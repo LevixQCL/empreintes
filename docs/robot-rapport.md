@@ -1,6 +1,6 @@
 # Rapport du robot d'équilibrage
 
-2026-10-21 · 200 expéditions par mesure · 773 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
+2026-10-21 · 200 expéditions par mesure · 764 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
 
 ## Le deck de départ selon la profondeur
 
@@ -61,23 +61,23 @@ Moyenne par rareté, à la découverte : Fer +2 · Cuivre −0 · Argent +5 · O
 
 ## Un Module dans les cinq métaux
 
-Chaque Module (hors cartes de départ) greffé en plus, à la découverte, dans chaque métal. Réglages actuels : force Fer ×1, Cuivre ×1.12, Argent ×1.25, Or ×1.4, Nacre ×1.55 ; effets gardés Fer 0, Cuivre 1, Argent 2, Or tous, Nacre tous.
+Chaque Module (hors cartes de départ) greffé en plus, à la découverte, dans chaque métal. Réglages actuels : force Fer ×1, Cuivre ×1.12, Argent ×1.25, Or ×1.4, Nacre ×1.55 ; effets gardés Fer 0, Cuivre 1, Argent 2, Or 3, Nacre tous.
 
 | Module | Métal d'origine | Fer | Cuivre | Argent | Or | Nacre |
 |---|---|---|---|---|---|---|
-| Gant à arc | Fer | −10 | −10 | −3 | −5 | −1 |
-| Œil-relais | Fer | +1 | +5 | +10 | +10 | +4 |
-| Cœur-turbine | Cuivre | −4 | −3 | −2 | +1 | +4 |
-| Bras-grue | Argent | −2 | −8 | −1 | +9 | +13 |
-| Lames orbitales | Or | −7 | −7 | −5 | +8 | +14 |
-| Crocs fossiles | Fer | −9 | −6 | −8 | −12 | −2 |
-| Cuir de récif | Fer | −6 | −9 | −8 | −6 | −1 |
-| Poumons d’abysse | Cuivre | +4 | +8 | +12 | +13 | +23 |
-| Carapace-mère | Argent | +0 | +3 | +7 | +14 | +15 |
-| Cœur de meute | Or | −1 | −8 | +10 | +16 | +27 |
-| Miroir de brume | Fer | −1 | +3 | −3 | −4 | −5 |
-| Encre ancienne | Fer | −5 | −8 | −6 | −4 | −2 |
-| Plume de givre | Cuivre | −2 | −6 | −6 | −10 | −6 |
-| Ombre ailée | Argent | −10 | +4 | −4 | +1 | +0 |
-| Chant des abysses | Or | −12 | −6 | +1 | +8 | +12 |
-| **Moyenne** | | **−4** | **−3** | **−0** | **+3** | **+6** |
+| Gant à arc | Fer | −10 | −2 | −8 | −3 | +2 |
+| Œil-relais | Fer | +1 | +2 | +7 | +11 | +12 |
+| Cœur-turbine | Cuivre | −4 | −3 | +1 | +4 | +6 |
+| Bras-grue | Argent | −2 | −8 | −1 | +9 | +14 |
+| Lames orbitales | Or | −7 | −7 | −5 | +8 | +18 |
+| Crocs fossiles | Fer | −9 | −4 | +4 | +4 | +12 |
+| Cuir de récif | Fer | −6 | −5 | +8 | +13 | +20 |
+| Poumons d’abysse | Cuivre | +4 | +8 | +17 | +17 | +24 |
+| Carapace-mère | Argent | +0 | +3 | +7 | +14 | +20 |
+| Cœur de meute | Or | −1 | −8 | +10 | +16 | +20 |
+| Miroir de brume | Fer | −1 | −7 | +1 | +2 | −1 |
+| Encre ancienne | Fer | −5 | −4 | −3 | +1 | −1 |
+| Plume de givre | Cuivre | −2 | −6 | −2 | +2 | +2 |
+| Ombre ailée | Argent | −10 | +4 | −4 | +1 | +5 |
+| Chant des abysses | Or | −12 | −6 | +1 | +8 | +11 |
+| **Moyenne** | | **−4** | **−3** | **+2** | **+7** | **+11** |
