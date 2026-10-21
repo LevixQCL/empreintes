@@ -4,13 +4,13 @@
 
 import { allonger, ajouter, capacite, placesLibres, vivants } from './combat';
 import { lancer } from './combat';
-import { gestesAvecModules } from './collection';
+import { cartesEnJeu } from './collection';
 import { GESTES_SPECIAUX, porteurDef } from './donnees';
 import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExpedition, nouvelleExploration, salleCourante } from './expedition';
 import { REGLES, places } from './regles';
 import type { CombatEtat, Geste } from './types';
 
-/** Copie rapide d'un combat (les Gestes eux-mêmes ne sont jamais modifiés, on peut les partager) */
+/** Copie rapide d'un combat (les cartes à plusieurs Fréquences changent de Fréquence : on les copie aussi) */
 const clone = (s: CombatEtat): CombatEtat => ({
   ...s,
   porteurs: s.porteurs.map((p) => ({ ...p })),
@@ -18,8 +18,8 @@ const clone = (s: CombatEtat): CombatEtat => ({
   intention: { ...s.intention },
   pioche: s.pioche.slice(),
   defausse: s.defausse.slice(),
-  main: s.main.slice(),
-  chaine: s.chaine.slice(),
+  main: s.main.map((g) => (g.fs ? { ...g } : g)),
+  chaine: s.chaine.map((g) => (g.fs ? { ...g } : g)),
   journal: s.journal.slice(),
 });
 
@@ -96,7 +96,7 @@ export function jouerTour(s: CombatEtat): void {
 }
 
 export interface Escouade {
-  /** id du Porteur → cartes greffées, avec leur niveau */
+  /** id du Porteur → cartes qu'il porte (exemplaires « carte@métal » ou cartes dans leur métal d'origine), avec leur niveau */
   [porteurId: string]: { id: string; niveau: number }[];
 }
 
@@ -113,7 +113,7 @@ export interface ResultatExpedition {
 export function simulerExpedition(escouade: Escouade, strate: number, rng: number): ResultatExpedition {
   const ids = Object.keys(escouade);
   const porteurs = ids.map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
-  const deck = [...ids.flatMap((id) => gestesAvecModules(id, escouade[id]!)), ...GESTES_SPECIAUX];
+  const deck = [...ids.flatMap((id) => cartesEnJeu(id, escouade[id]!)), ...GESTES_SPECIAUX];
   let x = nouvelleExpedition({ porteurs, deck, strate, rng });
   let tours = 0;
   let combats = 0;
@@ -166,7 +166,7 @@ export const tauxVictoire = (escouade: Escouade, strate: number, parties: number
 export function simulerExploration(escouade: Escouade, strate: number, rng: number): { victoire: boolean; combats: number } {
   const ids = Object.keys(escouade);
   const porteurs = ids.map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
-  const deck = [...ids.flatMap((id) => gestesAvecModules(id, escouade[id]!)), ...GESTES_SPECIAUX];
+  const deck = [...ids.flatMap((id) => cartesEnJeu(id, escouade[id]!)), ...GESTES_SPECIAUX];
   let x = nouvelleExploration({ porteurs, deck, strate, rng });
   let garde = 0;
   while (!x.terminee && garde++ < 3000) {

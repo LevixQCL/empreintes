@@ -2,9 +2,9 @@
 // et l'expédition en cours. Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms),
 // ce qui permet de rattraper le temps passé hors du jeu et de tester sans attendre.
 
-import { BATIMENTS, COLLECTION_DEPART, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, moduleDe, moduleDef, porteurDef, ennemiDef } from './donnees';
+import { BATIMENTS, CARTE_CHAMBRE, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, moduleDe, moduleDef, porteurDef, ennemiDef } from './donnees';
 import {
-  COLLECTION, NOMS_RARETE, ajouterCarte, gestesAvecModules, composantsNiveau, doublonsRequis, tirerCarte, tirerChoix,
+  COLLECTION, NOMS_RARETE, ajouterCarte, cartesEnJeu, composantsNiveau, doublonsRequis, tirerCarte, tirerChoix,
   type CarteCollection,
 } from './collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from './fragments';
@@ -12,7 +12,7 @@ import { cloturerCombat, combatSuivant, entrerSalle, lancerCombat, nouvelleExped
 import { graine, tireur } from './rng';
 import type { BatimentId, GesteDef, PorteurEtat, Rarete, BonusMarques } from './types';
 
-export const VERSION_JEU = 5;
+export const VERSION_JEU = 6;
 
 /** Réglages du district, au même endroit pour l'équilibrage */
 export const DISTRICT = {
@@ -34,7 +34,10 @@ export const DISTRICT = {
   usureATerre: 3,
   /** Usure maximale, en fraction des PV max */
   usureMaxRatio: 0.5,
-  modulesMax: 2,
+  /** cartes qu'un Porteur peut porter (décision du 22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue) */
+  cartesMax: 6,
+  /** cartes qu'il faut au deck de l'escouade (cartes du district comprises) pour descendre */
+  deckMin: 12,
   /** part du butin gardée après une défaite */
   butinDefaite: 0.5,
   depart: { energie: 120, composants: 20 },
@@ -59,6 +62,7 @@ export const POSTES: Poste[] = ['generateur', 'forge', 'clinique'];
 export interface PorteurDistrict {
   usure: number;
   poste: Poste | null;
+  /** les cartes qu'on lui a confiées (exemplaires « carte@métal ») : sa part du deck de combat */
   modules: string[];
   /** ce que le Porteur a vécu, pour ses Marques */
   faits?: { expeditions?: number; fondations?: number; anciens?: number };
@@ -178,7 +182,7 @@ export const DECISION_LECTURE: { titre: string; texte: string; options: { id: Le
   texte: 'Sous les salles closes, les cristaux d’un même individu portent des souvenirs qui se contredisent. Véla pense pouvoir lire jusqu’au bout ce qu’ils cachent. Elle sait que son lien avec son empreinte pourrait ne pas y survivre. Elle attend ton accord.',
   options: [
     { id: 'autoriser', nom: 'Autoriser la lecture', phrase: 'Une empreinte ne ment jamais. C’est nous qui la lisons mal.',
-      effet: 'Véla gagne un Geste unique, Lecture profonde (Fréquence libre, forte attaque). Son lien s’effiloche : −4 PV pour de bon.' },
+      effet: 'Véla gagne une carte unique, Lecture profonde (Fréquence libre, forte attaque), en plus de ses 6 cartes. Son lien s’effiloche : −4 PV pour de bon.' },
     { id: 'refuser', nom: 'Refuser, la protéger', phrase: 'On n’entre pas deux fois chez quelqu’un sans y être invité.',
       effet: 'Véla garde son empreinte intacte et reprend des forces : +4 PV pour de bon. Ce que cachent les cristaux attendra.' },
   ],
@@ -227,6 +231,7 @@ export const deciderChambre = (j: Jeu, choix: string) => decider(j, 'chambre', c
 
 /** Ce que la dernière lecture a changé chez Véla */
 export const bonusPv = (j: Jeu, id: string) => (id === 'vela' ? (j.actes.lecture === 'autoriser' ? -4 : j.actes.lecture === 'refuser' ? 4 : 0) : 0);
+/** la carte que Véla gagne après la dernière lecture : la sienne, en plus de ses 6 cartes */
 const LECTURE_PROFONDE: GesteDef = { id: 'lecture-profonde', porteur: 'vela', nom: 'Lecture profonde', f: 8, type: 'atk', v: 16, effet: { type: 'accord' } };
 
 export interface Resultat {
@@ -240,7 +245,7 @@ const typeDuJour = (jour: number): TypeQuotidien => (['combats', 'expedition', '
 
 export function nouveauJeu(now: number, rng = graine()): Jeu {
   const porteurs: Record<string, PorteurDistrict> = {};
-  for (const p of PORTEURS) porteurs[p.id] = { usure: 0, poste: null, modules: [] };
+  for (const p of PORTEURS) porteurs[p.id] = { usure: 0, poste: null, modules: (DEPART_PORTEURS[p.id] ?? []).map((id) => carteId(id, 'fer')) };
   return {
     version: VERSION_JEU,
     energie: DISTRICT.depart.energie,
@@ -274,7 +279,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
 
 export function estJeuValide(x: unknown): x is Jeu {
   const j = x as Jeu | null;
-  if (!(!!j && (j.version === VERSION_JEU || j.version === 2 || j.version === 3 || j.version === 4) && typeof j.energie === 'number' && !!j.batiments && !!j.porteurs)) return false;
+  if (!(!!j && (j.version === VERSION_JEU || (j.version >= 2 && j.version <= 5)) && typeof j.energie === 'number' && !!j.batiments && !!j.porteurs)) return false;
   migrer(j);
   return true;
 }
@@ -328,6 +333,24 @@ function migrer(j: Jeu) {
     // version 5 : réservée à la Fusion, retirée le 21 octobre (le métal se trouve, il ne se fabrique pas) ; rien à migrer
     j.version = 5;
     delete (j as Partial<Jeu> & { fusions?: unknown }).fusions;
+  }
+  if (j.version === 5) {
+    // version 6 (22 octobre 2026) : la carte qu'on collectionne est celle qu'on joue. Les Gestes de base deviennent
+    // 15 cartes en fer, portées par Ilka, Doran et Véla ; chacun garde ses cartes greffées, jusqu'à 6 cartes.
+    j.version = 6;
+    for (const id of CARTES_DE_BASE) j.collection[carteId(id, 'fer')] ??= { niveau: 1, doublons: 0 };
+    const porte = new Set(Object.values(j.porteurs).flatMap((p) => p.modules));
+    for (const [pid, depart] of Object.entries(DEPART_PORTEURS)) {
+      const p = j.porteurs[pid];
+      if (!p) continue;
+      const base = depart.filter((id) => CARTES_DE_BASE.includes(id)).map((id) => carteId(id, 'fer'));
+      // sa carte de départ, si elle n'est portée par personne
+      const premiere = carteId(depart[depart.length - 1]!, 'fer');
+      const greffes = p.modules.length || !j.collection[premiere] || porte.has(premiere) ? p.modules : [premiere];
+      p.modules = [...greffes.slice(0, DISTRICT.cartesMax), ...base].slice(0, DISTRICT.cartesMax);
+    }
+    // le deuxième objectif apprend désormais à confier la carte de la chambre
+    if (j.chambre && j.objectif === 1) j.collection[CARTE_CHAMBRE] ??= { niveau: 1, doublons: 0 };
   }
 }
 
@@ -553,7 +576,7 @@ export function monter(j: Jeu, moduleId: string): Resultat {
   return { ok: true };
 }
 
-/** Greffe une carte sur un Porteur de sa lignée (une carte ne se porte qu'une fois) */
+/** Confie une carte à un Porteur de sa lignée (un exemplaire n'est porté que par un Porteur ; il passe de l'un à l'autre) */
 export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   const p = j.porteurs[porteurId];
   if (!j.collection[moduleId]) return non('Carte inconnue.');
@@ -564,10 +587,10 @@ export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   if (ancien === porteurId) return { ok: true };
   if (p.modules.some((k) => k !== moduleId && moduleDe(k) === moduleDe(moduleId))) return non(`${porteurDef(porteurId).nom} porte déjà cette carte dans un autre métal.`);
   if (ancien && enExpedition(j, ancien)) return non('Cette carte est en expédition.');
-  if (p.modules.length >= DISTRICT.modulesMax) return non(`${porteurDef(porteurId).nom} porte déjà ${DISTRICT.modulesMax} cartes : retires-en une.`);
+  if (p.modules.length >= DISTRICT.cartesMax) return non(`${porteurDef(porteurId).nom} porte déjà ${DISTRICT.cartesMax} cartes : retires-en une.`);
   if (ancien) j.porteurs[ancien]!.modules = j.porteurs[ancien]!.modules.filter((m) => m !== moduleId);
   p.modules.push(moduleId);
-  log(j, `${moduleDef(moduleId).nom} greffé sur ${porteurDef(porteurId).nom}.`);
+  log(j, `${moduleDef(moduleId).nom} confiée à ${porteurDef(porteurId).nom}.`);
   return { ok: true };
 }
 
@@ -625,17 +648,17 @@ export function ouvrirArchive(j: Jeu): Resultat {
 
 // ---------- Expéditions ----------
 
-/** Les Gestes qu'un Porteur apporte : les siens + ceux de ses Modules */
+/** Les cartes qu'un Porteur apporte au deck de combat : celles qu'on lui a confiées, à leur niveau */
 export function gestesDe(j: Jeu, id: string): GesteDef[] {
-  const mods = (j.porteurs[id]?.modules ?? []).map((mid) => ({ id: mid, niveau: j.collection[mid]?.niveau ?? 1 }));
-  const gestes = gestesAvecModules(id, mods);
-  // après la dernière lecture, Véla remplace un de ses Murmures par la Lecture profonde
-  if (id === 'vela' && j.actes.lecture === 'autoriser') {
-    const k = gestes.findIndex((g) => g.id === 'murmure');
-    if (k >= 0) gestes[k] = LECTURE_PROFONDE;
-  }
-  return gestes;
+  const cartes = (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).map((k) => ({ id: k, niveau: j.collection[k]!.niveau }));
+  const jeu = cartesEnJeu(id, cartes);
+  // après la dernière lecture, Véla joue en plus sa Lecture profonde
+  if (id === 'vela' && j.actes.lecture === 'autoriser') jeu.push(LECTURE_PROFONDE);
+  return jeu;
 }
+
+/** Le deck de combat d'une escouade : les cartes de ses Porteurs, plus les cartes du district */
+export const deckEscouade = (j: Jeu, escouade: string[]): GesteDef[] => [...escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX];
 
 /** Les Porteurs de l'histoire qui rejoignent le district quand leur moment arrive ; renvoie les annonces */
 export function verifierArrivees(j: Jeu): string[] {
@@ -671,8 +694,9 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   }
   if (!j.chambre) return non('Ouvre d’abord la chambre scellée.');
   if (strate < 1 || strate > j.strate) return non('Cette Strate n’est pas encore creusée.');
+  const deck = deckEscouade(j, escouade);
+  if (deck.length < DISTRICT.deckMin) return non(`Ton deck n’a que ${deck.length} cartes : confie des cartes à ton escouade (${DISTRICT.deckMin} au moins).`);
   const porteurs: PorteurEtat[] = escouade.map((id) => ({ id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false }));
-  const deck = [...escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX];
   const bonus = bonusEscouade(j, escouade);
   // la Strate se parcourt salle par salle (exploration), jusqu'à son gardien
   j.expedition = nouvelleExploration({
@@ -808,9 +832,10 @@ export function remonter(j: Jeu): Retour {
       j.chambre = true;
       j.recrues = true;
       fragment = ajouterFragment(j);
+      ajouterCarte(j, CARTE_CHAMBRE);
       log(j, 'La chambre scellée est ouverte. Trois recrues rejoignent le district : un Coursier, un Docker et un Guetteur.');
     } else log(j, 'Le gardien de la chambre a repoussé l’escouade. Elle se repose, puis réessaie.');
-    return { butin, nouvelleStrate, victoire, fragment, tutoriel: true, cartes: [], eclats: 0 };
+    return { butin, nouvelleStrate, victoire, fragment, tutoriel: true, cartes: victoire ? [CARTE_CHAMBRE] : [], eclats: 0 };
   }
 
   // les trouvailles : une chance de carte par combat normal gagné, un choix de 3 sur le boss
@@ -878,18 +903,18 @@ function ajouterFragment(j: Jeu): string | null {
 
 // ---------- La chambre scellée (combat guidé) ----------
 
-/** Ordre de pioche du combat guidé : une leçon par tour */
-const ORDRE_TUTO = ['ruee', 'morsure', 'murmure', 'carapace', 'tir', 'ruee', 'bond', 'charge', 'grogner', 'esquive'];
+/** Ordre de pioche du combat guidé : une leçon par tour (au tour 2, un 3, un 4 et un 5 ; au tour 3, des boucliers) */
+const ORDRE_TUTO = ['ruee', 'morsure', 'murmure', 'carapace', 'tir', 'bond', 'charge', 'grogner', 'esquive', 'repli', 'glande-ambre'];
 
 export function ouvrirChambre(j: Jeu, rng = graine()): Resultat {
   if (j.chambre) return non('La chambre est déjà ouverte.');
   if (j.expedition) return non('Une expédition est déjà en cours.');
   const escouade = ['ilka', 'doran', 'vela'];
   for (const id of escouade) if (j.porteurs[id]!.poste) j.porteurs[id]!.poste = null;
-  const tout = [...escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX];
+  const tout = deckEscouade(j, escouade);
   const deck: GesteDef[] = [];
   for (const gid of ORDRE_TUTO) {
-    const k = tout.findIndex((g) => g.id === gid);
+    const k = tout.findIndex((g) => moduleDe(g.id) === gid);
     if (k >= 0) deck.push(...tout.splice(k, 1));
   }
   deck.push(...tout);
@@ -901,9 +926,9 @@ export function ouvrirChambre(j: Jeu, rng = graine()): Resultat {
 
 /** La consigne du combat guidé, selon le tour */
 export function leconTutoriel(tour: number): string {
-  if (tour === 1) return 'Leçon 1 : touche 3 Gestes de ta main, puis « Lancer la chaîne ».';
+  if (tour === 1) return 'Leçon 1 : touche 3 cartes de ta main, puis « Lancer la chaîne ».';
   if (tour === 2) return 'Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +30 % sur toute la chaîne.';
-  if (tour === 3) return 'Leçon 3 : le Rémanent annonce une Entaille sur Doran. Pose des Gestes à bouclier : ils protègent toute l’escouade pendant son attaque.';
+  if (tour === 3) return 'Leçon 3 : le Rémanent annonce une Entaille sur Doran. Pose des cartes à bouclier : elles protègent toute l’escouade pendant son attaque.';
   return 'Tu as l’essentiel : vise les suites, protège-toi des grosses attaques annoncées. Achève-le !';
 }
 
@@ -925,10 +950,10 @@ export const OBJECTIFS: Objectif[] = [
     fait: (j) => posteDe(j, 'generateur') === 'ilka',
   },
   {
-    titre: 'Greffer une carte', pilier: 'noyau',
-    consigne: 'Ouvre tes Cartes et greffe les Jambes à ressort sur Ilka : 2 Gestes plus forts remplacent Tir vif et Bond.',
+    titre: 'Construire ton deck', pilier: 'noyau',
+    consigne: 'Ouvre tes Cartes et confie l’Œil-relais, trouvé dans la chambre, à Ilka. Elle porte déjà 6 cartes : retires-en une. C’est ainsi que tu construis ton deck.',
     recompense: { composants: 10 },
-    fait: (j) => j.porteurs.ilka!.modules.length > 0,
+    fait: (j) => j.porteurs.ilka!.modules.some((k) => moduleDe(k) === 'oeil-relais'),
   },
   {
     titre: 'Descendre', pilier: 'noyau',

@@ -1,15 +1,16 @@
 // La face d'une carte Module, validée par Bryan le 21 octobre 2026 (maquette « Jambes à ressort, des cinq métaux ») :
-// - l'illustration Midjourney en haut, une silhouette à deux coins coupés, un onglet de métal qui porte le nom, une plaque pour les Gestes ;
+// - l'illustration Midjourney en haut, une silhouette à deux coins coupés, un onglet de métal qui porte le nom, une plaque pour l'action ;
+// - depuis le 22 octobre 2026, une carte = une action (celle qu'on joue en combat), avec ses Fréquences dans les octogones ;
 // - le métal (texture Midjourney, public/art/metaux) dit la rareté, avec une gemme de forme différente par métal ;
 // - un effet sur l'illustration monte avec la rareté : rien, lueur, reflet, paillettes d'or, cristaux qui pulsent ;
 // - la Nacre n'a pas de cadre : l'illustration va jusqu'aux bords.
 // Les tailles sont en unités de conteneur (cqw) : la même carte s'affiche en grand ou en petit.
 
 import { NOMS_EFFET } from '../core/effets';
-import { NOMS_LIGNEE } from '../core/donnees';
+import { DEPART_PORTEURS, NOMS_LIGNEE } from '../core/donnees';
 import { NOMS_RARETE } from '../core/collection';
 import type { ModuleDef, Rarete } from '../core/types';
-import { illustrationModule, textureMetal } from './art';
+import { illustrationModule, portrait, textureMetal } from './art';
 import { COULEUR, echap } from './vue';
 
 /** une couleur par Fréquence, du 1 (chaud) au 9 (froid) : des Fréquences qui se suivent ont des couleurs voisines */
@@ -21,6 +22,7 @@ const ICONES = {
   soin: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 1.5h4v4.5h4.5v4H10v4.5H6V10H1.5V6H6z"/></svg>',
 } as const;
 const LIBELLE = { atk: 'attaque', bouclier: 'protection', soin: 'soin' } as const;
+const ACTION = { atk: 'Attaque', bouclier: 'Bouclier', soin: 'Soin' } as const;
 
 /** les effets sur l'illustration, du Fer à la Nacre */
 const FX: Record<Rarete, string> = {
@@ -38,16 +40,22 @@ const FX: Record<Rarete, string> = {
  */
 export function faceCarte(m: ModuleDef, niveau: number, mult = 1): string {
   const ill = illustrationModule(m.id);
+  // une carte de base sans illustration prend, en attendant, le portrait du Porteur qui la porte au départ
+  const base = m.base ?? m.id;
+  const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base));
+  const repli = !ill && qui ? portrait(qui) : null;
   const art = ill
     ? `<img src="${ill}" alt="" decoding="async" data-src-fx="${ill}">`
-    : `<span class="fc-sans-image" style="--c:${COULEUR[m.lignee]}"></span>`;
-  const gestes = m.gestes.map((g) => {
-    const accord = g.effet?.type === 'accord';
-    const tags = (g.lourd ? '<em>lourd</em>' : '') + (g.effet ? `<em>${NOMS_EFFET[g.effet.type]}</em>` : '');
-    return `<li><span class="fc-freq" style="--fc:${accord ? '#5d5470' : couleurFrequence(g.f)}" title="${accord ? 'Accord : prend la Fréquence qui prolonge ta suite' : `Fréquence ${g.f}`}">${accord ? '∗' : g.f}</span>`
-      + `<span class="fc-gn">${echap(g.nom)}${tags}</span>`
-      + `<span class="fc-val ${g.type}" title="${LIBELLE[g.type]}">${ICONES[g.type]}${Math.round(g.v * mult)}</span></li>`;
-  }).join('');
+    : repli ? `<img class="fc-repli" src="${repli}" alt="" decoding="async">`
+      : `<span class="fc-sans-image" style="--c:${COULEUR[m.lignee]}"></span>`;
+  const accord = m.effet?.type === 'accord';
+  const freqs = accord
+    ? `<span class="fc-freq" style="--fc:#5d5470" title="Accord : prend la Fréquence qui prolonge ta suite">∗</span>`
+    : m.f.map((f) => `<span class="fc-freq" style="--fc:${couleurFrequence(f)}" title="Fréquence ${f}">${f}</span>`).join('');
+  const tags = (m.lourd ? '<em>2 pl.</em>' : '') + (m.effet ? `<em>${NOMS_EFFET[m.effet.type]}</em>` : '');
+  const gestes = `<li><span class="fc-freqs"${m.f.length > 1 && !accord ? ` title="Fréquences au choix : ${m.f.join(' ou ')}"` : ''}>${freqs}</span>`
+    + `<span class="fc-gn">${ACTION[m.type]}${tags}</span>`
+    + `<span class="fc-val ${m.type}" title="${LIBELLE[m.type]}">${ICONES[m.type]}${Math.round(m.v * mult)}</span></li>`;
   return `<div class="fc-ombre fo-${m.rarete}"><div class="fc-carte fr-${m.rarete}" style="--tex:url(${textureMetal(m.rarete)})" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${niveau}">`
     + `<div class="fc-art">${art}${ill ? FX[m.rarete] : ''}<span class="fc-puces"><span>Niv. ${niveau}</span><span class="fc-lignee" style="--c:${COULEUR[m.lignee]}">${NOMS_LIGNEE[m.lignee].court}</span></span></div>`
     + `<div class="fc-plaque"><span class="fc-lumiere"></span><div class="fc-titre"><span class="fc-gemme" title="${NOMS_RARETE[m.rarete]}"></span><span class="fc-nom">${echap(m.nom)}</span></div><ul class="fc-gestes">${gestes}</ul></div>`

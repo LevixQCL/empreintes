@@ -4,11 +4,11 @@
 
 import { capacite, ligneeGeste, placesLibres, placesPrises, texteIntention } from '../core/combat';
 import { NOMS_LIGNEE, ennemiDef, porteurDef } from '../core/donnees';
-import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, serieFinale } from '../core/regles';
+import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
 import type { CombatEtat, Geste, LigneeGeste } from '../core/types';
 import type { Expedition } from '../core/expedition';
-import { illustrationEnnemi, portrait } from './art';
+import { illustrationEnnemi, illustrationModule, portrait } from './art';
 import { couleurFrequence } from './carte';
 import { ICO } from './icones';
 
@@ -66,20 +66,39 @@ function popsPour(e: Ecran, cible: string) {
     .map((p) => `<span class="pop" style="--pc:${p.couleur}" aria-hidden="true">${echap(p.texte)}</span>`).join('');
 }
 
-/** Un Geste : la Fréquence dans sa gemme (même couleur que sur les cartes Module), la force, le nom */
+/**
+ * Une carte en combat (décision du 22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue).
+ * Son illustration en fond ; à défaut, le portrait du Porteur qui la joue. En haut, la Fréquence dans son octogone
+ * (et les autres Fréquences possibles en petit) ; en bas, la force, l'effet et le nom.
+ */
 function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean } = {}) {
   const lign = ligneeGeste(g);
-  const nomP = g.porteur ? porteurDef(g.porteur).nom : 'Spécial';
+  const nomP = g.porteur ? porteurDef(g.porteur).nom : 'District';
   const accord = g.effet?.type === 'accord';
-  const cls = ['geste', taille, g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : ''].filter(Boolean).join(' ');
-  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${g.effet ? ', ' + libelleEffet(g.effet) : ''}${o.halo ? ', prolonge ta suite' : ''}`;
+  const ill = g.carte ? illustrationModule(g.carte) : null;
+  const fond = ill ?? (g.porteur ? portrait(g.porteur) : null);
+  const autres = !accord && g.fs && g.fs.length > 1 ? g.fs.filter((f) => f !== g.f) : [];
+  const cls = ['geste', taille, g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : '', fond ? 'illus' : ''].filter(Boolean).join(' ');
+  const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
+  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${g.effet ? ', ' + libelleEffet(g.effet) : ''}${o.halo ? ', prolonge ta suite' : ''}`;
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]};--fc:${accord ? '#5d5470' : couleurFrequence(g.f)}" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
-    + `<span class="g-haut"><span class="g-freq">${accord ? '∗' : g.f}</span>${g.lourd ? '<span class="g-lourd">2 PL.</span>' : ''}${o.halo ? `<span class="g-suite">${ICO.monter}</span>` : ''}</span>`
-    + `<span class="g-val ${g.type}">${ICO[g.type]}<b>${g.v}</b></span>`
+    + (fond ? `<span class="g-art${ill ? '' : ' g-portrait'}" style="background-image:url(${fond})" aria-hidden="true"></span>` : '')
+    + `<span class="g-haut"><span class="g-freqs"><span class="g-freq">${accord ? '∗' : g.f}</span>${autres.map((f) => `<span class="g-freq mini" style="--fc:${couleurFrequence(f)}">${f}</span>`).join('')}</span>`
+    + `${g.lourd ? '<span class="g-lourd">2 PL.</span>' : ''}${o.halo ? `<span class="g-suite">${ICO.monter}</span>` : ''}</span>`
+    + `<span class="g-bas"><span class="g-val ${g.type}">${ICO[g.type]}<b>${g.v}</b></span>`
     + (g.effet ? `<span class="g-effet">${NOMS_EFFET[g.effet.type]}</span>` : '')
     + `<span class="g-nom">${echap(g.nom)}</span>`
     + (taille === 'chaine' ? `<span class="g-qui">${echap(nomP)}</span>` : '')
-    + `</button>`;
+    + `</span></button>`;
+}
+
+/** Une carte posée dans la chaîne : la toucher la retire ; sous elle, de quoi changer sa Fréquence (argent et plus) */
+function maillon(g: Geste, off: boolean) {
+  const choix = g.fs && g.fs.length > 1 && g.effet?.type !== 'accord';
+  if (!choix) return geste(g, 'chaine', 'retirer', { off });
+  const suivante = g.fs![(g.fs!.indexOf(g.f) + 1) % g.fs!.length]!;
+  return `<div class="maillon">${geste(g, 'chaine', 'retirer', { off })}`
+    + `<button type="button" class="accorder" data-action="accorder" data-uid="${g.uid}"${off ? ' disabled' : ''} aria-label="Passer ${echap(g.nom)} en Fréquence ${suivante}">${g.fs!.map((f) => `<i class="${f === g.f ? 'actif' : ''}" style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</button></div>`;
 }
 
 export function panneauCompte(c: Compte): string {
@@ -105,14 +124,15 @@ export function panneauCompte(c: Compte): string {
 function regles(): string {
   return `<div class="voile-feuille" data-action="regles" aria-hidden="true"></div><section class="feuille regles" role="dialog" aria-modal="true" aria-labelledby="regles-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">AIDE</span><h2 id="regles-titre">Comment on joue</h2></div><button type="button" class="btn-icone" data-action="regles" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps"><ol class="liste-regles">`
-    + '<li><b>D’où viennent tes Gestes.</b> Chaque Porteur apporte les siens au deck commun. Les cartes greffées sur lui en remplacent une partie : leurs Gestes, avec leurs Fréquences, arrivent alors dans ta main.</li>'
-    + `<li><b>Compose une chaîne.</b> Touche les Gestes de ta main (${REGLES.capaciteBase} places au départ), puis lance-la.</li>`
+    + '<li><b>Ton deck, ce sont tes cartes.</b> Chaque Porteur de l’escouade apporte celles que tu lui as confiées au district (6 au plus), plus les 2 cartes du district. L’illustration est celle de la carte ; à défaut, le portrait du Porteur qui la joue.</li>'
+    + `<li><b>Compose une chaîne.</b> Touche les cartes de ta main (${REGLES.capaciteBase} places au départ), puis lance-la.</li>`
     + `<li><b>La force</b> est au milieu : ${ICO.atk} dégâts, ${ICO.bouclier} protection de l’escouade, ${ICO.soin} soin du plus blessé.</li>`
-    + '<li><b>La Fréquence</b> est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque le Geste qui prolonge ta suite.</li>'
+    + '<li><b>La Fréquence</b> est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.</li>'
+    + '<li><b>Plusieurs Fréquences :</b> une carte en argent, en or ou en nacre en porte 2 ou 3. Posée, elle prend celle qui prolonge ta suite ; touche les chiffres sous elle pour en changer. Rien n’est tiré au sort.</li>'
     + `<li><b>L’Écho :</b> trois Fréquences identiques donnent un bouclier d’escouade de +${REGLES.bouclierEcho}.</li>`
     + '<li><b>Le Flux</b> se remplit à chaque Résonance. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main.</li>'
-    + '<li><b>« 2 PL. »</b> : ce Geste est puissant mais occupe deux places.</li>'
-    + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose le Geste dans la chaîne pour lire ce qu’il fait. « ∗ » : Fréquence libre, il prolonge toujours la suite.</li>'
+    + '<li><b>« 2 PL. »</b> : cette carte est puissante mais occupe deux places.</li>'
+    + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.</li>'
     + '<li><b>Le triangle des lignées :</b> Tech bat Résonant, Résonant bat Géné, Géné bat Tech (+15 %).</li>'
     + '<li><b>L’ennemi annonce son attaque</b> en haut de l’écran : protège-toi ou finis-le avant.</li>'
     + '<li><b>La Dissonance :</b> certains ennemis brouillent tes Fréquences. Au tour suivant, aucune suite ne résonne : mise sur la force brute ou la protection.</li></ol></div></section>';
@@ -131,7 +151,7 @@ export function htmlCombat(e: Ecran): string {
 
   let conseil: string;
   if (s.dissonance) conseil = `<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci. Mise sur la force brute ou la protection.`;
-  else if (!s.chaine.length) conseil = `Choisis jusqu’à ${capacite(s)} Gestes. Des Fréquences qui se suivent (3, 4, 5) déclenchent une <b>Résonance</b>.`;
+  else if (!s.chaine.length) conseil = `Choisis jusqu’à ${capacite(s)} cartes. Des Fréquences qui se suivent (3, 4, 5) déclenchent une <b>Résonance</b>.`;
   else {
     const fin = serieFinale(s.chaine);
     const f = fs[fs.length - 1]!;
@@ -139,7 +159,7 @@ export function htmlCombat(e: Ecran): string {
     else if (fin === 2) conseil = `Suite ${f - 1} → ${f} : ajoute un <b>${f + 1}</b> pour +30 %`;
     else conseil = `Ajoute un <b>${f + 1}</b> pour commencer une suite`;
     if (a.echo) conseil += ` · Écho : bouclier +${REGLES.bouclierEcho}`;
-    if (dernier?.effet) conseil += `<span class="effet-texte">${echap(NOMS_EFFET[dernier.effet.type])} : ${echap(libelleEffet(dernier.effet))}</span>`;
+    if (dernier?.effet) conseil += `<span class="effet-texte">${echap(libelleEffet(dernier.effet))}</span>`;
   }
 
   const ill = illustrationEnnemi(def.id);
@@ -185,7 +205,7 @@ export function htmlCombat(e: Ecran): string {
   h += `<section class="zone-chaine${a.suite >= 3 ? ' resonne' : ''}" aria-label="Chaîne"><div class="chaine-tete"><span class="surtitre">CHAÎNE · ${placesPrises(s)} / ${capacite(s)}</span>`
     + (mult ? `<span class="badge-reso">${ICO.flux}RÉSONANCE ${mult}</span>` : a.suite === 2 ? '<span class="badge-reso faible">SUITE EN COURS</span>' : '')
     + `</div><div class="rail">`;
-  for (const g of s.chaine) h += geste(g, 'chaine', 'retirer', { off: verrou });
+  for (const g of s.chaine) h += maillon(g, verrou);
   for (let i = 0; i < libres; i++) h += `<span class="place-vide" aria-hidden="true">${i === 0 && dernier && !a.echo ? (fs[fs.length - 1]! + 1) : ''}</span>`;
   h += `</div><p class="conseil">${conseil}</p>`;
   if (!e.lecon) {
@@ -201,7 +221,7 @@ export function htmlCombat(e: Ecran): string {
   // la main
   h += `<section class="zone-main" aria-label="Main"><div class="main-tete"><span class="surtitre">MAIN · ${s.main.length}</span><span class="journal-ligne">${echap(s.journal[0] ?? '')}</span></div><div class="main">`;
   for (const g of s.main) {
-    const halo = !!dernier && (g.f === fs[fs.length - 1]! + 1 || g.effet?.type === 'accord') && places(g) <= libres;
+    const halo = !!dernier && prolonge(g, fs[fs.length - 1]) && places(g) <= libres;
     h += geste(g, 'main', 'ajouter', { halo, off: verrou, serre: places(g) > libres });
   }
   h += '</div></section>';

@@ -2,10 +2,10 @@
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
 // les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
 
-import { libelleEffet } from '../core/effets';
-import { GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, ennemiDef, gestesRemplaces, moduleDef, porteurDef, zoneDe } from '../core/donnees';
+import { NOMS_EFFET, texteEffet } from '../core/effets';
+import { MODULES, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte,
+  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte,
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
@@ -279,10 +279,15 @@ function carteMini(id: string, j: Jeu, attrs = ''): string {
     + `<span class="ruban${c ? '' : ' neuve'}">${c ? `Doublon · niv. ${c.niveau}` : 'Nouvelle'}</span></button>`;
 }
 
-/** Le texte des effets spéciaux de la carte */
+/** L'effet de la carte, et ce que son métal lui ouvre */
 function effetsCarte(m: ReturnType<typeof moduleDef>): string {
-  const avec = m.gestes.filter((g) => g.effet);
-  return avec.length ? `<ul class="effets-carte">${avec.map((g) => `<li><b>${echap(g.nom)}</b> ${echap(libelleEffet(g.effet!))}</li>`).join('')}</ul>` : '';
+  const origine = MODULES.find((x) => x.id === (m.base ?? m.id));
+  let h = '';
+  if (m.effet) h += `<ul class="effets-carte"><li><b>${echap(NOMS_EFFET[m.effet.type])}</b> ${echap(texteEffet(m.effet))}</li></ul>`;
+  else if (origine?.effet) h += `<p class="aide">En fer, pas d’effet. À partir du cuivre : <b>${echap(NOMS_EFFET[origine.effet.type])}</b>, ${echap(texteEffet(origine.effet).replace(/^./, (c) => c.toLowerCase()))}</p>`;
+  if (m.f.length > 1 && m.effet?.type !== 'accord') h += `<p class="aide">Fréquences au choix : <b>${m.f.join(' ou ')}</b>. Posée, elle prend celle qui prolonge ta suite.</p>`;
+  else if (origine && origine.f.length > m.f.length && m.effet?.type !== 'accord') h += `<p class="aide">Son métal ne lui ouvre qu’une Fréquence ; en argent et en or, elle en a 2, en nacre 3.</p>`;
+  return h;
 }
 
 function fenetreChoix(j: Jeu): string {
@@ -291,18 +296,6 @@ function fenetreChoix(j: Jeu): string {
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><div class="cartes-choix">`
     + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}"`)).join('')
     + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
-}
-
-/** Les Gestes de base que la carte remplace (ou remplacerait) sur ce Porteur */
-function remplace(j: Jeu, moduleId: string, porteurId: string | undefined): string {
-  if (!porteurId) return '';
-  const mods = j.porteurs[porteurId]?.modules ?? [];
-  const k = mods.indexOf(moduleId);
-  const avant = (k >= 0 ? mods.slice(0, k) : mods).reduce((n, id) => n + moduleDef(id).gestes.length, 0);
-  const noms = gestesRemplaces(porteurId, avant, moduleDef(moduleId).gestes.length).map((g) => g.nom);
-  if (!noms.length) return '';
-  const qui = porteurDef(porteurId).nom;
-  return `<p class="aide">${k >= 0 ? `Remplace sur ${echap(qui)}` : `Sur ${echap(qui)}, remplacerait`} : <b>${noms.map(echap).join(', ')}</b></p>`;
 }
 
 const exemplaires = (j: Jeu, moduleId: string) => [...RARETES].reverse().map((r) => carteId(moduleId, r)).filter((k) => j.collection[k]);
@@ -320,7 +313,7 @@ function feuilleCarte(e: EcranDistrict): string {
   let h = `<div class="voile-feuille" data-action="carte-fermer" aria-hidden="true"></div><section class="feuille carte-detail" role="dialog" aria-modal="true" aria-label="${echap(m.nom)}"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR_RARETE[m.rarete]}">${NOMS_RARETE[m.rarete].toUpperCase()} · ${NOM_LIGNEE[m.lignee].toUpperCase()} · NIVEAU ${c.niveau}</span><h2>${echap(m.nom)}</h2></div>`
     + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
-    + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(m) || '<p class="aide">Pas d’effet spécial : des Gestes simples et fiables.</p>'}${remplace(j, m.id, porte ?? porteurs[0]?.id)}</div></div>`;
+    + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(m)}</div></div>`;
   // progression
   h += `<section class="bloc"><h3 class="titre-bloc">${ICO.monter}Progression</h3>`;
   if (requis === null) h += `<p class="aide">Niveau maximum atteint.</p>`;
@@ -334,15 +327,55 @@ function feuilleCarte(e: EcranDistrict): string {
   }
   if (requis === null && c.doublons > 0) h += `<div class="ligne-btn"><button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button></div>`;
   h += `</section>`;
-  // greffe
-  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Greffer sur</h3><p class="aide">${DISTRICT.modulesMax} cartes au plus par Porteur, de sa lignée. Ses Gestes remplacent certains des siens.</p><div class="rangee">`
+  // à qui la confier : elle prend une place dans le deck de combat
+  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Confier à</h3><p class="aide">Une carte confiée à un Porteur entre dans ton deck de combat quand il descend. ${DISTRICT.cartesMax} cartes au plus par Porteur, de sa lignée.</p><div class="rangee">`
     + porteurs.map((p) => {
       const ici = porte === p.id;
       const n = j.porteurs[p.id]!.modules.length;
       return `<button type="button" class="tuile-porteur${ici ? ' actif' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="${ici ? 'degreffer' : 'greffer'}" data-module="${cle}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}>`
-        + `${avatar(p.id, 48)}<strong>${echap(p.nom)}</strong><small>${ici ? 'Greffée · retirer' : `${n} / ${DISTRICT.modulesMax}`}</small>${ici ? `<span class="bonus ideal">${ICO.ok}</span>` : ''}</button>`;
+        + `${avatar(p.id, 48)}<strong>${echap(p.nom)}</strong><small>${ici ? 'La porte · reprendre' : `${n} / ${DISTRICT.cartesMax}`}</small>${ici ? `<span class="bonus ideal">${ICO.ok}</span>` : ''}</button>`;
     }).join('') + `</div></section>`;
   return h + `</div></section>`;
+}
+
+/** Les cartes de chaque Porteur : une rangée de raccourcis vers la construction de son deck */
+function decksPorteurs(j: Jeu): string {
+  const ids = PORTEURS.filter((p) => porteursPresents(j).includes(p.id)).map((p) => p.id);
+  return `<section class="bloc decks-porteurs"><h3 class="titre-bloc">${ICO.cartes}Construire le deck</h3><div class="rangee">`
+    + ids.map((id) => {
+      const p = porteurDef(id);
+      const n = j.porteurs[id]!.modules.length;
+      return `<button type="button" class="tuile-porteur" style="--c:${COULEUR[p.lignee]}" data-action="deck" data-id="${id}">${avatar(id, 44)}<strong>${echap(p.nom)}</strong><small>${n} / ${DISTRICT.cartesMax} cartes</small></button>`;
+    }).join('') + `</div></section>`;
+}
+
+/** La feuille d'un Porteur : les cartes qu'il porte (touche pour reprendre), puis celles qu'on peut lui confier */
+function feuilleDeck(e: EcranDistrict): string {
+  const j = e.j;
+  const id = e.deck;
+  if (!id || !j.porteurs[id]) return '';
+  const p = porteurDef(id);
+  const porte = j.porteurs[id]!.modules.filter((k) => j.collection[k]);
+  const plein = porte.length >= DISTRICT.cartesMax;
+  const parti = enExpedition(j, id);
+  const tuile = (cle: string, action: string, bas: string) => {
+    const m = moduleDef(cle);
+    const c = j.collection[cle]!;
+    return `<button type="button" class="carte-tuile" data-action="${action}" data-module="${cle}" data-id="${id}"${parti ? ' disabled' : ''} aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}">${faceCarte(m, c.niveau, multNiveau(cle, c.niveau))}<span class="tuile-bas">${bas}</span></button>`;
+  };
+  const libres = Object.keys(j.collection)
+    .filter((k) => moduleDef(k).lignee === p.lignee && !porte.includes(k) && !porte.some((x) => moduleDe(x) === moduleDe(k)))
+    .sort((a, b) => moduleDef(a).nom.localeCompare(moduleDef(b).nom, 'fr'));
+  let h = `<div class="voile-feuille" data-action="deck-fermer" aria-hidden="true"></div><section class="feuille deck-porteur" role="dialog" aria-modal="true" aria-label="Les cartes de ${echap(p.nom)}"><span class="poignee" aria-hidden="true"></span>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR[p.lignee]}">${NOM_LIGNEE[p.lignee].toUpperCase()} · ${porte.length} / ${DISTRICT.cartesMax} CARTES</span><h2>Les cartes de ${echap(p.nom)}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="deck-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
+  if (parti) h += `<p class="aide">${echap(p.nom)} est en expédition : ses cartes changeront à son retour.</p>`;
+  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour la reprendre.</p>`;
+  h += porte.length ? `<div class="grille-cartes">${porte.map((k) => tuile(k, 'degreffer', '<span class="libre">reprendre</span>')).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
+  h += `</section><section class="bloc"><h3 class="titre-bloc">${ICO.cartes}À lui confier</h3>`
+    + `<p class="aide">${plein ? `${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : reprends-en une d’abord.` : `Les cartes ${NOM_LIGNEE[p.lignee].toLowerCase()}s de ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
+  h += libres.length ? `<div class="grille-cartes${plein ? ' grisee' : ''}">${libres.map((k) => { const qui = greffesDe(j, k)[0]; return tuile(k, 'greffer', qui ? `${avatar(qui, 20)}<span class="libre">${echap(porteurDef(qui).nom)}</span>` : '<span class="libre">libre</span>'); }).join('')}</div>` : `<p class="aide">Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.</p>`;
+  return h + `</section></div></section>`;
 }
 
 export function htmlCartes(e: EcranDistrict): string {
@@ -352,7 +385,8 @@ export function htmlCartes(e: EcranDistrict): string {
   let h = entete(`COLLECTION · ${trouvees} / ${MODULES.length} TROUVÉES`, 'Cartes');
   h += `<div class="segments-choix" role="tablist">` + (['tout', 'tech', 'bio', 'reso'] as const).map((f) =>
     `<button type="button" role="tab" class="seg${e.filtre === f ? ' actif' : ''}"${f !== 'tout' ? ` style="--c:${COULEUR[f]}"` : ''} data-action="filtre" data-id="${f}" aria-selected="${e.filtre === f}">${f === 'tout' ? 'Toutes' : NOM_LIGNEES[f]}</button>`).join('') + `</div>`;
-  h += `<p class="aide intro-ecran">Une carte greffée sur un Porteur ajoute ses Gestes à ton deck de combat, à la place de certains des siens. Les chiffres dans les octogones sont leurs Fréquences : des Fréquences qui se suivent font les Résonances. Touche une carte pour la greffer ou la faire monter avec ses doublons.</p>`;
+  h += `<p class="aide intro-ecran">Ta collection, c’est ton deck. Chaque carte confiée à un Porteur entre dans ton deck de combat quand il descend (${DISTRICT.cartesMax} cartes par Porteur). Les chiffres dans les octogones sont ses Fréquences : des Fréquences qui se suivent font les Résonances. Touche une carte pour la confier ou la faire monter avec ses doublons.</p>`;
+  h += decksPorteurs(j);
   for (const lignee of lignees) {
     h += `<h2 class="titre-section" style="--c:${COULEUR[lignee]}">${NOM_LIGNEES[lignee]}</h2><div class="grille-cartes">`;
     for (const base of MODULES.filter((x) => x.lignee === lignee)) {
@@ -373,6 +407,7 @@ export function htmlCartes(e: EcranDistrict): string {
     h += `</div>`;
   }
   h += feuilleCarte(e);
+  h += feuilleDeck(e);
   if (j.choix.length) h += fenetreChoix(j);
   return coquille(e, h, 'ecran-cartes');
 }
@@ -506,7 +541,7 @@ export function htmlCoupe(e: EcranDistrict): string {
     h += `<div class="habitant${exp ? ' parti' : ''}" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 40)}<div class="hab-infos"><div class="hab-ligne"><strong>${echap(p.nom)}</strong><span class="chiffre">${pv}/${p.pvMax}</span></div>`
       + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id))
       + `<small>${d.poste && !exp ? ICO.ouvrier : ''}${etat}${d.usure >= 1 ? ` · Usure ${Math.floor(d.usure)}` : ''}</small>`
-      + (d.modules.length ? `<small class="greffes">${ICO.greffe}${d.modules.map((m) => echap(moduleDef(m).nom)).join(', ')}</small>` : '') + `</div></div>`;
+      + `<small class="greffes">${ICO.greffe}${d.modules.length} / ${DISTRICT.cartesMax} cartes</small>` + `</div></div>`;
   }
   h += `</div></section>`;
   h += `<section class="puits" style="--decor:url(${decor('coupe')})" aria-label="Les Strates"><h3 class="titre-bloc">${ICO.strate}Les Strates</h3><ol class="strates">`;
@@ -538,7 +573,7 @@ function marqueDe(j: Jeu, id: string): string {
 export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
   const dispo = disponibles(j);
-  const deck = e.escouade.reduce((n, id) => n + gestesDe(j, id).length, 0) + 2;
+  const deck = deckEscouade(j, e.escouade).length;
   let h = `<div class="ecran ecran-escouade"><main class="contenu">`
     + entete(`STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`, 'Escouade', `<button type="button" class="btn-icone" data-action="coupe" aria-label="Retour">${ICO.retour}</button>`);
   h += `<div class="emplacements" aria-label="Escouade choisie">` + [0, 1, 2].map((i) => {
@@ -548,17 +583,18 @@ export function htmlEscouade(e: EcranDistrict): string {
   }).join('') + `</div>`;
   // les Fréquences du deck de l'escouade : un trou dans la suite coupe les Résonances
   if (e.escouade.length) {
-    const cartes = [...e.escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX];
-    const n = Array.from({ length: 9 }, (_, i) => cartes.filter((g) => g.f === i + 1 && g.effet?.type !== 'accord').length);
+    const cartes = deckEscouade(j, e.escouade);
+    // une carte à plusieurs Fréquences compte pour chacune
+    const n = Array.from({ length: 9 }, (_, i) => cartes.filter((g) => (g.fs ?? [g.f]).includes(i + 1) && g.effet?.type !== 'accord').length);
     const libres = cartes.filter((g) => g.effet?.type === 'accord').length;
     const max = Math.max(...n, 1);
     h += `<div class="frequences-deck" aria-label="Fréquences du deck"><span class="surtitre">FRÉQUENCES DU DECK</span><div class="barres">`
       + n.map((k, i) => `<span class="barre${k ? '' : ' trou'}" style="--fc:${couleurFrequence(i + 1)};--h:${Math.round((100 * k) / max)}%"><i></i><b>${i + 1}</b><small>${k}</small></span>`).join('')
-      + `</div><small class="aide">Des chiffres qui se suivent font des Résonances. Un chiffre absent coupe les suites${libres ? ` · ${libres} Geste${libres > 1 ? 's' : ''} ∗ comble${libres > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</small></div>`;
+      + `</div><small class="aide">Des chiffres qui se suivent font des Résonances. Un chiffre absent coupe les suites${libres ? ` · ${libres} carte${libres > 1 ? 's' : ''} ∗ comble${libres > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</small></div>`;
   }
   const zone = zoneDe(e.strateChoisie);
   h += `<p class="zone-strate">${ICO.strate}<span><strong>${echap(zone.nom)}</strong><small>Deux rencontres, puis le gardien de la zone : ${echap(ennemiDef(zone.boss).nom)}</small></span></p>`;
-  h += `<p class="aide intro-ecran">Choisis 3 Porteurs. Chacun apporte ses Gestes et ceux de ses cartes au deck commun. Les Porteurs au travail restent au district.</p><div class="grille-porteurs">`;
+  h += `<p class="aide intro-ecran">Choisis 3 Porteurs. Chacun apporte au deck les cartes que tu lui as confiées : changer d’escouade change ton deck. Les Porteurs au travail restent au district.</p><div class="grille-porteurs">`;
   for (const p of PORTEURS) {
     if (!porteursPresents(j).includes(p.id)) continue;
     const libre = dispo.includes(p.id);
@@ -567,12 +603,21 @@ export function htmlEscouade(e: EcranDistrict): string {
     const pv = pvMaxCombat(j, p.id);
     h += `<button type="button" class="carte-porteur${choisi ? ' choisi' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="choisir" data-id="${p.id}"${!libre && !choisi ? ' disabled' : ''} aria-pressed="${choisi}">`
       + `${avatar(p.id, 72)}${choisi ? `<span class="rang">${e.escouade.indexOf(p.id) + 1}</span>` : ''}<strong>${echap(p.nom)}</strong><small class="lignee">${NOM_LIGNEE[p.lignee]}</small>`
-      + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id)) + `<small>${libre || choisi ? `PV ${pv} · ${gestesDe(j, p.id).length} Gestes` : `Au travail · ${echap(batimentDef(d.poste!).nom)}`}</small>`
+      + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id)) + `<small>${libre || choisi ? `PV ${pv} · ${gestesDe(j, p.id).length} cartes` : `Au travail · ${echap(batimentDef(d.poste!).nom)}`}</small>`
       + marqueDe(j, p.id) + `</button>`;
   }
-  h += `</div><p class="aide">Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p></main>`;
-  h += `<footer class="pied-fixe"><div class="pied-info"><span class="chiffre">${e.escouade.length} / 3</span><small>${e.escouade.length ? `${deck} Gestes dans le deck` : 'Personne pour l’instant'}</small></div>`
+  h += `</div>`;
+  // les cartes de chaque Porteur choisi : un raccourci vers sa feuille de deck
+  if (e.escouade.length) {
+    h += `<section class="bloc decks-porteurs"><h3 class="titre-bloc">${ICO.cartes}Le deck de l’escouade</h3><p class="aide">Touche un Porteur pour changer ses cartes.</p><div class="rangee">`
+      + e.escouade.map((id) => `<button type="button" class="tuile-porteur" style="--c:${COULEUR[porteurDef(id).lignee]}" data-action="deck" data-id="${id}">${avatar(id, 44)}<strong>${echap(porteurDef(id).nom)}</strong><small>${j.porteurs[id]!.modules.length} / ${DISTRICT.cartesMax} cartes</small></button>`).join('')
+      + `</div></section>`;
+  }
+  h += `<p class="aide">Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p></main>`;
+  const maigre = e.escouade.length === 3 && deck < DISTRICT.deckMin;
+  h += `<footer class="pied-fixe"><div class="pied-info"><span class="chiffre">${e.escouade.length} / 3</span><small${maigre ? ' class="alerte"' : ''}>${e.escouade.length ? `${deck} cartes dans le deck${maigre ? ` · ${DISTRICT.deckMin} au moins` : ''}` : 'Personne pour l’instant'}</small></div>`
     + `<button type="button" class="btn prim large" data-action="partir"${e.escouade.length === 3 ? '' : ' disabled'}>${ICO.descendre}Partir</button></footer>`;
+  h += feuilleDeck(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;
 }

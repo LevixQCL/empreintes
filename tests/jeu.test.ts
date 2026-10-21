@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as C from '../src/core/combat';
 import {
-  DISTRICT, ameliorer, disponibles, energieParHeure, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu, partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence, entrer, repondre, RENCONTRES,
+  DISTRICT, ameliorer, degreffer, disponibles, energieParHeure, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu, partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence, entrer, repondre, RENCONTRES,
 } from '../src/core/jeu';
 
 const H = 3_600_000;
@@ -34,17 +34,28 @@ describe('District', () => {
     expect(ameliorer(j, 'generateur').ok).toBe(true);
   });
 
-  it('greffer une carte remplace des Gestes de base par les siens ; la Forge refabrique un doublon', () => {
+  it('confier une carte : une place dans le deck, 6 au plus, de sa lignée ; la Forge refabrique un doublon', () => {
     const j = ouvert();
-    expect(greffer(j, 'jambes-ressort@fer', 'doran').ok).toBe(false); // mauvaise lignée
-    const avant = gestesDe(j, 'ilka').length;
-    expect(greffer(j, 'jambes-ressort@fer', 'ilka').ok).toBe(true);
-    const apres = gestesDe(j, 'ilka');
-    expect(apres.length).toBe(avant); // le deck garde sa taille
-    expect(apres.map((g) => g.nom)).toContain('Détente');
-    expect(apres.map((g) => g.nom)).not.toContain('Tir vif'); // le premier Geste de base à céder sa place
+    j.collection['oeil-relais@fer'] = { niveau: 1, doublons: 0 };
+    expect(gestesDe(j, 'ilka')).toHaveLength(DISTRICT.cartesMax); // Ilka porte déjà ses 6 cartes de départ
+    expect(greffer(j, 'oeil-relais@fer', 'doran').ok).toBe(false); // mauvaise lignée
+    expect(greffer(j, 'oeil-relais@fer', 'ilka').ok).toBe(false); // déjà 6 cartes
+    expect(degreffer(j, 'tir-vif@fer').ok).toBe(true);
+    expect(greffer(j, 'oeil-relais@fer', 'ilka').ok).toBe(true);
+    const noms = gestesDe(j, 'ilka').map((g) => g.nom);
+    expect(noms).toContain('Œil-relais');
+    expect(noms).not.toContain('Tir vif');
+    expect(noms).toHaveLength(6);
+    // un exemplaire passe d'un Porteur à l'autre, de la même lignée
+    expect(greffer(j, 'oeil-relais@fer', 'coursier').ok).toBe(true);
+    expect(gestesDe(j, 'ilka')).toHaveLength(5);
+    expect(gestesDe(j, 'coursier').map((g) => g.nom)).toEqual(['Œil-relais']);
+    // un deck trop maigre ne descend pas
+    const r = partir(j, ['coursier', 'docker', 'guetteur'], 1);
+    expect(r.ok).toBe(false);
+    expect(r.message).toMatch(/cartes/);
     expect(fabriquer(j, 'jambes-ressort@fer', 0).ok).toBe(false); // personne à la Forge
-    poster(j, 'coursier', 'forge');
+    poster(j, 'docker', 'forge');
     j.composants = 100;
     expect(fabriquer(j, 'lames-orbitales@or', 0).ok).toBe(false); // jamais trouvée
     expect(fabriquer(j, 'jambes-ressort@fer', 0).ok).toBe(true);
@@ -119,7 +130,12 @@ describe('Premier lancement', () => {
     expect(reclamer(j).ok).toBe(false);
     poster(j, 'ilka', 'generateur');
     expect(reclamer(j).ok).toBe(true);
-    expect(objectifCourant(j)!.titre).toBe('Greffer une carte');
+    expect(objectifCourant(j)!.titre).toBe('Construire ton deck');
+    j.collection['oeil-relais@fer'] = { niveau: 1, doublons: 0 };
+    expect(reclamer(j).ok).toBe(false);
+    degreffer(j, 'bond@fer');
+    greffer(j, 'oeil-relais@fer', 'ilka');
+    expect(reclamer(j).ok).toBe(true);
   });
 
   it('le résumé du retour ne liste que ce qui a avancé', () => {

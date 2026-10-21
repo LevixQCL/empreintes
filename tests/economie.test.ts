@@ -81,8 +81,8 @@ describe('Collection', () => {
   });
 });
 
-describe('Un Module, cinq métaux', () => {
-  it('un même Module existe dans chaque métal, chaque exemplaire à part', () => {
+describe('Une carte, cinq métaux', () => {
+  it('une même carte existe dans chaque métal, chaque exemplaire à part', () => {
     const j = avance();
     expect(ajouterCarte(j, 'jambes-ressort@or')).toBe(true); // nouvelle carte, pas un doublon du fer
     expect(j.collection['jambes-ressort@or']!.niveau).toBe(7);
@@ -91,37 +91,37 @@ describe('Un Module, cinq métaux', () => {
     expect(moduleDef('jambes-ressort@or').nom).toBe('Jambes à ressort');
   });
 
-  it('le métal règle la force et le nombre d’effets', () => {
-    const fer = moduleDef('jambes-ressort@fer'), or = moduleDef('jambes-ressort@or');
-    expect(or.gestes[0]!.v).toBeGreaterThan(fer.gestes[0]!.v);
-    // un Module en or (3 effets) trouvé en fer perd ses effets, en argent en garde 2
-    expect(moduleDef('lames-orbitales@fer').gestes.filter((g) => g.effet)).toHaveLength(0);
-    expect(moduleDef('lames-orbitales@argent').gestes.filter((g) => g.effet)).toHaveLength(2);
-    expect(moduleDef('lames-orbitales@or').gestes.filter((g) => g.effet)).toHaveLength(3);
-    // sans métal, c'est le Module dans son métal d'origine
+  it('le métal règle la force, les Fréquences et l’effet', () => {
+    const k = (m: string) => moduleDef(`jambes-ressort@${m}`);
+    expect(k('or').v).toBeGreaterThan(k('fer').v);
+    expect(['fer', 'cuivre', 'argent', 'or', 'nacre'].map((m) => k(m).f.length)).toEqual([1, 1, 2, 2, 3]);
+    expect(k('fer').effet).toBeUndefined();
+    expect(k('cuivre').effet).toEqual({ type: 'elan' });
+    // une carte d'origine or trouvée en fer : plus faible, une seule Fréquence, sans effet
     expect(moduleDef('lames-orbitales').rarete).toBe('or');
+    expect(moduleDef('lames-orbitales@fer').v).toBeLessThan(moduleDef('lames-orbitales').v);
+    expect(moduleDef('lames-orbitales@fer').f).toEqual([9]);
+    expect(moduleDef('lames-orbitales@fer').effet).toBeUndefined();
   });
 
-  it('le métal débloque les effets du Module un à un, la nacre les renforce', () => {
-    const nb = (k: string) => moduleDef(k).gestes.filter((g) => g.effet).length;
-    expect(nb('jambes-ressort@fer')).toBe(0);
-    expect(nb('jambes-ressort@cuivre')).toBe(1);
-    expect(moduleDef('jambes-ressort@cuivre').gestes[0]!.effet).toEqual({ type: 'percant' });
-    expect(nb('jambes-ressort@argent')).toBe(2);
-    expect(nb('jambes-ressort@nacre')).toBe(2);
-    expect(moduleDef('crocs-fossiles@or').gestes[0]!.effet).toEqual({ type: 'siphon', part: 0.5 });
-    expect(moduleDef('crocs-fossiles@nacre').gestes[0]!.effet).toEqual({ type: 'siphon', part: 0.75 });
-    expect(moduleDef('gant-arc@nacre').gestes[0]!.effet).toEqual({ type: 'flux', v: 2 });
+  it('l’or et la nacre renforcent l’effet', () => {
+    expect(moduleDef('crocs-fossiles@cuivre').effet).toEqual({ type: 'siphon', part: 0.5 });
+    expect(moduleDef('crocs-fossiles@argent').effet).toEqual({ type: 'siphon', part: 0.5 });
+    expect(moduleDef('crocs-fossiles@or').effet).toEqual({ type: 'siphon', part: 0.63 });
+    expect(moduleDef('crocs-fossiles@nacre').effet).toEqual({ type: 'siphon', part: 0.75 });
+    expect(moduleDef('gant-arc@or').effet).toEqual({ type: 'flux', v: 1 });
+    expect(moduleDef('gant-arc@nacre').effet).toEqual({ type: 'flux', v: 2 });
   });
 
-  it('un Porteur ne porte pas deux fois le même Module', () => {
+  it('un Porteur ne porte pas deux fois la même carte', () => {
     const j = avance();
     ajouterCarte(j, 'jambes-ressort@or');
-    expect(greffer(j, 'jambes-ressort@fer', 'ilka').ok).toBe(true);
+    expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@fer');
     expect(greffer(j, 'jambes-ressort@or', 'ilka').ok).toBe(false);
+    expect(greffer(j, 'jambes-ressort@or', 'coursier').ok).toBe(true);
   });
 
-  it('les tirages donnent des Modules de tous les métaux d’origine dans chaque métal', () => {
+  it('les tirages donnent des cartes de tous les métaux d’origine dans chaque métal', () => {
     const e: EtatCollection = { collection: {}, sans: { argent: 0, or: 0, nacre: 0 }, rng: 11 };
     const tirages = Array.from({ length: 600 }, () => tirerCarte(e, 12));
     expect(tirages.some((k) => k.startsWith('lames-orbitales@fer'))).toBe(true);
@@ -173,11 +173,13 @@ describe('Migration', () => {
     const v2 = nouveauJeu(0) as Partial<Jeu> & Record<string, unknown>;
     for (const k of ['eclats', 'collection', 'sans', 'rng', 'chantiers', 'choix', 'quotidien', 'archive']) delete v2[k];
     v2.version = 2;
+    for (const p of Object.values(v2.porteurs!)) p.modules = [];
     v2.porteurs!.doran!.modules = ['glande-amber'];
     expect(estJeuValide(v2)).toBe(true);
     const j = v2 as Jeu;
     expect(j.version).toBe(VERSION_JEU);
-    expect(j.porteurs.doran!.modules).toEqual(['glande-ambre@fer']);
+    // version 6 : sa carte greffée d'abord, puis ses cartes de base
+    expect(j.porteurs.doran!.modules).toEqual(['glande-ambre@fer', 'morsure@fer', 'carapace@fer', 'regenerer@fer', 'charge@fer', 'grogner@fer']);
     expect(j.collection['glande-ambre@fer']!.doublons).toBe(1);
     expect(j.chantiers).toEqual([]);
   });
@@ -186,14 +188,35 @@ describe('Migration', () => {
     const v3 = nouveauJeu(0);
     v3.version = 3;
     v3.collection = { 'jambes-ressort': { niveau: 2, doublons: 1 }, 'lames-orbitales': { niveau: 7, doublons: 0 } };
+    for (const p of Object.values(v3.porteurs)) p.modules = [];
     v3.porteurs.ilka!.modules = ['lames-orbitales'];
     v3.forge = { moduleId: 'jambes-ressort', debut: 0, fin: 10 };
     v3.choix = [{ source: 'boss', options: ['bras-grue', 'crocs-fossiles', 'disparu'] }];
     expect(estJeuValide(v3)).toBe(true);
     expect(v3.version).toBe(VERSION_JEU);
-    expect(v3.collection).toEqual({ 'jambes-ressort@fer': { niveau: 2, doublons: 1 }, 'lames-orbitales@or': { niveau: 7, doublons: 0 } });
-    expect(v3.porteurs.ilka!.modules).toEqual(['lames-orbitales@or']);
+    expect(v3.collection['jambes-ressort@fer']).toEqual({ niveau: 2, doublons: 1 });
+    expect(v3.collection['lames-orbitales@or']).toEqual({ niveau: 7, doublons: 0 });
+    expect(Object.keys(v3.collection)).toHaveLength(17); // + les 15 cartes de base (version 6)
+    expect(v3.porteurs.ilka!.modules).toEqual(['lames-orbitales@or', 'ruee@fer', 'bond@fer', 'esquive@fer', 'tir@fer', 'tir-vif@fer']);
     expect(v3.forge!.moduleId).toBe('jambes-ressort@fer');
     expect(v3.choix[0]!.options).toEqual(['bras-grue@argent', 'crocs-fossiles@fer']);
+  });
+
+  it('une sauvegarde de la version 5 : les Gestes de base deviennent des cartes portées, 6 au plus', () => {
+    const v5 = nouveauJeu(0);
+    v5.version = 5;
+    v5.chambre = true;
+    v5.objectif = 1;
+    v5.collection = { 'jambes-ressort@fer': { niveau: 3, doublons: 0 }, 'glande-ambre@fer': { niveau: 1, doublons: 0 }, 'eclat-chant@fer': { niveau: 1, doublons: 0 }, 'gant-arc@cuivre': { niveau: 3, doublons: 0 } };
+    for (const p of Object.values(v5.porteurs)) p.modules = [];
+    v5.porteurs.ilka!.modules = ['jambes-ressort@fer', 'gant-arc@cuivre'];
+    expect(estJeuValide(v5)).toBe(true);
+    expect(v5.version).toBe(VERSION_JEU);
+    expect(v5.porteurs.ilka!.modules).toEqual(['jambes-ressort@fer', 'gant-arc@cuivre', 'ruee@fer', 'bond@fer', 'esquive@fer', 'tir@fer']);
+    expect(v5.porteurs.doran!.modules).toHaveLength(6); // sa Glande d'ambre, libre, lui revient
+    expect(v5.porteurs.doran!.modules[0]).toBe('glande-ambre@fer');
+    expect(v5.collection['ruee@fer']).toEqual({ niveau: 1, doublons: 0 });
+    expect(v5.collection['jambes-ressort@fer']!.niveau).toBe(3);
+    expect(v5.collection['oeil-relais@fer']).toBeDefined(); // pour l'objectif « Construire ton deck »
   });
 });

@@ -27,6 +27,8 @@ export interface EcranDistrict {
   menu: boolean;
   /** carte ouverte en détail dans l'écran Cartes (clé module@métal) */
   carte: string | null;
+  /** Porteur dont on construit le deck (feuille « Les cartes de… »), ou null */
+  deck: string | null;
   /** lignée affichée dans l'écran Cartes */
   filtre: Filtre;
   /** Bibliothèque : onglet, chapitre ouvert, et écran où revenir */

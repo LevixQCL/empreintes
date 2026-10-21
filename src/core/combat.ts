@@ -2,7 +2,7 @@
 // l'interface appelle ces fonctions puis anime les « pas » qu'elles renvoient.
 
 import { DECK_DEPART, ennemiDef, porteurDef } from './donnees';
-import { REGLES, analyserChaine, avantage, places } from './regles';
+import { REGLES, analyserChaine, avantage, meilleureFrequence, places } from './regles';
 import { tireur } from './rng';
 import type {
   BonusMarques, CibleRegle, CombatEtat, Evenement, Geste, GesteDef, Intention, LigneeGeste, Pas, PorteurEtat,
@@ -88,12 +88,24 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
   if (estATerre(s, g.porteur)) return { ok: false, message: 'Ce Porteur est à terre.' };
   if (places(g) > placesLibres(s)) {
     const debut = g.lourd ? `${g.nom} prend 2 places, il n’en reste ${placesLibres(s)}.` : 'La chaîne est pleine.';
-    const fin = s.flux > 0 && capacite(s) < REGLES.capaciteMax ? ' Retire un Geste ou dépense 1 Flux (+1 place).' : ' Retire un Geste.';
+    const fin = s.flux > 0 && capacite(s) < REGLES.capaciteMax ? ' Retire une carte ou dépense 1 Flux (+1 place).' : ' Retire une carte.';
     log(s, debut + fin);
     return { ok: false, message: debut + fin };
   }
   s.main = s.main.filter((x) => x !== g);
+  // une carte à plusieurs Fréquences prend celle qui prolonge la suite
+  if (g.fs && g.fs.length > 1) g.f = meilleureFrequence(s.chaine, g.fs);
   s.chaine.push(g);
+  return { ok: true };
+}
+
+/** Change la Fréquence d'une carte posée dans la chaîne (cartes à plusieurs Fréquences : argent et plus) */
+export function accorder(s: CombatEtat, uid: string, f?: number): Resultat {
+  if (s.issue !== 'en-cours') return { ok: false };
+  const g = s.chaine.find((x) => x.uid === uid);
+  if (!g || !g.fs || g.fs.length < 2) return { ok: false };
+  const k = g.fs.indexOf(g.f);
+  g.f = f !== undefined && g.fs.includes(f) ? f : g.fs[(k + 1) % g.fs.length]!;
   return { ok: true };
 }
 
@@ -101,11 +113,13 @@ export function retirer(s: CombatEtat, uid: string): Resultat {
   const g = s.chaine.find((x) => x.uid === uid);
   if (!g) return { ok: false };
   s.chaine = s.chaine.filter((x) => x !== g);
+  if (g.fs) g.f = g.fs[0]!;
   s.main.push(g);
   return { ok: true };
 }
 
 export function viderChaine(s: CombatEtat): void {
+  for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
   s.main.push(...s.chaine);
   s.chaine = [];
 }
@@ -165,6 +179,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean } = {}): Pas[
       emettre({ kind: 'flux', gain: s.flux - avant });
     }
   }
+  for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
   s.defausse.push(...s.chaine);
   s.chaine = [];
   // Élan : les places gagnées servent au tour suivant
@@ -241,7 +256,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'Spécial';
   const ef = g.effet;
   const evs: Evenement[] = [];
-  // Crescendo : plus le Geste arrive tard dans la chaîne, plus il frappe fort
+  // Crescendo : plus la carte arrive tard dans la chaîne, plus elle frappe fort
   const cresc = ef?.type === 'crescendo' ? 1 + ef.part * rang : 1;
   const force = g.v * mult * cresc;
 
@@ -284,7 +299,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
     else log(s, `${nomP} · ${g.nom} : ${morceaux.join(', ')} PV.`);
   }
 
-  // effets qui ne dépendent pas du type du Geste
+  // effets qui ne dépendent pas du type de la carte
   if (ef?.type === 'flux') {
     const avant = s.flux;
     s.flux = Math.min(REGLES.fluxMax, s.flux + ef.v);
@@ -361,7 +376,7 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
   for (const p of s.porteurs) {
     if (p.pv <= 0 && !p.aTerre) {
       p.aTerre = true;
-      log(s, `${porteurDef(p.id).nom} est à terre : ses Gestes quittent le deck.`);
+      log(s, `${porteurDef(p.id).nom} est à terre : ses cartes quittent le deck.`);
       emettre({ kind: 'a-terre', cible: p.id });
     }
   }

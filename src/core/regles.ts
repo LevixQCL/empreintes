@@ -77,3 +77,20 @@ export function serieFinale(chaine: Maillon[]): number {
 }
 
 export const places = (g: Pick<Geste, 'lourd'>) => (g.lourd ? 2 : 1);
+
+/**
+ * La Fréquence que prend une carte à plusieurs Fréquences quand on la pose (décision du 22 octobre 2026, sans tirage) :
+ * celle qui prolonge la suite, sinon celle qui complète un Écho, sinon sa Fréquence principale.
+ */
+export function meilleureFrequence(chaine: Maillon[], fs: number[]): number {
+  if (fs.length < 2) return fs[0]!;
+  const eff = frequencesEffectives(chaine);
+  const der = eff[eff.length - 1];
+  if (der !== undefined && fs.includes(der + 1)) return der + 1;
+  for (const f of fs) if (eff.filter((x) => x === f).length >= 2) return f;
+  return fs[0]!;
+}
+
+/** La carte peut-elle prolonger la suite qui se termine sur `der` ? */
+export const prolonge = (g: Pick<Geste, 'f' | 'fs' | 'effet'>, der: number | undefined) =>
+  der !== undefined && (g.effet?.type === 'accord' || (g.fs ?? [g.f]).includes(der + 1));

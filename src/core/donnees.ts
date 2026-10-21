@@ -1,5 +1,5 @@
 import { tireur } from './rng';
-import type { BatimentId, Effet, EnnemiDef, GesteDef, Lignee, ModuleDef, PorteurDef, Rarete } from './types';
+import type { BatimentId, Effet, EnnemiDef, GesteDef, Lignee, ModuleDef, PorteurDef, Rarete, TypeGeste } from './types';
 
 // ---------- Porteurs ----------
 // Trois Porteurs nommés + trois recrues anonymes, une par lignée.
@@ -26,170 +26,121 @@ export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string
   neutre: { nom: 'Spécial', court: 'SPÉCIAL' },
 };
 
-// ---------- Gestes ----------
-// Chaque Porteur apporte ses Gestes au deck commun. Une escouade de 3 = 18 Gestes + 2 spéciaux = 20.
-const g = (porteur: string | null, id: string, nom: string, f: number, type: GesteDef['type'], v: number, lourd = false): GesteDef =>
-  ({ id, porteur, nom, f, type, v, ...(lourd ? { lourd: true } : {}) });
-
-export const GESTES_PORTEUR: Record<string, GesteDef[]> = {
-  ilka: [g('ilka', 'ruee', 'Ruée', 3, 'atk', 8), g('ilka', 'ruee', 'Ruée', 3, 'atk', 8), g('ilka', 'bond', 'Bond', 4, 'atk', 6),
-    g('ilka', 'esquive', 'Esquive', 5, 'bouclier', 6), g('ilka', 'tir', 'Tir', 6, 'atk', 10), g('ilka', 'tir-vif', 'Tir vif', 2, 'atk', 5)],
-  doran: [g('doran', 'morsure', 'Morsure', 2, 'atk', 7), g('doran', 'morsure', 'Morsure', 2, 'atk', 7), g('doran', 'carapace', 'Carapace', 1, 'bouclier', 8),
-    g('doran', 'regenerer', 'Régénérer', 4, 'soin', 9), g('doran', 'charge', 'Charge', 5, 'atk', 9), g('doran', 'grogner', 'Grogner', 3, 'bouclier', 5)],
-  vela: [g('vela', 'murmure', 'Murmure', 7, 'bouclier', 7), g('vela', 'murmure', 'Murmure', 7, 'bouclier', 7), g('vela', 'echo', 'Écho', 9, 'atk', 8),
-    g('vela', 'souffle', 'Souffle', 8, 'atk', 20, true), g('vela', 'apaiser', 'Apaiser', 6, 'soin', 7), g('vela', 'eclat', 'Éclat', 8, 'atk', 11)],
-  coursier: [g('coursier', 'sprint', 'Sprint', 4, 'atk', 7), g('coursier', 'sprint', 'Sprint', 4, 'atk', 7), g('coursier', 'crochet', 'Crochet', 5, 'atk', 8),
-    g('coursier', 'roulade', 'Roulade', 6, 'bouclier', 6), g('coursier', 'coup-bas', 'Coup bas', 3, 'atk', 6), g('coursier', 'relais', 'Relais', 7, 'soin', 5)],
-  docker: [g('docker', 'poigne', 'Poigne', 2, 'atk', 8), g('docker', 'epaule', 'Épaule', 3, 'atk', 9), g('docker', 'cuir', 'Cuir épais', 1, 'bouclier', 9),
-    g('docker', 'cuir', 'Cuir épais', 1, 'bouclier', 9), g('docker', 'soufflet', 'Soufflet', 4, 'atk', 7), g('docker', 'reprendre', 'Reprendre', 5, 'soin', 6)],
-  // Sasha, réparateur des Reprises : il répare autant qu'il frappe
-  sasha: [g('sasha', 'cle', 'Clé à molette', 4, 'atk', 8), g('sasha', 'cle', 'Clé à molette', 4, 'atk', 8), g('sasha', 'rafistoler', 'Rafistoler', 3, 'soin', 8),
-    g('sasha', 'tole', 'Tôle soudée', 6, 'bouclier', 8), g('sasha', 'debrider', 'Débrider', 5, 'atk', 10), g('sasha', 'etincelle', 'Étincelle', 2, 'atk', 5)],
-  // Nuit, éclaireuse des Veilleurs : elle frappe vite et se cache
-  nuit: [g('nuit', 'griffe', 'Griffe nocturne', 3, 'atk', 9), g('nuit', 'griffe', 'Griffe nocturne', 3, 'atk', 9), g('nuit', 'tapie', 'Tapie', 2, 'bouclier', 7),
-    g('nuit', 'bond', 'Bond silencieux', 4, 'atk', 8), g('nuit', 'chouette', 'Œil de chouette', 5, 'atk', 12), g('nuit', 'retraite', 'Retraite', 1, 'bouclier', 6)],
-  // Aurel, l'héritier en fuite : une ombre ailée, des coups puissants, peu de PV
-  aurel: [g('aurel', 'aile', 'Ombre ailée', 9, 'atk', 10), g('aurel', 'aile', 'Ombre ailée', 9, 'atk', 10), g('aurel', 'port', 'Port de tête', 7, 'bouclier', 7),
-    g('aurel', 'coup-aile', 'Coup d’aile', 8, 'atk', 19, true), g('aurel', 'heritage', 'Héritage', 6, 'soin', 8), g('aurel', 'dedain', 'Dédain', 8, 'atk', 9)],
-  guetteur: [g('guetteur', 'presage', 'Présage', 6, 'bouclier', 6), g('guetteur', 'presage', 'Présage', 6, 'bouclier', 6), g('guetteur', 'trait', 'Trait d’ombre', 7, 'atk', 9),
-    g('guetteur', 'vigie', 'Vigie', 8, 'bouclier', 8), g('guetteur', 'chuchote', 'Chuchoter', 9, 'atk', 10), g('guetteur', 'veille', 'Veille', 5, 'soin', 6)],
-};
-
-/**
- * Quand on greffe une carte, ses Gestes REMPLACENT des Gestes de base du Porteur (ils ne s'ajoutent pas) :
- * le deck reste autour de 20 Gestes et chaque carte se sent. Voici l'ordre dans lequel les Gestes de base
- * cèdent leur place (index dans GESTES_PORTEUR) ; le Geste emblématique part en dernier.
- */
-export const ORDRE_REMPLACEMENT: Record<string, number[]> = {
-  ilka: [5, 2, 1, 3, 4, 0],
-  doran: [5, 1, 4, 2, 0, 3],
-  vela: [1, 5, 2, 4, 0, 3],
-  coursier: [4, 1, 2, 3, 0, 5],
-  docker: [4, 3, 1, 0, 2, 5],
-  guetteur: [1, 4, 2, 3, 0, 5],
-  sasha: [5, 1, 3, 0, 2, 4],
-  nuit: [5, 1, 2, 3, 0, 4],
-  aurel: [1, 5, 2, 4, 0, 3],
-};
-
-/** Les Gestes de base qui restent quand `n` Gestes de cartes sont greffés */
-export function gestesDeBaseRestants(porteurId: string, n: number): GesteDef[] {
-  const base = GESTES_PORTEUR[porteurId] ?? [];
-  const partis = new Set((ORDRE_REMPLACEMENT[porteurId] ?? []).slice(0, n));
-  return base.filter((_, i) => !partis.has(i));
-}
-
-/** Les Gestes de base qu'une carte remplacerait, si on la greffe en plus de celles déjà portées */
-export function gestesRemplaces(porteurId: string, dejaGreffes: number, nouveaux: number): GesteDef[] {
-  const base = GESTES_PORTEUR[porteurId] ?? [];
-  return (ORDRE_REMPLACEMENT[porteurId] ?? []).slice(dejaGreffes, dejaGreffes + nouveaux).map((i) => base[i]!).filter(Boolean);
-}
-
-export const GESTES_SPECIAUX: GesteDef[] = [{ ...g(null, 'stimulant', 'Stimulant', 1, 'soin', 5), effet: { type: 'vague' } }, g(null, 'repli', 'Repli', 9, 'bouclier', 10)];
-
-// ---------- Modules : les cartes de collection ----------
-// Un Module se greffe sur un Porteur de sa lignée : ses Gestes remplacent une partie des Gestes de base du Porteur.
-// Les raretés hautes apportent plus de Gestes et des Gestes lourds, pas seulement de plus gros chiffres.
-type GM = ModuleDef['gestes'][number];
-const x = (nom: string, f: number, type: GM['type'], v: number, lourd = false, effet?: Effet): GM =>
-  ({ nom, f, type, v, ...(lourd ? { lourd: true } : {}), ...(effet ? { effet } : {}) });
-const m = (id: string, nom: string, lignee: Lignee, rarete: Rarete, gestes: GM[], deblocages?: ModuleDef['deblocages']): ModuleDef =>
-  ({ id, nom, lignee, rarete, gestes, ...(deblocages ? { deblocages } : {}) });
-/** un effet que le métal débloque, sur le Geste n° `geste` du Module */
-const d = (geste: number, effet: Effet) => ({ geste, effet });
-
-// Le fer n'a pas d'effet. Le cuivre en a un, l'argent et l'or en ont sur presque tous leurs Gestes.
+// ---------- Les cartes ----------
+// Décision du 22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue. Les Gestes, cartes d'action à part, ont disparu.
+// Une carte = une place dans le deck. On la confie à un Porteur de sa lignée (6 cartes au plus par Porteur, voir jeu.ts) ;
+// le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les 2 cartes du district.
+// (Le tableau garde son nom historique, MODULES : dans la première version, les cartes étaient des Modules greffés.)
+//
+// Une carte existe dans les cinq métaux. Un exemplaire se note « carte@métal » (« jambes-ressort@or »). Le métal :
+// - règle la force (METAL_FORCE, par rapport au métal d'origine de la carte, son champ `rarete`) ;
+// - ouvre l'effet de la carte à partir du cuivre, renforcé en or et en nacre (METAL_RENFORT) ;
+// - ouvre ses Fréquences : 1 en fer et en cuivre, 2 en argent et en or, 3 en nacre (METAL_FREQ).
+//   Une carte posée prend d'elle-même la Fréquence qui prolonge la suite, et on peut en changer : aucun tirage au sort.
 // Chaque lignée a ses effets de prédilection :
 // Augmentés = Perçant, Surcharge, Élan (la machine calcule) ;
 // Génés = Siphon, Vague, Rempart (le corps encaisse et se refait) ;
 // Résonants = Désarmer, Fissure, Accord, Crescendo (l'empreinte lit et amplifie).
+
+/** id, nom, lignée, métal d'origine, action, force (dans le métal d'origine), Fréquences (de la principale à la plus rare), effet, lourde */
+const c = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet?: Effet, lourd = false): ModuleDef =>
+  ({ id, nom, lignee, rarete, type, v, f, ...(effet ? { effet } : {}), ...(lourd ? { lourd: true } : {}) });
+
 export const MODULES: ModuleDef[] = [
-  // Augmentés : Fréquences basses et moyennes
-  m('jambes-ressort', 'Jambes à ressort', 'tech', 'fer', [x('Détente', 4, 'atk', 11), x('Saut d’appui', 5, 'bouclier', 8)], [d(0, { type: 'percant' }), d(1, { type: 'elan' })]),
-  m('gant-arc', 'Gant à arc', 'tech', 'fer', [x('Décharge', 6, 'atk', 12), x('Écran', 7, 'bouclier', 9)], [d(0, { type: 'flux', v: 1 }), d(1, { type: 'elan' })]),
-  m('oeil-relais', 'Œil-relais', 'tech', 'fer', [x('Visée', 5, 'atk', 9), x('Diagnostic', 3, 'soin', 6)], [d(0, { type: 'percant' }), d(1, { type: 'flux', v: 1 })]),
-  m('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', [x('Surrégime', 7, 'atk', 11, false, { type: 'flux', v: 1 }), x('Refroidir', 6, 'bouclier', 10)], [d(0, { type: 'flux', v: 1 }), d(1, { type: 'elan' })]),
-  m('bras-grue', 'Bras-grue', 'tech', 'argent', [x('Levage', 8, 'atk', 24, true, { type: 'percant' }), x('Étai', 6, 'bouclier', 13, false, { type: 'elan' }), x('Riveter', 4, 'atk', 12, false, { type: 'flux', v: 1 })]),
-  m('lames-orbitales', 'Lames orbitales', 'tech', 'or', [x('Orbite', 3, 'atk', 11, false, { type: 'percant' }), x('Orbite basse', 2, 'bouclier', 12, false, { type: 'elan' }),
-    x('Tourbillon', 9, 'atk', 22, true, { type: 'crescendo', part: 0.4 })]),
-  // Génés : Fréquences basses
-  m('glande-ambre', 'Glande d’ambre', 'bio', 'fer', [x('Sève', 3, 'soin', 6), x('Mue', 2, 'bouclier', 8)], [d(1, { type: 'rempart', part: 0.5 }), d(0, { type: 'vague' })]),
-  m('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', [x('Happer', 1, 'atk', 9), x('Ronger', 3, 'atk', 10)], [d(0, { type: 'siphon', part: 0.5 }), d(1, { type: 'fissure', part: 0.25 })]),
-  m('cuir-recif', 'Cuir de récif', 'bio', 'fer', [x('Écailles', 4, 'bouclier', 9), x('Barbillon', 5, 'atk', 8)], [d(0, { type: 'rempart', part: 0.5 }), d(1, { type: 'siphon', part: 0.5 })]),
-  m('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', [x('Apnée', 2, 'bouclier', 13, false, { type: 'rempart', part: 0.5 }), x('Remontée', 4, 'soin', 9)], [d(0, { type: 'rempart', part: 0.5 }), d(1, { type: 'vague' })]),
-  m('carapace-mere', 'Carapace-mère', 'bio', 'argent', [x('Rempart', 5, 'bouclier', 16, false, { type: 'rempart', part: 0.75 }), x('Bélier', 6, 'atk', 22, true, { type: 'fissure', part: 0.25 }),
-    x('Mue rapide', 1, 'soin', 9, false, { type: 'vague' })]),
-  m('coeur-meute', 'Cœur de meute', 'bio', 'or', [x('Hurlement', 4, 'atk', 11, false, { type: 'fissure', part: 0.4 }), x('Curée', 5, 'atk', 13, false, { type: 'siphon', part: 0.75 }),
-    x('Instinct', 3, 'soin', 9, false, { type: 'vague' })]),
-  // Résonants : Fréquences hautes
-  m('eclat-chant', 'Éclat qui chante', 'reso', 'fer', [x('Note haute', 8, 'atk', 13), x('Note basse', 7, 'bouclier', 9)], [d(1, { type: 'desarmer', part: 0.3 }), d(0, { type: 'crescendo', part: 0.3 })]),
-  m('miroir-brume', 'Miroir de brume', 'reso', 'fer', [x('Reflet', 9, 'atk', 13), x('Voile', 8, 'bouclier', 10)], [d(1, { type: 'desarmer', part: 0.3 }), d(0, { type: 'fissure', part: 0.25 })]),
-  m('encre-ancienne', 'Encre ancienne', 'reso', 'fer', [x('Glyphe', 6, 'atk', 11), x('Paume ouverte', 7, 'soin', 8)], [d(0, { type: 'fissure', part: 0.25 }), d(1, { type: 'accord' })]),
-  m('plume-givre', 'Plume de givre', 'reso', 'cuivre', [x('Givre', 9, 'atk', 13, false, { type: 'desarmer', part: 0.4 }), x('Cristal', 8, 'bouclier', 12)], [d(0, { type: 'desarmer', part: 0.4 }), d(1, { type: 'accord' })]),
-  m('ombre-ailee', 'Ombre ailée', 'reso', 'argent', [x('Envol', 7, 'bouclier', 13, false, { type: 'accord' }), x('Piqué', 9, 'atk', 25, true, { type: 'fissure', part: 0.4 }),
-    x('Battement', 8, 'soin', 10, false, { type: 'vague' })]),
-  m('chant-abysses', 'Chant des abysses', 'reso', 'or', [x('Unisson', 7, 'atk', 13, false, { type: 'accord' }), x('Contre-chant', 8, 'atk', 13, false, { type: 'siphon', part: 0.75 }),
-    x('Silence', 9, 'bouclier', 14, false, { type: 'desarmer', part: 0.6 })]),
-  // ---------- Deuxième série (21 octobre 2026) : 4 Modules par lignée ----------
-  // Augmentés : câbles de coursier, premiers implants anti-Résonants, implants débridés du Réseau des Reprises
-  m('grappin-cable', 'Grappin à câble', 'tech', 'fer', [x('Lancer', 5, 'atk', 10), x('Se hisser', 4, 'bouclier', 8)],
-    [d(1, { type: 'elan' }), d(0, { type: 'percant' })]),
-  m('oeil-brouilleur', 'Œil-brouilleur', 'tech', 'cuivre', [x('Brouillage', 6, 'atk', 11), x('Contre-mesure', 7, 'bouclier', 10)],
-    [d(0, { type: 'desarmer', part: 0.3 }), d(1, { type: 'flux', v: 1 })]),
-  m('dorsale', 'Dorsale renforcée', 'tech', 'argent', [x('Porter', 3, 'bouclier', 14), x('Bélier hydraulique', 7, 'atk', 20, true), x('Redresser', 4, 'soin', 8)],
-    [d(0, { type: 'elan' }), d(1, { type: 'percant' }), d(2, { type: 'flux', v: 1 })]),
-  m('coeur-reprise', 'Cœur de reprise', 'tech', 'or', [x('Débridage', 2, 'atk', 14), x('Court-circuit', 6, 'atk', 14), x('Réamorçage', 5, 'soin', 9)],
-    [d(1, { type: 'percant' }), d(0, { type: 'crescendo', part: 0.3 }), d(2, { type: 'flux', v: 1 })]),
-  // Génés : voir dans le noir, respirer sous les Fondations, se refaire
-  m('yeux-nocturnes', 'Yeux nocturnes', 'bio', 'fer', [x('Guet', 4, 'bouclier', 8), x('Bond dans le noir', 3, 'atk', 10)],
-    [d(1, { type: 'fissure', part: 0.25 }), d(0, { type: 'rempart', part: 0.5 })]),
-  m('branchies', 'Branchies des Fondations', 'bio', 'cuivre', [x('Plongée', 2, 'bouclier', 11), x('Remous', 1, 'atk', 10)],
-    [d(0, { type: 'rempart', part: 0.5 }), d(1, { type: 'siphon', part: 0.5 })]),
-  m('sang-ambre', 'Sang d’ambre', 'bio', 'argent', [x('Coagulation', 3, 'soin', 10), x('Durcir', 2, 'bouclier', 14), x('Éclat d’ambre', 5, 'atk', 18, true)],
-    [d(0, { type: 'vague' }), d(1, { type: 'rempart', part: 0.75 }), d(2, { type: 'fissure', part: 0.25 })]),
-  m('mue-totale', 'Mue totale', 'bio', 'or', [x('Écdysis', 1, 'soin', 11), x('Peau neuve', 2, 'bouclier', 13), x('Morsure de mue', 4, 'atk', 13)],
-    [d(0, { type: 'vague' }), d(1, { type: 'rempart', part: 0.5 }), d(2, { type: 'siphon', part: 0.75 })]),
-  // Résonants : la mèche d'or, l'ombre de l'être ancien, le pressentiment des catastrophes
-  m('meche-or', 'Mèche d’or', 'reso', 'fer', [x('Présage', 7, 'bouclier', 8), x('Éclat doré', 8, 'atk', 13)],
-    [d(0, { type: 'desarmer', part: 0.3 }), d(1, { type: 'crescendo', part: 0.3 })]),
-  m('ombre-serpent', 'Ombre de serpent', 'reso', 'cuivre', [x('Enlacer', 9, 'atk', 14), x('Mue d’ombre', 6, 'soin', 9)],
-    [d(0, { type: 'fissure', part: 0.3 }), d(1, { type: 'accord' })]),
-  m('pressentiment', 'Pressentiment', 'reso', 'argent', [x('Prémonition', 7, 'bouclier', 14), x('Esquive tracée', 8, 'bouclier', 10), x('Contre-temps', 6, 'atk', 22, true)],
-    [d(0, { type: 'desarmer', part: 0.4 }), d(1, { type: 'accord' }), d(2, { type: 'fissure', part: 0.3 })]),
-  m('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', [x('Souffle', 9, 'atk', 17), x('Écailles d’ombre', 8, 'bouclier', 13), x('Rugissement', 7, 'atk', 14)],
-    [d(0, { type: 'crescendo', part: 0.4 }), d(1, { type: 'desarmer', part: 0.5 }), d(2, { type: 'fissure', part: 0.4 })]),
+  // ---------- Les 15 cartes de base : 5 par Porteur nommé, qu'il porte dès le départ ----------
+  c('ruee', 'Ruée', 'tech', 'fer', 'atk', 8, [3, 4, 2], { type: 'percant' }),
+  c('bond', 'Bond', 'tech', 'fer', 'atk', 6, [4, 5, 3], { type: 'elan' }),
+  c('esquive', 'Esquive', 'tech', 'fer', 'bouclier', 6, [5, 6, 4], { type: 'elan' }),
+  c('tir', 'Tir', 'tech', 'fer', 'atk', 10, [6, 7, 5], { type: 'percant' }),
+  c('tir-vif', 'Tir vif', 'tech', 'fer', 'atk', 5, [2, 1, 3], { type: 'flux', v: 1 }),
+  c('morsure', 'Morsure', 'bio', 'fer', 'atk', 7, [2, 3, 1], { type: 'siphon', part: 0.5 }),
+  c('carapace', 'Carapace', 'bio', 'fer', 'bouclier', 8, [1, 2, 3], { type: 'rempart', part: 0.5 }),
+  c('regenerer', 'Régénérer', 'bio', 'fer', 'soin', 9, [4, 5, 3], { type: 'vague' }),
+  c('charge', 'Charge', 'bio', 'fer', 'atk', 9, [5, 4, 6], { type: 'fissure', part: 0.25 }),
+  c('grogner', 'Grogner', 'bio', 'fer', 'bouclier', 5, [3, 2, 4], { type: 'desarmer', part: 0.3 }),
+  c('murmure', 'Murmure', 'reso', 'fer', 'bouclier', 7, [7, 6, 8], { type: 'desarmer', part: 0.3 }),
+  c('echo', 'Écho', 'reso', 'fer', 'atk', 8, [9, 8, 7], { type: 'accord' }),
+  c('souffle', 'Souffle', 'reso', 'fer', 'atk', 20, [8, 9, 7], { type: 'fissure', part: 0.25 }, true),
+  c('apaiser', 'Apaiser', 'reso', 'fer', 'soin', 7, [6, 7, 5], { type: 'vague' }),
+  c('eclat', 'Éclat', 'reso', 'fer', 'atk', 11, [8, 7, 9], { type: 'crescendo', part: 0.3 }),
+
+  // ---------- Augmentés : Fréquences basses et moyennes ----------
+  c('jambes-ressort', 'Jambes à ressort', 'tech', 'fer', 'atk', 11, [4, 5, 3], { type: 'elan' }),
+  c('gant-arc', 'Gant à arc', 'tech', 'fer', 'atk', 12, [6, 7, 5], { type: 'flux', v: 1 }),
+  c('oeil-relais', 'Œil-relais', 'tech', 'fer', 'atk', 10, [5, 3, 6], { type: 'percant' }),
+  c('grappin-cable', 'Grappin à câble', 'tech', 'fer', 'bouclier', 7, [4, 5, 3], { type: 'elan' }),
+  c('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', 'atk', 12, [7, 6, 8], { type: 'flux', v: 1 }),
+  c('oeil-brouilleur', 'Œil-brouilleur', 'tech', 'cuivre', 'atk', 11, [6, 7, 5], { type: 'desarmer', part: 0.3 }),
+  c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 27, [8, 6, 4], { type: 'percant' }, true),
+  c('dorsale', 'Dorsale renforcée', 'tech', 'argent', 'bouclier', 14, [3, 4, 7], { type: 'elan' }),
+  c('lames-orbitales', 'Lames orbitales', 'tech', 'or', 'atk', 26, [9, 3, 2], { type: 'crescendo', part: 0.4 }, true),
+  c('coeur-reprise', 'Cœur de reprise', 'tech', 'or', 'atk', 18, [6, 2, 5], { type: 'percant' }),
+
+  // ---------- Génés : Fréquences basses ----------
+  c('glande-ambre', 'Glande d’ambre', 'bio', 'fer', 'soin', 7, [3, 2, 4], { type: 'vague' }),
+  c('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', 'atk', 9, [1, 3, 2], { type: 'siphon', part: 0.5 }),
+  c('cuir-recif', 'Cuir de récif', 'bio', 'fer', 'bouclier', 9, [4, 5, 3], { type: 'rempart', part: 0.5 }),
+  c('yeux-nocturnes', 'Yeux nocturnes', 'bio', 'fer', 'atk', 10, [3, 4, 2], { type: 'fissure', part: 0.25 }),
+  c('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', 'bouclier', 13, [2, 4, 3], { type: 'rempart', part: 0.5 }),
+  c('branchies', 'Branchies des Fondations', 'bio', 'cuivre', 'bouclier', 11, [2, 1, 3], { type: 'rempart', part: 0.5 }),
+  c('carapace-mere', 'Carapace-mère', 'bio', 'argent', 'bouclier', 16, [5, 6, 1], { type: 'rempart', part: 0.75 }),
+  c('sang-ambre', 'Sang d’ambre', 'bio', 'argent', 'soin', 9, [3, 2, 5], { type: 'vague' }),
+  c('coeur-meute', 'Cœur de meute', 'bio', 'or', 'atk', 13, [5, 4, 3], { type: 'siphon', part: 0.75 }),
+  c('mue-totale', 'Mue totale', 'bio', 'or', 'soin', 11, [1, 2, 4], { type: 'vague' }),
+
+  // ---------- Résonants : Fréquences hautes ----------
+  c('eclat-chant', 'Éclat qui chante', 'reso', 'fer', 'atk', 13, [8, 7, 9], { type: 'crescendo', part: 0.3 }),
+  c('miroir-brume', 'Miroir de brume', 'reso', 'fer', 'bouclier', 10, [8, 9, 7], { type: 'desarmer', part: 0.3 }),
+  c('encre-ancienne', 'Encre ancienne', 'reso', 'fer', 'atk', 10, [6, 7, 5], { type: 'fissure', part: 0.25 }),
+  c('meche-or', 'Mèche d’or', 'reso', 'fer', 'bouclier', 8, [7, 8, 6], { type: 'desarmer', part: 0.3 }),
+  c('plume-givre', 'Plume de givre', 'reso', 'cuivre', 'atk', 12, [9, 8, 7], { type: 'desarmer', part: 0.4 }),
+  c('ombre-serpent', 'Ombre de serpent', 'reso', 'cuivre', 'atk', 14, [9, 6, 8], { type: 'fissure', part: 0.3 }),
+  c('ombre-ailee', 'Ombre ailée', 'reso', 'argent', 'atk', 28, [9, 7, 8], { type: 'fissure', part: 0.4 }, true),
+  c('pressentiment', 'Pressentiment', 'reso', 'argent', 'bouclier', 13, [7, 8, 6], { type: 'desarmer', part: 0.4 }),
+  c('chant-abysses', 'Chant des abysses', 'reso', 'or', 'atk', 16, [7, 8, 9], { type: 'accord' }),
+  c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 17, [9, 8, 7], { type: 'crescendo', part: 0.4 }),
 ];
 
-// ---------- Un Module, cinq métaux ----------
-// Décision du 21 octobre 2026 : une même carte peut exister dans les cinq métaux. Le métal est fixé quand on trouve
-// l'exemplaire, il ne change jamais (pas de montée de métal). Un exemplaire se note « module@métal ».
-// Les Gestes ci-dessus sont réglés pour le métal d'origine du Module (son champ `rarete`) ; dans un exemplaire :
-// - la force est multipliée par METAL_FORCE[métal] / METAL_FORCE[métal d'origine] ;
-// - le métal débloque les effets de la liste `deblocages` du Module, dans l'ordre : fer aucun, cuivre 1, argent 2, or 3 ;
-// - la nacre débloque tout, et ses effets sont renforcés (NACRE_RENFORT).
-// Décision du 21 octobre 2026, d'après le robot : la force seule distingue trop peu les métaux, ce sont les effets qui comptent.
+/** Les 15 cartes de base (celles que les Porteurs nommés portent au départ, en plus de leur carte de départ) */
+export const CARTES_DE_BASE = MODULES.slice(0, 15).map((m) => m.id);
+
+// ---------- Les métaux ----------
+// Décision du 21 octobre 2026 : le métal est fixé quand on trouve l'exemplaire, il ne change jamais (pas de montée de métal).
+// Décision du 22 octobre 2026 : le métal ouvre aussi des Fréquences, pour se glisser plus facilement dans une suite.
 export const METAL_FORCE: Record<Rarete, number> = { fer: 1, cuivre: 1.18, argent: 1.32, or: 1.46, nacre: 1.6 };
-export const METAL_EFFETS: Record<Rarete, number> = { fer: 0, cuivre: 1, argent: 2, or: 3, nacre: Infinity };
-/** la nacre renforce ses effets : parts ×1,5 (plafonnées), Surcharge +1 */
-export const NACRE_RENFORT = 1.5;
+export const METAL_FREQ: Record<Rarete, number> = { fer: 1, cuivre: 1, argent: 2, or: 2, nacre: 3 };
+/** 0 : pas d'effet ; 1 : l'effet de la carte ; au-delà : l'effet renforcé (parts ×1,25 en or, ×1,5 en nacre, Surcharge +1 en nacre) */
+export const METAL_RENFORT: Record<Rarete, number> = { fer: 0, cuivre: 1, argent: 1, or: 1.25, nacre: 1.5 };
 
-/** Les effets que le métal débloque sur un Module, dans l'ordre (par défaut : ceux déjà posés sur ses Gestes) */
-export const deblocagesDe = (m: ModuleDef) => m.deblocages ?? m.gestes.flatMap((g, geste) => (g.effet ? [{ geste, effet: g.effet }] : []));
-
-function renforcer(e: Effet): Effet {
-  if (e.type === 'flux') return { ...e, v: e.v + 1 };
-  if ('part' in e) return { ...e, part: Math.min(e.type === 'siphon' ? 1 : 0.9, Math.round(e.part * NACRE_RENFORT * 100) / 100) };
+function renforcer(e: Effet, k: number): Effet {
+  if (k <= 1) return e;
+  if (e.type === 'flux') return { ...e, v: e.v + (k >= 1.5 ? 1 : 0) };
+  if ('part' in e) return { ...e, part: Math.min(e.type === 'siphon' ? 1 : 0.9, Math.round(e.part * k * 100) / 100) };
   return e;
 }
 const METAUX: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
 
-/** L'identifiant d'un exemplaire : un Module dans un métal */
+/** L'identifiant d'un exemplaire : une carte dans un métal */
 export const carteId = (moduleId: string, metal: Rarete) => `${moduleId}@${metal}`;
-/** Le Module de base d'un exemplaire (« jambes-ressort@or » → « jambes-ressort ») */
+/** La carte de base d'un exemplaire (« jambes-ressort@or » → « jambes-ressort ») */
 export const moduleDe = (cle: string) => cle.split('@')[0]!;
 
-/** Les cartes de départ : une en fer par Porteur nommé, pas encore greffées */
-export const COLLECTION_DEPART = ['jambes-ressort', 'glande-ambre', 'eclat-chant'].map((id) => carteId(id, 'fer'));
+/** Les cartes que chaque Porteur nommé porte au départ, en fer : ses 5 cartes de base et sa carte de départ */
+export const DEPART_PORTEURS: Record<string, string[]> = {
+  ilka: ['ruee', 'bond', 'esquive', 'tir', 'tir-vif', 'jambes-ressort'],
+  doran: ['morsure', 'carapace', 'regenerer', 'charge', 'grogner', 'glande-ambre'],
+  vela: ['murmure', 'echo', 'souffle', 'apaiser', 'eclat', 'eclat-chant'],
+};
+/** La collection de départ : les 18 cartes portées par Ilka, Doran et Véla */
+export const COLLECTION_DEPART = Object.values(DEPART_PORTEURS).flat().map((id) => carteId(id, 'fer'));
+/** La carte que laisse la chambre scellée : le deuxième objectif apprend à la confier */
+export const CARTE_CHAMBRE = carteId('oeil-relais', 'fer');
+
+// ---------- Les cartes du district ----------
+// Toujours dans le deck, jouées par personne en particulier (elles ne disparaissent pas quand un Porteur tombe).
+const special = (id: string, nom: string, f: number, type: TypeGeste, v: number, effet?: Effet): GesteDef =>
+  ({ id, carte: id, porteur: null, nom, f, type, v, ...(effet ? { effet } : {}) });
+export const GESTES_SPECIAUX: GesteDef[] = [special('stimulant', 'Stimulant', 1, 'soin', 5, { type: 'vague' }), special('repli', 'Repli', 9, 'bouclier', 10)];
 
 // ---------- Bâtiments ----------
 export interface BatimentDef {
@@ -394,8 +345,6 @@ export function sequenceStrate(strate: number, rng: number, garde?: string): str
   return [a!, b!, z.boss];
 }
 
-/** Ancien deck fixe du prototype (Ilka, Doran, Véla + 2 spéciaux) */
-export const DECK_DEPART: GesteDef[] = [...GESTES_PORTEUR.ilka!, ...GESTES_PORTEUR.doran!, ...GESTES_PORTEUR.vela!, ...GESTES_SPECIAUX];
 
 export const porteurDef = (id: string): PorteurDef => {
   const p = PORTEURS.find((x) => x.id === id);
@@ -412,21 +361,32 @@ export const ennemiDef = (id: string): EnnemiDef => {
 export const batimentDef = (id: BatimentId): BatimentDef => BATIMENTS.find((b) => b.id === id)!;
 const declinaisons = new Map<string, ModuleDef>();
 
-/** Un Module dans son métal d'origine (« jambes-ressort ») ou un exemplaire dans un métal (« jambes-ressort@or ») */
+/** Une carte dans son métal d'origine (« jambes-ressort ») ou un exemplaire dans un métal (« jambes-ressort@or ») */
 export const moduleDef = (cle: string): ModuleDef => {
   const deja = declinaisons.get(cle);
   if (deja) return deja;
   const [id, metal] = cle.split('@') as [string, Rarete | undefined];
   const m = MODULES.find((x) => x.id === id);
-  if (!m || (metal !== undefined && !METAUX.includes(metal))) throw new Error('Module inconnu : ' + cle);
+  if (!m || (metal !== undefined && !METAUX.includes(metal))) throw new Error('Carte inconnue : ' + cle);
   if (metal === undefined) return m;
-  const k = METAL_FORCE[metal] / METAL_FORCE[m.rarete];
-  const gestes: ModuleDef['gestes'] = m.gestes.map(({ effet: _sans, ...g }) => ({ ...g, v: Math.round(g.v * k) }));
-  for (const { geste, effet } of deblocagesDe(m).slice(0, METAL_EFFETS[metal])) {
-    if (gestes[geste]) gestes[geste]!.effet = metal === 'nacre' ? renforcer(effet) : effet;
-  }
-  const def: ModuleDef = { ...m, id: cle, base: id, rarete: metal, gestes };
-  delete def.deblocages;
+  const def: ModuleDef = { ...m, id: cle, base: id, rarete: metal, v: Math.round(m.v * METAL_FORCE[metal] / METAL_FORCE[m.rarete]), f: m.f.slice(0, METAL_FREQ[metal]) };
+  delete def.effet;
+  if (m.effet && METAL_RENFORT[metal] > 0) def.effet = renforcer(m.effet, METAL_RENFORT[metal]);
   declinaisons.set(cle, def);
   return def;
 };
+
+/** Une carte en jeu, telle que le moteur de combat la manipule : `porteur` est celui qui la joue, `mult` vient de son niveau */
+export function gesteDeCarte(cle: string, porteur: string, mult = 1): GesteDef {
+  const m = moduleDef(cle);
+  return {
+    id: cle, carte: cle, porteur, nom: m.nom, f: m.f[0]!, ...(m.f.length > 1 ? { fs: m.f.slice() } : {}), type: m.type, v: Math.round(m.v * mult),
+    ...(m.lourd ? { lourd: true } : {}), ...(m.effet ? { effet: m.effet } : {}),
+  };
+}
+
+/** Le deck de départ : les 6 cartes en fer d'Ilka, de Doran et de Véla, plus les 2 cartes du district (20 cartes) */
+export const DECK_DEPART: GesteDef[] = [
+  ...Object.entries(DEPART_PORTEURS).flatMap(([p, ids]) => ids.map((id) => gesteDeCarte(carteId(id, 'fer'), p))),
+  ...GESTES_SPECIAUX,
+];

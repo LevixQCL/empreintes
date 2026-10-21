@@ -45,33 +45,47 @@ export interface PorteurDef {
 
 export type BatimentId = 'noyau' | 'generateur' | 'forge' | 'clinique';
 
-/** Rareté d'une carte (Module) : du fer, commun, à la nacre, presque introuvable */
+/** Rareté d'une carte : le métal de son exemplaire, du fer, commun, à la nacre, presque introuvable */
 export type Rarete = 'fer' | 'cuivre' | 'argent' | 'or' | 'nacre';
 
-/** Un Module est une carte de collection : il se greffe sur un Porteur de sa lignée et ses Gestes remplacent une partie des siens */
+/**
+ * Une carte de collection, celle qu'on joue en combat (décision du 22 octobre 2026).
+ * On la confie à un Porteur de sa lignée ; elle prend une place dans le deck.
+ * Le type garde son nom historique (ModuleDef) : dans la première version, les cartes étaient des Modules greffés.
+ */
 export interface ModuleDef {
-  /** « jambes-ressort » pour le Module dans son métal d'origine, « jambes-ressort@or » pour un exemplaire dans un autre métal */
+  /** « jambes-ressort » pour la carte dans son métal d'origine, « jambes-ressort@or » pour un exemplaire dans un métal */
   id: string;
-  /** le Module de base, quand `id` désigne un exemplaire dans un métal (« jambes-ressort ») */
+  /** la carte de base, quand `id` désigne un exemplaire dans un métal (« jambes-ressort ») */
   base?: string;
   nom: string;
   lignee: Lignee;
+  /** métal d'origine de la carte, ou métal de l'exemplaire */
   rarete: Rarete;
-  gestes: { nom: string; f: number; type: TypeGeste; v: number; lourd?: boolean; effet?: Effet }[];
-  /**
-   * Les effets que les métaux débloquent, dans l'ordre (le cuivre le 1er, l'argent le 2e, l'or le 3e).
-   * Absent : les effets déjà posés sur les Gestes, dans leur ordre.
-   */
-  deblocages?: { geste: number; effet: Effet }[];
+  /** ce que fait la carte : attaque, bouclier d'escouade ou soin */
+  type: TypeGeste;
+  /** force (dans le métal d'origine, ou celle de l'exemplaire) */
+  v: number;
+  /** prend 2 places dans la chaîne */
+  lourd?: boolean;
+  /** Fréquences, de la principale à la plus rare ; un exemplaire ne garde que celles que son métal ouvre */
+  f: number[];
+  /** l'effet de la carte ; un exemplaire ne l'a qu'à partir du cuivre */
+  effet?: Effet;
 }
 
+/** Une carte en jeu, telle que le moteur de combat la manipule */
 export interface GesteDef {
   id: string;
-  /** Porteur qui joue ce Geste ; null = Geste spécial (tactique) */
+  /** l'exemplaire de carte (« ruee@fer ») : son illustration ; absent pour les cartes d'une sauvegarde ancienne */
+  carte?: string;
+  /** Porteur qui joue cette carte ; null = carte du district */
   porteur: string | null;
   nom: string;
-  /** Fréquence, de 1 à 9 */
+  /** Fréquence jouée, de 1 à 9 */
   f: number;
+  /** les Fréquences que la carte peut prendre (argent et plus) ; `f` est celle choisie */
+  fs?: number[];
   type: TypeGeste;
   /** Force : dégâts, bouclier ou soin */
   v: number;
@@ -80,7 +94,7 @@ export interface GesteDef {
   effet?: Effet;
 }
 
-/** Un exemplaire de Geste dans un combat (uid unique) */
+/** Un exemplaire de carte dans un combat (uid unique) */
 export interface Geste extends GesteDef {
   uid: string;
 }

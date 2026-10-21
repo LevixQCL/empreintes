@@ -26,8 +26,8 @@ Chaque `git push` sur `main` lance les tests, construit le site et le publie sur
 ```
 src/
   core/          les règles du jeu, sans affichage (pourront tourner sur un serveur)
-    types.ts       les types : Porteurs, Gestes, ennemis, état du combat
-    donnees.ts     le contenu : Porteurs, deck de départ, ennemis
+    types.ts       les types : Porteurs, cartes, ennemis, état du combat
+    donnees.ts     le contenu : Porteurs, les 45 cartes, deck de départ, ennemis
     regles.ts      les réglages chiffrés (équilibrage) + Résonance, Écho, triangle
     combat.ts      le moteur de combat
     effets.ts      les noms et textes des effets spéciaux (Perçant, Siphon, Accord…)
@@ -57,14 +57,22 @@ Le jour de Steam ou des stores, on emballe le même build (Electron/Tauri, Capac
 
 Tous les chiffres sont dans deux fichiers :
 - `src/core/regles.ts` : taille de main, places, bonus de suite, Flux, triangle…
-- `src/core/donnees.ts` : force et Fréquence de chaque Geste, PV et attaques des ennemis.
+- `src/core/donnees.ts` : force, Fréquences et effet de chaque carte, PV et attaques des ennemis.
 
-**Un Module, cinq métaux.** Chaque Module existe en fer, cuivre, argent, or et nacre. Un exemplaire possédé se note
-`module@métal` (`jambes-ressort@or`) ; le métal est fixé quand on le trouve et ne change jamais. Les Gestes de `donnees.ts`
-sont réglés pour le métal d'origine du Module ; dans un autre métal, `METAL_FORCE` règle la force, et le métal débloque
-les effets de la liste `deblocages` du Module, un à un (fer aucun, cuivre 1, argent 2, or 3, nacre tous et renforcés).
-Deux métaux d'un même Module sont deux cartes à part :
-chacune ses doublons, son niveau, et un Porteur n'en porte qu'une.
+**La carte qu'on collectionne est celle qu'on joue** (décision du 22 octobre 2026). Une carte = une place dans le deck.
+On la confie à un Porteur de sa lignée (`greffer` dans `jeu.ts`, 6 cartes au plus par Porteur, `DISTRICT.cartesMax`) ;
+le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les 2 cartes du district (`GESTES_SPECIAUX`).
+Au départ, Ilka, Doran et Véla portent chacun 6 cartes en fer : leurs 5 cartes de base et leur carte de départ (`DEPART_PORTEURS`).
+En combat, le moteur manipule des « Gestes » : c'est le nom interne d'une carte en jeu (`gesteDeCarte`), avec son Porteur,
+son niveau et la Fréquence choisie. Le tableau des cartes garde son nom historique `MODULES`.
+
+**Une carte, cinq métaux.** Chaque carte existe en fer, cuivre, argent, or et nacre. Un exemplaire possédé se note
+`carte@métal` (`jambes-ressort@or`) ; le métal est fixé quand on le trouve et ne change jamais. La force de `donnees.ts`
+est réglée pour le métal d'origine de la carte ; dans un autre métal, `METAL_FORCE` la règle. Le métal ouvre aussi l'effet
+(à partir du cuivre, renforcé en or et en nacre : `METAL_RENFORT`) et les Fréquences (1 en fer et en cuivre, 2 en argent
+et en or, 3 en nacre : `METAL_FREQ`). Une carte à plusieurs Fréquences prend d'elle-même celle qui prolonge la suite
+(`meilleureFrequence`), et le joueur peut en changer dans la chaîne (`accorder`) : aucun tirage au sort.
+Deux métaux d'une même carte sont deux cartes à part : chacune ses doublons, son niveau, et un Porteur n'en porte qu'une.
 
 **Pas de Fusion.** Un métal se trouve dans les Strates, les boss, les choix et les garanties ; il ne se fabrique pas et ne
 se gagne pas en fusionnant des cartes (décision du 21 octobre 2026).
@@ -74,8 +82,8 @@ son texte est dans `effets.ts` et sa règle dans `combat.ts` (l'Accord, qui touc
 
 **Le robot d'équilibrage.** `npm run robot` (option `-- --parties 300`) joue des milliers d'expéditions avec
 un joueur automatique qui essaie toutes les chaînes possibles à chaque tour. Il cherche la Strate où le
-deck de départ gagne une fois sur deux, mesure ce que vaut chaque carte (greffée en plus sur le Porteur de
-sa lignée), signale celles qui sortent du lot de leur rareté et compare le deck de départ à 3 et à 6 cartes.
+deck de départ gagne une fois sur deux, mesure ce que vaut chaque carte (à la place de la carte de départ de
+sa lignée) et signale celles qui sortent du lot de leur rareté.
 Le rapport est écrit dans `docs/robot-rapport.md`. À relancer après chaque changement de chiffre.
 
 ## Firebase

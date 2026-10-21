@@ -3,7 +3,7 @@ import './ui/scenes.css';
 import './ui/face-carte.css';
 import './ui/holo.css';
 import * as C from './core/combat';
-import { ennemiDef, moduleDef } from './core/donnees';
+import { ennemiDef, moduleDef, porteurDef } from './core/donnees';
 import * as J from './core/jeu';
 import type { BatimentId, CombatEtat, Evenement, Pas } from './core/types';
 import { charger, enregistrer, type Enveloppe } from './save/local';
@@ -40,7 +40,7 @@ let lignesVues = 1;
 let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
-const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0 };
+const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0 };
 const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null } = {
   verrou: false, regles: false, pops: [], fin: null, etat: null,
 };
@@ -355,7 +355,7 @@ racine.addEventListener('click', async (ev) => {
     // district
     case 'batiment': D.selection = D.selection === id ? null : (id as BatimentId); D.menu = false; break;
     case 'ok-message': D.message = ''; break;
-    case 'menu': D.menu = !D.menu; D.selection = null; D.carte = null; break;
+    case 'menu': D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; break;
     case 'carte': D.carte = id; break;
     case 'carte-fermer': D.carte = null; break;
     case 'filtre': D.filtre = (id as typeof D.filtre) || 'tout'; window.scrollTo(0, 0); break;
@@ -366,7 +366,15 @@ racine.addEventListener('click', async (ev) => {
     case 'liberer': resultat(J.poster(jeu, id, null)); break;
     case 'fabriquer': resultat(J.fabriquer(jeu, b.dataset.module ?? '', Date.now())); break;
     case 'cartes': ouvrir('cartes'); break;
-    case 'greffer': resultat(J.greffer(jeu, b.dataset.module ?? '', id)); break;
+    case 'greffer': {
+      // un Porteur déjà plein : on ouvre ses cartes pour qu'il en rende une
+      const plein = (jeu.porteurs[id]?.modules.length ?? 0) >= J.DISTRICT.cartesMax && !jeu.porteurs[id]!.modules.includes(b.dataset.module ?? '');
+      resultat(J.greffer(jeu, b.dataset.module ?? '', id));
+      if (plein) { D.carte = null; D.deck = id; D.message = `${porteurDef(id).nom} porte déjà ${J.DISTRICT.cartesMax} cartes : reprends-en une, puis confie-lui ${moduleDef(b.dataset.module ?? '').nom}.`; }
+      break;
+    }
+    case 'deck': D.deck = id; D.carte = null; break;
+    case 'deck-fermer': D.deck = null; break;
     case 'degreffer': resultat(J.degreffer(jeu, b.dataset.module ?? '')); break;
     case 'monter': resultat(J.monter(jeu, b.dataset.module ?? '')); break;
     case 'recycler': resultat(J.recycler(jeu, b.dataset.module ?? '')); break;
@@ -423,6 +431,7 @@ racine.addEventListener('click', async (ev) => {
     // combat
     case 'ajouter': if (s && !K.verrou) { C.ajouter(s, id || b.dataset.uid || ''); sauver(); } break;
     case 'retirer': if (s && !K.verrou) { C.retirer(s, b.dataset.uid ?? ''); sauver(); } break;
+    case 'accorder': if (s && !K.verrou) { C.accorder(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'vider': if (s && !K.verrou) { C.viderChaine(s); sauver(); } break;
     case 'allonger': if (s && !K.verrou) { C.allonger(s); sauver(); } break;
     case 'repiocher': if (s && !K.verrou) { C.repiocher(s); sauver(); } break;
@@ -451,7 +460,7 @@ racine.addEventListener('click', async (ev) => {
       if (r.tutoriel) {
         D.vue = 'archipel';
         D.message = r.victoire
-          ? 'La chambre est ouverte. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans le Codex (Tour du Noyau).'
+          ? 'La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans le Codex (Tour du Noyau).'
           : 'L’escouade se repose. La porte scellée t’attend toujours.';
       } else {
         D.vue = jeu.choix.length ? 'archipel' : 'coupe';

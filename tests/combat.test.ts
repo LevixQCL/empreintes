@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { ajouter, allonger, capacite, creerCombat, lancer, placesLibres } from '../src/core/combat';
+import { accorder, ajouter, allonger, capacite, creerCombat, lancer, placesLibres, retirer } from '../src/core/combat';
 import { nouvelleExpedition, combatSuivant, cloturerCombat } from '../src/core/expedition';
 import { analyserChaine, serieFinale } from '../src/core/regles';
-import { DECK_DEPART, PORTEURS } from '../src/core/donnees';
+import { DECK_DEPART, PORTEURS, gesteDeCarte } from '../src/core/donnees';
 import type { CombatEtat } from '../src/core/types';
 
 const f = (...xs: number[]) => xs.map((x) => ({ f: x }));
@@ -68,5 +68,29 @@ describe('Combat', () => {
       }
       expect(garde).toBeLessThan(500);
     }
+  });
+});
+
+describe('Fréquences au choix (argent et plus)', () => {
+  it('une carte prend la Fréquence qui prolonge la suite, et on peut en changer', () => {
+    const s = creerCombat({ porteurs: equipe(), ennemiId: 'remanent', rng: 3 });
+    const bond = { ...gesteDeCarte('bond@fer', 'ilka'), uid: 'a' }; // Fréquence 4
+    const jambes = { ...gesteDeCarte('jambes-ressort@argent', 'ilka'), uid: 'b' }; // Fréquences 4 ou 5
+    expect(jambes.fs).toEqual([4, 5]);
+    s.main = [bond, jambes];
+    ajouter(s, 'a');
+    ajouter(s, 'b');
+    expect(s.chaine[1]!.f).toBe(5);
+    expect(accorder(s, 'b').ok).toBe(true);
+    expect(s.chaine[1]!.f).toBe(4);
+    expect(accorder(s, 'a').ok).toBe(false); // une carte en fer n'a qu'une Fréquence
+    retirer(s, 'b');
+    expect(s.main.find((g) => g.uid === 'b')!.f).toBe(4);
+  });
+
+  it('le deck de départ compte 20 cartes, toutes illustrables', () => {
+    expect(DECK_DEPART).toHaveLength(20);
+    expect(DECK_DEPART.every((g) => !!g.carte)).toBe(true);
+    expect(new Set(DECK_DEPART.map((g) => g.id)).size).toBe(20);
   });
 });

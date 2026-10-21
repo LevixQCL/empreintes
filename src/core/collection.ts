@@ -1,7 +1,7 @@
-// La collection : les cartes (Modules) qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
+// La collection : les cartes qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
 // Tout le hasard passe par un état `rng` sauvegardé : aucun hasard n'est jamais payé.
 
-import { MODULES, carteId, gestesDeBaseRestants, moduleDef } from './donnees';
+import { MODULES, carteId, gesteDeCarte, moduleDef } from './donnees';
 import { tireur } from './rng';
 import type { GesteDef, Rarete } from './types';
 
@@ -87,13 +87,13 @@ export function tirerRarete(e: EtatCollection, strate: number, minimum: Rarete =
   return r;
 }
 
-/** Tire une carte : un métal, puis un Module parmi tous (chaque Module existe dans les cinq métaux) */
+/** Tire une carte : un métal, puis une carte parmi toutes (chaque carte existe dans les cinq métaux) */
 export function tirerCarte(e: EtatCollection, strate: number, minimum: Rarete = 'fer'): string {
   const r = tirerRarete(e, strate, minimum);
   return carteId(MODULES[tireur(e).entier(MODULES.length)]!.id, r);
 }
 
-/** Trois cartes différentes au choix (boss, objectif du jour, Archive), toujours de trois Modules différents */
+/** Trois cartes différentes au choix (boss, objectif du jour, Archive), toujours trois cartes de base différentes */
 export function tirerChoix(e: EtatCollection, strate: number, minimum: Rarete = 'fer'): string[] {
   const choix: string[] = [];
   let garde = 0;
@@ -131,13 +131,7 @@ export function multNiveau(id: string, niveau: number): number {
   return 1 + COLLECTION.bonusNiveau * (niveau - depart);
 }
 
-/** Les Gestes qu'un Porteur apporte au deck : ceux de ses cartes, à leur niveau, qui remplacent une partie des siens */
-export function gestesAvecModules(porteurId: string, modules: { id: string; niveau: number }[]): GesteDef[] {
-  const n = modules.reduce((k, { id }) => k + moduleDef(id).gestes.length, 0);
-  const base = gestesDeBaseRestants(porteurId, n);
-  const mods = modules.flatMap(({ id, niveau }) => {
-    const mult = multNiveau(id, niveau);
-    return moduleDef(id).gestes.map((x, k) => ({ id: `${id}-${k}`, porteur: porteurId, ...x, v: Math.round(x.v * mult) }));
-  });
-  return [...base, ...mods];
+/** Les cartes qu'un Porteur apporte au deck de combat : celles qu'on lui a confiées, à leur niveau */
+export function cartesEnJeu(porteurId: string, cartes: { id: string; niveau: number }[]): GesteDef[] {
+  return cartes.map(({ id, niveau }) => gesteDeCarte(id, porteurId, multNiveau(id, niveau)));
 }
