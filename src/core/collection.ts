@@ -1,9 +1,8 @@
 // La collection : les cartes (Modules) qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
 // Tout le hasard passe par un état `rng` sauvegardé : aucun hasard n'est jamais payé.
 
-import { MODULES, moduleDef } from './donnees';
+import { MODULES, gestesDeBaseRestants, moduleDef } from './donnees';
 import { tireur } from './rng';
-import { GESTES_PORTEUR } from './donnees';
 import type { GesteDef, Rarete } from './types';
 
 export const RARETES: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
@@ -131,9 +130,10 @@ export function multNiveau(id: string, niveau: number): number {
   return 1 + COLLECTION.bonusNiveau * (niveau - depart);
 }
 
-/** Les Gestes qu'un Porteur apporte au deck : les siens + ceux de ses Modules, à leur niveau */
+/** Les Gestes qu'un Porteur apporte au deck : ceux de ses cartes, à leur niveau, qui remplacent une partie des siens */
 export function gestesAvecModules(porteurId: string, modules: { id: string; niveau: number }[]): GesteDef[] {
-  const base = GESTES_PORTEUR[porteurId] ?? [];
+  const n = modules.reduce((k, { id }) => k + moduleDef(id).gestes.length, 0);
+  const base = gestesDeBaseRestants(porteurId, n);
   const mods = modules.flatMap(({ id, niveau }) => {
     const mult = multNiveau(id, niveau);
     return moduleDef(id).gestes.map((x, k) => ({ id: `${id}-${k}`, porteur: porteurId, ...x, v: Math.round(x.v * mult) }));

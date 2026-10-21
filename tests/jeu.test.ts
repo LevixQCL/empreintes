@@ -35,12 +35,15 @@ describe('District', () => {
     expect(ameliorer(j, 'generateur').ok).toBe(true);
   });
 
-  it('greffer une carte ajoute ses Gestes ; la Forge refabrique un doublon', () => {
+  it('greffer une carte remplace des Gestes de base par les siens ; la Forge refabrique un doublon', () => {
     const j = ouvert();
     expect(greffer(j, 'jambes-ressort', 'doran').ok).toBe(false); // mauvaise lignée
     const avant = gestesDe(j, 'ilka').length;
     expect(greffer(j, 'jambes-ressort', 'ilka').ok).toBe(true);
-    expect(gestesDe(j, 'ilka').length).toBe(avant + 2);
+    const apres = gestesDe(j, 'ilka');
+    expect(apres.length).toBe(avant); // le deck garde sa taille
+    expect(apres.map((g) => g.nom)).toContain('Détente');
+    expect(apres.map((g) => g.nom)).not.toContain('Tir vif'); // le premier Geste de base à céder sa place
     expect(fabriquer(j, 'jambes-ressort', 0).ok).toBe(false); // personne à la Forge
     poster(j, 'coursier', 'forge');
     j.composants = 100;

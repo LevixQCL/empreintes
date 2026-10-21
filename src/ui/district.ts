@@ -2,7 +2,7 @@
 // Les visuels sont provisoires (dessinés en SVG) : chaque pilier pourra être remplacé par une illustration.
 
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
-import { MODULES, PORTEURS, batimentDef, moduleDef, porteurDef } from '../core/donnees';
+import { MODULES, PORTEURS, batimentDef, gestesRemplaces, moduleDef, porteurDef } from '../core/donnees';
 import {
   ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles,
   dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant,
@@ -284,13 +284,25 @@ function fenetreChoix(j: Jeu): string {
     + (j.choix.length > 1 ? `<small class="aide">Encore ${j.choix.length - 1} choix après celui-ci.</small>` : '') + `</div></div>`;
 }
 
+/** Les Gestes de base que la carte remplace (ou remplacerait) sur ce Porteur */
+function remplace(j: Jeu, moduleId: string, porteurId: string | undefined): string {
+  if (!porteurId) return '';
+  const mods = j.porteurs[porteurId]?.modules ?? [];
+  const k = mods.indexOf(moduleId);
+  const avant = (k >= 0 ? mods.slice(0, k) : mods).reduce((n, id) => n + moduleDef(id).gestes.length, 0);
+  const noms = gestesRemplaces(porteurId, avant, moduleDef(moduleId).gestes.length).map((g) => g.nom);
+  if (!noms.length) return '';
+  const qui = porteurDef(porteurId).nom;
+  return `<small class="aide">${k >= 0 ? `Remplace sur ${echap(qui)}` : `Sur ${echap(qui)}, remplacerait`} : ${noms.map(echap).join(', ')}</small>`;
+}
+
 export function htmlCartes(e: EcranDistrict): string {
   const j = e.j;
   const trouvees = MODULES.filter((m) => j.collection[m.id]).length;
   let h = `<header class="top"><div><h1>Cartes</h1><span class="sous">${trouvees} / ${MODULES.length} TROUVÉES · ${DISTRICT.modulesMax} PAR PORTEUR</span></div><button type="button" class="btn-sec" data-action="archipel">Archipel</button></header>`;
   h += barreRessources(e);
   if (e.message) h += `<p class="message">${echap(e.message)}</p>`;
-  h += `<p class="discret">Greffe une carte sur un Porteur de sa lignée : ses Gestes rejoignent le deck quand il part. Les doublons la font monter (+${Math.round(COLLECTION.bonusNiveau * 100)} % de force par niveau).</p>`;
+  h += `<p class="discret">Greffe une carte sur un Porteur de sa lignée : ses Gestes remplacent certains des siens, le deck garde sa taille. Les doublons la font monter (+${Math.round(COLLECTION.bonusNiveau * 100)} % de force par niveau).</p>`;
   for (const lignee of ['tech', 'bio', 'reso'] as const) {
     const porteurs = PORTEURS.filter((p) => p.lignee === lignee && porteursPresents(j).includes(p.id));
     h += `<h2 class="titre-lignee" style="--c:${COULEUR[lignee]}">${lignee === 'tech' ? 'Augmentés' : lignee === 'bio' ? 'Génés' : 'Résonants'}</h2><div class="grille-cartes">`;
@@ -305,7 +317,7 @@ export function htmlCartes(e: EcranDistrict): string {
       const mult = multNiveau(m.id, c.niveau);
       const cout = composantsNiveau(c.niveau + 1);
       h += `<article class="carte" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[lignee]}"><div class="carte-tete"><span class="rarete">${NOMS_RARETE[m.rarete]}</span><span class="niveau">Niv. ${c.niveau}</span></div>`
-        + `<strong>${echap(m.nom)}</strong><ul>${m.gestes.map((g) => `<li><b>${g.effet?.type === 'accord' ? '∗' : g.f}</b> ${echap(g.nom)} · ${TYPE_GESTE[g.type]} ${Math.round(g.v * mult)}${g.lourd ? ' · lourd' : ''}${g.effet ? `<br><span class="effet-texte">${echap(libelleEffet(g.effet))}</span>` : ''}</li>`).join('')}</ul>`
+        + `<strong>${echap(m.nom)}</strong>${remplace(j, m.id, porte ?? porteurs[0]?.id)}<ul>${m.gestes.map((g) => `<li><b>${g.effet?.type === 'accord' ? '∗' : g.f}</b> ${echap(g.nom)} · ${TYPE_GESTE[g.type]} ${Math.round(g.v * mult)}${g.lourd ? ' · lourd' : ''}${g.effet ? `<br><span class="effet-texte">${echap(libelleEffet(g.effet))}</span>` : ''}</li>`).join('')}</ul>`
         + (requis === null ? `<small>Niveau maximum</small>` : `<div class="ligne-prog"><div class="piste"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%;--c:var(--r)"></i></div><small>${c.doublons} / ${requis}</small></div>`)
         + `<div class="chips">`
         + (requis !== null ? `<button type="button" class="chip petit" data-action="monter" data-module="${m.id}"${c.doublons >= requis && j.composants >= cout ? '' : ' disabled'}>Monter · ${cout} comp.</button>` : '')

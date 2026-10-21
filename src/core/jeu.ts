@@ -642,7 +642,7 @@ export const OBJECTIFS: Objectif[] = [
   },
   {
     titre: 'Greffer une carte', pilier: 'noyau',
-    consigne: 'Ouvre tes Cartes et greffe les Jambes à ressort sur Ilka : 2 nouveaux Gestes pour le deck.',
+    consigne: 'Ouvre tes Cartes et greffe les Jambes à ressort sur Ilka : 2 Gestes plus forts remplacent Tir vif et Bond.',
     recompense: { composants: 10 },
     fait: (j) => j.porteurs.ilka!.modules.length > 0,
   },

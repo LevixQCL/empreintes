@@ -46,7 +46,7 @@ export type BatimentId = 'noyau' | 'generateur' | 'forge' | 'clinique';
 /** Rareté d'une carte (Module) : du fer, commun, à la nacre, presque introuvable */
 export type Rarete = 'fer' | 'cuivre' | 'argent' | 'or' | 'nacre';
 
-/** Un Module est une carte de collection : il se greffe sur un Porteur de sa lignée et ajoute ses Gestes au deck */
+/** Un Module est une carte de collection : il se greffe sur un Porteur de sa lignée et ses Gestes remplacent une partie des siens */
 export interface ModuleDef {
   id: string;
   nom: string;

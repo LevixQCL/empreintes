@@ -55,23 +55,23 @@ const ref = courbe.reduce((a, b) => (Math.abs(b.taux - 0.5) < Math.abs(a.taux - 
 
 // 2. Ce que vaut chaque carte : on l'ajoute en 2e greffe sur le Porteur de sa lignée
 //    (pour les 3 cartes de départ, on mesure ce qu'on perd en la retirant).
-//    On mesure la progression moyenne dans l'expédition, plus fine que la seule victoire.
+//    On mesure la part d'expéditions gagnées : c'est ce que le joueur ressent.
 const valeur = (niveau: 'depart' | 10, m: ModuleDef, base: number) => {
   const depart = Object.values(DEPART).some((d) => d.carte === m.id);
   return depart
-    ? base - mesurer(escouade(niveau, { retrait: m.id }), ref, PARTIES).progres
-    : mesurer(escouade(niveau, { ajout: m }), ref, PARTIES).progres - base;
+    ? base - mesurer(escouade(niveau, { retrait: m.id }), ref, PARTIES).victoire
+    : mesurer(escouade(niveau, { ajout: m }), ref, PARTIES).victoire - base;
 };
 const baseDep = mesurer(escouade('depart'), ref, PARTIES);
-const base10 = mesurer(escouade(10), ref, PARTIES).progres;
+const base10 = mesurer(escouade(10), ref, PARTIES).victoire;
 const brut: { m: ModuleDef; dep: number; n10: number }[] = [];
 for (const [k, m] of MODULES.entries()) {
   progres(`Carte ${k + 1}/${MODULES.length} : ${m.nom}`);
-  brut.push({ m, dep: valeur('depart', m, baseDep.progres), n10: valeur(10, m, base10) });
+  brut.push({ m, dep: valeur('depart', m, baseDep.victoire), n10: valeur(10, m, base10) });
 }
 // Une carte est signalée quand elle sort nettement du lot de sa rareté,
 // ou quand elle fait mieux que la moyenne de la rareté au-dessus d'elle.
-const ECART = 0.04;
+const ECART = 0.08;
 const moyenne = (r: Rarete) => {
   const xs = brut.filter((b) => b.m.rarete === r).map((b) => b.dep);
   return xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : NaN;
@@ -82,9 +82,9 @@ const lignes = brut.map((b) => {
   const dessus = moyenne(RANGS[RANGS.indexOf(b.m.rarete) + 1] ?? 'nacre');
   const dessous = moyenne(RANGS[RANGS.indexOf(b.m.rarete) - 1] ?? 'fer');
   let alerte = '';
-  // une marge de 2 points évite de signaler le simple bruit de la simulation
-  if (b.dep > moy + ECART || (!Number.isNaN(dessus) && b.dep > dessus + 0.02)) alerte = 'TROP FORTE';
-  else if (b.dep < moy - ECART || (b.m.rarete !== 'fer' && b.dep < dessous - 0.02)) alerte = 'trop faible';
+  // une marge de 4 points évite de signaler le simple bruit de la simulation
+  if (b.dep > moy + ECART || (!Number.isNaN(dessus) && b.dep > dessus + 0.04)) alerte = 'TROP FORTE';
+  else if (b.dep < moy - ECART || (b.m.rarete !== 'fer' && b.dep < dessous - 0.04)) alerte = 'trop faible';
   return { ...b, alerte };
 });
 
@@ -105,11 +105,11 @@ r += `## Le deck de départ selon la profondeur\n\n| Strate | Victoire |\n|---|-
 r += courbe.map((c) => `| −${c.strate} | ${pct(c.taux)} |`).join('\n');
 r += `\n\nStrate de référence pour les cartes : **−${ref}** (le deck de départ y gagne ${pct(baseDep.victoire)} des expéditions).\n\n`;
 r += `## Ce que vaut chaque carte\n\nChaque carte est greffée en plus sur le Porteur de sa lignée (pour les 3 cartes de départ : ce qu'on perd en la retirant). `;
-r += `Les chiffres sont des points de progression dans l'expédition à la Strate −${ref} (100 = une expédition entière), à la découverte de la carte, puis avec toutes les cartes au niveau 10.\n\n`;
+r += `Les chiffres sont des points de victoire à la Strate −${ref} (+10 = une expédition gagnée de plus sur dix), à la découverte de la carte, puis avec toutes les cartes au niveau 10.\n\n`;
 r += `| Carte | Rareté | Effets | À la découverte | Au niveau 10 | Alerte |\n|---|---|---|---|---|---|\n`;
 for (const l of lignes) r += `| ${l.m.nom} | ${NOMS_RARETE[l.m.rarete]} | ${effets(l.m)} | ${pts(l.dep)} | ${pts(l.n10)} | ${l.alerte} |\n`;
 r += `\nMoyenne par rareté, à la découverte : ${RANGS.filter((x) => !Number.isNaN(moyenne(x))).map((x) => `${NOMS_RARETE[x]} ${pts(moyenne(x))}`).join(' · ')}. `;
-r += `Une carte est signalée quand elle s'écarte de plus de ${Math.round(ECART * 100)} points de la moyenne de sa rareté, ou dépasse de plus de 2 points la moyenne de la rareté au-dessus.\n\n`;
+r += `Une carte est signalée quand elle s'écarte de plus de ${Math.round(ECART * 100)} points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.\n\n`;
 r += `## Deck de départ : 3 cartes ou 6 cartes\n\n| Strate | 3 cartes (actuel) | 6 cartes (document Économie) |\n|---|---|---|\n`;
 r += decks.map((d) => `| −${d.st} | ${pct(d.trois)} | ${pct(d.six)} |`).join('\n') + '\n';
 
