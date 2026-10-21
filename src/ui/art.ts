@@ -6,8 +6,8 @@ import type { BatimentId, Rarete } from '../core/types';
 // URL absolue : une url() dans une variable CSS se résout depuis la feuille de style (assets/), pas depuis la page.
 const base = new URL('art/', document.baseURI).href;
 
-/** Porteurs illustrés (les recrues anonymes n'ont pas de portrait) */
-const PORTEURS_ILLUSTRES = new Set(['ilka', 'doran', 'vela', 'sasha', 'nuit', 'aurel']);
+/** Porteurs illustrés (tous ont maintenant un portrait ; un nouveau Porteur sans image garde son initiale) */
+const PORTEURS_ILLUSTRES = new Set(['ilka', 'doran', 'vela', 'sasha', 'nuit', 'aurel', 'coursier', 'docker', 'guetteur']);
 
 /** Modules illustrés : id du Module dans donnees.ts → fichier */
 const MODULES_ILLUSTRES: Record<string, string> = {
