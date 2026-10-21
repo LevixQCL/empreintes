@@ -188,3 +188,36 @@ describe('La Confiance des habitants', () => {
     expect(j.confiance).toBe(60);
   });
 });
+
+import { bonusEscouade, progresMarque, remonter } from '../src/core/jeu';
+import { creerCombat as creer } from '../src/core/combat';
+
+describe('Les Marques des Porteurs', () => {
+  it('Doran gagne Fondations après 20 combats dans les Fondations, et l’escouade commence avec du bouclier', () => {
+    const j = nouveauJeu(0, 1);
+    j.chambre = true; j.recrues = true;
+    j.porteurs.doran!.faits = { fondations: 19 };
+    expect(progresMarque(j, 'doran')!.acquise).toBe(false);
+    j.porteurs.doran!.faits.fondations = 20;
+    expect(bonusEscouade(j, ['ilka', 'doran', 'vela'])).toEqual({ bouclier: 8 });
+    expect(partir(j, ['ilka', 'doran', 'vela'], 1, 3).ok).toBe(true);
+    expect(j.expedition!.combat.bouclier).toBe(8);
+  });
+
+  it('Véla Lectrice : la Dissonance n’a plus de prise', () => {
+    const s = creer({ porteurs: PORTEURS.slice(0, 3).map((p) => ({ id: p.id, pv: p.pvMax, pvMax: p.pvMax, aTerre: false })), ennemiId: 'brigadier', rng: 3, bonus: { lucide: true } });
+    s.chaine = [{ id: 'a', uid: 'a', porteur: 'ilka', nom: 'T', f: 1, type: 'atk', v: 1 }];
+    lancer(s, { silencieux: true });
+    expect(s.dissonance).toBeFalsy();
+  });
+
+  it('une expédition remontée compte pour les Marques', () => {
+    const j = nouveauJeu(0, 1);
+    j.chambre = true; j.recrues = true;
+    partir(j, ['ilka', 'doran', 'vela'], 1, 3);
+    j.expedition!.combat.issue = 'defaite';
+    j.expedition!.terminee = true;
+    remonter(j);
+    expect(j.porteurs.ilka!.faits).toBeDefined();
+  });
+});

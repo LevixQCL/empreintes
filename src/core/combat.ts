@@ -5,7 +5,7 @@ import { DECK_DEPART, ennemiDef, porteurDef } from './donnees';
 import { REGLES, analyserChaine, avantage, places } from './regles';
 import { tireur } from './rng';
 import type {
-  CibleRegle, CombatEtat, Evenement, Geste, GesteDef, Intention, LigneeGeste, Pas, PorteurEtat,
+  BonusMarques, CibleRegle, CombatEtat, Evenement, Geste, GesteDef, Intention, LigneeGeste, Pas, PorteurEtat,
 } from './types';
 
 export interface Resultat {
@@ -24,6 +24,8 @@ export function creerCombat(opts: {
   force?: number;
   /** pioche dans l'ordre du deck, sans mélange (combat guidé) */
   ordonne?: boolean;
+  /** ce que les Marques des Porteurs apportent */
+  bonus?: BonusMarques;
 }): CombatEtat {
   const e = ennemiDef(opts.ennemiId);
   const force = opts.force ?? 1;
@@ -46,6 +48,10 @@ export function creerCombat(opts: {
   const deck: Geste[] = (opts.deck ?? DECK_DEPART).map((g, k) => ({ ...g, uid: `g${k}` }));
   s.pioche = opts.ordonne ? deck.slice().reverse() : tireur(s).melanger(deck);
   log(s, `Un ${e.nom} surgit dans la Strate.`);
+  const b = opts.bonus;
+  if (b?.places) s.capaBonus = b.places;
+  if (b?.bouclier) s.bouclier = b.bouclier;
+  if (b?.lucide) s.lucide = true;
   choisirIntention(s);
   piocher(s);
   return s;
@@ -324,6 +330,9 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
     s.ennemi.pv = Math.min(s.ennemi.pvMax, s.ennemi.pv + it.v);
     log(s, `${e.nom} · ${it.nom} : +${s.ennemi.pv - avant} PV.`);
     emettre({ kind: 'soin', cible: 'ennemi', v: s.ennemi.pv - avant });
+  } else if (it.type === 'dissonance' && s.lucide) {
+    log(s, `${e.nom} · ${it.nom} : Véla lit le brouillage, tes Fréquences restent nettes.`);
+    emettre({ kind: 'effet', cible: 'escouade', texte: 'Lucide' });
   } else if (it.type === 'dissonance') {
     s.dissonance = true;
     log(s, `${e.nom} · ${it.nom} : tes Fréquences sont brouillées, pas de Résonance au prochain tour.`);

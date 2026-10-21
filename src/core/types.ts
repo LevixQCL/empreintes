@@ -132,6 +132,16 @@ export interface EnnemiEtat {
 
 export type Issue = 'en-cours' | 'victoire' | 'defaite';
 
+/** Ce que les Marques des Porteurs apportent au début de chaque combat */
+export interface BonusMarques {
+  /** places en plus dans la chaîne au premier tour (Ilka, Raccourci) */
+  places?: number;
+  /** bouclier d'escouade au début du combat (Doran, Fondations) */
+  bouclier?: number;
+  /** la Dissonance n'a pas de prise (Véla, Lectrice) */
+  lucide?: boolean;
+}
+
 export interface CombatEtat {
   porteurs: PorteurEtat[];
   ennemi: EnnemiEtat;
@@ -149,6 +159,8 @@ export interface CombatEtat {
   flux: number;
   /** l'ennemi a brouillé les Fréquences : la prochaine chaîne ne fait pas de Résonance */
   dissonance?: boolean;
+  /** Marque de Véla (Lectrice) : la Dissonance n'a pas de prise sur l'escouade */
+  lucide?: boolean;
   tour: number;
   rng: number;
   issue: Issue;

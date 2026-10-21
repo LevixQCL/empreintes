@@ -603,3 +603,8 @@ h1,h2,h3{font-weight:400}
 .mission .confiance{display:grid;gap:4px;margin-top:8px}
 .mission .confiance .jauge i{background:linear-gradient(90deg,var(--danger),var(--gold) 50%,var(--bio))}
 .mission .confiance small{font-size:12px;color:var(--quiet)}
+
+/* Marques des Porteurs (écran Escouade) */
+.carte-porteur .marque{display:flex;align-items:center;justify-content:center;gap:4px;font-size:10.5px;color:var(--quiet);text-align:center;line-height:1.25}
+.carte-porteur .marque.acquise{color:var(--gold)}
+.carte-porteur .marque .ico{width:12px;height:12px}

@@ -2,7 +2,7 @@
 // et l'expédition en cours. Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms),
 // ce qui permet de rattraper le temps passé hors du jeu et de tester sans attendre.
 
-import { BATIMENTS, COLLECTION_DEPART, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, moduleDe, moduleDef, porteurDef, sequenceStrate } from './donnees';
+import { BATIMENTS, COLLECTION_DEPART, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, moduleDe, moduleDef, porteurDef, sequenceStrate, ennemiDef } from './donnees';
 import {
   COLLECTION, NOMS_RARETE, ajouterCarte, gestesAvecModules, composantsNiveau, doublonsRequis, tirerCarte, tirerChoix,
   type CarteCollection,
@@ -10,7 +10,7 @@ import {
 import { ORDRE_FRAGMENTS, fragmentDef } from './fragments';
 import { cloturerCombat, combatSuivant, nouvelleExpedition, type Expedition } from './expedition';
 import { graine, tireur } from './rng';
-import type { BatimentId, GesteDef, PorteurEtat, Rarete } from './types';
+import type { BatimentId, GesteDef, PorteurEtat, Rarete, BonusMarques } from './types';
 
 export const VERSION_JEU = 5;
 
@@ -60,6 +60,27 @@ export interface PorteurDistrict {
   usure: number;
   poste: Poste | null;
   modules: string[];
+  /** ce que le Porteur a vécu, pour ses Marques */
+  faits?: { expeditions?: number; fondations?: number; anciens?: number };
+}
+
+// ---------- Les Marques des Porteurs (Bible) ----------
+// Un seuil franchi laisse une Marque permanente, qui change le combat.
+export const MARQUES: Record<string, { nom: string; fait: 'expeditions' | 'fondations' | 'anciens'; seuil: number; texte: string; quoi: string }> = {
+  ilka: { nom: 'Raccourci', fait: 'expeditions', seuil: 30, quoi: 'expéditions réussies', texte: 'Elle connaît tous les raccourcis : +1 place dans la chaîne au premier tour de chaque combat.' },
+  doran: { nom: 'Fondations', fait: 'fondations', seuil: 20, quoi: 'combats dans les Fondations', texte: 'Il couvre les siens : chaque combat commence avec 8 de bouclier d’escouade.' },
+  vela: { nom: 'Lectrice', fait: 'anciens', seuil: 10, quoi: 'empreintes anciennes vaincues', texte: 'Elle lit les Échos : la Dissonance n’a plus de prise sur l’escouade.' },
+};
+export const progresMarque = (j: Jeu, id: string) => {
+  const m = MARQUES[id];
+  return m ? { ...m, n: j.porteurs[id]?.faits?.[m.fait] ?? 0, acquise: (j.porteurs[id]?.faits?.[m.fait] ?? 0) >= m.seuil } : null;
+};
+export function bonusEscouade(j: Jeu, escouade: string[]): BonusMarques {
+  const b: BonusMarques = {};
+  if (escouade.includes('ilka') && progresMarque(j, 'ilka')?.acquise) b.places = 1;
+  if (escouade.includes('doran') && progresMarque(j, 'doran')?.acquise) b.bouclier = 8;
+  if (escouade.includes('vela') && progresMarque(j, 'vela')?.acquise) b.lucide = true;
+  return b;
 }
 
 /** La Forge refabrique un exemplaire d'une carte déjà trouvée */
@@ -652,7 +673,11 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   if (strate < 1 || strate > j.strate) return non('Cette Strate n’est pas encore creusée.');
   const porteurs: PorteurEtat[] = escouade.map((id) => ({ id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false }));
   const deck = [...escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX];
-  j.expedition = nouvelleExpedition({ porteurs, deck, strate, rng, sequence: sequenceStrate(strate, rng, j.actes.chambre), facteur: j.actes.fin === 'scellement' ? 0.9 : 1 });
+  const bonus = bonusEscouade(j, escouade);
+  j.expedition = nouvelleExpedition({
+    porteurs, deck, strate, rng, sequence: sequenceStrate(strate, rng, j.actes.chambre), facteur: j.actes.fin === 'scellement' ? 0.9 : 1,
+    ...(Object.keys(bonus).length ? { bonus } : {}),
+  });
   log(j, `L’escouade descend dans la Strate −${strate}.`);
   return { ok: true };
 }
@@ -726,6 +751,18 @@ export function remonter(j: Jeu): Retour {
   for (const c of cartes) ajouterCarte(j, c);
   j.eclats += eclats;
   confier(j, victoire ? CONFIANCE.victoire : x.combat.issue === 'defaite' ? CONFIANCE.defaite : 0);
+  // ce que chacun a vécu, pour ses Marques
+  const vaincus = x.sequence.slice(0, victoires);
+  const anciens = vaincus.filter((id) => ennemiDef(id).lignee === 'reso').length;
+  for (const p of x.combat.porteurs) {
+    const f = (j.porteurs[p.id]!.faits ??= {});
+    const avant = progresMarque(j, p.id)?.acquise;
+    if (victoire) f.expeditions = (f.expeditions ?? 0) + 1;
+    if (x.strate <= 3) f.fondations = (f.fondations ?? 0) + victoires;
+    f.anciens = (f.anciens ?? 0) + anciens;
+    const m = progresMarque(j, p.id);
+    if (m?.acquise && !avant) log(j, `${porteurDef(p.id).nom} gagne la Marque ${m.nom} : ${m.texte}`);
+  }
   j.expedition = null;
   log(j, victoire
     ? `L’escouade remonte victorieuse avec ${butin} composants.${nouvelleStrate ? ` Un nouvel étage est creusé : la Strate −${j.strate} est ouverte.` : ''}`

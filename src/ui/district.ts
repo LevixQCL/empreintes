@@ -5,7 +5,7 @@
 import { libelleEffet } from '../core/effets';
 import { GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, ennemiDef, gestesRemplaces, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, type Acte,
+  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte,
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
@@ -526,6 +526,15 @@ export function htmlCoupe(e: EcranDistrict): string {
 
 // ---------- Choix de l'escouade ----------
 
+/** La Marque d'un Porteur : acquise, ou la progression vers elle */
+function marqueDe(j: Jeu, id: string): string {
+  const m = progresMarque(j, id);
+  if (!m) return '';
+  return m.acquise
+    ? `<small class="marque acquise" title="${echap(m.texte)}">${ICO.ok}Marque ${echap(m.nom)}</small>`
+    : `<small class="marque" title="${echap(m.texte)}">${echap(m.nom)} · ${Math.min(m.n, m.seuil)}/${m.seuil} ${echap(m.quoi)}</small>`;
+}
+
 export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
   const dispo = disponibles(j);
@@ -558,7 +567,8 @@ export function htmlEscouade(e: EcranDistrict): string {
     const pv = pvMaxCombat(j, p.id);
     h += `<button type="button" class="carte-porteur${choisi ? ' choisi' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="choisir" data-id="${p.id}"${!libre && !choisi ? ' disabled' : ''} aria-pressed="${choisi}">`
       + `${avatar(p.id, 72)}${choisi ? `<span class="rang">${e.escouade.indexOf(p.id) + 1}</span>` : ''}<strong>${echap(p.nom)}</strong><small class="lignee">${NOM_LIGNEE[p.lignee]}</small>`
-      + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id)) + `<small>${libre || choisi ? `PV ${pv} · ${gestesDe(j, p.id).length} Gestes` : `Au travail · ${echap(batimentDef(d.poste!).nom)}`}</small></button>`;
+      + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id)) + `<small>${libre || choisi ? `PV ${pv} · ${gestesDe(j, p.id).length} Gestes` : `Au travail · ${echap(batimentDef(d.poste!).nom)}`}</small>`
+      + marqueDe(j, p.id) + `</button>`;
   }
   h += `</div><p class="aide">Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p></main>`;
   h += `<footer class="pied-fixe"><div class="pied-info"><span class="chiffre">${e.escouade.length} / 3</span><small>${e.escouade.length ? `${deck} Gestes dans le deck` : 'Personne pour l’instant'}</small></div>`
