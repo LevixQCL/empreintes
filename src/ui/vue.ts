@@ -6,6 +6,7 @@ import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, serieF
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
 import type { CombatEtat, Geste, LigneeGeste } from '../core/types';
 import type { Expedition } from '../core/expedition';
+import { illustrationEnnemi, stylePastille } from './art';
 
 export interface Pop {
   id: number;
@@ -144,7 +145,9 @@ export function htmlCombat(e: Ecran): string {
     + '<li>L’attaque de l’ennemi est annoncée à l’avance : protège-toi ou finis-le avant.</li></ul></section>';
 
   h += `<section class="ennemi" aria-label="Ennemi">${popsPour(e, 'ennemi')}`
-    + `<div class="portrait" style="background:${FONDS[def.id] ?? '#2A2438'}">${silhouette}</div>`
+    + (illustrationEnnemi(def.id)
+      ? `<div class="portrait illustre" style="background:${FONDS[def.id] ?? '#2A2438'}"><img src="${illustrationEnnemi(def.id)}" alt="" decoding="async"></div>`
+      : `<div class="portrait" style="background:${FONDS[def.id] ?? '#2A2438'}">${silhouette}</div>`)
     + `<div class="infos"><span class="nom">${echap(def.nom)}</span>`
     + `<div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(def.tag)}</span>`
     + `<span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
@@ -158,7 +161,7 @@ export function htmlCombat(e: Ecran): string {
     const d = porteurDef(p.id);
     const ko = p.pv <= 0;
     const cible = !ko && it.type === 'atk' && (it.zone || it.cibleId === p.id);
-    h += `<div class="porteur${ko ? ' ko' : ''}" style="--c:${COULEUR[d.lignee]};--fond:${FONDS[d.id]}">${popsPour(e, p.id)}`
+    h += `<div class="porteur${ko ? ' ko' : ''}" style="--c:${COULEUR[d.lignee]};${stylePastille(d.id, FONDS[d.id])}">${popsPour(e, p.id)}`
       + `<div class="tete"><span class="pastille" aria-hidden="true"></span><span class="n">${echap(d.nom)}</span></div>`
       + `<div class="piste"><i style="width:${pct(p.pv, p.pvMax)}%"></i></div>`
       + `<div class="bas"><span class="chiffre">${ko ? 'À TERRE' : `${p.pv}/${p.pvMax}`}</span>${cible ? '<span class="cible">CIBLE</span>' : ''}</div></div>`;

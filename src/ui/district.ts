@@ -1,5 +1,5 @@
 // Écrans du district : l'archipel (accueil), la coupe de la Tour du Noyau, le choix de l'escouade.
-// Les visuels sont provisoires (dessinés en SVG) : chaque pilier pourra être remplacé par une illustration.
+// Les bâtiments sont des illustrations Midjourney (public/art/batiments, 4 apparences selon le niveau) ; le ciel et le chantier restent en SVG.
 
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
 import { MODULES, PORTEURS, batimentDef, gestesRemplaces, moduleDef, porteurDef } from '../core/donnees';
@@ -13,6 +13,7 @@ import type { Rarete } from '../core/types';
 import { FRAGMENTS } from '../core/fragments';
 import type { BatimentId } from '../core/types';
 import { COULEUR, FONDS, echap, panneauCompte, type Compte } from './vue';
+import { decor, illustrationBatiment, illustrationModule, prochainVisuel, stylePastille, visuel } from './art';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'codex' | 'cartes';
 
@@ -82,6 +83,13 @@ function batimentSvg(id: BatimentId | 'chantier', x: number, y: number, niv: num
   }
 }
 
+/** Illustration du bâtiment, posée sur son pilier : le haut de l'îlot tombe sur (x, y), le bas s'efface dans la brume. */
+function spriteBatiment(id: BatimentId, x: number, y: number, r: number, niv: number) {
+  const w = r * 2.15;
+  const h = w * 1.25;
+  return `<image class="sprite v${visuel(niv)}" href="${illustrationBatiment(id, niv)}" x="${x - w / 2}" y="${y - h * 0.56}" width="${w}" height="${h}" preserveAspectRatio="xMidYMax meet" mask="url(#brume)"/>`;
+}
+
 function archipelSvg(j: Jeu): string {
   const pont = (a: (typeof PILIERS)[number], b: (typeof PILIERS)[number]) => {
     const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 + 26;
@@ -93,6 +101,8 @@ function archipelSvg(j: Jeu): string {
   <defs>
     <linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9FD3EC"/><stop offset=".6" stop-color="#DCEFF2"/><stop offset="1" stop-color="#F3E2B8"/></linearGradient>
     <linearGradient id="roche" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9A8A74"/><stop offset=".55" stop-color="#7D7C86" stop-opacity=".9"/><stop offset="1" stop-color="#B9CCD8" stop-opacity="0"/></linearGradient>
+    <linearGradient id="fondu" x1="0" y1="0" x2="0" y2="1"><stop offset=".72" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+    <mask id="brume" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#fondu)"/></mask>
     <linearGradient id="ombre" x1="0" y1="0" x2="1" y2="0"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient>
   </defs>
   <rect width="400" height="600" fill="url(#ciel)"/>
@@ -100,8 +110,7 @@ function archipelSvg(j: Jeu): string {
   <g class="hauts" opacity=".95"><ellipse cx="250" cy="70" rx="46" ry="12" fill="#8FB886"/><path d="M210 70 L250 112 L290 70 Z" fill="#9B8C7A"/><rect x="236" y="42" width="28" height="24" fill="#FFFFFF"/><path d="M232 44 L250 30 L268 44 Z" fill="#F2EEE4"/><circle cx="250" cy="100" r="5" fill="#BFE6FF"/></g>
   <g fill="#FFFFFF" opacity=".85"><ellipse cx="80" cy="120" rx="50" ry="14"/><ellipse cx="350" cy="300" rx="60" ry="16"/><ellipse cx="40" cy="520" rx="70" ry="18"/><ellipse cx="370" cy="560" rx="60" ry="16"/></g>
   ${pont(gen, noyau)}${pont(forge, noyau)}${pont(clin, noyau)}${pont(chant, noyau)}${pont(gen, clin)}
-  ${PILIERS.map((p) => pilier(p.x, p.y, p.r)).join('')}
-  ${PILIERS.map((p) => batimentSvg(p.id, p.x, p.y - 4, niv(p.id))).join('')}
+  ${PILIERS.map((p) => (p.id === 'chantier' ? pilier(p.x, p.y, p.r) + batimentSvg(p.id, p.x, p.y - 4, 1) : spriteBatiment(p.id, p.x, p.y, p.r, niv(p.id)))).join('')}
 </svg>`;
 }
 
@@ -134,7 +143,7 @@ function barreRessources(e: EcranDistrict): string {
 function chipPorteur(j: Jeu, id: string, action: string, extra = '', actif = false, off = false): string {
   const d = porteurDef(id);
   const u = j.porteurs[id]!.usure;
-  return `<button type="button" class="chip${actif ? ' actif' : ''}" style="--c:${COULEUR[d.lignee]};--fond:${FONDS[id]}" data-action="${action}" data-id="${id}"${extra}${off ? ' disabled' : ''}>`
+  return `<button type="button" class="chip${actif ? ' actif' : ''}" style="--c:${COULEUR[d.lignee]};${stylePastille(id, FONDS[id])}" data-action="${action}" data-id="${id}"${extra}${off ? ' disabled' : ''}>`
     + `<span class="pastille" aria-hidden="true"></span><span>${echap(d.nom)}</span>${u >= 1 ? `<small>Usure ${Math.floor(u)}</small>` : ''}</button>`;
 }
 
@@ -146,7 +155,10 @@ function panneauBatiment(e: EcranDistrict): string {
   const cout = coutAmelioration(j, b);
   const bloque = b !== 'noyau' && j.batiments[b] >= j.batiments.noyau;
   let h = `<section class="feuille" aria-label="${echap(d.nom)}"><div class="feuille-tete"><div><h2>${echap(d.nom)}</h2><span class="sous">NIVEAU ${j.batiments[b]} / ${d.niveauMax}${d.affinite ? ' · IDÉAL : ' + (d.affinite === 'tech' ? 'AUGMENTÉ' : d.affinite === 'bio' ? 'GÉNÉ' : 'RÉSONANT') : ''}</span></div>`
-    + `<button type="button" class="btn-sec" data-action="fermer">Fermer</button></div><p class="role">${echap(d.role)}</p>`;
+    + `<button type="button" class="btn-sec" data-action="fermer">Fermer</button></div>`;
+  const pv = prochainVisuel(j.batiments[b]);
+  h += `<div class="apercu"><img src="${illustrationBatiment(b, j.batiments[b])}" alt="" decoding="async"><div><p class="role">${echap(d.role)}</p>`
+    + (pv !== null && pv <= d.niveauMax ? `<small class="aide">Nouvelle apparence au niveau ${pv}.</small>` : '') + `</div></div>`;
 
   if (b === 'generateur') h += `<p class="stat"><b>+${energieParHeure(j)}</b> énergie par heure · stockage ${ent(stockage(j))}</p>`;
   if (b === 'clinique') h += `<p class="stat"><b>−${Math.round(soinParHeure(j) * 10) / 10}</b> Usure par heure pour chaque Porteur au repos</p>`;
@@ -269,7 +281,9 @@ function carteMini(id: string, j: Jeu, attrs = ''): string {
   const m = moduleDef(id);
   const c = j.collection[id];
   const neuve = !c;
+  const ill = illustrationModule(id);
   return `<button type="button" class="carte-mini" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[m.lignee]}" ${attrs}>`
+    + (ill ? `<img class="illus" src="${ill}" alt="" decoding="async">` : '')
     + `<span class="rarete">${NOMS_RARETE[m.rarete]}</span><strong>${echap(m.nom)}</strong>`
     + `<small>${m.gestes.map((g) => `${echap(g.nom)} ${g.effet?.type === 'accord' ? '∗' : g.f}${g.effet ? ` (${NOMS_EFFET[g.effet.type]})` : ''}`).join(' · ')}</small>`
     + `<em>${neuve ? 'Nouvelle carte' : `Doublon · niveau ${c.niveau}`}</em></button>`;
@@ -316,14 +330,15 @@ export function htmlCartes(e: EcranDistrict): string {
       const porte = greffesDe(j, m.id)[0];
       const mult = multNiveau(m.id, c.niveau);
       const cout = composantsNiveau(c.niveau + 1);
-      h += `<article class="carte" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[lignee]}"><div class="carte-tete"><span class="rarete">${NOMS_RARETE[m.rarete]}</span><span class="niveau">Niv. ${c.niveau}</span></div>`
+      const ill = illustrationModule(m.id);
+      h += `<article class="carte" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[lignee]}">${ill ? `<img class="illus" src="${ill}" alt="" decoding="async">` : ''}<div class="carte-tete"><span class="rarete">${NOMS_RARETE[m.rarete]}</span><span class="niveau">Niv. ${c.niveau}</span></div>`
         + `<strong>${echap(m.nom)}</strong>${remplace(j, m.id, porte ?? porteurs[0]?.id)}<ul>${m.gestes.map((g) => `<li><b>${g.effet?.type === 'accord' ? '∗' : g.f}</b> ${echap(g.nom)} · ${TYPE_GESTE[g.type]} ${Math.round(g.v * mult)}${g.lourd ? ' · lourd' : ''}${g.effet ? `<br><span class="effet-texte">${echap(libelleEffet(g.effet))}</span>` : ''}</li>`).join('')}</ul>`
         + (requis === null ? `<small>Niveau maximum</small>` : `<div class="ligne-prog"><div class="piste"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%;--c:var(--r)"></i></div><small>${c.doublons} / ${requis}</small></div>`)
         + `<div class="chips">`
         + (requis !== null ? `<button type="button" class="chip petit" data-action="monter" data-module="${m.id}"${c.doublons >= requis && j.composants >= cout ? '' : ' disabled'}>Monter · ${cout} comp.</button>` : '')
         + (c.doublons > 0 ? `<button type="button" class="chip petit" data-action="recycler" data-module="${m.id}">Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button>` : '')
         + `</div><div class="chips">`
-        + porteurs.map((p) => `<button type="button" class="chip petit${porte === p.id ? ' actif' : ''}" style="--c:${COULEUR[lignee]};--fond:${FONDS[p.id]}" data-action="${porte === p.id ? 'degreffer' : 'greffer'}" data-module="${m.id}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}><span class="pastille" aria-hidden="true"></span>${echap(p.nom)}${porte === p.id ? ' ✓' : ''}</button>`).join('')
+        + porteurs.map((p) => `<button type="button" class="chip petit${porte === p.id ? ' actif' : ''}" style="--c:${COULEUR[lignee]};${stylePastille(p.id, FONDS[p.id])}" data-action="${porte === p.id ? 'degreffer' : 'greffer'}" data-module="${m.id}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}><span class="pastille" aria-hidden="true"></span>${echap(p.nom)}${porte === p.id ? ' ✓' : ''}</button>`).join('')
         + `</div></article>`;
     }
     h += `</div>`;
@@ -345,7 +360,7 @@ export function htmlRencontre(): string {
   h += `<section class="rencontre"><p class="intro-porte">Une porte ronde, scellée depuis les années 2060, luit faiblement. Trois personnes t’attendent devant.</p>`;
   REPLIQUES.forEach((r, i) => {
     const d = porteurDef(r.id);
-    h += `<div class="replique" style="--c:${COULEUR[d.lignee]};--fond:${FONDS[r.id]};--i:${i}"><span class="pastille" aria-hidden="true"></span><div><strong>${echap(d.nom)}</strong><small>${d.lignee === 'tech' ? 'Augmentée · coursière' : d.lignee === 'bio' ? 'Géné · ancien des Fondations' : 'Résonante · lectrice d’empreintes'}</small><p>${echap(r.texte)}</p></div></div>`;
+    h += `<div class="replique" style="--c:${COULEUR[d.lignee]};${stylePastille(r.id, FONDS[r.id])};--i:${i}"><span class="pastille" aria-hidden="true"></span><div><strong>${echap(d.nom)}</strong><small>${d.lignee === 'tech' ? 'Augmentée · coursière' : d.lignee === 'bio' ? 'Géné · ancien des Fondations' : 'Résonante · lectrice d’empreintes'}</small><p>${echap(r.texte)}</p></div></div>`;
   });
   h += `<button type="button" class="prim large" data-action="ouvrir-chambre">Ouvrir la porte</button></section>`;
   return h;
@@ -376,13 +391,13 @@ export function htmlCoupe(e: EcranDistrict): string {
   let h = `<header class="top"><div><h1>Tour du Noyau</h1><span class="sous">EN COUPE · ${j.strate} ÉTAGE${j.strate > 1 ? 'S' : ''} CREUSÉ${j.strate > 1 ? 'S' : ''}</span></div>`
     + `<button type="button" class="btn-sec" data-action="archipel">Archipel</button></header>`;
   h += barreRessources(e);
-  h += `<section class="coupe" aria-label="Coupe"><div class="etage tour"><div class="tete-tour"><span class="label">HABITATS</span><button type="button" class="btn-sec petit" data-action="codex">Codex · ${j.fragments.length}</button></div><div class="habitants">`;
+  h += `<section class="coupe illustree" aria-label="Coupe" style="--decor:url(${decor('coupe')})"><div class="etage tour"><div class="tete-tour"><span class="label">HABITATS</span><button type="button" class="btn-sec petit" data-action="codex">Codex · ${j.fragments.length}</button></div><div class="habitants">`;
   for (const p of PORTEURS) {
     if (!porteursPresents(j).includes(p.id)) continue;
     const d = j.porteurs[p.id]!;
     const etat = enExpedition(j, p.id) ? 'En expédition' : d.poste ? batimentDef(d.poste).nom : 'Au repos';
     const pv = pvMaxCombat(j, p.id);
-    h += `<div class="habitant" style="--c:${COULEUR[p.lignee]};--fond:${FONDS[p.id]}"><span class="pastille" aria-hidden="true"></span><div><strong>${echap(p.nom)}</strong><small>${etat} · PV ${pv}/${p.pvMax}</small>`
+    h += `<div class="habitant" style="--c:${COULEUR[p.lignee]};${stylePastille(p.id, FONDS[p.id])}"><span class="pastille" aria-hidden="true"></span><div><strong>${echap(p.nom)}</strong><small>${etat} · PV ${pv}/${p.pvMax}</small>`
       + (d.usure >= 1 ? `<div class="piste mini" style="--c:var(--danger)"><i style="width:${(100 * d.usure) / usureMax(p.id)}%"></i></div>` : '')
       + (d.modules.length ? `<small>${d.modules.map((m) => echap(moduleDef(m).nom)).join(', ')}</small>` : '') + `</div></div>`;
   }
