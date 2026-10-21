@@ -64,10 +64,10 @@ export function stylePastille(id: string, fond: string | undefined): string {
 
 /**
  * Tableau du district : un tableau complet par âge, l'âge suit le niveau de la Tour du Noyau
- * (les autres bâtiments ne peuvent pas le dépasser). L'âge 4 reprend le 3 tant que son tableau n'existe pas.
+ * (les autres bâtiments ne peuvent pas le dépasser).
  * La nuit (avant 7 h, dès 20 h, heure locale) n'est qu'une teinte posée en CSS.
  */
-const AGES_PEINTS = 3;
+const AGES_PEINTS = 4;
 export function sceneDistrict(niveauNoyau: number, maintenant = new Date()): { age: 1 | 2 | 3 | 4; url: string; nuit: boolean } {
   const age = visuel(niveauNoyau);
   const h = maintenant.getHours();

@@ -45,10 +45,11 @@ export const COULEUR_RARETE: Record<Rarete, string> = { fer: '#8E949C', cuivre: 
 
 type Lieu = BatimentId | 'chantier';
 /** Où se trouve chaque bâtiment dans le tableau de chaque âge (repère 400 × 600, haut de l'étiquette) */
-const LIEUX: Record<1 | 2 | 3, Record<Lieu, { x: number; y: number }>> = {
+const LIEUX: Record<1 | 2 | 3 | 4, Record<Lieu, { x: number; y: number }>> = {
   1: { noyau: { x: 200, y: 232 }, generateur: { x: 322, y: 228 }, forge: { x: 128, y: 500 }, clinique: { x: 322, y: 345 }, chantier: { x: 305, y: 470 } },
   2: { noyau: { x: 222, y: 205 }, generateur: { x: 92, y: 205 }, forge: { x: 332, y: 262 }, clinique: { x: 340, y: 385 }, chantier: { x: 300, y: 478 } },
   3: { noyau: { x: 205, y: 212 }, generateur: { x: 78, y: 182 }, forge: { x: 328, y: 212 }, clinique: { x: 78, y: 430 }, chantier: { x: 300, y: 470 } },
+  4: { noyau: { x: 205, y: 248 }, generateur: { x: 62, y: 232 }, forge: { x: 322, y: 250 }, clinique: { x: 72, y: 452 }, chantier: { x: 300, y: 505 } },
 };
 const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'chantier'];
 
@@ -64,7 +65,7 @@ function tableau(j: Jeu): string {
 
 function etiquettes(e: EcranDistrict): string {
   const j = e.j;
-  const lieux = LIEUX[Math.min(visuel(j.batiments.noyau), 3) as 1 | 2 | 3];
+  const lieux = LIEUX[visuel(j.batiments.noyau)];
   return ORDRE.map((id) => {
     const p = { id, ...lieux[id] };
     const left = (p.x / 400) * 100, top = (p.y / 600) * 100;
