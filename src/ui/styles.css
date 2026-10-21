@@ -571,3 +571,10 @@ h1,h2,h3{font-weight:400}
 @keyframes zoom-lent{from{transform:scale(1.02)}to{transform:scale(1.12)}}
 .titre-sec{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 @media (prefers-reduced-motion: reduce){ .lecture-fond img,.toile .lueur-cristal{animation:none} }
+
+/* Zone de la Strate choisie (écran Escouade) */
+.zone-strate{display:flex;gap:10px;align-items:center;margin:0;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
+.zone-strate .ico{width:20px;height:20px;flex-shrink:0;color:var(--laiton,var(--gold))}
+.zone-strate span{display:grid;gap:2px;min-width:0}
+.zone-strate strong{font-family:var(--display);font-weight:400;font-size:17px;color:var(--ink)}
+.zone-strate small{font-size:12.5px;color:var(--quiet)}

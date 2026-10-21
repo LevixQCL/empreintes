@@ -1,3 +1,4 @@
+import { tireur } from './rng';
 import type { BatimentId, Effet, EnnemiDef, GesteDef, Lignee, ModuleDef, PorteurDef, Rarete } from './types';
 
 // ---------- Porteurs ----------
@@ -205,10 +206,140 @@ export const ENNEMIS: EnnemiDef[] = [
       { type: 'bouclier', v: 12 },
     ],
   },
+  // ---------- Les salles closes (−4 à −6) ----------
+  {
+    id: 'brigadier', nom: 'Brigadier du Serment', lignee: 'reso', tag: 'BRIGADES DU SERMENT DE VEYR', pvMax: 85,
+    motif: [
+      { type: 'dissonance', nom: 'Sommation' },
+      { type: 'atk', nom: 'Matraque', v: 11, cible: 'hasard' },
+      { type: 'bouclier', v: 12 },
+      { type: 'atk', nom: 'Charge', v: 7, zone: true },
+    ],
+  },
+  {
+    id: 'echo-veilleur', nom: 'Écho de veilleur', lignee: 'reso', tag: 'ÉCHO', pvMax: 78,
+    motif: [
+      { type: 'atk', nom: 'Griffe d’ombre', v: 12, cible: 'faible' },
+      { type: 'dissonance', nom: 'Murmure' },
+      { type: 'atk', nom: 'Hurlement', v: 7, zone: true },
+      { type: 'soin', nom: 'Reflux', v: 10 },
+    ],
+  },
+  {
+    id: 'sentinelle-verre', nom: 'Sentinelle de verre', lignee: 'tech', tag: 'ANCIENNE MACHINE', pvMax: 100,
+    motif: [
+      { type: 'bouclier', v: 15 },
+      { type: 'atk', nom: 'Réfraction', v: 11, cible: 'bio' },
+      { type: 'boost' },
+      { type: 'atk', nom: 'Rayon brisé', v: 11, cible: 'hasard' },
+    ],
+  },
+  {
+    id: 'gardien-registres', nom: 'Gardien des registres', lignee: 'reso', tag: 'BOSS · LES SALLES CLOSES', pvMax: 175,
+    motif: [
+      { type: 'dissonance', nom: 'Sceau' },
+      { type: 'atk', nom: 'Effacement', v: 13, cible: 'hasard' },
+      { type: 'atk', nom: 'Liste des noms', v: 8, zone: true },
+      { type: 'boost' },
+      { type: 'atk', nom: 'Effacement', v: 12, cible: 'faible' },
+      { type: 'bouclier', v: 14 },
+    ],
+  },
+  // ---------- Les mémoires contradictoires (−7 à −9) ----------
+  {
+    id: 'double', nom: 'Double', lignee: 'reso', tag: 'ÉCHO DÉDOUBLÉ', pvMax: 90,
+    motif: [
+      { type: 'atk', nom: 'Premier souvenir', v: 12, cible: 'hasard' },
+      { type: 'atk', nom: 'Second souvenir', v: 12, cible: 'hasard' },
+      { type: 'dissonance', nom: 'Contradiction' },
+      { type: 'soin', nom: 'Se rassembler', v: 12 },
+    ],
+  },
+  {
+    id: 'essaim-ambre', nom: 'Essaim d’ambre', lignee: 'bio', tag: 'FAUNE DES STRATES', pvMax: 80,
+    motif: [
+      { type: 'atk', nom: 'Piqûres', v: 6, zone: true },
+      { type: 'atk', nom: 'Piqûres', v: 6, zone: true },
+      { type: 'bouclier', v: 10 },
+      { type: 'boost' },
+    ],
+  },
+  {
+    id: 'automate-graveur', nom: 'Automate graveur', lignee: 'tech', tag: 'ANCIENNE MACHINE', pvMax: 110,
+    motif: [
+      { type: 'atk', nom: 'Burin', v: 13, cible: 'reso' },
+      { type: 'bouclier', v: 12 },
+      { type: 'atk', nom: 'Burin', v: 12, cible: 'faible' },
+      { type: 'soin', nom: 'Polissage', v: 10 },
+    ],
+  },
+  {
+    id: 'tisseuse', nom: 'Tisseuse de souvenirs', lignee: 'bio', tag: 'BOSS · MÉMOIRES MÊLÉES', pvMax: 190,
+    motif: [
+      { type: 'atk', nom: 'Fil', v: 11, cible: 'faible' },
+      { type: 'atk', nom: 'Trame', v: 8, zone: true },
+      { type: 'dissonance', nom: 'Nœud' },
+      { type: 'soin', nom: 'Retisser', v: 14 },
+      { type: 'boost' },
+      { type: 'atk', nom: 'Fil', v: 12, cible: 'hasard' },
+    ],
+  },
+  // ---------- Le fond (−10 et plus) ----------
+  {
+    id: 'premier-porteur', nom: 'Le Premier Porteur', lignee: 'reso', tag: 'BOSS · CEUX D’AVANT', pvMax: 210,
+    motif: [
+      { type: 'dissonance', nom: 'Mise en garde' },
+      { type: 'atk', nom: 'Souvenir de feu', v: 15, cible: 'hasard' },
+      { type: 'atk', nom: 'Marée ancienne', v: 9, zone: true },
+      { type: 'soin', nom: 'Se souvenir', v: 15 },
+      { type: 'boost' },
+      { type: 'atk', nom: 'Dernier mot', v: 14, cible: 'faible' },
+      { type: 'bouclier', v: 16 },
+    ],
+  },
+  // ---------- Les Fondations (−1 à −3), en plus du Rémanent et de la Vigie ----------
+  {
+    id: 'rampeur', nom: 'Rampeur des piliers', lignee: 'bio', tag: 'FAUNE DES FONDATIONS', pvMax: 80,
+    motif: [
+      { type: 'atk', nom: 'Morsure', v: 9, cible: 'faible' },
+      { type: 'bouclier', v: 9 },
+      { type: 'atk', nom: 'Constriction', v: 5, zone: true },
+      { type: 'atk', nom: 'Morsure', v: 10, cible: 'hasard' },
+    ],
+  },
+  {
+    id: 'pilleur', nom: 'Pilleur de Strates', lignee: 'tech', tag: 'FOUILLEUR SANS LICENCE', pvMax: 70,
+    motif: [
+      { type: 'atk', nom: 'Pied-de-biche', v: 9, cible: 'hasard' },
+      { type: 'bouclier', v: 11 },
+      { type: 'atk', nom: 'Coup bas', v: 11, cible: 'faible' },
+      { type: 'soin', nom: 'Stimulant', v: 8 },
+    ],
+  },
 ];
 
-/** La séquence normale d'une Strate (le Rémanent affaibli est réservé à la chambre scellée) */
+/** La séquence d'origine du prototype (gardée pour les tests et le robot) */
 export const SEQUENCE_STRATE = ['remanent', 'vigie', 'confluence'];
+
+/**
+ * Les zones des Strates : plus on descend, plus c'est ancien (Bible du lore).
+ * Une expédition = deux combats tirés dans la zone, puis son gardien.
+ */
+export const ZONES: { nom: string; jusqua: number; ennemis: string[]; boss: string }[] = [
+  { nom: 'Les Fondations', jusqua: 3, ennemis: ['remanent', 'vigie', 'rampeur', 'pilleur'], boss: 'confluence' },
+  { nom: 'Les salles closes', jusqua: 6, ennemis: ['brigadier', 'echo-veilleur', 'sentinelle-verre', 'remanent'], boss: 'gardien-registres' },
+  { nom: 'Les mémoires contradictoires', jusqua: 9, ennemis: ['double', 'essaim-ambre', 'automate-graveur', 'echo-veilleur'], boss: 'tisseuse' },
+  { nom: 'Le fond', jusqua: Infinity, ennemis: ['double', 'automate-graveur', 'sentinelle-verre', 'echo-veilleur'], boss: 'premier-porteur' },
+];
+export const zoneDe = (strate: number) => ZONES.find((z) => strate <= z.jusqua)!;
+
+/** La séquence d'une expédition : deux ennemis différents de la zone, puis son gardien (déterministe selon `rng`) */
+export function sequenceStrate(strate: number, rng: number): string[] {
+  const z = zoneDe(strate);
+  const etat = { rng: (rng ^ 0x5bd1e995) >>> 0 };
+  const [a, b] = tireur(etat).melanger(z.ennemis);
+  return [a!, b!, z.boss];
+}
 
 /** Ancien deck fixe du prototype (Ilka, Doran, Véla + 2 spéciaux) */
 export const DECK_DEPART: GesteDef[] = [...GESTES_PORTEUR.ilka!, ...GESTES_PORTEUR.doran!, ...GESTES_PORTEUR.vela!, ...GESTES_SPECIAUX];

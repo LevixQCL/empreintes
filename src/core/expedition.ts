@@ -2,7 +2,7 @@
 // avec un peu de soin entre deux. Le district reprend la main à la fin.
 
 import { creerCombat } from './combat';
-import { SEQUENCE_STRATE } from './donnees';
+import { sequenceStrate } from './donnees';
 import { REGLES } from './regles';
 import type { CombatEtat, GesteDef, PorteurEtat } from './types';
 
@@ -32,7 +32,7 @@ export function nouvelleExpedition(opts: {
   porteurs: PorteurEtat[]; deck: GesteDef[]; strate: number; rng: number;
   sequence?: string[]; force?: number; tutoriel?: boolean;
 }): Expedition {
-  const sequence = opts.sequence ?? SEQUENCE_STRATE;
+  const sequence = opts.sequence ?? sequenceStrate(opts.strate, opts.rng);
   return {
     strate: opts.strate,
     sequence,

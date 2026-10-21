@@ -3,7 +3,7 @@
 // les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
 
 import { libelleEffet } from '../core/effets';
-import { MODULES, PORTEURS, batimentDef, carteId, gestesRemplaces, moduleDef, porteurDef } from '../core/donnees';
+import { MODULES, PORTEURS, batimentDef, carteId, ennemiDef, gestesRemplaces, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles,
   dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant,
@@ -527,6 +527,8 @@ export function htmlEscouade(e: EcranDistrict): string {
     return id ? `<button type="button" class="emplacement plein" style="--c:${COULEUR[porteurDef(id).lignee]}" data-action="choisir" data-id="${id}" aria-label="Retirer ${echap(porteurDef(id).nom)}">${avatar(id, 56)}<small>${echap(porteurDef(id).nom)}</small></button>`
       : `<div class="emplacement"><span>${i + 1}</span><small>Libre</small></div>`;
   }).join('') + `</div>`;
+  const zone = zoneDe(e.strateChoisie);
+  h += `<p class="zone-strate">${ICO.strate}<span><strong>${echap(zone.nom)}</strong><small>Deux rencontres, puis le gardien de la zone : ${echap(ennemiDef(zone.boss).nom)}</small></span></p>`;
   h += `<p class="aide intro-ecran">Choisis 3 Porteurs. Chacun apporte ses Gestes et ceux de ses cartes au deck commun. Les Porteurs au travail restent au district.</p><div class="grille-porteurs">`;
   for (const p of PORTEURS) {
     if (!porteursPresents(j).includes(p.id)) continue;

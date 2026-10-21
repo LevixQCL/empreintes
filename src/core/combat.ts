@@ -65,6 +65,8 @@ export function texteIntention(s: CombatEtat): string {
   const it = s.intention;
   if (it.type === 'bouclier') return `Va se protéger : bouclier ${it.v}`;
   if (it.type === 'boost') return 'Se concentre : sa prochaine attaque fera double dégâts';
+  if (it.type === 'soin') return `Va se réparer : ${it.nom} +${it.v} PV`;
+  if (it.type === 'dissonance') return `${it.nom} : va brouiller tes Fréquences, pas de Résonance au tour suivant`;
   const v = it.v * s.ennemi.boost;
   if (it.zone) return `Va frapper toute l’escouade : ${it.nom} ${v}`;
   const cible = it.cibleId ? porteurDef(it.cibleId).nom : '?';
@@ -127,7 +129,14 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean } = {}): Pas[
   // en mode silencieux (robot d'équilibrage), on ne garde pas les étapes d'animation
   const emettre = opts.silencieux ? () => {} : (ev: Evenement) => { pas.push({ ev, etat: clone(s) }); };
 
-  const a = analyserChaine(s.chaine);
+  const brut = analyserChaine(s.chaine);
+  // Dissonance : l'ennemi a brouillé les Fréquences, la suite ne compte pas ce tour-ci
+  const a = s.dissonance ? { ...brut, suite: 0, mult: 1 } : brut;
+  if (s.dissonance && brut.suite >= 3) {
+    log(s, 'Fréquences brouillées : pas de Résonance ce tour-ci.');
+    emettre({ kind: 'effet', cible: 'escouade', texte: 'Brouillé' });
+  }
+  s.dissonance = false;
   if (a.suite >= 3) {
     log(s, `Résonance ! Suite de ${a.suite} : effets +${Math.round((a.mult - 1) * 100)} %.`);
     emettre({ kind: 'resonance', suite: a.suite, mult: a.mult });
@@ -213,7 +222,7 @@ function choisirIntention(s: CombatEtat) {
   const m = e.motif[s.ennemi.etape % e.motif.length]!;
   s.ennemi.etape++;
   const it: Intention = { ...m };
-  if (it.type === 'atk' || it.type === 'bouclier') it.v = Math.round(it.v * s.ennemi.force);
+  if (it.type === 'atk' || it.type === 'bouclier' || it.type === 'soin') it.v = Math.round(it.v * s.ennemi.force);
   if (it.type === 'atk' && !it.zone) it.cibleId = choisirCible(s, it.cible);
   s.intention = it;
 }
@@ -310,6 +319,15 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
     s.ennemi.boost = 2;
     log(s, `${e.nom} se concentre. Sa prochaine attaque fera double dégâts.`);
     emettre({ kind: 'boost' });
+  } else if (it.type === 'soin') {
+    const avant = s.ennemi.pv;
+    s.ennemi.pv = Math.min(s.ennemi.pvMax, s.ennemi.pv + it.v);
+    log(s, `${e.nom} · ${it.nom} : +${s.ennemi.pv - avant} PV.`);
+    emettre({ kind: 'soin', cible: 'ennemi', v: s.ennemi.pv - avant });
+  } else if (it.type === 'dissonance') {
+    s.dissonance = true;
+    log(s, `${e.nom} · ${it.nom} : tes Fréquences sont brouillées, pas de Résonance au prochain tour.`);
+    emettre({ kind: 'effet', cible: 'escouade', texte: 'Dissonance' });
   } else {
     let cibles: PorteurEtat[];
     if (it.zone) cibles = vivants(s);

@@ -89,7 +89,11 @@ export type CibleRegle = 'hasard' | 'faible' | Lignee | (string & {});
 export type IntentionDef =
   | { type: 'atk'; nom: string; v: number; cible?: CibleRegle; zone?: boolean }
   | { type: 'bouclier'; v: number }
-  | { type: 'boost' };
+  | { type: 'boost' }
+  /** se répare : regagne des PV */
+  | { type: 'soin'; nom: string; v: number }
+  /** brouille les Fréquences : la prochaine chaîne du joueur ne fait pas de Résonance */
+  | { type: 'dissonance'; nom: string };
 
 export type Intention = IntentionDef & { cibleId?: string | null };
 
@@ -141,6 +145,8 @@ export interface CombatEtat {
   /** part du bouclier d'escouade gardée à la fin du tour ennemi (Rempart) */
   garde?: number;
   flux: number;
+  /** l'ennemi a brouillé les Fréquences : la prochaine chaîne ne fait pas de Résonance */
+  dissonance?: boolean;
   tour: number;
   rng: number;
   issue: Issue;
