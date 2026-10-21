@@ -12,7 +12,7 @@ export interface Plan {
   epoque: string;
   titre: string;
   lignes: string[];
-  /** années du compteur : il défile de la première à la seconde */
+  /** années du compteur : il défile de la première à la seconde ; d'un plan à l'autre, le temps n'avance jamais à rebours */
   annees: [number, number];
   scene: (k: number) => string;
   /** illustrations Midjourney du plan (public/intro/<id>.webp), chacune visible à partir de la ligne « des » (1 = début) */
@@ -131,10 +131,10 @@ export const PLANS: Plan[] = [
     'À six heures, toutes les radios se taisent au milieu d’une phrase.',
     'Au bout du monde, une partie de l’Antarctique se détache d’un bloc, comme une porte arrachée. Un marin la regarde glisser.',
     'La mer montera de plusieurs mètres en quelques décennies. Depuis, on dit « avant » et « après la Fracture ».'] },
-  { epoque: 'Après la Fracture', titre: 'La Montée', annees: [2057, 2085], ambiance: 'aube-doree', camera: 'monte', fonds: [f('04-hauteur')], scene: tours, lignes: [
+  { epoque: 'Après la Fracture', titre: 'La Montée', annees: [2057, 2062], ambiance: 'aube-doree', camera: 'monte', fonds: [f('04-hauteur')], scene: tours, lignes: [
     'Quand on ne peut plus fuir sur les côtés, il reste deux directions. On commence par monter.',
     'Des tours de secours poussent sur des piliers plantés dans l’eau. On vit aux étages finis pendant qu’on coule ceux du dessus.',
-    'Des passerelles les relient. En une génération, les tours se touchent, se mêlent, et deviennent une ville : Vertiga.'] },
+    'Des passerelles les relient. En une génération, elles se mêleront jusqu’à former une seule ville : Vertiga.'] },
   { epoque: 'Sous les piliers', titre: 'Le Puits Zéro', annees: [2062, 2062], ambiance: 'profondeur', camera: 'descend', texte: 'haut', fonds: [f('05-puits-zero')], scene: puits, lignes: [
     'Puis on creuse : il faut des abris contre les tempêtes, et on ne peut les mettre qu’en bas, sous les piliers des Fondations.',
     'Un soir, une foreuse débouche dans une salle aux murs lisses et courbes. Rien n’y est à la taille d’un humain.',
@@ -147,7 +147,7 @@ export const PLANS: Plan[] = [
     'En 2071, sept volontaires reçoivent en secret des empreintes anciennes. Une mèche d’or leur pousse en une nuit. Leur ombre change.',
     'Ils sentent les tempêtes venir avant les machines : ce sont les Résonants. Certains sauvent des villes, d’autres les prennent.',
     'Leurs familles s’installent dans les Hauts, des îles qui flottent au-dessus des nuages. Personne en bas ne sait comment.'] },
-  { epoque: 'Pendant ce temps, en bas', titre: 'La Réponse', annees: [2088, 2100], ambiance: 'atelier', camera: 'droite', fonds: [f('08-reponse')], scene: lignees, lignes: [
+  { epoque: 'Pendant ce temps, en bas', titre: 'La Réponse', annees: [2090, 2100], ambiance: 'atelier', camera: 'droite', fonds: [f('08-reponse')], scene: lignees, lignes: [
     'Les empreintes anciennes sont rares, et les Hauts gardent les meilleures. Alors le reste de l’humanité se refait autrement.',
     'La machine donne les Augmentés. Leurs premiers implants à cœur de cristal servent à une chose : brouiller les Résonants.',
     'La génétique donne les Génés, qui empruntent au vivant ce qui résiste à l’eau et au noir. Trois lignées, nées de la même peur.'] },
