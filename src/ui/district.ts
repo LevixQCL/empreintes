@@ -371,7 +371,7 @@ export function htmlCartes(e: EcranDistrict): string {
 
 const REPLIQUES: { id: string; texte: string }[] = [
   { id: 'ilka', texte: '« On attend quoi, l’Élu ? Qu’elle s’ouvre toute seule ? »' },
-  { id: 'doran', texte: '« J’ai connu ce puits avant qu’on le mure. Je n’aimais pas son silence. »' },
+  { id: 'doran', texte: '« Mon père a travaillé dans ce puits, avant qu’on le mure. Il n’a jamais aimé son silence. »' },
   { id: 'vela', texte: '« Quelque chose a peur, derrière cette porte. Et ce n’est pas moi. »' },
 ];
 
