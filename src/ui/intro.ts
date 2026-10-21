@@ -92,7 +92,15 @@ const toi = (k: number) => svg(`
   <circle cx="180" cy="300" r="22" fill="#2A2238"/><circle cx="180" cy="300" r="22" fill="none" stroke="#A98BDF" stroke-width="3" class="pulse"/>
   ${k >= 2 ? ([['#7FA7C9', 140], ['#8FAF6A', 180], ['#A98BDF', 220]] as [string, number][]).map(([c, x], i) => `<g class="arrivee" style="--i:${i}"><circle cx="${x}" cy="350" r="12" fill="${c}"/><rect x="${x - 10}" y="362" width="20" height="30" rx="8" fill="${c}"/></g>`).join('') : ''}`);
 
-// ---------- Les 10 plans ----------
+const strates = (k: number) => svg(`
+  <rect width="360" height="400" fill="#120E0A"/>
+  ${[0, 1, 2, 3].map((r) => `<rect x="0" y="${60 + r * 85}" width="360" height="80" fill="${['#2A2017', '#241B14', '#1E1711', '#19130E'][r]}"/><path d="M0 ${60 + r * 85} Q 90 ${52 + r * 85} 180 ${62 + r * 85} T 360 ${58 + r * 85}" stroke="#3A2E22" stroke-width="3" fill="none"/>`).join('')}
+  <g class="cristaux">${([[70, 120], [300, 210], [120, 300], [250, 360]] as [number, number][]).map(([x, y]) => `<path d="M${x} ${y - 18} L${x + 8} ${y} L${x} ${y + 9} L${x - 8} ${y} Z" fill="#9F86E8"/>`).join('')}</g>
+  <g transform="translate(205 120) rotate(-20)"><rect width="56" height="12" rx="5" fill="#7D8794"/><rect x="50" y="-2" width="18" height="16" rx="4" fill="#5E6874"/><circle cx="26" cy="6" r="4" fill="#7FB4D8" class="pulse"/></g>
+  <g transform="translate(40 225)"><rect width="34" height="50" rx="8" fill="#2F4A2E" stroke="#8FAF6A" stroke-width="2"/><rect x="6" y="18" width="22" height="26" rx="5" fill="#8FAF6A" opacity=".55" class="pulse-lent"/></g>
+  ${k >= 3 ? `<g class="arrivee" style="--i:0"><rect x="150" y="190" width="60" height="84" rx="7" fill="#1C1F26" stroke="#E8C25A" stroke-width="3"/><path d="M180 212 L192 232 L180 252 L168 232 Z" fill="#B9A6FF"/></g>` : ''}`);
+
+// ---------- Les 11 plans ----------
 
 const f = (id: string, des = 1) => ({ id, des });
 
@@ -126,13 +134,17 @@ export const PLANS: Plan[] = [
   { epoque: '2121', titre: 'On a oublié, encore', ambiance: 'nuit', camera: 'recule', fonds: [f('09-oubli')], scene: oubli, lignes: [
     'Les factions se disputent les empreintes. Les Fondations se fissurent.',
     'La mer remonte, centimètre après centimètre. Presque personne ne regarde.'] },
+  { epoque: '2121', titre: 'Ce qui dort en dessous', ambiance: 'profondeur', camera: 'descend', fonds: [f('10-dessous')], scene: strates, lignes: [
+    'Sous chaque district, les chantiers des années 2060 ont laissé des Strates à l’abandon.',
+    'Cristaux d’empreinte, modules d’Augmentés, greffes de Génés : tout ce qu’on y trouve est unique.',
+    'Chaque trouvaille devient une carte. Qui en réunit assez devient fort.'] },
   { epoque: '2121', titre: 'Toi', ambiance: 'foyer', camera: 'approche', fonds: [f('10-toi')], scene: toi, lignes: [
     'Tu viens d’être élu à la tête d’un district : quelques piliers, une vieille tour.',
     'Sous elle, une porte scellée depuis soixante ans. Trois personnes t’attendent.'] },
 ];
 
 /** Années affichées par le compteur de chaque plan (de, à) */
-const ANNEES: [number, number][] = [[2026, 2026], [2026, 2034], [2040, 2057], [2057, 2085], [2062, 2062], [2062, 2068], [2071, 2090], [2088, 2101], [2121, 2121], [2121, 2121]];
+const ANNEES: [number, number][] = [[2026, 2026], [2026, 2034], [2040, 2057], [2057, 2085], [2062, 2062], [2062, 2068], [2071, 2090], [2088, 2101], [2121, 2121], [2121, 2121], [2121, 2121]];
 
 /** Illustrations Midjourney déjà déposées dans public/intro/ */
 export const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-tempetes', '03-fracture', '04-hauteur', '05-puits-zero', '06-empreintes', '07-ascension', '08-reponse', '09-oubli', '10-toi']);
@@ -166,7 +178,7 @@ const PARTICULES: Record<string, { type: string; n: number }> = {
   or: { type: 'motes', n: 20 }, atelier: { type: 'etincelle', n: 18 }, nuit: { type: 'neige-lumiere', n: 16 }, foyer: { type: 'poussiere', n: 14 },
 };
 
-function particules(ambiance: string): string {
+export function particules(ambiance: string): string {
   const def = PARTICULES[ambiance];
   if (!def) return '';
   const span = Array.from({ length: def.n }, (_, i) => {
@@ -196,7 +208,7 @@ export function htmlIntro(i: number, k: number, mouvement = true, texteCache = f
     + `<div class="intro-haut"><div class="intro-prog" role="img" aria-label="Plan ${i + 1} sur ${PLANS.length}">${progression}</div>`
     + `<div class="intro-outils"><button type="button" class="btn-sec rond" data-action="intro-oeil" aria-pressed="${texteCache}" aria-label="${texteCache ? 'Afficher le texte' : 'Masquer le texte pour voir l’image'}">${texteCache ? OEIL_BARRE : OEIL}</button>`
     + `<button type="button" class="btn-sec" data-action="intro-passer">Passer</button></div></div>`
-    + `<div class="intro-corps${k === 1 ? ' entree' : ''}"><div class="intro-date"><span class="epoque">${echap(p.epoque)}</span>${compteur(de, a)}</div><h2>${echap(p.titre)}</h2>`
+    + `<div class="intro-corps${k === 1 ? ' entree' : ''}"><div class="intro-date"><span class="epoque">${echap(p.epoque)}</span>${de === a && p.epoque.includes(String(de)) ? '' : compteur(de, a)}</div><h2>${echap(p.titre)}</h2>`
     + p.lignes.slice(0, Math.max(1, k)).map((l, n) => `<p class="ligne${n === k - 1 ? ' neuve' : ' lue'}">${echap(l)}</p>`).join('')
     + `</div><div class="intro-bas">${i > 0 || k > 1 ? '<button type="button" class="btn-sec" data-action="intro-precedent">Retour</button>' : '<span></span>'}`
     + (i === 0 ? `<span class="intro-indice">Touche l’écran pour continuer</span>` : '<span></span>')

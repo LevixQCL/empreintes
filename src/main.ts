@@ -8,6 +8,7 @@ import { firebaseActif } from './net/firebase-config';
 import { htmlCombat, type Ecran as EcranCombat, type Fin, type Compte } from './ui/vue';
 import { htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre, type EcranDistrict } from './ui/district';
 import { PLANS, htmlIntro, imagesPlan } from './ui/intro';
+import { htmlTitre } from './ui/titre';
 
 const racine = document.getElementById('app') as HTMLElement;
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -23,8 +24,10 @@ const nouvellesAbsence = J.tick(jeu, Date.now());
 /** résumé « Pendant ton absence », seulement après plus de 10 minutes */
 const retourInitial = sauvegarde && absence > 10 * 60_000 && jeu.introVue ? J.resumeAbsence(avantAbsence, jeu, nouvellesAbsence) : [];
 
-type Mode = 'intro' | 'district' | 'combat';
-let mode: Mode = !jeu.introVue ? 'intro' : jeu.expedition ? 'combat' : 'district';
+type Mode = 'titre' | 'intro' | 'district' | 'combat';
+/** l'écran titre s'affiche à chaque lancement */
+let mode: Mode = 'titre';
+const apresTitre = (): Mode => !jeu.introVue ? 'intro' : jeu.expedition ? 'combat' : 'district';
 let plan = 0;
 let lignesVues = 1;
 /** intro : texte masqué pour admirer l'illustration */
@@ -44,7 +47,8 @@ function afficher() {
   const email = (racine.querySelector('#email') as HTMLInputElement | null)?.value ?? '';
   const mdp = (racine.querySelector('#mdp') as HTMLInputElement | null)?.value ?? '';
   let h = '';
-  if (mode === 'intro') h = htmlIntro(plan, lignesVues, !reduit, texteCache);
+  if (mode === 'titre') h = htmlTitre(jeu.introVue, !reduit);
+  else if (mode === 'intro') h = htmlIntro(plan, lignesVues, !reduit, texteCache);
   else if (mode === 'combat' && jeu.expedition) {
     const etat = K.etat ?? jeu.expedition.combat;
     const lecon = jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;
@@ -195,6 +199,9 @@ function reculerIntro(): boolean {
 }
 
 document.addEventListener('keydown', (ev) => {
+  if (mode === 'titre' && (ev.key === 'Enter' || ev.key === ' ')) {
+    ev.preventDefault(); mode = apresTitre(); if (mode === 'combat') K.fin = finPour(); afficher(); return;
+  }
   if (mode !== 'intro' || ev.altKey || ev.ctrlKey || ev.metaKey) return;
   let change = false;
   if (ev.key === 'ArrowRight' || ev.key === ' ' || ev.key === 'PageDown') { ev.preventDefault(); if (texteCache) { texteCache = false; change = true; } else change = avancerIntro(); }
@@ -294,6 +301,11 @@ racine.addEventListener('click', async (ev) => {
 
   switch (a) {
     // intro
+    case 'titre-jouer':
+      mode = apresTitre();
+      if (mode === 'combat') K.fin = finPour();
+      if (mode === 'intro') { plan = 0; lignesVues = 1; texteCache = false; }
+      break;
     case 'intro-suivant': if (texteCache) texteCache = false; else avancerIntro(); break;
     case 'intro-precedent': texteCache = false; reculerIntro(); break;
     case 'intro-oeil': texteCache = !texteCache; break;
@@ -406,6 +418,6 @@ setInterval(() => {
 }, 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) { J.tick(jeu, Date.now()); sauver(); if (mode === 'district') afficher(); } });
 
-K.fin = mode === 'combat' ? finPour() : null;
+K.fin = null;
 afficher();
 demarrerCompte();

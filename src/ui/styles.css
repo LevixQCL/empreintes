@@ -480,3 +480,27 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .coupe.illustree .etage.strate strong,.coupe.illustree .etage.strate small{text-shadow:0 1px 3px #000}
 .coupe.illustree .etage.roche{background:repeating-linear-gradient(135deg,rgba(23,19,15,.85) 0 10px,rgba(29,24,19,.85) 10px 20px)}
 @media (prefers-reduced-motion: reduce){ .archipel-svg .sprite.v4{animation:none} }
+
+/* ---------- Écran titre ---------- */
+#app[data-mode="titre"]{min-height:100vh;min-height:100dvh}
+.titre{position:relative;isolation:isolate;overflow:hidden;flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:56px 20px 24px;border-radius:18px;min-height:calc(100dvh - 36px);color:#F6F1E6;background:#0C1218;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.titre-fond{position:absolute;inset:0;z-index:-2;animation:fondu-in 1.4s ease-out}
+.titre-fond img,.titre-fond .titre-scene{width:100%;height:100%;object-fit:cover;display:block;animation:titre-cam 30s ease-in-out infinite alternate;transform-origin:50% 60%}
+@keyframes titre-cam{from{transform:scale(1.04)}to{transform:scale(1.14) translateY(-2%)}}
+.titre-voile{position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(8,10,14,.7) 0%,rgba(8,10,14,.15) 30%,rgba(8,10,14,0) 55%,rgba(8,10,14,.75) 88%,rgba(8,10,14,.9) 100%)}
+.titre-haut{text-align:center;display:grid;gap:12px}
+.titre-nom{margin:0;white-space:nowrap;font-family:var(--display);font-weight:400;font-size:clamp(30px,9vw,64px);letter-spacing:.1em;line-height:1;text-shadow:0 0 24px rgba(185,166,255,.55),0 3px 18px rgba(0,0,0,.7)}
+.titre-nom span{display:inline-block;opacity:0;animation:lettre 1.1s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(.5s + var(--i) * .08s)}
+@keyframes lettre{from{opacity:0;transform:translateY(-10px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+.titre-sous{margin:0;font-family:var(--mono);font-size:12px;letter-spacing:.08em;opacity:0;animation:apparait 1s ease-out 1.6s forwards;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.titre-bas{display:grid;justify-items:center;gap:12px;opacity:0;animation:apparait 1s ease-out 2.1s forwards}
+.titre-go{min-width:220px;min-height:52px;font-size:16px;letter-spacing:.04em;animation:appel-titre 2.6s ease-in-out 3s infinite}
+@keyframes appel-titre{0%,100%{box-shadow:0 0 0 0 rgba(185,166,255,0)}50%{box-shadow:0 0 0 6px rgba(185,166,255,.3)}}
+.titre .btn-sec{background:rgba(10,12,16,.4);border-color:rgba(255,255,255,.25);color:#F6F1E6;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.titre-indice{font-family:var(--mono);font-size:11px;letter-spacing:.06em;opacity:.6}
+.titre-version{font-family:var(--mono);font-size:10px;letter-spacing:.1em;opacity:.45;text-transform:uppercase}
+.titre-scene .t-fenetre{animation:scintille 3s ease-in-out infinite;animation-delay:calc(var(--i) * .5s)}
+.titre-scene .t-hauts{animation:flotte 6s ease-in-out infinite alternate}
+.titre-scene .t-vague{animation:reflet 4s ease-in-out infinite alternate}
+.titre-scene .t-pouls{animation:pulse 4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@media (prefers-reduced-motion: reduce){ .titre *,.titre-fond{animation:none!important;opacity:1!important} }
