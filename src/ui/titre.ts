@@ -4,7 +4,7 @@
 import { particules } from './intro';
 
 /** passe à true quand public/intro/00-titre.webp est déposée */
-export const IMAGE_TITRE = false;
+export const IMAGE_TITRE = true;
 
 const fondCode = () => `<svg class="titre-scene" viewBox="0 0 360 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
