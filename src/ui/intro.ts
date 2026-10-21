@@ -117,7 +117,7 @@ export const PLANS: Plan[] = [
     'En 2057, une partie de l’Antarctique glisse dans l’océan : la Fracture.'] },
   { epoque: 'Après la Fracture', titre: 'Construire en hauteur', ambiance: 'aube-doree', camera: 'monte', fonds: [f('04-hauteur')], scene: tours, lignes: [
     'La mer monte de plusieurs mètres. On bâtit vers le ciel, sur des piliers.',
-    'En une génération naissent les villes verticales. La plus grande : Vertiga.'] },
+    'Les premières villes verticales sortent de l’eau. Elles grandiront pendant des décennies ; la plus grande s’appellera Vertiga.'] },
   { epoque: '2062', titre: 'Le Puits Zéro', ambiance: 'profondeur', camera: 'descend', fonds: [f('05-puits-zero')], scene: puits, lignes: [
     'Il faut aussi des abris. On creuse sous les Fondations.',
     'Au fond du Puits Zéro : une salle que nul humain n’a construite.'] },
@@ -144,7 +144,7 @@ export const PLANS: Plan[] = [
 ];
 
 /** Années affichées par le compteur de chaque plan (de, à) */
-const ANNEES: [number, number][] = [[2026, 2026], [2026, 2034], [2040, 2057], [2057, 2085], [2062, 2062], [2062, 2068], [2071, 2090], [2088, 2101], [2121, 2121], [2121, 2121], [2121, 2121]];
+const ANNEES: [number, number][] = [[2026, 2026], [2026, 2034], [2040, 2057], [2057, 2062], [2062, 2062], [2062, 2068], [2071, 2090], [2088, 2101], [2121, 2121], [2121, 2121], [2121, 2121]];
 
 /** Illustrations Midjourney déjà déposées dans public/intro/ */
 export const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-tempetes', '03-fracture', '04-hauteur', '05-puits-zero', '06-empreintes', '07-ascension', '08-reponse', '09-oubli', '10-dessous', '10-toi']);
