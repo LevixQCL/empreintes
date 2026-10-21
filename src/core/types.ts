@@ -39,6 +39,8 @@ export interface PorteurDef {
   pvMax: number;
   /** Porteur nommé (illustré) ou recrue anonyme */
   nomme: boolean;
+  /** Porteur qui rejoint le district plus tard dans l'histoire, et à quelle condition */
+  arrivee?: { strate?: number; forge?: number; replique: string };
 }
 
 export type BatimentId = 'noyau' | 'generateur' | 'forge' | 'clinique';

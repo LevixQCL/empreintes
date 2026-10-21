@@ -108,6 +108,8 @@ export interface Jeu {
   chambre: boolean;
   /** les trois recrues anonymes ont rejoint le district */
   recrues: boolean;
+  /** les Porteurs de l'histoire arrivés plus tard (Sasha, Nuit, Aurel) */
+  arrives: string[];
   /** index de l'objectif guidé en cours (OBJECTIFS.length = tous faits) */
   objectif: number;
   /** fragments d'archives trouvés, dans l'ordre */
@@ -155,6 +157,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     introVue: false,
     chambre: false,
     recrues: false,
+    arrives: [],
     objectif: 0,
     fragments: [],
     lus: [],
@@ -183,6 +186,8 @@ function migrer(j: Jeu) {
   const ancien = j.chambre === undefined;
   j.chambre ??= ancien && j.strate > 1;
   j.recrues ??= ancien;
+  j.arrives ??= [];
+  for (const p of PORTEURS) j.porteurs[p.id] ??= { usure: 0, poste: null, modules: [] };
   j.objectif ??= ancien && j.strate > 1 ? OBJECTIFS.length : 0;
   j.fragments ??= [];
   j.lus ??= [];
@@ -275,6 +280,7 @@ export const greffesDe = (j: Jeu, moduleId: string) => Object.keys(j.porteurs).f
 /** Rattrape le temps écoulé : énergie, soins, Forge. Rien n'est perdu ni puni pendant l'absence. */
 export function tick(j: Jeu, now: number): string[] {
   const nouvelles: string[] = [];
+  nouvelles.push(...verifierArrivees(j));
   const dt = Math.max(0, now - j.dernierTick);
   const heures = dt / 3_600_000;
   j.dernierTick = now;
@@ -506,9 +512,25 @@ export function gestesDe(j: Jeu, id: string): GesteDef[] {
   return gestesAvecModules(id, mods);
 }
 
+/** Les Porteurs de l'histoire qui rejoignent le district quand leur moment arrive ; renvoie les annonces */
+export function verifierArrivees(j: Jeu): string[] {
+  if (!j.chambre) return [];
+  const annonces: string[] = [];
+  for (const p of PORTEURS) {
+    const a = p.arrivee;
+    if (!a || j.arrives.includes(p.id)) continue;
+    if ((a.strate && j.strate < a.strate) || (a.forge && j.batiments.forge < a.forge)) continue;
+    j.arrives.push(p.id);
+    const t = `${p.nom} rejoint le district. « ${a.replique} »`;
+    log(j, t);
+    annonces.push(t);
+  }
+  return annonces;
+}
+
 /** Les Porteurs présents au district (les recrues n'arrivent qu'après la chambre scellée) */
 export function porteursPresents(j: Jeu): string[] {
-  return PORTEURS.filter((p) => p.nomme || j.recrues).map((p) => p.id);
+  return PORTEURS.filter((p) => (p.arrivee ? j.arrives.includes(p.id) : p.nomme || j.recrues)).map((p) => p.id);
 }
 
 export function disponibles(j: Jeu): string[] {

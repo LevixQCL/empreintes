@@ -10,6 +10,13 @@ export const PORTEURS: PorteurDef[] = [
   { id: 'coursier', nom: 'Coursier', lignee: 'tech', pvMax: 32, nomme: false },
   { id: 'docker', nom: 'Docker', lignee: 'bio', pvMax: 42, nomme: false },
   { id: 'guetteur', nom: 'Guetteur', lignee: 'reso', pvMax: 30, nomme: false },
+  // Les trois Porteurs recrutables de la Bible : ils arrivent au fil de l'acte I, Aurel avec l'acte II
+  { id: 'sasha', nom: 'Sasha Mbeki', lignee: 'tech', pvMax: 36, nomme: true,
+    arrivee: { forge: 2, replique: 'Si ça a une vis, ça a une seconde chance.' } },
+  { id: 'nuit', nom: 'Nuit', lignee: 'bio', pvMax: 36, nomme: true,
+    arrivee: { strate: 3, replique: 'Le noir n’est pas vide. Il attend juste qu’on regarde mieux.' } },
+  { id: 'aurel', nom: 'Aurel Orsève', lignee: 'reso', pvMax: 30, nomme: true,
+    arrivee: { strate: 5, replique: 'Mon ombre a de meilleures manières que moi. C’est bien ça, le problème.' } },
 ];
 
 export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string }> = {
@@ -35,6 +42,15 @@ export const GESTES_PORTEUR: Record<string, GesteDef[]> = {
     g('coursier', 'roulade', 'Roulade', 6, 'bouclier', 6), g('coursier', 'coup-bas', 'Coup bas', 3, 'atk', 6), g('coursier', 'relais', 'Relais', 7, 'soin', 5)],
   docker: [g('docker', 'poigne', 'Poigne', 2, 'atk', 8), g('docker', 'epaule', 'Épaule', 3, 'atk', 9), g('docker', 'cuir', 'Cuir épais', 1, 'bouclier', 9),
     g('docker', 'cuir', 'Cuir épais', 1, 'bouclier', 9), g('docker', 'soufflet', 'Soufflet', 4, 'atk', 7), g('docker', 'reprendre', 'Reprendre', 5, 'soin', 6)],
+  // Sasha, réparateur des Reprises : il répare autant qu'il frappe
+  sasha: [g('sasha', 'cle', 'Clé à molette', 4, 'atk', 8), g('sasha', 'cle', 'Clé à molette', 4, 'atk', 8), g('sasha', 'rafistoler', 'Rafistoler', 3, 'soin', 8),
+    g('sasha', 'tole', 'Tôle soudée', 6, 'bouclier', 8), g('sasha', 'debrider', 'Débrider', 5, 'atk', 10), g('sasha', 'etincelle', 'Étincelle', 2, 'atk', 5)],
+  // Nuit, éclaireuse des Veilleurs : elle frappe vite et se cache
+  nuit: [g('nuit', 'griffe', 'Griffe nocturne', 3, 'atk', 9), g('nuit', 'griffe', 'Griffe nocturne', 3, 'atk', 9), g('nuit', 'tapie', 'Tapie', 2, 'bouclier', 7),
+    g('nuit', 'bond', 'Bond silencieux', 4, 'atk', 8), g('nuit', 'chouette', 'Œil de chouette', 5, 'atk', 12), g('nuit', 'retraite', 'Retraite', 1, 'bouclier', 6)],
+  // Aurel, l'héritier en fuite : une ombre ailée, des coups puissants, peu de PV
+  aurel: [g('aurel', 'aile', 'Ombre ailée', 9, 'atk', 10), g('aurel', 'aile', 'Ombre ailée', 9, 'atk', 10), g('aurel', 'port', 'Port de tête', 7, 'bouclier', 7),
+    g('aurel', 'coup-aile', 'Coup d’aile', 8, 'atk', 19, true), g('aurel', 'heritage', 'Héritage', 6, 'soin', 8), g('aurel', 'dedain', 'Dédain', 8, 'atk', 9)],
   guetteur: [g('guetteur', 'presage', 'Présage', 6, 'bouclier', 6), g('guetteur', 'presage', 'Présage', 6, 'bouclier', 6), g('guetteur', 'trait', 'Trait d’ombre', 7, 'atk', 9),
     g('guetteur', 'vigie', 'Vigie', 8, 'bouclier', 8), g('guetteur', 'chuchote', 'Chuchoter', 9, 'atk', 10), g('guetteur', 'veille', 'Veille', 5, 'soin', 6)],
 };
@@ -51,6 +67,9 @@ export const ORDRE_REMPLACEMENT: Record<string, number[]> = {
   coursier: [4, 1, 2, 3, 0, 5],
   docker: [4, 3, 1, 0, 2, 5],
   guetteur: [1, 4, 2, 3, 0, 5],
+  sasha: [5, 1, 3, 0, 2, 4],
+  nuit: [5, 1, 2, 3, 0, 4],
+  aurel: [1, 5, 2, 4, 0, 3],
 };
 
 /** Les Gestes de base qui restent quand `n` Gestes de cartes sont greffés */

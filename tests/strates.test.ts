@@ -58,3 +58,30 @@ describe('Nouvelles intentions ennemies', () => {
     expect(s.ennemi.pv).toBeLessThanOrEqual(s.ennemi.pvMax);
   });
 });
+
+import { nouveauJeu, porteursPresents, tick, verifierArrivees } from '../src/core/jeu';
+
+describe('Les Porteurs de l’histoire', () => {
+  it('Sasha arrive avec la Forge niveau 2, Nuit à la Strate −3, Aurel à la Strate −5', () => {
+    const j = nouveauJeu(0, 1);
+    j.chambre = true; j.recrues = true;
+    expect(porteursPresents(j)).not.toContain('sasha');
+    j.batiments.forge = 2;
+    expect(verifierArrivees(j)[0]).toContain('Sasha Mbeki');
+    expect(porteursPresents(j)).toContain('sasha');
+    j.strate = 3;
+    tick(j, 1000);
+    expect(porteursPresents(j)).toContain('nuit');
+    expect(porteursPresents(j)).not.toContain('aurel');
+    j.strate = 5;
+    expect(verifierArrivees(j)).toHaveLength(1);
+    expect(porteursPresents(j)).toContain('aurel');
+    expect(verifierArrivees(j)).toHaveLength(0); // une seule fois
+  });
+
+  it('personne n’arrive avant l’ouverture de la chambre', () => {
+    const j = nouveauJeu(0, 1);
+    j.strate = 9; j.batiments.forge = 5;
+    expect(verifierArrivees(j)).toHaveLength(0);
+  });
+});
