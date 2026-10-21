@@ -33,6 +33,8 @@ export interface EcranDistrict {
   onglet: 'chroniques' | 'archives';
   chapitre: string | null;
   retourBiblio: 'archipel' | 'coupe' | 'titre';
+  /** rencontre : nombre de répliques affichées */
+  bulles: number;
 }
 
 export const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');

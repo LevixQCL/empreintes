@@ -38,7 +38,7 @@ let lignesVues = 1;
 let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
-const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel' };
+const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0 };
 const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null } = {
   verrou: false, regles: false, pops: [], fin: null, etat: null,
 };
@@ -67,7 +67,7 @@ function afficher() {
     h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, pops: K.pops, fin: K.fin, lecon });
   } else {
     mode = 'district';
-    h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre()
+    h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles)
       : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : htmlArchipel(D);
   }
   racine.dataset.mode = mode;
@@ -341,6 +341,7 @@ racine.addEventListener('click', async (ev) => {
       jeu.introVue = true;
       mode = jeu.expedition ? 'combat' : 'district';
       D.vue = jeu.chambre ? 'archipel' : 'rencontre';
+      D.bulles = 0;
       sauver();
       break;
     case 'intro': plan = 0; lignesVues = 1; texteCache = false; mode = 'intro'; D.menu = false; break;
@@ -382,7 +383,8 @@ racine.addEventListener('click', async (ev) => {
       break;
     }
     case 'reprendre': mode = 'combat'; K.fin = finPour(); break;
-    case 'rencontre': D.vue = 'rencontre'; break;
+    case 'rencontre': D.vue = 'rencontre'; D.bulles = 0; break;
+    case 'rencontre-suite': D.bulles = Math.min(D.bulles + 1, 3); break;
     case 'codex':
     case 'bibliotheque':
       D.retourBiblio = mode === 'titre' ? 'titre' : D.vue === 'coupe' ? 'coupe' : 'archipel';

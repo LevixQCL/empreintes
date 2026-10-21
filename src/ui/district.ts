@@ -375,15 +375,22 @@ const REPLIQUES: { id: string; texte: string }[] = [
   { id: 'vela', texte: '« Quelque chose a peur, derrière cette porte. Et ce n’est pas moi. »' },
 ];
 
-export function htmlRencontre(): string {
-  let h = `<div class="ecran ecran-rencontre" style="--decor:url(${decor('coupe')})"><main class="contenu">`
-    + entete('SOUS LA TOUR DU NOYAU', 'La porte scellée', `<button type="button" class="btn sec" data-action="archipel">Plus tard</button>`);
-  h += `<section class="rencontre"><p class="intro-porte">Une porte ronde, scellée depuis les années 2060, luit faiblement. Trois personnes t’attendent devant.</p>`;
-  REPLIQUES.forEach((r, i) => {
+/** Où parle chacun : position de la bulle à l'écran et direction de sa pointe vers le personnage */
+const BULLES: Record<string, string> = { ilka: 'b-ilka', doran: 'b-doran', vela: 'b-vela' };
+
+/** La rencontre en scène : l'illustration du trio devant la porte, et les répliques en bulles, une par toucher */
+export function htmlRencontre(n = 0): string {
+  const fini = n >= REPLIQUES.length;
+  let h = `<section class="scene-rencontre${fini ? ' finie' : ''}" data-action="rencontre-suite" aria-label="La porte scellée">`
+    + `<div class="rencontre-fond" aria-hidden="true"><div class="rencontre-image"><img src="./intro/00-titre.webp" alt="" decoding="async"><span class="t-porte"></span><span class="t-flamme"></span><span class="t-halo"></span></div></div>`
+    + `<header class="rencontre-haut"><div><span class="label">SOUS LA TOUR DU NOYAU</span><h1>La porte scellée</h1></div><button type="button" class="btn-sec" data-action="archipel">Plus tard</button></header>`
+    + `<p class="recitatif">Une porte ronde, scellée depuis les années 2060, luit faiblement. Trois personnes t’attendent devant.</p>`;
+  REPLIQUES.slice(0, n).forEach((r, i) => {
     const d = porteurDef(r.id);
-    h += `<div class="replique" style="--c:${COULEUR[d.lignee]};--i:${i}">${avatar(r.id, 64)}<div><strong>${echap(d.nom)}</strong><small>${d.lignee === 'tech' ? 'Augmentée · coursière' : d.lignee === 'bio' ? 'Géné · ancien des Fondations' : 'Résonante · lectrice d’empreintes'}</small><p>${echap(r.texte)}</p></div></div>`;
+    h += `<div class="bulle ${BULLES[r.id]}${i === n - 1 ? ' neuve' : ''}" style="--c:${COULEUR[d.lignee]}"><strong>${echap(d.nom)}</strong><p>${echap(r.texte.replace(/^« | »$/g, ''))}</p></div>`;
   });
-  h += `</section></main><footer class="pied-fixe"><button type="button" class="btn prim large appel-porte" data-action="ouvrir-chambre">${ICO.porte}Ouvrir la porte</button></footer></div>`;
+  h += `<footer class="rencontre-bas">${fini ? '' : `<span class="indice-bulle">Touche l’écran pour les écouter</span>`}`
+    + `<button type="button" class="btn prim large appel-porte${fini ? '' : ' discrete'}" data-action="ouvrir-chambre">${ICO.porte}Ouvrir la porte</button></footer></section>`;
   return h;
 }
 
