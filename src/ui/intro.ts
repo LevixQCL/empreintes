@@ -125,8 +125,8 @@ export const PLANS: Plan[] = [
     'Ses cristaux gardent des êtres plus anciens que nous : dragons, esprits, sans-nom.',
     'Greffés sur un humain, ils éveillent des pouvoirs qu’aucune science n’explique.'] },
   { epoque: '2071 – 2090', titre: 'L’Ascension', ambiance: 'or', camera: 'monte', fonds: [f('07-ascension')], scene: ascension, lignes: [
-    'Les premiers greffés sentent venir les tempêtes et sauvent des villes entières.',
-    'Mèche d’or, ombre qui n’est pas la leur : les Résonants prennent la tête du monde.',
+    'En 2071, sept volontaires reçoivent en secret les premières empreintes. Ils sentent venir les tempêtes bien avant les machines.',
+    'Certains sauvent des villes entières, d’autres les prennent par la force. Mèche d’or, ombre qui n’est pas la leur : en vingt ans, les Résonants dirigent le monde.',
     'Leurs familles s’installent dans les Hauts, sur des îles qui flottent.'] },
   { epoque: '2088 – 2101', titre: 'La réponse', ambiance: 'atelier', camera: 'droite', fonds: [f('08-reponse')], scene: lignees, lignes: [
     'Le peuple répond : la machine donne les Augmentés, la génétique les Génés.',
