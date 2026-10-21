@@ -13,7 +13,7 @@ import type { Rarete } from '../core/types';
 import { FRAGMENTS } from '../core/fragments';
 import type { BatimentId } from '../core/types';
 import { COULEUR, FONDS, echap, panneauCompte, type Compte } from './vue';
-import { decor, illustrationBatiment, illustrationModule, prochainVisuel, stylePastille, visuel } from './art';
+import { decor, fondCarte, illustrationBatiment, illustrationModule, prochainVisuel, stylePastille, visuel } from './art';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'codex' | 'cartes';
 
@@ -85,9 +85,10 @@ function batimentSvg(id: BatimentId | 'chantier', x: number, y: number, niv: num
 
 /** Illustration du bâtiment, posée sur son pilier : le haut de l'îlot tombe sur (x, y), le bas s'efface dans la brume. */
 function spriteBatiment(id: BatimentId, x: number, y: number, r: number, niv: number) {
-  const w = r * 2.15;
+  const w = r * 2.4;
   const h = w * 1.25;
-  return `<image class="sprite v${visuel(niv)}" href="${illustrationBatiment(id, niv)}" x="${x - w / 2}" y="${y - h * 0.56}" width="${w}" height="${h}" preserveAspectRatio="xMidYMax meet" mask="url(#brume)"/>`;
+  return `<ellipse class="brume-pied" cx="${x}" cy="${y + h * 0.36}" rx="${w * 0.42}" ry="${h * 0.07}" fill="url(#halo)"/>`
+    + `<image class="sprite v${visuel(niv)}" href="${illustrationBatiment(id, niv)}" x="${x - w / 2}" y="${y - h * 0.56}" width="${w}" height="${h}" preserveAspectRatio="xMidYMax meet" mask="url(#brume)"/>`;
 }
 
 function archipelSvg(j: Jeu): string {
@@ -97,18 +98,17 @@ function archipelSvg(j: Jeu): string {
   };
   const [gen, forge, noyau, clin, chant] = PILIERS as [typeof PILIERS[number], typeof PILIERS[number], typeof PILIERS[number], typeof PILIERS[number], typeof PILIERS[number]];
   const niv = (id: BatimentId | 'chantier') => (id === 'chantier' ? 1 : j.batiments[id]);
-  return `<svg class="archipel-svg" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  const fond = fondCarte();
+  return `<svg class="archipel-svg${fond.nuit ? ' nuit' : ''}" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
     <linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9FD3EC"/><stop offset=".6" stop-color="#DCEFF2"/><stop offset="1" stop-color="#F3E2B8"/></linearGradient>
     <linearGradient id="roche" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9A8A74"/><stop offset=".55" stop-color="#7D7C86" stop-opacity=".9"/><stop offset="1" stop-color="#B9CCD8" stop-opacity="0"/></linearGradient>
     <linearGradient id="fondu" x1="0" y1="0" x2="0" y2="1"><stop offset=".72" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+    <radialGradient id="halo"><stop offset="0" stop-color="#EAF4F7" stop-opacity=".55"/><stop offset="1" stop-color="#EAF4F7" stop-opacity="0"/></radialGradient>
     <mask id="brume" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#fondu)"/></mask>
     <linearGradient id="ombre" x1="0" y1="0" x2="1" y2="0"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient>
   </defs>
-  <rect width="400" height="600" fill="url(#ciel)"/>
-  <g fill="#BACFDD" opacity=".8"><rect x="12" y="40" width="34" height="560"/><rect x="60" y="90" width="22" height="510"/><rect x="340" y="20" width="40" height="580"/><rect x="300" y="110" width="20" height="490"/></g>
-  <g class="hauts" opacity=".95"><ellipse cx="250" cy="70" rx="46" ry="12" fill="#8FB886"/><path d="M210 70 L250 112 L290 70 Z" fill="#9B8C7A"/><rect x="236" y="42" width="28" height="24" fill="#FFFFFF"/><path d="M232 44 L250 30 L268 44 Z" fill="#F2EEE4"/><circle cx="250" cy="100" r="5" fill="#BFE6FF"/></g>
-  <g fill="#FFFFFF" opacity=".85"><ellipse cx="80" cy="120" rx="50" ry="14"/><ellipse cx="350" cy="300" rx="60" ry="16"/><ellipse cx="40" cy="520" rx="70" ry="18"/><ellipse cx="370" cy="560" rx="60" ry="16"/></g>
+  <image class="fond-carte" href="${fond.url}" width="400" height="600" preserveAspectRatio="xMidYMid slice"/>
   ${pont(gen, noyau)}${pont(forge, noyau)}${pont(clin, noyau)}${pont(chant, noyau)}${pont(gen, clin)}
   ${PILIERS.map((p) => (p.id === 'chantier' ? pilier(p.x, p.y, p.r) + batimentSvg(p.id, p.x, p.y - 4, 1) : spriteBatiment(p.id, p.x, p.y, p.r, niv(p.id)))).join('')}
 </svg>`;
@@ -117,7 +117,7 @@ function archipelSvg(j: Jeu): string {
 function etiquettes(e: EcranDistrict): string {
   const j = e.j;
   return PILIERS.map((p) => {
-    const left = (p.x / 400) * 100, top = ((p.y + 30) / 600) * 100;
+    const left = (p.x / 400) * 100, top = ((p.y + p.r * 0.62) / 600) * 100;
     if (p.id === 'chantier') {
       return `<button type="button" class="etiquette verrou" style="left:${left}%;top:${top}%" data-action="chantier"><span>Chantier</span><small>Labo génétique · bientôt</small></button>`;
     }

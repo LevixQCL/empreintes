@@ -29,7 +29,7 @@ const ENNEMIS_ILLUSTRES: Record<string, string> = {
 export const portrait = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/${id}.webp` : null);
 export const illustrationModule = (id: string): string | null => (MODULES_ILLUSTRES[id] ? `${base}modules/${MODULES_ILLUSTRES[id]}.webp` : null);
 export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
-export const decor = (nom: 'archipel' | 'archipel-nuit' | 'coupe') => `${base}district/${nom}.webp`;
+export const decor = (nom: 'archipel' | 'archipel-nuit' | 'coupe' | 'mer-jour' | 'mer-nuit') => `${base}district/${nom}.webp`;
 
 /**
  * Le visuel d'un bâtiment selon son niveau (bible : « L'apparence des bâtiments ») :
@@ -54,4 +54,11 @@ export function prochainVisuel(niveau: number): number | null {
 export function stylePastille(id: string, fond: string | undefined): string {
   const p = portrait(id);
   return `--fond:${fond ?? '#2A2438'}${p ? `;--img:url(${p})` : ''}`;
+}
+
+/** Fond de la carte : la mer de jour de 7 h à 20 h, la mer au clair de lune le reste du temps (heure locale du joueur) */
+export function fondCarte(maintenant = new Date()): { url: string; nuit: boolean } {
+  const h = maintenant.getHours();
+  const nuit = h < 7 || h >= 20;
+  return { url: decor(nuit ? 'mer-nuit' : 'mer-jour'), nuit };
 }
