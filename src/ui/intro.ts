@@ -109,7 +109,7 @@ export const PLANS: Plan[] = [
     'Au début du siècle, un documentaire fait le tour du monde : les glaciers reculent, les étés brûlent.',
     'On le sait, on s’inquiète. Il y a des marches, des sommets, des promesses.'] },
   { epoque: 'Aujourd’hui', titre: 'On a regardé ailleurs', ambiance: 'colere', camera: 'recule', fonds: [f('02-ailleurs')], scene: ecrans, lignes: [
-    'Les prix montent. Dans des pays voisins, les extrêmes se répondent.',
+    'Les prix montent, la colère aussi. L’extrême gauche et l’extrême droite se dressent l’une contre l’autre, chacune crie plus fort.',
     'Des guerres s’embrasent. Le climat devient une ligne en bas de page.'] },
   { epoque: 'Les années 2040 à 2057', titre: 'La nature a frappé', ambiance: 'maree', camera: 'gauche', fonds: [f('03-tempetes'), f('03-fracture', 3)], scene: nature, lignes: [
     'Les tempêtes rendent des côtes entières inhabitables.',
