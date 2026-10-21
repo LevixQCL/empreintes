@@ -513,3 +513,20 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 @media (prefers-reduced-motion: reduce){ .titre *,.titre-fond{animation:none!important;opacity:1!important} }
 .titre-fond img,.titre-fond video{object-position:28% 50%}
 .titre-fond video{animation:none}
+/* Écran titre v2 : titre qui tient toujours sur une ligne, image fixe animée en code */
+.titre{min-width:0;max-width:100%}
+.titre-nom{font-size:clamp(24px,calc((min(100vw,430px) - 72px) / 8.6),54px);letter-spacing:.08em;max-width:100%}
+.titre-sous{font-size:11px;padding-inline:8px}
+.titre-image{position:absolute;top:0;height:100%;aspect-ratio:816/1456;left:28%;transform:translateX(-28%);animation:titre-cam 30s ease-in-out infinite alternate;transform-origin:50% 60%}
+@keyframes titre-cam{from{transform:translateX(-28%) scale(1.02)}to{transform:translateX(-28%) scale(1.07)}}
+.titre-image img{width:100%;height:100%;display:block;animation:none!important}
+.titre-image span{position:absolute;pointer-events:none;border-radius:50%}
+/* la flamme de la lanterne (≈ 30 %, 38 % de l'image) */
+.t-flamme{left:30%;top:38.5%;width:9%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,236,170,.95) 0%,rgba(255,170,70,.55) 35%,rgba(255,140,40,0) 70%);mix-blend-mode:screen;animation:flamme 1.8s steps(1,end) infinite}
+.t-halo{left:30%;top:38.5%;width:46%;aspect-ratio:1;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(255,190,100,.28) 0%,rgba(255,160,70,0) 65%);mix-blend-mode:screen;animation:halo 3.1s ease-in-out infinite}
+@keyframes flamme{0%{opacity:.85}13%{opacity:1}27%{opacity:.7}41%{opacity:.95}55%{opacity:.78}70%{opacity:1}84%{opacity:.82}}
+@keyframes halo{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(.96)}45%{opacity:1;transform:translate(-50%,-50%) scale(1.04)}70%{opacity:.8}}
+/* la lueur violette des joints de la porte */
+.t-porte{left:50%;top:33%;width:104%;aspect-ratio:1;transform:translate(-50%,-50%);box-shadow:0 0 22px 6px rgba(190,110,255,.55),inset 0 0 26px 4px rgba(190,110,255,.45);mix-blend-mode:screen;opacity:.25;animation:porte 4.5s ease-in-out infinite}
+@keyframes porte{0%,100%{opacity:.15}50%{opacity:.6}}
+@media (prefers-reduced-motion: reduce){ .titre-image,.titre-image span{animation:none!important} }
