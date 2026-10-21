@@ -1,0 +1,169 @@
+/* EMPREINTES — couche « matière » posée sur styles.css.
+   Direction validée par Bryan le 21/10/2026 : SF nette façon interfaces holographiques (lignes fines, lueurs, équerres),
+   sans tomber dans le plat. Deux familles de traits :
+   - le filet HOLO (bleu-blanc froid) dessine la structure : équerres, graduations, trames ;
+   - le LAITON (chaud) reste pour ce qu'on touche et ce qu'on gagne : boutons, valeurs, récompenses.
+   Matière : grain fin, trame de lignes, reflet de verre en haut de chaque panneau, fond à trame hexagonale.
+   Une texture peinte (public/art/ui/panneau.webp) peut remplacer le grain sans toucher au reste : --tex-panneau. */
+
+:root{
+  --holo:#9FD8FF; --holo-2:rgba(159,216,255,.55); --holo-3:rgba(159,216,255,.22); --holo-4:rgba(159,216,255,.09);
+  --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  --hex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='48' viewBox='0 0 28 48'%3E%3Cpath d='M14 0l14 8v16l-14 8L0 24V8zM14 32v16' fill='none' stroke='%239FD8FF' stroke-opacity='.07' stroke-width='1'/%3E%3C/svg%3E");
+  --trame:repeating-linear-gradient(180deg,rgba(255,255,255,.022) 0 1px,transparent 1px 3px);
+  --tex-panneau:var(--grain);
+  /* équerres aux deux coins non coupés (haut gauche, bas droite) */
+  --equerres:
+    linear-gradient(var(--eq,var(--holo-2)),var(--eq,var(--holo-2))) 0 0/14px 1.5px no-repeat,
+    linear-gradient(var(--eq,var(--holo-2)),var(--eq,var(--holo-2))) 0 0/1.5px 14px no-repeat,
+    linear-gradient(var(--eq,var(--holo-2)),var(--eq,var(--holo-2))) 100% 100%/14px 1.5px no-repeat,
+    linear-gradient(var(--eq,var(--holo-2)),var(--eq,var(--holo-2))) 100% 100%/1.5px 14px no-repeat;
+}
+
+/* Fond : nuit profonde, trame hexagonale, halo froid en haut et chaud en bas */
+body{background:
+  radial-gradient(90% 50% at 50% -8%,rgba(80,140,200,.22),transparent 60%),
+  radial-gradient(80% 40% at 50% 108%,rgba(216,160,80,.10),transparent 60%),
+  var(--hex),#080B11;background-attachment:fixed}
+@media (min-width:520px){ #app[data-mode="district"],#app[data-mode="combat"]{background:linear-gradient(rgba(8,11,17,.9),rgba(8,11,17,.94)),var(--hex) #080B11;box-shadow:0 0 0 1px var(--holo-4),0 0 0 6px rgba(8,11,17,.6),0 40px 120px rgba(0,0,0,.7)} }
+
+/* ---------- Le panneau de verre : grain, trame, reflet, filet, équerres ---------- */
+.res,.mission,.panneau,.habitant,.carte-porteur,.emplacement,.replique,.combattant,.zone-chaine,.ligne-menu,.tuile-porteur,.occupant,.stat,
+.liste-forge li,.en-cours,.chantier-cours,.chapitre-ligne,.puce,.lecon,.segments-choix,.appel,.plaque,.toast{
+  background:
+    linear-gradient(180deg,rgba(190,225,255,.075) 0%,rgba(190,225,255,0) 38%),
+    var(--trame),
+    var(--tex-panneau),
+    linear-gradient(165deg,rgba(26,34,48,.9) 0%,rgba(12,16,24,.92) 70%);
+  background-size:auto,auto,140px 140px,auto;
+  box-shadow:inset 0 0 0 1px var(--holo-3),inset 0 1px 0 rgba(220,240,255,.12),0 8px 24px rgba(0,0,0,.35)}
+.res::after,.mission::after,.panneau::after,.habitant::after,.carte-porteur::after,.emplacement::after,.replique::after,.combattant::after,.zone-chaine::after,
+.ligne-menu::after,.tuile-porteur::after,.occupant::after,.stat::after,.en-cours::after,.chantier-cours::after,.chapitre-ligne::after,.lecon::after,.appel::after,
+.plaque::after,.fenetre::after,.scene-ennemi::after,.puits::after,.fragment::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:3;background:var(--equerres)}
+.res,.mission,.panneau,.habitant,.carte-porteur,.emplacement,.replique,.combattant,.zone-chaine,.ligne-menu,.tuile-porteur,.occupant,.stat,.en-cours,.chantier-cours,.chapitre-ligne,.lecon,.fenetre,.puits,.fragment{position:relative}
+
+/* Une graduation fine sous le haut des grands panneaux */
+.mission::before,.zone-chaine::before,.fenetre::before,.puits::before{content:"";position:absolute;left:18px;right:18px;top:0;height:4px;pointer-events:none;z-index:2;
+  background:repeating-linear-gradient(90deg,var(--holo-3) 0 1px,transparent 1px 8px);-webkit-mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent);mask-image:linear-gradient(90deg,transparent,#000 20%,#000 80%,transparent)}
+
+/* ---------- Typographie : titres gravés, sur-titres en code ---------- */
+.entete h1,.feuille-tete h2,.fenetre h2,.ennemi-nom,.titre-section{letter-spacing:.03em;text-shadow:0 0 18px rgba(159,216,255,.18),0 1px 0 rgba(0,0,0,.6)}
+.entete .surtitre::before,.feuille-tete .surtitre::before{content:"";width:6px;height:6px;background:var(--holo);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);box-shadow:0 0 8px var(--holo);flex-shrink:0}
+.surtitre{color:#BFD9EC}
+.titre-bloc{color:#BFD9EC}
+.titre-bloc .ico{color:var(--holo);filter:drop-shadow(0 0 4px rgba(159,216,255,.5))}
+.titre-bloc::after{height:5px;background:linear-gradient(90deg,var(--holo-3),transparent) 0 50%/100% 1px no-repeat,repeating-linear-gradient(90deg,var(--holo-3) 0 1px,transparent 1px 10px) 0 0/100% 5px no-repeat;
+  -webkit-mask-image:linear-gradient(90deg,#000,transparent);mask-image:linear-gradient(90deg,#000,transparent)}
+
+/* ---------- Ressources ---------- */
+.hud{background:linear-gradient(rgba(8,11,17,.96),rgba(8,11,17,.86));box-shadow:0 1px 0 var(--holo-3),0 6px 20px rgba(0,0,0,.4)}
+.hud::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--holo-2) 30%,var(--holo-2) 70%,transparent);opacity:.7}
+.res .ico{filter:drop-shadow(0 0 6px currentColor)}
+.res .v{text-shadow:0 0 12px rgba(255,255,255,.18)}
+.jauge-res i{box-shadow:0 0 8px var(--gold)}
+.res .ico.peinte{width:30px;height:30px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+
+/* ---------- Navigation ---------- */
+.nav{background:linear-gradient(rgba(10,14,21,.88),rgba(6,8,12,.98)),var(--trame);box-shadow:0 -1px 0 var(--holo-3)}
+.nav::before{content:"";position:absolute;left:0;right:0;top:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--holo-2) 25%,var(--holo-2) 75%,transparent)}
+.onglet{color:#8E9AA8}
+.onglet .ico{filter:drop-shadow(0 0 0 transparent);transition:filter .2s ease,transform .2s ease}
+.onglet-ico{width:48px;height:34px}
+.onglet.actif{color:#F3E6C4}
+.onglet.actif .onglet-ico{background:none}
+.onglet.actif .onglet-ico::before{content:"";position:absolute;inset:-4px 2px;background:radial-gradient(closest-side,rgba(216,180,101,.28),transparent);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.onglet.actif .ico{color:var(--gold);filter:drop-shadow(0 0 6px rgba(216,180,101,.8));transform:translateY(-1px)}
+.onglet .ico.peinte{width:32px;height:32px;filter:saturate(.55) brightness(.75)}
+.onglet.actif .ico.peinte{filter:drop-shadow(0 0 8px rgba(216,180,101,.6))}
+
+/* ---------- Boutons : laiton gravé, reflet qui passe, chevrons ---------- */
+.btn.prim,button.prim{position:relative;overflow:hidden;
+  background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 45%),repeating-linear-gradient(90deg,rgba(90,60,10,.06) 0 1px,transparent 1px 3px),var(--laiton);
+  box-shadow:inset 0 1px 0 rgba(255,250,220,.8),inset 0 -2px 0 rgba(90,60,10,.45),inset 0 0 0 1px rgba(120,80,20,.5),0 0 18px rgba(216,180,101,.25)}
+.btn.prim::after,button.prim::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:30%;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:reflet-btn 4.5s ease-in-out infinite}
+@keyframes reflet-btn{0%,70%{left:-40%}100%{left:130%}}
+.btn.prim:disabled::after,button.prim:disabled::after{display:none}
+.btn.prim:disabled,button.prim:disabled{background:linear-gradient(180deg,#2A303B,#1F242D);box-shadow:inset 0 0 0 1px #3A4250}
+.btn.sec,.btn-sec,.btn-icone,.btn-flux{background:linear-gradient(180deg,rgba(190,225,255,.08),rgba(190,225,255,0) 50%),var(--trame),linear-gradient(180deg,#1A2230,#111620);
+  box-shadow:inset 0 0 0 1px var(--holo-3),inset 0 1px 0 rgba(220,240,255,.14)}
+.btn.sec:not(:disabled):hover,.btn-sec:not(:disabled):hover,.btn-icone:hover{box-shadow:inset 0 0 0 1px var(--holo-2),inset 0 1px 0 rgba(220,240,255,.2),0 0 14px rgba(159,216,255,.15)}
+.btn-icone .ico{color:var(--holo);filter:drop-shadow(0 0 5px rgba(159,216,255,.5))}
+.btn.large.prim::before{content:"";position:absolute;inset:5px 8px;pointer-events:none;
+  background:linear-gradient(rgba(60,40,8,.5),rgba(60,40,8,.5)) 0 50%/8px 1px no-repeat,linear-gradient(rgba(60,40,8,.5),rgba(60,40,8,.5)) 100% 50%/8px 1px no-repeat}
+
+/* ---------- Jauges : segmentées, lumineuses ---------- */
+.jauge{background:repeating-linear-gradient(90deg,#1E2530 0 6px,#161B23 6px 7px)}
+.jauge>i:not(.cran){box-shadow:0 0 8px var(--jc,var(--gold));-webkit-mask-image:repeating-linear-gradient(90deg,#000 0 6px,transparent 6px 7px);mask-image:repeating-linear-gradient(90deg,#000 0 6px,transparent 6px 7px)}
+.jauge-pv{background:#1A2029;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04)}
+.jauge-pv .pv{box-shadow:0 0 8px rgba(143,207,122,.6)}
+.jauge-ennemi{box-shadow:inset 0 0 0 1px rgba(226,115,90,.5),0 0 16px rgba(226,115,90,.25)}
+.jauge-ennemi i{-webkit-mask-image:repeating-linear-gradient(90deg,#000 0 10px,rgba(0,0,0,.75) 10px 11px);mask-image:repeating-linear-gradient(90deg,#000 0 10px,rgba(0,0,0,.75) 10px 11px)}
+
+/* ---------- Portraits : anneau holographique ---------- */
+.avatar{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 100%,white 30%),color-mix(in srgb,var(--c) 70%,black));filter:drop-shadow(0 0 6px color-mix(in srgb,var(--c) 45%,transparent))}
+
+/* ---------- District ---------- */
+.plaque{--eq:var(--holo-2);background:
+  linear-gradient(180deg,rgba(190,225,255,.09),rgba(190,225,255,0) 50%),var(--trame),linear-gradient(165deg,rgba(18,24,34,.9),rgba(8,11,17,.9));
+  box-shadow:inset 0 0 0 1px var(--holo-3),0 6px 18px rgba(0,0,0,.5)}
+.plaque::before{content:"";position:absolute;left:50%;top:100%;width:1px;height:16px;background:linear-gradient(var(--holo-2),transparent);pointer-events:none}
+.plaque.choisie{--eq:var(--holo);box-shadow:inset 0 0 0 1.5px var(--holo),0 0 20px rgba(159,216,255,.35)}
+.plaque.verrou::before{display:none}
+.niv{filter:drop-shadow(0 0 4px rgba(216,180,101,.6))}
+.mission{--eq:var(--holo)}
+.mission.faite{--eq:var(--gold)}
+.appel{--eq:var(--gold);background:linear-gradient(180deg,rgba(255,220,150,.12),rgba(255,220,150,0) 50%),var(--trame),linear-gradient(165deg,rgba(44,34,16,.94),rgba(20,15,8,.94))}
+.appel.reso{--eq:var(--reso);background:linear-gradient(180deg,rgba(200,180,255,.12),rgba(200,180,255,0) 50%),var(--trame),linear-gradient(165deg,rgba(38,26,62,.94),rgba(16,11,28,.94))}
+.toile::after{content:"";position:absolute;inset:0;pointer-events:none;background:var(--trame);opacity:.5;mix-blend-mode:overlay}
+
+/* ---------- Feuilles et fenêtres ---------- */
+.feuille{background:linear-gradient(180deg,rgba(190,225,255,.06),rgba(190,225,255,0) 120px),var(--trame),var(--hex),linear-gradient(180deg,#141A25,#0B0F16 40%)}
+.feuille::before{content:"";position:absolute;left:16px;right:16px;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--holo-2),transparent);z-index:2}
+.feuille-tete{box-shadow:0 1px 0 var(--holo-3)}
+.feuille-pied{background:linear-gradient(180deg,rgba(190,225,255,.05),transparent 40%),#0A0E14;box-shadow:0 -1px 0 var(--holo-3)}
+.feuille-tete .vignette{box-shadow:inset 0 0 0 1px var(--holo-3);background:radial-gradient(circle at 50% 60%,#2E5566,#0E1A22 75%)}
+.poignee{background:var(--holo-3);box-shadow:0 0 8px var(--holo-4)}
+.fenetre{--eq:var(--holo);background:linear-gradient(180deg,rgba(190,225,255,.08),rgba(190,225,255,0) 40%),var(--trame),var(--hex),linear-gradient(180deg,#171E2A,#0D1118);
+  box-shadow:inset 0 0 0 1px var(--holo-3),0 30px 80px rgba(0,0,0,.6),0 0 40px rgba(159,216,255,.08)}
+.fenetre.fin.victoire{--eq:var(--gold);box-shadow:inset 0 0 0 1px var(--filet-fort),0 0 60px rgba(216,180,101,.22)}
+.fenetre.fin.defaite{--eq:var(--danger)}
+.toast{box-shadow:inset 0 0 0 1px var(--holo-3),inset 3px 0 0 var(--holo),0 10px 30px rgba(0,0,0,.5)}
+
+/* ---------- Cartes, Tour, Escouade ---------- */
+.segments-choix{box-shadow:inset 0 0 0 1px var(--holo-3)}
+.seg.actif{background:linear-gradient(180deg,rgba(216,180,101,.18),rgba(216,180,101,.04));box-shadow:inset 0 -2px 0 var(--c,var(--gold)),0 0 12px rgba(216,180,101,.12)}
+.carte-dos{background:radial-gradient(circle at 50% 42%,rgba(159,216,255,.08),transparent 60%),var(--hex),#0E131B;box-shadow:inset 0 0 0 1px var(--holo-3)}
+.carte-porteur.choisi,.emplacement.plein{--eq:var(--gold)}
+.tuile-porteur.actif{--eq:var(--holo)}
+.puits{--eq:var(--holo)}
+.strate{background:linear-gradient(180deg,rgba(190,225,255,.06),transparent 50%),var(--trame),color-mix(in srgb,rgba(27,20,14,.86) calc((1 - var(--p)) * 100%),rgba(30,22,54,.86))}
+.strate.front{box-shadow:inset 0 0 0 1.5px var(--holo-2),inset 0 0 30px rgba(159,216,255,.14),0 0 20px rgba(159,216,255,.12)}
+.strates::before{background:linear-gradient(var(--holo-2),#7C61C6 70%,transparent);box-shadow:0 0 8px var(--holo-3)}
+.chapitre-ligne.neuf{--eq:var(--gold)}
+
+/* ---------- Combat ---------- */
+.scene-ennemi{--eq:var(--holo)}
+.scene-ennemi .scene-voile{background:
+  linear-gradient(180deg,rgba(8,10,14,.6) 0%,rgba(8,10,14,0) 28%,rgba(8,10,14,0) 42%,rgba(8,10,14,.85) 78%,rgba(8,10,14,.96) 100%),var(--trame)}
+.intention{background:linear-gradient(180deg,rgba(190,225,255,.08),transparent 50%),rgba(8,11,17,.88)}
+.combattant{--eq:color-mix(in srgb,var(--c) 70%,white)}
+.combattant.cible{--eq:var(--danger)}
+.zone-chaine{--eq:var(--holo)}
+.zone-chaine.resonne{--eq:var(--gold)}
+.place-vide{border:none;border-radius:0;background:
+  linear-gradient(var(--holo-2),var(--holo-2)) 0 0/10px 1px no-repeat,linear-gradient(var(--holo-2),var(--holo-2)) 0 0/1px 10px no-repeat,
+  linear-gradient(var(--holo-2),var(--holo-2)) 100% 0/10px 1px no-repeat,linear-gradient(var(--holo-2),var(--holo-2)) 100% 0/1px 10px no-repeat,
+  linear-gradient(var(--holo-2),var(--holo-2)) 0 100%/10px 1px no-repeat,linear-gradient(var(--holo-2),var(--holo-2)) 0 100%/1px 10px no-repeat,
+  linear-gradient(var(--holo-2),var(--holo-2)) 100% 100%/10px 1px no-repeat,linear-gradient(var(--holo-2),var(--holo-2)) 100% 100%/1px 10px no-repeat,
+  repeating-linear-gradient(135deg,rgba(159,216,255,.04) 0 6px,transparent 6px 12px);color:rgba(216,180,101,.5);text-shadow:0 0 12px rgba(216,180,101,.4)}
+.geste{background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 40%),var(--trame),linear-gradient(172deg,color-mix(in srgb,var(--c) 34%,#18202B) 0%,#10141C 64%)}
+.geste::after{content:"";position:absolute;inset:0;pointer-events:none;background:
+  linear-gradient(color-mix(in srgb,var(--c) 80%,white),color-mix(in srgb,var(--c) 80%,white)) 0 100%/10px 1.5px no-repeat,
+  linear-gradient(color-mix(in srgb,var(--c) 80%,white),color-mix(in srgb,var(--c) 80%,white)) 100% 100%/1.5px 10px no-repeat}
+.g-freq{filter:drop-shadow(0 0 5px var(--fc))}
+.geste.halo{box-shadow:inset 0 0 0 2px var(--gold),inset 0 3px 0 var(--gold),inset 0 -26px 30px -20px rgba(216,180,101,.35);filter:drop-shadow(0 0 10px rgba(216,180,101,.45))}
+.segments i.plein{box-shadow:0 0 10px rgba(216,180,101,.8)}
+.badge-reso{box-shadow:0 0 14px rgba(216,180,101,.45)}
+
+@media (prefers-reduced-motion: reduce){ .btn.prim::after,button.prim::after{animation:none;display:none} }

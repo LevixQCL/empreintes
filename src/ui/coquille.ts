@@ -6,7 +6,7 @@ import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
 import { energieParHeure, objectifCourant, stockage, type Jeu } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { portrait } from './art';
-import { ICO, type Icone } from './icones';
+import { ICO, icone, type Icone } from './icones';
 import { COULEUR, echap, panneauCompte, type Compte } from './vue';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'codex' | 'cartes';
@@ -75,11 +75,11 @@ export function hud(j: Jeu): string {
   const max = stockage(j);
   const plein = j.energie >= max;
   return `<header class="hud" aria-label="Ressources">`
-    + `<div class="res energie${plein ? ' plein' : ''}" title="Énergie : ${ent(j.energie)} sur ${ent(max)}, +${energieParHeure(j)} par heure">${ICO.energie}<span class="v">${ent(j.energie)}</span>`
+    + `<div class="res energie${plein ? ' plein' : ''}" title="Énergie : ${ent(j.energie)} sur ${ent(max)}, +${energieParHeure(j)} par heure">${icone('energie')}<span class="v">${ent(j.energie)}</span>`
     + `<span class="jauge-res"><i style="width:${Math.min(100, (100 * j.energie) / Math.max(1, max))}%"></i></span><small>${plein ? 'plein' : `+${energieParHeure(j)}/h`}</small></div>`
-    + `<div class="res composants" title="Composants">${ICO.composants}<span class="v">${ent(j.composants)}</span><small>comp.</small></div>`
-    + `<div class="res eclats" title="Éclats">${ICO.eclats}<span class="v">${ent(j.eclats)}</span><small>Éclats</small></div>`
-    + `<div class="res abysse" title="Strate la plus profonde ouverte">${ICO.strate}<span class="v">−${j.strate}</span><small>Strate</small></div>`
+    + `<div class="res composants" title="Composants">${icone('composants')}<span class="v">${ent(j.composants)}</span><small>comp.</small></div>`
+    + `<div class="res eclats" title="Éclats">${icone('eclats')}<span class="v">${ent(j.eclats)}</span><small>Éclats</small></div>`
+    + `<div class="res abysse" title="Strate la plus profonde ouverte">${icone('strate')}<span class="v">−${j.strate}</span><small>Strate</small></div>`
     + `</header>`;
 }
 
@@ -106,7 +106,7 @@ export function navigation(e: EcranDistrict): string {
     const ferme = !j.chambre && t.vue === 'cartes';
     const action = t.vue === 'plus' ? 'menu' : t.vue;
     return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${ferme ? ' disabled' : ''}${actif === t.vue ? ' aria-current="page"' : ''}>`
-      + `<span class="onglet-ico">${ferme ? ICO.verrou : ICO[t.icone]}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span>${t.nom}</span></button>`;
+      + `<span class="onglet-ico">${ferme ? ICO.verrou : icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span>${t.nom}</span></button>`;
   }).join('') + `</nav>`;
 }
 

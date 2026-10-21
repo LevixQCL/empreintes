@@ -1,6 +1,7 @@
 import './ui/styles.css';
 import './ui/scenes.css';
 import './ui/face-carte.css';
+import './ui/holo.css';
 import * as C from './core/combat';
 import { ennemiDef, moduleDef } from './core/donnees';
 import * as J from './core/jeu';
