@@ -19,3 +19,10 @@ describe('Chroniques', () => {
     for (const interdit of ['vendredi', 'sablier', 'dieux', 'ça va. Dix']) expect(texte).not.toContain(interdit);
   });
 });
+
+import { FRAGMENTS, ORDRE_FRAGMENTS } from '../src/core/fragments';
+describe('Fragments d’archives', () => {
+  it('ont un ordre qui couvre chaque fragment exactement une fois', () => {
+    expect([...ORDRE_FRAGMENTS].sort()).toEqual(FRAGMENTS.map((f) => f.id).sort());
+  });
+});
