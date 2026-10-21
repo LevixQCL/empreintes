@@ -3,7 +3,8 @@
 
 import type { BatimentId } from '../core/types';
 
-const base = './art/';
+// URL absolue : une url() dans une variable CSS se résout depuis la feuille de style (assets/), pas depuis la page.
+const base = new URL('art/', document.baseURI).href;
 
 /** Porteurs illustrés (les recrues anonymes n'ont pas de portrait) */
 const PORTEURS_ILLUSTRES = new Set(['ilka', 'doran', 'vela', 'sasha', 'nuit', 'aurel']);
