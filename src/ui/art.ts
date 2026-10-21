@@ -35,7 +35,7 @@ export const illustrationModule = (cle: string): string | null => {
 export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
 export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
-export const decor = (nom: 'archipel' | 'archipel-nuit' | 'coupe' | 'mer') => `${base}district/${nom}.webp`;
+export const decor = (nom: 'archipel' | 'archipel-nuit' | 'coupe') => `${base}district/${nom}.webp`;
 
 /**
  * Le visuel d'un bâtiment selon son niveau (bible : « L'apparence des bâtiments ») :
@@ -62,9 +62,14 @@ export function stylePastille(id: string, fond: string | undefined): string {
   return `--fond:${fond ?? '#2A2438'}${p ? `;--img:url(${p})` : ''}`;
 }
 
-/** Fond de la carte : la mer vue d'en haut ; la nuit (avant 7 h, dès 20 h, heure locale) n'est qu'une teinte posée en CSS */
-export function fondCarte(maintenant = new Date()): { url: string; nuit: boolean } {
+/**
+ * Tableau du district : un tableau complet par âge, l'âge suit le niveau de la Tour du Noyau
+ * (les autres bâtiments ne peuvent pas le dépasser). L'âge 4 reprend le 3 tant que son tableau n'existe pas.
+ * La nuit (avant 7 h, dès 20 h, heure locale) n'est qu'une teinte posée en CSS.
+ */
+const AGES_PEINTS = 3;
+export function sceneDistrict(niveauNoyau: number, maintenant = new Date()): { age: 1 | 2 | 3 | 4; url: string; nuit: boolean } {
+  const age = visuel(niveauNoyau);
   const h = maintenant.getHours();
-  const nuit = h < 7 || h >= 20;
-  return { url: decor('mer'), nuit };
+  return { age, url: `${base}district/age-${Math.min(age, AGES_PEINTS)}.webp`, nuit: h < 7 || h >= 20 };
 }

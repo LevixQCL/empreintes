@@ -1,5 +1,5 @@
 // Écrans du district : l'archipel (accueil), la coupe de la Tour du Noyau, le choix de l'escouade.
-// Les bâtiments sont des illustrations Midjourney (public/art/batiments, 4 apparences selon le niveau) ; le fond est la mer peinte (jour ou nuit), le Chantier une esquisse en attendant son illustration.
+// Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ; les étiquettes cliquables sont posées dessus.
 
 import { libelleEffet } from '../core/effets';
 import { MODULES, PORTEURS, batimentDef, carteId, gestesRemplaces, moduleDef, porteurDef } from '../core/donnees';
@@ -13,7 +13,7 @@ import type { Rarete } from '../core/types';
 import { FRAGMENTS } from '../core/fragments';
 import type { BatimentId } from '../core/types';
 import { COULEUR, FONDS, echap, panneauCompte, type Compte } from './vue';
-import { decor, fondCarte, illustrationBatiment, prochainVisuel, stylePastille, visuel } from './art';
+import { decor, sceneDistrict, illustrationBatiment, prochainVisuel, stylePastille, visuel } from './art';
 import { faceCarte } from './carte';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'codex' | 'cartes';
@@ -43,59 +43,31 @@ export const COULEUR_RARETE: Record<Rarete, string> = { fer: '#8E949C', cuivre: 
 
 // ---------- Archipel (SVG provisoire) ----------
 
-const PILIERS: { id: BatimentId | 'chantier'; x: number; y: number; r: number }[] = [
-  { id: 'generateur', x: 92, y: 188, r: 62 },
-  { id: 'forge', x: 308, y: 196, r: 62 },
-  { id: 'noyau', x: 200, y: 300, r: 82 },
-  { id: 'clinique', x: 96, y: 432, r: 64 },
-  { id: 'chantier', x: 306, y: 440, r: 60 },
-];
+type Lieu = BatimentId | 'chantier';
+/** Où se trouve chaque bâtiment dans le tableau de chaque âge (repère 400 × 600, haut de l'étiquette) */
+const LIEUX: Record<1 | 2 | 3, Record<Lieu, { x: number; y: number }>> = {
+  1: { noyau: { x: 200, y: 232 }, generateur: { x: 322, y: 228 }, forge: { x: 128, y: 500 }, clinique: { x: 322, y: 345 }, chantier: { x: 342, y: 470 } },
+  2: { noyau: { x: 222, y: 205 }, generateur: { x: 92, y: 205 }, forge: { x: 332, y: 262 }, clinique: { x: 340, y: 385 }, chantier: { x: 306, y: 478 } },
+  3: { noyau: { x: 205, y: 212 }, generateur: { x: 78, y: 182 }, forge: { x: 328, y: 212 }, clinique: { x: 78, y: 430 }, chantier: { x: 330, y: 470 } },
+};
+const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'chantier'];
 
-/** Anneau d'écume au pied d'un îlot : seulement l'arc avant, l'arrière passe derrière la roche */
-function ecume(x: number, y: number, rx: number, ry: number) {
-  return `<path class="ecume" d="M${x - rx} ${y} A${rx} ${ry} 0 0 0 ${x + rx} ${y}"/>`;
-}
+/** Âge affiché au rendu précédent : un changement d'âge déclenche le fondu d'apparition */
+let ageAffiche = 0;
 
-/** Emplacement du Chantier en attendant son illustration : une nappe de brume et un échafaudage esquissé */
-function emplacementChantier(x: number, y: number, r: number) {
-  return ecume(x, y + 4, r * 0.75, r * 0.2)
-    + `<g class="esquisse" transform="translate(${x} ${y})" stroke="#F2E6CC" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".75"><path d="M-22 0 V-46 M22 0 V-46 M-22 -23 H22 M-22 -46 H22 M-22 0 L22 -46"/><path d="M-34 2 H34" stroke-dasharray="3 5"/></g>`;
-}
-
-/** Illustration du bâtiment, posée sur son pilier : le haut de l'îlot tombe sur (x, y), le bas s'efface dans la brume. */
-function spriteBatiment(id: BatimentId, x: number, y: number, r: number, niv: number) {
-  const w = r * 2.4;
-  const h = w * 1.25;
-  const eau = y + h * 0.18;
-  return `<ellipse class="ombre-eau" cx="${x + w * 0.04}" cy="${eau + 4}" rx="${w * 0.36}" ry="${h * 0.06}"/>`
-    + `<image class="sprite v${visuel(niv)}" href="${illustrationBatiment(id, niv)}" x="${x - w / 2}" y="${y - h * 0.56}" width="${w}" height="${h}" preserveAspectRatio="xMidYMax meet" mask="url(#brume)"/>`
-    + ecume(x, eau, w * 0.25, h * 0.035);
-}
-
-function archipelSvg(j: Jeu): string {
-  const pont = (a: (typeof PILIERS)[number], b: (typeof PILIERS)[number]) => {
-    const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2 + 26;
-    return `<path d="M${a.x} ${a.y} Q${mx} ${my} ${b.x} ${b.y}" stroke="#7A5A3A" stroke-width="4" fill="none" stroke-dasharray="2 4"/>`;
-  };
-  const [gen, forge, noyau, clin, chant] = PILIERS as [typeof PILIERS[number], typeof PILIERS[number], typeof PILIERS[number], typeof PILIERS[number], typeof PILIERS[number]];
-  const niv = (id: BatimentId | 'chantier') => (id === 'chantier' ? 1 : j.batiments[id]);
-  const fond = fondCarte();
-  return `<svg class="archipel-svg${fond.nuit ? ' nuit' : ''}" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-  <defs>
-    <linearGradient id="fondu" x1="0" y1="0" x2="0" y2="1"><stop offset=".7" stop-color="#fff"/><stop offset=".8" stop-color="#000"/></linearGradient>
-    <mask id="brume" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#fondu)"/></mask>
-  </defs>
-  <image class="fond-carte" href="${fond.url}" width="400" height="600" preserveAspectRatio="xMidYMid slice"/>
-  <rect class="voile" width="400" height="600"/>
-  ${pont(gen, noyau)}${pont(forge, noyau)}${pont(clin, noyau)}${pont(chant, noyau)}${pont(gen, clin)}
-  ${PILIERS.map((p) => (p.id === 'chantier' ? emplacementChantier(p.x, p.y, p.r) : spriteBatiment(p.id, p.x, p.y, p.r, niv(p.id)))).join('')}
-</svg>`;
+function tableau(j: Jeu): string {
+  const s = sceneDistrict(j.batiments.noyau);
+  const nouveau = ageAffiche !== 0 && ageAffiche !== s.age;
+  ageAffiche = s.age;
+  return `<img class="tableau${s.nuit ? ' nuit' : ''}${nouveau ? ' nouvel-age' : ''}" src="${s.url}" alt="" draggable="false"/>${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
 }
 
 function etiquettes(e: EcranDistrict): string {
   const j = e.j;
-  return PILIERS.map((p) => {
-    const left = (p.x / 400) * 100, top = ((p.y + p.r * 0.62) / 600) * 100;
+  const lieux = LIEUX[Math.min(visuel(j.batiments.noyau), 3) as 1 | 2 | 3];
+  return ORDRE.map((id) => {
+    const p = { id, ...lieux[id] };
+    const left = (p.x / 400) * 100, top = (p.y / 600) * 100;
     if (p.id === 'chantier') {
       return `<button type="button" class="etiquette verrou" style="left:${left}%;top:${top}%" data-action="chantier"><span>Chantier</span><small>Labo génétique · bientôt</small></button>`;
     }
@@ -216,7 +188,7 @@ export function htmlArchipel(e: EcranDistrict): string {
       + (fait ? `<button type="button" class="prim" data-action="reclamer">Récupérer · ${gain}</button>` : `<small class="aide">Récompense : ${gain}</small>`) + `</section>`;
   }
   h += blocQuotidien(e);
-  h += `<section class="archipel" aria-label="Archipel">${archipelSvg(j)}${etiquettes(e)}</section>`;
+  h += `<section class="archipel" aria-label="Archipel">${tableau(j)}${etiquettes(e)}</section>`;
   if (e.message) h += `<p class="message">${echap(e.message)}</p>`;
   h += panneauBatiment(e);
   h += `<div class="journal" aria-label="Journal">${j.journal.slice(0, 3).map((t) => `<p>${echap(t)}</p>`).join('')}</div>`;
