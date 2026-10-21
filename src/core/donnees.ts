@@ -87,7 +87,7 @@ const d = (geste: number, effet: Effet) => ({ geste, effet });
 export const MODULES: ModuleDef[] = [
   // Augmentés : Fréquences basses et moyennes
   m('jambes-ressort', 'Jambes à ressort', 'tech', 'fer', [x('Détente', 4, 'atk', 11), x('Saut d’appui', 5, 'bouclier', 8)], [d(0, { type: 'percant' }), d(1, { type: 'elan' })]),
-  m('gant-arc', 'Gant à arc', 'tech', 'fer', [x('Décharge', 6, 'atk', 10), x('Écran', 7, 'bouclier', 7)], [d(0, { type: 'flux', v: 1 }), d(1, { type: 'elan' })]),
+  m('gant-arc', 'Gant à arc', 'tech', 'fer', [x('Décharge', 6, 'atk', 12), x('Écran', 7, 'bouclier', 9)], [d(0, { type: 'flux', v: 1 }), d(1, { type: 'elan' })]),
   m('oeil-relais', 'Œil-relais', 'tech', 'fer', [x('Visée', 5, 'atk', 9), x('Diagnostic', 3, 'soin', 6)], [d(0, { type: 'percant' }), d(1, { type: 'flux', v: 1 })]),
   m('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', [x('Surrégime', 7, 'atk', 11, false, { type: 'flux', v: 1 }), x('Refroidir', 6, 'bouclier', 10)], [d(0, { type: 'flux', v: 1 }), d(1, { type: 'elan' })]),
   m('bras-grue', 'Bras-grue', 'tech', 'argent', [x('Levage', 8, 'atk', 24, true, { type: 'percant' }), x('Étai', 6, 'bouclier', 13, false, { type: 'elan' }), x('Riveter', 4, 'atk', 12, false, { type: 'flux', v: 1 })]),
@@ -95,22 +95,50 @@ export const MODULES: ModuleDef[] = [
     x('Tourbillon', 9, 'atk', 22, true, { type: 'crescendo', part: 0.4 })]),
   // Génés : Fréquences basses
   m('glande-ambre', 'Glande d’ambre', 'bio', 'fer', [x('Sève', 3, 'soin', 6), x('Mue', 2, 'bouclier', 8)], [d(1, { type: 'rempart', part: 0.5 }), d(0, { type: 'vague' })]),
-  m('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', [x('Happer', 1, 'atk', 8), x('Ronger', 3, 'atk', 9)], [d(0, { type: 'siphon', part: 0.5 }), d(1, { type: 'fissure', part: 0.25 })]),
+  m('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', [x('Happer', 1, 'atk', 9), x('Ronger', 3, 'atk', 10)], [d(0, { type: 'siphon', part: 0.5 }), d(1, { type: 'fissure', part: 0.25 })]),
   m('cuir-recif', 'Cuir de récif', 'bio', 'fer', [x('Écailles', 4, 'bouclier', 9), x('Barbillon', 5, 'atk', 8)], [d(0, { type: 'rempart', part: 0.5 }), d(1, { type: 'siphon', part: 0.5 })]),
-  m('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', [x('Apnée', 2, 'bouclier', 11, false, { type: 'rempart', part: 0.5 }), x('Remontée', 4, 'soin', 8)], [d(0, { type: 'rempart', part: 0.5 }), d(1, { type: 'vague' })]),
+  m('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', [x('Apnée', 2, 'bouclier', 10, false, { type: 'rempart', part: 0.5 }), x('Remontée', 4, 'soin', 8)], [d(0, { type: 'rempart', part: 0.5 }), d(1, { type: 'vague' })]),
   m('carapace-mere', 'Carapace-mère', 'bio', 'argent', [x('Rempart', 5, 'bouclier', 16, false, { type: 'rempart', part: 0.75 }), x('Bélier', 6, 'atk', 22, true, { type: 'fissure', part: 0.25 }),
     x('Mue rapide', 1, 'soin', 9, false, { type: 'vague' })]),
   m('coeur-meute', 'Cœur de meute', 'bio', 'or', [x('Hurlement', 4, 'atk', 11, false, { type: 'fissure', part: 0.4 }), x('Curée', 5, 'atk', 13, false, { type: 'siphon', part: 0.75 }),
     x('Instinct', 3, 'soin', 9, false, { type: 'vague' })]),
   // Résonants : Fréquences hautes
   m('eclat-chant', 'Éclat qui chante', 'reso', 'fer', [x('Note haute', 8, 'atk', 13), x('Note basse', 7, 'bouclier', 9)], [d(1, { type: 'desarmer', part: 0.3 }), d(0, { type: 'crescendo', part: 0.3 })]),
-  m('miroir-brume', 'Miroir de brume', 'reso', 'fer', [x('Reflet', 9, 'atk', 10), x('Voile', 8, 'bouclier', 8)], [d(1, { type: 'desarmer', part: 0.3 }), d(0, { type: 'fissure', part: 0.25 })]),
-  m('encre-ancienne', 'Encre ancienne', 'reso', 'fer', [x('Glyphe', 6, 'atk', 9), x('Paume ouverte', 7, 'soin', 8)], [d(0, { type: 'fissure', part: 0.25 }), d(1, { type: 'accord' })]),
-  m('plume-givre', 'Plume de givre', 'reso', 'cuivre', [x('Givre', 9, 'atk', 12, false, { type: 'desarmer', part: 0.4 }), x('Cristal', 8, 'bouclier', 11)], [d(0, { type: 'desarmer', part: 0.4 }), d(1, { type: 'accord' })]),
+  m('miroir-brume', 'Miroir de brume', 'reso', 'fer', [x('Reflet', 9, 'atk', 12), x('Voile', 8, 'bouclier', 9)], [d(1, { type: 'desarmer', part: 0.3 }), d(0, { type: 'fissure', part: 0.25 })]),
+  m('encre-ancienne', 'Encre ancienne', 'reso', 'fer', [x('Glyphe', 6, 'atk', 11), x('Paume ouverte', 7, 'soin', 8)], [d(0, { type: 'fissure', part: 0.25 }), d(1, { type: 'accord' })]),
+  m('plume-givre', 'Plume de givre', 'reso', 'cuivre', [x('Givre', 9, 'atk', 13, false, { type: 'desarmer', part: 0.4 }), x('Cristal', 8, 'bouclier', 12)], [d(0, { type: 'desarmer', part: 0.4 }), d(1, { type: 'accord' })]),
   m('ombre-ailee', 'Ombre ailée', 'reso', 'argent', [x('Envol', 7, 'bouclier', 13, false, { type: 'accord' }), x('Piqué', 9, 'atk', 25, true, { type: 'fissure', part: 0.4 }),
     x('Battement', 8, 'soin', 10, false, { type: 'vague' })]),
   m('chant-abysses', 'Chant des abysses', 'reso', 'or', [x('Unisson', 7, 'atk', 13, false, { type: 'accord' }), x('Contre-chant', 8, 'atk', 13, false, { type: 'siphon', part: 0.75 }),
     x('Silence', 9, 'bouclier', 14, false, { type: 'desarmer', part: 0.6 })]),
+  // ---------- Deuxième série (21 octobre 2026) : 4 Modules par lignée ----------
+  // Augmentés : câbles de coursier, premiers implants anti-Résonants, implants débridés du Réseau des Reprises
+  m('grappin-cable', 'Grappin à câble', 'tech', 'fer', [x('Lancer', 5, 'atk', 10), x('Se hisser', 4, 'bouclier', 8)],
+    [d(1, { type: 'elan' }), d(0, { type: 'percant' })]),
+  m('oeil-brouilleur', 'Œil-brouilleur', 'tech', 'cuivre', [x('Brouillage', 6, 'atk', 11), x('Contre-mesure', 7, 'bouclier', 10)],
+    [d(0, { type: 'desarmer', part: 0.3 }), d(1, { type: 'flux', v: 1 })]),
+  m('dorsale', 'Dorsale renforcée', 'tech', 'argent', [x('Porter', 3, 'bouclier', 14), x('Bélier hydraulique', 7, 'atk', 20, true), x('Redresser', 4, 'soin', 8)],
+    [d(0, { type: 'elan' }), d(1, { type: 'percant' }), d(2, { type: 'flux', v: 1 })]),
+  m('coeur-reprise', 'Cœur de reprise', 'tech', 'or', [x('Débridage', 2, 'atk', 12), x('Court-circuit', 6, 'atk', 12), x('Réamorçage', 5, 'soin', 9)],
+    [d(1, { type: 'percant' }), d(0, { type: 'crescendo', part: 0.3 }), d(2, { type: 'flux', v: 1 })]),
+  // Génés : voir dans le noir, respirer sous les Fondations, se refaire
+  m('yeux-nocturnes', 'Yeux nocturnes', 'bio', 'fer', [x('Guet', 4, 'bouclier', 8), x('Bond dans le noir', 3, 'atk', 10)],
+    [d(1, { type: 'fissure', part: 0.25 }), d(0, { type: 'rempart', part: 0.5 })]),
+  m('branchies', 'Branchies des Fondations', 'bio', 'cuivre', [x('Plongée', 2, 'bouclier', 11), x('Remous', 1, 'atk', 10)],
+    [d(0, { type: 'rempart', part: 0.5 }), d(1, { type: 'siphon', part: 0.5 })]),
+  m('sang-ambre', 'Sang d’ambre', 'bio', 'argent', [x('Coagulation', 3, 'soin', 10), x('Durcir', 2, 'bouclier', 14), x('Éclat d’ambre', 5, 'atk', 18, true)],
+    [d(0, { type: 'vague' }), d(1, { type: 'rempart', part: 0.75 }), d(2, { type: 'fissure', part: 0.25 })]),
+  m('mue-totale', 'Mue totale', 'bio', 'or', [x('Écdysis', 1, 'soin', 11), x('Peau neuve', 2, 'bouclier', 13), x('Morsure de mue', 4, 'atk', 13)],
+    [d(0, { type: 'vague' }), d(1, { type: 'rempart', part: 0.5 }), d(2, { type: 'siphon', part: 0.75 })]),
+  // Résonants : la mèche d'or, l'ombre de l'être ancien, le pressentiment des catastrophes
+  m('meche-or', 'Mèche d’or', 'reso', 'fer', [x('Présage', 7, 'bouclier', 8), x('Éclat doré', 8, 'atk', 11)],
+    [d(0, { type: 'desarmer', part: 0.3 }), d(1, { type: 'crescendo', part: 0.3 })]),
+  m('ombre-serpent', 'Ombre de serpent', 'reso', 'cuivre', [x('Enlacer', 9, 'atk', 12), x('Mue d’ombre', 6, 'soin', 9)],
+    [d(0, { type: 'fissure', part: 0.3 }), d(1, { type: 'accord' })]),
+  m('pressentiment', 'Pressentiment', 'reso', 'argent', [x('Prémonition', 7, 'bouclier', 13), x('Esquive tracée', 8, 'bouclier', 10), x('Contre-temps', 6, 'atk', 18, true)],
+    [d(0, { type: 'desarmer', part: 0.4 }), d(1, { type: 'accord' }), d(2, { type: 'fissure', part: 0.3 })]),
+  m('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', [x('Souffle', 9, 'atk', 14), x('Écailles d’ombre', 8, 'bouclier', 13), x('Rugissement', 7, 'atk', 12)],
+    [d(0, { type: 'crescendo', part: 0.4 }), d(1, { type: 'desarmer', part: 0.5 }), d(2, { type: 'fissure', part: 0.4 })]),
 ];
 
 // ---------- Un Module, cinq métaux ----------
@@ -121,7 +149,7 @@ export const MODULES: ModuleDef[] = [
 // - le métal débloque les effets de la liste `deblocages` du Module, dans l'ordre : fer aucun, cuivre 1, argent 2, or 3 ;
 // - la nacre débloque tout, et ses effets sont renforcés (NACRE_RENFORT).
 // Décision du 21 octobre 2026, d'après le robot : la force seule distingue trop peu les métaux, ce sont les effets qui comptent.
-export const METAL_FORCE: Record<Rarete, number> = { fer: 1, cuivre: 1.12, argent: 1.25, or: 1.4, nacre: 1.55 };
+export const METAL_FORCE: Record<Rarete, number> = { fer: 1, cuivre: 1.18, argent: 1.32, or: 1.46, nacre: 1.6 };
 export const METAL_EFFETS: Record<Rarete, number> = { fer: 0, cuivre: 1, argent: 2, or: 3, nacre: Infinity };
 /** la nacre renforce ses effets : parts ×1,5 (plafonnées), Surcharge +1 */
 export const NACRE_RENFORT = 1.5;
