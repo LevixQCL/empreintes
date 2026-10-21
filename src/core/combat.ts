@@ -22,6 +22,8 @@ export function creerCombat(opts: {
   deck?: GesteDef[];
   /** puissance de l'ennemi (1 = Strate −1) */
   force?: number;
+  /** pioche dans l'ordre du deck, sans mélange (combat guidé) */
+  ordonne?: boolean;
 }): CombatEtat {
   const e = ennemiDef(opts.ennemiId);
   const force = opts.force ?? 1;
@@ -42,7 +44,7 @@ export function creerCombat(opts: {
     journal: [],
   };
   const deck: Geste[] = (opts.deck ?? DECK_DEPART).map((g, k) => ({ ...g, uid: `g${k}` }));
-  s.pioche = tireur(s).melanger(deck);
+  s.pioche = opts.ordonne ? deck.slice().reverse() : tireur(s).melanger(deck);
   log(s, `Un ${e.nom} surgit dans la Strate.`);
   choisirIntention(s);
   piocher(s);
@@ -192,7 +194,7 @@ function choisirCible(s: CombatEtat, regle: CibleRegle = 'hasard'): string | nul
     return v.slice().sort((a, b) => a.pv / a.pvMax - b.pv / b.pvMax)[0]!.id;
   }
   if (regle !== 'hasard') {
-    const p = v.find((x) => porteurDef(x.id).lignee === regle);
+    const p = v.find((x) => x.id === regle) ?? v.find((x) => porteurDef(x.id).lignee === regle);
     if (p) return p.id;
   }
   return v[tireur(s).entier(v.length)]!.id;

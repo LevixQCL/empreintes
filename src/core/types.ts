@@ -44,7 +44,8 @@ export interface Geste extends GesteDef {
   uid: string;
 }
 
-export type CibleRegle = 'hasard' | 'faible' | Lignee;
+/** 'hasard', 'faible', une lignée, ou l'id d'un Porteur précis */
+export type CibleRegle = 'hasard' | 'faible' | Lignee | (string & {});
 
 export type IntentionDef =
   | { type: 'atk'; nom: string; v: number; cible?: CibleRegle; zone?: boolean }

@@ -77,6 +77,15 @@ export const BATIMENTS: BatimentDef[] = [
 // ---------- Ennemis ----------
 export const ENNEMIS: EnnemiDef[] = [
   {
+    id: 'remanent-faible', nom: 'Rémanent affaibli', lignee: 'reso', tag: 'GARDIEN DE LA CHAMBRE', pvMax: 75,
+    motif: [
+      { type: 'atk', nom: 'Griffe', v: 4, cible: 'hasard' },
+      { type: 'atk', nom: 'Griffe', v: 5, cible: 'faible' },
+      { type: 'atk', nom: 'Lacération', v: 13, cible: 'doran' },
+      { type: 'atk', nom: 'Griffe', v: 5, cible: 'hasard' },
+    ],
+  },
+  {
     id: 'remanent', nom: 'Rémanent', lignee: 'reso', tag: 'ANCIEN', pvMax: 72,
     motif: [
       { type: 'atk', nom: 'Griffe', v: 8, cible: 'hasard' },
@@ -105,6 +114,9 @@ export const ENNEMIS: EnnemiDef[] = [
     ],
   },
 ];
+
+/** La séquence normale d'une Strate (le Rémanent affaibli est réservé à la chambre scellée) */
+export const SEQUENCE_STRATE = ['remanent', 'vigie', 'confluence'];
 
 /** Ancien deck fixe du prototype (Ilka, Doran, Véla + 2 spéciaux) */
 export const DECK_DEPART: GesteDef[] = [...GESTES_PORTEUR.ilka!, ...GESTES_PORTEUR.doran!, ...GESTES_PORTEUR.vela!, ...GESTES_SPECIAUX];

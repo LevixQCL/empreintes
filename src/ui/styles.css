@@ -231,3 +231,92 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .intro .ligne.neuve{animation:apparait .6s ease-out}
 @keyframes apparait{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){ .intro .ligne.neuve{animation:none} }
+
+/* ---------- Intro animée ---------- */
+@property --n { syntax: '<integer>'; inherits: false; initial-value: 0; }
+.intro{position:relative;overflow:hidden;isolation:isolate}
+.intro-scene{position:absolute;inset:0;z-index:-1;border-radius:inherit;overflow:hidden}
+.intro-scene .scene{width:100%;height:100%;display:block;animation:approche 9s ease-out forwards}
+.intro.illustree{background-image:var(--img);background-size:cover;background-position:center}
+.intro.illustree .intro-scene{opacity:.55;mix-blend-mode:screen}
+.intro::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(10,12,16,.45) 0%,rgba(10,12,16,0) 20%,rgba(10,12,16,0) 42%,rgba(10,12,16,.82) 70%,rgba(10,12,16,.94) 100%)}
+.intro.illustree::before{display:none}
+.compteur{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.1em;color:#F6F1E6;opacity:.85;--n:var(--de);animation:annees calc(var(--d) * 1s) ease-out .3s forwards;counter-reset:an var(--n)}
+.compteur::after{content:counter(an)}
+@keyframes annees{to{--n:var(--a)}}
+@keyframes approche{from{transform:scale(1)}to{transform:scale(1.06)}}
+.scene .pulse{animation:pulse 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.scene .pulse-lent{animation:pulse 5s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pulse{0%,100%{opacity:.75;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+.scene .brume{animation:brume 3s ease-in-out infinite alternate}
+@keyframes brume{from{transform:skewX(-1deg) translateY(0)}to{transform:skewX(1.5deg) translateY(-3px)}}
+.scene .clignote{animation:clignote 1.3s steps(2,jump-none) infinite}
+.scene .decale{animation-delay:.6s}
+@keyframes clignote{0%{opacity:1}50%{opacity:.55}100%{opacity:1}}
+.scene .efface{animation:efface 6s ease-in forwards}
+@keyframes efface{to{opacity:.1}}
+.scene .eau-monte{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);animation:eau 7s ease-in-out forwards}
+@keyframes eau{to{transform:scaleY(1)}}
+.scene .pluie{animation:pluie .7s linear infinite}
+@keyframes pluie{from{transform:translate(0,-40px)}to{transform:translate(-10px,40px)}}
+.scene .colonne{animation:marche 8s linear forwards}
+@keyframes marche{from{transform:translateX(60px);opacity:0}15%{opacity:1}to{transform:translateX(-90px)}}
+.scene.froid{background:#9FB9CB}
+.scene .glace .bloc{animation:glisse 4s ease-in .4s forwards;transform-box:fill-box;transform-origin:top left}
+@keyframes glisse{to{transform:translate(18px,60px) rotate(9deg);opacity:.75}}
+.scene .tour{transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);animation:pousse 1.6s ease-out forwards;animation-delay:calc(var(--i) * .45s)}
+@keyframes pousse{to{transform:scaleY(1)}}
+.scene .passerelles{opacity:0;animation:apparaitre 1s ease forwards 2.6s}
+@keyframes apparaitre{to{opacity:1}}
+.scene .descente{animation:descend 8s ease-in-out forwards}
+@keyframes descend{from{transform:translateY(0)}to{transform:translateY(-60px)}}
+.scene .faisceau{animation:balaye 3s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:top center}
+@keyframes balaye{from{transform:rotate(-12deg)}to{transform:rotate(12deg)}}
+.scene .cristaux{opacity:.2;animation:allume 2s ease forwards 2.5s}
+@keyframes allume{to{opacity:1;filter:drop-shadow(0 0 6px #B9A6FF)}}
+.scene .fantome{stroke-dasharray:600;stroke-dashoffset:600;animation:trace 5s ease-in-out infinite}
+@keyframes trace{0%{stroke-dashoffset:600;opacity:0}30%{opacity:.4}100%{stroke-dashoffset:-600;opacity:0}}
+.scene .aile{transform-box:fill-box;transform-origin:bottom left;transform:scale(.3);animation:deploie 4s ease-out forwards .5s}
+@keyframes deploie{to{transform:scale(1)}}
+.scene .ile{animation:flotte 5s ease-in-out infinite alternate;animation-delay:calc(var(--i) * -1.5s)}
+.scene .carte-l{transform-box:fill-box;transform-origin:center;opacity:0;transform:translateY(30px);animation:pose .7s ease-out forwards;animation-delay:calc(var(--i) * .5s)}
+@keyframes pose{to{opacity:1;transform:none}}
+.scene .carte-l.rapproche{animation:rapproche 1s ease-in-out forwards}
+.scene .carte-l.rapproche[style*="--i:0"]{--dx:24px}
+.scene .carte-l.rapproche[style*="--i:2"]{--dx:-24px}
+@keyframes rapproche{from{opacity:1;transform:none}to{opacity:1;transform:translateX(var(--dx,0)) translateY(-8px)}}
+.scene .lumiere{animation:scintille 2.2s ease-in-out infinite;animation-delay:calc(var(--i) * .3s)}
+@keyframes scintille{0%,100%{opacity:.35}50%{opacity:1}}
+.scene .maree{animation:maree 9s ease-in-out forwards}
+@keyframes maree{to{transform:translateY(-6px)}}
+.scene .arrivee{opacity:0;transform:translateY(12px);animation:pose .6s ease-out forwards;animation-delay:calc(var(--i) * .35s)}
+@media (prefers-reduced-motion: reduce){ .intro-scene *{animation:none!important} .scene .tour{transform:none} .scene .carte-l,.scene .arrivee{opacity:1;transform:none} .scene .cristaux{opacity:1} .compteur{animation:none;--n:var(--a)} .scene .eau-monte{transform:none} }
+
+/* ---------- Premier lancement, objectifs, Codex, retour ---------- */
+.bandeau.porte{display:grid;gap:2px;text-align:left;padding:12px 14px;min-height:56px;border-color:var(--reso);background:color-mix(in srgb,var(--reso) 18%,var(--surface));animation:appel 2.4s ease-in-out infinite}
+.bandeau.porte strong{font-family:var(--display);font-weight:400;font-size:18px;color:var(--ink)}
+.bandeau.porte span{font-size:13px;color:var(--ink-2);font-weight:400}
+@keyframes appel{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--reso) 0%,transparent)}50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--reso) 35%,transparent)}}
+.objectif{display:grid;gap:6px;padding:12px 14px;border-radius:14px;background:var(--surface);border:1px solid color-mix(in srgb,var(--gold) 50%,var(--line))}
+.objectif strong{font-family:var(--display);font-weight:400;font-size:18px;color:var(--ink)}
+.objectif p{margin:0;font-size:14px;line-height:1.4}
+.objectif.fait{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,var(--surface))}
+.etiquette.visee{border-color:var(--gold);animation:appel-or 1.6s ease-in-out infinite}
+@keyframes appel-or{0%,100%{box-shadow:0 0 0 0 transparent}50%{box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 55%,transparent)}}
+.rencontre{display:grid;gap:12px}
+.intro-porte{margin:0;font-size:15px;line-height:1.5;color:var(--ink-2)}
+.replique{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:14px;background:var(--surface);border-left:4px solid var(--c);opacity:0;transform:translateY(10px);animation:pose .6s ease-out forwards;animation-delay:calc(var(--i) * .9s + .3s)}
+.replique .pastille{width:40px;height:40px;flex-shrink:0;border-radius:50%;background:var(--fond);border:2px solid var(--c)}
+.replique strong{font-family:var(--display);font-size:18px;font-weight:400;color:var(--ink);display:block}
+.replique small{font-family:var(--mono);font-size:10.5px;color:var(--quiet);letter-spacing:.04em}
+.replique p{margin:6px 0 0;font-size:15px;line-height:1.4;color:var(--ink)}
+.rencontre .prim{opacity:0;animation:pose .6s ease-out forwards 3.2s}
+.fragment{padding:14px 16px;border-radius:14px;background:#1F1B16;border:1px solid #3A3126;display:grid;gap:8px}
+.fragment h2{margin:0;font-family:var(--display);font-weight:400;font-size:20px;color:var(--ivory)}
+.fragment p{margin:0;font-size:14.5px;line-height:1.5;color:#E6DCC8;font-style:italic}
+.lecon{padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--gold) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 55%,var(--line))}
+.lecon p{margin:4px 0 0;font-size:14px;line-height:1.4;color:var(--ink)}
+.fenetre.retour ul{margin:0;padding-left:20px;text-align:left;display:grid;gap:6px;font-size:14.5px;line-height:1.4}
+.tete-tour{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.btn-sec.petit{min-height:36px;padding:0 10px;font-size:13px;background:rgba(255,250,240,.85);color:#2A2418;border-color:#C9B48A}
+@media (prefers-reduced-motion: reduce){ .replique,.rencontre .prim{opacity:1;transform:none;animation:none} .bandeau.porte,.etiquette.visee{animation:none} }

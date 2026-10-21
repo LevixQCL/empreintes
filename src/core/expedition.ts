@@ -2,7 +2,7 @@
 // avec un peu de soin entre deux. Le district reprend la main à la fin.
 
 import { creerCombat } from './combat';
-import { ENNEMIS } from './donnees';
+import { SEQUENCE_STRATE } from './donnees';
 import { REGLES } from './regles';
 import type { CombatEtat, GesteDef, PorteurEtat } from './types';
 
@@ -19,6 +19,8 @@ export interface Expedition {
   terminee: boolean;
   /** le combat courant a déjà été clôturé (évite de compter deux fois le butin) */
   cloture: boolean;
+  /** la chambre scellée : combat guidé du premier lancement */
+  tutoriel?: boolean;
 }
 
 /** Puissance des ennemis selon la profondeur */
@@ -26,18 +28,25 @@ export const forceStrate = (strate: number) => 1 + 0.15 * (strate - 1);
 /** Composants gagnés par victoire */
 export const butinCombat = (strate: number, index: number) => Math.round((index === 2 ? 14 : 6) * (1 + 0.25 * (strate - 1)));
 
-export function nouvelleExpedition(opts: { porteurs: PorteurEtat[]; deck: GesteDef[]; strate: number; rng: number }): Expedition {
-  const sequence = ENNEMIS.map((e) => e.id);
+export function nouvelleExpedition(opts: {
+  porteurs: PorteurEtat[]; deck: GesteDef[]; strate: number; rng: number;
+  sequence?: string[]; force?: number; tutoriel?: boolean;
+}): Expedition {
+  const sequence = opts.sequence ?? SEQUENCE_STRATE;
   return {
     strate: opts.strate,
     sequence,
     index: 0,
     porteurs: opts.porteurs,
     deck: opts.deck,
-    combat: creerCombat({ porteurs: opts.porteurs, ennemiId: sequence[0]!, rng: opts.rng, deck: opts.deck, force: forceStrate(opts.strate) }),
+    combat: creerCombat({
+      porteurs: opts.porteurs, ennemiId: sequence[0]!, rng: opts.rng, deck: opts.deck,
+      force: opts.force ?? forceStrate(opts.strate), ordonne: opts.tutoriel,
+    }),
     butin: 0,
     terminee: false,
     cloture: false,
+    ...(opts.tutoriel ? { tutoriel: true } : {}),
   };
 }
 

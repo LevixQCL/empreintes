@@ -4,12 +4,13 @@
 import { MODULES, PORTEURS, batimentDef, moduleDef, porteurDef } from '../core/donnees';
 import {
   DISTRICT, POSTES, coutAmelioration, disponibles, dureeFabrication, energieParHeure, enExpedition, gestesDe,
-  posteDe, pvMaxCombat, soinParHeure, stockage, usureMax, type Jeu, type Poste,
+  objectifCourant, porteursPresents, posteDe, pvMaxCombat, soinParHeure, stockage, usureMax, type Jeu, type Poste,
 } from '../core/jeu';
+import { FRAGMENTS } from '../core/fragments';
 import type { BatimentId } from '../core/types';
 import { COULEUR, FONDS, echap, panneauCompte, type Compte } from './vue';
 
-export type Vue = 'archipel' | 'coupe' | 'escouade';
+export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'codex';
 
 export interface EcranDistrict {
   j: Jeu;
@@ -20,6 +21,8 @@ export interface EcranDistrict {
   message: string;
   compte: Compte;
   now: number;
+  /** lignes du résumé « Pendant ton absence » (vide = rien à montrer) */
+  retour: string[];
 }
 
 const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');
@@ -102,8 +105,9 @@ function etiquettes(e: EcranDistrict): string {
     }
     const d = batimentDef(p.id);
     const prete = p.id === 'forge' && j.forge && e.now >= j.forge.fin;
+    const vise = objectifCourant(j)?.pilier === p.id && !objectifCourant(j)!.fait(j);
     const occupe = p.id !== 'noyau' && posteDe(j, p.id as Poste);
-    return `<button type="button" class="etiquette${e.selection === p.id ? ' choisie' : ''}" style="left:${left}%;top:${top}%" data-action="batiment" data-id="${p.id}">`
+    return `<button type="button" class="etiquette${e.selection === p.id ? ' choisie' : ''}${vise ? ' visee' : ''}" style="left:${left}%;top:${top}%" data-action="batiment" data-id="${p.id}">`
       + `<span>${echap(d.nom)}</span><small>Niv. ${j.batiments[p.id]}${occupe ? ' · ' + echap(porteurDef(occupe).nom) : ''}</small>${prete ? '<i class="point" aria-label="prêt"></i>' : ''}</button>`;
   }).join('');
 }
@@ -148,7 +152,7 @@ function panneauBatiment(e: EcranDistrict): string {
     else h += `<small class="aide">Personne. Un Porteur de la bonne lignée travaille deux fois mieux.</small>`;
     h += `</div><div class="chips">`;
     for (const p of PORTEURS) {
-      if (p.id === occupant || enExpedition(j, p.id)) continue;
+      if (p.id === occupant || enExpedition(j, p.id) || !porteursPresents(j).includes(p.id)) continue;
       const ailleurs = j.porteurs[p.id]!.poste;
       h += chipPorteur(j, p.id, 'poster', ` data-poste="${poste}"`, false) .replace('</button>', ailleurs ? `<small>${echap(batimentDef(ailleurs).nom)}</small></button>` : '</button>');
     }
@@ -191,11 +195,60 @@ export function htmlArchipel(e: EcranDistrict): string {
     + `<button type="button" class="btn-sec" data-action="intro">Intro</button></div></header>`;
   h += panneauCompte(e.compte);
   h += barreRessources(e);
-  if (j.expedition) h += `<button type="button" class="bandeau" data-action="reprendre">Expédition en cours dans la Strate −${j.expedition.strate} · Reprendre</button>`;
+  if (!j.chambre && !j.expedition) {
+    h += `<button type="button" class="bandeau porte" data-action="rencontre"><strong>La porte scellée</strong><span>Sous la Tour du Noyau, trois personnes t’attendent.</span></button>`;
+  }
+  if (j.expedition) h += `<button type="button" class="bandeau" data-action="reprendre">${j.expedition.tutoriel ? 'La chambre scellée · Reprendre' : `Expédition en cours dans la Strate −${j.expedition.strate} · Reprendre`}</button>`;
+  const o = objectifCourant(j);
+  if (o) {
+    const fait = o.fait(j);
+    const gain = [o.recompense.energie ? `+${o.recompense.energie} énergie` : '', o.recompense.composants ? `+${o.recompense.composants} composants` : ''].filter(Boolean).join(' · ');
+    h += `<section class="objectif${fait ? ' fait' : ''}" aria-label="Objectif"><span class="label">OBJECTIF ${j.objectif + 1} / 3</span><strong>${echap(o.titre)}</strong><p>${echap(o.consigne)}</p>`
+      + (fait ? `<button type="button" class="prim" data-action="reclamer">Récupérer · ${gain}</button>` : `<small class="aide">Récompense : ${gain}</small>`) + `</section>`;
+  }
   h += `<section class="archipel" aria-label="Archipel">${archipelSvg(j)}${etiquettes(e)}</section>`;
   if (e.message) h += `<p class="message">${echap(e.message)}</p>`;
   h += panneauBatiment(e);
   h += `<div class="journal" aria-label="Journal">${j.journal.slice(0, 3).map((t) => `<p>${echap(t)}</p>`).join('')}</div>`;
+  if (e.retour.length) {
+    h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="retour-titre"><div class="fenetre retour"><h2 id="retour-titre">Pendant ton absence</h2><ul>`
+      + e.retour.map((l) => `<li>${echap(l)}</li>`).join('') + `</ul><button type="button" data-action="retour-ok">Au travail</button></div></div>`;
+  }
+  return h;
+}
+
+// ---------- La rencontre, avant la chambre scellée ----------
+
+const REPLIQUES: { id: string; texte: string }[] = [
+  { id: 'ilka', texte: '« On attend quoi, l’Élu ? Qu’elle s’ouvre toute seule ? »' },
+  { id: 'doran', texte: '« J’ai connu ce puits avant qu’on le mure. Je n’aimais pas son silence. »' },
+  { id: 'vela', texte: '« Quelque chose a peur, derrière cette porte. Et ce n’est pas moi. »' },
+];
+
+export function htmlRencontre(): string {
+  let h = `<header class="top"><div><h1>La porte scellée</h1><span class="sous">SOUS LA TOUR DU NOYAU</span></div><button type="button" class="btn-sec" data-action="archipel">Plus tard</button></header>`;
+  h += `<section class="rencontre"><p class="intro-porte">Une porte ronde, scellée depuis les années 2060, luit faiblement. Trois personnes t’attendent devant.</p>`;
+  REPLIQUES.forEach((r, i) => {
+    const d = porteurDef(r.id);
+    h += `<div class="replique" style="--c:${COULEUR[d.lignee]};--fond:${FONDS[r.id]};--i:${i}"><span class="pastille" aria-hidden="true"></span><div><strong>${echap(d.nom)}</strong><small>${d.lignee === 'tech' ? 'Augmentée · coursière' : d.lignee === 'bio' ? 'Géné · ancien des Fondations' : 'Résonante · lectrice d’empreintes'}</small><p>${echap(r.texte)}</p></div></div>`;
+  });
+  h += `<button type="button" class="prim large" data-action="ouvrir-chambre">Ouvrir la porte</button></section>`;
+  return h;
+}
+
+// ---------- Le Codex ----------
+
+export function htmlCodex(e: EcranDistrict): string {
+  const j = e.j;
+  let h = `<header class="top"><div><h1>Codex</h1><span class="sous">${j.fragments.length} / ${FRAGMENTS.length} FRAGMENTS D’ARCHIVES</span></div><button type="button" class="btn-sec" data-action="coupe">Retour</button></header>`;
+  if (!j.fragments.length) h += `<p class="discret">Aucun fragment pour l’instant. On les trouve en ouvrant de nouvelles Strates.</p>`;
+  for (const id of j.fragments) {
+    const f = FRAGMENTS.find((x) => x.id === id);
+    if (!f) continue;
+    h += `<article class="fragment"><span class="label">${echap(f.support.toUpperCase())}</span><h2>${echap(f.titre)}</h2>${f.lignes.map((l) => `<p>${echap(l)}</p>`).join('')}</article>`;
+  }
+  const reste = FRAGMENTS.length - j.fragments.length;
+  if (reste > 0) h += `<p class="discret">${reste} fragment${reste > 1 ? 's' : ''} encore enfoui${reste > 1 ? 's' : ''} dans les Strates.</p>`;
   return h;
 }
 
@@ -208,8 +261,9 @@ export function htmlCoupe(e: EcranDistrict): string {
   let h = `<header class="top"><div><h1>Tour du Noyau</h1><span class="sous">EN COUPE · ${j.strate} ÉTAGE${j.strate > 1 ? 'S' : ''} CREUSÉ${j.strate > 1 ? 'S' : ''}</span></div>`
     + `<button type="button" class="btn-sec" data-action="archipel">Archipel</button></header>`;
   h += barreRessources(e);
-  h += `<section class="coupe" aria-label="Coupe"><div class="etage tour"><span class="label">HABITATS</span><div class="habitants">`;
+  h += `<section class="coupe" aria-label="Coupe"><div class="etage tour"><div class="tete-tour"><span class="label">HABITATS</span><button type="button" class="btn-sec petit" data-action="codex">Codex · ${j.fragments.length}</button></div><div class="habitants">`;
   for (const p of PORTEURS) {
+    if (!porteursPresents(j).includes(p.id)) continue;
     const d = j.porteurs[p.id]!;
     const etat = enExpedition(j, p.id) ? 'En expédition' : d.poste ? batimentDef(d.poste).nom : 'Au repos';
     const pv = pvMaxCombat(j, p.id);
@@ -223,7 +277,7 @@ export function htmlCoupe(e: EcranDistrict): string {
     const nom = NOMS_ETAGES[Math.min(n - 1, NOMS_ETAGES.length - 1)];
     h += `<div class="etage strate${front ? ' front' : ''}" style="--p:${Math.min(1, (n - 1) / 4)}"><div><span class="label">STRATE −${n}</span><strong>${nom}</strong>`
       + `<small>${front ? 'Le front de fouille : la vaincre creuse un nouvel étage.' : 'Déjà explorée : on peut y retourner pour des composants.'}</small></div>`
-      + `<button type="button" class="${front ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${j.expedition ? ' disabled' : ''}>Descendre</button></div>`;
+      + `<button type="button" class="${front ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${j.expedition || !j.chambre ? ' disabled' : ''}>Descendre</button></div>`;
   }
   h += `<div class="etage roche"><small>Roche à creuser…</small></div></section>`;
   if (e.message) h += `<p class="message">${echap(e.message)}</p>`;
@@ -239,6 +293,7 @@ export function htmlEscouade(e: EcranDistrict): string {
     + `<button type="button" class="btn-sec" data-action="coupe">Retour</button></header>`;
   h += `<section class="panneau"><div class="chips">`;
   for (const p of PORTEURS) {
+    if (!porteursPresents(j).includes(p.id)) continue;
     const libre = dispo.includes(p.id);
     const choisi = e.escouade.includes(p.id);
     h += chipPorteur(j, p.id, 'choisir', '', choisi, !libre && !choisi).replace('</button>', `<small>PV ${pvMaxCombat(j, p.id)}${libre ? '' : ' · au travail'}</small></button>`);

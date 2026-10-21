@@ -6,8 +6,8 @@ import type { BatimentId, CombatEtat, Evenement, Pas } from './core/types';
 import { charger, enregistrer, type Enveloppe } from './save/local';
 import { firebaseActif } from './net/firebase-config';
 import { htmlCombat, type Ecran as EcranCombat, type Fin, type Compte } from './ui/vue';
-import { htmlArchipel, htmlCoupe, htmlEscouade, type EcranDistrict } from './ui/district';
-import { PLANS, htmlIntro } from './ui/intro';
+import { htmlArchipel, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre, type EcranDistrict } from './ui/district';
+import { DUREE_LIGNE, PLANS, htmlIntro } from './ui/intro';
 
 const racine = document.getElementById('app') as HTMLElement;
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -17,7 +17,11 @@ const pause = (ms: number) => new Promise((r) => setTimeout(r, reduit ? Math.min
 
 const sauvegarde = charger();
 let jeu: J.Jeu = sauvegarde?.data ?? J.nouveauJeu(Date.now());
-J.tick(jeu, Date.now());
+const absence = Date.now() - jeu.dernierTick;
+const avantAbsence: J.Jeu = structuredClone(jeu);
+const nouvellesAbsence = J.tick(jeu, Date.now());
+/** résumé « Pendant ton absence », seulement après plus de 10 minutes */
+const retourInitial = sauvegarde && absence > 10 * 60_000 && jeu.introVue ? J.resumeAbsence(avantAbsence, jeu, nouvellesAbsence) : [];
 
 type Mode = 'intro' | 'district' | 'combat';
 let mode: Mode = !jeu.introVue ? 'intro' : jeu.expedition ? 'combat' : 'district';
@@ -25,9 +29,9 @@ let plan = 0;
 let lignesVues = 1;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
-const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now() };
+const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial };
 const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null } = {
-  verrou: false, regles: !jeu.introVue || jeu.strate === 1, pops: [], fin: null, etat: null,
+  verrou: false, regles: false, pops: [], fin: null, etat: null,
 };
 
 // ---------- Rendu ----------
@@ -40,11 +44,15 @@ function afficher() {
   let h = '';
   if (mode === 'intro') h = htmlIntro(plan, lignesVues);
   else if (mode === 'combat' && jeu.expedition) {
-    h = htmlCombat({ x: jeu.expedition, etat: K.etat ?? jeu.expedition.combat, verrou: K.verrou, regles: K.regles, pops: K.pops, fin: K.fin });
+    const etat = K.etat ?? jeu.expedition.combat;
+    const lecon = jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;
+    h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, pops: K.pops, fin: K.fin, lecon });
   } else {
     mode = 'district';
-    h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : htmlArchipel(D);
+    h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre()
+      : D.vue === 'codex' ? htmlCodex(D) : htmlArchipel(D);
   }
+  planifierIntro();
   racine.dataset.mode = mode;
   racine.innerHTML = h;
   const ie = racine.querySelector('#email') as HTMLInputElement | null;
@@ -111,12 +119,33 @@ async function demarrerCompte() {
   });
 }
 
+// ---------- Intro : avance automatique ----------
+
+let minuteurIntro: number | undefined;
+function avancerIntro(): boolean {
+  if (lignesVues < PLANS[plan]!.lignes.length) { lignesVues++; return true; }
+  if (plan < PLANS.length - 1) { plan++; lignesVues = 1; return true; }
+  return false;
+}
+function planifierIntro() {
+  clearTimeout(minuteurIntro);
+  if (mode !== 'intro') return;
+  const fin = plan === PLANS.length - 1 && lignesVues >= PLANS[plan]!.lignes.length;
+  if (fin) return;
+  minuteurIntro = window.setTimeout(() => { if (mode === 'intro' && avancerIntro()) afficher(); }, DUREE_LIGNE);
+}
+
 // ---------- Combat ----------
 
 function finPour(): Fin | null {
   const x = jeu.expedition;
   if (!x) return null;
   const s = x.combat;
+  if (x.tutoriel) {
+    if (s.issue === 'victoire') return { titre: 'La porte cède', texte: 'Le gardien se dissipe en poussière lumineuse. Derrière lui, des cristaux aux souvenirs mélangés, et un vieux papier tamponné.', bouton: 'Remonter avec ce qu’on a trouvé', action: 'remonter' };
+    if (s.issue === 'defaite') return { titre: 'Repoussés', texte: 'Le gardien a eu le dessus, cette fois. Vise les suites et protège-toi quand il annonce une grosse attaque.', bouton: 'Remonter et réessayer', action: 'remonter' };
+    return null;
+  }
   if (s.issue === 'defaite') {
     return { titre: 'Défaite', texte: `Toute l’escouade est à terre. Elle remonte avec la moitié du butin (${Math.floor(x.butin * J.DISTRICT.butinDefaite)} composants) et devra se reposer à la Clinique.`, bouton: 'Remonter au district', action: 'remonter' };
   }
@@ -195,12 +224,14 @@ racine.addEventListener('click', async (ev) => {
 
   switch (a) {
     // intro
-    case 'intro-suivant':
-      if (lignesVues < PLANS[plan]!.lignes.length) lignesVues++;
-      else if (plan < PLANS.length - 1) { plan++; lignesVues = 1; }
-      break;
+    case 'intro-suivant': avancerIntro(); break;
     case 'intro-precedent': if (plan > 0) { plan--; lignesVues = PLANS[plan]!.lignes.length; } break;
-    case 'intro-passer': jeu.introVue = true; mode = jeu.expedition ? 'combat' : 'district'; sauver(); break;
+    case 'intro-passer':
+      jeu.introVue = true;
+      mode = jeu.expedition ? 'combat' : 'district';
+      D.vue = jeu.chambre ? 'archipel' : 'rencontre';
+      sauver();
+      break;
     case 'intro': plan = 0; lignesVues = 1; mode = 'intro'; break;
 
     // district
@@ -227,6 +258,16 @@ racine.addEventListener('click', async (ev) => {
       break;
     }
     case 'reprendre': mode = 'combat'; K.fin = finPour(); break;
+    case 'rencontre': D.vue = 'rencontre'; break;
+    case 'codex': D.vue = 'codex'; break;
+    case 'ouvrir-chambre': {
+      const r = J.ouvrirChambre(jeu);
+      resultat(r);
+      if (r.ok) { mode = 'combat'; K.fin = null; K.etat = null; window.scrollTo(0, 0); }
+      break;
+    }
+    case 'reclamer': resultat(J.reclamer(jeu)); break;
+    case 'retour-ok': D.retour = []; break;
 
     // combat
     case 'ajouter': if (s && !K.verrou) { C.ajouter(s, id || b.dataset.uid || ''); sauver(); } break;
@@ -241,8 +282,16 @@ racine.addEventListener('click', async (ev) => {
       const r = J.remonter(jeu);
       K.fin = null;
       mode = 'district';
-      D.vue = 'coupe';
-      D.message = r.nouvelleStrate ? `Un nouvel étage est creusé : la Strate −${jeu.strate} est ouverte.` : `+${r.butin} composants rapportés.`;
+      if (r.tutoriel) {
+        D.vue = 'archipel';
+        D.message = r.victoire
+          ? 'La chambre est ouverte. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans le Codex (Tour du Noyau).'
+          : 'L’escouade se repose. La porte scellée t’attend toujours.';
+      } else {
+        D.vue = 'coupe';
+        D.message = (r.nouvelleStrate ? `Un nouvel étage est creusé : la Strate −${jeu.strate} est ouverte.` : `+${r.butin} composants rapportés.`)
+          + (r.fragment ? ' Un fragment d’archives rejoint le Codex.' : '');
+      }
       sauver();
       window.scrollTo(0, 0);
       break;

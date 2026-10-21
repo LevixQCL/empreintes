@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest';
 import * as C from '../src/core/combat';
 import {
   DISTRICT, ameliorer, disponibles, energieParHeure, fabriquer, finDeCombat, continuer, gestesDe, nouveauJeu,
-  partir, poster, pvMaxCombat, remonter, stockage, tick,
+  partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence,
 } from '../src/core/jeu';
 
 const H = 3_600_000;
+/** une partie où la chambre scellée est déjà ouverte */
+const ouvert = () => { const j = nouveauJeu(0); j.chambre = true; j.recrues = true; return j; };
 
 describe('District', () => {
   it('le Générateur produit pendant l’absence, plafonné par le stockage', () => {
@@ -34,7 +36,7 @@ describe('District', () => {
   });
 
   it('la Forge fabrique un Module qui ajoute 2 Gestes', () => {
-    const j = nouveauJeu(0);
+    const j = ouvert();
     expect(fabriquer(j, 'jambes-ressort', 'ilka', 0).ok).toBe(false); // personne à la Forge
     poster(j, 'coursier', 'forge');
     expect(fabriquer(j, 'jambes-ressort', 'doran', 0).ok).toBe(false); // mauvaise lignée
@@ -48,7 +50,7 @@ describe('District', () => {
 
 describe('Expédition depuis le district', () => {
   it('un Porteur au travail ne part pas, l’Usure réduit les PV et la Clinique soigne', () => {
-    const j = nouveauJeu(0);
+    const j = ouvert();
     poster(j, 'ilka', 'generateur');
     expect(partir(j, ['ilka', 'doran', 'vela'], 1).ok).toBe(false);
     expect(disponibles(j)).not.toContain('ilka');
@@ -66,10 +68,54 @@ describe('Expédition depuis le district', () => {
     expect(j.expedition).toBeNull();
     expect(j.porteurs.doran!.usure).toBeGreaterThanOrEqual(DISTRICT.usureExpedition);
     expect(pvMaxCombat(j, 'doran')).toBeLessThan(46);
-    if (r.victoire) expect(j.strate).toBe(2);
+    if (r.victoire) { expect(j.strate).toBe(2); expect(j.fragments.length).toBe(1); }
 
     const u = j.porteurs.doran!.usure;
     tick(j, j.dernierTick + H);
     expect(j.porteurs.doran!.usure).toBeLessThan(u);
+  });
+});
+
+describe('Premier lancement', () => {
+  it('les recrues n’arrivent qu’après la chambre scellée, qui se joue dans l’ordre prévu', () => {
+    const j = nouveauJeu(0);
+    expect(disponibles(j)).toEqual(['ilka', 'doran', 'vela']);
+    expect(partir(j, ['ilka', 'doran', 'vela'], 1).ok).toBe(false);
+    expect(ouvrirChambre(j, 3).ok).toBe(true);
+    const s = j.expedition!.combat;
+    expect(s.main.map((g) => g.f)).toEqual([3, 2, 7, 1, 6]);
+    expect(j.expedition!.tutoriel).toBe(true);
+    let garde = 0;
+    while (j.expedition && !j.expedition.terminee && garde++ < 300) {
+      const c = j.expedition.combat;
+      if (c.issue !== 'en-cours') { finDeCombat(j); continue; }
+      for (const g of c.main.slice()) if (C.placesLibres(c) > 0) C.ajouter(c, g.uid);
+      C.lancer(c);
+    }
+    const r = remonter(j);
+    if (r.victoire) {
+      expect(j.chambre).toBe(true);
+      expect(disponibles(j)).toHaveLength(6);
+      expect(j.fragments).toEqual(['mure']);
+    }
+  });
+
+  it('les objectifs guidés se remplissent et se récupèrent dans l’ordre', () => {
+    const j = ouvert();
+    expect(objectifCourant(j)!.titre).toBe('Allumer le district');
+    expect(reclamer(j).ok).toBe(false);
+    poster(j, 'ilka', 'generateur');
+    expect(reclamer(j).ok).toBe(true);
+    expect(objectifCourant(j)!.titre).toBe('Forger');
+  });
+
+  it('le résumé du retour ne liste que ce qui a avancé', () => {
+    const j = ouvert();
+    j.porteurs.doran!.usure = 6;
+    const avant = structuredClone(j);
+    const nouvelles = tick(j, 2 * H);
+    const r = resumeAbsence(avant, j, nouvelles);
+    expect(r[0]).toMatch(/énergie/);
+    expect(r.some((l) => l.includes('Doran'))).toBe(true);
   });
 });

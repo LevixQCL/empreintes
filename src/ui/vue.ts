@@ -40,6 +40,8 @@ export interface Ecran {
   regles: boolean;
   pops: Pop[];
   fin: Fin | null;
+  /** consigne du combat guidé (chambre scellée) */
+  lecon?: string;
 }
 
 export const COULEUR: Record<LigneeGeste, string> = {
@@ -121,7 +123,7 @@ export function htmlCombat(e: Ecran): string {
   const iconeIntention = it.type === 'atk' ? ICONES.atk.replace('currentColor', 'var(--danger)') : it.type === 'bouclier' ? ICONES.bouclier : ICONES.boost;
 
   let h = '';
-  h += `<header class="top"><div><h1>EMPREINTES</h1><span class="sous">COMBAT ${e.x.index + 1}/${e.x.sequence.length} · TOUR ${s.tour} · STRATE −${e.x.strate}</span></div><div class="droite">`
+  h += `<header class="top"><div><h1>EMPREINTES</h1><span class="sous">${e.x.tutoriel ? `LA CHAMBRE SCELLÉE · TOUR ${s.tour}` : `COMBAT ${e.x.index + 1}/${e.x.sequence.length} · TOUR ${s.tour} · STRATE −${e.x.strate}`}</span></div><div class="droite">`
     + `<button type="button" class="btn-sec" data-action="regles" aria-expanded="${e.regles}">${e.regles ? 'Fermer' : 'Règles'}</button></div></header>`;
 
 
@@ -158,7 +160,8 @@ export function htmlCombat(e: Ecran): string {
     + `<span class="bouclier-esc">${ICONES.bouclier}Bouclier d’escouade : ${s.bouclier}</span>`
     + `<span class="chiffre">Pioche ${s.pioche.length} · Défausse ${s.defausse.length}</span></div></section>`;
 
-  h += `<section class="flux" aria-label="Flux"><span class="label">FLUX</span><div class="segments" aria-label="${s.flux} sur ${REGLES.fluxMax}">`
+  if (e.lecon) h += `<section class="lecon" aria-live="polite"><span class="label">COMBAT GUIDÉ</span><p>${echap(e.lecon)}</p></section>`;
+  if (!e.lecon) h += `<section class="flux" aria-label="Flux"><span class="label">FLUX</span><div class="segments" aria-label="${s.flux} sur ${REGLES.fluxMax}">`
     + Array.from({ length: REGLES.fluxMax }, (_, i) => `<i class="${i < s.flux ? 'plein' : ''}"></i>`).join('') + '</div>'
     + `<button type="button" class="btn-flux" data-action="allonger"${verrou || s.flux < 1 || capacite(s) >= REGLES.capaciteMax ? ' disabled' : ''}>+1 place</button>`
     + `<button type="button" class="btn-flux" data-action="repiocher"${verrou || s.flux < 1 ? ' disabled' : ''}>Repiocher</button></section>`;
