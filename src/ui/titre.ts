@@ -5,6 +5,8 @@ import { particules } from './intro';
 
 /** passe à true quand public/intro/00-titre.webp est déposée */
 export const IMAGE_TITRE = true;
+/** courte vidéo en boucle aller-retour (public/intro/00-titre.mp4/.webm), sa première image sert d'affiche */
+export const VIDEO_TITRE = true;
 
 const fondCode = () => `<svg class="titre-scene" viewBox="0 0 360 640" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
@@ -23,7 +25,7 @@ const fondCode = () => `<svg class="titre-scene" viewBox="0 0 360 640" preserveA
 
 export function htmlTitre(introVue: boolean, mouvement: boolean): string {
   return `<section class="titre" data-action="titre-jouer" aria-label="EMPREINTES, écran titre">`
-    + `<div class="titre-fond" aria-hidden="true">${IMAGE_TITRE ? '<img src="./intro/00-titre.webp" alt="" decoding="async">' : fondCode()}</div>`
+    + `<div class="titre-fond" aria-hidden="true">${mouvement && VIDEO_TITRE ? '<video poster="./intro/00-titre-affiche.webp" autoplay muted loop playsinline preload="auto"><source src="./intro/00-titre.webm" type="video/webm"><source src="./intro/00-titre.mp4" type="video/mp4"></video>' : IMAGE_TITRE ? '<img src="./intro/00-titre.webp" alt="" decoding="async">' : fondCode()}</div>`
     + (mouvement ? particules('cristal') : '')
     + `<div class="titre-voile" aria-hidden="true"></div>`
     + `<header class="titre-haut"><h1 class="titre-nom">${[...'EMPREINTES'].map((c, i) => `<span style="--i:${i}">${c}</span>`).join('')}</h1>`

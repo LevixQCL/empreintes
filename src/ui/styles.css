@@ -492,7 +492,7 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 #app[data-mode="titre"]{min-height:100vh;min-height:100dvh}
 .titre{position:relative;isolation:isolate;overflow:hidden;flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:56px 20px 24px;border-radius:18px;min-height:calc(100dvh - 36px);color:#F6F1E6;background:#0C1218;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
 .titre-fond{position:absolute;inset:0;z-index:-2;animation:fondu-in 1.4s ease-out}
-.titre-fond img,.titre-fond .titre-scene{width:100%;height:100%;object-fit:cover;display:block;animation:titre-cam 30s ease-in-out infinite alternate;transform-origin:50% 60%}
+.titre-fond video,.titre-fond img,.titre-fond .titre-scene{width:100%;height:100%;object-fit:cover;display:block;animation:titre-cam 30s ease-in-out infinite alternate;transform-origin:50% 60%}
 @keyframes titre-cam{from{transform:scale(1.04)}to{transform:scale(1.14) translateY(-2%)}}
 .titre-voile{position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(8,10,14,.7) 0%,rgba(8,10,14,.15) 30%,rgba(8,10,14,0) 55%,rgba(8,10,14,.75) 88%,rgba(8,10,14,.9) 100%)}
 .titre-haut{text-align:center;display:grid;gap:12px}
@@ -511,4 +511,5 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .titre-scene .t-vague{animation:reflet 4s ease-in-out infinite alternate}
 .titre-scene .t-pouls{animation:pulse 4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 @media (prefers-reduced-motion: reduce){ .titre *,.titre-fond{animation:none!important;opacity:1!important} }
-.titre-fond img{object-position:28% 50%}
+.titre-fond img,.titre-fond video{object-position:28% 50%}
+.titre-fond video{animation:none}
