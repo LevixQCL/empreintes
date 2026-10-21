@@ -220,3 +220,4 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 @media (prefers-reduced-motion: reduce){ .archipel-svg .pales,.archipel-svg .braise,.archipel-svg .hauts{animation:none} .intro{transition:none} }
 .habitant>div{display:grid;gap:1px;min-width:0;flex:1}
 .habitant strong,.habitant small{display:block}
+.amb-fracture{background:linear-gradient(170deg,#DCE8EE,#6E8EA6 35%,#18283A 80%)}

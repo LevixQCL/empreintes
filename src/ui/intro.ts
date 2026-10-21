@@ -33,31 +33,35 @@ export const PLANS: Plan[] = [
     texte: 'Un été plus chaud que tous les autres, puis un autre, puis un autre encore. Les récoltes échouent sur des continents entiers. Les fleuves s’assèchent ou débordent. Personne ne l’a vu venir, parce que plus personne ne regardait.',
   },
   {
-    epoque: 'Les années 2040', titre: 'La mer se lève', ambiance: 'maree',
-    texte: 'La glace des pôles cède bien plus vite que prévu. La mer ne monte plus de quelques millimètres, elle avale des quartiers en une saison. Des villes côtières se vident ; les voisins grimpent ensemble vers les étages, avec un sac, un chat, une plante en pot.',
+    epoque: 'Les années 2040', titre: 'Les tempêtes', ambiance: 'maree',
+    texte: 'La mer n’a monté que de quelques dizaines de centimètres, mais cela suffit. Portées par des tempêtes de plus en plus violentes, les vagues entrent dans les rues, les nappes deviennent salées, les assurances renoncent. Des côtes entières deviennent inhabitables ; les voisins partent ensemble, avec un sac, un chat, une plante en pot.',
   },
   {
     epoque: 'Les années 2040', titre: 'Les exodes', ambiance: 'crepuscule',
     texte: 'Des centaines de millions de personnes prennent la route. Les chaleurs mortelles, les famines et les épidémies font des morts par millions. Les frontières ne tiennent plus, et les vieilles querelles paraissent soudain dérisoires : il ne reste qu’à survivre ensemble.',
   },
   {
-    epoque: 'Les années 2050', titre: 'Construire en hauteur', ambiance: 'aube-doree',
-    texte: 'Ceux qui restent se serrent. On ne bâtit plus en largeur mais vers le ciel : des tours colossales, reliées par des passerelles, posées sur des piliers géants plantés dans la mer. Ainsi naissent les mégapoles verticales. La plus grande s’appelle Vertiga.',
+    epoque: '2057', titre: 'La Fracture', ambiance: 'fracture',
+    texte: 'Un matin d’hiver austral, une partie de la calotte de l’Antarctique se détache d’un bloc et glisse dans l’océan. Les scientifiques l’avaient décrite comme peu probable. En quelques décennies, la mer monte de plusieurs mètres. Les plaines et les grandes villes côtières disparaissent pour de bon. On dira longtemps « avant » et « après la Fracture ».',
+  },
+  {
+    epoque: '2050 – 2085', titre: 'Construire en hauteur', ambiance: 'aube-doree',
+    texte: 'Ceux qui restent se serrent. D’abord des tours de secours, dressées dans l’urgence sur des piliers géants plantés dans la mer. Puis on les relie par des passerelles, on bâtit par-dessus, on comble les vides. En une génération, elles forment des mégapoles verticales. La plus grande s’appelle Vertiga.',
   },
   {
     epoque: '2062', titre: 'Le Puits Zéro', ambiance: 'profondeur',
     texte: 'Il faut aussi des abris contre les tempêtes et les chaleurs, alors on creuse sous les Fondations. Au fond du Puits Zéro, une équipe d’ouvriers perce une paroi et découvre une salle immense que nul humain n’a construite : des formes courbes impossibles, et des cristaux qui brillent dans le faisceau des lampes.',
   },
   {
-    epoque: '2062', titre: 'Les empreintes', ambiance: 'cristal',
-    texte: 'Ces cristaux taillés gardent quelque chose : des données qui imitent une conscience, bien plus anciennes que l’humanité. Des dragons, des esprits, des êtres sans nom. Greffées sur un humain, ces empreintes éveillent des pouvoirs qu’aucune science n’explique. Sous la ville, les ruines continuent, couche après couche : les Strates.',
+    epoque: '2062 – 2068', titre: 'Les empreintes', ambiance: 'cristal',
+    texte: 'En les étudiant pendant des années, on comprend que ces cristaux taillés gardent quelque chose : des données qui imitent une conscience, bien plus anciennes que l’humanité. Des dragons, des esprits, des êtres sans nom. Greffées sur un humain, ces empreintes éveillent des pouvoirs qu’aucune science n’explique. Sous la ville, les ruines continuent, couche après couche : les Strates.',
   },
   {
-    epoque: 'Les années 2070', titre: 'L’Ascension', ambiance: 'or',
-    texte: 'Les premiers greffés deviennent des êtres à part. On les reconnaît à une mèche d’or et à leur ombre, qui n’est pas la leur. Ces Résonants prennent la tête des villes, puis du monde. Leurs familles s’installent dans les Hauts, sur des îles qui flottent au-dessus des nuages.',
+    epoque: '2071 – 2090', titre: 'L’Ascension', ambiance: 'or',
+    texte: 'En 2071, sept volontaires reçoivent en secret les premières empreintes anciennes. Ils deviennent des êtres à part, qu’on reconnaît à une mèche d’or et à une ombre qui n’est pas la leur. Ces Résonants prennent la tête des villes une à une, pendant vingt ans. Leurs familles s’installent dans les Hauts, sur des îles qui flottent au-dessus des nuages.',
   },
   {
-    epoque: 'Les années 2080', titre: 'La réponse du peuple', ambiance: 'atelier',
+    epoque: '2088 – 2100', titre: 'La réponse du peuple', ambiance: 'atelier',
     texte: 'Le reste de l’humanité répond avec ses propres armes. La machine donne les Augmentés, aux greffes d’acier et de cristal. La génétique donne les Génés, qui changent leur propre corps. Trois lignées se font face, et le monde manque de basculer encore une fois.',
   },
   {
