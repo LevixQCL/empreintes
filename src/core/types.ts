@@ -56,6 +56,11 @@ export interface ModuleDef {
   lignee: Lignee;
   rarete: Rarete;
   gestes: { nom: string; f: number; type: TypeGeste; v: number; lourd?: boolean; effet?: Effet }[];
+  /**
+   * Les effets que les métaux débloquent, dans l'ordre (le cuivre le 1er, l'argent le 2e, l'or le 3e).
+   * Absent : les effets déjà posés sur les Gestes, dans leur ordre.
+   */
+  deblocages?: { geste: number; effet: Effet }[];
 }
 
 export interface GesteDef {

@@ -102,6 +102,18 @@ describe('Un Module, cinq métaux', () => {
     expect(moduleDef('lames-orbitales').rarete).toBe('or');
   });
 
+  it('le métal débloque les effets du Module un à un, la nacre les renforce', () => {
+    const nb = (k: string) => moduleDef(k).gestes.filter((g) => g.effet).length;
+    expect(nb('jambes-ressort@fer')).toBe(0);
+    expect(nb('jambes-ressort@cuivre')).toBe(1);
+    expect(moduleDef('jambes-ressort@cuivre').gestes[0]!.effet).toEqual({ type: 'percant' });
+    expect(nb('jambes-ressort@argent')).toBe(2);
+    expect(nb('jambes-ressort@nacre')).toBe(2);
+    expect(moduleDef('crocs-fossiles@or').gestes[0]!.effet).toEqual({ type: 'siphon', part: 0.5 });
+    expect(moduleDef('crocs-fossiles@nacre').gestes[0]!.effet).toEqual({ type: 'siphon', part: 0.75 });
+    expect(moduleDef('gant-arc@nacre').gestes[0]!.effet).toEqual({ type: 'flux', v: 2 });
+  });
+
   it('un Porteur ne porte pas deux fois le même Module', () => {
     const j = avance();
     ajouterCarte(j, 'jambes-ressort@or');

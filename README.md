@@ -62,8 +62,9 @@ Tous les chiffres sont dans deux fichiers :
 
 **Un Module, cinq métaux.** Chaque Module existe en fer, cuivre, argent, or et nacre. Un exemplaire possédé se note
 `module@métal` (`jambes-ressort@or`) ; le métal est fixé quand on le trouve et ne change jamais. Les Gestes de `donnees.ts`
-sont réglés pour le métal d'origine du Module ; dans un autre métal, `METAL_FORCE` règle la force et `METAL_EFFETS` le
-nombre d'effets gardés (fer 0, cuivre 1, argent 2, or et nacre tous). Deux métaux d'un même Module sont deux cartes à part :
+sont réglés pour le métal d'origine du Module ; dans un autre métal, `METAL_FORCE` règle la force, et le métal débloque
+les effets de la liste `deblocages` du Module, un à un (fer aucun, cuivre 1, argent 2, or 3, nacre tous et renforcés).
+Deux métaux d'un même Module sont deux cartes à part :
 chacune ses doublons, son niveau, et un Porteur n'en porte qu'une.
 
 **La Fusion.** `src/core/fusion.ts` (règles et réglages dans `FUSION`) : deux cartes du même métal et de la même lignée,
