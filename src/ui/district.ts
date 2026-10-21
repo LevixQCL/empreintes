@@ -1,5 +1,6 @@
-// Écrans du district : l'archipel (accueil), la coupe de la Tour du Noyau, le choix de l'escouade.
-// Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ; les étiquettes cliquables sont posées dessus.
+// Écrans du district : l'archipel (accueil), la Tour du Noyau en coupe, l'escouade, les cartes, le Codex.
+// Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
+// les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
 
 import { libelleEffet } from '../core/effets';
 import { MODULES, PORTEURS, batimentDef, carteId, gestesRemplaces, moduleDef, porteurDef } from '../core/donnees';
@@ -9,47 +10,25 @@ import {
   porteursPresents, posteDe, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste,
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
-import type { Rarete } from '../core/types';
+import type { BatimentId, Lignee, Rarete } from '../core/types';
 import { FRAGMENTS } from '../core/fragments';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
-import type { BatimentId } from '../core/types';
-import { COULEUR, FONDS, echap, panneauCompte, type Compte } from './vue';
-import { decor, sceneDistrict, illustrationBatiment, prochainVisuel, stylePastille, visuel } from './art';
+import { COULEUR, echap } from './vue';
+import { decor, illustrationBatiment, prochainVisuel, sceneDistrict, visuel } from './art';
 import { faceCarte } from './carte';
+import { ICO } from './icones';
+import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict } from './coquille';
 
-export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'codex' | 'cartes';
-
-export interface EcranDistrict {
-  j: Jeu;
-  vue: Vue;
-  selection: BatimentId | null;
-  escouade: string[];
-  strateChoisie: number;
-  message: string;
-  compte: Compte;
-  now: number;
-  /** lignes du résumé « Pendant ton absence » (vide = rien à montrer) */
-  retour: string[];
-  /** Bibliothèque : onglet, chapitre ouvert, et écran où revenir */
-  onglet: 'chroniques' | 'archives';
-  chapitre: string | null;
-  retourBiblio: 'archipel' | 'coupe' | 'titre';
-}
-
-const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');
-const duree = (ms: number) => {
-  const s = Math.max(0, Math.ceil(ms / 1000));
-  if (s >= 86_400) return `${Math.floor(s / 86_400)} j ${Math.floor((s % 86_400) / 3600)} h`;
-  if (s >= 3600) return `${Math.floor(s / 3600)} h ${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}`;
-  return s >= 60 ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, '0')} s` : `${s} s`;
-};
+export type { EcranDistrict, Vue } from './coquille';
 
 export const COULEUR_RARETE: Record<Rarete, string> = { fer: '#8E949C', cuivre: '#C47A48', argent: '#B8C4CE', or: '#E2B44A', nacre: '#E6D3EE' };
 
-// ---------- Archipel (SVG provisoire) ----------
+const gemme = (r: Rarete) => `<i class="gemme g-${r}" style="--r:${COULEUR_RARETE[r]}" title="${NOMS_RARETE[r]}" aria-hidden="true"></i>`;
+
+// ---------- L'archipel ----------
 
 type Lieu = BatimentId | 'chantier';
-/** Où se trouve chaque bâtiment dans le tableau de chaque âge (repère 400 × 600, haut de l'étiquette) */
+/** Où se trouve chaque bâtiment dans le tableau de chaque âge (repère 400 × 600, haut de la plaque) */
 const LIEUX: Record<1 | 2 | 3 | 4, Record<Lieu, { x: number; y: number }>> = {
   1: { noyau: { x: 200, y: 232 }, generateur: { x: 322, y: 228 }, forge: { x: 128, y: 500 }, clinique: { x: 322, y: 345 }, chantier: { x: 305, y: 470 } },
   2: { noyau: { x: 222, y: 205 }, generateur: { x: 92, y: 205 }, forge: { x: 332, y: 262 }, clinique: { x: 340, y: 385 }, chantier: { x: 300, y: 478 } },
@@ -96,167 +75,188 @@ function tableau(j: Jeu): string {
     + `${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
 }
 
-function etiquettes(e: EcranDistrict): string {
+function plaques(e: EcranDistrict): string {
   const j = e.j;
   const lieux = LIEUX[visuel(j.batiments.noyau)];
+  const o = objectifCourant(j);
   return ORDRE.map((id) => {
-    const p = { id, ...lieux[id] };
-    const left = (p.x / 400) * 100, top = (p.y / 600) * 100;
-    if (p.id === 'chantier') {
-      return `<button type="button" class="etiquette verrou" style="left:${left}%;top:${top}%" data-action="chantier"><span>Chantier</span><small>Labo génétique · bientôt</small></button>`;
+    const p = lieux[id];
+    // une plaque près du bord droit ou gauche reste dans le tableau
+    const left = Math.min(84, Math.max(16, (p.x / 400) * 100)), top = (p.y / 600) * 100;
+    const pos = `style="left:${left}%;top:${top}%"`;
+    if (id === 'chantier') {
+      return `<button type="button" class="plaque verrou" ${pos} data-action="chantier"><span class="plaque-nom">${ICO.verrou}Labo génétique</span><small>Bientôt</small></button>`;
     }
-    const d = batimentDef(p.id);
-    const prete = p.id === 'forge' && j.forge && e.now >= j.forge.fin;
-    const ch = chantierDe(j, p.id);
-    const vise = objectifCourant(j)?.pilier === p.id && !objectifCourant(j)!.fait(j);
-    const occupe = p.id !== 'noyau' && posteDe(j, p.id as Poste);
-    return `<button type="button" class="etiquette${e.selection === p.id ? ' choisie' : ''}${vise ? ' visee' : ''}" style="left:${left}%;top:${top}%" data-action="batiment" data-id="${p.id}">`
-      + `<span>${echap(d.nom)}</span><small>${ch ? `Chantier · ${duree(ch.fin - e.now)}` : `Niv. ${j.batiments[p.id]}${occupe ? ' · ' + echap(porteurDef(occupe).nom) : ''}`}</small>${prete ? '<i class="point" aria-label="prêt"></i>' : ''}</button>`;
+    const d = batimentDef(id);
+    const prete = id === 'forge' && !!j.forge && e.now >= j.forge.fin;
+    const ch = chantierDe(j, id);
+    const vise = !!o && o.pilier === id && !o.fait(j) && o.titre !== 'Greffer une carte';
+    const occupant = id !== 'noyau' ? posteDe(j, id as Poste) : null;
+    let etat = '';
+    if (ch) etat = `<small class="en-chantier">${ICO.marteau}${duree(ch.fin - e.now)}</small>`;
+    else if (prete) etat = `<small class="pret">${ICO.ok}Prêt</small>`;
+    else if (j.forge && id === 'forge') etat = `<small>${ICO.chrono}${duree(j.forge.fin - e.now)}</small>`;
+    else if (id !== 'noyau' && !occupant) etat = `<small class="vacant">${ICO.ouvrier}Personne</small>`;
+    else if (occupant) etat = `<small class="occupe">${avatar(occupant, 14)}${echap(porteurDef(occupant).nom)}</small>`;
+    return `<button type="button" class="plaque${e.selection === id ? ' choisie' : ''}${vise ? ' visee' : ''}" ${pos} data-action="batiment" data-id="${id}" aria-label="${echap(d.nom)}, niveau ${j.batiments[id]}">`
+      + `<span class="plaque-nom"><b class="niv">${j.batiments[id]}</b>${echap(d.nom)}</span>${etat}${prete || vise ? '<i class="pastille-alerte" aria-hidden="true"></i>' : ''}</button>`;
   }).join('');
 }
 
-function barreRessources(e: EcranDistrict): string {
+/** La mission du moment, posée en haut du tableau */
+function mission(e: EcranDistrict): string {
   const j = e.j;
-  return `<div class="ressources">`
-    + `<span class="res"><b class="pastille-res en"></b>${ent(j.energie)}<small>/${ent(stockage(j))} · +${energieParHeure(j)}/h</small></span>`
-    + `<span class="res"><b class="pastille-res co"></b>${ent(j.composants)}<small> composants</small></span>`
-    + (j.eclats > 0 || j.strate >= 2 ? `<span class="res"><b class="pastille-res ec"></b>${ent(j.eclats)}<small> Éclats</small></span>` : '')
-    + `<span class="res"><small>Strate</small> −${j.strate}</span></div>`;
+  const o = objectifCourant(j);
+  if (o) {
+    const fait = o.fait(j);
+    const gain = `${o.recompense.energie ? prix('energie', o.recompense.energie) : ''}${o.recompense.composants ? prix('composants', o.recompense.composants) : ''}`;
+    return `<section class="mission${fait ? ' faite' : ''}" aria-label="Objectif"><div class="mission-tete"><span class="surtitre">OBJECTIF ${j.objectif + 1} / 3</span><span class="gains">${gain}</span></div>`
+      + `<strong>${echap(o.titre)}</strong>`
+      + (fait ? `<button type="button" class="btn prim" data-action="reclamer">${ICO.ok}Récupérer la récompense</button>` : `<p>${echap(o.consigne)}</p>`)
+      + `</section>`;
+  }
+  if (!j.chambre) return '';
+  const q = j.quotidien;
+  const def = QUOTIDIENS[q.type];
+  const max = ARCHIVE.paliers[2];
+  const crans = ARCHIVE.paliers.map((p) => `<i class="cran${j.archive.points >= p ? ' atteint' : ''}" style="left:${(p / max) * 100}%"></i>`).join('');
+  let h = `<section class="mission jour${quotidienFait(j) ? ' faite' : ''}" aria-label="Objectif du jour">`;
+  if (quotidienActif(j)) {
+    h += `<div class="mission-tete"><span class="surtitre">OBJECTIF DU JOUR${q.reserve > 1 ? ` · ${q.reserve} EN RÉSERVE` : ''}</span><span class="chiffre">${q.progres} / ${def.objectif}</span></div><strong>${echap(def.titre)}</strong>`
+      + (quotidienFait(j)
+        ? `<button type="button" class="btn prim" data-action="reclamer-jour">${ICO.coffre}Récupérer : une carte ou 2 Éclats</button>`
+        : `<div class="jauge"><i style="width:${(100 * q.progres) / def.objectif}%"></i></div>`);
+  } else h += `<div class="mission-tete"><span class="surtitre">OBJECTIF DU JOUR</span></div><small class="aide">Tous faits : le prochain arrive demain.</small>`;
+  h += `<div class="archive"><span class="surtitre">ARCHIVE · ${Math.min(j.archive.points, max)}/${max}</span><div class="jauge reso">${crans}<i style="width:${Math.min(100, (100 * j.archive.points) / max)}%"></i></div><small>lundi, dans ${duree(lundiSuivant(e.now) - e.now)}</small></div>`;
+  return h + `</section>`;
 }
 
-function chipPorteur(j: Jeu, id: string, action: string, extra = '', actif = false, off = false): string {
+/** Le grand bouton d'action posé en bas du tableau, quand une chose attend le joueur */
+function appel(e: EcranDistrict): string {
+  const j = e.j;
+  if (j.expedition) {
+    return `<button type="button" class="appel" data-action="reprendre">${ICO.descendre}<span><strong>${j.expedition.tutoriel ? 'La chambre scellée' : `Expédition · Strate −${j.expedition.strate}`}</strong><small>Le combat t’attend : reprendre</small></span></button>`;
+  }
+  if (!j.chambre) {
+    return `<button type="button" class="appel reso" data-action="rencontre">${ICO.porte}<span><strong>La porte scellée</strong><small>Sous la Tour du Noyau, trois personnes t’attendent</small></span></button>`;
+  }
+  if (j.archive.aOuvrir && !objectifCourant(j)) {
+    return `<button type="button" class="appel reso" data-action="ouvrir-archive">${ICO.coffre}<span><strong>L’Archive de la semaine est prête</strong><small>Palier ${j.archive.aOuvrir} sur 3 atteint : ouvre-la</small></span></button>`;
+  }
+  return '';
+}
+
+/** Un Porteur qu'on peut poster au travail */
+function candidat(j: Jeu, id: string, poste: Poste, affinite: Lignee | undefined): string {
   const d = porteurDef(id);
-  const u = j.porteurs[id]!.usure;
-  return `<button type="button" class="chip${actif ? ' actif' : ''}" style="--c:${COULEUR[d.lignee]};${stylePastille(id, FONDS[id])}" data-action="${action}" data-id="${id}"${extra}${off ? ' disabled' : ''}>`
-    + `<span class="pastille" aria-hidden="true"></span><span>${echap(d.nom)}</span>${u >= 1 ? `<small>Usure ${Math.floor(u)}</small>` : ''}</button>`;
+  const ailleurs = j.porteurs[id]!.poste;
+  const bonus = affinite === d.lignee ? `×${DISTRICT.bonusAffinite}` : `×${String(DISTRICT.bonusPoste).replace('.', ',')}`;
+  return `<button type="button" class="tuile-porteur" style="--c:${COULEUR[d.lignee]}" data-action="poster" data-id="${id}" data-poste="${poste}">`
+    + `${avatar(id, 48)}<strong>${echap(d.nom)}</strong><small>${ailleurs ? echap(batimentDef(ailleurs).nom) : 'Libre'}</small>`
+    + `<span class="bonus${affinite === d.lignee ? ' ideal' : ''}">${bonus}</span></button>`;
 }
 
-function panneauBatiment(e: EcranDistrict): string {
+function feuilleBatiment(e: EcranDistrict): string {
   const j = e.j;
   const b = e.selection;
   if (!b) return '';
   const d = batimentDef(b);
-  const cout = coutAmelioration(j, b);
-  const bloque = b !== 'noyau' && j.batiments[b] >= j.batiments.noyau;
-  let h = `<section class="feuille" aria-label="${echap(d.nom)}"><div class="feuille-tete"><div><h2>${echap(d.nom)}</h2><span class="sous">NIVEAU ${j.batiments[b]} / ${d.niveauMax}${d.affinite ? ' · IDÉAL : ' + (d.affinite === 'tech' ? 'AUGMENTÉ' : d.affinite === 'bio' ? 'GÉNÉ' : 'RÉSONANT') : ''}</span></div>`
-    + `<button type="button" class="btn-sec" data-action="fermer">Fermer</button></div>`;
-  const pv = prochainVisuel(j.batiments[b]);
-  h += `<div class="apercu"><img src="${illustrationBatiment(b, j.batiments[b])}" alt="" decoding="async"><div><p class="role">${echap(d.role)}</p>`
-    + (pv !== null && pv <= d.niveauMax ? `<small class="aide">Nouvelle apparence au niveau ${pv}.</small>` : '') + `</div></div>`;
+  const niv = j.batiments[b];
+  const pv = prochainVisuel(niv);
+  const pips = Array.from({ length: d.niveauMax }, (_, i) => `<i class="${i < niv ? 'plein' : ''}"></i>`).join('');
+  let h = `<div class="voile-feuille" data-action="fermer" aria-hidden="true"></div><section class="feuille" role="dialog" aria-modal="true" aria-labelledby="feuille-titre"><span class="poignee" aria-hidden="true"></span>`
+    + `<header class="feuille-tete"><img class="vignette" src="${illustrationBatiment(b, niv)}" alt="" decoding="async"><div class="titres"><span class="surtitre">NIVEAU ${niv} / ${d.niveauMax}${d.affinite ? ` · IDÉAL : ${NOM_LIGNEE[d.affinite].toUpperCase()}` : ''}</span><h2 id="feuille-titre">${echap(d.nom)}</h2><span class="pips" aria-hidden="true">${pips}</span></div>`
+    + `<button type="button" class="btn-icone" data-action="fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
+  h += `<p class="role">${echap(d.role)}${pv !== null && pv <= d.niveauMax ? ` <span class="aide">Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
 
-  if (b === 'generateur') h += `<p class="stat"><b>+${energieParHeure(j)}</b> énergie par heure · stockage ${ent(stockage(j))}</p>`;
-  if (b === 'clinique') h += `<p class="stat"><b>−${Math.round(soinParHeure(j) * 10) / 10}</b> Usure par heure pour chaque Porteur au repos</p>`;
+  // ce que le bâtiment rapporte
+  const stats: string[] = [];
+  if (b === 'generateur') stats.push(`<div class="stat">${ICO.energie}<b>+${energieParHeure(j)}</b><small>énergie / h</small></div>`);
+  if (b === 'clinique') stats.push(`<div class="stat">${ICO.soin}<b>−${Math.round(soinParHeure(j) * 10) / 10}</b><small>Usure / h au repos</small></div>`);
+  if (b === 'noyau' || b === 'generateur') stats.push(`<div class="stat">${ICO.coffre}<b>${ent(stockage(j))}</b><small>stockage</small></div>`);
+  if (b === 'noyau') stats.push(`<div class="stat">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div>`);
+  if (stats.length) h += `<div class="stats">${stats.join('')}</div>`;
   if (b === 'noyau') {
-    h += `<p class="stat">Stockage <b>${ent(stockage(j))}</b> · les autres bâtiments ne dépassent pas son niveau.</p>`
-      + `<button type="button" class="prim large" data-action="entrer">Entrer dans la tour</button>`;
+    h += `<p class="aide">Les autres bâtiments ne dépassent pas son niveau.</p><button type="button" class="btn prim large" data-action="entrer">${ICO.tour}Entrer dans la tour</button>`;
   }
 
+  // le Porteur au travail
   if (b !== 'noyau') {
     const poste = b as Poste;
     const occupant = posteDe(j, poste);
-    h += `<div class="bloc"><span class="label">AU TRAVAIL</span><div class="chips">`;
-    if (occupant) h += chipPorteur(j, occupant, 'liberer', '', true) + `<small class="aide">Touche pour le libérer</small>`;
-    else h += `<small class="aide">Personne. Un Porteur de la bonne lignée travaille deux fois mieux.</small>`;
-    h += `</div><div class="chips">`;
-    for (const p of PORTEURS) {
-      if (p.id === occupant || enExpedition(j, p.id) || !porteursPresents(j).includes(p.id)) continue;
-      const ailleurs = j.porteurs[p.id]!.poste;
-      h += chipPorteur(j, p.id, 'poster', ` data-poste="${poste}"`, false) .replace('</button>', ailleurs ? `<small>${echap(batimentDef(ailleurs).nom)}</small></button>` : '</button>');
+    h += `<section class="bloc"><h3 class="titre-bloc">${ICO.ouvrier}Au travail</h3>`;
+    if (occupant) {
+      const o = porteurDef(occupant);
+      h += `<div class="occupant" style="--c:${COULEUR[o.lignee]}">${avatar(occupant, 52)}<div><strong>${echap(o.nom)}</strong><small>${NOM_LIGNEE[o.lignee]} · rendement ×${String(d.affinite === o.lignee ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste).replace('.', ',')}</small></div>`
+        + `<button type="button" class="btn sec" data-action="liberer" data-id="${occupant}">Libérer</button></div>`;
+    } else {
+      h += `<p class="vide-poste">Personne au poste. Un Porteur ${d.affinite ? `<b style="color:${COULEUR[d.affinite]}">${NOM_LIGNEE[d.affinite]}</b>` : 'de la bonne lignée'} travaille deux fois mieux.</p>`;
     }
-    h += `</div></div>`;
+    const libres = PORTEURS.filter((p) => p.id !== occupant && !enExpedition(j, p.id) && porteursPresents(j).includes(p.id))
+      .sort((x, y) => Number(y.lignee === d.affinite) - Number(x.lignee === d.affinite));
+    if (libres.length) h += `<div class="rangee">${libres.map((p) => candidat(j, p.id, poste, d.affinite ?? undefined)).join('')}</div>`;
+    h += `</section>`;
   }
 
+  // la Forge
   if (b === 'forge') {
-    h += `<div class="bloc"><span class="label">REFABRIQUER UNE CARTE DÉJÀ TROUVÉE</span>`;
+    h += `<section class="bloc"><h3 class="titre-bloc">${ICO.marteau}Refabriquer une carte</h3>`;
     if (j.forge) {
       const m = moduleDef(j.forge.moduleId);
-      const total = j.forge.fin - j.forge.debut;
-      const fait = Math.min(1, (e.now - j.forge.debut) / total);
-      h += `<p class="stat">${echap(m.nom)} · reste ${duree(j.forge.fin - e.now)}</p><div class="piste" style="--c:var(--gold)"><i style="width:${fait * 100}%"></i></div>`;
+      const fait = Math.min(1, (e.now - j.forge.debut) / (j.forge.fin - j.forge.debut));
+      h += `<div class="en-cours">${gemme(m.rarete)}<div><strong>${echap(m.nom)}</strong><small>${e.now >= j.forge.fin ? 'Prête : elle rejoint tes cartes' : `Reste ${duree(j.forge.fin - e.now)}`}</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
     } else {
-      h += `<small class="aide">Un exemplaire de plus devient un doublon, pour faire monter la carte. Le recyclage se fait depuis tes Cartes.</small>`;
+      const forgeron = posteDe(j, 'forge');
+      h += `<p class="aide">Un exemplaire de plus devient un doublon, pour faire monter la carte.${forgeron ? '' : ' <b>Poste d’abord un Porteur à la Forge.</b>'}</p><ul class="liste-forge">`;
       const possedees = Object.keys(j.collection).map(moduleDef).sort((x, y) => RARETES.indexOf(y.rarete) - RARETES.indexOf(x.rarete) || x.nom.localeCompare(y.nom));
       for (const m of possedees) {
         const c = coutRefabrication(m.id);
         const assez = j.composants >= c.composants && j.eclats >= c.eclats;
-        h += `<div class="module" style="--c:${COULEUR_RARETE[m.rarete]}"><div><strong>${echap(m.nom)}</strong><small>${NOMS_RARETE[m.rarete]} · ${c.composants} composants${c.eclats ? ` · ${c.eclats} Éclats` : ''} · ${duree(dureeFabrication(j, m.id))}</small></div>`
-          + `<button type="button" class="chip petit" data-action="fabriquer" data-module="${m.id}"${assez && posteDe(j, 'forge') ? '' : ' disabled'}>Refabriquer</button></div>`;
+        h += `<li style="--r:${COULEUR_RARETE[m.rarete]}">${gemme(m.rarete)}<div class="lf-nom"><strong>${echap(m.nom)}</strong><small>${ICO.chrono}${duree(dureeFabrication(j, m.id))}</small></div>`
+          + `<span class="lf-prix">${couts(j, { composants: c.composants, eclats: c.eclats })}</span>`
+          + `<button type="button" class="btn sec petit" data-action="fabriquer" data-module="${m.id}"${assez && forgeron ? '' : ' disabled'} aria-label="Refabriquer ${echap(m.nom)}">${ICO.marteau}</button></li>`;
       }
-      if (!posteDe(j, 'forge')) h += `<small class="aide">Poste d’abord un Porteur à la Forge.</small>`;
+      h += `</ul>`;
     }
-    h += `</div>`;
+    h += `</section>`;
   }
+  h += `</div>`;
 
+  // le pied : l'amélioration, toujours visible
   const ch = chantierDe(j, b);
+  const cout = coutAmelioration(j, b);
+  h += `<footer class="feuille-pied">`;
   if (ch) {
     const fait = Math.min(1, (e.now - ch.debut) / (ch.fin - ch.debut));
-    h += `<div class="bloc"><span class="label">CHANTIER VERS LE NIVEAU ${j.batiments[b] + 1}</span><p class="stat">Reste ${duree(ch.fin - e.now)}. Le chantier avance même jeu fermé.</p><div class="piste" style="--c:var(--gold)"><i style="width:${fait * 100}%"></i></div></div>`;
-  } else   if (cout) {
+    h += `<div class="chantier-cours">${ICO.marteau}<div><strong>Chantier vers le niveau ${niv + 1}</strong><small>Reste ${duree(ch.fin - e.now)} · avance même jeu fermé</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
+  } else if (cout) {
+    const bloque = b !== 'noyau' && niv >= j.batiments.noyau;
     const assez = j.energie >= cout.energie && j.composants >= cout.composants && j.eclats >= (cout.eclats ?? 0);
     const plein = j.chantiers.length >= chantiersMax(j) || (b === 'noyau' && j.chantiers.length > 0);
-    const d = dureeChantier(j, b);
-    h += `<button type="button" class="sec large" data-action="ameliorer" data-id="${b}"${assez && !bloque && !plein ? '' : ' disabled'}>Améliorer au niveau ${j.batiments[b] + 1} · ${cout.energie} énergie · ${cout.composants} composants${cout.eclats ? ` · ${cout.eclats} Éclats` : ''} · ${d ? duree(d) : 'immédiat'}</button>`;
-    if (bloque) h += `<small class="aide">Améliore d’abord la Tour du Noyau.</small>`;
-    else if (plein) h += `<small class="aide">${b === 'noyau' && j.chantiers.length ? 'Attends la fin des chantiers en cours.' : `${chantiersMax(j) === 1 ? 'Un seul chantier à la fois (deux au Noyau niveau 4).' : 'Deux chantiers sont déjà en cours.'}`}</small>`;
-  } else h += `<small class="aide">Niveau maximum pour cette version.</small>`;
-  return h + `</section>`;
+    const dc = dureeChantier(j, b);
+    const raison = bloque ? 'Améliore d’abord la Tour du Noyau.'
+      : plein ? (b === 'noyau' && j.chantiers.length ? 'Attends la fin des chantiers en cours.' : chantiersMax(j) === 1 ? 'Un seul chantier à la fois (deux au Noyau niveau 4).' : 'Deux chantiers sont déjà en cours.')
+        : !assez ? 'Ressources insuffisantes.' : '';
+    h += `<div class="cout-ligne"><span class="surtitre">NIVEAU ${niv + 1}</span>${couts(j, cout)}<span class="prix duree">${ICO.chrono}${dc ? duree(dc) : 'immédiat'}</span></div>`
+      + `<button type="button" class="btn prim large" data-action="ameliorer" data-id="${b}"${assez && !bloque && !plein ? '' : ' disabled'}>${ICO.monter}Améliorer</button>`
+      + (raison ? `<small class="raison">${raison}</small>` : '');
+  } else h += `<small class="raison">Niveau maximum pour cette version.</small>`;
+  return h + `</footer></section>`;
 }
 
 export function htmlArchipel(e: EcranDistrict): string {
   const j = e.j;
-  let h = `<header class="top"><div><h1>EMPREINTES</h1><span class="sous">TON DISTRICT</span></div><div class="droite">`
-    + (e.compte.actif ? `<button type="button" class="btn-sec" data-action="compte" aria-expanded="${e.compte.ouvert}">${e.compte.utilisateur ? 'Compte ✓' : 'Compte'}</button>` : '')
-    + `<button type="button" class="btn-sec${objectifCourant(j)?.titre === 'Greffer une carte' && !objectifCourant(j)!.fait(j) ? ' visee' : ''}" data-action="cartes"${j.chambre ? '' : ' disabled'}>Cartes</button>`
-    + `<button type="button" class="btn-sec" data-action="bibliotheque">Chroniques${chapitresNouveaux(j) ? ` <span class="pastille-n">${chapitresNouveaux(j)}</span>` : ''}</button></div></header>`;
-  h += panneauCompte(e.compte);
-  h += barreRessources(e);
-  if (!j.chambre && !j.expedition) {
-    h += `<button type="button" class="bandeau porte" data-action="rencontre"><strong>La porte scellée</strong><span>Sous la Tour du Noyau, trois personnes t’attendent.</span></button>`;
-  }
-  if (j.expedition) h += `<button type="button" class="bandeau" data-action="reprendre">${j.expedition.tutoriel ? 'La chambre scellée · Reprendre' : `Expédition en cours dans la Strate −${j.expedition.strate} · Reprendre`}</button>`;
-  const o = objectifCourant(j);
-  if (o) {
-    const fait = o.fait(j);
-    const gain = [o.recompense.energie ? `+${o.recompense.energie} énergie` : '', o.recompense.composants ? `+${o.recompense.composants} composants` : ''].filter(Boolean).join(' · ');
-    h += `<section class="objectif${fait ? ' fait' : ''}" aria-label="Objectif"><span class="label">OBJECTIF ${j.objectif + 1} / 3</span><strong>${echap(o.titre)}</strong><p>${echap(o.consigne)}</p>`
-      + (fait ? `<button type="button" class="prim" data-action="reclamer">Récupérer · ${gain}</button>` : `<small class="aide">Récompense : ${gain}</small>`) + `</section>`;
-  }
-  h += blocQuotidien(e);
-  h += `<section class="archipel" aria-label="Archipel">${tableau(j)}${etiquettes(e)}</section>`;
-  if (e.message) h += `<p class="message">${echap(e.message)}</p>`;
-  h += panneauBatiment(e);
-  h += `<div class="journal" aria-label="Journal">${j.journal.slice(0, 3).map((t) => `<p>${echap(t)}</p>`).join('')}</div>`;
+  // le tableau garde ses proportions (les plaques sont placées en % de l'image) ; au-dessus, son ciel flouté prolonge l'écran
+  let h = `<section class="archipel" aria-label="Ton district"><img class="tableau-fond" src="${sceneDistrict(j.batiments.noyau).url}" alt="" aria-hidden="true">`
+    + `<div class="toile">${tableau(j)}${plaques(e)}</div>`
+    + `<div class="archipel-haut">${mission(e)}${appel(e)}</div></section>`;
+  h += feuilleBatiment(e);
   if (j.choix.length) h += fenetreChoix(j);
   else if (e.retour.length) {
-    h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="retour-titre"><div class="fenetre retour"><h2 id="retour-titre">Pendant ton absence</h2><ul>`
-      + e.retour.map((l) => `<li>${echap(l)}</li>`).join('') + `</ul><button type="button" data-action="retour-ok">Au travail</button></div></div>`;
+    h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="retour-titre"><div class="fenetre retour"><span class="surtitre">BON RETOUR, DIRECTEUR</span><h2 id="retour-titre">Pendant ton absence</h2><ul>`
+      + e.retour.map((l) => `<li>${ICO.cristal}<span>${echap(l)}</span></li>`).join('') + `</ul><button type="button" class="btn prim large" data-action="retour-ok">Au travail</button></div></div>`;
   }
-  return h;
-}
-
-// ---------- Objectif du jour et Archive de la semaine ----------
-
-function blocQuotidien(e: EcranDistrict): string {
-  const j = e.j;
-  if (!j.chambre || objectifCourant(j)) return '';
-  let h = '';
-  if (j.archive.aOuvrir) {
-    h += `<button type="button" class="bandeau archive-prete" data-action="ouvrir-archive"><strong>L’Archive de la semaine est prête</strong><span>Palier ${j.archive.aOuvrir} sur 3 atteint : ouvre-la.</span></button>`;
-  }
-  const q = j.quotidien;
-  const def = QUOTIDIENS[q.type];
-  const max = ARCHIVE.paliers[2];
-  const paliers = ARCHIVE.paliers.map((p) => `<i class="cran${j.archive.points >= p ? ' atteint' : ''}" style="left:${(p / max) * 100}%"></i>`).join('');
-  h += `<section class="objectif jour${quotidienFait(j) ? ' fait' : ''}" aria-label="Objectif du jour">`;
-  if (quotidienActif(j)) {
-    h += `<span class="label">OBJECTIF DU JOUR${q.reserve > 1 ? ` · ${q.reserve} EN RÉSERVE` : ''}</span><strong>${echap(def.titre)}</strong>`
-      + (quotidienFait(j)
-        ? `<button type="button" class="prim" data-action="reclamer-jour">Récupérer · une carte au choix ou 2 Éclats</button>`
-        : `<div class="ligne-prog"><div class="piste"><i style="width:${(100 * q.progres) / def.objectif}%;--c:var(--gold)"></i></div><small>${q.progres} / ${def.objectif}</small></div>`);
-  } else h += `<span class="label">OBJECTIF DU JOUR</span><small class="aide">Tous faits : le prochain arrive demain.</small>`;
-  h += `<div class="archive-sem"><span class="label">ARCHIVE DE LA SEMAINE · ${Math.min(j.archive.points, max)} / ${max}</span><div class="jauge"><div class="piste"><i style="width:${Math.min(100, (100 * j.archive.points) / max)}%;--c:var(--reso)"></i></div>${paliers}</div>`
-    + `<small class="aide">S’ouvre lundi, dans ${duree(lundiSuivant(e.now) - e.now)}. Tout ce que tu joues la remplit.</small></div></section>`;
-  return h;
+  return coquille(e, h, 'ecran-archipel');
 }
 
 // ---------- Les cartes ----------
@@ -264,25 +264,23 @@ function blocQuotidien(e: EcranDistrict): string {
 function carteMini(id: string, j: Jeu, attrs = ''): string {
   const m = moduleDef(id);
   const c = j.collection[id];
-  const neuve = !c;
   const niveau = c?.niveau ?? COLLECTION.niveauDepart[m.rarete];
-  return `<button type="button" class="carte-mini avec-face" ${attrs}>${faceCarte(m, niveau, multNiveau(id, niveau))}`
-    + `<em>${neuve ? 'Nouvelle carte' : `Doublon · niveau ${c.niveau}`}</em></button>`;
+  return `<button type="button" class="carte-choix" ${attrs}>${faceCarte(m, niveau, multNiveau(id, niveau))}`
+    + `<span class="ruban${c ? '' : ' neuve'}">${c ? `Doublon · niv. ${c.niveau}` : 'Nouvelle'}</span></button>`;
 }
 
-/** Le texte des effets spéciaux de la carte, sous sa face */
+/** Le texte des effets spéciaux de la carte */
 function effetsCarte(m: ReturnType<typeof moduleDef>): string {
   const avec = m.gestes.filter((g) => g.effet);
-  return avec.length ? `<ul class="effets-carte">${avec.map((g) => `<li><b>${echap(g.nom)}</b> · ${echap(libelleEffet(g.effet!))}</li>`).join('')}</ul>` : '';
+  return avec.length ? `<ul class="effets-carte">${avec.map((g) => `<li><b>${echap(g.nom)}</b> ${echap(libelleEffet(g.effet!))}</li>`).join('')}</ul>` : '';
 }
 
 function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
   const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : 'Archive de la semaine';
-  return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><div class="cartes-choix">`
+  return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><div class="cartes-choix">`
     + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}"`)).join('')
-    + `</div>${c.eclats ? `<button type="button" class="btn-sec" data-action="prendre" data-index="-1">Prendre ${c.eclats} Éclats à la place</button>` : ''}`
-    + (j.choix.length > 1 ? `<small class="aide">Encore ${j.choix.length - 1} choix après celui-ci.</small>` : '') + `</div></div>`;
+    + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
 }
 
 /** Les Gestes de base que la carte remplace (ou remplacerait) sur ce Porteur */
@@ -294,49 +292,79 @@ function remplace(j: Jeu, moduleId: string, porteurId: string | undefined): stri
   const noms = gestesRemplaces(porteurId, avant, moduleDef(moduleId).gestes.length).map((g) => g.nom);
   if (!noms.length) return '';
   const qui = porteurDef(porteurId).nom;
-  return `<small class="aide">${k >= 0 ? `Remplace sur ${echap(qui)}` : `Sur ${echap(qui)}, remplacerait`} : ${noms.map(echap).join(', ')}</small>`;
+  return `<p class="aide">${k >= 0 ? `Remplace sur ${echap(qui)}` : `Sur ${echap(qui)}, remplacerait`} : <b>${noms.map(echap).join(', ')}</b></p>`;
+}
+
+const exemplaires = (j: Jeu, moduleId: string) => [...RARETES].reverse().map((r) => carteId(moduleId, r)).filter((k) => j.collection[k]);
+
+function feuilleCarte(e: EcranDistrict): string {
+  const j = e.j;
+  const cle = e.carte;
+  if (!cle || !j.collection[cle]) return '';
+  const m = moduleDef(cle);
+  const c = j.collection[cle]!;
+  const requis = doublonsRequis(m.id, c.niveau);
+  const porte = greffesDe(j, m.id)[0];
+  const cout = composantsNiveau(c.niveau + 1);
+  const porteurs = PORTEURS.filter((p) => p.lignee === m.lignee && porteursPresents(j).includes(p.id));
+  let h = `<div class="voile-feuille" data-action="carte-fermer" aria-hidden="true"></div><section class="feuille carte-detail" role="dialog" aria-modal="true" aria-label="${echap(m.nom)}"><span class="poignee" aria-hidden="true"></span>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR_RARETE[m.rarete]}">${NOMS_RARETE[m.rarete].toUpperCase()} · ${NOM_LIGNEE[m.lignee].toUpperCase()} · NIVEAU ${c.niveau}</span><h2>${echap(m.nom)}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
+    + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(m) || '<p class="aide">Pas d’effet spécial : des Gestes simples et fiables.</p>'}${remplace(j, m.id, porte ?? porteurs[0]?.id)}</div></div>`;
+  // progression
+  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.monter}Progression</h3>`;
+  if (requis === null) h += `<p class="aide">Niveau maximum atteint.</p>`;
+  else {
+    const pret = c.doublons >= requis;
+    h += `<div class="progression"><div class="jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></div><span class="chiffre">${c.doublons} / ${requis} doublons</span></div>`
+      + `<p class="aide">Niveau ${c.niveau + 1} : +${Math.round(COLLECTION.bonusNiveau * 100)} % de force.</p>`
+      + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="monter" data-module="${cle}"${pret && j.composants >= cout ? '' : ' disabled'}>${ICO.monter}Monter · ${prix('composants', cout, j.composants >= cout)}</button>`;
+    if (c.doublons > 0) h += `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button>`;
+    h += `</div>`;
+  }
+  if (requis === null && c.doublons > 0) h += `<div class="ligne-btn"><button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button></div>`;
+  h += `</section>`;
+  // greffe
+  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Greffer sur</h3><p class="aide">${DISTRICT.modulesMax} cartes au plus par Porteur, de sa lignée. Ses Gestes remplacent certains des siens.</p><div class="rangee">`
+    + porteurs.map((p) => {
+      const ici = porte === p.id;
+      const n = j.porteurs[p.id]!.modules.length;
+      return `<button type="button" class="tuile-porteur${ici ? ' actif' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="${ici ? 'degreffer' : 'greffer'}" data-module="${cle}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}>`
+        + `${avatar(p.id, 48)}<strong>${echap(p.nom)}</strong><small>${ici ? 'Greffée · retirer' : `${n} / ${DISTRICT.modulesMax}`}</small>${ici ? `<span class="bonus ideal">${ICO.ok}</span>` : ''}</button>`;
+    }).join('') + `</div></section>`;
+  return h + `</div></section>`;
 }
 
 export function htmlCartes(e: EcranDistrict): string {
   const j = e.j;
-  const exemplaires = (moduleId: string) => [...RARETES].reverse().map((r) => carteId(moduleId, r)).filter((k) => j.collection[k]);
-  const trouvees = MODULES.filter((m) => exemplaires(m.id).length).length;
-  let h = `<header class="top"><div><h1>Cartes</h1><span class="sous">${trouvees} / ${MODULES.length} TROUVÉES · ${DISTRICT.modulesMax} PAR PORTEUR</span></div><button type="button" class="btn-sec" data-action="archipel">Archipel</button></header>`;
-  h += barreRessources(e);
-  if (e.message) h += `<p class="message">${echap(e.message)}</p>`;
-  h += `<p class="discret">Greffe une carte sur un Porteur de sa lignée : ses Gestes remplacent certains des siens, le deck garde sa taille. Les doublons la font monter (+${Math.round(COLLECTION.bonusNiveau * 100)} % de force par niveau).</p>`;
-  for (const lignee of ['tech', 'bio', 'reso'] as const) {
-    const porteurs = PORTEURS.filter((p) => p.lignee === lignee && porteursPresents(j).includes(p.id));
-    h += `<h2 class="titre-lignee" style="--c:${COULEUR[lignee]}">${lignee === 'tech' ? 'Augmentés' : lignee === 'bio' ? 'Génés' : 'Résonants'}</h2><div class="grille-cartes">`;
+  const trouvees = MODULES.filter((m) => exemplaires(j, m.id).length).length;
+  const lignees: Lignee[] = e.filtre === 'tout' ? ['tech', 'bio', 'reso'] : [e.filtre];
+  let h = entete(`COLLECTION · ${trouvees} / ${MODULES.length} TROUVÉES`, 'Cartes');
+  h += `<div class="segments-choix" role="tablist">` + (['tout', 'tech', 'bio', 'reso'] as const).map((f) =>
+    `<button type="button" role="tab" class="seg${e.filtre === f ? ' actif' : ''}"${f !== 'tout' ? ` style="--c:${COULEUR[f]}"` : ''} data-action="filtre" data-id="${f}" aria-selected="${e.filtre === f}">${f === 'tout' ? 'Toutes' : NOM_LIGNEES[f]}</button>`).join('') + `</div>`;
+  h += `<p class="aide intro-ecran">Touche une carte pour la greffer sur un Porteur ou la faire monter avec ses doublons.</p>`;
+  for (const lignee of lignees) {
+    h += `<h2 class="titre-section" style="--c:${COULEUR[lignee]}">${NOM_LIGNEES[lignee]}</h2><div class="grille-cartes">`;
     for (const base of MODULES.filter((x) => x.lignee === lignee)) {
-      const cles = exemplaires(base.id);
-      if (!cles.length) {
-        h += `<div class="carte inconnue" style="--r:var(--line)"><strong>?</strong><small>Pas encore trouvée</small></div>`;
-        continue;
-      }
-      // une carte par métal possédé, du plus rare au plus commun
+      const cles = exemplaires(j, base.id);
+      if (!cles.length) { h += `<div class="carte-dos" aria-label="Carte pas encore trouvée">${gemme(base.rarete)}<span>?</span><small>À trouver</small></div>`; continue; }
       for (const cle of cles) {
         const m = moduleDef(cle);
         const c = j.collection[cle]!;
         const requis = doublonsRequis(m.id, c.niveau);
         const porte = greffesDe(j, m.id)[0];
-        const mult = multNiveau(m.id, c.niveau);
-        const cout = composantsNiveau(c.niveau + 1);
-        h += `<article class="carte avec-face" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[lignee]}">${faceCarte(m, c.niveau, mult)}`
-          + `${effetsCarte(m)}${remplace(j, m.id, porte ?? porteurs[0]?.id)}`
-          + (requis === null ? `<small>Niveau maximum</small>` : `<div class="ligne-prog"><div class="piste"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%;--c:var(--r)"></i></div><small>${c.doublons} / ${requis}</small></div>`)
-          + `<div class="chips">`
-          + (requis !== null ? `<button type="button" class="chip petit" data-action="monter" data-module="${m.id}"${c.doublons >= requis && j.composants >= cout ? '' : ' disabled'}>Monter · ${cout} comp.</button>` : '')
-          + (c.doublons > 0 ? `<button type="button" class="chip petit" data-action="recycler" data-module="${m.id}">Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button>` : '')
-          + `</div><div class="chips">`
-          + porteurs.map((p) => `<button type="button" class="chip petit${porte === p.id ? ' actif' : ''}" style="--c:${COULEUR[lignee]};${stylePastille(p.id, FONDS[p.id])}" data-action="${porte === p.id ? 'degreffer' : 'greffer'}" data-module="${m.id}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}><span class="pastille" aria-hidden="true"></span>${echap(p.nom)}${porte === p.id ? ' ✓' : ''}</button>`).join('')
-          + `</div></article>`;
+        const pret = requis !== null && c.doublons >= requis && j.composants >= composantsNiveau(c.niveau + 1);
+        h += `<button type="button" class="carte-tuile" data-action="carte" data-id="${cle}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
+          + `<span class="tuile-bas">${porte ? avatar(porte, 20) : '<span class="libre">libre</span>'}`
+          + (requis === null ? `<span class="chiffre">MAX</span>` : `<span class="mini-jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span class="chiffre">${c.doublons}/${requis}</span>`)
+          + `</span>${pret ? `<i class="pastille-alerte" aria-label="peut monter"></i>` : ''}</button>`;
       }
     }
     h += `</div>`;
   }
+  h += feuilleCarte(e);
   if (j.choix.length) h += fenetreChoix(j);
-  return h;
+  return coquille(e, h, 'ecran-cartes');
 }
 
 // ---------- La rencontre, avant la chambre scellée ----------
@@ -348,17 +376,18 @@ const REPLIQUES: { id: string; texte: string }[] = [
 ];
 
 export function htmlRencontre(): string {
-  let h = `<header class="top"><div><h1>La porte scellée</h1><span class="sous">SOUS LA TOUR DU NOYAU</span></div><button type="button" class="btn-sec" data-action="archipel">Plus tard</button></header>`;
+  let h = `<div class="ecran ecran-rencontre" style="--decor:url(${decor('coupe')})"><main class="contenu">`
+    + entete('SOUS LA TOUR DU NOYAU', 'La porte scellée', `<button type="button" class="btn sec" data-action="archipel">Plus tard</button>`);
   h += `<section class="rencontre"><p class="intro-porte">Une porte ronde, scellée depuis les années 2060, luit faiblement. Trois personnes t’attendent devant.</p>`;
   REPLIQUES.forEach((r, i) => {
     const d = porteurDef(r.id);
-    h += `<div class="replique" style="--c:${COULEUR[d.lignee]};${stylePastille(r.id, FONDS[r.id])};--i:${i}"><span class="pastille" aria-hidden="true"></span><div><strong>${echap(d.nom)}</strong><small>${d.lignee === 'tech' ? 'Augmentée · coursière' : d.lignee === 'bio' ? 'Géné · ancien des Fondations' : 'Résonante · lectrice d’empreintes'}</small><p>${echap(r.texte)}</p></div></div>`;
+    h += `<div class="replique" style="--c:${COULEUR[d.lignee]};--i:${i}">${avatar(r.id, 64)}<div><strong>${echap(d.nom)}</strong><small>${d.lignee === 'tech' ? 'Augmentée · coursière' : d.lignee === 'bio' ? 'Géné · ancien des Fondations' : 'Résonante · lectrice d’empreintes'}</small><p>${echap(r.texte)}</p></div></div>`;
   });
-  h += `<button type="button" class="prim large" data-action="ouvrir-chambre">Ouvrir la porte</button></section>`;
+  h += `</section></main><footer class="pied-fixe"><button type="button" class="btn prim large appel-porte" data-action="ouvrir-chambre">${ICO.porte}Ouvrir la porte</button></footer></div>`;
   return h;
 }
 
-// ---------- Le Codex ----------
+// ---------- La Bibliothèque : Chroniques et Archives ----------
 
 /** Chapitres des Chroniques ouverts mais pas encore lus (pour la pastille « nouveau ») */
 export const chapitresNouveaux = (j: Jeu) => CHAPITRES.filter((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)).length;
@@ -368,50 +397,49 @@ export function htmlCodex(e: EcranDistrict): string {
   const j = e.j;
   if (e.onglet === 'chroniques' && e.chapitre) {
     const c = chapitreDef(e.chapitre);
-    if (c && chapitreOuvert(c, j.strate)) return htmlChapitre(e, c.id);
+    if (c && chapitreOuvert(c, j.strate)) return coquille(e, htmlChapitre(e, c.id), 'ecran-lecture');
   }
   const ouverts = CHAPITRES.filter((c) => chapitreOuvert(c, j.strate)).length;
-  let h = `<header class="top"><div><h1>Bibliothèque</h1><span class="sous">${ouverts} / ${CHAPITRES.length} CHAPITRES · ${j.fragments.length} / ${FRAGMENTS.length} ARCHIVES</span></div><button type="button" class="btn-sec" data-action="biblio-retour">Retour</button></header>`;
+  const retour = e.retourBiblio === 'titre' ? `<button type="button" class="btn-icone" data-action="biblio-retour" aria-label="Retour à l’écran titre">${ICO.retour}</button>` : '';
+  let h = entete(`${ouverts} / ${CHAPITRES.length} CHAPITRES · ${j.fragments.length} / ${FRAGMENTS.length} ARCHIVES`, 'Bibliothèque', retour);
   const nouveaux = chapitresNouveaux(j);
-  h += `<div class="onglets" role="tablist">`
-    + `<button type="button" role="tab" aria-selected="${e.onglet === 'chroniques'}" data-action="biblio-onglet" data-id="chroniques">Chroniques${nouveaux ? ` <span class="pastille-n">${nouveaux}</span>` : ''}</button>`
-    + `<button type="button" role="tab" aria-selected="${e.onglet === 'archives'}" data-action="biblio-onglet" data-id="archives">Archives</button></div>`;
+  h += `<div class="segments-choix deux" role="tablist">`
+    + `<button type="button" role="tab" class="seg${e.onglet === 'chroniques' ? ' actif' : ''}" aria-selected="${e.onglet === 'chroniques'}" data-action="biblio-onglet" data-id="chroniques">Chroniques${nouveaux ? ` <span class="pastille-n">${nouveaux}</span>` : ''}</button>`
+    + `<button type="button" role="tab" class="seg${e.onglet === 'archives' ? ' actif' : ''}" aria-selected="${e.onglet === 'archives'}" data-action="biblio-onglet" data-id="archives">Archives</button></div>`;
   if (e.onglet === 'archives') {
-    h += `<p class="discret">Des papiers d’époque, trouvés un à un dans les Strates. Ysé y renvoie souvent dans ses Chroniques.</p>`;
-    if (!j.fragments.length) h += `<p class="discret">Aucun fragment pour l’instant. On les trouve en ouvrant de nouvelles Strates.</p>`;
-    for (const id of j.fragments) {
+    h += `<p class="aide intro-ecran">Des papiers d’époque, trouvés un à un dans les Strates. Ysé y renvoie souvent dans ses Chroniques.</p>`;
+    if (!j.fragments.length) h += `<p class="vide-ecran">${ICO.codex}Aucun fragment pour l’instant. On les trouve en ouvrant de nouvelles Strates.</p>`;
+    j.fragments.forEach((id, i) => {
       const f = FRAGMENTS.find((x) => x.id === id);
-      if (!f) continue;
-      h += `<article class="fragment"><span class="label">${echap(f.support.toUpperCase())}</span><h2>${echap(f.titre)}</h2>${f.lignes.map((l) => `<p>${echap(l)}</p>`).join('')}</article>`;
-    }
+      if (!f) return;
+      h += `<article class="fragment"><span class="surtitre">N° ${String(i + 1).padStart(2, '0')} · ${echap(f.support.toUpperCase())}</span><h2>${echap(f.titre)}</h2>${f.lignes.map((l) => `<p>${echap(l)}</p>`).join('')}</article>`;
+    });
     const reste = FRAGMENTS.length - j.fragments.length;
-    if (reste > 0) h += `<p class="discret">${reste} fragment${reste > 1 ? 's' : ''} encore enfoui${reste > 1 ? 's' : ''} dans les Strates.</p>`;
-    return h;
+    if (reste > 0) h += `<div class="fragment enfoui">${ICO.verrou}<span>${reste} fragment${reste > 1 ? 's' : ''} encore enfoui${reste > 1 ? 's' : ''} dans les Strates</span></div>`;
+    return coquille(e, h, 'ecran-codex');
   }
   h += `<p class="chroniques-intro">Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi la troisième nuit après ton élection.</p>`;
   for (const livre of [1, 2, 3] as const) {
-    h += `<section class="livre"><h2 class="livre-titre">${echap(LIVRES[livre])}</h2>`;
+    h += `<section class="livre"><h2 class="titre-bloc">${ICO.codex}${echap(LIVRES[livre])}</h2>`;
     for (const c of CHAPITRES.filter((x) => x.livre === livre)) {
       const n = CHAPITRES.indexOf(c) + 1;
       if (chapitreOuvert(c, j.strate)) {
         const neuf = !j.lus.includes(c.id);
         h += `<button type="button" class="chapitre-ligne${neuf ? ' neuf' : ''}" data-action="chapitre" data-id="${c.id}">`
           + `<span class="num">${n}</span><span class="txt"><strong>${echap(c.titre)}</strong><small>${echap(c.epoque)}</small></span>`
-          + (neuf ? `<span class="marque-neuf">Nouveau</span>` : `<span class="lu" aria-label="Lu">✓</span>`) + `</button>`;
+          + (neuf ? `<span class="marque-neuf">Nouveau</span>` : `<span class="lu" aria-label="Lu">${ICO.ok}</span>`) + `</button>`;
       } else {
         h += `<div class="chapitre-ligne ferme" aria-disabled="true"><span class="num">${n}</span><span class="txt"><strong>${echap(c.titre)}</strong>`
-          + `<small>${echap(c.teaser ?? '')}</small><em>S’ouvre en atteignant la Strate −${c.strate}</em></span><span class="verrou" aria-hidden="true">${VERROU}</span></div>`;
+          + `<small>${echap(c.teaser ?? '')}</small><em>${ICO.strate}S’ouvre à la Strate −${c.strate}</em></span><span class="lu" aria-hidden="true">${ICO.verrou}</span></div>`;
       }
     }
     h += `</section>`;
   }
-  return h;
+  return coquille(e, h, 'ecran-codex');
 }
 
-const VERROU = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
-
 /** Typographie française : espace fine insécable avant : ; ? ! » et après « */
-const typo = (t: string) => t.replace(/ ([:;?!»])/g, '\u202F$1').replace(/« /g, '«\u202F').replace(/n° /g, 'n°\u00A0').replace(/(\d) h (\d)/g, '$1\u00A0h\u00A0$2');
+const typo = (t: string) => t.replace(/ ([:;?!»])/g, ' $1').replace(/« /g, '« ').replace(/n° /g, 'n° ').replace(/(\d) h (\d)/g, '$1 h $2');
 
 function htmlChapitre(e: EcranDistrict, id: string): string {
   const j = e.j;
@@ -425,51 +453,58 @@ function htmlChapitre(e: EcranDistrict, id: string): string {
   let h = `<article class="lecture">`;
   h += `<header class="lecture-tete${c.image ? ' illustree' : ''}">`
     + (c.image ? `<div class="lecture-fond" aria-hidden="true"><img src="./intro/${c.image}.webp" alt="" decoding="async"></div>` : '')
-    + `<button type="button" class="btn-sec" data-action="chapitre-fermer">Sommaire</button>`
-    + `<div class="lecture-titre"><span class="label">${echap(LIVRES[c.livre].split(' · ')[0]!.toUpperCase())} · CHAPITRE ${i + 1}</span><h1>${echap(c.titre)}</h1><span class="epoque">${echap(c.epoque)}</span></div></header>`;
+    + `<button type="button" class="btn sec petit" data-action="chapitre-fermer">${ICO.retour}Sommaire</button>`
+    + `<div class="lecture-titre"><span class="surtitre">${echap(LIVRES[c.livre].split(' · ')[0]!.toUpperCase())} · CHAPITRE ${i + 1}</span><h1>${echap(c.titre)}</h1><span class="epoque">${echap(c.epoque)}</span></div></header>`;
   h += `<div class="lecture-texte">`;
   c.paragraphes.forEach((p, n) => {
     const signature = n === c.paragraphes.length - 1 && p.startsWith('Ysé') && p.length < 80;
     h += `<p${signature ? ' class="signature"' : n === 0 ? ' class="lettrine"' : ''}>${typo(echap(p))}</p>`;
   });
   h += `</div><nav class="lecture-nav">`
-    + (prec ? `<button type="button" class="btn-sec" data-action="chapitre" data-id="${prec.id}">← ${echap(prec.titre)}</button>` : '<span></span>')
-    + (suiv ? `<button type="button" class="prim" data-action="chapitre" data-id="${suiv.id}">${echap(suiv.titre)} →</button>`
-      : prochainFerme ? `<p class="discret">La suite s’ouvrira en atteignant la Strate −${prochainFerme.strate}.</p>` : `<p class="discret">Fin des Chroniques. Pour l’instant.</p>`)
+    + (prec ? `<button type="button" class="btn sec" data-action="chapitre" data-id="${prec.id}">${ICO.retour}<span>${echap(prec.titre)}</span></button>` : '<span></span>')
+    + (suiv ? `<button type="button" class="btn prim" data-action="chapitre" data-id="${suiv.id}"><span>${echap(suiv.titre)}</span>${ICO.lancer}</button>`
+      : prochainFerme ? `<p class="aide">La suite s’ouvrira à la Strate −${prochainFerme.strate}.</p>` : `<p class="aide">Fin des Chroniques. Pour l’instant.</p>`)
     + `</nav></article>`;
   return h;
 }
 
-// ---------- La coupe de la Tour du Noyau ----------
+// ---------- La Tour du Noyau en coupe ----------
 
 const NOMS_ETAGES = ['Salle de fouilles', 'Bunker des années 2060', 'Galerie aux formes courbes', 'Ruines lumineuses'];
 
+function jaugePv(pv: number, max: number, usure = 0, usureM = 1): string {
+  return `<div class="jauge-pv"><i class="pv" style="width:${(100 * pv) / max}%"></i>${usure >= 1 ? `<i class="usure" style="width:${(100 * Math.min(usure, usureM)) / max}%"></i>` : ''}</div>`;
+}
+
 export function htmlCoupe(e: EcranDistrict): string {
   const j = e.j;
-  let h = `<header class="top"><div><h1>Tour du Noyau</h1><span class="sous">EN COUPE · ${j.strate} ÉTAGE${j.strate > 1 ? 'S' : ''} CREUSÉ${j.strate > 1 ? 'S' : ''}</span></div>`
-    + `<button type="button" class="btn-sec" data-action="archipel">Archipel</button></header>`;
-  h += barreRessources(e);
-  h += `<section class="coupe illustree" aria-label="Coupe" style="--decor:url(${decor('coupe')})"><div class="etage tour"><div class="tete-tour"><span class="label">HABITATS</span><button type="button" class="btn-sec petit" data-action="bibliotheque">Bibliothèque</button></div><div class="habitants">`;
+  let h = entete(`EN COUPE · ${j.strate} ÉTAGE${j.strate > 1 ? 'S' : ''} CREUSÉ${j.strate > 1 ? 'S' : ''}`, 'Tour du Noyau');
+  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.ouvrier}Habitants</h3><div class="habitants">`;
   for (const p of PORTEURS) {
     if (!porteursPresents(j).includes(p.id)) continue;
     const d = j.porteurs[p.id]!;
-    const etat = enExpedition(j, p.id) ? 'En expédition' : d.poste ? batimentDef(d.poste).nom : 'Au repos';
+    const exp = enExpedition(j, p.id);
+    const etat = exp ? 'En expédition' : d.poste ? batimentDef(d.poste).nom : 'Au repos';
     const pv = pvMaxCombat(j, p.id);
-    h += `<div class="habitant" style="--c:${COULEUR[p.lignee]};${stylePastille(p.id, FONDS[p.id])}"><span class="pastille" aria-hidden="true"></span><div><strong>${echap(p.nom)}</strong><small>${etat} · PV ${pv}/${p.pvMax}</small>`
-      + (d.usure >= 1 ? `<div class="piste mini" style="--c:var(--danger)"><i style="width:${(100 * d.usure) / usureMax(p.id)}%"></i></div>` : '')
-      + (d.modules.length ? `<small>${d.modules.map((m) => echap(moduleDef(m).nom)).join(', ')}</small>` : '') + `</div></div>`;
+    h += `<div class="habitant${exp ? ' parti' : ''}" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 40)}<div class="hab-infos"><div class="hab-ligne"><strong>${echap(p.nom)}</strong><span class="chiffre">${pv}/${p.pvMax}</span></div>`
+      + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id))
+      + `<small>${d.poste && !exp ? ICO.ouvrier : ''}${etat}${d.usure >= 1 ? ` · Usure ${Math.floor(d.usure)}` : ''}</small>`
+      + (d.modules.length ? `<small class="greffes">${ICO.greffe}${d.modules.map((m) => echap(moduleDef(m).nom)).join(', ')}</small>` : '') + `</div></div>`;
   }
-  h += `</div></div><div class="puits" aria-hidden="true"></div>`;
-  for (let n = 1; n <= j.strate; n++) {
+  h += `</div></section>`;
+  h += `<section class="puits" style="--decor:url(${decor('coupe')})" aria-label="Les Strates"><h3 class="titre-bloc">${ICO.strate}Les Strates</h3><ol class="strates">`;
+  for (let n = j.strate; n >= 1; n--) {
     const front = n === j.strate;
     const nom = NOMS_ETAGES[Math.min(n - 1, NOMS_ETAGES.length - 1)];
-    h += `<div class="etage strate${front ? ' front' : ''}" style="--p:${Math.min(1, (n - 1) / 4)}"><div><span class="label">STRATE −${n}</span><strong>${nom}</strong>`
-      + `<small>${front ? 'Le front de fouille : la vaincre creuse un nouvel étage.' : 'Déjà explorée : on peut y retourner pour des composants.'}</small></div>`
-      + `<button type="button" class="${front ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${j.expedition || !j.chambre ? ' disabled' : ''}>Descendre</button></div>`;
+    const off = j.expedition || !j.chambre;
+    h += `<li class="strate${front ? ' front' : ''}" style="--p:${Math.min(1, (n - 1) / 4)}"><span class="profondeur">−${n}</span><div class="strate-infos"><strong>${nom}</strong>`
+      + `<small>${front ? 'Front de fouille : la vaincre creuse un nouvel étage' : 'Explorée : on y retourne pour des composants'}</small></div>`
+      + `<button type="button" class="btn ${front ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}${front ? 'Descendre' : 'Y aller'}</button></li>`;
   }
-  h += `<div class="etage roche"><small>Roche à creuser…</small></div></section>`;
-  if (e.message) h += `<p class="message">${echap(e.message)}</p>`;
-  return h;
+  h += `<li class="strate roche" aria-hidden="true"><span>Roche à creuser…</span></li></ol>`;
+  if (j.expedition) h += `<button type="button" class="appel" data-action="reprendre">${ICO.descendre}<span><strong>Expédition en cours</strong><small>Strate −${j.expedition.strate} : reprendre le combat</small></span></button>`;
+  h += `</section>`;
+  return coquille(e, h, 'ecran-coupe');
 }
 
 // ---------- Choix de l'escouade ----------
@@ -477,21 +512,30 @@ export function htmlCoupe(e: EcranDistrict): string {
 export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
   const dispo = disponibles(j);
-  let h = `<header class="top"><div><h1>Escouade</h1><span class="sous">STRATE −${e.strateChoisie} · CHOISIS 3 PORTEURS</span></div>`
-    + `<button type="button" class="btn-sec" data-action="coupe">Retour</button></header>`;
-  h += `<section class="panneau"><div class="chips">`;
+  const deck = e.escouade.reduce((n, id) => n + gestesDe(j, id).length, 0) + 2;
+  let h = `<div class="ecran ecran-escouade"><main class="contenu">`
+    + entete(`STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`, 'Escouade', `<button type="button" class="btn-icone" data-action="coupe" aria-label="Retour">${ICO.retour}</button>`);
+  h += `<div class="emplacements" aria-label="Escouade choisie">` + [0, 1, 2].map((i) => {
+    const id = e.escouade[i];
+    return id ? `<button type="button" class="emplacement plein" style="--c:${COULEUR[porteurDef(id).lignee]}" data-action="choisir" data-id="${id}" aria-label="Retirer ${echap(porteurDef(id).nom)}">${avatar(id, 56)}<small>${echap(porteurDef(id).nom)}</small></button>`
+      : `<div class="emplacement"><span>${i + 1}</span><small>Libre</small></div>`;
+  }).join('') + `</div>`;
+  h += `<p class="aide intro-ecran">Choisis 3 Porteurs. Chacun apporte ses Gestes et ceux de ses cartes au deck commun. Les Porteurs au travail restent au district.</p><div class="grille-porteurs">`;
   for (const p of PORTEURS) {
     if (!porteursPresents(j).includes(p.id)) continue;
     const libre = dispo.includes(p.id);
     const choisi = e.escouade.includes(p.id);
-    h += chipPorteur(j, p.id, 'choisir', '', choisi, !libre && !choisi).replace('</button>', `<small>PV ${pvMaxCombat(j, p.id)}${libre ? '' : ' · au travail'}</small></button>`);
+    const d = j.porteurs[p.id]!;
+    const pv = pvMaxCombat(j, p.id);
+    h += `<button type="button" class="carte-porteur${choisi ? ' choisi' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="choisir" data-id="${p.id}"${!libre && !choisi ? ' disabled' : ''} aria-pressed="${choisi}">`
+      + `${avatar(p.id, 72)}${choisi ? `<span class="rang">${e.escouade.indexOf(p.id) + 1}</span>` : ''}<strong>${echap(p.nom)}</strong><small class="lignee">${NOM_LIGNEE[p.lignee]}</small>`
+      + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id)) + `<small>${libre || choisi ? `PV ${pv} · ${gestesDe(j, p.id).length} Gestes` : `Au travail · ${echap(batimentDef(d.poste!).nom)}`}</small></button>`;
   }
-  const deck = e.escouade.reduce((n, id) => n + gestesDe(j, id).length, 0) + 2;
-  h += `</div><p class="discret">Les Porteurs au travail restent au district. Chaque Porteur apporte ses Gestes, et ceux de ses Modules, au deck commun${e.escouade.length ? ` (${deck} Gestes)` : ''}.</p>`
-    + `<p class="discret">Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p>`
-    + `<button type="button" class="prim large" data-action="partir"${e.escouade.length === 3 ? '' : ' disabled'}>Partir</button></section>`;
-  if (e.message) h += `<p class="message">${echap(e.message)}</p>`;
-  return h;
+  h += `</div><p class="aide">Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p></main>`;
+  h += `<footer class="pied-fixe"><div class="pied-info"><span class="chiffre">${e.escouade.length} / 3</span><small>${e.escouade.length ? `${deck} Gestes dans le deck` : 'Personne pour l’instant'}</small></div>`
+    + `<button type="button" class="btn prim large" data-action="partir"${e.escouade.length === 3 ? '' : ' disabled'}>${ICO.descendre}Partir</button></footer>`;
+  h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
+  return h + `</div>`;
 }
 
 export { POSTES };

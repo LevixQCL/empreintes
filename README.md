@@ -35,7 +35,12 @@ src/
     expedition.ts  une suite de combats ; c'est ce qui est sauvegardé
     fusion.ts      la Fusion de deux cartes vers un métal au-dessus, avec son risque
     rng.ts         hasard déterministe (même graine = même partie)
-  ui/            l'affichage (vue.ts) et le style (styles.css)
+  ui/            l'affichage
+    coquille.ts    ressources en haut, navigation en bas, menu, notifications (commun au district)
+    district.ts    archipel, Tour du Noyau, escouade, cartes, Bibliothèque ; les détails s'ouvrent en feuille par le bas
+    vue.ts         l'écran de combat
+    icones.ts      le jeu d'icônes de l'interface (SVG, couleur du texte)
+    styles.css     le style « laiton et verre fumé » ; scenes.css (titre, intro) ; face-carte.css (cartes Module)
   save/          la sauvegarde sur l'appareil
   net/           Firebase : comptes et synchronisation (optionnel)
   main.ts        relie tout : clics, animations, sauvegarde

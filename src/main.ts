@@ -1,4 +1,6 @@
 import './ui/styles.css';
+import './ui/scenes.css';
+import './ui/face-carte.css';
 import * as C from './core/combat';
 import { ennemiDef, moduleDef } from './core/donnees';
 import * as J from './core/jeu';
@@ -36,12 +38,20 @@ let lignesVues = 1;
 let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
-const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel' };
+const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel' };
 const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null } = {
   verrou: false, regles: false, pops: [], fin: null, etat: null,
 };
 
 // ---------- Rendu ----------
+
+/** zones qui défilent toutes seules : on garde leur position d'un rendu à l'autre (le district se redessine chaque seconde) */
+const DEFILANTS = '.feuille-corps, .rangee, .main, .rail';
+/** une feuille, une fenêtre ou un message ne s'animent qu'à leur apparition */
+function cles(): Record<string, string> {
+  const t = (sel: string) => racine.querySelector(sel)?.querySelector('h2')?.textContent ?? racine.querySelector(sel)?.textContent ?? '';
+  return { '.feuille': t('.feuille'), '.fenetre': t('.fenetre'), '.toast': t('.toast') };
+}
 
 function afficher() {
   D.j = jeu;
@@ -61,7 +71,12 @@ function afficher() {
       : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : htmlArchipel(D);
   }
   racine.dataset.mode = mode;
+  const defile = [...racine.querySelectorAll<HTMLElement>(DEFILANTS)].map((el) => [el.scrollTop, el.scrollLeft] as const);
+  const avant = cles();
   if (!(mode === 'intro' && majIntro(h))) racine.innerHTML = h;
+  racine.querySelectorAll<HTMLElement>(DEFILANTS).forEach((el, i) => { const d = defile[i]; if (d) { el.scrollTop = d[0]; el.scrollLeft = d[1]; } });
+  for (const [sel, cle] of Object.entries(cles())) if (cle && cle !== avant[sel]) racine.querySelector(sel)?.classList.add('entre');
+  document.body.classList.toggle('fige', !!racine.querySelector('.feuille, .voile'));
   if (mode === 'district') { activerCartes(racine); brancherTableau(racine); }
   if (mode === 'intro') { precharger(plan); precharger(plan + 1); animerCompteur(); }
   const ie = racine.querySelector('#email') as HTMLInputElement | null;
@@ -205,6 +220,10 @@ document.addEventListener('keydown', (ev) => {
   if (mode === 'titre' && (ev.key === 'Enter' || ev.key === ' ')) {
     ev.preventDefault(); mode = apresTitre(); if (mode === 'combat') K.fin = finPour(); afficher(); return;
   }
+  if (ev.key === 'Escape') {
+    if (mode === 'district' && (D.selection || D.carte || D.menu)) { D.selection = null; D.carte = null; D.menu = false; afficher(); return; }
+    if (mode === 'combat' && K.regles) { K.regles = false; afficher(); return; }
+  }
   if (mode !== 'intro' || ev.altKey || ev.ctrlKey || ev.metaKey) return;
   let change = false;
   if (ev.key === 'ArrowRight' || ev.key === ' ' || ev.key === 'PageDown') { ev.preventDefault(); if (texteCache) { texteCache = false; change = true; } else change = avancerIntro(); }
@@ -291,6 +310,12 @@ async function actionCompte(f: () => Promise<void>) {
   afficher();
 }
 
+/** change d'onglet : ferme ce qui était ouvert et remonte en haut */
+function ouvrir(v: EcranDistrict['vue']) {
+  if (D.vue !== v) window.scrollTo(0, 0);
+  D.vue = v; D.selection = null; D.carte = null; D.menu = false;
+}
+
 const resultat = (r: J.Resultat) => { D.message = r.ok ? '' : r.message ?? ''; if (r.ok) sauver(); };
 
 racine.addEventListener('click', async (ev) => {
@@ -300,7 +325,7 @@ racine.addEventListener('click', async (ev) => {
   const id = b.dataset.id ?? '';
   const x = jeu.expedition;
   const s = x?.combat;
-  D.message = a === 'poster' || a === 'liberer' || a === 'fabriquer' || a === 'ameliorer' || a === 'choisir' || a === 'greffer' || a === 'monter' ? D.message : '';
+  D.message = a === 'poster' || a === 'liberer' || a === 'fabriquer' || a === 'ameliorer' || a === 'choisir' || a === 'greffer' || a === 'monter' || a === 'carte' ? D.message : '';
 
   switch (a) {
     // intro
@@ -318,17 +343,22 @@ racine.addEventListener('click', async (ev) => {
       D.vue = jeu.chambre ? 'archipel' : 'rencontre';
       sauver();
       break;
-    case 'intro': plan = 0; lignesVues = 1; texteCache = false; mode = 'intro'; break;
+    case 'intro': plan = 0; lignesVues = 1; texteCache = false; mode = 'intro'; D.menu = false; break;
 
     // district
-    case 'batiment': D.selection = D.selection === id ? null : (id as BatimentId); break;
+    case 'batiment': D.selection = D.selection === id ? null : (id as BatimentId); D.menu = false; break;
+    case 'ok-message': D.message = ''; break;
+    case 'menu': D.menu = !D.menu; D.selection = null; D.carte = null; break;
+    case 'carte': D.carte = id; break;
+    case 'carte-fermer': D.carte = null; break;
+    case 'filtre': D.filtre = (id as typeof D.filtre) || 'tout'; window.scrollTo(0, 0); break;
     case 'fermer': D.selection = null; break;
     case 'chantier': D.message = 'Ce pilier accueillera le Labo génétique dans une prochaine version.'; break;
     case 'ameliorer': resultat(J.ameliorer(jeu, id as BatimentId, Date.now())); break;
     case 'poster': resultat(J.poster(jeu, id, (b.dataset.poste as J.Poste) ?? null)); break;
     case 'liberer': resultat(J.poster(jeu, id, null)); break;
     case 'fabriquer': resultat(J.fabriquer(jeu, b.dataset.module ?? '', Date.now())); break;
-    case 'cartes': D.vue = 'cartes'; D.selection = null; break;
+    case 'cartes': ouvrir('cartes'); break;
     case 'greffer': resultat(J.greffer(jeu, b.dataset.module ?? '', id)); break;
     case 'degreffer': resultat(J.degreffer(jeu, b.dataset.module ?? '')); break;
     case 'monter': resultat(J.monter(jeu, b.dataset.module ?? '')); break;
@@ -336,9 +366,9 @@ racine.addEventListener('click', async (ev) => {
     case 'prendre': resultat(J.prendre(jeu, Number(b.dataset.index ?? 0))); break;
     case 'reclamer-jour': resultat(J.reclamerQuotidien(jeu)); break;
     case 'ouvrir-archive': resultat(J.ouvrirArchive(jeu)); break;
-    case 'entrer': D.vue = 'coupe'; D.selection = null; break;
-    case 'archipel': D.vue = 'archipel'; break;
-    case 'coupe': D.vue = 'coupe'; break;
+    case 'entrer': ouvrir('coupe'); break;
+    case 'archipel': ouvrir('archipel'); break;
+    case 'coupe': ouvrir('coupe'); break;
     case 'descendre': D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; break;
     case 'choisir':
       if (D.escouade.includes(id)) D.escouade = D.escouade.filter((p) => p !== id);
@@ -357,7 +387,7 @@ racine.addEventListener('click', async (ev) => {
     case 'bibliotheque':
       D.retourBiblio = mode === 'titre' ? 'titre' : D.vue === 'coupe' ? 'coupe' : 'archipel';
       if (mode === 'titre') mode = 'district';
-      D.vue = 'codex'; D.chapitre = null; window.scrollTo(0, 0);
+      ouvrir('codex'); D.chapitre = null; window.scrollTo(0, 0);
       break;
     case 'biblio-onglet': D.onglet = id === 'archives' ? 'archives' : 'chroniques'; D.chapitre = null; break;
     case 'chapitre':
