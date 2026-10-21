@@ -2,9 +2,9 @@
 // et l'expédition en cours. Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms),
 // ce qui permet de rattraper le temps passé hors du jeu et de tester sans attendre.
 
-import { BATIMENTS, COLLECTION_DEPART, GESTES_PORTEUR, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, moduleDef, porteurDef } from './donnees';
+import { BATIMENTS, COLLECTION_DEPART, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, moduleDef, porteurDef } from './donnees';
 import {
-  COLLECTION, NOMS_RARETE, ajouterCarte, composantsNiveau, doublonsRequis, multNiveau, tirerCarte, tirerChoix,
+  COLLECTION, NOMS_RARETE, ajouterCarte, gestesAvecModules, composantsNiveau, doublonsRequis, tirerCarte, tirerChoix,
   type CarteCollection,
 } from './collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from './fragments';
@@ -482,12 +482,8 @@ export function ouvrirArchive(j: Jeu): Resultat {
 
 /** Les Gestes qu'un Porteur apporte : les siens + ceux de ses Modules */
 export function gestesDe(j: Jeu, id: string): GesteDef[] {
-  const base = GESTES_PORTEUR[id] ?? [];
-  const mods = (j.porteurs[id]?.modules ?? []).flatMap((mid) => {
-    const mult = multNiveau(mid, j.collection[mid]?.niveau ?? 1);
-    return moduleDef(mid).gestes.map((x, k) => ({ id: `${mid}-${k}`, porteur: id, ...x, v: Math.round(x.v * mult) }));
-  });
-  return [...base, ...mods];
+  const mods = (j.porteurs[id]?.modules ?? []).map((mid) => ({ id: mid, niveau: j.collection[mid]?.niveau ?? 1 }));
+  return gestesAvecModules(id, mods);
 }
 
 /** Les Porteurs présents au district (les recrues n'arrivent qu'après la chambre scellée) */

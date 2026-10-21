@@ -2,7 +2,8 @@
 
 import { capacite, ligneeGeste, placesLibres, placesPrises, texteIntention } from '../core/combat';
 import { NOMS_LIGNEE, ennemiDef, porteurDef } from '../core/donnees';
-import { BATTU_PAR, REGLES, analyserChaine, places, serieFinale } from '../core/regles';
+import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, serieFinale } from '../core/regles';
+import { NOMS_EFFET, libelleEffet } from '../core/effets';
 import type { CombatEtat, Geste, LigneeGeste } from '../core/types';
 import type { Expedition } from '../core/expedition';
 
@@ -70,11 +71,13 @@ function carte(g: Geste, taille: 'moyen' | 'petit', action: string, o: { halo?: 
   const lign = ligneeGeste(g);
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'Spécial';
   const cls = ['geste', taille, g.lourd && taille === 'moyen' ? 'double' : '', o.halo ? 'halo' : '', o.serre ? 'serre' : ''].join(' ');
-  const label = `${g.nom} (${nomP}), fréquence ${g.f}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}`;
+  const accord = g.effet?.type === 'accord';
+  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${g.effet ? ', ' + libelleEffet(g.effet) : ''}`;
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]}" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
-    + `<span class="f">${g.f}</span>`
+    + `<span class="f">${accord ? '∗' : g.f}</span>`
     + (g.lourd ? '<span class="lourd" aria-hidden="true">2 PLACES</span>' : '')
     + `<span class="eff">${ICONES[g.type]}<span>${g.v}</span></span>`
+    + (g.effet ? `<span class="effet">${NOMS_EFFET[g.effet.type]}</span>` : '')
     + `<span class="nom">${echap(g.nom)}${taille === 'moyen' ? ' · ' + echap(nomP) : ''}</span></button>`;
 }
 
@@ -112,11 +115,13 @@ export function htmlCombat(e: Ecran): string {
   if (!s.chaine.length) conseil = `Choisis jusqu’à ${capacite(s)} Gestes. Des chiffres qui se suivent, dans l’ordre (3, 4, 5), déclenchent une Résonance.`;
   else {
     const fin = serieFinale(s.chaine);
-    const d = dernier!;
+    const fs = frequencesEffectives(s.chaine);
+    const d = { f: fs[fs.length - 1]! };
     if (a.suite >= 3) conseil = `Résonance : suite de ${a.suite}, effets <b>+${Math.round((a.mult - 1) * 100)} %</b>` + (a.suite < 5 && libres > 0 && fin === a.suite ? ` · ajoute un <b>${d.f + 1}</b> pour aller plus loin` : '');
     else if (fin === 2) conseil = `Suite ${d.f - 1} → ${d.f} : ajoute un <b>${d.f + 1}</b> pour +30 %`;
     else conseil = `Ajoute un <b>${d.f + 1}</b> pour commencer une suite`;
     if (a.echo) conseil += ` · Écho : bouclier +${REGLES.bouclierEcho}`;
+    if (dernier?.effet) conseil += `<br><span class="effet-texte">${echap(libelleEffet(dernier.effet))}</span>`;
   }
 
   const silhouette = `<svg width="92" height="92" viewBox="0 0 96 96" aria-hidden="true"><path d="M8 96 C10 64 26 40 48 38 C62 37 74 44 80 56 L90 46 L86 64 C90 74 90 86 88 96 Z" fill="${COULEUR[def.lignee]}" opacity=".35"/><circle cx="66" cy="56" r="3" fill="var(--gold)"/><circle cx="76" cy="58" r="2.5" fill="var(--gold)"/></svg>`;
@@ -134,6 +139,7 @@ export function htmlCombat(e: Ecran): string {
     + `<li>Trois Fréquences identiques font un Écho : bouclier d’escouade +${REGLES.bouclierEcho}.</li>`
     + '<li>Chaque Résonance remplit le Flux. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main.</li>'
     + '<li>« 2 PLACES » : ce Geste est puissant mais occupe deux places dans la chaîne.</li>'
+    + '<li>Les cartes rares ont des effets écrits en or sous leur force (Perçant, Siphon, Accord…). Pose le Geste dans la chaîne pour lire ce qu’il fait. « ∗ » : Fréquence libre, il prolonge toujours la suite.</li>'
     + '<li>Triangle des lignées : Tech bat Résonant, Résonant bat Géné, Géné bat Tech (+15 %).</li>'
     + '<li>L’attaque de l’ennemi est annoncée à l’avance : protège-toi ou finis-le avant.</li></ul></section>';
 
@@ -144,6 +150,7 @@ export function htmlCombat(e: Ecran): string {
     + `<span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
     + `<div class="barre" style="--c:var(--danger)"><div class="piste"><i style="width:${pct(s.ennemi.pv, s.ennemi.pvMax)}%"></i></div><span class="chiffre">${s.ennemi.pv}/${s.ennemi.pvMax}</span></div>`
     + (s.ennemi.bouclier ? `<span class="bouclier-e">Bouclier ${s.ennemi.bouclier}</span>` : '')
+    + (s.ennemi.fissure ? `<span class="bouclier-e fissure">Fissure +${Math.round(s.ennemi.fissure * 100)} %</span>` : '')
     + `<div class="intention">${iconeIntention}<span>${echap(texteIntention(s))}</span></div></div></section>`;
 
   h += '<section aria-label="Escouade" style="display:grid;gap:6px"><div class="escouade">';
@@ -174,7 +181,8 @@ export function htmlCombat(e: Ecran): string {
 
   h += '<section aria-label="Main" style="display:grid;gap:8px"><span class="label">MAIN</span><div class="main">';
   for (const g of s.main) {
-    const halo = !!dernier && g.f === dernier.f + 1 && places(g) <= libres;
+    const fs = frequencesEffectives(s.chaine);
+    const halo = !!dernier && (g.f === fs[fs.length - 1]! + 1 || g.effet?.type === 'accord') && places(g) <= libres;
     h += carte(g, 'petit', 'ajouter', { halo, off: verrou, serre: places(g) > libres });
   }
   h += '</div></section>';

@@ -1,6 +1,7 @@
 // Écrans du district : l'archipel (accueil), la coupe de la Tour du Noyau, le choix de l'escouade.
 // Les visuels sont provisoires (dessinés en SVG) : chaque pilier pourra être remplacé par une illustration.
 
+import { NOMS_EFFET, libelleEffet } from '../core/effets';
 import { MODULES, PORTEURS, batimentDef, moduleDef, porteurDef } from '../core/donnees';
 import {
   ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles,
@@ -270,7 +271,7 @@ function carteMini(id: string, j: Jeu, attrs = ''): string {
   const neuve = !c;
   return `<button type="button" class="carte-mini" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[m.lignee]}" ${attrs}>`
     + `<span class="rarete">${NOMS_RARETE[m.rarete]}</span><strong>${echap(m.nom)}</strong>`
-    + `<small>${m.gestes.map((g) => `${echap(g.nom)} ${g.f}`).join(' · ')}</small>`
+    + `<small>${m.gestes.map((g) => `${echap(g.nom)} ${g.effet?.type === 'accord' ? '∗' : g.f}${g.effet ? ` (${NOMS_EFFET[g.effet.type]})` : ''}`).join(' · ')}</small>`
     + `<em>${neuve ? 'Nouvelle carte' : `Doublon · niveau ${c.niveau}`}</em></button>`;
 }
 
@@ -304,7 +305,7 @@ export function htmlCartes(e: EcranDistrict): string {
       const mult = multNiveau(m.id, c.niveau);
       const cout = composantsNiveau(c.niveau + 1);
       h += `<article class="carte" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[lignee]}"><div class="carte-tete"><span class="rarete">${NOMS_RARETE[m.rarete]}</span><span class="niveau">Niv. ${c.niveau}</span></div>`
-        + `<strong>${echap(m.nom)}</strong><ul>${m.gestes.map((g) => `<li><b>${g.f}</b> ${echap(g.nom)} · ${TYPE_GESTE[g.type]} ${Math.round(g.v * mult)}${g.lourd ? ' · lourd' : ''}</li>`).join('')}</ul>`
+        + `<strong>${echap(m.nom)}</strong><ul>${m.gestes.map((g) => `<li><b>${g.effet?.type === 'accord' ? '∗' : g.f}</b> ${echap(g.nom)} · ${TYPE_GESTE[g.type]} ${Math.round(g.v * mult)}${g.lourd ? ' · lourd' : ''}${g.effet ? `<br><span class="effet-texte">${echap(libelleEffet(g.effet))}</span>` : ''}</li>`).join('')}</ul>`
         + (requis === null ? `<small>Niveau maximum</small>` : `<div class="ligne-prog"><div class="piste"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%;--c:var(--r)"></i></div><small>${c.doublons} / ${requis}</small></div>`)
         + `<div class="chips">`
         + (requis !== null ? `<button type="button" class="chip petit" data-action="monter" data-module="${m.id}"${c.doublons >= requis && j.composants >= cout ? '' : ' disabled'}>Monter · ${cout} comp.</button>` : '')

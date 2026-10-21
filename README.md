@@ -17,6 +17,7 @@ Autres commandes :
 | `npm test` | Lance les tests des règles (Résonance, Écho, combat complet) |
 | `npm run check` | Vérifie le TypeScript sans rien construire |
 | `npm run build` | Construit le site dans `dist/` |
+| `npm run robot` | Lance le robot d'équilibrage (quelques minutes) et écrit `docs/robot-rapport.md` |
 
 Chaque `git push` sur `main` lance les tests, construit le site et le publie sur GitHub Pages.
 
@@ -29,6 +30,8 @@ src/
     donnees.ts     le contenu : Porteurs, deck de départ, ennemis
     regles.ts      les réglages chiffrés (équilibrage) + Résonance, Écho, triangle
     combat.ts      le moteur de combat
+    effets.ts      les noms et textes des effets spéciaux (Perçant, Siphon, Accord…)
+    robot.ts       le robot d'équilibrage : un joueur automatique qui joue avec le vrai moteur
     expedition.ts  une suite de combats ; c'est ce qui est sauvegardé
     rng.ts         hasard déterministe (même graine = même partie)
   ui/            l'affichage (vue.ts) et le style (styles.css)
@@ -49,8 +52,15 @@ Tous les chiffres sont dans deux fichiers :
 - `src/core/regles.ts` : taille de main, places, bonus de suite, Flux, triangle…
 - `src/core/donnees.ts` : force et Fréquence de chaque Geste, PV et attaques des ennemis.
 
-Le test « un joueur au hasard termine toujours une expédition » joue 30 parties automatiques :
-il sert de base au futur robot d'équilibrage.
+**Les effets.** Les cartes en fer n'ont pas d'effet ; le cuivre en a un, l'argent deux, l'or en a sur tous
+ses Gestes. Un effet se déclare dans `donnees.ts` (`{ type: 'percant' }`, `{ type: 'siphon', part: 0.5 }`…),
+son texte est dans `effets.ts` et sa règle dans `combat.ts` (l'Accord, qui touche aux suites, est dans `regles.ts`).
+
+**Le robot d'équilibrage.** `npm run robot` (option `-- --parties 300`) joue des milliers d'expéditions avec
+un joueur automatique qui essaie toutes les chaînes possibles à chaque tour. Il cherche la Strate où le
+deck de départ gagne une fois sur deux, mesure ce que vaut chaque carte (greffée en plus sur le Porteur de
+sa lignée), signale celles qui sortent du lot de leur rareté et compare le deck de départ à 3 et à 6 cartes.
+Le rapport est écrit dans `docs/robot-rapport.md`. À relancer après chaque changement de chiffre.
 
 ## Firebase
 

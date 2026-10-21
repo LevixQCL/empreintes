@@ -4,6 +4,34 @@ export type Lignee = 'tech' | 'bio' | 'reso';
 export type LigneeGeste = Lignee | 'neutre';
 export type TypeGeste = 'atk' | 'bouclier' | 'soin';
 
+/**
+ * Effet spécial d'un Geste. Les cartes rares apportent des effets, pas de plus gros chiffres.
+ * `part` est une fraction (0.25 = 25 %).
+ */
+export type Effet =
+  /** ignore le bouclier de l'ennemi */
+  | { type: 'percant' }
+  /** soigne le Porteur le plus blessé d'une part des dégâts infligés */
+  | { type: 'siphon'; part: number }
+  /** remplit le Flux */
+  | { type: 'flux'; v: number }
+  /** la prochaine attaque ennemie perd une part de sa force */
+  | { type: 'desarmer'; part: number }
+  /** l'ennemi subit une part de dégâts en plus, ce tour-ci et le suivant */
+  | { type: 'fissure'; part: number }
+  /** +1 place dans la chaîne au tour suivant */
+  | { type: 'elan' }
+  /** une part de force en plus pour chaque Geste posé avant lui dans la chaîne */
+  | { type: 'crescendo'; part: number }
+  /** Fréquence libre : prolonge toujours la suite */
+  | { type: 'accord' }
+  /** le soin touche toute l'escouade */
+  | { type: 'vague' }
+  /** une part du bouclier d'escouade restant est gardée au tour suivant */
+  | { type: 'rempart'; part: number };
+
+export type TypeEffet = Effet['type'];
+
 export interface PorteurDef {
   id: string;
   nom: string;
@@ -24,7 +52,7 @@ export interface ModuleDef {
   nom: string;
   lignee: Lignee;
   rarete: Rarete;
-  gestes: { nom: string; f: number; type: TypeGeste; v: number; lourd?: boolean }[];
+  gestes: { nom: string; f: number; type: TypeGeste; v: number; lourd?: boolean; effet?: Effet }[];
 }
 
 export interface GesteDef {
@@ -39,6 +67,7 @@ export interface GesteDef {
   v: number;
   /** Prend 2 places dans la chaîne */
   lourd?: boolean;
+  effet?: Effet;
 }
 
 /** Un exemplaire de Geste dans un combat (uid unique) */
@@ -82,6 +111,9 @@ export interface EnnemiEtat {
   bouclier: number;
   etape: number;
   boost: number;
+  /** Fissure : part de dégâts en plus, et tours restants */
+  fissure?: number;
+  fissureTours?: number;
 }
 
 export type Issue = 'en-cours' | 'victoire' | 'defaite';
@@ -95,7 +127,11 @@ export interface CombatEtat {
   main: Geste[];
   chaine: Geste[];
   capaBonus: number;
+  /** places en plus gagnées pour le tour suivant (Élan) */
+  capaProchain?: number;
   bouclier: number;
+  /** part du bouclier d'escouade gardée à la fin du tour ennemi (Rempart) */
+  garde?: number;
   flux: number;
   tour: number;
   rng: number;
@@ -111,6 +147,7 @@ export type Evenement =
   | { kind: 'echo' }
   | { kind: 'flux'; gain: number }
   | { kind: 'boost' }
+  | { kind: 'effet'; cible: string; texte: string }
   | { kind: 'a-terre'; cible: string }
   | { kind: 'fin'; issue: Issue };
 

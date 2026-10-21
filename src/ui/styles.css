@@ -79,6 +79,9 @@ button:disabled{cursor:not-allowed}
 .geste .nom{font-size:11px;color:var(--quiet);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .geste .lourd{position:absolute;top:8px;right:8px;display:flex;gap:3px}
 .geste .lourd{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.04em;color:var(--c);top:7px;right:6px}
+.geste .effet{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.effet-texte{color:var(--gold);font-size:12px}
+.bouclier-e.fissure{color:var(--gold)}
 .geste.serre{opacity:.45}
 .geste.moyen{width:72px;height:104px}
 .geste.moyen .f{font-size:26px}

@@ -197,6 +197,8 @@ function popsDe(ev: Evenement) {
   else if (ev.kind === 'bouclier') pop(ev.cible, `+${ev.v}`, 'var(--ivory)');
   else if (ev.kind === 'soin' && ev.v) pop(ev.cible, `+${ev.v}`, 'var(--bio)');
   else if (ev.kind === 'echo') pop('escouade', 'Écho', 'var(--gold)');
+  else if (ev.kind === 'effet') pop(ev.cible, ev.texte, 'var(--gold)');
+  else if (ev.kind === 'flux') pop('escouade', `+${ev.gain} Flux`, 'var(--gold)');
 }
 
 async function jouer(pas: Pas[]) {

@@ -121,18 +121,19 @@ export function repiocher(s: CombatEtat): Resultat {
 }
 
 /** Lance la chaîne, puis joue le tour ennemi. Renvoie les pas à animer. */
-export function lancer(s: CombatEtat): Pas[] {
+export function lancer(s: CombatEtat, opts: { silencieux?: boolean } = {}): Pas[] {
   const pas: Pas[] = [];
   if (s.issue !== 'en-cours' || !s.chaine.length) return pas;
-  const emettre = (ev: Evenement) => pas.push({ ev, etat: clone(s) });
+  // en mode silencieux (robot d'équilibrage), on ne garde pas les étapes d'animation
+  const emettre = opts.silencieux ? () => {} : (ev: Evenement) => { pas.push({ ev, etat: clone(s) }); };
 
   const a = analyserChaine(s.chaine);
   if (a.suite >= 3) {
     log(s, `Résonance ! Suite de ${a.suite} : effets +${Math.round((a.mult - 1) * 100)} %.`);
     emettre({ kind: 'resonance', suite: a.suite, mult: a.mult });
   }
-  for (const g of s.chaine) {
-    emettre(appliquer(s, g, a.mult));
+  for (const [i, g] of s.chaine.entries()) {
+    for (const ev of appliquer(s, g, a.mult, i)) emettre(ev);
     if (s.ennemi.pv <= 0) break;
   }
   if (a.echo) {
@@ -151,7 +152,14 @@ export function lancer(s: CombatEtat): Pas[] {
   }
   s.defausse.push(...s.chaine);
   s.chaine = [];
-  s.capaBonus = 0;
+  // Élan : les places gagnées servent au tour suivant
+  s.capaBonus = Math.min(REGLES.capaciteMax - REGLES.capaciteBase, s.capaProchain ?? 0);
+  s.capaProchain = 0;
+  // Fissure : dure ce tour-ci et le suivant
+  if (s.ennemi.fissureTours) {
+    s.ennemi.fissureTours--;
+    if (!s.ennemi.fissureTours) s.ennemi.fissure = 0;
+  }
 
   if (s.ennemi.pv <= 0) {
     s.issue = 'victoire';
@@ -214,32 +222,80 @@ function plusBlesse(s: CombatEtat): PorteurEtat | undefined {
   return vivants(s).sort((a, b) => a.pv / a.pvMax - b.pv / b.pvMax)[0];
 }
 
-function appliquer(s: CombatEtat, g: Geste, mult: number): Evenement {
+function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Evenement[] {
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'Spécial';
+  const ef = g.effet;
+  const evs: Evenement[] = [];
+  // Crescendo : plus le Geste arrive tard dans la chaîne, plus il frappe fort
+  const cresc = ef?.type === 'crescendo' ? 1 + ef.part * rang : 1;
+  const force = g.v * mult * cresc;
+
   if (g.type === 'atk') {
     const e = ennemiDef(s.ennemi.id);
     const av = avantage(ligneeGeste(g), e.lignee);
-    const dmg = Math.round(g.v * mult * av);
-    const abs = Math.min(s.ennemi.bouclier, dmg);
+    const dmg = Math.round(force * av * (1 + (s.ennemi.fissure ?? 0)));
+    const abs = ef?.type === 'percant' ? 0 : Math.min(s.ennemi.bouclier, dmg);
     s.ennemi.bouclier -= abs;
     const net = dmg - abs;
     s.ennemi.pv = Math.max(0, s.ennemi.pv - net);
-    log(s, `${nomP} · ${g.nom} : ${net} dégâts${av > 1 ? ' (avantage de lignée)' : ''}${abs ? `, ${abs} absorbés` : ''}.`);
-    return { kind: 'degats', cible: 'ennemi', net, absorbe: abs };
-  }
-  if (g.type === 'bouclier') {
-    const v = Math.round(g.v * mult);
+    log(s, `${nomP} · ${g.nom} : ${net} dégâts${av > 1 ? ' (avantage de lignée)' : ''}${abs ? `, ${abs} absorbés` : ''}${ef?.type === 'percant' && s.ennemi.bouclier ? ', bouclier transpercé' : ''}.`);
+    evs.push({ kind: 'degats', cible: 'ennemi', net, absorbe: abs });
+    if (ef?.type === 'siphon' && net > 0) {
+      const c = plusBlesse(s);
+      if (c) {
+        const avant = c.pv;
+        c.pv = Math.min(c.pvMax, c.pv + Math.round(net * ef.part));
+        if (c.pv > avant) {
+          log(s, `Siphon : ${porteurDef(c.id).nom} récupère ${c.pv - avant} PV.`);
+          evs.push({ kind: 'soin', cible: c.id, v: c.pv - avant });
+        }
+      }
+    }
+  } else if (g.type === 'bouclier') {
+    const v = Math.round(force);
     s.bouclier += v;
     log(s, `${nomP} · ${g.nom} : bouclier d’escouade +${v}.`);
-    return { kind: 'bouclier', cible: 'escouade', v };
+    evs.push({ kind: 'bouclier', cible: 'escouade', v });
+  } else {
+    const cibles = ef?.type === 'vague' ? vivants(s) : [plusBlesse(s)].filter((x): x is PorteurEtat => !!x);
+    const morceaux: string[] = [];
+    for (const c of cibles) {
+      const avant = c.pv;
+      c.pv = Math.min(c.pvMax, c.pv + Math.round(force));
+      morceaux.push(`${porteurDef(c.id).nom} +${c.pv - avant}`);
+      evs.push({ kind: 'soin', cible: c.id, v: c.pv - avant });
+    }
+    if (!cibles.length) evs.push({ kind: 'soin', cible: 'escouade', v: 0 });
+    else log(s, `${nomP} · ${g.nom} : ${morceaux.join(', ')} PV.`);
   }
-  const cible = plusBlesse(s);
-  if (!cible) return { kind: 'soin', cible: 'escouade', v: 0 };
-  const max = cible.pvMax;
-  const avant = cible.pv;
-  cible.pv = Math.min(max, cible.pv + Math.round(g.v * mult));
-  log(s, `${nomP} · ${g.nom} : ${porteurDef(cible.id).nom} récupère ${cible.pv - avant} PV.`);
-  return { kind: 'soin', cible: cible.id, v: cible.pv - avant };
+
+  // effets qui ne dépendent pas du type du Geste
+  if (ef?.type === 'flux') {
+    const avant = s.flux;
+    s.flux = Math.min(REGLES.fluxMax, s.flux + ef.v);
+    if (s.flux > avant) {
+      log(s, `Surcharge : Flux +${s.flux - avant}.`);
+      evs.push({ kind: 'flux', gain: s.flux - avant });
+    }
+  } else if (ef?.type === 'desarmer' && s.intention.type === 'atk') {
+    const avant = s.intention.v;
+    s.intention.v = Math.round(avant * (1 - ef.part));
+    log(s, `Désarmé : sa prochaine attaque passe de ${avant} à ${s.intention.v}.`);
+    evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Désarmé' });
+  } else if (ef?.type === 'fissure' && s.ennemi.pv > 0) {
+    s.ennemi.fissure = Math.max(s.ennemi.fissure ?? 0, ef.part);
+    s.ennemi.fissureTours = 2;
+    log(s, `Fissure : l’ennemi subit +${Math.round(ef.part * 100)} % de dégâts jusqu’au tour prochain.`);
+    evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Fissure' });
+  } else if (ef?.type === 'elan') {
+    s.capaProchain = (s.capaProchain ?? 0) + 1;
+    log(s, 'Élan : la prochaine chaîne aura une place de plus.');
+    evs.push({ kind: 'effet', cible: 'escouade', texte: 'Élan' });
+  } else if (ef?.type === 'rempart') {
+    s.garde = Math.max(s.garde ?? 0, ef.part);
+    evs.push({ kind: 'effet', cible: 'escouade', texte: 'Rempart' });
+  }
+  return evs;
 }
 
 function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
@@ -292,7 +348,11 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
     emettre({ kind: 'fin', issue: 'defaite' });
     return;
   }
-  s.bouclier = 0;
+  // Rempart : une part du bouclier restant passe au tour suivant
+  const garde = Math.round(s.bouclier * (s.garde ?? 0));
+  if (garde) log(s, `Rempart : ${garde} de bouclier gardés.`);
+  s.bouclier = garde;
+  s.garde = 0;
   s.tour++;
   choisirIntention(s);
   piocher(s);

@@ -1,4 +1,4 @@
-import type { BatimentId, EnnemiDef, GesteDef, Lignee, ModuleDef, PorteurDef, Rarete } from './types';
+import type { BatimentId, Effet, EnnemiDef, GesteDef, Lignee, ModuleDef, PorteurDef, Rarete } from './types';
 
 // ---------- Porteurs ----------
 // Trois Porteurs nommés + trois recrues anonymes, une par lignée.
@@ -44,31 +44,42 @@ export const GESTES_SPECIAUX: GesteDef[] = [g(null, 'stimulant', 'Stimulant', 1,
 // Un Module se greffe sur un Porteur de sa lignée et ajoute ses Gestes au deck quand ce Porteur combat.
 // Les raretés hautes apportent plus de Gestes et des Gestes lourds, pas seulement de plus gros chiffres.
 type GM = ModuleDef['gestes'][number];
-const x = (nom: string, f: number, type: GM['type'], v: number, lourd = false): GM => ({ nom, f, type, v, ...(lourd ? { lourd: true } : {}) });
+const x = (nom: string, f: number, type: GM['type'], v: number, lourd = false, effet?: Effet): GM =>
+  ({ nom, f, type, v, ...(lourd ? { lourd: true } : {}), ...(effet ? { effet } : {}) });
 const m = (id: string, nom: string, lignee: Lignee, rarete: Rarete, gestes: GM[]): ModuleDef => ({ id, nom, lignee, rarete, gestes });
 
+// Le fer n'a pas d'effet. Le cuivre en a un, l'argent deux, l'or en a sur tous ses Gestes.
+// Chaque lignée a ses effets de prédilection :
+// Augmentés = Perçant, Surcharge, Élan (la machine calcule) ;
+// Génés = Siphon, Vague, Rempart (le corps encaisse et se refait) ;
+// Résonants = Désarmer, Fissure, Accord, Crescendo (l'empreinte lit et amplifie).
 export const MODULES: ModuleDef[] = [
   // Augmentés : Fréquences basses et moyennes
   m('jambes-ressort', 'Jambes à ressort', 'tech', 'fer', [x('Détente', 4, 'atk', 11), x('Saut d’appui', 5, 'bouclier', 8)]),
   m('gant-arc', 'Gant à arc', 'tech', 'fer', [x('Décharge', 6, 'atk', 10), x('Écran', 7, 'bouclier', 7)]),
   m('oeil-relais', 'Œil-relais', 'tech', 'fer', [x('Visée', 5, 'atk', 9), x('Diagnostic', 3, 'soin', 6)]),
-  m('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', [x('Surrégime', 7, 'atk', 13), x('Refroidir', 6, 'bouclier', 10)]),
-  m('bras-grue', 'Bras-grue', 'tech', 'argent', [x('Levage', 8, 'atk', 16, true), x('Étai', 6, 'bouclier', 11), x('Riveter', 4, 'atk', 9)]),
-  m('lames-orbitales', 'Lames orbitales', 'tech', 'or', [x('Orbite', 3, 'atk', 10), x('Orbite basse', 2, 'atk', 9), x('Tourbillon', 9, 'atk', 24, true)]),
+  m('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', [x('Surrégime', 7, 'atk', 11, false, { type: 'flux', v: 1 }), x('Refroidir', 6, 'bouclier', 10)]),
+  m('bras-grue', 'Bras-grue', 'tech', 'argent', [x('Levage', 8, 'atk', 15, true, { type: 'percant' }), x('Étai', 6, 'bouclier', 10, false, { type: 'elan' }), x('Riveter', 4, 'atk', 9)]),
+  m('lames-orbitales', 'Lames orbitales', 'tech', 'or', [x('Orbite', 3, 'atk', 9, false, { type: 'percant' }), x('Orbite basse', 2, 'atk', 8, false, { type: 'elan' }),
+    x('Tourbillon', 9, 'atk', 14, true, { type: 'crescendo', part: 0.25 })]),
   // Génés : Fréquences basses
   m('glande-ambre', 'Glande d’ambre', 'bio', 'fer', [x('Sève', 3, 'soin', 10), x('Mue', 2, 'bouclier', 10)]),
   m('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', [x('Happer', 1, 'atk', 8), x('Ronger', 3, 'atk', 9)]),
   m('cuir-recif', 'Cuir de récif', 'bio', 'fer', [x('Écailles', 4, 'bouclier', 9), x('Barbillon', 5, 'atk', 8)]),
-  m('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', [x('Apnée', 2, 'bouclier', 12), x('Remontée', 4, 'soin', 12)]),
-  m('carapace-mere', 'Carapace-mère', 'bio', 'argent', [x('Rempart', 5, 'bouclier', 14), x('Bélier', 6, 'atk', 16, true), x('Mue rapide', 1, 'soin', 9)]),
-  m('coeur-meute', 'Cœur de meute', 'bio', 'or', [x('Hurlement', 4, 'atk', 12), x('Curée', 5, 'atk', 13), x('Instinct', 3, 'soin', 14)]),
+  m('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', [x('Apnée', 2, 'bouclier', 11, false, { type: 'rempart', part: 0.5 }), x('Remontée', 4, 'soin', 11)]),
+  m('carapace-mere', 'Carapace-mère', 'bio', 'argent', [x('Rempart', 5, 'bouclier', 12, false, { type: 'rempart', part: 0.5 }), x('Bélier', 6, 'atk', 15, true),
+    x('Mue rapide', 1, 'soin', 6, false, { type: 'vague' })]),
+  m('coeur-meute', 'Cœur de meute', 'bio', 'or', [x('Hurlement', 4, 'atk', 10, false, { type: 'fissure', part: 0.25 }), x('Curée', 5, 'atk', 12, false, { type: 'siphon', part: 0.5 }),
+    x('Instinct', 3, 'soin', 8, false, { type: 'vague' })]),
   // Résonants : Fréquences hautes
   m('eclat-chant', 'Éclat qui chante', 'reso', 'fer', [x('Note haute', 8, 'atk', 13), x('Note basse', 7, 'bouclier', 9)]),
   m('miroir-brume', 'Miroir de brume', 'reso', 'fer', [x('Reflet', 9, 'atk', 10), x('Voile', 8, 'bouclier', 8)]),
   m('encre-ancienne', 'Encre ancienne', 'reso', 'fer', [x('Glyphe', 6, 'atk', 9), x('Paume ouverte', 7, 'soin', 8)]),
-  m('plume-givre', 'Plume de givre', 'reso', 'cuivre', [x('Givre', 9, 'atk', 14), x('Cristal', 8, 'bouclier', 11)]),
-  m('ombre-ailee', 'Ombre ailée', 'reso', 'argent', [x('Envol', 7, 'bouclier', 12), x('Piqué', 9, 'atk', 22, true), x('Battement', 8, 'soin', 9)]),
-  m('chant-abysses', 'Chant des abysses', 'reso', 'or', [x('Unisson', 7, 'atk', 14), x('Contre-chant', 8, 'atk', 15), x('Silence', 9, 'bouclier', 16)]),
+  m('plume-givre', 'Plume de givre', 'reso', 'cuivre', [x('Givre', 9, 'atk', 12, false, { type: 'desarmer', part: 0.25 }), x('Cristal', 8, 'bouclier', 11)]),
+  m('ombre-ailee', 'Ombre ailée', 'reso', 'argent', [x('Envol', 7, 'bouclier', 10, false, { type: 'accord' }), x('Piqué', 9, 'atk', 18, true, { type: 'fissure', part: 0.25 }),
+    x('Battement', 8, 'soin', 9)]),
+  m('chant-abysses', 'Chant des abysses', 'reso', 'or', [x('Unisson', 7, 'atk', 12, false, { type: 'accord' }), x('Contre-chant', 8, 'atk', 12, false, { type: 'crescendo', part: 0.25 }),
+    x('Silence', 9, 'bouclier', 12, false, { type: 'desarmer', part: 0.5 })]),
 ];
 
 /** Les cartes de départ : une par Porteur nommé, pas encore greffées */

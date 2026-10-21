@@ -3,7 +3,8 @@
 
 import { MODULES, moduleDef } from './donnees';
 import { tireur } from './rng';
-import type { Rarete } from './types';
+import { GESTES_PORTEUR } from './donnees';
+import type { GesteDef, Rarete } from './types';
 
 export const RARETES: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
 export const NOMS_RARETE: Record<Rarete, string> = { fer: 'Fer', cuivre: 'Cuivre', argent: 'Argent', or: 'Or', nacre: 'Nacre' };
@@ -128,4 +129,14 @@ export const composantsNiveau = (niveau: number) => 8 * niveau;
 export function multNiveau(id: string, niveau: number): number {
   const depart = COLLECTION.niveauDepart[moduleDef(id).rarete];
   return 1 + COLLECTION.bonusNiveau * (niveau - depart);
+}
+
+/** Les Gestes qu'un Porteur apporte au deck : les siens + ceux de ses Modules, à leur niveau */
+export function gestesAvecModules(porteurId: string, modules: { id: string; niveau: number }[]): GesteDef[] {
+  const base = GESTES_PORTEUR[porteurId] ?? [];
+  const mods = modules.flatMap(({ id, niveau }) => {
+    const mult = multNiveau(id, niveau);
+    return moduleDef(id).gestes.map((x, k) => ({ id: `${id}-${k}`, porteur: porteurId, ...x, v: Math.round(x.v * mult) }));
+  });
+  return [...base, ...mods];
 }

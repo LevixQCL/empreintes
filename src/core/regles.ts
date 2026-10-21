@@ -28,28 +28,49 @@ export interface Analyse {
   echo: boolean;
 }
 
+type Maillon = Pick<Geste, 'f'> & { effet?: Geste['effet'] };
+
+/**
+ * Fréquences réellement jouées : un Geste à Accord prend toujours la Fréquence
+ * qui prolonge la suite (celle d'avant + 1, ou celle d'après − 1 s'il ouvre la chaîne).
+ */
+export function frequencesEffectives(chaine: Maillon[]): number[] {
+  const r: number[] = [];
+  chaine.forEach((g, i) => {
+    if (g.effet?.type !== 'accord') r.push(g.f);
+    else if (i > 0) r.push(r[i - 1]! + 1);
+    else {
+      const suivant = chaine[1];
+      r.push(suivant && suivant.effet?.type !== 'accord' ? suivant.f - 1 : g.f);
+    }
+  });
+  return r;
+}
+
 /** Résonance (suite 3-4-5…) et Écho (trois Fréquences identiques) */
-export function analyserChaine(chaine: Pick<Geste, 'f'>[]): Analyse {
-  let meilleur = chaine.length ? 1 : 0;
+export function analyserChaine(chaine: Maillon[]): Analyse {
+  const fs = frequencesEffectives(chaine);
+  let meilleur = fs.length ? 1 : 0;
   let serie = 1;
-  for (let i = 1; i < chaine.length; i++) {
-    if ((chaine[i] as Geste).f === (chaine[i - 1] as Geste).f + 1) {
+  for (let i = 1; i < fs.length; i++) {
+    if (fs[i] === fs[i - 1]! + 1) {
       serie++;
       meilleur = Math.max(meilleur, serie);
     } else serie = 1;
   }
   const compte = new Map<number, number>();
-  for (const g of chaine) compte.set(g.f, (compte.get(g.f) ?? 0) + 1);
+  for (const f of fs) compte.set(f, (compte.get(f) ?? 0) + 1);
   const echo = [...compte.values()].some((n) => n >= 3);
   const mult = REGLES.multSuite[Math.min(meilleur, 5)] ?? 1;
   return { suite: meilleur, mult, echo };
 }
 
 /** Longueur de la suite qui se termine sur le dernier Geste posé */
-export function serieFinale(chaine: Pick<Geste, 'f'>[]): number {
-  let s = chaine.length ? 1 : 0;
-  for (let i = chaine.length - 1; i > 0; i--) {
-    if ((chaine[i] as Geste).f === (chaine[i - 1] as Geste).f + 1) s++;
+export function serieFinale(chaine: Maillon[]): number {
+  const fs = frequencesEffectives(chaine);
+  let s = fs.length ? 1 : 0;
+  for (let i = fs.length - 1; i > 0; i--) {
+    if (fs[i] === fs[i - 1]! + 1) s++;
     else break;
   }
   return s;
