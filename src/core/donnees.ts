@@ -11,7 +11,7 @@ export const PORTEURS: PorteurDef[] = [
   { id: 'docker', nom: 'Docker', lignee: 'bio', pvMax: 42, nomme: false },
   { id: 'guetteur', nom: 'Guetteur', lignee: 'reso', pvMax: 30, nomme: false },
   // Les trois Porteurs recrutables de la Bible : ils arrivent au fil de l'acte I, Aurel avec l'acte II
-  { id: 'sasha', nom: 'Sasha Mbeki', lignee: 'tech', pvMax: 36, nomme: true,
+  { id: 'sasha', nom: 'Sasha Ndiaro', lignee: 'tech', pvMax: 36, nomme: true,
     arrivee: { forge: 2, replique: 'Si ça a une vis, ça a une seconde chance.' } },
   { id: 'nuit', nom: 'Nuit', lignee: 'bio', pvMax: 36, nomme: true,
     arrivee: { strate: 3, replique: 'Le noir n’est pas vide. Il attend juste qu’on regarde mieux.' } },

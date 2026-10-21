@@ -67,7 +67,7 @@ describe('Les Porteurs de l’histoire', () => {
     j.chambre = true; j.recrues = true;
     expect(porteursPresents(j)).not.toContain('sasha');
     j.batiments.forge = 2;
-    expect(verifierArrivees(j)[0]).toContain('Sasha Mbeki');
+    expect(verifierArrivees(j)[0]).toContain('Sasha Ndiaro');
     expect(porteursPresents(j)).toContain('sasha');
     j.strate = 3;
     tick(j, 1000);
