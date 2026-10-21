@@ -109,8 +109,24 @@ export const MODULES: ModuleDef[] = [
     x('Silence', 9, 'bouclier', 14, false, { type: 'desarmer', part: 0.6 })]),
 ];
 
-/** Les cartes de départ : une par Porteur nommé, pas encore greffées */
-export const COLLECTION_DEPART = ['jambes-ressort', 'glande-ambre', 'eclat-chant'];
+// ---------- Un Module, cinq métaux ----------
+// Décision du 21 octobre 2026 : une même carte peut exister dans les cinq métaux. Le métal est fixé quand on trouve
+// l'exemplaire, il ne change jamais (pas de montée de métal). Un exemplaire se note « module@métal ».
+// Les Gestes ci-dessus sont réglés pour le métal d'origine du Module (son champ `rarete`) ; dans un autre métal :
+// - la force est multipliée par METAL_FORCE[métal] / METAL_FORCE[métal d'origine] ;
+// - les effets sont gardés dans l'ordre des Gestes, au plus METAL_EFFETS[métal] (fer 0, cuivre 1, argent 2, or et nacre tous).
+// Ces deux tables et la question « le métal ajoute-t-il des Gestes ? » sont à régler avec le robot d'équilibrage.
+export const METAL_FORCE: Record<Rarete, number> = { fer: 1, cuivre: 1.12, argent: 1.25, or: 1.4, nacre: 1.55 };
+export const METAL_EFFETS: Record<Rarete, number> = { fer: 0, cuivre: 1, argent: 2, or: Infinity, nacre: Infinity };
+const METAUX: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
+
+/** L'identifiant d'un exemplaire : un Module dans un métal */
+export const carteId = (moduleId: string, metal: Rarete) => `${moduleId}@${metal}`;
+/** Le Module de base d'un exemplaire (« jambes-ressort@or » → « jambes-ressort ») */
+export const moduleDe = (cle: string) => cle.split('@')[0]!;
+
+/** Les cartes de départ : une en fer par Porteur nommé, pas encore greffées */
+export const COLLECTION_DEPART = ['jambes-ressort', 'glande-ambre', 'eclat-chant'].map((id) => carteId(id, 'fer'));
 
 // ---------- Bâtiments ----------
 export interface BatimentDef {
@@ -195,8 +211,25 @@ export const ennemiDef = (id: string): EnnemiDef => {
 };
 
 export const batimentDef = (id: BatimentId): BatimentDef => BATIMENTS.find((b) => b.id === id)!;
-export const moduleDef = (id: string): ModuleDef => {
+const declinaisons = new Map<string, ModuleDef>();
+
+/** Un Module dans son métal d'origine (« jambes-ressort ») ou un exemplaire dans un métal (« jambes-ressort@or ») */
+export const moduleDef = (cle: string): ModuleDef => {
+  const deja = declinaisons.get(cle);
+  if (deja) return deja;
+  const [id, metal] = cle.split('@') as [string, Rarete | undefined];
   const m = MODULES.find((x) => x.id === id);
-  if (!m) throw new Error('Module inconnu : ' + id);
-  return m;
+  if (!m || (metal !== undefined && !METAUX.includes(metal))) throw new Error('Module inconnu : ' + cle);
+  if (metal === undefined) return m;
+  const k = METAL_FORCE[metal] / METAL_FORCE[m.rarete];
+  let effets = METAL_EFFETS[metal];
+  const gestes = m.gestes.map((g) => {
+    const { effet, ...reste } = g;
+    const garde = !!effet && effets > 0;
+    if (garde) effets--;
+    return { ...reste, v: Math.round(g.v * k), ...(garde ? { effet } : {}) };
+  });
+  const d: ModuleDef = { ...m, id: cle, base: id, rarete: metal, gestes };
+  declinaisons.set(cle, d);
+  return d;
 };

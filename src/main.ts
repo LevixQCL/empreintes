@@ -10,6 +10,7 @@ import { htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRenco
 import { PLANS, htmlIntro, imagesPlan } from './ui/intro';
 import { htmlTitre } from './ui/titre';
 import { activerCartes } from './ui/carte';
+import { NOMS_RARETE } from './core/collection';
 
 const racine = document.getElementById('app') as HTMLElement;
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -383,7 +384,7 @@ racine.addEventListener('click', async (ev) => {
       } else {
         D.vue = jeu.choix.length ? 'archipel' : 'coupe';
         D.message = (r.nouvelleStrate ? `Un nouvel étage est creusé : la Strate −${jeu.strate} est ouverte.` : `+${r.butin} composants rapportés.`)
-          + (r.cartes.length ? ` Carte${r.cartes.length > 1 ? 's' : ''} trouvée${r.cartes.length > 1 ? 's' : ''} : ${r.cartes.map((c) => moduleDef(c).nom).join(', ')}.` : '')
+          + (r.cartes.length ? ` Carte${r.cartes.length > 1 ? 's' : ''} trouvée${r.cartes.length > 1 ? 's' : ''} : ${r.cartes.map((c) => `${moduleDef(c).nom} (${NOMS_RARETE[moduleDef(c).rarete]})`).join(', ')}.` : '')
           + (r.eclats ? ` +${r.eclats} Éclat${r.eclats > 1 ? 's' : ''}.` : '')
           + (r.fragment ? ' Un fragment d’archives rejoint le Codex.' : '');
       }

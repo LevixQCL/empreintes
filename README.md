@@ -54,8 +54,13 @@ Tous les chiffres sont dans deux fichiers :
 - `src/core/regles.ts` : taille de main, places, bonus de suite, Flux, triangle…
 - `src/core/donnees.ts` : force et Fréquence de chaque Geste, PV et attaques des ennemis.
 
-**Les effets.** Les cartes en fer n'ont pas d'effet ; le cuivre en a un, l'argent deux, l'or en a sur tous
-ses Gestes. Un effet se déclare dans `donnees.ts` (`{ type: 'percant' }`, `{ type: 'siphon', part: 0.5 }`…),
+**Un Module, cinq métaux.** Chaque Module existe en fer, cuivre, argent, or et nacre. Un exemplaire possédé se note
+`module@métal` (`jambes-ressort@or`) ; le métal est fixé quand on le trouve et ne change jamais. Les Gestes de `donnees.ts`
+sont réglés pour le métal d'origine du Module ; dans un autre métal, `METAL_FORCE` règle la force et `METAL_EFFETS` le
+nombre d'effets gardés (fer 0, cuivre 1, argent 2, or et nacre tous). Deux métaux d'un même Module sont deux cartes à part :
+chacune ses doublons, son niveau, et un Porteur n'en porte qu'une.
+
+**Les effets.** Un effet se déclare dans `donnees.ts` (`{ type: 'percant' }`, `{ type: 'siphon', part: 0.5 }`…),
 son texte est dans `effets.ts` et sa règle dans `combat.ts` (l'Accord, qui touche aux suites, est dans `regles.ts`).
 
 **Le robot d'équilibrage.** `npm run robot` (option `-- --parties 300`) joue des milliers d'expéditions avec

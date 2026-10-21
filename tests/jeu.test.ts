@@ -37,21 +37,21 @@ describe('District', () => {
 
   it('greffer une carte remplace des Gestes de base par les siens ; la Forge refabrique un doublon', () => {
     const j = ouvert();
-    expect(greffer(j, 'jambes-ressort', 'doran').ok).toBe(false); // mauvaise lignée
+    expect(greffer(j, 'jambes-ressort@fer', 'doran').ok).toBe(false); // mauvaise lignée
     const avant = gestesDe(j, 'ilka').length;
-    expect(greffer(j, 'jambes-ressort', 'ilka').ok).toBe(true);
+    expect(greffer(j, 'jambes-ressort@fer', 'ilka').ok).toBe(true);
     const apres = gestesDe(j, 'ilka');
     expect(apres.length).toBe(avant); // le deck garde sa taille
     expect(apres.map((g) => g.nom)).toContain('Détente');
     expect(apres.map((g) => g.nom)).not.toContain('Tir vif'); // le premier Geste de base à céder sa place
-    expect(fabriquer(j, 'jambes-ressort', 0).ok).toBe(false); // personne à la Forge
+    expect(fabriquer(j, 'jambes-ressort@fer', 0).ok).toBe(false); // personne à la Forge
     poster(j, 'coursier', 'forge');
     j.composants = 100;
-    expect(fabriquer(j, 'lames-orbitales', 0).ok).toBe(false); // jamais trouvée
-    expect(fabriquer(j, 'jambes-ressort', 0).ok).toBe(true);
+    expect(fabriquer(j, 'lames-orbitales@or', 0).ok).toBe(false); // jamais trouvée
+    expect(fabriquer(j, 'jambes-ressort@fer', 0).ok).toBe(true);
     tick(j, j.forge!.fin);
     expect(j.forge).toBeNull();
-    expect(j.collection['jambes-ressort']!.doublons).toBe(1);
+    expect(j.collection['jambes-ressort@fer']!.doublons).toBe(1);
   });
 });
 

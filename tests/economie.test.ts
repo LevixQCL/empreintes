@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { COLLECTION, ajouterCarte, doublonsRequis, multNiveau, tableRarete, tirerCarte, type EtatCollection } from '../src/core/collection';
 import { moduleDef } from '../src/core/donnees';
 import {
-  ARCHIVE, OBJECTIFS, ameliorer, estJeuValide, jourDe, monter, nouveauJeu, ouvrirArchive, prendre, quotidienFait,
+  ARCHIVE, OBJECTIFS, ameliorer, estJeuValide, greffer, jourDe, monter, nouveauJeu, ouvrirArchive, prendre, quotidienFait,
   reclamerQuotidien, recycler, semaineDe, tick, type Jeu,
 } from '../src/core/jeu';
 
@@ -61,23 +61,59 @@ describe('Collection', () => {
 
   it('un doublon fait monter une carte, +5 % par niveau', () => {
     const j = avance();
-    expect(ajouterCarte(j, 'jambes-ressort')).toBe(false);
-    expect(doublonsRequis('jambes-ressort', 1)).toBe(1);
-    expect(monter(j, 'jambes-ressort').ok).toBe(true);
-    expect(j.collection['jambes-ressort']).toEqual({ niveau: 2, doublons: 0 });
-    expect(multNiveau('jambes-ressort', 10)).toBeCloseTo(1.45, 5);
+    expect(ajouterCarte(j, 'jambes-ressort@fer')).toBe(false);
+    expect(doublonsRequis('jambes-ressort@fer', 1)).toBe(1);
+    expect(monter(j, 'jambes-ressort@fer').ok).toBe(true);
+    expect(j.collection['jambes-ressort@fer']).toEqual({ niveau: 2, doublons: 0 });
+    expect(multNiveau('jambes-ressort@fer', 10)).toBeCloseTo(1.45, 5);
     // une carte en or démarre au niveau 7
-    expect(ajouterCarte(j, 'lames-orbitales')).toBe(true);
-    expect(j.collection['lames-orbitales']!.niveau).toBe(7);
+    expect(ajouterCarte(j, 'lames-orbitales@or')).toBe(true);
+    expect(j.collection['lames-orbitales@or']!.niveau).toBe(7);
   });
 
   it('recycler un doublon rend des composants', () => {
     const j = avance();
     const avant = j.composants;
-    expect(recycler(j, 'jambes-ressort').ok).toBe(false);
-    ajouterCarte(j, 'jambes-ressort');
-    expect(recycler(j, 'jambes-ressort').ok).toBe(true);
+    expect(recycler(j, 'jambes-ressort@fer').ok).toBe(false);
+    ajouterCarte(j, 'jambes-ressort@fer');
+    expect(recycler(j, 'jambes-ressort@fer').ok).toBe(true);
     expect(j.composants).toBe(avant + COLLECTION.recyclage.fer);
+  });
+});
+
+describe('Un Module, cinq métaux', () => {
+  it('un même Module existe dans chaque métal, chaque exemplaire à part', () => {
+    const j = avance();
+    expect(ajouterCarte(j, 'jambes-ressort@or')).toBe(true); // nouvelle carte, pas un doublon du fer
+    expect(j.collection['jambes-ressort@or']!.niveau).toBe(7);
+    expect(j.collection['jambes-ressort@fer']!.doublons).toBe(0);
+    expect(moduleDef('jambes-ressort@or').base).toBe('jambes-ressort');
+    expect(moduleDef('jambes-ressort@or').nom).toBe('Jambes à ressort');
+  });
+
+  it('le métal règle la force et le nombre d’effets', () => {
+    const fer = moduleDef('jambes-ressort@fer'), or = moduleDef('jambes-ressort@or');
+    expect(or.gestes[0]!.v).toBeGreaterThan(fer.gestes[0]!.v);
+    // un Module en or (3 effets) trouvé en fer perd ses effets, en argent en garde 2
+    expect(moduleDef('lames-orbitales@fer').gestes.filter((g) => g.effet)).toHaveLength(0);
+    expect(moduleDef('lames-orbitales@argent').gestes.filter((g) => g.effet)).toHaveLength(2);
+    expect(moduleDef('lames-orbitales@or').gestes.filter((g) => g.effet)).toHaveLength(3);
+    // sans métal, c'est le Module dans son métal d'origine
+    expect(moduleDef('lames-orbitales').rarete).toBe('or');
+  });
+
+  it('un Porteur ne porte pas deux fois le même Module', () => {
+    const j = avance();
+    ajouterCarte(j, 'jambes-ressort@or');
+    expect(greffer(j, 'jambes-ressort@fer', 'ilka').ok).toBe(true);
+    expect(greffer(j, 'jambes-ressort@or', 'ilka').ok).toBe(false);
+  });
+
+  it('les tirages donnent des Modules de tous les métaux d’origine dans chaque métal', () => {
+    const e: EtatCollection = { collection: {}, sans: { argent: 0, or: 0, nacre: 0 }, rng: 11 };
+    const tirages = Array.from({ length: 600 }, () => tirerCarte(e, 12));
+    expect(tirages.some((k) => k.startsWith('lames-orbitales@fer'))).toBe(true);
+    expect(tirages.every((k) => /@(fer|cuivre|argent|or|nacre)$/.test(k))).toBe(true);
   });
 });
 
@@ -121,16 +157,31 @@ describe('Objectif du jour et Archive de la semaine', () => {
 });
 
 describe('Migration', () => {
-  it('une sauvegarde de la version 2 passe en version 3 sans rien perdre', () => {
+  it('une sauvegarde de la version 2 passe en version 4 sans rien perdre', () => {
     const v2 = nouveauJeu(0) as Partial<Jeu> & Record<string, unknown>;
     for (const k of ['eclats', 'collection', 'sans', 'rng', 'chantiers', 'choix', 'quotidien', 'archive']) delete v2[k];
     v2.version = 2;
     v2.porteurs!.doran!.modules = ['glande-amber'];
     expect(estJeuValide(v2)).toBe(true);
     const j = v2 as Jeu;
-    expect(j.version).toBe(3);
-    expect(j.porteurs.doran!.modules).toEqual(['glande-ambre']);
-    expect(j.collection['glande-ambre']!.doublons).toBe(1);
+    expect(j.version).toBe(4);
+    expect(j.porteurs.doran!.modules).toEqual(['glande-ambre@fer']);
+    expect(j.collection['glande-ambre@fer']!.doublons).toBe(1);
     expect(j.chantiers).toEqual([]);
+  });
+
+  it('une sauvegarde de la version 3 garde chaque carte dans le métal d’origine de son Module', () => {
+    const v3 = nouveauJeu(0);
+    v3.version = 3;
+    v3.collection = { 'jambes-ressort': { niveau: 2, doublons: 1 }, 'lames-orbitales': { niveau: 7, doublons: 0 } };
+    v3.porteurs.ilka!.modules = ['lames-orbitales'];
+    v3.forge = { moduleId: 'jambes-ressort', debut: 0, fin: 10 };
+    v3.choix = [{ source: 'boss', options: ['bras-grue', 'crocs-fossiles', 'disparu'] }];
+    expect(estJeuValide(v3)).toBe(true);
+    expect(v3.version).toBe(4);
+    expect(v3.collection).toEqual({ 'jambes-ressort@fer': { niveau: 2, doublons: 1 }, 'lames-orbitales@or': { niveau: 7, doublons: 0 } });
+    expect(v3.porteurs.ilka!.modules).toEqual(['lames-orbitales@or']);
+    expect(v3.forge!.moduleId).toBe('jambes-ressort@fer');
+    expect(v3.choix[0]!.options).toEqual(['bras-grue@argent', 'crocs-fossiles@fer']);
   });
 });

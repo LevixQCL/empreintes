@@ -2,7 +2,7 @@
 // et l'expédition en cours. Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms),
 // ce qui permet de rattraper le temps passé hors du jeu et de tester sans attendre.
 
-import { BATIMENTS, COLLECTION_DEPART, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, moduleDef, porteurDef } from './donnees';
+import { BATIMENTS, COLLECTION_DEPART, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, moduleDe, moduleDef, porteurDef } from './donnees';
 import {
   COLLECTION, NOMS_RARETE, ajouterCarte, gestesAvecModules, composantsNiveau, doublonsRequis, tirerCarte, tirerChoix,
   type CarteCollection,
@@ -12,7 +12,7 @@ import { cloturerCombat, combatSuivant, nouvelleExpedition, type Expedition } fr
 import { graine, tireur } from './rng';
 import type { BatimentId, GesteDef, PorteurEtat, Rarete } from './types';
 
-export const VERSION_JEU = 3;
+export const VERSION_JEU = 4;
 
 /** Réglages du district, au même endroit pour l'équilibrage */
 export const DISTRICT = {
@@ -168,7 +168,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
 
 export function estJeuValide(x: unknown): x is Jeu {
   const j = x as Jeu | null;
-  if (!(!!j && (j.version === VERSION_JEU || j.version === 2) && typeof j.energie === 'number' && !!j.batiments && !!j.porteurs)) return false;
+  if (!(!!j && (j.version === VERSION_JEU || j.version === 2 || j.version === 3) && typeof j.energie === 'number' && !!j.batiments && !!j.porteurs)) return false;
   migrer(j);
   return true;
 }
@@ -189,7 +189,7 @@ function migrer(j: Jeu) {
     j.eclats = 0;
     j.collection = Object.fromEntries(COLLECTION_DEPART.map((id) => [id, { niveau: 1, doublons: 0 }]));
     for (const p of Object.values(j.porteurs)) {
-      p.modules = p.modules.map((m) => RENOMMES[m] ?? m).filter((m) => MODULES.some((x) => x.id === m));
+      p.modules = p.modules.map((m) => RENOMMES[m] ?? m).filter((m) => MODULES.some((x) => x.id === m)).map((m) => carteId(m, moduleDef(m).rarete));
       for (const m of p.modules) {
         if (j.collection[m]) j.collection[m]!.doublons++;
         else j.collection[m] = { niveau: 1, doublons: 0 };
@@ -202,6 +202,16 @@ function migrer(j: Jeu) {
     j.choix = [];
     j.quotidien = { jour: jourDe(now), reserve: 1, type: typeDuJour(jourDe(now)), progres: 0 };
     j.archive = { semaine: semaineDe(now), points: 0, aOuvrir: 0 };
+  }
+  if (j.version === 3) {
+    // version 4 : un Module peut exister dans les cinq métaux ; chaque exemplaire garde le métal d'origine de son Module
+    j.version = 4;
+    const existe = (id: string) => MODULES.some((m) => m.id === moduleDe(id));
+    const cle = (id: string) => (id.includes('@') ? id : carteId(id, moduleDef(id).rarete));
+    j.collection = Object.fromEntries(Object.entries(j.collection).filter(([id]) => existe(id)).map(([id, c]) => [cle(id), c]));
+    for (const p of Object.values(j.porteurs)) p.modules = p.modules.filter(existe).map(cle);
+    if (j.forge) j.forge = existe(j.forge.moduleId) ? { ...j.forge, moduleId: cle(j.forge.moduleId) } : null;
+    j.choix = j.choix.map((c) => ({ ...c, options: c.options.filter(existe).map(cle) })).filter((c) => c.options.length);
   }
 }
 
@@ -418,6 +428,7 @@ export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   if (porteurDef(porteurId).lignee !== moduleDef(moduleId).lignee) return non('Cette carte ne convient qu’à sa lignée.');
   const ancien = greffesDe(j, moduleId)[0];
   if (ancien === porteurId) return { ok: true };
+  if (p.modules.some((k) => k !== moduleId && moduleDe(k) === moduleDe(moduleId))) return non(`${porteurDef(porteurId).nom} porte déjà cette carte dans un autre métal.`);
   if (ancien && enExpedition(j, ancien)) return non('Cette carte est en expédition.');
   if (p.modules.length >= DISTRICT.modulesMax) return non(`${porteurDef(porteurId).nom} porte déjà ${DISTRICT.modulesMax} cartes : retires-en une.`);
   if (ancien) j.porteurs[ancien]!.modules = j.porteurs[ancien]!.modules.filter((m) => m !== moduleId);

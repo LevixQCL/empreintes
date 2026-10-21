@@ -2,7 +2,7 @@
 // Les bâtiments sont des illustrations Midjourney (public/art/batiments, 4 apparences selon le niveau) ; le fond est la mer peinte (jour ou nuit), le Chantier une esquisse en attendant son illustration.
 
 import { libelleEffet } from '../core/effets';
-import { MODULES, PORTEURS, batimentDef, gestesRemplaces, moduleDef, porteurDef } from '../core/donnees';
+import { MODULES, PORTEURS, batimentDef, carteId, gestesRemplaces, moduleDef, porteurDef } from '../core/donnees';
 import {
   ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles,
   dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant,
@@ -169,7 +169,7 @@ function panneauBatiment(e: EcranDistrict): string {
       h += `<p class="stat">${echap(m.nom)} · reste ${duree(j.forge.fin - e.now)}</p><div class="piste" style="--c:var(--gold)"><i style="width:${fait * 100}%"></i></div>`;
     } else {
       h += `<small class="aide">Un exemplaire de plus devient un doublon, pour faire monter la carte. Le recyclage se fait depuis tes Cartes.</small>`;
-      const possedees = MODULES.filter((m) => j.collection[m.id]).sort((x, y) => RARETES.indexOf(y.rarete) - RARETES.indexOf(x.rarete));
+      const possedees = Object.keys(j.collection).map(moduleDef).sort((x, y) => RARETES.indexOf(y.rarete) - RARETES.indexOf(x.rarete) || x.nom.localeCompare(y.nom));
       for (const m of possedees) {
         const c = coutRefabrication(m.id);
         const assez = j.composants >= c.composants && j.eclats >= c.eclats;
@@ -293,7 +293,8 @@ function remplace(j: Jeu, moduleId: string, porteurId: string | undefined): stri
 
 export function htmlCartes(e: EcranDistrict): string {
   const j = e.j;
-  const trouvees = MODULES.filter((m) => j.collection[m.id]).length;
+  const exemplaires = (moduleId: string) => [...RARETES].reverse().map((r) => carteId(moduleId, r)).filter((k) => j.collection[k]);
+  const trouvees = MODULES.filter((m) => exemplaires(m.id).length).length;
   let h = `<header class="top"><div><h1>Cartes</h1><span class="sous">${trouvees} / ${MODULES.length} TROUVÉES · ${DISTRICT.modulesMax} PAR PORTEUR</span></div><button type="button" class="btn-sec" data-action="archipel">Archipel</button></header>`;
   h += barreRessources(e);
   if (e.message) h += `<p class="message">${echap(e.message)}</p>`;
@@ -301,25 +302,30 @@ export function htmlCartes(e: EcranDistrict): string {
   for (const lignee of ['tech', 'bio', 'reso'] as const) {
     const porteurs = PORTEURS.filter((p) => p.lignee === lignee && porteursPresents(j).includes(p.id));
     h += `<h2 class="titre-lignee" style="--c:${COULEUR[lignee]}">${lignee === 'tech' ? 'Augmentés' : lignee === 'bio' ? 'Génés' : 'Résonants'}</h2><div class="grille-cartes">`;
-    for (const m of MODULES.filter((x) => x.lignee === lignee)) {
-      const c = j.collection[m.id];
-      if (!c) {
-        h += `<div class="carte inconnue" style="--r:${COULEUR_RARETE[m.rarete]}"><span class="rarete">${NOMS_RARETE[m.rarete]}</span><strong>?</strong><small>Pas encore trouvée</small></div>`;
+    for (const base of MODULES.filter((x) => x.lignee === lignee)) {
+      const cles = exemplaires(base.id);
+      if (!cles.length) {
+        h += `<div class="carte inconnue" style="--r:var(--line)"><strong>?</strong><small>Pas encore trouvée</small></div>`;
         continue;
       }
-      const requis = doublonsRequis(m.id, c.niveau);
-      const porte = greffesDe(j, m.id)[0];
-      const mult = multNiveau(m.id, c.niveau);
-      const cout = composantsNiveau(c.niveau + 1);
-      h += `<article class="carte avec-face" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[lignee]}">${faceCarte(m, c.niveau, mult)}`
-        + `${effetsCarte(m)}${remplace(j, m.id, porte ?? porteurs[0]?.id)}`
-        + (requis === null ? `<small>Niveau maximum</small>` : `<div class="ligne-prog"><div class="piste"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%;--c:var(--r)"></i></div><small>${c.doublons} / ${requis}</small></div>`)
-        + `<div class="chips">`
-        + (requis !== null ? `<button type="button" class="chip petit" data-action="monter" data-module="${m.id}"${c.doublons >= requis && j.composants >= cout ? '' : ' disabled'}>Monter · ${cout} comp.</button>` : '')
-        + (c.doublons > 0 ? `<button type="button" class="chip petit" data-action="recycler" data-module="${m.id}">Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button>` : '')
-        + `</div><div class="chips">`
-        + porteurs.map((p) => `<button type="button" class="chip petit${porte === p.id ? ' actif' : ''}" style="--c:${COULEUR[lignee]};${stylePastille(p.id, FONDS[p.id])}" data-action="${porte === p.id ? 'degreffer' : 'greffer'}" data-module="${m.id}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}><span class="pastille" aria-hidden="true"></span>${echap(p.nom)}${porte === p.id ? ' ✓' : ''}</button>`).join('')
-        + `</div></article>`;
+      // une carte par métal possédé, du plus rare au plus commun
+      for (const cle of cles) {
+        const m = moduleDef(cle);
+        const c = j.collection[cle]!;
+        const requis = doublonsRequis(m.id, c.niveau);
+        const porte = greffesDe(j, m.id)[0];
+        const mult = multNiveau(m.id, c.niveau);
+        const cout = composantsNiveau(c.niveau + 1);
+        h += `<article class="carte avec-face" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[lignee]}">${faceCarte(m, c.niveau, mult)}`
+          + `${effetsCarte(m)}${remplace(j, m.id, porte ?? porteurs[0]?.id)}`
+          + (requis === null ? `<small>Niveau maximum</small>` : `<div class="ligne-prog"><div class="piste"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%;--c:var(--r)"></i></div><small>${c.doublons} / ${requis}</small></div>`)
+          + `<div class="chips">`
+          + (requis !== null ? `<button type="button" class="chip petit" data-action="monter" data-module="${m.id}"${c.doublons >= requis && j.composants >= cout ? '' : ' disabled'}>Monter · ${cout} comp.</button>` : '')
+          + (c.doublons > 0 ? `<button type="button" class="chip petit" data-action="recycler" data-module="${m.id}">Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button>` : '')
+          + `</div><div class="chips">`
+          + porteurs.map((p) => `<button type="button" class="chip petit${porte === p.id ? ' actif' : ''}" style="--c:${COULEUR[lignee]};${stylePastille(p.id, FONDS[p.id])}" data-action="${porte === p.id ? 'degreffer' : 'greffer'}" data-module="${m.id}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}><span class="pastille" aria-hidden="true"></span>${echap(p.nom)}${porte === p.id ? ' ✓' : ''}</button>`).join('')
+          + `</div></article>`;
+      }
     }
     h += `</div>`;
   }

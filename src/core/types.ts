@@ -48,7 +48,10 @@ export type Rarete = 'fer' | 'cuivre' | 'argent' | 'or' | 'nacre';
 
 /** Un Module est une carte de collection : il se greffe sur un Porteur de sa lignée et ses Gestes remplacent une partie des siens */
 export interface ModuleDef {
+  /** « jambes-ressort » pour le Module dans son métal d'origine, « jambes-ressort@or » pour un exemplaire dans un autre métal */
   id: string;
+  /** le Module de base, quand `id` désigne un exemplaire dans un métal (« jambes-ressort ») */
+  base?: string;
   nom: string;
   lignee: Lignee;
   rarete: Rarete;

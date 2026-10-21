@@ -1,7 +1,7 @@
 // La collection : les cartes (Modules) qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
 // Tout le hasard passe par un état `rng` sauvegardé : aucun hasard n'est jamais payé.
 
-import { MODULES, gestesDeBaseRestants, moduleDef } from './donnees';
+import { MODULES, carteId, gestesDeBaseRestants, moduleDef } from './donnees';
 import { tireur } from './rng';
 import type { GesteDef, Rarete } from './types';
 
@@ -77,28 +77,25 @@ export function tirerRarete(e: EtatCollection, strate: number, minimum: Rarete =
   else if (strate >= 5 && e.sans.or + 1 >= g.or && rang(r) < rang('or')) r = 'or';
   else if (e.sans.argent + 1 >= g.argent && rang(r) < rang('argent')) r = 'argent';
   if (rang(r) < rang(minimum)) r = minimum;
-  // une rareté sans carte disponible retombe sur la plus proche en dessous
-  while (rang(r) > 0 && !MODULES.some((m) => m.rarete === r)) r = RARETES[rang(r) - 1]!;
   e.sans.argent = rang(r) >= rang('argent') ? 0 : e.sans.argent + 1;
   e.sans.or = rang(r) >= rang('or') ? 0 : e.sans.or + 1;
   e.sans.nacre = r === 'nacre' ? 0 : e.sans.nacre + 1;
   return r;
 }
 
-/** Tire une carte de la rareté donnée */
+/** Tire une carte : un métal, puis un Module parmi tous (chaque Module existe dans les cinq métaux) */
 export function tirerCarte(e: EtatCollection, strate: number, minimum: Rarete = 'fer'): string {
   const r = tirerRarete(e, strate, minimum);
-  const pool = MODULES.filter((m) => m.rarete === r);
-  return pool[tireur(e).entier(pool.length)]!.id;
+  return carteId(MODULES[tireur(e).entier(MODULES.length)]!.id, r);
 }
 
-/** Trois cartes différentes au choix (boss, objectif du jour, Archive) */
+/** Trois cartes différentes au choix (boss, objectif du jour, Archive), toujours de trois Modules différents */
 export function tirerChoix(e: EtatCollection, strate: number, minimum: Rarete = 'fer'): string[] {
   const choix: string[] = [];
   let garde = 0;
   while (choix.length < 3 && garde++ < 30) {
     const id = tirerCarte(e, strate, choix.length === 0 ? minimum : 'fer');
-    if (!choix.includes(id)) choix.push(id);
+    if (!choix.some((c) => moduleDef(c).base === moduleDef(id).base)) choix.push(id);
   }
   return choix;
 }

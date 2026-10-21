@@ -27,7 +27,11 @@ const ENNEMIS_ILLUSTRES: Record<string, string> = {
 };
 
 export const portrait = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/${id}.webp` : null);
-export const illustrationModule = (id: string): string | null => (MODULES_ILLUSTRES[id] ? `${base}modules/${MODULES_ILLUSTRES[id]}.webp` : null);
+/** l'illustration ne dépend pas du métal : « jambes-ressort@or » reprend celle de « jambes-ressort » */
+export const illustrationModule = (cle: string): string | null => {
+  const id = cle.split('@')[0]!;
+  return MODULES_ILLUSTRES[id] ? `${base}modules/${MODULES_ILLUSTRES[id]}.webp` : null;
+};
 export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
 export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
