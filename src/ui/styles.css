@@ -325,3 +325,46 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .tete-tour{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .btn-sec.petit{min-height:36px;padding:0 10px;font-size:13px;background:rgba(255,250,240,.85);color:#2A2418;border-color:#C9B48A}
 @media (prefers-reduced-motion: reduce){ .replique,.rencontre .prim{opacity:1;transform:none;animation:none} .bandeau.porte,.etiquette.visee{animation:none} }
+
+/* ---------- Cartes, objectif du jour, Archive ---------- */
+.pastille-res.ec{background:var(--reso);border-radius:2px;transform:rotate(45deg)}
+.btn-sec.visee{border-color:var(--gold);animation:appel-or 1.6s ease-in-out infinite}
+.ligne-prog{display:flex;align-items:center;gap:8px}
+.ligne-prog small{font-family:var(--mono);font-size:11px;color:var(--quiet);font-variant-numeric:tabular-nums}
+.objectif.jour{gap:8px}
+.archive-sem{display:grid;gap:6px;padding-top:8px;border-top:1px solid var(--line)}
+.jauge{position:relative;display:flex}
+.jauge .cran{position:absolute;top:-3px;width:3px;height:14px;margin-left:-2px;border-radius:2px;background:var(--line)}
+.jauge .cran.atteint{background:var(--reso)}
+.bandeau.archive-prete{display:grid;gap:2px;text-align:left;padding:12px 14px;min-height:56px;border-color:var(--reso);background:color-mix(in srgb,var(--reso) 18%,var(--surface));animation:appel 2.4s ease-in-out infinite}
+.bandeau.archive-prete strong{font-family:var(--display);font-weight:400;font-size:18px;color:var(--ink)}
+.bandeau.archive-prete span{font-size:13px;color:var(--ink-2);font-weight:400}
+.titre-lignee{margin:8px 0 0;font-family:var(--display);font-weight:400;font-size:20px;color:var(--ink);padding-left:10px;border-left:3px solid var(--c)}
+.grille-cartes{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.carte{display:grid;gap:8px;align-content:start;padding:12px;border-radius:14px;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--r)}
+.carte strong{font-family:var(--display);font-weight:400;font-size:18px;color:var(--ink);line-height:1.15}
+.carte ul{margin:0;padding:0;list-style:none;display:grid;gap:3px;font-size:12.5px}
+.carte li b{display:inline-grid;place-items:center;min-width:20px;height:20px;margin-right:4px;border-radius:6px;background:color-mix(in srgb,var(--c) 30%,var(--surface-2));color:var(--ink);font-family:var(--mono);font-size:11px}
+.carte-tete{display:flex;justify-content:space-between;align-items:center}
+.rarete{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--r)}
+.niveau{font-family:var(--mono);font-size:11px;color:var(--ink-2)}
+.carte.inconnue{opacity:.55;border-style:dashed;border-top-style:solid;text-align:center;min-height:120px;place-content:center}
+.carte.inconnue strong{font-size:28px;color:var(--quiet)}
+.carte .chip.petit{min-height:34px;font-size:12px}
+.fenetre.choix{max-width:560px;text-align:left}
+.cartes-choix{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.carte-mini{display:grid;gap:4px;text-align:left;padding:12px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);border-top:4px solid var(--r);color:var(--ink-2)}
+.fenetre .carte-mini{min-height:0;font-weight:400;background:var(--surface-2);color:var(--ink-2)}
+.carte-mini strong{font-family:var(--display);font-weight:400;font-size:17px;color:var(--ink)}
+.carte-mini small{font-size:12px;color:var(--quiet)}
+.carte-mini em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--gold)}
+.carte-mini:hover,.carte-mini:focus-visible{border-color:var(--r)}
+.fenetre .btn-sec{background:transparent;color:var(--ink-2);border:1px solid var(--line)}
+.top .droite{gap:6px;flex-wrap:wrap;justify-content:flex-end;min-width:0}
+.top .droite .btn-sec{padding-inline:10px}
+.top > div:first-child{min-width:0}
+.grille-cartes{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.carte{padding:10px}
+.carte.inconnue{min-height:84px;gap:2px}
+.carte.inconnue strong{font-size:22px}
+@media (max-width:360px){ .grille-cartes{grid-template-columns:1fr} }

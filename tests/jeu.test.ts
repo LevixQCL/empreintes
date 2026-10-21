@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as C from '../src/core/combat';
 import {
-  DISTRICT, ameliorer, disponibles, energieParHeure, fabriquer, finDeCombat, continuer, gestesDe, nouveauJeu,
+  DISTRICT, ameliorer, disponibles, energieParHeure, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu,
   partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence,
 } from '../src/core/jeu';
 
@@ -35,16 +35,20 @@ describe('District', () => {
     expect(ameliorer(j, 'generateur').ok).toBe(true);
   });
 
-  it('la Forge fabrique un Module qui ajoute 2 Gestes', () => {
+  it('greffer une carte ajoute ses Gestes ; la Forge refabrique un doublon', () => {
     const j = ouvert();
-    expect(fabriquer(j, 'jambes-ressort', 'ilka', 0).ok).toBe(false); // personne à la Forge
-    poster(j, 'coursier', 'forge');
-    expect(fabriquer(j, 'jambes-ressort', 'doran', 0).ok).toBe(false); // mauvaise lignée
-    expect(fabriquer(j, 'jambes-ressort', 'ilka', 0).ok).toBe(true);
+    expect(greffer(j, 'jambes-ressort', 'doran').ok).toBe(false); // mauvaise lignée
     const avant = gestesDe(j, 'ilka').length;
+    expect(greffer(j, 'jambes-ressort', 'ilka').ok).toBe(true);
+    expect(gestesDe(j, 'ilka').length).toBe(avant + 2);
+    expect(fabriquer(j, 'jambes-ressort', 0).ok).toBe(false); // personne à la Forge
+    poster(j, 'coursier', 'forge');
+    j.composants = 100;
+    expect(fabriquer(j, 'lames-orbitales', 0).ok).toBe(false); // jamais trouvée
+    expect(fabriquer(j, 'jambes-ressort', 0).ok).toBe(true);
     tick(j, j.forge!.fin);
     expect(j.forge).toBeNull();
-    expect(gestesDe(j, 'ilka').length).toBe(avant + 2);
+    expect(j.collection['jambes-ressort']!.doublons).toBe(1);
   });
 });
 
@@ -106,7 +110,7 @@ describe('Premier lancement', () => {
     expect(reclamer(j).ok).toBe(false);
     poster(j, 'ilka', 'generateur');
     expect(reclamer(j).ok).toBe(true);
-    expect(objectifCourant(j)!.titre).toBe('Forger');
+    expect(objectifCourant(j)!.titre).toBe('Greffer une carte');
   });
 
   it('le résumé du retour ne liste que ce qui a avancé', () => {

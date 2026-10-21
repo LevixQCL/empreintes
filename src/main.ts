@@ -1,12 +1,12 @@
 import './ui/styles.css';
 import * as C from './core/combat';
-import { ennemiDef } from './core/donnees';
+import { ennemiDef, moduleDef } from './core/donnees';
 import * as J from './core/jeu';
 import type { BatimentId, CombatEtat, Evenement, Pas } from './core/types';
 import { charger, enregistrer, type Enveloppe } from './save/local';
 import { firebaseActif } from './net/firebase-config';
 import { htmlCombat, type Ecran as EcranCombat, type Fin, type Compte } from './ui/vue';
-import { htmlArchipel, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre, type EcranDistrict } from './ui/district';
+import { htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre, type EcranDistrict } from './ui/district';
 import { DUREE_LIGNE, PLANS, htmlIntro, imagePlan } from './ui/intro';
 
 const racine = document.getElementById('app') as HTMLElement;
@@ -50,7 +50,7 @@ function afficher() {
   } else {
     mode = 'district';
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre()
-      : D.vue === 'codex' ? htmlCodex(D) : htmlArchipel(D);
+      : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : htmlArchipel(D);
   }
   planifierIntro();
   racine.dataset.mode = mode;
@@ -243,7 +243,7 @@ racine.addEventListener('click', async (ev) => {
   const id = b.dataset.id ?? '';
   const x = jeu.expedition;
   const s = x?.combat;
-  D.message = a === 'poster' || a === 'liberer' || a === 'fabriquer' || a === 'ameliorer' || a === 'choisir' ? D.message : '';
+  D.message = a === 'poster' || a === 'liberer' || a === 'fabriquer' || a === 'ameliorer' || a === 'choisir' || a === 'greffer' || a === 'monter' ? D.message : '';
 
   switch (a) {
     // intro
@@ -261,10 +261,18 @@ racine.addEventListener('click', async (ev) => {
     case 'batiment': D.selection = D.selection === id ? null : (id as BatimentId); break;
     case 'fermer': D.selection = null; break;
     case 'chantier': D.message = 'Ce pilier accueillera le Labo génétique dans une prochaine version.'; break;
-    case 'ameliorer': resultat(J.ameliorer(jeu, id as BatimentId)); break;
+    case 'ameliorer': resultat(J.ameliorer(jeu, id as BatimentId, Date.now())); break;
     case 'poster': resultat(J.poster(jeu, id, (b.dataset.poste as J.Poste) ?? null)); break;
     case 'liberer': resultat(J.poster(jeu, id, null)); break;
-    case 'fabriquer': resultat(J.fabriquer(jeu, b.dataset.module ?? '', id, Date.now())); break;
+    case 'fabriquer': resultat(J.fabriquer(jeu, b.dataset.module ?? '', Date.now())); break;
+    case 'cartes': D.vue = 'cartes'; D.selection = null; break;
+    case 'greffer': resultat(J.greffer(jeu, b.dataset.module ?? '', id)); break;
+    case 'degreffer': resultat(J.degreffer(jeu, b.dataset.module ?? '')); break;
+    case 'monter': resultat(J.monter(jeu, b.dataset.module ?? '')); break;
+    case 'recycler': resultat(J.recycler(jeu, b.dataset.module ?? '')); break;
+    case 'prendre': resultat(J.prendre(jeu, Number(b.dataset.index ?? 0))); break;
+    case 'reclamer-jour': resultat(J.reclamerQuotidien(jeu)); break;
+    case 'ouvrir-archive': resultat(J.ouvrirArchive(jeu)); break;
     case 'entrer': D.vue = 'coupe'; D.selection = null; break;
     case 'archipel': D.vue = 'archipel'; break;
     case 'coupe': D.vue = 'coupe'; break;
@@ -311,8 +319,10 @@ racine.addEventListener('click', async (ev) => {
           ? 'La chambre est ouverte. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans le Codex (Tour du Noyau).'
           : 'L’escouade se repose. La porte scellée t’attend toujours.';
       } else {
-        D.vue = 'coupe';
+        D.vue = jeu.choix.length ? 'archipel' : 'coupe';
         D.message = (r.nouvelleStrate ? `Un nouvel étage est creusé : la Strate −${jeu.strate} est ouverte.` : `+${r.butin} composants rapportés.`)
+          + (r.cartes.length ? ` Carte${r.cartes.length > 1 ? 's' : ''} trouvée${r.cartes.length > 1 ? 's' : ''} : ${r.cartes.map((c) => moduleDef(c).nom).join(', ')}.` : '')
+          + (r.eclats ? ` +${r.eclats} Éclat${r.eclats > 1 ? 's' : ''}.` : '')
           + (r.fragment ? ' Un fragment d’archives rejoint le Codex.' : '');
       }
       sauver();
@@ -339,7 +349,7 @@ setInterval(() => {
   const nouvelles = J.tick(jeu, Date.now());
   if (nouvelles.length) { D.message = nouvelles[0]!; sauver(); }
   if (mode !== 'district') return;
-  const vite = !!jeu.forge || nouvelles.length > 0;
+  const vite = !!jeu.forge || jeu.chantiers.length > 0 || nouvelles.length > 0;
   if (vite || Date.now() - dernierRendu > 15_000) {
     dernierRendu = Date.now();
     // ne pas redessiner pendant que le joueur tape dans le panneau Compte

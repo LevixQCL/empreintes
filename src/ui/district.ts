@@ -3,14 +3,17 @@
 
 import { MODULES, PORTEURS, batimentDef, moduleDef, porteurDef } from '../core/donnees';
 import {
-  DISTRICT, POSTES, coutAmelioration, disponibles, dureeFabrication, energieParHeure, enExpedition, gestesDe,
-  objectifCourant, porteursPresents, posteDe, pvMaxCombat, soinParHeure, stockage, usureMax, type Jeu, type Poste,
+  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles,
+  dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant,
+  porteursPresents, posteDe, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste,
 } from '../core/jeu';
+import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
+import type { Rarete } from '../core/types';
 import { FRAGMENTS } from '../core/fragments';
 import type { BatimentId } from '../core/types';
 import { COULEUR, FONDS, echap, panneauCompte, type Compte } from './vue';
 
-export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'codex';
+export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'codex' | 'cartes';
 
 export interface EcranDistrict {
   j: Jeu;
@@ -28,8 +31,13 @@ export interface EcranDistrict {
 const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');
 const duree = (ms: number) => {
   const s = Math.max(0, Math.ceil(ms / 1000));
+  if (s >= 86_400) return `${Math.floor(s / 86_400)} j ${Math.floor((s % 86_400) / 3600)} h`;
+  if (s >= 3600) return `${Math.floor(s / 3600)} h ${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}`;
   return s >= 60 ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, '0')} s` : `${s} s`;
 };
+
+export const COULEUR_RARETE: Record<Rarete, string> = { fer: '#8E949C', cuivre: '#C47A48', argent: '#B8C4CE', or: '#E2B44A', nacre: '#E6D3EE' };
+const TYPE_GESTE = { atk: 'attaque', bouclier: 'protection', soin: 'soin' } as const;
 
 // ---------- Archipel (SVG provisoire) ----------
 
@@ -105,10 +113,11 @@ function etiquettes(e: EcranDistrict): string {
     }
     const d = batimentDef(p.id);
     const prete = p.id === 'forge' && j.forge && e.now >= j.forge.fin;
+    const ch = chantierDe(j, p.id);
     const vise = objectifCourant(j)?.pilier === p.id && !objectifCourant(j)!.fait(j);
     const occupe = p.id !== 'noyau' && posteDe(j, p.id as Poste);
     return `<button type="button" class="etiquette${e.selection === p.id ? ' choisie' : ''}${vise ? ' visee' : ''}" style="left:${left}%;top:${top}%" data-action="batiment" data-id="${p.id}">`
-      + `<span>${echap(d.nom)}</span><small>Niv. ${j.batiments[p.id]}${occupe ? ' · ' + echap(porteurDef(occupe).nom) : ''}</small>${prete ? '<i class="point" aria-label="prêt"></i>' : ''}</button>`;
+      + `<span>${echap(d.nom)}</span><small>${ch ? `Chantier · ${duree(ch.fin - e.now)}` : `Niv. ${j.batiments[p.id]}${occupe ? ' · ' + echap(porteurDef(occupe).nom) : ''}`}</small>${prete ? '<i class="point" aria-label="prêt"></i>' : ''}</button>`;
   }).join('');
 }
 
@@ -117,6 +126,7 @@ function barreRessources(e: EcranDistrict): string {
   return `<div class="ressources">`
     + `<span class="res"><b class="pastille-res en"></b>${ent(j.energie)}<small>/${ent(stockage(j))} · +${energieParHeure(j)}/h</small></span>`
     + `<span class="res"><b class="pastille-res co"></b>${ent(j.composants)}<small> composants</small></span>`
+    + (j.eclats > 0 || j.strate >= 2 ? `<span class="res"><b class="pastille-res ec"></b>${ent(j.eclats)}<small> Éclats</small></span>` : '')
     + `<span class="res"><small>Strate</small> −${j.strate}</span></div>`;
 }
 
@@ -160,30 +170,37 @@ function panneauBatiment(e: EcranDistrict): string {
   }
 
   if (b === 'forge') {
-    h += `<div class="bloc"><span class="label">FABRIQUER UN MODULE</span>`;
+    h += `<div class="bloc"><span class="label">REFABRIQUER UNE CARTE DÉJÀ TROUVÉE</span>`;
     if (j.forge) {
       const m = moduleDef(j.forge.moduleId);
       const total = j.forge.fin - j.forge.debut;
       const fait = Math.min(1, (e.now - j.forge.debut) / total);
-      h += `<p class="stat">${echap(m.nom)} pour ${echap(porteurDef(j.forge.porteur).nom)} · reste ${duree(j.forge.fin - e.now)}</p><div class="piste" style="--c:var(--gold)"><i style="width:${fait * 100}%"></i></div>`;
+      h += `<p class="stat">${echap(m.nom)} · reste ${duree(j.forge.fin - e.now)}</p><div class="piste" style="--c:var(--gold)"><i style="width:${fait * 100}%"></i></div>`;
     } else {
-      for (const m of MODULES) {
-        const cibles = PORTEURS.filter((p) => p.lignee === m.lignee && j.porteurs[p.id]!.modules.length < DISTRICT.modulesMax);
-        const assez = j.energie >= m.cout.energie && j.composants >= m.cout.composants;
-        h += `<div class="module" style="--c:${COULEUR[m.lignee]}"><div><strong>${echap(m.nom)}</strong><small>${m.gestes.map((x) => `${echap(x.nom)} (${x.f}, ${x.type === 'atk' ? 'attaque' : x.type === 'bouclier' ? 'protection' : 'soin'} ${x.v})`).join(' · ')}</small>`
-          + `<small>${m.cout.energie} énergie · ${m.cout.composants} composants · ${duree(dureeFabrication(j, m.id))}</small></div><div class="chips">`
-          + cibles.map((p) => `<button type="button" class="chip petit" data-action="fabriquer" data-module="${m.id}" data-id="${p.id}"${assez && posteDe(j, 'forge') ? '' : ' disabled'}>Pour ${echap(p.nom)}</button>`).join('')
-          + `</div></div>`;
+      h += `<small class="aide">Un exemplaire de plus devient un doublon, pour faire monter la carte. Le recyclage se fait depuis tes Cartes.</small>`;
+      const possedees = MODULES.filter((m) => j.collection[m.id]).sort((x, y) => RARETES.indexOf(y.rarete) - RARETES.indexOf(x.rarete));
+      for (const m of possedees) {
+        const c = coutRefabrication(m.id);
+        const assez = j.composants >= c.composants && j.eclats >= c.eclats;
+        h += `<div class="module" style="--c:${COULEUR_RARETE[m.rarete]}"><div><strong>${echap(m.nom)}</strong><small>${NOMS_RARETE[m.rarete]} · ${c.composants} composants${c.eclats ? ` · ${c.eclats} Éclats` : ''} · ${duree(dureeFabrication(j, m.id))}</small></div>`
+          + `<button type="button" class="chip petit" data-action="fabriquer" data-module="${m.id}"${assez && posteDe(j, 'forge') ? '' : ' disabled'}>Refabriquer</button></div>`;
       }
       if (!posteDe(j, 'forge')) h += `<small class="aide">Poste d’abord un Porteur à la Forge.</small>`;
     }
     h += `</div>`;
   }
 
-  if (cout) {
-    const assez = j.energie >= cout.energie && j.composants >= cout.composants;
-    h += `<button type="button" class="sec large" data-action="ameliorer" data-id="${b}"${assez && !bloque ? '' : ' disabled'}>Améliorer au niveau ${j.batiments[b] + 1} · ${cout.energie} énergie · ${cout.composants} composants</button>`;
+  const ch = chantierDe(j, b);
+  if (ch) {
+    const fait = Math.min(1, (e.now - ch.debut) / (ch.fin - ch.debut));
+    h += `<div class="bloc"><span class="label">CHANTIER VERS LE NIVEAU ${j.batiments[b] + 1}</span><p class="stat">Reste ${duree(ch.fin - e.now)}. Le chantier avance même jeu fermé.</p><div class="piste" style="--c:var(--gold)"><i style="width:${fait * 100}%"></i></div></div>`;
+  } else   if (cout) {
+    const assez = j.energie >= cout.energie && j.composants >= cout.composants && j.eclats >= (cout.eclats ?? 0);
+    const plein = j.chantiers.length >= chantiersMax(j) || (b === 'noyau' && j.chantiers.length > 0);
+    const d = dureeChantier(j, b);
+    h += `<button type="button" class="sec large" data-action="ameliorer" data-id="${b}"${assez && !bloque && !plein ? '' : ' disabled'}>Améliorer au niveau ${j.batiments[b] + 1} · ${cout.energie} énergie · ${cout.composants} composants${cout.eclats ? ` · ${cout.eclats} Éclats` : ''} · ${d ? duree(d) : 'immédiat'}</button>`;
     if (bloque) h += `<small class="aide">Améliore d’abord la Tour du Noyau.</small>`;
+    else if (plein) h += `<small class="aide">${b === 'noyau' && j.chantiers.length ? 'Attends la fin des chantiers en cours.' : `${chantiersMax(j) === 1 ? 'Un seul chantier à la fois (deux au Noyau niveau 4).' : 'Deux chantiers sont déjà en cours.'}`}</small>`;
   } else h += `<small class="aide">Niveau maximum pour cette version.</small>`;
   return h + `</section>`;
 }
@@ -192,6 +209,7 @@ export function htmlArchipel(e: EcranDistrict): string {
   const j = e.j;
   let h = `<header class="top"><div><h1>EMPREINTES</h1><span class="sous">TON DISTRICT</span></div><div class="droite">`
     + (e.compte.actif ? `<button type="button" class="btn-sec" data-action="compte" aria-expanded="${e.compte.ouvert}">${e.compte.utilisateur ? 'Compte ✓' : 'Compte'}</button>` : '')
+    + `<button type="button" class="btn-sec${objectifCourant(j)?.titre === 'Greffer une carte' && !objectifCourant(j)!.fait(j) ? ' visee' : ''}" data-action="cartes"${j.chambre ? '' : ' disabled'}>Cartes</button>`
     + `<button type="button" class="btn-sec" data-action="intro">Intro</button></div></header>`;
   h += panneauCompte(e.compte);
   h += barreRessources(e);
@@ -206,14 +224,98 @@ export function htmlArchipel(e: EcranDistrict): string {
     h += `<section class="objectif${fait ? ' fait' : ''}" aria-label="Objectif"><span class="label">OBJECTIF ${j.objectif + 1} / 3</span><strong>${echap(o.titre)}</strong><p>${echap(o.consigne)}</p>`
       + (fait ? `<button type="button" class="prim" data-action="reclamer">Récupérer · ${gain}</button>` : `<small class="aide">Récompense : ${gain}</small>`) + `</section>`;
   }
+  h += blocQuotidien(e);
   h += `<section class="archipel" aria-label="Archipel">${archipelSvg(j)}${etiquettes(e)}</section>`;
   if (e.message) h += `<p class="message">${echap(e.message)}</p>`;
   h += panneauBatiment(e);
   h += `<div class="journal" aria-label="Journal">${j.journal.slice(0, 3).map((t) => `<p>${echap(t)}</p>`).join('')}</div>`;
-  if (e.retour.length) {
+  if (j.choix.length) h += fenetreChoix(j);
+  else if (e.retour.length) {
     h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="retour-titre"><div class="fenetre retour"><h2 id="retour-titre">Pendant ton absence</h2><ul>`
       + e.retour.map((l) => `<li>${echap(l)}</li>`).join('') + `</ul><button type="button" data-action="retour-ok">Au travail</button></div></div>`;
   }
+  return h;
+}
+
+// ---------- Objectif du jour et Archive de la semaine ----------
+
+function blocQuotidien(e: EcranDistrict): string {
+  const j = e.j;
+  if (!j.chambre || objectifCourant(j)) return '';
+  let h = '';
+  if (j.archive.aOuvrir) {
+    h += `<button type="button" class="bandeau archive-prete" data-action="ouvrir-archive"><strong>L’Archive de la semaine est prête</strong><span>Palier ${j.archive.aOuvrir} sur 3 atteint : ouvre-la.</span></button>`;
+  }
+  const q = j.quotidien;
+  const def = QUOTIDIENS[q.type];
+  const max = ARCHIVE.paliers[2];
+  const paliers = ARCHIVE.paliers.map((p) => `<i class="cran${j.archive.points >= p ? ' atteint' : ''}" style="left:${(p / max) * 100}%"></i>`).join('');
+  h += `<section class="objectif jour${quotidienFait(j) ? ' fait' : ''}" aria-label="Objectif du jour">`;
+  if (quotidienActif(j)) {
+    h += `<span class="label">OBJECTIF DU JOUR${q.reserve > 1 ? ` · ${q.reserve} EN RÉSERVE` : ''}</span><strong>${echap(def.titre)}</strong>`
+      + (quotidienFait(j)
+        ? `<button type="button" class="prim" data-action="reclamer-jour">Récupérer · une carte au choix ou 2 Éclats</button>`
+        : `<div class="ligne-prog"><div class="piste"><i style="width:${(100 * q.progres) / def.objectif}%;--c:var(--gold)"></i></div><small>${q.progres} / ${def.objectif}</small></div>`);
+  } else h += `<span class="label">OBJECTIF DU JOUR</span><small class="aide">Tous faits : le prochain arrive demain.</small>`;
+  h += `<div class="archive-sem"><span class="label">ARCHIVE DE LA SEMAINE · ${Math.min(j.archive.points, max)} / ${max}</span><div class="jauge"><div class="piste"><i style="width:${Math.min(100, (100 * j.archive.points) / max)}%;--c:var(--reso)"></i></div>${paliers}</div>`
+    + `<small class="aide">S’ouvre lundi, dans ${duree(lundiSuivant(e.now) - e.now)}. Tout ce que tu joues la remplit.</small></div></section>`;
+  return h;
+}
+
+// ---------- Les cartes ----------
+
+function carteMini(id: string, j: Jeu, attrs = ''): string {
+  const m = moduleDef(id);
+  const c = j.collection[id];
+  const neuve = !c;
+  return `<button type="button" class="carte-mini" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[m.lignee]}" ${attrs}>`
+    + `<span class="rarete">${NOMS_RARETE[m.rarete]}</span><strong>${echap(m.nom)}</strong>`
+    + `<small>${m.gestes.map((g) => `${echap(g.nom)} ${g.f}`).join(' · ')}</small>`
+    + `<em>${neuve ? 'Nouvelle carte' : `Doublon · niveau ${c.niveau}`}</em></button>`;
+}
+
+function fenetreChoix(j: Jeu): string {
+  const c = j.choix[0]!;
+  const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : 'Archive de la semaine';
+  return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><div class="cartes-choix">`
+    + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}"`)).join('')
+    + `</div>${c.eclats ? `<button type="button" class="btn-sec" data-action="prendre" data-index="-1">Prendre ${c.eclats} Éclats à la place</button>` : ''}`
+    + (j.choix.length > 1 ? `<small class="aide">Encore ${j.choix.length - 1} choix après celui-ci.</small>` : '') + `</div></div>`;
+}
+
+export function htmlCartes(e: EcranDistrict): string {
+  const j = e.j;
+  const trouvees = MODULES.filter((m) => j.collection[m.id]).length;
+  let h = `<header class="top"><div><h1>Cartes</h1><span class="sous">${trouvees} / ${MODULES.length} TROUVÉES · ${DISTRICT.modulesMax} PAR PORTEUR</span></div><button type="button" class="btn-sec" data-action="archipel">Archipel</button></header>`;
+  h += barreRessources(e);
+  if (e.message) h += `<p class="message">${echap(e.message)}</p>`;
+  h += `<p class="discret">Greffe une carte sur un Porteur de sa lignée : ses Gestes rejoignent le deck quand il part. Les doublons la font monter (+${Math.round(COLLECTION.bonusNiveau * 100)} % de force par niveau).</p>`;
+  for (const lignee of ['tech', 'bio', 'reso'] as const) {
+    const porteurs = PORTEURS.filter((p) => p.lignee === lignee && porteursPresents(j).includes(p.id));
+    h += `<h2 class="titre-lignee" style="--c:${COULEUR[lignee]}">${lignee === 'tech' ? 'Augmentés' : lignee === 'bio' ? 'Génés' : 'Résonants'}</h2><div class="grille-cartes">`;
+    for (const m of MODULES.filter((x) => x.lignee === lignee)) {
+      const c = j.collection[m.id];
+      if (!c) {
+        h += `<div class="carte inconnue" style="--r:${COULEUR_RARETE[m.rarete]}"><span class="rarete">${NOMS_RARETE[m.rarete]}</span><strong>?</strong><small>Pas encore trouvée</small></div>`;
+        continue;
+      }
+      const requis = doublonsRequis(m.id, c.niveau);
+      const porte = greffesDe(j, m.id)[0];
+      const mult = multNiveau(m.id, c.niveau);
+      const cout = composantsNiveau(c.niveau + 1);
+      h += `<article class="carte" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[lignee]}"><div class="carte-tete"><span class="rarete">${NOMS_RARETE[m.rarete]}</span><span class="niveau">Niv. ${c.niveau}</span></div>`
+        + `<strong>${echap(m.nom)}</strong><ul>${m.gestes.map((g) => `<li><b>${g.f}</b> ${echap(g.nom)} · ${TYPE_GESTE[g.type]} ${Math.round(g.v * mult)}${g.lourd ? ' · lourd' : ''}</li>`).join('')}</ul>`
+        + (requis === null ? `<small>Niveau maximum</small>` : `<div class="ligne-prog"><div class="piste"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%;--c:var(--r)"></i></div><small>${c.doublons} / ${requis}</small></div>`)
+        + `<div class="chips">`
+        + (requis !== null ? `<button type="button" class="chip petit" data-action="monter" data-module="${m.id}"${c.doublons >= requis && j.composants >= cout ? '' : ' disabled'}>Monter · ${cout} comp.</button>` : '')
+        + (c.doublons > 0 ? `<button type="button" class="chip petit" data-action="recycler" data-module="${m.id}">Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button>` : '')
+        + `</div><div class="chips">`
+        + porteurs.map((p) => `<button type="button" class="chip petit${porte === p.id ? ' actif' : ''}" style="--c:${COULEUR[lignee]};--fond:${FONDS[p.id]}" data-action="${porte === p.id ? 'degreffer' : 'greffer'}" data-module="${m.id}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}><span class="pastille" aria-hidden="true"></span>${echap(p.nom)}${porte === p.id ? ' ✓' : ''}</button>`).join('')
+        + `</div></article>`;
+    }
+    h += `</div>`;
+  }
+  if (j.choix.length) h += fenetreChoix(j);
   return h;
 }
 

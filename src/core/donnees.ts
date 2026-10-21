@@ -1,4 +1,4 @@
-import type { BatimentId, EnnemiDef, GesteDef, Lignee, ModuleDef, PorteurDef } from './types';
+import type { BatimentId, EnnemiDef, GesteDef, Lignee, ModuleDef, PorteurDef, Rarete } from './types';
 
 // ---------- Porteurs ----------
 // Trois Porteurs nommés + trois recrues anonymes, une par lignée.
@@ -40,16 +40,39 @@ export const GESTES_PORTEUR: Record<string, GesteDef[]> = {
 
 export const GESTES_SPECIAUX: GesteDef[] = [g(null, 'stimulant', 'Stimulant', 1, 'soin', 6), g(null, 'repli', 'Repli', 9, 'bouclier', 10)];
 
-// ---------- Modules (fabriqués à la Forge) ----------
-// Un Module se greffe sur un Porteur de sa lignée et ajoute 2 Gestes au deck quand ce Porteur combat.
+// ---------- Modules : les cartes de collection ----------
+// Un Module se greffe sur un Porteur de sa lignée et ajoute ses Gestes au deck quand ce Porteur combat.
+// Les raretés hautes apportent plus de Gestes et des Gestes lourds, pas seulement de plus gros chiffres.
+type GM = ModuleDef['gestes'][number];
+const x = (nom: string, f: number, type: GM['type'], v: number, lourd = false): GM => ({ nom, f, type, v, ...(lourd ? { lourd: true } : {}) });
+const m = (id: string, nom: string, lignee: Lignee, rarete: Rarete, gestes: GM[]): ModuleDef => ({ id, nom, lignee, rarete, gestes });
+
 export const MODULES: ModuleDef[] = [
-  { id: 'jambes-ressort', nom: 'Jambes à ressort', lignee: 'tech', cout: { energie: 60, composants: 8 }, minutes: 3,
-    gestes: [{ nom: 'Détente', f: 4, type: 'atk', v: 11 }, { nom: 'Saut d’appui', f: 5, type: 'bouclier', v: 8 }] },
-  { id: 'glande-amber', nom: 'Glande d’ambre', lignee: 'bio', cout: { energie: 60, composants: 8 }, minutes: 3,
-    gestes: [{ nom: 'Sève', f: 3, type: 'soin', v: 10 }, { nom: 'Mue', f: 2, type: 'bouclier', v: 10 }] },
-  { id: 'eclat-chant', nom: 'Éclat qui chante', lignee: 'reso', cout: { energie: 60, composants: 8 }, minutes: 3,
-    gestes: [{ nom: 'Note haute', f: 8, type: 'atk', v: 13 }, { nom: 'Note basse', f: 7, type: 'bouclier', v: 9 }] },
+  // Augmentés : Fréquences basses et moyennes
+  m('jambes-ressort', 'Jambes à ressort', 'tech', 'fer', [x('Détente', 4, 'atk', 11), x('Saut d’appui', 5, 'bouclier', 8)]),
+  m('gant-arc', 'Gant à arc', 'tech', 'fer', [x('Décharge', 6, 'atk', 10), x('Écran', 7, 'bouclier', 7)]),
+  m('oeil-relais', 'Œil-relais', 'tech', 'fer', [x('Visée', 5, 'atk', 9), x('Diagnostic', 3, 'soin', 6)]),
+  m('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', [x('Surrégime', 7, 'atk', 13), x('Refroidir', 6, 'bouclier', 10)]),
+  m('bras-grue', 'Bras-grue', 'tech', 'argent', [x('Levage', 8, 'atk', 16, true), x('Étai', 6, 'bouclier', 11), x('Riveter', 4, 'atk', 9)]),
+  m('lames-orbitales', 'Lames orbitales', 'tech', 'or', [x('Orbite', 3, 'atk', 10), x('Orbite basse', 2, 'atk', 9), x('Tourbillon', 9, 'atk', 24, true)]),
+  // Génés : Fréquences basses
+  m('glande-ambre', 'Glande d’ambre', 'bio', 'fer', [x('Sève', 3, 'soin', 10), x('Mue', 2, 'bouclier', 10)]),
+  m('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', [x('Happer', 1, 'atk', 8), x('Ronger', 3, 'atk', 9)]),
+  m('cuir-recif', 'Cuir de récif', 'bio', 'fer', [x('Écailles', 4, 'bouclier', 9), x('Barbillon', 5, 'atk', 8)]),
+  m('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', [x('Apnée', 2, 'bouclier', 12), x('Remontée', 4, 'soin', 12)]),
+  m('carapace-mere', 'Carapace-mère', 'bio', 'argent', [x('Rempart', 5, 'bouclier', 14), x('Bélier', 6, 'atk', 16, true), x('Mue rapide', 1, 'soin', 9)]),
+  m('coeur-meute', 'Cœur de meute', 'bio', 'or', [x('Hurlement', 4, 'atk', 12), x('Curée', 5, 'atk', 13), x('Instinct', 3, 'soin', 14)]),
+  // Résonants : Fréquences hautes
+  m('eclat-chant', 'Éclat qui chante', 'reso', 'fer', [x('Note haute', 8, 'atk', 13), x('Note basse', 7, 'bouclier', 9)]),
+  m('miroir-brume', 'Miroir de brume', 'reso', 'fer', [x('Reflet', 9, 'atk', 10), x('Voile', 8, 'bouclier', 8)]),
+  m('encre-ancienne', 'Encre ancienne', 'reso', 'fer', [x('Glyphe', 6, 'atk', 9), x('Paume ouverte', 7, 'soin', 8)]),
+  m('plume-givre', 'Plume de givre', 'reso', 'cuivre', [x('Givre', 9, 'atk', 14), x('Cristal', 8, 'bouclier', 11)]),
+  m('ombre-ailee', 'Ombre ailée', 'reso', 'argent', [x('Envol', 7, 'bouclier', 12), x('Piqué', 9, 'atk', 22, true), x('Battement', 8, 'soin', 9)]),
+  m('chant-abysses', 'Chant des abysses', 'reso', 'or', [x('Unisson', 7, 'atk', 14), x('Contre-chant', 8, 'atk', 15), x('Silence', 9, 'bouclier', 16)]),
 ];
+
+/** Les cartes de départ : une par Porteur nommé, pas encore greffées */
+export const COLLECTION_DEPART = ['jambes-ressort', 'glande-ambre', 'eclat-chant'];
 
 // ---------- Bâtiments ----------
 export interface BatimentDef {
@@ -59,19 +82,19 @@ export interface BatimentDef {
   /** lignée qui y travaille le mieux (+50 %) */
   affinite: Lignee | null;
   /** coût pour passer au niveau n+1 (index = niveau actuel) */
-  couts: { energie: number; composants: number }[];
+  couts: { energie: number; composants: number; eclats?: number }[];
   niveauMax: number;
 }
 
 export const BATIMENTS: BatimentDef[] = [
   { id: 'noyau', nom: 'Tour du Noyau', role: 'Le cœur du district. Son niveau limite celui des autres bâtiments et la capacité de stockage.', affinite: null,
-    couts: [{ energie: 0, composants: 0 }, { energie: 120, composants: 15 }, { energie: 300, composants: 40 }], niveauMax: 3 },
+    couts: [{ energie: 0, composants: 0 }, { energie: 120, composants: 15 }, { energie: 300, composants: 40 }, { energie: 650, composants: 80, eclats: 3 }, { energie: 1300, composants: 160, eclats: 8 }], niveauMax: 5 },
   { id: 'generateur', nom: 'Générateur', role: 'Produit de l’énergie en continu, même quand tu ne joues pas.', affinite: 'tech',
-    couts: [{ energie: 0, composants: 0 }, { energie: 80, composants: 10 }, { energie: 200, composants: 25 }], niveauMax: 3 },
-  { id: 'forge', nom: 'Forge', role: 'Fabrique des Modules qui ajoutent de nouveaux Gestes au deck. Il faut un Porteur au travail.', affinite: 'tech',
-    couts: [{ energie: 0, composants: 0 }, { energie: 100, composants: 12 }, { energie: 240, composants: 30 }], niveauMax: 3 },
+    couts: [{ energie: 0, composants: 0 }, { energie: 80, composants: 10 }, { energie: 200, composants: 25 }, { energie: 450, composants: 55, eclats: 2 }, { energie: 900, composants: 110, eclats: 5 }], niveauMax: 5 },
+  { id: 'forge', nom: 'Forge', role: 'Recycle les cartes en trop et refabrique un exemplaire d’une carte déjà trouvée. Il faut un Porteur au travail.', affinite: 'tech',
+    couts: [{ energie: 0, composants: 0 }, { energie: 100, composants: 12 }, { energie: 240, composants: 30 }, { energie: 500, composants: 60, eclats: 2 }, { energie: 1000, composants: 120, eclats: 5 }], niveauMax: 5 },
   { id: 'clinique', nom: 'Clinique', role: 'Soigne l’Usure des Porteurs qui se reposent au district.', affinite: 'bio',
-    couts: [{ energie: 0, composants: 0 }, { energie: 90, composants: 10 }, { energie: 220, composants: 28 }], niveauMax: 3 },
+    couts: [{ energie: 0, composants: 0 }, { energie: 90, composants: 10 }, { energie: 220, composants: 28 }, { energie: 480, composants: 58, eclats: 2 }, { energie: 950, composants: 115, eclats: 5 }], niveauMax: 5 },
 ];
 
 // ---------- Ennemis ----------
