@@ -237,8 +237,13 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .intro{position:relative;overflow:hidden;isolation:isolate}
 .intro-scene{position:absolute;inset:0;z-index:-1;border-radius:inherit;overflow:hidden}
 .intro-scene .scene{width:100%;height:100%;display:block;animation:approche 9s ease-out forwards}
-.intro.illustree{background-image:var(--img);background-size:cover;background-position:center}
-.intro.illustree .intro-scene{opacity:.55;mix-blend-mode:screen}
+.intro-fond{position:absolute;inset:0;z-index:-2;overflow:hidden;border-radius:inherit;background:#121418}
+.intro-fond img,.intro-fond video{width:100%;height:100%;object-fit:cover;display:block}
+.intro-fond img{animation:zoom-lent 14s ease-out forwards;transform-origin:50% 40%}
+.intro-fond{animation:fondu-in .8s ease-out}
+@keyframes zoom-lent{from{transform:scale(1.02)}to{transform:scale(1.12)}}
+@keyframes fondu-in{from{opacity:0}to{opacity:1}}
+.intro.illustree .intro-scene{display:none}
 .intro::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(10,12,16,.45) 0%,rgba(10,12,16,0) 20%,rgba(10,12,16,0) 42%,rgba(10,12,16,.82) 70%,rgba(10,12,16,.94) 100%)}
 .intro.illustree::before{display:none}
 .compteur{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.1em;color:#F6F1E6;opacity:.85;--n:var(--de);animation:annees calc(var(--d) * 1s) ease-out .3s forwards;counter-reset:an var(--n)}
@@ -290,7 +295,7 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .scene .maree{animation:maree 9s ease-in-out forwards}
 @keyframes maree{to{transform:translateY(-6px)}}
 .scene .arrivee{opacity:0;transform:translateY(12px);animation:pose .6s ease-out forwards;animation-delay:calc(var(--i) * .35s)}
-@media (prefers-reduced-motion: reduce){ .intro-scene *{animation:none!important} .scene .tour{transform:none} .scene .carte-l,.scene .arrivee{opacity:1;transform:none} .scene .cristaux{opacity:1} .compteur{animation:none;--n:var(--a)} .scene .eau-monte{transform:none} }
+@media (prefers-reduced-motion: reduce){ .intro-fond,.intro-fond img{animation:none} .intro-scene *{animation:none!important} .scene .tour{transform:none} .scene .carte-l,.scene .arrivee{opacity:1;transform:none} .scene .cristaux{opacity:1} .compteur{animation:none;--n:var(--a)} .scene .eau-monte{transform:none} }
 
 /* ---------- Premier lancement, objectifs, Codex, retour ---------- */
 .bandeau.porte{display:grid;gap:2px;text-align:left;padding:12px 14px;min-height:56px;border-color:var(--reso);background:color-mix(in srgb,var(--reso) 18%,var(--surface));animation:appel 2.4s ease-in-out infinite}

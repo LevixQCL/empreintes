@@ -7,7 +7,7 @@ import { charger, enregistrer, type Enveloppe } from './save/local';
 import { firebaseActif } from './net/firebase-config';
 import { htmlCombat, type Ecran as EcranCombat, type Fin, type Compte } from './ui/vue';
 import { htmlArchipel, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre, type EcranDistrict } from './ui/district';
-import { DUREE_LIGNE, PLANS, htmlIntro } from './ui/intro';
+import { DUREE_LIGNE, PLANS, htmlIntro, imagePlan } from './ui/intro';
 
 const racine = document.getElementById('app') as HTMLElement;
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -42,7 +42,7 @@ function afficher() {
   const email = (racine.querySelector('#email') as HTMLInputElement | null)?.value ?? '';
   const mdp = (racine.querySelector('#mdp') as HTMLInputElement | null)?.value ?? '';
   let h = '';
-  if (mode === 'intro') h = htmlIntro(plan, lignesVues);
+  if (mode === 'intro') h = htmlIntro(plan, lignesVues, !reduit);
   else if (mode === 'combat' && jeu.expedition) {
     const etat = K.etat ?? jeu.expedition.combat;
     const lecon = jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;
@@ -54,7 +54,8 @@ function afficher() {
   }
   planifierIntro();
   racine.dataset.mode = mode;
-  racine.innerHTML = h;
+  if (!(mode === 'intro' && majIntro(h))) racine.innerHTML = h;
+  if (mode === 'intro') precharger(plan + 1);
   const ie = racine.querySelector('#email') as HTMLInputElement | null;
   const im = racine.querySelector('#mdp') as HTMLInputElement | null;
   if (ie) ie.value = email;
@@ -122,6 +123,28 @@ async function demarrerCompte() {
 // ---------- Intro : avance automatique ----------
 
 let minuteurIntro: number | undefined;
+/** Même plan : on remplace tout sauf le fond, pour que l'image continue son zoom et la vidéo sa lecture */
+function majIntro(h: string): boolean {
+  const ancien = racine.querySelector<HTMLElement>('.intro');
+  if (!ancien || ancien.dataset.plan !== String(plan)) return false;
+  const t = document.createElement('template');
+  t.innerHTML = h;
+  const neuf = t.content.querySelector<HTMLElement>('.intro');
+  if (!neuf) return false;
+  for (const e of [...ancien.children]) if (!e.classList.contains('intro-fond')) e.remove();
+  for (const e of [...neuf.children]) if (!e.classList.contains('intro-fond')) ancien.append(e);
+  return true;
+}
+
+const precharges = new Set<string>();
+function precharger(i: number) {
+  const src = imagePlan(i);
+  if (!src || precharges.has(src)) return;
+  precharges.add(src);
+  const im = new Image();
+  im.src = src;
+}
+
 function avancerIntro(): boolean {
   if (lignesVues < PLANS[plan]!.lignes.length) { lignesVues++; return true; }
   if (plan < PLANS.length - 1) { plan++; lignesVues = 1; return true; }

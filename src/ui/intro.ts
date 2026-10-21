@@ -130,19 +130,36 @@ export const PLANS: Plan[] = [
 const ANNEES: [number, number][] = [[2026, 2026], [2026, 2034], [2040, 2057], [2057, 2085], [2062, 2062], [2062, 2068], [2071, 2090], [2088, 2101], [2121, 2121], [2121, 2121]];
 
 /** Illustrations Midjourney déjà déposées dans public/intro/ */
-export const IMAGES_DISPONIBLES = new Set<string>([]);
+export const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '05-puits-zero', '06-empreintes', '07-ascension', '09-oubli', '10-toi']);
+/** Plans qui ont aussi une courte vidéo en boucle (public/intro/<id>.mp4), l'image sert d'affiche */
+export const VIDEOS_DISPONIBLES = new Set<string>(['10-toi']);
+
+/** Chemin de l'illustration d'un plan, s'il en a une (pour le préchargement) */
+export const imagePlan = (i: number): string | null => {
+  const id = PLANS[i]?.image;
+  return id && IMAGES_DISPONIBLES.has(id) ? `./intro/${id}.webp` : null;
+};
+
+function fond(id: string, mouvement: boolean): string {
+  const src = `./intro/${id}.webp`;
+  const media = mouvement && VIDEOS_DISPONIBLES.has(id)
+    ? `<video poster="${src}" autoplay muted loop playsinline preload="auto"><source src="./intro/${id}.webm" type="video/webm"><source src="./intro/${id}.mp4" type="video/mp4"></video>`
+    : `<img src="${src}" alt="" decoding="async">`;
+  return `<div class="intro-fond" aria-hidden="true">${media}</div>`;
+}
 
 /** Durée d'affichage d'une ligne avant la suivante (avance automatique) */
 export const DUREE_LIGNE = 3200;
 
 /** i = plan, k = nombre de lignes affichées */
-export function htmlIntro(i: number, k: number): string {
+export function htmlIntro(i: number, k: number, mouvement = true): string {
   const p = PLANS[i]!;
   const dernier = i === PLANS.length - 1;
   const complet = k >= p.lignes.length;
-  const img = p.image && IMAGES_DISPONIBLES.has(p.image) ? ` style="--img:url('./intro/${p.image}.webp')"` : '';
+  const illustre = !!p.image && IMAGES_DISPONIBLES.has(p.image);
   const [de, a] = ANNEES[i]!;
-  return `<section class="intro amb-${p.ambiance}${img ? ' illustree' : ''}"${img} aria-label="Introduction" data-action="intro-suivant">`
+  return `<section class="intro amb-${p.ambiance}${illustre ? ' illustree' : ''}" data-plan="${i}" aria-label="Introduction" data-action="intro-suivant">`
+    + (illustre ? fond(p.image!, mouvement) : '')
     + `<div class="intro-scene" aria-hidden="true">${p.scene(k)}</div>`
     + `<div class="intro-haut"><span class="sous">${i + 1} / ${PLANS.length}</span>${compteur(de, a, 2.4)}<button type="button" class="btn-sec" data-action="intro-passer">Passer</button></div>`
     + `<div class="intro-corps"><span class="epoque">${echap(p.epoque)}</span><h2>${echap(p.titre)}</h2>`
