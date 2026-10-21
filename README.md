@@ -33,7 +33,6 @@ src/
     effets.ts      les noms et textes des effets spéciaux (Perçant, Siphon, Accord…)
     robot.ts       le robot d'équilibrage : un joueur automatique qui joue avec le vrai moteur
     expedition.ts  une suite de combats ; c'est ce qui est sauvegardé
-    fusion.ts      la Fusion de deux cartes vers un métal au-dessus, avec son risque
     rng.ts         hasard déterministe (même graine = même partie)
   ui/            l'affichage
     coquille.ts    ressources en haut, navigation en bas, menu, notifications (commun au district)
@@ -67,11 +66,8 @@ les effets de la liste `deblocages` du Module, un à un (fer aucun, cuivre 1, ar
 Deux métaux d'un même Module sont deux cartes à part :
 chacune ses doublons, son niveau, et un Porteur n'en porte qu'une.
 
-**La Fusion.** `src/core/fusion.ts` (règles et réglages dans `FUSION`) : deux cartes du même métal et de la même lignée,
-plus des Éclats, donnent une carte d'un autre Module de la lignée, un métal au-dessus (70 / 50 / 35 / 20 %). En cas d'échec,
-la carte risquée est perdue, la base est gardée, la moitié des Éclats revient et la tentative suivante (même lignée, même métal
-visé) gagne +5 %. Le métal visé demande une Forge de niveau 2 à 5. Pour l'écran : `apercuFusion` (chance, coût, Modules
-possibles), `partenairesFusion`, puis `fusionner`, qui renvoie la réussite et la carte obtenue pour l'animation.
+**Pas de Fusion.** Un métal se trouve dans les Strates, les boss, les choix et les garanties ; il ne se fabrique pas et ne
+se gagne pas en fusionnant des cartes (décision du 21 octobre 2026).
 
 **Les effets.** Un effet se déclare dans `donnees.ts` (`{ type: 'percant' }`, `{ type: 'siphon', part: 0.5 }`…),
 son texte est dans `effets.ts` et sa règle dans `combat.ts` (l'Accord, qui touche aux suites, est dans `regles.ts`).

@@ -127,8 +127,6 @@ export interface Jeu {
   quotidien: { jour: number; reserve: number; type: TypeQuotidien; progres: number };
   /** Archive de la semaine : points de la semaine en cours, paliers à ouvrir de la semaine passée */
   archive: { semaine: number; points: number; aOuvrir: number };
-  /** Fusions ratées d'affilée, par lignée et métal visé (« tech@argent ») : chaque échec rend la suivante plus sûre */
-  fusions: Record<string, number>;
 }
 
 export interface Resultat {
@@ -168,7 +166,6 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     choix: [],
     quotidien: { jour: jourDe(now), reserve: 1, type: typeDuJour(jourDe(now)), progres: 0 },
     archive: { semaine: semaineDe(now), points: 0, aOuvrir: 0 },
-    fusions: {},
   };
 }
 
@@ -221,9 +218,9 @@ function migrer(j: Jeu) {
     j.choix = j.choix.map((c) => ({ ...c, options: c.options.filter(existe).map(cle) })).filter((c) => c.options.length);
   }
   if (j.version === 4) {
-    // version 5 : la Fusion et ses échecs qui s'accumulent
+    // version 5 : réservée à la Fusion, retirée le 21 octobre (le métal se trouve, il ne se fabrique pas) ; rien à migrer
     j.version = 5;
-    j.fusions = {};
+    delete (j as Partial<Jeu> & { fusions?: unknown }).fusions;
   }
 }
 
