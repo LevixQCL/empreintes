@@ -16,6 +16,19 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'glande-ambre': 'glande-ambre',
   'carapace-mere': 'carapace-mere',
   'eclat-chant': 'eclat-chant',
+  'gant-arc': 'gant-arc',
+  'coeur-turbine': 'coeur-turbine',
+  'bras-grue': 'bras-grue',
+  'lames-orbitales': 'lames-orbitales',
+  'crocs-fossiles': 'crocs-fossiles',
+  'cuir-recif': 'cuir-recif',
+  'poumons-abysse': 'poumons-abysse',
+  'coeur-meute': 'coeur-meute',
+  'miroir-brume': 'miroir-brume',
+  'encre-ancienne': 'encre-ancienne',
+  'plume-givre': 'plume-givre',
+  'ombre-ailee': 'ombre-ailee',
+  'chant-abysses': 'chant-abysses',
 };
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */
