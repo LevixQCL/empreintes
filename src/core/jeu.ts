@@ -111,7 +111,7 @@ export interface Jeu {
   /** les Porteurs de l'histoire arrivés plus tard (Sasha, Nuit, Aurel) */
   arrives: string[];
   /** les grands choix de la campagne (Bible : un choix important par acte) */
-  actes: { chambre?: GardeChambre };
+  actes: { chambre?: GardeChambre; lecture?: LectureVela };
   /** index de l'objectif guidé en cours (OBJECTIFS.length = tous faits) */
   objectif: number;
   /** fragments d'archives trouvés, dans l'ordre */
@@ -148,17 +148,46 @@ export const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: Ga
   ],
 };
 
-/** Une décision de campagne attend le joueur (l'acte I se referme avec la Strate −3) */
-export const decisionEnAttente = (j: Jeu): 'chambre' | null => (j.chambre && j.strate >= 4 && !j.actes.chambre ? 'chambre' : null);
+/** Acte II, le choix : autoriser Véla à une dernière lecture profonde, au risque de briser le lien avec son empreinte */
+export type LectureVela = 'autoriser' | 'refuser';
+export const DECISION_LECTURE: { titre: string; texte: string; options: { id: LectureVela; nom: string; phrase: string; effet: string }[] } = {
+  titre: 'La dernière lecture',
+  texte: 'Sous les salles closes, les cristaux d’un même individu portent des souvenirs qui se contredisent. Véla pense pouvoir lire jusqu’au bout ce qu’ils cachent. Elle sait que son lien avec son empreinte pourrait ne pas y survivre. Elle attend ton accord.',
+  options: [
+    { id: 'autoriser', nom: 'Autoriser la lecture', phrase: 'Une empreinte ne ment jamais. C’est nous qui la lisons mal.',
+      effet: 'Véla gagne un Geste unique, Lecture profonde (Fréquence libre, forte attaque). Son lien s’effiloche : −4 PV pour de bon.' },
+    { id: 'refuser', nom: 'Refuser, la protéger', phrase: 'On n’entre pas deux fois chez quelqu’un sans y être invité.',
+      effet: 'Véla garde son empreinte intacte et reprend des forces : +4 PV pour de bon. Ce que cachent les cristaux attendra.' },
+  ],
+};
 
-export function deciderChambre(j: Jeu, choix: string): Resultat {
-  const o = DECISION_CHAMBRE.options.find((x) => x.id === choix);
+export const DECISIONS = { chambre: DECISION_CHAMBRE, lecture: DECISION_LECTURE } as const;
+export type Acte = keyof typeof DECISIONS;
+
+/** Une décision de campagne attend le joueur : l'acte I se referme après la Strate −3, l'acte II après la Strate −6 */
+export function decisionEnAttente(j: Jeu): Acte | null {
+  if (!j.chambre) return null;
+  if (j.strate >= 4 && !j.actes.chambre) return 'chambre';
+  if (j.strate >= 7 && !j.actes.lecture) return 'lecture';
+  return null;
+}
+
+export function decider(j: Jeu, acte: string, choix: string): Resultat {
+  const d = DECISIONS[acte as Acte];
+  if (!d) return non('Décision inconnue.');
+  const o = (d.options as readonly { id: string; nom: string }[]).find((x) => x.id === choix);
   if (!o) return non('Choix inconnu.');
-  if (j.actes.chambre) return non('La décision est déjà prise.');
-  j.actes.chambre = o.id;
-  log(j, `La chambre est confiée à : ${o.nom}.`);
+  if (j.actes[acte as Acte]) return non('La décision est déjà prise.');
+  (j.actes as Record<string, string>)[acte] = o.id;
+  log(j, acte === 'chambre' ? `La chambre est confiée à : ${o.nom}.` : `Véla : ${o.nom.toLowerCase()}.`);
   return { ok: true, message: `Décision prise : ${o.nom}.` };
 }
+
+export const deciderChambre = (j: Jeu, choix: string) => decider(j, 'chambre', choix);
+
+/** Ce que la dernière lecture a changé chez Véla */
+export const bonusPv = (j: Jeu, id: string) => (id === 'vela' ? (j.actes.lecture === 'autoriser' ? -4 : j.actes.lecture === 'refuser' ? 4 : 0) : 0);
+const LECTURE_PROFONDE: GesteDef = { id: 'lecture-profonde', porteur: 'vela', nom: 'Lecture profonde', f: 8, type: 'atk', v: 16, effet: { type: 'accord' } };
 
 export interface Resultat {
   ok: boolean;
@@ -270,7 +299,7 @@ export function log(j: Jeu, t: string) {
 export const enExpedition = (j: Jeu, id: string) => !!j.expedition && j.expedition.porteurs.some((p) => p.id === id);
 export const posteDe = (j: Jeu, b: Poste) => Object.keys(j.porteurs).find((id) => j.porteurs[id]!.poste === b) ?? null;
 export const stockage = (j: Jeu) => DISTRICT.stockage[j.batiments.noyau] ?? 0;
-export const pvMaxCombat = (j: Jeu, id: string) => porteurDef(id).pvMax - Math.floor(j.porteurs[id]!.usure);
+export const pvMaxCombat = (j: Jeu, id: string) => porteurDef(id).pvMax + bonusPv(j, id) - Math.floor(j.porteurs[id]!.usure);
 export const usureMax = (id: string) => Math.floor(porteurDef(id).pvMax * DISTRICT.usureMaxRatio);
 
 function multiplicateur(j: Jeu, b: Poste): number {
@@ -540,7 +569,13 @@ export function ouvrirArchive(j: Jeu): Resultat {
 /** Les Gestes qu'un Porteur apporte : les siens + ceux de ses Modules */
 export function gestesDe(j: Jeu, id: string): GesteDef[] {
   const mods = (j.porteurs[id]?.modules ?? []).map((mid) => ({ id: mid, niveau: j.collection[mid]?.niveau ?? 1 }));
-  return gestesAvecModules(id, mods);
+  const gestes = gestesAvecModules(id, mods);
+  // après la dernière lecture, Véla remplace un de ses Murmures par la Lecture profonde
+  if (id === 'vela' && j.actes.lecture === 'autoriser') {
+    const k = gestes.findIndex((g) => g.id === 'murmure');
+    if (k >= 0) gestes[k] = LECTURE_PROFONDE;
+  }
+  return gestes;
 }
 
 /** Les Porteurs de l'histoire qui rejoignent le district quand leur moment arrive ; renvoie les annonces */

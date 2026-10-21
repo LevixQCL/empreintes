@@ -108,3 +108,27 @@ describe('Acte I : qui garde la chambre ?', () => {
     }
   });
 });
+
+import { decider, gestesDe, pvMaxCombat } from '../src/core/jeu';
+
+describe('Acte II : la dernière lecture de Véla', () => {
+  it('arrive après la Strate −6, une fois la chambre confiée', () => {
+    const j = nouveauJeu(0, 1);
+    j.chambre = true; j.strate = 7;
+    expect(decisionEnAttente(j)).toBe('chambre'); // l'acte I d'abord
+    decider(j, 'chambre', 'district');
+    expect(decisionEnAttente(j)).toBe('lecture');
+  });
+
+  it('autoriser : Lecture profonde et −4 PV ; refuser : +4 PV', () => {
+    const a = nouveauJeu(0, 1); a.chambre = true; a.strate = 7; a.actes.chambre = 'orseve';
+    const pv = pvMaxCombat(a, 'vela');
+    expect(decider(a, 'lecture', 'autoriser').ok).toBe(true);
+    expect(pvMaxCombat(a, 'vela')).toBe(pv - 4);
+    expect(gestesDe(a, 'vela').map((g) => g.nom)).toContain('Lecture profonde');
+    const r = nouveauJeu(0, 1); r.chambre = true; r.strate = 7; r.actes.chambre = 'orseve';
+    decider(r, 'lecture', 'refuser');
+    expect(pvMaxCombat(r, 'vela')).toBe(pv + 4);
+    expect(gestesDe(r, 'vela').map((g) => g.nom)).not.toContain('Lecture profonde');
+  });
+});
