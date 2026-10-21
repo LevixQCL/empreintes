@@ -12,7 +12,7 @@ import { cloturerCombat, combatSuivant, nouvelleExpedition, type Expedition } fr
 import { graine, tireur } from './rng';
 import type { BatimentId, GesteDef, PorteurEtat, Rarete } from './types';
 
-export const VERSION_JEU = 4;
+export const VERSION_JEU = 5;
 
 /** Réglages du district, au même endroit pour l'équilibrage */
 export const DISTRICT = {
@@ -125,6 +125,8 @@ export interface Jeu {
   quotidien: { jour: number; reserve: number; type: TypeQuotidien; progres: number };
   /** Archive de la semaine : points de la semaine en cours, paliers à ouvrir de la semaine passée */
   archive: { semaine: number; points: number; aOuvrir: number };
+  /** Fusions ratées d'affilée, par lignée et métal visé (« tech@argent ») : chaque échec rend la suivante plus sûre */
+  fusions: Record<string, number>;
 }
 
 export interface Resultat {
@@ -163,12 +165,13 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     choix: [],
     quotidien: { jour: jourDe(now), reserve: 1, type: typeDuJour(jourDe(now)), progres: 0 },
     archive: { semaine: semaineDe(now), points: 0, aOuvrir: 0 },
+    fusions: {},
   };
 }
 
 export function estJeuValide(x: unknown): x is Jeu {
   const j = x as Jeu | null;
-  if (!(!!j && (j.version === VERSION_JEU || j.version === 2 || j.version === 3) && typeof j.energie === 'number' && !!j.batiments && !!j.porteurs)) return false;
+  if (!(!!j && (j.version === VERSION_JEU || j.version === 2 || j.version === 3 || j.version === 4) && typeof j.energie === 'number' && !!j.batiments && !!j.porteurs)) return false;
   migrer(j);
   return true;
 }
@@ -213,9 +216,14 @@ function migrer(j: Jeu) {
     if (j.forge) j.forge = existe(j.forge.moduleId) ? { ...j.forge, moduleId: cle(j.forge.moduleId) } : null;
     j.choix = j.choix.map((c) => ({ ...c, options: c.options.filter(existe).map(cle) })).filter((c) => c.options.length);
   }
+  if (j.version === 4) {
+    // version 5 : la Fusion et ses échecs qui s'accumulent
+    j.version = 5;
+    j.fusions = {};
+  }
 }
 
-function log(j: Jeu, t: string) {
+export function log(j: Jeu, t: string) {
   j.journal.unshift(t);
   j.journal = j.journal.slice(0, 8);
 }

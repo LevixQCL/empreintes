@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { COLLECTION, ajouterCarte, doublonsRequis, multNiveau, tableRarete, tirerCarte, type EtatCollection } from '../src/core/collection';
 import { moduleDef } from '../src/core/donnees';
 import {
-  ARCHIVE, OBJECTIFS, ameliorer, estJeuValide, greffer, jourDe, monter, nouveauJeu, ouvrirArchive, prendre, quotidienFait,
+  ARCHIVE, OBJECTIFS, VERSION_JEU, ameliorer, estJeuValide, greffer, jourDe, monter, nouveauJeu, ouvrirArchive, prendre, quotidienFait,
   reclamerQuotidien, recycler, semaineDe, tick, type Jeu,
 } from '../src/core/jeu';
 
@@ -164,7 +164,7 @@ describe('Migration', () => {
     v2.porteurs!.doran!.modules = ['glande-amber'];
     expect(estJeuValide(v2)).toBe(true);
     const j = v2 as Jeu;
-    expect(j.version).toBe(4);
+    expect(j.version).toBe(VERSION_JEU);
     expect(j.porteurs.doran!.modules).toEqual(['glande-ambre@fer']);
     expect(j.collection['glande-ambre@fer']!.doublons).toBe(1);
     expect(j.chantiers).toEqual([]);
@@ -178,7 +178,7 @@ describe('Migration', () => {
     v3.forge = { moduleId: 'jambes-ressort', debut: 0, fin: 10 };
     v3.choix = [{ source: 'boss', options: ['bras-grue', 'crocs-fossiles', 'disparu'] }];
     expect(estJeuValide(v3)).toBe(true);
-    expect(v3.version).toBe(4);
+    expect(v3.version).toBe(VERSION_JEU);
     expect(v3.collection).toEqual({ 'jambes-ressort@fer': { niveau: 2, doublons: 1 }, 'lames-orbitales@or': { niveau: 7, doublons: 0 } });
     expect(v3.porteurs.ilka!.modules).toEqual(['lames-orbitales@or']);
     expect(v3.forge!.moduleId).toBe('jambes-ressort@fer');
