@@ -82,8 +82,9 @@ const lignes = brut.map((b) => {
   const dessus = moyenne(RANGS[RANGS.indexOf(b.m.rarete) + 1] ?? 'nacre');
   const dessous = moyenne(RANGS[RANGS.indexOf(b.m.rarete) - 1] ?? 'fer');
   let alerte = '';
-  if (b.dep > moy + ECART || (!Number.isNaN(dessus) && b.dep > dessus)) alerte = 'TROP FORTE';
-  else if (b.dep < moy - ECART || (b.m.rarete !== 'fer' && b.dep < dessous)) alerte = 'trop faible';
+  // une marge de 2 points évite de signaler le simple bruit de la simulation
+  if (b.dep > moy + ECART || (!Number.isNaN(dessus) && b.dep > dessus + 0.02)) alerte = 'TROP FORTE';
+  else if (b.dep < moy - ECART || (b.m.rarete !== 'fer' && b.dep < dessous - 0.02)) alerte = 'trop faible';
   return { ...b, alerte };
 });
 
@@ -108,7 +109,7 @@ r += `Les chiffres sont des points de progression dans l'expédition à la Strat
 r += `| Carte | Rareté | Effets | À la découverte | Au niveau 10 | Alerte |\n|---|---|---|---|---|---|\n`;
 for (const l of lignes) r += `| ${l.m.nom} | ${NOMS_RARETE[l.m.rarete]} | ${effets(l.m)} | ${pts(l.dep)} | ${pts(l.n10)} | ${l.alerte} |\n`;
 r += `\nMoyenne par rareté, à la découverte : ${RANGS.filter((x) => !Number.isNaN(moyenne(x))).map((x) => `${NOMS_RARETE[x]} ${pts(moyenne(x))}`).join(' · ')}. `;
-r += `Une carte est signalée quand elle s'écarte de plus de ${Math.round(ECART * 100)} points de la moyenne de sa rareté, ou dépasse la moyenne de la rareté au-dessus.\n\n`;
+r += `Une carte est signalée quand elle s'écarte de plus de ${Math.round(ECART * 100)} points de la moyenne de sa rareté, ou dépasse de plus de 2 points la moyenne de la rareté au-dessus.\n\n`;
 r += `## Deck de départ : 3 cartes ou 6 cartes\n\n| Strate | 3 cartes (actuel) | 6 cartes (document Économie) |\n|---|---|---|\n`;
 r += decks.map((d) => `| −${d.st} | ${pct(d.trois)} | ${pct(d.six)} |`).join('\n') + '\n';
 
