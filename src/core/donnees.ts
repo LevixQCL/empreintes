@@ -90,10 +90,10 @@ export const MODULES: ModuleDef[] = [
   m('lames-orbitales', 'Lames orbitales', 'tech', 'or', [x('Orbite', 3, 'atk', 11, false, { type: 'percant' }), x('Orbite basse', 2, 'bouclier', 12, false, { type: 'elan' }),
     x('Tourbillon', 9, 'atk', 22, true, { type: 'crescendo', part: 0.4 })]),
   // Génés : Fréquences basses
-  m('glande-ambre', 'Glande d’ambre', 'bio', 'fer', [x('Sève', 3, 'soin', 7), x('Mue', 2, 'bouclier', 8)]),
+  m('glande-ambre', 'Glande d’ambre', 'bio', 'fer', [x('Sève', 3, 'soin', 6), x('Mue', 2, 'bouclier', 8)]),
   m('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', [x('Happer', 1, 'atk', 8), x('Ronger', 3, 'atk', 9)]),
   m('cuir-recif', 'Cuir de récif', 'bio', 'fer', [x('Écailles', 4, 'bouclier', 9), x('Barbillon', 5, 'atk', 8)]),
-  m('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', [x('Apnée', 2, 'bouclier', 11, false, { type: 'rempart', part: 0.5 }), x('Remontée', 4, 'soin', 11)]),
+  m('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', [x('Apnée', 2, 'bouclier', 11, false, { type: 'rempart', part: 0.5 }), x('Remontée', 4, 'soin', 8)]),
   m('carapace-mere', 'Carapace-mère', 'bio', 'argent', [x('Rempart', 5, 'bouclier', 16, false, { type: 'rempart', part: 0.75 }), x('Bélier', 6, 'atk', 22, true, { type: 'fissure', part: 0.25 }),
     x('Mue rapide', 1, 'soin', 9, false, { type: 'vague' })]),
   m('coeur-meute', 'Cœur de meute', 'bio', 'or', [x('Hurlement', 4, 'atk', 11, false, { type: 'fissure', part: 0.4 }), x('Curée', 5, 'atk', 13, false, { type: 'siphon', part: 0.75 }),
