@@ -105,10 +105,10 @@ const strates = (k: number) => svg(`
 const f = (id: string, des = 1) => ({ id, des });
 
 export const PLANS: Plan[] = [
-  { epoque: 'Aujourd’hui', titre: 'On savait', ambiance: 'chaleur', camera: 'approche', fonds: [f('01-on-savait')], scene: villeChaleur, lignes: [
-    'Les glaciers reculent, les étés brûlent. On le sait, on s’inquiète.',
-    'Il y a des marches, des sommets, des promesses.'] },
-  { epoque: 'Bientôt', titre: 'On a regardé ailleurs', ambiance: 'colere', camera: 'recule', fonds: [f('02-ailleurs')], scene: ecrans, lignes: [
+  { epoque: 'Les années 2000', titre: 'On savait', ambiance: 'chaleur', camera: 'approche', fonds: [f('01-on-savait')], scene: villeChaleur, lignes: [
+    'Au début du siècle, un documentaire fait le tour du monde : les glaciers reculent, les étés brûlent.',
+    'On le sait, on s’inquiète. Il y a des marches, des sommets, des promesses.'] },
+  { epoque: 'Aujourd’hui', titre: 'On a regardé ailleurs', ambiance: 'colere', camera: 'recule', fonds: [f('02-ailleurs')], scene: ecrans, lignes: [
     'Les prix montent. Dans des pays voisins, les extrêmes se répondent.',
     'Des guerres s’embrasent. Le climat devient une ligne en bas de page.'] },
   { epoque: 'Les années 2040 à 2057', titre: 'La nature a frappé', ambiance: 'maree', camera: 'gauche', fonds: [f('03-tempetes'), f('03-fracture', 3)], scene: nature, lignes: [
@@ -144,7 +144,7 @@ export const PLANS: Plan[] = [
 ];
 
 /** Années affichées par le compteur de chaque plan (de, à) */
-const ANNEES: [number, number][] = [[2026, 2026], [2026, 2034], [2040, 2057], [2057, 2062], [2062, 2062], [2062, 2068], [2071, 2090], [2090, 2101], [2121, 2121], [2121, 2121], [2121, 2121]];
+const ANNEES: [number, number][] = [[2006, 2019], [2020, 2026], [2040, 2057], [2057, 2062], [2062, 2062], [2062, 2068], [2071, 2090], [2090, 2101], [2121, 2121], [2121, 2121], [2121, 2121]];
 
 /** Illustrations Midjourney déjà déposées dans public/intro/ */
 export const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-tempetes', '03-fracture', '04-hauteur', '05-puits-zero', '06-empreintes', '07-ascension', '08-reponse', '09-oubli', '10-dessous', '10-toi']);
