@@ -56,7 +56,7 @@ const ref = courbe.reduce((a, b) => (Math.abs(b.taux - 0.5) < Math.abs(a.taux - 
 // 2. Ce que vaut chaque carte : elle prend la place de la carte de départ de sa lignée (dans son métal d'origine).
 //    Les 15 cartes de base ne sont pas mesurées : elles sont déjà dans le deck. On mesure la part d'expéditions gagnées.
 const valeur = (niveau: 'depart' | 10, m: ModuleDef, base: number) =>
-  estDepart(m.id) ? 0 : mesurer(escouade(niveau, { remplace: m }), ref, PARTIES).victoire - base;
+  estDepart(m.id) ? 0 : mesurer(escouade(niveau, { remplace: moduleDef(carteId(m.id, m.rarete)) }), ref, PARTIES).victoire - base;
 const baseDep = mesurer(escouade('depart'), ref, PARTIES);
 const base10 = mesurer(escouade(10), ref, PARTIES).victoire;
 const brut: { m: ModuleDef; dep: number; n10: number }[] = [];

@@ -350,7 +350,7 @@ function migrer(j: Jeu) {
       p.modules = [...greffes.slice(0, DISTRICT.cartesMax), ...base].slice(0, DISTRICT.cartesMax);
     }
     // le deuxième objectif apprend désormais à confier la carte de la chambre
-    if (j.chambre && j.objectif === 1) j.collection[CARTE_CHAMBRE] ??= { niveau: 1, doublons: 0 };
+    if (j.chambre && j.objectif <= 1) j.collection[CARTE_CHAMBRE] ??= { niveau: 1, doublons: 0 };
   }
 }
 

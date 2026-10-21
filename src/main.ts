@@ -225,7 +225,7 @@ document.addEventListener('keydown', (ev) => {
     ev.preventDefault(); mode = apresTitre(); if (mode === 'combat') K.fin = finPour(); afficher(); return;
   }
   if (ev.key === 'Escape') {
-    if (mode === 'district' && (D.selection || D.carte || D.menu)) { D.selection = null; D.carte = null; D.menu = false; afficher(); return; }
+    if (mode === 'district' && (D.selection || D.carte || D.deck || D.menu)) { D.selection = null; D.carte = null; D.deck = null; D.menu = false; afficher(); return; }
     if (mode === 'combat' && K.regles) { K.regles = false; afficher(); return; }
   }
   if (mode !== 'intro' || ev.altKey || ev.ctrlKey || ev.metaKey) return;
@@ -319,7 +319,7 @@ async function actionCompte(f: () => Promise<void>) {
 /** change d'onglet : ferme ce qui était ouvert et remonte en haut */
 function ouvrir(v: EcranDistrict['vue']) {
   if (D.vue !== v) window.scrollTo(0, 0);
-  D.vue = v; D.selection = null; D.carte = null; D.menu = false;
+  D.vue = v; D.selection = null; D.carte = null; D.deck = null; D.menu = false;
 }
 
 const resultat = (r: J.Resultat) => { D.message = r.ok ? '' : r.message ?? ''; if (r.ok) sauver(); };
@@ -368,8 +368,9 @@ racine.addEventListener('click', async (ev) => {
     case 'cartes': ouvrir('cartes'); break;
     case 'greffer': {
       // un Porteur déjà plein : on ouvre ses cartes pour qu'il en rende une
-      const plein = (jeu.porteurs[id]?.modules.length ?? 0) >= J.DISTRICT.cartesMax && !jeu.porteurs[id]!.modules.includes(b.dataset.module ?? '');
-      resultat(J.greffer(jeu, b.dataset.module ?? '', id));
+      const r = J.greffer(jeu, b.dataset.module ?? '', id);
+      resultat(r);
+      const plein = !r.ok && !!r.message?.includes(`${J.DISTRICT.cartesMax} cartes`);
       if (plein) { D.carte = null; D.deck = id; D.message = `${porteurDef(id).nom} porte déjà ${J.DISTRICT.cartesMax} cartes : reprends-en une, puis confie-lui ${moduleDef(b.dataset.module ?? '').nom}.`; }
       break;
     }
@@ -384,7 +385,7 @@ racine.addEventListener('click', async (ev) => {
     case 'entrer': ouvrir('coupe'); break;
     case 'archipel': ouvrir('archipel'); break;
     case 'coupe': ouvrir('coupe'); break;
-    case 'descendre': D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; break;
+    case 'descendre': D.deck = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; break;
     case 'choisir':
       if (D.escouade.includes(id)) D.escouade = D.escouade.filter((p) => p !== id);
       else if (D.escouade.length < 3) D.escouade = [...D.escouade, id];

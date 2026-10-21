@@ -115,6 +115,8 @@ export function retirer(s: CombatEtat, uid: string): Resultat {
   s.chaine = s.chaine.filter((x) => x !== g);
   if (g.fs) g.f = g.fs[0]!;
   s.main.push(g);
+  // les cartes à plusieurs Fréquences qui restent reprennent celle qui prolonge la nouvelle suite
+  s.chaine.forEach((x, i) => { if (x.fs && x.fs.length > 1) x.f = meilleureFrequence(s.chaine.slice(0, i), x.fs); });
   return { ok: true };
 }
 

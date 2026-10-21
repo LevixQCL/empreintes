@@ -218,5 +218,11 @@ describe('Migration', () => {
     expect(v5.collection['ruee@fer']).toEqual({ niveau: 1, doublons: 0 });
     expect(v5.collection['jambes-ressort@fer']!.niveau).toBe(3);
     expect(v5.collection['oeil-relais@fer']).toBeDefined(); // pour l'objectif « Construire ton deck »
+    // même si le premier objectif n'est pas encore réclamé
+    const w = nouveauJeu(0);
+    w.version = 5; w.chambre = true; w.objectif = 0;
+    delete w.collection['oeil-relais@fer'];
+    expect(estJeuValide(w)).toBe(true);
+    expect(w.collection['oeil-relais@fer']).toBeDefined();
   });
 });

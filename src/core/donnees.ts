@@ -361,7 +361,10 @@ export const ennemiDef = (id: string): EnnemiDef => {
 export const batimentDef = (id: BatimentId): BatimentDef => BATIMENTS.find((b) => b.id === id)!;
 const declinaisons = new Map<string, ModuleDef>();
 
-/** Une carte dans son métal d'origine (« jambes-ressort ») ou un exemplaire dans un métal (« jambes-ressort@or ») */
+/**
+ * Une carte (« jambes-ressort ») : sa définition complète, toutes Fréquences et effet compris, qui ne se joue jamais telle quelle ;
+ * ou un exemplaire dans un métal (« jambes-ressort@or »), le seul qu'on possède et qu'on joue.
+ */
 export const moduleDef = (cle: string): ModuleDef => {
   const deja = declinaisons.get(cle);
   if (deja) return deja;
