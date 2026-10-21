@@ -9,6 +9,7 @@ import { htmlCombat, type Ecran as EcranCombat, type Fin, type Compte } from './
 import { htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre, type EcranDistrict } from './ui/district';
 import { PLANS, htmlIntro, imagesPlan } from './ui/intro';
 import { htmlTitre } from './ui/titre';
+import { activerCartes } from './ui/carte';
 
 const racine = document.getElementById('app') as HTMLElement;
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -60,6 +61,7 @@ function afficher() {
   }
   racine.dataset.mode = mode;
   if (!(mode === 'intro' && majIntro(h))) racine.innerHTML = h;
+  if (mode === 'district') activerCartes(racine);
   if (mode === 'intro') { precharger(plan); precharger(plan + 1); animerCompteur(); }
   const ie = racine.querySelector('#email') as HTMLInputElement | null;
   const im = racine.querySelector('#mdp') as HTMLInputElement | null;

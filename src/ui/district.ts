@@ -1,7 +1,7 @@
 // Écrans du district : l'archipel (accueil), la coupe de la Tour du Noyau, le choix de l'escouade.
 // Les bâtiments sont des illustrations Midjourney (public/art/batiments, 4 apparences selon le niveau) ; le fond est la mer peinte (jour ou nuit), le Chantier une esquisse en attendant son illustration.
 
-import { NOMS_EFFET, libelleEffet } from '../core/effets';
+import { libelleEffet } from '../core/effets';
 import { MODULES, PORTEURS, batimentDef, gestesRemplaces, moduleDef, porteurDef } from '../core/donnees';
 import {
   ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles,
@@ -13,7 +13,8 @@ import type { Rarete } from '../core/types';
 import { FRAGMENTS } from '../core/fragments';
 import type { BatimentId } from '../core/types';
 import { COULEUR, FONDS, echap, panneauCompte, type Compte } from './vue';
-import { decor, fondCarte, illustrationBatiment, illustrationModule, prochainVisuel, stylePastille, visuel } from './art';
+import { decor, fondCarte, illustrationBatiment, prochainVisuel, stylePastille, visuel } from './art';
+import { faceCarte } from './carte';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'codex' | 'cartes';
 
@@ -39,7 +40,6 @@ const duree = (ms: number) => {
 };
 
 export const COULEUR_RARETE: Record<Rarete, string> = { fer: '#8E949C', cuivre: '#C47A48', argent: '#B8C4CE', or: '#E2B44A', nacre: '#E6D3EE' };
-const TYPE_GESTE = { atk: 'attaque', bouclier: 'protection', soin: 'soin' } as const;
 
 // ---------- Archipel (SVG provisoire) ----------
 
@@ -259,12 +259,15 @@ function carteMini(id: string, j: Jeu, attrs = ''): string {
   const m = moduleDef(id);
   const c = j.collection[id];
   const neuve = !c;
-  const ill = illustrationModule(id);
-  return `<button type="button" class="carte-mini" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[m.lignee]}" ${attrs}>`
-    + (ill ? `<img class="illus" src="${ill}" alt="" decoding="async">` : '')
-    + `<span class="rarete">${NOMS_RARETE[m.rarete]}</span><strong>${echap(m.nom)}</strong>`
-    + `<small>${m.gestes.map((g) => `${echap(g.nom)} ${g.effet?.type === 'accord' ? '∗' : g.f}${g.effet ? ` (${NOMS_EFFET[g.effet.type]})` : ''}`).join(' · ')}</small>`
+  const niveau = c?.niveau ?? COLLECTION.niveauDepart[m.rarete];
+  return `<button type="button" class="carte-mini avec-face" ${attrs}>${faceCarte(m, niveau, multNiveau(id, niveau))}`
     + `<em>${neuve ? 'Nouvelle carte' : `Doublon · niveau ${c.niveau}`}</em></button>`;
+}
+
+/** Le texte des effets spéciaux de la carte, sous sa face */
+function effetsCarte(m: ReturnType<typeof moduleDef>): string {
+  const avec = m.gestes.filter((g) => g.effet);
+  return avec.length ? `<ul class="effets-carte">${avec.map((g) => `<li><b>${echap(g.nom)}</b> · ${echap(libelleEffet(g.effet!))}</li>`).join('')}</ul>` : '';
 }
 
 function fenetreChoix(j: Jeu): string {
@@ -308,9 +311,8 @@ export function htmlCartes(e: EcranDistrict): string {
       const porte = greffesDe(j, m.id)[0];
       const mult = multNiveau(m.id, c.niveau);
       const cout = composantsNiveau(c.niveau + 1);
-      const ill = illustrationModule(m.id);
-      h += `<article class="carte" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[lignee]}">${ill ? `<img class="illus" src="${ill}" alt="" decoding="async">` : ''}<div class="carte-tete"><span class="rarete">${NOMS_RARETE[m.rarete]}</span><span class="niveau">Niv. ${c.niveau}</span></div>`
-        + `<strong>${echap(m.nom)}</strong>${remplace(j, m.id, porte ?? porteurs[0]?.id)}<ul>${m.gestes.map((g) => `<li><b>${g.effet?.type === 'accord' ? '∗' : g.f}</b> ${echap(g.nom)} · ${TYPE_GESTE[g.type]} ${Math.round(g.v * mult)}${g.lourd ? ' · lourd' : ''}${g.effet ? `<br><span class="effet-texte">${echap(libelleEffet(g.effet))}</span>` : ''}</li>`).join('')}</ul>`
+      h += `<article class="carte avec-face" style="--r:${COULEUR_RARETE[m.rarete]};--c:${COULEUR[lignee]}">${faceCarte(m, c.niveau, mult)}`
+        + `${effetsCarte(m)}${remplace(j, m.id, porte ?? porteurs[0]?.id)}`
         + (requis === null ? `<small>Niveau maximum</small>` : `<div class="ligne-prog"><div class="piste"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%;--c:var(--r)"></i></div><small>${c.doublons} / ${requis}</small></div>`)
         + `<div class="chips">`
         + (requis !== null ? `<button type="button" class="chip petit" data-action="monter" data-module="${m.id}"${c.doublons >= requis && j.composants >= cout ? '' : ' disabled'}>Monter · ${cout} comp.</button>` : '')

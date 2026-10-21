@@ -1,7 +1,7 @@
 // Illustrations Midjourney (public/art/). Chaque fonction renvoie null quand l'image n'existe pas encore :
 // l'affichage garde alors son visuel dessiné en SVG ou sa couleur de fond.
 
-import type { BatimentId } from '../core/types';
+import type { BatimentId, Rarete } from '../core/types';
 
 // URL absolue : une url() dans une variable CSS se résout depuis la feuille de style (assets/), pas depuis la page.
 const base = new URL('art/', document.baseURI).href;
@@ -29,6 +29,8 @@ const ENNEMIS_ILLUSTRES: Record<string, string> = {
 export const portrait = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/${id}.webp` : null);
 export const illustrationModule = (id: string): string | null => (MODULES_ILLUSTRES[id] ? `${base}modules/${MODULES_ILLUSTRES[id]}.webp` : null);
 export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
+/** Texture du métal d'une rareté (plaque et liseré des cartes) */
+export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
 export const decor = (nom: 'archipel' | 'archipel-nuit' | 'coupe' | 'mer') => `${base}district/${nom}.webp`;
 
 /**

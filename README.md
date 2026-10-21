@@ -38,7 +38,8 @@ src/
   save/          la sauvegarde sur l'appareil
   net/           Firebase : comptes et synchronisation (optionnel)
   main.ts        relie tout : clics, animations, sauvegarde
-public/art/      les illustrations Midjourney (Porteurs, Modules, ennemis, bâtiments, décors) ; src/ui/art.ts dit laquelle va où
+public/art/      les illustrations Midjourney (Porteurs, Modules, ennemis, bâtiments, décors, textures des métaux) ; src/ui/art.ts dit laquelle va où
+src/ui/carte.ts  la face des cartes Module (métal de la rareté, effets sur l'illustration)
 tests/           les tests automatiques
 firestore.rules  qui peut lire et écrire quoi dans la base
 ```
