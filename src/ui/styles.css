@@ -598,3 +598,8 @@ h1,h2,h3{font-weight:400}
 .option-decision em{font-size:13px;color:var(--gold)}
 .option-decision small{font-size:13px;color:var(--quiet);line-height:1.4}
 .option-decision:hover,.option-decision:focus-visible{border-color:var(--gold)}
+
+/* Confiance des habitants (bandeau du district) */
+.mission .confiance{display:grid;gap:4px;margin-top:8px}
+.mission .confiance .jauge i{background:linear-gradient(90deg,var(--danger),var(--gold) 50%,var(--bio))}
+.mission .confiance small{font-size:12px;color:var(--quiet)}

@@ -112,6 +112,8 @@ export interface Jeu {
   arrives: string[];
   /** les grands choix de la campagne (Bible : un choix important par acte) */
   actes: { chambre?: GardeChambre; lecture?: LectureVela; fin?: FinCampagne };
+  /** la Confiance des habitants, de 0 à 100 : elle ne destitue jamais le directeur, mais elle colore le jeu (Bible) */
+  confiance: number;
   /** index de l'objectif guidé en cours (OBJECTIFS.length = tous faits) */
   objectif: number;
   /** fragments d'archives trouvés, dans l'ordre */
@@ -195,6 +197,7 @@ export function decider(j: Jeu, acte: string, choix: string): Resultat {
   if (!o) return non('Choix inconnu.');
   if (j.actes[acte as Acte]) return non('La décision est déjà prise.');
   (j.actes as Record<string, string>)[acte] = o.id;
+  if (acte === 'chambre') confier(j, o.id === 'district' ? 10 : o.id === 'commission' ? 5 : -5);
   log(j, acte === 'chambre' ? `La chambre est confiée à : ${o.nom}.` : acte === 'lecture' ? `Véla : ${o.nom.toLowerCase()}.` : `Fin de la campagne : ${o.nom}. Les Strates continuent.`);
   return { ok: true, message: `Décision prise : ${o.nom}.` };
 }
@@ -233,6 +236,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     recrues: false,
     arrives: [],
     actes: {},
+    confiance: 50,
     objectif: 0,
     fragments: [],
     lus: [],
@@ -263,6 +267,7 @@ function migrer(j: Jeu) {
   j.recrues ??= ancien;
   j.arrives ??= [];
   j.actes ??= {};
+  j.confiance ??= 50;
   for (const p of PORTEURS) j.porteurs[p.id] ??= { usure: 0, poste: null, modules: [] };
   j.objectif ??= ancien && j.strate > 1 ? OBJECTIFS.length : 0;
   j.fragments ??= [];
@@ -324,7 +329,23 @@ function multiplicateur(j: Jeu, b: Poste): number {
   return porteurDef(id).lignee === batimentDef(b).affinite ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste;
 }
 
-export const energieParHeure = (j: Jeu) => Math.round((DISTRICT.energieParHeure[j.batiments.generateur] ?? 0) * multiplicateur(j, 'generateur'));
+export const energieParHeure = (j: Jeu) => Math.round((DISTRICT.energieParHeure[j.batiments.generateur] ?? 0) * multiplicateur(j, 'generateur') * effetConfiance(j));
+
+// ---------- La Confiance des habitants ----------
+// Elle monte avec les chantiers, les expéditions réussies et les choix qui protègent le quartier ; elle baisse avec les
+// défaites et certains choix. Jamais pendant l'absence : rien ne se dégrade quand on ne joue pas.
+export const CONFIANCE = { victoire: 3, chantier: 2, defaite: -2, haute: 70, basse: 30 } as const;
+export function confier(j: Jeu, delta: number) {
+  j.confiance = Math.max(0, Math.min(100, Math.round((j.confiance ?? 50) + delta)));
+}
+/** Haute : les habitants donnent un coup de main (+10 % d'énergie). Basse : le Générateur tourne au ralenti (−10 %). */
+export const effetConfiance = (j: Jeu) => ((j.confiance ?? 50) >= CONFIANCE.haute ? 1.1 : (j.confiance ?? 50) <= CONFIANCE.basse ? 0.9 : 1);
+export function humeurDistrict(j: Jeu): string {
+  const c = j.confiance ?? 50;
+  if (c >= CONFIANCE.haute) return 'Le quartier croit en toi : les habitants donnent un coup de main (+10 % d’énergie).';
+  if (c <= CONFIANCE.basse) return 'Le quartier doute : le Générateur tourne au ralenti (−10 % d’énergie).';
+  return 'Le quartier t’observe. Les chantiers et les expéditions réussies feront monter sa confiance.';
+}
 export const soinParHeure = (j: Jeu) => (DISTRICT.soinParHeure[j.batiments.clinique] ?? 0) * multiplicateur(j, 'clinique');
 
 /** Ce que coûte la refabrication d'un exemplaire */
@@ -381,6 +402,7 @@ export function tick(j: Jeu, now: number): string[] {
 
   for (const c of j.chantiers.filter((x) => now >= x.fin)) {
     j.batiments[c.batiment]++;
+    confier(j, CONFIANCE.chantier);
     const t = `Chantier terminé : ${batimentDef(c.batiment).nom} passe au niveau ${j.batiments[c.batiment]}.`;
     log(j, t);
     nouvelles.push(t);
@@ -703,6 +725,7 @@ export function remonter(j: Jeu): Retour {
   }
   for (const c of cartes) ajouterCarte(j, c);
   j.eclats += eclats;
+  confier(j, victoire ? CONFIANCE.victoire : x.combat.issue === 'defaite' ? CONFIANCE.defaite : 0);
   j.expedition = null;
   log(j, victoire
     ? `L’escouade remonte victorieuse avec ${butin} composants.${nouvelleStrate ? ` Un nouvel étage est creusé : la Strate −${j.strate} est ouverte.` : ''}`

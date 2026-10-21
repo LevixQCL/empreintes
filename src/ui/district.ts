@@ -5,7 +5,7 @@
 import { libelleEffet } from '../core/effets';
 import { GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, ennemiDef, gestesRemplaces, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, type Acte,
+  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, type Acte,
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
@@ -125,6 +125,7 @@ function mission(e: EcranDistrict): string {
         ? `<button type="button" class="btn prim" data-action="reclamer-jour">${ICO.coffre}Récupérer : une carte ou 2 Éclats</button>`
         : `<div class="jauge"><i style="width:${(100 * q.progres) / def.objectif}%"></i></div>`);
   } else h += `<div class="mission-tete"><span class="surtitre">OBJECTIF DU JOUR</span></div><small class="aide">Tous faits : le prochain arrive demain.</small>`;
+  h += `<div class="confiance" title="${echap(humeurDistrict(j))}"><span class="surtitre">CONFIANCE · ${j.confiance}</span><div class="jauge"><i style="width:${j.confiance}%"></i></div><small>${echap(humeurDistrict(j))}</small></div>`;
   h += `<div class="archive"><span class="surtitre">ARCHIVE · ${Math.min(j.archive.points, max)}/${max}</span><div class="jauge reso">${crans}<i style="width:${Math.min(100, (100 * j.archive.points) / max)}%"></i></div><small>lundi, dans ${duree(lundiSuivant(e.now) - e.now)}</small></div>`;
   return h + `</section>`;
 }

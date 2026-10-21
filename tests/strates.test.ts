@@ -163,3 +163,28 @@ describe('Acte III : les trois fins', () => {
     expect(dureeChantier(j, 'forge')).toBe(Math.round(avant * 1.25));
   });
 });
+
+import { confier, effetConfiance, energieParHeure } from '../src/core/jeu';
+
+describe('La Confiance des habitants', () => {
+  it('reste entre 0 et 100 et change la production d’énergie aux extrêmes', () => {
+    const j = nouveauJeu(0, 1);
+    expect(j.confiance).toBe(50);
+    const base = energieParHeure(j);
+    confier(j, 40);
+    expect(effetConfiance(j)).toBe(1.1);
+    expect(energieParHeure(j)).toBeGreaterThan(base);
+    confier(j, 500);
+    expect(j.confiance).toBe(100);
+    confier(j, -95);
+    expect(effetConfiance(j)).toBe(0.9);
+    confier(j, -500);
+    expect(j.confiance).toBe(0);
+  });
+
+  it('le choix de l’acte I la fait bouger', () => {
+    const j = nouveauJeu(0, 1); j.chambre = true; j.strate = 4;
+    decider(j, 'chambre', 'district');
+    expect(j.confiance).toBe(60);
+  });
+});
