@@ -12,6 +12,7 @@ import { htmlCombat, type Ecran as EcranCombat, type Fin, type Compte } from './
 import { brancherTableau, htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre, type EcranDistrict } from './ui/district';
 import { PLANS, htmlIntro, imagesPlan } from './ui/intro';
 import { htmlTitre } from './ui/titre';
+import { htmlExploration } from './ui/exploration';
 import { activerCartes } from './ui/carte';
 import { NOMS_RARETE } from './core/collection';
 
@@ -62,6 +63,7 @@ function afficher() {
   let h = '';
   if (mode === 'titre') h = htmlTitre(jeu.introVue, !reduit);
   else if (mode === 'intro') h = htmlIntro(plan, lignesVues, !reduit, texteCache);
+  else if (mode === 'combat' && jeu.expedition?.carte && jeu.expedition.phase === 'carte') h = htmlExploration(jeu);
   else if (mode === 'combat' && jeu.expedition) {
     const etat = K.etat ?? jeu.expedition.combat;
     const lecon = jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;
@@ -239,6 +241,7 @@ function finPour(): Fin | null {
   const x = jeu.expedition;
   if (!x) return null;
   const s = x.combat;
+  if (x.carte && x.phase === 'carte') return null;
   if (x.tutoriel) {
     if (s.issue === 'victoire') return { titre: 'La porte cède', texte: 'Le gardien se dissipe en poussière lumineuse. Derrière lui, des cristaux aux souvenirs mélangés, et un vieux papier tamponné.', bouton: 'Remonter avec ce qu’on a trouvé', action: 'remonter' };
     if (s.issue === 'defaite') return { titre: 'Repoussés', texte: 'Le gardien a eu le dessus, cette fois. Vise les suites et protège-toi quand il annonce une grosse attaque.', bouton: 'Remonter et réessayer', action: 'remonter' };
@@ -252,6 +255,7 @@ function finPour(): Fin | null {
     if (x.terminee) {
       return { titre: `Strate −${x.strate} vaincue`, texte: `${nom} se disperse. L’escouade remonte avec ${x.butin} composants.${x.strate === jeu.strate ? ' Les ouvriers vont pouvoir creuser un nouvel étage.' : ''}`, bouton: 'Remonter au district', action: 'remonter' };
     }
+    if (x.carte) return { titre: 'Victoire', texte: `${nom} se dissipe. Butin : ${x.butin} composants. L’escouade reprend sa route : les PV ne remontent qu’aux campements.`, bouton: 'Retour à la carte', action: 'suivant' };
     return { titre: 'Victoire', texte: `${nom} se dissipe. Butin : ${x.butin} composants. L’escouade souffle un peu (+50 % de PV) : tu continues, ou tu remontes avec ce que tu as ?`, bouton: 'Combat suivant', action: 'suivant', bouton2: 'Remonter avec le butin', action2: 'remonter' };
   }
   return null;
@@ -424,6 +428,21 @@ racine.addEventListener('click', async (ev) => {
     case 'lancer': if (s && !K.verrou) { await jouer(C.lancer(s)); return; } break;
     case 'regles': K.regles = !K.regles; break;
     case 'suivant': J.continuer(jeu); K.fin = null; sauver(); window.scrollTo(0, 0); break;
+    case 'salle': {
+      const r = J.entrer(jeu, Number(id));
+      if (!r.ok && jeu.expedition) jeu.expedition.recit = r.message ?? '';
+      K.fin = null; K.etat = null; sauver(); window.scrollTo(0, 0);
+      break;
+    }
+    case 'repondre': {
+      const r = J.repondre(jeu, Number(id));
+      if (!r.ok && jeu.expedition) jeu.expedition.recit = r.message ?? '';
+      K.fin = null; K.etat = null; sauver();
+      break;
+    }
+    case 'retraite':
+      if (!J.retraite(jeu).ok) break;
+    // falls through : remonter avec le butin
     case 'remonter': {
       const r = J.remonter(jeu);
       K.fin = null;

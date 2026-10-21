@@ -201,7 +201,7 @@ describe('Les Marques des Porteurs', () => {
     j.porteurs.doran!.faits.fondations = 20;
     expect(bonusEscouade(j, ['ilka', 'doran', 'vela'])).toEqual({ bouclier: 8 });
     expect(partir(j, ['ilka', 'doran', 'vela'], 1, 3).ok).toBe(true);
-    expect(j.expedition!.combat.bouclier).toBe(8);
+    expect(j.expedition!.bonus).toEqual({ bouclier: 8 });
   });
 
   it('Véla Lectrice : la Dissonance n’a plus de prise', () => {

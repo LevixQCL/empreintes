@@ -2,13 +2,13 @@
 // et l'expédition en cours. Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms),
 // ce qui permet de rattraper le temps passé hors du jeu et de tester sans attendre.
 
-import { BATIMENTS, COLLECTION_DEPART, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, moduleDe, moduleDef, porteurDef, sequenceStrate, ennemiDef } from './donnees';
+import { BATIMENTS, COLLECTION_DEPART, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, moduleDe, moduleDef, porteurDef, ennemiDef } from './donnees';
 import {
   COLLECTION, NOMS_RARETE, ajouterCarte, gestesAvecModules, composantsNiveau, doublonsRequis, tirerCarte, tirerChoix,
   type CarteCollection,
 } from './collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from './fragments';
-import { cloturerCombat, combatSuivant, nouvelleExpedition, type Expedition } from './expedition';
+import { cloturerCombat, combatSuivant, entrerSalle, lancerCombat, nouvelleExpedition, nouvelleExploration, peutRemonter, type Expedition } from './expedition';
 import { graine, tireur } from './rng';
 import type { BatimentId, GesteDef, PorteurEtat, Rarete, BonusMarques } from './types';
 
@@ -674,8 +674,9 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   const porteurs: PorteurEtat[] = escouade.map((id) => ({ id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false }));
   const deck = [...escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX];
   const bonus = bonusEscouade(j, escouade);
-  j.expedition = nouvelleExpedition({
-    porteurs, deck, strate, rng, sequence: sequenceStrate(strate, rng, j.actes.chambre), facteur: j.actes.fin === 'scellement' ? 0.9 : 1,
+  // la Strate se parcourt salle par salle (exploration), jusqu'à son gardien
+  j.expedition = nouvelleExploration({
+    porteurs, deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1,
     ...(Object.keys(bonus).length ? { bonus } : {}),
   });
   log(j, `L’escouade descend dans la Strate −${strate}.`);
@@ -683,6 +684,92 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
 }
 
 /** Appelé quand le combat en cours vient de se terminer */
+// ---------- L'exploration des Strates ----------
+
+/** Les rencontres en route : chacune propose un petit choix qui touche au butin, aux PV ou au district */
+export const RENCONTRES: Record<string, (j: Jeu) => { titre: string; texte: string; options: string[] }> = {
+  veilleur: () => ({ titre: 'Un Veilleur sous les gravats', texte: 'Un fouilleur des Veilleurs de Sédime est coincé sous un éboulis. Il tient serré contre lui un carnet couvert de croquis.',
+    options: ['Le dégager et le soigner (−4 PV chacun)', 'Prendre son carnet et repartir', 'Passer ton chemin'] }),
+  pilleur: () => ({ titre: 'Un pilleur acculé', texte: 'Un pilleur de Strates, dos au mur, serre un sac plein de cristaux. Il ne cherche pas la bagarre.',
+    options: ['Le laisser filer', 'Lui prendre son sac', 'L’affronter pour tout récupérer'] }),
+  brigade: (j) => (j.actes.chambre === 'orseve'
+    ? { titre: 'Une patrouille alliée', texte: 'Une patrouille des Brigades du Serment de Veyr vous salue : depuis l’accord avec la Maison Orsève, vous êtes du même côté.',
+      options: ['Accepter leurs soins (+25 % de PV)', 'Les saluer et continuer'] }
+    : { titre: 'Les Brigades barrent la route', texte: 'Une patrouille du Serment de Veyr bloque le couloir. Leur sergent réclame un « droit de passage ».',
+      options: ['Payer le passage (20 composants)', 'Les contourner par les gaines (−5 PV chacun)', 'Forcer le passage'] }),
+  cristal: () => ({ titre: 'Un cristal qui murmure', texte: 'Dans une niche, un cristal ancien murmure. Le son ressemble à une voix, sans les mots.',
+    options: ['L’écouter', 'Le rapporter au district', 'Le laisser où il est'] }),
+  marchand: () => ({ titre: 'Un marchand des bas-fonds', texte: 'Un marchand a installé son étal dans une ancienne salle, entre deux lampes à algues. Il a « de tout, pour qui sait payer ».',
+    options: ['Échanger 30 composants contre une carte', 'Acheter des soins (15 composants, +30 % de PV)', 'Passer'] }),
+  source: () => ({ titre: 'Une source chaude', texte: 'Entre deux piliers, une source chaude jaillit de la roche. L’eau sent le fer et le sel.',
+    options: ['S’y reposer (+25 % de PV)', 'Continuer sans s’arrêter'] }),
+};
+
+const soigner = (x: Expedition, part: number) => x.porteurs.map((p) => ({ ...p, pv: Math.min(p.pvMax, Math.max(0, p.pv) + Math.round(p.pvMax * part)) }));
+const blesser = (x: Expedition, v: number) => x.porteurs.map((p) => ({ ...p, pv: p.pv > 0 ? Math.max(1, p.pv - v) : p.pv }));
+
+export function entrer(j: Jeu, salle: number): Resultat {
+  if (!j.expedition) return non('Aucune expédition en cours.');
+  const r = entrerSalle(j.expedition, salle);
+  j.expedition = r.x;
+  return r.ok ? { ok: true } : non(r.message ?? 'Impossible d’aller par là.');
+}
+
+/** Répond à la rencontre en cours */
+export function repondre(j: Jeu, choix: number): Resultat {
+  const x = j.expedition;
+  if (!x?.rencontre) return non('Personne à qui répondre.');
+  const id = x.rencontre;
+  const opts = RENCONTRES[id]!(j).options;
+  if (choix < 0 || choix >= opts.length) return non('Choix inconnu.');
+  const n = Math.round(8 * (1 + 0.25 * (x.strate - 1)));
+  const gains = { ...x.gains! };
+  let y: Expedition = { ...x, rencontre: undefined };
+  let recit = 'L’escouade reprend sa route.';
+  const allie = j.actes.chambre === 'orseve';
+  if (id === 'veilleur') {
+    if (choix === 0) { y.porteurs = blesser(x, 4); gains.eclats++; confier(j, 3); recit = 'Le Veilleur, reconnaissant, te confie un Éclat trouvé plus bas. Le quartier en entendra parler.'; }
+    else if (choix === 1) { y.butin += n * 2; confier(j, -3); recit = `Le carnet se revend bien : +${n * 2} composants. Le Veilleur, lui, s’en souviendra.`; }
+  } else if (id === 'pilleur') {
+    if (choix === 0) { confier(j, 2); recit = 'Le pilleur file sans demander son reste. Il racontera que le directeur sait être juste.'; }
+    else if (choix === 1) { y.butin += n * 2; recit = `Il lâche son sac et s’enfuit : +${n * 2} composants.`; }
+    else { gains.cartes++; y = lancerCombat({ ...y, recit: 'Le pilleur sort un pied-de-biche. Son sac contient une carte : elle sera à toi.' }, 'pilleur'); }
+  } else if (id === 'brigade') {
+    if (allie) { if (choix === 0) { y.porteurs = soigner(x, 0.25); recit = 'Les Brigades pansent l’escouade (+25 % de PV).'; } }
+    else if (choix === 0) { y.butin = Math.max(0, y.butin - 20); recit = 'Le sergent empoche les composants et s’écarte.'; }
+    else if (choix === 1) { y.porteurs = blesser(x, 5); recit = 'Les gaines sont étroites et brûlantes, mais vous passez (−5 PV chacun).'; }
+    else { confier(j, 2); y = lancerCombat({ ...y, recit: 'Le district ne paie pas pour passer chez lui.' }, 'brigadier'); }
+  } else if (id === 'cristal') {
+    const vela = x.porteurs.some((p) => p.id === 'vela' && p.pv > 0);
+    if (choix === 0) {
+      if (vela) { gains.eclats++; recit = 'Véla écoute longtemps. « Il a peur d’être oublié », dit-elle. Le cristal se fend et laisse un Éclat.'; }
+      else { y.porteurs = blesser(x, 3); recit = 'Le murmure s’accroche aux pensées de l’escouade. Personne ne dort bien ce soir-là (−3 PV chacun).'; }
+    } else if (choix === 1) { gains.cartes++; y.porteurs = blesser(x, 2); recit = 'Le cristal pèse lourd dans le sac, et il chuchote encore. Au district, il deviendra une carte (−2 PV chacun).'; }
+  } else if (id === 'marchand') {
+    if (choix === 0) {
+      if (y.butin < 30) return non('Il te faut 30 composants dans le butin de l’expédition.');
+      y.butin -= 30; gains.cartes++; recit = 'Le marchand glisse un cristal gravé dans ta main. Au district, il deviendra une carte.';
+    } else if (choix === 1) {
+      if (y.butin < 15) return non('Il te faut 15 composants dans le butin de l’expédition.');
+      y.butin -= 15; y.porteurs = soigner(x, 0.3); recit = 'Onguents d’algues et bandages propres : +30 % de PV.';
+    }
+  } else if (id === 'source') {
+    if (choix === 0) { y.porteurs = soigner(x, 0.25); recit = 'L’eau chaude délie les muscles (+25 % de PV).'; }
+  }
+  if (y.phase !== 'combat') y = { ...y, recit };
+  y.gains = gains;
+  j.expedition = y;
+  return { ok: true };
+}
+
+/** Remonte au district depuis l'entrée ou un campement, avec tout ce qui a été trouvé */
+export function retraite(j: Jeu): Resultat {
+  const x = j.expedition;
+  if (!x || !peutRemonter(x)) return non('On ne remonte qu’à l’entrée ou depuis un campement.');
+  j.expedition = { ...x, retraite: true, terminee: true };
+  return { ok: true };
+}
+
 export function finDeCombat(j: Jeu): void {
   if (!j.expedition) return;
   j.expedition = cloturerCombat(j.expedition);
@@ -702,11 +789,13 @@ export interface Retour {
 export function remonter(j: Jeu): Retour {
   const x = j.expedition;
   if (!x) return { butin: 0, nouvelleStrate: false, victoire: false, fragment: null, cartes: [], eclats: 0 };
-  const victoire = x.terminee && x.combat.issue === 'victoire';
-  const brut = victoire || x.combat.issue !== 'defaite' ? x.butin : Math.floor(x.butin * DISTRICT.butinDefaite);
+  const victoire = x.terminee && !x.retraite && x.combat.issue === 'victoire';
+  const defaite = x.combat.issue === 'defaite' && !x.retraite;
+  const brut = !defaite ? x.butin : Math.floor(x.butin * DISTRICT.butinDefaite);
   const butin = x.tutoriel ? brut : Math.round(brut * (j.actes.chambre === 'district' ? 1.2 : 1) * (j.actes.fin === 'pacte' ? 1.1 : 1));
   j.composants += butin;
-  for (const p of x.combat.porteurs) {
+  const finaux = x.carte && x.phase !== 'combat' ? x.porteurs : x.combat.porteurs;
+  for (const p of finaux) {
     const d = j.porteurs[p.id]!;
     const usure = DISTRICT.usureExpedition * (j.actes.fin === 'archives' ? 1.5 : 1);
     d.usure = Math.min(usureMax(p.id), d.usure + usure + (p.pv <= 0 ? DISTRICT.usureATerre : 0));
@@ -725,7 +814,7 @@ export function remonter(j: Jeu): Retour {
   }
 
   // les trouvailles : une chance de carte par combat normal gagné, un choix de 3 sur le boss
-  const victoires = x.combat.issue === 'victoire' ? x.index + 1 : x.index;
+  const victoires = x.carte ? (x.gagnes ?? 0) : x.combat.issue === 'victoire' ? x.index + 1 : x.index;
   const normales = victoires - (victoire ? 1 : 0);
   const t = tireur(j);
   const cartes: string[] = [];
@@ -750,13 +839,20 @@ export function remonter(j: Jeu): Retour {
     cartes.push(tirerCarte(j, x.strate));
     eclats += 2;
   }
+  // les trouvailles de l'exploration : une carte par salle scellée, les cartes offertes en route, Éclats et archives
+  if (x.gains) {
+    for (let k = 0; k < x.gains.elites; k++) cartes.push(tirerCarte(j, x.strate, 'cuivre'));
+    for (let k = 0; k < x.gains.cartes; k++) cartes.push(tirerCarte(j, x.strate));
+    eclats += x.gains.eclats;
+    if (x.gains.fragment) fragment = ajouterFragment(j) ?? fragment;
+  }
   for (const c of cartes) ajouterCarte(j, c);
   j.eclats += eclats;
-  confier(j, victoire ? CONFIANCE.victoire : x.combat.issue === 'defaite' ? CONFIANCE.defaite : 0);
+  confier(j, victoire ? CONFIANCE.victoire : defaite ? CONFIANCE.defaite : 0);
   // ce que chacun a vécu, pour ses Marques
   const vaincus = x.sequence.slice(0, victoires);
   const anciens = vaincus.filter((id) => ennemiDef(id).lignee === 'reso').length;
-  for (const p of x.combat.porteurs) {
+  for (const p of finaux) {
     const f = (j.porteurs[p.id]!.faits ??= {});
     const avant = progresMarque(j, p.id)?.acquise;
     if (victoire) f.expeditions = (f.expeditions ?? 0) + 1;

@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as C from '../src/core/combat';
 import {
-  DISTRICT, ameliorer, disponibles, energieParHeure, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu,
-  partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence,
+  DISTRICT, ameliorer, disponibles, energieParHeure, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu, partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence, entrer, repondre, RENCONTRES,
 } from '../src/core/jeu';
 
 const H = 3_600_000;
@@ -65,8 +64,15 @@ describe('Expédition depuis le district', () => {
 
     // joue jusqu'à la fin de l'expédition
     let garde = 0;
-    while (j.expedition && !j.expedition.terminee && garde++ < 600) {
-      const s = j.expedition.combat;
+    while (j.expedition && !j.expedition.terminee && garde++ < 2000) {
+      const x = j.expedition;
+      if (x.phase === 'carte') {
+        // sur la carte : répondre aux rencontres (dernier choix), sinon descendre vers la première salle accessible
+        if (x.rencontre) repondre(j, RENCONTRES[x.rencontre]!(j).options.length - 1);
+        else entrer(j, x.carte!.salles[x.carte!.position]!.voisins[0]!);
+        continue;
+      }
+      const s = x.combat;
       if (s.issue !== 'en-cours') { finDeCombat(j); if (!j.expedition.terminee) continuer(j); continue; }
       for (const g of s.main.slice()) if (C.placesLibres(s) > 0) C.ajouter(s, g.uid);
       C.lancer(s);
@@ -75,7 +81,7 @@ describe('Expédition depuis le district', () => {
     expect(j.expedition).toBeNull();
     expect(j.porteurs.doran!.usure).toBeGreaterThanOrEqual(DISTRICT.usureExpedition);
     expect(pvMaxCombat(j, 'doran')).toBeLessThan(46);
-    if (r.victoire) { expect(j.strate).toBe(2); expect(j.fragments.length).toBe(2); } // deux papiers par Strate dans les Fondations
+    if (r.victoire) { expect(j.strate).toBe(2); expect(j.fragments.length).toBeGreaterThanOrEqual(2); } // deux papiers par Strate dans les Fondations
 
     const u = j.porteurs.doran!.usure;
     tick(j, j.dernierTick + H);

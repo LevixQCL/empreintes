@@ -149,7 +149,7 @@ export function htmlCombat(e: Ecran): string {
 
   let h = `<div class="ecran ecran-combat${verrou ? ' verrouille' : ''}">`;
   h += `<header class="combat-barre"><div class="puces"><span class="puce">${ICO.strate}${lieu}</span>`
-    + (e.x.tutoriel ? '' : `<span class="puce">Combat ${e.x.index + 1}/${e.x.sequence.length}</span>`)
+    + (e.x.tutoriel ? '' : e.x.carte ? `<span class="puce">${e.x.carte.salles[e.x.carte.position]?.type === 'gardien' ? 'Gardien' : e.x.carte.salles[e.x.carte.position]?.type === 'elite' ? 'Salle scellée' : `Combat ${(e.x.gagnes ?? 0) + 1}`}</span>` : `<span class="puce">Combat ${e.x.index + 1}/${e.x.sequence.length}</span>`)
     + `<span class="puce">Tour ${s.tour}</span></div>`
     + `<button type="button" class="btn-icone" data-action="regles" aria-expanded="${e.regles}" aria-label="Règles">${ICO.aide}</button></header>`;
 
