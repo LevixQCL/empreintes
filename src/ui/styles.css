@@ -509,4 +509,4 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .titre-scene .t-vague{animation:reflet 4s ease-in-out infinite alternate}
 .titre-scene .t-pouls{animation:pulse 4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 @media (prefers-reduced-motion: reduce){ .titre *,.titre-fond{animation:none!important;opacity:1!important} }
-.titre-fond img{object-position:64% 50%}
+.titre-fond img{object-position:28% 50%}
