@@ -135,7 +135,7 @@ export const PLANS: Plan[] = [
 const ANNEES: [number, number][] = [[2026, 2026], [2026, 2034], [2040, 2057], [2057, 2085], [2062, 2062], [2062, 2068], [2071, 2090], [2088, 2101], [2121, 2121], [2121, 2121]];
 
 /** Illustrations Midjourney déjà déposées dans public/intro/ */
-export const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '05-puits-zero', '06-empreintes', '07-ascension', '09-oubli', '10-toi']);
+export const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-tempetes', '03-fracture', '04-hauteur', '05-puits-zero', '06-empreintes', '07-ascension', '08-reponse', '09-oubli', '10-toi']);
 /** Plans qui ont aussi une courte vidéo en boucle (public/intro/<id>.mp4), l'image sert d'affiche */
 export const VIDEOS_DISPONIBLES = new Set<string>(['10-toi']);
 
