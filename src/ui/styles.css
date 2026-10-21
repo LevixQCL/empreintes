@@ -454,7 +454,7 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 }
 /* ---------- Illustrations Midjourney (public/art/) ---------- */
 /* Pastille de Porteur : portrait cadré sur le visage, couleur de lignée en secours */
-.pastille{background-image:var(--img,none);background-size:cover;background-position:50% 12%}
+.pastille,.porteur .pastille,.chip .pastille,.habitant .pastille,.replique .pastille{background-image:var(--img,none);background-size:cover;background-position:50% 12%}
 .porteur .pastille{width:30px;height:30px;box-shadow:0 0 0 1.5px var(--c)}
 .replique .pastille{width:56px;height:56px}
 .habitant .pastille{width:26px;height:26px}
@@ -473,7 +473,10 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .carte .illus,.carte-mini .illus{width:calc(100% + 24px);margin:-12px -12px 2px;aspect-ratio:4/3;object-fit:cover;object-position:50% 35%;display:block;border-radius:10px 10px 0 0}
 /* Coupe sous la Tour : l'illustration derrière les étages */
 .coupe.illustree{position:relative;isolation:isolate;background:#121418}
-.coupe.illustree::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--decor) center 30%/cover no-repeat;opacity:.55}
-.coupe.illustree .etage.strate{background:color-mix(in srgb,#1B1510 72%,transparent);backdrop-filter:blur(1px)}
+.coupe.illustree::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--decor) center top/cover no-repeat;opacity:.9}
+.coupe.illustree .etage.tour{background:linear-gradient(rgba(18,20,24,.15),rgba(18,20,24,.55))}
+.coupe.illustree .etage.tour .label{color:#F2E6CC;text-shadow:0 1px 3px #000}
+.coupe.illustree .etage.strate{background:color-mix(in srgb,#1B1510 58%,transparent)}
+.coupe.illustree .etage.strate strong,.coupe.illustree .etage.strate small{text-shadow:0 1px 3px #000}
 .coupe.illustree .etage.roche{background:repeating-linear-gradient(135deg,rgba(23,19,15,.85) 0 10px,rgba(29,24,19,.85) 10px 20px)}
 @media (prefers-reduced-motion: reduce){ .archipel-svg .sprite.v4{animation:none} }
