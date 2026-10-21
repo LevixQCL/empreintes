@@ -468,8 +468,8 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .archipel-svg.nuit .voile{opacity:.42}
 .archipel-svg.nuit .sprite{filter:drop-shadow(0 6px 8px rgba(0,0,0,.4)) brightness(.78) saturate(.85)}
 .archipel-svg .ombre-eau{fill:#04121A;opacity:.45;filter:blur(3px)}
-.archipel-svg .ecume{fill:none;stroke:#E8F6F7;stroke-width:2;stroke-dasharray:6 4;opacity:.75;animation:ecume 3s ease-in-out infinite alternate}
-@keyframes ecume{from{stroke-dashoffset:0;opacity:.55}to{stroke-dashoffset:10;opacity:.85}}
+.archipel-svg .ecume{fill:none;stroke:#E8F6F7;stroke-width:3.5;stroke-linecap:round;opacity:.55;filter:blur(1.2px);animation:ecume 3.4s ease-in-out infinite alternate}
+@keyframes ecume{from{opacity:.4}to{opacity:.7}}
 .archipel-svg .sprite.v4{animation:legendaire 3.2s ease-in-out infinite alternate}
 @keyframes legendaire{from{filter:drop-shadow(0 6px 8px rgba(30,40,60,.25)) drop-shadow(0 0 0 rgba(191,230,255,0))}to{filter:drop-shadow(0 6px 8px rgba(30,40,60,.25)) drop-shadow(0 0 10px rgba(191,230,255,.8))}}
 /* Panneau d'un bâtiment : son apparence actuelle */
