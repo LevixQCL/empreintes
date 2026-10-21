@@ -40,6 +40,6 @@ export function htmlTitre(introVue: boolean, mouvement: boolean): string {
     + `<header class="titre-haut"><h1 class="titre-nom">${[...'EMPREINTES'].map((c, i) => `<span style="--i:${i}">${c}</span>`).join('')}</h1>`
     + `<p class="titre-sous">2121 · La mer monte. Le passé dort en dessous.</p></header>`
     + `<div class="titre-bas"><button type="button" class="prim titre-go" data-action="titre-jouer">${introVue ? 'Reprendre' : 'Commencer'}</button>`
-    + (introVue ? `<button type="button" class="btn-sec" data-action="intro">Revoir l’intro</button>` : '')
+    + `<div class="titre-sec">${introVue ? `<button type="button" class="btn-sec" data-action="intro">Revoir l’intro</button>` : ''}<button type="button" class="btn-sec" data-action="bibliotheque">Chroniques</button></div>`
     + `<span class="titre-indice">Touche l’écran</span><small class="titre-version">Alpha</small></div></section>`;
 }

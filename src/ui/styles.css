@@ -616,3 +616,48 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .carte-mini.avec-face{padding:8px;border-top:1px solid var(--line);gap:6px}
 .carte-mini.avec-face:hover,.carte-mini.avec-face:focus-visible{border-color:var(--gold)}
 .effets-carte{margin:0;padding:0;list-style:none;display:grid;gap:3px;font-size:12px;color:var(--quiet);text-align:left}
+
+/* ---------- Bibliothèque : Chroniques et Archives ---------- */
+:root{--lecture:'Literata', Georgia, 'Times New Roman', serif}
+.pastille-n{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:4px;border-radius:9px;background:var(--gold);color:#1A1612;font-family:var(--mono);font-size:11px;font-weight:600;vertical-align:1px}
+.onglets{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
+.onglets button{min-height:40px;border:0;border-radius:10px;background:transparent;color:var(--ink-2);font-size:14px}
+.onglets button[aria-selected="true"]{background:var(--surface-2);color:var(--ink);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 45%,transparent)}
+.chroniques-intro{margin:2px 2px 0;font-family:var(--lecture);font-style:italic;font-size:15px;line-height:1.55;color:var(--ink-2)}
+.livre{display:grid;gap:6px}
+.livre-titre{margin:10px 2px 2px;font-family:var(--display);font-weight:400;font-size:15px;letter-spacing:.04em;color:var(--gold)}
+.chapitre-ligne{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:10px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);text-align:left}
+.chapitre-ligne .num{flex:none;width:24px;font-family:var(--mono);font-size:12px;color:var(--quiet);text-align:right}
+.chapitre-ligne .txt{flex:1;display:grid;gap:2px;min-width:0}
+.chapitre-ligne strong{font-family:var(--lecture);font-weight:500;font-size:16px}
+.chapitre-ligne small{font-size:12.5px;color:var(--quiet)}
+.chapitre-ligne em{font-style:normal;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--gold);text-transform:uppercase}
+.chapitre-ligne .marque-neuf{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#1A1612;background:var(--gold);padding:3px 7px;border-radius:6px}
+.chapitre-ligne .lu{color:var(--quiet);font-size:13px}
+.chapitre-ligne.neuf{border-color:color-mix(in srgb,var(--gold) 50%,var(--line))}
+.chapitre-ligne.ferme{background:transparent;border-style:dashed;color:var(--ink-2)}
+.chapitre-ligne.ferme strong{color:var(--ink-2)}
+.chapitre-ligne .verrou{color:var(--quiet)}
+
+/* La page de lecture */
+.lecture{display:grid;gap:0;margin-inline:-2px}
+.lecture-tete{position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:150px;padding:14px 16px 18px;border-radius:16px;background:linear-gradient(170deg,#2A231B,#15120E);overflow:hidden;isolation:isolate}
+.lecture-tete.illustree{min-height:300px}
+.lecture-fond{position:absolute;inset:0;z-index:-2;overflow:hidden}
+.lecture-fond img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;animation:zoom-lent 18s ease-out forwards}
+.lecture-tete::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(10,9,8,.45) 0%,rgba(10,9,8,0) 30%,rgba(10,9,8,.55) 65%,rgba(10,9,8,.95) 100%)}
+.lecture-tete .btn-sec{align-self:flex-start;background:rgba(10,12,16,.4);border-color:rgba(255,255,255,.22);color:#F6F1E6;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.lecture-titre{display:grid;gap:6px;color:#F6F1E6}
+.lecture-titre .label{color:var(--gold)}
+.lecture-titre h1{margin:0;font-family:var(--lecture);font-weight:500;font-size:30px;line-height:1.15;text-wrap:balance;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.lecture-titre .epoque{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
+.lecture-texte{padding:22px 6px 6px;max-width:36em;margin-inline:auto}
+.lecture-texte p{margin:0 0 1.05em;font-family:var(--lecture);font-size:18px;line-height:1.7;color:#EDE4D0;text-wrap:pretty;hyphens:auto;-webkit-hyphens:auto}
+.lecture-texte p.lettrine::first-letter{float:left;font-family:var(--display);font-size:3.3em;line-height:.82;padding:.06em .1em 0 0;color:var(--gold)}
+.lecture-texte p.signature{text-align:right;font-style:italic;color:var(--ink-2);margin-top:1.4em}
+.lecture-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 6px 4px;border-top:1px solid var(--line);margin-top:8px}
+.lecture-nav .btn-sec,.lecture-nav .prim{max-width:100%;min-height:46px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lecture-nav .prim{margin-left:auto}
+.lecture-nav .discret{margin:0;margin-left:auto;text-align:right}
+.titre-sec{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+@media (prefers-reduced-motion: reduce){ .lecture-fond img{animation:none} }

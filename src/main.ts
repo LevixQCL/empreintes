@@ -36,7 +36,7 @@ let lignesVues = 1;
 let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
-const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial };
+const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel' };
 const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null } = {
   verrou: false, regles: false, pops: [], fin: null, etat: null,
 };
@@ -353,7 +353,24 @@ racine.addEventListener('click', async (ev) => {
     }
     case 'reprendre': mode = 'combat'; K.fin = finPour(); break;
     case 'rencontre': D.vue = 'rencontre'; break;
-    case 'codex': D.vue = 'codex'; break;
+    case 'codex':
+    case 'bibliotheque':
+      D.retourBiblio = mode === 'titre' ? 'titre' : D.vue === 'coupe' ? 'coupe' : 'archipel';
+      if (mode === 'titre') mode = 'district';
+      D.vue = 'codex'; D.chapitre = null; window.scrollTo(0, 0);
+      break;
+    case 'biblio-onglet': D.onglet = id === 'archives' ? 'archives' : 'chroniques'; D.chapitre = null; break;
+    case 'chapitre':
+      D.onglet = 'chroniques'; D.chapitre = id;
+      if (!jeu.lus.includes(id)) { jeu.lus.push(id); sauver(); }
+      window.scrollTo(0, 0);
+      break;
+    case 'chapitre-fermer': D.chapitre = null; window.scrollTo(0, 0); break;
+    case 'biblio-retour':
+      D.chapitre = null;
+      if (D.retourBiblio === 'titre') mode = 'titre';
+      else D.vue = D.retourBiblio;
+      break;
     case 'ouvrir-chambre': {
       const r = J.ouvrirChambre(jeu);
       resultat(r);

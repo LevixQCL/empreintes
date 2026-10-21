@@ -112,6 +112,8 @@ export interface Jeu {
   objectif: number;
   /** fragments d'archives trouvés, dans l'ordre */
   fragments: string[];
+  /** chapitres des Chroniques déjà lus */
+  lus: string[];
   eclats: number;
   /** les cartes possédées */
   collection: Record<string, CarteCollection>;
@@ -157,6 +159,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     recrues: false,
     objectif: 0,
     fragments: [],
+    lus: [],
     eclats: 0,
     collection: Object.fromEntries(COLLECTION_DEPART.map((id) => [id, { niveau: 1, doublons: 0 }])),
     sans: { argent: 0, or: 0, nacre: 0 },
@@ -185,6 +188,7 @@ function migrer(j: Jeu) {
   j.recrues ??= ancien;
   j.objectif ??= ancien && j.strate > 1 ? OBJECTIFS.length : 0;
   j.fragments ??= [];
+  j.lus ??= [];
   if (j.version === 2) {
     // version 3 : la collection de cartes, les Éclats, les chantiers, l'objectif du jour et l'Archive
     const now = j.dernierTick;

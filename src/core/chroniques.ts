@@ -1,0 +1,225 @@
+// Les Chroniques : l'histoire du monde racontée comme un récit, rangée dans la Bibliothèque du district.
+// Ce n'est pas un manuel : c'est une longue lettre d'Ysé, archiviste des Veilleurs de Sédime, née en 2049,
+// au nouveau directeur. Le début vient des récits de sa grand-mère Nell ; la suite, elle l'a vécue.
+// Les chapitres déjà racontés par l'intro sont ouverts dès le départ ; les plus profonds s'ouvrent en descendant.
+// Aucun pays, aucune personne et aucun conflit réel n'est nommé.
+
+export interface Chapitre {
+  id: string;
+  livre: 1 | 2 | 3;
+  titre: string;
+  epoque: string;
+  /** illustration de l'intro réutilisée en tête de chapitre (public/intro/<id>.webp) */
+  image?: string;
+  /** Strate qu'il faut avoir ouverte pour lire ce chapitre ; absent = ouvert dès le départ */
+  strate?: number;
+  /** une ligne visible tant que le chapitre est fermé */
+  teaser?: string;
+  paragraphes: string[];
+}
+
+export const LIVRES: Record<1 | 2 | 3, string> = {
+  1: 'Livre I · Ce que nous savions',
+  2: 'Livre II · Ce que nous avons trouvé',
+  3: 'Livre III · Ce qui dort en dessous',
+};
+
+export const CHAPITRES: Chapitre[] = [
+  {
+    id: 'lettre', livre: 1, titre: 'À l’intention du directeur', epoque: '2121',
+    paragraphes: [
+      'On m’a demandé de t’écrire. Pas les Veilleurs : eux voulaient un rapport, avec des cotes, des dates et des tampons. C’est ton district qui me l’a demandé, à sa façon. La femme qui vend des algues au pied de la Tour du Noyau m’a arrêtée hier soir : « Le nouveau ne sait rien. Racontez-lui. » Alors je raconte.',
+      'Je m’appelle Ysé. J’ai soixante-douze ans, des genoux de pilier fendu et la manie de tout noter. Je suis archiviste chez les Veilleurs de Sédime, ce qui veut dire que je passe mes journées à recoller ce que les autres ont jeté. Je n’ai pas de greffe. On me le reproche souvent, dans un sens ou dans l’autre.',
+      'Ce que tu vas lire n’est pas l’histoire officielle. L’histoire officielle tient sur une plaque de bronze, dans les Hauts, et elle est très belle. Celle-ci est plus longue, plus sale, et je crois qu’elle est plus vraie. Je l’ai faite avec ce qu’il me restait : les récits de ma grand-mère, les miens, et les papiers que les Strates nous rendent, morceau par morceau. Tu trouveras ces papiers dans tes Archives, à côté de ces pages. Lis-les aussi. Ils parlent mieux que moi.',
+      'Certains chapitres resteront fermés pour l’instant. Ce n’est pas de la coquetterie. Il y a des choses que je ne dirai qu’à quelqu’un qui est descendu assez bas pour les voir de ses propres yeux. Sinon, tu ne me croirais pas, et tu aurais raison.',
+      'Une dernière chose avant de commencer. Tout ce qui nous est arrivé tient en une phrase, et j’aimerais que tu la gardes en tête jusqu’au bout : nous nous sommes disputé ce que nous avions sous la main, et nous avons oublié ce qui montait. Nous l’avons fait une fois. Je crois que nous sommes en train de recommencer.',
+      'Ysé, à la Tour du Noyau, la troisième nuit après ton élection.',
+    ],
+  },
+  {
+    id: 'ligne-bleue', livre: 1, titre: 'La ligne bleue', epoque: 'Les années 2000 à 2019', image: '01-on-savait',
+    paragraphes: [
+      'Ma grand-mère s’appelait Nell. Elle avait dix ans quand le monde a appris qu’il se réchauffait. Ou plutôt quand le monde a décidé de l’entendre, parce que les savants le disaient depuis longtemps. Elle racontait ça comme on raconte une rencontre : un documentaire, un soir, dans une salle de classe. Des glaciers photographiés à trente ans d’écart, qui avaient reculé comme une marée qui ne reviendrait pas. Une voix calme, devant des courbes qui montaient.',
+      '« On est sortis de là bouleversés, disait-elle. Le lendemain, on éteignait les lumières en quittant les pièces. » Et elle riait, parce que c’était vrai, et parce que c’était tout.',
+      'Il faut que tu comprennes une chose : ils savaient. Pas vaguement. Ils avaient des chiffres, des cartes, des modèles qui se trompaient surtout en étant trop prudents. Ils savaient quelles côtes partiraient les premières, et à peu près quand. Il y avait des rapports si épais qu’il fallait deux mains pour les porter, et des résumés pour ceux qui n’avaient qu’une main de libre.',
+      'Et ils ne restaient pas les bras croisés. C’est ce que les gens des Hauts oublient quand ils parlent de « l’aveuglement des anciens ». Nell a marché. Des millions de jeunes ont marché, jour après jour, avec des pancartes peintes à la main : des terres en feu, des abeilles, des thermomètres. Il y a eu des sommets, des signatures, des promesses avec des dates rondes. On se serrait la main devant des rangées de drapeaux.',
+      'Les étés devenaient plus chauds. Chaque année, on battait un record, et chaque année, on s’en étonnait. Nell avait une expression pour ça : « On mettait le monde en sourdine. » On montait le son des alertes, puis on baissait celui des conséquences.',
+      'Dans tes Archives, il y a une photo de famille devant une maison, avec une ligne bleue peinte sur le mur, là où l’eau s’était arrêtée la première fois. Ce n’est pas la mienne. Mais chaque famille de ce temps-là a eu sa ligne bleue, tôt ou tard. Au début, c’était une plaisanterie. On la montrait aux invités.',
+    ],
+  },
+  {
+    id: 'infos', livre: 1, titre: 'Les infos du soir', epoque: 'Les années 2020', image: '02-ailleurs',
+    paragraphes: [
+      'Puis il s’est passé quelque chose que personne n’a décidé. Le climat n’a pas disparu des conversations : il a glissé. Du début du journal vers la fin. De la première page vers la dernière. Vingt secondes entre la météo et le sport, l’image d’un champ fendu par la sécheresse, et l’on passait à autre chose.',
+      'Ce n’était pas de l’indifférence. Nell a toujours refusé ce mot. C’était de la fatigue, et de la peur. D’autres peurs, plus proches. Les prix montaient : le pain, le chauffage, le loyer. Quand on compte ses pièces le vingt du mois, la fonte d’un glacier qu’on ne verra jamais pèse moins lourd que la facture posée sur la table.',
+      'Alors la colère a cherché des visages. À l’extrême gauche comme à l’extrême droite, chacun a trouvé les siens, et chaque camp criait d’autant plus fort que l’autre criait aussi. Les écrans s’en nourrissaient. Ceux du milieu baissaient la tête, ou choisissaient un bord pour ne plus rester seuls. Nell disait qu’on ne discutait plus : on se répondait.',
+      'Des guerres sont revenues. Pas une : plusieurs, ici et là. Je ne les nommerai pas. Ceux qui les ont faites ne sont plus là pour s’en expliquer, et leurs noms n’ont plus d’importance. Ce qui compte, c’est ce qu’elles ont coûté en attention. Une guerre, ça remplit tout l’écran. Une sécheresse, ça tient dans un coin.',
+      'Je ne te raconte pas ça pour juger. Si j’avais eu vingt ans en ce temps-là, j’aurais sans doute regardé ailleurs, moi aussi. C’est bien ce qui m’effraie. Tout le monde avait de bonnes raisons. Et pendant que tout le monde avait de bonnes raisons, sous les glaces, l’eau trouvait son chemin.',
+    ],
+  },
+  {
+    id: 'fonte', livre: 1, titre: 'La Fonte', epoque: '2030 – 2055', image: '03-tempetes',
+    paragraphes: [
+      'On dit « la Fonte » comme s’il s’agissait d’un jour. C’est faux, et c’est ce qui l’a rendue si dangereuse. Elle a duré un quart de siècle. Assez lentement pour qu’on s’y habitue, assez vite pour qu’on ne s’en remette pas.',
+      'La mer, au début, n’a monté que de quelques dizaines de centimètres. Ça ne paraît rien. Mais quand une tempête pousse l’eau, trente centimètres de plus, c’est une digue qui cède, une rue qui devient rivière, un puits d’eau douce qui devient salé pour toujours. Les assurances ont renoncé avant les habitants. Puis les habitants ont renoncé à leur tour.',
+      'Les étés ont tué, aussi. Les récoltes séchaient sur pied. Les fleuves passaient sans prévenir de la crue au lit de cailloux. Il y a eu des années où l’on ne savait plus s’il fallait espérer la pluie ou la craindre.',
+      'Et les gens sont partis. Des centaines de millions, sur des décennies. Tu as dans tes Archives la lettre jamais postée de quelqu’un qui marche depuis onze jours. Je l’ai lue cent fois. Ce qui me bouleverse, ce n’est pas la route. C’est l’inconnu qui porte sa fille sur ses épaules pendant des heures. Il y en a eu beaucoup, des inconnus comme lui. Personne ne les compte jamais.',
+      'Ma mère est née en 2026, dans une ville côtière qui n’existe plus. Elle a vu partir son quartier rue après rue. Moi, je suis née en 2049, sur la route, entre deux villes, à l’arrière d’un camion qui transportait autre chose que des enfants. On m’a appelée Ysé parce que c’était court, et facile à crier dans une foule.',
+      'Il y a eu des morts par millions. Je n’écrirai pas de chiffre plus précis : personne ne l’a vraiment, et ceux qui prétendent l’avoir s’en servent toujours pour quelque chose. Mais Nell répétait une chose, à la fin de sa vie : quand la Fonte s’est achevée, les vieilles querelles qui avaient rempli les écrans paraissaient soudain minuscules. Elles l’avaient toujours été. Il avait fallu tout ce chemin pour s’en apercevoir.',
+    ],
+  },
+  {
+    id: 'fracture', livre: 1, titre: 'Le matin de l’eau chaude', epoque: '2057', image: '03-fracture',
+    paragraphes: [
+      'J’avais huit ans. Je me souviens de l’heure, parce que tout le monde s’en souvient : six heures du matin. Ma mère faisait chauffer de l’eau. La radio du camp s’est tue au milieu d’une phrase. Puis une autre voix a pris le relais, une voix qui n’avait pas l’habitude de parler à la radio.',
+      'Au bout du monde, une partie de la calotte de l’Antarctique venait de se détacher. Pas de fondre : de se détacher. D’un bloc, comme une porte qui tombe de ses gonds. Les savants décrivaient ce risque depuis longtemps. Ils le jugeaient peu probable, et terrible. Ils avaient raison sur le deuxième point.',
+      'Un marin l’a vu de ses yeux, et son carnet a fini chez nous. Le craquement grand comme le monde, la falaise qui glisse « comme si elle avait décidé de partir », le chef de mission qui dit « peu probable » à voix haute, puis se tait jusqu’au soir. Ce silence-là, je crois que l’humanité entière l’a partagé ce jour-là.',
+      'La mer n’est pas montée d’un coup. Ce n’était pas comme dans les films qu’aimait Nell. Elle est montée de plusieurs mètres en quelques décennies, ce qui est à la fois très lent et absolument impossible à arrêter. Les plaines sont parties. Les villes basses sont parties. Des pays entiers ont changé de forme, puis on a cessé d’imprimer des cartes, parce qu’elles étaient fausses avant que l’encre ne sèche.',
+      'Depuis, on dit « avant » et « après la Fracture », comme on disait autrefois avant et après une guerre. Ma mère, elle, ne disait ni l’un ni l’autre. Elle disait « le matin de l’eau chaude ». Jusqu’à la fin de sa vie, elle n’a plus rien bu de chaud au réveil.',
+    ],
+  },
+  {
+    id: 'montee', livre: 1, titre: 'La Montée', epoque: '2057 – 2085', image: '04-hauteur',
+    paragraphes: [
+      'Quand on ne peut plus fuir sur les côtés, il reste deux directions. Nous avons pris les deux.',
+      'D’abord, on est montés. Les premières tours de secours étaient laides et magnifiques : du béton coulé à toute vitesse sur des piliers plantés dans l’eau, parfois sur les fondations des villes noyées. Quarante étages prévus, quatre-vingts possibles. On vivait dans les étages finis pendant qu’on coulait ceux du dessus. J’ai grandi au vingt-troisième étage d’une tour qui a fini par en compter cent dix. Le bruit des bétonnières a été ma berceuse.',
+      'Puis on a tendu des passerelles d’une tour à l’autre. C’est là, je crois, que la ville est vraiment née. Une tour, c’est un abri. Deux tours reliées, c’est un marché. Dix tours reliées, c’est un quartier, avec ses commérages, ses querelles de linge qui sèche et ses fêtes sur les toits. En une génération, les tours se sont touchées, puis mêlées, et un jour quelqu’un a donné un nom à l’ensemble : Vertiga.',
+      'Sous la ville, on a gardé les piliers. On les appelle les Fondations, et c’est sur elles que tout repose : les districts, les ascenseurs, les jardins, toi, moi. Des colonnes de roche et de béton qui plongent dans la mer comme des racines, couvertes de coquillages jusqu’à la ligne de marée et de mousse au-dessus. Personne n’y vit, officiellement. Officiellement.',
+      'Le plan de chantier rangé dans tes Archives porte une phrase écrite à la main : « Mon petit-fils finira le toit. » Je ne sais pas qui l’a écrite. Mais la tour n° 12 existe encore, et elle a un toit. Je suis allée vérifier.',
+      'Seulement voilà : une ville verticale a besoin d’abris, de citernes, de caves pour le jour où les tempêtes reviendraient plus fortes. Elle ne peut pas les mettre en haut. Alors, pendant qu’on montait, on a commencé à creuser.',
+    ],
+  },
+  {
+    id: 'puits-zero', livre: 2, titre: 'Le Puits Zéro', epoque: '2062', image: '05-puits-zero',
+    paragraphes: [
+      'Mon père s’appelait Joris. Il était chef d’équipe sur les chantiers d’abris, sous Vertiga. Il avait des mains énormes, une orthographe désespérée et une patience que je n’ai jamais retrouvée chez personne. Le premier rapport du Puits Zéro, celui qui dort dans tes Archives avec ses accents oubliés, c’est lui qui l’a écrit. Je l’ai reconnu à la troisième ligne.',
+      'Un soir de 2062, à 23 h 40, sa foreuse a débouché dans le vide. Ils ont cru à une grotte, une poche naturelle dans la roche sous les Fondations. Ce n’était pas une grotte. Les murs étaient lisses et courbes, sans une seule arête, comme si quelqu’un avait coulé la pièce entière dans un moule. Et dans ces murs, des pierres brillaient toutes seules, d’une lumière violette qui ne chauffait pas.',
+      'Il m’a raconté la suite vingt fois, jamais pareille. Personne ne voulait descendre en premier. Alors ils y sont allés tous ensemble, onze hommes et femmes en combinaison de chantier, épaule contre épaule, comme des enfants dans le noir. À l’intérieur, l’air sentait la pierre mouillée, et autre chose que mon père n’a jamais réussi à nommer. Il disait seulement : « Ça sentait comme une pièce d’où quelqu’un vient de sortir. »',
+      'La salle n’était pas humaine. Tout le monde l’a compris en une minute. Les proportions étaient fausses, les ouvertures trop hautes, les seuils trop étroits. Rien n’avait été bâti pour nos corps. Et elle était vieille. Les géologues ont d’abord parlé de dizaines de milliers d’années, puis de beaucoup plus, puis ils ont cessé de donner des chiffres.',
+      'On l’a appelée la Strate zéro, parce qu’on se doutait déjà qu’il y en aurait d’autres en dessous. On avait raison. Aujourd’hui, le Puits Zéro est un lieu de visite, avec un guichet, une rampe en laiton et des souvenirs en plastique. Mon père n’y est jamais retourné. Quand je lui demandais pourquoi, il haussait ses grandes épaules : « On n’entre pas deux fois chez quelqu’un sans y être invité. »',
+    ],
+  },
+  {
+    id: 'graveur', livre: 2, titre: 'Le Graveur', epoque: '2062 – 2068', image: '06-empreintes', strate: 2,
+    teaser: 'Comment on a appris à lire les cristaux, et à écrire dedans.',
+    paragraphes: [
+      'Pendant six ans, on a étudié les cristaux sans rien y comprendre. On les a pesés, chauffés, éclairés, découpés en lamelles. Ils ne réagissaient à rien de ce qu’on savait mesurer. Puis une chercheuse a remarqué, presque par hasard, qu’ils réagissaient aux voix. Pas aux sons : aux voix. Un violon les laissait de glace. Un enfant qui chantonnait les faisait frémir.',
+      'Ses notes disent : « Il ne stocke pas une énergie, il stocke quelqu’un. Ou la forme de quelqu’un. » Elle a écrit ça un soir, et le lendemain, je crois, elle a eu peur de ce qu’elle avait écrit. Parce que la question suivante était évidente, et que personne ne voulait la poser à voix haute : si l’on peut lire cette forme, peut-on l’inscrire ? Et si l’on peut l’inscrire, sur quoi ?',
+      'La réponse a d’abord porté un nom technique, puis un nom ordinaire : le Graveur. En 2068, on a appris à graver l’essence d’un être dans un cristal, comme on grave une médaille. Un savoir-faire, d’abord : le geste d’un vieux soudeur, le réflexe d’une coureuse, l’oreille d’un accordeur. Puis on a appris à greffer ce cristal sur quelqu’un d’autre. Le soudeur pouvait prendre sa retraite. Son geste, lui, continuait de travailler.',
+      'Cela a changé le monde plus vite que la Fracture. En dix ans, il y avait des cœurs de cristal dans les ateliers, dans les outils, dans les mains des chirurgiens. C’est de là que vient le mot que tu entends partout dans ton district : « graver », pour dire qu’on n’oubliera jamais. Les gens gardent toujours de l’humour pour les choses qui leur font peur.',
+      'Mais les cristaux des Strates, eux, n’étaient pas vides. Ils contenaient déjà quelque chose. Quelqu’un. Et la vraie question, celle que les Veilleurs se posent encore aujourd’hui, n’était pas de savoir comment les lire. C’était de savoir qui les avait gravés, et pourquoi on les avait enterrés si profond.',
+    ],
+  },
+  {
+    id: 'sept', livre: 2, titre: 'Les Sept', epoque: '2071', strate: 3,
+    teaser: 'Les premiers à avoir reçu une empreinte ancienne, et ce que la plaque de bronze ne dit pas.',
+    paragraphes: [
+      'On a cherché des volontaires. On en a trouvé beaucoup trop. C’est un détail que l’histoire de bronze ne mentionne jamais : il y a eu des milliers de candidats pour recevoir les premières empreintes anciennes. Des gens dont la ville était sur la côte. Des gens qui n’avaient plus rien à perdre. Des gens qui avaient tout perdu, et qui voulaient que ça serve à quelque chose.',
+      'L’un de leurs formulaires a survécu. Le nom est effacé. À la ligne « motivation », quelqu’un a écrit : « Ma ville est sur la côte. Si ça peut servir. » Plus bas, la case « risques compris par le candidat » n’est pas cochée. Je regarde souvent cette case vide. Je me demande si c’est un oubli, ou une forme d’honnêteté.',
+      'Ils ont été sept. Sept greffes, en secret, dans un laboratoire dont personne n’a jamais su l’adresse exacte. Une mèche d’or est apparue dans leurs cheveux, en une nuit, pour chacun d’eux. Et leur ombre a changé.',
+      'Il faut que je te parle de l’ombre, parce que tu en verras. Quand un Résonant se tient dans la lumière, son ombre n’est pas la sienne. Elle a la forme de l’être qu’il porte : des ailes, une queue, une silhouette qui n’a pas de nom. Elle bouge parfois une seconde trop tard, ou une seconde trop tôt. Les Hauts disent que c’est une marque de noblesse. Les districts disent « il a de l’ombre » de quelqu’un qui cache quelque chose. Les deux ont un peu raison.',
+      'Ce qu’on ne dit pas, je l’ai trouvé dans le carnet d’un médecin, à moitié moisi, au fond d’un carton des Veilleurs. Sur les sept, deux ne se sont jamais tout à fait réveillés eux-mêmes. Le carnet ne dit pas ce qu’ils sont devenus. Il dit seulement, trois jours après la greffe : « Le patient 5 me demande depuis ce matin des nouvelles d’une mer dont personne ici n’a jamais entendu parler. »',
+    ],
+  },
+  {
+    id: 'ascension', livre: 2, titre: 'L’Ascension', epoque: '2071 – 2090', image: '07-ascension',
+    paragraphes: [
+      'Les Sept sentaient venir les tempêtes. Pas grâce à des instruments : dans le corps. Une lourdeur derrière les yeux, une envie soudaine de fermer les fenêtres, une ville entière vue en rêve sous l’eau trois jours avant qu’elle n’y soit. Dans un monde où une tempête pouvait emporter cent mille personnes en une nuit, c’était le plus grand pouvoir qu’on puisse imaginer.',
+      'D’autres ont été greffés après eux, puis beaucoup d’autres. On les a appelés les Résonants, parce qu’ils semblaient vibrer avec quelque chose que les autres n’entendaient pas. Certains ont sauvé des villes entières. Je ne l’écris pas pour leur faire plaisir : c’est vrai, et ma propre tour leur doit d’être encore debout. En 2081, une Résonante a fait évacuer trois districts la veille d’une tempête que toutes les machines annonçaient faible. Les machines se trompaient. Elle, non.',
+      'Quand quelqu’un vous sauve la vie, vous lui confiez volontiers le reste. Alors les villes leur ont donné des conseils, puis des sièges, puis des clés. Certains Résonants ont reçu le pouvoir comme on reçoit une dette, et l’ont porté avec gravité. D’autres l’ont pris. Par la peur, par la force, par des Brigades qui maintenaient « l’ordre » dans les districts qui posaient trop de questions. La plaque de bronze ne parle que des premiers. Les districts se souviennent des seconds.',
+      'En vingt ans, les Résonants dirigeaient presque toutes les grandes villes. Leurs familles se sont installées en haut, de plus en plus haut, jusqu’à ce que les Hauts se détachent littéralement du reste : des îles qui flottent au-dessus des nuages, avec leurs palais blancs, leurs jardins suspendus et leurs fruits frais. Elles tiennent en l’air grâce à des cœurs de cristal tirés des premières Strates. Personne, en dehors des Hauts, ne sait vraiment comment. Moi non plus. C’est la seule chose de cette ville qui me fasse vraiment peur.',
+      'Depuis n’importe quel district, tu peux les voir glisser au loin, dans la lumière du matin. C’est très beau. C’est fait pour.',
+    ],
+  },
+  {
+    id: 'reponse', livre: 2, titre: 'La Réponse', epoque: '2088 – 2100', image: '08-reponse',
+    paragraphes: [
+      'Le reste de l’humanité n’a pas attendu à genoux. J’aimerais que tu l’écrives quelque part, toi aussi : les districts n’ont jamais attendu à genoux.',
+      'On ne pouvait pas tous recevoir une empreinte ancienne. Il n’y en avait pas assez, et les Hauts gardaient les meilleures. Alors on s’est refaits autrement. La machine d’abord : des ingénieurs des districts ont mis au point des implants à cœur de cristal gravé. Des jambes qui ne fatiguent pas, des yeux qui calculent, des mains qui ne tremblent plus. On les a appelés les Augmentés. Leurs tout premiers implants avaient un autre but, qu’ils rappellent avec fierté : ils servaient à brouiller les Résonants, à rendre une pensée illisible pour ceux qui sentaient trop de choses.',
+      'Il y a un prix. Les cœurs de cristal puisent dans le corps, et c’est d’abord la couleur qui s’en va, en commençant par les cheveux. Quelques mèches ternes après le premier implant, une tête presque blanche chez ceux qui en portent beaucoup. La plupart l’affichent comme un grade. Et il y a la facture : les pièces, les mises à jour, les abonnements. Un implant prêté peut être repris. Demande à Ilka.',
+      'La génétique ensuite. Ceux qui travaillaient dans les égouts, les Fondations et les chantiers des Strates ont emprunté au vivant ce qui résiste à l’eau, au noir et aux chocs : la carapace des scarabées, les yeux des chouettes, la cicatrisation de certains poissons. On les a appelés les Génés. Leur corps change lentement, et l’on ne revient pas en arrière. Ils disent que les Augmentés ont acheté leur force, que les Résonants l’ont volée, et qu’eux l’ont fait pousser.',
+      'Voilà comment sont nées les trois lignées. Ce ne sont pas des peuples. Ce sont trois réponses à la même peur. Chacune regarde les deux autres à travers ses propres blessures. Chacune a un peu raison sur les autres, et beaucoup tort sur elle-même. Comme tout le monde.',
+    ],
+  },
+  {
+    id: 'accords', livre: 2, titre: 'Les Accords', epoque: '2101',
+    paragraphes: [
+      'En 2101, après dix ans de grèves, de sabotages et de nuits où les passerelles brûlaient, on a signé les Accords de Vertiga. Je les ai lus. Ce sont quarante pages très bien écrites, qui disent en substance : les Hauts gouvernent, les districts élisent leurs directeurs, et tout le monde fait semblant d’être content.',
+      'Il ne faut pas s’en moquer. Une paix fragile vaut mieux qu’une guerre solide, et celle-ci a tenu vingt ans. Elle a permis aux districts de rebâtir leurs Cliniques, leurs Forges, leurs marchés. Elle a donné aux gens comme toi un titre, une écharpe et un bureau qui fuit. Elle a donné aux Hauts ce qu’ils voulaient vraiment : le calme.',
+      'Les Accords ont laissé une seule question sans réponse, et c’est celle qui t’attend. À qui appartient ce qu’on trouve sous ses pieds ? Les Hauts disent que les empreintes anciennes relèvent de leur garde, parce qu’eux seuls savent les porter. Les districts disent que ce qui dort sous leurs piliers est à eux, parce que ce sont eux qui creusent, qui portent les pierres et qui meurent dans les éboulements. Les Accords ont écrit : « à préciser ultérieurement ». Voilà vingt ans qu’on ne précise pas.',
+      'Je te le dis parce que ton district repose sur un ancien chantier d’abris des années 2060. Et que les vieux chantiers des années 2060 ne sont jamais tout à fait vides.',
+    ],
+  },
+  {
+    id: 'oubli', livre: 2, titre: 'On a oublié, encore', epoque: '2121', image: '09-oubli',
+    paragraphes: [
+      'Voici où nous en sommes, la troisième nuit après ton élection.',
+      'Les factions se disputent les empreintes. La Maison Orsève, la plus puissante des familles des Hauts, descend de l’un des Sept ; elle veut garder les greffes anciennes sous son contrôle, et son Serment de Veyr envoie ses Brigades « sécuriser » tout ce qui brille. Les Racines franches, le mouvement des Génés, veulent que plus personne ne modifie un corps sur commande. Le Réseau des Reprises, des réparateurs augmentés, veut libérer les implants de leurs brevets. Et nous, les Veilleurs de Sédime, voulons comprendre avant qu’on exploite. On nous trouve lents. Nous le sommes. C’est voulu.',
+      'Chacune de ces factions a ses gens bien et ses brutes. Ne te fie jamais à une bannière. Fie-toi aux gens, un par un.',
+      'Pendant ce temps, il se passe autre chose, et presque personne ne regarde. Les Fondations se fissurent. Pas partout, pas beaucoup : des lignes fines dans le béton, que les équipes d’entretien rebouchent la nuit. Et la mer remonte, de quelques centimètres par an. Les lignes d’eau peintes sur les vieux murs, celles qu’on montrait aux enfants comme des souvenirs, ne sont plus tout à fait au-dessus de la marée.',
+      'J’ai écrit des rapports. On les a classés. J’ai écrit aux Hauts. On m’a répondu très poliment. Je suis vieille, alors j’ai fini par reconnaître la musique : c’est celle des infos du soir dont parlait ma grand-mère. Vingt secondes, à la fin, entre la météo et le sport. Comme avant.',
+    ],
+  },
+  {
+    id: 'toi', livre: 2, titre: 'Toi', epoque: '2121', image: '00-titre',
+    paragraphes: [
+      'Il y a trois jours, ton district t’a élu. Pas par enthousiasme, ne te vexe pas : l’ancien directeur est parti après une saison de pannes et de raids, la Forge tourne au ralenti, la Clinique manque de tout, et le Bastion n’est qu’une palissade. Les gens ont voté pour le changement sans trop y croire. Ça leur laisse une chance d’être surpris.',
+      'Ton district est un archipel, comme tous ceux du milieu : des sommets de vieux piliers couverts de verdure, reliés par des passerelles, avec un bâtiment sur chacun. Au centre, le pilier le plus large porte la Tour du Noyau, bâtie au-dessus d’un puits de chantier des années 2060. Doran te montrera les accès qu’on a murés après « un accident » dont personne ne parle. Il les connaît. Il connaît tout ce qu’on a voulu oublier sous ce district.',
+      'Le lendemain matin, des ouvriers ont ouvert sous la Tour une chambre scellée depuis soixante ans. Une porte ronde, gravée de motifs qu’aucune main humaine n’a dessinés, et qui luit faiblement par ses joints. Derrière, des empreintes. Pas une : beaucoup, mêlées, comme si quelqu’un les avait rangées à la hâte.',
+      'Véla est venue me voir juste après. Elle lit les empreintes pour les fouilleurs depuis quinze ans, et je ne l’avais jamais vue comme ça. Elle m’a dit qu’elle avait peur, et que cette peur n’était pas la sienne. Et qu’on racontait que dans les Hauts, cette même nuit, des Résonants s’étaient réveillés sans savoir qui ils étaient.',
+      'Je ne sais pas encore ce qu’il y a dans cette chambre. Mais je sais que tout Vertiga va vouloir le savoir, et que tu es la personne la plus proche de la porte. Descends. Prends Ilka, Doran et Véla. Regarde tout. Et quand tu remonteras, viens me raconter. Je garde la suite ouverte pour toi.',
+    ],
+  },
+  {
+    id: 'theories', livre: 3, titre: 'Trois façons de se tromper', epoque: '2121', strate: 4,
+    teaser: 'Ce que chaque faction raconte sur les empreintes, et pourquoi.',
+    paragraphes: [
+      'Maintenant que tu as vu des empreintes de près, je peux te parler de ce qu’on raconte sur elles. Tout le monde, à Vertiga, a sa théorie. Trois comptent vraiment, et chacune a une faction pour la défendre.',
+      'Le don. C’est la version de la Maison Orsève, celle de la plaque de bronze. Les êtres anciens auraient choisi de survivre en nous. Ils nous auraient attendus, au fond, pendant des âges, et les Résonants seraient leurs héritiers légitimes. L’ombre en serait la preuve : on ne porte pas l’ombre d’un dragon par hasard. C’est une belle histoire. Elle a l’avantage, pour ceux qui la racontent, de faire de leur pouvoir une vocation.',
+      'L’outil. C’est ce que disent le Réseau des Reprises et les Racines franches. Une empreinte n’est qu’une donnée, comme un plan de chantier ou une chanson enregistrée. Elle n’a rien de sacré, et personne n’a le droit de gouverner parce qu’il en porte une. C’est une histoire rugueuse. Elle a l’avantage de rendre le pouvoir à ceux qui n’ont pas d’ombre.',
+      'L’avertissement. C’est la nôtre, chez les Veilleurs, et c’est la moins populaire. On n’enterre pas aussi profondément ce qu’on veut transmettre. On n’entoure pas de murs, de portes et de seuils trop étroits ce qu’on veut offrir. Quelqu’un, il y a très longtemps, a voulu qu’on ne les trouve jamais. Et nous les avons déterrées à la foreuse, au son des fanfares.',
+      'Je ne te dis pas laquelle croire. Je te demande de remarquer une chose : chacune de ces trois histoires arrange quelqu’un. Méfie-toi toujours de l’explication qui t’arrange. La mienne comprise.',
+    ],
+  },
+  {
+    id: 'portes', livre: 3, titre: 'Fermées de l’intérieur', epoque: 'Les Strates', image: '10-dessous', strate: 5,
+    teaser: 'Ce que racontent les portes des salles condamnées.',
+    paragraphes: [
+      'Tu es assez bas, maintenant. Tu as dû les voir.',
+      'Les portes. Dans les Strates profondes, beaucoup de salles sont condamnées. Les fouilleurs le savent depuis longtemps, sans y prêter attention : des ruines, ça s’effondre, ça se bouche. Mais regarde bien les verrous, la prochaine fois. Ces portes ne sont pas fermées de l’extérieur, comme on ferme une tombe. Elles sont fermées de l’intérieur. Ceux qui les ont scellées sont restés dedans.',
+      'Derrière, je ne trouve aucune trace de violence. Pas d’armes, pas de combat, rien de ce qu’on découvrirait dans un refuge pris d’assaut. Seulement des cristaux, rangés avec un soin presque maniaque. Comme si les derniers occupants avaient voulu mettre de l’ordre avant de partir. Ou mettre quelque chose à l’abri. Ou se mettre à l’abri de quelque chose.',
+      'Et puis il y a l’ordre de service de ton propre district, dans tes Archives : niveau 7, accès condamné « suite à l’incident du 14 », et cette note au crayon, dans la marge. Ils ont entendu quelqu’un pleurer derrière la paroi, et il n’y avait personne. Les ouvriers des années 2060 ont muré cet accès. Ils ont fait exactement ce qu’avaient fait les autres avant eux, beaucoup plus loin dans le temps : ils ont fermé la porte, et ils ont décidé de ne pas en parler.',
+      'Je me demande parfois si c’est notre seule vraie façon d’avoir peur : fermer la porte, et se taire.',
+    ],
+  },
+  {
+    id: 'deux-fois', livre: 3, titre: 'Le même, deux fois', epoque: 'Les Strates', strate: 7,
+    teaser: 'Une anomalie que les Veilleurs ne montrent à personne.',
+    paragraphes: [
+      'Les Veilleurs tiennent un registre que nous ne montrons à personne. Il recense une anomalie que nous ne savons pas expliquer.',
+      'Dans les Strates, on trouve parfois plusieurs cristaux qui portent l’empreinte du même individu. Rien d’étrange, au début : on se gravait sans doute plusieurs fois au cours d’une vie, comme on prend des photos. Mais dans certains cas, les souvenirs ne concordent pas. Le même être se souvient, dans un cristal, d’avoir grandi au bord d’une mer chaude, et dans un autre, d’être né sous la glace. Il aime ici ce qu’il hait là. Il porte deux enfances, trois deuils, des vies qui ne peuvent pas avoir été les siennes toutes à la fois.',
+      'Au début, nous avons cru à des erreurs de lecture. Véla elle-même l’a cru. Puis nous en avons trouvé d’autres, de plus en plus à mesure qu’on descendait. Comme si, plus ces êtres s’étaient enfoncés, moins ils avaient su qui ils étaient.',
+      'Et il y a les registres. Des tables gravées, que nous commençons à peine à lire, et qui ressemblent à des listes de greffes : des noms, des dates, des empreintes reçues. Certaines lignes portent dix, vingt, trente empreintes pour un seul individu. Sur les dernières tables, la colonne des noms a disparu. On n’y a plus gravé que les empreintes.',
+      'Je ne sais pas encore ce que ça veut dire. Ou plutôt si : je crois que je le sais, et je n’ai pas encore le courage de l’écrire. Descends encore. Quand tu seras là où nos fouilleurs sont allés, je te le dirai.',
+    ],
+  },
+  {
+    id: 'avant', livre: 3, titre: 'Ceux d’avant', epoque: 'Bien avant nous', strate: 10,
+    teaser: 'La vérité sur les empreintes. Ysé l’écrira quand tu l’auras vue.',
+    paragraphes: [
+      'Ils étaient comme nous. C’est ça, la vérité. Pas des monstres, pas des dragons, pas des héritiers qui nous auraient attendus. Un peuple.',
+      'Eux aussi avaient vu basculer leur climat. Eux aussi avaient fui la montée de quelque chose, l’eau ou la glace, les tables ne le disent pas clairement. Eux aussi s’étaient enfouis, couche après couche, à mesure que la surface devenait impossible. Et eux aussi avaient trouvé une façon de graver l’essence d’un être dans un cristal.',
+      'Au début, je crois que ça les a sauvés, comme ça nous a sauvés. On greffait le savoir des morts aux vivants. On gardait les gestes, les sciences, les métiers, les pressentiments. Mais une empreinte n’est pas un savoir neutre. Elle ne parle pas. Elle penche. Elle pousse tes peurs d’un côté, tes colères de l’autre, elle grossit ce que tu étais déjà. Un jour, tu ne sais plus lesquelles étaient à toi.',
+      'Une empreinte, on la porte. Dix, on commence à s’y perdre. Eux en portaient des dizaines. Et ils se sont disputés : pour les meilleures, pour les plus rares, pour celles de leurs plus grands, pendant que leur monde basculait au-dessus de leurs têtes. Ils ont perdu les deux combats. À la fin, ils ne distinguaient plus leurs propres souvenirs de ceux qu’ils avaient hérités. Il n’y avait plus personne pour se souvenir d’être quelqu’un.',
+      'Les derniers, ceux qui savaient encore, ont scellé ce qui restait. Ils ont fermé les portes de l’intérieur, ils ont rangé les cristaux, et ils ont disparu. Ce que nous avons appelé des dragons, des esprits, des êtres sans nom, ce sont eux. Ou ce qu’il reste d’eux : des formes de quelqu’un, mêlées, recopiées, qui ne savent plus de qui elles viennent. Et ce qu’ils avaient construit pour garder ces formes endormies est en train de s’user. C’est pour ça que les chambres se réveillent. C’est pour ça que Véla a des peurs qui ne sont pas les siennes, et que des Résonants des Hauts oublient leur propre nom.',
+      'Les Résonants ne mentent pas, directeur. Je veux que tu l’entendes. Ils se trompent. Leur pouvoir est réel, et leurs sauvetages aussi. Mais personne ne les a choisis. Nous avons ouvert une porte que quelqu’un avait fermée de l’intérieur pour nous protéger, et nous avons pris ce qu’il y avait derrière pour un cadeau.',
+      'Sceller à nouveau, partager, tout ouvrir : aucune de ces voies n’est la bonne, chacune répare une chose et en abîme une autre. Je ne choisirai pas à ta place. Je te demande seulement, quoi que tu décides, de regarder aussi la mer. Elle n’a pas oublié de monter.',
+      'Ysé',
+    ],
+  },
+];
+
+export const chapitreDef = (id: string) => CHAPITRES.find((c) => c.id === id);
+
+/** Un chapitre est ouvert si on a ouvert la Strate qu'il demande */
+export const chapitreOuvert = (c: Chapitre, strate: number) => !c.strate || strate >= c.strate;

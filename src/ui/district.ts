@@ -11,6 +11,7 @@ import {
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { Rarete } from '../core/types';
 import { FRAGMENTS } from '../core/fragments';
+import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
 import type { BatimentId } from '../core/types';
 import { COULEUR, FONDS, echap, panneauCompte, type Compte } from './vue';
 import { decor, sceneDistrict, illustrationBatiment, prochainVisuel, stylePastille, visuel } from './art';
@@ -29,6 +30,10 @@ export interface EcranDistrict {
   now: number;
   /** lignes du résumé « Pendant ton absence » (vide = rien à montrer) */
   retour: string[];
+  /** Bibliothèque : onglet, chapitre ouvert, et écran où revenir */
+  onglet: 'chroniques' | 'archives';
+  chapitre: string | null;
+  retourBiblio: 'archipel' | 'coupe' | 'titre';
 }
 
 const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');
@@ -202,7 +207,7 @@ export function htmlArchipel(e: EcranDistrict): string {
   let h = `<header class="top"><div><h1>EMPREINTES</h1><span class="sous">TON DISTRICT</span></div><div class="droite">`
     + (e.compte.actif ? `<button type="button" class="btn-sec" data-action="compte" aria-expanded="${e.compte.ouvert}">${e.compte.utilisateur ? 'Compte ✓' : 'Compte'}</button>` : '')
     + `<button type="button" class="btn-sec${objectifCourant(j)?.titre === 'Greffer une carte' && !objectifCourant(j)!.fait(j) ? ' visee' : ''}" data-action="cartes"${j.chambre ? '' : ' disabled'}>Cartes</button>`
-    + `<button type="button" class="btn-sec" data-action="intro">Intro</button></div></header>`;
+    + `<button type="button" class="btn-sec" data-action="bibliotheque">Chroniques${chapitresNouveaux(j) ? ` <span class="pastille-n">${chapitresNouveaux(j)}</span>` : ''}</button></div></header>`;
   h += panneauCompte(e.compte);
   h += barreRessources(e);
   if (!j.chambre && !j.expedition) {
@@ -355,17 +360,83 @@ export function htmlRencontre(): string {
 
 // ---------- Le Codex ----------
 
+/** Chapitres des Chroniques ouverts mais pas encore lus (pour la pastille « nouveau ») */
+export const chapitresNouveaux = (j: Jeu) => CHAPITRES.filter((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)).length;
+
+/** La Bibliothèque du district : les Chroniques d'Ysé et les Archives trouvées dans les Strates */
 export function htmlCodex(e: EcranDistrict): string {
   const j = e.j;
-  let h = `<header class="top"><div><h1>Codex</h1><span class="sous">${j.fragments.length} / ${FRAGMENTS.length} FRAGMENTS D’ARCHIVES</span></div><button type="button" class="btn-sec" data-action="coupe">Retour</button></header>`;
-  if (!j.fragments.length) h += `<p class="discret">Aucun fragment pour l’instant. On les trouve en ouvrant de nouvelles Strates.</p>`;
-  for (const id of j.fragments) {
-    const f = FRAGMENTS.find((x) => x.id === id);
-    if (!f) continue;
-    h += `<article class="fragment"><span class="label">${echap(f.support.toUpperCase())}</span><h2>${echap(f.titre)}</h2>${f.lignes.map((l) => `<p>${echap(l)}</p>`).join('')}</article>`;
+  if (e.onglet === 'chroniques' && e.chapitre) {
+    const c = chapitreDef(e.chapitre);
+    if (c && chapitreOuvert(c, j.strate)) return htmlChapitre(e, c.id);
   }
-  const reste = FRAGMENTS.length - j.fragments.length;
-  if (reste > 0) h += `<p class="discret">${reste} fragment${reste > 1 ? 's' : ''} encore enfoui${reste > 1 ? 's' : ''} dans les Strates.</p>`;
+  const ouverts = CHAPITRES.filter((c) => chapitreOuvert(c, j.strate)).length;
+  let h = `<header class="top"><div><h1>Bibliothèque</h1><span class="sous">${ouverts} / ${CHAPITRES.length} CHAPITRES · ${j.fragments.length} / ${FRAGMENTS.length} ARCHIVES</span></div><button type="button" class="btn-sec" data-action="biblio-retour">Retour</button></header>`;
+  const nouveaux = chapitresNouveaux(j);
+  h += `<div class="onglets" role="tablist">`
+    + `<button type="button" role="tab" aria-selected="${e.onglet === 'chroniques'}" data-action="biblio-onglet" data-id="chroniques">Chroniques${nouveaux ? ` <span class="pastille-n">${nouveaux}</span>` : ''}</button>`
+    + `<button type="button" role="tab" aria-selected="${e.onglet === 'archives'}" data-action="biblio-onglet" data-id="archives">Archives</button></div>`;
+  if (e.onglet === 'archives') {
+    h += `<p class="discret">Des papiers d’époque, trouvés un à un dans les Strates. Ysé y renvoie souvent dans ses Chroniques.</p>`;
+    if (!j.fragments.length) h += `<p class="discret">Aucun fragment pour l’instant. On les trouve en ouvrant de nouvelles Strates.</p>`;
+    for (const id of j.fragments) {
+      const f = FRAGMENTS.find((x) => x.id === id);
+      if (!f) continue;
+      h += `<article class="fragment"><span class="label">${echap(f.support.toUpperCase())}</span><h2>${echap(f.titre)}</h2>${f.lignes.map((l) => `<p>${echap(l)}</p>`).join('')}</article>`;
+    }
+    const reste = FRAGMENTS.length - j.fragments.length;
+    if (reste > 0) h += `<p class="discret">${reste} fragment${reste > 1 ? 's' : ''} encore enfoui${reste > 1 ? 's' : ''} dans les Strates.</p>`;
+    return h;
+  }
+  h += `<p class="chroniques-intro">Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi la troisième nuit après ton élection.</p>`;
+  for (const livre of [1, 2, 3] as const) {
+    h += `<section class="livre"><h2 class="livre-titre">${echap(LIVRES[livre])}</h2>`;
+    for (const c of CHAPITRES.filter((x) => x.livre === livre)) {
+      const n = CHAPITRES.indexOf(c) + 1;
+      if (chapitreOuvert(c, j.strate)) {
+        const neuf = !j.lus.includes(c.id);
+        h += `<button type="button" class="chapitre-ligne${neuf ? ' neuf' : ''}" data-action="chapitre" data-id="${c.id}">`
+          + `<span class="num">${n}</span><span class="txt"><strong>${echap(c.titre)}</strong><small>${echap(c.epoque)}</small></span>`
+          + (neuf ? `<span class="marque-neuf">Nouveau</span>` : `<span class="lu" aria-label="Lu">✓</span>`) + `</button>`;
+      } else {
+        h += `<div class="chapitre-ligne ferme" aria-disabled="true"><span class="num">${n}</span><span class="txt"><strong>${echap(c.titre)}</strong>`
+          + `<small>${echap(c.teaser ?? '')}</small><em>S’ouvre en atteignant la Strate −${c.strate}</em></span><span class="verrou" aria-hidden="true">${VERROU}</span></div>`;
+      }
+    }
+    h += `</section>`;
+  }
+  return h;
+}
+
+const VERROU = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+
+/** Typographie française : espace fine insécable avant : ; ? ! » et après « */
+const typo = (t: string) => t.replace(/ ([:;?!»])/g, '\u202F$1').replace(/« /g, '«\u202F').replace(/n° /g, 'n°\u00A0').replace(/(\d) h (\d)/g, '$1\u00A0h\u00A0$2');
+
+function htmlChapitre(e: EcranDistrict, id: string): string {
+  const j = e.j;
+  const c = chapitreDef(id)!;
+  const i = CHAPITRES.indexOf(c);
+  const lisibles = CHAPITRES.filter((x) => chapitreOuvert(x, j.strate));
+  const k = lisibles.indexOf(c);
+  const prec = lisibles[k - 1];
+  const suiv = lisibles[k + 1];
+  const prochainFerme = CHAPITRES.slice(i + 1).find((x) => !chapitreOuvert(x, j.strate));
+  let h = `<article class="lecture">`;
+  h += `<header class="lecture-tete${c.image ? ' illustree' : ''}">`
+    + (c.image ? `<div class="lecture-fond" aria-hidden="true"><img src="./intro/${c.image}.webp" alt="" decoding="async"></div>` : '')
+    + `<button type="button" class="btn-sec" data-action="chapitre-fermer">Sommaire</button>`
+    + `<div class="lecture-titre"><span class="label">${echap(LIVRES[c.livre].split(' · ')[0]!.toUpperCase())} · CHAPITRE ${i + 1}</span><h1>${echap(c.titre)}</h1><span class="epoque">${echap(c.epoque)}</span></div></header>`;
+  h += `<div class="lecture-texte">`;
+  c.paragraphes.forEach((p, n) => {
+    const signature = n === c.paragraphes.length - 1 && p.startsWith('Ysé') && p.length < 80;
+    h += `<p${signature ? ' class="signature"' : n === 0 ? ' class="lettrine"' : ''}>${typo(echap(p))}</p>`;
+  });
+  h += `</div><nav class="lecture-nav">`
+    + (prec ? `<button type="button" class="btn-sec" data-action="chapitre" data-id="${prec.id}">← ${echap(prec.titre)}</button>` : '<span></span>')
+    + (suiv ? `<button type="button" class="prim" data-action="chapitre" data-id="${suiv.id}">${echap(suiv.titre)} →</button>`
+      : prochainFerme ? `<p class="discret">La suite s’ouvrira en atteignant la Strate −${prochainFerme.strate}.</p>` : `<p class="discret">Fin des Chroniques. Pour l’instant.</p>`)
+    + `</nav></article>`;
   return h;
 }
 
@@ -378,7 +449,7 @@ export function htmlCoupe(e: EcranDistrict): string {
   let h = `<header class="top"><div><h1>Tour du Noyau</h1><span class="sous">EN COUPE · ${j.strate} ÉTAGE${j.strate > 1 ? 'S' : ''} CREUSÉ${j.strate > 1 ? 'S' : ''}</span></div>`
     + `<button type="button" class="btn-sec" data-action="archipel">Archipel</button></header>`;
   h += barreRessources(e);
-  h += `<section class="coupe illustree" aria-label="Coupe" style="--decor:url(${decor('coupe')})"><div class="etage tour"><div class="tete-tour"><span class="label">HABITATS</span><button type="button" class="btn-sec petit" data-action="codex">Codex · ${j.fragments.length}</button></div><div class="habitants">`;
+  h += `<section class="coupe illustree" aria-label="Coupe" style="--decor:url(${decor('coupe')})"><div class="etage tour"><div class="tete-tour"><span class="label">HABITATS</span><button type="button" class="btn-sec petit" data-action="bibliotheque">Bibliothèque</button></div><div class="habitants">`;
   for (const p of PORTEURS) {
     if (!porteursPresents(j).includes(p.id)) continue;
     const d = j.porteurs[p.id]!;
