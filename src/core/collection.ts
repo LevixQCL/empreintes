@@ -58,6 +58,8 @@ export interface EtatCollection {
   /** cartes tirées depuis la dernière de chaque rareté (pour les garanties) */
   sans: { argent: number; or: number; nacre: number };
   rng: number;
+  /** la fin choisie change les trouvailles (Grand Scellement : plus de nacre ; Archives ouvertes : deux fois plus) */
+  actes?: { fin?: string };
 }
 
 const rang = (r: Rarete) => RARETES.indexOf(r);
@@ -65,7 +67,9 @@ const rang = (r: Rarete) => RARETES.indexOf(r);
 /** Tire une rareté, en appliquant les garanties */
 export function tirerRarete(e: EtatCollection, strate: number, minimum: Rarete = 'fer'): Rarete {
   const t = tireur(e);
-  const table = tableRarete(strate);
+  const table = { ...tableRarete(strate) };
+  if (e.actes?.fin === 'scellement') { table.or += table.nacre; table.nacre = 0; }
+  if (e.actes?.fin === 'archives') { table.fer -= table.nacre; table.nacre *= 2; }
   let r: Rarete = 'fer';
   let v = t.nombre() * 100;
   for (const x of [...RARETES].reverse()) {
@@ -73,7 +77,7 @@ export function tirerRarete(e: EtatCollection, strate: number, minimum: Rarete =
     v -= table[x];
   }
   const g = COLLECTION.garanties;
-  if (strate >= 10 && e.sans.nacre + 1 >= g.nacre) r = 'nacre';
+  if (strate >= 10 && e.sans.nacre + 1 >= g.nacre && e.actes?.fin !== 'scellement') r = 'nacre';
   else if (strate >= 5 && e.sans.or + 1 >= g.or && rang(r) < rang('or')) r = 'or';
   else if (e.sans.argent + 1 >= g.argent && rang(r) < rang('argent')) r = 'argent';
   if (rang(r) < rang(minimum)) r = minimum;

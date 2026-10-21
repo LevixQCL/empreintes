@@ -245,7 +245,7 @@ function feuilleBatiment(e: EcranDistrict): string {
 /** Un grand choix de la campagne : la fenêtre ne se ferme qu'une fois la décision prise */
 function fenetreDecision(acte: Acte): string {
   const d = DECISIONS[acte];
-  const sur = acte === 'chambre' ? 'ACTE I · LA CHAMBRE' : 'ACTE II · LE CRIME ANCIEN';
+  const sur = acte === 'chambre' ? 'ACTE I · LA CHAMBRE' : acte === 'lecture' ? 'ACTE II · LE CRIME ANCIEN' : 'ACTE III · LA VÉRITÉ';
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="decision-titre"><div class="fenetre decision"><span class="surtitre">${sur}</span><h2 id="decision-titre">${echap(d.titre)}</h2><p>${echap(d.texte)}</p><div class="options-decision">`
     + d.options.map((o) => `<button type="button" class="option-decision" data-action="decider" data-acte="${acte}" data-id="${o.id}"><strong>${echap(o.nom)}</strong><em>« ${echap(o.phrase)} »</em><small>${echap(o.effet)}</small></button>`).join('')
     + `</div><small class="aide">Ce choix est définitif. Aucun n’est « le bon » : chacun règle une partie du problème et en aggrave une autre.</small></div></div>`;

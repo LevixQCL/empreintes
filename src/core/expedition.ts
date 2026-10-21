@@ -21,6 +21,8 @@ export interface Expedition {
   cloture: boolean;
   /** la chambre scellée : combat guidé du premier lancement */
   tutoriel?: boolean;
+  /** multiplicateur de la force des ennemis (la fin choisie par le joueur peut l'adoucir) */
+  facteur?: number;
 }
 
 /** Puissance des ennemis selon la profondeur */
@@ -30,7 +32,7 @@ export const butinCombat = (strate: number, index: number) => Math.round((index 
 
 export function nouvelleExpedition(opts: {
   porteurs: PorteurEtat[]; deck: GesteDef[]; strate: number; rng: number;
-  sequence?: string[]; force?: number; tutoriel?: boolean;
+  sequence?: string[]; force?: number; tutoriel?: boolean; facteur?: number;
 }): Expedition {
   const sequence = opts.sequence ?? sequenceStrate(opts.strate, opts.rng);
   return {
@@ -41,12 +43,13 @@ export function nouvelleExpedition(opts: {
     deck: opts.deck,
     combat: creerCombat({
       porteurs: opts.porteurs, ennemiId: sequence[0]!, rng: opts.rng, deck: opts.deck,
-      force: opts.force ?? forceStrate(opts.strate), ordonne: opts.tutoriel,
+      force: opts.force ?? forceStrate(opts.strate) * (opts.facteur ?? 1), ordonne: opts.tutoriel,
     }),
     butin: 0,
     terminee: false,
     cloture: false,
     ...(opts.tutoriel ? { tutoriel: true } : {}),
+    ...(opts.facteur && opts.facteur !== 1 ? { facteur: opts.facteur } : {}),
   };
 }
 
@@ -75,6 +78,6 @@ export function combatSuivant(x: Expedition): Expedition {
     index,
     porteurs,
     cloture: false,
-    combat: creerCombat({ porteurs, ennemiId: x.sequence[index]!, rng: x.combat.rng, deck: x.deck, force: forceStrate(x.strate) }),
+    combat: creerCombat({ porteurs, ennemiId: x.sequence[index]!, rng: x.combat.rng, deck: x.deck, force: forceStrate(x.strate) * (x.facteur ?? 1) }),
   };
 }

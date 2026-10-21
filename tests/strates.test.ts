@@ -132,3 +132,34 @@ describe('Acte II : la dernière lecture de Véla', () => {
     expect(gestesDe(r, 'vela').map((g) => g.nom)).not.toContain('Lecture profonde');
   });
 });
+
+import { tirerRarete } from '../src/core/collection';
+import { dureeChantier, partir } from '../src/core/jeu';
+
+describe('Acte III : les trois fins', () => {
+  it('la fin arrive après le Premier Porteur (Strate −10), une fois les deux autres choix faits', () => {
+    const j = nouveauJeu(0, 1);
+    j.chambre = true; j.strate = 11; j.actes = { chambre: 'commission', lecture: 'refuser' };
+    expect(decisionEnAttente(j)).toBe('fin');
+    expect(decider(j, 'fin', 'pacte').ok).toBe(true);
+    expect(decisionEnAttente(j)).toBeNull();
+  });
+
+  it('le Grand Scellement adoucit les ennemis et fait disparaître la nacre', () => {
+    const j = nouveauJeu(0, 1);
+    j.chambre = true; j.recrues = true; j.strate = 12; j.actes = { chambre: 'orseve', lecture: 'refuser', fin: 'scellement' };
+    expect(partir(j, ['ilka', 'doran', 'vela'], 12, 5).ok).toBe(true);
+    expect(j.expedition!.facteur).toBe(0.9);
+    const e = { collection: {}, sans: { argent: 0, or: 0, nacre: 599 }, rng: 3, actes: { fin: 'scellement' } };
+    for (let k = 0; k < 300; k++) expect(tirerRarete(e, 12)).not.toBe('nacre');
+  });
+
+  it('le Pacte allonge les chantiers', () => {
+    const j = nouveauJeu(0, 1);
+    j.batiments.forge = 3;
+    const avant = dureeChantier(j, 'forge');
+    expect(avant).toBeGreaterThan(0);
+    j.actes.fin = 'pacte';
+    expect(dureeChantier(j, 'forge')).toBe(Math.round(avant * 1.25));
+  });
+});

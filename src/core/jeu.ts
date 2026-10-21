@@ -111,7 +111,7 @@ export interface Jeu {
   /** les Porteurs de l'histoire arrivés plus tard (Sasha, Nuit, Aurel) */
   arrives: string[];
   /** les grands choix de la campagne (Bible : un choix important par acte) */
-  actes: { chambre?: GardeChambre; lecture?: LectureVela };
+  actes: { chambre?: GardeChambre; lecture?: LectureVela; fin?: FinCampagne };
   /** index de l'objectif guidé en cours (OBJECTIFS.length = tous faits) */
   objectif: number;
   /** fragments d'archives trouvés, dans l'ordre */
@@ -161,7 +161,22 @@ export const DECISION_LECTURE: { titre: string; texte: string; options: { id: Le
   ],
 };
 
-export const DECISIONS = { chambre: DECISION_CHAMBRE, lecture: DECISION_LECTURE } as const;
+/** Acte III, la vérité : trois fins, aucune n'est « la bonne » (Bible) */
+export type FinCampagne = 'scellement' | 'pacte' | 'archives';
+export const DECISION_FIN: { titre: string; texte: string; options: { id: FinCampagne; nom: string; phrase: string; effet: string }[] } = {
+  titre: 'La vérité',
+  texte: 'Le Premier Porteur est tombé, et son registre parle enfin : une autre civilisation s’est perdue en se gravant des empreintes, et ses premiers porteurs l’avaient écrit dès le début. Ces mêmes empreintes ont pourtant sauvé l’humanité après la Fonte. Le système qui les tient stables s’use. Il faut décider de ce qu’on en fait.',
+  options: [
+    { id: 'scellement', nom: 'Le Grand Scellement', phrase: 'Certaines vérités doivent rester enfouies.',
+      effet: 'Les empreintes anciennes sont scellées à nouveau. Moins de risques : les ennemis perdent 10 % de leur force. Du savoir perdu : plus aucune carte en nacre ne tombe.' },
+    { id: 'pacte', nom: 'Le Pacte des empreintes', phrase: 'Nous héritons de la responsabilité de les contenir, ensemble.',
+      effet: 'Leur contrôle est partagé entre les Hauts et les districts. Une paix fragile : +10 % de composants. Une nouvelle bureaucratie : les chantiers durent 25 % plus longtemps.' },
+    { id: 'archives', nom: 'Les Archives ouvertes', phrase: 'Une empreinte n’est qu’une donnée. Elle n’a rien de sacré.',
+      effet: 'Tout est révélé et accessible à tous. Plus de liberté : deux fois plus de cartes en nacre. Des accidents de greffe : l’Usure des expéditions augmente de moitié.' },
+  ],
+};
+
+export const DECISIONS = { chambre: DECISION_CHAMBRE, lecture: DECISION_LECTURE, fin: DECISION_FIN } as const;
 export type Acte = keyof typeof DECISIONS;
 
 /** Une décision de campagne attend le joueur : l'acte I se referme après la Strate −3, l'acte II après la Strate −6 */
@@ -169,6 +184,7 @@ export function decisionEnAttente(j: Jeu): Acte | null {
   if (!j.chambre) return null;
   if (j.strate >= 4 && !j.actes.chambre) return 'chambre';
   if (j.strate >= 7 && !j.actes.lecture) return 'lecture';
+  if (j.strate >= 11 && !j.actes.fin) return 'fin';
   return null;
 }
 
@@ -179,7 +195,7 @@ export function decider(j: Jeu, acte: string, choix: string): Resultat {
   if (!o) return non('Choix inconnu.');
   if (j.actes[acte as Acte]) return non('La décision est déjà prise.');
   (j.actes as Record<string, string>)[acte] = o.id;
-  log(j, acte === 'chambre' ? `La chambre est confiée à : ${o.nom}.` : `Véla : ${o.nom.toLowerCase()}.`);
+  log(j, acte === 'chambre' ? `La chambre est confiée à : ${o.nom}.` : acte === 'lecture' ? `Véla : ${o.nom.toLowerCase()}.` : `Fin de la campagne : ${o.nom}. Les Strates continuent.`);
   return { ok: true, message: `Décision prise : ${o.nom}.` };
 }
 
@@ -328,7 +344,7 @@ export function coutAmelioration(j: Jeu, b: BatimentId) {
 }
 
 /** Durée du chantier pour monter un bâtiment au niveau suivant, en ms */
-export const dureeChantier = (j: Jeu, b: BatimentId) => (DISTRICT.chantierMinutes[j.batiments[b] + 1] ?? 0) * 60_000;
+export const dureeChantier = (j: Jeu, b: BatimentId) => Math.round((DISTRICT.chantierMinutes[j.batiments[b] + 1] ?? 0) * 60_000 * (j.actes?.fin === 'pacte' ? 1.25 : 1));
 export const chantierDe = (j: Jeu, b: BatimentId) => j.chantiers.find((c) => c.batiment === b) ?? null;
 export const chantiersMax = (j: Jeu) => (j.batiments.noyau >= DISTRICT.chantiersNoyau2 ? 2 : 1);
 
@@ -614,7 +630,7 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   if (strate < 1 || strate > j.strate) return non('Cette Strate n’est pas encore creusée.');
   const porteurs: PorteurEtat[] = escouade.map((id) => ({ id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false }));
   const deck = [...escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX];
-  j.expedition = nouvelleExpedition({ porteurs, deck, strate, rng, sequence: sequenceStrate(strate, rng, j.actes.chambre) });
+  j.expedition = nouvelleExpedition({ porteurs, deck, strate, rng, sequence: sequenceStrate(strate, rng, j.actes.chambre), facteur: j.actes.fin === 'scellement' ? 0.9 : 1 });
   log(j, `L’escouade descend dans la Strate −${strate}.`);
   return { ok: true };
 }
@@ -641,11 +657,12 @@ export function remonter(j: Jeu): Retour {
   if (!x) return { butin: 0, nouvelleStrate: false, victoire: false, fragment: null, cartes: [], eclats: 0 };
   const victoire = x.terminee && x.combat.issue === 'victoire';
   const brut = victoire || x.combat.issue !== 'defaite' ? x.butin : Math.floor(x.butin * DISTRICT.butinDefaite);
-  const butin = j.actes.chambre === 'district' && !x.tutoriel ? Math.round(brut * 1.2) : brut;
+  const butin = x.tutoriel ? brut : Math.round(brut * (j.actes.chambre === 'district' ? 1.2 : 1) * (j.actes.fin === 'pacte' ? 1.1 : 1));
   j.composants += butin;
   for (const p of x.combat.porteurs) {
     const d = j.porteurs[p.id]!;
-    d.usure = Math.min(usureMax(p.id), d.usure + DISTRICT.usureExpedition + (p.pv <= 0 ? DISTRICT.usureATerre : 0));
+    const usure = DISTRICT.usureExpedition * (j.actes.fin === 'archives' ? 1.5 : 1);
+    d.usure = Math.min(usureMax(p.id), d.usure + usure + (p.pv <= 0 ? DISTRICT.usureATerre : 0));
   }
   let nouvelleStrate = false;
   let fragment: string | null = null;
