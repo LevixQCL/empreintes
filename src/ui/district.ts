@@ -56,11 +56,38 @@ const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'chantier'];
 /** Âge affiché au rendu précédent : un changement d'âge déclenche le fondu d'apparition */
 let ageAffiche = 0;
 
+/**
+ * La vidéo du tableau survit aux redessins (l'écran est reconstruit chaque seconde) : on garde le même élément
+ * et on le replace, il reprend là où il en était. Rien n'est joué si le joueur a réduit les animations.
+ */
+let video: HTMLVideoElement | null = null;
+export function brancherTableau(racine: HTMLElement) {
+  const place = racine.querySelector<HTMLElement>('.archipel .anime');
+  if (!place || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const src = place.dataset.video!;
+  if (!video || video.dataset.src !== src) {
+    video = document.createElement('video');
+    video.dataset.src = src;
+    video.src = src;
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('aria-hidden', 'true');
+    video.preload = 'auto';
+    video.addEventListener('playing', () => video?.classList.add('prete'));
+  }
+  place.append(video);
+  video.play().catch(() => { /* lecture auto refusée : le tableau fixe reste affiché */ });
+}
+
 function tableau(j: Jeu): string {
   const s = sceneDistrict(j.batiments.noyau);
   const nouveau = ageAffiche !== 0 && ageAffiche !== s.age;
   ageAffiche = s.age;
-  return `<img class="tableau${s.nuit ? ' nuit' : ''}${nouveau ? ' nouvel-age' : ''}" src="${s.url}" alt="" draggable="false"/>${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
+  return `<img class="tableau${s.nuit ? ' nuit' : ''}${nouveau ? ' nouvel-age' : ''}" src="${s.url}" alt="" draggable="false"/>`
+    + (s.video ? `<div class="anime" data-video="${s.video}"></div>` : '')
+    + `${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
 }
 
 function etiquettes(e: EcranDistrict): string {

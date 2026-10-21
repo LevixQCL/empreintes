@@ -68,8 +68,15 @@ export function stylePastille(id: string, fond: string | undefined): string {
  * La nuit (avant 7 h, dès 20 h, heure locale) n'est qu'une teinte posée en CSS.
  */
 const AGES_PEINTS = 4;
-export function sceneDistrict(niveauNoyau: number, maintenant = new Date()): { age: 1 | 2 | 3 | 4; url: string; nuit: boolean } {
+/** Âges dont l'animation (boucle Midjourney ralentie, raccord fondu) existe ; l'âge 4 reste fixe pour l'instant */
+const AGES_ANIMES = new Set([1, 2, 3]);
+export function sceneDistrict(niveauNoyau: number, maintenant = new Date()): { age: 1 | 2 | 3 | 4; url: string; video: string | null; nuit: boolean } {
   const age = visuel(niveauNoyau);
   const h = maintenant.getHours();
-  return { age, url: `${base}district/age-${Math.min(age, AGES_PEINTS)}.webp`, nuit: h < 7 || h >= 20 };
+  return {
+    age,
+    url: `${base}district/age-${Math.min(age, AGES_PEINTS)}.webp`,
+    video: AGES_ANIMES.has(age) ? `${base}district/age-${age}.mp4` : null,
+    nuit: h < 7 || h >= 20,
+  };
 }

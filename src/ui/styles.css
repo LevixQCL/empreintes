@@ -476,12 +476,18 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .coupe.illustree .etage.roche{background:repeating-linear-gradient(135deg,rgba(23,19,15,.85) 0 10px,rgba(29,24,19,.85) 10px 20px)}
 /* Tableau du district : un tableau par âge */
 .archipel .tableau{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none}
+.archipel .anime{position:absolute;inset:0;pointer-events:none}
+.archipel .anime video{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s}
+.archipel .anime video.prete{opacity:1}
 .archipel .tableau.nouvel-age{animation:nouvelAge 1.6s ease-out}
 @keyframes nouvelAge{from{opacity:0;filter:brightness(1.8) blur(6px)}to{opacity:1;filter:none}}
 .archipel .nuit-voile{position:absolute;inset:0;pointer-events:none;background:linear-gradient(#0B1630cc,#0B163066 45%,#0B163099);mix-blend-mode:multiply}
 .archipel .etiquette{min-height:36px;min-width:0;padding:3px 9px;background:rgba(14,16,20,.72)}
 .archipel .etiquette span{font-size:13px}
-@media (prefers-reduced-motion: reduce){ .archipel .tableau.nouvel-age{animation:none} }
+@media (prefers-reduced-motion: reduce){ .archipel .anime{position:absolute;inset:0;pointer-events:none}
+.archipel .anime video{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s}
+.archipel .anime video.prete{opacity:1}
+.archipel .tableau.nouvel-age{animation:none} }
 
 /* ---------- Écran titre ---------- */
 #app[data-mode="titre"]{min-height:100vh;min-height:100dvh}
