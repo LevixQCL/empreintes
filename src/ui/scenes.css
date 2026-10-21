@@ -109,9 +109,17 @@
 .intro-prog span.fait{background:rgba(246,241,230,.75)}
 .intro-prog span.ici{background:#F6F1E6;box-shadow:0 0 6px rgba(246,241,230,.7)}
 
-/* Voile de lecture : sombre seulement derrière le texte, l'image reste visible en haut */
+/* Voile de lecture : sombre seulement là où se pose le texte, le reste de l'illustration respire.
+   Texte en bas par défaut ; en haut (.texte-haut) quand le sujet de l'image est en bas. */
 .intro-voile{position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;
-  background:linear-gradient(180deg,rgba(8,10,14,.55) 0%,rgba(8,10,14,0) 16%,rgba(8,10,14,0) 46%,rgba(8,10,14,.72) 66%,rgba(8,10,14,.93) 100%);transition:opacity .5s ease}
+  background:linear-gradient(180deg,rgba(8,10,14,.5) 0%,rgba(8,10,14,0) 13%,rgba(8,10,14,0) 50%,rgba(8,10,14,.68) 67%,rgba(8,10,14,.92) 100%);transition:opacity .5s ease}
+.intro.texte-haut .intro-voile{background:linear-gradient(180deg,rgba(8,10,14,.92) 0%,rgba(8,10,14,.8) 28%,rgba(8,10,14,.38) 42%,rgba(8,10,14,0) 54%,rgba(8,10,14,0) 84%,rgba(8,10,14,.5) 100%)}
+.intro.texte-haut .intro-corps{margin-top:4px;margin-bottom:auto}
+.intro.texte-bas .ligne{min-height:4.5em}
+/* Une phrase à la fois : de petits points disent combien il en reste dans le plan */
+.intro-pas{display:flex;gap:6px;margin-top:2px}
+.intro-pas span{width:6px;height:6px;border-radius:50%;background:rgba(246,241,230,.3);transition:background .3s ease}
+.intro-pas span.fait{background:#E8C25A;box-shadow:0 0 6px rgba(232,194,90,.6)}
 .intro-corps{gap:10px;transition:opacity .45s ease,transform .45s ease}
 .intro-date{display:flex;align-items:baseline;gap:12px}
 .intro .compteur{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.1em;color:#E8C25A;font-variant-numeric:tabular-nums}
@@ -138,16 +146,18 @@
 .intro-fond.sortant{z-index:-2;animation:fondu-out 1.1s ease-in forwards}
 @keyframes fondu-out{to{opacity:0}}
 .intro-fond img,.intro-fond video{will-change:transform;animation-duration:22s;animation-timing-function:cubic-bezier(.25,.1,.25,1);animation-fill-mode:forwards}
-.cam-approche img{animation-name:cam-approche;transform-origin:50% 42%}
-.cam-recule img{animation-name:cam-recule;transform-origin:50% 50%}
+/* --fx/--fy : le sujet de l'illustration (plan.foyer) ; le zoom se fait autour de lui pour ne jamais le sortir du cadre */
+.cam-approche img{animation-name:cam-approche;transform-origin:var(--fx,50%) var(--fy,42%)}
+.cam-recule img{animation-name:cam-recule;transform-origin:var(--fx,50%) var(--fy,50%)}
 .cam-monte img{animation-name:cam-monte}
 .cam-descend img{animation-name:cam-descend}
 .cam-gauche img{animation-name:cam-gauche}
 .cam-droite img{animation-name:cam-droite}
 @keyframes cam-approche{from{transform:scale(1.04)}to{transform:scale(1.2)}}
 @keyframes cam-recule{from{transform:scale(1.22)}to{transform:scale(1.04)}}
-@keyframes cam-monte{from{transform:scale(1.16) translateY(6%)}to{transform:scale(1.16) translateY(-5%)}}
-@keyframes cam-descend{from{transform:scale(1.16) translateY(-6%)}to{transform:scale(1.16) translateY(5%)}}
+/* monte : le regard glisse vers le haut de l'image et finit sur le sommet ; descend : il finit sur le bas */
+@keyframes cam-monte{from{transform:scale(1.16) translateY(-6%)}to{transform:scale(1.16) translateY(5%)}}
+@keyframes cam-descend{from{transform:scale(1.16) translateY(6%)}to{transform:scale(1.16) translateY(-5%)}}
 @keyframes cam-gauche{from{transform:scale(1.18) translateX(6%)}to{transform:scale(1.18) translateX(-6%)}}
 @keyframes cam-droite{from{transform:scale(1.18) translateX(-6%)}to{transform:scale(1.18) translateX(6%)}}
 .intro-scene.scene-entre{animation:fondu-in 1s ease-out}

@@ -179,6 +179,7 @@ function majIntro(h: string): boolean {
   }
   ancien.className = neuf.className;
   ancien.dataset.plan = neuf.dataset.plan ?? '';
+  ancien.dataset.k = neuf.dataset.k ?? '';
   return true;
 }
 
