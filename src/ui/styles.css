@@ -464,10 +464,12 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 /* Bâtiments sur l'archipel : léger flottement, le légendaire scintille */
 .archipel-svg .sprite{filter:drop-shadow(0 6px 8px rgba(30,40,60,.25))}
 .archipel{background:#1E3A44}
-.archipel-svg .voile{fill:#0E1A24;opacity:.12}
-.archipel-svg.nuit .voile{opacity:.38}
-.archipel-svg.nuit .sprite{filter:drop-shadow(0 0 10px rgba(0,0,0,.55)) brightness(.95)}
-.archipel-svg.nuit .brume-pied{opacity:.45}
+.archipel-svg .voile{fill:#0B1630;opacity:0}
+.archipel-svg.nuit .voile{opacity:.42}
+.archipel-svg.nuit .sprite{filter:drop-shadow(0 6px 8px rgba(0,0,0,.4)) brightness(.78) saturate(.85)}
+.archipel-svg .ombre-eau{fill:#04121A;opacity:.45;filter:blur(3px)}
+.archipel-svg .ecume{fill:none;stroke:#E8F6F7;stroke-width:2;stroke-dasharray:6 4;opacity:.75;animation:ecume 3s ease-in-out infinite alternate}
+@keyframes ecume{from{stroke-dashoffset:0;opacity:.55}to{stroke-dashoffset:10;opacity:.85}}
 .archipel-svg .sprite.v4{animation:legendaire 3.2s ease-in-out infinite alternate}
 @keyframes legendaire{from{filter:drop-shadow(0 6px 8px rgba(30,40,60,.25)) drop-shadow(0 0 0 rgba(191,230,255,0))}to{filter:drop-shadow(0 6px 8px rgba(30,40,60,.25)) drop-shadow(0 0 10px rgba(191,230,255,.8))}}
 /* Panneau d'un bâtiment : son apparence actuelle */
@@ -484,7 +486,7 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .coupe.illustree .etage.strate{background:color-mix(in srgb,#1B1510 58%,transparent)}
 .coupe.illustree .etage.strate strong,.coupe.illustree .etage.strate small{text-shadow:0 1px 3px #000}
 .coupe.illustree .etage.roche{background:repeating-linear-gradient(135deg,rgba(23,19,15,.85) 0 10px,rgba(29,24,19,.85) 10px 20px)}
-@media (prefers-reduced-motion: reduce){ .archipel-svg .sprite.v4{animation:none} }
+@media (prefers-reduced-motion: reduce){ .archipel-svg .sprite.v4,.archipel-svg .ecume{animation:none} }
 
 /* ---------- Écran titre ---------- */
 #app[data-mode="titre"]{min-height:100vh;min-height:100dvh}

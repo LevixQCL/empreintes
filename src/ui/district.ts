@@ -51,9 +51,14 @@ const PILIERS: { id: BatimentId | 'chantier'; x: number; y: number; r: number }[
   { id: 'chantier', x: 306, y: 440, r: 60 },
 ];
 
+/** Anneau d'écume au pied d'un îlot : seulement l'arc avant, l'arrière passe derrière la roche */
+function ecume(x: number, y: number, rx: number, ry: number) {
+  return `<path class="ecume" d="M${x - rx} ${y} A${rx} ${ry} 0 0 0 ${x + rx} ${y}"/>`;
+}
+
 /** Emplacement du Chantier en attendant son illustration : une nappe de brume et un échafaudage esquissé */
 function emplacementChantier(x: number, y: number, r: number) {
-  return `<ellipse class="brume-pied" cx="${x}" cy="${y + 8}" rx="${r * 0.9}" ry="${r * 0.28}" fill="url(#halo)"/>`
+  return ecume(x, y + 4, r * 0.75, r * 0.2)
     + `<g class="esquisse" transform="translate(${x} ${y})" stroke="#F2E6CC" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".75"><path d="M-22 0 V-46 M22 0 V-46 M-22 -23 H22 M-22 -46 H22 M-22 0 L22 -46"/><path d="M-34 2 H34" stroke-dasharray="3 5"/></g>`;
 }
 
@@ -61,8 +66,10 @@ function emplacementChantier(x: number, y: number, r: number) {
 function spriteBatiment(id: BatimentId, x: number, y: number, r: number, niv: number) {
   const w = r * 2.4;
   const h = w * 1.25;
-  return `<ellipse class="brume-pied" cx="${x}" cy="${y + h * 0.36}" rx="${w * 0.42}" ry="${h * 0.07}" fill="url(#halo)"/>`
-    + `<image class="sprite v${visuel(niv)}" href="${illustrationBatiment(id, niv)}" x="${x - w / 2}" y="${y - h * 0.56}" width="${w}" height="${h}" preserveAspectRatio="xMidYMax meet" mask="url(#brume)"/>`;
+  const eau = y + h * 0.18;
+  return `<ellipse class="ombre-eau" cx="${x + w * 0.04}" cy="${eau + 4}" rx="${w * 0.36}" ry="${h * 0.06}"/>`
+    + `<image class="sprite v${visuel(niv)}" href="${illustrationBatiment(id, niv)}" x="${x - w / 2}" y="${y - h * 0.56}" width="${w}" height="${h}" preserveAspectRatio="xMidYMax meet" mask="url(#brume)"/>`
+    + ecume(x, eau, w * 0.25, h * 0.035);
 }
 
 function archipelSvg(j: Jeu): string {
@@ -75,8 +82,7 @@ function archipelSvg(j: Jeu): string {
   const fond = fondCarte();
   return `<svg class="archipel-svg${fond.nuit ? ' nuit' : ''}" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
-    <linearGradient id="fondu" x1="0" y1="0" x2="0" y2="1"><stop offset=".72" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
-    <radialGradient id="halo"><stop offset="0" stop-color="#EAF4F7" stop-opacity=".55"/><stop offset="1" stop-color="#EAF4F7" stop-opacity="0"/></radialGradient>
+    <linearGradient id="fondu" x1="0" y1="0" x2="0" y2="1"><stop offset=".7" stop-color="#fff"/><stop offset=".8" stop-color="#000"/></linearGradient>
     <mask id="brume" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#fondu)"/></mask>
   </defs>
   <image class="fond-carte" href="${fond.url}" width="400" height="600" preserveAspectRatio="xMidYMid slice"/>
