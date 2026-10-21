@@ -400,8 +400,9 @@ racine.addEventListener('click', async (ev) => {
     case 'chapitre-fermer': D.chapitre = null; window.scrollTo(0, 0); break;
     case 'biblio-retour':
       D.chapitre = null;
-      if (D.retourBiblio === 'titre') mode = 'titre';
-      else D.vue = D.retourBiblio;
+      // revenu à l'écran titre, « Reprendre » doit ramener au district, pas à la Bibliothèque
+      if (D.retourBiblio === 'titre') { mode = 'titre'; ouvrir('archipel'); }
+      else ouvrir(D.retourBiblio);
       break;
     case 'ouvrir-chambre': {
       const r = J.ouvrirChambre(jeu);
