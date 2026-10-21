@@ -380,11 +380,17 @@ export const ZONES: { nom: string; jusqua: number; ennemis: string[]; boss: stri
 ];
 export const zoneDe = (strate: number) => ZONES.find((z) => strate <= z.jusqua)!;
 
-/** La séquence d'une expédition : deux ennemis différents de la zone, puis son gardien (déterministe selon `rng`) */
-export function sequenceStrate(strate: number, rng: number): string[] {
+/**
+ * La séquence d'une expédition : deux ennemis différents de la zone, puis son gardien (déterministe selon `rng`).
+ * Le choix de l'acte I la change : les Brigades alliées (Orsève) disparaissent, les Brigades hostiles (district seul) s'imposent.
+ */
+export function sequenceStrate(strate: number, rng: number, garde?: string): string[] {
   const z = zoneDe(strate);
   const etat = { rng: (rng ^ 0x5bd1e995) >>> 0 };
-  const [a, b] = tireur(etat).melanger(z.ennemis);
+  let pool = z.ennemis;
+  if (garde === 'orseve') pool = pool.filter((id) => id !== 'brigadier');
+  let [a, b] = tireur(etat).melanger(pool);
+  if (garde === 'district' && pool.includes('brigadier') && a !== 'brigadier' && b !== 'brigadier') b = 'brigadier';
   return [a!, b!, z.boss];
 }
 

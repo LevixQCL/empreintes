@@ -2,7 +2,7 @@
 // et l'expédition en cours. Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms),
 // ce qui permet de rattraper le temps passé hors du jeu et de tester sans attendre.
 
-import { BATIMENTS, COLLECTION_DEPART, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, moduleDe, moduleDef, porteurDef } from './donnees';
+import { BATIMENTS, COLLECTION_DEPART, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, moduleDe, moduleDef, porteurDef, sequenceStrate } from './donnees';
 import {
   COLLECTION, NOMS_RARETE, ajouterCarte, gestesAvecModules, composantsNiveau, doublonsRequis, tirerCarte, tirerChoix,
   type CarteCollection,
@@ -110,6 +110,8 @@ export interface Jeu {
   recrues: boolean;
   /** les Porteurs de l'histoire arrivés plus tard (Sasha, Nuit, Aurel) */
   arrives: string[];
+  /** les grands choix de la campagne (Bible : un choix important par acte) */
+  actes: { chambre?: GardeChambre };
   /** index de l'objectif guidé en cours (OBJECTIFS.length = tous faits) */
   objectif: number;
   /** fragments d'archives trouvés, dans l'ordre */
@@ -129,6 +131,33 @@ export interface Jeu {
   quotidien: { jour: number; reserve: number; type: TypeQuotidien; progres: number };
   /** Archive de la semaine : points de la semaine en cours, paliers à ouvrir de la semaine passée */
   archive: { semaine: number; points: number; aOuvrir: number };
+}
+
+/** Acte I, le choix : qui garde la chambre ? */
+export type GardeChambre = 'orseve' | 'district' | 'commission';
+export const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: GardeChambre; nom: string; phrase: string; effet: string }[] } = {
+  titre: 'Qui garde la chambre ?',
+  texte: 'La Confluence est tombée, et tout Vertiga parle de la chambre aux empreintes mêlées. Les Brigades du Serment de Veyr sont au pied de la Tour, les Veilleurs de Sédime demandent à l’étudier, et le quartier attend ta décision.',
+  options: [
+    { id: 'orseve', nom: 'La Maison Orsève', phrase: 'Nous n’héritons pas du pouvoir. Nous héritons de la responsabilité de le contenir.',
+      effet: 'Les Brigades sécurisent la chambre et ne te barrent plus la route dans les Strates. Les Hauts paient : +1 Éclat sur chaque gardien vaincu.' },
+    { id: 'district', nom: 'Le district seul', phrase: 'Ce qui est sous nos piliers est à nous.',
+      effet: 'Le quartier se mobilise : +20 % de composants à chaque expédition. Mais les Brigades contestent, et tu les croiseras dans les salles closes.' },
+    { id: 'commission', nom: 'Une commission avec les Veilleurs', phrase: 'Nous ne sommes pas les propriétaires du passé. Nous sommes les prochains à pouvoir le perdre.',
+      effet: 'Les Veilleurs partagent leurs fouilles : 20 % de chances de carte par combat au lieu de 15 %.' },
+  ],
+};
+
+/** Une décision de campagne attend le joueur (l'acte I se referme avec la Strate −3) */
+export const decisionEnAttente = (j: Jeu): 'chambre' | null => (j.chambre && j.strate >= 4 && !j.actes.chambre ? 'chambre' : null);
+
+export function deciderChambre(j: Jeu, choix: string): Resultat {
+  const o = DECISION_CHAMBRE.options.find((x) => x.id === choix);
+  if (!o) return non('Choix inconnu.');
+  if (j.actes.chambre) return non('La décision est déjà prise.');
+  j.actes.chambre = o.id;
+  log(j, `La chambre est confiée à : ${o.nom}.`);
+  return { ok: true, message: `Décision prise : ${o.nom}.` };
 }
 
 export interface Resultat {
@@ -158,6 +187,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     chambre: false,
     recrues: false,
     arrives: [],
+    actes: {},
     objectif: 0,
     fragments: [],
     lus: [],
@@ -187,6 +217,7 @@ function migrer(j: Jeu) {
   j.chambre ??= ancien && j.strate > 1;
   j.recrues ??= ancien;
   j.arrives ??= [];
+  j.actes ??= {};
   for (const p of PORTEURS) j.porteurs[p.id] ??= { usure: 0, poste: null, modules: [] };
   j.objectif ??= ancien && j.strate > 1 ? OBJECTIFS.length : 0;
   j.fragments ??= [];
@@ -548,7 +579,7 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   if (strate < 1 || strate > j.strate) return non('Cette Strate n’est pas encore creusée.');
   const porteurs: PorteurEtat[] = escouade.map((id) => ({ id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false }));
   const deck = [...escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX];
-  j.expedition = nouvelleExpedition({ porteurs, deck, strate, rng });
+  j.expedition = nouvelleExpedition({ porteurs, deck, strate, rng, sequence: sequenceStrate(strate, rng, j.actes.chambre) });
   log(j, `L’escouade descend dans la Strate −${strate}.`);
   return { ok: true };
 }
@@ -574,7 +605,8 @@ export function remonter(j: Jeu): Retour {
   const x = j.expedition;
   if (!x) return { butin: 0, nouvelleStrate: false, victoire: false, fragment: null, cartes: [], eclats: 0 };
   const victoire = x.terminee && x.combat.issue === 'victoire';
-  const butin = victoire || x.combat.issue !== 'defaite' ? x.butin : Math.floor(x.butin * DISTRICT.butinDefaite);
+  const brut = victoire || x.combat.issue !== 'defaite' ? x.butin : Math.floor(x.butin * DISTRICT.butinDefaite);
+  const butin = j.actes.chambre === 'district' && !x.tutoriel ? Math.round(brut * 1.2) : brut;
   j.composants += butin;
   for (const p of x.combat.porteurs) {
     const d = j.porteurs[p.id]!;
@@ -600,13 +632,13 @@ export function remonter(j: Jeu): Retour {
   const cartes: string[] = [];
   let eclats = 0;
   for (let k = 0; k < normales; k++) {
-    if (t.nombre() < COLLECTION.chanceCombat) cartes.push(tirerCarte(j, x.strate));
+    if (t.nombre() < COLLECTION.chanceCombat + (j.actes.chambre === 'commission' ? 0.05 : 0)) cartes.push(tirerCarte(j, x.strate));
     if (x.strate >= 5 && t.nombre() < 0.1) eclats++;
   }
   progresser(j, 'combat', victoires);
   if (victoire) {
     j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate) });
-    eclats += x.strate >= 5 ? 2 : 1;
+    eclats += (x.strate >= 5 ? 2 : 1) + (j.actes.chambre === 'orseve' ? 1 : 0);
     progresser(j, 'expedition');
   }
   if (victoire && x.strate === j.strate) {

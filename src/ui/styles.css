@@ -588,3 +588,13 @@ h1,h2,h3{font-weight:400}
 .frequences-deck .barre small{font-family:var(--mono);font-size:10px;color:var(--quiet)}
 .frequences-deck .barre.trou b{color:var(--danger)}
 .frequences-deck .barre.trou i{background:transparent;border:1px dashed var(--danger);height:8px}
+
+/* Grand choix de campagne (acte I : qui garde la chambre ?) */
+.fenetre.decision{max-width:520px;text-align:left}
+.options-decision{display:grid;gap:8px}
+.option-decision{display:grid;gap:4px;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);font-weight:400;min-height:0}
+.fenetre .option-decision{background:var(--surface-2);color:var(--ink-2);font-weight:400}
+.option-decision strong{font-family:var(--display);font-weight:400;font-size:19px;color:var(--ink)}
+.option-decision em{font-size:13px;color:var(--gold)}
+.option-decision small{font-size:13px;color:var(--quiet);line-height:1.4}
+.option-decision:hover,.option-decision:focus-visible{border-color:var(--gold)}

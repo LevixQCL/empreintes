@@ -5,9 +5,7 @@
 import { libelleEffet } from '../core/effets';
 import { GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, ennemiDef, gestesRemplaces, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles,
-  dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant,
-  porteursPresents, posteDe, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste,
+  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISION_CHAMBRE, decisionEnAttente,
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
@@ -244,6 +242,14 @@ function feuilleBatiment(e: EcranDistrict): string {
   return h + `</footer></section>`;
 }
 
+/** Un grand choix de la campagne : la fenêtre ne se ferme qu'une fois la décision prise */
+function fenetreDecision(): string {
+  const d = DECISION_CHAMBRE;
+  return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="decision-titre"><div class="fenetre decision"><span class="surtitre">ACTE I · LA CHAMBRE</span><h2 id="decision-titre">${echap(d.titre)}</h2><p>${echap(d.texte)}</p><div class="options-decision">`
+    + d.options.map((o) => `<button type="button" class="option-decision" data-action="decider" data-id="${o.id}"><strong>${echap(o.nom)}</strong><em>« ${echap(o.phrase)} »</em><small>${echap(o.effet)}</small></button>`).join('')
+    + `</div><small class="aide">Ce choix est définitif. Aucun n’est « le bon » : chacun règle une partie du problème et en aggrave une autre.</small></div></div>`;
+}
+
 export function htmlArchipel(e: EcranDistrict): string {
   const j = e.j;
   // le tableau garde ses proportions (les plaques sont placées en % de l'image) ; au-dessus, son ciel flouté prolonge l'écran
@@ -251,7 +257,8 @@ export function htmlArchipel(e: EcranDistrict): string {
     + `<div class="toile">${tableau(j)}${plaques(e)}</div>`
     + `<div class="archipel-haut">${mission(e)}${appel(e)}</div></section>`;
   h += feuilleBatiment(e);
-  if (j.choix.length) h += fenetreChoix(j);
+  if (decisionEnAttente(j)) h += fenetreDecision();
+  else if (j.choix.length) h += fenetreChoix(j);
   else if (e.retour.length) {
     h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="retour-titre"><div class="fenetre retour"><span class="surtitre">BON RETOUR, DIRECTEUR</span><h2 id="retour-titre">Pendant ton absence</h2><ul>`
       + e.retour.map((l) => `<li>${ICO.cristal}<span>${echap(l)}</span></li>`).join('') + `</ul><button type="button" class="btn prim large" data-action="retour-ok">Au travail</button></div></div>`;

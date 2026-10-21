@@ -412,6 +412,7 @@ racine.addEventListener('click', async (ev) => {
       break;
     }
     case 'reclamer': resultat(J.reclamer(jeu)); break;
+    case 'decider': resultat(J.deciderChambre(jeu, id)); break;
     case 'retour-ok': D.retour = []; break;
 
     // combat

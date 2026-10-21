@@ -85,3 +85,26 @@ describe('Les Porteurs de l’histoire', () => {
     expect(verifierArrivees(j)).toHaveLength(0);
   });
 });
+
+import { decisionEnAttente, deciderChambre } from '../src/core/jeu';
+
+describe('Acte I : qui garde la chambre ?', () => {
+  it('la décision arrive après la Strate −3, une seule fois', () => {
+    const j = nouveauJeu(0, 1);
+    j.chambre = true; j.strate = 3;
+    expect(decisionEnAttente(j)).toBeNull();
+    j.strate = 4;
+    expect(decisionEnAttente(j)).toBe('chambre');
+    expect(deciderChambre(j, 'personne').ok).toBe(false);
+    expect(deciderChambre(j, 'commission').ok).toBe(true);
+    expect(decisionEnAttente(j)).toBeNull();
+    expect(deciderChambre(j, 'orseve').ok).toBe(false);
+  });
+
+  it('les Brigades disparaissent si Orsève garde la chambre, et s’imposent si le district la garde seul', () => {
+    for (let rng = 1; rng < 40; rng++) {
+      expect(sequenceStrate(5, rng, 'orseve')).not.toContain('brigadier');
+      expect(sequenceStrate(5, rng, 'district')).toContain('brigadier');
+    }
+  });
+});
