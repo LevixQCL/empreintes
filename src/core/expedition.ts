@@ -1,57 +1,71 @@
-// Une expédition : une suite de combats dans une Strate, avec un peu de soin entre deux.
-// C'est l'objet sauvegardé (localement et dans le compte).
+// Une expédition : l'escouade descend dans une Strate et enchaîne trois combats,
+// avec un peu de soin entre deux. Le district reprend la main à la fin.
 
 import { creerCombat } from './combat';
-import { ENNEMIS, PORTEURS, porteurDef } from './donnees';
+import { ENNEMIS } from './donnees';
 import { REGLES } from './regles';
-import { graine } from './rng';
-import type { CombatEtat, PorteurEtat } from './types';
-
-export const VERSION_SAUVEGARDE = 1;
+import type { CombatEtat, GesteDef, PorteurEtat } from './types';
 
 export interface Expedition {
-  version: number;
   strate: number;
   sequence: string[];
   index: number;
   porteurs: PorteurEtat[];
+  deck: GesteDef[];
   combat: CombatEtat;
-  /** victoire de l'expédition entière */
+  /** composants trouvés pendant l'expédition (versés au district au retour) */
+  butin: number;
+  /** l'expédition est finie (victoire finale ou défaite) */
   terminee: boolean;
+  /** le combat courant a déjà été clôturé (évite de compter deux fois le butin) */
+  cloture: boolean;
 }
 
-export function nouvelleExpedition(rng = graine()): Expedition {
-  const porteurs = PORTEURS.map((p) => ({ id: p.id, pv: p.pvMax, aTerre: false }));
+/** Puissance des ennemis selon la profondeur */
+export const forceStrate = (strate: number) => 1 + 0.15 * (strate - 1);
+/** Composants gagnés par victoire */
+export const butinCombat = (strate: number, index: number) => Math.round((index === 2 ? 14 : 6) * (1 + 0.25 * (strate - 1)));
+
+export function nouvelleExpedition(opts: { porteurs: PorteurEtat[]; deck: GesteDef[]; strate: number; rng: number }): Expedition {
   const sequence = ENNEMIS.map((e) => e.id);
   return {
-    version: VERSION_SAUVEGARDE,
-    strate: 1,
+    strate: opts.strate,
     sequence,
     index: 0,
-    porteurs,
-    combat: creerCombat({ porteurs, ennemiId: sequence[0]!, rng }),
+    porteurs: opts.porteurs,
+    deck: opts.deck,
+    combat: creerCombat({ porteurs: opts.porteurs, ennemiId: sequence[0]!, rng: opts.rng, deck: opts.deck, force: forceStrate(opts.strate) }),
+    butin: 0,
     terminee: false,
+    cloture: false,
   };
 }
 
-/** Après une victoire : soin partiel puis combat suivant (ou fin d'expédition) */
+/** À appeler une fois quand un combat se termine : butin, et fin d'expédition en cas de défaite */
+export function cloturerCombat(x: Expedition): Expedition {
+  if (x.cloture) return x;
+  if (x.combat.issue === 'victoire') {
+    const fin = x.index >= x.sequence.length - 1;
+    return { ...x, butin: x.butin + butinCombat(x.strate, x.index), terminee: fin, cloture: true };
+  }
+  if (x.combat.issue === 'defaite') return { ...x, terminee: true, cloture: true };
+  return x;
+}
+
+/** Après une victoire : soin partiel puis combat suivant */
 export function combatSuivant(x: Expedition): Expedition {
-  if (x.combat.issue !== 'victoire') return x;
-  const porteurs = x.combat.porteurs.map((p) => {
-    const max = porteurDef(p.id).pvMax;
-    return { id: p.id, pv: Math.min(max, Math.max(p.pv, 0) + Math.round(max * REGLES.soinEntreCombats)), aTerre: false };
-  });
-  if (x.index >= x.sequence.length - 1) return { ...x, porteurs, terminee: true };
+  if (x.combat.issue !== 'victoire' || x.terminee) return x;
+  const porteurs = x.combat.porteurs.map((p) => ({
+    ...p,
+    pv: Math.min(p.pvMax, Math.max(p.pv, 0) + Math.round(p.pvMax * REGLES.soinEntreCombats)),
+    aTerre: false,
+  }));
   const index = x.index + 1;
   return {
     ...x,
     index,
     porteurs,
-    combat: creerCombat({ porteurs, ennemiId: x.sequence[index]!, rng: x.combat.rng }),
+    cloture: false,
+    combat: creerCombat({ porteurs, ennemiId: x.sequence[index]!, rng: x.combat.rng, deck: x.deck, force: forceStrate(x.strate) }),
   };
-}
-
-export function estValide(x: unknown): x is Expedition {
-  const e = x as Expedition | null;
-  return !!e && e.version === VERSION_SAUVEGARDE && Array.isArray(e.sequence) && !!e.combat && Array.isArray(e.combat.main);
 }

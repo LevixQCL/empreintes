@@ -8,8 +8,7 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, getFirestore, serverTimestamp, setDoc, Timestamp } from 'firebase/firestore';
 import { firebaseConfig } from './firebase-config';
-import { estValide } from '../core/expedition';
-import { VERSION_SAUVEGARDE } from '../core/expedition';
+import { estJeuValide, VERSION_JEU } from '../core/jeu';
 import type { Enveloppe } from '../save/local';
 
 const app = initializeApp(firebaseConfig);
@@ -48,7 +47,7 @@ export async function lireDistante(uid: string): Promise<Enveloppe | null> {
   const d = snap.data() as { data: string; updatedAt: Timestamp | null };
   try {
     const data = JSON.parse(d.data);
-    if (!estValide(data)) return null;
+    if (!estJeuValide(data)) return null;
     return { data, updatedAt: d.updatedAt ? d.updatedAt.toMillis() : 0 };
   } catch {
     return null;
@@ -60,7 +59,7 @@ export async function ecrireDistante(uid: string, env: Enveloppe): Promise<void>
   await setDoc(doc(db, 'saves', uid), {
     data: JSON.stringify(env.data),
     updatedAt: serverTimestamp(),
-    version: VERSION_SAUVEGARDE,
+    version: VERSION_JEU,
   });
 }
 

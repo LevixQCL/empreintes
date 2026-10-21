@@ -20,11 +20,14 @@ export function creerCombat(opts: {
   ennemiId: string;
   rng: number;
   deck?: GesteDef[];
+  /** puissance de l'ennemi (1 = Strate −1) */
+  force?: number;
 }): CombatEtat {
   const e = ennemiDef(opts.ennemiId);
+  const force = opts.force ?? 1;
   const s: CombatEtat = {
     porteurs: clone(opts.porteurs),
-    ennemi: { id: e.id, pv: e.pvMax, bouclier: 0, etape: 0, boost: 1 },
+    ennemi: { id: e.id, pv: Math.round(e.pvMax * force), pvMax: Math.round(e.pvMax * force), force, bouclier: 0, etape: 0, boost: 1 },
     intention: { type: 'boost' },
     pioche: [],
     defausse: [],
@@ -186,7 +189,7 @@ function choisirCible(s: CombatEtat, regle: CibleRegle = 'hasard'): string | nul
   const v = vivants(s);
   if (!v.length) return null;
   if (regle === 'faible') {
-    return v.slice().sort((a, b) => a.pv / porteurDef(a.id).pvMax - b.pv / porteurDef(b.id).pvMax)[0]!.id;
+    return v.slice().sort((a, b) => a.pv / a.pvMax - b.pv / b.pvMax)[0]!.id;
   }
   if (regle !== 'hasard') {
     const p = v.find((x) => porteurDef(x.id).lignee === regle);
@@ -200,12 +203,13 @@ function choisirIntention(s: CombatEtat) {
   const m = e.motif[s.ennemi.etape % e.motif.length]!;
   s.ennemi.etape++;
   const it: Intention = { ...m };
+  if (it.type === 'atk' || it.type === 'bouclier') it.v = Math.round(it.v * s.ennemi.force);
   if (it.type === 'atk' && !it.zone) it.cibleId = choisirCible(s, it.cible);
   s.intention = it;
 }
 
 function plusBlesse(s: CombatEtat): PorteurEtat | undefined {
-  return vivants(s).sort((a, b) => a.pv / porteurDef(a.id).pvMax - b.pv / porteurDef(b.id).pvMax)[0];
+  return vivants(s).sort((a, b) => a.pv / a.pvMax - b.pv / b.pvMax)[0];
 }
 
 function appliquer(s: CombatEtat, g: Geste, mult: number): Evenement {
@@ -229,7 +233,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number): Evenement {
   }
   const cible = plusBlesse(s);
   if (!cible) return { kind: 'soin', cible: 'escouade', v: 0 };
-  const max = porteurDef(cible.id).pvMax;
+  const max = cible.pvMax;
   const avant = cible.pv;
   cible.pv = Math.min(max, cible.pv + Math.round(g.v * mult));
   log(s, `${nomP} · ${g.nom} : ${porteurDef(cible.id).nom} récupère ${cible.pv - avant} PV.`);

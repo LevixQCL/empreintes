@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { ajouter, allonger, capacite, creerCombat, lancer, placesLibres } from '../src/core/combat';
-import { nouvelleExpedition, combatSuivant } from '../src/core/expedition';
+import { nouvelleExpedition, combatSuivant, cloturerCombat } from '../src/core/expedition';
 import { analyserChaine, serieFinale } from '../src/core/regles';
-import { PORTEURS } from '../src/core/donnees';
+import { DECK_DEPART, PORTEURS } from '../src/core/donnees';
 import type { CombatEtat } from '../src/core/types';
 
 const f = (...xs: number[]) => xs.map((x) => ({ f: x }));
-const equipe = () => PORTEURS.map((p) => ({ id: p.id, pv: p.pvMax, aTerre: false }));
+const equipe = () => PORTEURS.slice(0, 3).map((p) => ({ id: p.id, pv: p.pvMax, pvMax: p.pvMax, aTerre: false }));
 
 describe('Résonance et Écho', () => {
   it('pas de bonus sans suite', () => {
@@ -57,11 +57,11 @@ describe('Combat', () => {
 
   it('un joueur au hasard termine toujours une expédition (pas de blocage)', () => {
     for (let seed = 1; seed <= 30; seed++) {
-      let x = nouvelleExpedition(seed);
+      let x = nouvelleExpedition({ porteurs: equipe(), deck: DECK_DEPART, strate: 1, rng: seed });
       let garde = 0;
-      while (!x.terminee && x.combat.issue !== 'defaite' && garde++ < 500) {
+      while (!x.terminee && garde++ < 500) {
         const s: CombatEtat = x.combat;
-        if (s.issue === 'victoire') { x = combatSuivant(x); continue; }
+        if (s.issue !== 'en-cours') { x = cloturerCombat(x); if (!x.terminee) x = combatSuivant(x); continue; }
         for (const g of s.main.slice()) if (placesLibres(s) > 0) ajouter(s, g.uid);
         if (!s.chaine.length) throw new Error('main injouable');
         lancer(s);

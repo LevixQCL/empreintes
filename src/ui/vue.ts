@@ -17,7 +17,10 @@ export interface Fin {
   titre: string;
   texte: string;
   bouton: string;
-  action: 'suivant' | 'recommencer';
+  action: 'suivant' | 'remonter';
+  /** second bouton facultatif */
+  bouton2?: string;
+  action2?: 'suivant' | 'remonter';
 }
 
 export interface Compte {
@@ -37,10 +40,9 @@ export interface Ecran {
   regles: boolean;
   pops: Pop[];
   fin: Fin | null;
-  compte: Compte;
 }
 
-const COULEUR: Record<LigneeGeste, string> = {
+export const COULEUR: Record<LigneeGeste, string> = {
   tech: 'var(--tech)', bio: 'var(--bio)', reso: 'var(--reso)', neutre: 'var(--ivory)',
 };
 
@@ -52,9 +54,9 @@ const ICONES = {
 };
 const LIBELLE = { atk: 'attaque', bouclier: 'protection', soin: 'soin' };
 
-const FONDS: Record<string, string> = { ilka: '#3A4E63', doran: '#3B4D37', vela: '#44395C', remanent: '#2A2438', vigie: '#26313D', confluence: '#2E2B22' };
+export const FONDS: Record<string, string> = { ilka: '#3A4E63', doran: '#3B4D37', vela: '#44395C', coursier: '#33465A', docker: '#36462F', guetteur: '#3D3352', remanent: '#2A2438', vigie: '#26313D', confluence: '#2E2B22' };
 
-const echap = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+export const echap = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 const pct = (v: number, max: number) => Math.max(0, Math.min(100, (100 * v) / max));
 
 function popsPour(e: Ecran, cible: string) {
@@ -74,7 +76,7 @@ function carte(g: Geste, taille: 'moyen' | 'petit', action: string, o: { halo?: 
     + `<span class="nom">${echap(g.nom)}${taille === 'moyen' ? ' · ' + echap(nomP) : ''}</span></button>`;
 }
 
-function panneauCompte(c: Compte): string {
+export function panneauCompte(c: Compte): string {
   if (!c.ouvert) return '';
   if (c.utilisateur) {
     const etat = { aucune: '', 'en-cours': 'Synchronisation…', ok: 'Progression enregistrée dans ton compte.', erreur: 'Synchronisation impossible pour l’instant, la sauvegarde reste sur l’appareil.' }[c.synchro];
@@ -94,7 +96,7 @@ function panneauCompte(c: Compte): string {
     + `</section>`;
 }
 
-export function rendre(racine: HTMLElement, e: Ecran): void {
+export function htmlCombat(e: Ecran): string {
   const s = e.etat;
   const def = ennemiDef(s.ennemi.id);
   const it = s.intention;
@@ -120,10 +122,8 @@ export function rendre(racine: HTMLElement, e: Ecran): void {
 
   let h = '';
   h += `<header class="top"><div><h1>EMPREINTES</h1><span class="sous">COMBAT ${e.x.index + 1}/${e.x.sequence.length} · TOUR ${s.tour} · STRATE −${e.x.strate}</span></div><div class="droite">`
-    + (e.compte.actif ? `<button type="button" class="btn-sec" data-action="compte" aria-expanded="${e.compte.ouvert}">${e.compte.utilisateur ? 'Compte ✓' : 'Compte'}</button>` : '')
     + `<button type="button" class="btn-sec" data-action="regles" aria-expanded="${e.regles}">${e.regles ? 'Fermer' : 'Règles'}</button></div></header>`;
 
-  h += panneauCompte(e.compte);
 
   if (e.regles) h += '<section class="regles" aria-label="Règles"><strong>Comment on joue</strong><ul>'
     + `<li>Touche les Gestes de ta main pour composer une chaîne (${REGLES.capaciteBase} places au départ), puis lance-la.</li>`
@@ -140,7 +140,7 @@ export function rendre(racine: HTMLElement, e: Ecran): void {
     + `<div class="infos"><span class="nom">${echap(def.nom)}</span>`
     + `<div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(def.tag)}</span>`
     + `<span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
-    + `<div class="barre" style="--c:var(--danger)"><div class="piste"><i style="width:${pct(s.ennemi.pv, def.pvMax)}%"></i></div><span class="chiffre">${s.ennemi.pv}/${def.pvMax}</span></div>`
+    + `<div class="barre" style="--c:var(--danger)"><div class="piste"><i style="width:${pct(s.ennemi.pv, s.ennemi.pvMax)}%"></i></div><span class="chiffre">${s.ennemi.pv}/${s.ennemi.pvMax}</span></div>`
     + (s.ennemi.bouclier ? `<span class="bouclier-e">Bouclier ${s.ennemi.bouclier}</span>` : '')
     + `<div class="intention">${iconeIntention}<span>${echap(texteIntention(s))}</span></div></div></section>`;
 
@@ -151,8 +151,8 @@ export function rendre(racine: HTMLElement, e: Ecran): void {
     const cible = !ko && it.type === 'atk' && (it.zone || it.cibleId === p.id);
     h += `<div class="porteur${ko ? ' ko' : ''}" style="--c:${COULEUR[d.lignee]};--fond:${FONDS[d.id]}">${popsPour(e, p.id)}`
       + `<div class="tete"><span class="pastille" aria-hidden="true"></span><span class="n">${echap(d.nom)}</span></div>`
-      + `<div class="piste"><i style="width:${pct(p.pv, d.pvMax)}%"></i></div>`
-      + `<div class="bas"><span class="chiffre">${ko ? 'À TERRE' : `${p.pv}/${d.pvMax}`}</span>${cible ? '<span class="cible">CIBLE</span>' : ''}</div></div>`;
+      + `<div class="piste"><i style="width:${pct(p.pv, p.pvMax)}%"></i></div>`
+      + `<div class="bas"><span class="chiffre">${ko ? 'À TERRE' : `${p.pv}/${p.pvMax}`}</span>${cible ? '<span class="cible">CIBLE</span>' : ''}</div></div>`;
   }
   h += `</div><div class="ligne-escouade" style="position:relative">${popsPour(e, 'escouade')}`
     + `<span class="bouclier-esc">${ICONES.bouclier}Bouclier d’escouade : ${s.bouclier}</span>`
@@ -181,14 +181,7 @@ export function rendre(racine: HTMLElement, e: Ecran): void {
   h += `<div class="actions"><button type="button" class="sec" data-action="vider"${verrou || !s.chaine.length ? ' disabled' : ''}>Retirer</button>`
     + `<button type="button" class="prim" data-action="lancer"${verrou || !s.chaine.length ? ' disabled' : ''}>Lancer la chaîne</button></div>`;
 
-  if (e.fin) h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="fin-titre"><div class="fenetre"><h2 id="fin-titre">${echap(e.fin.titre)}</h2><p>${echap(e.fin.texte)}</p><button type="button" data-action="${e.fin.action}">${echap(e.fin.bouton)}</button></div></div>`;
+  if (e.fin) h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="fin-titre"><div class="fenetre"><h2 id="fin-titre">${echap(e.fin.titre)}</h2><p>${echap(e.fin.texte)}</p><button type="button" data-action="${e.fin.action}">${echap(e.fin.bouton)}</button>${e.fin.bouton2 ? `<button type="button" class="sec" data-action="${e.fin.action2}">${echap(e.fin.bouton2)}</button>` : ''}</div></div>`;
 
-  // Garder ce que le joueur tape dans le panneau Compte entre deux rendus
-  const email = (racine.querySelector('#email') as HTMLInputElement | null)?.value ?? '';
-  const mdp = (racine.querySelector('#mdp') as HTMLInputElement | null)?.value ?? '';
-  racine.innerHTML = h;
-  const ie = racine.querySelector('#email') as HTMLInputElement | null;
-  const im = racine.querySelector('#mdp') as HTMLInputElement | null;
-  if (ie) ie.value = email;
-  if (im) im.value = mdp;
+  return h;
 }

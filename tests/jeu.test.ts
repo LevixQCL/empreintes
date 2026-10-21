@@ -1,0 +1,75 @@
+import { describe, expect, it } from 'vitest';
+import * as C from '../src/core/combat';
+import {
+  DISTRICT, ameliorer, disponibles, energieParHeure, fabriquer, finDeCombat, continuer, gestesDe, nouveauJeu,
+  partir, poster, pvMaxCombat, remonter, stockage, tick,
+} from '../src/core/jeu';
+
+const H = 3_600_000;
+
+describe('District', () => {
+  it('le Générateur produit pendant l’absence, plafonné par le stockage', () => {
+    const j = nouveauJeu(0);
+    tick(j, 1 * H);
+    expect(j.energie).toBeCloseTo(DISTRICT.depart.energie + 60, 5);
+    tick(j, 100 * H);
+    expect(j.energie).toBe(stockage(j));
+  });
+
+  it('un Porteur de la bonne lignée double la production', () => {
+    const j = nouveauJeu(0);
+    poster(j, 'ilka', 'generateur');
+    expect(energieParHeure(j)).toBe(120);
+    poster(j, 'doran', 'generateur');
+    expect(energieParHeure(j)).toBe(90);
+    expect(j.porteurs.ilka!.poste).toBeNull();
+  });
+
+  it('un bâtiment ne dépasse pas le niveau du Noyau', () => {
+    const j = nouveauJeu(0);
+    j.energie = 1000; j.composants = 100;
+    expect(ameliorer(j, 'generateur').ok).toBe(false);
+    expect(ameliorer(j, 'noyau').ok).toBe(true);
+    expect(ameliorer(j, 'generateur').ok).toBe(true);
+  });
+
+  it('la Forge fabrique un Module qui ajoute 2 Gestes', () => {
+    const j = nouveauJeu(0);
+    expect(fabriquer(j, 'jambes-ressort', 'ilka', 0).ok).toBe(false); // personne à la Forge
+    poster(j, 'coursier', 'forge');
+    expect(fabriquer(j, 'jambes-ressort', 'doran', 0).ok).toBe(false); // mauvaise lignée
+    expect(fabriquer(j, 'jambes-ressort', 'ilka', 0).ok).toBe(true);
+    const avant = gestesDe(j, 'ilka').length;
+    tick(j, j.forge!.fin);
+    expect(j.forge).toBeNull();
+    expect(gestesDe(j, 'ilka').length).toBe(avant + 2);
+  });
+});
+
+describe('Expédition depuis le district', () => {
+  it('un Porteur au travail ne part pas, l’Usure réduit les PV et la Clinique soigne', () => {
+    const j = nouveauJeu(0);
+    poster(j, 'ilka', 'generateur');
+    expect(partir(j, ['ilka', 'doran', 'vela'], 1).ok).toBe(false);
+    expect(disponibles(j)).not.toContain('ilka');
+    expect(partir(j, ['doran', 'vela', 'guetteur'], 1, 7).ok).toBe(true);
+
+    // joue jusqu'à la fin de l'expédition
+    let garde = 0;
+    while (j.expedition && !j.expedition.terminee && garde++ < 600) {
+      const s = j.expedition.combat;
+      if (s.issue !== 'en-cours') { finDeCombat(j); if (!j.expedition.terminee) continuer(j); continue; }
+      for (const g of s.main.slice()) if (C.placesLibres(s) > 0) C.ajouter(s, g.uid);
+      C.lancer(s);
+    }
+    const r = remonter(j);
+    expect(j.expedition).toBeNull();
+    expect(j.porteurs.doran!.usure).toBeGreaterThanOrEqual(DISTRICT.usureExpedition);
+    expect(pvMaxCombat(j, 'doran')).toBeLessThan(46);
+    if (r.victoire) expect(j.strate).toBe(2);
+
+    const u = j.porteurs.doran!.usure;
+    tick(j, j.dernierTick + H);
+    expect(j.porteurs.doran!.usure).toBeLessThan(u);
+  });
+});

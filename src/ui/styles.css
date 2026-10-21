@@ -123,3 +123,100 @@ button:disabled{cursor:not-allowed}
 .panneau .discret{color:var(--quiet);margin:0}
 .lien{background:none;border:none;padding:0;color:var(--quiet);text-decoration:underline;font-size:13px;min-height:auto}
 .top .droite{display:flex;gap:8px}
+
+/* ---------- District ---------- */
+.ressources{display:flex;gap:8px;flex-wrap:wrap}
+.res{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;background:var(--surface);border:1px solid var(--line);font-family:var(--mono);font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.res small{font-weight:400;color:var(--quiet);font-size:11px}
+.pastille-res{width:10px;height:10px;border-radius:50%;display:inline-block}
+.pastille-res.en{background:var(--gold)}
+.pastille-res.co{background:var(--tech)}
+.bandeau{min-height:44px;border-radius:12px;border:1px solid color-mix(in srgb,var(--gold) 60%,var(--line));background:color-mix(in srgb,var(--gold) 16%,var(--surface));color:var(--ivory);font-weight:600}
+.archipel{position:relative;aspect-ratio:2/3;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.archipel-svg{position:absolute;inset:0;width:100%;height:100%}
+.archipel-svg .pales{animation:tourne 6s linear infinite;transform-box:fill-box;transform-origin:center}
+.archipel-svg .braise{animation:braise 1.6s ease-in-out infinite alternate}
+.archipel-svg .hauts{animation:flotte 7s ease-in-out infinite alternate}
+@keyframes tourne{to{transform:rotate(360deg)}}
+@keyframes braise{from{opacity:.45}to{opacity:.95}}
+@keyframes flotte{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+.etiquette{position:absolute;transform:translate(-50%,0);min-height:44px;min-width:92px;padding:4px 10px;border-radius:12px;border:1px solid rgba(18,20,24,.25);background:rgba(18,20,24,.78);color:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;backdrop-filter:blur(2px)}
+.etiquette span{font-family:var(--display);font-size:14px;white-space:nowrap}
+.etiquette small{font-family:var(--mono);font-size:10px;color:var(--quiet);white-space:nowrap}
+.etiquette.choisie{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold)}
+.etiquette.verrou{opacity:.8;border-style:dashed}
+.etiquette .point{position:absolute;top:-4px;right:-4px;width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--bg)}
+.feuille{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:grid;gap:12px}
+.feuille-tete{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.feuille h2{margin:0;font-family:var(--display);font-weight:400;font-size:22px;color:var(--ink)}
+.feuille .sous{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--quiet)}
+.role{margin:0;line-height:1.45}
+.stat{margin:0;font-size:14px}
+.stat b{font-family:var(--mono);color:var(--gold)}
+.bloc{display:grid;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 10px;border-radius:999px;border:1.5px solid var(--c,var(--line));background:var(--surface-2);color:var(--ink-2);font-size:13px}
+.chip .pastille{width:16px;height:16px;border-radius:50%;background:var(--fond)}
+.chip small{font-family:var(--mono);font-size:10px;color:var(--quiet)}
+.chip.actif{background:color-mix(in srgb,var(--c) 22%,var(--surface));color:var(--ink)}
+.chip:disabled{opacity:.4}
+.chip.petit{min-height:36px;border-color:var(--line)}
+.aide{color:var(--quiet);font-size:12.5px}
+.module{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;padding:10px;border-radius:12px;border-left:3px solid var(--c);background:var(--surface-2)}
+.module>div:first-child{display:grid;gap:2px;flex:1;min-width:180px}
+.module small{color:var(--quiet);font-size:12px}
+.large{width:100%;min-height:48px;border-radius:12px;font-size:15px}
+button.prim{border:none;background:var(--ivory);color:var(--bg);font-weight:600;min-height:44px;padding:0 16px;border-radius:12px}
+button.sec{border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);min-height:44px;padding:0 14px;border-radius:12px}
+button.prim:disabled,button.sec:disabled{opacity:.45}
+.piste.mini{height:4px;margin-top:3px}
+.message{margin:0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--gold) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--gold) 40%,var(--line));color:var(--ink);font-size:14px}
+
+/* ---------- Coupe ---------- */
+.coupe{display:grid;gap:0;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.etage{padding:14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.etage>div{display:grid;gap:2px}
+.etage strong{font-family:var(--display);font-weight:400;font-size:17px;color:var(--ink)}
+.etage small{color:var(--quiet);font-size:12.5px}
+.etage.tour{display:grid;background:linear-gradient(#9FD3EC,#E9D9B8);color:#2A2418}
+.etage.tour .label{color:#5A4A33}
+.habitants{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.habitant{display:flex;gap:8px;align-items:center;padding:8px;border-radius:10px;background:rgba(255,250,240,.82);border-left:3px solid var(--c);color:#2A2418}
+.habitant strong{font-family:var(--display);font-size:14px;color:#2A2418}
+.habitant small{color:#5E5446;font-size:11px}
+.habitant .pastille{width:18px;height:18px;flex-shrink:0;border-radius:50%;background:var(--fond)}
+.puits{height:28px;background:linear-gradient(90deg,#3A3128 0 44%,#BFE6FF 44% 56%,#3A3128 56%);opacity:.9}
+.etage.strate{background:color-mix(in srgb,#2B2219 calc((1 - var(--p)) * 100%),#23183A);border-top:1px solid #47392A}
+.etage.strate.front{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--reso) 60%,transparent)}
+.etage.roche{background:repeating-linear-gradient(135deg,#17130F 0 10px,#1D1813 10px 20px);min-height:56px;justify-content:center}
+
+/* ---------- Intro ---------- */
+#app[data-mode="intro"]{min-height:100vh;min-height:100dvh}
+.intro{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:18px;border-radius:18px;min-height:calc(100dvh - 36px);color:#F6F1E6;transition:background .6s ease;cursor:pointer}
+.intro-haut,.intro-bas{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.intro .sous{font-family:var(--mono);font-size:11px;letter-spacing:.08em;opacity:.8}
+.intro-corps{display:grid;gap:12px;max-width:34em}
+.intro .epoque{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.intro h2{margin:0;font-family:var(--display);font-weight:400;font-size:34px;line-height:1.1}
+.intro p{margin:0;font-size:17px;line-height:1.55;text-wrap:pretty}
+.intro .btn-sec{background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.25);color:#F6F1E6}
+.intro .prim{min-height:48px}
+.amb-aube-grise{background:linear-gradient(170deg,#4E5A66,#2A3038 70%)}
+.amb-vert-tendre{background:linear-gradient(170deg,#4C6B4E,#24332A 70%)}
+.amb-colere{background:linear-gradient(170deg,#7A3B33,#2E1A1A 70%)}
+.amb-braise{background:radial-gradient(circle at 70% 20%,#8A4A26,#1E1410 65%)}
+.amb-chaleur{background:linear-gradient(170deg,#B5782E,#4A2B16 70%)}
+.amb-maree{background:linear-gradient(170deg,#3E7C8A,#162B35 70%)}
+.amb-crepuscule{background:linear-gradient(170deg,#6B4A66,#1E1726 70%)}
+.amb-aube-doree{background:linear-gradient(170deg,#C79A4E,#4A3A2A 75%)}
+.amb-profondeur{background:radial-gradient(circle at 50% 30%,#5A4630,#120E0A 70%)}
+.amb-cristal{background:radial-gradient(circle at 50% 35%,#5B4A9A,#14102A 70%)}
+.amb-or{background:linear-gradient(170deg,#A88A3E,#2E2614 75%)}
+.amb-atelier{background:linear-gradient(170deg,#35536B,#2F4A2E 55%,#1A1C1F)}
+.amb-nuit{background:radial-gradient(circle at 80% 10%,#2C3A5A,#0C0F18 65%)}
+.amb-foyer{background:radial-gradient(circle at 30% 80%,#8A5A32,#1E1712 70%)}
+
+.fenetre .sec{min-height:48px;border-radius:12px}
+@media (prefers-reduced-motion: reduce){ .archipel-svg .pales,.archipel-svg .braise,.archipel-svg .hauts{animation:none} .intro{transition:none} }
+.habitant>div{display:grid;gap:1px;min-width:0;flex:1}
+.habitant strong,.habitant small{display:block}

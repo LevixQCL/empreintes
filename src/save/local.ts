@@ -1,11 +1,11 @@
 // Sauvegarde sur l'appareil. Le jeu solo marche entièrement sans réseau.
 
-import { estValide, type Expedition } from '../core/expedition';
+import { estJeuValide, type Jeu } from '../core/jeu';
 
-const CLE = 'empreintes.sauvegarde';
+const CLE = 'empreintes.jeu.v2';
 
 export interface Enveloppe {
-  data: Expedition;
+  data: Jeu;
   /** millisecondes depuis 1970, pour garder la plus récente entre l'appareil et le compte */
   updatedAt: number;
 }
@@ -15,13 +15,13 @@ export function charger(): Enveloppe | null {
     const brut = localStorage.getItem(CLE);
     if (!brut) return null;
     const env = JSON.parse(brut) as Enveloppe;
-    return estValide(env.data) ? env : null;
+    return estJeuValide(env.data) ? env : null;
   } catch {
     return null;
   }
 }
 
-export function enregistrer(data: Expedition, updatedAt = Date.now()): Enveloppe {
+export function enregistrer(data: Jeu, updatedAt = Date.now()): Enveloppe {
   const env = { data, updatedAt };
   try {
     localStorage.setItem(CLE, JSON.stringify(env));

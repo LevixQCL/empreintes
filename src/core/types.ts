@@ -9,6 +9,20 @@ export interface PorteurDef {
   nom: string;
   lignee: Lignee;
   pvMax: number;
+  /** Porteur nommé (illustré) ou recrue anonyme */
+  nomme: boolean;
+}
+
+export type BatimentId = 'noyau' | 'generateur' | 'forge' | 'clinique';
+
+export interface ModuleDef {
+  id: string;
+  nom: string;
+  lignee: Lignee;
+  cout: { energie: number; composants: number };
+  /** durée de fabrication */
+  minutes: number;
+  gestes: { nom: string; f: number; type: TypeGeste; v: number; lourd?: boolean }[];
 }
 
 export interface GesteDef {
@@ -51,12 +65,17 @@ export interface EnnemiDef {
 export interface PorteurEtat {
   id: string;
   pv: number;
+  /** PV max pour ce combat (réduits par l'Usure) */
+  pvMax: number;
   aTerre: boolean;
 }
 
 export interface EnnemiEtat {
   id: string;
   pv: number;
+  pvMax: number;
+  /** multiplicateur de puissance selon la profondeur de la Strate */
+  force: number;
   bouclier: number;
   etape: number;
   boost: number;
