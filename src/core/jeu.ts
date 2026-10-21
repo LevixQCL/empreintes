@@ -744,6 +744,8 @@ export function remonter(j: Jeu): Retour {
     j.strate++;
     nouvelleStrate = true;
     fragment = ajouterFragment(j);
+    // dans les Fondations, les abris des années 2060 rendent deux papiers par Strate
+    if (x.strate <= 3) ajouterFragment(j);
     j.composants += 20;
     cartes.push(tirerCarte(j, x.strate));
     eclats += 2;
@@ -805,7 +807,7 @@ export function ouvrirChambre(j: Jeu, rng = graine()): Resultat {
 export function leconTutoriel(tour: number): string {
   if (tour === 1) return 'Leçon 1 : touche 3 Gestes de ta main, puis « Lancer la chaîne ».';
   if (tour === 2) return 'Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +30 % sur toute la chaîne.';
-  if (tour === 3) return 'Leçon 3 : le Rémanent annonce une Lacération sur Doran. Pose des Gestes à bouclier : ils protègent toute l’escouade pendant son attaque.';
+  if (tour === 3) return 'Leçon 3 : le Rémanent annonce une Entaille sur Doran. Pose des Gestes à bouclier : ils protègent toute l’escouade pendant son attaque.';
   return 'Tu as l’essentiel : vise les suites, protège-toi des grosses attaques annoncées. Achève-le !';
 }
 

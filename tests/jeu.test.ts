@@ -75,7 +75,7 @@ describe('Expédition depuis le district', () => {
     expect(j.expedition).toBeNull();
     expect(j.porteurs.doran!.usure).toBeGreaterThanOrEqual(DISTRICT.usureExpedition);
     expect(pvMaxCombat(j, 'doran')).toBeLessThan(46);
-    if (r.victoire) { expect(j.strate).toBe(2); expect(j.fragments.length).toBe(1); }
+    if (r.victoire) { expect(j.strate).toBe(2); expect(j.fragments.length).toBe(2); } // deux papiers par Strate dans les Fondations
 
     const u = j.porteurs.doran!.usure;
     tick(j, j.dernierTick + H);

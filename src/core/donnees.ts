@@ -221,7 +221,7 @@ export const ENNEMIS: EnnemiDef[] = [
     motif: [
       { type: 'atk', nom: 'Griffe', v: 4, cible: 'hasard' },
       { type: 'atk', nom: 'Griffe', v: 5, cible: 'faible' },
-      { type: 'atk', nom: 'Lacération', v: 13, cible: 'doran' },
+      { type: 'atk', nom: 'Entaille', v: 13, cible: 'doran' },
       { type: 'atk', nom: 'Griffe', v: 5, cible: 'hasard' },
     ],
   },
@@ -231,7 +231,7 @@ export const ENNEMIS: EnnemiDef[] = [
       { type: 'atk', nom: 'Griffe', v: 8, cible: 'hasard' },
       { type: 'atk', nom: 'Griffe', v: 10, cible: 'faible' },
       { type: 'bouclier', v: 8 },
-      { type: 'atk', nom: 'Lacération', v: 14, cible: 'hasard' },
+      { type: 'atk', nom: 'Entaille', v: 14, cible: 'hasard' },
     ],
   },
   {

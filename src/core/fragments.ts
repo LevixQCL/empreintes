@@ -94,16 +94,16 @@ export const FRAGMENTS: Fragment[] = [
   {
     id: 'regle', titre: 'La règle aux deux échelles', support: 'Une règle de niveau, trouvée dans un abri',
     lignes: [
-      'Deux graduations sur la même tige de laiton : l’une gravée « relevé », l’autre « prévision ».',
-      'Pour le 3 mars, la première marque 41 cm. La seconde, 1,20 m. Les deux ont été notées le même jour, de la même main.',
-      'Au registre de l’abri, seul le second chiffre a été recopié.',
+      'Deux graduations sur la même tige de laiton : l’une gravée « relevé », l’autre « niveau officiel ».',
+      'À la date du 3 mars, la première indique 1,20 m. La seconde, 41 cm. Les deux relevés ont été notés le même jour, de la même main.',
+      'Au registre de l’abri, seul le second chiffre a été recopié. C’est celui qui ne demandait pas d’évacuer.',
     ],
   },
   {
     id: 'seuil', titre: 'Au-dessus d’une porte', support: 'Une inscription traduite par les Veilleurs',
     lignes: [
       '« Ici, on entre seul, et l’on ressort avec ce qu’on a apporté. »',
-      'Note de traduction : dans leur langue, le verbe « apporter » désigne aussi le fait de porter une empreinte.',
+      'Note de traduction : le dernier verbe reste incertain. Il pourrait aussi vouloir dire « ce qu’on porte ».',
       'La porte est fermée de l’intérieur. Personne n’est ressorti.',
     ],
   },
@@ -120,7 +120,7 @@ export const FRAGMENTS: Fragment[] = [
     lignes: [
       'Salle close n° 11 sécurisée à 4 h 20. Aucun civil présent. Cristaux inventoriés, mis sous scellés, transférés vers les Hauts.',
       'Le brigadier Tessel signale qu’une voix lui a donné un ordre dans une langue inconnue. Il dit l’avoir compris.',
-      'Mesure prise : le brigadier Tessel est relevé de ses fonctions, pour repos.',
+      'Mesure prise : le brigadier Tessel est relevé de ses fonctions et mis au repos.',
     ],
   },
   {
@@ -135,15 +135,15 @@ export const FRAGMENTS: Fragment[] = [
     id: 'patient-5', titre: 'Patient 5', support: 'Une page arrachée au carnet d’un médecin',
     lignes: [
       'Troisième jour après la greffe. Le patient 5 me demande des nouvelles d’une mer dont personne ici n’a jamais entendu parler.',
-      'Il la décrit avec précision : sa couleur, son odeur, le nom de ses courants. Aucune carte ne la connaît.',
-      'Il pleure quand je lui dis qu’elle n’existe pas. Il me répond que c’est nous qui l’avons perdue.',
+      'Vingt ans plus tard, il dessine toujours la même côte, avec ses criques et ses courants. Aucune carte ne la connaît.',
+      'Ajout des Veilleurs, 2118 : son dessin correspond trait pour trait aux murs gravés d’une salle de la Strate −9.',
     ],
   },
   {
     id: 'formes', titre: 'Ce qu’ils voulaient être', support: 'Une note de travail des Veilleurs',
     lignes: [
-      'Plus on descend, plus les formes sont nettes : dragons entiers, grands esprits aux contours précis.',
-      'Plus on remonte vers les couches récentes, plus elles se brouillent. Les dernières n’ont plus de forme du tout.',
+      'Dans les couches profondes, les formes sont rares et nettes : un dragon entier, un grand esprit aux contours précis.',
+      'Plus haut, on retrouve les mêmes dragons, mais recopiés cent fois, aux contours qui tremblent, et de plus en plus d’êtres sans nom.',
       'Hypothèse : ce ne sont pas leurs corps, mais les visages qu’ils se donnaient. Les derniers ne savaient plus lequel choisir.',
     ],
   },
@@ -158,17 +158,9 @@ export const FRAGMENTS: Fragment[] = [
   {
     id: 'noms', titre: 'La colonne des noms', support: 'Le relevé d’une table gravée',
     lignes: [
-      'Colonne 1 : un nom. Colonne 2 : une date. Colonne 3 : les empreintes reçues, de une à trente-deux.',
-      'Sur les tables suivantes, la colonne des noms rétrécit, puis disparaît.',
-      'Sur la dernière, il ne reste que les empreintes, et à côté de chacune, le nombre de fois où elle a été portée.',
-    ],
-  },
-  {
-    id: 'orseve', titre: 'Note interne', support: 'Une copie qui n’aurait jamais dû sortir des Hauts',
-    lignes: [
-      'Prélèvement 2079-12, cœur de levage de l’île de l’Aube : extraction réussie. Incident dans la Strate −3, deux ouvriers évacués.',
-      'Prélèvement 2084-03 : extraction réussie. Le lien avec les incidents des salles voisines n’est pas établi.',
-      'Classement : à ne pas transmettre. Paraphe : I. O.',
+      'Colonne 1 : un nom. Colonne 2 : une date. Colonne 3 : les empreintes reçues, d’une à trente-deux.',
+      'Sur les tables des couches plus hautes, donc plus récentes, la colonne des noms rétrécit, puis disparaît.',
+      'Sur les plus récentes, il ne reste que les empreintes, et à côté de chacune, le nombre de fois où elle a été portée.',
     ],
   },
   {
@@ -182,29 +174,26 @@ export const FRAGMENTS: Fragment[] = [
   {
     id: 'mise-en-garde', titre: 'La mise en garde', support: 'La traduction de la plus ancienne table connue',
     lignes: [
-      '« Nous avons gravé nos pères pour ne rien perdre. Nous gravons maintenant nos enfants pour ne pas les perdre. »',
-      '« Que celui qui lit ceci compte ses voix. Quand elles seront plus nombreuses que lui, qu’il s’arrête. »',
+      '« Nous gravons nos anciens pour ne rien perdre de ce qu’ils savaient. Un jour, nous voudrons graver tout le monde. »',
+      '« Que celui qui lit ceci compte les voix qu’il porte. Quand elles seront plus nombreuses que la sienne, qu’il s’arrête. »',
       '« Nous l’écrivons tant que nous savons encore qui l’écrit. »',
-    ],
-  },
-  {
-    id: 'annotation', titre: 'De la même main', support: 'Une ligne gravée sous la mise en garde',
-    lignes: [
-      'Même trait, même outil, même usure. La ligne date d’avant la fermeture des salles.',
-      '« Nous nous sommes trompés. Les voix ne nous ont pas pris, elles nous ont gardés. Ne fermez rien. »',
-      'Note d’Ysé : « Je ne sais pas qui a écrit cette ligne. Je crains que lui non plus. »',
     ],
   },
 ];
 
 /**
- * Le premier fragment vient de la chambre scellée ; les autres, un par nouvelle Strate conquise.
+ * Le premier fragment vient de la chambre scellée ; les autres, un par nouvelle Strate conquise (deux dans les Fondations).
  * D'abord les papiers humains des abris (les Chroniques y renvoient), puis, plus profond,
  * les traces de ceux d'avant et les secrets d'aujourd'hui : plus on descend, plus c'est ancien et secret.
  */
 export const ORDRE_FRAGMENTS = [
-  'mure', 'puits-zero', 'ligne-eau', 'regle', 'colonne', 'fracture', 'pierre', 'infos', 'graveur', 'sept',
-  'voix', 'seuil', 'choses', 'brigade', 'deux-enfances', 'patient-5', 'formes', 'berceau', 'noms', 'orseve',
-  'porteurs', 'mise-en-garde', 'annotation',
+  // la chambre, puis deux par Strate dans les Fondations (les papiers des abris auxquels renvoient les Chroniques)
+  'mure', 'puits-zero', 'ligne-eau', 'graveur', 'regle', 'sept', 'colonne',
+  // les salles closes (−4 à −6)
+  'seuil', 'choses', 'brigade',
+  // les mémoires contradictoires (−7 à −9)
+  'deux-enfances', 'voix', 'noms',
+  // le fond (−10 et plus)
+  'mise-en-garde', 'porteurs', 'formes', 'patient-5', 'berceau', 'fracture', 'pierre', 'infos',
 ];
 export const fragmentDef = (id: string) => FRAGMENTS.find((f) => f.id === id);

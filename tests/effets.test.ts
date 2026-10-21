@@ -11,7 +11,7 @@ let n = 0;
 const geste = (f: number, type: TypeGeste, v: number, effet?: Effet, porteur = 'doran'): Geste =>
   ({ id: 'test', uid: `t${n++}`, porteur, nom: 'Test', f, type, v, ...(effet ? { effet } : {}) });
 
-/** Un combat contre le Rémanent (motif : Griffe 8, Griffe 10, bouclier 8, Lacération 14), main remplacée */
+/** Un combat contre le Rémanent (motif : Griffe 8, Griffe 10, bouclier 8, Entaille 14), main remplacée */
 function combat(main: Geste[]): CombatEtat {
   const s = creerCombat({ porteurs: equipe(), ennemiId: 'remanent', rng: 3 });
   s.main = main;
