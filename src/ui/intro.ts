@@ -1,6 +1,6 @@
-// L'intro du premier lancement : 10 plans animés, environ 90 secondes.
+// L'intro du premier lancement : 10 plans, on avance au toucher (aucune avance automatique).
 // Chaque plan = une scène animée en code (SVG + CSS) et 2 ou 3 phrases courtes qui apparaissent une à une.
-// Les illustrations Midjourney viendront se glisser sous les scènes (image de fond) sans changer ce fichier.
+// Les illustrations Midjourney passent sous le texte ; tant qu'un plan n'a pas d'image, sa scène SVG la remplace.
 // Aucun pays, personne ni conflit réel n'est nommé.
 
 import { echap } from './vue';
@@ -10,16 +10,19 @@ export interface Plan {
   titre: string;
   lignes: string[];
   scene: (k: number) => string;
-  /** fichier attendu dans public/intro/ (illustration Midjourney), facultatif */
-  image?: string;
+  /** illustrations Midjourney du plan (public/intro/<id>.webp), chacune visible à partir de la ligne « des » (1 = début) */
+  fonds?: { id: string; des: number }[];
   ambiance: string;
+  /** mouvement de caméra sur l'illustration */
+  camera: 'approche' | 'monte' | 'descend' | 'gauche' | 'droite' | 'recule';
 }
 
 const svg = (contenu: string, cls = '') =>
   `<svg class="scene ${cls}" viewBox="0 0 360 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${contenu}</svg>`;
 
-const compteur = (de: number, a: number, duree: number) =>
-  `<span class="compteur" style="--de:${de};--a:${a};--d:${duree}s" aria-hidden="true"></span>`;
+const compteur = (de: number, a: number) =>
+  de === a ? `<span class="compteur fixe" aria-hidden="true">${de}</span>`
+    : `<span class="compteur" data-de="${de}" data-a="${a}" aria-hidden="true">${de}</span>`;
 
 // ---------- Scènes ----------
 
@@ -91,37 +94,39 @@ const toi = (k: number) => svg(`
 
 // ---------- Les 10 plans ----------
 
+const f = (id: string, des = 1) => ({ id, des });
+
 export const PLANS: Plan[] = [
-  { epoque: 'Aujourd’hui', titre: 'On savait', ambiance: 'chaleur', image: '01-on-savait', scene: villeChaleur, lignes: [
+  { epoque: 'Aujourd’hui', titre: 'On savait', ambiance: 'chaleur', camera: 'approche', fonds: [f('01-on-savait')], scene: villeChaleur, lignes: [
     'Les glaciers reculent, les étés brûlent. On le sait, on s’inquiète.',
     'Il y a des marches, des sommets, des promesses.'] },
-  { epoque: 'Bientôt', titre: 'On a regardé ailleurs', ambiance: 'colere', image: '02-ailleurs', scene: ecrans, lignes: [
+  { epoque: 'Bientôt', titre: 'On a regardé ailleurs', ambiance: 'colere', camera: 'recule', fonds: [f('02-ailleurs')], scene: ecrans, lignes: [
     'Les prix montent. Dans des pays voisins, les extrêmes se répondent.',
     'Des guerres s’embrasent. Le climat devient une ligne en bas de page.'] },
-  { epoque: 'Les années 2040 à 2057', titre: 'La nature a frappé', ambiance: 'maree', scene: nature, lignes: [
+  { epoque: 'Les années 2040 à 2057', titre: 'La nature a frappé', ambiance: 'maree', camera: 'gauche', fonds: [f('03-tempetes'), f('03-fracture', 3)], scene: nature, lignes: [
     'Les tempêtes rendent des côtes entières inhabitables.',
     'Des centaines de millions de personnes prennent la route. On meurt par millions.',
     'En 2057, une partie de l’Antarctique glisse dans l’océan : la Fracture.'] },
-  { epoque: 'Après la Fracture', titre: 'Construire en hauteur', ambiance: 'aube-doree', scene: tours, lignes: [
+  { epoque: 'Après la Fracture', titre: 'Construire en hauteur', ambiance: 'aube-doree', camera: 'monte', fonds: [f('04-hauteur')], scene: tours, lignes: [
     'La mer monte de plusieurs mètres. On bâtit vers le ciel, sur des piliers.',
     'En une génération naissent les villes verticales. La plus grande : Vertiga.'] },
-  { epoque: '2062', titre: 'Le Puits Zéro', ambiance: 'profondeur', image: '05-puits-zero', scene: puits, lignes: [
+  { epoque: '2062', titre: 'Le Puits Zéro', ambiance: 'profondeur', camera: 'descend', fonds: [f('05-puits-zero')], scene: puits, lignes: [
     'Il faut aussi des abris. On creuse sous les Fondations.',
     'Au fond du Puits Zéro : une salle que nul humain n’a construite.'] },
-  { epoque: '2062 – 2068', titre: 'Les empreintes', ambiance: 'cristal', image: '06-empreintes', scene: empreintes, lignes: [
+  { epoque: '2062 – 2068', titre: 'Les empreintes', ambiance: 'cristal', camera: 'approche', fonds: [f('06-empreintes')], scene: empreintes, lignes: [
     'Ses cristaux gardent des êtres plus anciens que nous : dragons, esprits, sans-nom.',
     'Greffés sur un humain, ils éveillent des pouvoirs qu’aucune science n’explique.'] },
-  { epoque: '2071 – 2090', titre: 'L’Ascension', ambiance: 'or', image: '07-ascension', scene: ascension, lignes: [
+  { epoque: '2071 – 2090', titre: 'L’Ascension', ambiance: 'or', camera: 'monte', fonds: [f('07-ascension')], scene: ascension, lignes: [
     'Les premiers greffés sentent venir les tempêtes et sauvent des villes entières.',
     'Mèche d’or, ombre qui n’est pas la leur : les Résonants prennent la tête du monde.',
     'Leurs familles s’installent dans les Hauts, sur des îles qui flottent.'] },
-  { epoque: '2088 – 2101', titre: 'La réponse', ambiance: 'atelier', scene: lignees, lignes: [
+  { epoque: '2088 – 2101', titre: 'La réponse', ambiance: 'atelier', camera: 'droite', fonds: [f('08-reponse')], scene: lignees, lignes: [
     'Le peuple répond : la machine donne les Augmentés, la génétique les Génés.',
     'En 2101, les Accords : les Hauts gouvernent, les districts élisent leurs directeurs.'] },
-  { epoque: '2121', titre: 'On a oublié, encore', ambiance: 'nuit', image: '09-oubli', scene: oubli, lignes: [
+  { epoque: '2121', titre: 'On a oublié, encore', ambiance: 'nuit', camera: 'recule', fonds: [f('09-oubli')], scene: oubli, lignes: [
     'Les factions se disputent les empreintes. Les Fondations se fissurent.',
     'La mer remonte, centimètre après centimètre. Presque personne ne regarde.'] },
-  { epoque: '2121', titre: 'Toi', ambiance: 'foyer', image: '10-toi', scene: toi, lignes: [
+  { epoque: '2121', titre: 'Toi', ambiance: 'foyer', camera: 'approche', fonds: [f('10-toi')], scene: toi, lignes: [
     'Tu viens d’être élu à la tête d’un district : quelques piliers, une vieille tour.',
     'Sous elle, une porte scellée depuis soixante ans. Trois personnes t’attendent.'] },
 ];
@@ -134,36 +139,69 @@ export const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs'
 /** Plans qui ont aussi une courte vidéo en boucle (public/intro/<id>.mp4), l'image sert d'affiche */
 export const VIDEOS_DISPONIBLES = new Set<string>(['10-toi']);
 
-/** Chemin de l'illustration d'un plan, s'il en a une (pour le préchargement) */
-export const imagePlan = (i: number): string | null => {
-  const id = PLANS[i]?.image;
-  return id && IMAGES_DISPONIBLES.has(id) ? `./intro/${id}.webp` : null;
-};
+/** Illustration visible au plan i quand k lignes sont affichées (la dernière disponible dont le seuil est atteint) */
+export function fondActif(i: number, k: number): string | null {
+  const dispo = (PLANS[i]?.fonds ?? []).filter((x) => IMAGES_DISPONIBLES.has(x.id));
+  const atteints = dispo.filter((x) => x.des <= k);
+  return (atteints[atteints.length - 1] ?? dispo[0])?.id ?? null;
+}
 
-function fond(id: string, mouvement: boolean): string {
+/** Illustrations à précharger pour le plan i (toutes celles du plan) */
+export const imagesPlan = (i: number): string[] =>
+  (PLANS[i]?.fonds ?? []).filter((x) => IMAGES_DISPONIBLES.has(x.id)).map((x) => `./intro/${x.id}.webp`);
+
+function fond(id: string, camera: string, mouvement: boolean): string {
   const src = `./intro/${id}.webp`;
   const media = mouvement && VIDEOS_DISPONIBLES.has(id)
     ? `<video poster="${src}" autoplay muted loop playsinline preload="auto"><source src="./intro/${id}.webm" type="video/webm"><source src="./intro/${id}.mp4" type="video/mp4"></video>`
     : `<img src="${src}" alt="" decoding="async">`;
-  return `<div class="intro-fond" aria-hidden="true">${media}</div>`;
+  return `<div class="intro-fond cam-${camera}" data-fond="${id}" aria-hidden="true">${media}</div>`;
 }
 
-/** Durée d'affichage d'une ligne avant la suivante (avance automatique) */
-export const DUREE_LIGNE = 3200;
+// ---------- Particules par ambiance (CSS seul, position et rythme déterministes) ----------
 
-/** i = plan, k = nombre de lignes affichées */
-export function htmlIntro(i: number, k: number, mouvement = true): string {
+const PARTICULES: Record<string, { type: string; n: number }> = {
+  chaleur: { type: 'poussiere', n: 18 }, colere: { type: 'cendre', n: 22 }, maree: { type: 'pluie', n: 46 },
+  'aube-doree': { type: 'poussiere', n: 16 }, profondeur: { type: 'gravats', n: 20 }, cristal: { type: 'motes', n: 24 },
+  or: { type: 'motes', n: 20 }, atelier: { type: 'etincelle', n: 18 }, nuit: { type: 'neige-lumiere', n: 16 }, foyer: { type: 'poussiere', n: 14 },
+};
+
+function particules(ambiance: string): string {
+  const def = PARTICULES[ambiance];
+  if (!def) return '';
+  const span = Array.from({ length: def.n }, (_, i) => {
+    const x = (i * 61 + 13) % 100;
+    const y = (i * 37 + 7) % 100;
+    const d = 0.7 + ((i * 29) % 10) / 10; // 0.7 à 1.6
+    const t = -((i * 17) % 40) / 10; // décalage négatif : déjà en mouvement à l'ouverture
+    const s = 0.6 + ((i * 13) % 9) / 10;
+    return `<i style="--x:${x}%;--y:${y}%;--d:${d.toFixed(2)};--t:${t.toFixed(1)}s;--s:${s.toFixed(2)}"></i>`;
+  }).join('');
+  return `<div class="intro-particules p-${def.type}" aria-hidden="true">${span}</div>`;
+}
+
+/** i = plan, k = nombre de lignes affichées, texteCache = mode « admirer l'image » */
+export function htmlIntro(i: number, k: number, mouvement = true, texteCache = false): string {
   const p = PLANS[i]!;
   const dernier = i === PLANS.length - 1;
   const complet = k >= p.lignes.length;
-  const illustre = !!p.image && IMAGES_DISPONIBLES.has(p.image);
+  const actif = fondActif(i, k);
   const [de, a] = ANNEES[i]!;
-  return `<section class="intro amb-${p.ambiance}${illustre ? ' illustree' : ''}" data-plan="${i}" aria-label="Introduction" data-action="intro-suivant">`
-    + (illustre ? fond(p.image!, mouvement) : '')
+  const progression = PLANS.map((_, n) => `<span class="${n < i ? 'fait' : n === i ? 'ici' : ''}"></span>`).join('');
+  return `<section class="intro amb-${p.ambiance}${actif ? ' illustree' : ''}${texteCache ? ' admirer' : ''}" data-plan="${i}" aria-label="Introduction" data-action="intro-suivant">`
+    + (actif ? fond(actif, p.camera, mouvement) : '')
     + `<div class="intro-scene" aria-hidden="true">${p.scene(k)}</div>`
-    + `<div class="intro-haut"><span class="sous">${i + 1} / ${PLANS.length}</span>${compteur(de, a, 2.4)}<button type="button" class="btn-sec" data-action="intro-passer">Passer</button></div>`
-    + `<div class="intro-corps"><span class="epoque">${echap(p.epoque)}</span><h2>${echap(p.titre)}</h2>`
-    + p.lignes.slice(0, Math.max(1, k)).map((l, n) => `<p class="ligne${n === k - 1 ? ' neuve' : ''}">${echap(l)}</p>`).join('')
-    + `</div><div class="intro-bas">${i > 0 ? '<button type="button" class="btn-sec" data-action="intro-precedent">Retour</button>' : '<span></span>'}`
-    + `<button type="button" class="prim" data-action="${dernier && complet ? 'intro-passer' : 'intro-suivant'}">${dernier && complet ? 'Descendre vers la porte' : 'Continuer'}</button></div></section>`;
+    + (mouvement ? particules(p.ambiance) : '')
+    + `<div class="intro-voile" aria-hidden="true"></div>`
+    + `<div class="intro-haut"><div class="intro-prog" role="img" aria-label="Plan ${i + 1} sur ${PLANS.length}">${progression}</div>`
+    + `<div class="intro-outils"><button type="button" class="btn-sec rond" data-action="intro-oeil" aria-pressed="${texteCache}" aria-label="${texteCache ? 'Afficher le texte' : 'Masquer le texte pour voir l’image'}">${texteCache ? OEIL_BARRE : OEIL}</button>`
+    + `<button type="button" class="btn-sec" data-action="intro-passer">Passer</button></div></div>`
+    + `<div class="intro-corps${k === 1 ? ' entree' : ''}"><div class="intro-date"><span class="epoque">${echap(p.epoque)}</span>${compteur(de, a)}</div><h2>${echap(p.titre)}</h2>`
+    + p.lignes.slice(0, Math.max(1, k)).map((l, n) => `<p class="ligne${n === k - 1 ? ' neuve' : ' lue'}">${echap(l)}</p>`).join('')
+    + `</div><div class="intro-bas">${i > 0 || k > 1 ? '<button type="button" class="btn-sec" data-action="intro-precedent">Retour</button>' : '<span></span>'}`
+    + (i === 0 ? `<span class="intro-indice">Touche l’écran pour continuer</span>` : '<span></span>')
+    + `<button type="button" class="prim" data-action="${dernier && complet ? 'intro-passer' : 'intro-suivant'}">${dernier && complet ? 'Descendre vers la porte' : complet ? 'Suite' : 'Continuer'}</button></div></section>`;
 }
+
+const OEIL = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
+const OEIL_BARRE = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/><path d="M4 20 20 4"/></svg>';
