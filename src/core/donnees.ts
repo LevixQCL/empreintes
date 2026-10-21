@@ -65,7 +65,7 @@ export function gestesRemplaces(porteurId: string, dejaGreffes: number, nouveaux
   return (ORDRE_REMPLACEMENT[porteurId] ?? []).slice(dejaGreffes, dejaGreffes + nouveaux).map((i) => base[i]!).filter(Boolean);
 }
 
-export const GESTES_SPECIAUX: GesteDef[] = [g(null, 'stimulant', 'Stimulant', 1, 'soin', 6), g(null, 'repli', 'Repli', 9, 'bouclier', 10)];
+export const GESTES_SPECIAUX: GesteDef[] = [{ ...g(null, 'stimulant', 'Stimulant', 1, 'soin', 5), effet: { type: 'vague' } }, g(null, 'repli', 'Repli', 9, 'bouclier', 10)];
 
 // ---------- Modules : les cartes de collection ----------
 // Un Module se greffe sur un Porteur de sa lignée : ses Gestes remplacent une partie des Gestes de base du Porteur.
@@ -86,8 +86,8 @@ export const MODULES: ModuleDef[] = [
   m('gant-arc', 'Gant à arc', 'tech', 'fer', [x('Décharge', 6, 'atk', 10), x('Écran', 7, 'bouclier', 7)]),
   m('oeil-relais', 'Œil-relais', 'tech', 'fer', [x('Visée', 5, 'atk', 9), x('Diagnostic', 3, 'soin', 6)]),
   m('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', [x('Surrégime', 7, 'atk', 11, false, { type: 'flux', v: 1 }), x('Refroidir', 6, 'bouclier', 10)]),
-  m('bras-grue', 'Bras-grue', 'tech', 'argent', [x('Levage', 8, 'atk', 24, true, { type: 'percant' }), x('Étai', 6, 'bouclier', 13, false, { type: 'elan' }), x('Riveter', 4, 'atk', 10, false, { type: 'flux', v: 1 })]),
-  m('lames-orbitales', 'Lames orbitales', 'tech', 'or', [x('Orbite', 3, 'atk', 11, false, { type: 'percant' }), x('Orbite basse', 2, 'atk', 10, false, { type: 'elan' }),
+  m('bras-grue', 'Bras-grue', 'tech', 'argent', [x('Levage', 8, 'atk', 24, true, { type: 'percant' }), x('Étai', 6, 'bouclier', 13, false, { type: 'elan' }), x('Riveter', 4, 'atk', 12, false, { type: 'flux', v: 1 })]),
+  m('lames-orbitales', 'Lames orbitales', 'tech', 'or', [x('Orbite', 3, 'atk', 11, false, { type: 'percant' }), x('Orbite basse', 2, 'bouclier', 12, false, { type: 'elan' }),
     x('Tourbillon', 9, 'atk', 22, true, { type: 'crescendo', part: 0.4 })]),
   // Génés : Fréquences basses
   m('glande-ambre', 'Glande d’ambre', 'bio', 'fer', [x('Sève', 3, 'soin', 7), x('Mue', 2, 'bouclier', 8)]),
@@ -95,7 +95,7 @@ export const MODULES: ModuleDef[] = [
   m('cuir-recif', 'Cuir de récif', 'bio', 'fer', [x('Écailles', 4, 'bouclier', 9), x('Barbillon', 5, 'atk', 8)]),
   m('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', [x('Apnée', 2, 'bouclier', 11, false, { type: 'rempart', part: 0.5 }), x('Remontée', 4, 'soin', 11)]),
   m('carapace-mere', 'Carapace-mère', 'bio', 'argent', [x('Rempart', 5, 'bouclier', 16, false, { type: 'rempart', part: 0.75 }), x('Bélier', 6, 'atk', 22, true, { type: 'fissure', part: 0.25 }),
-    x('Mue rapide', 1, 'soin', 7, false, { type: 'vague' })]),
+    x('Mue rapide', 1, 'soin', 9, false, { type: 'vague' })]),
   m('coeur-meute', 'Cœur de meute', 'bio', 'or', [x('Hurlement', 4, 'atk', 11, false, { type: 'fissure', part: 0.4 }), x('Curée', 5, 'atk', 13, false, { type: 'siphon', part: 0.75 }),
     x('Instinct', 3, 'soin', 9, false, { type: 'vague' })]),
   // Résonants : Fréquences hautes
@@ -104,8 +104,8 @@ export const MODULES: ModuleDef[] = [
   m('encre-ancienne', 'Encre ancienne', 'reso', 'fer', [x('Glyphe', 6, 'atk', 9), x('Paume ouverte', 7, 'soin', 8)]),
   m('plume-givre', 'Plume de givre', 'reso', 'cuivre', [x('Givre', 9, 'atk', 12, false, { type: 'desarmer', part: 0.4 }), x('Cristal', 8, 'bouclier', 11)]),
   m('ombre-ailee', 'Ombre ailée', 'reso', 'argent', [x('Envol', 7, 'bouclier', 13, false, { type: 'accord' }), x('Piqué', 9, 'atk', 25, true, { type: 'fissure', part: 0.4 }),
-    x('Battement', 8, 'soin', 8, false, { type: 'vague' })]),
-  m('chant-abysses', 'Chant des abysses', 'reso', 'or', [x('Unisson', 7, 'atk', 13, false, { type: 'accord' }), x('Contre-chant', 8, 'atk', 13, false, { type: 'crescendo', part: 0.4 }),
+    x('Battement', 8, 'soin', 10, false, { type: 'vague' })]),
+  m('chant-abysses', 'Chant des abysses', 'reso', 'or', [x('Unisson', 7, 'atk', 13, false, { type: 'accord' }), x('Contre-chant', 8, 'atk', 13, false, { type: 'siphon', part: 0.75 }),
     x('Silence', 9, 'bouclier', 14, false, { type: 'desarmer', part: 0.6 })]),
 ];
 
