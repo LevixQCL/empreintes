@@ -116,14 +116,14 @@ export const MODULES: ModuleDef[] = [
   m('glande-ambre', 'Glande d’ambre', 'bio', 'fer', [x('Sève', 3, 'soin', 6), x('Mue', 2, 'bouclier', 8)], [d(1, { type: 'rempart', part: 0.5 }), d(0, { type: 'vague' })]),
   m('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', [x('Happer', 1, 'atk', 9), x('Ronger', 3, 'atk', 10)], [d(0, { type: 'siphon', part: 0.5 }), d(1, { type: 'fissure', part: 0.25 })]),
   m('cuir-recif', 'Cuir de récif', 'bio', 'fer', [x('Écailles', 4, 'bouclier', 9), x('Barbillon', 5, 'atk', 8)], [d(0, { type: 'rempart', part: 0.5 }), d(1, { type: 'siphon', part: 0.5 })]),
-  m('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', [x('Apnée', 2, 'bouclier', 10, false, { type: 'rempart', part: 0.5 }), x('Remontée', 4, 'soin', 8)], [d(0, { type: 'rempart', part: 0.5 }), d(1, { type: 'vague' })]),
+  m('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', [x('Apnée', 2, 'bouclier', 13, false, { type: 'rempart', part: 0.5 }), x('Remontée', 4, 'soin', 9)], [d(0, { type: 'rempart', part: 0.5 }), d(1, { type: 'vague' })]),
   m('carapace-mere', 'Carapace-mère', 'bio', 'argent', [x('Rempart', 5, 'bouclier', 16, false, { type: 'rempart', part: 0.75 }), x('Bélier', 6, 'atk', 22, true, { type: 'fissure', part: 0.25 }),
     x('Mue rapide', 1, 'soin', 9, false, { type: 'vague' })]),
   m('coeur-meute', 'Cœur de meute', 'bio', 'or', [x('Hurlement', 4, 'atk', 11, false, { type: 'fissure', part: 0.4 }), x('Curée', 5, 'atk', 13, false, { type: 'siphon', part: 0.75 }),
     x('Instinct', 3, 'soin', 9, false, { type: 'vague' })]),
   // Résonants : Fréquences hautes
   m('eclat-chant', 'Éclat qui chante', 'reso', 'fer', [x('Note haute', 8, 'atk', 13), x('Note basse', 7, 'bouclier', 9)], [d(1, { type: 'desarmer', part: 0.3 }), d(0, { type: 'crescendo', part: 0.3 })]),
-  m('miroir-brume', 'Miroir de brume', 'reso', 'fer', [x('Reflet', 9, 'atk', 12), x('Voile', 8, 'bouclier', 9)], [d(1, { type: 'desarmer', part: 0.3 }), d(0, { type: 'fissure', part: 0.25 })]),
+  m('miroir-brume', 'Miroir de brume', 'reso', 'fer', [x('Reflet', 9, 'atk', 13), x('Voile', 8, 'bouclier', 10)], [d(1, { type: 'desarmer', part: 0.3 }), d(0, { type: 'fissure', part: 0.25 })]),
   m('encre-ancienne', 'Encre ancienne', 'reso', 'fer', [x('Glyphe', 6, 'atk', 11), x('Paume ouverte', 7, 'soin', 8)], [d(0, { type: 'fissure', part: 0.25 }), d(1, { type: 'accord' })]),
   m('plume-givre', 'Plume de givre', 'reso', 'cuivre', [x('Givre', 9, 'atk', 13, false, { type: 'desarmer', part: 0.4 }), x('Cristal', 8, 'bouclier', 12)], [d(0, { type: 'desarmer', part: 0.4 }), d(1, { type: 'accord' })]),
   m('ombre-ailee', 'Ombre ailée', 'reso', 'argent', [x('Envol', 7, 'bouclier', 13, false, { type: 'accord' }), x('Piqué', 9, 'atk', 25, true, { type: 'fissure', part: 0.4 }),
@@ -138,7 +138,7 @@ export const MODULES: ModuleDef[] = [
     [d(0, { type: 'desarmer', part: 0.3 }), d(1, { type: 'flux', v: 1 })]),
   m('dorsale', 'Dorsale renforcée', 'tech', 'argent', [x('Porter', 3, 'bouclier', 14), x('Bélier hydraulique', 7, 'atk', 20, true), x('Redresser', 4, 'soin', 8)],
     [d(0, { type: 'elan' }), d(1, { type: 'percant' }), d(2, { type: 'flux', v: 1 })]),
-  m('coeur-reprise', 'Cœur de reprise', 'tech', 'or', [x('Débridage', 2, 'atk', 12), x('Court-circuit', 6, 'atk', 12), x('Réamorçage', 5, 'soin', 9)],
+  m('coeur-reprise', 'Cœur de reprise', 'tech', 'or', [x('Débridage', 2, 'atk', 14), x('Court-circuit', 6, 'atk', 14), x('Réamorçage', 5, 'soin', 9)],
     [d(1, { type: 'percant' }), d(0, { type: 'crescendo', part: 0.3 }), d(2, { type: 'flux', v: 1 })]),
   // Génés : voir dans le noir, respirer sous les Fondations, se refaire
   m('yeux-nocturnes', 'Yeux nocturnes', 'bio', 'fer', [x('Guet', 4, 'bouclier', 8), x('Bond dans le noir', 3, 'atk', 10)],
@@ -150,13 +150,13 @@ export const MODULES: ModuleDef[] = [
   m('mue-totale', 'Mue totale', 'bio', 'or', [x('Écdysis', 1, 'soin', 11), x('Peau neuve', 2, 'bouclier', 13), x('Morsure de mue', 4, 'atk', 13)],
     [d(0, { type: 'vague' }), d(1, { type: 'rempart', part: 0.5 }), d(2, { type: 'siphon', part: 0.75 })]),
   // Résonants : la mèche d'or, l'ombre de l'être ancien, le pressentiment des catastrophes
-  m('meche-or', 'Mèche d’or', 'reso', 'fer', [x('Présage', 7, 'bouclier', 8), x('Éclat doré', 8, 'atk', 11)],
+  m('meche-or', 'Mèche d’or', 'reso', 'fer', [x('Présage', 7, 'bouclier', 8), x('Éclat doré', 8, 'atk', 13)],
     [d(0, { type: 'desarmer', part: 0.3 }), d(1, { type: 'crescendo', part: 0.3 })]),
-  m('ombre-serpent', 'Ombre de serpent', 'reso', 'cuivre', [x('Enlacer', 9, 'atk', 12), x('Mue d’ombre', 6, 'soin', 9)],
+  m('ombre-serpent', 'Ombre de serpent', 'reso', 'cuivre', [x('Enlacer', 9, 'atk', 14), x('Mue d’ombre', 6, 'soin', 9)],
     [d(0, { type: 'fissure', part: 0.3 }), d(1, { type: 'accord' })]),
-  m('pressentiment', 'Pressentiment', 'reso', 'argent', [x('Prémonition', 7, 'bouclier', 13), x('Esquive tracée', 8, 'bouclier', 10), x('Contre-temps', 6, 'atk', 18, true)],
+  m('pressentiment', 'Pressentiment', 'reso', 'argent', [x('Prémonition', 7, 'bouclier', 14), x('Esquive tracée', 8, 'bouclier', 10), x('Contre-temps', 6, 'atk', 22, true)],
     [d(0, { type: 'desarmer', part: 0.4 }), d(1, { type: 'accord' }), d(2, { type: 'fissure', part: 0.3 })]),
-  m('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', [x('Souffle', 9, 'atk', 14), x('Écailles d’ombre', 8, 'bouclier', 13), x('Rugissement', 7, 'atk', 12)],
+  m('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', [x('Souffle', 9, 'atk', 17), x('Écailles d’ombre', 8, 'bouclier', 13), x('Rugissement', 7, 'atk', 14)],
     [d(0, { type: 'crescendo', part: 0.4 }), d(1, { type: 'desarmer', part: 0.5 }), d(2, { type: 'fissure', part: 0.4 })]),
 ];
 
@@ -333,14 +333,14 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   // ---------- Le fond (−10 et plus) ----------
   {
-    id: 'premier-porteur', nom: 'Le Premier Porteur', lignee: 'reso', tag: 'BOSS · CEUX D’AVANT', pvMax: 210,
+    id: 'premier-porteur', nom: 'Le Premier Porteur', lignee: 'reso', tag: 'BOSS · CEUX D’AVANT', pvMax: 185,
     motif: [
       { type: 'dissonance', nom: 'Mise en garde' },
-      { type: 'atk', nom: 'Souvenir de feu', v: 15, cible: 'hasard' },
-      { type: 'atk', nom: 'Marée ancienne', v: 9, zone: true },
+      { type: 'atk', nom: 'Souvenir de feu', v: 13, cible: 'hasard' },
+      { type: 'atk', nom: 'Marée ancienne', v: 8, zone: true },
       { type: 'soin', nom: 'Se souvenir', v: 15 },
       { type: 'boost' },
-      { type: 'atk', nom: 'Dernier mot', v: 14, cible: 'faible' },
+      { type: 'atk', nom: 'Dernier mot', v: 12, cible: 'faible' },
       { type: 'bouclier', v: 16 },
     ],
   },
