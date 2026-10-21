@@ -479,6 +479,8 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .archipel .anime{position:absolute;inset:0;pointer-events:none}
 .archipel .anime video{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s}
 .archipel .anime video.prete{opacity:1}
+.archipel .lueur-cristal{position:absolute;left:51%;top:6.5%;width:34%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(circle,rgba(120,240,255,.55) 0%,rgba(80,210,240,.22) 35%,rgba(80,210,240,0) 70%);animation:lueurCristal 4.5s ease-in-out infinite alternate}
+@keyframes lueurCristal{from{opacity:.35;transform:translate(-50%,-50%) scale(.85)}to{opacity:.9;transform:translate(-50%,-50%) scale(1.08)}}
 .archipel .tableau.nouvel-age{animation:nouvelAge 1.6s ease-out}
 @keyframes nouvelAge{from{opacity:0;filter:brightness(1.8) blur(6px)}to{opacity:1;filter:none}}
 .archipel .nuit-voile{position:absolute;inset:0;pointer-events:none;background:linear-gradient(#0B1630cc,#0B163066 45%,#0B163099);mix-blend-mode:multiply}
@@ -487,6 +489,8 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 @media (prefers-reduced-motion: reduce){ .archipel .anime{position:absolute;inset:0;pointer-events:none}
 .archipel .anime video{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s}
 .archipel .anime video.prete{opacity:1}
+.archipel .lueur-cristal{position:absolute;left:51%;top:6.5%;width:34%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(circle,rgba(120,240,255,.55) 0%,rgba(80,210,240,.22) 35%,rgba(80,210,240,0) 70%);animation:lueurCristal 4.5s ease-in-out infinite alternate}
+@keyframes lueurCristal{from{opacity:.35;transform:translate(-50%,-50%) scale(.85)}to{opacity:.9;transform:translate(-50%,-50%) scale(1.08)}}
 .archipel .tableau.nouvel-age{animation:none} }
 
 /* ---------- Écran titre ---------- */

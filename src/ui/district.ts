@@ -87,6 +87,7 @@ function tableau(j: Jeu): string {
   ageAffiche = s.age;
   return `<img class="tableau${s.nuit ? ' nuit' : ''}${nouveau ? ' nouvel-age' : ''}" src="${s.url}" alt="" draggable="false"/>`
     + (s.video ? `<div class="anime" data-video="${s.video}"></div>` : '')
+    + (s.age === 4 ? '<i class="lueur-cristal" aria-hidden="true"></i>' : '')
     + `${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
 }
 
