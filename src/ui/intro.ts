@@ -19,7 +19,8 @@ export interface Plan {
   fonds?: { id: string; des: number }[];
   ambiance: string;
   /** mouvement de caméra sur l'illustration */
-  camera: 'approche' | 'monte' | 'descend' | 'gauche' | 'droite' | 'recule';
+  /** porte : plan large à la première phrase, puis la caméra s'approche de la porte et s'arrête */
+  camera: 'approche' | 'monte' | 'descend' | 'gauche' | 'droite' | 'recule' | 'porte';
   /** où poser le texte pour ne pas cacher le sujet de l'illustration (bas par défaut) */
   texte?: 'haut' | 'bas';
   /** position du sujet dans l'illustration, en % (x, y) : la caméra zoome autour de lui */
@@ -160,7 +161,7 @@ export const PLANS: Plan[] = [
     'Sous chaque district, il y a d’abord les abris murés des années 2060. Plus bas, les Strates, toujours plus anciennes.',
     'On en remonte des cristaux d’empreinte, des pièces d’Augmentés, des greffes de Génés. Chacune peut armer quelqu’un.',
     'Plus on descend, plus les trouvailles sont puissantes, et plus il est difficile d’en remonter.'] },
-  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'approche', texte: 'haut', foyer: [62, 80], fonds: [f('10-toi')], scene: toi, lignes: [
+  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-toi')], scene: toi, lignes: [
     'Hier, ton district t’a élu à sa tête : quelques piliers reliés par des passerelles, une Forge au ralenti, une vieille tour.',
     'Ce matin, sous la tour, on a ouvert une porte scellée depuis soixante ans. Derrière, des dizaines d’empreintes, mêlées.',
     'Au même moment, dans les Hauts, des Résonants se réveillent sans savoir qui ils sont. Tout Vertiga va vouloir cette porte.',
@@ -169,8 +170,9 @@ export const PLANS: Plan[] = [
 
 /** Illustrations Midjourney déjà déposées dans public/intro/ */
 export const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-tempetes', '03-fracture', '04-hauteur', '05-puits-zero', '06-empreintes', '07-ascension', '08-reponse', '09-oubli', '10-dessous', '10-toi']);
-/** Plans qui ont aussi une courte vidéo en boucle (public/intro/<id>.mp4), l'image sert d'affiche */
-export const VIDEOS_DISPONIBLES = new Set<string>(['10-toi']);
+/** Plans qui ont aussi une courte vidéo en boucle (public/intro/<id>.mp4), l'image sert d'affiche.
+ *  10-toi n'en a plus : sa boucle sautait ; l'image fixe et le zoom vers la porte la remplacent. */
+export const VIDEOS_DISPONIBLES = new Set<string>([]);
 
 /** Illustration visible au plan i quand k lignes sont affichées (la dernière disponible dont le seuil est atteint) */
 export function fondActif(i: number, k: number): string | null {
