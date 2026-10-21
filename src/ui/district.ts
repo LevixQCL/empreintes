@@ -1,5 +1,5 @@
 // Écrans du district : l'archipel (accueil), la coupe de la Tour du Noyau, le choix de l'escouade.
-// Les bâtiments sont des illustrations Midjourney (public/art/batiments, 4 apparences selon le niveau) ; le ciel et le chantier restent en SVG.
+// Les bâtiments sont des illustrations Midjourney (public/art/batiments, 4 apparences selon le niveau) ; le fond est la mer peinte (jour ou nuit), le Chantier une esquisse en attendant son illustration.
 
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
 import { MODULES, PORTEURS, batimentDef, gestesRemplaces, moduleDef, porteurDef } from '../core/donnees';
@@ -51,36 +51,10 @@ const PILIERS: { id: BatimentId | 'chantier'; x: number; y: number; r: number }[
   { id: 'chantier', x: 306, y: 440, r: 60 },
 ];
 
-function pilier(x: number, y: number, r: number) {
-  const ry = r * 0.42;
-  return `<path d="M${x - r * 0.86} ${y} L${x - r * 0.62} 640 L${x + r * 0.62} 640 L${x + r * 0.86} ${y} Z" fill="url(#roche)"/>`
-    + `<ellipse cx="${x}" cy="${y + 6}" rx="${r}" ry="${ry}" fill="#8C7B64"/>`
-    + `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${ry}" fill="#86B86A"/>`
-    + `<ellipse cx="${x - r * 0.25}" cy="${y - ry * 0.25}" rx="${r * 0.45}" ry="${ry * 0.4}" fill="#9CCB7C" opacity=".7"/>`;
-}
-
-function batimentSvg(id: BatimentId | 'chantier', x: number, y: number, niv: number) {
-  const k = 0.85 + 0.12 * niv;
-  const t = (s: string) => `<g transform="translate(${x} ${y}) scale(${k})">${s}</g>`;
-  switch (id) {
-    case 'noyau':
-      return t(`<rect x="-16" y="-96" width="32" height="96" rx="4" fill="#C9A37A"/><rect x="-16" y="-96" width="32" height="96" rx="4" fill="url(#ombre)"/>`
-        + [-80, -60, -40, -20].map((wy) => `<rect x="-6" y="${wy}" width="12" height="10" rx="2" fill="#FFD98A"/>`).join('')
-        + `<path d="M-20 -96 L0 -112 L20 -96 Z" fill="#8E5A3C"/><path d="M0 -140 L9 -122 L0 -110 L-9 -122 Z" fill="#BFE6FF"/><circle cx="0" cy="-124" r="16" fill="#BFE6FF" opacity=".25"/>`
-        + `<ellipse cx="0" cy="2" rx="14" ry="5" fill="#BFE6FF" opacity=".8"/>`);
-    case 'generateur':
-      return t(`<rect x="-6" y="-50" width="12" height="50" fill="#A9825E"/><g transform="translate(0 -52)"><g class="pales">`
-        + [0, 90, 180, 270].map((a) => `<rect x="-3" y="-30" width="6" height="30" rx="2" fill="#E8DCC4" transform="rotate(${a})"/>`).join('')
-        + `</g><circle r="4" fill="#6B4A33"/></g>`);
-    case 'forge':
-      return t(`<rect x="-24" y="-28" width="48" height="28" rx="3" fill="#A26B4A"/><path d="M-28 -28 L0 -44 L28 -28 Z" fill="#6E3F2B"/>`
-        + `<rect x="12" y="-56" width="10" height="24" fill="#6B5B52"/><circle cx="17" cy="-62" r="7" fill="#FF9C4A" opacity=".8" class="braise"/><rect x="-8" y="-16" width="14" height="16" rx="2" fill="#FFB25E"/>`);
-    case 'clinique':
-      return t(`<rect x="-22" y="-26" width="44" height="26" rx="3" fill="#EDE7DA"/><path d="M-26 -26 L0 -40 L26 -26 Z" fill="#FFFFFF"/>`
-        + `<rect x="-6" y="-14" width="12" height="14" rx="2" fill="#8FB7C9"/><g fill="#5E9A4E">${[-34, -26, 26, 34].map((cx) => `<circle cx="${cx}" cy="4" r="4"/>`).join('')}</g>`);
-    case 'chantier':
-      return t(`<g stroke="#8A6A48" stroke-width="3" fill="none"><path d="M-20 0 V-40 M20 0 V-40 M-20 -20 H20 M-20 -40 H20 M-20 0 L20 -40"/></g><rect x="-30" y="-6" width="18" height="6" fill="#B08A5E"/>`);
-  }
+/** Emplacement du Chantier en attendant son illustration : une nappe de brume et un échafaudage esquissé */
+function emplacementChantier(x: number, y: number, r: number) {
+  return `<ellipse class="brume-pied" cx="${x}" cy="${y + 8}" rx="${r * 0.9}" ry="${r * 0.28}" fill="url(#halo)"/>`
+    + `<g class="esquisse" transform="translate(${x} ${y})" stroke="#F2E6CC" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".75"><path d="M-22 0 V-46 M22 0 V-46 M-22 -23 H22 M-22 -46 H22 M-22 0 L22 -46"/><path d="M-34 2 H34" stroke-dasharray="3 5"/></g>`;
 }
 
 /** Illustration du bâtiment, posée sur son pilier : le haut de l'îlot tombe sur (x, y), le bas s'efface dans la brume. */
@@ -101,16 +75,14 @@ function archipelSvg(j: Jeu): string {
   const fond = fondCarte();
   return `<svg class="archipel-svg${fond.nuit ? ' nuit' : ''}" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
   <defs>
-    <linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9FD3EC"/><stop offset=".6" stop-color="#DCEFF2"/><stop offset="1" stop-color="#F3E2B8"/></linearGradient>
-    <linearGradient id="roche" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9A8A74"/><stop offset=".55" stop-color="#7D7C86" stop-opacity=".9"/><stop offset="1" stop-color="#B9CCD8" stop-opacity="0"/></linearGradient>
     <linearGradient id="fondu" x1="0" y1="0" x2="0" y2="1"><stop offset=".72" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
     <radialGradient id="halo"><stop offset="0" stop-color="#EAF4F7" stop-opacity=".55"/><stop offset="1" stop-color="#EAF4F7" stop-opacity="0"/></radialGradient>
     <mask id="brume" maskContentUnits="objectBoundingBox"><rect width="1" height="1" fill="url(#fondu)"/></mask>
-    <linearGradient id="ombre" x1="0" y1="0" x2="1" y2="0"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".18"/></linearGradient>
   </defs>
   <image class="fond-carte" href="${fond.url}" width="400" height="600" preserveAspectRatio="xMidYMid slice"/>
+  <rect class="voile" width="400" height="600"/>
   ${pont(gen, noyau)}${pont(forge, noyau)}${pont(clin, noyau)}${pont(chant, noyau)}${pont(gen, clin)}
-  ${PILIERS.map((p) => (p.id === 'chantier' ? pilier(p.x, p.y, p.r) + batimentSvg(p.id, p.x, p.y - 4, 1) : spriteBatiment(p.id, p.x, p.y, p.r, niv(p.id)))).join('')}
+  ${PILIERS.map((p) => (p.id === 'chantier' ? emplacementChantier(p.x, p.y, p.r) : spriteBatiment(p.id, p.x, p.y, p.r, niv(p.id)))).join('')}
 </svg>`;
 }
 
