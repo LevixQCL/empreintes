@@ -71,3 +71,11 @@ describe('Explorer', () => {
     expect(apres).toBe(avant + 1);
   });
 });
+
+import { simulerExploration } from '../src/core/robot';
+describe('Le robot sait explorer', () => {
+  it('le deck de départ va au bout d’une Strate des Fondations', () => {
+    const r = simulerExploration({ ilka: [{ id: 'jambes-ressort@fer', niveau: 1 }], doran: [{ id: 'glande-ambre@fer', niveau: 1 }], vela: [{ id: 'eclat-chant@fer', niveau: 1 }] }, 1, 7);
+    expect(r.combats).toBeGreaterThanOrEqual(3);
+  });
+});

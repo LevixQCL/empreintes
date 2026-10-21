@@ -6,7 +6,7 @@ import { allonger, ajouter, capacite, placesLibres, vivants } from './combat';
 import { lancer } from './combat';
 import { gestesAvecModules } from './collection';
 import { GESTES_SPECIAUX, porteurDef } from './donnees';
-import { cloturerCombat, combatSuivant, nouvelleExpedition } from './expedition';
+import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExpedition, nouvelleExploration, salleCourante } from './expedition';
 import { REGLES, places } from './regles';
 import type { CombatEtat, Geste } from './types';
 
@@ -158,3 +158,44 @@ export function mesurer(escouade: Escouade, strate: number, parties: number, gra
 
 export const tauxVictoire = (escouade: Escouade, strate: number, parties: number, graineDepart = 1) =>
   mesurer(escouade, strate, parties, graineDepart).victoire;
+
+/**
+ * Une descente en exploration, jouée par le robot : il choisit son chemin (campement quand l'escouade est entamée,
+ * sinon combat, cache ou archive plutôt que salle scellée), passe son chemin aux rencontres, et va jusqu'au gardien.
+ */
+export function simulerExploration(escouade: Escouade, strate: number, rng: number): { victoire: boolean; combats: number } {
+  const ids = Object.keys(escouade);
+  const porteurs = ids.map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
+  const deck = [...ids.flatMap((id) => gestesAvecModules(id, escouade[id]!)), ...GESTES_SPECIAUX];
+  let x = nouvelleExploration({ porteurs, deck, strate, rng });
+  let garde = 0;
+  while (!x.terminee && garde++ < 3000) {
+    if (x.phase === 'carte') {
+      if (x.rencontre) { x = { ...x, rencontre: undefined }; continue; }
+      const choix = accessibles(x);
+      if (!choix.length) break;
+      const sante = x.porteurs.reduce((n, p) => n + Math.max(0, p.pv), 0) / x.porteurs.reduce((n, p) => n + p.pvMax, 0);
+      const prefere = (t: string) => (t === 'camp' ? (sante < 0.7 ? 0 : 3) : t === 'cache' || t === 'archive' ? 1 : t === 'combat' || t === 'gardien' ? 2 : t === 'rencontre' ? 2 : 4);
+      const cible = choix.slice().sort((a, b) => prefere(a.type) - prefere(b.type))[0]!;
+      x = entrerSalle(x, cible.id).x;
+      continue;
+    }
+    if (x.combat.issue !== 'en-cours') {
+      x = cloturerCombat(x);
+      if (!x.terminee) x = combatSuivant(x);
+      continue;
+    }
+    jouerTour(x.combat);
+  }
+  return { victoire: x.terminee && x.combat.issue === 'victoire' && salleCourante(x).type === 'gardien', combats: x.gagnes ?? 0 };
+}
+
+export function tauxExploration(escouade: Escouade, strate: number, parties: number, graineDepart = 1): { victoire: number; combats: number } {
+  let v = 0, c = 0;
+  for (let k = 0; k < parties; k++) {
+    const r = simulerExploration(escouade, strate, graineDepart + k * 7919);
+    if (r.victoire) v++;
+    c += r.combats;
+  }
+  return { victoire: v / parties, combats: c / parties };
+}

@@ -6,7 +6,7 @@ import { writeFileSync } from 'node:fs';
 import { COLLECTION, NOMS_RARETE } from '../src/core/collection';
 import { NOMS_EFFET } from '../src/core/effets';
 import { METAL_EFFETS, METAL_FORCE, MODULES, carteId, moduleDef } from '../src/core/donnees';
-import { mesurer, tauxVictoire, type Escouade } from '../src/core/robot';
+import { mesurer, tauxExploration, tauxVictoire, type Escouade } from '../src/core/robot';
 import type { Lignee, ModuleDef, Rarete } from '../src/core/types';
 
 const arg = (nom: string, defaut: number) => {
@@ -95,6 +95,10 @@ progres('Comparaison des decks de départ…');
 const six: Escouade = Object.fromEntries(Object.entries(DEPART_6).map(([p, cs]) => [p, cs.map((c) => niv(c, 'depart'))]));
 const strates = [...new Set([2, 4, ref - 2, ref])].filter((s) => s >= 1).sort((a, b) => a - b);
 const decks = strates.map((st) => ({ st, trois: tauxVictoire(escouade('depart'), st, PARTIES), six: tauxVictoire(six, st, PARTIES) }));
+// 3 bis. L'exploration salle par salle : plus de combats, des PV qui ne remontent qu'aux campements
+progres('Exploration…');
+const explo = [1, 3, 5, 7, 9, 11].map((st) => ({ st, ...tauxExploration(escouade('depart'), st, Math.max(60, Math.round(PARTIES / 2))) }));
+
 // 4. Les métaux : chaque Module (hors cartes de départ) greffé en plus, dans chacun des cinq métaux, à la découverte
 const RANGS_M: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
 const metaux: { m: ModuleDef; v: Record<Rarete, number> }[] = [];
@@ -129,6 +133,8 @@ r += `Une carte est signalée quand elle s'écarte de plus de ${Math.round(ECART
 r += `## Deck de départ : 3 cartes ou 6 cartes\n\n| Strate | 3 cartes (actuel) | 6 cartes (document Économie) |\n|---|---|---|\n`;
 r += decks.map((d) => `| −${d.st} | ${pct(d.trois)} | ${pct(d.six)} |`).join('\n') + '\n';
 
+r += `\n## Exploration (deck de départ)\n\nLa descente salle par salle, jouée par le robot jusqu'au gardien.\n\n| Strate | Victoire | Combats gagnés en moyenne |\n|---|---|---|\n`;
+r += explo.map((e) => `| −${e.st} | ${pct(e.victoire)} | ${e.combats.toFixed(1)} |`).join('\n') + '\n';
 if (metaux.length) {
   const moyM = (r: Rarete) => metaux.reduce((a, x) => a + x.v[r], 0) / metaux.length;
   r += `\n## Un Module dans les cinq métaux\n\nChaque Module (hors cartes de départ) greffé en plus, à la découverte, dans chaque métal. `;
