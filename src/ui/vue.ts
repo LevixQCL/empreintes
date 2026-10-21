@@ -105,6 +105,7 @@ export function panneauCompte(c: Compte): string {
 function regles(): string {
   return `<div class="voile-feuille" data-action="regles" aria-hidden="true"></div><section class="feuille regles" role="dialog" aria-modal="true" aria-labelledby="regles-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">AIDE</span><h2 id="regles-titre">Comment on joue</h2></div><button type="button" class="btn-icone" data-action="regles" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps"><ol class="liste-regles">`
+    + '<li><b>D’où viennent tes Gestes.</b> Chaque Porteur apporte les siens au deck commun. Les cartes greffées sur lui en remplacent une partie : leurs Gestes, avec leurs Fréquences, arrivent alors dans ta main.</li>'
     + `<li><b>Compose une chaîne.</b> Touche les Gestes de ta main (${REGLES.capaciteBase} places au départ), puis lance-la.</li>`
     + `<li><b>La force</b> est au milieu : ${ICO.atk} dégâts, ${ICO.bouclier} protection de l’escouade, ${ICO.soin} soin du plus blessé.</li>`
     + '<li><b>La Fréquence</b> est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque le Geste qui prolonge ta suite.</li>'
@@ -113,7 +114,8 @@ function regles(): string {
     + '<li><b>« 2 PL. »</b> : ce Geste est puissant mais occupe deux places.</li>'
     + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose le Geste dans la chaîne pour lire ce qu’il fait. « ∗ » : Fréquence libre, il prolonge toujours la suite.</li>'
     + '<li><b>Le triangle des lignées :</b> Tech bat Résonant, Résonant bat Géné, Géné bat Tech (+15 %).</li>'
-    + '<li><b>L’ennemi annonce son attaque</b> en haut de l’écran : protège-toi ou finis-le avant.</li></ol></div></section>';
+    + '<li><b>L’ennemi annonce son attaque</b> en haut de l’écran : protège-toi ou finis-le avant.</li>'
+    + '<li><b>La Dissonance :</b> certains ennemis brouillent tes Fréquences. Au tour suivant, aucune suite ne résonne : mise sur la force brute ou la protection.</li></ol></div></section>';
 }
 
 export function htmlCombat(e: Ecran): string {

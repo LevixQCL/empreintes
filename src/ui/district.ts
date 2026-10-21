@@ -3,7 +3,7 @@
 // les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
 
 import { libelleEffet } from '../core/effets';
-import { MODULES, PORTEURS, batimentDef, carteId, ennemiDef, gestesRemplaces, moduleDef, porteurDef, zoneDe } from '../core/donnees';
+import { GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, ennemiDef, gestesRemplaces, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles,
   dureeChantier, dureeFabrication, energieParHeure, enExpedition, gestesDe, greffesDe, lundiSuivant, objectifCourant,
@@ -15,7 +15,7 @@ import { FRAGMENTS } from '../core/fragments';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
 import { COULEUR, echap } from './vue';
 import { decor, illustrationBatiment, prochainVisuel, sceneDistrict, visuel } from './art';
-import { faceCarte } from './carte';
+import { faceCarte, couleurFrequence } from './carte';
 import { ICO } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict } from './coquille';
 
@@ -342,7 +342,7 @@ export function htmlCartes(e: EcranDistrict): string {
   let h = entete(`COLLECTION · ${trouvees} / ${MODULES.length} TROUVÉES`, 'Cartes');
   h += `<div class="segments-choix" role="tablist">` + (['tout', 'tech', 'bio', 'reso'] as const).map((f) =>
     `<button type="button" role="tab" class="seg${e.filtre === f ? ' actif' : ''}"${f !== 'tout' ? ` style="--c:${COULEUR[f]}"` : ''} data-action="filtre" data-id="${f}" aria-selected="${e.filtre === f}">${f === 'tout' ? 'Toutes' : NOM_LIGNEES[f]}</button>`).join('') + `</div>`;
-  h += `<p class="aide intro-ecran">Touche une carte pour la greffer sur un Porteur ou la faire monter avec ses doublons.</p>`;
+  h += `<p class="aide intro-ecran">Une carte greffée sur un Porteur ajoute ses Gestes à ton deck de combat, à la place de certains des siens. Les chiffres dans les octogones sont leurs Fréquences : des Fréquences qui se suivent font les Résonances. Touche une carte pour la greffer ou la faire monter avec ses doublons.</p>`;
   for (const lignee of lignees) {
     h += `<h2 class="titre-section" style="--c:${COULEUR[lignee]}">${NOM_LIGNEES[lignee]}</h2><div class="grille-cartes">`;
     for (const base of MODULES.filter((x) => x.lignee === lignee)) {
@@ -527,6 +527,16 @@ export function htmlEscouade(e: EcranDistrict): string {
     return id ? `<button type="button" class="emplacement plein" style="--c:${COULEUR[porteurDef(id).lignee]}" data-action="choisir" data-id="${id}" aria-label="Retirer ${echap(porteurDef(id).nom)}">${avatar(id, 56)}<small>${echap(porteurDef(id).nom)}</small></button>`
       : `<div class="emplacement"><span>${i + 1}</span><small>Libre</small></div>`;
   }).join('') + `</div>`;
+  // les Fréquences du deck de l'escouade : un trou dans la suite coupe les Résonances
+  if (e.escouade.length) {
+    const cartes = [...e.escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX];
+    const n = Array.from({ length: 9 }, (_, i) => cartes.filter((g) => g.f === i + 1 && g.effet?.type !== 'accord').length);
+    const libres = cartes.filter((g) => g.effet?.type === 'accord').length;
+    const max = Math.max(...n, 1);
+    h += `<div class="frequences-deck" aria-label="Fréquences du deck"><span class="surtitre">FRÉQUENCES DU DECK</span><div class="barres">`
+      + n.map((k, i) => `<span class="barre${k ? '' : ' trou'}" style="--fc:${couleurFrequence(i + 1)};--h:${Math.round((100 * k) / max)}%"><i></i><b>${i + 1}</b><small>${k}</small></span>`).join('')
+      + `</div><small class="aide">Des chiffres qui se suivent font des Résonances. Un chiffre absent coupe les suites${libres ? ` · ${libres} Geste${libres > 1 ? 's' : ''} ∗ comble${libres > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</small></div>`;
+  }
   const zone = zoneDe(e.strateChoisie);
   h += `<p class="zone-strate">${ICO.strate}<span><strong>${echap(zone.nom)}</strong><small>Deux rencontres, puis le gardien de la zone : ${echap(ennemiDef(zone.boss).nom)}</small></span></p>`;
   h += `<p class="aide intro-ecran">Choisis 3 Porteurs. Chacun apporte ses Gestes et ceux de ses cartes au deck commun. Les Porteurs au travail restent au district.</p><div class="grille-porteurs">`;
