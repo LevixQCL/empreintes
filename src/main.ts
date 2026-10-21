@@ -22,6 +22,7 @@ J.tick(jeu, Date.now());
 type Mode = 'intro' | 'district' | 'combat';
 let mode: Mode = !jeu.introVue ? 'intro' : jeu.expedition ? 'combat' : 'district';
 let plan = 0;
+let lignesVues = 1;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
 const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now() };
@@ -37,7 +38,7 @@ function afficher() {
   const email = (racine.querySelector('#email') as HTMLInputElement | null)?.value ?? '';
   const mdp = (racine.querySelector('#mdp') as HTMLInputElement | null)?.value ?? '';
   let h = '';
-  if (mode === 'intro') h = htmlIntro(plan);
+  if (mode === 'intro') h = htmlIntro(plan, lignesVues);
   else if (mode === 'combat' && jeu.expedition) {
     h = htmlCombat({ x: jeu.expedition, etat: K.etat ?? jeu.expedition.combat, verrou: K.verrou, regles: K.regles, pops: K.pops, fin: K.fin });
   } else {
@@ -194,10 +195,13 @@ racine.addEventListener('click', async (ev) => {
 
   switch (a) {
     // intro
-    case 'intro-suivant': if (plan < PLANS.length - 1) plan++; break;
-    case 'intro-precedent': if (plan > 0) plan--; break;
+    case 'intro-suivant':
+      if (lignesVues < PLANS[plan]!.lignes.length) lignesVues++;
+      else if (plan < PLANS.length - 1) { plan++; lignesVues = 1; }
+      break;
+    case 'intro-precedent': if (plan > 0) { plan--; lignesVues = PLANS[plan]!.lignes.length; } break;
     case 'intro-passer': jeu.introVue = true; mode = jeu.expedition ? 'combat' : 'district'; sauver(); break;
-    case 'intro': plan = 0; mode = 'intro'; break;
+    case 'intro': plan = 0; lignesVues = 1; mode = 'intro'; break;
 
     // district
     case 'batiment': D.selection = D.selection === id ? null : (id as BatimentId); break;

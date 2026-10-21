@@ -221,3 +221,13 @@ button.prim:disabled,button.sec:disabled{opacity:.45}
 .habitant>div{display:grid;gap:1px;min-width:0;flex:1}
 .habitant strong,.habitant small{display:block}
 .amb-fracture{background:linear-gradient(170deg,#DCE8EE,#6E8EA6 35%,#18283A 80%)}
+/* Intro illustrée : l'image en plein écran, le texte en sous-titres en bas */
+.intro{background-size:cover;background-position:center}
+.intro.illustree{background-color:#121418;position:relative;isolation:isolate}
+.intro.illustree::before{content:"";position:absolute;inset:0;border-radius:inherit;z-index:-1;background:linear-gradient(180deg,rgba(10,12,16,.35) 0%,rgba(10,12,16,0) 22%,rgba(10,12,16,0) 45%,rgba(10,12,16,.78) 72%,rgba(10,12,16,.92) 100%)}
+.intro-corps{margin-top:auto;gap:8px}
+.intro h2{font-size:30px;text-shadow:0 2px 12px rgba(0,0,0,.55)}
+.intro .ligne{font-size:17px;line-height:1.45;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.intro .ligne.neuve{animation:apparait .6s ease-out}
+@keyframes apparait{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){ .intro .ligne.neuve{animation:none} }
