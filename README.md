@@ -86,8 +86,17 @@ chacun avec son `intention` : `viser` les échange, le reste du moteur ne change
 **L'expérience des Porteurs** (22 octobre 2026). Les cartes montent avec les doublons ; les Porteurs montent en combattant
 (`XP`, `gagnerXp`, `niveauPorteur` dans `jeu.ts`) : XP par combat gagné, salle scellée et gardien (×1 + 0,25 par Strate),
 partagée par toute l'escouade au retour, et XP de mission. Niveau 1 à 20, +4 % des PV de base par niveau (`pvNiveau`).
-Un Porteur en retard de deux niveaux sur le plus avancé apprend 1,5 fois plus vite. Les ennemis suivent : `FORCE.niveaux`
+Un Porteur en retard de deux niveaux sur le plus avancé apprend 1,5 fois plus vite. Les ennemis suivaient d'abord par `FORCE.niveaux`
 (+2,5 % par Strate) : descendre reste un défi (réglage du 22 octobre 2026, au parcours simulé : le joueur moyen gagne environ 3 tentatives au front sur 10, un joueur qui calcule tout comme le robot 5 à 8 sur 10 ; la Tour du Noyau et les creuseurs gardent le rythme des jours).
+
+**Varier les combats** (22 octobre 2026).
+- *Traits des ennemis* (`traits` dans `ENNEMIS`, règles dans `combat.ts`, textes `texteTrait`) : Blindé, Régénération, Épines,
+  Évanescent, Essaim, Vengeur, Furie. Dans la Strate −1, les ennemis jouent sans (`simple`) : on apprend d'abord les bases.
+- *Gardiens à deux phases* (`phase`) : sous la moitié de leurs PV, nouveaux gestes et un renfort (`invoquer`).
+- *Conditions de salle* (`CONDITIONS`, `conditionDe`) : à partir de −2, une salle de combat sur trois (un gardien sur deux) ;
+  visibles sur la carte avant d'entrer.
+- *Pas de combat sans fin* (`usureCombat`) : après le tour 10 les ennemis se soignent de moins en moins, après le tour 25 ils frappent plus fort.
+Ces mécaniques durcissent les combats d'à peu près ce que l'XP des Porteurs apporte : `FORCE.niveaux` est revenu à 0.
 
 **Pas de Fusion.** Un métal se trouve dans les Strates, les boss, les choix et les garanties ; il ne se fabrique pas et ne
 se gagne pas en fusionnant des cartes (décision du 21 octobre 2026).

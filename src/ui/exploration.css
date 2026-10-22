@@ -236,3 +236,9 @@
 /* salle de combat à plusieurs : le nombre d'ennemis en pastille (22 octobre 2026) */
 .sa-groupe{position:absolute;right:-6px;bottom:-3px;z-index:2;min-width:22px;height:18px;padding:0 4px;display:grid;place-items:center;border-radius:9px;
   font:700 10.5px/1 var(--mono);color:#ffe2d8;background:linear-gradient(180deg,#7a2a22,#3a0f0c);box-shadow:0 0 0 1.5px rgba(255,170,150,.75),0 2px 4px rgba(0,0,0,.7)}
+/* condition de salle (22 octobre 2026) : un cristal ambré sur le médaillon, et la règle dans l'annonce */
+.sa-condition{position:absolute;left:-5px;bottom:-3px;z-index:2;width:20px;height:20px;display:grid;place-items:center;border-radius:50%;color:#2a1a04;
+  background:radial-gradient(circle at 40% 30%,#ffe7a8,#d39a2c 70%);box-shadow:0 0 0 1.5px rgba(5,7,16,.9),0 0 8px rgba(255,200,110,.6)}
+.sa-condition .ico{width:11px;height:11px}
+.route .condition-salle{display:flex;gap:5px;align-items:baseline;margin-top:3px;font-style:normal;font-size:12px;color:#f3dca6}
+.route .condition-salle .ico{width:11px;height:11px;flex-shrink:0;color:#f3c66a}

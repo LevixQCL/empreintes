@@ -178,6 +178,7 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   {
     id: 'remanent', nom: 'Rémanent', lignee: 'reso', tag: 'ANCIEN', pvMax: 72,
+    traits: [{ type: 'evanescent', part: 0.25 }],
     motif: [
       { type: 'atk', nom: 'Griffe', v: 8, cible: 'hasard' },
       { type: 'atk', nom: 'Griffe', v: 10, cible: 'faible' },
@@ -187,6 +188,7 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   {
     id: 'vigie', nom: 'Vigie de dépôt', lignee: 'tech', tag: 'ANCIENNE MACHINE', pvMax: 95,
+    traits: [{ type: 'blinde', v: 2 }],
     motif: [
       { type: 'atk', nom: 'Rayon', v: 10, cible: 'reso' },
       { type: 'atk', nom: 'Balayage', v: 5, zone: true },
@@ -196,6 +198,9 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   {
     id: 'confluence', nom: 'Confluence', lignee: 'bio', tag: 'BOSS · EMPREINTES MÊLÉES', pvMax: 165,
+    traits: [{ type: 'regeneration', part: 0.015 }],
+    phase: { seuil: 0.5, nom: 'Crue', texte: 'Les empreintes mêlées débordent : la Confluence appelle ce qui rampe dans les piliers.', renforts: ['rampeur'],
+      motif: [{ type: 'atk', nom: 'Crue', v: 9, zone: true }, { type: 'atk', nom: 'Ressac', v: 13, cible: 'faible' }, { type: 'soin', nom: 'Refluer', v: 12 }, { type: 'atk', nom: 'Fracture', v: 11, cible: 'hasard' }] },
     motif: [
       { type: 'atk', nom: 'Ressac', v: 12, cible: 'hasard' },
       { type: 'atk', nom: 'Débordement', v: 7, zone: true },
@@ -207,6 +212,7 @@ export const ENNEMIS: EnnemiDef[] = [
   // ---------- Les salles closes (−4 à −6) ----------
   {
     id: 'brigadier', nom: 'Brigadier du Serment', lignee: 'reso', tag: 'BRIGADES DU SERMENT DE VEYR', pvMax: 85,
+    traits: [{ type: 'furie' }],
     motif: [
       { type: 'dissonance', nom: 'Sommation' },
       { type: 'atk', nom: 'Matraque', v: 11, cible: 'hasard' },
@@ -216,6 +222,7 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   {
     id: 'echo-veilleur', nom: 'Écho de veilleur', lignee: 'reso', tag: 'ÉCHO', pvMax: 78,
+    traits: [{ type: 'evanescent', part: 0.25 }],
     motif: [
       { type: 'atk', nom: 'Griffe d’ombre', v: 12, cible: 'faible' },
       { type: 'dissonance', nom: 'Murmure' },
@@ -225,6 +232,7 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   {
     id: 'sentinelle-verre', nom: 'Sentinelle de verre', lignee: 'tech', tag: 'ANCIENNE MACHINE', pvMax: 100,
+    traits: [{ type: 'epines', part: 0.1 }],
     motif: [
       { type: 'bouclier', v: 15 },
       { type: 'atk', nom: 'Réfraction', v: 11, cible: 'bio' },
@@ -234,6 +242,9 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   {
     id: 'gardien-registres', nom: 'Gardien des registres', lignee: 'reso', tag: 'BOSS · LES SALLES CLOSES', pvMax: 175,
+    traits: [{ type: 'blinde', v: 3 }],
+    phase: { seuil: 0.5, nom: 'Registre ouvert', texte: 'Le Gardien ouvre son registre et appelle un brigadier à la barre.', renforts: ['brigadier'],
+      motif: [{ type: 'atk', nom: 'Rature', v: 14, cible: 'faible' }, { type: 'dissonance', nom: 'Sceau' }, { type: 'atk', nom: 'Liste des noms', v: 9, zone: true }, { type: 'boost' }] },
     motif: [
       { type: 'dissonance', nom: 'Sceau' },
       { type: 'atk', nom: 'Effacement', v: 13, cible: 'hasard' },
@@ -246,6 +257,7 @@ export const ENNEMIS: EnnemiDef[] = [
   // ---------- Les mémoires contradictoires (−7 à −9) ----------
   {
     id: 'double', nom: 'Double', lignee: 'reso', tag: 'ÉCHO DÉDOUBLÉ', pvMax: 90,
+    traits: [{ type: 'essaim', part: 0.35 }],
     motif: [
       { type: 'atk', nom: 'Premier souvenir', v: 12, cible: 'hasard' },
       { type: 'atk', nom: 'Second souvenir', v: 12, cible: 'hasard' },
@@ -255,6 +267,7 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   {
     id: 'essaim-ambre', nom: 'Essaim d’ambre', lignee: 'bio', tag: 'FAUNE DES STRATES', pvMax: 80,
+    traits: [{ type: 'essaim', part: 0.4 }],
     motif: [
       { type: 'atk', nom: 'Piqûres', v: 6, zone: true },
       { type: 'atk', nom: 'Piqûres', v: 6, zone: true },
@@ -264,6 +277,7 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   {
     id: 'automate-graveur', nom: 'Automate graveur', lignee: 'tech', tag: 'ANCIENNE MACHINE', pvMax: 110,
+    traits: [{ type: 'blinde', v: 3 }],
     motif: [
       { type: 'atk', nom: 'Burin', v: 13, cible: 'reso' },
       { type: 'bouclier', v: 12 },
@@ -273,6 +287,9 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   {
     id: 'tisseuse', nom: 'Tisseuse de souvenirs', lignee: 'bio', tag: 'BOSS · MÉMOIRES MÊLÉES', pvMax: 190,
+    traits: [{ type: 'epines', part: 0.08 }],
+    phase: { seuil: 0.5, nom: 'Trame rompue', texte: 'La Tisseuse déchire sa trame : un essaim d’ambre s’en échappe.', renforts: ['essaim-ambre'],
+      motif: [{ type: 'atk', nom: 'Fil tranchant', v: 13, cible: 'faible' }, { type: 'atk', nom: 'Trame', v: 9, zone: true }, { type: 'soin', nom: 'Retisser', v: 12 }, { type: 'boost' }] },
     motif: [
       { type: 'atk', nom: 'Fil', v: 11, cible: 'faible' },
       { type: 'atk', nom: 'Trame', v: 8, zone: true },
@@ -285,6 +302,9 @@ export const ENNEMIS: EnnemiDef[] = [
   // ---------- Le fond (−10 et plus) ----------
   {
     id: 'premier-porteur', nom: 'Le Premier Porteur', lignee: 'reso', tag: 'BOSS · CEUX D’AVANT', pvMax: 185,
+    traits: [{ type: 'evanescent', part: 0.3 }],
+    phase: { seuil: 0.5, nom: 'Ceux d’avant', texte: 'Le Premier Porteur rappelle son double : ceux d’avant ne se battent jamais seuls.', renforts: ['double'],
+      motif: [{ type: 'atk', nom: 'Marée ancienne', v: 10, zone: true }, { type: 'dissonance', nom: 'Dernière mise en garde' }, { type: 'atk', nom: 'Souvenir de feu', v: 15, cible: 'hasard' }, { type: 'boost' }, { type: 'atk', nom: 'Dernier mot', v: 14, cible: 'faible' }] },
     motif: [
       { type: 'dissonance', nom: 'Mise en garde' },
       { type: 'atk', nom: 'Souvenir de feu', v: 13, cible: 'hasard' },
@@ -298,6 +318,7 @@ export const ENNEMIS: EnnemiDef[] = [
   // ---------- Les Fondations (−1 à −3), en plus du Rémanent et de la Vigie ----------
   {
     id: 'rampeur', nom: 'Rampeur des piliers', lignee: 'bio', tag: 'FAUNE DES FONDATIONS', pvMax: 80,
+    traits: [{ type: 'regeneration', part: 0.04 }],
     motif: [
       { type: 'atk', nom: 'Morsure', v: 9, cible: 'faible' },
       { type: 'bouclier', v: 9 },
@@ -307,6 +328,7 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   {
     id: 'pilleur', nom: 'Pilleur de Strates', lignee: 'tech', tag: 'FOUILLEUR SANS LICENCE', pvMax: 70,
+    traits: [{ type: 'vengeur' }],
     motif: [
       { type: 'atk', nom: 'Pied-de-biche', v: 9, cible: 'hasard' },
       { type: 'bouclier', v: 11 },
@@ -315,6 +337,34 @@ export const ENNEMIS: EnnemiDef[] = [
     ],
   },
 ];
+
+// ---------- Les traits des ennemis (décision du 22 octobre 2026) : leur nom et ce qu'ils font, pour l'écran ----------
+export function texteTrait(t: import('./types').Trait): { nom: string; texte: string } {
+  switch (t.type) {
+    case 'blinde': return { nom: 'Blindé', texte: `Chaque coup perd ${t.v} dégâts (un peu plus en profondeur). Perçant passe outre.` };
+    case 'regeneration': return { nom: 'Régénération', texte: `Regagne ${Math.round(t.part * 100)} % de ses PV à la fin de son tour.` };
+    case 'epines': return { nom: 'Épines', texte: `Renvoie ${Math.round(t.part * 100)} % des dégâts au Porteur qui frappe (sans le mettre à terre).` };
+    case 'evanescent': return { nom: 'Évanescent', texte: `Hors Résonance, il ne prend que ${Math.round((1 - t.part) * 100)} % des coups : fais des suites.` };
+    case 'essaim': return { nom: 'Essaim', texte: 'Quand il tombe, un rejeton plus petit surgit (une fois).' };
+    case 'vengeur': return { nom: 'Vengeur', texte: 'Quand un allié tombe, sa prochaine attaque est doublée.' };
+    case 'furie': return { nom: 'Furie', texte: 'Sous la moitié de ses PV, ses attaques font +30 %.' };
+  }
+}
+
+// ---------- Les conditions de salle (décision du 22 octobre 2026 : varier les combats) ----------
+// Tirées sur la carte de la Strate, visibles avant d'entrer : elles changent la façon de jouer la salle, pas seulement les chiffres.
+export interface ConditionDef { id: string; nom: string; texte: string }
+export const CONDITIONS: Record<string, ConditionDef> = {
+  inondee: { id: 'inondee', nom: 'Salle inondée', texte: 'L’eau porte les Génés : leurs cartes font +20 %.' },
+  courants: { id: 'courants', nom: 'Câbles à nu', texte: 'Le courant court partout : les cartes des Augmentés font +20 %.' },
+  chant: { id: 'chant', nom: 'Pierre qui chante', texte: 'La roche résonne : les cartes des Résonants font +20 %.' },
+  echo: { id: 'echo', nom: 'Écho ancien', texte: 'Une suite de 4 résonne comme une suite de 5.' },
+  sanctuaire: { id: 'sanctuaire', nom: 'Source tiède', texte: 'Les soins de l’escouade font +30 %.' },
+  eboulis: { id: 'eboulis', nom: 'Éboulis', texte: 'À chaque tour ennemi, des pierres tombent sur tout le monde (escouade et ennemis), sans jamais mettre personne à terre.' },
+  brouillard: { id: 'brouillard', nom: 'Brouillard', texte: 'L’intention de l’ennemi ne se lit qu’une fois la première carte posée.' },
+};
+/** La lignée que favorise une condition (+20 % à ses cartes) */
+export const FAVEUR_CONDITION: Record<string, Lignee> = { inondee: 'bio', courants: 'tech', chant: 'reso' };
 
 /** La séquence d'origine du prototype (gardée pour les tests et le robot) */
 export const SEQUENCE_STRATE = ['remanent', 'vigie', 'confluence'];

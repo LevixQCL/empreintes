@@ -1,6 +1,6 @@
 # Rapport du robot d'équilibrage
 
-2026-10-22 · 300 expéditions par mesure · 450 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
+2026-10-22 · 300 expéditions par mesure · 453 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
 
 ## Le deck de départ selon la profondeur
 
@@ -78,17 +78,17 @@ Une partie entière, jouée par le joueur moyen pendant 45 jours sur 12 parties 
 
 | Strate | Occasionnel (2 expéditions par jour) | Assidu (5 expéditions par jour) |
 |---|---|---|
-| −2 | jour 1 (1 exp.) | jour 1 (1 exp.) |
-| −3 | jour 1 (1 exp.) | jour 1 (1 exp.) |
-| −4 | jour 2 (1 exp.) | jour 1 (1 exp.) |
-| −5 | jour 4 (4 exp.) | jour 3 (7 exp.) |
-| −6 | jour 7 (8 exp.) | jour 4 (7 exp.) |
-| −7 | jour 11 (10 exp.) | jour 8 (15 exp.) |
-| −8 | jour 19 (13 exp.) | jour 11 (20 exp.) |
-| −9 | jour 24 (11 exp.) | jour 16 (23 exp.) |
-| −10 | jour 32 (16 exp.) | jour 22 (30 exp.) |
-| −11 | jour 42 (20 exp.) | jour 28 (28 exp.) |
-| −12 | — | jour 34 (30 exp.) |
-| −13 | — | jour 42 (40 exp.) |
+| −2 | jour 3 (4 exp.) | jour 1 (4 exp.) |
+| −3 | jour 4 (1 exp.) | jour 3 (6 exp.) |
+| −4 | jour 5 (2 exp.) | jour 3 (4 exp.) |
+| −5 | jour 7 (3 exp.) | jour 5 (6 exp.) |
+| −6 | jour 9 (4 exp.) | jour 7 (10 exp.) |
+| −7 | jour 14 (11 exp.) | jour 10 (15 exp.) |
+| −8 | jour 19 (10 exp.) | jour 13 (20 exp.) |
+| −9 | jour 23 (11 exp.) | jour 18 (23 exp.) |
+| −10 | jour 31 (11 exp.) | jour 23 (27 exp.) |
+| −11 | jour 40 (18 exp.) | jour 28 (32 exp.) |
+| −12 | — | jour 34 (28 exp.) |
+| −13 | — | jour 40 (30 exp.) |
 
-Victoires au front : Occasionnel 30 % · Assidu 29 %.
+Victoires au front : Occasionnel 35 % · Assidu 31 %.

@@ -234,3 +234,16 @@
   .vg-vie{width:54px;height:5px;margin-top:8px}
   .scene-ennemi.en-groupe .intention{max-width:calc(100% - 32px - var(--ng,3) * 74px)}
 }
+
+/* ---------- Traits, phases et conditions (22 octobre 2026) ---------- */
+.traits{display:flex;flex-wrap:wrap;gap:5px;margin-top:-1px}
+.trait{padding:2px 7px;font:600 10px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#ffe4c8;cursor:help;
+  background:linear-gradient(180deg,rgba(120,40,30,.75),rgba(50,14,10,.85));box-shadow:inset 0 0 0 1px rgba(255,170,140,.55);border-radius:2px}
+.ennemi-nom .phase{font-size:.55em;color:#ffb3a3;letter-spacing:.02em;text-shadow:0 0 12px rgba(255,90,70,.7)}
+.puce.condition{color:#f3dca6;box-shadow:inset 0 0 0 1px rgba(243,198,106,.6);cursor:help}
+.puce.condition .ico{color:#f3c66a}
+.intention.brume .int-ico{background:linear-gradient(180deg,#c8d0dc,#6b7686);color:#1a1f28;font:700 16px/1 var(--display)}
+.intention.brume{box-shadow:inset 0 0 0 1px rgba(200,210,225,.5)}
+.intention.brume .int-txt{color:var(--ink-2)}
+@media (max-width:899px){.scene-ennemi.en-groupe{min-height:175px}.scene-ennemi .traits .trait{font-size:9px;padding:1px 5px}}
+@media (max-width:899px){.scene-ennemi.en-groupe .tags .tag{display:none}}

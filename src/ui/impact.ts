@@ -528,6 +528,23 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       if (v) { v.classList.remove('agit'); void (v as HTMLElement).offsetWidth; v.classList.add('agit'); }
       return 120;
     }
+    case 'phase': {
+      // le gardien change de phase : un éclair, la scène tremble, une note grave qui monte
+      if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ filter: 'none' }, { filter: `brightness(2.2) drop-shadow(0 0 30px ${DANGER})`, transform: 'scale(1.05)' }, { filter: 'none', transform: 'none' }], { duration: 700, easing: 'ease-out' });
+      secouer(ecran, 3);
+      voileRouge(0.25);
+      note(80, 'sawtooth', 0.8, 0.07, 2);
+      return 500;
+    }
+    case 'renfort': {
+      // un ennemi surgit : sa vignette apparaît dans une gerbe de poussière
+      const v = racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]`);
+      const p = centre(v);
+      if (p) eclats(p.x, p.y, 18, '#c9b8a0', { vitesse: 120, gravite: 120, taille: 2.4, vie: 0.8 });
+      if (v && !reduit) (v as HTMLElement).animate([{ opacity: 0, transform: 'translateY(-14px) scale(.6)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.3,1.3)' });
+      note(180, 'triangle', 0.3, 0.05, 1.4);
+      return 250;
+    }
     case 'cible': {
       // le visé est tombé : le suivant entre en scène
       if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'ease-out' });

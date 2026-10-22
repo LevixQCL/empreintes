@@ -13,7 +13,7 @@
 //   avec ce qui l'attend (l'ennemi et sa faiblesse, le repos, la cache…).
 
 import { accessibles, peutRemonter, rangsDe, salleCourante, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
-import { NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';
+import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR } from '../core/regles';
 import { CIBLES_FOUILLE, RENCONTRES, type Jeu } from '../core/jeu';
 import { decorStrate, illustrationEnnemi, portrait } from './art';
@@ -136,10 +136,11 @@ export function htmlExploration(j: Jeu): string {
     const etat = s.id === ici.id ? 'ici' : acces ? 'accessible' : s.faite ? 'faite' : perdue(s) ? 'perdue' : 'loin';
     const classes = `salle s-${s.type} ${etat}`;
     const nom = nomSalle(s);
-    const label = `${NOMS[s.type]}${s.escorte?.length ? ` : un groupe (${nomsGroupe(s)})` : s.ennemi ? ` : ${ennemiDef(s.ennemi).nom}` : ''}${etat === 'ici' ? ' (tu es ici)' : s.faite ? ' (visitée)' : ''}`;
+    const label = `${s.condition && CONDITIONS[s.condition] ? `${CONDITIONS[s.condition]!.nom} · ` : ''}${NOMS[s.type]}${s.escorte?.length ? ` : un groupe (${nomsGroupe(s)})` : s.ennemi ? ` : ${ennemiDef(s.ennemi).nom}` : ''}${etat === 'ici' ? ' (tu es ici)' : s.faite ? ' (visitée)' : ''}`;
     let dedans = medaillon(s);
     if (s.type === 'elite') dedans += `<span class="sa-sceau" aria-hidden="true">${ICO.verrou}</span>`;
     if (s.escorte?.length) dedans += `<span class="sa-groupe" aria-hidden="true">×${s.escorte.length + 1}</span>`;
+    if (s.condition) dedans += `<span class="sa-condition" aria-hidden="true" title="${echap(CONDITIONS[s.condition]?.nom ?? '')}">${ICO.cristal}</span>`;
     if (etat === 'ici') {
       dedans += `<span class="sa-escouade" aria-hidden="true">${x.porteurs.map((p) => {
         const img = portrait(p.id);
@@ -189,6 +190,7 @@ export function htmlExploration(j: Jeu): string {
           + medaillon(s, 'petit')
           + `<span class="route-txt"><small>${a.sur}</small><strong>${echap(a.titre)}</strong>`
           + (a.texte ? `<em>${a.tag ? `<span class="tag-ennemi">${echap(a.texte)}</span>` : echap(a.texte)}${a.faible ? ` · <span class="faible" style="--c:${COULEUR[a.faible]}">faible contre <b>${NOMS_LIGNEE[a.faible].court}</b></span>` : ''}</em>` : '')
+          + (s.condition && CONDITIONS[s.condition] ? `<em class="condition-salle">${ICO.cristal}<b>${echap(CONDITIONS[s.condition]!.nom)}</b> : ${echap(CONDITIONS[s.condition]!.texte)}</em>` : '')
           + `</span>${CHEVRON}</button>`;
       }
       h += `</div>`;

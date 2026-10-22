@@ -115,6 +115,25 @@ export type IntentionDef =
 
 export type Intention = IntentionDef & { cibleId?: string | null };
 
+/**
+ * Les traits d'un ennemi (décision du 22 octobre 2026 : varier les combats). Affichés sous son nom.
+ * - blinde : chaque coup perd `v` dégâts (×la puissance de l'ennemi) ; Perçant passe outre
+ * - regeneration : regagne `part` de ses PV max à la fin de son tour
+ * - epines : renvoie `part` des dégâts reçus au Porteur qui a frappé (sans jamais le mettre à terre)
+ * - evanescent : hors Résonance, il ne subit que `1 − part` des dégâts
+ * - essaim : quand il tombe, un rejeton surgit (`part` de ses PV) — une seule fois
+ * - vengeur : quand un allié tombe, sa prochaine attaque est doublée
+ * - furie : sous la moitié de ses PV, ses attaques font +30 %
+ */
+export type Trait =
+  | { type: 'blinde'; v: number }
+  | { type: 'regeneration'; part: number }
+  | { type: 'epines'; part: number }
+  | { type: 'evanescent'; part: number }
+  | { type: 'essaim'; part: number }
+  | { type: 'vengeur' }
+  | { type: 'furie' };
+
 export interface EnnemiDef {
   id: string;
   nom: string;
@@ -122,6 +141,9 @@ export interface EnnemiDef {
   tag: string;
   pvMax: number;
   motif: IntentionDef[];
+  traits?: Trait[];
+  /** gardien à deux phases : sous `seuil` de ses PV, il change de geste et appelle des renforts */
+  phase?: { seuil: number; nom: string; texte: string; motif: IntentionDef[]; renforts?: string[] };
 }
 
 export interface PorteurEtat {
@@ -148,6 +170,12 @@ export interface EnnemiEtat {
   rang?: number;
   /** l'intention d'un ennemi qui n'est pas visé (celle de l'ennemi visé est dans `CombatEtat.intention`) */
   intention?: Intention;
+  /** surgi pendant le combat (rejeton d'un essaim, renfort d'un gardien) : il ne se divise pas à son tour */
+  rejeton?: boolean;
+  /** gardien passé dans sa seconde phase */
+  phase2?: boolean;
+  /** Strate −1 : l'ennemi joue sans ses traits ni sa seconde phase (on apprend d'abord les bases) */
+  simple?: boolean;
 }
 
 export type Issue = 'en-cours' | 'victoire' | 'defaite';
@@ -170,6 +198,10 @@ export interface CombatEtat {
   intention: Intention;
   /** les autres ennemis d'un groupe (combats à plusieurs, décision du 22 octobre 2026), avec leur propre intention */
   autres?: EnnemiEtat[];
+  /** puissance de la Strate (avant le partage d'un groupe) : sert aux ennemis qui surgissent en cours de combat */
+  forceBase?: number;
+  /** la condition de la salle (inondée, éboulis…), voir CONDITIONS */
+  condition?: string;
   pioche: Geste[];
   defausse: Geste[];
   main: Geste[];
@@ -197,7 +229,7 @@ export type Evenement =
   | { kind: 'resonance'; suite: number; mult: number }
   /** une carte de la chaîne entre en jeu (pour l'animation) : sa place, sa lignée, son action */
   | { kind: 'carte'; rang: number; total: number; lignee: LigneeGeste; type: TypeGeste; porteur: string | null; suite: number; effet?: string }
-  | { kind: 'degats'; cible: string; net: number; absorbe: number; rang?: number }
+  | { kind: 'degats'; cible: string; net: number; absorbe: number; rang?: number; source?: 'epines' | 'eboulis' }
   | { kind: 'bouclier'; cible: 'escouade' | 'ennemi'; v: number; rang?: number }
   | { kind: 'soin'; cible: string; v: number; rang?: number }
   | { kind: 'echo' }
@@ -208,6 +240,10 @@ export type Evenement =
   | { kind: 'cible'; rang: number }
   /** un ennemi d'un groupe agit pendant le tour ennemi (pour l'animation) */
   | { kind: 'ennemi-agit'; rang: number }
+  /** un ennemi surgit en cours de combat (rejeton, renfort) */
+  | { kind: 'renfort'; rang: number; id: string }
+  /** un gardien entre dans sa seconde phase */
+  | { kind: 'phase'; rang: number; nom: string }
   | { kind: 'a-terre'; cible: string }
   | { kind: 'fin'; issue: Issue };
 

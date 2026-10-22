@@ -3,7 +3,7 @@
 // L'ancien mode linéaire (trois combats d'affilée) reste pour la chambre scellée et le robot d'équilibrage.
 
 import { coupDeFuite, creerCombat } from './combat';
-import { ZONES, ennemiDef, porteurDef, sequenceStrate, zoneDe } from './donnees';
+import { CONDITIONS, ZONES, ennemiDef, porteurDef, sequenceStrate, zoneDe } from './donnees';
 import { tireur } from './rng';
 import { REGLES } from './regles';
 import type { BonusMarques, CombatEtat, GesteDef, PorteurEtat } from './types';
@@ -75,6 +75,8 @@ export interface Salle {
   ennemi?: string;
   /** les ennemis qui accompagnent le premier (salle de combat à plusieurs) */
   escorte?: string[];
+  /** la condition de la salle (CONDITIONS : inondée, éboulis…), visible avant d'entrer */
+  condition?: string;
   rencontre?: string;
   faite: boolean;
 }
@@ -98,9 +100,9 @@ export const FORCE = {
   table: [1, 1.3, 1.7, 2.0, 2.3, 2.6, 2.7, 2.82, 2.9, 3.05, 3.25, 3.5, 3.68, 3.8] as number[],
   /** hausse par Strate au-delà de la table */
   ensuite: 1.04,
-  /** les Porteurs gagnent des niveaux (et des PV) en descendant : les ennemis suivent, +2,5 % par Strate. Réglé pour que descendre
-   *  reste un défi (22 octobre 2026) : au front, le joueur moyen gagne ~3 fois sur 10, un joueur qui calcule tout 5 à 8 fois sur 10 */
-  niveaux: 0.025,
+  /** hausse par Strate pour suivre les niveaux des Porteurs. À 0 depuis les traits, phases et conditions (22 octobre 2026), qui
+   *  durcissent autant : au front, le joueur moyen gagne ~3 fois sur 10, un joueur qui calcule tout ~5 fois sur 10 */
+  niveaux: 0.0,
 };
 export const forceStrate = (strate: number) => {
   const t = FORCE.table;
@@ -124,6 +126,7 @@ export function nouvelleExpedition(opts: {
     combat: creerCombat({
       porteurs: opts.porteurs, ennemiId: sequence[0]!, rng: opts.rng, deck: opts.deck,
       force: opts.force ?? forceStrate(opts.strate) * (opts.facteur ?? 1), ordonne: opts.tutoriel, bonus: opts.bonus,
+      ...(opts.strate < 2 ? { traits: false } : {}),
     }),
     butin: 0,
     terminee: false,
@@ -171,7 +174,7 @@ export function combatSuivant(x: Expedition): Expedition {
     index,
     porteurs,
     cloture: false,
-    combat: creerCombat({ porteurs, ennemiId: x.sequence[index]!, rng: x.combat.rng, deck: x.deck, force: forceStrate(x.strate) * (x.facteur ?? 1), bonus: x.bonus }),
+    combat: creerCombat({ porteurs, ennemiId: x.sequence[index]!, rng: x.combat.rng, deck: x.deck, force: forceStrate(x.strate) * (x.facteur ?? 1), bonus: x.bonus, ...(x.strate < 2 ? { traits: false } : {}) }),
   };
 }
 
@@ -288,6 +291,10 @@ export function genererCarte(strate: number, rng: number, garde?: string, fouill
         const escorte = escorteDe(strate, rng, salle.id, pool);
         if (escorte.length) salle.escorte = escorte;
       }
+      if (salle.ennemi) {
+        const condition = conditionDe(strate, rng, salle.id, type);
+        if (condition) salle.condition = condition;
+      }
       salles.push(salle);
       ids.push(salle.id);
     }
@@ -346,14 +353,27 @@ export function escorteDe(strate: number, rng: number, salleId: number, pool: st
   return Array.from({ length: n }, () => pool[t.entier(pool.length)]!);
 }
 
+/**
+ * Conditions de salle (décision du 22 octobre 2026) : à partir de la Strate −2, environ une salle de combat sur trois
+ * (une sur deux pour le gardien). Tirage à part, pour ne pas changer le reste de la carte.
+ */
+export function conditionDe(strate: number, rng: number, salleId: number, type: TypeSalle): string | null {
+  if (strate < 2) return null;
+  const t = tireur({ rng: (rng ^ Math.imul(salleId + 7, 0xc2b2ae35)) >>> 0 });
+  if (t.nombre() >= (type === 'gardien' ? 0.5 : 0.33)) return null;
+  const ids = Object.keys(CONDITIONS);
+  return ids[t.entier(ids.length)]!;
+}
+
 /** Ouvre un combat dans la salle courante */
-export function lancerCombat(x: Expedition, ennemi: string, renfort = 1, escorte?: string[]): Expedition {
+export function lancerCombat(x: Expedition, ennemi: string, renfort = 1, escorte?: string[], condition?: string): Expedition {
   const porteurs = x.porteurs.map((p) => ({ ...p, aTerre: p.pv <= 0 }));
   const sequence = [...x.sequence, ennemi];
   return {
     ...x, phase: 'combat', sequence, index: sequence.length - 1, cloture: false, porteurs,
     combat: creerCombat({ porteurs, ennemiId: ennemi, rng: x.combat.rng ^ (sequence.length * 0x9e3779b1), deck: x.deck,
-      force: forceStrate(x.strate) * (x.facteur ?? 1) * renfort, bonus: x.bonus, ...(escorte?.length ? { escorte } : {}) }),
+      force: forceStrate(x.strate) * (x.facteur ?? 1) * renfort, bonus: x.bonus, ...(escorte?.length ? { escorte } : {}), ...(condition ? { condition } : {}),
+      ...(x.strate < 2 ? { traits: false } : {}) }),
   };
 }
 
@@ -375,10 +395,10 @@ export function entrerSalle(x: Expedition, id: number): { x: Expedition; ok: boo
   switch (salle.type) {
     case 'combat':
     case 'gardien':
-      y = lancerCombat(y, salle.ennemi!, 1, salle.escorte);
+      y = lancerCombat(y, salle.ennemi!, 1, salle.escorte, salle.condition);
       break;
     case 'elite':
-      y = lancerCombat({ ...y, recit: 'Une salle scellée : son occupant est plus coriace, mais quelque chose de précieux dort derrière lui.' }, salle.ennemi!, 1.15);
+      y = lancerCombat({ ...y, recit: 'Une salle scellée : son occupant est plus coriace, mais quelque chose de précieux dort derrière lui.' }, salle.ennemi!, 1.15, undefined, salle.condition);
       break;
     case 'cache': {
       const eclat = x.strate >= 3 && t.nombre() < 0.3;

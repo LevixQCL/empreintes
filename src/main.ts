@@ -261,7 +261,7 @@ async function jouer(pas: Pas[]) {
     }
     K.etat = p.etat;
     if (p.ev.kind === 'carte') K.actif = p.ev.rang;
-    else if (p.ev.kind === 'fin' || (p.ev.kind === 'degats' && p.ev.cible !== 'ennemi')) K.actif = undefined;
+    else if (p.ev.kind === 'fin' || (p.ev.kind === 'degats' && p.ev.cible !== 'ennemi' && !p.ev.source)) K.actif = undefined;
     popsDe(p.ev, p.etat);
     afficher();
     bonus = impact(p.ev, racine);
