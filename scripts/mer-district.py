@@ -27,7 +27,7 @@ X0, Y0 = (W - PW) // 2, H - PH
 # l'horizon de chaque tableau (en pixels du tableau), relevé à l'œil sur ses bords
 HORIZONS = {1: 77, 2: 206, 3: 192, 4: 231}
 RELAX = 300                 # distance (px) sur laquelle la couleur du bord rejoint la couleur moyenne de la ligne
-FONDU = 170                 # largeur du fondu du tableau dans la mer
+FONDU = 44                  # largeur du fondu du tableau dans la mer : court, les îlots restent nets jusqu'au bord
 
 
 def bruit_tuile(n: int, sigma: float, graine: int) -> np.ndarray:
@@ -110,17 +110,37 @@ def mer(age: int) -> Image.Image:
     toile = np.zeros((H, W, 3), np.float32)
     toile[Y0:] = base_tab
 
-    # sous l'horizon, près du tableau, la mer prend un peu de la couleur de ses bords (îlots et reflets compris, très lissée) :
-    # la couture entre le tableau et la mer s'efface. Sous le tableau (caché, sauf dans son fondu), on passe d'un bord à l'autre.
-    bord_g = gaussian_filter(p[:, :48].mean(axis=1), sigma=(30, 0), mode='nearest')
-    bord_d = gaussian_filter(p[:, -48:].mean(axis=1), sigma=(30, 0), mode='nearest')
-    tt = np.clip((xs - X0) / (PW - 1), 0, 1)[None, :, None]
-    bord = np.where((xs < X0)[None, :, None], bord_g[:, None, :],
-                    np.where((xs >= X0 + PW)[None, :, None], bord_d[:, None, :], bord_g[:, None, :] * (1 - tt) + bord_d[:, None, :] * tt))
-    dist = np.maximum(dist_g, dist_d)
-    poids = (0.6 * np.exp(-dist / 170))[None, :, None]
-    sous_h = (np.arange(PH) >= horizon + 6)[:, None, None]
-    toile[Y0:] = np.where(sous_h, toile[Y0:] * (1 - poids) + bord * poids, toile[Y0:])
+    # Près du tableau, la mer prend la couleur de l'EAU de ses bords (seulement les pixels d'eau, jamais les îlots : les teintes
+    # d'îlots faisaient une traînée brune floue, jugée « immonde » par Bryan). Les lignes où un îlot touche le bord reprennent
+    # l'eau des lignes voisines. Sans cela, l'eau du tableau, plus claire au bord, laissait une couture verticale.
+    r_, g_, b_ = p[..., 0], p[..., 1], p[..., 2]
+    eau_px = (g_ > r_ + 6) & (b_ > r_ + 6)
+    lum_px = p.mean(2)
+    def eau_bord(sl):
+        c = np.full((PH, 3), np.nan, np.float32)
+        for y in range(horizon + 4, PH):
+            m = eau_px[y, sl]
+            if m.sum() >= 10:
+                px = p[y, sl][m]; l = lum_px[y, sl][m]
+                lo, hi = np.percentile(l, [40, 95])   # l'eau claire : sans les reflets sombres des îlots
+                sel = (l >= lo) & (l <= hi)
+                c[y] = px[sel].mean(axis=0) if sel.sum() >= 5 else px.mean(axis=0)
+        ok = ~np.isnan(c[:, 0])
+        if ok.sum() < 10:
+            return None
+        ys = np.arange(PH)
+        for k in range(3):
+            c[:, k] = np.interp(ys, ys[ok], c[ok, k])
+        return gaussian_filter(c, sigma=(48, 0), mode='nearest')
+    eg, ed = eau_bord(slice(0, 70)), eau_bord(slice(PW - 70, PW))
+    if eg is not None and ed is not None:
+        tt = np.clip((xs - X0) / (PW - 1), 0, 1)[None, :, None]
+        eau_cote = np.where((xs < X0)[None, :, None], eg[:, None, :],
+                            np.where((xs >= X0 + PW)[None, :, None], ed[:, None, :], eg[:, None, :] * (1 - tt) + ed[:, None, :] * tt))
+        dist = np.maximum(dist_g, dist_d)
+        poids = np.exp(-dist / 240)[None, :, None]
+        sous_h = (np.arange(PH) >= horizon + 8)[:, None, None]
+        toile[Y0:] = np.where(sous_h, toile[Y0:] * (1 - poids) + eau_cote * poids, toile[Y0:])
 
     # au-dessus du tableau : le ciel continue et s'assombrit vers le zénith
     haut = toile[Y0].copy()

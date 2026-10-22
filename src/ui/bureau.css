@@ -68,9 +68,10 @@
   @keyframes mer-respire{from{opacity:.2}to{opacity:.4}}
   @media (prefers-reduced-motion:reduce){ .mer-reflets{animation:none} }
   .mer-fond.nuit::after{content:"";position:absolute;inset:0;background:linear-gradient(#0B1630cc,#0B163066 45%,#0B163099);mix-blend-mode:multiply}
+  /* le tableau reste net jusqu'au bord : un fondu très court sur les côtés (la mer prolongée prend le relais), un peu plus en haut */
   .toile{left:calc((100% - var(--panneau)) / 2);right:auto;top:0;bottom:0;height:100%;width:auto;aspect-ratio:2/3;transform:translateX(-50%);
-    -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent),linear-gradient(180deg,transparent 0,#000 7%);
-    -webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent),linear-gradient(180deg,transparent 0,#000 7%);mask-composite:intersect}
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent),linear-gradient(180deg,transparent 0,#000 6%);
+    -webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent),linear-gradient(180deg,transparent 0,#000 6%);mask-composite:intersect}
   .archipel-haut{left:auto;right:28px;top:28px;width:calc(var(--panneau) - 56px);gap:14px}
   .archipel-haut .mission{padding:16px 18px}
   .plaque{min-height:48px}
