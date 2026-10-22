@@ -14,7 +14,7 @@ import { FRAGMENTS } from '../core/fragments';
 import { loreCarte } from '../core/lore-cartes';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
 import { COULEUR, echap } from './vue';
-import { decor, illustrationBatiment, prochainVisuel, sceneDistrict, visuel } from './art';
+import { decor, illustrationBatiment, prochainVisuel, reflets, sceneDistrict, visuel } from './art';
 import { faceCarte, couleurFrequence } from './carte';
 import { ICO } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict } from './coquille';
@@ -295,8 +295,11 @@ function fenetreDecision(acte: Acte): string {
 
 export function htmlArchipel(e: EcranDistrict): string {
   const j = e.j;
-  // le tableau garde ses proportions (les plaques sont placées en % de l'image) ; au-dessus, son ciel flouté prolonge l'écran
-  let h = `<section class="archipel" aria-label="Ton district"><img class="tableau-fond" src="${sceneDistrict(j.batiments.noyau).url}" alt="" aria-hidden="true">`
+  // le tableau garde ses proportions (les plaques sont placées en % de l'image) ; au-dessus, son ciel flouté prolonge l'écran.
+  // Sur PC, la mer et le ciel du tableau continuent jusqu'aux bords de l'écran (.mer-fond, chargée seulement sur PC : bureau.css)
+  const scene = sceneDistrict(j.batiments.noyau);
+  let h = `<section class="archipel" aria-label="Ton district"><img class="tableau-fond" src="${scene.url}" alt="" aria-hidden="true">`
+    + `<span class="mer-fond${scene.nuit ? ' nuit' : ''}" style="--mer:url(${scene.mer});--reflets:url(${reflets});--horizon:${scene.horizon}%" aria-hidden="true"><i class="mer-reflets"></i></span>`
     + `<div class="toile">${tableau(j)}${plaques(e)}</div>`
     + `<div class="archipel-haut">${mission(e)}${appel(e)}</div></section>`;
   h += feuilleBatiment(e);

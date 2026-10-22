@@ -51,9 +51,23 @@
   .feuille.carte-detail{width:min(620px,48vw)}
 
   /* ================= District : le tableau au centre, la vitre à droite ================= */
-  .ecran-archipel > .contenu{max-width:none;padding:0;margin:0}
+  .ecran.ecran-archipel > .contenu{max-width:none;padding:0;margin:0}
   .archipel{--h:calc(100dvh - var(--hud-h));--panneau:420px}
-  .tableau-fond{filter:blur(30px) saturate(1.1) brightness(.4)}
+  /* plus de flou autour du tableau (22 octobre 2026, Bryan) : sa mer et son ciel continuent jusqu'aux bords de l'écran.
+     mer-N.webp fait 4000 × 1500, le tableau y occupe le centre en bas (800 × 1200) : on l'aligne exactement sous la toile. */
+  .tableau-fond{display:none}
+  .archipel{background:#0d2a33}
+  .mer-fond{display:block;position:absolute;z-index:0;top:-25%;height:125%;aspect-ratio:8/3;left:calc((100% - var(--panneau)) / 2);transform:translateX(-50%);
+    background:var(--mer) center/100% 100% no-repeat;pointer-events:none}
+  /* les côtés s'assombrissent doucement : le regard reste sur le district, et la vitre de droite se lit bien */
+  .mer-fond::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,10,22,.6),rgba(6,10,22,.15) 18%,transparent 32%,transparent 68%,rgba(6,10,22,.15) 82%,rgba(6,10,22,.55))}
+  /* les reflets glissent lentement vers la gauche et respirent : la mer bouge comme l'eau du tableau animé */
+  .mer-reflets{position:absolute;left:0;right:0;top:calc(var(--horizon) + .4%);bottom:0;background:var(--reflets) 0 0/auto 100% repeat-x;
+    mix-blend-mode:screen;opacity:.32;animation:mer-glisse 90s linear infinite,mer-respire 7s ease-in-out infinite alternate}
+  @keyframes mer-glisse{to{background-position-x:-1600px}}
+  @keyframes mer-respire{from{opacity:.2}to{opacity:.4}}
+  @media (prefers-reduced-motion:reduce){ .mer-reflets{animation:none} }
+  .mer-fond.nuit::after{content:"";position:absolute;inset:0;background:linear-gradient(#0B1630cc,#0B163066 45%,#0B163099);mix-blend-mode:multiply}
   .toile{left:calc((100% - var(--panneau)) / 2);right:auto;top:0;bottom:0;height:100%;width:auto;aspect-ratio:2/3;transform:translateX(-50%);
     -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent),linear-gradient(180deg,transparent 0,#000 7%);
     -webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent),linear-gradient(180deg,transparent 0,#000 7%);mask-composite:intersect}

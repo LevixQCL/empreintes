@@ -45,6 +45,7 @@ src/
   net/           Firebase : comptes et synchronisation (optionnel)
   main.ts        relie tout : clics, animations, sauvegarde
 public/art/      les illustrations Midjourney (Porteurs, Modules, ennemis, bâtiments, décors, textures des métaux) ; src/ui/art.ts dit laquelle va où
+scripts/mer-district.py  prolonge chaque tableau du district par sa mer et son ciel pour l'écran PC (public/art/district/mer-N.webp) : à relancer quand un âge change
 src/ui/carte.ts  la face des cartes Module (métal de la rareté, effets sur l'illustration)
 tests/           les tests automatiques
 firestore.rules  qui peut lire et écrire quoi dans la base
