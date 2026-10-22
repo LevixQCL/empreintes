@@ -114,7 +114,7 @@ function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: 
  * Une jauge de vie : un rail serti, la vie qui reste, la traînée du dernier coup qui se vide, des graduations
  * (une tous les `pas` PV) et, pour l'ennemi, son bouclier posé au bout de la vie.
  */
-function jauge(classe: string, pv: number, max: number, o: { trace?: number; pas?: number; bouclier?: number } = {}) {
+export function jauge(classe: string, pv: number, max: number, o: { trace?: number; pas?: number; bouclier?: number } = {}) {
   const v = pct(pv, max);
   const trainee = o.trace !== undefined && o.trace > v ? `<i class="j-trainee" style="--de:${o.trace}%;--a:${v}%"></i>` : '';
   const bouclier = o.bouclier ? `<i class="j-bouclier" style="left:${Math.max(0, v - pct(o.bouclier, max))}%;width:${Math.min(v, pct(o.bouclier, max))}%"></i>` : '';
@@ -203,7 +203,7 @@ const PARTICULES = Array.from({ length: 22 }, (_, i) => {
 /** zone de la Strate (0 Fondations… 3 le fond) : celle de la carte explorée, sinon celle de la profondeur (Épreuves, chambre scellée) */
 const zoneDuLieu = (x: Expedition) => x.carte?.zone ?? Math.max(0, ZONES.indexOf(zoneDe(Math.max(1, x.strate))));
 
-function htmlLieu(x: Expedition): string {
+export function htmlLieu(x: Expedition): string {
   const zone = zoneDuLieu(x);
   const img = fondCombat(zone);
   const salle = x.carte?.salles[x.carte.position]?.type;
@@ -273,7 +273,7 @@ function htmlEcranCombat(e: Ecran): string {
   const vise = (g: Geste) => guide && ((s.tour === 1 && libres > 0) || (s.tour === 2 && g.f === viseF) || (s.tour === 3 && g.type === 'bouclier' && libres > 0));
   const lancerVise = guide && s.chaine.length > 0 && (libres === 0 || (s.tour === 2 && a.suite >= 3));
 
-  let h = `<div class="ecran ecran-combat${verrou ? ' verrouille' : ''}${guide ? ` guide lecon-t${Math.min(s.tour, 4)}` : ''}">`;
+  let h = `<div class="ecran ecran-jeu ecran-combat${verrou ? ' verrouille' : ''}${guide ? ` guide lecon-t${Math.min(s.tour, 4)}` : ''}">`;
   h += `<header class="combat-barre"><div class="puces"><span class="puce">${ICO.strate}${lieu}</span>`
     + (e.x.tutoriel ? '' : e.x.carte ? `<span class="puce">${e.x.carte.salles[e.x.carte.position]?.type === 'gardien' ? 'Gardien' : e.x.carte.salles[e.x.carte.position]?.type === 'elite' ? 'Salle scellée' : `Combat ${(e.x.gagnes ?? 0) + 1}`}</span>` : `<span class="puce">Combat ${e.x.index + 1}/${e.x.sequence.length}</span>`)
     + `<span class="puce">Tour ${s.tour}</span></div>`

@@ -1,0 +1,202 @@
+/* EMPREINTES — l'exploration d'une Strate, refaite le 22 octobre 2026 (Bryan : « le plus moche »).
+   Un relevé de la Strate projeté dans la salle : le décor sans cadre, fondu dans la salle floutée qui remplit l'écran ;
+   des médaillons de cristal qui montrent ce que contient chaque salle ; des couloirs en fils de lumière.
+   Chargé après bureau.css : la mise en page PC est en bas de ce fichier. */
+
+.ecran-exploration{--d0:42px;display:flex;flex-direction:column;gap:10px;min-height:100%;padding:max(8px,var(--sat)) 12px 16px}
+.ecran-exploration .butin-puce .ico.peinte{width:20px;height:20px;margin:-3px 0}
+
+/* ================= La carte ================= */
+.carte-strate{position:relative;flex:none;width:100%;aspect-ratio:3/4;max-height:70vh;margin:0 auto;isolation:isolate}
+/* l'illustration nette, sans cadre : ses bords se fondent dans la salle floutée de l'arrière-plan.
+   Le voile (pour que les salles ressortent) et de fines lignes de balayage sont dans la même couche, sous le même masque :
+   on regarde un relevé de la salle, pas une photo encadrée. */
+.cs-decor{position:absolute;inset:0;z-index:-2;pointer-events:none;background:
+    repeating-linear-gradient(180deg,rgba(170,215,255,.04) 0 1px,transparent 1px 4px),
+    radial-gradient(85% 70% at 50% 50%,rgba(6,8,18,.12),rgba(6,8,18,.5) 100%),
+    linear-gradient(180deg,rgba(6,8,18,.28),rgba(6,8,18,.42)),
+    var(--decor,none) center/cover no-repeat;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent),linear-gradient(180deg,transparent,#000 8%,#000 90%,transparent);
+  -webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent),linear-gradient(180deg,transparent,#000 8%,#000 90%,transparent);
+  mask-composite:intersect}
+.cs-voile{display:none}
+/* le balayage du relevé : une lueur froide très douce descend lentement */
+.cs-releve{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+  -webkit-mask-image:radial-gradient(70% 60% at 50% 50%,#000 40%,transparent 100%);mask-image:radial-gradient(70% 60% at 50% 50%,#000 40%,transparent 100%)}
+.cs-releve i{position:absolute;left:0;right:0;top:-30%;height:26%;
+  background:linear-gradient(180deg,transparent,rgba(150,210,255,.035) 60%,rgba(205,239,255,.09) 96%,transparent);animation:releve 11s linear infinite}
+@keyframes releve{to{transform:translateY(520%)}}
+
+/* le nom de la zone, gravé en haut à gauche */
+.cs-titre{position:absolute;top:12px;left:14px;max-width:36%;display:grid;gap:2px;pointer-events:none}
+.cs-titre strong{font-family:var(--display);font-weight:400;font-size:22px;line-height:1.05;color:var(--ink);text-shadow:0 0 18px rgba(150,190,255,.35),0 2px 8px rgba(0,0,0,.9)}
+.cs-titre .surtitre{text-shadow:0 1px 3px #000}
+
+/* ---------- les couloirs : des fils de lumière ---------- */
+.carte-strate .couloirs{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.couloirs path{fill:none;vector-effect:non-scaling-stroke;stroke-linecap:round}
+.couloirs .c-avenir{stroke:rgba(205,239,255,.42);stroke-width:1.4;stroke-dasharray:1 6}
+.couloirs .c-perdu{stroke:rgba(205,239,255,.13);stroke-width:1;stroke-dasharray:1 6}
+.couloirs .c-parcouru{stroke:#F2D58C;stroke-width:2}
+.couloirs .c-parcouru.halo{stroke:rgba(240,190,90,.26);stroke-width:8}
+.couloirs .c-ouvert{stroke:#EAF8FF;stroke-width:2;stroke-dasharray:5 7;animation:couloir-flux .9s linear infinite}
+.couloirs .c-ouvert.halo{stroke:rgba(140,205,255,.32);stroke-width:9;stroke-dasharray:none;animation:none}
+@keyframes couloir-flux{to{stroke-dashoffset:-12}}
+
+/* ---------- les salles : des médaillons de cristal ---------- */
+.salle{--d:var(--d0);position:absolute;z-index:1;transform:translate(-50%,-50%);display:block;width:var(--d);height:var(--d);padding:0;border:none;background:none;
+  color:var(--ink);transition:transform .18s ease}
+.sa-medaillon{position:relative;display:grid;place-items:center;width:100%;height:100%;border-radius:50%;overflow:hidden;
+  background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--t) 26%,#16203a),#070a16 78%);
+  box-shadow:0 0 0 1.5px color-mix(in srgb,var(--t) 80%,white 10%),0 0 0 3.5px rgba(5,7,16,.9),0 0 0 4.5px color-mix(in srgb,var(--t) 38%,transparent),
+    0 6px 14px rgba(0,0,0,.75);transition:filter .25s ease,box-shadow .25s ease}
+/* la facette de cristal : un reflet en biais, une arête claire, le fond qui s'assombrit */
+.sa-medaillon::after{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;
+  background:linear-gradient(140deg,rgba(255,255,255,.34),rgba(255,255,255,.06) 34%,transparent 52%,transparent 74%,rgba(255,255,255,.1));
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.2),inset 0 -8px 14px rgba(0,0,0,.5)}
+.sa-image{position:absolute;inset:0;background:var(--img) var(--pos)/var(--zoom) no-repeat}
+.sa-medaillon.peinte{background:radial-gradient(circle at 50% 45%,color-mix(in srgb,var(--t) 55%,#2a2a3a),color-mix(in srgb,var(--t) 18%,#0b0e1c) 62%,#060812 92%)}
+.sa-medaillon.peinte img{width:96%;height:96%;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.85)) saturate(1.15) brightness(1.1)}
+.sa-medaillon.glyphe svg{width:62%;height:62%;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--t) 80%,transparent))}
+.sa-glyphe-texte{font-family:var(--display);font-size:calc(var(--d,46px) * .58);line-height:1;color:color-mix(in srgb,var(--t) 55%,white);
+  text-shadow:0 0 10px var(--t),0 0 22px color-mix(in srgb,var(--t) 60%,transparent)}
+.s-camp .sa-medaillon{background:radial-gradient(circle at 50% 62%,rgba(255,170,70,.55),rgba(160,60,20,.25) 45%,#0b0a10 80%)}
+
+/* le nom sous la salle : une plaque de verre, visible pour les salles accessibles, le gardien et le filon */
+.sa-nom{position:absolute;top:calc(100% + 7px);left:50%;translate:-50% 0;z-index:2;max-width:150px;padding:3px 9px 4px;
+  font-size:11.5px;font-weight:600;line-height:1.15;letter-spacing:.01em;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:linear-gradient(180deg,rgba(18,24,46,.94),rgba(7,9,20,.94));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t) 55%,transparent),0 4px 10px rgba(0,0,0,.6);
+  clip-path:polygon(6px 0,calc(100% - 6px) 0,100% 50%,calc(100% - 6px) 100%,6px 100%,0 50%);opacity:0;pointer-events:none;transition:opacity .2s ease}
+.salle.accessible .sa-nom,.salle.s-gardien:not(.faite) .sa-nom,.salle.s-filon:not(.faite) .sa-nom{opacity:1}
+.salle:hover .sa-nom,.salle:focus-visible .sa-nom{opacity:1;z-index:5}
+.salle:hover{z-index:4}
+
+/* le sceau d'une salle scellée */
+.sa-sceau{position:absolute;right:-5px;bottom:-3px;z-index:2;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;color:#F3EAFF;
+  background:radial-gradient(circle at 40% 30%,#d7c2ff,#6b45c9 70%);box-shadow:0 0 0 1.5px rgba(5,7,16,.9),0 0 10px rgba(180,140,255,.7)}
+.sa-sceau .ico{width:11px;height:11px}
+
+/* --- les états --- */
+/* plus loin dans la Strate : visibles, mais en retrait */
+.salle.loin .sa-medaillon{filter:saturate(.8) brightness(.86)}
+/* les branches qu'on ne prendra plus : presque effacées */
+.salle.perdue{--d:calc(var(--d0) * .72);opacity:.38}
+.salle.perdue .sa-medaillon{filter:grayscale(1) brightness(.55);box-shadow:0 0 0 1px rgba(205,239,255,.3),0 4px 10px rgba(0,0,0,.6)}
+/* déjà visitées : l'anneau passe à l'or du chemin parcouru */
+.salle.faite{--d:calc(var(--d0) * .86)}
+.salle.faite .sa-medaillon{filter:grayscale(.8) brightness(.55);
+  box-shadow:0 0 0 1.5px #E2C27A,0 0 0 3.5px rgba(5,7,16,.9),0 0 0 4.5px rgba(226,194,122,.35),0 4px 10px rgba(0,0,0,.7)}
+/* ici : l'anneau brille, une onde s'en échappe, l'escouade est posée à côté */
+.salle.ici{--d:calc(var(--d0) * 1.08);z-index:3}
+.salle.ici .sa-medaillon{filter:none;box-shadow:0 0 0 2px #fff,0 0 0 4px rgba(5,7,16,.9),0 0 0 5.5px rgba(205,239,255,.75),0 0 22px rgba(160,215,255,.65),0 6px 14px rgba(0,0,0,.75)}
+.salle.ici::before{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 2px rgba(205,239,255,.8);animation:ici-onde 2.4s ease-out infinite;pointer-events:none}
+@keyframes ici-onde{from{transform:scale(1);opacity:.9}to{transform:scale(1.9);opacity:0}}
+.sa-escouade{position:absolute;left:calc(100% - 4px);top:50%;translate:0 -50%;z-index:3;display:flex;padding-left:2px}
+.sa-escouade i{display:grid;place-items:center;width:22px;height:22px;margin-left:-7px;border-radius:50%;overflow:hidden;font-style:normal;font-size:11px;font-weight:700;
+  background:#1a2236;box-shadow:0 0 0 1.5px var(--c),0 0 0 3px rgba(5,7,16,.9),0 3px 6px rgba(0,0,0,.6)}
+.sa-escouade i img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+.sa-escouade i.ko{filter:grayscale(1) brightness(.5)}
+/* accessibles : en pleine lumière, l'anneau respire dans la couleur de la salle */
+.salle.accessible{--d:calc(var(--d0) * 1.14);z-index:2;cursor:pointer}
+.salle.accessible .sa-medaillon{filter:none;animation:salle-appel 2s ease-in-out infinite}
+@keyframes salle-appel{
+  0%,100%{box-shadow:0 0 0 1.5px color-mix(in srgb,var(--t) 80%,white 20%),0 0 0 3.5px rgba(5,7,16,.9),0 0 0 4.5px color-mix(in srgb,var(--t) 60%,transparent),0 0 12px color-mix(in srgb,var(--t) 45%,transparent),0 6px 14px rgba(0,0,0,.75)}
+  50%{box-shadow:0 0 0 1.5px color-mix(in srgb,var(--t) 60%,white 40%),0 0 0 3.5px rgba(5,7,16,.9),0 0 0 4.5px var(--t),0 0 26px color-mix(in srgb,var(--t) 75%,transparent),0 6px 14px rgba(0,0,0,.75)}}
+.salle.accessible:hover,.salle.accessible:focus-visible{transform:translate(-50%,-50%) scale(1.08);outline:none}
+.salle.accessible:active{transform:translate(-50%,-50%) scale(.96)}
+
+/* le gardien : plus grand, une couronne de crans qui tourne lentement */
+.salle.s-gardien{--d:calc(var(--d0) * 1.42)}
+.salle.s-gardien.faite{--d:calc(var(--d0) * 1.1)}
+.salle.s-gardien::after{content:"";position:absolute;inset:-9px;border-radius:50%;pointer-events:none;
+  background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--t) 85%,white) 0 2deg,transparent 2deg 15deg);
+  -webkit-mask:radial-gradient(circle,transparent calc(50% - 4px),#000 calc(50% - 3px),#000 calc(50% - 1px),transparent 50%);
+  mask:radial-gradient(circle,transparent calc(50% - 4px),#000 calc(50% - 3px),#000 calc(50% - 1px),transparent 50%);
+  opacity:.75;animation:gardien-couronne 40s linear infinite}
+.salle.s-gardien.faite::after,.salle.s-gardien.perdue::after{display:none}
+@keyframes gardien-couronne{to{transform:rotate(360deg)}}
+.salle.s-gardien:not(.faite) .sa-medaillon{box-shadow:0 0 0 2px #FFB59E,0 0 0 4px rgba(5,7,16,.9),0 0 0 5.5px rgba(255,93,77,.6),0 0 28px rgba(255,80,60,.45),0 8px 18px rgba(0,0,0,.8)}
+.salle.s-gardien .sa-nom{font-family:var(--display);font-weight:400;font-size:13px;letter-spacing:.02em}
+.salle.s-filon{--d:calc(var(--d0) * 1.3)}
+
+/* ================= L'escouade (téléphone : la même rangée qu'en combat) ================= */
+.ecran-exploration > .escouade-combat{flex:none}
+
+/* ================= Le panneau : où l'on est, où aller ================= */
+.panneau-exploration{position:relative;display:grid;gap:12px;padding:14px;
+  background:
+    linear-gradient(118deg,transparent 0 58%,rgba(220,245,255,.07) 58.5%,rgba(220,245,255,.02) 72%,transparent 72.5%),
+    linear-gradient(180deg,rgba(205,239,255,.09),rgba(205,239,255,0) 42%),
+    linear-gradient(165deg,rgba(22,28,52,.88),rgba(9,11,24,.94));
+  box-shadow:inset 0 0 0 1px var(--glace-3,rgba(205,239,255,.22)),inset 0 1px 0 rgba(255,255,255,.28),0 10px 26px rgba(0,0,0,.45);
+  clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))}
+.ici-tete{display:flex;align-items:center;gap:12px}
+.sa-medaillon.petit{flex:none;width:46px;height:46px}
+.ici-tete h2{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:21px;line-height:1.1;color:var(--ink)}
+.panneau-exploration .recit{margin:0;font-size:15px;line-height:1.5;color:var(--ink-2)}
+.panneau-exploration .aide{margin:0;font-size:12.5px;line-height:1.45;color:var(--quiet)}
+
+/* « Où aller ? » : une carte par salle accessible, avec ce qui l'attend */
+.routes,.choix-rencontre{display:grid;gap:8px}
+.route{--t:#CDEFFF;position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:9px 12px 9px 10px;border:none;text-align:left;color:var(--ink);cursor:pointer;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--t) 16%,transparent),transparent 60%),linear-gradient(165deg,rgba(26,33,60,.92),rgba(10,12,26,.95));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t) 42%,transparent),inset 3px 0 0 var(--t);
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:transform .15s ease,filter .15s ease,box-shadow .15s ease}
+.route .sa-medaillon.petit{width:48px;height:48px}
+.route-txt{flex:1;display:grid;gap:2px;min-width:0}
+.route-txt small{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:color-mix(in srgb,var(--t) 70%,white)}
+.route-txt strong{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.15;color:var(--ink)}
+.route-txt em{font-style:normal;font-size:12.5px;line-height:1.35;color:var(--quiet)}
+.route-txt .tag-ennemi{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-2)}
+.route-txt .faible{color:var(--quiet)}
+.route-txt .faible b{font-weight:600;color:var(--c)}
+.route-fleche{flex:none;width:18px;height:18px;color:color-mix(in srgb,var(--t) 70%,white);opacity:.8;transition:transform .15s ease}
+.route:hover,.route:focus-visible{outline:none;filter:brightness(1.12);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t) 75%,transparent),inset 3px 0 0 var(--t),inset 0 0 24px color-mix(in srgb,var(--t) 18%,transparent)}
+.route:hover .route-fleche,.route:focus-visible .route-txt .tag-ennemi{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-2)}
+.route-txt .faible{color:var(--quiet)}
+.route-txt .faible b{font-weight:600;color:var(--c)}
+.route-fleche{transform:translateX(3px)}
+.route:active{transform:scale(.985)}
+.route.choix{min-height:52px;padding-left:16px}
+.route.choix strong{font-family:var(--body);font-weight:600;font-size:15px}
+
+/* le butin, avec les icônes peintes */
+.butin-exploration{display:flex;flex-wrap:wrap;align-items:center;gap:6px 16px;padding-top:10px;border-top:1px solid rgba(205,239,255,.12);font-size:13px;color:var(--ink-2)}
+.butin-exploration .surtitre{width:100%}
+.butin-exploration span:not(.surtitre){display:inline-flex;align-items:center;gap:6px}
+.butin-exploration b{font-family:var(--mono);font-size:14px;color:var(--ink)}
+.butin-exploration .ico{width:16px;height:16px}
+.butin-exploration .ico.peinte{width:24px;height:24px;margin:-4px 0}
+.panneau-exploration > .btn.large{width:100%}
+
+@media (prefers-reduced-motion:reduce){
+  .cs-releve i,.salle.ici::before,.salle.s-gardien::after,.couloirs .c-ouvert{animation:none}
+  .salle.accessible .sa-medaillon{animation:none;box-shadow:0 0 0 1.5px color-mix(in srgb,var(--t) 60%,white 40%),0 0 0 3.5px rgba(5,7,16,.9),0 0 0 4.5px var(--t),0 0 20px color-mix(in srgb,var(--t) 70%,transparent)}
+}
+
+/* ================= PC : la carte à gauche en pleine hauteur, l'escouade et les routes à droite ================= */
+@media (min-width:1100px) and (min-height:600px){
+  #app[data-mode="combat"]:has(> .ecran-exploration){max-width:1500px;margin-inline:auto}
+  .ecran-exploration{--d0:52px;display:grid;flex:none;height:100dvh;min-height:0;grid-template-columns:minmax(0,1fr) 460px;
+    grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"carte barre" "carte escouade" "carte panneau";column-gap:44px;row-gap:14px;padding:20px 40px}
+  .ecran-exploration > .combat-barre{grid-area:barre}
+  .ecran-exploration > .carte-strate{grid-area:carte;justify-self:center;align-self:center;height:calc(100dvh - 40px);width:auto;max-width:100%;max-height:none;aspect-ratio:4/5}
+  .ecran-exploration > .panneau-exploration{grid-area:panneau;align-self:start;max-height:100%;overflow:auto;padding:18px 20px;scrollbar-width:thin}
+  .cs-titre{top:22px;left:26px}
+  .cs-titre strong{font-size:30px}
+  .sa-nom{font-size:12.5px;max-width:180px}
+  .salle.s-gardien .sa-nom{font-size:15px}
+
+  /* l'escouade : une ligne par Porteur, portrait coupé en biais (comme en combat), nom et lignée, PV en grand */
+  .ecran-exploration > .escouade-combat{grid-area:escouade;display:grid;grid-template-columns:1fr;grid-auto-rows:70px;gap:8px}
+  .ecran-exploration .combattant .avatar{aspect-ratio:1/1}
+  .ecran-exploration .combattant .avatar img{object-position:50% 10%}
+  .ecran-exploration .cb-infos{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto;grid-template-areas:"n chiffre" "lignee chiffre" "jauge jauge";
+    align-content:center;column-gap:12px;row-gap:3px;padding:8px 16px 9px 4px}
+  .ecran-exploration .cb-infos .n{grid-area:n;font-size:17px}
+  .ecran-exploration .cb-lignee{grid-area:lignee}
+  .ecran-exploration .cb-vie{display:contents}
+  .ecran-exploration .cb-vie .jauge-vie{grid-area:jauge;margin-top:4px}
+  .ecran-exploration .cb-vie .chiffre{grid-area:chiffre;align-self:center;order:0;font-size:24px}
+}
+@media (min-width:1100px) and (min-height:820px){ .ecran-exploration{--d0:58px} .ecran-exploration > .escouade-combat{grid-auto-rows:78px} }

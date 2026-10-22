@@ -5,6 +5,7 @@ import './ui/holo.css';
 import './ui/combat.css';
 import './ui/cristal.css';
 import './ui/bureau.css';
+import './ui/exploration.css';
 import * as C from './core/combat';
 import { ennemiDef, moduleDef, porteurDef } from './core/donnees';
 import * as J from './core/jeu';

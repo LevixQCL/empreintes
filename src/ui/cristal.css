@@ -240,7 +240,7 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
    La couche est à côté de .ecran-combat, pas dedans : l'écran tremble et s'éclaire pendant les coups (transform et filter),
    ce qui décalerait un élément fixe placé à l'intérieur. */
 .fond-lieu{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#070915;contain:strict}
-#app[data-mode="combat"] > .ecran-combat{position:relative;z-index:1}
+#app[data-mode="combat"] > .ecran{position:relative;z-index:1}
 .fl-image{position:absolute;inset:-6%;background:var(--decor,none) center 42%/cover no-repeat;will-change:transform;
   animation:fl-derive 90s ease-in-out infinite alternate}
 /* la caméra respire : un lent travelling, à peine perceptible */
