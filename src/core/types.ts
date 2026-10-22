@@ -97,6 +97,8 @@ export interface GesteDef {
 /** Un exemplaire de carte dans un combat (uid unique) */
 export interface Geste extends GesteDef {
   uid: string;
+  /** carte de soin dans la chaîne : le Porteur qu'elle soigne (choisi à la pose, modifiable) */
+  cible?: string;
 }
 
 /** 'hasard', 'faible', une lignée, ou l'id d'un Porteur précis */

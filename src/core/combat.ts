@@ -95,7 +95,38 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
   s.main = s.main.filter((x) => x !== g);
   // une carte à plusieurs Fréquences prend celle qui prolonge la suite
   if (g.fs && g.fs.length > 1) g.f = meilleureFrequence(s.chaine, g.fs);
+  // une carte de soin (hors Vague) reçoit une cible proposée : le joueur peut la changer
+  if (soigneUnSeul(g)) g.cible = cibleConseillee(s);
+  else delete g.cible;
   s.chaine.push(g);
+  return { ok: true };
+}
+
+/** Une carte qui soigne un seul Porteur (la Vague soigne toute l'escouade) */
+export const soigneUnSeul = (g: Geste) => g.type === 'soin' && g.effet?.type !== 'vague';
+
+/**
+ * La cible proposée pour un soin : le Porteur visé par l'attaque annoncée s'il risque de tomber bas,
+ * sinon le plus blessé.
+ */
+export function cibleConseillee(s: CombatEtat): string | undefined {
+  const it = s.intention;
+  if (it.type === 'atk' && !it.zone && it.cibleId) {
+    const p = s.porteurs.find((x) => x.id === it.cibleId && x.pv > 0);
+    if (p && p.pv - (it.v ?? 0) <= p.pvMax * 0.3) return p.id;
+  }
+  return plusBlesse(s)?.id;
+}
+
+/** Change la cible d'une carte de soin de la chaîne : passe au Porteur suivant encore debout */
+export function cibler(s: CombatEtat, uid: string, porteurId?: string): Resultat {
+  const g = s.chaine.find((x) => x.uid === uid);
+  if (!g || !soigneUnSeul(g)) return { ok: false };
+  const debout = vivants(s).map((p) => p.id);
+  if (porteurId) {
+    if (!debout.includes(porteurId)) return { ok: false };
+    g.cible = porteurId;
+  } else g.cible = debout[(debout.indexOf(g.cible ?? '') + 1) % debout.length];
   return { ok: true };
 }
 
@@ -275,7 +306,9 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
     log(s, `${nomP} · ${g.nom} : ${net} dégâts${av > 1 ? ' (avantage de lignée)' : ''}${abs ? `, ${abs} absorbés` : ''}${ef?.type === 'percant' && s.ennemi.bouclier ? ', bouclier transpercé' : ''}.`);
     evs.push({ kind: 'degats', cible: 'ennemi', net, absorbe: abs });
     if (ef?.type === 'siphon' && net > 0) {
-      const c = plusBlesse(s);
+      // le Siphon soigne le Porteur qui a joué la carte : c'est lui qui boit la vie (s'il est à terre, le plus blessé)
+      const lui = s.porteurs.find((p) => p.id === g.porteur && p.pv > 0);
+      const c = lui ?? plusBlesse(s);
       if (c) {
         const avant = c.pv;
         c.pv = Math.min(c.pvMax, c.pv + Math.round(net * ef.part));
@@ -291,7 +324,8 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
     log(s, `${nomP} · ${g.nom} : bouclier d’escouade +${v}.`);
     evs.push({ kind: 'bouclier', cible: 'escouade', v });
   } else {
-    const cibles = ef?.type === 'vague' ? vivants(s) : [plusBlesse(s)].filter((x): x is PorteurEtat => !!x);
+    const choisi = g.cible ? s.porteurs.find((p) => p.id === g.cible && p.pv > 0) : undefined;
+    const cibles = ef?.type === 'vague' ? vivants(s) : [choisi ?? plusBlesse(s)].filter((x): x is PorteurEtat => !!x);
     const morceaux: string[] = [];
     for (const c of cibles) {
       const avant = c.pv;

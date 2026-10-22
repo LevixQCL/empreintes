@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ajouter, capacite, creerCombat, lancer } from '../src/core/combat';
+import { ajouter, capacite, cibler, creerCombat, lancer } from '../src/core/combat';
 import { PORTEURS } from '../src/core/donnees';
 import { analyserChaine } from '../src/core/regles';
 import type { CombatEtat, Effet, Geste, TypeGeste } from '../src/core/types';
@@ -37,12 +37,50 @@ describe('Effets des Gestes', () => {
     expect(b.ennemi.pvMax - b.ennemi.pv).toBe(10);
   });
 
-  it('Siphon soigne le plus blessé d’une part des dégâts', () => {
+  it('Siphon soigne le Porteur qui a joué la carte, d’une part des dégâts', () => {
     const s = combat([geste(5, 'atk', 10, { type: 'siphon', part: 0.5 })]);
-    s.porteurs[2]!.pv = 10;
+    const doran = s.porteurs.find((p) => p.id === 'doran')!;
+    doran.pv = 20;
+    s.porteurs.find((p) => p.id === 'vela')!.pv = 10;
     s.intention = { type: 'bouclier', v: 0 };
     jouer(s);
-    expect(s.porteurs[2]!.pv).toBe(15);
+    expect(doran.pv).toBe(25);
+  });
+
+  it('Siphon : si celui qui a joué la carte est à terre, le plus blessé boit la vie', () => {
+    const s = combat([geste(5, 'atk', 10, { type: 'siphon', part: 0.5 }, 'vela')]);
+    const vela = s.porteurs.find((p) => p.id === 'vela')!;
+    s.porteurs.find((p) => p.id === 'doran')!.pv = 10;
+    s.intention = { type: 'bouclier', v: 0 };
+    ajouter(s, s.main[0]!.uid);
+    vela.pv = 0; vela.aTerre = true;
+    lancer(s, { silencieux: true });
+    expect(s.porteurs.find((p) => p.id === 'doran')!.pv).toBe(15);
+  });
+
+  it('un soin vise le plus blessé par défaut, et on peut changer sa cible', () => {
+    const s = combat([geste(5, 'soin', 10)]);
+    s.intention = { type: 'bouclier', v: 0 };
+    s.porteurs.find((p) => p.id === 'doran')!.pv = 20;
+    ajouter(s, s.main[0]!.uid);
+    const g = s.chaine[0]!;
+    expect(g.cible).toBe('doran');
+    expect(cibler(s, g.uid).ok).toBe(true);
+    expect(g.cible).not.toBe('doran');
+    expect(cibler(s, g.uid, 'ilka').ok).toBe(true);
+    s.porteurs.find((p) => p.id === 'ilka')!.pv = 20;
+    lancer(s, { silencieux: true });
+    expect(s.porteurs.find((p) => p.id === 'ilka')!.pv).toBe(30);
+  });
+
+  it('le soin proposé protège le Porteur visé par une grosse attaque annoncée', () => {
+    const s = combat([geste(5, 'soin', 10)]);
+    s.porteurs.find((p) => p.id === 'doran')!.pv = 20;
+    const vela = s.porteurs.find((p) => p.id === 'vela')!;
+    vela.pv = 14;
+    s.intention = { type: 'atk', nom: 'Entaille', v: 12, cibleId: 'vela' };
+    ajouter(s, s.main[0]!.uid);
+    expect(s.chaine[0]!.cible).toBe('vela');
   });
 
   it('Surcharge remplit le Flux', () => {
