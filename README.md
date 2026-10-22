@@ -100,6 +100,11 @@ Un Porteur en retard de deux niveaux sur le plus avancé apprend 1,5 fois plus v
   apparaît, une fenêtre l'explique avec un conseil (une par tour au plus ; ce qui est vu est gardé dans `Jeu.decouvertes`).
 Ces mécaniques durcissent les combats d'à peu près ce que l'XP des Porteurs apporte : `FORCE.niveaux` est revenu à 0.
 
+**Ce que rapporte un niveau de bâtiment** (22 octobre 2026). Au pied de la feuille d'un bâtiment, au-dessus du coût,
+la liste « Niveau N · ce que ça change » : les chiffres qui montent (avant → après) et ce qui se débloque. Elle vient de
+`gainsAmelioration` dans `jeu.ts`, qui applique les vraies règles à une copie du district (Porteur posté et Confiance compris) :
+un changement d'équilibrage s'y reporte tout seul. L'apparence (nouvel âge du district, nouveau bâtiment) est ajoutée par `district.ts`.
+
 **Pas de Fusion.** Un métal se trouve dans les Strates, les boss, les choix et les garanties ; il ne se fabrique pas et ne
 se gagne pas en fusionnant des cartes (décision du 21 octobre 2026).
 

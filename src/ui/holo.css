@@ -206,3 +206,9 @@ body{background:
 .lore-carte{position:relative;margin:0;padding:12px 14px 12px 18px;font-family:var(--lecture,Georgia,serif);font-style:italic;font-size:15px;line-height:1.55;color:#E6DCC8;
   background:linear-gradient(90deg,rgba(216,180,101,.08),transparent 70%);box-shadow:inset 2px 0 0 var(--gold)}
 .lore-carte::before{content:"«";position:absolute;left:4px;top:2px;font-size:22px;line-height:1;color:var(--gold);opacity:.6}
+
+/* ---------- Ce que change le niveau suivant (feuille d'un bâtiment) ---------- */
+.gain{border-top-color:var(--holo-4)}
+.gain>.ico{filter:drop-shadow(0 0 5px rgba(216,180,101,.45))}
+.gn-val i{color:var(--holo)}
+.gn-val b{text-shadow:0 0 10px rgba(216,180,101,.35)}

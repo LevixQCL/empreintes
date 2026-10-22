@@ -5,7 +5,7 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, CIBLES_FOUILLE, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau
+  ARCHIVE, CIBLES_FOUILLE, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
@@ -18,7 +18,7 @@ import { decor, illustrationBatiment, prochainVisuel, reflets, sceneDistrict, vi
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { feuillePorteur } from './porteurs';
-import { ICO } from './icones';
+import { ICO, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict } from './coquille';
 
 export type { EcranDistrict, Vue } from './coquille';
@@ -198,6 +198,27 @@ function candidat(j: Jeu, id: string, poste: Poste, affinite: Lignee | undefined
     + `<span class="bonus${affinite === d.lignee ? ' ideal' : ''}">${bonus}</span></button>`;
 }
 
+const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
+  energie: 'energie', soin: 'soin', stockage: 'coffre', creuseurs: 'ouvrier', strate: 'descendre', forge: 'chrono',
+  plafond: 'tour', chantiers: 'marteau', porteur: 'porteurs', apparence: 'district',
+};
+const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${Number.isInteger(v) ? ent(v) : (Math.round(v * 10) / 10).toLocaleString('fr-BE')}${unite ? ` ${unite}` : ''}`);
+
+/** Ce que change le niveau suivant : les chiffres qui montent (avant → après) et ce qui se débloque */
+function gainsNiveau(j: Jeu, b: BatimentId): string {
+  const niv = j.batiments[b];
+  const gains: (GainNiveau | { quoi: 'apparence'; texte: string; detail?: string; avant?: undefined; apres?: undefined; unite?: undefined })[] = gainsAmelioration(j, b);
+  if (visuel(niv + 1) !== visuel(niv)) gains.push(b === 'noyau' ? { quoi: 'apparence', texte: 'Le district change d’âge', detail: 'nouvelle vue d’ensemble' } : { quoi: 'apparence', texte: 'Nouvelle apparence du bâtiment' });
+  if (!gains.length) return '';
+  return `<div class="gains"><span class="surtitre">NIVEAU ${niv + 1} · CE QUE ÇA CHANGE</span><ul>`
+    + gains.map((g) => {
+      const chiffre = g.avant !== undefined && g.apres !== undefined;
+      return `<li class="gain${chiffre ? '' : ' deblocage'}">${ICO[ICONE_GAIN[g.quoi]]}<span class="gn-txt">${echap(g.texte)}${g.detail ? `<small>${echap(g.detail)}</small>` : ''}</span>`
+        + (chiffre ? `<span class="gn-val"><span class="av">${valeurGain(g.avant!, g.unite)}</span><i aria-label="devient">→</i><b>${valeurGain(g.apres!, g.unite)}</b></span>` : '')
+        + `</li>`;
+    }).join('') + `</ul></div>`;
+}
+
 function feuilleBatiment(e: EcranDistrict): string {
   const j = e.j;
   const b = e.selection;
@@ -209,7 +230,7 @@ function feuilleBatiment(e: EcranDistrict): string {
   let h = `<div class="voile-feuille" data-action="fermer" aria-hidden="true"></div><section class="feuille" role="dialog" aria-modal="true" aria-labelledby="feuille-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><img class="vignette" src="${illustrationBatiment(b, niv)}" alt="" decoding="async"><div class="titres"><span class="surtitre">NIVEAU ${niv} / ${d.niveauMax}${d.affinite ? ` · IDÉAL : ${NOM_LIGNEE[d.affinite].toUpperCase()}` : ''}</span><h2 id="feuille-titre">${echap(d.nom)}</h2><span class="pips" aria-hidden="true">${pips}</span></div>`
     + `<button type="button" class="btn-icone" data-action="fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
-  h += `<p class="role">${echap(d.role)}${pv !== null && pv <= d.niveauMax ? ` <span class="aide">Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
+  h += `<p class="role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span class="aide">Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
 
   // ce que le bâtiment rapporte
   const stats: string[] = [];
@@ -267,7 +288,7 @@ function feuilleBatiment(e: EcranDistrict): string {
   // le pied : l'amélioration, toujours visible
   const ch = chantierDe(j, b);
   const cout = coutAmelioration(j, b);
-  h += `<footer class="feuille-pied">`;
+  h += `<footer class="feuille-pied">${cout ? gainsNiveau(j, b) : ''}`;
   if (ch) {
     const fait = Math.min(1, (e.now - ch.debut) / (ch.fin - ch.debut));
     h += `<div class="chantier-cours">${ICO.marteau}<div><strong>Chantier vers le niveau ${niv + 1}</strong><small>Reste ${duree(ch.fin - e.now)} · avance même jeu fermé</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
@@ -279,7 +300,7 @@ function feuilleBatiment(e: EcranDistrict): string {
     const raison = bloque ? 'Améliore d’abord la Tour du Noyau.'
       : plein ? (b === 'noyau' && j.chantiers.length ? 'Attends la fin des chantiers en cours.' : chantiersMax(j) === 1 ? 'Un seul chantier à la fois (deux au Noyau niveau 4).' : 'Deux chantiers sont déjà en cours.')
         : !assez ? 'Ressources insuffisantes.' : '';
-    h += `<div class="cout-ligne"><span class="surtitre">NIVEAU ${niv + 1}</span>${couts(j, cout)}<span class="prix duree">${ICO.chrono}${dc ? duree(dc) : 'immédiat'}</span></div>`
+    h += `<div class="cout-ligne"><span class="surtitre">COÛT</span>${couts(j, cout)}<span class="prix duree">${ICO.chrono}${dc ? duree(dc) : 'immédiat'}</span></div>`
       + `<button type="button" class="btn prim large" data-action="ameliorer" data-id="${b}"${assez && !bloque && !plein ? '' : ' disabled'}>${ICO.monter}Améliorer</button>`
       + (raison ? `<small class="raison">${raison}</small>` : '');
   } else h += `<small class="raison">Niveau maximum pour cette version.</small>`;

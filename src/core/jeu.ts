@@ -500,11 +500,13 @@ export const soinParHeure = (j: Jeu) => (DISTRICT.soinParHeure[j.batiments.clini
 /** Ce que coûte la refabrication d'un exemplaire */
 export const coutRefabrication = (moduleId: string) => COLLECTION.refabrication[moduleDef(moduleId).rarete];
 
+/** Vitesse de la Forge selon son niveau : +25 % par niveau */
+export const vitesseForge = (niveau: number) => 1 + 0.25 * (niveau - 1);
+
 /** Durée de refabrication, en ms (plus rapide avec un forgeron de la bonne lignée et une Forge améliorée) */
 export function dureeFabrication(j: Jeu, moduleId: string): number {
   const bonus = multiplicateur(j, 'forge');
-  const niveau = 1 + 0.25 * (j.batiments.forge - 1);
-  return Math.round((coutRefabrication(moduleId).minutes * 60_000 * DISTRICT.bonusPoste) / (bonus * niveau));
+  return Math.round((coutRefabrication(moduleId).minutes * 60_000 * DISTRICT.bonusPoste) / (bonus * vitesseForge(j.batiments.forge)));
 }
 
 export function coutAmelioration(j: Jeu, b: BatimentId) {
@@ -517,6 +519,57 @@ export function coutAmelioration(j: Jeu, b: BatimentId) {
 export const dureeChantier = (j: Jeu, b: BatimentId) => Math.round((DISTRICT.chantierMinutes[j.batiments[b] + 1] ?? 0) * 60_000 * (j.actes?.fin === 'pacte' ? 1.25 : 1));
 export const chantierDe = (j: Jeu, b: BatimentId) => j.chantiers.find((c) => c.batiment === b) ?? null;
 export const chantiersMax = (j: Jeu) => (j.batiments.noyau >= DISTRICT.chantiersNoyau2 ? 2 : 1);
+
+/** Une chose que le niveau suivant d'un bâtiment change : un chiffre qui monte (avant → après) ou un déblocage */
+export interface GainNiveau {
+  quoi: 'energie' | 'soin' | 'stockage' | 'creuseurs' | 'strate' | 'forge' | 'plafond' | 'chantiers' | 'porteur';
+  texte: string;
+  avant?: number;
+  apres?: number;
+  /** Infinity pour « sans limite » */
+  unite?: '%';
+  detail?: string;
+}
+
+/** La Strate la plus profonde que le logement des creuseurs permet d'ouvrir à ce niveau du Noyau (Infinity : plus de limite) */
+export function profondeurNoyau(niveau: number): number {
+  const max = CREUSEURS.logement[CREUSEURS.logement.length - 1]!;
+  if ((CREUSEURS.logement[niveau] ?? max) >= max) return Infinity;
+  let s = 1;
+  while (noyauRequis(s + 1) <= niveau) s++;
+  return s;
+}
+
+/**
+ * Ce que rapporte le niveau suivant d'un bâtiment, calculé avec les vraies règles sur une copie du district
+ * (Porteur posté et Confiance compris) : la feuille du bâtiment l'affiche à côté du bouton Améliorer. Vide au niveau maximum.
+ */
+export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
+  const niv = j.batiments[b];
+  if (niv >= batimentDef(b).niveauMax) return [];
+  const apres: Jeu = { ...j, batiments: { ...j.batiments, [b]: niv + 1 } };
+  const g: GainNiveau[] = [];
+  if (b === 'generateur') g.push({ quoi: 'energie', texte: 'Énergie par heure', avant: energieParHeure(j), apres: energieParHeure(apres) });
+  if (b === 'clinique') g.push({ quoi: 'soin', texte: 'Usure soignée par heure', avant: soinParHeure(j), apres: soinParHeure(apres), detail: 'pour chaque Porteur au repos' });
+  if (b === 'forge') {
+    g.push({ quoi: 'forge', texte: 'Vitesse de refabrication', avant: Math.round(vitesseForge(niv) * 100), apres: Math.round(vitesseForge(niv + 1) * 100), unite: '%' });
+    for (const p of PORTEURS) {
+      if (p.arrivee?.forge !== niv + 1 || j.arrives.includes(p.id)) continue;
+      g.push({ quoi: 'porteur', texte: `${p.nom} rejoint le district`, ...(j.chambre ? {} : { detail: 'une fois la chambre scellée' }) });
+    }
+  }
+  if (b === 'noyau') {
+    g.push({ quoi: 'stockage', texte: 'Stockage d’énergie', avant: stockage(j), apres: stockage(apres) });
+    const prof = profondeurNoyau(niv + 1);
+    g.push({ quoi: 'creuseurs', texte: 'Creuseurs logés', avant: logementCreuseurs(j), apres: logementCreuseurs(apres),
+      detail: prof === Infinity ? 'plus aucune limite de profondeur' : `de quoi creuser jusqu’à la Strate −${prof}` });
+    const manque = manquePourCreuser(j);
+    if (manque && manque.creuseurs === 0 && noyauRequis(j.strate + 1) === niv + 1) g.push({ quoi: 'strate', texte: `Ouvre la Strate −${j.strate + 1}`, detail: 'les creuseurs attendent déjà la place' });
+    g.push({ quoi: 'plafond', texte: 'Niveau max. des autres bâtiments', avant: niv, apres: niv + 1 });
+    if (niv + 1 === DISTRICT.chantiersNoyau2) g.push({ quoi: 'chantiers', texte: 'Deux chantiers en même temps' });
+  }
+  return g;
+}
 
 /** Les Porteurs qui portent déjà cette carte */
 export const greffesDe = (j: Jeu, moduleId: string) => Object.keys(j.porteurs).filter((id) => j.porteurs[id]!.modules.includes(moduleId));
