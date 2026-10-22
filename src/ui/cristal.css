@@ -180,3 +180,15 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 @media (prefers-reduced-motion:reduce){
   #app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-argent,.gm-or,.gm-nacre,.halo)::before{animation:none}
 }
+
+/* ---------- Le nom de l'effet, sans cadre (22 octobre 2026) ----------
+   Bryan : l'étiquette de l'effet (« DÉSARMER », « FISSURE »…) était une boîte encadrée qui mangeait la moitié de l'image.
+   Le nom se lit maintenant à la verticale, le long du bord droit de l'illustration, en or, sur un simple voile sombre :
+   il ne prend plus qu'une fine bande et l'image reste libre. */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{
+  right:3px;bottom:calc(100% + 3px);max-width:none;max-height:calc(var(--h-art,60px) - 10px);padding:4px 2px 4px 1.5px;
+  writing-mode:vertical-rl;transform:rotate(180deg);font-size:7px;line-height:1;letter-spacing:.06em;
+  color:#f3dca4;text-shadow:0 0 3px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.8);
+  background:linear-gradient(90deg,rgba(6,8,16,.62),rgba(6,8,16,.38));box-shadow:none;border-radius:2px}
+/* la flèche de la suite se range à gauche du nom de l'effet */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.halo.a-effet .g-suite{right:13px}
