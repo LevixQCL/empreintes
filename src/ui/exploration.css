@@ -3,11 +3,11 @@
    des médaillons de cristal qui montrent ce que contient chaque salle ; des couloirs en fils de lumière.
    Chargé après bureau.css : la mise en page PC est en bas de ce fichier. */
 
-.ecran-exploration{--d0:42px;display:flex;flex-direction:column;gap:10px;min-height:100%;padding:max(8px,var(--sat)) 12px 16px}
+.ecran-exploration{--d0:38px;display:flex;flex-direction:column;gap:10px;min-height:100%;padding:max(8px,var(--sat)) 12px 16px}
 .ecran-exploration .butin-puce .ico.peinte{width:20px;height:20px;margin:-3px 0}
 
 /* ================= La carte ================= */
-.carte-strate{position:relative;flex:none;width:100%;aspect-ratio:3/4;max-height:70vh;margin:0 auto;isolation:isolate}
+.carte-strate{position:relative;flex:none;width:100%;aspect-ratio:2/3;max-height:78vh;margin:0 auto;isolation:isolate}
 /* l'illustration nette, sans cadre : ses bords se fondent dans la salle floutée de l'arrière-plan.
    Le voile (pour que les salles ressortent) et de fines lignes de balayage sont dans la même couche, sous le même masque :
    on regarde un relevé de la salle, pas une photo encadrée. */
@@ -210,7 +210,7 @@
 /* ================= PC : la carte à gauche en pleine hauteur, l'escouade et les routes à droite ================= */
 @media (min-width:1100px) and (min-height:600px){
   #app[data-mode="combat"]:has(> .ecran-exploration){max-width:1500px;margin-inline:auto}
-  .ecran-exploration{--d0:52px;display:grid;flex:none;height:100dvh;min-height:0;grid-template-columns:minmax(0,1fr) 460px;
+  .ecran-exploration{--d0:48px;display:grid;flex:none;height:100dvh;min-height:0;grid-template-columns:minmax(0,1fr) 460px;
     grid-template-rows:auto auto minmax(0,1fr);grid-template-areas:"carte barre" "carte escouade" "carte panneau";column-gap:44px;row-gap:14px;padding:20px 40px}
   .ecran-exploration > .combat-barre{grid-area:barre}
   .ecran-exploration > .carte-strate{grid-area:carte;justify-self:center;align-self:center;height:calc(100dvh - 40px);width:auto;max-width:100%;max-height:none;aspect-ratio:4/5}
@@ -232,7 +232,7 @@
   .ecran-exploration .cb-vie .jauge-vie{grid-area:jauge;margin-top:4px}
   .ecran-exploration .cb-vie .chiffre{grid-area:chiffre;align-self:center;order:0;font-size:24px}
 }
-@media (min-width:1100px) and (min-height:820px){ .ecran-exploration{--d0:58px} .ecran-exploration > .escouade-combat{grid-auto-rows:78px} }
+@media (min-width:1100px) and (min-height:820px){ .ecran-exploration{--d0:54px} .ecran-exploration > .escouade-combat{grid-auto-rows:78px} }
 /* salle de combat à plusieurs : le nombre d'ennemis en pastille (22 octobre 2026) */
 .sa-groupe{position:absolute;right:-6px;bottom:-3px;z-index:2;min-width:22px;height:18px;padding:0 4px;display:grid;place-items:center;border-radius:9px;
   font:700 10.5px/1 var(--mono);color:#ffe2d8;background:linear-gradient(180deg,#7a2a22,#3a0f0c);box-shadow:0 0 0 1.5px rgba(255,170,150,.75),0 2px 4px rgba(0,0,0,.7)}

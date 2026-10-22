@@ -105,10 +105,10 @@ describe('Une carte, cinq métaux', () => {
   });
 
   it('l’or et la nacre renforcent l’effet', () => {
-    expect(moduleDef('crocs-fossiles@cuivre').effet).toEqual({ type: 'siphon', part: 0.5 });
-    expect(moduleDef('crocs-fossiles@argent').effet).toEqual({ type: 'siphon', part: 0.5 });
-    expect(moduleDef('crocs-fossiles@or').effet).toEqual({ type: 'siphon', part: 0.63 });
-    expect(moduleDef('crocs-fossiles@nacre').effet).toEqual({ type: 'siphon', part: 0.75 });
+    expect(moduleDef('crocs-fossiles@cuivre').effet).toEqual({ type: 'siphon', part: 0.6 });
+    expect(moduleDef('crocs-fossiles@argent').effet).toEqual({ type: 'siphon', part: 0.6 });
+    expect(moduleDef('crocs-fossiles@or').effet).toEqual({ type: 'siphon', part: 0.75 });
+    expect(moduleDef('crocs-fossiles@nacre').effet).toEqual({ type: 'siphon', part: 0.9 });
     expect(moduleDef('gant-arc@or').effet).toEqual({ type: 'flux', v: 1 });
     expect(moduleDef('gant-arc@nacre').effet).toEqual({ type: 'flux', v: 2 });
   });

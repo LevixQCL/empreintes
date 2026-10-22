@@ -66,26 +66,26 @@ export const MODULES: ModuleDef[] = [
 
   // ---------- Augmentés : Fréquences basses et moyennes ----------
   c('jambes-ressort', 'Jambes à ressort', 'tech', 'fer', 'atk', 11, [4, 5, 3], { type: 'elan' }),
-  c('gant-arc', 'Gant à arc', 'tech', 'fer', 'atk', 12, [6, 7, 5], { type: 'flux', v: 1 }),
+  c('gant-arc', 'Gant à arc', 'tech', 'fer', 'atk', 13, [7, 6, 8], { type: 'flux', v: 1 }),
   c('oeil-relais', 'Œil-relais', 'tech', 'fer', 'atk', 11, [5, 3, 6], { type: 'percant' }),
   c('grappin-cable', 'Grappin à câble', 'tech', 'fer', 'bouclier', 6, [4, 5, 3], { type: 'elan' }),
-  c('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', 'atk', 12, [7, 6, 8], { type: 'flux', v: 1 }),
+  c('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', 'atk', 15, [7, 6, 8], { type: 'flux', v: 1 }),
   c('oeil-brouilleur', 'Œil-brouilleur', 'tech', 'cuivre', 'atk', 11, [6, 7, 5], { type: 'desarmer', part: 0.3 }),
-  c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 44, [8, 6, 4], { type: 'percant' }, true),
-  c('dorsale', 'Dorsale renforcée', 'tech', 'argent', 'bouclier', 4, [3, 4, 7], { type: 'elan' }),
+  c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 40, [8, 6, 4], { type: 'percant' }, true),
+  c('dorsale', 'Dorsale renforcée', 'tech', 'argent', 'bouclier', 8, [3, 4, 7], { type: 'elan' }),
   c('lames-orbitales', 'Lames orbitales', 'tech', 'or', 'atk', 30, [9, 3, 2], { type: 'crescendo', part: 0.4 }, true),
   c('coeur-reprise', 'Cœur de reprise', 'tech', 'or', 'atk', 24, [6, 2, 5], { type: 'percant' }),
 
   // ---------- Génés : Fréquences basses ----------
   c('glande-ambre', 'Glande d’ambre', 'bio', 'fer', 'soin', 7, [3, 2, 4], { type: 'vague' }),
-  c('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', 'atk', 11, [1, 3, 2], { type: 'siphon', part: 0.5 }),
+  c('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', 'atk', 15, [1, 3, 2], { type: 'siphon', part: 0.6 }),
   c('cuir-recif', 'Cuir de récif', 'bio', 'fer', 'bouclier', 11, [4, 5, 3], { type: 'rempart', part: 0.5 }),
   c('yeux-nocturnes', 'Yeux nocturnes', 'bio', 'fer', 'atk', 11, [3, 4, 2], { type: 'fissure', part: 0.25 }),
   c('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', 'bouclier', 15, [2, 4, 3], { type: 'rempart', part: 0.5 }),
   c('branchies', 'Branchies des Fondations', 'bio', 'cuivre', 'bouclier', 13, [2, 1, 3], { type: 'rempart', part: 0.5 }),
   c('carapace-mere', 'Carapace-mère', 'bio', 'argent', 'bouclier', 14, [5, 6, 1], { type: 'rempart', part: 0.75 }),
   c('sang-ambre', 'Sang d’ambre', 'bio', 'argent', 'soin', 8, [3, 2, 5], { type: 'vague' }),
-  c('coeur-meute', 'Cœur de meute', 'bio', 'or', 'atk', 13, [5, 4, 3], { type: 'siphon', part: 0.5 }),
+  c('coeur-meute', 'Cœur de meute', 'bio', 'or', 'atk', 11, [5, 4, 3], { type: 'siphon', part: 0.5 }),
   c('mue-totale', 'Mue totale', 'bio', 'or', 'soin', 11, [1, 2, 4], { type: 'vague' }),
 
   // ---------- Résonants : Fréquences hautes ----------
@@ -98,7 +98,7 @@ export const MODULES: ModuleDef[] = [
   c('ombre-ailee', 'Ombre ailée', 'reso', 'argent', 'atk', 30, [9, 7, 8], { type: 'fissure', part: 0.4 }, true),
   c('pressentiment', 'Pressentiment', 'reso', 'argent', 'bouclier', 12, [7, 8, 6], { type: 'desarmer', part: 0.4 }),
   c('chant-abysses', 'Chant des abysses', 'reso', 'or', 'atk', 26, [7, 8, 9], { type: 'accord' }),
-  c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 20, [9, 8, 7], { type: 'crescendo', part: 0.4 }),
+  c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 30, [9, 8, 7], { type: 'crescendo', part: 0.5 }),
 ];
 
 /** Les 15 cartes de base (celles que les Porteurs nommés portent au départ, en plus de leur carte de départ) */

@@ -244,10 +244,11 @@ export function fuirAuDistrict(x: Expedition): { x: Expedition; ok: boolean; mes
 /** On ne peut remonter de soi-même qu'à l'entrée ou depuis un campement */
 export const peutRemonter = (x: Expedition) => !!x.carte && x.phase === 'carte' && !x.rencontre && ['entree', 'camp'].includes(salleCourante(x).type);
 
-const POIDS: [TypeSalle, number][] = [['combat', 46], ['cache', 14], ['rencontre', 16], ['elite', 9], ['camp', 8], ['archive', 7]];
+// plus de combats par descente (22 octobre 2026, Bryan voulait l'esprit Baten Kaitos) : ~6 au lieu de ~4, avec les 9 rangées
+const POIDS: [TypeSalle, number][] = [['combat', 58], ['cache', 10], ['rencontre', 13], ['elite', 9], ['camp', 5], ['archive', 5]];
 
-/** Rangées d'une carte de Strate : 7 pour une expédition, 4 pour une fouille ciblée */
-export const RANGS_EXPEDITION = 7;
+/** Rangées d'une carte de Strate : 9 pour une expédition (7 jusqu'au 22 octobre 2026), 4 pour une fouille ciblée */
+export const RANGS_EXPEDITION = 9;
 export const RANGS_FOUILLE = 4;
 /** Nombre de rangées d'une carte */
 export const rangsDe = (c: CarteStrate) => Math.max(...c.salles.map((s) => s.rang)) + 1;
