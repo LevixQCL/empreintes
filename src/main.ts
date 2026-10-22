@@ -29,6 +29,7 @@ import { htmlExploration } from './ui/exploration';
 import { basculerSon, debloquerSon, impact, initImpacts } from './ui/impact';
 import { glisser, horloge, initToucher, noter, vibrer } from './ui/toucher';
 import './ui/toucher.css';
+import './ui/matieres.css';
 import { activerCartes } from './ui/carte';
 import { NOMS_RARETE } from './core/collection';
 import { trouveesDe, type OngletGuide } from './ui/guide';

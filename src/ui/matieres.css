@@ -1,0 +1,58 @@
+/* ---------- La règle de matière (22 octobre 2026) ----------
+   Tout ce qui est posé à l'écran est un objet de cristal, éclairé par le haut. Chaque objet a quatre couches :
+     1. l'arête   : un filet de lumière sur le bord haut, là où la lumière accroche ;
+     2. la face   : plus claire en haut, plus sombre en bas (déjà dans cristal.css) ;
+     3. la tranche: une bande sombre en bas, c'est l'épaisseur de la plaque ; plus un objet se touche, plus elle est épaisse ;
+     4. l'ombre   : une ombre de contact nette juste dessous, puis une ombre portée douce qui le décolle du fond.
+   Trois hauteurs seulement : POSÉ (panneaux), SAILLANT (boutons, plaques du district, ressources), LEVÉ (fenêtres, carte saisie).
+   Un bouton enfoncé perd sa tranche et descend d'autant : on appuie vraiment dessus.
+
+   Pourquoi le @supports : les coins coupés étaient faits avec clip-path, qui découpe aussi les ombres extérieures.
+   Les ombres prévues dans cristal.css ne s'affichaient donc jamais : tout restait collé au fond.
+   Les navigateurs qui savent couper un coin nativement (corner-shape : Chrome, Edge, Android) gardent le même dessin
+   ET les ombres ; les autres (Safari pour l'instant) gardent le découpage d'avant, avec l'arête et la tranche, sans ombre portée. */
+
+#app:is([data-mode="combat"],[data-mode="district"]){
+  --arete:inset 0 1px 0 rgba(255,255,255,.3);
+  --tranche-1:inset 0 -2px 0 rgba(2,4,14,.55);
+  --tranche-2:inset 0 -4px 0 rgba(2,4,14,.6);
+  --contour:inset 0 0 0 1px var(--glace-3);
+  --ombre-pose:0 1px 0 rgba(0,0,0,.5),0 8px 18px -6px rgba(0,0,0,.6);
+  --ombre-saillant:0 2px 0 rgba(0,0,0,.55),0 12px 22px -8px rgba(0,0,0,.75);
+  --ombre-leve:0 3px 0 rgba(0,0,0,.4),0 24px 48px -10px rgba(0,0,0,.8);
+}
+
+/* POSÉ : les panneaux */
+#app:is([data-mode="combat"],[data-mode="district"]) :is(.combattant,.zone-chaine,.lecon,.mission,.panneau,.habitant,.carte-porteur,.emplacement,.tuile-porteur,
+  .ligne-menu,.stat,.occupant,.chantier-cours,.en-cours,.chapitre-ligne,.replique,.segments-choix,.puce,.etat){
+  box-shadow:var(--contour),var(--arete),var(--tranche-1),inset 0 -20px 30px -24px rgba(150,190,255,.3),var(--ombre-pose)}
+
+/* SAILLANT : ce qu'on touche */
+#app:is([data-mode="combat"],[data-mode="district"]) :is(.btn.sec,.btn-sec,.btn-icone,.btn-flux,.res,.plaque,.appel){
+  box-shadow:var(--contour),var(--arete),var(--tranche-2),inset 0 -14px 22px -18px rgba(150,190,255,.35),var(--ombre-saillant)}
+#app:is([data-mode="combat"],[data-mode="district"]) .plaque.choisie{
+  box-shadow:inset 0 0 0 1.5px var(--glace),var(--arete),var(--tranche-2),0 0 16px rgba(160,210,255,.35),var(--ombre-saillant)}
+/* le bouton principal : une barre de lumière taillée, avec sa tranche bleu profond */
+#app:is([data-mode="combat"],[data-mode="district"]) .btn.prim:not(:disabled){
+  box-shadow:inset 0 1px 0 #fff,inset 0 -4px 0 #4f78bd,inset 0 -5px 0 rgba(255,255,255,.35),0 2px 0 rgba(10,20,50,.7),0 12px 24px -8px rgba(0,0,0,.7),0 0 22px rgba(160,210,255,.38)}
+#app:is([data-mode="combat"],[data-mode="district"]) .btn.prim:disabled{box-shadow:var(--contour),var(--tranche-2)}
+
+/* enfoncé : la tranche disparaît, le bouton descend de sa hauteur (remplace le petit appui générique de toucher.css) */
+#app:is([data-mode="combat"],[data-mode="district"]) :is(.btn,.btn-sec,.btn-icone,.btn-flux,.res,.plaque,.appel):not(:disabled):active{
+  scale:.985;translate:0 3px;filter:brightness(.92)}
+#app:is([data-mode="combat"],[data-mode="district"]) :is(.btn.sec,.btn-sec,.btn-icone,.btn-flux,.res,.plaque,.appel):not(:disabled):active{
+  box-shadow:var(--contour),inset 0 2px 6px rgba(0,0,0,.45),inset 0 -1px 0 rgba(2,4,14,.6),0 1px 0 rgba(0,0,0,.5)}
+#app:is([data-mode="combat"],[data-mode="district"]) .btn.prim:not(:disabled):active{
+  box-shadow:inset 0 2px 5px rgba(40,70,140,.45),inset 0 -1px 0 #4f78bd,0 1px 0 rgba(10,20,50,.7),0 0 18px rgba(160,210,255,.3)}
+
+/* LEVÉ : ce qui flotte au-dessus du jeu */
+#app:is([data-mode="combat"],[data-mode="district"]) :is(.fenetre,.toast){
+  box-shadow:var(--contour),var(--arete),var(--tranche-1),var(--ombre-leve)}
+
+/* les coins coupés natifs : même dessin, mais les ombres passent */
+@supports (corner-shape:bevel){
+  #app :is(.res,.mission,.plaque,.appel,.stat,.occupant,.tuile-porteur,.liste-forge li,.ligne-menu,.panneau,.fenetre,.habitant,.carte-porteur,.emplacement,
+    .replique,.segments-choix,.combattant,.zone-chaine,.puce,.lecon,.toast,.btn,button.prim,.btn-sec,.btn-icone,.btn-flux,.en-cours,.chantier-cours){
+    /* overflow:clip découpe le contenu exactement comme le faisait clip-path (images, reflets, chiffres), mais pas l'ombre */
+    clip-path:none;border-radius:0 var(--cut) 0 var(--cut);corner-shape:bevel;overflow:clip}
+}
