@@ -5,7 +5,7 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, CIBLES_FOUILLE, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte,
+  ARCHIVE, CIBLES_FOUILLE, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
@@ -569,6 +569,19 @@ function htmlChapitre(e: EcranDistrict, id: string): string {
 
 const NOMS_ETAGES = ['Salle de fouilles', 'Bunker des années 2060', 'Galerie aux formes courbes', 'Ruines lumineuses'];
 
+/** Le niveau d'un Porteur et sa barre d'expérience (décision du 22 octobre 2026) */
+function niveauDe(j: EcranDistrict['j'], id: string): string {
+  const n = niveauPorteur(j, id);
+  const part = n.requis ? Math.round((100 * n.xp) / n.requis) : 100;
+  return `<span class="niv-porteur" title="${n.requis ? `${n.xp} / ${n.requis} XP vers le niveau ${n.niveau + 1}` : 'Niveau maximum'}"><b>Niv. ${n.niveau}</b><i class="xp"><i style="width:${part}%"></i></i></span>`;
+}
+
+/** la barre d'expérience, fine et dorée, sous la jauge de PV */
+function barreXp(j: EcranDistrict['j'], id: string): string {
+  const n = niveauPorteur(j, id);
+  return `<div class="barre-xp" title="${n.requis ? `${n.xp} / ${n.requis} XP vers le niveau ${n.niveau + 1}` : 'Niveau maximum'}"><i style="width:${n.requis ? Math.round((100 * n.xp) / n.requis) : 100}%"></i></div>`;
+}
+
 function jaugePv(pv: number, max: number, usure = 0, usureM = 1): string {
   return `<div class="jauge-pv"><i class="pv" style="width:${(100 * pv) / max}%"></i>${usure >= 1 ? `<i class="usure" style="width:${(100 * Math.min(usure, usureM)) / max}%"></i>` : ''}</div>`;
 }
@@ -583,9 +596,9 @@ export function htmlCoupe(e: EcranDistrict): string {
     const exp = enExpedition(j, p.id);
     const etat = enMission(j, p.id) ? 'En mission' : exp ? 'En expédition' : d.poste ? batimentDef(d.poste).nom : 'Au repos';
     const pv = pvMaxCombat(j, p.id);
-    h += `<div class="habitant${exp ? ' parti' : ''}" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 40)}<div class="hab-infos"><div class="hab-ligne"><strong>${echap(p.nom)}</strong><span class="chiffre">${pv}/${p.pvMax}</span></div>`
-      + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id))
-      + `<small>${d.poste && !exp ? ICO.ouvrier : ''}${etat}${d.usure >= 1 ? ` · Usure ${Math.floor(d.usure)}` : ''}</small>`
+    h += `<div class="habitant${exp ? ' parti' : ''}" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 40)}<div class="hab-infos"><div class="hab-ligne"><strong>${echap(p.nom)}</strong><span class="chiffre">${pv}/${pvNiveau(j, p.id)}</span></div>`
+      + jaugePv(pv, pvNiveau(j, p.id), d.usure, usureMax(p.id)) + barreXp(j, p.id)
+      + `<small><b class="niv-hab">Niv. ${niveauPorteur(j, p.id).niveau}</b> · ${d.poste && !exp ? ICO.ouvrier : ''}${etat}${d.usure >= 1 ? ` · Usure ${Math.floor(d.usure)}` : ''}</small>`
       + `<small class="greffes">${ICO.greffe}${d.modules.length} / ${DISTRICT.cartesMax} cartes</small>` + `</div></div>`;
   }
   h += `</div></section>`;
@@ -728,8 +741,8 @@ export function htmlEscouade(e: EcranDistrict): string {
     const d = j.porteurs[p.id]!;
     const pv = pvMaxCombat(j, p.id);
     h += `<button type="button" class="carte-porteur${choisi ? ' choisi' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="choisir" data-id="${p.id}"${!libre && !choisi ? ' disabled' : ''} aria-pressed="${choisi}">`
-      + `${avatar(p.id, 72)}${choisi ? `<span class="rang">${e.escouade.indexOf(p.id) + 1}</span>` : ''}<strong>${echap(p.nom)}</strong><small class="lignee">${NOM_LIGNEE[p.lignee]}</small>`
-      + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id)) + `<small>${libre || choisi ? `PV ${pv} · ${gestesDe(j, p.id).length} cartes` : ep?.interdits?.includes(p.id) ? 'Pas pour cette Épreuve' : enMission(j, p.id) ? 'En mission' : d.poste ? `Au travail · ${echap(batimentDef(d.poste).nom)}` : 'Absent'}</small>`
+      + `${avatar(p.id, 72)}${choisi ? `<span class="rang">${e.escouade.indexOf(p.id) + 1}</span>` : ''}<strong>${echap(p.nom)}</strong><small class="lignee">${NOM_LIGNEE[p.lignee]}</small>${niveauDe(j, p.id)}`
+      + jaugePv(pv, pvNiveau(j, p.id), d.usure, usureMax(p.id)) + `<small>${libre || choisi ? `PV ${pv} · ${gestesDe(j, p.id).length} cartes` : ep?.interdits?.includes(p.id) ? 'Pas pour cette Épreuve' : enMission(j, p.id) ? 'En mission' : d.poste ? `Au travail · ${echap(batimentDef(d.poste).nom)}` : 'Absent'}</small>`
       + marqueDe(j, p.id) + `</button>`;
   }
   h += `</div>`;

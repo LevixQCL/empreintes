@@ -659,3 +659,13 @@ h1,h2,h3{font-weight:400}
 .strate.front-taille .strate-infos .ico{width:14px;height:14px}
 .strate.front-taille .jauge{margin:3px 0}
 .strate.front-taille.prete{box-shadow:inset 0 0 0 1.5px rgba(216,180,101,.55)}
+
+/* ---------- Le niveau des Porteurs (22 octobre 2026) ---------- */
+.niv-porteur{display:inline-flex;flex-direction:column;align-items:stretch;gap:2px;margin:0 6px;vertical-align:middle;min-width:42px}
+.niv-porteur b{font:600 10px/1 var(--mono);letter-spacing:.06em;color:var(--gold,#F3D27A);white-space:nowrap}
+.niv-porteur .xp{display:block;height:3px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden}
+.niv-porteur .xp i{display:block;height:100%;background:linear-gradient(90deg,#c9a24a,#ffe39a)}
+.carte-porteur .niv-porteur{margin:2px auto 4px;min-width:56px}
+.barre-xp{height:2px;margin-top:2px;border-radius:1px;background:rgba(255,255,255,.1);overflow:hidden}
+.barre-xp i{display:block;height:100%;background:linear-gradient(90deg,#c9a24a,#ffe39a)}
+.habitant small .niv-hab{font:600 10px/1 var(--mono);color:#F3D27A;letter-spacing:.05em}

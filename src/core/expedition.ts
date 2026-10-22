@@ -98,11 +98,13 @@ export const FORCE = {
   table: [1, 1.3, 1.6, 1.9, 2.25, 2.6, 2.7, 2.82, 2.9, 3.05, 3.25, 3.5, 3.68, 3.8] as number[],
   /** hausse par Strate au-delà de la table */
   ensuite: 1.04,
+  /** les Porteurs gagnent des niveaux (et des PV) en descendant : les ennemis suivent, +x % par Strate (22 octobre 2026) */
+  niveaux: 0.016,
 };
 export const forceStrate = (strate: number) => {
   const t = FORCE.table;
-  if (strate <= t.length) return t[Math.max(0, strate - 1)]!;
-  return t[t.length - 1]! * FORCE.ensuite ** (strate - t.length);
+  const base = strate <= t.length ? t[Math.max(0, strate - 1)]! : t[t.length - 1]! * FORCE.ensuite ** (strate - t.length);
+  return Math.round(base * (1 + FORCE.niveaux * Math.max(0, strate - 1)) * 1000) / 1000;
 };
 /** Composants gagnés par victoire */
 export const butinCombat = (strate: number, index: number) => Math.round((index === 2 ? 14 : 6) * (1 + 0.25 * (strate - 1)));

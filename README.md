@@ -83,6 +83,12 @@ le frappe, Désarmer et Fissure compris ; s'il tombe, le reste de la chaîne pas
 Côté moteur, l'ennemi visé est toujours `s.ennemi` (et son intention `s.intention`) ; les autres sont dans `s.autres`,
 chacun avec son `intention` : `viser` les échange, le reste du moteur ne change pas. `tousEnnemis(s)` les rend dans l'ordre.
 
+**L'expérience des Porteurs** (22 octobre 2026). Les cartes montent avec les doublons ; les Porteurs montent en combattant
+(`XP`, `gagnerXp`, `niveauPorteur` dans `jeu.ts`) : XP par combat gagné, salle scellée et gardien (×1 + 0,25 par Strate),
+partagée par toute l'escouade au retour, et XP de mission. Niveau 1 à 20, +4 % des PV de base par niveau (`pvNiveau`).
+Un Porteur en retard de deux niveaux sur le plus avancé apprend 1,5 fois plus vite. Les ennemis suivent : `FORCE.niveaux`
+(+1,6 % par Strate) garde les victoires au front autour de 40-45 % au parcours d'un joueur moyen, comme avant l'XP.
+
 **Pas de Fusion.** Un métal se trouve dans les Strates, les boss, les choix et les garanties ; il ne se fabrique pas et ne
 se gagne pas en fusionnant des cartes (décision du 21 octobre 2026).
 

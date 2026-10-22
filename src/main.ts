@@ -594,7 +594,8 @@ racine.addEventListener('click', async (ev) => {
             : `+${r.butin} composants rapportés.`)
           + (r.cartes.length ? ` Carte${r.cartes.length > 1 ? 's' : ''} trouvée${r.cartes.length > 1 ? 's' : ''} : ${r.cartes.map((c) => `${moduleDef(c).nom} (${NOMS_RARETE[moduleDef(c).rarete]})`).join(', ')}.` : '')
           + (r.eclats ? ` +${r.eclats} Éclat${r.eclats > 1 ? 's' : ''}.` : '')
-          + (r.fragment ? ' Un fragment d’archives rejoint le Codex.' : '');
+          + (r.fragment ? ' Un fragment d’archives rejoint le Codex.' : '')
+          + (r.xp?.length ? ` +${r.xp[0]!.xp} XP pour l’escouade.${r.xp.filter((e) => e.niveau).map((e) => ` ${porteurDef(e.id).nom} passe au niveau ${e.niveau} !`).join('')}` : '');
       }
       sauver();
       window.scrollTo(0, 0);

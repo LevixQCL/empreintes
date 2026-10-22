@@ -70,6 +70,50 @@ export interface PorteurDistrict {
   modules: string[];
   /** ce que le Porteur a vécu, pour ses Marques */
   faits?: { expeditions?: number; fondations?: number; anciens?: number };
+  /** expérience gagnée en combattant et en mission (décision du 22 octobre 2026) */
+  xp?: number;
+}
+
+// ---------- L'expérience des Porteurs (décision du 22 octobre 2026) ----------
+// Les cartes montent avec les doublons ; les Porteurs, eux, montent en combattant : leurs PV suivent la force des cartes.
+// Un niveau = +4 % des PV de base. Le niveau ne touche pas aux cartes : la force vient toujours de la collection.
+export const XP = {
+  /** par combat gagné dans une Strate, ×(1 + 0,25 × (Strate − 1)) */
+  combat: 10,
+  /** en plus pour une salle scellée vaincue, et pour le gardien */
+  elite: 10,
+  gardien: 30,
+  /** par heure de mission */
+  missionHeure: 4,
+  /** un Porteur en retard de 2 niveaux ou plus sur le plus avancé du district apprend plus vite (×1,5) */
+  rattrapage: 1.5,
+  niveauMax: 20,
+  pvParNiveau: 0.04,
+};
+/** XP pour passer du niveau n au niveau n+1 */
+export const xpPourNiveau = (n: number) => Math.round(12 * n ** 1.6);
+/** Niveau d'un Porteur, et ce qu'il a déjà vers le suivant */
+export function niveauPorteur(j: Pick<Jeu, 'porteurs'>, id: string): { niveau: number; xp: number; requis: number | null } {
+  let reste = Math.floor(j.porteurs[id]?.xp ?? 0);
+  let n = 1;
+  while (n < XP.niveauMax && reste >= xpPourNiveau(n)) { reste -= xpPourNiveau(n); n++; }
+  return { niveau: n, xp: reste, requis: n >= XP.niveauMax ? null : xpPourNiveau(n) };
+}
+/** PV de base d'un Porteur à son niveau (avant l'Usure et les choix d'histoire) */
+export const pvNiveau = (j: Pick<Jeu, 'porteurs'>, id: string) => Math.round(porteurDef(id).pvMax * (1 + XP.pvParNiveau * (niveauPorteur(j, id).niveau - 1)));
+/** Donne de l'XP à un Porteur ; renvoie son nouveau niveau s'il en a pris un */
+export function gagnerXp(j: Jeu, id: string, xp: number): number | null {
+  const d = j.porteurs[id];
+  if (!d || xp <= 0) return null;
+  const avant = niveauPorteur(j, id).niveau;
+  const tete = Math.max(...Object.keys(j.porteurs).map((k) => niveauPorteur(j, k).niveau));
+  d.xp = (d.xp ?? 0) + Math.round(xp * (tete - avant >= 2 ? XP.rattrapage : 1));
+  const apres = niveauPorteur(j, id).niveau;
+  if (apres > avant) {
+    log(j, `${porteurDef(id).nom} passe au niveau ${apres} : ${pvNiveau(j, id)} PV.`);
+    return apres;
+  }
+  return null;
 }
 
 // ---------- Les Marques des Porteurs (Bible) ----------
@@ -402,7 +446,7 @@ export const enExpedition = (j: Jeu, id: string) => (!!j.expedition && j.expedit
 export const enMission = (j: Jeu, id: string) => !!j.missions?.some((m) => m.porteur === id);
 export const posteDe = (j: Jeu, b: Poste) => Object.keys(j.porteurs).find((id) => j.porteurs[id]!.poste === b) ?? null;
 export const stockage = (j: Jeu) => DISTRICT.stockage[j.batiments.noyau] ?? 0;
-export const pvMaxCombat = (j: Jeu, id: string) => porteurDef(id).pvMax + bonusPv(j, id) - Math.floor(j.porteurs[id]!.usure);
+export const pvMaxCombat = (j: Jeu, id: string) => pvNiveau(j, id) + bonusPv(j, id) - Math.floor(j.porteurs[id]!.usure);
 export const usureMax = (id: string) => Math.floor(porteurDef(id).pvMax * DISTRICT.usureMaxRatio);
 
 function multiplicateur(j: Jeu, b: Poste): number {
@@ -994,7 +1038,9 @@ function retourDeMission(j: Jeu, m: Mission): string {
   if (arrives) creuser(j);
   const q = j.porteurs[m.porteur]!;
   q.usure = Math.min(usureMax(m.porteur), q.usure + d.usure);
-  const texte = `${p.nom} rentre de mission : +${composants} composants${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}.`;
+  const gainXp = Math.round(XP.missionHeure * d.heures * (1 + 0.25 * (m.strate - 1)));
+  const monte = gagnerXp(j, m.porteur, gainXp);
+  const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
   return texte;
 }
@@ -1172,6 +1218,8 @@ export interface Retour {
   fuite?: boolean;
   /** cartes trouvées en route, Éclats gagnés */
   cartes: string[]; eclats: number;
+  /** l'expérience gagnée par chaque Porteur de l'escouade, et les niveaux pris */
+  xp?: { id: string; xp: number; niveau?: number }[];
 }
 
 export function remonter(j: Jeu): Retour {
@@ -1259,6 +1307,11 @@ export function remonter(j: Jeu): Retour {
   for (const c of cartes) ajouterCarte(j, c);
   j.eclats += eclats;
   confier(j, victoire ? CONFIANCE.victoire : defaite ? CONFIANCE.defaite : 0);
+  // l'expérience : chaque combat gagné, les salles scellées et le gardien ; toute l'escouade la partage, debout ou à terre
+  const facteur = 1 + 0.25 * (x.strate - 1);
+  const gardien = victoire && !x.fouille && !x.epreuve ? XP.gardien : 0;
+  const brutXp = Math.round((victoires * XP.combat + (x.gains?.elites ?? 0) * XP.elite + gardien) * facteur * (x.epreuve || x.fouille ? 0.75 : 1));
+  const xp = finaux.map((p) => { const avant = niveauPorteur(j, p.id).niveau; const n = gagnerXp(j, p.id, brutXp); return { id: p.id, xp: brutXp, ...(n && n > avant ? { niveau: n } : {}) }; });
   // ce que chacun a vécu, pour ses Marques
   const vaincus = x.sequence.slice(0, victoires);
   const anciens = vaincus.filter((id) => ennemiDef(id).lignee === 'reso').length;
@@ -1276,7 +1329,7 @@ export function remonter(j: Jeu): Retour {
     ? `L’escouade remonte victorieuse avec ${butin} composants.${nouvelleStrate ? ` Un nouvel étage est creusé : la Strate −${j.strate} est ouverte.` : ''}`
     : x.fuite ? `L’escouade a fui et remonte avec ${butin} composants. Elle rentre épuisée.`
     : `L’escouade remonte avec ${butin} composants. Elle a besoin de repos.`);
-  return { butin: butin + butinFilon, nouvelleStrate, victoire, fragment, cartes, eclats, ...(x.fuite ? { fuite: true } : {}) };
+  return { butin: butin + butinFilon, nouvelleStrate, victoire, fragment, cartes, eclats, ...(x.fuite ? { fuite: true } : {}), ...(brutXp ? { xp } : {}) };
 }
 
 function ajouterFragment(j: Jeu): string | null {
