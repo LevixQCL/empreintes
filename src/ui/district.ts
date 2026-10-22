@@ -138,7 +138,7 @@ function mission(e: EcranDistrict): string {
   if (!j.chambre) return '';
   const q = j.quotidien;
   const def = QUOTIDIENS[q.type];
-  const max = ARCHIVE.paliers[2];
+  const max = ARCHIVE.paliers[ARCHIVE.paliers.length - 1]!;
   const crans = ARCHIVE.paliers.map((p) => `<i class="cran${j.archive.points >= p ? ' atteint' : ''}" style="left:${(p / max) * 100}%"></i>`).join('');
   let h = `<section class="mission jour${quotidienFait(j) ? ' faite' : ''}" aria-label="Objectif du jour">`;
   if (quotidienActif(j)) {
@@ -162,7 +162,7 @@ function appel(e: EcranDistrict): string {
     return `<button type="button" class="appel reso" data-action="rencontre">${ICO.porte}<span><strong>La porte scellée</strong><small>Sous la Tour du Noyau, trois personnes t’attendent</small></span></button>`;
   }
   if (j.archive.aOuvrir && !objectifCourant(j)) {
-    return `<button type="button" class="appel reso" data-action="ouvrir-archive">${ICO.coffre}<span><strong>L’Archive de la semaine est prête</strong><small>Palier ${j.archive.aOuvrir} sur 3 atteint : ouvre-la</small></span></button>`;
+    return `<button type="button" class="appel reso" data-action="ouvrir-archive">${ICO.coffre}<span><strong>L’Archive de la semaine est prête</strong><small>Palier ${j.archive.aOuvrir} sur ${ARCHIVE.paliers.length} atteint : ouvre-la</small></span></button>`;
   }
   if (colisDisponible(j)) {
     const reste = colisAvantChoix(j);

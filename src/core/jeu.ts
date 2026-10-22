@@ -4,7 +4,7 @@
 
 import { BATIMENTS, CARTE_CHAMBRE, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, carteId, moduleDe, moduleDef, porteurDef, ennemiDef } from './donnees';
 import {
-  COLLECTION, NOMS_RARETE, ajouterCarte, cartesEnJeu, composantsNiveau, doublonsRequis, tirerCarte, tirerChoix,
+  COLLECTION, NOMS_RARETE, ajouterCarte, cartesEnJeu, composantsNiveau, doublonsRequis, tirerChoix, tirerTrouvaille,
   type CarteCollection,
 } from './collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from './fragments';
@@ -46,7 +46,8 @@ export const DISTRICT = {
 /** Points d'Archive gagnés, et paliers de la semaine */
 export const ARCHIVE = {
   points: { combat: 2, expedition: 5, chantier: 3, quotidien: 5 },
-  paliers: [30, 80, 160],
+  /** le 4e palier récompense les joueurs assidus : un choix d'argent de plus et des Éclats */
+  paliers: [30, 80, 160, 300],
 } as const;
 
 /** Lundi 5 janvier 2026, 4 h du matin à Bruxelles : point de départ des jours et des semaines du jeu */
@@ -147,6 +148,8 @@ export interface Jeu {
   lus: string[];
   /** chapitres dont la première lecture a déjà rapporté sa carte */
   luesRecompensees: string[];
+  /** les recrues ont reçu leur kit de départ (3 cartes chacune) */
+  kitRecrues: boolean;
   /** Ravitaillement du jour : colis en réserve (3 au plus, rien ne se perd), dernier jour compté, colis déjà ouverts */
   ravitaillement: { jour: number; reserve: number; ouverts: number };
   eclats: number;
@@ -271,6 +274,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     fragments: [],
     lus: [],
     luesRecompensees: [],
+    kitRecrues: false,
     ravitaillement: { jour: jourDe(now), reserve: 1, ouverts: 0 },
     eclats: 0,
     collection: Object.fromEntries(COLLECTION_DEPART.map((id) => [id, { niveau: 1, doublons: 0 }])),
@@ -304,6 +308,7 @@ function migrer(j: Jeu) {
   j.objectif ??= ancien && j.strate > 1 ? OBJECTIFS.length : 0;
   j.fragments ??= [];
   j.lus ??= [];
+  if (j.kitRecrues === undefined) { j.kitRecrues = false; if (j.recrues && j.collection) donnerKitRecrues(j); }
   j.ravitaillement ??= { jour: jourDe(j.dernierTick), reserve: 1, ouverts: 0 };
   if (!j.luesRecompensees) {
     // sauvegarde d'avant les récompenses de lecture : les chapitres déjà lus rapportent leur carte maintenant
@@ -621,6 +626,31 @@ export function degreffer(j: Jeu, moduleId: string): Resultat {
 }
 
 /** Résout le premier choix en attente : une des cartes, ou les Éclats si proposé (index -1) */
+// ---------- Kit de départ des recrues ----------
+
+/** Trois cartes en fer par recrue, de sa lignée, différentes des cartes de départ des Porteurs nommés */
+export const KIT_RECRUES: Record<string, string[]> = {
+  coursier: ['gant-arc', 'grappin-cable', 'coeur-turbine'],
+  docker: ['crocs-fossiles', 'cuir-recif', 'yeux-nocturnes'],
+  guetteur: ['miroir-brume', 'encre-ancienne', 'meche-or'],
+};
+
+/** Donne le kit (une seule fois) : la carte rejoint la collection et la recrue la porte si elle est libre */
+export function donnerKitRecrues(j: Jeu): void {
+  if (j.kitRecrues) return;
+  j.kitRecrues = true;
+  for (const [id, cartes] of Object.entries(KIT_RECRUES)) {
+    const p = j.porteurs[id];
+    if (!p) continue;
+    for (const c of cartes) {
+      const cle = carteId(c, 'fer');
+      ajouterCarte(j, cle);
+      const libre = !Object.values(j.porteurs).some((q) => q.modules.includes(cle));
+      if (libre && p.modules.length < DISTRICT.cartesMax && !p.modules.some((k) => moduleDe(k) === c)) p.modules.push(cle);
+    }
+  }
+}
+
 // ---------- Récompenses de lecture et Ravitaillement du jour ----------
 // Étude du 22 octobre 2026 : la découverte des cartes est rapide, mais un exemplaire précis reçoit très peu de doublons
 // (45 cartes × 5 métaux). La lecture donne donc des cartes de départ (surtout au début), et le colis du jour donne
@@ -725,8 +755,9 @@ export function ouvrirArchive(j: Jeu): Resultat {
   j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate) });
   if (n >= 2) j.eclats += 3;
   if (n >= 3) j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent') });
+  if (n >= 4) { j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent') }); j.eclats += 5; }
   j.archive.aOuvrir = 0;
-  log(j, `Archive de la semaine ouverte : palier ${n} sur 3.`);
+  log(j, `Archive de la semaine ouverte : palier ${n} sur ${ARCHIVE.paliers.length}.`);
   return { ok: true };
 }
 
@@ -915,6 +946,7 @@ export function remonter(j: Jeu): Retour {
     if (victoire) {
       j.chambre = true;
       j.recrues = true;
+      donnerKitRecrues(j);
       fragment = ajouterFragment(j);
       ajouterCarte(j, CARTE_CHAMBRE);
       log(j, 'La chambre scellée est ouverte. Trois recrues rejoignent le district : un Coursier, un Docker et un Guetteur.');
@@ -929,7 +961,7 @@ export function remonter(j: Jeu): Retour {
   const cartes: string[] = [];
   let eclats = 0;
   for (let k = 0; k < normales; k++) {
-    if (t.nombre() < COLLECTION.chanceCombat + (j.actes.chambre === 'commission' ? 0.05 : 0)) cartes.push(tirerCarte(j, x.strate));
+    if (t.nombre() < COLLECTION.chanceCombat + (j.actes.chambre === 'commission' ? 0.05 : 0)) cartes.push(tirerTrouvaille(j, x.strate));
     if (x.strate >= 5 && t.nombre() < 0.1) eclats++;
   }
   progresser(j, 'combat', victoires);
@@ -945,13 +977,13 @@ export function remonter(j: Jeu): Retour {
     // dans les Fondations, les abris des années 2060 rendent deux papiers par Strate
     if (x.strate <= 3) ajouterFragment(j);
     j.composants += 20;
-    cartes.push(tirerCarte(j, x.strate));
+    cartes.push(tirerTrouvaille(j, x.strate));
     eclats += 2;
   }
   // les trouvailles de l'exploration : une carte par salle scellée, les cartes offertes en route, Éclats et archives
   if (x.gains) {
-    for (let k = 0; k < x.gains.elites; k++) cartes.push(tirerCarte(j, x.strate, 'cuivre'));
-    for (let k = 0; k < x.gains.cartes; k++) cartes.push(tirerCarte(j, x.strate));
+    for (let k = 0; k < x.gains.elites; k++) cartes.push(tirerTrouvaille(j, x.strate, 'cuivre'));
+    for (let k = 0; k < x.gains.cartes; k++) cartes.push(tirerTrouvaille(j, x.strate));
     eclats += x.gains.eclats;
     if (x.gains.fragment) fragment = ajouterFragment(j) ?? fragment;
   }

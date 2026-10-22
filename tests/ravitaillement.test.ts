@@ -47,3 +47,30 @@ describe('Ravitaillement du jour', () => {
     expect(j.choix.some((c) => c.source === 'ravitaillement')).toBe(true);
   });
 });
+
+describe('Kit des recrues et joueurs assidus', () => {
+  it('les recrues reçoivent 3 cartes chacune à l’ouverture de la chambre, une seule fois', () => {
+    const j = pret();
+    j.recrues = true;
+    J.donnerKitRecrues(j);
+    for (const id of ['coursier', 'docker', 'guetteur']) expect(j.porteurs[id]!.modules).toHaveLength(3);
+    const n = Object.keys(j.collection).length;
+    J.donnerKitRecrues(j);
+    expect(Object.keys(j.collection).length).toBe(n);
+  });
+  it('une ancienne sauvegarde avec recrues reçoit le kit au chargement', () => {
+    const j = pret() as J.Jeu;
+    j.recrues = true;
+    delete (j as Partial<J.Jeu>).kitRecrues;
+    expect(estJeuValide(j)).toBe(true);
+    expect(j.porteurs.docker!.modules.length).toBe(3);
+  });
+  it('le 4e palier de l’Archive donne un choix de plus et 5 Éclats', () => {
+    const j = pret();
+    j.archive.aOuvrir = 4;
+    const e = j.eclats;
+    J.ouvrirArchive(j);
+    expect(j.choix.filter((c) => c.source === 'archive')).toHaveLength(3);
+    expect(j.eclats).toBe(e + 3 + 5);
+  });
+});

@@ -10,7 +10,10 @@ export const NOMS_RARETE: Record<Rarete, string> = { fer: 'Fer', cuivre: 'Cuivre
 
 export const COLLECTION = {
   /** chance qu'un combat normal fasse tomber une carte */
-  chanceCombat: 0.15,
+  chanceCombat: 0.2,
+  /** une trouvaille d'expédition est, à cette fréquence, un doublon d'une carte qu'on possède déjà dans ce métal :
+   *  plus on joue, plus les cartes montent (étude du 22/10/2026 : les doublons se diluaient sur 225 exemplaires) */
+  affinite: 0.4,
   /** +5 % de force par niveau */
   bonusNiveau: 0.05,
   niveauMax: 10,
@@ -91,6 +94,18 @@ export function tirerRarete(e: EtatCollection, strate: number, minimum: Rarete =
 export function tirerCarte(e: EtatCollection, strate: number, minimum: Rarete = 'fer'): string {
   const r = tirerRarete(e, strate, minimum);
   return carteId(MODULES[tireur(e).entier(MODULES.length)]!.id, r);
+}
+
+/**
+ * Une trouvaille d'expédition (combat, salle scellée, cache) : comme tirerCarte, mais une fois sur 2,5 (COLLECTION.affinite)
+ * c'est un doublon d'une carte déjà possédée dans le métal tiré. Les choix (boss, objectif, Archive) restent tirerChoix.
+ */
+export function tirerTrouvaille(e: EtatCollection, strate: number, minimum: Rarete = 'fer'): string {
+  const r = tirerRarete(e, strate, minimum);
+  const t = tireur(e);
+  const possedees = Object.keys(e.collection).filter((id) => id.endsWith('@' + r));
+  if (possedees.length && t.nombre() < COLLECTION.affinite) return possedees[t.entier(possedees.length)]!;
+  return carteId(MODULES[t.entier(MODULES.length)]!.id, r);
 }
 
 /** Trois cartes différentes au choix (boss, objectif du jour, Archive), toujours trois cartes de base différentes */
