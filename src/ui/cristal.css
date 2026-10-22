@@ -289,3 +289,17 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
   .fl-image{animation:none;transform:scale(1.04)}
   .fl-p{animation:none;opacity:0}
 }
+
+/* ---------- Typographie des cartes (22 octobre 2026) ----------
+   Bryan trouvait la police de la force et du nom « barbare » (chiffres monospace gras, nom en gras sans empattement).
+   La force et le nom passent dans la capitale gravée du jeu (Marcellus SC), plus fine et plus petite ;
+   l'icône d'action se fait discrète en attendant ses symboles peints. */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val{gap:2px;align-items:baseline}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val b{font-family:var(--display);font-weight:400;font-size:16px;letter-spacing:.02em;
+  color:#fbf4e4;text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.85)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val b{font-size:17px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val .ico{width:10px;height:10px;opacity:.8;transform:translateY(-1px)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-nom{font-family:var(--display);font-weight:400;font-size:9px;letter-spacing:.05em;
+  color:#e9e1cf;text-shadow:0 1px 2px #000,0 0 5px rgba(0,0,0,.9)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-fer,.gm-cuivre,.gm-argent,.gm-or) .g-nom{font-size:9px;letter-spacing:.04em}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-qui{font-family:var(--display);font-size:7.5px;letter-spacing:.06em}
