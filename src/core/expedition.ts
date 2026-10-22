@@ -95,11 +95,12 @@ export const RENCONTRES_IDS = ['veilleur', 'pilleur', 'brigade', 'cristal', 'mar
  */
 export const FORCE = {
   //      −1   −2   −3   −4    −5    −6   −7    −8    −9   −10   −11   −12  −13   −14
-  table: [1, 1.3, 1.6, 1.9, 2.25, 2.6, 2.7, 2.82, 2.9, 3.05, 3.25, 3.5, 3.68, 3.8] as number[],
+  table: [1, 1.3, 1.7, 2.0, 2.3, 2.6, 2.7, 2.82, 2.9, 3.05, 3.25, 3.5, 3.68, 3.8] as number[],
   /** hausse par Strate au-delà de la table */
   ensuite: 1.04,
-  /** les Porteurs gagnent des niveaux (et des PV) en descendant : les ennemis suivent, +x % par Strate (22 octobre 2026) */
-  niveaux: 0.016,
+  /** les Porteurs gagnent des niveaux (et des PV) en descendant : les ennemis suivent, +2,5 % par Strate. Réglé pour que descendre
+   *  reste un défi (22 octobre 2026) : au front, le joueur moyen gagne ~3 fois sur 10, un joueur qui calcule tout 5 à 8 fois sur 10 */
+  niveaux: 0.025,
 };
 export const forceStrate = (strate: number) => {
   const t = FORCE.table;
