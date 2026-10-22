@@ -14,7 +14,7 @@ import { FRAGMENTS } from '../core/fragments';
 import { loreCarte } from '../core/lore-cartes';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
 import { COULEUR, echap } from './vue';
-import { decor, illustrationBatiment, prochainVisuel, reflets, sceneDistrict, visuel } from './art';
+import { decor, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { feuillePorteur } from './porteurs';
@@ -845,6 +845,28 @@ export function marqueDe(j: Jeu, id: string): string {
     : `<small class="marque" title="${echap(m.texte)}"><span><b>${echap(m.nom)}</b> ${Math.min(m.n, m.seuil)}/${m.seuil}</span></small>`;
 }
 
+/** Les Fréquences d'une liste de cartes (une carte à plusieurs Fréquences compte pour chacune ; les cartes ∗ à part) */
+function frequencesDe(cartes: { f: number; fs?: number[]; effet?: { type: string } }[]): number[] {
+  return Array.from({ length: 9 }, (_, i) => cartes.filter((g) => (g.fs ?? [g.f]).includes(i + 1) && g.effet?.type !== 'accord').length);
+}
+
+/** La plus longue suite de Fréquences présentes (les cartes ∗ comblent des trous) */
+function plusLongueSuite(n: number[], jokers: number): number[] {
+  let best: number[] = [];
+  for (let a = 0; a < 9; a++) {
+    let j = jokers; const suite: number[] = [];
+    for (let i = a; i < 9; i++) {
+      if (n[i]) suite.push(i + 1);
+      else if (j > 0) { j--; suite.push(i + 1); } else break;
+    }
+    if (suite.length > best.length) best = suite;
+  }
+  return best;
+}
+
+// L'écran Escouade (revue du 22 octobre 2026, même équipe que la feuille de bâtiment) :
+// d'abord ce qu'on part chercher, puis les trois Porteurs en grand sur la ligne de départ, ce que donne leur deck,
+// puis les Porteurs disponibles. Plus de doublons (emplacements + grille + tuiles de deck) ; le deck trop maigre dit quoi faire.
 export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
   const dispo = disponibles(j);
@@ -852,70 +874,100 @@ export function htmlEscouade(e: EcranDistrict): string {
   const fouille = ep ? null : e.fouille;
   const deck = deckEscouade(j, e.escouade).filter((g) => !ep?.filtre || g.porteur === null || ep.filtre(g)).length;
   const deckMin = ep ? EPREUVE_DECK_MIN : DISTRICT.deckMin;
+  const zone = zoneDe(e.strateChoisie);
   const titre = ep ? `ÉPREUVE · ${ep.nom.toUpperCase()}` : `${fouille ? 'FOUILLE · ' : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`;
-  let h = `<div class="ecran ecran-escouade"><main class="contenu">`
+  let h = `<div class="ecran ecran-escouade es"><main class="contenu">`
     + entete(titre, 'Escouade', `<button type="button" class="btn-icone" data-action="coupe" aria-label="Retour">${ICO.retour}</button>`);
-  h += `<div class="emplacements" aria-label="Escouade choisie">` + [0, 1, 2].map((i) => {
-    const id = e.escouade[i];
-    return id ? `<button type="button" class="emplacement plein" style="--c:${COULEUR[porteurDef(id).lignee]}" data-action="choisir" data-id="${id}" aria-label="Retirer ${echap(porteurDef(id).nom)}">${avatar(id, 56)}<small>${echap(porteurDef(id).nom)}</small></button>`
-      : `<div class="emplacement"><span>${i + 1}</span><small>Libre</small></div>`;
-  }).join('') + `</div>`;
-  // ce que chacun apporte : sa Marque (active ou à gagner), et sa fiche d'un toucher
-  if (e.escouade.length) {
-    h += `<section class="apports" aria-label="Les Marques de l’escouade"><span class="surtitre">MARQUES DE L’ESCOUADE</span>`
-      + e.escouade.map((id) => {
-        const m = progresMarque(j, id);
-        return `<button type="button" class="apport${m?.acquise ? ' actif' : ''}" style="--c:${COULEUR[porteurDef(id).lignee]}" data-action="porteur" data-id="${id}">${avatar(id, 30)}`
-          + `<span><strong>${m ? echap(m.nom) : echap(porteurDef(id).nom)}</strong><small>${m ? (m.acquise ? echap(m.court) : `à gagner : ${Math.min(m.n, m.seuil)} / ${m.seuil} ${echap(m.quoi)}`) : ''}</small></span>`
-          + `<span class="apport-etat">${m?.acquise ? ICO.ok : ICO.verrou}</span></button>`;
-      }).join('') + `</section>`;
+
+  // 1. ce qu'on part faire
+  h += `<section class="es-mission">`;
+  if (ep) {
+    h += `<p class="es-but">${ICO.boost}<span><strong>${echap(ep.nom)}</strong>${echap(ep.regle)} Un seul combat, contre ${echap(ennemiDef(zone.boss).nom)}.</span></p>`;
+  } else if (fouille) {
+    h += `<p class="es-but">${ICO.cristal}<span><strong>Fouille ciblée · ${echap(zone.nom)}</strong>Une descente courte, sans gardien : quelques salles, puis le filon.</span></p>`
+      + `<div class="es-cibles" role="tablist" aria-label="Ce que tu cherches">` + (Object.keys(CIBLES_FOUILLE) as CibleFouille[]).map((c) =>
+        `<button type="button" role="tab" class="es-cible${fouille === c ? ' actif' : ''}"${c === 'tech' || c === 'bio' || c === 'reso' ? ` style="--c:${COULEUR[c]}"` : ''} data-action="cible" data-id="${c}" aria-selected="${fouille === c}">${echap(CIBLES_FOUILLE[c].nom)}</button>`).join('') + `</div>`
+      + `<p class="es-cible-texte">${echap(CIBLES_FOUILLE[fouille].texte)}</p>`;
+  } else {
+    h += `<p class="es-but">${ICO.strate}<span><strong>${echap(zone.nom)}</strong>Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien : ${echap(ennemiDef(zone.boss).nom)}.</span></p>`;
   }
-  // les Fréquences du deck de l'escouade : un trou dans la suite coupe les Résonances
+  h += `</section>`;
+
+  // 2. les trois places, en grand
+  h += `<section class="es-trio" aria-label="Escouade choisie">` + [0, 1, 2].map((i) => {
+    const id = e.escouade[i];
+    if (!id) return `<div class="es-place vide"><span class="es-silhouette" aria-hidden="true"></span><b>${i + 1}</b><small>Choisis un Porteur plus bas</small></div>`;
+    const p = porteurDef(id);
+    const img = portrait(id);
+    const nCartes = j.porteurs[id]!.modules.length;
+    const m = progresMarque(j, id);
+    const pv = pvMaxCombat(j, id);
+    return `<div class="es-place" style="--c:${COULEUR[p.lignee]}">`
+      + `<button type="button" class="es-portrait" data-action="choisir" data-id="${id}" aria-label="Retirer ${echap(p.nom)} de l’escouade">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 72)}<span class="es-retirer" aria-hidden="true">${ICO.fermer}</span>`
+      + `<span class="es-nom"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · PV ${pv}</small></span></button>`
+      + `<button type="button" class="es-cartes${nCartes ? '' : ' aucune'}${nCartes >= DISTRICT.cartesMax ? ' pleine' : ''}" data-action="deck" data-id="${id}">${ICO.cartes}<span>${nCartes} / ${DISTRICT.cartesMax} cartes</span></button>`
+      + (m ? `<button type="button" class="es-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" title="${echap(m.texte)}">${m.acquise ? ICO.ok : ICO.verrou}<span><b>${echap(m.nom)}</b> ${m.acquise ? echap(m.court) : `${Math.min(m.n, m.seuil)} / ${m.seuil} ${echap(m.quoi)}`}</span></button>` : '')
+      + `</div>`;
+  }).join('') + `</section>`;
+
+  // 3. ce que donne leur deck
+  const maigre = e.escouade.length === 3 && deck < deckMin;
   if (e.escouade.length) {
     const cartes = deckEscouade(j, e.escouade);
-    // une carte à plusieurs Fréquences compte pour chacune
-    const n = Array.from({ length: 9 }, (_, i) => cartes.filter((g) => (g.fs ?? [g.f]).includes(i + 1) && g.effet?.type !== 'accord').length);
-    const libres = cartes.filter((g) => g.effet?.type === 'accord').length;
-    const max = Math.max(...n, 1);
-    h += `<div class="frequences-deck" aria-label="Fréquences du deck"><span class="surtitre">FRÉQUENCES DU DECK</span><div class="barres">`
-      + n.map((k, i) => `<span class="barre${k ? '' : ' trou'}" style="--fc:${couleurFrequence(i + 1)};--h:${Math.round((100 * k) / max)}%"><i></i><b>${i + 1}</b><small>${k}</small></span>`).join('')
-      + `</div><small class="aide">Des chiffres qui se suivent font des Résonances. Un chiffre absent coupe les suites${libres ? ` · ${libres} carte${libres > 1 ? 's' : ''} ∗ comble${libres > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</small>`
-      + `<div class="liens-guide">${lienGuide('deck', 'Bien construire son deck')}</div></div>`;
+    const n = frequencesDe(cartes);
+    const jokers = cartes.filter((g) => g.effet?.type === 'accord').length;
+    const suite = plusLongueSuite(n, jokers);
+    h += `<section class="es-deck" aria-label="Le deck de l’escouade"><div class="es-deck-tete"><span class="surtitre">Le deck · ${deck} cartes</span>${lienGuide('deck', 'Bien construire son deck')}</div>`
+      + `<div class="es-freq" role="img" aria-label="Fréquences du deck : ${n.map((k, i) => `${i + 1} : ${k}`).join(', ')}">`
+      + n.map((k, i) => `<span class="es-f${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}${i && n[i - 1] && k ? ' lie' : ''}" style="--fc:${couleurFrequence(i + 1)}"><b>${i + 1}</b><small>${k ? `×${k}` : '—'}</small></span>`).join('')
+      + `</div><p class="es-freq-aide">Des chiffres qui se suivent font des Résonances${suite.length >= 2 ? ` : ta plus longue suite va de <b>${suite[0]} à ${suite[suite.length - 1]}</b>` : ''}. Un chiffre absent coupe la suite${jokers ? ` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</p>`;
+    if (maigre) {
+      const aRemplir = e.escouade.filter((id) => j.porteurs[id]!.modules.length < DISTRICT.cartesMax);
+      const cible = aRemplir.sort((x, y) => j.porteurs[x]!.modules.length - j.porteurs[y]!.modules.length)[0];
+      h += `<div class="es-alerte">${ICO.cartes}<span><strong>Il manque ${deckMin - deck} carte${deckMin - deck > 1 ? 's' : ''}</strong> (${deckMin} au moins). `
+        + `${aRemplir.length ? `Confie des cartes à ${aRemplir.map((id) => `${echap(porteurDef(id).nom)} (${j.porteurs[id]!.modules.length}/${DISTRICT.cartesMax})`).join(', ')}.` : 'Choisis des Porteurs qui portent plus de cartes.'}</span>`
+        + (cible ? `<button type="button" class="btn sec" data-action="deck" data-id="${cible}">Confier</button>` : '') + `</div>`;
+    }
+    h += `</section>`;
   }
-  const zone = zoneDe(e.strateChoisie);
-  if (ep) {
-    h += `<p class="zone-strate">${ICO.boost}<span><strong>${echap(ep.nom)}</strong><small>${echap(ep.regle)} Un seul combat, contre ${echap(ennemiDef(zone.boss).nom)}.</small></span></p>`;
-  } else if (fouille) {
-    h += `<p class="zone-strate">${ICO.cristal}<span><strong>Fouille ciblée · ${echap(zone.nom)}</strong><small>Une descente courte, sans gardien : quelques salles, puis le filon. Que cherches-tu ?</small></span></p>`;
-    h += `<div class="segments-choix cibles" role="tablist">` + (Object.keys(CIBLES_FOUILLE) as CibleFouille[]).map((c) =>
-      `<button type="button" role="tab" class="seg${fouille === c ? ' actif' : ''}"${c === 'tech' || c === 'bio' || c === 'reso' ? ` style="--c:${COULEUR[c]}"` : ''} data-action="cible" data-id="${c}" aria-selected="${fouille === c}">${echap(CIBLES_FOUILLE[c].nom)}</button>`).join('') + `</div>`;
-    h += `<p class="aide">${echap(CIBLES_FOUILLE[fouille].texte)}</p>`;
-  } else {
-    h += `<p class="zone-strate">${ICO.strate}<span><strong>${echap(zone.nom)}</strong><small>Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien de la zone : ${echap(ennemiDef(zone.boss).nom)}</small></span></p>`;
-  }
-  h += `<p class="aide intro-ecran">Choisis 3 Porteurs. Chacun apporte au deck les cartes que tu lui as confiées : changer d’escouade change ton deck. Les Porteurs au travail restent au district.</p><div class="grille-porteurs">`;
-  for (const p of PORTEURS) {
-    if (!porteursPresents(j).includes(p.id)) continue;
-    const libre = dispo.includes(p.id) && !ep?.interdits?.includes(p.id);
-    const choisi = e.escouade.includes(p.id);
-    const d = j.porteurs[p.id]!;
-    const pv = pvMaxCombat(j, p.id);
-    h += `<button type="button" class="carte-porteur${choisi ? ' choisi' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="choisir" data-id="${p.id}"${!libre && !choisi ? ' disabled' : ''} aria-pressed="${choisi}">`
-      + `${avatar(p.id, 72)}${choisi ? `<span class="rang">${e.escouade.indexOf(p.id) + 1}</span>` : ''}<strong>${echap(p.nom)}</strong><small class="lignee">${NOM_LIGNEE[p.lignee]}</small>${niveauDe(j, p.id)}`
-      + jaugePv(pv, pvNiveau(j, p.id), d.usure, usureMax(p.id)) + `<small>${libre || choisi ? `PV ${pv} · ${gestesDe(j, p.id).length} cartes` : ep?.interdits?.includes(p.id) ? 'Pas pour cette Épreuve' : enMission(j, p.id) ? 'En mission' : d.poste ? `Au travail · ${echap(batimentDef(d.poste).nom)}` : 'Absent'}</small>`
-      + marqueDe(j, p.id) + `</button>`;
-  }
-  h += `</div>`;
-  // les cartes de chaque Porteur choisi : un raccourci vers sa feuille de deck
-  if (e.escouade.length) {
-    h += `<section class="bloc decks-porteurs"><h3 class="titre-bloc">${ICO.cartes}Le deck de l’escouade</h3><p class="aide">Touche un Porteur pour changer ses cartes.</p><div class="rangee">`
-      + e.escouade.map((id) => `<button type="button" class="tuile-porteur" style="--c:${COULEUR[porteurDef(id).lignee]}" data-action="deck" data-id="${id}">${avatar(id, 44)}<strong>${echap(porteurDef(id).nom)}</strong><small>${j.porteurs[id]!.modules.length} / ${DISTRICT.cartesMax} cartes</small></button>`).join('')
-      + `</div></section>`;
-  }
-  h += `<p class="aide">Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p></main>`;
-  const maigre = e.escouade.length === 3 && deck < deckMin;
-  h += `<footer class="pied-fixe"><div class="pied-info"><span class="chiffre">${e.escouade.length} / 3</span><small${maigre ? ' class="alerte"' : ''}>${e.escouade.length ? `${deck} cartes dans le deck${maigre ? ` · ${deckMin} au moins` : ''}` : 'Personne pour l’instant'}</small></div>`
-    + `<button type="button" class="btn prim large" data-action="partir"${e.escouade.length === 3 ? '' : ' disabled'}>${ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}</button></footer>`;
+
+  // 4. les Porteurs disponibles, puis ceux qui ne peuvent pas partir
+  const presents = PORTEURS.filter((p) => porteursPresents(j).includes(p.id));
+  const libre = (id: string) => dispo.includes(id) && !ep?.interdits?.includes(id);
+  const tuile = (pid: string) => {
+    const p = porteurDef(pid);
+    const ok = libre(pid);
+    const choisi = e.escouade.includes(pid);
+    const d = j.porteurs[pid]!;
+    const pv = pvMaxCombat(j, pid);
+    const pvM = pvNiveau(j, pid);
+    const img = portrait(pid);
+    const nc = d.modules.length;
+    const fs = [...new Set(gestesDe(j, pid).flatMap((g) => g.fs ?? [g.f]))].sort((a, b) => a - b);
+    const raison = ep?.interdits?.includes(pid) ? 'Pas pour cette Épreuve' : enMission(j, pid) ? 'En mission' : d.poste ? `Au travail · ${echap(batimentDef(d.poste).nom)}` : 'Absent';
+    const blesse = d.usure >= usureMax(pid) * 0.5;
+    return `<button type="button" class="es-tuile${choisi ? ' choisi' : ''}${ok || choisi ? '' : ' indispo'}" style="--c:${COULEUR[p.lignee]}" data-action="choisir" data-id="${pid}"${!ok && !choisi ? ' disabled' : ''} aria-pressed="${choisi}">`
+      + `<span class="es-vignette">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : avatar(pid, 64)}${choisi ? `<span class="es-rang">${e.escouade.indexOf(pid) + 1}</span>` : ''}${blesse && ok ? '<span class="es-blesse">Blessé</span>' : ''}</span>`
+      + `<strong>${echap(p.nom)}</strong><small class="es-lignee">${NOM_LIGNEE[p.lignee]}${ok || choisi ? ` · Niv. ${niveauPorteur(j, pid).niveau}` : ''}</small>`
+      + (ok || choisi
+        ? jaugePv(pv, pvM, d.usure, usureMax(pid)) + `<small class="es-stats">PV ${pv}/${pvM}</small><small class="es-stats${nc ? '' : ' zero'}">${nc} carte${nc > 1 ? 's' : ''}</small>`
+          + (fs.length ? `<span class="es-puces" aria-label="Fréquences de ses cartes">${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</span>` : '')
+        : `<small class="es-raison">${raison}</small>`)
+      + `</button>`;
+  };
+  // les trois choisis sont déjà en grand plus haut : la grille ne montre que les autres
+  const prets = presents.filter((p) => libre(p.id) && !e.escouade.includes(p.id));
+  const absents = presents.filter((p) => !libre(p.id) && !e.escouade.includes(p.id));
+  h += `<section class="es-porteurs"><div class="es-titre"><h3 class="titre-bloc">${ICO.porteurs}${e.escouade.length ? 'Autres Porteurs disponibles' : 'Porteurs disponibles'}</h3><small>${e.escouade.length === 3 ? 'Pour en faire entrer un, retire d’abord un Porteur de l’escouade (la croix sur son portrait).' : 'Touche un Porteur pour l’ajouter · chacun apporte ses cartes au deck.'}</small></div>`
+    + (prets.length ? `<div class="es-grille">${prets.map((p) => tuile(p.id)).join('')}</div>` : `<p class="es-note">Tous les Porteurs libres sont dans l’escouade.</p>`)
+    + (absents.length ? `<div class="es-titre"><h3 class="titre-bloc discret">Ne peuvent pas partir</h3></div><div class="es-grille petite">${absents.map((p) => tuile(p.id)).join('')}</div>` : '')
+    + `</section>`;
+  h += `<p class="es-note">${ICO.soin}Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p></main>`;
+
+  const pret = e.escouade.length === 3 && !maigre;
+  h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
+    + `<span><b>${e.escouade.length} / 3</b><small class="${maigre ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? `Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? `${deck} cartes · ${deckMin} au moins` : `${deck} cartes, prêt`}</small></span></div>`
+    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}</button></footer>`;
   h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : e.deck ? feuilleDeck(e) : feuillePorteur(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;

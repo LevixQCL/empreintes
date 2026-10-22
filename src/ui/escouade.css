@@ -1,0 +1,146 @@
+/* EMPREINTES — l'écran Escouade (revue du 22 octobre 2026, même équipe que la feuille de bâtiment).
+   « La ligne de départ » : les trois élus en grand, leurs portraits peints entiers ; tout le reste s'efface.
+   Pas de cartouches, des filets qui se fondent ; glace pour ce qui se touche, or pour la valeur ; textes ≥ 12 px. */
+
+.es{--es-txt:#C9D6E6;--es-doux:#93A3B8;--es-or:#F2D58C;--es-glace:#CDEFFF;--es-rouge:#FF9C8A;--es-fond:#0B1020}
+.es .contenu{gap:22px;padding-bottom:28px}
+
+/* ---------- 1. La mission ---------- */
+.es-mission{display:grid;gap:10px}
+.es-but{display:flex;gap:12px;align-items:flex-start;margin:0;font-size:14px;line-height:1.45;color:var(--es-txt)}
+.es-but>.ico{width:20px;height:20px;flex-shrink:0;margin-top:2px;color:var(--es-or);filter:drop-shadow(0 0 6px rgba(242,200,110,.4))}
+.es-but strong{display:block;font-family:var(--display);font-weight:400;font-size:19px;line-height:1.2;color:#F6F2EA;margin-bottom:2px}
+.es-cibles{display:flex;gap:6px;margin:0 -16px;padding:2px 16px;overflow-x:auto;scrollbar-width:none}
+.es-cibles::-webkit-scrollbar{display:none}
+.es-cibles{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 32px),transparent)}
+.es-cible{flex-shrink:0;min-height:38px;padding:0 14px;border:0;border-radius:999px;font:inherit;font-size:14px;font-weight:600;white-space:nowrap;cursor:pointer;
+  color:var(--es-doux);background:rgba(205,239,255,.05);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12);transition:background .15s,color .15s}
+.es-cible:hover{color:var(--es-txt)}
+.es-cible.actif{color:#fff;background:color-mix(in srgb,var(--c,#9FD8FF) 18%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c,#CDEFFF) 70%,white),0 0 14px color-mix(in srgb,var(--c,#9FD8FF) 25%,transparent)}
+.es-cible-texte{margin:0;font-size:14px;color:var(--es-or)}
+
+/* ---------- 2. Les trois places ---------- */
+.es-trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:start}
+.es-place{position:relative;display:grid;gap:6px;min-width:0}
+.es-portrait{position:relative;display:block;width:100%;aspect-ratio:3/4;padding:0;border:0;border-radius:4px;overflow:hidden;cursor:pointer;color:inherit;
+  background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 35%,#141A2E),#0B0F1C 75%);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 45%,transparent),0 12px 26px rgba(0,0,0,.5),0 0 22px color-mix(in srgb,var(--c) 18%,transparent);
+  animation:es-arrive .24s ease-out}
+@keyframes es-arrive{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.es-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block;
+  -webkit-mask-image:linear-gradient(#000 55%,transparent 98%);mask-image:linear-gradient(#000 55%,transparent 98%)}
+.es-portrait>.avatar{margin:22% auto 0}
+.es-portrait::after{content:"";position:absolute;left:10%;right:10%;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent)}
+.es-nom{position:absolute;left:0;right:0;bottom:0;display:grid;gap:1px;padding:0 8px 9px;text-align:left}
+.es-nom strong{font-family:var(--display);font-weight:400;font-size:18px;line-height:1.05;color:#fff;text-shadow:0 2px 8px #000,0 0 2px #000}
+.es-nom small{font-size:12px;color:color-mix(in srgb,var(--c) 45%,white);text-shadow:0 1px 4px #000}
+.es-retirer{position:absolute;top:6px;right:6px;display:grid;place-items:center;width:28px;height:28px;border-radius:50%;
+  background:rgba(9,12,26,.75);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3);opacity:.8}
+.es-retirer .ico{width:14px;height:14px;color:var(--es-glace)}
+.es-portrait:hover .es-retirer,.es-portrait:focus-visible .es-retirer{opacity:1;background:rgba(120,40,40,.8)}
+.es-cartes,.es-marque{display:flex;align-items:center;gap:6px;min-height:34px;padding:0 6px;border:0;border-radius:4px;background:none;font:inherit;text-align:left;cursor:pointer;color:var(--es-txt)}
+.es-cartes{font-size:13px;font-weight:600;color:var(--es-glace)}
+.es-cartes:hover,.es-marque:hover{background:rgba(205,239,255,.06)}
+.es-cartes .ico{width:15px;height:15px;flex-shrink:0}
+.es-cartes.pleine{color:var(--es-or)}
+.es-cartes.aucune{color:var(--es-rouge)}
+.es-marque{min-height:30px;font-size:12px;line-height:1.3;color:var(--es-doux);align-items:flex-start;padding-top:4px}
+.es-marque .ico{width:13px;height:13px;flex-shrink:0;margin-top:1px}
+.es-marque b{color:var(--es-txt);font-weight:600}
+.es-marque.acquise,.es-marque.acquise b{color:var(--es-or)}
+.es-place.vide{display:grid;place-items:center;align-content:center;gap:4px;aspect-ratio:3/4;border-radius:4px;text-align:center;
+  background:radial-gradient(circle at 50% 40%,rgba(205,239,255,.06),transparent 70%);box-shadow:inset 0 0 0 1px rgba(205,239,255,.1)}
+.es-silhouette{position:absolute;inset:18% 26% 30%;border-radius:50% 50% 40% 40%;background:rgba(205,239,255,.05)}
+.es-place.vide b{position:relative;font-family:var(--display);font-weight:400;font-size:40px;color:rgba(205,239,255,.35)}
+.es-place.vide small{position:relative;padding:0 8px;font-size:12px;color:var(--es-doux)}
+
+/* ---------- 3. Le deck ---------- */
+.es-deck{display:grid;gap:10px;padding-top:14px;box-shadow:inset 0 1px 0 rgba(205,239,255,.1)}
+.es-deck-tete{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.es-deck-tete .surtitre{font-size:12px;color:var(--es-glace);margin-right:auto}
+.es-deck-tete .surtitre::before{display:none}
+.es-deck-tete .lien-guide{margin:0;min-height:32px;padding:0 4px;background:none!important;box-shadow:none!important;font-size:13px;color:var(--es-glace)}
+.es-deck-tete .lien-guide::after,.es-deck-tete .lien-guide::before{display:none}
+.es-freq{display:grid;grid-template-columns:repeat(9,1fr);align-items:start}
+.es-f{position:relative;display:grid;justify-items:center;gap:2px;padding-top:2px}
+.es-f b{position:relative;z-index:1;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;font-family:var(--mono);font-size:15px;font-weight:700;color:#fff;
+  background:color-mix(in srgb,var(--fc) 40%,#0B1020);box-shadow:inset 0 0 0 1.5px var(--fc),0 0 10px color-mix(in srgb,var(--fc) 35%,transparent)}
+.es-f small{font-family:var(--mono);font-size:12px;color:var(--es-txt);font-variant-numeric:tabular-nums}
+.es-f.trou b{color:rgba(255,156,138,.75);background:transparent;box-shadow:inset 0 0 0 1px rgba(255,156,138,.35);border:1px dashed transparent}
+.es-f.trou small{color:var(--es-doux)}
+/* le filet entre deux chiffres qui se suivent : allumé dans la plus longue suite */
+.es-f.lie::before{content:"";position:absolute;top:17px;right:50%;width:100%;height:2px;background:rgba(205,239,255,.22)}
+.es-f.lie.suite::before{background:linear-gradient(90deg,#6FA6E6,#CDEFFF);box-shadow:0 0 8px rgba(160,210,255,.7)}
+.es-freq-aide{margin:0;font-size:13px;line-height:1.45;color:var(--es-doux)}
+.es-freq-aide b{color:var(--es-glace);font-weight:600}
+.es-alerte{display:flex;align-items:center;gap:10px;padding:10px 10px 10px 12px;border-radius:4px;font-size:13.5px;line-height:1.4;color:var(--es-txt);
+  background:linear-gradient(90deg,rgba(255,156,138,.12),rgba(255,156,138,.03));box-shadow:inset 2px 0 0 var(--es-rouge)}
+.es-alerte>.ico{width:18px;height:18px;flex-shrink:0;color:var(--es-rouge)}
+.es-alerte strong{color:var(--es-rouge)}
+.es-alerte span{flex:1}
+.es-alerte .btn{flex-shrink:0;min-height:40px;padding:0 14px;font-size:14px}
+
+/* ---------- 4. Les Porteurs disponibles ---------- */
+.es-porteurs{display:grid;gap:12px}
+.es-titre{display:grid;gap:3px}
+.es-titre .titre-bloc{font-size:12px;color:var(--es-glace)}
+.es-titre .titre-bloc.discret{color:var(--es-doux)}
+.es-titre small{font-size:13px;color:var(--es-doux)}
+.es-grille{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 8px}
+.es-tuile{position:relative;display:grid;justify-items:center;align-content:start;gap:3px;padding:0 0 6px;border:0;border-radius:4px;background:none;color:inherit;font:inherit;text-align:center;cursor:pointer}
+.es-tuile:focus-visible{outline:1px solid var(--es-glace);outline-offset:3px}
+.es-vignette{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:3/4;margin-bottom:4px;border-radius:4px;overflow:hidden;
+  background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 30%,#141A2E),#0B0F1C 75%);box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 30%,transparent),0 8px 18px rgba(0,0,0,.45);
+  transition:transform .15s,box-shadow .15s}
+.es-vignette img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+.es-tuile:not(:disabled):hover .es-vignette{transform:translateY(-3px);box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 70%,white),0 12px 22px rgba(0,0,0,.5),0 0 18px color-mix(in srgb,var(--c) 30%,transparent)}
+.es-tuile.choisi .es-vignette{box-shadow:0 0 0 2px var(--es-or),0 0 16px rgba(242,200,110,.35)}
+.es-tuile.choisi .es-vignette img{opacity:.55}
+.es-rang{position:absolute;top:6px;left:6px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;font-family:var(--mono);font-size:13px;font-weight:700;color:#2A1A04;
+  background:linear-gradient(180deg,#F8E3A6,#D4A54E);box-shadow:0 0 10px rgba(242,200,110,.55)}
+.es-blesse{position:absolute;right:5px;bottom:6px;padding:1px 7px;border-radius:999px;font-size:12px;font-weight:600;color:#2A0C08;background:var(--es-rouge)}
+.es-tuile strong{font-family:var(--display);font-weight:400;font-size:16px;line-height:1.1;color:#F6F2EA;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.es-lignee{font-size:12px;color:color-mix(in srgb,var(--c) 50%,white)}
+.es-tuile .jauge-pv{width:86%;height:3px;margin:3px 0 1px}
+.es-stats{font-family:var(--mono);font-size:12px;color:var(--es-txt);font-variant-numeric:tabular-nums}
+.es-stats.zero{color:var(--es-rouge);font-weight:600}
+.es-puces{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin-top:2px}
+.es-puces i{display:grid;place-items:center;min-width:18px;height:18px;border-radius:50%;font-style:normal;font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;
+  background:color-mix(in srgb,var(--fc) 45%,#0B1020);box-shadow:inset 0 0 0 1px var(--fc)}
+.es-raison{font-size:12px;color:#E8B86A}
+.es-tuile.indispo{cursor:default}
+.es-tuile.indispo .es-vignette{filter:grayscale(.85) brightness(.6)}
+.es-tuile.indispo strong{color:var(--es-doux)}
+.es-grille.petite{grid-template-columns:repeat(4,minmax(0,1fr))}
+.es-grille.petite strong{font-size:14px}
+.es-note{display:flex;align-items:center;gap:8px;margin:0;font-size:13px;color:var(--es-doux)}
+.es-note .ico{width:15px;height:15px;flex-shrink:0;color:var(--es-glace);opacity:.7}
+
+/* ---------- Le pied : opaque, rien ne passe dessous ---------- */
+.es>.es-pied{background:rgba(9,12,24,.96);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);box-shadow:0 -1px 0 rgba(205,239,255,.16),0 -12px 30px rgba(0,0,0,.45);gap:12px}
+.es-pied-info{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.es-avatars{display:flex}
+.es-avatars .avatar+.avatar,.es-avatars .avatar+i,.es-avatars i+i,.es-avatars i+.avatar{margin-left:-6px}
+.es-pastille-vide{display:inline-block;width:30px;height:33px;background:rgba(205,239,255,.1);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.es-pied-info>span:last-child{display:grid;gap:1px}
+.es-pied-info b{font-family:var(--mono);font-size:18px;color:#fff;line-height:1.1}
+.es-pied-info small{font-size:12.5px;color:var(--es-doux);white-space:nowrap}
+.es-pied-info small.alerte{color:var(--es-rouge);font-weight:600}
+.es-pied-info small.ok{color:var(--es-or)}
+.es .es-pied .btn.large.prim::before{display:none}
+
+@media (prefers-reduced-motion:reduce){.es-portrait{animation:none}}
+@media (max-width:380px){.es-pied-info .es-avatars{display:none}}
+
+/* PC : une colonne centrée et respirante, des portraits qui prennent leur place */
+@media (min-width:1100px) and (min-height:600px){
+  .es .contenu{max-width:1040px;margin-inline:auto;width:100%;gap:28px}
+  .es-trio{grid-template-columns:repeat(3,220px);justify-content:center;gap:22px}
+  .es-nom strong{font-size:22px}
+  .es-grille{grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:18px 14px}
+  .es-grille.petite{grid-template-columns:repeat(auto-fill,minmax(104px,1fr))}
+  .es-freq{max-width:620px}
+  .es-cibles{margin:0;padding:2px 0;flex-wrap:wrap;-webkit-mask-image:none;mask-image:none}
+  .ecran-escouade.es>.es-pied{max-width:none;padding:14px max(40px,calc((100% - 960px) / 2)) 18px}
+  .ecran-escouade.es>.es-pied .btn{flex:0 1 360px;margin-left:auto}
+}
