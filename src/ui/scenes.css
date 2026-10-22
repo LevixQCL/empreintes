@@ -224,6 +224,9 @@
 .titre .btn-sec{background:rgba(10,12,16,.4);border-color:rgba(255,255,255,.25);color:#F6F1E6;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .titre-indice{font-family:var(--mono);font-size:11px;letter-spacing:.06em;opacity:.6}
 .titre-version{font-family:var(--mono);font-size:10px;letter-spacing:.1em;opacity:.45;text-transform:uppercase}
+/* page teaser : l'écran de fin, après l'intro */
+.titre-fin{cursor:default}
+.titre-bientot{margin:0 0 6px;font-family:var(--display);font-size:30px;letter-spacing:.14em;color:var(--gold);text-shadow:0 0 22px rgba(216,180,101,.35),0 2px 10px rgba(0,0,0,.85)}
 .titre-scene .t-fenetre{animation:scintille 3s ease-in-out infinite;animation-delay:calc(var(--i) * .5s)}
 .titre-scene .t-hauts{animation:flotte 6s ease-in-out infinite alternate}
 .titre-scene .t-vague{animation:reflet 4s ease-in-out infinite alternate}

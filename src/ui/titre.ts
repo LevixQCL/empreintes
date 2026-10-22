@@ -33,14 +33,27 @@ const imageAnimee = () => `<div class="titre-image">`
   + `<img src="./intro/00-titre.webp" alt="" decoding="async">`
   + `<span class="t-porte"></span><span class="t-flamme"></span><span class="t-halo"></span></div>`;
 
-export function htmlTitre(introVue: boolean, mouvement: boolean): string {
-  return `<section class="titre" data-action="titre-jouer"${IMAGE_TITRE ? ' style="--image:url(./intro/00-titre.webp)"' : ''} aria-label="EMPREINTES, écran titre">`
+/** Les boutons du bas selon la page : le jeu, l'ouverture du teaser, ou la fin du teaser */
+function basTitre(introVue: boolean, variante: 'jeu' | 'teaser' | 'fin'): string {
+  if (variante === 'teaser') return `<div class="titre-bas"><button type="button" class="prim titre-go" data-action="teaser-voir">Voir l’intro</button>`
+    + `<span class="titre-indice">Touche l’écran</span><small class="titre-version">Teaser</small></div>`;
+  if (variante === 'fin') return `<div class="titre-bas"><p class="titre-bientot">Bientôt.</p>`
+    + `<button type="button" class="prim titre-go" data-action="teaser-partager">Partager</button>`
+    + `<div class="titre-sec"><button type="button" class="btn-sec" data-action="teaser-voir">Revoir l’intro</button></div>`
+    + `<small class="titre-version">Teaser</small></div>`;
+  return `<div class="titre-bas"><button type="button" class="prim titre-go" data-action="titre-jouer">${introVue ? 'Reprendre' : 'Commencer'}</button>`
+    + `<div class="titre-sec">${introVue ? `<button type="button" class="btn-sec" data-action="intro">Revoir l’intro</button>` : ''}<button type="button" class="btn-sec" data-action="bibliotheque">Chroniques</button></div>`
+    + `<span class="titre-indice">Touche l’écran</span><small class="titre-version">Alpha</small></div>`;
+}
+
+/** variante « teaser » / « fin » : la page qui ne montre que l'intro (teaser.html) */
+export function htmlTitre(introVue: boolean, mouvement: boolean, variante: 'jeu' | 'teaser' | 'fin' = 'jeu'): string {
+  const toucher = variante === 'jeu' ? ' data-action="titre-jouer"' : variante === 'teaser' ? ' data-action="teaser-voir"' : '';
+  return `<section class="titre${variante === 'fin' ? ' titre-fin' : ''}"${toucher}${IMAGE_TITRE ? ' style="--image:url(./intro/00-titre.webp)"' : ''} aria-label="EMPREINTES, écran titre">`
     + `<div class="titre-fond" aria-hidden="true">${IMAGE_TITRE ? imageAnimee() : fondCode()}</div>`
     + (mouvement ? particules('cristal') : '')
     + `<div class="titre-voile" aria-hidden="true"></div>`
     + `<header class="titre-haut"><h1 class="titre-nom">${LOGOTYPE}</h1>`
     + `<p class="titre-sous">2121 · La mer monte. Le passé dort en dessous.</p></header>`
-    + `<div class="titre-bas"><button type="button" class="prim titre-go" data-action="titre-jouer">${introVue ? 'Reprendre' : 'Commencer'}</button>`
-    + `<div class="titre-sec">${introVue ? `<button type="button" class="btn-sec" data-action="intro">Revoir l’intro</button>` : ''}<button type="button" class="btn-sec" data-action="bibliotheque">Chroniques</button></div>`
-    + `<span class="titre-indice">Touche l’écran</span><small class="titre-version">Alpha</small></div></section>`;
+    + basTitre(introVue, variante) + `</section>`;
 }
