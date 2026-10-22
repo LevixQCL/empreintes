@@ -73,6 +73,8 @@ export interface Salle {
   type: TypeSalle;
   voisins: number[];
   ennemi?: string;
+  /** les ennemis qui accompagnent le premier (salle de combat à plusieurs) */
+  escorte?: string[];
   rencontre?: string;
   faite: boolean;
 }
@@ -191,7 +193,7 @@ export const peutReculer = (x: Expedition) => peutFuir(x) && !!sallePrecedente(x
 function recitCoup(x: Expedition): string {
   const { coups, attaque } = coupDeFuite(x.combat);
   const touches = coups.filter((c) => c.net > 0);
-  if (!attaque) return 'L’ennemi ne préparait pas d’attaque : l’escouade s’échappe sans un coup.';
+  if (!attaque) return x.combat.autres?.length ? 'Aucun ne préparait d’attaque : l’escouade s’échappe sans un coup.' : 'L’ennemi ne préparait pas d’attaque : l’escouade s’échappe sans un coup.';
   if (!touches.length) return `${attaque} s’écrase sur le bouclier : l’escouade s’échappe sans une égratignure.`;
   return `En fuyant, ${touches.map((c) => `${porteurDef(c.id).nom} encaisse ${attaque} (−${c.net})`).join(', ')}.`;
 }
@@ -211,7 +213,8 @@ export function reculer(x: Expedition): { x: Expedition; ok: boolean; message?: 
   const salles = x.carte.salles.map((s) => (s.id === ici.id ? { ...s, faite: false } : s));
   // l'ennemi fui ne compte pas parmi les combats livrés (les Marques comptent les ennemis vaincus dans l'ordre)
   const sequence = x.sequence.slice(0, -1);
-  const nom = ennemiDef(x.combat.ennemi.id).nom;
+  const groupe = !!x.combat.autres?.length;
+  const nom = groupe ? 'Le groupe' : ennemiDef(x.combat.ennemi.id).nom;
   return {
     ok: true,
     x: {
@@ -278,6 +281,10 @@ export function genererCarte(strate: number, rng: number, garde?: string, fouill
       if (type === 'gardien') salle.ennemi = z.boss;
       if (type === 'rencontre') salle.rencontre = RENCONTRES_IDS[t.entier(RENCONTRES_IDS.length)]!;
       if (garde === 'district' && type === 'combat' && z.ennemis.includes('brigadier') && t.nombre() < 0.35) salle.ennemi = 'brigadier';
+      if (type === 'combat') {
+        const escorte = escorteDe(strate, rng, salle.id, pool);
+        if (escorte.length) salle.escorte = escorte;
+      }
       salles.push(salle);
       ids.push(salle.id);
     }
@@ -324,14 +331,26 @@ export function nouvelleExploration(opts: {
   };
 }
 
+/**
+ * Combats à plusieurs (décision du 22 octobre 2026) : à partir de la Strate −2, une salle de combat sur trois abrite un groupe
+ * (deux ennemis, trois à partir de la Strate −5). Tirage à part, pour ne pas changer le reste de la carte.
+ */
+export function escorteDe(strate: number, rng: number, salleId: number, pool: string[]): string[] {
+  if (strate < 2 || !pool.length) return [];
+  const t = tireur({ rng: (rng ^ Math.imul(salleId + 1, 0x85ebca6b)) >>> 0 });
+  if (t.nombre() >= (strate >= 5 ? 0.4 : 0.32)) return [];
+  const n = strate >= 5 && t.nombre() < 0.4 ? 2 : 1;
+  return Array.from({ length: n }, () => pool[t.entier(pool.length)]!);
+}
+
 /** Ouvre un combat dans la salle courante */
-export function lancerCombat(x: Expedition, ennemi: string, renfort = 1): Expedition {
+export function lancerCombat(x: Expedition, ennemi: string, renfort = 1, escorte?: string[]): Expedition {
   const porteurs = x.porteurs.map((p) => ({ ...p, aTerre: p.pv <= 0 }));
   const sequence = [...x.sequence, ennemi];
   return {
     ...x, phase: 'combat', sequence, index: sequence.length - 1, cloture: false, porteurs,
     combat: creerCombat({ porteurs, ennemiId: ennemi, rng: x.combat.rng ^ (sequence.length * 0x9e3779b1), deck: x.deck,
-      force: forceStrate(x.strate) * (x.facteur ?? 1) * renfort, bonus: x.bonus }),
+      force: forceStrate(x.strate) * (x.facteur ?? 1) * renfort, bonus: x.bonus, ...(escorte?.length ? { escorte } : {}) }),
   };
 }
 
@@ -353,7 +372,7 @@ export function entrerSalle(x: Expedition, id: number): { x: Expedition; ok: boo
   switch (salle.type) {
     case 'combat':
     case 'gardien':
-      y = lancerCombat(y, salle.ennemi!);
+      y = lancerCombat(y, salle.ennemi!, 1, salle.escorte);
       break;
     case 'elite':
       y = lancerCombat({ ...y, recit: 'Une salle scellée : son occupant est plus coriace, mais quelque chose de précieux dort derrière lui.' }, salle.ennemi!, 1.15);

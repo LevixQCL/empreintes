@@ -71,8 +71,8 @@ export const MODULES: ModuleDef[] = [
   c('grappin-cable', 'Grappin à câble', 'tech', 'fer', 'bouclier', 6, [4, 5, 3], { type: 'elan' }),
   c('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', 'atk', 12, [7, 6, 8], { type: 'flux', v: 1 }),
   c('oeil-brouilleur', 'Œil-brouilleur', 'tech', 'cuivre', 'atk', 11, [6, 7, 5], { type: 'desarmer', part: 0.3 }),
-  c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 32, [8, 6, 4], { type: 'percant' }, true),
-  c('dorsale', 'Dorsale renforcée', 'tech', 'argent', 'bouclier', 8, [3, 4, 7], { type: 'elan' }),
+  c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 44, [8, 6, 4], { type: 'percant' }, true),
+  c('dorsale', 'Dorsale renforcée', 'tech', 'argent', 'bouclier', 4, [3, 4, 7], { type: 'elan' }),
   c('lames-orbitales', 'Lames orbitales', 'tech', 'or', 'atk', 30, [9, 3, 2], { type: 'crescendo', part: 0.4 }, true),
   c('coeur-reprise', 'Cœur de reprise', 'tech', 'or', 'atk', 24, [6, 2, 5], { type: 'percant' }),
 
@@ -97,7 +97,7 @@ export const MODULES: ModuleDef[] = [
   c('ombre-serpent', 'Ombre de serpent', 'reso', 'cuivre', 'atk', 14, [9, 6, 8], { type: 'fissure', part: 0.3 }),
   c('ombre-ailee', 'Ombre ailée', 'reso', 'argent', 'atk', 30, [9, 7, 8], { type: 'fissure', part: 0.4 }, true),
   c('pressentiment', 'Pressentiment', 'reso', 'argent', 'bouclier', 12, [7, 8, 6], { type: 'desarmer', part: 0.4 }),
-  c('chant-abysses', 'Chant des abysses', 'reso', 'or', 'atk', 21, [7, 8, 9], { type: 'accord' }),
+  c('chant-abysses', 'Chant des abysses', 'reso', 'or', 'atk', 26, [7, 8, 9], { type: 'accord' }),
   c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 20, [9, 8, 7], { type: 'crescendo', part: 0.4 }),
 ];
 

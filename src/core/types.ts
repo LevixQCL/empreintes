@@ -144,6 +144,10 @@ export interface EnnemiEtat {
   /** Fissure : part de dégâts en plus, et tours restants */
   fissure?: number;
   fissureTours?: number;
+  /** place dans le groupe (0 = le premier, à gauche) ; absent pour un ennemi seul */
+  rang?: number;
+  /** l'intention d'un ennemi qui n'est pas visé (celle de l'ennemi visé est dans `CombatEtat.intention`) */
+  intention?: Intention;
 }
 
 export type Issue = 'en-cours' | 'victoire' | 'defaite';
@@ -160,8 +164,12 @@ export interface BonusMarques {
 
 export interface CombatEtat {
   porteurs: PorteurEtat[];
+  /** l'ennemi visé par la chaîne (le seul ennemi, hors groupes) */
   ennemi: EnnemiEtat;
+  /** l'intention de l'ennemi visé */
   intention: Intention;
+  /** les autres ennemis d'un groupe (combats à plusieurs, décision du 22 octobre 2026), avec leur propre intention */
+  autres?: EnnemiEtat[];
   pioche: Geste[];
   defausse: Geste[];
   main: Geste[];
@@ -188,14 +196,18 @@ export interface CombatEtat {
 export type Evenement =
   | { kind: 'resonance'; suite: number; mult: number }
   /** une carte de la chaîne entre en jeu (pour l'animation) : sa place, sa lignée, son action */
-  | { kind: 'carte'; rang: number; total: number; lignee: LigneeGeste; type: TypeGeste; porteur: string | null; suite: number }
-  | { kind: 'degats'; cible: string; net: number; absorbe: number }
-  | { kind: 'bouclier'; cible: 'escouade' | 'ennemi'; v: number }
-  | { kind: 'soin'; cible: string; v: number }
+  | { kind: 'carte'; rang: number; total: number; lignee: LigneeGeste; type: TypeGeste; porteur: string | null; suite: number; effet?: string }
+  | { kind: 'degats'; cible: string; net: number; absorbe: number; rang?: number }
+  | { kind: 'bouclier'; cible: 'escouade' | 'ennemi'; v: number; rang?: number }
+  | { kind: 'soin'; cible: string; v: number; rang?: number }
   | { kind: 'echo' }
   | { kind: 'flux'; gain: number }
-  | { kind: 'boost' }
-  | { kind: 'effet'; cible: string; texte: string }
+  | { kind: 'boost'; rang?: number }
+  | { kind: 'effet'; cible: string; texte: string; rang?: number }
+  /** un ennemi d'un groupe tombe : la chaîne passe au suivant (rang : le nouvel ennemi visé) */
+  | { kind: 'cible'; rang: number }
+  /** un ennemi d'un groupe agit pendant le tour ennemi (pour l'animation) */
+  | { kind: 'ennemi-agit'; rang: number }
   | { kind: 'a-terre'; cible: string }
   | { kind: 'fin'; issue: Issue };
 

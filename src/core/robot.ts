@@ -2,7 +2,7 @@
 // Il sert à mesurer ce qu'une carte change aux chances de victoire, à chaque modification de chiffre.
 // Aucun DOM ici : il tourne dans les tests et dans `npm run robot`.
 
-import { allonger, ajouter, capacite, placesLibres, vivants } from './combat';
+import { allonger, ajouter, capacite, ennemisDebout, intentionDe, placesLibres, tousEnnemis, viser, vivants } from './combat';
 import { lancer } from './combat';
 import { cartesEnJeu } from './collection';
 import { GESTES_SPECIAUX, porteurDef } from './donnees';
@@ -16,6 +16,7 @@ const clone = (s: CombatEtat): CombatEtat => ({
   porteurs: s.porteurs.map((p) => ({ ...p })),
   ennemi: { ...s.ennemi },
   intention: { ...s.intention },
+  ...(s.autres ? { autres: s.autres.map((e) => ({ ...e, ...(e.intention ? { intention: { ...e.intention } } : {}) })) } : {}),
   pioche: s.pioche.slice(),
   defausse: s.defausse.slice(),
   main: s.main.map((g) => (g.fs ? { ...g } : g)),
@@ -54,7 +55,8 @@ function sousGroupes<T>(a: T[]): T[][] {
 function note(s: CombatEtat): number {
   if (s.issue === 'victoire') return 1e6 + vivants(s).reduce((n, p) => n + p.pv, 0);
   if (s.issue === 'defaite') return -1e6;
-  return -1.2 * s.ennemi.pv
+  return -1.2 * tousEnnemis(s).reduce((n, e) => n + e.pv, 0)
+    + 25 * (tousEnnemis(s).length - ennemisDebout(s).length)
     + s.porteurs.reduce((n, p) => n + p.pv, 0)
     + 20 * vivants(s).length
     + 5 * s.flux
@@ -70,21 +72,26 @@ export function jouerTour(s: CombatEtat): void {
   let meilleur: { score: number; uids: string[]; allonge: boolean } | null = null;
   const essais = [false];
   if (s.flux > 0 && capacite(s) < REGLES.capaciteMax) essais.push(true);
-  for (const allonge of essais) {
+  // dans un groupe, il essaie de viser chacun des ennemis debout
+  const cibles = ennemisDebout(s).map((e) => e.rang ?? 0);
+  let meilleurRang = s.ennemi.rang ?? 0;
+  for (const rang of cibles) for (const allonge of essais) {
     const cap = capacite(s) + (allonge ? 1 : 0);
     for (const groupe of sousGroupes(s.main)) {
       if (groupe.reduce((n, g) => n + places(g), 0) > cap) continue;
       for (const ordre of ordres(groupe)) {
         const t = clone(s);
+        viser(t, rang);
         if (allonge) allonger(t);
         for (const g of ordre) ajouter(t, g.uid);
         if (t.chaine.length !== ordre.length) continue;
         lancer(t, { silencieux: true });
         const score = note(t) - (allonge ? 4 : 0);
-        if (!meilleur || score > meilleur.score) meilleur = { score, uids: ordre.map((g) => g.uid), allonge };
+        if (!meilleur || score > meilleur.score) { meilleur = { score, uids: ordre.map((g) => g.uid), allonge }; meilleurRang = rang; }
       }
     }
   }
+  viser(s, meilleurRang);
   if (!meilleur) {
     // main injouable (ne devrait pas arriver) : on pose ce qui rentre
     for (const g of s.main.slice()) if (placesLibres(s) >= places(g)) ajouter(s, g.uid);
@@ -103,12 +110,21 @@ export function jouerTour(s: CombatEtat): void {
  */
 export function jouerTourMoyen(s: CombatEtat): void {
   if (s.flux >= 2 && capacite(s) < REGLES.capaciteMax) allonger(s);
+  // dans un groupe, il frappe le plus entamé (le plus proche de tomber)
+  const proie = ennemisDebout(s).sort((a, b) => a.pv - b.pv)[0];
+  if (proie) viser(s, proie.rang ?? 0);
   const cap = capacite(s);
-  const it = s.intention;
   const vie = vivants(s);
   const pvTotal = vie.reduce((n, p) => n + p.pv, 0);
-  const menace = it.type === 'atk' ? (it.v ?? 0) * (it.zone ? vie.length : 1) : 0;
-  const danger = menace >= 0.2 * pvTotal || (it.type === 'atk' && vie.some((p) => p.pv <= (it.v ?? 0)));
+  let menace = 0;
+  let unCoupFatal = false;
+  for (const en of ennemisDebout(s)) {
+    const it = intentionDe(s, en);
+    if (it.type !== 'atk') continue;
+    menace += (it.v ?? 0) * (it.zone ? vie.length : 1);
+    if (vie.some((p) => p.pv <= (it.v ?? 0))) unCoupFatal = true;
+  }
+  const danger = menace >= 0.2 * pvTotal || unCoupFatal;
   const blesse = vie.some((p) => p.pv / p.pvMax < 0.4);
   let meilleur: { score: number; ordre: Geste[] } | null = null;
   for (const groupe of sousGroupes(s.main)) {
@@ -155,8 +171,8 @@ export function simulerExpedition(escouade: Escouade, strate: number, rng: numbe
     jouerTour(x.combat);
     tours++;
   }
-  const e = x.combat.ennemi;
-  const partiel = x.combat.issue === 'victoire' ? 0 : 1 - e.pv / e.pvMax;
+  const es = tousEnnemis(x.combat);
+  const partiel = x.combat.issue === 'victoire' ? 0 : 1 - es.reduce((n, e) => n + e.pv, 0) / es.reduce((n, e) => n + e.pvMax, 0);
   return {
     victoire: x.combat.issue === 'victoire' && combats === x.sequence.length,
     combats,

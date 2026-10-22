@@ -76,6 +76,13 @@ et en or, 3 en nacre : `METAL_FREQ`). Une carte à plusieurs Fréquences prend d
 (`meilleureFrequence`), et le joueur peut en changer dans la chaîne (`accorder`) : aucun tirage au sort.
 Deux métaux d'une même carte sont deux cartes à part : chacune ses doublons, son niveau, et un Porteur n'en porte qu'une.
 
+**Combats à plusieurs** (22 octobre 2026). À partir de la Strate −2, une salle de combat sur trois abrite un groupe
+(deux ennemis, trois à partir de la Strate −5 : `escorteDe` dans `expedition.ts`). Chaque ennemi a ses PV (`PART_GROUPE` :
+un groupe pèse un peu plus qu'un ennemi seul) et sa propre intention. Le joueur vise un ennemi (`viser`) : toute la chaîne
+le frappe, Désarmer et Fissure compris ; s'il tombe, le reste de la chaîne passe au suivant. Au tour ennemi, chacun agit.
+Côté moteur, l'ennemi visé est toujours `s.ennemi` (et son intention `s.intention`) ; les autres sont dans `s.autres`,
+chacun avec son `intention` : `viser` les échange, le reste du moteur ne change pas. `tousEnnemis(s)` les rend dans l'ordre.
+
 **Pas de Fusion.** Un métal se trouve dans les Strates, les boss, les choix et les garanties ; il ne se fabrique pas et ne
 se gagne pas en fusionnant des cartes (décision du 21 octobre 2026).
 

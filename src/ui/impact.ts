@@ -23,7 +23,7 @@ let traits: Trait[] = [];
 let boucle = 0;
 let reduit = false;
 /** la dernière carte jouée : son effet se déclenche à l'impact qui suit */
-let derniere: { lignee: LigneeGeste; rang: number; total: number; suite: number; type: string } | null = null;
+let derniere: { lignee: LigneeGeste; rang: number; total: number; suite: number; type: string; effet?: string } | null = null;
 
 const hasard = (a: number, b: number) => a + Math.random() * (b - a);
 const maintenant = () => performance.now();
@@ -273,6 +273,179 @@ function voileRouge(force: number) {
   lancerBoucle();
 }
 
+// ---------- Les effets des cartes (22 octobre 2026) ----------
+// Chaque effet a son geste à lui, par-dessus celui de la lignée : on reconnaît un Perçant ou une Fissure sans lire le texte.
+
+/** Perçant : une lance de lumière qui traverse l'ennemi de part en part (le bouclier ne l'arrête pas) */
+function lance(de: DOMPoint, a: DOMPoint, couleur: string, force: number) {
+  const dx = a.x - de.x, dy = a.y - de.y;
+  const long = Math.hypot(dx, dy) || 1;
+  const ux = dx / long, uy = dy / long;
+  const fin = new DOMPoint(a.x + ux * (90 + force * 20), a.y + uy * (90 + force * 20));
+  trait((c, k) => {
+    const t = Math.min(1, k * 2.4);
+    const x = de.x + (fin.x - de.x) * t, y = de.y + (fin.y - de.y) * t;
+    c.globalAlpha = k < 0.5 ? 1 : 1 - (k - 0.5) * 2;
+    c.lineCap = 'round';
+    c.strokeStyle = couleur; c.shadowColor = couleur; c.shadowBlur = 18; c.lineWidth = 5 + force;
+    c.beginPath(); c.moveTo(de.x + (x - de.x) * 0.55, de.y + (y - de.y) * 0.55); c.lineTo(x, y); c.stroke();
+    c.strokeStyle = '#fff'; c.lineWidth = 1.6; c.stroke();
+  }, 300);
+  // la sortie : une gerbe d'étincelles dans le prolongement
+  setTimeout(() => eclats(fin.x - ux * 60, fin.y - uy * 60, 12 + force * 3, couleur, { vitesse: 320, taille: 2, trainee: true, gravite: 80, angle: Math.atan2(uy, ux), ouverture: 0.35 }), 110);
+}
+
+/** Fissure : des lézardes dorées qui courent depuis l'impact et restent un instant */
+function fissures(p: DOMPoint) {
+  const n = 5 + Math.floor(hasard(0, 3));
+  const chemins: [number, number][][] = [];
+  for (let i = 0; i < n; i++) {
+    let a = (i / n) * Math.PI * 2 + hasard(-0.3, 0.3);
+    let x = p.x, y = p.y;
+    const pts: [number, number][] = [[x, y]];
+    const seg = 4 + Math.floor(hasard(0, 3));
+    for (let j = 0; j < seg; j++) { a += hasard(-0.5, 0.5); const l = hasard(10, 20); x += Math.cos(a) * l; y += Math.sin(a) * l * 0.8; pts.push([x, y]); }
+    chemins.push(pts);
+  }
+  trait((c, k) => {
+    const ouvert = Math.min(1, k * 3);
+    c.globalAlpha = k < 0.6 ? 1 : 1 - (k - 0.6) / 0.4;
+    c.strokeStyle = '#FFD98A'; c.shadowColor = '#FF9E3D'; c.shadowBlur = 10; c.lineWidth = 2; c.lineJoin = 'round';
+    for (const pts of chemins) {
+      const m = Math.max(2, Math.ceil(pts.length * ouvert));
+      c.beginPath(); pts.slice(0, m).forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y))); c.stroke();
+    }
+  }, 900);
+  note(1800, 'square', 0.08, 0.02, 0.6);
+}
+
+/** Désarmer : l'intention de l'ennemi est frappée, elle tremble et pâlit ; une gerbe d'étincelles métalliques */
+function desarme(el: Element | null) {
+  const p = centre(el);
+  if (p) eclats(p.x, p.y, 14, '#E8EEF5', { vitesse: 240, taille: 1.8, trainee: true, gravite: 260 });
+  if (el && !reduit) (el as HTMLElement).animate([
+    { transform: 'none', filter: 'none' }, { transform: 'translateX(-6px) rotate(-3deg)', filter: 'grayscale(.8) brightness(1.6)' },
+    { transform: 'translateX(5px) rotate(2deg)' }, { transform: 'none', filter: 'none' }], { duration: 420, easing: 'ease-out' });
+  note(2400, 'triangle', 0.12, 0.03, 0.7);
+}
+
+/** Élan : des traînées de vitesse qui montent depuis la chaîne */
+function elan(r: DOMRect) {
+  for (let i = 0; i < 7; i++) {
+    const x = hasard(r.left + 10, r.right - 10), y = hasard(r.top + r.height * 0.4, r.bottom);
+    const l = hasard(30, 60);
+    trait((c, k) => {
+      c.globalAlpha = Math.sin(k * Math.PI) * 0.9;
+      c.strokeStyle = '#F3D27A'; c.shadowColor = '#F3D27A'; c.shadowBlur = 8; c.lineWidth = 2; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(x, y - k * 50); c.lineTo(x, y - k * 50 - l); c.stroke();
+    }, 380, i * 30);
+  }
+  note(700, 'triangle', 0.18, 0.025, 1.6);
+}
+
+/** Rempart : des pans hexagonaux qui se posent l'un après l'autre devant l'escouade */
+function remparts(r: DOMRect) {
+  const n = 6;
+  for (let i = 0; i < n; i++) {
+    const cx = r.left + ((i + 0.5) / n) * r.width, cy = r.top + r.height * 0.55, t = Math.min(r.width / n, r.height) * 0.42;
+    trait((c, k) => {
+      const pose = Math.min(1, k * 4);
+      c.globalAlpha = (k < 0.7 ? 1 : 1 - (k - 0.7) / 0.3) * 0.85;
+      c.strokeStyle = BOUCLIER; c.shadowColor = '#9FD8FF'; c.shadowBlur = 14; c.lineWidth = 2;
+      c.fillStyle = 'rgba(159,216,255,.12)';
+      c.beginPath();
+      for (let j = 0; j <= 6; j++) { const a = (j / 6) * Math.PI * 2 + Math.PI / 6; c[j ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * t, cy - (1 - pose) * 30 + Math.sin(a) * t); }
+      c.fill(); c.stroke();
+    }, 620, i * 50);
+  }
+}
+
+/** Vague : une onde verte qui balaie toute l'escouade, de gauche à droite */
+function vague(r: DOMRect) {
+  trait((c, k) => {
+    const x = r.left - 40 + k * (r.width + 80);
+    const g = c.createLinearGradient(x - 70, 0, x + 20, 0);
+    g.addColorStop(0, 'transparent'); g.addColorStop(0.7, 'rgba(124,227,160,.55)'); g.addColorStop(1, 'transparent');
+    c.globalAlpha = Math.sin(k * Math.PI);
+    c.fillStyle = g; c.fillRect(x - 70, r.top - 6, 90, r.height + 12);
+  }, 560);
+  for (let i = 0; i < 4; i++) setTimeout(() => eclats(r.left + (i + 0.5) * (r.width / 4), r.bottom - 6, 6, SOIN, { vitesse: 60, gravite: -140, taille: 2.2, vie: 0.9, angle: -Math.PI / 2, ouverture: 0.8 }), i * 120);
+}
+
+/** Crescendo : un anneau doré qui grandit avec la place de la carte dans la chaîne */
+function crescendo(p: DOMPoint, rang: number) {
+  trait((c, k) => {
+    c.globalAlpha = (1 - k) * 0.9;
+    c.strokeStyle = '#F3D27A'; c.shadowColor = '#FFB44A'; c.shadowBlur = 16; c.lineWidth = 2 + rang;
+    c.beginPath(); c.arc(p.x, p.y, 16 + k * (50 + rang * 22), 0, Math.PI * 2); c.stroke();
+  }, 480);
+}
+
+/** Surcharge (et Flux gagné) : un filet d'énergie file jusqu'à la jauge de Flux */
+function versFlux(de: DOMPoint | null, a: DOMPoint | null) {
+  if (!de || !a) return;
+  for (let i = 0; i < 5; i++) {
+    trait((c, k) => {
+      const t = Math.min(1, k * 1.3);
+      const cx = (de.x + a.x) / 2 + (i - 2) * 14, cy = Math.min(de.y, a.y) - 30;
+      const x = (1 - t) * (1 - t) * de.x + 2 * (1 - t) * t * cx + t * t * a.x;
+      const y = (1 - t) * (1 - t) * de.y + 2 * (1 - t) * t * cy + t * t * a.y;
+      const g = c.createRadialGradient(x, y, 0, x, y, 6);
+      g.addColorStop(0, '#fff'); g.addColorStop(0.4, '#F3D27A'); g.addColorStop(1, 'transparent');
+      c.fillStyle = g; c.beginPath(); c.arc(x, y, 6, 0, Math.PI * 2); c.fill();
+    }, 380, i * 40);
+  }
+}
+
+/** Le coup d'un ennemi, selon sa lignée : rayon (Tech), griffes (Génés), onde qui se referme (Résonants) */
+const TEINTE_ENNEMI: Record<LigneeGeste, string> = { tech: '#FF5A6E', bio: '#FF7A3A', reso: '#C46BFF', neutre: DANGER };
+function coupEnnemi(de: DOMPoint | null, p: DOMPoint, lignee: LigneeGeste) {
+  const coul = TEINTE_ENNEMI[lignee];
+  if (lignee === 'tech' && de) {
+    trait((c, k) => {
+      c.globalAlpha = (1 - k) * (0.8 + Math.random() * 0.2);
+      c.lineCap = 'round'; c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 16; c.lineWidth = 6 * (1 - k) + 1;
+      c.beginPath(); c.moveTo(de.x, de.y); c.lineTo(p.x, p.y); c.stroke();
+      c.strokeStyle = '#fff'; c.lineWidth = 1.2; c.stroke();
+    }, 260);
+    eclats(p.x, p.y, 10, coul, { vitesse: 200, taille: 2, trainee: true });
+  } else if (lignee === 'bio') {
+    const angle = hasard(-0.8, -0.4) + (Math.random() < 0.5 ? 0 : Math.PI / 2.5);
+    for (let i = 0; i < 3; i++) {
+      const ox = Math.cos(angle + Math.PI / 2) * (i - 1) * 10, oy = Math.sin(angle + Math.PI / 2) * (i - 1) * 10;
+      trait((c, k) => {
+        const o = Math.min(1, k * 3.2);
+        c.globalAlpha = 1 - k * k; c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 10; c.lineCap = 'round'; c.lineWidth = 3 * (1 - k * 0.5);
+        const x0 = p.x + ox - Math.cos(angle) * 30, y0 = p.y + oy - Math.sin(angle) * 30;
+        c.beginPath(); c.moveTo(x0, y0); c.lineTo(x0 + Math.cos(angle) * 60 * o, y0 + Math.sin(angle) * 60 * o); c.stroke();
+      }, 300, i * 40);
+    }
+    eclats(p.x, p.y, 8, coul, { vitesse: 140, taille: 2.4, gravite: 420 });
+  } else {
+    trait((c, k) => {
+      c.globalAlpha = Math.sin(k * Math.PI) * 0.9;
+      c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 18; c.lineWidth = 3;
+      c.beginPath(); c.arc(p.x, p.y, 70 * (1 - k) + 8, 0, Math.PI * 2); c.stroke();
+    }, 360);
+    setTimeout(() => eclats(p.x, p.y, 10, coul, { vitesse: 150, taille: 2.2, gravite: 0, vie: 0.6 }), 300);
+  }
+}
+
+/** Un bouclier qui se pose sur l'ennemi : une coque hexagonale qui scintille */
+function coqueEnnemi(el: Element | null) {
+  const r = el?.getBoundingClientRect();
+  if (!r) return;
+  const cx = r.left + r.width / 2, cy = r.top + r.height * 0.45, t = Math.min(r.width, r.height) * 0.38;
+  trait((c, k) => {
+    c.globalAlpha = Math.sin(k * Math.PI) * 0.85;
+    c.strokeStyle = '#CFE6FF'; c.shadowColor = '#7FB8FF'; c.shadowBlur = 20; c.lineWidth = 2.5;
+    c.beginPath();
+    for (let j = 0; j <= 6; j++) { const a = (j / 6) * Math.PI * 2 + k * 0.4; c[j ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * t, cy + Math.sin(a) * t); }
+    c.stroke();
+  }, 620);
+  note(880, 'sine', 0.3, 0.025, 0.8);
+}
+
 // ---------- Sons (synthétisés : aucun fichier à charger) ----------
 
 let audio: AudioContext | null = null;
@@ -349,17 +522,32 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
   const scene = racine.querySelector('.scene-ennemi');
   const pEnnemi = centre(ennemi ?? scene, -0.08);
   switch (ev.kind) {
+    case 'ennemi-agit': {
+      // dans un groupe, l'ennemi qui agit s'avance un instant
+      const v = racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]`);
+      if (v) { v.classList.remove('agit'); void (v as HTMLElement).offsetWidth; v.classList.add('agit'); }
+      return 120;
+    }
+    case 'cible': {
+      // le visé est tombé : le suivant entre en scène
+      if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'ease-out' });
+      return 80;
+    }
     case 'carte': {
-      derniere = { lignee: ev.lignee, rang: ev.rang, total: ev.total, suite: ev.suite, type: ev.type };
+      derniere = { lignee: ev.lignee, rang: ev.rang, total: ev.total, suite: ev.suite, type: ev.type, ...(ev.effet ? { effet: ev.effet } : {}) };
       sonCarte(ev.lignee, ev.rang);
       // la carte qui part : celle de la chaîne à cette place (une carte lourde prend deux places, d'où l'élément réel)
       const carte = racine.querySelectorAll('.zone-chaine .rail > :not(.place-vide)')[ev.rang];
       const de = centre(carte ?? racine.querySelector('.zone-chaine'), -0.1);
       if (ev.type === 'atk' && de && pEnnemi) {
-        if (ev.lignee === 'tech') arc(de, pEnnemi, TEINTE.tech, ev.rang);
+        if (ev.effet === 'percant') lance(de, pEnnemi, TEINTE[ev.lignee], ev.rang);
+        else if (ev.lignee === 'tech') arc(de, pEnnemi, TEINTE.tech, ev.rang);
         else comete(de, pEnnemi, TEINTE[ev.lignee]);
       }
-      if (ev.type === 'bouclier') { const r = racine.querySelector('.escouade-combat')?.getBoundingClientRect(); if (r) bouclierSur(r); }
+      const esc = racine.querySelector('.escouade-combat')?.getBoundingClientRect();
+      if (ev.type === 'bouclier' && esc) { if (ev.effet === 'rempart') remparts(esc); else bouclierSur(esc); }
+      if (ev.type === 'soin' && ev.effet === 'vague' && esc) vague(esc);
+      if (ev.effet === 'flux') versFlux(de, centre(racine.querySelector('.flux .segments')));
       return 0;
     }
     case 'degats': {
@@ -385,6 +573,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
             g.addColorStop(0, `rgba(255,255,255,${0.9 * (1 - k)})`); g.addColorStop(0.35, couleur); g.addColorStop(1, 'transparent');
             c.globalAlpha = 1 - k; c.fillStyle = g; c.beginPath(); c.arc(pEnnemi.x, pEnnemi.y, rayon * (0.6 + k), 0, Math.PI * 2); c.fill();
           }, 200);
+          if (derniere?.effet === 'crescendo') crescendo(pEnnemi, d.rang);
           if (d.lignee === 'bio') griffes(pEnnemi, couleur, force);
           else if (d.lignee === 'reso') ondes(pEnnemi, couleur, force);
           eclats(pEnnemi.x, pEnnemi.y, 10 + force * 6, couleur, { vitesse: 260 + force * 40, taille: 2.4, trainee: true, gravite: 200 });
@@ -397,11 +586,11 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       const el = [...racine.querySelectorAll('.combattant')].find((x) => x.getAttribute('data-porteur') === ev.cible);
       const p = centre(el ?? null);
       if (p && ev.net) {
-        trait((c, k) => {
-          c.globalAlpha = 1 - k; c.strokeStyle = DANGER; c.shadowColor = DANGER; c.shadowBlur = 10; c.lineWidth = 3; c.lineCap = 'round';
-          c.beginPath(); c.moveTo(p.x - 30, p.y - 12); c.lineTo(p.x - 30 + 60 * Math.min(1, k * 3), p.y - 12 + 24 * Math.min(1, k * 3)); c.stroke();
-        }, 300);
-        eclats(p.x, p.y, 8, DANGER, { vitesse: 160, taille: 2, trainee: true });
+        // d'où vient le coup : la vignette de l'ennemi qui agit (groupe), sinon l'ennemi de la scène ; sa lignée choisit le geste
+        const src = (ev.rang !== undefined ? racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]:not(.visee)`) : null) ?? ennemi ?? scene;
+        const porteuse = src?.closest('.vignette-ennemi') ?? scene;
+        const lignee = (['tech', 'bio', 'reso'] as const).find((l) => porteuse?.classList.contains(`l-${l}`)) ?? 'neutre';
+        coupEnnemi(centre(src, -0.05), p, lignee);
       }
       if (el) { touche(el, DANGER, 1); secouer(el, 2); }
       if (ev.net) {
@@ -472,6 +661,20 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       note(660 * hasard(0.98, 1.02), 'sine', 0.3, 0.03, 1.12);
       return 0;
     }
+    case 'effet': {
+      if (ev.texte === 'Fissure' && pEnnemi) fissures(pEnnemi);
+      else if (ev.texte === 'Désarmé') desarme(racine.querySelector('.scene-ennemi .intention'));
+      else if (ev.texte === 'Élan') { const r = racine.querySelector('.zone-chaine')?.getBoundingClientRect(); if (r) elan(r); }
+      else if (ev.texte === 'Dissonance' && !reduit) racine.querySelector('.zone-chaine')?.animate([{ filter: 'none' }, { filter: 'hue-rotate(70deg) blur(1px)', transform: 'translateX(3px)' }, { filter: 'hue-rotate(-50deg)', transform: 'translateX(-3px)' }, { filter: 'none', transform: 'none' }], { duration: 480 });
+      return 0;
+    }
+    case 'bouclier': {
+      if (ev.cible === 'ennemi') {
+        const src = (ev.rang !== undefined ? racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]:not(.visee) img`) : null) ?? ennemi ?? scene;
+        coqueEnnemi(src);
+      }
+      return 0;
+    }
     case 'echo': {
       const r = racine.querySelector('.escouade-combat')?.getBoundingClientRect();
       if (r) { bouclierSur(r); eclats(r.left + r.width / 2, r.top, 14, '#F3D27A', { vitesse: 120, gravite: -40, taille: 2.2 }); }
@@ -479,7 +682,8 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       return 0;
     }
     case 'boost': {
-      if (ennemi) (ennemi as HTMLElement).animate([{ filter: `drop-shadow(0 0 0 ${DANGER})` }, { filter: `drop-shadow(0 0 24px ${DANGER}) brightness(1.2)` }, { filter: 'none' }], { duration: 600 });
+      const qui = (ev.rang !== undefined ? racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]:not(.visee) img`) : null) ?? ennemi;
+      if (qui) (qui as HTMLElement).animate([{ filter: `drop-shadow(0 0 0 ${DANGER})` }, { filter: `drop-shadow(0 0 24px ${DANGER}) brightness(1.2)` }, { filter: 'none' }], { duration: 600 });
       note(150, 'sawtooth', 0.4, 0.04, 1.6);
       return 0;
     }

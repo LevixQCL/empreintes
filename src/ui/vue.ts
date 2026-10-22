@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { capacite, coupDeFuite, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention } from '../core/combat';
+import { capacite, coupDeFuite, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout } from '../core/combat';
 import { NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
@@ -220,6 +220,7 @@ function regles(): string {
     + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.</li>'
     + '<li><b>Le triangle des lignées :</b> Tech bat Résonant, Résonant bat Géné, Géné bat Tech (+15 %).</li>'
     + '<li><b>L’ennemi annonce son attaque</b> en haut de l’écran : protège-toi ou finis-le avant.</li>'
+    + '<li><b>Contre un groupe</b>, chaque ennemi annonce son geste sur sa vignette, en haut à droite. Touche une vignette pour viser cet ennemi : toute la chaîne le frappe, et s’il tombe, le reste de la chaîne passe au suivant.</li>'
     + `<li><b>Fuir :</b> le bouton en haut à droite. L’attaque annoncée touche pendant la fuite (personne ne meurt), puis tu recules d’une salle sur la carte, ou tu remontes au district avec ${Math.round(DISTRICT.butinFuite * 100)} % des composants et un peu plus de fatigue.</li>`
     + '<li><b>La Dissonance :</b> certains ennemis brouillent tes Fréquences. Au tour suivant, aucune suite ne résonne : mise sur la force brute ou la protection.</li></ol></div></section>';
 }
@@ -261,6 +262,33 @@ export function htmlLieu(x: Expedition): string {
     h += `<i class="fl-p${p.eclat ? ' eclat' : ''}" style="--x:${p.x.toFixed(1)}%;--y:${p.y.toFixed(1)}%;--s:${p.taille.toFixed(1)}px;--d:${p.duree.toFixed(1)}s;--dx:${p.derive.toFixed(0)}px;animation-delay:${phase(p.duree, p.decalage)}"></i>`;
   }
   return h + '</div>';
+}
+
+/**
+ * Combat à plusieurs (décision du 22 octobre 2026) : une vignette par ennemi, en haut à droite de la scène.
+ * Toucher une vignette vise cet ennemi : toute la chaîne le frappera. La grande scène montre toujours l'ennemi visé.
+ */
+function vignettesGroupe(e: Ecran): string {
+  const s = e.etat;
+  if (!enGroupe(s)) return '';
+  const verrou = e.verrou || s.issue !== 'en-cours';
+  return '<div class="groupe-ennemis" role="group" aria-label="Le groupe : touche un ennemi pour le viser">' + tousEnnemis(s).map((en) => {
+    const d = ennemiDef(en.id);
+    const it = intentionDe(s, en);
+    const vise = en === s.ennemi;
+    const tombe = en.pv <= 0;
+    const ill = illustrationEnnemi(d.id);
+    const val = it.type === 'atk' ? String(it.v * en.boost) : it.type === 'bouclier' || it.type === 'soin' ? String(it.v) : it.type === 'boost' ? '×2' : '';
+    const cls = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
+    const ico = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
+    const label = tombe ? `${d.nom}, vaincu` : `${vise ? 'Visé : ' : 'Viser '}${d.nom}, ${en.pv} PV sur ${en.pvMax}. ${texteIntention(s, en)}`;
+    return `<button type="button" class="vignette-ennemi l-${d.lignee}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
+      + (ill ? `<img src="${ill}" alt="" decoding="async">` : '<span class="vg-sans"></span>')
+      + (tombe ? '' : `<span class="vg-int ${cls}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)
+      + `<span class="vg-vie"><i style="width:${Math.max(0, Math.round((100 * en.pv) / en.pvMax))}%"></i></span>`
+      + popsPour(e, `ennemi-${en.rang ?? 0}`)
+      + '</button>';
+  }).join('') + '</div>';
 }
 
 export function htmlCombat(e: Ecran): string {
@@ -305,7 +333,7 @@ function htmlEcranCombat(e: Ecran): string {
     const qui = enJeu.porteur ? porteurDef(enJeu.porteur).nom : 'District';
     conseil = `<span class="pas-chaine">${e.actif! + 1} / ${s.chaine.length}</span><span class="carte-agit" style="--c:${COULEUR[ligneeGeste(enJeu)]}">${echap(enJeu.nom)}</span> · ${echap(qui)}`
       + (a.suite >= 3 ? ` · Résonance <b>×${a.mult.toLocaleString('fr-BE')}</b>` : '');
-  } else if (e.verrou && !s.chaine.length && s.issue === 'en-cours' && s.ennemi.pv > 0) conseil = `${echap(def.nom)} riposte…`;
+  } else if (e.verrou && !s.chaine.length && s.issue === 'en-cours' && s.ennemi.pv > 0) conseil = enGroupe(s) ? 'Le groupe riposte…' : `${echap(def.nom)} riposte…`;
 
   const ill = illustrationEnnemi(def.id);
   const classeIntention = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
@@ -327,10 +355,11 @@ function htmlEcranCombat(e: Ecran): string {
     + `<button type="button" class="btn-icone" data-action="regles" aria-expanded="${e.regles}" aria-label="Règles">${ICO.aide}</button></div></header>`;
 
   // la scène de l'ennemi
-  h += `<section class="scene-ennemi l-${def.lignee}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'}" aria-label="Ennemi">`
+  h += `<section class="scene-ennemi l-${def.lignee}${enGroupe(s) ? ' en-groupe' : ''}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'};--ng:${tousEnnemis(s).length}" aria-label="Ennemi">`
     + (ill ? `<img class="ennemi-art${s.issue === 'victoire' ? ' dissous' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
     + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
     + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
+    + vignettesGroupe(e)
     + `<div class="intention ${classeIntention}" aria-live="polite"><span class="int-ico">${iconeIntention}</span><span class="int-txt"><small>INTENTION</small>${echap(texteIntention(s))}</span></div>`
     + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
     + `<h2 class="ennemi-nom">${echap(def.nom)}</h2>`
@@ -343,7 +372,8 @@ function htmlEcranCombat(e: Ecran): string {
   for (const p of s.porteurs) {
     const d = porteurDef(p.id);
     const ko = p.pv <= 0;
-    const cible = !ko && it.type === 'atk' && (it.zone || it.cibleId === p.id);
+    // dans un groupe, chaque ennemi debout annonce sa propre attaque
+    const cible = !ko && C_ennemisDebout(s).some((en) => { const i = intentionDe(s, en); return i.type === 'atk' && (i.zone || i.cibleId === p.id); });
     const img = portrait(d.id);
     const basPv = !ko && p.pv / p.pvMax <= 0.3;
     const soigne = !ko && s.chaine.some((g) => soigneUnSeul(g) && g.cible === p.id);

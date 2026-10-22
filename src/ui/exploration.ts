@@ -68,7 +68,9 @@ function medaillon(s: Salle, classe = ''): string {
 }
 
 /** le nom affiché sous une salle */
-const nomSalle = (s: Salle) => (s.ennemi && s.type !== 'elite' ? ennemiDef(s.ennemi).nom : NOMS[s.type]);
+const nomSalle = (s: Salle) => (s.escorte?.length ? 'Un groupe' : s.ennemi && s.type !== 'elite' ? ennemiDef(s.ennemi).nom : NOMS[s.type]);
+/** les ennemis d'une salle de groupe, pour l'annonce : « Pilleur de Strates, Vigie de dépôt » */
+const nomsGroupe = (s: Salle) => [s.ennemi!, ...(s.escorte ?? [])].map((id) => ennemiDef(id).nom).join(', ');
 
 /** ce qui attend l'escouade dans une salle accessible : pour choisir sa route en connaissance de cause */
 function annonce(s: Salle, x: Expedition): { sur: string; titre: string; texte: string; tag?: boolean; faible?: LigneeGeste } {
@@ -77,6 +79,7 @@ function annonce(s: Salle, x: Expedition): { sur: string; titre: string; texte: 
     const faible = BATTU_PAR[d.lignee];
     if (s.type === 'gardien') return { sur: 'GARDIEN DE LA ZONE', titre: d.nom, texte: d.tag, tag: true, faible };
     if (s.type === 'elite') return { sur: 'SALLE SCELLÉE', titre: d.nom, texte: 'Plus coriace, mais une carte dort derrière', faible };
+    if (s.escorte?.length) return { sur: `COMBAT · ${s.escorte.length + 1} ENNEMIS`, titre: 'Un groupe', texte: `${nomsGroupe(s)} : choisis qui frapper` };
     return { sur: 'COMBAT', titre: d.nom, texte: d.tag, tag: true, faible };
   }
   switch (s.type) {
@@ -133,9 +136,10 @@ export function htmlExploration(j: Jeu): string {
     const etat = s.id === ici.id ? 'ici' : acces ? 'accessible' : s.faite ? 'faite' : perdue(s) ? 'perdue' : 'loin';
     const classes = `salle s-${s.type} ${etat}`;
     const nom = nomSalle(s);
-    const label = `${NOMS[s.type]}${s.ennemi ? ` : ${ennemiDef(s.ennemi).nom}` : ''}${etat === 'ici' ? ' (tu es ici)' : s.faite ? ' (visitée)' : ''}`;
+    const label = `${NOMS[s.type]}${s.escorte?.length ? ` : un groupe (${nomsGroupe(s)})` : s.ennemi ? ` : ${ennemiDef(s.ennemi).nom}` : ''}${etat === 'ici' ? ' (tu es ici)' : s.faite ? ' (visitée)' : ''}`;
     let dedans = medaillon(s);
     if (s.type === 'elite') dedans += `<span class="sa-sceau" aria-hidden="true">${ICO.verrou}</span>`;
+    if (s.escorte?.length) dedans += `<span class="sa-groupe" aria-hidden="true">×${s.escorte.length + 1}</span>`;
     if (etat === 'ici') {
       dedans += `<span class="sa-escouade" aria-hidden="true">${x.porteurs.map((p) => {
         const img = portrait(p.id);

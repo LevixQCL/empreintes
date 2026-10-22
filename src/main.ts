@@ -265,7 +265,7 @@ function finPour(): Fin | null {
     return { titre: 'Défaite', texte: `Toute l’escouade est à terre. Elle remonte avec la moitié du butin (${Math.floor(x.butin * J.DISTRICT.butinDefaite)} composants) et devra se reposer à la Clinique.`, bouton: 'Remonter au district', action: 'remonter' };
   }
   if (s.issue === 'victoire') {
-    const nom = ennemiDef(s.ennemi.id).nom;
+    const nom = s.autres?.length ? 'Le groupe' : ennemiDef(s.ennemi.id).nom;
     if (x.terminee) {
       return { titre: `Strate −${x.strate} vaincue`, texte: `${nom} se disperse. L’escouade remonte avec ${x.butin} composants.${x.strate === jeu.strate ? ' Les ouvriers vont pouvoir creuser un nouvel étage.' : ''}`, bouton: 'Remonter au district', action: 'remonter' };
     }
@@ -285,7 +285,11 @@ function pop(cible: string, texte: string, couleur: string, echelle = 1) {
   }, 900);
 }
 
-function popsDe(ev: Evenement) {
+function popsDe(ev: Evenement, etat?: CombatEtat) {
+  // dans un groupe, ce qui touche un ennemi qui n'est pas visé s'affiche sur sa vignette
+  if ('rang' in ev && ev.rang !== undefined && 'cible' in ev && ev.cible === 'ennemi' && etat?.autres?.length && (etat.ennemi.rang ?? 0) !== ev.rang) {
+    ev = { ...ev, cible: `ennemi-${ev.rang}` } as Evenement;
+  }
   // un coup sur l'ennemi grossit avec sa place dans la chaîne et avec sa taille : la fin d'une suite se lit de loin
   if (ev.kind === 'degats') pop(ev.cible, ev.net ? `−${ev.net}` : 'bloqué', 'var(--danger)', ev.cible === 'ennemi' && ev.net ? Math.min(2, 1 + 0.18 * (K.actif ?? 0) + (ev.net >= 25 ? 0.25 : 0) + (ev.net >= 45 ? 0.2 : 0)) : 1);
   else if (ev.kind === 'bouclier') pop(ev.cible, `+${ev.v}`, 'var(--ivory)');
@@ -309,7 +313,8 @@ async function jouer(pas: Pas[]) {
     if (p.ev.kind === 'degats' && p.ev.net > 0) {
       const avant = K.etat ?? jeu.expedition?.combat;
       const cible = p.ev.cible;
-      const c = cible === 'ennemi' ? avant?.ennemi : avant?.porteurs.find((x) => x.id === cible);
+      const ev = p.ev;
+      const c = cible === 'ennemi' ? (avant && C.tousEnnemis(avant).find((e) => (e.rang ?? 0) === (ev.rang ?? 0))) ?? avant?.ennemi : avant?.porteurs.find((x) => x.id === cible);
       if (c) {
         K.traces[cible] = Math.max(0, Math.min(100, (100 * c.pv) / c.pvMax));
         setTimeout(() => { delete K.traces[cible]; }, 1100);
@@ -318,7 +323,7 @@ async function jouer(pas: Pas[]) {
     K.etat = p.etat;
     if (p.ev.kind === 'carte') K.actif = p.ev.rang;
     else if (p.ev.kind === 'fin' || (p.ev.kind === 'degats' && p.ev.cible !== 'ennemi')) K.actif = undefined;
-    popsDe(p.ev);
+    popsDe(p.ev, p.etat);
     afficher();
     bonus = impact(p.ev, racine);
   }
@@ -531,6 +536,7 @@ racine.addEventListener('click', async (ev) => {
     case 'retirer': if (s && !K.verrou) { C.retirer(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'accorder': if (s && !K.verrou) { C.accorder(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'cibler': if (s && !K.verrou) { C.cibler(s, b.dataset.uid ?? ''); sauver(); } break;
+    case 'viser': if (s && !K.verrou) { C.viser(s, Number(b.dataset.id)); sauver(); } break;
     case 'vider': if (s && !K.verrou) { C.viderChaine(s); sauver(); } break;
     case 'allonger': if (s && !K.verrou) { C.allonger(s); sauver(); } break;
     case 'repiocher': if (s && !K.verrou) { C.repiocher(s); sauver(); } break;
