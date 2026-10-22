@@ -26,7 +26,7 @@ export const LIVRES: Record<1 | 2 | 3, string> = {
 
 export const CHAPITRES: Chapitre[] = [
   {
-    id: 'lettre', livre: 1, titre: 'À l’intention du directeur', epoque: '2121',
+    id: 'lettre', livre: 1, titre: 'À l’intention du directeur', epoque: '2121', image: 'chap-lettre',
     paragraphes: [
       'On m’a demandé de t’écrire. Pas les Veilleurs : eux voulaient un rapport, avec des cotes, des dates et des tampons. C’est ton district qui me l’a demandé, à sa façon. La femme qui vend des algues au pied de la Tour du Noyau m’a arrêtée hier soir : « Le nouveau ne sait rien. Racontez-lui. » Alors je raconte.',
       'Je m’appelle Ysé. J’ai soixante-douze ans, des genoux de pilier fendu et la manie de tout noter. Je suis archiviste chez les Veilleurs de Sédime, ce qui veut dire que je passe mes journées à recoller ce que les autres ont jeté. Je n’ai pas de greffe. On me le reproche souvent, dans un sens ou dans l’autre.',
@@ -111,7 +111,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'sept', livre: 2, titre: 'Les Sept', epoque: '2071', strate: 3,
+    id: 'sept', livre: 2, titre: 'Les Sept', epoque: '2071', image: 'chap-sept', strate: 3,
     teaser: 'Les premiers à avoir reçu une empreinte ancienne, et ce que la plaque de bronze ne dit pas.',
     paragraphes: [
       'On a cherché des volontaires. On en a trouvé beaucoup trop. C’est un détail que l’histoire de bronze ne mentionne jamais : il y a eu des milliers de candidats pour recevoir les premières empreintes anciennes. Des gens dont la ville était sur la côte. Des gens qui n’avaient plus rien à perdre. Des gens qui avaient tout perdu, et qui voulaient que ça serve à quelque chose.',
@@ -142,7 +142,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'accords', livre: 2, titre: 'Les Accords', epoque: '2101',
+    id: 'accords', livre: 2, titre: 'Les Accords', epoque: '2101', image: 'chap-accords',
     paragraphes: [
       'En 2101, après dix ans de grèves, de sabotages et de nuits où les passerelles brûlaient, on a signé les Accords de Vertiga. Je les ai lus. Ce sont quarante pages très bien écrites, qui disent en substance : les Hauts gouvernent, les districts élisent leurs directeurs, et tout le monde fait semblant d’être content.',
       'Il ne faut pas s’en moquer. Une paix fragile vaut mieux qu’une guerre solide, et celle-ci a tenu vingt ans. Elle a permis aux districts de rebâtir leurs Cliniques, leurs Forges, leurs marchés. Elle a donné aux gens comme toi un titre, une écharpe et un bureau qui fuit. Elle a donné aux Hauts ce qu’ils voulaient vraiment : le calme.',
@@ -171,7 +171,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'theories', livre: 3, titre: 'Trois façons de se tromper', epoque: '2121', strate: 4,
+    id: 'theories', livre: 3, titre: 'Trois façons de se tromper', epoque: '2121', image: 'chap-theories', strate: 4,
     teaser: 'Ce que chaque faction raconte sur les empreintes, et pourquoi.',
     paragraphes: [
       'Maintenant que tu as vu des empreintes de près, je peux te parler de ce qu’on raconte sur elles. Tout le monde, à Vertiga, a sa théorie. Trois comptent vraiment, et chacune a une faction pour la défendre.',
@@ -193,7 +193,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'deux-fois', livre: 3, titre: 'Le même, deux fois', epoque: 'Les Strates', strate: 7,
+    id: 'deux-fois', livre: 3, titre: 'Le même, deux fois', epoque: 'Les Strates', image: 'chap-deux-fois', strate: 7,
     teaser: 'Une anomalie que les Veilleurs ne montrent à personne.',
     paragraphes: [
       'Les Veilleurs tiennent un registre que nous ne montrons à personne. Il recense une anomalie que nous ne savons pas expliquer.',
@@ -204,7 +204,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'avant', livre: 3, titre: 'Ceux d’avant', epoque: 'Bien avant nous', strate: 10,
+    id: 'avant', livre: 3, titre: 'Ceux d’avant', epoque: 'Bien avant nous', image: 'chap-avant', strate: 10,
     teaser: 'La vérité sur les empreintes. Ysé l’écrira quand tu l’auras vue.',
     paragraphes: [
       'Ils étaient comme nous. C’est ça, la vérité. Pas des monstres, pas des dragons, pas des héritiers qui nous auraient attendus. Un peuple. Ils s’appelaient eux-mêmes « ceux qui portent ». Le mot nous attendait, et nous l’avons repris sans le savoir.',

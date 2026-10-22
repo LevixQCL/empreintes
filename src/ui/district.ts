@@ -679,9 +679,8 @@ export function htmlCodex(e: EcranDistrict): string {
   return coquille(e, h, 'ecran-codex');
 }
 
-/** L'illustration d'un chapitre. Six chapitres n'ont pas encore la leur : ils empruntent provisoirement une image de l'intro. */
-const IMAGE_PROVISOIRE: Record<string, string> = { lettre: '10-toi', sept: '06-empreintes', accords: '03-tempetes', theories: '10-dessous', 'deux-fois': '05-puits-zero', avant: '03-fracture' };
-const imageChapitre = (c: { id: string; image?: string }) => c.image ?? IMAGE_PROVISOIRE[c.id] ?? '10-dessous';
+/** L'illustration d'un chapitre (public/intro/) */
+const imageChapitre = (c: { id: string; image?: string }) => c.image ?? '10-dessous';
 
 /** Typographie française : espace fine insécable avant : ; ? ! » et après « */
 const typo = (t: string) => t.replace(/ ([:;?!»])/g, ' $1').replace(/« /g, '« ').replace(/n° /g, 'n° ').replace(/(\d) h (\d)/g, '$1 h $2');
