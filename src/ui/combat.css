@@ -160,3 +160,13 @@
 /* le chiffre des dégâts grossit avec la place dans la chaîne */
 .scene-ennemi .pop{font-size:calc(30px * var(--ps,1))}
 .scene-ennemi .pop.gros{color:#FFE2A8;text-shadow:0 2px 6px #000,0 0 18px rgba(255,140,60,.75)}
+/* la cible d'une carte de soin : sous la carte dans la chaîne, et une marque verte sur le Porteur */
+.cibler{display:inline-flex;align-items:center;gap:3px;max-width:100%;padding:2px 6px;border:none;border-radius:3px;cursor:pointer;
+  font-size:10.5px;font-weight:600;color:#DFFBE8;background:linear-gradient(165deg,rgba(26,60,40,.92),rgba(9,24,16,.95));box-shadow:inset 0 0 0 1px rgba(124,227,160,.55)}
+.cibler .ico{width:11px;height:11px;color:#7CE3A0;flex-shrink:0}
+.cibler span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cibler:disabled{opacity:.6;cursor:default}
+.combattant .marque-soin{position:absolute;top:4px;right:4px;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;
+  color:#0C2416;background:#7CE3A0;box-shadow:0 0 8px rgba(124,227,160,.7)}
+.combattant .marque-soin .ico{width:11px;height:11px}
+.combattant.soigne{box-shadow:inset 0 0 0 1.5px rgba(124,227,160,.6)}

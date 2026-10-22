@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { capacite, ligneeGeste, placesLibres, placesPrises, texteIntention } from '../core/combat';
+import { capacite, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention } from '../core/combat';
 import { NOMS_LIGNEE, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
@@ -126,10 +126,15 @@ export const carteDemo = (g: Geste, taille: 'chaine' | 'main' = 'main') => geste
 /** Une carte posée dans la chaîne : la toucher la retire ; sous elle, de quoi changer sa Fréquence (argent et plus) */
 function maillon(g: Geste, off: boolean) {
   const choix = g.fs && g.fs.length > 1 && g.effet?.type !== 'accord';
+  // une carte de soin montre qui elle soigne ; la toucher passe au Porteur suivant
+  const soin = soigneUnSeul(g) && g.cible
+    ? `<button type="button" class="cibler" data-action="cibler" data-uid="${g.uid}"${off ? ' disabled' : ''} style="--c:${COULEUR[porteurDef(g.cible).lignee]}" aria-label="Soigne ${echap(porteurDef(g.cible).nom)} : toucher pour changer">${ICO.soin}<span>${echap(porteurDef(g.cible).nom)}</span></button>`
+    : '';
+  if (soin && !choix) return `<div class="maillon">${geste(g, 'chaine', 'retirer', { off })}${soin}</div>`;
   if (!choix) return geste(g, 'chaine', 'retirer', { off });
   const suivante = g.fs![(g.fs!.indexOf(g.f) + 1) % g.fs!.length]!;
   return `<div class="maillon">${geste(g, 'chaine', 'retirer', { off })}`
-    + `<button type="button" class="accorder" data-action="accorder" data-uid="${g.uid}"${off ? ' disabled' : ''} aria-label="Passer ${echap(g.nom)} en Fréquence ${suivante}">${g.fs!.map((f) => `<i class="${f === g.f ? 'actif' : ''}" style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</button></div>`;
+    + `<button type="button" class="accorder" data-action="accorder" data-uid="${g.uid}"${off ? ' disabled' : ''} aria-label="Passer ${echap(g.nom)} en Fréquence ${suivante}">${g.fs!.map((f) => `<i class="${f === g.f ? 'actif' : ''}" style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</button>${soin}</div>`;
 }
 
 export function panneauCompte(c: Compte): string {
@@ -233,10 +238,11 @@ export function htmlCombat(e: Ecran): string {
     const cible = !ko && it.type === 'atk' && (it.zone || it.cibleId === p.id);
     const img = portrait(d.id);
     const basPv = !ko && p.pv / p.pvMax <= 0.3;
-    h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${basPv ? ' bas' : ''}" data-porteur="${p.id}" style="--c:${COULEUR[d.lignee]}">${popsPour(e, p.id)}`
+    const soigne = !ko && s.chaine.some((g) => soigneUnSeul(g) && g.cible === p.id);
+    h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${basPv ? ' bas' : ''}${soigne ? ' soigne' : ''}" data-porteur="${p.id}" data-pvmax="${p.pvMax}" style="--c:${COULEUR[d.lignee]}">${popsPour(e, p.id)}`
       + `<span class="avatar${img ? '' : ' sans-portrait'}" style="--t:34px" aria-hidden="true">${img ? `<img src="${img}" alt="">` : `<b>${echap(d.nom.charAt(0))}</b>`}</span>`
       + `<div class="cb-infos"><span class="n">${echap(d.nom)}</span><div class="cb-vie">${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5 })}<span class="chiffre" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}`}">${ko ? '0' : p.pv}</span></div></div>`
-      + (cible ? `<span class="marque-cible">${ICO.atk}CIBLE</span>` : '') + `</div>`;
+      + (cible ? `<span class="marque-cible">${ICO.atk}CIBLE</span>` : '') + (soigne ? `<span class="marque-soin" aria-label="Sera soigné">${ICO.soin}</span>` : '') + `</div>`;
   }
   h += `</section><div class="ligne-escouade">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>`
     + `<span class="piles"><span title="Pioche">${ICO.cartes}${s.pioche.length}</span><span title="Défausse">${ICO.recycler}${s.defausse.length}</span></span></div>`;

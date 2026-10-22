@@ -188,6 +188,22 @@ function bouclierSur(p: DOMRect) {
   }, 520);
 }
 
+/** Un voile rouge sur les bords de l'écran, qui s'efface (force de 0 à 1) */
+function voileRouge(force: number) {
+  traits.push({
+    debut: maintenant(), duree: 520,
+    dessiner: (c, k) => {
+      const w = innerWidth, h = innerHeight;
+      const g = c.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.5, w / 2, h / 2, Math.max(w, h) * 0.72);
+      g.addColorStop(0, 'rgba(255,40,30,0)');
+      g.addColorStop(1, `rgba(220,30,20,${force * (1 - k)})`);
+      c.globalCompositeOperation = 'source-over';
+      c.fillStyle = g; c.fillRect(0, 0, w, h);
+    },
+  });
+  lancerBoucle();
+}
+
 // ---------- Sons (synthétisés : aucun fichier à charger) ----------
 
 let audio: AudioContext | null = null;
@@ -311,7 +327,22 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         eclats(p.x, p.y, 8, DANGER, { vitesse: 160, taille: 2, trainee: true });
       }
       if (el) { touche(el, DANGER, 1); secouer(el, 2); }
-      if (ev.net) note(hasard(70, 80), 'sine', 0.22, 0.14, 0.5);
+      if (ev.net) {
+        // ce qu'encaisse l'escouade : un voile rouge sur les bords, proportionné au coup (gardé même avec « réduire les animations »),
+        // et les cartes qui frémissent ; l'écran ne tremble que pour les gros coups
+        const pvMax = Number(el?.getAttribute('data-pvmax')) || 40;
+        const part = Math.min(1, ev.net / pvMax);
+        voileRouge(0.1 + part * 0.3);
+        if (!reduit) {
+          racine.querySelectorAll('.zone-main .geste, .zone-chaine .geste').forEach((c, i) => {
+            const a = 1.5 + part * 4;
+            (c as HTMLElement).animate([{ transform: 'none' }, { transform: `translate(${hasard(-a, a)}px, ${a * 0.6}px) rotate(${hasard(-1.2, 1.2)}deg)` }, { transform: 'none' }],
+              { duration: 220, delay: i * 18, easing: 'ease-out' });
+          });
+          if (part >= 0.3) secouer(ecran, 2);
+        }
+        note(hasard(70, 80), 'sine', 0.22, 0.14, 0.5);
+      }
       return 0;
     }
     case 'resonance': {
@@ -390,7 +421,10 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       const el = [...racine.querySelectorAll('.combattant')].find((x) => x.getAttribute('data-porteur') === ev.cible);
       const p = centre(el ?? null);
       if (p) eclats(p.x, p.y, 16, '#8a8f99', { vitesse: 90, gravite: 160, taille: 2.4, vie: 1 });
-      return 0;
+      if (el) (el as HTMLElement).animate([{ filter: 'brightness(1.6)' }, { filter: 'grayscale(1) brightness(.45)' }], { duration: 500, easing: 'ease-in' });
+      voileRouge(0.35);
+      note(62, 'sine', 0.7, 0.16, 0.6);
+      return 400;
     }
     default:
       return 0;
