@@ -53,7 +53,7 @@ export type Icone = keyof typeof ICO;
 // ---------- Icônes peintes (Midjourney, public/art/icones/<nom>.webp) ----------
 // Aux grandes tailles (ressources du haut, onglets du bas, gros boutons), une icône peinte remplace le trait SVG.
 // Tant que le fichier n'est pas déposé, le SVG reste. Ajouter le nom ici dès que l'image est dans public/art/icones/.
-const PEINTES = new Set<Icone>(['energie', 'composants', 'eclats', 'strate', 'district', 'tour', 'cartes', 'codex']);
+const PEINTES = new Set<Icone>(['energie', 'composants', 'eclats', 'strate', 'district', 'tour', 'porteurs', 'cartes', 'codex']);
 const baseIcones = new URL('art/icones/', document.baseURI).href;
 
 /** L'icône peinte si elle existe, sinon le trait SVG */
