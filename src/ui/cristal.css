@@ -209,3 +209,14 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips{display:flex;gap:2px;top:calc(31px + var(--ep) * .5);left:calc(4px + var(--ep) * .5)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-pips{top:calc(34px + var(--ep) * .5);left:calc(5px + var(--ep) * .5)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips i{width:17px;height:17px;font-size:9.5px}
+
+/* ---------- L'image en pleine carte (22 octobre 2026) ----------
+   Bryan : la bande de la force et du nom gâchait l'image. L'illustration occupe maintenant toute la carte ;
+   la force et le nom sont posés dessus, sur un simple dégradé sombre en bas, sans bande ni filet. */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-art{height:100%;background-position:50% 30%}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-art::after{background:linear-gradient(180deg,rgba(6,8,12,.35) 0%,transparent 22%,transparent 46%,rgba(6,8,12,.55) 66%,rgba(6,8,12,.9) 100%)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-plaque{background:none;border-top:none;box-shadow:none;height:auto;justify-content:flex-end;padding-bottom:calc(4px + var(--ep))}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val,#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-nom,
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-qui{text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.9)}
+/* l'effet garde sa place sur le bord droit, au-dessus de la force */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{bottom:calc(100% + 4px)}
