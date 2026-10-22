@@ -5,8 +5,8 @@
 // une illustration encadrée posée sur un fond uni, une légende en texte. Maintenant, un relevé de la Strate projeté dans la salle :
 // - le décor n'a plus de cadre : l'illustration nette se fond dans la même salle floutée qui remplit l'écran (htmlLieu) ;
 // - chaque salle est un médaillon de cristal qui montre ce qu'elle contient : le portrait de l'ennemi (combat, salle scellée,
-//   gardien), une icône peinte (cache, archives, filon, entrée), ou une lueur dessinée (campement, rencontre) en attendant
-//   leur icône Midjourney ; l'anneau prend la couleur du type de salle ;
+//   gardien), une icône peinte (cache, archives, filon, entrée), une petite scène peinte (campement), ou un « ? » dessiné
+//   (rencontre) en attendant son icône Midjourney ; l'anneau prend la couleur du type de salle ;
 // - les couloirs sont des fils de lumière : or pour le chemin parcouru, glace qui coule vers les salles accessibles,
 //   pointillés pour l'avenir, presque effacés pour les branches qu'on ne prendra plus ;
 // - à côté : l'escouade en portraits (comme en combat), puis « Où aller ? », une carte par salle accessible,
@@ -34,7 +34,16 @@ const TEINTE: Record<TypeSalle, string> = {
 const baseIcones = new URL('art/icones/', document.baseURI).href;
 const PEINTES: Partial<Record<TypeSalle, string>> = { entree: 'strate', cache: 'composants', archive: 'codex', filon: 'eclats' };
 
-/** dessins provisoires, en attendant les icônes Midjourney du campement et de la rencontre */
+/**
+ * Scènes peintes (public/art/salles/) : l'illustration entière, recadrée dans le médaillon comme un portrait d'ennemi.
+ * Le feu de camp (Midjourney, 22 octobre 2026) est une scène pleine, sans fond uni : on ne le détoure pas, on le cadre.
+ */
+const baseSalles = new URL('art/salles/', document.baseURI).href;
+const SCENES: Partial<Record<TypeSalle, { fichier: string; cadrage: [number, number, number] }>> = {
+  camp: { fichier: 'campement', cadrage: [50, 56, 118] },
+};
+
+/** dessins provisoires : la rencontre attend son icône Midjourney ; le feu dessiné ne sert plus que si l'image manque */
 const GLYPHES: Partial<Record<TypeSalle, string>> = {
   camp: '<svg viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="g-feu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF4C8"/><stop offset=".45" stop-color="#FFB547"/><stop offset="1" stop-color="#D2552A"/></linearGradient></defs>'
     + '<path fill="url(#g-feu)" d="M12 2.5c1.2 3.6 5 5.2 5 10a5 5 0 0 1-10 0c0-2.3 1.1-3.6 2.2-4.5.2 1.8 1.1 2.8 2.2 3.2.3-3.2-1.1-5.8.6-8.7z"/>'
@@ -61,6 +70,11 @@ function medaillon(s: Salle, classe = ''): string {
   if (ill) {
     const [cx, cy, z] = CADRAGE[s.ennemi!] ?? [50, 28, 210];
     return `<span class="sa-medaillon ennemi ${classe}" style="--img:url(${ill});--pos:${cx}% ${cy}%;--zoom:${z}%"><span class="sa-image"></span></span>`;
+  }
+  const scene = SCENES[s.type];
+  if (scene) {
+    const [cx, cy, z] = scene.cadrage;
+    return `<span class="sa-medaillon scene ${classe}" style="--img:url(${baseSalles}${scene.fichier}.webp);--pos:${cx}% ${cy}%;--zoom:${z}%"><span class="sa-image"></span></span>`;
   }
   const peinte = PEINTES[s.type];
   if (peinte) return `<span class="sa-medaillon peinte ${classe}"><img src="${baseIcones}${peinte}.webp" alt="" decoding="async"></span>`;
