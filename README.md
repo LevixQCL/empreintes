@@ -93,6 +93,11 @@ entière jouée par un « joueur moyen » (`jouerTourMoyen` : il lit la force, l
 du combat comme le robot), avec le vrai district, ses colis, ses niveaux, ses Épreuves, ses missions et ses fouilles. Objectif :
 qu'il faille un peu plus d'expéditions pour chaque nouvelle Strate (environ autant d'expéditions que la profondeur), sans mur.
 
+**Le creusement** (22 octobre 2026) : battre le gardien de la Strate la plus profonde prépare l'étage suivant, qui ne
+s'ouvre qu'avec assez de **creuseurs** logés par la **Tour du Noyau** (`CREUSEURS` dans `jeu.ts`). Les creuseurs qui percent
+un étage y restent : pas de réserve pour plus tard. On en gagne en jouant (fouilles, missions, Épreuves, gardiens, Confiance).
+Réglé pour la Strate −10 vers le jour 30 d'un joueur occasionnel, vers le jour 23 d'un assidu.
+
 **Quand on bloque devant une Strate** : les *fouilles ciblées* (`fouiller`, une descente courte sans gardien dans une Strate
 vaincue, vers des cartes d'une lignée, des composants ou des Éclats), les *missions* (`envoyerMission`, un Porteur libre part
 2 ou 8 h dans la dernière Strate vaincue) et les *Épreuves de la semaine* (`EPREUVES`, un combat à règle spéciale contre le

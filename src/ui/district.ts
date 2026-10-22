@@ -5,7 +5,7 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, CIBLES_FOUILLE, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte,
+  ARCHIVE, CIBLES_FOUILLE, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte,
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
@@ -587,21 +587,43 @@ export function htmlCoupe(e: EcranDistrict): string {
   }
   h += `</div></section>`;
   h += `<section class="puits" style="--decor:url(${decor('coupe')})" aria-label="Les Strates"><h3 class="titre-bloc">${ICO.strate}Les Strates</h3><ol class="strates">`;
+  // la roche à creuser en tête : c'est le prochain étage, juste sous le front
+  h += htmlFrontDeTaille(j);
   for (let n = j.strate; n >= 1; n--) {
     const front = n === j.strate;
+    const vaincue = !front || j.frontVaincu;
     const nom = NOMS_ETAGES[Math.min(n - 1, NOMS_ETAGES.length - 1)];
     const off = j.expedition || !j.chambre;
     h += `<li class="strate${front ? ' front' : ''}" style="--p:${Math.min(1, (n - 1) / 4)}"><span class="profondeur">−${n}</span><div class="strate-infos"><strong>${nom}</strong>`
-      + `<small>${front ? 'Front de fouille : la vaincre creuse un nouvel étage' : 'Vaincue : fouille ciblée ou expédition'}</small></div>`
+      + `<small>${front && !j.frontVaincu ? 'Front de fouille : vaincs son gardien pour préparer l’étage suivant' : 'Vaincue : fouille ciblée ou expédition'}</small></div>`
       + `<div class="strate-actions">`
-      + (front ? '' : `<button type="button" class="btn sec" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller</button>`)
+      + (!vaincue ? '' : `<button type="button" class="btn sec" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller</button>`)
       + `<button type="button" class="btn ${front ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}${front ? 'Descendre' : 'Y aller'}</button></div></li>`;
   }
-  h += `<li class="strate roche" aria-hidden="true"><span>Roche à creuser…</span></li></ol>`;
+  h += `</ol>`;
   if (j.expedition) h += `<button type="button" class="appel" data-action="reprendre">${ICO.descendre}<span><strong>Expédition en cours</strong><small>Strate −${j.expedition.strate} : reprendre le combat</small></span></button>`;
   h += `</section>`;
   if (j.chambre && j.strate >= 2) h += htmlEpreuves(e) + htmlMissions(e);
   return coquille(e, h, 'ecran-coupe');
+}
+
+// ---------- Le front de taille : les creuseurs ----------
+
+function htmlFrontDeTaille(j: Jeu): string {
+  const cible = j.strate + 1;
+  const requis = creuseursRequis(cible);
+  const loge = logementCreuseurs(j);
+  const manque = manquePourCreuser(j);
+  const jauge = requis ? `<div class="jauge or"><i style="width:${Math.min(100, (100 * j.creuseurs) / requis)}%"></i></div>` : '';
+  let etat: string;
+  if (!j.frontVaincu) etat = `Vaincs d’abord le gardien de la Strate −${j.strate}.${requis ? ` Il faudra ensuite ${requis} creuseurs.` : ''}`;
+  else if (!manque) etat = 'Tout est prêt : la roche cède.';
+  else etat = [manque.creuseurs ? `il manque ${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : '', manque.noyau ? `la Tour du Noyau doit passer au niveau ${noyauRequis(cible)} pour les loger` : ''].filter(Boolean).join(' et ') + '.';
+  return `<li class="strate roche front-taille${j.frontVaincu ? ' prete' : ''}"><span class="profondeur">−${cible}</span><div class="strate-infos"><strong>Roche à creuser</strong>`
+    + `<small>${ICO.ouvrier}Creuseurs ${j.creuseurs} / ${requis} · logés ${j.creuseurs} / ${loge} (Noyau niveau ${j.batiments.noyau})</small>${jauge}`
+    + `<small>${etat.charAt(0).toUpperCase() + etat.slice(1)}</small>`
+    + (j.frontVaincu && manque?.creuseurs ? `<small class="aide">Des creuseurs se trouvent en fouillant les Strates vaincues, en mission, avec les Épreuves et quand le district a confiance en toi.</small>` : '')
+    + `</div></li>`;
 }
 
 // ---------- Épreuves de la semaine et missions ----------

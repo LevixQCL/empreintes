@@ -17,6 +17,7 @@ import {
   coutRefabrication, type Jeu, type Poste,
 } from './jeu';
 import { jouerTour, jouerTourMoyen } from './robot';
+// (les creuseurs se gagnent par les fouilles, missions et Épreuves que joue déjà ce joueur simulé)
 import type { CombatEtat, Lignee } from './types';
 
 export interface Profil {
@@ -208,12 +209,26 @@ export function simulerParcours(
 
   const r: Parcours = { ouverture: { 1: 1 }, expeditions: {}, front: { tentatives: 0, victoires: 0 }, strate: 1 };
   let depuis = 0;
+  let derniere = j.strate;
+  /** note chaque Strate ouverte depuis la dernière fois (au front, ou par une mission, un chantier du Noyau…) */
+  const noter = (d: number, escouade: string[]): boolean => {
+    while (derniere < j.strate) {
+      derniere++;
+      r.ouverture[derniere] = d + 1;
+      r.expeditions[derniere] = depuis;
+      depuis = 0;
+      opts.trace?.(j, d + 1, escouade);
+      if (opts.jusqua && derniere >= opts.jusqua) { r.strate = j.strate; return true; }
+    }
+    return false;
+  };
   let echecs = 0;
   for (let d = 0; d < jours; d++) {
     for (const h of profil.sessions) {
       const now = debut + d * JOUR + h * HEURE;
       tick(j, now);
       gerer(j, now);
+      if (noter(d, [])) return r;
       const escouade = preparer(j);
       const front = j.strate;
       const jouer = opts.joueur === 'robot' ? jouerTour : jouerTourMoyen;
@@ -223,24 +238,20 @@ export function simulerParcours(
         if (ep) { jouerExpedition(j, () => partirEpreuve(j, escouade, ep.id, now, suivant()).ok, jouer, opts.tours); gerer(j, now); }
       }
       // bloqué au front (deux échecs d'affilée) : une fouille ciblée juste au-dessus, pour la lignée la plus faible du deck
-      const cible = echecs >= 2 && front > 1 ? front - 1 : front;
+      // le gardien du front est vaincu, mais il manque des creuseurs : on fouille le front pour en retrouver
+      const attente = j.frontVaincu;
+      const cible = attente ? front : echecs >= 2 && front > 1 ? front - 1 : front;
       const faible = LIGNEES.map((l) => ({ l, v: meilleures(j, l).reduce((n, id) => n + valeurCarte(id, j.collection[id]!.niveau), 0) / DEFENSES_POIDS[l] }))
         .sort((a, b) => a.v - b.v)[0]!.l;
       const g = suivant();
-      const victoire = jouerExpedition(j, () => (cible === front ? partir(j, escouade, cible, g) : fouiller(j, escouade, cible, faible, g)).ok, jouer, opts.tours);
+      const victoire = jouerExpedition(j, () => (cible === front && !attente ? partir(j, escouade, cible, g) : fouiller(j, escouade, cible, faible, g)).ok, jouer, opts.tours);
       depuis++;
-      if (cible === front) {
+      if (attente) { /* fouille d'attente : ne compte pas comme une tentative au front */ } else if (cible === front) {
         r.front.tentatives++;
         if (victoire) r.front.victoires++;
         echecs = victoire ? 0 : echecs + 1;
       } else echecs = 1;
-      if (j.strate > front) {
-        r.ouverture[j.strate] = d + 1;
-        r.expeditions[j.strate] = depuis;
-        depuis = 0;
-        opts.trace?.(j, d + 1, escouade);
-        if (opts.jusqua && j.strate >= opts.jusqua) { r.strate = j.strate; return r; }
-      }
+      if (noter(d, escouade)) return r;
       tick(j, now + 15 * 60_000);
       gerer(j, now + 15 * 60_000);
     }

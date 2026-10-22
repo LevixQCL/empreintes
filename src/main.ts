@@ -526,7 +526,11 @@ racine.addEventListener('click', async (ev) => {
           : 'L’escouade se repose. La porte scellée t’attend toujours.';
       } else {
         D.vue = jeu.choix.length ? 'archipel' : 'coupe';
-        D.message = (r.nouvelleStrate ? `Un nouvel étage est creusé : la Strate −${jeu.strate} est ouverte.` : `+${r.butin} composants rapportés.`)
+        const manque = J.manquePourCreuser(jeu);
+        D.message = (r.nouvelleStrate ? `Un nouvel étage est creusé : la Strate −${jeu.strate} est ouverte.`
+          : r.victoire && manque && jeu.frontVaincu && r.butin >= 0 && J.strateVaincue(jeu) === jeu.strate
+            ? `Le gardien est vaincu, mais l’étage suivant attend : ${manque.creuseurs ? `il manque ${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : ''}${manque.creuseurs && manque.noyau ? ' et ' : ''}${manque.noyau ? `la Tour du Noyau doit passer au niveau ${J.noyauRequis(jeu.strate + 1)}` : ''}. +${r.butin} composants rapportés.`
+            : `+${r.butin} composants rapportés.`)
           + (r.cartes.length ? ` Carte${r.cartes.length > 1 ? 's' : ''} trouvée${r.cartes.length > 1 ? 's' : ''} : ${r.cartes.map((c) => `${moduleDef(c).nom} (${NOMS_RARETE[moduleDef(c).rarete]})`).join(', ')}.` : '')
           + (r.eclats ? ` +${r.eclats} Éclat${r.eclats > 1 ? 's' : ''}.` : '')
           + (r.fragment ? ' Un fragment d’archives rejoint le Codex.' : '');

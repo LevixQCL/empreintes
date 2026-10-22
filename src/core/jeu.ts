@@ -169,6 +169,10 @@ export interface Jeu {
   missions: Mission[];
   /** Épreuves de la semaine déjà réussies (une récompense par Épreuve et par semaine) */
   epreuves: { semaine: number; faites: string[] };
+  /** les creuseurs du front de taille : il en faut assez pour creuser l'étage suivant (logés selon le niveau du Noyau) */
+  creuseurs: number;
+  /** le gardien de la Strate la plus profonde est vaincu : l'étage suivant attend d'être creusé */
+  frontVaincu: boolean;
 }
 
 /** Acte I, le choix : qui garde la chambre ? */
@@ -290,6 +294,8 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     archive: { semaine: semaineDe(now), points: 0, aOuvrir: 0 },
     missions: [],
     epreuves: { semaine: semaineDe(now), faites: [] },
+    creuseurs: 0,
+    frontVaincu: false,
   };
 }
 
@@ -317,6 +323,9 @@ function migrer(j: Jeu) {
   if (j.kitRecrues === undefined) { j.kitRecrues = false; if (j.recrues && j.collection) donnerKitRecrues(j); }
   j.ravitaillement ??= { jour: jourDe(j.dernierTick), reserve: 1, ouverts: 0 };
   j.missions ??= [];
+  // sauvegarde d'avant les creuseurs : on commence avec une équipe vide, les Strates déjà ouvertes le restent
+  j.creuseurs ??= 0;
+  j.frontVaincu ??= false;
   j.epreuves ??= { semaine: semaineDe(j.dernierTick), faites: [] };
   if (!j.luesRecompensees) {
     // sauvegarde d'avant les récompenses de lecture : les chapitres déjà lus rapportent leur carte maintenant
@@ -473,6 +482,8 @@ export function tick(j: Jeu, now: number): string[] {
   for (const c of j.chantiers.filter((x) => now >= x.fin)) {
     j.batiments[c.batiment]++;
     confier(j, CONFIANCE.chantier);
+    if ((j.confiance ?? 50) >= CONFIANCE.haute && tireur(j).nombre() < CREUSEURS.confiance) gagnerCreuseurs(j, 1, 'le district a confiance, un volontaire se présente');
+    if (c.batiment === 'noyau' && creuser(j)) nouvelles.push(`La Tour du Noyau loge assez de creuseurs : la Strate −${j.strate} est ouverte.`);
     const t = `Chantier terminé : ${batimentDef(c.batiment).nom} passe au niveau ${j.batiments[c.batiment]}.`;
     log(j, t);
     nouvelles.push(t);
@@ -546,6 +557,7 @@ export function ameliorer(j: Jeu, b: BatimentId, now = j.dernierTick): Resultat 
   if (duree <= 0) {
     j.batiments[b]++;
     log(j, `${batimentDef(b).nom} passe au niveau ${j.batiments[b]}.`);
+    if (b === 'noyau') creuser(j);
   } else {
     j.chantiers.push({ batiment: b, debut: now, fin: now + duree });
     log(j, `Chantier lancé : ${batimentDef(b).nom} vers le niveau ${j.batiments[b] + 1}.`);
@@ -814,6 +826,9 @@ export function disponibles(j: Jeu): string[] {
 }
 
 /** Vérifie l'escouade et prépare ce qu'elle emporte : ses PV, son deck (filtré pour une Épreuve) et ses Marques */
+/** La Strate vaincue la plus profonde (le front compte s'il a été vaincu) */
+export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 1);
+
 const refus = (message: string) => ({ ok: false as const, message });
 
 function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boolean, min: number = DISTRICT.deckMin):
@@ -845,6 +860,65 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   return { ok: true };
 }
 
+// ---------- Les creuseurs ----------
+// Décision du 22 octobre 2026 : on ne descend pas au rythme d'un minuteur, mais au rythme du jeu. Battre le gardien
+// du front prépare l'étage suivant ; il ne se creuse qu'avec assez de creuseurs, et la Tour du Noyau doit pouvoir les loger.
+// Les creuseurs qui percent un étage y restent pour l'étayer : on ne peut pas en faire de réserve pour plus tard.
+// On gagne des creuseurs en jouant : fouilles ciblées, missions, Épreuves, gardiens vaincus et Confiance du district.
+
+export const CREUSEURS = {
+  /** creuseurs logés selon le niveau du Noyau (index = niveau) */
+  logement: [0, 4, 7, 10, 14, 24],
+  /** creuseurs qu'il faut pour ouvrir la Strate −n, qui y restent (au-delà de la table : +1 par Strate, au plus le logement) */
+  requis: [0, 0, 0, 0, 3, 4, 6, 8, 10, 12, 14] as number[],
+  parStrateEnsuite: 1,
+  gardien: 1,
+  /** chances de ramener un fouilleur perdu : fouille ciblée, mission courte, mission longue */
+  fouille: 0.25,
+  missionCourte: 0.1,
+  missionLongue: 0.3,
+  epreuve: 1,
+  /** un chantier terminé quand la Confiance est haute attire parfois un volontaire */
+  confiance: 0.3,
+} as const;
+
+export const logementCreuseurs = (j: Pick<Jeu, 'batiments'>) => CREUSEURS.logement[j.batiments.noyau] ?? CREUSEURS.logement[CREUSEURS.logement.length - 1]!;
+export function creuseursRequis(strate: number): number {
+  const t = CREUSEURS.requis;
+  const max = CREUSEURS.logement[CREUSEURS.logement.length - 1]!;
+  return Math.min(max, strate < t.length ? t[strate]! : t[t.length - 1]! + CREUSEURS.parStrateEnsuite * (strate - t.length + 1));
+}
+/** Le niveau du Noyau qu'il faut pour loger les creuseurs d'une Strate */
+export const noyauRequis = (strate: number) => Math.max(1, CREUSEURS.logement.findIndex((n) => n >= creuseursRequis(strate)));
+
+/** Ajoute des creuseurs (dans la limite du logement) ; renvoie le nombre réellement arrivé */
+export function gagnerCreuseurs(j: Jeu, n: number, raison: string): number {
+  const avant = j.creuseurs ?? 0;
+  j.creuseurs = Math.min(logementCreuseurs(j), avant + n);
+  const arrives = j.creuseurs - avant;
+  if (arrives > 0) log(j, `+${arrives} creuseur${arrives > 1 ? 's' : ''} : ${raison}.`);
+  return arrives;
+}
+
+/** Ce qui manque pour creuser l'étage suivant (null s'il ne manque rien, ou si le gardien n'est pas vaincu) */
+export function manquePourCreuser(j: Jeu): { creuseurs: number; noyau: number } | null {
+  if (!j.frontVaincu) return null;
+  const cible = j.strate + 1;
+  const c = Math.max(0, creuseursRequis(cible) - j.creuseurs);
+  const n = Math.max(0, noyauRequis(cible) - j.batiments.noyau);
+  return c || n ? { creuseurs: c, noyau: n } : null;
+}
+
+/** Creuse l'étage suivant si tout est prêt ; renvoie true si une Strate s'est ouverte */
+export function creuser(j: Jeu): boolean {
+  if (!j.frontVaincu || manquePourCreuser(j)) return false;
+  j.creuseurs -= creuseursRequis(j.strate + 1);
+  j.strate++;
+  j.frontVaincu = false;
+  log(j, `Les creuseurs percent la roche : la Strate −${j.strate} est ouverte.`);
+  return true;
+}
+
 // ---------- Les fouilles ciblées ----------
 // Quand on bloque devant une Strate : une descente courte (4 rangées, sans gardien ni salle scellée) dans une Strate déjà
 // vaincue, vers un filon choisi. Les cartes trouvées en route sont de la lignée visée ; le filon donne ce qu'on cherchait.
@@ -862,7 +936,7 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
   const e = escouadePrete(j, escouade);
   if (!e.ok) return e;
   if (!CIBLES_FOUILLE[cible]) return non('Cible inconnue.');
-  if (strate < 1 || strate >= j.strate) return non('On ne fouille que les Strates déjà vaincues.');
+  if (strate < 1 || strate > strateVaincue(j)) return non('On ne fouille que les Strates déjà vaincues.');
   j.expedition = nouvelleExploration({
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1, fouille: cible,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
@@ -884,7 +958,7 @@ export type DureeMission = 'courte' | 'longue';
 export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number }
 
 /** La Strate où partent les missions : la dernière vaincue */
-export const strateMission = (j: Jeu) => j.strate - 1;
+export const strateMission = (j: Jeu) => strateVaincue(j);
 
 export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: number): Resultat {
   const m = MISSIONS[duree];
@@ -912,9 +986,12 @@ function retourDeMission(j: Jeu, m: Mission): string {
   for (let k = 0; k < d.doublons && possedees.length; k++) cartes.push(possedees[t.entier(possedees.length)]!);
   if (t.nombre() < d.nouvelle) cartes.push(tirerTrouvaille(j, m.strate, 'fer', p.lignee));
   for (const c of cartes) ajouterCarte(j, c);
+  const recrues = t.nombre() < (m.duree === 'longue' ? CREUSEURS.missionLongue : CREUSEURS.missionCourte) ? 1 : 0;
+  const arrives = recrues ? gagnerCreuseurs(j, recrues, `${p.nom} ramène des fouilleurs de mission`) : 0;
+  if (arrives) creuser(j);
   const q = j.porteurs[m.porteur]!;
   q.usure = Math.min(usureMax(m.porteur), q.usure + d.usure);
-  const texte = `${p.nom} rentre de mission : +${composants} composants${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}.`;
+  const texte = `${p.nom} rentre de mission : +${composants} composants${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
   return texte;
 }
@@ -950,12 +1027,12 @@ export function epreuvesDeLaSemaine(now: number): EpreuveDef[] {
 }
 export const epreuveDef = (id: string) => EPREUVES.find((e) => e.id === id);
 /** La Strate d'une Épreuve : la dernière vaincue */
-export const strateEpreuve = (j: Jeu) => Math.max(1, j.strate - 1);
+export const strateEpreuve = (j: Jeu) => Math.max(1, strateVaincue(j));
 
 export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: number, rng = graine()): Resultat {
   const ep = epreuveDef(id);
   if (!ep || !epreuvesDeLaSemaine(now).some((e) => e.id === id)) return non('Cette Épreuve n’est pas au programme cette semaine.');
-  if (j.strate < 2) return non('Les Épreuves s’ouvrent après la première Strate vaincue.');
+  if (strateVaincue(j) < 1) return non('Les Épreuves s’ouvrent après la première Strate vaincue.');
   const interdit = escouade.find((p) => ep.interdits?.includes(p));
   if (interdit) return non(`${porteurDef(interdit).nom} ne peut pas participer à cette Épreuve.`);
   const e = escouadePrete(j, escouade, ep.filtre, EPREUVE_DECK_MIN);
@@ -1118,6 +1195,7 @@ export function remonter(j: Jeu): Retour {
   }
   progresser(j, 'combat', victoires);
   if (victoire && x.fouille) {
+    if (tireur(j).nombre() < CREUSEURS.fouille) gagnerCreuseurs(j, 1, 'un fouilleur perdu retrouvé pendant la fouille');
     // le filon : ce que la fouille visait
     if (lignee) j.choix.push({ source: 'fouille', options: tirerChoix(j, x.strate, 'fer', lignee) });
     else if (x.fouille === 'composants') { const plus = butin + Math.round(20 * (1 + 0.25 * (x.strate - 1))); j.composants += plus; butinFilon = plus; }
@@ -1127,6 +1205,7 @@ export function remonter(j: Jeu): Retour {
     // la première victoire de la semaine dans cette Épreuve : une carte au choix, dont une en argent au moins
     if (!j.epreuves.faites.includes(x.epreuve)) {
       j.epreuves.faites.push(x.epreuve);
+      gagnerCreuseurs(j, CREUSEURS.epreuve, 'l’Épreuve réussie fait des émules');
       j.choix.push({ source: 'epreuve', options: tirerChoix(j, x.strate, 'argent') });
     }
     progresser(j, 'expedition');
@@ -1135,9 +1214,11 @@ export function remonter(j: Jeu): Retour {
     eclats += (x.strate >= 5 ? 2 : 1) + (j.actes.chambre === 'orseve' ? 1 : 0);
     progresser(j, 'expedition');
   }
-  if (victoire && x.strate === j.strate) {
-    j.strate++;
-    nouvelleStrate = true;
+  if (victoire && x.strate === j.strate && !j.frontVaincu) {
+    // le gardien du front est vaincu : l'étage suivant est prêt à être creusé, s'il y a assez de creuseurs
+    j.frontVaincu = true;
+    gagnerCreuseurs(j, CREUSEURS.gardien, 'le gardien vaincu, des fouilleurs se joignent au chantier');
+    nouvelleStrate = creuser(j);
     fragment = ajouterFragment(j);
     // dans les Fondations, les abris des années 2060 rendent deux papiers par Strate
     if (x.strate <= 3) ajouterFragment(j);

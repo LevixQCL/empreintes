@@ -687,3 +687,9 @@ h1,h2,h3{font-weight:400}
 .strate-actions .btn{width:100%;justify-content:flex-start}
 .salle.s-filon{width:58px;height:58px}
 .salle.s-filon:not(.accessible):not(.ici){background:#24394a;color:#bfe8ff}
+/* le front de taille : la roche à creuser et ses creuseurs */
+.strate.front-taille{justify-content:flex-start;align-items:flex-start}
+.strate.front-taille .strate-infos small{display:flex;align-items:center;gap:5px;font-style:normal}
+.strate.front-taille .strate-infos .ico{width:14px;height:14px}
+.strate.front-taille .jauge{margin:3px 0}
+.strate.front-taille.prete{box-shadow:inset 0 0 0 1.5px rgba(216,180,101,.55)}
