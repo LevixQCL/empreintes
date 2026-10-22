@@ -1,6 +1,6 @@
 # Rapport du robot d'équilibrage
 
-2026-10-22 · 300 expéditions par mesure · 470 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
+2026-10-22 · 300 expéditions par mesure · 450 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
 
 ## Le deck de départ selon la profondeur
 
@@ -8,11 +8,10 @@
 |---|---|
 | −1 | 100 % |
 | −2 | 100 % |
-| −3 | 100 % |
-| −4 | 84 % |
-| −5 | 6 % |
+| −3 | 99 % |
+| −4 | 19 % |
 
-Mesure des cartes : une Strate −3 entière en exploration, ennemis ×1.31 (le deck de départ y gagne 52 % des descentes ; ancienne Strate de référence en mode linéaire : −4).
+Mesure des cartes : une Strate −3 entière en exploration, ennemis ×1.18 (le deck de départ y gagne 46 % des descentes ; ancienne Strate de référence en mode linéaire : −4).
 
 ## Ce que vaut chaque carte
 
@@ -21,54 +20,54 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Carte | Rareté | Effets | À la découverte | Au niveau 10 | Alerte |
 |---|---|---|---|---|---|
 | Jambes à ressort | Fer | Élan | +0 | +0 |  |
-| Gant à arc | Fer | Surcharge | +3 | +1 |  |
-| Œil-relais | Fer | Perçant | −2 | −1 |  |
-| Grappin à câble | Fer | Élan | −4 | +7 |  |
-| Cœur-turbine | Cuivre | Surcharge | +4 | +3 |  |
-| Œil-brouilleur | Cuivre | Désarmer | +5 | +4 |  |
-| Bras-grue | Argent | Perçant | +2 | +2 |  |
-| Dorsale renforcée | Argent | Élan | +15 | +7 | TROP FORTE |
-| Lames orbitales | Or | Crescendo | +8 | +1 |  |
-| Cœur de reprise | Or | Perçant | +0 | +5 | trop faible |
+| Gant à arc | Fer | Surcharge | +3 | −5 |  |
+| Œil-relais | Fer | Perçant | +1 | −5 |  |
+| Grappin à câble | Fer | Élan | +11 | +5 | TROP FORTE |
+| Cœur-turbine | Cuivre | Surcharge | +7 | +0 |  |
+| Œil-brouilleur | Cuivre | Désarmer | +5 | +3 |  |
+| Bras-grue | Argent | Perçant | +9 | −1 |  |
+| Dorsale renforcée | Argent | Élan | +15 | +3 |  |
+| Lames orbitales | Or | Crescendo | +14 | +2 |  |
+| Cœur de reprise | Or | Perçant | +5 | +5 | trop faible |
 | Glande d’ambre | Fer | Vague | +0 | +0 |  |
-| Crocs fossiles | Fer | Siphon | −7 | −12 |  |
-| Cuir de récif | Fer | Rempart | −10 | −1 |  |
-| Yeux nocturnes | Fer | Fissure | −7 | −10 |  |
-| Poumons d’abysse | Cuivre | Rempart | +3 | +5 |  |
-| Branchies des Fondations | Cuivre | Rempart | −2 | +2 |  |
-| Carapace-mère | Argent | Rempart | +10 | +4 |  |
-| Sang d’ambre | Argent | Vague | +11 | +5 |  |
-| Cœur de meute | Or | Siphon | +24 | +5 | TROP FORTE |
-| Mue totale | Or | Vague | +11 | +6 |  |
+| Crocs fossiles | Fer | Siphon | −5 | −16 |  |
+| Cuir de récif | Fer | Rempart | −2 | −2 |  |
+| Yeux nocturnes | Fer | Fissure | −3 | −14 |  |
+| Poumons d’abysse | Cuivre | Rempart | +5 | +3 |  |
+| Branchies des Fondations | Cuivre | Rempart | +6 | +1 |  |
+| Carapace-mère | Argent | Rempart | +12 | +0 |  |
+| Sang d’ambre | Argent | Vague | +18 | +1 |  |
+| Cœur de meute | Or | Siphon | +24 | +2 | TROP FORTE |
+| Mue totale | Or | Vague | +20 | +4 |  |
 | Éclat qui chante | Fer | Crescendo | +0 | +0 |  |
-| Miroir de brume | Fer | Désarmer | +1 | +9 |  |
-| Encre ancienne | Fer | Fissure | −8 | −1 |  |
-| Mèche d’or | Fer | Désarmer | +2 | +5 |  |
-| Plume de givre | Cuivre | Désarmer | +5 | +2 |  |
-| Ombre de serpent | Cuivre | Fissure | +6 | +4 |  |
-| Ombre ailée | Argent | Fissure | −2 | +3 | trop faible |
-| Pressentiment | Argent | Désarmer | +10 | +8 |  |
-| Chant des abysses | Or | Accord | +7 | +5 |  |
-| Souffle du wyrm | Or | Crescendo | +8 | +5 |  |
+| Miroir de brume | Fer | Désarmer | +10 | +4 | TROP FORTE |
+| Encre ancienne | Fer | Fissure | +1 | −3 |  |
+| Mèche d’or | Fer | Désarmer | +3 | +2 |  |
+| Plume de givre | Cuivre | Désarmer | +9 | +3 |  |
+| Ombre de serpent | Cuivre | Fissure | +11 | −2 |  |
+| Ombre ailée | Argent | Fissure | +9 | +2 |  |
+| Pressentiment | Argent | Désarmer | +9 | +6 |  |
+| Chant des abysses | Or | Accord | +17 | +0 |  |
+| Souffle du wyrm | Or | Crescendo | +11 | +3 |  |
 
-Moyenne par rareté, à la découverte : Fer −3 · Cuivre +4 · Argent +8 · Or +10. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
+Moyenne par rareté, à la découverte : Fer +2 · Cuivre +7 · Argent +12 · Or +15. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
 
 
 ## Une Strate entière avec le deck de départ
 
-La descente salle par salle jusqu'au gardien, avec les 20 cartes de départ, sans aucune progression. Le robot essaie toutes les chaînes ; le joueur moyen regarde seulement ce qui est affiché (force, suite, attaque annoncée). Force des ennemis : −1 ×1, −2 ×1.3, −3 ×1.6, −4 ×1.9, −5 ×2.25, −6 ×2.6, −7 ×2.7, −8 ×2.82, −9 ×2.9, −10 ×3.05, −11 ×3.25, −12 ×3.5, −13 ×3.68, −14 ×3.8, puis ×1.04 par Strate.
+La descente salle par salle jusqu'au gardien, avec les 20 cartes de départ, sans aucune progression. Le robot essaie toutes les chaînes ; le joueur moyen regarde seulement ce qui est affiché (force, suite, attaque annoncée). Force des ennemis : −1 ×1, −2 ×1.3, −3 ×1.7, −4 ×2, −5 ×2.3, −6 ×2.6, −7 ×2.7, −8 ×2.82, −9 ×2.9, −10 ×3.05, −11 ×3.25, −12 ×3.5, −13 ×3.68, −14 ×3.8, puis ×1.04 par Strate.
 
 | Strate | Force | Robot | Joueur moyen | Combats gagnés (moyen) |
 |---|---|---|---|---|
 | −1 | ×1.00 | 100 % | 100 % | 4.0 |
-| −2 | ×1.30 | 100 % | 99 % | 3.9 |
-| −3 | ×1.60 | 97 % | 84 % | 3.7 |
-| −4 | ×1.90 | 36 % | 2 % | 2.1 |
-| −5 | ×2.25 | 3 % | 0 % | 1.1 |
-| −6 | ×2.60 | 0 % | 0 % | 0.5 |
-| −7 | ×2.70 | 0 % | 0 % | 0.4 |
-| −8 | ×2.82 | 0 % | 0 % | 0.2 |
-| −9 | ×2.90 | 0 % | 0 % | 0.1 |
+| −2 | ×1.30 | 100 % | 96 % | 3.9 |
+| −3 | ×1.70 | 94 % | 55 % | 3.2 |
+| −4 | ×2.00 | 12 % | 0 % | 1.3 |
+| −5 | ×2.30 | 0 % | 0 % | 0.6 |
+| −6 | ×2.60 | 0 % | 0 % | 0.2 |
+| −7 | ×2.70 | 0 % | 0 % | 0.0 |
+| −8 | ×2.82 | 0 % | 0 % | 0.0 |
+| −9 | ×2.90 | 0 % | 0 % | 0.0 |
 | −10 | ×3.05 | 0 % | 0 % | 0.0 |
 | −11 | ×3.25 | 0 % | 0 % | 0.0 |
 | −12 | ×3.50 | 0 % | 0 % | 0.0 |
@@ -82,14 +81,14 @@ Une partie entière, jouée par le joueur moyen pendant 45 jours sur 12 parties 
 | −2 | jour 1 (1 exp.) | jour 1 (1 exp.) |
 | −3 | jour 1 (1 exp.) | jour 1 (1 exp.) |
 | −4 | jour 2 (1 exp.) | jour 1 (1 exp.) |
-| −5 | jour 4 (3 exp.) | jour 2 (4 exp.) |
-| −6 | jour 7 (4 exp.) | jour 4 (8 exp.) |
-| −7 | jour 11 (8 exp.) | jour 8 (17 exp.) |
-| −8 | jour 16 (10 exp.) | jour 11 (18 exp.) |
-| −9 | jour 22 (13 exp.) | jour 15 (20 exp.) |
-| −10 | jour 29 (13 exp.) | jour 21 (28 exp.) |
-| −11 | jour 36 (14 exp.) | jour 27 (30 exp.) |
-| −12 | jour 45 (16 exp.) | jour 32 (22 exp.) |
-| −13 | — | jour 38 (35 exp.) |
+| −5 | jour 4 (4 exp.) | jour 3 (7 exp.) |
+| −6 | jour 7 (8 exp.) | jour 4 (7 exp.) |
+| −7 | jour 11 (10 exp.) | jour 8 (15 exp.) |
+| −8 | jour 19 (13 exp.) | jour 11 (20 exp.) |
+| −9 | jour 24 (11 exp.) | jour 16 (23 exp.) |
+| −10 | jour 32 (16 exp.) | jour 22 (30 exp.) |
+| −11 | jour 42 (20 exp.) | jour 28 (28 exp.) |
+| −12 | — | jour 34 (30 exp.) |
+| −13 | — | jour 42 (40 exp.) |
 
-Victoires au front : Occasionnel 43 % · Assidu 45 %.
+Victoires au front : Occasionnel 30 % · Assidu 29 %.
