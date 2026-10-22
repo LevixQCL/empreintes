@@ -210,8 +210,12 @@
 @keyframes titre-cam{from{transform:scale(1.04)}to{transform:scale(1.14) translateY(-2%)}}
 .titre-voile{position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,rgba(8,10,14,.7) 0%,rgba(8,10,14,.15) 30%,rgba(8,10,14,0) 55%,rgba(8,10,14,.75) 88%,rgba(8,10,14,.9) 100%)}
 .titre-haut{text-align:center;display:grid;gap:12px}
-.titre-nom{margin:0;white-space:nowrap;font-family:var(--display);font-weight:400;font-size:clamp(30px,9vw,64px);letter-spacing:.1em;line-height:1;text-shadow:0 0 24px rgba(185,166,255,.55),0 3px 18px rgba(0,0,0,.7)}
-.titre-nom span{display:inline-block;opacity:0;animation:lettre 1.1s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(.5s + var(--i) * .08s)}
+.titre-nom{margin:0;width:100%;line-height:0}
+.titre-nom svg{display:block;width:min(92vw,560px);height:auto;margin-inline:auto;overflow:visible}
+.titre-nom .lt-lettre,.titre-nom .lt-cristal{transform-box:fill-box;transform-origin:50% 50%;animation:lettre 1.1s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(.5s + var(--i) * .08s)}
+.titre-nom .lt-cristal{animation:lettre 1.1s cubic-bezier(.2,.7,.2,1) both,cristal-lueur 3.2s ease-in-out 2.2s infinite;animation-delay:calc(.5s + var(--i) * .08s),2.2s}
+@keyframes cristal-lueur{0%,100%{filter:drop-shadow(0 0 2px rgba(95,168,255,.4))}50%{filter:drop-shadow(0 0 10px rgba(95,168,255,.95))}}
+.titre-nom .lt-trait{opacity:0;animation:apparait 1s ease-out 1.4s forwards}
 @keyframes lettre{from{opacity:0;transform:translateY(-10px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
 .titre-sous{margin:0;font-family:var(--mono);font-size:12px;letter-spacing:.08em;opacity:0;animation:apparait 1s ease-out 1.6s forwards;text-shadow:0 1px 6px rgba(0,0,0,.8)}
 .titre-bas{display:grid;justify-items:center;gap:12px;opacity:0;animation:apparait 1s ease-out 2.1s forwards}
@@ -229,7 +233,7 @@
 .titre-fond video{animation:none}
 /* Écran titre v2 : titre qui tient toujours sur une ligne, image fixe animée en code */
 .titre{min-width:0;max-width:100%}
-.titre-nom{font-size:clamp(24px,calc((min(100vw,430px) - 72px) / 8.6),54px);letter-spacing:.08em;max-width:100%}
+.titre-nom{max-width:100%}
 .titre-sous{font-size:11px;padding-inline:8px}
 .titre-image{position:absolute;top:0;height:100%;aspect-ratio:816/1456;left:28%;transform:translateX(-28%);animation:titre-cam 30s ease-in-out infinite alternate;transform-origin:50% 60%}
 @keyframes titre-cam{from{transform:translateX(-28%) scale(1.02)}to{transform:translateX(-28%) scale(1.07)}}
