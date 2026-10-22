@@ -86,10 +86,26 @@
   .grille-porteurs{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
   .ecran-escouade > .pied-fixe{width:100%;max-width:1240px;margin-inline:auto;padding:18px 40px 22px}
   .ecran-escouade > .pied-fixe .btn{flex:0 1 380px;margin-left:auto}
-  .ecran-codex > .contenu{max-width:900px}
-  .ecran-lecture > .contenu{max-width:900px}
-  .lecture-tete.illustree{min-height:440px}
-  .lecture-texte{font-size:18px}
+  /* Chroniques : un vrai rayon de planches ; à la lecture, la planche reste à gauche, le texte se lit à droite */
+  .rayon{grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:16px}
+  .livre-tete h2{font-size:26px}
+  .chapitre-tuile .chap-bas strong{font-size:17px}
+  .ecran-lecture > .contenu{padding-top:28px}
+  .lecture{grid-template-columns:minmax(320px,.8fr) minmax(0,1fr);column-gap:56px;align-items:start}
+  .lecture-planche{--cut:16px;position:sticky;top:calc(var(--hud-h) + 28px);margin:0;height:calc(100dvh - var(--hud-h) - 56px);max-height:880px;
+    -webkit-mask-image:none;mask-image:none;clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+  .lecture-planche::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 0 1px var(--filet),inset 0 -120px 80px -60px rgba(6,7,10,.55)}
+  .lecture-page{padding-top:4px}
+  .lecture-retour{position:static;margin-bottom:34px}
+  .lecture-titre{margin-top:0;text-align:left;padding-bottom:26px}
+  .lecture-titre .surtitre{justify-content:flex-start}
+  .lecture-titre h1{font-size:44px;text-shadow:none}
+  .lecture-titre::after{justify-self:start;width:220px}
+  .lecture-texte{margin-inline:0;padding-inline:0;max-width:36em}
+  .lecture-nav{margin-inline:0;max-width:36em;grid-template-columns:1fr 1fr}
+  .lecture-nav .prec{grid-row:1;grid-column:1}
+  .lecture-nav .suiv,.lecture-nav .aide{grid-row:1;grid-column:2}
+  .lecture-nav .aide{text-align:right;align-self:center}
 
   /* ================= Combat : l'ennemi à gauche, la chaîne et la main à droite ================= */
   #app[data-mode="combat"]{max-width:1520px;margin-inline:auto}

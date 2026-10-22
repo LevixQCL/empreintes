@@ -655,23 +655,33 @@ export function htmlCodex(e: EcranDistrict): string {
   }
   h += `<p class="chroniques-intro">Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi la troisième nuit après ton élection.</p>`;
   for (const livre of [1, 2, 3] as const) {
-    h += `<section class="livre"><h2 class="titre-bloc">${ICO.codex}${echap(LIVRES[livre])}</h2>`;
-    for (const c of CHAPITRES.filter((x) => x.livre === livre)) {
-      const n = CHAPITRES.indexOf(c) + 1;
+    const chapitres = CHAPITRES.filter((x) => x.livre === livre);
+    const lus = chapitres.filter((c) => chapitreOuvert(c, j.strate) && j.lus.includes(c.id)).length;
+    const [numLivre, nomLivre] = LIVRES[livre].split(' · ');
+    h += `<section class="livre"><header class="livre-tete"><span class="surtitre">${echap(numLivre!.toUpperCase())}</span><h2>${echap(nomLivre ?? '')}</h2>`
+      + `<span class="livre-compte">${lus} / ${chapitres.length} lus</span></header><div class="rayon">`;
+    for (const c of chapitres) {
+      const n = String(CHAPITRES.indexOf(c) + 1).padStart(2, '0');
+      const img = `<img src="./intro/${imageChapitre(c)}.webp" alt="" loading="lazy" decoding="async">`;
       if (chapitreOuvert(c, j.strate)) {
         const neuf = !j.lus.includes(c.id);
-        h += `<button type="button" class="chapitre-ligne${neuf ? ' neuf' : ''}" data-action="chapitre" data-id="${c.id}">`
-          + `<span class="num">${n}</span><span class="txt"><strong>${echap(c.titre)}</strong><small>${echap(c.epoque)}</small></span>`
-          + (!j.luesRecompensees.includes(c.id) ? `<span class="marque-neuf">+1 carte</span>` : `<span class="lu" aria-label="Lu">${ICO.ok}</span>`) + `</button>`;
+        h += `<button type="button" class="chapitre-tuile${neuf ? ' neuf' : ''}" data-action="chapitre" data-id="${c.id}">${img}`
+          + `<span class="chap-num">CH. ${n}</span>`
+          + (!j.luesRecompensees.includes(c.id) ? `<span class="chap-don">+1 carte</span>` : `<span class="chap-lu" aria-label="Lu">${ICO.ok}</span>`)
+          + `<span class="chap-bas"><strong>${echap(c.titre)}</strong><small>${echap(c.epoque)}</small></span></button>`;
       } else {
-        h += `<div class="chapitre-ligne ferme" aria-disabled="true"><span class="num">${n}</span><span class="txt"><strong>${echap(c.titre)}</strong>`
-          + `<small>${echap(c.teaser ?? '')}</small><em>${ICO.strate}S’ouvre à la Strate −${c.strate}</em></span><span class="lu" aria-hidden="true">${ICO.verrou}</span></div>`;
+        h += `<div class="chapitre-tuile ferme" aria-disabled="true">${img}<span class="chap-num">CH. ${n}</span><span class="chap-verrou" aria-hidden="true">${ICO.verrou}</span>`
+          + `<span class="chap-bas"><strong>${echap(c.titre)}</strong>${c.teaser ? `<small>${echap(c.teaser)}</small>` : ''}<em>${ICO.strate}Strate −${c.strate}</em></span></div>`;
       }
     }
-    h += `</section>`;
+    h += `</div></section>`;
   }
   return coquille(e, h, 'ecran-codex');
 }
+
+/** L'illustration d'un chapitre. Six chapitres n'ont pas encore la leur : ils empruntent provisoirement une image de l'intro. */
+const IMAGE_PROVISOIRE: Record<string, string> = { lettre: '10-toi', sept: '06-empreintes', accords: '03-tempetes', theories: '10-dessous', 'deux-fois': '05-puits-zero', avant: '03-fracture' };
+const imageChapitre = (c: { id: string; image?: string }) => c.image ?? IMAGE_PROVISOIRE[c.id] ?? '10-dessous';
 
 /** Typographie française : espace fine insécable avant : ; ? ! » et après « */
 const typo = (t: string) => t.replace(/ ([:;?!»])/g, ' $1').replace(/« /g, '« ').replace(/n° /g, 'n° ').replace(/(\d) h (\d)/g, '$1 h $2');
@@ -685,21 +695,23 @@ function htmlChapitre(e: EcranDistrict, id: string): string {
   const prec = lisibles[k - 1];
   const suiv = lisibles[k + 1];
   const prochainFerme = CHAPITRES.slice(i + 1).find((x) => !chapitreOuvert(x, j.strate));
-  let h = `<article class="lecture">`;
-  h += `<header class="lecture-tete${c.image ? ' illustree' : ''}">`
-    + (c.image ? `<div class="lecture-fond" aria-hidden="true"><img src="./intro/${c.image}.webp" alt="" decoding="async"></div>` : '')
-    + `<button type="button" class="btn sec petit" data-action="chapitre-fermer">${ICO.retour}Sommaire</button>`
-    + `<div class="lecture-titre"><span class="surtitre">${echap(LIVRES[c.livre].split(' · ')[0]!.toUpperCase())} · CHAPITRE ${i + 1}</span><h1>${echap(c.titre)}</h1><span class="epoque">${echap(c.epoque)}</span></div></header>`;
+  const suite = (x: typeof c, sens: 'prec' | 'suiv') => `<button type="button" class="lecture-suite ${sens}" data-action="chapitre" data-id="${x.id}">`
+    + `<img src="./intro/${imageChapitre(x)}.webp" alt="" loading="lazy" decoding="async">`
+    + `<span><small>${sens === 'prec' ? 'Chapitre précédent' : 'Chapitre suivant'}</small><strong>${echap(x.titre)}</strong></span>${sens === 'prec' ? ICO.retour : ICO.lancer}</button>`;
+  let h = `<article class="lecture"><div class="lecture-progres" aria-hidden="true"></div>`;
+  h += `<figure class="lecture-planche" aria-hidden="true"><img src="./intro/${imageChapitre(c)}.webp" alt="" decoding="async"></figure>`;
+  h += `<div class="lecture-page"><button type="button" class="btn sec petit lecture-retour" data-action="chapitre-fermer">${ICO.retour}Sommaire</button>`
+    + `<header class="lecture-titre"><span class="surtitre">${echap(LIVRES[c.livre].split(' · ')[0]!.toUpperCase())} · CHAPITRE ${i + 1}</span><h1>${echap(c.titre)}</h1><span class="epoque">${echap(c.epoque)}</span></header>`;
   h += `<div class="lecture-texte">`;
   c.paragraphes.forEach((p, n) => {
     const signature = n === c.paragraphes.length - 1 && p.startsWith('Ysé') && p.length < 80;
     h += `<p${signature ? ' class="signature"' : n === 0 ? ' class="lettrine"' : ''}>${typo(echap(p))}</p>`;
   });
   h += `</div><nav class="lecture-nav">`
-    + (prec ? `<button type="button" class="btn sec" data-action="chapitre" data-id="${prec.id}">${ICO.retour}<span>${echap(prec.titre)}</span></button>` : '<span></span>')
-    + (suiv ? `<button type="button" class="btn prim" data-action="chapitre" data-id="${suiv.id}"><span>${echap(suiv.titre)}</span>${ICO.lancer}</button>`
-      : prochainFerme ? `<p class="aide">La suite s’ouvrira à la Strate −${prochainFerme.strate}.</p>` : `<p class="aide">Fin des Chroniques. Pour l’instant.</p>`)
-    + `</nav></article>`;
+    + (suiv ? suite(suiv, 'suiv')
+      : `<p class="aide">${prochainFerme ? `La suite s’ouvrira à la Strate −${prochainFerme.strate}.` : 'Fin des Chroniques. Pour l’instant.'}</p>`)
+    + (prec ? suite(prec, 'prec') : '')
+    + `</nav></div></article>`;
   return h;
 }
 

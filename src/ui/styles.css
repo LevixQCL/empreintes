@@ -565,48 +565,81 @@ h1,h2,h3{font-weight:400}
 .segments-choix.deux{grid-template-columns:1fr 1fr}
 .pastille-n{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;background:var(--laiton);color:#1C1406;font-family:var(--mono);font-size:11px;font-weight:600;vertical-align:1px;clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%)}
 .chroniques-intro{margin:0;font-family:var(--lecture);font-style:italic;font-size:15px;line-height:1.55;color:var(--ink-2)}
-.livre{display:grid;gap:8px}
-.chapitre-ligne{--cut:8px;display:flex;align-items:center;gap:12px;width:100%;min-height:60px;padding:10px 14px;border:none;color:var(--ink);text-align:left;
-  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet)}
-.chapitre-ligne .num{flex:none;display:grid;place-items:center;width:28px;height:31px;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--or-pale);background:#1B1F28;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
-.chapitre-ligne .txt{flex:1;display:grid;gap:2px;min-width:0}
-.chapitre-ligne strong{font-family:var(--lecture);font-weight:500;font-size:16px}
-.chapitre-ligne small{font-size:12.5px;color:var(--quiet)}
-.chapitre-ligne em{display:inline-flex;align-items:center;gap:5px;font-style:normal;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--gold);text-transform:uppercase}
-.chapitre-ligne em .ico{width:12px;height:12px}
-.chapitre-ligne .marque-neuf{flex:none;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#1C1406;background:var(--laiton);padding:3px 8px;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
-.chapitre-ligne .lu{color:var(--mute)}
-.chapitre-ligne .lu .ico{width:18px;height:18px}
-.chapitre-ligne.neuf{box-shadow:inset 0 0 0 1px var(--filet-fort),inset 3px 0 0 var(--gold)}
-.chapitre-ligne.neuf .num{background:var(--laiton);color:#1C1406}
-.chapitre-ligne.ferme{background:repeating-linear-gradient(135deg,rgba(255,255,255,.02) 0 8px,transparent 8px 16px);box-shadow:inset 0 0 0 1px var(--line);color:var(--ink-2)}
-.chapitre-ligne.ferme strong{color:var(--quiet)}
-/* La page de lecture */
-.ecran-lecture .contenu{padding-top:12px}
-.lecture{display:grid;gap:0}
-.lecture-tete{--cut:14px;position:relative;display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-height:160px;padding:14px 16px 18px;background:linear-gradient(170deg,#2A231B,#15120E);overflow:hidden;isolation:isolate;
+/* Le sommaire : chaque chapitre est une planche illustrée, rangée par livre comme sur un rayon */
+.livre{display:grid;gap:12px;margin-top:6px}
+.livre-tete{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;column-gap:12px;padding-bottom:8px;box-shadow:0 1px 0 var(--filet)}
+.livre-tete .surtitre{grid-column:1 / -1;color:var(--gold)}
+.livre-tete h2{margin:0;font-family:var(--lecture);font-weight:500;font-size:22px;line-height:1.2;color:var(--ink)}
+.livre-tete .livre-compte{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--quiet);padding-bottom:3px}
+.rayon{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.chapitre-tuile{--cut:10px;position:relative;display:block;aspect-ratio:3/4.4;padding:0;border:none;overflow:hidden;isolation:isolate;text-align:left;color:#F6F1E6;background:#0B0D12;cursor:pointer;
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
-.lecture-tete.illustree{min-height:300px}
-.lecture-fond{position:absolute;inset:0;z-index:-2;overflow:hidden}
-.lecture-fond img{width:100%;height:100%;object-fit:cover;object-position:center 35%;display:block;animation:zoom-lent 18s ease-out forwards}
-.lecture-tete::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(10,9,8,.45) 0%,rgba(10,9,8,0) 30%,rgba(10,9,8,.55) 65%,rgba(10,9,8,.95) 100%)}
-.lecture-tete .btn{align-self:flex-start}
-.lecture-titre{display:grid;gap:6px;color:#F6F1E6}
-.lecture-titre .surtitre{color:var(--gold)}
-.lecture-titre h1{margin:0;font-family:var(--lecture);font-weight:500;font-size:30px;line-height:1.15;text-wrap:balance;text-shadow:0 2px 12px rgba(0,0,0,.6)}
-.lecture-titre .epoque{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;opacity:.85}
-.lecture-texte{padding:22px 4px 6px;max-width:36em;margin-inline:auto}
-.lecture-texte p{margin:0 0 1.05em;font-family:var(--lecture);font-size:18px;line-height:1.7;color:#EDE4D0;text-wrap:pretty;hyphens:auto;-webkit-hyphens:auto}
-.lecture-texte p.lettrine::first-letter{float:left;font-family:var(--display);font-size:3.3em;line-height:.82;padding:.06em .1em 0 0;color:var(--gold)}
+.chapitre-tuile img{position:absolute;inset:0;z-index:-2;width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;transition:transform .6s cubic-bezier(.2,.8,.2,1),filter .3s ease}
+.chapitre-tuile::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,7,10,.55) 0%,rgba(6,7,10,0) 22%,rgba(6,7,10,0) 45%,rgba(6,7,10,.82) 74%,rgba(6,7,10,.96) 100%)}
+.chapitre-tuile::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(216,180,101,.18)}
+.chapitre-tuile.neuf::after{box-shadow:inset 0 0 0 1px var(--filet-fort),inset 0 -2px 0 var(--gold)}
+.chap-num{position:absolute;top:9px;left:10px;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;color:rgba(246,241,230,.8);text-shadow:0 1px 4px #000}
+.chap-don{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#1C1406;background:var(--laiton);padding:3px 7px;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
+.chap-lu{position:absolute;top:7px;right:8px;color:rgba(246,241,230,.55)}
+.chap-lu .ico{width:16px;height:16px}
+.chap-bas{position:absolute;left:0;right:0;bottom:0;display:grid;gap:3px;padding:10px 11px 12px}
+.chap-bas strong{font-family:var(--lecture);font-weight:500;font-size:16px;line-height:1.2;text-wrap:balance;text-shadow:0 1px 8px rgba(0,0,0,.8)}
+.chap-bas small{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--or-pale)}
+.chap-bas em{display:inline-flex;align-items:center;gap:5px;margin-top:3px;font-style:normal;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+.chap-bas em .ico{width:12px;height:12px}
+.chapitre-tuile.ferme{cursor:default;color:var(--ink-2)}
+.chapitre-tuile.ferme img{filter:grayscale(.8) blur(5px) brightness(.55);transform:scale(1.08)}
+.chapitre-tuile.ferme .chap-bas strong{color:var(--ink-2)}
+.chapitre-tuile.ferme .chap-bas small{font-family:var(--lecture);font-style:italic;font-size:12.5px;letter-spacing:0;line-height:1.35;color:var(--quiet);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.chap-verrou{position:absolute;top:34%;left:50%;transform:translate(-50%,-50%);display:grid;place-items:center;width:44px;height:44px;color:var(--or-pale);
+  background:rgba(8,10,14,.55);box-shadow:inset 0 0 0 1px var(--filet-fort);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.chap-verrou .ico{width:18px;height:18px}
+@media (hover:hover){
+  .chapitre-tuile:not(.ferme):hover img{transform:scale(1.05)}
+  .chapitre-tuile:not(.ferme):hover::after{box-shadow:inset 0 0 0 1px var(--gold)}
+}
+.chapitre-tuile:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* La page de lecture : la planche du chapitre, puis le texte. Sur PC, la planche reste à gauche pendant la lecture (bureau.css). */
+.ecran-lecture .contenu{padding-top:0}
+.lecture{position:relative;display:grid}
+.lecture-progres{position:fixed;z-index:20;top:0;left:0;right:0;height:2px;transform-origin:0 50%;transform:scaleX(0);
+  background:linear-gradient(90deg,var(--or-pale),var(--gold));box-shadow:0 0 8px rgba(216,180,101,.6)}
+@supports (animation-timeline: scroll()){ .lecture-progres{animation:progres-lecture linear both;animation-timeline:scroll(root)} }
+@keyframes progres-lecture{to{transform:scaleX(1)}}
+.lecture-planche{position:relative;margin:0 -16px;height:min(68vh,560px);overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg,#000 55%,transparent 100%);mask-image:linear-gradient(180deg,#000 55%,transparent 100%)}
+.lecture-planche img{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;animation:zoom-lent 24s ease-out forwards}
+.lecture-page{display:grid;min-width:0}
+.lecture-retour{position:absolute;z-index:2;top:14px;left:0;justify-self:start}
+.lecture-titre{position:relative;display:grid;gap:8px;margin-top:-120px;padding-bottom:22px;color:#F6F1E6;text-align:center}
+.lecture-titre .surtitre{color:var(--gold);justify-content:center}
+.lecture-titre h1{margin:0;font-family:var(--lecture);font-weight:500;font-size:32px;line-height:1.12;text-wrap:balance;text-shadow:0 2px 16px rgba(0,0,0,.9)}
+.lecture-titre .epoque{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--or-pale)}
+.lecture-titre::after{content:"";justify-self:center;width:min(220px,60%);height:9px;margin-top:10px;
+  background:linear-gradient(var(--gold),var(--gold)) center/7px 7px no-repeat,linear-gradient(90deg,transparent,var(--filet-fort) 40%,transparent 46%,transparent 54%,var(--filet-fort) 60%,transparent) center/100% 1px no-repeat;
+  -webkit-mask:linear-gradient(#000,#000);clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+.lecture-texte{padding:6px 4px 6px;max-width:34em;margin-inline:auto}
+.lecture-texte p{margin:0 0 1.05em;font-family:var(--lecture);font-size:18px;line-height:1.72;color:#EAE2CF;text-wrap:pretty;hyphens:auto;-webkit-hyphens:auto}
+.lecture-texte p.lettrine::first-letter{float:left;font-family:var(--display);font-size:3.4em;line-height:.82;padding:.06em .1em 0 0;color:var(--gold)}
 .lecture-texte p.signature{text-align:right;font-style:italic;color:var(--ink-2);margin-top:1.4em}
-.lecture-nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 0 4px;box-shadow:0 -1px 0 var(--filet);margin-top:8px}
-.lecture-nav .btn{max-width:100%;min-height:46px;min-width:0}
-.lecture-nav .btn span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lecture-nav .prim{margin-left:auto}
-.lecture-nav .aide{margin-left:auto;text-align:right}
-@keyframes zoom-lent{from{transform:scale(1.02)}to{transform:scale(1.12)}}
+.lecture-nav{display:grid;gap:10px;width:100%;max-width:34em;margin:22px auto 0;padding-top:22px;box-shadow:0 -1px 0 var(--filet)}
+.lecture-nav .aide{margin:0;text-align:center;font-family:var(--lecture);font-style:italic;color:var(--quiet)}
+.lecture-suite{--cut:8px;display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:14px;width:100%;min-height:0;padding:0 16px 0 0;border:none;text-align:left;color:var(--ink);
+  background:var(--verre-2);box-shadow:inset 0 0 0 1px var(--filet);overflow:hidden;cursor:pointer;
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.lecture-suite img{width:64px;height:80px;object-fit:cover;object-position:center 30%;display:block}
+.lecture-suite span{display:grid;gap:3px;min-width:0}
+.lecture-suite small{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--quiet)}
+.lecture-suite strong{font-family:var(--lecture);font-weight:500;font-size:17px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lecture-suite > .ico{width:20px;height:20px;color:var(--gold)}
+.lecture-suite.suiv{box-shadow:inset 0 0 0 1px var(--filet-fort)}
+.lecture-suite.suiv small{color:var(--gold)}
+.lecture-suite.prec{opacity:.8}
+@media (hover:hover){ .lecture-suite:hover{box-shadow:inset 0 0 0 1px var(--gold);opacity:1} }
+@keyframes zoom-lent{from{transform:scale(1.02)}to{transform:scale(1.1)}}
 .titre-sec{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-@media (prefers-reduced-motion: reduce){ .lecture-fond img,.toile .lueur-cristal,.toile .orbite-cristal .ox,.toile .orbite-cristal .oy,.toile .orbite-cristal i{animation:none} .toile .scintilles,.toile .reflet-dore{display:none} }
+@media (prefers-reduced-motion: reduce){ .lecture-planche img,.lecture-progres,.toile .lueur-cristal,.toile .orbite-cristal .ox,.toile .orbite-cristal .oy,.toile .orbite-cristal i{animation:none} .toile .scintilles,.toile .reflet-dore{display:none} }
 
 /* Zone de la Strate choisie (écran Escouade) */
 .zone-strate{display:flex;gap:10px;align-items:center;margin:0;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
