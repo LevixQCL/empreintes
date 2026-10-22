@@ -8,7 +8,7 @@ import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, prolon
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
 import type { CombatEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import type { Expedition } from '../core/expedition';
-import { illustrationEnnemi, illustrationModule, portrait, textureMetal } from './art';
+import { illustrationEnnemi, illustrationModule, ornementMetal, portrait, textureMetal } from './art';
 import { couleurFrequence } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
@@ -89,6 +89,7 @@ function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: 
   const ill = g.carte ? illustrationModule(g.carte) : null;
   const fond = ill ?? (g.porteur ? portrait(g.porteur) : null);
   const metal = (g.carte?.split('@')[1] as Rarete | undefined) ?? 'fer';
+  const orn = ornementMetal(metal);
   const autres = !accord && g.fs && g.fs.length > 1 ? g.fs.filter((f) => f !== g.f) : [];
   const cls = ['geste', taille, `gm-${metal}`, g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
@@ -96,6 +97,8 @@ function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: 
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]};--fc:${accord ? '#5d5470' : couleurFrequence(g.f)};--tex:url(${textureMetal(metal)})" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="g-cadre">`
     + (fond ? `<span class="g-art${ill ? '' : ' g-portrait'}" style="background-image:url(${fond})" aria-hidden="true"></span>` : '<span class="g-art g-vide" aria-hidden="true"></span>')
+    // l'équerre de métal, au coin droit en bas de la plaque
+    + (orn ? `<span class="g-orn" style="background-image:url(${orn})" aria-hidden="true"></span>` : '')
     + `<span class="g-socle" aria-hidden="true"><span class="g-freq">${accord ? '∗' : g.f}</span></span>`
     + (autres.length ? `<span class="g-pips" aria-hidden="true">${autres.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</span>` : '')
     + (g.lourd ? '<span class="g-lourd">2 PL.</span>' : '')

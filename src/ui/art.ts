@@ -90,6 +90,12 @@ export const illustrationModule = (cle: string): string | null => {
 export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
 export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
+/**
+ * Équerre de coin d'une rareté (peinte sur Midjourney le 22 octobre 2026, coin en haut à gauche de l'image).
+ * La nacre n'en a pas : elle n'a pas de cadre. L'argent attend une nouvelle image (la première sortait en faucille).
+ */
+const ORNEMENTS = new Set<Rarete>(['fer', 'cuivre', 'or']);
+export const ornementMetal = (r: Rarete): string | null => (ORNEMENTS.has(r) ? `${base}ornements/${r}.webp` : null);
 /** Fond de la carte d'une Strate, une illustration par zone (0 Fondations, 1 salles closes, 2 mémoires, 3 le fond), quand elle existe */
 const STRATES_ILLUSTREES = new Set<number>([0, 1, 2, 3]);
 export const decorStrate = (zone: number): string | null => (STRATES_ILLUSTREES.has(zone) ? `${base}strates/zone-${zone}.webp` : null);
