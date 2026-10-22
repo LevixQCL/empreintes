@@ -2,6 +2,7 @@ import './ui/styles.css';
 import './ui/scenes.css';
 import './ui/face-carte.css';
 import './ui/holo.css';
+import './ui/combat.css';
 import * as C from './core/combat';
 import { ennemiDef, moduleDef, porteurDef } from './core/donnees';
 import * as J from './core/jeu';
@@ -41,8 +42,8 @@ let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
 const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0 };
-const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null } = {
-  verrou: false, regles: false, pops: [], fin: null, etat: null,
+const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number> } = {
+  verrou: false, regles: false, pops: [], fin: null, etat: null, traces: {},
 };
 
 // ---------- Rendu ----------
@@ -67,7 +68,7 @@ function afficher() {
   else if (mode === 'combat' && jeu.expedition) {
     const etat = K.etat ?? jeu.expedition.combat;
     const lecon = jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;
-    h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, pops: K.pops, fin: K.fin, lecon });
+    h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, pops: K.pops, fin: K.fin, lecon, traces: K.traces });
   } else {
     mode = 'district';
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles)
@@ -285,6 +286,16 @@ async function jouer(pas: Pas[]) {
   K.verrou = true;
   for (const p of pas) {
     await pause(p.ev.kind === 'resonance' ? 250 : 380);
+    // la jauge touchée garde une traînée de ses PV d'avant le coup, qui se vide
+    if (p.ev.kind === 'degats' && p.ev.net > 0) {
+      const avant = K.etat ?? jeu.expedition?.combat;
+      const cible = p.ev.cible;
+      const c = cible === 'ennemi' ? avant?.ennemi : avant?.porteurs.find((x) => x.id === cible);
+      if (c) {
+        K.traces[cible] = Math.max(0, Math.min(100, (100 * c.pv) / c.pvMax));
+        setTimeout(() => { delete K.traces[cible]; }, 1100);
+      }
+    }
     K.etat = p.etat;
     popsDe(p.ev);
     afficher();

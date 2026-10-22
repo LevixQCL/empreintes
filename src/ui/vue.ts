@@ -6,9 +6,9 @@ import { capacite, ligneeGeste, placesLibres, placesPrises, texteIntention } fro
 import { NOMS_LIGNEE, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
-import type { CombatEtat, Geste, LigneeGeste } from '../core/types';
+import type { CombatEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import type { Expedition } from '../core/expedition';
-import { illustrationEnnemi, illustrationModule, portrait } from './art';
+import { illustrationEnnemi, illustrationModule, portrait, textureMetal } from './art';
 import { couleurFrequence } from './carte';
 import { ICO } from './icones';
 
@@ -48,6 +48,8 @@ export interface Ecran {
   fin: Fin | null;
   /** consigne du combat guidé (chambre scellée) */
   lecon?: string;
+  /** PV (en %) juste avant le dernier coup reçu, par cible : la jauge laisse une traînée qui se vide */
+  traces?: Record<string, number>;
 }
 
 export const COULEUR: Record<LigneeGeste, string> = {
@@ -68,8 +70,9 @@ function popsPour(e: Ecran, cible: string) {
 
 /**
  * Une carte en combat (décision du 22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue).
- * Son illustration en fond ; à défaut, le portrait du Porteur qui la joue. En haut, la Fréquence dans son octogone
- * (et les autres Fréquences possibles en petit) ; en bas, la force, l'effet et le nom.
+ * Un cadre de métal (teinté par la lignée), l'illustration en haut (à défaut, le portrait du Porteur qui la joue),
+ * la Fréquence sertie dans un chaton au coin, les autres Fréquences possibles en petits chatons dessous,
+ * et une plaque dans le métal de la carte pour la force, l'effet et le nom.
  */
 function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean } = {}) {
   const lign = ligneeGeste(g);
@@ -77,19 +80,36 @@ function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: 
   const accord = g.effet?.type === 'accord';
   const ill = g.carte ? illustrationModule(g.carte) : null;
   const fond = ill ?? (g.porteur ? portrait(g.porteur) : null);
+  const metal = (g.carte?.split('@')[1] as Rarete | undefined) ?? 'fer';
   const autres = !accord && g.fs && g.fs.length > 1 ? g.fs.filter((f) => f !== g.f) : [];
-  const cls = ['geste', taille, g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : '', fond ? 'illus' : ''].filter(Boolean).join(' ');
+  const cls = ['geste', taille, `gm-${metal}`, g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
   const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${g.effet ? ', ' + libelleEffet(g.effet) : ''}${o.halo ? ', prolonge ta suite' : ''}`;
-  return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]};--fc:${accord ? '#5d5470' : couleurFrequence(g.f)}" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
-    + (fond ? `<span class="g-art${ill ? '' : ' g-portrait'}" style="background-image:url(${fond})" aria-hidden="true"></span>` : '')
-    + `<span class="g-haut"><span class="g-freqs"><span class="g-freq">${accord ? '∗' : g.f}</span>${autres.map((f) => `<span class="g-freq mini" style="--fc:${couleurFrequence(f)}">${f}</span>`).join('')}</span>`
-    + `${g.lourd ? '<span class="g-lourd">2 PL.</span>' : ''}${o.halo ? `<span class="g-suite">${ICO.monter}</span>` : ''}</span>`
-    + `<span class="g-bas"><span class="g-val ${g.type}">${ICO[g.type]}<b>${g.v}</b></span>`
-    + (g.effet ? `<span class="g-effet">${NOMS_EFFET[g.effet.type]}</span>` : '')
+  return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]};--fc:${accord ? '#5d5470' : couleurFrequence(g.f)};--tex:url(${textureMetal(metal)})" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
+    + `<span class="g-cadre">`
+    + (fond ? `<span class="g-art${ill ? '' : ' g-portrait'}" style="background-image:url(${fond})" aria-hidden="true"></span>` : '<span class="g-art g-vide" aria-hidden="true"></span>')
+    + `<span class="g-socle" aria-hidden="true"><span class="g-freq">${accord ? '∗' : g.f}</span></span>`
+    + (autres.length ? `<span class="g-pips" aria-hidden="true">${autres.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</span>` : '')
+    + (g.lourd ? '<span class="g-lourd">2 PL.</span>' : '')
+    + (o.halo ? `<span class="g-suite">${ICO.monter}</span>` : '')
+    + `<span class="g-plaque"><span class="g-ligne"><span class="g-val ${g.type}">${ICO[g.type]}<b>${g.v}</b></span>`
+    + (g.effet ? `<span class="g-effet">${NOMS_EFFET[g.effet.type]}</span>` : '') + `</span>`
     + `<span class="g-nom">${echap(g.nom)}</span>`
     + (taille === 'chaine' ? `<span class="g-qui">${echap(nomP)}</span>` : '')
-    + `</span></button>`;
+    + `</span></span></button>`;
+}
+
+/**
+ * Une jauge de vie : un rail serti, la vie qui reste, la traînée du dernier coup qui se vide, des graduations
+ * (une tous les `pas` PV) et, pour l'ennemi, son bouclier posé au bout de la vie.
+ */
+function jauge(classe: string, pv: number, max: number, o: { trace?: number; pas?: number; bouclier?: number } = {}) {
+  const v = pct(pv, max);
+  const trainee = o.trace !== undefined && o.trace > v ? `<i class="j-trainee" style="--de:${o.trace}%;--a:${v}%"></i>` : '';
+  const bouclier = o.bouclier ? `<i class="j-bouclier" style="left:${Math.max(0, v - pct(o.bouclier, max))}%;width:${Math.min(v, pct(o.bouclier, max))}%"></i>` : '';
+  const pas = o.pas ? pct(o.pas, max) : 10;
+  return `<span class="jauge-vie ${classe}${v <= 30 ? ' basse' : ''}" style="--pas:${pas}%" role="img" aria-label="${pv} PV sur ${max}">`
+    + `<span class="j-rail">${trainee}<i class="j-vie" style="width:${v}%"></i>${bouclier}<span class="j-grad"></span></span></span>`;
 }
 
 /** Une carte posée dans la chaîne : la toucher la retire ; sous elle, de quoi changer sa Fréquence (argent et plus) */
@@ -180,7 +200,7 @@ export function htmlCombat(e: Ecran): string {
     + `<div class="intention ${classeIntention}" aria-live="polite"><span class="int-ico">${iconeIntention}</span><span class="int-txt"><small>INTENTION</small>${echap(texteIntention(s))}</span></div>`
     + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
     + `<h2 class="ennemi-nom">${echap(def.nom)}</h2>`
-    + `<div class="jauge-ennemi"><i style="width:${pct(s.ennemi.pv, s.ennemi.pvMax)}%"></i><span class="chiffre">${s.ennemi.pv} / ${s.ennemi.pvMax}</span></div>`
+    + `<div class="vie-ennemi">${jauge('je', s.ennemi.pv, s.ennemi.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: s.ennemi.bouclier })}<span class="je-valeur"><b>${s.ennemi.pv}</b><small>/ ${s.ennemi.pvMax}</small></span></div>`
     + (s.ennemi.bouclier || s.ennemi.fissure ? `<div class="etats">${s.ennemi.bouclier ? `<span class="etat garde">${ICO.bouclier}${s.ennemi.bouclier}</span>` : ''}${s.ennemi.fissure ? `<span class="etat fissure">Fissure +${Math.round(s.ennemi.fissure * 100)} %</span>` : ''}</div>` : '')
     + `</div></section>`;
 
@@ -194,7 +214,7 @@ export function htmlCombat(e: Ecran): string {
     const basPv = !ko && p.pv / p.pvMax <= 0.3;
     h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${basPv ? ' bas' : ''}" style="--c:${COULEUR[d.lignee]}">${popsPour(e, p.id)}`
       + `<span class="avatar${img ? '' : ' sans-portrait'}" style="--t:34px" aria-hidden="true">${img ? `<img src="${img}" alt="">` : `<b>${echap(d.nom.charAt(0))}</b>`}</span>`
-      + `<div class="cb-infos"><span class="n">${echap(d.nom)}</span><div class="jauge-pv"><i class="pv" style="width:${pct(p.pv, p.pvMax)}%"></i></div><span class="chiffre">${ko ? 'À TERRE' : `${p.pv}/${p.pvMax}`}</span></div>`
+      + `<div class="cb-infos"><span class="n">${echap(d.nom)}</span><div class="cb-vie">${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5 })}<span class="chiffre" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}`}">${ko ? '0' : p.pv}</span></div></div>`
       + (cible ? `<span class="marque-cible">${ICO.atk}CIBLE</span>` : '') + `</div>`;
   }
   h += `</section><div class="ligne-escouade">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>`

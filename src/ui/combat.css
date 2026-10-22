@@ -1,0 +1,111 @@
+/* L'écran de combat, matière (22 octobre 2026) : Bryan trouvait les jauges plates (« juste une barre rouge »)
+   et les Fréquences mal posées sur les cartes. Ce fichier passe après styles.css et holo.css.
+   - Jauges de vie : un rail serti dans du métal, une vie à reflet et à bord lumineux, des graduations,
+     la traînée claire du dernier coup qui se vide, le bouclier de l'ennemi posé au bout de sa vie.
+   - Cartes : un cadre de métal teinté par la lignée, la Fréquence sertie dans un chaton de laiton au coin,
+     les autres Fréquences en petits chatons dessous, une plaque dans le métal de la carte pour la force et le nom. */
+
+/* ---------- Les jauges de vie ---------- */
+.jauge-vie{--h:10px;position:relative;display:block;height:var(--h);padding:2px;
+  background:linear-gradient(180deg,#6a5b3f 0%,#2f281c 42%,#120f0a 100%);
+  clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);box-shadow:inset 0 1px 0 rgba(255,236,190,.4)}
+.j-rail{position:relative;display:block;height:100%;overflow:hidden;background:linear-gradient(180deg,#040508,#121820);
+  clip-path:polygon(3px 0,100% 0,calc(100% - 3px) 100%,0 100%);box-shadow:inset 0 2px 3px rgba(0,0,0,.95)}
+.j-vie{position:absolute;left:0;top:0;bottom:0;background:var(--vie)}
+.j-vie::before{content:"";position:absolute;left:0;right:0;top:0;height:48%;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,.04))}
+.j-vie::after{content:"";position:absolute;right:0;top:0;bottom:0;width:2px;background:#fff7ea;box-shadow:0 0 6px 2px var(--lueur)}
+.j-grad{position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(90deg,transparent 0 calc(var(--pas) - 1px),rgba(0,0,0,.6) calc(var(--pas) - 1px) var(--pas))}
+.j-trainee{position:absolute;left:0;top:0;bottom:0;width:var(--a);background:linear-gradient(180deg,#fff6e2,#f3c47f);
+  animation:j-vider .75s .2s cubic-bezier(.4,0,.2,1) both}
+@keyframes j-vider{from{width:var(--de)}to{width:var(--a)}}
+.j-bouclier{position:absolute;top:0;bottom:0;
+  background:repeating-linear-gradient(135deg,rgba(196,226,250,.9) 0 3px,rgba(118,168,220,.6) 3px 6px);
+  box-shadow:inset 0 0 0 1px rgba(226,244,255,.95),0 0 8px rgba(150,200,255,.8)}
+
+/* l'ennemi : une vie de braise, épaisse, avec un reflet qui passe */
+.jauge-vie.je{--h:20px;--lueur:rgba(255,128,84,.95);
+  --vie:linear-gradient(180deg,#ffb595 0%,#f2633f 30%,#b02d18 66%,#5a0f09 100%)}
+.je .j-vie{background:
+  linear-gradient(100deg,transparent 38%,rgba(255,228,196,.38) 50%,transparent 62%) 0 0/260% 100% no-repeat,
+  repeating-linear-gradient(115deg,rgba(255,214,160,.12) 0 2px,transparent 2px 7px),
+  var(--vie);animation:j-reflet 3.4s linear infinite}
+@keyframes j-reflet{from{background-position:140% 0,0 0,0 0}to{background-position:-140% 0,0 0,0 0}}
+.vie-ennemi{display:flex;align-items:center;gap:6px;filter:drop-shadow(0 0 10px rgba(226,115,90,.28))}
+.vie-ennemi .jauge-vie{flex:1;min-width:0}
+.je-valeur{display:flex;align-items:baseline;justify-content:center;gap:3px;min-width:66px;padding:3px 8px;font-family:var(--mono);color:#fff;
+  background:linear-gradient(180deg,#30281c,#120f0a);clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);box-shadow:inset 0 1px 0 rgba(255,236,190,.35)}
+.je-valeur b{font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums;text-shadow:0 0 8px rgba(255,140,100,.6)}
+.je-valeur small{font-size:10px;color:var(--quiet)}
+
+/* l'escouade : une vie verte, plus fine, rouge quand elle baisse */
+.jauge-vie.jp{--h:10px;--lueur:rgba(170,236,140,.85);
+  --vie:linear-gradient(180deg,#dcf7c2 0%,#93d27e 34%,#4f9a45 70%,#29561f 100%)}
+.jauge-vie.jp.basse{--lueur:rgba(255,128,84,.9);--vie:linear-gradient(180deg,#ffbf9f 0%,#ec6a49 34%,#a8301b 70%,#561009 100%)}
+.cb-vie{display:flex;align-items:center;gap:5px;min-width:0}
+.cb-vie .jauge-vie{flex:1;min-width:0}
+.cb-vie .chiffre{flex:none;min-width:16px;text-align:right;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.combattant.ko .jauge-vie{opacity:.5}
+
+/* ---------- Les cartes en combat ---------- */
+.geste{--g-cadre:linear-gradient(155deg,color-mix(in srgb,var(--c) 55%,#f1e3bd) 0%,color-mix(in srgb,var(--c) 45%,#5d4c30) 36%,#1b1711 70%,color-mix(in srgb,var(--c) 35%,#3d3121) 100%);
+  display:block;padding:0;background:var(--g-cadre);box-shadow:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+.geste::before,.geste::after{content:none}
+.g-cadre{position:absolute;inset:2px;overflow:hidden;background:#0b0e13;
+  clip-path:polygon(0 0,calc(100% - var(--cut) + 1px) 0,100% calc(var(--cut) - 1px),100% 100%,calc(var(--cut) - 1px) 100%,0 calc(100% - var(--cut) + 1px))}
+.geste .g-art{position:absolute;inset:0 0 auto 0;height:64%;background-size:cover;background-position:50% 24%;filter:none;z-index:0}
+.geste .g-art.g-portrait{background-position:50% 16%;filter:saturate(.5) brightness(.6)}
+.geste .g-art.g-vide{background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--c) 40%,#1a1c22),#0b0e13 75%)}
+.geste .g-art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,8,12,.4) 0%,transparent 26%,transparent 66%,rgba(6,8,12,.75) 100%)}
+
+/* la Fréquence, sertie dans un chaton de laiton au coin */
+.g-socle{position:absolute;z-index:2;top:3px;left:3px;display:grid;place-items:center;width:26px;height:26px;
+  background:linear-gradient(150deg,#fff0c4 0%,#d0aa5c 34%,#6b5026 64%,#e6c47c 100%);
+  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);filter:drop-shadow(0 1px 2px rgba(0,0,0,.85))}
+.geste .g-socle .g-freq{width:calc(100% - 4px);height:calc(100% - 4px);font-size:14px;filter:none;
+  background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--fc) 55%,white) 0%,var(--fc) 46%,color-mix(in srgb,var(--fc) 55%,black) 100%);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.5),inset 0 -2px 3px rgba(0,0,0,.4);text-shadow:0 1px 1px rgba(0,0,0,.75)}
+.geste.chaine .g-socle{width:29px;height:29px}
+.geste.chaine .g-socle .g-freq{font-size:16px}
+/* les autres Fréquences possibles : de petits chatons sous le premier */
+.g-pips{position:absolute;z-index:2;top:31px;left:6px;display:grid;gap:2px}
+.geste.chaine .g-pips{top:34px;left:7.5px}
+.g-pips i{display:grid;place-items:center;width:20px;height:20px;font:600 10px/1 var(--mono);font-style:normal;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.7);
+  border:1.5px solid transparent;
+  background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--fc) 55%,white),var(--fc) 50%,color-mix(in srgb,var(--fc) 55%,black)) padding-box,
+    linear-gradient(150deg,#f7e4b0,#8a6a33 60%,#d9b56e) border-box;
+  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);opacity:.85}
+.geste .g-lourd{position:absolute;z-index:2;top:4px;right:11px;padding:1px 4px;font-size:8px;color:var(--ink);background:rgba(8,10,14,.85);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 70%,transparent)}
+.geste .g-suite{position:absolute;z-index:2;top:12px;right:3px}
+
+/* la plaque, dans le métal de la carte */
+.g-plaque{position:absolute;z-index:1;left:0;right:0;bottom:0;height:40%;display:flex;flex-direction:column;justify-content:flex-start;gap:2px;padding:4px 5px 0 6px;
+  background:linear-gradient(180deg,rgba(14,16,22,.45),rgba(9,11,15,.8)),var(--tex) center/cover;
+  border-top:1px solid color-mix(in srgb,var(--c) 50%,#dcc99a);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 -5px 10px rgba(0,0,0,.5)}
+.g-ligne{display:flex;align-items:center;min-width:0}
+.geste .g-val{font-size:15px;line-height:1;gap:3px;text-shadow:0 1px 2px rgba(0,0,0,.95)}
+.geste .g-val .ico{width:12px;height:12px}
+.geste .g-effet{position:absolute;right:4px;bottom:calc(100% + 3px);max-width:calc(100% - 8px);padding:1px 4px;font-size:7.5px;line-height:1.3;
+  color:var(--gold);background:rgba(14,11,6,.82);box-shadow:inset 0 0 0 1px rgba(216,180,101,.55)}
+.geste .g-nom{font-size:9.5px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;color:var(--ink);text-shadow:0 1px 2px rgba(0,0,0,.95)}
+.geste .g-qui{font-size:8px;line-height:1;margin-top:-1px;color:var(--quiet)}
+.geste.chaine .g-plaque{height:44%}
+.geste.chaine .g-art{height:60%}
+
+/* la carte qui prolonge la suite : son cadre passe à l'or */
+.geste.halo{--g-cadre:linear-gradient(155deg,#fff2c6 0%,#e4bf6c 38%,#8a6527 72%,#f2d28c 100%);box-shadow:none;
+  filter:drop-shadow(0 0 9px rgba(216,180,101,.6)) drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+.geste.serre,.geste:disabled{filter:grayscale(.6) drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+.verrouille .geste.chaine:disabled{filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+
+@media (prefers-reduced-motion: reduce){
+  .j-trainee{animation:none}
+  .je .j-vie{animation:none}
+}
+
+/* la marque « CIBLE » devient un petit sceau rouge sur le portrait, pour ne cacher ni le nom ni les PV
+   (le cadre rouge qui pulse dit déjà qui est visé ; le mot reste lisible par les lecteurs d'écran) */
+.combattant .marque-cible{top:auto;bottom:4px;left:4px;right:auto;display:grid;place-items:center;width:18px;height:18px;padding:0;font-size:0;
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);box-shadow:0 0 8px rgba(226,115,90,.8)}
+.combattant .marque-cible .ico{width:11px;height:11px}
