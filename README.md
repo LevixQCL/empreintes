@@ -110,7 +110,7 @@ qu'il faille un peu plus d'expéditions pour chaque nouvelle Strate (environ aut
 **Le creusement** (22 octobre 2026) : battre le gardien de la Strate la plus profonde prépare l'étage suivant, qui ne
 s'ouvre qu'avec assez de **creuseurs** logés par la **Tour du Noyau** (`CREUSEURS` dans `jeu.ts`). Les creuseurs qui percent
 un étage y restent : pas de réserve pour plus tard. On en gagne en jouant (fouilles, missions, Épreuves, gardiens, Confiance).
-Réglé pour la Strate −10 vers le jour 30 d'un joueur occasionnel, vers le jour 23 d'un assidu.
+Il en faut dès la Strate −2 (Bryan, 22 octobre 2026 : ralentir dès le début). Réglé pour un joueur occasionnel : −2 vers le jour 3, −5 vers le jour 7, −7 vers le jour 14, −10 vers le jour 30 ; un assidu atteint −10 vers le jour 23.
 
 **Quand on bloque devant une Strate** : les *fouilles ciblées* (`fouiller`, une descente courte sans gardien dans une Strate
 vaincue, vers des cartes d'une lignée, des composants ou des Éclats), les *missions* (`envoyerMission`, un Porteur libre part

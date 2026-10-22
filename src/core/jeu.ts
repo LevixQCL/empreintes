@@ -917,7 +917,7 @@ export const CREUSEURS = {
   /** creuseurs logés selon le niveau du Noyau (index = niveau) */
   logement: [0, 4, 7, 10, 14, 24],
   /** creuseurs qu'il faut pour ouvrir la Strate −n, qui y restent (au-delà de la table : +1 par Strate, au plus le logement) */
-  requis: [0, 0, 0, 0, 3, 4, 6, 8, 10, 12, 14] as number[],
+  requis: [0, 0, 2, 3, 4, 5, 6, 7, 9, 11, 13] as number[],
   parStrateEnsuite: 1,
   gardien: 1,
   /** chances de ramener un fouilleur perdu : fouille ciblée, mission courte, mission longue */

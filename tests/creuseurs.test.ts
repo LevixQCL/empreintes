@@ -22,11 +22,15 @@ describe('Les creuseurs', () => {
     expect(noyauRequis(10)).toBeGreaterThan(noyauRequis(5));
   });
 
-  it('les premières Strates s’ouvrent dès le gardien vaincu', () => {
-    const j = pret(2);
+  it('dès la Strate −2, il faut des creuseurs : le gardien vaincu en amène un, il en faut un de plus (22 octobre 2026)', () => {
+    const j = pret(1);
     const r = vaincreGardien(j);
-    expect(r.nouvelleStrate).toBe(true);
-    expect(j.strate).toBe(3);
+    expect(r.nouvelleStrate).toBe(false);
+    expect(j.frontVaincu).toBe(true);
+    expect(manquePourCreuser(j)).toEqual({ creuseurs: creuseursRequis(2) - CREUSEURS.gardien, noyau: 0 });
+    gagnerCreuseurs(j, creuseursRequis(2), 'test');
+    expect(creuser(j)).toBe(true);
+    expect(j.strate).toBe(2);
     expect(j.frontVaincu).toBe(false);
   });
 

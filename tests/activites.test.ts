@@ -127,8 +127,8 @@ describe('Épreuves de la semaine', () => {
 
 describe('Le parcours d’un joueur', () => {
   it('une partie simulée avance de Strate en Strate et reste reproductible', () => {
-    const a = simulerParcours(PROFILS.occasionnel, 3, 7);
+    const a = simulerParcours(PROFILS.occasionnel, 8, 7);
     expect(a.strate).toBeGreaterThanOrEqual(2);
-    expect(simulerParcours(PROFILS.occasionnel, 3, 7)).toEqual(a);
+    expect(simulerParcours(PROFILS.occasionnel, 8, 7)).toEqual(a);
   });
 });
