@@ -74,3 +74,12 @@ describe('Kit des recrues et joueurs assidus', () => {
     expect(j.eclats).toBe(e + 3 + 5);
   });
 });
+
+import { MODULES } from '../src/core/donnees';
+import { LORE_CARTES, loreCarte } from '../src/core/lore-cartes';
+describe('Lore des cartes', () => {
+  it('chaque carte a son petit lore, et chaque lore une carte', () => {
+    for (const m of MODULES) expect(loreCarte(m.id + '@or'), m.id).toBeTruthy();
+    for (const id of Object.keys(LORE_CARTES)) expect(MODULES.some((m) => m.id === id), id).toBe(true);
+  });
+});
