@@ -232,3 +232,60 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
   animation:onde-glisse 2.8s linear infinite}
 @keyframes onde-glisse{to{transform:translateX(calc(-1 * var(--l)))}}
 @media (prefers-reduced-motion:reduce){ .geste .g-onde polyline{animation:none} }
+
+/* ================= Le lieu du combat (22 octobre 2026) =================
+   Bryan trouvait le fond uni trop monochrome. Derrière l'interface : la salle de la Strate (une illustration par zone,
+   floutée d'avance dans strates/zone-N-fond.webp), vue à travers le verre. Bords assombris, lumière froide de l'interface
+   en haut, bas plus sombre sous les boutons ; de la poussière chaude monte lentement, des éclats de cristal scintillent.
+   La couche est à côté de .ecran-combat, pas dedans : l'écran tremble et s'éclaire pendant les coups (transform et filter),
+   ce qui décalerait un élément fixe placé à l'intérieur. */
+.fond-lieu{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;background:#070915;contain:strict}
+#app[data-mode="combat"] > .ecran-combat{position:relative;z-index:1}
+.fl-image{position:absolute;inset:-6%;background:var(--decor,none) center 42%/cover no-repeat;will-change:transform;
+  animation:fl-derive 90s ease-in-out infinite alternate}
+/* la caméra respire : un lent travelling, à peine perceptible */
+@keyframes fl-derive{from{transform:scale(1.02) translate3d(-1.2%,.6%,0)}to{transform:scale(1.09) translate3d(1.4%,-1%,0)}}
+.fl-voile{position:absolute;inset:0;background:
+  radial-gradient(115% 85% at 50% 46%,transparent 30%,rgba(4,6,14,.78) 100%),
+  linear-gradient(180deg,rgba(70,110,200,.26),rgba(70,110,200,0) 36%),
+  linear-gradient(0deg,rgba(5,7,16,.75),rgba(5,7,16,0) 32%),
+  rgba(8,10,24,.46)}
+/* gardien et salle scellée : une braise rougeoie au pied de la salle */
+.fond-lieu.gardien .fl-voile{background:
+  radial-gradient(80% 42% at 50% 104%,rgba(210,70,40,.26),transparent 70%),
+  radial-gradient(115% 85% at 50% 46%,transparent 30%,rgba(6,4,10,.8) 100%),
+  linear-gradient(180deg,rgba(70,110,200,.2),rgba(70,110,200,0) 36%),
+  linear-gradient(0deg,rgba(8,5,12,.75),rgba(8,5,12,0) 32%),
+  rgba(10,8,22,.48)}
+/* la Résonance éclaire toute la salle un instant (impact.ts) */
+.fl-lueur{position:absolute;inset:0;opacity:0;background:radial-gradient(70% 60% at 62% 40%,rgba(255,214,140,.32),rgba(255,214,140,0) 70%)}
+
+/* poussière : monte du bas de l'écran en dérivant, s'allume puis s'éteint */
+.fl-p{position:absolute;left:var(--x);bottom:-12px;width:var(--s);height:var(--s);border-radius:50%;opacity:0;
+  background:#FFD9A0;box-shadow:0 0 calc(var(--s) * 3) rgba(255,180,100,.75);will-change:transform,opacity;
+  animation:fl-monte var(--d) linear infinite}
+@keyframes fl-monte{
+  0%{transform:translate3d(0,0,0);opacity:0}
+  12%{opacity:.75}
+  60%{opacity:.5}
+  100%{transform:translate3d(var(--dx),-108vh,0);opacity:0}}
+/* éclat de cristal : une petite étoile froide qui s'allume de temps en temps, sans bouger */
+.fl-p.eclat{left:var(--x);top:var(--y);bottom:auto;width:calc(var(--s) * 6);height:calc(var(--s) * 6);margin:calc(var(--s) * -3) 0 0 calc(var(--s) * -3);
+  border-radius:0;box-shadow:none;background:
+    radial-gradient(circle,#fff 0 7%,rgba(180,225,255,.75) 18%,rgba(180,225,255,0) 46%),
+    linear-gradient(90deg,transparent 47%,rgba(205,239,255,.85) 50%,transparent 53%),
+    linear-gradient(0deg,transparent 47%,rgba(205,239,255,.85) 50%,transparent 53%);
+  -webkit-mask:radial-gradient(circle,#000 22%,transparent 62%);mask:radial-gradient(circle,#000 22%,transparent 62%);
+  animation:fl-scintille var(--d) ease-in-out infinite}
+@keyframes fl-scintille{
+  0%,100%{transform:scale(.3) rotate(0deg);opacity:0}
+  8%{transform:scale(1.15) rotate(20deg);opacity:.95}
+  20%{transform:scale(.5) rotate(40deg);opacity:0}}
+
+/* les textes posés à même le décor (sans panneau) gardent une ombre pour rester lisibles sur une zone claire */
+#app[data-mode="combat"] .ecran-combat :is(.main-tete,.piles,.combat-barre .surtitre){text-shadow:0 1px 2px rgba(0,0,0,.95),0 0 10px rgba(4,6,14,.9)}
+
+@media (prefers-reduced-motion:reduce){
+  .fl-image{animation:none;transform:scale(1.04)}
+  .fl-p{animation:none;opacity:0}
+}

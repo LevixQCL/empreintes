@@ -3,12 +3,12 @@
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
 import { capacite, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention } from '../core/combat';
-import { NOMS_LIGNEE, ennemiDef, porteurDef } from '../core/donnees';
+import { NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
 import type { CombatEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import type { Expedition } from '../core/expedition';
-import { cadreMetal, illustrationEnnemi, illustrationModule, portrait, textureMetal } from './art';
+import { cadreMetal, fondCombat, illustrationEnnemi, illustrationModule, portrait, textureMetal } from './art';
 import { couleurFrequence } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
@@ -190,7 +190,50 @@ function regles(): string {
     + '<li><b>La Dissonance :</b> certains ennemis brouillent tes Fréquences. Au tour suivant, aucune suite ne résonne : mise sur la force brute ou la protection.</li></ol></div></section>';
 }
 
+// ---------- Le lieu du combat : la salle de la Strate derrière l'interface (22 octobre 2026) ----------
+// Bryan trouvait le fond uni (bleu nuit) trop monochrome. Le combat se passe maintenant dans la zone qu'on explore :
+// son illustration, floutée comme vue à travers le verre de l'interface, assombrie sur les bords, avec la lumière froide
+// de l'interface en haut, de la poussière chaude qui monte et quelques éclats de cristal qui scintillent.
+// L'écran est redessiné à chaque action : chaque animation reprend à sa phase (délai négatif calculé sur l'horloge),
+// sinon tout repartirait de zéro à chaque carte touchée.
+
+/** hasard fixe (le même à chaque rendu) : la poussière garde sa place d'un rendu à l'autre */
+const fixe = (i: number, n: number) => { const v = Math.sin(i * 127.1 + n * 311.7) * 43758.5453; return v - Math.floor(v); };
+const PARTICULES = Array.from({ length: 22 }, (_, i) => {
+  const eclat = i % 4 === 3; // un sur quatre : un éclat de cristal qui scintille sur place ; les autres : de la poussière chaude qui monte
+  return {
+    eclat,
+    x: 2 + fixe(i, 1) * 96,
+    y: 6 + fixe(i, 2) * 80,
+    taille: eclat ? 2 + fixe(i, 3) * 1.6 : 1.4 + fixe(i, 3) * 2.2,
+    duree: eclat ? 5 + fixe(i, 4) * 6 : 18 + fixe(i, 4) * 16,
+    decalage: fixe(i, 5),
+    derive: (fixe(i, 6) - 0.5) * 80,
+  };
+});
+
+/** zone de la Strate (0 Fondations… 3 le fond) : celle de la carte explorée, sinon celle de la profondeur (Épreuves, chambre scellée) */
+const zoneDuLieu = (x: Expedition) => x.carte?.zone ?? Math.max(0, ZONES.indexOf(zoneDe(Math.max(1, x.strate))));
+
+function htmlLieu(x: Expedition): string {
+  const zone = zoneDuLieu(x);
+  const img = fondCombat(zone);
+  const salle = x.carte?.salles[x.carte.position]?.type;
+  const t = performance.now() / 1000;
+  const phase = (duree: number, decalage = 0) => `-${((t + decalage * duree) % duree).toFixed(2)}s`;
+  let h = `<div class="fond-lieu z-${zone}${salle === 'gardien' || salle === 'elite' ? ' gardien' : ''}" aria-hidden="true"${img ? ` style="--decor:url(${img})"` : ''}>`
+    + `<span class="fl-image" style="animation-delay:${phase(90)}"></span><span class="fl-voile"></span><span class="fl-lueur"></span>`;
+  for (const p of PARTICULES) {
+    h += `<i class="fl-p${p.eclat ? ' eclat' : ''}" style="--x:${p.x.toFixed(1)}%;--y:${p.y.toFixed(1)}%;--s:${p.taille.toFixed(1)}px;--d:${p.duree.toFixed(1)}s;--dx:${p.derive.toFixed(0)}px;animation-delay:${phase(p.duree, p.decalage)}"></i>`;
+  }
+  return h + '</div>';
+}
+
 export function htmlCombat(e: Ecran): string {
+  return htmlLieu(e.x) + htmlEcranCombat(e);
+}
+
+function htmlEcranCombat(e: Ecran): string {
   const s = e.etat;
   const def = ennemiDef(s.ennemi.id);
   const it = s.intention;

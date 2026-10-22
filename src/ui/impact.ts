@@ -426,6 +426,9 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       sonResonance(ev.suite);
       const zone = racine.querySelector('.zone-chaine');
       if (zone) (zone as HTMLElement).animate([{ filter: 'brightness(1.9)', boxShadow: '0 0 40px rgba(216,180,101,.8)' }, { filter: 'none', boxShadow: 'none' }], { duration: 520, easing: 'ease-out' });
+      // la salle derrière l'interface s'éclaire elle aussi, d'autant plus que la suite est longue
+      racine.querySelector('.fond-lieu .fl-lueur')?.animate([{ opacity: 0 }, { opacity: Math.min(1, 0.45 + (ev.suite - 3) * 0.28), offset: 0.18 }, { opacity: 0 }],
+        { duration: 900 + ev.suite * 120, easing: 'ease-out' });
       if (ev.suite >= 5) {
         // la grande suite : un arrêt sur image, un éclair blanc, puis tout part
         if (!reduit) ecran?.animate([{ filter: 'brightness(2.2) saturate(.4)' }, { filter: 'none' }], { duration: 420, easing: 'ease-out' });

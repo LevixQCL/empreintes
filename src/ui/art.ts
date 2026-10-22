@@ -98,6 +98,11 @@ export const cadreMetal = (r: Rarete): string | null => (r === 'nacre' ? null : 
 /** Fond de la carte d'une Strate, une illustration par zone (0 Fondations, 1 salles closes, 2 mémoires, 3 le fond), quand elle existe */
 const STRATES_ILLUSTREES = new Set<number>([0, 1, 2, 3]);
 export const decorStrate = (zone: number): string | null => (STRATES_ILLUSTREES.has(zone) ? `${base}strates/zone-${zone}.webp` : null);
+/**
+ * Fond de l'écran de combat : la même illustration de zone, floutée et assombrie d'avance (strates/zone-N-fond.webp, 600 × 750).
+ * Floutée dans le fichier plutôt qu'en CSS : un filtre plein écran coûte cher sur téléphone, une petite image floue s'agrandit sans défaut.
+ */
+export const fondCombat = (zone: number): string | null => (STRATES_ILLUSTREES.has(zone) ? `${base}strates/zone-${zone}-fond.webp` : null);
 export const decor = (nom: 'archipel' | 'archipel-nuit' | 'coupe') => `${base}district/${nom}.webp`;
 
 /**
