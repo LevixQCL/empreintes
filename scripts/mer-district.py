@@ -254,12 +254,41 @@ def reflets() -> Image.Image:
     return im.filter(ImageFilter.GaussianBlur(0.6))
 
 
+def avec_panorama(age: int, mer_calculee: Image.Image) -> Image.Image:
+    """
+    Le panorama peint par Midjourney (22 octobre 2026) : Bryan a élargi chaque tableau en 16:9 dans l'éditeur de Midjourney
+    (scripts/panoramas/age-N.webp, 1456 x 816, le tableau au centre en 544 x 816, x 456-1000). On le pose à l'échelle exacte du
+    tableau sur la toile ; au-delà de ses bords (très larges écrans), la mer calculée prend le relais par un long fondu.
+    """
+    src = Path(__file__).resolve().parent / 'panoramas' / f'age-{age}.webp'
+    if not src.exists():
+        return mer_calculee
+    pano = Image.open(src).convert('RGB')
+    k = PH / pano.height
+    pw = round(pano.width * k)
+    pano = pano.resize((pw, PH), Image.LANCZOS)
+    x = X0 - round(456 * k)
+    out = mer_calculee.copy()
+    m = np.ones((PH, pw), np.float32)
+    f = 160
+    r = np.clip(np.arange(pw) / f, 0, 1); r = r * r * (3 - 2 * r)
+    m *= r[None, :] * r[::-1][None, :]
+    out.paste(pano, (x, Y0), Image.fromarray((m * 255).astype(np.uint8)))
+    # le tableau du jeu par-dessus, au centre, fondu sur quelques pixels seulement
+    tableau = Image.open(RACINE / f'age-{age}.webp').convert('RGB')
+    mt = np.ones((PH, PW), np.float32)
+    rr = np.clip(np.arange(PW) / 24, 0, 1)
+    mt *= rr[None, :] * rr[::-1][None, :]
+    out.paste(tableau, (X0, Y0), Image.fromarray((mt * 255).astype(np.uint8)))
+    return out
+
+
 if __name__ == '__main__':
     r = reflets()
     r.save(RACINE / 'mer-reflets.webp', 'WEBP', quality=80, method=6)
     print('mer-reflets.webp', r.size, (RACINE / 'mer-reflets.webp').stat().st_size // 1024, 'Ko')
     for age in HORIZONS:
-        im = mer(age)
+        im = avec_panorama(age, mer(age))
         sortie = RACINE / f'mer-{age}.webp'
         im.save(sortie, 'WEBP', quality=78, method=6)
         print(sortie.name, im.size, sortie.stat().st_size // 1024, 'Ko')
