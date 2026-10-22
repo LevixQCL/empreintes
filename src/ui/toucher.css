@@ -1,0 +1,25 @@
+/* « Toucher et poids » : chaque bouton s'enfonce sous le doigt, la carte saisie se soulève et s'incline.
+   On passe par les propriétés `scale` et `translate` (et non `transform`) : elles s'ajoutent aux transformations
+   existantes (éléments centrés, survol PC, animations d'impact) au lieu de les écraser. */
+
+/* les boutons : un appui sec, un relâchement qui rebondit */
+#app button:not(:disabled){transition:scale .22s cubic-bezier(.3,1.7,.5,1),translate .22s cubic-bezier(.3,1.7,.5,1),filter .22s ease}
+#app button:not(:disabled):active{scale:.95;translate:0 1px;filter:brightness(.88);transition-duration:.06s}
+
+/* la carte saisie : elle monte, grossit un peu, prend une ombre plus large et suit l'inclinaison du doigt */
+#app[data-mode="combat"] .geste:not(:disabled){transform-style:preserve-3d}
+#app[data-mode="combat"] .geste.saisie:not(:disabled){
+  scale:1.07;translate:0 -7px;filter:brightness(1.08) drop-shadow(0 12px 12px rgba(0,0,0,.6));
+  transform:perspective(520px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+  transition:scale .12s ease-out,translate .12s ease-out,filter .12s ease-out;z-index:4}
+/* un reflet qui glisse sur la carte inclinée, comme sur une vraie carte vernie */
+#app[data-mode="combat"] .geste.saisie:not(:disabled)::after{content:"";position:absolute;inset:0;z-index:6;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(circle at var(--lx,50%) var(--ly,30%),rgba(255,250,235,.28),transparent 55%);mix-blend-mode:screen}
+
+/* les boucles ne repartent plus de zéro à chaque redessin : elles suivent l'horloge commune posée par toucher.ts */
+#app :is(.ennemi-art,.fl-image,.je .j-vie,.fele-trait,.combattant.cible,.combattant.cible::before,.geste.halo::before,.geste .g-onde polyline){animation-delay:var(--horloge,0s)}
+
+@media (prefers-reduced-motion:reduce){
+  #app button:not(:disabled):active{scale:1;translate:none}
+  #app[data-mode="combat"] .geste.saisie:not(:disabled){scale:1;translate:none;transform:none}
+}

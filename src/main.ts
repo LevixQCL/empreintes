@@ -26,12 +26,15 @@ import { animerCompteur, majIntro, precharger } from './ui/intro-lecteur';
 import { htmlTitre } from './ui/titre';
 import { htmlExploration } from './ui/exploration';
 import { basculerSon, debloquerSon, impact, initImpacts } from './ui/impact';
+import { glisser, horloge, initToucher, noter, vibrer } from './ui/toucher';
+import './ui/toucher.css';
 import { activerCartes } from './ui/carte';
 import { NOMS_RARETE } from './core/collection';
 import { trouveesDe, type OngletGuide } from './ui/guide';
 
 const racine = document.getElementById('app') as HTMLElement;
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+initToucher(racine, reduit);
 const pause = (ms: number) => new Promise((r) => setTimeout(r, reduit ? Math.min(ms, 120) : ms));
 
 // ---------- État ----------
@@ -96,7 +99,10 @@ function afficher() {
   racine.dataset.mode = mode;
   const defile = [...racine.querySelectorAll<HTMLElement>(DEFILANTS)].map((el) => [el.scrollTop, el.scrollLeft] as const);
   const avant = cles();
+  const places = noter(racine);
+  horloge(racine);
   if (!(mode === 'intro' && majIntro(racine, h, reduit))) racine.innerHTML = h;
+  glisser(racine, places);
   racine.querySelectorAll<HTMLElement>(DEFILANTS).forEach((el, i) => { const d = defile[i]; if (d) { el.scrollTop = d[0]; el.scrollLeft = d[1]; } });
   for (const [sel, cle] of Object.entries(cles())) if (cle && cle !== avant[sel]) racine.querySelector(sel)?.classList.add('entre');
   document.body.classList.toggle('fige', !!racine.querySelector('.feuille, .voile'));
@@ -491,7 +497,7 @@ racine.addEventListener('click', async (ev) => {
     case 'retour-ok': D.retour = []; break;
 
     // combat
-    case 'ajouter': if (s && !K.verrou) { C.ajouter(s, id || b.dataset.uid || ''); sauver(); } break;
+    case 'ajouter': if (s && !K.verrou) { C.ajouter(s, id || b.dataset.uid || ''); vibrer(5); sauver(); } break;
     case 'retirer': if (s && !K.verrou) { C.retirer(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'accorder': if (s && !K.verrou) { C.accorder(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'cibler': if (s && !K.verrou) { C.cibler(s, b.dataset.uid ?? ''); sauver(); } break;

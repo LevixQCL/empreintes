@@ -7,6 +7,7 @@
 // L'option « réduire les animations » du téléphone coupe les tremblements et les particules.
 
 import type { Evenement, LigneeGeste } from '../core/types';
+import { vibrer } from './toucher';
 
 const TEINTE: Record<LigneeGeste, string> = { tech: '#8FDCFF', bio: '#FFB44A', reso: '#B98CFF', neutre: '#EBD9A8' };
 const SOIN = '#7CE3A0';
@@ -497,13 +498,28 @@ function secouer(el: Element | null, force: number) {
   (el as HTMLElement).animate([...pas, { transform: 'none' }], { duration: 180 + force * 40, easing: 'ease-out' });
 }
 
+/**
+ * Le coup qui porte. Trois temps, comme dans les jeux de combat :
+ *  1. l'arrêt sur image (« hit stop ») : la cible s'écrase sous le choc, blanchie, et reste figée un instant ;
+ *  2. le recul, dans le sens du coup ;
+ *  3. le retour, qui dépasse un peu avant de se poser : c'est ce dépassement qui donne du poids.
+ */
 function touche(el: Element | null, couleur: string, force: number) {
   if (!el) return;
-  const recul = reduit ? 0 : 4 + force * 2;
+  const flash = { filter: `brightness(${1.9 + force * 0.2}) saturate(.6) drop-shadow(0 0 12px ${couleur})` };
+  if (reduit) { (el as HTMLElement).animate([flash, { filter: 'none' }], { duration: 260, easing: 'ease-out' }); return; }
+  const fige = 50 + force * 14; // l'arrêt grandit avec la puissance du coup
+  const duree = fige + 300 + force * 30;
+  const k = fige / duree;
+  const recul = 4 + force * 2.2, dx = recul * hasard(-0.6, 0.6), tourne = hasard(-2.5, 2.5);
+  const ecrase = `scale(${1 + 0.03 * force}, ${1 - 0.025 * force})`;
   (el as HTMLElement).animate([
-    { filter: `brightness(${1.8 + force * 0.2}) drop-shadow(0 0 12px ${couleur})`, transform: `translate(${recul * hasard(-0.6, 0.6)}px, -${recul}px) scale(${1 + 0.02 * force}) rotate(${hasard(-2, 2)}deg)` },
+    { ...flash, transform: ecrase },
+    { ...flash, transform: ecrase, offset: k },
+    { filter: 'brightness(1.25)', transform: `translate(${dx}px, -${recul}px) rotate(${tourne}deg) scale(1.01)`, offset: k + (1 - k) * 0.3 },
+    { filter: 'none', transform: `translate(${-dx * 0.25}px, ${recul * 0.2}px) rotate(${-tourne * 0.3}deg)`, offset: k + (1 - k) * 0.65 },
     { filter: 'none', transform: 'none' },
-  ], { duration: 260 + force * 30, easing: 'cubic-bezier(.2,.8,.3,1)' });
+  ], { duration: duree, easing: 'cubic-bezier(.25,.8,.35,1)' });
 }
 
 const centre = (el: Element | null, dy = 0) => {
@@ -598,7 +614,9 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         touche(ennemi, couleur, force);
         secouer(ecran, force - 1);
         sonImpact(force);
-        return force >= 4 ? 40 : 0;
+        vibrer(8 + force * 6);
+        // l'arrêt sur image retient aussi la suite de la chaîne : le coup suivant attend que celui-ci ait « porté »
+        return force >= 2 ? 20 + force * 14 : 0;
       }
       const el = [...racine.querySelectorAll('.combattant')].find((x) => x.getAttribute('data-porteur') === ev.cible);
       const p = centre(el ?? null);
@@ -625,6 +643,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
           if (part >= 0.3) secouer(ecran, 2);
         }
         note(hasard(70, 80), 'sine', 0.22, 0.14, 0.5);
+        vibrer(part >= 0.3 ? [30, 40, 25] : 18);
       }
       return 0;
     }
@@ -635,6 +654,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       // la salle derrière l'interface s'éclaire elle aussi, d'autant plus que la suite est longue
       racine.querySelector('.fond-lieu .fl-lueur')?.animate([{ opacity: 0 }, { opacity: Math.min(1, 0.45 + (ev.suite - 3) * 0.28), offset: 0.18 }, { opacity: 0 }],
         { duration: 900 + ev.suite * 120, easing: 'ease-out' });
+      vibrer(ev.suite >= 5 ? [15, 30, 15, 30, 50] : 12);
       if (ev.suite >= 5) {
         // la grande suite : un arrêt sur image, un éclair blanc, puis tout part
         if (!reduit) ecran?.animate([{ filter: 'brightness(2.2) saturate(.4)' }, { filter: 'none' }], { duration: 420, easing: 'ease-out' });
@@ -713,6 +733,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         for (let i = 0; i < 6; i++) setTimeout(() => eclats(hasard(r.left + r.width * 0.2, r.right - r.width * 0.2), hasard(r.top + r.height * 0.2, r.bottom - r.height * 0.3), 14, TEINTE[lignee], { vitesse: 70, gravite: -90, taille: 2.6, vie: 1.4, ouverture: Math.PI }), i * 60);
         if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ opacity: 1, filter: 'none' }, { opacity: 0, filter: 'blur(6px) brightness(2)', transform: 'translateY(-10px) scale(1.04)' }], { duration: 900, fill: 'forwards', easing: 'ease-in' });
         [1, 5 / 4, 3 / 2, 2].forEach((k, i) => setTimeout(() => note(523 * k, 'triangle', 0.6, 0.035), i * 90));
+        vibrer([20, 60, 20, 60, 40]);
         return 700;
       }
       if (ev.issue === 'defaite') note(110, 'sawtooth', 0.9, 0.05, 0.5);
@@ -725,6 +746,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       if (el) (el as HTMLElement).animate([{ filter: 'brightness(1.6)' }, { filter: 'grayscale(1) brightness(.45)' }], { duration: 500, easing: 'ease-in' });
       voileRouge(0.35);
       note(62, 'sine', 0.7, 0.16, 0.6);
+      vibrer([60, 50, 90]);
       return 400;
     }
     default:
