@@ -17,7 +17,7 @@ import { brancherTableau, htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEs
 import { PLANS, htmlIntro, imagesPlan } from './ui/intro';
 import { htmlTitre } from './ui/titre';
 import { htmlExploration } from './ui/exploration';
-import { basculerSon, impact, initImpacts } from './ui/impact';
+import { basculerSon, debloquerSon, impact, initImpacts } from './ui/impact';
 import { activerCartes } from './ui/carte';
 import { NOMS_RARETE } from './core/collection';
 
@@ -494,7 +494,7 @@ racine.addEventListener('click', async (ev) => {
     case 'vider': if (s && !K.verrou) { C.viderChaine(s); sauver(); } break;
     case 'allonger': if (s && !K.verrou) { C.allonger(s); sauver(); } break;
     case 'repiocher': if (s && !K.verrou) { C.repiocher(s); sauver(); } break;
-    case 'lancer': if (s && !K.verrou) { await jouer(C.lancer(s)); return; } break;
+    case 'lancer': if (s && !K.verrou) { debloquerSon(); await jouer(C.lancer(s)); return; } break;
     case 'regles': K.regles = !K.regles; break;
     case 'son': basculerSon(); break;
     case 'suivant': J.continuer(jeu); K.fin = null; sauver(); window.scrollTo(0, 0); break;

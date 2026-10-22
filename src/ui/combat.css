@@ -142,7 +142,7 @@
 }
 
 /* ---------- Langage d'impact (22 octobre 2026) ---------- */
-.calque-impacts{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60}
+.calque-impacts{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:35}
 .combat-barre .boutons-barre{display:flex;gap:6px}
 /* sous un quart de ses PV, l'ennemi se fend */
 .scene-ennemi.fele .ennemi-art{filter:drop-shadow(0 0 10px rgba(255,107,91,.35))}
@@ -155,3 +155,5 @@
 .zone-chaine .en-jeu{transform:translateY(-10px) scale(1.08);filter:brightness(1.25) drop-shadow(0 0 14px var(--c,var(--gold)));z-index:2;transition:transform .12s ease-out}
 .zone-chaine .jouee{filter:saturate(.35) brightness(.6);transform:scale(.96)}
 @media (prefers-reduced-motion:reduce){.zone-chaine .en-jeu{transform:none}}
+/* l'ennemi vaincu reste dissous (l'animation de dissolution vient du calque d'impacts) */
+.ennemi-art.dissous{opacity:0}

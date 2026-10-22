@@ -89,8 +89,12 @@ function lancerBoucle() {
   boucle = requestAnimationFrame(pas);
 }
 
+/** plafond de particules à l'écran, pour les téléphones modestes */
+const MAX_PARTICULES = 220;
+
 function eclats(x: number, y: number, n: number, couleur: string, o: { vitesse?: number; gravite?: number; taille?: number; vie?: number; trainee?: boolean; angle?: number; ouverture?: number } = {}) {
   if (reduit) return;
+  n = Math.min(n, MAX_PARTICULES - particules.length);
   for (let i = 0; i < n; i++) {
     const a = (o.angle ?? 0) + hasard(-1, 1) * (o.ouverture ?? Math.PI);
     const v = hasard(0.3, 1) * (o.vitesse ?? 260);
@@ -187,6 +191,11 @@ function bouclierSur(p: DOMRect) {
 // ---------- Sons (synthétisés : aucun fichier à charger) ----------
 
 let audio: AudioContext | null = null;
+/** iOS ne laisse jouer le son que s'il a été ouvert pendant un toucher : à appeler dans le clic « Lancer la chaîne » */
+export function debloquerSon(): void {
+  if (!sonActif()) return;
+  try { audio ??= new AudioContext(); if (audio.state === 'suspended') void audio.resume(); } catch { /* pas d'audio */ }
+}
 export const sonActif = () => { try { return localStorage.getItem('empreintes.son') !== '0'; } catch { return true; } };
 export function basculerSon(): boolean {
   const on = !sonActif();
@@ -249,6 +258,8 @@ const centre = (el: Element | null, dy = 0) => {
  * Renvoie un temps de pause en plus (ms), pour les grands moments.
  */
 export function impact(ev: Evenement, racine: HTMLElement): number {
+  // on secoue l'écran de combat, pas la page : secouer la page déplacerait les éléments fixes (boutons du bas)
+  const ecran = racine.querySelector('.ecran-combat');
   const ennemi = racine.querySelector('.scene-ennemi .ennemi-art');
   const scene = racine.querySelector('.scene-ennemi');
   const pEnnemi = centre(ennemi ?? scene, -0.08);
@@ -256,8 +267,9 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
     case 'carte': {
       derniere = { lignee: ev.lignee, rang: ev.rang, total: ev.total, suite: ev.suite };
       sonCarte(ev.lignee, ev.rang);
-      const zone = racine.querySelector('.zone-chaine')?.getBoundingClientRect();
-      const de = zone ? new DOMPoint(zone.left + (zone.width * (ev.rang + 0.5)) / Math.max(1, ev.total), zone.top + zone.height * 0.55) : null;
+      // la carte qui part : celle de la chaîne à cette place (une carte lourde prend deux places, d'où l'élément réel)
+      const carte = racine.querySelectorAll('.zone-chaine .rail > :not(.place-vide)')[ev.rang];
+      const de = centre(carte ?? racine.querySelector('.zone-chaine'), -0.1);
       if (ev.type === 'atk' && de && pEnnemi) {
         if (ev.lignee === 'tech') arc(de, pEnnemi, TEINTE.tech, ev.rang);
         else comete(de, pEnnemi, TEINTE[ev.lignee]);
@@ -286,7 +298,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
           eclats(pEnnemi.x, pEnnemi.y, 10 + force * 6, couleur, { vitesse: 260 + force * 40, taille: 2.4, trainee: true, gravite: 200 });
         }
         touche(ennemi, couleur, force);
-        secouer(racine, force - 1);
+        secouer(ecran, force - 1);
         sonImpact(force);
         return force >= 4 ? 40 : 0;
       }
@@ -309,7 +321,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       if (zone) (zone as HTMLElement).animate([{ filter: 'brightness(1.9)', boxShadow: '0 0 40px rgba(216,180,101,.8)' }, { filter: 'none', boxShadow: 'none' }], { duration: 520, easing: 'ease-out' });
       if (ev.suite >= 5) {
         // la grande suite : un arrêt sur image, un éclair blanc, puis tout part
-        racine.animate([{ filter: 'brightness(2.2) saturate(.4)' }, { filter: 'none' }], { duration: 420, easing: 'ease-out' });
+        if (!reduit) ecran?.animate([{ filter: 'brightness(2.2) saturate(.4)' }, { filter: 'none' }], { duration: 420, easing: 'ease-out' });
         const r = zone?.getBoundingClientRect();
         if (r) eclats(r.left + r.width / 2, r.top + r.height / 2, 40, '#F3D27A', { vitesse: 380, taille: 2.6, trainee: true, gravite: 0, vie: 0.6 });
         return 260;

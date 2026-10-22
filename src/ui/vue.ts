@@ -213,7 +213,7 @@ export function htmlCombat(e: Ecran): string {
 
   // la scène de l'ennemi
   h += `<section class="scene-ennemi l-${def.lignee}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'}" aria-label="Ennemi">`
-    + (ill ? `<img class="ennemi-art" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
+    + (ill ? `<img class="ennemi-art${s.issue === 'victoire' ? ' dissous' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
     + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
     + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
     + `<div class="intention ${classeIntention}" aria-live="polite"><span class="int-ico">${iconeIntention}</span><span class="int-txt"><small>INTENTION</small>${echap(texteIntention(s))}</span></div>`
