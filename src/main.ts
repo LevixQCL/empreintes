@@ -47,8 +47,8 @@ let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
 const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null };
-const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number } = {
-  verrou: false, regles: false, pops: [], fin: null, etat: null, traces: {},
+const K: { verrou: boolean; regles: boolean; fuite: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number } = {
+  verrou: false, regles: false, fuite: false, pops: [], fin: null, etat: null, traces: {},
 };
 
 // ---------- Rendu ----------
@@ -73,7 +73,7 @@ function afficher() {
   else if (mode === 'combat' && jeu.expedition) {
     const etat = K.etat ?? jeu.expedition.combat;
     const lecon = jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;
-    h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}) });
+    h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, fuite: K.fuite, pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}) });
   } else {
     mode = 'district';
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape)
@@ -332,6 +332,28 @@ async function jouer(pas: Pas[]) {
   afficher();
 }
 
+/**
+ * Fuir : l'attaque annoncée touche pendant la fuite. On la joue comme un vrai coup (traînée de la jauge, chiffres, secousse),
+ * puis on quitte l'écran de combat. L'état du combat n'est pas modifié ici : jeu.ts applique le même coup.
+ */
+async function jouerFuite() {
+  const s = jeu.expedition?.combat;
+  if (!s) return;
+  const { coups } = C.coupDeFuite(s);
+  K.fuite = false;
+  const pas: Pas[] = [];
+  let etat = structuredClone(s);
+  for (const c of coups) {
+    etat = structuredClone(etat);
+    const p = etat.porteurs.find((q) => q.id === c.id)!;
+    p.pv = Math.max(0, p.pv - c.net);
+    etat.bouclier = Math.max(0, etat.bouclier - c.absorbe);
+    pas.push({ ev: { kind: 'degats', cible: c.id, net: c.net, absorbe: c.absorbe }, etat });
+    if (p.pv <= 0) { p.aTerre = true; pas.push({ ev: { kind: 'a-terre', cible: c.id }, etat }); }
+  }
+  if (pas.length) await jouer(pas);
+}
+
 // ---------- Actions ----------
 
 const champ = (id: string) => ((racine.querySelector('#' + id) as HTMLInputElement | null)?.value ?? '').trim();
@@ -498,7 +520,16 @@ racine.addEventListener('click', async (ev) => {
     case 'allonger': if (s && !K.verrou) { C.allonger(s); sauver(); } break;
     case 'repiocher': if (s && !K.verrou) { C.repiocher(s); sauver(); } break;
     case 'lancer': if (s && !K.verrou) { debloquerSon(); await jouer(C.lancer(s)); return; } break;
-    case 'regles': K.regles = !K.regles; break;
+    case 'regles': K.regles = !K.regles; K.fuite = false; break;
+    case 'fuir': if (!K.verrou) { K.fuite = !K.fuite; K.regles = false; } break;
+    case 'fuir-salle': {
+      if (K.verrou || !x) break;
+      await jouerFuite();
+      const r = J.fuirSalle(jeu);
+      if (!r.ok) { D.message = r.message ?? ''; afficher(); return; }
+      K.fin = null; K.etat = null; sauver(); window.scrollTo(0, 0);
+      break;
+    }
     case 'son': basculerSon(); break;
     case 'suivant': J.continuer(jeu); K.fin = null; sauver(); window.scrollTo(0, 0); break;
     case 'salle': {
@@ -516,6 +547,13 @@ racine.addEventListener('click', async (ev) => {
     case 'retraite':
       if (!J.retraite(jeu).ok) break;
     // falls through : remonter avec le butin
+    case 'fuir-district':
+      if (a === 'fuir-district') {
+        if (K.verrou || !x) break;
+        await jouerFuite();
+        if (!J.fuir(jeu).ok) break;
+      }
+    // falls through : remonter avec 75 % du butin
     case 'remonter': {
       const r = J.remonter(jeu);
       K.fin = null;
@@ -526,9 +564,10 @@ racine.addEventListener('click', async (ev) => {
           ? 'La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans le Codex (Tour du Noyau).'
           : 'L’escouade se repose. La porte scellée t’attend toujours.';
       } else {
+        const fuite = r.fuite ? `L’escouade a fui : elle rentre épuisée (+${J.DISTRICT.usureFuite} d’Usure chacun). ` : '';
         D.vue = jeu.choix.length ? 'archipel' : 'coupe';
         const manque = J.manquePourCreuser(jeu);
-        D.message = (r.nouvelleStrate ? `Un nouvel étage est creusé : la Strate −${jeu.strate} est ouverte.`
+        D.message = fuite + (r.nouvelleStrate ? `Un nouvel étage est creusé : la Strate −${jeu.strate} est ouverte.`
           : r.victoire && manque && jeu.frontVaincu && r.butin >= 0 && J.strateVaincue(jeu) === jeu.strate
             ? `Le gardien est vaincu, mais l’étage suivant attend : ${manque.creuseurs ? `il manque ${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : ''}${manque.creuseurs && manque.noyau ? ' et ' : ''}${manque.noyau ? `la Tour du Noyau doit passer au niveau ${J.noyauRequis(jeu.strate + 1)}` : ''}. +${r.butin} composants rapportés.`
             : `+${r.butin} composants rapportés.`)

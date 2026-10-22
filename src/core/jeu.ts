@@ -8,7 +8,7 @@ import {
   type CarteCollection,
 } from './collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from './fragments';
-import { cloturerCombat, combatSuivant, entrerSalle, forceStrate, lancerCombat, nouvelleExpedition, nouvelleExploration, peutRemonter, type CibleFouille, type Expedition } from './expedition';
+import { cloturerCombat, combatSuivant, entrerSalle, forceStrate, fuirAuDistrict, lancerCombat, nouvelleExpedition, nouvelleExploration, peutRemonter, reculer, type CibleFouille, type Expedition } from './expedition';
 import { graine, tireur } from './rng';
 import type { BatimentId, GesteDef, Lignee, PorteurEtat, Rarete, BonusMarques } from './types';
 
@@ -40,6 +40,9 @@ export const DISTRICT = {
   deckMin: 12,
   /** part du butin gardée après une défaite */
   butinDefaite: 0.5,
+  /** fuir un combat jusqu'au district (22 octobre 2026) : part des composants gardée, et Usure en plus pour chaque Porteur */
+  butinFuite: 0.75,
+  usureFuite: 3,
   depart: { energie: 120, composants: 20 },
 } as const;
 
@@ -1135,6 +1138,24 @@ export function retraite(j: Jeu): Resultat {
   return { ok: true };
 }
 
+/** Fuir le combat en reculant d'une salle sur la carte (l'ennemi frappe une dernière fois) */
+export function fuirSalle(j: Jeu): Resultat {
+  if (!j.expedition) return non('Aucune expédition en cours.');
+  const r = reculer(j.expedition);
+  if (!r.ok) return non(r.message ?? 'Impossible de reculer.');
+  j.expedition = r.x;
+  return { ok: true };
+}
+
+/** Fuir le combat jusqu'au district : à faire suivre de remonter(), qui garde 75 % des composants et ajoute de l'Usure */
+export function fuir(j: Jeu): Resultat {
+  if (!j.expedition) return non('Aucune expédition en cours.');
+  const r = fuirAuDistrict(j.expedition);
+  if (!r.ok) return non(r.message ?? 'Impossible de fuir.');
+  j.expedition = r.x;
+  return { ok: true };
+}
+
 export function finDeCombat(j: Jeu): void {
   if (!j.expedition) return;
   j.expedition = cloturerCombat(j.expedition);
@@ -1147,6 +1168,8 @@ export function continuer(j: Jeu): void {
 /** Retour au district : butin, Usure, et nouvel étage creusé après une victoire complète */
 export interface Retour {
   butin: number; nouvelleStrate: boolean; victoire: boolean; fragment: string | null; tutoriel?: boolean;
+  /** l'escouade a fui un combat */
+  fuite?: boolean;
   /** cartes trouvées en route, Éclats gagnés */
   cartes: string[]; eclats: number;
 }
@@ -1156,14 +1179,14 @@ export function remonter(j: Jeu): Retour {
   if (!x) return { butin: 0, nouvelleStrate: false, victoire: false, fragment: null, cartes: [], eclats: 0 };
   const victoire = x.terminee && !x.retraite && x.combat.issue === 'victoire';
   const defaite = x.combat.issue === 'defaite' && !x.retraite;
-  const brut = !defaite ? x.butin : Math.floor(x.butin * DISTRICT.butinDefaite);
+  const brut = defaite ? Math.floor(x.butin * DISTRICT.butinDefaite) : x.fuite ? Math.floor(x.butin * DISTRICT.butinFuite) : x.butin;
   const butin = x.tutoriel ? brut : Math.round(brut * (j.actes.chambre === 'district' ? 1.2 : 1) * (j.actes.fin === 'pacte' ? 1.1 : 1));
   j.composants += butin;
   const finaux = x.carte && x.phase !== 'combat' ? x.porteurs : x.combat.porteurs;
   for (const p of finaux) {
     const d = j.porteurs[p.id]!;
     const usure = DISTRICT.usureExpedition * (j.actes.fin === 'archives' ? 1.5 : 1) * (x.fouille || x.epreuve ? 0.5 : 1);
-    d.usure = Math.min(usureMax(p.id), d.usure + usure + (p.pv <= 0 ? DISTRICT.usureATerre : 0));
+    d.usure = Math.min(usureMax(p.id), d.usure + usure + (p.pv <= 0 ? DISTRICT.usureATerre : 0) + (x.fuite ? DISTRICT.usureFuite : 0));
   }
   let nouvelleStrate = false;
   let butinFilon = 0;
@@ -1251,8 +1274,9 @@ export function remonter(j: Jeu): Retour {
   j.expedition = null;
   log(j, victoire
     ? `L’escouade remonte victorieuse avec ${butin} composants.${nouvelleStrate ? ` Un nouvel étage est creusé : la Strate −${j.strate} est ouverte.` : ''}`
+    : x.fuite ? `L’escouade a fui et remonte avec ${butin} composants. Elle rentre épuisée.`
     : `L’escouade remonte avec ${butin} composants. Elle a besoin de repos.`);
-  return { butin: butin + butinFilon, nouvelleStrate, victoire, fragment, cartes, eclats };
+  return { butin: butin + butinFilon, nouvelleStrate, victoire, fragment, cartes, eclats, ...(x.fuite ? { fuite: true } : {}) };
 }
 
 function ajouterFragment(j: Jeu): string | null {

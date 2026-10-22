@@ -174,6 +174,39 @@
   .salle.accessible .sa-medaillon{animation:none;box-shadow:0 0 0 1.5px color-mix(in srgb,var(--t) 60%,white 40%),0 0 0 3.5px rgba(5,7,16,.9),0 0 0 4.5px var(--t),0 0 20px color-mix(in srgb,var(--t) 70%,transparent)}
 }
 
+/* ================= Fuir un combat (22 octobre 2026) =================
+   Un bouton discret dans la barre du haut ; la feuille propose de reculer d'une salle ou de remonter, avec le prix de chaque sortie. */
+.btn-fuir{--cut:8px;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:44px;height:44px;padding:0 12px;border:none;
+  font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#FFD9CC;cursor:pointer;
+  background:linear-gradient(165deg,rgba(60,24,34,.88),rgba(20,10,18,.92));box-shadow:inset 0 0 0 1px rgba(255,138,122,.45),0 6px 16px rgba(0,0,0,.4);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));transition:filter .15s ease}
+.btn-fuir .ico{width:16px;height:16px}
+.btn-fuir:not(:disabled):hover,.btn-fuir[aria-expanded="true"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1px rgba(255,160,140,.8),0 0 14px rgba(255,100,90,.25)}
+.btn-fuir:disabled{opacity:.45;cursor:default}
+.combat-barre .boutons-barre{display:flex;align-items:center;gap:8px}
+@media (max-width:519px){
+  .btn-fuir{padding:0} .btn-fuir span{display:none}
+  .combat-barre .boutons-barre{gap:6px}
+  .combat-barre .puce{padding-inline:7px}
+  .combat-barre .boutons-barre :is(.btn-fuir,.btn-icone){width:40px;min-width:40px;height:40px}
+}
+
+.feuille.fuite .feuille-corps{display:grid;align-content:start;gap:12px}
+.fuite-coup{display:flex;align-items:flex-start;gap:10px;margin:0;padding:11px 12px;font-size:14px;line-height:1.45;color:var(--ink-2);
+  background:rgba(205,239,255,.05);box-shadow:inset 3px 0 0 #8FC2FF}
+.fuite-coup.touche{background:rgba(255,110,90,.08);box-shadow:inset 3px 0 0 #FF8A7A}
+.fuite-coup > .ico{flex:none;width:18px;height:18px;margin-top:2px;color:#8FC2FF}
+.fuite-coup.touche > .ico{color:#FF8A7A}
+.fuite-coup b{color:var(--ink);font-weight:600}
+.fuite-coup b.tombe{color:#FFB19C}
+.route-ico{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;color:color-mix(in srgb,var(--t) 75%,white);
+  background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--t) 28%,#16203a),#070a16 78%);
+  box-shadow:0 0 0 1.5px color-mix(in srgb,var(--t) 70%,transparent),0 0 0 3.5px rgba(5,7,16,.9)}
+.route-ico .ico{width:20px;height:20px}
+.route:disabled{cursor:default;filter:grayscale(.7) brightness(.7)}
+.route:disabled:hover{filter:grayscale(.7) brightness(.7)}
+.feuille.fuite .btn.large{width:100%}
+
 /* ================= PC : la carte à gauche en pleine hauteur, l'escouade et les routes à droite ================= */
 @media (min-width:1100px) and (min-height:600px){
   #app[data-mode="combat"]:has(> .ecran-exploration){max-width:1500px;margin-inline:auto}

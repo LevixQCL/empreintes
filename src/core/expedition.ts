@@ -2,8 +2,8 @@
 // salle par salle (combats, salles scellées, caches, rencontres, campements, archives, puis le gardien).
 // L'ancien mode linéaire (trois combats d'affilée) reste pour la chambre scellée et le robot d'équilibrage.
 
-import { creerCombat } from './combat';
-import { ZONES, sequenceStrate, zoneDe } from './donnees';
+import { coupDeFuite, creerCombat } from './combat';
+import { ZONES, ennemiDef, porteurDef, sequenceStrate, zoneDe } from './donnees';
 import { tireur } from './rng';
 import { REGLES } from './regles';
 import type { BonusMarques, CombatEtat, GesteDef, PorteurEtat } from './types';
@@ -41,6 +41,8 @@ export interface Expedition {
   rencontre?: string;
   /** l'escouade est remontée d'elle-même depuis un campement */
   retraite?: boolean;
+  /** l'escouade a fui un combat pour remonter au district (75 % des composants, de l'Usure en plus) */
+  fuite?: boolean;
   /** une fouille ciblée : courte descente sans gardien dans une Strate déjà vaincue, vers un filon choisi */
   fouille?: CibleFouille;
   /** une Épreuve de la semaine : un seul combat à règle spéciale */
@@ -174,6 +176,62 @@ const gainsVides = (): Gains => ({ elites: 0, cartes: 0, eclats: 0, fragment: fa
 export const salleCourante = (x: Expedition): Salle => x.carte!.salles[x.carte!.position]!;
 /** Les salles où l'escouade peut aller : les voisines de la salle où elle se trouve */
 export const accessibles = (x: Expedition): Salle[] => (x.carte ? salleCourante(x).voisins.map((id) => x.carte!.salles[id]!) : []);
+/** La salle d'où vient l'escouade : sur la rangée d'avant, déjà visitée, et reliée à la salle courante */
+export function sallePrecedente(x: Expedition): Salle | undefined {
+  if (!x.carte) return undefined;
+  const ici = salleCourante(x);
+  return x.carte.salles.find((s) => s.rang === ici.rang - 1 && s.faite && s.voisins.includes(ici.id));
+}
+/** On peut fuir un combat en cours, sauf dans la chambre scellée (le combat guidé du premier lancement) */
+export const peutFuir = (x: Expedition) => x.phase !== 'carte' && x.combat.issue === 'en-cours' && !x.tutoriel && !x.cloture;
+/** Reculer d'une salle : seulement en exploration, et si quelqu'un tient encore debout après le dernier coup */
+export const peutReculer = (x: Expedition) => peutFuir(x) && !!sallePrecedente(x) && coupDeFuite(x.combat).porteurs.some((p) => p.pv > 0);
+
+/** Le récit du dernier coup encaissé en fuyant */
+function recitCoup(x: Expedition): string {
+  const { coups, attaque } = coupDeFuite(x.combat);
+  const touches = coups.filter((c) => c.net > 0);
+  if (!attaque) return 'L’ennemi ne préparait pas d’attaque : l’escouade s’échappe sans un coup.';
+  if (!touches.length) return `${attaque} s’écrase sur le bouclier : l’escouade s’échappe sans une égratignure.`;
+  return `En fuyant, ${touches.map((c) => `${porteurDef(c.id).nom} encaisse ${attaque} (−${c.net})`).join(', ')}.`;
+}
+
+/**
+ * Fuir vers la salle d'avant (décision du 22 octobre 2026) : l'ennemi frappe une dernière fois, l'escouade revient sur la carte
+ * à la salle d'où elle venait. L'ennemi garde sa salle (elle redevient « à faire ») : on peut prendre un autre chemin,
+ * ou revenir l'affronter plus tard (un combat neuf). Les PV perdus restent perdus.
+ */
+export function reculer(x: Expedition): { x: Expedition; ok: boolean; message?: string } {
+  if (!peutFuir(x) || !x.carte) return { x, ok: false, message: 'On ne recule que pendant un combat d’exploration.' };
+  const prec = sallePrecedente(x);
+  if (!prec) return { x, ok: false, message: 'Pas de salle où se replier.' };
+  const { porteurs } = coupDeFuite(x.combat);
+  if (!porteurs.some((p) => p.pv > 0)) return { x, ok: false, message: 'L’escouade ne tiendrait plus debout : il faut remonter.' };
+  const ici = salleCourante(x);
+  const salles = x.carte.salles.map((s) => (s.id === ici.id ? { ...s, faite: false } : s));
+  // l'ennemi fui ne compte pas parmi les combats livrés (les Marques comptent les ennemis vaincus dans l'ordre)
+  const sequence = x.sequence.slice(0, -1);
+  const nom = ennemiDef(x.combat.ennemi.id).nom;
+  return {
+    ok: true,
+    x: {
+      ...x, carte: { ...x.carte, salles, position: prec.id }, phase: 'carte', sequence, index: sequence.length - 1, cloture: true,
+      porteurs, combat: { ...x.combat, porteurs: porteurs.map((p) => ({ ...p })) },
+      recit: `${recitCoup(x)} L’escouade se replie d’une salle. ${nom} garde la sienne : prends un autre chemin, ou reviens l’affronter.`,
+    },
+  };
+}
+
+/** Fuir jusqu'au district : l'ennemi frappe une dernière fois, puis l'escouade remonte (remonter() applique le prix de la fuite) */
+export function fuirAuDistrict(x: Expedition): { x: Expedition; ok: boolean; message?: string } {
+  if (!peutFuir(x)) return { x, ok: false, message: 'On ne fuit que pendant un combat.' };
+  const { porteurs } = coupDeFuite(x.combat);
+  return {
+    ok: true,
+    x: { ...x, fuite: true, terminee: true, cloture: true, porteurs, combat: { ...x.combat, porteurs: porteurs.map((p) => ({ ...p })) }, recit: recitCoup(x) },
+  };
+}
+
 /** On ne peut remonter de soi-même qu'à l'entrée ou depuis un campement */
 export const peutRemonter = (x: Expedition) => !!x.carte && x.phase === 'carte' && !x.rencontre && ['entree', 'camp'].includes(salleCourante(x).type);
 

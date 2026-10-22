@@ -366,6 +366,38 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
   return evs;
 }
 
+/**
+ * Fuir un combat (décision du 22 octobre 2026) : l'attaque que l'ennemi annonçait touche l'escouade pendant qu'elle s'enfuit.
+ * Rien si l'ennemi ne préparait pas d'attaque. Même calcul que son vrai tour (élan, triangle des lignées), et le bouclier
+ * de l'escouade protège encore. Un Porteur peut finir à terre, jamais plus : personne ne meurt dans EMPREINTES.
+ * Ne modifie pas l'état : renvoie les PV d'après le coup, et les coups portés (pour l'animation).
+ */
+export function coupDeFuite(s: CombatEtat): { porteurs: PorteurEtat[]; coups: { id: string; net: number; absorbe: number }[]; attaque: string | null } {
+  const porteurs = s.porteurs.map((p) => ({ ...p }));
+  const it = s.intention;
+  if (it.type !== 'atk') return { porteurs, coups: [], attaque: null };
+  const e = ennemiDef(s.ennemi.id);
+  const debout = porteurs.filter((p) => p.pv > 0);
+  let cibles: PorteurEtat[];
+  if (it.zone) cibles = debout;
+  else {
+    const visee = it.cibleId ? debout.find((p) => p.id === it.cibleId) : undefined;
+    cibles = visee ? [visee] : debout.slice(0, 1);
+  }
+  let bouclier = s.bouclier;
+  const coups: { id: string; net: number; absorbe: number }[] = [];
+  for (const c of cibles) {
+    const dmg = Math.round(it.v * s.ennemi.boost * avantage(e.lignee, porteurDef(c.id).lignee));
+    const absorbe = Math.min(bouclier, dmg);
+    bouclier -= absorbe;
+    const net = dmg - absorbe;
+    c.pv = Math.max(0, c.pv - net);
+    if (c.pv <= 0) c.aTerre = true;
+    coups.push({ id: c.id, net, absorbe });
+  }
+  return { porteurs, coups, attaque: it.nom };
+}
+
 function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
   const e = ennemiDef(s.ennemi.id);
   const it = s.intention;
