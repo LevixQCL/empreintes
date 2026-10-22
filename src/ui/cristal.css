@@ -220,22 +220,3 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-qui{text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.9)}
 /* l'effet garde sa place sur le bord droit, au-dessus de la force */
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{bottom:calc(100% + 4px)}
-
-/* ---------- Des cartes épurées (22 octobre 2026) ----------
-   Bryan veut des cartes épurées et belles : l'image d'abord. Sur la carte ne restent que la gemme de la Fréquence,
-   la force (un grand chiffre fin, teinté par l'action : rouge l'attaque, bleu la protection, vert le soin) et le nom.
-   Plus d'icône ni d'étiquette d'effet sur l'image : un petit losange d'or à côté de la force dit qu'il y a un effet,
-   et son texte s'affiche sous la chaîne quand on pose la carte. */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{display:none}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val .ico{display:none}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val{align-items:flex-end}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val b{font-family:var(--display);font-weight:400;font-size:22px;line-height:.9;letter-spacing:.01em}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val b{font-size:24px}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.atk b{color:#ffd9cc;text-shadow:0 0 8px rgba(240,110,80,.85),0 1px 2px #000}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.bouclier b{color:#dcefff;text-shadow:0 0 8px rgba(110,170,240,.85),0 1px 2px #000}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.soin b{color:#e3fbd6;text-shadow:0 0 8px rgba(120,210,110,.85),0 1px 2px #000}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-nom{font-weight:500;font-size:9.5px;letter-spacing:.02em;opacity:.92}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.a-effet .g-val::after{content:"";display:inline-block;width:5px;height:5px;margin:0 0 4px 4px;
-  background:linear-gradient(135deg,#fff3c8,#d9a94a);transform:rotate(45deg);box-shadow:0 0 4px rgba(255,210,120,.8)}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips i{width:13px;height:13px;font-size:8px;opacity:.85}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-art::after{background:linear-gradient(180deg,transparent 0%,transparent 55%,rgba(6,8,12,.5) 75%,rgba(6,8,12,.85) 100%)}
