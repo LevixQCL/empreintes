@@ -310,11 +310,22 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
    L'action (attaque, protection, soin) est un symbole peint à côté de la force. */
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle.peinte{width:31px;height:31px;top:2px;left:2px;clip-path:none;
   background:var(--pierre) center/contain no-repeat;filter:drop-shadow(0 0 3px var(--fc)) drop-shadow(0 2px 2px rgba(0,0,0,.85))}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-socle.peinte{width:34px;height:34px}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle.peinte .g-freq{display:none}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips{top:33px;left:4px}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-pips{top:36px;left:5px}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips i.peinte{width:17px;height:17px;font-size:0;clip-path:none;opacity:1;
   background:var(--pierre) center/contain no-repeat;filter:drop-shadow(0 0 2px var(--fc)) drop-shadow(0 1px 1px #000)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val .g-sym{width:15px;height:15px;object-fit:contain;transform:translateY(1px);filter:drop-shadow(0 1px 2px #000)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val .g-sym{width:16px;height:16px}
+/* ---------- La pierre sertie dans le chaton du cadre (sertie dans le cadre) ---------- */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle.peinte{--sx:12px;--sy:12px;--sd:20px;width:var(--sd);height:var(--sd);top:calc(var(--sy) - var(--sd) / 2);left:calc(var(--sx) - var(--sd) / 2);
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.9)) saturate(.75)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-fer .g-socle.peinte{--sx:8.6px;--sy:9px;--sd:17px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-cuivre .g-socle.peinte{--sx:8.9px;--sy:9.1px;--sd:16px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-argent .g-socle.peinte{--sx:9.5px;--sy:9.7px;--sd:16px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-or .g-socle.peinte{--sx:9.6px;--sy:9.1px;--sd:16px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips{top:16px;left:3px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-argent,.gm-or) .g-pips{top:15px;left:4px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips i.peinte{width:11px;height:11px;filter:drop-shadow(0 1px 1px #000) saturate(.75)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-nacre .g-pips{top:23px;left:3px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val .g-sym{width:17px;height:17px;transform:translateY(2px)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val .g-sym{width:18px;height:18px}
