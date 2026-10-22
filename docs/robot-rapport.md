@@ -1,6 +1,6 @@
 # Rapport du robot d'équilibrage
 
-2026-10-22 · 300 expéditions par mesure · 542 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
+2026-10-22 · 300 expéditions par mesure · 872 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
 
 ## Le deck de départ selon la profondeur
 
