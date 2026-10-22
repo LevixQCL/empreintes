@@ -39,6 +39,9 @@ export interface EcranDistrict {
   bulles: number;
   /** « Avant d'ouvrir » : écran d'explication affiché */
   etape: number;
+  /** l'escouade part pour une fouille ciblée (et ce qu'elle cherche), ou pour une Épreuve de la semaine */
+  fouille: import('../core/expedition').CibleFouille | null;
+  epreuve: string | null;
 }
 
 export const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');

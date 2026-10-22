@@ -5,10 +5,11 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte,
+  ARCHIVE, CIBLES_FOUILLE, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte,
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
+import type { CibleFouille } from '../core/expedition';
 import { FRAGMENTS } from '../core/fragments';
 import { loreCarte } from '../core/lore-cartes';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
@@ -321,7 +322,7 @@ function effetsCarte(m: ReturnType<typeof moduleDef>): string {
 
 function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
-  const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : 'Archive de la semaine';
+  const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : 'Archive de la semaine';
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><div class="cartes-choix">`
     + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}"`)).join('')
     + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
@@ -566,7 +567,7 @@ export function htmlCoupe(e: EcranDistrict): string {
     if (!porteursPresents(j).includes(p.id)) continue;
     const d = j.porteurs[p.id]!;
     const exp = enExpedition(j, p.id);
-    const etat = exp ? 'En expédition' : d.poste ? batimentDef(d.poste).nom : 'Au repos';
+    const etat = enMission(j, p.id) ? 'En mission' : exp ? 'En expédition' : d.poste ? batimentDef(d.poste).nom : 'Au repos';
     const pv = pvMaxCombat(j, p.id);
     h += `<div class="habitant${exp ? ' parti' : ''}" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 40)}<div class="hab-infos"><div class="hab-ligne"><strong>${echap(p.nom)}</strong><span class="chiffre">${pv}/${p.pvMax}</span></div>`
       + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id))
@@ -580,13 +581,59 @@ export function htmlCoupe(e: EcranDistrict): string {
     const nom = NOMS_ETAGES[Math.min(n - 1, NOMS_ETAGES.length - 1)];
     const off = j.expedition || !j.chambre;
     h += `<li class="strate${front ? ' front' : ''}" style="--p:${Math.min(1, (n - 1) / 4)}"><span class="profondeur">−${n}</span><div class="strate-infos"><strong>${nom}</strong>`
-      + `<small>${front ? 'Front de fouille : la vaincre creuse un nouvel étage' : 'Explorée : on y retourne pour des composants'}</small></div>`
-      + `<button type="button" class="btn ${front ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}${front ? 'Descendre' : 'Y aller'}</button></li>`;
+      + `<small>${front ? 'Front de fouille : la vaincre creuse un nouvel étage' : 'Vaincue : fouille ciblée ou expédition'}</small></div>`
+      + `<div class="strate-actions">`
+      + (front ? '' : `<button type="button" class="btn sec" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller</button>`)
+      + `<button type="button" class="btn ${front ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}${front ? 'Descendre' : 'Y aller'}</button></div></li>`;
   }
   h += `<li class="strate roche" aria-hidden="true"><span>Roche à creuser…</span></li></ol>`;
   if (j.expedition) h += `<button type="button" class="appel" data-action="reprendre">${ICO.descendre}<span><strong>Expédition en cours</strong><small>Strate −${j.expedition.strate} : reprendre le combat</small></span></button>`;
   h += `</section>`;
+  if (j.chambre && j.strate >= 2) h += htmlEpreuves(e) + htmlMissions(e);
   return coquille(e, h, 'ecran-coupe');
+}
+
+// ---------- Épreuves de la semaine et missions ----------
+
+function htmlEpreuves(e: EcranDistrict): string {
+  const j = e.j;
+  const st = strateEpreuve(j);
+  const gardien = ennemiDef(zoneDe(st).boss).nom;
+  let h = `<section class="bloc"><h3 class="titre-bloc">${ICO.boost}Épreuves de la semaine</h3>`
+    + `<p class="aide">Un combat contre ${echap(gardien)} (Strate −${st}), avec une règle qui change ta façon de jouer. La première victoire de chaque Épreuve rapporte une carte au choix, dont une en argent au moins. Nouvelles Épreuves lundi, dans ${duree(lundiSuivant(e.now) - e.now)}.</p><div class="epreuves">`;
+  for (const ep of epreuvesDeLaSemaine(e.now)) {
+    const faite = j.epreuves.faites.includes(ep.id);
+    h += `<div class="epreuve${faite ? ' faite' : ''}"><div><strong>${echap(ep.nom)}</strong><small>${echap(ep.regle)}</small>`
+      + `<small class="gain">${faite ? `${ICO.ok}Réussie cette semaine` : `${ICO.cartes}1 carte au choix, argent au moins`}</small></div>`
+      + `<button type="button" class="btn ${faite ? 'sec' : 'prim'}" data-action="epreuve" data-id="${ep.id}"${j.expedition ? ' disabled' : ''}>${faite ? 'Rejouer' : 'Tenter'}</button></div>`;
+  }
+  return h + `</div></section>`;
+}
+
+function htmlMissions(e: EcranDistrict): string {
+  const j = e.j;
+  const st = strateMission(j);
+  let h = `<section class="bloc"><h3 class="titre-bloc">${ICO.ouvrier}Missions</h3>`
+    + `<p class="aide">Un Porteur qui ne travaille pas peut partir en mission dans la Strate −${st}. La mission avance même jeu fermé : il rapporte des composants et des doublons de cartes de sa lignée, et un peu d’Usure.</p>`;
+  for (const m of j.missions) {
+    const p = porteurDef(m.porteur);
+    const fait = Math.min(1, (e.now - m.debut) / (m.fin - m.debut));
+    h += `<div class="en-cours" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 36)}<div><strong>${echap(p.nom)} · Strate −${m.strate}</strong><small>${e.now >= m.fin ? 'Sur le retour' : `Retour dans ${duree(m.fin - e.now)}`}</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
+  }
+  const libres = disponibles(j);
+  if (j.missions.length >= MISSIONS.max) h += `<small class="aide">${MISSIONS.max} missions au plus en même temps.</small>`;
+  else if (!libres.length) h += `<small class="aide">Tous les Porteurs travaillent ou sont partis : libère-en un d’un bâtiment pour l’envoyer.</small>`;
+  else {
+    h += `<ul class="missions-libres">`;
+    for (const id of libres) {
+      const p = porteurDef(id);
+      h += `<li style="--c:${COULEUR[p.lignee]}">${avatar(id, 36)}<span><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · PV ${pvMaxCombat(j, id)}</small></span>`
+        + `<button type="button" class="btn sec" data-action="mission" data-id="${id}" data-duree="courte">${MISSIONS.courte.heures} h</button>`
+        + `<button type="button" class="btn sec" data-action="mission" data-id="${id}" data-duree="longue">${MISSIONS.longue.heures} h</button></li>`;
+    }
+    h += `</ul>`;
+  }
+  return h + `</section>`;
 }
 
 // ---------- Choix de l'escouade ----------
@@ -603,9 +650,13 @@ function marqueDe(j: Jeu, id: string): string {
 export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
   const dispo = disponibles(j);
-  const deck = deckEscouade(j, e.escouade).length;
+  const ep = e.epreuve ? epreuveDef(e.epreuve) ?? null : null;
+  const fouille = ep ? null : e.fouille;
+  const deck = deckEscouade(j, e.escouade).filter((g) => !ep?.filtre || g.porteur === null || ep.filtre(g)).length;
+  const deckMin = ep ? EPREUVE_DECK_MIN : DISTRICT.deckMin;
+  const titre = ep ? `ÉPREUVE · ${ep.nom.toUpperCase()}` : `${fouille ? 'FOUILLE · ' : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`;
   let h = `<div class="ecran ecran-escouade"><main class="contenu">`
-    + entete(`STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`, 'Escouade', `<button type="button" class="btn-icone" data-action="coupe" aria-label="Retour">${ICO.retour}</button>`);
+    + entete(titre, 'Escouade', `<button type="button" class="btn-icone" data-action="coupe" aria-label="Retour">${ICO.retour}</button>`);
   h += `<div class="emplacements" aria-label="Escouade choisie">` + [0, 1, 2].map((i) => {
     const id = e.escouade[i];
     return id ? `<button type="button" class="emplacement plein" style="--c:${COULEUR[porteurDef(id).lignee]}" data-action="choisir" data-id="${id}" aria-label="Retirer ${echap(porteurDef(id).nom)}">${avatar(id, 56)}<small>${echap(porteurDef(id).nom)}</small></button>`
@@ -623,17 +674,26 @@ export function htmlEscouade(e: EcranDistrict): string {
       + `</div><small class="aide">Des chiffres qui se suivent font des Résonances. Un chiffre absent coupe les suites${libres ? ` · ${libres} carte${libres > 1 ? 's' : ''} ∗ comble${libres > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</small></div>`;
   }
   const zone = zoneDe(e.strateChoisie);
-  h += `<p class="zone-strate">${ICO.strate}<span><strong>${echap(zone.nom)}</strong><small>Deux rencontres, puis le gardien de la zone : ${echap(ennemiDef(zone.boss).nom)}</small></span></p>`;
+  if (ep) {
+    h += `<p class="zone-strate">${ICO.boost}<span><strong>${echap(ep.nom)}</strong><small>${echap(ep.regle)} Un seul combat, contre ${echap(ennemiDef(zone.boss).nom)}.</small></span></p>`;
+  } else if (fouille) {
+    h += `<p class="zone-strate">${ICO.cristal}<span><strong>Fouille ciblée · ${echap(zone.nom)}</strong><small>Une descente courte, sans gardien : quelques salles, puis le filon. Que cherches-tu ?</small></span></p>`;
+    h += `<div class="segments-choix cibles" role="tablist">` + (Object.keys(CIBLES_FOUILLE) as CibleFouille[]).map((c) =>
+      `<button type="button" role="tab" class="seg${fouille === c ? ' actif' : ''}"${c === 'tech' || c === 'bio' || c === 'reso' ? ` style="--c:${COULEUR[c]}"` : ''} data-action="cible" data-id="${c}" aria-selected="${fouille === c}">${echap(CIBLES_FOUILLE[c].nom)}</button>`).join('') + `</div>`;
+    h += `<p class="aide">${echap(CIBLES_FOUILLE[fouille].texte)}</p>`;
+  } else {
+    h += `<p class="zone-strate">${ICO.strate}<span><strong>${echap(zone.nom)}</strong><small>Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien de la zone : ${echap(ennemiDef(zone.boss).nom)}</small></span></p>`;
+  }
   h += `<p class="aide intro-ecran">Choisis 3 Porteurs. Chacun apporte au deck les cartes que tu lui as confiées : changer d’escouade change ton deck. Les Porteurs au travail restent au district.</p><div class="grille-porteurs">`;
   for (const p of PORTEURS) {
     if (!porteursPresents(j).includes(p.id)) continue;
-    const libre = dispo.includes(p.id);
+    const libre = dispo.includes(p.id) && !ep?.interdits?.includes(p.id);
     const choisi = e.escouade.includes(p.id);
     const d = j.porteurs[p.id]!;
     const pv = pvMaxCombat(j, p.id);
     h += `<button type="button" class="carte-porteur${choisi ? ' choisi' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="choisir" data-id="${p.id}"${!libre && !choisi ? ' disabled' : ''} aria-pressed="${choisi}">`
       + `${avatar(p.id, 72)}${choisi ? `<span class="rang">${e.escouade.indexOf(p.id) + 1}</span>` : ''}<strong>${echap(p.nom)}</strong><small class="lignee">${NOM_LIGNEE[p.lignee]}</small>`
-      + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id)) + `<small>${libre || choisi ? `PV ${pv} · ${gestesDe(j, p.id).length} cartes` : `Au travail · ${echap(batimentDef(d.poste!).nom)}`}</small>`
+      + jaugePv(pv, p.pvMax, d.usure, usureMax(p.id)) + `<small>${libre || choisi ? `PV ${pv} · ${gestesDe(j, p.id).length} cartes` : ep?.interdits?.includes(p.id) ? 'Pas pour cette Épreuve' : enMission(j, p.id) ? 'En mission' : d.poste ? `Au travail · ${echap(batimentDef(d.poste).nom)}` : 'Absent'}</small>`
       + marqueDe(j, p.id) + `</button>`;
   }
   h += `</div>`;
@@ -644,9 +704,9 @@ export function htmlEscouade(e: EcranDistrict): string {
       + `</div></section>`;
   }
   h += `<p class="aide">Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p></main>`;
-  const maigre = e.escouade.length === 3 && deck < DISTRICT.deckMin;
-  h += `<footer class="pied-fixe"><div class="pied-info"><span class="chiffre">${e.escouade.length} / 3</span><small${maigre ? ' class="alerte"' : ''}>${e.escouade.length ? `${deck} cartes dans le deck${maigre ? ` · ${DISTRICT.deckMin} au moins` : ''}` : 'Personne pour l’instant'}</small></div>`
-    + `<button type="button" class="btn prim large" data-action="partir"${e.escouade.length === 3 ? '' : ' disabled'}>${ICO.descendre}Partir</button></footer>`;
+  const maigre = e.escouade.length === 3 && deck < deckMin;
+  h += `<footer class="pied-fixe"><div class="pied-info"><span class="chiffre">${e.escouade.length} / 3</span><small${maigre ? ' class="alerte"' : ''}>${e.escouade.length ? `${deck} cartes dans le deck${maigre ? ` · ${deckMin} au moins` : ''}` : 'Personne pour l’instant'}</small></div>`
+    + `<button type="button" class="btn prim large" data-action="partir"${e.escouade.length === 3 ? '' : ' disabled'}>${ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}</button></footer>`;
   h += feuilleDeck(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;

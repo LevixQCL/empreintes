@@ -6,7 +6,9 @@ import { writeFileSync } from 'node:fs';
 import { COLLECTION, NOMS_RARETE } from '../src/core/collection';
 import { NOMS_EFFET } from '../src/core/effets';
 import { CARTES_DE_BASE, DEPART_PORTEURS, METAL_FORCE, METAL_FREQ, METAL_RENFORT, MODULES, carteId, moduleDef } from '../src/core/donnees';
-import { mesurer, tauxExploration, tauxVictoire, type Escouade } from '../src/core/robot';
+import { jouerTour, jouerTourMoyen, mesurer, tauxExploration, tauxVictoire, type Escouade } from '../src/core/robot';
+import { FORCE } from '../src/core/expedition';
+import { PROFILS, mediane, simulerParcours } from '../src/core/parcours';
 import type { Lignee, ModuleDef, Rarete } from '../src/core/types';
 
 const arg = (nom: string, defaut: number) => {
@@ -86,7 +88,17 @@ const lignes = brut.map((b) => {
 
 // 3 bis. L'exploration salle par salle : plus de combats, des PV qui ne remontent qu'aux campements
 progres('Exploration…');
-const explo = [1, 3, 5, 7, 9, 11].map((st) => ({ st, ...tauxExploration(escouade('depart'), st, Math.max(60, Math.round(PARTIES / 2))) }));
+const nExplo = Math.max(60, Math.round(PARTIES / 2));
+const explo = Array.from({ length: 12 }, (_, i) => i + 1).map((st) => ({
+  st, robot: tauxExploration(escouade('depart'), st, nExplo, 1, jouerTour), moyen: tauxExploration(escouade('depart'), st, nExplo, 1, jouerTourMoyen),
+}));
+
+// 3 ter. Le parcours d'un joueur : une partie entière, district et économie compris, jouée par le joueur moyen
+progres('Parcours…');
+const JOURS_PARCOURS = 45;
+const parcours = (['occasionnel', 'assidu'] as const).map((k) => ({
+  k, runs: Array.from({ length: 12 }, (_, i) => simulerParcours(PROFILS[k], JOURS_PARCOURS, 1000 + i * 7919, { joueur: 'moyen' })),
+}));
 
 // 4. Les métaux : chaque carte (hors cartes de base et de départ), à la place de la carte de départ, dans chacun des cinq métaux
 const RANGS_M: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
@@ -119,8 +131,24 @@ r += `| Carte | Rareté | Effets | À la découverte | Au niveau 10 | Alerte |\n
 for (const l of lignes) r += `| ${l.m.nom} | ${NOMS_RARETE[l.m.rarete]} | ${effets(l.m)} | ${pts(l.dep)} | ${pts(l.n10)} | ${l.alerte} |\n`;
 r += `\nMoyenne par rareté, à la découverte : ${RANGS.filter((x) => !Number.isNaN(moyenne(x))).map((x) => `${NOMS_RARETE[x]} ${pts(moyenne(x))}`).join(' · ')}. `;
 r += `Une carte est signalée quand elle s'écarte de plus de ${Math.round(ECART * 100)} points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.\n\n`;
-r += `\n## Exploration (deck de départ)\n\nLa descente salle par salle, jouée par le robot jusqu'au gardien.\n\n| Strate | Victoire | Combats gagnés en moyenne |\n|---|---|---|\n`;
-r += explo.map((e) => `| −${e.st} | ${pct(e.victoire)} | ${e.combats.toFixed(1)} |`).join('\n') + '\n';
+r += `\n## Une Strate entière avec le deck de départ\n\nLa descente salle par salle jusqu'au gardien, avec les 20 cartes de départ, sans aucune progression. `;
+r += `Le robot essaie toutes les chaînes ; le joueur moyen regarde seulement ce qui est affiché (force, suite, attaque annoncée). `;
+r += `Force des ennemis : ${FORCE.table.map((f, i) => `−${i + 1} ×${f}`).join(', ')}, puis ×${FORCE.ensuite} par Strate.\n\n`;
+r += `| Strate | Force | Robot | Joueur moyen | Combats gagnés (moyen) |\n|---|---|---|---|---|\n`;
+r += explo.map((e) => `| −${e.st} | ×${(FORCE.table[e.st - 1] ?? FORCE.table[FORCE.table.length - 1]! * FORCE.ensuite ** (e.st - FORCE.table.length)).toFixed(2)} | ${pct(e.robot.victoire)} | ${pct(e.moyen.victoire)} | ${e.moyen.combats.toFixed(1)} |`).join('\n') + '\n';
+r += `\n## Le parcours d'un joueur\n\nUne partie entière, jouée par le joueur moyen pendant ${JOURS_PARCOURS} jours sur 12 parties : il ouvre ses colis, lit les Chroniques, monte ses cartes, construit son deck, améliore le district, `;
+r += `tente les Épreuves, envoie ses Porteurs libres en mission, et fait une fouille ciblée quand il bloque deux fois au front. Jour médian d'ouverture de chaque Strate, et expéditions qu'il a fallu depuis la précédente.\n\n`;
+r += `| Strate | ${parcours.map((p) => PROFILS[p.k].nom).join(' | ')} |\n|---|${parcours.map(() => '---').join('|')}|\n`;
+for (let st = 2; st <= 20; st++) {
+  const cases = parcours.map((p) => {
+    const jours = p.runs.map((x) => x.ouverture[st] ?? Infinity);
+    const d = mediane(jours);
+    return Number.isFinite(d) ? `jour ${d} (${mediane(p.runs.map((x) => x.expeditions[st] ?? Infinity))} exp.)` : '—';
+  });
+  if (cases.every((c) => c === '—')) break;
+  r += `| −${st} | ${cases.join(' | ')} |\n`;
+}
+r += `\nVictoires au front : ${parcours.map((p) => { const t = p.runs.reduce((n, x) => n + x.front.tentatives, 0), v = p.runs.reduce((n, x) => n + x.front.victoires, 0); return `${PROFILS[p.k].nom.split(' ')[0]} ${pct(v / t)}`; }).join(' · ')}.\n`;
 if (metaux.length) {
   const moyM = (r: Rarete) => metaux.reduce((a, x) => a + x.v[r], 0) / metaux.length;
   r += `\n## Une carte dans les cinq métaux\n\nChaque carte (hors cartes de base et de départ) à la place de la carte de départ, à la découverte, dans chaque métal. `;

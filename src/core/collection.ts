@@ -3,7 +3,7 @@
 
 import { MODULES, carteId, gesteDeCarte, moduleDef } from './donnees';
 import { tireur } from './rng';
-import type { GesteDef, Rarete } from './types';
+import type { GesteDef, Lignee, Rarete } from './types';
 
 export const RARETES: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
 export const NOMS_RARETE: Record<Rarete, string> = { fer: 'Fer', cuivre: 'Cuivre', argent: 'Argent', or: 'Or', nacre: 'Nacre' };
@@ -91,29 +91,31 @@ export function tirerRarete(e: EtatCollection, strate: number, minimum: Rarete =
 }
 
 /** Tire une carte : un métal, puis une carte parmi toutes (chaque carte existe dans les cinq métaux) */
-export function tirerCarte(e: EtatCollection, strate: number, minimum: Rarete = 'fer'): string {
+export function tirerCarte(e: EtatCollection, strate: number, minimum: Rarete = 'fer', lignee?: Lignee): string {
   const r = tirerRarete(e, strate, minimum);
-  return carteId(MODULES[tireur(e).entier(MODULES.length)]!.id, r);
+  const pool = lignee ? MODULES.filter((m) => m.lignee === lignee) : MODULES;
+  return carteId(pool[tireur(e).entier(pool.length)]!.id, r);
 }
 
 /**
  * Une trouvaille d'expédition (combat, salle scellée, cache) : comme tirerCarte, mais une fois sur 2,5 (COLLECTION.affinite)
  * c'est un doublon d'une carte déjà possédée dans le métal tiré. Les choix (boss, objectif, Archive) restent tirerChoix.
  */
-export function tirerTrouvaille(e: EtatCollection, strate: number, minimum: Rarete = 'fer'): string {
+export function tirerTrouvaille(e: EtatCollection, strate: number, minimum: Rarete = 'fer', lignee?: Lignee): string {
   const r = tirerRarete(e, strate, minimum);
   const t = tireur(e);
-  const possedees = Object.keys(e.collection).filter((id) => id.endsWith('@' + r));
+  const possedees = Object.keys(e.collection).filter((id) => id.endsWith('@' + r) && (!lignee || moduleDef(id).lignee === lignee));
   if (possedees.length && t.nombre() < COLLECTION.affinite) return possedees[t.entier(possedees.length)]!;
-  return carteId(MODULES[t.entier(MODULES.length)]!.id, r);
+  const pool = lignee ? MODULES.filter((m) => m.lignee === lignee) : MODULES;
+  return carteId(pool[t.entier(pool.length)]!.id, r);
 }
 
 /** Trois cartes différentes au choix (boss, objectif du jour, Archive), toujours trois cartes de base différentes */
-export function tirerChoix(e: EtatCollection, strate: number, minimum: Rarete = 'fer'): string[] {
+export function tirerChoix(e: EtatCollection, strate: number, minimum: Rarete = 'fer', lignee?: Lignee): string[] {
   const choix: string[] = [];
   let garde = 0;
   while (choix.length < 3 && garde++ < 30) {
-    const id = tirerCarte(e, strate, choix.length === 0 ? minimum : 'fer');
+    const id = tirerCarte(e, strate, choix.length === 0 ? minimum : 'fer', lignee);
     if (!choix.some((c) => moduleDef(c).base === moduleDef(id).base)) choix.push(id);
   }
   return choix;

@@ -44,7 +44,7 @@ let lignesVues = 1;
 let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
-const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0 };
+const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null };
 const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number> } = {
   verrou: false, regles: false, pops: [], fin: null, etat: null, traces: {},
 };
@@ -253,6 +253,12 @@ function finPour(): Fin | null {
     if (s.issue === 'defaite') return { titre: 'Repoussés', texte: 'Le gardien a eu le dessus, cette fois. Vise les suites et protège-toi quand il annonce une grosse attaque.', bouton: 'Remonter et réessayer', action: 'remonter' };
     return null;
   }
+  if (x.epreuve) {
+    const ep = J.epreuveDef(x.epreuve);
+    if (s.issue === 'victoire') return { titre: 'Épreuve réussie', texte: `${ep?.nom ?? 'L’Épreuve'} : ${ennemiDef(s.ennemi.id).nom} se dissipe.${jeu.epreuves.faites.includes(x.epreuve) ? ' Tu l’avais déjà réussie cette semaine : pas de nouvelle carte.' : ' Une carte au choix t’attend au district.'}`, bouton: 'Remonter au district', action: 'remonter' };
+    if (s.issue === 'defaite') return { titre: 'Épreuve manquée', texte: 'L’escouade a été repoussée. Tu peux la retenter quand tu veux cette semaine : change de cartes ou de Porteurs pour contourner la règle.', bouton: 'Remonter au district', action: 'remonter' };
+    return null;
+  }
   if (s.issue === 'defaite') {
     return { titre: 'Défaite', texte: `Toute l’escouade est à terre. Elle remonte avec la moitié du butin (${Math.floor(x.butin * J.DISTRICT.butinDefaite)} composants) et devra se reposer à la Clinique.`, bouton: 'Remonter au district', action: 'remonter' };
   }
@@ -406,14 +412,25 @@ racine.addEventListener('click', async (ev) => {
     case 'entrer': ouvrir('coupe'); break;
     case 'archipel': ouvrir('archipel'); break;
     case 'coupe': ouvrir('coupe'); break;
-    case 'descendre': D.deck = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; break;
+    case 'descendre': D.deck = null; D.fouille = null; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; window.scrollTo(0, 0); break;
+    case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; window.scrollTo(0, 0); break;
+    case 'cible': D.fouille = id as typeof D.fouille; break;
+    case 'epreuve': {
+      const ep = J.epreuveDef(id);
+      D.deck = null; D.fouille = null; D.epreuve = id; D.strateChoisie = J.strateEpreuve(jeu);
+      D.escouade = J.disponibles(jeu).filter((p) => !ep?.interdits?.includes(p)).slice(0, 3); D.vue = 'escouade'; window.scrollTo(0, 0);
+      break;
+    }
+    case 'mission': resultat(J.envoyerMission(jeu, id, (b.dataset.duree as J.DureeMission) ?? 'courte', Date.now())); break;
     case 'choisir':
       if (D.escouade.includes(id)) D.escouade = D.escouade.filter((p) => p !== id);
       else if (D.escouade.length < 3) D.escouade = [...D.escouade, id];
       else D.message = 'Trois Porteurs maximum : retires-en un d’abord.';
       break;
     case 'partir': {
-      const r = J.partir(jeu, D.escouade, D.strateChoisie);
+      const r = D.epreuve ? J.partirEpreuve(jeu, D.escouade, D.epreuve, Date.now())
+        : D.fouille ? J.fouiller(jeu, D.escouade, D.strateChoisie, D.fouille)
+          : J.partir(jeu, D.escouade, D.strateChoisie);
       resultat(r);
       if (r.ok) { mode = 'combat'; K.fin = null; K.etat = null; window.scrollTo(0, 0); }
       break;

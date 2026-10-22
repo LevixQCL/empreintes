@@ -7,7 +7,7 @@ import { lancer } from './combat';
 import { cartesEnJeu } from './collection';
 import { GESTES_SPECIAUX, porteurDef } from './donnees';
 import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExpedition, nouvelleExploration, salleCourante } from './expedition';
-import { REGLES, places } from './regles';
+import { REGLES, analyserChaine, places } from './regles';
 import type { CombatEtat, Geste } from './types';
 
 /** Copie rapide d'un combat (les cartes à plusieurs Fréquences changent de Fréquence : on les copie aussi) */
@@ -95,6 +95,34 @@ export function jouerTour(s: CombatEtat): void {
   lancer(s, { silencieux: true });
 }
 
+/**
+ * Le joueur moyen : il ne calcule pas la suite du combat comme le robot. Il regarde ce qui est affiché :
+ * la force des cartes, le bonus de suite, l'attaque annoncée. Il ordonne sa chaîne par Fréquence croissante,
+ * se protège si l'attaque annoncée fait mal, soigne si quelqu'un est bas, et ignore les effets spéciaux et les lignées.
+ * C'est la référence pour régler la difficulté : le robot, lui, gagne bien plus souvent qu'un vrai joueur.
+ */
+export function jouerTourMoyen(s: CombatEtat): void {
+  if (s.flux >= 2 && capacite(s) < REGLES.capaciteMax) allonger(s);
+  const cap = capacite(s);
+  const it = s.intention;
+  const vie = vivants(s);
+  const pvTotal = vie.reduce((n, p) => n + p.pv, 0);
+  const menace = it.type === 'atk' ? (it.v ?? 0) * (it.zone ? vie.length : 1) : 0;
+  const danger = menace >= 0.2 * pvTotal || (it.type === 'atk' && vie.some((p) => p.pv <= (it.v ?? 0)));
+  const blesse = vie.some((p) => p.pv / p.pvMax < 0.4);
+  let meilleur: { score: number; ordre: Geste[] } | null = null;
+  for (const groupe of sousGroupes(s.main)) {
+    if (groupe.reduce((n, g) => n + places(g), 0) > cap) continue;
+    const ordre = groupe.slice().sort((a, b) => a.f - b.f);
+    const mult = analyserChaine(ordre).mult;
+    const somme = (t: string) => ordre.filter((g) => g.type === t).reduce((n, g) => n + g.v, 0) * mult;
+    const score = somme('atk') + (danger ? 1.5 * Math.min(somme('bouclier'), menace) : 0.3 * somme('bouclier')) + (blesse ? somme('soin') : 0.2 * somme('soin'));
+    if (!meilleur || score > meilleur.score) meilleur = { score, ordre };
+  }
+  for (const g of meilleur?.ordre ?? []) ajouter(s, g.uid);
+  lancer(s, { silencieux: true });
+}
+
 export interface Escouade {
   /** id du Porteur → cartes qu'il porte (exemplaires « carte@métal » ou cartes dans leur métal d'origine), avec leur niveau */
   [porteurId: string]: { id: string; niveau: number }[];
@@ -163,7 +191,7 @@ export const tauxVictoire = (escouade: Escouade, strate: number, parties: number
  * Une descente en exploration, jouée par le robot : il choisit son chemin (campement quand l'escouade est entamée,
  * sinon combat, cache ou archive plutôt que salle scellée), passe son chemin aux rencontres, et va jusqu'au gardien.
  */
-export function simulerExploration(escouade: Escouade, strate: number, rng: number): { victoire: boolean; combats: number } {
+export function simulerExploration(escouade: Escouade, strate: number, rng: number, jouer = jouerTour): { victoire: boolean; combats: number } {
   const ids = Object.keys(escouade);
   const porteurs = ids.map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
   const deck = [...ids.flatMap((id) => cartesEnJeu(id, escouade[id]!)), ...GESTES_SPECIAUX];
@@ -185,15 +213,15 @@ export function simulerExploration(escouade: Escouade, strate: number, rng: numb
       if (!x.terminee) x = combatSuivant(x);
       continue;
     }
-    jouerTour(x.combat);
+    jouer(x.combat);
   }
   return { victoire: x.terminee && x.combat.issue === 'victoire' && salleCourante(x).type === 'gardien', combats: x.gagnes ?? 0 };
 }
 
-export function tauxExploration(escouade: Escouade, strate: number, parties: number, graineDepart = 1): { victoire: number; combats: number } {
+export function tauxExploration(escouade: Escouade, strate: number, parties: number, graineDepart = 1, jouer = jouerTour): { victoire: number; combats: number } {
   let v = 0, c = 0;
   for (let k = 0; k < parties; k++) {
-    const r = simulerExploration(escouade, strate, graineDepart + k * 7919);
+    const r = simulerExploration(escouade, strate, graineDepart + k * 7919, jouer);
     if (r.victoire) v++;
     c += r.combats;
   }

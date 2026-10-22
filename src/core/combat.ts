@@ -153,8 +153,9 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean } = {}): Pas[
 
   const brut = analyserChaine(s.chaine);
   // Dissonance : l'ennemi a brouillé les Fréquences, la suite ne compte pas ce tour-ci
-  const a = s.dissonance ? { ...brut, suite: 0, mult: 1 } : brut;
-  if (s.dissonance && brut.suite >= 3) {
+  const brouille = s.dissonance || s.sansResonance;
+  const a = brouille ? { ...brut, suite: 0, mult: 1 } : brut;
+  if (brouille && brut.suite >= 3) {
     log(s, 'Fréquences brouillées : pas de Résonance ce tour-ci.');
     emettre({ kind: 'effet', cible: 'escouade', texte: 'Brouillé' });
   }

@@ -1,7 +1,7 @@
 # EMPREINTES
 
 Jeu de cartes à collectionner et de gestion, science-fiction avec une touche de fantasy.
-Version actuelle : **tranche verticale en construction** — le combat est jouable, le district arrive ensuite.
+Version actuelle : **tranche verticale** — district, combat, Strates explorées salle par salle, Chroniques.
 
 ## Lancer le jeu sur ton ordinateur
 
@@ -86,6 +86,17 @@ un joueur automatique qui essaie toutes les chaînes possibles à chaque tour. I
 deck de départ gagne une fois sur deux, mesure ce que vaut chaque carte (à la place de la carte de départ de
 sa lignée) et signale celles qui sortent du lot de leur rareté.
 Le rapport est écrit dans `docs/robot-rapport.md`. À relancer après chaque changement de chiffre.
+
+**La difficulté des Strates** (22 octobre 2026) : `FORCE` dans `src/core/expedition.ts`, une force par Strate (PV et attaques
+des ennemis), puis +4 % par Strate au-delà. Elle est réglée sur le **parcours d'un joueur** (`src/core/parcours.ts`) : une partie
+entière jouée par un « joueur moyen » (`jouerTourMoyen` : il lit la force, la suite et l'attaque annoncée, sans calculer la suite
+du combat comme le robot), avec le vrai district, ses colis, ses niveaux, ses Épreuves, ses missions et ses fouilles. Objectif :
+qu'il faille un peu plus d'expéditions pour chaque nouvelle Strate (environ autant d'expéditions que la profondeur), sans mur.
+
+**Quand on bloque devant une Strate** : les *fouilles ciblées* (`fouiller`, une descente courte sans gardien dans une Strate
+vaincue, vers des cartes d'une lignée, des composants ou des Éclats), les *missions* (`envoyerMission`, un Porteur libre part
+2 ou 8 h dans la dernière Strate vaincue) et les *Épreuves de la semaine* (`EPREUVES`, un combat à règle spéciale contre le
+gardien de la dernière Strate vaincue, une carte au choix dont une en argent à la première victoire de la semaine).
 
 ## Firebase
 

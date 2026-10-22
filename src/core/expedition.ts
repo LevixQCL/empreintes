@@ -41,7 +41,14 @@ export interface Expedition {
   rencontre?: string;
   /** l'escouade est remontée d'elle-même depuis un campement */
   retraite?: boolean;
+  /** une fouille ciblée : courte descente sans gardien dans une Strate déjà vaincue, vers un filon choisi */
+  fouille?: CibleFouille;
+  /** une Épreuve de la semaine : un seul combat à règle spéciale */
+  epreuve?: string;
 }
+
+/** Ce que cherche une fouille ciblée : les cartes d'une lignée, des composants ou des Éclats */
+export type CibleFouille = 'tech' | 'bio' | 'reso' | 'composants' | 'eclats';
 
 export interface Gains {
   /** salles scellées vaincues : une carte garantie chacune */
@@ -53,7 +60,7 @@ export interface Gains {
   fragment: boolean;
 }
 
-export type TypeSalle = 'entree' | 'combat' | 'elite' | 'cache' | 'rencontre' | 'camp' | 'archive' | 'gardien';
+export type TypeSalle = 'entree' | 'combat' | 'elite' | 'cache' | 'rencontre' | 'camp' | 'archive' | 'gardien' | 'filon';
 export interface Salle {
   id: number;
   /** profondeur dans la Strate (0 = entrée) */
@@ -78,8 +85,21 @@ export interface CarteStrate {
 /** Les rencontres possibles en route ; leurs choix sont dans jeu.ts (elles touchent au district) */
 export const RENCONTRES_IDS = ['veilleur', 'pilleur', 'brigade', 'cristal', 'marchand', 'source'] as const;
 
-/** Puissance des ennemis selon la profondeur */
-export const forceStrate = (strate: number) => 1 + 0.15 * (strate - 1);
+/**
+ * Puissance des ennemis selon la profondeur (PV et attaques) : une table par Strate, réglée avec le robot
+ * (parcours d'un joueur, `src/core/parcours.ts`), puis une hausse régulière au-delà de la table.
+ */
+export const FORCE = {
+  //      −1   −2   −3   −4    −5    −6   −7    −8    −9   −10   −11   −12  −13   −14
+  table: [1, 1.3, 1.6, 1.9, 2.25, 2.6, 2.7, 2.82, 2.9, 3.05, 3.25, 3.5, 3.68, 3.8] as number[],
+  /** hausse par Strate au-delà de la table */
+  ensuite: 1.04,
+};
+export const forceStrate = (strate: number) => {
+  const t = FORCE.table;
+  if (strate <= t.length) return t[Math.max(0, strate - 1)]!;
+  return t[t.length - 1]! * FORCE.ensuite ** (strate - t.length);
+};
 /** Composants gagnés par victoire */
 export const butinCombat = (strate: number, index: number) => Math.round((index === 2 ? 14 : 6) * (1 + 0.25 * (strate - 1)));
 
@@ -159,8 +179,17 @@ export const peutRemonter = (x: Expedition) => !!x.carte && x.phase === 'carte' 
 
 const POIDS: [TypeSalle, number][] = [['combat', 46], ['cache', 14], ['rencontre', 16], ['elite', 9], ['camp', 8], ['archive', 7]];
 
-/** Une carte de Strate : 7 rangées, l'entrée en haut, le gardien tout en bas, 2 ou 3 salles par rangée */
-export function genererCarte(strate: number, rng: number, garde?: string): CarteStrate {
+/** Rangées d'une carte de Strate : 7 pour une expédition, 4 pour une fouille ciblée */
+export const RANGS_EXPEDITION = 7;
+export const RANGS_FOUILLE = 4;
+/** Nombre de rangées d'une carte */
+export const rangsDe = (c: CarteStrate) => Math.max(...c.salles.map((s) => s.rang)) + 1;
+
+/**
+ * Une carte de Strate : l'entrée en haut, 2 ou 3 salles par rangée, et tout en bas le gardien
+ * (ou, pour une fouille ciblée, le filon : une carte plus courte, sans gardien ni salle scellée).
+ */
+export function genererCarte(strate: number, rng: number, garde?: string, fouille = false): CarteStrate {
   const etat = { rng: (rng ^ 0x27d4eb2f) >>> 0 };
   const t = tireur(etat);
   const z = zoneDe(strate);
@@ -169,20 +198,21 @@ export function genererCarte(strate: number, rng: number, garde?: string): Carte
   const pool = garde === 'orseve' ? z.ennemis.filter((id) => id !== 'brigadier') : z.ennemis;
   const salles: Salle[] = [];
   const rangs: number[][] = [];
-  const RANGS = 7;
+  const RANGS = fouille ? RANGS_FOUILLE : RANGS_EXPEDITION;
   for (let r = 0; r < RANGS; r++) {
     const n = r === 0 || r === RANGS - 1 ? 1 : 2 + t.entier(2);
     const ids: number[] = [];
     for (let c = 0; c < n; c++) {
       let type: TypeSalle;
       if (r === 0) type = 'entree';
-      else if (r === RANGS - 1) type = 'gardien';
+      else if (r === RANGS - 1) type = fouille ? 'filon' : 'gardien';
       else if (r === 1) type = 'combat';
       else if (r === RANGS - 2 && c === 0) type = 'camp';
       else {
         let v = t.nombre() * 100;
         type = 'combat';
         for (const [ty, p] of POIDS) { if (v < p) { type = ty; break; } v -= p; }
+        if (fouille && type === 'elite') type = 'combat';
       }
       const salle: Salle = { id: salles.length, rang: r, col: c, nCol: n, type, voisins: [], faite: r === 0 };
       if (type === 'combat') salle.ennemi = pool[t.entier(pool.length)]!;
@@ -217,8 +247,9 @@ export function genererCarte(strate: number, rng: number, garde?: string): Carte
 /** Une nouvelle expédition en exploration */
 export function nouvelleExploration(opts: {
   porteurs: PorteurEtat[]; deck: GesteDef[]; strate: number; rng: number; garde?: string; facteur?: number; bonus?: BonusMarques;
+  fouille?: CibleFouille;
 }): Expedition {
-  const carte = genererCarte(opts.strate, opts.rng, opts.garde);
+  const carte = genererCarte(opts.strate, opts.rng, opts.garde, !!opts.fouille);
   const premier = carte.salles.find((s) => s.ennemi)!.ennemi!;
   // le combat n'existe qu'une fois une salle de combat ouverte : en attendant, un combat clôturé tient la place
   const attente = creerCombat({ porteurs: opts.porteurs, ennemiId: premier, rng: opts.rng, deck: opts.deck });
@@ -226,7 +257,10 @@ export function nouvelleExploration(opts: {
   return {
     strate: opts.strate, sequence: [], index: -1, porteurs: opts.porteurs, deck: opts.deck, combat: attente,
     butin: 0, terminee: false, cloture: true, carte, phase: 'carte', gagnes: 0, gains: gainsVides(),
-    recit: `L’escouade entre dans ${ZONES[carte.zone]!.nom.toLowerCase()}. Choisis ton chemin : le gardien attend tout au fond.`,
+    recit: opts.fouille
+      ? `L’escouade descend fouiller ${ZONES[carte.zone]!.nom.toLowerCase()}. Pas de gardien cette fois : le filon est au fond.`
+      : `L’escouade entre dans ${ZONES[carte.zone]!.nom.toLowerCase()}. Choisis ton chemin : le gardien attend tout au fond.`,
+    ...(opts.fouille ? { fouille: opts.fouille } : {}),
     ...(opts.facteur && opts.facteur !== 1 ? { facteur: opts.facteur } : {}),
     ...(opts.bonus ? { bonus: opts.bonus } : {}),
   };
@@ -284,6 +318,10 @@ export function entrerSalle(x: Expedition, id: number): { x: Expedition; ok: boo
     }
     case 'rencontre':
       y = { ...y, rencontre: salle.rencontre!, recit: '' };
+      break;
+    case 'filon':
+      // fin de la fouille : ce qu'on cherchait est là, l'escouade remonte avec
+      y = { ...y, terminee: true, recit: 'Le filon est là, intact. L’escouade le dégage et remonte avec.' };
       break;
     default:
       break;

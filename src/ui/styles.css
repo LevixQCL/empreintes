@@ -643,3 +643,28 @@ h1,h2,h3{font-weight:400}
 .legende-salles li{display:inline-flex;align-items:center;gap:4px}
 .legende-salles .ico{width:13px;height:13px}
 @media (prefers-reduced-motion: reduce){ .salle.accessible{animation:none;filter:drop-shadow(0 0 6px rgba(232,223,200,.8))} }
+
+/* ---------- Épreuves, missions, fouilles (22 octobre 2026) ---------- */
+.epreuves{display:grid;gap:8px}
+.epreuve{--cut:8px;display:flex;align-items:center;gap:12px;padding:12px;background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.epreuve>div{flex:1;display:grid;gap:3px;min-width:0}
+.epreuve strong{font-family:var(--display);font-weight:400;font-size:16px;color:var(--ink)}
+.epreuve small{font-size:12px;color:var(--quiet);line-height:1.4}
+.epreuve .gain{display:flex;align-items:center;gap:5px;color:var(--gold)}
+.epreuve .gain .ico{width:14px;height:14px}
+.epreuve.faite{opacity:.75}
+.epreuve.faite .gain{color:var(--quiet)}
+.epreuve .btn{flex-shrink:0;min-height:40px;padding:0 14px;font-size:14px}
+.missions-libres{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.missions-libres li{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet),inset 3px 0 0 var(--c)}
+.missions-libres li>span:not(.avatar){flex:1;display:grid;gap:1px;min-width:0}
+.missions-libres strong{font-size:14.5px;color:var(--ink)}
+.missions-libres small{font-size:12px;color:var(--quiet)}
+.missions-libres .btn{min-height:38px;padding:0 12px;font-size:13.5px}
+.segments-choix.cibles{position:static;grid-template-columns:repeat(auto-fit,minmax(96px,1fr))}
+.segments-choix.cibles .seg{padding:0 6px;line-height:1.2}
+.strate-actions{display:grid;gap:6px;flex-shrink:0}
+.strate-actions .btn{width:100%;justify-content:flex-start}
+.salle.s-filon{width:58px;height:58px}
+.salle.s-filon:not(.accessible):not(.ici){background:#24394a;color:#bfe8ff}

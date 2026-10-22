@@ -2,24 +2,25 @@
 // Vue d'en haut : l'entrée en haut, le gardien tout en bas ; on touche une salle voisine pour y aller.
 // Le fond est une illustration par zone quand elle existe (art.ts), sinon un dégradé à la couleur de la zone.
 
-import { accessibles, peutRemonter, salleCourante, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
+import { accessibles, peutRemonter, rangsDe, salleCourante, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
 import { ZONES, porteurDef } from '../core/donnees';
-import { RENCONTRES, type Jeu } from '../core/jeu';
+import { CIBLES_FOUILLE, RENCONTRES, type Jeu } from '../core/jeu';
 import { decorStrate, portrait } from './art';
 import { COULEUR, echap } from './vue';
 import { ICO } from './icones';
 
 const NOMS: Record<TypeSalle, string> = {
-  entree: 'Entrée', combat: 'Combat', elite: 'Salle scellée', cache: 'Cache', rencontre: 'Rencontre', camp: 'Campement', archive: 'Archives', gardien: 'Gardien',
+  entree: 'Entrée', combat: 'Combat', elite: 'Salle scellée', cache: 'Cache', rencontre: 'Rencontre', camp: 'Campement', archive: 'Archives', gardien: 'Gardien', filon: 'Filon',
 };
 const ICONES: Record<TypeSalle, string> = {
-  entree: ICO.descendre, combat: ICO.atk, elite: ICO.verrou, cache: ICO.coffre, rencontre: ICO.compte, camp: ICO.soin, archive: ICO.codex, gardien: ICO.porte,
+  entree: ICO.descendre, combat: ICO.atk, elite: ICO.verrou, cache: ICO.coffre, rencontre: ICO.compte, camp: ICO.soin, archive: ICO.codex, gardien: ICO.porte, filon: ICO.cristal,
 };
 const TEINTES = ['#3B3122', '#2B2638', '#33222C', '#1C1A2A'];
 
-const RANGS = 7;
 const posX = (s: Salle) => ((s.col + 1) / (s.nCol + 1)) * 100;
-const posY = (s: Salle) => 7 + (s.rang * 86) / (RANGS - 1);
+/** la carte d'une fouille est plus courte (4 rangées) : on l'étale sur la même hauteur */
+let rangs = 7;
+const posY = (s: Salle) => 7 + (s.rang * 86) / (rangs - 1);
 
 export function htmlExploration(j: Jeu): string {
   const x = j.expedition as Expedition;
@@ -28,10 +29,11 @@ export function htmlExploration(j: Jeu): string {
   const voisines = new Set(accessibles(x).map((s) => s.id));
   const bloque = !!x.rencontre;
   const zone = ZONES[c.zone]!;
+  rangs = rangsDe(c);
   const fond = decorStrate(c.zone);
 
   let h = `<div class="ecran ecran-exploration" style="--teinte:${TEINTES[c.zone] ?? TEINTES[0]}">`;
-  h += `<header class="combat-barre"><div class="puces"><span class="puce">${ICO.strate}Strate −${x.strate}</span><span class="puce">${echap(zone.nom)}</span></div>`
+  h += `<header class="combat-barre"><div class="puces"><span class="puce">${ICO.strate}Strate −${x.strate}</span><span class="puce">${x.fouille ? `Fouille · ${echap(CIBLES_FOUILLE[x.fouille].nom)}` : echap(zone.nom)}</span></div>`
     + `<span class="puce">${ICO.composants}${x.butin}</span></header>`;
 
   // l'escouade et ses PV : ils ne remontent qu'aux campements
@@ -58,7 +60,7 @@ export function htmlExploration(j: Jeu): string {
   }
   h += `</svg>`;
   for (const s of c.salles) {
-    const acces = voisines.has(s.id) && !bloque && x.phase === 'carte';
+    const acces = voisines.has(s.id) && !bloque && x.phase === 'carte' && !x.terminee;
     const classes = ['salle', `s-${s.type}`, s.faite ? 'faite' : '', s.id === ici.id ? 'ici' : '', acces ? 'accessible' : ''].filter(Boolean).join(' ');
     const label = `${NOMS[s.type]}${s.id === ici.id ? ' (tu es ici)' : s.faite ? ' (visitée)' : ''}`;
     h += acces
@@ -76,7 +78,7 @@ export function htmlExploration(j: Jeu): string {
   } else {
     h += `<span class="surtitre">${ICONES[ici.type]}${echap(NOMS[ici.type].toUpperCase())}</span>`;
     if (x.recit) h += `<p>${echap(x.recit)}</p>`;
-    h += `<p class="aide">Touche une salle éclairée pour avancer. Les PV ne remontent qu’aux campements.</p>`;
+    if (!x.terminee) h += `<p class="aide">Touche une salle éclairée pour avancer. Les PV ne remontent qu’aux campements.</p>`;
   }
   const g = x.gains;
   const cartes = (g?.elites ?? 0) + (g?.cartes ?? 0);
@@ -84,10 +86,11 @@ export function htmlExploration(j: Jeu): string {
     + (cartes ? `<span>${ICO.cartes}${cartes} carte${cartes > 1 ? 's' : ''}</span>` : '')
     + (g?.eclats ? `<span>${ICO.eclats}${g.eclats} Éclat${g.eclats > 1 ? 's' : ''}</span>` : '')
     + (g?.fragment ? `<span>${ICO.codex}archives</span>` : '') + `</div>`;
-  if (peutRemonter(x)) h += `<button type="button" class="btn sec large" data-action="retraite">${ICO.retour}Remonter au district avec le butin</button>`;
+  if (x.terminee) h += `<button type="button" class="btn prim large" data-action="remonter">${ICO.cristal}Remonter avec le filon</button>`;
+  else if (peutRemonter(x)) h += `<button type="button" class="btn sec large" data-action="retraite">${ICO.retour}Remonter au district avec le butin</button>`;
   h += `</section>`;
 
-  h += `<ul class="legende-salles" aria-label="Légende">${(['combat', 'elite', 'cache', 'rencontre', 'camp', 'archive', 'gardien'] as TypeSalle[])
+  h += `<ul class="legende-salles" aria-label="Légende">${(x.fouille ? ['combat', 'cache', 'rencontre', 'camp', 'archive', 'filon'] as TypeSalle[] : ['combat', 'elite', 'cache', 'rencontre', 'camp', 'archive', 'gardien'] as TypeSalle[])
     .map((t) => `<li class="s-${t}">${ICONES[t]}${NOMS[t]}</li>`).join('')}</ul>`;
   return h + `</div>`;
 }

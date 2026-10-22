@@ -175,6 +175,8 @@ export interface CombatEtat {
   dissonance?: boolean;
   /** Marque de Véla (Lectrice) : la Dissonance n'a pas de prise sur l'escouade */
   lucide?: boolean;
+  /** Épreuve « Fréquences brouillées » : aucune Résonance de tout le combat */
+  sansResonance?: boolean;
   tour: number;
   rng: number;
   issue: Issue;
