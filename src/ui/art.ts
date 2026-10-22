@@ -90,6 +90,11 @@ export const illustrationModule = (cle: string): string | null => {
 export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
 export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
+/**
+ * Cadre peint d'une rareté (Midjourney, Retexture de nos modèles de carte, 22 octobre 2026) : de plus en plus fin avec la rareté.
+ * Fer et or sont des cadres droits, cuivre et argent ont les deux coins coupés. La nacre n'a pas de cadre.
+ */
+export const cadreMetal = (r: Rarete): string | null => (r === 'nacre' ? null : `${base}cadres/${r}.webp`);
 /** Fond de la carte d'une Strate, une illustration par zone (0 Fondations, 1 salles closes, 2 mémoires, 3 le fond), quand elle existe */
 const STRATES_ILLUSTREES = new Set<number>([0, 1, 2, 3]);
 export const decorStrate = (zone: number): string | null => (STRATES_ILLUSTREES.has(zone) ? `${base}strates/zone-${zone}.webp` : null);

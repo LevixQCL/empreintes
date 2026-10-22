@@ -157,19 +157,6 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
     linear-gradient(rgba(170,150,130,.13),rgba(170,150,130,.13)),var(--tex) center/cover}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle{
   background:linear-gradient(150deg,rgba(255,255,255,.7),rgba(255,255,255,.05) 40%,rgba(0,0,0,.45)),var(--tex) center/cover}
-/* l'argent et l'or : un reflet passe lentement sur le cadre ; la nacre, presque sans cadre comme dans la collection, a un fil irisé
-   qui tourne. Le reflet est un calque posé sur le seul cadre (masque), pour ne pas toucher aux animations de la carte elle-même. */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-nacre .g-cadre{inset:1.5px}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-argent,.gm-or,.gm-nacre)::before{content:"";position:absolute;inset:0;z-index:3;padding:3px;pointer-events:none;
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-argent,.gm-or)::before{
-  background:linear-gradient(110deg,transparent 40%,rgba(255,255,255,.9) 50%,transparent 60%) 0 0/320% 100% no-repeat;animation:cadre-reflet 5.5s ease-in-out infinite}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-or::before{animation-duration:4s}
-@keyframes cadre-reflet{0%,55%{background-position:130% 0}100%{background-position:-30% 0}}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-nacre::before{padding:1.5px;
-  background:conic-gradient(from var(--angle-nacre,0deg),#ffb3dd,#a9e2ff,#c4ffd2,#fff0b0,#e0bcff,#ffb3dd);animation:nacre-tourne 6s linear infinite}
-@property --angle-nacre{syntax:'<angle>';inherits:false;initial-value:0deg}
-@keyframes nacre-tourne{to{--angle-nacre:360deg}}
 /* la carte qui prolonge la suite : un cadre de lumière dorée qui pulse par-dessus son métal, et une lueur dans l'image
    (une ombre portée ne se verrait pas : la carte est découpée par ses coins coupés) */
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.halo::before{content:"";position:absolute;inset:0;z-index:3;padding:3px;pointer-events:none;
@@ -178,7 +165,7 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.halo .g-art::after{box-shadow:inset 0 0 0 1px rgba(255,236,190,.8),inset 0 0 18px rgba(255,206,110,.55)}
 @keyframes halo-cadre{50%{opacity:.5}}
 @media (prefers-reduced-motion:reduce){
-  #app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-argent,.gm-or,.gm-nacre,.halo)::before{animation:none}
+  #app:is([data-mode="combat"],[data-mode="district"]) .geste.halo::before{animation:none}
 }
 
 /* ---------- Le nom de l'effet, sans cadre (22 octobre 2026) ----------
@@ -192,3 +179,26 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
   background:linear-gradient(90deg,rgba(6,8,16,.62),rgba(6,8,16,.38));box-shadow:none;border-radius:2px}
 /* la flèche de la suite se range à gauche du nom de l'effet */
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.halo.a-effet .g-suite{right:13px}
+
+/* ---------- Les cadres peints (22 octobre 2026) ----------
+   Un cadre par métal, peint sur Midjourney (Retexture de nos modèles de carte) puis détouré : épais et rafistolé pour le fer,
+   riveté pour le cuivre, fin à fermoirs pour l'argent, très fin à volutes pour l'or ; la nacre n'en a pas, l'image va jusqu'aux bords.
+   Le cadre est posé en border-image : ses coins gardent leur forme, ses côtés s'étirent à toutes les tailles de carte
+   (main, chaîne, cartes de 2 places). Fer et or ont des coins droits : leur carte perd ses coins coupés. */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-fer,.gm-cuivre,.gm-argent,.gm-or,.gm-nacre){--g-cadre:transparent}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-fer,.gm-cuivre,.gm-argent,.gm-or,.gm-nacre) .g-cadre{inset:0;box-shadow:none}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-fer,.gm-or){--cut:0px}
+.geste{--ep:0px;--bw:16px}
+.geste.chaine{--bw:17px}
+.geste.gm-fer{--ep:6px}.geste.gm-cuivre{--ep:6.5px}.geste.gm-argent{--ep:4px}.geste.gm-or{--ep:4px}
+/* l'argent et l'or ont des fermoirs et des cabochons qui débordent : l'image s'arrête au filet du cadre */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-argent,.gm-or) .g-cadre{inset:1.5px}
+.geste .g-monture{position:absolute;inset:0;z-index:2;pointer-events:none;
+  border:var(--bw) solid transparent;border-image-source:var(--cadre);border-image-slice:100;border-image-width:var(--bw);border-image-repeat:stretch;
+  filter:drop-shadow(0 0 1.5px rgba(0,0,0,.85))}
+.geste .g-socle,.geste .g-pips,.geste .g-lourd,.geste .g-suite{z-index:3}
+/* le texte de la plaque et les étiquettes s'écartent du cadre */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-plaque{padding-left:calc(6px + var(--ep));padding-right:calc(5px + var(--ep))}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{right:calc(3px + var(--ep))}
+.geste .g-lourd{right:calc(11px + var(--ep));top:calc(4px + var(--ep))}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle{top:calc(3px + var(--ep) * .5);left:calc(3px + var(--ep) * .5)}
