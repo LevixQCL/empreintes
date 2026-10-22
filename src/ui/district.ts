@@ -38,6 +38,46 @@ const LIEUX: Record<1 | 2 | 3 | 4, Record<Lieu, { x: number; y: number }>> = {
   4: { noyau: { x: 205, y: 248 }, generateur: { x: 62, y: 232 }, forge: { x: 322, y: 250 }, clinique: { x: 72, y: 452 }, chantier: { x: 300, y: 505 } },
 };
 const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'chantier'];
+/**
+ * Les bâtiments eux-mêmes sont cliquables (22 octobre 2026, Bryan : sur téléphone, les plaques seules faisaient de petites cibles
+ * qui se chevauchaient). Le contour de chaque lieu dans le tableau de chaque âge, repère 400 × 600 (relevé sur les tableaux).
+ */
+const ZONES: Record<1 | 2 | 3 | 4, Record<Lieu, string>> = {
+  1: {
+    noyau: '150,65 240,70 235,150 262,290 215,322 160,300 148,180',
+    generateur: '245,130 380,115 392,240 330,252 245,232',
+    forge: '80,358 222,368 242,522 130,548 58,470',
+    clinique: '288,262 372,268 392,372 300,382 283,320',
+    chantier: '292,395 400,400 400,522 300,522',
+  },
+  2: {
+    noyau: '155,55 282,55 292,230 262,282 165,272 150,170',
+    generateur: '18,112 142,112 152,242 60,252 8,225',
+    forge: '280,105 382,108 396,272 285,276 275,190',
+    clinique: '285,305 392,312 396,398 290,402',
+    chantier: '238,428 372,432 378,502 244,502',
+  },
+  3: {
+    noyau: '140,25 256,30 262,210 242,332 170,332 140,220',
+    generateur: '8,75 132,75 142,200 60,248 4,200',
+    forge: '262,120 400,130 400,332 300,322 262,232',
+    clinique: '38,330 152,330 162,472 60,482 18,420',
+    chantier: '250,400 392,410 386,512 258,506',
+  },
+  4: {
+    noyau: '160,5 246,5 252,210 272,382 150,372 130,252 165,200',
+    generateur: '14,128 126,128 142,282 30,292 8,230',
+    forge: '270,145 400,150 400,346 300,342 255,250',
+    clinique: '18,335 152,345 157,522 50,532 4,460',
+    chantier: '255,420 392,425 392,522 260,522',
+  },
+};
+
+function zonesBatiments(age: 1 | 2 | 3 | 4, selection: string | null): string {
+  return '<svg class="zones-bat" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">'
+    + ORDRE.map((id) => `<polygon class="zone-bat${selection === id ? ' choisie' : ''}" points="${ZONES[age][id]}" data-action="${id === 'chantier' ? 'chantier' : 'batiment'}"${id === 'chantier' ? '' : ` data-id="${id}"`} data-lieu="${id}"/>`).join('')
+    + '</svg>';
+}
 
 /** Âge affiché au rendu précédent : un changement d'âge déclenche le fondu d'apparition */
 let ageAffiche = 0;
@@ -119,7 +159,7 @@ function plaques(e: EcranDistrict): string {
     const left = Math.min(84, Math.max(16, (p.x / 400) * 100)), top = (p.y / 600) * 100;
     const pos = `style="left:${left}%;top:${top}%"`;
     if (id === 'chantier') {
-      return `<button type="button" class="plaque verrou" ${pos} data-action="chantier"><span class="plaque-nom">${ICO.verrou}Labo génétique</span><small>Bientôt</small></button>`;
+      return `<button type="button" class="plaque verrou" ${pos} data-action="chantier" data-lieu="chantier"><span class="plaque-nom">${ICO.verrou}Labo génétique</span><small>Bientôt</small></button>`;
     }
     const d = batimentDef(id);
     const prete = id === 'forge' && !!j.forge && e.now >= j.forge.fin;
@@ -133,7 +173,7 @@ function plaques(e: EcranDistrict): string {
     else if (j.forge && id === 'forge') etat = `<small>${ICO.chrono}${duree(j.forge.fin - e.now)}</small>`;
     else if (id !== 'noyau' && !occupant) etat = `<small class="vacant">${ICO.ouvrier}Personne</small>`;
     else if (occupant) etat = `<small class="occupe">${avatar(occupant, 14)}${echap(porteurDef(occupant).nom)}</small>`;
-    return `<button type="button" class="plaque${e.selection === id ? ' choisie' : ''}${vise ? ' visee' : ''}" ${pos} data-action="batiment" data-id="${id}" aria-label="${echap(d.nom)}, niveau ${j.batiments[id]}">`
+    return `<button type="button" class="plaque${e.selection === id ? ' choisie' : ''}${vise ? ' visee' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(d.nom)}, niveau ${j.batiments[id]}">`
       + `<span class="plaque-nom"><b class="niv">${j.batiments[id]}</b>${echap(d.nom)}</span>${etat}${prete || vise ? '<i class="pastille-alerte" aria-hidden="true"></i>' : ''}</button>`;
   }).join('');
 }
@@ -323,7 +363,7 @@ export function htmlArchipel(e: EcranDistrict): string {
   const scene = sceneDistrict(j.batiments.noyau);
   let h = `<section class="archipel" aria-label="Ton district"><img class="tableau-fond" src="${scene.url}" alt="" aria-hidden="true">`
     + `<span class="mer-fond${scene.nuit ? ' nuit' : ''}" style="--mer:url(${scene.mer});--reflets:url(${reflets});--horizon:${scene.horizon}%" aria-hidden="true"><i class="mer-reflets"></i></span>`
-    + `<div class="toile">${tableau(j)}${plaques(e)}</div>`
+    + `<div class="toile">${tableau(j)}${zonesBatiments(visuel(j.batiments.noyau), e.selection)}${plaques(e)}</div>`
     + `<div class="archipel-haut">${mission(e)}${appel(e)}</div></section>`;
   h += feuilleBatiment(e);
   const acte = decisionEnAttente(j);

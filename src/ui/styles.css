@@ -685,3 +685,18 @@ h1,h2,h3{font-weight:400}
 .barre-xp{height:2px;margin-top:2px;border-radius:1px;background:rgba(255,255,255,.1);overflow:hidden}
 .barre-xp i{display:block;height:100%;background:linear-gradient(90deg,#c9a24a,#ffe39a)}
 .habitant small .niv-hab{font:600 10px/1 var(--mono);color:#F3D27A;letter-spacing:.05em}
+
+/* ---------- Les bâtiments cliquables (22 octobre 2026) ----------
+   Une zone invisible épouse chaque bâtiment du tableau, sous les plaques. Au survol (PC) ou au toucher, elle s'éclaire
+   d'un contour de lumière, et sa plaque aussi ; le bâtiment choisi garde son contour doré. */
+.zones-bat{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible}
+.zone-bat{fill:rgba(255,220,150,0);stroke:none;cursor:pointer;filter:blur(10px);transition:fill .25s ease;-webkit-tap-highlight-color:transparent}
+.zone-bat:hover,.zone-bat:active{fill:rgba(255,220,150,.2)}
+.zone-bat.choisie{fill:rgba(255,214,140,.14)}
+@media (hover:none){ .zone-bat:hover{fill:rgba(255,220,150,0)} .zone-bat:active,.zone-bat.choisie{fill:rgba(255,220,150,.18)} }
+.toile .plaque{z-index:2}
+.toile:has(.zone-bat[data-lieu="noyau"]:hover) .plaque[data-lieu="noyau"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
+.toile:has(.zone-bat[data-lieu="generateur"]:hover) .plaque[data-lieu="generateur"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
+.toile:has(.zone-bat[data-lieu="forge"]:hover) .plaque[data-lieu="forge"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
+.toile:has(.zone-bat[data-lieu="clinique"]:hover) .plaque[data-lieu="clinique"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
+.toile:has(.zone-bat[data-lieu="chantier"]:hover) .plaque[data-lieu="chantier"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
