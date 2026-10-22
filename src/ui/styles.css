@@ -613,7 +613,7 @@ h1,h2,h3{font-weight:400}
 .ecran-exploration{display:flex;flex-direction:column;gap:10px;min-height:100%;padding-bottom:16px}
 .carte-strate{position:relative;width:100%;aspect-ratio:4/5;max-height:62vh;margin:0 auto;border-radius:16px;overflow:hidden;border:1px solid var(--line);
   background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--teinte) 85%,#fff 6%),var(--teinte) 45%,#0c0d11 100%)}
-.carte-strate.illustree{background:linear-gradient(rgba(10,10,14,.35),rgba(10,10,14,.55)),var(--decor) center/cover}
+.carte-strate.illustree{background:linear-gradient(rgba(10,10,14,.5),rgba(10,10,14,.68)),var(--decor) center/cover}
 .carte-strate .couloirs{position:absolute;inset:0;width:100%;height:100%}
 .couloirs line{stroke:rgba(232,223,200,.18);stroke-width:2;vector-effect:non-scaling-stroke;stroke-dasharray:4 5}
 .couloirs line.parcouru{stroke:color-mix(in srgb,var(--gold) 70%,transparent);stroke-dasharray:none}

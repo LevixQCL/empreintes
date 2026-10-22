@@ -29,6 +29,36 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'plume-givre': 'plume-givre',
   'ombre-ailee': 'ombre-ailee',
   'chant-abysses': 'chant-abysses',
+  // les 12 Modules du 22 octobre
+  'grappin-cable': 'grappin-cable',
+  'oeil-brouilleur': 'oeil-brouilleur',
+  'dorsale': 'dorsale',
+  'coeur-reprise': 'coeur-reprise',
+  'yeux-nocturnes': 'yeux-nocturnes',
+  'branchies': 'branchies',
+  'sang-ambre': 'sang-ambre',
+  'mue-totale': 'mue-totale',
+  'meche-or': 'meche-or',
+  'ombre-serpent': 'ombre-serpent',
+  'pressentiment': 'pressentiment',
+  'souffle-wyrm': 'souffle-wyrm',
+  // les cartes de base (Souffle attend encore son image) et les deux cartes du district
+  'ruee': 'ruee',
+  'bond': 'bond',
+  'esquive': 'esquive',
+  'tir': 'tir',
+  'tir-vif': 'tir-vif',
+  'morsure': 'morsure',
+  'carapace': 'carapace',
+  'regenerer': 'regenerer',
+  'charge': 'charge',
+  'grogner': 'grogner',
+  'murmure': 'murmure',
+  'echo': 'echo',
+  'apaiser': 'apaiser',
+  'eclat': 'eclat',
+  'stimulant': 'stimulant',
+  'repli': 'repli',
 };
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */
@@ -37,6 +67,17 @@ const ENNEMIS_ILLUSTRES: Record<string, string> = {
   remanent: 'remanent',
   vigie: 'vigie',
   confluence: 'confluence',
+  'rampeur': 'rampeur',
+  'pilleur': 'pilleur',
+  'brigadier': 'brigadier',
+  'echo-veilleur': 'echo-veilleur',
+  'sentinelle-verre': 'sentinelle-verre',
+  'gardien-registres': 'gardien-registres',
+  'double': 'double',
+  'essaim-ambre': 'essaim-ambre',
+  'automate-graveur': 'automate-graveur',
+  'tisseuse': 'tisseuse',
+  'premier-porteur': 'premier-porteur',
 };
 
 export const portrait = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/${id}.webp` : null);
@@ -49,7 +90,7 @@ export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUST
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
 export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
 /** Fond de la carte d'une Strate, une illustration par zone (0 Fondations, 1 salles closes, 2 mémoires, 3 le fond), quand elle existe */
-const STRATES_ILLUSTREES = new Set<number>([]);
+const STRATES_ILLUSTREES = new Set<number>([0, 1, 2, 3]);
 export const decorStrate = (zone: number): string | null => (STRATES_ILLUSTREES.has(zone) ? `${base}strates/zone-${zone}.webp` : null);
 export const decor = (nom: 'archipel' | 'archipel-nuit' | 'coupe') => `${base}district/${nom}.webp`;
 
