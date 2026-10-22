@@ -42,7 +42,7 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'ombre-serpent': 'ombre-serpent',
   'pressentiment': 'pressentiment',
   'souffle-wyrm': 'souffle-wyrm',
-  // les cartes de base (Souffle attend encore son image) et les deux cartes du district
+  // les 15 cartes de base et les deux cartes du district
   'ruee': 'ruee',
   'bond': 'bond',
   'esquive': 'esquive',
@@ -57,6 +57,7 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'echo': 'echo',
   'apaiser': 'apaiser',
   'eclat': 'eclat',
+  souffle: 'souffle',
   'stimulant': 'stimulant',
   'repli': 'repli',
 };
