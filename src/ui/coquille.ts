@@ -10,7 +10,8 @@ import { ICO, icone, type Icone } from './icones';
 import { COULEUR, echap, panneauCompte, type Compte } from './vue';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'codex' | 'cartes' | 'porteurs';
-export type Filtre = 'tout' | Lignee;
+/** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */
+export type Filtre = 'tout' | Lignee | 'monter' | 'libres';
 
 export interface EcranDistrict {
   j: Jeu;

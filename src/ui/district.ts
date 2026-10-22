@@ -3,9 +3,9 @@
 // les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
 
 import { NOMS_EFFET, texteEffet } from '../core/effets';
-import { MODULES, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
+import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, CIBLES_FOUILLE, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau
+  ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
@@ -14,12 +14,12 @@ import { FRAGMENTS } from '../core/fragments';
 import { loreCarte } from '../core/lore-cartes';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
 import { COULEUR, echap } from './vue';
-import { decor, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel } from './art';
+import { decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { feuillePorteur } from './porteurs';
 import { ICO, type Icone } from './icones';
-import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict, type Filtre } from './coquille';
 
 export type { EcranDistrict, Vue } from './coquille';
 
@@ -518,16 +518,6 @@ function feuilleCarte(e: EcranDistrict): string {
   return h + `</div></section>`;
 }
 
-/** Les cartes de chaque Porteur : une rangée de raccourcis vers la construction de son deck */
-function decksPorteurs(j: Jeu): string {
-  const ids = PORTEURS.filter((p) => porteursPresents(j).includes(p.id)).map((p) => p.id);
-  return `<section class="bloc decks-porteurs"><h3 class="titre-bloc">${ICO.cartes}Construire le deck</h3><div class="rangee">`
-    + ids.map((id) => {
-      const p = porteurDef(id);
-      const n = j.porteurs[id]!.modules.length;
-      return `<button type="button" class="tuile-porteur" style="--c:${COULEUR[p.lignee]}" data-action="deck" data-id="${id}">${avatar(id, 44)}<strong>${echap(p.nom)}</strong><small>${n} / ${DISTRICT.cartesMax} cartes</small></button>`;
-    }).join('') + `</div></section>`;
-}
 
 /** La feuille d'un Porteur : les cartes qu'il porte (touche pour reprendre), puis celles qu'on peut lui confier */
 export function feuilleDeck(e: EcranDistrict): string {
@@ -559,40 +549,65 @@ export function feuilleDeck(e: EcranDistrict): string {
   return h + `</section></div></section>`;
 }
 
+// La collection (revue du 22 octobre 2026, même équipe) : les cartes arrivent tout de suite, des filtres utiles
+// (« peuvent monter », « libres ») en plus des lignées, et l'équipement des Porteurs se fait depuis l'onglet Porteurs
+// ou en touchant une carte (la rangée « Construire le deck » faisait doublon).
 export function htmlCartes(e: EcranDistrict): string {
   const j = e.j;
   const trouvees = MODULES.filter((m) => exemplaires(j, m.id).length).length;
-  const lignees: Lignee[] = e.filtre === 'tout' ? ['tech', 'bio', 'reso'] : [e.filtre];
-  let h = entete(`COLLECTION · ${trouvees} / ${MODULES.length} TROUVÉES`, 'Cartes');
-  h += `<div class="segments-choix" role="tablist">` + (['tout', 'tech', 'bio', 'reso'] as const).map((f) =>
-    `<button type="button" role="tab" class="seg${e.filtre === f ? ' actif' : ''}"${f !== 'tout' ? ` style="--c:${COULEUR[f]}"` : ''} data-action="filtre" data-id="${f}" aria-selected="${e.filtre === f}">${f === 'tout' ? 'Toutes' : NOM_LIGNEES[f]}</button>`).join('') + `</div>`;
-  h += `<p class="aide intro-ecran">Ta collection, c’est ton deck : chaque carte confiée à un Porteur descend avec lui. Touche une carte pour la confier ou la faire monter.</p>`
-    + `<div class="liens-guide">${lienGuide('deck', 'Construire son deck')}${lienGuide('carte', 'Les cartes et leurs effets')}</div>`;
-  h += decksPorteurs(j);
-  for (const lignee of lignees) {
-    h += `<h2 class="titre-section" style="--c:${COULEUR[lignee]}">${NOM_LIGNEES[lignee]}</h2><div class="grille-cartes">`;
-    for (const base of MODULES.filter((x) => x.lignee === lignee)) {
-      const cles = exemplaires(j, base.id);
-      if (!cles.length) { h += `<div class="carte-dos" aria-label="Carte pas encore trouvée">${gemme(base.rarete)}<span>?</span><small>À trouver</small></div>`; continue; }
-      for (const cle of cles) {
-        const m = moduleDef(cle);
-        const c = j.collection[cle]!;
-        const requis = doublonsRequis(m.id, c.niveau);
-        const porte = greffesDe(j, m.id)[0];
-        const pret = requis !== null && c.doublons >= requis && j.composants >= composantsNiveau(c.niveau + 1);
-        h += `<button type="button" class="carte-tuile" data-action="carte" data-id="${cle}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
-          + `<span class="tuile-bas">${porte ? avatar(porte, 20) : '<span class="libre">libre</span>'}`
-          + (requis === null ? `<span class="chiffre">MAX</span>` : `<span class="mini-jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span class="chiffre">${c.doublons}/${requis}</span>`)
-          + `</span>${pret ? `<i class="pastille-alerte" aria-label="peut monter"></i>` : ''}</button>`;
+  const toutes = MODULES.flatMap((m) => exemplaires(j, m.id));
+  const peutMonter = (cle: string) => {
+    const m = moduleDef(cle); const c = j.collection[cle]!; const requis = doublonsRequis(m.id, c.niveau);
+    return requis !== null && c.doublons >= requis && j.composants >= composantsNiveau(c.niveau + 1);
+  };
+  const portees = new Set(Object.values(j.porteurs).flatMap((p) => p.modules));
+  const estLibre = (cle: string) => !portees.has(cle);
+  const nMonter = toutes.filter(peutMonter).length;
+  const nLibres = toutes.filter(estLibre).length;
+  const f = e.filtre;
+  let h = entete(`COLLECTION · ${trouvees} / ${MODULES.length} TROUVÉES`, 'Cartes', `<div class="cl-guides">${lienGuide('deck', 'Construire son deck')}${lienGuide('carte', 'Les effets')}</div>`);
+  const filtres: { id: Filtre; nom: string; n?: number; c?: string; classe?: string }[] = [
+    { id: 'tout', nom: 'Toutes' }, { id: 'tech', nom: NOM_LIGNEES.tech, c: COULEUR.tech }, { id: 'bio', nom: NOM_LIGNEES.bio, c: COULEUR.bio }, { id: 'reso', nom: NOM_LIGNEES.reso, c: COULEUR.reso },
+    { id: 'monter', nom: 'Peuvent monter', n: nMonter, classe: 'or' }, { id: 'libres', nom: 'Libres', n: nLibres },
+  ];
+  h += `<div class="cl-filtres" role="tablist" aria-label="Filtrer la collection">` + filtres.map((x) =>
+    `<button type="button" role="tab" class="es-cible${f === x.id ? ' actif' : ''}${x.classe ? ` ${x.classe}` : ''}"${x.c ? ` style="--c:${x.c}"` : ''} data-action="filtre" data-id="${x.id}" aria-selected="${f === x.id}">${x.nom}${x.n !== undefined ? ` <b>${x.n}</b>` : ''}</button>`).join('') + `</div>`;
+  h += `<p class="cl-intro">En expédition, ton deck réunit les cartes des 3 Porteurs emmenés (6 chacun au plus). Touche une carte pour la confier ou la faire monter.</p>`;
+
+  const tuileCarte = (cle: string) => {
+    const m = moduleDef(cle);
+    const c = j.collection[cle]!;
+    const requis = doublonsRequis(m.id, c.niveau);
+    const porte = greffesDe(j, m.id)[0];
+    const pret = peutMonter(cle);
+    return `<button type="button" class="carte-tuile cl-carte${pret ? ' pret' : ''}" data-action="carte" data-id="${cle}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}${porte ? `, portée par ${echap(porteurDef(porte).nom)}` : ', libre'}${pret ? ', peut monter' : ''}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
+      + `<span class="cl-bas"><span class="cl-porteur">${porte ? `${avatar(porte, 20)}<span>${echap(porteurDef(porte).nom)}</span>` : '<span class="cl-libre">Libre</span>'}</span>`
+      + (requis === null ? `<span class="cl-max">Niveau max</span>` : `<span class="cl-doublons" title="Doublons pour le niveau ${c.niveau + 1}"><span class="mini-jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span>${c.doublons}/${requis}</span></span>`)
+      + `</span>${pret ? `<span class="cl-monter">${ICO.monter}Peut monter</span>` : ''}</button>`;
+  };
+
+  if (f === 'monter' || f === 'libres') {
+    const liste = toutes.filter(f === 'monter' ? peutMonter : estLibre);
+    h += `<h2 class="titre-section">${f === 'monter' ? 'Peuvent monter' : 'Libres : personne ne les porte'}</h2>`
+      + (liste.length ? `<div class="grille-cartes">${liste.map(tuileCarte).join('')}</div>`
+        : `<p class="cl-vide">${f === 'monter' ? 'Aucune carte n’a encore assez de doublons et de composants pour monter.' : 'Toutes tes cartes sont confiées à un Porteur.'}</p>`);
+  } else {
+    const lignees: Lignee[] = f === 'tout' ? ['tech', 'bio', 'reso'] : [f];
+    for (const lignee of lignees) {
+      h += `<h2 class="titre-section" style="--c:${COULEUR[lignee]}">${NOM_LIGNEES[lignee]}</h2><div class="grille-cartes">`;
+      for (const base of MODULES.filter((x) => x.lignee === lignee)) {
+        const cles = exemplaires(j, base.id);
+        if (!cles.length) { h += `<div class="carte-dos cl-dos" aria-label="Carte pas encore trouvée">${gemme(base.rarete)}<span>?</span><small>À trouver</small><em>Fouille « ${echap(CIBLES_FOUILLE[lignee].nom)} »</em></div>`; continue; }
+        for (const cle of cles) h += tuileCarte(cle);
       }
+      h += `</div>`;
     }
-    h += `</div>`;
   }
   // le mode d'emploi prend la place des autres feuilles ; en le fermant, on retrouve celle d'où on venait
   if (e.guide) h += feuilleGuide(e.guide, trouveesDe(j.collection));
   else h += feuilleCarte(e) + feuilleDeck(e);
   if (j.choix.length) h += fenetreChoix(j);
-  return coquille(e, h, 'ecran-cartes');
+  return coquille(e, h, 'ecran-cartes cl');
 }
 
 // ---------- La rencontre, avant la chambre scellée ----------
@@ -735,61 +750,78 @@ export function jaugePv(pv: number, max: number, usure = 0, usureM = 1): string 
   return `<div class="jauge-pv"><i class="pv" style="width:${(100 * pv) / max}%"></i>${usure >= 1 ? `<i class="usure" style="width:${(100 * Math.min(usure, usureM)) / max}%"></i>` : ''}</div>`;
 }
 
+// La Tour du Noyau en coupe (revue du 22 octobre 2026, même équipe que la feuille de bâtiment et l'Escouade) :
+// la coupe peinte en tête avec les habitants en bande, la prochaine étape avec ses boutons, puis les Strates
+// qui descendent dans le bon sens (−1 en haut, la roche à creuser tout en bas).
 export function htmlCoupe(e: EcranDistrict): string {
   const j = e.j;
   let h = entete(`EN COUPE · ${j.strate} ÉTAGE${j.strate > 1 ? 'S' : ''} CREUSÉ${j.strate > 1 ? 'S' : ''}`, 'Tour du Noyau');
-  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.ouvrier}Habitants</h3><div class="habitants">`;
-  for (const p of PORTEURS) {
-    if (!porteursPresents(j).includes(p.id)) continue;
-    const d = j.porteurs[p.id]!;
-    const exp = enExpedition(j, p.id);
-    const etat = enMission(j, p.id) ? 'En mission' : exp ? 'En expédition' : d.poste ? batimentDef(d.poste).nom : 'Au repos';
-    const pv = pvMaxCombat(j, p.id);
-    h += `<div class="habitant${exp ? ' parti' : ''}" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 40)}<div class="hab-infos"><div class="hab-ligne"><strong>${echap(p.nom)}</strong><span class="chiffre">${pv}/${pvNiveau(j, p.id)}</span></div>`
-      + jaugePv(pv, pvNiveau(j, p.id), d.usure, usureMax(p.id)) + barreXp(j, p.id)
-      + `<small><b class="niv-hab">Niv. ${niveauPorteur(j, p.id).niveau}</b> · ${d.poste && !exp ? ICO.ouvrier : ''}${etat}${d.usure >= 1 ? ` · Usure ${Math.floor(d.usure)}` : ''}</small>`
-      + `<small class="greffes">${ICO.greffe}${d.modules.length} / ${DISTRICT.cartesMax} cartes</small>` + `</div></div>`;
+  const presents = PORTEURS.filter((p) => porteursPresents(j).includes(p.id));
+  const libres = presents.filter((p) => disponibles(j).includes(p.id)).length;
+  h += `<section class="tr-heros"><img class="tr-coupe" src="${decor('coupe')}" alt="" decoding="async">`
+    + `<button type="button" class="tr-habitants" data-action="porteurs" aria-label="Habitants : ${presents.length} Porteurs, ${libres} disponibles. Voir les Porteurs">`
+    + `<span class="tr-hab-avatars">${presents.map((p) => {
+      const d = j.porteurs[p.id]!;
+      const etat = enExpedition(j, p.id) ? 'parti' : d.poste ? 'travail' : 'libre';
+      return `<span class="tr-hab ${etat}">${avatar(p.id, 36)}<i></i></span>`;
+    }).join('')}</span><span class="tr-hab-txt"><b>${libres} disponible${libres > 1 ? 's' : ''}</b> sur ${presents.length} · Voir les Porteurs ${ICO.retour}</span></button></section>`;
+
+  // la prochaine étape, avec de quoi la faire tout de suite
+  const off = !!j.expedition || !j.chambre;
+  const cible = j.strate + 1;
+  const manque = manquePourCreuser(j);
+  let etape = '';
+  if (!j.frontVaincu) {
+    etape = `<strong>Vaincs le gardien de la Strate −${j.strate}</strong><small>C’est lui qui garde le passage : une fois vaincu, tes creuseurs pourront attaquer la roche.</small>`
+      + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}Descendre à −${j.strate}</button></div>`;
+  } else if (manque) {
+    const morceaux: string[] = [];
+    if (manque.creuseurs) morceaux.push(`trouve <b>${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}</b>`);
+    if (manque.noyau) morceaux.push(`monte la Tour du Noyau au <b>niveau ${noyauRequis(cible)}</b> pour les loger`);
+    etape = `<strong>Pour ouvrir la Strate −${cible}</strong><small>${morceaux.join(', puis ').replace(/^./, (c) => c.toUpperCase())}.</small>`
+      + (manque.creuseurs ? `<ul class="tr-sources"><li>${ICO.cristal}<span>Fouille ciblée</span><b>${Math.round(CREUSEURS.fouille * 100)} %</b></li>`
+        + `<li>${ICO.porteurs}<span>Mission${j.strate >= 2 ? '' : ' <em>(dès la Strate −2)</em>'}</span><b>${Math.round(CREUSEURS.missionCourte * 100)} à ${Math.round(CREUSEURS.missionLongue * 100)} %</b></li>`
+        + `<li>${ICO.boost}<span>Épreuve${j.strate >= 2 ? '' : ' <em>(dès la Strate −2)</em>'}</span><b>assuré</b></li></ul>` : '')
+      + `<div class="tr-boutons">${manque.creuseurs ? `<button type="button" class="btn prim" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller la Strate −${j.strate}</button>` : ''}`
+      + `${manque.noyau ? `<button type="button" class="btn ${manque.creuseurs ? 'sec' : 'prim'}" data-action="batiment" data-id="noyau">${ICO.tour}Améliorer la Tour</button>` : ''}</div>`;
+  } else {
+    etape = `<strong>La roche cède : la Strate −${cible} va s’ouvrir</strong><small>Tout est prêt. Descends pour découvrir le nouvel étage.</small>`
+      + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}Descendre</button></div>`;
   }
-  h += `</div></section>`;
-  h += `<section class="puits" style="--decor:url(${decor('coupe')})" aria-label="Les Strates"><h3 class="titre-bloc">${ICO.strate}Les Strates</h3><ol class="strates">`;
-  // la roche à creuser en tête : c'est le prochain étage, juste sous le front
-  h += htmlFrontDeTaille(j);
-  for (let n = j.strate; n >= 1; n--) {
+  if (j.expedition) h += `<button type="button" class="appel tr-reprendre" data-action="reprendre">${ICO.descendre}<span><strong>Expédition en cours</strong><small>Strate −${j.expedition.strate} : reprendre le combat</small></span></button>`;
+  h += `<section class="tr-etape"><span class="surtitre">Prochaine étape</span>${etape}</section>`;
+
+  // les Strates, de −1 à la roche
+  h += `<section class="tr-strates" aria-label="Les Strates"><h3 class="titre-bloc">${ICO.strate}Les Strates</h3><ol>`;
+  for (let n = 1; n <= j.strate; n++) {
     const front = n === j.strate;
     const vaincue = !front || j.frontVaincu;
     const nom = NOMS_ETAGES[Math.min(n - 1, NOMS_ETAGES.length - 1)];
-    const off = j.expedition || !j.chambre;
-    h += `<li class="strate${front ? ' front' : ''}" style="--p:${Math.min(1, (n - 1) / 4)}"><span class="profondeur">−${n}</span><div class="strate-infos"><strong>${nom}</strong>`
-      + `<small>${front && !j.frontVaincu ? 'Front de fouille : vaincs son gardien pour préparer l’étage suivant' : 'Vaincue : fouille ciblée ou expédition'}</small></div>`
-      + `<div class="strate-actions">`
-      + (!vaincue ? '' : `<button type="button" class="btn sec" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller</button>`)
-      + `<button type="button" class="btn ${front ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}${front ? 'Descendre' : 'Y aller'}</button></div></li>`;
+    const zone = zoneDe(n);
+    const img = decorStrate(ZONES_STRATES.indexOf(zone));
+    h += `<li class="tr-strate${front ? ' front' : ''}${vaincue ? ' vaincue' : ''}">`
+      + `<span class="tr-vignette">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}<b>−${n}</b></span>`
+      + `<div class="tr-infos"><strong>${nom}</strong><small>${echap(zone.nom)} · ${vaincue ? 'vaincue : fouille ciblée ou expédition' : 'front de fouille : son gardien t’attend'}</small>`
+      + `<div class="tr-actions">${vaincue ? `<button type="button" class="btn sec" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller</button>` : ''}`
+      + `<button type="button" class="btn ${front && !j.frontVaincu ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}${front ? 'Descendre' : 'Y aller'}</button></div></div></li>`;
   }
-  h += `</ol>`;
-  if (j.expedition) h += `<button type="button" class="appel" data-action="reprendre">${ICO.descendre}<span><strong>Expédition en cours</strong><small>Strate −${j.expedition.strate} : reprendre le combat</small></span></button>`;
-  h += `</section>`;
+  // la roche, tout en bas
+  const requis = creuseursRequis(cible);
+  const loge = logementCreuseurs(j);
+  const logementBloque = !!manque?.noyau;
+  h += `<li class="tr-strate roche${j.frontVaincu && !manque ? ' prete' : ''}"><span class="tr-vignette"><b>−${cible}</b></span><div class="tr-infos"><strong>Roche à creuser</strong>`
+    + (requis ? `<span class="tr-creuseurs"><b>${Math.min(j.creuseurs, requis)} / ${requis}</b> creuseurs</span><div class="tr-jauge"><i style="width:${Math.min(100, (100 * j.creuseurs) / requis)}%"></i></div>` : '')
+    + `<small>${!j.frontVaincu ? `S’ouvre après le gardien de la Strate −${j.strate}.` : manque ? 'Il manque encore de quoi la percer : voir « Prochaine étape ».' : 'Tout est prêt.'}</small>`
+    + (logementBloque ? `<small class="tr-loge">La Tour loge ${loge} creuseurs au niveau ${j.batiments.noyau} : il en faut la place pour ${requis}.</small>` : '')
+    + `</div></li></ol></section>`;
   if (j.chambre && j.strate >= 2) h += htmlEpreuves(e) + htmlMissions(e);
-  return coquille(e, h, 'ecran-coupe');
+  else if (j.chambre) h += `<p class="tr-note">${ICO.verrou}Les Épreuves et les missions s’ouvrent quand la Strate −2 est creusée.</p>`;
+  h += feuilleBatiment(e);
+  return coquille(e, h, 'ecran-coupe tr');
 }
 
 // ---------- Le front de taille : les creuseurs ----------
 
-function htmlFrontDeTaille(j: Jeu): string {
-  const cible = j.strate + 1;
-  const requis = creuseursRequis(cible);
-  const loge = logementCreuseurs(j);
-  const manque = manquePourCreuser(j);
-  const jauge = requis ? `<div class="jauge or"><i style="width:${Math.min(100, (100 * j.creuseurs) / requis)}%"></i></div>` : '';
-  let etat: string;
-  if (!j.frontVaincu) etat = `Vaincs d’abord le gardien de la Strate −${j.strate}.${requis ? ` Il faudra ensuite ${requis} creuseurs.` : ''}`;
-  else if (!manque) etat = 'Tout est prêt : la roche cède.';
-  else etat = [manque.creuseurs ? `il manque ${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : '', manque.noyau ? `la Tour du Noyau doit passer au niveau ${noyauRequis(cible)} pour les loger` : ''].filter(Boolean).join(' et ') + '.';
-  return `<li class="strate roche front-taille${j.frontVaincu ? ' prete' : ''}"><span class="profondeur">−${cible}</span><div class="strate-infos"><strong>Roche à creuser</strong>`
-    + `<small>${ICO.ouvrier}Creuseurs ${j.creuseurs} / ${requis} · logés ${j.creuseurs} / ${loge} (Noyau niveau ${j.batiments.noyau})</small>${jauge}`
-    + `<small>${etat.charAt(0).toUpperCase() + etat.slice(1)}</small>`
-    + (j.frontVaincu && manque?.creuseurs ? `<small class="aide">Des creuseurs se trouvent en fouillant les Strates vaincues, en mission, avec les Épreuves et quand le district a confiance en toi.</small>` : '')
-    + `</div></li>`;
-}
 
 // ---------- Épreuves de la semaine et missions ----------
 

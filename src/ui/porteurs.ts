@@ -36,48 +36,70 @@ function arrivee(p: PorteurDef): string {
   return 'Arrive quand la chambre scellée est ouverte.';
 }
 
-/** La Marque : acquise, ou en cours (barre de progression) */
+/** La Marque, sans boîte : son nom, où on en est, un filet qui se remplit */
 function marqueTuile(j: Jeu, id: string): string {
   const m = progresMarque(j, id);
   if (!m) return '';
   return m.acquise
-    ? `<span class="p-marque acquise">${ICO.ok}<span><b>${echap(m.nom)}</b><small>${echap(m.court)}</small></span></span>`
-    : `<span class="p-marque"><span><b>${echap(m.nom)}</b><small>${Math.min(m.n, m.seuil)} / ${m.seuil} ${echap(m.quoi)}</small></span><i class="p-marque-jauge"><i style="width:${Math.min(100, (100 * m.n) / m.seuil)}%"></i></i></span>`;
+    ? `<span class="pt-marque acquise">${ICO.ok}<span><b>${echap(m.nom)}</b> ${echap(m.court)}</span></span>`
+    : `<span class="pt-marque"><span><b>${echap(m.nom)}</b> ${fr(Math.min(m.n, m.seuil))} / ${fr(m.seuil)} ${echap(m.quoi)}</span><i class="pt-marque-jauge"><i style="width:${Math.min(100, (100 * m.n) / m.seuil)}%"></i></i></span>`;
 }
 
+// Revue du 22 octobre 2026 (même équipe que la feuille de bâtiment et l'Escouade) :
+// le portrait peint en grand au lieu d'un hexagone, des chiffres lisibles, plus de cartouches imbriqués.
 function tuile(j: Jeu, p: PorteurDef): string {
   const d = j.porteurs[p.id]!;
   const st = statut(j, p.id);
   const pv = pvMaxCombat(j, p.id);
+  const pvM = pvNiveau(j, p.id);
   const n = niveauPorteur(j, p.id);
-  return `<button type="button" class="tuile-p ${st.classe}" style="--c:${COULEUR[p.lignee]}" data-action="porteur" data-id="${p.id}" aria-label="${echap(p.nom)}, ${NOM_LIGNEE[p.lignee]}, niveau ${n.niveau}">`
-    + `<span class="p-tete">${avatar(p.id, 60)}<span class="p-nom"><strong>${echap(p.nom)}</strong><small>${echap(PRESENTATIONS[p.id]?.titre ?? NOM_LIGNEE[p.lignee])}</small></span></span>`
-    + `<span class="p-ligne"><span class="p-niv">Niv. ${n.niveau}</span><span class="chiffre">${pv} PV · ${d.modules.length}/${DISTRICT.cartesMax} cartes</span></span>`
-    + jaugePv(pv, pvNiveau(j, p.id), d.usure, usureMax(p.id)) + barreXp(j, p.id)
-    + `<span class="p-statut">${echap(st.texte)}</span>`
+  const img = portrait(p.id);
+  const nc = d.modules.length;
+  return `<button type="button" class="pt-tuile ${st.classe}" style="--c:${COULEUR[p.lignee]}" data-action="porteur" data-id="${p.id}" aria-label="${echap(p.nom)}, ${NOM_LIGNEE[p.lignee]}, niveau ${n.niveau}, ${echap(st.texte)}">`
+    + `<span class="pt-portrait">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : avatar(p.id, 80)}`
+    + `<span class="pt-etat ${st.classe}">${echap(st.texte)}</span>`
+    + `<span class="pt-nom"><strong>${echap(p.nom)}</strong><small>${echap(PRESENTATIONS[p.id]?.titre ?? NOM_LIGNEE[p.lignee])}</small></span></span>`
+    + `<span class="pt-chiffres"><b>Niv. ${n.niveau}</b><span>${pv}/${pvM} PV</span><span class="${nc >= DISTRICT.cartesMax ? 'plein' : nc ? '' : 'zero'}">${nc}/${DISTRICT.cartesMax} cartes</span></span>`
+    + `<span class="pt-jauges" title="PV et expérience${n.requis ? ` (${n.xp} / ${n.requis} XP vers le niveau ${n.niveau + 1})` : ''}">${jaugePv(pv, pvM, d.usure, usureMax(p.id))}${barreXp(j, p.id)}</span>`
     + marqueTuile(j, p.id)
+    + aFaire(j, p)
     + `</button>`;
 }
 
+/** Ce qui demande une action : des places libres alors que des cartes de sa lignée attendent, une Usure élevée */
+function aFaire(j: Jeu, p: PorteurDef): string {
+  const d = j.porteurs[p.id]!;
+  const portees = new Set(Object.values(j.porteurs).flatMap((x) => x.modules));
+  const libresLignee = Object.keys(j.collection).filter((k) => !portees.has(k) && moduleDef(k).lignee === p.lignee).length;
+  const places = DISTRICT.cartesMax - d.modules.length;
+  const bouts: string[] = [];
+  if (places > 0 && libresLignee > 0) bouts.push(`<span class="pt-afaire">${ICO.cartes}Peut porter ${Math.min(places, libresLignee)} carte${Math.min(places, libresLignee) > 1 ? 's' : ''} de plus</span>`);
+  if (d.usure >= usureMax(p.id) * 0.5) bouts.push(`<span class="pt-afaire usure">${ICO.soin}Usure élevée : repos à la Clinique</span>`);
+  return bouts.join('');
+}
+
+/** Un Porteur qui n'est pas encore là : une ligne, pas une tuile vide */
 function silhouette(p: PorteurDef): string {
-  return `<div class="tuile-p a-venir" style="--c:${COULEUR[p.lignee]}"><span class="p-tete"><span class="p-ombre" aria-hidden="true">?</span><span class="p-nom"><strong>Un Porteur ${NOM_LIGNEE[p.lignee].toLowerCase()}</strong><small>Pas encore arrivé</small></span></span>`
-    + `<span class="p-statut">${echap(arrivee(p))}</span></div>`;
+  return `<p class="pt-avenir" style="--c:${COULEUR[p.lignee]}"><span class="pt-ombre" aria-hidden="true">?</span><span><strong>Un Porteur ${NOM_LIGNEE[p.lignee].toLowerCase()} arrivera</strong> ${echap(arrivee(p).replace(/^Arrive /, '').replace(/\.$/, ''))}.</span></p>`;
 }
 
 export function htmlPorteurs(e: EcranDistrict): string {
   const j = e.j;
   const presents = porteursPresents(j);
   const libres = presents.filter((id) => statut(j, id).classe === 'libre').length;
-  let h = entete(`${presents.length} PORTEUR${presents.length > 1 ? 'S' : ''} · ${libres} DISPONIBLE${libres > 1 ? 'S' : ''}`, 'Porteurs');
-  h += `<p class="aide intro-ecran">Trois Porteurs descendent ensemble. Chacun apporte les cartes de sa lignée et, une fois gagnée, sa Marque. Touche un Porteur pour tout savoir de lui.</p>`;
+  let h = entete(`${presents.length} PORTEUR${presents.length > 1 ? 'S' : ''} · <span class="pt-dispo">${libres} DISPONIBLE${libres > 1 ? 'S' : ''}</span>`, 'Porteurs');
+  h += `<p class="pt-intro">Trois Porteurs descendent ensemble, avec leurs cartes et leur Marque. Touche un portrait pour tout savoir de lui.</p>`;
   for (const l of LIGNEES) {
     const ici = PORTEURS.filter((p) => p.lignee === l);
-    h += `<h2 class="titre-section" style="--c:${COULEUR[l]}">${NOM_LIGNEES[l]}</h2><div class="grille-p">`
-      + ici.map((p) => (presents.includes(p.id) ? tuile(j, p) : silhouette(p))).join('') + `</div>`;
+    const la = ici.filter((p) => presents.includes(p.id));
+    const avenir = ici.filter((p) => !presents.includes(p.id));
+    h += `<section class="pt-lignee"><h2 class="titre-section" style="--c:${COULEUR[l]}">${NOM_LIGNEES[l]}</h2>`
+      + (la.length ? `<div class="pt-grille">${la.map((p) => tuile(j, p)).join('')}</div>` : '')
+      + avenir.map(silhouette).join('') + `</section>`;
   }
   if (e.deck) h += feuilleDeck(e);
   else h += feuillePorteur(e);
-  return coquille(e, h, 'ecran-porteurs');
+  return coquille(e, h, 'ecran-porteurs pt');
 }
 
 /** La fiche complète d'un Porteur */
