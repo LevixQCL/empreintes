@@ -522,6 +522,25 @@ h1,h2,h3{font-weight:400}
 .toile .anime video.prete{opacity:1}
 .toile .lueur-cristal{position:absolute;left:51%;top:6.5%;width:34%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(circle,rgba(120,240,255,.55) 0%,rgba(80,210,240,.22) 35%,rgba(80,210,240,0) 70%);animation:lueurCristal 4.5s ease-in-out infinite alternate}
 @keyframes lueurCristal{from{opacity:.35;transform:translate(-50%,-50%) scale(.85)}to{opacity:.9;transform:translate(-50%,-50%) scale(1.08)}}
+/* Âge légendaire : cinq éclats tournent autour du cristal sur une ellipse (tour complet en 16 s) */
+.toile .orbite-cristal{position:absolute;left:51%;top:9%;width:26%;aspect-ratio:1/.3;transform:translate(-50%,-50%);pointer-events:none}
+.toile .orbite-cristal .ox,.toile .orbite-cristal .oy{position:absolute;inset:0}
+.toile .orbite-cristal .ox{animation:orbiteX 8s ease-in-out infinite alternate}
+.toile .orbite-cristal .oy{animation:orbiteY 8s ease-in-out infinite alternate}
+.toile .orbite-cristal i{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;background:#C8F8FF;
+  box-shadow:0 0 6px 2px rgba(110,230,255,.85);transform:rotate(45deg) scaleY(1.5);animation:eclatTwinkle 2.4s ease-in-out infinite alternate}
+.toile .orbite-cristal .ox:nth-child(even) i{width:4px;height:4px;margin:-2px;animation-delay:1.2s}
+@keyframes orbiteX{from{transform:translateX(-50%)}to{transform:translateX(50%)}}
+@keyframes orbiteY{from{transform:translateY(-50%)}to{transform:translateY(50%)}}
+@keyframes eclatTwinkle{from{opacity:.5}to{opacity:1}}
+/* la mer scintille */
+.toile .scintilles i{position:absolute;width:10px;height:10px;margin:-5px;pointer-events:none;mix-blend-mode:screen;opacity:0;
+  background:radial-gradient(circle,#fff 0 12%,rgba(170,245,255,.7) 22%,transparent 60%);animation:scintille 6.5s ease-in-out infinite}
+@keyframes scintille{0%,70%,100%{opacity:0;transform:scale(.4)}80%{opacity:1;transform:scale(1.15)}88%{opacity:.2;transform:scale(.8)}}
+/* un reflet doré traverse lentement le tableau */
+.toile .reflet-dore{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;
+  background:linear-gradient(105deg,transparent 35%,rgba(255,214,140,.55) 50%,transparent 65%) no-repeat;background-size:250% 100%;animation:refletDore 14s ease-in-out infinite}
+@keyframes refletDore{0%{background-position:120% 0}60%,100%{background-position:-60% 0}}
 .toile .plaque{z-index:1}
 
 /* ---------- Bibliothèque : Chroniques et Archives ---------- */
@@ -570,7 +589,7 @@ h1,h2,h3{font-weight:400}
 .lecture-nav .aide{margin-left:auto;text-align:right}
 @keyframes zoom-lent{from{transform:scale(1.02)}to{transform:scale(1.12)}}
 .titre-sec{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-@media (prefers-reduced-motion: reduce){ .lecture-fond img,.toile .lueur-cristal{animation:none} }
+@media (prefers-reduced-motion: reduce){ .lecture-fond img,.toile .lueur-cristal,.toile .orbite-cristal .ox,.toile .orbite-cristal .oy,.toile .orbite-cristal i{animation:none} .toile .scintilles,.toile .reflet-dore{display:none} }
 
 /* Zone de la Strate choisie (écran Escouade) */
 .zone-strate{display:flex;gap:10px;align-items:center;margin:0;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}

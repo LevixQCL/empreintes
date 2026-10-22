@@ -86,13 +86,24 @@ export function brancherTableau(racine: HTMLElement) {
   video.play().catch(() => { /* lecture auto refusée : le tableau fixe reste affiché */ });
 }
 
+/**
+ * L'âge légendaire n'a pas de boucle vidéo (celle de Midjourney ratait) : on l'anime en code.
+ * La lueur du cristal pulse, des éclats tournent autour de lui, la mer scintille et un reflet doré passe lentement.
+ */
+const SCINTILLES: [number, number, number][] = [[12, 45, 0], [22, 52, 2.1], [38, 74, 4.3], [48, 81, 1.2], [55, 94, 3.4], [76, 62, 5.2], [91, 72, 2.7]];
+const ANIMATION_LEGENDAIRE = '<i class="lueur-cristal" aria-hidden="true"></i>'
+  // chaque éclat suit une ellipse : un va-et-vient horizontal et un vertical décalé d'un quart de tour
+  + `<span class="orbite-cristal" aria-hidden="true">${[0, 3.2, 6.4, 9.6, 12.8].map((p) => `<span class="ox" style="animation-delay:-${p}s"><span class="oy" style="animation-delay:-${p + 4}s"><i></i></span></span>`).join('')}</span>`
+  + `<span class="scintilles" aria-hidden="true">${SCINTILLES.map(([x, y, d]) => `<i style="left:${x}%;top:${y}%;animation-delay:${d}s"></i>`).join('')}</span>`
+  + '<i class="reflet-dore" aria-hidden="true"></i>';
+
 function tableau(j: Jeu): string {
   const s = sceneDistrict(j.batiments.noyau);
   const nouveau = ageAffiche !== 0 && ageAffiche !== s.age;
   ageAffiche = s.age;
   return `<img class="tableau${s.nuit ? ' nuit' : ''}${nouveau ? ' nouvel-age' : ''}" src="${s.url}" alt="" draggable="false"/>`
     + (s.video ? `<div class="anime" data-video="${s.video}"></div>` : '')
-    + (s.age === 4 ? '<i class="lueur-cristal" aria-hidden="true"></i>' : '')
+    + (s.age === 4 ? ANIMATION_LEGENDAIRE : '')
     + `${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
 }
 
