@@ -413,3 +413,8 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 .geste.gm-fer .g-plein{inset:-.46% -.69%}
 .geste.gm-cuivre .g-plein{inset:-.34% -.53%}
 .geste.gm-argent .g-plein{inset:-.27% -.4%}
+/* en main : les Fréquences d'une carte (argent et plus) défilent dans son cristal, chiffre et couleur, en fondu */
+.g-plein.alt{--t:1.8s}
+.g-plein.alt .cp-k{animation:fcp-alt2 calc(var(--t) * var(--n)) ease-in-out infinite;animation-delay:calc((var(--n) - var(--i)) * var(--t) * -1)}
+.g-plein.alt-3 .cp-k{animation-name:fcp-alt3}
+@media (prefers-reduced-motion:reduce){.g-plein.alt .cp-k{animation:none;opacity:0}.g-plein.alt .cp-k[style*="--i:0"]{opacity:1}}

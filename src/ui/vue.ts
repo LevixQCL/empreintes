@@ -106,6 +106,11 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
   const metal = (g.carte?.split('@')[1] as Rarete | undefined) ?? 'fer';
   const cadre = cadreMetal(metal);
   const plein = cadrePlein(metal, g.type);
+  // en main, une carte à plusieurs Fréquences les fait défiler dans son cristal ; posée dans la chaîne, il reste sur celle qui compte
+  const tourne = taille === 'main' && !accord && g.fs && g.fs.length > 1 ? [g.f, ...g.fs.filter((f) => f !== g.f)] : null;
+  const cristalPlein = tourne
+    ? tourne.map((f, i) => `<i class="cp-teinte cp-k" style="--fc:${couleurFrequence(f)};--i:${i}"></i>`).join('') + tourne.map((f, i) => `<b class="cp-f cp-k" style="--fc:${couleurFrequence(f)};--i:${i}">${f}</b>`).join('')
+    : `<i class="cp-teinte"></i><b class="cp-f">${accord ? '∗' : g.f}</b>`;
   const cls = ['geste', taille, `gm-${metal}`, plein ? 'plein' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
   const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${g.effet ? ', ' + libelleEffet(g.effet) : ''}${o.halo ? ', prolonge ta suite' : ''}`;
@@ -115,7 +120,7 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
     // le cadre peint du métal, par-dessus l'image et la plaque, sous la gemme
     + (cadre ? `<span class="g-monture" style="--cadre:url(${cadre})" aria-hidden="true"></span>` : '')
     // cadre peint d'un seul tenant : cristal (teinté de la Fréquence) et socle de l'action peints avec le cadre ; le nom en bas à gauche
-    + (plein ? `<span class="g-plein" aria-hidden="true" style="--cp-img:url(${plein.img});--cp-masque:url(${plein.masque});--fx:${plein.f[0]}%;--fy:${plein.f[1]}%;--vx:${plein.v[0]}%;--vy:${plein.v[1]}%"><i class="cp-cadre"></i><i class="cp-teinte"></i><b class="cp-f">${accord ? '∗' : g.f}</b><b class="cp-v${g.v >= 10 ? ' deux' : ''}">${g.v}</b><span class="cp-nom">${echap(g.nom)}</span></span>` : '')
+    + (plein ? `<span class="g-plein${tourne ? ` alt alt-${tourne.length}` : ''}" aria-hidden="true" style="--n:${tourne ? tourne.length : 1};--cp-img:url(${plein.img});--cp-masque:url(${plein.masque});--fx:${plein.f[0]}%;--fy:${plein.f[1]}%;--vx:${plein.v[0]}%;--vy:${plein.v[1]}%"><i class="cp-cadre"></i>${cristalPlein}<b class="cp-v${g.v >= 10 ? ' deux' : ''}">${g.v}</b><span class="cp-nom">${echap(g.nom)}</span></span>` : '')
     + (g.lourd ? '<span class="g-lourd">2 PL.</span>' : '')
     + (o.halo ? `<span class="g-suite">${ICO.monter}</span>` : '')
     + `<span class="g-plaque"><span class="g-ligne">${socle(g.type, g.v)}`

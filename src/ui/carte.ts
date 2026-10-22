@@ -10,7 +10,7 @@ import { NOMS_EFFET } from '../core/effets';
 import { DEPART_PORTEURS, NOMS_LIGNEE } from '../core/donnees';
 import { NOMS_RARETE } from '../core/collection';
 import type { ModuleDef, Rarete } from '../core/types';
-import { illustrationModule, portrait, textureMetal } from './art';
+import { cadrePlein, illustrationModule, portrait, textureMetal } from './art';
 import { COULEUR, echap } from './vue';
 
 /** une couleur par Fréquence, du 1 (chaud) au 9 (froid) : des Fréquences qui se suivent ont des couleurs voisines */
@@ -59,6 +59,26 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1): string {
   const gestes = `<li><span class="fc-freqs"${m.f.length > 1 && !accord ? ` title="Fréquences au choix : ${m.f.join(' ou ')}"` : ''}>${freqs}</span>`
     + `<span class="fc-gn">${ACTION[m.type]}${tags}</span>`
     + `<span class="fc-val ${m.type}" title="${LIBELLE[m.type]}">${ICONES[m.type]}${Math.round(m.v * mult)}</span></li>`;
+  // depuis le 22 octobre 2026 : le même cadre peint qu'en combat (cristal de la Fréquence, socle de l'action, métal),
+  // avec en plus le niveau, la lignée, le nom en entier et l'effet en toutes lettres
+  const plein = cadrePlein(m.rarete, m.type);
+  if (plein) {
+    const v = Math.round(m.v * mult);
+    // plusieurs Fréquences (argent et plus) : le cristal les fait défiler, chiffre et couleur, au même endroit
+    const fs = accord ? [] : m.f;
+    const alt = fs.length > 1;
+    const cristal = alt
+      ? fs.map((f, i) => `<span class="fcp-teinte fcp-k" style="--fc:${couleurFrequence(f)};--i:${i}"></span>`).join('') + fs.map((f, i) => `<b class="fcp-f fcp-k" style="--fc:${couleurFrequence(f)};--i:${i}">${f}</b>`).join('')
+      : `<span class="fcp-teinte"></span><b class="fcp-f">${accord ? '∗' : m.f[0]}</b>`;
+    return `<div class="fc-ombre fo-${m.rarete}"><div class="fc-carte fcp fr-${m.rarete}${alt ? ` alt alt-${fs.length}` : ''}" style="--n:${fs.length || 1};--cp-img:url(${plein.img});--cp-masque:url(${plein.masque});--fx:${plein.f[0]}%;--fy:${plein.f[1]}%;--vx:${plein.v[0]}%;--vy:${plein.v[1]}%;--fc:${accord ? '#5d5470' : couleurFrequence(m.f[0]!)}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${niveau}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + NOMS_EFFET[m.effet.type] : ''}">`
+      + `<div class="fc-art">${art}${ill ? FX[m.rarete] : ''}</div>`
+      + `<span class="fcp-cadre"></span>${cristal}`
+      + `<b class="fcp-v${v >= 10 ? ' deux' : ''}">${v}</b>`
+      + `<span class="fcp-puces"><span>Niv. ${niveau}</span><span class="fc-lignee" style="--c:${COULEUR[m.lignee]}">${NOMS_LIGNEE[m.lignee].court}</span></span>`
+      + (m.effet || m.lourd ? `<span class="fcp-effet">${m.effet ? NOMS_EFFET[m.effet.type] : ''}${m.lourd ? `${m.effet ? ' · ' : ''}2 pl.` : ''}</span>` : '')
+      + `<span class="fcp-nom">${echap(m.nom)}</span>`
+      + `</div></div>`;
+  }
   return `<div class="fc-ombre fo-${m.rarete}"><div class="fc-carte fr-${m.rarete}" style="--tex:url(${textureMetal(m.rarete)})" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${niveau}">`
     + `<div class="fc-art">${art}${ill ? FX[m.rarete] : ''}<span class="fc-puces"><span>Niv. ${niveau}</span><span class="fc-lignee" style="--c:${COULEUR[m.lignee]}">${NOMS_LIGNEE[m.lignee].court}</span></span></div>`
     + `<div class="fc-plaque"><span class="fc-lumiere"></span><div class="fc-titre"><span class="fc-gemme" title="${NOMS_RARETE[m.rarete]}"></span><span class="fc-nom">${echap(m.nom)}</span></div><ul class="fc-gestes">${gestes}</ul></div>`
