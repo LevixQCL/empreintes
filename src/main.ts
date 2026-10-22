@@ -8,6 +8,7 @@ import './ui/bureau.css';
 import './ui/exploration.css';
 import './ui/guide.css';
 import './ui/porteurs.css';
+import './ui/batiment.css';
 import * as C from './core/combat';
 import { decouverteEnAttente } from './core/decouvertes';
 import { ennemiDef, moduleDef, porteurDef } from './core/donnees';

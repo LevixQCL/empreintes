@@ -228,14 +228,48 @@ function appel(e: EcranDistrict): string {
   return '';
 }
 
-/** Un Porteur qu'on peut poster au travail */
-function candidat(j: Jeu, id: string, poste: Poste, affinite: Lignee | undefined): string {
+// ---------- La feuille d'un bâtiment ----------
+// Revue du 22 octobre 2026 (lisibilité, direction artistique, game design) : l'îlot en grand en tête,
+// des chiffres réels plutôt que des multiplicateurs (« +60 énergie/h », pas « ×2 »), des Porteurs qui
+// tiennent dans l'écran, la réserve remplie / maximum, et le niveau suivant juste au-dessus du bouton.
+
+const virgule = (n: number) => String(Math.round(n * 10) / 10).replace('.', ',');
+
+/** Le district tel qu'il serait avec ce Porteur à ce poste (null : poste vide), pour comparer sans rien changer */
+function avecPorteur(j: Jeu, b: Poste, id: string | null): Jeu {
+  const porteurs: Jeu['porteurs'] = {};
+  for (const [k, v] of Object.entries(j.porteurs)) porteurs[k] = { ...v, poste: v.poste === b ? null : v.poste };
+  if (id && porteurs[id]) porteurs[id] = { ...porteurs[id]!, poste: b };
+  return { ...j, porteurs };
+}
+
+/** Ce que rend le poste avec ce Porteur : une valeur comparable et sa forme lisible */
+function rendement(j: Jeu, b: Poste, id: string | null): { v: number; court: string; long: string } {
+  if (b === 'generateur') { const v = energieParHeure(avecPorteur(j, b, id)); return { v, court: `${ent(v)}/h`, long: `${ent(v)} énergie/h` }; }
+  if (b === 'clinique') { const v = Math.round(soinParHeure(avecPorteur(j, b, id)) * 10) / 10; return { v, court: `${virgule(v)}/h`, long: `${virgule(v)} Usure soignée/h` }; }
+  const d = batimentDef(b);
+  const v = !id ? 1 : porteurDef(id).lignee === d.affinite ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste;
+  return { v, court: `×${virgule(v)}`, long: `vitesse ×${virgule(v)}` };
+}
+
+const multPoste = (b: Poste, id: string) => {
+  const ideal = porteurDef(id).lignee === batimentDef(b).affinite;
+  return `<span class="fb-mult${ideal ? ' ideal' : ''}" title="${ideal ? 'Lignée idéale pour ce bâtiment' : 'Autre lignée'}">×${virgule(ideal ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste)}</span>`;
+};
+
+/** Un Porteur qu'on peut poster : son portrait, ce que donnerait le poste avec lui, et ce qu'il quitterait */
+function candidat(j: Jeu, id: string, poste: Poste, actuel: number): string {
   const d = porteurDef(id);
   const ailleurs = j.porteurs[id]!.poste;
-  const bonus = affinite === d.lignee ? `×${DISTRICT.bonusAffinite}` : `×${String(DISTRICT.bonusPoste).replace('.', ',')}`;
-  return `<button type="button" class="tuile-porteur" style="--c:${COULEUR[d.lignee]}" data-action="poster" data-id="${id}" data-poste="${poste}">`
-    + `${avatar(id, 48)}<strong>${echap(d.nom)}</strong><small>${ailleurs ? echap(batimentDef(ailleurs).nom) : 'Libre'}</small>`
-    + `<span class="bonus${affinite === d.lignee ? ' ideal' : ''}">${bonus}</span></button>`;
+  const r = rendement(j, poste, id);
+  const ecart = Math.round((r.v - actuel) * 10) / 10;
+  const signe = ecart > 0 ? 'plus' : ecart < 0 ? 'moins' : 'egal';
+  const delta = poste === 'forge' ? '' : ecart === 0 ? '<i>=</i>' : `<i>${ecart > 0 ? '+' : '−'}${virgule(Math.abs(ecart))}</i>`;
+  return `<button type="button" class="fb-cand ${signe}" style="--c:${COULEUR[d.lignee]}" data-action="poster" data-id="${id}" data-poste="${poste}" aria-label="Poster ${echap(d.nom)} : ${r.long}${ailleurs ? `, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}">`
+    + `<span class="fb-cand-portrait">${avatar(id, 56)}${multPoste(poste, id)}</span>`
+    + `<strong>${echap(d.nom)}</strong>${poste === 'forge' ? '' : `<span class="fb-cand-eff">${r.court}${delta}</span>`}`
+    + (ailleurs ? `<small class="fb-cand-ailleurs">quitte ${echap(batimentDef(ailleurs).nom)}</small>` : '')
+    + `</button>`;
 }
 
 const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
@@ -244,19 +278,41 @@ const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
 };
 const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${Number.isInteger(v) ? ent(v) : (Math.round(v * 10) / 10).toLocaleString('fr-BE')}${unite ? ` ${unite}` : ''}`);
 
-/** Ce que change le niveau suivant : les chiffres qui montent (avant → après) et ce qui se débloque */
+/** Ce que change le niveau suivant : les chiffres qui montent (avant → après), ce qui se débloque, et la nouvelle apparence */
 function gainsNiveau(j: Jeu, b: BatimentId): string {
   const niv = j.batiments[b];
   const gains: (GainNiveau | { quoi: 'apparence'; texte: string; detail?: string; avant?: undefined; apres?: undefined; unite?: undefined })[] = gainsAmelioration(j, b);
-  if (visuel(niv + 1) !== visuel(niv)) gains.push(b === 'noyau' ? { quoi: 'apparence', texte: 'Le district change d’âge', detail: 'nouvelle vue d’ensemble' } : { quoi: 'apparence', texte: 'Nouvelle apparence du bâtiment' });
+  const nouvelle = visuel(niv + 1) !== visuel(niv);
+  if (nouvelle) gains.push(b === 'noyau' ? { quoi: 'apparence', texte: 'Le district change d’âge', detail: 'nouvelle vue d’ensemble' } : { quoi: 'apparence', texte: 'Nouvelle apparence', detail: 'le bâtiment se transforme' });
   if (!gains.length) return '';
-  return `<div class="gains"><span class="surtitre">NIVEAU ${niv + 1} · CE QUE ÇA CHANGE</span><ul>`
+  const dc = dureeChantier(j, b);
+  return `<section class="fb-suivant"><div class="fb-suivant-tete"><span class="surtitre">Au niveau ${niv + 1}</span><span class="fb-duree">${ICO.chrono}${dc ? duree(dc) : 'immédiat'}</span></div><ul>`
     + gains.map((g) => {
       const chiffre = g.avant !== undefined && g.apres !== undefined;
-      return `<li class="gain${chiffre ? '' : ' deblocage'}">${ICO[ICONE_GAIN[g.quoi]]}<span class="gn-txt">${echap(g.texte)}${g.detail ? `<small>${echap(g.detail)}</small>` : ''}</span>`
-        + (chiffre ? `<span class="gn-val"><span class="av">${valeurGain(g.avant!, g.unite)}</span><i aria-label="devient">→</i><b>${valeurGain(g.apres!, g.unite)}</b></span>` : '')
+      const vignette = g.quoi === 'apparence' && b !== 'noyau' ? `<img class="fb-apercu" src="${illustrationBatiment(b, niv + 1)}" alt="" decoding="async" loading="lazy">` : '';
+      return `<li class="${chiffre ? '' : 'deblocage'}">${vignette || ICO[ICONE_GAIN[g.quoi]]}<span class="fb-g-txt">${echap(g.texte)}${g.detail ? `<small>${echap(g.detail)}</small>` : ''}</span>`
+        + (chiffre ? `<span class="fb-g-val"><s>${valeurGain(g.avant!, g.unite)}</s><b>${valeurGain(g.apres!, g.unite)}</b></span>` : '')
         + `</li>`;
-    }).join('') + `</ul></div>`;
+    }).join('') + `</ul></section>`;
+}
+
+/** Une ressource du coût : ce qu'il faut, et ce qui manque s'il en manque */
+function coutDetail(icone: Icone, besoin: number, possede: number, nom: string): string {
+  const manque = Math.max(0, besoin - possede);
+  return `<span class="fb-prix${manque ? ' court' : ''}" title="${nom} : ${ent(possede)} / ${ent(besoin)}">${ICO[icone]}<b>${ent(besoin)}</b>${manque ? `<small>manque ${ent(manque)}</small>` : ''}</span>`;
+}
+
+/** Une réserve : jauge remplie / maximum et ce qu'elle dit */
+function reserve(j: Jeu, b: BatimentId): string {
+  const max = stockage(j);
+  const v = Math.min(j.energie, max);
+  const eph = energieParHeure(j);
+  const plein = v >= max;
+  const note = plein ? (eph > 0 ? 'Pleine : ce que produit le Générateur est perdu.' : 'Pleine.')
+    : eph > 0 ? `Pleine dans ${duree(((max - v) / eph) * 3_600_000)}.` : '';
+  return `<div class="fb-reserve${plein ? ' pleine' : ''}"><div class="fb-reserve-tete">${ICO.coffre}<span>Réserve d’énergie</span><b>${ent(v)}<small> / ${ent(max)}</small></b></div>`
+    + `<div class="fb-jauge" role="meter" aria-valuemin="0" aria-valuemax="${max}" aria-valuenow="${v}" aria-label="Réserve d’énergie"><i style="width:${max ? (v / max) * 100 : 0}%"></i></div>`
+    + `<small>${note}${b === 'generateur' ? ' La taille de la réserve dépend de la Tour du Noyau.' : ''}</small></div>`;
 }
 
 function feuilleBatiment(e: EcranDistrict): string {
@@ -266,44 +322,55 @@ function feuilleBatiment(e: EcranDistrict): string {
   const d = batimentDef(b);
   const niv = j.batiments[b];
   const pv = prochainVisuel(niv);
-  const pips = Array.from({ length: d.niveauMax }, (_, i) => `<i class="${i < niv ? 'plein' : ''}"></i>`).join('');
-  let h = `<div class="voile-feuille" data-action="fermer" aria-hidden="true"></div><section class="feuille" role="dialog" aria-modal="true" aria-labelledby="feuille-titre"><span class="poignee" aria-hidden="true"></span>`
-    + `<header class="feuille-tete"><img class="vignette" src="${illustrationBatiment(b, niv)}" alt="" decoding="async"><div class="titres"><span class="surtitre">NIVEAU ${niv} / ${d.niveauMax}${d.affinite ? ` · IDÉAL : ${NOM_LIGNEE[d.affinite].toUpperCase()}` : ''}</span><h2 id="feuille-titre">${echap(d.nom)}</h2><span class="pips" aria-hidden="true">${pips}</span></div>`
-    + `<button type="button" class="btn-icone" data-action="fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
-  h += `<p class="role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span class="aide">Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
+  const crans = Array.from({ length: d.niveauMax }, (_, i) => `<i class="${i < niv ? 'plein' : ''}"></i>`).join('');
+  const ideal = d.affinite ? `<span class="fb-ideal" style="--c:${COULEUR[d.affinite]}">${ICO.porteurs}Idéal : ${NOM_LIGNEE[d.affinite]} <b>×${virgule(DISTRICT.bonusAffinite)}</b></span>` : '';
+  let h = `<div class="voile-feuille" data-action="fermer" aria-hidden="true"></div><section class="feuille fiche-bat" role="dialog" aria-modal="true" aria-labelledby="feuille-titre">`
+    + `<span class="poignee" aria-hidden="true"></span><button type="button" class="btn-icone fb-fermer" data-action="fermer" aria-label="Fermer">${ICO.fermer}</button>`
+    + `<div class="feuille-corps fb-corps"><header class="fb-heros"><div class="fb-scene" aria-hidden="true"><span class="fb-halo"></span><img class="fb-ilot" src="${illustrationBatiment(b, niv)}" alt="" decoding="async"></div>`
+    + `<div class="fb-titre"><span class="surtitre">Niveau ${niv} <span class="fb-max">/ ${d.niveauMax}</span></span><h2 id="feuille-titre">${echap(d.nom)}</h2>`
+    + `<span class="fb-crans" aria-hidden="true">${crans}</span>${ideal}</div></header>`;
+  h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
 
   // ce que le bâtiment rapporte
-  const stats: string[] = [];
-  if (b === 'generateur') stats.push(`<div class="stat">${ICO.energie}<b>+${energieParHeure(j)}</b><small>énergie / h</small></div>`);
-  if (b === 'clinique') stats.push(`<div class="stat">${ICO.soin}<b>−${Math.round(soinParHeure(j) * 10) / 10}</b><small>Usure / h au repos</small></div>`);
-  if (b === 'noyau' || b === 'generateur') stats.push(`<div class="stat">${ICO.coffre}<b>${ent(stockage(j))}</b><small>stockage</small></div>`);
-  if (b === 'noyau') stats.push(`<div class="stat">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div>`);
-  if (stats.length) h += `<div class="stats">${stats.join('')}</div>`;
+  if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>+${ent(energieParHeure(j))}</b><small>énergie par heure</small></div></div>${reserve(j, b)}`;
+  if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur au repos</small></div></div>`;
   if (b === 'noyau') {
-    h += `<p class="aide">Les autres bâtiments ne dépassent pas son niveau.</p><button type="button" class="btn prim large" data-action="entrer">${ICO.tour}Entrer dans la tour</button>`;
+    h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>niveau maximum des autres bâtiments</small></div></div>${reserve(j, b)}`
+      + `<button type="button" class="btn prim large" data-action="entrer">${ICO.tour}Entrer dans la tour</button>`;
   }
 
   // le Porteur au travail
   if (b !== 'noyau') {
     const poste = b as Poste;
     const occupant = posteDe(j, poste);
-    h += `<section class="bloc"><h3 class="titre-bloc">${ICO.ouvrier}Au travail</h3>`;
+    const actuel = rendement(j, poste, occupant);
+    h += `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.ouvrier}Au travail</h3>`;
     if (occupant) {
       const o = porteurDef(occupant);
-      h += `<div class="occupant" style="--c:${COULEUR[o.lignee]}">${avatar(occupant, 52)}<div><strong>${echap(o.nom)}</strong><small>${NOM_LIGNEE[o.lignee]} · rendement ×${String(d.affinite === o.lignee ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste).replace('.', ',')}</small></div>`
-        + `<button type="button" class="btn sec" data-action="liberer" data-id="${occupant}">Libérer</button></div>`;
+      const vide = rendement(j, poste, null);
+      const apport = poste === 'forge' ? `fabrique ${virgule(actuel.v)} fois plus vite`
+        : poste === 'clinique' ? `+${virgule(actuel.v - vide.v)} Usure soignée/h grâce à ${echap(o.nom)}`
+          : `+${ent(actuel.v - vide.v)} énergie/h grâce à ${echap(o.nom)}`;
+      h += `<div class="fb-occupant" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 64)}${multPoste(poste, occupant)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-lignee">${NOM_LIGNEE[o.lignee]}</span><span class="fb-apport">${apport}</span></div>`
+        + `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Libérer ${echap(o.nom)} (${poste === 'forge' ? 'vitesse normale' : vide.long})">Libérer</button></div>`;
     } else {
-      h += `<p class="vide-poste">Personne au poste. Un Porteur ${d.affinite ? `<b style="color:${COULEUR[d.affinite]}">${NOM_LIGNEE[d.affinite]}</b>` : 'de la bonne lignée'} travaille deux fois mieux.</p>`;
+      const avec = (lignee: boolean) => { const id = PORTEURS.find((p) => (p.lignee === d.affinite) === lignee)?.id; return id ? rendement(j, poste, id).court : ''; };
+      h += `<p class="fb-vide">Personne au poste${poste === 'forge' ? ' : la Forge ne peut pas fabriquer.' : ` : ${actuel.long}.`} Avec un Porteur ${d.affinite ? `<b style="color:${COULEUR[d.affinite]}">${NOM_LIGNEE[d.affinite]}</b>` : 'de la bonne lignée'} : <b>${avec(true)}</b>, un autre : ${avec(false)}.</p>`;
     }
     const libres = PORTEURS.filter((p) => p.id !== occupant && !enExpedition(j, p.id) && porteursPresents(j).includes(p.id))
-      .sort((x, y) => Number(y.lignee === d.affinite) - Number(x.lignee === d.affinite));
-    if (libres.length) h += `<div class="rangee">${libres.map((p) => candidat(j, p.id, poste, d.affinite ?? undefined)).join('')}</div>`;
+      .sort((x, y) => Number(y.lignee === d.affinite) - Number(x.lignee === d.affinite) || Number(!!j.porteurs[x.id]!.poste) - Number(!!j.porteurs[y.id]!.poste));
+    if (libres.length) {
+      h += `<p class="fb-consigne">${occupant ? 'Le remplacer' : 'Poster un Porteur'} <span>· touche un portrait</span></p>`
+        + `<div class="fb-rangee">${libres.map((p) => candidat(j, p.id, poste, actuel.v)).join('')}</div>`;
+    }
+    const absents = PORTEURS.filter((p) => porteursPresents(j).includes(p.id) && enExpedition(j, p.id));
+    if (absents.length) h += `<small class="fb-absents">En expédition ou en mission : ${absents.map((p) => echap(p.nom)).join(', ')}.</small>`;
     h += `</section>`;
   }
 
   // la Forge
   if (b === 'forge') {
-    h += `<section class="bloc"><h3 class="titre-bloc">${ICO.marteau}Refabriquer une carte</h3>`;
+    h += `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.marteau}Refabriquer une carte</h3>`;
     if (j.forge) {
       const m = moduleDef(j.forge.moduleId);
       const fait = Math.min(1, (e.now - j.forge.debut) / (j.forge.fin - j.forge.debut));
@@ -323,12 +390,14 @@ function feuilleBatiment(e: EcranDistrict): string {
     }
     h += `</section>`;
   }
+
+  const ch = chantierDe(j, b);
+  const cout = coutAmelioration(j, b);
+  if (cout && !ch) h += gainsNiveau(j, b);
   h += `</div>`;
 
   // le pied : l'amélioration, toujours visible
-  const ch = chantierDe(j, b);
-  const cout = coutAmelioration(j, b);
-  h += `<footer class="feuille-pied">${cout ? gainsNiveau(j, b) : ''}`;
+  h += `<footer class="feuille-pied fb-pied">`;
   if (ch) {
     const fait = Math.min(1, (e.now - ch.debut) / (ch.fin - ch.debut));
     h += `<div class="chantier-cours">${ICO.marteau}<div><strong>Chantier vers le niveau ${niv + 1}</strong><small>Reste ${duree(ch.fin - e.now)} · avance même jeu fermé</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
@@ -336,13 +405,15 @@ function feuilleBatiment(e: EcranDistrict): string {
     const bloque = b !== 'noyau' && niv >= j.batiments.noyau;
     const assez = j.energie >= cout.energie && j.composants >= cout.composants && j.eclats >= (cout.eclats ?? 0);
     const plein = j.chantiers.length >= chantiersMax(j) || (b === 'noyau' && j.chantiers.length > 0);
-    const dc = dureeChantier(j, b);
-    const raison = bloque ? 'Améliore d’abord la Tour du Noyau.'
+    const raison = bloque ? `Il faut d’abord monter la Tour du Noyau (niveau ${j.batiments.noyau}).`
       : plein ? (b === 'noyau' && j.chantiers.length ? 'Attends la fin des chantiers en cours.' : chantiersMax(j) === 1 ? 'Un seul chantier à la fois (deux au Noyau niveau 4).' : 'Deux chantiers sont déjà en cours.')
-        : !assez ? 'Ressources insuffisantes.' : '';
-    h += `<div class="cout-ligne"><span class="surtitre">COÛT</span>${couts(j, cout)}<span class="prix duree">${ICO.chrono}${dc ? duree(dc) : 'immédiat'}</span></div>`
-      + `<button type="button" class="btn prim large" data-action="ameliorer" data-id="${b}"${assez && !bloque && !plein ? '' : ' disabled'}>${ICO.monter}Améliorer</button>`
-      + (raison ? `<small class="raison">${raison}</small>` : '');
+        : !assez ? 'Il manque des ressources.' : '';
+    h += `<div class="fb-cout"><span class="surtitre">Coût</span>`
+      + (cout.energie ? coutDetail('energie', cout.energie, j.energie, 'Énergie') : '')
+      + (cout.composants ? coutDetail('composants', cout.composants, j.composants, 'Composants') : '')
+      + (cout.eclats ? coutDetail('eclats', cout.eclats, j.eclats, 'Éclats') : '') + `</div>`;
+    if (raison) h += `<p class="fb-raison">${ICO.verrou}<span>${raison}</span>${bloque ? `<button type="button" class="fb-lien" data-action="batiment" data-id="noyau">Voir la Tour</button>` : ''}</p>`;
+    h += `<button type="button" class="btn prim large fb-ameliorer" data-action="ameliorer" data-id="${b}"${assez && !bloque && !plein ? '' : ' disabled'}>${ICO.monter}Passer au niveau ${niv + 1}</button>`;
   } else h += `<small class="raison">Niveau maximum pour cette version.</small>`;
   return h + `</footer></section>`;
 }

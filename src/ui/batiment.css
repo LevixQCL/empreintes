@@ -1,0 +1,149 @@
+/* EMPREINTES — la feuille d'un bâtiment (revue du 22 octobre 2026).
+   L'îlot est la star : il flotte en grand en tête, l'interface s'efface autour.
+   Pas de cartouches : de l'espace, des filets qui se fondent, deux accents seulement
+   (glace pour ce qui se touche, or pour la valeur et la progression). Textes à 12 px minimum. */
+
+.feuille.fiche-bat{--fb-txt:#C9D6E6;--fb-doux:#93A3B8;--fb-or:#F2D58C;--fb-glace:#CDEFFF;--fb-rouge:#FF9C8A;max-height:92dvh}
+
+/* ---------- En-tête « héros » ---------- */
+.fb-heros{position:relative;flex-shrink:0;height:232px;margin:-16px -16px 0;overflow:hidden;
+  background:
+    radial-gradient(ellipse 62% 48% at 50% 62%,rgba(120,190,255,.24),transparent 70%),
+    radial-gradient(ellipse 40% 16% at 50% 88%,rgba(255,170,80,.14),transparent 75%);
+  box-shadow:0 1px 0 rgba(205,239,255,.12)}
+.fiche-bat>.poignee{position:absolute;z-index:4;top:8px;left:50%;transform:translateX(-50%);margin:0}
+.fb-scene{position:absolute;inset:0;display:grid;justify-items:end;align-items:start;padding:18px 18px 0 0}
+.fb-halo{position:absolute;left:36%;right:-6%;bottom:30px;height:1px;background:linear-gradient(90deg,transparent,rgba(159,212,255,.55),transparent)}
+.fb-ilot{position:relative;width:auto;height:206px;max-width:62%;object-fit:contain;
+  filter:drop-shadow(0 14px 16px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(140,200,255,.18));
+  animation:fb-flotte 6s ease-in-out infinite}
+@keyframes fb-flotte{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.fb-fermer{position:absolute!important;z-index:4;top:12px;left:12px}
+.fb-titre{position:absolute;z-index:2;left:16px;right:40%;bottom:16px;display:grid;gap:6px;justify-items:start}
+.fb-titre .surtitre{font-size:12px;color:var(--fb-or)}
+.fb-titre .surtitre::before{display:none}
+.fb-max{color:var(--fb-doux);font-weight:400}
+.fb-titre h2{margin:0;font-family:var(--display);font-size:31px;line-height:1;color:#F6F2EA;
+  text-shadow:0 0 18px rgba(159,216,255,.25),0 2px 10px rgba(0,0,0,.8)}
+.fb-crans{display:flex;gap:4px}
+.fb-crans i{width:20px;height:5px;border-radius:1px;background:rgba(205,239,255,.14)}
+.fb-crans i.plein{background:linear-gradient(180deg,#F8E3A6,#D4A54E);box-shadow:0 0 8px rgba(242,200,110,.55)}
+.fb-ideal{display:inline-flex;align-items:center;gap:6px;margin-top:2px;padding:4px 9px 4px 7px;border-radius:999px;
+  font-size:12.5px;font-weight:600;color:color-mix(in srgb,var(--c) 55%,white);
+  background:color-mix(in srgb,var(--c) 16%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 45%,transparent)}
+.fb-ideal .ico{width:14px;height:14px}
+.fb-ideal b{color:var(--fb-or)}
+
+/* ---------- Corps ---------- */
+.fb-corps{gap:20px;padding-top:16px}
+.fb-corps>*{flex-shrink:0}
+.fb-role{margin:0;font-size:15px;line-height:1.45;color:var(--fb-txt)}
+.fb-role span{color:var(--fb-doux)}
+
+.fb-chiffres{display:flex;gap:0}
+.fb-chiffre{flex:1;display:grid;grid-template-columns:auto 1fr;column-gap:10px;align-items:center;padding:2px 14px 2px 0}
+.fb-chiffre+.fb-chiffre{padding-left:14px;box-shadow:inset 1px 0 0 rgba(205,239,255,.14)}
+.fb-chiffre>.ico{grid-row:span 2;width:22px;height:22px;color:var(--fb-or);filter:drop-shadow(0 0 6px rgba(242,200,110,.4))}
+.fb-chiffre b{font-family:var(--mono);font-size:26px;line-height:1.05;color:#fff;font-variant-numeric:tabular-nums}
+.fb-chiffre small{font-size:12.5px;color:var(--fb-doux);line-height:1.3}
+
+.fb-reserve{display:grid;gap:7px}
+.fb-reserve-tete{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--fb-txt)}
+.fb-reserve-tete .ico{width:17px;height:17px;color:var(--fb-glace);opacity:.85}
+.fb-reserve-tete b{margin-left:auto;font-family:var(--mono);font-size:16px;color:#fff;font-variant-numeric:tabular-nums}
+.fb-reserve-tete b small{font-size:13px;color:var(--fb-doux);font-weight:400}
+.fb-jauge{height:7px;border-radius:4px;background:rgba(205,239,255,.1);overflow:hidden}
+.fb-jauge i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,#6FA6E6,#CDEFFF);box-shadow:0 0 10px rgba(160,210,255,.6)}
+.fb-reserve>small{font-size:12.5px;color:var(--fb-doux);line-height:1.4}
+.fb-reserve.pleine .fb-jauge i{background:linear-gradient(90deg,#D4A54E,#F8E3A6);box-shadow:0 0 10px rgba(242,200,110,.6)}
+.fb-reserve.pleine>small{color:var(--fb-or)}
+
+/* ---------- Au travail ---------- */
+.fb-bloc{display:grid;gap:12px}
+.fb-bloc .titre-bloc{font-size:12px;color:var(--fb-glace)}
+.fb-occupant{display:flex;align-items:center;gap:14px;padding:12px 12px 12px 10px;border-radius:4px;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 14%,transparent),rgba(205,239,255,.03) 70%);
+  box-shadow:inset 2px 0 0 color-mix(in srgb,var(--c) 75%,white)}
+.fb-occupant>div{flex:1;display:grid;gap:2px;min-width:0}
+.fb-occupant strong{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.1;color:#F6F2EA}
+.fb-lignee{font-size:12.5px;color:color-mix(in srgb,var(--c) 55%,white)}
+.fb-apport{font-size:14px;font-weight:600;color:var(--fb-or)}
+.fb-liberer{min-height:44px;padding:0 16px;font-size:14px}
+
+.fb-cand-portrait{position:relative;display:inline-block}
+.fb-mult{position:absolute;right:-8px;top:-4px;padding:1px 6px;border-radius:999px;font-family:var(--mono);font-size:12px;font-weight:700;line-height:1.35;
+  color:var(--fb-glace);background:#14203A;box-shadow:inset 0 0 0 1px rgba(205,239,255,.35)}
+.fb-mult.ideal{color:#2A1A04;background:linear-gradient(180deg,#F8E3A6,#D4A54E);box-shadow:0 0 10px rgba(242,200,110,.55)}
+
+.fb-consigne{margin:4px 0 -2px;font-size:14px;font-weight:600;color:var(--fb-txt)}
+.fb-consigne span{font-weight:400;color:var(--fb-doux)}
+.fb-rangee{display:flex;gap:6px;margin:0 -16px;padding:6px 16px 4px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:16px;scrollbar-width:none;
+  -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+.fb-rangee::-webkit-scrollbar{display:none}
+.fb-cand{flex:0 0 84px;scroll-snap-align:start;display:grid;justify-items:center;align-content:start;gap:3px;padding:8px 2px 8px;border:0;border-radius:6px;
+  background:transparent;color:inherit;cursor:pointer;transition:background .15s}
+.fb-cand:hover,.fb-cand:focus-visible{background:rgba(205,239,255,.07);outline:none}
+.fb-cand:focus-visible{box-shadow:inset 0 0 0 1px var(--fb-glace)}
+.fb-cand:active{transform:scale(.97)}
+.fb-cand strong{margin-top:4px;font-family:var(--display);font-weight:400;font-size:15px;line-height:1.1;color:#F6F2EA;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fb-cand-eff{display:inline-flex;align-items:baseline;gap:4px;font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--fb-txt);font-variant-numeric:tabular-nums}
+.fb-cand-eff i{font-style:normal;font-size:12px}
+.fb-cand.plus .fb-cand-eff i{color:#9EE6B4}
+.fb-cand.moins .fb-cand-eff i{color:var(--fb-rouge)}
+.fb-cand.egal .fb-cand-eff i{color:var(--fb-doux)}
+.fb-cand-ailleurs{font-size:12px;color:#E8B86A;line-height:1.2;text-align:center}
+.fb-vide{margin:0;font-size:14px;line-height:1.5;color:var(--fb-txt)}
+.fb-vide>b{color:var(--fb-or);font-family:var(--mono)}
+.fb-absents{font-size:12.5px;color:var(--fb-doux)}
+
+/* ---------- Niveau suivant : juste au-dessus du bouton ---------- */
+.fb-suivant{position:relative;display:grid;gap:10px;margin-top:auto;padding:14px 14px 12px;border-radius:4px;overflow:hidden;
+  background:linear-gradient(160deg,rgba(242,200,110,.10),rgba(242,200,110,.02) 55%),rgba(10,13,26,.6);box-shadow:inset 0 0 0 1px rgba(242,200,110,.22)}
+.fb-suivant::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(105deg,transparent 35%,rgba(255,240,200,.08) 50%,transparent 65%);transform:translateX(-100%);animation:fb-balaye 5s ease-in-out 1s infinite}
+@keyframes fb-balaye{0%{transform:translateX(-100%)}35%,100%{transform:translateX(100%)}}
+.fb-suivant-tete{display:flex;align-items:center;gap:8px}
+.fb-suivant-tete .surtitre{font-size:12px;color:var(--fb-or)}
+.fb-suivant-tete .surtitre::before{display:none}
+.fb-duree{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:12.5px;color:var(--fb-glace)}
+.fb-duree .ico{width:14px;height:14px}
+.fb-suivant ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.fb-suivant li{display:flex;align-items:center;gap:10px;min-height:32px}
+.fb-suivant li>.ico{width:20px;height:20px;flex-shrink:0;color:var(--fb-or)}
+.fb-apercu{width:46px;height:46px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 0 8px rgba(242,200,110,.45))}
+.fb-g-txt{flex:1;display:grid;font-size:14.5px;color:#EEF2F8;line-height:1.25}
+.fb-g-txt small{font-size:12.5px;color:var(--fb-doux)}
+.fb-g-val{display:inline-flex;align-items:baseline;gap:8px;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.fb-g-val s{font-size:14px;color:var(--fb-doux);text-decoration-color:rgba(147,163,184,.6)}
+.fb-g-val b{font-size:23px;color:var(--fb-or);text-shadow:0 0 12px rgba(242,200,110,.4)}
+
+/* ---------- Pied : coût et bouton ---------- */
+.fb-pied{gap:10px;padding-top:12px}
+.fb-cout{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.fb-cout .surtitre{margin-right:auto;font-size:12px;color:var(--fb-doux)}
+.fb-cout .surtitre::before{display:none}
+.fb-prix{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-variant-numeric:tabular-nums;color:#fff}
+.fb-prix .ico{width:17px;height:17px;color:var(--fb-or)}
+.fb-prix b{font-size:16px}
+.fb-prix small{font-size:12px;font-weight:600;color:var(--fb-rouge)}
+.fb-prix.court b,.fb-prix.court .ico{color:var(--fb-rouge)}
+.fb-raison{display:flex;align-items:center;gap:8px;margin:0;font-size:14px;line-height:1.35;color:var(--fb-or)}
+.fb-raison>.ico{width:16px;height:16px;flex-shrink:0}
+.fb-raison span{flex:1}
+.fb-lien{flex-shrink:0;min-height:36px;padding:0 4px;border:0;background:none;font:inherit;font-weight:600;color:var(--fb-glace);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.fiche-bat .fb-ameliorer{min-height:54px;font-size:16px}
+.fiche-bat .btn.large.prim::before{display:none}
+
+@media (prefers-reduced-motion:reduce){.fb-ilot,.fb-suivant::after{animation:none}}
+
+/* PC : la feuille glisse depuis la droite, toute la hauteur */
+@media (min-width:1100px) and (min-height:600px){
+  .feuille.fiche-bat{max-height:none}
+  .fb-heros{height:290px;margin:-20px -24px 0}
+  .fb-ilot{height:260px}
+  .fb-titre{left:24px;bottom:22px}
+  .fb-rangee{margin:0 -24px;padding-inline:24px;scroll-padding-left:24px;flex-wrap:wrap;-webkit-mask-image:none;mask-image:none;overflow:visible}
+}
+
+/* la croix reste lisible quand le contenu défile dessous */
+#app .feuille.fiche-bat .fb-fermer{background:rgba(9,12,26,.9);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3),0 4px 14px rgba(0,0,0,.5)}
