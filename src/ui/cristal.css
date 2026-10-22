@@ -1,0 +1,89 @@
+/* « Cristal et lumière », retenu par Bryan le 22 octobre 2026 pour l'écran de combat (préféré à « Pierre gravée et veines d'or ») :
+   l'interface comme une lecture d'empreinte.
+   Verre sombre bleu nuit, arêtes de glace, facettes, lumière enfermée dans des éclats de cristal.
+   Le métal ne reste que sur les cartes, en fin liseré : c'est la monture qui dit la rareté (lore). */
+
+#app[data-mode="combat"]{
+  --glace:#CDEFFF; --glace-2:rgba(205,239,255,.55); --glace-3:rgba(205,239,255,.22);
+  --prisme:linear-gradient(115deg,rgba(220,245,255,.95),rgba(150,190,255,.55) 35%,rgba(196,170,255,.75) 65%,rgba(235,250,255,.95));
+}
+body:has(#app[data-mode="combat"]){background:
+  linear-gradient(112deg,transparent 0 22%,rgba(170,200,255,.05) 22.5%,transparent 34%),
+  linear-gradient(68deg,transparent 0 60%,rgba(200,170,255,.045) 60.5%,transparent 74%),
+  radial-gradient(70% 40% at 50% 0%,rgba(110,150,255,.22),transparent 65%),
+  radial-gradient(60% 35% at 80% 100%,rgba(170,130,255,.14),transparent 60%),
+  #070915}
+
+/* les panneaux : verre fumé, arêtes de glace, une facette de lumière en travers */
+#app[data-mode="combat"] :is(.combattant,.zone-chaine,.lecon,.puce,.intention,.etat,.btn.sec,.btn-icone,.btn-flux){
+  background:
+    linear-gradient(118deg,transparent 0 58%,rgba(220,245,255,.07) 58.5%,rgba(220,245,255,.02) 72%,transparent 72.5%),
+    linear-gradient(180deg,rgba(205,239,255,.09),rgba(205,239,255,0) 42%),
+    linear-gradient(165deg,rgba(22,28,52,.86),rgba(9,11,24,.92));
+  box-shadow:inset 0 0 0 1px var(--glace-3),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -20px 30px -24px rgba(150,190,255,.35),0 10px 26px rgba(0,0,0,.45)}
+#app[data-mode="combat"] :is(.combattant,.zone-chaine,.lecon)::after{background:
+  linear-gradient(var(--glace),var(--glace)) 0 0/10px 1px no-repeat,linear-gradient(var(--glace),var(--glace)) 0 0/1px 10px no-repeat,
+  linear-gradient(var(--glace),var(--glace)) 100% 100%/10px 1px no-repeat,linear-gradient(var(--glace),var(--glace)) 100% 100%/1px 10px no-repeat;opacity:.7}
+#app[data-mode="combat"] .zone-chaine::before{background:repeating-linear-gradient(90deg,var(--glace-3) 0 1px,transparent 1px 8px)}
+#app[data-mode="combat"] .combattant.cible{box-shadow:inset 0 0 0 1.5px #ff8a7a,inset 0 0 22px rgba(255,110,110,.25),0 0 16px rgba(255,110,110,.25)}
+#app[data-mode="combat"] .intention.danger{box-shadow:inset 0 0 0 1px rgba(255,150,140,.85),inset 0 0 24px rgba(255,100,100,.2)}
+#app[data-mode="combat"] .int-ico,#app[data-mode="combat"] .intention.danger .int-ico{background:conic-gradient(from 30deg,#ffd5cc,#ff6f63,#a3243a,#ff8c7d,#ffd5cc);color:#2a0612}
+#app[data-mode="combat"] .lecon{box-shadow:inset 0 0 0 1px var(--glace-3),inset 3px 0 0 var(--glace),0 10px 26px rgba(0,0,0,.45)}
+#app[data-mode="combat"] :is(.surtitre,.titre-bloc){color:#CFE6FF}
+#app[data-mode="combat"] .ennemi-nom{text-shadow:0 0 22px rgba(150,190,255,.35),0 2px 8px rgba(0,0,0,.8)}
+
+/* les jauges : de la lumière enfermée dans un éclat de cristal, pointu aux deux bouts */
+#app[data-mode="combat"] .jauge-vie{padding:1.5px;background:var(--prisme);box-shadow:none;
+  clip-path:polygon(0 50%,7px 0,calc(100% - 7px) 0,100% 50%,calc(100% - 7px) 100%,7px 100%)}
+#app[data-mode="combat"] .j-rail{background:linear-gradient(180deg,rgba(6,9,22,.96),rgba(18,24,48,.96));box-shadow:inset 0 0 6px rgba(120,160,255,.35);
+  clip-path:polygon(0 50%,6px 0,calc(100% - 6px) 0,100% 50%,calc(100% - 6px) 100%,6px 100%)}
+#app[data-mode="combat"] .j-vie::before{height:42%;background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,0))}
+#app[data-mode="combat"] .j-grad{background:repeating-linear-gradient(90deg,transparent 0 calc(var(--pas) - 1px),rgba(220,240,255,.28) calc(var(--pas) - 1px) var(--pas))}
+#app[data-mode="combat"] .jauge-vie.je{--lueur:rgba(255,150,140,.95);--vie:linear-gradient(180deg,#ffe0d8 0%,#ff8a75 34%,#d23a55 72%,#6e1035 100%)}
+#app[data-mode="combat"] .je .j-vie{background:
+  linear-gradient(100deg,transparent 38%,rgba(255,255,255,.45) 50%,transparent 62%) 0 0/260% 100% no-repeat,
+  repeating-linear-gradient(118deg,rgba(255,255,255,.16) 0 1px,transparent 1px 13px),
+  var(--vie)}
+#app[data-mode="combat"] .jauge-vie.jp{--lueur:rgba(150,255,225,.9);--vie:linear-gradient(180deg,#e2fff6 0%,#79e9cb 36%,#24a39a 72%,#0f4f5c 100%)}
+#app[data-mode="combat"] .jauge-vie.jp.basse{--lueur:rgba(255,150,140,.95);--vie:linear-gradient(180deg,#ffe0d8 0%,#ff8a75 36%,#c2304a 72%,#5a0f2a 100%)}
+#app[data-mode="combat"] .vie-ennemi{filter:drop-shadow(0 0 12px rgba(255,120,130,.3))}
+#app[data-mode="combat"] .je-valeur{background:linear-gradient(180deg,rgba(26,32,60,.95),rgba(10,12,26,.95));box-shadow:inset 0 0 0 1px var(--glace-3),inset 0 1px 0 rgba(255,255,255,.3)}
+#app[data-mode="combat"] .je-valeur b{text-shadow:0 0 10px rgba(255,150,150,.7)}
+
+/* les cartes : arête de glace, Fréquence taillée comme une gemme, plaque de verre givré ; un liseré de métal dit la rareté */
+#app[data-mode="combat"] .geste{--g-cadre:linear-gradient(150deg,rgba(235,250,255,.95),color-mix(in srgb,var(--c) 45%,#7d8fc0) 40%,#141a33 72%,color-mix(in srgb,var(--c) 40%,#cfe6ff) 100%);
+  filter:drop-shadow(0 0 6px rgba(150,190,255,.18)) drop-shadow(0 4px 6px rgba(0,0,0,.6))}
+#app[data-mode="combat"] .g-cadre{inset:1.5px;background:#080b18}
+#app[data-mode="combat"] .g-socle{background:linear-gradient(150deg,#ffffff,#cdefff 35%,#6b7fb4 68%,#eef9ff)}
+#app[data-mode="combat"] .geste .g-socle .g-freq,#app[data-mode="combat"] .g-pips i{
+  background:conic-gradient(from 35deg,color-mix(in srgb,var(--fc) 35%,white),var(--fc),color-mix(in srgb,var(--fc) 55%,black),var(--fc),color-mix(in srgb,var(--fc) 45%,white),color-mix(in srgb,var(--fc) 70%,black),color-mix(in srgb,var(--fc) 35%,white))}
+#app[data-mode="combat"] .g-pips i{border:none;padding:0}
+#app[data-mode="combat"] .g-plaque{
+  background:linear-gradient(118deg,transparent 0 60%,rgba(220,245,255,.08) 60.5%,transparent 75%),linear-gradient(180deg,rgba(26,34,66,.82),rgba(8,10,22,.94));
+  border-top:1.5px solid var(--rar,#9aa3ad);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 -1px 8px color-mix(in srgb,var(--rar,#9aa3ad) 55%,transparent)}
+#app[data-mode="combat"] .geste.halo{--g-cadre:linear-gradient(150deg,#ffffff,#fff1c8 35%,#d9b56a 70%,#fff7dc);
+  filter:drop-shadow(0 0 10px rgba(255,236,180,.65)) drop-shadow(0 4px 6px rgba(0,0,0,.6))}
+#app[data-mode="combat"] .geste .g-effet{color:#d9ecff;background:rgba(10,14,30,.85);box-shadow:inset 0 0 0 1px var(--glace-2)}
+#app[data-mode="combat"] :is(.gm-fer){--rar:#a9b3be} #app[data-mode="combat"] .gm-cuivre{--rar:#e2925c}
+#app[data-mode="combat"] .gm-argent{--rar:#e6eef6} #app[data-mode="combat"] .gm-or{--rar:#f4cd62} #app[data-mode="combat"] .gm-nacre{--rar:#f6d9f7}
+#app[data-mode="combat"] .place-vide{background:linear-gradient(118deg,transparent 0 55%,rgba(205,239,255,.05) 55.5%,transparent 70%),rgba(10,14,30,.5);
+  box-shadow:inset 0 0 0 1px var(--glace-3);color:rgba(205,239,255,.45);text-shadow:0 0 12px rgba(150,200,255,.5)}
+
+/* le Flux : des éclats qui s'allument */
+#app[data-mode="combat"] .segments i{height:9px;transform:none;clip-path:polygon(0 50%,25% 0,75% 0,100% 50%,75% 100%,25% 100%);background:rgba(120,150,220,.2)}
+#app[data-mode="combat"] .segments i.plein{background:linear-gradient(180deg,#fff,#bfe6ff 50%,#6f9fe0);box-shadow:none;filter:drop-shadow(0 0 6px rgba(170,220,255,.9))}
+#app[data-mode="combat"] :is(.flux .surtitre,.btn-flux .ico){color:var(--glace)}
+
+/* le bouton Lancer : une barre de lumière */
+#app[data-mode="combat"] .btn.prim{background:linear-gradient(180deg,#ffffff 0%,#d6f0ff 40%,#8fbdf0 100%);color:#0b1733;text-shadow:0 1px 0 rgba(255,255,255,.6);
+  box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(40,70,140,.35),0 0 22px rgba(160,210,255,.45)}
+#app[data-mode="combat"] .btn.prim:disabled{background:linear-gradient(165deg,rgba(22,28,52,.86),rgba(9,11,24,.92));color:#6e7896;box-shadow:inset 0 0 0 1px var(--glace-3)}
+#app[data-mode="combat"] .actions-combat{background:linear-gradient(rgba(7,9,21,0),rgba(7,9,21,.95) 28%)}
+
+/* le sélecteur de Fréquence et les étiquettes en verre */
+#app[data-mode="combat"] .accorder{background:linear-gradient(165deg,rgba(22,28,52,.9),rgba(9,11,24,.95));border:none;box-shadow:inset 0 0 0 1px var(--glace-3),inset 0 1px 0 rgba(255,255,255,.25)}
+#app[data-mode="combat"] .accorder i.actif{background:conic-gradient(from 35deg,color-mix(in srgb,var(--fc) 35%,white),var(--fc),color-mix(in srgb,var(--fc) 55%,black),var(--fc),color-mix(in srgb,var(--fc) 35%,white))}
+#app[data-mode="combat"] .badge-reso{background:linear-gradient(180deg,#fff,#d6f0ff 45%,#9cc6f2);color:#0b1733;box-shadow:0 0 14px rgba(160,210,255,.5)}
+#app[data-mode="combat"] .badge-reso.faible{background:rgba(205,239,255,.12);color:var(--glace);box-shadow:inset 0 0 0 1px var(--glace-3)}
+#app[data-mode="combat"] .conseil b{color:#fff;text-shadow:0 0 8px rgba(160,210,255,.8)}
+#app[data-mode="combat"] .zone-chaine.resonne{box-shadow:inset 0 0 0 1.5px var(--glace),inset 0 0 40px rgba(160,210,255,.15),0 10px 26px rgba(0,0,0,.45)}

@@ -3,6 +3,7 @@ import './ui/scenes.css';
 import './ui/face-carte.css';
 import './ui/holo.css';
 import './ui/combat.css';
+import './ui/cristal.css';
 import * as C from './core/combat';
 import { ennemiDef, moduleDef, porteurDef } from './core/donnees';
 import * as J from './core/jeu';
