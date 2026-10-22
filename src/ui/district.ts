@@ -43,7 +43,28 @@ let ageAffiche = 0;
  * et on le replace, il reprend là où il en était. Rien n'est joué si le joueur a réduit les animations.
  */
 let video: HTMLVideoElement | null = null;
+/**
+ * Les plaques des bâtiments ne se chevauchent jamais : après chaque rendu, une plaque qui en recouvre
+ * une autre, plus haut sur le tableau, descend juste en dessous (sur téléphone, les noms longs se touchaient).
+ */
+export function degagerPlaques(racine: HTMLElement) {
+  const ps = [...racine.querySelectorAll<HTMLElement>('.toile .plaque')];
+  const places: DOMRect[] = [];
+  for (const p of ps.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)) {
+    const r = p.getBoundingClientRect();
+    let dy = 0;
+    for (let essai = 0; essai < 6; essai++) {
+      const gene = places.find((q) => r.left < q.right + 4 && r.right > q.left - 4 && r.top + dy < q.bottom + 4 && r.bottom + dy > q.top - 4);
+      if (!gene) break;
+      dy = gene.bottom + 6 - r.top;
+    }
+    if (dy) p.style.marginTop = `${dy}px`;
+    places.push(new DOMRect(r.left, r.top + dy, r.width, r.height));
+  }
+}
+
 export function brancherTableau(racine: HTMLElement) {
+  degagerPlaques(racine);
   const place = racine.querySelector<HTMLElement>('.archipel .anime');
   if (!place || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const src = place.dataset.video!;
@@ -88,7 +109,8 @@ function plaques(e: EcranDistrict): string {
     const d = batimentDef(id);
     const prete = id === 'forge' && !!j.forge && e.now >= j.forge.fin;
     const ch = chantierDe(j, id);
-    const vise = !!o && o.pilier === id && !o.fait(j) && o.titre !== 'Greffer une carte';
+    // l'objectif « Construire ton deck » se fait dans les Cartes, pas sur la Tour du Noyau
+    const vise = !!o && o.pilier === id && !o.fait(j) && o.titre !== 'Construire ton deck';
     const occupant = id !== 'noyau' ? posteDe(j, id as Poste) : null;
     let etat = '';
     if (ch) etat = `<small class="en-chantier">${ICO.marteau}${duree(ch.fin - e.now)}</small>`;
