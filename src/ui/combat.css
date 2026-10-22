@@ -157,3 +157,6 @@
 @media (prefers-reduced-motion:reduce){.zone-chaine .en-jeu{transform:none}}
 /* l'ennemi vaincu reste dissous (l'animation de dissolution vient du calque d'impacts) */
 .ennemi-art.dissous{opacity:0}
+/* le chiffre des dégâts grossit avec la place dans la chaîne */
+.scene-ennemi .pop{font-size:calc(30px * var(--ps,1))}
+.scene-ennemi .pop.gros{color:#FFE2A8;text-shadow:0 2px 6px #000,0 0 18px rgba(255,140,60,.75)}

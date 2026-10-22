@@ -17,6 +17,8 @@ export interface Pop {
   id: number;
   cible: string;
   texte: string;
+  /** taille du chiffre (1 = normale) : les coups de fin de chaîne s'affichent plus gros */
+  echelle?: number;
   couleur: string;
 }
 
@@ -71,7 +73,7 @@ const pct = (v: number, max: number) => Math.max(0, Math.min(100, (100 * v) / ma
 
 function popsPour(e: Ecran, cible: string) {
   return e.pops.filter((p) => p.cible === cible)
-    .map((p) => `<span class="pop" style="--pc:${p.couleur}" aria-hidden="true">${echap(p.texte)}</span>`).join('');
+    .map((p) => `<span class="pop${(p.echelle ?? 1) >= 1.5 ? ' gros' : ''}" style="--pc:${p.couleur};--ps:${p.echelle ?? 1}" aria-hidden="true">${echap(p.texte)}</span>`).join('');
 }
 
 /**

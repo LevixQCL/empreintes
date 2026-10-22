@@ -275,9 +275,9 @@ function finPour(): Fin | null {
 }
 
 let idPop = 0;
-function pop(cible: string, texte: string, couleur: string) {
+function pop(cible: string, texte: string, couleur: string, echelle = 1) {
   const id = ++idPop;
-  K.pops.push({ id, cible, texte, couleur });
+  K.pops.push({ id, cible, texte, couleur, echelle });
   setTimeout(() => {
     K.pops = K.pops.filter((p) => p.id !== id);
     if (mode === 'combat') afficher();
@@ -285,7 +285,8 @@ function pop(cible: string, texte: string, couleur: string) {
 }
 
 function popsDe(ev: Evenement) {
-  if (ev.kind === 'degats') pop(ev.cible, ev.net ? `−${ev.net}` : 'bloqué', 'var(--danger)');
+  // un coup sur l'ennemi grossit avec sa place dans la chaîne et avec sa taille : la fin d'une suite se lit de loin
+  if (ev.kind === 'degats') pop(ev.cible, ev.net ? `−${ev.net}` : 'bloqué', 'var(--danger)', ev.cible === 'ennemi' && ev.net ? Math.min(2, 1 + 0.18 * (K.actif ?? 0) + (ev.net >= 25 ? 0.25 : 0) + (ev.net >= 45 ? 0.2 : 0)) : 1);
   else if (ev.kind === 'bouclier') pop(ev.cible, `+${ev.v}`, 'var(--ivory)');
   else if (ev.kind === 'soin' && ev.v) pop(ev.cible, `+${ev.v}`, 'var(--bio)');
   else if (ev.kind === 'echo') pop('escouade', 'Écho', 'var(--gold)');

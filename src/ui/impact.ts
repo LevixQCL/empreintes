@@ -23,7 +23,7 @@ let traits: Trait[] = [];
 let boucle = 0;
 let reduit = false;
 /** la dernière carte jouée : son effet se déclenche à l'impact qui suit */
-let derniere: { lignee: LigneeGeste; rang: number; total: number; suite: number } | null = null;
+let derniere: { lignee: LigneeGeste; rang: number; total: number; suite: number; type: string } | null = null;
 
 const hasard = (a: number, b: number) => a + Math.random() * (b - a);
 const maintenant = () => performance.now();
@@ -265,7 +265,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
   const pEnnemi = centre(ennemi ?? scene, -0.08);
   switch (ev.kind) {
     case 'carte': {
-      derniere = { lignee: ev.lignee, rang: ev.rang, total: ev.total, suite: ev.suite };
+      derniere = { lignee: ev.lignee, rang: ev.rang, total: ev.total, suite: ev.suite, type: ev.type };
       sonCarte(ev.lignee, ev.rang);
       // la carte qui part : celle de la chaîne à cette place (une carte lourde prend deux places, d'où l'élément réel)
       const carte = racine.querySelectorAll('.zone-chaine .rail > :not(.place-vide)')[ev.rang];
@@ -275,7 +275,6 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         else comete(de, pEnnemi, TEINTE[ev.lignee]);
       }
       if (ev.type === 'bouclier') { const r = racine.querySelector('.escouade-combat')?.getBoundingClientRect(); if (r) bouclierSur(r); }
-      if (ev.type === 'soin') for (const el of racine.querySelectorAll('.combattant:not(.ko)')) { const p = centre(el); if (p) eclats(p.x, p.y, 7, SOIN, { vitesse: 60, gravite: -120, taille: 2.4, vie: 0.9 }); }
       return 0;
     }
     case 'degats': {
@@ -327,6 +326,40 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         return 260;
       }
       return ev.suite >= 4 ? 80 : 0;
+    }
+    case 'soin': {
+      if (!ev.v) return 0;
+      if (ev.cible === 'ennemi') {
+        // l'ennemi se répare : une lueur verte qui remonte sur lui
+        if (pEnnemi) eclats(pEnnemi.x, pEnnemi.y + 30, 14, SOIN, { vitesse: 70, gravite: -140, taille: 2.6, vie: 1, angle: -Math.PI / 2, ouverture: 0.9 });
+        if (ennemi) (ennemi as HTMLElement).animate([{ filter: `drop-shadow(0 0 0 ${SOIN})` }, { filter: `drop-shadow(0 0 18px ${SOIN})` }, { filter: 'none' }], { duration: 600 });
+        note(520, 'sine', 0.35, 0.03, 1.25);
+        return 0;
+      }
+      const el = [...racine.querySelectorAll('.combattant')].find((x) => x.getAttribute('data-porteur') === ev.cible);
+      const p = centre(el ?? null);
+      if (!p) return 0;
+      if (derniere?.type === 'atk' && pEnnemi) {
+        // Siphon : la vie arrachée à l'ennemi file jusqu'au Porteur, en un filet de particules
+        const de = pEnnemi;
+        for (let i = 0; i < 6; i++) {
+          trait((c, k) => {
+            const t = Math.min(1, k * 1.2);
+            const cx = (de.x + p.x) / 2 + (i - 2.5) * 12, cy = Math.min(de.y, p.y) - 40;
+            const x = (1 - t) * (1 - t) * de.x + 2 * (1 - t) * t * cx + t * t * p.x;
+            const y = (1 - t) * (1 - t) * de.y + 2 * (1 - t) * t * cy + t * t * p.y;
+            const g = c.createRadialGradient(x, y, 0, x, y, 7);
+            g.addColorStop(0, '#fff'); g.addColorStop(0.4, SOIN); g.addColorStop(1, 'transparent');
+            c.globalAlpha = 1 - k * 0.5; c.fillStyle = g; c.beginPath(); c.arc(x, y, 7, 0, Math.PI * 2); c.fill();
+          }, 420, i * 45);
+        }
+        setTimeout(() => eclats(p.x, p.y, 8, SOIN, { vitesse: 70, gravite: -120, taille: 2.4, vie: 0.8 }), 380);
+      } else {
+        eclats(p.x, p.y, 8, SOIN, { vitesse: 60, gravite: -120, taille: 2.4, vie: 0.9 });
+      }
+      if (el) (el as HTMLElement).animate([{ filter: `brightness(1.4) drop-shadow(0 0 10px ${SOIN})` }, { filter: 'none' }], { duration: 500 });
+      note(660 * hasard(0.98, 1.02), 'sine', 0.3, 0.03, 1.12);
+      return 0;
     }
     case 'echo': {
       const r = racine.querySelector('.escouade-combat')?.getBoundingClientRect();
