@@ -220,3 +220,15 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-qui{text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.9)}
 /* l'effet garde sa place sur le bord droit, au-dessus de la force */
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{bottom:calc(100% + 4px)}
+
+/* ---------- L'onde de la Fréquence (22 octobre 2026) ----------
+   Pour que la Fréquence ne se lise pas comme un coût : une fine onde à côté du cristal, autant de vagues que la Fréquence,
+   dans sa couleur éclaircie, qui glisse doucement et s'efface aux deux bouts. Subtile : un trait fin, une lueur légère. */
+.geste .g-onde{position:absolute;z-index:3;top:calc(10px + var(--ep) * .5);left:calc(31px + var(--ep) * .5);width:21px;height:9px;overflow:hidden;pointer-events:none;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 18%,#000 72%,transparent);mask-image:linear-gradient(90deg,transparent,#000 18%,#000 72%,transparent);
+  filter:drop-shadow(0 0 1.5px var(--fc)) drop-shadow(0 1px 1px rgba(0,0,0,.9));opacity:.92}
+.geste.chaine .g-onde{top:calc(12px + var(--ep) * .5);left:calc(34px + var(--ep) * .5);width:23px}
+.geste .g-onde polyline{fill:none;stroke:color-mix(in srgb,var(--fc) 30%,white);stroke-width:1;stroke-linecap:round;stroke-linejoin:round;
+  animation:onde-glisse 2.8s linear infinite}
+@keyframes onde-glisse{to{transform:translateX(calc(-1 * var(--l)))}}
+@media (prefers-reduced-motion:reduce){ .geste .g-onde polyline{animation:none} }

@@ -100,6 +100,7 @@ function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: 
     // le cadre peint du métal, par-dessus l'image et la plaque, sous la gemme
     + (cadre ? `<span class="g-monture" style="--cadre:url(${cadre})" aria-hidden="true"></span>` : '')
     + `<span class="g-socle" aria-hidden="true"><span class="g-freq">${accord ? '∗' : g.f}</span></span>`
+    + (accord ? '' : onde(g.f))
     + (autres.length ? `<span class="g-pips" aria-hidden="true">${autres.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</span>` : '')
     + (g.lourd ? '<span class="g-lourd">2 PL.</span>' : '')
     + (o.halo ? `<span class="g-suite">${ICO.monter}</span>` : '')
@@ -121,6 +122,17 @@ function jauge(classe: string, pv: number, max: number, o: { trace?: number; pas
   const pas = o.pas ? pct(o.pas, max) : 10;
   return `<span class="jauge-vie ${classe}${v <= 30 ? ' basse' : ''}" style="--pas:${pas}%" role="img" aria-label="${pv} PV sur ${max}">`
     + `<span class="j-rail">${trainee}<i class="j-vie" style="width:${v}%"></i>${bouclier}<span class="j-grad"></span></span></span>`;
+}
+
+/**
+ * L'onde de la Fréquence (22 octobre 2026) : une fine vibration à côté du cristal, avec autant de vagues que la Fréquence
+ * (1 vague pour le 1, 9 pour le 9). Elle glisse lentement ; ses bouts s'effacent. Rien pour une carte « Accord » (Fréquence libre).
+ */
+function onde(f: number): string {
+  const L = 30, l = L / f;
+  const pts: string[] = [];
+  for (let i = 0; i <= 120; i++) { const x = ((L + l) * i) / 120; pts.push(`${x.toFixed(2)},${(5 - 3.2 * Math.sin((2 * Math.PI * x) / l)).toFixed(2)}`); }
+  return `<svg class="g-onde" viewBox="0 0 30 10" aria-hidden="true"><polyline style="--l:${l.toFixed(3)}px" points="${pts.join(' ')}"/></svg>`;
 }
 
 /** Une carte de combat montrée en démonstration (écran « Avant d'ouvrir ») : même rendu, sans action */
