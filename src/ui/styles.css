@@ -245,7 +245,10 @@ h1,h2,h3{font-weight:400}
 .toile .tableau{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none;pointer-events:none}
 .toile .tableau.nouvel-age{animation:nouvelAge 1.6s ease-out}
 @keyframes nouvelAge{from{opacity:0;filter:brightness(1.8) blur(6px)}to{opacity:1;filter:none}}
-.toile .nuit-voile{position:absolute;inset:0;pointer-events:none;background:linear-gradient(#0B1630cc,#0B163066 45%,#0B163099);mix-blend-mode:multiply}
+/* la nuit (22 octobre 2026) : une teinte, pas un voile. Bryan trouvait le voile gris (multiply) terne : on assombrit un peu,
+   on bleuit légèrement et on garde le contraste. Le même filtre sur le tableau, sa vidéo et la mer du PC : pas de colonne plus sombre. */
+.toile .nuit-voile{display:none}
+.toile .tableau.nuit,.toile:has(.tableau.nuit) .anime video,.mer-fond.nuit{filter:brightness(.8) contrast(1.06) saturate(1.08) hue-rotate(-6deg)}
 .plaque{--cut:6px;position:absolute;transform:translate(-50%,0);display:grid;justify-items:start;gap:1px;min-height:44px;max-width:46%;padding:5px 10px 5px 6px;border:none;color:var(--ink);text-align:left;
   background:rgba(10,12,17,.8);box-shadow:inset 0 0 0 1px var(--filet-fort);transition:transform .15s ease}
 .plaque:not(:disabled):active{transform:translate(-50%,0) scale(.96)}
