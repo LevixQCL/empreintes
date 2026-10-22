@@ -435,7 +435,7 @@ export function htmlRencontre(n = 0): string {
     h += `<div class="bulle ${BULLES[r.id]}${i === n - 1 ? ' neuve' : ''}" style="--c:${COULEUR[d.lignee]}"><strong>${echap(d.nom)}</strong><p>${echap(r.texte.replace(/^« | »$/g, ''))}</p></div>`;
   });
   h += `<footer class="rencontre-bas">${fini ? '' : `<span class="indice-bulle">Touche l’écran pour les écouter</span>`}`
-    + `<button type="button" class="btn prim large appel-porte${fini ? '' : ' discrete'}" data-action="ouvrir-chambre">${ICO.porte}Ouvrir la porte</button></footer></section>`;
+    + `<button type="button" class="btn prim large appel-porte${fini ? '' : ' discrete'}" data-action="briefing">${ICO.porte}Ouvrir la porte</button></footer></section>`;
   return h;
 }
 

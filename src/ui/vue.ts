@@ -74,7 +74,7 @@ function popsPour(e: Ecran, cible: string) {
  * la Fréquence sertie dans un chaton au coin, les autres Fréquences possibles en petits chatons dessous,
  * et une plaque dans le métal de la carte pour la force, l'effet et le nom.
  */
-function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean } = {}) {
+function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean } = {}) {
   const lign = ligneeGeste(g);
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'District';
   const accord = g.effet?.type === 'accord';
@@ -82,7 +82,7 @@ function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: 
   const fond = ill ?? (g.porteur ? portrait(g.porteur) : null);
   const metal = (g.carte?.split('@')[1] as Rarete | undefined) ?? 'fer';
   const autres = !accord && g.fs && g.fs.length > 1 ? g.fs.filter((f) => f !== g.f) : [];
-  const cls = ['geste', taille, `gm-${metal}`, g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : ''].filter(Boolean).join(' ');
+  const cls = ['geste', taille, `gm-${metal}`, g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
   const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${g.effet ? ', ' + libelleEffet(g.effet) : ''}${o.halo ? ', prolonge ta suite' : ''}`;
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]};--fc:${accord ? '#5d5470' : couleurFrequence(g.f)};--tex:url(${textureMetal(metal)})" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
@@ -111,6 +111,9 @@ function jauge(classe: string, pv: number, max: number, o: { trace?: number; pas
   return `<span class="jauge-vie ${classe}${v <= 30 ? ' basse' : ''}" style="--pas:${pas}%" role="img" aria-label="${pv} PV sur ${max}">`
     + `<span class="j-rail">${trainee}<i class="j-vie" style="width:${v}%"></i>${bouclier}<span class="j-grad"></span></span></span>`;
 }
+
+/** Une carte de combat montrée en démonstration (écran « Avant d'ouvrir ») : même rendu, sans action */
+export const carteDemo = (g: Geste, taille: 'chaine' | 'main' = 'main') => geste(g, taille, 'demo').replace('<button type="button"', '<div role="img"').replace(/<\/button>$/, '</div>');
 
 /** Une carte posée dans la chaîne : la toucher la retire ; sous elle, de quoi changer sa Fréquence (argent et plus) */
 function maillon(g: Geste, off: boolean) {
@@ -187,7 +190,14 @@ export function htmlCombat(e: Ecran): string {
   const iconeIntention = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
   const lieu = e.x.tutoriel ? 'Chambre scellée' : `Strate −${e.x.strate}`;
 
-  let h = `<div class="ecran ecran-combat${verrou ? ' verrouille' : ''}">`;
+  // combat guidé : ce que la leçon du tour désigne du doigt
+  const guide = !!e.lecon && !verrou;
+  const derniereF = fs[fs.length - 1];
+  const viseF = guide && s.tour === 2 ? (!s.chaine.length ? 3 : derniereF !== undefined && derniereF >= 3 && derniereF < 5 && serieFinale(s.chaine) === derniereF - 2 ? derniereF + 1 : null) : null;
+  const vise = (g: Geste) => guide && ((s.tour === 1 && libres > 0) || (s.tour === 2 && g.f === viseF) || (s.tour === 3 && g.type === 'bouclier' && libres > 0));
+  const lancerVise = guide && s.chaine.length > 0 && (libres === 0 || (s.tour === 2 && a.suite >= 3));
+
+  let h = `<div class="ecran ecran-combat${verrou ? ' verrouille' : ''}${guide ? ` guide lecon-t${Math.min(s.tour, 4)}` : ''}">`;
   h += `<header class="combat-barre"><div class="puces"><span class="puce">${ICO.strate}${lieu}</span>`
     + (e.x.tutoriel ? '' : e.x.carte ? `<span class="puce">${e.x.carte.salles[e.x.carte.position]?.type === 'gardien' ? 'Gardien' : e.x.carte.salles[e.x.carte.position]?.type === 'elite' ? 'Salle scellée' : `Combat ${(e.x.gagnes ?? 0) + 1}`}</span>` : `<span class="puce">Combat ${e.x.index + 1}/${e.x.sequence.length}</span>`)
     + `<span class="puce">Tour ${s.tour}</span></div>`
@@ -239,15 +249,15 @@ export function htmlCombat(e: Ecran): string {
   if (e.lecon) h += `<section class="lecon" aria-live="polite"><span class="surtitre">${ICO.cristal}COMBAT GUIDÉ</span><p>${echap(e.lecon)}</p></section>`;
 
   // la main
-  h += `<section class="zone-main" aria-label="Main"><div class="main-tete"><span class="surtitre">MAIN · ${s.main.length}</span><span class="journal-ligne">${echap(s.journal[0] ?? '')}</span></div><div class="main">`;
+  h += `<section class="zone-main" aria-label="Main"><div class="main-tete"><span class="surtitre">MAIN · ${s.main.length}</span><span class="journal-ligne">${echap(s.journal[0] ?? '')}</span></div><div class="main${guide && s.tour >= 2 && s.main.some((g) => vise(g) && places(g) <= libres) ? ' tri' : ''}">`;
   for (const g of s.main) {
     const halo = !!dernier && prolonge(g, fs[fs.length - 1]) && places(g) <= libres;
-    h += geste(g, 'main', 'ajouter', { halo, off: verrou, serre: places(g) > libres });
+    h += geste(g, 'main', 'ajouter', { halo, off: verrou, serre: places(g) > libres, vise: vise(g) && places(g) <= libres });
   }
   h += '</div></section>';
 
   h += `<footer class="actions-combat"><button type="button" class="btn sec" data-action="vider"${verrou || !s.chaine.length ? ' disabled' : ''}>${ICO.retirer}Retirer</button>`
-    + `<button type="button" class="btn prim lancer${mult ? ' fort' : ''}" data-action="lancer"${verrou || !s.chaine.length ? ' disabled' : ''}>${ICO.lancer}Lancer la chaîne${mult ? ` <b>${mult}</b>` : ''}</button></footer>`;
+    + `<button type="button" class="btn prim lancer${mult ? ' fort' : ''}${lancerVise ? ' vise' : ''}" data-action="lancer"${verrou || !s.chaine.length ? ' disabled' : ''}>${ICO.lancer}Lancer la chaîne${mult ? ` <b>${mult}</b>` : ''}</button></footer>`;
 
   if (e.regles) h += regles();
   if (e.fin) {

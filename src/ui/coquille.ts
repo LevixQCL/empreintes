@@ -9,7 +9,7 @@ import { portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
 import { COULEUR, echap, panneauCompte, type Compte } from './vue';
 
-export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'codex' | 'cartes';
+export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'codex' | 'cartes';
 export type Filtre = 'tout' | Lignee;
 
 export interface EcranDistrict {
@@ -37,6 +37,8 @@ export interface EcranDistrict {
   retourBiblio: 'archipel' | 'coupe' | 'titre';
   /** rencontre : nombre de répliques affichées */
   bulles: number;
+  /** « Avant d'ouvrir » : écran d'explication affiché */
+  etape: number;
 }
 
 export const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');

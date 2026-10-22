@@ -10,6 +10,7 @@ import type { BatimentId, CombatEtat, Evenement, Pas } from './core/types';
 import { charger, enregistrer, type Enveloppe } from './save/local';
 import { firebaseActif } from './net/firebase-config';
 import { htmlCombat, type Ecran as EcranCombat, type Fin, type Compte } from './ui/vue';
+import { ETAPES, htmlBriefing } from './ui/briefing';
 import { brancherTableau, htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre, type EcranDistrict } from './ui/district';
 import { PLANS, htmlIntro, imagesPlan } from './ui/intro';
 import { htmlTitre } from './ui/titre';
@@ -41,7 +42,7 @@ let lignesVues = 1;
 let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
-const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0 };
+const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0 };
 const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number> } = {
   verrou: false, regles: false, pops: [], fin: null, etat: null, traces: {},
 };
@@ -71,7 +72,7 @@ function afficher() {
     h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, pops: K.pops, fin: K.fin, lecon, traces: K.traces });
   } else {
     mode = 'district';
-    h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles)
+    h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape)
       : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : htmlArchipel(D);
   }
   racine.dataset.mode = mode;
@@ -411,6 +412,9 @@ racine.addEventListener('click', async (ev) => {
     case 'reprendre': mode = 'combat'; K.fin = finPour(); break;
     case 'rencontre': D.vue = 'rencontre'; D.bulles = 0; break;
     case 'rencontre-suite': D.bulles = Math.min(D.bulles + 1, 3); break;
+    case 'briefing': D.vue = 'briefing'; D.etape = 0; window.scrollTo(0, 0); break;
+    case 'briefing-suite': D.etape = Math.min(D.etape + 1, ETAPES.length - 1); break;
+    case 'briefing-retour': D.etape = Math.max(D.etape - 1, 0); break;
     case 'codex':
     case 'bibliotheque':
       D.retourBiblio = mode === 'titre' ? 'titre' : D.vue === 'coupe' ? 'coupe' : 'archipel';
