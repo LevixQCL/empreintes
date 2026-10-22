@@ -382,6 +382,21 @@ const resultat = (r: J.Resultat) => { D.message = r.ok ? '' : r.message ?? ''; i
 
 racine.addEventListener('pointerdown', () => { if (K.verrou) rapide = true; });
 
+/* appui long sur une carte de combat : montre son nom, sans la jouer */
+let appui: { el: HTMLElement; t: number; x: number; y: number } | null = null;
+let annulerClic = false;
+const finAppui = () => { if (appui) { clearTimeout(appui.t); const el = appui.el; appui = null; setTimeout(() => el.classList.remove('nom-visible'), 1200); } };
+racine.addEventListener('pointerdown', (ev) => {
+  const el = (ev.target as HTMLElement).closest<HTMLElement>('.geste');
+  if (!el || mode !== 'combat') return;
+  annulerClic = false;
+  appui = { el, x: ev.clientX, y: ev.clientY, t: window.setTimeout(() => { el.classList.add('nom-visible'); annulerClic = true; }, 450) };
+});
+racine.addEventListener('pointermove', (ev) => { if (appui && Math.hypot(ev.clientX - appui.x, ev.clientY - appui.y) > 10) { clearTimeout(appui.t); appui = null; } });
+for (const t of ['pointerup', 'pointercancel', 'pointerleave'] as const) racine.addEventListener(t, finAppui);
+racine.addEventListener('contextmenu', (ev) => { if (mode === 'combat' && (ev.target as HTMLElement).closest('.geste')) ev.preventDefault(); });
+racine.addEventListener('click', (ev) => { if (annulerClic) { annulerClic = false; ev.stopImmediatePropagation(); ev.preventDefault(); } }, true);
+
 racine.addEventListener('click', async (ev) => {
   const b = (ev.target as HTMLElement).closest<HTMLElement>('[data-action]');
   if (!b || (b as HTMLButtonElement).disabled) return;

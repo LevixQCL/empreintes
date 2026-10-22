@@ -355,3 +355,18 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.atk .g-sym{transform:none}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val b,#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val b{font-family:'Cinzel Force',var(--display);font-weight:900;font-size:12px;letter-spacing:-.02em;-webkit-text-stroke:2.5px #120c08;transform:translateY(.5px)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val b{font-size:14px}
+
+/* ---------- En combat, le nom de la carte se cache (22 octobre 2026) ----------
+   Bryan : le nom prend de la place pour rien en combat. Il apparaît au survol (PC) ou en gardant le doigt
+   sur la carte (appui long, mobile) ; le médaillon de la force descend dans le coin. Le Porteur reste affiché dans la chaîne. */
+#app[data-mode="combat"] .geste .g-nom{opacity:0;transition:opacity .15s;position:absolute;left:4px;right:4px;bottom:calc(100% + 2px);width:auto;
+  padding:2px 3px;border-radius:3px;background:rgba(8,6,4,.82);box-shadow:0 0 0 1px rgba(241,230,207,.25);pointer-events:none;white-space:normal;line-height:1.15}
+#app[data-mode="combat"] .geste.nom-visible .g-nom{opacity:1}
+@media (hover:hover){#app[data-mode="combat"] .geste:hover .g-nom{opacity:1}}
+#app[data-mode="combat"] .geste .g-plaque{position:absolute}
+#app[data-mode="combat"] .geste.main .g-val{bottom:calc(var(--ep) + 2px)}
+#app[data-mode="combat"] .geste.chaine .g-val{bottom:calc(var(--ep) + 13px)}
+#app[data-mode="combat"] .geste.main .g-art::after{background:linear-gradient(180deg,rgba(6,8,12,.35) 0%,transparent 22%,transparent 72%,rgba(6,8,12,.55) 100%)}
+#app[data-mode="combat"] .geste{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+#app[data-mode="combat"] .geste.main .g-nom{bottom:calc(100% + 26px)}
+#app[data-mode="combat"] .geste.chaine .g-nom{bottom:calc(100% + 34px)}
