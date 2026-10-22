@@ -198,7 +198,14 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
   filter:drop-shadow(0 0 1.5px rgba(0,0,0,.85))}
 .geste .g-socle,.geste .g-pips,.geste .g-lourd,.geste .g-suite{z-index:3}
 /* le texte de la plaque et les étiquettes s'écartent du cadre */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-plaque{padding-left:calc(6px + var(--ep));padding-right:calc(5px + var(--ep))}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-plaque{padding-left:calc(3px + var(--ep));padding-right:calc(2px + var(--ep))}
+/* dans un cadre, le nom perd un peu de largeur : un rien plus petit, pour que « Régénérer » tienne en entier */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-fer,.gm-cuivre,.gm-argent,.gm-or) .g-nom{font-size:10px;letter-spacing:-.01em}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{right:calc(3px + var(--ep))}
 .geste .g-lourd{right:calc(11px + var(--ep));top:calc(4px + var(--ep))}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle{top:calc(3px + var(--ep) * .5);left:calc(3px + var(--ep) * .5)}
+/* les autres Fréquences (argent : 1, or : 1, nacre : 2) en rang sous la gemme, et non plus en colonne :
+   en colonne, la troisième Fréquence de la nacre tombait sur la force de la carte */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips{display:flex;gap:2px;top:calc(31px + var(--ep) * .5);left:calc(4px + var(--ep) * .5)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-pips{top:calc(34px + var(--ep) * .5);left:calc(5px + var(--ep) * .5)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips i{width:17px;height:17px;font-size:9.5px}
