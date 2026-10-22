@@ -16,6 +16,9 @@ import { COULEUR, echap } from './vue';
 /** une couleur par Fréquence, du 1 (chaud) au 9 (froid) : des Fréquences qui se suivent ont des couleurs voisines */
 export const couleurFrequence = (f: number) => `hsl(${8 + (f - 1) * 34} 52% 38%)`;
 
+/** la couleur de chaque métal (titres, jauges, gemmes) */
+export const COULEUR_RARETE: Record<Rarete, string> = { fer: '#8E949C', cuivre: '#C47A48', argent: '#B8C4CE', or: '#E2B44A', nacre: '#E6D3EE' };
+
 const ICONES = {
   atk: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M10.5 1.5h4v4l-7.8 7.8-1.4-1.4 1.1-1.1-2.1-2.1-1.1 1.1-1.4-1.4z"/><path d="M2 12.6l1.4 1.4-1.6 1.6-1.4-1.4z"/></svg>',
   bouclier: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1l6 2v4.6c0 3.6-2.6 6.4-6 7.4-3.4-1-6-3.8-6-7.4V3z"/></svg>',

@@ -106,6 +106,12 @@ se gagne pas en fusionnant des cartes (décision du 21 octobre 2026).
 **Les effets.** Un effet se déclare dans `donnees.ts` (`{ type: 'percant' }`, `{ type: 'siphon', part: 0.5 }`…),
 son texte est dans `effets.ts` et sa règle dans `combat.ts` (l'Accord, qui touche aux suites, est dans `regles.ts`).
 
+**Le mode d'emploi des cartes** (22 octobre 2026, `src/ui/guide.ts` et `guide.css`). Une feuille à trois onglets :
+construire son deck (schéma, trois gestes, règles, conseils), lire une carte (la vraie carte annotée, actions, métaux, lignées)
+et les effets (règle, astuce, cartes trouvées qui le portent ; les cartes pas encore trouvées restent comptées « à trouver »).
+On l'ouvre depuis l'écran Cartes, le « ? » de la feuille d'un Porteur ou d'une carte, l'escouade et l'aide du combat.
+Les chiffres sont lus dans les données : un changement d'équilibrage s'y reporte tout seul. Les textes d'effets sont dans `effets.ts`.
+
 **Le robot d'équilibrage.** `npm run robot` (option `-- --parties 300`) joue des milliers d'expéditions avec
 un joueur automatique qui essaie toutes les chaînes possibles à chaque tour. Il cherche la Strate où le
 deck de départ gagne une fois sur deux, mesure ce que vaut chaque carte (à la place de la carte de départ de

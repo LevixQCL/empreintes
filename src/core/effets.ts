@@ -21,8 +21,8 @@ export const NOMS_EFFET: Record<TypeEffet, string> = {
 /** Phrase courte qui explique l'effet au joueur */
 export function texteEffet(e: Effet): string {
   switch (e.type) {
-    case 'percant': return 'Ignore le bouclier de l’ennemi.';
-    case 'siphon': return `Soigne le plus blessé de ${pc(e.part)} des dégâts infligés.`;
+    case 'percant': return 'Ignore le bouclier et le blindage de l’ennemi.';
+    case 'siphon': return `Le Porteur qui la joue récupère ${pc(e.part)} des dégâts infligés.`;
     case 'flux': return `Remplit le Flux (+${e.v}).`;
     case 'desarmer': return `La prochaine attaque ennemie perd ${pc(e.part)} de sa force.`;
     case 'fissure': return `L’ennemi subit ${pc(e.part)} de dégâts en plus, ce tour-ci et le suivant.`;

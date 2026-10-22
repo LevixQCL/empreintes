@@ -9,9 +9,9 @@ export type TypeGeste = 'atk' | 'bouclier' | 'soin';
  * `part` est une fraction (0.25 = 25 %).
  */
 export type Effet =
-  /** ignore le bouclier de l'ennemi */
+  /** ignore le bouclier et le blindage de l'ennemi */
   | { type: 'percant' }
-  /** soigne le Porteur le plus blessé d'une part des dégâts infligés */
+  /** le Porteur qui joue la carte récupère une part des dégâts infligés (le plus blessé s'il est à terre) */
   | { type: 'siphon'; part: number }
   /** remplit le Flux */
   | { type: 'flux'; v: number }

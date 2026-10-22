@@ -15,13 +15,14 @@ import { loreCarte } from '../core/lore-cartes';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
 import { COULEUR, echap } from './vue';
 import { decor, illustrationBatiment, prochainVisuel, reflets, sceneDistrict, visuel } from './art';
-import { faceCarte, couleurFrequence } from './carte';
+import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
+import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { ICO } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict } from './coquille';
 
 export type { EcranDistrict, Vue } from './coquille';
 
-export const COULEUR_RARETE: Record<Rarete, string> = { fer: '#8E949C', cuivre: '#C47A48', argent: '#B8C4CE', or: '#E2B44A', nacre: '#E6D3EE' };
+export { COULEUR_RARETE };
 
 const gemme = (r: Rarete) => `<i class="gemme g-${r}" style="--r:${COULEUR_RARETE[r]}" title="${NOMS_RARETE[r]}" aria-hidden="true"></i>`;
 
@@ -356,6 +357,7 @@ function feuilleCarte(e: EcranDistrict): string {
   const porteurs = PORTEURS.filter((p) => p.lignee === m.lignee && porteursPresents(j).includes(p.id));
   let h = `<div class="voile-feuille" data-action="carte-fermer" aria-hidden="true"></div><section class="feuille carte-detail" role="dialog" aria-modal="true" aria-label="${echap(m.nom)}"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR_RARETE[m.rarete]}">${NOMS_RARETE[m.rarete].toUpperCase()} · ${NOM_LIGNEE[m.lignee].toUpperCase()} · NIVEAU ${c.niveau}</span><h2>${echap(m.nom)}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="guide" data-id="effets" aria-label="Les cartes et leurs effets">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
     + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(m)}</div></div>`
     + (loreCarte(cle) ? `<blockquote class="lore-carte">${echap(loreCarte(cle)!)}</blockquote>` : '');
@@ -413,6 +415,7 @@ function feuilleDeck(e: EcranDistrict): string {
     .sort((a, b) => moduleDef(a).nom.localeCompare(moduleDef(b).nom, 'fr'));
   let h = `<div class="voile-feuille" data-action="deck-fermer" aria-hidden="true"></div><section class="feuille deck-porteur" role="dialog" aria-modal="true" aria-label="Les cartes de ${echap(p.nom)}"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR[p.lignee]}">${NOM_LIGNEE[p.lignee].toUpperCase()} · ${porte.length} / ${DISTRICT.cartesMax} CARTES</span><h2>Les cartes de ${echap(p.nom)}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="guide" data-id="deck" aria-label="Comment construire son deck">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="deck-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   if (parti) h += `<p class="aide">${echap(p.nom)} est en expédition : ses cartes changeront à son retour.</p>`;
   h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour la reprendre.</p>`;
@@ -430,7 +433,8 @@ export function htmlCartes(e: EcranDistrict): string {
   let h = entete(`COLLECTION · ${trouvees} / ${MODULES.length} TROUVÉES`, 'Cartes');
   h += `<div class="segments-choix" role="tablist">` + (['tout', 'tech', 'bio', 'reso'] as const).map((f) =>
     `<button type="button" role="tab" class="seg${e.filtre === f ? ' actif' : ''}"${f !== 'tout' ? ` style="--c:${COULEUR[f]}"` : ''} data-action="filtre" data-id="${f}" aria-selected="${e.filtre === f}">${f === 'tout' ? 'Toutes' : NOM_LIGNEES[f]}</button>`).join('') + `</div>`;
-  h += `<p class="aide intro-ecran">Ta collection, c’est ton deck. Chaque carte confiée à un Porteur entre dans ton deck de combat quand il descend (${DISTRICT.cartesMax} cartes par Porteur). Les chiffres dans les octogones sont ses Fréquences : des Fréquences qui se suivent font les Résonances. Touche une carte pour la confier ou la faire monter avec ses doublons.</p>`;
+  h += `<p class="aide intro-ecran">Ta collection, c’est ton deck : chaque carte confiée à un Porteur descend avec lui. Touche une carte pour la confier ou la faire monter.</p>`
+    + `<div class="liens-guide">${lienGuide('deck', 'Construire son deck')}${lienGuide('carte', 'Les cartes et leurs effets')}</div>`;
   h += decksPorteurs(j);
   for (const lignee of lignees) {
     h += `<h2 class="titre-section" style="--c:${COULEUR[lignee]}">${NOM_LIGNEES[lignee]}</h2><div class="grille-cartes">`;
@@ -451,8 +455,9 @@ export function htmlCartes(e: EcranDistrict): string {
     }
     h += `</div>`;
   }
-  h += feuilleCarte(e);
-  h += feuilleDeck(e);
+  // le mode d'emploi prend la place des autres feuilles ; en le fermant, on retrouve celle d'où on venait
+  if (e.guide) h += feuilleGuide(e.guide, trouveesDe(j.collection));
+  else h += feuilleCarte(e) + feuilleDeck(e);
   if (j.choix.length) h += fenetreChoix(j);
   return coquille(e, h, 'ecran-cartes');
 }
@@ -720,7 +725,8 @@ export function htmlEscouade(e: EcranDistrict): string {
     const max = Math.max(...n, 1);
     h += `<div class="frequences-deck" aria-label="Fréquences du deck"><span class="surtitre">FRÉQUENCES DU DECK</span><div class="barres">`
       + n.map((k, i) => `<span class="barre${k ? '' : ' trou'}" style="--fc:${couleurFrequence(i + 1)};--h:${Math.round((100 * k) / max)}%"><i></i><b>${i + 1}</b><small>${k}</small></span>`).join('')
-      + `</div><small class="aide">Des chiffres qui se suivent font des Résonances. Un chiffre absent coupe les suites${libres ? ` · ${libres} carte${libres > 1 ? 's' : ''} ∗ comble${libres > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</small></div>`;
+      + `</div><small class="aide">Des chiffres qui se suivent font des Résonances. Un chiffre absent coupe les suites${libres ? ` · ${libres} carte${libres > 1 ? 's' : ''} ∗ comble${libres > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</small>`
+      + `<div class="liens-guide">${lienGuide('deck', 'Bien construire son deck')}</div></div>`;
   }
   const zone = zoneDe(e.strateChoisie);
   if (ep) {
@@ -756,7 +762,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const maigre = e.escouade.length === 3 && deck < deckMin;
   h += `<footer class="pied-fixe"><div class="pied-info"><span class="chiffre">${e.escouade.length} / 3</span><small${maigre ? ' class="alerte"' : ''}>${e.escouade.length ? `${deck} cartes dans le deck${maigre ? ` · ${deckMin} au moins` : ''}` : 'Personne pour l’instant'}</small></div>`
     + `<button type="button" class="btn prim large" data-action="partir"${e.escouade.length === 3 ? '' : ' disabled'}>${ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}</button></footer>`;
-  h += feuilleDeck(e);
+  h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : feuilleDeck(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;
 }

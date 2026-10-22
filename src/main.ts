@@ -6,6 +6,7 @@ import './ui/combat.css';
 import './ui/cristal.css';
 import './ui/bureau.css';
 import './ui/exploration.css';
+import './ui/guide.css';
 import * as C from './core/combat';
 import { decouverteEnAttente } from './core/decouvertes';
 import { ennemiDef, moduleDef, porteurDef } from './core/donnees';
@@ -23,6 +24,7 @@ import { htmlExploration } from './ui/exploration';
 import { basculerSon, debloquerSon, impact, initImpacts } from './ui/impact';
 import { activerCartes } from './ui/carte';
 import { NOMS_RARETE } from './core/collection';
+import { trouveesDe, type OngletGuide } from './ui/guide';
 
 const racine = document.getElementById('app') as HTMLElement;
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -48,9 +50,9 @@ let lignesVues = 1;
 let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
-const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null };
-const K: { verrou: boolean; regles: boolean; fuite: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; decouverteId?: string } = {
-  verrou: false, regles: false, fuite: false, pops: [], fin: null, etat: null, traces: {},
+const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null, guide: null };
+const K: { verrou: boolean; regles: boolean; fuite: boolean; guide: OngletGuide | null; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; decouverteId?: string } = {
+  verrou: false, regles: false, fuite: false, guide: null, pops: [], fin: null, etat: null, traces: {},
 };
 
 // ---------- Rendu ----------
@@ -81,7 +83,7 @@ function afficher() {
     const enAttente = !K.verrou && !K.fin && !jeu.expedition.tutoriel && etat.issue === 'en-cours' ? decouverteEnAttente(jeu.decouvertes ?? [], etat) : null;
     const decouverte = enAttente && (enAttente.id === 'phase' || K.decouverteTour !== tourCombat || K.decouverteId === enAttente.id) ? enAttente : null;
     if (decouverte) { K.decouverteTour = tourCombat; K.decouverteId = decouverte.id; }
-    h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, fuite: K.fuite, pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
+    h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, fuite: K.fuite, guide: K.guide, trouvees: trouveesDe(jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
   } else {
     mode = 'district';
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape)
@@ -326,7 +328,7 @@ async function actionCompte(f: () => Promise<void>) {
 /** change d'onglet : ferme ce qui était ouvert et remonte en haut */
 function ouvrir(v: EcranDistrict['vue']) {
   if (D.vue !== v) window.scrollTo(0, 0);
-  D.vue = v; D.selection = null; D.carte = null; D.deck = null; D.menu = false;
+  D.vue = v; D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.guide = null;
 }
 
 const resultat = (r: J.Resultat) => { D.message = r.ok ? '' : r.message ?? ''; if (r.ok) sauver(); };
@@ -379,7 +381,10 @@ racine.addEventListener('click', async (ev) => {
     // district
     case 'batiment': D.selection = D.selection === id ? null : (id as BatimentId); D.menu = false; break;
     case 'ok-message': D.message = ''; break;
-    case 'menu': D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; break;
+    case 'menu': D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; D.guide = null; break;
+    // le mode d'emploi des cartes : ouvrir sur un onglet, changer d'onglet, fermer (district et combat)
+    case 'guide': if (mode === 'combat') { K.guide = id as OngletGuide; K.regles = false; } else D.guide = id as OngletGuide; break;
+    case 'guide-fermer': if (mode === 'combat') { K.guide = null; K.regles = true; } else D.guide = null; break;
     case 'carte': D.carte = id; break;
     case 'carte-fermer': D.carte = null; break;
     case 'filtre': D.filtre = (id as typeof D.filtre) || 'tout'; window.scrollTo(0, 0); break;
@@ -488,8 +493,8 @@ racine.addEventListener('click', async (ev) => {
     case 'allonger': if (s && !K.verrou) { C.allonger(s); sauver(); } break;
     case 'repiocher': if (s && !K.verrou) { C.repiocher(s); sauver(); } break;
     case 'lancer': if (s && !K.verrou) { debloquerSon(); await jouer(C.lancer(s)); return; } break;
-    case 'regles': K.regles = !K.regles; K.fuite = false; break;
-    case 'fuir': if (!K.verrou) { K.fuite = !K.fuite; K.regles = false; } break;
+    case 'regles': K.regles = !K.regles; K.fuite = false; K.guide = null; break;
+    case 'fuir': if (!K.verrou) { K.fuite = !K.fuite; K.regles = false; K.guide = null; } break;
     case 'fuir-salle': {
       if (K.verrou || !x) break;
       await jouerFuite();
@@ -559,6 +564,8 @@ racine.addEventListener('click', async (ev) => {
     default: return;
   }
   afficher();
+  // un nouvel onglet du guide s'ouvre en haut, pas à la hauteur de l'onglet d'avant
+  if (a === 'guide') racine.querySelector('.guide-corps')?.scrollTo(0, 0);
 });
 
 // ---------- Le temps qui passe ----------

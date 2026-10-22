@@ -14,6 +14,7 @@ import { couleurFrequence } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
 import type { Decouverte } from '../core/decouvertes';
+import { feuilleGuide, lienGuide, type OngletGuide } from './guide';
 
 export interface Pop {
   id: number;
@@ -64,6 +65,9 @@ export interface Ecran {
   actif?: number;
   /** la feuille « Fuir le combat ? » est ouverte */
   fuite?: boolean;
+  /** le mode d'emploi des cartes est ouvert (depuis l'aide), et les cartes trouvées qu'il peut nommer */
+  guide?: OngletGuide | null;
+  trouvees?: ReadonlySet<string>;
 }
 
 export const COULEUR: Record<LigneeGeste, string> = {
@@ -88,7 +92,7 @@ function popsPour(e: Ecran, cible: string) {
  * la Fréquence sertie dans un chaton au coin, les autres Fréquences possibles en petits chatons dessous,
  * et une plaque dans le métal de la carte pour la force, l'effet et le nom.
  */
-function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean } = {}) {
+export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean } = {}) {
   const lign = ligneeGeste(g);
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'District';
   const accord = g.effet?.type === 'accord';
@@ -211,10 +215,11 @@ const CHEVRON_FUITE = '<svg class="ico route-fleche" viewBox="0 0 24 24" fill="n
 
 function regles(): string {
   return `<div class="voile-feuille" data-action="regles" aria-hidden="true"></div><section class="feuille regles" role="dialog" aria-modal="true" aria-labelledby="regles-titre"><span class="poignee" aria-hidden="true"></span>`
-    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">AIDE</span><h2 id="regles-titre">Comment on joue</h2></div><button type="button" class="btn-icone" data-action="regles" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps"><ol class="liste-regles">`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">AIDE</span><h2 id="regles-titre">Comment on joue</h2></div><button type="button" class="btn-icone" data-action="regles" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
+    + `<div class="liens-guide">${lienGuide('carte', 'Lire une carte')}${lienGuide('effets', 'Tous les effets')}</div><ol class="liste-regles">`
     + '<li><b>Ton deck, ce sont tes cartes.</b> Chaque Porteur de l’escouade apporte celles que tu lui as confiées au district (6 au plus), plus les 2 cartes du district. L’illustration est celle de la carte ; à défaut, le portrait du Porteur qui la joue.</li>'
     + `<li><b>Compose une chaîne.</b> Touche les cartes de ta main (${REGLES.capaciteBase} places au départ), puis lance-la.</li>`
-    + `<li><b>La force</b> est au milieu : ${ICO.atk} dégâts, ${ICO.bouclier} protection de l’escouade, ${ICO.soin} soin du plus blessé.</li>`
+    + `<li><b>La force</b> est au milieu : ${ICO.atk} dégâts, ${ICO.bouclier} protection de l’escouade, ${ICO.soin} soin (dans la chaîne, touche le nom sous la carte pour choisir qui).</li>`
     + '<li><b>La Fréquence</b> est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.</li>'
     + '<li><b>Plusieurs Fréquences :</b> une carte en argent, en or ou en nacre en porte 2 ou 3. Posée, elle prend celle qui prolonge ta suite ; touche les chiffres sous elle pour en changer. Rien n’est tiré au sort.</li>'
     + `<li><b>L’Écho :</b> trois Fréquences identiques donnent un bouclier d’escouade de +${REGLES.bouclierEcho}.</li>`
@@ -433,7 +438,8 @@ function htmlEcranCombat(e: Ecran): string {
   h += `<footer class="actions-combat"><button type="button" class="btn sec" data-action="vider"${verrou || !s.chaine.length ? ' disabled' : ''}>${ICO.retirer}Retirer</button>`
     + `<button type="button" class="btn prim lancer${mult ? ' fort' : ''}${lancerVise ? ' vise' : ''}" data-action="lancer"${verrou || !s.chaine.length ? ' disabled' : ''}>${ICO.lancer}Lancer la chaîne${mult ? ` <b>${mult}</b>` : ''}</button></footer>`;
 
-  if (e.regles) h += regles();
+  if (e.guide) h += feuilleGuide(e.guide, e.trouvees ?? new Set());
+  else if (e.regles) h += regles();
   else if (e.fuite && peutFuir(e.x) && !verrou) h += feuilleFuite(e);
   if (e.decouverte && !e.fin) {
     const d = e.decouverte;

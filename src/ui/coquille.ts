@@ -42,6 +42,8 @@ export interface EcranDistrict {
   /** l'escouade part pour une fouille ciblée (et ce qu'elle cherche), ou pour une Épreuve de la semaine */
   fouille: import('../core/expedition').CibleFouille | null;
   epreuve: string | null;
+  /** le mode d'emploi des cartes est ouvert, sur cet onglet (guide.ts) */
+  guide: import('./guide').OngletGuide | null;
 }
 
 export const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');

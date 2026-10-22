@@ -1,0 +1,161 @@
+/* ================= Le mode d'emploi des cartes (guide.ts, 22 octobre 2026) =================
+   Une feuille à trois onglets. Une idée par ligne, des visuels plutôt que des paragraphes. */
+
+.feuille.guide{max-height:92dvh}
+.guide-onglets{position:static;grid-template-columns:repeat(3,1fr);margin:10px 16px 2px}
+.guide-onglets .seg{padding:0 4px;line-height:1.15}
+.guide-corps{gap:24px;padding-top:16px}
+.guide-corps .bloc{gap:12px}
+
+/* le lien qui ouvre le guide */
+.liens-guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;max-width:560px}
+.lien-guide{--cut:6px;display:inline-flex;align-items:center;gap:7px;min-height:38px;padding:0 13px 0 10px;border:none;
+  color:#D4E7F5;font-size:13px;font-weight:600;line-height:1.15;text-align:left;
+  background:linear-gradient(180deg,rgba(159,216,255,.09),rgba(159,216,255,.03));box-shadow:inset 0 0 0 1px rgba(159,216,255,.22);
+  clip-path:polygon(0 var(--cut),var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%)}
+.lien-guide .ico{width:16px;height:16px;flex-shrink:0;color:#9FD8FF;filter:drop-shadow(0 0 4px rgba(159,216,255,.45))}
+.lien-guide:active{background:rgba(159,216,255,.16)}
+.frequences-deck .lien-guide{margin-top:8px}
+.feuille.regles .liens-guide{margin-bottom:4px}
+
+/* ---------- Onglet « Le deck » ---------- */
+.g-schema{display:grid;gap:12px;padding:16px 8px 12px;background:radial-gradient(ellipse at 50% 0,rgba(159,216,255,.07),transparent 70%),rgba(255,255,255,.02);
+  box-shadow:inset 0 0 0 1px var(--line)}
+.g-cols{display:flex;align-items:flex-start;justify-content:center;gap:6px}
+.g-col{display:grid;justify-items:center;gap:7px;min-width:52px}
+.g-cases{display:grid;grid-template-columns:repeat(2,13px);gap:3px}
+.g-cases i{width:13px;height:18px;border-radius:2px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 45%,#141821),color-mix(in srgb,var(--c) 18%,#0c0f15));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 70%,transparent)}
+.g-col small{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.g-col.district{--c:var(--ivory)}
+.g-blason{display:grid;place-items:center;width:38px;height:38px;color:var(--ivory);background:radial-gradient(circle,#2a2f3a,#141821);
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.g-blason .ico{width:20px;height:20px}
+.g-op{align-self:center;margin-top:-10px;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--mute)}
+.g-egal{margin:0;text-align:center;font-size:13px;line-height:1.5;color:var(--quiet)}
+.g-egal b{font-family:var(--mono);color:var(--ink)}
+
+.g-etapes{list-style:none;margin:0;padding:0;display:grid;gap:12px;counter-reset:etape}
+.g-etapes li{counter-increment:etape;position:relative;padding-left:36px;font-size:14px;line-height:1.45;color:var(--ink-2)}
+.g-etapes li::before{content:counter(etape);position:absolute;left:0;top:-1px;display:grid;place-items:center;width:24px;height:27px;
+  font-family:var(--mono);font-size:12px;font-weight:700;color:#1C1406;background:linear-gradient(180deg,#f0d38c,#c79a45);
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.g-etapes b{color:var(--ink)}
+.g-etapes em{font-style:normal;color:var(--gold)}
+
+.g-regles{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.g-regles li{position:relative;padding-left:17px}
+.g-regles li::before{content:"";position:absolute;left:2px;top:.52em;width:6px;height:6px;background:var(--gold);transform:rotate(45deg)}
+.g-regles b{color:var(--ink)}
+
+.g-idees{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.g-idee{display:grid;grid-template-columns:30px 1fr;gap:11px;padding:11px 12px 12px;background:rgba(255,255,255,.025);box-shadow:inset 0 0 0 1px var(--line),inset 2px 0 0 rgba(216,180,101,.45)}
+.g-idee .g-ico{display:grid;place-items:center;width:30px;height:33px;color:var(--gold);background:rgba(216,180,101,.1);
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.g-idee .g-ico .ico,.g-idee .g-ico svg{width:16px;height:16px}
+.g-idee strong{display:block;margin-bottom:3px;font-size:14px;line-height:1.25;color:var(--ink)}
+.g-idee p{margin:0;font-size:13px;line-height:1.45;color:var(--quiet)}
+.g-etoile{font-family:var(--display);font-size:20px;font-weight:400;line-height:1;color:var(--gold);transform:translateY(3px)}
+
+/* l'échelle des Fréquences et la place de chaque lignée */
+.g-echelle{display:grid;grid-template-columns:66px repeat(9,1fr);gap:3px;align-items:center;margin-top:12px}
+.g-echelle b{display:grid;place-items:center;height:22px;font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;background:var(--fc);border-radius:3px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+.g-echelle small{font-family:var(--mono);font-size:9px;letter-spacing:.04em;text-transform:uppercase;color:var(--c)}
+.g-echelle i{position:relative;height:12px;border-radius:2px;background:rgba(255,255,255,.035)}
+.g-echelle i::after{content:"";position:absolute;inset:0;border-radius:2px;background:var(--c);opacity:var(--a)}
+
+/* la répartition des actions du deck de départ */
+.g-barre{display:flex;gap:2px;height:30px;margin-top:10px}
+.g-part{display:flex;align-items:center;justify-content:center;gap:5px;min-width:46px;font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--ink)}
+.g-part.atk{background:linear-gradient(180deg,rgba(226,115,90,.26),rgba(226,115,90,.12))}
+.g-part.bouclier{background:linear-gradient(180deg,rgba(127,167,201,.26),rgba(127,167,201,.12))}
+.g-part.soin{background:linear-gradient(180deg,rgba(143,207,122,.26),rgba(143,207,122,.12))}
+.g-symbole{object-fit:contain;filter:drop-shadow(0 1px 2px #000)}
+
+/* le triangle des lignées */
+.g-triangle{display:block;width:100%;max-width:230px;margin:10px auto 0;overflow:visible}
+.g-triangle text{font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+.g-triangle .g-fleches line{stroke:var(--gold);stroke-width:1.3;stroke-dasharray:4 3}
+.g-triangle .g-bonus{fill:var(--gold);font-size:13px;letter-spacing:0}
+
+/* ---------- Onglet « Lire une carte » ---------- */
+.g-anatomie{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
+.g-anat-carte{position:relative;zoom:1.75;width:74px;height:112px;margin:8px 14px 0 12px}
+.g-anat-carte .geste{position:relative;pointer-events:none}
+/* toujours à la taille du téléphone (le PC agrandit la chaîne) : les numéros sont placés pour cette taille */
+.g-anat-carte .geste.chaine{width:74px;height:112px}
+/* la carte montrée telle qu'en combat (même en dehors du combat) : le nom se cache, le médaillon descend */
+#app .guide .geste .g-nom{opacity:0}
+#app .guide .geste .g-plaque{position:absolute}
+#app .guide .geste.chaine .g-val{bottom:calc(var(--ep) + 13px)}
+#app .guide .geste.main .g-val{bottom:calc(var(--ep) + 2px)}
+#app .guide .geste.main .g-art::after{background:linear-gradient(180deg,rgba(6,8,12,.35) 0%,transparent 22%,transparent 72%,rgba(6,8,12,.55) 100%)}
+.g-num{position:absolute;z-index:5;display:grid;place-items:center;width:10px;height:10px;border-radius:50%;font:700 6.5px/1 var(--mono);font-style:normal;color:#1C1406;
+  background:linear-gradient(180deg,#f3d896,#c99d48);box-shadow:0 0 0 1.2px #0B0D12,0 1px 3px rgba(0,0,0,.6)}
+.g-num::before{content:"";position:absolute;top:50%;height:.8px;background:rgba(240,211,140,.7)}
+/* chaque numéro est posé au bord de la carte, un petit trait le relie à ce qu'il désigne */
+.g-num.n-freq{left:-13px;top:4px}      .g-num.n-freq::before{left:100%;width:6px}
+.g-num.n-pips{left:-13px;top:16px}     .g-num.n-pips::before{left:100%;width:6px}
+.g-num.n-effet{right:-13px;top:52px}   .g-num.n-effet::before{right:100%;width:9px}
+.g-num.n-force{left:-13px;top:75px}    .g-num.n-force::before{left:100%;width:5px}
+.g-num.n-qui{right:-13px;top:97px}     .g-num.n-qui::before{right:100%;width:16px}
+.g-num.n-cadre{right:-13px;top:30px}   .g-num.n-cadre::before{right:100%;width:7px}
+.g-legende{list-style:none;margin:0;padding:6px 0 0;display:grid;gap:10px;counter-reset:legende;font-size:13px;line-height:1.4;color:var(--quiet)}
+.g-legende li{counter-increment:legende;position:relative;padding-left:25px}
+.g-legende li::before{content:counter(legende);position:absolute;left:0;top:0;display:grid;place-items:center;width:17px;height:17px;border-radius:50%;
+  font:700 10px/1 var(--mono);color:#1C1406;background:linear-gradient(180deg,#f3d896,#c99d48)}
+.g-legende b{color:var(--ink)}
+
+.g-collection{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center}
+.g-face{container-type:inline-size;width:150px;pointer-events:none}
+
+.g-actions{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.g-actions li{display:grid;grid-template-columns:38px 1fr;gap:11px;align-items:center}
+.g-actions li > img{justify-self:center}
+.g-actions b{display:block;font-size:14px;color:var(--ink)}
+.g-actions p{margin:2px 0 0;font-size:13px;line-height:1.4;color:var(--quiet)}
+.g-lourd{justify-self:center;white-space:nowrap;padding:2px 5px;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink);background:rgba(8,10,14,.85);box-shadow:inset 0 0 0 1px rgba(241,230,207,.35)}
+
+/* le tableau des métaux */
+.g-metaux{display:grid;gap:2px}
+.g-metaux > div{display:grid;grid-template-columns:minmax(72px,1.2fr) repeat(5,1fr);gap:2px;align-items:center}
+.g-metaux span{display:grid;place-items:center;min-height:30px;padding:0 2px;font-family:var(--mono);font-size:12px;color:var(--ink);background:rgba(255,255,255,.03);text-align:center}
+.g-metaux span[role="rowheader"]{justify-items:start;padding-left:8px;font-family:inherit;font-size:12px;color:var(--quiet);background:none;text-align:left}
+.g-metal-tete span[role="columnheader"]{gap:4px;min-height:52px;padding-top:6px;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--r);background:none}
+.g-metal-tete span[role="columnheader"]:first-child{min-height:0}
+.g-metal-tete i{width:24px;height:24px;border-radius:50%;background:var(--tex) center/cover;box-shadow:0 0 0 1.5px color-mix(in srgb,var(--r) 70%,transparent),0 2px 4px rgba(0,0,0,.6)}
+
+/* les trois lignées */
+.g-lignees{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.g-lignees li{display:grid;gap:4px;align-content:start;padding:9px 8px 10px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 14%,transparent),transparent 80%);
+  box-shadow:inset 0 2px 0 var(--c),inset 0 0 0 1px var(--line)}
+.g-lignees b{font-size:13.5px;color:var(--c)}
+.g-lignees span{display:grid;font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink)}
+.g-lignees em{font-style:normal;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--quiet)}
+.g-lignees small{font-size:11.5px;line-height:1.35;color:var(--quiet)}
+
+/* ---------- Onglet « Les effets » ---------- */
+.g-chapeau{margin:0;padding:10px 12px;font-size:13.5px;line-height:1.5;color:var(--ink-2);background:rgba(216,180,101,.06);box-shadow:inset 2px 0 0 var(--gold)}
+.g-chapeau b{color:var(--ink)}
+.g-pastille{width:9px;height:10px;flex-shrink:0;background:var(--c);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.g-effets{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.g-effets li{display:grid;gap:5px;padding:11px 12px 12px;background:rgba(255,255,255,.025);box-shadow:inset 0 0 0 1px var(--line),inset 2px 0 0 var(--c)}
+.g-effet-tete b{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);text-shadow:0 0 10px rgba(216,180,101,.35)}
+.g-effets p{margin:0;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.g-effets .g-astuce{display:flex;gap:7px;align-items:flex-start;font-size:12.5px;color:var(--quiet)}
+.g-astuce .ico{width:13px;height:13px;flex-shrink:0;margin-top:2px;color:#9FD8FF}
+.g-sur{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.g-sur span{padding:2px 7px;font-size:11.5px;color:var(--ink-2);background:color-mix(in srgb,var(--c) 14%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent)}
+.g-sur .a-trouver{color:var(--mute);background:none;box-shadow:inset 0 0 0 1px var(--line);font-family:var(--mono);font-size:10.5px;letter-spacing:.03em}
+
+.g-district{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g-carte-district{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}
+.g-carte-district .geste{pointer-events:none}
+.g-carte-district p{margin:0;font-size:12.5px;line-height:1.4;color:var(--quiet)}
+.g-carte-district p b{display:block;font-size:14px;color:var(--ink)}
+
+@media (max-width:370px){
+  .g-anat-carte{zoom:1.5}
+  .g-district{grid-template-columns:1fr}
+}
