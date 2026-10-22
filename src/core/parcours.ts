@@ -151,7 +151,10 @@ function reponse(j: Jeu, id: string, sante: number): number {
 }
 
 /** Joue une expédition jusqu'au retour au district ; renvoie la victoire */
-function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) => void): boolean {
+/** tours joués par combat, par type de salle (mesure du rythme) */
+export type ToursCombat = Record<'normal' | 'gardien' | 'epreuve', number[]>;
+
+function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) => void, tours?: ToursCombat): boolean {
   if (!depart()) return false;
   let garde = 0;
   while (j.expedition && garde++ < 5000) {
@@ -159,13 +162,13 @@ function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) =
     if (!x.carte) {
       // un combat seul (Épreuve)
       if (x.combat.issue === 'en-cours') jouer(x.combat);
-      else if (!x.cloture) finDeCombat(j);
+      else if (!x.cloture) { tours?.epreuve.push(x.combat.tour); finDeCombat(j); }
       else if (x.terminee) return remonter(j).victoire;
       else continuer(j);
       continue;
     }
     if (x.phase === 'combat' && x.combat.issue === 'en-cours') { jouer(x.combat); continue; }
-    if (x.phase === 'combat' && !x.cloture) { finDeCombat(j); continue; }
+    if (x.phase === 'combat' && !x.cloture) { tours?.[salleCourante(x).type === 'gardien' ? 'gardien' : 'normal'].push(x.combat.tour); finDeCombat(j); continue; }
     if (j.expedition.terminee) return remonter(j).victoire;
     if (x.phase === 'combat') { continuer(j); continue; }
     const sante = x.porteurs.reduce((n, p) => n + Math.max(0, p.pv), 0) / x.porteurs.reduce((n, p) => n + p.pvMax, 0);
@@ -189,7 +192,7 @@ function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) =
  */
 export function simulerParcours(
   profil: Profil, jours: number, graine: number,
-  opts: { trace?: (j: Jeu, jour: number, escouade: string[]) => void; jusqua?: number; joueur?: 'robot' | 'moyen' } = {},
+  opts: { trace?: (j: Jeu, jour: number, escouade: string[]) => void; jusqua?: number; joueur?: 'robot' | 'moyen'; tours?: ToursCombat } = {},
 ): Parcours {
   const debut = Date.UTC(2026, 9, 5, 6); // un lundi matin
   const j = nouveauJeu(debut, graine);
@@ -217,14 +220,14 @@ export function simulerParcours(
       // une fois par jour, les Épreuves de la semaine pas encore réussies
       if (h === profil.sessions[0] && front >= 2) {
         const ep = epreuvesDeLaSemaine(now).find((e) => !j.epreuves.faites.includes(e.id) && !e.interdits);
-        if (ep) { jouerExpedition(j, () => partirEpreuve(j, escouade, ep.id, now, suivant()).ok, jouer); gerer(j, now); }
+        if (ep) { jouerExpedition(j, () => partirEpreuve(j, escouade, ep.id, now, suivant()).ok, jouer, opts.tours); gerer(j, now); }
       }
       // bloqué au front (deux échecs d'affilée) : une fouille ciblée juste au-dessus, pour la lignée la plus faible du deck
       const cible = echecs >= 2 && front > 1 ? front - 1 : front;
       const faible = LIGNEES.map((l) => ({ l, v: meilleures(j, l).reduce((n, id) => n + valeurCarte(id, j.collection[id]!.niveau), 0) / DEFENSES_POIDS[l] }))
         .sort((a, b) => a.v - b.v)[0]!.l;
       const g = suivant();
-      const victoire = jouerExpedition(j, () => (cible === front ? partir(j, escouade, cible, g) : fouiller(j, escouade, cible, faible, g)).ok, jouer);
+      const victoire = jouerExpedition(j, () => (cible === front ? partir(j, escouade, cible, g) : fouiller(j, escouade, cible, faible, g)).ok, jouer, opts.tours);
       depuis++;
       if (cible === front) {
         r.front.tentatives++;

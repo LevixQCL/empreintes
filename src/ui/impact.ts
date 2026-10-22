@@ -28,7 +28,31 @@ let derniere: { lignee: LigneeGeste; rang: number; total: number; suite: number;
 const hasard = (a: number, b: number) => a + Math.random() * (b - a);
 const maintenant = () => performance.now();
 
+// ---------- Les textures peintes (Midjourney, détourées) ----------
+// Chaque geste a sa texture ; tant qu'elle n'est pas chargée (ou si elle manque), le trait dessiné en code prend le relais.
+type NomSprite = 'tech' | 'bio' | 'reso' | 'impact';
+const sprites: Partial<Record<NomSprite, HTMLImageElement>> = {};
+function chargerSprites() {
+  const base = new URL('art/effets/', document.baseURI).href;
+  for (const n of ['tech', 'bio', 'reso', 'impact'] as NomSprite[]) {
+    if (sprites[n]) continue;
+    const im = new Image();
+    im.decoding = 'async';
+    im.src = `${base}${n}.webp`;
+    sprites[n] = im;
+  }
+}
+const pret = (n: NomSprite) => { const im = sprites[n]; return im && im.complete && im.naturalWidth > 0 ? im : null; };
+
+/** Dessine une texture centrée en (x, y), tournée de `angle`, à la largeur `largeur` */
+function sprite(c: CanvasRenderingContext2D, im: HTMLImageElement, x: number, y: number, largeur: number, angle = 0, etirement = 1) {
+  const h = (largeur * im.naturalHeight) / im.naturalWidth;
+  c.translate(x, y); c.rotate(angle);
+  c.drawImage(im, (-largeur * etirement) / 2, -h / 2, largeur * etirement, h);
+}
+
 export function initImpacts(mouvementReduit: boolean): void {
+  chargerSprites();
   reduit = mouvementReduit;
   if (canvas) return;
   canvas = document.createElement('canvas');
@@ -114,6 +138,21 @@ function trait(dessiner: Trait['dessiner'], duree: number, delai = 0) {
 
 /** Augmentés : un arc électrique brisé qui file de la carte à l'ennemi, avec deux ramifications */
 function arc(de: DOMPoint, a: DOMPoint, couleur: string, force: number) {
+  const tex = pret('tech');
+  if (tex) {
+    // l'éclair peint, étiré de la carte à l'ennemi, qui grésille (deux tirages légèrement décalés)
+    const dx = a.x - de.x, dy = a.y - de.y;
+    const long = Math.hypot(dx, dy), angle = Math.atan2(dy, dx);
+    const cx = (de.x + a.x) / 2, cy = (de.y + a.y) / 2;
+    trait((c, k) => {
+      const ouvert = Math.min(1, k * 3.5);
+      c.globalAlpha = (1 - k) * (0.85 + Math.random() * 0.15);
+      c.save(); c.beginPath(); c.translate(de.x, de.y); c.rotate(angle); c.rect(-10, -200, long * ouvert + 20, 400); c.restore(); c.clip();
+      c.save(); sprite(c, tex, cx, cy, long, angle); c.restore();
+      c.globalAlpha *= 0.5; c.save(); sprite(c, tex, cx + hasard(-3, 3), cy + hasard(-4, 4), long * 1.02, angle + hasard(-0.03, 0.03), 1); c.restore();
+    }, 280);
+    return;
+  }
   const segments = 9;
   const points: [number, number][] = [];
   for (let i = 0; i <= segments; i++) {
@@ -135,6 +174,23 @@ function arc(de: DOMPoint, a: DOMPoint, couleur: string, force: number) {
 
 /** Génés : trois griffures d'ambre en travers de l'ennemi, puis des gouttes de résine */
 function griffes(p: DOMPoint, couleur: string, force: number) {
+  const tex = pret('bio');
+  if (tex) {
+    // la griffure peinte, révélée en un geste de haut en bas, un peu tournée au hasard
+    const angle = hasard(-0.35, 0.35) + (Math.random() < 0.3 ? Math.PI / 2 : 0);
+    const larg = 120 + force * 18;
+    const miroir = Math.random() < 0.5 ? -1 : 1;
+    trait((c, k) => {
+      const ouvert = Math.min(1, k * 3.2);
+      c.globalAlpha = k < 0.55 ? 1 : 1 - (k - 0.55) / 0.45;
+      c.translate(p.x, p.y); c.rotate(angle); c.scale(miroir, 1);
+      const h = (larg * tex.naturalHeight) / tex.naturalWidth;
+      c.beginPath(); c.rect(-larg / 2, -h / 2, larg, h * ouvert); c.clip();
+      c.drawImage(tex, -larg / 2, -h / 2, larg, h);
+    }, 420);
+    setTimeout(() => eclats(p.x, p.y, 6 + force * 3, couleur, { vitesse: 140, gravite: 520, taille: 3.5, vie: 0.9 }), 120);
+    return;
+  }
   const angle = hasard(-0.9, -0.5) + (Math.random() < 0.5 ? 0 : Math.PI / 2.4);
   const long = 70 + force * 14;
   for (let i = 0; i < 3; i++) {
@@ -154,6 +210,19 @@ function griffes(p: DOMPoint, couleur: string, force: number) {
 
 /** Résonants : des ondes qui s'élargissent depuis l'ennemi, et des lucioles qui s'en échappent */
 function ondes(p: DOMPoint, couleur: string, force: number) {
+  const tex = pret('reso');
+  if (tex) {
+    // l'anneau peint qui s'élargit, deux ou trois fois, en tournant doucement
+    for (let i = 0; i < 2 + Math.min(1, Math.floor(force / 2)); i++) {
+      const sens = Math.random() < 0.5 ? -1 : 1, depart = hasard(0, Math.PI * 2);
+      trait((c, k) => {
+        c.globalAlpha = (1 - k) * 0.95;
+        c.save(); sprite(c, tex, p.x, p.y, (60 + force * 12) * (0.5 + k * 1.6), depart + sens * k * 0.8); c.restore();
+      }, 560, i * 120);
+    }
+    eclats(p.x, p.y, 8 + force * 3, couleur, { vitesse: 90, gravite: -60, taille: 2.6, vie: 1.1 });
+    return;
+  }
   for (let i = 0; i < 2 + Math.min(2, force); i++) {
     trait((c, k) => {
       c.globalAlpha = (1 - k) * 0.9;
@@ -303,7 +372,15 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         if (pEnnemi) {
           // l'éclair blanc de l'impact, plus large à chaque carte de la chaîne
           const rayon = 34 + force * 14;
-          trait((c, k) => {
+          const etoile = pret('impact');
+          if (etoile) {
+            const angle = hasard(0, Math.PI * 2);
+            trait((c, k) => {
+              const pop = k < 0.25 ? 0.55 + (k / 0.25) * 0.6 : 1.15 - (k - 0.25) * 0.25;
+              c.globalAlpha = k < 0.3 ? 1 : 1 - (k - 0.3) / 0.7;
+              c.save(); sprite(c, etoile, pEnnemi.x, pEnnemi.y, rayon * 2.2 * pop, angle + k * 0.3); c.restore();
+            }, 260);
+          } else trait((c, k) => {
             const g = c.createRadialGradient(pEnnemi.x, pEnnemi.y, 0, pEnnemi.x, pEnnemi.y, rayon * (0.6 + k));
             g.addColorStop(0, `rgba(255,255,255,${0.9 * (1 - k)})`); g.addColorStop(0.35, couleur); g.addColorStop(1, 'transparent');
             c.globalAlpha = 1 - k; c.fillStyle = g; c.beginPath(); c.arc(pEnnemi.x, pEnnemi.y, rayon * (0.6 + k), 0, Math.PI * 2); c.fill();

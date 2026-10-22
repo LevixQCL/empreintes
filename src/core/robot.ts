@@ -191,11 +191,11 @@ export const tauxVictoire = (escouade: Escouade, strate: number, parties: number
  * Une descente en exploration, jouée par le robot : il choisit son chemin (campement quand l'escouade est entamée,
  * sinon combat, cache ou archive plutôt que salle scellée), passe son chemin aux rencontres, et va jusqu'au gardien.
  */
-export function simulerExploration(escouade: Escouade, strate: number, rng: number, jouer = jouerTour): { victoire: boolean; combats: number } {
+export function simulerExploration(escouade: Escouade, strate: number, rng: number, jouer = jouerTour, facteur = 1, tours?: { normal: number[]; gardien: number[] }): { victoire: boolean; combats: number } {
   const ids = Object.keys(escouade);
   const porteurs = ids.map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
   const deck = [...ids.flatMap((id) => cartesEnJeu(id, escouade[id]!)), ...GESTES_SPECIAUX];
-  let x = nouvelleExploration({ porteurs, deck, strate, rng });
+  let x = nouvelleExploration({ porteurs, deck, strate, rng, ...(facteur !== 1 ? { facteur } : {}) });
   let garde = 0;
   while (!x.terminee && garde++ < 3000) {
     if (x.phase === 'carte') {
@@ -209,6 +209,7 @@ export function simulerExploration(escouade: Escouade, strate: number, rng: numb
       continue;
     }
     if (x.combat.issue !== 'en-cours') {
+      if (tours && !x.cloture) (salleCourante(x).type === 'gardien' ? tours.gardien : tours.normal).push(x.combat.tour);
       x = cloturerCombat(x);
       if (!x.terminee) x = combatSuivant(x);
       continue;
@@ -218,10 +219,10 @@ export function simulerExploration(escouade: Escouade, strate: number, rng: numb
   return { victoire: x.terminee && x.combat.issue === 'victoire' && salleCourante(x).type === 'gardien', combats: x.gagnes ?? 0 };
 }
 
-export function tauxExploration(escouade: Escouade, strate: number, parties: number, graineDepart = 1, jouer = jouerTour): { victoire: number; combats: number } {
+export function tauxExploration(escouade: Escouade, strate: number, parties: number, graineDepart = 1, jouer = jouerTour, facteur = 1, tours?: { normal: number[]; gardien: number[] }): { victoire: number; combats: number } {
   let v = 0, c = 0;
   for (let k = 0; k < parties; k++) {
-    const r = simulerExploration(escouade, strate, graineDepart + k * 7919, jouer);
+    const r = simulerExploration(escouade, strate, graineDepart + k * 7919, jouer, facteur, tours);
     if (r.victoire) v++;
     c += r.combats;
   }

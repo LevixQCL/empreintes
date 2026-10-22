@@ -54,13 +54,23 @@ for (let st = 1; st <= 16; st++) {
   if (taux < 0.25) break;
 }
 const ref = courbe.reduce((a, b) => (Math.abs(b.taux - 0.5) < Math.abs(a.taux - 0.5) ? b : a)).strate;
+// La mesure des cartes se fait en exploration (une Strate entière, salle par salle), à la Strate −3, avec des ennemis
+// renforcés jusqu'à ce que le deck de départ y gagne une fois sur deux : c'est là qu'une carte de plus ou de moins se voit le mieux.
+progres('Réglage de la mesure des cartes…');
+const ST_CARTES = 3;
+const nCartes = Math.max(100, Math.round(PARTIES / 2));
+const explorer = (e: Escouade, f: number) => ({ victoire: tauxExploration(e, ST_CARTES, nCartes, 1, jouerTour, f).victoire });
+let fBas = 0.8, fHaut = 2.4;
+for (let i = 0; i < 9; i++) { const m = (fBas + fHaut) / 2; if (explorer(escouade('depart'), m).victoire > 0.5) fBas = m; else fHaut = m; }
+const F_CARTES = (fBas + fHaut) / 2;
+const mesureCarte = (e: Escouade) => explorer(e, F_CARTES);
 
 // 2. Ce que vaut chaque carte : elle prend la place de la carte de départ de sa lignée (dans son métal d'origine).
 //    Les 15 cartes de base ne sont pas mesurées : elles sont déjà dans le deck. On mesure la part d'expéditions gagnées.
 const valeur = (niveau: 'depart' | 10, m: ModuleDef, base: number) =>
-  estDepart(m.id) ? 0 : mesurer(escouade(niveau, { remplace: moduleDef(carteId(m.id, m.rarete)) }), ref, PARTIES).victoire - base;
-const baseDep = mesurer(escouade('depart'), ref, PARTIES);
-const base10 = mesurer(escouade(10), ref, PARTIES).victoire;
+  estDepart(m.id) ? 0 : mesureCarte(escouade(niveau, { remplace: moduleDef(carteId(m.id, m.rarete)) })).victoire - base;
+const baseDep = mesureCarte(escouade('depart'));
+const base10 = mesureCarte(escouade(10)).victoire;
 const brut: { m: ModuleDef; dep: number; n10: number }[] = [];
 const MESUREES = MODULES.filter((m) => !CARTES_DE_BASE.includes(m.id));
 for (const [k, m] of MESUREES.entries()) {
@@ -109,7 +119,7 @@ if (METAUX_ON) {
     const v = {} as Record<Rarete, number>;
     for (const r of RANGS_M) {
       progres(`Métaux ${k + 1}/${hors.length} : ${m.nom} en ${NOMS_RARETE[r]}`);
-      v[r] = mesurer(escouade('depart', { remplace: moduleDef(carteId(m.id, r)) }), ref, PARTIES).victoire - baseDep.victoire;
+      v[r] = mesureCarte(escouade('depart', { remplace: moduleDef(carteId(m.id, r)) })).victoire - baseDep.victoire;
     }
     metaux.push({ m, v });
   }
@@ -124,9 +134,9 @@ r += `${new Date().toISOString().slice(0, 10)} · ${PARTIES} expéditions par me
 r += `Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.\n\n`;
 r += `## Le deck de départ selon la profondeur\n\n| Strate | Victoire |\n|---|---|\n`;
 r += courbe.map((c) => `| −${c.strate} | ${pct(c.taux)} |`).join('\n');
-r += `\n\nStrate de référence pour les cartes : **−${ref}** (le deck de départ y gagne ${pct(baseDep.victoire)} des expéditions).\n\n`;
+r += `\n\nMesure des cartes : une Strate −${ST_CARTES} entière en exploration, ennemis ×${F_CARTES.toFixed(2)} (le deck de départ y gagne ${pct(baseDep.victoire)} des descentes ; ancienne Strate de référence en mode linéaire : −${ref}).\n\n`;
 r += `## Ce que vaut chaque carte\n\nChaque carte prend la place de la carte de départ de sa lignée (Jambes à ressort, Glande d'ambre ou Éclat qui chante), dans son métal d'origine : 0 = aussi utile que la carte de départ. `;
-r += `Les chiffres sont des points de victoire à la Strate −${ref} (+10 = une expédition gagnée de plus sur dix), à la découverte de la carte, puis avec toutes les cartes au niveau 10.\n\n`;
+r += `Les chiffres sont des points de victoire sur cette descente (+10 = une expédition gagnée de plus sur dix), à la découverte de la carte, puis avec toutes les cartes au niveau 10.\n\n`;
 r += `| Carte | Rareté | Effets | À la découverte | Au niveau 10 | Alerte |\n|---|---|---|---|---|---|\n`;
 for (const l of lignes) r += `| ${l.m.nom} | ${NOMS_RARETE[l.m.rarete]} | ${effets(l.m)} | ${pts(l.dep)} | ${pts(l.n10)} | ${l.alerte} |\n`;
 r += `\nMoyenne par rareté, à la découverte : ${RANGS.filter((x) => !Number.isNaN(moyenne(x))).map((x) => `${NOMS_RARETE[x]} ${pts(moyenne(x))}`).join(' · ')}. `;
