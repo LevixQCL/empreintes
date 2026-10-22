@@ -109,6 +109,8 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.composants{--lueur:rgba(150,200,255,.4)}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.eclats{--lueur:rgba(200,150,255,.5)}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.abysse{--lueur:rgba(120,210,255,.5)}
+/* le bloc de la Strate est plus large que les autres icônes : un peu plus petit dans son écrin, pour que l'hexagone reste visible */
+#app:is([data-mode="combat"],[data-mode="district"]) .hud .res.abysse .ico.peinte{padding:4px 4px 8px}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .v{align-self:end;font-size:16px;line-height:1.05}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res small{align-self:start;font-family:var(--body);font-size:10.5px;line-height:1.35;letter-spacing:.01em;color:#A9BEDF}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.energie.plein small{color:#FFC768}
