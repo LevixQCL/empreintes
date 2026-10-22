@@ -3,6 +3,7 @@
 
 import { particules } from './intro';
 import { LOGOTYPE } from './logotype';
+import './debut.css';
 
 /** passe à true quand public/intro/00-titre.webp est déposée */
 export const IMAGE_TITRE = true;
@@ -43,7 +44,7 @@ function basTitre(introVue: boolean, variante: 'jeu' | 'teaser' | 'fin'): string
     + `<small class="titre-version">Teaser</small></div>`;
   return `<div class="titre-bas"><button type="button" class="prim titre-go" data-action="titre-jouer">${introVue ? 'Reprendre' : 'Commencer'}</button>`
     + `<div class="titre-sec">${introVue ? `<button type="button" class="btn-sec" data-action="intro">Revoir l’intro</button>` : ''}<button type="button" class="btn-sec" data-action="bibliotheque">Chroniques</button></div>`
-    + `<span class="titre-indice">Touche l’écran</span><small class="titre-version">Alpha</small></div>`;
+    + `<small class="titre-version">Alpha</small></div>`;
 }
 
 /** variante « teaser » / « fin » : la page qui ne montre que l'intro (teaser.html) */

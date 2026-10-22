@@ -1,0 +1,182 @@
+/* EMPREINTES — début de partie : écran titre et « Avant d'ouvrir » (revue du 22 octobre 2026).
+   Même ligne que la feuille de bâtiment, l'Escouade et les Porteurs : l'illustration en grand, pas de cartouches,
+   des filets de 1 px qui se fondent, glace pour ce qui se touche, or pour la valeur, 12 px minimum, colonne centrée sur PC.
+   L'emblème et le logotype ne changent pas : seuls la mise en page, la lisibilité et les boutons sont revus. */
+
+:is(.titre,.bf){--x-txt:#DCE4EE;--x-doux:#A9B6C7;--x-or:#F2D58C;--x-glace:#CDEFFF;--x-rouge:#FF9C8A;--x-vert:#9EE6B4}
+
+/* ================= Écran titre ================= */
+#app .titre{padding:max(52px,env(safe-area-inset-top,0px)) 20px max(24px,env(safe-area-inset-bottom,0px))}
+/* le haut et le bas assombris pour le logotype et les boutons, le tableau libre au milieu */
+#app .titre-voile{background:linear-gradient(180deg,rgba(6,8,14,.78) 0%,rgba(6,8,14,.25) 24%,rgba(6,8,14,0) 46%,rgba(6,8,14,.35) 66%,rgba(6,8,14,.88) 86%,rgba(6,8,14,.96) 100%)}
+#app .titre-haut{gap:14px}
+#app .titre-sous{max-width:30ch;margin-inline:auto;padding:0;font-size:13px;line-height:1.55;letter-spacing:.06em;color:var(--x-txt);text-wrap:balance;
+  text-shadow:0 1px 2px #000,0 0 14px rgba(0,0,0,.9)}
+#app .titre-bas{width:100%;gap:12px}
+#app .titre-go{width:min(100%,320px);min-height:56px;font-size:17px;letter-spacing:.05em}
+#app .titre-sec{display:flex;justify-content:center;gap:10px;width:min(100%,320px)}
+#app .titre .titre-sec .btn-sec{flex:1 1 0;min-width:0;min-height:48px;padding:0 12px;font-size:15px;color:var(--x-glace);
+  background:rgba(8,11,20,.62);border:0;box-shadow:inset 0 0 0 1px rgba(205,239,255,.2)}
+#app .titre .titre-sec .btn-sec:hover{background:rgba(20,28,44,.8);box-shadow:inset 0 0 0 1px rgba(205,239,255,.4)}
+#app .titre-indice{font-size:12px;letter-spacing:.06em;opacity:.75}
+#app .titre-version{font-size:12px;letter-spacing:.14em;opacity:.55;color:var(--x-doux)}
+#app .titre-bientot{font-size:32px}
+.titre :is(.titre-go,.btn-sec):focus-visible{outline:2px solid var(--x-glace);outline-offset:3px}
+
+@media (min-width:1100px) and (min-height:600px){
+  #app .titre{padding:0}
+  #app .titre-haut{gap:22px}
+  #app .titre-nom svg{max-width:560px}
+  #app .titre-sous{max-width:34em;margin:0;font-size:15px;letter-spacing:.05em;text-align:left;text-wrap:pretty}
+  /* un filet d'or qui se fond, entre l'accroche et les boutons */
+  #app .titre-haut::after{content:"";width:280px;height:1px;background:linear-gradient(90deg,rgba(242,213,140,.55),transparent)}
+  #app .titre-bas{width:auto;gap:14px}
+  #app .titre-go{width:340px;min-height:58px;font-size:18px}
+  #app .titre-sec{width:340px;justify-content:flex-start}
+  #app .titre-version{margin-top:6px}
+}
+
+/* ================= Avant d'ouvrir (le briefing) ================= */
+#app .scene-briefing.bf{display:flex;flex-direction:column;color:var(--x-txt)}
+.bf .rencontre-image img{filter:brightness(.34) saturate(.75) blur(2px);animation:none}
+.scene-briefing.bf::after{background:linear-gradient(180deg,rgba(6,8,14,.82),rgba(6,8,14,.5) 30%,rgba(6,8,14,.62) 65%,rgba(6,8,14,.95))}
+
+/* Le haut : l'étape, « Passer » discret, la progression en or */
+.bf-haut{display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 12px;padding:10px 16px 0}
+.bf-etape{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--x-doux)}
+.bf-etape b{color:var(--x-or);font-weight:600}
+.bf-passer{min-height:44px;margin-right:-8px;padding:0 8px;border:0;background:none;font:600 14px/1 inherit;font-family:inherit;color:var(--x-doux);cursor:pointer;
+  text-decoration:underline;text-decoration-color:rgba(205,239,255,.3);text-underline-offset:4px}
+.bf-passer:hover{color:var(--x-glace)}
+.bf-points{grid-column:1 / -1;display:flex;gap:6px}
+.bf-points i{flex:1;height:2px;border-radius:2px;background:rgba(205,239,255,.14)}
+.bf-points i.vu{background:rgba(242,213,140,.5)}
+.bf-points i.ici{background:linear-gradient(90deg,#D4A54E,#F8E3A6)}
+
+/* Le corps : qui parle (portrait peint en grand), ce qu'il dit, puis la démonstration avec de vraies cartes */
+.bf-corps{flex:1;display:flex;flex-direction:column;justify-content:center;gap:22px;padding:18px 16px 8px;animation:fondu-in .45s ease-out}
+.bf-parole{display:grid;grid-template-columns:148px minmax(0,1fr);grid-template-rows:auto auto;column-gap:16px;row-gap:14px;align-items:end}
+.bf-portrait{position:relative;grid-row:1;margin:0;width:148px;aspect-ratio:3/4;border-radius:4px;overflow:hidden;
+  background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 30%,#141A2E),#0B0F1C 75%)}
+.bf-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block;
+  -webkit-mask-image:linear-gradient(#000 55%,transparent 98%);mask-image:linear-gradient(#000 55%,transparent 98%)}
+.bf-portrait::after{content:"";position:absolute;left:8%;right:8%;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.8}
+.bf-portrait .avatar{margin:auto;position:absolute;inset:0}
+.bf-tete{display:grid;gap:6px;padding-bottom:6px}
+.bf-qui{font-family:var(--display);font-size:15px;letter-spacing:.08em;color:color-mix(in srgb,var(--c) 55%,white)}
+.bf-tete h1{margin:0;font-family:var(--display);font-weight:400;font-size:26px;line-height:1.1;color:#fff;text-wrap:balance;text-shadow:0 2px 10px rgba(0,0,0,.7)}
+.bf-texte{grid-column:1 / -1;margin:0;padding-left:14px;font-size:16px;line-height:1.55;color:var(--x-txt);
+  box-shadow:inset 1px 0 0 color-mix(in srgb,var(--c) 70%,transparent);text-wrap:pretty}
+
+.bf-demo{position:relative;display:grid;justify-items:center;padding:22px 0 4px}
+.bf-demo::before{content:"";position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(205,239,255,.22),transparent)}
+.bf-demo .geste{pointer-events:none}
+
+/* 1 · trois cartes, trois Porteurs */
+.bf .demo-rang{display:flex;gap:14px;justify-content:center;align-items:center}
+.bf .demo-rang .geste{zoom:1.3}
+.bf .demo-rang figure{margin:0;display:grid;justify-items:center;gap:8px}
+.bf .demo-rang figcaption{font-family:var(--display);font-size:16px;letter-spacing:.05em;color:color-mix(in srgb,var(--c) 60%,white)}
+
+/* 2 · lire une carte : la carte en grand, trois repères, la légende numérotée */
+.bf .demo-anatomie{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center;width:100%}
+.bf .demo-grande{position:relative;width:auto;height:auto;margin:0 0 8px 6px}
+.bf .demo-grande .geste{transform:none;zoom:1.55}
+.bf .repere{width:24px;height:24px;font-size:13px;color:#1C1406;background:linear-gradient(180deg,#F8E3A6,#D4A54E);box-shadow:0 0 0 2px #0B0F1C}
+.bf .repere.r1{left:-8px;top:-8px}
+.bf .repere.r2{right:-10px;top:auto;bottom:22%}
+.bf .repere.r3{left:22%;top:auto;bottom:-12px}
+.bf .demo-legende{margin:0;padding:0;list-style:none;display:grid;gap:14px;font-size:14.5px;line-height:1.42;color:var(--x-txt)}
+.bf .demo-legende li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:10px;align-items:start}
+.bf .demo-legende li>i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font:700 13px/1 var(--mono);font-style:normal;color:var(--x-or);box-shadow:inset 0 0 0 1px rgba(242,213,140,.5)}
+.bf .demo-legende b{color:#fff;font-weight:600}
+.bf .demo-legende .types{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-top:6px;color:var(--x-doux)}
+.bf .demo-legende .g-val{display:inline-flex;margin-right:-6px}
+.bf .demo-legende .g-val .ico{width:17px;height:17px}
+
+/* 3 · la chaîne : trois cartes qui se suivent, et ce que la Résonance change en vrais chiffres */
+.bf .demo-chaine{display:grid;gap:14px;justify-items:center;width:100%}
+.bf .demo-rail{display:flex;align-items:center;gap:6px}
+.bf .demo-rail .geste{zoom:1.2;animation:pose .5s cubic-bezier(.2,1.3,.4,1) both}
+.bf .demo-rail .geste:nth-of-type(2){animation-delay:.35s}
+.bf .demo-rail .geste:nth-of-type(3){animation-delay:.7s}
+.bf .demo-rail .fleche{font-size:24px;color:var(--x-or);opacity:.8}
+.bf .demo-suite{margin:0;font-size:15px;color:var(--x-txt)}
+.bf .demo-suite b{font-family:var(--mono);font-size:16px;color:var(--x-or)}
+.bf .demo-calcul{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:400px;margin:0}
+.bf .demo-calcul>div{display:grid;gap:4px;padding:10px 12px;text-align:center}
+.bf .demo-calcul>div+div{box-shadow:inset 1px 0 0 rgba(205,239,255,.14)}
+.bf .demo-calcul dt{display:flex;align-items:center;justify-content:center;gap:5px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--x-doux)}
+.bf .demo-calcul dt .ico{width:14px;height:14px}
+.bf .demo-calcul dd{margin:0;font-family:var(--mono);font-size:15px;color:var(--x-txt);font-variant-numeric:tabular-nums}
+.bf .demo-calcul dd b{font-size:20px;color:#fff}
+.bf .demo-calcul .reso dt{color:var(--x-or)}
+.bf .demo-calcul .reso dd b{font-size:24px;color:var(--x-or)}
+.bf .demo-calcul .reso{animation:fondu-in .4s ease-out 1.1s both}
+
+/* 4 · l'intention ennemie, et les boucliers qui y répondent */
+.bf .demo-intention{display:grid;gap:18px;justify-items:center;width:100%}
+.bf .demo-intention .intention{position:static;max-width:none}
+.bf .demo-rang.serre{gap:10px}
+.bf .demo-rang.serre .geste{zoom:1.2}
+.bf .demo-plus{display:grid;justify-items:center;gap:2px;margin-left:8px;font-size:13px;line-height:1.3;text-align:center;color:var(--x-glace)}
+.bf .demo-plus .ico{width:22px;height:22px}
+.bf .demo-plus b{font-family:var(--mono);font-size:24px;line-height:1.1;color:#fff}
+
+/* 5 · le bouton d'aide du combat */
+.bf .demo-aide{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center;max-width:440px}
+.bf .demo-aide p{margin:0;font-size:15px;line-height:1.5;color:var(--x-txt)}
+.bf .aide-faux{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;color:var(--x-glace);background:rgba(8,11,20,.7);
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.35);animation:bf-appel 2s ease-in-out infinite}
+.bf .aide-faux .ico{width:22px;height:22px}
+@keyframes bf-appel{0%,100%{box-shadow:inset 0 0 0 1px rgba(205,239,255,.35),0 0 0 0 rgba(205,239,255,.35)}50%{box-shadow:inset 0 0 0 1px rgba(205,239,255,.35),0 0 0 8px rgba(205,239,255,0)}}
+
+/* Le bas : Retour discret, la suite bien visible */
+.bf-bas{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px max(16px,env(safe-area-inset-bottom,0px))}
+.bf-bas .btn{min-height:50px;font-size:16px}
+.bf-bas .btn.sec{padding:0 16px;background:rgba(8,11,20,.6);box-shadow:inset 0 0 0 1px rgba(205,239,255,.18)}
+.bf-bas .btn.prim:not(.large){flex:0 1 200px}
+.bf-bas .appel-porte{flex:1;width:auto;opacity:1;transform:none;min-height:54px;font-size:17px;animation:appel-rencontre 1.6s ease-in-out infinite}
+.bf-bas .appel-porte .ico{width:20px;height:20px}
+.bf-bas .btn.large.prim::before{display:none}
+.bf :is(.btn,.bf-passer):focus-visible{outline:2px solid var(--x-glace);outline-offset:3px}
+
+/* Petits téléphones : on resserre sans descendre sous 12 px */
+@media (max-width:370px){
+  .bf-parole{grid-template-columns:110px minmax(0,1fr)}
+  .bf-portrait{width:110px}
+  .bf-tete h1{font-size:23px}
+  .bf .demo-rang .geste,.bf .demo-rail .geste,.bf .demo-rang.serre .geste{zoom:1.05}
+  .bf .demo-grande .geste{zoom:1.3}
+}
+
+/* PC : une colonne de 1000 px sur le reflet flouté du tableau ; le Porteur peint en grand à gauche */
+@media (min-width:1100px) and (min-height:600px){
+  #app .scene-briefing.bf{width:min(1040px,calc(100% - 96px))}
+  .bf-haut{padding:22px 40px 0}
+  .bf-corps{display:grid;grid-template-columns:300px minmax(0,1fr);grid-template-rows:auto auto auto;column-gap:48px;row-gap:22px;align-content:center;padding:24px 40px 12px}
+  /* le titre, la parole et la démo s'empilent dans la colonne de droite, le portrait occupe la gauche */
+  .bf-parole{display:contents}
+  .bf-portrait{grid-column:1;grid-row:1 / 4;align-self:center;width:300px}
+  .bf-tete{grid-column:2;grid-row:1;align-self:end;padding:0;gap:10px}
+  .bf-tete h1{font-size:38px}
+  .bf-qui{font-size:17px}
+  .bf-texte{grid-column:2;grid-row:2;align-self:start;max-width:38em;font-size:18px}
+  .bf-demo{grid-column:2;grid-row:3;justify-items:start;padding-top:26px}
+  .bf-demo::before{left:0;right:20%;background:linear-gradient(90deg,rgba(205,239,255,.22),transparent)}
+  .bf .demo-chaine,.bf .demo-intention{justify-items:start}
+  .bf .demo-calcul{margin-left:0}
+  .bf .demo-rang .geste{zoom:1.6}
+  .bf .demo-rang.serre .geste,.bf .demo-rail .geste{zoom:1.45}
+  .bf .demo-grande .geste{zoom:2.3}
+  .bf .demo-anatomie{gap:36px}
+  .bf .demo-legende{font-size:16px}
+  .bf .demo-suite{font-size:16px}
+  .bf-bas{padding:16px 40px 26px}
+  .bf-bas .btn.prim:not(.large){flex:0 0 240px}
+  .bf-bas .appel-porte{flex:0 0 320px}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .bf-corps,.bf .demo-rail .geste,.bf .demo-calcul .reso,.bf .aide-faux,.bf .repere,.bf-bas .appel-porte{animation:none}
+}
