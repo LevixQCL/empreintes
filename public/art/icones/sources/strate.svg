@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="c1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F0B26A"/><stop offset="1" stop-color="#B8692F"/></linearGradient>
+    <linearGradient id="c2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C47A3E"/><stop offset="1" stop-color="#83461F"/></linearGradient>
+    <linearGradient id="c3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8E532B"/><stop offset="1" stop-color="#58301A"/></linearGradient>
+    <linearGradient id="c4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5E3822"/><stop offset="1" stop-color="#2E1910"/></linearGradient>
+    <linearGradient id="herbe" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7FA05A"/><stop offset="1" stop-color="#3F5A2E"/></linearGradient>
+    <linearGradient id="puits" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#140D0B"/><stop offset="1" stop-color="#04060D"/></linearGradient>
+    <linearGradient id="cri" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F2FBFF"/><stop offset=".45" stop-color="#7FD4FF"/><stop offset="1" stop-color="#2C62C8"/></linearGradient>
+    <radialGradient id="halo" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#A8E8FF" stop-opacity=".95"/><stop offset=".4" stop-color="#5DB8FF" stop-opacity=".5"/><stop offset="1" stop-color="#5DB8FF" stop-opacity="0"/></radialGradient>
+    <filter id="grain" x="0" y="0" width="1" height="1">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="b"/>
+      <feColorMatrix in="b" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 -.18" result="g"/>
+      <feComposite in="g" in2="SourceGraphic" operator="in" result="gg"/>
+      <feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="gg"/></feMerge>
+    </filter>
+    <clipPath id="bloc"><path d="M12 26 Q30 20 52 23 Q76 18 98 22 Q110 21 117 26 L120 50 L115 74 L119 98 L104 110 Q84 117 64 116 Q40 117 24 110 L9 98 L13 74 L8 50 Z"/></clipPath>
+  </defs>
+
+  <!-- un bloc de terrain arraché, vu en coupe : quatre strates de plus en plus sombres -->
+  <g clip-path="url(#bloc)">
+    <g filter="url(#grain)" stroke="#1A0F09" stroke-width="3.2" stroke-linejoin="round">
+      <path d="M0 10 H128 V46 Q100 41 74 46 Q44 52 0 44 Z" fill="url(#c1)"/>
+      <path d="M0 44 Q44 52 74 46 Q100 41 128 46 V68 Q96 73 64 67 Q32 61 0 68 Z" fill="url(#c2)"/>
+      <path d="M0 68 Q32 61 64 67 Q96 73 128 68 V90 Q94 85 62 91 Q30 97 0 89 Z" fill="url(#c3)"/>
+      <path d="M0 89 Q30 97 62 91 Q94 85 128 90 V128 H0 Z" fill="url(#c4)"/>
+    </g>
+    <!-- reflets sur le haut de chaque strate -->
+    <g fill="none" stroke="#FFE2B8" stroke-width="1.6" stroke-linecap="round" opacity=".55">
+      <path d="M16 49 Q40 54 52 52"/><path d="M84 47 Q100 44 112 46"/>
+      <path d="M14 71 Q30 66 46 67"/><path d="M82 70 Q100 72 112 70"/>
+      <path d="M18 93 Q34 96 44 95" opacity=".6"/>
+    </g>
+    <!-- cailloux -->
+    <g fill="#2A170E" opacity=".7">
+      <ellipse cx="28" cy="36" rx="3.4" ry="2.2"/><ellipse cx="96" cy="58" rx="3" ry="2"/><ellipse cx="30" cy="80" rx="3.6" ry="2.3"/><ellipse cx="100" cy="102" rx="3.2" ry="2"/>
+    </g>
+    <!-- le puits qui descend -->
+    <path d="M55 10 H73 L70 94 H58 Z" fill="url(#puits)" stroke="#1A0F09" stroke-width="3"/>
+    <g stroke="#E9A85F" stroke-width="2.2" stroke-linecap="round" opacity=".8"><path d="M60 34 H68 M60 46 H68 M60 58 H68 M60 70 H68 M60 82 H68"/></g>
+  </g>
+  <!-- l'herbe du district, tout en haut -->
+  <path d="M12 26 Q30 20 52 23 Q76 18 98 22 Q110 21 117 26 L116 31 Q96 27 74 30 Q46 33 13 31 Z" fill="url(#herbe)" stroke="#1A0F09" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- le bord du bloc, encré -->
+  <path d="M12 26 Q30 20 52 23 Q76 18 98 22 Q110 21 117 26 L120 50 L115 74 L119 98 L104 110 Q84 117 64 116 Q40 117 24 110 L9 98 L13 74 L8 50 Z" fill="none" stroke="#1A0F09" stroke-width="4.5" stroke-linejoin="round"/>
+
+  <!-- le cristal qui dort tout au fond -->
+  <circle cx="64" cy="98" r="27" fill="url(#halo)"/>
+  <path d="M64 82 L75 98 L64 113 L53 98 Z" fill="url(#cri)" stroke="#0B1A3A" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M64 82 L64 113 M53 98 L75 98" stroke="#F2FBFF" stroke-width="1.5" opacity=".75"/>
+
+  <!-- la descente -->
+  <path d="M64 2 V20 M55 12 L64 21 L73 12" fill="none" stroke="#1A0F09" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M64 2 V20 M55 12 L64 21 L73 12" fill="none" stroke="#FFE2A6" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
