@@ -67,11 +67,11 @@ export const MODULES: ModuleDef[] = [
   // ---------- Augmentés : Fréquences basses et moyennes ----------
   c('jambes-ressort', 'Jambes à ressort', 'tech', 'fer', 'atk', 11, [4, 5, 3], { type: 'elan' }),
   c('gant-arc', 'Gant à arc', 'tech', 'fer', 'atk', 13, [7, 6, 8], { type: 'flux', v: 1 }),
-  c('oeil-relais', 'Œil-relais', 'tech', 'fer', 'atk', 11, [5, 3, 6], { type: 'percant' }),
+  c('oeil-relais', 'Œil-relais', 'tech', 'fer', 'atk', 14, [5, 3, 6], { type: 'percant' }),
   c('grappin-cable', 'Grappin à câble', 'tech', 'fer', 'bouclier', 6, [4, 5, 3], { type: 'elan' }),
   c('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', 'atk', 15, [7, 6, 8], { type: 'flux', v: 1 }),
   c('oeil-brouilleur', 'Œil-brouilleur', 'tech', 'cuivre', 'atk', 11, [6, 7, 5], { type: 'desarmer', part: 0.3 }),
-  c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 40, [8, 6, 4], { type: 'percant' }, true),
+  c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 36, [8, 6, 4], { type: 'percant' }, true),
   c('dorsale', 'Dorsale renforcée', 'tech', 'argent', 'bouclier', 8, [3, 4, 7], { type: 'elan' }),
   c('lames-orbitales', 'Lames orbitales', 'tech', 'or', 'atk', 30, [9, 3, 2], { type: 'crescendo', part: 0.4 }, true),
   c('coeur-reprise', 'Cœur de reprise', 'tech', 'or', 'atk', 24, [6, 2, 5], { type: 'percant' }),
