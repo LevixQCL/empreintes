@@ -700,3 +700,22 @@ h1,h2,h3{font-weight:400}
 .toile:has(.zone-bat[data-lieu="forge"]:hover) .plaque[data-lieu="forge"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
 .toile:has(.zone-bat[data-lieu="clinique"]:hover) .plaque[data-lieu="clinique"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
 .toile:has(.zone-bat[data-lieu="chantier"]:hover) .plaque[data-lieu="chantier"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
+
+/* ---------- Les ressources du haut sont des boutons (22 octobre 2026) : elles ouvrent leur fiche ---------- */
+button.res{font:inherit;color:inherit;text-align:left;border:none;cursor:pointer;transition:filter .15s ease,transform .12s ease}
+button.res:hover,button.res[aria-expanded="true"]{filter:brightness(1.18)}
+button.res:active{transform:scale(.97)}
+button.res:focus-visible{outline:1.5px solid var(--glace,#CDEFFF);outline-offset:2px}
+.ressource-fiche .feuille-corps{display:grid;gap:12px}
+.res-etat{display:flex;align-items:center;gap:14px;padding:12px 14px;background:rgba(205,239,255,.06);box-shadow:inset 0 0 0 1px rgba(205,239,255,.16)}
+.res-etat .ico.peinte{width:52px;height:52px;flex:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
+.res-etat > span{display:grid;gap:2px}
+.res-etat b{font-family:var(--mono);font-size:26px;line-height:1;color:var(--ink)}
+.res-etat small{font-size:13px;color:var(--quiet);line-height:1.35}
+.res-resume{margin:0;font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+.res-liste{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.res-liste li{display:flex;align-items:flex-start;gap:10px;padding:9px 10px;background:rgba(205,239,255,.04);box-shadow:inset 2px 0 0 rgba(205,239,255,.35)}
+.res-liste .ico{flex:none;width:18px;height:18px;margin-top:2px;color:#CFE6FF}
+.res-liste span{display:grid;gap:2px}
+.res-liste strong{font-size:14.5px;color:var(--ink)}
+.res-liste small{font-size:12.5px;line-height:1.4;color:var(--quiet)}

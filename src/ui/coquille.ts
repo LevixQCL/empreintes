@@ -3,7 +3,7 @@
 
 import { porteurDef } from '../core/donnees';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
-import { energieParHeure, objectifCourant, stockage, type Jeu } from '../core/jeu';
+import { creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, stockage, type Jeu } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
@@ -44,6 +44,8 @@ export interface EcranDistrict {
   /** l'escouade part pour une fouille ciblée (et ce qu'elle cherche), ou pour une Épreuve de la semaine */
   fouille: import('../core/expedition').CibleFouille | null;
   epreuve: string | null;
+  /** la fiche d'une ressource du haut est ouverte (22 octobre 2026) */
+  ressource?: Ressource | null;
   /** le mode d'emploi des cartes est ouvert, sur cet onglet (guide.ts) */
   guide: import('./guide').OngletGuide | null;
 }
@@ -82,16 +84,70 @@ export function couts(j: Jeu, c: { energie?: number; composants?: number; eclats
 }
 
 /** La barre des ressources, toujours en haut */
-export function hud(j: Jeu): string {
+export type Ressource = 'energie' | 'composants' | 'eclats' | 'strate';
+
+export function hud(j: Jeu, ouverte: Ressource | null = null): string {
   const max = stockage(j);
   const plein = j.energie >= max;
+  const b = (r: Ressource, extra: string, label: string) =>
+    `<button type="button" class="res ${r}${extra}" data-action="ressource" data-id="${r}" aria-expanded="${ouverte === r}" aria-label="${label}">`;
   return `<header class="hud" aria-label="Ressources">`
-    + `<div class="res energie${plein ? ' plein' : ''}" title="Énergie : ${ent(j.energie)} sur ${ent(max)}, +${energieParHeure(j)} par heure">${icone('energie')}<span class="v">${ent(j.energie)}</span>`
-    + `<span class="jauge-res"><i style="width:${Math.min(100, (100 * j.energie) / Math.max(1, max))}%"></i></span><small>${plein ? 'plein' : `+${energieParHeure(j)}/h`}</small></div>`
-    + `<div class="res composants" title="Composants">${icone('composants')}<span class="v">${ent(j.composants)}</span><small>comp.</small></div>`
-    + `<div class="res eclats" title="Éclats">${icone('eclats')}<span class="v">${ent(j.eclats)}</span><small>Éclats</small></div>`
-    + `<div class="res abysse" title="Strate la plus profonde ouverte">${icone('strate')}<span class="v">−${j.strate}</span><small>Strate</small></div>`
+    + b('energie', plein ? ' plein' : '', `Énergie : ${ent(j.energie)} sur ${ent(max)}. Détails`) + `${icone('energie')}<span class="v">${ent(j.energie)}</span>`
+    + `<span class="jauge-res"><i style="width:${Math.min(100, (100 * j.energie) / Math.max(1, max))}%"></i></span><small>${plein ? 'plein' : `+${energieParHeure(j)}/h`}</small></button>`
+    + b('composants', '', `Composants : ${ent(j.composants)}. Détails`) + `${icone('composants')}<span class="v">${ent(j.composants)}</span><small>comp.</small></button>`
+    + b('eclats', '', `Éclats : ${ent(j.eclats)}. Détails`) + `${icone('eclats')}<span class="v">${ent(j.eclats)}</span><small>Éclats</small></button>`
+    + b('strate', ' abysse', `Strate −${j.strate}. Détails`) + `${icone('strate')}<span class="v">−${j.strate}</span><small>Strate</small></button>`
     + `</header>`;
+}
+
+/** La fiche d'une ressource : ce que c'est, ce qu'on a, comment en gagner, à quoi elle sert */
+export function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
+  if (!r) return '';
+  const max = stockage(j);
+  const ligne = (ico: Icone, titre: string, texte: string) => `<li>${ICO[ico] ?? ''}<span><strong>${titre}</strong><small>${texte}</small></span></li>`;
+  let surtitre = '', titre = '', resume = '', gagner: string[] = [], servir: string[] = [], etat = '';
+  if (r === 'energie') {
+    surtitre = 'RESSOURCE'; titre = 'L’énergie';
+    resume = 'Le courant du district. Elle se produit toute seule, même quand tu ne joues pas, jusqu’à ce que le stockage soit plein.';
+    etat = `<b>${ent(j.energie)}</b> / ${ent(max)}<small>${j.energie >= max ? 'Stockage plein : la production est perdue tant que tu ne dépenses pas' : `+${energieParHeure(j)} par heure`}</small>`;
+    gagner = [ligne('boost', 'Le Générateur', 'Produit l’énergie chaque heure. Un Porteur posté dessus produit davantage.'),
+      ligne('tour', 'La Tour du Noyau', 'Chaque niveau agrandit le stockage.'),
+      ligne('cartes', 'Le ravitaillement et les objectifs', 'Certains en rapportent.')];
+    servir = [ligne('marteau', 'Améliorer les bâtiments', 'C’est la dépense principale de chaque chantier.')];
+  } else if (r === 'composants') {
+    surtitre = 'RESSOURCE'; titre = 'Les composants';
+    resume = 'Les pièces récupérées dans les Strates : métal, mécanismes, cristaux brisés. On les rapporte des expéditions.';
+    etat = `<b>${ent(j.composants)}</b><small>composants en réserve</small>`;
+    gagner = [ligne('strate', 'Les expéditions', 'Chaque combat gagné, chaque cache et chaque salle d’archives en rapporte. Fuir en garde les trois quarts, une défaite la moitié.'),
+      ligne('cristal', 'Les fouilles ciblées', 'Une descente courte qui peut viser les composants.'),
+      ligne('cartes', 'Le ravitaillement du jour', 'Quelques composants chaque jour.')];
+    servir = [ligne('marteau', 'Améliorer les bâtiments', 'Avec l’énergie.'),
+      ligne('cartes', 'Monter une carte de niveau', 'Avec ses doublons.'),
+      ligne('marteau', 'Refabriquer une carte à la Forge', 'De 25 composants (fer) à 1 250 (nacre).')];
+  } else if (r === 'eclats') {
+    surtitre = 'RESSOURCE RARE'; titre = 'Les Éclats';
+    resume = 'Des fragments de cristal chargés d’empreintes. Rares, ils ne se trouvent qu’en profondeur ou en récompense.';
+    etat = `<b>${ent(j.eclats)}</b><small>Éclats en réserve</small>`;
+    gagner = [ligne('strate', 'Les gardiens', 'Chaque gardien vaincu en donne, davantage à partir de la Strate −5.'),
+      ligne('coffre', 'Les caches et les rencontres', 'À partir de la Strate −3, une cache en cache parfois un.'),
+      ligne('cristal', 'Les fouilles « Éclats » et les Archives de la semaine', 'Pour en gagner quand on bloque.')];
+    servir = [ligne('marteau', 'Refabriquer les cartes rares', 'Argent, or et nacre en demandent à la Forge.'),
+      ligne('marteau', 'Les grands chantiers', 'Les derniers niveaux des bâtiments.')];
+  } else {
+    const manque = manquePourCreuser(j);
+    surtitre = 'PROFONDEUR'; titre = `La Strate −${j.strate}`;
+    resume = 'L’étage le plus profond que ton district a creusé sous la ville. Plus on descend, plus c’est ancien, dangereux et précieux.';
+    etat = `<b>−${j.strate}</b><small>${j.frontVaincu ? (manque ? `Gardien vaincu : il manque ${[manque.creuseurs ? `${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : '', manque.noyau ? `${manque.noyau} niveau${manque.noyau > 1 ? 'x' : ''} de Tour du Noyau` : ''].filter(Boolean).join(' et ')} pour creuser plus bas` : 'Prête à être creusée plus bas') : `Bats son gardien pour pouvoir creuser l’étage suivant`}</small>`;
+    gagner = [ligne('porte', 'Vaincre le gardien', `Le gardien de la Strate −${j.strate} garde l’accès à l’étage suivant.`),
+      ligne('ouvrier', `Assez de creuseurs (${j.creuseurs ?? 0} / ${creuseursRequis(j.strate + 1)})`, `La Tour du Noyau en loge ${logementCreuseurs(j)}. On en gagne avec les fouilles, les missions, les Épreuves et les gardiens.`)];
+    servir = [ligne('cartes', 'Des cartes de meilleur métal', 'Plus la Strate est profonde, plus les trouvailles sont rares.'),
+      ligne('codex', 'Les Chroniques', 'Les chapitres profonds se débloquent en descendant.')];
+  }
+  return `<div class="voile-feuille" data-action="ressource" data-id="" aria-hidden="true"></div><section class="feuille ressource-fiche res-${r}" role="dialog" aria-modal="true" aria-labelledby="res-titre"><span class="poignee" aria-hidden="true"></span>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">${surtitre}</span><h2 id="res-titre">${titre}</h2></div><button type="button" class="btn-icone" data-action="ressource" data-id="" aria-label="Fermer">${ICO.fermer}</button></header>`
+    + `<div class="feuille-corps"><div class="res-etat">${icone(r === 'strate' ? 'strate' : r)}<span>${etat}</span></div><p class="res-resume">${resume}</p>`
+    + `<h3 class="titre-bloc">Comment en obtenir</h3><ul class="res-liste">${gagner.join('')}</ul>`
+    + `<h3 class="titre-bloc">À quoi ça sert</h3><ul class="res-liste">${servir.join('')}</ul></div></section>`;
 }
 
 const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
@@ -150,5 +206,5 @@ export function entete(surtitre: string, titre: string, droite = ''): string {
 
 /** L'écran complet du district : ressources, contenu, message, navigation, menu */
 export function coquille(e: EcranDistrict, contenu: string, classe = ''): string {
-  return `<div class="ecran ${classe}">${hud(e.j)}<main class="contenu">${contenu}</main>${toast(e.message)}${navigation(e)}${menu(e)}</div>`;
+  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}</div>`;
 }

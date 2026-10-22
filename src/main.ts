@@ -383,7 +383,8 @@ racine.addEventListener('click', async (ev) => {
     // district
     case 'batiment': D.selection = D.selection === id ? null : (id as BatimentId); D.menu = false; break;
     case 'ok-message': D.message = ''; break;
-    case 'menu': D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; D.guide = null; D.porteur = null; break;
+    case 'ressource': D.ressource = id && D.ressource !== id ? (id as typeof D.ressource) : null; D.menu = false; D.selection = null; break;
+    case 'menu': D.ressource = null; D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; D.guide = null; D.porteur = null; break;
     // le mode d'emploi des cartes : ouvrir sur un onglet, changer d'onglet, fermer (district et combat)
     case 'guide': if (mode === 'combat') { K.guide = id as OngletGuide; K.regles = false; } else D.guide = id as OngletGuide; break;
     case 'guide-fermer': if (mode === 'combat') { K.guide = null; K.regles = true; } else D.guide = null; break;
