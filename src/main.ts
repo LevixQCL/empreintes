@@ -344,7 +344,7 @@ racine.addEventListener('click', async (ev) => {
   const id = b.dataset.id ?? '';
   const x = jeu.expedition;
   const s = x?.combat;
-  D.message = a === 'poster' || a === 'liberer' || a === 'fabriquer' || a === 'ameliorer' || a === 'choisir' || a === 'greffer' || a === 'monter' || a === 'carte' ? D.message : '';
+  D.message = a === 'poster' || a === 'liberer' || a === 'fabriquer' || a === 'ameliorer' || a === 'choisir' || a === 'greffer' || a === 'monter' || a === 'carte' || a === 'colis' || a === 'chapitre' ? D.message : '';
 
   switch (a) {
     // intro
@@ -394,6 +394,12 @@ racine.addEventListener('click', async (ev) => {
     case 'recycler': resultat(J.recycler(jeu, b.dataset.module ?? '')); break;
     case 'prendre': resultat(J.prendre(jeu, Number(b.dataset.index ?? 0))); break;
     case 'reclamer-jour': resultat(J.reclamerQuotidien(jeu)); break;
+    case 'colis': {
+      const r = J.ouvrirColis(jeu);
+      resultat(r);
+      if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} composants${r.colis.doublon ? `, un doublon de ${moduleDef(r.colis.doublon).nom}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
+      break;
+    }
     case 'ouvrir-archive': resultat(J.ouvrirArchive(jeu)); break;
     case 'entrer': ouvrir('coupe'); break;
     case 'archipel': ouvrir('archipel'); break;
@@ -425,7 +431,11 @@ racine.addEventListener('click', async (ev) => {
     case 'biblio-onglet': D.onglet = id === 'archives' ? 'archives' : 'chroniques'; D.chapitre = null; break;
     case 'chapitre':
       D.onglet = 'chroniques'; D.chapitre = id;
-      if (!jeu.lus.includes(id)) { jeu.lus.push(id); sauver(); }
+      if (!jeu.lus.includes(id) || !jeu.luesRecompensees.includes(id)) {
+        const carte = J.lireChapitre(jeu, id);
+        if (carte) D.message = `Ysé glisse une carte entre les pages : ${moduleDef(carte).nom} (Fer) rejoint tes Cartes.`;
+        sauver();
+      }
       window.scrollTo(0, 0);
       break;
     case 'chapitre-fermer': D.chapitre = null; window.scrollTo(0, 0); break;

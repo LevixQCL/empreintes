@@ -102,7 +102,7 @@ export interface Chantier {
 
 /** Un choix de carte en attente (boss, objectif du jour, Archive) */
 export interface Choix {
-  source: 'boss' | 'quotidien' | 'archive';
+  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement';
   options: string[];
   /** le joueur peut prendre des Éclats à la place */
   eclats?: number;
@@ -145,6 +145,10 @@ export interface Jeu {
   fragments: string[];
   /** chapitres des Chroniques déjà lus */
   lus: string[];
+  /** chapitres dont la première lecture a déjà rapporté sa carte */
+  luesRecompensees: string[];
+  /** Ravitaillement du jour : colis en réserve (3 au plus, rien ne se perd), dernier jour compté, colis déjà ouverts */
+  ravitaillement: { jour: number; reserve: number; ouverts: number };
   eclats: number;
   /** les cartes possédées */
   collection: Record<string, CarteCollection>;
@@ -266,6 +270,8 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     objectif: 0,
     fragments: [],
     lus: [],
+    luesRecompensees: [],
+    ravitaillement: { jour: jourDe(now), reserve: 1, ouverts: 0 },
     eclats: 0,
     collection: Object.fromEntries(COLLECTION_DEPART.map((id) => [id, { niveau: 1, doublons: 0 }])),
     sans: { argent: 0, or: 0, nacre: 0 },
@@ -298,6 +304,12 @@ function migrer(j: Jeu) {
   j.objectif ??= ancien && j.strate > 1 ? OBJECTIFS.length : 0;
   j.fragments ??= [];
   j.lus ??= [];
+  j.ravitaillement ??= { jour: jourDe(j.dernierTick), reserve: 1, ouverts: 0 };
+  if (!j.luesRecompensees) {
+    // sauvegarde d'avant les récompenses de lecture : les chapitres déjà lus rapportent leur carte maintenant
+    j.luesRecompensees = [];
+    if (j.collection && j.rng !== undefined) for (const id of j.lus) recompenserLecture(j, id);
+  }
   if (j.version === 2) {
     // version 3 : la collection de cartes, les Éclats, les chantiers, l'objectif du jour et l'Archive
     const now = j.dernierTick;
@@ -462,6 +474,12 @@ export function tick(j: Jeu, now: number): string[] {
     j.quotidien.jour = jour;
   }
 
+  // un colis de ravitaillement de plus chaque jour, 3 au plus (aucune série à perdre)
+  if (jour > j.ravitaillement.jour) {
+    j.ravitaillement.reserve = Math.min(RAVITAILLEMENT.reserveMax, j.ravitaillement.reserve + (jour - j.ravitaillement.jour));
+    j.ravitaillement.jour = jour;
+  }
+
   // l'Archive de la semaine s'ouvre le lundi
   const semaine = semaineDe(now);
   if (semaine > j.archive.semaine) {
@@ -603,6 +621,72 @@ export function degreffer(j: Jeu, moduleId: string): Resultat {
 }
 
 /** Résout le premier choix en attente : une des cartes, ou les Éclats si proposé (index -1) */
+// ---------- Récompenses de lecture et Ravitaillement du jour ----------
+// Étude du 22 octobre 2026 : la découverte des cartes est rapide, mais un exemplaire précis reçoit très peu de doublons
+// (45 cartes × 5 métaux). La lecture donne donc des cartes de départ (surtout au début), et le colis du jour donne
+// un doublon d'une carte qu'on possède déjà, pour faire monter le deck sans gonfler la découverte.
+
+export const RAVITAILLEMENT = {
+  reserveMax: 3,
+  /** composants du colis : base + par Strate ouverte */
+  composants: 20,
+  composantsParStrate: 10,
+  /** tous les 7 colis ouverts (pas forcément d'affilée), une carte au choix d'au moins ce métal */
+  cycle: 7,
+  minimumCycle: 'cuivre' as Rarete,
+} as const;
+
+/** La lignée qui a le moins d'exemplaires : la carte de lecture va là où le deck manque le plus */
+function ligneeLaMoinsFournie(j: Jeu): 'tech' | 'bio' | 'reso' {
+  const n = { tech: 0, bio: 0, reso: 0 };
+  for (const id of Object.keys(j.collection)) n[moduleDef(id).lignee]++;
+  return (['tech', 'bio', 'reso'] as const).reduce((a, b) => (n[b] < n[a] ? b : a));
+}
+
+/** La première lecture d'un chapitre rapporte une carte en fer. Renvoie la carte, ou null si déjà récompensé. */
+export function recompenserLecture(j: Jeu, chapitreId: string): string | null {
+  if (j.luesRecompensees.includes(chapitreId)) return null;
+  j.luesRecompensees.push(chapitreId);
+  const lignee = ligneeLaMoinsFournie(j);
+  const pool = MODULES.filter((m) => m.lignee === lignee);
+  // d'abord une carte qu'on n'a pas encore en fer ; sinon un doublon
+  const neuves = pool.filter((m) => !j.collection[carteId(m.id, 'fer')]);
+  const liste = neuves.length ? neuves : pool;
+  const id = carteId(liste[tireur(j).entier(liste.length)]!.id, 'fer');
+  const neuve = ajouterCarte(j, id);
+  log(j, `Lecture des Chroniques : ${moduleDef(id).nom} (Fer)${neuve ? '' : ', un doublon'}.`);
+  return id;
+}
+
+/** Lit un chapitre (le marque comme lu) et donne sa carte à la première lecture */
+export function lireChapitre(j: Jeu, chapitreId: string): string | null {
+  if (!j.lus.includes(chapitreId)) j.lus.push(chapitreId);
+  return recompenserLecture(j, chapitreId);
+}
+
+export const colisDisponible = (j: Jeu) => j.chambre && j.ravitaillement.reserve > 0;
+/** colis restants avant la carte au choix */
+export const colisAvantChoix = (j: Jeu) => RAVITAILLEMENT.cycle - (j.ravitaillement.ouverts % RAVITAILLEMENT.cycle);
+
+export interface Colis { composants: number; doublon: string | null; choix: boolean }
+
+/** Ouvre un colis : des composants, un doublon d'une carte possédée en fer, et tous les 7 colis une carte au choix */
+export function ouvrirColis(j: Jeu): Resultat & { colis?: Colis } {
+  if (!colisDisponible(j)) return non('Pas de colis pour l’instant : le prochain arrive demain.');
+  const r = j.ravitaillement;
+  r.reserve--;
+  r.ouverts++;
+  const composants = RAVITAILLEMENT.composants + RAVITAILLEMENT.composantsParStrate * j.strate;
+  j.composants += composants;
+  const enFer = Object.keys(j.collection).filter((id) => moduleDef(id).rarete === 'fer');
+  const doublon = enFer.length ? enFer[tireur(j).entier(enFer.length)]! : null;
+  if (doublon) ajouterCarte(j, doublon);
+  const choix = r.ouverts % RAVITAILLEMENT.cycle === 0;
+  if (choix) j.choix.push({ source: 'ravitaillement', options: tirerChoix(j, j.strate, RAVITAILLEMENT.minimumCycle) });
+  log(j, `Ravitaillement : +${composants} composants${doublon ? `, un doublon de ${moduleDef(doublon).nom}` : ''}${choix ? ', et une carte au choix' : ''}.`);
+  return { ok: true, colis: { composants, doublon, choix } };
+}
+
 export function prendre(j: Jeu, index: number): Resultat {
   const c = j.choix[0];
   if (!c) return non('Rien à choisir.');

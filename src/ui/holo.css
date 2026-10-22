@@ -193,3 +193,11 @@ body{background:
 .deck-porteur .grille-cartes{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .deck-porteur .grille-cartes.grisee .carte-tuile{opacity:.55}
 .alerte{color:var(--danger)}
+
+/* Ravitaillement du jour */
+.appel.colis{--eq:var(--holo);background:linear-gradient(180deg,rgba(159,216,255,.12),rgba(159,216,255,0) 50%),var(--trame),linear-gradient(165deg,rgba(16,34,48,.94),rgba(8,16,24,.94));flex-wrap:wrap}
+.appel.colis>.ico{background:linear-gradient(180deg,#CDEFFF,#4FA6D6);color:#08202E}
+.appel.colis>span:not(.crans-colis){flex:1;min-width:0}
+.crans-colis{display:flex;gap:3px;width:100%;padding-left:54px}
+.crans-colis i{flex:1;height:4px;background:rgba(159,216,255,.15);transform:skewX(-24deg)}
+.crans-colis i.plein{background:var(--holo);box-shadow:0 0 6px var(--holo)}

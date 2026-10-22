@@ -5,7 +5,7 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte,
+  ARCHIVE, DISTRICT, POSTES, QUOTIDIENS, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte,
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
@@ -164,6 +164,12 @@ function appel(e: EcranDistrict): string {
   if (j.archive.aOuvrir && !objectifCourant(j)) {
     return `<button type="button" class="appel reso" data-action="ouvrir-archive">${ICO.coffre}<span><strong>L’Archive de la semaine est prête</strong><small>Palier ${j.archive.aOuvrir} sur 3 atteint : ouvre-la</small></span></button>`;
   }
+  if (colisDisponible(j)) {
+    const reste = colisAvantChoix(j);
+    return `<button type="button" class="appel colis" data-action="colis">${ICO.coffre}<span><strong>Ravitaillement du jour${j.ravitaillement.reserve > 1 ? ` · ${j.ravitaillement.reserve} colis` : ''}</strong>`
+      + `<small>Composants et un doublon · ${reste === 1 ? 'celui-ci contient une carte au choix' : `carte au choix dans ${reste} colis`}</small></span>`
+      + `<span class="crans-colis" aria-hidden="true">${Array.from({ length: RAVITAILLEMENT.cycle }, (_, i) => `<i class="${i < j.ravitaillement.ouverts % RAVITAILLEMENT.cycle ? 'plein' : ''}"></i>`).join('')}</span></button>`;
+  }
   return '';
 }
 
@@ -314,7 +320,7 @@ function effetsCarte(m: ReturnType<typeof moduleDef>): string {
 
 function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
-  const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : 'Archive de la semaine';
+  const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : 'Archive de la semaine';
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><div class="cartes-choix">`
     + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}"`)).join('')
     + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
@@ -501,7 +507,7 @@ export function htmlCodex(e: EcranDistrict): string {
         const neuf = !j.lus.includes(c.id);
         h += `<button type="button" class="chapitre-ligne${neuf ? ' neuf' : ''}" data-action="chapitre" data-id="${c.id}">`
           + `<span class="num">${n}</span><span class="txt"><strong>${echap(c.titre)}</strong><small>${echap(c.epoque)}</small></span>`
-          + (neuf ? `<span class="marque-neuf">Nouveau</span>` : `<span class="lu" aria-label="Lu">${ICO.ok}</span>`) + `</button>`;
+          + (!j.luesRecompensees.includes(c.id) ? `<span class="marque-neuf">+1 carte</span>` : `<span class="lu" aria-label="Lu">${ICO.ok}</span>`) + `</button>`;
       } else {
         h += `<div class="chapitre-ligne ferme" aria-disabled="true"><span class="num">${n}</span><span class="txt"><strong>${echap(c.titre)}</strong>`
           + `<small>${echap(c.teaser ?? '')}</small><em>${ICO.strate}S’ouvre à la Strate −${c.strate}</em></span><span class="lu" aria-hidden="true">${ICO.verrou}</span></div>`;
