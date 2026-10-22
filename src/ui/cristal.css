@@ -220,25 +220,3 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-qui{text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.9)}
 /* l'effet garde sa place sur le bord droit, au-dessus de la force */
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{bottom:calc(100% + 4px)}
-
-/* ---------- La force dans une grosse pastille du métal de la carte (22 octobre 2026, idée de Bryan) ----------
-   Les petites icônes (épée, bouclier, croix) ne se lisaient pas à cette taille. La force est maintenant gravée
-   dans une pastille du métal de la carte, posée en bas à gauche de l'image ; sa forme et la couleur de son cœur
-   disent l'action : une pointe rouge pour l'attaque, un écu bleu pour la protection, un rond vert pour le soin. */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val{position:absolute;left:calc(1px + var(--ep));bottom:calc(100% - 2px);
-  display:grid;place-items:center;width:34px;height:34px;gap:0;font-size:15px;line-height:1;--forme:circle(50%);--coeur:#1d4a2c;--coeur-clair:#3f8a52}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.atk{--forme:polygon(50% 0,100% 50%,50% 100%,0 50%);width:38px;height:38px;--coeur:#5a1710;--coeur-clair:#b2412a}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.bouclier{--forme:polygon(0 0,100% 0,100% 55%,50% 100%,0 55%);height:36px;--coeur:#16304f;--coeur-clair:#3a6ea6}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val::before,
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val::after{content:"";position:absolute;clip-path:var(--forme)}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val::before{inset:0;
-  background:linear-gradient(150deg,rgba(255,255,255,.65),rgba(255,255,255,.05) 42%,rgba(0,0,0,.5)),var(--tex) center/cover}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val::after{inset:3.5px;
-  background:radial-gradient(circle at 38% 30%,var(--coeur-clair),var(--coeur) 75%);box-shadow:inset 0 0 6px #000}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.atk::after{inset:4.5px}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.bouclier b{margin-top:-5px}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val .ico{display:none}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val b{position:relative;z-index:1;color:#fff;font-weight:700;text-shadow:0 1px 2px #000,0 0 4px #000}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-nacre .g-val{left:2px}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val{width:38px;height:38px;font-size:16px}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val.atk{width:42px;height:42px}
