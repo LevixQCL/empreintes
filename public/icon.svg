@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="48%" r="60%">
+      <stop offset="0" stop-color="#16346A"/>
+      <stop offset="1" stop-color="#081732"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#5FA8FF" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#5FA8FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="left" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#A9D2FF"/>
+      <stop offset="1" stop-color="#5B92D6"/>
+    </linearGradient>
+    <linearGradient id="right" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2B6FB0"/>
+      <stop offset="1" stop-color="#0E3E70"/>
+    </linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0E2550"/>
+      <stop offset="1" stop-color="#0A1B3C"/>
+    </linearGradient>
+    <clipPath id="coreClip">
+      <polygon points="256,62 322,256 256,450 190,256"/>
+    </clipPath>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="220" fill="url(#glow)"/>
+
+  <!-- facettes -->
+  <polygon points="256,62 190,256 256,450 108,256" fill="url(#left)"/>
+  <polygon points="256,62 404,256 256,450 322,256" fill="url(#right)"/>
+  <polygon points="256,62 322,256 256,450 190,256" fill="url(#core)"/>
+
+  <!-- empreinte : sillons épais et peu nombreux -->
+  <g clip-path="url(#coreClip)" fill="none" stroke="#F4B95A" stroke-width="10" stroke-linecap="round">
+    <path d="M242 318 V214 A14 18 0 0 1 270 214 V292"/>
+    <path d="M224 340 V216 A32 40 0 0 1 288 216 V318"/>
+    <path d="M206 362 V218 A50 62 0 0 1 306 218 V344"/>
+    <path d="M188 384 V221 A68 85 0 0 1 324 221 V370"/>
+    <path d="M170 406 V224 A86 108 0 0 1 342 224 V396"/>
+  </g>
+
+  <!-- arêtes et contour or -->
+  <g fill="none" stroke="#F4C46E" stroke-linejoin="round">
+    <polygon points="256,62 404,256 256,450 108,256" stroke-width="9"/>
+    <polyline points="256,62 190,256 256,450" stroke-width="5"/>
+    <polyline points="256,62 322,256 256,450" stroke-width="5"/>
+  </g>
+  <!-- éclat de lumière -->
+  <polygon points="256,62 226,150 196,190" fill="#FFFFFF" opacity=".35"/>
+</svg>
