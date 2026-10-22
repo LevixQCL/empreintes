@@ -170,3 +170,92 @@
   .ecran > .contenu{max-width:1400px}
 }
 @media (min-width:1700px) and (min-height:1000px){ .zone-chaine > .rail,.zone-main > .main{zoom:1.75} }
+
+/* ================= Combat sur PC : l'escouade en portraits, des cartes de chaîne lisibles (22 octobre 2026) =================
+   Bryan trouvait la ligne d'escouade trop pauvre sur PC (une pastille, un nom, une barre fine) avec un grand vide au-dessus de la main.
+   L'espace libre de la colonne va maintenant à l'escouade : chaque Porteur a son portrait en pied coupé en biais,
+   son reflet flouté derrière, sa lignée, et ses PV en grand (« 38 / 40 »). La main reste collée au bouton Lancer.
+   Les cartes de la chaîne sont un peu plus hautes : leur nom tient sur deux lignes (« Grappin à câble » n'est plus coupé). */
+@media (min-width:1100px) and (min-height:600px){
+  /* flex:none : sinon l'écran (élément flex de #app) grandit avec son contenu au lieu de tenir dans la hauteur de la fenêtre,
+     et la rangée de l'escouade ne peut pas prendre « ce qui reste » */
+  .ecran-combat{flex:none;grid-template-rows:auto auto auto minmax(0,1fr) auto auto auto}
+  /* l'escouade prend la hauteur qui reste (entre 50 et 150 px) ; sous 84 px, ses portraits passent en version compacte */
+  .ecran-combat > .escouade-combat{align-self:end;height:100%;min-height:50px;max-height:150px;gap:10px;grid-template-rows:minmax(0,1fr);container:escouade / size}
+  .ecran-combat > .zone-main{align-self:end}
+
+  .ecran-combat .combattant{--cut:12px;min-height:0;height:100%;display:flex;align-items:stretch;gap:0;padding:0;isolation:isolate}
+  .ecran-combat .combattant > :is(.avatar,.cb-infos){position:relative;z-index:2}
+  /* le reflet : le portrait flouté et assombri, dans la couleur de la lignée */
+  .ecran-combat .cb-fond{display:block;position:absolute;z-index:0;inset:-20px;background:center 20%/cover no-repeat;
+    filter:blur(16px) saturate(1.3) brightness(.42);opacity:.75}
+  /* par-dessus le reflet : un voile pour lire les chiffres, et l'arête du panneau (le reflet cachait celle du verre) :
+     teinte de la lignée, rouge qui pulse pour la cible, verte pour le Porteur qui sera soigné */
+  .ecran-combat .combattant::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background:linear-gradient(90deg,transparent 30%,rgba(7,9,20,.55) 70%),linear-gradient(0deg,color-mix(in srgb,var(--c) 22%,transparent),transparent 60%);
+    box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 55%,transparent)}
+  .ecran-combat .combattant.soigne::before{box-shadow:inset 0 0 0 1.5px rgba(124,227,160,.75)}
+  .ecran-combat .combattant.cible::before{background:linear-gradient(90deg,transparent 30%,rgba(7,9,20,.5) 70%),linear-gradient(0deg,rgba(255,90,70,.3),transparent 70%);
+    box-shadow:inset 0 0 0 1.5px #ff8a7a,inset 0 0 26px rgba(255,90,80,.35);animation:cible-pc 1.6s ease-in-out infinite}
+  @keyframes cible-pc{50%{box-shadow:inset 0 0 0 1.5px #ffb0a4,inset 0 0 34px rgba(255,90,80,.55)}}
+  .ecran-combat .combattant.cible{animation:none}
+  @media (prefers-reduced-motion:reduce){ .ecran-combat .combattant.cible::before{animation:none} }
+  /* le portrait en pied, coupé en biais, serti d'une arête dans la couleur de la lignée */
+  .ecran-combat .combattant .avatar{--t:auto;flex:none;height:100%;width:auto;aspect-ratio:3/4;max-width:46%;
+    clip-path:polygon(0 0,100% 0,78% 100%,0 100%);filter:none;
+    background:linear-gradient(180deg,color-mix(in srgb,var(--c) 70%,white),color-mix(in srgb,var(--c) 60%,black))}
+  .ecran-combat .combattant .avatar img{width:calc(100% - 2px);height:100%;margin-right:2px;object-position:50% 16%;
+    clip-path:polygon(0 0,100% 0,78% 100%,0 100%);-webkit-mask-image:linear-gradient(180deg,#000 72%,rgba(0,0,0,.55));mask-image:linear-gradient(180deg,#000 72%,rgba(0,0,0,.55))}
+  .ecran-combat .combattant .avatar b{width:calc(100% - 2px);height:100%;clip-path:polygon(0 0,100% 0,78% 100%,0 100%);font-size:34px}
+
+  .ecran-combat .cb-infos{flex:1;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:2px;padding:12px 14px 12px 2px}
+  .ecran-combat .cb-infos .n{font-size:clamp(16px,1.25vw,20px);line-height:1.05;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+  .ecran-combat .cb-lignee{display:block;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    color:color-mix(in srgb,var(--c) 65%,white)}
+  .ecran-combat .cb-vie{grid-row:4;display:grid;gap:4px}
+  .ecran-combat .cb-vie .chiffre{order:-1;justify-self:end;font-size:clamp(20px,1.6vw,26px);line-height:1;color:#fff;text-shadow:0 0 12px rgba(170,236,140,.35),0 1px 3px #000}
+  .ecran-combat .cb-vie .chiffre small{display:inline;margin-left:4px;font-size:12px;font-weight:500;color:var(--quiet);text-shadow:none}
+  .ecran-combat .combattant.bas .cb-vie .chiffre{color:#ffb19c;text-shadow:0 0 12px rgba(255,110,80,.5),0 1px 3px #000}
+  .ecran-combat .combattant .jauge-vie.jp{--h:13px}
+  .ecran-combat .combattant.ko .cb-lignee{color:var(--quiet)}
+
+  @container escouade (max-height:84px){
+    .ecran-combat .cb-infos{grid-template-rows:auto minmax(0,1fr) auto;padding:6px 12px 7px 2px}
+    .ecran-combat .cb-lignee{display:none}
+    .ecran-combat .cb-infos .n{font-size:16px}
+    .ecran-combat .cb-vie{grid-row:3;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:6px}
+    .ecran-combat .cb-vie .chiffre{order:0;font-size:17px}
+    .ecran-combat .cb-vie .chiffre small{font-size:10px;margin-left:2px}
+    .ecran-combat .combattant .marque-cible{top:6px;right:8px}
+    .ecran-combat .combattant .marque-soin{top:5px;right:8px;width:20px;height:20px}
+    .ecran-combat .combattant.soigne .marque-cible{right:34px}
+    /* portrait plus carré, recadré sur le visage */
+    .ecran-combat .combattant .avatar{aspect-ratio:1/1}
+    .ecran-combat .combattant .avatar img{object-position:50% 8%}
+  }
+
+  /* CIBLE et SOIN : écrits en clair, en haut à droite (la place ne manque plus) */
+  .ecran-combat .combattant .marque-cible{z-index:4;top:10px;right:10px;bottom:auto;left:auto;display:flex;align-items:center;width:auto;height:auto;gap:4px;padding:3px 8px 3px 7px;
+    font-size:10px;line-height:1.2;clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%)}
+  .ecran-combat .combattant .marque-soin{z-index:4;top:8px;right:10px;left:auto;width:22px;height:22px}
+  .ecran-combat .combattant.soigne .marque-cible{right:38px}
+  .ecran-combat .combattant .marque-soin .ico{width:14px;height:14px}
+  .ecran-combat .combattant .pop{top:30%;font-size:26px}
+
+  /* sous l'escouade : le bouclier commun et les piles, lisibles */
+  .ecran-combat > .ligne-escouade{min-height:28px}
+  .ecran-combat > .ligne-escouade .etat{padding:4px 10px;font-size:12px}
+  .ecran-combat > .ligne-escouade .etat .ico{width:15px;height:15px}
+  .ecran-combat .piles{gap:18px;font-size:12px}
+  .ecran-combat .piles em{display:inline;font-style:normal;font-family:var(--body,inherit);letter-spacing:.02em;margin-right:2px}
+  .ecran-combat .piles .ico{width:15px;height:15px}
+
+}
+/* les cartes de la chaîne, quand la hauteur le permet : un peu plus hautes, le nom sur deux lignes */
+@media (min-width:1100px) and (min-height:900px){
+  .geste.chaine,.place-vide{height:124px}
+  .geste.chaine .g-art{height:50%}
+  .geste.chaine .g-plaque{height:52%}
+  .geste.chaine .g-nom{-webkit-line-clamp:2}
+  .rail{min-height:126px}
+}

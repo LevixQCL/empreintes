@@ -170,3 +170,29 @@
   color:#0C2416;background:#7CE3A0;box-shadow:0 0 8px rgba(124,227,160,.7)}
 .combattant .marque-soin .ico{width:11px;height:11px}
 .combattant.soigne{box-shadow:inset 0 0 0 1.5px rgba(124,227,160,.6)}
+
+/* ---------- La chaîne qui se joue (22 octobre 2026) ----------
+   Bryan : pendant un enchaînement, la carte qui agit était coupée en haut (le rail défile en largeur, donc il coupe
+   aussi en hauteur), et seules les cartes de soin s'éteignaient une fois jouées (un style des cartes verrouillées
+   reprenait le dessus : il faut le préfixe #app pour passer devant cristal.css). Le rail garde maintenant de la place au-dessus des cartes ; la carte qui agit grandit,
+   s'éclaire dans la couleur de sa lignée et un reflet la traverse ; les cartes jouées s'éteignent toutes. */
+.rail{padding-top:16px;margin-top:-13px}
+#app .ecran-combat .zone-chaine .rail > .en-jeu{transform:translateY(-12px) scale(1.1);z-index:2;transition:transform .14s cubic-bezier(.2,.9,.3,1.3);
+  filter:brightness(1.18) drop-shadow(0 0 10px var(--c,var(--gold))) drop-shadow(0 6px 10px rgba(0,0,0,.7))}
+#app .ecran-combat .zone-chaine .rail > .jouee{transform:translateY(5px) scale(.94);filter:saturate(.3) brightness(.5);transition:transform .2s ease,filter .2s ease}
+.en-jeu .g-cadre::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;mix-blend-mode:screen;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 46%,color-mix(in srgb,var(--c,#fff) 60%,white) 50%,transparent 64%) 0 0/250% 100% no-repeat;
+  animation:carte-reflet .55s ease-out both}
+@keyframes carte-reflet{from{background-position:130% 0}to{background-position:-130% 0}}
+@media (prefers-reduced-motion:reduce){
+  #app .ecran-combat .zone-chaine .rail > .en-jeu{transform:none}
+  #app .ecran-combat .zone-chaine .rail > .jouee{transform:none}
+  .en-jeu .g-cadre::after{animation:none;opacity:0}
+}
+/* sous la chaîne, pendant qu'elle se joue : quelle carte agit, et qui la joue */
+.conseil .pas-chaine{display:inline-block;margin-right:8px;padding:1px 6px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--quiet);
+  background:rgba(0,0,0,.35);box-shadow:inset 0 0 0 1px rgba(205,239,255,.18);vertical-align:1px}
+.conseil .carte-agit{font-weight:700;color:#fff;text-shadow:0 0 10px color-mix(in srgb,var(--c) 80%,transparent)}
+
+/* Les morceaux du portrait d'escouade réservés au PC (bureau.css) : le téléphone garde sa ligne compacte */
+.cb-fond,.cb-lignee,.cb-vie .chiffre small,.piles em{display:none}

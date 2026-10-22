@@ -130,10 +130,11 @@ function maillon(g: Geste, off: boolean) {
   const soin = soigneUnSeul(g) && g.cible
     ? `<button type="button" class="cibler" data-action="cibler" data-uid="${g.uid}"${off ? ' disabled' : ''} style="--c:${COULEUR[porteurDef(g.cible).lignee]}" aria-label="Soigne ${echap(porteurDef(g.cible).nom)} : toucher pour changer">${ICO.soin}<span>${echap(porteurDef(g.cible).nom)}</span></button>`
     : '';
-  if (soin && !choix) return `<div class="maillon">${geste(g, 'chaine', 'retirer', { off })}${soin}</div>`;
+  const c = `style="--c:${COULEUR[ligneeGeste(g)]}"`;
+  if (soin && !choix) return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off })}${soin}</div>`;
   if (!choix) return geste(g, 'chaine', 'retirer', { off });
   const suivante = g.fs![(g.fs!.indexOf(g.f) + 1) % g.fs!.length]!;
-  return `<div class="maillon">${geste(g, 'chaine', 'retirer', { off })}`
+  return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off })}`
     + `<button type="button" class="accorder" data-action="accorder" data-uid="${g.uid}"${off ? ' disabled' : ''} aria-label="Passer ${echap(g.nom)} en Fréquence ${suivante}">${g.fs!.map((f) => `<i class="${f === g.f ? 'actif' : ''}" style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</button>${soin}</div>`;
 }
 
@@ -179,25 +180,40 @@ export function htmlCombat(e: Ecran): string {
   const def = ennemiDef(s.ennemi.id);
   const it = s.intention;
   const faible = BATTU_PAR[def.lignee];
-  const a = analyserChaine(s.chaine);
+  // Fréquences brouillées : la suite ne compte pas (même règle que le moteur), ni badge ni multiplicateur affiché
+  const brut = analyserChaine(s.chaine);
+  const a = s.dissonance || s.sansResonance ? { ...brut, suite: 0, mult: 1 } : brut;
   const dernier = s.chaine[s.chaine.length - 1];
   const libres = placesLibres(s);
   const verrou = e.verrou || s.issue !== 'en-cours';
   const fs = frequencesEffectives(s.chaine);
 
   let conseil: string;
-  if (s.dissonance) conseil = `<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci. Mise sur la force brute ou la protection.`;
   if (s.sansResonance) conseil = `<b>Épreuve · Fréquences brouillées</b> : aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.`;
+  else if (s.dissonance && !s.chaine.length) conseil = `<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci. Mise sur la force brute ou la protection.`;
   else if (!s.chaine.length) conseil = `Choisis jusqu’à ${capacite(s)} cartes. Des Fréquences qui se suivent (3, 4, 5) déclenchent une <b>Résonance</b>.`;
   else {
     const fin = serieFinale(s.chaine);
     const f = fs[fs.length - 1]!;
-    if (a.suite >= 3) conseil = `<b>Résonance</b> : suite de ${a.suite}, effets <b>+${Math.round((a.mult - 1) * 100)} %</b>` + (a.suite < 5 && libres > 0 && fin === a.suite ? ` · un <b>${f + 1}</b> pour aller plus loin` : '');
+    // chaîne pleine : une place de plus ne s'achète qu'avec le Flux
+    const flux = s.flux > 0 && capacite(s) < REGLES.capaciteMax;
+    if (s.dissonance) conseil = '<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci';
+    else if (a.suite >= 3) conseil = `<b>Résonance</b> : suite de ${a.suite}, effets <b>+${Math.round((a.mult - 1) * 100)} %</b>` + (a.suite < 5 && fin === a.suite && (libres > 0 || flux) ? ` · un <b>${f + 1}</b> pour aller plus loin` : '');
+    else if (libres === 0 && fin === 2 && flux) conseil = `Suite ${f - 1} → ${f} : 1 Flux t’ouvre une place pour un <b>${f + 1}</b>`;
+    else if (libres === 0) conseil = flux ? 'Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus' : 'Chaîne pleine : tu peux la lancer';
     else if (fin === 2) conseil = `Suite ${f - 1} → ${f} : ajoute un <b>${f + 1}</b> pour +30 %`;
     else conseil = `Ajoute un <b>${f + 1}</b> pour commencer une suite`;
     if (a.echo) conseil += ` · Écho : bouclier +${REGLES.bouclierEcho}`;
     if (dernier?.effet) conseil += `<span class="effet-texte">${echap(libelleEffet(dernier.effet))}</span>`;
   }
+
+  // pendant l'animation : la carte qui agit, puis la riposte de l'ennemi
+  const enJeu = e.actif !== undefined ? s.chaine[e.actif] : undefined;
+  if (enJeu) {
+    const qui = enJeu.porteur ? porteurDef(enJeu.porteur).nom : 'District';
+    conseil = `<span class="pas-chaine">${e.actif! + 1} / ${s.chaine.length}</span><span class="carte-agit" style="--c:${COULEUR[ligneeGeste(enJeu)]}">${echap(enJeu.nom)}</span> · ${echap(qui)}`
+      + (a.suite >= 3 ? ` · Résonance <b>×${a.mult.toLocaleString('fr-BE')}</b>` : '');
+  } else if (e.verrou && !s.chaine.length && s.issue === 'en-cours' && s.ennemi.pv > 0) conseil = `${echap(def.nom)} riposte…`;
 
   const ill = illustrationEnnemi(def.id);
   const classeIntention = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
@@ -240,12 +256,14 @@ export function htmlCombat(e: Ecran): string {
     const basPv = !ko && p.pv / p.pvMax <= 0.3;
     const soigne = !ko && s.chaine.some((g) => soigneUnSeul(g) && g.cible === p.id);
     h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${basPv ? ' bas' : ''}${soigne ? ' soigne' : ''}" data-porteur="${p.id}" data-pvmax="${p.pvMax}" style="--c:${COULEUR[d.lignee]}">${popsPour(e, p.id)}`
+      + (img ? `<span class="cb-fond" style="background-image:url(${img})" aria-hidden="true"></span>` : '')
       + `<span class="avatar${img ? '' : ' sans-portrait'}" style="--t:34px" aria-hidden="true">${img ? `<img src="${img}" alt="">` : `<b>${echap(d.nom.charAt(0))}</b>`}</span>`
-      + `<div class="cb-infos"><span class="n">${echap(d.nom)}</span><div class="cb-vie">${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5 })}<span class="chiffre" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}`}">${ko ? '0' : p.pv}</span></div></div>`
+      + `<div class="cb-infos"><span class="n">${echap(d.nom)}</span><span class="cb-lignee" aria-hidden="true">${ko ? 'À terre' : NOMS_LIGNEE[d.lignee].nom}</span>`
+      + `<div class="cb-vie">${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5 })}<span class="chiffre" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}`}">${ko ? '0' : p.pv}<small aria-hidden="true">/ ${p.pvMax}</small></span></div></div>`
       + (cible ? `<span class="marque-cible">${ICO.atk}CIBLE</span>` : '') + (soigne ? `<span class="marque-soin" aria-label="Sera soigné">${ICO.soin}</span>` : '') + `</div>`;
   }
   h += `</section><div class="ligne-escouade">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>`
-    + `<span class="piles"><span title="Pioche">${ICO.cartes}${s.pioche.length}</span><span title="Défausse">${ICO.recycler}${s.defausse.length}</span></span></div>`;
+    + `<span class="piles"><span title="Pioche">${ICO.cartes}<em>Pioche</em>${s.pioche.length}</span><span title="Défausse">${ICO.recycler}<em>Défausse</em>${s.defausse.length}</span></span></div>`;
 
   // la chaîne
   const mult = a.suite >= 3 ? `×${a.mult.toLocaleString('fr-BE')}` : '';
