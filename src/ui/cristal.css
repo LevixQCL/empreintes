@@ -348,3 +348,10 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
   -webkit-text-stroke:3px #120c08;paint-order:stroke fill;text-shadow:0 1px 2px rgba(0,0,0,.9)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val b{font-size:17px}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{position:absolute;bottom:calc(100% + 3px)}
+/* médaillon plus discret, chiffres en Cinzel 900 (incluse dans le jeu) : épais et droits, lisibles en petit */
+@font-face{font-family:'Cinzel Force';src:url('./polices/cinzel-900.woff2') format('woff2');font-weight:900;font-display:block}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val{width:25px;height:25px;left:calc(var(--ep) * .3);bottom:calc(var(--ep) + 13px)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val{width:29px;height:29px;bottom:calc(var(--ep) + 24px)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.atk .g-sym{transform:none}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val b,#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val b{font-family:'Cinzel Force',var(--display);font-weight:900;font-size:12px;letter-spacing:-.02em;-webkit-text-stroke:2.5px #120c08;transform:translateY(.5px)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val b{font-size:14px}
