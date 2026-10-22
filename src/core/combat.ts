@@ -68,8 +68,14 @@ export function creerCombat(opts: {
   if (b?.places) s.capaBonus = b.places;
   if (b?.bouclier) s.bouclier = b.bouclier;
   if (b?.lucide) s.lucide = true;
+  if (b?.flux) s.flux = Math.min(REGLES.fluxMax, b.flux);
+  if (b?.garde) s.gardeMarque = b.garde;
+  if (b?.releve) s.releve = b.releve;
+  if (b?.fissure) { s.ennemi.fissure = b.fissure; s.ennemi.fissureTours = 2; }
   for (const en of tousEnnemis(s)) choisirIntention(s, en);
-  piocher(s);
+  // Ombre courtoise (Aurel) : la première attaque annoncée de chaque ennemi est retenue
+  if (b?.desarme) for (const en of tousEnnemis(s)) { const it = intentionDe(s, en); if (it.type === 'atk') it.v = Math.round(it.v * (1 - b.desarme)); }
+  piocher(s, REGLES.tailleMain + (b?.main ?? 0));
   return s;
 }
 
@@ -332,10 +338,10 @@ function log(s: CombatEtat, t: string) {
   s.journal = s.journal.slice(0, 6);
 }
 
-function piocher(s: CombatEtat) {
+function piocher(s: CombatEtat, taille: number = REGLES.tailleMain) {
   const r = tireur(s);
   let garde = 0;
-  while (s.main.length < REGLES.tailleMain && garde++ < 80) {
+  while (s.main.length < taille && garde++ < 80) {
     if (!s.pioche.length) {
       if (!s.defausse.length) break;
       s.pioche = r.melanger(s.defausse);
@@ -525,6 +531,14 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
   }
   for (const p of s.porteurs) {
     if (p.pv <= 0 && !p.aTerre) {
+      // Seconde chance (Sasha) : le premier qui tombe se relève, une fois par combat
+      if (s.releve && !s.releveFaite) {
+        s.releveFaite = true;
+        p.pv = Math.max(1, Math.round(p.pvMax * s.releve));
+        log(s, `Seconde chance : ${porteurDef(p.id).nom} se relève (${p.pv} PV).`);
+        emettre({ kind: 'soin', cible: p.id, v: p.pv });
+        continue;
+      }
       p.aTerre = true;
       log(s, `${porteurDef(p.id).nom} est à terre : ses cartes quittent le deck.`);
       emettre({ kind: 'a-terre', cible: p.id });
@@ -540,9 +554,10 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
     emettre({ kind: 'fin', issue: 'defaite' });
     return;
   }
-  // Rempart : une part du bouclier restant passe au tour suivant
-  const garde = Math.round(s.bouclier * (s.garde ?? 0));
-  if (garde) log(s, `Rempart : ${garde} de bouclier gardés.`);
+  // Rempart (et la Marque de Docker) : une part du bouclier restant passe au tour suivant
+  const part = Math.max(s.garde ?? 0, s.gardeMarque ?? 0);
+  const garde = Math.round(s.bouclier * part);
+  if (garde) log(s, `${(s.garde ?? 0) >= part ? 'Rempart' : 'Bras de quai'} : ${garde} de bouclier gardés.`);
   s.bouclier = garde;
   s.garde = 0;
   s.tour++;

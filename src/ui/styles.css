@@ -74,7 +74,7 @@ h1,h2,h3{font-weight:400}
 .res.energie.plein small{color:var(--alerte)}
 .res.energie.plein .jauge-res i{background:var(--alerte)}
 .contenu{flex:1;display:flex;flex-direction:column;gap:16px;padding:16px 16px calc(var(--nav-h) + 28px + var(--sab))}
-.nav{position:fixed;z-index:15;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);display:grid;grid-template-columns:repeat(5,1fr);padding:4px 4px calc(4px + var(--sab));
+.nav{position:fixed;z-index:15;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);display:grid;grid-template-columns:repeat(6,1fr);padding:4px 4px calc(4px + var(--sab));
   background:linear-gradient(rgba(12,14,20,.9),rgba(9,11,15,.98));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:0 -1px 0 var(--filet)}
 .onglet{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:58px;border:none;background:none;color:var(--quiet);font-size:11px;font-weight:500;letter-spacing:.02em}
 .onglet .ico{width:24px;height:24px}

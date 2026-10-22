@@ -188,6 +188,18 @@ export interface BonusMarques {
   bouclier?: number;
   /** la Dissonance n'a pas de prise (Véla, Lectrice) */
   lucide?: boolean;
+  /** une fois par combat, le premier Porteur qui tombe se relève avec cette part de ses PV (Sasha, Seconde chance) */
+  releve?: number;
+  /** Flux au début du combat (Coursier, Foulée) */
+  flux?: number;
+  /** Fissure posée sur l'ennemi visé au début du combat, pour deux tours (Nuit, Œil de nuit) */
+  fissure?: number;
+  /** part du bouclier d'escouade gardée d'un tour à l'autre (Docker, Bras de quai) */
+  garde?: number;
+  /** part retirée à l'attaque annoncée de chaque ennemi au premier tour (Aurel, Ombre courtoise) */
+  desarme?: number;
+  /** cartes en plus dans la main du premier tour (Guetteur, Guet) */
+  main?: number;
 }
 
 export interface CombatEtat {
@@ -217,6 +229,11 @@ export interface CombatEtat {
   dissonance?: boolean;
   /** Marque de Véla (Lectrice) : la Dissonance n'a pas de prise sur l'escouade */
   lucide?: boolean;
+  /** Marque de Docker (Bras de quai) : part du bouclier gardée à chaque tour, même sans Rempart */
+  gardeMarque?: number;
+  /** Marque de Sasha (Seconde chance) : part des PV rendue au premier Porteur qui tombe, et si elle a déjà servi */
+  releve?: number;
+  releveFaite?: boolean;
   /** Épreuve « Fréquences brouillées » : aucune Résonance de tout le combat */
   sansResonance?: boolean;
   tour: number;

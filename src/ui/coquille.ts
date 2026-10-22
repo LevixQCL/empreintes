@@ -9,7 +9,7 @@ import { portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
 import { COULEUR, echap, panneauCompte, type Compte } from './vue';
 
-export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'codex' | 'cartes';
+export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'codex' | 'cartes' | 'porteurs';
 export type Filtre = 'tout' | Lignee;
 
 export interface EcranDistrict {
@@ -29,6 +29,8 @@ export interface EcranDistrict {
   carte: string | null;
   /** Porteur dont on construit le deck (feuille « Les cartes de… »), ou null */
   deck: string | null;
+  /** Porteur dont la fiche est ouverte (onglet Porteurs, escouade), ou null */
+  porteur: string | null;
   /** lignée affichée dans l'écran Cartes */
   filtre: Filtre;
   /** Bibliothèque : onglet, chapitre ouvert, et écran où revenir */
@@ -95,6 +97,7 @@ export function hud(j: Jeu): string {
 const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
   { vue: 'archipel', nom: 'District', icone: 'district' },
   { vue: 'coupe', nom: 'Tour', icone: 'tour' },
+  { vue: 'porteurs', nom: 'Porteurs', icone: 'porteurs' },
   { vue: 'cartes', nom: 'Cartes', icone: 'cartes' },
   { vue: 'codex', nom: 'Chroniques', icone: 'codex' },
   { vue: 'plus', nom: 'Plus', icone: 'plus' },

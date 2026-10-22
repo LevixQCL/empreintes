@@ -7,6 +7,7 @@ import './ui/cristal.css';
 import './ui/bureau.css';
 import './ui/exploration.css';
 import './ui/guide.css';
+import './ui/porteurs.css';
 import * as C from './core/combat';
 import { decouverteEnAttente } from './core/decouvertes';
 import { ennemiDef, moduleDef, porteurDef } from './core/donnees';
@@ -17,6 +18,7 @@ import { firebaseActif } from './net/firebase-config';
 import { htmlCombat, type Ecran as EcranCombat, type Fin, type Compte } from './ui/vue';
 import { ETAPES, htmlBriefing } from './ui/briefing';
 import { brancherTableau, htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre, type EcranDistrict } from './ui/district';
+import { htmlPorteurs } from './ui/porteurs';
 import { PLANS, htmlIntro } from './ui/intro';
 import { animerCompteur, majIntro, precharger } from './ui/intro-lecteur';
 import { htmlTitre } from './ui/titre';
@@ -50,7 +52,7 @@ let lignesVues = 1;
 let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
-const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null, guide: null };
+const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, porteur: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null, guide: null };
 const K: { verrou: boolean; regles: boolean; fuite: boolean; guide: OngletGuide | null; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; decouverteId?: string } = {
   verrou: false, regles: false, fuite: false, guide: null, pops: [], fin: null, etat: null, traces: {},
 };
@@ -87,7 +89,7 @@ function afficher() {
   } else {
     mode = 'district';
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape)
-      : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : htmlArchipel(D);
+      : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : htmlArchipel(D);
   }
   racine.dataset.mode = mode;
   const defile = [...racine.querySelectorAll<HTMLElement>(DEFILANTS)].map((el) => [el.scrollTop, el.scrollLeft] as const);
@@ -328,7 +330,7 @@ async function actionCompte(f: () => Promise<void>) {
 /** change d'onglet : ferme ce qui était ouvert et remonte en haut */
 function ouvrir(v: EcranDistrict['vue']) {
   if (D.vue !== v) window.scrollTo(0, 0);
-  D.vue = v; D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.guide = null;
+  D.vue = v; D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.guide = null; D.porteur = null;
 }
 
 const resultat = (r: J.Resultat) => { D.message = r.ok ? '' : r.message ?? ''; if (r.ok) sauver(); };
@@ -381,7 +383,7 @@ racine.addEventListener('click', async (ev) => {
     // district
     case 'batiment': D.selection = D.selection === id ? null : (id as BatimentId); D.menu = false; break;
     case 'ok-message': D.message = ''; break;
-    case 'menu': D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; D.guide = null; break;
+    case 'menu': D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; D.guide = null; D.porteur = null; break;
     // le mode d'emploi des cartes : ouvrir sur un onglet, changer d'onglet, fermer (district et combat)
     case 'guide': if (mode === 'combat') { K.guide = id as OngletGuide; K.regles = false; } else D.guide = id as OngletGuide; break;
     case 'guide-fermer': if (mode === 'combat') { K.guide = null; K.regles = true; } else D.guide = null; break;
@@ -395,6 +397,9 @@ racine.addEventListener('click', async (ev) => {
     case 'liberer': resultat(J.poster(jeu, id, null)); break;
     case 'fabriquer': resultat(J.fabriquer(jeu, b.dataset.module ?? '', Date.now())); break;
     case 'cartes': ouvrir('cartes'); break;
+    case 'porteurs': ouvrir('porteurs'); break;
+    case 'porteur': D.porteur = id; D.deck = null; break;
+    case 'porteur-fermer': D.porteur = null; break;
     case 'greffer': {
       // un Porteur déjà plein : on ouvre ses cartes pour qu'il en rende une
       const r = J.greffer(jeu, b.dataset.module ?? '', id);
@@ -420,13 +425,13 @@ racine.addEventListener('click', async (ev) => {
     case 'entrer': ouvrir('coupe'); break;
     case 'archipel': ouvrir('archipel'); break;
     case 'coupe': ouvrir('coupe'); break;
-    case 'descendre': D.deck = null; D.fouille = null; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; window.scrollTo(0, 0); break;
-    case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; window.scrollTo(0, 0); break;
+    case 'descendre': D.deck = null; D.fouille = null; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
+    case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
     case 'cible': D.fouille = id as typeof D.fouille; break;
     case 'epreuve': {
       const ep = J.epreuveDef(id);
       D.deck = null; D.fouille = null; D.epreuve = id; D.strateChoisie = J.strateEpreuve(jeu);
-      D.escouade = J.disponibles(jeu).filter((p) => !ep?.interdits?.includes(p)).slice(0, 3); D.vue = 'escouade'; window.scrollTo(0, 0);
+      D.escouade = J.disponibles(jeu).filter((p) => !ep?.interdits?.includes(p)).slice(0, 3); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
     case 'mission': resultat(J.envoyerMission(jeu, id, (b.dataset.duree as J.DureeMission) ?? 'courte', Date.now())); break;

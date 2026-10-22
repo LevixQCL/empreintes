@@ -17,6 +17,7 @@ import { COULEUR, echap } from './vue';
 import { decor, illustrationBatiment, prochainVisuel, reflets, sceneDistrict, visuel } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
+import { feuillePorteur } from './porteurs';
 import { ICO } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict } from './coquille';
 
@@ -397,7 +398,7 @@ function decksPorteurs(j: Jeu): string {
 }
 
 /** La feuille d'un Porteur : les cartes qu'il porte (touche pour reprendre), puis celles qu'on peut lui confier */
-function feuilleDeck(e: EcranDistrict): string {
+export function feuilleDeck(e: EcranDistrict): string {
   const j = e.j;
   const id = e.deck;
   if (!id || !j.porteurs[id]) return '';
@@ -575,19 +576,19 @@ function htmlChapitre(e: EcranDistrict, id: string): string {
 const NOMS_ETAGES = ['Salle de fouilles', 'Bunker des années 2060', 'Galerie aux formes courbes', 'Ruines lumineuses'];
 
 /** Le niveau d'un Porteur et sa barre d'expérience (décision du 22 octobre 2026) */
-function niveauDe(j: EcranDistrict['j'], id: string): string {
+export function niveauDe(j: EcranDistrict['j'], id: string): string {
   const n = niveauPorteur(j, id);
   const part = n.requis ? Math.round((100 * n.xp) / n.requis) : 100;
   return `<span class="niv-porteur" title="${n.requis ? `${n.xp} / ${n.requis} XP vers le niveau ${n.niveau + 1}` : 'Niveau maximum'}"><b>Niv. ${n.niveau}</b><i class="xp"><i style="width:${part}%"></i></i></span>`;
 }
 
 /** la barre d'expérience, fine et dorée, sous la jauge de PV */
-function barreXp(j: EcranDistrict['j'], id: string): string {
+export function barreXp(j: EcranDistrict['j'], id: string): string {
   const n = niveauPorteur(j, id);
   return `<div class="barre-xp" title="${n.requis ? `${n.xp} / ${n.requis} XP vers le niveau ${n.niveau + 1}` : 'Niveau maximum'}"><i style="width:${n.requis ? Math.round((100 * n.xp) / n.requis) : 100}%"></i></div>`;
 }
 
-function jaugePv(pv: number, max: number, usure = 0, usureM = 1): string {
+export function jaugePv(pv: number, max: number, usure = 0, usureM = 1): string {
   return `<div class="jauge-pv"><i class="pv" style="width:${(100 * pv) / max}%"></i>${usure >= 1 ? `<i class="usure" style="width:${(100 * Math.min(usure, usureM)) / max}%"></i>` : ''}</div>`;
 }
 
@@ -693,12 +694,12 @@ function htmlMissions(e: EcranDistrict): string {
 // ---------- Choix de l'escouade ----------
 
 /** La Marque d'un Porteur : acquise, ou la progression vers elle */
-function marqueDe(j: Jeu, id: string): string {
+export function marqueDe(j: Jeu, id: string): string {
   const m = progresMarque(j, id);
   if (!m) return '';
   return m.acquise
-    ? `<small class="marque acquise" title="${echap(m.texte)}">${ICO.ok}Marque ${echap(m.nom)}</small>`
-    : `<small class="marque" title="${echap(m.texte)}">${echap(m.nom)} · ${Math.min(m.n, m.seuil)}/${m.seuil} ${echap(m.quoi)}</small>`;
+    ? `<small class="marque acquise" title="${echap(m.texte)}">${ICO.ok}<span><b>${echap(m.nom)}</b> ${echap(m.court)}</span></small>`
+    : `<small class="marque" title="${echap(m.texte)}"><span><b>${echap(m.nom)}</b> ${Math.min(m.n, m.seuil)}/${m.seuil}</span></small>`;
 }
 
 export function htmlEscouade(e: EcranDistrict): string {
@@ -716,6 +717,16 @@ export function htmlEscouade(e: EcranDistrict): string {
     return id ? `<button type="button" class="emplacement plein" style="--c:${COULEUR[porteurDef(id).lignee]}" data-action="choisir" data-id="${id}" aria-label="Retirer ${echap(porteurDef(id).nom)}">${avatar(id, 56)}<small>${echap(porteurDef(id).nom)}</small></button>`
       : `<div class="emplacement"><span>${i + 1}</span><small>Libre</small></div>`;
   }).join('') + `</div>`;
+  // ce que chacun apporte : sa Marque (active ou à gagner), et sa fiche d'un toucher
+  if (e.escouade.length) {
+    h += `<section class="apports" aria-label="Les Marques de l’escouade"><span class="surtitre">MARQUES DE L’ESCOUADE</span>`
+      + e.escouade.map((id) => {
+        const m = progresMarque(j, id);
+        return `<button type="button" class="apport${m?.acquise ? ' actif' : ''}" style="--c:${COULEUR[porteurDef(id).lignee]}" data-action="porteur" data-id="${id}">${avatar(id, 30)}`
+          + `<span><strong>${m ? echap(m.nom) : echap(porteurDef(id).nom)}</strong><small>${m ? (m.acquise ? echap(m.court) : `à gagner : ${Math.min(m.n, m.seuil)} / ${m.seuil} ${echap(m.quoi)}`) : ''}</small></span>`
+          + `<span class="apport-etat">${m?.acquise ? ICO.ok : ICO.verrou}</span></button>`;
+      }).join('') + `</section>`;
+  }
   // les Fréquences du deck de l'escouade : un trou dans la suite coupe les Résonances
   if (e.escouade.length) {
     const cartes = deckEscouade(j, e.escouade);
@@ -762,7 +773,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const maigre = e.escouade.length === 3 && deck < deckMin;
   h += `<footer class="pied-fixe"><div class="pied-info"><span class="chiffre">${e.escouade.length} / 3</span><small${maigre ? ' class="alerte"' : ''}>${e.escouade.length ? `${deck} cartes dans le deck${maigre ? ` · ${deckMin} au moins` : ''}` : 'Personne pour l’instant'}</small></div>`
     + `<button type="button" class="btn prim large" data-action="partir"${e.escouade.length === 3 ? '' : ' disabled'}>${ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}</button></footer>`;
-  h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : feuilleDeck(e);
+  h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : e.deck ? feuilleDeck(e) : feuillePorteur(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;
 }

@@ -63,6 +63,12 @@ function frequencesLignee(l: Lignee): number[] {
   return n;
 }
 
+/** Les Fréquences principales des cartes d'une lignée, de la plus basse à la plus haute (« 1 à 5 ») */
+export function plageFrequences(l: Lignee): string {
+  const ok = frequencesLignee(l).map((k, i) => (k ? i + 1 : 0)).filter(Boolean);
+  return `${Math.min(...ok)} à ${Math.max(...ok)}`;
+}
+
 /** Les actions du deck de départ : le repère conseillé */
 function actionsDepart(): Record<TypeGeste, number> {
   const n: Record<TypeGeste, number> = { atk: 0, bouclier: 0, soin: 0 };
@@ -86,7 +92,7 @@ function fourchette(t: TypeEffet): string {
 }
 
 /** Les effets de prédilection d'une lignée (au moins deux cartes), du plus courant au moins courant */
-function effetsLignee(l: Lignee): TypeEffet[] {
+export function effetsLignee(l: Lignee): TypeEffet[] {
   const n = new Map<TypeEffet, number>();
   for (const m of MODULES) if (m.lignee === l && m.effet) n.set(m.effet.type, (n.get(m.effet.type) ?? 0) + 1);
   return [...n.entries()].filter(([, k]) => k >= 2).sort((a, b) => b[1] - a[1]).map(([t]) => t);
@@ -180,6 +186,7 @@ function ongletDeck(): string {
     + idee(ICO.flux, 'Couvre les Fréquences de 1 à 9', `Des Fréquences qui se suivent font une Résonance (suite de ${suite}). Chaque lignée a sa zone : une escouade des trois lignées couvre l’échelle, et un chiffre absent coupe tes suites.`, echelleFrequences())
     + idee(ICO.cartes, 'Double les Fréquences utiles', `Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : bouclier d’escouade +${REGLES.bouclierEcho} et +1 Flux.`)
     + idee(ICO.atk, 'Mélange les actions', `Attaque, protection et soin. Le deck de départ en compte ${depart.atk}, ${depart.bouclier} et ${depart.soin} sur ${nDepart} : un bon repère.`, `<div class="g-barre" role="img" aria-label="${depart.atk} attaques, ${depart.bouclier} protections, ${depart.soin} soins">${barre}</div>`)
+    + idee(ICO.cristal, 'Choisis aussi pour les Marques', 'Chaque Porteur gagne une Marque en combattant (onglet Porteurs). Elle ne joue que s’il descend : l’écran de l’escouade montre celles qui seront actives.')
     + idee(ICO.soin, 'Répartis les soins', 'Un Porteur à terre emporte ses cartes. Si tous tes soins sont chez lui, l’escouade n’en a plus au pire moment.')
     + idee(ICO.place, 'Peu de cartes lourdes', `« 2 PL. » : la carte est forte mais prend deux places. Avec une autre carte, elle remplit une chaîne de ${REGLES.capaciteBase} places : pas de suite de 3 sans Flux ni Élan.`)
     + idee('<b class="g-etoile">∗</b>', 'Des jokers pour les suites', 'Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.')
@@ -241,7 +248,7 @@ function ongletCarte(): string {
     + `<li>Doublons et composants font monter une carte : +${Math.round(COLLECTION.bonusNiveau * 100)} % de force par niveau, jusqu’au niveau ${COLLECTION.niveauMax}.</li></ul></section>`;
 
   // les lignées
-  const plages = (l: Lignee) => { const n = frequencesLignee(l); const ok = n.map((k, i) => (k ? i + 1 : 0)).filter(Boolean); return `${Math.min(...ok)} à ${Math.max(...ok)}`; };
+  const plages = plageFrequences;
   h += `<section class="bloc">${titre(ICO_TRIANGLE, 'Trois lignées')}<ul class="g-lignees">`
     + LIGNEES.map((l) => `<li style="--c:${COULEUR[l]}"><b>${NOM_LIGNEES[l]}</b><span><em>Fréquences</em>${plages(l)}</span><small>${effetsLignee(l).map((t) => NOMS_EFFET[t]).join(' · ')}</small></li>`).join('')
     + `</ul>${triangle()}<p class="aide">Chaque flèche donne +${Math.round((REGLES.bonusLignee - 1) * 100)} % de dégâts à la lignée qui bat l’autre, dans les deux sens : tes cartes contre les ennemis, et les ennemis contre tes Porteurs.</p></section>`;

@@ -69,7 +69,7 @@ export interface PorteurDistrict {
   /** les cartes qu'on lui a confiées (exemplaires « carte@métal ») : sa part du deck de combat */
   modules: string[];
   /** ce que le Porteur a vécu, pour ses Marques */
-  faits?: { expeditions?: number; fondations?: number; anciens?: number };
+  faits?: Partial<Record<Fait, number>>;
   /** expérience gagnée en combattant et en mission (décision du 22 octobre 2026) */
   xp?: number;
 }
@@ -117,21 +117,40 @@ export function gagnerXp(j: Jeu, id: string, xp: number): number | null {
 }
 
 // ---------- Les Marques des Porteurs (Bible) ----------
-// Un seuil franchi laisse une Marque permanente, qui change le combat.
-export const MARQUES: Record<string, { nom: string; fait: 'expeditions' | 'fondations' | 'anciens'; seuil: number; texte: string; quoi: string }> = {
-  ilka: { nom: 'Raccourci', fait: 'expeditions', seuil: 30, quoi: 'expéditions réussies', texte: 'Elle connaît tous les raccourcis : +1 place dans la chaîne au premier tour de chaque combat.' },
-  doran: { nom: 'Fondations', fait: 'fondations', seuil: 20, quoi: 'combats dans les Fondations', texte: 'Il couvre les siens : chaque combat commence avec 8 de bouclier d’escouade.' },
-  vela: { nom: 'Lectrice', fait: 'anciens', seuil: 10, quoi: 'empreintes anciennes vaincues', texte: 'Elle lit les Échos : la Dissonance n’a plus de prise sur l’escouade.' },
+// Un seuil franchi laisse une Marque permanente, qui change le combat quand le Porteur est dans l'escouade.
+// Depuis le 22 octobre 2026, chaque Porteur a la sienne (Bryan : choisir un Porteur doit changer quelque chose).
+/** Ce que vit un Porteur et qu'on compte pour sa Marque */
+export type Fait = 'expeditions' | 'fondations' | 'anciens' | 'scellees' | 'abysses' | 'gardiens' | 'combats' | 'missions';
+/** court : l'effet en quelques mots, pour l'écran de l'escouade */
+export interface MarqueDef { nom: string; fait: Fait; seuil: number; texte: string; court: string; quoi: string; bonus: BonusMarques }
+export const MARQUES: Record<string, MarqueDef> = {
+  ilka: { nom: 'Raccourci', fait: 'expeditions', seuil: 30, quoi: 'expéditions réussies', court: '+1 place au premier tour', bonus: { places: 1 },
+    texte: 'Elle connaît tous les raccourcis : +1 place dans la chaîne au premier tour de chaque combat.' },
+  doran: { nom: 'Fondations', fait: 'fondations', seuil: 20, quoi: 'combats dans les Fondations', court: '8 de bouclier au départ', bonus: { bouclier: 8 },
+    texte: 'Il couvre les siens : chaque combat commence avec 8 de bouclier d’escouade.' },
+  vela: { nom: 'Lectrice', fait: 'anciens', seuil: 10, quoi: 'empreintes anciennes vaincues', court: 'insensible à la Dissonance', bonus: { lucide: true },
+    texte: 'Elle lit les Échos : la Dissonance n’a plus de prise sur l’escouade.' },
+  sasha: { nom: 'Seconde chance', fait: 'scellees', seuil: 10, quoi: 'salles scellées ouvertes', court: 'relève le premier qui tombe', bonus: { releve: 0.25 },
+    texte: 'Il remet tout le monde d’aplomb : une fois par combat, le premier Porteur qui tombe se relève avec 25 % de ses PV.' },
+  nuit: { nom: 'Œil de nuit', fait: 'abysses', seuil: 25, quoi: 'combats gagnés sous la Strate −3', court: 'l’ennemi commence fissuré', bonus: { fissure: 0.25 },
+    texte: 'Elle voit la faille dans le noir : l’ennemi visé commence chaque combat fissuré (+25 % de dégâts pendant deux tours).' },
+  aurel: { nom: 'Ombre courtoise', fait: 'gardiens', seuil: 6, quoi: 'gardiens vaincus', court: '1re attaque ennemie −40 %', bonus: { desarme: 0.4 },
+    texte: 'Son ombre retient le premier coup : au premier tour, l’attaque annoncée de chaque ennemi perd 40 % de sa force.' },
+  coursier: { nom: 'Foulée', fait: 'combats', seuil: 40, quoi: 'combats gagnés', court: '1 Flux au départ', bonus: { flux: 1 },
+    texte: 'Il court devant l’escouade : chaque combat commence avec 1 Flux.' },
+  docker: { nom: 'Bras de quai', fait: 'missions', seuil: 8, quoi: 'missions accomplies', court: 'garde 25 % du bouclier', bonus: { garde: 0.25 },
+    texte: 'Il ne lâche rien : à chaque tour, l’escouade garde 25 % de son bouclier pour le tour suivant.' },
+  guetteur: { nom: 'Guet', fait: 'anciens', seuil: 12, quoi: 'empreintes anciennes vaincues', court: '+1 carte au premier tour', bonus: { main: 1 },
+    texte: 'Il voit venir de loin : au premier tour de chaque combat, ta main compte une carte de plus.' },
 };
 export const progresMarque = (j: Jeu, id: string) => {
   const m = MARQUES[id];
   return m ? { ...m, n: j.porteurs[id]?.faits?.[m.fait] ?? 0, acquise: (j.porteurs[id]?.faits?.[m.fait] ?? 0) >= m.seuil } : null;
 };
+/** Les Marques acquises des Porteurs de l'escouade : chacune apporte son bonus au combat */
 export function bonusEscouade(j: Jeu, escouade: string[]): BonusMarques {
   const b: BonusMarques = {};
-  if (escouade.includes('ilka') && progresMarque(j, 'ilka')?.acquise) b.places = 1;
-  if (escouade.includes('doran') && progresMarque(j, 'doran')?.acquise) b.bouclier = 8;
-  if (escouade.includes('vela') && progresMarque(j, 'vela')?.acquise) b.lucide = true;
+  for (const id of escouade) if (progresMarque(j, id)?.acquise) Object.assign(b, MARQUES[id]!.bonus);
   return b;
 }
 
@@ -1042,6 +1061,10 @@ function retourDeMission(j: Jeu, m: Mission): string {
   if (arrives) creuser(j);
   const q = j.porteurs[m.porteur]!;
   q.usure = Math.min(usureMax(m.porteur), q.usure + d.usure);
+  const avantMarque = progresMarque(j, m.porteur)?.acquise;
+  q.faits = { ...q.faits, missions: (q.faits?.missions ?? 0) + 1 };
+  const marque = progresMarque(j, m.porteur);
+  if (marque?.acquise && !avantMarque) log(j, `${p.nom} gagne la Marque ${marque.nom} : ${marque.texte}`);
   const gainXp = Math.round(XP.missionHeure * d.heures * (1 + 0.25 * (m.strate - 1)));
   const monte = gagnerXp(j, m.porteur, gainXp);
   const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}.`;
@@ -1325,6 +1348,10 @@ export function remonter(j: Jeu): Retour {
     if (victoire) f.expeditions = (f.expeditions ?? 0) + 1;
     if (x.strate <= 3) f.fondations = (f.fondations ?? 0) + victoires;
     f.anciens = (f.anciens ?? 0) + anciens;
+    f.combats = (f.combats ?? 0) + victoires;
+    if (x.strate >= 4) f.abysses = (f.abysses ?? 0) + victoires;
+    f.scellees = (f.scellees ?? 0) + (x.gains?.elites ?? 0);
+    if (victoire && !x.fouille && !x.epreuve) f.gardiens = (f.gardiens ?? 0) + 1;
     const m = progresMarque(j, p.id);
     if (m?.acquise && !avant) log(j, `${porteurDef(p.id).nom} gagne la Marque ${m.nom} : ${m.texte}`);
   }

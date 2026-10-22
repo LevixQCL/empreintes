@@ -35,6 +35,7 @@ export const ICO = {
   marteau: svg('<path d="M14 4l6 6-3 3-6-6z"/><path d="M11 7 3 15l3 3 8-8"/>'),
   descendre: svg('<path d="M12 4v15"/><path d="M6 13l6 6 6-6"/>'),
   retour: svg('<path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/>'),
+  porteurs: svg('<circle cx="9" cy="8" r="3.4"/><path d="M2.8 20c.7-3.6 3.2-5.6 6.2-5.6s5.5 2 6.2 5.6"/><path d="M15.2 4.8a3.4 3.4 0 0 1 0 6.4"/><path d="M17.6 14.8c2 .7 3.2 2.4 3.6 5.2"/>'),
   compte: svg('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/>'),
   film: svg('<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M10 9l5 3-5 3z"/>'),
   journal: svg('<path d="M5 6h14M5 12h14M5 18h9"/>'),

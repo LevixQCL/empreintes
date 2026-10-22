@@ -112,6 +112,14 @@ et les effets (règle, astuce, cartes trouvées qui le portent ; les cartes pas 
 On l'ouvre depuis l'écran Cartes, le « ? » de la feuille d'un Porteur ou d'une carte, l'escouade et l'aide du combat.
 Les chiffres sont lus dans les données : un changement d'équilibrage s'y reporte tout seul. Les textes d'effets sont dans `effets.ts`.
 
+**L'onglet Porteurs et les Marques de tous** (22 octobre 2026, `src/ui/porteurs.ts`, `porteurs.css`, `src/core/lore-porteurs.ts`).
+Un onglet entre Tour et Cartes : tous les Porteurs par lignée (ceux pas encore arrivés en silhouette, avec leur condition d'arrivée)
+et la fiche de chacun (présentation et réplique de la Bible, PV, niveau, Usure, Marque, ce que donne sa lignée, poste, cartes).
+Chaque Porteur a maintenant sa Marque (`MARQUES` dans `jeu.ts`, avec son bonus de combat dans `BonusMarques`) :
+Sasha *Seconde chance* (salles scellées), Nuit *Œil de nuit* (combats sous −3), Aurel *Ombre courtoise* (gardiens),
+Coursier *Foulée* (combats), Docker *Bras de quai* (missions), Guetteur *Guet* (empreintes anciennes).
+L'escouade affiche les Marques des trois Porteurs choisis. Le parcours simulé ne change pas : le joueur moyen emmène toujours Ilka, Doran et Véla.
+
 **Le robot d'équilibrage.** `npm run robot` (option `-- --parties 300`) joue des milliers d'expéditions avec
 un joueur automatique qui essaie toutes les chaînes possibles à chaque tour. Il cherche la Strate où le
 deck de départ gagne une fois sur deux, mesure ce que vaut chaque carte (à la place de la carte de départ de
