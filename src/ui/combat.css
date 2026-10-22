@@ -109,3 +109,34 @@
 .combattant .marque-cible{top:auto;bottom:4px;left:4px;right:auto;display:grid;place-items:center;width:18px;height:18px;padding:0;font-size:0;
   clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);box-shadow:0 0 8px rgba(226,115,90,.8)}
 .combattant .marque-cible .ico{width:11px;height:11px}
+
+/* ---------- Lisibilité des cartes (22 octobre 2026) : plus hautes, nom sur deux lignes, chiffres plus gros ---------- */
+.geste.main{width:69px;height:114px}
+.main{gap:4px}
+.scene-ennemi{min-height:140px}
+.geste.main.lourd{width:100px}
+.geste.chaine{width:74px;height:112px}
+.geste.chaine.lourd{width:160px}
+.place-vide{width:74px;height:112px}
+.rail{min-height:114px}
+.geste.main .g-art{height:56%}
+.geste.chaine .g-art{height:54%}
+.geste.main .g-plaque{height:46%}
+.geste.chaine .g-plaque{height:48%}
+.geste .g-plaque{padding:5px 5px 0 6px;gap:3px}
+.geste .g-val{font-size:17px}
+.geste .g-val .ico{width:13px;height:13px}
+.geste .g-nom{font-size:10.5px;font-weight:600;line-height:1.12;white-space:normal;overflow:hidden;text-overflow:clip;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;color:#fff}
+.geste .g-qui{font-size:8.5px}
+.geste.chaine .g-nom{-webkit-line-clamp:1;display:-webkit-box}
+.geste .g-effet{font-size:8px;padding:1px 4px}
+/* une carte injouable reste lisible : un peu éteinte, pas grisée */
+.geste.serre,.geste:disabled{opacity:.72;filter:saturate(.45) brightness(.8) drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+.verrouille .geste:disabled{opacity:1}
+@media (max-height:740px){
+  .geste.main{width:66px;height:108px}
+  .geste.chaine{width:70px;height:106px}
+  .place-vide{width:70px;height:106px}
+  .rail{min-height:110px}
+}
