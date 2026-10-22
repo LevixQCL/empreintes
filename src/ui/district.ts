@@ -456,7 +456,7 @@ const BULLES: Record<string, string> = { ilka: 'b-ilka', doran: 'b-doran', vela:
 /** La rencontre en scène : l'illustration du trio devant la porte, et les répliques en bulles, une par toucher */
 export function htmlRencontre(n = 0): string {
   const fini = n >= REPLIQUES.length;
-  let h = `<section class="scene-rencontre${fini ? ' finie' : ''}" data-action="rencontre-suite" aria-label="La porte scellée">`
+  let h = `<section class="scene-rencontre${fini ? ' finie' : ''}" data-action="rencontre-suite" style="--image:url(./intro/00-titre.webp)" aria-label="La porte scellée">`
     + `<div class="rencontre-fond" aria-hidden="true"><div class="rencontre-image"><img src="./intro/00-titre.webp" alt="" decoding="async"><span class="t-porte"></span><span class="t-flamme"></span><span class="t-halo"></span></div></div>`
     + `<header class="rencontre-haut"><div><span class="label">SOUS LA TOUR DU NOYAU</span><h1>La porte scellée</h1></div><button type="button" class="btn-sec" data-action="archipel">Plus tard</button></header>`
     + `<p class="recitatif">Une porte ronde, scellée depuis les années 2060, luit faiblement. Trois personnes t’attendent devant.</p>`;

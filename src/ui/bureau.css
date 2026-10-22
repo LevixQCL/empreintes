@@ -1,0 +1,168 @@
+/* EMPREINTES — la version PC (« bureau »), chargée après toutes les autres feuilles.
+   Le téléphone ne change pas : tout ce qui suit ne s'applique qu'à partir de 1100 px de large et 600 px de haut.
+   Principe : « le tableau et la vitre ». Les illustrations sont en portrait ; sur un écran large, chaque écran
+   se construit autour de son tableau, en pleine hauteur, et l'interface se range à côté sur du verre,
+   au lieu de se poser dessus. La navigation passe du bas de l'écran à un rail vertical à gauche. */
+
+.nav-embleme{display:none}
+
+@media (min-width:1100px) and (min-height:600px){
+  :root{--rail:108px;--hud-h:60px;--sab:0px}
+
+  /* ================= Coquille du district : rail à gauche, ressources en haut ================= */
+  #app:is([data-mode="district"],[data-mode="combat"]){max-width:none;margin:0;box-shadow:none;background:none}
+  .ecran:has(> .nav){display:grid;grid-template-columns:var(--rail) minmax(0,1fr);grid-template-rows:var(--hud-h) minmax(0,1fr);min-height:100dvh}
+
+  .ecran > .nav{grid-column:1;grid-row:1 / -1;position:sticky;top:0;left:auto;bottom:auto;transform:none;width:auto;height:100dvh;
+    display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:14px 10px 18px;box-shadow:1px 0 0 var(--glace-3,var(--line));
+    background:linear-gradient(90deg,rgba(10,14,32,.97),rgba(6,8,20,.92))}
+  .ecran > .nav::before{left:auto;right:-1px;top:0;bottom:0;width:1px;height:auto;background:linear-gradient(180deg,transparent,var(--glace-2,var(--filet)) 30%,var(--glace-2,var(--filet)) 70%,transparent)}
+  .nav-embleme{display:grid;place-items:center;height:76px;margin-bottom:14px}
+  .nav-embleme img{width:50px;height:auto;filter:drop-shadow(0 0 14px rgba(160,210,255,.4)) drop-shadow(0 4px 8px rgba(0,0,0,.6))}
+  .nav .onglet{flex:none;min-height:80px;gap:6px;font-size:12.5px;border-radius:2px;transition:background .2s ease,color .2s ease}
+  .nav .onglet:last-child{margin-top:auto}
+  .nav .onglet:not(:disabled):hover{background:linear-gradient(90deg,rgba(205,239,255,.07),transparent);color:var(--ink)}
+  .nav .onglet.actif{background:linear-gradient(90deg,rgba(205,239,255,.1),transparent 85%)}
+  .nav .onglet.actif::before{top:50%;left:-10px;width:3px;height:38px;transform:translateY(-50%);clip-path:none;
+    background:linear-gradient(180deg,#fff,var(--glace,var(--cristal)) 40%,#8fb6ff);box-shadow:0 0 12px rgba(160,210,255,.9)}
+
+  .ecran > .hud{grid-column:2;grid-row:1;height:var(--hud-h);display:flex;align-items:center;gap:10px;padding:8px 28px}
+  .ecran > .hud .res{flex:0 1 210px;min-height:42px}
+  .ecran > .hud .res.energie{flex-basis:250px}
+
+  .ecran > .contenu{grid-column:2;grid-row:2;width:100%;max-width:1240px;margin-inline:auto;padding:28px 40px 56px;gap:22px}
+  .toast.seul{left:50%}
+  .toast{left:calc(50% + var(--rail) / 2);bottom:28px;width:min(560px,calc(100% - var(--rail) - 48px))}
+
+  /* Les feuilles (bâtiment, carte, deck, menu, règles) glissent depuis la droite : l'écran reste visible */
+  .voile-feuille{background:rgba(4,6,16,.42)}
+  .feuille{--cut:0px;left:auto;right:0;top:0;bottom:0;transform:none;width:min(480px,42vw);height:100dvh;max-height:none;
+    box-shadow:-1px 0 0 var(--glace-3,var(--line)),-30px 0 80px rgba(0,0,0,.55)}
+  .feuille.entre{animation:feuille-droite .32s cubic-bezier(.2,.8,.2,1)}
+  @keyframes feuille-droite{from{transform:translateX(40%);opacity:.4}to{transform:none;opacity:1}}
+  .feuille .poignee{display:none}
+  .feuille-tete{padding:22px 24px 16px}
+  .feuille-corps{padding:20px 24px 24px}
+  .feuille-pied{padding:16px 24px 20px}
+  .feuille.carte-detail{width:min(620px,48vw)}
+
+  /* ================= District : le tableau au centre, la vitre à droite ================= */
+  .ecran-archipel > .contenu{max-width:none;padding:0;margin:0}
+  .archipel{--h:calc(100dvh - var(--hud-h));--panneau:420px}
+  .tableau-fond{filter:blur(30px) saturate(1.1) brightness(.4)}
+  .toile{left:calc((100% - var(--panneau)) / 2);right:auto;top:0;bottom:0;height:100%;width:auto;aspect-ratio:2/3;transform:translateX(-50%);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent),linear-gradient(180deg,transparent 0,#000 7%);
+    -webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent),linear-gradient(180deg,transparent 0,#000 7%);mask-composite:intersect}
+  .archipel-haut{left:auto;right:28px;top:28px;width:calc(var(--panneau) - 56px);gap:14px}
+  .archipel-haut .mission{padding:16px 18px}
+  .plaque{min-height:48px}
+  .plaque:not(:disabled):hover{transform:translate(-50%,-2px);filter:brightness(1.15)}
+
+  /* ================= Cartes, Tour, Escouade, Chroniques : plus de colonnes ================= */
+  .grille-cartes{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:22px 18px}
+  .carte-tuile:hover{transform:translateY(-4px)}
+  .segments-choix{max-width:640px}
+  .decks-porteurs{flex-wrap:wrap;overflow:visible}
+  .habitants{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+  .grille-porteurs{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+  .ecran-escouade > .pied-fixe{width:100%;max-width:1240px;margin-inline:auto;padding:18px 40px 22px}
+  .ecran-escouade > .pied-fixe .btn{flex:0 1 380px;margin-left:auto}
+  .ecran-codex > .contenu{max-width:900px}
+  .ecran-lecture > .contenu{max-width:900px}
+  .lecture-tete.illustree{min-height:440px}
+  .lecture-texte{font-size:18px}
+
+  /* ================= Combat : l'ennemi à gauche, la chaîne et la main à droite ================= */
+  #app[data-mode="combat"]{max-width:1520px;margin-inline:auto}
+  .ecran-combat{display:grid;height:100dvh;min-height:0;grid-template-columns:minmax(0,1fr) minmax(0,1.04fr);
+    grid-template-rows:auto auto auto auto auto minmax(0,1fr) auto;
+    grid-template-areas:"barre barre" "ennemi chaine" "ennemi lecon" "ennemi escouade" "ennemi ligne" "ennemi main" "ennemi actions";
+    column-gap:32px;row-gap:8px;padding:14px 32px 16px}
+  .ecran-combat > .combat-barre{grid-area:barre}
+  .ecran-combat > .scene-ennemi{grid-area:ennemi;max-height:none;min-height:0}
+  .ecran-combat > .escouade-combat{grid-area:escouade}
+  .ecran-combat > .ligne-escouade{grid-area:ligne;margin:0}
+  .ecran-combat > .zone-chaine{grid-area:chaine}
+  .ecran-combat > .lecon{grid-area:lecon}
+  .ecran-combat > .zone-main{grid-area:main;align-self:end}
+  .ecran-combat > .actions-combat{grid-area:actions;margin:0;padding:0;background:none}
+  .ennemi-nom{font-size:34px}
+  .intention{top:16px;left:16px}
+  .zone-chaine > .rail,.zone-main > .main{zoom:1}
+  .zone-main > .main{justify-content:center;overflow:visible;padding-top:8px}
+  .geste.main:not(:disabled){transition:transform .15s ease,filter .15s ease}
+  .geste.main:not(:disabled):hover{transform:translateY(-6px);filter:brightness(1.12)}
+  .combattant{min-height:64px}
+
+  /* ================= Exploration d'une Strate : la carte à gauche, le récit à droite ================= */
+  .ecran-exploration{display:grid;height:100dvh;min-height:0;grid-template-columns:minmax(0,1fr) 440px;grid-template-rows:auto auto auto minmax(0,1fr);
+    grid-template-areas:"carte barre" "carte escouade" "carte panneau" "carte legende";column-gap:40px;row-gap:16px;padding:24px 40px;align-content:start}
+  .ecran-exploration > .combat-barre{grid-area:barre}
+  .ecran-exploration > .escouade-combat{grid-area:escouade;grid-template-columns:1fr}
+  .ecran-exploration > .carte-strate{grid-area:carte;justify-self:center;height:calc(100dvh - 48px);width:auto;max-height:none;aspect-ratio:4/5}
+  .ecran-exploration > .panneau-exploration{grid-area:panneau;padding:18px 20px}
+  .ecran-exploration > .legende-salles{grid-area:legende;align-self:start}
+
+  /* ================= Titre et intro : le tableau en pleine hauteur, le texte à côté ================= */
+  #app:is([data-mode="titre"],[data-mode="intro"]){max-width:none;margin:0;padding:0}
+
+  .titre,.intro{border-radius:0;min-height:100dvh;padding:0;
+    grid-template-columns:minmax(24px,1fr) calc((100dvh - 64px) * 816 / 1456) minmax(380px,540px) minmax(24px,1fr);column-gap:clamp(40px,5vw,88px)}
+  .titre::before,.intro::before{content:"";position:absolute;inset:-90px;z-index:-4;background:var(--image,none) center/cover #070915;
+    filter:blur(56px) brightness(.38) saturate(1.25);transition:background-image .8s ease}
+  .titre::after,.intro::after{content:"";position:absolute;inset:0;z-index:-4;pointer-events:none;
+    background:radial-gradient(60% 80% at 38% 50%,transparent 40%,rgba(4,6,14,.75))}
+
+  .titre{display:grid;grid-template-rows:1fr auto auto 1fr;row-gap:36px}
+  .titre-fond{grid-column:2 / 3;grid-row:1 / -1;inset:32px 0;overflow:hidden;
+    box-shadow:0 0 0 1px rgba(205,239,255,.18),0 40px 100px rgba(0,0,0,.65)}
+  .titre-image{left:0;transform:none;width:100%;height:100%;animation-name:titre-cam-pc}
+  @keyframes titre-cam-pc{from{transform:scale(1.02)}to{transform:scale(1.07)}}
+  .titre-voile{grid-column:2 / 3;grid-row:1 / -1;inset:32px 0;background:linear-gradient(180deg,rgba(8,10,14,0) 60%,rgba(8,10,14,.45))}
+  .titre-haut{grid-column:3;grid-row:2;text-align:left;justify-items:start;gap:18px}
+  .titre-nom svg{max-width:540px;margin-inline:0}
+  .titre-sous{font-size:13px;padding-inline:0}
+  .titre-bas{grid-column:3;grid-row:3;justify-items:start;gap:16px}
+  .titre-sec{display:flex;gap:10px}
+  .titre-indice{display:none}
+
+  .intro{display:grid;grid-template-rows:32px auto minmax(0,1fr) auto 32px;row-gap:0;gap:0 clamp(40px,5vw,88px);cursor:default}
+  .intro > :is(.intro-fond,.intro-scene,.intro-voile){grid-column:2 / 3;grid-row:2 / 5;inset:0}
+  .intro > .intro-fond{box-shadow:0 0 0 1px rgba(205,239,255,.18),0 40px 100px rgba(0,0,0,.65)}
+  .intro > .intro-particules{grid-column:1 / -1;grid-row:1 / -1}
+  .intro-voile,.intro.texte-haut .intro-voile{background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(8,10,14,.45))}
+  .intro-haut{grid-column:3;grid-row:2;padding-top:4px}
+  .intro-prog{max-width:300px}
+  .intro-corps,.intro.texte-haut .intro-corps{grid-column:3;grid-row:3;align-self:center;margin:0;max-width:30em;gap:14px}
+  .intro h2{font-size:46px}
+  .intro .epoque{font-size:13px}
+  .intro .compteur{font-size:15px}
+  .intro .ligne,.intro.texte-bas .ligne{font-size:22px;line-height:1.55;min-height:6.2em;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+  .intro-bas{grid-column:3;grid-row:4;justify-content:flex-start;gap:12px}
+  .intro-bas > span:empty{display:none}
+  .intro-indice{display:none}
+  .intro-bas .prim{min-width:200px}
+  .intro.admirer .intro-corps,.intro.admirer .intro-bas{opacity:.18}
+
+  /* ================= Rencontre et « Avant d'ouvrir » : la scène garde son cadre portrait ================= */
+  /* Les bulles sont placées en % de l'illustration : la scène reste au format du tableau, au centre, sur son reflet flouté */
+  #app:has(> :is(.scene-rencontre,.scene-briefing)){max-width:none;padding:24px 0}
+  .scene-rencontre,.scene-briefing{width:calc((100dvh - 48px) * 816 / 1456);min-height:calc(100dvh - 48px);margin-inline:auto;border-radius:0;
+    box-shadow:0 0 0 1px rgba(205,239,255,.18),0 40px 100px rgba(0,0,0,.65)}
+  .scene-rencontre::before,.scene-briefing::before{content:"";position:fixed;inset:-90px;z-index:-3;pointer-events:none;
+    background:var(--image,none) center/cover #070915;filter:blur(56px) brightness(.38) saturate(1.25)}
+  .scene-briefing{width:min(760px,calc(100% - 96px))}
+}
+
+/* Les cartes du combat grandissent avec la hauteur de l'écran (la chaîne et la main doivent tenir sans défiler) */
+@media (min-width:1100px) and (min-height:720px){ .ecran-combat{row-gap:12px;padding:20px 36px 24px} .zone-chaine > .rail,.zone-main > .main{zoom:1.2} }
+@media (min-width:1100px) and (min-height:800px){ .zone-chaine > .rail,.zone-main > .main{zoom:1.5} }
+@media (min-width:1100px) and (min-height:880px){ .zone-chaine > .rail,.zone-main > .main{zoom:1.6} }
+
+/* Très grands écrans : un peu plus d'air */
+@media (min-width:1700px) and (min-height:900px){
+  :root{--rail:120px}
+  .archipel{--panneau:460px}
+  .ecran > .contenu{max-width:1400px}
+}
+@media (min-width:1700px) and (min-height:1000px){ .zone-chaine > .rail,.zone-main > .main{zoom:1.75} }

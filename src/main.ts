@@ -4,6 +4,7 @@ import './ui/face-carte.css';
 import './ui/holo.css';
 import './ui/combat.css';
 import './ui/cristal.css';
+import './ui/bureau.css';
 import * as C from './core/combat';
 import { ennemiDef, moduleDef, porteurDef } from './core/donnees';
 import * as J from './core/jeu';
@@ -183,6 +184,7 @@ function majIntro(h: string): boolean {
   ancien.className = neuf.className;
   ancien.dataset.plan = neuf.dataset.plan ?? '';
   ancien.dataset.k = neuf.dataset.k ?? '';
+  ancien.setAttribute('style', neuf.getAttribute('style') ?? '');
   return true;
 }
 

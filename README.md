@@ -40,6 +40,7 @@ src/
     vue.ts         l'écran de combat
     icones.ts      le jeu d'icônes de l'interface (SVG, couleur du texte)
     styles.css     le style « laiton et verre fumé » ; scenes.css (titre, intro) ; face-carte.css (cartes Module)
+    bureau.css     la mise en page PC (à partir de 1100 px de large) : rail à gauche, tableaux en pleine hauteur ; le téléphone n’en dépend pas
   save/          la sauvegarde sur l'appareil
   net/           Firebase : comptes et synchronisation (optionnel)
   main.ts        relie tout : clics, animations, sauvegarde

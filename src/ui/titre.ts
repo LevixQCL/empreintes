@@ -34,7 +34,7 @@ const imageAnimee = () => `<div class="titre-image">`
   + `<span class="t-porte"></span><span class="t-flamme"></span><span class="t-halo"></span></div>`;
 
 export function htmlTitre(introVue: boolean, mouvement: boolean): string {
-  return `<section class="titre" data-action="titre-jouer" aria-label="EMPREINTES, écran titre">`
+  return `<section class="titre" data-action="titre-jouer"${IMAGE_TITRE ? ' style="--image:url(./intro/00-titre.webp)"' : ''} aria-label="EMPREINTES, écran titre">`
     + `<div class="titre-fond" aria-hidden="true">${IMAGE_TITRE ? imageAnimee() : fondCode()}</div>`
     + (mouvement ? particules('cristal') : '')
     + `<div class="titre-voile" aria-hidden="true"></div>`

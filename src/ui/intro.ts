@@ -231,7 +231,7 @@ export function htmlIntro(i: number, k: number, mouvement = true, texteCache = f
   const progression = PLANS.map((_, m) => `<span class="${m < i ? 'fait' : m === i ? 'ici' : ''}"></span>`).join('');
   // une seule phrase à la fois, comme un sous-titre : l'image reste visible
   const pas = p.lignes.length > 1 ? `<div class="intro-pas" aria-hidden="true">${p.lignes.map((_, m) => `<span class="${m < n ? 'fait' : ''}"></span>`).join('')}</div>` : '';
-  return `<section class="intro amb-${p.ambiance}${actif ? ' illustree' : ''}${texteCache ? ' admirer' : ''} texte-${p.texte ?? 'bas'}" data-plan="${i}" data-k="${n}" aria-label="Introduction" data-action="intro-suivant">`
+  return `<section class="intro amb-${p.ambiance}${actif ? ' illustree' : ''}${texteCache ? ' admirer' : ''} texte-${p.texte ?? 'bas'}" data-plan="${i}" data-k="${n}"${actif ? ` style="--image:url(./intro/${actif}.webp)"` : ''} aria-label="Introduction" data-action="intro-suivant">`
     + (actif ? fond(actif, p.camera, mouvement, p.foyer) : '')
     + `<div class="intro-scene" aria-hidden="true">${p.scene(n)}</div>`
     + (mouvement ? particules(p.ambiance) : '')

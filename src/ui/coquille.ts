@@ -106,7 +106,7 @@ export function navigation(e: EcranDistrict): string {
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
   };
   const actif = e.menu ? 'plus' : e.vue === 'escouade' ? 'coupe' : e.vue;
-  return `<nav class="nav" aria-label="Navigation">` + ONGLETS.map((t) => {
+  return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./icon.svg" alt=""></span>` + ONGLETS.map((t) => {
     const ferme = !j.chambre && t.vue === 'cartes';
     const action = t.vue === 'plus' ? 'menu' : t.vue;
     return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${ferme ? ' disabled' : ''}${actif === t.vue ? ' aria-current="page"' : ''}>`

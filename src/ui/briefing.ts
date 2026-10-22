@@ -66,7 +66,7 @@ export function htmlBriefing(etape: number): string {
   const e = ETAPES[i]!;
   const d = porteurDef(e.qui);
   const dernier = i === ETAPES.length - 1;
-  return `<section class="scene-briefing" aria-label="Avant d’ouvrir">`
+  return `<section class="scene-briefing" style="--image:url(./intro/00-titre.webp)" aria-label="Avant d’ouvrir">`
     + `<div class="rencontre-fond" aria-hidden="true"><div class="rencontre-image"><img src="./intro/00-titre.webp" alt="" decoding="async"><span class="t-flamme"></span><span class="t-halo"></span></div></div>`
     + `<header class="briefing-haut"><div><span class="label">AVANT D’OUVRIR · ${i + 1} / ${ETAPES.length}</span><h1>${echap(e.titre)}</h1></div>`
     + `<button type="button" class="btn-sec" data-action="ouvrir-chambre">Passer</button></header>`
