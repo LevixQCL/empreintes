@@ -140,3 +140,18 @@
   .place-vide{width:70px;height:106px}
   .rail{min-height:110px}
 }
+
+/* ---------- Langage d'impact (22 octobre 2026) ---------- */
+.calque-impacts{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:60}
+.combat-barre .boutons-barre{display:flex;gap:6px}
+/* sous un quart de ses PV, l'ennemi se fend */
+.scene-ennemi.fele .ennemi-art{filter:drop-shadow(0 0 10px rgba(255,107,91,.35))}
+.fele-trait{position:absolute;z-index:1;inset:8% 18% 30%;pointer-events:none;opacity:.85;mix-blend-mode:screen;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23FFD9A0' stroke-width='.9' stroke-linecap='round'%3E%3Cpath d='M48 8l4 14-6 9 9 12-5 10 7 13-4 12M52 22l12 6 9-4M46 31l-11 5-6 10M55 43l11 2M50 53l-12 4-4 11M57 66l10 7'/%3E%3C/svg%3E") center/contain no-repeat;
+  animation:fele-pulse 2.4s ease-in-out infinite}
+@keyframes fele-pulse{50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.fele-trait{animation:none}}
+/* la carte qui agit s'avance, dans la couleur de sa lignée ; celles déjà jouées s'éteignent */
+.zone-chaine .en-jeu{transform:translateY(-10px) scale(1.08);filter:brightness(1.25) drop-shadow(0 0 14px var(--c,var(--gold)));z-index:2;transition:transform .12s ease-out}
+.zone-chaine .jouee{filter:saturate(.35) brightness(.6);transform:scale(.96)}
+@media (prefers-reduced-motion:reduce){.zone-chaine .en-jeu{transform:none}}

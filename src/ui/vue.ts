@@ -10,6 +10,7 @@ import type { CombatEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import type { Expedition } from '../core/expedition';
 import { illustrationEnnemi, illustrationModule, portrait, textureMetal } from './art';
 import { couleurFrequence } from './carte';
+import { sonActif } from './impact';
 import { ICO } from './icones';
 
 export interface Pop {
@@ -18,6 +19,9 @@ export interface Pop {
   texte: string;
   couleur: string;
 }
+
+const ICONE_SON = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+const ICONE_MUET = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
 
 export interface Fin {
   titre: string;
@@ -50,6 +54,8 @@ export interface Ecran {
   lecon?: string;
   /** PV (en %) juste avant le dernier coup reçu, par cible : la jauge laisse une traînée qui se vide */
   traces?: Record<string, number>;
+  /** pendant l'animation d'une chaîne : la place de la carte qui agit */
+  actif?: number;
 }
 
 export const COULEUR: Record<LigneeGeste, string> = {
@@ -202,11 +208,13 @@ export function htmlCombat(e: Ecran): string {
   h += `<header class="combat-barre"><div class="puces"><span class="puce">${ICO.strate}${lieu}</span>`
     + (e.x.tutoriel ? '' : e.x.carte ? `<span class="puce">${e.x.carte.salles[e.x.carte.position]?.type === 'gardien' ? 'Gardien' : e.x.carte.salles[e.x.carte.position]?.type === 'elite' ? 'Salle scellée' : `Combat ${(e.x.gagnes ?? 0) + 1}`}</span>` : `<span class="puce">Combat ${e.x.index + 1}/${e.x.sequence.length}</span>`)
     + `<span class="puce">Tour ${s.tour}</span></div>`
-    + `<button type="button" class="btn-icone" data-action="regles" aria-expanded="${e.regles}" aria-label="Règles">${ICO.aide}</button></header>`;
+    + `<div class="boutons-barre"><button type="button" class="btn-icone" data-action="son" aria-pressed="${sonActif()}" aria-label="${sonActif() ? 'Couper le son' : 'Activer le son'}">${sonActif() ? ICONE_SON : ICONE_MUET}</button>`
+    + `<button type="button" class="btn-icone" data-action="regles" aria-expanded="${e.regles}" aria-label="Règles">${ICO.aide}</button></div></header>`;
 
   // la scène de l'ennemi
-  h += `<section class="scene-ennemi l-${def.lignee}" style="--fond:${FONDS[def.id] ?? '#2A2438'}" aria-label="Ennemi">`
+  h += `<section class="scene-ennemi l-${def.lignee}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'}" aria-label="Ennemi">`
     + (ill ? `<img class="ennemi-art" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
+    + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
     + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
     + `<div class="intention ${classeIntention}" aria-live="polite"><span class="int-ico">${iconeIntention}</span><span class="int-txt"><small>INTENTION</small>${echap(texteIntention(s))}</span></div>`
     + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
@@ -223,7 +231,7 @@ export function htmlCombat(e: Ecran): string {
     const cible = !ko && it.type === 'atk' && (it.zone || it.cibleId === p.id);
     const img = portrait(d.id);
     const basPv = !ko && p.pv / p.pvMax <= 0.3;
-    h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${basPv ? ' bas' : ''}" style="--c:${COULEUR[d.lignee]}">${popsPour(e, p.id)}`
+    h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${basPv ? ' bas' : ''}" data-porteur="${p.id}" style="--c:${COULEUR[d.lignee]}">${popsPour(e, p.id)}`
       + `<span class="avatar${img ? '' : ' sans-portrait'}" style="--t:34px" aria-hidden="true">${img ? `<img src="${img}" alt="">` : `<b>${echap(d.nom.charAt(0))}</b>`}</span>`
       + `<div class="cb-infos"><span class="n">${echap(d.nom)}</span><div class="cb-vie">${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5 })}<span class="chiffre" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}`}">${ko ? '0' : p.pv}</span></div></div>`
       + (cible ? `<span class="marque-cible">${ICO.atk}CIBLE</span>` : '') + `</div>`;
@@ -236,7 +244,12 @@ export function htmlCombat(e: Ecran): string {
   h += `<section class="zone-chaine${a.suite >= 3 ? ' resonne' : ''}" aria-label="Chaîne"><div class="chaine-tete"><span class="surtitre">CHAÎNE · ${placesPrises(s)} / ${capacite(s)}</span>`
     + (mult ? `<span class="badge-reso">${ICO.flux}RÉSONANCE ${mult}</span>` : a.suite === 2 ? '<span class="badge-reso faible">SUITE EN COURS</span>' : '')
     + `</div><div class="rail">`;
-  for (const g of s.chaine) h += maillon(g, verrou);
+  // pendant l'animation, la carte qui agit s'avance, celles déjà jouées s'éteignent
+  s.chaine.forEach((g, i) => {
+    const etat = e.actif === undefined ? '' : i === e.actif ? 'en-jeu' : i < e.actif ? 'jouee' : '';
+    const html = maillon(g, verrou);
+    h += etat ? html.replace('class="', `class="${etat} `) : html;
+  });
   for (let i = 0; i < libres; i++) h += `<span class="place-vide" aria-hidden="true">${i === 0 && dernier && !a.echo ? (fs[fs.length - 1]! + 1) : ''}</span>`;
   h += `</div><p class="conseil">${conseil}</p>`;
   if (!e.lecon) {

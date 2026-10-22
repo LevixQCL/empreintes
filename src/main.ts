@@ -17,6 +17,7 @@ import { brancherTableau, htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEs
 import { PLANS, htmlIntro, imagesPlan } from './ui/intro';
 import { htmlTitre } from './ui/titre';
 import { htmlExploration } from './ui/exploration';
+import { basculerSon, impact, initImpacts } from './ui/impact';
 import { activerCartes } from './ui/carte';
 import { NOMS_RARETE } from './core/collection';
 
@@ -45,7 +46,7 @@ let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
 const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null };
-const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number> } = {
+const K: { verrou: boolean; regles: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number } = {
   verrou: false, regles: false, pops: [], fin: null, etat: null, traces: {},
 };
 
@@ -71,7 +72,7 @@ function afficher() {
   else if (mode === 'combat' && jeu.expedition) {
     const etat = K.etat ?? jeu.expedition.combat;
     const lecon = jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;
-    h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, pops: K.pops, fin: K.fin, lecon, traces: K.traces });
+    h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}) });
   } else {
     mode = 'district';
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape)
@@ -292,10 +293,16 @@ function popsDe(ev: Evenement) {
   else if (ev.kind === 'flux') pop('escouade', `+${ev.gain} Flux`, 'var(--gold)');
 }
 
+/** un toucher pendant l'animation la fait passer plus vite */
+let rapide = false;
 async function jouer(pas: Pas[]) {
   K.verrou = true;
+  rapide = false;
+  initImpacts(reduit);
+  let bonus = 0;
   for (const p of pas) {
-    await pause(p.ev.kind === 'resonance' ? 250 : 380);
+    const base = p.ev.kind === 'carte' ? 130 : p.ev.kind === 'resonance' ? 250 : p.ev.kind === 'degats' && p.ev.cible === 'ennemi' ? 300 : 380;
+    await pause((base + bonus) * (rapide ? 0.35 : 1));
     // la jauge touchée garde une traînée de ses PV d'avant le coup, qui se vide
     if (p.ev.kind === 'degats' && p.ev.net > 0) {
       const avant = K.etat ?? jeu.expedition?.combat;
@@ -307,10 +314,14 @@ async function jouer(pas: Pas[]) {
       }
     }
     K.etat = p.etat;
+    if (p.ev.kind === 'carte') K.actif = p.ev.rang;
+    else if (p.ev.kind === 'fin' || (p.ev.kind === 'degats' && p.ev.cible !== 'ennemi')) K.actif = undefined;
     popsDe(p.ev);
     afficher();
+    bonus = impact(p.ev, racine);
   }
-  await pause(300);
+  await pause(300 + bonus * (rapide ? 0.35 : 1));
+  K.actif = undefined;
   K.etat = null;
   if (jeu.expedition && jeu.expedition.combat.issue !== 'en-cours') J.finDeCombat(jeu);
   K.fin = finPour();
@@ -344,6 +355,8 @@ function ouvrir(v: EcranDistrict['vue']) {
 }
 
 const resultat = (r: J.Resultat) => { D.message = r.ok ? '' : r.message ?? ''; if (r.ok) sauver(); };
+
+racine.addEventListener('pointerdown', () => { if (K.verrou) rapide = true; });
 
 racine.addEventListener('click', async (ev) => {
   const b = (ev.target as HTMLElement).closest<HTMLElement>('[data-action]');
@@ -483,6 +496,7 @@ racine.addEventListener('click', async (ev) => {
     case 'repiocher': if (s && !K.verrou) { C.repiocher(s); sauver(); } break;
     case 'lancer': if (s && !K.verrou) { await jouer(C.lancer(s)); return; } break;
     case 'regles': K.regles = !K.regles; break;
+    case 'son': basculerSon(); break;
     case 'suivant': J.continuer(jeu); K.fin = null; sauver(); window.scrollTo(0, 0); break;
     case 'salle': {
       const r = J.entrer(jeu, Number(id));

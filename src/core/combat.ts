@@ -165,6 +165,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean } = {}): Pas[
     emettre({ kind: 'resonance', suite: a.suite, mult: a.mult });
   }
   for (const [i, g] of s.chaine.entries()) {
+    emettre({ kind: 'carte', rang: i, total: s.chaine.length, lignee: ligneeGeste(g), type: g.type, porteur: g.porteur, suite: a.suite });
     for (const ev of appliquer(s, g, a.mult, i)) emettre(ev);
     if (s.ennemi.pv <= 0) break;
   }

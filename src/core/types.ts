@@ -185,6 +185,8 @@ export interface CombatEtat {
 
 export type Evenement =
   | { kind: 'resonance'; suite: number; mult: number }
+  /** une carte de la chaîne entre en jeu (pour l'animation) : sa place, sa lignée, son action */
+  | { kind: 'carte'; rang: number; total: number; lignee: LigneeGeste; type: TypeGeste; porteur: string | null; suite: number }
   | { kind: 'degats'; cible: string; net: number; absorbe: number }
   | { kind: 'bouclier'; cible: 'escouade' | 'ennemi'; v: number }
   | { kind: 'soin'; cible: string; v: number }
