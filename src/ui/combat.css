@@ -198,9 +198,29 @@
 .cb-fond,.cb-lignee,.cb-vie .chiffre small,.piles em{display:none}
 
 /* ---------- Les équerres de métal (22 octobre 2026) ----------
-   Une équerre peinte sur Midjourney par métal (public/art/ornements), retournée au coin droit en bas de la plaque
-   (le coin en haut à gauche est déjà pris par la gemme de la Fréquence). Le fer a ses boulons, le cuivre ses rivets,
-   l'or ses volutes : la rareté se lit aussi à la forme. La nacre n'en a pas, comme elle n'a pas de cadre. */
-.geste .g-orn{position:absolute;z-index:2;right:-1px;bottom:-1px;width:44%;aspect-ratio:1;pointer-events:none;transform:rotate(180deg);
-  background:0 0/contain no-repeat;filter:drop-shadow(0 -1px 1.5px rgba(0,0,0,.85))}
-.geste.lourd .g-orn{width:30%}
+   Une équerre peinte sur Midjourney par métal (public/art/ornements), posée sur le coin en haut à gauche de la carte,
+   par-dessus le cadre ; la gemme de la Fréquence est sertie dans son angle. (Bryan la voulait en haut au coin, pas en bas.)
+   Le fer a ses boulons, le cuivre ses rivets, l'or ses volutes : la rareté se lit aussi à la forme.
+   La nacre n'en a pas, comme elle n'a pas de cadre. La gemme et ses petites Fréquences sont donc hors de la fenêtre
+   de la carte (.g-cadre), et se placent par rapport au bord de la carte. */
+/* une équerre à chaque coin : la même image tournée d'un quart de tour à chaque fois (Bryan, 22 octobre 2026) ;
+   aux deux coins coupés de la carte, la pointe de l'équerre est rognée par la découpe */
+.geste .g-orn{position:absolute;z-index:3;height:26%;width:auto;aspect-ratio:1;pointer-events:none;
+  background:0 0/contain no-repeat;filter:drop-shadow(0 0 1.5px rgba(0,0,0,.9))}
+.geste .g-orn.hg{top:0;left:0}
+.geste .g-orn.hd{top:0;right:0;transform:rotate(90deg)}
+.geste .g-orn.bd{bottom:0;right:0;transform:rotate(180deg)}
+.geste .g-orn.bg{bottom:0;left:0;transform:rotate(270deg)}
+/* ce qui vivait dans le coin en haut à droite se range à côté de l'équerre */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste:not(.gm-nacre):not(.gm-argent) .g-effet{right:8px}
+.geste:not(.gm-nacre):not(.gm-argent) .g-lourd{right:34px}
+.geste.halo:not(.gm-nacre):not(.gm-argent) .g-suite{top:4px;right:28px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.halo.a-effet:not(.gm-nacre):not(.gm-argent) .g-suite{right:28px}
+.geste .g-socle{top:5px;left:5px;z-index:4}
+.geste .g-pips{top:33px;left:8px;z-index:4}
+.geste.chaine .g-pips{top:36px;left:9.5px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle{top:6px;left:6px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips{top:34px;left:9px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-pips{top:37px;left:10.5px}
+/* le texte de la plaque s'écarte un peu du bras de l'équerre du bas à gauche */
+.geste:not(.gm-nacre):not(.gm-argent) .g-plaque{padding-left:9px}

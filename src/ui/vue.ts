@@ -97,17 +97,18 @@ function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: 
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]};--fc:${accord ? '#5d5470' : couleurFrequence(g.f)};--tex:url(${textureMetal(metal)})" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="g-cadre">`
     + (fond ? `<span class="g-art${ill ? '' : ' g-portrait'}" style="background-image:url(${fond})" aria-hidden="true"></span>` : '<span class="g-art g-vide" aria-hidden="true"></span>')
-    // l'équerre de métal, au coin droit en bas de la plaque
-    + (orn ? `<span class="g-orn" style="background-image:url(${orn})" aria-hidden="true"></span>` : '')
-    + `<span class="g-socle" aria-hidden="true"><span class="g-freq">${accord ? '∗' : g.f}</span></span>`
-    + (autres.length ? `<span class="g-pips" aria-hidden="true">${autres.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</span>` : '')
     + (g.lourd ? '<span class="g-lourd">2 PL.</span>' : '')
     + (o.halo ? `<span class="g-suite">${ICO.monter}</span>` : '')
     + `<span class="g-plaque"><span class="g-ligne"><span class="g-val ${g.type}">${ICO[g.type]}<b>${g.v}</b></span>`
     + (g.effet ? `<span class="g-effet">${NOMS_EFFET[g.effet.type]}</span>` : '') + `</span>`
     + `<span class="g-nom">${echap(g.nom)}</span>`
     + (taille === 'chaine' ? `<span class="g-qui">${echap(nomP)}</span>` : '')
-    + `</span></span></button>`;
+    + `</span></span>`
+    // hors de la fenêtre, par-dessus le cadre : une équerre de métal à chaque coin (la même image, tournée), et la gemme sertie dans celle du haut à gauche
+    + (orn ? ['hg', 'hd', 'bd', 'bg'].map((c) => `<span class="g-orn ${c}" style="background-image:url(${orn})" aria-hidden="true"></span>`).join('') : '')
+    + `<span class="g-socle" aria-hidden="true"><span class="g-freq">${accord ? '∗' : g.f}</span></span>`
+    + (autres.length ? `<span class="g-pips" aria-hidden="true">${autres.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</span>` : '')
+    + `</button>`;
 }
 
 /**
