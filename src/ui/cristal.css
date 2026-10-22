@@ -370,3 +370,46 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app[data-mode="combat"] .geste{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 #app[data-mode="combat"] .geste.main .g-nom{bottom:calc(100% + 26px)}
 #app[data-mode="combat"] .geste.chaine .g-nom{bottom:calc(100% + 34px)}
+
+/* ── Socle peint (22 octobre 2026), seulement si la carte n'a pas de cadre peint d'un seul tenant : forme = action, chiffre = force ── */
+.geste{--sz:34px}.geste.chaine{--sz:38px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.g-socle2{position:absolute;width:var(--sz);height:var(--sz);right:calc(var(--ep) * .5 - 3px);left:auto;bottom:calc(var(--ep) + 1px);display:grid;place-items:center;gap:0}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val.g-socle2{bottom:calc(var(--ep) + 10px)}
+.geste .g-socle2 .sc{position:absolute;inset:0;background:var(--socle) center/contain no-repeat;pointer-events:none;filter:drop-shadow(0 1px 2px #000)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.g-socle2 b{position:relative;font-size:10.5px;-webkit-text-stroke:2px #120c08;paint-order:stroke fill;color:#fff7e4;transform:translateY(.5px)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val.g-socle2 b{font-size:11.5px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.g-socle2.deux b{font-size:9px;letter-spacing:-.04em}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val.g-socle2.deux b{font-size:10px}
+/* l'effet (nom vertical, bord droit) remonte au-dessus du socle, en bas à droite */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.a-effet .g-effet{bottom:calc(var(--ep) + var(--sz) + 2px);top:auto;right:calc(var(--ep) + 1px)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine.a-effet .g-effet{bottom:calc(var(--ep) + var(--sz) + 11px)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.plein.a-effet .g-effet{bottom:30px}
+
+/* ---------- Cadres peints d'un seul tenant (22 octobre 2026) ----------
+   Un cadre par métal et par action (Midjourney, Retexture) : cadre + cristal de la Fréquence en haut à gauche + socle de l'action
+   en bas à droite. La nacre garde seulement le cristal et le socle (sans cadre). Le jeu teinte le cristal de la couleur de la Fréquence
+   et pose les deux chiffres au centre peint (art.ts, CADRES_PLEINS, mesuré sur l'image), plus le nom en bas à gauche. */
+.geste.plein .g-monture,.geste.plein .g-val,.geste.plein .g-nom,.geste.plein .g-qui{display:none!important}
+.geste.plein .g-cadre{overflow:hidden}
+.geste .g-plein{position:absolute;inset:0;z-index:3;pointer-events:none}
+.geste .g-plein i{position:absolute;inset:0}
+.geste .g-plein .cp-cadre{background:var(--cp-img) 0 0/100% 100% no-repeat;filter:drop-shadow(0 0 1px rgba(0,0,0,.7))}
+.geste .g-plein .cp-teinte{-webkit-mask:var(--cp-masque) 0 0/100% 100% no-repeat;mask:var(--cp-masque) 0 0/100% 100% no-repeat;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--fc) 40%,#fff),var(--fc) 70%);mix-blend-mode:multiply;opacity:.95}
+.geste .g-plein b{position:absolute;width:0;height:0;display:flex;align-items:center;justify-content:center;line-height:0;
+  font-family:'Cinzel Force',var(--display);font-weight:900;font-size:11px;color:#fff7e4;-webkit-text-stroke:2px #120c08;paint-order:stroke fill}
+.geste.chaine .g-plein b{font-size:12px}
+.geste .g-plein .cp-f{left:var(--fx);top:var(--fy);margin-top:.8px;text-shadow:0 0 4px color-mix(in srgb,var(--fc) 70%,#fff)}
+.geste.chaine .g-plein .cp-f{margin-top:.2px}
+.geste .g-plein .cp-v{left:var(--vx);top:var(--vy);margin-top:.4px}
+.geste.chaine .g-plein .cp-v{margin-top:.3px}
+.geste .g-plein .cp-v.deux{font-size:9px;letter-spacing:-.05em}
+.geste.chaine .g-plein .cp-v.deux{font-size:10px}
+/* le nom de la carte, en bas à gauche, jusqu'au socle */
+.geste .g-plein .cp-nom{position:absolute;left:10.5%;bottom:7.5%;max-width:calc(var(--vx) - 25%);font-family:var(--display);font-size:7px;line-height:1.1;letter-spacing:.02em;
+  color:#f1e6cf;text-shadow:0 0 2px #000,0 0 4px #000,0 1px 1px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.geste.gm-nacre .g-plein .cp-nom{left:6%}
+/* fer, cuivre et argent un peu plus fins (-7,5 % d'épaisseur) : le cadre déborde légèrement et le bord de la carte le rogne */
+.geste.gm-fer .g-plein{inset:-.46% -.69%}
+.geste.gm-cuivre .g-plein{inset:-.34% -.53%}
+.geste.gm-argent .g-plein{inset:-.27% -.4%}

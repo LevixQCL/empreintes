@@ -9,7 +9,7 @@ import { NOMS_EFFET, libelleEffet } from '../core/effets';
 import type { CombatEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
 import { DISTRICT } from '../core/jeu';
-import { cadreMetal, fondCombat, illustrationEnnemi, illustrationModule, pierreFrequence, portrait, symboleAction, textureMetal } from './art';
+import { cadreMetal, fondCombat, illustrationEnnemi, illustrationModule, portrait, socleAction, textureMetal, cadrePlein } from './art';
 import { couleurFrequence } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
@@ -86,11 +86,16 @@ function popsPour(e: Ecran, cible: string) {
     .map((p) => `<span class="pop${(p.echelle ?? 1) >= 1.5 ? ' gros' : ''}" style="--pc:${p.couleur};--ps:${p.echelle ?? 1}" aria-hidden="true">${echap(p.texte)}</span>`).join('');
 }
 
+/** Le socle peint d'une carte (Midjourney, 22 octobre 2026) : sa forme dit l'action (étoile hérissée = attaque, écu = défense, fleur = soin), le chiffre au centre la force */
+function socle(type: 'atk' | 'bouclier' | 'soin', v: number): string {
+  return `<span class="g-val g-socle2 ${type}${v >= 10 ? ' deux' : ''}" style="--socle:url(${socleAction(type)})"><i class="sc"></i><b>${v}</b></span>`;
+}
+
 /**
  * Une carte en combat (décision du 22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue).
  * Un cadre de métal (teinté par la lignée), l'illustration en haut (à défaut, le portrait du Porteur qui la joue),
- * la Fréquence sertie dans un chaton au coin, les autres Fréquences possibles en petits chatons dessous,
- * et une plaque dans le métal de la carte pour la force, l'effet et le nom.
+ * puis le cadre peint d'un seul tenant de son métal et de son action (cristal de la Fréquence en haut à gauche, socle de la force
+ * en bas à droite, 22 octobre 2026) : le jeu y teinte le cristal et pose les deux chiffres et le nom.
  */
 export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean } = {}) {
   const lign = ligneeGeste(g);
@@ -100,8 +105,8 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
   const fond = ill ?? (g.porteur ? portrait(g.porteur) : null);
   const metal = (g.carte?.split('@')[1] as Rarete | undefined) ?? 'fer';
   const cadre = cadreMetal(metal);
-  const autres = !accord && g.fs && g.fs.length > 1 ? g.fs.filter((f) => f !== g.f) : [];
-  const cls = ['geste', taille, `gm-${metal}`, g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : ''].filter(Boolean).join(' ');
+  const plein = cadrePlein(metal, g.type);
+  const cls = ['geste', taille, `gm-${metal}`, plein ? 'plein' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
   const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${g.effet ? ', ' + libelleEffet(g.effet) : ''}${o.halo ? ', prolonge ta suite' : ''}`;
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]};--fc:${accord ? '#5d5470' : couleurFrequence(g.f)};--tex:url(${textureMetal(metal)})" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
@@ -109,11 +114,11 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
     + (fond ? `<span class="g-art${ill ? '' : ' g-portrait'}" style="background-image:url(${fond})" aria-hidden="true"></span>` : '<span class="g-art g-vide" aria-hidden="true"></span>')
     // le cadre peint du métal, par-dessus l'image et la plaque, sous la gemme
     + (cadre ? `<span class="g-monture" style="--cadre:url(${cadre})" aria-hidden="true"></span>` : '')
-    + `<span class="g-socle${accord ? '' : ' peinte'}" aria-hidden="true"${accord ? '' : ` style="--pierre:url(${pierreFrequence(g.f)})"`}><span class="g-freq">${accord ? '∗' : g.f}</span></span>`
-    + (autres.length ? `<span class="g-pips" aria-hidden="true">${autres.map((f) => `<i class="peinte" style="--fc:${couleurFrequence(f)};--pierre:url(${pierreFrequence(f)})">${f}</i>`).join('')}</span>` : '')
+    // cadre peint d'un seul tenant : cristal (teinté de la Fréquence) et socle de l'action peints avec le cadre ; le nom en bas à gauche
+    + (plein ? `<span class="g-plein" aria-hidden="true" style="--cp-img:url(${plein.img});--cp-masque:url(${plein.masque});--fx:${plein.f[0]}%;--fy:${plein.f[1]}%;--vx:${plein.v[0]}%;--vy:${plein.v[1]}%"><i class="cp-cadre"></i><i class="cp-teinte"></i><b class="cp-f">${accord ? '∗' : g.f}</b><b class="cp-v${g.v >= 10 ? ' deux' : ''}">${g.v}</b><span class="cp-nom">${echap(g.nom)}</span></span>` : '')
     + (g.lourd ? '<span class="g-lourd">2 PL.</span>' : '')
     + (o.halo ? `<span class="g-suite">${ICO.monter}</span>` : '')
-    + `<span class="g-plaque"><span class="g-ligne"><span class="g-val ${g.type}"><img class="g-sym" src="${symboleAction(g.type)}" alt=""><b>${g.v}</b></span>`
+    + `<span class="g-plaque"><span class="g-ligne">${socle(g.type, g.v)}`
     + (g.effet ? `<span class="g-effet">${NOMS_EFFET[g.effet.type]}</span>` : '') + `</span>`
     + `<span class="g-nom">${echap(g.nom)}</span>`
     + (taille === 'chaine' ? `<span class="g-qui">${echap(nomP)}</span>` : '')

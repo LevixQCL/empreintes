@@ -206,18 +206,17 @@ function ongletCarte(): string {
   const ex = gesteDeCarte(EXEMPLE, 'doran');
   let h = `<section class="bloc">${titre(ICO.cartes, 'En combat')}<div class="g-anatomie">`
     + `<div class="g-anat-carte">${carteExemple(ex, 'chaine')}`
-    + ['freq', 'pips', 'effet', 'force', 'qui', 'cadre'].map((k, i) => `<i class="g-num n-${k}" aria-hidden="true">${i + 1}</i>`).join('')
+    + ['freq', 'effet', 'force', 'nom', 'cadre'].map((k, i) => `<i class="g-num n-${k}" aria-hidden="true">${i + 1}</i>`).join('')
     + `</div><ol class="g-legende">`
-    + `<li><b>Fréquence</b>, la pierre au coin.</li>`
-    + `<li><b>Autres Fréquences</b>, en argent et plus.</li>`
+    + `<li><b>Fréquence</b> : le chiffre du cristal, en haut à gauche ; sa couleur suit la Fréquence.</li>`
     + `<li><b>Effet</b>, en lettres d’or.</li>`
-    + `<li><b>Action et force</b> : le symbole dit ce qu’elle fait, le chiffre combien.</li>`
-    + `<li><b>Porteur</b> qui la joue.</li>`
+    + `<li><b>Action et force</b> : la forme du socle dit ce qu’elle fait (étoile = attaque, écu = défense, fleur = soin), le chiffre combien.</li>`
+    + `<li><b>Nom</b> de la carte.</li>`
     + `<li><b>Cadre</b> : le métal de la carte.</li>`
     + `</ol></div><ul class="g-regles">`
-    + `<li>Des Fréquences qui se suivent font une <b>Résonance</b>. Une carte à plusieurs Fréquences prend seule celle qui prolonge ta suite : touche ses petites pierres pour en changer.</li>`
+    + `<li>Des Fréquences qui se suivent font une <b>Résonance</b>. Une carte à plusieurs Fréquences (argent et plus) prend seule celle qui prolonge ta suite ; en combat, le bouton sous la carte permet d’en changer.</li>`
     + `<li>Plus le métal est rare, plus le cadre est fin. La nacre n’en a pas.</li>`
-    + `<li>En combat, le <b>nom</b> se cache : garde le doigt sur la carte, ou survole-la, pour le lire.</li>`
+    + `<li>Le <b>nom</b> est en bas à gauche de la carte.</li>`
     + `</ul></section>`;
 
   // la même carte dans la collection

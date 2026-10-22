@@ -95,12 +95,11 @@
   background:linear-gradient(180deg,#f3d896,#c99d48);box-shadow:0 0 0 1.2px #0B0D12,0 1px 3px rgba(0,0,0,.6)}
 .g-num::before{content:"";position:absolute;top:50%;height:.8px;background:rgba(240,211,140,.7)}
 /* chaque numéro est posé au bord de la carte, un petit trait le relie à ce qu'il désigne */
-.g-num.n-freq{left:-13px;top:4px}      .g-num.n-freq::before{left:100%;width:6px}
-.g-num.n-pips{left:-13px;top:16px}     .g-num.n-pips::before{left:100%;width:6px}
-.g-num.n-effet{right:-13px;top:52px}   .g-num.n-effet::before{right:100%;width:9px}
-.g-num.n-force{left:-13px;top:75px}    .g-num.n-force::before{left:100%;width:5px}
-.g-num.n-qui{right:-13px;top:97px}     .g-num.n-qui::before{right:100%;width:16px}
-.g-num.n-cadre{right:-13px;top:30px}   .g-num.n-cadre::before{right:100%;width:7px}
+.g-num.n-freq{left:-13px;top:8px}      .g-num.n-freq::before{left:100%;width:8px}
+.g-num.n-effet{right:-13px;top:45px}   .g-num.n-effet::before{right:100%;width:9px}
+.g-num.n-force{right:-13px;top:92px}   .g-num.n-force::before{right:100%;width:6px}
+.g-num.n-nom{left:-13px;top:96px}      .g-num.n-nom::before{left:100%;width:10px}
+.g-num.n-cadre{right:-13px;top:20px}   .g-num.n-cadre::before{right:100%;width:7px}
 .g-legende{list-style:none;margin:0;padding:6px 0 0;display:grid;gap:10px;counter-reset:legende;font-size:13px;line-height:1.4;color:var(--quiet)}
 .g-legende li{counter-increment:legende;position:relative;padding-left:25px}
 .g-legende li::before{content:counter(legende);position:absolute;left:0;top:0;display:grid;place-items:center;width:17px;height:17px;border-radius:50%;
