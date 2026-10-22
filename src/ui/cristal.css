@@ -303,3 +303,18 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
   color:#e9e1cf;text-shadow:0 1px 2px #000,0 0 5px rgba(0,0,0,.9)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-fer,.gm-cuivre,.gm-argent,.gm-or) .g-nom{font-size:9px;letter-spacing:.04em}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-qui{font-family:var(--display);font-size:7.5px;letter-spacing:.06em}
+
+/* ---------- Pierres et symboles peints (22 octobre 2026) ----------
+   La Fréquence est une pierre gravée peinte sur Midjourney (public/art/frequences), posée dans le coin à la place de la gemme en code,
+   avec une lueur dans la couleur de sa Fréquence ; les Fréquences de rechange sont les mêmes pierres, plus petites.
+   L'action (attaque, protection, soin) est un symbole peint à côté de la force. */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle.peinte{width:31px;height:31px;top:2px;left:2px;clip-path:none;
+  background:var(--pierre) center/contain no-repeat;filter:drop-shadow(0 0 3px var(--fc)) drop-shadow(0 2px 2px rgba(0,0,0,.85))}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-socle.peinte{width:34px;height:34px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle.peinte .g-freq{display:none}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips{top:33px;left:4px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-pips{top:36px;left:5px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips i.peinte{width:17px;height:17px;font-size:0;clip-path:none;opacity:1;
+  background:var(--pierre) center/contain no-repeat;filter:drop-shadow(0 0 2px var(--fc)) drop-shadow(0 1px 1px #000)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val .g-sym{width:15px;height:15px;object-fit:contain;transform:translateY(1px);filter:drop-shadow(0 1px 2px #000)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val .g-sym{width:16px;height:16px}

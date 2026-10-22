@@ -94,6 +94,10 @@ export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
  * Cadre peint d'une rareté (Midjourney, Retexture de nos modèles de carte, 22 octobre 2026) : de plus en plus fin avec la rareté.
  * Fer et or sont des cadres droits, cuivre et argent ont les deux coins coupés. La nacre n'a pas de cadre.
  */
+/** Pierre gravée d'une Fréquence (Midjourney, 22 octobre 2026) */
+export const pierreFrequence = (f: number) => `${base}frequences/${f}.webp`;
+/** Symbole peint d'une action : épée, bouclier, croix de jade (Midjourney, 22 octobre 2026) */
+export const symboleAction = (t: 'atk' | 'bouclier' | 'soin') => `${base}actions/${t}.webp`;
 export const cadreMetal = (r: Rarete): string | null => (r === 'nacre' ? null : `${base}cadres/${r}.webp`);
 /** Fond de la carte d'une Strate, une illustration par zone (0 Fondations, 1 salles closes, 2 mémoires, 3 le fond), quand elle existe */
 const STRATES_ILLUSTREES = new Set<number>([0, 1, 2, 3]);
