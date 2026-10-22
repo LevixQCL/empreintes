@@ -21,6 +21,8 @@ import { feuillePorteur } from './porteurs';
 import { ICO, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict, type Filtre } from './coquille';
 
+import './district.css';
+
 export type { EcranDistrict, Vue } from './coquille';
 
 export { COULEUR_RARETE };
@@ -427,6 +429,19 @@ function fenetreDecision(acte: Acte): string {
     + `</div><small class="aide">Ce choix est définitif. Aucun n’est « le bon » : chacun règle une partie du problème et en aggrave une autre.</small></div></div>`;
 }
 
+/** Une icône qui dit de quoi parle chaque ligne de « Pendant ton absence » */
+function iconeRetour(l: string): Icone {
+  const t = l.toLowerCase();
+  if (t.includes('clinique') || t.includes('soign')) return 'soin';
+  if (t.includes('améliorer') || t.includes('niveau')) return 'monter';
+  if (t.includes('chantier')) return 'marteau';
+  if (t.includes('creuseur')) return 'ouvrier';
+  if (t.includes('forge') || t.includes('carte')) return 'cartes';
+  if (t.includes('énergie') || t.includes('stockage')) return 'energie';
+  if (t.includes('mission') || t.includes('expédition')) return 'descendre';
+  return 'cristal';
+}
+
 export function htmlArchipel(e: EcranDistrict): string {
   const j = e.j;
   // le tableau garde ses proportions (les plaques sont placées en % de l'image) ; au-dessus, son ciel flouté prolonge l'écran.
@@ -442,7 +457,7 @@ export function htmlArchipel(e: EcranDistrict): string {
   else if (j.choix.length) h += fenetreChoix(j);
   else if (e.retour.length) {
     h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="retour-titre"><div class="fenetre retour"><span class="surtitre">BON RETOUR, DIRECTEUR</span><h2 id="retour-titre">Pendant ton absence</h2><ul>`
-      + e.retour.map((l) => `<li>${ICO.cristal}<span>${echap(l)}</span></li>`).join('') + `</ul><button type="button" class="btn prim large" data-action="retour-ok">Au travail</button></div></div>`;
+      + e.retour.map((l) => `<li>${ICO[iconeRetour(l)]}<span>${echap(l)}</span></li>`).join('') + `</ul><button type="button" class="btn prim large" data-action="retour-ok">Au travail</button></div></div>`;
   }
   return coquille(e, h, 'ecran-archipel');
 }
@@ -494,27 +509,33 @@ function feuilleCarte(e: EcranDistrict): string {
     + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
     + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(m)}</div></div>`
     + (loreCarte(cle) ? `<blockquote class="lore-carte">${echap(loreCarte(cle)!)}</blockquote>` : '');
-  // progression
-  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.monter}Progression</h3>`;
-  if (requis === null) h += `<p class="aide">Niveau maximum atteint.</p>`;
+  // à qui la confier : la décision la plus fréquente, donc juste sous la carte
+  h += `<section class="bloc fc-confier"><h3 class="titre-bloc">${ICO.greffe}${porte ? `Portée par ${echap(porteurDef(porte).nom)}` : 'Confier à'}</h3><p class="fc-aide">${porte ? 'Touche son portrait pour la reprendre, ou un autre Porteur pour la lui passer.' : `Elle entrera dans ton deck quand ce Porteur descendra (${DISTRICT.cartesMax} cartes au plus, de sa lignée).`}</p><div class="fc-porteurs">`
+    + porteurs.map((p) => {
+      const ici = porte === p.id;
+      const n = j.porteurs[p.id]!.modules.length;
+      const img = portrait(p.id);
+      return `<button type="button" class="fc-porteur${ici ? ' actif' : ''}${n >= DISTRICT.cartesMax && !ici ? ' plein' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="${ici ? 'degreffer' : 'greffer'}" data-module="${cle}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}>`
+        + `<span class="fc-portrait">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : avatar(p.id, 48)}${ici ? `<span class="fc-coche">${ICO.ok}</span>` : ''}</span>`
+        + `<strong>${echap(p.nom)}</strong><small>${ici ? 'la porte · reprendre' : n >= DISTRICT.cartesMax ? `${n} / ${DISTRICT.cartesMax} · échanger` : `${n} / ${DISTRICT.cartesMax} cartes`}</small></button>`;
+    }).join('') + `</div></section>`;
+  // progression : où on en est, et ce qui manque, en clair
+  h += `<section class="bloc fc-prog"><h3 class="titre-bloc">${ICO.monter}Progression</h3>`;
+  if (requis === null) h += `<p class="fc-etat or">Niveau maximum atteint.</p>`;
   else {
     const pret = c.doublons >= requis;
+    const manqueD = Math.max(0, requis - c.doublons);
+    const manqueC = Math.max(0, cout - j.composants);
+    const etat = !pret ? `Encore <b>${manqueD} doublon${manqueD > 1 ? 's' : ''}</b> pour le niveau ${c.niveau + 1}. On en trouve en fouillant et dans les colis du ravitaillement.`
+      : manqueC ? `Doublons réunis. Il manque <b>${manqueC} composant${manqueC > 1 ? 's' : ''}</b>.` : `Prête : elle peut passer au niveau ${c.niveau + 1}.`;
     h += `<div class="progression"><div class="jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></div><span class="chiffre">${c.doublons} / ${requis} doublons</span></div>`
-      + `<p class="aide">Niveau ${c.niveau + 1} : +${Math.round(COLLECTION.bonusNiveau * 100)} % de force.</p>`
-      + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="monter" data-module="${cle}"${pret && j.composants >= cout ? '' : ' disabled'}>${ICO.monter}Monter · ${prix('composants', cout, j.composants >= cout)}</button>`;
+      + `<p class="fc-etat${pret && !manqueC ? ' or' : ''}">${etat} <span>Niveau ${c.niveau + 1} : +${Math.round(COLLECTION.bonusNiveau * 100)} % de force.</span></p>`
+      + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="monter" data-module="${cle}"${pret && j.composants >= cout ? '' : ' disabled'}>${ICO.monter}Passer au niveau ${c.niveau + 1} · ${prix('composants', cout, j.composants >= cout)}</button>`;
     if (c.doublons > 0) h += `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button>`;
     h += `</div>`;
   }
   if (requis === null && c.doublons > 0) h += `<div class="ligne-btn"><button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button></div>`;
   h += `</section>`;
-  // à qui la confier : elle prend une place dans le deck de combat
-  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Confier à</h3><p class="aide">Une carte confiée à un Porteur entre dans ton deck de combat quand il descend. ${DISTRICT.cartesMax} cartes au plus par Porteur, de sa lignée.</p><div class="rangee">`
-    + porteurs.map((p) => {
-      const ici = porte === p.id;
-      const n = j.porteurs[p.id]!.modules.length;
-      return `<button type="button" class="tuile-porteur${ici ? ' actif' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="${ici ? 'degreffer' : 'greffer'}" data-module="${cle}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}>`
-        + `${avatar(p.id, 48)}<strong>${echap(p.nom)}</strong><small>${ici ? 'La porte · reprendre' : `${n} / ${DISTRICT.cartesMax}`}</small>${ici ? `<span class="bonus ideal">${ICO.ok}</span>` : ''}</button>`;
-    }).join('') + `</div></section>`;
   return h + `</div></section>`;
 }
 
@@ -542,10 +563,13 @@ export function feuilleDeck(e: EcranDistrict): string {
     + `<button type="button" class="btn-icone" data-action="deck-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   if (parti) h += `<p class="aide">${echap(p.nom)} est en expédition : ses cartes changeront à son retour.</p>`;
   h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour la reprendre.</p>`;
-  h += porte.length ? `<div class="grille-cartes">${porte.map((k) => tuile(k, 'degreffer', '<span class="libre">reprendre</span>')).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
+  const fs = [...new Set(gestesDe(j, id).flatMap((g) => g.fs ?? [g.f]))].sort((a, b) => a - b);
+  if (fs.length) h += `<p class="dk-freq">Fréquences qu’il apporte : ${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</p>`;
+  h += porte.length ? `<div class="grille-cartes">${porte.map((k) => tuile(k, 'degreffer', `<span class="dk-action">${ICO.retour}Reprendre</span>`)).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
   h += `</section><section class="bloc"><h3 class="titre-bloc">${ICO.cartes}À lui confier</h3>`
-    + `<p class="aide">${plein ? `${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : reprends-en une d’abord.` : `Les cartes ${NOM_LIGNEE[p.lignee].toLowerCase()}s de ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
-  h += libres.length ? `<div class="grille-cartes${plein ? ' grisee' : ''}">${libres.map((k) => { const qui = greffesDe(j, k)[0]; return tuile(k, 'greffer', qui ? `${avatar(qui, 20)}<span class="libre">${echap(porteurDef(qui).nom)}</span>` : '<span class="libre">libre</span>'); }).join('')}</div>` : `<p class="aide">Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.</p>`;
+    + `<p class="aide">${plein ? `${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : reprends-en une d’abord.` : `Les cartes de sa lignée (${NOM_LIGNEES[p.lignee]}) dans ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
+  const triees = [...libres].sort((a, b) => Number(!!greffesDe(j, a)[0]) - Number(!!greffesDe(j, b)[0]));
+  h += libres.length ? `<div class="grille-cartes${plein ? ' grisee' : ''}">${triees.map((k) => { const qui = greffesDe(j, k)[0]; return tuile(k, 'greffer', qui ? `${avatar(qui, 20)}<span class="dk-chez">chez ${echap(porteurDef(qui).nom)}</span>` : `<span class="dk-action">${ICO.greffe}Confier</span>`); }).join('')}</div>` : `<p class="aide">Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.</p>`;
   return h + `</section></div></section>`;
 }
 

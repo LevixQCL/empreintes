@@ -163,7 +163,7 @@ function ongletDeck(): string {
 
   // le mode d'emploi, en trois gestes
   h += `<section class="bloc">${titre(ICO.greffe, 'En trois gestes')}<ol class="g-etapes">`
-    + `<li><b>Confie tes cartes.</b> Onglet <em>Cartes</em> : touche un Porteur sous « Construire le deck », puis les cartes à lui confier. Ou touche une carte, puis « Confier à ».</li>`
+    + `<li><b>Confie tes cartes.</b> Onglet <em>Porteurs</em> : touche un Porteur, puis ses cartes pour lui en confier. Ou, dans l’onglet <em>Cartes</em>, touche une carte puis un Porteur sous « Confier à » (le filtre « Libres » montre celles que personne ne porte).</li>`
     + `<li><b>Remplis chaque Porteur.</b> ${DISTRICT.cartesMax} cartes de sa lignée au plus. Touche une carte qu’il porte pour la lui reprendre.</li>`
     + `<li><b>Choisis l’escouade.</b> Onglet <em>Tour</em>, une Strate, « Descendre ». Les ${ESCOUADE} Porteurs choisis apportent leurs cartes, et la barre « Fréquences du deck » montre ce que ça donne.</li>`
     + `</ol></section>`;
