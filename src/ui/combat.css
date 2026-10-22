@@ -247,3 +247,14 @@
 .intention.brume .int-txt{color:var(--ink-2)}
 @media (max-width:899px){.scene-ennemi.en-groupe{min-height:175px}.scene-ennemi .traits .trait{font-size:9px;padding:1px 5px}}
 @media (max-width:899px){.scene-ennemi.en-groupe .tags .tag{display:none}}
+
+/* ---------- Premières rencontres (22 octobre 2026) ---------- */
+.fenetre.decouverte{text-align:center;max-width:420px}
+.decouverte-portrait{display:block;width:84px;height:84px;margin:0 auto 10px;border-radius:50%;object-fit:cover;object-position:50% 22%;
+  box-shadow:0 0 0 2px rgba(205,239,255,.6),0 0 0 5px rgba(8,10,20,.9),0 0 22px rgba(150,200,255,.45)}
+.decouverte-ico{display:grid;place-items:center;width:64px;height:64px;margin:0 auto 10px;border-radius:50%;color:#f3c66a;
+  background:radial-gradient(circle at 40% 30%,rgba(255,231,168,.25),rgba(20,16,10,.9));box-shadow:0 0 0 1.5px rgba(243,198,106,.6),0 0 18px rgba(243,198,106,.35)}
+.decouverte-ico .ico{width:28px;height:28px}
+.conseil-decouverte{margin:4px 0 14px;padding:9px 12px;text-align:left;font-size:14px;line-height:1.45;color:var(--ink);
+  background:rgba(243,198,106,.08);box-shadow:inset 3px 0 0 #f3c66a}
+.conseil-decouverte b{display:block;font:600 10px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#f3c66a}

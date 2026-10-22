@@ -13,6 +13,7 @@ import { cadreMetal, fondCombat, illustrationEnnemi, illustrationModule, pierreF
 import { couleurFrequence } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
+import type { Decouverte } from '../core/decouvertes';
 
 export interface Pop {
   id: number;
@@ -55,6 +56,8 @@ export interface Ecran {
   fin: Fin | null;
   /** consigne du combat guidé (chambre scellée) */
   lecon?: string;
+  /** une mécanique rencontrée pour la première fois, à expliquer (decouvertes.ts) */
+  decouverte?: Decouverte;
   /** PV (en %) juste avant le dernier coup reçu, par cible : la jauge laisse une traînée qui se vide */
   traces?: Record<string, number>;
   /** pendant l'animation d'une chaîne : la place de la carte qui agit */
@@ -432,6 +435,15 @@ function htmlEcranCombat(e: Ecran): string {
 
   if (e.regles) h += regles();
   else if (e.fuite && peutFuir(e.x) && !verrou) h += feuilleFuite(e);
+  if (e.decouverte && !e.fin) {
+    const d = e.decouverte;
+    const ill = d.ennemi ? illustrationEnnemi(d.ennemi) : null;
+    h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="decouverte-titre"><div class="fenetre decouverte">`
+      + (ill ? `<img class="decouverte-portrait" src="${ill}" alt="" decoding="async">` : `<span class="decouverte-ico" aria-hidden="true">${ICO.cristal}</span>`)
+      + `<span class="surtitre">${echap(d.sur)}</span><h2 id="decouverte-titre">${echap(d.titre)}</h2><p>${echap(d.texte)}</p>`
+      + (d.conseil ? `<p class="conseil-decouverte"><b>Conseil</b> ${echap(d.conseil)}</p>` : '')
+      + `<button type="button" class="btn prim large" data-action="decouverte-ok" data-id="${echap(d.id)}">Compris</button></div></div>`;
+  }
   if (e.fin) {
     const victoire = !/Défaite|Repoussés/.test(e.fin.titre);
     h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="fin-titre"><div class="fenetre fin ${victoire ? 'victoire' : 'defaite'}"><span class="surtitre">${victoire ? 'VICTOIRE' : 'L’ESCOUADE RECULE'}</span><h2 id="fin-titre">${echap(e.fin.titre)}</h2><p>${echap(e.fin.texte)}</p>`

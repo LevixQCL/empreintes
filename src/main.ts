@@ -7,6 +7,7 @@ import './ui/cristal.css';
 import './ui/bureau.css';
 import './ui/exploration.css';
 import * as C from './core/combat';
+import { decouverteEnAttente } from './core/decouvertes';
 import { ennemiDef, moduleDef, porteurDef } from './core/donnees';
 import * as J from './core/jeu';
 import type { BatimentId, CombatEtat, Evenement, Pas } from './core/types';
@@ -48,7 +49,7 @@ let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
 const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null };
-const K: { verrou: boolean; regles: boolean; fuite: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number } = {
+const K: { verrou: boolean; regles: boolean; fuite: boolean; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; decouverteId?: string } = {
   verrou: false, regles: false, fuite: false, pops: [], fin: null, etat: null, traces: {},
 };
 
@@ -74,7 +75,13 @@ function afficher() {
   else if (mode === 'combat' && jeu.expedition) {
     const etat = K.etat ?? jeu.expedition.combat;
     const lecon = jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;
-    h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, fuite: K.fuite, pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}) });
+    // une mécanique rencontrée pour la première fois : expliquée entre deux tours (jamais pendant le combat guidé)
+    // une seule par tour (sauf la phase d'un gardien) : quatre fenêtres d'affilée noieraient le joueur
+    const tourCombat = `${jeu.expedition.sequence.length}:${etat.tour}`;
+    const enAttente = !K.verrou && !K.fin && !jeu.expedition.tutoriel && etat.issue === 'en-cours' ? decouverteEnAttente(jeu.decouvertes ?? [], etat) : null;
+    const decouverte = enAttente && (enAttente.id === 'phase' || K.decouverteTour !== tourCombat || K.decouverteId === enAttente.id) ? enAttente : null;
+    if (decouverte) { K.decouverteTour = tourCombat; K.decouverteId = decouverte.id; }
+    h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, fuite: K.fuite, pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
   } else {
     mode = 'district';
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape)
@@ -476,6 +483,7 @@ racine.addEventListener('click', async (ev) => {
     case 'accorder': if (s && !K.verrou) { C.accorder(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'cibler': if (s && !K.verrou) { C.cibler(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'viser': if (s && !K.verrou) { C.viser(s, Number(b.dataset.id)); sauver(); } break;
+    case 'decouverte-ok': { const id = b.dataset.id ?? ''; if (id && !(jeu.decouvertes ??= []).includes(id)) jeu.decouvertes.push(id); sauver(); break; }
     case 'vider': if (s && !K.verrou) { C.viderChaine(s); sauver(); } break;
     case 'allonger': if (s && !K.verrou) { C.allonger(s); sauver(); } break;
     case 'repiocher': if (s && !K.verrou) { C.repiocher(s); sauver(); } break;

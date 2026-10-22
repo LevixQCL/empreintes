@@ -96,6 +96,8 @@ Un Porteur en retard de deux niveaux sur le plus avancé apprend 1,5 fois plus v
 - *Conditions de salle* (`CONDITIONS`, `conditionDe`) : à partir de −2, une salle de combat sur trois (un gardien sur deux) ;
   visibles sur la carte avant d'entrer.
 - *Pas de combat sans fin* (`usureCombat`) : après le tour 10 les ennemis se soignent de moins en moins, après le tour 25 ils frappent plus fort.
+- *Premières rencontres* (`src/core/decouvertes.ts`) : la première fois qu'un groupe, un trait, une condition ou une phase de gardien
+  apparaît, une fenêtre l'explique avec un conseil (une par tour au plus ; ce qui est vu est gardé dans `Jeu.decouvertes`).
 Ces mécaniques durcissent les combats d'à peu près ce que l'XP des Porteurs apporte : `FORCE.niveaux` est revenu à 0.
 
 **Pas de Fusion.** Un métal se trouve dans les Strates, les boss, les choix et les garanties ; il ne se fabrique pas et ne

@@ -187,6 +187,8 @@ export interface Jeu {
   actes: { chambre?: GardeChambre; lecture?: LectureVela; fin?: FinCampagne };
   /** la Confiance des habitants, de 0 à 100 : elle ne destitue jamais le directeur, mais elle colore le jeu (Bible) */
   confiance: number;
+  /** les mécaniques de combat déjà expliquées la première fois qu'elles sont apparues (decouvertes.ts) */
+  decouvertes?: string[];
   /** index de l'objectif guidé en cours (OBJECTIFS.length = tous faits) */
   objectif: number;
   /** fragments d'archives trouvés, dans l'ordre */
@@ -325,6 +327,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     arrives: [],
     actes: {},
     confiance: 50,
+    decouvertes: [],
     objectif: 0,
     fragments: [],
     lus: [],
@@ -363,6 +366,7 @@ function migrer(j: Jeu) {
   j.arrives ??= [];
   j.actes ??= {};
   j.confiance ??= 50;
+  j.decouvertes ??= [];
   for (const p of PORTEURS) j.porteurs[p.id] ??= { usure: 0, poste: null, modules: [] };
   j.objectif ??= ancien && j.strate > 1 ? OBJECTIFS.length : 0;
   j.fragments ??= [];
