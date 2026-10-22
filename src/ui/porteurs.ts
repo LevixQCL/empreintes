@@ -19,6 +19,8 @@ import { COULEUR, echap } from './vue';
 import './fiche-porteur.css';
 
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];
+/** pour accorder « Pourquoi il / elle est là » */
+const IL = new Set(['doran', 'sasha', 'aurel', 'coursier', 'docker', 'guetteur']);
 const fr = (x: number) => x.toLocaleString('fr-BE');
 
 /** Où est le Porteur en ce moment */
@@ -89,7 +91,7 @@ export function htmlPorteurs(e: EcranDistrict): string {
   const presents = porteursPresents(j);
   const libres = presents.filter((id) => statut(j, id).classe === 'libre').length;
   let h = entete(`${presents.length} PORTEUR${presents.length > 1 ? 'S' : ''} · <span class="pt-dispo">${libres} DISPONIBLE${libres > 1 ? 'S' : ''}</span>`, 'Porteurs');
-  h += `<p class="pt-intro">Trois Porteurs descendent ensemble, avec leurs cartes et leur Marque. Touche un portrait pour tout savoir de lui.</p>`;
+  h += `<p class="pt-intro">Une Augmentée, un Géné, une Résonante : depuis un siècle, les trois lignées se méfient les unes des autres. Sous la Tour, elles descendent ensemble, chacune avec ce que les deux autres n’ont pas. Touche un portrait pour savoir pourquoi chacun est là.</p>`;
   for (const l of LIGNEES) {
     const ici = PORTEURS.filter((p) => p.lignee === l);
     const la = ici.filter((p) => presents.includes(p.id));
@@ -146,6 +148,8 @@ export function feuillePorteur(e: EcranDistrict): string {
     + (pres ? `<span class="fp-role">${echap(pres.titre)}</span>` : '') + `</div></header>`;
 
   if (pres) h += `<div class="fp-bio"><p>${echap(pres.texte)}</p>${pres.replique ? `<p class="fp-replique">« ${echap(pres.replique)} »</p>` : ''}</div>`;
+  if (pres?.pourquoi) h += `<section class="fp-bloc fp-pourquoi"><h3 class="fp-h3">${ICO.porte}Pourquoi ${IL.has(id) ? 'il' : 'elle'} est là</h3><p class="fp-texte">${echap(pres.pourquoi)}</p></section>`;
+  if (pres?.aParte) h += `<aside class="fp-aparte"><strong>${echap(pres.aParte.titre)}</strong><p>${echap(pres.aParte.texte)}</p></aside>`;
 
   // ---------- son état, en vrais chiffres ----------
   const soin = soinParHeure(j);

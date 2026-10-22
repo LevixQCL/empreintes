@@ -640,7 +640,14 @@ const REPLIQUES: { id: string; texte: string }[] = [
   { id: 'ilka', texte: '« On attend quoi, l’Élu ? Qu’elle s’ouvre toute seule ? »' },
   { id: 'doran', texte: '« Mon père a travaillé dans ce puits, avant qu’on le mure. Il n’a jamais aimé son silence. »' },
   { id: 'vela', texte: '« Quelque chose a peur, derrière cette porte. Et ce n’est pas moi. »' },
+  // pourquoi ces trois-là : chacun dit ce qui l'amène (22 octobre 2026, Bryan : « c'est à expliquer dans le jeu »)
+  { id: 'ilka', texte: '« Les ouvriers m’ont envoyée te chercher à l’aube. Quand ça presse, c’est moi qu’on envoie. Et là, ça presse. »' },
+  { id: 'doran', texte: '« En dessous, il y a les couloirs qu’on a murés en 2060. Je suis le dernier à savoir où ils passent. »' },
+  { id: 'vela', texte: '« Oui, j’ai une mèche d’or. Mais je suis d’ici, pas des Hauts. Ce qui dort derrière, je l’entends : vous ne descendrez pas sans moi. »' },
 ];
+
+/** nombre de répliques de la rencontre (main.ts avance d'une à chaque toucher) */
+export const NB_REPLIQUES = REPLIQUES.length;
 
 /** Où parle chacun : position de la bulle à l'écran et direction de sa pointe vers le personnage */
 const BULLES: Record<string, string> = { ilka: 'b-ilka', doran: 'b-doran', vela: 'b-vela' };
@@ -652,7 +659,10 @@ export function htmlRencontre(n = 0): string {
     + `<div class="rencontre-fond" aria-hidden="true"><div class="rencontre-image"><img src="./intro/00-titre.webp" alt="" decoding="async"><span class="t-porte"></span><span class="t-flamme"></span><span class="t-halo"></span></div></div>`
     + `<header class="rencontre-haut"><div><span class="label">SOUS LA TOUR DU NOYAU</span><h1>La porte scellée</h1></div><button type="button" class="btn-sec" data-action="archipel">Plus tard</button></header>`
     + `<p class="recitatif">Une porte ronde, scellée depuis les années 2060, luit faiblement. Trois personnes t’attendent devant.</p>`;
-  REPLIQUES.slice(0, n).forEach((r, i) => {
+  // une bulle par personnage : sa dernière réplique remplace la précédente, pour ne pas couvrir l'image
+  const vues = REPLIQUES.slice(0, n);
+  vues.forEach((r, i) => {
+    if (vues.slice(i + 1).some((x) => x.id === r.id)) return;
     const d = porteurDef(r.id);
     h += `<div class="bulle ${BULLES[r.id]}${i === n - 1 ? ' neuve' : ''}" style="--c:${COULEUR[d.lignee]}"><strong>${echap(d.nom)}</strong><p>${echap(r.texte.replace(/^« | »$/g, ''))}</p></div>`;
   });

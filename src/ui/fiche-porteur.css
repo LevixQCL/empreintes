@@ -132,3 +132,10 @@
   .fp-titre h2{font-size:42px}
   .fp-heros::after{left:24px;right:24px}
 }
+
+/* Pourquoi il est là, et l'aparté de lignée (Véla : une Résonante des districts) */
+.fp-pourquoi .fp-texte{font-size:15px;line-height:1.55;color:#DCE4EE}
+.fp-aparte{display:grid;gap:6px;margin:0;padding:14px 14px 14px 16px;border-radius:6px;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--c) 16%,transparent),rgba(10,13,26,.4) 70%);box-shadow:inset 3px 0 0 var(--c),inset 0 0 0 1px color-mix(in srgb,var(--c) 30%,transparent)}
+.fp-aparte strong{font-family:var(--display);font-weight:400;font-size:19px;color:#F6F2EA}
+.fp-aparte p{margin:0;font-size:14px;line-height:1.55;color:#C9D6E6}

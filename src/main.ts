@@ -20,7 +20,7 @@ import { charger, enregistrer, type Enveloppe } from './save/local';
 import { firebaseActif } from './net/firebase-config';
 import { htmlCombat, type Ecran as EcranCombat, type Fin, type Compte } from './ui/vue';
 import { ETAPES, htmlBriefing } from './ui/briefing';
-import { brancherTableau, htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre, type EcranDistrict } from './ui/district';
+import { brancherTableau, htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre, type EcranDistrict, NB_REPLIQUES } from './ui/district';
 import { htmlPorteurs } from './ui/porteurs';
 import { PLANS, htmlIntro } from './ui/intro';
 import { animerCompteur, majIntro, precharger } from './ui/intro-lecteur';
@@ -461,7 +461,7 @@ racine.addEventListener('click', async (ev) => {
     }
     case 'reprendre': mode = 'combat'; K.fin = finPour(); break;
     case 'rencontre': D.vue = 'rencontre'; D.bulles = 0; break;
-    case 'rencontre-suite': D.bulles = Math.min(D.bulles + 1, 3); break;
+    case 'rencontre-suite': D.bulles = Math.min(D.bulles + 1, NB_REPLIQUES); break;
     case 'briefing': D.vue = 'briefing'; D.etape = 0; window.scrollTo(0, 0); break;
     case 'briefing-suite': D.etape = Math.min(D.etape + 1, ETAPES.length - 1); break;
     case 'briefing-retour': D.etape = Math.max(D.etape - 1, 0); break;
