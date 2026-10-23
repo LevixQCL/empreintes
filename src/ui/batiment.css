@@ -147,3 +147,22 @@
 
 /* la croix reste lisible quand le contenu défile dessous */
 #app .feuille.fiche-bat .fb-fermer{background:rgba(9,12,26,.9);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3),0 4px 14px rgba(0,0,0,.5)}
+
+/* ---------- Le Comptoir (23 octobre 2026) : les cartes du jour, posées sur l'étal ---------- */
+.fb-ilot.vide{filter:saturate(.55) brightness(.8)}
+.cp-renouv{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:10.5px;letter-spacing:.02em;text-transform:none;color:var(--quiet)}
+.cp-renouv .ico{width:12px;height:12px}
+.cp-etals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 8px;margin:10px 0 8px}
+.cp-offre{display:grid;justify-items:center;align-content:start;gap:6px;min-width:0}
+.cp-face{position:relative;width:100%;filter:drop-shadow(0 1px .5px rgba(0,0,0,.85)) drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+.cp-offre .ruban{font-size:9.5px;text-align:center}
+.cp-acheter{width:100%;min-height:34px;padding:0 6px;gap:4px}
+.cp-acheter .prix{display:inline-flex;align-items:center;gap:2px;font-family:var(--mono);font-size:12px}
+.cp-acheter .prix .ico{width:13px;height:13px}
+.cp-acheter .prix + .prix{margin-left:4px}
+.cp-offre.vendue .cp-face{filter:grayscale(.85) brightness(.55)}
+.cp-vendu{position:absolute;left:50%;top:50%;translate:-50% -50%;display:inline-flex;align-items:center;gap:4px;padding:4px 8px;white-space:nowrap;
+  font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#0b1733;
+  background:linear-gradient(180deg,#fff,#cfe9ff);box-shadow:0 2px 0 rgba(0,0,0,.4),0 6px 14px rgba(0,0,0,.5)}
+.cp-vendu .ico{width:12px;height:12px}
+.fb-cand:disabled{opacity:.55;cursor:not-allowed}

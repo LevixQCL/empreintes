@@ -5,7 +5,8 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau
+  ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
@@ -31,15 +32,15 @@ const gemme = (r: Rarete) => `<i class="gemme g-${r}" style="--r:${COULEUR_RARET
 
 // ---------- L'archipel ----------
 
-type Lieu = BatimentId | 'chantier';
+type Lieu = BatimentId;
 /** Où se trouve chaque bâtiment dans le tableau de chaque âge (repère 400 × 600, haut de la plaque) */
 const LIEUX: Record<1 | 2 | 3 | 4, Record<Lieu, { x: number; y: number }>> = {
-  1: { noyau: { x: 200, y: 232 }, generateur: { x: 322, y: 228 }, forge: { x: 128, y: 500 }, clinique: { x: 322, y: 345 }, chantier: { x: 305, y: 470 } },
-  2: { noyau: { x: 222, y: 205 }, generateur: { x: 92, y: 205 }, forge: { x: 332, y: 262 }, clinique: { x: 340, y: 385 }, chantier: { x: 300, y: 478 } },
-  3: { noyau: { x: 205, y: 212 }, generateur: { x: 78, y: 182 }, forge: { x: 328, y: 212 }, clinique: { x: 78, y: 430 }, chantier: { x: 300, y: 470 } },
-  4: { noyau: { x: 205, y: 248 }, generateur: { x: 62, y: 232 }, forge: { x: 322, y: 250 }, clinique: { x: 72, y: 452 }, chantier: { x: 300, y: 505 } },
+  1: { noyau: { x: 200, y: 232 }, generateur: { x: 322, y: 228 }, forge: { x: 128, y: 500 }, clinique: { x: 322, y: 345 }, comptoir: { x: 305, y: 470 } },
+  2: { noyau: { x: 222, y: 205 }, generateur: { x: 92, y: 205 }, forge: { x: 332, y: 262 }, clinique: { x: 340, y: 385 }, comptoir: { x: 300, y: 478 } },
+  3: { noyau: { x: 205, y: 212 }, generateur: { x: 78, y: 182 }, forge: { x: 328, y: 212 }, clinique: { x: 78, y: 430 }, comptoir: { x: 300, y: 470 } },
+  4: { noyau: { x: 205, y: 248 }, generateur: { x: 62, y: 232 }, forge: { x: 322, y: 250 }, clinique: { x: 72, y: 452 }, comptoir: { x: 300, y: 505 } },
 };
-const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'chantier'];
+const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'comptoir'];
 /**
  * Les bâtiments eux-mêmes sont cliquables (22 octobre 2026, Bryan : sur téléphone, les plaques seules faisaient de petites cibles
  * qui se chevauchaient). Le contour de chaque lieu dans le tableau de chaque âge, repère 400 × 600 (relevé sur les tableaux).
@@ -50,34 +51,34 @@ const ZONES: Record<1 | 2 | 3 | 4, Record<Lieu, string>> = {
     generateur: '245,130 380,115 392,240 330,252 245,232',
     forge: '80,358 222,368 242,522 130,548 58,470',
     clinique: '288,262 372,268 392,372 300,382 283,320',
-    chantier: '292,395 400,400 400,522 300,522',
+    comptoir: '292,395 400,400 400,522 300,522',
   },
   2: {
     noyau: '155,55 282,55 292,230 262,282 165,272 150,170',
     generateur: '18,112 142,112 152,242 60,252 8,225',
     forge: '280,105 382,108 396,272 285,276 275,190',
     clinique: '285,305 392,312 396,398 290,402',
-    chantier: '238,428 372,432 378,502 244,502',
+    comptoir: '238,428 372,432 378,502 244,502',
   },
   3: {
     noyau: '140,25 256,30 262,210 242,332 170,332 140,220',
     generateur: '8,75 132,75 142,200 60,248 4,200',
     forge: '262,120 400,130 400,332 300,322 262,232',
     clinique: '38,330 152,330 162,472 60,482 18,420',
-    chantier: '250,400 392,410 386,512 258,506',
+    comptoir: '250,400 392,410 386,512 258,506',
   },
   4: {
     noyau: '160,5 246,5 252,210 272,382 150,372 130,252 165,200',
     generateur: '14,128 126,128 142,282 30,292 8,230',
     forge: '270,145 400,150 400,346 300,342 255,250',
     clinique: '18,335 152,345 157,522 50,532 4,460',
-    chantier: '255,420 392,425 392,522 260,522',
+    comptoir: '255,420 392,425 392,522 260,522',
   },
 };
 
 function zonesBatiments(age: 1 | 2 | 3 | 4, selection: string | null): string {
   return '<svg class="zones-bat" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">'
-    + ORDRE.map((id) => `<polygon class="zone-bat${selection === id ? ' choisie' : ''}" points="${ZONES[age][id]}" data-action="${id === 'chantier' ? 'chantier' : 'batiment'}"${id === 'chantier' ? '' : ` data-id="${id}"`} data-lieu="${id}"/>`).join('')
+    + ORDRE.map((id) => `<polygon class="zone-bat${selection === id ? ' choisie' : ''}" points="${ZONES[age][id]}" data-action="batiment" data-id="${id}" data-lieu="${id}"/>`).join('')
     + '</svg>';
 }
 
@@ -160,23 +161,27 @@ function plaques(e: EcranDistrict): string {
     // une plaque près du bord droit ou gauche reste dans le tableau
     const left = Math.min(84, Math.max(16, (p.x / 400) * 100)), top = (p.y / 600) * 100;
     const pos = `style="left:${left}%;top:${top}%"`;
-    if (id === 'chantier') {
-      return `<button type="button" class="plaque verrou" ${pos} data-action="chantier" data-lieu="chantier"><span class="plaque-nom">${ICO.verrou}Labo génétique</span><small>Bientôt</small></button>`;
-    }
     const d = batimentDef(id);
     const prete = id === 'forge' && !!j.forge && e.now >= j.forge.fin;
     const ch = chantierDe(j, id);
     // l'objectif « Construire ton deck » se fait dans les Cartes, pas sur la Tour du Noyau
     const vise = !!o && o.pilier === id && !o.fait(j) && o.titre !== 'Construire ton deck';
-    const occupant = id !== 'noyau' ? posteDe(j, id as Poste) : null;
+    const occupant = id !== 'comptoir' ? posteDe(j, id) : null;
     let etat = '';
     if (ch) etat = `<small class="en-chantier">${ICO.marteau}${duree(ch.fin - e.now)}</small>`;
+    else if (id === 'comptoir') {
+      // le Comptoir : à construire, ou ce qui reste en vente aujourd'hui
+      const reste = j.comptoir.offres.length - j.comptoir.achetes.length;
+      etat = !j.batiments.comptoir ? `<small class="vacant">${ICO.marteau}À construire</small>`
+        : reste > 0 ? `<small class="occupe">${ICO.cartes}${reste} en vente</small>` : `<small>${ICO.ok}Tout vendu</small>`;
+    }
+    else if (id === 'noyau') etat = occupant ? `<small class="occupe">${avatar(occupant, 14)}${echap(porteurDef(occupant).nom)} s’entraîne</small>` : '';
     else if (prete) etat = `<small class="pret">${ICO.ok}Prêt</small>`;
     else if (j.forge && id === 'forge') etat = `<small>${ICO.chrono}${duree(j.forge.fin - e.now)}</small>`;
-    else if (id !== 'noyau' && !occupant) etat = `<small class="vacant">${ICO.ouvrier}Personne</small>`;
+    else if (!occupant) etat = `<small class="vacant">${ICO.ouvrier}Personne</small>`;
     else if (occupant) etat = `<small class="occupe">${avatar(occupant, 14)}${echap(porteurDef(occupant).nom)}</small>`;
-    return `<button type="button" class="plaque${e.selection === id ? ' choisie' : ''}${vise ? ' visee' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(d.nom)}, niveau ${j.batiments[id]}">`
-      + `<span class="plaque-nom"><b class="niv">${j.batiments[id]}</b>${echap(d.nom)}</span>${etat}${prete || vise ? '<i class="pastille-alerte" aria-hidden="true"></i>' : ''}</button>`;
+    return `<button type="button" class="plaque${e.selection === id ? ' choisie' : ''}${vise ? ' visee' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(d.nom)}${j.batiments[id] ? `, niveau ${j.batiments[id]}` : ', à construire'}">`
+      + `<span class="plaque-nom">${j.batiments[id] ? `<b class="niv">${j.batiments[id]}</b>` : ''}${echap(d.nom)}</span>${etat}${prete || vise ? '<i class="pastille-alerte" aria-hidden="true"></i>' : ''}</button>`;
   }).join('');
 }
 
@@ -246,7 +251,7 @@ function avecPorteur(j: Jeu, b: Poste, id: string | null): Jeu {
 }
 
 /** Ce que rend le poste avec ce Porteur : une valeur comparable et sa forme lisible */
-function rendement(j: Jeu, b: Poste, id: string | null): { v: number; court: string; long: string } {
+function rendement(j: Jeu, b: Exclude<Poste, 'noyau'>, id: string | null): { v: number; court: string; long: string } {
   if (b === 'generateur') { const v = energieParHeure(avecPorteur(j, b, id)); return { v, court: `${ent(v)}/h`, long: `${ent(v)} énergie/h` }; }
   if (b === 'clinique') { const v = Math.round(soinParHeure(avecPorteur(j, b, id)) * 10) / 10; return { v, court: `${virgule(v)}/h`, long: `${virgule(v)} Usure soignée/h` }; }
   const d = batimentDef(b);
@@ -254,13 +259,13 @@ function rendement(j: Jeu, b: Poste, id: string | null): { v: number; court: str
   return { v, court: `×${virgule(v)}`, long: `vitesse ×${virgule(v)}` };
 }
 
-const multPoste = (b: Poste, id: string) => {
+const multPoste = (b: Exclude<Poste, 'noyau'>, id: string) => {
   const ideal = porteurDef(id).lignee === batimentDef(b).affinite;
   return `<span class="fb-mult${ideal ? ' ideal' : ''}" title="${ideal ? 'Lignée idéale pour ce bâtiment' : 'Autre lignée'}">×${virgule(ideal ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste)}</span>`;
 };
 
 /** Un Porteur qu'on peut poster : son portrait, ce que donnerait le poste avec lui, et ce qu'il quitterait */
-function candidat(j: Jeu, id: string, poste: Poste, actuel: number): string {
+function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: number): string {
   const d = porteurDef(id);
   const ailleurs = j.porteurs[id]!.poste;
   const r = rendement(j, poste, id);
@@ -276,7 +281,7 @@ function candidat(j: Jeu, id: string, poste: Poste, actuel: number): string {
 
 const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
   energie: 'energie', soin: 'soin', stockage: 'coffre', creuseurs: 'ouvrier', strate: 'descendre', forge: 'chrono',
-  plafond: 'tour', chantiers: 'marteau', porteur: 'porteurs', apparence: 'district',
+  plafond: 'tour', chantiers: 'marteau', porteur: 'porteurs', apparence: 'district', entrainement: 'monter', offres: 'cartes', argent: 'cristal',
 };
 const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${Number.isInteger(v) ? ent(v) : (Math.round(v * 10) / 10).toLocaleString('fr-BE')}${unite ? ` ${unite}` : ''}`);
 
@@ -317,6 +322,70 @@ function reserve(j: Jeu, b: BatimentId): string {
     + `<small>${note}${b === 'generateur' ? ' La taille de la réserve dépend de la Tour du Noyau.' : ''}</small></div>`;
 }
 
+/**
+ * L'entraînement à la Tour du Noyau (23 octobre 2026) : un Porteur qui ne descend pas gagne de l'XP avec le temps,
+ * jusqu'à un plafond fixé par le niveau de la Tour. Même présentation que les postes des autres bâtiments.
+ */
+function blocEntrainement(j: Jeu): string {
+  if (!j.chambre) return '';
+  const occupant = posteDe(j, 'noyau');
+  const plafond = plafondEntrainement(j);
+  const xph = xpEntrainement(j);
+  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.monter}Entraînement</h3>`
+    + `<p class="fb-vide">Un Porteur posté ici s’entraîne avec les creuseurs : <b>+${xph} XP par heure</b>, même jeu fermé, jusqu’au <b>niveau ${plafond}</b>. Il ne descend pas pendant ce temps.</p>`;
+  const niveau = (id: string) => niveauPorteur(j, id).niveau;
+  if (occupant) {
+    const o = porteurDef(occupant);
+    const n = niveauPorteur(j, occupant);
+    const fini = n.niveau >= plafond;
+    const reste = !fini && n.requis ? Math.ceil(((n.requis - n.xp) / xph) * 3_600_000) : 0;
+    h += `<div class="fb-occupant" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 64)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-lignee">Niveau ${n.niveau} · ${pvNiveau(j, occupant)} PV</span>`
+      + `<span class="fb-apport">${fini ? `Plafond atteint : monte la Tour pour aller plus loin` : `Niveau ${n.niveau + 1} dans ${duree(reste)}`}</span></div>`
+      + `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Arrêter l’entraînement de ${echap(o.nom)}">Arrêter</button></div>`;
+  }
+  const libres = PORTEURS.filter((p) => p.id !== occupant && porteursPresents(j).includes(p.id) && !enExpedition(j, p.id))
+    .sort((x, y) => niveau(x.id) - niveau(y.id));
+  if (libres.length) {
+    h += `<p class="fb-consigne">${occupant ? 'Le remplacer' : 'Entraîner un Porteur'} <span>· les moins avancés d’abord</span></p><div class="fb-rangee">`
+      + libres.map((p) => {
+        const ailleurs = j.porteurs[p.id]!.poste;
+        const n = niveau(p.id);
+        return `<button type="button" class="fb-cand${n >= plafond ? ' egal' : ' plus'}" style="--c:${COULEUR[p.lignee]}" data-action="poster" data-id="${p.id}" data-poste="noyau"${n >= plafond ? ' disabled' : ''} aria-label="Entraîner ${echap(p.nom)}, niveau ${n}${ailleurs ? `, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}">`
+          + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom)}</strong><span class="fb-cand-eff">niv. ${n}${n >= plafond ? ' · max' : ''}</span>`
+          + (ailleurs ? `<small class="fb-cand-ailleurs">quitte ${echap(batimentDef(ailleurs).nom)}</small>` : '') + `</button>`;
+      }).join('') + `</div>`;
+  }
+  return h + `</section>`;
+}
+
+/**
+ * Le Comptoir (23 octobre 2026) : les cartes du jour, à prix fixe. On voit la carte avant de payer ; chaque offre
+ * ne s'achète qu'une fois, tout se renouvelle demain. L'or et la nacre restent à trouver dans les Strates.
+ */
+function blocComptoir(e: EcranDistrict): string {
+  const j = e.j;
+  if (!j.batiments.comptoir) {
+    return `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}Une fois construit</h3><p class="fb-vide">Chaque jour, <b>${COMPTOIR.etals[1]!.length} cartes</b> en vente (fer et cuivre), une fois chacune. Il montera jusqu’à ${COMPTOIR.etals[5]!.length} cartes par jour, avec de l’argent après la Strate −${COMPTOIR.strateArgent}. L’or et la nacre restent à trouver dans les Strates.</p></section>`;
+  }
+  const c = j.comptoir;
+  const demain = debutJour(c.jour + 1) - e.now;
+  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}En vente aujourd’hui<span class="cp-renouv">${ICO.chrono}nouvelles cartes dans ${duree(demain)}</span></h3><div class="cp-etals">`;
+  c.offres.forEach((id, i) => {
+    const m = moduleDef(id);
+    const possede = j.collection[id];
+    const vendu = c.achetes.includes(i);
+    const p = prixComptoir(id);
+    const assez = j.composants >= p.composants && j.eclats >= p.eclats;
+    const niveau = possede?.niveau ?? COLLECTION.niveauDepart[m.rarete];
+    const ruban = possede ? `Doublon · niv. ${possede.niveau}` : 'Nouvelle';
+    h += `<div class="cp-offre${vendu ? ' vendue' : ''}"><div class="cp-face">${faceCarte(m, niveau, multNiveau(id, niveau))}${vendu ? `<span class="cp-vendu">${ICO.ok}Achetée</span>` : ''}</div>`
+      + `<span class="ruban${possede ? '' : ' neuve'}">${ruban}</span>`
+      + (vendu ? '' : `<button type="button" class="btn ${assez ? 'prim' : 'sec'} petit cp-acheter" data-action="acheter" data-index="${i}"${assez ? '' : ' disabled'} aria-label="Acheter ${echap(m.nom)} (${NOMS_RARETE[m.rarete]})">${couts(j, { composants: p.composants, eclats: p.eclats })}</button>`)
+      + `</div>`;
+  });
+  return h + `</div><small class="fb-absents">Un doublon fait monter une carte que tu as déjà. L’or et la nacre ne se vendent pas : ils se trouvent dans les Strates.</small></section>`;
+}
+
 function feuilleBatiment(e: EcranDistrict): string {
   const j = e.j;
   const b = e.selection;
@@ -325,11 +394,12 @@ function feuilleBatiment(e: EcranDistrict): string {
   const niv = j.batiments[b];
   const pv = prochainVisuel(niv);
   const crans = Array.from({ length: d.niveauMax }, (_, i) => `<i class="${i < niv ? 'plein' : ''}"></i>`).join('');
+  const surtitre = niv ? `Niveau ${niv} <span class="fb-max">/ ${d.niveauMax}</span>` : 'À construire';
   const ideal = d.affinite ? `<span class="fb-ideal" style="--c:${COULEUR[d.affinite]}">${ICO.porteurs}Idéal : ${NOM_LIGNEE[d.affinite]} <b>×${virgule(DISTRICT.bonusAffinite)}</b></span>` : '';
   let h = `<div class="voile-feuille" data-action="fermer" aria-hidden="true"></div><section class="feuille fiche-bat" role="dialog" aria-modal="true" aria-labelledby="feuille-titre">`
     + `<span class="poignee" aria-hidden="true"></span><button type="button" class="btn-icone fb-fermer" data-action="fermer" aria-label="Fermer">${ICO.fermer}</button>`
-    + `<div class="feuille-corps fb-corps"><header class="fb-heros"><div class="fb-scene" aria-hidden="true"><span class="fb-halo"></span><img class="fb-ilot" src="${illustrationBatiment(b, niv)}" alt="" decoding="async"></div>`
-    + `<div class="fb-titre"><span class="surtitre">Niveau ${niv} <span class="fb-max">/ ${d.niveauMax}</span></span><h2 id="feuille-titre">${echap(d.nom)}</h2>`
+    + `<div class="feuille-corps fb-corps"><header class="fb-heros"><div class="fb-scene" aria-hidden="true"><span class="fb-halo"></span><img class="fb-ilot${niv ? '' : ' vide'}" src="${illustrationBatiment(b, Math.max(1, niv))}" alt="" decoding="async"></div>`
+    + `<div class="fb-titre"><span class="surtitre">${surtitre}</span><h2 id="feuille-titre">${echap(d.nom)}</h2>`
     + `<span class="fb-crans" aria-hidden="true">${crans}</span>${ideal}</div></header>`;
   h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
 
@@ -338,12 +408,14 @@ function feuilleBatiment(e: EcranDistrict): string {
   if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur au repos</small></div></div>`;
   if (b === 'noyau') {
     h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>niveau maximum des autres bâtiments</small></div></div>${reserve(j, b)}`
-      + `<button type="button" class="btn prim large" data-action="entrer">${ICO.tour}Entrer dans la tour</button>`;
+      + `<button type="button" class="btn prim large" data-action="entrer">${ICO.tour}Entrer dans la tour</button>`
+      + blocEntrainement(j);
   }
+  if (b === 'comptoir') h += blocComptoir(e);
 
   // le Porteur au travail
-  if (b !== 'noyau') {
-    const poste = b as Poste;
+  if (b !== 'noyau' && b !== 'comptoir') {
+    const poste = b;
     const occupant = posteDe(j, poste);
     const actuel = rendement(j, poste, occupant);
     h += `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.ouvrier}Au travail</h3>`;
@@ -415,7 +487,7 @@ function feuilleBatiment(e: EcranDistrict): string {
       + (cout.composants ? coutDetail('composants', cout.composants, j.composants, 'Composants') : '')
       + (cout.eclats ? coutDetail('eclats', cout.eclats, j.eclats, 'Éclats') : '') + `</div>`;
     if (raison) h += `<p class="fb-raison">${ICO.verrou}<span>${raison}</span>${bloque ? `<button type="button" class="fb-lien" data-action="batiment" data-id="noyau">Voir la Tour</button>` : ''}</p>`;
-    h += `<button type="button" class="btn prim large fb-ameliorer" data-action="ameliorer" data-id="${b}"${assez && !bloque && !plein ? '' : ' disabled'}>${ICO.monter}Passer au niveau ${niv + 1}</button>`;
+    h += `<button type="button" class="btn prim large fb-ameliorer" data-action="ameliorer" data-id="${b}"${assez && !bloque && !plein ? '' : ' disabled'}>${niv ? `${ICO.monter}Passer au niveau ${niv + 1}` : `${ICO.marteau}Construire le ${echap(d.nom)}`}</button>`;
   } else h += `<small class="raison">Niveau maximum pour cette version.</small>`;
   return h + `</footer></section>`;
 }

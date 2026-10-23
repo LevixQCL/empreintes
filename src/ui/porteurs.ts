@@ -28,6 +28,7 @@ function statut(j: Jeu, id: string): { texte: string; classe: string } {
   const d = j.porteurs[id]!;
   if (enMission(j, id)) return { texte: 'En mission', classe: 'parti' };
   if (enExpedition(j, id)) return { texte: 'En expédition', classe: 'parti' };
+  if (d.poste === 'noyau') return { texte: 'À l’entraînement · Tour du Noyau', classe: 'travail' };
   if (d.poste) return { texte: `Au travail · ${BATIMENTS.find((b) => b.id === d.poste)!.nom}`, classe: 'travail' };
   return { texte: 'Disponible', classe: 'libre' };
 }

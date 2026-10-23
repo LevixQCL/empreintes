@@ -10,6 +10,7 @@ import { multNiveau } from './collection';
 import { DEPART_PORTEURS, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, salleCourante } from './expedition';
 import {
+  acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
   enMission, envoyerMission, epreuvesDeLaSemaine, fouiller, partirEpreuve,
@@ -106,8 +107,8 @@ function preparer(j: Jeu): string[] {
     const id = libres.splice(k >= 0 ? k : 0, 1)[0];
     if (id) poster(j, id, b);
   }
-  // ceux qui restent partent en mission (longue : le joueur revient plus tard)
-  for (const id of libres) envoyerMission(j, id, 'longue', j.dernierTick);
+  // ceux qui restent partent en mission (longue : le joueur revient plus tard) ; s'il n'y a plus de place, ils s'entraînent à la Tour
+  for (const id of libres) if (!envoyerMission(j, id, 'longue', j.dernierTick).ok && !posteDe(j, 'noyau')) poster(j, id, 'noyau');
   return escouade;
 }
 
@@ -129,7 +130,15 @@ function gerer(j: Jeu, now: number): void {
   const enDeck = new Set(Object.values(j.porteurs).flatMap((p) => p.modules));
   const ordre = Object.keys(j.collection).sort((a, b) => Number(enDeck.has(b)) - Number(enDeck.has(a)));
   for (const id of ordre) while (monter(j, id).ok);
-  for (const b of ['noyau', 'generateur', 'clinique', 'forge'] as const) ameliorer(j, b, now);
+  for (const b of ['noyau', 'generateur', 'clinique', 'forge', 'comptoir'] as const) ameliorer(j, b, now);
+  // le Comptoir : il achète les doublons des cartes de son deck, et une carte neuve si elle vaut mieux que la plus faible,
+  // en gardant de quoi monter ses niveaux (une réserve de 2 fois le prix)
+  garnirComptoir(j, now);
+  const plusFaible = Math.min(...[...enDeck].map((id) => valeurCarte(id, j.collection[id]?.niveau ?? 1)));
+  j.comptoir.offres.forEach((id, i) => {
+    const utile = enDeck.has(id) || (!j.collection[id] && valeurCarte(id, 1) > plusFaible);
+    if (utile && j.composants >= 2 * prixComptoir(id).composants) acheter(j, i, now);
+  });
   // la Forge refabrique la carte du deck la plus proche de son prochain niveau, si les composants le permettent
   if (!j.forge && posteDe(j, 'forge')) {
     const cible = [...enDeck].filter((id) => j.collection[id] && coutRefabrication(id).eclats === 0)

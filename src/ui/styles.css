@@ -732,7 +732,7 @@ h1,h2,h3{font-weight:400}
 .toile:has(.zone-bat[data-lieu="generateur"]:hover) .plaque[data-lieu="generateur"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
 .toile:has(.zone-bat[data-lieu="forge"]:hover) .plaque[data-lieu="forge"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
 .toile:has(.zone-bat[data-lieu="clinique"]:hover) .plaque[data-lieu="clinique"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
-.toile:has(.zone-bat[data-lieu="chantier"]:hover) .plaque[data-lieu="chantier"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
+.toile:has(.zone-bat[data-lieu="comptoir"]:hover) .plaque[data-lieu="comptoir"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
 
 /* ---------- Les ressources du haut sont des boutons (22 octobre 2026) : elles ouvrent leur fiche ---------- */
 button.res{font:inherit;color:inherit;text-align:left;border:none;cursor:pointer;transition:filter .15s ease,transform .12s ease}

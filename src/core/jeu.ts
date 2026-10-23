@@ -57,11 +57,14 @@ export const ARCHIVE = {
 const EPOQUE = Date.UTC(2026, 0, 5, 3);
 export const jourDe = (now: number) => Math.floor((now - EPOQUE) / 86_400_000);
 export const semaineDe = (now: number) => Math.floor(jourDe(now) / 7);
+/** Le début d'un jour du jeu, en ms (4 h du matin à Bruxelles) */
+export const debutJour = (jour: number) => EPOQUE + jour * 86_400_000;
 /** Début de la semaine suivante, en ms */
 export const lundiSuivant = (now: number) => EPOQUE + (semaineDe(now) + 1) * 7 * 86_400_000;
 
-export type Poste = Exclude<BatimentId, 'noyau'>;
-export const POSTES: Poste[] = ['generateur', 'forge', 'clinique'];
+/** Les postes du district : les trois bâtiments qui produisent (POSTES), et l'entraînement à la Tour du Noyau */
+export type Poste = Exclude<BatimentId, 'comptoir'>;
+export const POSTES: Exclude<Poste, 'noyau'>[] = ['generateur', 'forge', 'clinique'];
 
 export interface PorteurDistrict {
   usure: number;
@@ -237,6 +240,8 @@ export interface Jeu {
   missions: Mission[];
   /** Épreuves de la semaine déjà réussies (une récompense par Épreuve et par semaine) */
   epreuves: { semaine: number; faites: string[] };
+  /** le Comptoir du jour : ses offres, celles déjà achetées, et son propre hasard (il ne touche pas aux trouvailles) */
+  comptoir: Comptoir;
   /** les creuseurs du front de taille : il en faut assez pour creuser l'étage suivant (logés selon le niveau du Noyau) */
   creuseurs: number;
   /** le gardien de la Strate la plus profonde est vaincu : l'étage suivant attend d'être creusé */
@@ -333,7 +338,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     version: VERSION_JEU,
     energie: DISTRICT.depart.energie,
     composants: DISTRICT.depart.composants,
-    batiments: { noyau: 1, generateur: 1, forge: 1, clinique: 1 },
+    batiments: { noyau: 1, generateur: 1, forge: 1, clinique: 1, comptoir: 0 },
     porteurs,
     forge: null,
     strate: 1,
@@ -365,6 +370,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     epreuves: { semaine: semaineDe(now), faites: [] },
     creuseurs: 0,
     frontVaincu: false,
+    comptoir: comptoirVide(now, rng),
   };
 }
 
@@ -397,6 +403,9 @@ function migrer(j: Jeu) {
   j.creuseurs ??= 0;
   j.frontVaincu ??= false;
   j.epreuves ??= { semaine: semaineDe(j.dernierTick), faites: [] };
+  // sauvegarde d'avant le Comptoir (23 octobre 2026) : il reste à construire
+  j.batiments.comptoir ??= 0;
+  j.comptoir ??= comptoirVide(j.dernierTick, j.rng ?? graine());
   if (!j.luesRecompensees) {
     // sauvegarde d'avant les récompenses de lecture : les chapitres déjà lus rapportent leur carte maintenant
     j.luesRecompensees = [];
@@ -472,7 +481,7 @@ export const stockage = (j: Jeu) => DISTRICT.stockage[j.batiments.noyau] ?? 0;
 export const pvMaxCombat = (j: Jeu, id: string) => pvNiveau(j, id) + bonusPv(j, id) - Math.floor(j.porteurs[id]!.usure);
 export const usureMax = (id: string) => Math.floor(porteurDef(id).pvMax * DISTRICT.usureMaxRatio);
 
-function multiplicateur(j: Jeu, b: Poste): number {
+function multiplicateur(j: Jeu, b: Exclude<Poste, 'noyau'>): number {
   const id = posteDe(j, b);
   if (!id) return 1;
   return porteurDef(id).lignee === batimentDef(b).affinite ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste;
@@ -522,7 +531,7 @@ export const chantiersMax = (j: Jeu) => (j.batiments.noyau >= DISTRICT.chantiers
 
 /** Une chose que le niveau suivant d'un bâtiment change : un chiffre qui monte (avant → après) ou un déblocage */
 export interface GainNiveau {
-  quoi: 'energie' | 'soin' | 'stockage' | 'creuseurs' | 'strate' | 'forge' | 'plafond' | 'chantiers' | 'porteur';
+  quoi: 'energie' | 'soin' | 'stockage' | 'creuseurs' | 'strate' | 'forge' | 'plafond' | 'chantiers' | 'porteur' | 'entrainement' | 'offres' | 'argent';
   texte: string;
   avant?: number;
   apres?: number;
@@ -558,6 +567,11 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
       g.push({ quoi: 'porteur', texte: `${p.nom} rejoint le district`, ...(j.chambre ? {} : { detail: 'une fois la chambre scellée' }) });
     }
   }
+  if (b === 'comptoir') {
+    g.push({ quoi: 'offres', texte: 'Cartes en vente chaque jour', avant: etalsDuComptoir(j).length, apres: etalsDuComptoir(apres).length });
+    const argent = (x: Jeu) => (COMPTOIR.etals[x.batiments.comptoir] ?? []).includes('argent');
+    if (argent(apres) && !argent(j)) g.push({ quoi: 'argent', texte: 'Des cartes en argent', ...(strateVaincue(j) < COMPTOIR.strateArgent ? { detail: `une fois la Strate −${COMPTOIR.strateArgent} vaincue` } : {}) });
+  }
   if (b === 'noyau') {
     g.push({ quoi: 'stockage', texte: 'Stockage d’énergie', avant: stockage(j), apres: stockage(apres) });
     const prof = profondeurNoyau(niv + 1);
@@ -566,6 +580,7 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
     const manque = manquePourCreuser(j);
     if (manque && manque.creuseurs === 0 && noyauRequis(j.strate + 1) === niv + 1) g.push({ quoi: 'strate', texte: `Ouvre la Strate −${j.strate + 1}`, detail: 'les creuseurs attendent déjà la place' });
     g.push({ quoi: 'plafond', texte: 'Niveau max. des autres bâtiments', avant: niv, apres: niv + 1 });
+    g.push({ quoi: 'entrainement', texte: 'Entraînement à la Tour', avant: xpEntrainement(j), apres: xpEntrainement(apres), detail: `XP par heure, jusqu’au niveau ${plafondEntrainement(apres)}` });
     if (niv + 1 === DISTRICT.chantiersNoyau2) g.push({ quoi: 'chantiers', texte: 'Deux chantiers en même temps' });
   }
   return g;
@@ -613,6 +628,9 @@ export function tick(j: Jeu, now: number): string[] {
   }
   j.chantiers = j.chantiers.filter((x) => now < x.fin);
 
+  const entraine = entrainer(j, heures);
+  if (entraine) nouvelles.push(entraine);
+
   for (const m of j.missions.filter((x) => now >= x.fin)) nouvelles.push(retourDeMission(j, m));
   j.missions = j.missions.filter((x) => now < x.fin);
   if (semaineDe(now) > j.epreuves.semaine) j.epreuves = { semaine: semaineDe(now), faites: [] };
@@ -645,6 +663,7 @@ export function tick(j: Jeu, now: number): string[] {
     j.archive.points = 0;
     j.archive.semaine = semaine;
   }
+  garnirComptoir(j, now);
   return nouvelles;
 }
 
@@ -702,7 +721,7 @@ export function poster(j: Jeu, id: string, b: Poste | null): Resultat {
   }
   if (p.poste === 'forge' && j.forge) return non('La Forge travaille : attends la fin de la fabrication.');
   p.poste = b;
-  log(j, b ? `${porteurDef(id).nom} travaille maintenant : ${batimentDef(b).nom}.` : `${porteurDef(id).nom} se repose.`);
+  log(j, b === 'noyau' ? `${porteurDef(id).nom} s’entraîne à la Tour du Noyau.` : b ? `${porteurDef(id).nom} travaille maintenant : ${batimentDef(b).nom}.` : `${porteurDef(id).nom} se repose.`);
   return { ok: true };
 }
 
@@ -960,7 +979,7 @@ function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boo
   if (escouade.length !== 3 || new Set(escouade).size !== 3) return refus('Choisis 3 Porteurs.');
   for (const id of escouade) {
     if (!porteursPresents(j).includes(id)) return refus('Ce Porteur n’est pas encore arrivé au district.');
-    if (j.porteurs[id]?.poste) return refus(`${porteurDef(id).nom} travaille au district.`);
+    if (j.porteurs[id]?.poste) return refus(`${porteurDef(id).nom} ${j.porteurs[id]!.poste === 'noyau' ? 's’entraîne à la Tour' : 'travaille au district'}.`);
     if (enMission(j, id)) return refus(`${porteurDef(id).nom} est en mission.`);
   }
   if (!j.chambre) return refus('Ouvre d’abord la chambre scellée.');
@@ -1123,6 +1142,107 @@ function retourDeMission(j: Jeu, m: Mission): string {
   const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
   return texte;
+}
+
+// ---------- L'entraînement à la Tour (23 octobre 2026) ----------
+// Pour devenir plus fort sans descendre : un Porteur posté à la Tour du Noyau s'entraîne avec les creuseurs et gagne
+// de l'XP avec le temps, même jeu fermé. Plus lent qu'une mission, sans risque ni Usure, mais il ne descend pas.
+// Plafond : 4 niveaux par niveau de la Tour ; au-delà, l'expérience se gagne dans les Strates.
+export const ENTRAINEMENT = {
+  /** XP par heure selon le niveau de la Tour du Noyau (index = niveau) */
+  xpHeure: [0, 3, 4, 5, 6, 8],
+  niveauxParNoyau: 4,
+} as const;
+export const xpEntrainement = (j: Jeu) => ENTRAINEMENT.xpHeure[j.batiments.noyau] ?? 0;
+export const plafondEntrainement = (j: Jeu) => Math.min(XP.niveauMax, ENTRAINEMENT.niveauxParNoyau * j.batiments.noyau);
+/** XP totale pour atteindre un niveau depuis le niveau 1 */
+const xpPourAtteindre = (niveau: number) => { let s = 0; for (let n = 1; n < niveau; n++) s += xpPourNiveau(n); return s; };
+
+/** Le temps passé à la Tour (appelé par tick) : renvoie l'annonce d'un niveau gagné */
+function entrainer(j: Jeu, heures: number): string | null {
+  const id = posteDe(j, 'noyau');
+  if (!id || heures <= 0 || enExpedition(j, id)) return null;
+  const d = j.porteurs[id]!;
+  const plafond = plafondEntrainement(j);
+  const avant = niveauPorteur(j, id).niveau;
+  if (avant >= plafond) return null;
+  const tete = Math.max(...Object.keys(j.porteurs).map((k) => niveauPorteur(j, k).niveau));
+  const gain = xpEntrainement(j) * heures * (tete - avant >= 2 ? XP.rattrapage : 1);
+  // l'XP s'accumule à la fraction près (le district se met à jour chaque seconde), sans dépasser le plafond
+  d.xp = Math.min((d.xp ?? 0) + gain, xpPourAtteindre(plafond));
+  const apres = niveauPorteur(j, id).niveau;
+  if (apres <= avant) return null;
+  const t = `${porteurDef(id).nom} s’est entraîné à la Tour : niveau ${apres}, ${pvNiveau(j, id)} PV.`;
+  log(j, t);
+  return t;
+}
+
+// ---------- Le Comptoir (23 octobre 2026) ----------
+// « Forger, acheter ou combattre » : acheter manquait. Les fouilleurs du quartier y revendent chaque jour quelques cartes
+// trouvées dans les Strates, à prix fixe : on voit la carte avant de payer, aucun hasard n'est jamais payé.
+// L'or et la nacre ne s'y vendent jamais : ils restent à trouver. L'argent n'y paraît qu'une fois la Strate −4 vaincue.
+// Une offre sur deux est, quand c'est possible, un doublon d'une carte qu'on possède : de quoi la faire monter.
+export const COMPTOIR = {
+  /** les étals de chaque jour selon le niveau du Comptoir (index = niveau ; 0 = pas encore construit) */
+  etals: [[], ['fer', 'fer', 'cuivre'], ['fer', 'fer', 'cuivre', 'cuivre'], ['fer', 'cuivre', 'cuivre', 'argent'],
+    ['fer', 'fer', 'cuivre', 'cuivre', 'argent'], ['fer', 'fer', 'cuivre', 'cuivre', 'argent', 'argent']] as Rarete[][],
+  /** prix fixes : environ 1,5 fois la refabrication à la Forge (qui, elle, ne refait qu'une carte déjà trouvée) */
+  prix: { fer: { composants: 40, eclats: 0 }, cuivre: { composants: 120, eclats: 0 }, argent: { composants: 300, eclats: 3 } } as Partial<Record<Rarete, { composants: number; eclats: number }>>,
+  strateArgent: 4,
+  partDoublons: 0.5,
+} as const;
+
+export interface Comptoir { jour: number; offres: string[]; achetes: number[]; rng: number }
+function comptoirVide(now: number, rng: number): Comptoir {
+  return { jour: jourDe(now), offres: [], achetes: [], rng: (rng ^ 0x9e3779b9) >>> 0 };
+}
+
+/** Les métaux des étals du jour (l'argent n'arrive qu'une fois la Strate −4 vaincue ; avant, du cuivre à sa place) */
+export function etalsDuComptoir(j: Jeu): Rarete[] {
+  return (COMPTOIR.etals[j.batiments.comptoir] ?? []).map((r) => (r === 'argent' && strateVaincue(j) < COMPTOIR.strateArgent ? 'cuivre' : r));
+}
+export const prixComptoir = (id: string) => COMPTOIR.prix[moduleDef(id).rarete] ?? { composants: 0, eclats: 0 };
+
+/** Renouvelle les offres chaque jour ; un Comptoir agrandi dans la journée ajoute ses nouveaux étals sans toucher aux autres */
+export function garnirComptoir(j: Jeu, now: number): void {
+  const c = j.comptoir;
+  const jour = jourDe(now);
+  if (c.jour !== jour) { c.jour = jour; c.offres = []; c.achetes = []; }
+  const etals = etalsDuComptoir(j);
+  if (c.offres.length >= etals.length) return;
+  const t = tireur(c);
+  const bases = new Set(c.offres.map(moduleDe));
+  for (let i = c.offres.length; i < etals.length; i++) {
+    const r = etals[i]!;
+    let id: string | undefined;
+    const aMonter = Object.keys(j.collection).filter((k) => k.endsWith('@' + r) && !bases.has(moduleDe(k)) && doublonsRequis(k, j.collection[k]!.niveau) !== null);
+    if (aMonter.length && t.nombre() < COMPTOIR.partDoublons) id = aMonter[t.entier(aMonter.length)];
+    for (let g = 0; !id && g < 40; g++) {
+      const m = MODULES[t.entier(MODULES.length)]!;
+      if (!bases.has(m.id)) id = carteId(m.id, r);
+    }
+    if (!id) break;
+    bases.add(moduleDe(id));
+    c.offres.push(id);
+  }
+}
+
+/** Achète l'offre n° index du Comptoir : la carte rejoint la collection (nouvelle carte, ou doublon) */
+export function acheter(j: Jeu, index: number, now = j.dernierTick): Resultat {
+  if (!j.batiments.comptoir) return non('Construis d’abord le Comptoir.');
+  garnirComptoir(j, now);
+  const c = j.comptoir;
+  const id = c.offres[index];
+  if (!id) return non('Cette offre n’existe pas.');
+  if (c.achetes.includes(index)) return non('Déjà acheté aujourd’hui : le Comptoir se renouvelle demain.');
+  const p = prixComptoir(id);
+  if (j.composants < p.composants || j.eclats < p.eclats) return non('Pas assez de ressources.');
+  j.composants -= p.composants;
+  j.eclats -= p.eclats;
+  c.achetes.push(index);
+  const neuve = ajouterCarte(j, id);
+  log(j, neuve ? `Comptoir : nouvelle carte, ${moduleDef(id).nom} (${NOMS_RARETE[moduleDef(id).rarete]}).` : `Comptoir : un doublon de ${moduleDef(id).nom}.`);
+  return { ok: true };
 }
 
 // ---------- Les Épreuves de la semaine ----------

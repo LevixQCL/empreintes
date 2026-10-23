@@ -147,6 +147,17 @@ vaincue, vers des cartes d'une lignée, des composants ou des Éclats), les *mis
 2 ou 8 h dans la dernière Strate vaincue) et les *Épreuves de la semaine* (`EPREUVES`, un combat à règle spéciale contre le
 gardien de la dernière Strate vaincue, une carte au choix dont une en argent à la première victoire de la semaine).
 
+**Devenir plus fort sans descendre** (23 octobre 2026). Deux voies au district, réglées dans `jeu.ts` :
+- **Le Comptoir** (`COMPTOIR`, `acheter`) : le « acheter » de « forger, acheter ou combattre ». Il se construit sur le pilier
+  qui attendait le Labo génétique (niveau 0 au départ). Chaque jour, 3 à 6 cartes à prix fixe selon son niveau, une fois chacune :
+  on voit la carte avant de payer, aucun hasard payé. Fer et cuivre, de l'argent après la Strate −4, jamais d'or ni de nacre.
+  Une offre sur deux est un doublon d'une carte possédée. Il a son propre hasard (`comptoir.rng`) : il ne touche pas aux trouvailles.
+- **L'entraînement à la Tour** (`ENTRAINEMENT`) : un Porteur posté à la Tour du Noyau gagne de l'XP avec le temps (3 à 8 XP/h),
+  jusqu'à 4 niveaux par niveau de la Tour. Il ne descend pas pendant ce temps.
+Le robot de parcours s'en sert aussi : la Strate −10 arrive vers le jour 29-30 (occasionnel), 23 (assidu), comme avant :
+ce sont les creuseurs et la Tour qui tiennent le rythme. Les images `public/art/batiments/comptoir-N.webp` sont provisoires
+(le plateau vide du tableau) en attendant celles de Midjourney.
+
 ## Firebase
 
 Voir [docs/GUIDE.md](docs/GUIDE.md). Tant que `src/net/firebase-config.ts` est vide, le jeu tourne

@@ -402,10 +402,10 @@ racine.addEventListener('click', async (ev) => {
     case 'carte-fermer': D.carte = null; break;
     case 'filtre': D.filtre = (id as typeof D.filtre) || 'tout'; window.scrollTo(0, 0); break;
     case 'fermer': D.selection = null; break;
-    case 'chantier': D.message = 'Ce pilier accueillera le Labo génétique dans une prochaine version.'; break;
     case 'ameliorer': resultat(J.ameliorer(jeu, id as BatimentId, Date.now())); break;
     case 'poster': resultat(J.poster(jeu, id, (b.dataset.poste as J.Poste) ?? null)); break;
     case 'liberer': resultat(J.poster(jeu, id, null)); break;
+    case 'acheter': resultat(J.acheter(jeu, Number(b.dataset.index ?? -1), Date.now())); break;
     case 'fabriquer': resultat(J.fabriquer(jeu, b.dataset.module ?? '', Date.now())); break;
     case 'cartes': ouvrir('cartes'); break;
     case 'porteurs': ouvrir('porteurs'); break;

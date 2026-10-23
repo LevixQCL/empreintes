@@ -163,6 +163,9 @@ export const BATIMENTS: BatimentDef[] = [
     couts: [{ energie: 0, composants: 0 }, { energie: 100, composants: 12 }, { energie: 240, composants: 30 }, { energie: 500, composants: 60, eclats: 2 }, { energie: 1000, composants: 120, eclats: 5 }], niveauMax: 5 },
   { id: 'clinique', nom: 'Clinique', role: 'Soigne l’Usure des Porteurs qui se reposent au district.', affinite: 'bio',
     couts: [{ energie: 0, composants: 0 }, { energie: 90, composants: 10 }, { energie: 220, composants: 28 }, { energie: 480, composants: 58, eclats: 2 }, { energie: 950, composants: 115, eclats: 5 }], niveauMax: 5 },
+  // 23 octobre 2026 : le « acheter » de « forger, acheter ou combattre ». Il commence au niveau 0 : on le construit.
+  { id: 'comptoir', nom: 'Comptoir', role: 'Les fouilleurs du quartier y revendent chaque jour quelques cartes trouvées dans les Strates. Prix fixes : tu vois toujours ce que tu achètes.', affinite: null,
+    couts: [{ energie: 150, composants: 20 }, { energie: 220, composants: 30 }, { energie: 480, composants: 60, eclats: 2 }, { energie: 950, composants: 115, eclats: 5 }, { energie: 1500, composants: 180, eclats: 8 }], niveauMax: 5 },
 ];
 
 // ---------- Ennemis ----------
