@@ -318,13 +318,35 @@ function devoiler(g: Exclude<Gain, { kind: 'res' }>): Promise<void> {
  * Pendant le suspense, la tache de lumière erre et s'élargit (--charge) : l'empreinte se révèle peu à peu, sans jamais être dessinée.
  */
 const MASQUE_EMPREINTE = (() => {
-  const sillons: string[] = ['<path d="M47 63 C45 56 55 54 55 61 C55 66 50 68 48 64"/>'];
-  for (let i = 0; i < 15; i++) {
-    const rx = 4 + i * 3.4, ry = rx * 1.22, cy = 62 + i * 0.5;
-    const bg = cy + 6 + ((i * 7) % 5) * 3 + i * 2.4, bd = cy + 3 + ((i * 3) % 4) * 4 + i * 2.8;
-    sillons.push(`<path d="M${(50 - rx).toFixed(1)} ${bg.toFixed(1)} V${cy} A${rx.toFixed(1)} ${ry.toFixed(1)} 0 0 1 ${(50 + rx).toFixed(1)} ${cy} V${bd.toFixed(1)}"/>`);
+  // des sillons souples en tourbillon : chaque ligne est une boucle ouverte, ondulée, légèrement en spirale,
+  // aux bouts inégaux ; lissée en courbes de Bézier (Catmull-Rom) pour qu'aucun angle ni segment droit ne subsiste
+  const lisse = (pts: [number, number][]) => {
+    let d = `M${pts[0]![0].toFixed(1)} ${pts[0]![1].toFixed(1)}`;
+    for (let k = 0; k < pts.length - 1; k++) {
+      const p0 = pts[k - 1] ?? pts[k]!, p1 = pts[k]!, p2 = pts[k + 1]!, p3 = pts[k + 2] ?? p2;
+      const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+      d += ` C${c1[0]!.toFixed(1)} ${c1[1]!.toFixed(1)} ${c2[0]!.toFixed(1)} ${c2[1]!.toFixed(1)} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+    }
+    return `<path d="${d}"/>`;
+  };
+  const sillons: string[] = [];
+  const cx = 50, cy = 64;
+  for (let i = 0; i < 17; i++) {
+    const r = 2.6 + i * 3.1;
+    // une ouverture qui tourne d'une ligne à l'autre : le motif semble s'enrouler
+    const debut = 0.6 + i * 0.47 + Math.sin(i * 1.7) * 0.5;
+    const tour = Math.PI * 2 - (0.5 + ((i * 5) % 7) * 0.12);
+    const pts: [number, number][] = [];
+    const n = 40;
+    for (let k = 0; k <= n; k++) {
+      const t = debut + (tour * k) / n;
+      const ondule = 1 + 0.1 * Math.sin(2 * t + i * 0.55) + 0.05 * Math.sin(3 * t - i * 0.9);
+      const rr = (r + (k / n) * 2.4) * ondule;
+      pts.push([cx + Math.cos(t) * rr * 0.86, cy + Math.sin(t) * rr * 1.12 - Math.max(0, i - 9) * 0.6]);
+    }
+    sillons.push(lisse(pts));
   }
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130"><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round">${sillons.join('')}</g></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130"><g fill="none" stroke="#fff" stroke-width="1.15" stroke-linecap="round">${sillons.join('')}</g></svg>`;
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 })();
 const EMPREINTE = `<span class="gr-holo" aria-hidden="true" style="--fp:${MASQUE_EMPREINTE.replace(/"/g, '&quot;')}"></span>`;

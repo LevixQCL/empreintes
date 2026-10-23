@@ -159,16 +159,18 @@
 @property --hx{syntax:'<percentage>';inherits:false;initial-value:30%}
 @property --hy{syntax:'<percentage>';inherits:false;initial-value:35%}
 @property --hr{syntax:'<percentage>';inherits:false;initial-value:0%}
-.gr-holo{position:absolute;z-index:0;inset:0;pointer-events:none;
+.gr-holo{position:absolute;z-index:0;inset:-22%;pointer-events:none;transform-origin:50% 49%;
   background:conic-gradient(from var(--tour,0deg) at var(--hx) var(--hy),#ff9ad5,#9ad7ff,#b7ffcf,#fff1a8,#d3a8ff,#ff9ad5);
-  -webkit-mask:var(--fp) 50% 52%/118% auto no-repeat,radial-gradient(circle at var(--hx) var(--hy),#000 0,rgba(0,0,0,.5) calc(var(--hr) * .5),transparent var(--hr));
+  -webkit-mask:var(--fp) 50% 50%/86% auto no-repeat,radial-gradient(circle at var(--hx) var(--hy),#000 0,rgba(0,0,0,.5) calc(var(--hr) * .5),transparent var(--hr));
   -webkit-mask-composite:source-in;
-  mask:var(--fp) 50% 52%/118% auto no-repeat,radial-gradient(circle at var(--hx) var(--hy),#000 0,rgba(0,0,0,.5) calc(var(--hr) * .5),transparent var(--hr));
+  mask:var(--fp) 50% 50%/86% auto no-repeat,radial-gradient(circle at var(--hx) var(--hy),#000 0,rgba(0,0,0,.5) calc(var(--hr) * .5),transparent var(--hr));
   mask-composite:intersect;
   mix-blend-mode:screen;opacity:.55;--hr:0%}
 /* au repos, la lumière effleure à peine ; pendant le suspense elle erre, s'élargit, et l'irisation tourne */
-.gr .gr-holo{animation:gr-errance 3.2s ease-in-out infinite alternate,gr-irise 4s linear infinite}
-.gr.charge .gr-holo{animation:gr-errance calc(var(--charge,1s) * .5) ease-in-out infinite alternate,gr-irise 2s linear infinite,gr-ouvre var(--charge,1s) ease-in forwards}
+.gr .gr-holo{animation:gr-errance 3.2s ease-in-out infinite alternate,gr-irise 4s linear infinite,gr-virevolte 14s linear infinite}
+.gr.charge .gr-holo{animation:gr-errance calc(var(--charge,1s) * .5) ease-in-out infinite alternate,gr-irise 2s linear infinite,gr-ouvre var(--charge,1s) ease-in forwards,gr-virevolte calc(var(--charge,1s) * 1.6) cubic-bezier(.3,0,.6,1) infinite}
+/* le motif tourne et respire : il virevolte au lieu de rester posé comme un cliché */
+@keyframes gr-virevolte{0%{transform:rotate(0) scale(1)}50%{transform:rotate(180deg) scale(1.07)}100%{transform:rotate(360deg) scale(1)}}
 @keyframes gr-errance{0%{--hx:22%;--hy:28%}35%{--hx:76%;--hy:40%}70%{--hx:38%;--hy:74%}100%{--hx:68%;--hy:62%}}
 @keyframes gr-ouvre{0%{--hr:20%;opacity:.5}100%{--hr:100%;opacity:.95}}
 .gr:not(.charge):not(.revelee) .gr-holo{--hr:22%}
