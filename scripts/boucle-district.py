@@ -30,6 +30,11 @@ LENTEUR = 2          # la vidéo dure LENTEUR fois plus longtemps
 FONDU = 36           # images de fondu entre la fin et le début de la boucle
 # les lieux qui restent le tableau fixe (le Générateur et le Port bougent : ailes du moulin, bateau)
 FIXES = ['noyau', 'forge', 'clinique', 'comptoir', 'labo']
+# réglages par âge : à l'âge 4, le cristal de la Tour et la flamme de la Forge bougent bien et restent animés ;
+# en revanche un personnage traverse le ponton du Labo au Port : on fige ce ponton (polygone en repère 400 x 600)
+PAR_AGE = {
+    4: {'fixes': ['clinique', 'comptoir', 'labo'], 'en_plus': [[(150, 450), (290, 468), (300, 540), (160, 548)]]},
+}
 
 
 def zones(age: int) -> dict[str, list[tuple[float, float]]]:
@@ -52,9 +57,13 @@ def masque(age: int) -> np.ndarray:
     m = Image.new('L', (W, H), 255)
     d = ImageDraw.Draw(m)
     k = W / 400
+    reglage = PAR_AGE.get(age, {})
+    fixes = reglage.get('fixes', FIXES)
     for nom, pts in zones(age).items():
-        if nom in FIXES:
+        if nom in fixes:
             d.polygon([(x * k, y * k) for x, y in pts], fill=0)
+    for pts in reglage.get('en_plus', []):
+        d.polygon([(x * k, y * k) for x, y in pts], fill=0)
     m = m.filter(ImageFilter.MinFilter(9))           # le fixe déborde un peu des contours
     m = m.filter(ImageFilter.GaussianBlur(10))       # et se fond dans la mer
     return np.asarray(m, np.float32)[..., None] / 255

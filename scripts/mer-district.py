@@ -269,11 +269,23 @@ def avec_panorama(age: int, mer_calculee: Image.Image) -> Image.Image:
     pano = pano.resize((pw, PH), Image.LANCZOS)
     x = X0 - round(456 * k)
     out = mer_calculee.copy()
-    m = np.ones((PH, pw), np.float32)
-    f = 160
-    r = np.clip(np.arange(pw) / f, 0, 1); r = r * r * (3 - 2 * r)
-    m *= r[None, :] * r[::-1][None, :]
-    out.paste(pano, (x, Y0), Image.fromarray((m * 255).astype(np.uint8)))
+    # au-delà du panorama (très larges écrans), on le prolonge en miroir : la mer calculée était d'une autre teinte
+    # et sa limite se voyait (23 octobre 2026). Le miroir garde exactement la couleur et la texture des bords.
+    a = np.asarray(pano)
+    marge, bande = 30, 420  # on écarte les dernières colonnes (souvent floues) ; la bande répétée ne contient que la mer
+    def rebond(n: int) -> np.ndarray:
+        # 0, 1, …, bande-1, bande-1, …, 0, 0, 1… : un miroir qui va et vient dans la bande, sans raccord
+        k = np.arange(n) % (2 * bande)
+        return np.where(k < bande, k, 2 * bande - 1 - k)
+    gauche = max(0, x + marge)
+    droite = max(0, W - (x + pw - marge))
+    # à gauche : la colonne juste avant le panorama est son miroir (marge, marge+1… en s'éloignant)
+    cg = (marge + rebond(gauche))[::-1]
+    cd = (pw - marge - 1) - rebond(droite)
+    ext = np.concatenate([a[:, cg], a[:, marge:pw - marge], a[:, cd]], axis=1)
+    debut = gauche - (x + marge)
+    ext = ext[:, debut:debut + W]
+    out.paste(Image.fromarray(ext.astype(np.uint8)), (0, Y0))
     # le tableau du jeu par-dessus, au centre, fondu sur quelques pixels seulement
     tableau = Image.open(RACINE / f'age-{age}.webp').convert('RGB')
     mt = np.ones((PH, PW), np.float32)
