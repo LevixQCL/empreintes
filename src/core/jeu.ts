@@ -264,7 +264,7 @@ export interface Jeu {
   /** le Grand Tableau (23 octobre 2026) : records personnels et scores du début de semaine (classements.ts) */
   palmares?: Palmares;
   /** le nom de directeur choisi pour le Grand Tableau, et si on y apparaît (jamais l'e-mail du compte) */
-  directeur?: { nom: string; public: boolean };
+  directeur?: { nom: string; public: boolean; /** dernier changement de pseudo (ms) : un par semaine au plus */ change?: number };
 }
 
 /** Acte I, le choix : qui garde la chambre ? */

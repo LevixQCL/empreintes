@@ -40,7 +40,7 @@ import './ui/rail.css';
 import './ui/panneau-district.css';
 import './ui/classements.css';
 import { htmlClassements, tableauVide, type GrandTableau } from './ui/classements';
-import { TABLEAUX, aChange, entreeAPublier, nettoyerNom, nomValide, type Entree, type Periode, type TableauId } from './core/classements';
+import { DELAI_PSEUDO, TABLEAUX, aChange, clePseudo, entreeAPublier, nettoyerNom, nomValide, pseudoInterdit, type Entree, type Periode, type TableauId } from './core/classements';
 
 const racine = document.getElementById('app') as HTMLElement;
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -170,6 +170,8 @@ function sauver() {
 let tableauNet: typeof import('./net/classement') | null = null;
 /** la feuille du pseudo ne s'ouvre d'elle-même qu'une fois par lancement */
 let pseudoDemande = false;
+/** la clé du pseudo dont la réservation en ligne est confirmée pendant ce lancement */
+let pseudoReserve: string | null = null;
 /** l'entrée telle qu'elle est en ligne (null = pas encore lue ou absente) */
 let monEntree: Entree | null = null;
 let monEntreeLue = false;
@@ -214,6 +216,22 @@ async function publierTableau() {
   if (!monEntreeLue) { await lireTableau(true); return; }
   const e = entreeAPublier(jeu, uid, jeu.directeur.nom, monEntree, Date.now(), J.semaineDe(Date.now()));
   if (!e || !aChange(e, monEntree)) return;
+  // le pseudo doit être réservé à ce compte (sauvegarde d'avant les réservations, ou autre appareil)
+  if (pseudoReserve !== e.cle) {
+    try {
+      await (await reseauTableau()).reserver(uid, jeu.directeur.nom, null);
+      pseudoReserve = e.cle;
+    } catch (err) {
+      const net = await reseauTableau();
+      if (err instanceof net.PseudoPris) {
+        G.edition = true; G.accueil = false;
+        G.erreur = `« ${jeu.directeur.nom} » a été réservé par un autre directeur. Choisis un autre pseudo.`;
+        jeu.directeur.change = 0;
+        if (mode === 'district') afficher();
+      } else planifierPublication(30_000);
+      return;
+    }
+  }
   try {
     const net = await reseauTableau();
     await net.publier(e);
@@ -724,9 +742,31 @@ racine.addEventListener('click', async (ev) => {
     case 'gt-nom-fermer': G.edition = false; G.accueil = false; G.erreur = ''; break;
     case 'gt-nom-ok': {
       const nom = nettoyerNom((racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value ?? '');
-      if (!nomValide(nom)) { G.erreur = 'De 3 à 18 caractères : lettres, chiffres, espaces, points, tirets.'; break; }
-      if (G.entrees.some((x) => x.uid !== uid && x.nom.toLocaleLowerCase('fr') === nom.toLocaleLowerCase('fr'))) { G.erreur = 'Un autre directeur porte déjà ce nom.'; break; }
-      jeu.directeur = { nom, public: jeu.directeur ? jeu.directeur.public || D.vue === 'classements' : true };
+      const avant = jeu.directeur?.nom ?? null;
+      if (!nomValide(nom)) { G.erreur = 'De 3 à 18 caractères : lettres (alphabet latin), chiffres, espaces, points, tirets.'; break; }
+      if (pseudoInterdit(nom)) { G.erreur = 'Ce pseudo n’est pas accepté. Choisis-en un autre.'; break; }
+      const change = !!avant && clePseudo(avant) !== clePseudo(nom);
+      const depuis = jeu.directeur?.change ?? 0;
+      if (change && Date.now() - depuis < DELAI_PSEUDO) {
+        G.erreur = `Un changement de pseudo par semaine : le prochain est possible le ${new Date(depuis + DELAI_PSEUDO).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' })}.`;
+        break;
+      }
+      if (G.entrees.some((x) => x.uid !== uid && x.cle === clePseudo(nom))) { G.erreur = 'Ce pseudo est déjà pris par un autre directeur.'; break; }
+      // la réservation en ligne : c'est elle qui garantit qu'il n'y a pas deux fois le même pseudo
+      if (compte && uid) {
+        G.etat = 'chargement'; afficher();
+        try {
+          await (await reseauTableau()).reserver(uid, nom, avant);
+          G.etat = 'ok';
+        } catch (e) {
+          G.etat = 'ok';
+          const net = await reseauTableau();
+          G.erreur = e instanceof net.PseudoPris ? 'Ce pseudo est déjà pris par un autre directeur.' : `Impossible de réserver ce pseudo pour l’instant (${(e as { code?: string })?.code ?? 'réseau'}).`;
+          break;
+        }
+        pseudoReserve = clePseudo(nom);
+      }
+      jeu.directeur = { nom, public: jeu.directeur ? jeu.directeur.public || D.vue === 'classements' : true, change: change || !avant ? Date.now() : depuis };
       G.edition = false; G.accueil = false; G.erreur = '';
       D.message = `Bienvenue, ${nom} : c’est ce nom que verront les autres joueurs.`;
       sauver();

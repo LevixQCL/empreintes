@@ -184,7 +184,7 @@ Deux périodes : le record (ne redescend jamais) et la semaine (ce qui est gagn�
 dans `j.palmares` ; connecté, le joueur choisit un nom de directeur (`j.directeur`, jamais l'e-mail) et publie `classement/{uid}`
 au plus toutes les 25 s. Entre amis, toute la liste ; au-delà de 12, le podium et les voisins du joueur (`fenetre`).
 Les règles Firestore valident chaque entrée (champs, bornes, profondeur qui ne redescend pas et monte de 2 Strates au plus,
-date d'arrivée = maintenant quand la profondeur monte). En développement : `__tableau(entrées, uid)` dans la console pour l'essayer sans compte.
+date d'arrivée = maintenant quand la profondeur monte). Les pseudos sont uniques : chacun est réservé dans `pseudos/{clé}` (`reserver` dans `src/net/classement.ts`, une transaction), la clé ignore majuscules, accents et séparateurs (`clePseudo`, même table que les règles), le Tableau n'accepte que le pseudo réservé par ce compte, un filtre écarte grossièretés et faux noms officiels (`pseudoInterdit`), et on en change au plus une fois par semaine (`DELAI_PSEUDO`, vérifié dans le jeu). En développement : `__tableau(entrées, uid)` dans la console pour l'essayer sans compte.
 
 ## Firebase
 

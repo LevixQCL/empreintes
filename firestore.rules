@@ -28,10 +28,39 @@ service cloud.firestore {
         && request.resource.data.maj >= resource.data.maj + 20000;
     }
 
+    // Les pseudos (23 octobre 2026) : une fiche par pseudo, à un seul compte. Deux joueurs ne peuvent pas avoir le même :
+    // la fiche existe déjà, la création est refusée. La clé est le pseudo en minuscules, sans accents ni séparateurs
+    // (« Bryan », « bryan », « Bryän » et « B-ryan » sont le même), et elle doit correspondre exactement au nom.
+    match /pseudos/{cle} {
+      allow get: if request.auth != null;
+      allow create: if request.auth != null && pseudoValide(cle, request.resource.data)
+        && request.resource.data.uid == request.auth.uid && maintenant(request.resource.data.le);
+      allow update: if request.auth != null && resource.data.uid == request.auth.uid && pseudoValide(cle, request.resource.data)
+        && request.resource.data.uid == resource.data.uid && request.resource.data.le == resource.data.le;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+
+    function pseudoValide(cle, d) {
+      return d.keys().hasOnly(['uid', 'nom', 'le']) && d.uid is string && d.le is int
+        && d.nom is string && d.nom.size() >= 3 && d.nom.size() <= 18
+        && cle.matches('^[a-z0-9]{3,24}$') && clePseudo(d.nom) == cle;
+    }
+
+    // la même table que clePseudo dans src/core/classements.ts
+    function clePseudo(nom) {
+      return nom.lower().replace("[ .'’_-]", "")
+        .replace("[àáâãäå]", "a").replace("[èéêë]", "e").replace("[ìíîï]", "i").replace("[òóôõöø]", "o").replace("[ùúûü]", "u")
+        .replace("[ýÿ]", "y").replace("ç", "c").replace("ñ", "n").replace("œ", "oe").replace("æ", "ae").replace("ß", "ss");
+    }
+
     function entreeValide(d) {
-      return d.keys().hasOnly(['nom', 'porteur', 'profondeur', 'profondeurLe', 'registre', 'decouvertes',
+      return d.keys().hasOnly(['nom', 'cle', 'porteur', 'profondeur', 'profondeurLe', 'registre', 'decouvertes',
           'semaine', 'profondeurSemaine', 'registreSemaine', 'maj'])
         && d.nom is string && d.nom.size() >= 3 && d.nom.size() <= 18
+        // le pseudo affiché est bien celui que ce joueur a réservé
+        && d.cle is string && d.cle.size() <= 24
+        && getAfter(/databases/$(database)/documents/pseudos/$(d.cle)).data.uid == request.auth.uid
+        && getAfter(/databases/$(database)/documents/pseudos/$(d.cle)).data.nom == d.nom
         && d.porteur is string && d.porteur.size() <= 24
         && d.profondeur is int && d.profondeur >= 2 && d.profondeur <= 201
         && d.profondeurLe is int

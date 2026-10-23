@@ -2,12 +2,12 @@
 import { describe, expect, it } from 'vitest';
 import {
   VALEUR_DECOUVERTE, VALEUR_METAL, aChange, classer, demiStrates, ecartDevant, entreeAPublier, fenetre, noterPalmares, nomValide,
-  profondeurDe, valeurExemplaire, valeurRegistre, type Entree,
+  clePseudo, pseudoInterdit, profondeurDe, valeurExemplaire, valeurRegistre, type Entree,
 } from '../src/core/classements';
 import { nouveauJeu, semaineDe, tick } from '../src/core/jeu';
 
 const entree = (uid: string, p: Partial<Entree> = {}): Entree => ({
-  uid, nom: uid, porteur: 'ilka', profondeur: 2, profondeurLe: 0, registre: 0, decouvertes: 0,
+  uid, nom: uid, cle: uid, porteur: 'ilka', profondeur: 2, profondeurLe: 0, registre: 0, decouvertes: 0,
   semaine: 1, profondeurSemaine: 0, registreSemaine: 0, maj: 0, ...p,
 });
 
@@ -137,5 +137,23 @@ describe('L’entrée publiée suit les règles Firestore', () => {
     expect(nomValide('Élo-42')).toBe(true);
     expect(nomValide('ab')).toBe(false);
     expect(nomValide('<script>')).toBe(false);
+  });
+});
+
+describe('Les pseudos', () => {
+  it('une seule clé pour les variantes d’un même pseudo', () => {
+    for (const n of ['Bryan', 'bryan', 'BRYAN', 'Bryän', 'B.r-y_a n', 'Bry’an']) expect(clePseudo(n)).toBe('bryan');
+    expect(clePseudo('Élo-42')).toBe('elo42');
+    expect(clePseudo('Cœur')).toBe('coeur');
+  });
+
+  it('refuse les alphabets qui permettent des sosies', () => {
+    expect(nomValide('Вryan')).toBe(false); // В cyrillique
+    expect(nomValide('Bryan')).toBe(true);
+  });
+
+  it('filtre les grossièretés et les faux noms officiels, sans bloquer les prénoms', () => {
+    for (const n of ['Connard', 'c0nnard', 'Admin', 'Modo', 'Support Empreintes', 'FDP', 'Hitler88']) expect(pseudoInterdit(n)).toBe(true);
+    for (const n of ['Dominique', 'Nazim', 'Montenegro', 'Pedro', 'Kevin', 'Steph', 'Verhelle', 'Marie', 'Pascal', 'Charlotte', 'Bryan']) expect(pseudoInterdit(n)).toBe(false);
   });
 });

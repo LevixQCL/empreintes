@@ -126,6 +126,8 @@ export function noterPalmares(j: { strate: number; frontVaincu: boolean; collect
 export interface Entree {
   uid: string;
   nom: string;
+  /** la clé du pseudo réservé (`pseudos/{cle}`) : les règles Firestore vérifient que ce pseudo est bien à ce joueur */
+  cle: string;
   /** le Porteur en tête de son escouade, dont on montre le portrait */
   porteur: string;
   profondeur: number;
@@ -142,7 +144,48 @@ export interface Entree {
 /** Un nom de directeur : 3 à 18 caractères, lettres (accents compris), chiffres, espace, point, tiret, apostrophe */
 export const NOM_VALIDE = /^[\p{L}\p{N}][\p{L}\p{N} .'’_-]{1,16}[\p{L}\p{N}.]$/u;
 export function nettoyerNom(nom: string): string { return nom.replace(/\s+/g, ' ').trim(); }
-export function nomValide(nom: string): boolean { return NOM_VALIDE.test(nettoyerNom(nom)); }
+export function nomValide(nom: string): boolean { return NOM_VALIDE.test(nettoyerNom(nom)) && /^[a-z0-9]{3,24}$/.test(clePseudo(nom)); }
+
+/**
+ * La clé d'un pseudo : ce qui le rend unique. Minuscules, sans accents ni séparateurs, et les chiffres qui imitent
+ * des lettres ramenés à ces lettres : « Bryan », « bryan », « Bryän », « B.r-y_a n » et « BRYAN » sont le même pseudo.
+ * Seuls les pseudos en alphabet latin sont acceptés (une clé hors de a-z et 0-9 est refusée) : pas de sosie en cyrillique.
+ */
+export function clePseudo(nom: string): string {
+  // la même table que firestore.rules (fonction clePseudo) : les deux doivent donner exactement la même clé
+  let c = nettoyerNom(nom).toLowerCase().replace(/[ .'’_-]/g, '');
+  for (const [de, vers] of ACCENTS) c = c.replace(de, vers);
+  return c;
+}
+/** Les accents ramenés à leur lettre (l'ordre et le contenu sont recopiés tels quels dans firestore.rules) */
+export const ACCENTS: [RegExp, string][] = [
+  [/[àáâãäå]/g, 'a'], [/[èéêë]/g, 'e'], [/[ìíîï]/g, 'i'], [/[òóôõöø]/g, 'o'], [/[ùúûü]/g, 'u'],
+  [/[ýÿ]/g, 'y'], [/ç/g, 'c'], [/ñ/g, 'n'], [/œ/g, 'oe'], [/æ/g, 'ae'], [/ß/g, 'ss'],
+];
+
+/** La clé vue par le filtre : les chiffres-lettres (0→o, 1→i, 3→e, 4→a, 5→s, 7→t) et les lettres doublées réduites */
+function cleFiltre(cle: string): string {
+  return cle.replace(/0/g, 'o').replace(/[1!|]/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's').replace(/7/g, 't')
+    .replace(/l/g, 'i').replace(/(.)\1+/g, '$1');
+}
+
+/** Les mots interdits dans un pseudo : grossièretés courantes, haine, et noms qui imitent l'équipe du jeu.
+ *  Écrits comme le filtre les voit (l → i, lettres doublées réduites). Trois listes pour ne pas bloquer des prénoms :
+ *  « Dominique » contient « nique », « Nazim » commence par « nazi », « Montenegro » contient « negro ». */
+const PARTOUT = ['conard', 'conase', 'saiope', 'encuie', 'batard', 'couie', 'merde', 'bordei', 'pedophi', 'hitier', 'bougnou', 'youpin',
+  'fagot', 'fuck', 'shit', 'bitch', 'cunt', 'whore', 'terorist', 'jihad', 'admin', 'moderat', 'anthropic', 'oficiei'];
+const AU_DEBUT = ['suport', 'equipe', 'systeme', 'empreinte', 'staf', 'modo'];
+const SEULS = ['pute', 'putes', 'bite', 'ntm', 'fdp', 'pd', 'tg', 'cui', 'sex', 'sexe', 'porn', 'xxx', 'vioi', 'rape', 'pedo', 'nique', 'niker',
+  'nazi', 'nazis', 'negro', 'negre', 'raton'];
+
+/** Le pseudo contient-il un mot interdit ? */
+export function pseudoInterdit(nom: string): boolean {
+  const c = cleFiltre(clePseudo(nom));
+  return PARTOUT.some((m) => c.includes(m)) || AU_DEBUT.some((m) => c.startsWith(m)) || SEULS.includes(c);
+}
+
+/** Changer de pseudo : au plus une fois par semaine, pour qu'on ne puisse pas se faire passer pour quelqu'un en jouant avec les noms */
+export const DELAI_PSEUDO = 7 * 86_400_000;
 
 /** La valeur d'une entrée dans un tableau et une période (null = n'apparaît pas : cette semaine, il n'a pas joué) */
 export function valeur(e: Entree, t: TableauId, per: Periode, semaine: number): number | null {
@@ -224,7 +267,7 @@ export function entreeAPublier(
   }
   const memeSemaine = pal.semaine === semaine;
   return {
-    uid, nom: nettoyerNom(nom), porteur: j.escouade?.[0] ?? 'ilka',
+    uid, nom: nettoyerNom(nom), cle: clePseudo(nom), porteur: j.escouade?.[0] ?? 'ilka',
     profondeur, profondeurLe, registre, decouvertes: r.decouvertes,
     semaine,
     profondeurSemaine: memeSemaine ? Math.max(0, Math.min(profondeur, profondeur - pal.profondeurDebut)) : 0,
@@ -236,7 +279,7 @@ export function entreeAPublier(
 /** Faut-il republier ? (un score, le nom ou le Porteur de tête a changé) */
 export function aChange(a: Entree, b: Entree | null): boolean {
   if (!b) return true;
-  return a.nom !== b.nom || a.porteur !== b.porteur || a.profondeur !== b.profondeur || a.registre !== b.registre || a.decouvertes !== b.decouvertes
+  return a.nom !== b.nom || a.cle !== b.cle || a.porteur !== b.porteur || a.profondeur !== b.profondeur || a.registre !== b.registre || a.decouvertes !== b.decouvertes
     || a.semaine !== b.semaine || a.profondeurSemaine !== b.profondeurSemaine || a.registreSemaine !== b.registreSemaine;
 }
 
