@@ -142,8 +142,8 @@ export const decorStrate = (zone: number): string | null => (STRATES_ILLUSTREES.
  * Floutée dans le fichier plutôt qu'en CSS : un filtre plein écran coûte cher sur téléphone, une petite image floue s'agrandit sans défaut.
  */
 export const fondCombat = (zone: number): string | null => (STRATES_ILLUSTREES.has(zone) ? `${base}strates/zone-${zone}-fond.webp` : null);
-/** Icônes peintes des conditions de salle (23 octobre 2026) ; inondée et éboulis gardent le cristal en attendant leur image */
-const CONDITIONS_PEINTES = new Set(['courants', 'chant', 'echo', 'sanctuaire', 'brouillard']);
+/** Icônes peintes des conditions de salle (23 octobre 2026), les sept */
+const CONDITIONS_PEINTES = new Set(['inondee', 'courants', 'chant', 'echo', 'sanctuaire', 'eboulis', 'brouillard']);
 export const iconeCondition = (id: string): string | null => (CONDITIONS_PEINTES.has(id) ? `${base}conditions/${id}.webp` : null);
 /** Ysé, l'archiviste des Chroniques (23 octobre 2026) */
 export const portraitYse = `${base}personnages/yse.webp`;
