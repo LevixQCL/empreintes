@@ -134,9 +134,9 @@ export function htmlExploration(j: Jeu): string {
   h += `<header class="ex-tete"><div class="ex-lieu"><span class="ex-sur">${x.fouille ? `Fouille · ${echap(CIBLES_FOUILLE[x.fouille].nom)}` : `Strate −${x.strate}`}</span>`
     + `<h1>${echap(zone.nom)}</h1>`
     + `<span class="ex-profondeur">${reste > 0 ? `Salle <b>${ici.rang + 1}</b> sur ${rangs} · ${fin} dans <b>${reste}</b> salle${reste > 1 ? 's' : ''}` : `Tu es devant ${fin}`}</span></div>`
-    + `<div class="ex-butin" aria-label="Butin de l’expédition"><span>${icone('composants')}<b>${x.butin}</b><small>compos.</small></span>`
-    + (cartes ? `<span>${icone('cartes')}<b>${cartes}</b><small>carte${cartes > 1 ? 's' : ''}</small></span>` : '')
-    + (g?.eclats ? `<span>${icone('eclats')}<b>${g.eclats}</b><small>Éclat${g.eclats > 1 ? 's' : ''}</small></span>` : '')
+    + `<div class="ex-butin" aria-label="Butin de l’expédition"><span data-gain="x-composants">${icone('composants')}<b>${x.butin}</b><small>compos.</small></span>`
+    + (cartes ? `<span data-gain="x-cartes">${icone('cartes')}<b>${cartes}</b><small>carte${cartes > 1 ? 's' : ''}</small></span>` : '')
+    + (g?.eclats ? `<span data-gain="x-eclats">${icone('eclats')}<b>${g.eclats}</b><small>Éclat${g.eclats > 1 ? 's' : ''}</small></span>` : '')
     + (g?.fragment ? `<span>${icone('codex')}<b>1</b><small>archive</small></span>` : '') + `</div></header>`;
 
   // ---------- l'escouade : trois portraits, les vrais PV ----------

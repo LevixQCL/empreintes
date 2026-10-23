@@ -95,7 +95,7 @@ export function hud(j: Jeu, ouverte: Ressource | null = null): string {
   const max = stockage(j);
   const plein = j.energie >= max;
   const b = (r: Ressource, extra: string, label: string) =>
-    `<button type="button" class="res ${r}${extra}" data-action="ressource" data-id="${r}" aria-expanded="${ouverte === r}" aria-label="${label}">`;
+    `<button type="button" class="res ${r}${extra}" data-action="ressource" data-id="${r}" data-gain="${r}" aria-expanded="${ouverte === r}" aria-label="${label}">`;
   return `<header class="hud" aria-label="Ressources">`
     + b('energie', plein ? ' plein' : '', `Énergie : ${ent(j.energie)} sur ${ent(max)}. Détails`) + `${icone('energie')}<span class="v">${ent(j.energie)}</span>`
     + `<span class="jauge-res"><i style="width:${Math.min(100, (100 * j.energie) / Math.max(1, max))}%"></i></span><small>${plein ? 'plein' : `+${energieParHeure(j)}/h`}</small></button>`

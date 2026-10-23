@@ -33,6 +33,8 @@ import './ui/matieres.css';
 import { activerCartes } from './ui/carte';
 import { NOMS_RARETE } from './core/collection';
 import { trouveesDe, type OngletGuide } from './ui/guide';
+import { comparer, montrer, relever } from './ui/gains';
+import './ui/gains.css';
 
 const racine = document.getElementById('app') as HTMLElement;
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -359,9 +361,13 @@ function ouvrir(v: EcranDistrict['vue']) {
   if (v === 'porteurs') D.reserve = false;
 }
 
+const centreDe = (el: Element) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
 const resultat = (r: J.Resultat) => { D.message = r.ok ? '' : r.message ?? ''; if (r.ok) sauver(); };
 
 racine.addEventListener('pointerdown', () => { if (K.verrou) rapide = true; });
+/** le dernier endroit touché : les gains en jaillissent */
+let touche = { x: 0, y: 0 };
+racine.addEventListener('pointerdown', (ev) => { touche = { x: ev.clientX, y: ev.clientY }; }, true);
 
 /* appui long sur une carte de combat : montre son nom, sans la jouer */
 let appui: { el: HTMLElement; t: number; x: number; y: number } | null = null;
@@ -385,6 +391,9 @@ racine.addEventListener('click', async (ev) => {
   const id = b.dataset.id ?? '';
   const x = jeu.expedition;
   const s = x?.combat;
+  // ce que le joueur reçoit grâce à cette action (comparé après le rendu, en bas de ce gestionnaire)
+  const avantGains = relever(jeu);
+  const depart = ev.detail === 0 ? centreDe(b) : touche;
   D.message = a === 'poster' || a === 'liberer' || a === 'fabriquer' || a === 'ameliorer' || a === 'choisir' || a === 'greffer' || a === 'monter' || a === 'carte' || a === 'colis' || a === 'chapitre' ? D.message : '';
 
   switch (a) {
@@ -539,7 +548,7 @@ racine.addEventListener('click', async (ev) => {
     case 'vider': if (s && !K.verrou) { C.viderChaine(s); sauver(); } break;
     case 'allonger': if (s && !K.verrou) { C.allonger(s); sauver(); } break;
     case 'repiocher': if (s && !K.verrou) { C.repiocher(s); sauver(); } break;
-    case 'lancer': if (s && !K.verrou) { debloquerSon(); await jouer(C.lancer(s)); return; } break;
+    case 'lancer': if (s && !K.verrou) { debloquerSon(); await jouer(C.lancer(s)); montrer(comparer(avantGains, relever(jeu))); return; } break;
     case 'regles': K.regles = !K.regles; K.fuite = false; K.guide = null; break;
     case 'fuir': if (!K.verrou) { K.fuite = !K.fuite; K.regles = false; K.guide = null; } break;
     case 'fuir-salle': {
@@ -611,6 +620,8 @@ racine.addEventListener('click', async (ev) => {
     default: return;
   }
   afficher();
+  // les gains de l'action : après le rendu, pour que les compteurs visés soient à l'écran
+  if (mode !== 'titre' && mode !== 'intro') montrer(comparer(avantGains, relever(jeu)), depart);
   // un nouvel onglet du guide s'ouvre en haut, pas à la hauteur de l'onglet d'avant
   if (a === 'guide') racine.querySelector('.guide-corps')?.scrollTo(0, 0);
 });
@@ -619,6 +630,7 @@ racine.addEventListener('click', async (ev) => {
 
 let dernierRendu = 0;
 setInterval(() => {
+  const avantTick = relever(jeu);
   const nouvelles = J.tick(jeu, Date.now());
   if (nouvelles.length) { D.message = nouvelles[0]!; sauver(); }
   if (mode !== 'district') return;
@@ -626,7 +638,11 @@ setInterval(() => {
   if (vite || Date.now() - dernierRendu > 15_000) {
     dernierRendu = Date.now();
     // ne pas redessiner pendant que le joueur tape dans le panneau Compte
-    if (document.activeElement?.tagName !== 'INPUT') afficher();
+    if (document.activeElement?.tagName !== 'INPUT') {
+      afficher();
+      // la Forge qui livre, une mission qui rentre, un Porteur qui arrive : sans la production d'énergie, qui coule toute seule
+      if (nouvelles.length) montrer(comparer(avantTick, relever(jeu), { energie: false }));
+    }
   }
 }, 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) { J.tick(jeu, Date.now()); sauver(); if (mode === 'district') afficher(); } });
@@ -634,3 +650,5 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) { J.
 K.fin = null;
 afficher();
 demarrerCompte();
+// pour essayer les gains à la main pendant le développement (absent du site publié)
+if (import.meta.env.DEV) Object.assign(window, { __gains: { montrer } });
