@@ -15,11 +15,11 @@ import { FRAGMENTS } from '../core/fragments';
 import { loreCarte } from '../core/lore-cartes';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
 import { COULEUR, echap } from './vue';
-import { decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel } from './art';
+import { decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { feuillePorteur } from './porteurs';
-import { ICO, type Icone } from './icones';
+import { ICO, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict, type Filtre } from './coquille';
 
 import './district.css';
@@ -245,11 +245,11 @@ function appel(e: EcranDistrict): string {
     return `<button type="button" class="appel reso" data-action="rencontre">${ICO.porte}<span><strong>La porte scellée</strong><small>Sous la Tour du Noyau, trois personnes t’attendent</small></span></button>`;
   }
   if (j.archive.aOuvrir && !objectifCourant(j)) {
-    return `<button type="button" class="appel reso" data-action="ouvrir-archive">${ICO.coffre}<span><strong>L’Archive de la semaine est prête</strong><small>Palier ${j.archive.aOuvrir} sur ${ARCHIVE.paliers.length} atteint : ouvre-la</small></span></button>`;
+    return `<button type="button" class="appel reso" data-action="ouvrir-archive">${icone('coffre')}<span><strong>L’Archive de la semaine est prête</strong><small>Palier ${j.archive.aOuvrir} sur ${ARCHIVE.paliers.length} atteint : ouvre-la</small></span></button>`;
   }
   if (colisDisponible(j)) {
     const reste = colisAvantChoix(j);
-    return `<button type="button" class="appel colis" data-action="colis">${ICO.coffre}<span><strong>Ravitaillement du jour${j.ravitaillement.reserve > 1 ? ` · ${j.ravitaillement.reserve} colis` : ''}</strong>`
+    return `<button type="button" class="appel colis" data-action="colis">${icone('coffre')}<span><strong>Ravitaillement du jour${j.ravitaillement.reserve > 1 ? ` · ${j.ravitaillement.reserve} colis` : ''}</strong>`
       + `<small>Composants et un doublon · ${reste === 1 ? 'celui-ci contient une carte au choix' : `carte au choix dans ${reste} colis`}</small></span>`
       + `<span class="crans-colis" aria-hidden="true">${Array.from({ length: RAVITAILLEMENT.cycle }, (_, i) => `<i class="${i < j.ravitaillement.ouverts % RAVITAILLEMENT.cycle ? 'plein' : ''}"></i>`).join('')}</span></button>`;
   }
@@ -353,7 +353,7 @@ function blocEntrainement(j: Jeu): string {
   const plafond = plafondEntrainement(j);
   const xph = xpEntrainement(j);
   const eh = energieEntrainement(j);
-  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.monter}Entraînement</h3>`
+  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.monter}Entraînement</h3><div class="fb-entrainement" aria-hidden="true"><img src="${salleEntrainement}" alt="" decoding="async"></div>`
     + `<p class="fb-vide">Un Porteur posté ici s’entraîne avec les creuseurs : <b>+${xph} XP par heure</b> pour <b>${eh} énergie par heure</b>, même jeu fermé, jusqu’au <b>niveau ${plafond}</b>. Sans énergie, il s’arrête. S’il rejoint l’escouade, il quitte l’entraînement.</p>`;
   const niveau = (id: string) => niveauPorteur(j, id).niveau;
   if (occupant) {
@@ -461,7 +461,7 @@ function feuilleBatiment(e: EcranDistrict): string {
     const poste = b;
     const occupant = posteDe(j, poste);
     const actuel = rendement(j, poste, occupant);
-    h += `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.ouvrier}Au travail</h3>`;
+    h += `<section class="fb-bloc"><h3 class="titre-bloc">${icone('ouvrier')}Au travail</h3>`;
     if (occupant) {
       const o = porteurDef(occupant);
       const vide = rendement(j, poste, null);
@@ -487,7 +487,7 @@ function feuilleBatiment(e: EcranDistrict): string {
 
   // la Forge
   if (b === 'forge') {
-    h += `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.marteau}Refabriquer une carte</h3>`;
+    h += `<section class="fb-bloc"><h3 class="titre-bloc">${icone('marteau')}Refabriquer une carte</h3>`;
     if (j.forge) {
       const m = moduleDef(j.forge.moduleId);
       const fait = Math.min(1, (e.now - j.forge.debut) / (j.forge.fin - j.forge.debut));
@@ -546,7 +546,7 @@ function barreAmelioration(e: EcranDistrict, b: BatimentId, a: ReturnType<typeof
   const niv = j.batiments[b];
   if (a.ch) {
     const fait = Math.min(1, (e.now - a.ch.debut) / (a.ch.fin - a.ch.debut));
-    return `<div class="chantier-cours">${ICO.marteau}<div><strong>Chantier vers le niveau ${niv + 1}</strong><small>Reste ${duree(a.ch.fin - e.now)} · avance même jeu fermé</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
+    return `<div class="chantier-cours">${icone('marteau')}<div><strong>Chantier vers le niveau ${niv + 1}</strong><small>Reste ${duree(a.ch.fin - e.now)} · avance même jeu fermé</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
   }
   if (!a.cout) return `<small class="raison">Niveau maximum pour cette version.</small>`;
   const c = a.cout;
@@ -842,7 +842,7 @@ export function htmlCodex(e: EcranDistrict): string {
     if (reste > 0) h += `<div class="fragment enfoui">${ICO.verrou}<span>${reste} fragment${reste > 1 ? 's' : ''} encore enfoui${reste > 1 ? 's' : ''} dans les Strates</span></div>`;
     return coquille(e, h, 'ecran-codex');
   }
-  h += `<p class="chroniques-intro">Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi la troisième nuit après ton élection.</p>`;
+  h += `<p class="chroniques-intro"><img class="yse-medaillon" src="${portraitYse}" alt="Ysé" decoding="async">Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi la troisième nuit après ton élection.</p>`;
   for (const livre of [1, 2, 3] as const) {
     const chapitres = CHAPITRES.filter((x) => x.livre === livre);
     const lus = chapitres.filter((c) => chapitreOuvert(c, j.strate) && j.lus.includes(c.id)).length;
@@ -1017,7 +1017,7 @@ function htmlEpreuves(e: EcranDistrict): string {
 function htmlMissions(e: EcranDistrict): string {
   const j = e.j;
   const st = strateMission(j);
-  let h = `<section class="bloc"><h3 class="titre-bloc">${ICO.ouvrier}Missions</h3>`
+  let h = `<section class="bloc"><h3 class="titre-bloc">${icone('ouvrier')}Missions</h3>`
     + `<p class="aide">Un Porteur qui ne travaille pas peut partir en mission dans la Strate −${st}, équipé d’un peu d’énergie. La mission avance même jeu fermé : il rapporte des composants et des doublons de cartes de sa lignée, et un peu d’Usure.</p>`;
   for (const m of j.missions) {
     const p = porteurDef(m.porteur);

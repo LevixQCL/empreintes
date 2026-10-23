@@ -216,3 +216,9 @@
 @media (min-width:1100px) and (max-height:940px) and (min-height:600px){
   .ex-portrait{aspect-ratio:1}
 }
+
+/* conditions de salle peintes (23 octobre 2026) */
+.ex-badge.condition.peinte{left:-8px;bottom:-6px;min-width:26px;height:26px;border-radius:13px;padding:0;
+  background:radial-gradient(circle at 50% 40%,#2B2418,#120E08);box-shadow:0 0 0 1.5px #D4A54E,0 2px 5px rgba(0,0,0,.6)}
+.ex-badge.condition.peinte img{width:22px;height:22px;object-fit:contain}
+.ex-condition .ex-cond-ico{width:30px;height:30px;flex-shrink:0;margin:-4px 0 -4px -2px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}

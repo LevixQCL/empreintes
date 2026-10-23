@@ -188,7 +188,7 @@ export function navigation(e: EcranDistrict): string {
     const ferme = !j.chambre && t.vue === 'cartes';
     const action = t.vue === 'plus' ? 'menu' : t.vue;
     return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${ferme ? ' disabled' : ''}${actif === t.vue ? ' aria-current="page"' : ''}>`
-      + `<span class="onglet-ico">${ferme ? ICO.verrou : icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span>${t.nom}</span></button>`;
+      + `<span class="onglet-ico">${ferme ? icone('verrou') : icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span>${t.nom}</span></button>`;
   }).join('') + `</nav>`;
 }
 
@@ -209,7 +209,7 @@ export function menu(e: EcranDistrict): string {
     + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur ? `Connecté : ${echap(c.utilisateur.nom)}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
     + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro</strong><small>L’histoire de 2121, depuis le début</small></span></button></div>`;
   h += panneauCompte(c);
-  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.journal}Journal du district</h3><ol class="journal-liste">${e.j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></section>`;
+  h += `<section class="bloc"><h3 class="titre-bloc">${icone('journal')}Journal du district</h3><ol class="journal-liste">${e.j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></section>`;
   return h + `</div></section>`;
 }
 

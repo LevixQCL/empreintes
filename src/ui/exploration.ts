@@ -16,7 +16,7 @@ import { PART_GROUPE } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR } from '../core/regles';
 import { CIBLES_FOUILLE, RENCONTRES, type Jeu } from '../core/jeu';
-import { decorStrate, illustrationEnnemi, portrait } from './art';
+import { decorStrate, illustrationEnnemi, portrait, iconeCondition } from './art';
 import { COULEUR, echap, htmlLieu } from './vue';
 import { ICO, icone } from './icones';
 
@@ -180,7 +180,7 @@ export function htmlExploration(j: Jeu): string {
     let dedans = medaillon(s);
     if (s.type === 'elite') dedans += `<span class="ex-badge sceau" aria-hidden="true">${ICO.verrou}</span>`;
     if (s.escorte?.length) dedans += `<span class="ex-badge groupe" aria-hidden="true">×${s.escorte.length + 1}</span>`;
-    if (s.condition) dedans += `<span class="ex-badge condition" aria-hidden="true">${ICO.cristal}</span>`;
+    if (s.condition) { const ic = iconeCondition(s.condition); dedans += `<span class="ex-badge condition${ic ? ' peinte' : ''}" aria-hidden="true">${ic ? `<img src="${ic}" alt="" decoding="async">` : ICO.cristal}</span>`; }
     const nom = etat === 'ici' ? 'Vous êtes ici' : nomSalle(s);
     dedans += `<span class="ex-nom">${echap(nom)}</span>`;
     const style = `left:${posX(s).toFixed(2)}%;top:${posY(s).toFixed(2)}%`;
@@ -211,7 +211,7 @@ export function htmlExploration(j: Jeu): string {
           + `<span class="ex-route-txt"><span class="ex-sur">${echap(a.sur)}</span><strong>${echap(a.titre)}</strong>`
           + (a.texte ? `<em>${echap(a.texte)}</em>` : '')
           + (a.faits.length ? `<span class="ex-faits">${a.faits.map((f) => `<span>${f}</span>`).join('')}</span>` : '')
-          + (cond ? `<span class="ex-condition">${ICO.cristal}<span><b>${echap(cond.nom)}</b> : ${echap(cond.texte)}</span></span>` : '')
+          + (cond ? `<span class="ex-condition">${iconeCondition(cond.id) ? `<img class="ex-cond-ico" src="${iconeCondition(cond.id)}" alt="" decoding="async">` : ICO.cristal}<span><b>${echap(cond.nom)}</b> : ${echap(cond.texte)}</span></span>` : '')
           + `</span>${CHEVRON}</button>`;
       }
       h += `</div>`;
