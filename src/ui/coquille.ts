@@ -185,7 +185,7 @@ export function navigation(e: EcranDistrict): string {
   };
   const actif = e.menu ? 'plus' : e.vue === 'escouade' ? 'coupe' : e.vue;
   // sur PC (rail.css) : le cristal seul en tête, et un filet de lumière qui relie les onglets au « Plus » du bas
-  return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./emblem.svg" alt=""></span>` + ONGLETS.map((t) => {
+  return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./art/embleme-cristal.webp" alt=""></span>` + ONGLETS.map((t) => {
     const ferme = !j.chambre && t.vue === 'cartes';
     const action = t.vue === 'plus' ? 'menu' : t.vue;
     return (t.vue === 'plus' ? '<span class="nav-filet" aria-hidden="true"></span>' : '')

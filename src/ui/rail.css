@@ -17,7 +17,7 @@
 
   /* ---------- le cristal en tête, sans carré de fond, sur un petit filet à losange ---------- */
   .ecran > .nav .nav-embleme{position:relative;height:84px;margin:0 0 14px}
-  .ecran > .nav .nav-embleme img{width:auto;height:58px;
+  .ecran > .nav .nav-embleme img{width:auto;height:70px;
     filter:drop-shadow(0 0 16px rgba(95,168,255,.55)) drop-shadow(0 4px 6px rgba(0,0,0,.6));animation:rail-cristal 6s ease-in-out infinite alternate}
   .ecran > .nav .nav-embleme::after{content:"";position:absolute;left:22px;right:22px;bottom:-6px;height:7px;
     background:
