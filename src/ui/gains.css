@@ -154,23 +154,22 @@
   .gr-carte{transition:none}
 }
 
-/* l'empreinte qui se dépose sur le dos pendant le suspense */
+/* l'empreinte du dos : un reflet holographique (l'effet des cartes de nacre), visible seulement sous la lumière qui passe */
 .gr-dos img{position:relative;z-index:1}
-/* l'empreinte reste derrière l'emblème, en clair, sans jamais le recouvrir */
-.gr-empreinte{position:absolute;z-index:0;left:50%;top:50%;width:96%;transform:translate(-50%,-50%);overflow:visible;pointer-events:none;
-  fill:none;stroke:#CFE4FF;stroke-width:1.3;stroke-linecap:round;opacity:.42;
-  filter:drop-shadow(0 0 2px rgba(190,225,255,.6))}
-.gr-empreinte .trace path{stroke-dasharray:1;stroke-dashoffset:1}
-.gr.charge .gr-empreinte .trace path{animation:gr-trace calc(var(--charge,1s) * .55) cubic-bezier(.4,0,.2,1) forwards;animation-delay:calc(var(--charge,1s) * .45 * var(--k))}
-.gr.charge .gr-empreinte{animation:gr-empreinte-lueur var(--charge,1s) ease-in forwards}
-@keyframes gr-trace{to{stroke-dashoffset:0}}
-@keyframes gr-empreinte-lueur{0%{opacity:.3;filter:drop-shadow(0 0 1px rgba(190,225,255,.5))}100%{opacity:.6;filter:drop-shadow(0 0 3px rgba(210,235,255,.8)) drop-shadow(0 0 12px color-mix(in srgb,var(--accent) 60%,transparent))}}
-.gr-empreinte{transform-origin:50% 50%}
-/* vivante : une fois tracée à moitié, elle bat comme un cœur, de plus en plus vite */
-.gr.charge .gr-empreinte .trace{animation:gr-battement calc(var(--charge,1s) * .28) calc(var(--charge,1s) * .4) ease-in-out infinite;transform-origin:50% 48%;transform-box:fill-box}
-@keyframes gr-battement{0%,100%{opacity:.85}15%{opacity:1;stroke-width:2.3}30%{opacity:.9}45%{opacity:1;stroke-width:2.1}}
-/* transmission : de courtes impulsions blanches courent le long des sillons, du bord vers le cœur */
-.gr-empreinte .flux path{stroke:#FFFFFF;stroke-width:1.9;stroke-dasharray:.07 .93;stroke-dashoffset:calc(1 + var(--f));opacity:0}
-.gr.charge .gr-empreinte .flux path{animation:gr-flux calc(var(--charge,1s) * .32) linear calc(var(--charge,1s) * (.35 + .1 * var(--f))) infinite}
-@keyframes gr-flux{0%{stroke-dashoffset:-.07;opacity:0}15%{opacity:1}85%{opacity:1}100%{stroke-dashoffset:-1.07;opacity:0}}
-@media (prefers-reduced-motion:reduce){.gr-empreinte .trace path{stroke-dashoffset:0;animation:none}.gr-empreinte .flux{display:none}}
+@property --hx{syntax:'<percentage>';inherits:false;initial-value:30%}
+@property --hy{syntax:'<percentage>';inherits:false;initial-value:35%}
+@property --hr{syntax:'<percentage>';inherits:false;initial-value:0%}
+.gr-holo{position:absolute;z-index:0;inset:0;pointer-events:none;
+  background:conic-gradient(from var(--tour,0deg) at var(--hx) var(--hy),#ff9ad5,#9ad7ff,#b7ffcf,#fff1a8,#d3a8ff,#ff9ad5);
+  -webkit-mask:var(--fp) 50% 52%/118% auto no-repeat,radial-gradient(circle at var(--hx) var(--hy),#000 0,rgba(0,0,0,.5) calc(var(--hr) * .5),transparent var(--hr));
+  -webkit-mask-composite:source-in;
+  mask:var(--fp) 50% 52%/118% auto no-repeat,radial-gradient(circle at var(--hx) var(--hy),#000 0,rgba(0,0,0,.5) calc(var(--hr) * .5),transparent var(--hr));
+  mask-composite:intersect;
+  mix-blend-mode:screen;opacity:.55;--hr:0%}
+/* au repos, la lumière effleure à peine ; pendant le suspense elle erre, s'élargit, et l'irisation tourne */
+.gr .gr-holo{animation:gr-errance 3.2s ease-in-out infinite alternate,gr-irise 4s linear infinite}
+.gr.charge .gr-holo{animation:gr-errance calc(var(--charge,1s) * .5) ease-in-out infinite alternate,gr-irise 2s linear infinite,gr-ouvre var(--charge,1s) ease-in forwards}
+@keyframes gr-errance{0%{--hx:22%;--hy:28%}35%{--hx:76%;--hy:40%}70%{--hx:38%;--hy:74%}100%{--hx:68%;--hy:62%}}
+@keyframes gr-ouvre{0%{--hr:20%;opacity:.5}100%{--hr:100%;opacity:.95}}
+.gr:not(.charge):not(.revelee) .gr-holo{--hr:22%}
+@media (prefers-reduced-motion:reduce){.gr .gr-holo,.gr.charge .gr-holo{animation:none;--hr:70%;--hx:50%;--hy:50%}}

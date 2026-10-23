@@ -313,25 +313,21 @@ function devoiler(g: Exclude<Gain, { kind: 'res' }>): Promise<void> {
 // On la range d'un toucher (ou toute seule après quelques secondes).
 
 /**
- * L'empreinte qui se dépose sur le dos pendant le suspense : des sillons dorés qui se tracent du cœur vers le bord,
- * comme un doigt qu'on presse sur le cristal (durée = celle du suspense, --charge).
+ * L'empreinte du dos (23 octobre 2026), reprise de l'effet holographique des cartes de nacre :
+ * des sillons d'empreinte ne se voient qu'en reflet irisé, là où passe la lumière. Elle reste derrière l'emblème.
+ * Pendant le suspense, la tache de lumière erre et s'élargit (--charge) : l'empreinte se révèle peu à peu, sans jamais être dessinée.
  */
-const EMPREINTE = (() => {
-  const sillons: string[] = [];
-  const n = 9;
-  for (let i = 0; i < n; i++) {
-    const rx = 4 + i * 4.6, ry = rx * 1.25;
-    const cy = 56 + i * 0.6;
-    // des bouts inégaux, comme une vraie empreinte
-    const bg = cy + 8 + ((i * 7) % 5) * 4 + i * 2.2, bd = cy + 4 + ((i * 3) % 4) * 5 + i * 2.6;
-    sillons.push(`<path pathLength="1" style="--k:${(i / n).toFixed(3)}" d="M${(50 - rx).toFixed(1)} ${bg.toFixed(1)} V${cy} A${rx.toFixed(1)} ${ry.toFixed(1)} 0 0 1 ${(50 + rx).toFixed(1)} ${cy} V${bd.toFixed(1)}"/>`);
+const MASQUE_EMPREINTE = (() => {
+  const sillons: string[] = ['<path d="M47 63 C45 56 55 54 55 61 C55 66 50 68 48 64"/>'];
+  for (let i = 0; i < 15; i++) {
+    const rx = 4 + i * 3.4, ry = rx * 1.22, cy = 62 + i * 0.5;
+    const bg = cy + 6 + ((i * 7) % 5) * 3 + i * 2.4, bd = cy + 3 + ((i * 3) % 4) * 4 + i * 2.8;
+    sillons.push(`<path d="M${(50 - rx).toFixed(1)} ${bg.toFixed(1)} V${cy} A${rx.toFixed(1)} ${ry.toFixed(1)} 0 0 1 ${(50 + rx).toFixed(1)} ${cy} V${bd.toFixed(1)}"/>`);
   }
-  // le petit tourbillon du cœur
-  sillons.unshift('<path pathLength="1" style="--k:0" d="M48 62 C46 56 54 54 54 60 C54 64 50 66 49 63"/>');
-  // par-dessus, le même dessin parcouru par des impulsions de lumière : l'empreinte vit et transmet
-  const flux = sillons.map((d, i) => d.replace('style="--k:', `style="--f:${((i * 0.37) % 1).toFixed(2)};--k:`)).join('');
-  return `<svg class="gr-empreinte" viewBox="0 0 100 130" aria-hidden="true"><g class="trace">${sillons.join('')}</g><g class="flux">${flux}</g></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130"><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round">${sillons.join('')}</g></svg>`;
+  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 })();
+const EMPREINTE = `<span class="gr-holo" aria-hidden="true" style="--fp:${MASQUE_EMPREINTE.replace(/"/g, '&quot;')}"></span>`;
 
 const NOM_PALIER: Record<number, string> = { 3: 'Rare', 4: 'Très rare', 5: 'Légendaire' };
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
