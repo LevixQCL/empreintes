@@ -46,6 +46,10 @@ export interface Compte {
   erreur: string;
   info: string;
   synchro: 'aucune' | 'en-cours' | 'ok' | 'erreur';
+  /** le code de la dernière erreur de synchronisation (pour comprendre ce qui bloque) */
+  codeErreur?: string;
+  /** le pseudo choisi (nom de directeur), affiché à la place du nom du compte Google */
+  pseudo?: string;
 }
 
 export interface Ecran {
@@ -164,8 +168,10 @@ function maillon(g: Geste, off: boolean) {
 export function panneauCompte(c: Compte): string {
   if (!c.ouvert) return '';
   if (c.utilisateur) {
-    const etat = { aucune: '', 'en-cours': 'Synchronisation…', ok: 'Progression enregistrée dans ton compte.', erreur: 'Synchronisation impossible pour l’instant, la sauvegarde reste sur l’appareil.' }[c.synchro];
-    return `<section class="panneau" aria-label="Compte"><strong>Connecté : ${echap(c.utilisateur.nom)}</strong>`
+    const etat = { aucune: '', 'en-cours': 'Synchronisation…', ok: 'Progression enregistrée dans ton compte.', erreur: `Synchronisation impossible pour l’instant, la sauvegarde reste sur l’appareil.${c.codeErreur ? ` (${c.codeErreur})` : ''}` }[c.synchro];
+    return `<section class="panneau" aria-label="Compte"><strong>${c.pseudo ? `Pseudo : ${echap(c.pseudo)}` : 'Pas encore de pseudo'}</strong>`
+      + `<p class="discret">${c.pseudo ? 'C’est ce nom que voient les autres joueurs.' : 'Choisis le nom que verront les autres joueurs : ton nom de compte n’est jamais affiché.'}</p>`
+      + `<div class="ligne"><button type="button" class="btn ${c.pseudo ? 'sec' : 'prim'}" data-action="gt-nom">${c.pseudo ? 'Changer de pseudo' : 'Choisir mon pseudo'}</button></div>`
       + (etat ? `<p class="discret">${etat}</p>` : '')
       + `<div class="ligne"><button type="button" class="btn sec" data-action="deconnexion"${c.occupe ? ' disabled' : ''}>Se déconnecter</button></div></section>`;
   }

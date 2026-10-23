@@ -99,8 +99,8 @@ export function htmlClassements(e: EcranDistrict, g: GrandTableau, uid: string |
   if (!e.compte.actif) h += seul(j, def.id, g.periode, semaine, 'Le Tableau en ligne n’est pas branché sur cette version.', '');
   else if (!enLigne) h += seul(j, def.id, g.periode, semaine, 'Connecte-toi pour te mesurer aux autres directeurs.',
     `<button type="button" class="btn prim" data-action="gt-connexion">${ICO.compte}Se connecter</button>`);
-  else if (!publie) h += seul(j, def.id, g.periode, semaine, 'Choisis un nom de directeur pour apparaître sur le Tableau.',
-    `<button type="button" class="btn prim" data-action="gt-nom">${ICO.ok}Choisir mon nom</button>`);
+  else if (!publie) h += seul(j, def.id, g.periode, semaine, 'Choisis ton pseudo pour apparaître sur le Tableau.',
+    `<button type="button" class="btn prim" data-action="gt-nom">${ICO.ok}Choisir mon pseudo</button>`);
   else h += liste(g, uid, def.id, semaine, e.now);
 
   // réglages
@@ -108,12 +108,12 @@ export function htmlClassements(e: EcranDistrict, g: GrandTableau, uid: string |
     h += `<footer class="gt-pied">`
       + (g.lu ? `<span>${g.etat === 'chargement' ? 'Mise à jour…' : `Mis à jour ${ilYa(e.now - g.lu)}`}</span>` : '')
       + `<button type="button" class="lien" data-action="gt-actualiser"${g.etat === 'chargement' ? ' disabled' : ''}>Actualiser</button>`
-      + (publie ? `<button type="button" class="lien" data-action="gt-nom">Changer de nom</button><button type="button" class="lien" data-action="gt-retirer" aria-expanded="${g.retrait}">Ne plus apparaître</button>` : '')
+      + (publie ? `<button type="button" class="lien" data-action="gt-nom">Changer de pseudo</button><button type="button" class="lien" data-action="gt-retirer" aria-expanded="${g.retrait}">Ne plus apparaître</button>` : '')
       + (publie && g.retrait ? `<div class="confirmer" role="group" aria-label="Confirmer"><span>Retirer ton district du Tableau ? Tes records restent dans ta partie, et tu pourras revenir.</span>`
         + `<button type="button" class="btn sec petit" data-action="gt-retirer-ok">Me retirer</button><button type="button" class="btn sec petit" data-action="gt-retirer">Annuler</button></div>` : '')
       + `</footer>`;
   }
-  return coquille(e, h + (g.edition ? feuilleNom(j, e.compte.utilisateur?.nom ?? '', g.erreur) : ''), 'gt');
+  return coquille(e, h + (g.edition && !e.menu ? feuilleNom(j, e.compte.utilisateur?.nom ?? '', g.erreur) : ''), 'gt');
 }
 
 const ICONE_TABLEAU: Record<TableauId, 'strate' | 'cartes' | 'atk' | 'tour'> = { profondeur: 'strate', registre: 'cartes', joutes: 'atk', fleche: 'tour' };
@@ -243,15 +243,17 @@ function apercuFleche(): string {
 
 // ---------- Le nom de directeur ----------
 
-function feuilleNom(j: Jeu, nomCompte: string, erreur: string): string {
-  const propose = j.directeur?.nom ?? (nomCompte.includes('@') ? '' : nomCompte.split(' ')[0] ?? '');
+/** La feuille du pseudo : depuis le Grand Tableau ou le panneau Compte du menu */
+export function feuilleNom(j: Jeu, nomCompte: string, erreur: string): string {
+  const propose = j.directeur?.nom ?? '';
+  void nomCompte;
   return `<div class="voile-feuille" data-action="gt-nom-fermer" aria-hidden="true"></div><section class="feuille gt-feuille" role="dialog" aria-modal="true" aria-labelledby="gt-nom-titre"><span class="poignee" aria-hidden="true"></span>`
-    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">Le Grand Tableau</span><h2 id="gt-nom-titre">Ton nom de directeur</h2></div>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">Le Grand Tableau</span><h2 id="gt-nom-titre">Ton pseudo</h2></div>`
     + `<button type="button" class="btn-icone" data-action="gt-nom-fermer" aria-label="Fermer">${ICO.fermer}</button></header>`
-    + `<div class="feuille-corps"><p class="aide">C’est le nom que les autres directeurs verront sur les écrans de Vertiga. <b>Ton e-mail n’est jamais affiché.</b></p>`
-    + `<input id="gt-nom" type="text" maxlength="18" autocomplete="nickname" spellcheck="false" placeholder="3 à 18 caractères" aria-label="Nom de directeur" value="${echap(propose)}">`
+    + `<div class="feuille-corps"><p class="aide">Ton nom de directeur : c’est lui que les autres joueurs verront sur les écrans de Vertiga. <b>Ton nom de compte Google et ton e-mail ne sont jamais affichés.</b></p>`
+    + `<input id="gt-nom" type="text" maxlength="18" autocomplete="nickname" spellcheck="false" placeholder="3 à 18 caractères" aria-label="Pseudo" value="${echap(propose)}">`
     + (erreur ? `<p class="erreur">${echap(erreur)}</p>` : '')
     + `<p class="aide">Ton Porteur de tête d’escouade, ${echap(porteurDef(connuPorteur(j.escouade?.[0] ?? 'ilka')).nom)}, sera ton portrait. Tu peux te retirer du Tableau quand tu veux.</p>`
-    + `<button type="button" class="btn prim large" data-action="gt-nom-ok">${ICO.ok}Apparaître sur le Tableau</button></div></section>`;
+    + `<button type="button" class="btn prim large" data-action="gt-nom-ok">${ICO.ok}${j.directeur?.nom ? 'Enregistrer' : 'Apparaître sur le Tableau'}</button></div></section>`;
 }
 

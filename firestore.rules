@@ -2,9 +2,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // Chaque joueur ne lit et n'écrit que sa propre sauvegarde.
+    // (lecture, écriture et suppression séparées : request.resource n'existe pas à la lecture)
     match /saves/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid
-        && (request.resource == null || request.resource.data.keys().hasOnly(['data', 'updatedAt', 'version']));
+      allow get, delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['data', 'updatedAt', 'version']);
     }
 
     // Le Grand Tableau (23 octobre 2026) : tout directeur connecté lit les classements,

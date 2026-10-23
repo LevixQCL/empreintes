@@ -7,6 +7,7 @@ import { cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, lo
 import type { Lignee } from '../core/types';
 import { portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
+import { feuilleNom } from './classements';
 import { COULEUR, echap, panneauCompte, type Compte } from './vue';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'codex' | 'cartes' | 'porteurs' | 'classements';
@@ -214,9 +215,10 @@ export function menu(e: EcranDistrict): string {
     + `<button type="button" class="btn-icone" data-action="menu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   h += `<div class="liste-menu">`
     + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>Le Grand Tableau</strong><small>Les classements des directeurs : profondeur, Registre, et bientôt les Joutes et la Flèche</small></span></button>`
-    + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur ? `Connecté : ${echap(c.utilisateur.nom)}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
+    + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : ' · choisis ton pseudo'}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
     + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro</strong><small>L’histoire de 2121, depuis le début</small></span></button></div>`;
   h += panneauCompte(c);
+  if (e.grand?.edition) h += feuilleNom(e.j, c.utilisateur?.nom ?? '', e.grand.erreur);
   h += `<section class="bloc"><h3 class="titre-bloc">${icone('journal')}Journal du district</h3><ol class="journal-liste">${e.j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></section>`;
   return h + `</div></section>`;
 }

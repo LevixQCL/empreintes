@@ -87,9 +87,12 @@ function cles(): Record<string, string> {
 
 function afficher() {
   D.j = jeu;
+  D.uid = uid;
+  compteEtat.pseudo = jeu.directeur?.nom;
   D.now = Date.now();
   const email = (racine.querySelector('#email') as HTMLInputElement | null)?.value ?? '';
   const mdp = (racine.querySelector('#mdp') as HTMLInputElement | null)?.value ?? '';
+  const pseudoTape = (racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value;
   let h = '';
   if (mode === 'titre') h = htmlTitre(jeu.introVue, !reduit);
   else if (mode === 'intro') h = htmlIntro(plan, lignesVues, !reduit, texteCache);
@@ -126,6 +129,8 @@ function afficher() {
   const ie = racine.querySelector('#email') as HTMLInputElement | null;
   const im = racine.querySelector('#mdp') as HTMLInputElement | null;
   if (ie) ie.value = email;
+  const ip = racine.querySelector('#gt-nom') as HTMLInputElement | null;
+  if (ip && pseudoTape !== undefined) ip.value = pseudoTape;
   if (im) im.value = mdp;
 }
 
@@ -186,8 +191,9 @@ async function lireTableau(force = false) {
     monEntree = G.entrees.find((x) => x.uid === uid) ?? null;
     monEntreeLue = true;
     G.lu = Date.now(); G.etat = 'ok';
-  } catch {
-    G.etat = 'erreur'; G.erreur = 'Le Tableau ne répond pas pour l’instant. Vérifie ta connexion.';
+  } catch (e) {
+    G.etat = 'erreur'; G.erreur = `Le Tableau ne répond pas pour l’instant (${(e as { code?: string })?.code ?? 'réseau'}).`;
+    console.warn('Grand Tableau', e);
   }
   if (mode === 'district') afficher();
   planifierPublication();
@@ -229,8 +235,11 @@ async function pousser(env: Enveloppe) {
   try {
     await compte.ecrireDistante(uid, env);
     compteEtat.synchro = 'ok';
-  } catch {
+    compteEtat.codeErreur = '';
+  } catch (e) {
     compteEtat.synchro = 'erreur';
+    compteEtat.codeErreur = 'écriture : ' + ((e as { code?: string })?.code ?? String(e).slice(0, 60));
+    console.warn('Synchronisation', e);
   }
   if (compteEtat.ouvert && mode === 'district') afficher();
 }
@@ -250,8 +259,10 @@ async function reconcilier() {
       K.fin = finPour();
       afficher();
     } else if (locale) await pousser(locale);
-  } catch {
+  } catch (e) {
     compteEtat.synchro = 'erreur';
+    compteEtat.codeErreur = 'lecture : ' + ((e as { code?: string })?.code ?? String(e).slice(0, 60));
+    console.warn('Synchronisation', e);
   }
 }
 
@@ -700,13 +711,13 @@ racine.addEventListener('click', async (ev) => {
     case 'gt-regles': G.regles = !G.regles; break;
     case 'gt-actualiser': await lireTableau(true); return;
     case 'gt-connexion': D.menu = true; compteEtat.ouvert = true; break;
-    case 'gt-nom': G.edition = true; G.erreur = ''; break;
+    case 'gt-nom': G.edition = true; G.erreur = ''; lireTableau(); break;
     case 'gt-nom-fermer': G.edition = false; G.erreur = ''; break;
     case 'gt-nom-ok': {
       const nom = nettoyerNom((racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value ?? '');
       if (!nomValide(nom)) { G.erreur = 'De 3 à 18 caractères : lettres, chiffres, espaces, points, tirets.'; break; }
       if (G.entrees.some((x) => x.uid !== uid && x.nom.toLocaleLowerCase('fr') === nom.toLocaleLowerCase('fr'))) { G.erreur = 'Un autre directeur porte déjà ce nom.'; break; }
-      jeu.directeur = { nom, public: true };
+      jeu.directeur = { nom, public: jeu.directeur ? jeu.directeur.public || D.vue === 'classements' : true };
       G.edition = false; G.erreur = '';
       sauver();
       planifierPublication(0);
