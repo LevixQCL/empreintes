@@ -10,8 +10,8 @@
 .gt .contenu{gap:18px}
 
 /* ---------- La vitrine ---------- */
-.gt-tete{position:relative;display:grid;gap:14px;margin:-16px -16px 0;padding:26px 16px 0;isolation:isolate}
-.gt-fond{position:absolute;inset:0 0 30px;z-index:-1;width:100%;height:calc(100% - 30px);object-fit:cover;object-position:50% 30%;opacity:.55;
+.gt-tete{position:relative;display:grid;gap:14px;margin:-16px -16px 0;padding:150px 16px 0;isolation:isolate}
+.gt-fond{position:absolute;inset:0 0 30px;z-index:-1;width:100%;height:calc(100% - 30px);object-fit:cover;object-position:50% 42%;opacity:.8;
   -webkit-mask-image:linear-gradient(#000 20%,transparent 92%);mask-image:linear-gradient(#000 20%,transparent 92%)}
 .gt-tete::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(90% 70% at 50% 0%,rgba(127,212,255,.16),transparent 70%),
   repeating-linear-gradient(0deg,rgba(205,239,255,.035) 0 1px,transparent 1px 4px)}
@@ -171,7 +171,7 @@
 /* ---------- PC : une colonne de tableau, la vitrine en large ---------- */
 @media (min-width:1100px){
   .ecran.gt > .contenu{max-width:880px}
-  .gt-tete{margin:-28px -40px 0;padding:40px 40px 0}
+  .gt-tete{margin:-28px -40px 0;padding:190px 40px 0}
   .gt-titres h1{font-size:44px}
   .gt-podium{max-width:620px;width:100%;margin-inline:auto}
   .gt-periode .segments-choix{max-width:420px}

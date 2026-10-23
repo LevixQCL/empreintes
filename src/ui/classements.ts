@@ -20,7 +20,7 @@ import { lundiSuivant, semaineDe, type Jeu } from '../core/jeu';
 import { avatar, coquille, duree, ent, type EcranDistrict } from './coquille';
 import { ICO, icone } from './icones';
 import { echap } from './vue';
-import { decor } from './art';
+import { fondTableau } from './art';
 
 /** L'état du Tableau en ligne, tenu par main.ts */
 export interface GrandTableau {
@@ -74,7 +74,7 @@ export function htmlClassements(e: EcranDistrict, g: GrandTableau, uid: string |
   const publie = !!(j.directeur?.public && j.directeur.nom);
   const nom = publie ? j.directeur!.nom : 'Toi';
 
-  let h = `<header class="gt-tete"><img class="gt-fond" src="${decor('archipel-nuit')}" alt="" decoding="async">`
+  let h = `<header class="gt-tete"><img class="gt-fond" src="${fondTableau}" alt="" decoding="async">`
     + `<div class="gt-titres"><span class="surtitre">Écrans des marchés · Vertiga</span><h1>Le Grand Tableau</h1>`
     + `<p>Les districts comparés, chaque jour, sur tous les écrans de la ville. Les Hauts adorent les palmarès.</p></div>`
     + carteDirecteur(j, g, uid, nom, publie, semaine) + `</header>`;

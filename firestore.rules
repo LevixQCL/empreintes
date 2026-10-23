@@ -21,9 +21,8 @@ service cloud.firestore {
         && request.resource.data.profondeur >= resource.data.profondeur
         && request.resource.data.profondeur <= resource.data.profondeur + 4
         // la date d'arrivée ne bouge que si la profondeur monte, et c'est alors maintenant : « premier arrivé » ne se falsifie pas
-        && (request.resource.data.profondeur > resource.data.profondeur
-            ? maintenant(request.resource.data.profondeurLe)
-            : request.resource.data.profondeurLe == resource.data.profondeurLe)
+        && ((request.resource.data.profondeur > resource.data.profondeur && maintenant(request.resource.data.profondeurLe))
+            || (request.resource.data.profondeur == resource.data.profondeur && request.resource.data.profondeurLe == resource.data.profondeurLe))
         && request.resource.data.maj >= resource.data.maj + 20000;
     }
 
