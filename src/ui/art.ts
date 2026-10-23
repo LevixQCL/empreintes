@@ -7,7 +7,7 @@ import type { BatimentId, Rarete } from '../core/types';
 const base = new URL('art/', document.baseURI).href;
 
 /** Porteurs illustrés (tous ont maintenant un portrait ; un nouveau Porteur sans image garde son initiale) */
-const PORTEURS_ILLUSTRES = new Set(['ilka', 'doran', 'vela', 'sasha', 'nuit', 'aurel', 'coursier', 'docker', 'guetteur']);
+const PORTEURS_ILLUSTRES = new Set(['ilka', 'doran', 'vela', 'sasha', 'nuit', 'aurel', 'coursier', 'docker', 'guetteur', 'kessa', 'liane', 'joss']);
 
 /** Modules illustrés : id du Module dans donnees.ts → fichier */
 const MODULES_ILLUSTRES: Record<string, string> = {
@@ -79,6 +79,7 @@ const ENNEMIS_ILLUSTRES: Record<string, string> = {
   'automate-graveur': 'automate-graveur',
   'tisseuse': 'tisseuse',
   'premier-porteur': 'premier-porteur',
+  sauvage: 'sauvage',
 };
 
 export const portrait = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/${id}.webp` : null);
