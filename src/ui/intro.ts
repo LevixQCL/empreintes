@@ -159,7 +159,7 @@ export const PLANS: Plan[] = [
     'On se dispute ce qu’on a déterré, et on oublie ce qui monte. Vingt secondes entre la météo et le sport. Comme avant.'] },
   { epoque: 'Vertiga', titre: 'Ce qui dort en dessous', annees: [2121, 2121], ambiance: 'profondeur', camera: 'descend', texte: 'haut', fonds: [f('10-dessous')], scene: strates, lignes: [
     'Sous chaque district, il y a d’abord les abris murés des années 2060. Plus bas, les Strates, toujours plus anciennes.',
-    'On en remonte des cristaux d’empreinte, des pièces d’Augmentés, des greffes de Génés. Chacune peut armer quelqu’un.',
+    'On en remonte des cristaux d’empreinte. Greffés, ils font les Résonants ; gravés, ils font battre les implants des Augmentés. Chacun peut armer quelqu’un.',
     'Plus on descend, plus les trouvailles sont puissantes, et plus il est difficile d’en remonter.'] },
   { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-toi')], scene: toi, lignes: [
     'Hier, ton district t’a élu à sa tête : quelques piliers reliés par des passerelles, une Forge au ralenti, une vieille tour.',
