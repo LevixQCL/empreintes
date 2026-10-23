@@ -153,3 +153,22 @@
   .gr-rayons,.gr.revelee .gr-halo,.gr.p5 .gr-recto{animation:none}
   .gr-carte{transition:none}
 }
+
+/* l'empreinte qui se dépose sur le dos pendant le suspense */
+.gr-empreinte{position:absolute;left:50%;top:50%;width:62%;transform:translate(-50%,-50%);overflow:visible;pointer-events:none;
+  fill:none;stroke:#FFD27A;stroke-width:1.7;stroke-linecap:round;opacity:.95;mix-blend-mode:screen;
+  filter:drop-shadow(0 0 2px #FFC861) drop-shadow(0 0 6px rgba(255,190,90,.7))}
+.gr-empreinte .trace path{stroke-dasharray:1;stroke-dashoffset:1}
+.gr.charge .gr-empreinte .trace path{animation:gr-trace calc(var(--charge,1s) * .55) cubic-bezier(.4,0,.2,1) forwards;animation-delay:calc(var(--charge,1s) * .45 * var(--k))}
+.gr.charge .gr-empreinte{animation:gr-empreinte-lueur var(--charge,1s) ease-in forwards}
+@keyframes gr-trace{to{stroke-dashoffset:0}}
+@keyframes gr-empreinte-lueur{0%{filter:drop-shadow(0 0 1px #FFC861)}100%{filter:drop-shadow(0 0 3px #FFE3A0) drop-shadow(0 0 14px rgba(255,200,100,.95)) drop-shadow(0 0 28px var(--accent))}}
+.gr-empreinte{transform-origin:50% 50%}
+/* vivante : une fois tracée à moitié, elle bat comme un cœur, de plus en plus vite */
+.gr.charge .gr-empreinte .trace{animation:gr-battement calc(var(--charge,1s) * .28) calc(var(--charge,1s) * .4) ease-in-out infinite;transform-origin:50% 48%;transform-box:fill-box}
+@keyframes gr-battement{0%,100%{opacity:.85}15%{opacity:1;stroke-width:2.3}30%{opacity:.9}45%{opacity:1;stroke-width:2.1}}
+/* transmission : de courtes impulsions blanches courent le long des sillons, du bord vers le cœur */
+.gr-empreinte .flux path{stroke:#FFFBEA;stroke-width:2.4;stroke-dasharray:.07 .93;stroke-dashoffset:calc(1 + var(--f));opacity:0}
+.gr.charge .gr-empreinte .flux path{animation:gr-flux calc(var(--charge,1s) * .32) linear calc(var(--charge,1s) * (.35 + .1 * var(--f))) infinite}
+@keyframes gr-flux{0%{stroke-dashoffset:-.07;opacity:0}15%{opacity:1}85%{opacity:1}100%{stroke-dashoffset:-1.07;opacity:0}}
+@media (prefers-reduced-motion:reduce){.gr-empreinte .trace path{stroke-dashoffset:0;animation:none}.gr-empreinte .flux{display:none}}

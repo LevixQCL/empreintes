@@ -312,6 +312,27 @@ function devoiler(g: Exclude<Gain, { kind: 'res' }>): Promise<void> {
 // elle se retourne dans une gerbe d'éclats, des ondes de choc (or, nacre) et une secousse de l'écran.
 // On la range d'un toucher (ou toute seule après quelques secondes).
 
+/**
+ * L'empreinte qui se dépose sur le dos pendant le suspense : des sillons dorés qui se tracent du cœur vers le bord,
+ * comme un doigt qu'on presse sur le cristal (durée = celle du suspense, --charge).
+ */
+const EMPREINTE = (() => {
+  const sillons: string[] = [];
+  const n = 9;
+  for (let i = 0; i < n; i++) {
+    const rx = 4 + i * 4.6, ry = rx * 1.25;
+    const cy = 56 + i * 0.6;
+    // des bouts inégaux, comme une vraie empreinte
+    const bg = cy + 8 + ((i * 7) % 5) * 4 + i * 2.2, bd = cy + 4 + ((i * 3) % 4) * 5 + i * 2.6;
+    sillons.push(`<path pathLength="1" style="--k:${(i / n).toFixed(3)}" d="M${(50 - rx).toFixed(1)} ${bg.toFixed(1)} V${cy} A${rx.toFixed(1)} ${ry.toFixed(1)} 0 0 1 ${(50 + rx).toFixed(1)} ${cy} V${bd.toFixed(1)}"/>`);
+  }
+  // le petit tourbillon du cœur
+  sillons.unshift('<path pathLength="1" style="--k:0" d="M48 62 C46 56 54 54 54 60 C54 64 50 66 49 63"/>');
+  // par-dessus, le même dessin parcouru par des impulsions de lumière : l'empreinte vit et transmet
+  const flux = sillons.map((d, i) => d.replace('style="--k:', `style="--f:${((i * 0.37) % 1).toFixed(2)};--k:`)).join('');
+  return `<svg class="gr-empreinte" viewBox="0 0 100 130" aria-hidden="true"><g class="trace">${sillons.join('')}</g><g class="flux">${flux}</g></svg>`;
+})();
+
 const NOM_PALIER: Record<number, string> = { 3: 'Rare', 4: 'Très rare', 5: 'Légendaire' };
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -331,7 +352,7 @@ function grandeRevelation(g: Extract<Gain, { kind: 'carte' | 'porteur' }>, p: nu
     el.setAttribute('aria-label', `${sur} : ${nom}`);
     el.innerHTML = `<div class="gr-voile"></div><div class="gr-rayons"></div><div class="gr-halo"></div><div class="gr-flash"></div>`
       + `<div class="gr-pose"><div class="gr-carte${carte ? '' : ' rond'}">`
-      + `<div class="gr-face gr-dos"><img src="./art/embleme.webp" alt=""></div>`
+      + `<div class="gr-face gr-dos"><img src="./art/embleme.webp" alt="">${EMPREINTE}</div>`
       + `<div class="gr-face gr-recto">${img ? `<img src="${img}" alt="">` : `<i>${echap(nom.charAt(0))}</i>`}</div></div></div>`
       + `<div class="gr-texte"><small>${echap(sur)}</small><strong>${echap(nom)}</strong><em>${echap(sous)}</em><span class="gr-suite">Touche pour continuer</span></div>`;
     c.appendChild(el);
@@ -373,7 +394,7 @@ function grandeRevelation(g: Extract<Gain, { kind: 'carte' | 'porteur' }>, p: nu
         { duration: 520, easing: 'cubic-bezier(.2,.8,.3,1.1)', fill: 'both' });
       await pause(560);
       // 2. le suspense : elle tremble et s'illumine, plus longtemps pour les plus rares
-      const suspense = p >= 5 ? 1700 : p >= 4 ? 1100 : 550;
+      const suspense = p >= 5 ? 1800 : p >= 4 ? 1300 : 850;
       el.classList.add('charge');
       carteEl.style.setProperty('--charge', `${suspense}ms`);
       const amp = p >= 5 ? 5 : p >= 4 ? 3.5 : 2;
