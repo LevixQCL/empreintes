@@ -184,10 +184,12 @@ export function navigation(e: EcranDistrict): string {
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
   };
   const actif = e.menu ? 'plus' : e.vue === 'escouade' ? 'coupe' : e.vue;
-  return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./icon.svg" alt=""></span>` + ONGLETS.map((t) => {
+  // sur PC (rail.css) : le cristal seul en tête, et un filet de lumière qui relie les onglets au « Plus » du bas
+  return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./emblem.svg" alt=""></span>` + ONGLETS.map((t) => {
     const ferme = !j.chambre && t.vue === 'cartes';
     const action = t.vue === 'plus' ? 'menu' : t.vue;
-    return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${ferme ? ' disabled' : ''}${actif === t.vue ? ' aria-current="page"' : ''}>`
+    return (t.vue === 'plus' ? '<span class="nav-filet" aria-hidden="true"></span>' : '')
+      + `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${ferme ? ' disabled' : ''}${actif === t.vue ? ' aria-current="page"' : ''}>`
       + `<span class="onglet-ico">${ferme ? icone('verrou') : icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span>${t.nom}</span></button>`;
   }).join('') + `</nav>`;
 }
