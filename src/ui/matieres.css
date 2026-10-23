@@ -56,3 +56,29 @@
     /* overflow:clip découpe le contenu exactement comme le faisait clip-path (images, reflets, chiffres), mais pas l'ombre */
     clip-path:none;border-radius:0 var(--cut) 0 var(--cut);corner-shape:bevel;overflow:clip}
 }
+
+/* ---------- Les cartes posées (23 octobre 2026) ----------
+   L'ombre des cartes existait (drop-shadow) mais le découpage de la carte (clip-path) la coupait : les cartes flottaient
+   sur le panneau. Même remède que pour les panneaux : on découpe le contenu (overflow:clip), plus la carte elle-même.
+   L'ombre a deux couches : un contact net, presque noir, collé sous la carte (c'est lui qui la « pose »),
+   et une ombre douce un peu plus bas. Les cartes de la chaîne, rangées dans leur rail, sont un peu moins hautes. */
+#app:is([data-mode="combat"],[data-mode="district"]){
+  --ombre-carte:drop-shadow(0 1px .5px rgba(0,0,0,.85)) drop-shadow(0 5px 5px rgba(0,0,0,.55));
+  --ombre-carte-rail:drop-shadow(0 1px .5px rgba(0,0,0,.85)) drop-shadow(0 3px 4px rgba(0,0,0,.5));
+}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste,
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.halo{filter:var(--ombre-carte)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine{filter:var(--ombre-carte-rail)}
+/* fer et or ont des coins droits : plus besoin de découper, partout */
+#app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-fer,.gm-or){clip-path:none;overflow:clip}
+@supports (corner-shape:bevel){
+  #app .geste{clip-path:none;border-radius:0 var(--cut) 0 var(--cut);corner-shape:bevel;overflow:clip}
+}
+/* la main et le rail défilent de côté : sans un peu de marge en bas, leur bord coupait l'ombre */
+#app[data-mode="combat"] .zone-chaine .rail{padding-bottom:10px;margin-bottom:-6px}
+/* une ombre noire ne se voit pas sur du noir : la main repose sur une tablette de cristal, éclairée par le haut,
+   sur laquelle les cartes projettent leur ombre. Le dessus de la tablette est clair, sa tranche avant est sombre. */
+#app[data-mode="combat"] .zone-main > .main{padding-bottom:16px;margin-bottom:-4px;background:
+  linear-gradient(180deg,transparent calc(100% - 26px),rgba(205,239,255,.32) calc(100% - 26px),rgba(205,239,255,.32) calc(100% - 25px),
+    rgba(150,190,255,.16) calc(100% - 25px),rgba(110,150,230,.09) calc(100% - 7px),rgba(205,239,255,.25) calc(100% - 7px),
+    rgba(14,20,44,.95) calc(100% - 6px),rgba(2,4,14,.95) 100%)}
