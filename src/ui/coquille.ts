@@ -117,7 +117,7 @@ export function feuilleRessource(j: Jeu, r: Ressource | null | undefined): strin
     etat = `<b>${ent(j.energie)}</b> / ${ent(max)}<small>${j.energie >= max ? 'Stockage plein : la production est perdue tant que tu ne dépenses pas' : `+${energieParHeure(j)} par heure`}</small>`;
     gagner = [ligne('boost', 'Le Générateur', 'Produit l’énergie chaque heure. Un Porteur posté dessus produit davantage.'),
       ligne('tour', 'La Tour du Noyau', 'Chaque niveau agrandit le stockage.'),
-      ligne('cartes', 'Le ravitaillement et les objectifs', 'Certains en rapportent.')];
+      ligne('cartes', 'Les premiers objectifs', 'Le premier en rapporte.')];
     servir = [ligne('marteau', 'Améliorer les bâtiments', 'C’est la dépense principale de chaque chantier.')];
   } else if (r === 'composants') {
     surtitre = 'RESSOURCE'; titre = 'Les composants';
@@ -125,8 +125,12 @@ export function feuilleRessource(j: Jeu, r: Ressource | null | undefined): strin
     etat = `<b>${ent(j.composants)}</b><small>composants en réserve</small>`;
     gagner = [ligne('strate', 'Les expéditions', 'Chaque combat gagné, chaque cache et chaque salle d’archives en rapporte. Fuir en garde les trois quarts, une défaite la moitié.'),
       ligne('cristal', 'Les fouilles ciblées', 'Une descente courte qui peut viser les composants.'),
-      ligne('cartes', 'Le ravitaillement du jour', 'Quelques composants chaque jour.')];
+      ligne('cartes', 'Le ravitaillement du jour', 'Quelques composants chaque jour.'),
+      ligne('porteurs', 'Les missions', 'Un Porteur envoyé dans une Strate vaincue en rapporte à son retour.'),
+      ligne('recycler', 'Recycler des doublons', 'Chaque doublon recyclé rapporte quelques composants.'),
+      ligne('coffre', 'L’Archive de la semaine', 'Chaque lundi, selon les paliers atteints.')];
     servir = [ligne('marteau', 'Améliorer les bâtiments', 'Avec l’énergie.'),
+      ligne('cartes', 'Acheter au Comptoir', 'Des cartes précises, à prix fixe, renouvelées chaque jour.'),
       ligne('cartes', 'Monter une carte de niveau', 'Avec ses doublons.'),
       ligne('marteau', 'Refabriquer une carte à la Forge', 'De 25 composants (fer) à 1 250 (nacre).')];
   } else if (r === 'eclats') {
@@ -137,6 +141,7 @@ export function feuilleRessource(j: Jeu, r: Ressource | null | undefined): strin
       ligne('coffre', 'Les caches et les rencontres', 'À partir de la Strate −3, une cache en cache parfois un.'),
       ligne('cristal', 'Les fouilles « Éclats » et les Archives de la semaine', 'Pour en gagner quand on bloque.')];
     servir = [ligne('marteau', 'Refabriquer les cartes rares', 'Argent, or et nacre en demandent à la Forge.'),
+      ligne('cartes', 'Les cartes en argent du Comptoir', 'Elles coûtent aussi des Éclats.'),
       ligne('marteau', 'Les grands chantiers', 'Les derniers niveaux des bâtiments.')];
   } else {
     const manque = manquePourCreuser(j);

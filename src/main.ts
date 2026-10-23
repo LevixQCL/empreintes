@@ -242,9 +242,9 @@ function finPour(): Fin | null {
   if (s.issue === 'victoire') {
     const nom = s.autres?.length ? 'Le groupe' : ennemiDef(s.ennemi.id).nom;
     if (x.terminee) {
-      return { titre: `Strate −${x.strate} vaincue`, texte: `${nom} se disperse. L’escouade remonte avec ${x.butin} composants.${x.strate === jeu.strate ? ' Les ouvriers vont pouvoir creuser un nouvel étage.' : ''}`, bouton: 'Remonter au district', action: 'remonter' };
+      return { titre: `Strate −${x.strate} vaincue`, texte: `${nom} se disperse. L’escouade remonte avec ${x.butin} composants.${x.strate === jeu.strate ? ' Le passage est libre : avec assez de creuseurs, l’étage suivant pourra être percé (voir la Tour du Noyau).' : ''}`, bouton: 'Remonter au district', action: 'remonter' };
     }
-    if (x.carte) return { titre: 'Victoire', texte: `${nom} se dissipe. Butin : ${x.butin} composants. L’escouade reprend sa route : les PV ne remontent qu’aux campements.`, bouton: 'Retour à la carte', action: 'suivant' };
+    if (x.carte) return { titre: 'Victoire', texte: `${nom} se dissipe. Butin : ${x.butin} composants. L’escouade reprend sa route : les PV remontent surtout aux campements.`, bouton: 'Retour à la carte', action: 'suivant' };
     return { titre: 'Victoire', texte: `${nom} se dissipe. Butin : ${x.butin} composants. L’escouade souffle un peu (+50 % de PV) : tu continues, ou tu remontes avec ce que tu as ?`, bouton: 'Combat suivant', action: 'suivant', bouton2: 'Remonter avec le butin', action2: 'remonter' };
   }
   return null;
@@ -578,7 +578,7 @@ racine.addEventListener('click', async (ev) => {
       if (r.tutoriel) {
         D.vue = 'archipel';
         D.message = r.victoire
-          ? 'La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans le Codex (Tour du Noyau).'
+          ? 'La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans les Chroniques (onglet Archives).'
           : 'L’escouade se repose. La porte scellée t’attend toujours.';
       } else {
         const fuite = r.fuite ? `L’escouade a fui : elle rentre épuisée (+${J.DISTRICT.usureFuite} d’Usure chacun). ` : '';

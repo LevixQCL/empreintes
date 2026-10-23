@@ -181,7 +181,7 @@ export interface Choix {
 export type TypeQuotidien = 'combats' | 'expedition' | 'chantier';
 export const QUOTIDIENS: Record<TypeQuotidien, { titre: string; objectif: number }> = {
   combats: { titre: 'Gagner 4 combats', objectif: 4 },
-  expedition: { titre: 'Vaincre une Strate jusqu’à son boss', objectif: 1 },
+  expedition: { titre: 'Vaincre un gardien, réussir une fouille ou une Épreuve', objectif: 1 },
   chantier: { titre: 'Lancer une amélioration de bâtiment', objectif: 1 },
 };
 
@@ -264,7 +264,7 @@ export const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: Ga
     { id: 'district', nom: 'Le district seul', phrase: 'Ce qui est sous nos piliers est à nous.',
       effet: 'Le quartier se mobilise : +20 % de composants à chaque expédition. Mais les Brigades contestent, et tu les croiseras dans les salles closes.' },
     { id: 'commission', nom: 'Une commission avec les Veilleurs', phrase: 'Nous ne sommes pas les propriétaires du passé. Nous sommes les prochains à pouvoir le perdre.',
-      effet: 'Les Veilleurs partagent leurs fouilles : 20 % de chances de carte par combat au lieu de 15 %.' },
+      effet: 'Les Veilleurs partagent leurs fouilles : 25 % de chances de carte par combat au lieu de 20 %.' },
   ],
 };
 
@@ -1273,7 +1273,7 @@ function retourDeMission(j: Jeu, m: Mission): string {
 
 // ---------- L'entraînement à la Tour (23 octobre 2026) ----------
 // Pour devenir plus fort sans descendre : un Porteur posté à la Tour du Noyau s'entraîne avec les creuseurs et gagne
-// de l'XP avec le temps, même jeu fermé. Plus lent qu'une mission, sans risque ni Usure, mais il ne descend pas.
+// de l'XP avec le temps, même jeu fermé. Plus lent qu'une mission, sans risque ni Usure, et s'il rejoint l'escouade, il quitte l'entraînement.
 // Plafond : 4 niveaux par niveau de la Tour ; au-delà, l'expérience se gagne dans les Strates.
 export const ENTRAINEMENT = {
   /** XP par heure selon le niveau de la Tour du Noyau (index = niveau) */

@@ -5,7 +5,7 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  cartesNouvelles, OBJECTIFS, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  cartesNouvelles, OBJECTIFS, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
@@ -332,7 +332,7 @@ function blocEntrainement(j: Jeu): string {
   const plafond = plafondEntrainement(j);
   const xph = xpEntrainement(j);
   let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.monter}Entraînement</h3>`
-    + `<p class="fb-vide">Un Porteur posté ici s’entraîne avec les creuseurs : <b>+${xph} XP par heure</b>, même jeu fermé, jusqu’au <b>niveau ${plafond}</b>. Il ne descend pas pendant ce temps.</p>`;
+    + `<p class="fb-vide">Un Porteur posté ici s’entraîne avec les creuseurs : <b>+${xph} XP par heure</b>, même jeu fermé, jusqu’au <b>niveau ${plafond}</b>. S’il rejoint l’escouade, il quitte l’entraînement.</p>`;
   const niveau = (id: string) => niveauPorteur(j, id).niveau;
   if (occupant) {
     const o = porteurDef(occupant);
@@ -405,7 +405,7 @@ function feuilleBatiment(e: EcranDistrict): string {
 
   // ce que le bâtiment rapporte
   if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>+${ent(energieParHeure(j))}</b><small>énergie par heure</small></div></div>${reserve(j, b)}`;
-  if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur au repos</small></div></div>`;
+  if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur présent au district</small></div></div>`;
   if (b === 'noyau') {
     h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>niveau maximum des autres bâtiments</small></div></div>${reserve(j, b)}`
       + `<button type="button" class="btn prim large" data-action="entrer">${ICO.tour}Entrer dans la tour</button>`
@@ -598,7 +598,7 @@ function feuilleCarte(e: EcranDistrict): string {
     const pret = c.doublons >= requis;
     const manqueD = Math.max(0, requis - c.doublons);
     const manqueC = Math.max(0, cout - j.composants);
-    const etat = !pret ? `Encore <b>${manqueD} doublon${manqueD > 1 ? 's' : ''}</b> pour le niveau ${c.niveau + 1}. On en trouve en fouillant et dans les colis du ravitaillement.`
+    const etat = !pret ? `Encore <b>${manqueD} doublon${manqueD > 1 ? 's' : ''}</b> pour le niveau ${c.niveau + 1}. On en trouve en expédition, en mission, dans les colis du ravitaillement, au Comptoir et à la Forge.`
       : manqueC ? `Doublons réunis. Il manque <b>${manqueC} composant${manqueC > 1 ? 's' : ''}</b>.` : `Prête : elle peut passer au niveau ${c.niveau + 1}.`;
     h += `<div class="progression"><div class="jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></div><span class="chiffre">${c.doublons} / ${requis} doublons</span></div>`
       + `<p class="fc-etat${pret && !manqueC ? ' or' : ''}">${etat} <span>Niveau ${c.niveau + 1} : +${Math.round(COLLECTION.bonusNiveau * 100)} % de force.</span></p>`
@@ -887,8 +887,8 @@ export function htmlCoupe(e: EcranDistrict): string {
     if (manque.noyau) morceaux.push(`monte la Tour du Noyau au <b>niveau ${noyauRequis(cible)}</b> pour les loger`);
     etape = `<strong>Pour ouvrir la Strate −${cible}</strong><small>${morceaux.join(', puis ').replace(/^./, (c) => c.toUpperCase())}.</small>`
       + (manque.creuseurs ? `<ul class="tr-sources"><li>${ICO.cristal}<span>Fouille ciblée</span><b>${Math.round(CREUSEURS.fouille * 100)} %</b></li>`
-        + `<li>${ICO.porteurs}<span>Mission${j.strate >= 2 ? '' : ' <em>(dès la Strate −2)</em>'}</span><b>${Math.round(CREUSEURS.missionCourte * 100)} à ${Math.round(CREUSEURS.missionLongue * 100)} %</b></li>`
-        + `<li>${ICO.boost}<span>Épreuve${j.strate >= 2 ? '' : ' <em>(dès la Strate −2)</em>'}</span><b>assuré</b></li></ul>` : '')
+        + `<li>${ICO.porteurs}<span>Mission</span><b>${Math.round(CREUSEURS.missionCourte * 100)} à ${Math.round(CREUSEURS.missionLongue * 100)} %</b></li>`
+        + `<li>${ICO.boost}<span>Épreuve <em>(1re victoire de la semaine)</em></span><b>assuré</b></li></ul>` : '')
       + `<div class="tr-boutons">${manque.creuseurs ? `<button type="button" class="btn prim" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller la Strate −${j.strate}</button>` : ''}`
       + `${manque.noyau ? `<button type="button" class="btn ${manque.creuseurs ? 'sec' : 'prim'}" data-action="batiment" data-id="noyau">${ICO.tour}Améliorer la Tour</button>` : ''}</div>`;
   } else {
@@ -921,8 +921,8 @@ export function htmlCoupe(e: EcranDistrict): string {
     + `<small>${!j.frontVaincu ? `S’ouvre après le gardien de la Strate −${j.strate}.` : manque ? 'Il manque encore de quoi la percer : voir « Prochaine étape ».' : 'Tout est prêt.'}</small>`
     + (logementBloque ? `<small class="tr-loge">La Tour loge ${loge} creuseurs au niveau ${j.batiments.noyau} : il en faut la place pour ${requis}.</small>` : '')
     + `</div></li></ol></section>`;
-  if (j.chambre && j.strate >= 2) h += htmlEpreuves(e) + htmlMissions(e);
-  else if (j.chambre) h += `<p class="tr-note">${ICO.verrou}Les Épreuves et les missions s’ouvrent quand la Strate −2 est creusée.</p>`;
+  if (j.chambre && strateVaincue(j) >= 1) h += htmlEpreuves(e) + htmlMissions(e);
+  else if (j.chambre) h += `<p class="tr-note">${ICO.verrou}Les Épreuves et les missions s’ouvrent quand le gardien de la Strate −1 est vaincu.</p>`;
   h += feuilleBatiment(e);
   return coquille(e, h, 'ecran-coupe tr');
 }

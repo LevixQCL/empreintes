@@ -155,13 +155,13 @@ export interface BatimentDef {
 }
 
 export const BATIMENTS: BatimentDef[] = [
-  { id: 'noyau', nom: 'Tour du Noyau', role: 'Le cœur du district. Son niveau limite celui des autres bâtiments et la capacité de stockage.', affinite: null,
+  { id: 'noyau', nom: 'Tour du Noyau', role: 'Le cœur du district. Son niveau limite celui des autres bâtiments, le stockage et les creuseurs qu’il loge pour percer les Strates. Un Porteur peut s’y entraîner.', affinite: null,
     couts: [{ energie: 0, composants: 0 }, { energie: 120, composants: 15 }, { energie: 300, composants: 40 }, { energie: 650, composants: 80, eclats: 3 }, { energie: 1300, composants: 160, eclats: 8 }], niveauMax: 5 },
   { id: 'generateur', nom: 'Générateur', role: 'Produit de l’énergie en continu, même quand tu ne joues pas.', affinite: 'tech',
     couts: [{ energie: 0, composants: 0 }, { energie: 80, composants: 10 }, { energie: 200, composants: 25 }, { energie: 450, composants: 55, eclats: 2 }, { energie: 900, composants: 110, eclats: 5 }], niveauMax: 5 },
-  { id: 'forge', nom: 'Forge', role: 'Recycle les cartes en trop et refabrique un exemplaire d’une carte déjà trouvée. Il faut un Porteur au travail.', affinite: 'tech',
+  { id: 'forge', nom: 'Forge', role: 'Refabrique un exemplaire d’une carte déjà trouvée : un doublon de plus. Il faut un Porteur au travail.', affinite: 'tech',
     couts: [{ energie: 0, composants: 0 }, { energie: 100, composants: 12 }, { energie: 240, composants: 30 }, { energie: 500, composants: 60, eclats: 2 }, { energie: 1000, composants: 120, eclats: 5 }], niveauMax: 5 },
-  { id: 'clinique', nom: 'Clinique', role: 'Soigne l’Usure des Porteurs qui se reposent au district.', affinite: 'bio',
+  { id: 'clinique', nom: 'Clinique', role: 'Soigne l’Usure des Porteurs présents au district, même au travail.', affinite: 'bio',
     couts: [{ energie: 0, composants: 0 }, { energie: 90, composants: 10 }, { energie: 220, composants: 28 }, { energie: 480, composants: 58, eclats: 2 }, { energie: 950, composants: 115, eclats: 5 }], niveauMax: 5 },
   // 23 octobre 2026 : le « acheter » de « forger, acheter ou combattre ». Il commence au niveau 0 : on le construit.
   { id: 'comptoir', nom: 'Comptoir', role: 'Les fouilleurs du quartier y revendent chaque jour quelques cartes trouvées dans les Strates. Prix fixes : tu vois toujours ce que tu achètes.', affinite: null,

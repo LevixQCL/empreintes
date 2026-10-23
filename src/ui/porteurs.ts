@@ -275,7 +275,7 @@ export function feuillePorteur(e: EcranDistrict): string {
       + (parti ? 'Elle se soignera à son retour.' : soin > 0 ? `La Clinique en soigne ${virgule(soin)} par heure : effacée dans ${Math.max(1, Math.ceil(d.usure / soin))} h environ.` : 'La Clinique la soignera.');
   const pvSuivant = Math.round(p.pvMax * (1 + XP.pvParNiveau * n.niveau)) + bonusPv(j, id);
   const noteXp = n.requis
-    ? `Encore <b>${fr(n.requis - n.xp)} XP</b> pour le niveau ${n.niveau + 1} : <b class="or">${pvSuivant} PV</b> au lieu de ${pvM}. XP gagnée en combat (${XP.combat} par victoire) et en mission.`
+    ? `Encore <b>${fr(n.requis - n.xp)} XP</b> pour le niveau ${n.niveau + 1} : <b class="or">${pvSuivant} PV</b> au lieu de ${pvM}. XP gagnée en combat (plus en profondeur, et davantage contre les salles scellées et les gardiens), en mission et à l’entraînement à la Tour du Noyau.`
     : `Niveau maximum atteint.`;
   h += `<section class="fp-bloc"><h3 class="fp-h3">${ICO.soin}Son état</h3><div class="fp-figs">`
     + figure('pv', 'En combat', `${pv}`, `/ ${pvM} PV`, jaugePv(pv, pvM, d.usure, uMax), noteUsure)
@@ -309,7 +309,7 @@ export function feuillePorteur(e: EcranDistrict): string {
       + (m.acquise
         ? `<p class="fp-note or">Active dans chaque combat où ${echap(p.nom)} fait partie de l’escouade.</p>`
         : `<i class="fp-jauge"><i style="width:${Math.min(100, (100 * m.n) / m.seuil)}%"></i></i>`
-          + `<p class="fp-note"><b>Comment la gagner :</b> emmène ${echap(p.nom)} dans l’escouade. Encore <b class="or">${fr(m.seuil - fait)} ${echap(m.quoi)}</b> et elle lui est acquise pour toujours.</p>`)
+          + `<p class="fp-note"><b>Comment la gagner :</b> ${m.fait === 'missions' ? `envoie ${echap(p.nom)} en mission depuis la Tour` : `emmène ${echap(p.nom)} dans l’escouade`}. Encore <b class="or">${fr(m.seuil - fait)} ${echap(m.quoi)}</b> et elle lui est acquise pour toujours.</p>`)
       + `</section>`;
   }
 

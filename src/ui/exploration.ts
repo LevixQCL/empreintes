@@ -221,7 +221,7 @@ export function htmlExploration(j: Jeu): string {
   else if (peutRemonter(x)) {
     h += `<div class="ex-remonter"><p>${ici.type === 'camp' ? 'Le campement est une sortie' : 'L’entrée est une sortie'} : tu peux rentrer maintenant avec tout ce que tu as trouvé.</p>`
       + `<button type="button" class="btn sec large ex-sortie" data-action="retraite">${ICO.retour}${x.butin ? `Remonter avec ${x.butin} composant${x.butin > 1 ? 's' : ''}` : 'Remonter au district'}</button></div>`;
-  } else if (libre) h += `<p class="ex-note">Les PV ne remontent qu’aux campements. On ne peut remonter que depuis l’entrée ou un campement.</p>`;
+  } else if (libre) h += `<p class="ex-note">Les PV remontent surtout aux campements (et parfois lors d’une rencontre). On ne peut remonter que depuis l’entrée ou un campement.</p>`;
   h += `</section>`;
 
   return h + `</div>`;
