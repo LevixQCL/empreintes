@@ -5,7 +5,7 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  cartesNouvelles, OBJECTIFS, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  cartesNouvelles, OBJECTIFS, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
@@ -212,15 +212,34 @@ function mission(e: EcranDistrict): string {
   const def = QUOTIDIENS[q.type];
   const max = ARCHIVE.paliers[ARCHIVE.paliers.length - 1]!;
   const crans = ARCHIVE.paliers.map((p) => `<i class="cran${j.archive.points >= p ? ' atteint' : ''}" style="left:${(p / max) * 100}%"></i>`).join('');
-  let h = `<section class="mission jour${quotidienFait(j) ? ' faite' : ''}" aria-label="Objectif du jour">`;
+  // Trois blocs : l'objectif, la confiance, l'Archive. Sur téléphone ils restent serrés dans un seul panneau ;
+  // sur PC (panneau-district.css, 23 octobre 2026) chacun devient sa propre carte de verre, avec plus de détails.
+  // Les éléments « pc » ne s'affichent que sur PC, les « mob » que sur téléphone.
+  const points = Math.min(j.archive.points, max);
+  const confiance = j.confiance ?? 50;
+  let h = `<section class="mission jour${quotidienFait(j) ? ' faite' : ''}" aria-label="Objectif du jour"><div class="mj-obj">`;
   if (quotidienActif(j)) {
-    h += `<div class="mission-tete"><span class="surtitre">OBJECTIF DU JOUR${q.reserve > 1 ? ` · ${q.reserve} EN RÉSERVE` : ''}</span><span class="chiffre">${q.progres} / ${def.objectif}</span></div><strong>${echap(def.titre)}</strong>`
+    const reserve = q.reserve > 1
+      ? `<span class="mj-reserve pc" title="${q.reserve} objectifs en réserve : ils s’accumulent jusqu’à 3 si tu ne joues pas">${Array.from({ length: 3 }, (_, i) => `<i class="${i < q.reserve ? 'plein' : ''}"></i>`).join('')}<small>${q.reserve} en réserve</small></span>`
+      : '';
+    h += `<div class="mission-tete"><span class="surtitre mob">OBJECTIF DU JOUR${q.reserve > 1 ? ` · ${q.reserve} EN RÉSERVE` : ''}</span><span class="surtitre pc">OBJECTIF DU JOUR</span>${reserve}<span class="chiffre mob">${q.progres} / ${def.objectif}</span></div><strong>${echap(def.titre)}</strong>`
       + (quotidienFait(j)
         ? `<button type="button" class="btn prim" data-action="reclamer-jour">${ICO.coffre}Récupérer : une carte ou 2 Éclats</button>`
-        : `<div class="jauge"><i style="width:${(100 * q.progres) / def.objectif}%"></i></div>`);
+        : `<div class="mj-progres"><div class="jauge"><i style="width:${(100 * q.progres) / def.objectif}%"></i></div><span class="chiffre pc"><b>${q.progres}</b> / ${def.objectif}</span></div>`
+          + `<p class="mj-gain pc">${icone('coffre')}<span>Récompense : <b>une carte</b> ou <b>2 Éclats</b>, au choix</span></p>`);
   } else h += `<div class="mission-tete"><span class="surtitre">OBJECTIF DU JOUR</span></div><small class="aide">Tous faits : le prochain arrive demain.</small>`;
-  h += `<div class="confiance" title="${echap(humeurDistrict(j))}"><span class="surtitre">CONFIANCE · ${j.confiance}</span><div class="jauge"><i style="width:${j.confiance}%"></i></div><small>${echap(humeurDistrict(j))}</small></div>`;
-  h += `<div class="archive"><span class="surtitre">ARCHIVE · ${Math.min(j.archive.points, max)}/${max}</span><div class="jauge reso">${crans}<i style="width:${Math.min(100, (100 * j.archive.points) / max)}%"></i></div><small>lundi, dans ${duree(lundiSuivant(e.now) - e.now)}</small></div>`;
+  h += `</div>`;
+  const seuils = `<i class="seuil pc" style="left:${CONFIANCE.basse}%" title="En dessous : −10 % d’énergie"></i><i class="seuil pc" style="left:${CONFIANCE.haute}%" title="Au-dessus : +10 % d’énergie"></i>`;
+  h += `<div class="confiance" title="${echap(humeurDistrict(j))}"><span class="surtitre mob">CONFIANCE · ${confiance}</span><span class="surtitre pc">CONFIANCE DU QUARTIER</span>`
+    + `<span class="mj-valeur pc"><b>${confiance}</b>/100</span>`
+    + `<div class="jauge">${seuils}<i style="width:${confiance}%"></i><b class="curseur pc" style="left:${confiance}%"></b></div><small>${echap(humeurDistrict(j))}</small></div>`;
+  const reperes = ARCHIVE.paliers.map((p, i) => `<span class="${points >= p ? 'atteint' : ''}" style="left:${(p / max) * 100}%">${i === ARCHIVE.paliers.length - 1 ? '' : p}</span>`).join('');
+  h += `<div class="archive"><span class="mj-ico pc">${icone('coffre')}</span>`
+    + `<span class="surtitre mob">ARCHIVE · ${points}/${max}</span><span class="surtitre pc">ARCHIVE DE LA SEMAINE</span>`
+    + `<span class="mj-valeur pc"><b>${points}</b>/${max}</span>`
+    + `<div class="jauge reso">${crans}<i style="width:${Math.min(100, (100 * j.archive.points) / max)}%"></i></div>`
+    + `<div class="mj-reperes pc" aria-hidden="true">${reperes}</div>`
+    + `<small><span class="pc">S’ouvre </span>lundi, dans ${duree(lundiSuivant(e.now) - e.now)}</small></div>`;
   return h + `</section>`;
 }
 

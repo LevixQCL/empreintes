@@ -277,9 +277,11 @@ h1,h2,h3{font-weight:400}
 .mission.faite{box-shadow:inset 0 0 0 1.5px var(--gold),0 0 30px rgba(216,180,101,.25)}
 .mission .btn{justify-self:start;margin-top:2px}
 .mission.jour{grid-template-columns:1fr 112px;column-gap:14px;row-gap:5px}
-.mission.jour>.mission-tete,.mission.jour>strong,.mission.jour>.jauge,.mission.jour>.btn,.mission.jour>.aide{grid-column:1}
+.mission.jour>.mj-obj{grid-column:1;display:grid;gap:5px;min-width:0}
+.mission.jour>.confiance{grid-column:1}
+.mission .pc{display:none}
 .mission.jour strong{font-size:16px}
-.mission.jour .archive{grid-column:2;grid-row:1 / span 3;display:grid;align-content:center;gap:5px;padding-left:12px;box-shadow:-1px 0 0 var(--filet)}
+.mission.jour .archive{grid-column:2;grid-row:1;display:grid;align-content:center;gap:5px;padding-left:12px;box-shadow:-1px 0 0 var(--filet)}
 .mission.jour .archive small{font-family:var(--mono);font-size:9.5px;color:var(--quiet)}
 .mission.jour .archive .surtitre{font-size:9.5px;letter-spacing:.08em;color:#C9B5F0}
 .appel{--cut:10px;display:flex;align-items:center;gap:12px;padding:10px 14px 10px 10px;border:none;text-align:left;color:var(--ink);

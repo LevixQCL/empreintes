@@ -36,6 +36,7 @@ import { trouveesDe, type OngletGuide } from './ui/guide';
 import { comparer, montrer, relever } from './ui/gains';
 import './ui/gains.css';
 import './ui/rail.css';
+import './ui/panneau-district.css';
 
 const racine = document.getElementById('app') as HTMLElement;
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
