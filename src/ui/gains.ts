@@ -329,24 +329,24 @@ const MASQUE_EMPREINTE = (() => {
     }
     return `<path d="${d}"/>`;
   };
+  // une vraie volute d'empreinte, ordonnée : des boucles fines et régulières autour d'un même cœur,
+  // toutes déformées de la même façon, avec une seule ouverture qui glisse doucement d'une ligne à l'autre
   const sillons: string[] = [];
-  const cx = 50, cy = 64;
-  for (let i = 0; i < 17; i++) {
-    const r = 2.6 + i * 3.1;
-    // une ouverture qui tourne d'une ligne à l'autre : le motif semble s'enrouler
-    const debut = 0.6 + i * 0.47 + Math.sin(i * 1.7) * 0.5;
-    const tour = Math.PI * 2 - (0.5 + ((i * 5) % 7) * 0.12);
+  const cx = 50, cy = 62;
+  for (let i = 0; i < 24; i++) {
+    const r = 1.8 + i * 2.15;
+    const ouverture = 0.35 + Math.min(i, 12) * 0.012;
+    const debut = Math.PI * 0.62 + i * 0.045;
     const pts: [number, number][] = [];
-    const n = 40;
+    const n = 48;
     for (let k = 0; k <= n; k++) {
-      const t = debut + (tour * k) / n;
-      const ondule = 1 + 0.1 * Math.sin(2 * t + i * 0.55) + 0.05 * Math.sin(3 * t - i * 0.9);
-      const rr = (r + (k / n) * 2.4) * ondule;
-      pts.push([cx + Math.cos(t) * rr * 0.86, cy + Math.sin(t) * rr * 1.12 - Math.max(0, i - 9) * 0.6]);
+      const t = debut + ((Math.PI * 2 - ouverture) * k) / n;
+      const forme = 1 + 0.035 * Math.sin(2 * t + 0.6);
+      pts.push([cx + Math.cos(t) * r * 0.84 * forme, cy + Math.sin(t) * r * 1.06 * forme]);
     }
     sillons.push(lisse(pts));
   }
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130"><g fill="none" stroke="#fff" stroke-width="1.15" stroke-linecap="round">${sillons.join('')}</g></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130"><g fill="none" stroke="#fff" stroke-width=".75" stroke-linecap="round">${sillons.join('')}</g></svg>`;
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 })();
 const EMPREINTE = `<span class="gr-holo" aria-hidden="true" style="--fp:${MASQUE_EMPREINTE.replace(/"/g, '&quot;')}"></span>`;
