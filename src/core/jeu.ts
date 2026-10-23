@@ -1436,7 +1436,7 @@ export function garnirComptoir(j: Jeu, now: number): void {
 
 /** Achète l'offre n° index du Comptoir : la carte rejoint la collection (nouvelle carte, ou doublon) */
 export function acheter(j: Jeu, index: number, now = j.dernierTick): Resultat {
-  if (!j.batiments.comptoir) return non('Construis d’abord le Comptoir.');
+  if (!j.batiments.comptoir) return non('Le Comptoir est fermé : remets-le d’abord en état.');
   garnirComptoir(j, now);
   const c = j.comptoir;
   const id = c.offres[index];

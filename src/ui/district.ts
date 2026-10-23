@@ -52,6 +52,11 @@ export const LIEUX_FUTURS: Record<LieuFutur, { nom: string; raison: string; prom
     promesse: 'Les Génés du quartier y tailleront un jour de nouvelles greffes.',
   },
 };
+/**
+ * Le Comptoir est déjà peint sur le tableau : tant qu'il n'est pas « construit » (niveau 0), on le dit fermé, avec une raison
+ * tirée du lore, comme le port et le labo (23 octobre 2026, Bryan). Le construire, c'est le remettre en état.
+ */
+const COMPTOIR_FERME = 'Ses volets sont cloués depuis que le dernier marchand a quitté le district, et la balance a rouillé sur le comptoir. Les fouilleurs remontent des Strates les poches pleines, mais personne n’est là pour leur racheter quoi que ce soit.';
 const estFutur = (id: string | null): id is LieuFutur => id === 'port' || id === 'labo';
 
 /**
@@ -173,6 +178,10 @@ function plaques(e: EcranDistrict): string {
         + `<span class="plaque-nom">${echap(LIEUX_FUTURS[id].nom)}</span></button>`;
     }
     const d = batimentDef(id);
+    if (id === 'comptoir' && !j.batiments.comptoir && !chantierDe(j, id)) {
+      return `<button type="button" class="plaque futur${e.selection === id ? ' choisie' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(d.nom)}, fermé">`
+        + `<span class="plaque-nom">${echap(d.nom)}</span></button>`;
+    }
     const prete = id === 'forge' && !!j.forge && e.now >= j.forge.fin;
     const ch = chantierDe(j, id);
     const vise = !!o && o.pilier === id && !o.fait(j);
@@ -398,7 +407,7 @@ function blocEntrainement(j: Jeu): string {
 function blocComptoir(e: EcranDistrict): string {
   const j = e.j;
   if (!j.batiments.comptoir) {
-    return `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}Une fois construit</h3><p class="fb-vide">Chaque jour, <b>${COMPTOIR.etals[1]!.length} cartes</b> en vente (fer et cuivre), une fois chacune. Il montera jusqu’à ${COMPTOIR.etals[5]!.length} cartes par jour, avec de l’argent après la Strate −${COMPTOIR.strateArgent}. L’or et la nacre restent à trouver dans les Strates.</p></section>`;
+    return `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}Une fois rouvert</h3><p class="fb-vide">Chaque jour, <b>${COMPTOIR.etals[1]!.length} cartes</b> en vente (fer et cuivre), une fois chacune. Il montera jusqu’à ${COMPTOIR.etals[5]!.length} cartes par jour, avec de l’argent après la Strate −${COMPTOIR.strateArgent}. L’or et la nacre restent à trouver dans les Strates.</p></section>`;
   }
   const c = j.comptoir;
   const demain = debutJour(c.jour + 1) - e.now;
@@ -449,14 +458,15 @@ function feuilleBatiment(e: EcranDistrict): string {
   const niv = j.batiments[b];
   const pv = prochainVisuel(niv);
   const crans = Array.from({ length: d.niveauMax }, (_, i) => `<i class="${i < niv ? 'plein' : ''}"></i>`).join('');
-  const surtitre = niv ? `Niveau ${niv} <span class="fb-max">/ ${d.niveauMax}</span>` : 'À construire';
+  const surtitre = niv ? `Niveau ${niv} <span class="fb-max">/ ${d.niveauMax}</span>` : b === 'comptoir' ? 'Fermé' : 'À construire';
   const ideal = d.affinite ? `<span class="fb-ideal" style="--c:${COULEUR[d.affinite]}">${ICO.porteurs}Idéal : ${NOM_LIGNEE[d.affinite]} <b>×${virgule(DISTRICT.bonusAffinite)}</b></span>` : '';
   let h = `<div class="voile-feuille" data-action="fermer" aria-hidden="true"></div><section class="feuille fiche-bat" role="dialog" aria-modal="true" aria-labelledby="feuille-titre">`
     + `<span class="poignee" aria-hidden="true"></span><button type="button" class="btn-icone fb-fermer" data-action="fermer" aria-label="Fermer">${ICO.fermer}</button>`
     + `<div class="feuille-corps fb-corps"><header class="fb-heros"><div class="fb-scene" aria-hidden="true"><span class="fb-halo"></span><img class="fb-ilot${niv ? '' : ' vide'}" src="${illustrationBatiment(b, Math.max(1, niv))}" alt="" decoding="async"></div>`
     + `<div class="fb-titre"><span class="surtitre">${surtitre}</span><h2 id="feuille-titre">${echap(d.nom)}</h2>`
     + `<span class="fb-crans" aria-hidden="true">${crans}</span>${ideal}</div></header>`;
-  h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
+  if (b === 'comptoir' && !niv) h += `<p class="fb-role">${echap(COMPTOIR_FERME)}</p>`;
+  else h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
 
   // ce que le bâtiment rapporte
   if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>+${ent(energieParHeure(j))}</b><small>énergie par heure</small></div></div>${reserve(j, b)}`;
@@ -557,17 +567,17 @@ function barreAmelioration(e: EcranDistrict, b: BatimentId, a: ReturnType<typeof
   const niv = j.batiments[b];
   if (a.ch) {
     const fait = Math.min(1, (e.now - a.ch.debut) / (a.ch.fin - a.ch.debut));
-    return `<div class="chantier-cours">${icone('marteau')}<div><strong>Chantier vers le niveau ${niv + 1}</strong><small>Reste ${duree(a.ch.fin - e.now)} · avance même jeu fermé</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
+    return `<div class="chantier-cours">${icone('marteau')}<div><strong>${!niv && b === 'comptoir' ? 'Remise en état' : `Chantier vers le niveau ${niv + 1}`}</strong><small>Reste ${duree(a.ch.fin - e.now)} · avance même jeu fermé</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
   }
   if (!a.cout) return `<small class="raison">Niveau maximum pour cette version.</small>`;
   const c = a.cout;
-  const etiquette = !niv ? `${ICO.marteau}Construire` : pied ? `${ICO.monter}Niveau ${niv + 1}` : `${ICO.monter}Passer au niveau ${niv + 1}`;
+  const etiquette = !niv ? `${ICO.marteau}${b === 'comptoir' ? 'Rouvrir' : 'Construire'}` : pied ? `${ICO.monter}Niveau ${niv + 1}` : `${ICO.monter}Passer au niveau ${niv + 1}`;
   return (a.raison ? `<p class="fb-raison">${ICO.verrou}<span>${a.raison}</span>${a.bloque ? `<button type="button" class="fb-lien" data-action="batiment" data-id="noyau" data-amelio>Voir la Tour</button>` : ''}</p>` : '')
     + `<div class="fb-barre"><div class="fb-cout" aria-label="Coût">`
     + (c.energie ? coutDetail('energie', c.energie, j.energie, 'Énergie') : '')
     + (c.composants ? coutDetail('composants', c.composants, j.composants, 'Composants') : '')
     + (c.eclats ? coutDetail('eclats', c.eclats, j.eclats, 'Éclats') : '') + `</div>`
-    + `<button type="button" class="btn ${a.pret ? 'prim' : 'sec'} fb-ameliorer" data-action="ameliorer" data-id="${b}"${a.pret ? '' : ' disabled'} aria-label="${niv ? `Passer au niveau ${niv + 1}` : `Construire le ${echap(batimentDef(b).nom)}`}">${etiquette}</button></div>`;
+    + `<button type="button" class="btn ${a.pret ? 'prim' : 'sec'} fb-ameliorer" data-action="ameliorer" data-id="${b}"${a.pret ? '' : ' disabled'} aria-label="${niv ? `Passer au niveau ${niv + 1}` : b === 'comptoir' ? 'Remettre le Comptoir en état' : `Construire le ${echap(batimentDef(b).nom)}`}">${etiquette}</button></div>`;
 }
 
 /** Un grand choix de la campagne : la fenêtre ne se ferme qu'une fois la décision prise */
