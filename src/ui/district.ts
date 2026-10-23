@@ -303,10 +303,10 @@ function gainsNiveau(j: Jeu, b: BatimentId): string {
     }).join('') + `</ul></section>`;
 }
 
-/** Une ressource du coût : ce qu'il faut, et ce qui manque s'il en manque */
+/** Une ressource du coût, lue « ce que j'ai / ce qu'il faut » (23 octobre 2026) : pas de soustraction à faire, le rouge dit ce qui manque */
 function coutDetail(icone: Icone, besoin: number, possede: number, nom: string): string {
-  const manque = Math.max(0, besoin - possede);
-  return `<span class="fb-prix${manque ? ' court' : ''}" title="${nom} : ${ent(possede)} / ${ent(besoin)}">${ICO[icone]}<b>${ent(besoin)}</b>${manque ? `<small>manque ${ent(manque)}</small>` : ''}</span>`;
+  const court = possede < besoin;
+  return `<span class="fb-prix${court ? ' court' : ''}" title="${nom} : ${ent(possede)} / ${ent(besoin)}" aria-label="${nom} : ${ent(possede)} sur ${ent(besoin)}">${ICO[icone]}<b>${ent(Math.min(possede, besoin))}</b><small>/ ${ent(besoin)}</small></span>`;
 }
 
 /** Une réserve : jauge remplie / maximum et ce qu'elle dit */
@@ -408,7 +408,6 @@ function feuilleBatiment(e: EcranDistrict): string {
   if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur présent au district</small></div></div>`;
   if (b === 'noyau') {
     h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>niveau maximum des autres bâtiments</small></div></div>${reserve(j, b)}`
-      + `<button type="button" class="btn prim large" data-action="entrer">${ICO.tour}Entrer dans la tour</button>`
       + blocEntrainement(j);
   }
   if (b === 'comptoir') h += blocComptoir(e);
@@ -465,31 +464,55 @@ function feuilleBatiment(e: EcranDistrict): string {
     h += `</section>`;
   }
 
+  // Revue du 23 octobre 2026 : le pied fixe porte l'action qu'on fait le plus souvent. À la Tour du Noyau, c'est
+  // « Entrer dans la tour » ; l'amélioration, rare, passe en bas de la feuille (un raccourci du pied y mène).
+  // Ailleurs, l'amélioration reste au pied, mais sur une seule ligne : coût et bouton côte à côte.
+  const a = amelioration(j, b);
+  if (b === 'noyau') {
+    h += `<section class="fb-amelio" id="fb-amelio">${a.ch || !a.cout ? '' : gainsNiveau(j, b)}${barreAmelioration(e, b, a, false)}</section>`;
+  } else if (a.cout && !a.ch) h += gainsNiveau(j, b);
+  h += `</div><footer class="feuille-pied fb-pied">`;
+  if (b === 'noyau') {
+    const raccourci = a.ch ? `${ICO.marteau}<span>${duree(a.ch.fin - e.now)}</span>`
+      : `${ICO.monter}<span>Niv. ${niv + 1}</span>`;
+    h += `<div class="fb-barre">`
+      + (a.cout || a.ch ? `<button type="button" class="btn sec fb-vers-amelio${a.pret ? ' pret' : ''}" data-action="vers-amelioration" aria-label="${a.ch ? 'Voir le chantier en cours' : `Améliorer au niveau ${niv + 1}${a.pret ? ' : possible' : ''}`}">${raccourci}</button>` : '')
+      + `<button type="button" class="btn prim large fb-entrer" data-action="entrer">${ICO.tour}Entrer dans la tour</button></div>`;
+  } else h += barreAmelioration(e, b, a, true);
+  return h + `</footer></section>`;
+}
+
+/** Où en est l'amélioration d'un bâtiment : chantier en cours, coût, et ce qui la bloque */
+function amelioration(j: Jeu, b: BatimentId) {
+  const niv = j.batiments[b];
   const ch = chantierDe(j, b);
   const cout = coutAmelioration(j, b);
-  if (cout && !ch) h += gainsNiveau(j, b);
-  h += `</div>`;
+  const bloque = b !== 'noyau' && niv >= j.batiments.noyau;
+  const assez = !!cout && j.energie >= cout.energie && j.composants >= cout.composants && j.eclats >= (cout.eclats ?? 0);
+  const plein = j.chantiers.length >= chantiersMax(j) || (b === 'noyau' && j.chantiers.length > 0);
+  // les ressources manquantes se lisent déjà en rouge dans le coût : la phrase ne sert que pour les autres blocages
+  const raison = bloque ? `Il faut d’abord monter la Tour du Noyau (niveau ${j.batiments.noyau}).`
+    : plein ? (b === 'noyau' && j.chantiers.length ? 'Attends la fin des chantiers en cours.' : chantiersMax(j) === 1 ? 'Un seul chantier à la fois (deux au Noyau niveau 4).' : 'Deux chantiers sont déjà en cours.') : '';
+  return { ch, cout, bloque, raison, pret: !ch && assez && !bloque && !plein };
+}
 
-  // le pied : l'amélioration, toujours visible
-  h += `<footer class="feuille-pied fb-pied">`;
-  if (ch) {
-    const fait = Math.min(1, (e.now - ch.debut) / (ch.fin - ch.debut));
-    h += `<div class="chantier-cours">${ICO.marteau}<div><strong>Chantier vers le niveau ${niv + 1}</strong><small>Reste ${duree(ch.fin - e.now)} · avance même jeu fermé</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
-  } else if (cout) {
-    const bloque = b !== 'noyau' && niv >= j.batiments.noyau;
-    const assez = j.energie >= cout.energie && j.composants >= cout.composants && j.eclats >= (cout.eclats ?? 0);
-    const plein = j.chantiers.length >= chantiersMax(j) || (b === 'noyau' && j.chantiers.length > 0);
-    const raison = bloque ? `Il faut d’abord monter la Tour du Noyau (niveau ${j.batiments.noyau}).`
-      : plein ? (b === 'noyau' && j.chantiers.length ? 'Attends la fin des chantiers en cours.' : chantiersMax(j) === 1 ? 'Un seul chantier à la fois (deux au Noyau niveau 4).' : 'Deux chantiers sont déjà en cours.')
-        : !assez ? 'Il manque des ressources.' : '';
-    h += `<div class="fb-cout"><span class="surtitre">Coût</span>`
-      + (cout.energie ? coutDetail('energie', cout.energie, j.energie, 'Énergie') : '')
-      + (cout.composants ? coutDetail('composants', cout.composants, j.composants, 'Composants') : '')
-      + (cout.eclats ? coutDetail('eclats', cout.eclats, j.eclats, 'Éclats') : '') + `</div>`;
-    if (raison) h += `<p class="fb-raison">${ICO.verrou}<span>${raison}</span>${bloque ? `<button type="button" class="fb-lien" data-action="batiment" data-id="noyau">Voir la Tour</button>` : ''}</p>`;
-    h += `<button type="button" class="btn prim large fb-ameliorer" data-action="ameliorer" data-id="${b}"${assez && !bloque && !plein ? '' : ' disabled'}>${niv ? `${ICO.monter}Passer au niveau ${niv + 1}` : `${ICO.marteau}Construire le ${echap(d.nom)}`}</button>`;
-  } else h += `<small class="raison">Niveau maximum pour cette version.</small>`;
-  return h + `</footer></section>`;
+/** Le coût et le bouton d'amélioration sur une ligne ; `pied` : la version du pied fixe (étiquette courte) */
+function barreAmelioration(e: EcranDistrict, b: BatimentId, a: ReturnType<typeof amelioration>, pied: boolean): string {
+  const j = e.j;
+  const niv = j.batiments[b];
+  if (a.ch) {
+    const fait = Math.min(1, (e.now - a.ch.debut) / (a.ch.fin - a.ch.debut));
+    return `<div class="chantier-cours">${ICO.marteau}<div><strong>Chantier vers le niveau ${niv + 1}</strong><small>Reste ${duree(a.ch.fin - e.now)} · avance même jeu fermé</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
+  }
+  if (!a.cout) return `<small class="raison">Niveau maximum pour cette version.</small>`;
+  const c = a.cout;
+  const etiquette = !niv ? `${ICO.marteau}Construire` : pied ? `${ICO.monter}Niveau ${niv + 1}` : `${ICO.monter}Passer au niveau ${niv + 1}`;
+  return (a.raison ? `<p class="fb-raison">${ICO.verrou}<span>${a.raison}</span>${a.bloque ? `<button type="button" class="fb-lien" data-action="batiment" data-id="noyau" data-amelio>Voir la Tour</button>` : ''}</p>` : '')
+    + `<div class="fb-barre"><div class="fb-cout" aria-label="Coût">`
+    + (c.energie ? coutDetail('energie', c.energie, j.energie, 'Énergie') : '')
+    + (c.composants ? coutDetail('composants', c.composants, j.composants, 'Composants') : '')
+    + (c.eclats ? coutDetail('eclats', c.eclats, j.eclats, 'Éclats') : '') + `</div>`
+    + `<button type="button" class="btn ${a.pret ? 'prim' : 'sec'} fb-ameliorer" data-action="ameliorer" data-id="${b}"${a.pret ? '' : ' disabled'} aria-label="${niv ? `Passer au niveau ${niv + 1}` : `Construire le ${echap(batimentDef(b).nom)}`}">${etiquette}</button></div>`;
 }
 
 /** Un grand choix de la campagne : la fenêtre ne se ferme qu'une fois la décision prise */
@@ -890,7 +913,7 @@ export function htmlCoupe(e: EcranDistrict): string {
         + `<li>${ICO.porteurs}<span>Mission</span><b>${Math.round(CREUSEURS.missionCourte * 100)} à ${Math.round(CREUSEURS.missionLongue * 100)} %</b></li>`
         + `<li>${ICO.boost}<span>Épreuve <em>(1re victoire de la semaine)</em></span><b>assuré</b></li></ul>` : '')
       + `<div class="tr-boutons">${manque.creuseurs ? `<button type="button" class="btn prim" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller la Strate −${j.strate}</button>` : ''}`
-      + `${manque.noyau ? `<button type="button" class="btn ${manque.creuseurs ? 'sec' : 'prim'}" data-action="batiment" data-id="noyau">${ICO.tour}Améliorer la Tour</button>` : ''}</div>`;
+      + `${manque.noyau ? `<button type="button" class="btn ${manque.creuseurs ? 'sec' : 'prim'}" data-action="batiment" data-id="noyau" data-amelio>${ICO.tour}Améliorer la Tour</button>` : ''}</div>`;
   } else {
     etape = `<strong>La roche cède : la Strate −${cible} va s’ouvrir</strong><small>Tout est prêt. Descends pour découvrir le nouvel étage.</small>`
       + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}Descendre</button></div>`;

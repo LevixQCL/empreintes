@@ -167,6 +167,8 @@
 /* la sortie */
 .ex-remonter{display:grid;gap:10px;padding-top:14px;box-shadow:inset 0 1px 0 rgba(205,239,255,.1)}
 .ex-remonter p{margin:0;font-size:13.5px;line-height:1.45;color:var(--ex-doux)}
+.ex-retraite{justify-self:start;min-height:44px;padding:0 14px;font-size:14px}
+.ex-retraite .ico{width:16px;height:16px}
 .ex .ex-sortie{width:100%}
 .ex-note{margin:0;padding-top:12px;font-size:13px;line-height:1.45;color:var(--ex-doux);box-shadow:inset 0 1px 0 rgba(205,239,255,.1)}
 

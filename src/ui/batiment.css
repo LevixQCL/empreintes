@@ -117,21 +117,28 @@
 .fb-g-val s{font-size:14px;color:var(--fb-doux);text-decoration-color:rgba(147,163,184,.6)}
 .fb-g-val b{font-size:23px;color:var(--fb-or);text-shadow:0 0 12px rgba(242,200,110,.4)}
 
-/* ---------- Pied : coût et bouton ---------- */
-.fb-pied{gap:10px;padding-top:12px}
-.fb-cout{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.fb-cout .surtitre{margin-right:auto;font-size:12px;color:var(--fb-doux)}
-.fb-cout .surtitre::before{display:none}
-.fb-prix{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-variant-numeric:tabular-nums;color:#fff}
-.fb-prix .ico{width:17px;height:17px;color:var(--fb-or)}
-.fb-prix b{font-size:16px}
-.fb-prix small{font-size:12px;font-weight:600;color:var(--fb-rouge)}
+/* ---------- Pied : une seule ligne (revue du 23 octobre 2026) ---------- */
+.fb-pied{gap:8px;padding-top:10px}
+.fb-barre{display:flex;align-items:center;gap:10px}
+.fb-cout{flex:1;min-width:0;display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap}
+.fb-prix{display:inline-flex;align-items:baseline;gap:3px;font-family:var(--mono);font-variant-numeric:tabular-nums;color:#fff;white-space:nowrap}
+.fb-prix .ico{align-self:center;width:16px;height:16px;margin-right:2px;color:var(--fb-or)}
+.fb-prix b{font-size:15.5px}
+.fb-prix small{font-size:12.5px;color:var(--fb-doux)}
 .fb-prix.court b,.fb-prix.court .ico{color:var(--fb-rouge)}
-.fb-raison{display:flex;align-items:center;gap:8px;margin:0;font-size:14px;line-height:1.35;color:var(--fb-or)}
+.fb-raison{display:flex;align-items:center;gap:8px;margin:0;font-size:13.5px;line-height:1.35;color:var(--fb-or)}
 .fb-raison>.ico{width:16px;height:16px;flex-shrink:0}
 .fb-raison span{flex:1}
 .fb-lien{flex-shrink:0;min-height:36px;padding:0 4px;border:0;background:none;font:inherit;font-weight:600;color:var(--fb-glace);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.fiche-bat .fb-ameliorer{min-height:54px;font-size:16px}
+.fiche-bat .fb-ameliorer{flex-shrink:0;min-height:48px;padding:0 18px;font-size:15px}
+/* la Tour du Noyau : « Entrer » occupe le pied, l'amélioration a son raccourci à gauche */
+.fiche-bat .fb-entrer{flex:1;width:auto;min-height:54px}
+.fb-vers-amelio{position:relative;flex-shrink:0;min-height:54px;padding:0 12px;gap:6px;font-family:var(--mono);font-size:13px;color:var(--fb-doux)}
+.fb-vers-amelio .ico{width:17px;height:17px}
+.fb-vers-amelio.pret{color:var(--fb-or);box-shadow:inset 0 0 0 1px rgba(242,200,110,.55),0 0 14px rgba(242,200,110,.25)}
+.fb-vers-amelio.pret::after{content:"";position:absolute;top:7px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--fb-or);box-shadow:0 0 8px var(--fb-or)}
+.fb-amelio{display:grid;gap:10px;margin-top:auto;scroll-margin-top:16px}
+.fb-amelio .fb-suivant{margin-top:0}
 .fiche-bat .btn.large.prim::before{display:none}
 
 @media (prefers-reduced-motion:reduce){.fb-ilot,.fb-suivant::after{animation:none}}

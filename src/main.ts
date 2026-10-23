@@ -407,7 +407,9 @@ racine.addEventListener('click', async (ev) => {
     case 'intro': plan = 0; lignesVues = 1; texteCache = false; mode = 'intro'; D.menu = false; break;
 
     // district
-    case 'batiment': D.selection = D.selection === id ? null : (id as BatimentId); D.menu = false; break;
+    case 'batiment': D.selection = D.selection === id ? null : (id as BatimentId); D.menu = false;
+      if (b.dataset.amelio !== undefined) requestAnimationFrame(() => document.getElementById('fb-amelio')?.scrollIntoView({ block: 'start' }));
+      break;
     case 'ok-message': D.message = ''; break;
     case 'ressource': D.ressource = id && D.ressource !== id ? (id as typeof D.ressource) : null; D.menu = false; D.selection = null; break;
     case 'menu': D.ressource = null; D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; D.guide = null; D.porteur = null; break;
@@ -462,6 +464,7 @@ racine.addEventListener('click', async (ev) => {
     }
     case 'ouvrir-archive': resultat(J.ouvrirArchive(jeu)); break;
     case 'entrer': ouvrir('coupe'); break;
+    case 'vers-amelioration': document.getElementById('fb-amelio')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }); return;
     case 'archipel': ouvrir('archipel'); break;
     case 'coupe': ouvrir('coupe'); break;
     case 'descendre': D.deck = null; D.fouille = null; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
