@@ -114,7 +114,7 @@
 .gr-carte.rond .gr-face{border-radius:50%}
 .gr-dos{display:grid;place-items:center;border:3px solid #6E5A35;
   background:radial-gradient(circle at 50% 45%,#2A3550,#0E1220 70%);box-shadow:0 18px 40px rgba(0,0,0,.7)}
-.gr-dos img{width:46%;border-radius:18%;filter:drop-shadow(0 0 14px rgba(127,212,255,.6))}
+.gr-dos img{width:78%;filter:drop-shadow(0 0 18px rgba(127,212,255,.45))}
 .gr.charge .gr-dos{box-shadow:0 18px 40px rgba(0,0,0,.7),0 0 70px 6px var(--accent);border-color:var(--accent);transition:box-shadow var(--charge,1s) ease-in,border-color .3s}
 .gr-recto{transform:rotateY(180deg);background:#151a24;border:4px solid var(--accent);
   box-shadow:0 0 0 1px rgba(0,0,0,.7),0 22px 50px rgba(0,0,0,.7),0 0 80px 4px var(--accent)}

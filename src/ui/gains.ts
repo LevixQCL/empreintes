@@ -331,7 +331,7 @@ function grandeRevelation(g: Extract<Gain, { kind: 'carte' | 'porteur' }>, p: nu
     el.setAttribute('aria-label', `${sur} : ${nom}`);
     el.innerHTML = `<div class="gr-voile"></div><div class="gr-rayons"></div><div class="gr-halo"></div><div class="gr-flash"></div>`
       + `<div class="gr-pose"><div class="gr-carte${carte ? '' : ' rond'}">`
-      + `<div class="gr-face gr-dos"><img src="./icon.svg" alt=""></div>`
+      + `<div class="gr-face gr-dos"><img src="./art/embleme.webp" alt=""></div>`
       + `<div class="gr-face gr-recto">${img ? `<img src="${img}" alt="">` : `<i>${echap(nom.charAt(0))}</i>`}</div></div></div>`
       + `<div class="gr-texte"><small>${echap(sur)}</small><strong>${echap(nom)}</strong><em>${echap(sous)}</em><span class="gr-suite">Touche pour continuer</span></div>`;
     c.appendChild(el);
