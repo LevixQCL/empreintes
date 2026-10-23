@@ -39,6 +39,7 @@ import './ui/gains.css';
 import './ui/rail.css';
 import './ui/panneau-district.css';
 import './ui/classements.css';
+import { visuel as ageDistrict } from './ui/art';
 import { htmlClassements, tableauVide, type GrandTableau } from './ui/classements';
 import { DELAI_PSEUDO, TABLEAUX, aChange, clePseudo, entreeAPublier, nettoyerNom, nomValide, pseudoInterdit, type Entree, type Periode, type TableauId } from './core/classements';
 
@@ -728,6 +729,12 @@ racine.addEventListener('click', async (ev) => {
       break;
     }
 
+    case 'age-ok': jeu.ageVu = Math.max(jeu.ageVu ?? 1, ageDistrict(jeu.batiments.noyau)); sauver(); break;
+    case 'objectif-aller':
+      // l'objectif du jour emmène là où il se remplit
+      if (id === 'chantier') { ouvrir('archipel'); D.selection = J.batimentConseille(jeu); }
+      else ouvrir('coupe');
+      break;
     case 'panneau':
       D.panneauReplie = D.panneauReplie === false;
       try { localStorage.setItem('empreintes.panneau', D.panneauReplie ? 'replie' : 'ouvert'); } catch { /* stockage bloqué */ }

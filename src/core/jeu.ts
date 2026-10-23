@@ -261,6 +261,8 @@ export interface Jeu {
   frontVaincu: boolean;
   /** les fils des Porteurs : nombre d'étapes faites par Porteur (23 octobre 2026) */
   fils?: Record<string, number>;
+  /** le dernier âge du district montré au joueur (fenêtre « nouvel âge », 23 octobre 2026) */
+  ageVu?: number;
   /** le Grand Tableau (23 octobre 2026) : records personnels et scores du début de semaine (classements.ts) */
   palmares?: Palmares;
   /** le nom de directeur choisi pour le Grand Tableau, et si on y apparaît (jamais l'e-mail du compte) */
@@ -729,6 +731,17 @@ export const quotidienActif = (j: Jeu) => j.objectif >= OBJECTIFS.length && j.qu
 export const quotidienFait = (j: Jeu) => quotidienActif(j) && j.quotidien.progres >= QUOTIDIENS[j.quotidien.type].objectif;
 
 // ---------- Actions du district ----------
+
+/** Le bâtiment à proposer pour l'objectif « lancer une amélioration » : le premier qu'on peut lancer tout de suite,
+ *  sinon le moins cher à atteindre (la Tour du Noyau en dernier recours) */
+export function batimentConseille(j: Jeu): BatimentId {
+  const ids = BATIMENTS.map((b) => b.id).filter((b) => j.batiments[b] > 0 || b === 'comptoir');
+  const essai = (b: BatimentId) => { const c = structuredClone(j); return ameliorer(c, b).ok; };
+  const pret = ids.find(essai);
+  if (pret) return pret;
+  const cout = (b: BatimentId) => { const c = coutAmelioration(j, b); return c ? c.energie + 3 * c.composants : Infinity; };
+  return [...ids].sort((a, b) => cout(a) - cout(b))[0] ?? 'noyau';
+}
 
 export function ameliorer(j: Jeu, b: BatimentId, now = j.dernierTick): Resultat {
   const cout = coutAmelioration(j, b);

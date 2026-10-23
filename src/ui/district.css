@@ -159,3 +159,24 @@
   #app .mission.jour.replie .mission-tete{padding-right:0}
   .mission.jour.replie>:is(.confiance,.archive,.rumeur){display:revert}
 }
+
+/* ---------- Replié : une barre fine qui emmène vers l'objectif (23 octobre 2026) ---------- */
+#app .mission.jour.barre{display:flex;align-items:center;gap:6px;padding:4px 4px 4px 0;row-gap:0}
+.mj-aller{flex:1;min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px;min-height:40px;padding:0 4px 0 12px;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.mj-aller .surtitre{font-size:9.5px}
+.mj-aller strong{font-family:var(--body);font-size:13.5px;font-weight:600;line-height:1.2;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mj-aller .chiffre{font-size:12px;color:var(--gold,#E8C25A)}
+.mj-aller>.ico{width:16px;height:16px;color:var(--glace,#CDEFFF)}
+#app .mission.jour.barre .mj-plier{position:static;min-width:40px;justify-content:center;padding:0}
+#app .mission.jour.barre .mj-plier i{font-size:13px}
+@media (min-width:1100px) and (min-height:600px){ #app .mission.jour.barre{display:none} }
+
+/* ---------- Le nouvel âge du district ---------- */
+.nouvel-age-fenetre{display:grid;gap:10px;text-align:center;justify-items:center}
+.nouvel-age-fenetre .age-tableau{width:100%;max-height:42dvh;object-fit:cover;object-position:50% 40%;border-radius:6px;box-shadow:0 0 0 1px rgba(242,213,140,.4),0 14px 30px rgba(0,0,0,.6);
+  animation:age-apparait 1.4s ease-out both}
+.nouvel-age-fenetre h2{margin:0;font-family:var(--display);font-size:28px;color:#F2D58C}
+.nouvel-age-fenetre p{margin:0;font-size:14.5px;line-height:1.5;color:#DCE4EE}
+@keyframes age-apparait{from{opacity:0;transform:scale(1.06);filter:brightness(1.8) saturate(.4)}to{opacity:1;transform:none;filter:none}}
+@media (prefers-reduced-motion:reduce){ .nouvel-age-fenetre .age-tableau{animation:none} }
+@media (max-width:1099px),(max-height:599px){ #app .mission.jour.pc-seul{display:none} }

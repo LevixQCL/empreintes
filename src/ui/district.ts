@@ -232,7 +232,16 @@ function mission(e: EcranDistrict): string {
   // sur téléphone, le panneau se replie (23 octobre 2026, Bryan : « je ne sais pas fermer cette page ») : replié,
   // il ne garde que l'objectif du jour et sa jauge ; on le touche pour tout voir. Sur PC, il reste toujours ouvert.
   const replie = e.panneauReplie !== false;
-  let h = `<section class="mission jour${quotidienFait(j) ? ' faite' : ''}${replie ? ' replie' : ''}" aria-label="Objectif du jour">`
+  // replié, sur téléphone : une seule barre fine. Toucher l'objectif emmène là où il se remplit ; la flèche ouvre les détails.
+  let barre = '';
+  if (replie && quotidienActif(j) && !quotidienFait(j)) {
+    barre = `<section class="mission jour replie barre" aria-label="Objectif du jour">`
+      + `<button type="button" class="mj-aller" data-action="objectif-aller" data-id="${q.type}" aria-label="Objectif du jour : ${echap(def.titre)}, ${q.progres} sur ${def.objectif}. Y aller">`
+      + `<span class="surtitre">Objectif</span><strong>${echap(def.titre)}</strong><b class="chiffre">${q.progres}/${def.objectif}</b>${ICO.lancer}</button>`
+      + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="false" aria-label="Voir la confiance, l’Archive et le marché"><i aria-hidden="true">▾</i></button></section>`;
+  }
+  // avec la barre, le panneau complet n'est plus montré que sur PC (district.css)
+  let h = barre + `<section class="mission jour${quotidienFait(j) ? ' faite' : ''}${replie ? ' replie' : ''}${barre ? ' pc-seul' : ''}" aria-label="Objectif du jour">`
     + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="${!replie}" aria-label="${replie ? 'Voir la confiance, l’Archive et le marché' : 'Réduire le panneau'}">${replie ? 'Détails' : 'Réduire'}<i aria-hidden="true">${replie ? '▾' : '▴'}</i></button><div class="mj-obj">`;
   if (quotidienActif(j)) {
     const reserve = q.reserve > 1
@@ -607,6 +616,26 @@ function iconeRetour(l: string): Icone {
   return 'cristal';
 }
 
+/** Les âges du district : il change de visage avec la Tour du Noyau (art.ts, visuel) */
+const AGES: Record<1 | 2 | 3 | 4, { nom: string; texte: string }> = {
+  1: { nom: 'Le campement', texte: 'Quelques cabanes sur les piliers, et une Tour qui tient debout.' },
+  2: { nom: 'Le quartier s’éveille', texte: 'La Tour du Noyau tient bon : les habitants rallongent les pontons, réparent les toits et rouvrent les ateliers. Le district ressemble enfin à un quartier.' },
+  3: { nom: 'Le district prospère', texte: 'L’énergie circule, les marchands reviennent, et des maisons neuves poussent sur chaque pilier. On parle de ton district jusque dans les autres quartiers.' },
+  4: { nom: 'Le phare de Vertiga', texte: 'La Tour du Noyau illumine la mer. Ton district est devenu un repère, et même les Hauts le regardent.' },
+};
+
+/** La fenêtre du nouvel âge : le district a changé de visage (23 octobre 2026, Bryan : « rien ne l'indique du tout ») */
+function fenetreAge(j: Jeu): string {
+  const age = visuel(j.batiments.noyau);
+  const a = AGES[age];
+  const suivant = prochainVisuel(j.batiments.noyau);
+  return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="age-titre"><div class="fenetre nouvel-age-fenetre">`
+    + `<img class="age-tableau" src="${sceneDistrict(j.batiments.noyau).url}" alt="Ton district à l’âge ${age}" decoding="async">`
+    + `<span class="surtitre">TOUR DU NOYAU NIVEAU ${j.batiments.noyau} · ÂGE ${age}</span><h2 id="age-titre">${a.nom}</h2><p>${a.texte}</p>`
+    + (suivant ? `<small class="aide">Prochain âge : Tour du Noyau au niveau ${suivant}.</small>` : '')
+    + `<button type="button" class="btn prim large" data-action="age-ok">${ICO.ok}Admirer le district</button></div></div>`;
+}
+
 export function htmlArchipel(e: EcranDistrict): string {
   const j = e.j;
   // le tableau garde ses proportions (les plaques sont placées en % de l'image) ; au-dessus, son ciel flouté prolonge l'écran.
@@ -620,6 +649,7 @@ export function htmlArchipel(e: EcranDistrict): string {
   const acte = decisionEnAttente(j);
   if (acte) h += fenetreDecision(acte);
   else if (j.choix.length) h += fenetreChoix(j);
+  else if (visuel(j.batiments.noyau) > (j.ageVu ?? 1)) h += fenetreAge(j);
   else if (e.retour.length) {
     h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="retour-titre"><div class="fenetre retour"><span class="surtitre">BON RETOUR, DIRECTEUR</span><h2 id="retour-titre">Pendant ton absence</h2><ul>`
       + e.retour.map((l) => `<li>${ICO[iconeRetour(l)]}<span>${echap(l)}</span></li>`).join('') + `</ul><button type="button" class="btn prim large" data-action="retour-ok">Au travail</button></div></div>`;
