@@ -477,9 +477,7 @@ h1,h2,h3{font-weight:400}
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));
   background:linear-gradient(172deg,color-mix(in srgb,var(--c) 30%,#1A1F29) 0%,#141821 62%);box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--c) 65%,transparent),inset 0 3px 0 var(--c);transition:transform .15s ease,opacity .15s ease}
 .geste.main{width:66px;height:98px}
-.geste.main.lourd{width:96px}
 .geste.chaine{width:74px;height:106px}
-.geste.chaine.lourd{width:156px}
 .g-haut{display:flex;align-items:center;justify-content:space-between;width:100%;gap:2px}
 .g-freq{display:grid;place-items:center;width:27px;height:27px;font-family:var(--mono);font-size:15px;font-weight:600;color:#fff;background:var(--fc);box-shadow:inset 0 0 0 2px rgba(255,255,255,.2);clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)}
 .geste.chaine .g-freq{width:31px;height:31px;font-size:17px}
@@ -524,7 +522,6 @@ h1,h2,h3{font-weight:400}
   .combattant{padding-block:5px}
   .rail{min-height:96px}
   .geste.chaine{width:66px;height:94px}
-  .geste.chaine.lourd{width:138px}
   .place-vide{width:66px;height:94px}
   .geste.main{width:62px;height:90px}
   .zone-chaine{padding:8px 10px 10px;gap:6px}

@@ -114,9 +114,7 @@
 .geste.main{width:69px;height:114px}
 .main{gap:4px}
 .scene-ennemi{min-height:140px}
-.geste.main.lourd{width:100px}
 .geste.chaine{width:74px;height:112px}
-.geste.chaine.lourd{width:160px}
 .place-vide{width:74px;height:112px}
 .rail{min-height:114px}
 .geste.main .g-art{height:56%}
@@ -258,3 +256,15 @@
 .conseil-decouverte{margin:4px 0 14px;padding:9px 12px;text-align:left;font-size:14px;line-height:1.45;color:var(--ink);
   background:rgba(243,198,106,.08);box-shadow:inset 3px 0 0 #f3c66a}
 .conseil-decouverte b{display:block;font:600 10px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#f3c66a}
+
+/* ---------- Cartes lourdes (23 octobre 2026) : plus d'illustration étirée ----------
+   Une carte « 2 PL. » a la même forme que les autres ; dans la chaîne, sa deuxième place est un emplacement relié à elle. */
+#app .ecran-combat .place-vide.place-liee{position:relative;display:grid;place-items:end center;padding-bottom:10px;overflow:visible;
+  background:linear-gradient(rgba(8,12,24,.35),rgba(8,12,24,.75)),var(--art,none) 30% 40%/cover,repeating-linear-gradient(135deg,rgba(127,212,255,.14) 0 6px,rgba(127,212,255,.04) 6px 12px);
+  box-shadow:inset 0 0 0 1px rgba(127,212,255,.5);filter:saturate(.6)}
+.place-vide.place-liee small{padding:1px 6px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(8,10,14,.85);box-shadow:inset 0 0 0 1px rgba(205,239,255,.35)}
+.place-vide.place-liee::before{content:"";position:absolute;left:-10px;top:50%;width:12px;height:2px;margin-top:-1px;background:rgba(127,212,255,.7);box-shadow:0 0 6px rgba(127,212,255,.7)}
+.place-vide.place-liee.jouee{opacity:.4}
+/* l'Écho (trois Fréquences identiques) se voit aussi en tête de chaîne, comme la Résonance */
+#app:is([data-mode="combat"],[data-mode="district"]) .badge-reso.echo{background:linear-gradient(180deg,#e9f4ff,#9fc3ee 55%,#5f86c4);color:#0b1733;box-shadow:0 0 14px rgba(120,170,240,.5)}
+.chaine-tete{flex-wrap:wrap;gap:6px}

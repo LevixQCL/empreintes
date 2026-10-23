@@ -151,6 +151,9 @@ export function jauge(classe: string, pv: number, max: number, o: { trace?: numb
 export const carteDemo = (g: Geste, taille: 'chaine' | 'main' = 'main') => geste(g, taille, 'demo').replace('<button type="button"', '<div role="img"').replace(/<\/button>$/, '</div>');
 
 /** Une carte posée dans la chaîne : la toucher la retire ; sous elle, de quoi changer sa Fréquence (argent et plus) */
+/** la plus haute Fréquence d'une carte : une suite s'arrête là */
+const FREQ_MAX = 9;
+
 function maillon(g: Geste, off: boolean) {
   const choix = g.fs && g.fs.length > 1 && g.effet?.type !== 'accord';
   // une carte de soin montre qui elle soigne ; la toucher passe au Porteur suivant
@@ -349,6 +352,7 @@ function htmlEcranCombat(e: Ecran): string {
     else if (a.suite >= 3) conseil = `<b>Résonance</b> : suite de ${a.suite}, effets <b>+${Math.round((a.mult - 1) * 100)} %</b>` + (a.suite < 5 && fin === a.suite && (libres > 0 || flux) ? ` · un <b>${f + 1}</b> pour aller plus loin` : '');
     else if (libres === 0 && fin === 2 && flux) conseil = `Suite ${f - 1} → ${f} : 1 Flux t’ouvre une place pour un <b>${f + 1}</b>`;
     else if (libres === 0) conseil = flux ? 'Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus' : 'Chaîne pleine : tu peux la lancer';
+    else if (f >= FREQ_MAX) conseil = `${FREQ_MAX} est la plus haute Fréquence : une suite ne va pas plus loin. Deux autres ${f} feraient un <b>Écho</b>`;
     else if (fin === 2) conseil = `Suite ${f - 1} → ${f} : ajoute un <b>${f + 1}</b> pour +30 %`;
     else conseil = `Ajoute un <b>${f + 1}</b> pour commencer une suite`;
     if (a.echo) conseil += ` · Écho : bouclier +${REGLES.bouclierEcho}`;
@@ -424,14 +428,20 @@ function htmlEcranCombat(e: Ecran): string {
   const mult = a.suite >= 3 ? `×${a.mult.toLocaleString('fr-BE')}` : '';
   h += `<section class="zone-chaine${a.suite >= 3 ? ' resonne' : ''}" aria-label="Chaîne"><div class="chaine-tete"><span class="surtitre">CHAÎNE · ${placesPrises(s)} / ${capacite(s)}</span>`
     + (mult ? `<span class="badge-reso">${ICO.flux}RÉSONANCE ${mult}</span>` : a.suite === 2 ? '<span class="badge-reso faible">SUITE EN COURS</span>' : '')
+    + (a.echo ? `<span class="badge-reso echo">${ICO.bouclier}ÉCHO +${REGLES.bouclierEcho}</span>` : '')
     + `</div><div class="rail">`;
   // pendant l'animation, la carte qui agit s'avance, celles déjà jouées s'éteignent
   s.chaine.forEach((g, i) => {
     const etat = e.actif === undefined ? '' : i === e.actif ? 'en-jeu' : i < e.actif ? 'jouee' : '';
     const html = maillon(g, verrou);
     h += etat ? html.replace('class="', `class="${etat} `) : html;
+    // une carte lourde garde sa forme de carte : sa deuxième place est un emplacement relié, au lieu d'une carte étirée
+    if (g.lourd) {
+      const ill = g.carte ? illustrationModule(g.carte) : null;
+      h += `<span class="place-vide place-liee${etat ? ' ' + etat : ''}"${ill ? ` style="--art:url(${ill})"` : ''} aria-hidden="true"><small>2 pl.</small></span>`;
+    }
   });
-  for (let i = 0; i < libres; i++) h += `<span class="place-vide" aria-hidden="true">${i === 0 && dernier && !a.echo ? (fs[fs.length - 1]! + 1) : ''}</span>`;
+  for (let i = 0; i < libres; i++) h += `<span class="place-vide" aria-hidden="true">${i === 0 && dernier && !a.echo && fs[fs.length - 1]! < FREQ_MAX ? (fs[fs.length - 1]! + 1) : ''}</span>`;
   h += `</div><p class="conseil">${conseil}</p>`;
   if (!e.lecon) {
     h += `<div class="flux"><span class="surtitre">${ICO.flux}FLUX</span><div class="segments" role="img" aria-label="${s.flux} sur ${REGLES.fluxMax}">`
