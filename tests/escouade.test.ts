@@ -1,6 +1,6 @@
 // « Mon escouade » (décision du 23 octobre 2026) : l'escouade est enregistrée, et ne change qu'au district.
 import { describe, expect, it } from 'vitest';
-import { escouadeDe, escouadePourDepart, nouveauJeu, partir, placerDansEscouade, poster, estJeuValide, type Jeu } from '../src/core/jeu';
+import { cartesNouvelles, marquerVus, porteursNouveaux, escouadeDe, escouadePourDepart, nouveauJeu, partir, placerDansEscouade, poster, estJeuValide, type Jeu } from '../src/core/jeu';
 
 const pret = () => { const j = nouveauJeu(0, 1); j.chambre = true; j.recrues = true; return j; };
 
@@ -54,5 +54,33 @@ describe('Mon escouade', () => {
     const j = pret();
     expect(partir(j, ['vela', 'ilka', 'doran'], 1).ok).toBe(true);
     expect(j.escouade).toEqual(['vela', 'ilka', 'doran']);
+  });
+});
+
+describe('Les pastilles « Nouveau »', () => {
+  it('une nouvelle partie ne montre rien de nouveau', () => {
+    const j = nouveauJeu(0, 1);
+    expect(porteursNouveaux(j)).toEqual([]);
+    expect(cartesNouvelles(j)).toEqual([]);
+  });
+
+  it('les recrues et une carte trouvée sont nouvelles jusqu’à ce qu’on les voie', () => {
+    const j = pret();
+    expect(porteursNouveaux(j).length).toBeGreaterThan(0);
+    j.collection['test@fer'] = { niveau: 1, doublons: 0 };
+    expect(cartesNouvelles(j)).toEqual(['test@fer']);
+    expect(marquerVus(j, 'cartes', ['test@fer'])).toBe(true);
+    expect(marquerVus(j, 'cartes', ['test@fer'])).toBe(false);
+    expect(cartesNouvelles(j)).toEqual([]);
+    marquerVus(j, 'porteurs', porteursNouveaux(j));
+    expect(porteursNouveaux(j)).toEqual([]);
+  });
+
+  it('une ancienne sauvegarde considère tout ce qu’elle a comme déjà vu', () => {
+    const j = pret() as Partial<Jeu>;
+    delete j.vus;
+    expect(estJeuValide(j)).toBe(true);
+    expect(porteursNouveaux(j as Jeu)).toEqual([]);
+    expect(cartesNouvelles(j as Jeu)).toEqual([]);
   });
 });

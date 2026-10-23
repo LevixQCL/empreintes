@@ -3,7 +3,7 @@
 // qui il est, son état (PV, niveau, Usure), sa Marque, ce que sa lignée lui donne, son poste et ses cartes.
 
 import { BATIMENTS, GESTES_SPECIAUX, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
-import { DISTRICT, XP, bonusPv, deckEscouade, enExpedition, enMission, escouadeDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, usureMax, type Jeu } from '../core/jeu';
+import { DISTRICT, XP, bonusPv, deckEscouade, enExpedition, enMission, escouadeDe, escouadeVerrouillee, niveauPorteur, porteursNouveaux, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS } from '../core/lore-porteurs';
 import { BATTU_PAR, REGLES } from '../core/regles';
 import { NOMS_EFFET } from '../core/effets';
@@ -65,6 +65,7 @@ function tuile(j: Jeu, p: PorteurDef): string {
     + `<span class="pt-portrait">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : avatar(p.id, 80)}`
     + `<span class="pt-etat ${st.classe}">${echap(st.texte)}</span>`
     + (rang >= 0 ? `<span class="pt-escouade" title="Dans ton escouade">${rang + 1}</span>` : '')
+    + (j.vus.porteurs.includes(p.id) ? '' : `<span class="ruban-nouveau">Nouveau</span>`)
     + `<span class="pt-nom"><strong>${echap(p.nom)}</strong><small>${echap(PRESENTATIONS[p.id]?.titre ?? NOM_LIGNEE[p.lignee])}</small></span></span>`
     + `<span class="pt-chiffres"><b>Niv. ${n.niveau}</b><span>${pv}/${pvM} PV</span><span class="${nc >= DISTRICT.cartesMax ? 'plein' : nc ? '' : 'zero'}">${nc}/${DISTRICT.cartesMax} cartes</span></span>`
     + `<span class="pt-jauges" title="PV et expérience${n.requis ? ` (${n.xp} / ${n.requis} XP vers le niveau ${n.niveau + 1})` : ''}">${jaugePv(pv, pvM, d.usure, usureMax(p.id))}${barreXp(j, p.id)}</span>`
@@ -159,7 +160,8 @@ function monEscouade(e: EcranDistrict): string {
   // la liste complète, à part
   const autres = presents.filter((id) => !esc.includes(id));
   const libres = autres.filter((id) => !raisonHorsEscouade(j, id)).length;
-  h += `<button type="button" class="me-tous" data-action="porteurs-tous">${ICO.porteurs}<span><strong>Tous les Porteurs · ${presents.length}</strong>`
+  const neufs = porteursNouveaux(j).length;
+  h += `<button type="button" class="me-tous" data-action="porteurs-tous">${ICO.porteurs}<span><strong>Tous les Porteurs · ${presents.length}${neufs ? `<span class="pastille-n" aria-label="${neufs} nouveau${neufs > 1 ? 'x' : ''}">${neufs} nouveau${neufs > 1 ? 'x' : ''}</span>` : ''}</strong>`
     + `<small>${autres.length ? `${autres.length} hors de l’escouade${libres ? `, dont ${libres} disponible${libres > 1 ? 's' : ''}` : ''}` : 'Toute ta troupe est dans l’escouade'} · leur histoire, leurs Marques, les arrivées à venir</small></span>${ICO.retour}</button>`;
   return h;
 }
@@ -182,7 +184,7 @@ function voletPlace(e: EcranDistrict, place: number): string {
     const m = progresMarque(j, p.id);
     return `<button type="button" class="me-choix${raison ? ' indispo' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="escouade-mettre" data-id="${p.id}" data-index="${place}"${raison ? ' disabled' : ''}>`
       + `<span class="me-vignette">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : avatar(p.id, 56)}</span>`
-      + `<span class="me-choix-txt"><strong>${echap(p.nom)}</strong><small class="me-lignee">${NOM_LIGNEE[p.lignee]} · Niv. ${niveauPorteur(j, p.id).niveau}</small>`
+      + `<span class="me-choix-txt"><strong>${echap(p.nom)}${j.vus.porteurs.includes(p.id) ? '' : ' <span class="pastille-n">Nouveau</span>'}</strong><small class="me-lignee">${NOM_LIGNEE[p.lignee]} · Niv. ${niveauPorteur(j, p.id).niveau}</small>`
       + (raison ? `<small class="me-raison">${echap(raison.replace(/\.$/, ''))}</small>`
         : `<small class="me-stats">${pv}/${pvM} PV · <span class="${nc ? '' : 'zero'}">${nc} carte${nc > 1 ? 's' : ''}</span></small>`
           + (m?.acquise ? `<small class="me-stats or">${ICO.ok}${echap(m.nom)}</small>` : ''))

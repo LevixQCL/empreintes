@@ -3,7 +3,7 @@
 
 import { porteurDef } from '../core/donnees';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
-import { creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, stockage, type Jeu } from '../core/jeu';
+import { cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, stockage, type Jeu } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
@@ -170,7 +170,8 @@ export function navigation(e: EcranDistrict): string {
   const o = objectifCourant(j);
   const alerte: Partial<Record<Vue | 'plus', boolean>> = {
     archipel: !!(j.forge && e.now >= j.forge.fin) || !!(o && o.fait(j)),
-    cartes: !!(o && o.titre === 'Greffer une carte' && !o.fait(j)),
+    cartes: !!(o && o.titre === 'Greffer une carte' && !o.fait(j)) || (j.chambre && cartesNouvelles(j).length > 0),
+    porteurs: porteursNouveaux(j).length > 0,
     coupe: !!j.expedition || !!(o && o.titre === 'Descendre' && !o.fait(j)),
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
   };

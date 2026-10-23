@@ -5,7 +5,7 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  cartesNouvelles, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
@@ -661,7 +661,8 @@ export function htmlCartes(e: EcranDistrict): string {
   const nMonter = toutes.filter(peutMonter).length;
   const nLibres = toutes.filter(estLibre).length;
   const f = e.filtre;
-  let h = entete(`COLLECTION · ${trouvees} / ${MODULES.length} TROUVÉES`, 'Cartes', `<div class="cl-guides">${lienGuide('deck', 'Construire son deck')}${lienGuide('carte', 'Les effets')}</div>`);
+  const neuves = cartesNouvelles(j).length;
+  let h = entete(`COLLECTION · ${trouvees} / ${MODULES.length} TROUVÉES${neuves ? ` · <span class="pt-dispo">${neuves} NOUVELLE${neuves > 1 ? 'S' : ''}</span>` : ''}`, 'Cartes', `<div class="cl-guides">${lienGuide('deck', 'Construire son deck')}${lienGuide('carte', 'Les effets')}</div>`);
   const filtres: { id: Filtre; nom: string; n?: number; c?: string; classe?: string }[] = [
     { id: 'tout', nom: 'Toutes' }, { id: 'tech', nom: NOM_LIGNEES.tech, c: COULEUR.tech }, { id: 'bio', nom: NOM_LIGNEES.bio, c: COULEUR.bio }, { id: 'reso', nom: NOM_LIGNEES.reso, c: COULEUR.reso },
     { id: 'monter', nom: 'Peuvent monter', n: nMonter, classe: 'or' }, { id: 'libres', nom: 'Libres', n: nLibres },
@@ -679,7 +680,7 @@ export function htmlCartes(e: EcranDistrict): string {
     return `<button type="button" class="carte-tuile cl-carte${pret ? ' pret' : ''}" data-action="carte" data-id="${cle}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}${porte ? `, portée par ${echap(porteurDef(porte).nom)}` : ', libre'}${pret ? ', peut monter' : ''}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
       + `<span class="cl-bas"><span class="cl-porteur">${porte ? `${avatar(porte, 20)}<span>${echap(porteurDef(porte).nom)}</span>` : '<span class="cl-libre">Libre</span>'}</span>`
       + (requis === null ? `<span class="cl-max">Niveau max</span>` : `<span class="cl-doublons" title="Doublons pour le niveau ${c.niveau + 1}"><span class="mini-jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span>${c.doublons}/${requis}</span></span>`)
-      + `</span>${pret ? `<span class="cl-monter">${ICO.monter}Peut monter</span>` : ''}</button>`;
+      + `</span>${pret ? `<span class="cl-monter">${ICO.monter}Peut monter</span>` : ''}${e.j.vus.cartes.includes(cle) ? '' : `<span class="ruban-nouveau">Nouvelle</span>`}</button>`;
   };
 
   if (f === 'monter' || f === 'libres') {

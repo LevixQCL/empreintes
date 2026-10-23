@@ -245,6 +245,8 @@ export interface Jeu {
   /** « Mon escouade » (décision du 23 octobre 2026) : les trois Porteurs qui descendent. Elle ne change qu'au district,
    *  jamais pendant une descente (sinon c'est trop facile). Ancienne sauvegarde : complétée par `migrer`. */
   escouade: string[];
+  /** les Porteurs et les cartes déjà vus par le joueur : le reste porte une pastille « Nouveau » (23 octobre 2026) */
+  vus: { porteurs: string[]; cartes: string[] };
   /** les creuseurs du front de taille : il en faut assez pour creuser l'étage suivant (logés selon le niveau du Noyau) */
   creuseurs: number;
   /** le gardien de la Strate la plus profonde est vaincu : l'étage suivant attend d'être creusé */
@@ -375,6 +377,8 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     frontVaincu: false,
     comptoir: comptoirVide(now, rng),
     escouade: [...ESCOUADE_DEPART],
+    // l'escouade et les cartes de départ sont connues : seuls les nouveaux venus portent la pastille
+    vus: { porteurs: [...ESCOUADE_DEPART], cartes: [...COLLECTION_DEPART] },
   };
 }
 
@@ -410,6 +414,8 @@ function migrer(j: Jeu) {
   // sauvegarde d'avant le Comptoir (23 octobre 2026) : il reste à construire
   j.batiments.comptoir ??= 0;
   j.comptoir ??= comptoirVide(j.dernierTick, j.rng ?? graine());
+  // sauvegarde d'avant les pastilles « Nouveau » : tout ce qui est déjà là est considéré comme vu
+  j.vus ??= { porteurs: porteursPresents(j), cartes: Object.keys(j.collection ?? {}) };
   // sauvegarde d'avant « Mon escouade » : l'escouade de départ, ou les trois premiers Porteurs présents
   j.escouade ??= ESCOUADE_DEPART.every((id) => porteursPresents(j).includes(id)) ? [...ESCOUADE_DEPART] : porteursPresents(j).slice(0, 3);
   if (!j.luesRecompensees) {
@@ -1035,6 +1041,23 @@ export function escouadePourDepart(j: Jeu, interdits: readonly string[] = []): s
   const libres = disponibles(j).filter((id) => !interdits.includes(id));
   const garde = escouadeDe(j).filter((id) => libres.includes(id));
   return [...garde, ...libres.filter((id) => !garde.includes(id))].slice(0, 3);
+}
+
+// ---------- Les nouveautés (23 octobre 2026) ----------
+// Un Porteur arrivé ou une carte trouvée porte une pastille « Nouveau » jusqu'à ce que le joueur l'ait vu :
+// en ouvrant sa fiche, ou en quittant l'écran où il était affiché.
+
+/** Les Porteurs arrivés que le joueur n'a pas encore vus */
+export const porteursNouveaux = (j: Jeu): string[] => porteursPresents(j).filter((id) => !j.vus.porteurs.includes(id));
+/** Les cartes possédées que le joueur n'a pas encore vues */
+export const cartesNouvelles = (j: Jeu): string[] => Object.keys(j.collection).filter((k) => !j.vus.cartes.includes(k));
+
+/** Note des Porteurs ou des cartes comme vus ; renvoie true si quelque chose a changé (pour sauvegarder) */
+export function marquerVus(j: Jeu, quoi: 'porteurs' | 'cartes', ids: string[]): boolean {
+  const deja = new Set(j.vus[quoi]);
+  const neufs = ids.filter((id) => !deja.has(id));
+  if (neufs.length) j.vus[quoi] = [...j.vus[quoi], ...neufs];
+  return neufs.length > 0;
 }
 
 /** Vérifie l'escouade et prépare ce qu'elle emporte : ses PV, son deck (filtré pour une Épreuve) et ses Marques */

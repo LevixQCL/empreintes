@@ -109,3 +109,18 @@
   .me-nom strong{font-size:22px}
   .me-deck,.me-tous,.me-verrou{max-width:720px;margin-inline:auto;width:100%}
 }
+
+/* ---------- La pastille « Nouveau » (23 octobre 2026) : un Porteur arrivé, une carte trouvée, pas encore vus ---------- */
+.ruban-nouveau{position:absolute;z-index:3;top:8px;left:8px;padding:3px 9px;border-radius:999px;pointer-events:none;
+  font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#2A1A04;
+  background:linear-gradient(180deg,#F8E3A6,#D4A54E);box-shadow:0 0 0 1px rgba(42,26,4,.35),0 0 14px rgba(242,200,110,.6);animation:ruban-luit 2.4s ease-in-out infinite}
+
+/* sur une carte : centrée au-dessus du cadre, pour ne cacher ni la Fréquence ni la force */
+.carte-tuile>.ruban-nouveau{top:-7px;left:50%;transform:translateX(-50%)}
+@keyframes ruban-luit{50%{box-shadow:0 0 0 1px rgba(42,26,4,.35),0 0 22px rgba(242,200,110,.9)}}
+.me-tous .pastille-n{font-family:var(--mono);font-size:11px;vertical-align:3px}
+.me-choix-txt .pastille-n{font-family:var(--mono);font-size:10.5px;vertical-align:3px}
+@media (prefers-reduced-motion:reduce){.ruban-nouveau{animation:none}}
+/* sur un portrait de la liste : l'état descend sous la pastille pour ne pas la chevaucher */
+.pt-portrait:has(>.ruban-nouveau)>.pt-etat{top:40px}
+.pt-portrait>.pt-escouade~.ruban-nouveau{top:8px;left:38px}

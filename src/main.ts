@@ -95,6 +95,7 @@ function afficher() {
     h = htmlCombat({ x: jeu.expedition, etat, verrou: K.verrou, regles: K.regles, fuite: K.fuite, guide: K.guide, trouvees: trouveesDe(jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
   } else {
     mode = 'district';
+    voirNouveautes();
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape)
       : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : htmlArchipel(D);
   }
@@ -121,6 +122,20 @@ function afficher() {
 let compte: typeof import('./net/compte') | null = null;
 let uid: string | null = null;
 let minuteur: number | undefined;
+
+// Les pastilles « Nouveau » (23 octobre 2026) : elles restent tant qu'on est sur l'écran qui les montre,
+// et s'effacent quand on le quitte (ou plus tôt, en ouvrant la fiche du Porteur ou le détail de la carte).
+let ecranVu = '';
+function voirNouveautes() {
+  const ecran = D.vue === 'porteurs' && D.reserve ? 'tous-porteurs' : D.vue;
+  let change = false;
+  if (ecranVu === 'cartes' && ecran !== 'cartes') change = J.marquerVus(jeu, 'cartes', Object.keys(jeu.collection)) || change;
+  if (ecranVu === 'tous-porteurs' && ecran !== 'tous-porteurs') change = J.marquerVus(jeu, 'porteurs', J.porteursPresents(jeu)) || change;
+  if (D.porteur) change = J.marquerVus(jeu, 'porteurs', [D.porteur]) || change;
+  if (D.carte) change = J.marquerVus(jeu, 'cartes', [D.carte]) || change;
+  ecranVu = ecran;
+  if (change) sauver();
+}
 
 function sauver() {
   const env = enregistrer(jeu);
@@ -418,6 +433,7 @@ racine.addEventListener('click', async (ev) => {
     case 'escouade-fermer': D.place = null; break;
     case 'escouade-mettre': {
       const r = J.placerDansEscouade(jeu, Number(b.dataset.index ?? 0), id);
+      if (r.ok) J.marquerVus(jeu, 'porteurs', [id]);
       resultat(r);
       if (r.ok) D.place = null;
       break;
