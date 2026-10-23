@@ -32,48 +32,65 @@ const gemme = (r: Rarete) => `<i class="gemme g-${r}" style="--r:${COULEUR_RARET
 
 // ---------- L'archipel ----------
 
-type Lieu = BatimentId;
-/** Où se trouve chaque bâtiment dans le tableau de chaque âge (repère 400 × 600, haut de la plaque) */
-const LIEUX: Record<1 | 2 | 3 | 4, Record<Lieu, { x: number; y: number }>> = {
-  1: { noyau: { x: 200, y: 232 }, generateur: { x: 322, y: 228 }, forge: { x: 128, y: 500 }, clinique: { x: 322, y: 345 }, comptoir: { x: 305, y: 470 } },
-  2: { noyau: { x: 222, y: 205 }, generateur: { x: 92, y: 205 }, forge: { x: 332, y: 262 }, clinique: { x: 340, y: 385 }, comptoir: { x: 300, y: 478 } },
-  3: { noyau: { x: 205, y: 212 }, generateur: { x: 78, y: 182 }, forge: { x: 328, y: 212 }, clinique: { x: 78, y: 430 }, comptoir: { x: 300, y: 470 } },
-  4: { noyau: { x: 205, y: 248 }, generateur: { x: 62, y: 232 }, forge: { x: 322, y: 250 }, clinique: { x: 72, y: 452 }, comptoir: { x: 300, y: 505 } },
+/**
+ * Les lieux de l'archipel (tableaux à 7 bâtiments, 23 octobre 2026) : les 5 bâtiments du jeu, et 2 lieux déjà peints
+ * qui ouvriront plus tard (le Port et le Labo génétique). Bryan : pas de voile sur eux, le tableau reste beau partout ;
+ * quand on les touche, une raison plausible, dans le lore, dit pourquoi ils ne sont pas encore ouverts.
+ */
+export type LieuFutur = 'port' | 'labo';
+type Lieu = BatimentId | LieuFutur;
+export const LIEUX_FUTURS: Record<LieuFutur, { nom: string; raison: string; promesse: string }> = {
+  port: {
+    nom: 'Port',
+    raison: 'Le charpentier de marine n’est pas encore arrivé au district. Sans lui, personne n’ose prendre la mer : le vieux bateau reste amarré au ponton.',
+    promesse: 'D’ici, des équipages partiront un jour vers les autres piliers et les ruines à moitié noyées.',
+  },
+  labo: {
+    nom: 'Labo génétique',
+    raison: 'Les cuves d’ambre sont vides. Pour les rallumer, il faudrait de l’ambre vivant, et on n’en trouve qu’au fond des Strates.',
+    promesse: 'Les Génés du quartier y tailleront un jour de nouvelles greffes.',
+  },
 };
-const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'comptoir'];
+const estFutur = (id: string | null): id is LieuFutur => id === 'port' || id === 'labo';
+
+/**
+ * Où se trouve chaque plaque dans le tableau de chaque âge (repère 400 × 600, haut de la plaque) : dans l'eau, au pied de
+ * son îlot, pour ne jamais cacher le bâtiment lui-même (Bryan : les bâtiments doivent se voir et se distinguer).
+ */
+const PLAQUES_234: Record<Lieu, { x: number; y: number }> = {
+  noyau: { x: 200, y: 312 }, generateur: { x: 64, y: 184 }, forge: { x: 322, y: 228 }, clinique: { x: 62, y: 304 },
+  comptoir: { x: 322, y: 382 }, labo: { x: 112, y: 538 }, port: { x: 326, y: 556 },
+};
+const LIEUX: Record<1 | 2 | 3 | 4, Record<Lieu, { x: number; y: number }>> = {
+  1: { ...PLAQUES_234, noyau: { x: 196, y: 312 }, generateur: { x: 64, y: 194 }, forge: { x: 325, y: 238 }, port: { x: 322, y: 552 } },
+  2: PLAQUES_234, 3: PLAQUES_234, 4: PLAQUES_234,
+};
+const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'comptoir', 'labo', 'port'];
 /**
  * Les bâtiments eux-mêmes sont cliquables (22 octobre 2026, Bryan : sur téléphone, les plaques seules faisaient de petites cibles
  * qui se chevauchaient). Le contour de chaque lieu dans le tableau de chaque âge, repère 400 × 600 (relevé sur les tableaux).
+ * Les âges 2 à 4 ont été peints à partir de l'âge 1 : même disposition, à quelques pixels près.
  */
+const ZONES_234: Record<Lieu, string> = {
+  generateur: '15,60 95,60 125,140 125,215 60,225 5,210 5,130',
+  noyau: '165,5 225,10 255,120 255,290 230,325 150,325 135,250 140,130 130,100',
+  forge: '255,90 345,80 400,150 400,240 300,245 235,215 240,160',
+  clinique: '30,225 90,225 125,270 120,330 40,335 0,315 0,260',
+  comptoir: '275,255 395,265 395,355 380,395 285,390 240,350 245,300',
+  labo: '20,345 160,340 240,410 225,520 160,555 50,550 5,480 10,400',
+  port: '265,450 350,425 385,470 385,550 300,565 265,520',
+};
 const ZONES: Record<1 | 2 | 3 | 4, Record<Lieu, string>> = {
   1: {
-    noyau: '150,65 240,70 235,150 262,290 215,322 160,300 148,180',
-    generateur: '245,130 380,115 392,240 330,252 245,232',
-    forge: '80,358 222,368 242,522 130,548 58,470',
-    clinique: '288,262 372,268 392,372 300,382 283,320',
-    comptoir: '292,395 400,400 400,522 300,522',
+    noyau: '140,10 215,5 235,140 255,290 200,330 135,320 140,160 110,120',
+    generateur: '20,70 80,70 125,150 125,210 60,225 0,210 0,140',
+    forge: '260,130 375,125 400,200 400,250 300,255 245,220 245,175',
+    clinique: '30,230 90,235 125,280 115,330 40,335 0,315 0,260',
+    comptoir: '280,270 375,295 395,350 380,395 280,390 240,350 245,310',
+    labo: '30,345 150,340 240,410 230,520 160,555 60,550 10,480 15,400',
+    port: '270,480 340,460 370,500 375,545 300,560 270,520',
   },
-  2: {
-    noyau: '155,55 282,55 292,230 262,282 165,272 150,170',
-    generateur: '18,112 142,112 152,242 60,252 8,225',
-    forge: '280,105 382,108 396,272 285,276 275,190',
-    clinique: '285,305 392,312 396,398 290,402',
-    comptoir: '238,428 372,432 378,502 244,502',
-  },
-  3: {
-    noyau: '140,25 256,30 262,210 242,332 170,332 140,220',
-    generateur: '8,75 132,75 142,200 60,248 4,200',
-    forge: '262,120 400,130 400,332 300,322 262,232',
-    clinique: '38,330 152,330 162,472 60,482 18,420',
-    comptoir: '250,400 392,410 386,512 258,506',
-  },
-  4: {
-    noyau: '160,5 246,5 252,210 272,382 150,372 130,252 165,200',
-    generateur: '14,128 126,128 142,282 30,292 8,230',
-    forge: '270,145 400,150 400,346 300,342 255,250',
-    clinique: '18,335 152,345 157,522 50,532 4,460',
-    comptoir: '255,420 392,425 392,522 260,522',
-  },
+  2: ZONES_234, 3: ZONES_234, 4: ZONES_234,
 };
 
 function zonesBatiments(age: 1 | 2 | 3 | 4, selection: string | null): string {
@@ -161,6 +178,10 @@ function plaques(e: EcranDistrict): string {
     // une plaque près du bord droit ou gauche reste dans le tableau
     const left = Math.min(84, Math.max(16, (p.x / 400) * 100)), top = (p.y / 600) * 100;
     const pos = `style="left:${left}%;top:${top}%"`;
+    if (estFutur(id)) {
+      return `<button type="button" class="plaque futur${e.selection === id ? ' choisie' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(LIEUX_FUTURS[id].nom)}, pas encore ouvert">`
+        + `<span class="plaque-nom">${echap(LIEUX_FUTURS[id].nom)}</span><small>Pas encore ouvert</small></button>`;
+    }
     const d = batimentDef(id);
     const prete = id === 'forge' && !!j.forge && e.now >= j.forge.fin;
     const ch = chantierDe(j, id);
@@ -387,10 +408,32 @@ function blocComptoir(e: EcranDistrict): string {
   return h + `</div><small class="fb-absents">Un doublon fait monter une carte que tu as déjà. L’or et la nacre ne se vendent pas : ils se trouvent dans les Strates.</small></section>`;
 }
 
+/** Un lieu déjà peint mais pas encore ouvert : sa vue tirée du tableau, et la raison, dans le lore */
+function feuilleLieuFutur(e: EcranDistrict, id: LieuFutur): string {
+  const age = visuel(e.j.batiments.noyau);
+  const pts = ZONES[age][id].split(' ').map((p) => p.split(',').map(Number) as [number, number]);
+  const xs = pts.map((p) => p[0]), ys = pts.map((p) => p[1]);
+  const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  // le tableau, cadré sur le lieu : la vue tient dans un carré, le lieu au centre
+  const cote = Math.max(x1 - x0, y1 - y0) * 1.15;
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+  const taille = (400 / cote) * 100;
+  const vue = `background-image:url(${sceneDistrict(e.j.batiments.noyau).url});background-size:${taille}% auto;`
+    + `background-position:${((cx - cote / 2) / (400 - cote)) * 100}% ${((cy - cote / 2) / (600 - cote)) * 100}%`;
+  const l = LIEUX_FUTURS[id];
+  return `<div class="voile-feuille" data-action="fermer" aria-hidden="true"></div><section class="feuille fiche-bat fiche-futur" role="dialog" aria-modal="true" aria-labelledby="feuille-titre">`
+    + `<span class="poignee" aria-hidden="true"></span><button type="button" class="btn-icone fb-fermer" data-action="fermer" aria-label="Fermer">${ICO.fermer}</button>`
+    + `<div class="feuille-corps fb-corps"><header class="fb-heros"><div class="fb-scene" aria-hidden="true"><span class="fb-halo"></span><span class="ff-vue" style="${vue}"></span></div>`
+    + `<div class="fb-titre"><span class="surtitre">Pas encore ouvert</span><h2 id="feuille-titre">${echap(l.nom)}</h2></div></header>`
+    + `<p class="fb-role">${echap(l.raison)}</p><p class="ff-promesse">${echap(l.promesse)}</p></div></section>`;
+}
+
 function feuilleBatiment(e: EcranDistrict): string {
   const j = e.j;
-  const b = e.selection;
-  if (!b) return '';
+  const sel = e.selection;
+  if (!sel) return '';
+  if (estFutur(sel)) return feuilleLieuFutur(e, sel);
+  const b = sel;
   const d = batimentDef(b);
   const niv = j.batiments[b];
   const pv = prochainVisuel(niv);

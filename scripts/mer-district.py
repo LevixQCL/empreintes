@@ -25,7 +25,7 @@ W, H = 4000, 1500           # la toile complète
 PW, PH = 800, 1200          # le tableau
 X0, Y0 = (W - PW) // 2, H - PH
 # l'horizon de chaque tableau (en pixels du tableau), relevé à l'œil sur ses bords
-HORIZONS = {1: 77, 2: 206, 3: 192, 4: 231}
+HORIZONS = {1: 69, 2: 67, 3: 64, 4: 64}
 RELAX = 300                 # distance (px) sur laquelle la couleur du bord rejoint la couleur moyenne de la ligne
 FONDU = 44                  # largeur du fondu du tableau dans la mer : court, les îlots restent nets jusqu'au bord
 

@@ -407,7 +407,7 @@ racine.addEventListener('click', async (ev) => {
     case 'intro': plan = 0; lignesVues = 1; texteCache = false; mode = 'intro'; D.menu = false; break;
 
     // district
-    case 'batiment': D.selection = D.selection === id ? null : (id as BatimentId); D.menu = false;
+    case 'batiment': D.selection = D.selection === id ? null : (id as typeof D.selection); D.menu = false;
       if (b.dataset.amelio !== undefined) requestAnimationFrame(() => document.getElementById('fb-amelio')?.scrollIntoView({ block: 'start' }));
       break;
     case 'ok-message': D.message = ''; break;

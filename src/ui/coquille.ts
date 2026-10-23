@@ -16,7 +16,7 @@ export type Filtre = 'tout' | Lignee | 'monter' | 'libres';
 export interface EcranDistrict {
   j: Jeu;
   vue: Vue;
-  selection: import('../core/types').BatimentId | null;
+  selection: import('../core/types').BatimentId | 'port' | 'labo' | null;
   escouade: string[];
   strateChoisie: number;
   message: string;

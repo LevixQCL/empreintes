@@ -173,3 +173,11 @@
   background:linear-gradient(180deg,#fff,#cfe9ff);box-shadow:0 2px 0 rgba(0,0,0,.4),0 6px 14px rgba(0,0,0,.5)}
 .cp-vendu .ico{width:12px;height:12px}
 .fb-cand:disabled{opacity:.55;cursor:not-allowed}
+
+/* ---------- Les lieux pas encore ouverts (Port, Labo : 23 octobre 2026) ----------
+   Rien ne les grise sur le tableau ; leur plaque est plus discrète, et leur fiche raconte pourquoi ils sont fermés. */
+#app .plaque.futur .plaque-nom{color:#d9e6f2}
+#app .plaque.futur small{color:#9fb3c8;font-style:italic}
+.fiche-futur .ff-vue{position:relative;display:block;width:206px;height:206px;max-width:62%;aspect-ratio:1;background-repeat:no-repeat;
+  -webkit-mask:radial-gradient(closest-side,#000 62%,transparent 100%);mask:radial-gradient(closest-side,#000 62%,transparent 100%)}
+.fiche-futur .ff-promesse{margin:10px 0 0;font-size:14px;line-height:1.5;color:var(--quiet);font-style:italic}
