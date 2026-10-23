@@ -9,7 +9,7 @@ import { portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
 import { COULEUR, echap, panneauCompte, type Compte } from './vue';
 
-export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'codex' | 'cartes' | 'porteurs';
+export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'codex' | 'cartes' | 'porteurs' | 'classements';
 /** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */
 export type Filtre = 'tout' | Lignee | 'monter' | 'libres';
 
@@ -53,6 +53,9 @@ export interface EcranDistrict {
   place?: number | null;
   /** le mode d'emploi des cartes est ouvert, sur cet onglet (guide.ts) */
   guide: import('./guide').OngletGuide | null;
+  /** le Grand Tableau (classements.ts) et l'identifiant du compte connecté */
+  grand?: import('./classements').GrandTableau;
+  uid?: string | null;
 }
 
 export const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');
@@ -160,7 +163,9 @@ export function feuilleRessource(j: Jeu, r: Ressource | null | undefined): strin
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">${surtitre}</span><h2 id="res-titre">${titre}</h2></div><button type="button" class="btn-icone" data-action="ressource" data-id="" aria-label="Fermer">${ICO.fermer}</button></header>`
     + `<div class="feuille-corps"><div class="res-etat">${icone(r === 'strate' ? 'strate' : r)}<span>${etat}</span></div><p class="res-resume">${resume}</p>`
     + `<h3 class="titre-bloc">Comment en obtenir</h3><ul class="res-liste">${gagner.join('')}</ul>`
-    + `<h3 class="titre-bloc">À quoi ça sert</h3><ul class="res-liste">${servir.join('')}</ul></div></section>`;
+    + `<h3 class="titre-bloc">À quoi ça sert</h3><ul class="res-liste">${servir.join('')}</ul>`
+    + (r === 'strate' ? `<button type="button" class="btn sec large" data-action="classements" data-id="profondeur">${ICO.monter}Voir le classement des profondeurs</button>` : '')
+    + `</div></section>`;
 }
 
 const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
@@ -183,7 +188,7 @@ export function navigation(e: EcranDistrict): string {
     coupe: !!j.expedition || !!(o && o.onglet === 'coupe' && !o.fait(j)),
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
   };
-  const actif = e.menu ? 'plus' : e.vue === 'escouade' ? 'coupe' : e.vue;
+  const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'escouade' ? 'coupe' : e.vue;
   // sur PC (rail.css) : le cristal seul en tête, et un filet de lumière qui relie les onglets au « Plus » du bas
   return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./art/embleme-cristal.webp" alt=""></span>` + ONGLETS.map((t) => {
     const ferme = !j.chambre && t.vue === 'cartes';
@@ -208,6 +213,7 @@ export function menu(e: EcranDistrict): string {
     + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">EMPREINTES · ALPHA</span><h2>Menu</h2></div>`
     + `<button type="button" class="btn-icone" data-action="menu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   h += `<div class="liste-menu">`
+    + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>Le Grand Tableau</strong><small>Les classements des directeurs : profondeur, Registre, et bientôt les Joutes et la Flèche</small></span></button>`
     + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur ? `Connecté : ${echap(c.utilisateur.nom)}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
     + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro</strong><small>L’histoire de 2121, depuis le début</small></span></button></div>`;
   h += panneauCompte(c);

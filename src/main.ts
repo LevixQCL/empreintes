@@ -38,6 +38,9 @@ import { initInstallation, installer } from './ui/installer';
 import './ui/gains.css';
 import './ui/rail.css';
 import './ui/panneau-district.css';
+import './ui/classements.css';
+import { htmlClassements, tableauVide, type GrandTableau } from './ui/classements';
+import { TABLEAUX, aChange, entreeAPublier, nettoyerNom, nomValide, type Entree, type Periode, type TableauId } from './core/classements';
 
 const racine = document.getElementById('app') as HTMLElement;
 const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -65,6 +68,9 @@ let texteCache = false;
 
 const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
 const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, porteur: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null, guide: null };
+/** le Grand Tableau : lecture des classements en ligne, et ce qu'on a publié */
+const G: GrandTableau = tableauVide();
+D.grand = G;
 const K: { verrou: boolean; regles: boolean; fuite: boolean; guide: OngletGuide | null; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; decouverteId?: string } = {
   verrou: false, regles: false, fuite: false, guide: null, pops: [], fin: null, etat: null, traces: {},
 };
@@ -102,7 +108,7 @@ function afficher() {
     mode = 'district';
     voirNouveautes();
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape)
-      : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : htmlArchipel(D);
+      : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : D.vue === 'classements' ? htmlClassements(D, G, uid) : htmlArchipel(D);
   }
   racine.dataset.mode = mode;
   const defile = [...racine.querySelectorAll<HTMLElement>(DEFILANTS)].map((el) => [el.scrollTop, el.scrollLeft] as const);
@@ -116,6 +122,7 @@ function afficher() {
   document.body.classList.toggle('fige', !!racine.querySelector('.feuille, .voile'));
   if (mode === 'district') { activerCartes(racine); brancherTableau(racine); }
   if (mode === 'intro') { precharger(plan); precharger(plan + 1); animerCompteur(racine, lignesVues, reduit); }
+  D.uid = uid;
   const ie = racine.querySelector('#email') as HTMLInputElement | null;
   const im = racine.querySelector('#mdp') as HTMLInputElement | null;
   if (ie) ie.value = email;
@@ -147,6 +154,72 @@ function sauver() {
   if (compte && uid) {
     clearTimeout(minuteur);
     minuteur = window.setTimeout(() => pousser(env), 1500);
+    planifierPublication();
+  }
+}
+
+// ---------- Le Grand Tableau en ligne ----------
+// On publie son entrée quand un score change (au plus une fois toutes les 25 secondes, comme le veulent les règles Firestore),
+// et on relit les classements à l'ouverture de l'écran (au plus une fois par minute, sauf « Actualiser »).
+
+let tableauNet: typeof import('./net/classement') | null = null;
+/** l'entrée telle qu'elle est en ligne (null = pas encore lue ou absente) */
+let monEntree: Entree | null = null;
+let monEntreeLue = false;
+let dernierePublication = 0;
+let minuteurPublication: number | undefined;
+
+async function reseauTableau() {
+  tableauNet ??= await import('./net/classement');
+  return tableauNet;
+}
+
+async function lireTableau(force = false) {
+  if (!compte || !uid) return;
+  if (!force && G.etat === 'chargement') return;
+  if (!force && G.lu && Date.now() - G.lu < 60_000) return;
+  G.etat = 'chargement'; G.erreur = '';
+  if (mode === 'district' && D.vue === 'classements') afficher();
+  try {
+    const net = await reseauTableau();
+    G.entrees = await net.lire();
+    monEntree = G.entrees.find((x) => x.uid === uid) ?? null;
+    monEntreeLue = true;
+    G.lu = Date.now(); G.etat = 'ok';
+  } catch {
+    G.etat = 'erreur'; G.erreur = 'Le Tableau ne répond pas pour l’instant. Vérifie ta connexion.';
+  }
+  if (mode === 'district') afficher();
+  planifierPublication();
+}
+
+function planifierPublication(delai = 2000) {
+  if (!compte || !uid || !jeu.directeur?.public) return;
+  clearTimeout(minuteurPublication);
+  const attente = Math.max(delai, dernierePublication + 25_000 - Date.now());
+  minuteurPublication = window.setTimeout(publierTableau, attente);
+}
+
+async function publierTableau() {
+  if (!compte || !uid || !jeu.directeur?.public || !jeu.directeur.nom) return;
+  // l'entrée en ligne d'abord : sa profondeur et sa date décident de ce qu'on a le droit d'envoyer
+  if (!monEntreeLue) { await lireTableau(true); return; }
+  const e = entreeAPublier(jeu, uid, jeu.directeur.nom, monEntree, Date.now(), J.semaineDe(Date.now()));
+  if (!e || !aChange(e, monEntree)) return;
+  try {
+    const net = await reseauTableau();
+    await net.publier(e);
+    dernierePublication = Date.now();
+    monEntree = e;
+    G.entrees = [...G.entrees.filter((x) => x.uid !== uid), e];
+    if (mode === 'district' && D.vue === 'classements') afficher();
+    // la profondeur ne monte que de deux Strates par publication : le reste suit à la prochaine
+    if (jeu.palmares && e.profondeur < jeu.palmares.profondeur) planifierPublication(25_000);
+  } catch {
+    // refusée (trop tôt, ou l'entrée a changé ailleurs) : on relit, puis on réessaie plus tard
+    monEntreeLue = false;
+    dernierePublication = Date.now();
+    planifierPublication(30_000);
   }
 }
 
@@ -189,7 +262,8 @@ async function demarrerCompte() {
     compteEtat.utilisateur = u;
     uid = u?.uid ?? null;
     compteEtat.synchro = 'aucune';
-    if (uid) reconcilier();
+    G.entrees = []; G.lu = 0; G.etat = 'repos'; monEntree = null; monEntreeLue = false;
+    if (uid) { reconcilier(); lireTableau(true); }
     if (mode === 'district') afficher();
   });
 }
@@ -614,6 +688,44 @@ racine.addEventListener('click', async (ev) => {
       break;
     }
 
+    // le Grand Tableau
+    case 'classements':
+      ouvrir('classements');
+      if (id && TABLEAUX.some((t) => t.id === id)) G.tableau = id as TableauId;
+      D.ressource = null;
+      lireTableau();
+      break;
+    case 'gt-tableau': G.tableau = id as TableauId; G.regles = false; break;
+    case 'gt-periode': G.periode = id as Periode; break;
+    case 'gt-regles': G.regles = !G.regles; break;
+    case 'gt-actualiser': await lireTableau(true); return;
+    case 'gt-connexion': D.menu = true; compteEtat.ouvert = true; break;
+    case 'gt-nom': G.edition = true; G.erreur = ''; break;
+    case 'gt-nom-fermer': G.edition = false; G.erreur = ''; break;
+    case 'gt-nom-ok': {
+      const nom = nettoyerNom((racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value ?? '');
+      if (!nomValide(nom)) { G.erreur = 'De 3 à 18 caractères : lettres, chiffres, espaces, points, tirets.'; break; }
+      if (G.entrees.some((x) => x.uid !== uid && x.nom.toLocaleLowerCase('fr') === nom.toLocaleLowerCase('fr'))) { G.erreur = 'Un autre directeur porte déjà ce nom.'; break; }
+      jeu.directeur = { nom, public: true };
+      G.edition = false; G.erreur = '';
+      sauver();
+      planifierPublication(0);
+      break;
+    }
+    case 'gt-retirer': G.retrait = !G.retrait; break;
+    case 'gt-retirer-ok': {
+      G.retrait = false;
+      if (!uid) break;
+      try {
+        await (await reseauTableau()).retirer(uid);
+        if (jeu.directeur) jeu.directeur.public = false;
+        G.entrees = G.entrees.filter((x) => x.uid !== uid);
+        monEntree = null;
+        sauver();
+      } catch { G.erreur = 'Impossible de te retirer pour l’instant. Réessaie dans un instant.'; G.etat = 'erreur'; }
+      break;
+    }
+
     // compte
     case 'compte': compteEtat.ouvert = !compteEtat.ouvert; compteEtat.erreur = ''; compteEtat.info = ''; break;
     case 'google': await actionCompte(() => compte!.connexionGoogle()); return;
@@ -656,4 +768,8 @@ afficher();
 demarrerCompte();
 initInstallation(() => { if (mode === 'titre') afficher(); });
 // pour essayer les gains à la main pendant le développement (absent du site publié)
-if (import.meta.env.DEV) Object.assign(window, { __gains: { montrer } });
+if (import.meta.env.DEV) Object.assign(window, {
+  __gains: { montrer },
+  // pour voir le Grand Tableau sans compte : __tableau(entrées, ton uid)
+  __tableau: (l: Entree[], moi: string) => { G.entrees = l; G.etat = 'ok'; G.lu = Date.now(); uid = moi; compteEtat.utilisateur = { nom: 'Essai' }; afficher(); },
+});

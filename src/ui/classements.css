@@ -1,0 +1,179 @@
+/* EMPREINTES — Le Grand Tableau (23 octobre 2026).
+   Les écrans des marchés de Vertiga : une vitrine de nuit, des rangs frappés dans les métaux du jeu
+   (or, argent, cuivre pour le podium), la ligne du joueur éclairée de glace. Mêmes matières que le reste :
+   verre fumé, arêtes de glace, laiton pour la valeur. Textes à 12 px minimum, colonne centrée sur PC. */
+
+.gt{--g-txt:#C9D6E6;--g-doux:#93A3B8;--g-or:#F2D58C;--g-glace:#CDEFFF;
+  --m-or:linear-gradient(180deg,#FBE7A8 0%,#E2B44A 45%,#9C7424 100%);
+  --m-argent:linear-gradient(180deg,#F4F8FB 0%,#B8C4CE 48%,#6F7C88 100%);
+  --m-cuivre:linear-gradient(180deg,#F2BE97 0%,#C47A48 48%,#7C4423 100%)}
+.gt .contenu{gap:18px}
+
+/* ---------- La vitrine ---------- */
+.gt-tete{position:relative;display:grid;gap:14px;margin:-16px -16px 0;padding:26px 16px 0;isolation:isolate}
+.gt-fond{position:absolute;inset:0 0 30px;z-index:-1;width:100%;height:calc(100% - 30px);object-fit:cover;object-position:50% 30%;opacity:.55;
+  -webkit-mask-image:linear-gradient(#000 20%,transparent 92%);mask-image:linear-gradient(#000 20%,transparent 92%)}
+.gt-tete::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(90% 70% at 50% 0%,rgba(127,212,255,.16),transparent 70%),
+  repeating-linear-gradient(0deg,rgba(205,239,255,.035) 0 1px,transparent 1px 4px)}
+.gt-titres{display:grid;gap:4px}
+.gt-titres h1{margin:0;font-family:var(--display);font-size:32px;line-height:1;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.8),0 0 24px rgba(127,212,255,.25)}
+.gt-titres p{margin:0;max-width:34ch;font-size:13.5px;line-height:1.4;color:var(--g-txt);text-shadow:0 1px 6px #000}
+
+.gt-moi{--cut:12px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;padding:12px 14px;
+  background:linear-gradient(180deg,rgba(28,36,54,.86),rgba(12,16,26,.92));box-shadow:inset 0 0 0 1px var(--glace-3,rgba(205,239,255,.22)),inset 0 1px 0 rgba(255,255,255,.25),0 12px 28px -10px rgba(0,0,0,.8);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.gt-moi-nom{display:grid;gap:1px;min-width:0}
+.gt-moi-nom small{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--or-pale)}
+.gt-moi-nom strong{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.1;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gt-records{display:flex;gap:14px;margin:0}
+.gt-records div{display:grid;justify-items:end;gap:2px}
+.gt-records dt{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--g-doux)}
+.gt-records dd{display:flex;align-items:center;gap:6px;margin:0}
+.gt-records dd b{font-family:var(--mono);font-size:18px;font-weight:600;color:var(--g-or);font-variant-numeric:tabular-nums}
+.gt-records dd i{display:inline-grid;color:var(--ok)}
+.gt-records dd i .ico{width:13px;height:13px}
+.gt-rang{font-style:normal;font-family:var(--mono);font-size:11px;font-weight:700;padding:1px 6px;border-radius:999px;color:#1C1406;background:var(--m-or)}
+.gt-rang sup{font-size:.7em}
+.gt-rang.r2{background:var(--m-argent)} .gt-rang.r3{background:var(--m-cuivre)}
+.gt-rang.r4{color:var(--g-txt);background:rgba(205,239,255,.1);box-shadow:inset 0 0 0 1px rgba(205,239,255,.25)}
+
+/* ---------- Les quatre tableaux ---------- */
+.gt-onglets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;position:sticky;top:calc(var(--hud-h) + 4px);z-index:6}
+.gt-onglet{--cut:8px;position:relative;display:grid;justify-items:center;align-content:center;gap:3px;min-height:62px;padding:6px 2px;border:none;font-size:12.5px;font-weight:600;color:var(--g-doux);
+  background:rgba(12,16,26,.88);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14),inset 0 -3px 0 rgba(2,4,14,.6);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.gt-onglet-ico .ico{width:20px;height:20px}
+.gt-onglet small{position:absolute;top:4px;right:6px;font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--g-doux)}
+.gt-onglet.grise{color:#6E7A8C}
+.gt-onglet.grise small{display:none}
+.gt-onglet.actif{color:#fff;background:linear-gradient(180deg,rgba(127,212,255,.2),rgba(20,30,48,.92));box-shadow:inset 0 0 0 1px var(--g-glace),inset 0 1px 0 #fff,0 0 18px rgba(127,212,255,.25)}
+.gt-onglet.actif .gt-onglet-ico{color:var(--g-glace)}
+.gt-onglet.grise.actif{color:var(--g-txt)}
+
+.gt-periode{display:grid;gap:8px}
+.gt-explique{margin:0;font-size:13px;line-height:1.45;color:var(--g-doux)}
+.gt-explique b{color:var(--g-txt)}
+.gt-explique .lien{font-size:13px;color:var(--g-glace)}
+.gt-regles{display:grid;gap:8px;padding:12px 14px;border-left:2px solid var(--g-glace);background:rgba(205,239,255,.05)}
+.gt-regles p{margin:0;font-size:13px;line-height:1.45;color:var(--g-txt)}
+.gt-baremes,.gt-metaux{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
+.gt-baremes li,.gt-metaux li{display:grid;justify-items:center;gap:1px;padding:6px 2px;border-radius:3px;background:rgba(255,255,255,.04);box-shadow:inset 0 -2px 0 var(--m,#8E949C)}
+.gt-baremes b,.gt-metaux b{font-family:var(--mono);font-size:15px;color:#fff}
+.gt-baremes small,.gt-metaux small{font-size:12px;color:var(--g-doux)}
+.m-fer{--m:#8E949C} .m-cuivre{--m:#C47A48} .m-argent{--m:#B8C4CE} .m-or{--m:#E2B44A} .m-nacre{--m:#E6D3EE}
+
+/* ---------- La cible : le joueur juste devant ---------- */
+.gt-cible{display:flex;align-items:center;gap:10px;margin:0;padding:10px 12px;font-size:14px;line-height:1.35;color:var(--g-txt);
+  background:linear-gradient(90deg,rgba(242,213,140,.12),transparent);box-shadow:inset 2px 0 0 var(--g-or)}
+.gt-cible .ico{width:18px;height:18px;color:var(--g-or)}
+.gt-cible b{color:#fff}
+.gt-cible.tete{background:linear-gradient(90deg,rgba(158,230,180,.12),transparent);box-shadow:inset 2px 0 0 var(--ok)}
+.gt-cible.tete .ico{color:var(--ok)}
+
+/* ---------- Le podium : or, argent, cuivre ---------- */
+.gt-podium{display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:end;gap:8px;margin:4px 0 0;padding:0;list-style:none}
+.gt-marche{display:grid;justify-items:center;gap:5px;min-width:0;text-align:center}
+.gt-marche .avatar{filter:drop-shadow(0 6px 10px rgba(0,0,0,.6))}
+.gt-marche-nom{max-width:100%;font-weight:600;font-size:13.5px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gt-marche .gt-valeur{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--g-or)}
+.gt-socle{--cut:8px;display:grid;place-items:center;width:100%;height:46px;background:var(--m-cuivre);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),inset 0 -4px 0 rgba(0,0,0,.3);
+  clip-path:polygon(var(--cut) 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,0 100%,0 var(--cut))}
+.gt-socle em{font-style:normal;font-family:var(--display);font-size:22px;color:rgba(20,12,4,.82);text-shadow:0 1px 0 rgba(255,255,255,.45)}
+.gt-socle sup{font-size:.55em}
+.gt-marche.r1 .gt-socle{height:70px;background:var(--m-or)}
+.gt-marche.r1 .gt-socle em{font-size:28px}
+.gt-marche.r2 .gt-socle{height:56px;background:var(--m-argent)}
+.gt-marche.r1 .gt-marche-nom{font-size:15px}
+.gt-marche.moi .gt-marche-nom{color:var(--g-glace)}
+.gt-marche.moi .avatar{filter:drop-shadow(0 0 10px rgba(127,212,255,.7))}
+
+/* ---------- La liste ---------- */
+.gt-liste{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.gt-ligne{--cut:8px;display:grid;grid-template-columns:28px auto minmax(0,1fr) auto;align-items:center;gap:10px;min-height:56px;padding:7px 12px 7px 8px;
+  background:rgba(14,18,28,.82);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12),inset 0 -2px 0 rgba(2,4,14,.55);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.gt-num{font-family:var(--mono);font-size:14px;font-weight:600;text-align:center;color:var(--g-doux);font-variant-numeric:tabular-nums}
+.gt-qui{display:grid;gap:1px;min-width:0}
+.gt-qui strong{font-weight:600;font-size:14.5px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gt-qui strong em{font-style:normal;margin-left:4px;padding:0 6px;border-radius:999px;font-size:11px;font-weight:700;color:#0B1424;background:var(--g-glace);vertical-align:1px}
+.gt-qui small{font-size:12px;color:var(--g-doux);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gt-ligne .gt-valeur{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--g-or);font-variant-numeric:tabular-nums}
+.gt-ligne.moi{background:linear-gradient(90deg,rgba(127,212,255,.16),rgba(14,22,36,.9));box-shadow:inset 0 0 0 1px var(--g-glace),inset 0 1px 0 rgba(255,255,255,.3),0 0 16px rgba(127,212,255,.2)}
+.gt-ligne.moi .gt-num{color:var(--g-glace)}
+.gt-ligne.inactif{opacity:.62}
+.gt-ellipse{text-align:center;color:var(--g-doux);letter-spacing:.3em;font-size:14px;line-height:1}
+.gt-absent{margin:0;font-size:13px;color:var(--g-doux)}
+.gt-liste.attente p{margin:0;padding:24px 0;text-align:center;color:var(--g-doux);animation:gt-respire 1.6s ease-in-out infinite}
+@keyframes gt-respire{50%{opacity:.45}}
+
+/* ---------- Seul, hors ligne, ou pas encore inscrit ---------- */
+.gt-seul{display:grid;justify-items:center;gap:10px;padding:22px 16px;text-align:center;background:radial-gradient(80% 90% at 50% 0%,rgba(127,212,255,.1),transparent 70%);box-shadow:inset 0 1px 0 rgba(205,239,255,.12)}
+.gt-seul-ico .ico{width:44px;height:44px}
+.gt-seul strong{font-family:var(--display);font-weight:400;font-size:26px;color:#fff}
+.gt-seul p{margin:0;max-width:32ch;font-size:14px;line-height:1.45;color:var(--g-txt)}
+.gt-seul .gt-metaux{width:100%}
+.gt-decouvertes{font-size:13px!important;color:var(--g-doux)!important}
+
+/* ---------- Les tableaux à venir ---------- */
+.gt-avenir{display:grid;gap:12px}
+.gt-avenir-ico{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;color:var(--g-glace);background:radial-gradient(circle,rgba(127,212,255,.22),transparent 70%);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3)}
+.gt-avenir-ico .ico{width:26px;height:26px}
+.gt-avenir h2{margin:0;font-family:var(--display);font-size:26px;color:#fff}
+.gt-avenir>p{margin:0;font-size:14px;line-height:1.5;color:var(--g-txt)}
+.gt-promesses{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.gt-promesses li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start}
+.gt-promesses .ico{width:18px;height:18px;margin-top:2px;color:var(--g-or)}
+.gt-promesses strong{display:block;font-size:14px;color:#fff}
+.gt-promesses small{font-size:13px;line-height:1.4;color:var(--g-doux)}
+
+/* la Flèche : une tour fine, les paliers de bas en haut, les Sièges au sommet */
+.gt-tour{position:relative;display:grid;gap:0;padding:0 0 0 22px}
+.gt-tour::before{content:"";position:absolute;left:8px;top:6px;bottom:10px;width:2px;background:linear-gradient(var(--g-or),var(--g-glace) 35%,rgba(205,239,255,.15))}
+.gt-sommet{position:relative;display:grid;gap:1px;padding:4px 0 12px}
+.gt-sommet::before{content:"";position:absolute;left:-19px;top:6px;width:10px;height:10px;transform:rotate(45deg);background:var(--m-or);box-shadow:0 0 12px rgba(242,213,140,.7)}
+.gt-sommet strong{font-family:var(--display);font-weight:400;font-size:18px;color:var(--g-or)}
+.gt-sommet small{font-size:12.5px;color:var(--g-doux)}
+.gt-tour ol{display:grid;margin:0;padding:0;list-style:none}
+.gt-tour li{position:relative;display:grid;grid-template-columns:42px 1fr;align-items:baseline;gap:8px;padding:5px 0;font-size:12.5px;color:var(--g-doux);box-shadow:inset 0 -1px 0 rgba(205,239,255,.06)}
+.gt-tour li::before{content:"";position:absolute;left:-17px;top:50%;width:6px;height:6px;margin-top:-3px;border-radius:50%;background:#0B0F1A;box-shadow:inset 0 0 0 1.5px var(--g-glace)}
+.gt-tour li b{font-family:var(--mono);font-size:13.5px;color:var(--g-txt);text-align:right}
+.gt-tour li.base b{color:var(--g-doux)}
+
+/* ---------- Pied ---------- */
+.gt-pied{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;font-size:12.5px;color:var(--g-doux)}
+.gt-pied span{margin-right:auto}
+.gt-pied .lien{font-size:12.5px}
+.gt-pied .confirmer{display:flex;flex-wrap:wrap;align-items:center;gap:8px;width:100%;padding:10px 12px;color:var(--g-txt);background:rgba(226,115,90,.08);box-shadow:inset 2px 0 0 var(--danger)}
+
+/* ---------- Le nom ---------- */
+.gt-feuille input{width:100%;min-height:48px;padding:0 14px;border:none;font:inherit;font-size:17px;color:#fff;background:rgba(10,14,22,.9);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3)}
+.gt-feuille input:focus{outline:none;box-shadow:inset 0 0 0 1.5px var(--g-glace),0 0 14px rgba(127,212,255,.25)}
+.gt-feuille .feuille-corps{display:grid;gap:12px}
+.gt-feuille .erreur{margin:0;color:var(--danger);font-size:13px}
+
+/* ---------- Le bandeau de la Tour du Noyau ---------- */
+.gt-bandeau{--cut:10px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;width:100%;min-height:58px;padding:8px 14px;border:none;text-align:left;color:inherit;
+  background:linear-gradient(90deg,rgba(242,213,140,.13),rgba(14,18,28,.85) 60%);box-shadow:inset 0 0 0 1px rgba(242,213,140,.35),inset 0 -3px 0 rgba(2,4,14,.6),0 10px 20px -10px rgba(0,0,0,.7);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.gt-bandeau-ico{display:grid;place-items:center;width:34px;height:34px;color:#1C1406;background:var(--m-or,linear-gradient(180deg,#FBE7A8,#E2B44A 45%,#9C7424));clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.gt-bandeau-ico .ico{width:18px;height:18px}
+.gt-bandeau small{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--or-pale)}
+.gt-bandeau strong{font-size:14.5px;font-weight:600;color:#fff}
+.gt-bandeau strong sup{font-size:.65em}
+.gt-bandeau>.ico{width:18px;height:18px;color:var(--or-pale)}
+.gt-menu>.ico{color:var(--gold)}
+
+@media (prefers-reduced-motion: reduce){ .gt-liste.attente p{animation:none} }
+.gt-droite{display:grid;justify-items:end;gap:1px}
+.gt-droite small{font-family:var(--mono);font-size:11px;color:var(--g-doux);white-space:nowrap}
+.gt-bientot{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-family:var(--mono);font-style:normal;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;vertical-align:5px;color:var(--g-glace);box-shadow:inset 0 0 0 1px rgba(205,239,255,.35)}
+
+/* ---------- PC : une colonne de tableau, la vitrine en large ---------- */
+@media (min-width:1100px){
+  .ecran.gt > .contenu{max-width:880px}
+  .gt-tete{margin:-28px -40px 0;padding:40px 40px 0}
+  .gt-titres h1{font-size:44px}
+  .gt-podium{max-width:620px;width:100%;margin-inline:auto}
+  .gt-periode .segments-choix{max-width:420px}
+  .gt-tour{max-width:560px}
+}

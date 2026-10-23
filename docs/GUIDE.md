@@ -24,6 +24,9 @@ la version en ligne reste la précédente. Suivi : onglet **Actions** du dépôt
 
 (Plus tard, avec l'outil `firebase` en ligne de commande : `firebase deploy --only firestore:rules`.)
 
+**Le Grand Tableau (23 octobre 2026)** ajoute la collection `classement` : recopier `firestore.rules` dans la console
+et publier, sinon les classements restent vides (« Le Tableau ne répond pas »). Aucun index à créer.
+
 ## Ce que fait la synchronisation
 
 - Le jeu sauvegarde toujours sur l'appareil, même sans compte.

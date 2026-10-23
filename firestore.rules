@@ -6,6 +6,47 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == uid
         && (request.resource == null || request.resource.data.keys().hasOnly(['data', 'updatedAt', 'version']));
     }
+
+    // Le Grand Tableau (23 octobre 2026) : tout directeur connecté lit les classements,
+    // chacun n'écrit que sa propre entrée, et peut la retirer.
+    // Les scores sont calculés sur l'appareil : ces règles bloquent les erreurs et la triche grossière
+    // (champs inconnus, valeurs impossibles, profondeur qui redescend, publications en rafale).
+    // Le jour du multijoueur, les Cloud Functions recalculeront les scores à partir de la sauvegarde.
+    match /classement/{uid} {
+      allow read: if request.auth != null;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null && request.auth.uid == uid && entreeValide(request.resource.data);
+      allow update: if request.auth != null && request.auth.uid == uid && entreeValide(request.resource.data)
+        // la profondeur ne redescend jamais, et ne gagne pas plus de deux Strates d'un coup
+        && request.resource.data.profondeur >= resource.data.profondeur
+        && request.resource.data.profondeur <= resource.data.profondeur + 4
+        // la date d'arrivée ne bouge que si la profondeur monte, et c'est alors maintenant : « premier arrivé » ne se falsifie pas
+        && (request.resource.data.profondeur > resource.data.profondeur
+            ? maintenant(request.resource.data.profondeurLe)
+            : request.resource.data.profondeurLe == resource.data.profondeurLe)
+        && request.resource.data.maj >= resource.data.maj + 20000;
+    }
+
+    function entreeValide(d) {
+      return d.keys().hasOnly(['nom', 'porteur', 'profondeur', 'profondeurLe', 'registre', 'decouvertes',
+          'semaine', 'profondeurSemaine', 'registreSemaine', 'maj'])
+        && d.nom is string && d.nom.size() >= 3 && d.nom.size() <= 18
+        && d.porteur is string && d.porteur.size() <= 24
+        && d.profondeur is int && d.profondeur >= 2 && d.profondeur <= 201
+        && d.profondeurLe is int
+        && d.registre is int && d.registre >= 0 && d.registre <= 2000000
+        && d.decouvertes is int && d.decouvertes >= 0 && d.decouvertes <= 500
+        && d.semaine is int
+        && d.profondeurSemaine is int && d.profondeurSemaine >= 0 && d.profondeurSemaine <= d.profondeur
+        && d.registreSemaine is int && d.registreSemaine >= 0 && d.registreSemaine <= d.registre
+        && d.maj is int && maintenant(d.maj);
+    }
+
+    // une heure en millisecondes à cinq minutes près de l'heure du serveur
+    function maintenant(ms) {
+      return ms is int && ms <= request.time.toMillis() + 300000 && ms >= request.time.toMillis() - 300000;
+    }
+
     // Tout le reste est fermé par défaut.
     match /{document=**} {
       allow read, write: if false;

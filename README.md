@@ -174,6 +174,18 @@ ce sont les creuseurs et la Tour qui tiennent le rythme. Les images `public/art/
   la *rumeur du jour* sous la Confiance (`src/core/rumeurs.ts`), deux chapitres des Chroniques (« Les yeux d'or », « Le Registre des Vierges »)
   et deux fragments d'archives (« Non prioritaire », « Pas de notre côté »).
 
+**Le Grand Tableau** (23 octobre 2026, `src/core/classements.ts`, `src/ui/classements.ts`, `src/net/classement.ts`).
+Les classements entre directeurs, sur les « écrans des marchés de Vertiga ». On y entre par le menu Plus, le bandeau de la
+Tour du Noyau (ton rang en profondeur) et la fiche de la Strate en haut de l'écran. Quatre tableaux :
+- *Profondeur* : la Strate la plus profonde (`profondeurDe` : 2 par Strate, +1 quand son gardien est vaincu) ; à égalité, le premier arrivé.
+- *Registre* : la valeur de la collection (`VALEUR_METAL` fer 10 → nacre 400, +10 % par niveau monté, +20 par carte découverte) : découvrir compte plus que répéter.
+- *Joutes* (combats entre joueurs) et *La Flèche* (tour d'arène vers les Hauts, `FLECHE`) : grisés, avec ce qui arrive.
+Deux périodes : le record (ne redescend jamais) et la semaine (ce qui est gagné depuis lundi). Le palmarès est noté à chaque tick
+dans `j.palmares` ; connecté, le joueur choisit un nom de directeur (`j.directeur`, jamais l'e-mail) et publie `classement/{uid}`
+au plus toutes les 25 s. Entre amis, toute la liste ; au-delà de 12, le podium et les voisins du joueur (`fenetre`).
+Les règles Firestore valident chaque entrée (champs, bornes, profondeur qui ne redescend pas et monte de 2 Strates au plus,
+date d'arrivée = maintenant quand la profondeur monte). En développement : `__tableau(entrées, uid)` dans la console pour l'essayer sans compte.
+
 ## Firebase
 
 Voir [docs/GUIDE.md](docs/GUIDE.md). Tant que `src/net/firebase-config.ts` est vide, le jeu tourne

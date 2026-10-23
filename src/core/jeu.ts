@@ -11,6 +11,7 @@ import { ORDRE_FRAGMENTS, fragmentDef } from './fragments';
 import { FILS } from './fils';
 import { cloturerCombat, combatSuivant, entrerSalle, forceStrate, fuirAuDistrict, lancerCombat, nouvelleExpedition, nouvelleExploration, peutRemonter, reculer, type CibleFouille, type Expedition } from './expedition';
 import { graine, tireur } from './rng';
+import { noterPalmares, type Palmares } from './classements';
 import type { BatimentId, GesteDef, Lignee, PorteurEtat, Rarete, BonusMarques } from './types';
 
 export const VERSION_JEU = 7;
@@ -260,6 +261,10 @@ export interface Jeu {
   frontVaincu: boolean;
   /** les fils des Porteurs : nombre d'étapes faites par Porteur (23 octobre 2026) */
   fils?: Record<string, number>;
+  /** le Grand Tableau (23 octobre 2026) : records personnels et scores du début de semaine (classements.ts) */
+  palmares?: Palmares;
+  /** le nom de directeur choisi pour le Grand Tableau, et si on y apparaît (jamais l'e-mail du compte) */
+  directeur?: { nom: string; public: boolean };
 }
 
 /** Acte I, le choix : qui garde la chambre ? */
@@ -705,6 +710,7 @@ export function tick(j: Jeu, now: number): string[] {
     j.archive.semaine = semaine;
   }
   garnirComptoir(j, now);
+  noterPalmares(j, now, semaineDe(now));
   return nouvelles;
 }
 

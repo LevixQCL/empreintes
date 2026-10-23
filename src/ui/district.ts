@@ -20,6 +20,7 @@ import { decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, ref
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { feuillePorteur } from './porteurs';
+import { bandeauTableau } from './classements';
 import { ICO, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict, type Filtre } from './coquille';
 
@@ -986,6 +987,8 @@ export function htmlCoupe(e: EcranDistrict): string {
   }
   if (j.expedition) h += `<button type="button" class="appel tr-reprendre" data-action="reprendre">${ICO.descendre}<span><strong>Expédition en cours</strong><small>Strate −${j.expedition.strate} : reprendre le combat</small></span></button>`;
   h += `<section class="tr-etape"><span class="surtitre">Prochaine étape</span>${etape}</section>`;
+  // le Grand Tableau : ton rang en profondeur, et l'entrée vers les classements
+  if (j.chambre && e.grand) h += bandeauTableau(e, e.grand, e.uid ?? null);
 
   // les Strates, de −1 à la roche
   h += `<section class="tr-strates" aria-label="Les Strates"><h3 class="titre-bloc">${ICO.strate}Les Strates</h3><ol>`;

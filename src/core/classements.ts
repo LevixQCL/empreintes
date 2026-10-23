@@ -1,0 +1,261 @@
+// Le Grand Tableau (23 octobre 2026) : les classements entre directeurs de district.
+// Sur les écrans des marchés de Vertiga, les districts sont comparés : qui creuse le plus profond, qui garde le plus riche
+// registre d'empreintes. Ce fichier calcule les scores et les ordonne ; il n'utilise ni le navigateur ni le réseau
+// (src/net/classement.ts publie et lit les entrées dans Firestore).
+//
+// Quatre tableaux :
+//   - Profondeur : la Strate la plus profonde (gardien vaincu ou non), départagée par la date où on l'a atteinte ;
+//   - Registre   : la valeur de la collection (métal et niveau de chaque carte, plus chaque carte découverte) ;
+//   - Joutes     : les combats gagnés contre d'autres directeurs (grisé : arrive avec le multijoueur) ;
+//   - La Flèche  : l'ascension d'une tour d'arène, étage par étage (grisé : à venir, voir FLECHE).
+// Deux périodes : depuis le début, et la semaine en cours (ce qu'on a gagné depuis lundi), pour qu'un nouveau venu
+// puisse finir premier d'une semaine même face à quelqu'un qui joue depuis un mois.
+
+import { MODULES, moduleDe, moduleDef, zoneDe } from './donnees';
+import type { Rarete } from './types';
+import { COLLECTION, RARETES } from './collection';
+
+export type TableauId = 'profondeur' | 'registre' | 'joutes' | 'fleche';
+export type Periode = 'total' | 'semaine';
+
+/** Les tableaux dans l'ordre d'affichage ; `ouvert: false` = grisé, avec ce qui arrive */
+export const TABLEAUX: { id: TableauId; nom: string; court: string; ouvert: boolean; texte: string }[] = [
+  { id: 'profondeur', nom: 'Profondeur', court: 'Strates', ouvert: true,
+    texte: 'L’étage le plus profond creusé sous le district. À profondeur égale, le premier arrivé passe devant.' },
+  { id: 'registre', nom: 'Registre', court: 'Cartes', ouvert: true,
+    texte: 'La valeur de ta collection : le métal et le niveau de chaque carte, et chaque carte découverte.' },
+  { id: 'joutes', nom: 'Joutes', court: 'Duels', ouvert: false,
+    texte: 'Les combats gagnés contre d’autres directeurs. Ouvre avec les combats entre joueurs.' },
+  { id: 'fleche', nom: 'La Flèche', court: 'Tour', ouvert: false,
+    texte: 'L’ascension de la tour d’arène qui monte vers les Hauts, étage par étage. En préparation.' },
+];
+
+// ---------- Le Registre : la valeur d'une collection ----------
+
+/** Ce que vaut un exemplaire au niveau où on le trouve : chaque métal vaut environ 2,5 fois le précédent,
+ *  à peu près l'écart de rareté entre deux métaux (tableRarete) — une carte en or pèse comme vingt en fer, pas comme deux cents. */
+export const VALEUR_METAL: Record<Rarete, number> = { fer: 10, cuivre: 25, argent: 60, or: 150, nacre: 400 };
+/** chaque niveau gagné au-dessus du niveau de départ ajoute 10 % de la valeur de l'exemplaire */
+export const VALEUR_NIVEAU = 0.1;
+/** chaque carte découverte (au moins un métal) : récompense l'étendue de la collection, pas seulement l'empilement */
+export const VALEUR_DECOUVERTE = 20;
+
+export function valeurExemplaire(cle: string, niveau: number): number {
+  const r = moduleDef(cle).rarete;
+  const gagnes = Math.max(0, niveau - COLLECTION.niveauDepart[r]);
+  return Math.round(VALEUR_METAL[r] * (1 + VALEUR_NIVEAU * gagnes));
+}
+
+export interface ValeurRegistre {
+  points: number;
+  /** exemplaires possédés (une carte dans un métal) */
+  exemplaires: number;
+  /** cartes différentes découvertes, sur `total` */
+  decouvertes: number;
+  total: number;
+  /** exemplaires par métal */
+  parMetal: Record<Rarete, number>;
+}
+
+export function valeurRegistre(collection: Record<string, { niveau: number }>): ValeurRegistre {
+  const parMetal = Object.fromEntries(RARETES.map((r) => [r, 0])) as Record<Rarete, number>;
+  const bases = new Set<string>();
+  let points = 0;
+  for (const [cle, c] of Object.entries(collection)) {
+    let def;
+    try { def = moduleDef(cle); } catch { continue; }
+    parMetal[def.rarete]++;
+    bases.add(moduleDe(cle));
+    points += valeurExemplaire(cle, c.niveau);
+  }
+  points += bases.size * VALEUR_DECOUVERTE;
+  return { points, exemplaires: Object.values(parMetal).reduce((a, b) => a + b, 0), decouvertes: bases.size, total: MODULES.length, parMetal };
+}
+
+// ---------- La Profondeur ----------
+
+/** La profondeur en demi-étages : 2 par Strate ouverte, +1 quand son gardien est vaincu (−4 vaincue > −4 ouverte) */
+export const profondeurDe = (j: { strate: number; frontVaincu: boolean }) => j.strate * 2 + (j.frontVaincu ? 1 : 0);
+export const strateDe = (p: number) => Math.floor(p / 2);
+export const gardienVaincu = (p: number) => p % 2 === 1;
+export function texteProfondeur(p: number): string {
+  return `Strate −${strateDe(p)}${gardienVaincu(p) ? ' · gardien vaincu' : ''}`;
+}
+export const zoneProfondeur = (p: number) => zoneDe(Math.max(1, strateDe(p))).nom;
+
+// ---------- Le palmarès personnel, gardé dans la partie ----------
+
+export interface Palmares {
+  /** meilleure profondeur atteinte (demi-étages) et quand */
+  profondeur: number;
+  profondeurLe: number;
+  /** meilleure valeur du Registre atteinte */
+  registre: number;
+  /** la semaine en cours (semaineDe) et les scores de son début, pour le tableau de la semaine */
+  semaine: number;
+  profondeurDebut: number;
+  registreDebut: number;
+}
+
+/**
+ * Met à jour le palmarès avec l'état de la partie. Appelé à chaque tick : bon marché, et ne change rien si rien n'a bougé.
+ * Le score ne redescend jamais : recycler un doublon n'efface pas un record.
+ * @returns true si quelque chose a changé (à publier)
+ */
+export function noterPalmares(j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares }, now: number, semaine: number): boolean {
+  const p = profondeurDe(j);
+  const r = valeurRegistre(j.collection).points;
+  const avant = j.palmares;
+  if (!avant) {
+    // première fois (nouvelle partie ou ancienne sauvegarde) : la semaine part d'ici, la date d'arrivée est maintenant
+    j.palmares = { profondeur: p, profondeurLe: now, registre: r, semaine, profondeurDebut: p, registreDebut: r };
+    return true;
+  }
+  let change = false;
+  if (avant.semaine !== semaine) {
+    avant.semaine = semaine; avant.profondeurDebut = avant.profondeur; avant.registreDebut = avant.registre; change = true;
+  }
+  if (p > avant.profondeur) { avant.profondeur = p; avant.profondeurLe = now; change = true; }
+  if (r > avant.registre) { avant.registre = r; change = true; }
+  return change;
+}
+
+// ---------- Les entrées publiées et leur ordre ----------
+
+/** Ce qu'un joueur publie sur le Grand Tableau. Aucun e-mail : seulement le nom de directeur qu'il a choisi. */
+export interface Entree {
+  uid: string;
+  nom: string;
+  /** le Porteur en tête de son escouade, dont on montre le portrait */
+  porteur: string;
+  profondeur: number;
+  profondeurLe: number;
+  registre: number;
+  decouvertes: number;
+  semaine: number;
+  profondeurSemaine: number;
+  registreSemaine: number;
+  /** dernière publication (ms) */
+  maj: number;
+}
+
+/** Un nom de directeur : 3 à 18 caractères, lettres (accents compris), chiffres, espace, point, tiret, apostrophe */
+export const NOM_VALIDE = /^[\p{L}\p{N}][\p{L}\p{N} .'’_-]{1,16}[\p{L}\p{N}.]$/u;
+export function nettoyerNom(nom: string): string { return nom.replace(/\s+/g, ' ').trim(); }
+export function nomValide(nom: string): boolean { return NOM_VALIDE.test(nettoyerNom(nom)); }
+
+/** La valeur d'une entrée dans un tableau et une période (null = n'apparaît pas : cette semaine, il n'a pas joué) */
+export function valeur(e: Entree, t: TableauId, per: Periode, semaine: number): number | null {
+  if (t === 'profondeur') return per === 'total' ? e.profondeur : e.semaine === semaine ? e.profondeurSemaine : null;
+  if (t === 'registre') return per === 'total' ? e.registre : e.semaine === semaine ? e.registreSemaine : null;
+  return null;
+}
+
+/** Ordonne les entrées : la plus haute valeur d'abord ; à profondeur égale, le premier arrivé ; sinon le nom */
+export function classer(entrees: Entree[], t: TableauId, per: Periode, semaine: number): { e: Entree; v: number; rang: number }[] {
+  const l = entrees.map((e) => ({ e, v: valeur(e, t, per, semaine) })).filter((x): x is { e: Entree; v: number } => x.v !== null && (per === 'total' || x.v > 0));
+  l.sort((a, b) => b.v - a.v || (t === 'profondeur' && per === 'total' ? a.e.profondeurLe - b.e.profondeurLe : 0) || a.e.nom.localeCompare(b.e.nom, 'fr'));
+  // ex æquo affichés au même rang, sauf en profondeur totale où la date départage toujours
+  let rang = 0;
+  return l.map((x, i) => {
+    const prec = l[i - 1];
+    if (!prec || prec.v !== x.v || (t === 'profondeur' && per === 'total')) rang = i + 1;
+    return { ...x, rang };
+  });
+}
+
+/** Ce qu'il manque pour dépasser le joueur juste devant (null si on est premier ou absent) */
+export function ecartDevant(l: { e: Entree; v: number; rang: number }[], uid: string): { nom: string; manque: number } | null {
+  const i = l.findIndex((x) => x.e.uid === uid);
+  if (i <= 0) return null;
+  const moi = l[i]!;
+  const devant = l.slice(0, i).reverse().find((x) => x.rang < moi.rang);
+  if (!devant) return null;
+  return { nom: devant.e.nom, manque: devant.v - moi.v + 1 };
+}
+
+/**
+ * Les lignes à montrer : tout le monde s'il y a peu de joueurs ; sinon le podium, puis le joueur entouré de ses voisins
+ * (« toi et ceux qui t'entourent » : on se compare à qui on peut rattraper, pas seulement au premier).
+ */
+export function fenetre<T extends { e: Entree }>(l: T[], uid: string | null, voisins = 2, tous = 12): (T | 'ellipse')[] {
+  if (l.length <= tous) return l;
+  const i = uid ? l.findIndex((x) => x.e.uid === uid) : -1;
+  const garde = new Set<number>([0, 1, 2]);
+  if (i >= 0) {
+    for (let k = i - voisins; k <= i + voisins; k++) if (k >= 0 && k < l.length) garde.add(k);
+  } else {
+    for (let k = 3; k < Math.min(l.length, 10); k++) garde.add(k);
+  }
+  const r: (T | 'ellipse')[] = [];
+  let prec = -1;
+  for (const k of [...garde].sort((a, b) => a - b)) { if (k > prec + 1) r.push('ellipse'); r.push(l[k]!); prec = k; }
+  if (prec < l.length - 1) r.push('ellipse');
+  return r;
+}
+
+/** Des demi-étages en Strates : 3 → « 1½ », 1 → « ½ » */
+export const demiStrates = (v: number) => `${Math.floor(v / 2) || (v % 2 ? '' : '0')}${v % 2 ? '½' : ''}`;
+
+/** Le texte de la valeur d'un tableau */
+export function texteValeur(t: TableauId, per: Periode, v: number): string {
+  if (t === 'profondeur') return per === 'total' ? `−${strateDe(v)}` : `+${demiStrates(v)}`;
+  return (per === 'semaine' ? '+' : '') + Math.round(v).toLocaleString('fr-BE');
+}
+
+/**
+ * L'entrée à publier, à partir de la partie et de l'entrée déjà en ligne (null s'il n'y en a pas encore).
+ * Suit les règles Firestore : la profondeur ne monte que de deux Strates par publication (le reste suivra à la suivante),
+ * et la date d'arrivée n'est « maintenant » que si la profondeur monte, sinon elle reste celle déjà publiée.
+ */
+export function entreeAPublier(
+  j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares; escouade?: string[] },
+  uid: string, nom: string, enLigne: Entree | null, now: number, semaine: number,
+): Entree | null {
+  const pal = j.palmares;
+  if (!pal) return null;
+  const r = valeurRegistre(j.collection);
+  const registre = Math.round(Math.max(pal.registre, r.points));
+  let profondeur = Math.max(2, pal.profondeur);
+  let profondeurLe = Math.round(pal.profondeurLe);
+  if (enLigne) {
+    profondeur = Math.min(Math.max(profondeur, enLigne.profondeur), enLigne.profondeur + 4);
+    profondeurLe = profondeur > enLigne.profondeur ? now : enLigne.profondeurLe;
+  }
+  const memeSemaine = pal.semaine === semaine;
+  return {
+    uid, nom: nettoyerNom(nom), porteur: j.escouade?.[0] ?? 'ilka',
+    profondeur, profondeurLe, registre, decouvertes: r.decouvertes,
+    semaine,
+    profondeurSemaine: memeSemaine ? Math.max(0, Math.min(profondeur, profondeur - pal.profondeurDebut)) : 0,
+    registreSemaine: memeSemaine ? Math.max(0, Math.min(registre, registre - pal.registreDebut)) : 0,
+    maj: now,
+  };
+}
+
+/** Faut-il republier ? (un score, le nom ou le Porteur de tête a changé) */
+export function aChange(a: Entree, b: Entree | null): boolean {
+  if (!b) return true;
+  return a.nom !== b.nom || a.porteur !== b.porteur || a.profondeur !== b.profondeur || a.registre !== b.registre || a.decouvertes !== b.decouvertes
+    || a.semaine !== b.semaine || a.profondeurSemaine !== b.profondeurSemaine || a.registreSemaine !== b.registreSemaine;
+}
+
+// ---------- La Flèche (à venir) ----------
+// L'arène qui monte vers les Hauts, inspirée des tours d'arène des récits d'aventure (sans en copier les noms) :
+// un district y envoie une escouade ; chaque victoire fait monter de plusieurs étages en bas, d'un seul en haut ;
+// une défaite fait redescendre, jamais sous le dernier palier atteint (comme les paliers d'une échelle classée).
+// Au-delà de l'étage 200, plus de butin, seulement l'honneur : on s'y inscrit pour une saison, quatre défaites
+// éliminent (retour au palier, record gardé), dix victoires ouvrent le droit de défier un Siège. Les Sièges sont tenus
+// par des joueurs, défendus par un fantôme de leur deck. Le tableau classe l'étage atteint, puis le premier arrivé.
+export const FLECHE = {
+  etages: 200,
+  /** étages gagnés par victoire selon la hauteur : vite en bas, lentement en haut */
+  montee: [{ jusqua: 50, etages: 10 }, { jusqua: 100, etages: 5 }, { jusqua: 150, etages: 2 }, { jusqua: 200, etages: 1 }],
+  /** paliers : une défaite n'en fait jamais redescendre, et chacun donne une récompense une fois */
+  paliers: [10, 25, 50, 75, 100, 125, 150, 175, 190, 200],
+  /** au-delà du dernier étage : 10 Sièges tenus par des joueurs, qu'on défie */
+  sieges: 10,
+  /** au sommet, par saison : défaites qui éliminent, victoires qui ouvrent un défi de Siège */
+  defaitesMax: 4,
+  victoiresDefi: 10,
+} as const;
