@@ -2,8 +2,8 @@
 // en connaissance de cause, avec leurs effets. Une grille par lignée, et la fiche complète d'un Porteur :
 // qui il est, son état (PV, niveau, Usure), sa Marque, ce que sa lignée lui donne, son poste et ses cartes.
 
-import { BATIMENTS, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
-import { DISTRICT, XP, bonusPv, enExpedition, enMission, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, soinParHeure, usureMax, type Jeu } from '../core/jeu';
+import { BATIMENTS, GESTES_SPECIAUX, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
+import { DISTRICT, XP, bonusPv, deckEscouade, enExpedition, enMission, escouadeDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS } from '../core/lore-porteurs';
 import { BATTU_PAR, REGLES } from '../core/regles';
 import { NOMS_EFFET } from '../core/effets';
@@ -17,6 +17,7 @@ import { effetsLignee, plageFrequences } from './guide';
 import { ICO } from './icones';
 import { COULEUR, echap } from './vue';
 import './fiche-porteur.css';
+import './mon-escouade.css';
 
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];
 /** pour accorder « Pourquoi il / elle est là » */
@@ -53,6 +54,7 @@ function marqueTuile(j: Jeu, id: string): string {
 // le portrait peint en grand au lieu d'un hexagone, des chiffres lisibles, plus de cartouches imbriqués.
 function tuile(j: Jeu, p: PorteurDef): string {
   const d = j.porteurs[p.id]!;
+  const rang = escouadeDe(j).indexOf(p.id);
   const st = statut(j, p.id);
   const pv = pvMaxCombat(j, p.id);
   const pvM = pvNiveau(j, p.id);
@@ -62,6 +64,7 @@ function tuile(j: Jeu, p: PorteurDef): string {
   return `<button type="button" class="pt-tuile ${st.classe}" style="--c:${COULEUR[p.lignee]}" data-action="porteur" data-id="${p.id}" aria-label="${echap(p.nom)}, ${NOM_LIGNEE[p.lignee]}, niveau ${n.niveau}, ${echap(st.texte)}">`
     + `<span class="pt-portrait">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : avatar(p.id, 80)}`
     + `<span class="pt-etat ${st.classe}">${echap(st.texte)}</span>`
+    + (rang >= 0 ? `<span class="pt-escouade" title="Dans ton escouade">${rang + 1}</span>` : '')
     + `<span class="pt-nom"><strong>${echap(p.nom)}</strong><small>${echap(PRESENTATIONS[p.id]?.titre ?? NOM_LIGNEE[p.lignee])}</small></span></span>`
     + `<span class="pt-chiffres"><b>Niv. ${n.niveau}</b><span>${pv}/${pvM} PV</span><span class="${nc >= DISTRICT.cartesMax ? 'plein' : nc ? '' : 'zero'}">${nc}/${DISTRICT.cartesMax} cartes</span></span>`
     + `<span class="pt-jauges" title="PV et expérience${n.requis ? ` (${n.xp} / ${n.requis} XP vers le niveau ${n.niveau + 1})` : ''}">${jaugePv(pv, pvM, d.usure, usureMax(p.id))}${barreXp(j, p.id)}</span>`
@@ -87,11 +90,122 @@ function silhouette(p: PorteurDef): string {
   return `<p class="pt-avenir" style="--c:${COULEUR[p.lignee]}"><span class="pt-ombre" aria-hidden="true">?</span><span><strong>Un Porteur ${NOM_LIGNEE[p.lignee].toLowerCase()} arrivera</strong> ${echap(arrivee(p).replace(/^Arrive /, '').replace(/\.$/, ''))}.</span></p>`;
 }
 
+// « Mon escouade » (décision du 23 octobre 2026). Bryan : « Quand on ouvre l’écran Porteurs, on a tous les persos.
+// Ce ne serait pas plus simple d’afficher d’abord une page Mon équipe avec les trois qui combattent ? »
+// L'onglet s'ouvre donc sur l'escouade, ce qu'on consulte 90 % du temps ; on touche une place pour changer
+// son Porteur (volet par le bas), et « Tous les Porteurs » ouvre la liste complète. Pendant une descente,
+// l'escouade est verrouillée : on ne change de Porteurs qu'au district.
 export function htmlPorteurs(e: EcranDistrict): string {
+  let h = e.reserve ? listeTous(e) : monEscouade(e);
+  if (e.place !== null && e.place !== undefined && !e.reserve) h += voletPlace(e, e.place);
+  else if (e.deck) h += feuilleDeck(e);
+  else h += feuillePorteur(e);
+  return coquille(e, h, `ecran-porteurs pt${e.reserve ? '' : ' me'}`);
+}
+
+/** Une place de l'escouade, en grand : le portrait, ses chiffres, ses cartes, sa Marque, et « Changer » */
+function placeEscouade(j: Jeu, id: string | undefined, i: number, verrou: string | null): string {
+  if (!id) {
+    return `<button type="button" class="me-place vide" data-action="escouade-place" data-index="${i}"${verrou ? ' disabled' : ''}>`
+      + `<span class="me-silhouette" aria-hidden="true"></span><b>${i + 1}</b><small>${verrou ? 'Place libre' : 'Choisir un Porteur'}</small></button>`;
+  }
+  const p = porteurDef(id);
+  const d = j.porteurs[id]!;
+  const img = portrait(id);
+  const n = niveauPorteur(j, id);
+  const pv = pvMaxCombat(j, id);
+  const pvM = pvNiveau(j, id) + bonusPv(j, id);
+  const nc = d.modules.filter((k) => j.collection[k]).length;
+  const m = progresMarque(j, id);
+  // ce qui l'empêcherait de partir, ou ce qui le rend fragile
+  const raison = raisonHorsEscouade(j, id);
+  const alerte = raison && !j.expedition
+    ? `<span class="me-alerte">${ICO.verrou}<span>${echap(raison.replace(/\.$/, ''))} : il ne pourra pas descendre.</span></span>`
+    : d.usure >= usureMax(id) * 0.5 ? `<span class="me-alerte usure">${ICO.soin}<span>Usure élevée</span></span>` : '';
+  return `<div class="me-place" style="--c:${COULEUR[p.lignee]}">`
+    + `<button type="button" class="me-portrait" data-action="porteur" data-id="${id}" aria-label="Fiche de ${echap(p.nom)}">`
+    + (img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 72))
+    + `<span class="me-rang" aria-hidden="true">${i + 1}</span>`
+    + `<span class="me-nom"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]}</small></span></button>`
+    + `<span class="me-jauges" title="${pv} / ${pvM} PV${n.requis ? ` · ${n.xp} / ${n.requis} XP` : ''}">${jaugePv(pv, pvM, d.usure, usureMax(id))}${barreXp(j, id)}</span>`
+    + `<span class="me-chiffres"><b class="or">Niv. ${n.niveau}</b><span><b>${pv}</b>/${pvM} PV</span></span>`
+    + `<button type="button" class="me-cartes${nc ? '' : ' aucune'}${nc >= DISTRICT.cartesMax ? ' pleine' : ''}" data-action="deck" data-id="${id}"${enExpedition(j, id) ? ' disabled' : ''}>${ICO.cartes}<span>${nc} / ${DISTRICT.cartesMax} cartes</span></button>`
+    + (m ? `<button type="button" class="me-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" title="${echap(m.texte)}">${m.acquise ? ICO.ok : ICO.cristal}<span><b>${echap(m.nom)}</b> ${m.acquise ? echap(m.court) : `${fr(Math.min(m.n, m.seuil))} / ${fr(m.seuil)}`}</span></button>` : '')
+    + alerte
+    + (verrou ? '' : `<button type="button" class="me-changer" data-action="escouade-place" data-index="${i}" aria-label="Changer ${echap(p.nom)} de l’escouade">${ICO.recycler}<span>Changer</span></button>`)
+    + `</div>`;
+}
+
+function monEscouade(e: EcranDistrict): string {
+  const j = e.j;
+  const esc = escouadeDe(j);
+  const verrou = escouadeVerrouillee(j);
+  const presents = porteursPresents(j);
+  let h = entete(`MON ESCOUADE · <span class="pt-dispo">${esc.length} / 3</span>`, 'Porteurs');
+  h += `<p class="pt-intro">Les trois qui descendent sous la Tour. Leurs cartes forment ton deck de combat ; touche un portrait pour sa fiche.</p>`;
+  if (verrou) h += `<p class="me-verrou">${ICO.verrou}<span><strong>En descente</strong>${echap(verrou.replace(/^L’escouade est en descente : /, 'L’escouade '))}</span></p>`;
+  h += `<section class="me-trio" aria-label="Mon escouade">${[0, 1, 2].map((i) => placeEscouade(j, esc[i], i, verrou)).join('')}</section>`;
+
+  // le deck qu'elle emporte
+  if (esc.length) {
+    const deck = deckEscouade(j, esc).length;
+    const manque = Math.max(0, DISTRICT.deckMin - deck);
+    h += `<p class="me-deck${manque ? ' maigre' : ''}">${ICO.cartes}<span><strong>Le deck · ${deck} cartes</strong>`
+      + (manque ? `Il en manque ${manque} pour descendre (${DISTRICT.deckMin} au moins) : touche « cartes » sous un Porteur pour lui en confier.`
+        : `Les cartes des trois Porteurs, plus les ${GESTES_SPECIAUX.length} cartes du district.`)
+      + `</span></p>`;
+  }
+
+  // la liste complète, à part
+  const autres = presents.filter((id) => !esc.includes(id));
+  const libres = autres.filter((id) => !raisonHorsEscouade(j, id)).length;
+  h += `<button type="button" class="me-tous" data-action="porteurs-tous">${ICO.porteurs}<span><strong>Tous les Porteurs · ${presents.length}</strong>`
+    + `<small>${autres.length ? `${autres.length} hors de l’escouade${libres ? `, dont ${libres} disponible${libres > 1 ? 's' : ''}` : ''}` : 'Toute ta troupe est dans l’escouade'} · leur histoire, leurs Marques, les arrivées à venir</small></span>${ICO.retour}</button>`;
+  return h;
+}
+
+/** Le volet « Choisir un Porteur » pour une place de l'escouade */
+function voletPlace(e: EcranDistrict, place: number): string {
+  const j = e.j;
+  const esc = escouadeDe(j);
+  const actuel = esc[place];
+  const candidats = PORTEURS.filter((p) => porteursPresents(j).includes(p.id) && !esc.includes(p.id));
+  // d'abord ceux qui peuvent venir, puis les autres
+  candidats.sort((a, b) => Number(!!raisonHorsEscouade(j, a.id)) - Number(!!raisonHorsEscouade(j, b.id)));
+  const ligne = (p: PorteurDef) => {
+    const d = j.porteurs[p.id]!;
+    const raison = raisonHorsEscouade(j, p.id);
+    const img = portrait(p.id);
+    const pv = pvMaxCombat(j, p.id);
+    const pvM = pvNiveau(j, p.id) + bonusPv(j, p.id);
+    const nc = d.modules.filter((k) => j.collection[k]).length;
+    const m = progresMarque(j, p.id);
+    return `<button type="button" class="me-choix${raison ? ' indispo' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="escouade-mettre" data-id="${p.id}" data-index="${place}"${raison ? ' disabled' : ''}>`
+      + `<span class="me-vignette">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : avatar(p.id, 56)}</span>`
+      + `<span class="me-choix-txt"><strong>${echap(p.nom)}</strong><small class="me-lignee">${NOM_LIGNEE[p.lignee]} · Niv. ${niveauPorteur(j, p.id).niveau}</small>`
+      + (raison ? `<small class="me-raison">${echap(raison.replace(/\.$/, ''))}</small>`
+        : `<small class="me-stats">${pv}/${pvM} PV · <span class="${nc ? '' : 'zero'}">${nc} carte${nc > 1 ? 's' : ''}</span></small>`
+          + (m?.acquise ? `<small class="me-stats or">${ICO.ok}${echap(m.nom)}</small>` : ''))
+      + `</span>${raison ? '' : `<span class="me-prendre">Prendre</span>`}</button>`;
+  };
+  let h = `<div class="voile-feuille" data-action="escouade-fermer" aria-hidden="true"></div>`
+    + `<section class="feuille me-volet" role="dialog" aria-modal="true" aria-labelledby="volet-titre"><span class="poignee" aria-hidden="true"></span>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">Place ${place + 1} de l’escouade</span><h2 id="volet-titre">${actuel ? `Remplacer ${echap(porteurDef(actuel).nom)}` : 'Choisir un Porteur'}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="escouade-fermer" aria-label="Fermer">${ICO.fermer}</button></header>`
+    + `<div class="feuille-corps">`;
+  h += candidats.length
+    ? `<div class="me-choix-liste">${candidats.map(ligne).join('')}</div><p class="me-aide">Le Porteur choisi apporte ses cartes au deck. ${actuel ? `${echap(porteurDef(actuel).nom)} reste au district, avec les siennes.` : ''}</p>`
+    : `<p class="me-aide">Tous tes Porteurs sont déjà dans l’escouade. D’autres arriveront en descendant les Strates et en agrandissant la Forge.</p>`;
+  return h + `</div></section>`;
+}
+
+/** La liste de tous les Porteurs, par lignée (l'ancien écran Porteurs, revue du 22 octobre 2026) */
+function listeTous(e: EcranDistrict): string {
   const j = e.j;
   const presents = porteursPresents(j);
   const libres = presents.filter((id) => statut(j, id).classe === 'libre').length;
-  let h = entete(`${presents.length} PORTEUR${presents.length > 1 ? 'S' : ''} · <span class="pt-dispo">${libres} DISPONIBLE${libres > 1 ? 'S' : ''}</span>`, 'Porteurs');
+  let h = entete(`${presents.length} PORTEUR${presents.length > 1 ? 'S' : ''} · <span class="pt-dispo">${libres} DISPONIBLE${libres > 1 ? 'S' : ''}</span>`, 'Tous les Porteurs',
+    `<button type="button" class="btn-icone" data-action="porteurs-escouade" aria-label="Retour à mon escouade">${ICO.retour}</button>`);
   h += `<p class="pt-intro">Une Augmentée, un Géné, une Résonante : depuis un siècle, les trois lignées se méfient les unes des autres. Sous la Tour, elles descendent ensemble, chacune avec ce que les deux autres n’ont pas. Touche un portrait pour savoir pourquoi chacun est là.</p>`;
   for (const l of LIGNEES) {
     const ici = PORTEURS.filter((p) => p.lignee === l);
@@ -101,9 +215,7 @@ export function htmlPorteurs(e: EcranDistrict): string {
       + (la.length ? `<div class="pt-grille">${la.map((p) => tuile(j, p)).join('')}</div>` : '')
       + avenir.map(silhouette).join('') + `</section>`;
   }
-  if (e.deck) h += feuilleDeck(e);
-  else h += feuillePorteur(e);
-  return coquille(e, h, 'ecran-porteurs pt');
+  return h;
 }
 
 // La fiche d'un Porteur (revue du 22 octobre 2026, même équipe que la feuille de bâtiment et l'Escouade).

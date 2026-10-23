@@ -68,6 +68,11 @@ Au départ, Ilka, Doran et Véla portent chacun 6 cartes en fer : leurs 5 cartes
 En combat, le moteur manipule des « Gestes » : c'est le nom interne d'une carte en jeu (`gesteDeCarte`), avec son Porteur,
 son niveau et la Fréquence choisie. Le tableau des cartes garde son nom historique `MODULES`.
 
+**Mon escouade** (décision du 23 octobre 2026). L'escouade est enregistrée dans la partie (`j.escouade`, Ilka, Doran et Véla au départ).
+L'onglet Porteurs s'ouvre sur elle (`monEscouade` dans `porteurs.ts`) : on touche « Changer » sous un Porteur pour le remplacer
+(`placerDansEscouade`), et « Tous les Porteurs » ouvre la liste complète. Elle ne change qu'au district, jamais pendant une descente
+(`escouadeVerrouillee`). L'écran de départ part de cette escouade (`escouadePourDepart`) et la complète si l'un d'eux est au travail ou en mission.
+
 **Une carte, cinq métaux.** Chaque carte existe en fer, cuivre, argent, or et nacre. Un exemplaire possédé se note
 `carte@métal` (`jambes-ressort@or`) ; le métal est fixé quand on le trouve et ne change jamais. La force de `donnees.ts`
 est réglée pour le métal d'origine de la carte ; dans un autre métal, `METAL_FORCE` la règle. Le métal ouvre aussi l'effet

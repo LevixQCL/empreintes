@@ -242,6 +242,9 @@ export interface Jeu {
   epreuves: { semaine: number; faites: string[] };
   /** le Comptoir du jour : ses offres, celles déjà achetées, et son propre hasard (il ne touche pas aux trouvailles) */
   comptoir: Comptoir;
+  /** « Mon escouade » (décision du 23 octobre 2026) : les trois Porteurs qui descendent. Elle ne change qu'au district,
+   *  jamais pendant une descente (sinon c'est trop facile). Ancienne sauvegarde : complétée par `migrer`. */
+  escouade: string[];
   /** les creuseurs du front de taille : il en faut assez pour creuser l'étage suivant (logés selon le niveau du Noyau) */
   creuseurs: number;
   /** le gardien de la Strate la plus profonde est vaincu : l'étage suivant attend d'être creusé */
@@ -371,6 +374,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     creuseurs: 0,
     frontVaincu: false,
     comptoir: comptoirVide(now, rng),
+    escouade: [...ESCOUADE_DEPART],
   };
 }
 
@@ -406,6 +410,8 @@ function migrer(j: Jeu) {
   // sauvegarde d'avant le Comptoir (23 octobre 2026) : il reste à construire
   j.batiments.comptoir ??= 0;
   j.comptoir ??= comptoirVide(j.dernierTick, j.rng ?? graine());
+  // sauvegarde d'avant « Mon escouade » : l'escouade de départ, ou les trois premiers Porteurs présents
+  j.escouade ??= ESCOUADE_DEPART.every((id) => porteursPresents(j).includes(id)) ? [...ESCOUADE_DEPART] : porteursPresents(j).slice(0, 3);
   if (!j.luesRecompensees) {
     // sauvegarde d'avant les récompenses de lecture : les chapitres déjà lus rapportent leur carte maintenant
     j.luesRecompensees = [];
@@ -967,6 +973,70 @@ export function disponibles(j: Jeu): string[] {
   return porteursPresents(j).filter((id) => !j.porteurs[id]!.poste && !enExpedition(j, id));
 }
 
+// ---------- Mon escouade (décision du 23 octobre 2026) ----------
+// L'onglet Porteurs s'ouvre sur l'escouade : les trois qui descendent. On la compose au district, et elle est
+// verrouillée pendant une descente : impossible de changer de Porteurs entre deux salles.
+
+/** L'escouade de départ : Ilka, Doran et Véla */
+export const ESCOUADE_DEPART = ['ilka', 'doran', 'vela'] as const;
+
+/** L'escouade enregistrée (les Porteurs présents seulement, trois au plus) */
+export function escouadeDe(j: Jeu): string[] {
+  const presents = porteursPresents(j);
+  return [...new Set(j.escouade ?? [])].filter((id) => presents.includes(id)).slice(0, 3);
+}
+
+/** Pourquoi l'escouade ne peut pas changer maintenant (null = elle peut) */
+export function escouadeVerrouillee(j: Jeu): string | null {
+  return j.expedition ? 'L’escouade est en descente : elle ne change qu’au district.' : null;
+}
+
+/** Pourquoi un Porteur ne peut pas entrer dans l'escouade (null = il peut) */
+export function raisonHorsEscouade(j: Jeu, id: string): string | null {
+  if (!porteursPresents(j).includes(id)) return 'Pas encore arrivé au district.';
+  if (enMission(j, id)) return 'En mission.';
+  const poste = j.porteurs[id]?.poste;
+  if (poste === 'noyau') return 'À l’entraînement · Tour du Noyau.';
+  if (poste) return `Au travail · ${batimentDef(poste).nom}.`;
+  return null;
+}
+
+/** Place un Porteur à la place `place` (0 à 2) de l'escouade. Déjà dans l'escouade : les deux échangent leur place. */
+export function placerDansEscouade(j: Jeu, place: number, id: string): Resultat {
+  const verrou = escouadeVerrouillee(j);
+  if (verrou) return non(verrou);
+  if (!Number.isInteger(place) || place < 0 || place > 2) return non('Place inconnue.');
+  const actuelle = escouadeDe(j);
+  const ancienne = actuelle.indexOf(id);
+  if (ancienne < 0) {
+    const raison = raisonHorsEscouade(j, id);
+    if (raison) return non(`${porteurDef(id).nom} ne peut pas rejoindre l’escouade : ${raison.charAt(0).toLowerCase()}${raison.slice(1)}`);
+  }
+  const suite = [...actuelle];
+  if (ancienne >= 0) {
+    if (ancienne === place) return { ok: true };
+    const autre = suite[place];
+    suite[place] = id;
+    if (autre) suite[ancienne] = autre; else suite.splice(ancienne, 1);
+  } else if (place < suite.length) {
+    const sortant = suite[place]!;
+    suite[place] = id;
+    log(j, `${porteurDef(id).nom} remplace ${porteurDef(sortant).nom} dans l’escouade.`);
+  } else {
+    suite.push(id);
+    log(j, `${porteurDef(id).nom} rejoint l’escouade.`);
+  }
+  j.escouade = suite.slice(0, 3);
+  return { ok: true };
+}
+
+/** Les Porteurs proposés au départ : l'escouade enregistrée, complétée par d'autres Porteurs libres si l'un d'eux ne peut pas partir */
+export function escouadePourDepart(j: Jeu, interdits: readonly string[] = []): string[] {
+  const libres = disponibles(j).filter((id) => !interdits.includes(id));
+  const garde = escouadeDe(j).filter((id) => libres.includes(id));
+  return [...garde, ...libres.filter((id) => !garde.includes(id))].slice(0, 3);
+}
+
 /** Vérifie l'escouade et prépare ce qu'elle emporte : ses PV, son deck (filtré pour une Épreuve) et ses Marques */
 /** La Strate vaincue la plus profonde (le front compte s'il a été vaincu) */
 export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 1);
@@ -998,6 +1068,7 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   });
+  j.escouade = [...escouade];
   log(j, `L’escouade descend dans la Strate −${strate}.`);
   return { ok: true };
 }
@@ -1083,6 +1154,7 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1, fouille: cible,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   });
+  j.escouade = [...escouade];
   log(j, `L’escouade part fouiller la Strate −${strate} (${CIBLES_FOUILLE[cible].nom.toLowerCase()}).`);
   return { ok: true };
 }

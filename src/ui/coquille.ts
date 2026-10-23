@@ -47,6 +47,10 @@ export interface EcranDistrict {
   epreuve: string | null;
   /** la fiche d'une ressource du haut est ouverte (22 octobre 2026) */
   ressource?: Ressource | null;
+  /** onglet Porteurs (23 octobre 2026) : la liste de tous les Porteurs est affichée au lieu de « Mon escouade » */
+  reserve?: boolean;
+  /** onglet Porteurs : la place de l'escouade (0 à 2) dont on choisit le Porteur, volet ouvert */
+  place?: number | null;
   /** le mode d'emploi des cartes est ouvert, sur cet onglet (guide.ts) */
   guide: import('./guide').OngletGuide | null;
 }

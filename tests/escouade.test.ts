@@ -1,0 +1,58 @@
+// « Mon escouade » (décision du 23 octobre 2026) : l'escouade est enregistrée, et ne change qu'au district.
+import { describe, expect, it } from 'vitest';
+import { escouadeDe, escouadePourDepart, nouveauJeu, partir, placerDansEscouade, poster, estJeuValide, type Jeu } from '../src/core/jeu';
+
+const pret = () => { const j = nouveauJeu(0, 1); j.chambre = true; j.recrues = true; return j; };
+
+describe('Mon escouade', () => {
+  it('commence avec Ilka, Doran et Véla', () => {
+    expect(escouadeDe(pret())).toEqual(['ilka', 'doran', 'vela']);
+  });
+
+  it('une ancienne sauvegarde reçoit l’escouade de départ', () => {
+    const j = pret() as Partial<Jeu>;
+    delete j.escouade;
+    expect(estJeuValide(j)).toBe(true);
+    expect(escouadeDe(j as Jeu)).toEqual(['ilka', 'doran', 'vela']);
+  });
+
+  it('on remplace un Porteur à sa place, et deux membres échangent leur place', () => {
+    const j = pret();
+    const autre = escouadePourDepart({ ...j, escouade: [] }).find((id) => !['ilka', 'doran', 'vela'].includes(id));
+    if (autre) {
+      expect(placerDansEscouade(j, 1, autre).ok).toBe(true);
+      expect(escouadeDe(j)).toEqual(['ilka', autre, 'vela']);
+    }
+    expect(placerDansEscouade(j, 0, 'vela').ok).toBe(true);
+    expect(escouadeDe(j)[0]).toBe('vela');
+    expect(escouadeDe(j)[2]).toBe('ilka');
+  });
+
+  it('elle ne change pas pendant une descente', () => {
+    const j = pret();
+    expect(partir(j, ['ilka', 'doran', 'vela'], 1).ok).toBe(true);
+    const r = placerDansEscouade(j, 0, 'doran');
+    expect(r.ok).toBe(false);
+    expect(r.message).toMatch(/district/);
+    expect(escouadeDe(j)).toEqual(['ilka', 'doran', 'vela']);
+  });
+
+  it('un Porteur au travail n’y entre pas, et le départ propose un remplaçant libre', () => {
+    const j = pret();
+    const libre = escouadePourDepart({ ...j, escouade: [] }).concat().find((id) => !['ilka', 'doran', 'vela'].includes(id));
+    if (!libre) return;
+    expect(poster(j, libre, 'forge').ok).toBe(true);
+    expect(placerDansEscouade(j, 0, libre).ok).toBe(false);
+    expect(poster(j, 'doran', 'generateur').ok).toBe(true);
+    const depart = escouadePourDepart(j);
+    expect(depart).toHaveLength(3);
+    expect(depart).not.toContain('doran');
+    expect(depart.slice(0, 2)).toEqual(['ilka', 'vela']);
+  });
+
+  it('partir enregistre l’escouade choisie au départ', () => {
+    const j = pret();
+    expect(partir(j, ['vela', 'ilka', 'doran'], 1).ok).toBe(true);
+    expect(j.escouade).toEqual(['vela', 'ilka', 'doran']);
+  });
+});

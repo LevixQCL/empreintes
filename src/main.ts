@@ -192,7 +192,7 @@ document.addEventListener('keydown', (ev) => {
     ev.preventDefault(); mode = apresTitre(); if (mode === 'combat') K.fin = finPour(); afficher(); return;
   }
   if (ev.key === 'Escape') {
-    if (mode === 'district' && (D.selection || D.carte || D.deck || D.menu)) { D.selection = null; D.carte = null; D.deck = null; D.menu = false; afficher(); return; }
+    if (mode === 'district' && (D.selection || D.carte || D.deck || D.menu || D.porteur || D.place != null)) { D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.porteur = null; D.place = null; afficher(); return; }
     if (mode === 'combat' && K.regles) { K.regles = false; afficher(); return; }
   }
   if (mode !== 'intro' || ev.altKey || ev.ctrlKey || ev.metaKey) return;
@@ -340,7 +340,8 @@ async function actionCompte(f: () => Promise<void>) {
 /** change d'onglet : ferme ce qui était ouvert et remonte en haut */
 function ouvrir(v: EcranDistrict['vue']) {
   if (D.vue !== v) window.scrollTo(0, 0);
-  D.vue = v; D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.guide = null; D.porteur = null;
+  D.vue = v; D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.guide = null; D.porteur = null; D.place = null;
+  if (v === 'porteurs') D.reserve = false;
 }
 
 const resultat = (r: J.Resultat) => { D.message = r.ok ? '' : r.message ?? ''; if (r.ok) sauver(); };
@@ -409,7 +410,18 @@ racine.addEventListener('click', async (ev) => {
     case 'fabriquer': resultat(J.fabriquer(jeu, b.dataset.module ?? '', Date.now())); break;
     case 'cartes': ouvrir('cartes'); break;
     case 'porteurs': ouvrir('porteurs'); break;
-    case 'porteur': D.porteur = id; D.deck = null; break;
+    case 'porteur': D.porteur = id; D.deck = null; D.place = null; break;
+    // « Mon escouade » (23 octobre 2026) : l'onglet Porteurs s'ouvre sur l'escouade ; « Tous les Porteurs » à part
+    case 'porteurs-tous': D.reserve = true; D.place = null; D.porteur = null; D.deck = null; window.scrollTo(0, 0); break;
+    case 'porteurs-escouade': D.reserve = false; D.porteur = null; D.deck = null; window.scrollTo(0, 0); break;
+    case 'escouade-place': D.place = Number(b.dataset.index ?? 0); D.porteur = null; D.deck = null; break;
+    case 'escouade-fermer': D.place = null; break;
+    case 'escouade-mettre': {
+      const r = J.placerDansEscouade(jeu, Number(b.dataset.index ?? 0), id);
+      resultat(r);
+      if (r.ok) D.place = null;
+      break;
+    }
     case 'porteur-fermer': D.porteur = null; break;
     case 'greffer': {
       // un Porteur déjà plein : on ouvre ses cartes pour qu'il en rende une
@@ -436,13 +448,13 @@ racine.addEventListener('click', async (ev) => {
     case 'entrer': ouvrir('coupe'); break;
     case 'archipel': ouvrir('archipel'); break;
     case 'coupe': ouvrir('coupe'); break;
-    case 'descendre': D.deck = null; D.fouille = null; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
-    case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.disponibles(jeu).slice(0, 3); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
+    case 'descendre': D.deck = null; D.fouille = null; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
+    case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
     case 'cible': D.fouille = id as typeof D.fouille; break;
     case 'epreuve': {
       const ep = J.epreuveDef(id);
       D.deck = null; D.fouille = null; D.epreuve = id; D.strateChoisie = J.strateEpreuve(jeu);
-      D.escouade = J.disponibles(jeu).filter((p) => !ep?.interdits?.includes(p)).slice(0, 3); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      D.escouade = J.escouadePourDepart(jeu, ep?.interdits ?? []); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
     case 'mission': resultat(J.envoyerMission(jeu, id, (b.dataset.duree as J.DureeMission) ?? 'courte', Date.now())); break;
