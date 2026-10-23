@@ -1,6 +1,6 @@
 # Rapport du robot d'équilibrage
 
-2026-10-22 · 300 expéditions par mesure · 1048 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
+2026-10-23 · 300 expéditions par mesure · 947 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
 
 ## Le deck de départ selon la profondeur
 
@@ -20,11 +20,11 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 |---|---|---|---|---|---|
 | Jambes à ressort | Fer | Élan | +0 | +0 |  |
 | Gant à arc | Fer | Surcharge | −8 | −1 |  |
-| Œil-relais | Fer | Perçant | −11 | −3 | trop faible |
+| Œil-relais | Fer | Perçant | −10 | −3 | trop faible |
 | Grappin à câble | Fer | Élan | −9 | +2 |  |
 | Cœur-turbine | Cuivre | Surcharge | +0 | −1 |  |
 | Œil-brouilleur | Cuivre | Désarmer | +11 | +0 |  |
-| Bras-grue | Argent | Perçant | +23 | +1 | TROP FORTE |
+| Bras-grue | Argent | Perçant | +20 | +0 |  |
 | Dorsale renforcée | Argent | Élan | +13 | +1 |  |
 | Lames orbitales | Or | Crescendo | +31 | −1 |  |
 | Cœur de reprise | Or | Perçant | +22 | +1 |  |
@@ -77,17 +77,17 @@ Une partie entière, jouée par le joueur moyen pendant 45 jours sur 12 parties 
 
 | Strate | Occasionnel (2 expéditions par jour) | Assidu (5 expéditions par jour) |
 |---|---|---|
-| −2 | jour 3 (4 exp.) | jour 2 (7 exp.) |
-| −3 | jour 4 (2 exp.) | jour 3 (1 exp.) |
-| −4 | jour 6 (2 exp.) | jour 3 (4 exp.) |
-| −5 | jour 8 (4 exp.) | jour 5 (7 exp.) |
-| −6 | jour 10 (5 exp.) | jour 7 (13 exp.) |
-| −7 | jour 13 (8 exp.) | jour 10 (17 exp.) |
-| −8 | jour 19 (7 exp.) | jour 13 (15 exp.) |
-| −9 | jour 24 (11 exp.) | jour 18 (22 exp.) |
-| −10 | jour 30 (12 exp.) | jour 23 (20 exp.) |
-| −11 | jour 40 (20 exp.) | jour 28 (28 exp.) |
-| −12 | — | jour 34 (30 exp.) |
+| −2 | jour 1 (1 exp.) | jour 1 (1 exp.) |
+| −3 | jour 3 (4 exp.) | jour 3 (10 exp.) |
+| −4 | jour 4 (2 exp.) | jour 3 (4 exp.) |
+| −5 | jour 7 (6 exp.) | jour 5 (6 exp.) |
+| −6 | jour 11 (6 exp.) | jour 7 (12 exp.) |
+| −7 | jour 15 (8 exp.) | jour 9 (10 exp.) |
+| −8 | jour 20 (8 exp.) | jour 12 (15 exp.) |
+| −9 | jour 24 (10 exp.) | jour 17 (25 exp.) |
+| −10 | jour 31 (14 exp.) | jour 22 (23 exp.) |
+| −11 | jour 38 (16 exp.) | jour 27 (35 exp.) |
+| −12 | jour 45 (17 exp.) | jour 33 (32 exp.) |
 | −13 | — | jour 40 (33 exp.) |
 
-Victoires au front : Occasionnel 35 % · Assidu 29 %.
+Victoires au front : Occasionnel 32 % · Assidu 25 %.
