@@ -181,7 +181,7 @@ const HORIZON_MER = [24.6, 24.47, 24.27, 24.27];
 export const reflets = `${base}district/mer-reflets.webp`;
 /** Âges dont l'animation (boucle Midjourney ralentie, raccord fondu) existe. Vide depuis les nouveaux tableaux à 7 bâtiments
  *  (23 octobre 2026) : les anciennes boucles montraient les anciens tableaux ; on rebranche les nouvelles dès qu'elles existent. */
-const AGES_ANIMES = new Set<number>([]);
+const AGES_ANIMES = new Set<number>([1]);
 export function sceneDistrict(niveauNoyau: number, maintenant = new Date()): { age: 1 | 2 | 3 | 4; url: string; mer: string; horizon: number; video: string | null; nuit: boolean } {
   const age = visuel(niveauNoyau);
   const h = maintenant.getHours();
