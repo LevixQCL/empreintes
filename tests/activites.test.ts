@@ -62,7 +62,10 @@ describe('Missions', () => {
     const j = avance();
     for (const id of ['coursier', 'docker', 'guetteur']) poster(j, id, null);
     const compo = j.composants;
+    j.energie = MISSIONS.courte.energie + MISSIONS.longue.energie;
     expect(envoyerMission(j, 'docker', 'courte', T0).ok).toBe(true);
+    // une mission s'équipe avec de l'énergie (23 octobre 2026)
+    expect(j.energie).toBe(MISSIONS.longue.energie);
     expect(partir(j, ['ilka', 'docker', 'vela'], 1, 3).ok).toBe(false);
     expect(envoyerMission(j, 'coursier', 'longue', T0).ok).toBe(true);
     expect(envoyerMission(j, 'guetteur', 'courte', T0).ok).toBe(false); // deux au plus
@@ -130,5 +133,30 @@ describe('Le parcours d’un joueur', () => {
     const a = simulerParcours(PROFILS.occasionnel, 8, 7);
     expect(a.strate).toBeGreaterThanOrEqual(2);
     expect(simulerParcours(PROFILS.occasionnel, 8, 7)).toEqual(a);
+  });
+});
+
+describe('L’énergie, ressource à part entière (23 octobre 2026)', () => {
+  it('une mission sans assez d’énergie ne part pas', () => {
+    const j = avance();
+    for (const id of ['coursier', 'docker', 'guetteur']) poster(j, id, null);
+    j.energie = MISSIONS.courte.energie - 1;
+    expect(envoyerMission(j, 'docker', 'courte', T0).ok).toBe(false);
+  });
+});
+
+describe('La Forge tourne à l’énergie', () => {
+  it('refabriquer coûte de l’énergie', async () => {
+    const { fabriquer, coutRefabrication } = await import('../src/core/jeu');
+    const j = avance();
+    const forgeron = Object.keys(j.porteurs).find((id) => !j.porteurs[id]!.poste && id !== 'ilka')!;
+    poster(j, forgeron, 'forge');
+    const carte = Object.keys(j.collection)[0]!;
+    const c = coutRefabrication(carte);
+    j.composants = c.composants; j.eclats = c.eclats; j.energie = c.energie - 1;
+    expect(fabriquer(j, carte, T0).ok).toBe(false);
+    j.energie = c.energie;
+    expect(fabriquer(j, carte, T0).ok).toBe(true);
+    expect(j.energie).toBe(0);
   });
 });

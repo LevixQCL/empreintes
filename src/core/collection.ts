@@ -29,14 +29,15 @@ export const COLLECTION = {
   } as Record<Rarete, number[]>,
   /** composants rendus par le recyclage d'un doublon */
   recyclage: { fer: 5, cuivre: 15, argent: 40, or: 100, nacre: 250 } as Record<Rarete, number>,
-  /** refabriquer un exemplaire : environ 5 fois le recyclage, plus des Éclats, plus du temps de Forge */
+  /** refabriquer un exemplaire : environ 5 fois le recyclage, plus des Éclats, plus du temps de Forge.
+   *  La Forge tourne à l'énergie (23 octobre 2026) : l'énergie devient une ressource à part entière, pas seulement des chantiers. */
   refabrication: {
-    fer: { composants: 25, eclats: 0, minutes: 5 },
-    cuivre: { composants: 75, eclats: 0, minutes: 20 },
-    argent: { composants: 200, eclats: 2, minutes: 60 },
-    or: { composants: 500, eclats: 5, minutes: 180 },
-    nacre: { composants: 1250, eclats: 12, minutes: 480 },
-  } as Record<Rarete, { composants: number; eclats: number; minutes: number }>,
+    fer: { composants: 25, eclats: 0, minutes: 5, energie: 40 },
+    cuivre: { composants: 75, eclats: 0, minutes: 20, energie: 120 },
+    argent: { composants: 200, eclats: 2, minutes: 60, energie: 300 },
+    or: { composants: 500, eclats: 5, minutes: 180, energie: 700 },
+    nacre: { composants: 1250, eclats: 12, minutes: 480, energie: 1600 },
+  } as Record<Rarete, { composants: number; eclats: number; minutes: number; energie: number }>,
   /** garanties : après N cartes sans cette rareté (ou mieux), la suivante l'est forcément */
   garanties: { argent: 40, or: 150, nacre: 600 },
 } as const;

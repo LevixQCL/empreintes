@@ -118,7 +118,10 @@ export function feuilleRessource(j: Jeu, r: Ressource | null | undefined): strin
     gagner = [ligne('boost', 'Le Générateur', 'Produit l’énergie chaque heure. Un Porteur posté dessus produit davantage.'),
       ligne('tour', 'La Tour du Noyau', 'Chaque niveau agrandit le stockage.'),
       ligne('cartes', 'Les premiers objectifs', 'Le premier en rapporte.')];
-    servir = [ligne('marteau', 'Améliorer les bâtiments', 'C’est la dépense principale de chaque chantier.')];
+    servir = [ligne('marteau', 'Améliorer les bâtiments', 'C’est la dépense principale de chaque chantier.'),
+      ligne('marteau', 'Faire tourner la Forge', 'Chaque carte refabriquée consomme de l’énergie, plus pour les métaux rares.'),
+      ligne('monter', 'Entraîner un Porteur', 'À la Tour du Noyau, l’entraînement consomme de l’énergie chaque heure.'),
+      ligne('porteurs', 'Équiper les missions', 'Vivres et lampes : un peu d’énergie au départ.')];
   } else if (r === 'composants') {
     surtitre = 'RESSOURCE'; titre = 'Les composants';
     resume = 'Les pièces récupérées dans les Strates : métal, mécanismes, cristaux brisés. On les rapporte des expéditions.';

@@ -136,3 +136,28 @@ describe('L’entraînement à la Tour du Noyau', () => {
     expect(gainsAmelioration(j, 'noyau').find((g) => g.quoi === 'entrainement')).toMatchObject({ avant: xpEntrainement(j), apres: ENTRAINEMENT.xpHeure[2] });
   });
 });
+
+describe('L’entraînement consomme de l’énergie (23 octobre 2026)', () => {
+  it('il s’arrête quand la réserve est vide, si la Tour consomme plus que le Générateur ne produit', () => {
+    const j = pret();
+    poster(j, 'doran', 'noyau');
+    for (const id of Object.keys(j.porteurs)) if (j.porteurs[id]!.poste === 'generateur') poster(j, id, null);
+    j.batiments.generateur = 0;
+    j.energie = 30;
+    const xp = j.porteurs.doran!.xp ?? 0;
+    tick(j, j.dernierTick + 10 * 3_600_000);
+    expect(j.energie).toBeCloseTo(0, 5);
+    // 30 énergie à 15 par heure : 2 heures d'entraînement seulement
+    expect((j.porteurs.doran!.xp ?? 0) - xp).toBeCloseTo(2 * ENTRAINEMENT.xpHeure[1]!, 5);
+  });
+
+  it('avec un Générateur qui suit, il continue et l’énergie monte moins vite', () => {
+    const j = pret();
+    j.energie = 0;
+    const sans = structuredClone(j);
+    poster(j, 'doran', 'noyau');
+    tick(j, j.dernierTick + 3_600_000);
+    tick(sans, sans.dernierTick + 3_600_000);
+    expect(sans.energie - j.energie).toBeCloseTo(ENTRAINEMENT.energieHeure[1]!, 5);
+  });
+});

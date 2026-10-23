@@ -6,7 +6,7 @@ import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   cartesNouvelles, OBJECTIFS, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
-  COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, debutJour
+  COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
@@ -331,8 +331,9 @@ function blocEntrainement(j: Jeu): string {
   const occupant = posteDe(j, 'noyau');
   const plafond = plafondEntrainement(j);
   const xph = xpEntrainement(j);
+  const eh = energieEntrainement(j);
   let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.monter}Entraînement</h3>`
-    + `<p class="fb-vide">Un Porteur posté ici s’entraîne avec les creuseurs : <b>+${xph} XP par heure</b>, même jeu fermé, jusqu’au <b>niveau ${plafond}</b>. S’il rejoint l’escouade, il quitte l’entraînement.</p>`;
+    + `<p class="fb-vide">Un Porteur posté ici s’entraîne avec les creuseurs : <b>+${xph} XP par heure</b> pour <b>${eh} énergie par heure</b>, même jeu fermé, jusqu’au <b>niveau ${plafond}</b>. Sans énergie, il s’arrête. S’il rejoint l’escouade, il quitte l’entraînement.</p>`;
   const niveau = (id: string) => niveauPorteur(j, id).niveau;
   if (occupant) {
     const o = porteurDef(occupant);
@@ -340,7 +341,7 @@ function blocEntrainement(j: Jeu): string {
     const fini = n.niveau >= plafond;
     const reste = !fini && n.requis ? Math.ceil(((n.requis - n.xp) / xph) * 3_600_000) : 0;
     h += `<div class="fb-occupant" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 64)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-lignee">Niveau ${n.niveau} · ${pvNiveau(j, occupant)} PV</span>`
-      + `<span class="fb-apport">${fini ? `Plafond atteint : monte la Tour pour aller plus loin` : `Niveau ${n.niveau + 1} dans ${duree(reste)}`}</span></div>`
+      + `<span class="fb-apport">${fini ? `Plafond atteint : monte la Tour pour aller plus loin` : j.energie < 1 ? `En pause : plus d’énergie` : `Niveau ${n.niveau + 1} dans ${duree(reste)}`}</span></div>`
       + `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Arrêter l’entraînement de ${echap(o.nom)}">Arrêter</button></div>`;
   }
   const libres = PORTEURS.filter((p) => p.id !== occupant && porteursPresents(j).includes(p.id) && !enExpedition(j, p.id))
@@ -454,9 +455,9 @@ function feuilleBatiment(e: EcranDistrict): string {
       const possedees = Object.keys(j.collection).map(moduleDef).sort((x, y) => RARETES.indexOf(y.rarete) - RARETES.indexOf(x.rarete) || x.nom.localeCompare(y.nom));
       for (const m of possedees) {
         const c = coutRefabrication(m.id);
-        const assez = j.composants >= c.composants && j.eclats >= c.eclats;
+        const assez = j.energie >= c.energie && j.composants >= c.composants && j.eclats >= c.eclats;
         h += `<li style="--r:${COULEUR_RARETE[m.rarete]}">${gemme(m.rarete)}<div class="lf-nom"><strong>${echap(m.nom)}</strong><small>${ICO.chrono}${duree(dureeFabrication(j, m.id))}</small></div>`
-          + `<span class="lf-prix">${couts(j, { composants: c.composants, eclats: c.eclats })}</span>`
+          + `<span class="lf-prix">${couts(j, { energie: c.energie, composants: c.composants, eclats: c.eclats })}</span>`
           + `<button type="button" class="btn sec petit" data-action="fabriquer" data-module="${m.id}"${assez && forgeron ? '' : ' disabled'} aria-label="Refabriquer ${echap(m.nom)}">${ICO.marteau}</button></li>`;
       }
       h += `</ul>`;
@@ -974,7 +975,7 @@ function htmlMissions(e: EcranDistrict): string {
   const j = e.j;
   const st = strateMission(j);
   let h = `<section class="bloc"><h3 class="titre-bloc">${ICO.ouvrier}Missions</h3>`
-    + `<p class="aide">Un Porteur qui ne travaille pas peut partir en mission dans la Strate −${st}. La mission avance même jeu fermé : il rapporte des composants et des doublons de cartes de sa lignée, et un peu d’Usure.</p>`;
+    + `<p class="aide">Un Porteur qui ne travaille pas peut partir en mission dans la Strate −${st}, équipé d’un peu d’énergie. La mission avance même jeu fermé : il rapporte des composants et des doublons de cartes de sa lignée, et un peu d’Usure.</p>`;
   for (const m of j.missions) {
     const p = porteurDef(m.porteur);
     const fait = Math.min(1, (e.now - m.debut) / (m.fin - m.debut));
@@ -988,8 +989,7 @@ function htmlMissions(e: EcranDistrict): string {
     for (const id of libres) {
       const p = porteurDef(id);
       h += `<li style="--c:${COULEUR[p.lignee]}">${avatar(id, 36)}<span><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · PV ${pvMaxCombat(j, id)}</small></span>`
-        + `<button type="button" class="btn sec" data-action="mission" data-id="${id}" data-duree="courte">${MISSIONS.courte.heures} h</button>`
-        + `<button type="button" class="btn sec" data-action="mission" data-id="${id}" data-duree="longue">${MISSIONS.longue.heures} h</button></li>`;
+        + (['courte', 'longue'] as const).map((d) => `<button type="button" class="btn sec mission-duree" data-action="mission" data-id="${id}" data-duree="${d}"${j.energie >= MISSIONS[d].energie ? '' : ' disabled'} aria-label="Mission de ${MISSIONS[d].heures} heures, ${MISSIONS[d].energie} énergie"><span>${MISSIONS[d].heures} h</span>${prix('energie', MISSIONS[d].energie, j.energie >= MISSIONS[d].energie)}</button>`).join('') + `</li>`;
     }
     h += `</ul>`;
   }

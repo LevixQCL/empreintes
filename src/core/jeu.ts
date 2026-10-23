@@ -616,7 +616,15 @@ export function tick(j: Jeu, now: number): string[] {
   const heures = dt / 3_600_000;
   j.dernierTick = now;
 
-  j.energie = Math.min(stockage(j), j.energie + energieParHeure(j) * heures);
+  // l'énergie produite, moins ce que consomme l'entraînement tant qu'il dure (23 octobre 2026) :
+  // si la Tour consomme plus que le Générateur ne produit, l'entraînement s'arrête quand la réserve est vide
+  const prod = energieParHeure(j);
+  const entrainement = heuresEntrainement(j, heures);
+  const conso = energieEntrainement(j);
+  let paye = entrainement;
+  if (conso > prod && paye > 0) paye = Math.min(paye, j.energie / (conso - prod));
+  j.energie = Math.max(0, Math.min(stockage(j), j.energie + (prod - conso) * paye));
+  j.energie = Math.min(stockage(j), j.energie + prod * (heures - paye));
 
   const soin = soinParHeure(j) * heures;
   for (const id of Object.keys(j.porteurs)) {
@@ -645,7 +653,7 @@ export function tick(j: Jeu, now: number): string[] {
   }
   j.chantiers = j.chantiers.filter((x) => now < x.fin);
 
-  const entraine = entrainer(j, heures);
+  const entraine = entrainer(j, paye);
   if (entraine) nouvelles.push(entraine);
 
   for (const m of j.missions.filter((x) => now >= x.fin)) nouvelles.push(retourDeMission(j, m));
@@ -748,7 +756,9 @@ export function fabriquer(j: Jeu, moduleId: string, now: number): Resultat {
   if (j.forge) return non('La Forge est déjà occupée.');
   if (!posteDe(j, 'forge')) return non('Il faut un Porteur au travail à la Forge.');
   const c = coutRefabrication(moduleId);
+  if (j.energie < c.energie) return non(`La Forge manque d’énergie : il en faut ${c.energie}.`);
   if (j.composants < c.composants || j.eclats < c.eclats) return non('Pas assez de ressources.');
+  j.energie -= c.energie;
   j.composants -= c.composants;
   j.eclats -= c.eclats;
   j.forge = { moduleId, debut: now, fin: now + dureeFabrication(j, moduleId) };
@@ -1220,8 +1230,9 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
 
 export const MISSIONS = {
   max: 2,
-  courte: { heures: 2, composants: 14, doublons: 1, nouvelle: 0, usure: 4 },
-  longue: { heures: 8, composants: 45, doublons: 2, nouvelle: 0.35, usure: 8 },
+  // l'énergie au départ (23 octobre 2026) : vivres, lampes et piles pour l'expédition
+  courte: { heures: 2, composants: 14, doublons: 1, nouvelle: 0, usure: 4, energie: 30 },
+  longue: { heures: 8, composants: 45, doublons: 2, nouvelle: 0.35, usure: 8, energie: 100 },
 } as const;
 export type DureeMission = 'courte' | 'longue';
 export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number }
@@ -1237,6 +1248,8 @@ export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: num
   if (j.porteurs[id]!.poste) return non(`${porteurDef(id).nom} travaille au district.`);
   if (enExpedition(j, id)) return non(`${porteurDef(id).nom} n’est pas au district.`);
   if (j.missions.length >= MISSIONS.max) return non(`${MISSIONS.max} missions au plus en même temps.`);
+  if (j.energie < m.energie) return non(`Il faut ${m.energie} énergie pour équiper la mission.`);
+  j.energie -= m.energie;
   j.missions.push({ porteur: id, strate: strateMission(j), duree, debut: now, fin: now + m.heures * 3_600_000 });
   log(j, `${porteurDef(id).nom} part en mission dans la Strate −${strateMission(j)} (${m.heures} h).`);
   return { ok: true };
@@ -1278,12 +1291,29 @@ function retourDeMission(j: Jeu, m: Mission): string {
 export const ENTRAINEMENT = {
   /** XP par heure selon le niveau de la Tour du Noyau (index = niveau) */
   xpHeure: [0, 3, 4, 5, 6, 8],
+  /** énergie consommée par heure d'entraînement (23 octobre 2026) : sans énergie, l'entraînement s'arrête */
+  energieHeure: [0, 15, 25, 35, 50, 70],
   niveauxParNoyau: 4,
 } as const;
 export const xpEntrainement = (j: Jeu) => ENTRAINEMENT.xpHeure[j.batiments.noyau] ?? 0;
+export const energieEntrainement = (j: Jeu) => ENTRAINEMENT.energieHeure[j.batiments.noyau] ?? ENTRAINEMENT.energieHeure[ENTRAINEMENT.energieHeure.length - 1]!;
 export const plafondEntrainement = (j: Jeu) => Math.min(XP.niveauMax, ENTRAINEMENT.niveauxParNoyau * j.batiments.noyau);
 /** XP totale pour atteindre un niveau depuis le niveau 1 */
 const xpPourAtteindre = (niveau: number) => { let s = 0; for (let n = 1; n < niveau; n++) s += xpPourNiveau(n); return s; };
+
+/** Les heures d'entraînement à compter sur une durée : 0 sans Porteur à la Tour, et pas au-delà du plafond
+ *  (l'énergie, elle, est décomptée par tick) */
+function heuresEntrainement(j: Jeu, heures: number): number {
+  const id = posteDe(j, 'noyau');
+  if (!id || heures <= 0 || enExpedition(j, id)) return 0;
+  const plafond = plafondEntrainement(j);
+  const n = niveauPorteur(j, id).niveau;
+  if (n >= plafond) return 0;
+  const tete = Math.max(...Object.keys(j.porteurs).map((k) => niveauPorteur(j, k).niveau));
+  const parHeure = xpEntrainement(j) * (tete - n >= 2 ? XP.rattrapage : 1);
+  if (parHeure <= 0) return 0;
+  return Math.min(heures, (xpPourAtteindre(plafond) - (j.porteurs[id]!.xp ?? 0)) / parHeure);
+}
 
 /** Le temps passé à la Tour (appelé par tick) : renvoie l'annonce d'un niveau gagné */
 function entrainer(j: Jeu, heures: number): string | null {
