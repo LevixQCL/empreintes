@@ -8,6 +8,7 @@ import {
   type CarteCollection,
 } from './collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from './fragments';
+import { FILS } from './fils';
 import { cloturerCombat, combatSuivant, entrerSalle, forceStrate, fuirAuDistrict, lancerCombat, nouvelleExpedition, nouvelleExploration, peutRemonter, reculer, type CibleFouille, type Expedition } from './expedition';
 import { graine, tireur } from './rng';
 import type { BatimentId, GesteDef, Lignee, PorteurEtat, Rarete, BonusMarques } from './types';
@@ -145,6 +146,12 @@ export const MARQUES: Record<string, MarqueDef> = {
     texte: 'Il ne lâche rien : à chaque tour, l’escouade garde 25 % de son bouclier pour le tour suivant.' },
   guetteur: { nom: 'Guet', fait: 'anciens', seuil: 12, quoi: 'empreintes anciennes vaincues', court: '+1 carte au premier tour', bonus: { main: 1 },
     texte: 'Il voit venir de loin : au premier tour de chaque combat, ta main compte une carte de plus.' },
+  kessa: { nom: 'Née-de-mue', fait: 'fondations', seuil: 25, quoi: 'combats dans les Fondations', court: 'garde 20 % du bouclier', bonus: { garde: 0.2 },
+    texte: 'Sa chitine ne cède pas d’un coup : à chaque tour, l’escouade garde 20 % de son bouclier pour le tour suivant.' },
+  liane: { nom: 'Galons blancs', fait: 'scellees', seuil: 12, quoi: 'salles scellées ouvertes', court: '1 Flux au départ', bonus: { flux: 1 },
+    texte: 'Chaque implant est un galon : chaque combat commence avec 1 Flux.' },
+  joss: { nom: 'Nuit blanche', fait: 'combats', seuil: 35, quoi: 'combats gagnés', court: '+1 carte au premier tour', bonus: { main: 1 },
+    texte: 'Le quartier entier l’a veillé : au premier tour de chaque combat, ta main compte une carte de plus.' },
 };
 export const progresMarque = (j: Jeu, id: string) => {
   const m = MARQUES[id];
@@ -251,6 +258,8 @@ export interface Jeu {
   creuseurs: number;
   /** le gardien de la Strate la plus profonde est vaincu : l'étage suivant attend d'être creusé */
   frontVaincu: boolean;
+  /** les fils des Porteurs : nombre d'étapes faites par Porteur (23 octobre 2026) */
+  fils?: Record<string, number>;
 }
 
 /** Acte I, le choix : qui garde la chambre ? */
@@ -377,6 +386,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     frontVaincu: false,
     comptoir: comptoirVide(now, rng),
     escouade: [...ESCOUADE_DEPART],
+    fils: {},
     // l'escouade et les cartes de départ sont connues : seuls les nouveaux venus portent la pastille
     vus: { porteurs: [...ESCOUADE_DEPART], cartes: [...COLLECTION_DEPART] },
   };
@@ -400,6 +410,7 @@ function migrer(j: Jeu) {
   j.actes ??= {};
   j.confiance ??= 50;
   j.decouvertes ??= [];
+  j.fils ??= {};
   for (const p of PORTEURS) j.porteurs[p.id] ??= { usure: 0, poste: null, modules: [] };
   j.objectif ??= ancien && j.strate > 1 ? OBJECTIFS.length : 0;
   j.fragments ??= [];
@@ -577,6 +588,10 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
   const g: GainNiveau[] = [];
   if (b === 'generateur') g.push({ quoi: 'energie', texte: 'Énergie par heure', avant: energieParHeure(j), apres: energieParHeure(apres) });
   if (b === 'clinique') g.push({ quoi: 'soin', texte: 'Usure soignée par heure', avant: soinParHeure(j), apres: soinParHeure(apres), detail: 'pour chaque Porteur au repos' });
+  if (b === 'clinique' && niv + 1 === ACCORD_OUVERT.clinique) {
+    const joss = PORTEURS.find((p) => p.arrivee?.accord && !j.arrives.includes(p.id));
+    if (joss) g.push({ quoi: 'porteur', texte: 'La Clinique peut organiser un Accord ouvert', detail: `un nouveau Résonant, quand la Confiance atteint ${ACCORD_OUVERT.confiance}` });
+  }
   if (b === 'forge') {
     g.push({ quoi: 'forge', texte: 'Vitesse de refabrication', avant: Math.round(vitesseForge(niv) * 100), apres: Math.round(vitesseForge(niv + 1) * 100), unite: '%' });
     for (const p of PORTEURS) {
@@ -612,6 +627,7 @@ export const greffesDe = (j: Jeu, moduleId: string) => Object.keys(j.porteurs).f
 export function tick(j: Jeu, now: number): string[] {
   const nouvelles: string[] = [];
   nouvelles.push(...verifierArrivees(j));
+  nouvelles.push(...avancerFils(j));
   const dt = Math.max(0, now - j.dernierTick);
   const heures = dt / 3_600_000;
   j.dernierTick = now;
@@ -977,13 +993,47 @@ export function verifierArrivees(j: Jeu): string[] {
     const a = p.arrivee;
     if (!a || j.arrives.includes(p.id)) continue;
     if ((a.strate && j.strate < a.strate) || (a.forge && j.batiments.forge < a.forge)) continue;
+    if (a.accord && !accordOuvertPret(j)) continue;
     j.arrives.push(p.id);
-    const t = `${p.nom} rejoint le district. « ${a.replique} »`;
+    const t = a.accord
+      ? `La Clinique a organisé un Accord ouvert : quarante volontaires, une seule pierre. Elle a pris sur ${p.nom}, et tout le quartier a veillé sa Nuit blanche. « ${a.replique} »`
+      : `${p.nom} rejoint le district. « ${a.replique} »`;
     log(j, t);
     annonces.push(t);
   }
   return annonces;
 }
+
+/** Fait avancer les fils des Porteurs dont la condition est remplie ; renvoie les annonces */
+export function avancerFils(j: Jeu): string[] {
+  if (!j.chambre) return [];
+  j.fils ??= {};
+  const presents = porteursPresents(j);
+  const c = { niveau: (id: string) => (j.porteurs[id] ? niveauPorteur(j, id).niveau : 0), present: (id: string) => presents.includes(id),
+    strate: j.strate, fragments: j.fragments, batiments: j.batiments };
+  const annonces: string[] = [];
+  for (const [id, fil] of Object.entries(FILS)) {
+    if (!presents.includes(id)) continue;
+    let n = j.fils[id] ?? 0;
+    while (n < fil.etapes.length && fil.etapes[n]!.test(c)) {
+      const e = fil.etapes[n]!;
+      j.fils[id] = ++n;
+      gagnerXp(j, id, e.xp);
+      if (e.confiance) confier(j, e.confiance);
+      const t = `${porteurDef(id).nom} · ${fil.titre} : « ${e.titre} » (+${e.xp} XP). À lire dans sa fiche.`;
+      log(j, t);
+      annonces.push(t);
+    }
+  }
+  return annonces;
+}
+
+/**
+ * L'Accord ouvert (Bible, 23 octobre 2026) : quand le district a confiance en son directeur et que la Clinique
+ * sait greffer, elle offre une pierre relevée à tout volontaire du quartier. Un nouveau Résonant rejoint le district.
+ */
+export const ACCORD_OUVERT = { clinique: 3, confiance: CONFIANCE.haute } as const;
+export const accordOuvertPret = (j: Jeu) => j.batiments.clinique >= ACCORD_OUVERT.clinique && (j.confiance ?? 50) >= ACCORD_OUVERT.confiance;
 
 /** Les Porteurs présents au district (les recrues n'arrivent qu'après la chambre scellée) */
 export function porteursPresents(j: Jeu): string[] {
@@ -1473,6 +1523,11 @@ export const RENCONTRES: Record<string, (j: Jeu) => { titre: string; texte: stri
     options: ['L’écouter', 'Le rapporter au district', 'Le laisser où il est'] }),
   marchand: () => ({ titre: 'Un marchand des bas-fonds', texte: 'Un marchand a installé son étal dans une ancienne salle, entre deux lampes à algues. Il a « de tout, pour qui sait payer ».',
     options: ['Échanger 30 composants contre une carte', 'Acheter des soins (15 composants, +30 % de PV)', 'Passer'] }),
+  // Bible, 23 octobre 2026 : un Sauvage (greffé sans Clinique, sans Lecture) et un vendeur de pierres mortes
+  sauvage: (j) => ({ titre: 'Un Sauvage', texte: 'Un homme recroquevillé contre un pilier, une mèche à peine dorée collée au front. Il s’est greffé une brisure achetée au marché noir, sans Lecture. Il gronde des mots qui ne sont pas les siens.',
+    options: [j.expedition?.porteurs.some((p) => p.id === 'vela' && p.pv > 0) ? 'Laisser Véla lire sa pierre' : 'Lui parler doucement (−3 PV chacun)', 'L’affronter', 'Passer ton chemin'] }),
+  faussaire: () => ({ titre: 'Un vendeur de pierres', texte: 'Sur une couverture, une rangée de cristaux tous identiques. « Des pierres d’Accord, directeur. Jamais portées. Une vierge pour vingt-cinq composants. » Elles sont ternes. Toutes.',
+    options: ['Lui acheter une « vierge » (25 composants)', 'Lui faire rendre ses pierres', 'Passer'] }),
   source: () => ({ titre: 'Une source chaude', texte: 'Entre deux piliers, une source chaude jaillit de la roche. L’eau sent le fer et le sel.',
     options: ['S’y reposer (+25 % de PV)', 'Continuer sans s’arrêter'] }),
 };
@@ -1527,6 +1582,17 @@ export function repondre(j: Jeu, choix: number): Resultat {
     }
   } else if (id === 'source') {
     if (choix === 0) { y.porteurs = soigner(x, 0.25); recit = 'L’eau chaude délie les muscles (+25 % de PV).'; }
+  } else if (id === 'sauvage') {
+    const vela = x.porteurs.some((p) => p.id === 'vela' && p.pv > 0);
+    if (choix === 0) {
+      if (vela) { confier(j, 3); gains.eclats++; recit = 'Véla pose la main sur sa nuque. « C’est une brisure de créature des hauteurs. Elle a peur d’être enfermée. » Il se calme, et vous laisse un Éclat en remerciement. La Clinique le retirera.'; }
+      else { y.porteurs = blesser(x, 3); confier(j, 2); recit = 'Il finit par se calmer et accepte qu’on le conduise à la Clinique. Ses accès ont laissé des bleus à tout le monde (−3 PV chacun).'; }
+    } else if (choix === 1) { y = lancerCombat({ ...y, recit: 'Le penchant l’emporte : il se jette sur l’escouade.' }, 'sauvage'); }
+  } else if (id === 'faussaire') {
+    if (choix === 0) {
+      if (y.butin < 25) return non('Il te faut 25 composants dans le butin de l’expédition.');
+      y.butin -= 25; recit = 'Au district, la Clinique tranche : une pierre morte. Elle a refusé un Accord, et ne prendra plus jamais chez personne. Le quartier en rit encore.';
+    } else if (choix === 1) { y.butin += n; confier(j, 2); recit = `Il remballe en grommelant et rend ce qu’il a pris aux fouilleurs : +${n} composants. Les familles volées sauront qui remercier.`; }
   }
   if (y.phase !== 'combat') y = { ...y, recit };
   y.gains = gains;

@@ -74,7 +74,9 @@ describe('Les Porteurs de l’histoire', () => {
     expect(porteursPresents(j)).toContain('nuit');
     expect(porteursPresents(j)).not.toContain('aurel');
     j.strate = 5;
-    expect(verifierArrivees(j)).toHaveLength(1);
+    // Kessa (Strate −4) et Aurel (Strate −5) arrivent ensemble quand on saute de −3 à −5
+    expect(verifierArrivees(j)).toHaveLength(2);
+    expect(porteursPresents(j)).toContain('kessa');
     expect(porteursPresents(j)).toContain('aurel');
     expect(verifierArrivees(j)).toHaveLength(0); // une seule fois
   });

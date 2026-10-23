@@ -40,7 +40,8 @@ export interface PorteurDef {
   /** Porteur nommé (illustré) ou recrue anonyme */
   nomme: boolean;
   /** Porteur qui rejoint le district plus tard dans l'histoire, et à quelle condition */
-  arrivee?: { strate?: number; forge?: number; replique: string };
+  /** accord : arrive par un Accord ouvert de la Clinique (Clinique et Confiance assez hautes : `ACCORD_OUVERT`) */
+  arrivee?: { strate?: number; forge?: number; accord?: boolean; replique: string };
 }
 
 export type BatimentId = 'noyau' | 'generateur' | 'forge' | 'clinique' | 'comptoir';

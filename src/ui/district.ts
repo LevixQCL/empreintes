@@ -5,14 +5,15 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  cartesNouvelles, OBJECTIFS, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  cartesNouvelles, OBJECTIFS, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { FRAGMENTS } from '../core/fragments';
-import { loreCarte } from '../core/lore-cartes';
+import { RANG_METAL, loreCarte } from '../core/lore-cartes';
+import { rumeurDuJour } from '../core/rumeurs';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
 import { COULEUR, echap } from './vue';
 import { decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
@@ -233,7 +234,8 @@ function mission(e: EcranDistrict): string {
   const seuils = `<i class="seuil pc" style="left:${CONFIANCE.basse}%" title="En dessous : −10 % d’énergie"></i><i class="seuil pc" style="left:${CONFIANCE.haute}%" title="Au-dessus : +10 % d’énergie"></i>`;
   h += `<div class="confiance" title="${echap(humeurDistrict(j))}"><span class="surtitre mob">CONFIANCE · ${confiance}</span><span class="surtitre pc">CONFIANCE DU QUARTIER</span>`
     + `<span class="mj-valeur pc"><b>${confiance}</b>/100</span>`
-    + `<div class="jauge">${seuils}<i style="width:${confiance}%"></i><b class="curseur pc" style="left:${confiance}%"></b></div><small>${echap(humeurDistrict(j))}</small></div>`;
+    + `<div class="jauge">${seuils}<i style="width:${confiance}%"></i><b class="curseur pc" style="left:${confiance}%"></b></div><small>${echap(humeurDistrict(j))}</small></div>`
+    + (j.chambre ? `<p class="rumeur"><b>Au marché</b> ${echap(rumeurDuJour(jourDe(Date.now()), j.strate))}</p>` : '');
   const reperes = ARCHIVE.paliers.map((p, i) => `<span class="${points >= p ? 'atteint' : ''}" style="left:${(p / max) * 100}%">${i === ARCHIVE.paliers.length - 1 ? '' : p}</span>`).join('');
   h += `<div class="archive"><span class="mj-ico pc">${icone('coffre')}</span>`
     + `<span class="surtitre mob">ARCHIVE · ${points}/${max}</span><span class="surtitre pc">ARCHIVE DE LA SEMAINE</span>`
@@ -656,7 +658,8 @@ function feuilleCarte(e: EcranDistrict): string {
     + `<button type="button" class="btn-icone" data-action="guide" data-id="effets" aria-label="Les cartes et leurs effets">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
     + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(m)}</div></div>`
-    + (loreCarte(cle) ? `<blockquote class="lore-carte">${echap(loreCarte(cle)!)}</blockquote>` : '');
+    + (loreCarte(cle) ? `<blockquote class="lore-carte">${echap(loreCarte(cle)!)}</blockquote>` : '')
+    + `<p class="rang-carte"><b style="color:${COULEUR_RARETE[m.rarete]}">${RANG_METAL[m.rarete].rang}</b> · ${echap(RANG_METAL[m.rarete].texte)}</p>`;
   // à qui la confier : la décision la plus fréquente, donc juste sous la carte
   h += `<section class="bloc fc-confier"><h3 class="titre-bloc">${ICO.greffe}${porte ? `Portée par ${echap(porteurDef(porte).nom)}` : 'Confier à'}</h3><p class="fc-aide">${porte ? 'Touche son portrait pour la reprendre, ou un autre Porteur pour la lui passer.' : `Elle entrera dans ton deck quand ce Porteur descendra (${DISTRICT.cartesMax} cartes au plus, de sa lignée).`}</p><div class="fc-porteurs">`
     + porteurs.map((p) => {

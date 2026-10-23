@@ -63,3 +63,16 @@ export const LORE_CARTES: Record<string, string> = {
 
 /** Le lore d'une carte (« jambes-ressort@or » → celui de « jambes-ressort ») */
 export const loreCarte = (cle: string): string | null => LORE_CARTES[cle.split('@')[0]!] ?? null;
+
+/**
+ * Le rang d'une empreinte selon son métal (Bible, 23 octobre 2026 : « le métal dit le rang »). Une carte de fer est une
+ * copie lointaine d'une compétence, une carte de nacre en est la vierge : jamais portée par un humain, tirée d'un Berceau.
+ * C'est pourquoi on trouve une carte directement dans son métal, et les métaux rares plus bas, où l'on a moins copié.
+ */
+export const RANG_METAL: Record<import('./types').Rarete, { rang: string; texte: string }> = {
+  fer: { rang: 'Copie lointaine', texte: 'Recopiée tant de fois que le geste a perdu ses détails. Il en reste l’essentiel, et c’est déjà beaucoup.' },
+  cuivre: { rang: 'Copie de copie', texte: 'Passée par plusieurs porteurs : chacun en a perdu un peu, chacun en a inventé un peu.' },
+  argent: { rang: 'Copie de famille', texte: 'Relevée à la mort de son porteur et transmise avec soin. Elle se souvient encore de ses deux derniers visages.' },
+  or: { rang: 'Première copie', texte: 'Un seul passage la sépare de l’original. Les Hauts en gardent beaucoup, et les districts presque aucune.' },
+  nacre: { rang: 'Vierge', texte: 'Jamais portée par un humain. Elle sort d’un Berceau telle que ceux d’avant l’ont rangée.' },
+};

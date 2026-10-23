@@ -163,6 +163,17 @@ Le robot de parcours s'en sert aussi : la Strate −10 arrive vers le jour 29-30
 ce sont les creuseurs et la Tour qui tiennent le rythme. Les images `public/art/batiments/comptoir-N.webp` sont provisoires
 (le plateau vide du tableau) en attendant celles de Midjourney.
 
+**Lignées et origines** (23 octobre 2026, Bible « Devenir Résonant, Géné ou Augmenté » et « D'où viennent leurs dons »).
+- *Son histoire* (`ORIGINES` dans `src/core/lore-porteurs.ts`) : dans la fiche de chaque Porteur, d'où vient son don, en paliers qui s'ouvrent avec son niveau.
+- *Les fils* (`src/core/fils.ts`, appliqués par `avancerFils` dans `jeu.ts` à chaque tick) : la dette de Pim (Ilka), la porte de son père (Doran),
+  retrouver Liane (Aurel). Trois étapes chacun, qui avancent toutes seules (niveau, arrivée, Strate, fragment, bâtiment) et rapportent de l'XP.
+- *Trois nouveaux Porteurs* : Kessa, Née-de-mue (Strate −4), Liane Orsève, la Refusée devenue Délavée (Strate −6), et Joss, trouvé par
+  un *Accord ouvert* de la Clinique (`ACCORD_OUVERT` : Clinique niveau 3 et Confiance 70). Portraits à faire sur Midjourney ; avatar en attendant.
+- *Le rang des métaux* (`RANG_METAL` dans `lore-cartes.ts`) : la fiche d'une carte dit si c'est une copie lointaine (fer) ou une vierge (nacre).
+- *Le Sauvage* (ennemi des Fondations, illustration à faire), les rencontres *Sauvage* et *vendeur de pierres mortes*,
+  la *rumeur du jour* sous la Confiance (`src/core/rumeurs.ts`), deux chapitres des Chroniques (« Les yeux d'or », « Le Registre des Vierges »)
+  et deux fragments d'archives (« Non prioritaire », « Pas de notre côté »).
+
 ## Firebase
 
 Voir [docs/GUIDE.md](docs/GUIDE.md). Tant que `src/net/firebase-config.ts` est vide, le jeu tourne

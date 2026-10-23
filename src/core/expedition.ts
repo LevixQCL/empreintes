@@ -89,7 +89,7 @@ export interface CarteStrate {
 }
 
 /** Les rencontres possibles en route ; leurs choix sont dans jeu.ts (elles touchent au district) */
-export const RENCONTRES_IDS = ['veilleur', 'pilleur', 'brigade', 'cristal', 'marchand', 'source'] as const;
+export const RENCONTRES_IDS = ['veilleur', 'pilleur', 'brigade', 'cristal', 'marchand', 'source', 'sauvage', 'faussaire'] as const;
 
 /**
  * Puissance des ennemis selon la profondeur (PV et attaques) : une table par Strate, réglée avec le robot

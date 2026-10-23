@@ -3,8 +3,9 @@
 // qui il est, son état (PV, niveau, Usure), sa Marque, ce que sa lignée lui donne, son poste et ses cartes.
 
 import { BATIMENTS, GESTES_SPECIAUX, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
-import { DISTRICT, XP, bonusPv, deckEscouade, enExpedition, enMission, escouadeDe, escouadeVerrouillee, niveauPorteur, porteursNouveaux, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
-import { PRESENTATIONS } from '../core/lore-porteurs';
+import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, deckEscouade, enExpedition, enMission, escouadeDe, escouadeVerrouillee, niveauPorteur, porteursNouveaux, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
+import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
+import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES } from '../core/regles';
 import { NOMS_EFFET } from '../core/effets';
 import { multNiveau } from '../core/collection';
@@ -38,6 +39,7 @@ function statut(j: Jeu, id: string): { texte: string; classe: string } {
 function arrivee(p: PorteurDef): string {
   if (p.arrivee?.forge) return `Arrive quand la Forge atteint le niveau ${p.arrivee.forge}.`;
   if (p.arrivee?.strate) return `Arrive quand la Strate −${p.arrivee.strate} est ouverte.`;
+  if (p.arrivee?.accord) return `Arrive par un Accord ouvert : Clinique niveau ${ACCORD_OUVERT.clinique} et Confiance du district à ${ACCORD_OUVERT.confiance} ou plus.`;
   return 'Arrive quand la chambre scellée est ouverte.';
 }
 
@@ -266,6 +268,28 @@ export function feuillePorteur(e: EcranDistrict): string {
   if (pres) h += `<div class="fp-bio"><p>${echap(pres.texte)}</p>${pres.replique ? `<p class="fp-replique">« ${echap(pres.replique)} »</p>` : ''}</div>`;
   if (pres?.pourquoi) h += `<section class="fp-bloc fp-pourquoi"><h3 class="fp-h3">${ICO.porte}Pourquoi ${IL.has(id) ? 'il' : 'elle'} est là</h3><p class="fp-texte">${echap(pres.pourquoi)}</p></section>`;
   if (pres?.aParte) h += `<aside class="fp-aparte"><strong>${echap(pres.aParte.titre)}</strong><p>${echap(pres.aParte.texte)}</p></aside>`;
+
+  // ---------- son histoire : d'où vient son don, un palier de plus tous les quelques niveaux ----------
+  const histoire = origineDe(id, n.niveau);
+  if (histoire.length) {
+    h += `<section class="fp-bloc fp-histoire"><h3 class="fp-h3">${ICO.journal}Son histoire <span class="fp-compte">${histoire.filter((x) => x.ouvert).length} / ${histoire.length}</span></h3><ol class="fp-paliers">`
+      + histoire.map((x) => (x.ouvert
+        ? `<li class="ouvert"><strong>${echap(x.titre)}</strong><p>${echap(x.texte)}</p></li>`
+        : `<li class="ferme"><strong>${ICO.verrou}Au niveau ${x.niveau}</strong><p>${echap(p.nom)} n’en parle pas encore.</p></li>`)).join('')
+      + `</ol></section>`;
+  }
+
+  // ---------- son fil : une petite histoire qui avance toute seule (23 octobre 2026) ----------
+  const fil = FILS[id];
+  if (fil) {
+    const faites = j.fils?.[id] ?? 0;
+    const etapes = etapesDe(id, faites);
+    const suivante = etapes.find((x) => !x.faite);
+    h += `<section class="fp-bloc fp-fil"><h3 class="fp-h3">${ICO.porte}${echap(fil.titre)} <span class="fp-compte${suivante ? '' : ' plein'}">${faites} / ${etapes.length}</span></h3><ol class="fp-paliers">`
+      + etapes.filter((x) => x.faite).map((x) => `<li class="ouvert"><strong>${echap(x.titre)}</strong><p>${echap(x.recit)}</p></li>`).join('')
+      + (suivante ? `<li class="ferme"><strong>${ICO.verrou}La suite</strong><p>${echap(suivante.quand)}.</p></li>` : '')
+      + `</ol></section>`;
+  }
 
   // ---------- son état, en vrais chiffres ----------
   const soin = soinParHeure(j);

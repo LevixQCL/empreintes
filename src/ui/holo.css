@@ -212,3 +212,7 @@ body{background:
 .gain>.ico{filter:drop-shadow(0 0 5px rgba(216,180,101,.45))}
 .gn-val i{color:var(--holo)}
 .gn-val b{text-shadow:0 0 10px rgba(216,180,101,.35)}
+
+/* Le rang de l'empreinte selon son métal (23 octobre 2026) */
+.rang-carte{margin:8px 0 0;padding:0 14px 0 18px;font-size:13px;line-height:1.5;color:#AEBBCC}
+.rang-carte b{font-weight:600;letter-spacing:.02em}

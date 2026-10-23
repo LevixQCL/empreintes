@@ -17,6 +17,14 @@ export const PORTEURS: PorteurDef[] = [
     arrivee: { strate: 3, replique: 'Le noir n’est pas vide. Il attend juste qu’on regarde mieux.' } },
   { id: 'aurel', nom: 'Aurel Orsève', lignee: 'reso', pvMax: 30, nomme: true,
     arrivee: { strate: 5, replique: 'Mon ombre a de meilleures manières que moi. C’est bien ça, le problème.' } },
+  // Bible, 23 octobre 2026 (« Devenir Résonant, Géné ou Augmenté ») : une Née-de-mue, la cousine Refusée d'Aurel,
+  // et le Résonant que la Clinique trouve lors d'un Accord ouvert, quand le district lui fait confiance
+  { id: 'kessa', nom: 'Kessa', lignee: 'bio', pvMax: 40, nomme: true,
+    arrivee: { strate: 4, replique: 'On n’a rien choisi. Mais on est les seuls à pouvoir dire ce que ça fait.' } },
+  { id: 'liane', nom: 'Liane Orsève', lignee: 'tech', pvMax: 34, nomme: true,
+    arrivee: { strate: 6, replique: 'Ils m’ont pris la mèche d’or. J’ai fait pousser autre chose.' } },
+  { id: 'joss', nom: 'Joss', lignee: 'reso', pvMax: 29, nomme: true,
+    arrivee: { accord: true, replique: 'J’ai passé des années à cacher l’or des autres. Le mien, je le laisse briller.' } },
 ];
 
 export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string }> = {
@@ -330,6 +338,17 @@ export const ENNEMIS: EnnemiDef[] = [
     ],
   },
   {
+    // Bible, 23 octobre 2026 : un Résonant greffé sans Clinique ni Lecture, une brisure de marché noir (un « doré pâle »)
+    id: 'sauvage', nom: 'Sauvage', lignee: 'reso', tag: 'GREFFÉ SANS CLINIQUE', pvMax: 66,
+    traits: [{ type: 'vengeur' }],
+    motif: [
+      { type: 'atk', nom: 'Penchant mal lu', v: 10, cible: 'hasard' },
+      { type: 'bouclier', v: 9 },
+      { type: 'atk', nom: 'Accès', v: 12, cible: 'faible' },
+      { type: 'atk', nom: 'Ombre qui tremble', v: 5, zone: true },
+    ],
+  },
+  {
     id: 'pilleur', nom: 'Pilleur de Strates', lignee: 'tech', tag: 'FOUILLEUR SANS LICENCE', pvMax: 70,
     traits: [{ type: 'vengeur' }],
     motif: [
@@ -377,7 +396,7 @@ export const SEQUENCE_STRATE = ['remanent', 'vigie', 'confluence'];
  * Une expédition = deux combats tirés dans la zone, puis son gardien.
  */
 export const ZONES: { nom: string; jusqua: number; ennemis: string[]; boss: string }[] = [
-  { nom: 'Les Fondations', jusqua: 3, ennemis: ['remanent', 'vigie', 'rampeur', 'pilleur'], boss: 'confluence' },
+  { nom: 'Les Fondations', jusqua: 3, ennemis: ['remanent', 'vigie', 'rampeur', 'pilleur', 'sauvage'], boss: 'confluence' },
   { nom: 'Les salles closes', jusqua: 6, ennemis: ['brigadier', 'echo-veilleur', 'sentinelle-verre', 'remanent'], boss: 'gardien-registres' },
   { nom: 'Les mémoires contradictoires', jusqua: 9, ennemis: ['double', 'essaim-ambre', 'automate-graveur', 'echo-veilleur'], boss: 'tisseuse' },
   { nom: 'Le fond', jusqua: Infinity, ennemis: ['double', 'automate-graveur', 'sentinelle-verre', 'echo-veilleur'], boss: 'premier-porteur' },

@@ -179,6 +179,22 @@ export const FRAGMENTS: Fragment[] = [
       '« Nous l’écrivons tant que nous savons encore qui l’écrit. »',
     ],
   },
+  {
+    id: 'passerelle', titre: 'Non prioritaire', support: 'Trois fiches de signalement, agrafées ensemble',
+    lignes: [
+      'Printemps 2111. Passerelle des Hauts-Ponts, troisième travée : une fissure le long du rail, longue comme une main. Signalé par un coursier.',
+      'Été 2111. Même endroit, la fissure a doublé. La rambarde bouge quand on s’y appuie. Signalé par une commerçante du marché.',
+      'Automne 2111. J’ai mis la main dedans jusqu’au poignet. Signalé par un ouvrier des Fondations. Tampon sur les trois fiches : « non prioritaire, aucun Présage ».',
+    ],
+  },
+  {
+    id: 'pas-notre-cote', titre: 'Pas de notre côté', support: 'Un rapport de chantier de 2066, signé de quatre ouvriers',
+    lignes: [
+      'Chantier d’abris, niveau 7. Pose du mur de condamnation terminée à 4 h 10. Quatre hommes, deux tonnes de béton.',
+      'Pendant la prise, un bruit de l’autre côté. Pas un éboulement : un loquet qu’on tire, lentement, comme on ferme chez soi pour la nuit.',
+      'Le contremaître a dit qu’on avait rêvé. On a signé quand même, tous les quatre. On a fermé la porte, mais pas de notre côté.',
+    ],
+  },
 ];
 
 /**
@@ -188,9 +204,9 @@ export const FRAGMENTS: Fragment[] = [
  */
 export const ORDRE_FRAGMENTS = [
   // la chambre, puis deux par Strate dans les Fondations (les papiers des abris auxquels renvoient les Chroniques)
-  'mure', 'puits-zero', 'ligne-eau', 'graveur', 'regle', 'sept', 'colonne',
+  'mure', 'puits-zero', 'ligne-eau', 'graveur', 'regle', 'sept', 'colonne', 'passerelle',
   // les salles closes (−4 à −6)
-  'seuil', 'choses', 'brigade',
+  'seuil', 'pas-notre-cote', 'choses', 'brigade',
   // les mémoires contradictoires (−7 à −9)
   'deux-enfances', 'voix', 'noms',
   // le fond (−10 et plus)

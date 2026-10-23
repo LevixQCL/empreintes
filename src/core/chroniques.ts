@@ -151,6 +151,19 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
+    id: 'chouettes', livre: 2, titre: 'Les yeux d’or', epoque: '2104 – 2111', image: '08-reponse', strate: 3,
+    teaser: 'Ce que Vertiga a vu sur les écrans des marchés, et ce qu’elle n’a pas regardé.',
+    paragraphes: [
+      'Je vais te raconter deux histoires qui n’ont rien à voir l’une avec l’autre. Tu verras qu’elles se ressemblent.',
+      'La première date de 2104. J’avais cinquante-cinq ans et je classais déjà les papiers des autres. À cette époque, on faisait encore muer des enfants pour les fouilles de nuit. Trois ou quatre ans : c’est l’âge où un corps accepte le mieux les yeux nocturnes. On les appelait les Chouettes. Les familles signaient parce que le programme les nourrissait. Je ne les juge pas. J’ai connu la faim aussi.',
+      'Cette année-là, une galerie s’est effondrée à la Strate −2, avec une vingtaine d’adultes dedans et six Chouettes. Les lampes se sont éteintes avec l’éboulement. Pendant trois jours, dans le noir complet, ces enfants de dix ans ont guidé les adultes à tâtons, en se tenant par la main, jusqu’à une ancienne gaine que personne n’avait sur les plans. Tout le monde est remonté vivant.',
+      'Les écrans des marchés ont montré la sortie en direct. Des enfants aux yeux d’or, plissés sous les projecteurs, qui demandaient qu’on éteigne la lumière parce qu’elle leur faisait mal. Vertiga entière a pleuré devant ces images. Et pour une fois, Vertiga a regardé ce qu’elle faisait : l’année suivante, la Mue des enfants était interdite. La toute dernière promotion avait trois ans. L’une d’elles travaille aujourd’hui pour nous. Elle s’appelle Nuit, et elle n’aime toujours pas les projecteurs.',
+      'La deuxième histoire date de 2111, et elle n’est passée sur aucun écran. Une fissure sur la passerelle des Hauts-Ponts, signalée par un coursier au printemps. Signalée encore en été, par une commerçante. Signalée une troisième fois à l’automne, par un ouvrier des Fondations qui avait mis sa main dedans. Les trois rapports sont dans tes Archives. Ils portent tous le même tampon : « non prioritaire ». Le Présage n’avait rien dit, puisque rien de soudain ne s’annonçait.',
+      'La passerelle a cédé un soir d’hiver, sous une gamine de quatorze ans qui courait trop vite. Elle s’en est sortie, grâce à un Géné qui a plongé et lui a tenu la tête hors de l’eau pendant deux heures. Elle y a laissé ses jambes. Tu la connais : elle t’a apporté la nouvelle, le matin de l’ouverture.',
+      'Voilà ce que je voulais que tu voies. Six enfants dans le noir, et toute la ville s’arrête. Trois rapports sur un bureau, et personne ne bouge. Nous savons très bien regarder ce qui arrive d’un coup. C’est ce qui arrive lentement que nous ne savons pas voir. Les Résonants n’y sont pour rien : nous avons bâti notre façon d’avoir peur autour de leur Présage, et le Présage ne sent que les tempêtes.',
+    ],
+  },
+  {
     id: 'oubli', livre: 2, titre: 'On a oublié, encore', epoque: '2121', image: '09-oubli',
     paragraphes: [
       'Voici où nous en sommes, la troisième nuit après ton élection.',
@@ -190,6 +203,18 @@ export const CHAPITRES: Chapitre[] = [
       'Derrière, je ne trouve aucune trace de violence. Pas d’armes, pas de combat, rien de ce qu’on découvrirait dans un refuge pris d’assaut. Seulement des cristaux, rangés avec un soin presque maniaque. Comme si les derniers occupants avaient voulu mettre de l’ordre avant de partir. Ou mettre quelque chose à l’abri. Ou se mettre à l’abri de quelque chose.',
       'Et puis il y a l’ordre de service de ton propre district, dans tes Archives : niveau 7, accès condamné « suite à l’incident du 14 », et cette note au crayon, dans la marge. Ils ont entendu quelqu’un pleurer derrière la paroi, et il n’y avait personne. Les ouvriers des années 2060 ont muré cet accès. Ils ont fait exactement ce qu’avaient fait les autres avant eux, beaucoup plus loin dans le temps : ils ont fermé la porte, et ils ont décidé de ne pas en parler.',
       'Je me demande parfois si c’est notre seule vraie façon d’avoir peur : fermer la porte, et se taire.',
+    ],
+  },
+  {
+    id: 'vierges', livre: 3, titre: 'Le Registre des Vierges', epoque: '2071 – 2121', image: '07-ascension', strate: 6,
+    teaser: 'Pourquoi les Résonants des Hauts sont plus forts que les autres.',
+    paragraphes: [
+      'Tu t’es sûrement demandé pourquoi les Résonants des Hauts sont si puissants, et ceux des districts si discrets. Les Hauts te répondront « le sang d’or ». C’est vrai pour une part : l’aptitude à accepter une pierre se transmet, un peu, comme la taille ou la couleur des yeux. Un enfant de Résonants réussit l’Accord une fois sur quatre ; un enfant de chez toi, une fois sur trente. Mais ce n’est pas l’essentiel.',
+      'L’essentiel tient dans un mot que tu ne trouveras dans aucun discours : la vierge. Une empreinte que personne n’a jamais portée, sortie d’un Berceau telle que ceux d’avant l’ont rangée. Chaque fois qu’une empreinte passe d’un porteur à un autre, elle perd un peu de ce qu’elle était et invente un peu de ce qu’elle n’était pas. Une vierge n’a rien perdu. Son Présage est net, son ombre est nette, son pouvoir n’a pas de mesure commune avec celui d’une copie.',
+      'Les Sept ont reçu des vierges. Depuis, les grandes familles en ont fait une réserve. Elle porte un nom, que j’ai entendu une seule fois, prononcé par quelqu’un qui croyait que je dormais : le Registre des Vierges. Je ne sais pas combien il en compte. Je sais que chaque fois qu’un Berceau des premières Strates est ouvert, une partie de ce qu’il contenait ne remonte jamais jusqu’aux Veilleurs.',
+      'Les districts, eux, se transmettent des copies. Une pierre relevée à la mort d’un voisin, greffée à son petit-fils, puis à une inconnue lors d’un Accord ouvert. Chez toi, on appelle « copie de copie » ce qui est usé jusqu’à la corde. Et dans les marchés noirs, on vend des brisures, des morceaux de cristal cassé qui donnent une mèche à peine dorée et un pouvoir à moitié. Les dorés pâles.',
+      'Il y a pire que d’être pauvre en pierres : c’est d’avoir fait mourir la sienne. Une pierre qui refuse un Accord ne prendra plus jamais chez personne. Dans les Hauts, l’enfant qui a fait mourir une pierre de famille est un Refusé. On l’envoie étudier ailleurs, et on efface son nom. Certains de tes collègues directeurs sont des Refusés. Ils ne te le diront pas. Moi non plus, je ne te dirai pas lesquels.',
+      'Une dernière chose. Les cœurs qui font flotter les îles des Hauts sont, pour une part, des empreintes prises dans des Berceaux. Des vierges qu’on n’a pas greffées : on les a brûlées pour tenir en l’air. Je ne sais pas encore ce que cela coûte. Je sais seulement que les Berceaux s’usent, et que personne là-haut ne compte.',
     ],
   },
   {
