@@ -168,6 +168,8 @@ function sauver() {
 // et on relit les classements à l'ouverture de l'écran (au plus une fois par minute, sauf « Actualiser »).
 
 let tableauNet: typeof import('./net/classement') | null = null;
+/** la feuille du pseudo ne s'ouvre d'elle-même qu'une fois par lancement */
+let pseudoDemande = false;
 /** l'entrée telle qu'elle est en ligne (null = pas encore lue ou absente) */
 let monEntree: Entree | null = null;
 let monEntreeLue = false;
@@ -274,7 +276,14 @@ async function demarrerCompte() {
     uid = u?.uid ?? null;
     compteEtat.synchro = 'aucune';
     G.entrees = []; G.lu = 0; G.etat = 'repos'; monEntree = null; monEntreeLue = false;
-    if (uid) { reconcilier(); lireTableau(true); }
+    if (uid) {
+      // à la connexion (ou au premier lancement connecté), le jeu demande un pseudo s'il n'y en a pas encore,
+      // après avoir récupéré la sauvegarde du compte : elle en a peut-être déjà un
+      reconcilier().then(() => {
+        if (uid && !jeu.directeur?.nom && !pseudoDemande) { pseudoDemande = true; G.edition = true; G.accueil = true; G.erreur = ''; if (mode === 'district') afficher(); }
+      });
+      lireTableau(true);
+    }
     if (mode === 'district') afficher();
   });
 }
@@ -711,14 +720,15 @@ racine.addEventListener('click', async (ev) => {
     case 'gt-regles': G.regles = !G.regles; break;
     case 'gt-actualiser': await lireTableau(true); return;
     case 'gt-connexion': D.menu = true; compteEtat.ouvert = true; break;
-    case 'gt-nom': G.edition = true; G.erreur = ''; lireTableau(); break;
-    case 'gt-nom-fermer': G.edition = false; G.erreur = ''; break;
+    case 'gt-nom': G.edition = true; G.accueil = false; G.erreur = ''; lireTableau(); break;
+    case 'gt-nom-fermer': G.edition = false; G.accueil = false; G.erreur = ''; break;
     case 'gt-nom-ok': {
       const nom = nettoyerNom((racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value ?? '');
       if (!nomValide(nom)) { G.erreur = 'De 3 à 18 caractères : lettres, chiffres, espaces, points, tirets.'; break; }
       if (G.entrees.some((x) => x.uid !== uid && x.nom.toLocaleLowerCase('fr') === nom.toLocaleLowerCase('fr'))) { G.erreur = 'Un autre directeur porte déjà ce nom.'; break; }
       jeu.directeur = { nom, public: jeu.directeur ? jeu.directeur.public || D.vue === 'classements' : true };
-      G.edition = false; G.erreur = '';
+      G.edition = false; G.accueil = false; G.erreur = '';
+      D.message = `Bienvenue, ${nom} : c’est ce nom que verront les autres joueurs.`;
       sauver();
       planifierPublication(0);
       break;
@@ -782,5 +792,6 @@ initInstallation(() => { if (mode === 'titre') afficher(); });
 if (import.meta.env.DEV) Object.assign(window, {
   __gains: { montrer },
   // pour voir le Grand Tableau sans compte : __tableau(entrées, ton uid)
+  __pseudo: () => { G.edition = true; G.accueil = true; afficher(); },
   __tableau: (l: Entree[], moi: string) => { G.entrees = l; G.etat = 'ok'; G.lu = Date.now(); uid = moi; compteEtat.utilisateur = { nom: 'Essai' }; afficher(); },
 });

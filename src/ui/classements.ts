@@ -37,6 +37,8 @@ export interface GrandTableau {
   regles: boolean;
   /** « Ne plus apparaître » attend sa confirmation */
   retrait: boolean;
+  /** la feuille du pseudo s'est ouverte d'elle-même, juste après la connexion (texte d'accueil, « Plus tard ») */
+  accueil?: boolean;
 }
 
 export const tableauVide = (): GrandTableau => ({ tableau: 'profondeur', periode: 'total', etat: 'repos', entrees: [], lu: 0, erreur: '', edition: false, regles: false, retrait: false });
@@ -113,7 +115,7 @@ export function htmlClassements(e: EcranDistrict, g: GrandTableau, uid: string |
         + `<button type="button" class="btn sec petit" data-action="gt-retirer-ok">Me retirer</button><button type="button" class="btn sec petit" data-action="gt-retirer">Annuler</button></div>` : '')
       + `</footer>`;
   }
-  return coquille(e, h + (g.edition && !e.menu ? feuilleNom(j, e.compte.utilisateur?.nom ?? '', g.erreur) : ''), 'gt');
+  return coquille(e, h, 'gt');
 }
 
 const ICONE_TABLEAU: Record<TableauId, 'strate' | 'cartes' | 'atk' | 'tour'> = { profondeur: 'strate', registre: 'cartes', joutes: 'atk', fleche: 'tour' };
@@ -244,16 +246,18 @@ function apercuFleche(): string {
 // ---------- Le nom de directeur ----------
 
 /** La feuille du pseudo : depuis le Grand Tableau ou le panneau Compte du menu */
-export function feuilleNom(j: Jeu, nomCompte: string, erreur: string): string {
+export function feuilleNom(j: Jeu, nomCompte: string, erreur: string, accueil = false): string {
   const propose = j.directeur?.nom ?? '';
   void nomCompte;
   return `<div class="voile-feuille" data-action="gt-nom-fermer" aria-hidden="true"></div><section class="feuille gt-feuille" role="dialog" aria-modal="true" aria-labelledby="gt-nom-titre"><span class="poignee" aria-hidden="true"></span>`
-    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">Le Grand Tableau</span><h2 id="gt-nom-titre">Ton pseudo</h2></div>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">${accueil ? 'Bienvenue, directeur' : 'Le Grand Tableau'}</span><h2 id="gt-nom-titre">${accueil ? 'Choisis ton pseudo' : 'Ton pseudo'}</h2></div>`
     + `<button type="button" class="btn-icone" data-action="gt-nom-fermer" aria-label="Fermer">${ICO.fermer}</button></header>`
     + `<div class="feuille-corps"><p class="aide">Ton nom de directeur : c’est lui que les autres joueurs verront sur les écrans de Vertiga. <b>Ton nom de compte Google et ton e-mail ne sont jamais affichés.</b></p>`
     + `<input id="gt-nom" type="text" maxlength="18" autocomplete="nickname" spellcheck="false" placeholder="3 à 18 caractères" aria-label="Pseudo" value="${echap(propose)}">`
     + (erreur ? `<p class="erreur">${echap(erreur)}</p>` : '')
     + `<p class="aide">Ton Porteur de tête d’escouade, ${echap(porteurDef(connuPorteur(j.escouade?.[0] ?? 'ilka')).nom)}, sera ton portrait. Tu peux te retirer du Tableau quand tu veux.</p>`
-    + `<button type="button" class="btn prim large" data-action="gt-nom-ok">${ICO.ok}${j.directeur?.nom ? 'Enregistrer' : 'Apparaître sur le Tableau'}</button></div></section>`;
+    + `<button type="button" class="btn prim large" data-action="gt-nom-ok">${ICO.ok}${j.directeur?.nom ? 'Enregistrer' : 'Valider mon pseudo'}</button>`
+    + (accueil ? `<button type="button" class="lien" data-action="gt-nom-fermer">Plus tard (dans Plus › Compte)</button>` : '')
+    + `</div></section>`;
 }
 

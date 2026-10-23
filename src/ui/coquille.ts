@@ -218,7 +218,6 @@ export function menu(e: EcranDistrict): string {
     + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : ' · choisis ton pseudo'}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
     + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro</strong><small>L’histoire de 2121, depuis le début</small></span></button></div>`;
   h += panneauCompte(c);
-  if (e.grand?.edition) h += feuilleNom(e.j, c.utilisateur?.nom ?? '', e.grand.erreur);
   h += `<section class="bloc"><h3 class="titre-bloc">${icone('journal')}Journal du district</h3><ol class="journal-liste">${e.j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></section>`;
   return h + `</div></section>`;
 }
@@ -230,5 +229,6 @@ export function entete(surtitre: string, titre: string, droite = ''): string {
 
 /** L'écran complet du district : ressources, contenu, message, navigation, menu */
 export function coquille(e: EcranDistrict, contenu: string, classe = ''): string {
-  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}</div>`;
+  const pseudo = e.grand?.edition ? feuilleNom(e.j, e.compte.utilisateur?.nom ?? '', e.grand.erreur, !!e.grand.accueil) : '';
+  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}${pseudo}</div>`;
 }
