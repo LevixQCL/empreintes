@@ -55,6 +55,6 @@ export function htmlTitre(introVue: boolean, mouvement: boolean, variante: 'jeu'
     + (mouvement ? particules('cristal') : '')
     + `<div class="titre-voile" aria-hidden="true"></div>`
     + `<header class="titre-haut"><h1 class="titre-nom">${LOGOTYPE}</h1>`
-    + `<p class="titre-sous">2121 · La mer monte. Le passé dort en dessous.</p></header>`
+    + `<p class="titre-sous">2121 · Sous les eaux, d’autres se souviennent encore.</p></header>`
     + basTitre(introVue, variante) + `</section>`;
 }

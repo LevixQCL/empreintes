@@ -45,7 +45,7 @@ function reculer(): boolean {
 /** Partage natif sur téléphone ; sinon le lien est copié */
 async function partager(bouton: HTMLElement) {
   const url = location.href.split('#')[0]!;
-  const donnees = { title: 'EMPREINTES', text: '2121. La mer monte. Le passé dort en dessous.', url };
+  const donnees = { title: 'EMPREINTES', text: '2121. Sous les eaux, d’autres se souviennent encore.', url };
   if (navigator.share) {
     try { await navigator.share(donnees); } catch { /* partage annulé */ }
     return;
