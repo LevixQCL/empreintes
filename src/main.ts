@@ -34,6 +34,7 @@ import { activerCartes } from './ui/carte';
 import { NOMS_RARETE } from './core/collection';
 import { trouveesDe, type OngletGuide } from './ui/guide';
 import { comparer, montrer, relever } from './ui/gains';
+import { initInstallation, installer } from './ui/installer';
 import './ui/gains.css';
 import './ui/rail.css';
 import './ui/panneau-district.css';
@@ -415,6 +416,7 @@ racine.addEventListener('click', async (ev) => {
       D.bulles = 0;
       sauver();
       break;
+    case 'installer': ev.stopPropagation(); await installer(); afficher(); return;
     case 'intro': plan = 0; lignesVues = 1; texteCache = false; mode = 'intro'; D.menu = false; break;
 
     // district
@@ -652,5 +654,6 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) { J.
 K.fin = null;
 afficher();
 demarrerCompte();
+initInstallation(() => { if (mode === 'titre') afficher(); });
 // pour essayer les gains à la main pendant le développement (absent du site publié)
 if (import.meta.env.DEV) Object.assign(window, { __gains: { montrer } });

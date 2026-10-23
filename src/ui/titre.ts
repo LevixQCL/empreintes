@@ -3,6 +3,7 @@
 
 import { particules } from './intro';
 import { LOGOTYPE } from './logotype';
+import { peutInstaller } from './installer';
 import './debut.css';
 
 /** passe à true quand public/intro/00-titre.webp est déposée */
@@ -44,6 +45,7 @@ function basTitre(introVue: boolean, variante: 'jeu' | 'teaser' | 'fin'): string
     + `<small class="titre-version">Teaser</small></div>`;
   return `<div class="titre-bas"><button type="button" class="prim titre-go" data-action="titre-jouer">${introVue ? 'Reprendre' : 'Commencer'}</button>`
     + `<div class="titre-sec">${introVue ? `<button type="button" class="btn-sec" data-action="intro">Revoir l’intro</button>` : ''}<button type="button" class="btn-sec" data-action="bibliotheque">Chroniques</button></div>`
+    + (peutInstaller() ? `<button type="button" class="titre-installer" data-action="installer"><img src="./favicon-32.png" alt="" width="16" height="16">Installer le jeu sur l’écran d’accueil</button>` : '')
     + `<small class="titre-version">Alpha</small></div>`;
 }
 

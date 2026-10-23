@@ -180,3 +180,23 @@
 @media (prefers-reduced-motion: reduce){
   .bf-corps,.bf .demo-rail .geste,.bf .demo-calcul .reso,.bf .aide-faux,.bf .repere,.bf-bas .appel-porte{animation:none}
 }
+
+/* « Installer le jeu » sur l'écran titre, et la fiche des consignes (iPhone, ou navigateur sans fenêtre d'installation) */
+#app .titre-installer{display:inline-flex;align-items:center;gap:8px;margin-top:2px;padding:8px 14px;border:0;border-radius:999px;
+  background:rgba(127,212,255,.1);box-shadow:inset 0 0 0 1px rgba(127,212,255,.35);color:#CFEAFF;font:600 13px/1 var(--body);cursor:pointer}
+#app .titre-installer:hover{background:rgba(127,212,255,.18)}
+#app .titre-installer img{width:16px;height:16px}
+#consignes-install{position:fixed;inset:0;z-index:9500;display:grid;place-items:end center;padding:16px;background:rgba(3,5,10,.72);
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);animation:ci-fondu .25s ease-out}
+@keyframes ci-fondu{from{opacity:0}}
+#consignes-install .ci-carte{width:min(100%,380px);padding:22px 20px 18px;border-radius:16px;text-align:center;color:var(--ink,#F3EEE4);
+  background:linear-gradient(180deg,#1A2132,#0E121C);box-shadow:inset 0 0 0 1px rgba(127,212,255,.25),0 20px 60px rgba(0,0,0,.6);
+  animation:ci-monte .35s cubic-bezier(.2,.8,.3,1.1)}
+@keyframes ci-monte{from{transform:translateY(40px);opacity:0}}
+#consignes-install img{border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.5)}
+#consignes-install h2{margin:12px 0 6px;font:400 22px/1.2 var(--display,serif)}
+#consignes-install p{margin:0 0 12px;font-size:14px;line-height:1.45;color:#C9D3E0}
+#consignes-install ol{margin:0 0 16px;padding:0 0 0 22px;text-align:left;font-size:15px;line-height:1.7}
+#consignes-install ol svg{vertical-align:-4px;color:#7FD4FF}
+#consignes-install button{width:100%;min-height:46px}
+@media (min-width:700px){#consignes-install{place-items:center}}
