@@ -77,3 +77,79 @@
 @media (prefers-reduced-motion:reduce){
   .gain-recu,.gv-rayons,.gain-revele::after{animation:none}
 }
+
+/* ---------- l'importance se voit (23 octobre 2026) ---------- */
+/* palier 2 : grosse somme, Éclats, cuivre, niveau : l'étiquette est plus grande et le reçu scintille */
+.gain-etiquette.fort{padding:7px 16px 7px 8px;box-shadow:0 0 0 1px rgba(0,0,0,.5),0 10px 26px rgba(0,0,0,.6),0 0 40px 0 var(--teinte,var(--gold))}
+.gain-etiquette.fort b{font-size:25px}
+.gain-etiquette.fort .ico{width:34px;height:34px}
+.gain-revele.p2{border-color:var(--accent);box-shadow:0 0 0 1px rgba(0,0,0,.55),0 16px 40px rgba(0,0,0,.6),0 0 56px -6px var(--accent)}
+.gain-revele.p2 .gv-rayons{opacity:.7;animation-duration:4s}
+.gain-revele.p2::after{animation-iteration-count:2}
+
+/* ---------- la grande révélation : argent, or, nacre, nouveau Porteur ---------- */
+.gr{position:absolute;inset:0;pointer-events:auto;cursor:pointer;--accent:#DDE3EC;color:var(--ink)}
+.gr-voile{position:absolute;inset:0;background:radial-gradient(70% 55% at 50% 42%,color-mix(in srgb,var(--accent) 18%,rgba(6,8,12,.95)),rgba(4,5,8,.97));-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  animation:gr-fondu .35s ease-out both}
+@keyframes gr-fondu{from{opacity:0}}
+.gr-flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 42%,#fff,color-mix(in srgb,var(--accent) 70%,#fff) 40%,transparent 80%);opacity:0;pointer-events:none}
+.gr-rayons{position:absolute;left:50%;top:42%;width:170vmax;height:170vmax;margin:-85vmax 0 0 -85vmax;opacity:0;pointer-events:none;
+  background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--accent) 55%,transparent) 0 5deg,transparent 5deg 18deg);
+  -webkit-mask:radial-gradient(closest-side,#000 8%,transparent 70%);mask:radial-gradient(closest-side,#000 8%,transparent 70%);
+  transition:opacity .5s ease-out;animation:gain-tourne 16s linear infinite}
+.gr-halo{position:absolute;left:50%;top:42%;width:120vmin;height:120vmin;margin:-60vmin 0 0 -60vmin;opacity:0;pointer-events:none;
+  background:radial-gradient(closest-side,color-mix(in srgb,var(--accent) 70%,transparent),transparent);transition:opacity .4s ease-out}
+.gr.charge .gr-halo{opacity:.35;transition-duration:1.2s}
+.gr.revelee .gr-rayons{opacity:.55}
+.gr.revelee .gr-halo{opacity:.6;animation:gr-pouls 2.4s ease-in-out infinite}
+.gr.p4.revelee .gr-rayons{opacity:.8}
+.gr.p5.revelee .gr-rayons{opacity:.9;background:repeating-conic-gradient(from 0deg,hsl(0 90% 75% / .5) 0 5deg,transparent 5deg 12deg,hsl(120 90% 75% / .5) 12deg 17deg,transparent 17deg 24deg,hsl(240 90% 80% / .5) 24deg 29deg,transparent 29deg 36deg);animation-duration:10s}
+@keyframes gr-pouls{50%{transform:scale(1.08)}}
+
+.gr-pose{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);perspective:1100px}
+.gr-carte{position:relative;width:min(58vw,250px);aspect-ratio:3/4;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.3,1.5,.5,1)}
+.gr-carte.rond{width:min(52vw,220px);aspect-ratio:1}
+.gr-carte.ouverte{transform:rotateY(180deg)}
+.gr-face{position:absolute;inset:0;border-radius:14px;overflow:hidden;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.gr-carte.rond .gr-face{border-radius:50%}
+.gr-dos{display:grid;place-items:center;border:3px solid #6E5A35;
+  background:radial-gradient(circle at 50% 45%,#2A3550,#0E1220 70%);box-shadow:0 18px 40px rgba(0,0,0,.7)}
+.gr-dos img{width:46%;border-radius:18%;filter:drop-shadow(0 0 14px rgba(127,212,255,.6))}
+.gr.charge .gr-dos{box-shadow:0 18px 40px rgba(0,0,0,.7),0 0 70px 6px var(--accent);border-color:var(--accent);transition:box-shadow var(--charge,1s) ease-in,border-color .3s}
+.gr-recto{transform:rotateY(180deg);background:#151a24;border:4px solid var(--accent);
+  box-shadow:0 0 0 1px rgba(0,0,0,.7),0 22px 50px rgba(0,0,0,.7),0 0 80px 4px var(--accent)}
+.gr-recto img{width:100%;height:100%;object-fit:cover;display:block}
+.gr-carte.rond .gr-recto img{object-position:50% 18%}
+.gr-recto i{display:grid;place-items:center;height:100%;font:400 64px var(--display);font-style:normal}
+/* un reflet qui traverse la carte retournée */
+.gr-recto::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.45) 48%,transparent 60%);transform:translateX(-130%)}
+.gr.revelee .gr-recto::after{animation:gr-reflet 1.2s .5s ease-out forwards}
+.gr.p5.revelee .gr-recto::after{animation:gr-reflet 1.4s .5s ease-out 3}
+@keyframes gr-reflet{to{transform:translateX(130%)}}
+/* l'or et la nacre gardent une bordure vivante */
+.gr.p4 .gr-recto{border-width:5px}
+.gr.p5 .gr-recto{border:5px solid transparent;background:linear-gradient(#151a24,#151a24) padding-box,conic-gradient(from var(--tour,0deg),#ffb3c7,#ffe9a8,#b6ffd9,#a9d8ff,#d8b8ff,#ffb3c7) border-box;animation:gr-irise 3s linear infinite}
+@property --tour{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes gr-irise{to{--tour:360deg}}
+
+.gr-texte{position:absolute;left:50%;top:calc(42% + min(58vw,250px) * .67 + 26px);transform:translateX(-50%);width:min(92vw,420px);text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0}
+.gr-carte.rond ~ .gr-texte,.gr.porteur .gr-texte{top:calc(42% + min(52vw,220px) * .5 + 26px)}
+.gr.revelee .gr-texte{animation:gr-texte .5s .35s cubic-bezier(.2,.8,.3,1.2) forwards}
+@keyframes gr-texte{from{opacity:0;transform:translate(-50%,16px) scale(.9)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+.gr-texte small{font:600 12px/1 var(--body);letter-spacing:.28em;text-transform:uppercase;color:var(--accent);text-shadow:0 0 14px var(--accent)}
+.gr-texte strong{font:400 32px/1.1 var(--display);color:#fff;text-shadow:0 2px 0 #000,0 0 24px color-mix(in srgb,var(--accent) 70%,transparent)}
+.gr.p5 .gr-texte small{background:linear-gradient(90deg,#ffb3c7,#ffe9a8,#b6ffd9,#a9d8ff,#d8b8ff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+.gr-texte em{font:500 13px/1.2 var(--body);font-style:normal;color:var(--ink-2)}
+.gr-suite{margin-top:14px;font:500 12px/1 var(--body);color:var(--quiet);opacity:0;animation:gr-fondu-in .6s 1.4s forwards}
+@keyframes gr-fondu-in{to{opacity:.85}}
+.gr.sort .gr-texte,.gr.sort .gr-rayons,.gr.sort .gr-halo{opacity:0;transition:opacity .25s}
+
+.gr-eclat{position:absolute;border-radius:2px;pointer-events:none;will-change:transform,opacity}
+.gr-onde{position:absolute;left:50%;top:42%;width:min(58vw,250px);aspect-ratio:1;border-radius:50%;pointer-events:none;
+  border:3px solid var(--accent);box-shadow:0 0 30px var(--accent),inset 0 0 30px var(--accent)}
+
+@media (prefers-reduced-motion:reduce){
+  .gr-rayons,.gr.revelee .gr-halo,.gr.p5 .gr-recto{animation:none}
+  .gr-carte{transition:none}
+}

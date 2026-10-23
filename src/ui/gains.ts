@@ -120,15 +120,32 @@ export function montrer(gains: Gain[], depart?: { x: number; y: number }) {
   const reveles = gains.filter((g) => g.kind !== 'res');
   if (!reveles.length) { vibrer(12); return; }
   vibrer([14, 40, 22]);
-  // au plus 4 nouvelles cartes en grand ; au-delà, elles rejoignent le paquet des doublons
-  const nouvelles = reveles.filter((g): g is Extract<Gain, { kind: 'carte' }> => g.kind === 'carte');
-  const surplus = nouvelles.slice(4).map((g) => g.cle);
-  for (const g of reveles) {
-    if (g.kind === 'carte' && surplus.includes(g.cle)) continue;
-    const r = g.kind === 'doublons' ? { ...g, cles: [...surplus, ...g.cles] } : g;
-    file = file.then(() => devoiler(r));
+  // au plus 4 nouvelles cartes de fer ou de cuivre en reçu ; au-delà, elles rejoignent le paquet des doublons
+  // (une carte rare a toujours sa propre révélation, même dans un gros butin)
+  const communes = reveles.filter((g): g is Extract<Gain, { kind: 'carte' }> => g.kind === 'carte' && palier(g) < 3);
+  const surplus = communes.slice(4).map((g) => g.cle);
+  let liste = reveles.filter((g) => !(g.kind === 'carte' && surplus.includes(g.cle)))
+    .map((g) => (g.kind === 'doublons' ? { ...g, cles: [...surplus, ...g.cles] } : g));
+  if (surplus.length && !liste.some((g) => g.kind === 'doublons')) liste.push({ kind: 'doublons', cles: surplus });
+  // du plus modeste au plus précieux : le clou du butin arrive en dernier
+  liste = liste.sort((a, b) => palier(a) - palier(b));
+  for (const g of liste) {
+    const p = palier(g);
+    file = file.then(() => ((g.kind === 'carte' || g.kind === 'porteur') && p >= 3 ? grandeRevelation(g, p) : devoiler(g)));
   }
-  if (surplus.length && !reveles.some((g) => g.kind === 'doublons')) file = file.then(() => devoiler({ kind: 'doublons', cles: surplus }));
+}
+
+// ---------- L'importance d'un gain ----------
+// Plus c'est rare, plus ça se voit (décision du 23 octobre 2026) :
+// 1 fer, doublons, petites sommes · 2 cuivre, niveau, grosse somme, Éclats · 3 argent · 4 or, nouveau Porteur · 5 nacre.
+const PALIER_METAL: Record<Rarete, number> = { fer: 1, cuivre: 2, argent: 3, or: 4, nacre: 5 };
+export function palier(g: Gain): number {
+  if (g.kind === 'carte') return PALIER_METAL[moduleDef(g.cle).rarete];
+  if (g.kind === 'porteur') return 4;
+  if (g.kind === 'niveaux') return 2;
+  if (g.kind === 'doublons') return Math.max(1, Math.max(...g.cles.map((c) => PALIER_METAL[moduleDef(c).rarete])) - 1);
+  if (g.r === 'eclats' || g.r === 'cartes') return 2;
+  return g.n >= 100 ? 2 : 1;
 }
 
 // ---------- Les ressources qui volent jusqu'à leur compteur ----------
@@ -141,8 +158,9 @@ function volerRessource(g: Extract<Gain, { kind: 'res' }>, d: { x: number; y: nu
   const nom = NOMS[g.r][g.n > 1 ? 1 : 0];
 
   // l'étiquette « +12 composants » : elle jaillit, puis monte doucement et s'efface
+  const fort = palier(g) >= 2;
   const lab = document.createElement('div');
-  lab.className = `gain-etiquette g-${g.r}`;
+  lab.className = `gain-etiquette g-${g.r}${fort ? ' fort' : ''}`;
   lab.innerHTML = `${ico}<b>+${ent(g.n)}</b><span>${nom}</span>`;
   lab.style.left = `${d.x}px`;
   lab.style.top = `${d.y}px`;
@@ -160,7 +178,7 @@ function volerRessource(g: Extract<Gain, { kind: 'res' }>, d: { x: number; y: nu
   if (!fin || reduit()) { if (cible) setTimeout(() => recevoir(cible, g), retard + 300); return; }
 
   // une gerbe de petites icônes peintes, qui s'égaillent puis filent vers le compteur
-  const nb = Math.max(3, Math.min(8, Math.round(2 + Math.log2(g.n + 1))));
+  const nb = Math.max(3, Math.min(fort ? 14 : 8, Math.round(2 + Math.log2(g.n + 1)) + (fort ? 4 : 0)));
   let arrivees = 0;
   for (let i = 0; i < nb; i++) {
     const p = document.createElement('div');
@@ -253,7 +271,7 @@ function devoiler(g: Exclude<Gain, { kind: 'res' }>): Promise<void> {
     const { html, onglet, classe } = contenu(g);
     const el = document.createElement('button');
     el.type = 'button';
-    el.className = `gain-revele ${classe}`;
+    el.className = `gain-revele ${classe} p${palier(g)}`;
     el.innerHTML = `<span class="gv-rayons" aria-hidden="true"></span>${html}`;
     c.appendChild(el);
     let parti = false;
@@ -287,4 +305,144 @@ function devoiler(g: Exclude<Gain, { kind: 'res' }>): Promise<void> {
       ], { duration: 420, easing: 'cubic-bezier(.2,.8,.3,1.2)', fill: 'both' });
     const minuteur = window.setTimeout(partir, g.kind === 'doublons' ? 1700 : 2300);
   });
+}
+
+// ---------- La grande révélation : carte d'argent, d'or, de nacre, nouveau Porteur ----------
+// Le voile tombe, la carte arrive face cachée, tremble de plus en plus longtemps selon sa rareté, puis un éclair :
+// elle se retourne dans une gerbe d'éclats, des ondes de choc (or, nacre) et une secousse de l'écran.
+// On la range d'un toucher (ou toute seule après quelques secondes).
+
+const NOM_PALIER: Record<number, string> = { 3: 'Rare', 4: 'Très rare', 5: 'Légendaire' };
+const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+function grandeRevelation(g: Extract<Gain, { kind: 'carte' | 'porteur' }>, p: number): Promise<void> {
+  return new Promise((fini) => {
+    const c = calque();
+    const carte = g.kind === 'carte' ? moduleDef(g.cle) : null;
+    const accent = carte ? COULEUR_METAL[carte.rarete] : '#7FD4FF';
+    const img = carte ? illustrationModule(g.kind === 'carte' ? g.cle : '') : portrait(g.kind === 'porteur' ? g.id : '');
+    const nom = carte ? carte.nom : porteurDef((g as { id: string }).id).nom;
+    const sur = carte ? `Carte ${carte.rarete === 'or' ? 'd’or' : carte.rarete === 'argent' ? 'd’argent' : 'de nacre'} · ${NOM_PALIER[p]}` : 'Nouveau Porteur';
+    const sous = carte ? 'Nouvelle carte' : 'rejoint le district';
+    const el = document.createElement('div');
+    el.className = `gr p${p}${carte ? ` metal-${carte.rarete}` : ' porteur'}`;
+    el.style.setProperty('--accent', accent);
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-label', `${sur} : ${nom}`);
+    el.innerHTML = `<div class="gr-voile"></div><div class="gr-rayons"></div><div class="gr-halo"></div><div class="gr-flash"></div>`
+      + `<div class="gr-pose"><div class="gr-carte${carte ? '' : ' rond'}">`
+      + `<div class="gr-face gr-dos"><img src="./icon.svg" alt=""></div>`
+      + `<div class="gr-face gr-recto">${img ? `<img src="${img}" alt="">` : `<i>${echap(nom.charAt(0))}</i>`}</div></div></div>`
+      + `<div class="gr-texte"><small>${echap(sur)}</small><strong>${echap(nom)}</strong><em>${echap(sous)}</em><span class="gr-suite">Touche pour continuer</span></div>`;
+    c.appendChild(el);
+    const carteEl = el.querySelector<HTMLElement>('.gr-carte')!;
+    const pose = el.querySelector<HTMLElement>('.gr-pose')!;
+    let pret = false, parti = false;
+
+    const ranger = () => {
+      if (!pret || parti) return;
+      parti = true;
+      clearTimeout(auto);
+      const tab = document.querySelector(`#app .nav [data-action="${carte ? 'cartes' : 'porteurs'}"]`);
+      const r = pose.getBoundingClientRect();
+      const fin = tab && !reduit() ? centreDe(tab) : null;
+      el.classList.add('sort');
+      const a = fin
+        ? pose.animate([{ transform: 'translate(-50%, -50%) scale(1)' }, { transform: `translate(calc(-50% + ${fin.x - (r.left + r.width / 2)}px), calc(-50% + ${fin.y - (r.top + r.height / 2)}px)) scale(.08)`, opacity: 0.3 }],
+          { duration: 520, easing: 'cubic-bezier(.5,0,.75,.3)', fill: 'forwards' })
+        : pose.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 260, fill: 'forwards' });
+      a.finished.then(() => {
+        el.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 220, fill: 'forwards' }).finished.then(() => el.remove(), () => el.remove());
+        if (tab) { tab.classList.remove('gain-recu'); void (tab as HTMLElement).offsetWidth; tab.classList.add('gain-recu'); setTimeout(() => tab.classList.remove('gain-recu'), 900); }
+        fini();
+      }, () => { el.remove(); fini(); });
+    };
+    el.addEventListener('click', ranger);
+    let auto = 0;
+
+    (async () => {
+      if (reduit()) {
+        carteEl.classList.add('ouverte');
+        el.classList.add('revelee');
+        pret = true;
+        auto = window.setTimeout(ranger, 6000);
+        return;
+      }
+      // 1. la carte arrive face cachée
+      pose.animate([{ transform: 'translate(-50%, 40vh) scale(.5) rotate(-8deg)', opacity: 0 }, { transform: 'translate(-50%, -50%) scale(1) rotate(0)', opacity: 1 }],
+        { duration: 520, easing: 'cubic-bezier(.2,.8,.3,1.1)', fill: 'both' });
+      await pause(560);
+      // 2. le suspense : elle tremble et s'illumine, plus longtemps pour les plus rares
+      const suspense = p >= 5 ? 1700 : p >= 4 ? 1100 : 550;
+      el.classList.add('charge');
+      carteEl.style.setProperty('--charge', `${suspense}ms`);
+      const amp = p >= 5 ? 5 : p >= 4 ? 3.5 : 2;
+      const pas: Keyframe[] = [];
+      for (let i = 0; i <= 12; i++) { const k = i / 12; const a = amp * (0.3 + k) * (i % 2 ? 1 : -1); pas.push({ transform: `rotate(${a}deg) scale(${1 + 0.06 * k})`, offset: k }); }
+      carteEl.animate(pas, { duration: suspense, easing: 'ease-in', fill: 'forwards' });
+      const ticks = Math.round(suspense / 260);
+      for (let i = 0; i < ticks; i++) setTimeout(() => vibrer(8 + i * 4), i * 260);
+      await pause(suspense);
+      // 3. l'éclair, le retournement, la gerbe
+      carteEl.getAnimations().forEach((a) => a.cancel());
+      el.classList.remove('charge');
+      el.querySelector<HTMLElement>('.gr-flash')!.animate([{ opacity: 0 }, { opacity: p >= 4 ? 0.95 : 0.7, offset: 0.25 }, { opacity: 0 }], { duration: p >= 4 ? 700 : 450, easing: 'ease-out' });
+      carteEl.classList.add('ouverte');
+      el.classList.add('revelee');
+      vibrer(p >= 5 ? [60, 40, 90, 40, 140] : p >= 4 ? [50, 40, 100] : [40, 30, 60]);
+      eclats(el, p, accent);
+      for (let i = 0; i < p - 3; i++) onde(el, i * 220);
+      if (p >= 4) secouer(p);
+      await pause(900);
+      pret = true;
+      auto = window.setTimeout(ranger, p >= 5 ? 9000 : 7000);
+    })();
+  });
+}
+
+/** la gerbe d'éclats, à la couleur du métal (toutes les couleurs pour la nacre) */
+function eclats(el: HTMLElement, p: number, accent: string) {
+  const n = p >= 5 ? 70 : p >= 4 ? 46 : 26;
+  const cx = innerWidth / 2, cy = innerHeight * 0.42;
+  for (let i = 0; i < n; i++) {
+    const e = document.createElement('i');
+    e.className = 'gr-eclat';
+    const couleur = p >= 5 ? `hsl(${Math.round(Math.random() * 360)} 90% 78%)` : Math.random() < 0.3 ? '#FFF6DA' : accent;
+    e.style.background = couleur;
+    e.style.boxShadow = `0 0 8px ${couleur}`;
+    e.style.left = `${cx}px`;
+    e.style.top = `${cy}px`;
+    const taille = 5 + Math.random() * (p >= 4 ? 10 : 7);
+    e.style.width = `${taille}px`;
+    e.style.height = `${taille * (Math.random() < 0.5 ? 2.4 : 1)}px`;
+    el.appendChild(e);
+    const angle = Math.random() * Math.PI * 2;
+    const loin = (0.25 + Math.random() * 0.5) * Math.min(innerWidth, innerHeight) * (p >= 4 ? 1 : 0.75);
+    const x = Math.cos(angle) * loin, y = Math.sin(angle) * loin;
+    const t = 1300 + Math.random() * 1200;
+    const rot = Math.round(Math.random() * 720 - 360);
+    e.animate([
+      { transform: 'translate(-50%, -50%) scale(.2) rotate(0)', opacity: 1 },
+      { transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(1) rotate(${rot / 2}deg)`, opacity: 1, offset: 0.45, easing: 'cubic-bezier(.3,.6,.5,1)' },
+      { transform: `translate(calc(-50% + ${x * 1.1}px), calc(-50% + ${y + 120}px)) scale(.6) rotate(${rot}deg)`, opacity: 0 },
+    ], { duration: t, easing: 'cubic-bezier(.1,.8,.3,1)', fill: 'forwards' }).finished.then(() => e.remove(), () => e.remove());
+  }
+}
+
+/** une onde de choc qui part de la carte (or et nacre) */
+function onde(el: HTMLElement, retard: number) {
+  const o = document.createElement('i');
+  o.className = 'gr-onde';
+  el.appendChild(o);
+  o.animate([{ transform: 'translate(-50%, -50%) scale(.2)', opacity: 0.9 }, { transform: 'translate(-50%, -50%) scale(3.2)', opacity: 0 }],
+    { duration: 900, delay: retard, easing: 'cubic-bezier(.2,.7,.3,1)', fill: 'both' }).finished.then(() => o.remove(), () => o.remove());
+}
+
+/** l'écran tremble un instant (or et nacre) */
+function secouer(p: number) {
+  const app = document.getElementById('app');
+  if (!app) return;
+  const a = p >= 5 ? 9 : 6;
+  app.animate([0, 1, 2, 3, 4, 5, 6].map((i) => ({ transform: i === 6 ? 'none' : `translate(${(i % 2 ? 1 : -1) * a * (1 - i / 6)}px, ${(i % 3 - 1) * a * 0.6 * (1 - i / 6)}px)` })),
+    { duration: 380, easing: 'ease-out' });
 }
