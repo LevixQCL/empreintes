@@ -169,7 +169,7 @@ function plaques(e: EcranDistrict): string {
     const pos = `style="left:${left}%;top:${top}%"`;
     if (estFutur(id)) {
       return `<button type="button" class="plaque futur${e.selection === id ? ' choisie' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(LIEUX_FUTURS[id].nom)}, pas encore ouvert">`
-        + `<span class="plaque-nom">${echap(LIEUX_FUTURS[id].nom)}</span><small>Pas encore ouvert</small></button>`;
+        + `<span class="plaque-nom">${echap(LIEUX_FUTURS[id].nom)}</span></button>`;
     }
     const d = batimentDef(id);
     const prete = id === 'forge' && !!j.forge && e.now >= j.forge.fin;
@@ -181,16 +181,17 @@ function plaques(e: EcranDistrict): string {
     else if (id === 'comptoir') {
       // le Comptoir : à construire, ou ce qui reste en vente aujourd'hui
       const reste = j.comptoir.offres.length - j.comptoir.achetes.length;
-      etat = !j.batiments.comptoir ? `<small class="vacant">${ICO.marteau}À construire</small>`
+      etat = !j.batiments.comptoir ? ''
         : reste > 0 ? `<small class="occupe">${ICO.cartes}${reste} en vente</small>` : `<small>${ICO.ok}Tout vendu</small>`;
     }
-    else if (id === 'noyau') etat = occupant ? `<small class="occupe">${avatar(occupant, 14)}${echap(porteurDef(occupant).nom)} s’entraîne</small>` : '';
     else if (prete) etat = `<small class="pret">${ICO.ok}Prêt</small>`;
     else if (j.forge && id === 'forge') etat = `<small>${ICO.chrono}${duree(j.forge.fin - e.now)}</small>`;
-    else if (!occupant) etat = `<small class="vacant">${ICO.ouvrier}Personne</small>`;
-    else if (occupant) etat = `<small class="occupe">${avatar(occupant, 14)}${echap(porteurDef(occupant).nom)}</small>`;
-    return `<button type="button" class="plaque${e.selection === id ? ' choisie' : ''}${vise ? ' visee' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(d.nom)}${j.batiments[id] ? `, niveau ${j.batiments[id]}` : ', à construire'}">`
-      + `<span class="plaque-nom">${j.batiments[id] ? `<b class="niv">${j.batiments[id]}</b>` : ''}${echap(d.nom)}</span>${etat}${prete || vise ? '<i class="pastille-alerte" aria-hidden="true"></i>' : ''}</button>`;
+    // le travailleur : un petit médaillon, vide si personne, avec son visage sinon (23 octobre 2026, Bryan : les noms prenaient trop de place sur téléphone)
+    const med = id === 'comptoir' || !j.batiments[id] || (id === 'noyau' && !occupant) ? ''
+      : occupant ? `<span class="poste-med" title="${echap(porteurDef(occupant).nom)}">${avatar(occupant, 22)}</span>`
+      : `<span class="poste-med vide" title="Personne au poste">${ICO.ouvrier}</span>`;
+    return `<button type="button" class="plaque${e.selection === id ? ' choisie' : ''}${vise ? ' visee' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(d.nom)}${j.batiments[id] ? `, niveau ${j.batiments[id]}` : ', à construire'}${occupant ? `, ${echap(porteurDef(occupant).nom)} au poste` : med ? ', personne au poste' : ''}">`
+      + `<span class="plaque-nom">${j.batiments[id] ? `<b class="niv">${j.batiments[id]}</b>` : `<b class="niv a-construire" title="À construire">${ICO.marteau}</b>`}${echap(d.nom)}${med}</span>${etat}${prete || vise ? '<i class="pastille-alerte" aria-hidden="true"></i>' : ''}</button>`;
   }).join('');
 }
 
