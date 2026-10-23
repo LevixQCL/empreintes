@@ -78,7 +78,7 @@ const K: { verrou: boolean; regles: boolean; fuite: boolean; guide: OngletGuide 
 // ---------- Rendu ----------
 
 /** zones qui défilent toutes seules : on garde leur position d'un rendu à l'autre (le district se redessine chaque seconde) */
-const DEFILANTS = '.feuille-corps, .rangee, .main, .rail';
+const DEFILANTS = ['.feuille-corps', '.rangee', '.main', '.rail', '.fb-rangee', '.cl-filtres', '.es-cibles'];
 /** une feuille, une fenêtre ou un message ne s'animent qu'à leur apparition */
 function cles(): Record<string, string> {
   const t = (sel: string) => racine.querySelector(sel)?.querySelector('h2')?.textContent ?? racine.querySelector(sel)?.textContent ?? '';
@@ -114,13 +114,14 @@ function afficher() {
       : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : D.vue === 'classements' ? htmlClassements(D, G, uid) : htmlArchipel(D);
   }
   racine.dataset.mode = mode;
-  const defile = [...racine.querySelectorAll<HTMLElement>(DEFILANTS)].map((el) => [el.scrollTop, el.scrollLeft] as const);
+  // chaque sorte de zone garde ses positions à part : une liste qui apparaît ou disparaît ne décale pas les autres
+  const defile = DEFILANTS.map((sel) => [...racine.querySelectorAll<HTMLElement>(sel)].map((el) => [el.scrollTop, el.scrollLeft] as const));
   const avant = cles();
   const places = noter(racine);
   horloge(racine);
   if (!(mode === 'intro' && majIntro(racine, h, reduit))) racine.innerHTML = h;
   glisser(racine, places);
-  racine.querySelectorAll<HTMLElement>(DEFILANTS).forEach((el, i) => { const d = defile[i]; if (d) { el.scrollTop = d[0]; el.scrollLeft = d[1]; } });
+  DEFILANTS.forEach((sel, k) => racine.querySelectorAll<HTMLElement>(sel).forEach((el, i) => { const d = defile[k]?.[i]; if (d) { el.scrollTop = d[0]; el.scrollLeft = d[1]; } }));
   for (const [sel, cle] of Object.entries(cles())) if (cle && cle !== avant[sel]) racine.querySelector(sel)?.classList.add('entre');
   document.body.classList.toggle('fige', !!racine.querySelector('.feuille, .voile'));
   if (mode === 'district') { activerCartes(racine); brancherTableau(racine); }
@@ -806,6 +807,10 @@ racine.addEventListener('click', async (ev) => {
 // ---------- Le temps qui passe ----------
 
 let dernierRendu = 0;
+/** le dernier contact ou défilement du joueur : le redessin automatique attend qu'il ait fini */
+let dernierGeste = 0;
+for (const t of ['touchstart', 'touchmove', 'pointerdown', 'wheel'] as const) racine.addEventListener(t, () => { dernierGeste = Date.now(); }, { passive: true, capture: true });
+racine.addEventListener('scroll', () => { dernierGeste = Date.now(); }, { passive: true, capture: true });
 setInterval(() => {
   const avantTick = relever(jeu);
   const nouvelles = J.tick(jeu, Date.now());
@@ -814,8 +819,9 @@ setInterval(() => {
   const vite = !!jeu.forge || jeu.chantiers.length > 0 || nouvelles.length > 0;
   if (vite || Date.now() - dernierRendu > 15_000) {
     dernierRendu = Date.now();
-    // ne pas redessiner pendant que le joueur tape dans le panneau Compte
-    if (document.activeElement?.tagName !== 'INPUT') {
+    // ne pas redessiner pendant que le joueur tape dans le panneau Compte, ni pendant qu'il fait défiler une liste
+    // (un redessin en plein glissement couperait le geste et ramènerait la liste au début)
+    if (document.activeElement?.tagName !== 'INPUT' && Date.now() - dernierGeste > 2500) {
       afficher();
       // la Forge qui livre, une mission qui rentre, un Porteur qui arrive : sans la production d'énergie, qui coule toute seule
       if (nouvelles.length) montrer(comparer(avantTick, relever(jeu), { energie: false }));
