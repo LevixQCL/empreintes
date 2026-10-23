@@ -54,6 +54,8 @@ export interface EcranDistrict {
   place?: number | null;
   /** le mode d'emploi des cartes est ouvert, sur cet onglet (guide.ts) */
   guide: import('./guide').OngletGuide | null;
+  /** sur téléphone, le panneau du district (objectif, confiance, Archive, marché) est replié (par défaut) */
+  panneauReplie?: boolean;
   /** le Grand Tableau (classements.ts) et l'identifiant du compte connecté */
   grand?: import('./classements').GrandTableau;
   uid?: string | null;

@@ -229,7 +229,11 @@ function mission(e: EcranDistrict): string {
   // Les éléments « pc » ne s'affichent que sur PC, les « mob » que sur téléphone.
   const points = Math.min(j.archive.points, max);
   const confiance = j.confiance ?? 50;
-  let h = `<section class="mission jour${quotidienFait(j) ? ' faite' : ''}" aria-label="Objectif du jour"><div class="mj-obj">`;
+  // sur téléphone, le panneau se replie (23 octobre 2026, Bryan : « je ne sais pas fermer cette page ») : replié,
+  // il ne garde que l'objectif du jour et sa jauge ; on le touche pour tout voir. Sur PC, il reste toujours ouvert.
+  const replie = e.panneauReplie !== false;
+  let h = `<section class="mission jour${quotidienFait(j) ? ' faite' : ''}${replie ? ' replie' : ''}" aria-label="Objectif du jour">`
+    + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="${!replie}" aria-label="${replie ? 'Voir la confiance, l’Archive et le marché' : 'Réduire le panneau'}">${replie ? 'Détails' : 'Réduire'}<i aria-hidden="true">${replie ? '▾' : '▴'}</i></button><div class="mj-obj">`;
   if (quotidienActif(j)) {
     const reserve = q.reserve > 1
       ? `<span class="mj-reserve pc" title="${q.reserve} objectifs en réserve : ils s’accumulent jusqu’à 3 si tu ne joues pas">${Array.from({ length: 3 }, (_, i) => `<i class="${i < q.reserve ? 'plein' : ''}"></i>`).join('')}<small>${q.reserve} en réserve</small></span>`

@@ -70,6 +70,7 @@ const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur:
 const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, porteur: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null, guide: null };
 /** le Grand Tableau : lecture des classements en ligne, et ce qu'on a publié */
 const G: GrandTableau = tableauVide();
+try { D.panneauReplie = localStorage.getItem('empreintes.panneau') !== 'ouvert'; } catch { D.panneauReplie = true; }
 D.grand = G;
 const K: { verrou: boolean; regles: boolean; fuite: boolean; guide: OngletGuide | null; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; decouverteId?: string } = {
   verrou: false, regles: false, fuite: false, guide: null, pops: [], fin: null, etat: null, traces: {},
@@ -726,6 +727,11 @@ racine.addEventListener('click', async (ev) => {
       window.scrollTo(0, 0);
       break;
     }
+
+    case 'panneau':
+      D.panneauReplie = D.panneauReplie === false;
+      try { localStorage.setItem('empreintes.panneau', D.panneauReplie ? 'replie' : 'ouvert'); } catch { /* stockage bloqué */ }
+      break;
 
     // le Grand Tableau
     case 'classements':
