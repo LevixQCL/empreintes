@@ -66,10 +66,9 @@ describe('District', () => {
 });
 
 describe('Expédition depuis le district', () => {
-  it('un Porteur au travail ne part pas, l’Usure réduit les PV et la Clinique soigne', () => {
+  it('un Porteur au travail peut partir (son poste reste vacant), l’Usure réduit les PV et la Clinique soigne', () => {
     const j = ouvert();
     poster(j, 'ilka', 'generateur');
-    expect(partir(j, ['ilka', 'doran', 'vela'], 1).ok).toBe(false);
     expect(disponibles(j)).not.toContain('ilka');
     expect(partir(j, ['doran', 'vela', 'guetteur'], 1, 7).ok).toBe(true);
 

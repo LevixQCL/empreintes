@@ -997,14 +997,26 @@ export function escouadeVerrouillee(j: Jeu): string | null {
   return j.expedition ? 'L’escouade est en descente : elle ne change qu’au district.' : null;
 }
 
-/** Pourquoi un Porteur ne peut pas entrer dans l'escouade (null = il peut) */
+/** Pourquoi un Porteur ne peut pas entrer dans l'escouade (null = il peut).
+ * Un Porteur au travail peut entrer (demande du 23 octobre 2026) : il quitte son poste au départ, qui reste vacant
+ * (voir posteQuitte). Seuls bloquent : pas encore arrivé, en mission, ou forgeron d'une fabrication en cours. */
 export function raisonHorsEscouade(j: Jeu, id: string): string | null {
   if (!porteursPresents(j).includes(id)) return 'Pas encore arrivé au district.';
   if (enMission(j, id)) return 'En mission.';
-  const poste = j.porteurs[id]?.poste;
-  if (poste === 'noyau') return 'À l’entraînement · Tour du Noyau.';
-  if (poste) return `Au travail · ${batimentDef(poste).nom}.`;
+  if (j.porteurs[id]?.poste === 'forge' && j.forge) return 'Au travail · Forge (fabrication en cours).';
   return null;
+}
+
+/** Le poste qu'un Porteur laissera vacant s'il descend (null : il ne travaille pas) */
+export function posteQuitte(j: Jeu, id: string): Poste | null {
+  return j.porteurs[id]?.poste ?? null;
+}
+
+/** Ce que dit l'avertissement : « la Clinique restera sans Porteur », « il ne s'entraînera plus à la Tour » */
+export function textePosteQuitte(j: Jeu, id: string): string | null {
+  const b = posteQuitte(j, id);
+  if (!b) return null;
+  return b === 'noyau' ? 'quitte l’entraînement à la Tour du Noyau' : `quitte son poste : ${batimentDef(b).nom} restera vacant`;
 }
 
 /** Place un Porteur à la place `place` (0 à 2) de l'escouade. Déjà dans l'escouade : les deux échangent leur place. */
@@ -1036,11 +1048,13 @@ export function placerDansEscouade(j: Jeu, place: number, id: string): Resultat 
   return { ok: true };
 }
 
-/** Les Porteurs proposés au départ : l'escouade enregistrée, complétée par d'autres Porteurs libres si l'un d'eux ne peut pas partir */
+/** Les Porteurs proposés au départ : l'escouade enregistrée (même au travail : ils quitteront leur poste),
+ * complétée par des Porteurs libres si l'un d'eux ne peut vraiment pas partir */
 export function escouadePourDepart(j: Jeu, interdits: readonly string[] = []): string[] {
-  const libres = disponibles(j).filter((id) => !interdits.includes(id));
-  const garde = escouadeDe(j).filter((id) => libres.includes(id));
-  return [...garde, ...libres.filter((id) => !garde.includes(id))].slice(0, 3);
+  const peut = (id: string) => !interdits.includes(id) && !enExpedition(j, id) && !raisonHorsEscouade(j, id);
+  const garde = escouadeDe(j).filter(peut);
+  const libres = disponibles(j).filter((id) => peut(id) && !garde.includes(id));
+  return [...garde, ...libres].slice(0, 3);
 }
 
 // ---------- Les nouveautés (23 octobre 2026) ----------
@@ -1066,20 +1080,31 @@ export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 
 
 const refus = (message: string) => ({ ok: false as const, message });
 
+/** Au départ, ceux qui travaillaient quittent leur poste : il reste vacant jusqu'à ce qu'on y remette quelqu'un */
+function quitterPostes(j: Jeu, escouade: string[]): void {
+  for (const id of escouade) {
+    const b = j.porteurs[id]!.poste;
+    if (!b) continue;
+    j.porteurs[id]!.poste = null;
+    log(j, b === 'noyau' ? `${porteurDef(id).nom} quitte l’entraînement pour descendre.` : `${porteurDef(id).nom} quitte son poste (${batimentDef(b).nom}) pour descendre.`);
+  }
+}
+
 function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boolean, min: number = DISTRICT.deckMin):
   { ok: false; message: string } | { ok: true; message?: undefined; porteurs: PorteurEtat[]; deck: GesteDef[]; bonus: BonusMarques } {
   if (j.expedition) return refus('Une expédition est déjà en cours.');
   if (escouade.length !== 3 || new Set(escouade).size !== 3) return refus('Choisis 3 Porteurs.');
   for (const id of escouade) {
     if (!porteursPresents(j).includes(id)) return refus('Ce Porteur n’est pas encore arrivé au district.');
-    if (j.porteurs[id]?.poste) return refus(`${porteurDef(id).nom} ${j.porteurs[id]!.poste === 'noyau' ? 's’entraîne à la Tour' : 'travaille au district'}.`);
     if (enMission(j, id)) return refus(`${porteurDef(id).nom} est en mission.`);
+    if (j.porteurs[id]?.poste === 'forge' && j.forge) return refus(`${porteurDef(id).nom} ne peut pas quitter la Forge pendant une fabrication.`);
   }
   if (!j.chambre) return refus('Ouvre d’abord la chambre scellée.');
   const deck = deckEscouade(j, escouade).filter((g) => !filtre || g.porteur === null || filtre(g));
   if (deck.length < min) return refus(`Ton deck n’a que ${deck.length} cartes : confie des cartes à ton escouade (${min} au moins).`);
   const porteurs: PorteurEtat[] = escouade.map((id) => ({ id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false }));
-  return { ok: true, porteurs, deck, bonus: bonusEscouade(j, escouade) };
+  const bonus = bonusEscouade(j, escouade);
+  return { ok: true, porteurs, deck, bonus };
 }
 
 export function partir(j: Jeu, escouade: string[], strate: number, rng = graine()): Resultat {
@@ -1087,6 +1112,7 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   if (!e.ok) return e;
   if (strate < 1 || strate > j.strate) return non('Cette Strate n’est pas encore creusée.');
   // la Strate se parcourt salle par salle (exploration), jusqu'à son gardien
+  quitterPostes(j, escouade);
   j.expedition = nouvelleExploration({
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
@@ -1173,6 +1199,7 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
   if (!e.ok) return e;
   if (!CIBLES_FOUILLE[cible]) return non('Cible inconnue.');
   if (strate < 1 || strate > strateVaincue(j)) return non('On ne fouille que les Strates déjà vaincues.');
+  quitterPostes(j, escouade);
   j.expedition = nouvelleExploration({
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1, fouille: cible,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
@@ -1387,6 +1414,7 @@ export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: numbe
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   });
   if (ep.sansResonance) x.combat.sansResonance = true;
+  quitterPostes(j, escouade);
   j.expedition = { ...x, epreuve: id };
   log(j, `Épreuve de la semaine : ${ep.nom}.`);
   return { ok: true };

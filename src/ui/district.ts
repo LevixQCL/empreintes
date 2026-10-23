@@ -5,7 +5,7 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  cartesNouvelles, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, enMission, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  cartesNouvelles, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
@@ -1008,7 +1008,6 @@ function plusLongueSuite(n: number[], jokers: number): number[] {
 // puis les Porteurs disponibles. Plus de doublons (emplacements + grille + tuiles de deck) ; le deck trop maigre dit quoi faire.
 export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
-  const dispo = disponibles(j);
   const ep = e.epreuve ? epreuveDef(e.epreuve) ?? null : null;
   const fouille = ep ? null : e.fouille;
   const deck = deckEscouade(j, e.escouade).filter((g) => !ep?.filtre || g.porteur === null || ep.filtre(g)).length;
@@ -1046,6 +1045,7 @@ export function htmlEscouade(e: EcranDistrict): string {
       + `<span class="es-nom"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · PV ${pv}</small></span></button>`
       + `<button type="button" class="es-cartes${nCartes ? '' : ' aucune'}${nCartes >= DISTRICT.cartesMax ? ' pleine' : ''}" data-action="deck" data-id="${id}">${ICO.cartes}<span>${nCartes} / ${DISTRICT.cartesMax} cartes</span></button>`
       + (m ? `<button type="button" class="es-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" title="${echap(m.texte)}">${m.acquise ? ICO.ok : ICO.verrou}<span><b>${echap(m.nom)}</b> ${m.acquise ? echap(m.court) : `${Math.min(m.n, m.seuil)} / ${m.seuil} ${echap(m.quoi)}`}</span></button>` : '')
+      + (posteQuitte(j, id) ? `<span class="es-quitte">${ICO.ouvrier}<span>${echap(textePosteQuitte(j, id)!)}</span></span>` : '')
       + `</div>`;
   }).join('') + `</section>`;
 
@@ -1072,7 +1072,9 @@ export function htmlEscouade(e: EcranDistrict): string {
 
   // 4. les Porteurs disponibles, puis ceux qui ne peuvent pas partir
   const presents = PORTEURS.filter((p) => porteursPresents(j).includes(p.id));
-  const libre = (id: string) => dispo.includes(id) && !ep?.interdits?.includes(id);
+  // un Porteur au travail peut partir (demande du 23 octobre 2026) : il quitte son poste, qui reste vacant
+  const bloque = (id: string) => ep?.interdits?.includes(id) ? 'Pas pour cette Épreuve' : enExpedition(j, id) ? 'En expédition' : raisonHorsEscouade(j, id)?.replace(/\.$/, '') ?? null;
+  const libre = (id: string) => !bloque(id);
   const tuile = (pid: string) => {
     const p = porteurDef(pid);
     const ok = libre(pid);
@@ -1083,24 +1085,34 @@ export function htmlEscouade(e: EcranDistrict): string {
     const img = portrait(pid);
     const nc = d.modules.length;
     const fs = [...new Set(gestesDe(j, pid).flatMap((g) => g.fs ?? [g.f]))].sort((a, b) => a - b);
-    const raison = ep?.interdits?.includes(pid) ? 'Pas pour cette Épreuve' : enMission(j, pid) ? 'En mission' : d.poste ? `Au travail · ${echap(batimentDef(d.poste).nom)}` : 'Absent';
+    const raison = bloque(pid) ?? '';
+    const poste = d.poste;
     const blesse = d.usure >= usureMax(pid) * 0.5;
     return `<button type="button" class="es-tuile${choisi ? ' choisi' : ''}${ok || choisi ? '' : ' indispo'}" style="--c:${COULEUR[p.lignee]}" data-action="choisir" data-id="${pid}"${!ok && !choisi ? ' disabled' : ''} aria-pressed="${choisi}">`
       + `<span class="es-vignette">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : avatar(pid, 64)}${choisi ? `<span class="es-rang">${e.escouade.indexOf(pid) + 1}</span>` : ''}${blesse && ok ? '<span class="es-blesse">Blessé</span>' : ''}</span>`
       + `<strong>${echap(p.nom)}</strong><small class="es-lignee">${NOM_LIGNEE[p.lignee]}${ok || choisi ? ` · Niv. ${niveauPorteur(j, pid).niveau}` : ''}</small>`
       + (ok || choisi
         ? jaugePv(pv, pvM, d.usure, usureMax(pid)) + `<small class="es-stats">PV ${pv}/${pvM}</small><small class="es-stats${nc ? '' : ' zero'}">${nc} carte${nc > 1 ? 's' : ''}</small>`
+          + (poste ? `<small class="es-travail">${ICO.ouvrier}${poste === 'noyau' ? 'À l’entraînement' : `Au travail · ${echap(batimentDef(poste).nom)}`}</small>` : '')
           + (fs.length ? `<span class="es-puces" aria-label="Fréquences de ses cartes">${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</span>` : '')
         : `<small class="es-raison">${raison}</small>`)
       + `</button>`;
   };
   // les trois choisis sont déjà en grand plus haut : la grille ne montre que les autres
-  const prets = presents.filter((p) => libre(p.id) && !e.escouade.includes(p.id));
+  // les libres d'abord, puis ceux qui travaillent
+  const prets = presents.filter((p) => libre(p.id) && !e.escouade.includes(p.id)).sort((a, b) => Number(!!j.porteurs[a.id]!.poste) - Number(!!j.porteurs[b.id]!.poste));
   const absents = presents.filter((p) => !libre(p.id) && !e.escouade.includes(p.id));
   h += `<section class="es-porteurs"><div class="es-titre"><h3 class="titre-bloc">${ICO.porteurs}${e.escouade.length ? 'Autres Porteurs disponibles' : 'Porteurs disponibles'}</h3><small>${e.escouade.length === 3 ? 'Pour en faire entrer un, retire d’abord un Porteur de l’escouade (la croix sur son portrait).' : 'Touche un Porteur pour l’ajouter · chacun apporte ses cartes au deck.'}</small></div>`
     + (prets.length ? `<div class="es-grille">${prets.map((p) => tuile(p.id)).join('')}</div>` : `<p class="es-note">Tous les Porteurs libres sont dans l’escouade.</p>`)
     + (absents.length ? `<div class="es-titre"><h3 class="titre-bloc discret">Ne peuvent pas partir</h3></div><div class="es-grille petite">${absents.map((p) => tuile(p.id)).join('')}</div>` : '')
     + `</section>`;
+  const vacants = e.escouade.filter((id) => posteQuitte(j, id));
+  if (vacants.length) {
+    const et = (l: string[]) => l.length > 1 ? `${l.slice(0, -1).join(', ')} et ${l[l.length - 1]}` : l[0]!;
+    const lieux = vacants.map((id) => posteQuitte(j, id) === 'noyau' ? 'l’entraînement à la Tour' : batimentDef(posteQuitte(j, id)!).nom);
+    const pl = vacants.length > 1;
+    h += `<p class="es-note es-note-poste">${ICO.ouvrier}<span>Au départ, ${et(vacants.map((id) => `<b>${echap(porteurDef(id).nom)}</b>`))} quitte${pl ? 'nt leur' : ' son'} poste : ${et(lieux)} ${lieux.length > 1 ? 'resteront' : 'restera'} sans Porteur jusqu’à ce que tu y remettes quelqu’un.</span></p>`;
+  }
   h += `<p class="es-note">${ICO.soin}Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p></main>`;
 
   const pret = e.escouade.length === 3 && !maigre;

@@ -123,12 +123,12 @@ describe('L’entraînement à la Tour du Noyau', () => {
     expect(plafondEntrainement(j)).toBe(XP.niveauMax);
   });
 
-  it('pendant ce temps, le Porteur ne descend pas', () => {
+  it('s’il descend, il quitte l’entraînement', () => {
     const j = pret();
     poster(j, 'doran', 'noyau');
-    const r = partir(j, ['ilka', 'doran', 'vela'], 1, 5);
-    expect(r.ok).toBe(false);
-    expect(r.message).toContain('s’entraîne');
+    // il peut descendre quand même (23 octobre 2026) : il quitte la Tour, l'entraînement s'arrête
+    expect(partir(j, ['ilka', 'doran', 'vela'], 1, 5).ok).toBe(true);
+    expect(j.porteurs.doran!.poste).toBeNull();
   });
 
   it('la Tour montre son entraînement au niveau suivant', () => {

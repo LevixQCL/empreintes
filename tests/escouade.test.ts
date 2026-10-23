@@ -37,17 +37,28 @@ describe('Mon escouade', () => {
     expect(escouadeDe(j)).toEqual(['ilka', 'doran', 'vela']);
   });
 
-  it('un Porteur au travail n’y entre pas, et le départ propose un remplaçant libre', () => {
+  it('un Porteur au travail peut entrer et partir : son poste reste vacant', () => {
     const j = pret();
-    const libre = escouadePourDepart({ ...j, escouade: [] }).concat().find((id) => !['ilka', 'doran', 'vela'].includes(id));
-    if (!libre) return;
-    expect(poster(j, libre, 'forge').ok).toBe(true);
-    expect(placerDansEscouade(j, 0, libre).ok).toBe(false);
+    expect(poster(j, 'doran', 'clinique').ok).toBe(true);
+    expect(escouadePourDepart(j)).toEqual(['ilka', 'doran', 'vela']);
+    expect(partir(j, ['ilka', 'doran', 'vela'], 1).ok).toBe(true);
+    expect(j.porteurs.doran!.poste).toBeNull();
+    expect(Object.values(j.porteurs).some((p) => p.poste === 'clinique')).toBe(false);
+  });
+
+  it('un départ refusé ne libère personne', () => {
+    const j = pret();
     expect(poster(j, 'doran', 'generateur').ok).toBe(true);
-    const depart = escouadePourDepart(j);
-    expect(depart).toHaveLength(3);
-    expect(depart).not.toContain('doran');
-    expect(depart.slice(0, 2)).toEqual(['ilka', 'vela']);
+    expect(partir(j, ['ilka', 'doran', 'vela'], 99).ok).toBe(false);
+    expect(j.porteurs.doran!.poste).toBe('generateur');
+  });
+
+  it('un Porteur au travail peut rejoindre Mon escouade', () => {
+    const j = pret();
+    const libre = escouadePourDepart({ ...j, escouade: [] }).find((id) => !['ilka', 'doran', 'vela'].includes(id));
+    if (!libre) return;
+    expect(poster(j, libre, 'generateur').ok).toBe(true);
+    expect(placerDansEscouade(j, 0, libre).ok).toBe(true);
   });
 
   it('partir enregistre l’escouade choisie au départ', () => {

@@ -3,7 +3,7 @@
 // qui il est, son état (PV, niveau, Usure), sa Marque, ce que sa lignée lui donne, son poste et ses cartes.
 
 import { BATIMENTS, GESTES_SPECIAUX, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
-import { DISTRICT, XP, bonusPv, deckEscouade, enExpedition, enMission, escouadeDe, escouadeVerrouillee, niveauPorteur, porteursNouveaux, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, usureMax, type Jeu } from '../core/jeu';
+import { DISTRICT, XP, bonusPv, deckEscouade, enExpedition, enMission, escouadeDe, escouadeVerrouillee, niveauPorteur, porteursNouveaux, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS } from '../core/lore-porteurs';
 import { BATTU_PAR, REGLES } from '../core/regles';
 import { NOMS_EFFET } from '../core/effets';
@@ -122,6 +122,7 @@ function placeEscouade(j: Jeu, id: string | undefined, i: number, verrou: string
   const raison = raisonHorsEscouade(j, id);
   const alerte = raison && !j.expedition
     ? `<span class="me-alerte">${ICO.verrou}<span>${echap(raison.replace(/\.$/, ''))} : il ne pourra pas descendre.</span></span>`
+    : textePosteQuitte(j, id) && !j.expedition ? `<span class="me-alerte">${ICO.ouvrier}<span>Au départ, ${echap(textePosteQuitte(j, id)!)}</span></span>`
     : d.usure >= usureMax(id) * 0.5 ? `<span class="me-alerte usure">${ICO.soin}<span>Usure élevée</span></span>` : '';
   return `<div class="me-place" style="--c:${COULEUR[p.lignee]}">`
     + `<button type="button" class="me-portrait" data-action="porteur" data-id="${id}" aria-label="Fiche de ${echap(p.nom)}">`
@@ -186,7 +187,7 @@ function voletPlace(e: EcranDistrict, place: number): string {
       + `<span class="me-vignette">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : avatar(p.id, 56)}</span>`
       + `<span class="me-choix-txt"><strong>${echap(p.nom)}${j.vus.porteurs.includes(p.id) ? '' : ' <span class="pastille-n">Nouveau</span>'}</strong><small class="me-lignee">${NOM_LIGNEE[p.lignee]} · Niv. ${niveauPorteur(j, p.id).niveau}</small>`
       + (raison ? `<small class="me-raison">${echap(raison.replace(/\.$/, ''))}</small>`
-        : `<small class="me-stats">${pv}/${pvM} PV · <span class="${nc ? '' : 'zero'}">${nc} carte${nc > 1 ? 's' : ''}</span></small>`
+        : (d.poste ? `<small class="me-raison">${d.poste === 'noyau' ? 'À l’entraînement' : 'Au travail'} · son poste restera vacant</small>` : '') + `<small class="me-stats">${pv}/${pvM} PV · <span class="${nc ? '' : 'zero'}">${nc} carte${nc > 1 ? 's' : ''}</span></small>`
           + (m?.acquise ? `<small class="me-stats or">${ICO.ok}${echap(m.nom)}</small>` : ''))
       + `</span>${raison ? '' : `<span class="me-prendre">Prendre</span>`}</button>`;
   };
