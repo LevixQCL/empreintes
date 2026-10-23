@@ -213,7 +213,7 @@ export function simulerParcours(
   while (j.expedition && j.expedition.combat.issue === 'en-cours') (opts.joueur === 'robot' ? jouerTour : jouerTourMoyen)(j.expedition.combat);
   remonter(j);
   if (!j.chambre) { j.chambre = true; j.recrues = true; }
-  for (const o of OBJECTIFS) { j.energie += o.recompense.energie ?? 0; j.composants += o.recompense.composants ?? 0; }
+  for (const o of OBJECTIFS) { j.energie += o.recompense.energie ?? 0; j.composants += o.recompense.composants ?? 0; j.creuseurs += o.recompense.creuseurs ?? 0; }
   j.objectif = OBJECTIFS.length;
 
   const r: Parcours = { ouverture: { 1: 1 }, expeditions: {}, front: { tentatives: 0, victoires: 0 }, strate: 1 };

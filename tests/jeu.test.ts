@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import * as C from '../src/core/combat';
-import {
+import { envoyerMission,
   DISTRICT, ameliorer, degreffer, disponibles, energieParHeure, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu, partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence, entrer, repondre, RENCONTRES,
 } from '../src/core/jeu';
 
@@ -127,7 +127,10 @@ describe('Premier lancement', () => {
     const j = ouvert();
     expect(objectifCourant(j)!.titre).toBe('Allumer le district');
     expect(reclamer(j).ok).toBe(false);
+    // un Porteur de l'escouade au Générateur ne compte pas : il ne pourrait plus descendre
     poster(j, 'ilka', 'generateur');
+    expect(reclamer(j).ok).toBe(false);
+    poster(j, 'coursier', 'generateur');
     expect(reclamer(j).ok).toBe(true);
     expect(objectifCourant(j)!.titre).toBe('Construire ton deck');
     j.collection['oeil-relais@fer'] = { niveau: 1, doublons: 0 };
@@ -135,6 +138,17 @@ describe('Premier lancement', () => {
     degreffer(j, 'bond@fer');
     greffer(j, 'oeil-relais@fer', 'ilka');
     expect(reclamer(j).ok).toBe(true);
+    expect(objectifCourant(j)!.id).toBe('descendre');
+    j.frontVaincu = true;
+    j.creuseurs = 1;
+    expect(reclamer(j).ok).toBe(true);
+    // les creuseurs : une mission envoyée suffit, et le creuseur offert perce la Strate −2
+    expect(objectifCourant(j)!.id).toBe('creuseurs');
+    expect(reclamer(j).ok).toBe(false);
+    expect(envoyerMission(j, 'docker', 'courte', 0).ok).toBe(true);
+    expect(reclamer(j).ok).toBe(true);
+    expect(j.strate).toBe(2);
+    expect(objectifCourant(j)).toBeNull();
   });
 
   it('le résumé du retour ne liste que ce qui a avancé', () => {

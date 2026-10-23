@@ -169,10 +169,10 @@ export function navigation(e: EcranDistrict): string {
   const j = e.j;
   const o = objectifCourant(j);
   const alerte: Partial<Record<Vue | 'plus', boolean>> = {
-    archipel: !!(j.forge && e.now >= j.forge.fin) || !!(o && o.fait(j)),
-    cartes: !!(o && o.titre === 'Greffer une carte' && !o.fait(j)) || (j.chambre && cartesNouvelles(j).length > 0),
-    porteurs: porteursNouveaux(j).length > 0,
-    coupe: !!j.expedition || !!(o && o.titre === 'Descendre' && !o.fait(j)),
+    archipel: !!(j.forge && e.now >= j.forge.fin) || !!(o && (o.fait(j) || o.onglet === 'archipel')),
+    cartes: !!(o && o.onglet === 'cartes' && !o.fait(j)) || (j.chambre && cartesNouvelles(j).length > 0),
+    porteurs: !!(o && o.onglet === 'porteurs' && !o.fait(j)) || porteursNouveaux(j).length > 0,
+    coupe: !!j.expedition || !!(o && o.onglet === 'coupe' && !o.fait(j)),
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
   };
   const actif = e.menu ? 'plus' : e.vue === 'escouade' ? 'coupe' : e.vue;

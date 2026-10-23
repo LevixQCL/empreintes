@@ -163,9 +163,9 @@ function ongletDeck(): string {
 
   // le mode d'emploi, en trois gestes
   h += `<section class="bloc">${titre(ICO.greffe, 'En trois gestes')}<ol class="g-etapes">`
-    + `<li><b>Confie tes cartes.</b> Onglet <em>Porteurs</em> : touche un Porteur, puis ses cartes pour lui en confier. Ou, dans l’onglet <em>Cartes</em>, touche une carte puis un Porteur sous « Confier à » (le filtre « Libres » montre celles que personne ne porte).</li>`
-    + `<li><b>Remplis chaque Porteur.</b> ${DISTRICT.cartesMax} cartes de sa lignée au plus. Touche une carte qu’il porte pour la lui reprendre.</li>`
-    + `<li><b>Choisis l’escouade.</b> Onglet <em>Tour</em>, une Strate, « Descendre ». Les ${ESCOUADE} Porteurs choisis apportent leurs cartes, et la barre « Fréquences du deck » montre ce que ça donne.</li>`
+    + `<li><b>Choisis ton escouade.</b> Onglet <em>Porteurs</em> : tes ${ESCOUADE} Porteurs en grand. « Changer » sous l’un d’eux en fait entrer un autre. Elle ne change qu’au district, jamais pendant une descente.</li>`
+    + `<li><b>Confie-leur des cartes.</b> Sous chaque Porteur de l’escouade, touche ses cartes. Ou, dans l’onglet <em>Cartes</em>, touche une carte puis un Porteur sous « Confier à » (le filtre « Libres » montre celles que personne ne porte).</li>`
+    + `<li><b>Vérifie au départ.</b> Onglet <em>Tour</em>, une Strate, « Descendre » : la barre « Fréquences du deck » montre ce que donnent les cartes de ton escouade.</li>`
     + `</ol></section>`;
 
   // les règles, sans exception
@@ -174,7 +174,8 @@ function ongletDeck(): string {
     + `<li><b>${DISTRICT.cartesMax} cartes</b> au plus par Porteur, et <b>${DISTRICT.deckMin}</b> au moins dans le deck pour descendre (${EPREUVE_DECK_MIN} pour une Épreuve).</li>`
     + `<li>Une carte n’a qu’<b>un Porteur à la fois</b>. Un Porteur ne porte pas deux fois la même carte, même dans deux métaux.</li>`
     + `<li><b>Stimulant</b> et <b>Repli</b>, les cartes du district, sont toujours dans le deck.</li>`
-    + `<li>Changer d’escouade change le deck. Un Porteur en expédition ou en mission garde ses cartes jusqu’à son retour.</li>`
+    + `<li>Changer d’escouade change le deck. Un Porteur au travail (ou à l’entraînement) peut descendre : il quitte son poste, qui reste vacant.</li>`
+    + `<li>Un Porteur en expédition ou en mission garde ses cartes jusqu’à son retour.</li>`
     + `<li>En combat, un Porteur <b>à terre</b> emporte ses cartes : elles quittent le deck tant qu’il ne s’est pas relevé, à un campement.</li>`
     + `</ul></section>`;
 
@@ -186,7 +187,7 @@ function ongletDeck(): string {
     + idee(ICO.flux, 'Couvre les Fréquences de 1 à 9', `Des Fréquences qui se suivent font une Résonance (suite de ${suite}). Chaque lignée a sa zone : une escouade des trois lignées couvre l’échelle, et un chiffre absent coupe tes suites.`, echelleFrequences())
     + idee(ICO.cartes, 'Double les Fréquences utiles', `Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : bouclier d’escouade +${REGLES.bouclierEcho} et +1 Flux.`)
     + idee(ICO.atk, 'Mélange les actions', `Attaque, protection et soin. Le deck de départ en compte ${depart.atk}, ${depart.bouclier} et ${depart.soin} sur ${nDepart} : un bon repère.`, `<div class="g-barre" role="img" aria-label="${depart.atk} attaques, ${depart.bouclier} protections, ${depart.soin} soins">${barre}</div>`)
-    + idee(ICO.cristal, 'Choisis aussi pour les Marques', 'Chaque Porteur gagne une Marque en combattant (onglet Porteurs). Elle ne joue que s’il descend : l’écran de l’escouade montre celles qui seront actives.')
+    + idee(ICO.cristal, 'Choisis aussi pour les Marques', 'Chaque Porteur gagne une Marque en combattant (onglet Porteurs). Elle ne joue que s’il est dans l’escouade : l’onglet Porteurs montre celles qui sont actives.')
     + idee(ICO.soin, 'Répartis les soins', 'Un Porteur à terre emporte ses cartes. Si tous tes soins sont chez lui, l’escouade n’en a plus au pire moment.')
     + idee(ICO.place, 'Peu de cartes lourdes', `« 2 PL. » : la carte est forte mais prend deux places. Avec une autre carte, elle remplit une chaîne de ${REGLES.capaciteBase} places : pas de suite de 3 sans Flux ni Élan.`)
     + idee('<b class="g-etoile">∗</b>', 'Des jokers pour les suites', 'Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.')

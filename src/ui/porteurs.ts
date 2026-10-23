@@ -335,7 +335,7 @@ export function feuillePorteur(e: EcranDistrict): string {
       const ideal = b.affinite === p.lignee;
       return `<li class="${ici ? 'ici' : ''}"><img src="${illustrationBatiment(b.id, j.batiments[b.id])}" alt="" decoding="async" loading="lazy"><span><strong>${echap(b.nom)}</strong><small>${ici ? 'Au travail ici' : ideal ? 'Lignée idéale' : 'Autre lignée'}</small></span><b class="${ideal ? 'or' : ''}">×${virgule(ideal ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste)}</b></li>`;
     }).join('')}</ul>` : '')
-    + `<p class="fp-note">${ateliers.length ? `Ailleurs : ×${virgule(DISTRICT.bonusPoste)}.` : `Aucun bâtiment n’est fait pour sa lignée : ×${virgule(DISTRICT.bonusPoste)} partout.`} Pour le poster, touche un bâtiment au District. Au travail, un Porteur peut quand même descendre.</p>`
+    + `<p class="fp-note">${ateliers.length ? `Ailleurs : ×${virgule(DISTRICT.bonusPoste)}.` : `Aucun bâtiment n’est fait pour sa lignée : ×${virgule(DISTRICT.bonusPoste)} partout.`} Pour le poster, touche un bâtiment au District. S’il descend, il quitte son poste, qui reste vacant.</p>`
     + `</section>`;
 
   // ---------- pied : la prochaine action ----------
