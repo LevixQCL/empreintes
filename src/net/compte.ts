@@ -74,6 +74,11 @@ export function messageErreur(e: unknown): string {
     'auth/popup-closed-by-user': 'Fenêtre de connexion fermée.',
     'auth/unauthorized-domain': 'Ce site n’est pas encore autorisé dans Firebase (Authentication › Paramètres › Domaines autorisés).',
     'auth/network-request-failed': 'Pas de connexion réseau.',
+    'auth/popup-blocked': 'La fenêtre de connexion Google a été bloquée. Autorise les fenêtres pour ce site, ou ouvre le jeu dans Chrome.',
+    'auth/cancelled-popup-request': 'Une autre fenêtre de connexion était déjà ouverte. Réessaie.',
+    'auth/web-storage-unsupported': 'Ce navigateur bloque la connexion (stockage désactivé). Ouvre le jeu dans Chrome ou Safari.',
+    'auth/operation-not-supported-in-this-environment': 'La connexion Google ne marche pas dans ce navigateur intégré. Ouvre le jeu dans Chrome ou Safari.',
   };
-  return m[code] ?? 'La connexion a échoué. Réessaie dans un instant.';
+  // le code entre parenthèses permet de savoir ce qui bloque (une capture suffit)
+  return m[code] ?? `La connexion a échoué. Réessaie dans un instant.${code ? ` (${code})` : ''}`;
 }
