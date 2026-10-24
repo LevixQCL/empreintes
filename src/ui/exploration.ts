@@ -197,7 +197,14 @@ export function htmlExploration(j: Jeu): string {
     h += `<div class="ex-rencontre"><span class="ex-visuel scene"><img src="${baseSalles}rencontre.webp" alt="" decoding="async"></span>`
       + `<div><span class="ex-sur">Rencontre</span><h2>${echap(r.titre)}</h2></div></div>`
       + `<p class="ex-recit">${echap(r.texte)}</p><div class="ex-choix">`
-      + r.options.map((o, k) => `<button type="button" class="ex-choix-btn" data-action="repondre" data-id="${k}"><span>${echap(o)}</span>${CHEVRON}</button>`).join('') + `</div>`;
+      + r.options.map((o, k) => {
+        // une option qui coûte des composants du butin : grisée, avec ce qui manque, si le butin ne suffit pas
+        // (24 octobre 2026 : le bouton « ne fonctionnait pas », le refus ne s'affichait nulle part)
+        const cout = Number(/\((\d+) composants\)/.exec(o)?.[1] ?? 0);
+        const manque = cout > x.butin ? cout - x.butin : 0;
+        return `<button type="button" class="ex-choix-btn${manque ? ' manque' : ''}" data-action="repondre" data-id="${k}"${manque ? ' disabled' : ''}><span>${echap(o)}`
+          + (manque ? `<small>Le butin de l’expédition n’a que ${x.butin} composants : il en manque ${manque}.</small>` : '') + `</span>${CHEVRON}</button>`;
+      }).join('') + `</div>`;
   } else {
     if (x.recit) h += `<p class="ex-recit">${echap(x.recit)}</p>`;
     if (libre) {
