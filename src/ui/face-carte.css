@@ -114,3 +114,15 @@
 @keyframes fcp-alt2{0%,42%{opacity:1}50%,92%{opacity:0}100%{opacity:1}}
 @keyframes fcp-alt3{0%,28%{opacity:1}34%,94%{opacity:0}100%{opacity:1}}
 @media (prefers-reduced-motion:reduce){.fcp.alt .fcp-k{animation:none;opacity:0}.fcp.alt .fcp-k[style*="--i:0"]{opacity:1}}
+
+/* ---------- Niveau et lignée sous l'illustration, au-dessus du nom (24 octobre 2026) ----------
+   En haut, ils mangeaient le cristal de la Fréquence sur les petites cartes. Ils forment maintenant une ligne gravée
+   au-dessus du nom, alignée sur lui : le niveau en or, la lignée dans sa couleur, le même trait que le nom. */
+.fcp-puces{top:auto;right:auto;left:10.5%;bottom:calc(7.5% + 8.6cqw);max-width:calc(var(--vx) - 22%);gap:2.4cqw;flex-wrap:nowrap;overflow:hidden}
+.fr-nacre .fcp-puces{left:6%}
+.fcp-puces > span,.fcp-puces > b{padding:0;border-radius:0;background:none;font-family:var(--mono);font-size:max(8px,3.6cqw);font-weight:700;letter-spacing:.08em;line-height:1.1;white-space:nowrap;
+  text-shadow:0 0 2px #000,0 0 5px #000,0 1px 1px #000}
+.fcp-niv{display:inline-flex;align-items:baseline;gap:.8cqw;color:#e9cf8f;text-transform:uppercase}
+.fcp-niv i{font-style:normal;font-family:'Cinzel Force',var(--display);font-weight:900;font-size:max(10px,5.2cqw);color:#fff3d2;-webkit-text-stroke:max(1px,.9cqw) #120c08;paint-order:stroke fill}
+.fcp-puces .fc-lignee{position:relative;padding-left:3.4cqw;color:color-mix(in srgb,var(--c) 65%,white)}
+.fcp-puces .fc-lignee::before{content:"";position:absolute;left:0;top:50%;width:1cqw;height:1cqw;min-width:3px;min-height:3px;margin-top:-.5cqw;transform:rotate(45deg);background:currentColor;opacity:.8}

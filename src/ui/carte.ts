@@ -74,7 +74,8 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1): string {
       + `<div class="fc-art">${art}${ill ? FX[m.rarete] : ''}</div>`
       + `<span class="fcp-cadre"></span>${cristal}`
       + `<b class="fcp-v${v >= 10 ? ' deux' : ''}">${v}</b>`
-      + `<span class="fcp-puces"><span>Niv. ${niveau}</span><span class="fc-lignee" style="--c:${COULEUR[m.lignee]}">${NOMS_LIGNEE[m.lignee].court}</span></span>`
+      // le niveau et la lignée, gravés au-dessus du nom (24 octobre 2026) : le haut de la carte reste au cristal de la Fréquence
+      + `<span class="fcp-puces"><b class="fcp-niv" title="Niveau ${niveau}">Niv.<i>${niveau}</i></b><span class="fc-lignee" style="--c:${COULEUR[m.lignee]}">${NOMS_LIGNEE[m.lignee].court}</span></span>`
       + (m.effet || m.lourd ? `<span class="fcp-effet">${m.effet ? NOMS_EFFET[m.effet.type] : ''}${m.lourd ? `${m.effet ? ' · ' : ''}2 pl.` : ''}</span>` : '')
       + `<span class="fcp-nom">${echap(m.nom)}</span>`
       + `</div></div>`;
