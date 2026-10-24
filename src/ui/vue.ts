@@ -138,13 +138,17 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
  * Une jauge de vie : un rail serti, la vie qui reste, la traînée du dernier coup qui se vide, des graduations
  * (une tous les `pas` PV) et, pour l'ennemi, son bouclier posé au bout de la vie.
  */
-export function jauge(classe: string, pv: number, max: number, o: { trace?: number; pas?: number; bouclier?: number } = {}) {
+export function jauge(classe: string, pv: number, max: number, o: { trace?: number; pas?: number; bouclier?: number; usure?: number } = {}) {
+  // l'Usure : les PV perdus pour toute la descente, hachurés au bout de la jauge (la jauge compte alors sur les PV pleins)
+  const u = o.usure ?? 0;
+  if (u > 0) max += u;
   const v = pct(pv, max);
+  const usure = u > 0 ? `<i class="j-usure" style="width:${pct(u, max)}%"></i>` : '';
   const trainee = o.trace !== undefined && o.trace > v ? `<i class="j-trainee" style="--de:${o.trace}%;--a:${v}%"></i>` : '';
   const bouclier = o.bouclier ? `<i class="j-bouclier" style="left:${Math.max(0, v - pct(o.bouclier, max))}%;width:${Math.min(v, pct(o.bouclier, max))}%"></i>` : '';
   const pas = o.pas ? pct(o.pas, max) : 10;
   return `<span class="jauge-vie ${classe}${v <= 30 ? ' basse' : ''}" style="--pas:${pas}%" role="img" aria-label="${pv} PV sur ${max}">`
-    + `<span class="j-rail">${trainee}<i class="j-vie" style="width:${v}%"></i>${bouclier}<span class="j-grad"></span></span></span>`;
+    + `<span class="j-rail">${trainee}<i class="j-vie" style="width:${v}%"></i>${bouclier}${usure}<span class="j-grad"></span></span></span>`;
 }
 
 /** Une carte de combat montrée en démonstration (écran « Avant d'ouvrir ») : même rendu, sans action */
@@ -418,7 +422,7 @@ function htmlEcranCombat(e: Ecran): string {
       + (img ? `<span class="cb-fond" style="background-image:url(${img})" aria-hidden="true"></span>` : '')
       + `<span class="avatar${img ? '' : ' sans-portrait'}" style="--t:34px" aria-hidden="true">${img ? `<img src="${img}" alt="">` : `<b>${echap(d.nom.charAt(0))}</b>`}</span>`
       + `<div class="cb-infos"><span class="n">${echap(d.nom)}</span><span class="cb-lignee" aria-hidden="true">${ko ? 'À terre' : NOMS_LIGNEE[d.lignee].nom}</span>`
-      + `<div class="cb-vie">${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5 })}<span class="chiffre" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}`}">${ko ? '0' : p.pv}<small aria-hidden="true">/ ${p.pvMax}</small></span></div></div>`
+      + `<div class="cb-vie">${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5, ...(p.usure ? { usure: p.usure } : {}) })}<span class="chiffre" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}${p.usure ? `, l’Usure en retire ${p.usure}` : ''}`}">${ko ? '0' : p.pv}<small aria-hidden="true">/ ${p.pvMax}</small></span></div></div>`
       + (cible ? `<span class="marque-cible">${ICO.atk}CIBLE</span>` : '') + (soigne ? `<span class="marque-soin" aria-label="Sera soigné">${ICO.soin}</span>` : '') + `</div>`;
   }
   h += `</section><div class="ligne-escouade">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>`

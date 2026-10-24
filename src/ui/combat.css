@@ -268,3 +268,10 @@
 /* l'Écho (trois Fréquences identiques) se voit aussi en tête de chaîne, comme la Résonance */
 #app:is([data-mode="combat"],[data-mode="district"]) .badge-reso.echo{background:linear-gradient(180deg,#e9f4ff,#9fc3ee 55%,#5f86c4);color:#0b1733;box-shadow:0 0 14px rgba(120,170,240,.5)}
 .chaine-tete{flex-wrap:wrap;gap:6px}
+
+/* l'Usure pendant la descente (24 octobre 2026) : les PV qu'elle retire, hachurés au bout de la jauge, comme au district */
+.j-rail>.j-usure{position:absolute;right:0;top:0;bottom:0;z-index:2;background:repeating-linear-gradient(135deg,rgba(226,115,90,.85) 0 3px,rgba(226,115,90,.3) 3px 6px)}
+.ex-barre{position:relative}
+.ex-barre>i.ex-usure{position:absolute;right:0;top:0;bottom:0;border-radius:0;background:repeating-linear-gradient(135deg,rgba(226,115,90,.9) 0 3px,rgba(226,115,90,.35) 3px 6px)}
+.ex-barre{height:4px}
+.ex-p-usure{margin-left:4px;font-size:.8em;color:#FF9C8A}

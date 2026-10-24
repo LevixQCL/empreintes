@@ -1186,7 +1186,10 @@ function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boo
   if (!j.chambre) return refus('Ouvre d’abord la chambre scellée.');
   const deck = deckEscouade(j, escouade).filter((g) => !filtre || g.porteur === null || filtre(g));
   if (deck.length < min) return refus(`Ton deck n’a que ${deck.length} cartes : confie des cartes à ton escouade (${min} au moins).`);
-  const porteurs: PorteurEtat[] = escouade.map((id) => ({ id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false }));
+  const porteurs: PorteurEtat[] = escouade.map((id) => {
+    const u = Math.floor(j.porteurs[id]!.usure);
+    return { id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false, ...(u > 0 ? { usure: u } : {}) };
+  });
   const bonus = bonusEscouade(j, escouade);
   return { ok: true, porteurs, deck, bonus };
 }
@@ -1811,7 +1814,10 @@ export function ouvrirChambre(j: Jeu, rng = graine()): Resultat {
     if (k >= 0) deck.push(...tout.splice(k, 1));
   }
   deck.push(...tout);
-  const porteurs: PorteurEtat[] = escouade.map((id) => ({ id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false }));
+  const porteurs: PorteurEtat[] = escouade.map((id) => {
+    const u = Math.floor(j.porteurs[id]!.usure);
+    return { id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false, ...(u > 0 ? { usure: u } : {}) };
+  });
   j.expedition = nouvelleExpedition({ porteurs, deck, strate: 1, rng, sequence: ['remanent-faible'], force: 1, tutoriel: true });
   log(j, 'Ilka, Doran et Véla descendent vers la porte scellée.');
   return { ok: true };

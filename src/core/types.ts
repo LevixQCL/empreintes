@@ -153,6 +153,8 @@ export interface PorteurEtat {
   /** PV max pour ce combat (réduits par l'Usure) */
   pvMax: number;
   aTerre: boolean;
+  /** les PV que l'Usure retire à ce Porteur pour toute la descente (affichés hachurés au bout de sa jauge) */
+  usure?: number;
 }
 
 export interface EnnemiEtat {

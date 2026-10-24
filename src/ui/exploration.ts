@@ -145,13 +145,16 @@ export function htmlExploration(j: Jeu): string {
     const d = porteurDef(p.id);
     const ko = p.pv <= 0;
     const img = portrait(d.id);
-    const part = Math.max(0, Math.min(100, (Math.max(0, p.pv) / p.pvMax) * 100));
+    // la jauge compte sur les PV pleins : la part retirée par l'Usure est hachurée au bout (24 octobre 2026, Bryan : « l'Usure n'a aucune incidence ? »)
+    const plein = p.pvMax + (p.usure ?? 0);
+    const part = Math.max(0, Math.min(100, (Math.max(0, p.pv) / plein) * 100));
+    const partUsure = p.usure ? (100 * p.usure) / plein : 0;
     const bas = !ko && part <= 30;
     h += `<div class="ex-porteur${ko ? ' ko' : ''}${bas ? ' bas' : ''}" data-porteur="${p.id}" style="--c:${COULEUR[d.lignee]}">`
       + `<span class="ex-portrait" aria-hidden="true">${img ? `<img src="${img}" alt="">` : `<b>${echap(d.nom.charAt(0))}</b>`}</span>`
       + `<span class="ex-p-infos"><strong>${echap(d.nom)}</strong>`
-      + `<span class="ex-p-pv" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}`}">${ko ? 'À terre' : `<b>${p.pv}</b> / ${p.pvMax}`}</span>`
-      + `<span class="ex-barre" aria-hidden="true"><i style="width:${part.toFixed(1)}%"></i></span></span></div>`;
+      + `<span class="ex-p-pv" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}${p.usure ? `, l’Usure en retire ${p.usure}` : ''}`}">${ko ? 'À terre' : `<b>${p.pv}</b> / ${p.pvMax}${p.usure ? `<small class="ex-p-usure" title="PV retirés par l’Usure">−${p.usure}</small>` : ''}`}</span>`
+      + `<span class="ex-barre" aria-hidden="true"><i style="width:${part.toFixed(1)}%"></i>${partUsure ? `<i class="ex-usure" style="width:${partUsure.toFixed(1)}%"></i>` : ''}</span></span></div>`;
   }
   h += '</section>';
 
