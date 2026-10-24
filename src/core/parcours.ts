@@ -58,7 +58,7 @@ const DEFENSES_POIDS: Record<Lignee, number> = Object.fromEntries(
 ) as Record<Lignee, number>;
 
 /** Ce que vaut une carte pour le deck, à son niveau (estimation simple : force, effet, Fréquences, place prise) */
-export const valeurCarte = (id: string, niveau: number): number => puissanceCarte(id, niveau);
+export function valeurCarte(id: string, niveau: number): number { return puissanceCarte(id, niveau); }
 
 /** Les 6 meilleures cartes d'une lignée, en gardant autant de défenses que le deck de départ */
 function meilleures(j: Jeu, l: Lignee): string[] {
