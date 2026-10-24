@@ -153,3 +153,39 @@ export function multNiveau(id: string, niveau: number): number {
 export function cartesEnJeu(porteurId: string, cartes: { id: string; niveau: number }[]): GesteDef[] {
   return cartes.map(({ id, niveau }) => gesteDeCarte(id, porteurId, multNiveau(id, niveau)));
 }
+
+// ---------- Trier la collection (24 octobre 2026) ----------
+
+/**
+ * La puissance d'une carte pour le deck, à son niveau : sa force, ajustée de ce qu'elle apporte en plus.
+ * C'est la même estimation que le parcours simulé de l'équilibrage (parcours.ts) : une carte lourde compte pour 60 %
+ * (elle prend deux places), un effet +25 %, une défense ou un soin +10 %, et +15 % par Fréquence en plus.
+ */
+export function puissanceCarte(cle: string, niveau: number): number {
+  const m = moduleDef(cle);
+  let v = m.v * multNiveau(cle, niveau);
+  if (m.lourd) v *= 0.6;
+  if (m.effet) v *= 1.25;
+  if (m.type !== 'atk') v *= 1.1;
+  return v * (1 + 0.15 * (m.f.length - 1));
+}
+
+export type TriCartes = 'puissance' | 'metal' | 'niveau';
+export const TRIS: { id: TriCartes; nom: string; texte: string }[] = [
+  { id: 'puissance', nom: 'Puissance', texte: 'La force de la carte à son niveau, ajustée de ses effets, de ses Fréquences et des places qu’elle prend' },
+  { id: 'metal', nom: 'Métal', texte: 'De la nacre au fer' },
+  { id: 'niveau', nom: 'Niveau', texte: 'Du plus haut au plus bas' },
+];
+
+/** Trie des exemplaires (clés carte@métal) : le critère choisi d'abord, puis la puissance, le métal, le nom */
+export function trierCartes(cles: string[], collection: Record<string, { niveau: number }>, tri: TriCartes): string[] {
+  const p = (k: string) => puissanceCarte(k, collection[k]?.niveau ?? 1);
+  const r = (k: string) => RARETES.indexOf(moduleDef(k).rarete);
+  const n = (k: string) => collection[k]?.niveau ?? 1;
+  const cle = (k: string): number[] => tri === 'metal' ? [r(k), p(k)] : tri === 'niveau' ? [n(k), p(k), r(k)] : [p(k), r(k), n(k)];
+  return [...cles].sort((a, b) => {
+    const x = cle(a), y = cle(b);
+    for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return y[i]! - x[i]!;
+    return moduleDef(a).nom.localeCompare(moduleDef(b).nom, 'fr');
+  });
+}

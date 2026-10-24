@@ -6,7 +6,7 @@
 // Aucun DOM ici : il tourne dans les tests et dans `npm run robot`.
 
 import { CHAPITRES, chapitreOuvert } from './chroniques';
-import { multNiveau } from './collection';
+import { puissanceCarte } from './collection';
 import { DEPART_PORTEURS, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, salleCourante } from './expedition';
 import {
@@ -58,14 +58,7 @@ const DEFENSES_POIDS: Record<Lignee, number> = Object.fromEntries(
 ) as Record<Lignee, number>;
 
 /** Ce que vaut une carte pour le deck, à son niveau (estimation simple : force, effet, Fréquences, place prise) */
-export function valeurCarte(id: string, niveau: number): number {
-  const m = moduleDef(id);
-  let v = m.v * multNiveau(id, niveau);
-  if (m.lourd) v *= 0.6;
-  if (m.effet) v *= 1.25;
-  if (m.type !== 'atk') v *= 1.1;
-  return v * (1 + 0.15 * (m.f.length - 1));
-}
+export const valeurCarte = (id: string, niveau: number): number => puissanceCarte(id, niveau);
 
 /** Les 6 meilleures cartes d'une lignée, en gardant autant de défenses que le deck de départ */
 function meilleures(j: Jeu, l: Lignee): string[] {

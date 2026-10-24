@@ -72,6 +72,7 @@ const D: EcranDistrict = { j: jeu, vue: 'archipel', selection: null, escouade: [
 /** le Grand Tableau : lecture des classements en ligne, et ce qu'on a publié */
 const G: GrandTableau = tableauVide();
 try { D.panneauReplie = localStorage.getItem('empreintes.panneau') !== 'ouvert'; } catch { D.panneauReplie = true; }
+try { const t = localStorage.getItem('empreintes.tri'); if (t === 'puissance' || t === 'metal' || t === 'niveau') D.tri = t; } catch { /* stockage bloqué */ }
 D.grand = G;
 const K: { verrou: boolean; regles: boolean; fuite: boolean; guide: OngletGuide | null; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; decouverteId?: string } = {
   verrou: false, regles: false, fuite: false, guide: null, pops: [], fin: null, etat: null, traces: {},
@@ -734,6 +735,12 @@ racine.addEventListener('click', async (ev) => {
       // l'objectif du jour emmène là où il se remplit
       if (id === 'chantier') { ouvrir('archipel'); D.selection = J.batimentConseille(jeu); }
       else ouvrir('coupe');
+      break;
+    case 'tri':
+      if (id === 'puissance' || id === 'metal' || id === 'niveau') {
+        D.tri = id;
+        try { localStorage.setItem('empreintes.tri', id); } catch { /* stockage bloqué */ }
+      }
       break;
     case 'panneau':
       D.panneauReplie = D.panneauReplie === false;

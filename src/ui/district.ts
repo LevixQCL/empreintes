@@ -8,7 +8,7 @@ import {
   cartesNouvelles, OBJECTIFS, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
-import { COLLECTION, NOMS_RARETE, RARETES, composantsNiveau, doublonsRequis, multNiveau } from '../core/collection';
+import { COLLECTION, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, Lignee, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { FRAGMENTS } from '../core/fragments';
@@ -750,20 +750,23 @@ export function feuilleDeck(e: EcranDistrict): string {
     const c = j.collection[cle]!;
     return `<button type="button" class="carte-tuile" data-action="${action}" data-module="${cle}" data-id="${id}"${parti ? ' disabled' : ''} aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}">${faceCarte(m, c.niveau, multNiveau(cle, c.niveau))}<span class="tuile-bas">${bas}</span></button>`;
   };
-  const libres = Object.keys(j.collection)
-    .filter((k) => moduleDef(k).lignee === p.lignee && !porte.includes(k) && !porte.some((x) => moduleDe(x) === moduleDe(k)))
-    .sort((a, b) => moduleDef(a).nom.localeCompare(moduleDef(b).nom, 'fr'));
+  const tri = e.tri ?? 'puissance';
+  const libres = trierCartes(Object.keys(j.collection)
+    .filter((k) => moduleDef(k).lignee === p.lignee && !porte.includes(k) && !porte.some((x) => moduleDe(x) === moduleDe(k))), j.collection, tri);
   let h = `<div class="voile-feuille" data-action="deck-fermer" aria-hidden="true"></div><section class="feuille deck-porteur" role="dialog" aria-modal="true" aria-label="Les cartes de ${echap(p.nom)}"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR[p.lignee]}">${NOM_LIGNEE[p.lignee].toUpperCase()} · ${porte.length} / ${DISTRICT.cartesMax} CARTES</span><h2>Les cartes de ${echap(p.nom)}</h2></div>`
     + `<button type="button" class="btn-icone" data-action="guide" data-id="deck" aria-label="Comment construire son deck">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="deck-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   if (parti) h += `<p class="aide">${echap(p.nom)} est en expédition : ses cartes changeront à son retour.</p>`;
+  // le tri, en tête : il range les deux listes de la feuille
+  h += choixTri(tri);
   h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour la reprendre.</p>`;
   const fs = [...new Set(gestesDe(j, id).flatMap((g) => g.fs ?? [g.f]))].sort((a, b) => a - b);
   if (fs.length) h += `<p class="dk-freq">Fréquences qu’il apporte : ${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</p>`;
-  h += porte.length ? `<div class="grille-cartes">${porte.map((k) => tuile(k, 'degreffer', `<span class="dk-action">${ICO.retour}Reprendre</span>`)).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
+  h += porte.length ? `<div class="grille-cartes">${trierCartes(porte, j.collection, tri).map((k) => tuile(k, 'degreffer', `<span class="dk-action">${ICO.retour}Reprendre</span>`)).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
   h += `</section><section class="bloc"><h3 class="titre-bloc">${ICO.cartes}À lui confier</h3>`
     + `<p class="aide">${plein ? `${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : reprends-en une d’abord.` : `Les cartes de sa lignée (${NOM_LIGNEES[p.lignee]}) dans ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
+  // les cartes libres d'abord, puis celles qu'un autre Porteur porte ; chaque groupe dans l'ordre du tri (sort est stable)
   const triees = [...libres].sort((a, b) => Number(!!greffesDe(j, a)[0]) - Number(!!greffesDe(j, b)[0]));
   h += libres.length ? `<div class="grille-cartes${plein ? ' grisee' : ''}">${triees.map((k) => { const qui = greffesDe(j, k)[0]; return tuile(k, 'greffer', qui ? `${avatar(qui, 20)}<span class="dk-chez">chez ${echap(porteurDef(qui).nom)}</span>` : `<span class="dk-action">${ICO.greffe}Confier</span>`); }).join('')}</div>` : `<p class="aide">Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.</p>`;
   return h + `</section></div></section>`;
@@ -772,6 +775,13 @@ export function feuilleDeck(e: EcranDistrict): string {
 // La collection (revue du 22 octobre 2026, même équipe) : les cartes arrivent tout de suite, des filtres utiles
 // (« peuvent monter », « libres ») en plus des lignées, et l'équipement des Porteurs se fait depuis l'onglet Porteurs
 // ou en touchant une carte (la rangée « Construire le deck » faisait doublon).
+/** Le choix du tri des cartes (24 octobre 2026) : le même partout où l'on voit une liste de cartes, et retenu d'un écran à l'autre */
+export function choixTri(tri: TriCartes): string {
+  return `<div class="tri-cartes" role="radiogroup" aria-label="Trier les cartes"><span class="tri-label">${ICO.journal}Trier</span>`
+    + TRIS.map((t) => `<button type="button" role="radio" class="tri-choix${t.id === tri ? ' actif' : ''}" data-action="tri" data-id="${t.id}" aria-checked="${t.id === tri}" title="${echap(t.texte)}">${t.nom}</button>`).join('')
+    + `</div>`;
+}
+
 export function htmlCartes(e: EcranDistrict): string {
   const j = e.j;
   const trouvees = MODULES.filter((m) => exemplaires(j, m.id).length).length;
@@ -793,6 +803,8 @@ export function htmlCartes(e: EcranDistrict): string {
   ];
   h += `<div class="cl-filtres" role="tablist" aria-label="Filtrer la collection">` + filtres.map((x) =>
     `<button type="button" role="tab" class="es-cible${f === x.id ? ' actif' : ''}${x.classe ? ` ${x.classe}` : ''}"${x.c ? ` style="--c:${x.c}"` : ''} data-action="filtre" data-id="${x.id}" aria-selected="${f === x.id}">${x.nom}${x.n !== undefined ? ` <b>${x.n}</b>` : ''}</button>`).join('') + `</div>`;
+  const tri = e.tri ?? 'puissance';
+  h += choixTri(tri);
   h += `<p class="cl-intro">En expédition, ton deck réunit les cartes des 3 Porteurs emmenés (6 chacun au plus). Touche une carte pour la confier ou la faire monter.</p>`;
 
   const tuileCarte = (cle: string) => {
@@ -808,7 +820,7 @@ export function htmlCartes(e: EcranDistrict): string {
   };
 
   if (f === 'monter' || f === 'libres') {
-    const liste = toutes.filter(f === 'monter' ? peutMonter : estLibre);
+    const liste = trierCartes(toutes.filter(f === 'monter' ? peutMonter : estLibre), j.collection, tri);
     h += `<h2 class="titre-section">${f === 'monter' ? 'Peuvent monter' : 'Libres : personne ne les porte'}</h2>`
       + (liste.length ? `<div class="grille-cartes">${liste.map(tuileCarte).join('')}</div>`
         : `<p class="cl-vide">${f === 'monter' ? 'Aucune carte n’a encore assez de doublons et de composants pour monter.' : 'Toutes tes cartes sont confiées à un Porteur.'}</p>`);
@@ -816,11 +828,10 @@ export function htmlCartes(e: EcranDistrict): string {
     const lignees: Lignee[] = f === 'tout' ? ['tech', 'bio', 'reso'] : [f];
     for (const lignee of lignees) {
       h += `<h2 class="titre-section" style="--c:${COULEUR[lignee]}">${NOM_LIGNEES[lignee]}</h2><div class="grille-cartes">`;
-      for (const base of MODULES.filter((x) => x.lignee === lignee)) {
-        const cles = exemplaires(j, base.id);
-        if (!cles.length) { h += `<div class="carte-dos cl-dos" aria-label="Carte pas encore trouvée">${gemme(base.rarete)}<span>?</span><small>À trouver</small><em>Fouille « ${echap(CIBLES_FOUILLE[lignee].nom)} »</em></div>`; continue; }
-        for (const cle of cles) h += tuileCarte(cle);
-      }
+      // les cartes trouvées, triées ; celles qui restent à trouver à la fin
+      const bases = MODULES.filter((x) => x.lignee === lignee);
+      for (const cle of trierCartes(bases.flatMap((b) => exemplaires(j, b.id)), j.collection, tri)) h += tuileCarte(cle);
+      for (const base of bases.filter((b) => !exemplaires(j, b.id).length)) h += `<div class="carte-dos cl-dos" aria-label="Carte pas encore trouvée">${gemme(base.rarete)}<span>?</span><small>À trouver</small><em>Fouille « ${echap(CIBLES_FOUILLE[lignee].nom)} »</em></div>`;
       h += `</div>`;
     }
   }
