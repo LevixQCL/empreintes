@@ -1045,7 +1045,7 @@ export function htmlCoupe(e: EcranDistrict): string {
     const img = decorStrate(ZONES_STRATES.indexOf(zone));
     h += `<li class="tr-strate${front ? ' front' : ''}${vaincue ? ' vaincue' : ''}">`
       + `<span class="tr-vignette">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}<b>−${n}</b></span>`
-      + `<div class="tr-infos"><strong>${nom}</strong><small>${echap(zone.nom)} · ${vaincue ? 'vaincue : fouille ciblée ou expédition' : 'front de fouille : son gardien t’attend'}</small>`
+      + `<div class="tr-infos"><strong>${nom}</strong><small>${echap(zone.nom)} · ${vaincue ? 'vaincue : fouille (cartes, composants, Éclats) ou expédition' : 'front de fouille : son gardien t’attend'}</small>`
       + `<div class="tr-actions">${vaincue ? `<button type="button" class="btn sec" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller</button>` : ''}`
       + `<button type="button" class="btn ${front && !j.frontVaincu ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}${front ? 'Descendre' : 'Y aller'}</button></div></div></li>`;
   }
@@ -1142,6 +1142,15 @@ function plusLongueSuite(n: number[], jokers: number): number[] {
 // L'écran Escouade (revue du 22 octobre 2026, même équipe que la feuille de bâtiment) :
 // d'abord ce qu'on part chercher, puis les trois Porteurs en grand sur la ligne de départ, ce que donne leur deck,
 // puis les Porteurs disponibles. Plus de doublons (emplacements + grille + tuiles de deck) ; le deck trop maigre dit quoi faire.
+/** Une tuile de cible de fouille : son icône, son nom, ce qu'elle rapporte en bref */
+function tuileCible(c: CibleFouille, choisie: CibleFouille): string {
+  const lignee = c === 'tech' || c === 'bio' || c === 'reso';
+  const ico = lignee ? ICO.cartes : c === 'composants' ? ICO.composants : ICO.eclats;
+  const bref = lignee ? '3 cartes au choix au filon' : c === 'composants' ? 'selon les combats gagnés' : '2 à 3 Éclats au filon';
+  return `<button type="button" role="radio" class="es-tuile${choisie === c ? ' actif' : ''}${lignee ? ' carte' : ''}" style="--c:${lignee ? COULEUR[c] : c === 'eclats' ? 'var(--reso)' : '#8FB8DA'}" data-action="cible" data-id="${c}" aria-checked="${choisie === c}">`
+    + `${ico}<strong>${echap(CIBLES_FOUILLE[c].nom)}</strong><small>${bref}</small></button>`;
+}
+
 export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
   const ep = e.epreuve ? epreuveDef(e.epreuve) ?? null : null;
@@ -1159,8 +1168,12 @@ export function htmlEscouade(e: EcranDistrict): string {
     h += `<p class="es-but">${ICO.boost}<span><strong>${echap(ep.nom)}</strong>${echap(ep.regle)} Un seul combat, contre ${echap(ennemiDef(zone.boss).nom)}.</span></p>`;
   } else if (fouille) {
     h += `<p class="es-but">${ICO.cristal}<span><strong>Fouille ciblée · ${echap(zone.nom)}</strong>Une descente courte, sans gardien : quelques salles, puis le filon.</span></p>`
-      + `<div class="es-cibles" role="tablist" aria-label="Ce que tu cherches">` + (Object.keys(CIBLES_FOUILLE) as CibleFouille[]).map((c) =>
-        `<button type="button" role="tab" class="es-cible${fouille === c ? ' actif' : ''}"${c === 'tech' || c === 'bio' || c === 'reso' ? ` style="--c:${COULEUR[c]}"` : ''} data-action="cible" data-id="${c}" aria-selected="${fouille === c}">${echap(CIBLES_FOUILLE[c].nom)}</button>`).join('') + `</div>`
+      // ce que l'on cherche : des tuiles toujours visibles, en deux groupes (24 octobre 2026 : la fouille de cartes passait inaperçue,
+      // cachée au bout d'une rangée qui défilait et commençait sur « Composants »)
+      + `<h3 class="es-cibles-titre">Que cherches-tu ?</h3>`
+      + `<div class="es-cibles-grille" role="radiogroup" aria-label="Ce que tu cherches">`
+      + (['tech', 'bio', 'reso'] as CibleFouille[]).map((c) => tuileCible(c, fouille)).join('')
+      + (['composants', 'eclats'] as CibleFouille[]).map((c) => tuileCible(c, fouille)).join('') + `</div>`
       + `<p class="es-cible-texte">${echap(CIBLES_FOUILLE[fouille].texte)}</p>`;
   } else {
     h += `<p class="es-but">${ICO.strate}<span><strong>${echap(zone.nom)}</strong>Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien : ${echap(ennemiDef(zone.boss).nom)}.</span></p>`;

@@ -1269,11 +1269,14 @@ export function creuser(j: Jeu): boolean {
 // Quand on bloque devant une Strate : une descente courte (4 rangées, sans gardien ni salle scellée) dans une Strate déjà
 // vaincue, vers un filon choisi. Les cartes trouvées en route sont de la lignée visée ; le filon donne ce qu'on cherchait.
 
+/** composants du filon par combat gagné pendant la fouille, en Strate −1 (+25 % par Strate) */
+export const FILON_COMPOSANTS = 8;
+
 export const CIBLES_FOUILLE: Record<CibleFouille, { nom: string; texte: string }> = {
   tech: { nom: 'Cartes augmentées', texte: 'Les cartes trouvées sont des cartes d’Augmentés, et le filon en offre trois au choix.' },
   bio: { nom: 'Cartes génés', texte: 'Les cartes trouvées sont des cartes de Génés, et le filon en offre trois au choix.' },
   reso: { nom: 'Cartes résonantes', texte: 'Les cartes trouvées sont des cartes de Résonants, et le filon en offre trois au choix.' },
-  composants: { nom: 'Composants', texte: 'Le filon double les composants rapportés, et en ajoute.' },
+  composants: { nom: 'Composants', texte: 'Le filon rapporte des composants pour chaque combat gagné en route : plus le chemin est long, plus il donne.' },
   eclats: { nom: 'Éclats', texte: 'Le filon rapporte des Éclats : 2, et 3 à partir de la Strate −5.' },
 };
 export const estLignee = (c?: CibleFouille): c is Lignee => c === 'tech' || c === 'bio' || c === 'reso';
@@ -1712,7 +1715,9 @@ export function remonter(j: Jeu): Retour {
     if (tireur(j).nombre() < CREUSEURS.fouille) gagnerCreuseurs(j, 1, 'un fouilleur perdu retrouvé pendant la fouille');
     // le filon : ce que la fouille visait
     if (lignee) j.choix.push({ source: 'fouille', options: tirerChoix(j, x.strate, 'fer', lignee) });
-    else if (x.fouille === 'composants') { const plus = butin + Math.round(20 * (1 + 0.25 * (x.strate - 1))); j.composants += plus; butinFilon = plus; }
+    // le filon « composants » rapporte selon l'effort (24 octobre 2026) : une part par combat gagné dans la fouille,
+    // au lieu de doubler le butin et d'ajouter une prime fixe (un chemin d'un seul combat rapportait ~3 fois plus par combat qu'une expédition)
+    else if (x.fouille === 'composants') { const plus = Math.max(1, victoires) * Math.round(FILON_COMPOSANTS * (1 + 0.25 * (x.strate - 1))); j.composants += plus; butinFilon = plus; }
     else eclats += x.strate >= 5 ? 3 : 2;
     progresser(j, 'expedition');
   } else if (victoire && x.epreuve) {

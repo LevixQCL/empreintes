@@ -152,3 +152,15 @@
 .es-quitte .ico{width:13px;height:13px;flex-shrink:0;margin-top:1px}
 .es-note-poste{color:#E8B86A}
 .es-note-poste b{color:var(--es-txt)}
+
+/* ---------- Que cherches-tu ? (24 octobre 2026) : des tuiles, les cartes d'abord ---------- */
+.es-cibles-titre{margin:4px 0 0;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--or-pale,#CDB98E)}
+.es-cibles-grille{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.es-tuile{grid-column:span 2;display:grid;justify-items:center;align-content:center;gap:3px;min-height:84px;padding:8px 4px;border:0;border-radius:8px;cursor:pointer;font:inherit;text-align:center;
+  color:var(--es-doux,#93A3B8);background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12);transition:background .15s,box-shadow .15s,color .15s}
+.es-tuile:nth-child(n+4){grid-column:span 3;min-height:64px}
+.es-tuile .ico{width:22px;height:22px;color:color-mix(in srgb,var(--c) 75%,white)}
+.es-tuile strong{font-size:13.5px;line-height:1.15;color:#E5EEF8}
+.es-tuile small{font-size:11.5px;line-height:1.2}
+.es-tuile:hover{background:rgba(205,239,255,.08)}
+.es-tuile.actif{color:#E5EEF8;background:color-mix(in srgb,var(--c) 20%,rgba(8,12,24,.8));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--c) 75%,white),0 0 16px color-mix(in srgb,var(--c) 30%,transparent)}
