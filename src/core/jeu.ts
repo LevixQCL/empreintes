@@ -1724,7 +1724,9 @@ export function remonter(j: Jeu): Retour {
     }
     progresser(j, 'expedition');
   } else if (victoire) {
-    j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate) });
+    // le gardien est généreux (24 octobre 2026, Bryan : « toujours des cartes fer, on est un peu radin ») :
+    // à partir de la Strate −3, la première des trois cartes est au moins en cuivre
+    j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, x.strate >= 3 ? 'cuivre' : 'fer') });
     eclats += (x.strate >= 5 ? 2 : 1) + (j.actes.chambre === 'orseve' ? 1 : 0);
     progresser(j, 'expedition');
   }

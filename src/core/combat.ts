@@ -338,7 +338,14 @@ function log(s: CombatEtat, t: string) {
   s.journal = s.journal.slice(0, 6);
 }
 
-function piocher(s: CombatEtat, taille: number = REGLES.tailleMain) {
+/**
+ * Une escouade décimée joue moins de cartes (24 octobre 2026, Bryan : seul, un Porteur devenait « pratiquement imbattable »
+ * en alternant dégâts, soin et bouclier, car sa main de 5 cartes reprenait presque tout son deck de 6 à chaque tour).
+ * Une carte de moins en main par Porteur à terre : 5 à trois, 4 à deux, 3 seul.
+ */
+export const tailleMainDe = (s: CombatEtat) => REGLES.tailleMain - s.porteurs.filter((p) => p.pv <= 0).length;
+
+function piocher(s: CombatEtat, taille: number = tailleMainDe(s)) {
   const r = tireur(s);
   let garde = 0;
   while (s.main.length < taille && garde++ < 80) {
@@ -540,7 +547,7 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
         continue;
       }
       p.aTerre = true;
-      log(s, `${porteurDef(p.id).nom} est à terre : ses cartes quittent le deck.`);
+      log(s, `${porteurDef(p.id).nom} est à terre : ses cartes quittent le deck, et la main perd une carte.`);
       emettre({ kind: 'a-terre', cible: p.id });
     }
   }
