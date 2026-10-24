@@ -134,7 +134,11 @@ function placeEscouade(j: Jeu, id: string | undefined, i: number, verrou: string
     + `<span class="me-jauges" title="${pv} / ${pvM} PV${n.requis ? ` · ${n.xp} / ${n.requis} XP` : ''}">${jaugePv(pv, pvM, d.usure, usureMax(id))}${barreXp(j, id)}</span>`
     + `<span class="me-chiffres"><b class="or">Niv. ${n.niveau}</b><span><b>${pv}</b>/${pvM} PV</span></span>`
     + `<button type="button" class="me-cartes${nc ? '' : ' aucune'}${nc >= DISTRICT.cartesMax ? ' pleine' : ''}" data-action="deck" data-id="${id}"${enExpedition(j, id) ? ' disabled' : ''}>${ICO.cartes}<span>${nc} / ${DISTRICT.cartesMax} cartes</span></button>`
-    + (m ? `<button type="button" class="me-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" title="${echap(m.texte)}">${m.acquise ? ICO.ok : ICO.cristal}<span><b>${echap(m.nom)}</b> ${m.acquise ? echap(m.court) : `${fr(Math.min(m.n, m.seuil))} / ${fr(m.seuil)}`}</span></button>` : '')
+    // la Marque : acquise, son effet ; sinon ce qu'il faut accomplir pour la gagner, avec une jauge (24 octobre 2026 : « 10/30 » seul ne se comprenait pas)
+    + (m ? `<button type="button" class="me-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" title="${echap(m.texte)}">${m.acquise ? ICO.ok : ICO.cristal}<span>`
+      + (m.acquise ? `<b>${echap(m.nom)}</b> ${echap(m.court)}`
+        : `<small class="me-marque-sur">Marque à gagner</small><b>${echap(m.nom)}</b> : ${echap(m.court)}<i class="me-marque-jauge"><i style="width:${Math.min(100, (100 * m.n) / m.seuil)}%"></i></i><small>${fr(Math.min(m.n, m.seuil))} / ${fr(m.seuil)} ${echap(m.quoi)}</small>`)
+      + `</span></button>` : '')
     + alerte
     + (verrou ? '' : `<button type="button" class="me-changer" data-action="escouade-place" data-index="${i}" aria-label="Changer ${echap(p.nom)} de l’escouade">${ICO.recycler}<span>Changer</span></button>`)
     + `</div>`;
