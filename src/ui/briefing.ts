@@ -8,7 +8,6 @@ import { REGLES } from '../core/regles';
 import type { Geste } from '../core/types';
 import { portrait } from './art';
 import { avatar } from './coquille';
-import './debut.css';
 import { ICO } from './icones';
 import { COULEUR, carteDemo } from './vue';
 import { echap } from './outils';

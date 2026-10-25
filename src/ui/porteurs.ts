@@ -17,8 +17,6 @@ import { barreXp, feuilleDeck, jaugePv } from './district';
 import { effetsLignee, plageFrequences } from './guide';
 import { ICO } from './icones';
 import { COULEUR } from './vue';
-import './fiche-porteur.css';
-import './mon-escouade.css';
 import { echap, virgule } from './outils';
 
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];

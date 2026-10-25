@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "check": "tsc --noEmit",
-    "robot": "tsx scripts/robot.ts"
+    "robot": "tsx scripts/robot.ts",
+    "visuel": "tsx scripts/visuel.ts"
   },
   "devDependencies": {
     "tsx": "^4.23.15",

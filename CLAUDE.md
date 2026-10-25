@@ -4,9 +4,9 @@ Jeu de cartes à collectionner + gestion, SF/fantasy, web mobile d'abord (Vite +
 Tout est en français : code, commentaires, textes du jeu, messages de commit. Lire le README avant de coder.
 
 ## Règles du code
-- `src/core` n'utilise jamais le navigateur (il tournera sur un serveur). L'affichage est dans `src/ui`, le câblage dans `src/main.ts`.
-- Tous les chiffres d'équilibrage sont dans `src/core/regles.ts`, `donnees.ts`, `collection.ts` et `jeu.ts` : les tests et le robot (`npm run robot`) s'en servent.
-- Avant chaque push : `npx tsc --noEmit -p .` et `npm test` doivent passer (le déploiement GitHub Pages lance les tests ; s'ils échouent, rien n'est publié).
+- `src/core` n'utilise jamais le navigateur (il tournera sur un serveur). L'affichage est dans `src/ui`, l'application (état, actions, rendu) dans `src/app`, le démarrage dans `src/main.ts`.
+- Tous les chiffres d'équilibrage sont dans `src/core/regles.ts`, `donnees.ts`, `collection.ts` et `jeu.ts` (rangé par thème dans `partie/`) : les tests et le robot (`npm run robot`) s'en servent.
+- Avant chaque push : `npx tsc --noEmit -p .` et `npm test` doivent passer, et `npm run visuel` ne doit montrer que les changements voulus (le déploiement GitHub Pages lance les tests ; s'ils échouent, rien n'est publié).
 - Pousser sur `main` publie le jeu (https://levixqcl.github.io/empreintes/). Commits courts, en français, qui disent ce qui change pour le joueur.
 - Toute modification de `firestore.rules` doit être recopiée et publiée dans la console Firebase (projet `empreintes-8e82d`) : demander à Bryan avant de publier.
 - Vérifier visuellement à la taille d'un téléphone (≈ 360 à 412 px de large) avec Playwright, puis sur PC (≥ 1100 px).

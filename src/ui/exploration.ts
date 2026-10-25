@@ -10,7 +10,6 @@
 // - UX : « Où aller ? » dit ce que chaque salle rapporte et coûte en vrais chiffres (PV de l'ennemi, composants,
 //   PV rendus au campement), la sortie possible est chiffrée, le butin ne s'affiche qu'une fois.
 
-import './exploration-refonte.css';
 import { accessibles, butinCombat, forceStrate, peutRemonter, rangsDe, salleCourante, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
 import { PART_GROUPE } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';

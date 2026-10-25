@@ -17,6 +17,7 @@ Autres commandes :
 | `npm test` | Lance les tests des règles (Résonance, Écho, combat complet) |
 | `npm run check` | Vérifie le TypeScript sans rien construire |
 | `npm run build` | Construit le site dans `dist/` |
+| `npm run visuel` | Compare les écrans avant / après une modification (téléphone et PC) : voir `.visuel/` |
 | `npm run robot` | Lance le robot d'équilibrage (quelques minutes) et écrit `docs/robot-rapport.md` |
 
 Chaque `git push` sur `main` lance les tests, construit le site et le publie sur GitHub Pages.
@@ -46,12 +47,22 @@ src/
     district.ts    archipel, Tour du Noyau, escouade, cartes, Bibliothèque ; les détails s'ouvrent en feuille par le bas
     vue.ts         l'écran de combat
     icones.ts      le jeu d'icônes de l'interface (SVG, couleur du texte)
+    feuilles.ts    l'ordre des feuilles de style (la cascade) : toutes les feuilles CSS sont importées là, et seulement là
     outils.ts      petits outils partagés (échapper un texte, animations réduites, virgule française)
     styles.css     le style « laiton et verre fumé » ; scenes.css (titre, intro) ; face-carte.css (cartes Module)
     bureau.css     la mise en page PC (à partir de 1100 px de large) : rail à gauche, tableaux en pleine hauteur ; le téléphone n’en dépend pas
   save/          la sauvegarde sur l'appareil
   net/           Firebase : comptes et synchronisation (optionnel)
-  main.ts        relie tout : clics, animations, sauvegarde
+  app/           l'application : relie les règles (core) et l'affichage (ui)
+    etat.ts        l'état partagé : la partie en cours (app.jeu), l'écran affiché, l'état du district, du combat, du Grand Tableau
+    rendu.ts       redessine l'écran courant
+    actions/       ce que fait chaque bouton [data-action], rangé par thème (intro, district, combat, tableau, compte)
+    combat.ts      l'animation des coups et la fenêtre de fin de combat
+    horloge.ts     le temps qui passe (chaque seconde)
+    synchro.ts     la sauvegarde sur l'appareil et sur le compte, la partie de secours
+    tableau.ts     le Grand Tableau en ligne
+    clavier.ts, intro.ts
+  main.ts        le démarrage et les gestes du joueur
 public/art/      les illustrations Midjourney (Porteurs, Modules, ennemis, bâtiments, décors, scènes des salles, icônes, textures des métaux) ; src/ui/art.ts dit laquelle va où
 scripts/mer-district.py  prolonge chaque tableau du district par sa mer et son ciel pour l'écran PC (public/art/district/mer-N.webp) : à relancer quand un âge change
 src/ui/carte.ts  la face des cartes Module (métal de la rareté, effets sur l'illustration)

@@ -24,7 +24,6 @@ import { bandeauTableau } from './classements';
 import { ICO, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, type EcranDistrict, type Filtre } from './coquille';
 
-import './district.css';
 import { echap, mouvementReduit, virgule } from './outils';
 
 export type { EcranDistrict, Vue } from './coquille';

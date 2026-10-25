@@ -4,7 +4,6 @@
 import { particules } from './intro';
 import { LOGOTYPE } from './logotype';
 import { peutInstaller } from './installer';
-import './debut.css';
 
 /**
  * L'illustration fixe, avec des effets en code posés exactement sur elle (positions en % de l'image) :
