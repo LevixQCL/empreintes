@@ -1,9 +1,9 @@
 // Les premières rencontres (décision du 22 octobre 2026) : la première fois qu'une mécanique apparaît en combat
-// (un groupe, un trait d'ennemi, une condition de salle, la seconde phase d'un gardien), une fenêtre l'explique
+// (la Fêlure, le Coup d'éclat, un groupe, un trait d'ennemi, une condition de salle, la seconde phase d'un gardien), une fenêtre l'explique
 // avec un conseil concret. Une seule fois par partie : ce qui a été vu est gardé dans `Jeu.decouvertes`.
 // Aucun DOM ici : l'écran affiche la découverte que renvoie `decouverteEnAttente`.
 
-import { enGroupe, tousEnnemis } from './combat';
+import { ECLATS, eclatsPossibles, enGroupe, felureVisible, tousEnnemis } from './combat';
 import { CONDITIONS, ennemiDef, texteTrait } from './donnees';
 import type { CombatEtat, Trait } from './types';
 
@@ -26,6 +26,7 @@ const CONSEILS_TRAITS: Record<Trait['type'], string> = {
   essaim: 'Il revient plus petit quand il tombe : garde de quoi finir le rejeton.',
   vengeur: 'Si tu abats son allié, il frappera double au tour suivant : protège-toi, ou abats-le en premier.',
   furie: 'Plus il est blessé, plus il frappe fort : une fois sous la moitié de ses PV, achève-le vite.',
+  aspire: 'Chacune de ses attaques vide ton Flux : déclenche ton Coup d’éclat ou dépense ton Flux avant qu’il ne frappe.',
 };
 
 const CONSEILS_CONDITIONS: Record<string, string> = {
@@ -41,6 +42,21 @@ const CONSEILS_CONDITIONS: Record<string, string> = {
 /** Les découvertes que ce combat peut déclencher, dans l'ordre où les montrer */
 export function decouvertesDuCombat(s: CombatEtat): Decouverte[] {
   const r: Decouverte[] = [];
+  if (tousEnnemis(s).some((en) => en.pv > 0 && felureVisible(en) && !en.felureBrisee)) {
+    r.push({
+      id: 'felure', sur: 'PREMIÈRE RENCONTRE', titre: 'La Fêlure',
+      texte: 'À côté de son intention, l’ennemi montre une gemme fêlée et une Fréquence. Pose une carte de cette Fréquence dans ta chaîne : son intention se brise (moitié moins forte, un quart chez un gardien ou un blindé) et ton Flux monte d’un cran. Les cartes de ta main qui la brisent portent la gemme.',
+      conseil: 'Une Fêlure brisée vaut souvent mieux qu’une suite de plus : elle protège l’escouade et remplit le Flux pour ton Coup d’éclat.',
+    });
+  }
+  const eclats = eclatsPossibles(s);
+  if (eclats.length) {
+    r.push({
+      id: 'eclat', sur: 'FLUX PLEIN', titre: 'Le Coup d’éclat',
+      texte: `Ton Flux est plein : le bouton doré « Éclat » remplace ses losanges. Un seul Coup d’éclat par combat, au choix selon les lignées de ton escouade. ${eclats.map((c) => `${ECLATS[c.lignee].nom} : ${ECLATS[c.lignee].texte}`).join(' ')} Il vide le Flux, et le Porteur qui le déclenche prend de l’Usure.`,
+      conseil: 'Garder son Flux pour le Coup d’éclat, ou le dépenser tout de suite pour une place ou une nouvelle main : c’est à toi de voir. Méfie-toi des ennemis qui l’aspirent.',
+    });
+  }
   if (s.condition && CONDITIONS[s.condition]) {
     const c = CONDITIONS[s.condition]!;
     r.push({ id: `condition-${c.id}`, sur: 'CONDITION DE SALLE', titre: c.nom, texte: c.texte, conseil: CONSEILS_CONDITIONS[c.id] ?? '' });

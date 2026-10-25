@@ -102,7 +102,7 @@ export function afficher() {
     const enAttente = !K.verrou && !K.fin && !app.jeu.expedition.tutoriel && etat.issue === 'en-cours' ? decouverteEnAttente(app.jeu.decouvertes ?? [], etat) : null;
     const decouverte = enAttente && (enAttente.id === 'phase' || K.decouverteTour !== tourCombat || K.decouverteId === enAttente.id) ? enAttente : null;
     if (decouverte) { K.decouverteTour = tourCombat; K.decouverteId = decouverte.id; }
-    h = htmlCombat({ x: app.jeu.expedition, etat, verrou: K.verrou, regles: K.regles, fuite: K.fuite, guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
+    h = htmlCombat({ x: app.jeu.expedition, etat, verrou: K.verrou, regles: K.regles, fuite: K.fuite, eclats: K.eclats, guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
   } else {
     app.mode = 'district';
     voirNouveautes();

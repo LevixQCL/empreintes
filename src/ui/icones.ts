@@ -44,6 +44,10 @@ export const ICO = {
   monter: svg('<path d="M12 20V6"/><path d="M6 12l6-6 6 6"/><path d="M5 3h14"/>'),
   greffe: svg('<path d="M12 3v6"/><path d="M8 9h8l-1 4H9z"/><path d="M12 13v8"/><path d="M8 21h8"/>'),
   cristal: svg('<path d="M12 2l4 5-4 15-4-15z"/>', true),
+  // une gemme fêlée : la Fêlure de l'ennemi (25 octobre 2026)
+  fele: svg('<path d="M12 2l6 7-6 13-6-13z"/><path d="M13 4l-2.5 5 3 3-2 5"/>'),
+  // le Coup d'éclat : une étoile à quatre branches
+  eclat: svg('<path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/>', true),
   porte: svg('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v5M12 16v5M3 12h5M16 12h5"/>'),
   coffre: svg('<path d="M3 9h18v11H3z"/><path d="M3 9l2-5h14l2 5"/><path d="M10 13h4"/>'),
 } as const;

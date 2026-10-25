@@ -362,7 +362,7 @@ export function remonter(j: Jeu): Retour {
   for (const p of finaux) {
     const d = j.porteurs[p.id]!;
     const usure = DISTRICT.usureExpedition * (j.actes.fin === 'archives' ? 1.5 : 1) * (x.fouille || x.epreuve ? 0.5 : 1);
-    d.usure = Math.min(usureMax(p.id), d.usure + usure + (p.pv <= 0 ? DISTRICT.usureATerre : 0) + (x.fuite ? DISTRICT.usureFuite : 0));
+    d.usure = Math.min(usureMax(p.id), d.usure + usure + (p.pv <= 0 ? DISTRICT.usureATerre : 0) + (x.fuite ? DISTRICT.usureFuite : 0) + (p.usureEclat ?? 0));
   }
   let nouvelleStrate = false;
   let butinFilon = 0;

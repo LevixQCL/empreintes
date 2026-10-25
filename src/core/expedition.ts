@@ -96,8 +96,10 @@ const RENCONTRES_IDS = ['veilleur', 'pilleur', 'brigade', 'cristal', 'marchand',
  * (parcours d'un joueur, `src/core/parcours.ts`), puis une hausse régulière au-delà de la table.
  */
 export const FORCE = {
-  //      −1   −2   −3   −4    −5    −6   −7    −8    −9   −10   −11   −12  −13   −14
-  table: [1, 1.3, 1.7, 2.0, 2.3, 2.6, 2.7, 2.82, 2.9, 3.05, 3.25, 3.5, 3.68, 3.8] as number[],
+  // ×1,15 à partir de −2 (25 octobre 2026) : la Fêlure et les Coups d'éclat rendent l'escouade plus forte ; réglé au robot
+  // pour garder ~1 victoire sur 3 au front (joueur moyen) et la Strate −10 vers le jour 28-30.
+  //      −1   −2     −3     −4   −5     −6    −7     −8     −9     −10    −11    −12    −13    −14
+  table: [1, 1.495, 1.955, 2.3, 2.645, 2.99, 3.105, 3.243, 3.335, 3.507, 3.737, 4.025, 4.232, 4.37] as number[],
   /** hausse par Strate au-delà de la table */
   ensuite: 1.04,
   /** hausse par Strate pour suivre les niveaux des Porteurs. À 0 depuis les traits, phases et conditions (22 octobre 2026), qui
