@@ -9,6 +9,7 @@ import { initToucher } from './ui/toucher';
 import { agir } from './app/actions/index';
 import { clavier } from './app/clavier';
 import { app, compteEtat, G, K, racine, reduit } from './app/etat';
+import { brancherChaine } from './app/chaine';
 import { battre } from './app/horloge';
 import { afficher } from './app/rendu';
 import { demarrerCompte, sauver } from './app/synchro';
@@ -39,6 +40,9 @@ racine.addEventListener('pointermove', (ev) => { if (appui && Math.hypot(ev.clie
 for (const t of ['pointerup', 'pointercancel', 'pointerleave'] as const) racine.addEventListener(t, finAppui);
 racine.addEventListener('contextmenu', (ev) => { if (app.mode === 'combat' && (ev.target as HTMLElement).closest('.geste')) ev.preventDefault(); });
 racine.addEventListener('click', (ev) => { if (annulerClic) { annulerClic = false; ev.stopImmediatePropagation(); ev.preventDefault(); } }, true);
+
+/* glisser une carte posée le long de la chaîne la change de place */
+brancherChaine();
 
 // ---------- Le temps qui passe ----------
 

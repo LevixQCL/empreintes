@@ -268,3 +268,7 @@
 .ex-barre{position:relative}
 .ex-barre>i.ex-usure{position:absolute;right:0;top:0;bottom:0;border-radius:0;background:repeating-linear-gradient(135deg,rgba(226,115,90,.9) 0 3px,rgba(226,115,90,.35) 3px 6px)}
 .ex-p-usure{margin-left:4px;font-size:.8em;color:#FF9C8A}
+
+/* réordonner la chaîne : un glissé horizontal sur une carte posée la déplace (le défilement vertical de la page reste libre) */
+.zone-chaine .rail .geste{touch-action:pan-y}
+#app .ecran-combat .zone-chaine .rail .geste.deplace{filter:brightness(1.12) drop-shadow(0 12px 14px rgba(0,0,0,.55));cursor:grabbing}

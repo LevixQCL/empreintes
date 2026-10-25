@@ -233,6 +233,20 @@ export function retirer(s: CombatEtat, uid: string): Resultat {
   return { ok: true };
 }
 
+/** Déplace une carte posée à une autre place de la chaîne, sans la renvoyer en main (une suite mal posée se répare) */
+export function deplacer(s: CombatEtat, uid: string, vers: number): Resultat {
+  if (s.issue !== 'en-cours') return { ok: false };
+  const de = s.chaine.findIndex((x) => x.uid === uid);
+  if (de < 0) return { ok: false };
+  const a = Math.max(0, Math.min(s.chaine.length - 1, vers));
+  if (a === de) return { ok: false };
+  const [g] = s.chaine.splice(de, 1);
+  s.chaine.splice(a, 0, g!);
+  // les cartes à plusieurs Fréquences reprennent celle qui prolonge la suite à leur nouvelle place
+  s.chaine.forEach((x, i) => { if (x.fs && x.fs.length > 1) x.f = meilleureFrequence(s.chaine.slice(0, i), x.fs); });
+  return { ok: true };
+}
+
 export function viderChaine(s: CombatEtat): void {
   for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
   s.main.push(...s.chaine);
