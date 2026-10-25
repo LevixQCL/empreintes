@@ -8,13 +8,14 @@
 
 import type { Evenement, LigneeGeste } from '../core/types';
 import { vibrer } from './toucher';
+import { ondeDeChoc } from './verre';
 
 const TEINTE: Record<LigneeGeste, string> = { tech: '#8FDCFF', bio: '#FFB44A', reso: '#B98CFF', neutre: '#EBD9A8' };
 const SOIN = '#7CE3A0';
 const BOUCLIER = '#E6F3FF';
 const DANGER = '#FF6B5B';
 
-interface Particule { x: number; y: number; vx: number; vy: number; vie: number; max: number; taille: number; couleur: string; gravite: number; trainee?: boolean }
+interface Particule { x: number; y: number; vx: number; vy: number; vie: number; max: number; taille: number; couleur: string; gravite: number; trainee?: boolean; frein?: number; eclat?: { angle: number; tourne: number; forme: number[] } }
 interface Trait { dessiner: (c: CanvasRenderingContext2D, t: number) => void; debut: number; duree: number }
 
 let canvas: HTMLCanvasElement | null = null;
@@ -91,18 +92,30 @@ function lancerBoucle() {
     particules = particules.filter((p) => {
       p.vie -= dt;
       if (p.vie <= 0) return false;
+      // l'air freine : les étincelles jaillissent vite puis flottent, au lieu de filer droit
+      const frein = Math.exp(-(p.frein ?? 0) * dt);
+      p.vx *= frein; p.vy *= frein;
       p.vy += p.gravite * dt;
       p.x += p.vx * dt;
       p.y += p.vy * dt;
       const a = Math.max(0, p.vie / p.max);
-      c.globalAlpha = a;
-      c.fillStyle = p.couleur;
-      if (p.trainee) {
-        c.strokeStyle = p.couleur;
-        c.lineWidth = p.taille;
-        c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * 0.04, p.y - p.vy * 0.04); c.stroke();
+      if (p.eclat) dessinerEclat(c, p, a, dt);
+      else if (p.trainee) {
+        // une traînée de lumière : un halo coloré, un cœur blanc, une tête qui brille
+        const queue = 0.05;
+        c.lineCap = 'round';
+        c.globalAlpha = a * 0.55;
+        c.strokeStyle = p.couleur; c.lineWidth = p.taille * 2.4;
+        c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * queue, p.y - p.vy * queue); c.stroke();
+        c.globalAlpha = a;
+        c.strokeStyle = '#fff'; c.lineWidth = Math.max(0.8, p.taille * 0.7);
+        c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(p.x - p.vx * queue * 0.6, p.y - p.vy * queue * 0.6); c.stroke();
+        halo(c, p.x, p.y, p.taille * 4, p.couleur, a * 0.8);
       } else {
-        c.beginPath(); c.arc(p.x, p.y, p.taille * (0.5 + a / 2), 0, Math.PI * 2); c.fill();
+        // une braise : un halo doux et un point blanc au centre
+        halo(c, p.x, p.y, p.taille * (2.5 + a * 2.5), p.couleur, a);
+        c.globalAlpha = a; c.fillStyle = '#fff';
+        c.beginPath(); c.arc(p.x, p.y, p.taille * 0.45 * (0.5 + a / 2), 0, Math.PI * 2); c.fill();
       }
       return true;
     });
@@ -114,17 +127,67 @@ function lancerBoucle() {
   boucle = requestAnimationFrame(pas);
 }
 
+/** Un halo de lumière : un dégradé radial peint une fois par couleur, puis simplement recopié (bien moins cher qu'une ombre floue) */
+const halos = new Map<string, HTMLCanvasElement>();
+function halo(c: CanvasRenderingContext2D, x: number, y: number, rayon: number, couleur: string, alpha: number) {
+  let h = halos.get(couleur);
+  if (!h) {
+    h = document.createElement('canvas');
+    h.width = h.height = 64;
+    const g = h.getContext('2d')!;
+    const d = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    d.addColorStop(0, couleur); d.addColorStop(0.25, couleur + 'AA'); d.addColorStop(1, couleur + '00');
+    g.fillStyle = d; g.fillRect(0, 0, 64, 64);
+    halos.set(couleur, h);
+  }
+  c.globalAlpha = alpha;
+  c.drawImage(h, x - rayon, y - rayon, rayon * 2, rayon * 2);
+}
+
+/** Un éclat de verre : un petit polygone qui tourne et lance un reflet quand il fait face à la lumière */
+function dessinerEclat(c: CanvasRenderingContext2D, p: Particule, a: number, dt: number) {
+  const e = p.eclat!;
+  e.angle += e.tourne * dt;
+  // la face visible s'amincit et s'élargit en tournant ; le reflet éclate quand elle est de face
+  const face = Math.cos(e.angle * 1.7);
+  const reflet = Math.pow(Math.abs(face), 8);
+  c.save();
+  c.translate(p.x, p.y); c.rotate(e.angle); c.scale(1, 0.25 + Math.abs(face) * 0.75);
+  c.globalAlpha = a * (0.35 + reflet * 0.65);
+  c.fillStyle = reflet > 0.5 ? '#fff' : p.couleur;
+  c.strokeStyle = '#fff'; c.lineWidth = 0.8;
+  c.beginPath();
+  for (let i = 0; i < e.forme.length; i += 2) c[i ? 'lineTo' : 'moveTo'](e.forme[i]! * p.taille, e.forme[i + 1]! * p.taille);
+  c.closePath(); c.fill(); c.stroke();
+  c.restore();
+  if (reflet > 0.6) halo(c, p.x, p.y, p.taille * 3.5, '#FFFFFF', a * reflet * 0.7);
+}
+
+/** Des éclats de verre qui sautent du point d'impact */
+function verre(x: number, y: number, n: number, couleur: string, force: number) {
+  if (reduit) return;
+  n = Math.min(n, MAX_PARTICULES - particules.length);
+  for (let i = 0; i < n; i++) {
+    const a = hasard(-Math.PI, 0.2) - 0.3; // surtout vers le haut et les côtés
+    const v = hasard(140, 260 + force * 40);
+    const vie = hasard(0.6, 1.1);
+    const forme = [0, -1, hasard(0.4, 0.9), hasard(-0.2, 0.4), hasard(-0.1, 0.2), 1, hasard(-0.9, -0.4), hasard(-0.1, 0.3)];
+    particules.push({ x: x + hasard(-10, 10), y: y + hasard(-10, 10), vx: Math.cos(a) * v, vy: Math.sin(a) * v, vie, max: vie, taille: hasard(3, 5.5 + force * 0.4), couleur, gravite: 520, frein: 1.2, eclat: { angle: hasard(0, 6.28), tourne: hasard(-14, 14), forme } });
+  }
+  lancerBoucle();
+}
+
 /** plafond de particules à l'écran, pour les téléphones modestes */
 const MAX_PARTICULES = 220;
 
-function eclats(x: number, y: number, n: number, couleur: string, o: { vitesse?: number; gravite?: number; taille?: number; vie?: number; trainee?: boolean; angle?: number; ouverture?: number } = {}) {
+function eclats(x: number, y: number, n: number, couleur: string, o: { vitesse?: number; gravite?: number; taille?: number; vie?: number; trainee?: boolean; angle?: number; ouverture?: number; frein?: number } = {}) {
   if (reduit) return;
   n = Math.min(n, MAX_PARTICULES - particules.length);
   for (let i = 0; i < n; i++) {
     const a = (o.angle ?? 0) + hasard(-1, 1) * (o.ouverture ?? Math.PI);
     const v = hasard(0.3, 1) * (o.vitesse ?? 260);
     const vie = hasard(0.5, 1) * (o.vie ?? 0.7);
-    particules.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, vie, max: vie, taille: hasard(0.6, 1.2) * (o.taille ?? 3), couleur, gravite: o.gravite ?? 300, trainee: o.trainee });
+    particules.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, vie, max: vie, taille: hasard(0.6, 1.2) * (o.taille ?? 3), couleur, gravite: o.gravite ?? 300, trainee: o.trainee, frein: o.frein ?? (o.trainee ? 3 : 1) });
   }
   lancerBoucle();
 }
@@ -609,7 +672,9 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
           if (derniere?.effet === 'crescendo') crescendo(pEnnemi, d.rang);
           if (d.lignee === 'bio') griffes(pEnnemi, couleur, force);
           else if (d.lignee === 'reso') ondes(pEnnemi, couleur, force);
-          eclats(pEnnemi.x, pEnnemi.y, 10 + force * 6, couleur, { vitesse: 260 + force * 40, taille: 2.4, trainee: true, gravite: 200 });
+          eclats(pEnnemi.x, pEnnemi.y, 10 + force * 6, couleur, { vitesse: 420 + force * 60, taille: 2.2, trainee: true, gravite: 160 });
+          verre(pEnnemi.x, pEnnemi.y, 3 + force, '#DDEBFF', force);
+          if (!reduit) ondeDeChoc(pEnnemi.x, pEnnemi.y, couleur, force);
         }
         touche(ennemi, couleur, force);
         secouer(ecran, force - 1);

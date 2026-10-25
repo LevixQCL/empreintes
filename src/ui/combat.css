@@ -272,3 +272,5 @@
 /* réordonner la chaîne : un glissé horizontal sur une carte posée la déplace (le défilement vertical de la page reste libre) */
 .zone-chaine .rail .geste{touch-action:pan-y}
 #app .ecran-combat .zone-chaine .rail .geste.deplace{filter:brightness(1.12) drop-shadow(0 12px 14px rgba(0,0,0,.55));cursor:grabbing}
+/* l'onde de choc qui plie l'image de l'ennemi (verre.ts) : juste au-dessus de l'image, sous tout le reste */
+.calque-verre{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
