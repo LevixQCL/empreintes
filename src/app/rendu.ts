@@ -1,8 +1,12 @@
 // Le rendu : redessine l'écran courant à partir de l'état (positions de défilement et champs de saisie gardés).
 
+import { repliqueGardien, sceneDef } from '../core/campagne';
+import { tousEnnemis } from '../core/combat';
+import { ennemiDef } from '../core/donnees';
 import { decouverteEnAttente } from '../core/decouvertes';
 import * as J from '../core/jeu';
 import { htmlBriefing } from '../ui/briefing';
+import { htmlScene } from '../ui/campagne';
 import { activerCartes } from '../ui/carte';
 import { htmlClassements } from '../ui/classements';
 import { brancherTableau, htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre } from '../ui/district';
@@ -102,13 +106,19 @@ export function afficher() {
     const enAttente = !K.verrou && !K.fin && !app.jeu.expedition.tutoriel && etat.issue === 'en-cours' ? decouverteEnAttente(app.jeu.decouvertes ?? [], etat) : null;
     const decouverte = enAttente && (enAttente.id === 'phase' || K.decouverteTour !== tourCombat || K.decouverteId === enAttente.id) ? enAttente : null;
     if (decouverte) { K.decouverteTour = tourCombat; K.decouverteId = decouverte.id; }
-    h = htmlCombat({ x: app.jeu.expedition, etat, verrou: K.verrou, regles: K.regles, fuite: K.fuite, eclats: K.eclats, guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
+    const parole = paroleGardien(etat);
+    h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, fuite: K.fuite, eclats: K.eclats, guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
   } else {
     app.mode = 'district';
     voirNouveautes();
     proposerProtection();
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape) : D.vue === 'accueil' ? htmlBriefing(D.etape, 'district')
       : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : D.vue === 'classements' ? htmlClassements(D, G, app.uid) : htmlArchipel(D);
+    // une scène de la campagne : au retour sur l'archipel ou dans la Tour, par-dessus tout (ou rejouée depuis la Bibliothèque)
+    const revoir = D.revoir ? sceneDef(D.revoir) : undefined;
+    const scene = revoir ?? (!D.menu && (D.vue === 'archipel' || D.vue === 'coupe') ? J.sceneCampagne(app.jeu) : null);
+    if (scene) h = htmlScene(scene, J.contexteCampagne(app.jeu), D.scene ?? 0, !!revoir);
+    else D.scene = 0;
   }
   racine.dataset.mode = app.mode;
   // chaque sorte de zone garde ses positions à part : une liste qui apparaît ou disparaît ne décale pas les autres
@@ -130,6 +140,26 @@ export function afficher() {
   const ip = racine.querySelector('#gt-nom') as HTMLInputElement | null;
   if (ip && pseudoTape !== undefined) ip.value = pseudoTape;
   if (im) im.value = mdp;
+}
+
+/**
+ * Ce que dit le gardien (campagne.ts) : en entrant dans sa salle, tant que la première chaîne n'est pas lancée,
+ * puis au tour qui suit son passage en seconde phase (la réplique remplace le conseil sous la chaîne, tant qu'elle est vide). Jamais dans une fouille, une Épreuve ou le combat guidé.
+ */
+function paroleGardien(etat: import('../core/types').CombatEtat): { nom: string; texte: string } | undefined {
+  const x = app.jeu.expedition;
+  if (!x?.carte || x.fouille || x.epreuve || x.tutoriel || etat.issue !== 'en-cours') return undefined;
+  if (x.carte.salles[x.carte.position]?.type !== 'gardien') return undefined;
+  const boss = tousEnnemis(etat).find((en) => en.id === x.carte!.salles[x.carte!.position]!.ennemi);
+  if (!boss) return undefined;
+  const nom = ennemiDef(boss.id).nom;
+  // la phase change pendant la chaîne du joueur : sa réplique s'affiche au tour suivant, tant que la chaîne est vide
+  if (boss.phase2 && boss.pv > 0) {
+    K.phaseTour ??= etat.tour;
+    return etat.tour <= K.phaseTour + 1 && !etat.chaine.length ? { nom, texte: repliqueGardien(x.strate, 'phase') } : undefined;
+  }
+  K.phaseTour = undefined;
+  return etat.tour === 1 && !etat.chaine.length ? { nom, texte: repliqueGardien(x.strate, 'avant') } : undefined;
 }
 
 // Les pastilles « Nouveau » (23 octobre 2026) : elles restent tant qu'on est sur l'écran qui les montre,

@@ -1,0 +1,88 @@
+/* ---------- Les scènes de la campagne (campagne.ts, 25 octobre 2026) ----------
+   L'illustration en plein écran, le récit sur papier, puis qui parle : portrait serti, nom dans la couleur de sa lignée,
+   sur un panneau de verre fumé aux arêtes de glace. Un toucher fait parler le suivant. */
+.voile.scene-voile{padding:0;background:#05070A;align-items:stretch;justify-content:center;z-index:60;isolation:isolate}
+/* sur PC, l'illustration floutée prolonge la scène jusqu'aux bords de l'écran */
+@media (min-width:1100px){
+  .voile.scene-voile::before{content:"";position:fixed;inset:-40px;z-index:-1;background:var(--sc-img) center/cover;filter:blur(28px) brightness(.4) saturate(.9)}
+  .scene-campagne{box-shadow:0 0 0 1px rgba(205,239,255,.22),0 0 60px rgba(0,0,0,.6)}
+}
+.scene-campagne{position:relative;isolation:isolate;overflow:hidden;width:100%;max-width:480px;min-height:100dvh;display:flex;flex-direction:column;gap:12px;
+  padding:calc(14px + var(--sat)) 16px calc(16px + var(--sab));color:#F6F1E6;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent}
+.sc-fond{position:absolute;inset:0;z-index:-2;overflow:hidden;background:#0C1218}
+.sc-fond img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;animation:sc-camera 26s ease-out both}
+@keyframes sc-camera{from{transform:scale(1.08)}to{transform:scale(1)}}
+.scene-campagne::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(5,7,10,.82) 0%,rgba(5,7,10,.25) 26%,rgba(5,7,10,0) 50%,rgba(5,7,10,.55) 72%,rgba(5,7,10,.94) 100%)}
+.sc-haut{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.sc-haut .surtitre{color:var(--gold)}
+.sc-haut h1{margin:4px 0 0;font-family:var(--display);font-weight:400;font-size:26px;line-height:1.08;text-shadow:0 2px 12px rgba(0,0,0,.8)}
+.scene-campagne .btn-sec{flex-shrink:0;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;background:rgba(10,12,16,.5);
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.28);color:#F6F1E6;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.scene-campagne .btn-sec .ico{width:16px;height:16px}
+/* le récit : du papier, comme les Archives ; il se fait discret dès que quelqu'un parle */
+.sc-recit{margin:0;padding:10px 13px;border-radius:4px;background:rgba(232,223,200,.94);color:#1E1A14;font-family:var(--lecture,'Literata',Georgia,serif);
+  font-style:italic;font-size:15px;line-height:1.45;box-shadow:0 4px 18px rgba(0,0,0,.45);animation:fondu-in .8s ease-out both;transition:opacity .4s}
+.sc-recit.replie{font-size:13px;opacity:.86}
+.sc-espace{flex:1;min-height:40px}
+/* qui parle : verre fumé, liseré de glace, et la couleur de sa lignée sur le portrait et le nom */
+.sc-replique{--cut:14px;position:relative;display:grid;grid-template-columns:62px minmax(0,1fr);gap:12px;align-items:start;padding:14px 14px 15px;
+  clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));
+  background:linear-gradient(118deg,transparent 0 62%,rgba(220,245,255,.07) 62.5%,transparent 76%),linear-gradient(165deg,rgba(22,28,54,.9),rgba(9,11,24,.94));
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.3),inset 0 1px 0 rgba(255,255,255,.18);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+  animation:sc-parle .4s cubic-bezier(.2,1.2,.4,1) both}
+@keyframes sc-parle{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.sc-portrait{width:62px;height:62px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:#141A26;
+  box-shadow:0 0 0 2px var(--c),0 0 16px color-mix(in srgb,var(--c) 55%,transparent)}
+.sc-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
+.sc-portrait b{font-family:var(--display);font-weight:400;font-size:28px;color:var(--c)}
+.sc-paroles strong{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;font-family:var(--display);font-weight:400;font-size:17px;letter-spacing:.03em;color:color-mix(in srgb,var(--c) 70%,#fff)}
+.sc-paroles small{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--quiet)}
+.sc-paroles p{margin:4px 0 0;font-size:16px;line-height:1.45;color:#F3EEE4}
+.sc-bas{display:grid;gap:10px;justify-items:center;min-height:52px;align-content:end}
+.sc-points{display:flex;gap:6px}
+.sc-points i{width:7px;height:7px;transform:rotate(45deg);background:rgba(205,239,255,.25)}
+.sc-points i.vu{background:var(--gold);box-shadow:0 0 6px rgba(232,194,90,.7)}
+.scene-campagne .indice-bulle{font-size:12px}
+.sc-continuer{width:100%}
+.scene-campagne.finie .sc-continuer{animation:appel-rencontre 1.6s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){ .sc-fond img,.sc-replique,.sc-recit{animation:none} }
+
+/* ---------- La Bibliothèque, onglet Campagne : les scènes vécues, à revoir ---------- */
+.segments-choix.trois{grid-template-columns:repeat(3,1fr)}
+.sc-liste{display:grid;gap:8px}
+.sc-tuile{--cut:10px;position:relative;display:grid;grid-template-columns:64px minmax(0,1fr) 20px;gap:12px;align-items:center;width:100%;padding:8px 12px 8px 8px;border:none;text-align:left;
+  background:var(--verre-2);box-shadow:inset 0 0 0 1px var(--filet);color:var(--ink);
+  clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))}
+.sc-tuile img{width:64px;height:48px;object-fit:cover;border-radius:3px}
+.sc-tuile span{display:grid;gap:2px;min-width:0}
+.sc-tuile small{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--gold)}
+.sc-tuile strong{font-family:var(--display);font-weight:400;font-size:16px;line-height:1.15}
+.sc-tuile>.ico{width:18px;height:18px;color:var(--gold)}
+.sc-tuile.fermee{opacity:.62;grid-template-columns:64px minmax(0,1fr)}
+.sc-verrou{width:64px;height:48px;display:grid;place-items:center;border-radius:3px;background:rgba(255,255,255,.04);color:var(--quiet)}
+.sc-tuile.fermee strong{color:var(--quiet)}
+
+/* ---------- Le chapitre en cours, à la Tour du Noyau ---------- */
+.tr-chapitre{--cut:12px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:12px 14px;
+  background:linear-gradient(118deg,transparent 0 64%,rgba(220,245,255,.06) 64.5%,transparent 78%),linear-gradient(165deg,rgba(22,28,54,.92),rgba(9,11,24,.95));
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.24);clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut))}
+.tr-chapitre .surtitre{grid-column:1/-1;color:var(--gold)}
+.tr-chapitre strong{font-family:var(--display);font-weight:400;font-size:19px;color:var(--ink);line-height:1.15}
+.tr-chapitre p{grid-column:1/-1;margin:0;font-size:14px;line-height:1.4;color:var(--ink-2)}
+.tr-chapitre .btn-sec{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;font-size:13px}
+.tr-chapitre .btn-sec .ico{width:15px;height:15px}
+
+/* ---------- Ce que disent les gardiens, en combat ---------- */
+.parole-gardien{display:block;font-family:var(--lecture,'Literata',Georgia,serif);font-style:italic;font-size:15px;line-height:1.38;color:#F3EEE4;animation:sc-parle .5s ease-out both}
+#app .conseil .parole-gardien b{display:block;margin-bottom:2px;font-family:var(--mono);font-style:normal;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);text-shadow:none}
+
+/* ---------- Ce que disent les Porteurs, pendant la descente ---------- */
+.ex-parole{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:start;margin:0 0 8px;padding:9px 11px;border-radius:4px;
+  background:rgba(232,223,200,.07);box-shadow:inset 3px 0 0 var(--c),inset 0 0 0 1px rgba(205,239,255,.14);animation:sc-parle .45s ease-out both}
+.ex-parole .ex-pp{width:40px;height:40px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 1.5px var(--c);display:grid;place-items:center;background:#141A26}
+.ex-parole .ex-pp img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
+.ex-parole .ex-pp b{font-family:var(--display);font-weight:400;font-size:18px;color:var(--c)}
+.ex-parole p{margin:0;font-size:14px;line-height:1.4;color:var(--ink)}
+.ex-parole strong{display:block;font-family:var(--display);font-weight:400;font-size:14px;letter-spacing:.03em;color:color-mix(in srgb,var(--c) 70%,#fff)}
+@media (prefers-reduced-motion: reduce){ .parole-gardien,.ex-parole{animation:none} }

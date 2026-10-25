@@ -36,13 +36,23 @@ export function agirDistrict(a: string, c: Clic): Suite {
     case 'cartes': ouvrir('cartes'); break;
     case 'porteurs': ouvrir('porteurs'); break;
     case 'porteur': D.porteur = id; D.deck = null; D.place = null; break;
-    // « Mon escouade » (23 octobre 2026) : l'onglet Porteurs s'ouvre sur l'escouade ; « Tous les Porteurs » à part
-    case 'porteurs-tous': D.reserve = true; D.place = null; D.porteur = null; D.deck = null; window.scrollTo(0, 0); break;
+    // l'onglet Escouade (25 octobre 2026) s'ouvre sur l'escouade ; « Porteurs » et « Collection » sont ses deux autres volets
+    case 'porteurs-tous': ouvrir('porteurs'); D.reserve = true; window.scrollTo(0, 0); break;
     case 'porteurs-escouade': D.reserve = false; D.porteur = null; D.deck = null; window.scrollTo(0, 0); break;
     case 'escouade-place': D.place = Number(b.dataset.index ?? 0); D.porteur = null; D.deck = null; break;
     case 'escouade-fermer': D.place = null; break;
+    // les trois escouades (25 octobre 2026) : en voir une, la faire descendre
+    case 'escouade-voir': D.vueEscouade = Number(b.dataset.index ?? 0); D.place = null; D.porteur = null; D.deck = null; D.carte = null; break;
+    case 'depart-escouade': {
+      const r = J.choisirEscouade(app.jeu, Number(b.dataset.index ?? 0));
+      resultat(r);
+      const ep = D.epreuve ? J.epreuveDef(D.epreuve) : undefined;
+      if (r.ok) D.escouade = J.escouadePourDepart(app.jeu, ep?.interdits ?? []);
+      break;
+    }
+    case 'escouade-active': resultat(J.choisirEscouade(app.jeu, Number(b.dataset.index ?? 0))); break;
     case 'escouade-mettre': {
-      const r = J.placerDansEscouade(app.jeu, Number(b.dataset.index ?? 0), id);
+      const r = J.placerDansEscouade(app.jeu, Number(b.dataset.index ?? 0), id, D.vueEscouade ?? J.escouadeActive(app.jeu));
       if (r.ok) J.marquerVus(app.jeu, 'porteurs', [id]);
       resultat(r);
       if (r.ok) D.place = null;
@@ -137,7 +147,16 @@ export function agirDistrict(a: string, c: Clic): Suite {
       if (app.mode === 'titre') app.mode = 'district';
       ouvrir('codex'); D.chapitre = null; window.scrollTo(0, 0);
       break;
-    case 'biblio-onglet': D.onglet = id === 'archives' ? 'archives' : 'chroniques'; D.chapitre = null; break;
+    case 'biblio-onglet': D.onglet = id === 'archives' || id === 'campagne' ? id : 'chroniques'; D.chapitre = null; break;
+    // les scènes de la campagne : la suivante réplique, la fin (vue pour de bon), et revoir depuis la Bibliothèque
+    case 'scene-suite': D.scene = (D.scene ?? 0) + 1; break;
+    case 'scene-fin': {
+      if (D.revoir) D.revoir = null;
+      else { const s = J.sceneCampagne(app.jeu); if (s && J.voirScene(app.jeu, s.id)) sauver(); }
+      D.scene = 0;
+      break;
+    }
+    case 'scene-revoir': D.revoir = id; D.scene = 0; break;
     case 'chapitre':
       D.onglet = 'chroniques'; D.chapitre = id;
       if (!app.jeu.lus.includes(id) || !app.jeu.luesRecompensees.includes(id)) {
@@ -178,6 +197,8 @@ export function agirDistrict(a: string, c: Clic): Suite {
       if (!o) break;
       ouvrir(o.onglet);
       if (o.onglet === 'archipel' && o.pilier) D.selection = o.pilier;
+      // construire le deck : droit aux cartes d'Ilka, où attend l'Œil-relais
+      if (o.id === 'deck') D.deck = 'ilka';
       break;
     }
     case 'tri':

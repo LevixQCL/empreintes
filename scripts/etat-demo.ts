@@ -5,6 +5,7 @@ import * as J from '../src/core/jeu';
 import { MODULES, carteId } from '../src/core/donnees';
 import { FRAGMENTS } from '../src/core/fragments';
 import { CHAPITRES } from '../src/core/chroniques';
+import { SCENES } from '../src/core/campagne';
 
 const dossier = process.argv[2] ?? '.';
 const now = Date.now();
@@ -23,6 +24,8 @@ MODULES.forEach((m, i) => {
 j.fragments = FRAGMENTS.slice(0, 12).map((f) => f.id);
 j.lus = CHAPITRES.slice(0, 8).map((c) => c.id);
 j.choix = [];
+// la campagne vécue jusqu'au gardien de −4 : la scène d'ouverture de −5 attend au retour sur l'archipel
+j.scenes = SCENES.slice(0, SCENES.findIndex((s) => s.id === 'entree-5')).map((s) => s.id);
 const env = (data: unknown) => JSON.stringify({ data, updatedAt: now });
 writeFileSync(`${dossier}/district.json`, env(j));
 const k = structuredClone(j);

@@ -3,7 +3,8 @@
 
 import { PORTEURS, CARTE_CHAMBRE, MODULES, moduleDe, moduleDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
 import { graine } from '../rng';
-import { DISTRICT, VERSION_JEU, confier, jourDe, log, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
+import { DISTRICT, VERSION_JEU, confier, strateVaincue, jourDe, log, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
+import { SCENES, sceneEnAttente, type ContexteCampagne } from '../campagne';
 import { ESCOUADE_DEPART } from './descentes';
 import { comptoirVide } from './district';
 import { OBJECTIFS } from './objectifs';
@@ -50,13 +51,31 @@ export const DECISIONS = { chambre: DECISION_CHAMBRE, lecture: DECISION_LECTURE,
 
 export type Acte = keyof typeof DECISIONS;
 
-/** Une décision de campagne attend le joueur : l'acte I se referme après la Strate −3, l'acte II après la Strate −6 */
+/**
+ * Une décision de campagne attend le joueur, dès le gardien qui ferme l'acte vaincu (25 octobre 2026 : avant, elle attendait
+ * l'ouverture de l'étage suivant, loin de la scène qui l'amène) : l'acte I après la Strate −3, l'acte II après −6, l'acte III après −10.
+ */
 export function decisionEnAttente(j: Jeu): Acte | null {
   if (!j.chambre) return null;
-  if (j.strate >= 4 && !j.actes.chambre) return 'chambre';
-  if (j.strate >= 7 && !j.actes.lecture) return 'lecture';
-  if (j.strate >= 11 && !j.actes.fin) return 'fin';
+  const v = strateVaincue(j);
+  if (v >= 3 && !j.actes.chambre) return 'chambre';
+  if (v >= 6 && !j.actes.lecture) return 'lecture';
+  if (v >= 10 && !j.actes.fin) return 'fin';
   return null;
+}
+
+// ---------- La campagne vécue (campagne.ts) ----------
+
+export const contexteCampagne = (j: Jeu): ContexteCampagne => ({ strate: j.strate, vaincue: strateVaincue(j), actes: j.actes, presents: porteursPresents(j) });
+
+/** La scène de la campagne à jouer maintenant, au district (jamais pendant une descente, ni avant la chambre) */
+export const sceneCampagne = (j: Jeu) => (j.chambre && !j.expedition ? sceneEnAttente(contexteCampagne(j), j.scenes ?? []) : null);
+
+/** Une scène jouée (ou passée) : elle ne revient plus d'elle-même, mais se revoit dans la Bibliothèque */
+export function voirScene(j: Jeu, id: string): boolean {
+  if (!SCENES.some((s) => s.id === id) || (j.scenes ??= []).includes(id)) return false;
+  j.scenes.push(id);
+  return true;
 }
 
 export function decider(j: Jeu, acte: string, choix: string): Resultat {
@@ -94,6 +113,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     actes: {},
     confiance: 50,
     decouvertes: [],
+    scenes: [],
     objectif: 0,
     fragments: [],
     lus: [],
@@ -114,6 +134,8 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     frontVaincu: false,
     comptoir: comptoirVide(now, rng),
     escouade: [...ESCOUADE_DEPART],
+    escouades: [[...ESCOUADE_DEPART], [], []],
+    escouadeActive: 0,
     fils: {},
     // l'escouade et les cartes de départ sont connues : seuls les nouveaux venus portent la pastille
     vus: { porteurs: [...ESCOUADE_DEPART], cartes: [...COLLECTION_DEPART] },
@@ -138,6 +160,14 @@ function migrer(j: Jeu) {
   j.actes ??= {};
   j.confiance ??= 50;
   j.decouvertes ??= [];
+  if (!j.scenes) {
+    // sauvegarde d'avant la campagne vécue (25 octobre 2026) : seule la dernière scène déjà atteinte se joue,
+    // les précédentes sont comptées comme vues (elles se revoient dans la Bibliothèque)
+    const c = contexteCampagne(j);
+    let n = 0;
+    while (n < SCENES.length && SCENES[n]!.quand(c)) n++;
+    j.scenes = j.chambre ? SCENES.slice(0, Math.max(0, n - 1)).map((s) => s.id) : [];
+  }
   j.fils ??= {};
   for (const p of PORTEURS) j.porteurs[p.id] ??= { usure: 0, poste: null, modules: [] };
   j.objectif ??= ancien && j.strate > 1 ? OBJECTIFS.length : 0;
@@ -157,6 +187,9 @@ function migrer(j: Jeu) {
   j.vus ??= { porteurs: porteursPresents(j), cartes: Object.keys(j.collection ?? {}) };
   // sauvegarde d'avant « Mon escouade » : l'escouade de départ, ou les trois premiers Porteurs présents
   j.escouade ??= ESCOUADE_DEPART.every((id) => porteursPresents(j).includes(id)) ? [...ESCOUADE_DEPART] : porteursPresents(j).slice(0, 3);
+  // sauvegarde d'avant les trois escouades (25 octobre 2026) : la sienne devient l'escouade 1, les deux autres sont vides
+  j.escouadeActive ??= 0;
+  j.escouades ??= [[...j.escouade], [], []];
   if (!j.luesRecompensees) {
     // sauvegarde d'avant les récompenses de lecture : les chapitres déjà lus rapportent leur carte maintenant
     j.luesRecompensees = [];

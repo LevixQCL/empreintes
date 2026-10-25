@@ -95,7 +95,7 @@ describe('Acte I : qui garde la chambre ?', () => {
     const j = nouveauJeu(0, 1);
     j.chambre = true; j.strate = 3;
     expect(decisionEnAttente(j)).toBeNull();
-    j.strate = 4;
+    j.frontVaincu = true; // le gardien de −3 tombe : la décision suit la scène, sans attendre l'étage suivant
     expect(decisionEnAttente(j)).toBe('chambre');
     expect(deciderChambre(j, 'personne').ok).toBe(false);
     expect(deciderChambre(j, 'commission').ok).toBe(true);

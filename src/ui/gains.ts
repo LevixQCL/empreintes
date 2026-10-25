@@ -236,11 +236,12 @@ function vignettePorteur(id: string): string {
   return `<span class="gv-porteur">${p ? `<img src="${p}" alt="" decoding="async">` : `<i>${echap(porteurDef(id).nom.charAt(0))}</i>`}</span>`;
 }
 
+/** onglet : celui de la navigation où le gain file (les cartes et les Porteurs vont tous à l'onglet Escouade) */
 function contenu(g: Exclude<Gain, { kind: 'res' }>): { html: string; onglet: string; classe: string } {
   if (g.kind === 'carte') {
     const m = moduleDef(g.cle);
     return {
-      classe: `metal-${m.rarete}`, onglet: 'cartes',
+      classe: `metal-${m.rarete}`, onglet: 'porteurs',
       html: `${vignetteCarte(g.cle)}<span class="gv-texte"><small>Nouvelle carte</small><strong>${echap(m.nom)}</strong><em style="color:${COULEUR_METAL[m.rarete]}">${echap(NOMS_RARETE[m.rarete])}</em></span>`,
     };
   }
@@ -248,7 +249,7 @@ function contenu(g: Exclude<Gain, { kind: 'res' }>): { html: string; onglet: str
     const uniques = [...new Set(g.cles)];
     const titre = uniques.length === 1 ? `${moduleDef(uniques[0]!).nom}${g.cles.length > 1 ? ` ×${g.cles.length}` : ''}` : `${g.cles.length} cartes`;
     return {
-      classe: 'doublons', onglet: 'cartes',
+      classe: 'doublons', onglet: 'porteurs',
       html: `<span class="gv-pile">${uniques.slice(0, 4).map((c) => vignetteCarte(c, true)).join('')}</span><span class="gv-texte"><small>+${g.cles.length} doublon${g.cles.length > 1 ? 's' : ''}</small><strong>${echap(titre)}</strong><em>vers le niveau suivant</em></span>`,
     };
   }
@@ -380,7 +381,7 @@ function grandeRevelation(g: Extract<Gain, { kind: 'carte' | 'porteur' }>, p: nu
       if (!pret || parti) return;
       parti = true;
       clearTimeout(auto);
-      const tab = document.querySelector(`#app .nav [data-action="${carte ? 'cartes' : 'porteurs'}"]`);
+      const tab = document.querySelector('#app .nav [data-action="porteurs"]');
       const r = pose.getBoundingClientRect();
       const fin = tab && !reduit() ? centreDe(tab) : null;
       el.classList.add('sort');

@@ -5,7 +5,8 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
-  cartesNouvelles, OBJECTIFS, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  contexteCampagne,
+  OBJECTIFS, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, trierCartes, type TriCartes } from '../core/collection';
@@ -15,6 +16,8 @@ import { FRAGMENTS } from '../core/fragments';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
+import { chapitreCampagne } from '../core/campagne';
+import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
 import { decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
@@ -22,7 +25,7 @@ import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { ICO, icone, type Icone } from './icones';
-import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, type EcranDistrict, type Filtre } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { echap, mouvementReduit, virgule } from './outils';
 
@@ -695,7 +698,7 @@ function fenetreChoix(j: Jeu): string {
 
 const exemplaires = (j: Jeu, moduleId: string) => [...RARETES].reverse().map((r) => carteId(moduleId, r)).filter((k) => j.collection[k]);
 
-function feuilleCarte(e: EcranDistrict): string {
+export function feuilleCarte(e: EcranDistrict): string {
   const j = e.j;
   const cle = e.carte;
   if (!cle || !j.collection[cle]) return '';
@@ -803,8 +806,8 @@ export function feuilleDeck(e: EcranDistrict): string {
 }
 
 // La collection (revue du 22 octobre 2026, même équipe) : les cartes arrivent tout de suite, des filtres utiles
-// (« peuvent monter », « libres ») en plus des lignées, et l'équipement des Porteurs se fait depuis l'onglet Porteurs
-// ou en touchant une carte (la rangée « Construire le deck » faisait doublon).
+// (« peuvent monter », « libres ») en plus des lignées, et l'équipement des Porteurs se fait depuis le volet Escouade
+// ou en touchant une carte. Depuis le 25 octobre 2026, c'est le troisième volet de l'onglet Escouade.
 /** Le choix du tri des cartes (24 octobre 2026) : le même partout où l'on voit une liste de cartes, et retenu d'un écran à l'autre */
 function choixTri(tri: TriCartes): string {
   return `<div class="tri-cartes" role="radiogroup" aria-label="Trier les cartes"><span class="tri-label">${ICO.journal}Trier</span>`
@@ -825,8 +828,8 @@ export function htmlCartes(e: EcranDistrict): string {
   const nMonter = toutes.filter(peutMonter).length;
   const nLibres = toutes.filter(estLibre).length;
   const f = e.filtre;
-  const neuves = cartesNouvelles(j).length;
-  let h = entete(`COLLECTION · ${trouvees} / ${MODULES.length} TROUVÉES${neuves ? ` · <span class="pt-dispo">${neuves} NOUVELLE${neuves > 1 ? 'S' : ''}</span>` : ''}`, 'Cartes', `<div class="cl-guides">${lienGuide('deck', 'Construire son deck')}${lienGuide('carte', 'Les effets')}</div>`);
+  let h = entete(`${trouvees} / ${MODULES.length} TROUVÉES`, 'Collection', `<div class="cl-guides">${lienGuide('deck', 'Construire son deck')}${lienGuide('carte', 'Les effets')}</div>`);
+  h += voletsEscouade(e);
   const filtres: { id: Filtre; nom: string; n?: number; c?: string; classe?: string }[] = [
     { id: 'tout', nom: 'Toutes' }, { id: 'tech', nom: NOM_LIGNEES.tech, c: COULEUR.tech }, { id: 'bio', nom: NOM_LIGNEES.bio, c: COULEUR.bio }, { id: 'reso', nom: NOM_LIGNEES.reso, c: COULEUR.reso },
     { id: 'monter', nom: 'Peuvent monter', n: nMonter, classe: 'or' }, { id: 'libres', nom: 'Libres', n: nLibres },
@@ -835,7 +838,7 @@ export function htmlCartes(e: EcranDistrict): string {
     `<button type="button" role="tab" class="es-cible${f === x.id ? ' actif' : ''}${x.classe ? ` ${x.classe}` : ''}"${x.c ? ` style="--c:${x.c}"` : ''} data-action="filtre" data-id="${x.id}" aria-selected="${f === x.id}">${x.nom}${x.n !== undefined ? ` <b>${x.n}</b>` : ''}</button>`).join('') + `</div>`;
   const tri = e.tri ?? 'puissance';
   h += choixTri(tri);
-  h += `<p class="cl-intro">En expédition, ton deck réunit les cartes des 3 Porteurs emmenés (6 chacun au plus). Touche une carte pour la confier ou la faire monter.</p>`;
+  h += `<p class="cl-intro">Toutes tes cartes. Touche-en une pour la confier à un Porteur ou la faire monter ; ton deck est dans le volet Escouade.</p>`;
 
   const tuileCarte = (cle: string) => {
     const m = moduleDef(cle);
@@ -925,9 +928,11 @@ export function htmlCodex(e: EcranDistrict): string {
   const retour = e.retourBiblio === 'titre' ? `<button type="button" class="btn-icone" data-action="biblio-retour" aria-label="Retour à l’écran titre">${ICO.retour}</button>` : '';
   let h = entete(`${ouverts} / ${CHAPITRES.length} CHAPITRES · ${j.fragments.length} / ${FRAGMENTS.length} ARCHIVES`, 'Bibliothèque', retour);
   const nouveaux = chapitresNouveaux(j);
-  h += `<div class="segments-choix deux" role="tablist">`
+  h += `<div class="segments-choix trois" role="tablist">`
     + `<button type="button" role="tab" class="seg${e.onglet === 'chroniques' ? ' actif' : ''}" aria-selected="${e.onglet === 'chroniques'}" data-action="biblio-onglet" data-id="chroniques">Chroniques${nouveaux ? ` <span class="pastille-n">${nouveaux}</span>` : ''}</button>`
-    + `<button type="button" role="tab" class="seg${e.onglet === 'archives' ? ' actif' : ''}" aria-selected="${e.onglet === 'archives'}" data-action="biblio-onglet" data-id="archives">Archives</button></div>`;
+    + `<button type="button" role="tab" class="seg${e.onglet === 'archives' ? ' actif' : ''}" aria-selected="${e.onglet === 'archives'}" data-action="biblio-onglet" data-id="archives">Archives</button>`
+    + `<button type="button" role="tab" class="seg${e.onglet === 'campagne' ? ' actif' : ''}" aria-selected="${e.onglet === 'campagne'}" data-action="biblio-onglet" data-id="campagne">Campagne</button></div>`;
+  if (e.onglet === 'campagne') return coquille(e, h + htmlListeScenes(j.scenes ?? []), 'ecran-codex');
   if (e.onglet === 'archives') {
     h += `<p class="aide intro-ecran">Des papiers d’époque, trouvés un à un dans les Strates. Ysé y renvoie souvent dans ses Chroniques.</p>`;
     if (!j.fragments.length) h += `<p class="vide-ecran">${ICO.codex}Aucun fragment pour l’instant. On les trouve en ouvrant de nouvelles Strates.</p>`;
@@ -1054,6 +1059,14 @@ export function htmlCoupe(e: EcranDistrict): string {
       + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}Descendre</button></div>`;
   }
   if (j.expedition) h += `<button type="button" class="appel tr-reprendre" data-action="reprendre">${ICO.descendre}<span><strong>Expédition en cours</strong><small>Strate −${j.expedition.strate} : reprendre le combat</small></span></button>`;
+  // le chapitre de la campagne en cours : pourquoi on descend (campagne.ts)
+  const chap = j.chambre ? chapitreCampagne(contexteCampagne(j)) : null;
+  const derniere = j.scenes?.at(-1);
+  if (chap) {
+    h += `<section class="tr-chapitre"><span class="surtitre">${echap(chap.sur)}</span><strong>${echap(chap.titre)}</strong>`
+      + (derniere ? `<button type="button" class="btn-sec" data-action="scene-revoir" data-id="${derniere}" aria-label="Revoir la dernière scène">${ICO.film}Revoir</button>` : '')
+      + `<p>${echap(chap.texte)}</p></section>`;
+  }
   h += `<section class="tr-etape"><span class="surtitre">Prochaine étape</span>${etape}</section>`;
   // le Grand Tableau : ton rang en profondeur, et l'entrée vers les classements
   if (j.chambre && e.grand) h += bandeauTableau(e, e.grand, e.uid ?? null);
@@ -1134,12 +1147,12 @@ function htmlMissions(e: EcranDistrict): string {
 // ---------- Choix de l'escouade ----------
 
 /** Les Fréquences d'une liste de cartes (une carte à plusieurs Fréquences compte pour chacune ; les cartes ∗ à part) */
-function frequencesDe(cartes: { f: number; fs?: number[]; effet?: { type: string } }[]): number[] {
+export function frequencesDe(cartes: { f: number; fs?: number[]; effet?: { type: string } }[]): number[] {
   return Array.from({ length: 9 }, (_, i) => cartes.filter((g) => (g.fs ?? [g.f]).includes(i + 1) && g.effet?.type !== 'accord').length);
 }
 
 /** La plus longue suite de Fréquences présentes (les cartes ∗ comblent des trous) */
-function plusLongueSuite(n: number[], jokers: number): number[] {
+export function plusLongueSuite(n: number[], jokers: number): number[] {
   let best: number[] = [];
   for (let a = 0; a < 9; a++) {
     let j = jokers; const suite: number[] = [];
@@ -1192,6 +1205,16 @@ export function htmlEscouade(e: EcranDistrict): string {
     h += `<p class="es-but">${ICO.strate}<span><strong>${echap(zone.nom)}</strong>Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien : ${echap(ennemiDef(zone.boss).nom)}.</span></p>`;
   }
   h += `</section>`;
+
+  // 1 bis. quelle escouade part (25 octobre 2026) : seulement si plus d'une est composée
+  const toutes = escouadesDe(j);
+  if (toutes.filter((l) => l.length).length > 1) {
+    const active = escouadeActive(j);
+    h += `<div class="es-equipes" role="radiogroup" aria-label="Escouade qui part"><span class="es-equipes-titre">Partir avec</span>`
+      + toutes.map((l, k) => (l.length
+        ? `<button type="button" role="radio" class="es-equipe${k === active ? ' actif' : ''}" data-action="depart-escouade" data-index="${k}" aria-checked="${k === active}"><small>Escouade ${k + 1}</small><span>${l.map((id) => avatar(id, 24)).join('')}</span></button>`
+        : '')).join('') + `</div>`;
+  }
 
   // 2. les trois places, en grand
   h += `<section class="es-trio" aria-label="Escouade choisie">` + [0, 1, 2].map((i) => {

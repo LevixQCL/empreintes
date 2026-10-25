@@ -93,6 +93,17 @@ Au départ, Ilka, Doran et Véla portent chacun 6 cartes en fer : leurs 5 cartes
 En combat, le moteur manipule des « Gestes » : c'est le nom interne d'une carte en jeu (`gesteDeCarte`), avec son Porteur,
 son niveau et la Fréquence choisie. Le tableau des cartes garde son nom historique `MODULES`.
 
+**L'onglet Escouade** (25 octobre 2026, `src/ui/porteurs.ts`, `equipe.css`). Les onglets Porteurs et Cartes n'en font plus qu'un,
+à trois volets (`voletsEscouade` dans `coquille.ts`) : *Escouade* (la feuille de match), *Porteurs* (tous, par lignée) et *Collection*
+(`htmlCartes`, fermée avant la chambre scellée). La feuille de match montre d'abord le bilan du deck (`bilanDeck` : nombre de cartes,
+échelle des Fréquences 1 à 9 empilée par lignée, trous et plus longue suite, attaques / protections / soins, un conseil), puis chaque Porteur
+(`blocPorteur` : portrait, PV, qui il bat, sa Marque en toutes lettres avec ce qu'il reste à accomplir, et ses cartes une par ligne :
+Fréquence, nom, niveau, effet en clair, force sur le socle peint des cartes), puis les cartes du district.
+*Trois escouades* (`j.escouades`, `escouadesDe`, `placerDansEscouade(j, place, id, n)`, `choisirEscouade`) : on en compose trois, un Porteur
+n'est que dans une seule (le prendre ailleurs l'échange avec celui qu'il remplace), et une seule descend (`j.escouadeActive` ; `j.escouade`
+en est toujours la copie, c'est elle que lit le reste du jeu). On la choisit dans l'onglet (« Faire descendre l'escouade 2 ») ou sur l'écran
+de départ (« Partir avec »), jamais pendant une descente. Le départ retient l'escouade qui part (`retenirDepart`).
+
 **Mon escouade** (décision du 23 octobre 2026). L'escouade est enregistrée dans la partie (`j.escouade`, Ilka, Doran et Véla au départ).
 L'onglet Porteurs s'ouvre sur elle (`monEscouade` dans `porteurs.ts`) : on touche « Changer » sous un Porteur pour le remplacer
 (`placerDansEscouade`), et « Tous les Porteurs » ouvre la liste complète. Elle ne change qu'au district, jamais pendant une descente
@@ -198,6 +209,19 @@ ce sont les creuseurs et la Tour qui tiennent le rythme. Les images `public/art/
 - *Le Sauvage* (ennemi des Fondations), les rencontres *Sauvage* et *vendeur de pierres mortes*,
   la *rumeur du jour* sous la Confiance (`src/core/rumeurs.ts`), deux chapitres des Chroniques (« Les yeux d'or », « Le Registre des Vierges »)
   et deux fragments d'archives (« Non prioritaire », « Pas de notre côté »).
+
+**La campagne vécue** (25 octobre 2026, `src/core/campagne.ts`, `src/ui/campagne.ts`, `campagne.css`). Les Chroniques racontent
+le passé du monde ; la campagne raconte l'histoire du joueur, là où il joue. Chaque Strate de −1 à −10 est un chapitre :
+une scène à son ouverture (l'enjeu) et une après son gardien (ce qu'on a trouvé), jouées au retour sur l'archipel ou dans la Tour
+(`sceneCampagne`, une seule fois, dans l'ordre : `Jeu.scenes`), puis la convocation des Hauts (après « La dernière lecture »,
+elle annonce la Flèche) et l'épilogue. Les gardiens reviennent et parlent en combat (`repliqueGardien`, à l'entrée et au passage
+de phase) : la Confluence fuit jusqu'à −3, le Gardien des registres jusqu'à −6, la Tisseuse jusqu'à −9, le Premier Porteur
+attend à −10. Un Porteur de l'escouade parle à l'entrée de la Strate et devant le gardien (`paroleDescente`). Des visages
+reviennent : la capitaine Hald (Brigades), Tobin (Veilleurs), Brac (pilleur), Dame Isaure Orsève (les Hauts) et Ysé.
+Les répliques tiennent compte des décisions et des Porteurs arrivés (`si`). Les décisions arrivent dès le gardien qui ferme
+l'acte (−3, −6, −10) au lieu d'attendre l'étage suivant, et l'acte suivant attend la décision. La Tour montre le chapitre en
+cours (`chapitreCampagne`) ; la Bibliothèque, onglet Campagne, rejoue les scènes vues. Une ancienne sauvegarde ne rejoue que la
+dernière scène atteinte. Les illustrations à faire sont dans `docs/prompts-campagne.md`.
 
 **Le Grand Tableau** (23 octobre 2026, `src/core/classements.ts`, `src/ui/classements.ts`, `src/net/classement.ts`).
 Les classements entre directeurs, sur les « écrans des marchés de Vertiga ». On y entre par le menu Plus, le bandeau de la
