@@ -6,7 +6,7 @@ import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne,
-  OBJECTIFS, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, trierCartes, type TriCartes } from '../core/collection';
@@ -1191,6 +1191,16 @@ export function htmlEscouade(e: EcranDistrict): string {
     h += `<p class="es-but">${ICO.strate}<span><strong>${echap(zone.nom)}</strong>Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien : ${echap(ennemiDef(zone.boss).nom)}.</span></p>`;
   }
   h += `</section>`;
+
+  // 1 bis. quelle escouade part (25 octobre 2026) : seulement si plus d'une est composée
+  const toutes = escouadesDe(j);
+  if (toutes.filter((l) => l.length).length > 1) {
+    const active = escouadeActive(j);
+    h += `<div class="es-equipes" role="radiogroup" aria-label="Escouade qui part"><span class="es-equipes-titre">Partir avec</span>`
+      + toutes.map((l, k) => (l.length
+        ? `<button type="button" role="radio" class="es-equipe${k === active ? ' actif' : ''}" data-action="depart-escouade" data-index="${k}" aria-checked="${k === active}"><small>Escouade ${k + 1}</small><span>${l.map((id) => avatar(id, 24)).join('')}</span></button>`
+        : '')).join('') + `</div>`;
+  }
 
   // 2. les trois places, en grand
   h += `<section class="es-trio" aria-label="Escouade choisie">` + [0, 1, 2].map((i) => {

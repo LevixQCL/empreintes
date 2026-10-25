@@ -8,7 +8,7 @@ import { COLLECTION, ajouterCarte, cartesEnJeu, tirerChoix, tirerTrouvaille } fr
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
-import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, confier, enExpedition, enMission, escouadeDe, gagnerXp, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
+import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
 import { chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -110,32 +110,67 @@ export function textePosteQuitte(j: Jeu, id: string): string | null {
   return b === 'noyau' ? 'quitte l’entraînement à la Tour du Noyau' : `quitte son poste : ${batimentDef(b).nom} restera vacant`;
 }
 
-/** Place un Porteur à la place `place` (0 à 2) de l'escouade. Déjà dans l'escouade : les deux échangent leur place. */
-export function placerDansEscouade(j: Jeu, place: number, id: string): Resultat {
+/** Enregistre les trois escouades ; celle qui descend est recopiée dans `j.escouade` */
+function ranger(j: Jeu, toutes: string[][]): void {
+  j.escouades = toutes.map((l) => l.slice(0, 3));
+  j.escouade = [...j.escouades[escouadeActive(j)]!];
+}
+
+/** Retient l'escouade qui part (l'écran de départ a pu la changer) : elle devient celle qui descend,
+ * et ses Porteurs quittent les autres escouades */
+function retenirDepart(j: Jeu, escouade: string[]): void {
+  const a = escouadeActive(j);
+  ranger(j, escouadesDe(j).map((l, k) => (k === a ? [...escouade] : l.filter((id) => !escouade.includes(id)))));
+}
+
+/**
+ * Place un Porteur à la place `place` (0 à 2) de l'escouade `n` (par défaut, celle qui descend).
+ * Déjà dans cette escouade : les deux échangent leur place. Dans une autre escouade : il la quitte,
+ * et le Porteur qu'il remplace prend sa place là-bas (un Porteur n'est que dans une seule escouade).
+ */
+export function placerDansEscouade(j: Jeu, place: number, id: string, n = escouadeActive(j)): Resultat {
   const verrou = escouadeVerrouillee(j);
   if (verrou) return non(verrou);
   if (!Number.isInteger(place) || place < 0 || place > 2) return non('Place inconnue.');
-  const actuelle = escouadeDe(j);
-  const ancienne = actuelle.indexOf(id);
+  if (!Number.isInteger(n) || n < 0 || n >= NB_ESCOUADES) return non('Escouade inconnue.');
+  const toutes = escouadesDe(j).map((l) => [...l]);
+  const suite = toutes[n]!;
+  const ancienne = suite.indexOf(id);
+  const ailleurs = toutes.findIndex((l, k) => k !== n && l.includes(id));
   if (ancienne < 0) {
     const raison = raisonHorsEscouade(j, id);
     if (raison) return non(`${porteurDef(id).nom} ne peut pas rejoindre l’escouade : ${raison.charAt(0).toLowerCase()}${raison.slice(1)}`);
   }
-  const suite = [...actuelle];
   if (ancienne >= 0) {
     if (ancienne === place) return { ok: true };
     const autre = suite[place];
     suite[place] = id;
     if (autre) suite[ancienne] = autre; else suite.splice(ancienne, 1);
-  } else if (place < suite.length) {
-    const sortant = suite[place]!;
-    suite[place] = id;
-    log(j, `${porteurDef(id).nom} remplace ${porteurDef(sortant).nom} dans l’escouade.`);
   } else {
-    suite.push(id);
-    log(j, `${porteurDef(id).nom} rejoint l’escouade.`);
+    const sortant = place < suite.length ? suite[place]! : null;
+    if (sortant) suite[place] = id; else suite.push(id);
+    if (ailleurs >= 0) {
+      // il quitte son autre escouade ; celui qu'il remplace prend sa place là-bas
+      const la = toutes[ailleurs]!;
+      const q = la.indexOf(id);
+      if (sortant) la[q] = sortant; else la.splice(q, 1);
+    }
+    log(j, sortant ? `${porteurDef(id).nom} remplace ${porteurDef(sortant).nom} dans l’escouade ${n + 1}.` : `${porteurDef(id).nom} rejoint l’escouade ${n + 1}.`);
   }
-  j.escouade = suite.slice(0, 3);
+  ranger(j, toutes);
+  return { ok: true };
+}
+
+/** Choisit l'escouade qui descend (0 à 2) */
+export function choisirEscouade(j: Jeu, n: number): Resultat {
+  const verrou = escouadeVerrouillee(j);
+  if (verrou) return non(verrou);
+  if (!Number.isInteger(n) || n < 0 || n >= NB_ESCOUADES) return non('Escouade inconnue.');
+  const toutes = escouadesDe(j);
+  if (!toutes[n]!.length) return non('Cette escouade est vide : choisis-lui d’abord des Porteurs.');
+  j.escouadeActive = n;
+  ranger(j, toutes);
+  log(j, `L’escouade ${n + 1} descendra la prochaine fois.`);
   return { ok: true };
 }
 
@@ -564,7 +599,7 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   });
-  j.escouade = [...escouade];
+  retenirDepart(j, escouade);
   log(j, `L’escouade descend dans la Strate −${strate}.`);
   return { ok: true };
 }
@@ -592,7 +627,7 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1, fouille: cible,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   });
-  j.escouade = [...escouade];
+  retenirDepart(j, escouade);
   log(j, `L’escouade part fouiller la Strate −${strate} (${CIBLES_FOUILLE[cible].nom.toLowerCase()}).`);
   return { ok: true };
 }

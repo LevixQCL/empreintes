@@ -41,8 +41,18 @@ export function agirDistrict(a: string, c: Clic): Suite {
     case 'porteurs-escouade': D.reserve = false; D.porteur = null; D.deck = null; window.scrollTo(0, 0); break;
     case 'escouade-place': D.place = Number(b.dataset.index ?? 0); D.porteur = null; D.deck = null; break;
     case 'escouade-fermer': D.place = null; break;
+    // les trois escouades (25 octobre 2026) : en voir une, la faire descendre
+    case 'escouade-voir': D.vueEscouade = Number(b.dataset.index ?? 0); D.place = null; D.porteur = null; D.deck = null; D.carte = null; break;
+    case 'depart-escouade': {
+      const r = J.choisirEscouade(app.jeu, Number(b.dataset.index ?? 0));
+      resultat(r);
+      const ep = D.epreuve ? J.epreuveDef(D.epreuve) : undefined;
+      if (r.ok) D.escouade = J.escouadePourDepart(app.jeu, ep?.interdits ?? []);
+      break;
+    }
+    case 'escouade-active': resultat(J.choisirEscouade(app.jeu, Number(b.dataset.index ?? 0))); break;
     case 'escouade-mettre': {
-      const r = J.placerDansEscouade(app.jeu, Number(b.dataset.index ?? 0), id);
+      const r = J.placerDansEscouade(app.jeu, Number(b.dataset.index ?? 0), id, D.vueEscouade ?? J.escouadeActive(app.jeu));
       if (r.ok) J.marquerVus(app.jeu, 'porteurs', [id]);
       resultat(r);
       if (r.ok) D.place = null;

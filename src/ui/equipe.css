@@ -3,7 +3,6 @@
    Matière cristal : verre fumé, arêtes de glace pour ce qui se touche, or pour la valeur ; textes à 12 px minimum. */
 
 /* les trois volets de l'onglet */
-.segments-choix.trois{grid-template-columns:repeat(3,1fr)}
 .volets-escouade .seg{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:0 4px}
 .volets-escouade .seg .ico{width:14px;height:14px}
 .volets-escouade .seg:disabled{opacity:.55}
@@ -36,11 +35,37 @@
 .eq-conseil b{color:#F6F2EA;font-weight:600}
 .eq-conseil b.rouge{color:var(--x-rouge)}
 .eq-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding-top:10px;box-shadow:inset 0 1px 0 rgba(205,239,255,.1)}
-.eq-action{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:7px;align-items:center;min-width:0;font-size:12px;color:var(--x-doux)}
-.eq-action img{grid-row:span 2;width:22px;height:22px}
-.eq-action b{font-family:var(--mono);font-size:16px;line-height:1.1;color:var(--x-txt)}
-.eq-action.zero b,.eq-action.zero small{color:var(--x-rouge)}
+.eq-action{display:flex;align-items:center;gap:7px;min-width:0;font-size:12.5px;color:var(--x-doux)}
+.eq-action.zero small{color:var(--x-rouge)}
 .eq-action small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---------- les trois escouades ---------- */
+.eq-escouades{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.eq-esc{position:relative;display:grid;justify-items:center;gap:5px;min-height:84px;padding:8px 4px 7px;border:0;border-radius:4px;color:var(--x-txt);cursor:pointer;
+  background:rgba(14,19,34,.7);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14);transition:background .15s,box-shadow .15s}
+.eq-esc:hover{box-shadow:inset 0 0 0 1px rgba(205,239,255,.32)}
+.eq-esc.actif{background:linear-gradient(180deg,rgba(205,239,255,.12),rgba(205,239,255,.03));box-shadow:inset 0 0 0 1px var(--x-glace),0 0 16px rgba(160,210,255,.18)}
+.eq-esc-nom{font-size:13px;font-weight:600}
+.eq-esc-visages{display:flex}
+.eq-esc-visages>*{margin-left:-6px;box-shadow:0 0 0 2px #0E1322;border-radius:50%}
+.eq-esc-visages>:first-child{margin-left:0}
+.eq-esc-place{display:block;width:26px;height:26px;border-radius:50%;background:rgba(205,239,255,.05);box-shadow:inset 0 0 0 1px rgba(205,239,255,.2),0 0 0 2px #0E1322}
+.eq-esc small{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--x-doux)}
+.eq-esc small .ico{width:13px;height:13px}
+.eq-esc.descend small{color:var(--x-or);font-weight:600}
+.eq-esc.descend::before{content:"";position:absolute;left:12%;right:12%;top:0;height:2px;border-radius:0 0 2px 2px;background:linear-gradient(90deg,transparent,var(--x-or),transparent)}
+.eq-esc.vide .eq-esc-nom{color:var(--x-doux)}
+
+/* celle qui descend, ou le bouton pour qu'elle descende */
+.eq-descend{display:flex;align-items:flex-start;gap:10px;width:100%;margin:0;padding:10px 12px;border:0;border-radius:4px;font:inherit;font-size:13px;line-height:1.4;text-align:left;color:var(--x-doux);
+  background:linear-gradient(90deg,rgba(242,213,140,.12),rgba(242,213,140,.02));box-shadow:inset 2px 0 0 var(--x-or)}
+.eq-descend>.ico{width:17px;height:17px;flex-shrink:0;margin-top:1px;color:var(--x-or)}
+.eq-descend strong{display:block;font-size:14px;font-weight:600;color:var(--x-or)}
+.eq-descend.bouton{cursor:pointer;color:var(--x-txt);background:linear-gradient(90deg,rgba(205,239,255,.1),rgba(205,239,255,.02));box-shadow:inset 0 0 0 1px rgba(205,239,255,.3)}
+.eq-descend.bouton:hover{background:linear-gradient(90deg,rgba(205,239,255,.16),rgba(205,239,255,.04))}
+.eq-descend.bouton>.ico,.eq-descend.bouton strong{color:var(--x-glace)}
+.eq-descend.vide{background:rgba(205,239,255,.04);box-shadow:inset 2px 0 0 rgba(205,239,255,.3)}
+.eq-descend.vide>.ico,.eq-descend.vide strong{color:var(--x-glace)}
 
 /* ---------- un Porteur de l'escouade ---------- */
 .eq-trio{display:grid;gap:22px}
@@ -126,12 +151,15 @@
 .eq-effet{font-size:12.5px;line-height:1.35;color:var(--x-txt)}
 .eq-effet b{color:var(--x-or);font-weight:600}
 .eq-effet.sans{color:var(--x-doux)}
-.eq-force{display:grid;justify-items:center;gap:1px;min-width:34px}
-.eq-force img{width:18px;height:18px}
-.eq-force b{font-family:var(--mono);font-size:18px;line-height:1;color:#F6F2EA}
-.eq-force.atk b{color:#FFC2A8}
-.eq-force.bouclier b{color:#BFE3FF}
-.eq-force.soin b{color:#B8F0C8}
+/* le socle peint des cartes, le chiffre au centre (comme en combat) */
+.eq-force,.eq-socle{position:relative;display:grid;place-items:center;flex-shrink:0}
+.eq-force{width:44px;height:44px}
+.eq-socle{width:38px;height:38px}
+.eq-force>i,.eq-socle>i{position:absolute;inset:0;background:center/contain no-repeat;filter:drop-shadow(0 1px 3px #000)}
+.eq-force>b,.eq-socle>b{position:relative;font-family:var(--mono);font-weight:700;line-height:1;color:#fff7e4;-webkit-text-stroke:3px #120c08;paint-order:stroke fill}
+.eq-force>b{font-size:16px}
+.eq-socle>b{font-size:14px}
+.eq-action.zero .eq-socle{filter:grayscale(1) brightness(.7)}
 .eq-txt strong small.eq-monte{display:inline-flex;align-items:center;gap:3px;font-family:var(--body);font-weight:600;color:var(--x-or)}
 .eq-monte .ico{width:12px;height:12px}
 .eq-neuve{position:absolute;left:58px;top:-6px;padding:0 6px;border-radius:999px;font-size:12px;font-weight:600;line-height:16px;color:#2A1A04;background:linear-gradient(180deg,#F8E3A6,#D4A54E)}
@@ -165,6 +193,8 @@
   .eq-actions{grid-column:1 / -1}
   .eq-pile{height:56px}
   /* chaque Porteur occupe les 5 mêmes rangées (tête, Marque, alerte, titre, cartes) : les colonnes s'alignent */
+  .eq-escouades{max-width:720px}
+  .eq-descend{max-width:720px}
   .eq-trio{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:26px;row-gap:0;align-items:start}
   .eq-porteur{grid-row:span 5;grid-template-rows:subgrid;row-gap:10px}
   .eq-porteur.vide{grid-template-rows:auto}

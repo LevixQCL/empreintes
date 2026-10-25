@@ -157,10 +157,18 @@
 .es-cibles-titre{margin:4px 0 0;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--or-pale,#CDB98E)}
 .es-cibles-grille{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
 .es-tuile{grid-column:span 2;display:grid;justify-items:center;align-content:center;gap:3px;min-height:84px;padding:8px 4px;border:0;border-radius:8px;cursor:pointer;font:inherit;text-align:center;
-  color:var(--es-doux,#93A3B8);background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12);transition:background .15s,box-shadow .15s,color .15s}
+  color:var(--es-doux);background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12);transition:background .15s,box-shadow .15s,color .15s}
 .es-tuile:nth-child(n+4){grid-column:span 3;min-height:64px}
 .es-tuile .ico{width:22px;height:22px;color:color-mix(in srgb,var(--c) 75%,white)}
 .es-tuile strong{font-size:13.5px;line-height:1.15;color:#E5EEF8}
 .es-tuile small{font-size:11.5px;line-height:1.2}
 .es-tuile:hover{background:rgba(205,239,255,.08)}
 .es-tuile.actif{color:#E5EEF8;background:color-mix(in srgb,var(--c) 20%,rgba(8,12,24,.8));box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--c) 75%,white),0 0 16px color-mix(in srgb,var(--c) 30%,transparent)}
+
+/* quelle escouade part (25 octobre 2026) : visible seulement si plus d'une est composée */
+.es-equipes{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.es-equipes-titre{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--es-doux)}
+.es-equipe{display:grid;justify-items:center;gap:3px;min-height:52px;padding:5px 10px;border:0;border-radius:4px;cursor:pointer;color:var(--es-txt);background:rgba(14,19,34,.7);box-shadow:inset 0 0 0 1px rgba(205,239,255,.16)}
+.es-equipe small{font-size:12px;font-weight:600}
+.es-equipe>span{display:flex;gap:2px}
+.es-equipe.actif{color:var(--es-or);background:linear-gradient(180deg,rgba(242,213,140,.14),rgba(242,213,140,.03));box-shadow:inset 0 0 0 1px var(--es-or)}
