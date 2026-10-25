@@ -9,7 +9,7 @@ let installe = false;
 let surChangement: () => void = () => {};
 
 const autonome = () => window.matchMedia('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true;
-export const estIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const estIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 const mobile = () => estIOS() || /android/i.test(navigator.userAgent);
 
 export function initInstallation(rafraichir: () => void) {

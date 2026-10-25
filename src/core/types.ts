@@ -105,7 +105,7 @@ export interface Geste extends GesteDef {
 /** 'hasard', 'faible', une lignée, ou l'id d'un Porteur précis */
 export type CibleRegle = 'hasard' | 'faible' | Lignee | (string & {});
 
-export type IntentionDef =
+type IntentionDef =
   | { type: 'atk'; nom: string; v: number; cible?: CibleRegle; zone?: boolean }
   | { type: 'bouclier'; v: number }
   | { type: 'boost' }
@@ -181,7 +181,7 @@ export interface EnnemiEtat {
   simple?: boolean;
 }
 
-export type Issue = 'en-cours' | 'victoire' | 'defaite';
+type Issue = 'en-cours' | 'victoire' | 'defaite';
 
 /** Ce que les Marques des Porteurs apportent au début de chaque combat */
 export interface BonusMarques {

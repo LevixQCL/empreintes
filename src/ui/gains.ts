@@ -18,7 +18,7 @@ import { centreDe, echap, mouvementReduit as reduit } from './outils';
 
 type Res = 'energie' | 'composants' | 'eclats';
 
-export interface Releve {
+interface Releve {
   energie: number;
   composants: number;
   eclats: number;
@@ -44,7 +44,7 @@ export function relever(j: Jeu): Releve {
   };
 }
 
-export type Gain =
+type Gain =
   | { kind: 'res'; r: Res | 'cartes'; n: number; avant: number; cible: string }
   | { kind: 'carte'; cle: string }
   | { kind: 'doublons'; cles: string[] }

@@ -39,10 +39,10 @@ h1,h2,h3{font-weight:400}
 .label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--quiet);text-transform:uppercase}
 
 /* ---------- Matières : verre à coins coupés ---------- */
-.res,.mission,.plaque,.appel,.feuille-tete .vignette,.stat,.occupant,.tuile-porteur,.liste-forge li,.ligne-menu,.panneau,.fenetre,
-.habitant,.puits,.carte-porteur,.emplacement,.replique,.fragment,.segments-choix,.combattant,.zone-chaine,.scene-ennemi,.puce,.lecon,.toast,.btn,button.prim,.btn-sec,.btn-icone,.btn-flux,.en-cours,.chantier-cours,.carte-dos{
+.res,.mission,.plaque,.appel,.feuille-tete .vignette,.stat,.occupant,.liste-forge li,.ligne-menu,.panneau,.fenetre,
+.habitant,.puits,.emplacement,.replique,.fragment,.segments-choix,.combattant,.zone-chaine,.scene-ennemi,.puce,.lecon,.toast,.btn,button.prim,.btn-sec,.btn-icone,.btn-flux,.en-cours,.chantier-cours,.carte-dos{
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
-.res,.mission,.plaque,.appel,.panneau,.habitant,.carte-porteur,.emplacement,.replique,.segments-choix,.combattant,.zone-chaine,.puce,.lecon,.toast,.ligne-menu,.tuile-porteur,.occupant,.stat,.liste-forge li,.en-cours,.chantier-cours{
+.res,.mission,.plaque,.appel,.panneau,.habitant,.emplacement,.replique,.segments-choix,.combattant,.zone-chaine,.puce,.lecon,.toast,.ligne-menu,.occupant,.stat,.liste-forge li,.en-cours,.chantier-cours{
   background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 
 /* ---------- Boutons ---------- */
@@ -141,28 +141,19 @@ h1,h2,h3{font-weight:400}
 .feuille-tete .titres{flex:1;display:grid;gap:3px;min-width:0}
 .feuille-tete h2{margin:0;font-family:var(--display);font-size:24px;line-height:1.05;color:var(--ink)}
 .feuille-tete .vignette{--cut:8px;width:68px;height:68px;object-fit:contain;flex-shrink:0;background:radial-gradient(circle at 50% 60%,#3D6A7A,#16252E 75%)}
-.pips{display:flex;gap:3px;margin-top:2px}
-.pips i{width:14px;height:4px;background:var(--track);clip-path:polygon(2px 0,100% 0,calc(100% - 2px) 100%,0 100%)}
-.pips i.plein{background:var(--laiton)}
+
 .feuille-corps{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px 16px 18px;display:flex;flex-direction:column;gap:18px}
 .feuille-pied{display:grid;gap:8px;padding:12px 16px calc(12px + var(--sab));background:#0D1016;box-shadow:0 -1px 0 var(--filet)}
 .role{margin:0;line-height:1.45;color:var(--ink-2)}
 .raison{text-align:center;font-size:12.5px;color:var(--alerte)}
-.cout-ligne{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.cout-ligne .surtitre{margin-right:auto}
+
 /* ce que change le niveau suivant, au-dessus du coût */
 .gains{display:grid;gap:4px}
 .gains ul{list-style:none;margin:0;padding:0}
 .gain{display:grid;grid-template-columns:18px 1fr auto;align-items:center;column-gap:10px;padding:6px 0;border-top:1px solid var(--filet)}
 .gain:first-child{border-top:0}
 .gain>.ico{width:18px;height:18px;color:var(--gold)}
-.gain.deblocage .gn-txt{grid-column:2 / span 2}
-.gn-txt{font-size:13.5px;line-height:1.25;color:var(--ink)}
-.gn-txt small{display:block;font-size:11.5px;color:var(--quiet)}
-.gn-val{display:inline-flex;align-items:baseline;gap:6px;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
-.gn-val .av{font-size:13px;color:var(--quiet)}
-.gn-val i{font-style:normal;font-size:12px;color:var(--quiet)}
-.gn-val b{font-size:15px;color:var(--gold)}
+
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:8px}
 .stat{--cut:7px;display:grid;grid-template-columns:auto 1fr;column-gap:8px;align-items:center;padding:9px 10px}
 .stat .ico{grid-row:1 / span 2;width:20px;height:20px;color:var(--gold)}
@@ -172,18 +163,10 @@ h1,h2,h3{font-weight:400}
 .occupant>div{flex:1;display:grid;gap:2px;min-width:0}
 .occupant strong{font-family:var(--display);font-size:18px;font-weight:400;color:var(--ink)}
 .occupant small{font-size:12px;color:var(--quiet)}
-.vide-poste{margin:0;padding:12px;font-size:13.5px;color:var(--ink-2);background:repeating-linear-gradient(135deg,rgba(255,181,71,.06) 0 8px,transparent 8px 16px);box-shadow:inset 0 0 0 1px rgba(255,181,71,.35)}
+
 .rangee{display:flex;gap:8px;overflow-x:auto;padding:2px 16px 6px;margin:0 -16px;scroll-snap-type:x proximity;scrollbar-width:none}
 .rangee::-webkit-scrollbar{display:none}
-.tuile-porteur{--cut:8px;position:relative;flex:none;width:86px;display:grid;justify-items:center;gap:3px;padding:10px 6px 9px;border:none;color:var(--ink);scroll-snap-align:start;transition:transform .12s ease}
-.tuile-porteur:not(:disabled):active{transform:scale(.96)}
-.tuile-porteur strong{font-family:var(--display);font-size:14px;font-weight:400;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.tuile-porteur small{font-size:10.5px;color:var(--quiet);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
-.tuile-porteur .bonus{position:absolute;top:6px;right:6px;padding:1px 5px;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--quiet);background:rgba(255,255,255,.07)}
-.tuile-porteur .bonus.ideal{background:var(--laiton);color:#1C1406}
-.tuile-porteur .bonus .ico{width:11px;height:11px}
-.tuile-porteur.actif{background:color-mix(in srgb,var(--c) 18%,var(--verre));box-shadow:inset 0 0 0 1.5px var(--cristal)}
-.tuile-porteur:disabled{opacity:.4}
+
 .liste-forge{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .liste-forge li{--cut:7px;display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:10px;padding:8px 8px 8px 12px;box-shadow:inset 0 0 0 1px var(--filet),inset 2px 0 0 var(--r)}
 .lf-nom{display:grid;min-width:0}
@@ -324,21 +307,14 @@ h1,h2,h3{font-weight:400}
 .habitants{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .habitant{--cut:8px;display:flex;align-items:center;gap:10px;padding:9px 10px}
 .habitant.parti{opacity:.55}
-.hab-infos{flex:1;display:grid;gap:4px;min-width:0}
-.hab-ligne{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
-.hab-infos strong{font-family:var(--display);font-weight:400;font-size:15px;color:var(--ink)}
-.hab-infos small{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--quiet);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hab-infos small .ico{width:12px;height:12px}
-.hab-infos .greffes{color:var(--or-pale)}
+
 .puits{--cut:14px;position:relative;display:grid;gap:12px;padding:14px 12px;background:linear-gradient(rgba(11,13,18,.5),rgba(11,13,18,.9)),var(--decor) center 40%/cover;box-shadow:inset 0 0 0 1px var(--filet)}
 .strates{position:relative;list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .strates::before{content:"";position:absolute;left:27px;top:20px;bottom:20px;width:2px;background:linear-gradient(var(--or-pale),#7C61C6 70%,transparent);opacity:.5}
 .strate{--cut:8px;position:relative;display:flex;align-items:center;gap:12px;padding:12px 10px;clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));
   background:color-mix(in srgb,rgba(27,20,14,.82) calc((1 - var(--p)) * 100%),rgba(30,22,54,.82));box-shadow:inset 0 0 0 1px var(--filet)}
 .profondeur{position:relative;z-index:1;display:grid;place-items:center;width:36px;height:40px;flex-shrink:0;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--ink);background:#1B1F28;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
-.strate-infos{flex:1;display:grid;gap:2px;min-width:0}
-.strate-infos strong{font-family:var(--display);font-weight:400;font-size:16.5px;color:var(--ink)}
-.strate-infos small{font-size:12px;color:var(--quiet)}
+
 .strate .btn{flex-shrink:0;min-height:40px;padding:0 12px;font-size:14px}
 .strate .btn .ico{width:16px;height:16px}
 .strate.front{box-shadow:inset 0 0 0 1.5px rgba(127,212,255,.6),inset 0 0 30px rgba(127,212,255,.12)}
@@ -354,16 +330,7 @@ h1,h2,h3{font-weight:400}
 .emplacement small{font-size:12px;color:var(--quiet)}
 .emplacement.plein{background:color-mix(in srgb,var(--c) 16%,var(--verre));box-shadow:inset 0 0 0 1.5px var(--c)}
 .emplacement.plein small{color:var(--ink);font-family:var(--display);font-size:14px}
-.grille-porteurs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.carte-porteur{--cut:10px;position:relative;display:grid;justify-items:center;gap:5px;padding:12px 8px 10px;border:none;color:var(--ink);text-align:center;transition:transform .12s ease}
-.carte-porteur:not(:disabled):active{transform:scale(.97)}
-.carte-porteur strong{font-family:var(--display);font-weight:400;font-size:16px;margin-top:2px}
-.carte-porteur .lignee{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--c)}
-.carte-porteur small{font-size:11px;color:var(--quiet)}
-.carte-porteur .jauge-pv{width:100%}
-.carte-porteur.choisi{background:color-mix(in srgb,var(--c) 20%,var(--verre));box-shadow:inset 0 0 0 2px var(--gold)}
-.carte-porteur .rang{position:absolute;top:6px;left:6px;display:grid;place-items:center;width:22px;height:24px;font-family:var(--mono);font-size:12px;font-weight:600;color:#1C1406;background:var(--laiton);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
-.carte-porteur:disabled{opacity:.42;filter:grayscale(.6)}
+
 .pied-fixe{position:sticky;bottom:0;z-index:10;display:flex;align-items:center;gap:14px;padding:14px 16px calc(14px + var(--sab));background:linear-gradient(rgba(11,13,18,0),rgba(11,13,18,.94) 30%)}
 .pied-fixe .btn{flex:1}
 .pied-info{display:grid;gap:1px}
@@ -371,10 +338,9 @@ h1,h2,h3{font-weight:400}
 .pied-info small{font-size:11.5px;color:var(--quiet);white-space:nowrap}
 
 /* ---------- Rencontre et Codex ---------- */
-.ecran-rencontre{background:linear-gradient(rgba(11,13,18,.55),rgba(11,13,18,.92) 70%),var(--decor) center 75%/cover}
-.ecran-rencontre .contenu{padding-bottom:16px}
+
 .rencontre{display:grid;gap:12px}
-.intro-porte{margin:0;font-size:15px;line-height:1.5;color:var(--ink-2)}
+
 .replique{--cut:10px;display:flex;gap:12px;align-items:flex-start;padding:12px;box-shadow:inset 0 0 0 1px var(--filet),inset 3px 0 0 var(--c);opacity:0;transform:translateY(10px);animation:pose .6s ease-out forwards;animation-delay:calc(var(--i) * .9s + .3s)}
 .replique strong{display:block;font-family:var(--display);font-weight:400;font-size:18px;color:var(--ink)}
 .replique small{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:var(--quiet)}
@@ -417,9 +383,7 @@ h1,h2,h3{font-weight:400}
 .faible{font-size:12.5px;color:var(--ink-2);text-shadow:0 1px 3px #000}
 .faible b{font-weight:600;color:var(--c)}
 .ennemi-nom{margin:0;font-family:var(--display);font-size:26px;line-height:1;color:var(--ink);text-shadow:0 2px 10px rgba(0,0,0,.8)}
-.jauge-ennemi{position:relative;height:16px;background:rgba(0,0,0,.6);box-shadow:inset 0 0 0 1px rgba(226,115,90,.4);clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
-.jauge-ennemi i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(180deg,#F08B6E,#B8432C);transition:width .35s ease}
-.jauge-ennemi .chiffre{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:10.5px;font-weight:600;color:#fff;text-shadow:0 1px 2px #000}
+
 .etats{display:flex;gap:6px}
 .etat{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ivory);background:rgba(0,0,0,.55);box-shadow:inset 0 0 0 1px rgba(232,223,200,.3)}
 .etat .ico{width:13px;height:13px}
@@ -507,7 +471,7 @@ h1,h2,h3{font-weight:400}
 
 @media (prefers-reduced-motion: reduce){
   .pop{animation-duration:.01s}
-  .jauge>i,.jauge-pv .pv,.jauge-ennemi i,.geste{transition:none}
+  .jauge>i,.jauge-pv .pv,.geste{transition:none}
   .ennemi-art,.intention.danger,.combattant.cible,.lancer.fort,.appel,.plaque.visee,.pastille-alerte,.toast.entre,.feuille.entre,.fenetre.entre,.toile .tableau.nouvel-age{animation:none}
   .replique,.appel-porte{opacity:1;transform:none;animation:none}
 }
@@ -536,26 +500,18 @@ h1,h2,h3{font-weight:400}
 .toile .anime{position:absolute;inset:0;pointer-events:none}
 .toile .anime video{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .8s}
 .toile .anime video.prete{opacity:1}
-.toile .lueur-cristal{position:absolute;left:51%;top:6.5%;width:34%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(circle,rgba(120,240,255,.55) 0%,rgba(80,210,240,.22) 35%,rgba(80,210,240,0) 70%);animation:lueurCristal 4.5s ease-in-out infinite alternate}
+
 @keyframes lueurCristal{from{opacity:.35;transform:translate(-50%,-50%) scale(.85)}to{opacity:.9;transform:translate(-50%,-50%) scale(1.08)}}
 /* Âge légendaire : cinq éclats tournent autour du cristal sur une ellipse (tour complet en 16 s) */
-.toile .orbite-cristal{position:absolute;left:51%;top:9%;width:26%;aspect-ratio:1/.3;transform:translate(-50%,-50%);pointer-events:none}
-.toile .orbite-cristal .ox,.toile .orbite-cristal .oy{position:absolute;inset:0}
-.toile .orbite-cristal .ox{animation:orbiteX 8s ease-in-out infinite alternate}
-.toile .orbite-cristal .oy{animation:orbiteY 8s ease-in-out infinite alternate}
-.toile .orbite-cristal i{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;background:#C8F8FF;
-  box-shadow:0 0 6px 2px rgba(110,230,255,.85);transform:rotate(45deg) scaleY(1.5);animation:eclatTwinkle 2.4s ease-in-out infinite alternate}
-.toile .orbite-cristal .ox:nth-child(even) i{width:4px;height:4px;margin:-2px;animation-delay:1.2s}
+
 @keyframes orbiteX{from{transform:translateX(-50%)}to{transform:translateX(50%)}}
 @keyframes orbiteY{from{transform:translateY(-50%)}to{transform:translateY(50%)}}
 @keyframes eclatTwinkle{from{opacity:.5}to{opacity:1}}
 /* la mer scintille */
-.toile .scintilles i{position:absolute;width:10px;height:10px;margin:-5px;pointer-events:none;mix-blend-mode:screen;opacity:0;
-  background:radial-gradient(circle,#fff 0 12%,rgba(170,245,255,.7) 22%,transparent 60%);animation:scintille 6.5s ease-in-out infinite}
+
 @keyframes scintille{0%,70%,100%{opacity:0;transform:scale(.4)}80%{opacity:1;transform:scale(1.15)}88%{opacity:.2;transform:scale(.8)}}
 /* un reflet doré traverse lentement le tableau */
-.toile .reflet-dore{position:absolute;inset:0;pointer-events:none;mix-blend-mode:soft-light;
-  background:linear-gradient(105deg,transparent 35%,rgba(255,214,140,.55) 50%,transparent 65%) no-repeat;background-size:250% 100%;animation:refletDore 14s ease-in-out infinite}
+
 @keyframes refletDore{0%{background-position:120% 0}60%,100%{background-position:-60% 0}}
 .toile .plaque{z-index:1}
 
@@ -638,24 +594,11 @@ h1,h2,h3{font-weight:400}
 @media (hover:hover){ .lecture-suite:hover{box-shadow:inset 0 0 0 1px var(--gold);opacity:1} }
 @keyframes zoom-lent{from{transform:scale(1.02)}to{transform:scale(1.1)}}
 .titre-sec{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-@media (prefers-reduced-motion: reduce){ .lecture-planche img,.lecture-progres,.toile .lueur-cristal,.toile .orbite-cristal .ox,.toile .orbite-cristal .oy,.toile .orbite-cristal i{animation:none} .toile .scintilles,.toile .reflet-dore{display:none} }
+@media (prefers-reduced-motion: reduce){ .lecture-planche img,.lecture-progres{animation:none}  }
 
 /* Zone de la Strate choisie (écran Escouade) */
-.zone-strate{display:flex;gap:10px;align-items:center;margin:0;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
-.zone-strate .ico{width:20px;height:20px;flex-shrink:0;color:var(--laiton,var(--gold))}
-.zone-strate span{display:grid;gap:2px;min-width:0}
-.zone-strate strong{font-family:var(--display);font-weight:400;font-size:17px;color:var(--ink)}
-.zone-strate small{font-size:12.5px;color:var(--quiet)}
 
 /* Fréquences du deck de l'escouade : un histogramme 1 à 9, les trous en évidence */
-.frequences-deck{display:grid;gap:6px;padding:10px 12px;border-radius:12px;background:var(--surface);border:1px solid var(--line)}
-.frequences-deck .barres{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;align-items:end;height:74px}
-.frequences-deck .barre{display:grid;grid-template-rows:1fr auto auto;justify-items:center;height:100%;min-width:0}
-.frequences-deck .barre i{align-self:end;width:70%;height:var(--h);min-height:2px;border-radius:3px 3px 0 0;background:var(--fc)}
-.frequences-deck .barre b{font-family:var(--mono);font-size:12px;color:var(--ink)}
-.frequences-deck .barre small{font-family:var(--mono);font-size:10px;color:var(--quiet)}
-.frequences-deck .barre.trou b{color:var(--danger)}
-.frequences-deck .barre.trou i{background:transparent;border:1px dashed var(--danger);height:8px}
 
 /* Grand choix de campagne (acte I : qui garde la chambre ?) */
 .fenetre.decision{max-width:520px;text-align:left}
@@ -673,9 +616,6 @@ h1,h2,h3{font-weight:400}
 .mission .confiance small{font-size:12px;color:var(--quiet)}
 
 /* Marques des Porteurs (écran Escouade) */
-.carte-porteur .marque{display:flex;align-items:center;justify-content:center;gap:4px;font-size:10.5px;color:var(--quiet);text-align:center;line-height:1.25}
-.carte-porteur .marque.acquise{color:var(--gold)}
-.carte-porteur .marque .ico{width:12px;height:12px}
 
 /* ---------- Exploration d'une Strate : voir exploration.css (refonte du 22 octobre 2026) ---------- */
 
@@ -702,24 +642,13 @@ h1,h2,h3{font-weight:400}
 .missions-libres .mission-duree .prix .ico{width:12px;height:12px}
 .segments-choix.cibles{position:static;grid-template-columns:repeat(auto-fit,minmax(96px,1fr))}
 .segments-choix.cibles .seg{padding:0 6px;line-height:1.2}
-.strate-actions{display:grid;gap:6px;flex-shrink:0}
-.strate-actions .btn{width:100%;justify-content:flex-start}
+
 /* le front de taille : la roche à creuser et ses creuseurs */
-.strate.front-taille{justify-content:flex-start;align-items:flex-start}
-.strate.front-taille .strate-infos small{display:flex;align-items:center;gap:5px;font-style:normal}
-.strate.front-taille .strate-infos .ico{width:14px;height:14px}
-.strate.front-taille .jauge{margin:3px 0}
-.strate.front-taille.prete{box-shadow:inset 0 0 0 1.5px rgba(216,180,101,.55)}
 
 /* ---------- Le niveau des Porteurs (22 octobre 2026) ---------- */
-.niv-porteur{display:inline-flex;flex-direction:column;align-items:stretch;gap:2px;margin:0 6px;vertical-align:middle;min-width:42px}
-.niv-porteur b{font:600 10px/1 var(--mono);letter-spacing:.06em;color:var(--gold,#F3D27A);white-space:nowrap}
-.niv-porteur .xp{display:block;height:3px;border-radius:2px;background:rgba(255,255,255,.12);overflow:hidden}
-.niv-porteur .xp i{display:block;height:100%;background:linear-gradient(90deg,#c9a24a,#ffe39a)}
-.carte-porteur .niv-porteur{margin:2px auto 4px;min-width:56px}
+
 .barre-xp{height:2px;margin-top:2px;border-radius:1px;background:rgba(255,255,255,.1);overflow:hidden}
 .barre-xp i{display:block;height:100%;background:linear-gradient(90deg,#c9a24a,#ffe39a)}
-.habitant small .niv-hab{font:600 10px/1 var(--mono);color:#F3D27A;letter-spacing:.05em}
 
 /* ---------- Les bâtiments cliquables (22 octobre 2026) ----------
    Une zone invisible épouse chaque bâtiment du tableau, sous les plaques. Au survol (PC) ou au toucher, elle s'éclaire

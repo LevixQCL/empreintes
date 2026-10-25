@@ -144,7 +144,7 @@ export interface Escouade {
   [porteurId: string]: { id: string; niveau: number }[];
 }
 
-export interface ResultatExpedition {
+interface ResultatExpedition {
   victoire: boolean;
   /** combats gagnés (0 à 3) */
   combats: number;

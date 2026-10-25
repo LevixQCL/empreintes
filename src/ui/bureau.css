@@ -81,9 +81,7 @@
   .grille-cartes{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:22px 18px}
   .carte-tuile:hover{transform:translateY(-4px)}
   .segments-choix{max-width:640px}
-  .decks-porteurs{flex-wrap:wrap;overflow:visible}
   .habitants{grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
-  .grille-porteurs{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
   .ecran-escouade > .pied-fixe{width:100%;max-width:1240px;margin-inline:auto;padding:18px 40px 22px}
   .ecran-escouade > .pied-fixe .btn{flex:0 1 380px;margin-left:auto}
   /* Chroniques : un vrai rayon de planches ; à la lecture, la planche reste à gauche, le texte se lit à droite */

@@ -151,7 +151,7 @@ const special = (id: string, nom: string, f: number, type: TypeGeste, v: number,
 export const GESTES_SPECIAUX: GesteDef[] = [special('stimulant', 'Stimulant', 1, 'soin', 5, { type: 'vague' }), special('repli', 'Repli', 9, 'bouclier', 10)];
 
 // ---------- Bâtiments ----------
-export interface BatimentDef {
+interface BatimentDef {
   id: BatimentId;
   nom: string;
   role: string;
@@ -375,7 +375,7 @@ export function texteTrait(t: import('./types').Trait): { nom: string; texte: st
 
 // ---------- Les conditions de salle (décision du 22 octobre 2026 : varier les combats) ----------
 // Tirées sur la carte de la Strate, visibles avant d'entrer : elles changent la façon de jouer la salle, pas seulement les chiffres.
-export interface ConditionDef { id: string; nom: string; texte: string }
+interface ConditionDef { id: string; nom: string; texte: string }
 export const CONDITIONS: Record<string, ConditionDef> = {
   inondee: { id: 'inondee', nom: 'Salle inondée', texte: 'L’eau porte les Génés : leurs cartes font +20 %.' },
   courants: { id: 'courants', nom: 'Câbles à nu', texte: 'Le courant court partout : les cartes des Augmentés font +20 %.' },

@@ -73,7 +73,6 @@
 .gv-texte strong{font:400 19px/1.1 var(--display);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gv-texte em{font:500 12px/1.2 var(--body);font-style:normal;color:var(--quiet)}
 
-
 @media (prefers-reduced-motion:reduce){
   .gain-recu,.gv-rayons,.gain-revele::after{animation:none}
 }

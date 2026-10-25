@@ -68,7 +68,7 @@ export const lundiSuivant = (now: number) => EPOQUE + (semaineDe(now) + 1) * 7 *
 export type Poste = Exclude<BatimentId, 'comptoir'>;
 export const POSTES: Exclude<Poste, 'noyau'>[] = ['generateur', 'forge', 'clinique'];
 
-export interface PorteurDistrict {
+interface PorteurDistrict {
   usure: number;
   poste: Poste | null;
   /** les cartes qu'on lui a confiées (exemplaires « carte@métal ») : sa part du deck de combat */
@@ -125,9 +125,9 @@ export function gagnerXp(j: Jeu, id: string, xp: number): number | null {
 // Un seuil franchi laisse une Marque permanente, qui change le combat quand le Porteur est dans l'escouade.
 // Depuis le 22 octobre 2026, chaque Porteur a la sienne (Bryan : choisir un Porteur doit changer quelque chose).
 /** Ce que vit un Porteur et qu'on compte pour sa Marque */
-export type Fait = 'expeditions' | 'fondations' | 'anciens' | 'scellees' | 'abysses' | 'gardiens' | 'combats' | 'missions';
+type Fait = 'expeditions' | 'fondations' | 'anciens' | 'scellees' | 'abysses' | 'gardiens' | 'combats' | 'missions';
 /** court : l'effet en quelques mots, pour l'écran de l'escouade */
-export interface MarqueDef { nom: string; fait: Fait; seuil: number; texte: string; court: string; quoi: string; bonus: BonusMarques }
+interface MarqueDef { nom: string; fait: Fait; seuil: number; texte: string; court: string; quoi: string; bonus: BonusMarques }
 export const MARQUES: Record<string, MarqueDef> = {
   ilka: { nom: 'Raccourci', fait: 'expeditions', seuil: 30, quoi: 'expéditions réussies', court: '+1 place au premier tour', bonus: { places: 1 },
     texte: 'Elle connaît tous les raccourcis : +1 place dans la chaîne au premier tour de chaque combat.' },
@@ -166,7 +166,7 @@ export function bonusEscouade(j: Jeu, escouade: string[]): BonusMarques {
 }
 
 /** La Forge refabrique un exemplaire d'une carte déjà trouvée */
-export interface Fabrication {
+interface Fabrication {
   moduleId: string;
   debut: number;
   fin: number;
@@ -186,7 +186,7 @@ export interface Choix {
   eclats?: number;
 }
 
-export type TypeQuotidien = 'combats' | 'expedition' | 'chantier';
+type TypeQuotidien = 'combats' | 'expedition' | 'chantier';
 export const QUOTIDIENS: Record<TypeQuotidien, { titre: string; objectif: number }> = {
   combats: { titre: 'Gagner 4 combats', objectif: 4 },
   expedition: { titre: 'Vaincre un gardien, réussir une fouille ou une Épreuve', objectif: 1 },
@@ -270,8 +270,8 @@ export interface Jeu {
 }
 
 /** Acte I, le choix : qui garde la chambre ? */
-export type GardeChambre = 'orseve' | 'district' | 'commission';
-export const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: GardeChambre; nom: string; phrase: string; effet: string }[] } = {
+type GardeChambre = 'orseve' | 'district' | 'commission';
+const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: GardeChambre; nom: string; phrase: string; effet: string }[] } = {
   titre: 'Qui garde la chambre ?',
   texte: 'La Confluence est tombée, et tout Vertiga parle de la chambre aux empreintes mêlées. Les Brigades du Serment de Veyr sont au pied de la Tour, les Veilleurs de Sédime demandent à l’étudier, et le quartier attend ta décision.',
   options: [
@@ -285,8 +285,8 @@ export const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: Ga
 };
 
 /** Acte II, le choix : autoriser Véla à une dernière lecture profonde, au risque de briser le lien avec son empreinte */
-export type LectureVela = 'autoriser' | 'refuser';
-export const DECISION_LECTURE: { titre: string; texte: string; options: { id: LectureVela; nom: string; phrase: string; effet: string }[] } = {
+type LectureVela = 'autoriser' | 'refuser';
+const DECISION_LECTURE: { titre: string; texte: string; options: { id: LectureVela; nom: string; phrase: string; effet: string }[] } = {
   titre: 'La dernière lecture',
   texte: 'Sous les salles closes, les cristaux d’un même individu portent des souvenirs qui se contredisent. Véla pense pouvoir lire jusqu’au bout ce qu’ils cachent. Elle sait que son lien avec son empreinte pourrait ne pas y survivre. Elle attend ton accord.',
   options: [
@@ -298,8 +298,8 @@ export const DECISION_LECTURE: { titre: string; texte: string; options: { id: Le
 };
 
 /** Acte III, la vérité : trois fins, aucune n'est « la bonne » (Bible) */
-export type FinCampagne = 'scellement' | 'pacte' | 'archives';
-export const DECISION_FIN: { titre: string; texte: string; options: { id: FinCampagne; nom: string; phrase: string; effet: string }[] } = {
+type FinCampagne = 'scellement' | 'pacte' | 'archives';
+const DECISION_FIN: { titre: string; texte: string; options: { id: FinCampagne; nom: string; phrase: string; effet: string }[] } = {
   titre: 'La vérité',
   texte: 'Le Premier Porteur est tombé, et son registre parle enfin : une autre civilisation s’est perdue en se gravant des empreintes, et ses premiers porteurs l’avaient écrit dès le début. Ces mêmes empreintes ont pourtant sauvé l’humanité après la Fonte. Le système qui les tient stables s’use. Il faut décider de ce qu’on en fait.',
   options: [
@@ -882,7 +882,7 @@ export function degreffer(j: Jeu, moduleId: string): Resultat {
 // ---------- Kit de départ des recrues ----------
 
 /** Trois cartes en fer par recrue, de sa lignée, différentes des cartes de départ des Porteurs nommés */
-export const KIT_RECRUES: Record<string, string[]> = {
+const KIT_RECRUES: Record<string, string[]> = {
   coursier: ['gant-arc', 'grappin-cable', 'coeur-turbine'],
   docker: ['crocs-fossiles', 'cuir-recif', 'yeux-nocturnes'],
   guetteur: ['miroir-brume', 'encre-ancienne', 'meche-or'],
@@ -927,7 +927,7 @@ function ligneeLaMoinsFournie(j: Jeu): 'tech' | 'bio' | 'reso' {
 }
 
 /** La première lecture d'un chapitre rapporte une carte en fer. Renvoie la carte, ou null si déjà récompensé. */
-export function recompenserLecture(j: Jeu, chapitreId: string): string | null {
+function recompenserLecture(j: Jeu, chapitreId: string): string | null {
   if (j.luesRecompensees.includes(chapitreId)) return null;
   j.luesRecompensees.push(chapitreId);
   const lignee = ligneeLaMoinsFournie(j);
@@ -951,7 +951,7 @@ export const colisDisponible = (j: Jeu) => j.chambre && j.ravitaillement.reserve
 /** colis restants avant la carte au choix */
 export const colisAvantChoix = (j: Jeu) => RAVITAILLEMENT.cycle - (j.ravitaillement.ouverts % RAVITAILLEMENT.cycle);
 
-export interface Colis { composants: number; doublon: string | null; choix: boolean }
+interface Colis { composants: number; doublon: string | null; choix: boolean }
 
 /** Ouvre un colis : des composants, un doublon d'une carte possédée en fer, et tous les 7 colis une carte au choix */
 export function ouvrirColis(j: Jeu): Resultat & { colis?: Colis } {
@@ -1076,7 +1076,7 @@ export function avancerFils(j: Jeu): string[] {
  * sait greffer, elle offre une pierre relevée à tout volontaire du quartier. Un nouveau Résonant rejoint le district.
  */
 export const ACCORD_OUVERT = { clinique: 3, confiance: CONFIANCE.haute } as const;
-export const accordOuvertPret = (j: Jeu) => j.batiments.clinique >= ACCORD_OUVERT.clinique && (j.confiance ?? 50) >= ACCORD_OUVERT.confiance;
+const accordOuvertPret = (j: Jeu) => j.batiments.clinique >= ACCORD_OUVERT.clinique && (j.confiance ?? 50) >= ACCORD_OUVERT.confiance;
 
 /** Les Porteurs présents au district (les recrues n'arrivent qu'après la chambre scellée) */
 export function porteursPresents(j: Jeu): string[] {
@@ -1092,7 +1092,7 @@ export function disponibles(j: Jeu): string[] {
 // verrouillée pendant une descente : impossible de changer de Porteurs entre deux salles.
 
 /** L'escouade de départ : Ilka, Doran et Véla */
-export const ESCOUADE_DEPART = ['ilka', 'doran', 'vela'] as const;
+const ESCOUADE_DEPART = ['ilka', 'doran', 'vela'] as const;
 
 /** L'escouade enregistrée (les Porteurs présents seulement, trois au plus) */
 export function escouadeDe(j: Jeu): string[] {
@@ -1297,7 +1297,7 @@ export function creuser(j: Jeu): boolean {
 // vaincue, vers un filon choisi. Les cartes trouvées en route sont de la lignée visée ; le filon donne ce qu'on cherchait.
 
 /** composants du filon par combat gagné pendant la fouille, en Strate −1 (+25 % par Strate) */
-export const FILON_COMPOSANTS = 8;
+const FILON_COMPOSANTS = 8;
 
 export const CIBLES_FOUILLE: Record<CibleFouille, { nom: string; texte: string }> = {
   tech: { nom: 'Cartes augmentées', texte: 'Les cartes trouvées sont des cartes d’Augmentés, et le filon en offre trois au choix.' },
@@ -1306,7 +1306,7 @@ export const CIBLES_FOUILLE: Record<CibleFouille, { nom: string; texte: string }
   composants: { nom: 'Composants', texte: 'Le filon rapporte des composants pour chaque combat gagné en route : plus le chemin est long, plus il donne.' },
   eclats: { nom: 'Éclats', texte: 'Le filon rapporte des Éclats : 2, et 3 à partir de la Strate −5.' },
 };
-export const estLignee = (c?: CibleFouille): c is Lignee => c === 'tech' || c === 'bio' || c === 'reso';
+const estLignee = (c?: CibleFouille): c is Lignee => c === 'tech' || c === 'bio' || c === 'reso';
 
 export function fouiller(j: Jeu, escouade: string[], strate: number, cible: CibleFouille, rng = graine()): Resultat {
   const e = escouadePrete(j, escouade);
@@ -1505,7 +1505,7 @@ export function acheter(j: Jeu, index: number, now = j.dernierTick): Resultat {
 // Trois combats à règle spéciale, renouvelés chaque lundi, contre le gardien de la dernière Strate vaincue.
 // La première victoire de chaque Épreuve dans la semaine donne une carte au choix, dont une en argent au moins.
 
-export interface EpreuveDef {
+interface EpreuveDef {
   id: string;
   nom: string;
   regle: string;

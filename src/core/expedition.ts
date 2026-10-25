@@ -52,7 +52,7 @@ export interface Expedition {
 /** Ce que cherche une fouille ciblée : les cartes d'une lignée, des composants ou des Éclats */
 export type CibleFouille = 'tech' | 'bio' | 'reso' | 'composants' | 'eclats';
 
-export interface Gains {
+interface Gains {
   /** salles scellées vaincues : une carte garantie chacune */
   elites: number;
   /** cartes offertes en route (rencontres) */
@@ -80,7 +80,7 @@ export interface Salle {
   rencontre?: string;
   faite: boolean;
 }
-export interface CarteStrate {
+interface CarteStrate {
   zone: number;
   salles: Salle[];
   position: number;
@@ -89,7 +89,7 @@ export interface CarteStrate {
 }
 
 /** Les rencontres possibles en route ; leurs choix sont dans jeu.ts (elles touchent au district) */
-export const RENCONTRES_IDS = ['veilleur', 'pilleur', 'brigade', 'cristal', 'marchand', 'source', 'sauvage', 'faussaire'] as const;
+const RENCONTRES_IDS = ['veilleur', 'pilleur', 'brigade', 'cristal', 'marchand', 'source', 'sauvage', 'faussaire'] as const;
 
 /**
  * Puissance des ennemis selon la profondeur (PV et attaques) : une table par Strate, réglée avec le robot
@@ -248,8 +248,8 @@ export const peutRemonter = (x: Expedition) => !!x.carte && x.phase === 'carte' 
 const POIDS: [TypeSalle, number][] = [['combat', 58], ['cache', 10], ['rencontre', 13], ['elite', 9], ['camp', 5], ['archive', 5]];
 
 /** Rangées d'une carte de Strate : 9 pour une expédition (7 jusqu'au 22 octobre 2026), 4 pour une fouille ciblée */
-export const RANGS_EXPEDITION = 9;
-export const RANGS_FOUILLE = 4;
+const RANGS_EXPEDITION = 9;
+const RANGS_FOUILLE = 4;
 /** Nombre de rangées d'une carte */
 export const rangsDe = (c: CarteStrate) => Math.max(...c.salles.map((s) => s.rang)) + 1;
 

@@ -21,7 +21,7 @@ export function avantage(att: LigneeGeste, def: Lignee): number {
   return att !== 'neutre' && BAT[att] === def ? REGLES.bonusLignee : 1;
 }
 
-export interface Analyse {
+interface Analyse {
   /** longueur de la meilleure suite croissante consécutive (1, 2, 3…) */
   suite: number;
   mult: number;

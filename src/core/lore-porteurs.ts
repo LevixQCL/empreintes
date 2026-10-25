@@ -2,7 +2,7 @@
 // Ilka, Doran, Véla, Sasha, Nuit et Aurel suivent la Bible du lore (portraits et répliques).
 // Les trois recrues n'ont pas de nom : leur texte reste court, à étoffer par Bryan.
 
-export interface PresentationPorteur {
+interface PresentationPorteur {
   /** ce qu'il est, en quelques mots */
   titre: string;
   /** deux ou trois phrases */
@@ -18,7 +18,7 @@ export interface PresentationPorteur {
  * Son histoire (23 octobre 2026, Bible « D'où viennent leurs dons ») : d'où vient son don, racontée en trois paliers.
  * Chaque palier s'ouvre quand le Porteur atteint son niveau : on apprend à le connaître en descendant avec lui.
  */
-export interface PalierOrigine { niveau: number; titre: string; texte: string }
+interface PalierOrigine { niveau: number; titre: string; texte: string }
 
 export const ORIGINES: Record<string, PalierOrigine[]> = {
   ilka: [

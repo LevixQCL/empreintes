@@ -15,7 +15,7 @@
   clip-path:polygon(0 var(--cut),var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%)}
 .lien-guide .ico{width:16px;height:16px;flex-shrink:0;color:#9FD8FF;filter:drop-shadow(0 0 4px rgba(159,216,255,.45))}
 .lien-guide:active{background:rgba(159,216,255,.16)}
-.frequences-deck .lien-guide{margin-top:8px}
+
 .feuille.regles .liens-guide{margin-bottom:4px}
 
 /* ---------- Onglet « Le deck » ---------- */

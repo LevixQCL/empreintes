@@ -104,7 +104,7 @@ export const socleAction = (t: 'atk' | 'bouclier' | 'soin') => `${base}socles/${
  * + socle de l'action en bas à droite, un cadre par métal et par action. Le jeu ne pose que les deux chiffres (et teinte le cristal).
  * f = centre du cristal, v = centre du disque de force, en % de la carte (mesurés sur l'image, puis vérifiés à l'écran).
  */
-export const CADRES_PLEINS: Partial<Record<Rarete, Partial<Record<'atk' | 'bouclier' | 'soin', { f: [number, number]; v: [number, number] }>>>> = {
+const CADRES_PLEINS: Partial<Record<Rarete, Partial<Record<'atk' | 'bouclier' | 'soin', { f: [number, number]; v: [number, number] }>>>> = {
   fer: {
     atk: { f: [11.5, 12.0], v: [80.8, 85.5] },
     bouclier: { f: [11.7, 12.2], v: [80.9, 85.6] },

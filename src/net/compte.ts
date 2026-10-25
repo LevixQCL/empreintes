@@ -16,7 +16,7 @@ const auth = getAuth(app);
 auth.languageCode = 'fr';
 const db = getFirestore(app);
 
-export type Utilisateur = { uid: string; nom: string };
+type Utilisateur = { uid: string; nom: string };
 
 const versUtilisateur = (u: User): Utilisateur => ({ uid: u.uid, nom: u.displayName || u.email || 'Joueur' });
 

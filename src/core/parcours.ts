@@ -21,7 +21,7 @@ import { jouerTour, jouerTourMoyen } from './robot';
 // (les creuseurs se gagnent par les fouilles, missions et Épreuves que joue déjà ce joueur simulé)
 import type { CombatEtat, Lignee } from './types';
 
-export interface Profil {
+interface Profil {
   nom: string;
   /** heures des sessions dans la journée (une expédition par session) */
   sessions: number[];
@@ -58,7 +58,7 @@ const DEFENSES_POIDS: Record<Lignee, number> = Object.fromEntries(
 ) as Record<Lignee, number>;
 
 /** Ce que vaut une carte pour le deck, à son niveau (estimation simple : force, effet, Fréquences, place prise) */
-export function valeurCarte(id: string, niveau: number): number { return puissanceCarte(id, niveau); }
+function valeurCarte(id: string, niveau: number): number { return puissanceCarte(id, niveau); }
 
 /** Les 6 meilleures cartes d'une lignée, en gardant autant de défenses que le deck de départ */
 function meilleures(j: Jeu, l: Lignee): string[] {
@@ -155,7 +155,7 @@ function reponse(j: Jeu, id: string, sante: number): number {
 
 /** Joue une expédition jusqu'au retour au district ; renvoie la victoire */
 /** tours joués par combat, par type de salle (mesure du rythme) */
-export type ToursCombat = Record<'normal' | 'gardien' | 'epreuve', number[]>;
+type ToursCombat = Record<'normal' | 'gardien' | 'epreuve', number[]>;
 
 function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) => void, tours?: ToursCombat): boolean {
   if (!depart()) return false;

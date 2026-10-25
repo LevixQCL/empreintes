@@ -48,7 +48,7 @@ const ilYa = (ms: number) => ms < 60_000 ? 'à l’instant' : `il y a ${duree(ms
 const dateCourte = (ms: number) => ms ? new Date(ms).toLocaleDateString('fr-BE', { day: 'numeric', month: 'short' }) : '';
 
 /** Le rang de ce joueur dans un tableau (pour la Tour du Noyau et la fiche de la Strate), ou null */
-export function monRang(g: GrandTableau, uid: string | null, t: TableauId, now: number): { rang: number; sur: number } | null {
+function monRang(g: GrandTableau, uid: string | null, t: TableauId, now: number): { rang: number; sur: number } | null {
   if (!uid || !g.entrees.length) return null;
   const l = classer(g.entrees, t, 'total', semaineDe(now));
   const i = l.findIndex((x) => x.e.uid === uid);
@@ -56,7 +56,7 @@ export function monRang(g: GrandTableau, uid: string | null, t: TableauId, now: 
 }
 
 /** « 1er », « 2e » */
-export const ordinal = (n: number) => `${n}${n === 1 ? '<sup>er</sup>' : '<sup>e</sup>'}`;
+const ordinal = (n: number) => `${n}${n === 1 ? '<sup>er</sup>' : '<sup>e</sup>'}`;
 
 /** Le petit bandeau de la Tour du Noyau : ton rang en profondeur, et l'entrée vers le Tableau */
 export function bandeauTableau(e: EcranDistrict, g: GrandTableau, uid: string | null): string {

@@ -4,7 +4,7 @@
 // Ce fichier ne contient que les textes et les conditions : `avancerFils` (jeu.ts) les applique.
 
 /** Ce qu'une condition peut lire de la partie, sans dépendre de jeu.ts */
-export interface ContexteFil {
+interface ContexteFil {
   niveau: (id: string) => number;
   present: (id: string) => boolean;
   /** la Strate la plus profonde ouverte */
@@ -13,7 +13,7 @@ export interface ContexteFil {
   batiments: Record<string, number>;
 }
 
-export interface EtapeFil {
+interface EtapeFil {
   titre: string;
   /** la condition, en clair, pour la fiche du Porteur */
   quand: string;
@@ -24,7 +24,7 @@ export interface EtapeFil {
   confiance?: number;
 }
 
-export interface FilDef { titre: string; etapes: EtapeFil[] }
+interface FilDef { titre: string; etapes: EtapeFil[] }
 
 export const FILS: Record<string, FilDef> = {
   ilka: {

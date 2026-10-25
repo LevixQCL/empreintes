@@ -74,7 +74,6 @@
 .fc-holo{background:conic-gradient(from calc(var(--ry) * 14) at var(--mx) var(--my),#ff9ad5,#9ad7ff,#b7ffcf,#fff1a8,#d3a8ff,#ff9ad5);mix-blend-mode:color-dodge;opacity:.22}
 @media (prefers-reduced-motion: reduce){ .fc-carte{transition:none} .fc-lumiere,.fc-reflet,.fc-cristal{animation:none!important} .fc-cristal{opacity:.7} }
 
-
 /* ---------- Face « collection » au cadre peint (22 octobre 2026) ----------
    Mêmes signes qu'en combat : cadre du métal, cristal coloré de la Fréquence en haut à gauche, socle de l'action en bas à droite.
    En plus : niveau et lignée en haut, nom en entier en bas à gauche, effet sur le bord droit, autres Fréquences sous le cristal. */
@@ -92,8 +91,7 @@
 .fcp-f{left:var(--fx);top:var(--fy);margin-top:1cqw;text-shadow:0 0 5cqw color-mix(in srgb,var(--fc) 70%,#fff)}
 .fcp-v{left:var(--vx);top:var(--vy);margin-top:.6cqw}
 .fcp-v.deux{font-size:max(9px,12.5cqw);letter-spacing:-.05em}
-.fcp-autres{position:absolute;z-index:3;left:calc(var(--fx) - 1cqw);top:calc(var(--fy) + 13cqw);transform:translateX(-50%);white-space:nowrap;
-  padding:max(1px,.6cqw) max(3px,1.6cqw);border-radius:max(3px,1.6cqw);background:rgba(9,9,12,.78);font-family:var(--mono);font-size:max(8px,3.4cqw);font-weight:600;color:var(--ink)}
+
 .fcp-puces{position:absolute;z-index:3;top:5cqw;right:7cqw;display:flex;gap:1.4cqw;align-items:center}
 .fcp-puces > span{padding:max(2px,.9cqw) max(4px,2cqw);border-radius:max(4px,1.8cqw);background:rgba(9,9,12,.74);font-family:var(--mono);font-size:max(8px,3.4cqw);font-weight:600;color:var(--ink);line-height:1.2}
 .fcp-puces .fc-lignee{letter-spacing:.1em;color:color-mix(in srgb,var(--c) 70%,white)}
@@ -106,7 +104,7 @@
 .fcp-effet{bottom:42cqw}
 .fcp-effet{bottom:46cqw}
 /* plusieurs Fréquences : chacune s'affiche à son tour dans le cristal (chiffre + couleur), en fondu */
-.fcp-autres{display:none}
+
 .fcp.alt{--t:1.8s}
 .fcp.alt .fcp-k{animation:fcp-alt calc(var(--t) * var(--n)) ease-in-out infinite;animation-delay:calc((var(--n) - var(--i)) * var(--t) * -1)}
 .fcp.alt-2 .fcp-k{animation-name:fcp-alt2}

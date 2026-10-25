@@ -46,7 +46,7 @@ export function valeurExemplaire(cle: string, niveau: number): number {
   return Math.round(VALEUR_METAL[r] * (1 + VALEUR_NIVEAU * gagnes));
 }
 
-export interface ValeurRegistre {
+interface ValeurRegistre {
   points: number;
   /** exemplaires possédés (une carte dans un métal) */
   exemplaires: number;
@@ -139,7 +139,7 @@ export interface Entree {
 }
 
 /** Un nom de directeur : 3 à 18 caractères, lettres (accents compris), chiffres, espace, point, tiret, apostrophe */
-export const NOM_VALIDE = /^[\p{L}\p{N}][\p{L}\p{N} .'’_-]{1,16}[\p{L}\p{N}.]$/u;
+const NOM_VALIDE = /^[\p{L}\p{N}][\p{L}\p{N} .'’_-]{1,16}[\p{L}\p{N}.]$/u;
 export function nettoyerNom(nom: string): string { return nom.replace(/\s+/g, ' ').trim(); }
 export function nomValide(nom: string): boolean { return NOM_VALIDE.test(nettoyerNom(nom)) && /^[a-z0-9]{3,24}$/.test(clePseudo(nom)); }
 
@@ -155,7 +155,7 @@ export function clePseudo(nom: string): string {
   return c;
 }
 /** Les accents ramenés à leur lettre (l'ordre et le contenu sont recopiés tels quels dans firestore.rules) */
-export const ACCENTS: [RegExp, string][] = [
+const ACCENTS: [RegExp, string][] = [
   [/[àáâãäå]/g, 'a'], [/[èéêë]/g, 'e'], [/[ìíîï]/g, 'i'], [/[òóôõöø]/g, 'o'], [/[ùúûü]/g, 'u'],
   [/[ýÿ]/g, 'y'], [/ç/g, 'c'], [/ñ/g, 'n'], [/œ/g, 'oe'], [/æ/g, 'ae'], [/ß/g, 'ss'],
 ];

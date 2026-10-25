@@ -1,21 +1,21 @@
 /* EMPREINTES — ce qui reste de l'ancienne feuille de l'exploration : les « routes » de la feuille Fuir (rendue par vue.ts).
    La carte d'une Strate elle-même est dans exploration-refonte.css (revue du 22 octobre 2026). */
-.routes,.choix-rencontre{display:grid;gap:8px}
+.routes{display:grid;gap:8px}
 .route{--t:#CDEFFF;position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:9px 12px 9px 10px;border:none;text-align:left;color:var(--ink);cursor:pointer;
   background:linear-gradient(90deg,color-mix(in srgb,var(--t) 16%,transparent),transparent 60%),linear-gradient(165deg,rgba(26,33,60,.92),rgba(10,12,26,.95));
   box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t) 42%,transparent),inset 3px 0 0 var(--t);
   clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:transform .15s ease,filter .15s ease,box-shadow .15s ease}
-.route .sa-medaillon.petit{width:48px;height:48px}
+
 .route-txt{flex:1;display:grid;gap:2px;min-width:0}
 .route-txt small{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:color-mix(in srgb,var(--t) 70%,white)}
 .route-txt strong{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.15;color:var(--ink)}
 .route-txt em{font-style:normal;font-size:12.5px;line-height:1.35;color:var(--quiet)}
-.route-txt .tag-ennemi{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-2)}
+
 .route-txt .faible{color:var(--quiet)}
 .route-txt .faible b{font-weight:600;color:var(--c)}
 .route-fleche{flex:none;width:18px;height:18px;color:color-mix(in srgb,var(--t) 70%,white);opacity:.8;transition:transform .15s ease}
 .route:hover,.route:focus-visible{outline:none;filter:brightness(1.12);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t) 75%,transparent),inset 3px 0 0 var(--t),inset 0 0 24px color-mix(in srgb,var(--t) 18%,transparent)}
-.route:hover .route-fleche,.route:focus-visible .route-txt .tag-ennemi{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-2)}
+.route:hover .route-fleche{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-2)}
 .route-txt .faible{color:var(--quiet)}
 .route-txt .faible b{font-weight:600;color:var(--c)}
 .route-fleche{transform:translateX(3px)}

@@ -40,9 +40,9 @@ const gemme = (r: Rarete) => `<i class="gemme g-${r}" style="--r:${COULEUR_RARET
  * qui ouvriront plus tard (le Port et le Labo génétique). Bryan : pas de voile sur eux, le tableau reste beau partout ;
  * quand on les touche, une raison plausible, dans le lore, dit pourquoi ils ne sont pas encore ouverts.
  */
-export type LieuFutur = 'port' | 'labo';
+type LieuFutur = 'port' | 'labo';
 type Lieu = BatimentId | LieuFutur;
-export const LIEUX_FUTURS: Record<LieuFutur, { nom: string; raison: string; promesse: string }> = {
+const LIEUX_FUTURS: Record<LieuFutur, { nom: string; raison: string; promesse: string }> = {
   port: {
     nom: 'Port',
     raison: 'Le charpentier de marine n’est pas encore arrivé au district. Sans lui, personne n’ose prendre la mer : le vieux bateau reste amarré au ponton.',
@@ -119,7 +119,7 @@ let video: HTMLVideoElement | null = null;
  * Les plaques des bâtiments ne se chevauchent jamais : après chaque rendu, une plaque qui en recouvre
  * une autre, plus haut sur le tableau, descend juste en dessous (sur téléphone, les noms longs se touchaient).
  */
-export function degagerPlaques(racine: HTMLElement) {
+function degagerPlaques(racine: HTMLElement) {
   const ps = [...racine.querySelectorAll<HTMLElement>('.toile .plaque')];
   const places: DOMRect[] = [];
   for (const p of ps.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)) {
@@ -785,7 +785,7 @@ export function feuilleDeck(e: EcranDistrict): string {
 // (« peuvent monter », « libres ») en plus des lignées, et l'équipement des Porteurs se fait depuis l'onglet Porteurs
 // ou en touchant une carte (la rangée « Construire le deck » faisait doublon).
 /** Le choix du tri des cartes (24 octobre 2026) : le même partout où l'on voit une liste de cartes, et retenu d'un écran à l'autre */
-export function choixTri(tri: TriCartes): string {
+function choixTri(tri: TriCartes): string {
   return `<div class="tri-cartes" role="radiogroup" aria-label="Trier les cartes"><span class="tri-label">${ICO.journal}Trier</span>`
     + TRIS.map((t) => `<button type="button" role="radio" class="tri-choix${t.id === tri ? ' actif' : ''}" data-action="tri" data-id="${t.id}" aria-checked="${t.id === tri}" title="${echap(t.texte)}">${t.nom}</button>`).join('')
     + `</div>`;
@@ -891,7 +891,7 @@ export function htmlRencontre(n = 0): string {
 // ---------- La Bibliothèque : Chroniques et Archives ----------
 
 /** Chapitres des Chroniques ouverts mais pas encore lus (pour la pastille « nouveau ») */
-export const chapitresNouveaux = (j: Jeu) => CHAPITRES.filter((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)).length;
+const chapitresNouveaux = (j: Jeu) => CHAPITRES.filter((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)).length;
 
 /** La Bibliothèque du district : les Chroniques d'Ysé et les Archives trouvées dans les Strates */
 export function htmlCodex(e: EcranDistrict): string {

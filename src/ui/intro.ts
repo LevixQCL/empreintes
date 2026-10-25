@@ -169,13 +169,13 @@ export const PLANS: Plan[] = [
 ];
 
 /** Illustrations Midjourney déjà déposées dans public/intro/ */
-export const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-tempetes', '03-fracture', '04-hauteur', '05-puits-zero', '06-empreintes', '07-ascension', '08-reponse', '09-oubli', '10-dessous', '10-toi']);
+const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-tempetes', '03-fracture', '04-hauteur', '05-puits-zero', '06-empreintes', '07-ascension', '08-reponse', '09-oubli', '10-dessous', '10-toi']);
 /** Plans qui ont aussi une courte vidéo en boucle (public/intro/<id>.mp4), l'image sert d'affiche.
  *  10-toi n'en a plus : sa boucle sautait ; l'image fixe et le zoom vers la porte la remplacent. */
-export const VIDEOS_DISPONIBLES = new Set<string>([]);
+const VIDEOS_DISPONIBLES = new Set<string>([]);
 
 /** Illustration visible au plan i quand k lignes sont affichées (la dernière disponible dont le seuil est atteint) */
-export function fondActif(i: number, k: number): string | null {
+function fondActif(i: number, k: number): string | null {
   const dispo = (PLANS[i]?.fonds ?? []).filter((x) => IMAGES_DISPONIBLES.has(x.id));
   const atteints = dispo.filter((x) => x.des <= k);
   return (atteints[atteints.length - 1] ?? dispo[0])?.id ?? null;

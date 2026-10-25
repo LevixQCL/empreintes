@@ -81,9 +81,9 @@ export function creerCombat(opts: {
 
 // ---------- Lecture ----------
 
-export const porteurEtat = (s: CombatEtat, id: string) => s.porteurs.find((p) => p.id === id);
+const porteurEtat = (s: CombatEtat, id: string) => s.porteurs.find((p) => p.id === id);
 export const vivants = (s: CombatEtat) => s.porteurs.filter((p) => p.pv > 0);
-export const estATerre = (s: CombatEtat, id: string | null) => !!id && (porteurEtat(s, id)?.pv ?? 0) <= 0;
+const estATerre = (s: CombatEtat, id: string | null) => !!id && (porteurEtat(s, id)?.pv ?? 0) <= 0;
 export const capacite = (s: CombatEtat) => REGLES.capaciteBase + s.capaBonus;
 export const placesPrises = (s: CombatEtat) => s.chaine.reduce((n, g) => n + places(g), 0);
 export const placesLibres = (s: CombatEtat) => capacite(s) - placesPrises(s);
@@ -187,7 +187,7 @@ export const soigneUnSeul = (g: Geste) => g.type === 'soin' && g.effet?.type !==
  * La cible proposée pour un soin : le Porteur visé par l'attaque annoncée s'il risque de tomber bas,
  * sinon le plus blessé.
  */
-export function cibleConseillee(s: CombatEtat): string | undefined {
+function cibleConseillee(s: CombatEtat): string | undefined {
   const coups = new Map<string, number>();
   for (const en of ennemisDebout(s)) {
     const it = intentionDe(s, en);
@@ -343,7 +343,7 @@ function log(s: CombatEtat, t: string) {
  * en alternant dégâts, soin et bouclier, car sa main de 5 cartes reprenait presque tout son deck de 6 à chaque tour).
  * Une carte de moins en main par Porteur à terre : 5 à trois, 4 à deux, 3 seul.
  */
-export const tailleMainDe = (s: CombatEtat) => REGLES.tailleMain - s.porteurs.filter((p) => p.pv <= 0).length;
+const tailleMainDe = (s: CombatEtat) => REGLES.tailleMain - s.porteurs.filter((p) => p.pv <= 0).length;
 
 function piocher(s: CombatEtat, taille: number = tailleMainDe(s)) {
   const r = tireur(s);

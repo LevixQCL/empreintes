@@ -2,7 +2,7 @@
 // La vie du quartier autour du directeur : teinturiers de mèches, maisons de mue, minute grise, le boulanger des toits.
 // Certaines n'apparaissent qu'une fois la chambre ouverte, ou qu'à partir d'une Strate.
 
-export interface Rumeur { texte: string; strate?: number }
+interface Rumeur { texte: string; strate?: number }
 
 export const RUMEURS: Rumeur[] = [
   { texte: 'Le boulanger de la rue des Filets a encore dormi sur le toit. Son pain est toujours excellent. Personne n’ose lui demander pourquoi.' },

@@ -98,9 +98,9 @@ export function couts(j: Jeu, c: { energie?: number; composants?: number; eclats
 }
 
 /** La barre des ressources, toujours en haut */
-export type Ressource = 'energie' | 'composants' | 'eclats' | 'strate';
+type Ressource = 'energie' | 'composants' | 'eclats' | 'strate';
 
-export function hud(j: Jeu, ouverte: Ressource | null = null): string {
+function hud(j: Jeu, ouverte: Ressource | null = null): string {
   const max = stockage(j);
   const plein = j.energie >= max;
   const b = (r: Ressource, extra: string, label: string) =>
@@ -115,7 +115,7 @@ export function hud(j: Jeu, ouverte: Ressource | null = null): string {
 }
 
 /** La fiche d'une ressource : ce que c'est, ce qu'on a, comment en gagner, à quoi elle sert */
-export function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
+function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
   if (!r) return '';
   const max = stockage(j);
   const ligne = (ico: Icone, titre: string, texte: string) => `<li>${ICO[ico] ?? ''}<span><strong>${titre}</strong><small>${texte}</small></span></li>`;
