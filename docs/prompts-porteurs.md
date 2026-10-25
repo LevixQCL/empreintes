@@ -25,11 +25,13 @@ Format : 600 × 800, à enregistrer sous le même nom dans `public/art/porteurs/
 
 ## Augmentés : lumière bleu acier
 
+Chaque implant ternit les cheveux : quelques mèches ternes après le premier, une tête presque blanche quand on en porte beaucoup.
+
 | Fichier | Prompt (après le préfixe, avant la fin commune) |
 |---|---|
 | `ilka.webp` | young woman courier in her twenties, short spiky white hair, freckles, wide cheeky grin, thin metal circuit lines at her temple, slate-blue hooded scarf and worn utility jacket, sleek mechanical legs with glowing blue crystal cores at the knees, leaping across rusty suspension bridge cables high above a city at dusk, dominant cold steel-blue and electric cyan lighting, blue glow from her implants, cool blue-grey sky, deep navy shadows |
-| `coursier.webp` | young runner in his late teens, messy black hair, determined look, dark teal hooded scarf, second-hand mechanical arm with a glowing blue palm, crouched mid-sprint on a metal walkway, motion lines, dominant cold steel-blue and electric cyan lighting, blue rim light, cool night city haze, deep navy shadows |
-| `sasha.webp` | strong repairman in his thirties, short hair, trimmed beard, brass goggles pushed up on his forehead, heavy work apron, homemade mechanical right arm built from salvaged plates and cables, repairing a machine on a cluttered workbench, blue-white welding sparks, dominant cold steel-blue and cyan lighting, workshop lit by blue work lamps, deep navy shadows |
+| `coursier.webp` | young runner in his late teens, messy black hair already streaked with many dull white strands, white temples, determined restless look, dark teal hooded scarf, second-hand mechanical legs with glowing blue crystal cores at the knees and mismatched worn plates, crouched mid-sprint on a metal walkway as if starting to run before deciding where, motion lines, dominant cold steel-blue and electric cyan lighting, blue rim light, cool night city haze, deep navy shadows |
+| `sasha.webp` | strong repairman in his thirties, short dark hair with a few dull white strands, trimmed beard, brass goggles pushed up on his forehead, heavy work apron, homemade mechanical right arm built from salvaged plates and cables, repairing a machine on a cluttered workbench, blue-white welding sparks, dominant cold steel-blue and cyan lighting, workshop lit by blue work lamps, deep navy shadows |
 | `liane.webp` | elegant cold woman in her thirties, hair almost entirely white, aloof proud gaze, long black high-collared coat, discreet implants with glowing blue nodes along her arm and neck, standing in a narrow alley between tall buildings, dominant cold steel-blue and pale cyan lighting, blue mist, moonlit blue-grey background, deep navy shadows |
 
 ## Génés : lumière verte bioluminescente
