@@ -38,3 +38,18 @@ export function effacer(): void {
     /* rien */
   }
 }
+
+const SECOURS = 'empreintes.jeu.secours';
+
+/** Garde une copie d'une sauvegarde qu'on va remplacer : rien n'est jamais perdu en changeant d'appareil */
+export function garderSecours(env: Enveloppe): void {
+  try { localStorage.setItem(SECOURS, JSON.stringify(env)); } catch { /* stockage plein ou bloqué */ }
+}
+export function lireSecours(): Enveloppe | null {
+  try {
+    const brut = localStorage.getItem(SECOURS);
+    if (!brut) return null;
+    const env = JSON.parse(brut) as Enveloppe;
+    return estJeuValide(env.data) ? env : null;
+  } catch { return null; }
+}

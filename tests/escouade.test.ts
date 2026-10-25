@@ -95,3 +95,15 @@ describe('Les pastilles « Nouveau »', () => {
     expect(cartesNouvelles(j as Jeu)).toEqual([]);
   });
 });
+
+describe('Changer d’appareil (25 octobre 2026)', () => {
+  it('la partie la plus avancée gagne, pas la plus récente', async () => {
+    const { compareAvancement } = await import('../src/core/jeu');
+    const neuve = nouveauJeu(0, 1);
+    const avancee = nouveauJeu(0, 2);
+    avancee.strate = 4;
+    expect(compareAvancement(avancee, neuve)).toBe(1);
+    expect(compareAvancement(neuve, avancee)).toBe(-1);
+    expect(compareAvancement(neuve, nouveauJeu(0, 3))).toBe(0);
+  });
+});

@@ -16,7 +16,7 @@ import { decouverteEnAttente } from './core/decouvertes';
 import { ennemiDef, moduleDef, porteurDef } from './core/donnees';
 import * as J from './core/jeu';
 import type { BatimentId, CombatEtat, Evenement, Pas } from './core/types';
-import { charger, enregistrer, type Enveloppe } from './save/local';
+import { charger, enregistrer, garderSecours, type Enveloppe } from './save/local';
 import { firebaseActif } from './net/firebase-config';
 import { htmlCombat, type Ecran as EcranCombat, type Fin, type Compte } from './ui/vue';
 import { ETAPES, htmlBriefing } from './ui/briefing';
@@ -158,9 +158,12 @@ function voirNouveautes() {
   if (change) sauver();
 }
 
+/** la sauvegarde du compte a été lue et comparée : avant ça, on n'envoie rien (on écraserait une partie plus avancée) */
+let reconcilie = false;
+
 function sauver() {
   const env = enregistrer(jeu);
-  if (compte && uid) {
+  if (compte && uid && reconcilie) {
     clearTimeout(minuteur);
     minuteur = window.setTimeout(() => pousser(env), 1500);
     planifierPublication();
@@ -273,16 +276,26 @@ async function reconcilier() {
   try {
     const distante = await compte.lireDistante(uid);
     const locale = charger();
-    if (distante && (!locale || distante.updatedAt > locale.updatedAt)) {
-      enregistrer(distante.data, distante.updatedAt);
+    // garder la partie la plus AVANCÉE (pas la plus récente) : une partie neuve ouverte sur un autre appareil
+    // ne doit jamais écraser celle du compte ; à avancement égal, la plus récente. L'autre est gardée en secours.
+    const cmp = distante && locale ? J.compareAvancement(distante.data, locale.data) : 0;
+    const prendreDistante = !!distante && (!locale || cmp > 0 || (cmp === 0 && distante.updatedAt > locale.updatedAt));
+    if (prendreDistante && distante) {
+      if (locale) garderSecours(locale);
+      enregistrer(distante.data, Math.max(distante.updatedAt, Date.now()));
       jeu = distante.data;
       J.tick(jeu, Date.now());
       compteEtat.info = 'Progression du compte chargée.';
-      mode = jeu.expedition ? 'combat' : 'district';
+      D.message = `Progression du compte chargée : Strate −${jeu.strate}.`;
+      mode = mode === 'titre' || mode === 'intro' ? mode : jeu.expedition ? 'combat' : 'district';
       K.etat = null;
       K.fin = finPour();
       afficher();
-    } else if (locale) await pousser(locale);
+    } else if (locale) {
+      if (distante && cmp < 0) garderSecours(distante);
+      await pousser(locale);
+    }
+    reconcilie = true;
   } catch (e) {
     compteEtat.synchro = 'erreur';
     compteEtat.codeErreur = 'lecture : ' + ((e as { code?: string })?.code ?? String(e).slice(0, 60));
@@ -297,7 +310,7 @@ async function demarrerCompte() {
     compteEtat.utilisateur = u;
     uid = u?.uid ?? null;
     compteEtat.synchro = 'aucune';
-    G.entrees = []; G.lu = 0; G.etat = 'repos'; monEntree = null; monEntreeLue = false;
+    G.entrees = []; G.lu = 0; G.etat = 'repos'; monEntree = null; monEntreeLue = false; reconcilie = false;
     if (uid) {
       // à la connexion (ou au premier lancement connecté), le jeu demande un pseudo s'il n'y en a pas encore,
       // après avoir récupéré la sauvegarde du compte : elle en a peut-être déjà un

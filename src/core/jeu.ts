@@ -399,6 +399,23 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
   };
 }
 
+/**
+ * Jusqu'où une partie est allée, pour choisir entre deux sauvegardes (appareil ou compte) sans jamais faire reculer
+ * le joueur (25 octobre 2026 : une partie neuve sur PC, plus « récente », écrasait celle avancée sur le téléphone).
+ * Profondeur d'abord, puis l'expérience des Porteurs, puis les niveaux des bâtiments, puis la collection.
+ */
+export function avancement(j: Jeu): number[] {
+  const xp = Object.values(j.porteurs ?? {}).reduce((n, p) => n + (p.xp ?? 0), 0);
+  const bat = Object.values(j.batiments ?? {}).reduce((n, v) => n + v, 0);
+  return [j.strate * 2 + (j.frontVaincu ? 1 : 0), Math.floor(xp), bat, Object.keys(j.collection ?? {}).length];
+}
+/** 1 si a est plus avancée que b, -1 si moins, 0 si à égalité */
+export function compareAvancement(a: Jeu, b: Jeu): number {
+  const x = avancement(a), y = avancement(b);
+  for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i]! > y[i]! ? 1 : -1;
+  return 0;
+}
+
 export function estJeuValide(x: unknown): x is Jeu {
   const j = x as Jeu | null;
   if (!(!!j && (j.version === VERSION_JEU || (j.version >= 2 && j.version <= 6)) && typeof j.energie === 'number' && !!j.batiments && !!j.porteurs)) return false;
