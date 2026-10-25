@@ -9,6 +9,8 @@ const base = new URL('art/', document.baseURI).href;
 /** Porteurs illustrés (tous ont maintenant un portrait ; un nouveau Porteur sans image garde son initiale) */
 /** à changer quand les portraits sont repeints sous le même nom : le navigateur recharge alors les nouveaux au lieu de garder les anciens en cache */
 const VERSION_PORTRAITS = 2;
+/** idem pour les illustrations des cartes */
+const VERSION_CARTES = 2;
 const PORTEURS_ILLUSTRES = new Set(['ilka', 'doran', 'vela', 'sasha', 'nuit', 'aurel', 'coursier', 'docker', 'guetteur', 'kessa', 'liane', 'joss']);
 
 /** Modules illustrés : id du Module dans donnees.ts → fichier */
@@ -88,7 +90,7 @@ export const portrait = (id: string): string | null => (PORTEURS_ILLUSTRES.has(i
 /** l'illustration ne dépend pas du métal : « jambes-ressort@or » reprend celle de « jambes-ressort » */
 export const illustrationModule = (cle: string): string | null => {
   const id = cle.split('@')[0]!;
-  return MODULES_ILLUSTRES[id] ? `${base}modules/${MODULES_ILLUSTRES[id]}.webp` : null;
+  return MODULES_ILLUSTRES[id] ? `${base}modules/${MODULES_ILLUSTRES[id]}.webp?v=${VERSION_CARTES}` : null;
 };
 export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
