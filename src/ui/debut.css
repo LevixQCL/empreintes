@@ -199,3 +199,42 @@
 #consignes-install ol svg{vertical-align:-4px;color:#7FD4FF}
 #consignes-install button{width:100%;min-height:46px}
 @media (min-width:700px){#consignes-install{place-items:center}}
+
+/* Le compte sur l'écran titre (25 octobre 2026) : on attend la partie du compte, on dit avec quel compte on joue,
+   et on s'y connecte dans une feuille de verre, sans entrer dans le district. */
+#app .titre-go.attente{display:inline-flex;align-items:center;justify-content:center;gap:10px;cursor:progress;animation:none;opacity:.9;filter:saturate(.7)}
+.titre-anneau{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;animation:titre-tourne .9s linear infinite}
+@keyframes titre-tourne{to{transform:rotate(360deg)}}
+#app .titre-compte{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px;border:0;border-radius:999px;cursor:pointer;
+  background:rgba(8,11,20,.62);box-shadow:inset 0 0 0 1px rgba(205,239,255,.22);color:var(--x-txt);font:500 13px/1.2 var(--body)}
+#app .titre-compte:hover{box-shadow:inset 0 0 0 1px rgba(205,239,255,.45)}
+#app .titre-compte .ico{width:15px;height:15px;color:var(--x-glace)}
+#app .titre-compte b{color:var(--x-glace);font-weight:600}
+#app .titre-compte.connecte .ico{color:var(--x-vert)}
+#app .titre-compte small{font:600 12px/1 var(--mono);letter-spacing:.04em;color:var(--x-or)}
+#app .titre-compte.connecte small::before{content:"·";margin-right:8px;color:var(--x-doux)}
+.titre-voile-feuille{position:fixed;inset:0;z-index:40;background:rgba(3,5,10,.62);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:ci-fondu .25s ease-out}
+.titre-feuille{position:fixed;z-index:41;left:50%;bottom:max(16px,env(safe-area-inset-bottom,0px));width:min(calc(100% - 32px),400px);transform:translateX(-50%);
+  max-height:calc(100dvh - 32px);overflow:auto;border-radius:18px;background:linear-gradient(180deg,#1A2132,#0E121C);
+  box-shadow:inset 0 0 0 1px rgba(127,212,255,.25),0 20px 60px rgba(0,0,0,.6);animation:titre-feuille-monte .35s cubic-bezier(.2,.8,.3,1.1)}
+@keyframes titre-feuille-monte{from{transform:translate(-50%,40px);opacity:0}}
+.titre-feuille .panneau{display:grid;gap:12px;margin:0;padding:22px 20px 20px;background:none;box-shadow:none;border:0;color:#DCE4EE}
+.titre-feuille .panneau::after{display:none}
+.titre-feuille .panneau strong{font:400 21px/1.2 var(--display,serif);color:#F3EEE4;padding-right:40px}
+.titre-feuille .panneau .discret{font-size:14px;line-height:1.45;color:#A9B6C7}
+.titre-feuille .panneau .ligne{display:flex;gap:10px}
+.titre-feuille .panneau .ligne .btn{flex:1 1 0;min-height:46px}
+.titre-feuille .panneau input{min-height:46px;border-radius:10px;font-size:16px}
+.titre-feuille .panneau .lien{justify-self:start;font-size:13px}
+.titre-feuille .panneau .erreur{margin:0;font-size:14px;color:#FF9C8A}
+.titre-fermer{position:absolute;z-index:1;top:12px;right:12px;display:grid;place-items:center;width:40px;height:40px;border:0;border-radius:12px;cursor:pointer;
+  background:rgba(205,239,255,.06);box-shadow:inset 0 0 0 1px rgba(205,239,255,.2);color:#CDEFFF}
+.titre-fermer .ico{width:18px;height:18px}
+@media (min-width:1100px) and (min-height:600px){
+  .titre-feuille{top:50%;bottom:auto;transform:translate(-50%,-50%)}
+  @keyframes titre-feuille-monte{from{transform:translate(-50%,-46%);opacity:0}}
+}
+@media (prefers-reduced-motion:reduce){ .titre-anneau{animation-duration:2.4s} .titre-feuille,.titre-voile-feuille{animation:none} }
+/* le bas de l'écran titre redessiné (le compte qui répond) : il est déjà apparu, il ne rejoue pas son entrée */
+#app .titre-bas.vu{animation:none;opacity:1}
+#app .titre-compte.fantome{visibility:hidden}

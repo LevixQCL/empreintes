@@ -1,12 +1,13 @@
 // Le clavier (PC) : Entrée sur l'écran titre, Échap pour fermer, flèches dans l'intro.
 
 import { finPour } from './combat';
-import { app, apresTitre, D, K } from './etat';
+import { app, apresTitre, compteEtat, D, K, titrePret } from './etat';
 import { avancerIntro, reculerIntro } from './intro';
 import { afficher } from './rendu';
 
 export function clavier(ev: KeyboardEvent) {
-  if (app.mode === 'titre' && (ev.key === 'Enter' || ev.key === ' ')) {
+  if (app.mode === 'titre' && compteEtat.ouvert && ev.key === 'Escape') { compteEtat.ouvert = false; afficher(); return; }
+  if (app.mode === 'titre' && !compteEtat.ouvert && titrePret() && (ev.key === 'Enter' || ev.key === ' ')) {
     ev.preventDefault(); app.mode = apresTitre(); if (app.mode === 'combat') K.fin = finPour(); afficher(); return;
   }
   if (ev.key === 'Escape') {

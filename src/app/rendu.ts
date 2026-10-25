@@ -11,9 +11,9 @@ import { trouveesDe } from '../ui/guide';
 import { htmlIntro } from '../ui/intro';
 import { animerCompteur, majIntro, precharger } from '../ui/intro-lecteur';
 import { htmlPorteurs } from '../ui/porteurs';
-import { htmlTitre } from '../ui/titre';
+import { htmlTitre, type TitreCompte } from '../ui/titre';
 import { glisser, horloge, noter } from '../ui/toucher';
-import { htmlCombat } from '../ui/vue';
+import { htmlCombat, panneauCompte } from '../ui/vue';
 import { app, compteEtat, D, G, K, racine, reduit } from './etat';
 import { sauver } from './synchro';
 
@@ -27,6 +27,40 @@ function cles(): Record<string, string> {
   return { '.feuille': t('.feuille'), '.fenetre': t('.fenetre'), '.toast': t('.toast') };
 }
 
+/**
+ * L'écran titre déjà affiché (le compte qui répond, le panneau qui s'ouvre) : on ne remplace que le bas et la feuille du compte,
+ * pour ne pas rejouer l'apparition du logotype ni recadrer l'illustration.
+ */
+function majTitre(h: string): boolean {
+  const section = racine.querySelector<HTMLElement>(':scope > .titre');
+  const bas = section?.querySelector('.titre-bas');
+  if (!section || !bas) return false;
+  const neuf = document.createElement('template');
+  neuf.innerHTML = h;
+  const nouveau = neuf.content.querySelector('.titre');
+  const nouveauBas = nouveau?.querySelector('.titre-bas');
+  if (!nouveau || !nouveauBas) return false;
+  nouveauBas.classList.add('vu');
+  bas.replaceWith(nouveauBas);
+  section.toggleAttribute('data-action', nouveau.hasAttribute('data-action'));
+  if (nouveau.hasAttribute('data-action')) section.dataset.action = nouveau.getAttribute('data-action')!;
+  racine.querySelectorAll(':scope > .titre-voile-feuille, :scope > .titre-feuille').forEach((el) => el.remove());
+  racine.append(...[...neuf.content.children].filter((el) => el !== nouveau));
+  return true;
+}
+
+/** Le compte tel que l'écran titre le montre (rien si Firebase n'est pas configuré) */
+function compteTitre(): TitreCompte | null {
+  if (!compteEtat.actif) return null;
+  const u = compteEtat.utilisateur;
+  return {
+    etat: !compteEtat.pret ? 'attente' : u ? 'connecte' : 'invite',
+    nom: app.jeu.directeur?.nom ?? u?.nom ?? '',
+    strate: app.jeu.strate,
+    panneau: compteEtat.ouvert ? panneauCompte(compteEtat) : null,
+  };
+}
+
 export function afficher() {
   D.j = app.jeu;
   D.uid = app.uid;
@@ -36,7 +70,7 @@ export function afficher() {
   const mdp = (racine.querySelector('#mdp') as HTMLInputElement | null)?.value ?? '';
   const pseudoTape = (racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value;
   let h = '';
-  if (app.mode === 'titre') h = htmlTitre(app.jeu.introVue, !reduit);
+  if (app.mode === 'titre') h = htmlTitre(app.jeu.introVue, !reduit, compteTitre());
   else if (app.mode === 'intro') h = htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache);
   else if (app.mode === 'combat' && app.jeu.expedition?.carte && app.jeu.expedition.phase === 'carte') h = htmlExploration(app.jeu);
   else if (app.mode === 'combat' && app.jeu.expedition) {
@@ -61,7 +95,7 @@ export function afficher() {
   const avant = cles();
   const places = noter(racine);
   horloge(racine);
-  if (!(app.mode === 'intro' && majIntro(racine, h, reduit))) racine.innerHTML = h;
+  if (!(app.mode === 'intro' && majIntro(racine, h, reduit)) && !(app.mode === 'titre' && majTitre(h))) racine.innerHTML = h;
   glisser(racine, places);
   DEFILANTS.forEach((sel, k) => racine.querySelectorAll<HTMLElement>(sel).forEach((el, i) => { const d = defile[k]?.[i]; if (d) { el.scrollTop = d[0]; el.scrollLeft = d[1]; } }));
   for (const [sel, cle] of Object.entries(cles())) if (cle && cle !== avant[sel]) racine.querySelector(sel)?.classList.add('entre');

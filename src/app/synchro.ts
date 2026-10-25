@@ -91,9 +91,25 @@ async function reconcilier() {
   }
 }
 
+/** Le compte est prêt : l'écran titre peut ouvrir la partie */
+function comptePret() {
+  if (compteEtat.pret) return;
+  compteEtat.pret = true;
+  if (app.mode === 'titre') afficher();
+}
+
+/** au-delà, l'écran titre ouvre la partie de l'appareil (hors ligne, réseau lent) ; celle du compte la remplacera si elle arrive */
+const ATTENTE_COMPTE = 8000;
+
 export async function demarrerCompte() {
   if (!firebaseActif()) return;
-  app.compte = await import('../net/compte');
+  window.setTimeout(() => { if (!compteEtat.pret) { compteEtat.info = 'Hors ligne : partie de cet appareil.'; comptePret(); } }, ATTENTE_COMPTE);
+  try {
+    app.compte = await import('../net/compte');
+  } catch {
+    comptePret();
+    return;
+  }
   app.compte.surChangement((u) => {
     compteEtat.utilisateur = u;
     app.uid = u?.uid ?? null;
@@ -103,11 +119,14 @@ export async function demarrerCompte() {
       // à la connexion (ou au premier lancement connecté), le jeu demande un pseudo s'il n'y en a pas encore,
       // après avoir récupéré la sauvegarde du compte : elle en a peut-être déjà un
       reconcilier().then(() => {
+        // connecté depuis l'écran titre : le panneau se referme, « Reprendre » ouvre la partie du compte
+        if (app.mode === 'titre') compteEtat.ouvert = false;
+        comptePret();
         if (app.uid && !app.jeu.directeur?.nom && !app.pseudoDemande) { app.pseudoDemande = true; G.edition = true; G.accueil = true; G.erreur = ''; if (app.mode === 'district') afficher(); }
       });
       lireTableau(true);
-    }
-    if (app.mode === 'district') afficher();
+    } else comptePret();
+    if (app.mode === 'district' || app.mode === 'titre') afficher();
   });
 }
 

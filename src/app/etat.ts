@@ -72,7 +72,9 @@ const retourInitial = sauvegarde && absence > 10 * 60_000 && app.jeu.introVue ? 
 
 export const apresTitre = (): Mode => !app.jeu.introVue ? 'intro' : app.jeu.expedition ? 'combat' : 'district';
 
-export const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune' };
+export const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune', pret: false };
+/** l'écran titre n'ouvre la partie qu'une fois celle du compte récupérée : sinon, on ouvrirait celle de l'appareil */
+export const titrePret = () => !compteEtat.actif || !!compteEtat.pret;
 export const D: EcranDistrict = { j: app.jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, porteur: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null, guide: null };
 /** le Grand Tableau : lecture des classements en ligne, et ce qu'on a publié */
 export const G: GrandTableau = tableauVide();

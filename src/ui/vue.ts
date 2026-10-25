@@ -53,6 +53,8 @@ export interface Compte {
   pseudo?: string;
   /** la partie gardée en secours quand une autre l'a remplacée ; confirmer : le joueur a touché « Restaurer » une première fois */
   secours?: { strate: number; le: number; actuelle: number; confirmer: boolean } | null;
+  /** on sait si le joueur est connecté, et la partie du compte est récupérée (ou il n'y a pas de compte, ou on est hors ligne) */
+  pret?: boolean;
 }
 
 export interface Ecran {
