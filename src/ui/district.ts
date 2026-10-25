@@ -1059,20 +1059,46 @@ export function htmlCoupe(e: EcranDistrict): string {
       + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}Descendre</button></div>`;
   }
   if (j.expedition) h += `<button type="button" class="appel tr-reprendre" data-action="reprendre">${ICO.descendre}<span><strong>Expédition en cours</strong><small>Strate −${j.expedition.strate} : reprendre le combat</small></span></button>`;
-  // le chapitre de la campagne en cours : pourquoi on descend (campagne.ts)
+  // une seule carte en tête (refonte du 25 octobre 2026) : le chapitre en cours (pourquoi on descend), puis ce qu'il faut faire
   const chap = j.chambre ? chapitreCampagne(contexteCampagne(j)) : null;
   const derniere = j.scenes?.at(-1);
-  if (chap) {
-    h += `<section class="tr-chapitre"><span class="surtitre">${echap(chap.sur)}</span><strong>${echap(chap.titre)}</strong>`
-      + (derniere ? `<button type="button" class="btn-sec" data-action="scene-revoir" data-id="${derniere}" aria-label="Revoir la dernière scène">${ICO.film}Revoir</button>` : '')
-      + `<p>${echap(chap.texte)}</p></section>`;
-  }
-  h += `<section class="tr-etape"><span class="surtitre">Prochaine étape</span>${etape}</section>`;
+  h += `<section class="tr-etape">`
+    + (chap ? `<div class="tr-chapitre"><span class="surtitre">${echap(chap.sur)} · ${echap(chap.titre)}</span>`
+      + (derniere ? `<button type="button" class="tr-revoir" data-action="scene-revoir" data-id="${derniere}" aria-label="Revoir la dernière scène">${ICO.film}Revoir</button>` : '')
+      + `<p>${echap(chap.texte)}</p></div>` : '')
+    + `<span class="surtitre tr-prochaine">Prochaine étape</span>${etape}</section>`;
   // le Grand Tableau : ton rang en profondeur, et l'entrée vers les classements
   if (j.chambre && e.grand) h += bandeauTableau(e, e.grand, e.uid ?? null);
 
-  // les Strates, de −1 à la roche
-  h += `<section class="tr-strates" aria-label="Les Strates"><h3 class="titre-bloc">${ICO.strate}Les Strates</h3><ol>`;
+  // trois volets au lieu d'une page sans fin : les Strates, les Épreuves, les missions
+  const ouvert = j.chambre && strateVaincue(j) >= 1;
+  const volet = ouvert ? e.ongletTour ?? 'strates' : 'strates';
+  if (ouvert) {
+    const faites = epreuvesDeLaSemaine(e.now).filter((ep) => j.epreuves.faites.includes(ep.id)).length;
+    const nEp = epreuvesDeLaSemaine(e.now).length;
+    const seg = (id: typeof volet, nom: string, plus: string) =>
+      `<button type="button" role="tab" class="seg${volet === id ? ' actif' : ''}" data-action="tour-volet" data-id="${id}" aria-selected="${volet === id}">${nom}<small>${plus}</small></button>`;
+    h += `<div class="segments-choix trois tr-volets" role="tablist" aria-label="Strates, Épreuves ou missions">`
+      + seg('strates', 'Strates', `${j.strate} creusée${j.strate > 1 ? 's' : ''}`)
+      + seg('epreuves', 'Épreuves', `${faites} / ${nEp} cette semaine`)
+      + seg('missions', 'Missions', `${j.missions.length} / ${MISSIONS.max} en cours`)
+      + `</div>`;
+  }
+  if (volet === 'epreuves') h += htmlEpreuves(e);
+  else if (volet === 'missions') h += htmlMissions(e);
+  else h += htmlStrates(e, off, manque);
+  if (j.chambre && !ouvert) h += `<p class="tr-note">${ICO.verrou}Les Épreuves et les missions s’ouvrent quand le gardien de la Strate −1 est vaincu.</p>`;
+  h += feuilleBatiment(e);
+  return coquille(e, h, 'ecran-coupe tr');
+}
+
+/** Les Strates, de −1 à la roche : ce qu'on peut y faire, expliqué une fois en tête plutôt qu'à chaque ligne */
+function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof manquePourCreuser>): string {
+  const j = e.j;
+  const cible = j.strate + 1;
+  let h = `<section class="tr-strates" aria-label="Les Strates">`
+    + `<ul class="tr-legende"><li>${ICO.cristal}<span><b>Fouiller</b> : une descente courte, sans gardien, vers un filon (cartes, composants ou Éclats).</span></li>`
+    + `<li>${ICO.descendre}<span><b>Explorer</b> : toute la Strate, salle par salle, jusqu’à son gardien.</span></li></ul><ol>`;
   for (let n = 1; n <= j.strate; n++) {
     const front = n === j.strate;
     const vaincue = !front || j.frontVaincu;
@@ -1081,9 +1107,9 @@ export function htmlCoupe(e: EcranDistrict): string {
     const img = decorStrate(ZONES_STRATES.indexOf(zone));
     h += `<li class="tr-strate${front ? ' front' : ''}${vaincue ? ' vaincue' : ''}">`
       + `<span class="tr-vignette">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}<b>−${n}</b></span>`
-      + `<div class="tr-infos"><strong>${nom}</strong><small>${echap(zone.nom)} · ${vaincue ? 'vaincue : fouille (cartes, composants, Éclats) ou expédition' : 'front de fouille : son gardien t’attend'}</small>`
+      + `<div class="tr-infos"><strong>${nom}</strong><small>${echap(zone.nom)}${vaincue ? ` · ${ICO.ok}vaincue` : ' · <em>front : son gardien t’attend</em>'}</small>`
       + `<div class="tr-actions">${vaincue ? `<button type="button" class="btn sec" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller</button>` : ''}`
-      + `<button type="button" class="btn ${front && !j.frontVaincu ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}${front ? 'Descendre' : 'Y aller'}</button></div></div></li>`;
+      + `<button type="button" class="btn ${front && !j.frontVaincu ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}Explorer</button></div></div></li>`;
   }
   // la roche, tout en bas
   const requis = creuseursRequis(cible);
@@ -1094,10 +1120,7 @@ export function htmlCoupe(e: EcranDistrict): string {
     + `<small>${!j.frontVaincu ? `S’ouvre après le gardien de la Strate −${j.strate}.` : manque ? 'Il manque encore de quoi la percer : voir « Prochaine étape ».' : 'Tout est prêt.'}</small>`
     + (logementBloque ? `<small class="tr-loge">La Tour loge ${loge} creuseurs au niveau ${j.batiments.noyau} : il en faut la place pour ${requis}.</small>` : '')
     + `</div></li></ol></section>`;
-  if (j.chambre && strateVaincue(j) >= 1) h += htmlEpreuves(e) + htmlMissions(e);
-  else if (j.chambre) h += `<p class="tr-note">${ICO.verrou}Les Épreuves et les missions s’ouvrent quand le gardien de la Strate −1 est vaincu.</p>`;
-  h += feuilleBatiment(e);
-  return coquille(e, h, 'ecran-coupe tr');
+  return h;
 }
 
 // ---------- Le front de taille : les creuseurs ----------
@@ -1109,8 +1132,7 @@ function htmlEpreuves(e: EcranDistrict): string {
   const j = e.j;
   const st = strateEpreuve(j);
   const gardien = ennemiDef(zoneDe(st).boss).nom;
-  let h = `<section class="bloc"><h3 class="titre-bloc">${ICO.boost}Épreuves de la semaine</h3>`
-    + `<p class="aide">Un combat contre ${echap(gardien)} (Strate −${st}), avec une règle qui change ta façon de jouer. La première victoire de chaque Épreuve rapporte une carte au choix, dont une en argent au moins. ${decompte(lundiSuivant(e.now), e.now, 'Nouvelles Épreuves lundi, dans ', '.')}</p><div class="epreuves">`;
+  let h = `<section class="bloc tr-volet"><p class="aide">Un combat contre ${echap(gardien)} (Strate −${st}), avec une règle qui change ta façon de jouer. La première victoire de chaque Épreuve rapporte une carte au choix, dont une en argent au moins. ${decompte(lundiSuivant(e.now), e.now, 'Nouvelles Épreuves lundi, dans ', '.')}</p><div class="epreuves">`;
   for (const ep of epreuvesDeLaSemaine(e.now)) {
     const faite = j.epreuves.faites.includes(ep.id);
     h += `<div class="epreuve${faite ? ' faite' : ''}"><div><strong>${echap(ep.nom)}</strong><small>${echap(ep.regle)}</small>`
@@ -1123,8 +1145,7 @@ function htmlEpreuves(e: EcranDistrict): string {
 function htmlMissions(e: EcranDistrict): string {
   const j = e.j;
   const st = strateMission(j);
-  let h = `<section class="bloc"><h3 class="titre-bloc">${icone('ouvrier')}Missions</h3>`
-    + `<p class="aide">Un Porteur qui ne travaille pas peut partir en mission dans la Strate −${st}, équipé d’un peu d’énergie. La mission avance même jeu fermé : il rapporte des composants et des doublons de cartes de sa lignée, et un peu d’Usure.</p>`;
+  let h = `<section class="bloc tr-volet"><p class="aide">Un Porteur qui ne travaille pas peut partir en mission dans la Strate −${st}, équipé d’un peu d’énergie. La mission avance même jeu fermé : il rapporte des composants et des doublons de cartes de sa lignée, et un peu d’Usure.</p>`;
   for (const m of j.missions) {
     const p = porteurDef(m.porteur);
     h += `<div class="en-cours" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 36)}<div><strong>${echap(p.nom)} · Strate −${m.strate}</strong><small>${e.now >= m.fin ? 'Sur le retour' : decompte(m.fin, e.now, 'Retour dans ')}</small><div class="jauge or">${jaugeTemps(m.debut, m.fin, e.now)}</div></div></div>`;

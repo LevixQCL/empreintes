@@ -107,6 +107,7 @@ export function agirDistrict(a: string, c: Clic): Suite {
     case 'vers-amelioration': document.getElementById('fb-amelio')?.scrollIntoView({ behavior: reduit ? 'auto' : 'smooth', block: 'start' }); return 'fin';
     case 'archipel': ouvrir('archipel'); break;
     case 'coupe': ouvrir('coupe'); break;
+    case 'tour-volet': D.ongletTour = id === 'epreuves' || id === 'missions' ? id : 'strates'; break;
     case 'descendre': D.deck = null; D.fouille = null; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
     case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
     case 'cible': D.fouille = id as typeof D.fouille; break;

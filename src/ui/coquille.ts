@@ -62,6 +62,8 @@ export interface EcranDistrict {
   place?: number | null;
   /** onglet Escouade : l'escouade affichée (0 à 2) ; par défaut, celle qui descend */
   vueEscouade?: number;
+  /** Tour du Noyau : le volet affiché sous la prochaine étape (par défaut, les Strates) */
+  ongletTour?: 'strates' | 'epreuves' | 'missions';
   /** le mode d'emploi des cartes est ouvert, sur cet onglet (guide.ts) */
   guide: import('./guide').OngletGuide | null;
   /** l'ordre des cartes (écran Cartes, cartes d'un Porteur), retenu sur l'appareil */
