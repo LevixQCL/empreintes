@@ -1,20 +1,21 @@
-// L'onglet Porteurs (22 octobre 2026). Bryan voulait un endroit où voir tous ses Porteurs, pour les choisir
-// en connaissance de cause, avec leurs effets. Une grille par lignée, et la fiche complète d'un Porteur :
-// qui il est, son état (PV, niveau, Usure), sa Marque, ce que sa lignée lui donne, son poste et ses cartes.
+// L'onglet Escouade (25 octobre 2026 ; Porteurs et Cartes réunis). Trois volets : l'escouade et son deck complet,
+// tous les Porteurs (une grille par lignée, 22 octobre 2026), et la collection (htmlCartes dans district.ts).
+// La fiche complète d'un Porteur : qui il est, son état (PV, niveau, Usure), sa Marque, sa lignée, son poste et ses cartes.
 
 import { BATIMENTS, GESTES_SPECIAUX, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
-import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, deckEscouade, enExpedition, enMission, escouadeDe, escouadeVerrouillee, niveauPorteur, porteursNouveaux, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
+import { composantsNiveau, doublonsRequis } from '../core/collection';
+import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, deckEscouade, enExpedition, gestesDe, enMission, escouadeDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES } from '../core/regles';
-import { NOMS_EFFET } from '../core/effets';
+import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { multNiveau } from '../core/collection';
-import type { Lignee, PorteurDef } from '../core/types';
-import { illustrationBatiment, portrait } from './art';
-import { faceCarte } from './carte';
-import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, type EcranDistrict } from './coquille';
-import { barreXp, feuilleDeck, jaugePv } from './district';
-import { effetsLignee, plageFrequences } from './guide';
+import type { GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
+import { illustrationBatiment, illustrationModule, portrait, symboleAction } from './art';
+import { COULEUR_RARETE, couleurFrequence, faceCarte } from './carte';
+import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, voletsEscouade, type EcranDistrict } from './coquille';
+import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugePv, plusLongueSuite } from './district';
+import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
 import { ICO } from './icones';
 import { COULEUR } from './vue';
 import { echap, virgule } from './outils';
@@ -99,17 +100,110 @@ function silhouette(p: PorteurDef): string {
 // l'escouade est verrouillée : on ne change de Porteurs qu'au district.
 export function htmlPorteurs(e: EcranDistrict): string {
   let h = e.reserve ? listeTous(e) : monEscouade(e);
-  if (e.place !== null && e.place !== undefined && !e.reserve) h += voletPlace(e, e.place);
+  // le mode d'emploi prend la place des autres feuilles ; en le fermant, on retrouve celle d'où on venait
+  if (e.guide) h += feuilleGuide(e.guide, trouveesDe(e.j.collection));
+  else if (e.place !== null && e.place !== undefined && !e.reserve) h += voletPlace(e, e.place);
   else if (e.deck) h += feuilleDeck(e);
+  else if (e.carte) h += feuilleCarte(e);
   else h += feuillePorteur(e);
   return coquille(e, h, `ecran-porteurs pt${e.reserve ? '' : ' me'}`);
 }
 
-/** Une place de l'escouade, en grand : le portrait, ses chiffres, ses cartes, sa Marque, et « Changer » */
-function placeEscouade(j: Jeu, id: string | undefined, i: number, verrou: string | null): string {
+// L'onglet Escouade (25 octobre 2026). Bryan : « Les écrans Porteurs et Cartes sont voués à être fusionnés. On voit nos
+// Porteurs et vaguement leurs effets spéciaux, mal expliqués, et on ne voit même pas notre deck complet. »
+// Une seule feuille de match, de haut en bas : ce que vaut le deck (Fréquences, actions, Marques), puis chaque Porteur
+// avec sa Marque en toutes lettres et ses cartes en liste lisible (Fréquence, nom, effet, force), puis les cartes du district.
+// Une carte se touche pour son détail ; « Gérer ses cartes » ouvre la feuille où l'on confie et reprend.
+// Tout est construit pour une escouade donnée (`blocPorteur`, `bilanDeck`) : le jour où il y en aura deux ou trois,
+// chacune aura sa feuille, sans rien réécrire.
+
+const NOM_ACTION: Record<TypeGeste, string> = { atk: 'Attaque', bouclier: 'Protection', soin: 'Soin' };
+
+/** La Fréquence d'une carte en jeu : son chiffre (ou ses chiffres), ou ∗ pour un Accord */
+function cristalFreq(g: GesteDef): string {
+  if (g.effet?.type === 'accord') return `<b class="eq-f" style="--fc:#5d5470" title="Fréquence libre">∗</b>`;
+  const fs = g.fs ?? [g.f];
+  return `<b class="eq-f${fs.length > 1 ? ' multi' : ''}" style="--fc:${couleurFrequence(fs[0]!)}" title="Fréquence ${fs.join(' ou ')}">${fs.join('<i>/</i>')}</b>`;
+}
+
+/** Une carte du deck, sur une ligne : l'illustration et sa Fréquence, le nom, l'effet en clair, l'action et la force */
+function ligneCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean): string {
+  const cle = g.carte && j.collection[g.carte] ? g.carte : null;
+  const m = cle ? moduleDef(cle) : null;
+  const c = cle ? j.collection[cle]! : null;
+  const img = cle ? illustrationModule(cle) : null;
+  const effet = g.effet
+    ? `<span class="eq-effet"><b>${echap(NOMS_EFFET[g.effet.type])}</b> ${echap(texteEffet(g.effet))}</span>`
+    : `<span class="eq-effet sans">${NOM_ACTION[g.type]}</span>`;
+  const corps = `<span class="eq-vignette" style="--m:${m ? COULEUR_RARETE[m.rarete] : 'rgba(205,239,255,.3)'}">`
+    + (img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : `<span class="eq-sans">${g.porteur ? ICO.cartes : ICO.district}</span>`)
+    + cristalFreq(g) + `</span>`
+    + `<span class="eq-txt"><strong>${echap(g.nom)}${c ? `<small>Niv. ${c.niveau}</small>` : ''}${g.lourd ? '<small class="eq-lourd">2 places</small>' : ''}${cle && prete(cle) ? `<small class="eq-monte">${ICO.monter}Peut monter</small>` : ''}</strong>${effet}</span>`
+    + `<span class="eq-force ${g.type}" title="${NOM_ACTION[g.type]} ${g.v}"><img src="${symboleAction(g.type)}" alt="" width="18" height="18" decoding="async"><b>${g.v}</b></span>`
+    + (cle && !j.vus.cartes.includes(cle) ? `<span class="eq-neuve">Nouvelle</span>` : '');
+  return cle
+    ? `<li><button type="button" class="eq-carte" data-action="carte" data-id="${cle}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}${g.effet ? `, ${NOMS_EFFET[g.effet.type]}` : ''}. Voir la carte">${corps}</button></li>`
+    : `<li><div class="eq-carte fixe">${corps}</div></li>`;
+}
+
+/** Ce que vaut le deck de l'escouade : sa taille, ses Fréquences (par lignée), ses actions */
+function bilanDeck(j: Jeu, esc: string[]): string {
+  const cartes = deckEscouade(j, esc);
+  const n = cartes.length;
+  const manque = Math.max(0, DISTRICT.deckMin - n);
+  const freqs = frequencesDe(cartes);
+  const jokers = cartes.filter((g) => g.effet?.type === 'accord').length;
+  const suite = plusLongueSuite(freqs, jokers);
+  const max = Math.max(1, ...freqs);
+  // chaque colonne empile les cartes de chaque lignée (les cartes du district en neutre)
+  const couleurDe = (g: GesteDef) => (g.porteur ? COULEUR[porteurDef(g.porteur).lignee] : 'var(--x-doux)');
+  const colonnes = freqs.map((k, i) => {
+    const ici = cartes.filter((g) => g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(i + 1));
+    return `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}">`
+      + `<span class="eq-pile" style="--h:${(100 * k) / max}%">${ici.map((g) => `<i style="--c:${couleurDe(g)}"></i>`).join('')}</span>`
+      + `<b style="--fc:${couleurFrequence(i + 1)}">${i + 1}</b><small>${k || '—'}</small></span>`;
+  }).join('');
+  const trous = freqs.map((k, i) => (k ? 0 : i + 1)).filter(Boolean);
+  const actions = (['atk', 'bouclier', 'soin'] as TypeGeste[]).map((t) => {
+    const k = cartes.filter((g) => g.type === t).length;
+    return `<span class="eq-action ${t}${k ? '' : ' zero'}"><img src="${symboleAction(t)}" alt="" width="20" height="20" decoding="async"><b>${k}</b><small>${t === 'atk' ? 'attaque' : t === 'bouclier' ? 'protection' : 'soin'}${k > 1 ? 's' : ''}</small></span>`;
+  }).join('');
+  // une seule phrase de conseil, la plus utile
+  const conseil = manque ? `<b class="rouge">Il manque ${manque} carte${manque > 1 ? 's' : ''}</b> pour descendre (${DISTRICT.deckMin} au moins) : confie-en à un Porteur plus bas.`
+    : !cartes.some((g) => g.type === 'soin' && g.porteur) ? `<b class="rouge">Aucun soin</b> dans les cartes de tes Porteurs : seul le Stimulant du district soigne.`
+    : suite.length >= 2 ? `Ta plus longue suite va de <b>${suite[0]} à ${suite[suite.length - 1]}</b>${trous.length ? `. Rien en <b>${trous.join(', ')}</b> : ${trous.length > 1 ? 'ces chiffres coupent' : 'ce chiffre coupe'} tes Résonances` : ' : toute l’échelle est couverte'}${jokers ? ` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} un trou` : ''}.`
+    : 'Des Fréquences qui se suivent font des Résonances : ajoute des chiffres voisins.';
+  return `<section class="eq-bilan" aria-label="Le deck de l’escouade">`
+    + `<div class="eq-bilan-tete"><span class="eq-total${manque ? ' maigre' : ''}"><b>${n}</b><span>cartes<small>dans le deck</small></span></span>`
+    + lienGuide('deck', 'Bien construire') + `</div>`
+    + `<div class="eq-freqs" role="img" aria-label="Fréquences du deck : ${freqs.map((k, i) => `${i + 1} : ${k}`).join(', ')}">${colonnes}</div>`
+    + `<p class="eq-conseil">${conseil}</p>`
+    + `<div class="eq-actions">${actions}</div>`
+    + `</section>`;
+}
+
+/** La Marque d'un Porteur, expliquée : ce qu'elle fait, active ou non, et comment la gagner */
+function blocMarque(j: Jeu, id: string): string {
+  const m = progresMarque(j, id);
+  if (!m) return '';
+  const p = porteurDef(id);
+  // le texte de la Bible commence par une image (« Elle connaît tous les raccourcis : ») : on garde l'effet, en clair
+  const effet = m.texte.includes(' : ') ? m.texte.slice(m.texte.indexOf(' : ') + 3) : m.texte;
+  const fait = Math.min(m.n, m.seuil);
+  return `<button type="button" class="eq-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" aria-label="Marque ${echap(m.nom)} : ${echap(effet)} Voir la fiche de ${echap(p.nom)}">`
+    + `<span class="eq-marque-ico" aria-hidden="true">${m.acquise ? ICO.ok : ICO.cristal}</span><span class="eq-marque-txt">`
+    + `<span class="eq-marque-sur">${m.acquise ? 'Marque active' : 'Marque à gagner'}</span>`
+    + `<strong>${echap(m.nom)}</strong><span class="eq-marque-effet">${echap(effet.replace(/^./, (x) => x.toUpperCase()))}</span>`
+    + (m.acquise ? ''
+      : `<span class="eq-marque-prog"><i class="eq-jauge"><i style="width:${(100 * fait) / m.seuil}%"></i></i><small><b>${fr(fait)} / ${fr(m.seuil)}</b> ${echap(m.quoi)}${m.fait === 'missions' ? ' (en mission)' : ` avec ${IL.has(id) ? 'lui' : 'elle'} dans l’escouade`}</small></span>`)
+    + `</span></button>`;
+}
+
+/** Un Porteur de l'escouade : qui il est, sa Marque, puis ses cartes, une par ligne */
+function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string | null, prete: (cle: string) => boolean): string {
   if (!id) {
-    return `<button type="button" class="me-place vide" data-action="escouade-place" data-index="${i}"${verrou ? ' disabled' : ''}>`
-      + `<span class="me-silhouette" aria-hidden="true"></span><b>${i + 1}</b><small>${verrou ? 'Place libre' : 'Choisir un Porteur'}</small></button>`;
+    return `<section class="eq-porteur vide"><button type="button" class="eq-choisir" data-action="escouade-place" data-index="${i}"${verrou ? ' disabled' : ''}>`
+      + `<span class="eq-rang">${i + 1}</span>${ICO.porteurs}<span><strong>Place libre</strong><small>${verrou ? 'L’escouade est en descente' : 'Choisir un Porteur : il apporte ses cartes au deck'}</small></span></button></section>`;
   }
   const p = porteurDef(id);
   const d = j.porteurs[id]!;
@@ -117,58 +211,54 @@ function placeEscouade(j: Jeu, id: string | undefined, i: number, verrou: string
   const n = niveauPorteur(j, id);
   const pv = pvMaxCombat(j, id);
   const pvM = pvNiveau(j, id) + bonusPv(j, id);
+  const gestes = gestesDe(j, id);
   const nc = d.modules.filter((k) => j.collection[k]).length;
-  const m = progresMarque(j, id);
-  // ce qui l'empêcherait de partir, ou ce qui le rend fragile
+  const places = DISTRICT.cartesMax - nc;
+  const parti = enExpedition(j, id);
+  const portees = new Set(Object.values(j.porteurs).flatMap((x) => x.modules));
+  const attendent = Object.keys(j.collection).filter((k) => !portees.has(k) && moduleDef(k).lignee === p.lignee).length;
   const raison = raisonHorsEscouade(j, id);
   const alerte = raison && !j.expedition
-    ? `<span class="me-alerte">${ICO.verrou}<span>${echap(raison.replace(/\.$/, ''))} : il ne pourra pas descendre.</span></span>`
-    : textePosteQuitte(j, id) && !j.expedition ? `<span class="me-alerte">${ICO.ouvrier}<span>Au départ, ${echap(textePosteQuitte(j, id)!)}</span></span>`
-    : d.usure >= usureMax(id) * 0.5 ? `<span class="me-alerte usure">${ICO.soin}<span>Usure élevée</span></span>` : '';
-  return `<div class="me-place" style="--c:${COULEUR[p.lignee]}">`
-    + `<button type="button" class="me-portrait" data-action="porteur" data-id="${id}" aria-label="Fiche de ${echap(p.nom)}">`
-    + (img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 72))
-    + `<span class="me-rang" aria-hidden="true">${i + 1}</span>`
-    + `<span class="me-nom"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]}</small></span></button>`
-    + `<span class="me-jauges" title="${pv} / ${pvM} PV${n.requis ? ` · ${n.xp} / ${n.requis} XP` : ''}">${jaugePv(pv, pvM, d.usure, usureMax(id))}${barreXp(j, id)}</span>`
-    + `<span class="me-chiffres"><b class="or">Niv. ${n.niveau}</b><span><b>${pv}</b>/${pvM} PV</span></span>`
-    + `<button type="button" class="me-cartes${nc ? '' : ' aucune'}${nc >= DISTRICT.cartesMax ? ' pleine' : ''}" data-action="deck" data-id="${id}"${enExpedition(j, id) ? ' disabled' : ''}>${ICO.cartes}<span>${nc} / ${DISTRICT.cartesMax} cartes</span></button>`
-    // la Marque : acquise, son effet ; sinon ce qu'il faut accomplir pour la gagner, avec une jauge (24 octobre 2026 : « 10/30 » seul ne se comprenait pas)
-    + (m ? `<button type="button" class="me-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" title="${echap(m.texte)}">${m.acquise ? ICO.ok : ICO.cristal}<span>`
-      + (m.acquise ? `<b>${echap(m.nom)}</b> ${echap(m.court)}`
-        : `<small class="me-marque-sur">Marque à gagner</small><b>${echap(m.nom)}</b> : ${echap(m.court)}<i class="me-marque-jauge"><i style="width:${Math.min(100, (100 * m.n) / m.seuil)}%"></i></i><small>${fr(Math.min(m.n, m.seuil))} / ${fr(m.seuil)} ${echap(m.quoi)}</small>`)
-      + `</span></button>` : '')
-    + alerte
-    + (verrou ? '' : `<button type="button" class="me-changer" data-action="escouade-place" data-index="${i}" aria-label="Changer ${echap(p.nom)} de l’escouade">${ICO.recycler}<span>Changer</span></button>`)
-    + `</div>`;
+    ? `<p class="eq-alerte">${ICO.verrou}<span>${echap(raison.replace(/\.$/, ''))} : ${IL.has(id) ? 'il' : 'elle'} ne pourra pas descendre.</span></p>`
+    : textePosteQuitte(j, id) && !j.expedition ? `<p class="eq-alerte doux">${ICO.ouvrier}<span>Au départ, ${echap(textePosteQuitte(j, id)!)}</span></p>`
+    : d.usure >= usureMax(id) * 0.5 ? `<p class="eq-alerte">${ICO.soin}<span>Usure élevée : −${Math.floor(d.usure)} PV en combat. La Clinique la soigne au district.</span></p>`
+    // vide, la ligne garde sa place : sur PC, les trois colonnes restent alignées
+    : '<p class="eq-alerte"></p>';
+  const bat = LIGNEES.find((l) => BATTU_PAR[l] === p.lignee)!;
+  return `<section class="eq-porteur" style="--c:${COULEUR[p.lignee]}" aria-label="${echap(p.nom)}">`
+    + `<header class="eq-tete">`
+    + `<button type="button" class="eq-portrait" data-action="porteur" data-id="${id}" aria-label="Fiche de ${echap(p.nom)}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 64)}<span class="eq-rang" aria-hidden="true">${i + 1}</span></button>`
+    + `<div class="eq-id"><button type="button" class="eq-nom" data-action="porteur" data-id="${id}"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · Niv. ${n.niveau}</small></button>`
+    + `<span class="eq-pv">${jaugePv(pv, pvM, d.usure, usureMax(id))}<small><b>${pv}</b> / ${pvM} PV</small></span>`
+    + `<small class="eq-fort" style="--l:${COULEUR[bat]}">Fort contre les <b>${NOM_LIGNEES[bat]}</b></small></div>`
+    + (verrou ? '' : `<button type="button" class="eq-changer" data-action="escouade-place" data-index="${i}" aria-label="Changer ${echap(p.nom)}">${ICO.recycler}<span>Changer</span></button>`)
+    + `</header>`
+    + blocMarque(j, id) + alerte
+    + `<div class="eq-cartes-tete"><h3>${ICO.cartes}Ses cartes <span class="${places ? '' : 'plein'}">${nc} / ${DISTRICT.cartesMax}</span></h3>`
+    + `<button type="button" class="eq-gerer" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''}>${ICO.greffe}<span>${parti ? 'À son retour' : 'Gérer ses cartes'}</span></button></div>`
+    + `<ul class="eq-cartes">${gestes.map((g) => ligneCarte(j, g, prete)).join('')}`
+    + (places > 0 && !parti ? `<li><button type="button" class="eq-carte libre" data-action="deck" data-id="${id}"><span class="eq-vignette vide">${ICO.place}</span><span class="eq-txt"><strong>${places} place${places > 1 ? 's' : ''} libre${places > 1 ? 's' : ''}</strong>`
+      + `<span class="eq-effet sans">${attendent ? `${attendent} carte${attendent > 1 ? 's' : ''} de sa lignée ${attendent > 1 ? 'attendent' : 'attend'} dans ta collection` : 'Aucune carte libre de sa lignée pour l’instant'}</span></span>${attendent ? `<span class="eq-ajout">${ICO.greffe}Confier</span>` : ''}</button></li>` : '')
+    + `</ul></section>`;
 }
 
 function monEscouade(e: EcranDistrict): string {
   const j = e.j;
   const esc = escouadeDe(j);
   const verrou = escouadeVerrouillee(j);
-  const presents = porteursPresents(j);
-  let h = entete(`MON ESCOUADE · <span class="pt-dispo">${esc.length} / 3</span>`, 'Porteurs');
-  h += `<p class="pt-intro">Les trois qui descendent sous la Tour. Leurs cartes forment ton deck de combat ; touche un portrait pour sa fiche.</p>`;
+  const prete = (cle: string) => {
+    const c = j.collection[cle]; const r = c ? doublonsRequis(moduleDef(cle).id, c.niveau) : null;
+    return !!c && r !== null && c.doublons >= r && j.composants >= composantsNiveau(c.niveau + 1);
+  };
+  const deck = deckEscouade(j, esc).length;
+  let h = entete(`MON ESCOUADE · ${esc.length} / 3 · <span class="pt-dispo">${deck} CARTES</span>`, 'Escouade');
+  h += voletsEscouade(e);
   if (verrou) h += `<p class="me-verrou">${ICO.verrou}<span><strong>En descente</strong>${echap(verrou.replace(/^L’escouade est en descente : /, 'L’escouade '))}</span></p>`;
-  h += `<section class="me-trio" aria-label="Mon escouade">${[0, 1, 2].map((i) => placeEscouade(j, esc[i], i, verrou)).join('')}</section>`;
-
-  // le deck qu'elle emporte
-  if (esc.length) {
-    const deck = deckEscouade(j, esc).length;
-    const manque = Math.max(0, DISTRICT.deckMin - deck);
-    h += `<p class="me-deck${manque ? ' maigre' : ''}">${ICO.cartes}<span><strong>Le deck · ${deck} cartes</strong>`
-      + (manque ? `Il en manque ${manque} pour descendre (${DISTRICT.deckMin} au moins) : touche « cartes » sous un Porteur pour lui en confier.`
-        : `Les cartes des trois Porteurs, plus les ${GESTES_SPECIAUX.length} cartes du district.`)
-      + `</span></p>`;
-  }
-
-  // la liste complète, à part
-  const autres = presents.filter((id) => !esc.includes(id));
-  const libres = autres.filter((id) => !raisonHorsEscouade(j, id)).length;
-  const neufs = porteursNouveaux(j).length;
-  h += `<button type="button" class="me-tous" data-action="porteurs-tous">${ICO.porteurs}<span><strong>Tous les Porteurs · ${presents.length}${neufs ? `<span class="pastille-n" aria-label="${neufs} nouveau${neufs > 1 ? 'x' : ''}">${neufs} nouveau${neufs > 1 ? 'x' : ''}</span>` : ''}</strong>`
-    + `<small>${autres.length ? `${autres.length} hors de l’escouade${libres ? `, dont ${libres} disponible${libres > 1 ? 's' : ''}` : ''}` : 'Toute ta troupe est dans l’escouade'} · leur histoire, leurs Marques, les arrivées à venir</small></span>${ICO.retour}</button>`;
+  if (esc.length) h += bilanDeck(j, esc);
+  h += `<div class="eq-trio">${[0, 1, 2].map((i) => blocPorteur(j, esc[i], i, verrou, prete)).join('')}</div>`;
+  // les cartes du district, toujours là
+  h += `<section class="eq-district"><div class="eq-cartes-tete"><h3>${ICO.district}Cartes du district <span>${GESTES_SPECIAUX.length}</span></h3><small>Toujours dans le deck, quelle que soit l’escouade</small></div>`
+    + `<ul class="eq-cartes">${GESTES_SPECIAUX.map((g) => ligneCarte(j, g, prete)).join('')}</ul></section>`;
   return h;
 }
 
@@ -212,8 +302,8 @@ function listeTous(e: EcranDistrict): string {
   const j = e.j;
   const presents = porteursPresents(j);
   const libres = presents.filter((id) => statut(j, id).classe === 'libre').length;
-  let h = entete(`${presents.length} PORTEUR${presents.length > 1 ? 'S' : ''} · <span class="pt-dispo">${libres} DISPONIBLE${libres > 1 ? 'S' : ''}</span>`, 'Tous les Porteurs',
-    `<button type="button" class="btn-icone" data-action="porteurs-escouade" aria-label="Retour à mon escouade">${ICO.retour}</button>`);
+  let h = entete(`${presents.length} PORTEUR${presents.length > 1 ? 'S' : ''} · <span class="pt-dispo">${libres} DISPONIBLE${libres > 1 ? 'S' : ''}</span>`, 'Porteurs');
+  h += voletsEscouade(e);
   h += `<p class="pt-intro">Une Augmentée, un Géné, une Résonante : depuis un siècle, les trois lignées se méfient les unes des autres. Sous la Tour, elles descendent ensemble, chacune avec ce que les deux autres n’ont pas. Touche un portrait pour savoir pourquoi chacun est là.</p>`;
   for (const l of LIGNEES) {
     const ici = PORTEURS.filter((p) => p.lignee === l);
