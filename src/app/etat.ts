@@ -83,6 +83,6 @@ export const G: GrandTableau = tableauVide();
 try { D.panneauReplie = localStorage.getItem('empreintes.panneau') !== 'ouvert'; } catch { D.panneauReplie = true; }
 try { const t = localStorage.getItem('empreintes.tri'); if (t === 'puissance' || t === 'metal' || t === 'niveau') D.tri = t; } catch { /* stockage bloqué */ }
 D.grand = G;
-export const K: { verrou: boolean; regles: boolean; fuite: boolean; eclats: boolean; guide: OngletGuide | null; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; decouverteId?: string } = {
+export const K: { verrou: boolean; regles: boolean; fuite: boolean; eclats: boolean; guide: OngletGuide | null; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; phaseTour?: number; decouverteId?: string } = {
   verrou: false, regles: false, fuite: false, eclats: false, guide: null, pops: [], fin: null, etat: null, traces: {},
 };

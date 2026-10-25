@@ -11,6 +11,7 @@
 //   PV rendus au campement), la sortie possible est chiffrée, le butin ne s'affiche qu'une fois.
 
 import { accessibles, butinCombat, forceStrate, peutRemonter, rangsDe, salleCourante, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
+import { paroleDescente } from '../core/campagne';
 import { PART_GROUPE } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR } from '../core/regles';
@@ -108,6 +109,24 @@ function annonce(s: Salle, x: Expedition): { sur: string; titre: string; texte: 
 }
 
 const CHEVRON = '<svg class="ico ex-fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+
+/**
+ * Un Porteur de l'escouade parle (campagne.ts) : à l'entrée de la Strate, puis quand le gardien est à portée.
+ * Toujours le même Porteur pour une même expédition (tiré d'après la carte), jamais dans une fouille devant le filon.
+ */
+function paroleEscouade(x: Expedition): string {
+  const c = x.carte!;
+  const ici = salleCourante(x);
+  const moment = ici.type === 'entree' ? 'entree' : !x.fouille && accessibles(x).some((s) => s.type === 'gardien') ? 'gardien' : null;
+  if (!moment) return '';
+  const debout = x.porteurs.filter((p) => p.pv > 0).map((p) => p.id);
+  const p = paroleDescente(c.zone, moment, debout, c.rng + (moment === 'gardien' ? 1 : 0));
+  if (!p) return '';
+  const d = porteurDef(p.qui);
+  const img = portrait(p.qui);
+  return `<div class="ex-parole" style="--c:${COULEUR[d.lignee]}"><span class="ex-pp" aria-hidden="true">${img ? `<img src="${img}" alt="">` : `<b>${echap(d.nom.charAt(0))}</b>`}</span>`
+    + `<p><strong>${echap(d.nom)}</strong>${echap(p.texte)}</p></div>`;
+}
 
 export function htmlExploration(j: Jeu): string {
   const x = j.expedition as Expedition;
@@ -208,6 +227,7 @@ export function htmlExploration(j: Jeu): string {
           + (manque ? `<small>Le butin de l’expédition n’a que ${x.butin} composants : il en manque ${manque}.</small>` : '') + `</span>${CHEVRON}</button>`;
       }).join('') + `</div>`;
   } else {
+    h += paroleEscouade(x);
     if (x.recit) h += `<p class="ex-recit">${echap(x.recit)}</p>`;
     if (libre) {
       const routes = accessibles(x);

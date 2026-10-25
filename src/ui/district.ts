@@ -5,6 +5,7 @@
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
+  contexteCampagne,
   cartesNouvelles, OBJECTIFS, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
@@ -15,6 +16,8 @@ import { FRAGMENTS } from '../core/fragments';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
+import { chapitreCampagne } from '../core/campagne';
+import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
 import { decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
@@ -901,9 +904,11 @@ export function htmlCodex(e: EcranDistrict): string {
   const retour = e.retourBiblio === 'titre' ? `<button type="button" class="btn-icone" data-action="biblio-retour" aria-label="Retour à l’écran titre">${ICO.retour}</button>` : '';
   let h = entete(`${ouverts} / ${CHAPITRES.length} CHAPITRES · ${j.fragments.length} / ${FRAGMENTS.length} ARCHIVES`, 'Bibliothèque', retour);
   const nouveaux = chapitresNouveaux(j);
-  h += `<div class="segments-choix deux" role="tablist">`
+  h += `<div class="segments-choix trois" role="tablist">`
     + `<button type="button" role="tab" class="seg${e.onglet === 'chroniques' ? ' actif' : ''}" aria-selected="${e.onglet === 'chroniques'}" data-action="biblio-onglet" data-id="chroniques">Chroniques${nouveaux ? ` <span class="pastille-n">${nouveaux}</span>` : ''}</button>`
-    + `<button type="button" role="tab" class="seg${e.onglet === 'archives' ? ' actif' : ''}" aria-selected="${e.onglet === 'archives'}" data-action="biblio-onglet" data-id="archives">Archives</button></div>`;
+    + `<button type="button" role="tab" class="seg${e.onglet === 'archives' ? ' actif' : ''}" aria-selected="${e.onglet === 'archives'}" data-action="biblio-onglet" data-id="archives">Archives</button>`
+    + `<button type="button" role="tab" class="seg${e.onglet === 'campagne' ? ' actif' : ''}" aria-selected="${e.onglet === 'campagne'}" data-action="biblio-onglet" data-id="campagne">Campagne</button></div>`;
+  if (e.onglet === 'campagne') return coquille(e, h + htmlListeScenes(j.scenes ?? []), 'ecran-codex');
   if (e.onglet === 'archives') {
     h += `<p class="aide intro-ecran">Des papiers d’époque, trouvés un à un dans les Strates. Ysé y renvoie souvent dans ses Chroniques.</p>`;
     if (!j.fragments.length) h += `<p class="vide-ecran">${ICO.codex}Aucun fragment pour l’instant. On les trouve en ouvrant de nouvelles Strates.</p>`;
@@ -1030,6 +1035,14 @@ export function htmlCoupe(e: EcranDistrict): string {
       + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}Descendre</button></div>`;
   }
   if (j.expedition) h += `<button type="button" class="appel tr-reprendre" data-action="reprendre">${ICO.descendre}<span><strong>Expédition en cours</strong><small>Strate −${j.expedition.strate} : reprendre le combat</small></span></button>`;
+  // le chapitre de la campagne en cours : pourquoi on descend (campagne.ts)
+  const chap = j.chambre ? chapitreCampagne(contexteCampagne(j)) : null;
+  const derniere = j.scenes?.at(-1);
+  if (chap) {
+    h += `<section class="tr-chapitre"><span class="surtitre">${echap(chap.sur)}</span><strong>${echap(chap.titre)}</strong>`
+      + (derniere ? `<button type="button" class="btn-sec" data-action="scene-revoir" data-id="${derniere}" aria-label="Revoir la dernière scène">${ICO.film}Revoir</button>` : '')
+      + `<p>${echap(chap.texte)}</p></section>`;
+  }
   h += `<section class="tr-etape"><span class="surtitre">Prochaine étape</span>${etape}</section>`;
   // le Grand Tableau : ton rang en profondeur, et l'entrée vers les classements
   if (j.chambre && e.grand) h += bandeauTableau(e, e.grand, e.uid ?? null);

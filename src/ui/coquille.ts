@@ -39,11 +39,14 @@ export interface EcranDistrict {
   /** lignée affichée dans l'écran Cartes */
   filtre: Filtre;
   /** Bibliothèque : onglet, chapitre ouvert, et écran où revenir */
-  onglet: 'chroniques' | 'archives';
+  onglet: 'chroniques' | 'archives' | 'campagne';
   chapitre: string | null;
   retourBiblio: 'archipel' | 'coupe' | 'titre';
   /** rencontre : nombre de répliques affichées */
   bulles: number;
+  /** scène de la campagne : nombre de répliques déjà dites ; et la scène rejouée depuis la Bibliothèque (campagne.ts) */
+  scene?: number;
+  revoir?: string | null;
   /** « Avant d'ouvrir » : écran d'explication affiché */
   etape: number;
   /** l'escouade part pour une fouille ciblée (et ce qu'elle cherche), ou pour une Épreuve de la semaine */

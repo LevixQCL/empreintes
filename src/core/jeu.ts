@@ -10,4 +10,4 @@ export { acheter, ameliorer, batimentConseille, chantierDe, chantiersMax, COMPTO
 export { cartesNouvelles, colisAvantChoix, colisDisponible, donnerKitRecrues, lireChapitre, marquerVus, ouvrirArchive, ouvrirColis, porteursNouveaux, prendre, RAVITAILLEMENT, reclamerQuotidien } from './partie/recompenses';
 export { avancerFils, CIBLES_FOUILLE, continuer, deckEscouade, disponibles, entrer, envoyerMission, EPREUVE_DECK_MIN, epreuveDef, EPREUVES, epreuvesDeLaSemaine, escouadePourDepart, escouadeVerrouillee, finDeCombat, fouiller, fuir, fuirSalle, gestesDe, leconTutoriel, MISSIONS, ouvrirChambre, partir, partirEpreuve, placerDansEscouade, posteQuitte, raisonHorsEscouade, remonter, RENCONTRES, repondre, resumeAbsence, type Retour, retraite, strateEpreuve, strateMission, textePosteQuitte, verifierArrivees } from './partie/descentes';
 export { tick } from './partie/temps';
-export { type Acte, decider, deciderChambre, decisionEnAttente, DECISIONS, estJeuValide, nouveauJeu } from './partie/nouvelle';
+export { type Acte, contexteCampagne, decider, deciderChambre, decisionEnAttente, DECISIONS, estJeuValide, nouveauJeu, sceneCampagne, voirScene } from './partie/nouvelle';

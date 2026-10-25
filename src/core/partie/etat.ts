@@ -212,6 +212,8 @@ export interface Jeu {
   confiance: number;
   /** les mécaniques de combat déjà expliquées la première fois qu'elles sont apparues (decouvertes.ts) */
   decouvertes?: string[];
+  /** les scènes de la campagne déjà jouées, dans l'ordre (campagne.ts) */
+  scenes?: string[];
   /** index de l'objectif guidé en cours (OBJECTIFS.length = tous faits) */
   objectif: number;
   /** fragments d'archives trouvés, dans l'ordre */

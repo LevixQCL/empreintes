@@ -110,7 +110,16 @@ export function agirDistrict(a: string, c: Clic): Suite {
       if (app.mode === 'titre') app.mode = 'district';
       ouvrir('codex'); D.chapitre = null; window.scrollTo(0, 0);
       break;
-    case 'biblio-onglet': D.onglet = id === 'archives' ? 'archives' : 'chroniques'; D.chapitre = null; break;
+    case 'biblio-onglet': D.onglet = id === 'archives' || id === 'campagne' ? id : 'chroniques'; D.chapitre = null; break;
+    // les scènes de la campagne : la suivante réplique, la fin (vue pour de bon), et revoir depuis la Bibliothèque
+    case 'scene-suite': D.scene = (D.scene ?? 0) + 1; break;
+    case 'scene-fin': {
+      if (D.revoir) D.revoir = null;
+      else { const s = J.sceneCampagne(app.jeu); if (s && J.voirScene(app.jeu, s.id)) sauver(); }
+      D.scene = 0;
+      break;
+    }
+    case 'scene-revoir': D.revoir = id; D.scene = 0; break;
     case 'chapitre':
       D.onglet = 'chroniques'; D.chapitre = id;
       if (!app.jeu.lus.includes(id) || !app.jeu.luesRecompensees.includes(id)) {

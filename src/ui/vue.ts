@@ -69,6 +69,8 @@ export interface Ecran {
   lecon?: string;
   /** une mécanique rencontrée pour la première fois, à expliquer (decouvertes.ts) */
   decouverte?: Decouverte;
+  /** ce que dit le gardien, à son entrée ou au passage de sa seconde phase (campagne.ts) */
+  parole?: { nom: string; texte: string };
   /** PV (en %) juste avant le dernier coup reçu, par cible : la jauge laisse une traînée qui se vide */
   traces?: Record<string, number>;
   /** pendant l'animation d'une chaîne : la place de la carte qui agit */
@@ -371,6 +373,8 @@ function htmlEcranCombat(e: Ecran): string {
   let conseil: string;
   if (s.sansResonance) conseil = `<b>Épreuve · Fréquences brouillées</b> : aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.`;
   else if (s.dissonance && !s.chaine.length) conseil = `<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci. Mise sur la force brute ou la protection.`;
+  // le gardien parle (campagne.ts) : à la place du conseil, tant que la chaîne est vide
+  else if (e.parole && !s.chaine.length) conseil = `<span class="parole-gardien" role="status"><b>${echap(e.parole.nom)}</b>« ${echap(e.parole.texte)} »</span>`;
   else if (!s.chaine.length) conseil = `Choisis jusqu’à ${capacite(s)} cartes. Des Fréquences qui se suivent (3, 4, 5) déclenchent une <b>Résonance</b>.`;
   else {
     const fin = serieFinale(s.chaine);
@@ -432,6 +436,7 @@ function htmlEcranCombat(e: Ecran): string {
     + (ill ? `<img class="ennemi-art${s.issue === 'victoire' ? ' dissous' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
     + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
     + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
+
     + vignettesGroupe(e)
     + (s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours'
       ? `<div class="intention brume" aria-live="polite"><span class="int-ico">?</span><span class="int-txt"><small>BROUILLARD</small>Pose une carte pour la lire</span></div>`

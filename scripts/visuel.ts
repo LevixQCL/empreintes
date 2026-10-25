@@ -21,8 +21,9 @@ type Page = import('playwright').Page;
 const ENTRER = async (p: Page) => {
   await p.click('.titre-go');
   await p.waitForTimeout(400);
-  // les fenêtres d'arrivée (nouveaux Porteurs, retour au district) se ferment d'elles-mêmes
-  for (let i = 0; i < 3 && (await p.$('.voile')); i++) {
+  // les fenêtres d'arrivée (nouveaux Porteurs, retour au district) se ferment d'elles-mêmes, la scène de la campagne se passe
+  for (let i = 0; i < 4 && (await p.$('.voile')); i++) {
+    if (await p.$('.scene-voile')) { await p.click('.scene-voile [data-action="scene-fin"]'); await p.waitForTimeout(300); continue; }
     await p.click('.voile button.prim, .voile .btn.prim').catch(() => {});
     await p.waitForTimeout(300);
   }
@@ -40,6 +41,7 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut'; faire:
   { nom: 'menu', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="compte"]').catch(() => {}); } },
   { nom: 'classements', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="classements"]'); } },
   { nom: 'fleche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="classements"]'); await p.click('[data-action="gt-tableau"][data-id="fleche"]'); } },
+  { nom: 'scene', sauvegarde: 'district', faire: async (p) => { await p.click('.titre-go'); await p.waitForTimeout(400); for (let i = 0; i < 3; i++) { await p.click('.scene-campagne'); await p.waitForTimeout(150); } } },
   { nom: 'strate', sauvegarde: 'combat', faire: ENTRER },
   { nom: 'combat', sauvegarde: 'combat', faire: async (p) => { await ENTRER(p); await p.click('[data-action="salle"]'); await p.waitForTimeout(600); } },
   { nom: 'debut', sauvegarde: 'debut', faire: ENTRER },
