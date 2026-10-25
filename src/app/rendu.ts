@@ -112,7 +112,7 @@ export function afficher() {
     app.mode = 'district';
     voirNouveautes();
     proposerProtection();
-    h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape)
+    h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape) : D.vue === 'accueil' ? htmlBriefing(D.etape, 'district')
       : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : D.vue === 'classements' ? htmlClassements(D, G, app.uid) : htmlArchipel(D);
     // une scène de la campagne : au retour sur l'archipel ou dans la Tour, par-dessus tout (ou rejouée depuis la Bibliothèque)
     const revoir = D.revoir ? sceneDef(D.revoir) : undefined;

@@ -166,7 +166,9 @@
 .mj-aller>.ico{width:16px;height:16px;color:var(--glace,#CDEFFF)}
 #app .mission.jour.barre .mj-plier{position:static;min-width:40px;justify-content:center;padding:0}
 #app .mission.jour.barre .mj-plier i{font-size:13px}
-@media (min-width:1100px) and (min-height:600px){ #app .mission.jour.barre{display:none} }
+@media (min-width:1100px) and (min-height:600px){ #app .mission.jour.barre,#app[data-mode="district"] .archipel-haut .mission.jour.barre{display:none} }
+/* l'objectif guidé déplié sur téléphone : « Réduire » se range en bas */
+#app .mission.guide>.mj-plier{position:static;justify-self:end;margin-top:4px}
 
 /* ---------- Le nouvel âge du district ---------- */
 .nouvel-age-fenetre{display:grid;gap:10px;text-align:center;justify-items:center}
@@ -176,4 +178,4 @@
 .nouvel-age-fenetre p{margin:0;font-size:14.5px;line-height:1.5;color:#DCE4EE}
 @keyframes age-apparait{from{opacity:0;transform:scale(1.06);filter:brightness(1.8) saturate(.4)}to{opacity:1;transform:none;filter:none}}
 @media (prefers-reduced-motion:reduce){ .nouvel-age-fenetre .age-tableau{animation:none} }
-@media (max-width:1099px),(max-height:599px){ #app .mission.jour.pc-seul{display:none} }
+@media (max-width:1099px),(max-height:599px){ #app .mission.pc-seul{display:none} }

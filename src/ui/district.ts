@@ -217,9 +217,19 @@ function mission(e: EcranDistrict): string {
     const fait = o.fait(j);
     const gain = `${o.recompense.energie ? prix('energie', o.recompense.energie) : ''}${o.recompense.composants ? prix('composants', o.recompense.composants) : ''}`
       + (o.recompense.creuseurs ? prix('ouvrier', o.recompense.creuseurs, true, 'creuseurs') : '');
-    return `<section class="mission${fait ? ' faite' : ''}" aria-label="Objectif"><div class="mission-tete"><span class="surtitre">OBJECTIF ${j.objectif + 1} / ${OBJECTIFS.length}</span><span class="gains">${gain}</span></div>`
+    // sur téléphone, l'objectif guidé se replie en une barre comme celui du jour (25 octobre 2026, Bryan : « beaucoup trop de place ») :
+    // la toucher emmène là où il se fait, la flèche déplie la consigne. Sur PC, il reste toujours ouvert.
+    const replie = e.panneauReplie !== false && !fait;
+    const barre = replie
+      ? `<section class="mission jour replie barre guide" aria-label="Objectif">`
+        + `<button type="button" class="mj-aller" data-action="objectif-guide" aria-label="Objectif ${j.objectif + 1} sur ${OBJECTIFS.length} : ${echap(o.titre)}. Y aller">`
+        + `<span class="surtitre">Objectif</span><strong>${echap(o.titre)}</strong>${ICO.lancer}</button>`
+        + `<button type="button" class="mj-plier" data-action="panneau" aria-expanded="false" aria-label="Lire la consigne"><i aria-hidden="true">▾</i></button></section>`
+      : '';
+    return barre + `<section class="mission guide${fait ? ' faite' : ''}${replie ? ' pc-seul' : ''}" aria-label="Objectif"><div class="mission-tete"><span class="surtitre">OBJECTIF ${j.objectif + 1} / ${OBJECTIFS.length}</span><span class="gains">${gain}</span></div>`
       + `<strong>${echap(o.titre)}</strong>`
-      + (fait ? `<button type="button" class="btn prim" data-action="reclamer">${ICO.ok}Récupérer la récompense</button>` : `<p>${echap(o.consigne)}</p>`)
+      + (fait ? `<button type="button" class="btn prim" data-action="reclamer">${ICO.ok}Récupérer la récompense</button>` : `<p>${echap(o.consigne)}</p>`
+        + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="true" aria-label="Réduire l’objectif">Réduire<i aria-hidden="true">▴</i></button>`)
       + `</section>`;
   }
   if (!j.chambre) return '';

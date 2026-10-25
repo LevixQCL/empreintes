@@ -67,7 +67,8 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
       K.fin = null;
       app.mode = 'district';
       if (r.tutoriel) {
-        D.vue = 'archipel';
+        D.vue = r.victoire ? 'accueil' : 'archipel';
+        D.etape = 0;
         D.message = r.victoire
           ? 'La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans les Chroniques (onglet Archives).'
           : 'L’escouade se repose. La porte scellée t’attend toujours.';
