@@ -39,4 +39,4 @@ Laisser le tiers bas de l'image calme et simple : le panneau de dialogue s'y pos
 | `epilogue.webp` | Ce que tu as choisi | the top of a lighthouse tower above a small archipelago district on old pillars, calm sea at sunset, an old archivist woman and three companions looking at the horizon, a floating island far away --ar 9:16 --sref https://levixqcl.github.io/empreintes/art/strates/zone-1.webp https://levixqcl.github.io/empreintes/art/ennemis/confluence.webp |
 
 Arrivées le 25 octobre 2026 et branchées (`illustrationScene`, `portraitPersonnage` dans `src/ui/art.ts`) : `isaure`, `brac`, `tobin`,
-`entree-2`, `gardien-2`, `gardien-3`, `convocation`, `entree-8`, `gardien-9`, `epilogue`. Reste à faire : `hald`, `entree-4`, `entree-5`, `entree-6`.
+`entree-2`, `gardien-2`, `gardien-3`, `convocation`, `entree-5`, `entree-8`, `gardien-9`, `epilogue`. Reste à faire : `hald`, `entree-4`, `entree-6`.
