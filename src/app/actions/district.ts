@@ -8,7 +8,7 @@ import { ETAPES } from '../../ui/briefing';
 import { NB_REPLIQUES } from '../../ui/district';
 import type { OngletGuide } from '../../ui/guide';
 import { finPour } from '../combat';
-import { app, D, K, reduit } from '../etat';
+import { app, compteEtat, D, K, reduit } from '../etat';
 import { sauver } from '../synchro';
 import { ouvrir, resultat, type Clic, type Suite } from './commun';
 
@@ -136,6 +136,8 @@ export function agirDistrict(a: string, c: Clic): Suite {
     case 'reclamer': resultat(J.reclamer(app.jeu)); break;
     case 'decider': resultat(J.decider(app.jeu, b.dataset.acte ?? 'chambre', id)); break;
     case 'retour-ok': D.retour = []; break;
+    case 'rappel-plus-tard': D.rappel = false; break;
+    case 'rappel-proteger': D.rappel = false; D.menu = true; compteEtat.ouvert = true; compteEtat.erreur = ''; compteEtat.info = ''; break;
 
     case 'age-ok': app.jeu.ageVu = Math.max(app.jeu.ageVu ?? 1, ageDistrict(app.jeu.batiments.noyau)); sauver(); break;
     case 'objectif-aller':

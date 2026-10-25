@@ -256,6 +256,8 @@ export interface Jeu {
   fils?: Record<string, number>;
   /** le dernier âge du district montré au joueur (fenêtre « nouvel âge », 23 octobre 2026) */
   ageVu?: number;
+  /** la dernière Strate où le jeu a proposé de protéger la partie (compte invisible) : une seule fois par palier */
+  rappelCompte?: number;
   /** le Grand Tableau (23 octobre 2026) : records personnels et scores du début de semaine (classements.ts) */
   palmares?: Palmares;
   /** le nom de directeur choisi pour le Grand Tableau, et si on y apparaît (jamais l'e-mail du compte) */

@@ -2,7 +2,7 @@
 
 import { aChange, entreeAPublier } from '../core/classements';
 import * as J from '../core/jeu';
-import { app, D, G } from './etat';
+import { app, compteProtege, D, G } from './etat';
 import { afficher } from './rendu';
 
 // ---------- Le Grand Tableau en ligne ----------
@@ -39,14 +39,14 @@ export async function lireTableau(force = false) {
 }
 
 export function planifierPublication(delai = 2000) {
-  if (!app.compte || !app.uid || !app.jeu.directeur?.public) return;
+  if (!app.compte || !app.uid || !compteProtege() || !app.jeu.directeur?.public) return;
   clearTimeout(minuteurPublication);
   const attente = Math.max(delai, dernierePublication + 25_000 - Date.now());
   minuteurPublication = window.setTimeout(publierTableau, attente);
 }
 
 async function publierTableau() {
-  if (!app.compte || !app.uid || !app.jeu.directeur?.public || !app.jeu.directeur.nom) return;
+  if (!app.compte || !app.uid || !compteProtege() || !app.jeu.directeur?.public || !app.jeu.directeur.nom) return;
   // l'entrée en ligne d'abord : sa profondeur et sa date décident de ce qu'on a le droit d'envoyer
   if (!app.monEntreeLue) { await lireTableau(true); return; }
   const e = entreeAPublier(app.jeu, app.uid, app.jeu.directeur.nom, app.monEntree, Date.now(), J.semaineDe(Date.now()));

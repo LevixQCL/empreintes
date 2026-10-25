@@ -11,6 +11,7 @@ import { trouveesDe } from '../ui/guide';
 import { htmlIntro } from '../ui/intro';
 import { animerCompteur, majIntro, precharger } from '../ui/intro-lecteur';
 import { htmlPorteurs } from '../ui/porteurs';
+import { visuel as ageDistrict } from '../ui/art';
 import { htmlTitre, type TitreCompte } from '../ui/titre';
 import { glisser, horloge, noter } from '../ui/toucher';
 import { htmlCombat, panneauCompte } from '../ui/vue';
@@ -49,12 +50,31 @@ function majTitre(h: string): boolean {
   return true;
 }
 
+/** les Strates où le jeu propose de protéger la partie ; ensuite, toutes les 5 Strates */
+const PALIERS_RAPPEL = [2, 4, 7, 10];
+const palierRappel = (strate: number) => (strate >= 15 ? strate - (strate % 5) : [...PALIERS_RAPPEL].reverse().find((p) => strate >= p) ?? 0);
+
+/**
+ * « Protège ta partie » : au retour sur l'archipel, une fois par palier, tant que la partie n'est reliée à aucun compte.
+ * Jamais par-dessus une autre fenêtre (résumé du retour, nouvel âge du district, décision de la campagne).
+ */
+function proposerProtection() {
+  const j = app.jeu;
+  const palier = palierRappel(j.strate);
+  if (!compteEtat.utilisateur?.anonyme || D.rappel || !palier || palier <= (j.rappelCompte ?? 0)) return;
+  if (D.vue !== 'archipel' || D.menu || D.selection || D.ressource || D.retour.length || J.decisionEnAttente(j)) return;
+  if ((j.ageVu ?? 1) < ageDistrict(j.batiments.noyau)) return;
+  j.rappelCompte = palier;
+  D.rappel = true;
+  sauver();
+}
+
 /** Le compte tel que l'écran titre le montre (rien si Firebase n'est pas configuré) */
 function compteTitre(): TitreCompte | null {
   if (!compteEtat.actif) return null;
   const u = compteEtat.utilisateur;
   return {
-    etat: !compteEtat.pret ? 'attente' : u ? 'connecte' : 'invite',
+    etat: !compteEtat.pret ? 'attente' : u?.anonyme ? 'invisible' : u ? 'connecte' : 'invite',
     nom: app.jeu.directeur?.nom ?? u?.nom ?? '',
     strate: app.jeu.strate,
     panneau: compteEtat.ouvert ? panneauCompte(compteEtat) : null,
@@ -86,6 +106,7 @@ export function afficher() {
   } else {
     app.mode = 'district';
     voirNouveautes();
+    proposerProtection();
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape)
       : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : D.vue === 'classements' ? htmlClassements(D, G, app.uid) : htmlArchipel(D);
   }

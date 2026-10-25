@@ -72,7 +72,8 @@ export function htmlClassements(e: EcranDistrict, g: GrandTableau, uid: string |
   const j = e.j;
   const semaine = semaineDe(e.now);
   const def = TABLEAUX.find((t) => t.id === g.tableau) ?? TABLEAUX[0]!;
-  const enLigne = e.compte.actif && !!e.compte.utilisateur;
+  // le compte invisible ne publie rien : un pseudo réservé par une partie qui peut disparaître serait perdu pour tous
+  const enLigne = e.compte.actif && !!e.compte.utilisateur && !e.compte.utilisateur.anonyme;
   const publie = !!(j.directeur?.public && j.directeur.nom);
   const nom = publie ? j.directeur!.nom : 'Toi';
 
@@ -99,8 +100,8 @@ export function htmlClassements(e: EcranDistrict, g: GrandTableau, uid: string |
 
   // la liste
   if (!e.compte.actif) h += seul(j, def.id, g.periode, semaine, 'Le Tableau en ligne n’est pas branché sur cette version.', '');
-  else if (!enLigne) h += seul(j, def.id, g.periode, semaine, 'Connecte-toi pour te mesurer aux autres directeurs.',
-    `<button type="button" class="btn prim" data-action="gt-connexion">${ICO.compte}Se connecter</button>`);
+  else if (!enLigne) h += seul(j, def.id, g.periode, semaine, e.compte.utilisateur?.anonyme ? 'Protège ta partie pour te mesurer aux autres directeurs.' : 'Connecte-toi pour te mesurer aux autres directeurs.',
+    `<button type="button" class="btn prim" data-action="gt-connexion">${ICO.compte}${e.compte.utilisateur?.anonyme ? 'Protéger ma partie' : 'Se connecter'}</button>`);
   else if (!publie) h += seul(j, def.id, g.periode, semaine, 'Choisis ton pseudo pour apparaître sur le Tableau.',
     `<button type="button" class="btn prim" data-action="gt-nom">${ICO.ok}Choisir mon pseudo</button>`);
   else h += liste(g, uid, def.id, semaine, e.now);

@@ -177,3 +177,9 @@
   .gt-periode .segments-choix{max-width:420px}
   .gt-tour{max-width:560px}
 }
+
+/* « Protège ta partie » : la même feuille que celle du pseudo */
+.rappel-compte .feuille-corps{display:grid;align-content:start;gap:14px}
+.rappel-compte .rc-texte{margin:0;font-size:14px;line-height:1.5;color:var(--ink-2)}
+.rappel-compte .rc-boutons{display:grid;gap:10px}
+.rappel-compte .rc-boutons .btn{min-height:48px;justify-content:center}

@@ -22,7 +22,7 @@ const imageAnimee = () => `<div class="titre-image">`
  * panneau : le contenu du panneau Compte quand il est ouvert.
  */
 export interface TitreCompte {
-  etat: 'attente' | 'connecte' | 'invite';
+  etat: 'attente' | 'connecte' | 'invisible' | 'invite';
   nom: string;
   strate: number;
   panneau: string | null;
@@ -33,6 +33,7 @@ function ligneCompte(c: TitreCompte): string {
   if (c.etat === 'attente') return `<span class="titre-compte fantome" aria-hidden="true">${ICO.compte}<span>&nbsp;</span></span>`;
   if (c.etat === 'connecte') return `<button type="button" class="titre-compte connecte" data-action="titre-compte" aria-label="Compte : ${echap(c.nom)}, Strate −${c.strate}">`
     + `${ICO.ok}<span>${echap(c.nom)}</span><small>Strate −${c.strate}</small></button>`;
+  if (c.etat === 'invisible') return `<button type="button" class="titre-compte" data-action="titre-compte">${ICO.compte}<span>Partie de ce téléphone · <b>La protéger</b></span></button>`;
   return `<button type="button" class="titre-compte" data-action="titre-compte">${ICO.compte}<span>Déjà un compte ? <b>Se connecter</b></span></button>`;
 }
 

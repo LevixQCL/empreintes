@@ -17,6 +17,8 @@ export type Filtre = 'tout' | Lignee | 'monter' | 'libres';
 
 export interface EcranDistrict {
   j: Jeu;
+  /** la feuille « Protège ta partie », proposée aux paliers tant que la partie n'est reliée à aucun compte */
+  rappel?: boolean;
   vue: Vue;
   selection: import('../core/types').BatimentId | 'port' | 'labo' | null;
   escouade: string[];
@@ -222,6 +224,17 @@ export function toast(message: string): string {
   return `<button type="button" class="toast" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(message)}</span></button>`;
 }
 
+/** « Protège ta partie » (25 octobre 2026) : aux paliers, tant que la partie n'est reliée à aucun compte. Jamais bloquant. */
+function feuilleRappel(e: EcranDistrict): string {
+  if (!e.rappel) return '';
+  return `<div class="voile-feuille" data-action="rappel-plus-tard" aria-hidden="true"></div><section class="feuille rappel-compte" role="dialog" aria-modal="true" aria-label="Protège ta partie">`
+    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">Strate −${e.j.strate} · ta partie grandit</span><h2>Protège ta partie</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="rappel-plus-tard" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
+    + `<p class="rc-texte">Elle n’est sauvegardée que pour ce téléphone : s’il est perdu ou réinitialisé, elle disparaît. Relie-la à Google ou à un e-mail, en quelques secondes, et tu la retrouveras partout.</p>`
+    + `<div class="rc-boutons"><button type="button" class="btn prim" data-action="rappel-proteger">${ICO.compte}Protéger ma partie</button>`
+    + `<button type="button" class="btn sec" data-action="rappel-plus-tard">Plus tard</button></div></div></section>`;
+}
+
 /** Le menu « Plus » : compte, intro, journal */
 export function menu(e: EcranDistrict): string {
   if (!e.menu) return '';
@@ -231,7 +244,7 @@ export function menu(e: EcranDistrict): string {
     + `<button type="button" class="btn-icone" data-action="menu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   h += `<div class="liste-menu">`
     + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>Le Grand Tableau</strong><small>Les classements des directeurs : profondeur, Registre, et bientôt les Joutes et la Flèche</small></span></button>`
-    + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : ' · choisis ton pseudo'}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
+    + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur?.anonyme ? 'Protège ta partie : relie-la à Google ou à un e-mail' : c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : ' · choisis ton pseudo'}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
     + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro</strong><small>L’histoire de 2121, depuis le début</small></span></button></div>`;
   h += panneauCompte(c);
   h += `<section class="bloc"><h3 class="titre-bloc">${icone('journal')}Journal du district</h3><ol class="journal-liste">${e.j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></section>`;
@@ -246,5 +259,5 @@ export function entete(surtitre: string, titre: string, droite = ''): string {
 /** L'écran complet du district : ressources, contenu, message, navigation, menu */
 export function coquille(e: EcranDistrict, contenu: string, classe = ''): string {
   const pseudo = e.grand?.edition ? feuilleNom(e.j, e.compte.utilisateur?.nom ?? '', e.grand.erreur, !!e.grand.accueil) : '';
-  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}${pseudo}</div>`;
+  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}${pseudo}${feuilleRappel(e)}</div>`;
 }

@@ -3,8 +3,8 @@
 
 import { initializeApp } from 'firebase/app';
 import {
-  GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, onAuthStateChanged,
-  sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, type User,
+  EmailAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, linkWithCredential, linkWithPopup, onAuthStateChanged,
+  sendPasswordResetEmail, signInAnonymously, signInWithCredential, signInWithEmailAndPassword, signInWithPopup, signOut, type User,
 } from 'firebase/auth';
 import { doc, getDoc, getFirestore, serverTimestamp, setDoc, Timestamp } from 'firebase/firestore';
 import { firebaseConfig } from './firebase-config';
@@ -16,20 +16,54 @@ const auth = getAuth(app);
 auth.languageCode = 'fr';
 const db = getFirestore(app);
 
-type Utilisateur = { uid: string; nom: string };
+/** anonyme : le compte invisible créé au premier lancement, pas encore relié à Google ou à un e-mail */
+type Utilisateur = { uid: string; nom: string; anonyme: boolean };
 
-const versUtilisateur = (u: User): Utilisateur => ({ uid: u.uid, nom: u.displayName || u.email || 'Joueur' });
+const versUtilisateur = (u: User): Utilisateur => ({ uid: u.uid, nom: u.displayName || u.email || 'Joueur', anonyme: u.isAnonymous });
 
+let prevenir: ((u: Utilisateur | null) => void) | null = null;
+
+/**
+ * Le compte invisible (25 octobre 2026) : sans compte, le jeu en crée un anonyme tout seul, et la partie est sauvegardée en ligne
+ * dès la première minute. Le relier plus tard à Google ou à un e-mail garde la même partie (même identifiant).
+ * Si la connexion anonyme n'est pas activée dans Firebase, ou hors ligne, on reste sans compte, comme avant.
+ */
 export function surChangement(cb: (u: Utilisateur | null) => void): void {
-  onAuthStateChanged(auth, (u) => cb(u ? versUtilisateur(u) : null));
+  prevenir = cb;
+  onAuthStateChanged(auth, (u) => {
+    if (u) { cb(versUtilisateur(u)); return; }
+    signInAnonymously(auth).catch(() => cb(null));
+  });
+}
+
+/** relier le compte invisible ne change pas d'utilisateur : Firebase ne prévient pas, on le fait */
+async function apresLiaison(): Promise<void> {
+  await auth.currentUser?.reload();
+  if (auth.currentUser) prevenir?.(versUtilisateur(auth.currentUser));
 }
 
 export async function connexionGoogle(): Promise<void> {
-  await signInWithPopup(auth, new GoogleAuthProvider());
+  const fournisseur = new GoogleAuthProvider();
+  const u = auth.currentUser;
+  if (!u?.isAnonymous) { await signInWithPopup(auth, fournisseur); return; }
+  try {
+    await linkWithPopup(u, fournisseur);
+    await apresLiaison();
+  } catch (e) {
+    // ce compte Google a déjà une partie : on s'y connecte (la plus avancée des deux est gardée, l'autre part en secours)
+    const deja = GoogleAuthProvider.credentialFromError(e as Parameters<typeof GoogleAuthProvider.credentialFromError>[0]);
+    if ((e as { code?: string })?.code === 'auth/credential-already-in-use' && deja) await signInWithCredential(auth, deja);
+    else throw e;
+  }
 }
 
 export async function connexionEmail(email: string, mdp: string, creer: boolean): Promise<void> {
-  if (creer) await createUserWithEmailAndPassword(auth, email, mdp);
+  const u = auth.currentUser;
+  if (creer && u?.isAnonymous) {
+    // créer un compte depuis le compte invisible : on le relie, la partie reste la même
+    await linkWithCredential(u, EmailAuthProvider.credential(email, mdp));
+    await apresLiaison();
+  } else if (creer) await createUserWithEmailAndPassword(auth, email, mdp);
   else await signInWithEmailAndPassword(auth, email, mdp);
 }
 
@@ -68,6 +102,8 @@ export function messageErreur(e: unknown): string {
   const code = (e as { code?: string })?.code ?? '';
   const m: Record<string, string> = {
     'auth/invalid-credential': 'E-mail ou mot de passe incorrect.',
+    'auth/credential-already-in-use': 'Ce compte est déjà utilisé par une autre partie. Connecte-toi avec lui.',
+    'auth/provider-already-linked': 'Ta partie est déjà reliée à ce compte.',
     'auth/invalid-email': 'Adresse e-mail invalide.',
     'auth/email-already-in-use': 'Un compte existe déjà avec cette adresse.',
     'auth/weak-password': 'Mot de passe trop court (6 caractères minimum).',

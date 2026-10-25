@@ -4,7 +4,7 @@ import * as J from '../core/jeu';
 import { charger, enregistrer, garderSecours, lireSecours, type Enveloppe } from '../save/local';
 import { firebaseActif } from '../net/firebase-config';
 import { finPour } from './combat';
-import { app, compteEtat, D, G, K, racine } from './etat';
+import { app, compteEtat, compteProtege, D, G, K, racine } from './etat';
 import { afficher } from './rendu';
 import { lireTableau, planifierPublication } from './tableau';
 
@@ -122,7 +122,7 @@ export async function demarrerCompte() {
         // connecté depuis l'écran titre : le panneau se referme, « Reprendre » ouvre la partie du compte
         if (app.mode === 'titre') compteEtat.ouvert = false;
         comptePret();
-        if (app.uid && !app.jeu.directeur?.nom && !app.pseudoDemande) { app.pseudoDemande = true; G.edition = true; G.accueil = true; G.erreur = ''; if (app.mode === 'district') afficher(); }
+        if (app.uid && compteProtege() && !app.jeu.directeur?.nom && !app.pseudoDemande) { app.pseudoDemande = true; G.edition = true; G.accueil = true; G.erreur = ''; if (app.mode === 'district') afficher(); }
       });
       lireTableau(true);
     } else comptePret();

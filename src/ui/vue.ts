@@ -42,7 +42,8 @@ export interface Fin {
 export interface Compte {
   actif: boolean;
   ouvert: boolean;
-  utilisateur: { nom: string } | null;
+  /** anonyme : le compte invisible du premier lancement, pas encore relié à Google ou à un e-mail */
+  utilisateur: { nom: string; anonyme?: boolean } | null;
   occupe: boolean;
   erreur: string;
   info: string;
@@ -187,7 +188,7 @@ function ligneSecours(c: Compte): string {
 
 export function panneauCompte(c: Compte): string {
   if (!c.ouvert) return '';
-  if (c.utilisateur) {
+  if (c.utilisateur && !c.utilisateur.anonyme) {
     const etat = { aucune: '', 'en-cours': 'Synchronisation…', ok: 'Progression enregistrée dans ton compte.', erreur: `Synchronisation impossible pour l’instant, la sauvegarde reste sur l’appareil.${c.codeErreur ? ` (${c.codeErreur})` : ''}` }[c.synchro];
     return `<section class="panneau" aria-label="Compte"><strong>${c.pseudo ? `Pseudo : ${echap(c.pseudo)}` : 'Pas encore de pseudo'}</strong>`
       + `<p class="discret">${c.pseudo ? 'C’est ce nom que voient les autres joueurs.' : 'Choisis le nom que verront les autres joueurs : ton nom de compte n’est jamais affiché.'}</p>`
@@ -196,8 +197,11 @@ export function panneauCompte(c: Compte): string {
       + ligneSecours(c)
       + `<div class="ligne"><button type="button" class="btn sec" data-action="deconnexion"${c.occupe ? ' disabled' : ''}>Se déconnecter</button></div></section>`;
   }
-  return `<section class="panneau" aria-label="Compte"><strong>Compte</strong>`
-    + `<p class="discret">Optionnel : retrouve ta progression sur un autre appareil.</p>`
+  const invisible = !!c.utilisateur?.anonyme;
+  return `<section class="panneau" aria-label="Compte"><strong>${invisible ? 'Protège ta partie' : 'Compte'}</strong>`
+    + `<p class="discret">${invisible
+      ? 'Ta partie est sauvegardée, mais seulement pour ce téléphone. Relie-la à Google ou à un e-mail : elle ne sera jamais perdue, et tu la retrouveras sur un autre appareil.'
+      : 'Optionnel : retrouve ta progression sur un autre appareil.'}</p>`
     + `<div class="ligne"><button type="button" class="btn prim" data-action="google"${c.occupe ? ' disabled' : ''}>Continuer avec Google</button></div>`
     + `<input id="email" type="email" autocomplete="email" placeholder="E-mail" aria-label="E-mail">`
     + `<input id="mdp" type="password" autocomplete="current-password" placeholder="Mot de passe" aria-label="Mot de passe">`
