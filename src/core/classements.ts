@@ -7,7 +7,7 @@
 //   - Profondeur : la Strate la plus profonde (gardien vaincu ou non), départagée par la date où on l'a atteinte ;
 //   - Registre   : la valeur de la collection (métal et niveau de chaque carte, plus chaque carte découverte) ;
 //   - Joutes     : les combats gagnés contre d'autres directeurs (grisé : arrive avec le multijoueur) ;
-//   - La Flèche  : l'ascension d'une tour d'arène, étage par étage (grisé : à venir, voir FLECHE).
+//   - La Flèche  : l'ascension de la flèche d'amarrage vers les Hauts, quai par quai (grisé : à venir, voir FLECHE).
 // Deux périodes : depuis le début, et la semaine en cours (ce qu'on a gagné depuis lundi), pour qu'un nouveau venu
 // puisse finir premier d'une semaine même face à quelqu'un qui joue depuis un mois.
 
@@ -27,7 +27,7 @@ export const TABLEAUX: { id: TableauId; nom: string; court: string; ouvert: bool
   { id: 'joutes', nom: 'Joutes', court: 'Duels', ouvert: false,
     texte: 'Les combats gagnés contre d’autres directeurs. Ouvre avec les combats entre joueurs.' },
   { id: 'fleche', nom: 'La Flèche', court: 'Tour', ouvert: false,
-    texte: 'L’ascension de la tour d’arène qui monte vers les Hauts, étage par étage. En préparation.' },
+    texte: 'La seule route légale vers les Hauts : la Flèche, quai par quai, jusqu’aux Sièges du sommet. En préparation.' },
 ];
 
 // ---------- Le Registre : la valeur d'une collection ----------
@@ -281,21 +281,22 @@ export function aChange(a: Entree, b: Entree | null): boolean {
 }
 
 // ---------- La Flèche (à venir) ----------
-// L'arène qui monte vers les Hauts, inspirée des tours d'arène des récits d'aventure (sans en copier les noms) :
-// un district y envoie une escouade ; chaque victoire fait monter de plusieurs étages en bas, d'un seul en haut ;
-// une défaite fait redescendre, jamais sous le dernier palier atteint (comme les paliers d'une échelle classée).
-// Au-delà de l'étage 200, plus de butin, seulement l'honneur : on s'y inscrit pour une saison, quatre défaites
-// éliminent (retour au palier, record gardé), dix victoires ouvrent le droit de défier un Siège. Les Sièges sont tenus
-// par des joueurs, défendus par un fantôme de leur deck. Le tableau classe l'étage atteint, puis le premier arrivé.
+// La dernière flèche d'amarrage des Hauts (lore validé le 25 octobre 2026) : depuis la Clause de la Flèche des Accords
+// de 2101, tout district peut y envoyer une escouade ; celle qui tient le sommet quand une île passe est reçue là-haut.
+// Chaque victoire fait monter de plusieurs quais en bas, d'un seul en haut ; une défaite fait redescendre, jamais sous
+// le dernier quai gravé. Au sommet, le temps d'un passage d'île (une saison) : trois défaites éliminent (retour au quai
+// gravé, record gardé), sept victoires ouvrent le droit de défier un Siège. Les Sièges sont tenus par des joueurs,
+// défendus par un fantôme de leur deck. Le tableau classe le quai atteint, puis le premier arrivé.
+// Chiffres choisis pour ne rappeler aucune tour d'arène connue (101 quais : l'année des Accords).
 export const FLECHE = {
-  etages: 200,
-  /** étages gagnés par victoire selon la hauteur : vite en bas, lentement en haut */
-  montee: [{ jusqua: 50, etages: 10 }, { jusqua: 100, etages: 5 }, { jusqua: 150, etages: 2 }, { jusqua: 200, etages: 1 }],
-  /** paliers : une défaite n'en fait jamais redescendre, et chacun donne une récompense une fois */
-  paliers: [10, 25, 50, 75, 100, 125, 150, 175, 190, 200],
-  /** au-delà du dernier étage : 10 Sièges tenus par des joueurs, qu'on défie */
-  sieges: 10,
-  /** au sommet, par saison : défaites qui éliminent, victoires qui ouvrent un défi de Siège */
-  defaitesMax: 4,
-  victoiresDefi: 10,
+  quais: 101,
+  /** quais gagnés par victoire selon la hauteur : vite en bas, lentement en haut (56 victoires sans défaite pour le sommet) */
+  montee: [{ jusqua: 40, quais: 4 }, { jusqua: 70, quais: 2 }, { jusqua: 101, quais: 1 }],
+  /** quais gravés : une défaite n'en fait jamais redescendre, et chacun donne une récompense une fois */
+  paliers: [20, 40, 50, 60, 70, 80, 90, 101],
+  /** au-delà du dernier quai : les Sièges, tenus par des joueurs, qu'on défie */
+  sieges: 5,
+  /** au sommet, pendant un passage d'île : défaites qui éliminent, victoires qui ouvrent un défi de Siège */
+  defaitesMax: 3,
+  victoiresDefi: 7,
 } as const;

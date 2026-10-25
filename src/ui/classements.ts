@@ -231,17 +231,17 @@ function apercuJoutes(): string {
 }
 
 function apercuFleche(): string {
-  // la Flèche dessinée de bas en haut : les paliers, la montée qui ralentit, les Sièges au sommet
+  // la Flèche dessinée de bas en haut : les quais gravés, la montée qui ralentit, les Sièges au sommet
   const paliers = [...FLECHE.paliers].reverse();
-  const tranche = (n: number) => FLECHE.montee.find((m) => n <= m.jusqua)!.etages;
+  const tranche = (n: number) => FLECHE.montee.find((m) => n <= m.jusqua)!.quais;
   return `<section class="gt-avenir fleche"><span class="gt-avenir-ico">${ICO.tour}</span><h2>La Flèche <em class="gt-bientot">en préparation</em></h2>`
-    + `<p>Une tour d’arène qui monte des districts jusqu’aux Hauts. Ton escouade y combat d’étage en étage, contre des adversaires de plus en plus forts.</p>`
-    + `<div class="gt-tour" aria-label="Les étages de la Flèche"><div class="gt-sommet"><strong>Les ${FLECHE.sieges} Sièges</strong><small>tenus par des joueurs, qu’on défie</small></div><ol>`
-    + paliers.map((n) => `<li><b>${n}</b><span>${n >= FLECHE.etages ? 'dernier étage : l’honneur seulement' : `palier · on y monte ${tranche(n) > 1 ? `de ${tranche(n)} en ${tranche(n)}` : 'étage par étage'}`}</span></li>`).join('')
-    + `<li class="base"><b>1</b><span>entrée de la Flèche</span></li></ol></div>`
-    + `<ul class="gt-promesses"><li>${ICO.monter}<span><strong>Vite en bas, lentement en haut</strong><small>Chaque victoire fait monter de ${FLECHE.montee[0]!.etages} étages au début, d’un seul près du sommet.</small></span></li>`
-    + `<li>${ICO.bouclier}<span><strong>Des paliers qui protègent</strong><small>Une défaite fait redescendre, jamais sous le dernier palier atteint.</small></span></li>`
-    + `<li>${ICO.porte}<span><strong>Au sommet, une saison</strong><small>${FLECHE.defaitesMax} défaites t’éliminent, ${FLECHE.victoiresDefi} victoires t’ouvrent le défi d’un Siège.</small></span></li></ul></section>`;
+    + `<p>La dernière flèche d’amarrage des Hauts. Depuis les Accords de 2101, tout district peut y envoyer une escouade : celle qui tient le sommet quand une île passe est reçue là-haut. Les gardiens, payés par les Hauts, sont plus forts à chaque quai.</p>`
+    + `<div class="gt-tour" aria-label="Les quais de la Flèche"><div class="gt-sommet"><strong>Les ${FLECHE.sieges} Sièges</strong><small>tenus par des directeurs, qu’on défie</small></div><ol>`
+    + paliers.map((n) => `<li><b>${n}</b><span>${n >= FLECHE.quais ? 'dernier quai : l’amarrage' : `quai gravé · on y monte ${tranche(n) > 1 ? `de ${tranche(n)} en ${tranche(n)}` : 'quai par quai'}`}</span></li>`).join('')
+    + `<li class="base"><b>1</b><span>le pied de la Flèche</span></li></ol></div>`
+    + `<ul class="gt-promesses"><li>${ICO.monter}<span><strong>Vite en bas, lentement en haut</strong><small>Chaque victoire fait monter de ${FLECHE.montee[0]!.quais} quais au début, d’un seul près du sommet.</small></span></li>`
+    + `<li>${ICO.bouclier}<span><strong>Des quais qui protègent</strong><small>Une défaite fait redescendre, jamais sous le dernier quai gravé.</small></span></li>`
+    + `<li>${ICO.porte}<span><strong>Au sommet, le passage d’une île</strong><small>Le temps qu’elle passe : ${FLECHE.defaitesMax} défaites t’éliminent, ${FLECHE.victoiresDefi} victoires t’ouvrent le défi d’un Siège.</small></span></li></ul></section>`;
 }
 
 // ---------- Le nom de directeur ----------

@@ -39,6 +39,7 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut'; faire:
   { nom: 'chroniques', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="codex"]'); } },
   { nom: 'menu', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="compte"]').catch(() => {}); } },
   { nom: 'classements', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="classements"]'); } },
+  { nom: 'fleche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="classements"]'); await p.click('[data-action="gt-tableau"][data-id="fleche"]'); } },
   { nom: 'strate', sauvegarde: 'combat', faire: ENTRER },
   { nom: 'combat', sauvegarde: 'combat', faire: async (p) => { await ENTRER(p); await p.click('[data-action="salle"]'); await p.waitForTimeout(600); } },
   { nom: 'debut', sauvegarde: 'debut', faire: ENTRER },
