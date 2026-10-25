@@ -6,7 +6,7 @@ import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne,
-  OBJECTIFS, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, trierCartes, type TriCartes } from '../core/collection';
@@ -1206,27 +1206,31 @@ export function htmlEscouade(e: EcranDistrict): string {
   }
   h += `</section>`;
 
-  // 1 bis. quelle escouade part (25 octobre 2026) : seulement si plus d'une est composée
+  // 2. quelle escouade part (25 octobre 2026) : on choisit une des trois escouades composées dans l'onglet Escouade,
+  // on ne compose plus ici (la grille de tous les Porteurs prenait l'écran)
   const toutes = escouadesDe(j);
-  if (toutes.filter((l) => l.length).length > 1) {
-    const active = escouadeActive(j);
-    h += `<div class="es-equipes" role="radiogroup" aria-label="Escouade qui part"><span class="es-equipes-titre">Partir avec</span>`
-      + toutes.map((l, k) => (l.length
-        ? `<button type="button" role="radio" class="es-equipe${k === active ? ' actif' : ''}" data-action="depart-escouade" data-index="${k}" aria-checked="${k === active}"><small>Escouade ${k + 1}</small><span>${l.map((id) => avatar(id, 24)).join('')}</span></button>`
-        : '')).join('') + `</div>`;
-  }
+  const active = escouadeActive(j);
+  h += `<section class="es-equipes" aria-label="Escouade qui part"><div class="es-equipes-tete"><span class="surtitre">Quelle escouade part ?</span>`
+    + `<button type="button" class="es-modifier" data-action="escouade-modifier">${ICO.porteurs}Modifier</button></div>`
+    + `<div class="es-equipes-choix" role="radiogroup" aria-label="Escouade qui part">`
+    + toutes.map((l, k) => {
+      const n = deckEscouade(j, l).length;
+      return `<button type="button" role="radio" class="es-equipe${k === active ? ' actif' : ''}${l.length ? '' : ' vide'}" data-action="depart-escouade" data-index="${k}" aria-checked="${k === active}"${l.length ? '' : ' disabled'}>`
+        + `<strong>Escouade ${k + 1}</strong><span class="es-equipe-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 30) : '<i class="es-pastille-vide"></i>')).join('')}</span>`
+        + `<small>${l.length ? `${l.length < 3 ? `${l.length} / 3 · ` : ''}${n} cartes` : 'Vide'}</small></button>`;
+    }).join('') + `</div></section>`;
 
-  // 2. les trois places, en grand
-  h += `<section class="es-trio" aria-label="Escouade choisie">` + [0, 1, 2].map((i) => {
+  // les trois Porteurs qui partent : toucher un portrait ouvre sa fiche
+  h += `<section class="es-trio" aria-label="Porteurs qui partent">` + [0, 1, 2].map((i) => {
     const id = e.escouade[i];
-    if (!id) return `<div class="es-place vide"><span class="es-silhouette" aria-hidden="true"></span><b>${i + 1}</b><small>Choisis un Porteur plus bas</small></div>`;
+    if (!id) return `<button type="button" class="es-place vide" data-action="escouade-modifier"><span class="es-silhouette" aria-hidden="true"></span><b>${i + 1}</b><small>Place libre · compléter l’escouade</small></button>`;
     const p = porteurDef(id);
     const img = portrait(id);
     const nCartes = j.porteurs[id]!.modules.length;
     const m = progresMarque(j, id);
     const pv = pvMaxCombat(j, id);
     return `<div class="es-place" style="--c:${COULEUR[p.lignee]}">`
-      + `<button type="button" class="es-portrait" data-action="choisir" data-id="${id}" aria-label="Retirer ${echap(p.nom)} de l’escouade">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 72)}<span class="es-retirer" aria-hidden="true">${ICO.fermer}</span>`
+      + `<button type="button" class="es-portrait" data-action="porteur" data-id="${id}" aria-label="Fiche de ${echap(p.nom)}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 72)}`
       + `<span class="es-nom"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · PV ${pv}</small></span></button>`
       + `<button type="button" class="es-cartes${nCartes ? '' : ' aucune'}${nCartes >= DISTRICT.cartesMax ? ' pleine' : ''}" data-action="deck" data-id="${id}">${ICO.cartes}<span>${nCartes} / ${DISTRICT.cartesMax} cartes</span></button>`
       + (m ? `<button type="button" class="es-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" title="${echap(m.texte)}">${m.acquise ? ICO.ok : ICO.verrou}<span><b>${echap(m.nom)}</b> ${m.acquise ? echap(m.court) : `${Math.min(m.n, m.seuil)} / ${m.seuil} ${echap(m.quoi)}`}</span></button>` : '')
@@ -1255,42 +1259,6 @@ export function htmlEscouade(e: EcranDistrict): string {
     h += `</section>`;
   }
 
-  // 4. les Porteurs disponibles, puis ceux qui ne peuvent pas partir
-  const presents = PORTEURS.filter((p) => porteursPresents(j).includes(p.id));
-  // un Porteur au travail peut partir (demande du 23 octobre 2026) : il quitte son poste, qui reste vacant
-  const bloque = (id: string) => ep?.interdits?.includes(id) ? 'Pas pour cette Épreuve' : enExpedition(j, id) ? 'En expédition' : raisonHorsEscouade(j, id)?.replace(/\.$/, '') ?? null;
-  const libre = (id: string) => !bloque(id);
-  const tuile = (pid: string) => {
-    const p = porteurDef(pid);
-    const ok = libre(pid);
-    const choisi = e.escouade.includes(pid);
-    const d = j.porteurs[pid]!;
-    const pv = pvMaxCombat(j, pid);
-    const pvM = pvNiveau(j, pid);
-    const img = portrait(pid);
-    const nc = d.modules.length;
-    const fs = [...new Set(gestesDe(j, pid).flatMap((g) => g.fs ?? [g.f]))].sort((a, b) => a - b);
-    const raison = bloque(pid) ?? '';
-    const poste = d.poste;
-    const blesse = d.usure >= usureMax(pid) * 0.5;
-    return `<button type="button" class="es-tuile${choisi ? ' choisi' : ''}${ok || choisi ? '' : ' indispo'}" style="--c:${COULEUR[p.lignee]}" data-action="choisir" data-id="${pid}"${!ok && !choisi ? ' disabled' : ''} aria-pressed="${choisi}">`
-      + `<span class="es-vignette">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : avatar(pid, 64)}${choisi ? `<span class="es-rang">${e.escouade.indexOf(pid) + 1}</span>` : ''}${blesse && ok ? '<span class="es-blesse">Blessé</span>' : ''}</span>`
-      + `<strong>${echap(p.nom)}</strong><small class="es-lignee">${NOM_LIGNEE[p.lignee]}${ok || choisi ? ` · Niv. ${niveauPorteur(j, pid).niveau}` : ''}</small>`
-      + (ok || choisi
-        ? jaugePv(pv, pvM, d.usure, usureMax(pid)) + `<small class="es-stats">PV ${pv}/${pvM}</small><small class="es-stats${nc ? '' : ' zero'}">${nc} carte${nc > 1 ? 's' : ''}</small>`
-          + (poste ? `<small class="es-travail">${ICO.ouvrier}${poste === 'noyau' ? 'À l’entraînement' : `Au travail · ${echap(batimentDef(poste).nom)}`}</small>` : '')
-          + (fs.length ? `<span class="es-puces" aria-label="Fréquences de ses cartes">${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</span>` : '')
-        : `<small class="es-raison">${raison}</small>`)
-      + `</button>`;
-  };
-  // les trois choisis sont déjà en grand plus haut : la grille ne montre que les autres
-  // les libres d'abord, puis ceux qui travaillent
-  const prets = presents.filter((p) => libre(p.id) && !e.escouade.includes(p.id)).sort((a, b) => Number(!!j.porteurs[a.id]!.poste) - Number(!!j.porteurs[b.id]!.poste));
-  const absents = presents.filter((p) => !libre(p.id) && !e.escouade.includes(p.id));
-  h += `<section class="es-porteurs"><div class="es-titre"><h3 class="titre-bloc">${ICO.porteurs}${e.escouade.length ? 'Autres Porteurs disponibles' : 'Porteurs disponibles'}</h3><small>${e.escouade.length === 3 ? 'Pour en faire entrer un, retire d’abord un Porteur de l’escouade (la croix sur son portrait).' : 'Touche un Porteur pour l’ajouter · chacun apporte ses cartes au deck.'}</small></div>`
-    + (prets.length ? `<div class="es-grille">${prets.map((p) => tuile(p.id)).join('')}</div>` : `<p class="es-note">Tous les Porteurs libres sont dans l’escouade.</p>`)
-    + (absents.length ? `<div class="es-titre"><h3 class="titre-bloc discret">Ne peuvent pas partir</h3></div><div class="es-grille petite">${absents.map((p) => tuile(p.id)).join('')}</div>` : '')
-    + `</section>`;
   const vacants = e.escouade.filter((id) => posteQuitte(j, id));
   if (vacants.length) {
     const et = (l: string[]) => l.length > 1 ? `${l.slice(0, -1).join(', ')} et ${l[l.length - 1]}` : l[0]!;
