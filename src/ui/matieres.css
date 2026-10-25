@@ -12,16 +12,6 @@
    Les navigateurs qui savent couper un coin nativement (corner-shape : Chrome, Edge, Android) gardent le même dessin
    ET les ombres ; les autres (Safari pour l'instant) gardent le découpage d'avant, avec l'arête et la tranche, sans ombre portée. */
 
-#app:is([data-mode="combat"],[data-mode="district"]){
-  --arete:inset 0 1px 0 rgba(255,255,255,.3);
-  --tranche-1:inset 0 -2px 0 rgba(2,4,14,.55);
-  --tranche-2:inset 0 -4px 0 rgba(2,4,14,.6);
-  --contour:inset 0 0 0 1px var(--glace-3);
-  --ombre-pose:0 1px 0 rgba(0,0,0,.5),0 8px 18px -6px rgba(0,0,0,.6);
-  --ombre-saillant:0 2px 0 rgba(0,0,0,.55),0 12px 22px -8px rgba(0,0,0,.75);
-  --ombre-leve:0 3px 0 rgba(0,0,0,.4),0 24px 48px -10px rgba(0,0,0,.8);
-}
-
 /* POSÉ : les panneaux */
 #app:is([data-mode="combat"],[data-mode="district"]) :is(.combattant,.zone-chaine,.lecon,.mission,.panneau,.habitant,.carte-porteur,.emplacement,.tuile-porteur,
   .ligne-menu,.stat,.occupant,.chantier-cours,.en-cours,.chapitre-ligne,.replique,.segments-choix,.puce,.etat){
@@ -63,6 +53,13 @@
    L'ombre a deux couches : un contact net, presque noir, collé sous la carte (c'est lui qui la « pose »),
    et une ombre douce un peu plus bas. Les cartes de la chaîne, rangées dans leur rail, sont un peu moins hautes. */
 #app:is([data-mode="combat"],[data-mode="district"]){
+  --arete:inset 0 1px 0 rgba(255,255,255,.3);
+  --tranche-1:inset 0 -2px 0 rgba(2,4,14,.55);
+  --tranche-2:inset 0 -4px 0 rgba(2,4,14,.6);
+  --contour:inset 0 0 0 1px var(--glace-3);
+  --ombre-pose:0 1px 0 rgba(0,0,0,.5),0 8px 18px -6px rgba(0,0,0,.6);
+  --ombre-saillant:0 2px 0 rgba(0,0,0,.55),0 12px 22px -8px rgba(0,0,0,.75);
+  --ombre-leve:0 3px 0 rgba(0,0,0,.4),0 24px 48px -10px rgba(0,0,0,.8);
   --ombre-carte:drop-shadow(0 1px .5px rgba(0,0,0,.85)) drop-shadow(0 5px 5px rgba(0,0,0,.55));
   --ombre-carte-rail:drop-shadow(0 1px .5px rgba(0,0,0,.85)) drop-shadow(0 3px 4px rgba(0,0,0,.5));
 }

@@ -62,7 +62,7 @@ body{background:
 .res .ico{filter:drop-shadow(0 0 6px currentColor)}
 .res .v{text-shadow:0 0 12px rgba(255,255,255,.18)}
 .jauge-res i{box-shadow:0 0 8px var(--gold)}
-.res .ico.peinte{width:32px;height:32px;margin:-4px -2px -4px -4px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(159,216,255,.18))}
+.res .ico.peinte{filter:drop-shadow(0 2px 4px rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(159,216,255,.18))}
 
 /* ---------- Navigation ---------- */
 .nav{background:linear-gradient(rgba(10,14,21,.88),rgba(6,8,12,.98)),var(--trame);box-shadow:0 -1px 0 var(--holo-3)}
@@ -155,12 +155,10 @@ body{background:
   linear-gradient(var(--holo-2),var(--holo-2)) 0 100%/10px 1px no-repeat,linear-gradient(var(--holo-2),var(--holo-2)) 0 100%/1px 10px no-repeat,
   linear-gradient(var(--holo-2),var(--holo-2)) 100% 100%/10px 1px no-repeat,linear-gradient(var(--holo-2),var(--holo-2)) 100% 100%/1px 10px no-repeat,
   repeating-linear-gradient(135deg,rgba(159,216,255,.04) 0 6px,transparent 6px 12px);color:rgba(216,180,101,.5);text-shadow:0 0 12px rgba(216,180,101,.4)}
-.geste{background:linear-gradient(180deg,rgba(255,255,255,.08),transparent 40%),var(--trame),linear-gradient(172deg,color-mix(in srgb,var(--c) 34%,#18202B) 0%,#10141C 64%)}
 .geste::after{content:"";position:absolute;inset:0;pointer-events:none;background:
   linear-gradient(color-mix(in srgb,var(--c) 80%,white),color-mix(in srgb,var(--c) 80%,white)) 0 100%/10px 1.5px no-repeat,
   linear-gradient(color-mix(in srgb,var(--c) 80%,white),color-mix(in srgb,var(--c) 80%,white)) 100% 100%/1.5px 10px no-repeat}
 .g-freq{filter:drop-shadow(0 0 5px var(--fc))}
-.geste.halo{box-shadow:inset 0 0 0 2px var(--gold),inset 0 3px 0 var(--gold),inset 0 -26px 30px -20px rgba(216,180,101,.35);filter:drop-shadow(0 0 10px rgba(216,180,101,.45))}
 .segments i.plein{box-shadow:0 0 10px rgba(216,180,101,.8)}
 .badge-reso{box-shadow:0 0 14px rgba(216,180,101,.45)}
 
@@ -168,9 +166,7 @@ body{background:
 
 /* Les cartes illustrées en combat (22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue).
    L'illustration de la carte en fond (à défaut, le portrait du Porteur qui la joue), un voile sombre en bas pour lire. */
-.geste.main{width:68px;height:104px}
-.geste .g-art{position:absolute;inset:0;background-size:cover;background-position:50% 26%;z-index:0;pointer-events:none}
-.geste .g-art.g-portrait{background-position:50% 16%;filter:saturate(.5) brightness(.6)}
+.geste .g-art{pointer-events:none}
 .geste.illus::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
   background:linear-gradient(180deg,rgba(8,10,14,.45) 0%,rgba(8,10,14,0) 24%,rgba(8,10,14,.2) 46%,rgba(8,10,14,.85) 68%,rgba(8,10,14,.96) 100%)}
 .geste > .g-haut,.geste > .g-bas{position:relative;z-index:1}
@@ -184,7 +180,6 @@ body{background:
 .accorder i{font-style:normal;min-width:17px;text-align:center;opacity:.5;border-radius:2px}
 .accorder i.actif{opacity:1;color:#fff;background:var(--fc)}
 .accorder:disabled{opacity:.4}
-@media (max-height:740px){ .geste.main{width:64px;height:96px} }
 .geste.main .g-freq.mini,.geste.chaine .g-freq.mini{width:17px;height:17px;font-size:10px}
 .fc-art img.fc-repli{filter:saturate(.45) brightness(.55);object-position:50% 18%}
 .deck-porteur .grille-cartes{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}

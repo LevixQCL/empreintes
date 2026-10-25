@@ -67,7 +67,6 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
   background:linear-gradient(118deg,transparent 0 60%,rgba(220,245,255,.08) 60.5%,transparent 75%),linear-gradient(180deg,rgba(26,34,66,.82),rgba(8,10,22,.94));
   border-top:1.5px solid color-mix(in srgb,var(--c) 75%,white);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 -1px 8px color-mix(in srgb,var(--c) 60%,transparent)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.halo{filter:none}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{color:#d9ecff;background:rgba(10,14,30,.85);box-shadow:inset 0 0 0 1px var(--glace-2)}
 #app:is([data-mode="combat"],[data-mode="district"]) :is(.gm-fer){--rar:#a9b3be} #app:is([data-mode="combat"],[data-mode="district"]) .gm-cuivre{--rar:#e2925c}
 #app:is([data-mode="combat"],[data-mode="district"]) .gm-argent{--rar:#e6eef6} #app:is([data-mode="combat"],[data-mode="district"]) .gm-or{--rar:#f4cd62} #app:is([data-mode="combat"],[data-mode="district"]) .gm-nacre{--rar:#f6d9f7}
 #app:is([data-mode="combat"],[data-mode="district"]) .place-vide{background:linear-gradient(118deg,transparent 0 55%,rgba(205,239,255,.05) 55.5%,transparent 70%),rgba(10,14,30,.5);
@@ -81,7 +80,7 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 /* le bouton Lancer : une barre de lumière */
 #app:is([data-mode="combat"],[data-mode="district"]) .btn.prim{background:linear-gradient(180deg,#ffffff 0%,#d6f0ff 40%,#8fbdf0 100%);color:#0b1733;text-shadow:0 1px 0 rgba(255,255,255,.6);
   box-shadow:inset 0 1px 0 #fff,inset 0 -2px 0 rgba(40,70,140,.35),0 0 22px rgba(160,210,255,.45)}
-#app:is([data-mode="combat"],[data-mode="district"]) .btn.prim:disabled{background:linear-gradient(165deg,rgba(22,28,52,.86),rgba(9,11,24,.92));color:#6e7896;box-shadow:inset 0 0 0 1px var(--glace-3)}
+#app:is([data-mode="combat"],[data-mode="district"]) .btn.prim:disabled{background:linear-gradient(165deg,rgba(22,28,52,.86),rgba(9,11,24,.92));color:#6e7896}
 #app:is([data-mode="combat"],[data-mode="district"]) .actions-combat{background:linear-gradient(rgba(7,9,21,0),rgba(7,9,21,.95) 28%)}
 
 /* le sélecteur de Fréquence et les étiquettes en verre */
@@ -134,7 +133,6 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
   linear-gradient(180deg,rgba(205,239,255,.1),rgba(205,239,255,0) 42%),
   linear-gradient(165deg,rgba(20,26,50,.88),rgba(8,10,22,.92))}
 #app:is([data-mode="combat"],[data-mode="district"]) .plaque-nom{font-size:13px}
-#app:is([data-mode="combat"],[data-mode="district"]) .plaque.choisie{box-shadow:inset 0 0 0 1.5px var(--glace),0 0 16px rgba(160,210,255,.35)}
 #app:is([data-mode="combat"],[data-mode="district"]) .plaque.verrou{opacity:.8}
 #app:is([data-mode="combat"],[data-mode="district"]) .mission.faite{box-shadow:inset 0 0 0 1.5px var(--glace),inset 0 0 30px rgba(160,210,255,.12),0 0 24px rgba(160,210,255,.25)}
 /* la fenêtre de fin de combat et les fenêtres du district */
@@ -148,9 +146,6 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
    Le cadre prend maintenant la texture du métal de la carte (fer noir rouillé, cuivre, argent, or, nacre), avec un biseau ;
    le chaton de la Fréquence est serti dans le même métal. La couleur de la lignée (qui joue la carte) passe sur la plaque.
    La carte qui prolonge la suite ne change plus de cadre (une carte en or se confondait avec elle) : elle se soulève et rayonne. */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-plaque{
-  background:linear-gradient(118deg,transparent 0 60%,rgba(220,245,255,.08) 60.5%,transparent 75%),
-    linear-gradient(180deg,color-mix(in srgb,var(--c) 34%,rgba(26,34,66,.86)),rgba(8,10,22,.95) 72%)}
 /* le fer est presque noir : un voile léger pour que son cadre se détache du fond, sans qu'il se confonde avec l'argent */
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-fer{
   --g-cadre:linear-gradient(150deg,rgba(255,255,255,.6),rgba(255,255,255,.1) 24%,rgba(0,0,0,0) 55%,rgba(0,0,0,.45)),
@@ -172,8 +167,7 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
    Bryan : l'étiquette de l'effet (« DÉSARMER », « FISSURE »…) était une boîte encadrée qui mangeait la moitié de l'image.
    Le nom se lit maintenant à la verticale, le long du bord droit de l'illustration, en or, sur un simple voile sombre :
    il ne prend plus qu'une fine bande et l'image reste libre. */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{
-  right:3px;bottom:calc(100% + 3px);max-width:none;max-height:calc(var(--h-art,60px) - 10px);padding:4px 2px 4px 1.5px;
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{max-width:none;max-height:calc(var(--h-art,60px) - 10px);padding:4px 2px 4px 1.5px;
   writing-mode:vertical-rl;transform:rotate(180deg);font-size:7px;line-height:1;letter-spacing:.06em;
   color:#f3dca4;text-shadow:0 0 3px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.8);
   background:linear-gradient(90deg,rgba(6,8,16,.62),rgba(6,8,16,.38));box-shadow:none;border-radius:2px}
@@ -189,7 +183,6 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-fer,.gm-cuivre,.gm-argent,.gm-or,.gm-nacre) .g-cadre{inset:0;box-shadow:none}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-fer,.gm-or){--cut:0px}
 .geste{--ep:0px;--bw:16px}
-.geste.chaine{--bw:17px}
 .geste.gm-fer{--ep:6px}.geste.gm-cuivre{--ep:6.5px}.geste.gm-argent{--ep:4px}.geste.gm-or{--ep:4px}
 /* l'argent et l'or ont des fermoirs et des cabochons qui débordent : l'image s'arrête au filet du cadre */
 #app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-argent,.gm-or) .g-cadre{inset:1.5px}
@@ -198,15 +191,13 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
   filter:drop-shadow(0 0 1.5px rgba(0,0,0,.85))}
 .geste .g-socle,.geste .g-pips,.geste .g-lourd,.geste .g-suite{z-index:3}
 /* le texte de la plaque et les étiquettes s'écartent du cadre */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-plaque{padding-left:calc(3px + var(--ep));padding-right:calc(2px + var(--ep))}
 /* dans un cadre, le nom perd un peu de largeur : un rien plus petit, pour que « Régénérer » tienne en entier */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-fer,.gm-cuivre,.gm-argent,.gm-or) .g-nom{font-size:10px;letter-spacing:-.01em}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{right:calc(3px + var(--ep))}
 .geste .g-lourd{right:calc(11px + var(--ep));top:calc(4px + var(--ep))}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle{top:calc(3px + var(--ep) * .5);left:calc(3px + var(--ep) * .5)}
 /* les autres Fréquences (argent : 1, or : 1, nacre : 2) en rang sous la gemme, et non plus en colonne :
    en colonne, la troisième Fréquence de la nacre tombait sur la force de la carte */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips{display:flex;gap:2px;top:calc(31px + var(--ep) * .5);left:calc(4px + var(--ep) * .5)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips{display:flex;gap:2px}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-pips{top:calc(34px + var(--ep) * .5);left:calc(5px + var(--ep) * .5)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips i{width:17px;height:17px;font-size:9.5px}
 
@@ -214,12 +205,10 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
    Bryan : la bande de la force et du nom gâchait l'image. L'illustration occupe maintenant toute la carte ;
    la force et le nom sont posés dessus, sur un simple dégradé sombre en bas, sans bande ni filet. */
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-art{height:100%;background-position:50% 30%}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-art::after{background:linear-gradient(180deg,rgba(6,8,12,.35) 0%,transparent 22%,transparent 46%,rgba(6,8,12,.55) 66%,rgba(6,8,12,.9) 100%)}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-plaque{background:none;border-top:none;box-shadow:none;height:auto;justify-content:flex-end;padding-bottom:calc(4px + var(--ep))}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-plaque{padding-left:calc(3px + var(--ep));padding-right:calc(2px + var(--ep));background:none;border-top:none;box-shadow:none;height:auto;justify-content:flex-end;padding-bottom:calc(4px + var(--ep))}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val,#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-nom,
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-qui{text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.9)}
 /* l'effet garde sa place sur le bord droit, au-dessus de la force */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{bottom:calc(100% + 4px)}
 
 /* ---------- L'onde de la Fréquence (22 octobre 2026) ----------
    Pour que la Fréquence ne se lise pas comme un coût : une fine onde à côté du cristal, autant de vagues que la Fréquence,
@@ -294,13 +283,11 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
    Bryan trouvait la police de la force et du nom « barbare » (chiffres monospace gras, nom en gras sans empattement).
    La force et le nom passent dans la capitale gravée du jeu (Marcellus SC), plus fine et plus petite ;
    l'icône d'action se fait discrète en attendant ses symboles peints. */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val{gap:2px;align-items:baseline}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val{align-items:baseline}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val b{font-family:var(--display);font-weight:400;font-size:16px;letter-spacing:.02em;
   color:#fbf4e4;text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.85)}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val b{font-size:17px}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val .ico{width:10px;height:10px;opacity:.8;transform:translateY(-1px)}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-nom{font-family:var(--display);font-weight:400;font-size:9px;letter-spacing:.05em;
-  color:#e9e1cf;text-shadow:0 1px 2px #000,0 0 5px rgba(0,0,0,.9)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-nom{font-family:var(--display);font-weight:400}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-fer,.gm-cuivre,.gm-argent,.gm-or) .g-nom{font-size:9px;letter-spacing:.04em}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-qui{font-family:var(--display);font-size:7.5px;letter-spacing:.06em}
 
@@ -308,16 +295,11 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
    La Fréquence est une pierre gravée peinte sur Midjourney (public/art/frequences), posée dans le coin à la place de la gemme en code,
    avec une lueur dans la couleur de sa Fréquence ; les Fréquences de rechange sont les mêmes pierres, plus petites.
    L'action (attaque, protection, soin) est un symbole peint à côté de la force. */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle.peinte{width:31px;height:31px;top:2px;left:2px;clip-path:none;
-  background:var(--pierre) center/contain no-repeat;filter:drop-shadow(0 0 3px var(--fc)) drop-shadow(0 2px 2px rgba(0,0,0,.85))}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle.peinte .g-freq{display:none}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips{top:33px;left:4px}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips i.peinte{width:17px;height:17px;font-size:0;clip-path:none;opacity:1;
-  background:var(--pierre) center/contain no-repeat;filter:drop-shadow(0 0 2px var(--fc)) drop-shadow(0 1px 1px #000)}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val .g-sym{width:15px;height:15px;object-fit:contain;transform:translateY(1px);filter:drop-shadow(0 1px 2px #000)}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val .g-sym{width:16px;height:16px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val .g-sym{object-fit:contain;filter:drop-shadow(0 1px 2px #000)}
 /* ---------- La pierre sertie dans le chaton du cadre (sertie dans le cadre) ---------- */
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle.peinte{--sx:12px;--sy:12px;--sd:20px;width:var(--sd);height:var(--sd);top:calc(var(--sy) - var(--sd) / 2);left:calc(var(--sx) - var(--sd) / 2);
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle.peinte{clip-path:none;
+  background:var(--pierre) center/contain no-repeat;--sx:12px;--sy:12px;--sd:20px;width:var(--sd);height:var(--sd);top:calc(var(--sy) - var(--sd) / 2);left:calc(var(--sx) - var(--sd) / 2);
   filter:drop-shadow(0 1px 1px rgba(0,0,0,.9)) saturate(.75)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-fer .g-socle.peinte{--sx:8.6px;--sy:9px;--sd:17px}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-cuivre .g-socle.peinte{--sx:8.9px;--sy:9.1px;--sd:16px}
@@ -325,7 +307,8 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-or .g-socle.peinte{--sx:9.6px;--sy:9.1px;--sd:16px}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips{top:16px;left:3px}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste:is(.gm-argent,.gm-or) .g-pips{top:15px;left:4px}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips i.peinte{width:11px;height:11px;filter:drop-shadow(0 1px 1px #000) saturate(.75)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-pips i.peinte{font-size:0;clip-path:none;opacity:1;
+  background:var(--pierre) center/contain no-repeat;width:11px;height:11px;filter:drop-shadow(0 1px 1px #000) saturate(.75)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.gm-nacre .g-pips{top:23px;left:3px}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val .g-sym{width:17px;height:17px;transform:translateY(2px)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val .g-sym{width:18px;height:18px}
@@ -340,13 +323,9 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-qui{text-align:center;width:100%}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-art::after{background:linear-gradient(180deg,rgba(6,8,12,.35) 0%,transparent 22%,transparent 58%,rgba(6,8,12,.7) 80%,rgba(6,8,12,.95) 100%)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-ligne{position:static}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val{position:absolute;left:calc(var(--ep) * .3 - 2px);bottom:calc(var(--ep) + 13px);width:31px;height:31px;display:grid;place-items:center;gap:0}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val{width:35px;height:35px;bottom:calc(var(--ep) + 24px)}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val{position:absolute;display:grid;place-items:center;gap:0}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val .g-sym,#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val .g-sym{position:absolute;inset:0;width:100%;height:100%;transform:none;filter:drop-shadow(0 1px 2px #000) drop-shadow(0 0 1px #000)}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.atk .g-sym{transform:scale(1.3)}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val b,#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val b{position:relative;font-family:var(--display);font-weight:400;font-size:15px;color:#fff7e4;
-  -webkit-text-stroke:3px #120c08;paint-order:stroke fill;text-shadow:0 1px 2px rgba(0,0,0,.9)}
-#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val b{font-size:17px}
+#app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val b,#app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val b{position:relative;color:#fff7e4;paint-order:stroke fill;text-shadow:0 1px 2px rgba(0,0,0,.9)}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{position:absolute;bottom:calc(100% + 3px)}
 /* médaillon plus discret, chiffres en Cinzel 900 (incluse dans le jeu) : épais et droits, lisibles en petit */
 @font-face{font-family:'Cinzel Force';src:url('./polices/cinzel-900.woff2') format('woff2');font-weight:900;font-display:block}
@@ -372,7 +351,7 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app[data-mode="combat"] .geste.chaine .g-nom{bottom:calc(100% + 34px)}
 
 /* ── Socle peint (22 octobre 2026), seulement si la carte n'a pas de cadre peint d'un seul tenant : forme = action, chiffre = force ── */
-.geste{--sz:34px}.geste.chaine{--sz:38px}
+.geste{--sz:34px}.geste.chaine{--bw:17px;--sz:38px}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-val.g-socle2{position:absolute;width:var(--sz);height:var(--sz);right:calc(var(--ep) * .5 - 3px);left:auto;bottom:calc(var(--ep) + 1px);display:grid;place-items:center;gap:0}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste.chaine .g-val.g-socle2{bottom:calc(var(--ep) + 10px)}
 .geste .g-socle2 .sc{position:absolute;inset:0;background:var(--socle) center/contain no-repeat;pointer-events:none;filter:drop-shadow(0 1px 2px #000)}

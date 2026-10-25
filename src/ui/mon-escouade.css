@@ -32,8 +32,7 @@
 .me-nom small{font-size:12px;color:color-mix(in srgb,var(--c) 45%,white);text-shadow:0 1px 4px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .me-jauges{display:grid;gap:3px;margin-top:2px}
 .me-jauges .jauge-pv{width:100%;height:4px}
-.me-chiffres{font-family:var(--mono);font-size:12px;color:var(--x-doux);font-variant-numeric:tabular-nums}
-.me-chiffres{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.me-chiffres{font-family:var(--mono);font-size:12px;color:var(--x-doux);font-variant-numeric:tabular-nums;display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}
 .me-chiffres b{color:var(--x-txt);font-weight:600}
 .me-chiffres b.or{color:var(--x-or)}
 .me-cartes,.me-marque,.me-changer{display:flex;align-items:center;gap:6px;min-height:34px;padding:0 6px;border:0;border-radius:4px;background:none;font:inherit;text-align:left;cursor:pointer;color:var(--x-txt)}

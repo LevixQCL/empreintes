@@ -75,7 +75,7 @@
   background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--fc) 55%,white),var(--fc) 50%,color-mix(in srgb,var(--fc) 55%,black)) padding-box,
     linear-gradient(150deg,#f7e4b0,#8a6a33 60%,#d9b56e) border-box;
   clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);opacity:.85}
-.geste .g-lourd{position:absolute;z-index:2;top:4px;right:11px;padding:1px 4px;font-size:8px;color:var(--ink);background:rgba(8,10,14,.85);
+.geste .g-lourd{position:absolute;z-index:2;padding:1px 4px;font-size:8px;color:var(--ink);background:rgba(8,10,14,.85);
   box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 70%,transparent)}
 .geste .g-suite{position:absolute;z-index:2;top:12px;right:3px}
 
@@ -84,19 +84,14 @@
   background:linear-gradient(180deg,rgba(14,16,22,.45),rgba(9,11,15,.8)),var(--tex) center/cover;
   border-top:1px solid color-mix(in srgb,var(--c) 50%,#dcc99a);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 -5px 10px rgba(0,0,0,.5)}
 .g-ligne{display:flex;align-items:center;min-width:0}
-.geste .g-val{font-size:15px;line-height:1;gap:3px;text-shadow:0 1px 2px rgba(0,0,0,.95)}
-.geste .g-val .ico{width:12px;height:12px}
-.geste .g-effet{position:absolute;right:4px;bottom:calc(100% + 3px);max-width:calc(100% - 8px);padding:1px 4px;font-size:7.5px;line-height:1.3;
+.geste .g-val{line-height:1;gap:3px;text-shadow:0 1px 2px rgba(0,0,0,.95)}
+.geste .g-effet{position:absolute;right:4px;bottom:calc(100% + 3px);max-width:calc(100% - 8px);line-height:1.3;
   color:var(--gold);background:rgba(14,11,6,.82);box-shadow:inset 0 0 0 1px rgba(216,180,101,.55)}
-.geste .g-nom{font-size:9.5px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;color:var(--ink);text-shadow:0 1px 2px rgba(0,0,0,.95)}
-.geste .g-qui{font-size:8px;line-height:1;margin-top:-1px;color:var(--quiet)}
-.geste.chaine .g-plaque{height:44%}
-.geste.chaine .g-art{height:60%}
+.geste .g-qui{line-height:1;margin-top:-1px;color:var(--quiet)}
 
 /* la carte qui prolonge la suite : son cadre passe à l'or */
 .geste.halo{--g-cadre:linear-gradient(155deg,#fff2c6 0%,#e4bf6c 38%,#8a6527 72%,#f2d28c 100%);box-shadow:none;
   filter:drop-shadow(0 0 9px rgba(216,180,101,.6)) drop-shadow(0 3px 5px rgba(0,0,0,.6))}
-.geste.serre,.geste:disabled{filter:grayscale(.6) drop-shadow(0 3px 5px rgba(0,0,0,.6))}
 .verrouille .geste.chaine:disabled{filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
 
 @media (prefers-reduced-motion: reduce){
@@ -124,7 +119,7 @@
 .geste .g-plaque{padding:5px 5px 0 6px;gap:3px}
 .geste .g-val{font-size:17px}
 .geste .g-val .ico{width:13px;height:13px}
-.geste .g-nom{font-size:10.5px;font-weight:600;line-height:1.12;white-space:normal;overflow:hidden;text-overflow:clip;
+.geste .g-nom{max-width:100%;text-shadow:0 1px 2px rgba(0,0,0,.95);font-size:10.5px;font-weight:600;line-height:1.12;white-space:normal;overflow:hidden;text-overflow:clip;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;color:#fff}
 .geste .g-qui{font-size:8.5px}
 .geste.chaine .g-nom{-webkit-line-clamp:1;display:-webkit-box}
@@ -141,7 +136,6 @@
 
 /* ---------- Langage d'impact (22 octobre 2026) ---------- */
 .calque-impacts{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:35}
-.combat-barre .boutons-barre{display:flex;gap:6px}
 /* sous un quart de ses PV, l'ennemi se fend */
 .scene-ennemi.fele .ennemi-art{filter:drop-shadow(0 0 10px rgba(255,107,91,.35))}
 .fele-trait{position:absolute;z-index:1;inset:8% 18% 30%;pointer-events:none;opacity:.85;mix-blend-mode:screen;
@@ -273,5 +267,4 @@
 .j-rail>.j-usure{position:absolute;right:0;top:0;bottom:0;z-index:2;background:repeating-linear-gradient(135deg,rgba(226,115,90,.85) 0 3px,rgba(226,115,90,.3) 3px 6px)}
 .ex-barre{position:relative}
 .ex-barre>i.ex-usure{position:absolute;right:0;top:0;bottom:0;border-radius:0;background:repeating-linear-gradient(135deg,rgba(226,115,90,.9) 0 3px,rgba(226,115,90,.35) 3px 6px)}
-.ex-barre{height:4px}
 .ex-p-usure{margin-left:4px;font-size:.8em;color:#FF9C8A}

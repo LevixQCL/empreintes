@@ -2,13 +2,12 @@
 @keyframes flotte{from{transform:translateY(0)}to{transform:translateY(-6px)}}
 /* ---------- Intro ---------- */
 #app[data-mode="intro"]{min-height:100vh;min-height:100dvh}
-.intro{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:20px;padding:18px;border-radius:18px;min-height:calc(100dvh - 36px);color:#F6F1E6;transition:background .6s ease;cursor:pointer}
+.intro{flex:1;display:flex;flex-direction:column;justify-content:space-between;border-radius:18px;min-height:calc(100dvh - 36px);color:#F6F1E6;transition:background .6s ease;cursor:pointer}
 .intro-haut,.intro-bas{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.intro-corps{display:grid;gap:12px;max-width:34em}
+.intro-corps{display:grid;max-width:34em}
 .intro .epoque{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;opacity:.85}
-.intro h2{margin:0;font-family:var(--display);font-weight:400;font-size:34px;line-height:1.1}
+.intro h2{margin:0;font-family:var(--display);font-weight:400;line-height:1.1}
 .intro p{margin:0;font-size:17px;line-height:1.55;text-wrap:pretty}
-.intro .btn-sec{background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.25);color:#F6F1E6}
 .intro .prim{min-height:48px}
 .amb-aube-grise{background:linear-gradient(170deg,#4E5A66,#2A3038 70%)}
 .amb-vert-tendre{background:linear-gradient(170deg,#4C6B4E,#24332A 70%)}
@@ -31,22 +30,17 @@
 .habitant strong,.habitant small{display:block}
 .amb-fracture{background:linear-gradient(170deg,#DCE8EE,#6E8EA6 35%,#18283A 80%)}
 /* Intro illustrée : l'image en plein écran, le texte en sous-titres en bas */
-.intro{background-size:cover;background-position:center}
 .intro.illustree{background-color:#121418;position:relative;isolation:isolate}
-.intro-corps{margin-top:auto;gap:8px}
-.intro h2{font-size:30px;text-shadow:0 2px 12px rgba(0,0,0,.55)}
-.intro .ligne{font-size:17px;line-height:1.45;text-shadow:0 1px 8px rgba(0,0,0,.6)}
-.intro .ligne.neuve{animation:apparait .6s ease-out}
+.intro-corps{margin-top:auto}
 @keyframes apparait{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion: reduce){ .intro .ligne.neuve{animation:none} }
 
 /* ---------- Intro animée ---------- */
-.intro{position:relative;overflow:hidden;isolation:isolate}
+.intro{background-size:cover;background-position:center;position:relative;overflow:hidden;isolation:isolate}
 .intro-scene{position:absolute;inset:0;z-index:-1;border-radius:inherit;overflow:hidden}
 .intro-scene .scene{width:100%;height:100%;display:block;animation:approche 9s ease-out forwards}
 .intro-fond{position:absolute;inset:0;z-index:-2;overflow:hidden;border-radius:inherit;background:#121418}
 .intro-fond img,.intro-fond video{width:100%;height:100%;object-fit:cover;display:block}
-.intro-fond{animation:fondu-in .8s ease-out}
 @keyframes zoom-lent{from{transform:scale(1.02)}to{transform:scale(1.12)}}
 @keyframes fondu-in{from{opacity:0}to{opacity:1}}
 .intro.illustree .intro-scene{display:none}
@@ -102,7 +96,7 @@
 .intro{padding:16px;gap:14px;user-select:none;-webkit-tap-highlight-color:transparent}
 .intro-haut{align-items:flex-start}
 .intro-outils{display:flex;gap:8px}
-.intro .btn-sec{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:rgba(10,12,16,.38)}
+.intro .btn-sec{border-color:rgba(255,255,255,.25);color:#F6F1E6;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:rgba(10,12,16,.38)}
 .intro .btn-sec.rond{width:44px;min-width:44px;padding:0;display:grid;place-items:center}
 .intro-prog{display:flex;gap:4px;padding-top:6px;flex:1;max-width:220px}
 .intro-prog span{flex:1;height:3px;border-radius:2px;background:rgba(246,241,230,.25)}
@@ -183,8 +177,7 @@
 @keyframes tombe{0%{opacity:0;transform:translate(0,-60px)}15%{opacity:.6}100%{opacity:0;transform:translate(8px,160px)}}
 .p-gravats::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 30%,rgba(255,210,130,.18),transparent 55%);animation:lampe 3.2s steps(1) infinite}
 @keyframes lampe{0%,100%{opacity:1}47%{opacity:.4}49%{opacity:1}52%{opacity:.6}}
-.p-motes i{width:calc(4px * var(--s));height:calc(4px * var(--s));opacity:0;animation:monte calc(7s * var(--d)) ease-in-out var(--t) infinite}
-.p-motes i{background:#CDBBFF;box-shadow:0 0 10px #9F86E8}
+.p-motes i{width:calc(4px * var(--s));height:calc(4px * var(--s));opacity:0;animation:monte calc(7s * var(--d)) ease-in-out var(--t) infinite;background:#CDBBFF;box-shadow:0 0 10px #9F86E8}
 .amb-or .p-motes i{background:#FFE39A;box-shadow:0 0 10px #E8C25A}
 @keyframes monte{0%{opacity:0;transform:translate(0,40px) scale(.6)}30%{opacity:.9}70%{opacity:.6}100%{opacity:0;transform:translate(-14px,-120px) scale(1.1)}}
 .p-motes::after{content:"";position:absolute;inset:-10%;background:radial-gradient(circle at 50% 45%,rgba(185,166,255,.22),transparent 50%);animation:respire 4.5s ease-in-out infinite}
@@ -217,7 +210,7 @@
 @keyframes cristal-lueur{0%,100%{filter:drop-shadow(0 0 2px rgba(95,168,255,.4))}50%{filter:drop-shadow(0 0 10px rgba(95,168,255,.95))}}
 .titre-nom .lt-trait{opacity:0;animation:apparait 1s ease-out 1.4s forwards}
 @keyframes lettre{from{opacity:0;transform:translateY(-10px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
-.titre-sous{margin:0;font-family:var(--mono);font-size:12px;letter-spacing:.08em;opacity:0;animation:apparait 1s ease-out 1.6s forwards;text-shadow:0 1px 6px rgba(0,0,0,.8)}
+.titre-sous{margin:0;font-family:var(--mono);letter-spacing:.08em;opacity:0;animation:apparait 1s ease-out 1.6s forwards;text-shadow:0 1px 6px rgba(0,0,0,.8)}
 .titre-bas{display:grid;justify-items:center;gap:12px;opacity:0;animation:apparait 1s ease-out 2.1s forwards}
 .titre-go{min-width:220px;min-height:52px;font-size:16px;letter-spacing:.04em;animation:appel-titre 2.6s ease-in-out 3s infinite}
 @keyframes appel-titre{0%,100%{box-shadow:0 0 0 0 rgba(185,166,255,0)}50%{box-shadow:0 0 0 6px rgba(185,166,255,.3)}}

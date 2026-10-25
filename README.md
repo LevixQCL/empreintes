@@ -18,6 +18,7 @@ Autres commandes :
 | `npm run check` | Vérifie le TypeScript sans rien construire |
 | `npm run build` | Construit le site dans `dist/` |
 | `npm run visuel` | Compare les écrans avant / après une modification (téléphone et PC) : voir `.visuel/` |
+| `npm run css` | Repère le CSS inutile (déclarations toujours écrasées, règles en double) ; `-- --ecrire` le nettoie |
 | `npm run robot` | Lance le robot d'équilibrage (quelques minutes) et écrit `docs/robot-rapport.md` |
 
 Chaque `git push` sur `main` lance les tests, construit le site et le publie sur GitHub Pages.

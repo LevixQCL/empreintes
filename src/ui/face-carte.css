@@ -92,16 +92,15 @@
 .fcp-v{left:var(--vx);top:var(--vy);margin-top:.6cqw}
 .fcp-v.deux{font-size:max(9px,12.5cqw);letter-spacing:-.05em}
 
-.fcp-puces{position:absolute;z-index:3;top:5cqw;right:7cqw;display:flex;gap:1.4cqw;align-items:center}
+.fcp-puces{position:absolute;z-index:3;display:flex;align-items:center}
 .fcp-puces > span{padding:max(2px,.9cqw) max(4px,2cqw);border-radius:max(4px,1.8cqw);background:rgba(9,9,12,.74);font-family:var(--mono);font-size:max(8px,3.4cqw);font-weight:600;color:var(--ink);line-height:1.2}
 .fcp-puces .fc-lignee{letter-spacing:.1em;color:color-mix(in srgb,var(--c) 70%,white)}
-.fcp-effet{position:absolute;z-index:3;right:9.5cqw;bottom:36cqw;writing-mode:vertical-rl;transform:rotate(180deg);padding:max(3px,1.6cqw) max(2px,.8cqw);
+.fcp-effet{position:absolute;z-index:3;right:9.5cqw;writing-mode:vertical-rl;transform:rotate(180deg);padding:max(3px,1.6cqw) max(2px,.8cqw);
   font-family:var(--display);font-size:max(8px,4.2cqw);letter-spacing:.08em;color:#f3dca4;background:linear-gradient(90deg,rgba(6,8,16,.62),rgba(6,8,16,.38));border-radius:max(2px,1cqw);
   text-shadow:0 0 3px rgba(0,0,0,.95)}
 .fcp-nom{position:absolute;z-index:3;left:10.5%;bottom:7.5%;max-width:calc(var(--vx) - 25%);font-family:var(--display);font-size:max(9px,7cqw);line-height:1.1;letter-spacing:.02em;
   color:#f1e6cf;text-shadow:0 0 2px #000,0 0 5px #000,0 1px 1px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fr-nacre .fcp-nom{left:6%}
-.fcp-effet{bottom:42cqw}
 .fcp-effet{bottom:46cqw}
 /* plusieurs Fréquences : chacune s'affiche à son tour dans le cristal (chiffre + couleur), en fondu */
 

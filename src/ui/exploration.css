@@ -10,9 +10,6 @@
 .route-txt small{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:color-mix(in srgb,var(--t) 70%,white)}
 .route-txt strong{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.15;color:var(--ink)}
 .route-txt em{font-style:normal;font-size:12.5px;line-height:1.35;color:var(--quiet)}
-
-.route-txt .faible{color:var(--quiet)}
-.route-txt .faible b{font-weight:600;color:var(--c)}
 .route-fleche{flex:none;width:18px;height:18px;color:color-mix(in srgb,var(--t) 70%,white);opacity:.8;transition:transform .15s ease}
 .route:hover,.route:focus-visible{outline:none;filter:brightness(1.12);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t) 75%,transparent),inset 3px 0 0 var(--t),inset 0 0 24px color-mix(in srgb,var(--t) 18%,transparent)}
 .route:hover .route-fleche{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-2)}
