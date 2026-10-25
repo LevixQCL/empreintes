@@ -593,7 +593,7 @@ function versFlux(de: DOMPoint | null, a: DOMPoint | null) {
   }
 }
 
-/** Le coup d'un ennemi, selon sa lignée : rayon (Tech), griffes (Génés), onde qui se referme (Résonants) */
+/** Le coup d'un ennemi, selon sa lignée : rayon (Augmentés), griffes (Génés), onde qui se referme (Résonants) */
 const TEINTE_ENNEMI: Record<LigneeGeste, string> = { tech: '#FF5A6E', bio: '#FF7A3A', reso: '#C46BFF', neutre: DANGER };
 function coupEnnemi(de: DOMPoint | null, p: DOMPoint, lignee: LigneeGeste) {
   const coul = TEINTE_ENNEMI[lignee];

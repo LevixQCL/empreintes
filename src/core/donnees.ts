@@ -28,7 +28,7 @@ export const PORTEURS: PorteurDef[] = [
 ];
 
 export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string }> = {
-  tech: { nom: 'Augmenté', court: 'TECH' },
+  tech: { nom: 'Augmenté', court: 'AUGMENTÉ' },
   bio: { nom: 'Géné', court: 'GÉNÉ' },
   reso: { nom: 'Résonant', court: 'RÉSONANT' },
   neutre: { nom: 'Spécial', court: 'SPÉCIAL' },

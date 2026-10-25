@@ -275,7 +275,7 @@ function regles(): string {
     + `<li><b>Le Coup d’éclat</b> : Flux plein, un seul par combat, au choix selon les lignées de l’escouade. ${(Object.values(ECLATS)).map((x) => `<b>${x.nom}</b> : ${x.texte}`).join(' ')} Le Porteur qui le déclenche prend ${REGLES.eclat.usure} d’Usure.</li>`
     + '<li><b>« 2 PL. »</b> : cette carte est puissante mais occupe deux places.</li>'
     + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.</li>'
-    + '<li><b>Le triangle des lignées :</b> Tech bat Résonant, Résonant bat Géné, Géné bat Tech (+15 %).</li>'
+    + '<li><b>Le triangle des lignées :</b> les Augmentés battent les Résonants, les Résonants battent les Génés, les Génés battent les Augmentés (+15 %).</li>'
     + '<li><b>L’ennemi annonce son attaque</b> en haut de l’écran : protège-toi ou finis-le avant.</li>'
     + '<li><b>Les traits</b> des ennemis sont écrits sous leur nom (Blindé, Évanescent, Épines…) : touche-les pour lire ce qu’ils font. Les gardiens changent de gestes à mi-vie et appellent de l’aide.</li>'
     + '<li><b>Les conditions de salle</b> (inondée, éboulis, brouillard…) s’affichent en haut, et sur la carte avant d’entrer.</li>'
