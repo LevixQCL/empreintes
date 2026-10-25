@@ -1,6 +1,6 @@
 # Rapport du robot d'équilibrage
 
-2026-10-25 · 300 expéditions par mesure · 450 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
+2026-10-25 · 300 expéditions par mesure · 447 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
 
 ## Le deck de départ selon la profondeur
 
@@ -21,7 +21,7 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Jambes à ressort | Fer | Élan | +0 | +0 |  |
 | Gant à arc | Fer | Surcharge | +13 | +0 | TROP FORTE |
 | Œil-relais | Fer | Perçant | +1 | +1 |  |
-| Grappin à câble | Fer | Élan | −6 | +2 |  |
+| Grappin à câble | Fer | Élan | +6 | +3 |  |
 | Cœur-turbine | Cuivre | Surcharge | +12 | +3 |  |
 | Œil-brouilleur | Cuivre | Désarmer | +15 | +3 |  |
 | Bras-grue | Argent | Perçant | +15 | +2 |  |
@@ -29,27 +29,27 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Lames orbitales | Or | Crescendo | +33 | +2 |  |
 | Cœur de reprise | Or | Perçant | +23 | +4 |  |
 | Glande d’ambre | Fer | Vague | +0 | +0 |  |
-| Crocs fossiles | Fer | Siphon | −10 | −3 | trop faible |
+| Crocs fossiles | Fer | Siphon | −1 | +1 |  |
 | Cuir de récif | Fer | Rempart | −3 | +2 |  |
-| Yeux nocturnes | Fer | Fissure | −15 | +1 | trop faible |
+| Yeux nocturnes | Fer | Fissure | +2 | +3 |  |
 | Poumons d’abysse | Cuivre | Rempart | +13 | +3 |  |
 | Branchies des Fondations | Cuivre | Rempart | +5 | +0 |  |
 | Carapace-mère | Argent | Rempart | +11 | +3 |  |
-| Sang d’ambre | Argent | Vague | +21 | +5 | TROP FORTE |
+| Sang d’ambre | Argent | Vague | +21 | +5 |  |
 | Cœur de meute | Or | Siphon | +29 | +3 |  |
 | Mue totale | Or | Vague | +30 | +6 |  |
 | Éclat qui chante | Fer | Crescendo | +0 | +0 |  |
 | Miroir de brume | Fer | Désarmer | +1 | +3 |  |
-| Encre ancienne | Fer | Fissure | +7 | +2 | TROP FORTE |
+| Encre ancienne | Fer | Fissure | +7 | +2 |  |
 | Mèche d’or | Fer | Désarmer | +1 | +3 |  |
-| Plume de givre | Cuivre | Désarmer | +18 | +3 | TROP FORTE |
+| Plume de givre | Cuivre | Désarmer | +18 | +3 |  |
 | Ombre de serpent | Cuivre | Fissure | +13 | +1 |  |
-| Ombre ailée | Argent | Fissure | −1 | +3 | trop faible |
+| Ombre ailée | Argent | Fissure | +9 | +0 |  |
 | Pressentiment | Argent | Désarmer | +18 | +2 |  |
 | Chant des abysses | Or | Accord | +17 | +4 | trop faible |
 | Souffle du wyrm | Or | Crescendo | +23 | +3 |  |
 
-Moyenne par rareté, à la découverte : Fer −1 · Cuivre +13 · Argent +12 · Or +26. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
+Moyenne par rareté, à la découverte : Fer +2 · Cuivre +13 · Argent +14 · Or +26. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
 
 
 ## Une Strate entière avec le deck de départ
@@ -78,15 +78,15 @@ Une partie entière, jouée par le joueur moyen pendant 45 jours sur 12 parties 
 | Strate | Occasionnel (2 expéditions par jour) | Assidu (5 expéditions par jour) |
 |---|---|---|
 | −2 | jour 1 (1 exp.) | jour 1 (1 exp.) |
-| −3 | jour 3 (4 exp.) | jour 3 (9 exp.) |
-| −4 | jour 5 (3 exp.) | jour 3 (2 exp.) |
-| −5 | jour 9 (10 exp.) | jour 5 (10 exp.) |
-| −6 | jour 14 (6 exp.) | jour 7 (10 exp.) |
-| −7 | jour 22 (16 exp.) | jour 10 (16 exp.) |
-| −8 | jour 27 (14 exp.) | jour 14 (22 exp.) |
-| −9 | jour 31 (10 exp.) | jour 19 (25 exp.) |
-| −10 | jour 40 (18 exp.) | jour 24 (30 exp.) |
-| −11 | — | jour 35 (54 exp.) |
-| −12 | — | jour 38 (38 exp.) |
+| −3 | jour 4 (5 exp.) | jour 2 (7 exp.) |
+| −4 | jour 4 (2 exp.) | jour 3 (4 exp.) |
+| −5 | jour 8 (8 exp.) | jour 5 (8 exp.) |
+| −6 | jour 11 (8 exp.) | jour 8 (14 exp.) |
+| −7 | jour 15 (8 exp.) | jour 10 (10 exp.) |
+| −8 | jour 19 (6 exp.) | jour 13 (18 exp.) |
+| −9 | jour 24 (9 exp.) | jour 17 (22 exp.) |
+| −10 | jour 30 (11 exp.) | jour 23 (23 exp.) |
+| −11 | — | jour 33 (33 exp.) |
+| −12 | — | jour 39 (30 exp.) |
 
-Victoires au front : Occasionnel 17 % · Assidu 12 %.
+Victoires au front : Occasionnel 24 % · Assidu 16 %.
