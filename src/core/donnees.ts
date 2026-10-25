@@ -80,33 +80,33 @@ export const MODULES: ModuleDef[] = [
   c('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', 'atk', 15, [7, 6, 8], { type: 'flux', v: 1 }),
   c('oeil-brouilleur', 'Œil-brouilleur', 'tech', 'cuivre', 'atk', 11, [6, 7, 5], { type: 'desarmer', part: 0.3 }),
   c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 36, [8, 6, 4], { type: 'percant' }, true),
-  c('dorsale', 'Dorsale renforcée', 'tech', 'argent', 'bouclier', 8, [3, 4, 7], { type: 'elan' }),
-  c('lames-orbitales', 'Lames orbitales', 'tech', 'or', 'atk', 30, [9, 3, 2], { type: 'crescendo', part: 0.4 }, true),
-  c('coeur-reprise', 'Cœur de reprise', 'tech', 'or', 'atk', 24, [6, 2, 5], { type: 'percant' }),
+  c('dorsale', 'Dorsale renforcée', 'tech', 'argent', 'bouclier', 20, [3, 4, 7], { type: 'elan' }),
+  c('lames-orbitales', 'Lames orbitales', 'tech', 'or', 'atk', 26, [9, 3, 2], { type: 'crescendo', part: 0.25 }, true),
+  c('coeur-reprise', 'Cœur de reprise', 'tech', 'or', 'atk', 28, [6, 2, 5], { type: 'percant' }),
 
   // ---------- Génés : Fréquences basses ----------
   c('glande-ambre', 'Glande d’ambre', 'bio', 'fer', 'soin', 7, [3, 2, 4], { type: 'vague' }),
-  c('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', 'atk', 23, [1, 3, 2], { type: 'siphon', part: 0.6 }),
+  c('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', 'atk', 15, [1, 3, 2], { type: 'siphon', part: 0.6 }),
   c('cuir-recif', 'Cuir de récif', 'bio', 'fer', 'bouclier', 11, [4, 5, 3], { type: 'rempart', part: 0.5 }),
-  c('yeux-nocturnes', 'Yeux nocturnes', 'bio', 'fer', 'atk', 18, [3, 4, 2], { type: 'fissure', part: 0.25 }),
+  c('yeux-nocturnes', 'Yeux nocturnes', 'bio', 'fer', 'atk', 14, [3, 4, 2], { type: 'fissure', part: 0.25 }),
   c('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', 'bouclier', 15, [2, 4, 3], { type: 'rempart', part: 0.5 }),
   c('branchies', 'Branchies des Fondations', 'bio', 'cuivre', 'bouclier', 13, [2, 1, 3], { type: 'rempart', part: 0.5 }),
   c('carapace-mere', 'Carapace-mère', 'bio', 'argent', 'bouclier', 14, [5, 6, 1], { type: 'rempart', part: 0.75 }),
   c('sang-ambre', 'Sang d’ambre', 'bio', 'argent', 'soin', 8, [3, 2, 5], { type: 'vague' }),
   c('coeur-meute', 'Cœur de meute', 'bio', 'or', 'atk', 11, [5, 4, 3], { type: 'siphon', part: 0.5 }),
-  c('mue-totale', 'Mue totale', 'bio', 'or', 'soin', 11, [1, 2, 4], { type: 'vague' }),
+  c('mue-totale', 'Mue totale', 'bio', 'or', 'soin', 25, [1, 2, 4], { type: 'vague' }),
 
   // ---------- Résonants : Fréquences hautes ----------
   c('eclat-chant', 'Éclat qui chante', 'reso', 'fer', 'atk', 13, [8, 7, 9], { type: 'crescendo', part: 0.3 }),
   c('miroir-brume', 'Miroir de brume', 'reso', 'fer', 'bouclier', 10, [8, 9, 7], { type: 'desarmer', part: 0.3 }),
   c('encre-ancienne', 'Encre ancienne', 'reso', 'fer', 'atk', 11, [6, 7, 5], { type: 'fissure', part: 0.25 }),
-  c('meche-or', 'Mèche d’or', 'reso', 'fer', 'bouclier', 9, [7, 8, 6], { type: 'desarmer', part: 0.3 }),
-  c('plume-givre', 'Plume de givre', 'reso', 'cuivre', 'atk', 13, [9, 8, 7], { type: 'desarmer', part: 0.4 }),
+  c('meche-or', 'Mèche d’or', 'reso', 'fer', 'bouclier', 11, [7, 8, 6], { type: 'desarmer', part: 0.3 }),
+  c('plume-givre', 'Plume de givre', 'reso', 'cuivre', 'atk', 11, [9, 8, 7], { type: 'desarmer', part: 0.4 }),
   c('ombre-serpent', 'Ombre de serpent', 'reso', 'cuivre', 'atk', 14, [9, 6, 8], { type: 'fissure', part: 0.3 }),
-  c('ombre-ailee', 'Ombre ailée', 'reso', 'argent', 'atk', 40, [9, 7, 8], { type: 'fissure', part: 0.4 }, true),
+  c('ombre-ailee', 'Ombre ailée', 'reso', 'argent', 'atk', 26, [9, 7, 8], { type: 'fissure', part: 0.4 }, true),
   c('pressentiment', 'Pressentiment', 'reso', 'argent', 'bouclier', 12, [7, 8, 6], { type: 'desarmer', part: 0.4 }),
   c('chant-abysses', 'Chant des abysses', 'reso', 'or', 'atk', 26, [7, 8, 9], { type: 'accord' }),
-  c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 30, [9, 8, 7], { type: 'crescendo', part: 0.5 }),
+  c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 22, [9, 8, 7], { type: 'crescendo', part: 0.3 }),
 ];
 
 /** Les 15 cartes de base (celles que les Porteurs nommés portent au départ, en plus de leur carte de départ) */
