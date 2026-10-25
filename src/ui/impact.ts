@@ -8,7 +8,7 @@
 
 import type { Evenement, LigneeGeste } from '../core/types';
 import { vibrer } from './toucher';
-import { ondeDeChoc } from './verre';
+import { echelleScene, ondeDeChoc } from './verre';
 
 const TEINTE: Record<LigneeGeste, string> = { tech: '#8FDCFF', bio: '#FFB44A', reso: '#B98CFF', neutre: '#EBD9A8' };
 const SOIN = '#7CE3A0';
@@ -25,6 +25,8 @@ let particules: Particule[] = [];
 let traits: Trait[] = [];
 let boucle = 0;
 let reduit = false;
+/** l'échelle des effets autour de l'ennemi (1 sur téléphone, plus sur PC : voir echelleScene) ; mise à jour à chaque événement */
+let ech = 1;
 /** la dernière carte jouée : son effet se déclenche à l'impact qui suit */
 let derniere: { lignee: LigneeGeste; rang: number; total: number; suite: number; type: string; effet?: string } | null = null;
 
@@ -171,10 +173,10 @@ function verre(x: number, y: number, n: number, couleur: string, force: number) 
   n = Math.min(n, MAX_PARTICULES - particules.length);
   for (let i = 0; i < n; i++) {
     const a = hasard(-Math.PI, 0.2) - 0.3; // surtout vers le haut et les côtés
-    const v = hasard(140, 260 + force * 40);
+    const v = hasard(140, 260 + force * 40) * ech;
     const vie = hasard(0.6, 1.1);
     const forme = [0, -1, hasard(0.4, 0.9), hasard(-0.2, 0.4), hasard(-0.1, 0.2), 1, hasard(-0.9, -0.4), hasard(-0.1, 0.3)];
-    particules.push({ x: x + hasard(-10, 10), y: y + hasard(-10, 10), vx: Math.cos(a) * v, vy: Math.sin(a) * v, vie, max: vie, taille: hasard(3, 5.5 + force * 0.4), couleur, gravite: 520, frein: 1.2, eclat: { angle: hasard(0, 6.28), tourne: hasard(-14, 14), forme } });
+    particules.push({ x: x + hasard(-10, 10), y: y + hasard(-10, 10), vx: Math.cos(a) * v, vy: Math.sin(a) * v, vie, max: vie, taille: hasard(3, 5.5 + force * 0.4) * Math.sqrt(ech), couleur, gravite: 520 * ech, frein: 1.2, eclat: { angle: hasard(0, 6.28), tourne: hasard(-14, 14), forme } });
   }
   lancerBoucle();
 }
@@ -187,9 +189,9 @@ function eclats(x: number, y: number, n: number, couleur: string, o: { vitesse?:
   n = Math.min(n, MAX_PARTICULES - particules.length);
   for (let i = 0; i < n; i++) {
     const a = (o.angle ?? 0) + hasard(-1, 1) * (o.ouverture ?? Math.PI);
-    const v = hasard(0.3, 1) * (o.vitesse ?? 260);
+    const v = hasard(0.3, 1) * (o.vitesse ?? 260) * ech;
     const vie = hasard(0.5, 1) * (o.vie ?? 0.7);
-    particules.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, vie, max: vie, taille: hasard(0.6, 1.2) * (o.taille ?? 3), couleur, gravite: o.gravite ?? 300, trainee: o.trainee, frein: o.frein ?? (o.trainee ? 3 : 1) });
+    particules.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, vie, max: vie, taille: hasard(0.6, 1.2) * (o.taille ?? 3) * Math.sqrt(ech), couleur, gravite: (o.gravite ?? 300) * ech, trainee: o.trainee, frein: o.frein ?? (o.trainee ? 3 : 1) });
   }
   lancerBoucle();
 }
@@ -244,7 +246,7 @@ function griffes(p: DOMPoint, couleur: string, force: number) {
   if (tex) {
     // la griffure peinte, révélée en un geste de haut en bas, un peu tournée au hasard
     const angle = hasard(-0.35, 0.35) + (Math.random() < 0.3 ? Math.PI / 2 : 0);
-    const larg = 120 + force * 18;
+    const larg = (120 + force * 18) * ech;
     const miroir = Math.random() < 0.5 ? -1 : 1;
     trait((c, k) => {
       const ouvert = Math.min(1, k * 3.2);
@@ -258,10 +260,10 @@ function griffes(p: DOMPoint, couleur: string, force: number) {
     return;
   }
   const angle = hasard(-0.9, -0.5) + (Math.random() < 0.5 ? 0 : Math.PI / 2.4);
-  const long = 70 + force * 14;
+  const long = (70 + force * 14) * ech;
   for (let i = 0; i < 3; i++) {
-    const dx = Math.cos(angle + Math.PI / 2) * (i - 1) * 16;
-    const dy = Math.sin(angle + Math.PI / 2) * (i - 1) * 16;
+    const dx = Math.cos(angle + Math.PI / 2) * (i - 1) * 16 * ech;
+    const dy = Math.sin(angle + Math.PI / 2) * (i - 1) * 16 * ech;
     trait((c, k) => {
       const ouvert = Math.min(1, k * 3);
       c.globalAlpha = 1 - k * k;
@@ -283,7 +285,7 @@ function ondes(p: DOMPoint, couleur: string, force: number) {
       const sens = Math.random() < 0.5 ? -1 : 1, depart = hasard(0, Math.PI * 2);
       trait((c, k) => {
         c.globalAlpha = (1 - k) * 0.95;
-        c.save(); sprite(c, tex, p.x, p.y, (60 + force * 12) * (0.5 + k * 1.6), depart + sens * k * 0.8); c.restore();
+        c.save(); sprite(c, tex, p.x, p.y, (60 + force * 12) * ech * (0.5 + k * 1.6), depart + sens * k * 0.8); c.restore();
       }, 560, i * 120);
     }
     eclats(p.x, p.y, 8 + force * 3, couleur, { vitesse: 90, gravite: -60, taille: 2.6, vie: 1.1 });
@@ -294,7 +296,8 @@ function ondes(p: DOMPoint, couleur: string, force: number) {
       c.globalAlpha = (1 - k) * 0.9;
       c.strokeStyle = couleur; c.shadowColor = couleur; c.shadowBlur = 16;
       c.lineWidth = 3 * (1 - k) + 1;
-      c.beginPath(); c.ellipse(p.x, p.y, 20 + k * (90 + force * 18), (20 + k * (90 + force * 18)) * 0.62, 0, 0, Math.PI * 2); c.stroke();
+      const r = (20 + k * (90 + force * 18)) * ech;
+      c.beginPath(); c.ellipse(p.x, p.y, r, r * 0.62, 0, 0, Math.PI * 2); c.stroke();
     }, 520, i * 110);
   }
   eclats(p.x, p.y, 8 + force * 3, couleur, { vitesse: 90, gravite: -60, taille: 2.6, vie: 1.1 });
@@ -304,9 +307,10 @@ function ondes(p: DOMPoint, couleur: string, force: number) {
 function comete(de: DOMPoint, a: DOMPoint, couleur: string) {
   trait((c, k) => {
     const x = de.x + (a.x - de.x) * k, y = de.y + (a.y - de.y) * k;
-    const g = c.createRadialGradient(x, y, 0, x, y, 14);
+    const r = 14 * Math.sqrt(ech);
+    const g = c.createRadialGradient(x, y, 0, x, y, r);
     g.addColorStop(0, '#fff'); g.addColorStop(0.3, couleur); g.addColorStop(1, 'transparent');
-    c.fillStyle = g; c.beginPath(); c.arc(x, y, 14, 0, Math.PI * 2); c.fill();
+    c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
   }, 170);
 }
 
@@ -347,13 +351,13 @@ function lance(de: DOMPoint, a: DOMPoint, couleur: string, force: number) {
   const dx = a.x - de.x, dy = a.y - de.y;
   const long = Math.hypot(dx, dy) || 1;
   const ux = dx / long, uy = dy / long;
-  const fin = new DOMPoint(a.x + ux * (90 + force * 20), a.y + uy * (90 + force * 20));
+  const fin = new DOMPoint(a.x + ux * (90 + force * 20) * ech, a.y + uy * (90 + force * 20) * ech);
   trait((c, k) => {
     const t = Math.min(1, k * 2.4);
     const x = de.x + (fin.x - de.x) * t, y = de.y + (fin.y - de.y) * t;
     c.globalAlpha = k < 0.5 ? 1 : 1 - (k - 0.5) * 2;
     c.lineCap = 'round';
-    c.strokeStyle = couleur; c.shadowColor = couleur; c.shadowBlur = 18; c.lineWidth = 5 + force;
+    c.strokeStyle = couleur; c.shadowColor = couleur; c.shadowBlur = 18; c.lineWidth = (5 + force) * Math.sqrt(ech);
     c.beginPath(); c.moveTo(de.x + (x - de.x) * 0.55, de.y + (y - de.y) * 0.55); c.lineTo(x, y); c.stroke();
     c.strokeStyle = '#fff'; c.lineWidth = 1.6; c.stroke();
   }, 300);
@@ -370,7 +374,7 @@ function fissures(p: DOMPoint) {
     let x = p.x, y = p.y;
     const pts: [number, number][] = [[x, y]];
     const seg = 4 + Math.floor(hasard(0, 3));
-    for (let j = 0; j < seg; j++) { a += hasard(-0.5, 0.5); const l = hasard(10, 20); x += Math.cos(a) * l; y += Math.sin(a) * l * 0.8; pts.push([x, y]); }
+    for (let j = 0; j < seg; j++) { a += hasard(-0.5, 0.5); const l = hasard(10, 20) * ech; x += Math.cos(a) * l; y += Math.sin(a) * l * 0.8; pts.push([x, y]); }
     chemins.push(pts);
   }
   trait((c, k) => {
@@ -443,7 +447,7 @@ function crescendo(p: DOMPoint, rang: number) {
   trait((c, k) => {
     c.globalAlpha = (1 - k) * 0.9;
     c.strokeStyle = '#F3D27A'; c.shadowColor = '#FFB44A'; c.shadowBlur = 16; c.lineWidth = 2 + rang;
-    c.beginPath(); c.arc(p.x, p.y, 16 + k * (50 + rang * 22), 0, Math.PI * 2); c.stroke();
+    c.beginPath(); c.arc(p.x, p.y, (16 + k * (50 + rang * 22)) * ech, 0, Math.PI * 2); c.stroke();
   }, 480);
 }
 
@@ -459,7 +463,7 @@ const MAX_SUSPENDUS = 7;
 
 /** Les places des cristaux : un arc au-dessus de l'ennemi, du centre vers les bords */
 function place(p: DOMPoint, i: number): DOMPoint {
-  const r = Math.min(160, innerWidth * 0.32);
+  const r = Math.min(160 * ech, innerWidth * 0.32);
   const cote = i % 2 ? 1 : -1, pas = Math.ceil(i / 2);
   const a = -Math.PI / 2 + cote * pas * 0.42;
   return new DOMPoint(p.x + Math.cos(a) * r, p.y + Math.sin(a) * r * 0.36);
@@ -502,7 +506,7 @@ function dessinerSuspendus(c: CanvasRenderingContext2D, t: number) {
   for (const s of suspendus) {
     const [x, y, k] = ou(s, t);
     const pulse = 0.85 + Math.sin((t / 1000) * 5 + s.phase) * 0.15;
-    cristal(c, x, y, 7 * (0.5 + k * 0.5), Math.sin((t / 1000) * 1.3 + s.phase) * 0.25, s.couleur, pulse);
+    cristal(c, x, y, 7 * Math.pow(ech, 0.8) * (0.5 + k * 0.5), Math.sin((t / 1000) * 1.3 + s.phase) * 0.25, s.couleur, pulse);
   }
 }
 
@@ -530,7 +534,7 @@ function converger(p: DOMPoint): number {
   suspendus.forEach((s, i) => {
     const [x0, y0] = ou(s, t);
     // une courbe : le cristal recule un peu avant de plonger
-    const cx = x0 + (x0 - p.x) * 0.35, cy = y0 - 30;
+    const cx = x0 + (x0 - p.x) * 0.35, cy = y0 - 30 * ech;
     trait((c, k) => {
       const e = k * k;
       const x = (1 - e) * (1 - e) * x0 + 2 * (1 - e) * e * cx + e * e * p.x;
@@ -540,9 +544,9 @@ function converger(p: DOMPoint): number {
         const ej = Math.max(0, e - j * 0.06);
         const xj = (1 - ej) * (1 - ej) * x0 + 2 * (1 - ej) * ej * cx + ej * ej * p.x;
         const yj = (1 - ej) * (1 - ej) * y0 + 2 * (1 - ej) * ej * cy + ej * ej * p.y;
-        halo(c, xj, yj, 10 - j * 2, s.couleur, 0.5 - j * 0.1);
+        halo(c, xj, yj, (10 - j * 2) * ech, s.couleur, 0.5 - j * 0.1);
       }
-      cristal(c, x, y, 7, Math.atan2(p.y - y, p.x - x) + Math.PI / 2, s.couleur, 1);
+      cristal(c, x, y, 7 * Math.pow(ech, 0.8), Math.atan2(p.y - y, p.x - x) + Math.PI / 2, s.couleur, 1);
     }, vol, i * ecart);
   });
   suspendus = [];
@@ -554,7 +558,7 @@ function converger(p: DOMPoint): number {
     const force = Math.min(6, 2 + n);
     ondeDeChoc(ici.x, ici.y, OR, force);
     const etoile = pret('impact');
-    const rayon = 60 + n * 18;
+    const rayon = (60 + n * 18) * ech;
     trait((c, k) => {
       c.globalAlpha = k < 0.2 ? 1 : 1 - (k - 0.2) / 0.8;
       if (etoile) { c.save(); sprite(c, etoile, ici.x, ici.y, rayon * 2.4 * (0.7 + k * 0.5), k * 0.4); c.restore(); }
@@ -728,6 +732,8 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
   const ennemi = racine.querySelector('.scene-ennemi .ennemi-art');
   const scene = racine.querySelector('.scene-ennemi');
   const pEnnemi = centre(ennemi ?? scene, -0.08);
+  const rs = scene?.getBoundingClientRect();
+  if (rs) ech = echelleScene(rs.width, rs.height);
   switch (ev.kind) {
     case 'ennemi-agit': {
       dissiper();
@@ -791,7 +797,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         if (pEnnemi && !dernierCoup && derniere?.type === 'atk') suspendre(pEnnemi, couleur);
         if (pEnnemi) {
           // l'éclair blanc de l'impact, plus large à chaque carte de la chaîne
-          const rayon = 34 + force * 14;
+          const rayon = (34 + force * 14) * ech;
           const etoile = pret('impact');
           if (etoile) {
             const angle = hasard(0, Math.PI * 2);
