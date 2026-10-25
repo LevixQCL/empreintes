@@ -47,3 +47,11 @@
 .apport.actif strong{color:var(--gold)}
 .apport.actif small{color:var(--ink-2)}
 
+
+/* ---------- Lumière de lignée (25 octobre 2026) ----------
+   Les portraits peints baignent tous dans la même lueur de lanterne : la lignée se lit donc à la lumière qui monte
+   du bas du cadre et à l'arête de glace teintée, sans repeindre l'illustration. */
+.pt-portrait::before,.me-portrait::before,.es-portrait::before,.fp-heros::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(transparent 35%,color-mix(in srgb,var(--c) 55%,transparent));mix-blend-mode:screen}
+.pt-portrait>:not(img),.me-portrait>:not(img),.es-portrait>:not(img){z-index:2}
+.fp-heros::before{background:linear-gradient(transparent 40%,color-mix(in srgb,var(--c) 45%,transparent) 88%,transparent)}

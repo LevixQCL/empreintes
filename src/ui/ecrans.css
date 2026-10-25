@@ -14,11 +14,11 @@
 .pt-tuile:focus-visible{outline:1px solid var(--x-glace);outline-offset:4px}
 .pt-portrait{position:relative;display:grid;place-items:center;width:100%;aspect-ratio:3/4;border-radius:4px;overflow:hidden;
   background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 32%,#141A2E),#0B0F1C 75%);
-  box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 35%,transparent),0 10px 22px rgba(0,0,0,.45);transition:transform .18s,box-shadow .18s}
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 85%,white),0 12px 26px rgba(0,0,0,.5),0 0 18px color-mix(in srgb,var(--c) 38%,transparent);transition:transform .18s,box-shadow .18s}
 .pt-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;transition:transform .3s;
   -webkit-mask-image:linear-gradient(#000 52%,transparent 97%);mask-image:linear-gradient(#000 52%,transparent 97%)}
 .pt-portrait::after{content:"";position:absolute;left:8%;right:8%;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.7}
-.pt-tuile:hover .pt-portrait{box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 70%,white),0 14px 28px rgba(0,0,0,.5),0 0 22px color-mix(in srgb,var(--c) 28%,transparent)}
+.pt-tuile:hover .pt-portrait{box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 60%,white),0 14px 28px rgba(0,0,0,.5),0 0 26px color-mix(in srgb,var(--c) 50%,transparent)}
 .pt-tuile:hover .pt-portrait img{transform:scale(1.04)}
 .pt-tuile:active .pt-portrait{transform:scale(.98)}
 .pt-nom{position:absolute;left:0;right:0;bottom:0;display:grid;gap:2px;padding:0 10px 10px}
