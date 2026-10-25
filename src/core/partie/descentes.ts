@@ -11,6 +11,7 @@ import { graine, tireur } from '../rng';
 import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, confier, enExpedition, enMission, escouadeDe, gagnerXp, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
 import { chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, quitterPostes, refus } from './recompenses';
+import { noterCombat, noterExpedition } from './stats';
 
 // ---------- Expéditions ----------
 
@@ -311,6 +312,7 @@ export function fuirSalle(j: Jeu): Resultat {
   if (!j.expedition) return non('Aucune expédition en cours.');
   const r = reculer(j.expedition);
   if (!r.ok) return non(r.message ?? 'Impossible de reculer.');
+  noterCombat(j, j.expedition.combat, 'fuite');
   j.expedition = r.x;
   return { ok: true };
 }
@@ -320,12 +322,15 @@ export function fuir(j: Jeu): Resultat {
   if (!j.expedition) return non('Aucune expédition en cours.');
   const r = fuirAuDistrict(j.expedition);
   if (!r.ok) return non(r.message ?? 'Impossible de fuir.');
+  noterCombat(j, j.expedition.combat, 'fuite');
   j.expedition = r.x;
   return { ok: true };
 }
 
 export function finDeCombat(j: Jeu): void {
   if (!j.expedition) return;
+  const c = j.expedition.combat;
+  if (c.issue === 'victoire' || c.issue === 'defaite') noterCombat(j, c, c.issue);
   j.expedition = cloturerCombat(j.expedition);
 }
 
@@ -349,6 +354,7 @@ export function remonter(j: Jeu): Retour {
   if (!x) return { butin: 0, nouvelleStrate: false, victoire: false, fragment: null, cartes: [], eclats: 0 };
   const victoire = x.terminee && !x.retraite && x.combat.issue === 'victoire';
   const defaite = x.combat.issue === 'defaite' && !x.retraite;
+  if (!x.tutoriel) noterExpedition(j, x.strate, victoire && !x.fouille && !x.epreuve ? 'gardien' : defaite ? 'defaite' : x.fuite ? 'fuite' : x.retraite ? 'retraite' : 'autre');
   const brut = defaite ? Math.floor(x.butin * DISTRICT.butinDefaite) : x.fuite ? Math.floor(x.butin * DISTRICT.butinFuite) : x.butin;
   const butin = x.tutoriel ? brut : Math.round(brut * (j.actes.chambre === 'district' ? 1.2 : 1) * (j.actes.fin === 'pacte' ? 1.1 : 1));
   j.composants += butin;

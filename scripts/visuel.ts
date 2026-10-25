@@ -58,6 +58,8 @@ async function main() {
   mkdirSync(sortie, { recursive: true });
   // la version de référence, dans un dossier à part (git worktree)
   const avant = resolve(sortie, 'reference');
+  // une exécution interrompue a pu laisser l'ancien dossier enregistré : on fait le ménage d'abord
+  git('worktree', 'prune');
   git('worktree', 'add', '--detach', avant, ref);
   try {
     if (!existsSync(resolve(avant, 'node_modules'))) symlinkSync(resolve(racine, 'node_modules'), resolve(avant, 'node_modules'));
@@ -86,6 +88,8 @@ async function main() {
           const photos: Buffer[] = [];
           for (const port of [4401, 4402]) {
             const ctx = await navigateur.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1, reducedMotion: 'reduce' });
+            // aucun accès à Firebase : les tests ne créent pas de comptes et n'écrivent rien dans les vraies données (les polices restent)
+            await ctx.route(/identitytoolkit\.googleapis|securetoken\.googleapis|firestore\.googleapis|firebaseinstallations\.googleapis|firebaseapp\.com/, (r) => r.abort());
             // tsx ajoute un petit outil (__name) dans les fonctions envoyées à la page : on le fournit
             await ctx.addInitScript({ content: 'window.__name = (f) => f;' });
             const p = await ctx.newPage();

@@ -4,7 +4,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const COUCHES = ['etat', 'objectifs', 'district', 'recompenses', 'descentes', 'temps', 'nouvelle'];
+const COUCHES = ['etat', 'stats', 'objectifs', 'district', 'recompenses', 'descentes', 'temps', 'nouvelle'];
 const dossier = resolve(import.meta.dirname, '../src/core/partie');
 
 describe('Couches de src/core/partie', () => {

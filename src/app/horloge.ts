@@ -3,7 +3,7 @@
 import * as J from '../core/jeu';
 import { duree } from '../ui/coquille';
 import { comparer, montrer, relever } from '../ui/gains';
-import { app, D, racine } from './etat';
+import { app, compteEtat, D, racine } from './etat';
 import { afficher } from './rendu';
 import { sauver } from './synchro';
 
@@ -30,6 +30,13 @@ export function battre() {
   // l'état d'avant n'est relevé qu'au district : c'est le seul écran qui montre ce que le temps a rapporté
   const avantTick = app.mode === 'district' ? relever(app.jeu) : null;
   const nouvelles = J.tick(app.jeu, now);
+  // statistiques : le temps compte quand l'écran est affiché et que le joueur a touché quelque chose depuis moins de 2 minutes
+  const u = compteEtat.utilisateur;
+  J.noterTemps(app.jeu, now, {
+    actif: !document.hidden && now - app.dernierGeste < 120_000,
+    appareil: matchMedia('(min-width: 1100px)').matches ? 'pc' : 'telephone',
+    compte: !u ? 'aucun' : u.anonyme ? 'invisible' : 'protege',
+  });
   if (nouvelles.length) { D.message = nouvelles[0]!; sauver(); }
   if (app.mode !== 'district') return;
   const fini = majDecomptes(now);

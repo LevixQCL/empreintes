@@ -5,6 +5,8 @@ service cloud.firestore {
     // (lecture, écriture et suppression séparées : request.resource n'existe pas à la lecture)
     match /saves/{uid} {
       allow get, delete: if request.auth != null && request.auth.uid == uid;
+      // l'outil d'analyse (analyse.html, 25 octobre 2026) : lecture seule de toutes les sauvegardes, pour un seul compte Google
+      allow get, list: if estAdmin();
       allow create, update: if request.auth != null && request.auth.uid == uid
         && request.resource.data.keys().hasOnly(['data', 'updatedAt', 'version']);
     }
@@ -38,6 +40,10 @@ service cloud.firestore {
       allow update: if request.auth != null && resource.data.uid == request.auth.uid && pseudoValide(cle, request.resource.data)
         && request.resource.data.uid == resource.data.uid && request.resource.data.le == resource.data.le;
       allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+
+    function estAdmin() {
+      return request.auth != null && request.auth.token.email == 'houben.bryan@gmail.com' && request.auth.token.email_verified == true;
     }
 
     function pseudoValide(cle, d) {

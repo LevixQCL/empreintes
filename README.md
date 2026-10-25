@@ -19,6 +19,7 @@ Autres commandes :
 | `npm run build` | Construit le site dans `dist/` |
 | `npm run visuel` | Compare les écrans avant / après une modification (téléphone et PC) : voir `.visuel/` |
 | `npm run css` | Repère le CSS inutile (déclarations toujours écrasées, règles en double) ; `-- --ecrire` le nettoie |
+| `analyse.html` | L'outil d'analyse (page à part, jamais chargée par le jeu) : joueurs actifs, rétention, progression, combats, cartes, export anonymisé. Réservé au compte de Bryan |
 | `npm run robot` | Lance le robot d'équilibrage (quelques minutes) et écrit `docs/robot-rapport.md` |
 
 Chaque `git push` sur `main` lance les tests, construit le site et le publie sur GitHub Pages.
@@ -37,6 +38,7 @@ src/
     jeu.ts         le point d'entrée de la partie ; le code est rangé par thème dans partie/ :
       (en couches : chaque fichier n'utilise que ceux d'au-dessus ; tests/couches.test.ts le vérifie)
       partie/etat.ts         réglages du district, types, expérience et Marques, Confiance, creuseurs, escouade
+      partie/stats.ts        les statistiques pour l'équilibrage (rangées dans la sauvegarde, lues par analyse.html)
       partie/objectifs.ts    les objectifs guidés
       partie/district.ts     chantiers, Forge, postes, cartes confiées, creuseurs, entraînement, Comptoir, quotidiens
       partie/recompenses.ts  kit des recrues, lectures et Ravitaillement, nouveautés
@@ -56,6 +58,7 @@ src/
     bureau.css     la mise en page PC (à partir de 1100 px de large) : rail à gauche, tableaux en pleine hauteur ; le téléphone n’en dépend pas
   save/          la sauvegarde sur l'appareil
   net/           Firebase : comptes et synchronisation (optionnel)
+  analyse/       l'outil d'analyse (analyse.html) : calculs.ts (testé) et la page
   app/           l'application : relie les règles (core) et l'affichage (ui)
     etat.ts        l'état partagé : la partie en cours (app.jeu), l'écran affiché, l'état du district, du combat, du Grand Tableau
     rendu.ts       redessine l'écran courant
