@@ -118,6 +118,33 @@
   .ecran-combat > .actions-combat{grid-area:actions;margin:0;padding:0;background:none}
   .ennemi-nom{font-size:34px}
   .intention{top:16px;left:16px}
+  /* sur PC, la scène de l'ennemi est deux fois plus grande que sur téléphone : ce qu'on y lit grandit avec elle */
+  .ecran-combat .intention{--cut:10px;top:20px;left:20px;gap:13px;padding:9px 18px 9px 9px}
+  .ecran-combat .int-ico{width:46px;height:50px}
+  .ecran-combat .int-ico .ico{width:24px;height:24px}
+  .ecran-combat .int-txt{font-size:19px;line-height:1.2}
+  .ecran-combat .int-txt small{font-size:11px}
+  .ecran-combat .int-felure{padding:5px 9px 4px}
+  .ecran-combat .int-felure .ico{width:18px;height:18px}
+  .ecran-combat .int-felure b{font-size:19px}
+  .ecran-combat .int-felure small{font-size:10px}
+  .ecran-combat .ennemi-infos{left:20px;right:20px;bottom:18px;gap:8px}
+  .ecran-combat .ennemi-infos .tag{padding:4px 9px;font-size:12px}
+  .ecran-combat .ennemi-infos .faible{font-size:15px}
+  .ecran-combat .traits .trait{padding:3px 9px;font-size:12px}
+  .ecran-combat .vie-ennemi .jauge-vie.je{--h:24px}
+  .ecran-combat .je-valeur{min-width:84px;padding:4px 10px}
+  .ecran-combat .je-valeur b{font-size:18px}
+  .ecran-combat .je-valeur small{font-size:12px}
+  /* les ennemis d'un groupe : médaillons et intentions plus grands */
+  .ecran-combat .groupe-ennemis{top:20px;right:20px;gap:12px}
+  .ecran-combat .vignette-ennemi{width:78px}
+  .ecran-combat .vignette-ennemi img,.ecran-combat .vignette-ennemi .vg-sans{width:70px;height:70px}
+  .ecran-combat .vg-int{top:50px;font-size:13.5px;padding:2px 6px 2px 4px}
+  .ecran-combat .vg-int .ico{width:14px;height:14px}
+  .ecran-combat .vg-vie{width:66px;height:6px;margin-top:10px}
+  .ecran-combat .scene-ennemi.en-groupe .intention{max-width:calc(100% - 40px - var(--ng,3) * 90px)}
+  .ecran-combat .scene-ennemi .pop{font-size:calc(42px * var(--ps,1))}
   .zone-chaine > .rail,.zone-main > .main{zoom:1}
   .zone-main > .main{justify-content:center;overflow:visible;padding-top:8px}
   .geste.main:not(:disabled){transition:transform .15s ease,filter .15s ease}
@@ -200,6 +227,19 @@
   .ecran > .contenu{max-width:1400px}
 }
 @media (min-width:1700px) and (min-height:1000px){ .zone-chaine > .rail,.zone-main > .main{zoom:1.75} }
+/* grand écran : la scène de l'ennemi fait près de 1000 px de haut, l'intention et le nom suivent */
+@media (min-width:1700px) and (min-height:900px){
+  .ecran-combat .intention{top:26px;left:26px;gap:15px;padding:11px 22px 11px 11px}
+  .ecran-combat .int-ico{width:54px;height:59px}
+  .ecran-combat .int-ico .ico{width:28px;height:28px}
+  .ecran-combat .int-txt{font-size:23px}
+  .ecran-combat .int-txt small{font-size:12px}
+  .ecran-combat .int-felure b{font-size:22px}
+  .ecran-combat .ennemi-infos{left:26px;right:26px;bottom:24px}
+  .ecran-combat .ennemi-nom{font-size:42px}
+  .ecran-combat .ennemi-infos .faible{font-size:17px}
+  .ecran-combat .je-valeur b{font-size:21px}
+}
 
 /* ================= Combat sur PC : l'escouade en portraits, des cartes de chaîne lisibles (22 octobre 2026) =================
    Bryan trouvait la ligne d'escouade trop pauvre sur PC (une pastille, un nom, une barre fine) avec un grand vide au-dessus de la main.
