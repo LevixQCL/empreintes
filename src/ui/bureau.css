@@ -191,7 +191,7 @@
 
 /* Les cartes du combat grandissent avec la hauteur de l'écran (la chaîne et la main doivent tenir sans défiler) */
 @media (min-width:1100px) and (min-height:720px){ .ecran-combat{row-gap:12px;padding:20px 36px 24px} .zone-chaine > .rail,.zone-main > .main{zoom:1.2} }
-@media (min-width:1100px) and (min-height:800px){ .zone-chaine > .rail,.zone-main > .main{zoom:1.5} }
+@media (min-width:1100px) and (min-height:860px){ .zone-chaine > .rail,.zone-main > .main{zoom:1.5} }
 @media (min-width:1100px) and (min-height:880px){ .zone-chaine > .rail,.zone-main > .main{zoom:1.6} }
 
 /* Très grands écrans : un peu plus d'air */
