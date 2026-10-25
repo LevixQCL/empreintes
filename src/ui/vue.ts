@@ -325,6 +325,33 @@ export function htmlLieu(x: Expedition): string {
  * Combat à plusieurs (décision du 22 octobre 2026) : une vignette par ennemi, en haut à droite de la scène.
  * Toucher une vignette vise cet ennemi : toute la chaîne le frappera. La grande scène montre toujours l'ennemi visé.
  */
+/**
+ * L'intention de l'ennemi visé, en plaque (26 octobre 2026) : ce qu'il prépare en petit, sur qui en clair (avec le portrait),
+ * et la valeur en grand à droite. La phrase complète reste pour les lecteurs d'écran.
+ */
+function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtml: string): string {
+  const it = s.intention;
+  let nom = '', quoi = '', val = '', unite = '';
+  if (it.type === 'atk') {
+    nom = it.nom;
+    val = String(Math.round(it.v * puissance(s.ennemi) * usureCombat(s).attaque));
+    unite = 'dégâts';
+    if (it.zone) quoi = `<span class="int-qui">${s.porteurs.filter((p) => p.pv > 0).map((p) => { const im = portrait(p.id); return im ? `<img src="${im}" alt="" style="--c:${COULEUR[porteurDef(p.id).lignee]}">` : ''; }).join('')}</span>Toute l’escouade`;
+    else if (it.cibleId) {
+      const d = porteurDef(it.cibleId), im = portrait(it.cibleId);
+      quoi = `<span class="int-qui">${im ? `<img src="${im}" alt="" style="--c:${COULEUR[d.lignee]}">` : ''}</span>${echap(d.nom)}`;
+    } else quoi = '?';
+  } else if (it.type === 'bouclier') { nom = 'Se protège'; quoi = 'Bouclier'; val = `+${it.v}`; unite = 'bouclier'; }
+  else if (it.type === 'soin') { nom = it.nom; quoi = 'Se répare'; val = `+${it.v}`; unite = 'PV'; }
+  else if (it.type === 'boost') { nom = 'Se concentre'; quoi = 'Prochaine attaque'; val = '×2'; unite = 'dégâts'; }
+  else { nom = it.nom; quoi = 'Pas de Résonance au tour suivant'; }
+  return `<div class="intention plaque-int ${classe}" aria-live="polite" aria-label="${echap(texteIntention(s))}">`
+    + `<span class="int-ico">${icone}</span>`
+    + `<span class="int-corps" aria-hidden="true"><small class="int-nom">${echap(nom)}</small><span class="int-quoi">${it.type === 'atk' ? '<i class="int-fleche"></i>' : ''}${quoi}</span></span>`
+    + (val ? `<span class="int-val" aria-hidden="true"><b>${val}</b><small>${unite}</small></span>` : '')
+    + felureHtml + '</div>';
+}
+
 function vignettesGroupe(e: Ecran): string {
   const s = e.etat;
   if (!enGroupe(s)) return '';
@@ -407,7 +434,7 @@ function htmlEcranCombat(e: Ecran): string {
   const prevue = felF !== undefined && fs.includes(felF);
   const felureHtml = s.ennemi.felure === undefined || brume || s.ennemi.pv <= 0 ? ''
     : s.ennemi.felureBrisee ? `<span class="int-felure brisee" title="Fêlure brisée">${ICO.fele}<small>BRISÉE</small></span>`
-    : !felureVisible(s.ennemi) ? `<span class="int-felure cachee" title="Fêlure cachée : un évanescent ne la montre pas" aria-label="Fêlure cachée">${ICO.fele}<b>?</b></span>`
+    : !felureVisible(s.ennemi) ? `<span class="int-felure cachee" title="Fêlure cachée : un évanescent ne la montre pas" aria-label="Fêlure cachée">${ICO.fele}<small>CACHÉE</small></span>`
     : `<span class="int-felure${prevue ? ' prevue' : ''}" style="--fc:${couleurFrequence(s.ennemi.felure)}" title="${echap(`Fêlure : une carte de Fréquence ${s.ennemi.felure} dans la chaîne brise cette intention et remplit le Flux`)}" aria-label="${echap(`Fêlure ${s.ennemi.felure}${prevue ? ', ta chaîne va la briser' : ''}`)}">${ICO.fele}<b>${s.ennemi.felure}</b></span>`;
   const brise = (g: Geste) => felF !== undefined && g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(felF);
 
@@ -435,7 +462,7 @@ function htmlEcranCombat(e: Ecran): string {
     + vignettesGroupe(e)
     + (s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours'
       ? `<div class="intention brume" aria-live="polite"><span class="int-ico">?</span><span class="int-txt"><small>BROUILLARD</small>Pose une carte pour la lire</span></div>`
-      : `<div class="intention ${classeIntention}" aria-live="polite"><span class="int-ico">${iconeIntention}</span><span class="int-txt"><small>INTENTION</small>${echap(texteIntention(s))}</span>${felureHtml}</div>`)
+      : plaqueIntention(s, classeIntention, iconeIntention, felureHtml))
     + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
     + `<h2 class="ennemi-nom">${echap(def.nom)}${s.ennemi.phase2 && def.phase ? ` <small class="phase">· ${echap(def.phase.nom)}</small>` : ''}</h2>`
     + (!s.ennemi.simple && def.traits?.length ? `<div class="traits">${def.traits.map((t) => { const x = texteTrait(t); return `<span class="trait" tabindex="0" title="${echap(x.texte)}" aria-label="${echap(`${x.nom} : ${x.texte}`)}">${echap(x.nom)}</span>`; }).join('')}</div>` : '')

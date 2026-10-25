@@ -314,3 +314,34 @@
 @media (prefers-reduced-motion: reduce){ .int-felure.prevue,.btn-eclat{animation:none} }
 /* l'onde de choc qui plie l'image de l'ennemi (verre.ts) : juste au-dessus de l'image, sous tout le reste */
 .calque-verre{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+/* ---------- L'intention en plaque (26 octobre 2026) : ce qu'il prépare, sur qui, et combien ---------- */
+.plaque-int{gap:10px;padding:6px 6px 6px 6px}
+.int-corps{display:grid;gap:2px;min-width:0}
+.int-nom{font:600 9.5px/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--quiet);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.plaque-int.danger .int-nom{color:#ffb3a3}
+.plaque-int.garde .int-nom{color:#cfe6ff}
+.plaque-int.boost .int-nom{color:var(--laiton)}
+.int-quoi{display:flex;align-items:center;gap:6px;min-width:0;font-size:14.5px;font-weight:600;line-height:1.15;color:var(--ink)}
+.int-fleche{flex-shrink:0;width:14px;height:8px;background:currentColor;opacity:.55;clip-path:polygon(0 35%,60% 35%,60% 0,100% 50%,60% 100%,60% 65%,0 65%)}
+.int-qui{display:flex;flex-shrink:0}
+.int-qui img{width:24px;height:24px;border-radius:50%;object-fit:cover;object-position:50% 18%;background:#141826;
+  box-shadow:0 0 0 1.5px var(--c,#fff),0 0 0 3px rgba(8,10,20,.9),0 0 10px color-mix(in srgb,var(--c,#fff) 60%,transparent)}
+.int-qui img + img{margin-left:-7px}
+.int-val{display:grid;justify-items:center;align-content:center;gap:1px;align-self:stretch;min-width:44px;padding:0 4px 0 11px;border-left:1px solid var(--glace-3,rgba(205,239,255,.25))}
+.int-val b{font:700 24px/1 var(--display);color:#fff;font-variant-numeric:tabular-nums}
+.int-val small{font:600 8.5px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--quiet)}
+.plaque-int.danger .int-val b{color:#ffe1d9;text-shadow:0 0 12px rgba(255,90,70,.85),0 2px 4px #000}
+.plaque-int.garde .int-val b{text-shadow:0 0 12px rgba(150,200,255,.8),0 2px 4px #000}
+.plaque-int.boost .int-val b{color:#ffe7b0;text-shadow:0 0 12px rgba(216,180,101,.85),0 2px 4px #000}
+.plaque-int .int-felure{align-self:center}
+.int-felure.cachee small{color:var(--ink-2)}
+/* sur téléphone, « Faible contre » passe à droite du nom (l'étiquette de famille s'efface) : une ligne de gagnée,
+   et l'intention ne chevauche plus le bas de la scène sur les téléphones de 844 px de haut */
+@media (max-width:899px){
+  .ennemi-infos{grid-template-columns:minmax(0,auto) minmax(0,1fr);column-gap:10px}
+  .ennemi-infos > *{grid-column:1 / -1}
+  .ennemi-infos > .ennemi-nom{grid-column:1;grid-row:1}
+  .ennemi-infos > .tags{grid-column:2;grid-row:1;justify-self:end;align-self:end;padding-bottom:2px}
+  .ennemi-infos .tags .tag{display:none}
+}
