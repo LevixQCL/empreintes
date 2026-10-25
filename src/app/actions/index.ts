@@ -27,7 +27,7 @@ export async function agir(ev: MouseEvent) {
   // ce que le joueur reçoit grâce à cette action (comparé après le rendu, en bas de ce gestionnaire)
   const avantGains = relever(app.jeu);
   const depart = ev.detail === 0 ? centreDe(b) : app.touche;
-  D.message = a === 'poster' || a === 'liberer' || a === 'fabriquer' || a === 'ameliorer' || a === 'choisir' || a === 'greffer' || a === 'monter' || a === 'carte' || a === 'colis' || a === 'chapitre' ? D.message : '';
+  D.message = a === 'poster' || a === 'liberer' || a === 'fabriquer' || a === 'ameliorer' || a === 'greffer' || a === 'monter' || a === 'carte' || a === 'colis' || a === 'chapitre' ? D.message : '';
   const c: Clic = { b, ev, id, x, s, avantGains };
   let suite: Suite = 'inconnu';
   for (const theme of THEMES) {

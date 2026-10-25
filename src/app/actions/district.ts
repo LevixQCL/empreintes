@@ -117,11 +117,8 @@ export function agirDistrict(a: string, c: Clic): Suite {
       break;
     }
     case 'mission': resultat(J.envoyerMission(app.jeu, id, (b.dataset.duree as J.DureeMission) ?? 'courte', Date.now())); break;
-    case 'choisir':
-      if (D.escouade.includes(id)) D.escouade = D.escouade.filter((p) => p !== id);
-      else if (D.escouade.length < 3) D.escouade = [...D.escouade, id];
-      else D.message = 'Trois Porteurs maximum : retires-en un d’abord.';
-      break;
+    // depuis l'écran de départ : on compose les escouades dans l'onglet Escouade, sur celle qui descend
+    case 'escouade-modifier': ouvrir('porteurs'); D.vueEscouade = J.escouadeActive(app.jeu); window.scrollTo(0, 0); break;
     case 'partir': {
       const r = D.epreuve ? J.partirEpreuve(app.jeu, D.escouade, D.epreuve, Date.now())
         : D.fouille ? J.fouiller(app.jeu, D.escouade, D.strateChoisie, D.fouille)
