@@ -1,16 +1,16 @@
-// Les descentes : expéditions, escouade, missions, exploration des Strates, chambre scellée, résumé du retour.
+// Couche 5 — les descentes : départs (expédition, fouille ciblée, Épreuve), escouade, missions, exploration des Strates, chambre scellée.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { BATIMENTS, CARTE_CHAMBRE, GESTES_SPECIAUX, MODULES, PORTEURS, batimentDef, moduleDe, moduleDef, porteurDef, ennemiDef } from '../donnees';
+import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, GESTES_SPECIAUX, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
+import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, forceStrate, nouvelleExploration, type CibleFouille } from '../expedition';
+import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
 import { COLLECTION, ajouterCarte, cartesEnJeu, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
-import { cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, type Expedition } from '../expedition';
 import { graine, tireur } from '../rng';
-import type { GesteDef, PorteurEtat, Rarete } from '../types';
-import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, DISTRICT, type Jeu, LECTURE_PROFONDE, type Poste, type Resultat, XP, confier, enExpedition, enMission, gagnerXp, log, niveauPorteur, non, progresMarque, pvMaxCombat, stockage, usureMax } from './etat';
+import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, confier, enExpedition, enMission, escouadeDe, gagnerXp, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
 import { chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
-import { FILON_COMPOSANTS, donnerKitRecrues, estLignee, strateVaincue } from './recompenses';
+import { donnerKitRecrues, quitterPostes, refus } from './recompenses';
 
 // ---------- Expéditions ----------
 
@@ -71,11 +71,6 @@ export function avancerFils(j: Jeu): string[] {
 
 const accordOuvertPret = (j: Jeu) => j.batiments.clinique >= ACCORD_OUVERT.clinique && (j.confiance ?? 50) >= ACCORD_OUVERT.confiance;
 
-/** Les Porteurs présents au district (les recrues n'arrivent qu'après la chambre scellée) */
-export function porteursPresents(j: Jeu): string[] {
-  return PORTEURS.filter((p) => (p.arrivee ? j.arrives.includes(p.id) : p.nomme || j.recrues)).map((p) => p.id);
-}
-
 export function disponibles(j: Jeu): string[] {
   return porteursPresents(j).filter((id) => !j.porteurs[id]!.poste && !enExpedition(j, id));
 }
@@ -86,12 +81,6 @@ export function disponibles(j: Jeu): string[] {
 
 /** L'escouade de départ : Ilka, Doran et Véla */
 export const ESCOUADE_DEPART = ['ilka', 'doran', 'vela'] as const;
-
-/** L'escouade enregistrée (les Porteurs présents seulement, trois au plus) */
-export function escouadeDe(j: Jeu): string[] {
-  const presents = porteursPresents(j);
-  return [...new Set(j.escouade ?? [])].filter((id) => presents.includes(id)).slice(0, 3);
-}
 
 /** Pourquoi l'escouade ne peut pas changer maintenant (null = elle peut) */
 export function escouadeVerrouillee(j: Jeu): string | null {
@@ -168,9 +157,6 @@ export const MISSIONS = {
   courte: { heures: 2, composants: 14, doublons: 1, nouvelle: 0, usure: 4, energie: 30 },
   longue: { heures: 8, composants: 45, doublons: 2, nouvelle: 0.35, usure: 8, energie: 100 },
 } as const;
-export type DureeMission = 'courte' | 'longue';
-export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number }
-
 /** La Strate où partent les missions : la dernière vaincue */
 export const strateMission = (j: Jeu) => strateVaincue(j);
 
@@ -539,3 +525,121 @@ export function resumeAbsence(avant: Jeu, apres: Jeu, nouvelles: string[]): stri
 
 export { BATIMENTS, MODULES };
 export type { Rarete };
+
+// ---------- Les départs : expédition, fouille ciblée, Épreuve ----------
+
+function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boolean, min: number = DISTRICT.deckMin):
+  { ok: false; message: string } | { ok: true; message?: undefined; porteurs: PorteurEtat[]; deck: GesteDef[]; bonus: BonusMarques } {
+  if (j.expedition) return refus('Une expédition est déjà en cours.');
+  if (escouade.length !== 3 || new Set(escouade).size !== 3) return refus('Choisis 3 Porteurs.');
+  for (const id of escouade) {
+    if (!porteursPresents(j).includes(id)) return refus('Ce Porteur n’est pas encore arrivé au district.');
+    if (enMission(j, id)) return refus(`${porteurDef(id).nom} est en mission.`);
+    if (j.porteurs[id]?.poste === 'forge' && j.forge) return refus(`${porteurDef(id).nom} ne peut pas quitter la Forge pendant une fabrication.`);
+  }
+  if (!j.chambre) return refus('Ouvre d’abord la chambre scellée.');
+  const deck = deckEscouade(j, escouade).filter((g) => !filtre || g.porteur === null || filtre(g));
+  if (deck.length < min) return refus(`Ton deck n’a que ${deck.length} cartes : confie des cartes à ton escouade (${min} au moins).`);
+  const porteurs: PorteurEtat[] = escouade.map((id) => {
+    const u = Math.floor(j.porteurs[id]!.usure);
+    return { id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false, ...(u > 0 ? { usure: u } : {}) };
+  });
+  const bonus = bonusEscouade(j, escouade);
+  return { ok: true, porteurs, deck, bonus };
+}
+
+export function partir(j: Jeu, escouade: string[], strate: number, rng = graine()): Resultat {
+  const e = escouadePrete(j, escouade);
+  if (!e.ok) return e;
+  if (strate < 1 || strate > j.strate) return non('Cette Strate n’est pas encore creusée.');
+  // la Strate se parcourt salle par salle (exploration), jusqu'à son gardien
+  quitterPostes(j, escouade);
+  j.expedition = nouvelleExploration({
+    porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1,
+    ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
+  });
+  j.escouade = [...escouade];
+  log(j, `L’escouade descend dans la Strate −${strate}.`);
+  return { ok: true };
+}
+
+/** composants du filon par combat gagné pendant la fouille, en Strate −1 (+25 % par Strate) */
+export const FILON_COMPOSANTS = 8;
+
+export const CIBLES_FOUILLE: Record<CibleFouille, { nom: string; texte: string }> = {
+  tech: { nom: 'Cartes augmentées', texte: 'Les cartes trouvées sont des cartes d’Augmentés, et le filon en offre trois au choix.' },
+  bio: { nom: 'Cartes génés', texte: 'Les cartes trouvées sont des cartes de Génés, et le filon en offre trois au choix.' },
+  reso: { nom: 'Cartes résonantes', texte: 'Les cartes trouvées sont des cartes de Résonants, et le filon en offre trois au choix.' },
+  composants: { nom: 'Composants', texte: 'Le filon rapporte des composants pour chaque combat gagné en route : plus le chemin est long, plus il donne.' },
+  eclats: { nom: 'Éclats', texte: 'Le filon rapporte des Éclats : 2, et 3 à partir de la Strate −5.' },
+};
+
+export const estLignee = (c?: CibleFouille): c is Lignee => c === 'tech' || c === 'bio' || c === 'reso';
+
+export function fouiller(j: Jeu, escouade: string[], strate: number, cible: CibleFouille, rng = graine()): Resultat {
+  const e = escouadePrete(j, escouade);
+  if (!e.ok) return e;
+  if (!CIBLES_FOUILLE[cible]) return non('Cible inconnue.');
+  if (strate < 1 || strate > strateVaincue(j)) return non('On ne fouille que les Strates déjà vaincues.');
+  quitterPostes(j, escouade);
+  j.expedition = nouvelleExploration({
+    porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1, fouille: cible,
+    ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
+  });
+  j.escouade = [...escouade];
+  log(j, `L’escouade part fouiller la Strate −${strate} (${CIBLES_FOUILLE[cible].nom.toLowerCase()}).`);
+  return { ok: true };
+}
+
+interface EpreuveDef {
+  id: string;
+  nom: string;
+  regle: string;
+  /** les cartes qui restent au district (les cartes du district viennent toujours) */
+  filtre?: (g: GesteDef) => boolean;
+  /** les Porteurs qui ne peuvent pas venir */
+  interdits?: string[];
+  /** aucune Résonance de tout le combat */
+  sansResonance?: boolean;
+}
+
+export const EPREUVES: EpreuveDef[] = [
+  { id: 'brouillage', nom: 'Fréquences brouillées', regle: 'Aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.', sansResonance: true },
+  { id: 'fer', nom: 'Le fer seulement', regle: 'Seules tes cartes en fer descendent : c’est le moment de les avoir montées de niveau.', filtre: (g) => !!g.carte && moduleDef(g.carte).rarete === 'fer' },
+  { id: 'nus', nom: 'À découvert', regle: 'Les cartes qui protègent restent au district : aucun bouclier.', filtre: (g) => g.type !== 'bouclier' },
+  { id: 'sans-soin', nom: 'Sans soigneur', regle: 'Les cartes qui soignent restent au district.', filtre: (g) => g.type !== 'soin' },
+  { id: 'releve', nom: 'La relève', regle: 'Ilka, Doran et Véla restent au district : ce combat est pour les autres.', interdits: ['ilka', 'doran', 'vela'] },
+];
+
+export const EPREUVE_DECK_MIN = 9;
+
+/** Les trois Épreuves de la semaine (les mêmes pour tous les joueurs, tirées d'après le numéro de la semaine) */
+export function epreuvesDeLaSemaine(now: number): EpreuveDef[] {
+  const t = tireur({ rng: (semaineDe(now) * 2654435761) >>> 0 });
+  return t.melanger(EPREUVES.slice()).slice(0, 3);
+}
+
+export const epreuveDef = (id: string) => EPREUVES.find((e) => e.id === id);
+
+/** La Strate d'une Épreuve : la dernière vaincue */
+export const strateEpreuve = (j: Jeu) => Math.max(1, strateVaincue(j));
+
+export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: number, rng = graine()): Resultat {
+  const ep = epreuveDef(id);
+  if (!ep || !epreuvesDeLaSemaine(now).some((e) => e.id === id)) return non('Cette Épreuve n’est pas au programme cette semaine.');
+  if (strateVaincue(j) < 1) return non('Les Épreuves s’ouvrent après la première Strate vaincue.');
+  const interdit = escouade.find((p) => ep.interdits?.includes(p));
+  if (interdit) return non(`${porteurDef(interdit).nom} ne peut pas participer à cette Épreuve.`);
+  const e = escouadePrete(j, escouade, ep.filtre, EPREUVE_DECK_MIN);
+  if (!e.ok) return e;
+  const strate = strateEpreuve(j);
+  const x = nouvelleExpedition({
+    porteurs: e.porteurs, deck: e.deck, strate, rng, sequence: [zoneDe(strate).boss], force: forceStrate(strate),
+    ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
+  });
+  if (ep.sansResonance) x.combat.sansResonance = true;
+  quitterPostes(j, escouade);
+  j.expedition = { ...x, epreuve: id };
+  log(j, `Épreuve de la semaine : ${ep.nom}.`);
+  return { ok: true };
+}

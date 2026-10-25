@@ -1,11 +1,9 @@
-// Les objectifs guidés.
+// Couche 2 — les objectifs guidés (la liste, et lequel est en cours).
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { moduleDe } from '../donnees';
 import type { BatimentId } from '../types';
-import { type Jeu, type Resultat, creuseursRequis, log, non, posteDe, stockage } from './etat';
-import { creuser, gagnerCreuseurs } from './district';
-import { escouadeDe } from './descentes';
+import { moduleDe } from '../donnees';
+import { creuseursRequis, escouadeDe, posteDe, type Jeu } from './etat';
 
 // ---------- Objectifs guidés ----------
 
@@ -54,14 +52,3 @@ export const OBJECTIFS: Objectif[] = [
 
 export const objectifCourant = (j: Jeu): Objectif | null => (j.chambre ? OBJECTIFS[j.objectif] ?? null : null);
 
-/** Récupère la récompense de l'objectif en cours s'il est rempli */
-export function reclamer(j: Jeu): Resultat {
-  const o = objectifCourant(j);
-  if (!o || !o.fait(j)) return non('Objectif pas encore rempli.');
-  j.energie = Math.min(stockage(j), j.energie + (o.recompense.energie ?? 0));
-  j.composants += o.recompense.composants ?? 0;
-  if (o.recompense.creuseurs && gagnerCreuseurs(j, o.recompense.creuseurs, 'des volontaires rejoignent le chantier')) creuser(j);
-  j.objectif++;
-  log(j, `Objectif rempli : ${o.titre}.`);
-  return { ok: true };
-}

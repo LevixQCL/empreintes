@@ -1,15 +1,12 @@
-// La vie du district : Confiance, temps qui passe, chantiers et Forge, creuseurs, entraînement, Comptoir.
+// Couche 3 — la vie du district : chantiers et Forge, postes, cartes confiées, creuseurs, entraînement, Comptoir, quotidiens, objectif réclamé.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { BATIMENTS, MODULES, PORTEURS, batimentDef, carteId, moduleDe, moduleDef, porteurDef } from '../donnees';
-import { COLLECTION, NOMS_RARETE, ajouterCarte, composantsNiveau, doublonsRequis } from '../collection';
-import { tireur } from '../rng';
-import { noterPalmares } from '../classements';
+import { batimentDef, porteurDef, PORTEURS, BATIMENTS, MODULES, moduleDe, moduleDef, carteId } from '../donnees';
 import type { BatimentId, Rarete } from '../types';
-import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, CREUSEURS, DISTRICT, type Jeu, type Poste, QUOTIDIENS, type Resultat, XP, confier, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, posteDe, pvNiveau, semaineDe, stockage, typeDuJour, xpPourNiveau } from './etat';
-import { RAVITAILLEMENT, strateVaincue } from './recompenses';
-import { avancerFils, porteursPresents, retourDeMission, verifierArrivees } from './descentes';
-import { OBJECTIFS } from './objectifs';
+import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis } from '../collection';
+import { tireur } from '../rng';
+import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Resultat, xpPourNiveau } from './etat';
+import { OBJECTIFS, objectifCourant } from './objectifs';
 
 export function humeurDistrict(j: Jeu): string {
   const c = j.confiance ?? 50;
@@ -107,92 +104,6 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
 export const greffesDe = (j: Jeu, moduleId: string) => Object.keys(j.porteurs).filter((id) => j.porteurs[id]!.modules.includes(moduleId));
 
 // ---------- Le temps qui passe ----------
-
-/** Rattrape le temps écoulé : énergie, soins, Forge. Rien n'est perdu ni puni pendant l'absence. */
-export function tick(j: Jeu, now: number): string[] {
-  const nouvelles: string[] = [];
-  nouvelles.push(...verifierArrivees(j));
-  nouvelles.push(...avancerFils(j));
-  const dt = Math.max(0, now - j.dernierTick);
-  const heures = dt / 3_600_000;
-  j.dernierTick = now;
-
-  // l'énergie produite, moins ce que consomme l'entraînement tant qu'il dure (23 octobre 2026) :
-  // si la Tour consomme plus que le Générateur ne produit, l'entraînement s'arrête quand la réserve est vide
-  const prod = energieParHeure(j);
-  const entrainement = heuresEntrainement(j, heures);
-  const conso = energieEntrainement(j);
-  let paye = entrainement;
-  if (conso > prod && paye > 0) paye = Math.min(paye, j.energie / (conso - prod));
-  j.energie = Math.max(0, Math.min(stockage(j), j.energie + (prod - conso) * paye));
-  j.energie = Math.min(stockage(j), j.energie + prod * (heures - paye));
-
-  const soin = soinParHeure(j) * heures;
-  for (const id of Object.keys(j.porteurs)) {
-    if (enExpedition(j, id)) continue;
-    const p = j.porteurs[id]!;
-    p.usure = Math.max(0, p.usure - soin);
-  }
-
-  if (j.forge && now >= j.forge.fin) {
-    const f = j.forge;
-    ajouterCarte(j, f.moduleId);
-    j.forge = null;
-    const t = `La Forge a refabriqué ${moduleDef(f.moduleId).nom} : un doublon de plus.`;
-    log(j, t);
-    nouvelles.push(t);
-  }
-
-  for (const c of j.chantiers.filter((x) => now >= x.fin)) {
-    j.batiments[c.batiment]++;
-    confier(j, CONFIANCE.chantier);
-    if ((j.confiance ?? 50) >= CONFIANCE.haute && tireur(j).nombre() < CREUSEURS.confiance) gagnerCreuseurs(j, 1, 'le district a confiance, un volontaire se présente');
-    if (c.batiment === 'noyau' && creuser(j)) nouvelles.push(`La Tour du Noyau loge assez de creuseurs : la Strate −${j.strate} est ouverte.`);
-    const t = `Chantier terminé : ${batimentDef(c.batiment).nom} passe au niveau ${j.batiments[c.batiment]}.`;
-    log(j, t);
-    nouvelles.push(t);
-  }
-  j.chantiers = j.chantiers.filter((x) => now < x.fin);
-
-  const entraine = entrainer(j, paye);
-  if (entraine) nouvelles.push(entraine);
-
-  for (const m of j.missions.filter((x) => now >= x.fin)) nouvelles.push(retourDeMission(j, m));
-  j.missions = j.missions.filter((x) => now < x.fin);
-  if (semaineDe(now) > j.epreuves.semaine) j.epreuves = { semaine: semaineDe(now), faites: [] };
-
-  // un objectif du jour de plus en réserve chaque jour, 3 au plus : rien ne se perd pendant une courte absence
-  const jour = jourDe(now);
-  if (jour > j.quotidien.jour) {
-    const avant = j.quotidien.reserve;
-    j.quotidien.reserve = Math.min(3, j.quotidien.reserve + (jour - j.quotidien.jour));
-    if (avant === 0) { j.quotidien.type = typeDuJour(jour); j.quotidien.progres = 0; }
-    j.quotidien.jour = jour;
-  }
-
-  // un colis de ravitaillement de plus chaque jour, 3 au plus (aucune série à perdre)
-  if (jour > j.ravitaillement.jour) {
-    j.ravitaillement.reserve = Math.min(RAVITAILLEMENT.reserveMax, j.ravitaillement.reserve + (jour - j.ravitaillement.jour));
-    j.ravitaillement.jour = jour;
-  }
-
-  // l'Archive de la semaine s'ouvre le lundi
-  const semaine = semaineDe(now);
-  if (semaine > j.archive.semaine) {
-    const paliers = ARCHIVE.paliers.filter((p) => j.archive.points >= p).length;
-    if (paliers > 0) {
-      j.archive.aOuvrir = Math.max(j.archive.aOuvrir, paliers);
-      const t = 'L’Archive de la semaine est prête à être ouverte.';
-      log(j, t);
-      nouvelles.push(t);
-    }
-    j.archive.points = 0;
-    j.archive.semaine = semaine;
-  }
-  garnirComptoir(j, now);
-  noterPalmares(j, now, semaineDe(now));
-  return nouvelles;
-}
 
 /** Des points d'Archive et la progression de l'objectif du jour */
 export function progresser(j: Jeu, quoi: keyof typeof ARCHIVE.points, n = 1) {
@@ -397,7 +308,7 @@ const xpPourAtteindre = (niveau: number) => { let s = 0; for (let n = 1; n < niv
 
 /** Les heures d'entraînement à compter sur une durée : 0 sans Porteur à la Tour, et pas au-delà du plafond
  *  (l'énergie, elle, est décomptée par tick) */
-function heuresEntrainement(j: Jeu, heures: number): number {
+export function heuresEntrainement(j: Jeu, heures: number): number {
   const id = posteDe(j, 'noyau');
   if (!id || heures <= 0 || enExpedition(j, id)) return 0;
   const plafond = plafondEntrainement(j);
@@ -410,7 +321,7 @@ function heuresEntrainement(j: Jeu, heures: number): number {
 }
 
 /** Le temps passé à la Tour (appelé par tick) : renvoie l'annonce d'un niveau gagné */
-function entrainer(j: Jeu, heures: number): string | null {
+export function entrainer(j: Jeu, heures: number): string | null {
   const id = posteDe(j, 'noyau');
   if (!id || heures <= 0 || enExpedition(j, id)) return null;
   const d = j.porteurs[id]!;
@@ -443,7 +354,6 @@ export const COMPTOIR = {
   partDoublons: 0.5,
 } as const;
 
-export interface Comptoir { jour: number; offres: string[]; achetes: number[]; rng: number }
 export function comptoirVide(now: number, rng: number): Comptoir {
   return { jour: jourDe(now), offres: [], achetes: [], rng: (rng ^ 0x9e3779b9) >>> 0 };
 }
@@ -493,5 +403,17 @@ export function acheter(j: Jeu, index: number, now = j.dernierTick): Resultat {
   c.achetes.push(index);
   const neuve = ajouterCarte(j, id);
   log(j, neuve ? `Comptoir : nouvelle carte, ${moduleDef(id).nom} (${NOMS_RARETE[moduleDef(id).rarete]}).` : `Comptoir : un doublon de ${moduleDef(id).nom}.`);
+  return { ok: true };
+}
+
+/** Récupère la récompense de l'objectif en cours s'il est rempli */
+export function reclamer(j: Jeu): Resultat {
+  const o = objectifCourant(j);
+  if (!o || !o.fait(j)) return non('Objectif pas encore rempli.');
+  j.energie = Math.min(stockage(j), j.energie + (o.recompense.energie ?? 0));
+  j.composants += o.recompense.composants ?? 0;
+  if (o.recompense.creuseurs && gagnerCreuseurs(j, o.recompense.creuseurs, 'des volontaires rejoignent le chantier')) creuser(j);
+  j.objectif++;
+  log(j, `Objectif rempli : ${o.titre}.`);
   return { ok: true };
 }

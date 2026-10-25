@@ -1,13 +1,13 @@
-// Une nouvelle partie, les décisions de la campagne, et la mise à jour des anciennes sauvegardes.
+// Couche 7 — une nouvelle partie, les décisions de la campagne, et la mise à jour des anciennes sauvegardes.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { CARTE_CHAMBRE, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, MODULES, PORTEURS, carteId, moduleDe, moduleDef } from '../donnees';
+import { PORTEURS, CARTE_CHAMBRE, MODULES, moduleDe, moduleDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
 import { graine } from '../rng';
-import { DISTRICT, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, VERSION_JEU, confier, jourDe, log, non, semaineDe, typeDuJour } from './etat';
+import { DISTRICT, VERSION_JEU, confier, jourDe, log, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
+import { ESCOUADE_DEPART } from './descentes';
 import { comptoirVide } from './district';
-import { donnerKitRecrues, recompenserLecture } from './recompenses';
-import { ESCOUADE_DEPART, porteursPresents } from './descentes';
 import { OBJECTIFS } from './objectifs';
+import { donnerKitRecrues, recompenserLecture } from './recompenses';
 
 const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: GardeChambre; nom: string; phrase: string; effet: string }[] } = {
   titre: 'Qui garde la chambre ?',

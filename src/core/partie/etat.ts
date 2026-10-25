@@ -1,13 +1,11 @@
-// L'état d'une partie : réglages du district, types, expérience et Marques des Porteurs, Confiance et creuseurs.
+// Couche 1 — l'état d'une partie : réglages du district, types, expérience et Marques des Porteurs, Confiance, creuseurs, escouade.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef } from '../donnees';
+import { batimentDef, porteurDef, PORTEURS } from '../donnees';
 import type { CarteCollection } from '../collection';
 import type { Expedition } from '../expedition';
 import type { Palmares } from '../classements';
 import type { BatimentId, GesteDef, BonusMarques } from '../types';
-import type { Comptoir } from './district';
-import type { Mission } from './descentes';
 
 export const VERSION_JEU = 7;
 
@@ -362,3 +360,23 @@ export function creuseursRequis(strate: number): number {
   const max = CREUSEURS.logement[CREUSEURS.logement.length - 1]!;
   return Math.min(max, strate < t.length ? t[strate]! : t[t.length - 1]! + CREUSEURS.parStrateEnsuite * (strate - t.length + 1));
 }
+
+/** Les Porteurs présents au district (les recrues n'arrivent qu'après la chambre scellée) */
+export function porteursPresents(j: Jeu): string[] {
+  return PORTEURS.filter((p) => (p.arrivee ? j.arrives.includes(p.id) : p.nomme || j.recrues)).map((p) => p.id);
+}
+
+/** L'escouade enregistrée (les Porteurs présents seulement, trois au plus) */
+export function escouadeDe(j: Jeu): string[] {
+  const presents = porteursPresents(j);
+  return [...new Set(j.escouade ?? [])].filter((id) => presents.includes(id)).slice(0, 3);
+}
+
+/** La Strate vaincue la plus profonde (le front compte s'il a été vaincu) */
+export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 1);
+
+export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number }
+
+export interface Comptoir { jour: number; offres: string[]; achetes: number[]; rng: number }
+
+export type DureeMission = 'courte' | 'longue';

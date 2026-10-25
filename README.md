@@ -34,11 +34,13 @@ src/
     effets.ts      les noms et textes des effets spéciaux (Perçant, Siphon, Accord…)
     robot.ts       le robot d'équilibrage : un joueur automatique qui joue avec le vrai moteur
     jeu.ts         le point d'entrée de la partie ; le code est rangé par thème dans partie/ :
-      partie/etat.ts         réglages du district, types, expérience et Marques, Confiance, creuseurs
-      partie/district.ts     le temps qui passe, chantiers, Forge, creuseurs, entraînement, Comptoir
-      partie/recompenses.ts  kit des recrues, lectures et Ravitaillement, nouveautés, fouilles, Épreuves
-      partie/descentes.ts    expéditions, escouade, missions, exploration des Strates, chambre scellée
+      (en couches : chaque fichier n'utilise que ceux d'au-dessus ; tests/couches.test.ts le vérifie)
+      partie/etat.ts         réglages du district, types, expérience et Marques, Confiance, creuseurs, escouade
       partie/objectifs.ts    les objectifs guidés
+      partie/district.ts     chantiers, Forge, postes, cartes confiées, creuseurs, entraînement, Comptoir, quotidiens
+      partie/recompenses.ts  kit des recrues, lectures et Ravitaillement, nouveautés
+      partie/descentes.ts    départs (expédition, fouille, Épreuve), escouade, missions, exploration des Strates
+      partie/temps.ts        le temps qui passe
       partie/nouvelle.ts     nouvelle partie, décisions de la campagne, mise à jour des anciennes sauvegardes
     expedition.ts  une suite de combats ; c'est ce qui est sauvegardé
     rng.ts         hasard déterministe (même graine = même partie)
