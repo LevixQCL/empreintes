@@ -94,7 +94,7 @@ export const MODULES: ModuleDef[] = [
   c('carapace-mere', 'Carapace-mère', 'bio', 'argent', 'bouclier', 14, [5, 6, 1], { type: 'rempart', part: 0.75 }),
   c('sang-ambre', 'Sang d’ambre', 'bio', 'argent', 'soin', 8, [3, 2, 5], { type: 'vague' }),
   c('coeur-meute', 'Cœur de meute', 'bio', 'or', 'atk', 11, [5, 4, 3], { type: 'siphon', part: 0.5 }),
-  c('mue-totale', 'Mue totale', 'bio', 'or', 'soin', 25, [1, 2, 4], { type: 'vague' }),
+  c('mue-totale', 'Mue totale', 'bio', 'or', 'soin', 16, [1, 2, 4], { type: 'vague' }),
 
   // ---------- Résonants : Fréquences hautes ----------
   c('eclat-chant', 'Éclat qui chante', 'reso', 'fer', 'atk', 13, [8, 7, 9], { type: 'crescendo', part: 0.3 }),
