@@ -147,7 +147,7 @@ export const iconeCondition = (id: string): string | null => (CONDITIONS_PEINTES
 /** Ysé, l'archiviste des Chroniques (23 octobre 2026) */
 export const portraitYse = `${base}personnages/yse.webp`;
 /** Les personnages de la campagne illustrés (campagne.ts) : les autres gardent leur initiale */
-const PERSONNAGES_ILLUSTRES = new Set(['yse', 'isaure', 'brac', 'tobin']);
+const PERSONNAGES_ILLUSTRES = new Set(['yse', 'hald', 'isaure', 'brac', 'tobin']);
 export const portraitPersonnage = (id: string): string | null => (PERSONNAGES_ILLUSTRES.has(id) ? `${base}personnages/${id}.webp` : null);
 /** Les scènes de la campagne qui ont leur propre illustration (public/art/scenes/) ; les autres reprennent un décor existant */
 const SCENES_ILLUSTREES = new Set(['entree-2', 'entree-5', 'gardien-2', 'gardien-3', 'convocation', 'entree-8', 'gardien-9', 'epilogue']);
