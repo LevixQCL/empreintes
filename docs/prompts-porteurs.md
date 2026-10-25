@@ -45,9 +45,12 @@ Chaque implant ternit les cheveux : quelques mèches ternes après le premier, u
 
 ## Résonants : lumière améthyste
 
+La mèche d'or doit se voir : elle est placée en tête de la description, capuche baissée, et la fin commune perd « amber » (sinon Midjourney efface l'or) :
+`--ar 3:4 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, sunset, fire glow, text`
+
 | Fichier | Prompt (après le préfixe, avant la fin commune) |
 |---|---|
-| `vela.webp` | young woman in her twenties, shoulder-length dark hair, calm attentive face, hooded travel cloak, raising a lantern with a cold violet flame, a huge serpentine dragon shadow cast on the stone wall behind her, dominant amethyst and violet lighting, glowing purple crystal light, lavender rim light, deep indigo shadows |
+| `vela.webp` | young woman in her twenties with a single bright metallic gold streak of hair falling across her forehead, clearly visible against her shoulder-length dark hair, hood down, calm attentive face, travel cloak with the hood resting on her shoulders, raising a lantern with a cold violet flame, a huge serpentine dragon shadow cast on the stone wall behind her, dominant amethyst and violet lighting, glowing purple crystal light, lavender rim light, deep indigo shadows |
 | `guetteur.webp` | weathered older man in his sixties, grey beard, a pale gold streak in his grey hair, long worn coat, holding an old brass spyglass, standing on a high lookout above the rooftops, dominant amethyst and violet lighting, a faint purple crystal glow at his neck, lavender sky, deep indigo shadows |
 | `aurel.webp` | young nobleman in his early twenties, wavy dark hair with a bright gold streak, gentle guarded smile, white noble coat with a hood thrown back, a faint winged shadow behind him, on a dark district street far from home, dominant amethyst and violet lighting, glowing purple crystal light, lavender rim light, deep indigo shadows |
 | `joss.webp` | cheerful young man around twenty, messy brown hair with one fresh gold streak, laughing, dyer's apron covered in colourful stains, holding out an open hand, in a small dye workshop with hanging cloth, dominant amethyst and violet lighting, glowing purple crystal light, lavender rim light, deep indigo shadows |
