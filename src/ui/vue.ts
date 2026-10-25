@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { capacite, coupDeFuite, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, puissance, usureCombat } from '../core/combat';
+import { ECLATS, capacite, coupDeFuite, eclatsPossibles, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, puissance, usureCombat } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
@@ -75,6 +75,8 @@ export interface Ecran {
   actif?: number;
   /** la feuille « Fuir le combat ? » est ouverte */
   fuite?: boolean;
+  /** le choix du Coup d'éclat est déplié (à la place des boutons du Flux) */
+  eclats?: boolean;
   /** le mode d'emploi des cartes est ouvert (depuis l'aide), et les cartes trouvées qu'il peut nommer */
   guide?: OngletGuide | null;
   trouvees?: ReadonlySet<string>;
@@ -106,7 +108,7 @@ function socle(type: 'atk' | 'bouclier' | 'soin', v: number): string {
  * puis le cadre peint d'un seul tenant de son métal et de son action (cristal de la Fréquence en haut à gauche, socle de la force
  * en bas à droite, 22 octobre 2026) : le jeu y teinte le cristal et pose les deux chiffres et le nom.
  */
-export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean } = {}) {
+export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean; felure?: boolean } = {}) {
   const lign = ligneeGeste(g);
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'District';
   const accord = g.effet?.type === 'accord';
@@ -120,9 +122,9 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
   const cristalPlein = tourne
     ? tourne.map((f, i) => `<i class="cp-teinte cp-k" style="--fc:${couleurFrequence(f)};--i:${i}"></i>`).join('') + tourne.map((f, i) => `<b class="cp-f cp-k" style="--fc:${couleurFrequence(f)};--i:${i}">${f}</b>`).join('')
     : `<i class="cp-teinte"></i><b class="cp-f">${accord ? '∗' : g.f}</b>`;
-  const cls = ['geste', taille, `gm-${metal}`, plein ? 'plein' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : ''].filter(Boolean).join(' ');
+  const cls = ['geste', taille, `gm-${metal}`, plein ? 'plein' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : '', o.felure ? 'brise-felure' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
-  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${g.effet ? ', ' + libelleEffet(g.effet) : ''}${o.halo ? ', prolonge ta suite' : ''}`;
+  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${g.effet ? ', ' + libelleEffet(g.effet) : ''}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}`;
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]};--fc:${accord ? '#5d5470' : couleurFrequence(g.f)};--tex:url(${textureMetal(metal)})" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="g-cadre">`
     + (fond ? `<span class="g-art${ill ? '' : ' g-portrait'}" style="background-image:url(${fond})" aria-hidden="true"></span>` : '<span class="g-art g-vide" aria-hidden="true"></span>')
@@ -132,6 +134,7 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
     + (plein ? `<span class="g-plein${tourne ? ` alt alt-${tourne.length}` : ''}" aria-hidden="true" style="--n:${tourne ? tourne.length : 1};--cp-img:url(${plein.img});--cp-masque:url(${plein.masque});--fx:${plein.f[0]}%;--fy:${plein.f[1]}%;--vx:${plein.v[0]}%;--vy:${plein.v[1]}%"><i class="cp-cadre"></i>${cristalPlein}<b class="cp-v${g.v >= 10 ? ' deux' : ''}">${g.v}</b><span class="cp-nom">${echap(g.nom)}</span></span>` : '')
     + (g.lourd ? '<span class="g-lourd">2 PL.</span>' : '')
     + (o.halo ? `<span class="g-suite">${ICO.monter}</span>` : '')
+    + (o.felure ? `<span class="g-felure" aria-hidden="true">${ICO.fele}</span>` : '')
     + `<span class="g-plaque"><span class="g-ligne">${socle(g.type, g.v)}`
     + (g.effet ? `<span class="g-effet">${NOMS_EFFET[g.effet.type]}</span>` : '') + `</span>`
     + `<span class="g-nom">${echap(g.nom)}</span>`
@@ -265,7 +268,9 @@ function regles(): string {
     + '<li><b>La Fréquence</b> est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.</li>'
     + '<li><b>Plusieurs Fréquences :</b> une carte en argent, en or ou en nacre en porte 2 ou 3. Posée, elle prend celle qui prolonge ta suite ; touche les chiffres sous elle pour en changer. Rien n’est tiré au sort.</li>'
     + `<li><b>L’Écho :</b> trois Fréquences identiques donnent un bouclier d’escouade de +${REGLES.bouclierEcho}.</li>`
-    + '<li><b>Le Flux</b> se remplit à chaque Résonance. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main.</li>'
+    + '<li><b>Le Flux</b> se remplit à chaque Résonance et à chaque Fêlure brisée. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main, ou garde-le pour un Coup d’éclat.</li>'
+    + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien) et donne 1 Flux.</li>'
+    + `<li><b>Le Coup d’éclat</b> : Flux plein, un seul par combat, au choix selon les lignées de l’escouade. ${(Object.values(ECLATS)).map((x) => `<b>${x.nom}</b> : ${x.texte}`).join(' ')} Le Porteur qui le déclenche prend ${REGLES.eclat.usure} d’Usure.</li>`
     + '<li><b>« 2 PL. »</b> : cette carte est puissante mais occupe deux places.</li>'
     + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.</li>'
     + '<li><b>Le triangle des lignées :</b> Tech bat Résonant, Résonant bat Géné, Géné bat Tech (+15 %).</li>'
@@ -339,6 +344,7 @@ function vignettesGroupe(e: Ecran): string {
     return `<button type="button" class="vignette-ennemi l-${d.lignee}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
       + (ill ? `<img src="${ill}" alt="" decoding="async">` : '<span class="vg-sans"></span>')
       + (tombe ? '' : cache ? '<span class="vg-int"><b>?</b></span>' : `<span class="vg-int ${cls}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)
+      + (tombe || cache || !en.felure ? '' : `<span class="vg-felure${en.felureBrisee ? ' brisee' : ''}" style="--fc:${couleurFrequence(en.felure)}" aria-hidden="true">${ICO.fele}<b>${en.felure}</b></span>`)
       + `<span class="vg-vie"><i style="width:${Math.max(0, Math.round((100 * en.pv) / en.pvMax))}%"></i></span>`
       + popsPour(e, `ennemi-${en.rang ?? 0}`)
       + '</button>';
@@ -395,6 +401,15 @@ function htmlEcranCombat(e: Ecran): string {
   const iconeIntention = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
   const lieu = e.x.tutoriel ? 'Chambre scellée' : `Strate −${e.x.strate}`;
 
+  // la Fêlure de l'ennemi visé : la Fréquence qui brise son intention (cachée par le brouillard tant que la chaîne est vide)
+  const brume = s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours';
+  const felF = !brume && s.ennemi.pv > 0 && !s.ennemi.felureBrisee ? s.ennemi.felure : undefined;
+  const prevue = felF !== undefined && fs.includes(felF);
+  const felureHtml = s.ennemi.felure === undefined || brume || s.ennemi.pv <= 0 ? ''
+    : s.ennemi.felureBrisee ? `<span class="int-felure brisee" title="Fêlure brisée">${ICO.fele}<small>BRISÉE</small></span>`
+    : `<span class="int-felure${prevue ? ' prevue' : ''}" style="--fc:${couleurFrequence(s.ennemi.felure)}" title="${echap(`Fêlure : une carte de Fréquence ${s.ennemi.felure} dans la chaîne brise cette intention et remplit le Flux`)}" aria-label="${echap(`Fêlure ${s.ennemi.felure}${prevue ? ', ta chaîne va la briser' : ''}`)}">${ICO.fele}<b>${s.ennemi.felure}</b></span>`;
+  const brise = (g: Geste) => felF !== undefined && g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(felF);
+
   // combat guidé : ce que la leçon du tour désigne du doigt
   const guide = !!e.lecon && !verrou;
   const derniereF = fs[fs.length - 1];
@@ -419,7 +434,7 @@ function htmlEcranCombat(e: Ecran): string {
     + vignettesGroupe(e)
     + (s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours'
       ? `<div class="intention brume" aria-live="polite"><span class="int-ico">?</span><span class="int-txt"><small>BROUILLARD</small>Pose une carte pour la lire</span></div>`
-      : `<div class="intention ${classeIntention}" aria-live="polite"><span class="int-ico">${iconeIntention}</span><span class="int-txt"><small>INTENTION</small>${echap(texteIntention(s))}</span></div>`)
+      : `<div class="intention ${classeIntention}" aria-live="polite"><span class="int-ico">${iconeIntention}</span><span class="int-txt"><small>INTENTION</small>${echap(texteIntention(s))}</span>${felureHtml}</div>`)
     + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
     + `<h2 class="ennemi-nom">${echap(def.nom)}${s.ennemi.phase2 && def.phase ? ` <small class="phase">· ${echap(def.phase.nom)}</small>` : ''}</h2>`
     + (!s.ennemi.simple && def.traits?.length ? `<div class="traits">${def.traits.map((t) => { const x = texteTrait(t); return `<span class="trait" tabindex="0" title="${echap(x.texte)}" aria-label="${echap(`${x.nom} : ${x.texte}`)}">${echap(x.nom)}</span>`; }).join('')}</div>` : '')
@@ -444,7 +459,7 @@ function htmlEcranCombat(e: Ecran): string {
       + `<div class="cb-vie">${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5, ...(p.usure ? { usure: p.usure } : {}) })}<span class="chiffre" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}${p.usure ? `, l’Usure en retire ${p.usure}` : ''}`}">${ko ? '0' : p.pv}<small aria-hidden="true">/ ${p.pvMax}</small></span></div></div>`
       + (cible ? `<span class="marque-cible">${ICO.atk}CIBLE</span>` : '') + (soigne ? `<span class="marque-soin" aria-label="Sera soigné">${ICO.soin}</span>` : '') + `</div>`;
   }
-  h += `</section><div class="ligne-escouade">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>`
+  h += `</section><div class="ligne-escouade">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>${s.ombre ? `<span class="etat ombre actif">${ICO.eclat}Ombre agissante</span>` : ''}`
     + `<span class="piles"><span title="Pioche">${ICO.cartes}<em>Pioche</em>${s.pioche.length}</span><span title="Défausse">${ICO.recycler}<em>Défausse</em>${s.defausse.length}</span></span></div>`;
 
   // la chaîne
@@ -452,6 +467,7 @@ function htmlEcranCombat(e: Ecran): string {
   h += `<section class="zone-chaine${a.suite >= 3 ? ' resonne' : ''}" aria-label="Chaîne"><div class="chaine-tete"><span class="surtitre">CHAÎNE · ${placesPrises(s)} / ${capacite(s)}</span>`
     + (mult ? `<span class="badge-reso">${ICO.flux}RÉSONANCE ${mult}</span>` : a.suite === 2 ? '<span class="badge-reso faible">SUITE EN COURS</span>' : '')
     + (a.echo ? `<span class="badge-reso echo">${ICO.bouclier}ÉCHO +${REGLES.bouclierEcho}</span>` : '')
+    + (s.debride ? `<span class="badge-reso eclat">${ICO.eclat}DÉBRIDAGE ×${REGLES.eclat.debride}</span>` : '')
     + `</div><div class="rail">`;
   // pendant l'animation, la carte qui agit s'avance, celles déjà jouées s'éteignent
   s.chaine.forEach((g, i) => {
@@ -467,10 +483,23 @@ function htmlEcranCombat(e: Ecran): string {
   for (let i = 0; i < libres; i++) h += `<span class="place-vide" aria-hidden="true">${i === 0 && dernier && !a.echo && fs[fs.length - 1]! < FREQ_MAX ? (fs[fs.length - 1]! + 1) : ''}</span>`;
   h += `</div><p class="conseil">${conseil}</p>`;
   if (!e.lecon) {
-    h += `<div class="flux"><span class="surtitre">${ICO.flux}FLUX</span><div class="segments" role="img" aria-label="${s.flux} sur ${REGLES.fluxMax}">`
-      + Array.from({ length: REGLES.fluxMax }, (_, i) => `<i class="${i < s.flux ? 'plein' : ''}"></i>`).join('') + '</div>'
-      + `<button type="button" class="btn-flux" data-action="allonger"${verrou || s.flux < 1 || capacite(s) >= REGLES.capaciteMax ? ' disabled' : ''}>${ICO.place}+1 place</button>`
-      + `<button type="button" class="btn-flux" data-action="repiocher"${verrou || s.flux < 1 ? ' disabled' : ''}>${ICO.repiocher}Repiocher</button></div>`;
+    // Coup d'éclat : Flux plein, un seul par combat. Un bouton doré dans la rangée du Flux déplie le choix (une lignée par
+    // Porteur debout) à la même place : la rangée ne grandit pas, la main garde sa taille sur téléphone.
+    const eclats = eclatsPossibles(s);
+    if (eclats.length && e.eclats) {
+      h += `<div class="flux coups-eclat" role="group" aria-label="Coup d’éclat : un seul par combat, il vide le Flux">`
+        + eclats.map((c) => `<button type="button" class="btn-eclat l-${c.lignee}" style="--c:${COULEUR[c.lignee]}" data-action="eclat" data-id="${c.porteur}"${verrou ? ' disabled' : ''} aria-label="${echap(`${ECLATS[c.lignee].nom}, par ${porteurDef(c.porteur).nom} : ${ECLATS[c.lignee].texte}`)}"><strong>${echap(ECLATS[c.lignee].nom)}</strong><small>${echap(porteurDef(c.porteur).nom)}</small></button>`).join('')
+        + `<button type="button" class="btn-icone" data-action="eclats" aria-label="Garder mon Flux">${ICO.fermer}</button></div>`;
+    } else {
+      // Flux plein et Coup d'éclat disponible : le bouton doré prend la place des trois losanges (pleins, par définition)
+      h += `<div class="flux"><span class="surtitre">${ICO.flux}FLUX</span>`
+        + (eclats.length
+          ? `<button type="button" class="btn-flux btn-eclat-ouvrir" data-action="eclats" aria-expanded="false"${verrou ? ' disabled' : ''} aria-label="Flux plein : Coup d’éclat, un seul par combat, il vide le Flux">${ICO.eclat}Éclat</button>`
+          : `<div class="segments" role="img" aria-label="${s.flux} sur ${REGLES.fluxMax}">` + Array.from({ length: REGLES.fluxMax }, (_, i) => `<i class="${i < s.flux ? 'plein' : ''}"></i>`).join('') + '</div>')
+        + `<button type="button" class="btn-flux" data-action="allonger"${verrou || s.flux < 1 || capacite(s) >= REGLES.capaciteMax ? ' disabled' : ''}>${ICO.place}+1 place</button>`
+        + `<button type="button" class="btn-flux" data-action="repiocher"${verrou || s.flux < 1 ? ' disabled' : ''}>${ICO.repiocher}Repiocher</button>`
+        + '</div>';
+    }
   }
   h += `</section>`;
 
@@ -480,7 +509,7 @@ function htmlEcranCombat(e: Ecran): string {
   h += `<section class="zone-main" aria-label="Main"><div class="main-tete"><span class="surtitre">MAIN · ${s.main.length}</span><span class="journal-ligne">${echap(s.journal[0] ?? '')}</span></div><div class="main${guide && s.tour >= 2 && s.main.some((g) => vise(g) && places(g) <= libres) ? ' tri' : ''}">`;
   for (const g of s.main) {
     const halo = !!dernier && prolonge(g, fs[fs.length - 1]) && places(g) <= libres;
-    h += geste(g, 'main', 'ajouter', { halo, off: verrou, serre: places(g) > libres, vise: vise(g) && places(g) <= libres });
+    h += geste(g, 'main', 'ajouter', { halo, off: verrou, serre: places(g) > libres, vise: vise(g) && places(g) <= libres, felure: brise(g) && !prevue });
   }
   h += '</div></section>';
 

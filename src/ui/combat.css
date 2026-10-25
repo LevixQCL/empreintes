@@ -272,3 +272,43 @@
 /* réordonner la chaîne : un glissé horizontal sur une carte posée la déplace (le défilement vertical de la page reste libre) */
 .zone-chaine .rail .geste{touch-action:pan-y}
 #app .ecran-combat .zone-chaine .rail .geste.deplace{filter:brightness(1.12) drop-shadow(0 12px 14px rgba(0,0,0,.55));cursor:grabbing}
+
+/* ---------- La Fêlure (25 octobre 2026) : la gemme fêlée de l'ennemi, teintée de sa Fréquence ---------- */
+.int-felure{display:grid;justify-items:center;gap:0;margin-left:2px;padding:3px 6px 2px;flex-shrink:0;color:var(--fc,#fff);
+  background:color-mix(in srgb,var(--fc,#fff) 16%,rgba(8,11,17,.9));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fc,#fff) 70%,transparent);
+  clip-path:polygon(50% 0,100% 22%,100% 78%,50% 100%,0 78%,0 22%)}
+.int-felure .ico{width:14px;height:14px}
+.int-felure b{font:700 14px/1 var(--display);color:#fff;text-shadow:0 0 6px var(--fc,#fff)}
+.int-felure small{font:600 8px/1.2 var(--mono);letter-spacing:.1em;color:var(--quiet)}
+.int-felure.prevue{animation:felure-prevue 1s ease-in-out infinite alternate;box-shadow:inset 0 0 0 1.5px #fff,0 0 12px var(--fc,#fff)}
+.int-felure.brisee{color:var(--quiet);background:rgba(8,11,17,.7);box-shadow:inset 0 0 0 1px var(--filet)}
+@keyframes felure-prevue{from{filter:brightness(1)}to{filter:brightness(1.35)}}
+.vg-felure{position:absolute;bottom:9px;right:2px;display:flex;align-items:center;gap:1px;padding:0 3px;border-radius:6px;font:700 11px/14px var(--display);color:#fff;
+  background:color-mix(in srgb,var(--fc,#fff) 30%,rgba(8,11,17,.9));box-shadow:inset 0 0 0 1px var(--fc,#fff)}
+.vg-felure .ico{width:9px;height:9px;color:var(--fc,#fff)}
+.vg-felure.brisee{opacity:.45}
+/* une carte de la main qui brise la Fêlure : la gemme fêlée en haut à droite */
+.geste .g-felure{position:absolute;z-index:3;top:12px;right:3px;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;color:#fff;
+  background:rgba(8,11,17,.82);box-shadow:inset 0 0 0 1.5px #fff,0 0 8px rgba(255,255,255,.7)}
+.geste .g-felure .ico{width:12px;height:12px}
+.geste.halo .g-felure{top:34px}
+
+/* ---------- Le Coup d'éclat : un bouton doré dans la rangée du Flux, qui déplie un bouton par lignée à la même place ---------- */
+#app:is([data-mode="combat"]) .flux .btn-flux.btn-eclat-ouvrir{color:#1C1406;background:linear-gradient(180deg,#fff6dc,#f2d58c 45%,#c79a3e);
+  box-shadow:inset 0 -3px 0 #8a6420,0 0 12px rgba(242,213,140,.5);animation:eclat-pret 1.4s ease-in-out infinite alternate}
+#app:is([data-mode="combat"]) .flux .btn-flux.btn-eclat-ouvrir .ico{color:#1C1406}
+.flux .btn-flux{white-space:nowrap}
+.coups-eclat{gap:6px}
+.btn-eclat{--cut:7px;flex:1;min-width:0;height:36px;overflow:hidden;display:grid;align-content:center;gap:0;padding:2px 7px;text-align:left;color:#1C1406;cursor:pointer;border:0;
+  background:linear-gradient(180deg,#fff6dc,#f2d58c 45%,#c79a3e);box-shadow:inset 0 -3px 0 color-mix(in srgb,var(--c) 70%,#000),0 0 14px rgba(242,213,140,.45);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.btn-eclat strong{font:400 13px/1.1 var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn-eclat small{font-size:12px;line-height:1.1;font-weight:600;opacity:.8}
+.btn-eclat:disabled{filter:saturate(.3) brightness(.6)}
+.coups-eclat .btn-icone{flex:none;height:36px;min-height:0;width:36px}
+/* téléphone étroit : les boutons du Flux se serrent pour laisser la place au Coup d'éclat */
+@media (max-width:400px){ .flux .btn-flux{padding:0 7px;gap:3px} }
+@keyframes eclat-pret{from{filter:brightness(1)}to{filter:brightness(1.12)}}
+#app .badge-reso.eclat{background:linear-gradient(180deg,#fff6dc,#f2d58c 50%,#c79a3e);color:#1C1406}
+.etat.ombre.actif{color:#e7dcff;box-shadow:inset 0 0 0 1px var(--reso)}
+@media (prefers-reduced-motion: reduce){ .int-felure.prevue,.btn-eclat{animation:none} }

@@ -60,5 +60,7 @@ if (import.meta.env.DEV) Object.assign(window, {
   __gains: { montrer },
   // pour voir le Grand Tableau sans compte : __tableau(entrées, ton uid)
   __pseudo: () => { G.edition = true; G.accueil = true; afficher(); },
+  // pour régler un combat à la main (captures) : __combat(s => { s.flux = 3; })
+  __combat: (f: (s: NonNullable<typeof app.jeu.expedition>['combat']) => void) => { const s = app.jeu.expedition?.combat; if (s) { f(s); afficher(); } },
   __tableau: (l: Entree[], moi: string) => { G.entrees = l; G.etat = 'ok'; G.lu = Date.now(); app.uid = moi; compteEtat.utilisateur = { nom: 'Essai' }; afficher(); },
 });
