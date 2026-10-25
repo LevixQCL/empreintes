@@ -14,6 +14,7 @@ const TEINTE: Record<LigneeGeste, string> = { tech: '#8FDCFF', bio: '#FFB44A', r
 const SOIN = '#7CE3A0';
 const BOUCLIER = '#E6F3FF';
 const DANGER = '#FF6B5B';
+const OR = '#F3D27A';
 
 interface Particule { x: number; y: number; vx: number; vy: number; vie: number; max: number; taille: number; couleur: string; gravite: number; trainee?: boolean; frein?: number; eclat?: { angle: number; tourne: number; forme: number[] } }
 interface Trait { dessiner: (c: CanvasRenderingContext2D, t: number) => void; debut: number; duree: number }
@@ -119,9 +120,10 @@ function lancerBoucle() {
       }
       return true;
     });
+    dessinerSuspendus(c, t);
     c.globalAlpha = 1;
     c.globalCompositeOperation = 'source-over';
-    if (particules.length || traits.length) boucle = requestAnimationFrame(pas);
+    if (particules.length || traits.length || suspendus.length) boucle = requestAnimationFrame(pas);
     else { boucle = 0; c.clearRect(0, 0, innerWidth, innerHeight); }
   };
   boucle = requestAnimationFrame(pas);
@@ -445,6 +447,132 @@ function crescendo(p: DOMPoint, rang: number) {
   }, 480);
 }
 
+// ---------- La fin de chaîne : les cristaux suspendus ----------
+// Chaque coup porté laisse un cristal de lumière, de la couleur de sa lignée, qui flotte au-dessus de l'ennemi.
+// Au dernier coup de la chaîne (ou quand l'ennemi tombe), tous plongent ensemble sur lui : un seul grand moment par chaîne,
+// d'autant plus fort que la chaîne a porté de coups. Une chaîne d'un seul coup n'en laisse aucun.
+
+interface Suspendu { de: DOMPoint; vers: DOMPoint; couleur: string; ne: number; phase: number }
+let suspendus: Suspendu[] = [];
+let filet = 0;
+const MAX_SUSPENDUS = 7;
+
+/** Les places des cristaux : un arc au-dessus de l'ennemi, du centre vers les bords */
+function place(p: DOMPoint, i: number): DOMPoint {
+  const r = Math.min(160, innerWidth * 0.32);
+  const cote = i % 2 ? 1 : -1, pas = Math.ceil(i / 2);
+  const a = -Math.PI / 2 + cote * pas * 0.42;
+  return new DOMPoint(p.x + Math.cos(a) * r, p.y + Math.sin(a) * r * 0.36);
+}
+
+function suspendre(p: DOMPoint, couleur: string) {
+  if (reduit || suspendus.length >= MAX_SUSPENDUS) return;
+  suspendus.push({ de: p, vers: place(p, suspendus.length), couleur, ne: maintenant(), phase: hasard(0, 6.28) });
+  note(1046 * GAMME[Math.min(GAMME.length - 1, suspendus.length - 1)]!, 'sine', 0.25, 0.018);
+  // filet de sécurité : si la chaîne s'arrête sans fin reconnue, les cristaux s'évanouissent d'eux-mêmes
+  clearTimeout(filet);
+  filet = window.setTimeout(dissiper, 8000);
+  lancerBoucle();
+}
+
+/** La position du cristal à l'instant t : il monte à sa place, puis flotte */
+function ou(s: Suspendu, t: number): [number, number, number] {
+  const k = Math.min(1, (t - s.ne) / 320);
+  const e = 1 - Math.pow(1 - k, 3);
+  const flotte = Math.sin((t / 1000) * 2.2 + s.phase) * 3;
+  return [s.de.x + (s.vers.x - s.de.x) * e, s.de.y + (s.vers.y - s.de.y) * e + flotte * k, k];
+}
+
+/** Un cristal de lumière : un losange effilé, un cœur blanc, un halo */
+function cristal(c: CanvasRenderingContext2D, x: number, y: number, taille: number, angle: number, couleur: string, alpha: number) {
+  halo(c, x, y, taille * 3.2, couleur, alpha * 0.75);
+  c.save();
+  c.translate(x, y); c.rotate(angle);
+  c.globalAlpha = alpha * 0.9;
+  c.fillStyle = couleur; c.strokeStyle = '#fff'; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(0, -taille * 1.7); c.lineTo(taille * 0.55, 0); c.lineTo(0, taille * 1.7); c.lineTo(-taille * 0.55, 0); c.closePath();
+  c.fill(); c.stroke();
+  c.globalAlpha = alpha;
+  c.fillStyle = '#fff';
+  c.beginPath(); c.moveTo(0, -taille); c.lineTo(taille * 0.18, 0); c.lineTo(0, taille); c.lineTo(-taille * 0.18, 0); c.closePath(); c.fill();
+  c.restore();
+}
+
+function dessinerSuspendus(c: CanvasRenderingContext2D, t: number) {
+  for (const s of suspendus) {
+    const [x, y, k] = ou(s, t);
+    const pulse = 0.85 + Math.sin((t / 1000) * 5 + s.phase) * 0.15;
+    cristal(c, x, y, 7 * (0.5 + k * 0.5), Math.sin((t / 1000) * 1.3 + s.phase) * 0.25, s.couleur, pulse);
+  }
+}
+
+/** Les cristaux s'évanouissent sans frapper (la chaîne finit sur un soin, un bouclier, ou s'interrompt) */
+function dissiper() {
+  clearTimeout(filet);
+  const t = maintenant();
+  for (const s of suspendus) {
+    const [x, y] = ou(s, t);
+    eclats(x, y, 6, s.couleur, { vitesse: 50, gravite: -60, taille: 2, vie: 0.8 });
+  }
+  suspendus = [];
+}
+
+/**
+ * Les cristaux plongent sur l'ennemi, l'un après l'autre, puis frappent ensemble : une onde dorée, un éclair, une note.
+ * Renvoie le temps (ms) que la chaîne doit attendre pour laisser ce moment respirer.
+ */
+function converger(p: DOMPoint): number {
+  clearTimeout(filet);
+  const n = suspendus.length;
+  if (!n) return 0;
+  const t = maintenant();
+  const vol = 200, ecart = 35;
+  suspendus.forEach((s, i) => {
+    const [x0, y0] = ou(s, t);
+    // une courbe : le cristal recule un peu avant de plonger
+    const cx = x0 + (x0 - p.x) * 0.35, cy = y0 - 30;
+    trait((c, k) => {
+      const e = k * k;
+      const x = (1 - e) * (1 - e) * x0 + 2 * (1 - e) * e * cx + e * e * p.x;
+      const y = (1 - e) * (1 - e) * y0 + 2 * (1 - e) * e * cy + e * e * p.y;
+      // la traînée : quelques échos du cristal derrière lui
+      for (let j = 3; j >= 0; j--) {
+        const ej = Math.max(0, e - j * 0.06);
+        const xj = (1 - ej) * (1 - ej) * x0 + 2 * (1 - ej) * ej * cx + ej * ej * p.x;
+        const yj = (1 - ej) * (1 - ej) * y0 + 2 * (1 - ej) * ej * cy + ej * ej * p.y;
+        halo(c, xj, yj, 10 - j * 2, s.couleur, 0.5 - j * 0.1);
+      }
+      cristal(c, x, y, 7, Math.atan2(p.y - y, p.x - x) + Math.PI / 2, s.couleur, 1);
+    }, vol, i * ecart);
+  });
+  suspendus = [];
+  const arrivee = vol + (n - 1) * ecart;
+  setTimeout(() => {
+    // l'ennemi du moment (l'écran a pu se redessiner entre-temps)
+    const ennemi = document.querySelector('.scene-ennemi .ennemi-art');
+    const ici = centre(ennemi, -0.08) ?? p;
+    const force = Math.min(6, 2 + n);
+    ondeDeChoc(ici.x, ici.y, OR, force);
+    const etoile = pret('impact');
+    const rayon = 60 + n * 18;
+    trait((c, k) => {
+      c.globalAlpha = k < 0.2 ? 1 : 1 - (k - 0.2) / 0.8;
+      if (etoile) { c.save(); sprite(c, etoile, ici.x, ici.y, rayon * 2.4 * (0.7 + k * 0.5), k * 0.4); c.restore(); }
+      halo(c, ici.x, ici.y, rayon * (0.7 + k * 0.8), '#FFFFFF', (1 - k) * 0.5);
+    }, 380);
+    eclats(ici.x, ici.y, 24 + n * 8, OR, { vitesse: 520 + n * 40, taille: 2.4, trainee: true, gravite: 140 });
+    verre(ici.x, ici.y, 4 + n * 2, '#FFF1CC', force);
+    touche(ennemi, OR, Math.min(5, force));
+    const ecran = document.querySelector('.ecran-combat');
+    secouer(ecran, Math.min(5, 1 + n));
+    if (!reduit && n >= 3) ecran?.animate([{ filter: 'brightness(1.5)' }, { filter: 'none' }], { duration: 260, easing: 'ease-out' });
+    sonImpact(5);
+    [1, 5 / 4, 3 / 2, 2, 5 / 2].slice(0, Math.min(5, n + 1)).forEach((k, i) => setTimeout(() => note(392 * k, 'triangle', 0.45, 0.04), i * 35));
+    vibrer(n >= 3 ? [25, 30, 70] : 30);
+  }, arrivee);
+  return arrivee + 160;
+}
+
 /** Surcharge (et Flux gagné) : un filet d'énergie file jusqu'à la jauge de Flux */
 function versFlux(de: DOMPoint | null, a: DOMPoint | null) {
   if (!de || !a) return;
@@ -602,6 +730,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
   const pEnnemi = centre(ennemi ?? scene, -0.08);
   switch (ev.kind) {
     case 'ennemi-agit': {
+      dissiper();
       // dans un groupe, l'ennemi qui agit s'avance un instant
       const v = racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]`);
       if (v) { v.classList.remove('agit'); void (v as HTMLElement).offsetWidth; v.classList.add('agit'); }
@@ -625,12 +754,14 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       return 250;
     }
     case 'cible': {
+      dissiper();
       // le visé est tombé : le suivant entre en scène
       if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ opacity: 0, transform: 'scale(1.06)' }, { opacity: 1, transform: 'none' }], { duration: 320, easing: 'ease-out' });
       return 80;
     }
     case 'carte': {
       derniere = { lignee: ev.lignee, rang: ev.rang, total: ev.total, suite: ev.suite, type: ev.type, ...(ev.effet ? { effet: ev.effet } : {}) };
+      if (ev.rang === 0) dissiper();
       sonCarte(ev.lignee, ev.rang);
       // la carte qui part : celle de la chaîne à cette place (une carte lourde prend deux places, d'où l'élément réel)
       const carte = racine.querySelectorAll('.zone-chaine .rail > :not(.place-vide)')[ev.rang];
@@ -644,6 +775,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       if (ev.type === 'bouclier' && esc) { if (ev.effet === 'rempart') remparts(esc); else bouclierSur(esc); }
       if (ev.type === 'soin' && ev.effet === 'vague' && esc) vague(esc);
       if (ev.effet === 'flux') versFlux(de, centre(racine.querySelector('.flux .segments')));
+      if (ev.rang === ev.total - 1 && ev.type !== 'atk') setTimeout(dissiper, 200);
       return 0;
     }
     case 'degats': {
@@ -652,7 +784,11 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         // l'intensité monte avec la place dans la chaîne, la Résonance, et la taille du coup
         const force = Math.min(5, d.rang + (d.suite >= 3 ? 1 : 0) + (ev.net >= 25 ? 1 : 0));
         const couleur = TEINTE[d.lignee];
-        if (!ev.net) { if (pEnnemi) eclats(pEnnemi.x, pEnnemi.y, 6, '#9aa4b2', { vitesse: 200, taille: 2, trainee: true }); note(1400, 'triangle', 0.08, 0.03); return 0; }
+        // le dernier coup de la chaîne : les cristaux suspendus plongent avec lui
+        const dernierCoup = !!derniere && derniere.type === 'atk' && d.rang === d.total - 1;
+        const finale = dernierCoup && pEnnemi ? converger(pEnnemi) : 0;
+        if (!ev.net) { if (pEnnemi) eclats(pEnnemi.x, pEnnemi.y, 6, '#9aa4b2', { vitesse: 200, taille: 2, trainee: true }); note(1400, 'triangle', 0.08, 0.03); return finale; }
+        if (pEnnemi && !dernierCoup && derniere?.type === 'atk') suspendre(pEnnemi, couleur);
         if (pEnnemi) {
           // l'éclair blanc de l'impact, plus large à chaque carte de la chaîne
           const rayon = 34 + force * 14;
@@ -681,7 +817,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         sonImpact(force);
         vibrer(8 + force * 6);
         // l'arrêt sur image retient aussi la suite de la chaîne : le coup suivant attend que celui-ci ait « porté »
-        return force >= 2 ? 20 + force * 14 : 0;
+        return Math.max(finale, force >= 2 ? 20 + force * 14 : 0);
       }
       const el = [...racine.querySelectorAll('.combattant')].find((x) => x.getAttribute('data-porteur') === ev.cible);
       const p = centre(el ?? null);
@@ -791,15 +927,18 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
     }
     case 'fin': {
       derniere = null;
+      // l'ennemi tombe avant la fin de la chaîne : les cristaux l'achèvent
+      const finale = ev.issue === 'victoire' && pEnnemi ? converger(pEnnemi) : (dissiper(), 0);
       if (ev.issue === 'victoire' && pEnnemi) {
         // l'ennemi se dissout en poussière lumineuse, de la couleur de sa lignée
         const lignee = (['tech', 'bio', 'reso'] as const).find((l) => scene?.classList.contains(`l-${l}`)) ?? 'neutre';
         const r = (ennemi ?? scene)!.getBoundingClientRect();
-        for (let i = 0; i < 6; i++) setTimeout(() => eclats(hasard(r.left + r.width * 0.2, r.right - r.width * 0.2), hasard(r.top + r.height * 0.2, r.bottom - r.height * 0.3), 14, TEINTE[lignee], { vitesse: 70, gravite: -90, taille: 2.6, vie: 1.4, ouverture: Math.PI }), i * 60);
-        if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ opacity: 1, filter: 'none' }, { opacity: 0, filter: 'blur(6px) brightness(2)', transform: 'translateY(-10px) scale(1.04)' }], { duration: 900, fill: 'forwards', easing: 'ease-in' });
-        [1, 5 / 4, 3 / 2, 2].forEach((k, i) => setTimeout(() => note(523 * k, 'triangle', 0.6, 0.035), i * 90));
+        // (après le coup des cristaux, s'il y en a : l'ennemi reste entier jusque-là)
+        for (let i = 0; i < 6; i++) setTimeout(() => eclats(hasard(r.left + r.width * 0.2, r.right - r.width * 0.2), hasard(r.top + r.height * 0.2, r.bottom - r.height * 0.3), 14, TEINTE[lignee], { vitesse: 70, gravite: -90, taille: 2.6, vie: 1.4, ouverture: Math.PI }), finale + i * 60);
+        if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ opacity: 1, filter: 'none' }, { opacity: 0, filter: 'blur(6px) brightness(2)', transform: 'translateY(-10px) scale(1.04)' }], { duration: 900, delay: finale, fill: 'both', easing: 'ease-in' });
+        [1, 5 / 4, 3 / 2, 2].forEach((k, i) => setTimeout(() => note(523 * k, 'triangle', 0.6, 0.035), finale + i * 90));
         vibrer([20, 60, 20, 60, 40]);
-        return 700;
+        return 700 + finale;
       }
       if (ev.issue === 'defaite') note(110, 'sawtooth', 0.9, 0.05, 0.5);
       return 0;
