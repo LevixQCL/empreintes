@@ -99,3 +99,96 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 ```
 bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a large rough crystal with the dark shadow of an ancient serpentine dragon trapped inside it, a spiral torrent of violet energy pouring out of the crystal, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
 ```
+
+## Augmentés : lumière bleu acier
+
+### Bond — `bond.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a single sleek mechanical foot implant with a glowing blue crystal sole, caught just after landing, a small burst of dust and blue sparks beneath it, curved motion lines, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Bras-grue — `bras-grue.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a heavy mechanical arm prosthesis with hydraulic pistons and thick steel fingers, gripping and lifting a short steel beam, a glowing blue crystal in the elbow, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Cœur de reprise — `coeur-reprise.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a crystal heart held in a small brass cage wrapped with copper coils, a bright blue electric spark jolting it back to life, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Cœur-turbine — `coeur-turbine.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a faceted crystal heart mounted on a tiny brass turbine, its blades spinning in a blur, thin trails of blue light around it, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Dorsale renforcée — `dorsale.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a long spine implant made of brass vertebrae and blue crystal joints, laid straight along the workbench like a precious tool, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Esquive — `esquive.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a slim steel wrist implant with a small crystal lens, faint blue afterimages of it sliding sideways as a steel bolt passes harmlessly beside it, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Gant à arc — `gant-arc.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a thick worn electrician's glove with a blue crystal set on the back of the hand, a crackling electric arc jumping between its fingertips, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Grappin à câble — `grappin-cable.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a wrist-mounted grappling launcher with folded steel claws and a coil of thin steel cable, a blue crystal glowing in its housing, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Jambes à ressort — `jambes-ressort.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an old bulky pair of mechanical legs with visible coil springs and riveted steel plates, glowing blue crystal cores at the knees, a big wrench lying beside them, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Lames orbitales — `lames-orbitales.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, three curved steel blades hovering in a circle around a floating blue crystal, blue light trails tracing their orbit, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Œil-brouilleur — `oeil-brouilleur.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a mechanical eye implant with a shuttered lens, emitting rippling waves of blue static distortion that blur the air around it, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Œil-relais — `oeil-relais.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a mechanical eye implant on a small brass stand, projecting a faint blue holographic image of a distant dark corridor above it, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Ruée — `ruee.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a battered steel shoulder guard with a glowing blue crystal, resting on a bent and snapped metal railing, strong speed lines, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Tir — `tir.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a heavy rail nail gun built from welding tools, with a magnetic rail charged with blue energy and a few construction nails beside it, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Tir vif — `tir-vif.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a compact wrist-mounted rail launcher firing a bright blue streak, a small coin spinning in the air beside it, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
