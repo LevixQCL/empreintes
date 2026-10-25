@@ -5,6 +5,12 @@
 // Sans WebGL 2, ou avec « réduire les animations », rien ne se passe : les autres effets suffisent.
 
 const MAX_ONDES = 4;
+
+/**
+ * L'échelle des effets : 1 sur téléphone (scène d'environ 340 × 140 à 390 × 250 px), jusqu'à 2,4 sur un grand écran de PC
+ * où l'ennemi est affiché deux à trois fois plus grand. Tout ce qui se mesure en pixels autour de l'ennemi en dépend.
+ */
+export const echelleScene = (largeur: number, hauteur: number) => Math.min(2.4, Math.max(1, Math.sqrt(largeur * hauteur) / 300));
 const DUREE = 560;
 
 interface Onde { x: number; y: number; debut: number; force: number; couleur: [number, number, number] }
@@ -29,6 +35,7 @@ precision highp float;
 uniform sampler2D img;
 uniform vec2 taille;      // la scène, en px CSS
 uniform float dpr;
+uniform float echelle;   // 1 sur téléphone, plus sur PC
 uniform vec4 boite;       // l'image avant transformation : x, y, largeur, hauteur
 uniform mat2 inverse;     // l'inverse de la transformation CSS de l'image (respiration, recul)
 uniform vec2 decalage;    // sa translation
@@ -56,16 +63,17 @@ void main() {
     float t = o.z, f = o.w;
     vec2 v = p - o.xy;
     float r = length(v);
-    float rayon = 12.0 + (150.0 + f * 34.0) * (1.0 - pow(1.0 - t, 3.0));
-    float larg = 16.0 + f * 4.0 + t * 22.0;
+    float rayon = (12.0 + (150.0 + f * 34.0) * (1.0 - pow(1.0 - t, 3.0))) * echelle;
+    float larg = (16.0 + f * 4.0 + t * 22.0) * echelle;
     float s = (r - rayon) / larg;
     float g = exp(-s * s);
-    float amp = (6.0 + f * 2.2) * pow(1.0 - t, 1.6);
+    float amp = (6.0 + f * 2.2) * pow(1.0 - t, 1.6) * pow(echelle, 0.8);
     // le front de l'onde : le verre est poussé vers l'extérieur devant, tiré vers l'intérieur derrière (comme une lentille)
     d += (r > 0.001 ? v / r : vec2(0.0)) * (-s * g * 2.33) * amp;
     fil += g * pow(1.0 - t, 2.0);
     // au centre, juste après le choc, le verre s'enfonce un peu
-    float creux = exp(-r * r / ((30.0 + f * 8.0) * (30.0 + f * 8.0))) * max(0.0, 1.0 - t * 3.0);
+    float rc = (30.0 + f * 8.0) * echelle;
+    float creux = exp(-r * r / (rc * rc)) * max(0.0, 1.0 - t * 3.0);
     d += v * creux * 0.18;
     lueur += teintes[i] * g * pow(1.0 - t, 2.2) * (0.22 + f * 0.04);
   }
@@ -108,7 +116,7 @@ function preparer(): boolean {
     const loc = gl.getAttribLocation(prog, 'p');
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    for (const nom of ['img', 'taille', 'dpr', 'boite', 'inverse', 'decalage', 'couvre', 'ondes', 'teintes', 'n']) U[nom] = gl.getUniformLocation(prog, nom);
+    for (const nom of ['img', 'taille', 'dpr', 'echelle', 'boite', 'inverse', 'decalage', 'couvre', 'ondes', 'teintes', 'n']) U[nom] = gl.getUniformLocation(prog, nom);
     return true;
   } catch {
     impossible = true;
@@ -181,6 +189,7 @@ function dessiner() {
   gl.uniform1i(U.img!, 0);
   gl.uniform2f(U.taille!, L, H);
   gl.uniform1f(U.dpr!, toile.width / L);
+  gl.uniform1f(U.echelle!, echelleScene(L, H));
   gl.uniform4f(U.boite!, bx, by, bw, bh);
   // colonne par colonne (WebGL) : l'inverse de [a c; b d]
   gl.uniformMatrix2fv(U.inverse!, false, [m.d / det, -m.b / det, -m.c / det, m.a / det]);
