@@ -36,8 +36,8 @@ export function agirDistrict(a: string, c: Clic): Suite {
     case 'cartes': ouvrir('cartes'); break;
     case 'porteurs': ouvrir('porteurs'); break;
     case 'porteur': D.porteur = id; D.deck = null; D.place = null; break;
-    // « Mon escouade » (23 octobre 2026) : l'onglet Porteurs s'ouvre sur l'escouade ; « Tous les Porteurs » à part
-    case 'porteurs-tous': D.reserve = true; D.place = null; D.porteur = null; D.deck = null; window.scrollTo(0, 0); break;
+    // l'onglet Escouade (25 octobre 2026) s'ouvre sur l'escouade ; « Porteurs » et « Collection » sont ses deux autres volets
+    case 'porteurs-tous': ouvrir('porteurs'); D.reserve = true; window.scrollTo(0, 0); break;
     case 'porteurs-escouade': D.reserve = false; D.porteur = null; D.deck = null; window.scrollTo(0, 0); break;
     case 'escouade-place': D.place = Number(b.dataset.index ?? 0); D.porteur = null; D.deck = null; break;
     case 'escouade-fermer': D.place = null; break;
@@ -165,6 +165,8 @@ export function agirDistrict(a: string, c: Clic): Suite {
       if (!o) break;
       ouvrir(o.onglet);
       if (o.onglet === 'archipel' && o.pilier) D.selection = o.pilier;
+      // construire le deck : droit aux cartes d'Ilka, où attend l'Œil-relais
+      if (o.id === 'deck') D.deck = 'ilka';
       break;
     }
     case 'tri':

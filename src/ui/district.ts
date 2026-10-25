@@ -6,7 +6,7 @@ import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne,
-  cartesNouvelles, OBJECTIFS, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, trierCartes, type TriCartes } from '../core/collection';
@@ -25,7 +25,7 @@ import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { ICO, icone, type Icone } from './icones';
-import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, type EcranDistrict, type Filtre } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { echap, mouvementReduit, virgule } from './outils';
 
@@ -698,7 +698,7 @@ function fenetreChoix(j: Jeu): string {
 
 const exemplaires = (j: Jeu, moduleId: string) => [...RARETES].reverse().map((r) => carteId(moduleId, r)).filter((k) => j.collection[k]);
 
-function feuilleCarte(e: EcranDistrict): string {
+export function feuilleCarte(e: EcranDistrict): string {
   const j = e.j;
   const cle = e.carte;
   if (!cle || !j.collection[cle]) return '';
@@ -792,8 +792,8 @@ export function feuilleDeck(e: EcranDistrict): string {
 }
 
 // La collection (revue du 22 octobre 2026, même équipe) : les cartes arrivent tout de suite, des filtres utiles
-// (« peuvent monter », « libres ») en plus des lignées, et l'équipement des Porteurs se fait depuis l'onglet Porteurs
-// ou en touchant une carte (la rangée « Construire le deck » faisait doublon).
+// (« peuvent monter », « libres ») en plus des lignées, et l'équipement des Porteurs se fait depuis le volet Escouade
+// ou en touchant une carte. Depuis le 25 octobre 2026, c'est le troisième volet de l'onglet Escouade.
 /** Le choix du tri des cartes (24 octobre 2026) : le même partout où l'on voit une liste de cartes, et retenu d'un écran à l'autre */
 function choixTri(tri: TriCartes): string {
   return `<div class="tri-cartes" role="radiogroup" aria-label="Trier les cartes"><span class="tri-label">${ICO.journal}Trier</span>`
@@ -814,8 +814,8 @@ export function htmlCartes(e: EcranDistrict): string {
   const nMonter = toutes.filter(peutMonter).length;
   const nLibres = toutes.filter(estLibre).length;
   const f = e.filtre;
-  const neuves = cartesNouvelles(j).length;
-  let h = entete(`COLLECTION · ${trouvees} / ${MODULES.length} TROUVÉES${neuves ? ` · <span class="pt-dispo">${neuves} NOUVELLE${neuves > 1 ? 'S' : ''}</span>` : ''}`, 'Cartes', `<div class="cl-guides">${lienGuide('deck', 'Construire son deck')}${lienGuide('carte', 'Les effets')}</div>`);
+  let h = entete(`${trouvees} / ${MODULES.length} TROUVÉES`, 'Collection', `<div class="cl-guides">${lienGuide('deck', 'Construire son deck')}${lienGuide('carte', 'Les effets')}</div>`);
+  h += voletsEscouade(e);
   const filtres: { id: Filtre; nom: string; n?: number; c?: string; classe?: string }[] = [
     { id: 'tout', nom: 'Toutes' }, { id: 'tech', nom: NOM_LIGNEES.tech, c: COULEUR.tech }, { id: 'bio', nom: NOM_LIGNEES.bio, c: COULEUR.bio }, { id: 'reso', nom: NOM_LIGNEES.reso, c: COULEUR.reso },
     { id: 'monter', nom: 'Peuvent monter', n: nMonter, classe: 'or' }, { id: 'libres', nom: 'Libres', n: nLibres },
@@ -824,7 +824,7 @@ export function htmlCartes(e: EcranDistrict): string {
     `<button type="button" role="tab" class="es-cible${f === x.id ? ' actif' : ''}${x.classe ? ` ${x.classe}` : ''}"${x.c ? ` style="--c:${x.c}"` : ''} data-action="filtre" data-id="${x.id}" aria-selected="${f === x.id}">${x.nom}${x.n !== undefined ? ` <b>${x.n}</b>` : ''}</button>`).join('') + `</div>`;
   const tri = e.tri ?? 'puissance';
   h += choixTri(tri);
-  h += `<p class="cl-intro">En expédition, ton deck réunit les cartes des 3 Porteurs emmenés (6 chacun au plus). Touche une carte pour la confier ou la faire monter.</p>`;
+  h += `<p class="cl-intro">Toutes tes cartes. Touche-en une pour la confier à un Porteur ou la faire monter ; ton deck est dans le volet Escouade.</p>`;
 
   const tuileCarte = (cle: string) => {
     const m = moduleDef(cle);
@@ -1133,12 +1133,12 @@ function htmlMissions(e: EcranDistrict): string {
 // ---------- Choix de l'escouade ----------
 
 /** Les Fréquences d'une liste de cartes (une carte à plusieurs Fréquences compte pour chacune ; les cartes ∗ à part) */
-function frequencesDe(cartes: { f: number; fs?: number[]; effet?: { type: string } }[]): number[] {
+export function frequencesDe(cartes: { f: number; fs?: number[]; effet?: { type: string } }[]): number[] {
   return Array.from({ length: 9 }, (_, i) => cartes.filter((g) => (g.fs ?? [g.f]).includes(i + 1) && g.effet?.type !== 'accord').length);
 }
 
 /** La plus longue suite de Fréquences présentes (les cartes ∗ comblent des trous) */
-function plusLongueSuite(n: number[], jokers: number): number[] {
+export function plusLongueSuite(n: number[], jokers: number): number[] {
   let best: number[] = [];
   for (let a = 0; a < 9; a++) {
     let j = jokers; const suite: number[] = [];
