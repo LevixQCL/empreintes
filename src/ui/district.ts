@@ -755,10 +755,14 @@ export function feuilleDeck(e: EcranDistrict): string {
   const porte = j.porteurs[id]!.modules.filter((k) => j.collection[k]);
   const plein = porte.length >= DISTRICT.cartesMax;
   const parti = enExpedition(j, id);
+  // l'échange (25 octobre 2026) : on choisit une carte portée puis une à confier (ou l'inverse), et elles changent de place
+  const choisie = e.echange && j.collection[e.echange] && moduleDef(e.echange).lignee === p.lignee ? e.echange : null;
+  const choixPorte = !!choisie && porte.includes(choisie);
   const tuile = (cle: string, action: string, bas: string) => {
     const m = moduleDef(cle);
     const c = j.collection[cle]!;
-    return `<button type="button" class="carte-tuile" data-action="${action}" data-module="${cle}" data-id="${id}"${parti ? ' disabled' : ''} aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}">${faceCarte(m, c.niveau, multNiveau(cle, c.niveau))}<span class="tuile-bas">${bas}</span></button>`;
+    const sel = cle === choisie;
+    return `<button type="button" class="carte-tuile${sel ? ' dk-choisie' : ''}" data-action="${action}" data-module="${cle}" data-id="${id}"${parti ? ' disabled' : ''} aria-pressed="${sel}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}">${faceCarte(m, c.niveau, multNiveau(cle, c.niveau))}<span class="tuile-bas">${bas}</span></button>`;
   };
   const tri = e.tri ?? 'puissance';
   const libres = trierCartes(Object.keys(j.collection)
@@ -772,23 +776,33 @@ export function feuilleDeck(e: EcranDistrict): string {
   if (parti) h += `<p class="aide">${echap(p.nom)} est en expédition : ses cartes changeront à son retour.</p>`;
   // le tri, en tête : il range les deux listes de la feuille
   h += choixTri(tri);
-  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour la reprendre.</p>`;
+  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour l’échanger ou la reprendre.</p>`;
   const fs = [...new Set(gestesDe(j, id).flatMap((g) => g.fs ?? [g.f]))].sort((a, b) => a - b);
   if (fs.length) h += `<p class="dk-freq">Fréquences qu’il apporte : ${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</p>`;
-  h += porte.length ? `<div class="grille-cartes">${trierCartes(porte, j.collection, tri).map((k) => tuile(k, 'degreffer', `<span class="dk-action">${ICO.retour}Reprendre</span>`)).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
+  h += porte.length ? `<div class="grille-cartes">${trierCartes(porte, j.collection, tri).map((k) => tuile(k, 'dk-porte', k === choisie ? `<span class="dk-action dk-remplace">${ICO.recycler}Choisie</span>` : choisie && !choixPorte ? `<span class="dk-action dk-remplace">${ICO.recycler}Échanger</span>` : `<span class="dk-action">${ICO.recycler}Échanger</span>`)).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
   h += `</section><section class="bloc"><h3 class="titre-bloc">${ICO.cartes}À lui confier</h3>`
-    + `<p class="aide">${plein ? `${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : reprends-en une d’abord, ou remplace une carte par la même dans un meilleur métal.` : `Les cartes de sa lignée (${NOM_LIGNEES[p.lignee]}) dans ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
+    + `<p class="aide">${plein ? `${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : touche une carte ici puis celle qu’elle remplace (ou l’inverse) pour les échanger.` : `Les cartes de sa lignée (${NOM_LIGNEES[p.lignee]}) dans ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
   // les cartes libres d'abord, puis celles qu'un autre Porteur porte ; chaque groupe dans l'ordre du tri (sort est stable)
   const triees = [...libres].sort((a, b) => Number(!!greffesDe(j, a)[0]) - Number(!!greffesDe(j, b)[0]));
   h += libres.length ? `<div class="grille-cartes">${triees.map((k) => {
     const qui = greffesDe(j, k)[0];
     const r = remplace(k);
-    const bas = r ? `<span class="dk-action dk-remplace">${ICO.recycler}Remplace celle en ${NOMS_RARETE[moduleDef(r).rarete].toLowerCase()}</span>`
+    const bas = k === choisie ? `<span class="dk-action dk-remplace">${ICO.recycler}Choisie</span>`
+      : choixPorte ? `<span class="dk-action dk-remplace">${ICO.recycler}Échanger</span>`
+      : r ? `<span class="dk-action dk-remplace">${ICO.recycler}Remplace celle en ${NOMS_RARETE[moduleDef(r).rarete].toLowerCase()}</span>`
       : qui ? `${avatar(qui, 20)}<span class="dk-chez">chez ${echap(porteurDef(qui).nom)}</span>` : `<span class="dk-action">${ICO.greffe}Confier</span>`;
     // pleine, il ne peut plus en recevoir de nouvelle ; une carte qui en remplace une autre reste possible
-    return tuile(k, 'greffer', bas).replace('class="carte-tuile"', `class="carte-tuile${plein && !r ? ' grisee' : ''}"`);
+    return tuile(k, 'dk-libre', bas).replace('class="carte-tuile"', `class="carte-tuile${plein && !r && !choixPorte ? ' grisee' : ''}"`);
   }).join('')}</div>` : `<p class="aide">Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.</p>`;
-  return h + `</section></div></section>`;
+  h += `</section></div>`;
+  // la carte choisie attend sa partenaire : le pied de la feuille le dit, toujours visible
+  if (choisie && !parti) {
+    const nom = echap(moduleDef(choisie).nom);
+    h += `<footer class="feuille-pied dk-pied"><p class="dk-consigne">${ICO.recycler}<span><strong>${nom}</strong> ${choixPorte ? `: touche une carte de « À lui confier » pour l’échanger.` : `: touche la carte que ${echap(p.nom)} porte et qu’elle remplacera.`}</span></p>`
+      + `<div class="ligne-btn">${choixPorte ? `<button type="button" class="btn sec" data-action="degreffer" data-module="${choisie}">${ICO.retour}Reprendre</button>` : ''}`
+      + `<button type="button" class="btn sec" data-action="dk-annuler">Annuler</button></div></footer>`;
+  }
+  return h + `</section>`;
 }
 
 // La collection (revue du 22 octobre 2026, même équipe) : les cartes arrivent tout de suite, des filtres utiles

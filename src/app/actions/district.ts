@@ -1,6 +1,6 @@
 // Actions du district : bâtiments, Porteurs, cartes, escouade, départs, Chroniques.
 
-import { moduleDef, porteurDef } from '../../core/donnees';
+import { moduleDe, moduleDef, porteurDef } from '../../core/donnees';
 import * as J from '../../core/jeu';
 import type { BatimentId } from '../../core/types';
 import { visuel as ageDistrict } from '../../ui/art';
@@ -64,12 +64,34 @@ export function agirDistrict(a: string, c: Clic): Suite {
       const r = J.greffer(app.jeu, b.dataset.module ?? '', id);
       resultat(r);
       const plein = !r.ok && !!r.message?.includes(`${J.DISTRICT.cartesMax} cartes`);
-      if (plein) { D.carte = null; D.deck = id; D.message = `${porteurDef(id).nom} porte déjà ${J.DISTRICT.cartesMax} cartes : reprends-en une, puis confie-lui ${moduleDef(b.dataset.module ?? '').nom}.`; }
+      if (plein) { D.carte = null; D.deck = id; D.echange = b.dataset.module ?? null; D.message = `${porteurDef(id).nom} porte déjà ${J.DISTRICT.cartesMax} cartes : touche celle que ${moduleDef(b.dataset.module ?? '').nom} remplacera.`; }
       break;
     }
-    case 'deck': D.deck = id; D.carte = null; break;
-    case 'deck-fermer': D.deck = null; break;
-    case 'degreffer': resultat(J.degreffer(app.jeu, b.dataset.module ?? '')); break;
+    case 'deck': D.deck = id; D.carte = null; D.echange = null; break;
+    case 'deck-fermer': D.deck = null; D.echange = null; break;
+    case 'degreffer': D.echange = null; resultat(J.degreffer(app.jeu, b.dataset.module ?? '')); break;
+    // la feuille d'un Porteur : on choisit deux cartes (une portée, une à confier) et elles s'échangent
+    case 'dk-annuler': D.echange = null; break;
+    case 'dk-porte': case 'dk-libre': {
+      const cle = b.dataset.module ?? '';
+      const porte = app.jeu.porteurs[id]?.modules ?? [];
+      const choisie = D.echange && app.jeu.collection[D.echange] ? D.echange : null;
+      if (choisie === cle) { D.echange = null; break; }
+      const autreCote = choisie && (porte.includes(choisie) !== (a === 'dk-porte'));
+      if (choisie && autreCote) {
+        const [retire, ajoute] = a === 'dk-porte' ? [cle, choisie] : [choisie, cle];
+        const r = J.echanger(app.jeu, retire, ajoute, id);
+        resultat(r);
+        if (r.ok) D.echange = null;
+        break;
+      }
+      // une carte à confier passe tout de suite s'il a une place libre (ou si elle remplace son autre métal)
+      const plein = porte.length >= J.DISTRICT.cartesMax;
+      const autreMetal = porte.some((k) => moduleDe(k) === moduleDe(cle));
+      if (a === 'dk-libre' && (!plein || autreMetal)) { D.echange = null; resultat(J.greffer(app.jeu, cle, id)); break; }
+      D.echange = cle;
+      break;
+    }
     case 'monter': resultat(J.monter(app.jeu, b.dataset.module ?? '')); break;
     case 'recycler': resultat(J.recycler(app.jeu, b.dataset.module ?? '')); break;
     case 'prendre': resultat(J.prendre(app.jeu, Number(b.dataset.index ?? 0))); break;

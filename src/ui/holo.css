@@ -208,3 +208,11 @@ body{background:
 .rang-carte b{font-weight:600;letter-spacing:.02em}
 .deck-porteur .carte-tuile.grisee{opacity:.55}
 .dk-remplace{color:#F2D58C}
+/* L'échange de deux cartes dans la feuille d'un Porteur (25 octobre 2026) */
+.deck-porteur .carte-tuile.dk-choisie{transform:translateY(-3px);filter:drop-shadow(0 0 8px rgba(242,213,140,.55))}
+.deck-porteur .carte-tuile.dk-choisie .tuile-bas{box-shadow:inset 0 -2px 0 var(--gold)}
+.dk-pied{gap:10px}
+.dk-consigne{display:flex;align-items:flex-start;gap:8px;margin:0;font-size:13.5px;line-height:1.45;color:#D8E2EE}
+.dk-consigne .ico{flex:none;width:16px;height:16px;margin-top:2px;color:var(--gold)}
+.dk-consigne strong{color:#F2D58C;font-weight:600}
+.dk-pied .ligne-btn{display:flex;gap:8px;justify-content:flex-end}
