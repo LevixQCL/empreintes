@@ -1,11 +1,11 @@
 // Le moteur de combat. Fonctions pures sur un état sérialisable (JSON) :
 // l'interface appelle ces fonctions puis anime les « pas » qu'elles renvoient.
 
-import { DECK_DEPART, FAVEUR_CONDITION, ennemiDef, porteurDef } from './donnees';
-import { REGLES, analyserChaine, avantage, meilleureFrequence, places } from './regles';
+import { DECK_DEPART, FAVEUR_CONDITION, ZONES, ennemiDef, porteurDef } from './donnees';
+import { REGLES, analyserChaine, avantage, frequencesEffectives, meilleureFrequence, places } from './regles';
 import { tireur } from './rng';
 import type {
-  BonusMarques, CibleRegle, CombatEtat, EnnemiEtat, Evenement, Geste, GesteDef, Intention, LigneeGeste, Pas, PorteurEtat, Trait,
+  BonusMarques, CibleRegle, CombatEtat, EnnemiEtat, Evenement, Geste, GesteDef, Intention, Lignee, LigneeGeste, Pas, PorteurEtat, Trait,
 } from './types';
 
 export interface Resultat {
@@ -76,6 +76,7 @@ export function creerCombat(opts: {
   // Ombre courtoise (Aurel) : la première attaque annoncée de chaque ennemi est retenue
   if (b?.desarme) for (const en of tousEnnemis(s)) { const it = intentionDe(s, en); if (it.type === 'atk') it.v = Math.round(it.v * (1 - b.desarme)); }
   piocher(s, REGLES.tailleMain + (b?.main ?? 0));
+  fixerFelures(s);
   return s;
 }
 
@@ -293,9 +294,11 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean } = {}): Pas[
     log(s, `Résonance ! Suite de ${a.suite} : effets +${Math.round((a.mult - 1) * 100)} %.`);
     emettre({ kind: 'resonance', suite: a.suite, mult: a.mult });
   }
+  const freqs = frequencesEffectives(s.chaine);
   for (const [i, g] of s.chaine.entries()) {
     emettre({ kind: 'carte', rang: i, total: s.chaine.length, lignee: ligneeGeste(g), type: g.type, porteur: g.porteur, suite: a.suite, ...(g.effet ? { effet: g.effet.type } : {}) });
     for (const ev of appliquer(s, g, a.mult, i)) emettre(ev);
+    if (s.ennemi.pv > 0 && freqs[i] === s.ennemi.felure && !s.ennemi.felureBrisee) briser(s, s.ennemi, emettre);
     phaseGardien(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) tombe(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) {
@@ -320,6 +323,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean } = {}): Pas[
       emettre({ kind: 'flux', gain: s.flux - avant });
     }
   }
+  s.debride = false;
   for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
   s.defausse.push(...s.chaine);
   s.chaine = [];
@@ -414,7 +418,9 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
   // les conditions de salle : une lignée favorisée, une source qui renforce les soins
   const faveur = s.condition && FAVEUR_CONDITION[s.condition] === ligneeGeste(g) ? 1.2 : 1;
   const source = s.condition === 'sanctuaire' && g.type === 'soin' ? 1.3 : 1;
-  const force = g.v * mult * cresc * faveur * source;
+  // Débridage (Coup d'éclat des Augmentés) : les coups de ce tour frappent deux fois plus fort
+  const debride = s.debride && g.type === 'atk' ? REGLES.eclat.debride : 1;
+  const force = g.v * mult * cresc * faveur * source * debride;
 
   if (g.type === 'atk') {
     const e = ennemiDef(s.ennemi.id);
@@ -581,9 +587,102 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
   if (garde) log(s, `${(s.garde ?? 0) >= part ? 'Rempart' : 'Bras de quai'} : ${garde} de bouclier gardés.`);
   s.bouclier = garde;
   s.garde = 0;
+  s.ombre = false;
   s.tour++;
   for (const en of ennemisDebout(s)) choisirIntention(s, en);
   piocher(s);
+  fixerFelures(s);
+}
+
+// ---------- Les Coups d'éclat (25 octobre 2026) ----------
+// Quand le Flux est plein, un Porteur peut déclencher le coup de sa lignée, une seule fois par combat pour toute
+// l'escouade : le Flux se vide, et il le paiera en Usure au retour. Garder son Flux ou le dépenser, c'est le dilemme.
+
+export const ECLATS: Record<Lignee, { nom: string; texte: string }> = {
+  tech: { nom: 'Débridage', texte: 'Les coups de ta chaîne frappent deux fois plus fort ce tour-ci.' },
+  bio: { nom: 'Sursaut', texte: 'Toute l’escouade récupère 40 % de ses PV, et un Porteur à terre se relève.' },
+  reso: { nom: 'Ombre agissante', texte: 'Aucune attaque ennemie ne porte au prochain tour ennemi.' },
+};
+
+/** Les Coups d'éclat qu'on peut déclencher maintenant : un par lignée, porté par le premier Porteur debout de cette lignée */
+export function eclatsPossibles(s: CombatEtat): { porteur: string; lignee: Lignee }[] {
+  if (s.issue !== 'en-cours' || s.eclat || s.flux < REGLES.fluxMax) return [];
+  const r: { porteur: string; lignee: Lignee }[] = [];
+  for (const p of vivants(s)) {
+    const l = porteurDef(p.id).lignee;
+    if (!r.some((x) => x.lignee === l)) r.push({ porteur: p.id, lignee: l });
+  }
+  return r;
+}
+
+/** Déclenche le Coup d'éclat d'un Porteur. Renvoie les pas à animer (vide si c'est impossible). */
+export function eclater(s: CombatEtat, porteurId: string, opts: { silencieux?: boolean } = {}): Pas[] {
+  const pas: Pas[] = [];
+  const choix = eclatsPossibles(s).find((x) => x.porteur === porteurId);
+  if (!choix) return pas;
+  const emettre = opts.silencieux ? () => {} : (ev: Evenement) => { pas.push({ ev, etat: clone(s) }); };
+  s.flux = 0;
+  s.eclat = choix;
+  const p = porteurEtat(s, porteurId)!;
+  p.usureEclat = (p.usureEclat ?? 0) + REGLES.eclat.usure;
+  const nom = porteurDef(porteurId).nom;
+  emettre({ kind: 'effet', cible: porteurId, texte: ECLATS[choix.lignee].nom });
+  if (choix.lignee === 'tech') {
+    s.debride = true;
+    log(s, `Débridage : ${nom} pousse ses implants au-delà du raisonnable. La chaîne frappera deux fois plus fort.`);
+  } else if (choix.lignee === 'reso') {
+    s.ombre = true;
+    log(s, `Ombre agissante : l’ombre de ${nom} se lève et retiendra les coups du prochain tour.`);
+  } else {
+    const aTerre = s.porteurs.find((x) => x.pv <= 0);
+    if (aTerre) {
+      aTerre.pv = Math.max(1, Math.round(aTerre.pvMax * REGLES.eclat.sursaut));
+      aTerre.aTerre = false;
+      emettre({ kind: 'soin', cible: aTerre.id, v: aTerre.pv });
+    }
+    for (const c of vivants(s)) {
+      if (c === aTerre) continue;
+      const avant = c.pv;
+      c.pv = Math.min(c.pvMax, c.pv + Math.round(c.pvMax * REGLES.eclat.sursaut));
+      if (c.pv > avant) emettre({ kind: 'soin', cible: c.id, v: c.pv - avant });
+    }
+    log(s, `Sursaut : le corps de ${nom} répond pour tous.${aTerre ? ` ${porteurDef(aTerre.id).nom} se relève.` : ''}`);
+  }
+  return pas;
+}
+
+// ---------- La Fêlure (25 octobre 2026) ----------
+// Chaque tour, chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence, posée dans la chaîne pendant
+// qu'il est visé, brise son intention (attaque, bouclier ou soin réduits de moitié, d'un quart chez un gardien)
+// et remplit le Flux. Deux fois sur trois, la Fréquence fêlée est l'une de celles de la main : jouable, pas automatique.
+
+export const estGardien = (id: string) => ZONES.some((z) => z.boss === id);
+
+function fixerFelures(s: CombatEtat) {
+  const r = tireur(s);
+  const enMain = [...new Set(s.main.flatMap((g) => (g.effet?.type === 'accord' ? [] : g.fs ?? [g.f])))];
+  for (const en of tousEnnemis(s)) {
+    delete en.felureBrisee;
+    if (en.pv <= 0 || en.simple) { delete en.felure; continue; }
+    en.felure = enMain.length && r.nombre() < REGLES.felure.chanceMain ? enMain[r.entier(enMain.length)]! : 1 + r.entier(9);
+  }
+}
+
+/** La Fréquence fêlée d'un ennemi est touchée : son intention se brise, le Flux monte */
+function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void) {
+  en.felureBrisee = true;
+  const it = intentionDe(s, en);
+  const part = estGardien(en.id) ? REGLES.felure.partGardien : REGLES.felure.part;
+  const nom = ennemiDef(en.id).nom;
+  if (it.type === 'atk' || it.type === 'bouclier' || it.type === 'soin') {
+    const avant = it.v;
+    it.v = Math.round(avant * (1 - part));
+    log(s, `Fêlure : ${nom} vacille, ${it.type === 'atk' ? 'son attaque' : it.type === 'bouclier' ? 'son bouclier' : 'son soin'} passe de ${avant} à ${it.v}.`);
+  } else log(s, `Fêlure : ${nom} vacille.`);
+  emettre({ kind: 'effet', cible: 'ennemi', texte: 'Fêlure', rang: en.rang ?? 0 });
+  const avant = s.flux;
+  s.flux = Math.min(REGLES.fluxMax, s.flux + REGLES.felure.flux);
+  if (s.flux > avant) emettre({ kind: 'flux', gain: s.flux - avant });
 }
 
 /** Ce que fait un ennemi à son tour */
@@ -621,7 +720,8 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
     }
     const morceaux: string[] = [];
     for (const c of cibles) {
-      const dmg = Math.round(it.v * puissance(en) * usureCombat(s).attaque * avantage(e.lignee, porteurDef(c.id).lignee));
+      // Ombre agissante (Coup d'éclat des Résonants) : l'ombre retient le coup
+      const dmg = s.ombre ? 0 : Math.round(it.v * puissance(en) * usureCombat(s).attaque * avantage(e.lignee, porteurDef(c.id).lignee));
       const abs = Math.min(s.bouclier, dmg);
       s.bouclier -= abs;
       const net = dmg - abs;
@@ -630,7 +730,7 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
       emettre({ kind: 'degats', cible: c.id, net, absorbe: abs, rang });
     }
     en.boost = 1;
-    log(s, `${e.nom} · ${it.nom} : ${morceaux.join(', ')}.`);
+    log(s, s.ombre ? `${e.nom} · ${it.nom} : l’ombre retient le coup.` : `${e.nom} · ${it.nom} : ${morceaux.join(', ')}.`);
   }
   // Régénération : il regagne une part de ses PV à la fin de son tour
   const regen = trait(en, 'regeneration');

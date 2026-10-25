@@ -155,6 +155,8 @@ export interface PorteurEtat {
   aTerre: boolean;
   /** les PV que l'Usure retire à ce Porteur pour toute la descente (affichés hachurés au bout de sa jauge) */
   usure?: number;
+  /** Usure en plus pour avoir déclenché un Coup d'éclat (comptée au retour de l'expédition) */
+  usureEclat?: number;
 }
 
 export interface EnnemiEtat {
@@ -179,6 +181,9 @@ export interface EnnemiEtat {
   phase2?: boolean;
   /** Strate −1 : l'ennemi joue sans ses traits ni sa seconde phase (on apprend d'abord les bases) */
   simple?: boolean;
+  /** Fêlure (25 octobre 2026) : la Fréquence qui brise son intention ce tour-ci, et si elle a déjà été brisée */
+  felure?: number;
+  felureBrisee?: boolean;
 }
 
 type Issue = 'en-cours' | 'victoire' | 'defaite';
@@ -228,6 +233,12 @@ export interface CombatEtat {
   /** part du bouclier d'escouade gardée à la fin du tour ennemi (Rempart) */
   garde?: number;
   flux: number;
+  /** Coup d'éclat (25 octobre 2026) : un seul par combat ; celui qui a été déclenché, et ses effets en cours */
+  eclat?: { porteur: string; lignee: Lignee };
+  /** Débridage : la chaîne de ce tour frappe deux fois plus fort */
+  debride?: boolean;
+  /** Ombre agissante : aucune attaque ennemie ne porte ce tour-ci */
+  ombre?: boolean;
   /** l'ennemi a brouillé les Fréquences : la prochaine chaîne ne fait pas de Résonance */
   dissonance?: boolean;
   /** Marque de Véla (Lectrice) : la Dissonance n'a pas de prise sur l'escouade */

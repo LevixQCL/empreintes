@@ -11,6 +11,25 @@ export const REGLES = {
   /** multiplicateur selon la longueur de la meilleure suite */
   multSuite: { 3: 1.3, 4: 1.6, 5: 2 } as Record<number, number>,
   soinEntreCombats: 0.5,
+  /** Fêlure (25 octobre 2026) : une carte de la Fréquence fêlée brise l'intention de l'ennemi visé */
+  felure: {
+    /** chance que la Fréquence fêlée soit tirée parmi celles de la main (sinon de 1 à 9) */
+    chanceMain: 2 / 3,
+    /** part retirée à l'attaque, au bouclier ou au soin annoncé ; les gardiens résistent mieux */
+    part: 0.5,
+    partGardien: 0.25,
+    /** Flux gagné par Fêlure brisée */
+    flux: 1,
+  },
+  /** Coups d'éclat (25 octobre 2026) : Flux plein, un seul par combat */
+  eclat: {
+    /** Usure en plus pour le Porteur qui le déclenche (« deux jours de sommeil ») */
+    usure: 3,
+    /** Débridage : multiplicateur des dégâts de la chaîne */
+    debride: 2,
+    /** Sursaut : part des PV max rendue à chacun, et à celui qui se relève */
+    sursaut: 0.4,
+  },
 } as const;
 
 // Tech bat Résonant, Résonant bat Géné, Géné bat Tech
