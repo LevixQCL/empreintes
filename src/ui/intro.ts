@@ -6,7 +6,7 @@
 // et le sport » (plans 2 et 10), le regard (on a regardé ailleurs… regarde tout), la porte (plans 4 et 12).
 // Aucun pays, personne ni conflit réel n'est nommé. Source : Bible du lore et Chroniques d'Ysé.
 
-import { echap } from './vue';
+import { echap } from './outils';
 
 export interface Plan {
   epoque: string;

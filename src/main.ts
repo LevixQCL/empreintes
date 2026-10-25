@@ -16,7 +16,7 @@ import { decouverteEnAttente } from './core/decouvertes';
 import { ennemiDef, moduleDef, porteurDef } from './core/donnees';
 import * as J from './core/jeu';
 import type { BatimentId, CombatEtat, Evenement, Pas } from './core/types';
-import { charger, enregistrer, garderSecours, type Enveloppe } from './save/local';
+import { charger, enregistrer, garderSecours, lireSecours, type Enveloppe } from './save/local';
 import { firebaseActif } from './net/firebase-config';
 import { htmlCombat, type Ecran as EcranCombat, type Fin, type Compte } from './ui/vue';
 import { ETAPES, htmlBriefing } from './ui/briefing';
@@ -31,6 +31,7 @@ import { glisser, horloge, initToucher, noter, vibrer } from './ui/toucher';
 import './ui/toucher.css';
 import './ui/matieres.css';
 import { activerCartes } from './ui/carte';
+import { centreDe, mouvementReduit } from './ui/outils';
 import { NOMS_RARETE } from './core/collection';
 import { trouveesDe, type OngletGuide } from './ui/guide';
 import { comparer, montrer, relever } from './ui/gains';
@@ -44,7 +45,7 @@ import { htmlClassements, tableauVide, type GrandTableau } from './ui/classement
 import { DELAI_PSEUDO, TABLEAUX, aChange, clePseudo, entreeAPublier, nettoyerNom, nomValide, pseudoInterdit, type Entree, type Periode, type TableauId } from './core/classements';
 
 const racine = document.getElementById('app') as HTMLElement;
-const reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reduit = mouvementReduit();
 initToucher(racine, reduit);
 const pause = (ms: number) => new Promise((r) => setTimeout(r, reduit ? Math.min(ms, 120) : ms));
 
@@ -256,6 +257,28 @@ async function publierTableau() {
   }
 }
 
+/** Relit la partie de secours pour le panneau Compte (seulement quand il s'ouvre ou que le secours change) */
+function majSecours() {
+  const s = lireSecours();
+  compteEtat.secours = s ? { strate: s.data.strate, le: s.updatedAt, actuelle: jeu.strate, confirmer: false } : null;
+}
+
+/** Échange la partie en cours et la partie de secours : rien n'est perdu, on peut revenir en arrière */
+function restaurerSecours() {
+  const s = lireSecours();
+  if (!s) return;
+  garderSecours({ data: jeu, updatedAt: Date.now() });
+  jeu = s.data;
+  J.tick(jeu, Date.now());
+  sauver();
+  majSecours();
+  compteEtat.info = `Partie de secours restaurée : Strate −${jeu.strate}.`;
+  D.message = compteEtat.info;
+  mode = jeu.expedition ? 'combat' : 'district';
+  K.etat = null;
+  K.fin = finPour();
+}
+
 async function pousser(env: Enveloppe) {
   if (!compte || !uid) return;
   compteEtat.synchro = 'en-cours';
@@ -281,7 +304,7 @@ async function reconcilier() {
     const cmp = distante && locale ? J.compareAvancement(distante.data, locale.data) : 0;
     const prendreDistante = !!distante && (!locale || cmp > 0 || (cmp === 0 && distante.updatedAt > locale.updatedAt));
     if (prendreDistante && distante) {
-      if (locale) garderSecours(locale);
+      if (locale) { garderSecours(locale); majSecours(); }
       enregistrer(distante.data, Math.max(distante.updatedAt, Date.now()));
       jeu = distante.data;
       J.tick(jeu, Date.now());
@@ -292,7 +315,7 @@ async function reconcilier() {
       K.fin = finPour();
       afficher();
     } else if (locale) {
-      if (distante && cmp < 0) garderSecours(distante);
+      if (distante && cmp < 0) { garderSecours(distante); majSecours(); }
       await pousser(locale);
     }
     reconcilie = true;
@@ -493,7 +516,6 @@ function ouvrir(v: EcranDistrict['vue']) {
   if (v === 'porteurs') D.reserve = false;
 }
 
-const centreDe = (el: Element) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
 const resultat = (r: J.Resultat) => { D.message = r.ok ? '' : r.message ?? ''; if (r.ok) sauver(); };
 
 racine.addEventListener('pointerdown', () => { if (K.verrou) rapide = true; });
@@ -822,7 +844,9 @@ racine.addEventListener('click', async (ev) => {
     }
 
     // compte
-    case 'compte': compteEtat.ouvert = !compteEtat.ouvert; compteEtat.erreur = ''; compteEtat.info = ''; break;
+    case 'compte': compteEtat.ouvert = !compteEtat.ouvert; compteEtat.erreur = ''; compteEtat.info = ''; if (compteEtat.ouvert) majSecours(); break;
+    case 'secours': if (compteEtat.secours) compteEtat.secours.confirmer = true; break;
+    case 'secours-confirmer': restaurerSecours(); break;
     case 'google': await actionCompte(() => compte!.connexionGoogle()); return;
     case 'connexion': await actionCompte(() => compte!.connexionEmail(champ('email'), champ('mdp'), false)); return;
     case 'inscription': await actionCompte(() => compte!.connexionEmail(champ('email'), champ('mdp'), true)); return;

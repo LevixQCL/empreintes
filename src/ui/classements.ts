@@ -19,8 +19,8 @@ import { NOMS_RARETE, RARETES } from '../core/collection';
 import { lundiSuivant, semaineDe, type Jeu } from '../core/jeu';
 import { avatar, coquille, duree, ent, type EcranDistrict } from './coquille';
 import { ICO, icone } from './icones';
-import { echap } from './vue';
 import { fondTableau } from './art';
+import { echap } from './outils';
 
 /** L'état du Tableau en ligne, tenu par main.ts */
 export interface GrandTableau {

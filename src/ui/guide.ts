@@ -17,7 +17,8 @@ import { symboleAction, textureMetal } from './art';
 import { COULEUR_RARETE, couleurFrequence, faceCarte } from './carte';
 import { NOM_LIGNEES, avatar } from './coquille';
 import { ICO } from './icones';
-import { COULEUR, echap, geste } from './vue';
+import { COULEUR, geste } from './vue';
+import { echap } from './outils';
 
 export type OngletGuide = 'deck' | 'carte' | 'effets';
 

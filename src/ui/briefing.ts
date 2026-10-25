@@ -10,7 +10,8 @@ import { portrait } from './art';
 import { avatar } from './coquille';
 import './debut.css';
 import { ICO } from './icones';
-import { COULEUR, carteDemo, echap } from './vue';
+import { COULEUR, carteDemo } from './vue';
+import { echap } from './outils';
 
 const carte = (id: string): Geste => {
   const g = DECK_DEPART.find((d) => d.id === `${id}@fer`) ?? DECK_DEPART[0]!;

@@ -95,8 +95,6 @@ export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
  * Cadre peint d'une rareté (Midjourney, Retexture de nos modèles de carte, 22 octobre 2026) : de plus en plus fin avec la rareté.
  * Fer et or sont des cadres droits, cuivre et argent ont les deux coins coupés. La nacre n'a pas de cadre.
  */
-/** Pierre gravée d'une Fréquence (Midjourney, 22 octobre 2026) */
-export const pierreFrequence = (f: number) => `${base}frequences/${f}.webp`;
 /** Symbole peint d'une action : épée, bouclier, croix de jade (Midjourney, 22 octobre 2026) */
 export const symboleAction = (t: 'atk' | 'bouclier' | 'soin') => `${base}actions/${t}.webp`;
 /** Socle peint d'une action, porte la force au centre et la Fréquence sur le pourtour (Midjourney, 22 octobre 2026) */
@@ -171,12 +169,6 @@ export const illustrationBatiment = (id: BatimentId, niveau: number) => `${base}
 export function prochainVisuel(niveau: number): number | null {
   const seuils = [4, 8, 10];
   return seuils.find((s) => s > niveau) ?? null;
-}
-
-/** Style CSS d'une pastille de Porteur : sa couleur de fond, et son portrait s'il existe */
-export function stylePastille(id: string, fond: string | undefined): string {
-  const p = portrait(id);
-  return `--fond:${fond ?? '#2A2438'}${p ? `;--img:url(${p})` : ''}`;
 }
 
 /**

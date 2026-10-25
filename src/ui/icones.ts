@@ -56,7 +56,7 @@ export type Icone = keyof typeof ICO;
 const PEINTES = new Set<Icone>(['energie', 'composants', 'eclats', 'strate', 'district', 'tour', 'porteurs', 'cartes', 'codex', 'plus',
   // le lot du 23 octobre 2026
   'marteau', 'coffre', 'chrono', 'verrou', 'journal', 'ouvrier']);
-const baseIcones = new URL('art/icones/', document.baseURI).href;
+export const baseIcones = new URL('art/icones/', document.baseURI).href;
 
 /** L'icône peinte si elle existe, sinon le trait SVG */
 export function icone(nom: Icone): string {

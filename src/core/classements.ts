@@ -78,9 +78,6 @@ export function valeurRegistre(collection: Record<string, { niveau: number }>): 
 export const profondeurDe = (j: { strate: number; frontVaincu: boolean }) => j.strate * 2 + (j.frontVaincu ? 1 : 0);
 export const strateDe = (p: number) => Math.floor(p / 2);
 export const gardienVaincu = (p: number) => p % 2 === 1;
-export function texteProfondeur(p: number): string {
-  return `Strate −${strateDe(p)}${gardienVaincu(p) ? ' · gardien vaincu' : ''}`;
-}
 export const zoneProfondeur = (p: number) => zoneDe(Math.max(1, strateDe(p))).nom;
 
 // ---------- Le palmarès personnel, gardé dans la partie ----------

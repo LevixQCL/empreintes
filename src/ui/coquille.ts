@@ -8,7 +8,8 @@ import type { Lignee } from '../core/types';
 import { portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
 import { feuilleNom } from './classements';
-import { COULEUR, echap, panneauCompte, type Compte } from './vue';
+import { COULEUR, panneauCompte, type Compte } from './vue';
+import { echap } from './outils';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'codex' | 'cartes' | 'porteurs' | 'classements';
 /** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */

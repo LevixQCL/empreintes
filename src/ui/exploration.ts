@@ -17,15 +17,15 @@ import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/d
 import { BATTU_PAR } from '../core/regles';
 import { CIBLES_FOUILLE, RENCONTRES, type Jeu } from '../core/jeu';
 import { decorStrate, illustrationEnnemi, portrait, iconeCondition } from './art';
-import { COULEUR, echap, htmlLieu } from './vue';
-import { ICO, icone } from './icones';
+import { COULEUR, htmlLieu } from './vue';
+import { ICO, baseIcones, icone } from './icones';
+import { echap } from './outils';
 
 const NOMS: Record<TypeSalle, string> = {
   entree: 'Entrée', combat: 'Combat', elite: 'Salle scellée', cache: 'Cache', rencontre: 'Rencontre', camp: 'Campement', archive: 'Archives', gardien: 'Gardien', filon: 'Filon',
 };
 
 /** icônes peintes (public/art/icones/) des salles qui en ont une */
-const baseIcones = new URL('art/icones/', document.baseURI).href;
 const PEINTES: Partial<Record<TypeSalle, string>> = { entree: 'strate', cache: 'composants', archive: 'codex', filon: 'eclats' };
 
 /** scènes peintes (public/art/salles/), recadrées dans le médaillon */

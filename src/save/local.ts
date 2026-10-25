@@ -31,14 +31,6 @@ export function enregistrer(data: Jeu, updatedAt = Date.now()): Enveloppe {
   return env;
 }
 
-export function effacer(): void {
-  try {
-    localStorage.removeItem(CLE);
-  } catch {
-    /* rien */
-  }
-}
-
 const SECOURS = 'empreintes.jeu.secours';
 
 /** Garde une copie d'une sauvegarde qu'on va remplacer : rien n'est jamais perdu en changeant d'appareil */

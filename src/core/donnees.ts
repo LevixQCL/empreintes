@@ -388,9 +388,6 @@ export const CONDITIONS: Record<string, ConditionDef> = {
 /** La lignée que favorise une condition (+20 % à ses cartes) */
 export const FAVEUR_CONDITION: Record<string, Lignee> = { inondee: 'bio', courants: 'tech', chant: 'reso' };
 
-/** La séquence d'origine du prototype (gardée pour les tests et le robot) */
-export const SEQUENCE_STRATE = ['remanent', 'vigie', 'confluence'];
-
 /**
  * Les zones des Strates : plus on descend, plus c'est ancien (Bible du lore).
  * Une expédition = deux combats tirés dans la zone, puis son gardien.

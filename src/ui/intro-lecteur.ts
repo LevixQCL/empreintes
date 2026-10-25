@@ -1,4 +1,4 @@
-// Le lecteur de l'intro, partagé par le jeu (main.ts) et la page teaser (teaser.ts) :
+// Le lecteur de l'intro (main.ts) :
 // mise à jour sans tout reconstruire, préchargement des illustrations, compteur d'années.
 
 import { imagesPlan } from './intro';

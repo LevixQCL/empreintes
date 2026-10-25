@@ -15,6 +15,7 @@ import { sonActif } from './impact';
 import { ICO } from './icones';
 import type { Decouverte } from '../core/decouvertes';
 import { feuilleGuide, lienGuide, type OngletGuide } from './guide';
+import { echap } from './outils';
 
 export interface Pop {
   id: number;
@@ -50,6 +51,8 @@ export interface Compte {
   codeErreur?: string;
   /** le pseudo choisi (nom de directeur), affiché à la place du nom du compte Google */
   pseudo?: string;
+  /** la partie gardée en secours quand une autre l'a remplacée ; confirmer : le joueur a touché « Restaurer » une première fois */
+  secours?: { strate: number; le: number; actuelle: number; confirmer: boolean } | null;
 }
 
 export interface Ecran {
@@ -82,7 +85,6 @@ const LIBELLE = { atk: 'attaque', bouclier: 'protection', soin: 'soin' };
 
 export const FONDS: Record<string, string> = { ilka: '#3A4E63', doran: '#3B4D37', vela: '#44395C', coursier: '#33465A', docker: '#36462F', guetteur: '#3D3352', sasha: '#3D4752', nuit: '#2F3B2E', aurel: '#3A3050', remanent: '#2A2438', vigie: '#26313D', confluence: '#2E2B22', rampeur: '#2C3326', pilleur: '#2F2A24', brigadier: '#2E2A3E', 'echo-veilleur': '#252238', 'sentinelle-verre': '#22303A', 'gardien-registres': '#2B2533', double: '#2A2236', 'essaim-ambre': '#352A18', 'automate-graveur': '#29303A', tisseuse: '#33261F', 'premier-porteur': '#1E1C2A' };
 
-export const echap = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 const pct = (v: number, max: number) => Math.max(0, Math.min(100, (100 * v) / max));
 
 function popsPour(e: Ecran, cible: string) {
@@ -172,6 +174,15 @@ function maillon(g: Geste, off: boolean) {
     + `<button type="button" class="accorder" data-action="accorder" data-uid="${g.uid}"${off ? ' disabled' : ''} aria-label="Passer ${echap(g.nom)} en Fréquence ${suivante}">${g.fs!.map((f) => `<i class="${f === g.f ? 'actif' : ''}" style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</button>${soin}</div>`;
 }
 
+/** La partie de secours : on l'échange avec la partie en cours (deux touches), l'échange se défait de la même façon */
+function ligneSecours(c: Compte): string {
+  const s = c.secours;
+  if (!s) return '';
+  const le = new Date(s.le).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
+  return `<p class="discret">Partie de secours : Strate −${s.strate}, du ${le}.${s.confirmer ? ` Ta partie actuelle (Strate −${s.actuelle}) deviendra la partie de secours : tu pourras revenir en arrière.` : ''}</p>`
+    + `<div class="ligne"><button type="button" class="btn sec" data-action="${s.confirmer ? 'secours-confirmer' : 'secours'}">${s.confirmer ? 'Confirmer l’échange' : 'Restaurer cette partie'}</button></div>`;
+}
+
 export function panneauCompte(c: Compte): string {
   if (!c.ouvert) return '';
   if (c.utilisateur) {
@@ -180,6 +191,7 @@ export function panneauCompte(c: Compte): string {
       + `<p class="discret">${c.pseudo ? 'C’est ce nom que voient les autres joueurs.' : 'Choisis le nom que verront les autres joueurs : ton nom de compte n’est jamais affiché.'}</p>`
       + `<div class="ligne"><button type="button" class="btn ${c.pseudo ? 'sec' : 'prim'}" data-action="gt-nom">${c.pseudo ? 'Changer de pseudo' : 'Choisir mon pseudo'}</button></div>`
       + (etat ? `<p class="discret">${etat}</p>` : '')
+      + ligneSecours(c)
       + `<div class="ligne"><button type="button" class="btn sec" data-action="deconnexion"${c.occupe ? ' disabled' : ''}>Se déconnecter</button></div></section>`;
   }
   return `<section class="panneau" aria-label="Compte"><strong>Compte</strong>`
@@ -191,6 +203,7 @@ export function panneauCompte(c: Compte): string {
     + `<button type="button" class="lien" data-action="oubli">Mot de passe oublié</button>`
     + (c.erreur ? `<p class="erreur">${echap(c.erreur)}</p>` : '')
     + (c.info ? `<p class="discret">${echap(c.info)}</p>` : '')
+    + ligneSecours(c)
     + `</section>`;
 }
 

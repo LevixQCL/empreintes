@@ -16,9 +16,10 @@ import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, type EcranDistrict }
 import { barreXp, feuilleDeck, jaugePv } from './district';
 import { effetsLignee, plageFrequences } from './guide';
 import { ICO } from './icones';
-import { COULEUR, echap } from './vue';
+import { COULEUR } from './vue';
 import './fiche-porteur.css';
 import './mon-escouade.css';
+import { echap, virgule } from './outils';
 
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];
 /** pour accorder « Pourquoi il / elle est là » */
@@ -234,7 +235,6 @@ function listeTous(e: EcranDistrict): string {
 // Pas de cartouches : des filets qui se fondent ; glace pour ce qui se touche, or pour la valeur et la progression.
 /** les cartes d'une lignée (au féminin) */
 const CARTES_DE: Record<Lignee, string> = { tech: 'augmentées', bio: 'génées', reso: 'résonantes' };
-const virgule = (n: number) => String(Math.round(n * 10) / 10).replace('.', ',');
 
 /** Une figure de l'état : un gros chiffre, son unité, une jauge et une phrase qui dit quoi faire */
 function figure(cls: string, nom: string, val: string, sur: string, jauge: string, note: string): string {

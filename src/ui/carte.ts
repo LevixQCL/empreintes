@@ -11,7 +11,8 @@ import { DEPART_PORTEURS, NOMS_LIGNEE } from '../core/donnees';
 import { NOMS_RARETE } from '../core/collection';
 import type { ModuleDef, Rarete } from '../core/types';
 import { cadrePlein, illustrationModule, portrait, textureMetal } from './art';
-import { COULEUR, echap } from './vue';
+import { COULEUR } from './vue';
+import { echap, mouvementReduit as reduit } from './outils';
 
 /** une couleur par Fréquence, du 1 (chaud) au 9 (froid) : des Fréquences qui se suivent ont des couleurs voisines */
 export const couleurFrequence = (f: number) => `hsl(${8 + (f - 1) * 34} 52% 38%)`;
@@ -90,7 +91,6 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1): string {
 
 interface Masques { cristal: HTMLCanvasElement; or: HTMLCanvasElement; points: [number, number, number, number][]; W: number; H: number }
 const cache = new Map<string, Promise<Masques>>();
-const reduit = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const lisse = (a: number, b: number, x: number) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
 function calculer(img: HTMLImageElement): Masques {

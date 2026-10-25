@@ -15,7 +15,7 @@ import { FRAGMENTS } from '../core/fragments';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
-import { COULEUR, echap } from './vue';
+import { COULEUR } from './vue';
 import { decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
@@ -25,6 +25,7 @@ import { ICO, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict, type Filtre } from './coquille';
 
 import './district.css';
+import { echap, mouvementReduit, virgule } from './outils';
 
 export type { EcranDistrict, Vue } from './coquille';
 
@@ -137,7 +138,7 @@ export function degagerPlaques(racine: HTMLElement) {
 export function brancherTableau(racine: HTMLElement) {
   degagerPlaques(racine);
   const place = racine.querySelector<HTMLElement>('.archipel .anime');
-  if (!place || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!place || mouvementReduit()) return;
   const src = place.dataset.video!;
   if (!video || video.dataset.src !== src) {
     video = document.createElement('video');
@@ -295,7 +296,6 @@ function appel(e: EcranDistrict): string {
 // des chiffres réels plutôt que des multiplicateurs (« +60 énergie/h », pas « ×2 »), des Porteurs qui
 // tiennent dans l'écran, la réserve remplie / maximum, et le niveau suivant juste au-dessus du bouton.
 
-const virgule = (n: number) => String(Math.round(n * 10) / 10).replace('.', ',');
 
 /** Le district tel qu'il serait avec ce Porteur à ce poste (null : poste vide), pour comparer sans rien changer */
 function avecPorteur(j: Jeu, b: Poste, id: string | null): Jeu {
@@ -984,13 +984,6 @@ function htmlChapitre(e: EcranDistrict, id: string): string {
 
 const NOMS_ETAGES = ['Salle de fouilles', 'Bunker des années 2060', 'Galerie aux formes courbes', 'Ruines lumineuses'];
 
-/** Le niveau d'un Porteur et sa barre d'expérience (décision du 22 octobre 2026) */
-export function niveauDe(j: EcranDistrict['j'], id: string): string {
-  const n = niveauPorteur(j, id);
-  const part = n.requis ? Math.round((100 * n.xp) / n.requis) : 100;
-  return `<span class="niv-porteur" title="${n.requis ? `${n.xp} / ${n.requis} XP vers le niveau ${n.niveau + 1}` : 'Niveau maximum'}"><b>Niv. ${n.niveau}</b><i class="xp"><i style="width:${part}%"></i></i></span>`;
-}
-
 /** la barre d'expérience, fine et dorée, sous la jauge de PV */
 export function barreXp(j: EcranDistrict['j'], id: string): string {
   const n = niveauPorteur(j, id);
@@ -1119,15 +1112,6 @@ function htmlMissions(e: EcranDistrict): string {
 }
 
 // ---------- Choix de l'escouade ----------
-
-/** La Marque d'un Porteur : acquise, ou la progression vers elle */
-export function marqueDe(j: Jeu, id: string): string {
-  const m = progresMarque(j, id);
-  if (!m) return '';
-  return m.acquise
-    ? `<small class="marque acquise" title="${echap(m.texte)}">${ICO.ok}<span><b>${echap(m.nom)}</b> ${echap(m.court)}</span></small>`
-    : `<small class="marque" title="${echap(m.texte)}"><span><b>${echap(m.nom)}</b> ${Math.min(m.n, m.seuil)}/${m.seuil}</span></small>`;
-}
 
 /** Les Fréquences d'une liste de cartes (une carte à plusieurs Fréquences compte pour chacune ; les cartes ∗ à part) */
 function frequencesDe(cartes: { f: number; fs?: number[]; effet?: { type: string } }[]): number[] {

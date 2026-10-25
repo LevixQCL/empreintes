@@ -14,6 +14,7 @@ import type { Rarete } from '../core/types';
 import { illustrationModule, portrait } from './art';
 import { icone } from './icones';
 import { vibrer } from './toucher';
+import { centreDe, echap, mouvementReduit as reduit } from './outils';
 
 type Res = 'energie' | 'composants' | 'eclats';
 
@@ -81,8 +82,6 @@ export function comparer(a: Releve, b: Releve, o: { energie?: boolean } = {}): G
 
 // ---------- L'affichage ----------
 
-const reduit = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const echap = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');
 const COULEUR_METAL: Record<Rarete, string> = { fer: '#A7B0BA', cuivre: '#D88A55', argent: '#DDE3EC', or: '#E8BE5E', nacre: '#E6D6F5' };
 const NOMS: Record<Res | 'cartes', [string, string]> = {
@@ -100,7 +99,6 @@ function calque(): HTMLElement {
   return c;
 }
 
-const centreDe = (el: Element) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
 /** le compteur visible d'une ressource (barre du haut, ou butin de l'expédition) */
 function compteur(cible: string): HTMLElement | null {
   const el = document.querySelector<HTMLElement>(`#app [data-gain="${cible}"]`);
