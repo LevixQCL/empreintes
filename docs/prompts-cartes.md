@@ -192,3 +192,98 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a compact wrist-mounted rail launcher firing a bright blue streak, a small coin spinning in the air beside it, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
 ```
 
+## Génés : lumière verte
+
+Les greffes Génés sont dessinées comme des spécimens de naturaliste (bocal, coquille, objet sculpté), jamais comme de la chair : rien de gore.
+Glande d'ambre et Sang d'ambre gardent leur or : « amber » n'est pas dans leur `--no`.
+
+### Branchies des Fondations — `branchies.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a tall glass specimen jar filled with glowing green water, holding a pair of delicate feathery gill fronds like sea ferns, tiny rising bubbles, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Carapace — `carapace.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a large curved shoulder plate of dark teal-green beetle chitin, iridescent sheen, deep scratches from years of carrying beams, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Carapace-mère — `carapace-mere.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an enormous wide shield of layered teal-green chitin standing upright, so wide it fills the whole frame, small moss patches along its edges, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Charge — `charge.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a heavy horned forehead plate of thick green chitin, chunks of broken stone and dust around it, strong impact lines, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Cœur de meute — `coeur-meute.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a glowing green seed pod cradled in a nest of twisted roots, three smaller pods around it connected by living vines, all pulsing with light in rhythm, a faint wolf paw print pattern on the main pod, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Crocs fossiles — `crocs-fossiles.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a row of ancient stone fossil fangs set into a new jaw frame of pale green chitin, small rock fragments and fossil dust on the workbench, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Cuir de récif — `cuir-recif.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a folded piece of thick rough hide textured like coral reef, teal and green, tiny coral polyps on its surface, wet and glistening, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Glande d'ambre — `glande-ambre.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a small glass vial holding a glowing seed-like gland, thick honey-gold resin dripping from it and hardening into green-gold drops on the workbench, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Grogner — `grogner.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a large spiral horn made of green chitin like a conch, deep green sound waves rippling out of its mouth, dust trembling off the workbench, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Morsure — `morsure.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a pair of massive green chitin crusher mandibles like a giant crab claw, cracking open a huge mussel shell, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Mue totale — `mue-totale.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an empty translucent shed husk of a whole crab-like carapace, split open along its back, soft green glow inside it, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Poumons d'abysse — `poumons-abysse.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a diver's breathing apparatus grown from living green coral and kelp, two air bladders like seaweed floats, standing in a small water tank, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Régénérer — `regenerer.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a steaming wooden bowl of glowing green algae soup with a wooden spoon, soft green healing vapor rising from it, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Sang d'ambre — `sang-ambre.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a stoppered glass flask of thick glowing honey-gold liquid tinted green, a few drops on the workbench coagulating into small crystals, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Yeux nocturnes — `yeux-nocturnes.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a carved chitin half mask with a pair of large round glowing golden owl eyes, catching the faintest light, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
