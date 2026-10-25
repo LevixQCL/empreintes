@@ -13,7 +13,7 @@ import { NOMS_EFFET } from '../core/effets';
 import { DISTRICT, EPREUVE_DECK_MIN } from '../core/jeu';
 import { REGLES } from '../core/regles';
 import type { Geste, GesteDef, Lignee, TypeEffet, TypeGeste } from '../core/types';
-import { symboleAction, textureMetal } from './art';
+import { socleAction, textureMetal } from './art';
 import { COULEUR_RARETE, couleurFrequence, faceCarte } from './carte';
 import { NOM_LIGNEES, avatar } from './coquille';
 import { ICO } from './icones';
@@ -101,7 +101,8 @@ export function effetsLignee(l: Lignee): TypeEffet[] {
 
 // ---------- Petits visuels ----------
 
-const symbole = (t: TypeGeste, taille = 18) => `<img class="g-symbole" src="${symboleAction(t)}" alt="" width="${taille}" height="${taille}" decoding="async">`;
+/** Le socle peint des cartes : sa forme dit l'action (étoile de feu = attaque, écu de glace = protection, fleur d'émeraude = soin) */
+const symbole = (t: TypeGeste, taille = 18) => `<img class="g-symbole" src="${socleAction(t)}" alt="" width="${taille}" height="${taille}" decoding="async">`;
 const NOM_ACTION: Record<TypeGeste, string> = { atk: 'Attaque', bouclier: 'Protection', soin: 'Soin' };
 
 /** Une carte de combat montrée en exemple : la vraie carte, qu'on ne peut pas jouer */
@@ -182,7 +183,7 @@ function ongletDeck(): string {
 
   // les conseils
   const barre = (['atk', 'bouclier', 'soin'] as TypeGeste[]).map((t) =>
-    `<span class="g-part ${t}" style="flex:${depart[t]}">${symbole(t, 16)}<b>${depart[t]}</b></span>`).join('');
+    `<span class="g-part ${t}" style="flex:${depart[t]}">${symbole(t, 22)}<b>${depart[t]}</b></span>`).join('');
   const suite = Object.entries(REGLES.multSuite).map(([n, m]) => `${n} = +${Math.round((m - 1) * 100)} %`).join(', ');
   h += `<section class="bloc">${titre(ICO.boost, 'Bien construire')}<ul class="g-idees">`
     + idee(ICO.flux, 'Couvre les Fréquences de 1 à 9', `Des Fréquences qui se suivent font une Résonance (suite de ${suite}). Chaque lignée a sa zone : une escouade des trois lignées couvre l’échelle, et un chiffre absent coupe tes suites.`, echelleFrequences())
@@ -227,9 +228,9 @@ function ongletCarte(): string {
 
   // les trois actions
   h += `<section class="bloc">${titre(ICO.atk, 'Trois actions')}<ul class="g-actions">`
-    + `<li>${symbole('atk', 30)}<div><b>Attaque</b><p>Des dégâts à l’ennemi visé. Son bouclier encaisse d’abord.</p></div></li>`
-    + `<li>${symbole('bouclier', 30)}<div><b>Protection</b><p>Un bouclier pour toute l’escouade. Il encaisse les coups de l’ennemi, puis disparaît (sauf Rempart).</p></div></li>`
-    + `<li>${symbole('soin', 30)}<div><b>Soin</b><p>Des PV à un Porteur : touche son nom sous la carte, dans la chaîne, pour choisir qui. Avec Vague, toute l’escouade.</p></div></li>`
+    + `<li>${symbole('atk', 36)}<div><b>Attaque</b><p>Des dégâts à l’ennemi visé. Son bouclier encaisse d’abord.</p></div></li>`
+    + `<li>${symbole('bouclier', 36)}<div><b>Protection</b><p>Un bouclier pour toute l’escouade. Il encaisse les coups de l’ennemi, puis disparaît (sauf Rempart).</p></div></li>`
+    + `<li>${symbole('soin', 36)}<div><b>Soin</b><p>Des PV à un Porteur : touche son nom sous la carte, dans la chaîne, pour choisir qui. Avec Vague, toute l’escouade.</p></div></li>`
     + `<li><span class="g-lourd">2 PL.</span><div><b>Carte lourde</b><p>Plus forte, mais elle prend deux places dans la chaîne.</p></div></li>`
     + `</ul></section>`;
 
