@@ -32,6 +32,7 @@ import './ui/toucher.css';
 import './ui/matieres.css';
 import { activerCartes } from './ui/carte';
 import { centreDe, mouvementReduit } from './ui/outils';
+import { duree } from './ui/coquille';
 import { NOMS_RARETE } from './core/collection';
 import { trouveesDe, type OngletGuide } from './ui/guide';
 import { comparer, montrer, relever } from './ui/gains';
@@ -868,20 +869,39 @@ let dernierRendu = 0;
 let dernierGeste = 0;
 for (const t of ['touchstart', 'touchmove', 'pointerdown', 'wheel'] as const) racine.addEventListener(t, () => { dernierGeste = Date.now(); }, { passive: true, capture: true });
 racine.addEventListener('scroll', () => { dernierGeste = Date.now(); }, { passive: true, capture: true });
+/**
+ * Les comptes à rebours et les jauges de durée du district (decompte, jaugeTemps) avancent chaque seconde sans redessiner l'écran.
+ * Renvoie vrai si l'un d'eux est arrivé au bout : l'écran doit alors changer (« Prête », « Sur le retour »…).
+ */
+function majDecomptes(now: number): boolean {
+  let fini = false;
+  racine.querySelectorAll<HTMLElement>('[data-fin]').forEach((el) => {
+    const fin = Number(el.dataset.fin);
+    if (now >= fin) fini = true;
+    if (el.dataset.debut) {
+      const debut = Number(el.dataset.debut);
+      el.style.width = `${Math.min(1, (now - debut) / (fin - debut)) * 100}%`;
+    } else el.textContent = (el.dataset.avant ?? '') + duree(fin - now) + (el.dataset.apres ?? '');
+  });
+  return fini;
+}
+
 setInterval(() => {
-  const avantTick = relever(jeu);
-  const nouvelles = J.tick(jeu, Date.now());
+  const now = Date.now();
+  // l'état d'avant n'est relevé qu'au district : c'est le seul écran qui montre ce que le temps a rapporté
+  const avantTick = mode === 'district' ? relever(jeu) : null;
+  const nouvelles = J.tick(jeu, now);
   if (nouvelles.length) { D.message = nouvelles[0]!; sauver(); }
   if (mode !== 'district') return;
-  const vite = !!jeu.forge || jeu.chantiers.length > 0 || nouvelles.length > 0;
-  if (vite || Date.now() - dernierRendu > 15_000) {
+  const fini = majDecomptes(now);
+  if (nouvelles.length > 0 || fini || now - dernierRendu > 15_000) {
     dernierRendu = Date.now();
     // ne pas redessiner pendant que le joueur tape dans le panneau Compte, ni pendant qu'il fait défiler une liste
     // (un redessin en plein glissement couperait le geste et ramènerait la liste au début)
     if (document.activeElement?.tagName !== 'INPUT' && Date.now() - dernierGeste > 2500) {
       afficher();
       // la Forge qui livre, une mission qui rentre, un Porteur qui arrive : sans la production d'énergie, qui coule toute seule
-      if (nouvelles.length) montrer(comparer(avantTick, relever(jeu), { energie: false }));
+      if (nouvelles.length && avantTick) montrer(comparer(avantTick, relever(jeu), { energie: false }));
     }
   }
 }, 1000);

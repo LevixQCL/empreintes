@@ -72,6 +72,17 @@ export const duree = (ms: number) => {
   return s >= 60 ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, '0')}` : `${s} s`;
 };
 
+/**
+ * Un compte à rebours que l'horloge du district (main.ts : majDecomptes) met à jour chaque seconde sans tout redessiner.
+ * avant et apres font partie du même texte : la mise en page reste exactement celle d'un texte simple.
+ */
+export const decompte = (fin: number, now: number, avant = '', apres = '') =>
+  `<span data-fin="${fin}"${avant ? ` data-avant="${avant}"` : ''}${apres ? ` data-apres="${apres}"` : ''}>${avant}${duree(fin - now)}${apres}</span>`;
+
+/** Le remplissage d'une jauge de durée, mis à jour de la même façon */
+export const jaugeTemps = (debut: number, fin: number, now: number) =>
+  `<i data-debut="${debut}" data-fin="${fin}" style="width:${Math.min(1, (now - debut) / (fin - debut)) * 100}%"></i>`;
+
 export const NOM_LIGNEE: Record<Lignee, string> = { tech: 'Augmenté', bio: 'Géné', reso: 'Résonant' };
 export const NOM_LIGNEES: Record<Lignee, string> = { tech: 'Augmentés', bio: 'Génés', reso: 'Résonants' };
 

@@ -22,7 +22,7 @@ import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { ICO, icone, type Icone } from './icones';
-import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, duree, ent, entete, prix, type EcranDistrict, type Filtre } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, type EcranDistrict, type Filtre } from './coquille';
 
 import './district.css';
 import { echap, mouvementReduit, virgule } from './outils';
@@ -189,7 +189,7 @@ function plaques(e: EcranDistrict): string {
     const vise = !!o && o.pilier === id && !o.fait(j);
     const occupant = id !== 'comptoir' ? posteDe(j, id) : null;
     let etat = '';
-    if (ch) etat = `<small class="en-chantier">${ICO.marteau}${duree(ch.fin - e.now)}</small>`;
+    if (ch) etat = `<small class="en-chantier">${ICO.marteau}${decompte(ch.fin, e.now)}</small>`;
     else if (id === 'comptoir') {
       // le Comptoir : à construire, ou ce qui reste en vente aujourd'hui
       const reste = j.comptoir.offres.length - j.comptoir.achetes.length;
@@ -197,7 +197,7 @@ function plaques(e: EcranDistrict): string {
         : reste > 0 ? `<small class="occupe">${ICO.cartes}${reste} en vente</small>` : `<small>${ICO.ok}Tout vendu</small>`;
     }
     else if (prete) etat = `<small class="pret">${ICO.ok}Prêt</small>`;
-    else if (j.forge && id === 'forge') etat = `<small>${ICO.chrono}${duree(j.forge.fin - e.now)}</small>`;
+    else if (j.forge && id === 'forge') etat = `<small>${ICO.chrono}${decompte(j.forge.fin, e.now)}</small>`;
     // le travailleur : un petit médaillon, vide si personne, avec son visage sinon (23 octobre 2026, Bryan : les noms prenaient trop de place sur téléphone)
     const med = id === 'comptoir' || !j.batiments[id] || (id === 'noyau' && !occupant) ? ''
       : occupant ? `<span class="poste-med" title="${echap(porteurDef(occupant).nom)}">${avatar(occupant, 22)}</span>`
@@ -266,7 +266,7 @@ function mission(e: EcranDistrict): string {
     + `<span class="mj-valeur pc"><b>${points}</b>/${max}</span>`
     + `<div class="jauge reso">${crans}<i style="width:${Math.min(100, (100 * j.archive.points) / max)}%"></i></div>`
     + `<div class="mj-reperes pc" aria-hidden="true">${reperes}</div>`
-    + `<small><span class="pc">S’ouvre </span>lundi, dans ${duree(lundiSuivant(e.now) - e.now)}</small></div>`;
+    + `<small><span class="pc">S’ouvre </span>${decompte(lundiSuivant(e.now), e.now, 'lundi, dans ')}</small></div>`;
   return h + `</section>`;
 }
 
@@ -371,7 +371,7 @@ function reserve(j: Jeu, b: BatimentId): string {
   const eph = energieParHeure(j);
   const plein = v >= max;
   const note = plein ? (eph > 0 ? 'Pleine : ce que produit le Générateur est perdu.' : 'Pleine.')
-    : eph > 0 ? `Pleine dans ${duree(((max - v) / eph) * 3_600_000)}.` : '';
+    : eph > 0 ? decompte(Date.now() + ((max - v) / eph) * 3_600_000, Date.now(), 'Pleine dans ', '.') : '';
   return `<div class="fb-reserve${plein ? ' pleine' : ''}"><div class="fb-reserve-tete">${ICO.coffre}<span>Réserve d’énergie</span><b>${ent(v)}<small> / ${ent(max)}</small></b></div>`
     + `<div class="fb-jauge" role="meter" aria-valuemin="0" aria-valuemax="${max}" aria-valuenow="${v}" aria-label="Réserve d’énergie"><i style="width:${max ? (v / max) * 100 : 0}%"></i></div>`
     + `<small>${note}${b === 'generateur' ? ' La taille de la réserve dépend de la Tour du Noyau.' : ''}</small></div>`;
@@ -396,7 +396,7 @@ function blocEntrainement(j: Jeu): string {
     const fini = n.niveau >= plafond;
     const reste = !fini && n.requis ? Math.ceil(((n.requis - n.xp) / xph) * 3_600_000) : 0;
     h += `<div class="fb-occupant" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 64)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-lignee">Niveau ${n.niveau} · ${pvNiveau(j, occupant)} PV</span>`
-      + `<span class="fb-apport">${fini ? `Plafond atteint : monte la Tour pour aller plus loin` : j.energie < 1 ? `En pause : plus d’énergie` : `Niveau ${n.niveau + 1} dans ${duree(reste)}`}</span></div>`
+      + `<span class="fb-apport">${fini ? `Plafond atteint : monte la Tour pour aller plus loin` : j.energie < 1 ? `En pause : plus d’énergie` : decompte(Date.now() + reste, Date.now(), `Niveau ${n.niveau + 1} dans `)}</span></div>`
       + `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Arrêter l’entraînement de ${echap(o.nom)}">Arrêter</button></div>`;
   }
   const libres = PORTEURS.filter((p) => p.id !== occupant && porteursPresents(j).includes(p.id) && !enExpedition(j, p.id))
@@ -425,7 +425,7 @@ function blocComptoir(e: EcranDistrict): string {
   }
   const c = j.comptoir;
   const demain = debutJour(c.jour + 1) - e.now;
-  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}En vente aujourd’hui<span class="cp-renouv">${ICO.chrono}nouvelles cartes dans ${duree(demain)}</span></h3><div class="cp-etals">`;
+  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}En vente aujourd’hui<span class="cp-renouv">${ICO.chrono}${decompte(e.now + demain, e.now, 'nouvelles cartes dans ')}</span></h3><div class="cp-etals">`;
   c.offres.forEach((id, i) => {
     const m = moduleDef(id);
     const possede = j.collection[id];
@@ -525,8 +525,7 @@ function feuilleBatiment(e: EcranDistrict): string {
     h += `<section class="fb-bloc"><h3 class="titre-bloc">${icone('marteau')}Refabriquer une carte</h3>`;
     if (j.forge) {
       const m = moduleDef(j.forge.moduleId);
-      const fait = Math.min(1, (e.now - j.forge.debut) / (j.forge.fin - j.forge.debut));
-      h += `<div class="en-cours">${gemme(m.rarete)}<div><strong>${echap(m.nom)}</strong><small>${e.now >= j.forge.fin ? 'Prête : elle rejoint tes cartes' : `Reste ${duree(j.forge.fin - e.now)}`}</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
+      h += `<div class="en-cours">${gemme(m.rarete)}<div><strong>${echap(m.nom)}</strong><small>${e.now >= j.forge.fin ? 'Prête : elle rejoint tes cartes' : decompte(j.forge.fin, e.now, 'Reste ')}</small><div class="jauge or">${jaugeTemps(j.forge.debut, j.forge.fin, e.now)}</div></div></div>`;
     } else {
       const forgeron = posteDe(j, 'forge');
       h += `<p class="aide">Un exemplaire de plus devient un doublon, pour faire monter la carte.${forgeron ? '' : ' <b>Poste d’abord un Porteur à la Forge.</b>'}</p><ul class="liste-forge">`;
@@ -552,7 +551,7 @@ function feuilleBatiment(e: EcranDistrict): string {
   } else if (a.cout && !a.ch) h += gainsNiveau(j, b);
   h += `</div><footer class="feuille-pied fb-pied">`;
   if (b === 'noyau') {
-    const raccourci = a.ch ? `${ICO.marteau}<span>${duree(a.ch.fin - e.now)}</span>`
+    const raccourci = a.ch ? `${ICO.marteau}${decompte(a.ch.fin, e.now)}`
       : `${ICO.monter}<span>Niv. ${niv + 1}</span>`;
     h += `<div class="fb-barre">`
       + (a.cout || a.ch ? `<button type="button" class="btn sec fb-vers-amelio${a.pret ? ' pret' : ''}" data-action="vers-amelioration" aria-label="${a.ch ? 'Voir le chantier en cours' : `Améliorer au niveau ${niv + 1}${a.pret ? ' : possible' : ''}`}">${raccourci}</button>` : '')
@@ -580,8 +579,7 @@ function barreAmelioration(e: EcranDistrict, b: BatimentId, a: ReturnType<typeof
   const j = e.j;
   const niv = j.batiments[b];
   if (a.ch) {
-    const fait = Math.min(1, (e.now - a.ch.debut) / (a.ch.fin - a.ch.debut));
-    return `<div class="chantier-cours">${icone('marteau')}<div><strong>${!niv && b === 'comptoir' ? 'Remise en état' : `Chantier vers le niveau ${niv + 1}`}</strong><small>Reste ${duree(a.ch.fin - e.now)} · avance même jeu fermé</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
+    return `<div class="chantier-cours">${icone('marteau')}<div><strong>${!niv && b === 'comptoir' ? 'Remise en état' : `Chantier vers le niveau ${niv + 1}`}</strong><small>${decompte(a.ch.fin, e.now, 'Reste ', ' · avance même jeu fermé')}</small><div class="jauge or">${jaugeTemps(a.ch.debut, a.ch.fin, e.now)}</div></div></div>`;
   }
   if (!a.cout) return `<small class="raison">Niveau maximum pour cette version.</small>`;
   const c = a.cout;
@@ -1076,7 +1074,7 @@ function htmlEpreuves(e: EcranDistrict): string {
   const st = strateEpreuve(j);
   const gardien = ennemiDef(zoneDe(st).boss).nom;
   let h = `<section class="bloc"><h3 class="titre-bloc">${ICO.boost}Épreuves de la semaine</h3>`
-    + `<p class="aide">Un combat contre ${echap(gardien)} (Strate −${st}), avec une règle qui change ta façon de jouer. La première victoire de chaque Épreuve rapporte une carte au choix, dont une en argent au moins. Nouvelles Épreuves lundi, dans ${duree(lundiSuivant(e.now) - e.now)}.</p><div class="epreuves">`;
+    + `<p class="aide">Un combat contre ${echap(gardien)} (Strate −${st}), avec une règle qui change ta façon de jouer. La première victoire de chaque Épreuve rapporte une carte au choix, dont une en argent au moins. ${decompte(lundiSuivant(e.now), e.now, 'Nouvelles Épreuves lundi, dans ', '.')}</p><div class="epreuves">`;
   for (const ep of epreuvesDeLaSemaine(e.now)) {
     const faite = j.epreuves.faites.includes(ep.id);
     h += `<div class="epreuve${faite ? ' faite' : ''}"><div><strong>${echap(ep.nom)}</strong><small>${echap(ep.regle)}</small>`
@@ -1093,8 +1091,7 @@ function htmlMissions(e: EcranDistrict): string {
     + `<p class="aide">Un Porteur qui ne travaille pas peut partir en mission dans la Strate −${st}, équipé d’un peu d’énergie. La mission avance même jeu fermé : il rapporte des composants et des doublons de cartes de sa lignée, et un peu d’Usure.</p>`;
   for (const m of j.missions) {
     const p = porteurDef(m.porteur);
-    const fait = Math.min(1, (e.now - m.debut) / (m.fin - m.debut));
-    h += `<div class="en-cours" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 36)}<div><strong>${echap(p.nom)} · Strate −${m.strate}</strong><small>${e.now >= m.fin ? 'Sur le retour' : `Retour dans ${duree(m.fin - e.now)}`}</small><div class="jauge or"><i style="width:${fait * 100}%"></i></div></div></div>`;
+    h += `<div class="en-cours" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 36)}<div><strong>${echap(p.nom)} · Strate −${m.strate}</strong><small>${e.now >= m.fin ? 'Sur le retour' : decompte(m.fin, e.now, 'Retour dans ')}</small><div class="jauge or">${jaugeTemps(m.debut, m.fin, e.now)}</div></div></div>`;
   }
   const libres = disponibles(j);
   if (j.missions.length >= MISSIONS.max) h += `<small class="aide">${MISSIONS.max} missions au plus en même temps.</small>`;

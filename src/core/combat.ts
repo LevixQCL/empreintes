@@ -13,7 +13,7 @@ export interface Resultat {
   message?: string;
 }
 
-const clone = <T>(x: T): T => JSON.parse(JSON.stringify(x)) as T;
+const clone = <T>(x: T): T => structuredClone(x);
 
 export function creerCombat(opts: {
   porteurs: PorteurEtat[];
