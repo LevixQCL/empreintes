@@ -34,6 +34,8 @@ export interface EcranDistrict {
   carte: string | null;
   /** Porteur dont on construit le deck (feuille « Les cartes de… »), ou null */
   deck: string | null;
+  /** dans cette feuille, la carte choisie pour un échange (portée ou à confier), en attente de la seconde */
+  echange?: string | null;
   /** Porteur dont la fiche est ouverte (onglet Porteurs, escouade), ou null */
   porteur: string | null;
   /** lignée affichée dans l'écran Cartes */

@@ -242,6 +242,26 @@ export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   return { ok: true };
 }
 
+/** Échange une carte que le Porteur porte contre une autre (25 octobre 2026, Bryan : avec 6 cartes, il fallait en reprendre
+ *  une puis en confier une autre). La nouvelle prend la place de l'ancienne ; si un autre Porteur la portait, elle passe chez lui. */
+export function echanger(j: Jeu, retireId: string, ajouteId: string, porteurId: string): Resultat {
+  const p = j.porteurs[porteurId];
+  if (!p || !p.modules.includes(retireId)) return non('Ce Porteur ne porte pas cette carte.');
+  if (retireId === ajouteId) return { ok: true };
+  if (!j.collection[ajouteId]) return non('Carte inconnue.');
+  if (enExpedition(j, porteurId)) return non('Ce Porteur est en expédition.');
+  if (porteurDef(porteurId).lignee !== moduleDef(ajouteId).lignee) return non('Cette carte ne convient qu’à sa lignée.');
+  if (p.modules.includes(ajouteId)) return non(`${porteurDef(porteurId).nom} porte déjà cette carte.`);
+  const autreMetal = p.modules.find((k) => k !== retireId && moduleDe(k) === moduleDe(ajouteId));
+  if (autreMetal) return non(`${porteurDef(porteurId).nom} porte déjà ${moduleDef(ajouteId).nom} en ${NOMS_RARETE[moduleDef(autreMetal).rarete].toLowerCase()} : échange plutôt celle-là.`);
+  const ancien = greffesDe(j, ajouteId)[0];
+  if (ancien && enExpedition(j, ancien)) return non('Cette carte est en expédition.');
+  if (ancien) j.porteurs[ancien]!.modules = j.porteurs[ancien]!.modules.filter((m) => m !== ajouteId);
+  p.modules[p.modules.indexOf(retireId)] = ajouteId;
+  log(j, `${moduleDef(ajouteId).nom} remplace ${moduleDef(retireId).nom} chez ${porteurDef(porteurId).nom}.`);
+  return { ok: true };
+}
+
 export function degreffer(j: Jeu, moduleId: string): Resultat {
   const id = greffesDe(j, moduleId)[0];
   if (!id) return { ok: true };
