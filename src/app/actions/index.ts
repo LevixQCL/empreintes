@@ -12,6 +12,9 @@ import { agirDistrict } from './district';
 import { agirIntro } from './intro';
 import { agirTableau } from './tableau';
 
+/** les gains reçus pendant « Ton district » (le kit des recrues, juste après la chambre) */
+const gainsEnAttente: ReturnType<typeof comparer> = [];
+
 const THEMES = [agirIntro, agirDistrict, agirCombat, agirTableau, agirCompte];
 
 export async function agir(ev: MouseEvent) {
@@ -36,7 +39,11 @@ export async function agir(ev: MouseEvent) {
   if (suite !== 'afficher') return;
   afficher();
   // les gains de l'action : après le rendu, pour que les compteurs visés soient à l'écran
-  if (app.mode !== 'titre' && app.mode !== 'intro') montrer(comparer(avantGains, relever(app.jeu)), depart);
+  // pendant « Ton district », ils attendent la fin des explications pour ne pas passer devant
+  if (app.mode !== 'titre' && app.mode !== 'intro') {
+    gainsEnAttente.push(...comparer(avantGains, relever(app.jeu)));
+    if (app.mode !== 'district' || D.vue !== 'accueil') montrer(gainsEnAttente.splice(0), depart);
+  }
   // un nouvel onglet du guide s'ouvre en haut, pas à la hauteur de l'onglet d'avant
   if (a === 'guide') racine.querySelector('.guide-corps')?.scrollTo(0, 0);
 }

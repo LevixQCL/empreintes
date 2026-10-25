@@ -4,7 +4,7 @@ import { moduleDef, porteurDef } from '../../core/donnees';
 import * as J from '../../core/jeu';
 import type { BatimentId } from '../../core/types';
 import { visuel as ageDistrict } from '../../ui/art';
-import { ETAPES } from '../../ui/briefing';
+import { nbEtapes } from '../../ui/briefing';
 import { NB_REPLIQUES } from '../../ui/district';
 import type { OngletGuide } from '../../ui/guide';
 import { finPour } from '../combat';
@@ -102,8 +102,13 @@ export function agirDistrict(a: string, c: Clic): Suite {
     case 'rencontre': D.vue = 'rencontre'; D.bulles = 0; break;
     case 'rencontre-suite': D.bulles = Math.min(D.bulles + 1, NB_REPLIQUES); break;
     case 'briefing': D.vue = 'briefing'; D.etape = 0; window.scrollTo(0, 0); break;
-    case 'briefing-suite': D.etape = Math.min(D.etape + 1, ETAPES.length - 1); break;
+    case 'briefing-suite': D.etape = Math.min(D.etape + 1, nbEtapes('chambre') - 1); break;
     case 'briefing-retour': D.etape = Math.max(D.etape - 1, 0); break;
+    // « Ton district » : à l'arrivée après la chambre, et depuis le menu
+    case 'accueil': ouvrir('accueil'); D.etape = 0; window.scrollTo(0, 0); break;
+    case 'accueil-suite': D.etape = Math.min(D.etape + 1, nbEtapes('district') - 1); break;
+    case 'accueil-retour': D.etape = Math.max(D.etape - 1, 0); break;
+    case 'accueil-fin': ouvrir('archipel'); if (id === 'generateur') D.selection = 'generateur'; window.scrollTo(0, 0); break;
     case 'codex':
     case 'bibliotheque':
       D.retourBiblio = app.mode === 'titre' ? 'titre' : D.vue === 'coupe' ? 'coupe' : 'archipel';
@@ -145,6 +150,14 @@ export function agirDistrict(a: string, c: Clic): Suite {
       if (id === 'chantier') { ouvrir('archipel'); D.selection = J.batimentConseille(app.jeu); }
       else ouvrir('coupe');
       break;
+    case 'objectif-guide': {
+      // l'objectif guidé emmène là où il se fait : son bâtiment sur le district, sinon son onglet
+      const o = J.objectifCourant(app.jeu);
+      if (!o) break;
+      ouvrir(o.onglet);
+      if (o.onglet === 'archipel' && o.pilier) D.selection = o.pilier;
+      break;
+    }
     case 'tri':
       if (id === 'puissance' || id === 'metal' || id === 'niveau') {
         D.tri = id;

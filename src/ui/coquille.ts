@@ -11,7 +11,7 @@ import { feuilleNom } from './classements';
 import { COULEUR, panneauCompte, type Compte } from './vue';
 import { echap } from './outils';
 
-export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'codex' | 'cartes' | 'porteurs' | 'classements';
+export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements';
 /** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */
 export type Filtre = 'tout' | Lignee | 'monter' | 'libres';
 
@@ -245,6 +245,7 @@ export function menu(e: EcranDistrict): string {
   h += `<div class="liste-menu">`
     + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>Le Grand Tableau</strong><small>Les classements des directeurs : profondeur, Registre, et bientôt les Joutes et la Flèche</small></span></button>`
     + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur?.anonyme ? 'Protège ta partie : relie-la à Google ou à un e-mail' : c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : ' · choisis ton pseudo'}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
+    + (e.j.chambre ? `<button type="button" class="ligne-menu" data-action="accueil">${icone('district')}<span><strong>Comment marche le district</strong><small>Les ressources, l’escouade et le but : creuser plus bas</small></span></button>` : '')
     + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro</strong><small>L’histoire de 2121, depuis le début</small></span></button></div>`;
   h += panneauCompte(c);
   h += `<section class="bloc"><h3 class="titre-bloc">${icone('journal')}Journal du district</h3><ol class="journal-liste">${e.j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></section>`;
