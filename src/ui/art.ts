@@ -7,6 +7,8 @@ import type { BatimentId, Rarete } from '../core/types';
 const base = new URL('art/', document.baseURI).href;
 
 /** Porteurs illustrés (tous ont maintenant un portrait ; un nouveau Porteur sans image garde son initiale) */
+/** à changer quand les portraits sont repeints sous le même nom : le navigateur recharge alors les nouveaux au lieu de garder les anciens en cache */
+const VERSION_PORTRAITS = 2;
 const PORTEURS_ILLUSTRES = new Set(['ilka', 'doran', 'vela', 'sasha', 'nuit', 'aurel', 'coursier', 'docker', 'guetteur', 'kessa', 'liane', 'joss']);
 
 /** Modules illustrés : id du Module dans donnees.ts → fichier */
@@ -82,7 +84,7 @@ const ENNEMIS_ILLUSTRES: Record<string, string> = {
   sauvage: 'sauvage',
 };
 
-export const portrait = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/${id}.webp` : null);
+export const portrait = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/${id}.webp?v=${VERSION_PORTRAITS}` : null);
 /** l'illustration ne dépend pas du métal : « jambes-ressort@or » reprend celle de « jambes-ressort » */
 export const illustrationModule = (cle: string): string | null => {
   const id = cle.split('@')[0]!;
