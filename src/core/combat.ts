@@ -653,10 +653,13 @@ export function eclater(s: CombatEtat, porteurId: string, opts: { silencieux?: b
 
 // ---------- La Fêlure (25 octobre 2026) ----------
 // Chaque tour, chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence, posée dans la chaîne pendant
-// qu'il est visé, brise son intention (attaque, bouclier ou soin réduits de moitié, d'un quart chez un gardien)
+// qu'il est visé, brise son intention (attaque, bouclier ou soin réduits de moitié, d'un quart chez un gardien ou un blindé)
 // et remplit le Flux. Deux fois sur trois, la Fréquence fêlée est l'une de celles de la main : jouable, pas automatique.
+// Un évanescent la cache (elle n'est pas affichée, mais existe) ; la Vigie aspire le Flux de ceux qui le gardent.
 
 export const estGardien = (id: string) => ZONES.some((z) => z.boss === id);
+/** La Fêlure d'un ennemi est-elle visible ? (cachée chez les évanescents tant qu'elle n'est pas brisée) */
+export const felureVisible = (en: EnnemiEtat) => en.felure !== undefined && (!!en.felureBrisee || !trait(en, 'evanescent'));
 
 function fixerFelures(s: CombatEtat) {
   const r = tireur(s);
@@ -672,7 +675,8 @@ function fixerFelures(s: CombatEtat) {
 function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void) {
   en.felureBrisee = true;
   const it = intentionDe(s, en);
-  const part = estGardien(en.id) ? REGLES.felure.partGardien : REGLES.felure.part;
+  // les gardiens et les blindés résistent mieux : un quart seulement
+  const part = estGardien(en.id) || trait(en, 'blinde') ? REGLES.felure.partGardien : REGLES.felure.part;
   const nom = ennemiDef(en.id).nom;
   if (it.type === 'atk' || it.type === 'bouclier' || it.type === 'soin') {
     const avant = it.v;
@@ -730,6 +734,13 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
       emettre({ kind: 'degats', cible: c.id, net, absorbe: abs, rang });
     }
     en.boost = 1;
+    const aspire = trait(en, 'aspire');
+    if (aspire && !s.ombre && s.flux > 0) {
+      const pris = Math.min(s.flux, aspire.v);
+      s.flux -= pris;
+      log(s, `${e.nom} aspire ${pris} Flux.`);
+      emettre({ kind: 'effet', cible: 'escouade', texte: 'Flux aspiré' });
+    }
     log(s, s.ombre ? `${e.nom} · ${it.nom} : l’ombre retient le coup.` : `${e.nom} · ${it.nom} : ${morceaux.join(', ')}.`);
   }
   // Régénération : il regagne une part de ses PV à la fin de son tour

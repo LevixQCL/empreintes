@@ -133,7 +133,9 @@ export type Trait =
   | { type: 'evanescent'; part: number }
   | { type: 'essaim'; part: number }
   | { type: 'vengeur' }
-  | { type: 'furie' };
+  | { type: 'furie' }
+  /** Aspiration (25 octobre 2026) : quand il frappe, il vide une part du Flux de l'escouade */
+  | { type: 'aspire'; v: number };
 
 export interface EnnemiDef {
   id: string;

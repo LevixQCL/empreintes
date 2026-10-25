@@ -26,6 +26,7 @@ const CONSEILS_TRAITS: Record<Trait['type'], string> = {
   essaim: 'Il revient plus petit quand il tombe : garde de quoi finir le rejeton.',
   vengeur: 'Si tu abats son allié, il frappera double au tour suivant : protège-toi, ou abats-le en premier.',
   furie: 'Plus il est blessé, plus il frappe fort : une fois sous la moitié de ses PV, achève-le vite.',
+  aspire: 'Chacune de ses attaques vide ton Flux : déclenche ton Coup d’éclat ou dépense ton Flux avant qu’il ne frappe.',
 };
 
 const CONSEILS_CONDITIONS: Record<string, string> = {

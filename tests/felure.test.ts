@@ -44,6 +44,15 @@ describe('La Fêlure', () => {
     expect(s.journal.find((l) => l.startsWith('Fêlure'))).toContain('de 20 à 15');
   });
 
+  it('les blindés résistent comme les gardiens ; la Vigie aspire le Flux en frappant', () => {
+    const s = preparer('vigie', 4);
+    s.flux = 2;
+    ajouter(s, 'a'); lancer(s);
+    expect(s.journal.find((l) => l.startsWith('Fêlure'))).toContain('de 20 à 15');
+    expect(s.journal.some((l) => l.includes('aspire 1 Flux'))).toBe(true);
+    expect(s.flux).toBe(2); // 2, +1 (Fêlure), −1 (aspiré)
+  });
+
   it('pas de Fêlure à la Strate −1 (ennemis simples)', () => {
     const s = creerCombat({ porteurs: equipe(), ennemiId: 'remanent', rng: 3, traits: false });
     expect(s.ennemi.felure).toBeUndefined();

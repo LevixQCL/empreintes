@@ -10,12 +10,12 @@ const equipe = () => ['ilka', 'doran', 'vela'].map((id) => ({ id, pv: porteurDef
 describe('Les premières rencontres', () => {
   it('une condition, un groupe et les traits de chaque ennemi, dans cet ordre', () => {
     const s = creerCombat({ porteurs: equipe(), ennemiId: 'vigie', escorte: ['pilleur'], condition: 'brouillard', rng: 1 });
-    expect(decouvertesDuCombat(s).map((d) => d.id)).toEqual(['condition-brouillard', 'groupe', 'trait-blinde', 'trait-vengeur']);
+    expect(decouvertesDuCombat(s).map((d) => d.id)).toEqual(['condition-brouillard', 'groupe', 'trait-blinde', 'trait-aspire', 'trait-vengeur']);
   });
   it('ce qui a été vu ne revient pas', () => {
     const s = creerCombat({ porteurs: equipe(), ennemiId: 'vigie', escorte: ['pilleur'], rng: 1 });
-    expect(decouverteEnAttente(['groupe', 'trait-blinde'], s)!.id).toBe('trait-vengeur');
-    expect(decouverteEnAttente(['groupe', 'trait-blinde', 'trait-vengeur'], s)).toBeNull();
+    expect(decouverteEnAttente(['groupe', 'trait-blinde', 'trait-aspire'], s)!.id).toBe('trait-vengeur');
+    expect(decouverteEnAttente(['groupe', 'trait-blinde', 'trait-aspire', 'trait-vengeur'], s)).toBeNull();
   });
   it('rien dans la Strate −1 (ennemis sans traits), et la phase d’un gardien quand elle arrive', () => {
     const simple = creerCombat({ porteurs: equipe(), ennemiId: 'vigie', rng: 1, traits: false });

@@ -2,7 +2,7 @@
 // Il sert à mesurer ce qu'une carte change aux chances de victoire, à chaque modification de chiffre.
 // Aucun DOM ici : il tourne dans les tests et dans `npm run robot`.
 
-import { allonger, ajouter, capacite, ennemisDebout, intentionDe, placesLibres, tousEnnemis, viser, vivants } from './combat';
+import { allonger, ajouter, capacite, eclater, eclatsPossibles, ennemisDebout, felureVisible, intentionDe, placesLibres, tousEnnemis, viser, vivants } from './combat';
 import { lancer } from './combat';
 import { cartesEnJeu } from './collection';
 import { GESTES_SPECIAUX, porteurDef } from './donnees';
@@ -22,6 +22,7 @@ const clone = (s: CombatEtat): CombatEtat => ({
   main: s.main.map((g) => (g.fs ? { ...g } : g)),
   chaine: s.chaine.map((g) => (g.fs ? { ...g } : g)),
   journal: s.journal.slice(),
+  ...(s.eclat ? { eclat: { ...s.eclat } } : {}),
 });
 
 /** Les ordres de jeu à essayer pour un même groupe de Gestes */
@@ -69,28 +70,35 @@ function note(s: CombatEtat): number {
  * (tour ennemi compris) et garde la meilleure. Peut dépenser 1 Flux pour une place de plus.
  */
 export function jouerTour(s: CombatEtat): void {
-  let meilleur: { score: number; uids: string[]; allonge: boolean } | null = null;
-  const essais = [false];
-  if (s.flux > 0 && capacite(s) < REGLES.capaciteMax) essais.push(true);
+  let meilleur: { score: number; uids: string[]; allonge: boolean; eclat: string | null } | null = null;
+  // Coup d'éclat (Flux plein) : il essaie aussi chaque coup possible avant sa chaîne ; le Flux vidé se paie dans la note
+  const eclats: (string | null)[] = [null, ...eclatsPossibles(s).map((c) => c.porteur)];
   // dans un groupe, il essaie de viser chacun des ennemis debout
   const cibles = ennemisDebout(s).map((e) => e.rang ?? 0);
   let meilleurRang = s.ennemi.rang ?? 0;
-  for (const rang of cibles) for (const allonge of essais) {
-    const cap = capacite(s) + (allonge ? 1 : 0);
-    for (const groupe of sousGroupes(s.main)) {
-      if (groupe.reduce((n, g) => n + places(g), 0) > cap) continue;
-      for (const ordre of ordres(groupe)) {
-        const t = clone(s);
-        viser(t, rang);
-        if (allonge) allonger(t);
-        for (const g of ordre) ajouter(t, g.uid);
-        if (t.chaine.length !== ordre.length) continue;
-        lancer(t, { silencieux: true });
-        const score = note(t) - (allonge ? 4 : 0);
-        if (!meilleur || score > meilleur.score) { meilleur = { score, uids: ordre.map((g) => g.uid), allonge }; meilleurRang = rang; }
+  for (const eclat of eclats) {
+    const base = clone(s);
+    if (eclat) eclater(base, eclat, { silencieux: true });
+    const essais = [false];
+    if (base.flux > 0 && capacite(base) < REGLES.capaciteMax) essais.push(true);
+    for (const rang of cibles) for (const allonge of essais) {
+      const cap = capacite(base) + (allonge ? 1 : 0);
+      for (const groupe of sousGroupes(base.main)) {
+        if (groupe.reduce((n, g) => n + places(g), 0) > cap) continue;
+        for (const ordre of ordres(groupe)) {
+          const t = clone(base);
+          viser(t, rang);
+          if (allonge) allonger(t);
+          for (const g of ordre) ajouter(t, g.uid);
+          if (t.chaine.length !== ordre.length) continue;
+          lancer(t, { silencieux: true });
+          const score = note(t) - (allonge ? 4 : 0) - (eclat ? 6 : 0);
+          if (!meilleur || score > meilleur.score) { meilleur = { score, uids: ordre.map((g) => g.uid), allonge, eclat }; meilleurRang = rang; }
+        }
       }
     }
   }
+  if (meilleur?.eclat) eclater(s, meilleur.eclat, { silencieux: true });
   viser(s, meilleurRang);
   if (!meilleur) {
     // main injouable (ne devrait pas arriver) : on pose ce qui rentre
@@ -109,7 +117,8 @@ export function jouerTour(s: CombatEtat): void {
  * C'est la référence pour régler la difficulté : le robot, lui, gagne bien plus souvent qu'un vrai joueur.
  */
 export function jouerTourMoyen(s: CombatEtat): void {
-  if (s.flux >= 2 && capacite(s) < REGLES.capaciteMax) allonger(s);
+  // il garde son Flux pour le Coup d'éclat tant qu'il ne l'a pas déclenché ; ensuite, il s'offre une place de plus
+  if (s.eclat && s.flux >= 2 && capacite(s) < REGLES.capaciteMax) allonger(s);
   // dans un groupe, il frappe le plus entamé (le plus proche de tomber)
   const proie = ennemisDebout(s).sort((a, b) => a.pv - b.pv)[0];
   if (proie) viser(s, proie.rang ?? 0);
@@ -126,13 +135,24 @@ export function jouerTourMoyen(s: CombatEtat): void {
   }
   const danger = menace >= 0.2 * pvTotal || unCoupFatal;
   const blesse = vie.some((p) => p.pv / p.pvMax < 0.4);
+  // Coup d'éclat, au plus simple : relever un Porteur à terre, sinon survivre à un coup fatal, sinon frapper fort
+  const eclats = eclatsPossibles(s);
+  const choix = (s.porteurs.some((p) => p.pv <= 0) || pvTotal < 0.35 * s.porteurs.reduce((n, p) => n + p.pvMax, 0) ? eclats.find((c) => c.lignee === 'bio') : undefined)
+    ?? (unCoupFatal ? eclats.find((c) => c.lignee === 'reso') : undefined)
+    ?? eclats.find((c) => c.lignee === 'tech');
+  if (choix) eclater(s, choix.porteur, { silencieux: true });
+  // la Fêlure affichée sur l'ennemi qu'il frappe : une carte de cette Fréquence brise son intention
+  const fel = s.ennemi.felureBrisee || !felureVisible(s.ennemi) ? undefined : s.ennemi.felure;
+  const itVise = intentionDe(s, s.ennemi);
+  const gainFelure = fel === undefined ? 0 : (itVise.type === 'atk' ? itVise.v * 0.5 * (danger ? 1.5 : 1) : itVise.type === 'bouclier' || itVise.type === 'soin' ? itVise.v * 0.5 : 0) + 4;
   let meilleur: { score: number; ordre: Geste[] } | null = null;
   for (const groupe of sousGroupes(s.main)) {
     if (groupe.reduce((n, g) => n + places(g), 0) > cap) continue;
     const ordre = groupe.slice().sort((a, b) => a.f - b.f);
     const mult = analyserChaine(ordre).mult;
     const somme = (t: string) => ordre.filter((g) => g.type === t).reduce((n, g) => n + g.v, 0) * mult;
-    const score = somme('atk') + (danger ? 1.5 * Math.min(somme('bouclier'), menace) : 0.3 * somme('bouclier')) + (blesse ? somme('soin') : 0.2 * somme('soin'));
+    const brise = fel !== undefined && ordre.some((g) => g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(fel));
+    const score = somme('atk') + (danger ? 1.5 * Math.min(somme('bouclier'), menace) : 0.3 * somme('bouclier')) + (blesse ? somme('soin') : 0.2 * somme('soin')) + (brise ? gainFelure : 0);
     if (!meilleur || score > meilleur.score) meilleur = { score, ordre };
   }
   for (const g of meilleur?.ordre ?? []) ajouter(s, g.uid);

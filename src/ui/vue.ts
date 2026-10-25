@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, capacite, coupDeFuite, eclatsPossibles, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, puissance, usureCombat } from '../core/combat';
+import { ECLATS, capacite, coupDeFuite, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, puissance, usureCombat } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
@@ -269,7 +269,7 @@ function regles(): string {
     + '<li><b>Plusieurs Fréquences :</b> une carte en argent, en or ou en nacre en porte 2 ou 3. Posée, elle prend celle qui prolonge ta suite ; touche les chiffres sous elle pour en changer. Rien n’est tiré au sort.</li>'
     + `<li><b>L’Écho :</b> trois Fréquences identiques donnent un bouclier d’escouade de +${REGLES.bouclierEcho}.</li>`
     + '<li><b>Le Flux</b> se remplit à chaque Résonance et à chaque Fêlure brisée. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main, ou garde-le pour un Coup d’éclat.</li>'
-    + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien) et donne 1 Flux.</li>'
+    + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé) et donne 1 Flux. Les évanescents la cachent.</li>'
     + `<li><b>Le Coup d’éclat</b> : Flux plein, un seul par combat, au choix selon les lignées de l’escouade. ${(Object.values(ECLATS)).map((x) => `<b>${x.nom}</b> : ${x.texte}`).join(' ')} Le Porteur qui le déclenche prend ${REGLES.eclat.usure} d’Usure.</li>`
     + '<li><b>« 2 PL. »</b> : cette carte est puissante mais occupe deux places.</li>'
     + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.</li>'
@@ -344,7 +344,7 @@ function vignettesGroupe(e: Ecran): string {
     return `<button type="button" class="vignette-ennemi l-${d.lignee}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
       + (ill ? `<img src="${ill}" alt="" decoding="async">` : '<span class="vg-sans"></span>')
       + (tombe ? '' : cache ? '<span class="vg-int"><b>?</b></span>' : `<span class="vg-int ${cls}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)
-      + (tombe || cache || !en.felure ? '' : `<span class="vg-felure${en.felureBrisee ? ' brisee' : ''}" style="--fc:${couleurFrequence(en.felure)}" aria-hidden="true">${ICO.fele}<b>${en.felure}</b></span>`)
+      + (tombe || cache || !en.felure ? '' : !felureVisible(en) ? `<span class="vg-felure" aria-hidden="true">${ICO.fele}<b>?</b></span>` : `<span class="vg-felure${en.felureBrisee ? ' brisee' : ''}" style="--fc:${couleurFrequence(en.felure)}" aria-hidden="true">${ICO.fele}<b>${en.felure}</b></span>`)
       + `<span class="vg-vie"><i style="width:${Math.max(0, Math.round((100 * en.pv) / en.pvMax))}%"></i></span>`
       + popsPour(e, `ennemi-${en.rang ?? 0}`)
       + '</button>';
@@ -403,10 +403,11 @@ function htmlEcranCombat(e: Ecran): string {
 
   // la Fêlure de l'ennemi visé : la Fréquence qui brise son intention (cachée par le brouillard tant que la chaîne est vide)
   const brume = s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours';
-  const felF = !brume && s.ennemi.pv > 0 && !s.ennemi.felureBrisee ? s.ennemi.felure : undefined;
+  const felF = !brume && s.ennemi.pv > 0 && !s.ennemi.felureBrisee && felureVisible(s.ennemi) ? s.ennemi.felure : undefined;
   const prevue = felF !== undefined && fs.includes(felF);
   const felureHtml = s.ennemi.felure === undefined || brume || s.ennemi.pv <= 0 ? ''
     : s.ennemi.felureBrisee ? `<span class="int-felure brisee" title="Fêlure brisée">${ICO.fele}<small>BRISÉE</small></span>`
+    : !felureVisible(s.ennemi) ? `<span class="int-felure cachee" title="Fêlure cachée : un évanescent ne la montre pas" aria-label="Fêlure cachée">${ICO.fele}<b>?</b></span>`
     : `<span class="int-felure${prevue ? ' prevue' : ''}" style="--fc:${couleurFrequence(s.ennemi.felure)}" title="${echap(`Fêlure : une carte de Fréquence ${s.ennemi.felure} dans la chaîne brise cette intention et remplit le Flux`)}" aria-label="${echap(`Fêlure ${s.ennemi.felure}${prevue ? ', ta chaîne va la briser' : ''}`)}">${ICO.fele}<b>${s.ennemi.felure}</b></span>`;
   const brise = (g: Geste) => felF !== undefined && g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(felF);
 
