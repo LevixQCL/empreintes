@@ -32,6 +32,13 @@ src/
     combat.ts      le moteur de combat
     effets.ts      les noms et textes des effets spéciaux (Perçant, Siphon, Accord…)
     robot.ts       le robot d'équilibrage : un joueur automatique qui joue avec le vrai moteur
+    jeu.ts         le point d'entrée de la partie ; le code est rangé par thème dans partie/ :
+      partie/etat.ts         réglages du district, types, expérience et Marques, Confiance, creuseurs
+      partie/district.ts     le temps qui passe, chantiers, Forge, creuseurs, entraînement, Comptoir
+      partie/recompenses.ts  kit des recrues, lectures et Ravitaillement, nouveautés, fouilles, Épreuves
+      partie/descentes.ts    expéditions, escouade, missions, exploration des Strates, chambre scellée
+      partie/objectifs.ts    les objectifs guidés
+      partie/nouvelle.ts     nouvelle partie, décisions de la campagne, mise à jour des anciennes sauvegardes
     expedition.ts  une suite de combats ; c'est ce qui est sauvegardé
     rng.ts         hasard déterministe (même graine = même partie)
   ui/            l'affichage
@@ -39,6 +46,7 @@ src/
     district.ts    archipel, Tour du Noyau, escouade, cartes, Bibliothèque ; les détails s'ouvrent en feuille par le bas
     vue.ts         l'écran de combat
     icones.ts      le jeu d'icônes de l'interface (SVG, couleur du texte)
+    outils.ts      petits outils partagés (échapper un texte, animations réduites, virgule française)
     styles.css     le style « laiton et verre fumé » ; scenes.css (titre, intro) ; face-carte.css (cartes Module)
     bureau.css     la mise en page PC (à partir de 1100 px de large) : rail à gauche, tableaux en pleine hauteur ; le téléphone n’en dépend pas
   save/          la sauvegarde sur l'appareil
