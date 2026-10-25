@@ -216,3 +216,5 @@ body{background:
 /* Le rang de l'empreinte selon son métal (23 octobre 2026) */
 .rang-carte{margin:8px 0 0;padding:0 14px 0 18px;font-size:13px;line-height:1.5;color:#AEBBCC}
 .rang-carte b{font-weight:600;letter-spacing:.02em}
+.deck-porteur .carte-tuile.grisee{opacity:.55}
+.dk-remplace{color:#F2D58C}

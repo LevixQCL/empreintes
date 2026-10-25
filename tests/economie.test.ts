@@ -113,12 +113,16 @@ describe('Une carte, cinq métaux', () => {
     expect(moduleDef('gant-arc@nacre').effet).toEqual({ type: 'flux', v: 2 });
   });
 
-  it('un Porteur ne porte pas deux fois la même carte', () => {
+  it('un Porteur ne porte pas deux fois la même carte : un meilleur métal remplace l’ancien (24 octobre 2026)', () => {
     const j = avance();
     ajouterCarte(j, 'jambes-ressort@or');
     expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@fer');
-    expect(greffer(j, 'jambes-ressort@or', 'ilka').ok).toBe(false);
-    expect(greffer(j, 'jambes-ressort@or', 'coursier').ok).toBe(true);
+    const avant = j.porteurs.ilka!.modules.length;
+    expect(greffer(j, 'jambes-ressort@or', 'ilka').ok).toBe(true);
+    expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@or');
+    expect(j.porteurs.ilka!.modules).not.toContain('jambes-ressort@fer');
+    expect(j.porteurs.ilka!.modules.length).toBe(avant);
+    expect(greffer(j, 'jambes-ressort@fer', 'coursier').ok).toBe(true);
   });
 
   it('les tirages donnent des cartes de tous les métaux d’origine dans chaque métal', () => {

@@ -752,7 +752,9 @@ export function feuilleDeck(e: EcranDistrict): string {
   };
   const tri = e.tri ?? 'puissance';
   const libres = trierCartes(Object.keys(j.collection)
-    .filter((k) => moduleDef(k).lignee === p.lignee && !porte.includes(k) && !porte.some((x) => moduleDe(x) === moduleDe(k))), j.collection, tri);
+    .filter((k) => moduleDef(k).lignee === p.lignee && !porte.includes(k)), j.collection, tri);
+  /** la carte qu'il porte déjà dans un autre métal : la confier la remplace */
+  const remplace = (k: string) => porte.find((x) => moduleDe(x) === moduleDe(k));
   let h = `<div class="voile-feuille" data-action="deck-fermer" aria-hidden="true"></div><section class="feuille deck-porteur" role="dialog" aria-modal="true" aria-label="Les cartes de ${echap(p.nom)}"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR[p.lignee]}">${NOM_LIGNEE[p.lignee].toUpperCase()} · ${porte.length} / ${DISTRICT.cartesMax} CARTES</span><h2>Les cartes de ${echap(p.nom)}</h2></div>`
     + `<button type="button" class="btn-icone" data-action="guide" data-id="deck" aria-label="Comment construire son deck">${ICO.aide}</button>`
@@ -765,10 +767,17 @@ export function feuilleDeck(e: EcranDistrict): string {
   if (fs.length) h += `<p class="dk-freq">Fréquences qu’il apporte : ${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</p>`;
   h += porte.length ? `<div class="grille-cartes">${trierCartes(porte, j.collection, tri).map((k) => tuile(k, 'degreffer', `<span class="dk-action">${ICO.retour}Reprendre</span>`)).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
   h += `</section><section class="bloc"><h3 class="titre-bloc">${ICO.cartes}À lui confier</h3>`
-    + `<p class="aide">${plein ? `${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : reprends-en une d’abord.` : `Les cartes de sa lignée (${NOM_LIGNEES[p.lignee]}) dans ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
+    + `<p class="aide">${plein ? `${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : reprends-en une d’abord, ou remplace une carte par la même dans un meilleur métal.` : `Les cartes de sa lignée (${NOM_LIGNEES[p.lignee]}) dans ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
   // les cartes libres d'abord, puis celles qu'un autre Porteur porte ; chaque groupe dans l'ordre du tri (sort est stable)
   const triees = [...libres].sort((a, b) => Number(!!greffesDe(j, a)[0]) - Number(!!greffesDe(j, b)[0]));
-  h += libres.length ? `<div class="grille-cartes${plein ? ' grisee' : ''}">${triees.map((k) => { const qui = greffesDe(j, k)[0]; return tuile(k, 'greffer', qui ? `${avatar(qui, 20)}<span class="dk-chez">chez ${echap(porteurDef(qui).nom)}</span>` : `<span class="dk-action">${ICO.greffe}Confier</span>`); }).join('')}</div>` : `<p class="aide">Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.</p>`;
+  h += libres.length ? `<div class="grille-cartes">${triees.map((k) => {
+    const qui = greffesDe(j, k)[0];
+    const r = remplace(k);
+    const bas = r ? `<span class="dk-action dk-remplace">${ICO.recycler}Remplace celle en ${NOMS_RARETE[moduleDef(r).rarete].toLowerCase()}</span>`
+      : qui ? `${avatar(qui, 20)}<span class="dk-chez">chez ${echap(porteurDef(qui).nom)}</span>` : `<span class="dk-action">${ICO.greffe}Confier</span>`;
+    // pleine, il ne peut plus en recevoir de nouvelle ; une carte qui en remplace une autre reste possible
+    return tuile(k, 'greffer', bas).replace('class="carte-tuile"', `class="carte-tuile${plein && !r ? ' grisee' : ''}"`);
+  }).join('')}</div>` : `<p class="aide">Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.</p>`;
   return h + `</section></div></section>`;
 }
 

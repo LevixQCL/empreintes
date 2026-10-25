@@ -837,10 +837,17 @@ export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   if (porteurDef(porteurId).lignee !== moduleDef(moduleId).lignee) return non('Cette carte ne convient qu’à sa lignée.');
   const ancien = greffesDe(j, moduleId)[0];
   if (ancien === porteurId) return { ok: true };
-  if (p.modules.some((k) => k !== moduleId && moduleDe(k) === moduleDe(moduleId))) return non(`${porteurDef(porteurId).nom} porte déjà cette carte dans un autre métal.`);
   if (ancien && enExpedition(j, ancien)) return non('Cette carte est en expédition.');
-  if (p.modules.length >= DISTRICT.cartesMax) return non(`${porteurDef(porteurId).nom} porte déjà ${DISTRICT.cartesMax} cartes : retires-en une.`);
+  // il porte déjà cette carte dans un autre métal : la nouvelle prend sa place (24 octobre 2026, Bryan : une Morsure en argent
+  // n'apparaissait pas pour Doran, qui portait la Morsure en fer). Un Porteur ne porte toujours qu'un métal de chaque carte.
+  const autreMetal = p.modules.find((k) => k !== moduleId && moduleDe(k) === moduleDe(moduleId));
+  if (!autreMetal && p.modules.length >= DISTRICT.cartesMax) return non(`${porteurDef(porteurId).nom} porte déjà ${DISTRICT.cartesMax} cartes : retires-en une.`);
   if (ancien) j.porteurs[ancien]!.modules = j.porteurs[ancien]!.modules.filter((m) => m !== moduleId);
+  if (autreMetal) {
+    p.modules[p.modules.indexOf(autreMetal)] = moduleId;
+    log(j, `${moduleDef(moduleId).nom} (${NOMS_RARETE[moduleDef(moduleId).rarete].toLowerCase()}) remplace celle en ${NOMS_RARETE[moduleDef(autreMetal).rarete].toLowerCase()} chez ${porteurDef(porteurId).nom}.`);
+    return { ok: true };
+  }
   p.modules.push(moduleId);
   log(j, `${moduleDef(moduleId).nom} confiée à ${porteurDef(porteurId).nom}.`);
   return { ok: true };
