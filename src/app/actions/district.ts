@@ -1,6 +1,6 @@
 // Actions du district : bâtiments, Porteurs, cartes, escouade, départs, Chroniques.
 
-import { moduleDef, porteurDef } from '../../core/donnees';
+import { moduleDe, moduleDef, porteurDef } from '../../core/donnees';
 import * as J from '../../core/jeu';
 import type { BatimentId } from '../../core/types';
 import { visuel as ageDistrict } from '../../ui/art';
@@ -36,13 +36,23 @@ export function agirDistrict(a: string, c: Clic): Suite {
     case 'cartes': ouvrir('cartes'); break;
     case 'porteurs': ouvrir('porteurs'); break;
     case 'porteur': D.porteur = id; D.deck = null; D.place = null; break;
-    // « Mon escouade » (23 octobre 2026) : l'onglet Porteurs s'ouvre sur l'escouade ; « Tous les Porteurs » à part
-    case 'porteurs-tous': D.reserve = true; D.place = null; D.porteur = null; D.deck = null; window.scrollTo(0, 0); break;
+    // l'onglet Escouade (25 octobre 2026) s'ouvre sur l'escouade ; « Porteurs » et « Collection » sont ses deux autres volets
+    case 'porteurs-tous': ouvrir('porteurs'); D.reserve = true; window.scrollTo(0, 0); break;
     case 'porteurs-escouade': D.reserve = false; D.porteur = null; D.deck = null; window.scrollTo(0, 0); break;
     case 'escouade-place': D.place = Number(b.dataset.index ?? 0); D.porteur = null; D.deck = null; break;
     case 'escouade-fermer': D.place = null; break;
+    // les trois escouades (25 octobre 2026) : en voir une, la faire descendre
+    case 'escouade-voir': D.vueEscouade = Number(b.dataset.index ?? 0); D.place = null; D.porteur = null; D.deck = null; D.carte = null; break;
+    case 'depart-escouade': {
+      const r = J.choisirEscouade(app.jeu, Number(b.dataset.index ?? 0));
+      resultat(r);
+      const ep = D.epreuve ? J.epreuveDef(D.epreuve) : undefined;
+      if (r.ok) D.escouade = J.escouadePourDepart(app.jeu, ep?.interdits ?? []);
+      break;
+    }
+    case 'escouade-active': resultat(J.choisirEscouade(app.jeu, Number(b.dataset.index ?? 0))); break;
     case 'escouade-mettre': {
-      const r = J.placerDansEscouade(app.jeu, Number(b.dataset.index ?? 0), id);
+      const r = J.placerDansEscouade(app.jeu, Number(b.dataset.index ?? 0), id, D.vueEscouade ?? J.escouadeActive(app.jeu));
       if (r.ok) J.marquerVus(app.jeu, 'porteurs', [id]);
       resultat(r);
       if (r.ok) D.place = null;
@@ -54,12 +64,34 @@ export function agirDistrict(a: string, c: Clic): Suite {
       const r = J.greffer(app.jeu, b.dataset.module ?? '', id);
       resultat(r);
       const plein = !r.ok && !!r.message?.includes(`${J.DISTRICT.cartesMax} cartes`);
-      if (plein) { D.carte = null; D.deck = id; D.message = `${porteurDef(id).nom} porte déjà ${J.DISTRICT.cartesMax} cartes : reprends-en une, puis confie-lui ${moduleDef(b.dataset.module ?? '').nom}.`; }
+      if (plein) { D.carte = null; D.deck = id; D.echange = b.dataset.module ?? null; D.message = `${porteurDef(id).nom} porte déjà ${J.DISTRICT.cartesMax} cartes : touche celle que ${moduleDef(b.dataset.module ?? '').nom} remplacera.`; }
       break;
     }
-    case 'deck': D.deck = id; D.carte = null; break;
-    case 'deck-fermer': D.deck = null; break;
-    case 'degreffer': resultat(J.degreffer(app.jeu, b.dataset.module ?? '')); break;
+    case 'deck': D.deck = id; D.carte = null; D.echange = null; break;
+    case 'deck-fermer': D.deck = null; D.echange = null; break;
+    case 'degreffer': D.echange = null; resultat(J.degreffer(app.jeu, b.dataset.module ?? '')); break;
+    // la feuille d'un Porteur : on choisit deux cartes (une portée, une à confier) et elles s'échangent
+    case 'dk-annuler': D.echange = null; break;
+    case 'dk-porte': case 'dk-libre': {
+      const cle = b.dataset.module ?? '';
+      const porte = app.jeu.porteurs[id]?.modules ?? [];
+      const choisie = D.echange && app.jeu.collection[D.echange] ? D.echange : null;
+      if (choisie === cle) { D.echange = null; break; }
+      const autreCote = choisie && (porte.includes(choisie) !== (a === 'dk-porte'));
+      if (choisie && autreCote) {
+        const [retire, ajoute] = a === 'dk-porte' ? [cle, choisie] : [choisie, cle];
+        const r = J.echanger(app.jeu, retire, ajoute, id);
+        resultat(r);
+        if (r.ok) D.echange = null;
+        break;
+      }
+      // une carte à confier passe tout de suite s'il a une place libre (ou si elle remplace son autre métal)
+      const plein = porte.length >= J.DISTRICT.cartesMax;
+      const autreMetal = porte.some((k) => moduleDe(k) === moduleDe(cle));
+      if (a === 'dk-libre' && (!plein || autreMetal)) { D.echange = null; resultat(J.greffer(app.jeu, cle, id)); break; }
+      D.echange = cle;
+      break;
+    }
     case 'monter': resultat(J.monter(app.jeu, b.dataset.module ?? '')); break;
     case 'recycler': resultat(J.recycler(app.jeu, b.dataset.module ?? '')); break;
     case 'prendre': resultat(J.prendre(app.jeu, Number(b.dataset.index ?? 0))); break;
@@ -165,6 +197,8 @@ export function agirDistrict(a: string, c: Clic): Suite {
       if (!o) break;
       ouvrir(o.onglet);
       if (o.onglet === 'archipel' && o.pilier) D.selection = o.pilier;
+      // construire le deck : droit aux cartes d'Ilka, où attend l'Œil-relais
+      if (o.id === 'deck') D.deck = 'ilka';
       break;
     }
     case 'tri':

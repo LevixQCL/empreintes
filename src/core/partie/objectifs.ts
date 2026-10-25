@@ -31,14 +31,14 @@ export const OBJECTIFS: Objectif[] = [
     fait: (j) => { const p = posteDe(j, 'generateur'); return !!p && !escouadeDe(j).includes(p); },
   },
   {
-    id: 'deck', titre: 'Construire ton deck', pilier: null, onglet: 'cartes',
-    consigne: 'Ouvre tes Cartes et confie l’Œil-relais, trouvé dans la chambre, à Ilka. Elle porte déjà 6 cartes : retires-en une. Les cartes de tes trois Porteurs forment ton deck.',
+    id: 'deck', titre: 'Construire ton deck', pilier: null, onglet: 'porteurs',
+    consigne: 'Dans l’onglet Escouade, touche « Gérer ses cartes » sous Ilka et confie-lui l’Œil-relais, trouvé dans la chambre. Elle porte déjà 6 cartes : reprends-en une d’abord. Les cartes de tes trois Porteurs forment ton deck.',
     recompense: { composants: 10 },
     fait: (j) => j.porteurs.ilka!.modules.some((k) => moduleDe(k) === 'oeil-relais'),
   },
   {
     id: 'descendre', titre: 'Vaincre la Strate −1', pilier: 'noyau', onglet: 'coupe',
-    consigne: 'Ton escouade est prête (onglet Porteurs). Entre dans la Tour du Noyau et explore la Strate −1 salle par salle, jusqu’à son gardien.',
+    consigne: 'Ton escouade est prête (onglet Escouade). Entre dans la Tour du Noyau et explore la Strate −1 salle par salle, jusqu’à son gardien.',
     recompense: { composants: 20 },
     fait: (j) => j.strate >= 2 || j.frontVaincu,
   },

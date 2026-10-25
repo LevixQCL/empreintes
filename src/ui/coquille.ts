@@ -34,7 +34,9 @@ export interface EcranDistrict {
   carte: string | null;
   /** Porteur dont on construit le deck (feuille « Les cartes de… »), ou null */
   deck: string | null;
-  /** Porteur dont la fiche est ouverte (onglet Porteurs, escouade), ou null */
+  /** dans cette feuille, la carte choisie pour un échange (portée ou à confier), en attente de la seconde */
+  echange?: string | null;
+  /** Porteur dont la fiche est ouverte (onglet Escouade, départ), ou null */
   porteur: string | null;
   /** lignée affichée dans l'écran Cartes */
   filtre: Filtre;
@@ -54,10 +56,12 @@ export interface EcranDistrict {
   epreuve: string | null;
   /** la fiche d'une ressource du haut est ouverte (22 octobre 2026) */
   ressource?: Ressource | null;
-  /** onglet Porteurs (23 octobre 2026) : la liste de tous les Porteurs est affichée au lieu de « Mon escouade » */
+  /** onglet Escouade : le volet « Porteurs » (tous les Porteurs) est affiché au lieu de l’escouade */
   reserve?: boolean;
-  /** onglet Porteurs : la place de l'escouade (0 à 2) dont on choisit le Porteur, volet ouvert */
+  /** onglet Escouade : la place de l'escouade (0 à 2) dont on choisit le Porteur, volet ouvert */
   place?: number | null;
+  /** onglet Escouade : l'escouade affichée (0 à 2) ; par défaut, celle qui descend */
+  vueEscouade?: number;
   /** le mode d'emploi des cartes est ouvert, sur cet onglet (guide.ts) */
   guide: import('./guide').OngletGuide | null;
   /** l'ordre des cartes (écran Cartes, cartes d'un Porteur), retenu sur l'appareil */
@@ -193,32 +197,48 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
 const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
   { vue: 'archipel', nom: 'District', icone: 'district' },
   { vue: 'coupe', nom: 'Tour', icone: 'tour' },
-  { vue: 'porteurs', nom: 'Porteurs', icone: 'porteurs' },
-  { vue: 'cartes', nom: 'Cartes', icone: 'cartes' },
+  // Porteurs et Cartes ne font plus qu'un onglet (25 octobre 2026) : l'escouade, ses Porteurs et leurs cartes au même endroit
+  { vue: 'porteurs', nom: 'Escouade', icone: 'porteurs' },
   { vue: 'codex', nom: 'Chroniques', icone: 'codex' },
   { vue: 'plus', nom: 'Plus', icone: 'plus' },
 ];
 
-/** La navigation du bas. Les onglets fermés avant la chambre scellée portent un cadenas. */
+/** La navigation du bas */
 export function navigation(e: EcranDistrict): string {
   const j = e.j;
   const o = objectifCourant(j);
   const alerte: Partial<Record<Vue | 'plus', boolean>> = {
     archipel: !!(j.forge && e.now >= j.forge.fin) || !!(o && (o.fait(j) || o.onglet === 'archipel')),
-    cartes: !!(o && o.onglet === 'cartes' && !o.fait(j)) || (j.chambre && cartesNouvelles(j).length > 0),
-    porteurs: !!(o && o.onglet === 'porteurs' && !o.fait(j)) || porteursNouveaux(j).length > 0,
+    porteurs: !!(o && (o.onglet === 'porteurs' || o.onglet === 'cartes') && !o.fait(j)) || porteursNouveaux(j).length > 0 || (j.chambre && cartesNouvelles(j).length > 0),
     coupe: !!j.expedition || !!(o && o.onglet === 'coupe' && !o.fait(j)),
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
   };
-  const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'escouade' ? 'coupe' : e.vue;
+  const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'escouade' ? 'coupe' : e.vue === 'cartes' ? 'porteurs' : e.vue;
   // sur PC (rail.css) : le cristal seul en tête, et un filet de lumière qui relie les onglets au « Plus » du bas
   return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./art/embleme-cristal.webp" alt=""></span>` + ONGLETS.map((t) => {
-    const ferme = !j.chambre && t.vue === 'cartes';
     const action = t.vue === 'plus' ? 'menu' : t.vue;
     return (t.vue === 'plus' ? '<span class="nav-filet" aria-hidden="true"></span>' : '')
-      + `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${ferme ? ' disabled' : ''}${actif === t.vue ? ' aria-current="page"' : ''}>`
-      + `<span class="onglet-ico">${ferme ? icone('verrou') : icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span>${t.nom}</span></button>`;
+      + `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${actif === t.vue ? ' aria-current="page"' : ''}>`
+      + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span>${t.nom}</span></button>`;
   }).join('') + `</nav>`;
+}
+
+/**
+ * Les trois volets de l'onglet Escouade (25 octobre 2026) : l'escouade et son deck, tous les Porteurs, toute la collection.
+ * La collection reste fermée tant que la chambre scellée n'est pas ouverte.
+ */
+export function voletsEscouade(e: EcranDistrict): string {
+  const j = e.j;
+  const ici = e.vue === 'cartes' ? 'cartes' : e.reserve ? 'tous' : 'escouade';
+  const neufsP = porteursNouveaux(j).length;
+  const neufsC = j.chambre ? cartesNouvelles(j).length : 0;
+  const seg = (id: string, action: string, nom: string, plus = '', ferme = false) =>
+    `<button type="button" role="tab" class="seg${ici === id ? ' actif' : ''}" data-action="${action}" aria-selected="${ici === id}"${ferme ? ' disabled' : ''}>${ferme ? ICO.verrou : ''}${nom}${plus}</button>`;
+  return `<div class="segments-choix trois volets-escouade" role="tablist" aria-label="Escouade, Porteurs ou cartes">`
+    + seg('escouade', 'porteurs', 'Escouade')
+    + seg('tous', 'porteurs-tous', 'Porteurs', neufsP ? ` <span class="pastille-n" aria-label="${neufsP} nouveau${neufsP > 1 ? 'x' : ''}">${neufsP}</span>` : '')
+    + seg('cartes', 'cartes', 'Collection', neufsC ? ` <span class="pastille-n" aria-label="${neufsC} nouvelle${neufsC > 1 ? 's' : ''}">${neufsC}</span>` : '', !j.chambre)
+    + `</div>`;
 }
 
 /** Le message du moment, posé au-dessus de la navigation ; on le touche pour le fermer */

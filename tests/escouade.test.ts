@@ -1,6 +1,6 @@
 // « Mon escouade » (décision du 23 octobre 2026) : l'escouade est enregistrée, et ne change qu'au district.
 import { describe, expect, it } from 'vitest';
-import { cartesNouvelles, marquerVus, porteursNouveaux, escouadeDe, escouadePourDepart, nouveauJeu, partir, placerDansEscouade, poster, estJeuValide, type Jeu } from '../src/core/jeu';
+import { choisirEscouade, escouadesDe, cartesNouvelles, marquerVus, porteursNouveaux, escouadeDe, escouadePourDepart, nouveauJeu, partir, placerDansEscouade, poster, estJeuValide, type Jeu } from '../src/core/jeu';
 
 const pret = () => { const j = nouveauJeu(0, 1); j.chambre = true; j.recrues = true; return j; };
 
@@ -107,3 +107,52 @@ describe('Changer d’appareil (25 octobre 2026)', () => {
     expect(compareAvancement(neuve, nouveauJeu(0, 3))).toBe(0);
   });
 });
+
+// Les trois escouades (25 octobre 2026) : on en enregistre trois, une seule descend, un Porteur n'est que dans une seule.
+describe('Les trois escouades', () => {
+  const autres = (j: Jeu) => escouadePourDepart({ ...j, escouade: [] }).filter((id) => !['ilka', 'doran', 'vela'].includes(id));
+
+  it('une ancienne sauvegarde garde son escouade en escouade 1, les deux autres vides', () => {
+    const j = pret() as Partial<Jeu>;
+    delete j.escouades; delete j.escouadeActive;
+    expect(estJeuValide(j)).toBe(true);
+    expect(escouadesDe(j as Jeu)).toEqual([['ilka', 'doran', 'vela'], [], []]);
+  });
+
+  it('on compose une deuxième escouade sans toucher à celle qui descend', () => {
+    const j = pret();
+    const [a, b] = autres(j);
+    if (!a || !b) return;
+    expect(placerDansEscouade(j, 0, a, 1).ok).toBe(true);
+    expect(placerDansEscouade(j, 1, b, 1).ok).toBe(true);
+    expect(escouadesDe(j)[1]).toEqual([a, b]);
+    expect(escouadeDe(j)).toEqual(['ilka', 'doran', 'vela']);
+  });
+
+  it('un Porteur pris dans une autre escouade la quitte : celui qu’il remplace y prend sa place', () => {
+    const j = pret();
+    const [a] = autres(j);
+    if (!a) return;
+    placerDansEscouade(j, 0, a, 1);
+    expect(placerDansEscouade(j, 0, 'ilka', 1).ok).toBe(true);
+    expect(escouadesDe(j)[1]).toEqual(['ilka']);
+    expect(escouadeDe(j)).toEqual([a, 'doran', 'vela']);
+  });
+
+  it('on choisit celle qui descend, pas une escouade vide, et jamais pendant une descente', () => {
+    const j = pret();
+    expect(choisirEscouade(j, 2).ok).toBe(false);
+    const [a] = autres(j);
+    if (!a) return;
+    placerDansEscouade(j, 0, a, 1);
+    expect(choisirEscouade(j, 1).ok).toBe(true);
+    expect(escouadeDe(j)).toEqual([a]);
+    expect(escouadesDe(j)[0]).toEqual(['ilka', 'doran', 'vela']);
+    expect(partir(j, [a, 'ilka', 'doran'], 1).ok).toBe(true);
+    // le départ retient l'escouade partie, et ses Porteurs quittent l'escouade 1
+    expect(escouadesDe(j)[1]).toEqual([a, 'ilka', 'doran']);
+    expect(escouadesDe(j)[0]).toEqual(['vela']);
+    expect(choisirEscouade(j, 0).ok).toBe(false);
+  });
+});
+

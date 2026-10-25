@@ -18,6 +18,7 @@ import './ecrans.css';
 import './debut.css';
 import './fiche-porteur.css';
 import './mon-escouade.css';
+import './equipe.css';
 import './district.css';
 import './exploration-refonte.css';
 import './toucher.css';

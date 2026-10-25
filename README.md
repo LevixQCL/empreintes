@@ -93,6 +93,17 @@ Au départ, Ilka, Doran et Véla portent chacun 6 cartes en fer : leurs 5 cartes
 En combat, le moteur manipule des « Gestes » : c'est le nom interne d'une carte en jeu (`gesteDeCarte`), avec son Porteur,
 son niveau et la Fréquence choisie. Le tableau des cartes garde son nom historique `MODULES`.
 
+**L'onglet Escouade** (25 octobre 2026, `src/ui/porteurs.ts`, `equipe.css`). Les onglets Porteurs et Cartes n'en font plus qu'un,
+à trois volets (`voletsEscouade` dans `coquille.ts`) : *Escouade* (la feuille de match), *Porteurs* (tous, par lignée) et *Collection*
+(`htmlCartes`, fermée avant la chambre scellée). La feuille de match montre d'abord le bilan du deck (`bilanDeck` : nombre de cartes,
+échelle des Fréquences 1 à 9 empilée par lignée, trous et plus longue suite, attaques / protections / soins, un conseil), puis chaque Porteur
+(`blocPorteur` : portrait, PV, qui il bat, sa Marque en toutes lettres avec ce qu'il reste à accomplir, et ses cartes une par ligne :
+Fréquence, nom, niveau, effet en clair, force sur le socle peint des cartes), puis les cartes du district.
+*Trois escouades* (`j.escouades`, `escouadesDe`, `placerDansEscouade(j, place, id, n)`, `choisirEscouade`) : on en compose trois, un Porteur
+n'est que dans une seule (le prendre ailleurs l'échange avec celui qu'il remplace), et une seule descend (`j.escouadeActive` ; `j.escouade`
+en est toujours la copie, c'est elle que lit le reste du jeu). On la choisit dans l'onglet (« Faire descendre l'escouade 2 ») ou sur l'écran
+de départ (« Partir avec »), jamais pendant une descente. Le départ retient l'escouade qui part (`retenirDepart`).
+
 **Mon escouade** (décision du 23 octobre 2026). L'escouade est enregistrée dans la partie (`j.escouade`, Ilka, Doran et Véla au départ).
 L'onglet Porteurs s'ouvre sur elle (`monEscouade` dans `porteurs.ts`) : on touche « Changer » sous un Porteur pour le remplacer
 (`placerDansEscouade`), et « Tous les Porteurs » ouvre la liste complète. Elle ne change qu'au district, jamais pendant une descente

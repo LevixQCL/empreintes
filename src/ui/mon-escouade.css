@@ -1,4 +1,5 @@
-/* EMPREINTES — « Mon escouade » (décision du 23 octobre 2026) : l'onglet Porteurs s'ouvre sur les trois qui descendent.
+/* EMPREINTES — « Mon escouade » (décision du 23 octobre 2026) : le bandeau « en descente » et le volet « Choisir un Porteur ».
+   L'écran de l'escouade lui-même est dans equipe.css depuis le 25 octobre 2026.
    Mêmes règles que la ligne de départ (escouade.css) : portraits peints en grand, pas de cartouches,
    glace pour ce qui se touche, or pour la valeur et la progression, textes à 12 px minimum. */
 
@@ -9,68 +10,6 @@
   background:linear-gradient(90deg,rgba(242,213,140,.12),rgba(242,213,140,.02));box-shadow:inset 2px 0 0 var(--x-or)}
 .me-verrou>.ico{width:17px;height:17px;flex-shrink:0;margin-top:1px;color:var(--x-or)}
 .me-verrou strong{display:block;color:var(--x-or);font-weight:600}
-
-/* ---------- les trois places ---------- */
-.me-trio{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;align-items:stretch}
-.me-place{position:relative;display:flex;flex-direction:column;gap:5px;min-width:0}
-.me-place>.me-changer{margin-top:auto}
-.me-portrait{position:relative;display:block;width:100%;aspect-ratio:3/4;padding:0;border:0;border-radius:4px;overflow:hidden;cursor:pointer;color:inherit;
-  background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 35%,#141A2E),#0B0F1C 75%);
-  box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 85%,white),0 12px 26px rgba(0,0,0,.5),0 0 18px color-mix(in srgb,var(--c) 38%,transparent);
-  transition:transform .15s,box-shadow .15s}
-.me-portrait:hover{box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 60%,white),0 14px 28px rgba(0,0,0,.5),0 0 26px color-mix(in srgb,var(--c) 50%,transparent)}
-.me-portrait:active{transform:scale(.98)}
-.me-portrait:focus-visible{outline:1px solid var(--x-glace);outline-offset:3px}
-.me-portrait img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;display:block;
-  -webkit-mask-image:linear-gradient(#000 55%,transparent 98%);mask-image:linear-gradient(#000 55%,transparent 98%)}
-.me-portrait>.avatar{margin:22% auto 0}
-.me-portrait::after{content:"";position:absolute;left:10%;right:10%;bottom:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent)}
-.me-rang{position:absolute;top:6px;left:6px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font-family:var(--mono);font-size:12px;font-weight:700;color:#2A1A04;
-  background:linear-gradient(180deg,#F8E3A6,#D4A54E);box-shadow:0 0 10px rgba(242,200,110,.5)}
-.me-nom{position:absolute;left:0;right:0;bottom:0;display:grid;gap:1px;padding:0 8px 9px;text-align:left}
-.me-nom strong{font-family:var(--display);font-weight:400;font-size:18px;line-height:1.05;color:#fff;text-shadow:0 2px 8px #000,0 0 2px #000;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.me-nom small{font-size:12px;color:color-mix(in srgb,var(--c) 45%,white);text-shadow:0 1px 4px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.me-jauges{display:grid;gap:3px;margin-top:2px}
-.me-jauges .jauge-pv{width:100%;height:4px}
-.me-chiffres{font-family:var(--mono);font-size:12px;color:var(--x-doux);font-variant-numeric:tabular-nums;display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap}
-.me-chiffres b{color:var(--x-txt);font-weight:600}
-.me-chiffres b.or{color:var(--x-or)}
-.me-cartes,.me-marque,.me-changer{display:flex;align-items:center;gap:6px;min-height:34px;padding:0 6px;border:0;border-radius:4px;background:none;font:inherit;text-align:left;cursor:pointer;color:var(--x-txt)}
-.me-cartes{font-size:13px;font-weight:600;color:var(--x-glace)}
-.me-cartes.pleine{color:var(--x-or)}
-.me-cartes.aucune{color:var(--x-rouge)}
-.me-cartes:disabled{cursor:default;opacity:.7}
-.me-cartes .ico{width:15px;height:15px;flex-shrink:0}
-.me-marque{align-items:flex-start;min-height:30px;padding-top:4px;font-size:12px;line-height:1.3;color:var(--x-doux)}
-.me-marque .ico{width:13px;height:13px;flex-shrink:0;margin-top:1px}
-.me-marque b{color:var(--x-txt);font-weight:600}
-.me-marque.acquise,.me-marque.acquise b{color:var(--x-or)}
-.me-cartes:not(:disabled):hover,.me-marque:hover,.me-changer:hover{background:rgba(205,239,255,.06)}
-.me-alerte{display:flex;align-items:flex-start;gap:5px;padding:0 6px;font-size:12px;line-height:1.3;color:#E8B86A}
-.me-alerte .ico{width:13px;height:13px;flex-shrink:0;margin-top:1px}
-.me-alerte.usure{color:var(--x-rouge)}
-.me-changer{justify-content:center;font-size:13px;font-weight:600;color:var(--x-glace);background:rgba(205,239,255,.05);box-shadow:inset 0 0 0 1px rgba(205,239,255,.16)}
-.me-changer .ico{width:14px;height:14px}
-.me-place.vide{display:grid;align-self:start;place-items:center;align-content:center;gap:4px;width:100%;aspect-ratio:3/4;padding:0;border:0;border-radius:4px;font:inherit;text-align:center;cursor:pointer;color:inherit;
-  background:radial-gradient(circle at 50% 40%,rgba(205,239,255,.06),transparent 70%);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14)}
-.me-place.vide:not(:disabled):hover{box-shadow:inset 0 0 0 1px rgba(205,239,255,.4)}
-.me-place.vide:disabled{cursor:default}
-.me-silhouette{position:absolute;inset:18% 26% 30%;border-radius:50% 50% 40% 40%;background:rgba(205,239,255,.05)}
-.me-place.vide b{position:relative;font-family:var(--display);font-weight:400;font-size:40px;color:rgba(205,239,255,.35)}
-.me-place.vide small{position:relative;padding:0 8px;font-size:12.5px;font-weight:600;color:var(--x-glace)}
-
-/* ---------- le deck, puis la liste complète ---------- */
-.me-deck{display:flex;gap:10px;align-items:flex-start;margin:0;padding-top:14px;font-size:13.5px;line-height:1.45;color:var(--x-doux);box-shadow:inset 0 1px 0 rgba(205,239,255,.1)}
-.me-deck>.ico{width:17px;height:17px;flex-shrink:0;margin-top:1px;color:var(--x-glace)}
-.me-deck strong{display:block;font-weight:600;color:var(--x-txt)}
-.me-deck.maigre>.ico,.me-deck.maigre strong{color:var(--x-rouge)}
-.me-tous{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;width:100%;min-height:62px;padding:10px 12px;border:0;border-radius:4px;font:inherit;text-align:left;cursor:pointer;color:var(--x-txt);
-  background:linear-gradient(90deg,rgba(205,239,255,.07),rgba(205,239,255,.02));box-shadow:inset 0 0 0 1px rgba(205,239,255,.16);transition:background .15s}
-.me-tous:hover{background:linear-gradient(90deg,rgba(205,239,255,.12),rgba(205,239,255,.03))}
-.me-tous>.ico{width:20px;height:20px;color:var(--x-glace)}
-.me-tous>.ico:last-child{width:16px;height:16px;transform:scaleX(-1);opacity:.7}
-.me-tous strong{display:block;font-family:var(--display);font-weight:400;font-size:18px;line-height:1.15;color:#F6F2EA}
-.me-tous small{display:block;font-size:12.5px;line-height:1.35;color:var(--x-doux)}
 
 /* le rang dans l'escouade, sur la tuile de la liste complète */
 .pt-escouade{position:absolute;top:8px;left:8px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font-family:var(--mono);font-size:12px;font-weight:700;color:#2A1A04;
@@ -101,13 +40,6 @@
 .me-choix.indispo strong{color:var(--x-doux)}
 .me-aide{margin:0;font-size:13px;line-height:1.45;color:var(--x-doux)}
 
-@media (max-width:360px){.me-nom strong{font-size:16px}.me-changer{font-size:12px;gap:4px}}
-
-@media (min-width:1100px) and (min-height:600px){
-  .me-trio{grid-template-columns:repeat(3,230px);justify-content:center;gap:24px}
-  .me-nom strong{font-size:22px}
-  .me-deck,.me-tous,.me-verrou{max-width:720px;margin-inline:auto;width:100%}
-}
 
 /* ---------- La pastille « Nouveau » (23 octobre 2026) : un Porteur arrivé, une carte trouvée, pas encore vus ---------- */
 .ruban-nouveau{position:absolute;z-index:3;top:8px;left:8px;padding:3px 9px;border-radius:999px;pointer-events:none;
@@ -117,16 +49,8 @@
 /* sur une carte : centrée au-dessus du cadre, pour ne cacher ni la Fréquence ni la force */
 .carte-tuile>.ruban-nouveau{top:-7px;left:50%;transform:translateX(-50%)}
 @keyframes ruban-luit{50%{box-shadow:0 0 0 1px rgba(42,26,4,.35),0 0 22px rgba(242,200,110,.9)}}
-.me-tous .pastille-n{font-family:var(--mono);font-size:11px;vertical-align:3px}
 .me-choix-txt .pastille-n{font-family:var(--mono);font-size:10.5px;vertical-align:3px}
 @media (prefers-reduced-motion:reduce){.ruban-nouveau{animation:none}}
 /* sur un portrait de la liste : l'état descend sous la pastille pour ne pas la chevaucher */
 .pt-portrait:has(>.ruban-nouveau)>.pt-etat{top:40px}
 .pt-portrait>.pt-escouade~.ruban-nouveau{top:8px;left:38px}
-
-/* la Marque pas encore gagnée : ce qu'elle donne, et la jauge de ce qu'il reste à accomplir (24 octobre 2026) */
-.me-marque>span{display:grid;gap:2px;min-width:0}
-.me-marque-sur{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--x-glace)}
-.me-marque small{font-size:11.5px;color:var(--x-doux)}
-.me-marque-jauge{display:block;height:3px;margin:3px 0 1px;border-radius:2px;background:rgba(205,239,255,.1);overflow:hidden}
-.me-marque-jauge>i{display:block;height:100%;background:linear-gradient(90deg,#D4A54E,#F8E3A6)}

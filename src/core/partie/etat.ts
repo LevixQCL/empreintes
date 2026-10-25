@@ -248,6 +248,10 @@ export interface Jeu {
   /** « Mon escouade » (décision du 23 octobre 2026) : les trois Porteurs qui descendent. Elle ne change qu'au district,
    *  jamais pendant une descente (sinon c'est trop facile). Ancienne sauvegarde : complétée par `migrer`. */
   escouade: string[];
+  /** les trois escouades enregistrées (25 octobre 2026) : un Porteur n'est que dans une seule. Celle d'indice
+   *  `escouadeActive` est celle qui descend, et `escouade` en est toujours la copie (c'est elle qui fait foi). */
+  escouades: string[][];
+  escouadeActive: number;
   /** les Porteurs et les cartes déjà vus par le joueur : le reste porte une pastille « Nouveau » (23 octobre 2026) */
   vus: { porteurs: string[]; cartes: string[] };
   /** les creuseurs du front de taille : il en faut assez pour creuser l'étage suivant (logés selon le niveau du Noyau) */
@@ -376,6 +380,26 @@ export function porteursPresents(j: Jeu): string[] {
 export function escouadeDe(j: Jeu): string[] {
   const presents = porteursPresents(j);
   return [...new Set(j.escouade ?? [])].filter((id) => presents.includes(id)).slice(0, 3);
+}
+
+/** Combien d'escouades on peut enregistrer */
+export const NB_ESCOUADES = 3;
+
+/** L'indice de l'escouade qui descend (0 à 2) */
+export const escouadeActive = (j: Jeu): number => (Number.isInteger(j.escouadeActive) && j.escouadeActive >= 0 && j.escouadeActive < NB_ESCOUADES ? j.escouadeActive : 0);
+
+/** Les trois escouades enregistrées (25 octobre 2026) : celle qui descend d'abord rangée à sa place,
+ * puis les autres, chacune sans les Porteurs déjà pris par une autre (un Porteur n'est que dans une seule) */
+export function escouadesDe(j: Jeu): string[][] {
+  const presents = porteursPresents(j);
+  const a = escouadeActive(j);
+  const pris = new Set(escouadeDe(j));
+  return Array.from({ length: NB_ESCOUADES }, (_, k) => {
+    if (k === a) return escouadeDe(j);
+    const liste = [...new Set(j.escouades?.[k] ?? [])].filter((id) => presents.includes(id) && !pris.has(id)).slice(0, 3);
+    liste.forEach((id) => pris.add(id));
+    return liste;
+  });
 }
 
 /** La Strate vaincue la plus profonde (le front compte s'il a été vaincu) */

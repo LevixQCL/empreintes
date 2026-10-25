@@ -13,7 +13,7 @@ import { NOMS_EFFET } from '../core/effets';
 import { DISTRICT, EPREUVE_DECK_MIN } from '../core/jeu';
 import { REGLES } from '../core/regles';
 import type { Geste, GesteDef, Lignee, TypeEffet, TypeGeste } from '../core/types';
-import { symboleAction, textureMetal } from './art';
+import { socleAction, textureMetal } from './art';
 import { COULEUR_RARETE, couleurFrequence, faceCarte } from './carte';
 import { NOM_LIGNEES, avatar } from './coquille';
 import { ICO } from './icones';
@@ -101,7 +101,8 @@ export function effetsLignee(l: Lignee): TypeEffet[] {
 
 // ---------- Petits visuels ----------
 
-const symbole = (t: TypeGeste, taille = 18) => `<img class="g-symbole" src="${symboleAction(t)}" alt="" width="${taille}" height="${taille}" decoding="async">`;
+/** Le socle peint des cartes : sa forme dit l'action (étoile de feu = attaque, écu de glace = protection, fleur d'émeraude = soin) */
+const symbole = (t: TypeGeste, taille = 18) => `<img class="g-symbole" src="${socleAction(t)}" alt="" width="${taille}" height="${taille}" decoding="async">`;
 const NOM_ACTION: Record<TypeGeste, string> = { atk: 'Attaque', bouclier: 'Protection', soin: 'Soin' };
 
 /** Une carte de combat montrée en exemple : la vraie carte, qu'on ne peut pas jouer */
@@ -164,9 +165,9 @@ function ongletDeck(): string {
 
   // le mode d'emploi, en trois gestes
   h += `<section class="bloc">${titre(ICO.greffe, 'En trois gestes')}<ol class="g-etapes">`
-    + `<li><b>Choisis ton escouade.</b> Onglet <em>Porteurs</em> : tes ${ESCOUADE} Porteurs en grand. « Changer » sous l’un d’eux en fait entrer un autre. Elle ne change qu’au district, jamais pendant une descente.</li>`
-    + `<li><b>Confie-leur des cartes.</b> Sous chaque Porteur de l’escouade, touche ses cartes. Ou, dans l’onglet <em>Cartes</em>, touche une carte puis un Porteur sous « Confier à » (le filtre « Libres » montre celles que personne ne porte).</li>`
-    + `<li><b>Vérifie au départ.</b> Onglet <em>Tour</em>, une Strate, « Descendre » : la barre « Fréquences du deck » montre ce que donnent les cartes de ton escouade.</li>`
+    + `<li><b>Choisis ton escouade.</b> Onglet <em>Escouade</em> : tes ${ESCOUADE} Porteurs, leur Marque et toutes leurs cartes. « Changer » à côté de l’un d’eux en fait entrer un autre. Elle ne change qu’au district, jamais pendant une descente.</li>`
+    + `<li><b>Confie-leur des cartes.</b> « Gérer ses cartes » au-dessus de la liste d’un Porteur. Ou, dans le volet <em>Collection</em>, touche une carte puis un Porteur sous « Confier à » (le filtre « Libres » montre celles que personne ne porte).</li>`
+    + `<li><b>Vérifie le deck.</b> En haut de l’onglet <em>Escouade</em>, l’échelle des Fréquences montre ce que donnent les cartes de ton escouade, et où ta suite se coupe.</li>`
     + `</ol></section>`;
 
   // les règles, sans exception
@@ -182,13 +183,13 @@ function ongletDeck(): string {
 
   // les conseils
   const barre = (['atk', 'bouclier', 'soin'] as TypeGeste[]).map((t) =>
-    `<span class="g-part ${t}" style="flex:${depart[t]}">${symbole(t, 16)}<b>${depart[t]}</b></span>`).join('');
+    `<span class="g-part ${t}" style="flex:${depart[t]}">${symbole(t, 22)}<b>${depart[t]}</b></span>`).join('');
   const suite = Object.entries(REGLES.multSuite).map(([n, m]) => `${n} = +${Math.round((m - 1) * 100)} %`).join(', ');
   h += `<section class="bloc">${titre(ICO.boost, 'Bien construire')}<ul class="g-idees">`
     + idee(ICO.flux, 'Couvre les Fréquences de 1 à 9', `Des Fréquences qui se suivent font une Résonance (suite de ${suite}). Chaque lignée a sa zone : une escouade des trois lignées couvre l’échelle, et un chiffre absent coupe tes suites.`, echelleFrequences())
     + idee(ICO.cartes, 'Double les Fréquences utiles', `Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : bouclier d’escouade +${REGLES.bouclierEcho} et +1 Flux.`)
     + idee(ICO.atk, 'Mélange les actions', `Attaque, protection et soin. Le deck de départ en compte ${depart.atk}, ${depart.bouclier} et ${depart.soin} sur ${nDepart} : un bon repère.`, `<div class="g-barre" role="img" aria-label="${depart.atk} attaques, ${depart.bouclier} protections, ${depart.soin} soins">${barre}</div>`)
-    + idee(ICO.cristal, 'Choisis aussi pour les Marques', 'Chaque Porteur gagne une Marque par ses exploits, presque toujours en combattant (onglet Porteurs). Elle ne joue que s’il est dans l’escouade : l’onglet Porteurs montre celles qui sont actives.')
+    + idee(ICO.cristal, 'Choisis aussi pour les Marques', 'Chaque Porteur gagne une Marque par ses exploits, presque toujours en combattant. Elle ne joue que s’il est dans l’escouade : l’onglet Escouade dit ce qu’elle fait et combien il en reste à accomplir.')
     + idee(ICO.soin, 'Répartis les soins', 'Un Porteur à terre emporte ses cartes. Si tous tes soins sont chez lui, l’escouade n’en a plus au pire moment.')
     + idee(ICO.place, 'Peu de cartes lourdes', `« 2 PL. » : la carte est forte mais prend deux places. Avec une autre carte, elle remplit une chaîne de ${REGLES.capaciteBase} places : pas de suite de 3 sans Flux ni Élan.`)
     + idee('<b class="g-etoile">∗</b>', 'Des jokers pour les suites', 'Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.')
@@ -223,13 +224,13 @@ function ongletCarte(): string {
 
   // la même carte dans la collection
   h += `<section class="bloc">${titre(ICO.codex, 'Dans ta collection')}<div class="g-collection"><div class="g-face">${faceCarte(moduleDef(EXEMPLE), COLLECTION.niveauDepart.or)}</div>`
-    + `<ul class="g-regles"><li>En haut, son <b>niveau</b> et sa <b>lignée</b>.</li><li>Dans l’onglet Cartes, la jauge sous la carte compte les <b>doublons</b> qu’il faut pour monter.</li><li>Touche la carte pour lire son effet en entier et sa petite histoire.</li></ul></div></section>`;
+    + `<ul class="g-regles"><li>En haut, son <b>niveau</b> et sa <b>lignée</b>.</li><li>Dans la Collection (onglet Escouade), la jauge sous la carte compte les <b>doublons</b> qu’il faut pour monter.</li><li>Touche la carte pour lire son effet en entier et sa petite histoire.</li></ul></div></section>`;
 
   // les trois actions
   h += `<section class="bloc">${titre(ICO.atk, 'Trois actions')}<ul class="g-actions">`
-    + `<li>${symbole('atk', 30)}<div><b>Attaque</b><p>Des dégâts à l’ennemi visé. Son bouclier encaisse d’abord.</p></div></li>`
-    + `<li>${symbole('bouclier', 30)}<div><b>Protection</b><p>Un bouclier pour toute l’escouade. Il encaisse les coups de l’ennemi, puis disparaît (sauf Rempart).</p></div></li>`
-    + `<li>${symbole('soin', 30)}<div><b>Soin</b><p>Des PV à un Porteur : touche son nom sous la carte, dans la chaîne, pour choisir qui. Avec Vague, toute l’escouade.</p></div></li>`
+    + `<li>${symbole('atk', 36)}<div><b>Attaque</b><p>Des dégâts à l’ennemi visé. Son bouclier encaisse d’abord.</p></div></li>`
+    + `<li>${symbole('bouclier', 36)}<div><b>Protection</b><p>Un bouclier pour toute l’escouade. Il encaisse les coups de l’ennemi, puis disparaît (sauf Rempart).</p></div></li>`
+    + `<li>${symbole('soin', 36)}<div><b>Soin</b><p>Des PV à un Porteur : touche son nom sous la carte, dans la chaîne, pour choisir qui. Avec Vague, toute l’escouade.</p></div></li>`
     + `<li><span class="g-lourd">2 PL.</span><div><b>Carte lourde</b><p>Plus forte, mais elle prend deux places dans la chaîne.</p></div></li>`
     + `</ul></section>`;
 

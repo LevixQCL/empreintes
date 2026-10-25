@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as C from '../src/core/combat';
 import { envoyerMission,
-  DISTRICT, ameliorer, degreffer, disponibles, energieParHeure, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu, partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence, entrer, repondre, RENCONTRES,
+  DISTRICT, ameliorer, degreffer, echanger, disponibles, energieParHeure, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu, partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence, entrer, repondre, RENCONTRES,
 } from '../src/core/jeu';
 
 const H = 3_600_000;
@@ -32,6 +32,22 @@ describe('District', () => {
     expect(ameliorer(j, 'generateur').ok).toBe(false);
     expect(ameliorer(j, 'noyau').ok).toBe(true);
     expect(ameliorer(j, 'generateur').ok).toBe(true);
+  });
+
+  it('échanger une carte : la nouvelle prend la place de l’ancienne, sans passer par 5 cartes', () => {
+    const j = ouvert();
+    j.collection['oeil-relais@fer'] = { niveau: 1, doublons: 0 };
+    expect(echanger(j, 'tir-vif@fer', 'oeil-relais@fer', 'doran').ok).toBe(false); // il ne la porte pas
+    expect(echanger(j, 'tir-vif@fer', 'oeil-relais@fer', 'ilka').ok).toBe(true);
+    const noms = gestesDe(j, 'ilka').map((g) => g.nom);
+    expect(noms).toContain('Œil-relais');
+    expect(noms).not.toContain('Tir vif');
+    expect(noms).toHaveLength(DISTRICT.cartesMax);
+    // une carte portée par un autre Porteur de la lignée passe chez lui
+    expect(greffer(j, 'tir-vif@fer', 'coursier').ok).toBe(true);
+    expect(echanger(j, 'oeil-relais@fer', 'tir-vif@fer', 'ilka').ok).toBe(true);
+    expect(j.porteurs.coursier!.modules).not.toContain('tir-vif@fer');
+    expect(j.porteurs.ilka!.modules).toContain('tir-vif@fer');
   });
 
   it('confier une carte : une place dans le deck, 6 au plus, de sa lignée ; la Forge refabrique un doublon', () => {

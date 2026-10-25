@@ -6,7 +6,7 @@ import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne,
-  cartesNouvelles, OBJECTIFS, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, raisonHorsEscouade, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, usureMax, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, trierCartes, type TriCartes } from '../core/collection';
@@ -25,7 +25,7 @@ import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { ICO, icone, type Icone } from './icones';
-import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, type EcranDistrict, type Filtre } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { echap, mouvementReduit, virgule } from './outils';
 
@@ -698,7 +698,7 @@ function fenetreChoix(j: Jeu): string {
 
 const exemplaires = (j: Jeu, moduleId: string) => [...RARETES].reverse().map((r) => carteId(moduleId, r)).filter((k) => j.collection[k]);
 
-function feuilleCarte(e: EcranDistrict): string {
+export function feuilleCarte(e: EcranDistrict): string {
   const j = e.j;
   const cle = e.carte;
   if (!cle || !j.collection[cle]) return '';
@@ -755,10 +755,14 @@ export function feuilleDeck(e: EcranDistrict): string {
   const porte = j.porteurs[id]!.modules.filter((k) => j.collection[k]);
   const plein = porte.length >= DISTRICT.cartesMax;
   const parti = enExpedition(j, id);
+  // l'échange (25 octobre 2026) : on choisit une carte portée puis une à confier (ou l'inverse), et elles changent de place
+  const choisie = e.echange && j.collection[e.echange] && moduleDef(e.echange).lignee === p.lignee ? e.echange : null;
+  const choixPorte = !!choisie && porte.includes(choisie);
   const tuile = (cle: string, action: string, bas: string) => {
     const m = moduleDef(cle);
     const c = j.collection[cle]!;
-    return `<button type="button" class="carte-tuile" data-action="${action}" data-module="${cle}" data-id="${id}"${parti ? ' disabled' : ''} aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}">${faceCarte(m, c.niveau, multNiveau(cle, c.niveau))}<span class="tuile-bas">${bas}</span></button>`;
+    const sel = cle === choisie;
+    return `<button type="button" class="carte-tuile${sel ? ' dk-choisie' : ''}" data-action="${action}" data-module="${cle}" data-id="${id}"${parti ? ' disabled' : ''} aria-pressed="${sel}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}">${faceCarte(m, c.niveau, multNiveau(cle, c.niveau))}<span class="tuile-bas">${bas}</span></button>`;
   };
   const tri = e.tri ?? 'puissance';
   const libres = trierCartes(Object.keys(j.collection)
@@ -772,28 +776,38 @@ export function feuilleDeck(e: EcranDistrict): string {
   if (parti) h += `<p class="aide">${echap(p.nom)} est en expédition : ses cartes changeront à son retour.</p>`;
   // le tri, en tête : il range les deux listes de la feuille
   h += choixTri(tri);
-  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour la reprendre.</p>`;
+  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour l’échanger ou la reprendre.</p>`;
   const fs = [...new Set(gestesDe(j, id).flatMap((g) => g.fs ?? [g.f]))].sort((a, b) => a - b);
   if (fs.length) h += `<p class="dk-freq">Fréquences qu’il apporte : ${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</p>`;
-  h += porte.length ? `<div class="grille-cartes">${trierCartes(porte, j.collection, tri).map((k) => tuile(k, 'degreffer', `<span class="dk-action">${ICO.retour}Reprendre</span>`)).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
+  h += porte.length ? `<div class="grille-cartes">${trierCartes(porte, j.collection, tri).map((k) => tuile(k, 'dk-porte', k === choisie ? `<span class="dk-action dk-remplace">${ICO.recycler}Choisie</span>` : choisie && !choixPorte ? `<span class="dk-action dk-remplace">${ICO.recycler}Échanger</span>` : `<span class="dk-action">${ICO.recycler}Échanger</span>`)).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
   h += `</section><section class="bloc"><h3 class="titre-bloc">${ICO.cartes}À lui confier</h3>`
-    + `<p class="aide">${plein ? `${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : reprends-en une d’abord, ou remplace une carte par la même dans un meilleur métal.` : `Les cartes de sa lignée (${NOM_LIGNEES[p.lignee]}) dans ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
+    + `<p class="aide">${plein ? `${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : touche une carte ici puis celle qu’elle remplace (ou l’inverse) pour les échanger.` : `Les cartes de sa lignée (${NOM_LIGNEES[p.lignee]}) dans ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
   // les cartes libres d'abord, puis celles qu'un autre Porteur porte ; chaque groupe dans l'ordre du tri (sort est stable)
   const triees = [...libres].sort((a, b) => Number(!!greffesDe(j, a)[0]) - Number(!!greffesDe(j, b)[0]));
   h += libres.length ? `<div class="grille-cartes">${triees.map((k) => {
     const qui = greffesDe(j, k)[0];
     const r = remplace(k);
-    const bas = r ? `<span class="dk-action dk-remplace">${ICO.recycler}Remplace celle en ${NOMS_RARETE[moduleDef(r).rarete].toLowerCase()}</span>`
+    const bas = k === choisie ? `<span class="dk-action dk-remplace">${ICO.recycler}Choisie</span>`
+      : choixPorte ? `<span class="dk-action dk-remplace">${ICO.recycler}Échanger</span>`
+      : r ? `<span class="dk-action dk-remplace">${ICO.recycler}Remplace celle en ${NOMS_RARETE[moduleDef(r).rarete].toLowerCase()}</span>`
       : qui ? `${avatar(qui, 20)}<span class="dk-chez">chez ${echap(porteurDef(qui).nom)}</span>` : `<span class="dk-action">${ICO.greffe}Confier</span>`;
     // pleine, il ne peut plus en recevoir de nouvelle ; une carte qui en remplace une autre reste possible
-    return tuile(k, 'greffer', bas).replace('class="carte-tuile"', `class="carte-tuile${plein && !r ? ' grisee' : ''}"`);
+    return tuile(k, 'dk-libre', bas).replace('class="carte-tuile"', `class="carte-tuile${plein && !r && !choixPorte ? ' grisee' : ''}"`);
   }).join('')}</div>` : `<p class="aide">Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.</p>`;
-  return h + `</section></div></section>`;
+  h += `</section></div>`;
+  // la carte choisie attend sa partenaire : le pied de la feuille le dit, toujours visible
+  if (choisie && !parti) {
+    const nom = echap(moduleDef(choisie).nom);
+    h += `<footer class="feuille-pied dk-pied"><p class="dk-consigne">${ICO.recycler}<span><strong>${nom}</strong> ${choixPorte ? `: touche une carte de « À lui confier » pour l’échanger.` : `: touche la carte que ${echap(p.nom)} porte et qu’elle remplacera.`}</span></p>`
+      + `<div class="ligne-btn">${choixPorte ? `<button type="button" class="btn sec" data-action="degreffer" data-module="${choisie}">${ICO.retour}Reprendre</button>` : ''}`
+      + `<button type="button" class="btn sec" data-action="dk-annuler">Annuler</button></div></footer>`;
+  }
+  return h + `</section>`;
 }
 
 // La collection (revue du 22 octobre 2026, même équipe) : les cartes arrivent tout de suite, des filtres utiles
-// (« peuvent monter », « libres ») en plus des lignées, et l'équipement des Porteurs se fait depuis l'onglet Porteurs
-// ou en touchant une carte (la rangée « Construire le deck » faisait doublon).
+// (« peuvent monter », « libres ») en plus des lignées, et l'équipement des Porteurs se fait depuis le volet Escouade
+// ou en touchant une carte. Depuis le 25 octobre 2026, c'est le troisième volet de l'onglet Escouade.
 /** Le choix du tri des cartes (24 octobre 2026) : le même partout où l'on voit une liste de cartes, et retenu d'un écran à l'autre */
 function choixTri(tri: TriCartes): string {
   return `<div class="tri-cartes" role="radiogroup" aria-label="Trier les cartes"><span class="tri-label">${ICO.journal}Trier</span>`
@@ -814,8 +828,8 @@ export function htmlCartes(e: EcranDistrict): string {
   const nMonter = toutes.filter(peutMonter).length;
   const nLibres = toutes.filter(estLibre).length;
   const f = e.filtre;
-  const neuves = cartesNouvelles(j).length;
-  let h = entete(`COLLECTION · ${trouvees} / ${MODULES.length} TROUVÉES${neuves ? ` · <span class="pt-dispo">${neuves} NOUVELLE${neuves > 1 ? 'S' : ''}</span>` : ''}`, 'Cartes', `<div class="cl-guides">${lienGuide('deck', 'Construire son deck')}${lienGuide('carte', 'Les effets')}</div>`);
+  let h = entete(`${trouvees} / ${MODULES.length} TROUVÉES`, 'Collection', `<div class="cl-guides">${lienGuide('deck', 'Construire son deck')}${lienGuide('carte', 'Les effets')}</div>`);
+  h += voletsEscouade(e);
   const filtres: { id: Filtre; nom: string; n?: number; c?: string; classe?: string }[] = [
     { id: 'tout', nom: 'Toutes' }, { id: 'tech', nom: NOM_LIGNEES.tech, c: COULEUR.tech }, { id: 'bio', nom: NOM_LIGNEES.bio, c: COULEUR.bio }, { id: 'reso', nom: NOM_LIGNEES.reso, c: COULEUR.reso },
     { id: 'monter', nom: 'Peuvent monter', n: nMonter, classe: 'or' }, { id: 'libres', nom: 'Libres', n: nLibres },
@@ -824,7 +838,7 @@ export function htmlCartes(e: EcranDistrict): string {
     `<button type="button" role="tab" class="es-cible${f === x.id ? ' actif' : ''}${x.classe ? ` ${x.classe}` : ''}"${x.c ? ` style="--c:${x.c}"` : ''} data-action="filtre" data-id="${x.id}" aria-selected="${f === x.id}">${x.nom}${x.n !== undefined ? ` <b>${x.n}</b>` : ''}</button>`).join('') + `</div>`;
   const tri = e.tri ?? 'puissance';
   h += choixTri(tri);
-  h += `<p class="cl-intro">En expédition, ton deck réunit les cartes des 3 Porteurs emmenés (6 chacun au plus). Touche une carte pour la confier ou la faire monter.</p>`;
+  h += `<p class="cl-intro">Toutes tes cartes. Touche-en une pour la confier à un Porteur ou la faire monter ; ton deck est dans le volet Escouade.</p>`;
 
   const tuileCarte = (cle: string) => {
     const m = moduleDef(cle);
@@ -1133,12 +1147,12 @@ function htmlMissions(e: EcranDistrict): string {
 // ---------- Choix de l'escouade ----------
 
 /** Les Fréquences d'une liste de cartes (une carte à plusieurs Fréquences compte pour chacune ; les cartes ∗ à part) */
-function frequencesDe(cartes: { f: number; fs?: number[]; effet?: { type: string } }[]): number[] {
+export function frequencesDe(cartes: { f: number; fs?: number[]; effet?: { type: string } }[]): number[] {
   return Array.from({ length: 9 }, (_, i) => cartes.filter((g) => (g.fs ?? [g.f]).includes(i + 1) && g.effet?.type !== 'accord').length);
 }
 
 /** La plus longue suite de Fréquences présentes (les cartes ∗ comblent des trous) */
-function plusLongueSuite(n: number[], jokers: number): number[] {
+export function plusLongueSuite(n: number[], jokers: number): number[] {
   let best: number[] = [];
   for (let a = 0; a < 9; a++) {
     let j = jokers; const suite: number[] = [];
@@ -1191,6 +1205,16 @@ export function htmlEscouade(e: EcranDistrict): string {
     h += `<p class="es-but">${ICO.strate}<span><strong>${echap(zone.nom)}</strong>Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien : ${echap(ennemiDef(zone.boss).nom)}.</span></p>`;
   }
   h += `</section>`;
+
+  // 1 bis. quelle escouade part (25 octobre 2026) : seulement si plus d'une est composée
+  const toutes = escouadesDe(j);
+  if (toutes.filter((l) => l.length).length > 1) {
+    const active = escouadeActive(j);
+    h += `<div class="es-equipes" role="radiogroup" aria-label="Escouade qui part"><span class="es-equipes-titre">Partir avec</span>`
+      + toutes.map((l, k) => (l.length
+        ? `<button type="button" role="radio" class="es-equipe${k === active ? ' actif' : ''}" data-action="depart-escouade" data-index="${k}" aria-checked="${k === active}"><small>Escouade ${k + 1}</small><span>${l.map((id) => avatar(id, 24)).join('')}</span></button>`
+        : '')).join('') + `</div>`;
+  }
 
   // 2. les trois places, en grand
   h += `<section class="es-trio" aria-label="Escouade choisie">` + [0, 1, 2].map((i) => {

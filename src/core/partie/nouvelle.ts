@@ -134,6 +134,8 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     frontVaincu: false,
     comptoir: comptoirVide(now, rng),
     escouade: [...ESCOUADE_DEPART],
+    escouades: [[...ESCOUADE_DEPART], [], []],
+    escouadeActive: 0,
     fils: {},
     // l'escouade et les cartes de départ sont connues : seuls les nouveaux venus portent la pastille
     vus: { porteurs: [...ESCOUADE_DEPART], cartes: [...COLLECTION_DEPART] },
@@ -185,6 +187,9 @@ function migrer(j: Jeu) {
   j.vus ??= { porteurs: porteursPresents(j), cartes: Object.keys(j.collection ?? {}) };
   // sauvegarde d'avant « Mon escouade » : l'escouade de départ, ou les trois premiers Porteurs présents
   j.escouade ??= ESCOUADE_DEPART.every((id) => porteursPresents(j).includes(id)) ? [...ESCOUADE_DEPART] : porteursPresents(j).slice(0, 3);
+  // sauvegarde d'avant les trois escouades (25 octobre 2026) : la sienne devient l'escouade 1, les deux autres sont vides
+  j.escouadeActive ??= 0;
+  j.escouades ??= [[...j.escouade], [], []];
   if (!j.luesRecompensees) {
     // sauvegarde d'avant les récompenses de lecture : les chapitres déjà lus rapportent leur carte maintenant
     j.luesRecompensees = [];
