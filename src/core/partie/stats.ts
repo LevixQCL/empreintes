@@ -2,6 +2,7 @@
 // Ce sont de petits compteurs rangés dans la sauvegarde : ils partent avec elle, sans aucun envoi en plus.
 // L'outil d'analyse (analyse.html) les lit ; le jeu, lui, ne les affiche jamais.
 
+import { analyserChaine } from '../regles';
 import type { CombatEtat, Geste } from '../types';
 import { jourDe, type Jeu } from './etat';
 
@@ -23,6 +24,19 @@ export interface Stats {
   strates: Record<string, [number, number, number, number, number]>;
   /** combien de fois chaque carte a été lancée dans une chaîne (id de la carte, tous métaux confondus) */
   cartes: Record<string, number>;
+  /** temps actif par heure de la journée (heure de l'appareil), en secondes : 24 cases */
+  heures?: number[];
+  /** durée des dernières sessions, en secondes (les 30 plus récentes) */
+  durees?: number[];
+  /** le temps de jeu (secondes) au moment où chaque étape est atteinte pour la première fois : « strate-3 », « noyau-4 », « chambre »… */
+  jalons?: Record<string, number>;
+  /** par Porteur : [expéditions, gardien vaincu] */
+  porteurs?: Record<string, [number, number]>;
+  /** chaînes lancées, par nombre de cartes (index = longueur) et par longueur de la meilleure suite */
+  chaines?: number[];
+  suites?: number[];
+  /** combien de fois chaque bouton du jeu a été utilisé (data-action) : l'usage de chaque fonction */
+  actions?: Record<string, number>;
 }
 
 const SESSION = 30 * 60_000;
@@ -37,19 +51,51 @@ function statsDe(j: Jeu, now = Date.now()): Stats {
 export function noterTemps(j: Jeu, now: number, o: { actif: boolean; appareil: Stats['appareil']; compte: Stats['compte'] }): void {
   if (!o.actif) return;
   const s = statsDe(j, now);
-  if (now - s.vu > SESSION) s.sessions++;
+  const durees = (s.durees ??= []);
+  if (now - s.vu > SESSION) {
+    s.sessions++;
+    durees.push(0);
+    if (durees.length > 30) durees.shift();
+  }
+  if (!durees.length) durees.push(0);
+  durees[durees.length - 1]!++;
   const jour = jourDe(now);
   if (s.jours[s.jours.length - 1] !== jour) s.jours.push(jour);
   s.secondes++;
   s.vu = now;
   s.appareil = o.appareil;
   s.compte = o.compte;
+  const heures = (s.heures ??= Array<number>(24).fill(0));
+  heures[new Date(now).getHours()]!++;
+  noterJalons(j, s);
+}
+
+/** Les étapes de la partie : le temps de jeu qu'il a fallu pour y arriver (seulement la première fois) */
+function noterJalons(j: Jeu, s: Stats): void {
+  const jalons = (s.jalons ??= {});
+  const atteint = (cle: string) => { if (jalons[cle] === undefined) jalons[cle] = s.secondes; };
+  if (j.introVue) atteint('intro');
+  if (j.chambre) atteint('chambre');
+  if (j.recrues) atteint('recrues');
+  for (let n = 2; n <= j.strate; n++) atteint(`strate-${n}`);
+  for (let n = 2; n <= j.batiments.noyau; n++) atteint(`noyau-${n}`);
+}
+
+/** Un bouton du jeu utilisé */
+export function noterAction(j: Jeu, action: string): void {
+  const actions = (statsDe(j).actions ??= {});
+  actions[action] = (actions[action] ?? 0) + 1;
 }
 
 /** Une chaîne lancée : les cartes qu'elle contenait */
 export function noterChaine(j: Jeu, chaine: Geste[]): void {
   const s = statsDe(j);
   for (const g of chaine) s.cartes[g.id] = (s.cartes[g.id] ?? 0) + 1;
+  const chaines = (s.chaines ??= []);
+  chaines[chaine.length] = (chaines[chaine.length] ?? 0) + 1;
+  const suite = analyserChaine(chaine).suite;
+  const suites = (s.suites ??= []);
+  suites[suite] = (suites[suite] ?? 0) + 1;
 }
 
 /** La fin d'un combat (victoire ou défaite), ou une fuite : contre qui, et en combien de tours */
@@ -63,8 +109,15 @@ export function noterCombat(j: Jeu, c: CombatEtat, issue: 'victoire' | 'defaite'
 }
 
 /** Le retour d'une expédition dans une Strate */
-export function noterExpedition(j: Jeu, strate: number, fin: 'gardien' | 'defaite' | 'fuite' | 'retraite' | 'autre'): void {
-  const t = (statsDe(j).strates[strate] ??= [0, 0, 0, 0, 0]);
+export function noterExpedition(j: Jeu, strate: number, fin: 'gardien' | 'defaite' | 'fuite' | 'retraite' | 'autre', escouade: string[] = []): void {
+  const s = statsDe(j);
+  const porteurs = (s.porteurs ??= {});
+  for (const id of escouade) {
+    const p = (porteurs[id] ??= [0, 0]);
+    p[0]++;
+    if (fin === 'gardien') p[1]++;
+  }
+  const t = (s.strates[strate] ??= [0, 0, 0, 0, 0]);
   t[0]++;
   if (fin === 'gardien') t[1]++;
   else if (fin === 'defaite') t[2]++;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { analyser, estPartieDeTest, exporter, type Partie } from '../src/analyse/calculs';
+import { analyser, csvJoueurs, estPartieDeTest, exporter, filtrer, type Partie } from '../src/analyse/calculs';
 import * as J from '../src/core/jeu';
 
 const T = Date.parse('2026-10-25T10:00:00Z');
@@ -28,7 +28,7 @@ describe('Outil d’analyse', () => {
     // a et b ont commencé il y a 10 jours ; seul a est revenu le lendemain et une semaine après
     expect(a.retention.find((r) => r.delai === 1)).toEqual({ delai: 1, eligibles: 2, revenus: 1 });
     expect(a.retention.find((r) => r.delai === 7)).toEqual({ delai: 7, eligibles: 2, revenus: 1 });
-    expect(a.parJour[13]).toMatchObject({ actifs: 1, nouveaux: 1 });
+    expect(a.parJour.at(-1)).toMatchObject({ actifs: 1, nouveaux: 1 });
   });
 
   it('suit la progression et additionne les combats de tous les joueurs', () => {
@@ -51,5 +51,30 @@ describe('Outil d’analyse', () => {
     expect(texte).not.toContain('Secret');
     expect(texte).not.toContain('"uid"');
     expect(exporter(parties, T).joueurs[0]).toMatchObject({ joueur: 1, strate: 3 });
+  });
+});
+
+describe('Outil d’analyse : filtres, points d’attention, CSV', () => {
+  it('filtre par période et par groupe', () => {
+    const p = [partie('a', 1, []), partie('b', 20, [])];
+    p[1]!.jeu.stats!.appareil = 'pc';
+    p[1]!.jeu.stats!.compte = 'protege';
+    expect(filtrer(p, { periode: '7', segment: 'tous' }, T).map((x) => x.uid)).toEqual(['a']);
+    expect(filtrer(p, { periode: 'tout', segment: 'pc' }, T).map((x) => x.uid)).toEqual(['b']);
+    expect(filtrer(p, { periode: 'tout', segment: 'invisible' }, T)).toHaveLength(1);
+  });
+
+  it('signale un ennemi trop fort et une étape où l’on décroche', () => {
+    const p = Array.from({ length: 10 }, (_, i) => partie(`j${i}`, 3, [], { introVue: true, chambre: i < 3 }));
+    p[0]!.jeu.stats!.ennemis = { vigie: [10, 8, 4, 40] };
+    const a = analyser(p, T);
+    expect(a.alertes.some((x) => x.theme === 'Combats' && x.texte.includes('Trop fort'))).toBe(true);
+    expect(a.alertes.some((x) => x.theme === 'Progression' && x.texte.includes('Chambre'))).toBe(true);
+  });
+
+  it('écrit la liste des joueurs en CSV', () => {
+    const csv = csvJoueurs(analyser([partie('a', 2, [1])], T).liste);
+    expect(csv.split('\n')).toHaveLength(2);
+    expect(csv.split('\n')[0]).toContain('joueur;strate;minutes');
   });
 });

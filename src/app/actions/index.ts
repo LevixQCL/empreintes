@@ -1,5 +1,6 @@
 // Un toucher sur un bouton [data-action] : chaque thème traite les siennes, puis l'écran se redessine et montre les gains.
 
+import * as J from '../../core/jeu';
 import { comparer, montrer, relever } from '../../ui/gains';
 import { centreDe } from '../../ui/outils';
 import { app, D, racine } from '../etat';
@@ -30,6 +31,8 @@ export async function agir(ev: MouseEvent) {
     suite = await theme(a ?? '', c);
     if (suite !== 'inconnu') break;
   }
+  // statistiques : l'usage de chaque bouton du jeu
+  if (suite !== 'inconnu' && a) J.noterAction(app.jeu, a);
   if (suite !== 'afficher') return;
   afficher();
   // les gains de l'action : après le rendu, pour que les compteurs visés soient à l'écran

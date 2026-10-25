@@ -36,4 +36,22 @@ describe('Statistiques de la partie', () => {
     J.noterChaine(j, [{ id: 'ruee' }, { id: 'ruee' }, { id: 'parade' }] as Parameters<typeof J.noterChaine>[1]);
     expect(j.stats!.cartes).toEqual({ ruee: 2, parade: 1 });
   });
+
+  it('note les étapes, les heures, la durée des sessions, les Porteurs, les chaînes et les boutons', () => {
+    const j = J.nouveauJeu(T);
+    j.introVue = true;
+    J.noterTemps(j, T, actif);
+    j.strate = 3;
+    for (let s = 1; s < 10; s++) J.noterTemps(j, T + s * 1000, actif);
+    expect(j.stats!.jalons).toMatchObject({ intro: 1, 'strate-2': 2, 'strate-3': 2 });
+    expect(j.stats!.durees).toEqual([10]);
+    expect(j.stats!.heures!.reduce((a, b) => a + b, 0)).toBe(10);
+    noterExpedition(j, 3, 'gardien', ['ilka', 'doran']);
+    expect(j.stats!.porteurs).toEqual({ ilka: [1, 1], doran: [1, 1] });
+    J.noterChaine(j, [{ id: 'a', f: 2 }, { id: 'b', f: 3 }, { id: 'c', f: 7 }] as Parameters<typeof J.noterChaine>[1]);
+    expect(j.stats!.chaines![3]).toBe(1);
+    expect(j.stats!.suites![2]).toBe(1);
+    J.noterAction(j, 'forge'); J.noterAction(j, 'forge');
+    expect(j.stats!.actions).toEqual({ forge: 2 });
+  });
 });
