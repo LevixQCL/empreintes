@@ -17,6 +17,7 @@ export const RUMEURS: Rumeur[] = [
   { texte: 'Les lanternes sur les terrasses des Hauts étaient nombreuses avant l’aube. Une tempête, dit-on. Le Présage ne se trompe jamais sur celles-là.' },
   { texte: 'Quelqu’un a vu une Résonante marcher sur un câble sans harnais, une lanterne à la main. Tout le monde sait de qui il s’agit.', strate: 1 },
   { texte: 'Une fissure de plus sur un pilier de l’est. Quelqu’un l’a rebouchée pendant la nuit. Le Présage n’a rien dit.', strate: 2 },
+  { texte: 'Une île des Hauts passait au-dessus du marché. Un vieux Géné a craché par terre. « On ne demande pas qui les a montées », a dit sa voisine, et elle a changé de sujet.', strate: 3 },
   { texte: 'Les Brigades sont passées à l’école demander combien d’enfants « ont des yeux qui brillent ». Les parents ont répondu : aucun.', strate: 4 },
   { texte: 'On raconte qu’une famille des Hauts a envoyé une fille « étudier ailleurs », il y a longtemps. Dans quel district, personne ne le dit.', strate: 5 },
 ];

@@ -147,7 +147,7 @@ export const PLANS: Plan[] = [
   { epoque: 'Vingt ans', titre: 'L’Ascension', annees: [2071, 2090], ambiance: 'or', camera: 'monte', fonds: [f('07-ascension')], scene: ascension, lignes: [
     'En 2071, sept volontaires reçoivent en secret des empreintes anciennes. Une mèche d’or leur pousse en une nuit. Leur ombre change.',
     'Ils sentent les tempêtes avant les machines, apaisent une foule d’un mot, et seuls savent éveiller les cristaux anciens : ce sont les Résonants. Certains sauvent des villes, d’autres les prennent.',
-    'Leurs familles s’installent dans les Hauts, des îles qui flottent au-dessus des nuages. Personne en bas ne sait comment.'] },
+    'Leurs familles s’installent au sommet des tours. Bientôt, les Hauts s’en détacheront : des îles qui flottent au-dessus des nuages. Personne en bas ne demande comment.'] },
   { epoque: 'Pendant ce temps, en bas', titre: 'La Réponse', annees: [2090, 2100], ambiance: 'atelier', camera: 'droite', fonds: [f('08-reponse')], scene: lignees, lignes: [
     'Les empreintes anciennes sont rares, et les Hauts gardent les meilleures. Alors le reste de l’humanité se refait autrement.',
     'La machine donne les Augmentés. Leurs premiers implants à cœur de cristal servent à une chose : brouiller les Résonants.',
