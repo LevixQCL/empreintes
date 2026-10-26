@@ -72,6 +72,11 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
         D.message = r.victoire
           ? 'La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans les Chroniques (onglet Archives).'
           : 'L’escouade se repose. La porte scellée t’attend toujours.';
+      } else if (r.pillage) {
+        const p = r.pillage;
+        D.vue = 'pillages';
+        D.message = p.victoire ? `Pillage réussi à ${p.nom} : +${p.gain} composants, rangés dans ton coffre.`
+          : `Repoussés à ${p.nom}.${p.perte ? ` L’escouade a laissé ${p.perte} composants de son coffre.` : ''}`;
       } else {
         const fuite = r.fuite ? `L’escouade a fui : elle rentre épuisée (+${J.DISTRICT.usureFuite} d’Usure chacun). ` : '';
         D.vue = app.jeu.choix.length ? 'archipel' : 'coupe';

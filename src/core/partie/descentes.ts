@@ -382,6 +382,8 @@ export interface Retour {
   cartes: string[]; eclats: number;
   /** l'expérience gagnée par chaque Porteur de l'escouade, et les niveaux pris */
   xp?: { id: string; xp: number; niveau?: number }[];
+  /** le retour d'un pillage (pillages.ts) */
+  pillage?: { nom: string; victoire: boolean; gain: number; perte: number };
 }
 
 export function remonter(j: Jeu): Retour {
@@ -569,7 +571,7 @@ export type { Rarete };
 
 // ---------- Les départs : expédition, fouille ciblée, Épreuve ----------
 
-function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boolean, min: number = DISTRICT.deckMin):
+export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boolean, min: number = DISTRICT.deckMin):
   { ok: false; message: string } | { ok: true; message?: undefined; porteurs: PorteurEtat[]; deck: GesteDef[]; bonus: BonusMarques } {
   if (j.expedition) return refus('Une expédition est déjà en cours.');
   if (escouade.length !== 3 || new Set(escouade).size !== 3) return refus('Choisis 3 Porteurs.');

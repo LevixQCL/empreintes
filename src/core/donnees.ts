@@ -364,6 +364,34 @@ export const ENNEMIS: EnnemiDef[] = [
       { type: 'soin', nom: 'Stimulant', v: 8 },
     ],
   },
+  // ---------- Les gardes d'un archipel pillé (pillage.ts) : un par Porteur de la garnison, joués par le district attaqué ----------
+  {
+    id: 'garde-tech', nom: 'Garde augmenté', lignee: 'tech', tag: 'GARNISON', pvMax: 72,
+    motif: [
+      { type: 'atk', nom: 'Salve', v: 10, cible: 'hasard' },
+      { type: 'bouclier', v: 9 },
+      { type: 'atk', nom: 'Frappe ciblée', v: 12, cible: 'faible' },
+      { type: 'atk', nom: 'Balayage', v: 6, zone: true },
+    ],
+  },
+  {
+    id: 'garde-bio', nom: 'Garde géné', lignee: 'bio', tag: 'GARNISON', pvMax: 80,
+    motif: [
+      { type: 'atk', nom: 'Morsure', v: 9, cible: 'faible' },
+      { type: 'bouclier', v: 11 },
+      { type: 'soin', nom: 'Sève', v: 9 },
+      { type: 'atk', nom: 'Charge', v: 11, cible: 'hasard' },
+    ],
+  },
+  {
+    id: 'garde-reso', nom: 'Garde résonant', lignee: 'reso', tag: 'GARNISON', pvMax: 64,
+    motif: [
+      { type: 'dissonance', nom: 'Contre-chant' },
+      { type: 'atk', nom: 'Onde', v: 11, cible: 'hasard' },
+      { type: 'atk', nom: 'Écho', v: 6, zone: true },
+      { type: 'bouclier', v: 9 },
+    ],
+  },
 ];
 
 // ---------- Les traits des ennemis (décision du 22 octobre 2026) : leur nom et ce qu'ils font, pour l'écran ----------

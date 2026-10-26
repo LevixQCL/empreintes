@@ -46,6 +46,8 @@ export interface Expedition {
   /** une fouille ciblée : courte descente sans gardien dans une Strate déjà vaincue, vers un filon choisi */
   fouille?: CibleFouille;
   /** une Épreuve de la semaine : un seul combat à règle spéciale */
+  /** un pillage (pillages.ts) : un seul combat contre la garnison d'un autre archipel */
+  pillage?: import('./partie/pillages').PillageEnCours;
   epreuve?: string;
 }
 

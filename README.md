@@ -231,9 +231,28 @@ Tour du Noyau (ton rang en profondeur) et la fiche de la Strate en haut de l'éc
 - *Joutes* (combats entre joueurs) et *La Flèche* (tour d'arène vers les Hauts, `FLECHE`) : grisés, avec ce qui arrive.
 Deux périodes : le record (ne redescend jamais) et la semaine (ce qui est gagné depuis lundi). Le palmarès est noté à chaque tick
 dans `j.palmares` ; connecté, le joueur choisit un nom de directeur (`j.directeur`, jamais l'e-mail) et publie `classement/{uid}`
-au plus toutes les 25 s. Entre amis, toute la liste ; au-delà de 12, le podium et les voisins du joueur (`fenetre`).
+au plus toutes les 5 minutes (une nouvelle Strate ou un nouveau pseudo partent tout de suite). Entre amis, toute la liste ; au-delà de 12, le podium et les voisins du joueur (`fenetre`).
 Les règles Firestore valident chaque entrée (champs, bornes, profondeur qui ne redescend pas et monte de 2 Strates au plus,
 date d'arrivée = maintenant quand la profondeur monte). Les pseudos sont uniques : chacun est réservé dans `pseudos/{clé}` (`reserver` dans `src/net/classement.ts`, une transaction), la clé ignore majuscules, accents et séparateurs (`clePseudo`, même table que les règles), le Tableau n'accepte que le pseudo réservé par ce compte, un filtre écarte grossièretés et faux noms officiels (`pseudoInterdit`), et on en change au plus une fois par semaine (`DELAI_PSEUDO`, vérifié dans le jeu). En développement : `__tableau(entrées, uid)` dans la console pour l'essayer sans compte.
+
+**Les pillages** (26 octobre 2026, décidé avec Bryan ; `src/core/partie/pillages.ts`, `src/ui/pillages.ts`).
+La Tour du Noyau ouvre les « Archipels voisins » après la Strate −1 : une carte marine, ton archipel en bas, six archipels
+autour, rangés du plus facile au plus dur. Un pillage = un seul combat contre la garnison de l'archipel (ses trois Porteurs,
+joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `garde-bio`, `garde-reso` dans `donnees.ts`).
+- *Force* : `K × √(puissance des cartes × PV)` des deux côtés (`forceGarnison`, K = 0,026). Réglé au robot : le joueur moyen
+  qui attaque sa propre garnison gagne une fois sur deux, du deck de départ aux cartes en or niveau 10. Les chances sont très
+  tranchées (98 % à 0,85 fois sa force, 50 % à égalité, 18 % à 1,08, presque rien à 1,2) : la carte ne propose que de 0,85 à 1,15.
+- *Butin* : 2 combats de la Strate du défenseur (`butinCombat`) × l'écart (×0,4 contre bien plus faible, ×2 contre plus fort :
+  le meilleur gain moyen est à force égale), plus 10 % de son coffre (plafond : 5 combats de sa Strate).
+- *Le coffre* : les composants gagnés en pillant ou en défendant, les seuls qu'un pillage peut prendre (les composants des
+  descentes, missions et du district sont à l'abri : aucune punition si on ne joue pas). On le dépense en premier.
+  L'attaquant qui perd (ou abandonne) laisse 5 % de son coffre au défenseur.
+- *Limites* : 5 jetons (un revient toutes les 4 h 48, rien ne se perd), un pillage par archipel et par jour ; le défenseur a
+  8 h de bouclier après une attaque perdue et subit 3 attaques par jour au plus (`protege`).
+- *Archipels sans directeur* (`ciblesBots`) : tant qu'il y a peu de vrais directeurs à portée, des archipels tenus par un
+  intendant complètent la carte (dits comme tels sur la fiche), les mêmes toute la journée.
+- *À venir* : les garnisons des vrais directeurs en ligne (`garnisonDe` publiée dans Firestore, attaques subies appliquées à
+  l'ouverture par `subirPillages`), puis les Joutes en temps réel. Il faudra publier de nouvelles règles Firestore.
 
 ## Firebase
 

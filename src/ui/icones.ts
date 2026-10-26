@@ -50,6 +50,8 @@ export const ICO = {
   eclat: svg('<path d="M12 2l2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2z"/>', true),
   porte: svg('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v5M12 16v5M3 12h5M16 12h5"/>'),
   coffre: svg('<path d="M3 9h18v11H3z"/><path d="M3 9l2-5h14l2 5"/><path d="M10 13h4"/>'),
+  // le grappin des pillages (26 octobre 2026)
+  grappin: svg('<circle cx="12" cy="4.5" r="1.8"/><path d="M12 6.3V20"/><path d="M8.5 9.5h7"/><path d="M4.5 13.5a7.5 7.5 0 0 0 15 0"/><path d="M4.5 13.5 3 11.5M19.5 13.5l1.5-2"/>'),
 } as const;
 
 export type Icone = keyof typeof ICO;

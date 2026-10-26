@@ -22,6 +22,15 @@ export function finPour(): Fin | null {
     if (s.issue === 'defaite') return { titre: 'Repoussés', texte: 'Le gardien a eu le dessus, cette fois. Vise les suites et protège-toi quand il annonce une grosse attaque.', bouton: 'Remonter et réessayer', action: 'remonter' };
     return null;
   }
+  if (x.pillage) {
+    const p = x.pillage;
+    if (s.issue === 'victoire') return { titre: `${p.nom} est pillé`, texte: `La garnison se replie. L’escouade rapporte ${p.base + p.vol} composants${p.vol ? `, dont ${p.vol} pris à son coffre` : ''}.`, bouton: 'Rentrer avec le butin', action: 'remonter' };
+    if (s.issue === 'defaite') {
+      const perte = Math.floor(J.etatPillage(app.jeu).coffre * J.PILLAGE.perteDefaite);
+      return { titre: 'Repoussés par la garnison', texte: `${p.nom} tient bon.${perte ? ` L’escouade laisse ${perte} composants de son coffre en repartant.` : ''} Une garnison plus faible, ou une escouade mieux montée, passera.`, bouton: 'Rentrer au district', action: 'remonter' };
+    }
+    return null;
+  }
   if (x.epreuve) {
     const ep = J.epreuveDef(x.epreuve);
     if (s.issue === 'victoire') return { titre: 'Épreuve réussie', texte: `${ep?.nom ?? 'L’Épreuve'} : ${ennemiDef(s.ennemi.id).nom} se dissipe.${app.jeu.epreuves.faites.includes(x.epreuve) ? ' Tu l’avais déjà réussie cette semaine : pas de nouvelle carte.' : ' Une carte au choix t’attend au district.'}`, bouton: 'Remonter au district', action: 'remonter' };

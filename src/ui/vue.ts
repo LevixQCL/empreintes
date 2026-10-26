@@ -6,9 +6,9 @@ import { ECLATS, apercuChaine, capacite, coupDeFuite, partFelure, eclatsPossible
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
-import type { CombatEtat, Geste, LigneeGeste, Rarete } from '../core/types';
+import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
-import { DISTRICT } from '../core/jeu';
+import { DISTRICT, PILLAGE } from '../core/jeu';
 import { cadreMetal, fondCombat, illustrationEnnemi, illustrationModule, portrait, socleAction, textureMetal, cadrePlein } from './art';
 import { couleurFrequence } from './carte';
 import { sonActif } from './impact';
@@ -229,7 +229,7 @@ const NOMS_SALLE: Record<TypeSalle, string> = {
 function feuilleFuite(e: Ecran): string {
   const x = e.x;
   const s = e.etat;
-  const nom = ennemiDef(s.ennemi.id).nom;
+  const nom = nomEnnemi(s.ennemi);
   const { porteurs, coups, attaque } = coupDeFuite(s);
   const touches = coups.filter((c) => c.net > 0);
   const tombent = porteurs.filter((p) => p.pv <= 0 && (s.porteurs.find((q) => q.id === p.id)?.pv ?? 0) > 0);
@@ -252,9 +252,9 @@ function feuilleFuite(e: Ecran): string {
   }
   const garde = Math.floor(x.butin * DISTRICT.butinFuite);
   h += `<button type="button" class="route" style="--t:#F0C96A" data-action="fuir-district"><span class="route-ico">${ICO.strate}</span>`
-    + `<span class="route-txt"><small>${x.epreuve ? 'ABANDONNER L’ÉPREUVE' : 'REMONTER AU DISTRICT'}</small>`
-    + `<strong>${x.epreuve ? 'Rentrer au district' : x.butin ? `Rentrer avec ${garde} composants sur ${x.butin}` : 'Rentrer au district'}</strong>`
-    + `<em>${x.epreuve ? 'Tu pourras la retenter cette semaine.' : `Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % des composants et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.</em></span>${CHEVRON_FUITE}</button>`
+    + `<span class="route-txt"><small>${x.pillage ? 'ABANDONNER LE PILLAGE' : x.epreuve ? 'ABANDONNER L’ÉPREUVE' : 'REMONTER AU DISTRICT'}</small>`
+    + `<strong>${x.epreuve || x.pillage ? 'Rentrer au district' : x.butin ? `Rentrer avec ${garde} composants sur ${x.butin}` : 'Rentrer au district'}</strong>`
+    + `<em>${x.pillage ? `Le pillage compte comme perdu : tu laisses ${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre à ${echap(x.pillage.nom)}.` : x.epreuve ? 'Tu pourras la retenter cette semaine.' : `Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % des composants et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.</em></span>${CHEVRON_FUITE}</button>`
     + `</div><button type="button" class="btn sec large" data-action="fuir">Continuer le combat</button></div></section>`;
   return h;
 }
@@ -406,6 +406,10 @@ function bilanChaine(s: CombatEtat): string {
   return `<span class="bilan${fatal ? ' fatal' : ''}" role="status" aria-label="${echap(`Si tu lances : ${dire.join(', ')}`)}"><small aria-hidden="true">${fatal ? 'FATAL' : 'TOTAL'}</small>${morceaux.join('')}</span>`;
 }
 
+/** Le nom et le visage d'un ennemi : un garde d'archipel pillé prend ceux du Porteur de la garnison qu'il incarne */
+const nomEnnemi = (en: EnnemiEtat) => (en.porteur ? porteurDef(en.porteur).nom : ennemiDef(en.id).nom);
+const visageEnnemi = (en: EnnemiEtat) => (en.porteur ? portrait(en.porteur) : illustrationEnnemi(en.id));
+
 function vignettesGroupe(e: Ecran): string {
   const s = e.etat;
   if (!enGroupe(s)) return '';
@@ -415,13 +419,14 @@ function vignettesGroupe(e: Ecran): string {
     const it = intentionDe(s, en);
     const vise = en === s.ennemi;
     const tombe = en.pv <= 0;
-    const ill = illustrationEnnemi(d.id);
+    const ill = visageEnnemi(en);
     const cache = s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours';
     const val = cache ? '?' : it.type === 'atk' ? String(Math.round(it.v * puissance(en) * usureCombat(s).attaque)) : it.type === 'bouclier' || it.type === 'soin' ? String(it.v) : it.type === 'boost' ? '×2' : '';
     const cls = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
     const ico = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
     const traits = (en.simple ? [] : d.traits ?? []).map((t) => texteTrait(t).nom);
-    const label = tombe ? `${d.nom}, vaincu` : `${vise ? 'Visé : ' : 'Viser '}${d.nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? 'Intention cachée par le brouillard.' : texteIntention(s, en)}`;
+    const nom = nomEnnemi(en);
+    const label = tombe ? `${nom}, vaincu` : `${vise ? 'Visé : ' : 'Viser '}${nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? 'Intention cachée par le brouillard.' : texteIntention(s, en)}`;
     return `<button type="button" class="vignette-ennemi l-${d.lignee}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
       + (ill ? `<img src="${ill}" alt="" decoding="async">` : '<span class="vg-sans"></span>')
       + (tombe ? '' : cache ? '<span class="vg-int"><b>?</b></span>' : `<span class="vg-int ${cls}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)
@@ -477,12 +482,12 @@ function htmlEcranCombat(e: Ecran): string {
     const qui = enJeu.porteur ? porteurDef(enJeu.porteur).nom : 'District';
     conseil = `<span class="pas-chaine">${e.actif! + 1} / ${s.chaine.length}</span><span class="carte-agit" style="--c:${COULEUR[ligneeGeste(enJeu)]}">${echap(enJeu.nom)}</span> · ${echap(qui)}`
       + (a.suite >= 3 ? ` · Résonance <b>×${a.mult.toLocaleString('fr-BE')}</b>` : '');
-  } else if (e.verrou && !s.chaine.length && s.issue === 'en-cours' && s.ennemi.pv > 0) conseil = enGroupe(s) ? 'Le groupe riposte…' : `${echap(def.nom)} riposte…`;
+  } else if (e.verrou && !s.chaine.length && s.issue === 'en-cours' && s.ennemi.pv > 0) conseil = enGroupe(s) ? 'Le groupe riposte…' : `${echap(nomEnnemi(s.ennemi))} riposte…`;
 
-  const ill = illustrationEnnemi(def.id);
+  const ill = visageEnnemi(s.ennemi);
   const classeIntention = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
   const iconeIntention = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
-  const lieu = e.x.tutoriel ? 'Chambre scellée' : `Strate −${e.x.strate}`;
+  const lieu = e.x.tutoriel ? 'Chambre scellée' : e.x.pillage ? `Pillage · ${e.x.pillage.nom}` : `Strate −${e.x.strate}`;
 
   // la Fêlure de l'ennemi visé : la Fréquence qui brise son intention (cachée par le brouillard tant que la chaîne est vide)
   const brume = s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours';
@@ -513,7 +518,7 @@ function htmlEcranCombat(e: Ecran): string {
 
   // la scène de l'ennemi
   h += `<section class="scene-ennemi l-${def.lignee}${enGroupe(s) ? ' en-groupe' : ''}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'};--ng:${tousEnnemis(s).length}" aria-label="Ennemi">`
-    + (ill ? `<img class="ennemi-art${s.issue === 'victoire' ? ' dissous' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
+    + (ill ? `<img class="ennemi-art${s.issue === 'victoire' ? ' dissous' : ''}${s.ennemi.porteur ? ' garde' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
     + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
     + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
 
@@ -521,8 +526,8 @@ function htmlEcranCombat(e: Ecran): string {
     + (s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours'
       ? `<div class="intention brume" aria-live="polite"><span class="int-ico">?</span><span class="int-txt"><small>BROUILLARD</small>Pose une carte pour la lire</span></div>`
       : plaqueIntention(s, classeIntention, iconeIntention, felureHtml))
-    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
-    + `<h2 class="ennemi-nom">${echap(def.nom)}${s.ennemi.phase2 && def.phase ? ` <small class="phase">· ${echap(def.phase.nom)}</small>` : ''}</h2>`
+    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
+    + `<h2 class="ennemi-nom">${echap(nomEnnemi(s.ennemi))}${s.ennemi.phase2 && def.phase ? ` <small class="phase">· ${echap(def.phase.nom)}</small>` : ''}</h2>`
     // les traits et les états passagers (bouclier, Fissure) sur la même ligne : la scène reste basse sur téléphone
     + (marques ? `<div class="traits">${marques}</div>` : '')
     + `<div class="vie-ennemi">${jauge('je', s.ennemi.pv, s.ennemi.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: s.ennemi.bouclier })}<span class="je-valeur"><b>${s.ennemi.pv}</b><small>/ ${s.ennemi.pvMax}</small></span></div>`
