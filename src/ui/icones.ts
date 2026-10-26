@@ -38,6 +38,8 @@ export const ICO = {
   porteurs: svg('<circle cx="9" cy="8" r="3.4"/><path d="M2.8 20c.7-3.6 3.2-5.6 6.2-5.6s5.5 2 6.2 5.6"/><path d="M15.2 4.8a3.4 3.4 0 0 1 0 6.4"/><path d="M17.6 14.8c2 .7 3.2 2.4 3.6 5.2"/>'),
   compte: svg('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/>'),
   film: svg('<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M10 9l5 3-5 3z"/>'),
+  ecouter: svg('<path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path d="M15.5 9a4 4 0 0 1 0 6"/><path d="M18 6.5a7.5 7.5 0 0 1 0 11"/>'),
+  arreter: svg('<rect x="7" y="7" width="10" height="10"/>'),
   journal: svg('<path d="M5 6h14M5 12h14M5 18h9"/>'),
   ouvrier: svg('<path d="M5 13a7 7 0 0 1 14 0"/><path d="M3 13h18"/><path d="M12 6V4"/><path d="M8 17v3M16 17v3"/>'),
   recycler: svg('<path d="M7 19H4l3-5"/><path d="M10 5l2-3 3 5"/><path d="M20 15l-2 4h-6"/><path d="M5.5 11.5 8 7.5"/><path d="M16 9.5l2.5 4"/>'),

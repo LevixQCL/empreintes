@@ -28,6 +28,7 @@ import { ICO, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { echap, mouvementReduit, virgule } from './outils';
+import { boutonEcouter } from './voix';
 
 export type { EcranDistrict, Vue } from './coquille';
 
@@ -713,7 +714,7 @@ export function feuilleCarte(e: EcranDistrict): string {
     + `<button type="button" class="btn-icone" data-action="guide" data-id="effets" aria-label="Les cartes et leurs effets">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
     + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(m)}</div></div>`
-    + (loreCarte(cle) ? `<blockquote class="lore-carte">${echap(loreCarte(cle)!)}</blockquote>` : '')
+    + (loreCarte(cle) ? `<div class="lore-bloc"><blockquote class="lore-carte">${echap(loreCarte(cle)!)}</blockquote>${boutonEcouter(`carte:${cle}`, loreCarte(cle)!)}</div>` : '')
     + `<p class="rang-carte"><b style="color:${COULEUR_RARETE[m.rarete]}">${RANG_METAL[m.rarete].rang}</b> · ${echap(RANG_METAL[m.rarete].texte)}</p>`;
   // à qui la confier : la décision la plus fréquente, donc juste sous la carte
   h += `<section class="bloc fc-confier"><h3 class="titre-bloc">${ICO.greffe}${porte ? `Portée par ${echap(porteurDef(porte).nom)}` : 'Confier à'}</h3><p class="fc-aide">${porte ? 'Touche son portrait pour la reprendre, ou un autre Porteur pour la lui passer.' : `Elle entrera dans ton deck quand ce Porteur descendra (${DISTRICT.cartesMax} cartes au plus, de sa lignée).`}</p><div class="fc-porteurs">`
@@ -949,7 +950,7 @@ export function htmlCodex(e: EcranDistrict): string {
     j.fragments.forEach((id, i) => {
       const f = FRAGMENTS.find((x) => x.id === id);
       if (!f) return;
-      h += `<article class="fragment"><span class="surtitre">N° ${String(i + 1).padStart(2, '0')} · ${echap(f.support.toUpperCase())}</span><h2>${echap(f.titre)}</h2>${f.lignes.map((l) => `<p>${echap(l)}</p>`).join('')}</article>`;
+      h += `<article class="fragment"><span class="surtitre">N° ${String(i + 1).padStart(2, '0')} · ${echap(f.support.toUpperCase())}</span><h2>${echap(f.titre)}</h2>${f.lignes.map((l) => `<p>${echap(l)}</p>`).join('')}${boutonEcouter(`fragment:${id}`, [f.titre, ...f.lignes].join(' '))}</article>`;
     });
     const reste = FRAGMENTS.length - j.fragments.length;
     if (reste > 0) h += `<div class="fragment enfoui">${ICO.verrou}<span>${reste} fragment${reste > 1 ? 's' : ''} encore enfoui${reste > 1 ? 's' : ''} dans les Strates</span></div>`;
@@ -1002,7 +1003,7 @@ function htmlChapitre(e: EcranDistrict, id: string): string {
   let h = `<article class="lecture"><div class="lecture-progres" aria-hidden="true"></div>`;
   h += `<figure class="lecture-planche" aria-hidden="true"><img src="./intro/${imageChapitre(c)}.webp" alt="" decoding="async"></figure>`;
   h += `<div class="lecture-page"><button type="button" class="btn sec petit lecture-retour" data-action="chapitre-fermer">${ICO.retour}Sommaire</button>`
-    + `<header class="lecture-titre"><span class="surtitre">${echap(LIVRES[c.livre].split(' · ')[0]!.toUpperCase())} · CHAPITRE ${i + 1}</span><h1>${echap(c.titre)}</h1><span class="epoque">${echap(c.epoque)}</span></header>`;
+    + `<header class="lecture-titre"><span class="surtitre">${echap(LIVRES[c.livre].split(' · ')[0]!.toUpperCase())} · CHAPITRE ${i + 1}</span><h1>${echap(c.titre)}</h1><span class="epoque">${echap(c.epoque)}</span>${boutonEcouter(`chapitre:${c.id}`, [c.titre + '.', ...c.paragraphes].join(' '), 'Écouter le chapitre')}</header>`;
   h += `<div class="lecture-texte">`;
   c.paragraphes.forEach((p, n) => {
     const signature = n === c.paragraphes.length - 1 && p.startsWith('Ysé') && p.length < 80;

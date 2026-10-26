@@ -19,6 +19,7 @@ import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } fr
 import { ICO } from './icones';
 import { COULEUR } from './vue';
 import { echap, virgule } from './outils';
+import { boutonEcouter } from './voix';
 
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];
 /** pour accorder « Pourquoi il / elle est là » */
@@ -390,7 +391,7 @@ export function feuillePorteur(e: EcranDistrict): string {
     + `<div class="fp-titre"><span class="fp-sur">${NOM_LIGNEE[p.lignee]} · Niveau ${n.niveau}</span><h2 id="fiche-titre">${echap(p.nom)}</h2>`
     + (pres ? `<span class="fp-role">${echap(pres.titre)}</span>` : '') + `</div></header>`;
 
-  if (pres) h += `<div class="fp-bio"><p>${echap(pres.texte)}</p>${pres.replique ? `<p class="fp-replique">« ${echap(pres.replique)} »</p>` : ''}</div>`;
+  if (pres) h += `<div class="fp-bio"><p>${echap(pres.texte)}</p>${pres.replique ? `<p class="fp-replique">« ${echap(pres.replique)} »</p>` : ''}${boutonEcouter(`porteur:${id}`, [pres.texte, pres.replique ? `« ${pres.replique} »` : '', pres.pourquoi ?? ''].join(' '))}</div>`;
   if (pres?.pourquoi) h += `<section class="fp-bloc fp-pourquoi"><h3 class="fp-h3">${ICO.porte}Pourquoi ${IL.has(id) ? 'il' : 'elle'} est là</h3><p class="fp-texte">${echap(pres.pourquoi)}</p></section>`;
   if (pres?.aParte) h += `<aside class="fp-aparte"><strong>${echap(pres.aParte.titre)}</strong><p>${echap(pres.aParte.texte)}</p></aside>`;
 
@@ -401,7 +402,7 @@ export function feuillePorteur(e: EcranDistrict): string {
       + histoire.map((x) => (x.ouvert
         ? `<li class="ouvert"><strong>${echap(x.titre)}</strong><p>${echap(x.texte)}</p></li>`
         : `<li class="ferme"><strong>${ICO.verrou}Au niveau ${x.niveau}</strong><p>${echap(p.nom)} n’en parle pas encore.</p></li>`)).join('')
-      + `</ol></section>`;
+      + `</ol>${boutonEcouter(`histoire:${id}`, histoire.filter((x) => x.ouvert).map((x) => `${x.titre}. ${x.texte}`).join(' '), 'Écouter son histoire')}</section>`;
   }
 
   // ---------- son fil : une petite histoire qui avance toute seule (23 octobre 2026) ----------

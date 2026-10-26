@@ -6,6 +6,7 @@ import * as J from './core/jeu';
 import { montrer } from './ui/gains';
 import { initInstallation } from './ui/installer';
 import { initToucher } from './ui/toucher';
+import { brancherVoix } from './ui/voix';
 import { agir } from './app/actions/index';
 import { clavier } from './app/clavier';
 import { app, compteEtat, G, K, racine, reduit } from './app/etat';
@@ -43,6 +44,9 @@ racine.addEventListener('click', (ev) => { if (annulerClic) { annulerClic = fals
 
 /* glisser une carte posée le long de la chaîne la change de place */
 brancherChaine();
+
+/* « Écouter » : le lore lu à voix haute, avec la voix la plus humaine de l’appareil */
+brancherVoix(racine);
 
 // ---------- Le temps qui passe ----------
 
