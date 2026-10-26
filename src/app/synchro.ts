@@ -6,7 +6,7 @@ import { firebaseActif } from '../net/firebase-config';
 import { finPour } from './combat';
 import { app, compteEtat, compteProtege, D, G, K, racine } from './etat';
 import { afficher } from './rendu';
-import { lireTableau, planifierPublication } from './tableau';
+import { lireMonEntree, planifierPublication } from './tableau';
 
 let minuteur: number | undefined;
 
@@ -128,7 +128,7 @@ export async function demarrerCompte() {
         comptePret();
         if (app.uid && compteProtege() && !app.jeu.directeur?.nom && !app.pseudoDemande) { app.pseudoDemande = true; G.edition = true; G.accueil = true; G.erreur = ''; if (app.mode === 'district') afficher(); }
       });
-      lireTableau(true);
+      lireMonEntree();
     } else comptePret();
     if (app.mode === 'district' || app.mode === 'titre') afficher();
   }, () => app.jeu.introVue);

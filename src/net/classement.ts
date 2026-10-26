@@ -4,7 +4,7 @@
 // Les règles (firestore.rules) n'acceptent que sa propre entrée, avec le pseudo qu'on a réservé, des bornes plausibles,
 // une profondeur qui ne redescend jamais et une publication toutes les 20 secondes au plus.
 
-import { collection, deleteDoc, doc, getDocs, getFirestore, limit, query, runTransaction, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, limit, query, runTransaction, setDoc } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
 import { clePseudo, type Entree } from '../core/classements';
 
@@ -46,18 +46,27 @@ export async function reserver(uid: string, nom: string, ancien: string | null):
   });
 }
 
-/** Toutes les entrées (la bêta compte quelques dizaines de directeurs ; au-delà, passer à des requêtes triées et indexées) */
+/** Une entrée lue en ligne, ou null si elle est incomplète */
+function entreeDe(uid: string, d: Partial<Publie>): Entree | null {
+  if (typeof d.nom !== 'string' || typeof d.profondeur !== 'number' || typeof d.registre !== 'number') return null;
+  return {
+    uid, nom: d.nom, cle: d.cle ?? clePseudo(d.nom), porteur: typeof d.porteur === 'string' ? d.porteur : 'ilka',
+    profondeur: d.profondeur, profondeurLe: d.profondeurLe ?? 0, registre: d.registre, decouvertes: d.decouvertes ?? 0,
+    semaine: d.semaine ?? 0, profondeurSemaine: d.profondeurSemaine ?? 0, registreSemaine: d.registreSemaine ?? 0, maj: d.maj ?? 0,
+  };
+}
+
+/** Sa propre entrée seulement : une seule lecture, au lancement et avant de publier (null s'il n'en a pas encore) */
+export async function lireMienne(uid: string): Promise<Entree | null> {
+  const snap = await getDoc(doc(db(), 'classement', uid));
+  return snap.exists() ? entreeDe(uid, snap.data() as Partial<Publie>) : null;
+}
+
+/** Toutes les entrées, une lecture par directeur : seulement quand on ouvre le Tableau
+ *  (la bêta compte quelques dizaines de directeurs ; au-delà, passer à des requêtes triées et indexées) */
 export async function lire(): Promise<Entree[]> {
   const snap = await getDocs(query(collection(db(), 'classement'), limit(500)));
   const l: Entree[] = [];
-  snap.forEach((s) => {
-    const d = s.data() as Partial<Publie>;
-    if (typeof d.nom !== 'string' || typeof d.profondeur !== 'number' || typeof d.registre !== 'number') return;
-    l.push({
-      uid: s.id, nom: d.nom, cle: d.cle ?? clePseudo(d.nom), porteur: typeof d.porteur === 'string' ? d.porteur : 'ilka',
-      profondeur: d.profondeur, profondeurLe: d.profondeurLe ?? 0, registre: d.registre, decouvertes: d.decouvertes ?? 0,
-      semaine: d.semaine ?? 0, profondeurSemaine: d.profondeurSemaine ?? 0, registreSemaine: d.registreSemaine ?? 0, maj: d.maj ?? 0,
-    });
-  });
+  snap.forEach((s) => { const e = entreeDe(s.id, s.data() as Partial<Publie>); if (e) l.push(e); });
   return l;
 }
