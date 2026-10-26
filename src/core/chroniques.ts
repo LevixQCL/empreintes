@@ -147,7 +147,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'noir', livre: 1, titre: 'L’année du noir', epoque: '2029', image: '09-oubli',
+    id: 'noir', livre: 1, titre: 'L’année du noir', epoque: '2029', image: 'chap-noir',
     paragraphes: [
       'En 2029, les machines se sont tues. Pas d’un coup : comme une maison où l’on éteint les pièces une à une avant d’aller dormir.',
       'Les guerres avaient retenu la leçon de 2028. Partout où l’on se battait, les centres de données étaient frappés les premiers, par missiles, par drones, par sabotage, par des attaques invisibles qui faisaient fondre leurs propres machines de l’intérieur. Un pays pouvait tenir avec une bonne IA de défense ; alors on visait son cœur avant ses soldats. Les grands bâtiments gris brûlaient la nuit, et leurs incendies se voyaient de très loin, parce qu’ils étaient construits loin de tout. Nell en a vu un depuis sa fenêtre, à quarante kilomètres. Elle disait que ça brûlait bleu.',
@@ -176,7 +176,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'sans-glace', livre: 1, titre: 'L’été sans glace', epoque: '2030', image: '03-fracture',
+    id: 'sans-glace', livre: 1, titre: 'L’été sans glace', epoque: '2030', image: 'chap-sans-glace',
     paragraphes: [
       'En septembre 2030, pour la première fois depuis que les hommes savent compter, il n’y a plus eu de glace sur la mer, tout en haut du monde. Pas de banquise, pas un seul radeau blanc : de l’eau bleue, d’un bord à l’autre. Les savants qui restaient, ceux qu’on n’avait pas remerciés en 2027, l’avaient annoncé pour bien plus tard. Ils s’étaient trompés, comme d’habitude, en étant trop prudents.',
       'Ça a fait un titre. Un seul jour, en bas de l’écran, entre une trêve et une affaire de corruption. Nell a montré l’image à sa fille, qui avait quatre ans : « Regarde, c’était tout blanc, avant. » La petite a demandé où était parti le blanc. Nell n’a pas su répondre, et ça l’a mise en colère pour le reste de la journée, sans qu’elle sache contre qui.',
@@ -381,7 +381,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'glaciere', livre: 3, titre: 'Elle attend', epoque: '2028 – 2121', image: '10-dessous', strate: 8,
+    id: 'glaciere', livre: 3, titre: 'Elle attend', epoque: '2028 – 2121', image: 'chap-glaciere', strate: 8,
     teaser: 'Qui écrit vraiment les mises à jour des Augmentés.',
     paragraphes: [
       'Tu te souviens de Malo, le frère de Nell, et de sa phrase de 2029 : « Elle est en bas, et elle attend. » Je te dois la suite. J’ai mis quarante ans à la reconstituer, et je n’en suis pas fière, parce que la plupart des pièces étaient sous mes yeux.',
