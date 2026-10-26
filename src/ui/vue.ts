@@ -2,13 +2,13 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, capacite, coupDeFuite, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, puissance, usureCombat } from '../core/combat';
+import { ECLATS, apercuChaine, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, puissance, usureCombat } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
-import type { CombatEtat, Geste, LigneeGeste, Rarete } from '../core/types';
+import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
-import { DISTRICT } from '../core/jeu';
+import { DISTRICT, PILLAGE } from '../core/jeu';
 import { cadreMetal, fondCombat, illustrationEnnemi, illustrationModule, portrait, socleAction, textureMetal, cadrePlein } from './art';
 import { couleurFrequence } from './carte';
 import { sonActif } from './impact';
@@ -229,7 +229,7 @@ const NOMS_SALLE: Record<TypeSalle, string> = {
 function feuilleFuite(e: Ecran): string {
   const x = e.x;
   const s = e.etat;
-  const nom = ennemiDef(s.ennemi.id).nom;
+  const nom = nomEnnemi(s.ennemi);
   const { porteurs, coups, attaque } = coupDeFuite(s);
   const touches = coups.filter((c) => c.net > 0);
   const tombent = porteurs.filter((p) => p.pv <= 0 && (s.porteurs.find((q) => q.id === p.id)?.pv ?? 0) > 0);
@@ -252,9 +252,9 @@ function feuilleFuite(e: Ecran): string {
   }
   const garde = Math.floor(x.butin * DISTRICT.butinFuite);
   h += `<button type="button" class="route" style="--t:#F0C96A" data-action="fuir-district"><span class="route-ico">${ICO.strate}</span>`
-    + `<span class="route-txt"><small>${x.epreuve ? 'ABANDONNER L’ÉPREUVE' : 'REMONTER AU DISTRICT'}</small>`
-    + `<strong>${x.epreuve ? 'Rentrer au district' : x.butin ? `Rentrer avec ${garde} composants sur ${x.butin}` : 'Rentrer au district'}</strong>`
-    + `<em>${x.epreuve ? 'Tu pourras la retenter cette semaine.' : `Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % des composants et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.</em></span>${CHEVRON_FUITE}</button>`
+    + `<span class="route-txt"><small>${x.pillage ? 'ABANDONNER LE PILLAGE' : x.epreuve ? 'ABANDONNER L’ÉPREUVE' : 'REMONTER AU DISTRICT'}</small>`
+    + `<strong>${x.epreuve || x.pillage ? 'Rentrer au district' : x.butin ? `Rentrer avec ${garde} composants sur ${x.butin}` : 'Rentrer au district'}</strong>`
+    + `<em>${x.pillage ? `Le pillage compte comme perdu : tu laisses ${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre à ${echap(x.pillage.nom)}.` : x.epreuve ? 'Tu pourras la retenter cette semaine.' : `Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % des composants et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.</em></span>${CHEVRON_FUITE}</button>`
     + `</div><button type="button" class="btn sec large" data-action="fuir">Continuer le combat</button></div></section>`;
   return h;
 }
@@ -264,14 +264,14 @@ function regles(): string {
   return `<div class="voile-feuille" data-action="regles" aria-hidden="true"></div><section class="feuille regles" role="dialog" aria-modal="true" aria-labelledby="regles-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">AIDE</span><h2 id="regles-titre">Comment on joue</h2></div><button type="button" class="btn-icone" data-action="regles" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
     + `<div class="liens-guide">${lienGuide('carte', 'Lire une carte')}${lienGuide('effets', 'Tous les effets')}</div><ol class="liste-regles">`
-    + '<li><b>Ton deck, ce sont tes cartes.</b> Chaque Porteur de l’escouade apporte celles que tu lui as confiées au district (6 au plus), plus les 2 cartes du district. L’illustration est celle de la carte ; à défaut, le portrait du Porteur qui la joue.</li>'
+    + '<li><b>Ton deck, ce sont tes cartes.</b> Chaque Porteur de l’escouade apporte celles que tu lui as confiées au district (6 au plus), plus les 2 cartes du paquetage du district (Stimulant et Repli). L’illustration est celle de la carte ; à défaut, le portrait du Porteur qui la joue.</li>'
     + `<li><b>Compose une chaîne.</b> Touche les cartes de ta main (${REGLES.capaciteBase} places au départ), puis lance-la. Une carte posée se retire d’un toucher, ou se glisse de côté pour changer de place.</li>`
     + `<li><b>La force</b> est au milieu : ${ICO.atk} dégâts, ${ICO.bouclier} protection de l’escouade, ${ICO.soin} soin (dans la chaîne, touche le nom sous la carte pour choisir qui).</li>`
     + '<li><b>La Fréquence</b> est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.</li>'
     + '<li><b>Plusieurs Fréquences :</b> une carte en argent, en or ou en nacre en porte 2 ou 3. Posée, elle prend celle qui prolonge ta suite ; touche les chiffres sous elle pour en changer. Rien n’est tiré au sort.</li>'
     + `<li><b>L’Écho :</b> trois Fréquences identiques donnent un bouclier d’escouade de +${REGLES.bouclierEcho}.</li>`
-    + '<li><b>Le Flux</b> se remplit à chaque Résonance et à chaque Fêlure brisée. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main, ou garde-le pour un Coup d’éclat.</li>'
-    + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé) et donne 1 Flux. Les évanescents la cachent.</li>'
+    + '<li><b>Le Flux</b> se remplit à chaque Résonance, et encore plus si la suite brise aussi une Fêlure. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main, ou garde-le pour un Coup d’éclat.</li>'
+    + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé). Dans une suite (3, 4, 5), elle donne aussi 1 Flux. Les évanescents la cachent.</li>'
     + `<li><b>Le Coup d’éclat</b> : Flux plein, un seul par combat, au choix selon les lignées de l’escouade. ${(Object.values(ECLATS)).map((x) => `<b>${x.nom}</b> : ${x.texte}`).join(' ')} Le Porteur qui le déclenche prend ${REGLES.eclat.usure} d’Usure.</li>`
     + '<li><b>« 2 PL. »</b> : cette carte est puissante mais occupe deux places.</li>'
     + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.</li>'
@@ -338,7 +338,7 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
     nom = it.nom;
     val = String(Math.round(it.v * puissance(s.ennemi) * usureCombat(s).attaque));
     unite = 'dégâts';
-    if (it.zone) quoi = `<span class="int-qui">${s.porteurs.filter((p) => p.pv > 0).map((p) => { const im = portrait(p.id); return im ? `<img src="${im}" alt="" style="--c:${COULEUR[porteurDef(p.id).lignee]}">` : ''; }).join('')}</span>Toute l’escouade`;
+    if (it.zone) quoi = `<span class="int-qui">${s.porteurs.filter((p) => p.pv > 0).map((p) => { const im = portrait(p.id); return im ? `<img src="${im}" alt="" style="--c:${COULEUR[porteurDef(p.id).lignee]}">` : ''; }).join('')}</span>Tous`;
     else if (it.cibleId) {
       const d = porteurDef(it.cibleId), im = portrait(it.cibleId);
       quoi = `<span class="int-qui">${im ? `<img src="${im}" alt="" style="--c:${COULEUR[d.lignee]}">` : ''}</span>${echap(d.nom)}`;
@@ -354,6 +354,63 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
     + felureHtml + '</div>';
 }
 
+/**
+ * La Fêlure, dite en clair sous l'intention (26 octobre 2026). Bryan : « je peux la casser avec la bonne carte, mais je ne
+ * sais même pas ce qu'elle fait ». La ligne dit quelle carte poser et ce que ça change, chiffres à l'appui (10 → 8 dégâts, +1 Flux).
+ */
+function ligneFelure(s: CombatEtat, prevue: boolean, resonne: boolean): string {
+  const en = s.ennemi, it = s.intention;
+  if (en.felureBrisee) return `<span class="int-felure brisee"><span class="gemme">${ICO.fele}</span><span><b>Fêlure brisée</b> : ${it.type === 'atk' ? 'son attaque est affaiblie' : it.type === 'bouclier' ? 'son bouclier est affaibli' : it.type === 'soin' ? 'son soin est affaibli' : 'il vacille'}</span></span>`;
+  if (!felureVisible(en)) return `<span class="int-felure cachee"><span class="gemme">${ICO.fele}<b>?</b></span><span><b>Fêlure cachée</b> : un évanescent ne montre pas la carte qui le brise</span></span>`;
+  const f = en.felure!;
+  // ce que la Fêlure retire, avec les mêmes arrondis que le moteur
+  const reduit = (v: number) => Math.round(v * (1 - partFelure(en)));
+  const force = it.type === 'atk' ? puissance(en) * usureCombat(s).attaque : 1;
+  const chiffre = (v: number) => Math.round(v * force);
+  const effet = it.type === 'atk' ? `${chiffre(it.v)} → <b>${chiffre(reduit(it.v))}</b> dégâts`
+    : it.type === 'bouclier' ? `bouclier +${it.v} → <b>+${reduit(it.v)}</b>`
+    : it.type === 'soin' ? `soin +${it.v} → <b>+${reduit(it.v)}</b>`
+    : 'il vacille';
+  // le Flux en plus ne s'annonce que quand la chaîne posée fait une suite (3, 4, 5) : avant, la ligne dit juste ce que la carte brise
+  const flux = prevue && resonne && s.flux < REGLES.fluxMax ? `, <b class="gain-flux">+${REGLES.felure.flux} Flux</b>` : '';
+  return `<span class="int-felure${prevue ? ' prevue' : ''}" style="--fc:${couleurFrequence(f)}"><span class="gemme">${ICO.fele}<b>${f}</b></span>`
+    + `<span>${prevue ? '<b>Ta chaîne la brise</b>' : `Pose un <b class="freq">${f}</b>`} : ${effet}${flux}</span></span>`;
+}
+
+/**
+ * Le Flux en fiole de cristal (26 octobre 2026), à la place des trois losanges : Bryan les trouvait « jeu des années 90 ».
+ * Un tube de verre fumé en trois chambres ; chaque point de Flux est une chambre emplie de lumière.
+ */
+function jaugeFlux(flux: number): string {
+  return `<div class="jauge-flux${flux ? '' : ' vide'}" role="img" aria-label="Flux : ${flux} sur ${REGLES.fluxMax}">`
+    + `<span class="jf-nom">${ICO.flux}Flux<b>${flux}</b><small>/ ${REGLES.fluxMax}</small></span>`
+    + `<span class="jf-tube">${Array.from({ length: REGLES.fluxMax }, (_, i) => `<i${i < flux ? ' class="plein"' : ''}></i>`).join('')}</span></div>`;
+}
+
+/**
+ * Le total de la chaîne, en tête de chaîne (26 octobre 2026) : tout compris (Résonance, lignées, Blindé, Fissure, bouclier
+ * de l'ennemi), calculé par le moteur sur une copie du combat. Le joueur n'a plus de calcul à faire avant de lancer.
+ */
+function bilanChaine(s: CombatEtat): string {
+  const a = apercuChaine(s);
+  const morceaux: string[] = [];
+  const dire: string[] = [];
+  if (a.degats || s.chaine.some((g) => g.type === 'atk')) {
+    morceaux.push(`<span class="bl-atk">${ICO.atk}<b>${a.degats}</b></span>`);
+    dire.push(`${a.degats} dégâts${a.absorbe ? ` (${a.absorbe} absorbés par son bouclier en plus)` : ''}`);
+  }
+  if (a.bouclier) { morceaux.push(`<span class="bl-garde">${ICO.bouclier}<b>+${a.bouclier}</b></span>`); dire.push(`bouclier +${a.bouclier}`); }
+  if (a.soin) { morceaux.push(`<span class="bl-soin">${ICO.soin}<b>+${a.soin}</b></span>`); dire.push(`soin +${a.soin} PV`); }
+  if (!morceaux.length) return '';
+  const fatal = a.vaincus > 0;
+  if (fatal) dire.push(a.vaincus > 1 ? `${a.vaincus} ennemis vaincus` : 'ennemi vaincu');
+  return `<span class="bilan${fatal ? ' fatal' : ''}" role="status" aria-label="${echap(`Si tu lances : ${dire.join(', ')}`)}"><small aria-hidden="true">${fatal ? 'FATAL' : 'TOTAL'}</small>${morceaux.join('')}</span>`;
+}
+
+/** Le nom et le visage d'un ennemi : un garde d'archipel pillé prend ceux du Porteur de la garnison qu'il incarne */
+const nomEnnemi = (en: EnnemiEtat) => (en.porteur ? porteurDef(en.porteur).nom : ennemiDef(en.id).nom);
+const visageEnnemi = (en: EnnemiEtat) => (en.porteur ? portrait(en.porteur) : illustrationEnnemi(en.id));
+
 function vignettesGroupe(e: Ecran): string {
   const s = e.etat;
   if (!enGroupe(s)) return '';
@@ -363,13 +420,14 @@ function vignettesGroupe(e: Ecran): string {
     const it = intentionDe(s, en);
     const vise = en === s.ennemi;
     const tombe = en.pv <= 0;
-    const ill = illustrationEnnemi(d.id);
+    const ill = visageEnnemi(en);
     const cache = s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours';
     const val = cache ? '?' : it.type === 'atk' ? String(Math.round(it.v * puissance(en) * usureCombat(s).attaque)) : it.type === 'bouclier' || it.type === 'soin' ? String(it.v) : it.type === 'boost' ? '×2' : '';
     const cls = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
     const ico = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
     const traits = (en.simple ? [] : d.traits ?? []).map((t) => texteTrait(t).nom);
-    const label = tombe ? `${d.nom}, vaincu` : `${vise ? 'Visé : ' : 'Viser '}${d.nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? 'Intention cachée par le brouillard.' : texteIntention(s, en)}`;
+    const nom = nomEnnemi(en);
+    const label = tombe ? `${nom}, vaincu` : `${vise ? 'Visé : ' : 'Viser '}${nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? 'Intention cachée par le brouillard.' : texteIntention(s, en)}`;
     return `<button type="button" class="vignette-ennemi l-${d.lignee}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
       + (ill ? `<img src="${ill}" alt="" decoding="async">` : '<span class="vg-sans"></span>')
       + (tombe ? '' : cache ? '<span class="vg-int"><b>?</b></span>' : `<span class="vg-int ${cls}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)
@@ -425,21 +483,18 @@ function htmlEcranCombat(e: Ecran): string {
     const qui = enJeu.porteur ? porteurDef(enJeu.porteur).nom : 'District';
     conseil = `<span class="pas-chaine">${e.actif! + 1} / ${s.chaine.length}</span><span class="carte-agit" style="--c:${COULEUR[ligneeGeste(enJeu)]}">${echap(enJeu.nom)}</span> · ${echap(qui)}`
       + (a.suite >= 3 ? ` · Résonance <b>×${a.mult.toLocaleString('fr-BE')}</b>` : '');
-  } else if (e.verrou && !s.chaine.length && s.issue === 'en-cours' && s.ennemi.pv > 0) conseil = enGroupe(s) ? 'Le groupe riposte…' : `${echap(def.nom)} riposte…`;
+  } else if (e.verrou && !s.chaine.length && s.issue === 'en-cours' && s.ennemi.pv > 0) conseil = enGroupe(s) ? 'Le groupe riposte…' : `${echap(nomEnnemi(s.ennemi))} riposte…`;
 
-  const ill = illustrationEnnemi(def.id);
+  const ill = visageEnnemi(s.ennemi);
   const classeIntention = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
   const iconeIntention = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
-  const lieu = e.x.tutoriel ? 'Chambre scellée' : `Strate −${e.x.strate}`;
+  const lieu = e.x.tutoriel ? 'Chambre scellée' : e.x.pillage ? `Pillage · ${e.x.pillage.nom}` : `Strate −${e.x.strate}`;
 
   // la Fêlure de l'ennemi visé : la Fréquence qui brise son intention (cachée par le brouillard tant que la chaîne est vide)
   const brume = s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours';
   const felF = !brume && s.ennemi.pv > 0 && !s.ennemi.felureBrisee && felureVisible(s.ennemi) ? s.ennemi.felure : undefined;
   const prevue = felF !== undefined && fs.includes(felF);
-  const felureHtml = s.ennemi.felure === undefined || brume || s.ennemi.pv <= 0 ? ''
-    : s.ennemi.felureBrisee ? `<span class="int-felure brisee" title="Fêlure brisée">${ICO.fele}<small>BRISÉE</small></span>`
-    : !felureVisible(s.ennemi) ? `<span class="int-felure cachee" title="Fêlure cachée : un évanescent ne la montre pas" aria-label="Fêlure cachée">${ICO.fele}<small>CACHÉE</small></span>`
-    : `<span class="int-felure${prevue ? ' prevue' : ''}" style="--fc:${couleurFrequence(s.ennemi.felure)}" title="${echap(`Fêlure : une carte de Fréquence ${s.ennemi.felure} dans la chaîne brise cette intention et remplit le Flux`)}" aria-label="${echap(`Fêlure ${s.ennemi.felure}${prevue ? ', ta chaîne va la briser' : ''}`)}">${ICO.fele}<b>${s.ennemi.felure}</b></span>`;
+  const felureHtml = s.ennemi.felure === undefined || brume || s.ennemi.pv <= 0 ? '' : ligneFelure(s, prevue, a.suite >= 3);
   const brise = (g: Geste) => felF !== undefined && g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(felF);
 
   // combat guidé : ce que la leçon du tour désigne du doigt
@@ -450,7 +505,7 @@ function htmlEcranCombat(e: Ecran): string {
   const lancerVise = guide && s.chaine.length > 0 && (libres === 0 || (s.tour === 2 && a.suite >= 3));
 
   let h = `<div class="ecran ecran-jeu ecran-combat${verrou ? ' verrouille' : ''}${guide ? ` guide lecon-t${Math.min(s.tour, 4)}` : ''}">`;
-  h += `<header class="combat-barre"><div class="puces"><span class="puce">${ICO.strate}${lieu}</span>`
+  h += `<header class="combat-barre"><div class="puces"><span class="puce">${ICO.strate}${e.x.tutoriel ? lieu : `<span class="puce-mot">Strate </span>−${e.x.strate}`}</span>`
     + (e.x.tutoriel ? '' : e.x.carte ? `<span class="puce">${e.x.carte.salles[e.x.carte.position]?.type === 'gardien' ? 'Gardien' : e.x.carte.salles[e.x.carte.position]?.type === 'elite' ? 'Salle scellée' : `Combat ${(e.x.gagnes ?? 0) + 1}`}</span>` : `<span class="puce">Combat ${e.x.index + 1}/${e.x.sequence.length}</span>`)
     + `<span class="puce">Tour ${s.tour}</span>`
     + (s.condition && CONDITIONS[s.condition] ? `<span class="puce condition" tabindex="0" title="${echap(CONDITIONS[s.condition]!.texte)}" aria-label="${echap(`${CONDITIONS[s.condition]!.nom} : ${CONDITIONS[s.condition]!.texte}`)}">${ICO.cristal}${echap(CONDITIONS[s.condition]!.nom)}</span>` : '')
@@ -458,9 +513,13 @@ function htmlEcranCombat(e: Ecran): string {
     + `<div class="boutons-barre">${peutFuir(e.x) && s.issue === 'en-cours' ? `<button type="button" class="btn-fuir" data-action="fuir" aria-expanded="${!!e.fuite}" aria-label="Fuir le combat"${verrou ? ' disabled' : ''}>${ICO.retour}<span>Fuir</span></button>` : ''}<button type="button" class="btn-icone" data-action="son" aria-pressed="${sonActif()}" aria-label="${sonActif() ? 'Couper le son' : 'Activer le son'}">${sonActif() ? ICONE_SON : ICONE_MUET}</button>`
     + `<button type="button" class="btn-icone" data-action="regles" aria-expanded="${e.regles}" aria-label="Règles">${ICO.aide}</button></div></header>`;
 
+  const marques = (!s.ennemi.simple && def.traits?.length ? def.traits.map((t) => { const x = texteTrait(t); return `<span class="trait" tabindex="0" title="${echap(x.texte)}" aria-label="${echap(`${x.nom} : ${x.texte}`)}">${echap(x.nom)}</span>`; }).join('') : '')
+    + (s.ennemi.bouclier ? `<span class="etat garde">${ICO.bouclier}${s.ennemi.bouclier}</span>` : '')
+    + (s.ennemi.fissure ? `<span class="etat fissure" tabindex="0" title="Fissure : il subit ${Math.round(s.ennemi.fissure * 100)} % de dégâts en plus">${ICO.fele}Fissure +${Math.round(s.ennemi.fissure * 100)} % dégâts</span>` : '');
+
   // la scène de l'ennemi
   h += `<section class="scene-ennemi l-${def.lignee}${enGroupe(s) ? ' en-groupe' : ''}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'};--ng:${tousEnnemis(s).length}" aria-label="Ennemi">`
-    + (ill ? `<img class="ennemi-art${s.issue === 'victoire' ? ' dissous' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
+    + (ill ? `<img class="ennemi-art${s.issue === 'victoire' ? ' dissous' : ''}${s.ennemi.porteur ? ' garde' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
     + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
     + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
 
@@ -468,11 +527,11 @@ function htmlEcranCombat(e: Ecran): string {
     + (s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours'
       ? `<div class="intention brume" aria-live="polite"><span class="int-ico">?</span><span class="int-txt"><small>BROUILLARD</small>Pose une carte pour la lire</span></div>`
       : plaqueIntention(s, classeIntention, iconeIntention, felureHtml))
-    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
-    + `<h2 class="ennemi-nom">${echap(def.nom)}${s.ennemi.phase2 && def.phase ? ` <small class="phase">· ${echap(def.phase.nom)}</small>` : ''}</h2>`
-    + (!s.ennemi.simple && def.traits?.length ? `<div class="traits">${def.traits.map((t) => { const x = texteTrait(t); return `<span class="trait" tabindex="0" title="${echap(x.texte)}" aria-label="${echap(`${x.nom} : ${x.texte}`)}">${echap(x.nom)}</span>`; }).join('')}</div>` : '')
+    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
+    + `<h2 class="ennemi-nom">${echap(nomEnnemi(s.ennemi))}${s.ennemi.phase2 && def.phase ? ` <small class="phase">· ${echap(def.phase.nom)}</small>` : ''}</h2>`
+    // les traits et les états passagers (bouclier, Fissure) sur la même ligne : la scène reste basse sur téléphone
+    + (marques ? `<div class="traits">${marques}</div>` : '')
     + `<div class="vie-ennemi">${jauge('je', s.ennemi.pv, s.ennemi.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: s.ennemi.bouclier })}<span class="je-valeur"><b>${s.ennemi.pv}</b><small>/ ${s.ennemi.pvMax}</small></span></div>`
-    + (s.ennemi.bouclier || s.ennemi.fissure ? `<div class="etats">${s.ennemi.bouclier ? `<span class="etat garde">${ICO.bouclier}${s.ennemi.bouclier}</span>` : ''}${s.ennemi.fissure ? `<span class="etat fissure">Fissure +${Math.round(s.ennemi.fissure * 100)} %</span>` : ''}</div>` : '')
     + `</div></section>`;
 
   // l'escouade
@@ -501,6 +560,7 @@ function htmlEcranCombat(e: Ecran): string {
     + (mult ? `<span class="badge-reso">${ICO.flux}RÉSONANCE ${mult}</span>` : a.suite === 2 ? '<span class="badge-reso faible">SUITE EN COURS</span>' : '')
     + (a.echo ? `<span class="badge-reso echo">${ICO.bouclier}ÉCHO +${REGLES.bouclierEcho}</span>` : '')
     + (s.debride ? `<span class="badge-reso eclat">${ICO.eclat}DÉBRIDAGE ×${REGLES.eclat.debride}</span>` : '')
+    + (s.chaine.length && e.actif === undefined && !verrou ? bilanChaine(s) : '')
     + `</div><div class="rail">`;
   // pendant l'animation, la carte qui agit s'avance, celles déjà jouées s'éteignent
   s.chaine.forEach((g, i) => {
@@ -525,10 +585,10 @@ function htmlEcranCombat(e: Ecran): string {
         + `<button type="button" class="btn-icone" data-action="eclats" aria-label="Garder mon Flux">${ICO.fermer}</button></div>`;
     } else {
       // Flux plein et Coup d'éclat disponible : le bouton doré prend la place des trois losanges (pleins, par définition)
-      h += `<div class="flux"><span class="surtitre">${ICO.flux}FLUX</span>`
+      h += `<div class="flux">`
         + (eclats.length
           ? `<button type="button" class="btn-flux btn-eclat-ouvrir" data-action="eclats" aria-expanded="false"${verrou ? ' disabled' : ''} aria-label="Flux plein : Coup d’éclat, un seul par combat, il vide le Flux">${ICO.eclat}Éclat</button>`
-          : `<div class="segments" role="img" aria-label="${s.flux} sur ${REGLES.fluxMax}">` + Array.from({ length: REGLES.fluxMax }, (_, i) => `<i class="${i < s.flux ? 'plein' : ''}"></i>`).join('') + '</div>')
+          : jaugeFlux(s.flux))
         + `<button type="button" class="btn-flux" data-action="allonger"${verrou || s.flux < 1 || capacite(s) >= REGLES.capaciteMax ? ' disabled' : ''}>${ICO.place}+1 place</button>`
         + `<button type="button" class="btn-flux" data-action="repiocher"${verrou || s.flux < 1 ? ' disabled' : ''}>${ICO.repiocher}Repiocher</button>`
         + '</div>';

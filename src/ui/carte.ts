@@ -42,7 +42,7 @@ const FX: Record<Rarete, string> = {
  * @param niveau niveau à afficher (celui de la carte possédée, ou de départ pour une carte proposée)
  * @param mult multiplicateur de force du niveau (1 au niveau de départ)
  */
-export function faceCarte(m: ModuleDef, niveau: number, mult = 1): string {
+export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?: string } = {}): string {
   const ill = illustrationModule(m.id);
   // une carte de base sans illustration prend, en attendant, le portrait du Porteur qui la porte au départ
   const base = m.base ?? m.id;
@@ -71,12 +71,15 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1): string {
     const cristal = alt
       ? fs.map((f, i) => `<span class="fcp-teinte fcp-k" style="--fc:${couleurFrequence(f)};--i:${i}"></span>`).join('') + fs.map((f, i) => `<b class="fcp-f fcp-k" style="--fc:${couleurFrequence(f)};--i:${i}">${f}</b>`).join('')
       : `<span class="fcp-teinte"></span><b class="fcp-f">${accord ? '∗' : m.f[0]}</b>`;
-    return `<div class="fc-ombre fo-${m.rarete}"><div class="fc-carte fcp fr-${m.rarete}${alt ? ` alt alt-${fs.length}` : ''}" style="--n:${fs.length || 1};--cp-img:url(${plein.img});--cp-masque:url(${plein.masque});--fx:${plein.f[0]}%;--fy:${plein.f[1]}%;--vx:${plein.v[0]}%;--vy:${plein.v[1]}%;--fc:${accord ? '#5d5470' : couleurFrequence(m.f[0]!)}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${niveau}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + NOMS_EFFET[m.effet.type] : ''}">`
+    return `<div class="fc-ombre fo-${m.rarete}"><div class="fc-carte fcp fr-${m.rarete}${o.origine ? ' fc-paquetage' : ''}${alt ? ` alt alt-${fs.length}` : ''}" style="--n:${fs.length || 1};--cp-img:url(${plein.img});--cp-masque:url(${plein.masque});--fx:${plein.f[0]}%;--fy:${plein.f[1]}%;--vx:${plein.v[0]}%;--vy:${plein.v[1]}%;--fc:${accord ? '#5d5470' : couleurFrequence(m.f[0]!)}" aria-label="${echap(m.nom)}, ${o.origine ? `fournie par la ${echap(o.origine)}` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + NOMS_EFFET[m.effet.type] : ''}">`
       + `<div class="fc-art">${art}${ill ? FX[m.rarete] : ''}</div>`
       + `<span class="fcp-cadre"></span>${cristal}`
       + `<b class="fcp-v${v >= 10 ? ' deux' : ''}">${v}</b>`
       // le niveau et la lignée, gravés au-dessus du nom (24 octobre 2026) : le haut de la carte reste au cristal de la Fréquence
-      + `<span class="fcp-puces"><b class="fcp-niv" title="Niveau ${niveau}">Niv.<i>${niveau}</i></b><span class="fc-lignee" style="--c:${COULEUR[m.lignee]}">${NOMS_LIGNEE[m.lignee].court}</span></span>`
+      // une carte du paquetage n'a ni niveau ni lignée : le bâtiment qui la fournit prend leur place
+      + (o.origine
+        ? `<span class="fcp-puces"><span class="fc-lignee" style="--c:#CDEFFF">${echap(o.origine)}</span></span>`
+        : `<span class="fcp-puces"><b class="fcp-niv" title="Niveau ${niveau}">Niv.<i>${niveau}</i></b><span class="fc-lignee" style="--c:${COULEUR[m.lignee]}">${NOMS_LIGNEE[m.lignee].court}</span></span>`)
       + (m.effet || m.lourd ? `<span class="fcp-effet">${m.effet ? NOMS_EFFET[m.effet.type] : ''}${m.lourd ? `${m.effet ? ' · ' : ''}2 pl.` : ''}</span>` : '')
       + `<span class="fcp-nom">${echap(m.nom)}</span>`
       + `</div></div>`;

@@ -18,10 +18,33 @@ export async function reseauTableau() {
   return tableauNet;
 }
 
+/** Le Tableau entier coûte une lecture par directeur : on ne le relit pas plus d'une fois toutes les 5 minutes
+ *  en l'ouvrant (le bouton « Actualiser » force la lecture) */
+const RELIRE_APRES = 5 * 60_000;
+/** Publier coûte une écriture : hors nouvelle Strate, au plus une fois toutes les 5 minutes */
+const PUBLIER_APRES = 5 * 60_000;
+
+/** Sa propre entrée seulement (une lecture) : de quoi publier sans lire tout le Tableau, au lancement du jeu */
+export async function lireMonEntree() {
+  if (!app.compte || !app.uid) return;
+  const uid = app.uid;
+  try {
+    const e = await (await reseauTableau()).lireMienne(uid);
+    if (app.uid !== uid) return;
+    app.monEntree = e;
+    app.monEntreeLue = true;
+  } catch (e) {
+    console.warn('Grand Tableau', e);
+    planifierPublication(60_000);
+    return;
+  }
+  planifierPublication();
+}
+
 export async function lireTableau(force = false) {
   if (!app.compte || !app.uid) return;
   if (!force && G.etat === 'chargement') return;
-  if (!force && G.lu && Date.now() - G.lu < 60_000) return;
+  if (!force && G.lu && Date.now() - G.lu < RELIRE_APRES) return;
   G.etat = 'chargement'; G.erreur = '';
   if (app.mode === 'district' && D.vue === 'classements') afficher();
   try {
@@ -48,9 +71,14 @@ export function planifierPublication(delai = 2000) {
 async function publierTableau() {
   if (!app.compte || !app.uid || !compteProtege() || !app.jeu.directeur?.public || !app.jeu.directeur.nom) return;
   // l'entrée en ligne d'abord : sa profondeur et sa date décident de ce qu'on a le droit d'envoyer
-  if (!app.monEntreeLue) { await lireTableau(true); return; }
+  if (!app.monEntreeLue) { await lireMonEntree(); return; }
   const e = entreeAPublier(app.jeu, app.uid, app.jeu.directeur.nom, app.monEntree, Date.now(), J.semaineDe(Date.now()));
   if (!e || !aChange(e, app.monEntree)) return;
+  // une Strate de plus ou un nouveau pseudo partent tout de suite (le premier arrivé passe devant) ;
+  // le Registre et le reste attendent 5 minutes
+  const attente = dernierePublication + PUBLIER_APRES - Date.now();
+  const urgent = !app.monEntree || e.profondeur !== app.monEntree.profondeur || e.nom !== app.monEntree.nom;
+  if (!urgent && attente > 0) { planifierPublication(attente); return; }
   // le pseudo doit être réservé à ce compte (sauvegarde d'avant les réservations, ou autre appareil)
   if (app.pseudoReserve !== e.cle) {
     try {

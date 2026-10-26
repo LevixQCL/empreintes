@@ -272,12 +272,34 @@ export function repiocher(s: CombatEtat): Resultat {
   return { ok: true };
 }
 
+/**
+ * Ce que la chaîne posée fera si on la lance (26 octobre 2026). Bryan : « ça fait beaucoup de calculs à faire avant de lancer
+ * une attaque ». La chaîne est jouée sur une copie du combat, avec exactement les règles du vrai lancer (Résonance, lignées,
+ * Blindé, Fissure, bouclier de l'ennemi…) : le total affiché est celui qui tombera. Rien n'est modifié.
+ */
+export function apercuChaine(s: CombatEtat): { degats: number; absorbe: number; bouclier: number; soin: number; vaincus: number } {
+  const r = { degats: 0, absorbe: 0, bouclier: 0, soin: 0, vaincus: 0 };
+  if (s.issue !== 'en-cours' || !s.chaine.length) return r;
+  const copie = clone(s);
+  const debout = ennemisDebout(copie).length;
+  lancer(copie, {
+    apercu: (ev) => {
+      if (ev.kind === 'degats' && ev.cible === 'ennemi') { r.degats += ev.net; r.absorbe += ev.absorbe; }
+      else if (ev.kind === 'bouclier' && ev.cible === 'escouade') r.bouclier += ev.v;
+      else if (ev.kind === 'echo') r.bouclier += REGLES.bouclierEcho;
+      else if (ev.kind === 'soin' && ev.cible !== 'ennemi' && ev.cible !== 'escouade') r.soin += ev.v;
+    },
+  });
+  r.vaincus = debout - ennemisDebout(copie).length;
+  return r;
+}
+
 /** Lance la chaîne, puis joue le tour ennemi. Renvoie les pas à animer. */
-export function lancer(s: CombatEtat, opts: { silencieux?: boolean } = {}): Pas[] {
+export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev: Evenement) => void } = {}): Pas[] {
   const pas: Pas[] = [];
   if (s.issue !== 'en-cours' || !s.chaine.length) return pas;
   // en mode silencieux (robot d'équilibrage), on ne garde pas les étapes d'animation
-  const emettre = opts.silencieux ? () => {} : (ev: Evenement) => { pas.push({ ev, etat: clone(s) }); };
+  const emettre = opts.apercu ?? (opts.silencieux ? () => {} : (ev: Evenement) => { pas.push({ ev, etat: clone(s) }); });
 
   const analyse = analyserChaine(s.chaine);
   // Écho ancien : une suite de 4 résonne comme une suite de 5
@@ -298,7 +320,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean } = {}): Pas[
   for (const [i, g] of s.chaine.entries()) {
     emettre({ kind: 'carte', rang: i, total: s.chaine.length, lignee: ligneeGeste(g), type: g.type, porteur: g.porteur, suite: a.suite, ...(g.effet ? { effet: g.effet.type } : {}) });
     for (const ev of appliquer(s, g, a.mult, i)) emettre(ev);
-    if (s.ennemi.pv > 0 && freqs[i] === s.ennemi.felure && !s.ennemi.felureBrisee) briser(s, s.ennemi, emettre);
+    if (s.ennemi.pv > 0 && freqs[i] === s.ennemi.felure && !s.ennemi.felureBrisee) briser(s, s.ennemi, emettre, a.suite >= 3);
     phaseGardien(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) tombe(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) {
@@ -323,6 +345,8 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean } = {}): Pas[
       emettre({ kind: 'flux', gain: s.flux - avant });
     }
   }
+  // l'aperçu s'arrête là : seule la chaîne compte, pas la riposte
+  if (opts.apercu) return pas;
   s.debride = false;
   for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
   s.defausse.push(...s.chaine);
@@ -653,8 +677,9 @@ export function eclater(s: CombatEtat, porteurId: string, opts: { silencieux?: b
 
 // ---------- La Fêlure (25 octobre 2026) ----------
 // Chaque tour, chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence, posée dans la chaîne pendant
-// qu'il est visé, brise son intention (attaque, bouclier ou soin réduits de moitié, d'un quart chez un gardien ou un blindé)
-// et remplit le Flux. Deux fois sur trois, la Fréquence fêlée est l'une de celles de la main : jouable, pas automatique.
+// qu'il est visé, brise son intention (attaque, bouclier ou soin réduits de moitié, d'un quart chez un gardien ou un blindé) ;
+// si la chaîne fait aussi une Résonance, elle remplit le Flux.
+// Deux fois sur trois, la Fréquence fêlée est l'une de celles de la main : jouable, pas automatique.
 // Un évanescent la cache (elle n'est pas affichée, mais existe) ; la Vigie aspire le Flux de ceux qui le gardent.
 
 export const estGardien = (id: string) => ZONES.some((z) => z.boss === id);
@@ -671,12 +696,14 @@ function fixerFelures(s: CombatEtat) {
   }
 }
 
-/** La Fréquence fêlée d'un ennemi est touchée : son intention se brise, le Flux monte */
-function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void) {
+/** La part retirée à l'intention quand la Fêlure se brise : les gardiens et les blindés résistent mieux (un quart seulement) */
+export const partFelure = (en: EnnemiEtat) => (estGardien(en.id) || trait(en, 'blinde') ? REGLES.felure.partGardien : REGLES.felure.part);
+
+/** La Fréquence fêlée d'un ennemi est touchée : son intention se brise ; le Flux monte si la chaîne résonne */
+function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void, resonne: boolean) {
   en.felureBrisee = true;
   const it = intentionDe(s, en);
-  // les gardiens et les blindés résistent mieux : un quart seulement
-  const part = estGardien(en.id) || trait(en, 'blinde') ? REGLES.felure.partGardien : REGLES.felure.part;
+  const part = partFelure(en);
   const nom = ennemiDef(en.id).nom;
   if (it.type === 'atk' || it.type === 'bouclier' || it.type === 'soin') {
     const avant = it.v;
@@ -684,6 +711,7 @@ function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void)
     log(s, `Fêlure : ${nom} vacille, ${it.type === 'atk' ? 'son attaque' : it.type === 'bouclier' ? 'son bouclier' : 'son soin'} passe de ${avant} à ${it.v}.`);
   } else log(s, `Fêlure : ${nom} vacille.`);
   emettre({ kind: 'effet', cible: 'ennemi', texte: 'Fêlure', rang: en.rang ?? 0 });
+  if (!resonne) return;
   const avant = s.flux;
   s.flux = Math.min(REGLES.fluxMax, s.flux + REGLES.felure.flux);
   if (s.flux > avant) emettre({ kind: 'flux', gain: s.flux - avant });

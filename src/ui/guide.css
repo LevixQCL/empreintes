@@ -114,7 +114,7 @@
 .g-actions li > img{justify-self:center}
 .g-actions b{display:block;font-size:14px;color:var(--ink)}
 .g-actions p{margin:2px 0 0;font-size:13px;line-height:1.4;color:var(--quiet)}
-.g-lourd{justify-self:center;white-space:nowrap;padding:2px 5px;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--ink);background:rgba(8,10,14,.85);box-shadow:inset 0 0 0 1px rgba(241,230,207,.35)}
+.g-lourd{justify-self:center;white-space:nowrap;padding:2px 5px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);background:rgba(8,10,14,.85);box-shadow:inset 0 0 0 1px rgba(241,230,207,.35)}
 
 /* le tableau des métaux */
 .g-metaux{display:grid;gap:2px}

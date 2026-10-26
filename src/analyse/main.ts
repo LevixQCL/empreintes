@@ -23,7 +23,7 @@ auth.languageCode = 'fr';
 const db = getFirestore(fb);
 const racine = document.getElementById('analyse') as HTMLElement;
 
-interface Donnees { toutes: Partie[]; tests: number; lu: number; filtre: Filtre; parties: Partie[]; a: Analyse; tri: Record<string, Tri> }
+interface Donnees { toutes: Partie[]; tests: number; visites: number; lu: number; filtre: Filtre; parties: Partie[]; a: Analyse; tri: Record<string, Tri> }
 type Etat = { quoi: 'connexion' } | { quoi: 'chargement' } | { quoi: 'refus'; email: string } | { quoi: 'erreur'; message: string } | ({ quoi: 'ok' } & Donnees);
 let etat: Etat = { quoi: 'chargement' };
 
@@ -53,9 +53,9 @@ async function lire(): Promise<Partie[]> {
   return l;
 }
 
-function calculer(toutes: Partie[], tests: number, lu: number, filtre: Filtre, tri: Record<string, Tri> = {}): Etat {
+function calculer(toutes: Partie[], tests: number, visites: number, lu: number, filtre: Filtre, tri: Record<string, Tri> = {}): Etat {
   const parties = filtrer(toutes, filtre, lu);
-  return { quoi: 'ok', toutes, tests, lu, filtre, parties, a: analyser(parties, lu), tri };
+  return { quoi: 'ok', toutes, tests, visites, lu, filtre, parties, a: analyser(parties, lu), tri };
 }
 
 async function charger(u: User) {
@@ -63,8 +63,8 @@ async function charger(u: User) {
   const avant = etat.quoi === 'ok' ? etat : null;
   etat = { quoi: 'chargement' }; afficher();
   try {
-    const { parties, tests } = sansTests(await lire());
-    etat = calculer(parties, tests, Date.now(), avant?.filtre ?? { periode: 'tout', segment: 'tous' }, avant?.tri);
+    const { parties, tests, visites } = sansTests(await lire());
+    etat = calculer(parties, tests, visites, Date.now(), avant?.filtre ?? { periode: 'tout', segment: 'tous' }, avant?.tri);
   } catch (e) {
     const code = (e as { code?: string })?.code ?? '';
     etat = { quoi: 'erreur', message: code === 'permission-denied'
@@ -253,7 +253,7 @@ function tableauDeBord(e: Donnees): string {
     + chapitre('campagne', 'Campagne', campagne(a))
     + chapitre('fonctions', 'Fonctions', fonctions(a))
     + chapitre('joueurs', 'Joueurs', joueurs(e))
-    + `<p class="an-pied">Lu le ${new Date(e.lu).toLocaleString('fr-BE')} · ${fr(e.toutes.length)} sauvegardes${e.tests ? ` (${fr(e.tests)} parties de test écartées)` : ''}`
+    + `<p class="an-pied">Lu le ${new Date(e.lu).toLocaleString('fr-BE')} · ${fr(e.toutes.length)} sauvegardes${e.tests ? ` (${fr(e.tests)} parties de test écartées)` : ''}${e.visites ? ` · ${fr(e.visites)} visite${e.visites > 1 ? 's' : ''} sans partie commencée écartée${e.visites > 1 ? 's' : ''}` : ''}`
     + `${a.sansStats ? ` · ${fr(a.sansStats)} sans statistiques (d’avant le 25 octobre 2026)` : ''} · les statistiques sont calculées sur l’appareil des joueurs : un tricheur peut les fausser.</p>`;
 }
 
@@ -310,7 +310,7 @@ racine.addEventListener('change', (ev) => {
   const s = ev.target as HTMLSelectElement;
   if (etat.quoi !== 'ok' || !s.dataset.filtre) return;
   const filtre = { ...etat.filtre, [s.dataset.filtre]: s.value } as Filtre;
-  etat = calculer(etat.toutes, etat.tests, etat.lu, filtre, etat.tri);
+  etat = calculer(etat.toutes, etat.tests, etat.visites, etat.lu, filtre, etat.tri);
   afficher();
 });
 
@@ -321,4 +321,4 @@ onAuthStateChanged(auth, (u) => {
 afficher();
 
 // pour voir le tableau de bord sans compte pendant le développement : __apercu(parties) (absent du site publié)
-if (import.meta.env.DEV) Object.assign(window, { __apercu: (parties: Partie[]) => { etat = calculer(parties, 0, Date.now(), { periode: 'tout', segment: 'tous' }); afficher(); } });
+if (import.meta.env.DEV) Object.assign(window, { __apercu: (parties: Partie[]) => { etat = calculer(parties, 0, 0, Date.now(), { periode: 'tout', segment: 'tous' }); afficher(); } });

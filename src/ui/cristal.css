@@ -193,7 +193,10 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 /* le texte de la plaque et les étiquettes s'écartent du cadre */
 /* dans un cadre, le nom perd un peu de largeur : un rien plus petit, pour que « Régénérer » tienne en entier */
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-effet{right:calc(3px + var(--ep))}
-.geste .g-lourd{right:calc(11px + var(--ep));top:calc(4px + var(--ep))}
+.geste .g-lourd{right:calc(2px + var(--ep));top:calc(3px + var(--ep))}
+/* sur une carte lourde, la flèche de suite et la Fêlure passent sous l’étiquette « 2 PL. » */
+.geste.lourd :is(.g-suite,.g-felure){top:calc(22px + var(--ep))}
+.geste.lourd.halo .g-felure{top:calc(46px + var(--ep))}
 #app:is([data-mode="combat"],[data-mode="district"]) .geste .g-socle{top:calc(3px + var(--ep) * .5);left:calc(3px + var(--ep) * .5)}
 /* les autres Fréquences (argent : 1, or : 1, nacre : 2) en rang sous la gemme, et non plus en colonne :
    en colonne, la troisième Fréquence de la nacre tombait sur la force de la carte */

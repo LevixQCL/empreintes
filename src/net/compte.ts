@@ -25,15 +25,26 @@ let prevenir: ((u: Utilisateur | null) => void) | null = null;
 
 /**
  * Le compte invisible (25 octobre 2026) : sans compte, le jeu en crée un anonyme tout seul, et la partie est sauvegardée en ligne
- * dès la première minute. Le relier plus tard à Google ou à un e-mail garde la même partie (même identifiant).
+ * dès que le joueur a vraiment commencé (intro vue) : une simple visite (robot, aperçu de lien) ne crée plus de compte.
+ * Le relier plus tard à Google ou à un e-mail garde la même partie (même identifiant).
  * Si la connexion anonyme n'est pas activée dans Firebase, ou hors ligne, on reste sans compte, comme avant.
  */
-export function surChangement(cb: (u: Utilisateur | null) => void): void {
+export function surChangement(cb: (u: Utilisateur | null) => void, commence: () => boolean): void {
   prevenir = cb;
   onAuthStateChanged(auth, (u) => {
     if (u) { cb(versUtilisateur(u)); return; }
-    signInAnonymously(auth).catch(() => cb(null));
+    if (commence()) creerInvisible();
+    else cb(null);
   });
+}
+
+let invisibleDemande = false;
+
+/** crée le compte invisible (une seule tentative par lancement) */
+export function creerInvisible(): void {
+  if (auth.currentUser || invisibleDemande) return;
+  invisibleDemande = true;
+  signInAnonymously(auth).catch(() => prevenir?.(null));
 }
 
 /** relier le compte invisible ne change pas d'utilisateur : Firebase ne prévient pas, on le fait */

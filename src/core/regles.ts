@@ -18,7 +18,8 @@ export const REGLES = {
     /** part retirée à l'attaque, au bouclier ou au soin annoncé ; les gardiens résistent mieux */
     part: 0.5,
     partGardien: 0.25,
-    /** Flux gagné par Fêlure brisée */
+    /** Flux gagné par Fêlure brisée, seulement si la chaîne fait aussi une Résonance (26 octobre 2026 : Bryan trouvait
+     *  le Flux trop facile, une carte isolée suffisait ; le Flux redevient la récompense des suites) */
     flux: 1,
   },
   /** Coups d'éclat (25 octobre 2026) : Flux plein, un seul par combat */

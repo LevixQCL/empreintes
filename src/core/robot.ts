@@ -144,7 +144,7 @@ export function jouerTourMoyen(s: CombatEtat): void {
   // la Fêlure affichée sur l'ennemi qu'il frappe : une carte de cette Fréquence brise son intention
   const fel = s.ennemi.felureBrisee || !felureVisible(s.ennemi) ? undefined : s.ennemi.felure;
   const itVise = intentionDe(s, s.ennemi);
-  const gainFelure = fel === undefined ? 0 : (itVise.type === 'atk' ? itVise.v * 0.5 * (danger ? 1.5 : 1) : itVise.type === 'bouclier' || itVise.type === 'soin' ? itVise.v * 0.5 : 0) + 4;
+  const gainFelure = fel === undefined ? 0 : (itVise.type === 'atk' ? itVise.v * 0.5 * (danger ? 1.5 : 1) : itVise.type === 'bouclier' || itVise.type === 'soin' ? itVise.v * 0.5 : 0);
   let meilleur: { score: number; ordre: Geste[] } | null = null;
   for (const groupe of sousGroupes(s.main)) {
     if (groupe.reduce((n, g) => n + places(g), 0) > cap) continue;
@@ -152,7 +152,7 @@ export function jouerTourMoyen(s: CombatEtat): void {
     const mult = analyserChaine(ordre).mult;
     const somme = (t: string) => ordre.filter((g) => g.type === t).reduce((n, g) => n + g.v, 0) * mult;
     const brise = fel !== undefined && ordre.some((g) => g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(fel));
-    const score = somme('atk') + (danger ? 1.5 * Math.min(somme('bouclier'), menace) : 0.3 * somme('bouclier')) + (blesse ? somme('soin') : 0.2 * somme('soin')) + (brise ? gainFelure : 0);
+    const score = somme('atk') + (danger ? 1.5 * Math.min(somme('bouclier'), menace) : 0.3 * somme('bouclier')) + (blesse ? somme('soin') : 0.2 * somme('soin')) + (brise ? gainFelure + (mult > 1 ? 4 : 0) : 0);
     if (!meilleur || score > meilleur.score) meilleur = { score, ordre };
   }
   for (const g of meilleur?.ordre ?? []) ajouter(s, g.uid);

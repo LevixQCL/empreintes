@@ -144,10 +144,19 @@ export function estPartieDeTest(p: Partie): boolean {
   return horlogeFigee || demo;
 }
 
-/** Les vraies parties, et combien de parties de test ont été écartées */
-export function sansTests(parties: Partie[]): { parties: Partie[]; tests: number } {
-  const vraies = parties.filter((p) => !estPartieDeTest(p));
-  return { parties: vraies, tests: parties.length - vraies.length };
+/**
+ * Une simple visite, pas un joueur : l'écran titre ouvert sans jamais commencer (robot, aperçu de lien, navigateur intégré).
+ * Avant le 26 octobre 2026, le compte invisible était créé dès l'ouverture du site et envoyait cette partie vide.
+ */
+export function estVisite(p: Partie): boolean {
+  return !p.jeu.introVue && (p.jeu.stats?.secondes ?? 0) < 60;
+}
+
+/** Les vraies parties, et combien de parties de test et de simples visites ont été écartées */
+export function sansTests(parties: Partie[]): { parties: Partie[]; tests: number; visites: number } {
+  const sansT = parties.filter((p) => !estPartieDeTest(p));
+  const vraies = sansT.filter((p) => !estVisite(p));
+  return { parties: vraies, tests: parties.length - sansT.length, visites: sansT.length - vraies.length };
 }
 
 export function filtrer(parties: Partie[], f: Filtre, now: number): Partie[] {

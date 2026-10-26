@@ -11,7 +11,7 @@ import { feuilleNom } from './classements';
 import { COULEUR, panneauCompte, type Compte } from './vue';
 import { echap } from './outils';
 
-export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements';
+export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages';
 /** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */
 export type Filtre = 'tout' | Lignee | 'monter' | 'libres';
 
@@ -54,6 +54,11 @@ export interface EcranDistrict {
   /** l'escouade part pour une fouille ciblée (et ce qu'elle cherche), ou pour une Épreuve de la semaine */
   fouille: import('../core/expedition').CibleFouille | null;
   epreuve: string | null;
+  /** l'escouade part piller cet archipel (pillages.ts) ; et l'archipel choisi sur la carte */
+  pillage?: import('../core/jeu').Cible | null;
+  pillageCible?: string | null;
+  /** les garnisons des vrais directeurs à portée, lues en ligne (vide sans compte) */
+  pillagesEnLigne?: import('../core/jeu').Cible[];
   /** la fiche d'une ressource du haut est ouverte (22 octobre 2026) */
   ressource?: Ressource | null;
   /** onglet Escouade : le volet « Porteurs » (tous les Porteurs) est affiché au lieu de l’escouade */
@@ -215,7 +220,7 @@ export function navigation(e: EcranDistrict): string {
     coupe: !!j.expedition || !!(o && o.onglet === 'coupe' && !o.fait(j)),
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
   };
-  const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'escouade' ? 'coupe' : e.vue === 'cartes' ? 'porteurs' : e.vue;
+  const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'escouade' || e.vue === 'pillages' ? 'coupe' : e.vue === 'cartes' ? 'porteurs' : e.vue;
   // sur PC (rail.css) : le cristal seul en tête, et un filet de lumière qui relie les onglets au « Plus » du bas
   return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./art/embleme-cristal.webp" alt=""></span>` + ONGLETS.map((t) => {
     const action = t.vue === 'plus' ? 'menu' : t.vue;

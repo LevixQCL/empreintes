@@ -1,12 +1,12 @@
 // Actions du compte : connexion, déconnexion, partie de secours.
 
 import { app, compteEtat } from '../etat';
-import { actionCompte, champ, majSecours, restaurerSecours } from '../synchro';
+import { actionCompte, champ, envoyer, majSecours, restaurerSecours } from '../synchro';
 import type { Clic, Suite } from './commun';
 
 export async function agirCompte(a: string, _c: Clic): Promise<Suite> {
   switch (a) {
-    case 'compte': compteEtat.ouvert = !compteEtat.ouvert; compteEtat.erreur = ''; compteEtat.info = ''; if (compteEtat.ouvert) majSecours(); break;
+    case 'compte': compteEtat.ouvert = !compteEtat.ouvert; compteEtat.erreur = ''; compteEtat.info = ''; if (compteEtat.ouvert) { majSecours(); envoyer(); } break;
     case 'secours': if (compteEtat.secours) compteEtat.secours.confirmer = true; break;
     case 'secours-confirmer': restaurerSecours(); break;
     case 'google': await actionCompte(() => app.compte!.connexionGoogle()); return 'fin';

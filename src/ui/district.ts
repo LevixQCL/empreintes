@@ -2,15 +2,17 @@
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
 // les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
 
+import { appelPillages } from './pillages';
+import { butinPillage, chanceVictoire, difficulte, forceEscouade } from '../core/jeu';
 import { NOMS_EFFET, texteEffet } from '../core/effets';
-import { MODULES, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
+import { GESTES_SPECIAUX, MODULES, ORIGINE_PAQUETAGE, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne,
   OBJECTIFS, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { COLLECTION, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, trierCartes, type TriCartes } from '../core/collection';
-import type { BatimentId, Lignee, Rarete } from '../core/types';
+import type { BatimentId, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { FRAGMENTS } from '../core/fragments';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
@@ -868,6 +870,16 @@ export function htmlCartes(e: EcranDistrict): string {
       h += `</div>`;
     }
   }
+  // le paquetage du district : dans chaque deck, jamais dans la collection (on le montre pour qu'on sache d'où il vient)
+  if (f === 'tout') {
+    h += `<h2 class="titre-section" style="--c:#CDEFFF">Paquetage du district</h2>`
+      + `<p class="cl-intro">Fourni à chaque escouade qui descend, en plus des cartes de tes Porteurs. Ces cartes restent même si un Porteur tombe ; elles n’ont pas de métal et ne montent pas de niveau.</p>`
+      + `<div class="grille-cartes">` + GESTES_SPECIAUX.map((g) => {
+        const o = ORIGINE_PAQUETAGE[g.id]!;
+        const m: ModuleDef = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) };
+        return `<div class="carte-tuile cl-carte cl-paquetage">${faceCarte(m, 1, 1, { origine: o.batiment })}<span class="cl-bas"><span class="cl-origine">${echap(o.texte)}</span></span></div>`;
+      }).join('') + `</div>`;
+  }
   // le mode d'emploi prend la place des autres feuilles ; en le fermant, on retrouve celle d'où on venait
   if (e.guide) h += feuilleGuide(e.guide, trouveesDe(j.collection));
   else h += feuilleCarte(e) + feuilleDeck(e);
@@ -1070,6 +1082,8 @@ export function htmlCoupe(e: EcranDistrict): string {
   // le Grand Tableau : ton rang en profondeur, et l'entrée vers les classements
   if (j.chambre && e.grand) h += bandeauTableau(e, e.grand, e.uid ?? null);
 
+  // les archipels voisins : les pillages (26 octobre 2026)
+  if (j.chambre && !j.expedition) h += appelPillages(j, e.now);
   // trois volets au lieu d'une page sans fin : les Strates, les Épreuves, les missions
   const ouvert = j.chambre && strateVaincue(j) >= 1;
   const volet = ouvert ? e.ongletTour ?? 'strates' : 'strates';
@@ -1205,13 +1219,23 @@ export function htmlEscouade(e: EcranDistrict): string {
   const deck = deckEscouade(j, e.escouade).filter((g) => !ep?.filtre || g.porteur === null || ep.filtre(g)).length;
   const deckMin = ep ? EPREUVE_DECK_MIN : DISTRICT.deckMin;
   const zone = zoneDe(e.strateChoisie);
-  const titre = ep ? `ÉPREUVE · ${ep.nom.toUpperCase()}` : `${fouille ? 'FOUILLE · ' : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`;
+  const pi = !ep && !fouille ? e.pillage ?? null : null;
+  const titre = pi ? `PILLAGE · ${pi.nom.toUpperCase()}` : ep ? `ÉPREUVE · ${ep.nom.toUpperCase()}` : `${fouille ? 'FOUILLE · ' : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`;
   let h = `<div class="ecran ecran-escouade es"><main class="contenu">`
-    + entete(titre, 'Escouade', `<button type="button" class="btn-icone" data-action="coupe" aria-label="Retour">${ICO.retour}</button>`);
+    + entete(titre, 'Escouade', `<button type="button" class="btn-icone" data-action="${pi ? 'pillages' : 'coupe'}" aria-label="Retour">${ICO.retour}</button>`);
 
   // 1. ce qu'on part faire
   h += `<section class="es-mission">`;
-  if (ep) {
+  if (pi) {
+    // la cible : sa garnison, et les chances de l'escouade choisie (elles changent avec l'escouade)
+    const ecart = pi.force / Math.max(0.01, forceEscouade(j, e.escouade));
+    const d = difficulte(ecart);
+    const b = butinPillage(pi, ecart);
+    h += `<p class="es-but">${ICO.grappin}<span><strong>Pillage · ${echap(pi.nom)}</strong>Un seul combat contre sa garnison : ${pi.porteurs.map((id) => echap(porteurDef(id).nom)).join(', ')}.</span></p>`
+      + `<div class="es-pillage d${d.niveau}"><span class="es-pillage-visages">${pi.porteurs.map((id) => avatar(id, 34)).join('')}</span>`
+      + `<span><b>${d.nom}</b><small>${e.escouade.length === 3 ? `${Math.round(chanceVictoire(ecart) * 100)} % de chances avec cette escouade` : 'Choisis 3 Porteurs'}</small></span>`
+      + `<span class="es-pillage-butin">${ICO.composants}<b>+${ent(b.base + b.vol)}</b></span></div>`;
+  } else if (ep) {
     h += `<p class="es-but">${ICO.boost}<span><strong>${echap(ep.nom)}</strong>${echap(ep.regle)} Un seul combat, contre ${echap(ennemiDef(zone.boss).nom)}.</span></p>`;
   } else if (fouille) {
     h += `<p class="es-but">${ICO.cristal}<span><strong>Fouille ciblée · ${echap(zone.nom)}</strong>Une descente courte, sans gardien : quelques salles, puis le filon.</span></p>`
@@ -1292,7 +1316,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const pret = e.escouade.length === 3 && !maigre;
   h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
     + `<span><b>${e.escouade.length} / 3</b><small class="${maigre ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? `Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? `${deck} cartes · ${deckMin} au moins` : `${deck} cartes, prêt`}</small></span></div>`
-    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}</button></footer>`;
+    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${pi ? `${ICO.grappin}Piller` : ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}</button></footer>`;
   h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : e.deck ? feuilleDeck(e) : feuillePorteur(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;

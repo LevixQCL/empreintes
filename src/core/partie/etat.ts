@@ -226,6 +226,8 @@ export interface Jeu {
   kitRecrues: boolean;
   /** Ravitaillement du jour : colis en réserve (3 au plus, rien ne se perd), dernier jour compté, colis déjà ouverts */
   ravitaillement: { jour: number; reserve: number; ouverts: number };
+  /** les pillages : jetons, coffre et attaques à envoyer (pillages.ts) ; absent avant le premier */
+  pillage?: import('./pillages').EtatPillage;
   eclats: number;
   /** les cartes possédées */
   collection: Record<string, CarteCollection>;

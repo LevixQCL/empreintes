@@ -88,7 +88,7 @@ Tous les chiffres sont dans deux fichiers :
 
 **La carte qu'on collectionne est celle qu'on joue** (décision du 22 octobre 2026). Une carte = une place dans le deck.
 On la confie à un Porteur de sa lignée (`greffer` dans `jeu.ts`, 6 cartes au plus par Porteur, `DISTRICT.cartesMax`) ;
-le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les 2 cartes du district (`GESTES_SPECIAUX`).
+le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les 2 cartes du paquetage du district (`GESTES_SPECIAUX`, origine dans `ORIGINE_PAQUETAGE`).
 Au départ, Ilka, Doran et Véla portent chacun 6 cartes en fer : leurs 5 cartes de base et leur carte de départ (`DEPART_PORTEURS`).
 En combat, le moteur manipule des « Gestes » : c'est le nom interne d'une carte en jeu (`gesteDeCarte`), avec son Porteur,
 son niveau et la Fréquence choisie. Le tableau des cartes garde son nom historique `MODULES`.
@@ -98,7 +98,7 @@ son niveau et la Fréquence choisie. Le tableau des cartes garde son nom histori
 (`htmlCartes`, fermée avant la chambre scellée). La feuille de match montre d'abord le bilan du deck (`bilanDeck` : nombre de cartes,
 échelle des Fréquences 1 à 9 empilée par lignée, trous et plus longue suite, attaques / protections / soins, un conseil), puis chaque Porteur
 (`blocPorteur` : portrait, PV, qui il bat, sa Marque en toutes lettres avec ce qu'il reste à accomplir, et ses cartes une par ligne :
-Fréquence, nom, niveau, effet en clair, force sur le socle peint des cartes), puis les cartes du district.
+Fréquence, nom, niveau, effet en clair, force sur le socle peint des cartes), puis le paquetage du district.
 *Trois escouades* (`j.escouades`, `escouadesDe`, `placerDansEscouade(j, place, id, n)`, `choisirEscouade`) : on en compose trois, un Porteur
 n'est que dans une seule (le prendre ailleurs l'échange avec celui qu'il remplace), et une seule descend (`j.escouadeActive` ; `j.escouade`
 en est toujours la copie, c'est elle que lit le reste du jeu). On la choisit dans l'onglet (« Faire descendre l'escouade 2 ») ou sur l'écran
@@ -231,9 +231,34 @@ Tour du Noyau (ton rang en profondeur) et la fiche de la Strate en haut de l'éc
 - *Joutes* (combats entre joueurs) et *La Flèche* (tour d'arène vers les Hauts, `FLECHE`) : grisés, avec ce qui arrive.
 Deux périodes : le record (ne redescend jamais) et la semaine (ce qui est gagné depuis lundi). Le palmarès est noté à chaque tick
 dans `j.palmares` ; connecté, le joueur choisit un nom de directeur (`j.directeur`, jamais l'e-mail) et publie `classement/{uid}`
-au plus toutes les 25 s. Entre amis, toute la liste ; au-delà de 12, le podium et les voisins du joueur (`fenetre`).
+au plus toutes les 5 minutes (une nouvelle Strate ou un nouveau pseudo partent tout de suite). Entre amis, toute la liste ; au-delà de 12, le podium et les voisins du joueur (`fenetre`).
 Les règles Firestore valident chaque entrée (champs, bornes, profondeur qui ne redescend pas et monte de 2 Strates au plus,
 date d'arrivée = maintenant quand la profondeur monte). Les pseudos sont uniques : chacun est réservé dans `pseudos/{clé}` (`reserver` dans `src/net/classement.ts`, une transaction), la clé ignore majuscules, accents et séparateurs (`clePseudo`, même table que les règles), le Tableau n'accepte que le pseudo réservé par ce compte, un filtre écarte grossièretés et faux noms officiels (`pseudoInterdit`), et on en change au plus une fois par semaine (`DELAI_PSEUDO`, vérifié dans le jeu). En développement : `__tableau(entrées, uid)` dans la console pour l'essayer sans compte.
+
+**Les pillages** (26 octobre 2026, décidé avec Bryan ; `src/core/partie/pillages.ts`, `src/ui/pillages.ts`).
+La Tour du Noyau ouvre les « Archipels voisins » après la Strate −1 : une carte marine, ton archipel en bas, six archipels
+autour, rangés du plus facile au plus dur. Un pillage = un seul combat contre la garnison de l'archipel (ses trois Porteurs,
+joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `garde-bio`, `garde-reso` dans `donnees.ts`).
+- *Force* : `K × √(puissance des cartes × PV)` des deux côtés (`forceGarnison`, K = 0,0245). Réglé au robot : le joueur moyen
+  qui attaque sa propre garnison gagne une fois sur deux, du deck de départ aux cartes en or niveau 10. Les chances sont très
+  tranchées (98 % à 0,85 fois sa force, 50 % à égalité, 18 % à 1,08, presque rien à 1,2) : la carte ne propose que de 0,85 à 1,15.
+- *Butin* : 2 combats de la Strate du défenseur (`butinCombat`) × l'écart (×0,4 contre bien plus faible, ×2 contre plus fort :
+  le meilleur gain moyen est à force égale), plus 10 % de son coffre (plafond : 5 combats de sa Strate).
+- *Le coffre* : les composants gagnés en pillant ou en défendant, les seuls qu'un pillage peut prendre (les composants des
+  descentes, missions et du district sont à l'abri : aucune punition si on ne joue pas). On le dépense en premier.
+  L'attaquant qui perd (ou abandonne) laisse 5 % de son coffre au défenseur.
+- *Limites* : 5 jetons (un revient toutes les 4 h 48, rien ne se perd), un pillage par archipel et par jour ; le défenseur a
+  8 h de bouclier après une attaque perdue et subit 3 attaques par jour au plus (`protege`).
+- *Archipels sans directeur* (`ciblesBots`) : tant qu'il y a peu de vrais directeurs à portée, des archipels tenus par un
+  intendant complètent la carte (dits comme tels sur la fiche), les mêmes toute la journée.
+- *En ligne* (`src/net/pillages.ts`, `src/app/pillages.ts`) : chaque directeur connecté publie sa garnison `garnisons/{uid}`
+  (nom du Grand Tableau s'il est public, sinon « Directeur anonyme » ; au plus toutes les 5 minutes). La carte lit une
+  douzaine de garnisons à sa portée (requête triée sur la force, relue au plus toutes les 10 minutes) et vérifie le bouclier
+  d'un vrai directeur avant le départ. Chaque pillage joué est noté dans `garnisons/{défenseur}/subis` ; le défenseur les lit
+  à l'ouverture, les applique lui-même (`subirPillages` : chacun une fois, 3 par jour, bouclier de 8 h, montants plafonnés)
+  et les ajoute au résumé « Pendant ton absence ». Tant que les règles Firestore des garnisons ne sont pas publiées,
+  tout échoue sans bruit et la carte n'a que des archipels sans directeur.
+- *À venir* : les Joutes en temps réel (elles demanderont d'autres règles Firestore).
 
 ## Firebase
 

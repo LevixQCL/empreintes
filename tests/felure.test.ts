@@ -24,16 +24,28 @@ describe('La Fêlure', () => {
     expect(s.ennemi.felure).toBeLessThanOrEqual(9);
   });
 
-  it('une carte de la Fréquence fêlée divise l’attaque par deux et remplit le Flux', () => {
+  it('une carte de la Fréquence fêlée divise l’attaque par deux, sans Flux hors d’une suite', () => {
     const brise = preparer('remanent', 4);
     const rate = preparer('remanent', 9);
     const avant = pvIlka(brise);
     ajouter(brise, 'a'); lancer(brise);
     ajouter(rate, 'a'); lancer(rate);
     expect(brise.journal.some((l) => l.startsWith('Fêlure'))).toBe(true);
-    expect(brise.flux).toBe(1);
+    expect(brise.flux).toBe(0);
     expect(rate.flux).toBe(0);
     expect(avant - pvIlka(brise)).toBeLessThan(avant - pvIlka(rate));
+  });
+
+  it('dans une suite, la Fêlure brisée remplit le Flux en plus de la Résonance', () => {
+    const avec = preparer('remanent', 4), sans = preparer('remanent', 9);
+    for (const s of [avec, sans]) {
+      // une suite 3 → 4 → 5
+      s.main = [{ ...gesteDeCarte('ruee@fer', 'ilka'), uid: 'a' }, { ...gesteDeCarte('bond@fer', 'ilka'), uid: 'b' }, { ...gesteDeCarte('esquive@fer', 'ilka'), uid: 'c' }];
+      for (const uid of ['a', 'b', 'c']) ajouter(s, uid);
+      lancer(s);
+    }
+    expect(sans.flux).toBe(1); // la Résonance
+    expect(avec.flux).toBe(2); // la Résonance et la Fêlure
   });
 
   it('un gardien résiste mieux : un quart seulement', () => {
@@ -50,7 +62,7 @@ describe('La Fêlure', () => {
     ajouter(s, 'a'); lancer(s);
     expect(s.journal.find((l) => l.startsWith('Fêlure'))).toContain('de 20 à 15');
     expect(s.journal.some((l) => l.includes('aspire 1 Flux'))).toBe(true);
-    expect(s.flux).toBe(2); // 2, +1 (Fêlure), −1 (aspiré)
+    expect(s.flux).toBe(1); // 2, rien pour la Fêlure (pas de suite), −1 (aspiré)
   });
 
   it('pas de Fêlure à la Strate −1 (ennemis simples)', () => {

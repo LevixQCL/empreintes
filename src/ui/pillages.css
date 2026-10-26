@@ -1,0 +1,118 @@
+/* EMPREINTES — Les archipels voisins (26 octobre 2026).
+   Une carte marine de nuit : la mer en verre fumé, ton archipel en bas, les archipels à portée en médaillons
+   cerclés de la couleur du danger (vert facile, glace équilibré, ambre risqué, rouge redoutable), reliés par
+   des routes de passeurs. La fiche de l'archipel choisi juste dessous. Textes à 12 px minimum. */
+
+.pl{--p-txt:#C9D6E6;--p-doux:#93A3B8;--p-glace:#CDEFFF;--p-or:#F2D58C;
+  --d1:#8FCF7A;--d2:#7FD4FF;--d3:#FFB547;--d4:#E2735A}
+.pl .contenu{gap:16px}
+.pl .d1{--dc:var(--d1)} .pl .d2{--dc:var(--d2)} .pl .d3{--dc:var(--d3)} .pl .d4{--dc:var(--d4)}
+.es-pillage.d1{--dc:#8FCF7A} .es-pillage.d2{--dc:#7FD4FF} .es-pillage.d3{--dc:#FFB547} .es-pillage.d4{--dc:#E2735A}
+
+/* ---------- Jetons et coffre ---------- */
+.pl-etat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.pl-etat>div{--cut:10px;display:grid;align-content:start;gap:6px;padding:11px 12px;
+  background:linear-gradient(180deg,rgba(28,36,54,.82),rgba(12,16,26,.9));box-shadow:inset 0 0 0 1px rgba(205,239,255,.18),inset 0 1px 0 rgba(255,255,255,.18);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.pl-etat .surtitre{color:var(--p-doux)}
+.pl-etat .surtitre .ico{width:15px;height:15px}
+.pl-etat small{font-size:12px;line-height:1.35;color:var(--p-doux)}
+.pl-gemmes{display:flex;gap:7px;padding:4px 0 2px}
+.pl-gemmes i{width:14px;height:14px;transform:rotate(45deg);background:rgba(205,239,255,.08);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3)}
+.pl-gemmes i.plein{background:linear-gradient(135deg,#E8F8FF,#7FD4FF 55%,#2F7FB0);box-shadow:0 0 10px rgba(127,212,255,.55),inset 0 0 0 1px rgba(255,255,255,.6)}
+.pl-coffre b{font-family:var(--mono);font-size:22px;font-weight:600;line-height:1.1;color:var(--p-or);font-variant-numeric:tabular-nums}
+
+/* ---------- La carte ---------- */
+.pl-carte{position:relative;aspect-ratio:1/1;margin:0 -4px;overflow:hidden;isolation:isolate;
+  background:radial-gradient(60% 40% at 50% 84%,rgba(242,213,140,.16),transparent 70%),
+    radial-gradient(120% 90% at 50% 0%,#1C4C5E 0%,#0F2D3C 45%,#08141E 100%);
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.22),inset 0 0 60px rgba(0,0,0,.55);border-radius:6px}
+.pl-carte::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.5;
+  background:repeating-radial-gradient(circle at 50% 80%,transparent 0 22px,rgba(205,239,255,.05) 22px 23px),
+    repeating-linear-gradient(90deg,rgba(205,239,255,.04) 0 1px,transparent 1px 12.5%),repeating-linear-gradient(0deg,rgba(205,239,255,.04) 0 1px,transparent 1px 12.5%)}
+.pl-routes{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.pl-routes line{stroke:rgba(205,239,255,.32);stroke-width:.45;stroke-dasharray:1.4 1.2;vector-effect:non-scaling-stroke;stroke-width:1.4px}
+.pl-routes line.vise{stroke:var(--p-or);stroke-dasharray:none;stroke-width:2px;filter:drop-shadow(0 0 3px rgba(242,213,140,.7))}
+.pl-routes line.faite{stroke:rgba(205,239,255,.12)}
+
+.pl-ile,.pl-moi{position:absolute;left:var(--x);top:var(--y);z-index:1;display:grid;justify-items:center;gap:4px;width:98px;padding:0;border:none;background:none;
+  transform:translate(-50%,-34px);text-align:center}
+.pl-medaillon{position:relative;display:block;width:64px;height:64px;border-radius:50%;overflow:hidden;
+  box-shadow:0 0 0 2px var(--dc,var(--p-glace)),0 0 0 4px rgba(8,20,30,.8),0 6px 16px rgba(0,0,0,.6);transition:transform .2s ease,box-shadow .2s ease}
+.pl-medaillon img{width:100%;height:100%;object-fit:cover;object-position:50% 58%;display:block}
+.pl-nom{max-width:100%;padding:2px 7px;font-size:12px;font-weight:600;line-height:1.3;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:rgba(8,14,22,.82);box-shadow:inset 0 0 0 1px rgba(205,239,255,.2);border-radius:3px}
+.pl-diff{margin-top:-2px;font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--dc);text-shadow:0 1px 4px #000}
+.pl-ile.choisie .pl-medaillon{transform:scale(1.12);box-shadow:0 0 0 2px var(--p-or),0 0 0 5px rgba(8,20,30,.8),0 0 22px rgba(242,213,140,.55)}
+.pl-ile.choisie .pl-nom{box-shadow:inset 0 0 0 1px var(--p-or)}
+.pl-ile.faite .pl-medaillon img{filter:grayscale(.8) brightness(.6)}
+.pl-ile.faite .pl-diff{color:var(--p-doux)}
+.pl-fait{position:absolute;inset:0;display:grid;place-items:center;color:var(--ok)}
+.pl-fait .ico{width:28px;height:28px;filter:drop-shadow(0 1px 3px #000)}
+.pl-moi{width:110px;transform:translate(-50%,-40px)}
+.pl-moi .pl-medaillon{width:80px;height:80px;box-shadow:0 0 0 2px var(--p-or),0 0 0 5px rgba(8,20,30,.8),0 0 26px rgba(242,213,140,.35)}
+.pl-moi .pl-nom{color:var(--p-or)}
+@media (hover:hover){.pl-ile:not(.choisie):hover .pl-medaillon{transform:scale(1.06)}}
+
+/* ---------- La fiche de l'archipel choisi ---------- */
+.pl-fiche{--cut:12px;display:grid;gap:14px;padding:14px;
+  background:linear-gradient(180deg,rgba(28,36,54,.88),rgba(12,16,26,.94));box-shadow:inset 0 0 0 1px rgba(205,239,255,.2),inset 0 2px 0 var(--dc),0 14px 30px -12px rgba(0,0,0,.8);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.pl-fiche header{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:10px}
+.pl-fiche header .surtitre{color:var(--p-doux);letter-spacing:.08em;line-height:1.4}
+.pl-fiche h2{margin:2px 0 0;font-family:var(--display);font-size:24px;line-height:1.1;color:#fff}
+.pl-badge{display:grid;justify-items:end;gap:1px;padding:5px 9px;font-family:var(--display);font-size:17px;line-height:1.1;color:var(--dc);
+  background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px var(--dc);border-radius:3px}
+.pl-badge small{font-family:var(--mono);font-size:12px;color:var(--p-txt)}
+.pl-garnison{display:grid;gap:8px}
+.pl-garnison .surtitre{color:var(--p-doux)}
+.pl-garnison ul{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0;padding:0;list-style:none}
+.pl-garnison li{display:grid;justify-items:center;gap:5px;padding:8px 4px;text-align:center;background:rgba(255,255,255,.03);box-shadow:inset 0 -2px 0 var(--c);border-radius:3px}
+.pl-garnison li span{display:grid;gap:0;min-width:0;max-width:100%}
+.pl-garnison strong{font-size:13.5px;font-weight:600;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-garnison small{font-size:12px;color:var(--p-doux)}
+.pl-forces{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;font-size:12px;color:var(--p-doux)}
+.pl-forces b{font-family:var(--mono);font-size:13px;color:var(--p-txt)}
+.pl-jauge{position:relative;height:6px;background:rgba(127,212,255,.3);box-shadow:inset 0 0 0 1px rgba(205,239,255,.2);border-radius:3px;overflow:hidden}
+.pl-jauge i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--dc),color-mix(in srgb,var(--dc) 60%,#fff));border-radius:3px}
+.pl-jauge::after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:rgba(255,255,255,.7)}
+.pl-enjeu{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0}
+.pl-enjeu>div{display:grid;gap:3px;padding:9px 10px;border-radius:3px;background:rgba(255,255,255,.035);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+.pl-enjeu dt{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--p-doux)}
+.pl-enjeu dd{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;column-gap:6px;margin:0}
+.pl-enjeu dd .ico{width:18px;height:18px;color:#8FB8DA}
+.pl-enjeu dd b{font-family:var(--mono);font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.pl-enjeu dd small{grid-column:1 / -1;font-size:12px;line-height:1.3;color:var(--p-doux)}
+.pl-enjeu .pl-gain b{color:var(--p-or)}
+.pl-enjeu .pl-perte b{color:#E9A08F}
+.pl-raison{display:flex;align-items:center;gap:8px;margin:0;font-size:13px;color:var(--p-txt)}
+.pl-raison .ico{color:var(--p-doux)}
+.pl-regle{display:flex;gap:10px;margin:0;font-size:13px;line-height:1.45;color:var(--p-doux)}
+.pl-regle .ico{flex-shrink:0;width:18px;height:18px;margin-top:2px;color:var(--p-glace)}
+
+/* ---------- Le départ : la cible ---------- */
+.es-pillage{--cut:8px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;margin-top:10px;padding:9px 12px;
+  background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.16),inset 3px 0 0 var(--dc);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.es-pillage-visages{display:flex}
+.es-pillage-visages .avatar+.avatar{margin-left:-8px}
+.es-pillage>span:nth-child(2){display:grid;gap:1px;min-width:0}
+.es-pillage b{font-family:var(--display);font-weight:400;font-size:17px;color:var(--dc)}
+.es-pillage small{font-size:12px;color:var(--quiet)}
+.es-pillage-butin{display:flex;align-items:center;gap:5px}
+.es-pillage-butin .ico{width:18px;height:18px;color:#8FB8DA}
+.es-pillage-butin b{font-family:var(--mono);font-size:17px;font-weight:600;color:#F2D58C}
+
+/* le garde d'un archipel pillé : le portrait du Porteur, cadré comme un ennemi */
+.ennemi-art.garde{object-fit:cover;object-position:50% 22%;-webkit-mask-image:radial-gradient(70% 62% at 50% 40%,#000 55%,transparent 100%);mask-image:radial-gradient(70% 62% at 50% 40%,#000 55%,transparent 100%)}
+
+/* ---------- PC : la carte à gauche, la fiche à droite ---------- */
+@media (min-width:1100px){
+  .pl .contenu{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(340px,1fr);align-items:start;column-gap:22px;row-gap:16px}
+  .pl .contenu>.entete,.pl-etat{grid-column:1 / -1}
+  .pl-carte{grid-column:1;grid-row:3 / span 2;aspect-ratio:5/4;margin:0}
+  .pl-fiche{grid-column:2;grid-row:3}
+  .pl-regle{grid-column:2;grid-row:4}
+  .pl-medaillon{width:76px;height:76px}
+  .pl-moi .pl-medaillon{width:92px;height:92px}
+}

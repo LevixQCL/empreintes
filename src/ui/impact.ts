@@ -780,7 +780,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       const esc = racine.querySelector('.escouade-combat')?.getBoundingClientRect();
       if (ev.type === 'bouclier' && esc) { if (ev.effet === 'rempart') remparts(esc); else bouclierSur(esc); }
       if (ev.type === 'soin' && ev.effet === 'vague' && esc) vague(esc);
-      if (ev.effet === 'flux') versFlux(de, centre(racine.querySelector('.flux .segments')));
+      if (ev.effet === 'flux') versFlux(de, centre(racine.querySelector('.flux .jf-tube')));
       if (ev.rang === ev.total - 1 && ev.type !== 'atk') setTimeout(dissiper, 200);
       return 0;
     }

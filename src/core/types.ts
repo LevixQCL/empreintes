@@ -186,6 +186,8 @@ export interface EnnemiEtat {
   /** Fêlure (25 octobre 2026) : la Fréquence qui brise son intention ce tour-ci, et si elle a déjà été brisée */
   felure?: number;
   felureBrisee?: boolean;
+  /** garde d'un archipel pillé : le Porteur de la garnison dont il prend le visage et le nom */
+  porteur?: string;
 }
 
 type Issue = 'en-cours' | 'victoire' | 'defaite';
