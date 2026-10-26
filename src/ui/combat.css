@@ -274,14 +274,6 @@
 #app .ecran-combat .zone-chaine .rail .geste.deplace{filter:brightness(1.12) drop-shadow(0 12px 14px rgba(0,0,0,.55));cursor:grabbing}
 
 /* ---------- La Fêlure (25 octobre 2026) : la gemme fêlée de l'ennemi, teintée de sa Fréquence ---------- */
-.int-felure{display:grid;justify-items:center;gap:0;margin-left:2px;padding:3px 6px 2px;flex-shrink:0;color:var(--fc,#fff);
-  background:color-mix(in srgb,var(--fc,#fff) 16%,rgba(8,11,17,.9));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fc,#fff) 70%,transparent);
-  clip-path:polygon(50% 0,100% 22%,100% 78%,50% 100%,0 78%,0 22%)}
-.int-felure .ico{width:14px;height:14px}
-.int-felure b{font:700 14px/1 var(--display);color:#fff;text-shadow:0 0 6px var(--fc,#fff)}
-.int-felure small{font:600 8px/1.2 var(--mono);letter-spacing:.1em;color:var(--quiet)}
-.int-felure.prevue{animation:felure-prevue 1s ease-in-out infinite alternate;box-shadow:inset 0 0 0 1.5px #fff,0 0 12px var(--fc,#fff)}
-.int-felure.brisee{color:var(--quiet);background:rgba(8,11,17,.7);box-shadow:inset 0 0 0 1px var(--filet)}
 @keyframes felure-prevue{from{filter:brightness(1)}to{filter:brightness(1.35)}}
 .vg-felure{position:absolute;bottom:9px;right:2px;display:flex;align-items:center;gap:1px;padding:0 3px;border-radius:6px;font:700 11px/14px var(--display);color:#fff;
   background:color-mix(in srgb,var(--fc,#fff) 30%,rgba(8,11,17,.9));box-shadow:inset 0 0 0 1px var(--fc,#fff)}
@@ -311,7 +303,7 @@
 @keyframes eclat-pret{from{filter:brightness(1)}to{filter:brightness(1.12)}}
 #app .badge-reso.eclat{background:linear-gradient(180deg,#fff6dc,#f2d58c 50%,#c79a3e);color:#1C1406}
 .etat.ombre.actif{color:#e7dcff;box-shadow:inset 0 0 0 1px var(--reso)}
-@media (prefers-reduced-motion: reduce){ .int-felure.prevue,.btn-eclat{animation:none} }
+@media (prefers-reduced-motion: reduce){ .int-felure.prevue .gemme,.btn-eclat{animation:none} }
 /* l'onde de choc qui plie l'image de l'ennemi (verre.ts) : juste au-dessus de l'image, sous tout le reste */
 .calque-verre{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 
@@ -334,8 +326,6 @@
 .plaque-int.danger .int-val b{color:#ffe1d9;text-shadow:0 0 12px rgba(255,90,70,.85),0 2px 4px #000}
 .plaque-int.garde .int-val b{text-shadow:0 0 12px rgba(150,200,255,.8),0 2px 4px #000}
 .plaque-int.boost .int-val b{color:#ffe7b0;text-shadow:0 0 12px rgba(216,180,101,.85),0 2px 4px #000}
-.plaque-int .int-felure{align-self:center}
-.int-felure.cachee small{color:var(--ink-2)}
 /* sur téléphone, « Faible contre » passe à droite du nom (l'étiquette de famille s'efface) : une ligne de gagnée,
    et l'intention ne chevauche plus le bas de la scène sur les téléphones de 844 px de haut */
 @media (max-width:899px){
@@ -345,3 +335,113 @@
   .ennemi-infos > .tags{grid-column:2;grid-row:1;justify-self:end;align-self:end;padding-bottom:2px}
   .ennemi-infos .tags .tag{display:none}
 }
+
+/* ---------- La menace lisible (26 octobre 2026) ----------
+   Bryan : le nom du boss recouvrait ceux qu'il va frapper, et la Fêlure était une gemme muette. La Fêlure devient une ligne
+   sous l'intention, dans la même plaque : quelle carte poser et ce que ça change, chiffres à l'appui. */
+.plaque-int{flex-wrap:wrap;row-gap:0}
+.plaque-int .int-corps{flex:1 1 0}
+.int-felure{flex:1 0 100%;display:flex;align-items:center;gap:8px;margin:6px -6px -6px;padding:5px 10px 5px 7px;
+  font-size:12.5px;line-height:1.3;color:var(--ink-2);text-wrap:pretty;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--fc,#cfe6ff) 18%,rgba(8,11,17,.75)),rgba(8,11,17,.55) 70%);
+  box-shadow:inset 0 1px 0 color-mix(in srgb,var(--fc,#cfe6ff) 45%,transparent)}
+.int-felure b{color:#fff;font-weight:700}
+.int-felure .freq{display:inline-block;min-width:1.25em;padding:0 3px;text-align:center;border-radius:3px;color:#fff;
+  background:color-mix(in srgb,var(--fc) 45%,rgba(8,11,17,.8));box-shadow:inset 0 0 0 1px var(--fc)}
+.int-felure .gain-flux{color:#cfe9ff;text-shadow:0 0 8px rgba(127,212,255,.8)}
+.int-felure .gemme{position:relative;display:grid;place-items:center;flex-shrink:0;width:28px;height:31px;color:var(--fc,#fff);background:var(--fc,#fff);
+  clip-path:polygon(50% 0,100% 24%,100% 76%,50% 100%,0 76%,0 24%)}
+.int-felure .gemme::before{content:"";position:absolute;inset:1.5px;clip-path:inherit;
+  background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--fc,#fff) 50%,#0b0f18),#0b0f18 80%)}
+.int-felure .gemme > *{position:relative;z-index:1}
+.int-felure .gemme .ico{position:absolute;width:13px;height:13px;top:3px;opacity:.75}
+.int-felure .gemme b{position:relative;margin-top:9px;font:700 14px/1 var(--display);color:#fff;text-shadow:0 0 6px var(--fc,#fff),0 1px 2px #000}
+.int-felure.prevue{color:#fff;background:linear-gradient(90deg,color-mix(in srgb,var(--fc) 38%,rgba(8,11,17,.7)),color-mix(in srgb,var(--fc) 12%,rgba(8,11,17,.55)))}
+.int-felure.prevue .gemme{animation:felure-prevue 1s ease-in-out infinite alternate}
+.int-felure.brisee,.int-felure.cachee{--fc:#9aa6b8}
+.int-felure.brisee .gemme .ico,.int-felure.cachee .gemme .ico{position:relative;top:auto;opacity:1;width:15px;height:15px}
+.int-felure.cachee .gemme .ico{display:none}
+.int-felure.cachee .gemme b{margin:0;font-size:15px}
+
+/* Téléphone : la scène se lit de haut en bas, sans rien superposer. L'intention en haut, le nom, les traits et la vie
+   en bas ; l'illustration reste derrière. Même avec de grandes polices, rien ne se chevauche. */
+@media (max-width:899px){
+  .scene-ennemi{display:flex;flex-direction:column;justify-content:space-between;gap:10px;padding:10px;flex:1 0 auto;max-height:none}
+  .scene-ennemi .intention{position:relative;top:auto;left:auto;align-self:flex-start;max-width:100%}
+  .scene-ennemi .ennemi-infos{position:relative;left:auto;right:auto;bottom:auto;margin-top:auto}
+}
+
+/* ---------- Le Flux en fiole de cristal ---------- */
+.flux .jauge-flux{flex:1;min-width:0;display:grid;gap:4px}
+.jf-nom{display:flex;align-items:baseline;gap:5px;font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#bfe3ff}
+.jf-nom .ico{width:13px;height:13px;align-self:center;color:#7fd4ff}
+.jf-nom b{margin-left:2px;font:700 15px/1 var(--display);letter-spacing:0;color:#fff;text-shadow:0 0 8px rgba(127,212,255,.9)}
+.jf-nom small{font-size:11px;letter-spacing:0;color:var(--quiet)}
+.jauge-flux.vide .jf-nom b{color:var(--ink-2);text-shadow:none}
+.jf-tube{position:relative;display:flex;gap:3px;height:12px;padding:2px;border-radius:7px;
+  background:linear-gradient(180deg,rgba(4,8,16,.95),rgba(20,30,48,.9));
+  box-shadow:inset 0 0 0 1px rgba(170,215,255,.32),inset 0 2px 3px rgba(0,0,0,.6),0 1px 0 rgba(205,239,255,.08)}
+.jf-tube::after{content:"";position:absolute;left:6px;right:6px;top:2px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);pointer-events:none}
+.jf-tube i{flex:1;border-radius:2px;background:rgba(120,160,230,.1);box-shadow:inset 0 0 0 1px rgba(150,190,255,.1)}
+.jf-tube i:first-child{border-radius:5px 2px 2px 5px}
+.jf-tube i:last-child{border-radius:2px 5px 5px 2px}
+.jf-tube i.plein{background:linear-gradient(180deg,#f2fbff 0%,#9fdcff 35%,#5b9cf0 70%,#7d6cf0 100%);
+  box-shadow:0 0 8px rgba(127,190,255,.85),inset 0 -1px 0 rgba(40,60,160,.6)}
+@media (prefers-reduced-motion:no-preference){
+  .jf-tube i.plein{background-size:100% 100%,200% 100%;animation:flux-vit 2.4s ease-in-out infinite alternate}
+}
+@keyframes flux-vit{from{filter:brightness(1)}to{filter:brightness(1.18) saturate(1.1)}}
+@media (min-width:900px){
+  .jf-tube{height:14px}
+  .jf-nom{font-size:12px}
+  .jf-nom b{font-size:17px}
+}
+
+/* Téléphone étroit : les puces du haut tiennent sur une ligne (« −3 » à côté de l'icône des Strates) */
+@media (max-width:420px){ .puce-mot{display:none} .combat-barre .puces{gap:4px} .combat-barre .puce{padding-inline:7px} }
+/* Téléphone de hauteur moyenne (ou grandes polices) : tout le combat tient sans défiler, la main n'est plus coupée */
+@media (max-width:899px) and (max-height:820px){
+  .ecran-combat{gap:5px}
+  .scene-ennemi{gap:8px;padding:8px 10px}
+  .int-felure{font-size:12px}
+  .scene-ennemi .ennemi-nom{font-size:22px}
+  .scene-ennemi .ennemi-infos{gap:4px}
+  .scene-ennemi .tags{display:flex}
+  .combattant{padding-block:5px}
+  .zone-chaine{padding:8px 10px 10px;gap:6px}
+  .zone-chaine .conseil{font-size:12.5px;line-height:1.35}
+  .geste.chaine,.place-vide{width:64px;height:96px}
+  .rail{min-height:98px}
+  .geste.main{width:66px;height:108px}
+  .actions-combat{padding-top:8px}
+  .actions-combat .btn{min-height:44px}
+}
+@media (min-width:900px){ .flux .jauge-flux{max-width:280px;margin-right:auto} }
+
+/* Téléphone, combat à plusieurs : les ennemis se rangent en colonne sur le bord droit de la scène,
+   l'intention et le nom gardent toute la largeur qui reste (plus de plaque écrasée entre les vignettes) */
+@media (max-width:899px){
+  .scene-ennemi.en-groupe{padding-right:62px}
+  .scene-ennemi.en-groupe .intention{max-width:100%}
+  .scene-ennemi.en-groupe .groupe-ennemis{top:8px;right:8px;bottom:8px;flex-direction:column;justify-content:space-between;gap:2px}
+  .scene-ennemi.en-groupe .ennemi-infos{display:flex;flex-direction:column}
+  .scene-ennemi.en-groupe .ennemi-nom{order:-1}
+  .scene-ennemi.en-groupe .vignette-ennemi.visee::after{top:16px;left:-9px;transform:none;border-top-color:transparent;border-right-color:#ffe2a8}
+}
+
+/* ---------- Le total de la chaîne (26 octobre 2026) : ce qui tombera si on lance, tout compris ---------- */
+.bilan{--cut:6px;margin-left:auto;display:inline-flex;align-items:center;gap:9px;padding:3px 9px 3px 8px;
+  background:linear-gradient(180deg,rgba(255,236,190,.1),rgba(255,236,190,0) 60%),rgba(8,11,17,.75);
+  box-shadow:inset 0 0 0 1px rgba(242,213,140,.55),0 0 12px rgba(242,213,140,.18);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.bilan small{font:600 10px/1 var(--mono);letter-spacing:.14em;color:#f2d58c}
+.bilan > span{display:inline-flex;align-items:center;gap:3px}
+.bilan .ico{width:13px;height:13px}
+.bilan b{font:700 17px/1 var(--display);color:#fff;font-variant-numeric:tabular-nums}
+.bilan .bl-atk .ico{color:#ff9c82}
+.bilan .bl-atk b{color:#fff1d6;text-shadow:0 0 10px rgba(255,170,90,.75)}
+.bilan .bl-garde .ico{color:#9fd0ff}
+.bilan .bl-soin .ico{color:#7CE3A0}
+.bilan.fatal{box-shadow:inset 0 0 0 1.5px #ffcf7a,0 0 16px rgba(255,190,90,.5)}
+.bilan.fatal small{color:#ffcf7a}
+@media (min-width:900px){ .bilan b{font-size:20px} .bilan small{font-size:11px} .bilan .ico{width:15px;height:15px} }
