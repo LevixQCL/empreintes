@@ -287,3 +287,19 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an owl-shaped half mask carved from dark teal-green chitin, its feather-like scales all green and teal, a pair of large round glowing golden owl eyes as the only warm color, catching the faintest light, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ, brown, rust, copper, red
 ```
 
+## Cartes du district : lumière ivoire
+
+Stimulant et Repli n'appartiennent à aucune lignée : lumière neutre, blanc ivoire et or pâle.
+
+### Stimulant — `stimulant.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a district medic's small brass auto-injector with a glass vial of glowing pale ivory liquid, a soft wave of white light rippling out from it, a rolled bandage beside it, the object softly lit by pale ivory-white light with small touches of pale gold, neutral soft lighting, cool grey-blue shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, needle
+```
+
+### Repli — `repli.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a battered round shield made from an old riveted manhole cover, a worn leather strap on its back, deep dents and scratches, propped upright, the object softly lit by pale ivory-white light with small touches of pale gold, neutral soft lighting, cool grey-blue shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, needle
+```
+

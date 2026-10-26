@@ -236,7 +236,7 @@ Les règles Firestore valident chaque entrée (champs, bornes, profondeur qui ne
 date d'arrivée = maintenant quand la profondeur monte). Les pseudos sont uniques : chacun est réservé dans `pseudos/{clé}` (`reserver` dans `src/net/classement.ts`, une transaction), la clé ignore majuscules, accents et séparateurs (`clePseudo`, même table que les règles), le Tableau n'accepte que le pseudo réservé par ce compte, un filtre écarte grossièretés et faux noms officiels (`pseudoInterdit`), et on en change au plus une fois par semaine (`DELAI_PSEUDO`, vérifié dans le jeu). En développement : `__tableau(entrées, uid)` dans la console pour l'essayer sans compte.
 
 **Les pillages** (26 octobre 2026, décidé avec Bryan ; `src/core/partie/pillages.ts`, `src/ui/pillages.ts`).
-La Tour du Noyau ouvre les « Archipels voisins » après la Strate −1 : une carte marine, ton archipel en bas, six archipels
+Le Port du district (fermé jusque-là) s'ouvre après la Strate −1 sur les « Archipels voisins » (Bryan : « il faut un bateau pour aller piller ») : une carte marine, ton archipel en bas, six archipels
 autour, rangés du plus facile au plus dur. Un pillage = un seul combat contre la garnison de l'archipel (ses trois Porteurs,
 joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `garde-bio`, `garde-reso` dans `donnees.ts`).
 - *Force* : `K × √(puissance des cartes × PV)` des deux côtés (`forceGarnison`, K = 0,0245). Réglé au robot : le joueur moyen

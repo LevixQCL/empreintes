@@ -4,7 +4,7 @@
 
 import { porteurDef } from '../core/donnees';
 import { PILLAGE, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadePourDepart, etatPillage, faitsDuJour, forceEscouade, majJetons, strateVaincue, type Cible, type Jeu } from '../core/jeu';
-import { vignetteArchipel, visuel } from './art';
+import { ageArchipel, vignetteArchipel, visuel } from './art';
 import { avatar, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { ICO, icone } from './icones';
 import { echap } from './outils';
@@ -14,8 +14,6 @@ import { COULEUR } from './vue';
 const PLACES: [number, number][] = [[16, 13], [50, 13], [84, 13], [14, 45], [50, 45], [86, 45]];
 const MOI: [number, number] = [50, 80];
 
-/** L'âge d'un archipel selon sa profondeur : plus il a creusé, plus il a grandi */
-const ageDe = (strate: number) => (strate <= 2 ? 1 : strate <= 5 ? 2 : strate <= 9 ? 3 : 4);
 
 /** Les archipels de la carte et ce qu'il faut pour les afficher */
 export function cartePillages(j: Jeu, now: number, enLigne: Cible[] = []) {
@@ -31,7 +29,7 @@ export function htmlPillages(e: EcranDistrict): string {
   const { cibles, force, faits } = cartePillages(j, e.now, e.pillagesEnLigne ?? []);
   const choisie = cibles.find((c) => c.id === e.pillageCible) ?? cibles.find((c) => !faits.includes(c.id)) ?? cibles[0];
 
-  let h = entete('Pillages · La mer des piliers', 'Archipels voisins', `<button type="button" class="btn-icone" data-action="coupe" aria-label="Retour à la Tour">${ICO.retour}</button>`);
+  let h = entete('Le Port · La mer des piliers', 'Archipels voisins', `<button type="button" class="btn-icone" data-action="archipel" aria-label="Retour au district">${ICO.retour}</button>`);
 
   // les jetons et le coffre : ce qu'on peut faire, ce qu'on risque
   h += `<section class="pl-etat" aria-label="Jetons et coffre">`
@@ -51,7 +49,7 @@ export function htmlPillages(e: EcranDistrict): string {
       const d = difficulte(c.force / force);
       const fait = faits.includes(c.id);
       return `<button type="button" class="pl-ile d${d.niveau}${c === choisie ? ' choisie' : ''}${fait ? ' faite' : ''}" style="--x:${x}%;--y:${y}%" data-action="pillage-voir" data-id="${echap(c.id)}" aria-pressed="${c === choisie}" aria-label="${echap(`${c.nom} : ${fait ? 'déjà pillé aujourd’hui' : d.nom}`)}">`
-        + `<span class="pl-medaillon"><img src="${vignetteArchipel(ageDe(c.strate))}" alt="" decoding="async" loading="lazy">${fait ? `<span class="pl-fait">${ICO.ok}</span>` : ''}</span>`
+        + `<span class="pl-medaillon"><img src="${vignetteArchipel(ageArchipel(c.strate))}" alt="" decoding="async" loading="lazy">${fait ? `<span class="pl-fait">${ICO.ok}</span>` : ''}</span>`
         + `<span class="pl-nom">${echap(c.nom)}</span><span class="pl-diff">${fait ? 'Pillé' : d.nom}</span></button>`;
     }).join('')
     + `<div class="pl-moi" style="--x:${MOI[0]}%;--y:${MOI[1]}%"><span class="pl-medaillon"><img src="${vignetteArchipel(age)}" alt="" decoding="async"></span><span class="pl-nom">${echap(j.directeur?.nom ?? 'Ton district')}</span></div>`
@@ -81,11 +79,5 @@ function ficheCible(j: Jeu, c: Cible, force: number, fait: boolean, jetons: numb
     + `<button type="button" class="btn prim large" data-action="pillage-preparer" data-id="${echap(c.id)}"${raison ? ' disabled' : ''}>${ICO.grappin}Préparer le pillage</button></section>`;
 }
 
-/** L'entrée des pillages dans la Tour du Noyau */
-export function appelPillages(j: Jeu, now: number): string {
-  if (strateVaincue(j) < PILLAGE.strateMin) return `<p class="tr-note">${ICO.verrou}Les pillages s’ouvrent quand le gardien de la Strate −1 est vaincu.</p>`;
-  majJetons(j, now);
-  const n = etatPillage(j).jetons;
-  return `<button type="button" class="gt-bandeau tr-pillages" data-action="pillages"><span class="gt-bandeau-ico">${ICO.grappin}</span>`
-    + `<span><small>Archipels voisins</small><strong>Pille un archipel pour des composants · ${n} / ${PILLAGE.jetonsMax} jetons</strong></span>${ICO.lancer}</button>`;
-}
+/** Le Port est ouvert : la Strate −1 est vaincue, le bateau peut quitter le ponton */
+export const portOuvert = (j: Jeu) => j.chambre && strateVaincue(j) >= PILLAGE.strateMin;

@@ -10,7 +10,7 @@ const base = new URL('art/', document.baseURI).href;
 /** à changer quand les portraits sont repeints sous le même nom : le navigateur recharge alors les nouveaux au lieu de garder les anciens en cache */
 const VERSION_PORTRAITS = 2;
 /** idem pour les illustrations des cartes */
-const VERSION_CARTES = 12;
+const VERSION_CARTES = 13;
 const PORTEURS_ILLUSTRES = new Set(['ilka', 'doran', 'vela', 'sasha', 'nuit', 'aurel', 'coursier', 'docker', 'guetteur', 'kessa', 'liane', 'joss']);
 
 /** Modules illustrés : id du Module dans donnees.ts → fichier */
@@ -193,6 +193,8 @@ export const reflets = `${base}district/mer-reflets.webp`;
  *  (23 octobre 2026) : les anciennes boucles montraient les anciens tableaux ; on rebranche les nouvelles dès qu'elles existent. */
 const AGES_ANIMES = new Set<number>([1, 2, 3, 4]);
 /** Un archipel vu de loin (carte des pillages) : le tableau du district à cet âge */
+/** L'âge d'un archipel d'après sa profondeur : plus il a creusé, plus il a grandi */
+export const ageArchipel = (strate: number) => (strate <= 2 ? 1 : strate <= 5 ? 2 : strate <= 9 ? 3 : 4);
 export const vignetteArchipel = (age: number) => `${base}district/age-${Math.max(1, Math.min(age, AGES_PEINTS))}.webp`;
 export function sceneDistrict(niveauNoyau: number, maintenant = new Date()): { age: 1 | 2 | 3 | 4; url: string; mer: string; horizon: number; video: string | null; nuit: boolean } {
   const age = visuel(niveauNoyau);

@@ -9,7 +9,7 @@ import { NOMS_EFFET, libelleEffet } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
 import { DISTRICT, PILLAGE } from '../core/jeu';
-import { cadreMetal, fondCombat, illustrationEnnemi, illustrationModule, portrait, socleAction, textureMetal, cadrePlein } from './art';
+import { ageArchipel, vignetteArchipel, cadreMetal, fondCombat, illustrationEnnemi, illustrationModule, portrait, socleAction, textureMetal, cadrePlein } from './art';
 import { couleurFrequence } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
@@ -311,11 +311,12 @@ const zoneDuLieu = (x: Expedition) => x.carte?.zone ?? Math.max(0, ZONES.indexOf
 
 export function htmlLieu(x: Expedition): string {
   const zone = zoneDuLieu(x);
-  const img = fondCombat(zone);
+  // un pillage se joue sur l'archipel attaqué, en pleine mer, pas dans une Strate
+  const img = x.pillage ? vignetteArchipel(ageArchipel(x.strate)) : fondCombat(zone);
   const salle = x.carte?.salles[x.carte.position]?.type;
   const t = performance.now() / 1000;
   const phase = (duree: number, decalage = 0) => `-${((t + decalage * duree) % duree).toFixed(2)}s`;
-  let h = `<div class="fond-lieu z-${zone}${salle === 'gardien' || salle === 'elite' ? ' gardien' : ''}" aria-hidden="true"${img ? ` style="--decor:url(${img})"` : ''}>`
+  let h = `<div class="fond-lieu ${x.pillage ? 'z-pillage' : `z-${zone}`}${salle === 'gardien' || salle === 'elite' ? ' gardien' : ''}" aria-hidden="true"${img ? ` style="--decor:url(${img})"` : ''}>`
     + `<span class="fl-image" style="animation-delay:${phase(90)}"></span><span class="fl-voile"></span><span class="fl-lueur"></span>`;
   for (const p of PARTICULES) {
     h += `<i class="fl-p${p.eclat ? ' eclat' : ''}" style="--x:${p.x.toFixed(1)}%;--y:${p.y.toFixed(1)}%;--s:${p.taille.toFixed(1)}px;--d:${p.duree.toFixed(1)}s;--dx:${p.derive.toFixed(0)}px;animation-delay:${phase(p.duree, p.decalage)}"></i>`;
@@ -505,8 +506,8 @@ function htmlEcranCombat(e: Ecran): string {
   const lancerVise = guide && s.chaine.length > 0 && (libres === 0 || (s.tour === 2 && a.suite >= 3));
 
   let h = `<div class="ecran ecran-jeu ecran-combat${verrou ? ' verrouille' : ''}${guide ? ` guide lecon-t${Math.min(s.tour, 4)}` : ''}">`;
-  h += `<header class="combat-barre"><div class="puces"><span class="puce">${ICO.strate}${e.x.tutoriel ? lieu : `<span class="puce-mot">Strate </span>−${e.x.strate}`}</span>`
-    + (e.x.tutoriel ? '' : e.x.carte ? `<span class="puce">${e.x.carte.salles[e.x.carte.position]?.type === 'gardien' ? 'Gardien' : e.x.carte.salles[e.x.carte.position]?.type === 'elite' ? 'Salle scellée' : `Combat ${(e.x.gagnes ?? 0) + 1}`}</span>` : `<span class="puce">Combat ${e.x.index + 1}/${e.x.sequence.length}</span>`)
+  h += `<header class="combat-barre"><div class="puces">${e.x.pillage ? `<span class="puce">${ICO.grappin}<span class="puce-mot">Pillage · </span>${echap(e.x.pillage.nom)}</span>` : `<span class="puce">${ICO.strate}${e.x.tutoriel ? lieu : `<span class="puce-mot">Strate </span>−${e.x.strate}`}</span>`}`
+    + (e.x.tutoriel || e.x.pillage ? '' : e.x.carte ? `<span class="puce">${e.x.carte.salles[e.x.carte.position]?.type === 'gardien' ? 'Gardien' : e.x.carte.salles[e.x.carte.position]?.type === 'elite' ? 'Salle scellée' : `Combat ${(e.x.gagnes ?? 0) + 1}`}</span>` : `<span class="puce">Combat ${e.x.index + 1}/${e.x.sequence.length}</span>`)
     + `<span class="puce">Tour ${s.tour}</span>`
     + (s.condition && CONDITIONS[s.condition] ? `<span class="puce condition" tabindex="0" title="${echap(CONDITIONS[s.condition]!.texte)}" aria-label="${echap(`${CONDITIONS[s.condition]!.nom} : ${CONDITIONS[s.condition]!.texte}`)}">${ICO.cristal}${echap(CONDITIONS[s.condition]!.nom)}</span>` : '')
     + `</div>`
