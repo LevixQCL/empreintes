@@ -2,7 +2,7 @@
 // tous les Porteurs (une grille par lignée, 22 octobre 2026), et la collection (htmlCartes dans district.ts).
 // La fiche complète d'un Porteur : qui il est, son état (PV, niveau, Usure), sa Marque, sa lignée, son poste et ses cartes.
 
-import { BATIMENTS, GESTES_SPECIAUX, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
+import { BATIMENTS, GESTES_SPECIAUX, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
 import { composantsNiveau, doublonsRequis } from '../core/collection';
 import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
@@ -135,14 +135,16 @@ function ligneCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean): strin
   const cle = g.carte && j.collection[g.carte] ? g.carte : null;
   const m = cle ? moduleDef(cle) : null;
   const c = cle ? j.collection[cle]! : null;
-  const img = cle ? illustrationModule(cle) : null;
+  // le paquetage du district n'est pas dans la collection : son illustration vient de son identifiant
+  const origine = g.porteur === null ? ORIGINE_PAQUETAGE[g.id] : undefined;
+  const img = cle ? illustrationModule(cle) : origine ? illustrationModule(g.id) : null;
   const effet = g.effet
     ? `<span class="eq-effet"><b>${echap(NOMS_EFFET[g.effet.type])}</b> ${echap(texteEffet(g.effet))}</span>`
     : `<span class="eq-effet sans">${NOM_ACTION[g.type]}</span>`;
   const corps = `<span class="eq-vignette" style="--m:${m ? COULEUR_RARETE[m.rarete] : 'rgba(205,239,255,.3)'}">`
     + (img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : `<span class="eq-sans">${g.porteur ? ICO.cartes : ICO.district}</span>`)
     + cristalFreq(g) + `</span>`
-    + `<span class="eq-txt"><strong>${echap(g.nom)}${c ? `<small>Niv. ${c.niveau}</small>` : ''}${g.lourd ? '<small class="eq-lourd">2 places</small>' : ''}${cle && prete(cle) ? `<small class="eq-monte">${ICO.monter}Peut monter</small>` : ''}</strong>${effet}</span>`
+    + `<span class="eq-txt"><strong>${echap(g.nom)}${c ? `<small>Niv. ${c.niveau}</small>` : ''}${g.lourd ? '<small class="eq-lourd">2 places</small>' : ''}${origine ? `<small class="eq-origine">${echap(origine.batiment)}</small>` : ''}${cle && prete(cle) ? `<small class="eq-monte">${ICO.monter}Peut monter</small>` : ''}</strong>${effet}</span>`
     + socle(g.type, g.v, 'eq-force')
     + (cle && !j.vus.cartes.includes(cle) ? `<span class="eq-neuve">Nouvelle</span>` : '');
   return cle
@@ -174,7 +176,7 @@ function bilanDeck(j: Jeu, esc: string[]): string {
   }).join('');
   // une seule phrase de conseil, la plus utile
   const conseil = manque ? `<b class="rouge">Il manque ${manque} carte${manque > 1 ? 's' : ''}</b> pour descendre (${DISTRICT.deckMin} au moins) : confie-en à un Porteur plus bas.`
-    : !cartes.some((g) => g.type === 'soin' && g.porteur) ? `<b class="rouge">Aucun soin</b> dans les cartes de tes Porteurs : seul le Stimulant du district soigne.`
+    : !cartes.some((g) => g.type === 'soin' && g.porteur) ? `<b class="rouge">Aucun soin</b> dans les cartes de tes Porteurs : seul le Stimulant du paquetage soigne.`
     : suite.length >= 2 ? `Ta plus longue suite va de <b>${suite[0]} à ${suite[suite.length - 1]}</b>${trous.length ? `. Rien en <b>${trous.join(', ')}</b> : ${trous.length > 1 ? 'ces chiffres coupent' : 'ce chiffre coupe'} tes Résonances` : ' : toute l’échelle est couverte'}${jokers ? ` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} un trou` : ''}.`
     : 'Des Fréquences qui se suivent font des Résonances : ajoute des chiffres voisins.';
   return `<section class="eq-bilan" aria-label="Le deck de l’escouade">`
@@ -281,8 +283,8 @@ function monEscouade(e: EcranDistrict): string {
   else h += `<p class="eq-descend vide">${ICO.porteurs}<span><strong>Une équipe de réserve</strong>Compose-la pour un autre ennemi, une autre lignée ou une Épreuve : un Porteur n’est que dans une seule escouade, et ses cartes le suivent.</span></p>`;
   if (esc.length) h += bilanDeck(j, esc);
   h += `<div class="eq-trio">${[0, 1, 2].map((i) => blocPorteur(j, esc[i], i, verrou, prete)).join('')}</div>`;
-  // les cartes du district, toujours là
-  h += `<section class="eq-district"><div class="eq-cartes-tete"><h3>${ICO.district}Cartes du district <span>${GESTES_SPECIAUX.length}</span></h3><small>Toujours dans le deck, quelle que soit l’escouade</small></div>`
+  // le paquetage du district, toujours là
+  h += `<section class="eq-district"><div class="eq-cartes-tete"><h3>${ICO.district}Paquetage du district <span>${GESTES_SPECIAUX.length}</span></h3><small>Fourni à chaque escouade qui descend : il reste même si un Porteur tombe</small></div>`
     + `<ul class="eq-cartes">${GESTES_SPECIAUX.map((g) => ligneCarte(j, g, prete)).join('')}</ul></section>`;
   return h;
 }

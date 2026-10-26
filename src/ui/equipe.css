@@ -148,6 +148,7 @@
 .eq-txt strong{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 7px;font-size:15px;font-weight:600;line-height:1.2;color:#F6F2EA}
 .eq-txt strong small{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--x-doux)}
 .eq-txt strong small.eq-lourd{color:#E8B86A}
+.eq-txt strong small.eq-origine{font-family:var(--body);font-weight:600;color:#CDEFFF}
 .eq-effet{font-size:12.5px;line-height:1.35;color:var(--x-txt)}
 .eq-effet b{color:var(--x-or);font-weight:600}
 .eq-effet.sans{color:var(--x-doux)}
