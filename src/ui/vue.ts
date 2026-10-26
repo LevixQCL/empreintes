@@ -371,9 +371,8 @@ function ligneFelure(s: CombatEtat, prevue: boolean, resonne: boolean): string {
     : it.type === 'bouclier' ? `bouclier +${it.v} → <b>+${reduit(it.v)}</b>`
     : it.type === 'soin' ? `soin +${it.v} → <b>+${reduit(it.v)}</b>`
     : 'il vacille';
-  // le Flux ne vient que si la chaîne fait aussi une suite (3, 4, 5)
-  const flux = s.flux >= REGLES.fluxMax ? '' : prevue ? (resonne ? `, <b class="gain-flux">+${REGLES.felure.flux} Flux</b>` : '')
-    : `, <b class="gain-flux">+${REGLES.felure.flux} Flux</b> en suite`;
+  // le Flux en plus ne s'annonce que quand la chaîne posée fait une suite (3, 4, 5) : avant, la ligne dit juste ce que la carte brise
+  const flux = prevue && resonne && s.flux < REGLES.fluxMax ? `, <b class="gain-flux">+${REGLES.felure.flux} Flux</b>` : '';
   return `<span class="int-felure${prevue ? ' prevue' : ''}" style="--fc:${couleurFrequence(f)}"><span class="gemme">${ICO.fele}<b>${f}</b></span>`
     + `<span>${prevue ? '<b>Ta chaîne la brise</b>' : `Pose un <b class="freq">${f}</b>`} : ${effet}${flux}</span></span>`;
 }
