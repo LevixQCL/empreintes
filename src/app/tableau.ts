@@ -21,6 +21,8 @@ export async function reseauTableau() {
 /** Le Tableau entier coûte une lecture par directeur : on ne le relit pas plus d'une fois toutes les 5 minutes
  *  en l'ouvrant (le bouton « Actualiser » force la lecture) */
 const RELIRE_APRES = 5 * 60_000;
+/** Publier coûte une écriture : hors nouvelle Strate, au plus une fois toutes les 5 minutes */
+const PUBLIER_APRES = 5 * 60_000;
 
 /** Sa propre entrée seulement (une lecture) : de quoi publier sans lire tout le Tableau, au lancement du jeu */
 export async function lireMonEntree() {
@@ -72,6 +74,11 @@ async function publierTableau() {
   if (!app.monEntreeLue) { await lireMonEntree(); return; }
   const e = entreeAPublier(app.jeu, app.uid, app.jeu.directeur.nom, app.monEntree, Date.now(), J.semaineDe(Date.now()));
   if (!e || !aChange(e, app.monEntree)) return;
+  // une Strate de plus ou un nouveau pseudo partent tout de suite (le premier arrivé passe devant) ;
+  // le Registre et le reste attendent 5 minutes
+  const attente = dernierePublication + PUBLIER_APRES - Date.now();
+  const urgent = !app.monEntree || e.profondeur !== app.monEntree.profondeur || e.nom !== app.monEntree.nom;
+  if (!urgent && attente > 0) { planifierPublication(attente); return; }
   // le pseudo doit être réservé à ce compte (sauvegarde d'avant les réservations, ou autre appareil)
   if (app.pseudoReserve !== e.cle) {
     try {

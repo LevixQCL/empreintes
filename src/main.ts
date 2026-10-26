@@ -12,7 +12,7 @@ import { app, compteEtat, G, K, racine, reduit } from './app/etat';
 import { brancherChaine } from './app/chaine';
 import { battre } from './app/horloge';
 import { afficher } from './app/rendu';
-import { demarrerCompte, sauver } from './app/synchro';
+import { demarrerCompte, envoyer, sauver } from './app/synchro';
 
 initToucher(racine, reduit);
 
@@ -47,7 +47,11 @@ brancherChaine();
 // ---------- Le temps qui passe ----------
 
 setInterval(battre, 1000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) { J.tick(app.jeu, Date.now()); sauver(); if (app.mode === 'district') afficher(); } });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { void envoyer(); return; }
+  J.tick(app.jeu, Date.now()); sauver(); if (app.mode === 'district') afficher();
+});
+addEventListener('pagehide', () => void envoyer());
 
 // ---------- Démarrage ----------
 

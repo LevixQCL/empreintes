@@ -9,6 +9,13 @@ import { afficher } from './rendu';
 import { lireMonEntree, planifierPublication } from './tableau';
 
 let minuteur: number | undefined;
+/** la partie à envoyer au compte (la plus récente), et quand on l'a envoyée la dernière fois */
+let enAttente: Enveloppe | null = null;
+let derniereEcriture = 0;
+
+/** L'appareil garde la partie à chaque geste ; le compte en ligne la reçoit au plus une fois par minute
+ *  (une écriture par geste viderait vite le quota gratuit de Firebase), et tout de suite quand on quitte le jeu */
+const ECRIRE_APRES = 60_000;
 
 /** la sauvegarde du compte a été lue et comparée : avant ça, on n'envoie rien (on écraserait une partie plus avancée) */
 let reconcilie = false;
@@ -18,8 +25,8 @@ export function sauver() {
   // le joueur vient de commencer (intro vue) : le compte invisible est créé maintenant, pas à la simple visite
   if (app.compte && !compteEtat.utilisateur && compteEtat.pret && app.jeu.introVue) app.compte.creerInvisible();
   if (app.compte && app.uid && reconcilie) {
-    clearTimeout(minuteur);
-    minuteur = window.setTimeout(() => pousser(env), 1500);
+    enAttente = env;
+    if (minuteur === undefined) minuteur = window.setTimeout(envoyer, Math.max(1500, derniereEcriture + ECRIRE_APRES - Date.now()));
     planifierPublication();
   }
 }
@@ -46,9 +53,19 @@ export function restaurerSecours() {
   K.fin = finPour();
 }
 
+/** Envoie tout de suite la partie en attente (le joueur quitte le jeu ou passe à une autre application) */
+export async function envoyer() {
+  clearTimeout(minuteur);
+  minuteur = undefined;
+  const env = enAttente;
+  enAttente = null;
+  if (env) await pousser(env);
+}
+
 async function pousser(env: Enveloppe) {
   if (!app.compte || !app.uid) return;
   compteEtat.synchro = 'en-cours';
+  derniereEcriture = Date.now();
   try {
     await app.compte.ecrireDistante(app.uid, env);
     compteEtat.synchro = 'ok';
@@ -119,6 +136,8 @@ export async function demarrerCompte() {
     app.uid = u?.uid ?? null;
     compteEtat.synchro = 'aucune';
     G.entrees = []; G.lu = 0; G.etat = 'repos'; app.monEntree = null; app.monEntreeLue = false; reconcilie = false;
+    // une partie en attente pour l'ancien compte ne part pas sur le nouveau (la réconciliation s'en charge)
+    clearTimeout(minuteur); minuteur = undefined; enAttente = null;
     if (app.uid) {
       // à la connexion (ou au premier lancement connecté), le jeu demande un pseudo s'il n'y en a pas encore,
       // après avoir récupéré la sauvegarde du compte : elle en a peut-être déjà un
@@ -144,6 +163,8 @@ export async function actionCompte(f: () => Promise<void>) {
   compteEtat.erreur = '';
   afficher();
   try {
+    // la dernière progression part sur le compte actuel avant d'en changer
+    await envoyer();
     await f();
   } catch (e) {
     compteEtat.erreur = app.compte.messageErreur(e);
