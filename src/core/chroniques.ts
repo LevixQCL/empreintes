@@ -60,7 +60,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'caves', livre: 1, titre: 'L’année des caves', epoque: '2026', image: '01-on-savait',
+    id: 'caves', livre: 1, titre: 'L’année des caves', epoque: '2026', image: 'chap-caves',
     paragraphes: [
       'Ma mère est née en 2026. Tu le liras plus loin, dit en passant, comme on dit ces choses-là. Je veux revenir dessus, parce que les années qui ont suivi sa naissance sont celles où tout aurait encore pu tourner autrement, et que Nell me les a racontées plus souvent que toutes les autres.',
       'Nell avait trente ans. Elle vivait dans une ville côtière, dans une maison qui avait déjà sa ligne bleue peinte sur le mur, et elle était enceinte d’un enfant qu’elle n’avait pas prévu et qu’elle attendait déjà comme une fête. Cet été-là, trois vagues de chaleur se sont suivies sans laisser respirer personne. Quarante degrés le jour, trente-cinq la nuit. Les hôpitaux ouvraient des « salles fraîcheur » où l’on venait dormir sur des lits de camp, comme pendant une inondation. Les fleuves étaient si bas que les centrales devaient ralentir, faute d’eau pour se refroidir.',
@@ -89,7 +89,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'detroit', livre: 1, titre: 'Le détroit', epoque: '2027', image: '02-ailleurs',
+    id: 'detroit', livre: 1, titre: 'Le détroit', epoque: '2027', image: 'chap-detroit',
     paragraphes: [
       'Au printemps de 2027, des navires ont cessé d’arriver. Il n’y a pas eu de grande bataille, pas d’image qui reste. Quelque part, un passage de mer étroit, par où transitait une bonne part de tout ce que le monde s’achetait, a été bloqué. Des mines, des menaces, des assurances qui refusaient de couvrir les cargos. Les navires attendaient au large, par centaines, comme des voitures devant un pont fermé.',
       'En deux mois, on a manqué de tout ce qu’on ne savait pas fabriquer près de chez soi. Des pièces, des engrais, des médicaments. La pharmacie de Nell affichait chaque matin une liste de ce qu’elle n’avait plus. Le lait pour bébé a disparu des rayons trois semaines. Nell a appris à faire la queue avec une poussette, et à reconnaître les autres mères à la façon dont elles comptaient leurs pièces.',
@@ -118,7 +118,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'pieds-mouilles', livre: 1, titre: 'Les pieds mouillés', epoque: '2028', image: '03-tempetes',
+    id: 'pieds-mouilles', livre: 1, titre: 'Les pieds mouillés', epoque: '2028', image: 'chap-pieds-mouilles',
     paragraphes: [
       'Dans ton district, quand quelqu’un a tout perdu, on dit qu’il « a les pieds mouillés ». Les jeunes croient que ça vient des Fondations, des inondations des bas-fonds. Ça vient de 2028, et de la maison de Nell.',
       'Les assureurs avaient commencé à se retirer des côtes deux ans plus tôt. Une lettre polie, un paragraphe, et votre maison n’était plus assurée contre l’eau. Sans assurance, plus de prêt ; sans prêt, plus d’acheteur. En un an, les maisons du bord de mer ont perdu la moitié de leur valeur, puis presque tout. Ceux qui les avaient achetées à crédit devaient encore payer une maison que plus personne ne voulait, et que la mer allait prendre. Nell disait : « Nous étions propriétaires d’une dette avec vue sur l’eau. »',
