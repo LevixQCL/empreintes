@@ -239,7 +239,7 @@ date d'arrivée = maintenant quand la profondeur monte). Les pseudos sont unique
 La Tour du Noyau ouvre les « Archipels voisins » après la Strate −1 : une carte marine, ton archipel en bas, six archipels
 autour, rangés du plus facile au plus dur. Un pillage = un seul combat contre la garnison de l'archipel (ses trois Porteurs,
 joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `garde-bio`, `garde-reso` dans `donnees.ts`).
-- *Force* : `K × √(puissance des cartes × PV)` des deux côtés (`forceGarnison`, K = 0,026). Réglé au robot : le joueur moyen
+- *Force* : `K × √(puissance des cartes × PV)` des deux côtés (`forceGarnison`, K = 0,0245). Réglé au robot : le joueur moyen
   qui attaque sa propre garnison gagne une fois sur deux, du deck de départ aux cartes en or niveau 10. Les chances sont très
   tranchées (98 % à 0,85 fois sa force, 50 % à égalité, 18 % à 1,08, presque rien à 1,2) : la carte ne propose que de 0,85 à 1,15.
 - *Butin* : 2 combats de la Strate du défenseur (`butinCombat`) × l'écart (×0,4 contre bien plus faible, ×2 contre plus fort :

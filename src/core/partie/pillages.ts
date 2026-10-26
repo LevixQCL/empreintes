@@ -35,9 +35,9 @@ export const PILLAGE = {
   /**
    * La force des gardes : K × √(puissance des cartes × PV de la garnison). Réglé au robot (26 octobre 2026) :
    * le joueur moyen qui attaque sa propre garnison gagne une fois sur deux, du deck de départ aux cartes en or niveau 10
-   * (K mesuré entre 0,025 et 0,028 selon le deck).
+   * (K mesuré entre 0,0235 et 0,0263 selon le deck ; refait après la Fêlure du 26 octobre).
    */
-  K: 0.026,
+  K: 0.0245,
   /**
    * Chances du joueur moyen selon l'écart de force (force des gardes / force de l'escouade) : très tranchées,
    * 98 % à 0,85, 82 % à 0,92, 50 % à 1, 18 % à 1,08, presque rien à 1,2 (mesuré au robot, courbe logistique)
