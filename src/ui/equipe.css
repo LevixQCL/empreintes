@@ -193,11 +193,11 @@
   .eq-conseil{grid-column:2}
   .eq-actions{grid-column:1 / -1}
   .eq-pile{height:56px}
-  /* chaque Porteur occupe les 5 mêmes rangées (tête, Marque, alerte, titre, cartes) : les colonnes s'alignent */
+  /* chaque Porteur occupe les 6 mêmes rangées (tête, Marque, alerte, titre, Charge, cartes) : les colonnes s’alignent */
   .eq-escouades{max-width:720px}
   .eq-descend{max-width:720px}
   .eq-trio{grid-template-columns:repeat(3,minmax(0,1fr));column-gap:26px;row-gap:0;align-items:start}
-  .eq-porteur{grid-row:span 5;grid-template-rows:subgrid;row-gap:10px}
+  .eq-porteur{grid-row:span 6;grid-template-rows:subgrid;row-gap:10px}
   .eq-porteur.vide{grid-template-rows:auto}
   .eq-alerte:empty{display:block}
   .eq-marque{align-self:stretch}

@@ -3,8 +3,8 @@
 // La fiche complète d'un Porteur : qui il est, son état (PV, niveau, Usure), sa Marque, sa lignée, son poste et ses cartes.
 
 import { BATIMENTS, GESTES_SPECIAUX, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
-import { composantsNiveau, doublonsRequis } from '../core/collection';
-import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
+import { CHARGE, composantsNiveau, doublonsRequis } from '../core/collection';
+import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES } from '../core/regles';
@@ -14,7 +14,7 @@ import type { GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
 import { illustrationBatiment, illustrationModule, portrait, socleAction } from './art';
 import { COULEUR_RARETE, couleurFrequence, faceCarte } from './carte';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, voletsEscouade, type EcranDistrict } from './coquille';
-import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugePv, plusLongueSuite } from './district';
+import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugeCharge, jaugePv, plusLongueSuite } from './district';
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
 import { ICO } from './icones';
 import { COULEUR } from './vue';
@@ -224,7 +224,10 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
   const portees = new Set(Object.values(j.porteurs).flatMap((x) => x.modules));
   const attendent = Object.keys(j.collection).filter((k) => !portees.has(k) && moduleDef(k).lignee === p.lignee).length;
   const raison = raisonHorsEscouade(j, id);
-  const alerte = raison && !j.expedition
+  const trop = chargePortee(j, id) > chargeMax(j, id);
+  const alerte = trop && !j.expedition
+    ? `<p class="eq-alerte">${ICO.cristal}<span>Trop lourd : ${chargePortee(j, id)} de Charge sur ${chargeMax(j, id)}. Reprends-lui une carte pour qu’il descende.</span></p>`
+    : raison && !j.expedition
     ? `<p class="eq-alerte">${ICO.verrou}<span>${echap(raison.replace(/\.$/, ''))} : ${IL.has(id) ? 'il' : 'elle'} ne pourra pas descendre.</span></p>`
     : textePosteQuitte(j, id) && !j.expedition ? `<p class="eq-alerte doux">${ICO.ouvrier}<span>Au départ, ${echap(textePosteQuitte(j, id)!)}</span></p>`
     : d.usure >= usureMax(id) * 0.5 ? `<p class="eq-alerte">${ICO.soin}<span>Usure élevée : −${Math.floor(d.usure)} PV en combat. La Clinique la soigne au district.</span></p>`
@@ -242,8 +245,9 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
     + blocMarque(j, id) + alerte
     + `<div class="eq-cartes-tete"><h3>${ICO.cartes}Ses cartes <span class="${places ? '' : 'plein'}">${nc} / ${DISTRICT.cartesMax}</span></h3>`
     + `<button type="button" class="eq-gerer" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''}>${ICO.greffe}<span>${parti ? 'À son retour' : 'Gérer ses cartes'}</span></button></div>`
+    + jaugeCharge(chargePortee(j, id), chargeMax(j, id))
     + `<ul class="eq-cartes">${gestes.map((g) => ligneCarte(j, g, prete)).join('')}`
-    + (places > 0 && !parti ? `<li><button type="button" class="eq-carte libre" data-action="deck" data-id="${id}"><span class="eq-vignette vide">${ICO.place}</span><span class="eq-txt"><strong>${places} place${places > 1 ? 's' : ''} libre${places > 1 ? 's' : ''}</strong>`
+    + (places > 0 && !parti ? `<li><button type="button" class="eq-carte libre" data-action="deck" data-id="${id}"><span class="eq-vignette vide">${ICO.place}</span><span class="eq-txt"><strong>${places} place${places > 1 ? 's' : ''} libre${places > 1 ? 's' : ''} · piochée${places > 1 ? 's' : ''} vide${places > 1 ? 's' : ''}</strong>`
       + `<span class="eq-effet sans">${attendent ? `${attendent} carte${attendent > 1 ? 's' : ''} de sa lignée ${attendent > 1 ? 'attendent' : 'attend'} dans ta collection` : 'Aucune carte libre de sa lignée pour l’instant'}</span></span>${attendent ? `<span class="eq-ajout">${ICO.greffe}Confier</span>` : ''}</button></li>` : '')
     + `</ul></section>`;
 }
@@ -438,6 +442,7 @@ export function feuillePorteur(e: EcranDistrict): string {
   const places = DISTRICT.cartesMax - cartes.length;
   const dispo = parti ? '' : ` data-action="deck" data-id="${id}"`;
   h += `<section class="fp-bloc"><h3 class="fp-h3">${ICO.cartes}Ses cartes <span class="fp-compte${places ? '' : ' plein'}">${cartes.length} / ${DISTRICT.cartesMax}</span></h3>`
+    + jaugeCharge(chargePortee(j, id), chargeMax(j, id), `Ce que pèsent ses cartes sur ce qu’${IL.has(id) ? 'il' : 'elle'} peut porter : +${CHARGE.parNiveau} à chaque niveau.`)
     + `<div class="fp-cartes">${cartes.map((k) => { const cc = j.collection[k]!; const m = moduleDef(k);
       return `<button type="button" class="fp-carte"${dispo}${parti ? ' disabled' : ''} aria-label="${echap(m.nom)}, niveau ${cc.niveau}. Changer ses cartes">${faceCarte(m, cc.niveau, multNiveau(k, cc.niveau))}</button>`; }).join('')}`
     + Array.from({ length: places }, () => `<button type="button" class="fp-place"${dispo}${parti ? ' disabled' : ''} aria-label="Place libre : lui confier une carte">${ICO.place}<span>Place libre</span></button>`).join('')

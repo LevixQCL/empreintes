@@ -90,6 +90,10 @@ Tous les chiffres sont dans deux fichiers :
 On la confie à un Porteur de sa lignée (`greffer` dans `jeu.ts`, 6 cartes au plus par Porteur, `DISTRICT.cartesMax`) ;
 le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les 2 cartes du paquetage du district (`GESTES_SPECIAUX`, origine dans `ORIGINE_PAQUETAGE`).
 Au départ, Ilka, Doran et Véla portent chacun 6 cartes en fer : leurs 5 cartes de base et leur carte de départ (`DEPART_PORTEURS`).
+**La Charge** (26 octobre 2026) : chaque carte pèse selon sa puissance (`poidsCarte`, dans son métal, à son niveau de départ) et chaque
+Porteur porte une Charge qui grandit avec son niveau (`CHARGE` dans `collection.ts`, `chargeMax` / `chargePortee`). Un Porteur combat toujours
+avec ses 6 places : celles qu'on ne remplit pas descendent en places vides (`placesVides`), piochées sans se jouer, sinon trois grosses
+cartes par Porteur battaient six cartes bien choisies. Une vieille sauvegarde trop lourde rend des cartes à la collection au chargement.
 En combat, le moteur manipule des « Gestes » : c'est le nom interne d'une carte en jeu (`gesteDeCarte`), avec son Porteur,
 son niveau et la Fréquence choisie. Le tableau des cartes garde son nom historique `MODULES`.
 

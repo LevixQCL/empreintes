@@ -8,10 +8,10 @@ import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { GESTES_SPECIAUX, MODULES, ORIGINE_PAQUETAGE, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne,
-  OBJECTIFS, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
-import { COLLECTION, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, trierCartes, type TriCartes } from '../core/collection';
+import { CHARGE, COLLECTION, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { FRAGMENTS } from '../core/fragments';
@@ -725,14 +725,18 @@ export function feuilleCarte(e: EcranDistrict): string {
     + (loreCarte(cle) ? `<blockquote class="lore-carte">${echap(loreCarte(cle)!)}</blockquote>` : '')
     + `<p class="rang-carte"><b style="color:${COULEUR_RARETE[m.rarete]}">${RANG_METAL[m.rarete].rang}</b> · ${echap(RANG_METAL[m.rarete].texte)}</p>`;
   // à qui la confier : la décision la plus fréquente, donc juste sous la carte
-  h += `<section class="bloc fc-confier"><h3 class="titre-bloc">${ICO.greffe}${porte ? `Portée par ${echap(porteurDef(porte).nom)}` : 'Confier à'}</h3><p class="fc-aide">${porte ? 'Touche son portrait pour la reprendre, ou un autre Porteur pour la lui passer.' : `Elle entrera dans ton deck quand ce Porteur descendra (${DISTRICT.cartesMax} cartes au plus, de sa lignée).`}</p><div class="fc-porteurs">`
+  h += `<section class="bloc fc-confier"><h3 class="titre-bloc">${ICO.greffe}${porte ? `Portée par ${echap(porteurDef(porte).nom)}` : 'Confier à'}</h3><p class="fc-aide">Elle pèse <b class="fc-poids">${poidsCarte(cle)}</b> de Charge. ${porte ? 'Touche son portrait pour la reprendre, ou un autre Porteur pour la lui passer.' : `Elle entrera dans ton deck quand ce Porteur descendra (${DISTRICT.cartesMax} cartes au plus, de sa lignée).`}</p><div class="fc-porteurs">`
     + porteurs.map((p) => {
       const ici = porte === p.id;
       const n = j.porteurs[p.id]!.modules.length;
       const img = portrait(p.id);
-      return `<button type="button" class="fc-porteur${ici ? ' actif' : ''}${n >= DISTRICT.cartesMax && !ici ? ' plein' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="${ici ? 'degreffer' : 'greffer'}" data-module="${cle}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}>`
+      // la Charge qui lui reste (s'il porte cette carte dans un autre métal, elle prendra sa place)
+      const autre = j.porteurs[p.id]!.modules.find((k) => k !== cle && moduleDe(k) === m.id);
+      const libre = chargeMax(j, p.id) - chargePortee(j, p.id) + (autre ? poidsCarte(autre) : 0);
+      const lourde = !ici && poidsCarte(cle) > libre;
+      return `<button type="button" class="fc-porteur${ici ? ' actif' : ''}${(n >= DISTRICT.cartesMax || lourde) && !ici ? ' plein' : ''}" style="--c:${COULEUR[p.lignee]}" data-action="${ici ? 'degreffer' : 'greffer'}" data-module="${cle}" data-id="${p.id}"${enExpedition(j, p.id) ? ' disabled' : ''}>`
         + `<span class="fc-portrait">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : avatar(p.id, 48)}${ici ? `<span class="fc-coche">${ICO.ok}</span>` : ''}</span>`
-        + `<strong>${echap(p.nom)}</strong><small>${ici ? 'la porte · reprendre' : n >= DISTRICT.cartesMax ? `${n} / ${DISTRICT.cartesMax} · échanger` : `${n} / ${DISTRICT.cartesMax} cartes`}</small></button>`;
+        + `<strong>${echap(p.nom)}</strong><small>${ici ? 'la porte · reprendre' : lourde ? `trop lourde · ${libre} libre${libre > 1 ? 's' : ''}` : n >= DISTRICT.cartesMax && !autre ? `${n} / ${DISTRICT.cartesMax} · échanger` : `Charge ${libre} libre${libre > 1 ? 's' : ''}`}</small></button>`;
     }).join('') + `</div></section>`;
   // progression : où on en est, et ce qui manque, en clair
   h += `<section class="bloc fc-prog"><h3 class="titre-bloc">${ICO.monter}Progression</h3>`;
@@ -755,6 +759,16 @@ export function feuilleCarte(e: EcranDistrict): string {
 }
 
 
+/** Le poids d'une carte, en pastille de glace sur sa tuile */
+export const pastillePoids = (cle: string) => `<span class="poids-carte" title="Pèse ${poidsCarte(cle)} de Charge" aria-hidden="true">${poidsCarte(cle)}</span>`;
+
+/** La jauge de Charge d'un Porteur : ce que pèsent ses cartes sur ce qu'il peut porter */
+export function jaugeCharge(portee: number, max: number, aide?: string): string {
+  const trop = portee > max;
+  return `<div class="charge${trop ? ' trop' : ''}"><span class="charge-nom">${ICO.cristal}Charge</span><span class="charge-rail" aria-hidden="true"><i style="width:${Math.min(100, (100 * portee) / Math.max(1, max))}%"></i></span><b class="charge-val">${portee} / ${max}</b>`
+    + (aide ? `<p class="charge-aide">${trop ? `Trop lourd : reprends-lui une carte avant de descendre. ` : ''}${aide}</p>` : '') + `</div>`;
+}
+
 /** La feuille d'un Porteur : les cartes qu'il porte (touche pour reprendre), puis celles qu'on peut lui confier */
 export function feuilleDeck(e: EcranDistrict): string {
   const j = e.j;
@@ -771,8 +785,15 @@ export function feuilleDeck(e: EcranDistrict): string {
     const m = moduleDef(cle);
     const c = j.collection[cle]!;
     const sel = cle === choisie;
-    return `<button type="button" class="carte-tuile${sel ? ' dk-choisie' : ''}" data-action="${action}" data-module="${cle}" data-id="${id}"${parti ? ' disabled' : ''} aria-pressed="${sel}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}">${faceCarte(m, c.niveau, multNiveau(cle, c.niveau))}<span class="tuile-bas">${bas}</span></button>`;
+    return `<button type="button" class="carte-tuile${sel ? ' dk-choisie' : ''}" data-action="${action}" data-module="${cle}" data-id="${id}"${parti ? ' disabled' : ''} aria-pressed="${sel}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}, pèse ${poidsCarte(cle)}">${faceCarte(m, c.niveau, multNiveau(cle, c.niveau))}<span class="tuile-bas">${bas}${pastillePoids(cle)}</span></button>`;
   };
+  // la Charge (26 octobre 2026) : ce qu'il peut encore porter ; une carte qui prend la place d'une autre libère son poids
+  const max = chargeMax(j, id);
+  const portee = chargePortee(j, id);
+  const tient = (k: string, retire?: string) => poidsCarte(k) <= max - portee + (retire ? poidsCarte(retire) : 0);
+  /** même en prenant la place de la plus lourde qu'il porte, elle ne tiendrait pas */
+  const plusLourde = Math.max(0, ...porte.map(poidsCarte));
+  const jamais = (k: string) => poidsCarte(k) > max - portee + plusLourde;
   const tri = e.tri ?? 'puissance';
   const libres = trierCartes(Object.keys(j.collection)
     .filter((k) => moduleDef(k).lignee === p.lignee && !porte.includes(k)), j.collection, tri);
@@ -783,12 +804,18 @@ export function feuilleDeck(e: EcranDistrict): string {
     + `<button type="button" class="btn-icone" data-action="guide" data-id="deck" aria-label="Comment construire son deck">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="deck-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   if (parti) h += `<p class="aide">${echap(p.nom)} est en expédition : ses cartes changeront à son retour.</p>`;
+  h += jaugeCharge(portee, max, `Chaque carte pèse selon sa force. ${echap(p.nom)} porte plus lourd en montant de niveau (+${CHARGE.parNiveau} par niveau). Une place laissée vide se pioche et ne se joue pas.`);
   // le tri, en tête : il range les deux listes de la feuille
   h += choixTri(tri);
   h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour l’échanger ou la reprendre.</p>`;
   const fs = [...new Set(gestesDe(j, id).flatMap((g) => g.fs ?? [g.f]))].sort((a, b) => a - b);
   if (fs.length) h += `<p class="dk-freq">Fréquences qu’il apporte : ${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</p>`;
-  h += porte.length ? `<div class="grille-cartes">${trierCartes(porte, j.collection, tri).map((k) => tuile(k, 'dk-porte', k === choisie ? `<span class="dk-action dk-remplace">${ICO.recycler}Choisie</span>` : choisie && !choixPorte ? `<span class="dk-action dk-remplace">${ICO.recycler}Échanger</span>` : `<span class="dk-action">${ICO.recycler}Échanger</span>`)).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
+  h += porte.length ? `<div class="grille-cartes">${trierCartes(porte, j.collection, tri).map((k) => {
+    // une carte à confier est choisie : celles qu'elle ne peut pas remplacer (trop légères pour lui faire de la place) se grisent
+    const bloque = !!choisie && !choixPorte && !tient(choisie, k);
+    const bas = k === choisie ? `<span class="dk-action dk-remplace">${ICO.recycler}Choisie</span>` : bloque ? `<span class="dk-action dk-lourd">${ICO.cristal}Trop lourd</span>` : choisie && !choixPorte ? `<span class="dk-action dk-remplace">${ICO.recycler}Échanger</span>` : `<span class="dk-action">${ICO.recycler}Échanger</span>`;
+    return tuile(k, 'dk-porte', bas).replace('class="carte-tuile"', `class="carte-tuile${bloque ? ' grisee' : ''}"`);
+  }).join('')}</div>` : `<p class="aide">Aucune carte pour l’instant.</p>`;
   h += `</section><section class="bloc"><h3 class="titre-bloc">${ICO.cartes}À lui confier</h3>`
     + `<p class="aide">${plein ? `${echap(p.nom)} porte déjà ${DISTRICT.cartesMax} cartes : touche une carte ici puis celle qu’elle remplace (ou l’inverse) pour les échanger.` : `Les cartes de sa lignée (${NOM_LIGNEES[p.lignee]}) dans ta collection. Une carte portée par un autre Porteur passe à ${echap(p.nom)}.`}</p>`;
   // les cartes libres d'abord, puis celles qu'un autre Porteur porte ; chaque groupe dans l'ordre du tri (sort est stable)
@@ -796,12 +823,17 @@ export function feuilleDeck(e: EcranDistrict): string {
   h += libres.length ? `<div class="grille-cartes">${triees.map((k) => {
     const qui = greffesDe(j, k)[0];
     const r = remplace(k);
+    // trop lourde : elle ne tient pas dans la Charge qui reste (en prenant la place de la carte choisie ou de son autre métal)
+    const lourde = k !== choisie && (choixPorte ? !tient(k, choisie!) : r ? !tient(k, r) : jamais(k));
+    // elle tient seulement à la place d'une carte plus lourde : on l'échange
+    const aEchanger = !lourde && !choixPorte && !r && !tient(k);
     const bas = k === choisie ? `<span class="dk-action dk-remplace">${ICO.recycler}Choisie</span>`
-      : choixPorte ? `<span class="dk-action dk-remplace">${ICO.recycler}Échanger</span>`
+      : lourde ? `<span class="dk-action dk-lourd">${ICO.cristal}Trop lourde</span>`
+      : choixPorte || aEchanger ? `<span class="dk-action dk-remplace">${ICO.recycler}Échanger</span>`
       : r ? `<span class="dk-action dk-remplace">${ICO.recycler}Remplace celle en ${NOMS_RARETE[moduleDef(r).rarete].toLowerCase()}</span>`
       : qui ? `${avatar(qui, 20)}<span class="dk-chez">chez ${echap(porteurDef(qui).nom)}</span>` : `<span class="dk-action">${ICO.greffe}Confier</span>`;
     // pleine, il ne peut plus en recevoir de nouvelle ; une carte qui en remplace une autre reste possible
-    return tuile(k, 'dk-libre', bas).replace('class="carte-tuile"', `class="carte-tuile${plein && !r && !choixPorte ? ' grisee' : ''}"`);
+    return tuile(k, 'dk-libre', bas).replace('class="carte-tuile"', `class="carte-tuile${(plein && !r && !choixPorte) || lourde ? ' grisee' : ''}"`);
   }).join('')}</div>` : `<p class="aide">Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.</p>`;
   h += `</section></div>`;
   // la carte choisie attend sa partenaire : le pied de la feuille le dit, toujours visible

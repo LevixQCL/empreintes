@@ -73,9 +73,11 @@ describe('Explorer', () => {
 });
 
 import { simulerExploration } from '../src/core/robot';
+import { DEPART_PORTEURS, carteId } from '../src/core/donnees';
 describe('Le robot sait explorer', () => {
   it('le deck de départ va au bout d’une Strate des Fondations', () => {
-    const r = simulerExploration({ ilka: [{ id: 'jambes-ressort@fer', niveau: 1 }], doran: [{ id: 'glande-ambre@fer', niveau: 1 }], vela: [{ id: 'eclat-chant@fer', niveau: 1 }] }, 1, 7);
+    const depart = Object.fromEntries(Object.entries(DEPART_PORTEURS).map(([p, ids]) => [p, ids.map((id) => ({ id: carteId(id, 'fer'), niveau: 1 }))]));
+    const r = simulerExploration(depart, 1, 7);
     expect(r.combats).toBeGreaterThanOrEqual(3);
   });
 });

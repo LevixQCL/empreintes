@@ -2,7 +2,7 @@
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
 import { batimentDef, porteurDef, PORTEURS } from '../donnees';
-import type { CarteCollection } from '../collection';
+import { PLACES_PORTEUR, chargeNiveau, poidsCarte, type CarteCollection } from '../collection';
 import type { Expedition } from '../expedition';
 import type { Palmares } from '../classements';
 import type { BatimentId, GesteDef, BonusMarques } from '../types';
@@ -29,8 +29,9 @@ export const DISTRICT = {
   usureATerre: 3,
   /** Usure maximale, en fraction des PV max */
   usureMaxRatio: 0.5,
-  /** cartes qu'un Porteur peut porter (décision du 22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue) */
-  cartesMax: 6,
+  /** cartes qu'un Porteur peut porter (décision du 22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue) ;
+   *  ce sont aussi ses places en combat, remplies ou vides (`PLACES_PORTEUR`) */
+  cartesMax: PLACES_PORTEUR,
   /** cartes qu'il faut au deck de l'escouade (cartes du district comprises) pour descendre */
   deckMin: 12,
   /** part du butin gardée après une défaite */
@@ -99,6 +100,9 @@ export function niveauPorteur(j: Pick<Jeu, 'porteurs'>, id: string): { niveau: n
 }
 /** PV de base d'un Porteur à son niveau (avant l'Usure et les choix d'histoire) */
 export const pvNiveau = (j: Pick<Jeu, 'porteurs'>, id: string) => Math.round(porteurDef(id).pvMax * (1 + XP.pvParNiveau * (niveauPorteur(j, id).niveau - 1)));
+/** La Charge qu'un Porteur peut porter à son niveau, et celle que pèsent ses cartes */
+export const chargeMax = (j: Pick<Jeu, 'porteurs'>, id: string) => chargeNiveau(niveauPorteur(j, id).niveau);
+export const chargePortee = (j: Pick<Jeu, 'porteurs'>, id: string) => (j.porteurs[id]?.modules ?? []).reduce((n, k) => n + poidsCarte(k), 0);
 /** Donne de l'XP à un Porteur ; renvoie son nouveau niveau s'il en a pris un */
 export function gagnerXp(j: Jeu, id: string, xp: number): number | null {
   const d = j.porteurs[id];

@@ -602,6 +602,15 @@ function htmlEcranCombat(e: Ecran): string {
   // la main
   h += `<section class="zone-main" aria-label="Main"><div class="main-tete"><span class="surtitre">MAIN · ${s.main.length}</span><span class="journal-ligne">${echap(s.journal[0] ?? '')}</span></div><div class="main${guide && s.tour >= 2 && s.main.some((g) => vise(g) && places(g) <= libres) ? ' tri' : ''}">`;
   for (const g of s.main) {
+    // une place qu'on n'a pas remplie chez ce Porteur : elle prend sa place dans la main ce tour-ci, sans se jouer
+    if (g.vide) {
+      const img = g.porteur ? portrait(g.porteur) : null;
+      const nom = g.porteur ? porteurDef(g.porteur).nom : '';
+      h += `<span class="geste main main-vide" role="img" aria-label="${echap(`Place vide de ${nom} : elle ne se joue pas`)}" style="--c:${COULEUR[ligneeGeste(g)]}">`
+        + (img ? `<span class="mv-ombre" style="background-image:url(${img})" aria-hidden="true"></span>` : '')
+        + `<span class="mv-texte" aria-hidden="true"><b>Place vide</b><small>${echap(nom)}</small></span></span>`;
+      continue;
+    }
     const halo = !!dernier && prolonge(g, fs[fs.length - 1]) && places(g) <= libres;
     h += geste(g, 'main', 'ajouter', { halo, off: verrou, serre: places(g) > libres, vise: vise(g) && places(g) <= libres, felure: brise(g) && !prevue });
   }

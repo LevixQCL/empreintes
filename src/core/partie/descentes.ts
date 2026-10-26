@@ -4,11 +4,11 @@
 import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, GESTES_SPECIAUX, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
 import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, forceStrate, nouvelleExploration, type CibleFouille } from '../expedition';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
-import { COLLECTION, ajouterCarte, cartesEnJeu, tirerChoix, tirerTrouvaille } from '../collection';
+import { COLLECTION, ajouterCarte, cartesEnJeu, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
-import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
+import { ACCORD_OUVERT, CONFIANCE, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
 import { chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -581,8 +581,13 @@ export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef)
     if (j.porteurs[id]?.poste === 'forge' && j.forge) return refus(`${porteurDef(id).nom} ne peut pas quitter la Forge pendant une fabrication.`);
   }
   if (!j.chambre) return refus('Ouvre d’abord la chambre scellée.');
-  const deck = deckEscouade(j, escouade).filter((g) => !filtre || g.porteur === null || filtre(g));
-  if (deck.length < min) return refus(`Ton deck n’a que ${deck.length} cartes : confie des cartes à ton escouade (${min} au moins).`);
+  for (const id of escouade) {
+    if (chargePortee(j, id) > chargeMax(j, id)) return refus(`${porteurDef(id).nom} porte trop lourd (${chargePortee(j, id)} de Charge sur ${chargeMax(j, id)}) : reprends-lui une carte.`);
+  }
+  const cartes = deckEscouade(j, escouade).filter((g) => !filtre || g.porteur === null || filtre(g));
+  if (cartes.length < min) return refus(`Ton deck n’a que ${cartes.length} cartes : confie des cartes à ton escouade (${min} au moins).`);
+  // chaque Porteur combat avec ses 6 places : celles qu'on n'a pas remplies descendent vides (pas dans les Épreuves, qui retirent des cartes)
+  const deck = filtre ? cartes : [...cartes, ...escouade.flatMap((id) => placesVides(id, (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).length))];
   const porteurs: PorteurEtat[] = escouade.map((id) => {
     const u = Math.floor(j.porteurs[id]!.usure);
     return { id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false, ...(u > 0 ? { usure: u } : {}) };

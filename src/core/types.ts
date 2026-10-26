@@ -93,6 +93,8 @@ export interface GesteDef {
   /** Prend 2 places dans la chaîne */
   lourd?: boolean;
   effet?: Effet;
+  /** Place vide : un Porteur combat toujours avec 6 places ; celle qu'on ne remplit pas se pioche et ne se joue pas */
+  vide?: boolean;
 }
 
 /** Un exemplaire de carte dans un combat (uid unique) */

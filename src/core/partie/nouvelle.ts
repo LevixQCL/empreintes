@@ -1,9 +1,10 @@
 // Couche 7 — une nouvelle partie, les décisions de la campagne, et la mise à jour des anciennes sauvegardes.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { PORTEURS, CARTE_CHAMBRE, MODULES, moduleDe, moduleDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
+import { PORTEURS, CARTE_CHAMBRE, MODULES, moduleDe, moduleDef, porteurDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
+import { poidsCarte } from '../collection';
 import { graine } from '../rng';
-import { DISTRICT, VERSION_JEU, confier, strateVaincue, jourDe, log, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
+import { DISTRICT, VERSION_JEU, chargeMax, chargePortee, enExpedition, confier, strateVaincue, jourDe, log, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
 import { SCENES, sceneEnAttente, type ContexteCampagne } from '../campagne';
 import { ESCOUADE_DEPART } from './descentes';
 import { comptoirVide } from './district';
@@ -253,5 +254,28 @@ function migrer(j: Jeu) {
     // version 7 (23 octobre 2026) : un quatrième objectif guidé, les creuseurs. Qui avait fini les trois anciens a fini.
     j.version = 7;
     if (j.objectif >= 3) j.objectif = OBJECTIFS.length;
+  }
+  allegerSelonCharge(j);
+}
+
+/**
+ * La Charge (26 octobre 2026) : un Porteur qui portait plus lourd que sa Charge, dans une sauvegarde d'avant, rend ses cartes
+ * à la collection jusqu'à ce que ça tienne, en en rendant le moins possible (rien n'est perdu ; il peut les reprendre en montant de niveau).
+ */
+function allegerSelonCharge(j: Jeu) {
+  if (!j.collection) return;
+  for (const id of Object.keys(j.porteurs)) {
+    if (!PORTEURS.some((p) => p.id === id) || enExpedition(j, id)) continue;
+    const d = j.porteurs[id]!;
+    const rendues: string[] = [];
+    while (d.modules.length && chargePortee(j, id) > chargeMax(j, id)) {
+      // la plus légère qui suffit à rentrer dans la Charge ; sinon la plus lourde, et on recommence
+      const exces = chargePortee(j, id) - chargeMax(j, id);
+      const tri = d.modules.slice().sort((a, b) => poidsCarte(a) - poidsCarte(b));
+      const lourde = tri.find((k) => poidsCarte(k) >= exces) ?? tri[tri.length - 1]!;
+      d.modules = d.modules.filter((k) => k !== lourde);
+      rendues.push(moduleDef(lourde).nom);
+    }
+    if (rendues.length) log(j, `La Charge : ${porteurDef(id).nom} portait trop lourd et rend ${rendues.join(', ')} à la collection.`);
   }
 }

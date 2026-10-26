@@ -4,7 +4,7 @@
 
 import { allonger, ajouter, capacite, eclater, eclatsPossibles, ennemisDebout, felureVisible, intentionDe, placesLibres, tousEnnemis, viser, vivants } from './combat';
 import { lancer } from './combat';
-import { cartesEnJeu } from './collection';
+import { cartesEnJeu, placesVides } from './collection';
 import { GESTES_SPECIAUX, porteurDef } from './donnees';
 import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExpedition, nouvelleExploration, salleCourante } from './expedition';
 import { REGLES, analyserChaine, places } from './regles';
@@ -83,7 +83,7 @@ export function jouerTour(s: CombatEtat): void {
     if (base.flux > 0 && capacite(base) < REGLES.capaciteMax) essais.push(true);
     for (const rang of cibles) for (const allonge of essais) {
       const cap = capacite(base) + (allonge ? 1 : 0);
-      for (const groupe of sousGroupes(base.main)) {
+      for (const groupe of sousGroupes(base.main.filter((g) => !g.vide))) {
         if (groupe.reduce((n, g) => n + places(g), 0) > cap) continue;
         for (const ordre of ordres(groupe)) {
           const t = clone(base);
@@ -146,7 +146,7 @@ export function jouerTourMoyen(s: CombatEtat): void {
   const itVise = intentionDe(s, s.ennemi);
   const gainFelure = fel === undefined ? 0 : (itVise.type === 'atk' ? itVise.v * 0.5 * (danger ? 1.5 : 1) : itVise.type === 'bouclier' || itVise.type === 'soin' ? itVise.v * 0.5 : 0);
   let meilleur: { score: number; ordre: Geste[] } | null = null;
-  for (const groupe of sousGroupes(s.main)) {
+  for (const groupe of sousGroupes(s.main.filter((g) => !g.vide))) {
     if (groupe.reduce((n, g) => n + places(g), 0) > cap) continue;
     const ordre = groupe.slice().sort((a, b) => a.f - b.f);
     const mult = analyserChaine(ordre).mult;
@@ -177,7 +177,7 @@ interface ResultatExpedition {
 export function simulerExpedition(escouade: Escouade, strate: number, rng: number): ResultatExpedition {
   const ids = Object.keys(escouade);
   const porteurs = ids.map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
-  const deck = [...ids.flatMap((id) => cartesEnJeu(id, escouade[id]!)), ...GESTES_SPECIAUX];
+  const deck = [...ids.flatMap((id) => [...cartesEnJeu(id, escouade[id]!), ...placesVides(id, escouade[id]!.length)]), ...GESTES_SPECIAUX];
   let x = nouvelleExpedition({ porteurs, deck, strate, rng });
   let tours = 0;
   let combats = 0;
@@ -230,7 +230,7 @@ export const tauxVictoire = (escouade: Escouade, strate: number, parties: number
 export function simulerExploration(escouade: Escouade, strate: number, rng: number, jouer = jouerTour, facteur = 1, tours?: { normal: number[]; gardien: number[] }): { victoire: boolean; combats: number } {
   const ids = Object.keys(escouade);
   const porteurs = ids.map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
-  const deck = [...ids.flatMap((id) => cartesEnJeu(id, escouade[id]!)), ...GESTES_SPECIAUX];
+  const deck = [...ids.flatMap((id) => [...cartesEnJeu(id, escouade[id]!), ...placesVides(id, escouade[id]!.length)]), ...GESTES_SPECIAUX];
   let x = nouvelleExploration({ porteurs, deck, strate, rng, ...(facteur !== 1 ? { facteur } : {}) });
   let garde = 0;
   while (!x.terminee && garde++ < 3000) {

@@ -3,9 +3,9 @@
 
 import { batimentDef, porteurDef, PORTEURS, BATIMENTS, MODULES, moduleDe, moduleDef, carteId } from '../donnees';
 import type { BatimentId, Rarete } from '../types';
-import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis } from '../collection';
+import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
-import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Resultat, xpPourNiveau } from './etat';
+import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
 
 export function humeurDistrict(j: Jeu): string {
@@ -217,6 +217,13 @@ export function monter(j: Jeu, moduleId: string): Resultat {
   return { ok: true };
 }
 
+/** La carte dépasserait-elle la Charge du Porteur (en prenant la place de `retire`) ? Renvoie le refus, sinon null */
+function tropLourd(j: Jeu, porteurId: string, cle: string, retire?: string): string | null {
+  const libre = chargeMax(j, porteurId) - chargePortee(j, porteurId) + (retire ? poidsCarte(retire) : 0);
+  if (poidsCarte(cle) <= libre) return null;
+  return `Trop lourd : ${moduleDef(cle).nom} pèse ${poidsCarte(cle)}, il ne reste que ${libre} de Charge à ${porteurDef(porteurId).nom}.`;
+}
+
 /** Confie une carte à un Porteur de sa lignée (un exemplaire n'est porté que par un Porteur ; il passe de l'un à l'autre) */
 export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   const p = j.porteurs[porteurId];
@@ -231,6 +238,8 @@ export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   // n'apparaissait pas pour Doran, qui portait la Morsure en fer). Un Porteur ne porte toujours qu'un métal de chaque carte.
   const autreMetal = p.modules.find((k) => k !== moduleId && moduleDe(k) === moduleDe(moduleId));
   if (!autreMetal && p.modules.length >= DISTRICT.cartesMax) return non(`${porteurDef(porteurId).nom} porte déjà ${DISTRICT.cartesMax} cartes : retires-en une.`);
+  const trop = tropLourd(j, porteurId, moduleId, autreMetal);
+  if (trop) return non(trop);
   if (ancien) j.porteurs[ancien]!.modules = j.porteurs[ancien]!.modules.filter((m) => m !== moduleId);
   if (autreMetal) {
     p.modules[p.modules.indexOf(autreMetal)] = moduleId;
@@ -254,6 +263,8 @@ export function echanger(j: Jeu, retireId: string, ajouteId: string, porteurId: 
   if (p.modules.includes(ajouteId)) return non(`${porteurDef(porteurId).nom} porte déjà cette carte.`);
   const autreMetal = p.modules.find((k) => k !== retireId && moduleDe(k) === moduleDe(ajouteId));
   if (autreMetal) return non(`${porteurDef(porteurId).nom} porte déjà ${moduleDef(ajouteId).nom} en ${NOMS_RARETE[moduleDef(autreMetal).rarete].toLowerCase()} : échange plutôt celle-là.`);
+  const trop = tropLourd(j, porteurId, ajouteId, retireId);
+  if (trop) return non(trop);
   const ancien = greffesDe(j, ajouteId)[0];
   if (ancien && enExpedition(j, ancien)) return non('Cette carte est en expédition.');
   if (ancien) j.porteurs[ancien]!.modules = j.porteurs[ancien]!.modules.filter((m) => m !== ajouteId);

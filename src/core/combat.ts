@@ -164,6 +164,7 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
   if (s.issue !== 'en-cours') return { ok: false };
   const g = s.main.find((x) => x.uid === uid);
   if (!g) return { ok: false };
+  if (g.vide) return { ok: false, message: 'Une place vide ne se joue pas : confie une carte de plus à ce Porteur.' };
   if (estATerre(s, g.porteur)) return { ok: false, message: 'Ce Porteur est à terre.' };
   if (places(g) > placesLibres(s)) {
     const debut = g.lourd ? `${g.nom} prend 2 places, il n’en reste ${placesLibres(s)}.` : 'La chaîne est pleine.';
@@ -355,6 +356,9 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
   s.defausse.push(...s.chaine);
   s.chaine = [];
+  // les places vides ne restent pas en main : elles ont coûté leur place pour ce tour
+  s.defausse.push(...s.main.filter((g) => g.vide));
+  s.main = s.main.filter((g) => !g.vide);
   // Élan : les places gagnées servent au tour suivant
   s.capaBonus = Math.min(REGLES.capaciteMax - REGLES.capaciteBase, s.capaProchain ?? 0);
   s.capaProchain = 0;
@@ -692,7 +696,7 @@ export const felureVisible = (en: EnnemiEtat) => en.felure !== undefined && (!!e
 
 function fixerFelures(s: CombatEtat) {
   const r = tireur(s);
-  const enMain = [...new Set(s.main.flatMap((g) => (g.effet?.type === 'accord' ? [] : g.fs ?? [g.f])))];
+  const enMain = [...new Set(s.main.flatMap((g) => (g.effet?.type === 'accord' || g.vide ? [] : g.fs ?? [g.f])))];
   for (const en of tousEnnemis(s)) {
     delete en.felureBrisee;
     if (en.pv <= 0 || en.simple) { delete en.felure; continue; }

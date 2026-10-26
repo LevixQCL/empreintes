@@ -7,7 +7,7 @@
 // Attention aux imports circulaires (vue.ts importe ce fichier) : rien d'importé de ./vue, ./carte ou ./coquille
 // ne doit servir au chargement du module, seulement dans les fonctions.
 
-import { COLLECTION, NOMS_RARETE, RARETES } from '../core/collection';
+import { CHARGE, COLLECTION, NOMS_RARETE, RARETES, chargeNiveau } from '../core/collection';
 import { DECK_DEPART, GESTES_SPECIAUX, METAL_FORCE, METAL_FREQ, METAL_RENFORT, MODULES, carteId, gesteDeCarte, moduleDe, moduleDef } from '../core/donnees';
 import { NOMS_EFFET } from '../core/effets';
 import { DISTRICT, EPREUVE_DECK_MIN } from '../core/jeu';
@@ -174,6 +174,8 @@ function ongletDeck(): string {
   h += `<section class="bloc">${titre(ICO.verrou, 'Les règles du deck')}<ul class="g-regles">`
     + `<li>Une carte va à un Porteur <b>de sa lignée</b> : Augmenté, Géné ou Résonant.</li>`
     + `<li><b>${DISTRICT.cartesMax} cartes</b> au plus par Porteur, et <b>${DISTRICT.deckMin}</b> au moins dans le deck pour descendre (${EPREUVE_DECK_MIN} pour une Épreuve).</li>`
+    + `<li>Chaque carte <b>pèse</b> selon sa force (le chiffre de glace sur sa tuile). Un Porteur porte une <b>Charge</b> de ${chargeNiveau(1)} au niveau 1, +${CHARGE.parNiveau} par niveau : une très grosse carte laisse moins de place aux autres.</li>`
+    + `<li>Un Porteur combat toujours avec ses <b>${DISTRICT.cartesMax} places</b> : une place laissée vide se pioche comme une carte et <b>ne se joue pas</b> (sauf dans les Épreuves).</li>`
     + `<li>Une carte n’a qu’<b>un Porteur à la fois</b>. Un Porteur ne porte pas deux fois la même carte, même dans deux métaux.</li>`
     + `<li><b>Stimulant</b> et <b>Repli</b>, le paquetage du district, sont toujours dans le deck.</li>`
     + `<li>Changer d’escouade change le deck. Un Porteur au travail (ou à l’entraînement) peut descendre : il quitte son poste, qui reste vacant.</li>`

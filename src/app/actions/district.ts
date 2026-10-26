@@ -3,6 +3,7 @@
 import { cartePillages, portOuvert } from '../../ui/pillages';
 import { lireCiblesEnLigne, sousBouclier } from '../pillages';
 import { moduleDe, moduleDef, porteurDef } from '../../core/donnees';
+import { poidsCarte } from '../../core/collection';
 import * as J from '../../core/jeu';
 import type { BatimentId } from '../../core/types';
 import { visuel as ageDistrict } from '../../ui/art';
@@ -92,7 +93,9 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       // une carte à confier passe tout de suite s'il a une place libre (ou si elle remplace son autre métal)
       const plein = porte.length >= J.DISTRICT.cartesMax;
       const autreMetal = porte.some((k) => moduleDe(k) === moduleDe(cle));
-      if (a === 'dk-libre' && (!plein || autreMetal)) { D.echange = null; resultat(J.greffer(app.jeu, cle, id)); break; }
+      // trop lourde pour s'ajouter, mais elle tiendrait à la place d'une carte plus lourde : on passe à l'échange
+      const tient = poidsCarte(cle) <= J.chargeMax(app.jeu, id) - J.chargePortee(app.jeu, id);
+      if (a === 'dk-libre' && (autreMetal || (!plein && tient))) { D.echange = null; resultat(J.greffer(app.jeu, cle, id)); break; }
       D.echange = cle;
       break;
     }

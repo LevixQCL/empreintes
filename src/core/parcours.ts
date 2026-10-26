@@ -6,7 +6,7 @@
 // Aucun DOM ici : il tourne dans les tests et dans `npm run robot`.
 
 import { CHAPITRES, chapitreOuvert } from './chroniques';
-import { puissanceCarte } from './collection';
+import { poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, salleCourante } from './expedition';
 import {
@@ -14,7 +14,7 @@ import {
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
   enMission, envoyerMission, epreuvesDeLaSemaine, fouiller, partirEpreuve,
-  porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick,
+  chargeMax, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick,
   coutRefabrication, type Jeu, type Poste,
 } from './jeu';
 import { jouerTour, jouerTourMoyen } from './robot';
@@ -60,23 +60,40 @@ const DEFENSES_POIDS: Record<Lignee, number> = Object.fromEntries(
 /** Ce que vaut une carte pour le deck, à son niveau (estimation simple : force, effet, Fréquences, place prise) */
 function valeurCarte(id: string, niveau: number): number { return puissanceCarte(id, niveau); }
 
-/** Les 6 meilleures cartes d'une lignée, en gardant autant de défenses que le deck de départ */
-function meilleures(j: Jeu, l: Lignee): string[] {
-  const cartes = Object.keys(j.collection).filter((id) => moduleDef(id).lignee === l)
-    .sort((a, b) => valeurCarte(b, j.collection[b]!.niveau) - valeurCarte(a, j.collection[a]!.niveau));
-  const pris: string[] = [];
-  const bases = new Set<string>();
-  const prendreSi = (ok: (id: string) => boolean, n: number) => {
-    for (const id of cartes) {
-      if (pris.length >= 6 || n <= 0) return;
-      if (bases.has(moduleDe(id)) || !ok(id)) continue;
-      pris.push(id); bases.add(moduleDe(id)); n--;
+/**
+ * Les 6 meilleures cartes d'une lignée que le Porteur peut porter (Charge comprise), en gardant autant de défenses que
+ * le deck de départ quand c'est possible : un sac à dos, un seul métal par carte.
+ */
+function meilleures(j: Jeu, l: Lignee, charge: number): string[] {
+  const parBase = new Map<string, string[]>();
+  for (const id of Object.keys(j.collection)) if (moduleDef(id).lignee === l) parBase.set(moduleDe(id), [...(parBase.get(moduleDe(id)) ?? []), id]);
+  // etat[n][d][w] : meilleure valeur avec n cartes, d défenses (plafonnées), w de Charge
+  type Case = { v: number; pris: string[] } | null;
+  const D = DEFENSES[l];
+  let etat: Case[][][] = Array.from({ length: 7 }, () => Array.from({ length: D + 1 }, () => Array<Case>(charge + 1).fill(null)));
+  etat[0]![0]![0] = { v: 0, pris: [] };
+  for (const copies of parBase.values()) {
+    const suite = etat.map((a) => a.map((b) => b.slice()));
+    for (let n = 0; n < 6; n++) for (let d = 0; d <= D; d++) for (let w = 0; w <= charge; w++) {
+      const c = etat[n]![d]![w];
+      if (!c) continue;
+      for (const id of copies) {
+        const w2 = w + poidsCarte(id);
+        if (w2 > charge) continue;
+        const d2 = Math.min(D, d + (moduleDef(id).type !== 'atk' ? 1 : 0));
+        const v = c.v + valeurCarte(id, j.collection[id]!.niveau);
+        const t = suite[n + 1]![d2]![w2];
+        if (!t || v > t.v) suite[n + 1]![d2]![w2] = { v, pris: [...c.pris, id] };
+      }
     }
-  };
-  prendreSi((id) => moduleDef(id).type !== 'atk', DEFENSES[l]);
-  prendreSi((id) => moduleDef(id).type === 'atk', 6 - pris.length);
-  prendreSi(() => true, 6 - pris.length);
-  return pris;
+    etat = suite;
+  }
+  // une place vide se pioche sans se jouer : six cartes d'abord, puis les défenses, puis la valeur
+  for (let n = 6; n >= 0; n--) for (let d = D; d >= 0; d--) {
+    const meilleur = etat[n]![d]!.reduce<Case>((a, b) => (b && (!a || b.v > a.v) ? b : a), null);
+    if (meilleur) return meilleur.pris;
+  }
+  return [];
 }
 
 /** Choisit l'escouade (un Porteur par lignée, le plus solide), lui confie les meilleures cartes et poste les autres */
@@ -87,7 +104,7 @@ function preparer(j: Jeu): string[] {
   const escouade = LIGNEES.map((l) => presents.filter((id) => id !== forgeron && porteurDef(id).lignee === l)
     .sort((a, b) => pvMaxCombat(j, b) - pvMaxCombat(j, a))[0]!).filter(Boolean);
   for (const id of escouade) {
-    const voulues = meilleures(j, porteurDef(id).lignee);
+    const voulues = meilleures(j, porteurDef(id).lignee, chargeMax(j, id));
     for (const k of j.porteurs[id]!.modules.slice()) if (!voulues.includes(k)) degreffer(j, k);
     for (const k of voulues) greffer(j, k, id);
   }
@@ -243,7 +260,7 @@ export function simulerParcours(
       // le gardien du front est vaincu, mais il manque des creuseurs : on fouille le front pour en retrouver
       const attente = j.frontVaincu;
       const cible = attente ? front : echecs >= 2 && front > 1 ? front - 1 : front;
-      const faible = LIGNEES.map((l) => ({ l, v: meilleures(j, l).reduce((n, id) => n + valeurCarte(id, j.collection[id]!.niveau), 0) / DEFENSES_POIDS[l] }))
+      const faible = LIGNEES.map((l) => ({ l, v: meilleures(j, l, Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => chargeMax(j, id)), chargeMax(j, NOMME[l]))).reduce((n, id) => n + valeurCarte(id, j.collection[id]!.niveau), 0) / DEFENSES_POIDS[l] }))
         .sort((a, b) => a.v - b.v)[0]!.l;
       const g = suivant();
       const victoire = jouerExpedition(j, () => (cible === front && !attente ? partir(j, escouade, cible, g) : fouiller(j, escouade, cible, faible, g)).ok, jouer, opts.tours);

@@ -214,6 +214,7 @@ describe('Migration', () => {
     v5.collection = { 'jambes-ressort@fer': { niveau: 3, doublons: 0 }, 'glande-ambre@fer': { niveau: 1, doublons: 0 }, 'eclat-chant@fer': { niveau: 1, doublons: 0 }, 'gant-arc@cuivre': { niveau: 3, doublons: 0 } };
     for (const p of Object.values(v5.porteurs)) p.modules = [];
     v5.porteurs.ilka!.modules = ['jambes-ressort@fer', 'gant-arc@cuivre'];
+    v5.porteurs.ilka!.xp = 12; // niveau 2 : sa Charge tient ses 6 cartes
     expect(estJeuValide(v5)).toBe(true);
     expect(v5.version).toBe(VERSION_JEU);
     expect(v5.porteurs.ilka!.modules).toEqual(['jambes-ressort@fer', 'gant-arc@cuivre', 'ruee@fer', 'bond@fer', 'esquive@fer', 'tir@fer']);

@@ -149,9 +149,36 @@ export function multNiveau(id: string, niveau: number): number {
   return 1 + COLLECTION.bonusNiveau * (niveau - depart);
 }
 
+/**
+ * La Charge (26 octobre 2026, Bryan : « une carte qui fait 30 face à une qui fait 8 ») : chaque carte pèse selon sa puissance
+ * (celle du tri « Puissance », dans son métal, à son niveau de départ : monter une carte ne l'alourdit pas), et chaque Porteur
+ * porte une Charge qui grandit avec son niveau. Le robot a montré qu'un poids qui suit la puissance laisse « une grosse carte
+ * et des petites » et « six cartes moyennes » à égalité ; un poids qui grimpe plus vite écrase les grosses cartes.
+ */
+export const CHARGE = {
+  /** une carte pèse sa puissance divisée par ce nombre (1 au moins) */
+  diviseur: 4,
+  /** Charge d'un Porteur au niveau 1, et ce qu'il gagne par niveau */
+  base: 16,
+  parNiveau: 1,
+};
+export const poidsCarte = (cle: string): number =>
+  Math.max(1, Math.round(puissanceCarte(cle, COLLECTION.niveauDepart[moduleDef(cle).rarete]) / CHARGE.diviseur));
+export const chargeNiveau = (niveau: number): number => CHARGE.base + CHARGE.parNiveau * (niveau - 1);
+
 /** Les cartes qu'un Porteur apporte au deck de combat : celles qu'on lui a confiées, à leur niveau */
 export function cartesEnJeu(porteurId: string, cartes: { id: string; niveau: number }[]): GesteDef[] {
   return cartes.map(({ id, niveau }) => gesteDeCarte(id, porteurId, multNiveau(id, niveau)));
+}
+
+/**
+ * Un Porteur combat toujours avec ses 6 places (26 octobre 2026) : chaque place qu'on ne remplit pas entre dans le deck
+ * comme une place vide, qui prend une place dans la main sans se jouer. Sans elles, trois grosses cartes par Porteur
+ * revenaient en main à chaque tour et battaient six cartes bien choisies, à Charge égale.
+ */
+export const PLACES_PORTEUR = 6;
+export function placesVides(porteurId: string, nb: number): GesteDef[] {
+  return Array.from({ length: Math.max(0, PLACES_PORTEUR - nb) }, () => ({ id: 'vide', porteur: porteurId, nom: 'Place vide', f: 0, type: 'atk', v: 0, vide: true }));
 }
 
 // ---------- Trier la collection (24 octobre 2026) ----------
