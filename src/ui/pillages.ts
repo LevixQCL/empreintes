@@ -4,7 +4,7 @@
 
 import { porteurDef } from '../core/donnees';
 import { PILLAGE, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadePourDepart, etatPillage, faitsDuJour, forceEscouade, majJetons, strateVaincue, type Cible, type Jeu } from '../core/jeu';
-import { vignetteArchipel, visuel } from './art';
+import { ageArchipel, vignetteArchipel, visuel } from './art';
 import { avatar, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { ICO, icone } from './icones';
 import { echap } from './outils';
@@ -14,8 +14,6 @@ import { COULEUR } from './vue';
 const PLACES: [number, number][] = [[16, 13], [50, 13], [84, 13], [14, 45], [50, 45], [86, 45]];
 const MOI: [number, number] = [50, 80];
 
-/** L'âge d'un archipel selon sa profondeur : plus il a creusé, plus il a grandi */
-const ageDe = (strate: number) => (strate <= 2 ? 1 : strate <= 5 ? 2 : strate <= 9 ? 3 : 4);
 
 /** Les archipels de la carte et ce qu'il faut pour les afficher */
 export function cartePillages(j: Jeu, now: number, enLigne: Cible[] = []) {
@@ -51,7 +49,7 @@ export function htmlPillages(e: EcranDistrict): string {
       const d = difficulte(c.force / force);
       const fait = faits.includes(c.id);
       return `<button type="button" class="pl-ile d${d.niveau}${c === choisie ? ' choisie' : ''}${fait ? ' faite' : ''}" style="--x:${x}%;--y:${y}%" data-action="pillage-voir" data-id="${echap(c.id)}" aria-pressed="${c === choisie}" aria-label="${echap(`${c.nom} : ${fait ? 'déjà pillé aujourd’hui' : d.nom}`)}">`
-        + `<span class="pl-medaillon"><img src="${vignetteArchipel(ageDe(c.strate))}" alt="" decoding="async" loading="lazy">${fait ? `<span class="pl-fait">${ICO.ok}</span>` : ''}</span>`
+        + `<span class="pl-medaillon"><img src="${vignetteArchipel(ageArchipel(c.strate))}" alt="" decoding="async" loading="lazy">${fait ? `<span class="pl-fait">${ICO.ok}</span>` : ''}</span>`
         + `<span class="pl-nom">${echap(c.nom)}</span><span class="pl-diff">${fait ? 'Pillé' : d.nom}</span></button>`;
     }).join('')
     + `<div class="pl-moi" style="--x:${MOI[0]}%;--y:${MOI[1]}%"><span class="pl-medaillon"><img src="${vignetteArchipel(age)}" alt="" decoding="async"></span><span class="pl-nom">${echap(j.directeur?.nom ?? 'Ton district')}</span></div>`

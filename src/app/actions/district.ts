@@ -1,6 +1,6 @@
 // Actions du district : bâtiments, Porteurs, cartes, escouade, départs, Chroniques.
 
-import { cartePillages } from '../../ui/pillages';
+import { cartePillages, portOuvert } from '../../ui/pillages';
 import { lireCiblesEnLigne, sousBouclier } from '../pillages';
 import { moduleDe, moduleDef, porteurDef } from '../../core/donnees';
 import * as J from '../../core/jeu';
@@ -17,7 +17,9 @@ import { ouvrir, resultat, type Clic, type Suite } from './commun';
 export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
   const { b, id } = c;
   switch (a) {
-    case 'batiment': D.selection = D.selection === id ? null : (id as typeof D.selection); D.menu = false;
+    // le Port ouvert (plaque ou bateau peint) : le bateau part vers les archipels voisins
+    case 'batiment': if (id === 'port' && portOuvert(app.jeu)) { ouvrir('pillages'); lireCiblesEnLigne(); break; }
+      D.selection = D.selection === id ? null : (id as typeof D.selection); D.menu = false;
       if (b.dataset.amelio !== undefined) requestAnimationFrame(() => document.getElementById('fb-amelio')?.scrollIntoView({ block: 'start' }));
       break;
     case 'ok-message': D.message = ''; break;

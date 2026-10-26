@@ -116,3 +116,12 @@
   .pl-medaillon{width:76px;height:76px}
   .pl-moi .pl-medaillon{width:92px;height:92px}
 }
+
+/* le combat d'un pillage : sur l'archipel attaqué, en pleine mer ; des embruns au lieu de la poussière des Strates */
+.fond-lieu.z-pillage .fl-image{background-position:center 55%}
+.fond-lieu.z-pillage .fl-voile{background:
+  radial-gradient(115% 85% at 50% 46%,transparent 34%,rgba(4,10,16,.74) 100%),
+  linear-gradient(180deg,rgba(120,190,230,.2),rgba(120,190,230,0) 40%),
+  linear-gradient(0deg,rgba(4,10,16,.72),rgba(4,10,16,0) 32%),
+  rgba(6,14,24,.4)}
+.fond-lieu.z-pillage .fl-p{background:#E4F6FF;box-shadow:0 0 calc(var(--s) * 3) rgba(160,220,255,.7)}
