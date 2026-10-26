@@ -216,8 +216,8 @@ h1,h2,h3{font-weight:400}
 .ecran-archipel .contenu{padding:0;gap:0}
 .archipel{--h:max(540px,calc(100dvh - var(--hud-h) - var(--nav-h) - var(--sab)));position:relative;height:var(--h);overflow:hidden;background:#1E3A44}
 .mer-fond{display:none}
-.tableau-fond{position:absolute;inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px);object-fit:cover;object-position:50% 0;filter:blur(22px) saturate(1.2) brightness(.9);pointer-events:none}
-.toile{position:absolute;left:0;right:0;bottom:0;aspect-ratio:2/3;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 4%);mask-image:linear-gradient(to bottom,transparent 0,#000 4%)}
+.tableau-fond{position:absolute;inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px);object-fit:cover;object-position:50% 0;filter:blur(22px) saturate(1.2) brightness(.62);pointer-events:none}
+.toile{position:absolute;left:0;right:0;bottom:0;aspect-ratio:2/3;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 9%);mask-image:linear-gradient(to bottom,transparent 0,#000 9%)}
 .toile .tableau{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;user-select:none;-webkit-user-drag:none;pointer-events:none}
 .toile .tableau.nouvel-age{animation:nouvelAge 1.6s ease-out}
 @keyframes nouvelAge{from{opacity:0;filter:brightness(1.8) blur(6px)}to{opacity:1;filter:none}}
