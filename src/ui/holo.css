@@ -199,29 +199,6 @@ body{background:
   background:linear-gradient(90deg,rgba(216,180,101,.08),transparent 70%);box-shadow:inset 2px 0 0 var(--gold)}
 .lore-carte::before{content:"«";position:absolute;left:4px;top:2px;font-size:22px;line-height:1;color:var(--gold);opacity:.6}
 
-/* « Écouter » : le lore lu à voix haute (voix.ts). Une pastille de verre fumé ; en lecture, l'or s'allume et l'onde bat */
-.lore-bloc{display:grid;gap:8px;justify-items:start}
-.btn-ecouter{--cut:7px;display:inline-flex;align-items:center;gap:8px;min-height:36px;padding:0 14px 0 10px;border:none;cursor:pointer;
-  font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#CFE6F2;
-  background:linear-gradient(180deg,rgba(150,200,230,.12),rgba(20,30,44,.55));box-shadow:inset 0 0 0 1px rgba(170,215,240,.32),inset 0 1px 0 rgba(255,255,255,.12);
-  clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));transition:color .2s,box-shadow .2s,background .2s}
-.btn-ecouter .be-ico{display:grid;width:18px;height:18px}
-.btn-ecouter .be-ico .ico{grid-area:1/1;width:18px;height:18px}
-.btn-ecouter .be-ico .ico:last-child,.btn-ecouter.lit .be-ico .ico:first-child{opacity:0}
-.btn-ecouter.lit .be-ico .ico:last-child{opacity:1}
-.btn-ecouter .be-onde{display:none;align-items:center;gap:2px;height:14px}
-.btn-ecouter .be-onde i{width:2px;height:100%;background:currentColor;transform-origin:center;animation:be-onde .9s steps(4,end) infinite}
-.btn-ecouter .be-onde i:nth-child(2){animation-delay:-.3s}
-.btn-ecouter .be-onde i:nth-child(3){animation-delay:-.6s}
-.btn-ecouter .be-onde i:nth-child(4){animation-delay:-.15s}
-.btn-ecouter.lit{color:var(--gold);background:linear-gradient(180deg,rgba(216,180,101,.18),rgba(30,24,14,.6));box-shadow:inset 0 0 0 1px rgba(216,180,101,.55),0 0 14px rgba(216,180,101,.18)}
-.btn-ecouter.lit .be-onde{display:inline-flex}
-@keyframes be-onde{0%{transform:scaleY(.25)}25%{transform:scaleY(1)}50%{transform:scaleY(.5)}75%{transform:scaleY(.8)}100%{transform:scaleY(.3)}}
-@media (prefers-reduced-motion:reduce){.btn-ecouter .be-onde i{animation:none;transform:scaleY(.6)}}
-.fp-bio .btn-ecouter,.fp-histoire .btn-ecouter,.fragment .btn-ecouter{justify-self:start}
-.lecture-titre .btn-ecouter{justify-self:center;margin-top:6px}
-@media (min-width:1100px){.lecture-titre .btn-ecouter{justify-self:start}}
-
 /* ---------- Ce que change le niveau suivant (feuille d'un bâtiment) ---------- */
 .gain{border-top-color:var(--holo-4)}
 .gain>.ico{filter:drop-shadow(0 0 5px rgba(216,180,101,.45))}
