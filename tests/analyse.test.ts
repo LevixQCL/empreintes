@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { analyser, csvJoueurs, estPartieDeTest, exporter, filtrer, type Partie } from '../src/analyse/calculs';
+import { analyser, csvJoueurs, estPartieDeTest, exporter, filtrer, sansTests, type Partie } from '../src/analyse/calculs';
 import * as J from '../src/core/jeu';
 
 const T = Date.parse('2026-10-25T10:00:00Z');
@@ -43,6 +43,13 @@ describe('Outil d’analyse', () => {
     expect(estPartieDeTest({ uid: 't', jeu: figee, maj: Date.parse('2026-10-25T14:30:00Z') })).toBe(true);
     // un vrai joueur à 10 h : la sauvegarde arrive tout de suite
     expect(estPartieDeTest({ uid: 'v', jeu: figee, maj: Date.parse('2026-10-25T10:01:00Z') })).toBe(false);
+  });
+
+  it('écarte les simples visites : écran titre ouvert sans jamais commencer', () => {
+    // c n'a jamais passé l'intro ni joué une minute ; a et b ont commencé
+    const r = sansTests(parties);
+    expect(r).toMatchObject({ tests: 0, visites: 1 });
+    expect(r.parties.map((p) => p.uid)).toEqual(['a', 'b']);
   });
 
   it('exporte sans identifiant ni pseudo', () => {

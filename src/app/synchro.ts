@@ -15,6 +15,8 @@ let reconcilie = false;
 
 export function sauver() {
   const env = enregistrer(app.jeu);
+  // le joueur vient de commencer (intro vue) : le compte invisible est créé maintenant, pas à la simple visite
+  if (app.compte && !compteEtat.utilisateur && compteEtat.pret && app.jeu.introVue) app.compte.creerInvisible();
   if (app.compte && app.uid && reconcilie) {
     clearTimeout(minuteur);
     minuteur = window.setTimeout(() => pousser(env), 1500);
@@ -103,6 +105,8 @@ const ATTENTE_COMPTE = 8000;
 
 export async function demarrerCompte() {
   if (!firebaseActif()) return;
+  // un navigateur piloté (tests, captures automatiques) ne crée pas de compte et n'écrit rien dans les vraies données
+  if (navigator.webdriver) { comptePret(); return; }
   window.setTimeout(() => { if (!compteEtat.pret) { compteEtat.info = 'Hors ligne : partie de cet appareil.'; comptePret(); } }, ATTENTE_COMPTE);
   try {
     app.compte = await import('../net/compte');
@@ -127,7 +131,7 @@ export async function demarrerCompte() {
       lireTableau(true);
     } else comptePret();
     if (app.mode === 'district' || app.mode === 'titre') afficher();
-  });
+  }, () => app.jeu.introVue);
 }
 
 // ---------- Actions ----------
