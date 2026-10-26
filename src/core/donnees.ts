@@ -144,11 +144,17 @@ export const COLLECTION_DEPART = Object.values(DEPART_PORTEURS).flat().map((id) 
 /** La carte que laisse la chambre scellée : le deuxième objectif apprend à la confier */
 export const CARTE_CHAMBRE = carteId('oeil-relais', 'fer');
 
-// ---------- Les cartes du district ----------
-// Toujours dans le deck, jouées par personne en particulier (elles ne disparaissent pas quand un Porteur tombe).
+// ---------- Le paquetage du district ----------
+// Fourni à chaque escouade qui descend, joué par personne en particulier (il ne disparaît pas quand un Porteur tombe).
+// Pas de métal : on ne le trouve pas, on ne le fabrique pas, il ne monte pas de niveau (25 octobre 2026).
 const special = (id: string, nom: string, f: number, type: TypeGeste, v: number, effet?: Effet): GesteDef =>
   ({ id, carte: id, porteur: null, nom, f, type, v, ...(effet ? { effet } : {}) });
 export const GESTES_SPECIAUX: GesteDef[] = [special('stimulant', 'Stimulant', 1, 'soin', 5, { type: 'vague' }), special('repli', 'Repli', 9, 'bouclier', 10)];
+/** D'où vient chaque carte du paquetage : le bâtiment qui la fournit et ce qu'elle est */
+export const ORIGINE_PAQUETAGE: Record<string, { batiment: string; texte: string }> = {
+  stimulant: { batiment: 'Clinique', texte: 'Une seringue de lumière verte, préparée par la Clinique pour chaque escouade.' },
+  repli: { batiment: 'Tour du Noyau', texte: 'Une balise de la Tour du Noyau : une porte blindée s’ouvre, l’escouade s’y abrite.' },
+};
 
 // ---------- Bâtiments ----------
 interface BatimentDef {

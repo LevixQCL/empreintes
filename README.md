@@ -88,7 +88,7 @@ Tous les chiffres sont dans deux fichiers :
 
 **La carte qu'on collectionne est celle qu'on joue** (décision du 22 octobre 2026). Une carte = une place dans le deck.
 On la confie à un Porteur de sa lignée (`greffer` dans `jeu.ts`, 6 cartes au plus par Porteur, `DISTRICT.cartesMax`) ;
-le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les 2 cartes du district (`GESTES_SPECIAUX`).
+le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les 2 cartes du paquetage du district (`GESTES_SPECIAUX`, origine dans `ORIGINE_PAQUETAGE`).
 Au départ, Ilka, Doran et Véla portent chacun 6 cartes en fer : leurs 5 cartes de base et leur carte de départ (`DEPART_PORTEURS`).
 En combat, le moteur manipule des « Gestes » : c'est le nom interne d'une carte en jeu (`gesteDeCarte`), avec son Porteur,
 son niveau et la Fréquence choisie. Le tableau des cartes garde son nom historique `MODULES`.
@@ -98,7 +98,7 @@ son niveau et la Fréquence choisie. Le tableau des cartes garde son nom histori
 (`htmlCartes`, fermée avant la chambre scellée). La feuille de match montre d'abord le bilan du deck (`bilanDeck` : nombre de cartes,
 échelle des Fréquences 1 à 9 empilée par lignée, trous et plus longue suite, attaques / protections / soins, un conseil), puis chaque Porteur
 (`blocPorteur` : portrait, PV, qui il bat, sa Marque en toutes lettres avec ce qu'il reste à accomplir, et ses cartes une par ligne :
-Fréquence, nom, niveau, effet en clair, force sur le socle peint des cartes), puis les cartes du district.
+Fréquence, nom, niveau, effet en clair, force sur le socle peint des cartes), puis le paquetage du district.
 *Trois escouades* (`j.escouades`, `escouadesDe`, `placerDansEscouade(j, place, id, n)`, `choisirEscouade`) : on en compose trois, un Porteur
 n'est que dans une seule (le prendre ailleurs l'échange avec celui qu'il remplace), et une seule descend (`j.escouadeActive` ; `j.escouade`
 en est toujours la copie, c'est elle que lit le reste du jeu). On la choisit dans l'onglet (« Faire descendre l'escouade 2 ») ou sur l'écran

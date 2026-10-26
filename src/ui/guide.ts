@@ -158,7 +158,7 @@ function ongletDeck(): string {
 
   // le schéma : trois Porteurs, leurs cartes, et les cartes du district
   const colonne = (id: string, l: Lignee) => `<div class="g-col" style="--c:${COULEUR[l]}">${avatar(id, 38)}<span class="g-cases">${'<i></i>'.repeat(DISTRICT.cartesMax)}</span><small>${NOM_LIGNEES[l].slice(0, -1)}</small></div>`;
-  h += `<section class="g-schema" aria-label="Le deck : ${ESCOUADE} Porteurs de ${DISTRICT.cartesMax} cartes, plus ${GESTES_SPECIAUX.length} cartes du district, soit ${total} cartes">`
+  h += `<section class="g-schema" aria-label="Le deck : ${ESCOUADE} Porteurs de ${DISTRICT.cartesMax} cartes, plus ${GESTES_SPECIAUX.length} cartes du paquetage du district, soit ${total} cartes">`
     + `<div class="g-cols">${colonne('ilka', 'tech')}<b class="g-op">+</b>${colonne('doran', 'bio')}<b class="g-op">+</b>${colonne('vela', 'reso')}<b class="g-op">+</b>`
     + `<div class="g-col district"><span class="g-blason" aria-hidden="true">${ICO.district}</span><span class="g-cases">${'<i></i>'.repeat(GESTES_SPECIAUX.length)}</span><small>District</small></div></div>`
     + `<p class="g-egal"><b>${total}</b> cartes au plus · main de <b>${REGLES.tailleMain}</b> · chaîne de <b>${REGLES.capaciteBase}</b> places</p></section>`;
@@ -175,7 +175,7 @@ function ongletDeck(): string {
     + `<li>Une carte va à un Porteur <b>de sa lignée</b> : Augmenté, Géné ou Résonant.</li>`
     + `<li><b>${DISTRICT.cartesMax} cartes</b> au plus par Porteur, et <b>${DISTRICT.deckMin}</b> au moins dans le deck pour descendre (${EPREUVE_DECK_MIN} pour une Épreuve).</li>`
     + `<li>Une carte n’a qu’<b>un Porteur à la fois</b>. Un Porteur ne porte pas deux fois la même carte, même dans deux métaux.</li>`
-    + `<li><b>Stimulant</b> et <b>Repli</b>, les cartes du district, sont toujours dans le deck.</li>`
+    + `<li><b>Stimulant</b> et <b>Repli</b>, le paquetage du district, sont toujours dans le deck.</li>`
     + `<li>Changer d’escouade change le deck. Un Porteur au travail (ou à l’entraînement) peut descendre : il quitte son poste, qui reste vacant.</li>`
     + `<li>Un Porteur en expédition ou en mission garde ses cartes jusqu’à son retour.</li>`
     + `<li>En combat, un Porteur <b>à terre</b> emporte ses cartes : elles quittent le deck tant qu’il ne s’est pas relevé, à un campement.</li>`
@@ -308,9 +308,9 @@ function ongletEffets(trouvees: ReadonlySet<string>): string {
     }
     h += `</ul></section>`;
   }
-  // les cartes du district
-  h += `<section class="bloc">${titre(ICO.district, 'Les cartes du district')}<div class="g-district">`
+  // le paquetage du district
+  h += `<section class="bloc">${titre(ICO.district, 'Le paquetage du district')}<div class="g-district">`
     + GESTES_SPECIAUX.map((g) => `<div class="g-carte-district">${carteExemple(g, 'main')}<p><b>${echap(g.nom)}</b>${NOM_ACTION[g.type]} ${g.v}, Fréquence ${g.f}${g.effet ? `, ${NOMS_EFFET[g.effet.type]}` : ''}.</p></div>`).join('')
-    + `</div><p class="aide">Elles sont toujours dans le deck et ne sont jouées par personne : elles restent même quand un Porteur tombe. Elles ne montent pas de niveau.</p></section>`;
+    + `</div><p class="aide">Le district les fournit à chaque escouade qui descend : le Stimulant vient de la Clinique, le Repli de la Tour du Noyau. Jouées par personne, elles restent même quand un Porteur tombe. Elles n’ont pas de métal et ne montent pas de niveau.</p></section>`;
   return h;
 }
