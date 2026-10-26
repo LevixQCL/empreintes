@@ -320,7 +320,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   for (const [i, g] of s.chaine.entries()) {
     emettre({ kind: 'carte', rang: i, total: s.chaine.length, lignee: ligneeGeste(g), type: g.type, porteur: g.porteur, suite: a.suite, ...(g.effet ? { effet: g.effet.type } : {}) });
     for (const ev of appliquer(s, g, a.mult, i)) emettre(ev);
-    if (s.ennemi.pv > 0 && freqs[i] === s.ennemi.felure && !s.ennemi.felureBrisee) briser(s, s.ennemi, emettre);
+    if (s.ennemi.pv > 0 && freqs[i] === s.ennemi.felure && !s.ennemi.felureBrisee) briser(s, s.ennemi, emettre, a.suite >= 3);
     phaseGardien(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) tombe(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) {
@@ -677,8 +677,9 @@ export function eclater(s: CombatEtat, porteurId: string, opts: { silencieux?: b
 
 // ---------- La Fêlure (25 octobre 2026) ----------
 // Chaque tour, chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence, posée dans la chaîne pendant
-// qu'il est visé, brise son intention (attaque, bouclier ou soin réduits de moitié, d'un quart chez un gardien ou un blindé)
-// et remplit le Flux. Deux fois sur trois, la Fréquence fêlée est l'une de celles de la main : jouable, pas automatique.
+// qu'il est visé, brise son intention (attaque, bouclier ou soin réduits de moitié, d'un quart chez un gardien ou un blindé) ;
+// si la chaîne fait aussi une Résonance, elle remplit le Flux.
+// Deux fois sur trois, la Fréquence fêlée est l'une de celles de la main : jouable, pas automatique.
 // Un évanescent la cache (elle n'est pas affichée, mais existe) ; la Vigie aspire le Flux de ceux qui le gardent.
 
 export const estGardien = (id: string) => ZONES.some((z) => z.boss === id);
@@ -698,8 +699,8 @@ function fixerFelures(s: CombatEtat) {
 /** La part retirée à l'intention quand la Fêlure se brise : les gardiens et les blindés résistent mieux (un quart seulement) */
 export const partFelure = (en: EnnemiEtat) => (estGardien(en.id) || trait(en, 'blinde') ? REGLES.felure.partGardien : REGLES.felure.part);
 
-/** La Fréquence fêlée d'un ennemi est touchée : son intention se brise, le Flux monte */
-function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void) {
+/** La Fréquence fêlée d'un ennemi est touchée : son intention se brise ; le Flux monte si la chaîne résonne */
+function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void, resonne: boolean) {
   en.felureBrisee = true;
   const it = intentionDe(s, en);
   const part = partFelure(en);
@@ -710,6 +711,7 @@ function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void)
     log(s, `Fêlure : ${nom} vacille, ${it.type === 'atk' ? 'son attaque' : it.type === 'bouclier' ? 'son bouclier' : 'son soin'} passe de ${avant} à ${it.v}.`);
   } else log(s, `Fêlure : ${nom} vacille.`);
   emettre({ kind: 'effet', cible: 'ennemi', texte: 'Fêlure', rang: en.rang ?? 0 });
+  if (!resonne) return;
   const avant = s.flux;
   s.flux = Math.min(REGLES.fluxMax, s.flux + REGLES.felure.flux);
   if (s.flux > avant) emettre({ kind: 'flux', gain: s.flux - avant });

@@ -270,8 +270,8 @@ function regles(): string {
     + '<li><b>La Fréquence</b> est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.</li>'
     + '<li><b>Plusieurs Fréquences :</b> une carte en argent, en or ou en nacre en porte 2 ou 3. Posée, elle prend celle qui prolonge ta suite ; touche les chiffres sous elle pour en changer. Rien n’est tiré au sort.</li>'
     + `<li><b>L’Écho :</b> trois Fréquences identiques donnent un bouclier d’escouade de +${REGLES.bouclierEcho}.</li>`
-    + '<li><b>Le Flux</b> se remplit à chaque Résonance et à chaque Fêlure brisée. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main, ou garde-le pour un Coup d’éclat.</li>'
-    + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé) et donne 1 Flux. Les évanescents la cachent.</li>'
+    + '<li><b>Le Flux</b> se remplit à chaque Résonance, et encore plus si la suite brise aussi une Fêlure. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main, ou garde-le pour un Coup d’éclat.</li>'
+    + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé). Dans une suite (3, 4, 5), elle donne aussi 1 Flux. Les évanescents la cachent.</li>'
     + `<li><b>Le Coup d’éclat</b> : Flux plein, un seul par combat, au choix selon les lignées de l’escouade. ${(Object.values(ECLATS)).map((x) => `<b>${x.nom}</b> : ${x.texte}`).join(' ')} Le Porteur qui le déclenche prend ${REGLES.eclat.usure} d’Usure.</li>`
     + '<li><b>« 2 PL. »</b> : cette carte est puissante mais occupe deux places.</li>'
     + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.</li>'
@@ -358,7 +358,7 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
  * La Fêlure, dite en clair sous l'intention (26 octobre 2026). Bryan : « je peux la casser avec la bonne carte, mais je ne
  * sais même pas ce qu'elle fait ». La ligne dit quelle carte poser et ce que ça change, chiffres à l'appui (10 → 8 dégâts, +1 Flux).
  */
-function ligneFelure(s: CombatEtat, prevue: boolean): string {
+function ligneFelure(s: CombatEtat, prevue: boolean, resonne: boolean): string {
   const en = s.ennemi, it = s.intention;
   if (en.felureBrisee) return `<span class="int-felure brisee"><span class="gemme">${ICO.fele}</span><span><b>Fêlure brisée</b> : ${it.type === 'atk' ? 'son attaque est affaiblie' : it.type === 'bouclier' ? 'son bouclier est affaibli' : it.type === 'soin' ? 'son soin est affaibli' : 'il vacille'}</span></span>`;
   if (!felureVisible(en)) return `<span class="int-felure cachee"><span class="gemme">${ICO.fele}<b>?</b></span><span><b>Fêlure cachée</b> : un évanescent ne montre pas la carte qui le brise</span></span>`;
@@ -371,7 +371,9 @@ function ligneFelure(s: CombatEtat, prevue: boolean): string {
     : it.type === 'bouclier' ? `bouclier +${it.v} → <b>+${reduit(it.v)}</b>`
     : it.type === 'soin' ? `soin +${it.v} → <b>+${reduit(it.v)}</b>`
     : 'il vacille';
-  const flux = s.flux < REGLES.fluxMax ? `, <b class="gain-flux">+${REGLES.felure.flux} Flux</b>` : '';
+  // le Flux ne vient que si la chaîne fait aussi une suite (3, 4, 5)
+  const flux = s.flux >= REGLES.fluxMax ? '' : prevue ? (resonne ? `, <b class="gain-flux">+${REGLES.felure.flux} Flux</b>` : '')
+    : `, <b class="gain-flux">+${REGLES.felure.flux} Flux</b> en suite`;
   return `<span class="int-felure${prevue ? ' prevue' : ''}" style="--fc:${couleurFrequence(f)}"><span class="gemme">${ICO.fele}<b>${f}</b></span>`
     + `<span>${prevue ? '<b>Ta chaîne la brise</b>' : `Pose un <b class="freq">${f}</b>`} : ${effet}${flux}</span></span>`;
 }
@@ -488,7 +490,7 @@ function htmlEcranCombat(e: Ecran): string {
   const brume = s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours';
   const felF = !brume && s.ennemi.pv > 0 && !s.ennemi.felureBrisee && felureVisible(s.ennemi) ? s.ennemi.felure : undefined;
   const prevue = felF !== undefined && fs.includes(felF);
-  const felureHtml = s.ennemi.felure === undefined || brume || s.ennemi.pv <= 0 ? '' : ligneFelure(s, prevue);
+  const felureHtml = s.ennemi.felure === undefined || brume || s.ennemi.pv <= 0 ? '' : ligneFelure(s, prevue, a.suite >= 3);
   const brise = (g: Geste) => felF !== undefined && g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(felF);
 
   // combat guidé : ce que la leçon du tour désigne du doigt
