@@ -41,6 +41,8 @@ const gemme = (r: Rarete) => `<i class="gemme g-${r}" style="--r:${COULEUR_RARET
  * Les lieux de l'archipel (tableaux à 7 bâtiments, 23 octobre 2026) : les 5 bâtiments du jeu, et 2 lieux déjà peints
  * qui ouvriront plus tard (le Port et le Labo génétique). Bryan : pas de voile sur eux, le tableau reste beau partout ;
  * quand on les touche, une raison plausible, dans le lore, dit pourquoi ils ne sont pas encore ouverts.
+ * Le Port (décidé avec Bryan, 26 octobre 2026) ouvrira avec la convocation des Hauts, après le gardien de −6 :
+ * il mènera à la Flèche et à la carte des Joutes (voir le README, Grand Tableau).
  */
 type LieuFutur = 'port' | 'labo';
 type Lieu = BatimentId | LieuFutur;

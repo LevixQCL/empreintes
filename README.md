@@ -229,6 +229,9 @@ Tour du Noyau (ton rang en profondeur) et la fiche de la Strate en haut de l'éc
 - *Profondeur* : la Strate la plus profonde (`profondeurDe` : 2 par Strate, +1 quand son gardien est vaincu) ; à égalité, le premier arrivé.
 - *Registre* : la valeur de la collection (`VALEUR_METAL` fer 10 → nacre 400, +10 % par niveau monté, +20 par carte découverte) : découvrir compte plus que répéter.
 - *Joutes* (combats entre joueurs) et *La Flèche* (tour d'arène vers les Hauts, `FLECHE`) : grisés, avec ce qui arrive.
+  *Décidé avec Bryan (26 octobre 2026)* : on y entrera par le **Port** de l'archipel, qui ouvre avec la convocation des Hauts
+  (après le gardien de la Strate −6 et la décision de la lecture) : le charpentier de marine arrive, le bateau peut partir.
+  Le Port donnera accès à la Flèche et à la carte des Joutes ; d'ici là, il reste fermé (`LIEUX_FUTURS` dans `district.ts`).
 Deux périodes : le record (ne redescend jamais) et la semaine (ce qui est gagné depuis lundi). Le palmarès est noté à chaque tick
 dans `j.palmares` ; connecté, le joueur choisit un nom de directeur (`j.directeur`, jamais l'e-mail) et publie `classement/{uid}`
 au plus toutes les 25 s. Entre amis, toute la liste ; au-delà de 12, le podium et les voisins du joueur (`fenetre`).
