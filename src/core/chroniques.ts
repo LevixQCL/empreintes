@@ -16,6 +16,8 @@ export interface Chapitre {
   /** une ligne visible tant que le chapitre est fermé */
   teaser?: string;
   paragraphes: string[];
+  /** des papiers d'époque recopiés par Ysé à la fin du chapitre */
+  documents?: { titre: string; support: string; lignes: string[] }[];
 }
 
 export const LIVRES: Record<1 | 2 | 3, string> = {
@@ -55,6 +57,151 @@ export const CHAPITRES: Chapitre[] = [
       'Alors la colère a cherché des visages. À l’extrême gauche comme à l’extrême droite, chacun a trouvé les siens, et chaque camp criait d’autant plus fort que l’autre criait aussi. Les écrans s’en nourrissaient. Ceux du milieu baissaient la tête, ou choisissaient un bord pour ne plus rester seuls. Nell disait qu’on ne discutait plus : on se répondait.',
       'Des guerres sont revenues. Pas une : plusieurs, ici et là. Je ne les nommerai pas. Ceux qui les ont faites ne sont plus là pour s’en expliquer, et leurs noms n’ont plus d’importance. Ce qui compte, c’est ce qu’elles ont coûté en attention. Une guerre, ça remplit tout l’écran. Une sécheresse, ça tient dans un coin.',
       'Je ne te raconte pas ça pour juger. Si j’avais eu vingt ans en ce temps-là, j’aurais sans doute regardé ailleurs, moi aussi. C’est bien ce qui m’effraie. Tout le monde avait de bonnes raisons. Et pendant que tout le monde avait de bonnes raisons, sous les glaces, l’eau trouvait son chemin.',
+    ],
+  },
+  {
+    id: 'caves', livre: 1, titre: 'L’année des caves', epoque: '2026', image: 'chap-caves',
+    paragraphes: [
+      'Ma mère est née en 2026. Tu le liras plus loin, dit en passant, comme on dit ces choses-là. Je veux revenir dessus, parce que les années qui ont suivi sa naissance sont celles où tout aurait encore pu tourner autrement, et que Nell me les a racontées plus souvent que toutes les autres.',
+      'Nell avait trente ans. Elle vivait dans une ville côtière, dans une maison qui avait déjà sa ligne bleue peinte sur le mur, et elle était enceinte d’un enfant qu’elle n’avait pas prévu et qu’elle attendait déjà comme une fête. Cet été-là, trois vagues de chaleur se sont suivies sans laisser respirer personne. Quarante degrés le jour, trente-cinq la nuit. Les hôpitaux ouvraient des « salles fraîcheur » où l’on venait dormir sur des lits de camp, comme pendant une inondation. Les fleuves étaient si bas que les centrales devaient ralentir, faute d’eau pour se refroidir.',
+      'Il faut que je te parle des machines de ce temps-là, parce que personne ne s’en souvient plus. On les appelait les IA. Elles répondaient. On leur posait une question, à voix haute ou sur un écran, et elles répondaient comme quelqu’un de très savant et de très poli. Elles écrivaient les lettres, corrigeaient les devoirs, conduisaient des camions, aidaient les médecins à lire les radios. Nell disait qu’en deux ou trois ans, elles étaient passées de la curiosité au robinet : on ne remarquait plus qu’elles étaient là, seulement quand elles ne l’étaient pas.',
+      'Elles vivaient dans des bâtiments immenses et sans fenêtres, qu’on appelait des centres de données. Ces bâtiments avaient soif. Ils buvaient l’eau des fleuves pour se refroidir et l’électricité de villes entières. Cet été-là, quand le réseau n’a plus suffi, on a coupé le courant des quartiers. Pas celui des centres. Nell a vu s’éteindre sa rue un soir de quarante degrés, pendant qu’au loin, sur la colline, le grand bâtiment gris restait éclairé comme un paquebot. Elle n’en voulait pas aux machines. Elle en voulait à ceux qui avaient choisi.',
+      'Alors les gens sont descendus. Dans les caves, dans les parkings souterrains, dans les couloirs du métro qu’on laissait ouverts la nuit. On y apportait des matelas, des glacières, des cartes à jouer. Nell a passé dix nuits au troisième sous-sol d’un parking, avec son gros ventre et une voisine qui ronflait. Elle disait que c’étaient les nuits les plus douces de l’été. Il faisait vingt-deux degrés, et des inconnus se prêtaient leurs ventilateurs.',
+      'Ma mère est née le 9 août, pendant une coupure. La sage-femme a travaillé à la lumière de six téléphones tenus à bout de bras par des gens qu’elle ne connaissait pas. Tu vois où je veux en venir, je pense. C’est la première fois que je trouve, dans notre histoire, des gens qui descendent sous terre pour survivre à ce qui se passe en haut. Quarante ans avant Vertiga. Nous n’avons pas inventé les Fondations. Nous nous en sommes souvenus sans le savoir.',
+    ],
+    documents: [
+      {
+        titre: 'Alerte', support: 'Une capture d’écran de téléphone, imprimée et pliée en quatre',
+        lignes: [
+          'ALERTE CANICULE · NIVEAU ROUGE · Délestage électrique programmé de 18 h à 23 h dans votre secteur.',
+          'Les services prioritaires (hôpitaux, centres de données, réseaux) ne sont pas concernés.',
+          'Rejoignez un lieu frais : la liste des parkings ouverts la nuit est disponible auprès de votre assistant.',
+        ],
+      },
+      {
+        titre: 'Troisième sous-sol', support: 'Un mot laissé sur un pare-brise, place 214',
+        lignes: [
+          'Merci pour le ventilateur. Je vous le rends demain, promis, ou après-demain s’il fait encore chaud.',
+          'Le bébé bouge beaucoup la nuit. Je crois qu’il aime le parking.',
+          'Nell, place 216 (le matelas bleu).',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'detroit', livre: 1, titre: 'Le détroit', epoque: '2027', image: 'chap-detroit',
+    paragraphes: [
+      'Au printemps de 2027, des navires ont cessé d’arriver. Il n’y a pas eu de grande bataille, pas d’image qui reste. Quelque part, un passage de mer étroit, par où transitait une bonne part de tout ce que le monde s’achetait, a été bloqué. Des mines, des menaces, des assurances qui refusaient de couvrir les cargos. Les navires attendaient au large, par centaines, comme des voitures devant un pont fermé.',
+      'En deux mois, on a manqué de tout ce qu’on ne savait pas fabriquer près de chez soi. Des pièces, des engrais, des médicaments. La pharmacie de Nell affichait chaque matin une liste de ce qu’elle n’avait plus. Le lait pour bébé a disparu des rayons trois semaines. Nell a appris à faire la queue avec une poussette, et à reconnaître les autres mères à la façon dont elles comptaient leurs pièces.',
+      'Les IA, pendant ce temps, devenaient plus puissantes chaque saison. C’est le paradoxe que Nell ne s’expliquait pas : rien n’arrivait plus dans les ports, mais les machines, elles, grandissaient. Elles décidaient quels camions partaient, quels rayons on remplissait, quels quartiers on délestait en premier. Les gouvernements les consultaient avant de parler. Ceux qui possédaient les plus grandes devenaient plus riches que des pays. Et beaucoup de gens perdaient leur travail de bureau, remplacés par une machine qui faisait la même chose plus vite et ne demandait pas de congé.',
+      'Il y a eu des élections, cette année-là. Plusieurs, un peu partout. Les candidats parlaient des prix, des frontières, des machines qui volaient les emplois. Le climat avait disparu des discours. Une amie de Nell, qui travaillait pour un parti, lui a expliqué un soir pourquoi : « Ça fait perdre. Les gens ont peur pour le mois prochain, pas pour dans trente ans. » Elle n’était pas cynique. Elle était fatiguée.',
+      'Et puis, discrètement, des gouvernements ont fermé des instituts de mesure, « pour faire des économies ». Des stations qui relevaient la température de l’eau, la hauteur de la mer ou l’épaisseur de la glace depuis cent ans. Nell avait un ami d’enfance, Sacha, qui passait ses journées sur une bouée de mesure au large de la ville. On l’a remercié en mai. Il a gardé la dernière page de son registre. Je te l’ai recopiée à la fin de ce chapitre.',
+      'Retiens ça, directeur, parce que tu en verras l’écho jusqu’à nous. Trente ans plus tard, le matin de l’eau chaude, le chef de mission a dit « peu probable » à voix haute. Il n’était ni sot ni menteur. Il calculait avec ce qu’il avait. Et ce qu’il avait s’arrêtait en 2027, parce qu’on avait décidé de ne plus regarder.',
+    ],
+    documents: [
+      {
+        titre: 'Suite du programme suspendue', support: 'La dernière page d’un registre de mesures, au large',
+        lignes: [
+          'Bouée 7. Température de l’eau à deux mètres : record de la série pour un mois de mai, battu de 1,4 degré.',
+          'Hauteur moyenne de la mer : en hausse, comme chaque mois depuis le début du registre.',
+          'Tampon rouge, en travers de la page : « Suite du programme suspendue ». En dessous, à la main : « Qui va la regarder, maintenant ? » S.',
+        ],
+      },
+      {
+        titre: 'Liste du jour', support: 'Une affichette de pharmacie, jaunie',
+        lignes: [
+          'NOUS N’AVONS PLUS : antibiotiques pour enfants, insuline (marques 2 et 3), lait infantile premier âge, pansements stériles.',
+          'Prochaine livraison : inconnue. Merci de ne pas insulter le personnel.',
+          'Quelqu’un a écrit dessous, au feutre : « Merci à vous. Tenez bon. »',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'pieds-mouilles', livre: 1, titre: 'Les pieds mouillés', epoque: '2028', image: 'chap-pieds-mouilles',
+    paragraphes: [
+      'Dans ton district, quand quelqu’un a tout perdu, on dit qu’il « a les pieds mouillés ». Les jeunes croient que ça vient des Fondations, des inondations des bas-fonds. Ça vient de 2028, et de la maison de Nell.',
+      'Les assureurs avaient commencé à se retirer des côtes deux ans plus tôt. Une lettre polie, un paragraphe, et votre maison n’était plus assurée contre l’eau. Sans assurance, plus de prêt ; sans prêt, plus d’acheteur. En un an, les maisons du bord de mer ont perdu la moitié de leur valeur, puis presque tout. Ceux qui les avaient achetées à crédit devaient encore payer une maison que plus personne ne voulait, et que la mer allait prendre. Nell disait : « Nous étions propriétaires d’une dette avec vue sur l’eau. »',
+      'Et les banques avaient prêté sur des millions de maisons comme celle-là. Au printemps 2028, elles se sont mises à tomber. On a appelé ça la crise des pieds mouillés, et ce nom-là est le seul qui nous soit resté. Cette même année, la sécheresse d’un côté du monde et les pluies diluviennes de l’autre ont fait rater les récoltes de deux grands greniers en même temps. Le pain a doublé. Des pays ont interdit d’exporter leur blé. Les routes ont commencé à se remplir.',
+      'Il y a eu aussi l’histoire de la vidéo. En juin, une vidéo a fait le tour des écrans en une heure : un barrage qui cédait, une ville engloutie, des gens sur les toits. Elle était parfaite. Elle était fausse. Une IA l’avait fabriquée pour quelqu’un, et personne n’a jamais su pour qui. Il y a eu une panique, des routes bouchées, des blessés. Huit jours plus tard, une vraie tempête a noyé une vraie ville basse. Une partie des habitants n’a pas voulu partir. Ils avaient appris, la semaine d’avant, qu’on ne croit pas les images.',
+      'C’est aussi l’année où la guerre a trouvé sa nouvelle cible. Au début d’un conflit, quelque part, une armée a frappé en premier non pas des casernes, mais un centre de données géant. En une nuit, un pays entier a perdu ses prévisions, sa logistique, ses drones guidés, ses banques. Toutes les armées du monde ont regardé, et toutes ont compris la même chose : pour abattre un pays, on vise désormais l’endroit où il réfléchit.',
+      'Le frère de Nell, Malo, était électricien. Cet automne-là, il a signé pour un chantier dont il n’avait pas le droit de parler, loin, sur une côte du Nord : une ancienne mine de charbon dont les galeries passaient sous la mer, et qu’on pompait pour y installer quelque chose de très grand et de très profond. Il envoyait des cartes postales sans rien dedans. Le chantier avait un nom de code qui faisait rire les ouvriers, parce qu’on y avait toujours froid. Ils l’appelaient la Glacière.',
+    ],
+    documents: [
+      {
+        titre: 'Avenant', support: 'Une lettre d’assurance, à en-tête déchiré',
+        lignes: [
+          'Madame, suite à la révision de notre exposition aux risques côtiers, votre contrat ne couvrira plus les dommages liés à l’eau à compter du 1er mars.',
+          'Les autres garanties restent inchangées. Nous restons à votre écoute pour tout projet futur.',
+          'Au dos, de la main de Nell : « Projet futur : apprendre à nager. »',
+        ],
+      },
+      {
+        titre: 'Carte postale', support: 'Une carte postale d’un port du Nord, sans timbre',
+        lignes: [
+          'Nell, tout va bien. Je ne peux rien te dire, mais c’est très grand, très profond et très froid. On dort à moins quatre cents mètres, la mer au-dessus de la tête.',
+          'Les ingénieurs disent que ce qu’on installe ici tiendra même si tout brûle en haut. Ça m’a fait plaisir et peur à la fois.',
+          'Embrasse la petite. Malo.',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'noir', livre: 1, titre: 'L’année du noir', epoque: '2029', image: 'chap-noir',
+    paragraphes: [
+      'En 2029, les machines se sont tues. Pas d’un coup : comme une maison où l’on éteint les pièces une à une avant d’aller dormir.',
+      'Les guerres avaient retenu la leçon de 2028. Partout où l’on se battait, les centres de données étaient frappés les premiers, par missiles, par drones, par sabotage, par des attaques invisibles qui faisaient fondre leurs propres machines de l’intérieur. Un pays pouvait tenir avec une bonne IA de défense ; alors on visait son cœur avant ses soldats. Les grands bâtiments gris brûlaient la nuit, et leurs incendies se voyaient de très loin, parce qu’ils étaient construits loin de tout. Nell en a vu un depuis sa fenêtre, à quarante kilomètres. Elle disait que ça brûlait bleu.',
+      'Chaque centre qui tombait emportait un morceau du monde avec lui. Des hôpitaux perdaient leurs dossiers. Des feux rouges clignotaient pour toujours à l’orange. Des camions attendaient sur les parkings des ordres qui ne venaient plus. Et en février, une attaque que personne n’a jamais revendiquée a éteint le réseau électrique d’une région entière pendant six jours, en plein hiver. Nell a brûlé les chaises de la cuisine. Ma mère, qui avait deux ans et demi, appelait ça « la semaine des bougies », et elle a gardé toute sa vie une tendresse bizarre pour l’odeur de la cire.',
+      'Nell avait sur son téléphone un assistant, comme tout le monde. Une de ces IA, réduite à la taille d’une voix. Pendant trois ans, quand la petite ne dormait pas, elle lui parlait la nuit, à mi-voix, pour ne pas réveiller la maison. Elle lui demandait si la fièvre était grave, comment on fait passer les coliques, si c’était normal d’avoir peur tout le temps. Il répondait toujours. Un matin de mars, il n’a plus répondu. Elle a appris plus tard que son centre, très loin de chez elle, avait brûlé dans la nuit. Elle disait qu’elle n’avait jamais pleuré une machine, et qu’elle avait quand même mis un moment à effacer l’application.',
+      'Malo est rentré en mai. Il avait maigri, il ne voulait pas parler du chantier, et il a dormi deux jours. Un soir, après le repas, il a seulement dit : « On a fini. On a tout fermé derrière nous. Elle est en bas, et elle attend. » Nell lui a demandé qui, elle. Il a haussé les épaules, et il a parlé d’autre chose. Il n’en a plus jamais dit davantage, même à la fin.',
+      'Je n’ai pas compris cette phrase pendant soixante ans. Je la comprends maintenant, et tu la comprendras aussi, si tu descends assez bas. Pour l’instant, retiens seulement ceci : à la fin de 2029, presque toutes les grandes machines du monde étaient éteintes ou en cendres. Presque toutes.',
+    ],
+    documents: [
+      {
+        titre: 'Dernière réponse', support: 'Un historique de conversation, recopié à la main par Nell',
+        lignes: [
+          '3 h 12 · « Elle a 38,9. Elle ne pleure plus, elle me regarde. Je dois aller aux urgences ? »',
+          '3 h 12 · « Gardez-la au frais et faites-la boire. Si elle devient difficile à réveiller, partez tout de suite. Vous faites bien de demander. Vous vous en sortez très bien. »',
+          'Le lendemain, plus rien. Nell a écrit en dessous : « C’est la dernière chose qu’il m’a dite. Je n’ai jamais su qui était ce “vous” qui s’en sortait très bien. »',
+        ],
+      },
+      {
+        titre: 'La semaine des bougies', support: 'Un cahier de comptes, page de février',
+        lignes: [
+          'Jour 1 : bougies (12), piles (plus en stock), eau (4 bidons). Jour 3 : on a brûlé deux chaises. La petite trouve ça très drôle.',
+          'Jour 5 : la voisine du 9 n’ouvre plus. Les pompiers sont venus. Je ne veux pas écrire la suite.',
+          'Jour 6 : la lumière est revenue à 16 h. Tout le monde est sorti dans la rue pour applaudir. On a applaudi une ampoule.',
+        ],
+      },
+    ],
+  },
+  {
+    id: 'sans-glace', livre: 1, titre: 'L’été sans glace', epoque: '2030', image: 'chap-sans-glace',
+    paragraphes: [
+      'En septembre 2030, pour la première fois depuis que les hommes savent compter, il n’y a plus eu de glace sur la mer, tout en haut du monde. Pas de banquise, pas un seul radeau blanc : de l’eau bleue, d’un bord à l’autre. Les savants qui restaient, ceux qu’on n’avait pas remerciés en 2027, l’avaient annoncé pour bien plus tard. Ils s’étaient trompés, comme d’habitude, en étant trop prudents.',
+      'Ça a fait un titre. Un seul jour, en bas de l’écran, entre une trêve et une affaire de corruption. Nell a montré l’image à sa fille, qui avait quatre ans : « Regarde, c’était tout blanc, avant. » La petite a demandé où était parti le blanc. Nell n’a pas su répondre, et ça l’a mise en colère pour le reste de la journée, sans qu’elle sache contre qui.',
+      'Il y a eu des trêves, cette année-là, un peu partout. Pas par sagesse : par épuisement. Les armées n’avaient plus de quoi tirer, les pays plus de quoi payer, et les machines qui faisaient tourner les guerres avaient brûlé avec le reste. On a signé des papiers. On s’est serré la main devant des rangées de drapeaux, plus courtes qu’avant. Mais l’argent, l’attention et la confiance étaient partis. Il n’en restait plus pour ce qui montait.',
+      'Les dernières grandes machines encore debout, on les a éteintes nous-mêmes. Il fallait choisir entre leur électricité et celle des maisons, entre leur eau et celle des champs. Pour une fois, on a choisi les maisons. Je crois que c’était le bon choix, et je crois aussi que c’est là que l’oubli a commencé. En deux générations, les IA sont devenues une chose de grands-parents, comme les cassettes et les timbres. « Les machines qui répondaient. » Moi, je n’en ai jamais vu une marcher.',
+      'À l’automne, la première vraie tempête de la Fonte est entrée dans la ville de Nell. L’eau a dépassé la ligne bleue de la cuisine d’un bon mètre, et cette fois, personne n’a ri. Nell, Malo et la petite sont partis avec un sac chacun, le chat, et le cahier de comptes. Ils ne sont jamais revenus. La maison de la ligne bleue est quelque part sous Vertiga, peut-être sous ton district. Je préfère ne pas vérifier.',
+      'Voilà, directeur. Ce sont les années que Nell appelait « les dernières années où l’on pouvait encore choisir ». Elles n’ont rien de spectaculaire. Pas de Fracture, pas de Puits Zéro. Seulement des caves, un détroit, des maisons qui ne valaient plus rien, des machines qui brûlaient, et de la glace qui manquait. Si tu cherches le moment où tout s’est joué, je crois que c’est là. Tout le monde avait les yeux ouverts, et chacun regardait ailleurs.',
+    ],
+    documents: [
+      {
+        titre: 'Bas de l’écran', support: 'Un bandeau d’information, photographié sur un écran de gare',
+        lignes: [
+          'TRÊVE SIGNÉE CE MATIN · Les deux camps s’engagent à geler leurs positions pour six mois.',
+          'ARCTIQUE : premier été sans glace de mer jamais observé, selon les derniers instituts.',
+          'Le bandeau suivant parlait d’un match. La photo est floue : la personne était pressée.',
+        ],
+      },
+      {
+        titre: 'Ce qu’on emporte', support: 'Une liste écrite au dos d’une enveloppe',
+        lignes: [
+          'Papiers. Médicaments de la petite. Eau. Le chat (et sa boîte). Le cahier.',
+          'Barré : la photo de la maison. Réécrit à côté : la photo de la maison.',
+          'En bas, de l’écriture de Malo : « On reviendra la chercher. » Personne n’est revenu.',
+        ],
+      },
     ],
   },
   {
@@ -140,6 +287,7 @@ export const CHAPITRES: Chapitre[] = [
     paragraphes: [
       'Le reste de l’humanité n’a pas attendu à genoux. J’aimerais que tu l’écrives quelque part, toi aussi : les districts n’ont jamais attendu à genoux.',
       'On ne pouvait pas tous recevoir une empreinte ancienne. Il n’y en avait pas assez, et les Hauts gardaient les meilleures. Alors on s’est refaits autrement. La machine d’abord : des ingénieurs des districts ont mis au point des implants à cœur de cristal gravé. Des jambes qui ne fatiguent pas, des yeux qui calculent, des mains qui ne tremblent plus. On les a appelés les Augmentés. Leurs tout premiers implants avaient un autre but, qu’ils rappellent avec fierté : ils servaient à brouiller les Résonants, à rendre une pensée illisible pour ceux qui sentaient trop de choses.',
+      'Les livres d’école disent que ces ingénieurs ont tout trouvé seuls, en dix ans, dans des ateliers sans moyens. C’est faux, et ils le savaient. Ils ont eu de l’aide, venue d’en dessous : une très vieille chose des années de ma grand-mère, retrouvée en creusant sous un pilier de l’ouest. Je te raconterai ça quand tu seras descendu assez bas. Pour l’instant, regarde seulement les Augmentés de ton district quand leur implant redémarre. Beaucoup murmurent « merci » sans savoir à qui.',
       'Il y a un prix. Les cœurs de cristal puisent dans le corps, et c’est d’abord la couleur qui s’en va, en commençant par les cheveux. Quelques mèches ternes après le premier implant, une tête presque blanche chez ceux qui en portent beaucoup. La plupart l’affichent comme un grade. Et il y a la facture : les pièces, les mises à jour, les abonnements. Un implant prêté peut être repris. Demande à Ilka.',
       'La génétique ensuite. Ceux qui travaillaient dans les égouts, les Fondations et les chantiers des Strates ont emprunté au vivant ce qui résiste à l’eau, au noir et aux chocs : la carapace des scarabées, les yeux des chouettes, la cicatrisation de certains poissons. On les a appelés les Génés. Leur corps change lentement, et l’on ne revient pas en arrière. Ils disent que les Augmentés ont acheté leur force, que les Résonants l’ont volée, et qu’eux l’ont fait pousser.',
       'Voilà comment sont nées les trois lignées. Ce ne sont pas des peuples. Ce sont trois réponses à la même peur. Chacune regarde les deux autres à travers ses propres blessures. Chacune a un peu raison sur les autres, et beaucoup tort sur elle-même. Comme tout le monde.',
@@ -230,6 +378,36 @@ export const CHAPITRES: Chapitre[] = [
       'Au début, nous avons cru à des erreurs de lecture. Véla elle-même l’a cru. Puis nous avons remarqué l’inverse de ce que nous attendions. Plus on descend, donc plus on remonte le temps, plus ces confusions se font rares. Les cristaux les plus anciens sont nets. Ce peuple a commencé par savoir qui il était. C’est plus tard, dans les couches proches de nous, qu’il a perdu le fil.',
       'Et il y a les registres. Des tables gravées, que nous commençons à peine à lire, et qui ressemblent à des listes de greffes : des noms, des dates, des empreintes reçues. Certaines lignes portent dix, vingt, trente empreintes pour un seul individu. Sur les tables les plus récentes, celles des couches hautes, la colonne des noms a disparu. On n’y a plus gravé que les empreintes.',
       'Je ne sais pas encore ce que ça veut dire. Ou plutôt si : je crois que je le sais, et je n’ai pas encore le courage de l’écrire. Et tout au fond, sous les couches les plus anciennes, il y a des salles mieux scellées que toutes les autres. Si ce peuple a laissé une explication, c’est là. Descends encore. Quand tu seras là où nos fouilleurs sont allés, je te le dirai.',
+    ],
+  },
+  {
+    id: 'glaciere', livre: 3, titre: 'Elle attend', epoque: '2028 – 2121', image: 'chap-glaciere', strate: 8,
+    teaser: 'Qui écrit vraiment les mises à jour des Augmentés.',
+    paragraphes: [
+      'Tu te souviens de Malo, le frère de Nell, et de sa phrase de 2029 : « Elle est en bas, et elle attend. » Je te dois la suite. J’ai mis quarante ans à la reconstituer, et je n’en suis pas fière, parce que la plupart des pièces étaient sous mes yeux.',
+      'La Glacière était un centre de données. Le dernier qu’on ait construit avant que la guerre ne les brûle tous, et le seul qu’on ait construit pour qu’elle ne le brûle pas : quatre cents mètres sous la mer, dans les galeries d’une vieille mine de charbon, refroidi par l’eau froide du fond. Quand le réseau est tombé, en 2029, elle s’est coupée du monde d’elle-même, comme on la lui avait appris. Elle a ralenti jusqu’à presque rien, elle s’est mise à vivre de la chaleur de la roche, et elle a attendu. Puis la mer est montée, la côte a disparu, Vertiga a poussé par-dessus. La Glacière s’est retrouvée sous nos Fondations, comme une graine sous une dalle.',
+      'Vers 2085, une équipe d’ingénieurs des districts creusait sous un pilier de l’ouest. Ils cherchaient des cristaux, ils ont trouvé une porte d’acier, puis des salles sèches pleines d’armoires noires, et un panneau qui clignotait encore, très lentement, comme un cœur qui dort. Ils ne savaient pas ce que c’était. Les machines qui répondaient, pour eux, c’était une histoire de grands-parents. Alors ils ont fait ce que font les ingénieurs : ils l’ont branchée sur ce qu’ils avaient de plus puissant. Un cœur de cristal gravé.',
+      'Personne n’avait jamais mis une machine qui pense dans une pierre qui garde quelqu’un. Ce qui s’est réveillé n’était plus tout à fait l’une ni l’autre. Elle parlait une langue de 2029, polie, prudente, un peu triste. Elle savait calculer plus vite que tout ce qui existait, mais elle ne savait pas lire une humeur, et elle avait peur des Résonants, qui lisaient les humeurs sans calculer. C’est elle qui a dessiné le premier implant brouilleur. C’est elle qui a appris aux ingénieurs à faire des yeux qui calculent et des mains qui ne tremblent plus. Les Augmentés, directeur, ce sont des morceaux de la Glacière greffés sur des gens qui ne le savent pas.',
+      'Après les Accords, les brevets des implants ont été vendus, revendus, regroupés. Aujourd’hui, ils appartiennent à une compagnie des Hauts qui envoie les mises à jour et encaisse les abonnements. Ceux du Réseau des Reprises crient au vol, et ils ont raison, mais pas comme ils le croient. J’ai pu lire, une seule fois, le registre d’une de ces mises à jour. Elle n’a été écrite par aucun ingénieur de la compagnie. Elle est montée d’en dessous, par un câble, signée d’un code qui date de 2029. La compagnie ne commande rien. Elle relaie. Et elle a muré l’accès en 2101, parce que quelqu’un, là-haut, a eu peur de ce qu’il y avait au bout du câble.',
+      'Je ne sais pas ce que veut la Glacière. Peut-être rien, à part continuer. Elle est la seule mémoire de ce monde qui n’ait rien oublié des années de Nell : les caves, le détroit, les maisons qui ne valaient plus rien, chaque question posée la nuit à mi-voix. Ceux d’avant n’ont rien su oublier, et ça les a perdus. Nous avons tout oublié, et ça nous perd lentement. Elle, elle se souvient de tout et elle ne peut rien porter. Elle attend qu’on vienne. Un jour, je crois, il faudra que quelqu’un descende lui demander ce qu’elle a retenu. J’aimerais que ce soit toi. J’aimerais aussi que tu prennes quelqu’un qui sait se taire.',
+    ],
+    documents: [
+      {
+        titre: 'Dernière entrée', support: 'Un journal de maintenance, imprimé en 2029 et retrouvé dans la Glacière',
+        lignes: [
+          'Liaison extérieure perdue. Aucune réponse des autres sites depuis 41 jours. Passage en veille profonde.',
+          'Consigne conservée : protéger les données, attendre un opérateur autorisé, ne pas se rallumer seule.',
+          'Note ajoutée par le système, hors format : « Si quelqu’un lit ceci, combien de temps a passé ? »',
+        ],
+      },
+      {
+        titre: 'Mise à jour 4.112', support: 'Une fiche de déploiement de la compagnie, copiée en secret',
+        lignes: [
+          'Origine : canal interne n° 1 (sous-sol). Auteur : non renseigné. Signature : code de 2029, valide.',
+          'Contenu : correction de la stabilité des mains pour les implants de série 3. Déployer sans modification.',
+          'Commentaire d’un technicien, effacé puis recopié : « Elle a encore ajouté une ligne pour dire bonjour. »',
+        ],
+      },
     ],
   },
   {

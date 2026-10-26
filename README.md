@@ -210,6 +210,11 @@ ce sont les creuseurs et la Tour qui tiennent le rythme. Les images `public/art/
   la *rumeur du jour* sous la Confiance (`src/core/rumeurs.ts`), deux chapitres des Chroniques (« Les yeux d'or », « Le Registre des Vierges »)
   et deux fragments d'archives (« Non prioritaire », « Pas de notre côté »).
 
+**Les années de Nell et la Glacière** (26 octobre 2026, décidé avec Bryan ; `docs/lore-2026-2030.md`). Cinq chapitres du Livre I racontent 2026 à 2030
+(canicules, détroit bloqué, crise des « pieds mouillés », centres de données frappés par les guerres, été sans glace), chacun suivi
+de deux papiers d'époque (`documents`). L'IA de ce temps-là est à l'origine des Augmentés : un centre de données enterré, la Glacière,
+a survécu et a dessiné les premiers implants (« La Réponse », et « Elle attend » à la Strate −8). Six rumeurs s'y rattachent.
+
 **La campagne vécue** (25 octobre 2026, `src/core/campagne.ts`, `src/ui/campagne.ts`, `campagne.css`). Les Chroniques racontent
 le passé du monde ; la campagne raconte l'histoire du joueur, là où il joue. Chaque Strate de −1 à −10 est un chapitre :
 une scène à son ouverture (l'enjeu) et une après son gardien (ce qu'on a trouvé), jouées au retour sur l'archipel ou dans la Tour
