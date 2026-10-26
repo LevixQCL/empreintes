@@ -31,7 +31,7 @@ export function htmlPillages(e: EcranDistrict): string {
   const { cibles, force, faits } = cartePillages(j, e.now, e.pillagesEnLigne ?? []);
   const choisie = cibles.find((c) => c.id === e.pillageCible) ?? cibles.find((c) => !faits.includes(c.id)) ?? cibles[0];
 
-  let h = entete('Pillages · La mer des piliers', 'Archipels voisins', `<button type="button" class="btn-icone" data-action="coupe" aria-label="Retour à la Tour">${ICO.retour}</button>`);
+  let h = entete('Le Port · La mer des piliers', 'Archipels voisins', `<button type="button" class="btn-icone" data-action="archipel" aria-label="Retour au district">${ICO.retour}</button>`);
 
   // les jetons et le coffre : ce qu'on peut faire, ce qu'on risque
   h += `<section class="pl-etat" aria-label="Jetons et coffre">`
@@ -81,11 +81,5 @@ function ficheCible(j: Jeu, c: Cible, force: number, fait: boolean, jetons: numb
     + `<button type="button" class="btn prim large" data-action="pillage-preparer" data-id="${echap(c.id)}"${raison ? ' disabled' : ''}>${ICO.grappin}Préparer le pillage</button></section>`;
 }
 
-/** L'entrée des pillages dans la Tour du Noyau */
-export function appelPillages(j: Jeu, now: number): string {
-  if (strateVaincue(j) < PILLAGE.strateMin) return `<p class="tr-note">${ICO.verrou}Les pillages s’ouvrent quand le gardien de la Strate −1 est vaincu.</p>`;
-  majJetons(j, now);
-  const n = etatPillage(j).jetons;
-  return `<button type="button" class="gt-bandeau tr-pillages" data-action="pillages"><span class="gt-bandeau-ico">${ICO.grappin}</span>`
-    + `<span><small>Archipels voisins</small><strong>Pille un archipel pour des composants · ${n} / ${PILLAGE.jetonsMax} jetons</strong></span>${ICO.lancer}</button>`;
-}
+/** Le Port est ouvert : la Strate −1 est vaincue, le bateau peut quitter le ponton */
+export const portOuvert = (j: Jeu) => j.chambre && strateVaincue(j) >= PILLAGE.strateMin;

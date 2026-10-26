@@ -220,7 +220,7 @@ export function navigation(e: EcranDistrict): string {
     coupe: !!j.expedition || !!(o && o.onglet === 'coupe' && !o.fait(j)),
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
   };
-  const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'escouade' || e.vue === 'pillages' ? 'coupe' : e.vue === 'cartes' ? 'porteurs' : e.vue;
+  const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'pillages' ? 'archipel' : e.vue === 'escouade' ? 'coupe' : e.vue === 'cartes' ? 'porteurs' : e.vue;
   // sur PC (rail.css) : le cristal seul en tête, et un filet de lumière qui relie les onglets au « Plus » du bas
   return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./art/embleme-cristal.webp" alt=""></span>` + ONGLETS.map((t) => {
     const action = t.vue === 'plus' ? 'menu' : t.vue;

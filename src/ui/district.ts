@@ -2,8 +2,8 @@
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
 // les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
 
-import { appelPillages } from './pillages';
-import { butinPillage, chanceVictoire, difficulte, forceEscouade } from '../core/jeu';
+import { portOuvert } from './pillages';
+import { PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons } from '../core/jeu';
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { GESTES_SPECIAUX, MODULES, ORIGINE_PAQUETAGE, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
@@ -49,8 +49,8 @@ type Lieu = BatimentId | LieuFutur;
 const LIEUX_FUTURS: Record<LieuFutur, { nom: string; raison: string; promesse: string }> = {
   port: {
     nom: 'Port',
-    raison: 'Le charpentier de marine n’est pas encore arrivé au district. Sans lui, personne n’ose prendre la mer : le vieux bateau reste amarré au ponton.',
-    promesse: 'D’ici, des équipages partiront un jour vers les autres piliers et les ruines à moitié noyées.',
+    raison: 'Le vieux bateau reste amarré au ponton : tant que le gardien de la Strate −1 tient le puits, personne ne laisse le district sans défense pour prendre la mer.',
+    promesse: 'Le passage sûr, des équipages partiront d’ici vers les autres piliers, piller les archipels voisins.',
   },
   labo: {
     nom: 'Labo génétique',
@@ -179,6 +179,13 @@ function plaques(e: EcranDistrict): string {
     // une plaque près du bord droit ou gauche reste dans le tableau
     const left = Math.min(84, Math.max(16, (p.x / 400) * 100)), top = (p.y / 600) * 100;
     const pos = `style="left:${left}%;top:${top}%"`;
+    // le Port s'ouvre avec les pillages (26 octobre 2026, Bryan : « il faut un bateau pour aller piller des gens »)
+    if (id === 'port' && portOuvert(j)) {
+      majJetons(j, e.now);
+      const n = etatPillage(j).jetons;
+      return `<button type="button" class="plaque" ${pos} data-action="pillages" data-lieu="port" aria-label="Port : archipels voisins, ${n} jeton${n > 1 ? 's' : ''} de pillage sur ${PILLAGE.jetonsMax}">`
+        + `<span class="plaque-nom">${ICO.grappin}Port</span><small>${n} / ${PILLAGE.jetonsMax} jetons</small></button>`;
+    }
     if (estFutur(id)) {
       return `<button type="button" class="plaque futur${e.selection === id ? ' choisie' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(LIEUX_FUTURS[id].nom)}, pas encore ouvert">`
         + `<span class="plaque-nom">${echap(LIEUX_FUTURS[id].nom)}</span></button>`;
@@ -1082,8 +1089,6 @@ export function htmlCoupe(e: EcranDistrict): string {
   // le Grand Tableau : ton rang en profondeur, et l'entrée vers les classements
   if (j.chambre && e.grand) h += bandeauTableau(e, e.grand, e.uid ?? null);
 
-  // les archipels voisins : les pillages (26 octobre 2026)
-  if (j.chambre && !j.expedition) h += appelPillages(j, e.now);
   // trois volets au lieu d'une page sans fin : les Strates, les Épreuves, les missions
   const ouvert = j.chambre && strateVaincue(j) >= 1;
   const volet = ouvert ? e.ongletTour ?? 'strates' : 'strates';
