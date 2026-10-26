@@ -42,6 +42,45 @@ service cloud.firestore {
       allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
     }
 
+    // Les pillages (26 octobre 2026) : chaque directeur publie sa garnison (son escouade, ses cartes, son coffre) ;
+    // tout directeur connecté les lit pour trouver des archipels à sa portée. Un pillage joué contre lui est noté
+    // dans garnisons/{uid}/subis par l'attaquant ; seul le défenseur les efface. Les bornes limitent la triche :
+    // une victoire prend au plus un dixième du coffre publié, et le défenseur n'applique que 3 attaques par jour,
+    // avec 8 h de bouclier après une attaque perdue (src/core/partie/pillages.ts, subirPillages).
+    match /garnisons/{uid} {
+      allow read: if request.auth != null;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid && garnisonValide(request.resource.data);
+      match /subis/{id} {
+        allow read: if request.auth != null;
+        allow delete: if request.auth != null && request.auth.uid == uid;
+        allow create: if request.auth != null && request.auth.uid != uid && subiValide(request.resource.data, uid);
+      }
+    }
+
+    function garnisonValide(d) {
+      return d.keys().hasOnly(['nom', 'porteurs', 'strate', 'coffre', 'force', 'maj'])
+        && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24
+        && d.porteurs is list && d.porteurs.size() >= 1 && d.porteurs.size() <= 3
+        && d.strate is int && d.strate >= 1 && d.strate <= 200
+        && d.coffre is int && d.coffre >= 0 && d.coffre <= 1000000
+        && d.force is number && d.force > 0 && d.force < 1000
+        && maintenant(d.maj);
+    }
+
+    function subiValide(d, defenseur) {
+      return d.keys().hasOnly(['attaquant', 'nom', 'victoire', 'vol', 'perte', 'le'])
+        && d.attaquant == request.auth.uid
+        && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24
+        && d.victoire is bool
+        && d.vol is int && d.vol >= 0
+        && d.vol <= get(/databases/$(database)/documents/garnisons/$(defenseur)).data.coffre / 10 + 1
+        && d.perte is int && d.perte >= 0 && d.perte <= 100000
+        // une victoire ne laisse rien, une défaite ne prend rien
+        && (d.victoire || d.vol == 0) && (!d.victoire || d.perte == 0)
+        && maintenant(d.le);
+    }
+
     function estAdmin() {
       return request.auth != null && request.auth.token.email == 'houben.bryan@gmail.com' && request.auth.token.email_verified == true;
     }

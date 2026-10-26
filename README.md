@@ -251,8 +251,14 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
   8 h de bouclier après une attaque perdue et subit 3 attaques par jour au plus (`protege`).
 - *Archipels sans directeur* (`ciblesBots`) : tant qu'il y a peu de vrais directeurs à portée, des archipels tenus par un
   intendant complètent la carte (dits comme tels sur la fiche), les mêmes toute la journée.
-- *À venir* : les garnisons des vrais directeurs en ligne (`garnisonDe` publiée dans Firestore, attaques subies appliquées à
-  l'ouverture par `subirPillages`), puis les Joutes en temps réel. Il faudra publier de nouvelles règles Firestore.
+- *En ligne* (`src/net/pillages.ts`, `src/app/pillages.ts`) : chaque directeur connecté publie sa garnison `garnisons/{uid}`
+  (nom du Grand Tableau s'il est public, sinon « Directeur anonyme » ; au plus toutes les 5 minutes). La carte lit une
+  douzaine de garnisons à sa portée (requête triée sur la force, relue au plus toutes les 10 minutes) et vérifie le bouclier
+  d'un vrai directeur avant le départ. Chaque pillage joué est noté dans `garnisons/{défenseur}/subis` ; le défenseur les lit
+  à l'ouverture, les applique lui-même (`subirPillages` : chacun une fois, 3 par jour, bouclier de 8 h, montants plafonnés)
+  et les ajoute au résumé « Pendant ton absence ». Tant que les règles Firestore des garnisons ne sont pas publiées,
+  tout échoue sans bruit et la carte n'a que des archipels sans directeur.
+- *À venir* : les Joutes en temps réel (elles demanderont d'autres règles Firestore).
 
 ## Firebase
 

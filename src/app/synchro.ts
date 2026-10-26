@@ -7,6 +7,7 @@ import { finPour } from './combat';
 import { app, compteEtat, compteProtege, D, G, K, racine } from './etat';
 import { afficher } from './rendu';
 import { lireMonEntree, planifierPublication } from './tableau';
+import { envoyerPillages, planifierGarnison, recevoirPillages } from './pillages';
 
 let minuteur: number | undefined;
 /** la partie à envoyer au compte (la plus récente), et quand on l'a envoyée la dernière fois */
@@ -28,6 +29,7 @@ export function sauver() {
     enAttente = env;
     if (minuteur === undefined) minuteur = window.setTimeout(envoyer, Math.max(1500, derniereEcriture + ECRIRE_APRES - Date.now()));
     planifierPublication();
+    planifierGarnison();
   }
 }
 
@@ -145,6 +147,8 @@ export async function demarrerCompte() {
         // connecté depuis l'écran titre : le panneau se referme, « Reprendre » ouvre la partie du compte
         if (app.mode === 'titre') compteEtat.ouvert = false;
         comptePret();
+        // les pillages : attaques subies pendant l'absence, pillages pas encore envoyés, garnison à jour
+        if (reconcilie) recevoirPillages().then((change) => { if (change) sauver(); envoyerPillages(); planifierGarnison(); });
         if (app.uid && compteProtege() && !app.jeu.directeur?.nom && !app.pseudoDemande) { app.pseudoDemande = true; G.edition = true; G.accueil = true; G.erreur = ''; if (app.mode === 'district') afficher(); }
       });
       lireMonEntree();

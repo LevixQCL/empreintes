@@ -1,5 +1,6 @@
 // Actions du combat et de l'exploration des Strates.
 
+import { envoyerPillages } from '../pillages';
 import { NOMS_RARETE } from '../../core/collection';
 import * as C from '../../core/combat';
 import { moduleDef, porteurDef } from '../../core/donnees';
@@ -75,6 +76,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
       } else if (r.pillage) {
         const p = r.pillage;
         D.vue = 'pillages';
+        envoyerPillages();
         D.message = p.victoire ? `Pillage réussi à ${p.nom} : +${p.gain} composants, rangés dans ton coffre.`
           : `Repoussés à ${p.nom}.${p.perte ? ` L’escouade a laissé ${p.perte} composants de son coffre.` : ''}`;
       } else {

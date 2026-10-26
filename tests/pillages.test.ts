@@ -99,17 +99,36 @@ describe('Les pillages', () => {
     expect(etatPillage(j).coffre).toBe(190);
   });
 
-  it('les attaques subies ne touchent que le coffre', () => {
+  it('les attaques subies ne touchent que le coffre, plafonnées, chacune une seule fois', () => {
     const j = pret();
     j.composants = 500;
     etatPillage(j).coffre = 40;
+    const subis = [
+      { id: 'a', nom: 'Ilse', victoire: false, vol: 0, perte: 7, le: 1 },
+      { id: 'b', nom: 'Bryan', victoire: true, vol: 100, perte: 0, le: 2 },
+    ];
+    expect(subirPillages(j, subis)).toHaveLength(2);
+    // le vol est plafonné à 5 combats de sa Strate (−1 : 30 composants)
+    expect(etatPillage(j).coffre).toBe(17);
+    expect(j.composants).toBe(477);
+    expect(subirPillages(j, subis)).toHaveLength(0);
+    expect(j.composants).toBe(477);
+  });
+
+  it('le défenseur applique lui-même son bouclier et la limite du jour', () => {
+    const j = pret();
+    j.composants = 500;
+    etatPillage(j).coffre = 200;
+    const h = 3_600_000;
     const l = subirPillages(j, [
-      { nom: 'Bryan', victoire: true, vol: 100, perte: 0, le: 1 },
-      { nom: 'Ilse', victoire: false, vol: 0, perte: 7, le: 2 },
+      { id: 'a', nom: 'A', victoire: true, vol: 5, perte: 0, le: 0 },
+      { id: 'b', nom: 'B', victoire: true, vol: 5, perte: 0, le: h },
+      { id: 'c', nom: 'C', victoire: false, vol: 0, perte: 3, le: 9 * h },
+      { id: 'd', nom: 'D', victoire: true, vol: 5, perte: 0, le: 18 * h },
+      { id: 'e', nom: 'E', victoire: false, vol: 0, perte: 3, le: 20 * h },
     ]);
-    expect(l).toHaveLength(2);
-    expect(etatPillage(j).coffre).toBe(7);
-    expect(j.composants).toBe(467);
+    // b tombe sous le bouclier de a ; c passe ; d ouvre un nouveau bouclier ; e est la 4e du jour
+    expect(l.map((m) => m.charAt(0))).toEqual(['A', 'T', 'D']);
   });
 
   it('bouclier de 8 h après une attaque perdue, 3 attaques subies par jour au plus', () => {

@@ -142,6 +142,8 @@ export interface EtatPillage {
   /** les archipels déjà attaqués aujourd'hui (un seul pillage par archipel et par jour), et ce jour */
   faits?: string[];
   jour?: number;
+  /** les attaques subies déjà comptées (deux jours) : pour le bouclier, et pour ne rien compter deux fois */
+  recus?: { id: string; victoire: boolean; le: number; refusee?: boolean }[];
 }
 
 export function etatPillage(j: Jeu): EtatPillage {
@@ -316,33 +318,47 @@ export function remonterPillage(j: Jeu, now: number): RetourPillage | null {
   return { nom: pi.nom, victoire, gain, perte };
 }
 
-/** Une attaque subie, reçue du réseau à l'ouverture du jeu */
-export interface PillageSubi { nom: string; victoire: boolean; vol: number; perte: number; le: number }
+/** Une attaque subie, reçue du réseau à l'ouverture du jeu (id : celui du document en ligne) */
+export interface PillageSubi { id?: string; nom: string; victoire: boolean; vol: number; perte: number; le: number }
 
-/** Applique les attaques subies pendant l'absence : le coffre perd ce qui a été pris, gagne ce que les perdants ont laissé */
+/**
+ * Applique les attaques subies pendant l'absence : le coffre perd ce qui a été pris, gagne ce que les perdants ont laissé.
+ * Le défenseur fait lui-même respecter les limites (un attaquant tricheur ne peut pas les contourner) : chaque attaque
+ * n'est comptée qu'une fois, au plus 3 par jour, aucune pendant les 8 h de bouclier après une attaque perdue,
+ * et ce qu'un perdant laisse est plafonné comme un vol.
+ */
 export function subirPillages(j: Jeu, subis: PillageSubi[]): string[] {
   const etat = etatPillage(j);
+  const recus = (etat.recus ??= []);
+  const plafond = PILLAGE.plafondVol * butinCombat(Math.max(1, strateVaincue(j)), 0);
   const l: string[] = [];
   for (const s of subis.slice().sort((a, b) => a.le - b.le)) {
+    if (s.id && recus.some((r) => r.id === s.id)) continue;
+    const refusee = protege(recus, s.le);
+    recus.push({ id: s.id ?? `${s.le}`, victoire: s.victoire && !refusee, le: s.le, ...(refusee ? { refusee: true } : {}) });
+    if (refusee) continue;
     if (s.victoire) {
-      const pris = Math.min(Math.max(0, Math.floor(s.vol)), Math.floor(etat.coffre));
+      const pris = Math.min(Math.max(0, Math.floor(s.vol)), Math.floor(etat.coffre), plafond);
       etat.coffre -= pris;
       j.composants -= pris;
       l.push(`${s.nom} a pillé ton archipel${pris ? ` et pris ${pris} composants de ton coffre` : ''}.`);
     } else {
-      const gagne = Math.max(0, Math.floor(s.perte));
+      const gagne = Math.min(Math.max(0, Math.floor(s.perte)), plafond);
       etat.coffre += gagne;
       j.composants += gagne;
       l.push(`Ta garnison a repoussé ${s.nom}${gagne ? ` : +${gagne} composants laissés dans ton coffre` : ''}.`);
     }
   }
+  // on ne garde que deux jours d'attaques : assez pour le bouclier et pour ne rien compter deux fois
+  const dernier = recus.reduce((m, r) => Math.max(m, r.le), 0);
+  etat.recus = recus.filter((r) => dernier - r.le < 48 * 3_600_000);
   for (const m of l) log(j, m);
   return l;
 }
 
 /** Le défenseur est-il protégé ? (bouclier après une attaque perdue, ou trop d'attaques aujourd'hui) */
-export function protege(subis: { victoire: boolean; le: number }[], now: number): boolean {
-  const jour = subis.filter((s) => now - s.le < 24 * 3_600_000);
+export function protege(subis: { victoire: boolean; le: number; refusee?: boolean }[], now: number): boolean {
+  const jour = subis.filter((s) => !s.refusee && now - s.le < 24 * 3_600_000 && now >= s.le);
   if (jour.length >= PILLAGE.subiesMax) return true;
   return jour.some((s) => s.victoire && now - s.le < PILLAGE.bouclierMs);
 }

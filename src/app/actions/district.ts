@@ -1,6 +1,7 @@
 // Actions du district : bâtiments, Porteurs, cartes, escouade, départs, Chroniques.
 
 import { cartePillages } from '../../ui/pillages';
+import { lireCiblesEnLigne, sousBouclier } from '../pillages';
 import { moduleDe, moduleDef, porteurDef } from '../../core/donnees';
 import * as J from '../../core/jeu';
 import type { BatimentId } from '../../core/types';
@@ -13,7 +14,7 @@ import { app, compteEtat, D, K, reduit } from '../etat';
 import { sauver } from '../synchro';
 import { ouvrir, resultat, type Clic, type Suite } from './commun';
 
-export function agirDistrict(a: string, c: Clic): Suite {
+export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
   const { b, id } = c;
   switch (a) {
     case 'batiment': D.selection = D.selection === id ? null : (id as typeof D.selection); D.menu = false;
@@ -109,11 +110,14 @@ export function agirDistrict(a: string, c: Clic): Suite {
     case 'archipel': ouvrir('archipel'); break;
     case 'coupe': ouvrir('coupe'); break;
     // les pillages (26 octobre 2026) : la carte des archipels, la fiche d'un archipel, puis le départ
-    case 'pillages': ouvrir('pillages'); break;
+    case 'pillages': ouvrir('pillages'); lireCiblesEnLigne(); break;
     case 'pillage-voir': D.pillageCible = id; break;
     case 'pillage-preparer': {
       const c = cartePillages(app.jeu, Date.now(), D.pillagesEnLigne ?? []).cibles.find((x) => x.id === id);
       if (!c) break;
+      // un vrai directeur : son bouclier se vérifie en ligne juste avant
+      const bouclier = await sousBouclier(c);
+      if (bouclier !== false) { D.message = bouclier ? `${c.nom} est sous bouclier pour l’instant : choisis un autre archipel.` : `Impossible de joindre ${c.nom} pour l’instant : réessaie dans un moment.`; break; }
       D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = c; D.strateChoisie = c.strate;
       D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
