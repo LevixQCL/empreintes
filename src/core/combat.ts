@@ -262,11 +262,15 @@ export function allonger(s: CombatEtat): Resultat {
   return { ok: true };
 }
 
+/** Nouvelle main : les cartes de la main ET celles déjà posées dans la chaîne repartent à la défausse (26 octobre 2026 :
+ *  Bryan posait 4 ou 5 cartes puis repiochait, et se retrouvait avec 5 cartes de plus que les autres tours) */
 export function repiocher(s: CombatEtat): Resultat {
-  if (s.flux < 1) return { ok: false };
+  if (s.issue !== 'en-cours' || s.flux < 1) return { ok: false };
   s.flux--;
-  s.defausse.push(...s.main);
+  for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
+  s.defausse.push(...s.main, ...s.chaine);
   s.main = [];
+  s.chaine = [];
   piocher(s);
   log(s, 'Flux dépensé : nouvelle main.');
   return { ok: true };

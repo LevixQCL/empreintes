@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { accorder, ajouter, allonger, capacite, creerCombat, deplacer, lancer, placesLibres, retirer } from '../src/core/combat';
+import { accorder, ajouter, allonger, capacite, creerCombat, deplacer, lancer, placesLibres, repiocher, retirer } from '../src/core/combat';
 import { nouvelleExpedition, combatSuivant, cloturerCombat } from '../src/core/expedition';
 import { analyserChaine, serieFinale } from '../src/core/regles';
 import { DECK_DEPART, PORTEURS, gesteDeCarte } from '../src/core/donnees';
@@ -53,6 +53,18 @@ describe('Combat', () => {
     s.flux = 1;
     expect(allonger(s).ok).toBe(true);
     expect(ajouter(s, 'x').ok).toBe(true);
+  });
+
+  it('repiocher reprend aussi les cartes posées : la main revient à sa taille, pas plus', () => {
+    const s = creerCombat({ porteurs: equipe(), ennemiId: 'remanent', rng: 1 });
+    const total = s.main.length + s.pioche.length + s.defausse.length;
+    for (const g of s.main.slice(0, 3)) ajouter(s, g.uid);
+    expect(s.chaine).toHaveLength(3);
+    s.flux = 1;
+    expect(repiocher(s).ok).toBe(true);
+    expect(s.chaine).toHaveLength(0);
+    expect(s.main).toHaveLength(5);
+    expect(s.main.length + s.pioche.length + s.defausse.length).toBe(total);
   });
 
   it('un joueur au hasard termine toujours une expédition (pas de blocage)', () => {
