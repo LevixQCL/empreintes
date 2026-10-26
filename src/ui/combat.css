@@ -75,7 +75,7 @@
   background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--fc) 55%,white),var(--fc) 50%,color-mix(in srgb,var(--fc) 55%,black)) padding-box,
     linear-gradient(150deg,#f7e4b0,#8a6a33 60%,#d9b56e) border-box;
   clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);opacity:.85}
-.geste .g-lourd{position:absolute;z-index:2;padding:1px 4px;font-size:8px;color:var(--ink);background:rgba(8,10,14,.85);
+.geste .g-lourd{position:absolute;z-index:2;padding:1px 3px;font:700 12px/1.1 var(--mono);letter-spacing:0;color:var(--ink);background:rgba(8,10,14,.85);
   box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 70%,transparent)}
 .geste .g-suite{position:absolute;z-index:2;top:12px;right:3px}
 
