@@ -99,6 +99,7 @@
   .lecture-titre::after{justify-self:start;width:220px}
   .lecture-texte{margin-inline:0;padding-inline:0;max-width:36em}
   .lecture-nav{margin-inline:0;max-width:36em;grid-template-columns:1fr 1fr}
+  .lecture-docs{margin-inline:0;max-width:36em;padding-inline:0}
   .lecture-nav .prec{grid-row:1;grid-column:1}
   .lecture-nav .suiv,.lecture-nav .aide{grid-row:1;grid-column:2}
   .lecture-nav .aide{text-align:right;align-self:center}

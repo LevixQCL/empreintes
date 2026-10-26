@@ -557,6 +557,9 @@ h1,h2,h3{font-weight:400}
 .lecture-texte{padding:6px 4px 6px;max-width:34em;margin-inline:auto}
 .lecture-texte p{margin:0 0 1.05em;font-family:var(--lecture);font-size:18px;line-height:1.72;color:#EAE2CF;text-wrap:pretty;hyphens:auto;-webkit-hyphens:auto}
 .lecture-texte p.lettrine::first-letter{float:left;font-family:var(--display);font-size:3.4em;line-height:.82;padding:.06em .1em 0 0;color:var(--gold)}
+.lecture-docs{display:grid;gap:12px;max-width:34em;margin:6px auto 22px;padding:0 4px}
+.lecture-docs>.surtitre{font-size:12px;color:var(--gold);letter-spacing:.14em}
+.lecture-docs .fragment .surtitre{font-size:12px;color:var(--mute)}
 .lecture-texte p.signature{text-align:right;font-style:italic;color:var(--ink-2);margin-top:1.4em}
 .lecture-nav{display:grid;gap:10px;width:100%;max-width:34em;margin:22px auto 0;padding-top:22px;box-shadow:0 -1px 0 var(--filet)}
 .lecture-nav .aide{margin:0;text-align:center;font-family:var(--lecture);font-style:italic;color:var(--quiet)}
