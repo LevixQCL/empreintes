@@ -446,7 +446,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
   // les conditions de salle : une lignée favorisée, une source qui renforce les soins
   const faveur = s.condition && FAVEUR_CONDITION[s.condition] === ligneeGeste(g) ? 1.2 : 1;
   const source = s.condition === 'sanctuaire' && g.type === 'soin' ? 1.3 : 1;
-  // Débridage (Coup d'éclat des Augmentés) : les coups de ce tour frappent deux fois plus fort
+  // Débridage (Coup d'éclat des Augmentés) : les coups de ce tour frappent plus fort
   const debride = s.debride && g.type === 'atk' ? REGLES.eclat.debride : 1;
   const force = g.v * mult * cresc * faveur * source * debride;
 
@@ -627,7 +627,7 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
 // l'escouade : le Flux se vide, et il le paiera en Usure au retour. Garder son Flux ou le dépenser, c'est le dilemme.
 
 export const ECLATS: Record<Lignee, { nom: string; texte: string }> = {
-  tech: { nom: 'Débridage', texte: 'Les coups de ta chaîne frappent deux fois plus fort ce tour-ci.' },
+  tech: { nom: 'Débridage', texte: `Les coups de ta chaîne frappent ${REGLES.eclat.debride * 100 - 100} % plus fort ce tour-ci.` },
   bio: { nom: 'Sursaut', texte: 'Toute l’escouade récupère 40 % de ses PV, et un Porteur à terre se relève.' },
   reso: { nom: 'Ombre agissante', texte: 'Aucune attaque ennemie ne porte au prochain tour ennemi.' },
 };
@@ -657,7 +657,7 @@ export function eclater(s: CombatEtat, porteurId: string, opts: { silencieux?: b
   emettre({ kind: 'effet', cible: porteurId, texte: ECLATS[choix.lignee].nom });
   if (choix.lignee === 'tech') {
     s.debride = true;
-    log(s, `Débridage : ${nom} pousse ses implants au-delà du raisonnable. La chaîne frappera deux fois plus fort.`);
+    log(s, `Débridage : ${nom} pousse ses implants au-delà du raisonnable. La chaîne frappera ${REGLES.eclat.debride * 100 - 100} % plus fort.`);
   } else if (choix.lignee === 'reso') {
     s.ombre = true;
     log(s, `Ombre agissante : l’ombre de ${nom} se lève et retiendra les coups du prochain tour.`);

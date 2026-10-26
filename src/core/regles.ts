@@ -26,8 +26,9 @@ export const REGLES = {
   eclat: {
     /** Usure en plus pour le Porteur qui le déclenche (« deux jours de sommeil ») */
     usure: 3,
-    /** Débridage : multiplicateur des dégâts de la chaîne */
-    debride: 2,
+    /** Débridage : multiplicateur des dégâts de la chaîne (26 octobre 2026 : 2 → 1,5, Bryan trouvait qu'il finissait le combat
+     *  à lui seul, quand Sursaut et Ombre agissante ne font que sauver l'escouade) */
+    debride: 1.5,
     /** Sursaut : part des PV max rendue à chacun, et à celui qui se relève */
     sursaut: 0.4,
   },

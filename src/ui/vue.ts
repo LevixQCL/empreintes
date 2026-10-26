@@ -559,7 +559,7 @@ function htmlEcranCombat(e: Ecran): string {
   h += `<section class="zone-chaine${a.suite >= 3 ? ' resonne' : ''}" aria-label="Chaîne"><div class="chaine-tete"><span class="surtitre">CHAÎNE · ${placesPrises(s)} / ${capacite(s)}</span>`
     + (mult ? `<span class="badge-reso">${ICO.flux}RÉSONANCE ${mult}</span>` : a.suite === 2 ? '<span class="badge-reso faible">SUITE EN COURS</span>' : '')
     + (a.echo ? `<span class="badge-reso echo">${ICO.bouclier}ÉCHO +${REGLES.bouclierEcho}</span>` : '')
-    + (s.debride ? `<span class="badge-reso eclat">${ICO.eclat}DÉBRIDAGE ×${REGLES.eclat.debride}</span>` : '')
+    + (s.debride ? `<span class="badge-reso eclat">${ICO.eclat}DÉBRIDAGE ×${String(REGLES.eclat.debride).replace('.', ',')}</span>` : '')
     + (s.chaine.length && e.actif === undefined && !verrou ? bilanChaine(s) : '')
     + `</div><div class="rail">`;
   // pendant l'animation, la carte qui agit s'avance, celles déjà jouées s'éteignent

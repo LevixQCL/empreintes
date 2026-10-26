@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ajouter, creerCombat, eclater, eclatsPossibles, estGardien, lancer } from '../src/core/combat';
 import { PORTEURS, gesteDeCarte } from '../src/core/donnees';
+import { REGLES } from '../src/core/regles';
 import type { CombatEtat } from '../src/core/types';
 
 const equipe = () => PORTEURS.slice(0, 3).map((p) => ({ id: p.id, pv: p.pvMax, pvMax: p.pvMax, aTerre: false }));
@@ -87,12 +88,12 @@ describe('Les Coups d’éclat', () => {
     expect(s.porteurs.find((p) => p.id === choix[0]!.porteur)!.usureEclat).toBe(3);
   });
 
-  it('Débridage : la chaîne frappe deux fois plus fort', () => {
+  it('Débridage : la chaîne frappe une fois et demie plus fort', () => {
     const normal = preparer('remanent', 9), debride = plein(preparer('remanent', 9));
     eclater(debride, eclatsPossibles(debride).find((c) => c.lignee === 'tech')!.porteur);
     ajouter(normal, 'a'); lancer(normal);
     ajouter(debride, 'a'); lancer(debride);
-    expect(999 - debride.ennemi.pv).toBe(2 * (999 - normal.ennemi.pv));
+    expect(999 - debride.ennemi.pv).toBeCloseTo(REGLES.eclat.debride * (999 - normal.ennemi.pv), -0.5);
   });
 
   it('Ombre agissante : aucune attaque ne porte au tour ennemi suivant', () => {
