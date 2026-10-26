@@ -14,6 +14,19 @@ describe('Chroniques', () => {
     expect(CHAPITRES.filter((c) => chapitreOuvert(c, 1)).length).toBeGreaterThan(10);
   });
 
+  it('racontent 2026 à 2030 dès le départ, avec leurs papiers d’époque, et gardent la Glacière pour la Strate −8', () => {
+    for (const id of ['caves', 'detroit', 'pieds-mouilles', 'noir', 'sans-glace']) {
+      const c = CHAPITRES.find((x) => x.id === id)!;
+      expect(c.livre).toBe(1);
+      expect(chapitreOuvert(c, 0)).toBe(true);
+      expect(c.documents?.length).toBeGreaterThan(0);
+      for (const d of c.documents!) expect(d.lignes.length).toBeGreaterThan(0);
+    }
+    const glaciere = CHAPITRES.find((c) => c.id === 'glaciere')!;
+    expect(chapitreOuvert(glaciere, 7)).toBe(false);
+    expect(chapitreOuvert(glaciere, 8)).toBe(true);
+  });
+
   it('ne nomment aucune personne ni aucun mouvement réels repérés en relecture', () => {
     const texte = CHAPITRES.flatMap((c) => c.paragraphes).join(' ');
     for (const interdit of ['vendredi', 'sablier', 'dieux', 'ça va. Dix']) expect(texte).not.toContain(interdit);

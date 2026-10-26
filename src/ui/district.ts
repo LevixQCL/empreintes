@@ -1017,7 +1017,13 @@ function htmlChapitre(e: EcranDistrict, id: string): string {
     const signature = n === c.paragraphes.length - 1 && p.startsWith('Ysé') && p.length < 80;
     h += `<p${signature ? ' class="signature"' : n === 0 ? ' class="lettrine"' : ''}>${typo(echap(p))}</p>`;
   });
-  h += `</div><nav class="lecture-nav">`
+  h += `</div>`;
+  if (c.documents?.length) {
+    h += `<section class="lecture-docs"><span class="surtitre">RECOPIÉ PAR YSÉ</span>`
+      + c.documents.map((d) => `<article class="fragment"><span class="surtitre">${echap(d.support.toUpperCase())}</span><h2>${echap(d.titre)}</h2>${d.lignes.map((l) => `<p>${typo(echap(l))}</p>`).join('')}</article>`).join('')
+      + `</section>`;
+  }
+  h += `<nav class="lecture-nav">`
     + (suiv ? suite(suiv, 'suiv')
       : `<p class="aide">${prochainFerme ? `La suite s’ouvrira à la Strate −${prochainFerme.strate}.` : 'Fin des Chroniques. Pour l’instant.'}</p>`)
     + (prec ? suite(prec, 'prec') : '')
