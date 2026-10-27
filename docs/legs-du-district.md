@@ -11,10 +11,19 @@ Le but : donner envie de jouer pour enfin la porter.
 - **Le Legs devient une identité** : « tu as eu laquelle ? ». Il se voit dans la garnison (pillages) et pourra s'afficher au Grand Tableau.
 - **Les dix doivent se valoir** : plus question d'en avoir une « meilleure ». Chacune est la pièce maîtresse d'une voie, réglée au
   robot pour que l'écart entre la plus forte et la plus faible reste petit (quelques points).
-- **Un seul sceau, en trois temps**, pour garder l'envie sur tout le mois :
-  - dès le départ, la carte est **visible mais scellée** (sa fiche complète, son sceau et la progression) ;
-  - **Strate −5 ouverte** (vers le jour 6) : le sceau cède, elle se porte, au niveau 8 ;
-  - **Strate −8** (vers le jour 21) : niveau 9 ; **le Premier Porteur vaincu** (vers le jour 32) : niveau 10, et la dernière lettre.
+- **Le sceau, c'est le niveau du Porteur qui la porte** (Bryan : le joueur n'a pas de niveau, ses Porteurs si). Elle ne se confie qu'à
+  un Porteur **de sa lignée** et **de niveau 8 au moins**. Elle grandit ensuite avec lui (« la vierge apprend son porteur ») :
+
+  | Porteur | Le Legs | Joueur occasionnel | Joueur assidu |
+  |---|---|---|---|
+  | niveau 8 | se porte, niveau 8 | vers le jour 7-8 | vers le jour 5 |
+  | niveau 12 | niveau 9 | vers le jour 22 | vers le jour 10 |
+  | niveau 15 | niveau 10 | vers le jour 32 | vers le jour 15 |
+
+  (Jours mesurés au parcours simulé, 6 parties par profil : le niveau du Porteur le plus avancé de l'escouade. Un Porteur en retard
+  rattrape vite : il apprend 1,5 fois plus vite à deux niveaux d'écart.)
+  Dès le départ, la carte est **visible** avec sa fiche complète, et l'écran montre la progression : « Doran niveau 5 / 8 ».
+  Le joueur sait quel Porteur faire monter : c'est l'envie de jouer.
 - **« Un seul Legs par Porteur » disparaît** (il n'y en a qu'un) ; la carte reste liée à sa lignée et pèse sa Charge.
 - **Reste à décider : comment le joueur reçoit la sienne** (voir le message de Claude).
 
