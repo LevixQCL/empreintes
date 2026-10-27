@@ -31,7 +31,7 @@ qui ne couvre que le quart du bas, et l'image reste visible à travers.
 │     ILLUSTRATION ENTIÈRE  │
 │     (format 5:7, rien de  │   0 → 75 % : aucune autre interface
 │      coupé)               │
-│━━━━━━━━━━━━━━━━━━━━━━ ⬢12 │   75 % : la couture, et la valeur dans son médaillon d'or
+│━━━━━━━━━━━━━━━━━━━━━━ ⬢12 │   75 % : la couture, et la valeur (chiffre + icône de couleur)
 │░◌ Apaiser░░░░░░░░░░░░░░░░░│
 ╲░◆ Vague  soigne tous░░░░░░│   voile de verre fumé : 2 lignes seulement
  ╲──────────────────────────┘
@@ -42,8 +42,8 @@ qui ne couvre que le quart du bas, et l'image reste visible à travers.
 2. **La Fréquence en haut à gauche** (choix de Bryan : c'est là qu'on la cherche, et elle reste visible quand les cartes
    se chevauchent). La principale en grand ; les autres à sa droite, en ligne et plus petites — **plus d'animation qui
    les fait défiler**. En combat, le cristal d'une carte qui prolonge ta suite s'allume : le combo se lit par la lumière.
-   **La valeur en bas à droite**, dans un médaillon d'or posé sur la couture (une fine bande de cristal à 75 % de la
-   hauteur) ; sa forme dit l'action : éclat (attaque), écu (bouclier), goutte (soin).
+   **La valeur en bas à droite**, au-dessus de la couture (une fine bande de cristal à 75 % de la hauteur) : le chiffre et une petite
+   icône de couleur — épée rouge (attaque), écu bleu (bouclier), goutte verte (soin).
 3. **Le voile : deux lignes, pas une de plus.** Dégradé de verre fumé flouté, donc toujours clair sur foncé quel que soit
    le métal ou l'image.
    - Ligne 1 : **la roue de niveau** puis le nom en entier. La roue a 10 crans (`COLLECTION.niveauMax`), remplis jusqu'au
@@ -83,79 +83,23 @@ qui ne couvre que le quart du bas, et l'image reste visible à travers.
 
 En main, le voile se réduit à la couture : il ne reste que l'image, les Fréquences et la valeur.
 
-## Ce que Midjourney fait, et ce qu'il ne fait pas
+## Midjourney : abandonné pour le cadre (test du 27 octobre)
 
-Midjourney ne sait pas écrire de chiffres fiables, et les chiffres changent avec le niveau : **il dessine les pièces vides,
-le code pose le texte**, comme pour les cadres actuels. On procède en deux temps : un concept pour valider l'allure
-d'ensemble, puis les pièces, avec le concept choisi en `--sref` en plus de celui du Manifeste pour que tout se tienne.
-Toutes les pièces sur fond noir uni (fond blanc pour le cristal à teinter) : je détoure et je règle les découpes.
+Le test de l'étape 0 n'est pas utilisable : cadres épais, intérieur texturé, perspective, couture mal placée. Les
+socles peints actuels (éclat, écu, couronne de feuilles) ont aussi été écartés : trop imposants, ils écrasent l'image.
 
-### Étape 0 — Le concept (4 images, on en garde une)
+**Décision : la carte n'a plus besoin d'aucune image Midjourney en dehors de l'illustration.** Tout le reste est dessiné
+par le code, net à toutes les tailles :
+- le liseré du métal (dégradé ou texture `public/art/metaux/`) ;
+- les cristaux de Fréquence, petits (15 % de la largeur, les autres Fréquences à 11 %), en ligne en haut à gauche ;
+- la valeur : le chiffre seul, avec une petite icône de couleur posée à sa gauche — épée rouge (attaque), écu bleu
+  (bouclier), goutte verte (soin) — sur une pastille de verre fumé, au-dessus de la couture à droite ;
+- la roue de niveau, le voile et ses deux lignes.
 
-```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. empty game card frame design, front view, flat, a very thin ornate polished gold border running around the whole card, the whole inside is an open window filled with flat pure black, one empty octagonal faceted crystal socket in the top left corner, a thin luminous pale blue crystal seam runs horizontally across the card at three quarters of its height, one larger round empty gold medallion on the right end of the seam, top right and bottom left corners cut at 45 degrees, crystal and light, icy edges, family-friendly, no text, no letters, no numbers --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, letters, numbers, symbols, person, character, creature, thick frame
-```
+Midjourney reste réservé aux illustrations, avec la règle de composition du point 5.
 
-### Étape 1 — Les cinq liserés de métal (`public/art/cadres/bord-<metal>.webp`, 1000 × 1400)
+## Ordre de travail
 
-Le même prompt pour les cinq, seul `{MÉTAL}` change. Ajouter `--sref <URL du concept choisi>` après celui du Manifeste.
-
-```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. a very thin game card border only, front view, flat orthographic, perfectly symmetrical, made of {MÉTAL}, the border is a narrow band running around the edge of the card, small elegant corner pieces, top right and bottom left corners cut at 45 degrees, the whole inside is empty flat pure black, family-friendly, no text, no letters, no numbers --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, letters, numbers, symbols, person, character, ornaments inside, thick frame
-```
-
-| Métal | `{MÉTAL}` |
-|---|---|
-| fer | `dark forged iron, hammered and riveted, matte steel grey` |
-| cuivre | `warm hammered copper, polished, rosy orange highlights` |
-| argent | `polished silver with cold blue reflections, fine engraved lines` |
-| or | `ornate chiselled gold with delicate filigree, rich warm highlights` |
-| nacre | `iridescent mother-of-pearl and prismatic glass, soft rainbow sheen, pink blue and green reflections` |
-
-### Étape 2 — Le cristal de Fréquence (`frequence.webp`, 512 × 512, teinté par le code)
-
-```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. a single octagonal faceted gemstone, perfectly clear colorless crystal with bright facets, set in a thin polished silver bezel, front view, centered, flat and symmetrical, the center facet large and smooth, isolated on a pure flat white background, family-friendly, no text, no letters, no numbers --ar 1:1 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, letters, numbers, color tint, shadow
-```
-
-### Étape 3 — Les trois médaillons de valeur (`valeur-<action>.webp`, 512 × 512)
-
-L'or porte la valeur ; le centre reste sombre et vide pour le chiffre.
-
-```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. a game card value medallion, front view, centered, flat and symmetrical, {FORME}, a thick polished gold rim, a large smooth empty dark center for a number, isolated on a pure flat black background, family-friendly, no text, no letters, no numbers --ar 1:1 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, letters, numbers, symbols, cross
-```
-
-| Action | `{FORME}` |
-|---|---|
-| attaque | `a sixteen-pointed burst of sharp red crystal shards radiating around a round core` |
-| bouclier | `a plain pointed shield shape made of deep blue crystal, no emblem` |
-| soin | `a rounded drop shape made of soft green crystal, a small leaf curling at its tip` |
-
-### Étape 4 — Les icônes d'effet et de Lien (`effets/<id>.webp`, 256 × 256)
-
-```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. a small simple glowing icon, front view, centered, flat, bold readable silhouette, {MOTIF}, warm gold light, isolated on a pure flat black background, family-friendly, no text, no letters, no numbers --ar 1:1 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, letters, numbers, person
-```
-
-| Effet | Motif |
-|---|---|
-| Perçant | `a crystal spear tip piercing through a cracked plate` |
-| Siphon | `a swirl of red light pulled into a small crystal vial` |
-| Surcharge | `a crystal cell overflowing with small lightning arcs` |
-| Désarmer | `a short blade snapped in two` |
-| Fissure | `a glowing crack spreading across a stone slab` |
-| Élan | `an arrow-shaped crystal with curved motion trails` |
-| Crescendo | `three crystal shards rising in size like steps` |
-| Accord | `a crystal tuning fork with ripples` |
-| Vague | `a curling wave of light` |
-| Rempart | `a low stone wall with a glowing crystal set in its center` |
-| Lien (combo) | `two interlocking crystal chain links` |
-
-## Ordre de travail proposé
-
-1. Bryan lance l'étape 0 et choisit une image.
-2. Les étapes 1 à 3 (9 images) suffisent pour coder la nouvelle face ; les icônes peuvent suivre, la maquette
-   tient avec des formes simples en attendant.
-3. Je code la nouvelle face dans `src/ui/carte.ts` / `face-carte.css` (mêmes unités `cqw`, les trois distances par
+1. Bryan valide la maquette.
+2. Je code la nouvelle face dans `src/ui/carte.ts` / `face-carte.css` (mêmes unités `cqw`, les trois distances par
    requêtes de conteneur), puis vérification au téléphone et sur PC, et `npm run visuel`.
