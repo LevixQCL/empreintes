@@ -10,6 +10,7 @@
     "test": "vitest run",
     "check": "tsc --noEmit",
     "robot": "tsx scripts/robot.ts",
+    "archetypes": "tsx scripts/archetypes.ts",
     "voies": "tsx scripts/voies.ts",
     "visuel": "tsx scripts/visuel.ts",
     "css": "node scripts/css-propre.cjs"
