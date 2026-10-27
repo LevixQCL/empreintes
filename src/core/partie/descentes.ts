@@ -8,7 +8,7 @@ import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, plac
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
-import { ACCORD_OUVERT, CONFIANCE, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
+import { ACCORD_OUVERT, CONFIANCE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
 import { chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -81,7 +81,7 @@ export function avancerFils(j: Jeu): string[] {
   return annonces;
 }
 
-const accordOuvertPret = (j: Jeu) => j.batiments.clinique >= ACCORD_OUVERT.clinique && (j.confiance ?? 50) >= ACCORD_OUVERT.confiance;
+const accordOuvertPret = (j: Jeu) => j.batiments.clinique >= ACCORD_OUVERT.clinique && niveauConfiance(j.confiance ?? 0).niveau >= ACCORD_OUVERT.confiance;
 
 export function disponibles(j: Jeu): string[] {
   return porteursPresents(j).filter((id) => !j.porteurs[id]!.poste && !enExpedition(j, id));
@@ -301,7 +301,7 @@ export function repondre(j: Jeu, choix: number): Resultat {
   const allie = j.actes.chambre === 'orseve';
   if (id === 'veilleur') {
     if (choix === 0) { y.porteurs = blesser(x, 4); gains.eclats++; confier(j, 3); recit = 'Le Veilleur, reconnaissant, te confie un Éclat trouvé plus bas. Le quartier en entendra parler.'; }
-    else if (choix === 1) { y.butin += n * 2; confier(j, -3); recit = `Le carnet se revend bien : +${n * 2} composants. Le Veilleur, lui, s’en souviendra.`; }
+    else if (choix === 1) { y.butin += n * 2; recit = `Le carnet se revend bien : +${n * 2} composants. Le Veilleur, lui, s’en souviendra.`; }
   } else if (id === 'pilleur') {
     if (choix === 0) { confier(j, 2); recit = 'Le pilleur file sans demander son reste. Il racontera que le directeur sait être juste.'; }
     else if (choix === 1) { y.butin += n * 2; recit = `Il lâche son sac et s’enfuit : +${n * 2} composants.`; }
@@ -486,7 +486,8 @@ export function remonter(j: Jeu): Retour {
   }
   for (const c of cartes) ajouterCarte(j, c);
   j.eclats += eclats;
-  confier(j, victoire ? CONFIANCE.victoire : defaite ? CONFIANCE.defaite : 0);
+  // la Confiance du quartier : chaque combat gagné, et la descente réussie (elle ne baisse jamais)
+  confier(j, victoires * CONFIANCE.combat + (victoire ? CONFIANCE.victoire : 0));
   // l'expérience : chaque combat gagné, les salles scellées et le gardien ; toute l'escouade la partage, debout ou à terre
   const facteur = 1 + 0.25 * (x.strate - 1);
   const gardien = victoire && !x.fouille && !x.epreuve ? XP.gardien : 0;

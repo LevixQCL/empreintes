@@ -5,14 +5,27 @@ import { batimentDef, porteurDef, PORTEURS, BATIMENTS, MODULES_TIRABLES, moduleD
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
-import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Resultat, xpPourNiveau } from './etat';
+import { ACCORD_OUVERT, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
 
 export function humeurDistrict(j: Jeu): string {
-  const c = j.confiance ?? 50;
-  if (c >= CONFIANCE.haute) return 'Le quartier croit en toi : les habitants donnent un coup de main (+10 % d’énergie).';
-  if (c <= CONFIANCE.basse) return 'Le quartier doute : le Générateur tourne au ralenti (−10 % d’énergie).';
-  return 'Le quartier t’observe. Les chantiers et les expéditions réussies feront monter sa confiance.';
+  const n = niveauConfiance(j.confiance ?? 0);
+  return `Niveau ${n.niveau} : encore ${n.requis - n.dans} points pour le suivant. Chaque niveau amène un creuseur volontaire.`;
+}
+
+/**
+ * Les niveaux de Confiance atteints et pas encore récompensés : un creuseur volontaire chacun (s'il y a de quoi le loger ;
+ * sinon il attend le prochain niveau). Renvoie les annonces à montrer.
+ */
+export function recompenserConfiance(j: Jeu): string[] {
+  const n = niveauConfiance(j.confiance ?? 0).niveau;
+  const annonces: string[] = [];
+  while ((j.confianceRecue ?? 0) < n) {
+    j.confianceRecue = (j.confianceRecue ?? 0) + 1;
+    const venus = gagnerCreuseurs(j, CREUSEURS.confiance, `le quartier te fait confiance (niveau ${j.confianceRecue})`);
+    annonces.push(`Confiance du quartier : niveau ${j.confianceRecue}${venus ? ` ! ${venus > 1 ? `${venus} volontaires rejoignent` : 'Un volontaire rejoint'} les creuseurs.` : '.'}`);
+  }
+  return annonces;
 }
 export const soinParHeure = (j: Jeu) => (DISTRICT.soinParHeure[j.batiments.clinique] ?? 0) * multiplicateur(j, 'clinique');
 
@@ -72,7 +85,7 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
   if (b === 'clinique') g.push({ quoi: 'soin', texte: 'Usure soignée par heure', avant: soinParHeure(j), apres: soinParHeure(apres), detail: 'pour chaque Porteur au repos' });
   if (b === 'clinique' && niv + 1 === ACCORD_OUVERT.clinique) {
     const joss = PORTEURS.find((p) => p.arrivee?.accord && !j.arrives.includes(p.id));
-    if (joss) g.push({ quoi: 'porteur', texte: 'La Clinique peut organiser un Accord ouvert', detail: `un nouveau Résonant, quand la Confiance atteint ${ACCORD_OUVERT.confiance}` });
+    if (joss) g.push({ quoi: 'porteur', texte: 'La Clinique peut organiser un Accord ouvert', detail: `un nouveau Résonant, quand la Confiance du quartier atteint le niveau ${ACCORD_OUVERT.confiance}` });
   }
   if (b === 'forge') {
     g.push({ quoi: 'forge', texte: 'Vitesse de refabrication', avant: Math.round(vitesseForge(niv) * 100), apres: Math.round(vitesseForge(niv + 1) * 100), unite: '%' });

@@ -12,7 +12,7 @@ import { puissanceCarte } from '../collection';
 import { butinCombat, nouvelleExpedition } from '../expedition';
 import { graine, tireur } from '../rng';
 import type { Lignee } from '../types';
-import { DISTRICT, XP, bonusPv, jourDe, escouadeDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureMax, type Jeu, type Resultat } from './etat';
+import { CONFIANCE, DISTRICT, XP, bonusPv, confier, jourDe, escouadeDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureMax, type Jeu, type Resultat } from './etat';
 import { escouadePrete, remonter as remonterDescente, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 
@@ -296,6 +296,7 @@ export function remonterPillage(j: Jeu, now: number): RetourPillage | null {
     j.composants += gain;
     etat.coffre += gain;
     etat.gagnes++;
+    confier(j, CONFIANCE.pillage);
   } else {
     perte = Math.floor(etat.coffre * PILLAGE.perteDefaite);
     j.composants -= perte;

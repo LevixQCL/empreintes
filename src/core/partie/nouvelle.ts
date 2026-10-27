@@ -4,7 +4,7 @@
 import { PORTEURS, CARTE_CHAMBRE, MODULES, moduleDe, moduleDef, porteurDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
 import { niveauRequis, poidsCarte } from '../collection';
 import { graine } from '../rng';
-import { DISTRICT, VERSION_JEU, chargeMax, chargePortee, enExpedition, confier, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
+import { DISTRICT, VERSION_JEU, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
 import { SCENES, sceneEnAttente, type ContexteCampagne } from '../campagne';
 import { ESCOUADE_DEPART } from './descentes';
 import { comptoirVide } from './district';
@@ -86,7 +86,7 @@ export function decider(j: Jeu, acte: string, choix: string): Resultat {
   if (!o) return non('Choix inconnu.');
   if (j.actes[acte as Acte]) return non('La décision est déjà prise.');
   (j.actes as Record<string, string>)[acte] = o.id;
-  if (acte === 'chambre') confier(j, o.id === 'district' ? 10 : o.id === 'commission' ? 5 : -5);
+  if (acte === 'chambre') confier(j, o.id === 'district' ? 10 : o.id === 'commission' ? 5 : 0);
   log(j, acte === 'chambre' ? `La chambre est confiée à : ${o.nom}.` : acte === 'lecture' ? `Véla : ${o.nom.toLowerCase()}.` : `Fin de la campagne : ${o.nom}. Les Strates continuent.`);
   return { ok: true, message: `Décision prise : ${o.nom}.` };
 }
@@ -112,7 +112,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     recrues: false,
     arrives: [],
     actes: {},
-    confiance: 50,
+    confiance: 0,
     decouvertes: [],
     scenes: [],
     objectif: 0,
@@ -159,7 +159,9 @@ function migrer(j: Jeu) {
   j.recrues ??= ancien;
   j.arrives ??= [];
   j.actes ??= {};
-  j.confiance ??= 50;
+  j.confiance ??= 0;
+  // la Confiance par niveaux (27 octobre 2026) : les niveaux déjà atteints par une vieille sauvegarde ne rapportent pas de creuseur d'un coup
+  j.confianceRecue ??= niveauConfiance(j.confiance).niveau;
   j.decouvertes ??= [];
   if (!j.scenes) {
     // sauvegarde d'avant la campagne vécue (25 octobre 2026) : seule la dernière scène déjà atteinte se joue,

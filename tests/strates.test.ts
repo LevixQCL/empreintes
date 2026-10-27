@@ -166,28 +166,33 @@ describe('Acte III : les trois fins', () => {
   });
 });
 
-import { confier, effetConfiance, energieParHeure } from '../src/core/jeu';
+import { CONFIANCE, CREUSEURS, confier, niveauConfiance, recompenserConfiance } from '../src/core/jeu';
 
-describe('La Confiance des habitants', () => {
-  it('reste entre 0 et 100 et change la production d’énergie aux extrêmes', () => {
+describe('La Confiance du quartier (27 octobre 2026 : elle ne fait que monter, par niveaux)', () => {
+  it('ne baisse jamais et passe des niveaux de plus en plus longs', () => {
     const j = nouveauJeu(0, 1);
-    expect(j.confiance).toBe(50);
-    const base = energieParHeure(j);
-    confier(j, 40);
-    expect(effetConfiance(j)).toBe(1.1);
-    expect(energieParHeure(j)).toBeGreaterThan(base);
-    confier(j, 500);
-    expect(j.confiance).toBe(100);
-    confier(j, -95);
-    expect(effetConfiance(j)).toBe(0.9);
-    confier(j, -500);
     expect(j.confiance).toBe(0);
+    confier(j, -50);
+    expect(j.confiance).toBe(0);
+    expect(niveauConfiance(CONFIANCE.seuil - 1).niveau).toBe(0);
+    expect(niveauConfiance(CONFIANCE.seuil).niveau).toBe(1);
+    expect(niveauConfiance(CONFIANCE.seuil * 3).niveau).toBe(2);
+    expect(niveauConfiance(CONFIANCE.seuil * 3 - 1)).toEqual({ niveau: 1, dans: CONFIANCE.seuil * 2 - 1, requis: CONFIANCE.seuil * 2 });
   });
 
-  it('le choix de l’acte I la fait bouger', () => {
+  it('chaque niveau atteint amène un creuseur volontaire, une seule fois', () => {
+    const j = nouveauJeu(0, 1); j.chambre = true;
+    j.creuseurs = 0;
+    confier(j, CONFIANCE.seuil * 3);
+    expect(recompenserConfiance(j)).toHaveLength(2);
+    expect(j.creuseurs).toBe(2 * CREUSEURS.confiance);
+    expect(recompenserConfiance(j)).toHaveLength(0);
+  });
+
+  it('le choix de l’acte I la fait monter', () => {
     const j = nouveauJeu(0, 1); j.chambre = true; j.strate = 4;
     decider(j, 'chambre', 'district');
-    expect(j.confiance).toBe(60);
+    expect(j.confiance).toBe(10);
   });
 });
 
