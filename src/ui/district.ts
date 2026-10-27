@@ -839,9 +839,29 @@ function fenetreLegs(e: EcranDistrict): string {
 function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
   const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : 'Archive de la semaine';
-  return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><div class="cartes-choix">`
-    + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}"`, true)).join('')
+  return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><small class="aide choix-loupe">Reste appuyé sur une carte pour lire son effet.</small><div class="cartes-choix">`
+    + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}" data-carte="${id}"`, true)).join('')
     + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
+}
+
+/**
+ * La loupe des récompenses (27 octobre 2026, Bryan) : un appui prolongé sur une carte proposée la montre en grand avec ses effets,
+ * pour choisir en connaissance de cause ; lever le doigt la referme sans prendre la carte (main.ts).
+ */
+export function loupeCarte(id: string, j: Jeu): string | null {
+  let m: ModuleDef;
+  try { m = moduleDef(id); } catch { return null; }
+  const c = j.collection[id];
+  const niveau = c?.niveau ?? COLLECTION.niveauDepart[m.rarete];
+  const origine = MODULES.find((x) => x.id === (m.base ?? m.id));
+  const lignes = m.effet
+    ? effetsDe(m).map((x) => `<li><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</li>`).join('')
+    : origine?.effet ? `<li>En fer, pas d’effet. À partir du cuivre : <b>${echap(NOMS_EFFET[origine.effet.type])}</b>, ${echap(texteEffet(origine.effet).replace(/^./, (x) => x.toLowerCase()))}</li>`
+    : '<li>Pas d’effet : sa force seule.</li>';
+  const freq = m.f.length > 1 && !frequenceLibre(m.effet) ? `<li>Fréquences au choix : <b>${m.f.join(' ou ')}</b></li>` : '';
+  return `<div class="loupe" aria-hidden="true"><div class="loupe-face">${faceCarte(m, niveau, multNiveau(m.id, niveau))}</div>`
+    + `<ul class="loupe-effets"><li class="lc-nom"><b>${echap(m.nom)}</b> · ${NOMS_RARETE[m.rarete].toLowerCase()} · ${NOM_LIGNEE[m.lignee].toLowerCase()}</li>${lignes}${freq}</ul>`
+    + `<p class="loupe-qui">${pourQui(id, j)}</p></div>`;
 }
 
 const exemplaires = (j: Jeu, moduleId: string) => [...RARETES].reverse().map((r) => carteId(moduleId, r)).filter((k) => j.collection[k]);

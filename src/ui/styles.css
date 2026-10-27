@@ -190,7 +190,9 @@ h1,h2,h3{font-weight:400}
 .fenetre.retour li .ico{color:var(--cristal);margin-top:2px;width:14px;height:14px}
 .fenetre.choix{max-width:460px}
 .cartes-choix{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:4px 0}
-.carte-choix{display:grid;gap:6px;padding:0;border:none;background:none;transition:transform .15s ease}
+.carte-choix{display:grid;gap:6px;padding:0;border:none;background:none;transition:transform .15s ease;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.choix-loupe{display:block;margin:-2px 0 6px;font-size:12px}
+.loupe-effets .lc-nom{color:rgba(238,242,248,.7);font-size:13px}
 .carte-choix:hover,.carte-choix:focus-visible{transform:translateY(-4px)}
 .ruban{font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--quiet);text-transform:uppercase;letter-spacing:.06em}
 .ruban.neuve{color:var(--cristal)}
