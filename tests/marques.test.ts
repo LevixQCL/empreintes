@@ -92,3 +92,35 @@ describe('Les effets des nouvelles Marques', () => {
     expect(releve!.aTerre).toBeFalsy();
   });
 });
+
+describe('Les Marques de Kessa, Liane et Joss (27 octobre 2026 : plus aucun doublon)', () => {
+  it('aucune Marque ne donne le même effet qu’une autre', () => {
+    const effets = Object.values(MARQUES).map((m) => Object.keys(m.bonus)[0]);
+    expect(new Set(effets).size).toBe(effets.length);
+  });
+
+  it('Nuit blanche (Joss) : le plus blessé récupère 6 % de ses PV à la fin du tour ennemi', () => {
+    const s = combat({ veille: 0.06 });
+    s.ennemi.pv = s.ennemi.pvMax = 9999;
+    s.bouclier = 9999;
+    const blesse = s.porteurs[1]!;
+    blesse.pv = 5;
+    s.chaine = [{ id: 'a', uid: 'a', porteur: 'ilka', nom: 'T', f: 1, type: 'atk', v: 1 }];
+    lancer(s, { silencieux: true });
+    expect(blesse.pv).toBe(5 + Math.round(blesse.pvMax * 0.06));
+  });
+
+  it('Née-de-mue (Kessa) : le bouclier renvoie 30 % de ce qu’il absorbe', () => {
+    const s = combat({ chitine: 0.3 });
+    s.ennemi.pv = s.ennemi.pvMax = 9999;
+    s.bouclier = 9999;
+    s.chaine = [{ id: 'a', uid: 'a', porteur: 'ilka', nom: 'T', f: 1, type: 'atk', v: 1 }];
+    const t = combat();
+    t.ennemi.pv = t.ennemi.pvMax = 9999;
+    t.bouclier = 9999;
+    t.chaine = [{ id: 'a', uid: 'a', porteur: 'ilka', nom: 'T', f: 1, type: 'atk', v: 1 }];
+    lancer(s, { silencieux: true });
+    lancer(t, { silencieux: true });
+    expect(s.ennemi.pv).toBeLessThan(t.ennemi.pv);
+  });
+});

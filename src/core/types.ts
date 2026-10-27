@@ -229,6 +229,12 @@ export interface BonusMarques {
   desarme?: number;
   /** cartes en plus dans la main du premier tour (Guetteur, Guet) */
   main?: number;
+  /** à la fin de chaque tour ennemi, le Porteur le plus blessé récupère cette part de ses PV max (Joss, Nuit blanche) */
+  veille?: number;
+  /** part des dégâts absorbés par le bouclier d'escouade renvoyée à l'ennemi qui frappe (Kessa, Née-de-mue) */
+  chitine?: number;
+  /** Flux en plus pour chaque Fêlure brisée par une chaîne qui résonne (Liane, Galons blancs) */
+  felureFlux?: number;
 }
 
 export interface CombatEtat {
@@ -273,6 +279,12 @@ export interface CombatEtat {
   /** Marque de Sasha (Seconde chance) : part des PV rendue au premier Porteur qui tombe, et si elle a déjà servi */
   releve?: number;
   releveFaite?: boolean;
+  /** Marque de Joss (Nuit blanche) : part des PV max rendue au plus blessé à la fin de chaque tour ennemi */
+  veille?: number;
+  /** Marque de Kessa (Née-de-mue) : part des dégâts absorbés par le bouclier renvoyée à l'attaquant */
+  chitine?: number;
+  /** Marque de Liane (Galons blancs) : Flux en plus par Fêlure brisée en résonance */
+  felureFlux?: number;
   /** Épreuve « Fréquences brouillées » : aucune Résonance de tout le combat */
   sansResonance?: boolean;
   tour: number;

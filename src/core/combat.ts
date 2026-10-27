@@ -75,6 +75,9 @@ export function creerCombat(opts: {
   if (b?.flux) s.flux = Math.min(REGLES.fluxMax, b.flux);
   if (b?.garde) s.gardeMarque = b.garde;
   if (b?.releve) s.releve = b.releve;
+  if (b?.veille) s.veille = b.veille;
+  if (b?.chitine) s.chitine = b.chitine;
+  if (b?.felureFlux) s.felureFlux = b.felureFlux;
   if (b?.fissure) { s.ennemi.fissure = b.fissure; s.ennemi.fissureTours = 2; }
   for (const en of tousEnnemis(s)) choisirIntention(s, en);
   // Ombre courtoise (Aurel) : la première attaque annoncée de chaque ennemi est retenue
@@ -671,6 +674,16 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
     emettre({ kind: 'fin', issue: 'defaite' });
     return;
   }
+  // Nuit blanche (Joss) : il veille sur les siens comme le quartier l'a veillé
+  if (s.veille && usureCombat(s).soins > 0) {
+    const blesse = vivants(s).filter((p) => p.pv < p.pvMax).sort((a, b) => a.pv / a.pvMax - b.pv / b.pvMax)[0];
+    if (blesse) {
+      const avant = blesse.pv;
+      blesse.pv = Math.min(blesse.pvMax, blesse.pv + Math.max(1, Math.round(blesse.pvMax * s.veille * usureCombat(s).soins)));
+      log(s, `Nuit blanche : Joss veille sur ${porteurDef(blesse.id).nom} (+${blesse.pv - avant}).`);
+      emettre({ kind: 'soin', cible: blesse.id, v: blesse.pv - avant });
+    }
+  }
   // Rempart (et la Marque de Docker) : une part du bouclier restant passe au tour suivant
   const part = Math.max(s.garde ?? 0, s.gardeMarque ?? 0);
   const garde = Math.round(s.bouclier * part);
@@ -779,7 +792,7 @@ function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void,
   emettre({ kind: 'effet', cible: 'ennemi', texte: 'Fêlure', rang: en.rang ?? 0 });
   if (!resonne) return;
   const avant = s.flux;
-  s.flux = Math.min(REGLES.fluxMax, s.flux + REGLES.felure.flux);
+  s.flux = Math.min(REGLES.fluxMax, s.flux + REGLES.felure.flux + (s.felureFlux ?? 0));
   if (s.flux > avant) emettre({ kind: 'flux', gain: s.flux - avant });
 }
 
@@ -826,6 +839,13 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
       c.pv = Math.max(0, c.pv - net);
       morceaux.push(`${porteurDef(c.id).nom} ${net ? '−' + net : 'protégé'}`);
       emettre({ kind: 'degats', cible: c.id, net, absorbe: abs, rang });
+      // Née-de-mue (Kessa) : la chitine renvoie une part du coup que le bouclier a pris (sans achever l'ennemi)
+      if (s.chitine && abs > 0 && en.pv > 1) {
+        const renvoi = Math.min(en.pv - 1, Math.max(1, Math.round(abs * s.chitine)));
+        en.pv -= renvoi;
+        log(s, `Née-de-mue : la chitine renvoie ${renvoi} à ${e.nom}.`);
+        emettre({ kind: 'degats', cible: 'ennemi', net: renvoi, absorbe: 0, rang, source: 'epines' });
+      }
     }
     en.boost = 1;
     const aspire = trait(en, 'aspire');

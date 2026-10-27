@@ -144,12 +144,12 @@ export const MARQUES: Record<string, MarqueDef> = {
     texte: 'Il ne lâche rien : à chaque tour, l’escouade garde 25 % de son bouclier pour le tour suivant.' },
   guetteur: { nom: 'Guet', fait: 'anciens', seuil: 12, quoi: 'empreintes anciennes vaincues', court: '+1 carte au premier tour', bonus: { main: 1 },
     texte: 'Il voit venir de loin : au premier tour de chaque combat, ta main compte une carte de plus.' },
-  kessa: { nom: 'Née-de-mue', fait: 'fondations', seuil: 25, quoi: 'combats dans les Fondations', court: 'garde 20 % du bouclier', bonus: { garde: 0.2 },
-    texte: 'Sa chitine ne cède pas d’un coup : à chaque tour, l’escouade garde 20 % de son bouclier pour le tour suivant.' },
-  liane: { nom: 'Galons blancs', fait: 'scellees', seuil: 12, quoi: 'salles scellées ouvertes', court: '1 Flux au départ', bonus: { flux: 1 },
-    texte: 'Chaque implant est un galon : chaque combat commence avec 1 Flux.' },
-  joss: { nom: 'Nuit blanche', fait: 'combats', seuil: 35, quoi: 'combats gagnés', court: '+1 carte au premier tour', bonus: { main: 1 },
-    texte: 'Le quartier entier l’a veillé : au premier tour de chaque combat, ta main compte une carte de plus.' },
+  kessa: { nom: 'Née-de-mue', fait: 'fondations', seuil: 25, quoi: 'combats dans les Fondations', court: 'le bouclier renvoie 30 % des coups', bonus: { chitine: 0.3 },
+    texte: 'Sa chitine pique qui la frappe : quand le bouclier d’escouade encaisse un coup, 30 % de ce qu’il absorbe revient à l’ennemi.' },
+  liane: { nom: 'Galons blancs', fait: 'scellees', seuil: 12, quoi: 'salles scellées ouvertes', court: '+1 Flux par Fêlure résonnante', bonus: { felureFlux: 1 },
+    texte: 'Chaque implant est un galon : une Fêlure brisée par une chaîne qui résonne donne 1 Flux de plus.' },
+  joss: { nom: 'Nuit blanche', fait: 'combats', seuil: 35, quoi: 'combats gagnés', court: 'soigne le plus blessé chaque tour', bonus: { veille: 0.06 },
+    texte: 'Le quartier entier l’a veillé, il veille à son tour : à la fin de chaque tour ennemi, le Porteur le plus blessé récupère 6 % de ses PV.' },
 };
 export const progresMarque = (j: Jeu, id: string) => {
   const m = MARQUES[id];
