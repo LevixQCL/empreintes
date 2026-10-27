@@ -1000,7 +1000,7 @@ export function feuilleDeck(e: EcranDistrict): string {
       : haute ? `<span class="dk-action dk-lourd">${ICO.cristal}Niveau ${niveauRequis(k)} requis</span>`
       : lourde ? `<span class="dk-action dk-lourd">${ICO.cristal}Trop lourde</span>`
       : choixPorte || aEchanger ? `<span class="dk-action dk-remplace">${ICO.recycler}Échanger</span>`
-      : r ? `<span class="dk-action dk-remplace">${ICO.recycler}Remplace celle en ${NOMS_RARETE[moduleDef(r).rarete].toLowerCase()}</span>`
+      : r ? `<span class="dk-action dk-remplace">${ICO.recycler}<span>Remplace<br>celle en ${NOMS_RARETE[moduleDef(r).rarete].toLowerCase()}</span></span>`
       : qui ? `${avatar(qui, 20)}<span class="dk-chez">chez ${echap(porteurDef(qui).nom)}</span>` : `<span class="dk-action">${ICO.greffe}Confier</span>`;
     // pleine, il ne peut plus en recevoir de nouvelle ; une carte qui en remplace une autre reste possible
     return tuile(k, 'dk-libre', bas).replace('class="carte-tuile"', `class="carte-tuile${(plein && !r && !choixPorte) || lourde || haute ? ' grisee' : ''}"`);

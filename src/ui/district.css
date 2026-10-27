@@ -194,7 +194,13 @@
 .charge.trop .charge-rail i{background:linear-gradient(180deg,#FFC2AE,#E2735A 55%,#9B3A24);box-shadow:0 0 8px rgba(226,115,90,.6)}
 /* le poids d'une carte : un éclat de glace taillé, au bout de la ligne sous la tuile */
 .tuile-bas>.poids-carte{margin-left:auto;display:inline-flex;align-items:center;gap:3px;flex-shrink:0;font-family:var(--mono);font-size:13px;font-weight:700;color:var(--cristal)}
-.deck-porteur .dk-action{white-space:nowrap;min-width:0}
+/* une tuile ne s'élargit jamais au-delà de sa colonne (28 octobre 2026) : un libellé long (« Remplace celle en argent »)
+   faisait déborder la carte sur ses voisines ; il passe sur deux lignes */
+.deck-porteur .grille-cartes>.carte-tuile{min-width:0}
+.deck-porteur .tuile-bas{align-items:flex-start;padding-top:2px}
+.deck-porteur .dk-action{min-width:0;line-height:1.25;font-size:12px}
+.deck-porteur .dk-action .ico{flex:none;margin-top:1px}
+.deck-porteur .dk-remplace .ico{display:none}
 .poids-carte::before{content:"";width:9px;height:12px;background:linear-gradient(160deg,#E6F8FF,#7FD4FF 50%,#3E8DB8);clip-path:polygon(50% 0,100% 35%,50% 100%,0 35%);filter:drop-shadow(0 0 3px rgba(127,212,255,.6))}
 .dk-lourd{color:var(--danger)}
 .fc-poids{color:var(--cristal);font-family:var(--mono)}
