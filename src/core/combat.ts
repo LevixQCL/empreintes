@@ -252,6 +252,45 @@ export function cibler(s: CombatEtat, uid: string, porteurId?: string): Resultat
   return { ok: true };
 }
 
+/**
+ * Protégé (27 octobre 2026, Bryan : « si on a une attaque qui va sur tous les personnages et qu'on a un bouclier, il faudrait
+ * pouvoir rediriger le bouclier vers celui qui est le plus faible »). Le bouclier d'escouade reste un seul réservoir ; sur une
+ * attaque de zone, il couvre d'abord le protégé, puis les autres dans l'ordre de l'escouade. Le jeu propose le plus menacé,
+ * le joueur peut en choisir un autre d'un toucher (comme la cible d'un soin). Le choix vaut pour le tour.
+ */
+export const zoneAnnoncee = (s: CombatEtat) =>
+  s.issue === 'en-cours' && !brumeActive(s) && ennemisDebout(s).some((en) => { const it = intentionDe(s, en); return it.type === 'atk' && !!it.zone; });
+
+/** Le Porteur que le bouclier couvrira en premier : celui choisi ce tour, sinon celui qui finirait le plus bas après la zone */
+export function protegeDe(s: CombatEtat): string | undefined {
+  const debout = vivants(s);
+  if (s.protege && debout.some((p) => p.id === s.protege)) return s.protege;
+  if (brumeActive(s)) return plusBlesse(s)?.id;
+  const reste = (p: PorteurEtat) => {
+    let r = p.pv;
+    for (const en of ennemisDebout(s)) {
+      const it = intentionDe(s, en);
+      if (it.type === 'atk' && it.zone) r -= it.v * puissance(en) * avantage(ennemiDef(en.id).lignee, porteurDef(p.id).lignee);
+    }
+    return r / p.pvMax;
+  };
+  return debout.sort((a, b) => reste(a) - reste(b))[0]?.id;
+}
+
+/** Choisit le protégé du tour (un Porteur encore debout) */
+export function proteger(s: CombatEtat, porteurId: string): Resultat {
+  if (s.issue !== 'en-cours' || !vivants(s).some((p) => p.id === porteurId)) return { ok: false };
+  s.protege = porteurId;
+  return { ok: true };
+}
+
+/** Les Porteurs touchés par une zone, le protégé d'abord : c'est lui que le bouclier couvre en premier */
+function ordreZone<T extends { id: string }>(s: CombatEtat, debout: T[]): T[] {
+  const id = protegeDe(s);
+  const p = debout.find((x) => x.id === id);
+  return p ? [p, ...debout.filter((x) => x !== p)] : debout;
+}
+
 /** Change la Fréquence d'une carte posée dans la chaîne (cartes à plusieurs Fréquences : argent et plus) */
 export function accorder(s: CombatEtat, uid: string, f?: number): Resultat {
   if (s.issue !== 'en-cours') return { ok: false };
@@ -845,7 +884,7 @@ export function coupDeFuite(s: CombatEtat): { porteurs: PorteurEtat[]; coups: { 
     const e = ennemiDef(en.id);
     const debout = porteurs.filter((p) => p.pv > 0);
     let cibles: PorteurEtat[];
-    if (it.zone) cibles = debout;
+    if (it.zone) cibles = ordreZone(s, debout);
     else {
       const visee = it.cibleId ? debout.find((p) => p.id === it.cibleId) : undefined;
       cibles = visee ? [visee] : debout.slice(0, 1);
@@ -919,6 +958,7 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
   if (garde) log(s, `${(s.garde ?? 0) >= part ? 'Rempart' : 'Bras de quai'} : ${garde} de bouclier gardés.`, { camp: 'neutre', sorte: 'effet' });
   s.bouclier = garde;
   s.garde = 0;
+  delete s.protege;
   s.ombre = false;
   s.tour++;
   for (const en of ennemisDebout(s)) choisirIntention(s, en);
@@ -1065,7 +1105,7 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
     emettre({ kind: 'effet', cible: 'escouade', texte: 'Dissonance' });
   } else {
     let cibles: PorteurEtat[];
-    if (it.zone) cibles = vivants(s);
+    if (it.zone) cibles = ordreZone(s, vivants(s));
     else {
       const visee = it.cibleId ? porteurEtat(s, it.cibleId) : undefined;
       const id = visee && visee.pv > 0 ? visee.id : choisirCible(s);

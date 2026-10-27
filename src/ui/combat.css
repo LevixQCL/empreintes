@@ -412,6 +412,12 @@
 .combattant::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;clip-path:inherit;
   box-shadow:inset 0 0 0 1.5px var(--lis),inset 0 1px 0 rgba(255,255,255,.3)}
 .combattant.soigne{--lis:#7CE3A0}
+/* Protégé : le bouclier couvre ce Porteur en premier sur une attaque de zone ; toucher une autre tuile le change */
+.combattant[data-action="proteger"]{cursor:pointer}
+.combattant .marque-protege{position:absolute;z-index:4;right:5px;top:4px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;
+  color:#d8ecff;background:radial-gradient(circle at 40% 35%,rgba(127,190,255,.55),rgba(30,60,110,.85));box-shadow:0 0 0 1px rgba(159,208,255,.7),0 0 10px rgba(127,190,255,.45)}
+.combattant .marque-protege .ico{width:12px;height:12px}
+.combattant.soigne .marque-protege{right:27px}
 .combattant.cible{--lis:var(--danger)}
 .combattant.cible::after{box-shadow:inset 0 0 0 2px var(--lis),inset 0 0 18px rgba(255,90,70,.35)}
 .combattant.cible.fatal::after{box-shadow:inset 0 0 0 2px #ffcf7a,inset 0 0 22px rgba(255,90,70,.5)}
@@ -482,6 +488,9 @@
   .ecran-jeu .cb-vie .jauge-vie.jp{--h:10px}
   .ecran-jeu .combattant .marque-soin{top:8px;right:10px;width:22px;height:22px}
   .ecran-jeu .combattant .marque-soin .ico{width:14px;height:14px}
+  .ecran-jeu .combattant .marque-protege{right:10px;top:8px;width:24px;height:24px}
+  .ecran-jeu .combattant.soigne .marque-protege{right:38px}
+  .ecran-jeu .combattant .marque-protege .ico{width:15px;height:15px}
   .ecran-jeu .combattant .marque-coups{left:10px;top:10px;height:24px;gap:4px;padding:0 9px 0 5px;border-radius:12px;font-size:15px}
   .ecran-jeu .combattant .marque-coups .ico{width:13px;height:13px}
   .ecran-jeu .mc-qui img{width:18px;height:18px}

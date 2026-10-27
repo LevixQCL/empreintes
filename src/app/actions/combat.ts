@@ -20,6 +20,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     case 'ajouter': if (s && !K.verrou) { C.ajouter(s, id || b.dataset.uid || ''); vibrer(5); sauver(); } break;
     case 'retirer': if (s && !K.verrou) { C.retirer(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'accorder': if (s && !K.verrou) { C.accorder(s, b.dataset.uid ?? ''); sauver(); } break;
+    case 'proteger': if (s && !K.verrou) { C.proteger(s, id || b.dataset.id || ''); vibrer(5); sauver(); } break;
     case 'cibler': if (s && !K.verrou) { C.cibler(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'viser': if (s && !K.verrou) { C.viser(s, Number(b.dataset.id)); sauver(); } break;
     case 'eclats': K.eclats = !K.eclats; break;

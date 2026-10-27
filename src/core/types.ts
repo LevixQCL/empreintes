@@ -257,6 +257,8 @@ export interface CombatEtat {
   /** places en plus gagnées pour le tour suivant (Élan) */
   capaProchain?: number;
   bouclier: number;
+  /** le Porteur que le bouclier couvre en premier sur une attaque de zone, choisi par le joueur pour ce tour (sinon proposé) */
+  protege?: string;
   /** part du bouclier d'escouade gardée à la fin du tour ennemi (Rempart) */
   garde?: number;
   flux: number;
