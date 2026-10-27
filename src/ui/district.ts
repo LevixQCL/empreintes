@@ -408,18 +408,19 @@ function blocConvertisseur(j: Jeu): string {
   const now = Date.now();
   const taux = tauxConversion(j, now);
   const faits = conversionsDuJour(j, now);
-  const peut = j.energie >= CONVERTISSEUR.lot;
+  const fini = faits >= CONVERTISSEUR.lotsParJour;
+  const peut = j.energie >= CONVERTISSEUR.lot && !fini;
   // les paliers du jour : 10, puis 6, puis 3 composants par lot
   const paliers = [...new Set(CONVERTISSEUR.taux), CONVERTISSEUR.ensuite].map((t) => {
     const debut = CONVERTISSEUR.taux.indexOf(t) < 0 ? CONVERTISSEUR.taux.length : CONVERTISSEUR.taux.indexOf(t);
     const nb = CONVERTISSEUR.taux.filter((x) => x === t).length;
-    return `<li class="${t === taux ? 'actif' : faits > debut ? 'passe' : ''}"><b>+${t}</b><small>${nb ? `lots ${debut + 1} à ${debut + nb}` : `ensuite`}</small></li>`;
+    return `<li class="${!fini && t === taux ? 'actif' : faits > debut ? 'passe' : ''}"><b>+${t}</b><small>${nb ? `lots ${debut + 1} à ${debut + nb}` : `lots ${debut + 1} à ${CONVERTISSEUR.lotsParJour}`}</small></li>`;
   }).join('');
   return `<section class="fb-bloc fb-convertir"><h3 class="titre-bloc">${ICO.energie}Convertisseur</h3>`
-    + `<p class="fb-vide">L’énergie en trop devient des composants : <b>${CONVERTISSEUR.lot} énergie → +${taux} composants</b>. Le taux baisse avec les lots convertis aujourd’hui et repart demain.</p>`
+    + `<p class="fb-vide">L’énergie en trop devient des composants : <b>${CONVERTISSEUR.lot} énergie → +${taux} composants</b>. Le taux baisse avec les lots convertis aujourd’hui (${CONVERTISSEUR.lotsParJour} au plus) et repart demain.</p>`
     + `<ol class="fb-paliers" aria-label="Composants par lot selon les lots déjà convertis aujourd’hui">${paliers}</ol>`
     + `<button type="button" class="btn prim large" data-action="convertir"${peut ? '' : ' disabled'}>${ICO.energie}Convertir ${CONVERTISSEUR.lot} → +${taux} ${icone('composants')}</button>`
-    + `<small class="fb-note">${faits ? `${faits} lot${faits > 1 ? 's' : ''} converti${faits > 1 ? 's' : ''} aujourd’hui.` : 'Aucun lot converti aujourd’hui.'}</small></section>`;
+    + `<small class="fb-note">${fini ? 'Assez tourné pour aujourd’hui : il repart demain.' : faits ? `${faits} lot${faits > 1 ? 's' : ''} sur ${CONVERTISSEUR.lotsParJour} converti${faits > 1 ? 's' : ''} aujourd’hui.` : `Aucun lot converti aujourd’hui (${CONVERTISSEUR.lotsParJour} au plus).`}</small></section>`;
 }
 
 /** Les soins intensifs de la Clinique (27 octobre 2026) : de l'énergie pour effacer l'Usure d'un Porteur tout de suite */
@@ -742,8 +743,11 @@ function pourQui(id: string, j: Jeu): string {
   const requis = niveauRequis(id);
   const prets = presents.filter((p) => niveauPorteur(j, p.id).niveau >= requis);
   if (!prets.length) return `Porteur ${NOM_LIGNEE[m.lignee].toLowerCase()} niv. ${requis} requis`;
-  const noms = prets.slice(0, 2).map((p) => echap(p.nom.split(' ')[0]!)).join(', ');
-  return `Pour ${noms}${prets.length > 2 ? '…' : ''}${voie ? ` · ${echap(voie.nom)}` : ''}`;
+  // un seul nom (celui de l'escouade d'abord), et combien d'autres pourraient la porter
+  const esc = j.escouade ?? [];
+  const tri = prets.slice().sort((a, b) => Number(esc.includes(b.id)) - Number(esc.includes(a.id)));
+  const qui = `${echap(tri[0]!.nom.split(' ')[0]!)}${tri.length > 1 ? ` +${tri.length - 1}` : ''}`;
+  return voie ? `${echap(voie.nom)} · ${qui}` : `Pour ${qui}`;
 }
 
 /** L'effet de la carte, et ce que son métal lui ouvre */

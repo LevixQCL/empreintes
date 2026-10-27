@@ -453,14 +453,16 @@ export function acheter(j: Jeu, index: number, now = j.dernierTick): Resultat {
 
 /**
  * Le convertisseur du Générateur : un lot d'énergie devient des composants. Le taux baisse avec les lots convertis dans
- * la journée (10, puis 6, puis 3 composants par lot) et repart chaque jour : une réserve pleine rapporte environ une expédition.
+ * la journée (10, puis 6, puis 3 composants par lot), 20 lots au plus, et repart chaque jour : au plus 110 composants par jour,
+ * à peu près une expédition (un Générateur au niveau 5 produit bien plus : le plafond garde les descentes indispensables).
  */
-export const CONVERTISSEUR = { lot: 100, taux: [10, 10, 10, 10, 10, 6, 6, 6, 6, 6] as number[], ensuite: 3 };
+export const CONVERTISSEUR = { lot: 100, taux: [10, 10, 10, 10, 10, 6, 6, 6, 6, 6] as number[], ensuite: 3, lotsParJour: 20 };
 export const conversionsDuJour = (j: Jeu, now = j.dernierTick) => (j.conversion?.jour === jourDe(now) ? j.conversion.lots : 0);
 export const tauxConversion = (j: Jeu, now = j.dernierTick) => CONVERTISSEUR.taux[conversionsDuJour(j, now)] ?? CONVERTISSEUR.ensuite;
 
 export function convertir(j: Jeu, now = j.dernierTick): Resultat {
   if (j.batiments.generateur < 1) return non('Le Générateur est à l’arrêt.');
+  if (conversionsDuJour(j, now) >= CONVERTISSEUR.lotsParJour) return non('Le convertisseur a assez tourné pour aujourd’hui : il repart demain.');
   if (j.energie < CONVERTISSEUR.lot) return non(`Il faut ${CONVERTISSEUR.lot} énergie pour un lot.`);
   const gain = tauxConversion(j, now);
   j.energie -= CONVERTISSEUR.lot;

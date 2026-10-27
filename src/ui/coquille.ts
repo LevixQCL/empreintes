@@ -161,7 +161,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
       ligne('marteau', 'Faire tourner la Forge', 'Chaque carte refabriquée consomme de l’énergie, plus pour les métaux rares.'),
       ligne('monter', 'Entraîner un Porteur', 'À la Tour du Noyau, l’entraînement consomme de l’énergie chaque heure.'),
       ligne('porteurs', 'Équiper les missions', 'Vivres et lampes : un peu d’énergie au départ.'),
-      ligne('boost', 'Le convertisseur du Générateur', 'L’énergie en trop devient des composants (10 par lot de 100, moins après 5 lots dans la journée).'),
+      ligne('boost', 'Le convertisseur du Générateur', 'L’énergie en trop devient des composants : 10 par lot de 100, puis moins, 20 lots par jour au plus.'),
       ligne('soin', 'Les soins intensifs', 'À la Clinique, effacer l’Usure d’un Porteur tout de suite.')];
   } else if (r === 'composants') {
     surtitre = 'RESSOURCE'; titre = 'Les composants';

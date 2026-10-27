@@ -15,6 +15,9 @@ describe('Le convertisseur du Générateur', () => {
     expect(gains).toEqual([10, 10, 10, 10, 10, 6, 6, 6, 6, 6, 3, 3]);
     expect(j.energie).toBe(5000 - 12 * CONVERTISSEUR.lot);
     expect(tauxConversion(j, t0 + JOUR)).toBe(10);
+    for (let k = 12; k < CONVERTISSEUR.lotsParJour; k++) expect(convertir(j, t0).ok).toBe(true);
+    expect(convertir(j, t0).ok).toBe(false);
+    expect(convertir(j, t0 + JOUR).ok).toBe(true);
   });
   it('refuse sans assez d’énergie', () => {
     const j = pret();
