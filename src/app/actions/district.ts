@@ -3,7 +3,7 @@
 import { cartePillages, portOuvert } from '../../ui/pillages';
 import { lireCiblesEnLigne, sousBouclier } from '../pillages';
 import { moduleDe, moduleDef, porteurDef } from '../../core/donnees';
-import { poidsCarte } from '../../core/collection';
+import { estTri, poidsCarte } from '../../core/collection';
 import * as J from '../../core/jeu';
 import type { BatimentId } from '../../core/types';
 import { visuel as ageDistrict } from '../../ui/art';
@@ -228,7 +228,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     }
     case 'tri':
-      if (id === 'puissance' || id === 'metal' || id === 'niveau') {
+      if (estTri(id)) {
         D.tri = id;
         try { localStorage.setItem('empreintes.tri', id); } catch { /* stockage bloqué */ }
       }

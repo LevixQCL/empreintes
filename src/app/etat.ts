@@ -2,6 +2,7 @@
 // Tout ce qui change pendant la partie est dans `app` : les autres modules le lisent et le modifient.
 
 import type { Entree } from '../core/classements';
+import { estTri } from '../core/collection';
 import * as J from '../core/jeu';
 import type { CombatEtat } from '../core/types';
 import { charger } from '../save/local';
@@ -84,7 +85,7 @@ export const D: EcranDistrict = { j: app.jeu, vue: app.jeu.chambre && !app.jeu.a
 /** le Grand Tableau : lecture des classements en ligne, et ce qu'on a publié */
 export const G: GrandTableau = tableauVide();
 try { D.panneauReplie = localStorage.getItem('empreintes.panneau') !== 'ouvert'; } catch { D.panneauReplie = true; }
-try { const t = localStorage.getItem('empreintes.tri'); if (t === 'puissance' || t === 'metal' || t === 'niveau') D.tri = t; } catch { /* stockage bloqué */ }
+try { const t = localStorage.getItem('empreintes.tri'); if (estTri(t)) D.tri = t; } catch { /* stockage bloqué */ }
 D.grand = G;
 export const K: { verrou: boolean; regles: boolean; fuite: boolean; eclats: boolean; guide: OngletGuide | null; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; phaseTour?: number; decouverteId?: string } = {
   verrou: false, regles: false, fuite: false, eclats: false, guide: null, pops: [], fin: null, etat: null, traces: {},

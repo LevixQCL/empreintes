@@ -206,19 +206,23 @@ export function puissanceCarte(cle: string, niveau: number): number {
   return v * (1 + 0.15 * (m.f.length - 1));
 }
 
-export type TriCartes = 'puissance' | 'metal' | 'niveau';
+export type TriCartes = 'puissance' | 'metal' | 'niveau' | 'nouvelles';
 export const TRIS: { id: TriCartes; nom: string; texte: string }[] = [
   { id: 'puissance', nom: 'Puissance', texte: 'La force de la carte à son niveau, ajustée de ses effets, de ses Fréquences et des places qu’elle prend' },
   { id: 'metal', nom: 'Métal', texte: 'De la nacre au fer' },
   { id: 'niveau', nom: 'Niveau', texte: 'Du plus haut au plus bas' },
+  { id: 'nouvelles', nom: 'Nouvelles', texte: 'Les cartes pas encore vues d’abord, puis par puissance' },
 ];
+export const estTri = (t: unknown): t is TriCartes => TRIS.some((x) => x.id === t);
 
-/** Trie des exemplaires (clés carte@métal) : le critère choisi d'abord, puis la puissance, le métal, le nom */
-export function trierCartes(cles: string[], collection: Record<string, { niveau: number }>, tri: TriCartes): string[] {
+/** Trie des exemplaires (clés carte@métal) : le critère choisi d'abord, puis la puissance, le métal, le nom ; « nouvelles » met en tête celles qui ne sont pas dans `vues` */
+export function trierCartes(cles: string[], collection: Record<string, { niveau: number }>, tri: TriCartes, vues: readonly string[] = []): string[] {
   const p = (k: string) => puissanceCarte(k, collection[k]?.niveau ?? 1);
   const r = (k: string) => RARETES.indexOf(moduleDef(k).rarete);
   const n = (k: string) => collection[k]?.niveau ?? 1;
-  const cle = (k: string): number[] => tri === 'metal' ? [r(k), p(k)] : tri === 'niveau' ? [n(k), p(k), r(k)] : [p(k), r(k), n(k)];
+  const vu = new Set(vues);
+  const cle = (k: string): number[] => tri === 'metal' ? [r(k), p(k)] : tri === 'niveau' ? [n(k), p(k), r(k)]
+    : tri === 'nouvelles' ? [Number(!vu.has(k)), p(k), r(k), n(k)] : [p(k), r(k), n(k)];
   return [...cles].sort((a, b) => {
     const x = cle(a), y = cle(b);
     for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return y[i]! - x[i]!;

@@ -893,7 +893,7 @@ export function feuilleDeck(e: EcranDistrict): string {
   const jamais = (k: string) => poidsCarte(k) > max - portee + plusLourde;
   const tri = e.tri ?? 'puissance';
   const libres = trierCartes(Object.keys(j.collection)
-    .filter((k) => moduleDef(k).lignee === p.lignee && !porte.includes(k)), j.collection, tri);
+    .filter((k) => moduleDef(k).lignee === p.lignee && !porte.includes(k)), j.collection, tri, j.vus.cartes);
   /** la carte qu'il porte déjà dans un autre métal : la confier la remplace */
   const remplace = (k: string) => porte.find((x) => moduleDe(x) === moduleDe(k));
   let h = `<div class="voile-feuille" data-action="deck-fermer" aria-hidden="true"></div><section class="feuille deck-porteur" role="dialog" aria-modal="true" aria-label="Les cartes de ${echap(p.nom)}"><span class="poignee" aria-hidden="true"></span>`
@@ -907,7 +907,7 @@ export function feuilleDeck(e: EcranDistrict): string {
   h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour l’échanger ou la reprendre.</p>`;
   const fs = [...new Set(gestesDe(j, id).flatMap((g) => g.fs ?? [g.f]))].sort((a, b) => a - b);
   if (fs.length) h += `<p class="dk-freq">Fréquences qu’il apporte : ${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</p>`;
-  h += porte.length ? `<div class="grille-cartes">${trierCartes(porte, j.collection, tri).map((k) => {
+  h += porte.length ? `<div class="grille-cartes">${trierCartes(porte, j.collection, tri, j.vus.cartes).map((k) => {
     // une carte à confier est choisie : celles qu'elle ne peut pas remplacer (trop légères pour lui faire de la place) se grisent
     const bloque = !!choisie && !choixPorte && !tient(choisie, k);
     const bas = k === choisie ? `<span class="dk-action dk-remplace">${ICO.recycler}Choisie</span>` : bloque ? `<span class="dk-action dk-lourd">${ICO.cristal}Trop lourd</span>` : choisie && !choixPorte ? `<span class="dk-action dk-remplace">${ICO.recycler}Échanger</span>` : `<span class="dk-action">${ICO.recycler}Échanger</span>`;
@@ -990,12 +990,13 @@ export function htmlCartes(e: EcranDistrict): string {
     const pret = peutMonter(cle);
     return `<button type="button" class="carte-tuile cl-carte${pret ? ' pret' : ''}" data-action="carte" data-id="${cle}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}${porte ? `, portée par ${echap(porteurDef(porte).nom)}` : ', libre'}${pret ? ', peut monter' : ''}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
       + `<span class="cl-bas"><span class="cl-porteur">${porte ? `${avatar(porte, 20)}<span>${echap(porteurDef(porte).nom)}</span>` : '<span class="cl-libre">Libre</span>'}</span>`
-      + (m.legs ? `<span class="cl-max cl-legs">Héritage</span>` : requis === null ? `<span class="cl-max">Niveau max</span>` : `<span class="cl-doublons" title="Doublons pour le niveau ${c.niveau + 1}"><span class="mini-jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span>${c.doublons}/${requis}</span></span>`)
+      + `<span class="cl-niv" title="Niveau ${c.niveau}">Niv. ${c.niveau}</span>`
+      + (m.legs ? `<span class="cl-max cl-legs">Héritage</span>` : requis === null ? `<span class="cl-max">Max</span>` : `<span class="cl-doublons" title="Doublons pour le niveau ${c.niveau + 1}"><span class="mini-jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span>${c.doublons}/${requis}</span></span>`)
       + `</span>${pret ? `<span class="cl-monter">${ICO.monter}Peut monter</span>` : ''}${e.j.vus.cartes.includes(cle) ? '' : `<span class="ruban-nouveau">Nouvelle</span>`}</button>`;
   };
 
   if (f === 'monter' || f === 'libres') {
-    const liste = trierCartes(toutes.filter(f === 'monter' ? peutMonter : estLibre), j.collection, tri);
+    const liste = trierCartes(toutes.filter(f === 'monter' ? peutMonter : estLibre), j.collection, tri, j.vus.cartes);
     h += `<h2 class="titre-section">${f === 'monter' ? 'Peuvent monter' : 'Libres : personne ne les porte'}</h2>`
       + (liste.length ? `<div class="grille-cartes">${liste.map(tuileCarte).join('')}</div>`
         : `<p class="cl-vide">${f === 'monter' ? 'Aucune carte n’a encore assez de doublons et de composants pour monter.' : 'Toutes tes cartes sont confiées à un Porteur.'}</p>`);
@@ -1005,7 +1006,7 @@ export function htmlCartes(e: EcranDistrict): string {
       h += `<h2 class="titre-section" style="--c:${COULEUR[lignee]}">${NOM_LIGNEES[lignee]}</h2><div class="grille-cartes">`;
       // les cartes trouvées, triées ; celles qui restent à trouver à la fin
       const bases = MODULES.filter((x) => x.lignee === lignee && (!x.legs || exemplaires(j, x.id).length));
-      for (const cle of trierCartes(bases.flatMap((b) => exemplaires(j, b.id)), j.collection, tri)) h += tuileCarte(cle);
+      for (const cle of trierCartes(bases.flatMap((b) => exemplaires(j, b.id)), j.collection, tri, j.vus.cartes)) h += tuileCarte(cle);
       for (const base of bases.filter((b) => !exemplaires(j, b.id).length)) h += `<div class="carte-dos cl-dos" aria-label="Carte pas encore trouvée">${gemme(base.rarete)}<span>?</span><small>À trouver</small><em>Fouille « ${echap(CIBLES_FOUILLE[lignee].nom)} »</em></div>`;
       h += `</div>`;
     }
