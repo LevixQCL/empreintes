@@ -594,10 +594,14 @@ function htmlEcranCombat(e: Ecran): string {
     else if (a.suite >= 3) conseil = `<b>Résonance</b> : suite de ${a.suite}, effets <b>+${Math.round((a.mult - 1) * 100)} %</b>` + (a.suite < 5 && fin === a.suite && (libres > 0 || flux) ? ` · un <b>${f + 1}</b> pour aller plus loin` : '');
     else if (libres === 0 && fin === 2 && flux) conseil = `Suite ${f - 1} → ${f} : 1 Flux t’ouvre une place pour un <b>${f + 1}</b>`;
     else if (libres === 0) conseil = flux ? 'Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus' : 'Chaîne pleine : tu peux la lancer';
-    else if (f >= FREQ_MAX) conseil = `${FREQ_MAX} est la plus haute Fréquence : une suite ne va pas plus loin. Deux autres ${f} feraient un <b>Écho</b>`;
+    // au sommet des Fréquences, seul l'Écho reste possible : on dit combien il manque de cartes, pas plus
+    else if (f >= FREQ_MAX) {
+      const n = fs.filter((x) => x === f).length;
+      conseil = a.echo ? '' : n >= 2 ? `Encore un <b>${f}</b> pour un <b>Écho</b>` : `${f} : pas de suite au-delà · deux autres ${f} pour un <b>Écho</b>`;
+    }
     else if (fin === 2) conseil = `Suite ${f - 1} → ${f} : ajoute un <b>${f + 1}</b> pour +30 %`;
     else conseil = `Ajoute un <b>${f + 1}</b> pour commencer une suite`;
-    if (a.echo) conseil += ` · <b>Écho</b> : les trois ${a.echoF} <b>+${Math.round((REGLES.echo - 1) * 100)} %</b>`;
+    if (a.echo) conseil = (conseil ? `${conseil} · ` : '') + `<b>Écho</b> : les trois ${a.echoF} <b>+${Math.round((REGLES.echo - 1) * 100)} %</b>`;
     if (dernier?.effet) conseil += `<span class="effet-texte">${echap(libelleEffet(dernier.effet))}</span>`;
   }
 
