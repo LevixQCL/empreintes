@@ -225,7 +225,7 @@ function ongletCarte(): string {
 
   // la même carte en combat
   h += `<section class="bloc">${titre(ICO.codex, 'En combat')}<div class="g-collection"><div class="g-main">${carteExemple(ex, 'main')}</div>`
-    + `<ul class="g-regles"><li>En main, la carte garde l’essentiel : la <b>Fréquence</b>, la <b>force</b> et, sous la barre, le <b>losange de la lignée</b> et l’<b>icône de l’effet</b>.</li>`
+    + `<ul class="g-regles"><li>En main, la carte garde l’essentiel : la <b>Fréquence</b>, la <b>force</b> en bas à droite et, en bas à gauche, le <b>losange de la lignée</b> avec l’<b>icône de l’effet</b> (liseré d’or quand la carte en a un).</li>`
     + `<li>La carte qui prolonge ta suite fait briller sa Fréquence.</li></ul></div></section>`;
 
   // les trois actions

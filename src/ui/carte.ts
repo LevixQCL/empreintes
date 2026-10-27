@@ -5,7 +5,7 @@
 // - en haut à gauche, les Fréquences dans une capsule de verre (la principale, puis les autres à sa droite) ;
 // - une barre de séparation aux trois quarts, la valeur posée dessus à droite (icône au trait + chiffre) ;
 // - dessous, sur un voile dans la matière du métal : la roue de niveau (couleur de la lignée) et le nom, puis l'effet ;
-// - en main (carte étroite), il ne reste que la Fréquence, la valeur et, sous la barre, l'icône de l'effet.
+// - en main (carte étroite), l'image entière avec la Fréquence en haut, et en bas deux capsules : lignée et effet, puis la force.
 // Les tailles sont en unités de conteneur (cqw) : la même carte s'affiche en grand ou en petit.
 
 import { NOMS_EFFET, effetsDe, formuleEffet, nomsEffets } from '../core/effets';
@@ -31,7 +31,7 @@ export const ICONES_ACTION: Record<Action, string> = {
   bouclier: trait('<path d="M12 2.5l8 3v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z"/><path d="M12 7v10"/>'),
   soin: trait('<path d="M12 5v14M5 12h14"/>', 2.6),
 };
-/** une icône dorée par effet : devant son nom sur la carte, et seule sous la barre en main */
+/** une icône dorée par effet : devant son nom sur la carte, et dans la capsule en bas à gauche en main */
 export const ICONES_EFFET: Record<TypeEffet, string> = {
   percant: trait('<path d="M3 12h15"/><path d="M14 7l5 5-5 5"/><path d="M9 4v16" stroke-dasharray="2 3"/>'),
   siphon: trait('<path d="M19 12a7 7 0 1 1-2-4.9"/><path d="M19 3v5h-5"/>'),
@@ -117,7 +117,8 @@ export function corpsFace(d: Face): string {
     + `<span class="nf-freqs"><span class="nf-caps">${segs}${fele}</span>${d.lourd ? '<b class="nf-lourd">2 PL.</b>' : ''}</span>`
     + `<span class="nf-voile"><span class="nf-barre"></span>`
     + `<span class="nf-val ${d.type}">${ICONES_ACTION[d.type]}<b>${d.v}</b></span>`
-    + (d.effet ? `<span class="nf-eff">${effetsDe(d).map((e) => ICONES_EFFET[e.type]).join('')}</span>` : '')
+    // en main : une capsule en bas à gauche, la lignée (losange) et l'icône de l'effet, en face de celle de la force
+    + `<span class="nf-eff${d.effet ? ' a-effet' : ''}"><i class="nf-eff-lg"></i>${d.effet ? effetsDe(d).map((e) => ICONES_EFFET[e.type]).join('') : ''}</span>`
     + `<span class="nf-ligne">${roue}<span class="nf-nom">${echap(d.nom)}</span></span>${effet}</span>`;
 }
 

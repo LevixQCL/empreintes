@@ -91,25 +91,27 @@
   .nf-seg.fele svg{width:10cqw;height:10cqw}
 }
 
-/* en main (carte de 90 px au plus) : la Fréquence principale, la valeur et l'icône de l'effet, en grand */
+/* en main (carte de 90 px au plus) : la Fréquence principale en haut, la lignée et l'effet, puis la force, en bas */
 @container (max-width:90px){
   .nf{--bord:2.4cqw}
-  .nf-voile{height:calc(20% - var(--bord));padding:0}
-  .nf-ligne,.nf-regle,.nf-seg:not(.p,.fele),.nf-seg.fele em{display:none}
+  /* l'image prend toute la carte : plus de voile ni de barre, deux capsules de verre en bas, face à face */
+  .nf-voile{height:0;padding:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+  .nf-barre,.nf-ligne,.nf-regle,.nf-seg:not(.p,.fele),.nf-seg.fele em{display:none}
   .nf-seg.fele{padding:0 3cqw}
   .nf-seg.fele svg{width:16cqw;height:16cqw}
   .nf-freqs{top:4cqw;left:4cqw}
   .nf-caps{height:30cqw;border-radius:16cqw}
   .nf-seg.p{min-width:32cqw;font-size:22cqw}
   .nf-seg.p::after{height:1.8cqw;bottom:2.6cqw}
-  .nf-val{height:30cqw;top:-34cqw;right:2cqw;padding:0 5cqw 0 4cqw;border-radius:16cqw}
-  .nf-val svg{width:17cqw;height:17cqw}
-  .nf-val b{font-size:22cqw}
-  .nf-eff{display:grid;position:absolute;left:0;right:0;top:1cqw;bottom:0}
-  .nf-eff svg{width:24cqw;height:24cqw;stroke-width:2.8}
-  /* la lignée (le triangle des dégâts) : un losange de sa couleur, à gauche */
-  .nf-voile::before{content:"";position:absolute;left:7cqw;top:50%;width:9cqw;height:9cqw;margin-top:-3.5cqw;transform:rotate(45deg);
-    background:var(--lc);box-shadow:0 0 3cqw var(--lc)}
+  .nf-val{height:28cqw;top:auto;bottom:3cqw;right:3cqw;gap:1cqw;padding:0 4cqw 0 3cqw;border-radius:15cqw}
+  .nf-val svg{width:14cqw;height:14cqw}
+  .nf-val b{font-size:21cqw}
+  /* à gauche : la lignée (le triangle des dégâts) et, s'il y en a un, l'effet ; liseré d'or quand la carte a un effet */
+  .nf-eff{display:flex;align-items:center;justify-content:center;gap:2cqw;position:absolute;left:3cqw;bottom:3cqw;min-width:28cqw;height:28cqw;padding:0 3.5cqw;border-radius:15cqw;
+    background:rgba(8,10,18,.62);box-shadow:inset 0 0 0 .5cqw rgba(220,240,255,.22),0 1cqw 3cqw rgba(0,0,0,.4)}
+  .nf-eff.a-effet{box-shadow:inset 0 0 0 .5cqw rgba(243,210,122,.6),0 0 4cqw rgba(243,210,122,.3)}
+  .nf-eff-lg{flex:none;width:7cqw;height:7cqw;transform:rotate(45deg);background:var(--lc);box-shadow:0 0 2.5cqw var(--lc)}
+  .nf-eff svg{width:15cqw;height:15cqw;stroke-width:2.6}
 }
 
 /* en combat (src/ui/vue.ts, geste) : la face remplit le bouton de la carte ; la flèche de suite par-dessus */
