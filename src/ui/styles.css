@@ -431,8 +431,6 @@ h1,h2,h3{font-weight:400}
 .geste{--cut:9px;position:relative;flex:none;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:2px;border:none;color:var(--ink);text-align:left;
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));transition:transform .15s ease,opacity .15s ease}
 .g-lourd{letter-spacing:.04em}
-.g-suite{display:grid;place-items:center;width:20px;height:22px;color:#1C1406;background:var(--laiton);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
-.g-suite .ico{width:12px;height:12px}
 .g-val{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:17px;font-weight:600}
 .g-val .ico{width:14px;height:14px}
 .g-val.atk{color:#F2A285} .g-val.bouclier{color:#B4D5EF} .g-val.soin{color:#B9D99A}

@@ -103,7 +103,7 @@ Une seule face pour la collection et le combat (`geste` dans `vue.ts` la reprend
 (aucun en Nacre) dont l'arête prend la couleur de l'action ; en haut à gauche les Fréquences dans une capsule de verre (police Oxanium) ;
 la valeur (icône au trait + chiffre) sur une barre aux trois quarts ; dessous, sur un voile du métal, la roue de niveau (couleur de la
 lignée) et le nom, puis l'effet (icône, nom, formule courte `formuleEffet` dans `effets.ts`). Une carte de 90 px au plus (la main,
-la chaîne) ne garde que la Fréquence principale, la valeur, « 2 PL. », et en bas à gauche une capsule avec le losange de la lignée et l'icône de l'effet.
+la chaîne) garde l'image entière avec la Fréquence principale, « 2 PL. », le nom (deux lignes au plus), la valeur, et en bas à gauche une capsule avec le losange de la lignée et l'icône de l'effet.
 
 **L'onglet Escouade** (25 octobre 2026, `src/ui/porteurs.ts`, `equipe.css`). Les onglets Porteurs et Cartes n'en font plus qu'un,
 à trois volets (`voletsEscouade` dans `coquille.ts`) : *Escouade* (la feuille de match), *Porteurs* (tous, par lignée) et *Collection*

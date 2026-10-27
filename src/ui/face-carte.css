@@ -40,7 +40,10 @@
 .nf-seg.fele::after{display:none}
 .nf-seg.fele svg{width:7cqw;height:7cqw;filter:drop-shadow(0 0 1.2cqw #fff)}
 .nf-seg.fele em{font-style:normal;font-family:'Oxanium',var(--mono);font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
-.nf-suite .nf-seg.p{color:#fff;box-shadow:0 0 4cqw #ffd76e,inset 0 0 0 .5cqw #ffd76e}
+/* la carte prolonge la suite : sa capsule de Fréquence s'allume en or */
+.nf-suite .nf-caps{box-shadow:inset 0 0 0 2px #ffd76e,0 0 10px rgba(255,215,110,.8)}
+.nf-suite .nf-seg.p{color:#fff4cf;background:color-mix(in srgb,#ffd76e 38%,rgba(8,10,18,.7));box-shadow:inset 0 0 0 2px #ffd76e}
+.nf-suite .nf-seg.p::after{background:#ffe9a6}
 .nf-lourd{font-family:'Oxanium',var(--mono);font-weight:700;font-size:max(9px,4.6cqw);color:var(--ink);background:rgba(8,10,18,.8);
   border:.35cqw solid rgba(220,240,255,.35);border-radius:6cqw;padding:.6cqw 2cqw;white-space:nowrap}
 
@@ -96,7 +99,14 @@
   .nf{--bord:2.4cqw}
   /* l'image prend toute la carte : plus de voile ni de barre, deux capsules de verre en bas, face à face */
   .nf-voile{height:0;padding:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none}
-  .nf-barre,.nf-ligne,.nf-regle,.nf-seg:not(.p,.fele),.nf-seg.fele em{display:none}
+  .nf-barre,.nf-regle,.nf-roue,.nf-lg,.nf-seg:not(.p,.fele),.nf-seg.fele em{display:none}
+  /* le nom, pour se souvenir de la carte : au-dessus des capsules, sur un dégradé sombre, deux lignes au plus */
+  .nf-art::after{content:"";position:absolute;inset:auto 0 0 0;height:62%;pointer-events:none;
+    background:linear-gradient(to top,rgba(6,8,14,.9) 0%,rgba(6,8,14,.72) 45%,transparent 100%)}
+  .nf-ligne{position:absolute;left:4cqw;right:3cqw;bottom:34cqw;display:block}
+  .nf-nom{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;
+    font-family:'IBM Plex Sans Condensed',var(--body,sans-serif);font-weight:600;font-size:12px;line-height:1.1;letter-spacing:0;color:#fff;
+    text-shadow:0 1px 2px #000,0 0 5px rgba(0,0,0,.95)}
   .nf-seg.fele{padding:0 3cqw}
   .nf-seg.fele svg{width:16cqw;height:16cqw}
   .nf-freqs{top:4cqw;left:4cqw}
@@ -114,11 +124,9 @@
   .nf-eff svg{width:15cqw;height:15cqw;stroke-width:2.6}
 }
 
-/* en combat (src/ui/vue.ts, geste) : la face remplit le bouton de la carte ; la flèche de suite par-dessus */
+/* en combat (src/ui/vue.ts, geste) : la face remplit le bouton de la carte */
 .geste{container-type:inline-size;clip-path:none}
 .geste > .nf{position:absolute;inset:0;width:auto;aspect-ratio:auto}
-.geste .g-suite{z-index:6}
-.geste.lourd .g-suite{top:26px}
 /* en main, une carte lourde garde son « 2 PL. » en haut à droite */
 @container (max-width:90px){
   .nf-freqs{right:4cqw;justify-content:space-between;flex-wrap:wrap;row-gap:1.5cqw}

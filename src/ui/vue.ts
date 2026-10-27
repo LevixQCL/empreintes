@@ -126,7 +126,6 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
   const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}${eteinte ? ', éteinte : son Porteur est à terre' : ''}`;
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]}" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="nf nf-${metal}${o.halo ? ' nf-suite' : ''}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d)}</span>`
-    + (o.halo ? `<span class="g-suite" aria-hidden="true">${ICO.monter}</span>` : '')
     + `</button>`;
 }
 
