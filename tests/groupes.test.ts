@@ -1,6 +1,6 @@
 // Combats à plusieurs ennemis (décision du 22 octobre 2026) : choisir qui frapper.
 import { describe, expect, it } from 'vitest';
-import { PART_GROUPE, coupDeFuite, creerCombat, ennemisDebout, intentionDe, lancer, tousEnnemis, viser } from '../src/core/combat';
+import { PV_GROUPE, pvProfondeur, coupDeFuite, creerCombat, ennemisDebout, intentionDe, lancer, tousEnnemis, viser } from '../src/core/combat';
 import { ennemiDef, porteurDef } from '../src/core/donnees';
 import { escorteDe, genererCarte } from '../src/core/expedition';
 import type { CombatEtat, PorteurEtat } from '../src/core/types';
@@ -24,7 +24,7 @@ describe('Un groupe d’ennemis', () => {
     const es = tousEnnemis(s);
     expect(es.map((e) => e.rang)).toEqual([0, 1, 2]);
     expect(es.map((e) => e.id)).toEqual(['pilleur', 'vigie', 'rampeur']);
-    expect(es[1]!.pvMax).toBe(Math.round(ennemiDef('vigie').pvMax * PART_GROUPE[3]!));
+    expect(es[1]!.pvMax).toBe(Math.round(ennemiDef('vigie').pvMax * PV_GROUPE[3]! * pvProfondeur(1)));
     for (const e of es) expect(intentionDe(s, e).type).toBeTruthy();
   });
 

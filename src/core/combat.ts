@@ -32,14 +32,18 @@ export function creerCombat(opts: {
   condition?: string;
   /** false : les ennemis jouent sans traits ni seconde phase (Strate −1) */
   traits?: boolean;
+  /** PV au même rythme que les coups (les pillages, réglés à part sur la force des garnisons) */
+  pvPleins?: boolean;
 }): CombatEtat {
   const e = ennemiDef(opts.ennemiId);
   const groupe = [opts.ennemiId, ...(opts.escorte ?? [])];
   // un groupe se partage la puissance d'un ennemi seul (un peu plus au total : il faut choisir qui frapper)
   const force = (opts.force ?? 1) * (PART_GROUPE[groupe.length] ?? PART_GROUPE[3]!);
+  // les PV seuls suivent un peu moins la profondeur que les coups (27 octobre 2026 : des combats moins longs en profondeur)
+  const pvForce = opts.pvPleins ? force : (opts.force ?? 1) * (PV_GROUPE[groupe.length] ?? PV_GROUPE[3]!) * pvProfondeur(opts.force ?? 1);
   const etat = (id: string, rang: number): EnnemiEtat => {
     const d = ennemiDef(id);
-    const pv = Math.round(d.pvMax * force);
+    const pv = Math.round(d.pvMax * pvForce);
     return { id, pv, pvMax: pv, force, bouclier: 0, etape: rang, boost: 1, ...(groupe.length > 1 ? { rang } : {}), ...(opts.traits === false ? { simple: true } : {}) };
   };
   const s: CombatEtat = {
@@ -92,6 +96,15 @@ export const ligneeGeste = (g: GesteDef): LigneeGeste => (g.porteur ? porteurDef
 
 /** PV et attaques de chaque ennemi d'un groupe, par rapport à un ennemi seul (×1,28 de PV au total pour deux, ×1,35 pour trois ; réglé au joueur moyen : un groupe pèse à peu près autant que ses membres affrontés seuls) */
 export const PART_GROUPE: Record<number, number> = { 1: 1, 2: 0.64, 3: 0.45 };
+/**
+ * Durée des combats (27 octobre 2026, Bryan : 31 tours contre un groupe, c'est trop ; 4 à 6 tours, trop peu). Cible au parcours
+ * d'un joueur moyen (`scripts/durees.ts`) : combats normaux 6 à 9 tours, groupes 9 à 13, gardiens 12 à 18.
+ * Les PV d'un groupe : chaque ennemi garde sa part de coups (PART_GROUPE), mais a moins de PV.
+ */
+export const PV_GROUPE: Record<number, number> = { 1: 1, 2: 0.6, 3: 0.4 };
+/** En profondeur, les PV montent moins vite que les coups : × 1 jusqu'à la Strate −2, puis de moins en moins, jusqu'au plancher */
+export const PV_PROFONDEUR = { depuis: 1.4, pente: 0.12, plancher: 0.82 };
+export const pvProfondeur = (force: number) => Math.max(PV_PROFONDEUR.plancher, Math.min(1, 1 - PV_PROFONDEUR.pente * (force - PV_PROFONDEUR.depuis)));
 
 /** Le trait d'un ennemi, s'il l'a */
 export function trait<T extends Trait['type']>(en: EnnemiEtat, type: T): Extract<Trait, { type: T }> | undefined {
