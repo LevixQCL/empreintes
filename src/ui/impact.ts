@@ -640,13 +640,85 @@ function impactPorteur(p: DOMPoint, coul: string, angle: number, delai: number) 
   setTimeout(() => eclats(p.x, p.y, 14, coul, { vitesse: 320, taille: 2.2, trainee: true, angle, ouverture: 0.9, gravite: 120 }), delai);
 }
 
+type Bloque = 'non' | 'tout' | 'partiel';
+
+/**
+ * Le bouclier de l'escouade encaisse : une coque hexagonale de glace se dresse devant le Porteur, une onde la parcourt
+ * depuis le point d'impact et le coup ricoche en étincelles bleutées vers l'ennemi. S'il cède (une partie du coup passe),
+ * la coque se fend et éclate en éclats de verre.
+ */
+function parade(r: DOMRect, angle: number, delai: number, brise: boolean) {
+  const e = Math.sqrt(ech);
+  const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  const rx = r.width / 2 + 8 * e, ry = r.height / 2 + 7 * e;
+  // le point d'impact sur la coque : là où le coup arrive, côté ennemi
+  const ix = cx - Math.cos(angle) * rx * 0.8, iy = cy - Math.sin(angle) * ry * 0.8;
+  const hex = (c: CanvasRenderingContext2D, ech2: number) => {
+    c.beginPath();
+    for (let i = 0; i <= 6; i++) { const a = (i / 6) * Math.PI * 2 + Math.PI / 6; c[i ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * rx * ech2, cy + Math.sin(a) * ry * ech2); }
+  };
+  const duree = brise ? 340 : 560;
+  trait((c, k) => {
+    // la coque se dresse (petit rebond), tient, puis s'efface ; brisée, elle disparaît vite
+    const pop = k < 0.18 ? 0.86 + (k / 0.18) * 0.2 : 1.06 - Math.min(1, (k - 0.18) / 0.3) * 0.06;
+    const a = k < 0.18 ? k / 0.18 : 1 - (k - 0.18) / 0.82;
+    c.globalAlpha = a;
+    hex(c, pop);
+    c.fillStyle = 'rgba(140,200,255,.16)'; c.fill();
+    c.strokeStyle = BOUCLIER; c.shadowColor = '#7FB8FF'; c.shadowBlur = 18; c.lineWidth = 2.2 * e; c.stroke();
+    // l'onde qui court sur la coque depuis l'impact
+    c.save(); hex(c, pop); c.clip();
+    const ro = (8 + k * 110) * e;
+    c.globalAlpha = a * (1 - k);
+    c.strokeStyle = '#FFFFFF'; c.lineWidth = 3 * e; c.shadowBlur = 12;
+    c.beginPath(); c.arc(ix, iy, ro, 0, Math.PI * 2); c.stroke();
+    c.lineWidth = 1.2 * e; c.beginPath(); c.arc(ix, iy, ro * 0.6, 0, Math.PI * 2); c.stroke();
+    c.restore();
+  }, duree, delai);
+  // l'éclat blanc au point d'impact
+  trait((c, k) => {
+    const rr = (10 + k * 22) * e;
+    const g = c.createRadialGradient(ix, iy, 0, ix, iy, rr);
+    g.addColorStop(0, `rgba(255,255,255,${1 - k})`); g.addColorStop(0.45, 'rgba(160,210,255,.7)'); g.addColorStop(1, 'transparent');
+    c.globalAlpha = 1 - k; c.fillStyle = g; c.beginPath(); c.arc(ix, iy, rr, 0, Math.PI * 2); c.fill();
+  }, 180, delai);
+  if (brise) {
+    // la coque se fend du point d'impact, puis vole en éclats
+    const fentes = Array.from({ length: 5 }, () => ({ a: angle + Math.PI + hasard(-1.3, 1.3), l: hasard(0.5, 0.9) }));
+    trait((c, k) => {
+      c.globalAlpha = 1 - k; c.strokeStyle = '#FFFFFF'; c.shadowColor = '#7FB8FF'; c.shadowBlur = 8; c.lineWidth = 1.4 * e;
+      const o = Math.min(1, k * 5);
+      for (const f of fentes) {
+        c.beginPath(); c.moveTo(ix, iy);
+        c.lineTo(ix + Math.cos(f.a) * rx * f.l * 0.5 * o, iy + Math.sin(f.a) * ry * f.l * 0.5 * o);
+        c.lineTo(ix + Math.cos(f.a + 0.25) * rx * f.l * o, iy + Math.sin(f.a + 0.25) * ry * f.l * o); c.stroke();
+      }
+    }, 300, delai);
+    setTimeout(() => {
+      eclats(cx, cy, 22, '#CFE6FF', { vitesse: 260, taille: 2.6, gravite: 520, vie: 0.8 });
+      note(1900, 'triangle', 0.16, 0.05, 0.55);
+    }, delai + 90);
+  } else {
+    // le coup ricoche : des étincelles repartent vers l'ennemi
+    setTimeout(() => {
+      eclats(ix, iy, 12, '#CFE6FF', { vitesse: 300, taille: 2, trainee: true, angle: angle + Math.PI, ouverture: 1.1, gravite: 80 });
+      note(1320, 'triangle', 0.22, 0.05, 1.04);
+      note(1980, 'sine', 0.18, 0.025);
+    }, delai);
+  }
+}
+
 /**
  * Le coup d'un ennemi sur un Porteur, selon sa lignée. Renvoie le délai (ms) avant que le coup ne porte.
  * Augmentés : une salve, un obus de lumière lourd qui part de l'ennemi avec un éclair de bouche et vient s'écraser.
  * Génés : trois griffures qui lacèrent. Résonants : une onde qui se referme sur la cible.
  */
-function coupEnnemi(de: DOMPoint | null, p: DOMPoint, lignee: LigneeGeste): number {
+function coupEnnemi(de: DOMPoint | null, p: DOMPoint, lignee: LigneeGeste, bloque: Bloque = 'non', r: DOMRect | null = null): number {
   const coul = TEINTE_ENNEMI[lignee];
+  const frappe = (angle: number, delai: number) => {
+    if (bloque !== 'non' && r) parade(r, angle, delai, bloque === 'partiel');
+    if (bloque !== 'tout') impactPorteur(p, coul, angle, delai);
+  };
   const e = Math.sqrt(ech);
   if (lignee === 'tech' && de) {
     const dx = p.x - de.x, dy = p.y - de.y, l = Math.hypot(dx, dy) || 1;
@@ -671,7 +743,7 @@ function coupEnnemi(de: DOMPoint | null, p: DOMPoint, lignee: LigneeGeste): numb
       c.moveTo(de.x + dx * Math.max(0, t - 0.1), de.y + dy * Math.max(0, t - 0.1)); c.lineTo(hx, hy); c.stroke();
       c.fillStyle = '#fff'; c.beginPath(); c.arc(hx, hy, 5 * e, 0, Math.PI * 2); c.fill();
     }, vol);
-    impactPorteur(p, coul, angle, vol);
+    frappe(angle, vol);
     return vol;
   }
   if (lignee === 'bio') {
@@ -685,7 +757,7 @@ function coupEnnemi(de: DOMPoint | null, p: DOMPoint, lignee: LigneeGeste): numb
         c.beginPath(); c.moveTo(x0, y0); c.lineTo(x0 + Math.cos(angle) * 60 * o, y0 + Math.sin(angle) * 60 * o); c.stroke();
       }, 300, 80 + i * 40);
     }
-    impactPorteur(p, coul, angle, 110);
+    frappe(angle, 110);
     return 110;
   }
   trait((c, k) => {
@@ -693,7 +765,7 @@ function coupEnnemi(de: DOMPoint | null, p: DOMPoint, lignee: LigneeGeste): numb
     c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 18; c.lineWidth = 3;
     c.beginPath(); c.arc(p.x, p.y, 70 * (1 - k) + 8, 0, Math.PI * 2); c.stroke();
   }, 300);
-  impactPorteur(p, coul, hasard(0, Math.PI * 2), 260);
+  frappe(hasard(-Math.PI * 0.75, -Math.PI * 0.25), 260);
   return 260;
 }
 
@@ -898,17 +970,23 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       const el = [...racine.querySelectorAll('.combattant')].find((x) => x.getAttribute('data-porteur') === ev.cible);
       const p = centre(el ?? null);
       let delai = 0;
-      if (p && ev.net) {
+      // le bouclier de l'escouade a pris tout le coup, une partie, ou rien
+      const bloque: Bloque = !ev.absorbe ? 'non' : ev.net ? 'partiel' : 'tout';
+      if (p && (ev.net || ev.absorbe)) {
         // d'où vient le coup : la vignette de l'ennemi qui agit (groupe), sinon l'ennemi de la scène ; sa lignée choisit le geste
         const src = (ev.rang !== undefined ? racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]:not(.visee)`) : null) ?? ennemi ?? scene;
         const porteuse = src?.closest('.vignette-ennemi') ?? scene;
         const lignee = (['tech', 'bio', 'reso'] as const).find((l) => porteuse?.classList.contains(`l-${l}`)) ?? 'neutre';
         const de = centre(src, -0.05);
         bond(src, de, p);
-        delai = reduit ? 0 : coupEnnemi(de, p, lignee);
+        delai = reduit ? 0 : coupEnnemi(de, p, lignee, bloque, el?.getBoundingClientRect() ?? null);
       }
       // le Porteur encaisse quand le coup arrive, pas quand il part
       const encaisser = () => {
+        // paré : la jauge de bouclier s'illumine, le Porteur ne bronche presque pas
+        if (bloque !== 'non') racine.querySelector('.ligne-escouade .etat.garde')?.animate(
+          [{ filter: 'brightness(2.2) drop-shadow(0 0 8px #7FB8FF)', transform: 'scale(1.08)' }, { filter: 'none', transform: 'none' }], { duration: 420, easing: 'ease-out' });
+        if (bloque === 'tout') { if (el) { touche(el, '#7FB8FF', 0); secouer(el, 1); } vibrer(10); return; }
         if (el) { touche(el, DANGER, 1); secouer(el, 2); }
         if (!ev.net) return;
         // ce qu'encaisse l'escouade : un voile rouge sur les bords, proportionné au coup (gardé même avec « réduire les animations »),
