@@ -34,4 +34,20 @@ export function texteEffet(e: Effet): string {
   }
 }
 
+/** Formule courte (15 signes au plus) posée sur la carte à côté du nom de l'effet ; la phrase entière va dans le détail */
+export function formuleEffet(e: Effet): string {
+  switch (e.type) {
+    case 'percant': return 'ignore bouclier';
+    case 'siphon': return `rend ${pc(e.part)}`;
+    case 'flux': return `Flux +${e.v}`;
+    case 'desarmer': return `−${pc(e.part)} ennemi`;
+    case 'fissure': return `+${pc(e.part)} dégâts`;
+    case 'elan': return '+1 place';
+    case 'crescendo': return `+${pc(e.part)} / carte`;
+    case 'accord': return 'Fréquence libre';
+    case 'vague': return 'soigne tous';
+    case 'rempart': return `garde ${pc(e.part)}`;
+  }
+}
+
 export const libelleEffet = (e: Effet) => `${NOMS_EFFET[e.type]} : ${texteEffet(e)}`;

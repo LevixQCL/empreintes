@@ -126,6 +126,6 @@ Midjourney reste réservé aux illustrations, avec la règle de composition du p
 
 ## Ordre de travail
 
-1. Bryan valide la maquette.
-2. Je code la nouvelle face dans `src/ui/carte.ts` / `face-carte.css` (mêmes unités `cqw`, les trois distances par
+1. Bryan valide la maquette (fait le 27 octobre).
+2. Codé le 27 octobre : je code la nouvelle face dans `src/ui/carte.ts` / `face-carte.css` (mêmes unités `cqw`, les trois distances par
    requêtes de conteneur), puis vérification au téléphone et sur PC, et `npm run visuel`.

@@ -1,66 +1,105 @@
-/* Face des cartes Module (src/ui/carte.ts) */
-/* ---------- Face des cartes Module (src/ui/carte.ts) : maquette validée le 21/10/2026 ----------
-   Silhouette à deux coins coupés, onglet de métal pour le nom, plaque pour les Gestes, Nacre sans cadre.
-   Tout est en cqw (largeur de la carte) avec des planchers en px pour rester lisible en petit. */
+/* ---------- Face des cartes (src/ui/carte.ts) : refonte validée par Bryan le 27/10/2026 (docs/carte-optimale.md) ----------
+   L'illustration entière, un cadre dans la matière du métal (arête intérieure de la couleur de l'action, aucun cadre en Nacre),
+   les Fréquences en capsule en haut à gauche, la valeur sur la barre, la roue de niveau, le nom et l'effet sur un voile du métal.
+   Tout est en cqw (largeur de la carte) : la même carte sert en grand, en collection et en main. */
 .fc-ombre{container-type:inline-size;width:100%;filter:drop-shadow(0 10px 12px rgba(0,0,0,.55)) drop-shadow(0 0 var(--halo-t,0px) var(--halo,transparent))}
 .fo-or{--halo:rgba(226,180,74,.35);--halo-t:12px}
 .fo-nacre{--halo:rgba(214,190,240,.45);--halo-t:14px}
-.fc-carte{--rx:0deg;--ry:0deg;--mx:50%;--my:50%;--cut:8.3cqw;--tab:11cqw;
-  position:relative;width:100%;aspect-ratio:63/88;padding:1.4cqw;display:grid;grid-template-rows:1fr auto;isolation:isolate;
-  background:var(--tex) center/cover;
-  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));
-  transform:perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));transition:transform .25s ease-out}
-.fc-art{position:relative;overflow:hidden;background:#0d0e11;clip-path:polygon(0 0,calc(100% - var(--cut) + 1cqw) 0,100% calc(var(--cut) - 1cqw),100% 100%,0 100%)}
-.fc-art img,.fc-sans-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 26%;display:block}
-.fc-sans-image{background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 45%,#1a1c22),#0d0e11 75%)}
-.fc-puces{position:absolute;top:2.8cqw;left:2.8cqw;display:flex;gap:1.6cqw;align-items:center;z-index:3}
-.fc-puces > span{padding:max(2px,1cqw) max(4px,2.4cqw);border-radius:max(4px,2cqw);background:rgba(9,9,12,.74);font-family:var(--mono);font-size:max(9px,3.8cqw);font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.2}
-.fc-puces .fc-lignee{letter-spacing:.1em;color:color-mix(in srgb,var(--c) 70%,white)}
+.fc-carte{--rx:0deg;--ry:0deg;--mx:50%;--my:50%;transform:perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));transition:transform .25s ease-out}
 
-.fc-plaque{position:relative;z-index:2;margin-top:calc(-1 * var(--tab));padding:2.4cqw 4.1cqw 3.8cqw;display:grid;gap:1.4cqw;
-  background:var(--tex) center/cover;color:var(--encre);
-  clip-path:polygon(0 0,74% 0,calc(74% + var(--tab)) var(--tab),100% var(--tab),100% 100%,calc(var(--cut) - 1cqw) 100%,0 calc(100% - var(--cut) + 1cqw))}
-.fc-plaque::before{content:"";position:absolute;inset:0;background:var(--calme,transparent);pointer-events:none}
-.fc-plaque > *{position:relative}
-.fc-lumiere{position:absolute!important;inset:0;pointer-events:none;mix-blend-mode:var(--mode,overlay);opacity:var(--force,0);background:var(--lum,none)}
-.fc-titre{display:flex;align-items:center;gap:2.4cqw;height:calc(var(--tab) - 3cqw);width:76%;margin-bottom:1.4cqw;min-width:0}
-.fc-gemme{flex-shrink:0;width:max(9px,5.2cqw);height:max(9px,5.2cqw);background:var(--gemme);clip-path:var(--forme)}
-.fc-nom{font-family:var(--display);font-size:max(13px,6.9cqw);line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;text-shadow:var(--ombre-txt)}
-.fc-gestes{list-style:none;margin:0;padding:1.4cqw 0 0;display:grid;gap:1.4cqw}
-.fc-freqs{display:flex;gap:1.2cqw}
-.fc-gestes li{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:2.4cqw;font-size:max(10.5px,4.65cqw);font-weight:500;text-shadow:var(--ombre-txt);min-width:0}
-.fc-freq{display:grid;place-items:center;width:max(18px,9.6cqw);height:max(18px,9.6cqw);font-family:var(--mono);font-size:max(10px,4.8cqw);font-weight:600;color:#fff;text-shadow:none;
-  background:var(--fc);box-shadow:inset 0 0 0 2px rgba(255,255,255,.18);clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%)}
-.fc-gn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fc-gn em{font-style:normal;font-family:var(--mono);font-size:max(8px,3.1cqw);letter-spacing:.06em;margin-left:1.6cqw;padding:0 1.2cqw;border-radius:3px;border:1px solid currentColor;opacity:.8;vertical-align:1px}
-.fc-val{display:flex;align-items:center;gap:1.2cqw;font-family:var(--mono);font-size:max(10px,4.5cqw);font-weight:600;font-variant-numeric:tabular-nums}
-.fc-val svg{width:max(9px,4.1cqw);height:max(9px,4.1cqw)}
-.fc-val.atk{color:var(--atk)}.fc-val.bouclier{color:var(--shield)}.fc-val.soin{color:var(--heal)}
+.nf{--cut:7cqw;--bord:2.8cqw;position:relative;display:block;width:100%;aspect-ratio:5/7;overflow:hidden;background:#0b0d12;isolation:isolate;
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.nf-art{position:absolute;inset:0;overflow:hidden}
+.nf-art img,.nf-sans-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block}
+.nf-sans-image{background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--lc) 45%,#1a1c22),#0d0e11 75%)}
+/* le cadre : la texture du métal, en anneau autour de la carte */
+.nf::after{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;padding:var(--bord);
+  background:linear-gradient(150deg,rgba(255,255,255,.35),rgba(255,255,255,0) 30%,rgba(0,0,0,0) 60%,rgba(0,0,0,.35)),var(--tex) center/cover;
+  -webkit-mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+/* son arête intérieure, de la couleur de l'action */
+.nf::before{content:"";position:absolute;inset:var(--bord);z-index:5;pointer-events:none;
+  box-shadow:inset 0 0 0 .7cqw var(--ac),inset 0 0 6cqw color-mix(in srgb,var(--ac) 55%,transparent);
+  clip-path:polygon(0 0,calc(100% - var(--cut) + 2cqw) 0,100% calc(var(--cut) - 2cqw),100% 100%,calc(var(--cut) - 2cqw) 100%,0 calc(100% - var(--cut) + 2cqw))}
+.nf-nacre{--bord:0px}
+.nf-nacre::after,.nf-nacre::before{display:none}
 
-/* Les cinq métaux : la matière, l'encre lisible dessus, la gemme et la lumière sur la plaque */
-.fr-fer{--encre:#F1ECE2;--ombre-txt:0 1px 3px rgba(0,0,0,.95);--atk:#F0A080;--shield:#A9CDEB;--heal:#B9D99A;--calme:linear-gradient(rgba(10,8,8,.45),rgba(10,8,8,.55));
-  --gemme:#a7abb0;--forme:polygon(50% 0,100% 50%,50% 100%,0 50%)}
-.fr-cuivre{--encre:#2B140A;--ombre-txt:0 1px 0 rgba(255,220,190,.35);--atk:#8E2A12;--shield:#1F4A6E;--heal:#2F5A1C;--calme:linear-gradient(rgba(240,150,100,.32),rgba(200,110,60,.3));
-  --gemme:#7c3a17;--forme:polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%);
-  --lum:radial-gradient(circle at var(--mx) var(--my),rgba(255,200,140,.9),transparent 70%);--force:.35;--mode:soft-light}
-.fr-argent{--encre:#17222D;--ombre-txt:0 1px 0 rgba(255,255,255,.6);--atk:#9A2C17;--shield:#1E4C78;--heal:#2F5A1C;--calme:linear-gradient(rgba(240,246,252,.42),rgba(225,235,245,.4));
-  --gemme:#5b7a96;--forme:polygon(50% 0,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);
-  --lum:linear-gradient(105deg,transparent calc(var(--mx) - 12%),rgba(255,255,255,.95) var(--mx),transparent calc(var(--mx) + 12%));--force:.7;--mode:soft-light}
-.fr-or{--encre:#3A2405;--ombre-txt:0 1px 0 rgba(255,240,190,.45);--atk:#8E2A12;--shield:#1F4A6E;--heal:#2F5A1C;--calme:linear-gradient(rgba(255,245,210,.12),rgba(140,90,10,.12));
-  --gemme:#9b5a05;--forme:polygon(50% 0,63% 33%,100% 38%,72% 62%,80% 100%,50% 80%,20% 100%,28% 62%,0 38%,37% 33%);
-  --lum:radial-gradient(circle at var(--mx) var(--my),rgba(255,250,225,1),transparent 38%);--force:.6;--mode:overlay}
-.fr-argent .fc-lumiere,.fr-or .fc-lumiere{animation:fc-respire 6s ease-in-out infinite}
-@keyframes fc-respire{0%,100%{opacity:calc(var(--force) * .55)}50%{opacity:var(--force)}}
+/* les Fréquences : une capsule de verre fumé, la principale d'abord */
+.nf-freqs{position:absolute;z-index:4;top:4.5cqw;left:4.5cqw;display:flex;align-items:center;gap:1.2cqw}
+.nf-nacre .nf-freqs{top:3.5cqw;left:3.5cqw}
+.nf-caps{display:inline-flex;align-items:stretch;height:14cqw;border-radius:8cqw;overflow:hidden;background:rgba(8,10,18,.62);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);box-shadow:inset 0 0 0 .3cqw rgba(220,240,255,.22),0 1cqw 3cqw rgba(0,0,0,.4)}
+.nf-seg{position:relative;display:grid;place-items:center;min-width:10cqw;padding:0 2cqw;font-family:'Oxanium',var(--mono);font-weight:700;font-size:8cqw;line-height:1;
+  color:color-mix(in srgb,var(--fc) 35%,#fff);opacity:.75;text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.nf-seg + .nf-seg{border-left:.3cqw solid rgba(220,240,255,.18)}
+.nf-seg::after{content:"";position:absolute;left:22%;right:22%;bottom:1.3cqw;height:.7cqw;border-radius:1cqw;background:color-mix(in srgb,var(--fc) 55%,#fff);opacity:.8}
+.nf-seg.p{min-width:15cqw;font-size:10.5cqw;opacity:1;background:color-mix(in srgb,var(--fc) 22%,rgba(8,10,18,.7));color:color-mix(in srgb,var(--fc) 30%,#fff)}
+.nf-seg.p::after{left:18%;right:18%;height:.9cqw;opacity:1;background:color-mix(in srgb,var(--fc) 70%,#fff)}
+.nf-suite .nf-seg.p{color:#fff;box-shadow:0 0 4cqw #ffd76e,inset 0 0 0 .5cqw #ffd76e}
+.nf-lourd{font-family:'Oxanium',var(--mono);font-weight:700;font-size:max(9px,4.6cqw);color:var(--ink);background:rgba(8,10,18,.8);
+  border:.35cqw solid rgba(220,240,255,.35);border-radius:6cqw;padding:.6cqw 2cqw;white-space:nowrap}
 
-/* Nacre : pas de cadre, l'illustration va jusqu'aux bords et le texte se pose dessus */
-.fr-nacre{padding:0;background:none}
-.fr-nacre .fc-art{grid-row:1 / span 2;grid-column:1;clip-path:none}
-.fr-nacre .fc-art::after{content:"";position:absolute;inset:auto 0 0 0;height:48%;background:linear-gradient(to top,rgba(14,10,20,.92),rgba(14,10,20,.75) 45%,transparent);pointer-events:none}
-.fr-nacre .fc-plaque{grid-row:2;grid-column:1;margin:0;background:none;clip-path:none;padding:0 4.8cqw 4.8cqw 5.5cqw;
-  --encre:#F7F1FA;--ombre-txt:0 1px 4px rgba(0,0,0,.9);--atk:#FF9C8A;--shield:#A9D2F5;--heal:#C3E8A6;--calme:none}
-.fr-nacre .fc-titre{height:auto;width:auto;margin-bottom:.7cqw}
-.fr-nacre .fc-gemme{--gemme:conic-gradient(#ff8fcf,#7fd4ff,#9dffb0,#ffe08a,#ff8fcf);--forme:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
-.fr-nacre .fc-nom{background:linear-gradient(90deg,#ffe3f3,#d6f1ff,#e6ffe0,#fff3d6);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 1px 3px rgba(0,0,0,.85))}
+/* le bas : un voile dans la matière du métal, assombrie pour lire le texte */
+.nf-voile{position:absolute;z-index:3;left:var(--bord);right:var(--bord);bottom:var(--bord);height:calc(25% - var(--bord));
+  display:flex;flex-direction:column;padding:6.6cqw 4cqw 0 3.4cqw;
+  background:linear-gradient(180deg,rgba(8,10,18,.5),rgba(8,10,18,.68)),var(--tex) center/cover}
+.nf-nacre .nf-voile{padding-left:4.5cqw;background:linear-gradient(180deg,rgba(14,10,24,.35),rgba(14,10,24,.8) 35%,rgba(14,10,24,.88)),
+  linear-gradient(100deg,rgba(255,190,235,.25),rgba(190,230,255,.25),rgba(200,255,215,.22),rgba(255,240,185,.25));-webkit-backdrop-filter:blur(2.5px);backdrop-filter:blur(2.5px)}
+.nf-barre{position:absolute;left:0;right:0;top:-.8cqw;height:1.6cqw;opacity:.85;
+  background:linear-gradient(90deg,color-mix(in srgb,var(--ac) 60%,#fff),var(--ac) 60%,color-mix(in srgb,var(--ac) 60%,#fff));box-shadow:0 0 3cqw var(--ac)}
+/* la valeur, posée sur la barre : icône au trait de l'action + chiffre */
+.nf-val{position:absolute;right:1.5cqw;top:-9cqw;height:14cqw;display:flex;align-items:center;gap:1.4cqw;padding:0 3cqw 0 2.4cqw;border-radius:8cqw;
+  background:rgba(8,10,18,.62);color:var(--ac);box-shadow:inset 0 0 0 .35cqw color-mix(in srgb,var(--ac) 55%,transparent),0 0 4cqw color-mix(in srgb,var(--ac) 35%,transparent)}
+.nf-val svg{width:8.5cqw;height:8.5cqw;filter:drop-shadow(0 0 1.2cqw currentColor)}
+.nf-val b{font-family:'Oxanium',var(--mono);font-weight:700;font-size:11cqw;line-height:1;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6);font-variant-numeric:tabular-nums}
+/* l'icône seule de l'effet, sous la barre : uniquement en main */
+.nf-eff{display:none;place-items:center;color:#f3d27a}
+.nf-eff svg{filter:drop-shadow(0 0 1.5cqw rgba(243,210,122,.7))}
+/* la roue de niveau (dans la couleur de la lignée, dorée au maximum), le nom, puis l'effet */
+.nf-ligne{display:flex;align-items:center;gap:2cqw;min-width:0}
+.nf-roue{flex:none;width:max(14px,8.5cqw);aspect-ratio:1;border-radius:50%;
+  background:conic-gradient(var(--lc) calc(var(--n) * 360deg / var(--max)),rgba(255,255,255,.22) 0);
+  -webkit-mask:radial-gradient(farthest-side,#0000 52%,#000 56%),repeating-conic-gradient(#000 0 calc(360deg / var(--max) - 6deg),#0000 0 calc(360deg / var(--max)));-webkit-mask-composite:source-in;
+  mask:radial-gradient(farthest-side,#0000 52%,#000 56%),repeating-conic-gradient(#000 0 calc(360deg / var(--max) - 6deg),#0000 0 calc(360deg / var(--max)));mask-composite:intersect}
+.nf-roue.max{background:conic-gradient(#ffd873,#fff3c4,#e2b44a,#ffd873)}
+.nf-nom{min-width:0;font-family:var(--display);font-size:max(12px,7cqw);line-height:1.1;color:#f7efdc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.9)}
+.nf-regle{display:flex;align-items:center;gap:1.6cqw;margin-top:1.2cqw;min-width:0;font-size:max(11px,6.4cqw);line-height:1.15;white-space:nowrap;
+  text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.9)}
+.nf-regle strong{color:#f3dca4;font-weight:600}
+.nf-regle > span{min-width:0;overflow:hidden;text-overflow:ellipsis;color:#d3d9e4}
+.nf-ico{flex:none;display:grid;place-items:center;width:max(11px,6.6cqw);height:max(11px,6.6cqw);color:#f3d27a}
+.nf-ico svg{width:100%;height:100%;filter:drop-shadow(0 0 1cqw rgba(243,210,122,.6))}
+
+/* en main (carte de 90 px au plus) : la Fréquence principale, la valeur et l'icône de l'effet, en grand */
+@container (max-width:90px){
+  .nf{--bord:2.4cqw}
+  .nf-voile{height:calc(20% - var(--bord));padding:0}
+  .nf-ligne,.nf-regle,.nf-seg:not(.p){display:none}
+  .nf-freqs{top:4cqw;left:4cqw}
+  .nf-caps{height:30cqw;border-radius:16cqw}
+  .nf-seg.p{min-width:32cqw;font-size:22cqw}
+  .nf-seg.p::after{height:1.8cqw;bottom:2.6cqw}
+  .nf-val{height:30cqw;top:-34cqw;right:2cqw;padding:0 5cqw 0 4cqw;border-radius:16cqw}
+  .nf-val svg{width:17cqw;height:17cqw}
+  .nf-val b{font-size:22cqw}
+  .nf-eff{display:grid;position:absolute;left:0;right:0;top:1cqw;bottom:0}
+  .nf-eff svg{width:24cqw;height:24cqw;stroke-width:2.8}
+  /* la lignée (le triangle des dégâts) : un losange de sa couleur, à gauche */
+  .nf-voile::before{content:"";position:absolute;left:7cqw;top:50%;width:9cqw;height:9cqw;margin-top:-3.5cqw;transform:rotate(45deg);
+    background:var(--lc);box-shadow:0 0 3cqw var(--lc)}
+}
+
+/* en combat (src/ui/vue.ts, geste) : la face remplit le bouton de la carte ; la flèche de suite et la Fêlure par-dessus */
+.geste{container-type:inline-size;clip-path:none}
+.geste > .nf{position:absolute;inset:0;width:auto;aspect-ratio:auto}
+.geste :is(.g-suite,.g-felure){z-index:6}
+.geste.lourd :is(.g-suite,.g-felure){top:26px}
+.geste.lourd.halo .g-felure{top:50px}
+/* en main, une carte lourde garde son « 2 PL. » en haut à droite */
+@container (max-width:90px){
+  .nf-freqs{right:4cqw;justify-content:space-between}
+  .nf-lourd{display:block;font-size:12px;line-height:1.2;padding:0 3px;border-radius:5px}
+}
 
 /* Effets sur l'illustration, du Cuivre à la Nacre */
 .fc-fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
@@ -72,54 +111,4 @@
 .fc-cristal{mix-blend-mode:screen;animation:fc-pulse 3.2s ease-in-out infinite}
 @keyframes fc-pulse{0%,100%{opacity:.25}50%{opacity:1}}
 .fc-holo{background:conic-gradient(from calc(var(--ry) * 14) at var(--mx) var(--my),#ff9ad5,#9ad7ff,#b7ffcf,#fff1a8,#d3a8ff,#ff9ad5);mix-blend-mode:color-dodge;opacity:.22}
-@media (prefers-reduced-motion: reduce){ .fc-carte{transition:none} .fc-lumiere,.fc-reflet,.fc-cristal{animation:none!important} .fc-cristal{opacity:.7} }
-
-/* ---------- Face « collection » au cadre peint (22 octobre 2026) ----------
-   Mêmes signes qu'en combat : cadre du métal, cristal coloré de la Fréquence en haut à gauche, socle de l'action en bas à droite.
-   En plus : niveau et lignée en haut, nom en entier en bas à gauche, effet sur le bord droit, autres Fréquences sous le cristal. */
-.fc-carte.fcp{aspect-ratio:400/619;padding:0;display:block;background:#0d0e11;clip-path:none;border-radius:1.5cqw}
-.fc-carte.fcp .fc-art{position:absolute;inset:0;clip-path:none}
-.fcp-cadre,.fcp-teinte{position:absolute;inset:0;pointer-events:none;z-index:2}
-.fcp-cadre{background:var(--cp-img) 0 0/100% 100% no-repeat}
-.fcp-teinte{-webkit-mask:var(--cp-masque) 0 0/100% 100% no-repeat;mask:var(--cp-masque) 0 0/100% 100% no-repeat;
-  background:linear-gradient(160deg,color-mix(in srgb,var(--fc) 40%,#fff),var(--fc) 70%);mix-blend-mode:multiply;opacity:.95}
-.fr-fer .fcp-cadre,.fr-fer .fcp-teinte{inset:-.46% -.69%}
-.fr-cuivre .fcp-cadre,.fr-cuivre .fcp-teinte{inset:-.34% -.53%}
-.fr-argent .fcp-cadre,.fr-argent .fcp-teinte{inset:-.27% -.4%}
-.fcp-f,.fcp-v{position:absolute;z-index:3;width:0;height:0;display:flex;align-items:center;justify-content:center;line-height:0;
-  font-family:'Cinzel Force',var(--display);font-weight:900;font-size:max(11px,15cqw);color:#fff7e4;-webkit-text-stroke:max(2px,2.6cqw) #120c08;paint-order:stroke fill}
-.fcp-f{left:var(--fx);top:var(--fy);margin-top:1cqw;text-shadow:0 0 5cqw color-mix(in srgb,var(--fc) 70%,#fff)}
-.fcp-v{left:var(--vx);top:var(--vy);margin-top:.6cqw}
-.fcp-v.deux{font-size:max(9px,12.5cqw);letter-spacing:-.05em}
-
-.fcp-puces{position:absolute;z-index:3;display:flex;align-items:center}
-.fcp-puces > span{padding:max(2px,.9cqw) max(4px,2cqw);border-radius:max(4px,1.8cqw);background:rgba(9,9,12,.74);font-family:var(--mono);font-size:max(8px,3.4cqw);font-weight:600;color:var(--ink);line-height:1.2}
-.fcp-puces .fc-lignee{letter-spacing:.1em;color:color-mix(in srgb,var(--c) 70%,white)}
-.fcp-effet{position:absolute;z-index:3;right:9.5cqw;writing-mode:vertical-rl;transform:rotate(180deg);padding:max(3px,1.6cqw) max(2px,.8cqw);
-  font-family:var(--display);font-size:max(8px,4.2cqw);letter-spacing:.08em;color:#f3dca4;background:linear-gradient(90deg,rgba(6,8,16,.62),rgba(6,8,16,.38));border-radius:max(2px,1cqw);
-  text-shadow:0 0 3px rgba(0,0,0,.95)}
-.fcp-nom{position:absolute;z-index:3;left:10.5%;bottom:7.5%;max-width:calc(var(--vx) - 25%);font-family:var(--display);font-size:max(9px,7cqw);line-height:1.1;letter-spacing:.02em;
-  color:#f1e6cf;text-shadow:0 0 2px #000,0 0 5px #000,0 1px 1px #000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fr-nacre .fcp-nom{left:6%}
-.fcp-effet{bottom:46cqw}
-/* plusieurs Fréquences : chacune s'affiche à son tour dans le cristal (chiffre + couleur), en fondu */
-
-.fcp.alt{--t:1.8s}
-.fcp.alt .fcp-k{animation:fcp-alt calc(var(--t) * var(--n)) ease-in-out infinite;animation-delay:calc((var(--n) - var(--i)) * var(--t) * -1)}
-.fcp.alt-2 .fcp-k{animation-name:fcp-alt2}
-.fcp.alt-3 .fcp-k{animation-name:fcp-alt3}
-@keyframes fcp-alt2{0%,42%{opacity:1}50%,92%{opacity:0}100%{opacity:1}}
-@keyframes fcp-alt3{0%,28%{opacity:1}34%,94%{opacity:0}100%{opacity:1}}
-@media (prefers-reduced-motion:reduce){.fcp.alt .fcp-k{animation:none;opacity:0}.fcp.alt .fcp-k[style*="--i:0"]{opacity:1}}
-
-/* ---------- Niveau et lignée sous l'illustration, au-dessus du nom (24 octobre 2026) ----------
-   En haut, ils mangeaient le cristal de la Fréquence sur les petites cartes. Ils forment maintenant une ligne gravée
-   au-dessus du nom, alignée sur lui : le niveau en or, la lignée dans sa couleur, le même trait que le nom. */
-.fcp-puces{top:auto;right:auto;left:10.5%;bottom:calc(7.5% + 8.6cqw);max-width:calc(var(--vx) - 22%);gap:2.4cqw;flex-wrap:nowrap;overflow:hidden}
-.fr-nacre .fcp-puces{left:6%}
-.fcp-puces > span,.fcp-puces > b{padding:0;border-radius:0;background:none;font-family:var(--mono);font-size:max(8px,3.6cqw);font-weight:700;letter-spacing:.08em;line-height:1.1;white-space:nowrap;
-  text-shadow:0 0 2px #000,0 0 5px #000,0 1px 1px #000}
-.fcp-niv{display:inline-flex;align-items:baseline;gap:.8cqw;color:#e9cf8f;text-transform:uppercase}
-.fcp-niv i{font-style:normal;font-family:'Cinzel Force',var(--display);font-weight:900;font-size:max(10px,5.2cqw);color:#fff3d2;-webkit-text-stroke:max(1px,.9cqw) #120c08;paint-order:stroke fill}
-.fcp-puces .fc-lignee{position:relative;padding-left:3.4cqw;color:color-mix(in srgb,var(--c) 65%,white)}
-.fcp-puces .fc-lignee::before{content:"";position:absolute;left:0;top:50%;width:1cqw;height:1cqw;min-width:3px;min-height:3px;margin-top:-.5cqw;transform:rotate(45deg);background:currentColor;opacity:.8}
+@media (prefers-reduced-motion: reduce){ .fc-carte{transition:none} .fc-reflet,.fc-cristal{animation:none!important} .fc-cristal{opacity:.7} }

@@ -318,7 +318,7 @@
 
 /* ---------- Combat guidé : la leçon du tour désigne les éléments concernés ---------- */
 .ecran-combat.guide .geste.main.vise{animation:vise 1.4s ease-in-out infinite}
-.ecran-combat.guide .geste.main.vise .g-cadre::after{content:"";position:absolute;inset:0;z-index:5;pointer-events:none;box-shadow:inset 0 0 0 3px var(--gold),inset 0 0 22px rgba(232,194,90,.55);animation:vise-lueur 1.4s ease-in-out infinite}
+.ecran-combat.guide .geste.main.vise::after{content:"";position:absolute;inset:0;z-index:7;pointer-events:none;box-shadow:inset 0 0 0 3px var(--gold),inset 0 0 22px rgba(232,194,90,.55);animation:vise-lueur 1.4s ease-in-out infinite}
 .ecran-combat.guide .main.tri .geste:not(.vise){filter:saturate(.3) brightness(.55)}
 @keyframes vise-lueur{0%,100%{opacity:.75}50%{opacity:1}}
 .ecran-combat.guide .lancer.vise{animation:appel-rencontre 1.3s ease-in-out infinite}

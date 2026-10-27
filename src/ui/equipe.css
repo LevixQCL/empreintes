@@ -153,13 +153,11 @@
 .eq-effet b{color:var(--x-or);font-weight:600}
 .eq-effet.sans{color:var(--x-doux)}
 /* le socle peint des cartes, le chiffre au centre (comme en combat) */
-.eq-force,.eq-socle{position:relative;display:grid;place-items:center;flex-shrink:0}
-.eq-force{width:44px;height:44px}
-.eq-socle{width:38px;height:38px}
-.eq-force>i,.eq-socle>i{position:absolute;inset:0;background:center/contain no-repeat;filter:drop-shadow(0 1px 3px #000)}
-.eq-force>b,.eq-socle>b{position:relative;font-family:var(--mono);font-weight:700;line-height:1;color:#fff7e4;-webkit-text-stroke:3px #120c08;paint-order:stroke fill}
-.eq-force>b{font-size:16px}
-.eq-socle>b{font-size:14px}
+.eq-force,.eq-socle{display:inline-flex;align-items:center;gap:4px;flex-shrink:0;height:28px;padding:0 9px 0 7px;border-radius:14px;
+  background:rgba(8,10,18,.62);color:var(--ac);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ac) 55%,transparent),0 0 8px color-mix(in srgb,var(--ac) 30%,transparent)}
+.eq-force.atk,.eq-socle.atk{--ac:#ff6a4a}.eq-force.bouclier,.eq-socle.bouclier{--ac:#5fb0ff}.eq-force.soin,.eq-socle.soin{--ac:#7fe06a}
+.eq-force svg,.eq-socle svg{width:15px;height:15px;filter:drop-shadow(0 0 3px currentColor)}
+.eq-force>b,.eq-socle>b{font-family:'Oxanium',var(--mono);font-weight:700;font-size:16px;line-height:1;color:#fff;font-variant-numeric:tabular-nums}
 .eq-action.zero .eq-socle{filter:grayscale(1) brightness(.7)}
 .eq-txt strong small.eq-monte{display:inline-flex;align-items:center;gap:3px;font-family:var(--body);font-weight:600;color:var(--x-or)}
 .eq-monte .ico{width:12px;height:12px}

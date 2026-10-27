@@ -155,10 +155,6 @@ body{background:
   linear-gradient(var(--holo-2),var(--holo-2)) 0 100%/10px 1px no-repeat,linear-gradient(var(--holo-2),var(--holo-2)) 0 100%/1px 10px no-repeat,
   linear-gradient(var(--holo-2),var(--holo-2)) 100% 100%/10px 1px no-repeat,linear-gradient(var(--holo-2),var(--holo-2)) 100% 100%/1px 10px no-repeat,
   repeating-linear-gradient(135deg,rgba(159,216,255,.04) 0 6px,transparent 6px 12px);color:rgba(216,180,101,.5);text-shadow:0 0 12px rgba(216,180,101,.4)}
-.geste::after{content:"";position:absolute;inset:0;pointer-events:none;background:
-  linear-gradient(color-mix(in srgb,var(--c) 80%,white),color-mix(in srgb,var(--c) 80%,white)) 0 100%/10px 1.5px no-repeat,
-  linear-gradient(color-mix(in srgb,var(--c) 80%,white),color-mix(in srgb,var(--c) 80%,white)) 100% 100%/1.5px 10px no-repeat}
-.g-freq{filter:drop-shadow(0 0 5px var(--fc))}
 .segments i.plein{box-shadow:0 0 10px rgba(216,180,101,.8)}
 .badge-reso{box-shadow:0 0 14px rgba(216,180,101,.45)}
 
@@ -166,22 +162,12 @@ body{background:
 
 /* Les cartes illustrées en combat (22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue).
    L'illustration de la carte en fond (à défaut, le portrait du Porteur qui la joue), un voile sombre en bas pour lire. */
-.geste .g-art{pointer-events:none}
-.geste.illus::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(8,10,14,.45) 0%,rgba(8,10,14,0) 24%,rgba(8,10,14,.2) 46%,rgba(8,10,14,.85) 68%,rgba(8,10,14,.96) 100%)}
-.geste > .g-haut,.geste > .g-bas{position:relative;z-index:1}
-.g-bas{display:flex;flex-direction:column;align-items:flex-start;gap:1px;width:100%;min-width:0}
-.g-freqs{display:flex;align-items:center;gap:2px}
-.g-freq.mini{width:17px;height:17px;font-size:10px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.25)}
-.geste.illus .g-nom{color:var(--ink);text-shadow:0 1px 2px rgba(0,0,0,.95)}
-.geste.illus .g-val,.geste.illus .g-effet,.geste.illus .g-qui{text-shadow:0 1px 2px rgba(0,0,0,.95)}
 .maillon{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none}
 .accorder{display:flex;gap:3px;padding:2px 4px;border:1px solid var(--holo-2);background:rgba(10,14,20,.85);color:var(--ink-2);font-family:var(--mono);font-size:11px;font-weight:600;border-radius:3px;cursor:pointer}
 .accorder i{font-style:normal;min-width:17px;text-align:center;opacity:.5;border-radius:2px}
 .accorder i.actif{opacity:1;color:#fff;background:var(--fc)}
 .accorder:disabled{opacity:.4}
-.geste.main .g-freq.mini,.geste.chaine .g-freq.mini{width:17px;height:17px;font-size:10px}
-.fc-art img.fc-repli{filter:saturate(.45) brightness(.55);object-position:50% 18%}
+.nf-art img.nf-repli{filter:saturate(.45) brightness(.55);object-position:50% 18%}
 .deck-porteur .grille-cartes{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .deck-porteur .grille-cartes.grisee .carte-tuile{opacity:.55}
 .alerte{color:var(--danger)}

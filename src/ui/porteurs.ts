@@ -11,8 +11,8 @@ import { BATTU_PAR, REGLES } from '../core/regles';
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { multNiveau } from '../core/collection';
 import type { GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
-import { illustrationBatiment, illustrationModule, portrait, socleAction } from './art';
-import { COULEUR_RARETE, couleurFrequence, faceCarte } from './carte';
+import { illustrationBatiment, illustrationModule, portrait } from './art';
+import { COULEUR_RARETE, ICONES_ACTION, couleurFrequence, faceCarte } from './carte';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, voletsEscouade, type EcranDistrict } from './coquille';
 import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugeCharge, jaugePv, plusLongueSuite } from './district';
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
@@ -119,9 +119,9 @@ export function htmlPorteurs(e: EcranDistrict): string {
 
 const NOM_ACTION: Record<TypeGeste, string> = { atk: 'Attaque', bouclier: 'Protection', soin: 'Soin' };
 
-/** Le socle peint des cartes (étoile de feu = attaque, écu de glace = protection, fleur d'émeraude = soin), le chiffre au centre */
+/** La force, comme sur la carte : l'icône au trait de l'action (épée, écu, +) et le chiffre, dans une capsule de sa couleur */
 const socle = (t: TypeGeste, v: number, classe: string) =>
-  `<span class="${classe} ${t}" title="${NOM_ACTION[t]} ${v}"><i style="background-image:url(${socleAction(t)})" aria-hidden="true"></i><b>${v}</b></span>`;
+  `<span class="${classe} ${t}" title="${NOM_ACTION[t]} ${v}">${ICONES_ACTION[t]}<b>${v}</b></span>`;
 
 /** La Fréquence d'une carte en jeu : son chiffre (ou ses chiffres), ou ∗ pour un Accord */
 function cristalFreq(g: GesteDef): string {

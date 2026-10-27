@@ -332,11 +332,8 @@
   .ecran-combat .piles .ico{width:15px;height:15px}
 
 }
-/* les cartes de la chaîne, quand la hauteur le permet : un peu plus hautes, le nom sur deux lignes */
+/* les cartes de la chaîne, quand la hauteur le permet : un peu plus grandes */
 @media (min-width:1100px) and (min-height:900px){
-  .geste.chaine,.place-vide{height:124px}
-  .geste.chaine .g-art{height:50%}
-  .geste.chaine .g-plaque{height:52%}
-  .geste.chaine .g-nom{-webkit-line-clamp:2}
+  .geste.chaine,.place-vide{width:88px;height:124px}
   .rail{min-height:126px}
 }

@@ -95,46 +95,6 @@ export const illustrationModule = (cle: string): string | null => {
 export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
 export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
-/**
- * Cadre peint d'une rareté (Midjourney, Retexture de nos modèles de carte, 22 octobre 2026) : de plus en plus fin avec la rareté.
- * Fer et or sont des cadres droits, cuivre et argent ont les deux coins coupés. La nacre n'a pas de cadre.
- */
-/** Socle peint d'une action, porte la force au centre et la Fréquence sur le pourtour (Midjourney, 22 octobre 2026) */
-export const socleAction = (t: 'atk' | 'bouclier' | 'soin') => `${base}socles/${t}.webp`;
-/**
- * Cadres peints d'un seul tenant (Midjourney, Retexture, 22 octobre 2026) : cadre du métal + cristal de la Fréquence en haut à gauche
- * + socle de l'action en bas à droite, un cadre par métal et par action. Le jeu ne pose que les deux chiffres (et teinte le cristal).
- * f = centre du cristal, v = centre du disque de force, en % de la carte (mesurés sur l'image, puis vérifiés à l'écran).
- */
-const CADRES_PLEINS: Partial<Record<Rarete, Partial<Record<'atk' | 'bouclier' | 'soin', { f: [number, number]; v: [number, number] }>>>> = {
-  fer: {
-    atk: { f: [11.5, 12.0], v: [80.8, 85.5] },
-    bouclier: { f: [11.7, 12.2], v: [80.9, 85.6] },
-    soin: { f: [11.5, 12.1], v: [81.3, 86.8] },
-  },
-  cuivre: {
-    atk: { f: [11.8, 12.2], v: [80.1, 84.8] },
-    bouclier: { f: [13.2, 13.4], v: [81.6, 86.4] },
-    soin: { f: [11.7, 11.7], v: [81.1, 86.3] },
-  },
-  argent: {
-    atk: { f: [10.6, 12.4], v: [80.4, 85.3] },
-    bouclier: { f: [11.1, 12.5], v: [82.0, 86.8] },
-    soin: { f: [11.3, 11.9], v: [81.0, 86.2] },
-  },
-  or: {
-    atk: { f: [12.0, 12.2], v: [80.3, 85.1] },
-    bouclier: { f: [11.7, 12.0], v: [80.4, 85.2] },
-    soin: { f: [11.5, 12.0], v: [81.1, 86.2] },
-  },
-  nacre: {
-    atk: { f: [12.0, 12.2], v: [80.3, 85.1] },
-    bouclier: { f: [11.7, 12.0], v: [80.4, 85.2] },
-    soin: { f: [11.5, 12.0], v: [81.1, 86.2] },
-  },
-};
-export const cadrePlein = (r: Rarete, t: 'atk' | 'bouclier' | 'soin') => (CADRES_PLEINS[r]?.[t] ? { ...CADRES_PLEINS[r]![t]!, img: `${base}cadres/${r}-${t}-plein.webp`, masque: `${base}cadres/${r}-${t}-cristal.png` } : null);
-export const cadreMetal = (r: Rarete): string | null => (r === 'nacre' ? null : `${base}cadres/${r}.webp`);
 /** Fond de la carte d'une Strate, une illustration par zone (0 Fondations, 1 salles closes, 2 mémoires, 3 le fond), quand elle existe */
 const STRATES_ILLUSTREES = new Set<number>([0, 1, 2, 3]);
 export const decorStrate = (zone: number): string | null => (STRATES_ILLUSTREES.has(zone) ? `${base}strates/zone-${zone}.webp` : null);
