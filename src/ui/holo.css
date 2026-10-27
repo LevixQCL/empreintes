@@ -28,7 +28,7 @@ body{background:
 @media (min-width:520px){ #app[data-mode="district"],#app[data-mode="combat"]{background:linear-gradient(rgba(8,11,17,.9),rgba(8,11,17,.94)),var(--hex) #080B11;box-shadow:0 0 0 1px var(--holo-4),0 0 0 6px rgba(8,11,17,.6),0 40px 120px rgba(0,0,0,.7)} }
 
 /* ---------- Le panneau de verre : grain, trame, reflet, filet, équerres ---------- */
-.res,.mission,.panneau,.habitant,.emplacement,.replique,.combattant,.zone-chaine,.ligne-menu,.occupant,.stat,
+.res,.mission,.panneau,.habitant,.emplacement,.replique,.zone-chaine,.ligne-menu,.occupant,.stat,
 .liste-forge li,.en-cours,.chantier-cours,.puce,.lecon,.segments-choix,.appel,.plaque,.toast{
   background:
     linear-gradient(180deg,rgba(190,225,255,.075) 0%,rgba(190,225,255,0) 38%),
@@ -37,11 +37,11 @@ body{background:
     linear-gradient(165deg,rgba(26,34,48,.9) 0%,rgba(12,16,24,.92) 70%);
   background-size:auto,auto,140px 140px,auto;
   box-shadow:inset 0 0 0 1px var(--holo-3),inset 0 1px 0 rgba(220,240,255,.12),0 8px 24px rgba(0,0,0,.35)}
-.res::after,.mission::after,.panneau::after,.habitant::after,.emplacement::after,.replique::after,.combattant::after,.zone-chaine::after,
+.res::after,.mission::after,.panneau::after,.habitant::after,.emplacement::after,.replique::after,.zone-chaine::after,
 .ligne-menu::after,.occupant::after,.stat::after,.en-cours::after,.chantier-cours::after,.lecon::after,.appel::after,
 .plaque::after,.fenetre::after,.scene-ennemi::after,.puits::after,.fragment::after{
   content:"";position:absolute;inset:0;pointer-events:none;z-index:3;background:var(--equerres)}
-.res,.mission,.panneau,.habitant,.emplacement,.replique,.combattant,.zone-chaine,.ligne-menu,.occupant,.stat,.en-cours,.chantier-cours,.lecon,.fenetre,.puits,.fragment{position:relative}
+.res,.mission,.panneau,.habitant,.emplacement,.replique,.zone-chaine,.ligne-menu,.occupant,.stat,.en-cours,.chantier-cours,.lecon,.fenetre,.puits,.fragment{position:relative}
 
 /* Une graduation fine sous le haut des grands panneaux */
 .mission::before,.zone-chaine::before,.fenetre::before,.puits::before{content:"";position:absolute;left:18px;right:18px;top:0;height:4px;pointer-events:none;z-index:2;
@@ -145,8 +145,6 @@ body{background:
 .scene-ennemi .scene-voile{background:
   linear-gradient(180deg,rgba(8,10,14,.6) 0%,rgba(8,10,14,0) 28%,rgba(8,10,14,0) 42%,rgba(8,10,14,.85) 78%,rgba(8,10,14,.96) 100%),var(--trame)}
 .intention{background:linear-gradient(180deg,rgba(190,225,255,.08),transparent 50%),rgba(8,11,17,.88)}
-.combattant{--eq:color-mix(in srgb,var(--c) 70%,white)}
-.combattant.cible{--eq:var(--danger)}
 .zone-chaine{--eq:var(--holo)}
 .zone-chaine.resonne{--eq:var(--gold)}
 .place-vide{border:none;border-radius:0;background:

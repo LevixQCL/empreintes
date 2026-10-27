@@ -42,10 +42,6 @@
 .jauge-vie.jp{--h:10px;--lueur:rgba(170,236,140,.85);
   --vie:linear-gradient(180deg,#dcf7c2 0%,#93d27e 34%,#4f9a45 70%,#29561f 100%)}
 .jauge-vie.jp.basse{--lueur:rgba(255,128,84,.9);--vie:linear-gradient(180deg,#ffbf9f 0%,#ec6a49 34%,#a8301b 70%,#561009 100%)}
-.cb-vie{display:flex;align-items:center;gap:5px;min-width:0}
-.cb-vie .jauge-vie{flex:1;min-width:0}
-.cb-vie .chiffre{flex:none;min-width:16px;text-align:right;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
-.combattant.ko .jauge-vie{opacity:.5}
 
 /* ---------- Les cartes en combat ---------- */
 .geste{display:block;padding:0;background:none;box-shadow:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
@@ -66,11 +62,6 @@
   .je .j-vie{animation:none}
 }
 
-/* la marque « CIBLE » devient un petit sceau rouge sur le portrait, pour ne cacher ni le nom ni les PV
-   (le cadre rouge qui pulse dit déjà qui est visé ; le mot reste lisible par les lecteurs d'écran) */
-.combattant .marque-cible{top:auto;bottom:4px;left:4px;right:auto;display:grid;place-items:center;width:18px;height:18px;padding:0;font-size:0;
-  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);box-shadow:0 0 8px rgba(226,115,90,.8)}
-.combattant .marque-cible .ico{width:11px;height:11px}
 
 /* ---------- Taille des cartes : le format de l'illustration, 5:7 (27 octobre 2026) ---------- */
 .geste.main{width:69px;height:97px}
@@ -116,10 +107,6 @@
 .cibler .ico{width:11px;height:11px;color:#7CE3A0;flex-shrink:0}
 .cibler span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cibler:disabled{opacity:.6;cursor:default}
-.combattant .marque-soin{position:absolute;top:4px;right:4px;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;
-  color:#0C2416;background:#7CE3A0;box-shadow:0 0 8px rgba(124,227,160,.7)}
-.combattant .marque-soin .ico{width:11px;height:11px}
-.combattant.soigne{box-shadow:inset 0 0 0 1.5px rgba(124,227,160,.6)}
 
 /* ---------- La chaîne qui se joue (22 octobre 2026) ----------
    Bryan : pendant un enchaînement, la carte qui agit était coupée en haut (le rail défile en largeur, donc il coupe
@@ -140,8 +127,9 @@
   background:rgba(0,0,0,.35);box-shadow:inset 0 0 0 1px rgba(205,239,255,.18);vertical-align:1px}
 .conseil .carte-agit{font-weight:700;color:#fff;text-shadow:0 0 10px color-mix(in srgb,var(--c) 80%,transparent)}
 
-/* Les morceaux du portrait d'escouade réservés au PC (bureau.css) : le téléphone garde sa ligne compacte */
-.cb-fond,.cb-lignee,.cb-vie .chiffre small,.piles em{display:none}
+
+/* les noms des piles : réservés au PC */
+.piles em{display:none}
 
 /* ---------- Combat à plusieurs (22 octobre 2026) ----------
    Une vignette par ennemi en haut à droite de la scène : portrait en médaillon de cristal, intention, vie.
@@ -353,7 +341,6 @@
   .scene-ennemi .ennemi-nom{font-size:22px}
   .scene-ennemi .ennemi-infos{gap:4px}
   .scene-ennemi .tags{display:flex}
-  .combattant{padding-block:5px}
   .zone-chaine{padding:8px 10px 10px;gap:6px}
   .zone-chaine .conseil{font-size:12.5px;line-height:1.35}
   .geste.chaine,.place-vide{width:64px;height:90px}
@@ -407,11 +394,57 @@
 .plaque-int.brume .int-val b{color:#dfe5ee;text-shadow:0 0 14px rgba(200,210,225,.8),0 2px 4px #000;filter:blur(.3px)}
 .vg-int.brume b{color:#dfe5ee;text-shadow:0 0 8px rgba(200,210,225,.8)}
 
-/* ---------- Qui va être frappé (27 octobre 2026) ----------
-   Bryan : le bandeau du boss disait « → Ilka » et les trois cartes clignotaient, il fallait lire pour savoir qui était visé.
-   La marque est sur le Porteur lui-même : sur son portrait, le visage de l'ennemi qui le frappe (en groupe) et les PV qu'il
-   perdra, bouclier déduit (bleu si le bouclier prend tout) ; sur sa jauge, le morceau de vie qui va partir, qui bat en rouge. */
-.combattant .marque-coups{position:absolute;z-index:3;left:3px;bottom:3px;display:inline-flex;align-items:center;gap:2px;height:18px;padding:0 5px 0 3px;
+/* ================= Les tuiles de l'escouade (27 octobre 2026) — seule source des règles .combattant =================
+   Bryan : sur téléphone le portrait n'était qu'un hexagone de 30 px, le nom, la lignée et le « / max » prenaient la place,
+   et la marque CIBLE noyait tout. Le visage remplit maintenant la tuile ; les PV sont posés en bas sur un voile sombre ;
+   le nom et la lignée passent à l'appui long (la lignée reste dans le liseré). Même hauteur qu'avant. */
+.escouade-combat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.combattant{--cut:8px;--lis:color-mix(in srgb,var(--c) 80%,white);position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;
+  height:53px;padding:0;overflow:hidden;background:#0b0f18;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+/* le portrait, cadré pour que les yeux tombent au tiers haut */
+.cb-fond{position:absolute;inset:0;z-index:0;background:50% var(--cadre,18%)/cover no-repeat;transition:filter .3s ease}
+.cb-fond.sans-portrait{display:grid;place-items:center;font:700 26px/1 var(--display);color:rgba(255,255,255,.55);
+  background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 55%,#0b0f18),#0b0f18 75%)}
+/* le voile pour lire les PV */
+.combattant::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(7,9,20,.85),transparent 60%)}
+/* le liseré : la lignée, rouge qui bat pour la cible, vert pour le soigné, bleu quand le bouclier prend tout */
+.combattant::after{content:"";position:absolute;inset:0;z-index:3;pointer-events:none;clip-path:inherit;
+  box-shadow:inset 0 0 0 1.5px var(--lis),inset 0 1px 0 rgba(255,255,255,.3)}
+.combattant.soigne{--lis:#7CE3A0}
+.combattant.cible{--lis:var(--danger)}
+.combattant.cible::after{box-shadow:inset 0 0 0 2px var(--lis),inset 0 0 18px rgba(255,90,70,.35)}
+.combattant.cible.fatal::after{box-shadow:inset 0 0 0 2px #ffcf7a,inset 0 0 22px rgba(255,90,70,.5)}
+.combattant.cible:has(.marque-coups.protege){--lis:#9fd0ff}
+.combattant.cible:has(.marque-coups.protege)::after{box-shadow:inset 0 0 0 2px var(--lis),inset 0 0 16px rgba(127,190,255,.25)}
+@media (prefers-reduced-motion:no-preference){
+  .combattant.cible:not(:has(.marque-coups.protege))::after{animation:cible-bat 1.6s ease-in-out infinite}
+}
+@keyframes cible-bat{50%{box-shadow:inset 0 0 0 2px #ffb0a4,inset 0 0 26px rgba(255,90,70,.55)}}
+
+/* les PV : le chiffre en grand à droite, la jauge fine sur toute la largeur */
+.cb-vie{position:relative;z-index:2;display:grid;gap:2px;padding:0 6px 5px}
+.cb-vie .chiffre{justify-self:end;font:700 17px/1 var(--mono);color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 1px 3px #000,0 0 10px rgba(0,0,0,.7)}
+.cb-vie .chiffre small{display:none}
+.cb-vie .jauge-vie.jp{--h:7px;width:100%}
+/* bas : la jauge bat, le chiffre passe au rouge clair */
+.combattant.bas .cb-vie .chiffre{color:#ffb19c;text-shadow:0 1px 3px #000,0 0 12px rgba(255,110,80,.6)}
+@media (prefers-reduced-motion:no-preference){ .combattant.bas .jauge-vie.jp{animation:pv-bat 1.2s ease-in-out infinite alternate} }
+@keyframes pv-bat{to{filter:brightness(1.5) drop-shadow(0 0 4px rgba(255,110,80,.8))}}
+/* à terre : gris et sombre */
+.combattant.ko .cb-fond{filter:grayscale(1) brightness(.4)}
+.combattant.ko .cb-vie .chiffre{color:var(--quiet)}
+.combattant.ko .jauge-vie{opacity:.4}
+/* les pops partent du visage */
+.combattant .pop{top:18%}
+
+/* le Porteur soigné : une petite pastille en haut à droite */
+.combattant .marque-soin{position:absolute;z-index:4;top:4px;right:5px;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;
+  color:#0C2416;background:#7CE3A0;box-shadow:0 0 8px rgba(124,227,160,.7),0 1px 3px rgba(0,0,0,.6)}
+.combattant .marque-soin .ico{width:11px;height:11px}
+
+/* les PV qu'il va perdre (bouclier déduit), avec le visage de l'ennemi en groupe : en haut à gauche, hors du visage */
+.combattant .marque-coups{position:absolute;z-index:4;left:4px;top:4px;display:inline-flex;align-items:center;gap:2px;height:18px;padding:0 5px 0 3px;
   border-radius:9px;font:700 12px/1 var(--mono);color:#fff;font-variant-numeric:tabular-nums;
   background:linear-gradient(180deg,#ff8a72,#c4322a 55%,#7e1416);box-shadow:inset 0 0 0 1px rgba(255,214,200,.75),0 0 10px rgba(255,90,70,.7),0 2px 4px rgba(0,0,0,.7)}
 .marque-coups b{text-shadow:0 1px 2px rgba(60,0,0,.9)}
@@ -421,16 +454,36 @@
 .mc-qui img + img{margin-left:-5px}
 .marque-coups.protege{color:#eaf6ff;background:linear-gradient(180deg,#9fd0ff,#3d78c4 55%,#1d3d75);box-shadow:inset 0 0 0 1px rgba(214,236,255,.8),0 0 10px rgba(127,190,255,.6),0 2px 4px rgba(0,0,0,.7)}
 .marque-coups.fatal{box-shadow:inset 0 0 0 1.5px #ffe2a8,0 0 14px rgba(255,190,90,.85),0 2px 4px rgba(0,0,0,.7)}
-/* un Porteur que le bouclier protège entièrement n'a pas à clignoter en rouge */
-#app .combattant.cible:has(.marque-coups.protege){animation:none;box-shadow:inset 0 0 0 1.5px rgba(159,208,255,.8),inset 0 0 18px rgba(127,190,255,.18)}
 /* la vie qui va partir */
 .j-perte{position:absolute;top:0;bottom:0;z-index:1;
   background:repeating-linear-gradient(135deg,#ffd0c4 0 2px,#e2402f 2px 5px);box-shadow:inset 0 0 0 1px rgba(255,230,220,.8)}
 @media (prefers-reduced-motion:no-preference){ .j-perte{animation:perte-bat 1.1s ease-in-out infinite alternate} }
 @keyframes perte-bat{from{opacity:1}to{opacity:.35}}
+
+/* l'appui long sur une tuile : qui c'est, sa lignée et ses PV */
+.loupe-porteur{display:grid;justify-items:center;gap:4px;padding:12px 18px;min-width:min(240px,80vw);text-align:center;
+  background:rgba(8,10,18,.88);border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--c),0 16px 30px rgba(0,0,0,.6)}
+.loupe-porteur img{width:96px;height:96px;object-fit:cover;border-radius:10px;box-shadow:0 0 0 1.5px var(--c)}
+.loupe-porteur h3{margin:4px 0 0;font:400 24px/1.1 var(--display);color:#fff}
+.loupe-porteur .lp-lignee{font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 70%,white)}
+.loupe-porteur .lp-pv{font:700 16px/1.3 var(--mono);color:#fff}
+.loupe-porteur .lp-pv small{color:var(--quiet);font-weight:500}
+.loupe-porteur p{margin:2px 0 0;font-size:13px;line-height:1.35;color:#d3d9e4}
+
+/* Téléphone de hauteur moyenne : la tuile se tasse un peu */
+@media (max-width:899px) and (max-height:820px){ .combattant{height:49px} }
+
+/* PC : la tuile prend la hauteur que lui laisse l'écran (50 à 150 px), les chiffres grandissent */
 @media (min-width:1100px) and (min-height:600px){
-  .ecran-jeu .combattant .marque-coups{z-index:4;left:auto;right:10px;top:10px;bottom:auto;height:24px;gap:4px;padding:0 9px 0 5px;border-radius:12px;font-size:15px}
-  .ecran-jeu .combattant.soigne .marque-coups{right:38px}
+  .ecran-combat > .escouade-combat{gap:10px}
+  .ecran-jeu .combattant{--cut:12px;height:100%;min-height:0}
+  .ecran-jeu .cb-vie{gap:5px;padding:0 12px 10px}
+  .ecran-jeu .cb-vie .chiffre{font-size:clamp(20px,1.6vw,26px)}
+  .ecran-jeu .cb-vie .jauge-vie.jp{--h:10px}
+  .ecran-jeu .combattant .marque-soin{top:8px;right:10px;width:22px;height:22px}
+  .ecran-jeu .combattant .marque-soin .ico{width:14px;height:14px}
+  .ecran-jeu .combattant .marque-coups{left:10px;top:10px;height:24px;gap:4px;padding:0 9px 0 5px;border-radius:12px;font-size:15px}
   .ecran-jeu .combattant .marque-coups .ico{width:13px;height:13px}
   .ecran-jeu .mc-qui img{width:18px;height:18px}
+  .ecran-jeu .combattant .pop{font-size:26px}
 }

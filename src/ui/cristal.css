@@ -16,18 +16,17 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
   #070915}
 
 /* les panneaux : verre fumé, arêtes de glace, une facette de lumière en travers */
-#app:is([data-mode="combat"],[data-mode="district"]) :is(.combattant,.zone-chaine,.lecon,.puce,.intention,.etat,.btn.sec,.btn-icone,.btn-flux,
+#app:is([data-mode="combat"],[data-mode="district"]) :is(.zone-chaine,.lecon,.puce,.intention,.etat,.btn.sec,.btn-icone,.btn-flux,
   .res,.mission,.plaque,.appel,.panneau,.habitant,.carte-porteur,.emplacement,.tuile-porteur,.ligne-menu,.stat,.occupant,.chantier-cours,.en-cours,.chapitre-ligne,.replique,.segments-choix,.fenetre,.toast){
   background:
     linear-gradient(118deg,transparent 0 58%,rgba(220,245,255,.07) 58.5%,rgba(220,245,255,.02) 72%,transparent 72.5%),
     linear-gradient(180deg,rgba(205,239,255,.09),rgba(205,239,255,0) 42%),
     linear-gradient(165deg,rgba(22,28,52,.86),rgba(9,11,24,.92));
   box-shadow:inset 0 0 0 1px var(--glace-3),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -20px 30px -24px rgba(150,190,255,.35),0 10px 26px rgba(0,0,0,.45)}
-#app:is([data-mode="combat"],[data-mode="district"]) :is(.combattant,.zone-chaine,.lecon,.res,.mission,.panneau,.habitant,.carte-porteur,.emplacement,.replique,.ligne-menu,.tuile-porteur,.occupant,.stat,.en-cours,.chantier-cours,.chapitre-ligne,.appel,.plaque,.fenetre)::after{background:
+#app:is([data-mode="combat"],[data-mode="district"]) :is(.zone-chaine,.lecon,.res,.mission,.panneau,.habitant,.carte-porteur,.emplacement,.replique,.ligne-menu,.tuile-porteur,.occupant,.stat,.en-cours,.chantier-cours,.chapitre-ligne,.appel,.plaque,.fenetre)::after{background:
   linear-gradient(var(--glace),var(--glace)) 0 0/10px 1px no-repeat,linear-gradient(var(--glace),var(--glace)) 0 0/1px 10px no-repeat,
   linear-gradient(var(--glace),var(--glace)) 100% 100%/10px 1px no-repeat,linear-gradient(var(--glace),var(--glace)) 100% 100%/1px 10px no-repeat;opacity:.7}
 #app:is([data-mode="combat"],[data-mode="district"]) .zone-chaine::before{background:repeating-linear-gradient(90deg,var(--glace-3) 0 1px,transparent 1px 8px)}
-#app:is([data-mode="combat"],[data-mode="district"]) .combattant.cible{box-shadow:inset 0 0 0 1.5px #ff8a7a,inset 0 0 22px rgba(255,110,110,.25),0 0 16px rgba(255,110,110,.25)}
 #app:is([data-mode="combat"],[data-mode="district"]) .intention.danger{box-shadow:inset 0 0 0 1px rgba(255,150,140,.85),inset 0 0 24px rgba(255,100,100,.2)}
 #app:is([data-mode="combat"],[data-mode="district"]) .int-ico,#app:is([data-mode="combat"],[data-mode="district"]) .intention.danger .int-ico{background:conic-gradient(from 30deg,#ffd5cc,#ff6f63,#a3243a,#ff8c7d,#ffd5cc);color:#2a0612}
 #app:is([data-mode="combat"],[data-mode="district"]) .lecon{box-shadow:inset 0 0 0 1px var(--glace-3),inset 3px 0 0 var(--glace),0 10px 26px rgba(0,0,0,.45)}

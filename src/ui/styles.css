@@ -39,9 +39,9 @@ h1,h2,h3{font-weight:400}
 
 /* ---------- Matières : verre à coins coupés ---------- */
 .res,.mission,.plaque,.appel,.feuille-tete .vignette,.stat,.occupant,.liste-forge li,.ligne-menu,.panneau,.fenetre,
-.habitant,.puits,.emplacement,.replique,.fragment,.segments-choix,.combattant,.zone-chaine,.scene-ennemi,.puce,.lecon,.toast,.btn,button.prim,.btn-sec,.btn-icone,.btn-flux,.en-cours,.chantier-cours,.carte-dos{
+.habitant,.puits,.emplacement,.replique,.fragment,.segments-choix,.zone-chaine,.scene-ennemi,.puce,.lecon,.toast,.btn,button.prim,.btn-sec,.btn-icone,.btn-flux,.en-cours,.chantier-cours,.carte-dos{
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
-.res,.mission,.plaque,.appel,.panneau,.habitant,.emplacement,.replique,.segments-choix,.combattant,.zone-chaine,.puce,.lecon,.toast,.ligne-menu,.occupant,.stat,.liste-forge li,.en-cours,.chantier-cours{
+.res,.mission,.plaque,.appel,.panneau,.habitant,.emplacement,.replique,.segments-choix,.zone-chaine,.puce,.lecon,.toast,.ligne-menu,.occupant,.stat,.liste-forge li,.en-cours,.chantier-cours{
   background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 
 /* ---------- Boutons ---------- */
@@ -379,16 +379,6 @@ h1,h2,h3{font-weight:400}
 .etat{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ivory);background:rgba(0,0,0,.55);box-shadow:inset 0 0 0 1px rgba(232,223,200,.3)}
 .etat .ico{width:13px;height:13px}
 .etat.fissure{color:var(--gold);box-shadow:inset 0 0 0 1px rgba(216,180,101,.45)}
-.escouade-combat{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
-.combattant{--cut:8px;position:relative;display:flex;align-items:center;gap:7px;padding:7px 8px 7px 6px;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 45%,transparent)}
-.cb-infos{flex:1;display:grid;gap:3px;min-width:0}
-.cb-infos .n{font-family:var(--display);font-size:13.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.cb-infos .chiffre{font-size:10px}
-.combattant.cible{box-shadow:inset 0 0 0 1.5px var(--danger);animation:menace 1.6s ease-in-out infinite}
-.marque-cible{position:absolute;bottom:0;right:0;display:inline-flex;align-items:center;gap:3px;padding:1px 6px 1px 5px;font-family:var(--mono);font-size:8.5px;font-weight:600;letter-spacing:.06em;color:#2A0B04;background:var(--danger)}
-.marque-cible .ico{width:9px;height:9px}
-.combattant.bas .jauge-pv .pv{background:linear-gradient(90deg,#B8432C,var(--danger))}
-.combattant.ko{opacity:.4;filter:grayscale(1)}
 .ligne-escouade{position:relative;display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:22px;margin-top:-2px}
 .etat.garde.actif{color:#fff;box-shadow:inset 0 0 0 1px var(--ivory),0 0 12px rgba(232,223,200,.25)}
 .piles{display:flex;gap:12px;font-family:var(--mono);font-size:11px;color:var(--quiet)}
@@ -453,7 +443,7 @@ h1,h2,h3{font-weight:400}
 @media (prefers-reduced-motion: reduce){
   .pop{animation-duration:.01s}
   .jauge>i,.jauge-pv .pv,.geste{transition:none}
-  .ennemi-art,.intention.danger,.combattant.cible,.lancer.fort,.appel,.plaque.visee,.pastille-alerte,.toast.entre,.feuille.entre,.fenetre.entre,.toile .tableau.nouvel-age{animation:none}
+  .ennemi-art,.intention.danger,.lancer.fort,.appel,.plaque.visee,.pastille-alerte,.toast.entre,.feuille.entre,.fenetre.entre,.toile .tableau.nouvel-age{animation:none}
   .replique,.appel-porte{opacity:1;transform:none;animation:none}
 }
 .ecran-combat>:not(.scene-ennemi){flex-shrink:0}
@@ -464,7 +454,6 @@ h1,h2,h3{font-weight:400}
   .scene-ennemi{min-height:130px}
   .ennemi-nom{font-size:22px}
   .scene-ennemi .tags{display:none}
-  .combattant{padding-block:5px}
   .zone-chaine{padding:8px 10px 10px;gap:6px}
   .conseil{font-size:12.5px}
   .flux{padding-top:6px}

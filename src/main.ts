@@ -6,7 +6,7 @@ import * as J from './core/jeu';
 import { montrer } from './ui/gains';
 import { initInstallation } from './ui/installer';
 import { initToucher, vibrer } from './ui/toucher';
-import { loupe } from './ui/vue';
+import { loupe, loupePorteur } from './ui/vue';
 import { agir } from './app/actions/index';
 import { clavier } from './app/clavier';
 import { app, compteEtat, G, K, racine, reduit } from './app/etat';
@@ -33,11 +33,12 @@ let annulerClic = false;
 const fermerLoupe = () => document.querySelectorAll('.loupe').forEach((l) => l.remove());
 const finAppui = () => { if (appui) { clearTimeout(appui.t); appui = null; } fermerLoupe(); };
 racine.addEventListener('pointerdown', (ev) => {
-  const el = (ev.target as HTMLElement).closest<HTMLElement>('.geste');
+  // une carte (son détail) ou une tuile de l'escouade (nom, lignée, PV, le coup qu'il va prendre)
+  const el = (ev.target as HTMLElement).closest<HTMLElement>('.geste, .combattant');
   if (!el || app.mode !== 'combat') return;
   annulerClic = false;
   appui = { el, x: ev.clientX, y: ev.clientY, t: window.setTimeout(() => {
-    const html = el.dataset.uid ? loupe(el.dataset.uid) : null;
+    const html = el.dataset.uid ? loupe(el.dataset.uid) : el.dataset.porteur ? loupePorteur(el.dataset.porteur) : null;
     if (!html) return;
     document.body.insertAdjacentHTML('beforeend', html);
     annulerClic = true;
@@ -46,7 +47,7 @@ racine.addEventListener('pointerdown', (ev) => {
 });
 racine.addEventListener('pointermove', (ev) => { if (appui && Math.hypot(ev.clientX - appui.x, ev.clientY - appui.y) > 10) { clearTimeout(appui.t); appui = null; } });
 for (const t of ['pointerup', 'pointercancel', 'pointerleave'] as const) racine.addEventListener(t, finAppui);
-racine.addEventListener('contextmenu', (ev) => { if (app.mode === 'combat' && (ev.target as HTMLElement).closest('.geste')) ev.preventDefault(); });
+racine.addEventListener('contextmenu', (ev) => { if (app.mode === 'combat' && (ev.target as HTMLElement).closest('.geste, .combattant')) ev.preventDefault(); });
 racine.addEventListener('click', (ev) => { if (annulerClic) { annulerClic = false; ev.stopImmediatePropagation(); ev.preventDefault(); } }, true);
 
 /* glisser une carte posée le long de la chaîne la change de place */

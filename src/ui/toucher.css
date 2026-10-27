@@ -17,7 +17,7 @@
   background:radial-gradient(circle at var(--lx,50%) var(--ly,30%),rgba(255,250,235,.28),transparent 55%);mix-blend-mode:screen}
 
 /* les boucles ne repartent plus de zéro à chaque redessin : elles suivent l'horloge commune posée par toucher.ts */
-#app :is(.ennemi-art,.fl-image,.je .j-vie,.fele-trait,.combattant.cible,.combattant.cible::before){animation-delay:var(--horloge,0s)}
+#app :is(.ennemi-art,.fl-image,.je .j-vie,.fele-trait,.combattant.cible::after){animation-delay:var(--horloge,0s)}
 
 @media (prefers-reduced-motion:reduce){
   #app button:not(:disabled):active{scale:1;translate:none}

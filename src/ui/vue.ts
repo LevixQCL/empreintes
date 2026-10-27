@@ -9,7 +9,7 @@ import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
 import { DISTRICT, PILLAGE } from '../core/jeu';
-import { ageArchipel, artGardien, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait } from './art';
+import { ageArchipel, artGardien, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, cadragePortrait } from './art';
 import { corpsFace, couleurFrequence, styleFace, type Face } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
@@ -471,6 +471,28 @@ const visageEnnemi = (en: EnnemiEtat) => (en.porteur ? portrait(en.porteur) : il
  * qu'elle est concernée ». Sur son portrait : le visage de chaque ennemi qui le frappe (en groupe) et les PV qu'il perdra,
  * bouclier déduit ; un bouclier qui prend tout le coup se lit en bleu.
  */
+function texteCoups(s: CombatEtat, recus: CoupAttendu[], pv: number): string {
+  const net = recus.reduce((t, c) => t + c.net, 0);
+  const absorbe = recus.reduce((t, c) => t + c.absorbe, 0);
+  const noms = [...new Set(recus.map((c) => c.rang))].map((r) => tousEnnemis(s).find((en) => (en.rang ?? 0) === r)).filter((en): en is EnnemiEtat => !!en).map(nomEnnemi).join(' et ');
+  if (net === 0 && absorbe > 0) return `${noms} va frapper : le bouclier prend tout le coup.`;
+  return `${noms} va frapper : −${net} PV${absorbe ? ` (${absorbe} pris par le bouclier)` : ''}${net >= pv ? ', à terre' : ''}.`;
+}
+
+/** Les tuiles de l'escouade affichées (par Porteur), pour l'appui long */
+const TUILES = new Map<string, { nom: string; lignee: string; couleur: string; img: string | null | undefined; cadre: number; pv: number; pvMax: number; usure: number; coups: string }>();
+
+/** L'appui long sur une tuile de l'escouade : son nom, sa lignée, ses PV et le coup qu'il va prendre */
+export function loupePorteur(id: string): string | null {
+  const t = TUILES.get(id);
+  if (!t) return null;
+  return `<div class="loupe" aria-hidden="true"><div class="loupe-porteur" style="--c:${t.couleur}">`
+    + (t.img ? `<img src="${t.img}" alt="" style="object-position:50% ${t.cadre}%">` : '')
+    + `<h3>${echap(t.nom)}</h3><span class="lp-lignee">${echap(t.lignee)}</span>`
+    + `<span class="lp-pv">${t.pv} <small>/ ${t.pvMax} PV${t.usure ? ` · Usure ${t.usure}` : ''}</small></span>`
+    + (t.coups ? `<p>${echap(t.coups)}</p>` : '') + '</div></div>';
+}
+
 function marqueCoups(s: CombatEtat, recus: CoupAttendu[], pv: number): string {
   const net = recus.reduce((t, c) => t + c.net, 0);
   const absorbe = recus.reduce((t, c) => t + c.absorbe, 0);
@@ -478,8 +500,7 @@ function marqueCoups(s: CombatEtat, recus: CoupAttendu[], pv: number): string {
   const qui = [...new Set(recus.map((c) => c.rang))].map((r) => tousEnnemis(s).find((en) => (en.rang ?? 0) === r)).filter((en): en is EnnemiEtat => !!en);
   const visages = groupe ? qui.map((en) => { const im = visageEnnemi(en); return im ? `<img src="${im}" alt="">` : ''; }).join('') : '';
   const protege = net === 0 && absorbe > 0;
-  const noms = qui.map(nomEnnemi).join(' et ');
-  const dit = protege ? `${noms} le frappe, le bouclier prend tout le coup` : `${noms} le frappe : −${net} PV${absorbe ? `, ${absorbe} pris par le bouclier` : ''}${net >= pv ? ', il tombera' : ''}`;
+  const dit = texteCoups(s, recus, pv);
   return `<span class="marque-coups${protege ? ' protege' : ''}${net >= pv ? ' fatal' : ''}" role="img" aria-label="${echap(dit)}" title="${echap(dit)}">`
     + (visages ? `<span class="mc-qui">${visages}</span>` : protege ? ICO.bouclier : ICO.atk)
     + `<b>${protege ? '0' : `−${net}`}</b></span>`;
@@ -650,11 +671,13 @@ function htmlEcranCombat(e: Ecran): string {
     const img = portrait(d.id);
     const basPv = !ko && p.pv / p.pvMax <= 0.3;
     const soigne = !ko && s.chaine.some((g) => soigneUnSeul(g) && g.cible === p.id);
-    h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${cible && perte >= p.pv ? ' fatal' : ''}${basPv ? ' bas' : ''}${soigne ? ' soigne' : ''}" data-porteur="${p.id}" data-pvmax="${p.pvMax}" style="--c:${COULEUR[d.lignee]}">${popsPour(e, p.id)}`
-      + (img ? `<span class="cb-fond" style="background-image:url(${img})" aria-hidden="true"></span>` : '')
-      + `<span class="avatar${img ? '' : ' sans-portrait'}" style="--t:34px" aria-hidden="true">${img ? `<img src="${img}" alt="">` : `<b>${echap(d.nom.charAt(0))}</b>`}</span>`
-      + `<div class="cb-infos"><span class="n">${echap(d.nom)}</span><span class="cb-lignee" aria-hidden="true">${ko ? 'À terre' : NOMS_LIGNEE[d.lignee].nom}</span>`
-      + `<div class="cb-vie">${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5, ...(p.usure ? { usure: p.usure } : {}), ...(perte && !verrou ? { perte } : {}) })}<span class="chiffre" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}${p.usure ? `, l’Usure en retire ${p.usure}` : ''}`}">${ko ? '0' : p.pv}<small aria-hidden="true">/ ${p.pvMax}</small></span></div></div>`
+    const lignee = ko ? 'À terre' : NOMS_LIGNEE[d.lignee].nom;
+    const dit = `${d.nom}, ${lignee}, ${ko ? 'à terre' : `${p.pv} PV sur ${p.pvMax}${p.usure ? `, l’Usure en retire ${p.usure}` : ''}`}`;
+    TUILES.set(p.id, { nom: d.nom, lignee, couleur: COULEUR[d.lignee], img, cadre: cadragePortrait(d.id), pv: ko ? 0 : p.pv, pvMax: p.pvMax, usure: p.usure ?? 0, coups: cible ? texteCoups(s, recus, p.pv) : '' });
+    h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${cible && perte >= p.pv ? ' fatal' : ''}${basPv ? ' bas' : ''}${soigne ? ' soigne' : ''}" data-porteur="${p.id}" data-pvmax="${p.pvMax}" role="group" aria-label="${echap(dit)}" style="--c:${COULEUR[d.lignee]}">`
+      + (img ? `<span class="cb-fond" style="background-image:url(${img});--cadre:${cadragePortrait(d.id)}%" aria-hidden="true"></span>` : `<span class="cb-fond sans-portrait" aria-hidden="true">${echap(d.nom.charAt(0))}</span>`)
+      + popsPour(e, p.id)
+      + `<div class="cb-vie" aria-hidden="true"><span class="chiffre">${ko ? '0' : p.pv}<small>/ ${p.pvMax}</small></span>${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5, ...(p.usure ? { usure: p.usure } : {}), ...(perte && !verrou ? { perte } : {}) })}</div>`
       + (cible && !verrou ? marqueCoups(s, recus, p.pv) : '') + (soigne ? `<span class="marque-soin" aria-label="Sera soigné">${ICO.soin}</span>` : '') + `</div>`;
   }
   h += `</section><div class="ligne-escouade">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>${s.ombre ? `<span class="etat ombre actif">${ICO.eclat}Ombre agissante</span>` : ''}`

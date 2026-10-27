@@ -112,6 +112,12 @@ const ENNEMIS_ILLUSTRES: Record<string, string> = {
   sauvage: 'sauvage',
 };
 
+/**
+ * Le cadrage vertical de chaque portrait dans une tuile large de l'escouade (background-position, en %) : les yeux tombent
+ * au tiers haut de la tuile. 18 % par défaut ; Véla, encapuchonnée, a le visage nettement plus bas.
+ */
+const CADRAGE: Record<string, number> = { vela: 52, nuit: 25, sasha: 25, coursier: 20 };
+export const cadragePortrait = (id: string): number => CADRAGE[id] ?? 18;
 export const portrait = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/${id}.webp?v=${VERSION_PORTRAITS}` : null);
 /** l'illustration ne dépend pas du métal : « jambes-ressort@or » reprend celle de « jambes-ressort » */
 export const illustrationModule = (cle: string): string | null => {

@@ -13,7 +13,7 @@
    ET les ombres ; les autres (Safari pour l'instant) gardent le découpage d'avant, avec l'arête et la tranche, sans ombre portée. */
 
 /* POSÉ : les panneaux */
-#app:is([data-mode="combat"],[data-mode="district"]) :is(.combattant,.zone-chaine,.lecon,.mission,.panneau,.habitant,.carte-porteur,.emplacement,.tuile-porteur,
+#app:is([data-mode="combat"],[data-mode="district"]) :is(.zone-chaine,.lecon,.mission,.panneau,.habitant,.carte-porteur,.emplacement,.tuile-porteur,
   .ligne-menu,.stat,.occupant,.chantier-cours,.en-cours,.chapitre-ligne,.replique,.segments-choix,.puce,.etat){
   box-shadow:var(--contour),var(--arete),var(--tranche-1),inset 0 -20px 30px -24px rgba(150,190,255,.3),var(--ombre-pose)}
 
@@ -42,7 +42,7 @@
 /* les coins coupés natifs : même dessin, mais les ombres passent */
 @supports (corner-shape:bevel){
   #app :is(.res,.mission,.plaque,.appel,.stat,.occupant,.tuile-porteur,.liste-forge li,.ligne-menu,.panneau,.fenetre,.habitant,.carte-porteur,.emplacement,
-    .replique,.segments-choix,.combattant,.zone-chaine,.puce,.lecon,.toast,.btn,button.prim,.btn-sec,.btn-icone,.btn-flux,.en-cours,.chantier-cours){
+    .replique,.segments-choix,.zone-chaine,.puce,.lecon,.toast,.btn,button.prim,.btn-sec,.btn-icone,.btn-flux,.en-cours,.chantier-cours){
     /* overflow:clip découpe le contenu exactement comme le faisait clip-path (images, reflets, chiffres), mais pas l'ombre */
     clip-path:none;border-radius:0 var(--cut) 0 var(--cut);corner-shape:bevel;overflow:clip}
 }
