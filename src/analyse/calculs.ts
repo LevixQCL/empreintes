@@ -56,6 +56,7 @@ export interface Analyse {
   campagne: { titre: string; lignes: Ligne[] }[];
   fonctions: Ligne[];
   actions: Ligne[];
+  eclats: Ligne[];
   appareils: Ligne[];
   comptes: Ligne[];
   liste: LigneJoueur[];
@@ -316,6 +317,11 @@ export function analyser(parties: Partie[], now: number): Analyse {
   }).sort((a, b) => b.valeur - a.valeur);
   const totalActions = new Map<string, number>();
   for (const { s } of avecActions) for (const [a, v] of Object.entries(s.actions!)) totalActions.set(a, (totalActions.get(a) ?? 0) + v);
+  // les Coups d'éclat, par lignée ; pour les Augmentés, la part déclenchée par un deck du Moteur (cartes à Décharge)
+  const totalEclats = new Map<string, number>();
+  for (const { s } of stats) for (const [k, v] of Object.entries(s.eclats ?? {})) totalEclats.set(k, (totalEclats.get(k) ?? 0) + v);
+  const NOMS_ECLATS: Record<string, string> = { tech: 'Débridage (Augmentés)', 'tech-decharge': 'dont avec un deck du Moteur', bio: 'Sursaut (Génés)', reso: 'Ombre agissante (Résonants)' };
+  const eclats = ['tech', 'tech-decharge', 'bio', 'reso'].map((k) => ({ cle: k, nom: NOMS_ECLATS[k]!, valeur: totalEclats.get(k) ?? 0 }));
   const actions = [...totalActions.entries()].sort((a, b) => b[1] - a[1]).slice(0, 30).map(([a, v]) => ({ cle: a, nom: NOMS_ACTIONS[a] ?? a, valeur: v }));
 
   // ---------- joueurs ----------
@@ -346,7 +352,7 @@ export function analyser(parties: Partie[], now: number): Analyse {
     expeditions: [...expeditions.values()].sort((x, y) => x.strate - y.strate),
     chaines: histo(chaines, (i) => `${i} carte${i > 1 ? 's' : ''}`),
     suites: histo(suites, (i) => (i ? `Suite de ${i}` : 'Pas de suite')),
-    porteurs, cartes, metaux, economie, campagne, fonctions, actions,
+    porteurs, cartes, metaux, economie, campagne, fonctions, actions, eclats,
     appareils: (['telephone', 'pc'] as const).map((x) => ({ cle: x, nom: x === 'pc' ? 'PC' : 'Téléphone', valeur: stats.filter(({ s }) => s.appareil === x).length })),
     comptes: (['protege', 'invisible', 'aucun'] as const).map((c) => ({
       cle: c, nom: { protege: 'Compte Google ou e-mail', invisible: 'Compte invisible', aucun: 'Sans compte' }[c], valeur: stats.filter(({ s }) => s.compte === c).length,

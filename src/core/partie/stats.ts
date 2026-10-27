@@ -37,6 +37,9 @@ export interface Stats {
   suites?: number[];
   /** combien de fois chaque bouton du jeu a été utilisé (data-action) : l'usage de chaque fonction */
   actions?: Record<string, number>;
+  /** Coups d'éclat déclenchés, par lignée ; « tech-decharge » : un Débridage avec des cartes à Décharge dans le deck
+   *  (27 octobre 2026 : le Moteur fait-il oublier le Débridage ?) */
+  eclats?: Record<string, number>;
 }
 
 const SESSION = 30 * 60_000;
@@ -96,6 +99,14 @@ export function noterChaine(j: Jeu, chaine: Geste[]): void {
   const suite = analyserChaine(chaine).suite;
   const suites = (s.suites ??= []);
   suites[suite] = (suites[suite] ?? 0) + 1;
+}
+
+/** Un Coup d'éclat : sa lignée, et si le deck porte des cartes à Décharge (le Moteur) */
+export function noterEclat(j: Jeu, c: CombatEtat, lignee: string): void {
+  const e = (statsDe(j).eclats ??= {});
+  e[lignee] = (e[lignee] ?? 0) + 1;
+  const decharge = [...c.pioche, ...c.defausse, ...c.main, ...c.chaine].some((g) => g.effet?.type === 'decharge' || g.effet2?.type === 'decharge');
+  if (decharge) e[`${lignee}-decharge`] = (e[`${lignee}-decharge`] ?? 0) + 1;
 }
 
 /** La fin d'un combat (victoire ou défaite), ou une fuite : contre qui, et en combien de tours */
