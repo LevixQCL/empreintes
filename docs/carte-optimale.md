@@ -94,6 +94,8 @@ par le code, net à toutes les tailles :
   métal d'un coup d'œil ; son arête intérieure et la couture prennent la couleur de l'action (rouge attaque, bleu
   bouclier, vert soin) : on reconnaît l'action aussi (demande de Bryan : « les deux ») ;
 - les cristaux de Fréquence, petits (15 % de la largeur, les autres Fréquences à 11 %), en ligne en haut à gauche ;
+- le bas de la carte (sous le nom et l'effet) dans la même matière du métal, assombrie pour garder le texte lisible
+  (demande de Bryan : le métal se lisait encore mal avec le seul cadre) ;
 - la valeur : le chiffre seul, avec une petite icône de couleur posée à sa gauche — épée rouge (attaque), écu bleu
   (bouclier), goutte verte (soin) — sur une pastille de verre fumé, au-dessus de la couture à droite ;
 - la roue de niveau, le voile et ses deux lignes.
