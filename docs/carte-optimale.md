@@ -27,9 +27,9 @@ qui ne couvre que le quart du bas, et l'image reste visible à travers.
 
 ```
 ┌──────────────────────────╲   liseré fin du métal tout autour
-│ ⬡6                        │   en haut à gauche : la Fréquence (les autres en dessous, plus petites)
-│ ⬡7  ILLUSTRATION ENTIÈRE  │
-│ ⬡5  (format 5:7, rien de  │   0 → 75 % : aucune autre interface
+│ ⬡6 ⬡7 ⬡5                  │   en haut à gauche : la Fréquence (les autres à sa droite, plus petites)
+│     ILLUSTRATION ENTIÈRE  │
+│     (format 5:7, rien de  │   0 → 75 % : aucune autre interface
 │      coupé)               │
 │━━━━━━━━━━━━━━━━━━━━━━ ⬢12 │   75 % : la couture, et la valeur dans son médaillon d'or
 │░◌ Apaiser░░░░░░░░░░░░░░░░░│
@@ -40,7 +40,7 @@ qui ne couvre que le quart du bas, et l'image reste visible à travers.
 1. **L'image entière.** Le cadre n'est plus qu'un liseré de métal fin (1,6 % de la largeur) tout autour : il dit le métal
    (fer, cuivre, argent, or, nacre irisée) sans rien cacher. Le badge « Nouvelle » passe en haut à droite, petit.
 2. **La Fréquence en haut à gauche** (choix de Bryan : c'est là qu'on la cherche, et elle reste visible quand les cartes
-   se chevauchent). La principale en grand ; les autres, en dessous, en colonne et plus petites — **plus d'animation qui
+   se chevauchent). La principale en grand ; les autres à sa droite, en ligne et plus petites — **plus d'animation qui
    les fait défiler**. En combat, le cristal d'une carte qui prolonge ta suite s'allume : le combo se lit par la lumière.
    **La valeur en bas à droite**, dans un médaillon d'or posé sur la couture (une fine bande de cristal à 75 % de la
    hauteur) ; sa forme dit l'action : éclat (attaque), écu (bouclier), goutte (soin).
