@@ -222,17 +222,19 @@
   .scene-briefing{width:min(760px,calc(100% - 96px))}
 }
 
-/* Les cartes du combat grandissent avec la hauteur de l'écran (la chaîne et la main doivent tenir sans défiler) */
-@media (min-width:1100px) and (min-height:720px){ .ecran-combat{row-gap:12px;padding:20px 36px 24px} .zone-chaine > .rail,.zone-main > .main{zoom:1.2} }
-@media (min-width:1100px) and (min-height:860px){ .zone-chaine > .rail,.zone-main > .main{zoom:1.5} }
-@media (min-width:1100px) and (min-height:880px){ .zone-chaine > .rail,.zone-main > .main{zoom:1.6} }
+/* Les cartes du combat grandissent avec la hauteur de l'écran (la chaîne et la main doivent tenir sans défiler).
+   Depuis la refonte des cartes (27 octobre 2026), elles prennent une vraie taille plutôt qu'un zoom : au-delà de 90 px de large,
+   la carte s'affiche en entier (nom, effet en clair), comme dans la collection. */
+@media (min-width:1100px) and (min-height:720px){ .ecran-combat{row-gap:12px;padding:20px 36px 24px}
+  .geste.main,.geste.chaine,.place-vide{width:92px;height:129px} .rail{min-height:131px} }
+@media (min-width:1100px) and (min-height:860px){ .geste.main,.geste.chaine,.place-vide{width:116px;height:162px} .rail{min-height:164px} }
 
 /* Très grands écrans : un peu plus d'air */
 @media (min-width:1700px) and (min-height:900px){
   .archipel{--panneau:460px}
   .ecran > .contenu{max-width:1400px}
 }
-@media (min-width:1700px) and (min-height:1000px){ .zone-chaine > .rail,.zone-main > .main{zoom:1.75} }
+@media (min-width:1700px) and (min-height:1000px){ .geste.main,.geste.chaine,.place-vide{width:130px;height:182px} .rail{min-height:184px} }
 /* grand écran : la scène de l'ennemi fait près de 1000 px de haut, l'intention et le nom suivent */
 @media (min-width:1700px) and (min-height:900px){
   .ecran-combat .intention{top:26px;left:26px;gap:15px;padding:11px 22px 11px 11px}
@@ -332,8 +334,4 @@
   .ecran-combat .piles .ico{width:15px;height:15px}
 
 }
-/* les cartes de la chaîne, quand la hauteur le permet : un peu plus grandes */
-@media (min-width:1100px) and (min-height:900px){
-  .geste.chaine,.place-vide{width:88px;height:124px}
-  .rail{min-height:126px}
-}
+
