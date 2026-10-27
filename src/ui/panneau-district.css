@@ -1,8 +1,8 @@
 /* EMPREINTES — le panneau de droite du District sur PC (23 octobre 2026, Bryan : « ça pourrait être plus beau,
    et sur PC affiché autrement, il y a largement la place »).
-   Le téléphone garde son panneau serré (styles.css, district.css). Sur PC, l'objectif du jour
-   et l'Archive de la semaine deviennent deux cartes de verre empilées, chacune avec sa couleur :
-   or pour l'objectif, violet résonant pour l'Archive. */
+   Le téléphone garde son panneau serré (styles.css, district.css). Sur PC, l'objectif du jour, la confiance du quartier
+   et l'Archive de la semaine deviennent trois cartes de verre empilées, chacune avec sa couleur :
+   or pour l'objectif, dégradé rouge → vert pour la confiance, violet résonant pour l'Archive. */
 
 @media (min-width:1100px) and (min-height:600px){
   .mission .mob{display:none}
@@ -16,19 +16,21 @@
     -webkit-backdrop-filter:none;backdrop-filter:none;border-radius:0}
 
   /* ---------- une carte de verre ---------- */
-  #app[data-mode="district"] .mission.jour>:is(.mj-obj,.archive){position:relative;margin:0;padding:16px 18px 15px;border-radius:8px;
+  #app[data-mode="district"] .mission.jour>:is(.mj-obj,.confiance,.archive){position:relative;margin:0;padding:16px 18px 15px;border-radius:8px;
     background:linear-gradient(165deg,rgba(16,22,46,.9),rgba(8,11,24,.93));
     box-shadow:inset 0 0 0 1px rgba(205,239,255,.14),inset 0 1px 0 rgba(255,255,255,.06),0 10px 26px rgba(0,0,0,.45);
     -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
   /* une arête de couleur en haut de chaque carte */
-  #app[data-mode="district"] .mission.jour>:is(.mj-obj,.archive)::before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;
+  #app[data-mode="district"] .mission.jour>:is(.mj-obj,.confiance,.archive)::before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;
     background:linear-gradient(90deg,transparent,var(--arete) 30%,var(--arete) 70%,transparent);opacity:.8}
   #app[data-mode="district"] .mission.jour>.mj-obj{--arete:#F2D58C;display:grid;gap:10px}
+  #app[data-mode="district"] .mission.jour>.confiance{--arete:#9EE6B4;display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:8px 12px}
   #app[data-mode="district"] .mission.jour>.archive{--arete:#B9A2F2;display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:6px 12px;box-shadow:inset 0 0 0 1px rgba(185,162,242,.18),inset 0 1px 0 rgba(255,255,255,.06),0 10px 26px rgba(0,0,0,.45)}
 
   /* les sur-titres : petits, espacés, de la couleur de leur carte */
   #app[data-mode="district"] .mission.jour .surtitre{font-size:11.5px;letter-spacing:.14em;font-weight:600}
   #app[data-mode="district"] .mission.jour .mj-obj .surtitre{color:var(--d-or)}
+  #app[data-mode="district"] .mission.jour .confiance .surtitre{color:#BFE9CF}
   #app[data-mode="district"] .mission.jour .archive .surtitre{color:#D3C4F7}
 
   /* ---------- l'objectif du jour ---------- */
@@ -48,11 +50,17 @@
   .mj-gain .ico.peinte{width:34px;height:34px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
   #app[data-mode="district"] .mission.jour .mj-obj .btn.prim{min-height:44px;font-size:15px}
 
+  /* ---------- la confiance ---------- */
   .mj-valeur{display:block !important;font-family:var(--mono);font-size:13px;color:var(--d-doux);justify-self:end}
   .mj-valeur b{font-size:24px;font-weight:600;color:#F3F7FF;margin-right:2px}
+  #app[data-mode="district"] .mission.jour .confiance .jauge{grid-column:1 / -1;position:relative;height:8px;margin:4px 0 2px;border-radius:4px;overflow:visible;
     background:linear-gradient(90deg,rgba(255,120,100,.14),rgba(242,200,110,.14) 50%,rgba(130,220,160,.14));box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+  #app[data-mode="district"] .mission.jour .confiance .jauge>i:not(.seuil){border-radius:4px;-webkit-mask-image:none;mask-image:none;box-shadow:none;
     background:linear-gradient(90deg,#E86A55,#F2C86E 50%,#7FD6A0)}
+  .confiance .seuil{display:block !important;position:absolute;top:-3px;bottom:-3px;width:1px;background:rgba(255,255,255,.35);z-index:1}
+  .confiance .curseur{display:block !important;position:absolute;top:50%;width:13px !important;height:13px !important;min-width:0;padding:0;margin:0;transform:translate(-50%,-50%) rotate(45deg);z-index:2;
     background:linear-gradient(135deg,#fff,#CFE8FF);border-radius:2px;box-shadow:0 0 0 2px #0B1024,0 0 12px rgba(205,239,255,.8)}
+  #app[data-mode="district"] .mission.jour .confiance small{grid-column:1 / -1;font-size:13.5px;line-height:1.45;color:var(--d-txt)}
 
   /* ---------- l'Archive de la semaine ---------- */
   .archive .mj-ico{display:grid !important;place-items:center;grid-row:1 / span 2;width:44px;height:44px;border-radius:50%;

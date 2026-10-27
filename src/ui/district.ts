@@ -247,7 +247,7 @@ function mission(e: EcranDistrict): string {
   const def = QUOTIDIENS[q.type];
   const max = ARCHIVE.paliers[ARCHIVE.paliers.length - 1]!;
   const crans = ARCHIVE.paliers.map((p) => `<i class="cran${j.archive.points >= p ? ' atteint' : ''}" style="left:${(p / max) * 100}%"></i>`).join('');
-  // Deux blocs : l'objectif et l'Archive (la Confiance est retirée le 27 octobre 2026), avec la rumeur du marché. Sur téléphone ils restent serrés dans un seul panneau ;
+  // Deux blocs : l'objectif et l'Archive (la Confiance est montée dans la barre du haut, 27 octobre 2026), et la rumeur du marché. Sur téléphone ils restent serrés dans un seul panneau ;
   // sur PC (panneau-district.css, 23 octobre 2026) chacun devient sa propre carte de verre, avec plus de détails.
   // Les éléments « pc » ne s'affichent que sur PC, les « mob » que sur téléphone.
   const points = Math.min(j.archive.points, max);

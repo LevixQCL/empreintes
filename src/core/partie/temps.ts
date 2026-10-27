@@ -3,11 +3,10 @@
 
 import { batimentDef, moduleDef } from '../donnees';
 import { ajouterCarte } from '../collection';
-import { tireur } from '../rng';
 import { noterPalmares } from '../classements';
-import { ARCHIVE, CREUSEURS, enExpedition, energieParHeure, jourDe, log, semaineDe, stockage, type Jeu, typeDuJour } from './etat';
+import { ARCHIVE, CONFIANCE, confier, enExpedition, energieParHeure, jourDe, log, semaineDe, stockage, type Jeu, typeDuJour } from './etat';
 import { avancerFils, retourDeMission, verifierArrivees } from './descentes';
-import { creuser, energieEntrainement, entrainer, gagnerCreuseurs, garnirComptoir, heuresEntrainement, soinParHeure } from './district';
+import { creuser, recompenserConfiance, energieEntrainement, entrainer, garnirComptoir, heuresEntrainement, soinParHeure } from './district';
 import { RAVITAILLEMENT, eveillerLegs } from './recompenses';
 
 /** Rattrape le temps écoulé : énergie, soins, Forge. Rien n'est perdu ni puni pendant l'absence. */
@@ -48,13 +47,19 @@ export function tick(j: Jeu, now: number): string[] {
 
   for (const c of j.chantiers.filter((x) => now >= x.fin)) {
     j.batiments[c.batiment]++;
-    if (tireur(j).nombre() < CREUSEURS.chantier) gagnerCreuseurs(j, 1, 'le chantier attire un volontaire');
+    confier(j, CONFIANCE.chantier);
     if (c.batiment === 'noyau' && creuser(j)) nouvelles.push(`La Tour du Noyau loge assez de creuseurs : la Strate −${j.strate} est ouverte.`);
     const t = `Chantier terminé : ${batimentDef(c.batiment).nom} passe au niveau ${j.batiments[c.batiment]}.`;
     log(j, t);
     nouvelles.push(t);
   }
   j.chantiers = j.chantiers.filter((x) => now < x.fin);
+  // la Confiance du quartier : chaque niveau atteint amène un creuseur volontaire, qui peut ouvrir l'étage suivant
+  const confiance = recompenserConfiance(j);
+  if (confiance.length) {
+    nouvelles.push(...confiance);
+    if (creuser(j)) nouvelles.push(`Les volontaires suffisent : la Strate −${j.strate} est ouverte.`);
+  }
 
   const entraine = entrainer(j, paye);
   if (entraine) nouvelles.push(entraine);

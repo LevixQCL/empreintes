@@ -27,6 +27,7 @@
 
   #app:is([data-mode="district"],[data-mode="combat"]) .ecran > .hud{grid-column:2;grid-row:1;height:var(--hud-h);display:flex;align-items:center;gap:12px;padding:8px 28px}
   #app:is([data-mode="district"],[data-mode="combat"]) .ecran > .hud .res{flex:0 1 190px;min-height:54px;grid-template-columns:40px minmax(0,1fr);column-gap:10px;padding:5px 12px 7px 8px}
+  #app:is([data-mode="district"],[data-mode="combat"]) .ecran > .hud .res.confiance{flex:0 0 auto}
   #app:is([data-mode="district"],[data-mode="combat"]) .ecran > .hud .res.energie{flex-basis:230px}
   #app:is([data-mode="district"],[data-mode="combat"]) .ecran > .hud .res .ico.peinte{width:40px;height:48px;margin:-6px 0 -3px;padding:0 1px 7px;background-size:36px 41px}
   #app:is([data-mode="district"],[data-mode="combat"]) .ecran > .hud .res .v{font-size:19px}

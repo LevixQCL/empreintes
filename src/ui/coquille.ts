@@ -3,7 +3,7 @@
 
 import { porteurDef } from '../core/donnees';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
-import { cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, stockage, type Jeu } from '../core/jeu';
+import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, stockage, type Jeu } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
@@ -128,7 +128,7 @@ export function couts(j: Jeu, c: { energie?: number; composants?: number; eclats
 }
 
 /** La barre des ressources, toujours en haut */
-type Ressource = 'energie' | 'composants' | 'eclats' | 'strate';
+type Ressource = 'energie' | 'composants' | 'eclats' | 'strate' | 'confiance';
 
 function hud(j: Jeu, ouverte: Ressource | null = null): string {
   const max = stockage(j);
@@ -141,7 +141,20 @@ function hud(j: Jeu, ouverte: Ressource | null = null): string {
     + b('composants', '', `Composants : ${ent(j.composants)}. Détails`) + `${icone('composants')}<span class="v">${ent(j.composants)}</span><small>comp.</small></button>`
     + b('eclats', '', `Éclats : ${ent(j.eclats)}. Détails`) + `${icone('eclats')}<span class="v">${ent(j.eclats)}</span><small>Éclats</small></button>`
     + b('strate', ' abysse', `Strate −${j.strate}. Détails`) + `${icone('strate')}<span class="v">−${j.strate}</span><small>Strate</small></button>`
+    + roueConfiance(j, b)
     + `</header>`;
+}
+
+/**
+ * La Confiance du quartier dans la barre du haut (27 octobre 2026, Bryan : « une section à côté de la Strate avec une roue à niveau ») :
+ * le niveau au centre d'une roue qui se remplit vers le suivant. Elle ne fait que monter.
+ */
+function roueConfiance(j: Jeu, b: (r: Ressource, extra: string, label: string) => string): string {
+  if (!j.chambre) return '';
+  const n = niveauConfiance(j.confiance ?? 0);
+  const p = Math.round((100 * n.dans) / n.requis);
+  return b('confiance', '', `Confiance du quartier : niveau ${n.niveau}, ${n.dans} sur ${n.requis} points vers le suivant. Détails`)
+    + `<span class="roue-confiance" style="--p:${p}%" aria-hidden="true"><b>${n.niveau}</b></span><small>Confiance</small></button>`;
 }
 
 /** La fiche d'une ressource : ce que c'est, ce qu'on a, comment en gagner, à quoi elle sert */
@@ -187,6 +200,17 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
     servir = [ligne('marteau', 'Refabriquer les cartes rares', 'Argent, or et nacre en demandent à la Forge.'),
       ligne('cartes', 'Les cartes en argent du Comptoir', 'Elles coûtent aussi des Éclats.'),
       ligne('marteau', 'Les grands chantiers', 'Les derniers niveaux des bâtiments.')];
+  } else if (r === 'confiance') {
+    const n = niveauConfiance(j.confiance ?? 0);
+    surtitre = 'QUARTIER'; titre = 'La Confiance du quartier';
+    resume = 'Ce que les habitants pensent de leur directeur. Elle ne fait que monter : chaque victoire, chaque chantier la nourrit, et rien ne la fait baisser.';
+    etat = `<b>Niveau ${n.niveau}</b><small>${n.dans} / ${n.requis} points vers le niveau ${n.niveau + 1}</small>`;
+    gagner = [ligne('porte', 'Gagner des combats en bas', `+${CONFIANCE.combat} par combat gagné, +${CONFIANCE.victoire} de plus pour une descente réussie.`),
+      ligne('marteau', 'Finir des chantiers', `+${CONFIANCE.chantier} par bâtiment amélioré.`),
+      ligne('boost', 'Réussir un pillage', `+${CONFIANCE.pillage} par pillage gagné.`),
+      ligne('porteurs', 'Certains choix en bas', 'Aider ceux qu’on croise se sait au quartier.')];
+    servir = [ligne('ouvrier', 'Des creuseurs volontaires', `Chaque niveau atteint amène ${CREUSEURS.confiance} creuseur (s’il reste de la place à la Tour du Noyau).`),
+      ligne('soin', 'L’Accord ouvert', `Au niveau ${ACCORD_OUVERT.confiance}, avec la Clinique au niveau ${ACCORD_OUVERT.clinique}, un nouveau Résonant rejoint le district.`)];
   } else {
     const manque = manquePourCreuser(j);
     surtitre = 'PROFONDEUR'; titre = `La Strate −${j.strate}`;
@@ -199,7 +223,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
   }
   return `<div class="voile-feuille" data-action="ressource" data-id="" aria-hidden="true"></div><section class="feuille ressource-fiche res-${r}" role="dialog" aria-modal="true" aria-labelledby="res-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">${surtitre}</span><h2 id="res-titre">${titre}</h2></div><button type="button" class="btn-icone" data-action="ressource" data-id="" aria-label="Fermer">${ICO.fermer}</button></header>`
-    + `<div class="feuille-corps"><div class="res-etat">${icone(r === 'strate' ? 'strate' : r)}<span>${etat}</span></div><p class="res-resume">${resume}</p>`
+    + `<div class="feuille-corps"><div class="res-etat">${icone(r === 'confiance' ? 'district' : r)}<span>${etat}</span></div><p class="res-resume">${resume}</p>`
     + `<h3 class="titre-bloc">Comment en obtenir</h3><ul class="res-liste">${gagner.join('')}</ul>`
     + `<h3 class="titre-bloc">À quoi ça sert</h3><ul class="res-liste">${servir.join('')}</ul>`
     + (r === 'strate' ? `<button type="button" class="btn sec large" data-action="classements" data-id="profondeur">${ICO.monter}Voir le classement des profondeurs</button>` : '')
