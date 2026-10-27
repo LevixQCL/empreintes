@@ -79,6 +79,12 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'chorale-ombres': 'chorale-ombres',
   'cloche-abysses': 'cloche-abysses',
   'grand-unisson': 'grand-unisson',
+  // l'Héritage du district (27 octobre 2026)
+  'carapace-fondations': 'carapace-fondations',
+  'oeil-grande-nuit': 'oeil-grande-nuit',
+  'premiere-mue': 'premiere-mue',
+  'lanterne-lecture': 'lanterne-lecture',
+  'cle-legs': 'cle-legs',
 };
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */
