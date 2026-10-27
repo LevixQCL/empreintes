@@ -406,3 +406,31 @@
 .plaque-int.brume .int-nom{color:#c8d0dc;letter-spacing:.06em}
 .plaque-int.brume .int-val b{color:#dfe5ee;text-shadow:0 0 14px rgba(200,210,225,.8),0 2px 4px #000;filter:blur(.3px)}
 .vg-int.brume b{color:#dfe5ee;text-shadow:0 0 8px rgba(200,210,225,.8)}
+
+/* ---------- Qui va être frappé (27 octobre 2026) ----------
+   Bryan : le bandeau du boss disait « → Ilka » et les trois cartes clignotaient, il fallait lire pour savoir qui était visé.
+   La marque est sur le Porteur lui-même : sur son portrait, le visage de l'ennemi qui le frappe (en groupe) et les PV qu'il
+   perdra, bouclier déduit (bleu si le bouclier prend tout) ; sur sa jauge, le morceau de vie qui va partir, qui bat en rouge. */
+.combattant .marque-coups{position:absolute;z-index:3;left:3px;bottom:3px;display:inline-flex;align-items:center;gap:2px;height:18px;padding:0 5px 0 3px;
+  border-radius:9px;font:700 12px/1 var(--mono);color:#fff;font-variant-numeric:tabular-nums;
+  background:linear-gradient(180deg,#ff8a72,#c4322a 55%,#7e1416);box-shadow:inset 0 0 0 1px rgba(255,214,200,.75),0 0 10px rgba(255,90,70,.7),0 2px 4px rgba(0,0,0,.7)}
+.marque-coups b{text-shadow:0 1px 2px rgba(60,0,0,.9)}
+.marque-coups .ico{width:11px;height:11px;flex-shrink:0}
+.mc-qui{display:inline-flex}
+.mc-qui img{width:14px;height:14px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 1px #ffd6c8;background:#1a0e14}
+.mc-qui img + img{margin-left:-5px}
+.marque-coups.protege{color:#eaf6ff;background:linear-gradient(180deg,#9fd0ff,#3d78c4 55%,#1d3d75);box-shadow:inset 0 0 0 1px rgba(214,236,255,.8),0 0 10px rgba(127,190,255,.6),0 2px 4px rgba(0,0,0,.7)}
+.marque-coups.fatal{box-shadow:inset 0 0 0 1.5px #ffe2a8,0 0 14px rgba(255,190,90,.85),0 2px 4px rgba(0,0,0,.7)}
+/* un Porteur que le bouclier protège entièrement n'a pas à clignoter en rouge */
+#app .combattant.cible:has(.marque-coups.protege){animation:none;box-shadow:inset 0 0 0 1.5px rgba(159,208,255,.8),inset 0 0 18px rgba(127,190,255,.18)}
+/* la vie qui va partir */
+.j-perte{position:absolute;top:0;bottom:0;z-index:1;
+  background:repeating-linear-gradient(135deg,#ffd0c4 0 2px,#e2402f 2px 5px);box-shadow:inset 0 0 0 1px rgba(255,230,220,.8)}
+@media (prefers-reduced-motion:no-preference){ .j-perte{animation:perte-bat 1.1s ease-in-out infinite alternate} }
+@keyframes perte-bat{from{opacity:1}to{opacity:.35}}
+@media (min-width:1100px) and (min-height:600px){
+  .ecran-jeu .combattant .marque-coups{z-index:4;left:auto;right:10px;top:10px;bottom:auto;height:24px;gap:4px;padding:0 9px 0 5px;border-radius:12px;font-size:15px}
+  .ecran-jeu .combattant.soigne .marque-coups{right:38px}
+  .ecran-jeu .combattant .marque-coups .ico{width:13px;height:13px}
+  .ecran-jeu .mc-qui img{width:18px;height:18px}
+}

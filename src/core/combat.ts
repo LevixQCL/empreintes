@@ -338,8 +338,35 @@ export function apercuChaine(s: CombatEtat): { degats: number; absorbe: number; 
   return r;
 }
 
+/** Un coup annoncé sur un Porteur : l'ennemi qui frappe (son rang), ce qui passera (net) et ce que le bouclier prendra */
+export type CoupAttendu = { rang: number; net: number; absorbe: number };
+
+/**
+ * Les coups que chaque Porteur va recevoir au tour ennemi (27 octobre 2026). Bryan : « si seulement Ilka avait une marque
+ * visuelle, on verrait tout de suite qu'elle est concernée ». Le tour est joué sur une copie, avec la chaîne posée si elle
+ * existe : son bouclier, la Fêlure qu'elle brise et l'ennemi qu'elle abat avant qu'il frappe sont donc comptés.
+ * Rien sous le brouillard (ni la force, ni la cible ne se voient). Rien n'est modifié.
+ */
+export function coupsAttendus(s: CombatEtat): Map<string, CoupAttendu[]> {
+  const r = new Map<string, CoupAttendu[]>();
+  if (s.issue !== 'en-cours' || brumeActive(s)) return r;
+  const copie = photo(s);
+  delete copie.historique;
+  const noter = (ev: Evenement) => {
+    if (ev.kind !== 'degats' || ev.cible === 'ennemi' || ev.cible === 'escouade' || ev.source) return;
+    const l = r.get(ev.cible) ?? [];
+    l.push({ rang: ev.rang ?? 0, net: ev.net, absorbe: ev.absorbe });
+    r.set(ev.cible, l);
+  };
+  const camp = CAMP;
+  if (copie.chaine.length) lancer(copie, { apercu: noter, riposte: true });
+  else tourEnnemi(copie, noter);
+  CAMP = camp;
+  return r;
+}
+
 /** Lance la chaîne, puis joue le tour ennemi. Renvoie les pas à animer. */
-export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev: Evenement) => void } = {}): Pas[] {
+export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev: Evenement) => void; riposte?: boolean } = {}): Pas[] {
   const pas: Pas[] = [];
   if (s.issue !== 'en-cours' || !s.chaine.length) return pas;
   // en mode silencieux (robot d'équilibrage), on ne garde pas les étapes d'animation
@@ -393,8 +420,8 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
       emettre({ kind: 'flux', gain: s.flux - avant });
     }
   }
-  // l'aperçu s'arrête là : seule la chaîne compte, pas la riposte
-  if (opts.apercu) return pas;
+  // l'aperçu s'arrête là : seule la chaîne compte, pas la riposte (sauf pour annoncer les coups attendus)
+  if (opts.apercu && !opts.riposte) return pas;
   CAMP = 'neutre';
   s.debride = false;
   for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;

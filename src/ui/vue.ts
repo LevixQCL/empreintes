@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, estGardien, apercuChaine, detailForce, type DetailForce, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, brumeActive as C_brume, puissance, usureCombat } from '../core/combat';
+import { ECLATS, estGardien, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
@@ -181,7 +181,7 @@ function calculLoupe(g: Geste, d: DetailForce): string {
  * Une jauge de vie : un rail serti, la vie qui reste, la traînée du dernier coup qui se vide, des graduations
  * (une tous les `pas` PV) et, pour l'ennemi, son bouclier posé au bout de la vie.
  */
-export function jauge(classe: string, pv: number, max: number, o: { trace?: number; pas?: number; bouclier?: number; usure?: number } = {}) {
+export function jauge(classe: string, pv: number, max: number, o: { trace?: number; pas?: number; bouclier?: number; usure?: number; perte?: number } = {}) {
   // l'Usure : les PV perdus pour toute la descente, hachurés au bout de la jauge (la jauge compte alors sur les PV pleins)
   const u = o.usure ?? 0;
   if (u > 0) max += u;
@@ -190,8 +190,10 @@ export function jauge(classe: string, pv: number, max: number, o: { trace?: numb
   const trainee = o.trace !== undefined && o.trace > v ? `<i class="j-trainee" style="--de:${o.trace}%;--a:${v}%"></i>` : '';
   const bouclier = o.bouclier ? `<i class="j-bouclier" style="left:${Math.max(0, v - pct(o.bouclier, max))}%;width:${Math.min(v, pct(o.bouclier, max))}%"></i>` : '';
   const pas = o.pas ? pct(o.pas, max) : 10;
+  // les PV que le prochain coup ennemi va retirer : un segment rouge qui bat au bout de la vie
+  const perte = o.perte ? `<i class="j-perte" style="left:${pct(Math.max(0, pv - o.perte), max)}%;width:${pct(Math.min(pv, o.perte), max)}%"></i>` : '';
   return `<span class="jauge-vie ${classe}${v <= 30 ? ' basse' : ''}" style="--pas:${pas}%" role="img" aria-label="${pv} PV sur ${max}">`
-    + `<span class="j-rail">${trainee}<i class="j-vie" style="width:${v}%"></i>${bouclier}${usure}<span class="j-grad"></span></span></span>`;
+    + `<span class="j-rail">${trainee}<i class="j-vie" style="width:${v}%"></i>${perte}${bouclier}${usure}<span class="j-grad"></span></span></span>`;
 }
 
 /** Une carte de combat montrée en démonstration (écran « Avant d'ouvrir ») : même rendu, sans action */
@@ -393,7 +395,8 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
     if (it.zone) quoi = `<span class="int-qui">${s.porteurs.filter((p) => p.pv > 0).map((p) => { const im = portrait(p.id); return im ? `<img src="${im}" alt="" style="--c:${COULEUR[porteurDef(p.id).lignee]}">` : ''; }).join('')}</span>Tous`;
     else if (it.cibleId) {
       const d = porteurDef(it.cibleId), im = portrait(it.cibleId);
-      quoi = `<span class="int-qui">${im ? `<img src="${im}" alt="" style="--c:${COULEUR[d.lignee]}">` : ''}</span>${echap(d.nom)}`;
+      // le nom n'est plus écrit : le portrait suffit, et la marque sur sa carte dit le reste (27 octobre 2026)
+      quoi = im ? `<span class="int-qui">${`<img src="${im}" alt="" style="--c:${COULEUR[d.lignee]}">`}</span>` : echap(d.nom);
     } else quoi = '?';
   } else if (it.type === 'bouclier') { nom = 'Se protège'; quoi = 'Bouclier'; val = `+${it.v}`; unite = 'bouclier'; }
   else if (it.type === 'soin') { nom = it.nom; quoi = 'Se répare'; val = `+${it.v}`; unite = 'PV'; }
@@ -462,6 +465,25 @@ function bilanChaine(s: CombatEtat): string {
 /** Le nom et le visage d'un ennemi : un garde d'archipel pillé prend ceux du Porteur de la garnison qu'il incarne */
 const nomEnnemi = (en: EnnemiEtat) => (en.porteur ? porteurDef(en.porteur).nom : ennemiDef(en.id).nom);
 const visageEnnemi = (en: EnnemiEtat) => (en.porteur ? portrait(en.porteur) : illustrationEnnemi(en.id));
+
+/**
+ * La marque d'un Porteur visé (27 octobre 2026). Bryan : « si Ilka avait une marque visuelle, on verrait tout de suite
+ * qu'elle est concernée ». Sur son portrait : le visage de chaque ennemi qui le frappe (en groupe) et les PV qu'il perdra,
+ * bouclier déduit ; un bouclier qui prend tout le coup se lit en bleu.
+ */
+function marqueCoups(s: CombatEtat, recus: CoupAttendu[], pv: number): string {
+  const net = recus.reduce((t, c) => t + c.net, 0);
+  const absorbe = recus.reduce((t, c) => t + c.absorbe, 0);
+  const groupe = enGroupe(s);
+  const qui = [...new Set(recus.map((c) => c.rang))].map((r) => tousEnnemis(s).find((en) => (en.rang ?? 0) === r)).filter((en): en is EnnemiEtat => !!en);
+  const visages = groupe ? qui.map((en) => { const im = visageEnnemi(en); return im ? `<img src="${im}" alt="">` : ''; }).join('') : '';
+  const protege = net === 0 && absorbe > 0;
+  const noms = qui.map(nomEnnemi).join(' et ');
+  const dit = protege ? `${noms} le frappe, le bouclier prend tout le coup` : `${noms} le frappe : −${net} PV${absorbe ? `, ${absorbe} pris par le bouclier` : ''}${net >= pv ? ', il tombera' : ''}`;
+  return `<span class="marque-coups${protege ? ' protege' : ''}${net >= pv ? ' fatal' : ''}" role="img" aria-label="${echap(dit)}" title="${echap(dit)}">`
+    + (visages ? `<span class="mc-qui">${visages}</span>` : protege ? ICO.bouclier : ICO.atk)
+    + `<b>${protege ? '0' : `−${net}`}</b></span>`;
+}
 
 function vignettesGroupe(e: Ecran): string {
   const s = e.etat;
@@ -617,20 +639,23 @@ function htmlEcranCombat(e: Ecran): string {
 
   // l'escouade
   h += '<section class="escouade-combat" aria-label="Escouade">';
+  const coups = coupsAttendus(s);
   for (const p of s.porteurs) {
     const d = porteurDef(p.id);
     const ko = p.pv <= 0;
-    // dans un groupe, chaque ennemi debout annonce sa propre attaque
-    const cible = !ko && !C_brume(s) && C_ennemisDebout(s).some((en) => { const i = intentionDe(s, en); return i.type === 'atk' && (i.zone || i.cibleId === p.id); });
+    // les coups annoncés sur lui, calculés par le moteur (bouclier, Fêlure, chaîne posée compris)
+    const recus = ko ? [] : coups.get(p.id) ?? [];
+    const cible = recus.length > 0;
+    const perte = recus.reduce((t, c) => t + c.net, 0);
     const img = portrait(d.id);
     const basPv = !ko && p.pv / p.pvMax <= 0.3;
     const soigne = !ko && s.chaine.some((g) => soigneUnSeul(g) && g.cible === p.id);
-    h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${basPv ? ' bas' : ''}${soigne ? ' soigne' : ''}" data-porteur="${p.id}" data-pvmax="${p.pvMax}" style="--c:${COULEUR[d.lignee]}">${popsPour(e, p.id)}`
+    h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${cible && perte >= p.pv ? ' fatal' : ''}${basPv ? ' bas' : ''}${soigne ? ' soigne' : ''}" data-porteur="${p.id}" data-pvmax="${p.pvMax}" style="--c:${COULEUR[d.lignee]}">${popsPour(e, p.id)}`
       + (img ? `<span class="cb-fond" style="background-image:url(${img})" aria-hidden="true"></span>` : '')
       + `<span class="avatar${img ? '' : ' sans-portrait'}" style="--t:34px" aria-hidden="true">${img ? `<img src="${img}" alt="">` : `<b>${echap(d.nom.charAt(0))}</b>`}</span>`
       + `<div class="cb-infos"><span class="n">${echap(d.nom)}</span><span class="cb-lignee" aria-hidden="true">${ko ? 'À terre' : NOMS_LIGNEE[d.lignee].nom}</span>`
-      + `<div class="cb-vie">${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5, ...(p.usure ? { usure: p.usure } : {}) })}<span class="chiffre" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}${p.usure ? `, l’Usure en retire ${p.usure}` : ''}`}">${ko ? '0' : p.pv}<small aria-hidden="true">/ ${p.pvMax}</small></span></div></div>`
-      + (cible ? `<span class="marque-cible">${ICO.atk}CIBLE</span>` : '') + (soigne ? `<span class="marque-soin" aria-label="Sera soigné">${ICO.soin}</span>` : '') + `</div>`;
+      + `<div class="cb-vie">${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5, ...(p.usure ? { usure: p.usure } : {}), ...(perte && !verrou ? { perte } : {}) })}<span class="chiffre" aria-label="${ko ? 'À terre' : `${p.pv} PV sur ${p.pvMax}${p.usure ? `, l’Usure en retire ${p.usure}` : ''}`}">${ko ? '0' : p.pv}<small aria-hidden="true">/ ${p.pvMax}</small></span></div></div>`
+      + (cible && !verrou ? marqueCoups(s, recus, p.pv) : '') + (soigne ? `<span class="marque-soin" aria-label="Sera soigné">${ICO.soin}</span>` : '') + `</div>`;
   }
   h += `</section><div class="ligne-escouade">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>${s.ombre ? `<span class="etat ombre actif">${ICO.eclat}Ombre agissante</span>` : ''}`
     // les piles ouvrent le journal du combat (27 octobre 2026) : les cartes jouées tour par tour, la défausse et la pioche
