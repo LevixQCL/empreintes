@@ -8,7 +8,7 @@
 // ne doit servir au chargement du module, seulement dans les fonctions.
 
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, chargeNiveau } from '../core/collection';
-import { DECK_DEPART, GESTES_SPECIAUX, METAL_FORCE, METAL_FREQ, METAL_RENFORT, MODULES, carteId, gesteDeCarte, moduleDe, moduleDef } from '../core/donnees';
+import { DECK_DEPART, GESTES_SPECIAUX, METAL_FORCE, METAL_FREQ, METAL_RENFORT, MODULES_TIRABLES as MODULES, carteId, gesteDeCarte, moduleDe, moduleDef } from '../core/donnees';
 import { NOMS_EFFET } from '../core/effets';
 import { DISTRICT, EPREUVE_DECK_MIN } from '../core/jeu';
 import { REGLES, frequenceLibre } from '../core/regles';

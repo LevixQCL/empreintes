@@ -7,10 +7,10 @@
 
 import { CHAPITRES, chapitreOuvert } from './chroniques';
 import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
-import { DEPART_PORTEURS, moduleDe, moduleDef, porteurDef } from './donnees';
+import { DEPART_PORTEURS, MODULES, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, salleCourante } from './expedition';
 import {
-  acheter, garnirComptoir, prixComptoir,
+  choisirLegs, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
   enMission, envoyerMission, epreuvesDeLaSemaine, fouiller, partirEpreuve,
@@ -223,6 +223,9 @@ export function simulerParcours(
   while (j.expedition && j.expedition.combat.issue === 'en-cours') (opts.joueur === 'robot' ? jouerTour : jouerTourMoyen)(j.expedition.combat);
   remonter(j);
   if (!j.chambre) { j.chambre = true; j.recrues = true; }
+  // le Legs du district : chaque partie simulée reçoit une vierge différente (les neuf cartes et la Clé, tour à tour)
+  const legs = [...MODULES.filter((m) => m.legs).map((m) => m.id), 'cle'];
+  choisirLegs(j, legs[graine % legs.length]!);
   for (const o of OBJECTIFS) { j.energie += o.recompense.energie ?? 0; j.composants += o.recompense.composants ?? 0; j.creuseurs += o.recompense.creuseurs ?? 0; }
   j.objectif = OBJECTIFS.length;
 

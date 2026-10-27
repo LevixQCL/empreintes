@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ajouter, creerCombat, lancer } from '../src/core/combat';
-import { MODULES, PORTEURS, VOIES, porteurDef } from '../src/core/donnees';
+import { MODULES_TIRABLES as MODULES, PORTEURS, VOIES, porteurDef } from '../src/core/donnees';
 import { analyserChaine, frequencesEffectives } from '../src/core/regles';
 import type { CombatEtat, Effet, Geste, TypeGeste } from '../src/core/types';
 

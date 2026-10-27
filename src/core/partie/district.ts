@@ -1,7 +1,7 @@
 // Couche 3 — la vie du district : chantiers et Forge, postes, cartes confiées, creuseurs, entraînement, Comptoir, quotidiens, objectif réclamé.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef, PORTEURS, BATIMENTS, MODULES, moduleDe, moduleDef, carteId } from '../donnees';
+import { batimentDef, porteurDef, PORTEURS, BATIMENTS, MODULES_TIRABLES, moduleDe, moduleDef, carteId } from '../donnees';
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
@@ -177,6 +177,7 @@ export function poster(j: Jeu, id: string, b: Poste | null): Resultat {
 /** La Forge refabrique un exemplaire d'une carte déjà trouvée : un doublon de plus */
 export function fabriquer(j: Jeu, moduleId: string, now: number): Resultat {
   if (!j.collection[moduleId]) return non('On ne refabrique qu’une carte déjà trouvée.');
+  if (moduleDef(moduleId).legs) return non('Une carte du Legs est unique : la Forge ne sait pas la refaire.');
   if (j.forge) return non('La Forge est déjà occupée.');
   if (!posteDe(j, 'forge')) return non('Il faut un Porteur au travail à la Forge.');
   const c = coutRefabrication(moduleId);
@@ -418,10 +419,10 @@ export function garnirComptoir(j: Jeu, now: number): void {
   for (let i = c.offres.length; i < etals.length; i++) {
     const r = etals[i]!;
     let id: string | undefined;
-    const aMonter = Object.keys(j.collection).filter((k) => k.endsWith('@' + r) && !bases.has(moduleDe(k)) && doublonsRequis(k, j.collection[k]!.niveau) !== null);
+    const aMonter = Object.keys(j.collection).filter((k) => k.endsWith('@' + r) && !moduleDef(k).legs && !bases.has(moduleDe(k)) && doublonsRequis(k, j.collection[k]!.niveau) !== null);
     if (aMonter.length && t.nombre() < COMPTOIR.partDoublons) id = aMonter[t.entier(aMonter.length)];
     for (let g = 0; !id && g < 40; g++) {
-      const m = MODULES[t.entier(MODULES.length)]!;
+      const m = MODULES_TIRABLES[t.entier(MODULES_TIRABLES.length)]!;
       if (!bases.has(m.id)) id = carteId(m.id, r);
     }
     if (!id) break;

@@ -42,7 +42,7 @@ const depart = (): Escouade => Object.fromEntries(Object.entries(DEPART_PORTEURS
  */
 function classique(l: Lignee, metal: Rarete, charge: number): string[] {
   const n = COLLECTION.niveauDepart[metal];
-  const pool = MODULES.filter((m) => m.lignee === l && !CARTES_VOIES.has(m.id) && !EFFETS_VOIES.includes(m.effet?.type ?? ''))
+  const pool = MODULES.filter((m) => m.lignee === l && !m.legs && !CARTES_VOIES.has(m.id) && !EFFETS_VOIES.includes(m.effet?.type ?? ''))
     .map((m) => carteId(m.id, metal)).map((k) => ({ k, p: puissanceCarte(k, n), w: poidsCarte(k) }));
   let meilleur: { p: number; ks: string[] } = { p: -1, ks: [] };
   const choisir = (i: number, pris: typeof pool, p: number, w: number) => {

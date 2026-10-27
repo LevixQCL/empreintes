@@ -1,11 +1,11 @@
 // Couche 4 — ce que le district donne : kit des recrues, lectures et Ravitaillement, nouveautés.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef, MODULES, moduleDe, moduleDef, carteId } from '../donnees';
+import { batimentDef, porteurDef, MODULES, MODULES_TIRABLES, NOMS_LIGNEE, moduleDe, moduleDef, carteId } from '../donnees';
 import type { Rarete } from '../types';
-import { ajouterCarte, tirerChoix, NOMS_RARETE } from '../collection';
+import { COLLECTION, NIVEAU_METAL, ajouterCarte, tirerChoix, NOMS_RARETE } from '../collection';
 import { tireur } from '../rng';
-import { ARCHIVE, DISTRICT, log, non, porteursPresents, type Jeu, type Resultat, typeDuJour } from './etat';
+import { ARCHIVE, DISTRICT, log, niveauPorteur, non, porteursPresents, type Jeu, type Resultat, typeDuJour } from './etat';
 import { progresser, quotidienFait } from './district';
 
 // ---------- Kit de départ des recrues ----------
@@ -60,7 +60,7 @@ export function recompenserLecture(j: Jeu, chapitreId: string): string | null {
   if (j.luesRecompensees.includes(chapitreId)) return null;
   j.luesRecompensees.push(chapitreId);
   const lignee = ligneeLaMoinsFournie(j);
-  const pool = MODULES.filter((m) => m.lignee === lignee);
+  const pool = MODULES_TIRABLES.filter((m) => m.lignee === lignee);
   // d'abord une carte qu'on n'a pas encore en fer ; sinon un doublon
   const neuves = pool.filter((m) => !j.collection[carteId(m.id, 'fer')]);
   const liste = neuves.length ? neuves : pool;
@@ -182,3 +182,77 @@ export function quitterPostes(j: Jeu, escouade: string[]): void {
 // La première victoire de chaque Épreuve dans la semaine donne une carte au choix, dont une en argent au moins.
 
 /** Appelé quand le combat en cours vient de se terminer */
+
+// ---------- Le Legs du district (27 octobre 2026, docs/legs-du-district.md) ----------
+// L'ancienne directrice a caché dix vierges (cartes en nacre) sous la Tour du Noyau. Chaque joueur n'en reçoit qu'une, par la
+// lettre qu'elle a laissée : deux questions sur le directeur qu'il veut être, sans un chiffre. Le choix est définitif.
+// Comme toute nacre, la carte se porte à partir d'un Porteur de niveau 10 (NIVEAU_METAL), puis s'éveille avec lui.
+
+/** La lettre de la directrice : la première question choisit la lignée (ou la Clé), la seconde la voie */
+export const LETTRE_LEGS = {
+  titre: 'La lettre de la directrice',
+  texte: 'Sous la Tour du Noyau, derrière une plaque que personne n’avait pensé à dévisser, un coffre de nacre et une lettre. « Directeur, j’ai tenu ce district avant toi. Les Hauts vident les Berceaux ; j’ai sauvé ce que j’ai pu. Dix vierges, jamais portées. Une seule est pour toi : dis-moi qui tu es, et je te dirai laquelle. »',
+  question: 'Qu’est-ce qui tient un district debout ?',
+  lignees: [
+    { id: 'tech', nom: 'La machine', phrase: 'Des mains qui réparent ce que les autres jettent.' },
+    { id: 'bio', nom: 'Le corps', phrase: 'Des épaules qui encaissent pour ceux qui ne peuvent pas.' },
+    { id: 'reso', nom: 'L’empreinte', phrase: 'Des yeux qui voient ce que les autres ont oublié.' },
+    { id: 'cle', nom: 'Tout le monde à la fois', phrase: 'Personne ne tient seul. Le district non plus.' },
+  ],
+  voies: {
+    tech: { question: 'Et quand la machine s’emballe ?', options: [
+      { id: 'foulee-directrice', phrase: 'On court devant elle, plus vite qu’elle.' },
+      { id: 'bras-fonderie', phrase: 'On frappe plus fort qu’elle, une bonne fois.' },
+      { id: 'coeur-glaciere', phrase: 'On garde son énergie, et on la relâche au bon moment.' },
+    ] },
+    bio: { question: 'Et quand les coups pleuvent ?', options: [
+      { id: 'carapace-fondations', phrase: 'On encaisse ensemble, et on rend chaque coup.' },
+      { id: 'oeil-grande-nuit', phrase: 'On ne lâche jamais une proie.' },
+      { id: 'premiere-mue', phrase: 'On se relève toujours, tous ensemble.' },
+    ] },
+    reso: { question: 'Et quand personne ne veut entendre ?', options: [
+      { id: 'lanterne-lecture', phrase: 'On éclaire la suite, pas à pas.' },
+      { id: 'sceau-orseve', phrase: 'On lit la faute de l’autre, et on la lui rend.' },
+      { id: 'voix-quartier', phrase: 'On chante plus fort, tous sur la même note.' },
+    ] },
+  },
+} as const;
+
+/** La lettre attend le joueur : après la chambre scellée, au district, tant qu'il n'a pas reçu son Legs */
+export const legsEnAttente = (j: Jeu) => !!j.chambre && !j.expedition && !j.legs;
+
+/** Le joueur répond à la lettre : sa carte du Legs (ou la Clé) lui revient, scellée jusqu'à un Porteur de niveau 10 */
+export function choisirLegs(j: Jeu, id: string): Resultat {
+  if (!j.chambre) return non('Ouvre d’abord la chambre scellée.');
+  if (j.legs) return non('Tu as déjà reçu ton Legs.');
+  if (id === 'cle') {
+    j.legs = 'cle';
+    log(j, `Le Legs du district : la Clé du Legs rejoint le paquetage de tes escouades (avec un Porteur de niveau ${NIVEAU_METAL.nacre}).`);
+    return { ok: true };
+  }
+  const m = MODULES.find((x) => x.id === id && x.legs);
+  if (!m) return non('Cette carte ne fait pas partie du Legs.');
+  j.legs = id;
+  ajouterCarte(j, carteId(id, 'nacre'));
+  log(j, `Le Legs du district : ${m.nom} est à toi. Elle se portera avec un Porteur ${NOMS_LIGNEE[m.lignee].nom.toLowerCase()} de niveau ${NIVEAU_METAL.nacre}.`);
+  return { ok: true };
+}
+
+/** L'éveil : la carte du Legs passe au niveau 9 avec un Porteur de niveau 13, au niveau 10 avec un Porteur de niveau 16 */
+export const EVEIL_LEGS: { porteur: number; niveau: number }[] = [{ porteur: 13, niveau: 9 }, { porteur: 16, niveau: 10 }];
+export const niveauLegsPour = (niveauDuPorteur: number) =>
+  EVEIL_LEGS.reduce((n, e) => (niveauDuPorteur >= e.porteur ? Math.max(n, e.niveau) : n), COLLECTION.niveauDepart.nacre);
+
+/** À chaque tick : la carte du Legs s'éveille avec le Porteur qui la porte (elle ne redescend jamais) */
+export function eveillerLegs(j: Jeu) {
+  if (!j.legs || j.legs === 'cle') return;
+  const cle = carteId(j.legs, 'nacre');
+  const c = j.collection[cle];
+  const porteur = Object.keys(j.porteurs).find((id) => j.porteurs[id]!.modules.includes(cle));
+  if (!c || !porteur) return;
+  const n = niveauLegsPour(niveauPorteur(j, porteur).niveau);
+  if (n > c.niveau) {
+    c.niveau = n;
+    log(j, `${moduleDef(cle).nom} s’éveille avec ${porteurDef(porteur).nom} : niveau ${n}.`);
+  }
+}

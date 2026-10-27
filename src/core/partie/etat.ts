@@ -266,6 +266,8 @@ export interface Jeu {
   frontVaincu: boolean;
   /** les fils des Porteurs : nombre d'étapes faites par Porteur (23 octobre 2026) */
   fils?: Record<string, number>;
+  /** le Legs du district choisi dans la lettre de la directrice (27 octobre 2026) : une carte du Legs, ou « cle » (la Clé du Legs) */
+  legs?: string;
   /** le dernier âge du district montré au joueur (fenêtre « nouvel âge », 23 octobre 2026) */
   ageVu?: number;
   /** la dernière Strate où le jeu a proposé de protéger la partie (compte invisible) : une seule fois par palier */

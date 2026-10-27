@@ -8,7 +8,7 @@ import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEsco
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre, signeLibre } from '../core/regles';
-import { NOMS_EFFET, texteEffet } from '../core/effets';
+import { NOMS_EFFET, effetsDe, nomsEffets, texteEffet } from '../core/effets';
 import { multNiveau } from '../core/collection';
 import type { GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
 import { illustrationBatiment, illustrationModule, portrait, socleAction } from './art';
@@ -139,7 +139,7 @@ function ligneCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean): strin
   const origine = g.porteur === null ? ORIGINE_PAQUETAGE[g.id] : undefined;
   const img = cle ? illustrationModule(cle) : origine ? illustrationModule(g.id) : null;
   const effet = g.effet
-    ? `<span class="eq-effet"><b>${echap(NOMS_EFFET[g.effet.type])}</b> ${echap(texteEffet(g.effet))}</span>`
+    ? effetsDe(g).map((x) => `<span class="eq-effet"><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</span>`).join('')
     : `<span class="eq-effet sans">${NOM_ACTION[g.type]}</span>`;
   const corps = `<span class="eq-vignette" style="--m:${m ? COULEUR_RARETE[m.rarete] : 'rgba(205,239,255,.3)'}">`
     + (img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : `<span class="eq-sans">${g.porteur ? ICO.cartes : ICO.district}</span>`)
@@ -148,7 +148,7 @@ function ligneCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean): strin
     + socle(g.type, g.v, 'eq-force')
     + (cle && !j.vus.cartes.includes(cle) ? `<span class="eq-neuve">Nouvelle</span>` : '');
   return cle
-    ? `<li><button type="button" class="eq-carte" data-action="carte" data-id="${cle}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}${g.effet ? `, ${NOMS_EFFET[g.effet.type]}` : ''}. Voir la carte">${corps}</button></li>`
+    ? `<li><button type="button" class="eq-carte" data-action="carte" data-id="${cle}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}${g.effet ? `, ${nomsEffets(g)}` : ''}. Voir la carte">${corps}</button></li>`
     : `<li><div class="eq-carte fixe">${corps}</div></li>`;
 }
 

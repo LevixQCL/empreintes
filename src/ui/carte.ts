@@ -6,7 +6,7 @@
 // - la Nacre n'a pas de cadre : l'illustration va jusqu'aux bords.
 // Les tailles sont en unités de conteneur (cqw) : la même carte s'affiche en grand ou en petit.
 
-import { NOMS_EFFET } from '../core/effets';
+import { nomsEffets } from '../core/effets';
 import { DEPART_PORTEURS, NOMS_LIGNEE, voieDe } from '../core/donnees';
 import { NOMS_RARETE } from '../core/collection';
 import { frequenceLibre, signeLibre } from '../core/regles';
@@ -57,7 +57,7 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?:
   const freqs = accord
     ? `<span class="fc-freq" style="--fc:#5d5470" title="${m.effet?.type === 'diapason' ? 'Diapason : reprend la Fréquence de la carte d’avant' : 'Accord : prend la Fréquence qui prolonge ta suite'}">${signeLibre(m.effet)}</span>`
     : m.f.map((f) => `<span class="fc-freq" style="--fc:${couleurFrequence(f)}" title="Fréquence ${f}">${f}</span>`).join('');
-  const tags = (m.lourd ? '<em>2 pl.</em>' : '') + (m.effet ? `<em>${NOMS_EFFET[m.effet.type]}</em>` : '');
+  const tags = (m.lourd ? '<em>2 pl.</em>' : '') + (m.effet ? `<em>${nomsEffets(m)}</em>` : '');
   const gestes = `<li><span class="fc-freqs"${m.f.length > 1 && !accord ? ` title="Fréquences au choix : ${m.f.join(' ou ')}"` : ''}>${freqs}</span>`
     + `<span class="fc-gn">${ACTION[m.type]}${tags}</span>`
     + `<span class="fc-val ${m.type}" title="${LIBELLE[m.type]}">${ICONES[m.type]}${Math.round(m.v * mult)}</span></li>`;
@@ -72,7 +72,7 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?:
     const cristal = alt
       ? fs.map((f, i) => `<span class="fcp-teinte fcp-k" style="--fc:${couleurFrequence(f)};--i:${i}"></span>`).join('') + fs.map((f, i) => `<b class="fcp-f fcp-k" style="--fc:${couleurFrequence(f)};--i:${i}">${f}</b>`).join('')
       : `<span class="fcp-teinte"></span><b class="fcp-f">${accord ? signeLibre(m.effet) : m.f[0]}</b>`;
-    return `<div class="fc-ombre fo-${m.rarete}"><div class="fc-carte fcp fr-${m.rarete}${o.origine ? ' fc-paquetage' : ''}${alt ? ` alt alt-${fs.length}` : ''}" style="--n:${fs.length || 1};--cp-img:url(${plein.img});--cp-masque:url(${plein.masque});--fx:${plein.f[0]}%;--fy:${plein.f[1]}%;--vx:${plein.v[0]}%;--vy:${plein.v[1]}%;--fc:${accord ? '#5d5470' : couleurFrequence(m.f[0]!)}" aria-label="${echap(m.nom)}, ${o.origine ? `fournie par la ${echap(o.origine)}` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + NOMS_EFFET[m.effet.type] : ''}">`
+    return `<div class="fc-ombre fo-${m.rarete}"><div class="fc-carte fcp fr-${m.rarete}${m.legs ? ' fc-legs' : ''}${o.origine ? ' fc-paquetage' : ''}${alt ? ` alt alt-${fs.length}` : ''}" style="--n:${fs.length || 1};--cp-img:url(${plein.img});--cp-masque:url(${plein.masque});--fx:${plein.f[0]}%;--fy:${plein.f[1]}%;--vx:${plein.v[0]}%;--vy:${plein.v[1]}%;--fc:${accord ? '#5d5470' : couleurFrequence(m.f[0]!)}" aria-label="${echap(m.nom)}, ${o.origine ? `fournie par la ${echap(o.origine)}` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + nomsEffets(m) : ''}">`
       + `<div class="fc-art">${art}${ill ? FX[m.rarete] : ''}</div>`
       + `<span class="fcp-cadre"></span>${cristal}`
       + `<b class="fcp-v${v >= 10 ? ' deux' : ''}">${v}</b>`
@@ -81,7 +81,7 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?:
       + (o.origine
         ? `<span class="fcp-puces"><span class="fc-lignee" style="--c:#CDEFFF">${echap(o.origine)}</span></span>`
         : `<span class="fcp-puces"><b class="fcp-niv" title="Niveau ${niveau}">Niv.<i>${niveau}</i></b><span class="fc-lignee" style="--c:${COULEUR[m.lignee]}">${NOMS_LIGNEE[m.lignee].court}</span></span>`)
-      + (m.effet || m.lourd ? `<span class="fcp-effet">${m.effet ? NOMS_EFFET[m.effet.type] : ''}${m.lourd ? `${m.effet ? ' · ' : ''}2 pl.` : ''}</span>` : '')
+      + (m.effet || m.lourd ? `<span class="fcp-effet">${m.effet ? nomsEffets(m) : ''}${m.lourd ? `${m.effet ? ' · ' : ''}2 pl.` : ''}</span>` : '')
       + `<span class="fcp-nom">${echap(m.nom)}</span>`
       + `</div></div>`;
   }

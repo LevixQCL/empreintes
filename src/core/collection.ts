@@ -1,7 +1,7 @@
 // La collection : les cartes qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
 // Tout le hasard passe par un état `rng` sauvegardé : aucun hasard n'est jamais payé.
 
-import { MODULES, carteId, gesteDeCarte, moduleDef } from './donnees';
+import { MODULES_TIRABLES, carteId, gesteDeCarte, moduleDef } from './donnees';
 import { tireur } from './rng';
 import type { GesteDef, Lignee, Rarete } from './types';
 
@@ -94,7 +94,7 @@ export function tirerRarete(e: EtatCollection, strate: number, minimum: Rarete =
 /** Tire une carte : un métal, puis une carte parmi toutes (chaque carte existe dans les cinq métaux) */
 export function tirerCarte(e: EtatCollection, strate: number, minimum: Rarete = 'fer', lignee?: Lignee): string {
   const r = tirerRarete(e, strate, minimum);
-  const pool = lignee ? MODULES.filter((m) => m.lignee === lignee) : MODULES;
+  const pool = lignee ? MODULES_TIRABLES.filter((m) => m.lignee === lignee) : MODULES_TIRABLES;
   return carteId(pool[tireur(e).entier(pool.length)]!.id, r);
 }
 
@@ -105,9 +105,9 @@ export function tirerCarte(e: EtatCollection, strate: number, minimum: Rarete = 
 export function tirerTrouvaille(e: EtatCollection, strate: number, minimum: Rarete = 'fer', lignee?: Lignee): string {
   const r = tirerRarete(e, strate, minimum);
   const t = tireur(e);
-  const possedees = Object.keys(e.collection).filter((id) => id.endsWith('@' + r) && (!lignee || moduleDef(id).lignee === lignee));
+  const possedees = Object.keys(e.collection).filter((id) => id.endsWith('@' + r) && !moduleDef(id).legs && (!lignee || moduleDef(id).lignee === lignee));
   if (possedees.length && t.nombre() < COLLECTION.affinite) return possedees[t.entier(possedees.length)]!;
-  const pool = lignee ? MODULES.filter((m) => m.lignee === lignee) : MODULES;
+  const pool = lignee ? MODULES_TIRABLES.filter((m) => m.lignee === lignee) : MODULES_TIRABLES;
   return carteId(pool[t.entier(pool.length)]!.id, r);
 }
 
@@ -135,6 +135,8 @@ export function ajouterCarte(e: EtatCollection, id: string): boolean {
 
 /** Doublons nécessaires pour le niveau suivant (null au niveau max) */
 export function doublonsRequis(id: string, niveau: number): number | null {
+  // une carte du Legs est unique : elle ne monte pas avec des doublons, elle s'éveille avec son Porteur (eveillerLegs)
+  if (moduleDef(id).legs) return null;
   const r = moduleDef(id).rarete;
   if (niveau >= COLLECTION.niveauMax) return null;
   return COLLECTION.doublons[r][niveau - COLLECTION.niveauDepart[r]] ?? null;

@@ -78,6 +78,17 @@ export const LORE_CARTES: Record<string, string> = {
   'chorale-ombres': 'Les ombres de plusieurs Résonants qui chantent ensemble, même quand leurs propriétaires se taisent. Joss dit que c’est la seule chorale qui ne fait jamais de fausse note.',
   'cloche-abysses': 'Une cloche remontée de la Strate −8, couverte de coquillages qui n’existent plus. Quand elle sonne, chaque empreinte autour d’elle répond sur le même ton.',
   'grand-unisson': 'Le quartier entier, une nuit, a chanté la même note pour veiller un des siens. Les Veilleurs l’ont accordée dans un carillon doré, dont chaque tube porte une voix. Il frappe d’autant plus fort qu’on est nombreux à le faire sonner.',
+
+  // ---------- Le Legs du district (27 octobre 2026) : la directrice parle, dans sa lettre ----------
+  'foulee-directrice': '« Je n’ai jamais été la plus forte. J’étais toujours la première arrivée. Ces jambes-là m’ont portée à travers chaque Strate ouverte de ce district. Cours devant, directeur : les autres suivront. »',
+  'bras-fonderie': '« Ce bras a coulé les premiers piliers du district, du temps où on bâtissait à la main sur l’eau. Il ne sait rien faire de délicat. Il n’en a jamais eu besoin. »',
+  'coeur-glaciere': '« Un cœur dessiné par la Glacière elle-même, avant qu’on comprenne ce qu’elle était. Il garde tout, et rend tout d’un coup. Ne le laisse jamais s’éteindre. »',
+  'carapace-fondations': '« Cette carapace a tenu une nuit entière devant la porte de l’ascenseur, pendant la grande crue. Personne n’est passé. Elle se souvient de chaque coup, et les rend. »',
+  'oeil-grande-nuit': '« La nuit où les lumières du district se sont éteintes, quelqu’un voyait encore. Cet œil-là. Il trouve la faille, et il ne la quitte plus. »',
+  'premiere-mue': '« La toute première mue d’un Géné, gardée comme un trésor par sa famille, puis par moi. Elle rappelle au corps qu’il sait se refaire. À tous les corps autour. »',
+  'lanterne-lecture': '« La lanterne de la première Lectrice du district. Elle éclaire toujours la marche suivante, jamais plus loin : c’est assez pour monter un escalier entier. »',
+  'sceau-orseve': '« Je l’ai pris dans le bureau d’Isaure Orsève, le jour où elle a signé la fermeture de nos Berceaux. Il lit les fautes de ceux qui le regardent. Elle ne l’a jamais réclamé. »',
+  'voix-quartier': '« Le soir où on a appris la fermeture des Berceaux, le quartier entier est sorti chanter sous la Tour. Une seule note, des heures. Je l’ai gardée. Elle reprend toutes les voix qu’on lui donne. »',
 };
 
 /** Le lore d'une carte (« jambes-ressort@or » → celui de « jambes-ressort ») */

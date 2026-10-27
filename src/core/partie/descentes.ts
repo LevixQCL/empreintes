@@ -1,16 +1,16 @@
 // Couche 5 — les descentes : départs (expédition, fouille ciblée, Épreuve), escouade, missions, exploration des Strates, chambre scellée.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, GESTES_SPECIAUX, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
+import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, CLE_LEGS, GESTES_SPECIAUX, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
 import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, forceStrate, nouvelleExploration, type CibleFouille } from '../expedition';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
-import { COLLECTION, ajouterCarte, cartesEnJeu, niveauRequis, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
+import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { ACCORD_OUVERT, CONFIANCE, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
 import { chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
-import { donnerKitRecrues, quitterPostes, refus } from './recompenses';
+import { donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
 
 // ---------- Expéditions ----------
@@ -25,7 +25,18 @@ export function gestesDe(j: Jeu, id: string): GesteDef[] {
 }
 
 /** Le deck de combat d'une escouade : les cartes de ses Porteurs, plus les cartes du district */
-export const deckEscouade = (j: Jeu, escouade: string[]): GesteDef[] => [...escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX];
+export const deckEscouade = (j: Jeu, escouade: string[]): GesteDef[] => {
+  const cle = cleDuLegs(j, escouade);
+  return [...escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX, ...(cle ? [cle] : [])];
+};
+
+/** La Clé du Legs, si le joueur l'a choisie et qu'un Porteur de l'escouade a le niveau de la nacre ; sa force suit le plus avancé */
+export function cleDuLegs(j: Jeu, escouade: string[]): GesteDef | null {
+  if (j.legs !== 'cle' || !escouade.length) return null;
+  const n = Math.max(...escouade.map((id) => niveauPorteur(j, id).niveau));
+  if (n < NIVEAU_METAL.nacre) return null;
+  return { ...CLE_LEGS, v: Math.round(CLE_LEGS.v * (1 + COLLECTION.bonusNiveau * (niveauLegsPour(n) - COLLECTION.niveauDepart.nacre))) };
+}
 
 /** Les Porteurs de l'histoire qui rejoignent le district quand leur moment arrive ; renvoie les annonces */
 export function verifierArrivees(j: Jeu): string[] {

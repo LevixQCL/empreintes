@@ -53,6 +53,9 @@ export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string
 /** id, nom, lignée, métal d'origine, action, force (dans le métal d'origine), Fréquences (de la principale à la plus rare), effet, lourde */
 const c = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet?: Effet, lourd = false): ModuleDef =>
   ({ id, nom, lignee, rarete, type, v, f, ...(effet ? { effet } : {}), ...(lourd ? { lourd: true } : {}) });
+/** une carte du Legs : en nacre, deux effets */
+const legs = (id: string, nom: string, lignee: Lignee, type: TypeGeste, v: number, f: number[], effet: Effet, effet2: Effet, lourd = false): ModuleDef =>
+  ({ ...c(id, nom, lignee, 'nacre', type, v, f, effet, lourd), effet2, legs: true });
 
 export const MODULES: ModuleDef[] = [
   // ---------- Les 15 cartes de base : 5 par Porteur nommé, qu'il porte dès le départ ----------
@@ -126,7 +129,23 @@ export const MODULES: ModuleDef[] = [
   c('chorale-ombres', 'Chorale des ombres', 'reso', 'cuivre', 'atk', 10, [8, 9, 7], { type: 'unisson', part: 1.3 }),
   c('cloche-abysses', 'Cloche des abysses', 'reso', 'argent', 'bouclier', 15, [9, 7, 8], { type: 'diapason' }),
   c('grand-unisson', 'Grand unisson', 'reso', 'or', 'atk', 18, [9, 8, 6], { type: 'unisson', part: 1.4 }),
+  // ---------- Le Legs du district (27 octobre 2026, docs/legs-du-district.md) ----------
+  // Dix vierges cachées par l'ancienne directrice ; chaque joueur n'en reçoit qu'une (lettre de la directrice, LETTRE_LEGS).
+  // Exclusives (jamais trouvées ailleurs : MODULES_TIRABLES), en nacre seulement, les seules à deux effets. La nacre renforce
+  // leurs parts (×1,5) comme pour toute carte : les parts ci-dessous sont avant ce renfort. Une Fréquence libre est le premier effet.
+  legs('foulee-directrice', 'Foulée de la directrice', 'tech', 'atk', 16, [4, 3, 5], { type: 'elan' }, { type: 'crescendo', part: 0.2 }),
+  legs('bras-fonderie', 'Bras de la Fonderie', 'tech', 'atk', 44, [5, 6, 4], { type: 'percant' }, { type: 'elan' }, true),
+  legs('coeur-glaciere', 'Cœur de la Glacière', 'tech', 'atk', 20, [6, 5, 7], { type: 'decharge', part: 0.5 }, { type: 'flux', v: 1 }),
+  legs('carapace-fondations', 'Carapace des Fondations', 'bio', 'bouclier', 24, [2, 3, 1], { type: 'rempart', part: 0.5 }, { type: 'riposte', part: 0.4 }),
+  legs('oeil-grande-nuit', 'Œil de la Grande Nuit', 'bio', 'atk', 18, [3, 2, 4], { type: 'fissure', part: 0.2 }, { type: 'siphon', part: 0.35 }),
+  legs('premiere-mue', 'Première mue', 'bio', 'soin', 14, [1, 2, 3], { type: 'vague' }, { type: 'rempart', part: 0.35 }),
+  legs('lanterne-lecture', 'Lanterne de la première Lecture', 'reso', 'atk', 20, [8, 7, 9], { type: 'accord' }, { type: 'desarmer', part: 0.3 }),
+  legs('sceau-orseve', 'Sceau volé aux Orsève', 'reso', 'atk', 18, [7, 6, 8], { type: 'desarmer', part: 0.3 }, { type: 'fissure', part: 0.2 }),
+  legs('voix-quartier', 'Voix du quartier', 'reso', 'atk', 14, [9, 8, 7], { type: 'diapason' }, { type: 'unisson', part: 0.7 }),
 ];
+
+/** Les cartes qu'on peut trouver, acheter ou fabriquer : toutes, sauf celles du Legs */
+export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs);
 
 /**
  * Les voies (docs/familles-de-decks.md) : chaque Porteur nommé incarne une façon de gagner. Les cartes restent liées à la lignée
@@ -184,10 +203,19 @@ export const CARTE_CHAMBRE = carteId('oeil-relais', 'fer');
 const special = (id: string, nom: string, f: number, type: TypeGeste, v: number, effet?: Effet): GesteDef =>
   ({ id, carte: id, porteur: null, nom, f, type, v, ...(effet ? { effet } : {}) });
 export const GESTES_SPECIAUX: GesteDef[] = [special('stimulant', 'Stimulant', 1, 'soin', 5, { type: 'vague' }), special('repli', 'Repli', 9, 'bouclier', 10)];
+/**
+ * La Clé du Legs (27 octobre 2026) : la dixième vierge, pour le directeur qui répond « tout le monde à la fois » à la lettre.
+ * Elle rejoint le paquetage (jouée par personne, elle reste quand un Porteur tombe) dès qu'un Porteur de l'escouade a le niveau
+ * de la nacre, et grandit avec le plus avancé d'entre eux (comme une carte du Legs : niveaux 8, 9 et 10, +5 % par niveau).
+ */
+export const CLE_LEGS: GesteDef = special('cle-legs', 'Clé du Legs', 1, 'bouclier', 18, { type: 'accord' });
+CLE_LEGS.effet2 = { type: 'rempart', part: 0.75 };
+
 /** D'où vient chaque carte du paquetage : le bâtiment qui la fournit et ce qu'elle est */
 export const ORIGINE_PAQUETAGE: Record<string, { batiment: string; texte: string }> = {
   stimulant: { batiment: 'Clinique', texte: 'Une seringue de lumière verte, préparée par la Clinique pour chaque escouade.' },
   repli: { batiment: 'Tour du Noyau', texte: 'Une balise de la Tour du Noyau : une porte blindée s’ouvre, l’escouade s’y abrite.' },
+  'cle-legs': { batiment: 'Legs du district', texte: 'La dixième vierge de l’ancienne directrice : une clé de nacre qui ouvre toutes les portes, et les tient fermées derrière l’escouade.' },
 };
 
 // ---------- Bâtiments ----------
@@ -512,7 +540,9 @@ export const moduleDef = (cle: string): ModuleDef => {
   if (metal === undefined) return m;
   const def: ModuleDef = { ...m, id: cle, base: id, rarete: metal, v: Math.round(m.v * METAL_FORCE[metal] / METAL_FORCE[m.rarete]), f: m.f.slice(0, METAL_FREQ[metal]) };
   delete def.effet;
+  delete def.effet2;
   if (m.effet && METAL_RENFORT[metal] > 0) def.effet = renforcer(m.effet, METAL_RENFORT[metal]);
+  if (m.effet2 && METAL_RENFORT[metal] > 0) def.effet2 = renforcer(m.effet2, METAL_RENFORT[metal]);
   declinaisons.set(cle, def);
   return def;
 };
@@ -522,7 +552,7 @@ export function gesteDeCarte(cle: string, porteur: string, mult = 1): GesteDef {
   const m = moduleDef(cle);
   return {
     id: cle, carte: cle, porteur, nom: m.nom, f: m.f[0]!, ...(m.f.length > 1 ? { fs: m.f.slice() } : {}), type: m.type, v: Math.round(m.v * mult),
-    ...(m.lourd ? { lourd: true } : {}), ...(m.effet ? { effet: m.effet } : {}),
+    ...(m.lourd ? { lourd: true } : {}), ...(m.effet ? { effet: m.effet } : {}), ...(m.effet2 ? { effet2: m.effet2 } : {}),
   };
 }
 

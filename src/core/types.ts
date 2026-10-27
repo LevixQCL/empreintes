@@ -82,6 +82,10 @@ export interface ModuleDef {
   f: number[];
   /** l'effet de la carte ; un exemplaire ne l'a qu'à partir du cuivre */
   effet?: Effet;
+  /** second effet : seules les cartes du Legs en ont un (une Fréquence libre est toujours le premier) */
+  effet2?: Effet;
+  /** carte du Legs du district : exclusive, jamais trouvée ailleurs (docs/legs-du-district.md) */
+  legs?: true;
 }
 
 /** Une carte en jeu, telle que le moteur de combat la manipule */
@@ -102,6 +106,8 @@ export interface GesteDef {
   /** Prend 2 places dans la chaîne */
   lourd?: boolean;
   effet?: Effet;
+  /** second effet (cartes du Legs) */
+  effet2?: Effet;
   /** Place vide : un Porteur combat toujours avec 6 places ; celle qu'on ne remplit pas se pioche et ne se joue pas */
   vide?: boolean;
 }

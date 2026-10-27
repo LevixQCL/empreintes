@@ -5,7 +5,7 @@
 import { ECLATS, apercuChaine, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, puissance, usureCombat } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale, signeLibre } from '../core/regles';
-import { NOMS_EFFET, libelleEffet } from '../core/effets';
+import { effetsDe, libelleEffet, nomsEffets } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
 import { DISTRICT, PILLAGE } from '../core/jeu';
@@ -126,7 +126,7 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
     : `<i class="cp-teinte"></i><b class="cp-f">${accord ? signeLibre(g.effet) : g.f}</b>`;
   const cls = ['geste', taille, `gm-${metal}`, plein ? 'plein' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : '', o.felure ? 'brise-felure' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
-  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${g.effet ? ', ' + libelleEffet(g.effet) : ''}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}`;
+  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}`;
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]};--fc:${accord ? '#5d5470' : couleurFrequence(g.f)};--tex:url(${textureMetal(metal)})" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="g-cadre">`
     + (fond ? `<span class="g-art${ill ? '' : ' g-portrait'}" style="background-image:url(${fond})" aria-hidden="true"></span>` : '<span class="g-art g-vide" aria-hidden="true"></span>')
@@ -138,7 +138,7 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
     + (o.halo ? `<span class="g-suite">${ICO.monter}</span>` : '')
     + (o.felure ? `<span class="g-felure" aria-hidden="true">${ICO.fele}</span>` : '')
     + `<span class="g-plaque"><span class="g-ligne">${socle(g.type, g.v)}`
-    + (g.effet ? `<span class="g-effet">${NOMS_EFFET[g.effet.type]}</span>` : '') + `</span>`
+    + (g.effet ? `<span class="g-effet">${nomsEffets(g)}</span>` : '') + `</span>`
     + `<span class="g-nom">${echap(g.nom)}</span>`
     + (taille === 'chaine' ? `<span class="g-qui">${echap(nomP)}</span>` : '')
     + `</span></span></button>`;

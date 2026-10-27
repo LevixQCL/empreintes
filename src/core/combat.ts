@@ -5,7 +5,7 @@ import { DECK_DEPART, FAVEUR_CONDITION, ZONES, ennemiDef, porteurDef } from './d
 import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, places } from './regles';
 import { tireur } from './rng';
 import type {
-  BonusMarques, CibleRegle, CombatEtat, EnnemiEtat, Evenement, Geste, GesteDef, Intention, Lignee, LigneeGeste, Pas, PorteurEtat, Trait,
+  BonusMarques, CibleRegle, CombatEtat, Effet, EnnemiEtat, Evenement, Geste, GesteDef, Intention, Lignee, LigneeGeste, Pas, PorteurEtat, Trait,
 } from './types';
 
 export interface Resultat {
@@ -443,27 +443,32 @@ function plusBlesse(s: CombatEtat): PorteurEtat | undefined {
 
 function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Evenement[] {
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'Spécial';
-  const ef = g.effet;
+  // une carte du Legs a deux effets : chacun se lit par son type
+  const de = <T extends Effet['type']>(t: T) => [g.effet, g.effet2].find((e): e is Extract<Effet, { type: T }> => e?.type === t);
   const evs: Evenement[] = [];
   // Crescendo : plus la carte arrive tard dans la chaîne, plus elle frappe fort
-  const cresc = ef?.type === 'crescendo' ? 1 + ef.part * rang : 1;
+  const cr = de('crescendo');
+  const cresc = cr ? 1 + cr.part * rang : 1;
   // les conditions de salle : une lignée favorisée, une source qui renforce les soins
   const faveur = s.condition && FAVEUR_CONDITION[s.condition] === ligneeGeste(g) ? 1.2 : 1;
   const source = s.condition === 'sanctuaire' && g.type === 'soin' ? 1.3 : 1;
   // Débridage (Coup d'éclat des Augmentés) : les coups de ce tour frappent plus fort
   const debride = s.debride && g.type === 'atk' ? REGLES.eclat.debride : 1;
   // Décharge (Moteur) : elle vide le Flux et gagne une part de force par Flux vidé
-  const vide = ef?.type === 'decharge' ? s.flux : 0;
-  if (ef?.type === 'decharge' && vide) {
+  const dc = de('decharge');
+  const vide = dc ? s.flux : 0;
+  if (dc && vide) {
     s.flux = 0;
-    log(s, `Décharge : ${vide} Flux vidé${vide > 1 ? 's' : ''}, +${Math.round(ef.part * vide * 100)} % de force.`);
+    log(s, `Décharge : ${vide} Flux vidé${vide > 1 ? 's' : ''}, +${Math.round(dc.part * vide * 100)} % de force.`);
     evs.push({ kind: 'effet', cible: 'escouade', texte: 'Décharge' });
   }
-  const decharge = ef?.type === 'decharge' ? 1 + ef.part * vide : 1;
+  const decharge = dc ? 1 + dc.part * vide : 1;
   // Unisson (Chœur) : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne
-  const fsChaine = ef?.type === 'unisson' ? frequencesEffectives(s.chaine) : [];
-  const pareilles = ef?.type === 'unisson' ? fsChaine.filter((f, k) => k !== rang && f === fsChaine[rang]).length : 0;
-  const unisson = ef?.type === 'unisson' ? 1 + ef.part * pareilles : 1;
+  const un = de('unisson');
+  const fsChaine = un ? frequencesEffectives(s.chaine) : [];
+  const pareilles = un ? fsChaine.filter((f, k) => k !== rang && f === fsChaine[rang]).length : 0;
+  const unisson = un ? 1 + un.part * pareilles : 1;
+  const percant = !!de('percant');
   const force = g.v * mult * cresc * faveur * source * debride * decharge * unisson;
 
   /** Un coup porté à l'ennemi visé : lignées, Fissure, Évanescent, Blindé et bouclier ennemi (Perçant passe outre), puis Épines */
@@ -473,13 +478,13 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
     // Évanescent : hors Résonance, l'ennemi ne prend qu'une part des coups ; Blindé : chaque coup perd quelques points (Perçant passe outre)
     const evan = trait(s.ennemi, 'evanescent');
     // l'armure grandit doucement avec la puissance de l'ennemi (sinon les petites cartes ne servent plus à rien en profondeur)
-    const blinde = ef?.type === 'percant' ? 0 : Math.round((trait(s.ennemi, 'blinde')?.v ?? 0) * (1 + 0.4 * (s.ennemi.force - 1)));
+    const blinde = percant ? 0 : Math.round((trait(s.ennemi, 'blinde')?.v ?? 0) * (1 + 0.4 * (s.ennemi.force - 1)));
     const dmg = Math.max(0, Math.round(force * av * (1 + (s.ennemi.fissure ?? 0)) * (evan && mult <= 1 ? 1 - evan.part : 1)) - blinde);
-    const abs = ef?.type === 'percant' ? 0 : Math.min(s.ennemi.bouclier, dmg);
+    const abs = percant ? 0 : Math.min(s.ennemi.bouclier, dmg);
     s.ennemi.bouclier -= abs;
     const net = dmg - abs;
     s.ennemi.pv = Math.max(0, s.ennemi.pv - net);
-    log(s, `${nomP} · ${quoi} : ${net} dégâts${av > 1 ? ' (avantage de lignée)' : ''}${abs ? `, ${abs} absorbés` : ''}${ef?.type === 'percant' && s.ennemi.bouclier ? ', bouclier transpercé' : ''}.`);
+    log(s, `${nomP} · ${quoi} : ${net} dégâts${av > 1 ? ' (avantage de lignée)' : ''}${abs ? `, ${abs} absorbés` : ''}${percant && s.ennemi.bouclier ? ', bouclier transpercé' : ''}.`);
     evs.push({ kind: 'degats', cible: 'ennemi', net, absorbe: abs, rang: s.ennemi.rang ?? 0 });
     // Épines : une part du coup revient au Porteur qui a frappé, sans jamais le mettre à terre
     const epines = trait(s.ennemi, 'epines');
@@ -495,13 +500,14 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
 
   if (g.type === 'atk') {
     const net = frapper(force, g.nom);
-    if (ef?.type === 'siphon' && net > 0) {
+    const si = de('siphon');
+    if (si && net > 0) {
       // le Siphon soigne le Porteur qui a joué la carte : c'est lui qui boit la vie (s'il est à terre, le plus blessé)
       const lui = s.porteurs.find((p) => p.id === g.porteur && p.pv > 0);
       const c = lui ?? plusBlesse(s);
       if (c) {
         const avant = c.pv;
-        c.pv = Math.min(c.pvMax, c.pv + Math.round(net * ef.part));
+        c.pv = Math.min(c.pvMax, c.pv + Math.round(net * si.part));
         if (c.pv > avant) {
           log(s, `Siphon : ${porteurDef(c.id).nom} récupère ${c.pv - avant} PV.`);
           evs.push({ kind: 'soin', cible: c.id, v: c.pv - avant });
@@ -514,10 +520,11 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
     log(s, `${nomP} · ${g.nom} : bouclier d’escouade +${v}.`);
     evs.push({ kind: 'bouclier', cible: 'escouade', v });
     // Riposte (Carapace) : après son bouclier, elle frappe d'une part de tout le bouclier d'escouade, sans le dépenser
-    if (ef?.type === 'riposte' && s.ennemi.pv > 0) frapper(s.bouclier * ef.part * faveur * (s.debride ? REGLES.eclat.debride : 1), `${g.nom} (Riposte)`);
+    const rp = de('riposte');
+    if (rp && s.ennemi.pv > 0) frapper(s.bouclier * rp.part * faveur * (s.debride ? REGLES.eclat.debride : 1), `${g.nom} (Riposte)`);
   } else {
     const choisi = g.cible ? s.porteurs.find((p) => p.id === g.cible && p.pv > 0) : undefined;
-    const cibles = ef?.type === 'vague' ? vivants(s) : [choisi ?? plusBlesse(s)].filter((x): x is PorteurEtat => !!x);
+    const cibles = de('vague') ? vivants(s) : [choisi ?? plusBlesse(s)].filter((x): x is PorteurEtat => !!x);
     const morceaux: string[] = [];
     for (const c of cibles) {
       const avant = c.pv;
@@ -529,31 +536,33 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
     else log(s, `${nomP} · ${g.nom} : ${morceaux.join(', ')} PV.`);
   }
 
-  // effets qui ne dépendent pas du type de la carte
-  if (ef?.type === 'flux') {
-    const avant = s.flux;
-    s.flux = Math.min(REGLES.fluxMax, s.flux + ef.v);
-    if (s.flux > avant) {
-      log(s, `Surcharge : Flux +${s.flux - avant}.`);
-      evs.push({ kind: 'flux', gain: s.flux - avant });
+  // effets qui ne dépendent pas du type de la carte (les deux d'une carte du Legs, dans l'ordre)
+  for (const ef of [g.effet, g.effet2]) {
+    if (ef?.type === 'flux') {
+      const avant = s.flux;
+      s.flux = Math.min(REGLES.fluxMax, s.flux + ef.v);
+      if (s.flux > avant) {
+        log(s, `Surcharge : Flux +${s.flux - avant}.`);
+        evs.push({ kind: 'flux', gain: s.flux - avant });
+      }
+    } else if (ef?.type === 'desarmer' && s.intention.type === 'atk') {
+      const avant = s.intention.v;
+      s.intention.v = Math.round(avant * (1 - ef.part));
+      log(s, `Désarmé : sa prochaine attaque passe de ${avant} à ${s.intention.v}.`);
+      evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Désarmé', rang: s.ennemi.rang ?? 0 });
+    } else if (ef?.type === 'fissure' && s.ennemi.pv > 0) {
+      s.ennemi.fissure = Math.max(s.ennemi.fissure ?? 0, ef.part);
+      s.ennemi.fissureTours = 2;
+      log(s, `Fissure : l’ennemi subit +${Math.round(ef.part * 100)} % de dégâts jusqu’au tour prochain.`);
+      evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Fissure', rang: s.ennemi.rang ?? 0 });
+    } else if (ef?.type === 'elan') {
+      s.capaProchain = (s.capaProchain ?? 0) + 1;
+      log(s, 'Élan : la prochaine chaîne aura une place de plus.');
+      evs.push({ kind: 'effet', cible: 'escouade', texte: 'Élan' });
+    } else if (ef?.type === 'rempart') {
+      s.garde = Math.max(s.garde ?? 0, ef.part);
+      evs.push({ kind: 'effet', cible: 'escouade', texte: 'Rempart' });
     }
-  } else if (ef?.type === 'desarmer' && s.intention.type === 'atk') {
-    const avant = s.intention.v;
-    s.intention.v = Math.round(avant * (1 - ef.part));
-    log(s, `Désarmé : sa prochaine attaque passe de ${avant} à ${s.intention.v}.`);
-    evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Désarmé', rang: s.ennemi.rang ?? 0 });
-  } else if (ef?.type === 'fissure' && s.ennemi.pv > 0) {
-    s.ennemi.fissure = Math.max(s.ennemi.fissure ?? 0, ef.part);
-    s.ennemi.fissureTours = 2;
-    log(s, `Fissure : l’ennemi subit +${Math.round(ef.part * 100)} % de dégâts jusqu’au tour prochain.`);
-    evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Fissure', rang: s.ennemi.rang ?? 0 });
-  } else if (ef?.type === 'elan') {
-    s.capaProchain = (s.capaProchain ?? 0) + 1;
-    log(s, 'Élan : la prochaine chaîne aura une place de plus.');
-    evs.push({ kind: 'effet', cible: 'escouade', texte: 'Élan' });
-  } else if (ef?.type === 'rempart') {
-    s.garde = Math.max(s.garde ?? 0, ef.part);
-    evs.push({ kind: 'effet', cible: 'escouade', texte: 'Rempart' });
   }
   return evs;
 }
