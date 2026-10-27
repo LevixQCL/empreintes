@@ -1,7 +1,22 @@
 # Le Legs du district : proposition (27 octobre 2026)
 
-Rien n'est codé. Idée de Bryan : une dizaine de cartes en nacre, exclusives, offertes au joueur, qu'on ne peut utiliser
-qu'après avoir progressé. Le but : donner envie de jouer pour enfin les porter.
+Rien n'est codé. Idée de Bryan : une dizaine de cartes en nacre, exclusives, qu'on ne peut utiliser qu'après avoir progressé.
+Le but : donner envie de jouer pour enfin la porter.
+
+> **Correction de Bryan (27 octobre 2026) : chaque joueur ne reçoit qu'UNE seule des dix cartes**, pour que tout le monde n'ait pas
+> la même. Les sections 1 à 5 ci-dessous décrivaient dix cartes pour chacun : ce qui change est résumé en section 0.
+
+## 0. Une seule carte par joueur : ce qui change
+
+- **Le Legs devient une identité** : « tu as eu laquelle ? ». Il se voit dans la garnison (pillages) et pourra s'afficher au Grand Tableau.
+- **Les dix doivent se valoir** : plus question d'en avoir une « meilleure ». Chacune est la pièce maîtresse d'une voie, réglée au
+  robot pour que l'écart entre la plus forte et la plus faible reste petit (quelques points).
+- **Un seul sceau, en trois temps**, pour garder l'envie sur tout le mois :
+  - dès le départ, la carte est **visible mais scellée** (sa fiche complète, son sceau et la progression) ;
+  - **Strate −5 ouverte** (vers le jour 6) : le sceau cède, elle se porte, au niveau 8 ;
+  - **Strate −8** (vers le jour 21) : niveau 9 ; **le Premier Porteur vaincu** (vers le jour 32) : niveau 10, et la dernière lettre.
+- **« Un seul Legs par Porteur » disparaît** (il n'y en a qu'un) ; la carte reste liée à sa lignée et pèse sa Charge.
+- **Reste à décider : comment le joueur reçoit la sienne** (voir le message de Claude).
 
 ## 1. L'histoire
 
