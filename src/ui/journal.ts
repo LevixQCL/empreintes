@@ -26,7 +26,7 @@ const suites = Object.entries(REGLES.multSuite).map(([n, m]) => `${n} = +${pc(m 
 /** Chaque terme : son nom, ce qu'il fait en une ou deux phrases, et comment le reconnaître dans une ligne du journal */
 const LEXIQUE: Record<string, Terme> = {
   resonance: { nom: 'Résonance', motif: /Résonance/, texte: `Des Fréquences qui se suivent dans l’ordre dans la chaîne (3, 4, 5…). Suite de ${suites} : toutes les cartes de la chaîne sont renforcées d’autant, et le Flux monte de 1.` },
-  echo: { nom: 'Écho', motif: /Écho(?! ancien| de veilleur|-)/, texte: `Trois cartes de la même Fréquence dans la chaîne : l’escouade gagne ${REGLES.bouclierEcho} de bouclier et 1 Flux.` },
+  echo: { nom: 'Écho', motif: /Écho(?! ancien| de veilleur|-)/, texte: `Trois cartes de la même Fréquence dans la chaîne : ces trois cartes sont renforcées de +${Math.round((REGLES.echo - 1) * 100)} % (dégâts, protection ou soin) et l’escouade gagne 1 Flux.` },
   flux: { nom: 'Flux', motif: /Flux/, texte: `La réserve sous la chaîne (${REGLES.fluxMax} au plus). Elle se remplit par une Résonance, un Écho ou une Fêlure brisée dans une suite ; on la dépense pour une place de plus, une nouvelle main, ou un Coup d’éclat quand elle est pleine.` },
   bouclier: { nom: 'Bouclier d’escouade', motif: /bouclier d’escouade|protégé/, texte: 'Commun aux trois Porteurs : il prend les coups ennemis avant leurs PV. Quand plusieurs Porteurs vont être touchés, il couvre d’abord celui marqué d’un bouclier : le plus menacé, ou celui que tu touches. Il retombe à zéro à la fin du tour ennemi (sauf Rempart ou Bras de quai).' },
   absorbe: { nom: 'Absorbé', motif: /absorbés?/, texte: 'La part du coup prise par un bouclier : elle ne touche pas les PV. Perçant passe outre le bouclier de l’ennemi.' },
@@ -202,7 +202,7 @@ function corpsTour(t: TourHisto, n: number): string {
   let h = '';
   if (t.chaine.length) {
     const reso = t.suite ? `<span class="jb reso">${ICO.flux}Résonance ×${String(t.mult).replace('.', ',')}</span>` : '';
-    const echo = t.echo ? `<span class="jb echo">${ICO.bouclier}Écho</span>` : '';
+    const echo = t.echo ? `<span class="jb echo">${ICO.boost}Écho</span>` : '';
     const brouille = t.brouille ? `<span class="jb brouille">Brouillée</span>` : '';
     h += `<div class="jt-chaine"><div class="jt-cartes">${t.chaine.map((c, i) => carteMini(c, i)).join('')}</div>${reso || echo || brouille ? `<div class="jt-badges">${reso}${echo}${brouille}</div>` : ''}</div>`;
   }

@@ -189,7 +189,7 @@ function ongletDeck(): string {
   const suite = Object.entries(REGLES.multSuite).map(([n, m]) => `${n} = +${Math.round((m - 1) * 100)} %`).join(', ');
   h += `<section class="bloc">${titre(ICO.boost, 'Bien construire')}<ul class="g-idees">`
     + idee(ICO.flux, 'Couvre les Fréquences de 1 à 9', `Des Fréquences qui se suivent font une Résonance (suite de ${suite}). Chaque lignée a sa zone : une escouade des trois lignées couvre l’échelle, et un chiffre absent coupe tes suites.`, echelleFrequences())
-    + idee(ICO.cartes, 'Double les Fréquences utiles', `Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : bouclier d’escouade +${REGLES.bouclierEcho} et +1 Flux.`)
+    + idee(ICO.cartes, 'Double les Fréquences utiles', `Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : ces trois cartes +${Math.round((REGLES.echo - 1) * 100)} % et +1 Flux. Mais une Fréquence empilée, ce sont moins de suites.`)
     + idee(ICO.atk, 'Mélange les actions', `Attaque, protection et soin. Le deck de départ en compte ${depart.atk}, ${depart.bouclier} et ${depart.soin} sur ${nDepart} : un bon repère.`, `<div class="g-barre" role="img" aria-label="${depart.atk} attaques, ${depart.bouclier} protections, ${depart.soin} soins">${barre}</div>`)
     + idee(ICO.cristal, 'Choisis aussi pour les Marques', 'Chaque Porteur gagne une Marque par ses exploits, presque toujours en combattant. Elle ne joue que s’il est dans l’escouade : l’onglet Escouade dit ce qu’elle fait et combien il en reste à accomplir.')
     + idee(ICO.soin, 'Répartis les soins', 'Les cartes d’un Porteur à terre s’éteignent. Si tous tes soins sont chez lui, ils perdent leur effet au pire moment.')
@@ -293,7 +293,7 @@ function astuce(t: TypeEffet): string {
     case 'accord': return 'Elle bouche le trou d’une suite. En tête de chaîne, elle se cale juste avant la carte qui la suit.';
     case 'riposte': return 'Pose-la en dernier : elle profite de tout le bouclier déjà monté dans la chaîne, et de celui gardé par un Rempart ou la Marque de Doran.';
     case 'decharge': return `Remplis le Flux (Surcharge, Résonance, Écho), puis vide-le d’un coup : à ${REGLES.fluxMax} Flux, la force fait plus que doubler. Mais ce Flux ne servira ni au Coup d’éclat ni à une place de plus.`;
-    case 'diapason': return `Elle complète un Écho : deux cartes de même Fréquence et un Diapason, et l’escouade gagne ${REGLES.bouclierEcho} de bouclier et 1 Flux.`;
+    case 'diapason': return `Elle complète un Écho : deux cartes de même Fréquence et un Diapason, et ces trois cartes sont renforcées de +${Math.round((REGLES.echo - 1) * 100)} %, avec 1 Flux.`;
     case 'unisson': return 'Trois cartes de même Fréquence : chacune compte les deux autres. La Dissonance ne brouille que les suites, pas l’Unisson ni l’Écho.';
     case 'crescendo': {
       const parts = MODULES.map((m) => m.effet).filter((e): e is { type: 'crescendo'; part: number } => e?.type === 'crescendo').map((e) => e.part);

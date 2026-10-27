@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ajouter, creerCombat, lancer } from '../src/core/combat';
 import { MODULES_TIRABLES as MODULES, PORTEURS, VOIES, porteurDef } from '../src/core/donnees';
-import { analyserChaine, frequencesEffectives } from '../src/core/regles';
+import { REGLES, analyserChaine, frequencesEffectives } from '../src/core/regles';
 import type { CombatEtat, Effet, Geste, TypeGeste } from '../src/core/types';
 
 // Les voies, étape 1 (27 octobre 2026) : Riposte (Carapace), Décharge (Moteur), Diapason et Unisson (Chœur)
@@ -71,7 +71,8 @@ describe('Les voies : étape 1', () => {
     const s = combat([geste(9, 'atk', 10, { type: 'unisson', part: 0.6 }), geste(9, 'bouclier', 5), geste(1, 'bouclier', 5, { type: 'diapason' })]);
     s.intention = { type: 'bouclier', v: 0 };
     jouer(s);
-    expect(degats(s)).toBe(22);
+    // 10 × (1 + 0,6 × 2) = 22, puis l'Écho des trois 9
+    expect(degats(s)).toBe(Math.round(22 * REGLES.echo));
   });
 
   it('La Dissonance brouille les suites, pas l’Unisson ni l’Écho', () => {
@@ -80,8 +81,20 @@ describe('Les voies : étape 1', () => {
     s.intention = { type: 'bouclier', v: 0 };
     const flux = s.flux;
     jouer(s);
-    expect(degats(s)).toBe(16);
+    expect(degats(s)).toBe(Math.round(16 * REGLES.echo));
     expect(s.flux).toBe(flux + 1);
+  });
+
+  it('L’Écho renforce seulement les trois cartes de même Fréquence, quelle que soit leur action', () => {
+    const s = combat([geste(4, 'atk', 10), geste(4, 'atk', 10), geste(4, 'bouclier', 10), geste(7, 'atk', 10)]);
+    s.capaBonus = 1;
+    s.intention = { type: 'bouclier', v: 0 };
+    let bouclier = 0;
+    for (const g of s.main.slice()) ajouter(s, g.uid);
+    lancer(s, { apercu: (ev) => { if (ev.kind === 'bouclier' && ev.cible === 'escouade') bouclier += ev.v; } });
+    expect(degats(s)).toBe(2 * Math.round(10 * REGLES.echo) + 10);
+    expect(bouclier).toBe(Math.round(10 * REGLES.echo));
+    expect(analyserChaine([{ f: 4 }, { f: 4 }, { f: 4 }]).echoF).toBe(4);
   });
 
   it('Chaque voie de l’étape 1 a ses cartes, dans sa lignée et sa plage de Fréquences', () => {

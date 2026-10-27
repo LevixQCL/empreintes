@@ -2,7 +2,7 @@
 // l'interface appelle ces fonctions puis anime les « pas » qu'elles renvoient.
 
 import { CONDITIONS, DECK_DEPART, FAVEUR_CONDITION, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from './donnees';
-import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, places } from './regles';
+import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, places } from './regles';
 import { tireur } from './rng';
 import type {
   BonusMarques, CalculHisto, CarteHisto, CibleRegle, CombatEtat, Effet, EnnemiEtat, Evenement, Geste, GesteDef, Intention, Lignee, LigneeGeste,
@@ -418,7 +418,6 @@ export function apercuChaine(s: CombatEtat): { degats: number; absorbe: number; 
     apercu: (ev) => {
       if (ev.kind === 'degats' && ev.cible === 'ennemi') { r.degats += ev.net; r.absorbe += ev.absorbe; }
       else if (ev.kind === 'bouclier' && ev.cible === 'escouade') r.bouclier += ev.v;
-      else if (ev.kind === 'echo') r.bouclier += REGLES.bouclierEcho;
       else if (ev.kind === 'soin' && ev.cible !== 'ennemi' && ev.cible !== 'escouade') r.soin += ev.v;
     },
   });
@@ -479,6 +478,10 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     log(s, `Résonance ! Suite de ${a.suite} : effets +${Math.round((a.mult - 1) * 100)} %.`, { sorte: 'effet' });
     emettre({ kind: 'resonance', suite: a.suite, mult: a.mult });
   }
+  if (a.echo) {
+    log(s, `Écho ! Trois Fréquences identiques : ces cartes +${Math.round((REGLES.echo - 1) * 100)} %.`, { sorte: 'effet' });
+    emettre({ kind: 'echo' });
+  }
   for (const [i, g] of s.chaine.entries()) {
     RANG = i;
     emettre({ kind: 'carte', rang: i, total: s.chaine.length, lignee: ligneeGeste(g), type: g.type, porteur: g.porteur, suite: a.suite, ...(g.effet ? { effet: g.effet.type } : {}) });
@@ -495,11 +498,6 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     }
   }
   RANG = undefined;
-  if (a.echo) {
-    s.bouclier += REGLES.bouclierEcho;
-    log(s, `Écho : trois Fréquences identiques, bouclier d’escouade +${REGLES.bouclierEcho}.`, { sorte: 'protection', v: REGLES.bouclierEcho });
-    emettre({ kind: 'echo' });
-  }
   const gain = (a.suite >= 3 ? 1 : 0) + (a.echo ? 1 : 0);
   if (gain) {
     const avant = s.flux;
@@ -797,6 +795,7 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   const f: Facteur[] = [];
   const mettre = (nom: string, m: number) => { if (m !== 1) f.push({ nom, m }); };
   mettre(`Résonance (suite de ${suite})`, mult);
+  mettre('Écho (trois Fréquences identiques)', multEcho(chaine, rang));
   // Crescendo : plus la carte arrive tard dans la chaîne, plus elle frappe fort
   const cr = de('crescendo');
   if (cr) mettre(`Crescendo (${rang + 1}e de la chaîne)`, 1 + cr.part * rang);

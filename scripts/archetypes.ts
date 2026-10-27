@@ -12,7 +12,7 @@ import { writeFileSync } from 'node:fs';
 import { cartesEnJeu, chargeNiveau, placesVides, poidsCarte, puissanceCarte } from '../src/core/collection';
 import { GESTES_SPECIAUX, MODULES_TIRABLES, NOMS_LIGNEE, carteId, moduleDef } from '../src/core/donnees';
 import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExploration, salleCourante } from '../src/core/expedition';
-import { frequenceLibre } from '../src/core/regles';
+import { REGLES, frequenceLibre } from '../src/core/regles';
 import { jouerTour, jouerTourMoyen, type Escouade } from '../src/core/robot';
 import type { CombatEtat, Lignee, Rarete } from '../src/core/types';
 
@@ -23,6 +23,10 @@ const arg = (nom: string, defaut: string) => {
 const PARTIES = Number(arg('parties', '120'));
 const METAL = arg('metal', 'fer') as Rarete;
 const NIVEAU_CARTES = 10;
+/** --echo 1.6 : essaie un autre bonus d'Écho sans toucher aux règles */
+if (process.argv.includes('--echo')) (REGLES as { echo: number }).echo = Number(arg('echo', String(REGLES.echo)));
+/** --sortie fichier.md : écrit le rapport ailleurs que dans docs/ (pour comparer plusieurs réglages) */
+const SORTIE = arg('sortie', '');
 /** Charge d'un Porteur de niveau 6 : assez pour 6 cartes moyennes, pas pour 6 grosses */
 const CHARGE = chargeNiveau(6);
 /** Mêmes PV pour tout le monde : les recrues et les Porteurs nommés n'ont pas les mêmes, ça fausserait la comparaison */
@@ -66,7 +70,26 @@ function chanceSuite(deck: string[], tirages = 400): number {
   return ok / tirages;
 }
 
-type Choix = 'force' | 'suites';
+/** Chance qu'une main de 5 cartes permette un Écho (trois Fréquences identiques, Diapason compris) */
+function chanceEcho(deck: string[], tirages = 400): number {
+  if (deck.length < 5) return 0;
+  let graine = 11;
+  const alea = () => ((graine = (graine * 16807) % 2147483647) / 2147483647);
+  let ok = 0;
+  for (let k = 0; k < tirages; k++) {
+    const tas = [...deck, ...Array<string>(Math.max(0, 20 - deck.length)).fill('')];
+    const main: string[] = [];
+    for (let i = 0; i < 5; i++) main.push(tas.splice(Math.floor(alea() * tas.length), 1)[0]!);
+    const cartes = main.filter(Boolean).map(moduleDef);
+    const joker = cartes.some((m) => m.effet?.type === 'diapason') ? 1 : 0;
+    const compte = new Map<number, number>();
+    for (const m of cartes) if (!frequenceLibre(m.effet) && !m.lourd) for (const f of m.f) compte.set(f, (compte.get(f) ?? 0) + 1);
+    if ([...compte.values()].some((n) => n + joker >= 3)) ok++;
+  }
+  return ok / tirages;
+}
+
+type Choix = 'force' | 'suites' | 'echos';
 /** Compose les cartes de chaque Porteur : 6 au plus, Charge respectée, 2 défenses au moins */
 function composer(porteurs: string[], lignees: Lignee[], choix: Choix): Escouade {
   const pris: Record<string, string[]> = Object.fromEntries(porteurs.map((p) => [p, []]));
@@ -84,13 +107,15 @@ function composer(porteurs: string[], lignees: Lignee[], choix: Choix): Escouade
   };
   for (;;) {
     const deck = Object.values(pris).flat();
-    const base = choix === 'suites' ? chanceSuite(deck) : 0;
+    const chance = choix === 'suites' ? chanceSuite : chanceEcho;
+    const base = choix === 'force' ? 0 : chance(deck);
     let meilleur: { p: string; c: string; note: number } | null = null;
     porteurs.forEach((p, i) => {
       for (const c of pool(lignees[i]!)) {
         if (!peut(p, c, i)) continue;
         // « suites » : ce que la carte ajoute aux chances de suite, la force ne départage qu'à égalité
-        const note = choix === 'suites' ? (chanceSuite([...deck, c]) - base) * 1000 + force(c) / 1000 : force(c);
+        // « échos » : pareil, avec les chances d'Écho (l'escouade qui empile une seule Fréquence)
+        const note = choix === 'force' ? force(c) : (chance([...deck, c]) - base) * 1000 + force(c) / 1000;
         if (!meilleur || note > meilleur.note) meilleur = { p, c, note };
       }
     });
@@ -150,9 +175,11 @@ const progres = (t: string) => process.stdout.write(`\r${t.padEnd(70)}`);
 const escouades: { nom: string; e: Escouade; ref?: boolean }[] = [
   { nom: 'Mixte · force (joueur normal)', e: composer(MIXTE, LIGNEES, 'force'), ref: true },
   { nom: 'Mixte · suites', e: composer(MIXTE, LIGNEES, 'suites') },
+  { nom: 'Mixte · échos', e: composer(MIXTE, LIGNEES, 'echos') },
   ...LIGNEES.flatMap((l) => [
     { nom: `${NOMS_LIGNEE[l].nom}s seuls · force`, e: composer(MONO[l], [l, l, l], 'force') },
     { nom: `${NOMS_LIGNEE[l].nom}s seuls · suites`, e: composer(MONO[l], [l, l, l], 'suites') },
+    { nom: `${NOMS_LIGNEE[l].nom}s seuls · échos`, e: composer(MONO[l], [l, l, l], 'echos') },
   ]),
 ];
 const deckDe = (e: Escouade) => Object.values(e).flat().map((c) => c.id);
@@ -173,7 +200,7 @@ const resultats = escouades.map((x, i) => {
   progres(`${i + 1}/${escouades.length} : ${x.nom} (joueur moyen)`);
   const moyen = mesurer(x.e, jouerTourMoyen, FACTEUR);
   const deck = deckDe(x.e);
-  return { ...x, robot, moyen, main: chanceSuite(deck, 4000), puissance: deck.reduce((n, c) => n + force(c), 0) };
+  return { ...x, robot, moyen, main: chanceSuite(deck, 4000), mainEcho: chanceEcho(deck, 4000), puissance: deck.reduce((n, c) => n + force(c), 0) };
 });
 process.stdout.write('\r'.padEnd(72) + '\r');
 
@@ -181,14 +208,14 @@ process.stdout.write('\r'.padEnd(72) + '\r');
 const pct = (x: number) => `${Math.round(x * 100)} %`;
 const ecart = (x: number, r: number) => (x === r ? '—' : `${x >= r ? '+' : '−'}${Math.abs(Math.round((x - r) * 100))}`);
 const r0 = resultats[0]!;
-let r = `# Le deck « tout en suites » casse-t-il le jeu ?\n\n`;
+let r = `# Les decks « tout en suites » ou « tout en échos » cassent-ils le jeu ?\n\n`;
 r += `${new Date().toISOString().slice(0, 10)} · ${PARTIES} descentes par mesure · ${Math.round((Date.now() - t0) / 1000)} s de calcul.\n\n`;
 r += `Une Strate −${STRATE} entière, salle par salle jusqu'au gardien, ennemis ×${FACTEUR.toFixed(2)} (réglés pour que l'escouade de référence gagne une descente sur deux avec le robot). `;
 r += `Toutes les cartes en ${METAL}, au niveau ${NIVEAU_CARTES} ; chaque Porteur porte 6 cartes au plus, ${CHARGE} de Charge et ${DEFENSES_MIN} défenses au moins ; ${PV} PV chacun.\n\n`;
-r += `- **Force** : les cartes les plus puissantes, sans regarder leur Fréquence.\n- **Suites** : les cartes qui donnent le plus de chances de suite, la force ne départage qu'à égalité.\n\n`;
-r += `| Escouade | Suite possible en main | Puissance du deck | Victoires (robot) | Écart | Victoires (joueur moyen) | Écart | Tours avec Résonance (robot) | Échos |\n|---|---|---|---|---|---|---|---|---|\n`;
+r += `- **Force** : les cartes les plus puissantes, sans regarder leur Fréquence.\n- **Suites** : les cartes qui donnent le plus de chances de suite, la force ne départage qu'à égalité.\n- **Échos** : les cartes qui donnent le plus de chances d'Écho (une Fréquence empilée), la force ne départage qu'à égalité.\n\n`;
+r += `| Escouade | Suite possible en main | Écho possible | Puissance du deck | Victoires (robot) | Écart | Victoires (joueur moyen) | Écart | Tours avec Résonance (robot) | Échos |\n|---|---|---|---|---|---|---|---|---|---|\n`;
 for (const x of resultats) {
-  r += `| ${x.ref ? '**' + x.nom + '**' : x.nom} | ${pct(x.main)} | ${Math.round(x.puissance)} | ${pct(x.robot.victoire)} | ${ecart(x.robot.victoire, r0.robot.victoire)} | ${pct(x.moyen.victoire)} | ${ecart(x.moyen.victoire, r0.moyen.victoire)} | ${pct(x.robot.reso)} | ${pct(x.robot.echo)} |\n`;
+  r += `| ${x.ref ? '**' + x.nom + '**' : x.nom} | ${pct(x.main)} | ${pct(x.mainEcho)} | ${Math.round(x.puissance)} | ${pct(x.robot.victoire)} | ${ecart(x.robot.victoire, r0.robot.victoire)} | ${pct(x.moyen.victoire)} | ${ecart(x.moyen.victoire, r0.moyen.victoire)} | ${pct(x.robot.reso)} | ${pct(x.robot.echo)} |\n`;
 }
 r += `\nÉcart : points de victoire par rapport à l'escouade de référence (+10 = une descente gagnée de plus sur dix). Le bruit de la mesure est d'environ ±${Math.round(100 / Math.sqrt(PARTIES))} points.\n\n## Les decks\n\n`;
 for (const x of resultats) {
@@ -198,5 +225,5 @@ for (const x of resultats) {
   }
   r += '\n';
 }
-writeFileSync(new URL('../docs/robot-archetypes.md', import.meta.url), r);
+writeFileSync(SORTIE || new URL('../docs/robot-archetypes.md', import.meta.url), r);
 console.log(r);

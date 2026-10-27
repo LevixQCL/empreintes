@@ -10,7 +10,14 @@ export const REGLES = {
   capaciteMax: 5,
   fluxMax: 3,
   bonusLignee: 1.15,
-  bouclierEcho: 8,
+  /** Écho (trois Fréquences identiques dans la chaîne) : les cartes qui résonnent ensemble frappent, protègent et soignent
+   *  plus fort (27 octobre 2026). Avant : bouclier d'escouade +8, quelle que soit la chaîne — trop peu pour un tirage
+   *  environ 10 fois plus rare qu'une suite de 3 dans un deck normal (3 à 7 % des mains contre ~40 %), et toujours du bouclier.
+   *  Le bonus suit maintenant l'action des cartes ; +50 % se place entre la suite de 3 (+30 %) et celle de 4 (+60 %) : plus rare
+   *  que la première, mais un deck qui empile une Fréquence peut le rendre fréquent (23 % des mains). Mesuré au robot
+   *  (archétypes, 80 descentes) : de ×1,25 à ×1,6, le deck « tout en échos » ne bat jamais le deck normal chez le joueur moyen
+   *  (−4 à −7 points) et reste loin derrière le deck « tout en suites » (voir docs/robot-archetypes.md). */
+  echo: 1.5,
   /** multiplicateur selon la longueur de la meilleure suite */
   multSuite: { 3: 1.3, 4: 1.6, 5: 2 } as Record<number, number>,
   soinEntreCombats: 0.5,
@@ -50,6 +57,8 @@ interface Analyse {
   suite: number;
   mult: number;
   echo: boolean;
+  /** la Fréquence qui fait l'Écho (celle des cartes renforcées), s'il y en a un */
+  echoF?: number;
 }
 
 type Maillon = Pick<Geste, 'f'> & { effet?: Geste['effet'] };
@@ -89,9 +98,15 @@ export function analyserChaine(chaine: Maillon[]): Analyse {
   }
   const compte = new Map<number, number>();
   for (const f of fs) compte.set(f, (compte.get(f) ?? 0) + 1);
-  const echo = [...compte.values()].some((n) => n >= 3);
+  const echoF = [...compte.entries()].find(([, n]) => n >= 3)?.[0];
   const mult = REGLES.multSuite[Math.min(meilleur, 5)] ?? 1;
-  return { suite: meilleur, mult, echo };
+  return { suite: meilleur, mult, echo: echoF !== undefined, ...(echoF !== undefined ? { echoF } : {}) };
+}
+
+/** Multiplicateur d'Écho de la carte au rang donné : seules les cartes de la Fréquence répétée sont renforcées */
+export function multEcho(chaine: Maillon[], rang: number): number {
+  const a = analyserChaine(chaine);
+  return a.echoF !== undefined && frequencesEffectives(chaine)[rang] === a.echoF ? REGLES.echo : 1;
 }
 
 /** Longueur de la suite qui se termine sur le dernier Geste posé */
