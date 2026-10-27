@@ -136,7 +136,7 @@
 }
 #app[data-mode="district"] .plaque .niv.a-construire{background:rgba(255,214,140,.16);box-shadow:inset 0 0 0 1px rgba(255,214,140,.6)}
 #app[data-mode="district"] .plaque .niv.a-construire .ico{width:10px;height:10px;color:var(--d-or,#f0c674)}
-/* La rumeur du jour, sous la Confiance (23 octobre 2026) */
+/* La rumeur du jour, au marché (23 octobre 2026) */
 .rumeur{margin:8px 0 0;font-size:13px;line-height:1.5;color:#B8C4D4;font-style:italic}
 .rumeur b{font-style:normal;font-weight:600;letter-spacing:.06em;font-size:11px;text-transform:uppercase;color:var(--gold,#E8C25A);margin-right:6px}
 
@@ -148,13 +148,13 @@
 .mj-plier i{font-style:normal;font-size:11px}
 #app .mission.jour.replie{grid-template-columns:1fr}
 #app .mission.jour.replie .mission-tete{padding-right:96px}
-.mission.jour.replie>:is(.confiance,.archive,.rumeur){display:none}
+.mission.jour.replie>:is(.archive,.rumeur){display:none}
 .mission.jour.replie .mission-tete .chiffre{margin-right:0}
 #app .mission.jour:not(.replie) .mj-plier{position:static;grid-column:1 / -1;justify-self:end;order:99;margin-top:2px}
 @media (min-width:1100px) and (min-height:600px){
   .mj-plier{display:none}
   #app .mission.jour.replie .mission-tete{padding-right:0}
-  .mission.jour.replie>:is(.confiance,.archive,.rumeur){display:revert}
+  .mission.jour.replie>:is(.archive,.rumeur){display:revert}
 }
 
 /* ---------- Replié : une barre fine qui emmène vers l'objectif (23 octobre 2026) ---------- */

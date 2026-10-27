@@ -256,7 +256,6 @@ h1,h2,h3{font-weight:400}
 .mission .btn{justify-self:start;margin-top:2px}
 .mission.jour{grid-template-columns:1fr 112px;column-gap:14px;row-gap:5px}
 .mission.jour>.mj-obj{grid-column:1;display:grid;gap:5px;min-width:0}
-.mission.jour>.confiance{grid-column:1}
 .mission .pc{display:none}
 .mission.jour strong{font-size:16px}
 .mission.jour .archive{grid-column:2;grid-row:1;display:grid;align-content:center;gap:5px;padding-left:12px;box-shadow:-1px 0 0 var(--filet)}
@@ -589,10 +588,6 @@ h1,h2,h3{font-weight:400}
 .option-decision small{font-size:13px;color:var(--quiet);line-height:1.4}
 .option-decision:hover,.option-decision:focus-visible{border-color:var(--gold)}
 
-/* Confiance des habitants (bandeau du district) */
-.mission .confiance{display:grid;gap:4px;margin-top:8px}
-.mission .confiance .jauge i{background:linear-gradient(90deg,var(--danger),var(--gold) 50%,var(--bio))}
-.mission .confiance small{font-size:12px;color:var(--quiet)}
 
 /* Marques des Porteurs (écran Escouade) */
 

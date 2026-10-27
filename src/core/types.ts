@@ -49,7 +49,7 @@ export interface PorteurDef {
   /** Porteur nommé (illustré) ou recrue anonyme */
   nomme: boolean;
   /** Porteur qui rejoint le district plus tard dans l'histoire, et à quelle condition */
-  /** accord : arrive par un Accord ouvert de la Clinique (Clinique et Confiance assez hautes : `ACCORD_OUVERT`) */
+  /** accord : arrive par un Accord ouvert de la Clinique (Clinique assez haute : `ACCORD_OUVERT`) */
   arrivee?: { strate?: number; forge?: number; accord?: boolean; replique: string };
 }
 

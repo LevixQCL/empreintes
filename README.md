@@ -295,6 +295,8 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
 - *Durée des combats* : les PV montent moins vite que les coups en profondeur (`pvProfondeur`) et un groupe a moins de PV (`PV_GROUPE`) ;
   `npx tsx scripts/durees.ts` mesure au parcours : normaux ~8 tours, groupes ~10, gardiens ~15 (cible 6-9 / 9-13 / 12-18), Strate −10 au jour 29.
   Les pillages gardent leurs PV (`pvPleins`).
+- *Plus de Confiance des habitants* : elle restait à 100 et ne servait à rien (« celui qui joue doit gagner du fait de jouer »).
+  L’Accord ouvert ne demande plus que la Clinique niveau 3 ; un chantier terminé attire parfois un creuseur volontaire (`CREUSEURS.chantier`).
 - *Énergie* : convertisseur du Générateur (`CONVERTISSEUR` : 100 énergie → 10, puis 6, puis 3 composants, 20 lots par jour) et soins intensifs
   de la Clinique (`SOINS_INTENSIFS` : 20 énergie par point d’Usure).
 

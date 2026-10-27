@@ -19,12 +19,11 @@ describe('Lignées et origines (23 octobre 2026)', () => {
     expect(ilka.some((x) => !x.ouvert)).toBe(true);
   });
 
-  it('l’Accord ouvert amène Joss seulement quand Clinique et Confiance sont assez hautes', () => {
+  it('l’Accord ouvert amène Joss quand la Clinique atteint son niveau', () => {
     const j = partie();
     verifierArrivees(j);
     expect(porteursPresents(j)).not.toContain('joss');
     j.batiments.clinique = ACCORD_OUVERT.clinique;
-    j.confiance = ACCORD_OUVERT.confiance;
     const annonces = verifierArrivees(j);
     expect(porteursPresents(j)).toContain('joss');
     expect(annonces.join(' ')).toContain('Accord ouvert');
