@@ -21,6 +21,7 @@ Autres commandes :
 | `npm run css` | Repère le CSS inutile (déclarations toujours écrasées, règles en double) ; `-- --ecrire` le nettoie |
 | `analyse.html` | L'outil d'analyse (page à part, jamais chargée par le jeu, réservée au compte de Bryan) : points d'attention, activité, rétention par cohorte, progression et rythme, combats, Porteurs, cartes, économie, campagne, usage des fonctions, joueurs ; filtres ; exports JSON et CSV anonymisés |
 | `npm run robot` | Lance le robot d'équilibrage (quelques minutes) et écrit `docs/robot-rapport.md` |
+| `npm run voies` | Compare chaque voie à un deck classique de même Charge et écrit `docs/voies-rapport.md` |
 
 Chaque `git push` sur `main` lance les tests, construit le site et le publie sur GitHub Pages.
 
@@ -149,6 +150,14 @@ Ces mécaniques durcissent les combats d'à peu près ce que l'XP des Porteurs a
 la liste « Niveau N · ce que ça change » : les chiffres qui montent (avant → après) et ce qui se débloque. Elle vient de
 `gainsAmelioration` dans `jeu.ts`, qui applique les vraies règles à une copie du district (Porteur posté et Confiance compris) :
 un changement d'équilibrage s'y reporte tout seul. L'apparence (nouvel âge du district, nouveau bâtiment) est ajoutée par `district.ts`.
+
+**Les voies** (27 octobre 2026, `docs/familles-de-decks.md`). Chaque Porteur nommé incarnera une façon de gagner autre que les suites.
+L'étape 1 en ouvre une par lignée, avec 14 cartes (fin de `MODULES`, liste dans `VOIES`) et 4 effets :
+*le Moteur* (Liane : Surcharge, puis **Décharge** qui vide le Flux pour +X % par Flux, sans renfort en or), *la Carapace* (Doran : des
+cartes de bouclier à **Riposte**, qui frappent ensuite de X % du bouclier d'escouade) et *le Chœur* (Joss : **Unisson**, +X % par autre carte
+de même Fréquence, et **Diapason**, Fréquence libre qui reprend celle d'avant, le pendant de l'Accord : `frequenceLibre` dans `regles.ts`).
+Une carte de voie sans illustration prend le portrait du Porteur de sa voie. Une carte de voie seule vaut peu : `npm run voies` compare une voie
+entière (les 6 cartes d'un Porteur) au meilleur deck classique de même Charge, en cuivre et en or (`docs/voies-rapport.md`).
 
 **Pas de Fusion.** Un métal se trouve dans les Strates, les boss, les choix et les garanties ; il ne se fabrique pas et ne
 se gagne pas en fusionnant des cartes (décision du 21 octobre 2026).

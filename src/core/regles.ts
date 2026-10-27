@@ -51,19 +51,24 @@ interface Analyse {
 
 type Maillon = Pick<Geste, 'f'> & { effet?: Geste['effet'] };
 
+/** Une carte à Fréquence libre : l'Accord (prolonge la suite) et le Diapason (répète la Fréquence d'avant) */
+export const frequenceLibre = (e?: { type: string }) => e?.type === 'accord' || e?.type === 'diapason';
+/** Le signe d'une Fréquence libre sur la carte : ∗ pour l'Accord, = pour le Diapason */
+export const signeLibre = (e?: { type: string }) => (e?.type === 'diapason' ? '=' : '∗');
+
 /**
  * Fréquences réellement jouées : un Geste à Accord prend toujours la Fréquence
- * qui prolonge la suite (celle d'avant + 1, ou celle d'après − 1 s'il ouvre la chaîne).
+ * qui prolonge la suite (celle d'avant + 1, ou celle d'après − 1 s'il ouvre la chaîne) ;
+ * un Geste à Diapason reprend celle d'avant (ou celle d'après s'il ouvre la chaîne).
  */
 export function frequencesEffectives(chaine: Maillon[]): number[] {
   const r: number[] = [];
   chaine.forEach((g, i) => {
-    if (g.effet?.type !== 'accord') r.push(g.f);
-    else if (i > 0) r.push(r[i - 1]! + 1);
-    else {
-      const suivant = chaine[1];
-      r.push(suivant && suivant.effet?.type !== 'accord' ? suivant.f - 1 : g.f);
-    }
+    if (!frequenceLibre(g.effet)) { r.push(g.f); return; }
+    const pas = g.effet?.type === 'accord' ? 1 : 0;
+    if (i > 0) { r.push(r[i - 1]! + pas); return; }
+    const suivant = chaine[1];
+    r.push(suivant && !frequenceLibre(suivant.effet) ? suivant.f - pas : g.f);
   });
   return r;
 }

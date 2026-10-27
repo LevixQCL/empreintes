@@ -7,8 +7,9 @@
 // Les tailles sont en unités de conteneur (cqw) : la même carte s'affiche en grand ou en petit.
 
 import { NOMS_EFFET } from '../core/effets';
-import { DEPART_PORTEURS, NOMS_LIGNEE } from '../core/donnees';
+import { DEPART_PORTEURS, NOMS_LIGNEE, voieDe } from '../core/donnees';
 import { NOMS_RARETE } from '../core/collection';
+import { frequenceLibre, signeLibre } from '../core/regles';
 import type { ModuleDef, Rarete } from '../core/types';
 import { cadrePlein, illustrationModule, portrait, textureMetal } from './art';
 import { COULEUR } from './vue';
@@ -44,17 +45,17 @@ const FX: Record<Rarete, string> = {
  */
 export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?: string } = {}): string {
   const ill = illustrationModule(m.id);
-  // une carte de base sans illustration prend, en attendant, le portrait du Porteur qui la porte au départ
+  // une carte de base sans illustration prend, en attendant, le portrait du Porteur qui la porte au départ (une carte de voie, celui de sa voie)
   const base = m.base ?? m.id;
-  const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base));
+  const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base)) ?? voieDe(base)?.porteur;
   const repli = !ill && qui ? portrait(qui) : null;
   const art = ill
     ? `<img src="${ill}" alt="" decoding="async" data-src-fx="${ill}">`
     : repli ? `<img class="fc-repli" src="${repli}" alt="" decoding="async">`
       : `<span class="fc-sans-image" style="--c:${COULEUR[m.lignee]}"></span>`;
-  const accord = m.effet?.type === 'accord';
+  const accord = frequenceLibre(m.effet);
   const freqs = accord
-    ? `<span class="fc-freq" style="--fc:#5d5470" title="Accord : prend la Fréquence qui prolonge ta suite">∗</span>`
+    ? `<span class="fc-freq" style="--fc:#5d5470" title="${m.effet?.type === 'diapason' ? 'Diapason : reprend la Fréquence de la carte d’avant' : 'Accord : prend la Fréquence qui prolonge ta suite'}">${signeLibre(m.effet)}</span>`
     : m.f.map((f) => `<span class="fc-freq" style="--fc:${couleurFrequence(f)}" title="Fréquence ${f}">${f}</span>`).join('');
   const tags = (m.lourd ? '<em>2 pl.</em>' : '') + (m.effet ? `<em>${NOMS_EFFET[m.effet.type]}</em>` : '');
   const gestes = `<li><span class="fc-freqs"${m.f.length > 1 && !accord ? ` title="Fréquences au choix : ${m.f.join(' ou ')}"` : ''}>${freqs}</span>`
@@ -70,7 +71,7 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?:
     const alt = fs.length > 1;
     const cristal = alt
       ? fs.map((f, i) => `<span class="fcp-teinte fcp-k" style="--fc:${couleurFrequence(f)};--i:${i}"></span>`).join('') + fs.map((f, i) => `<b class="fcp-f fcp-k" style="--fc:${couleurFrequence(f)};--i:${i}">${f}</b>`).join('')
-      : `<span class="fcp-teinte"></span><b class="fcp-f">${accord ? '∗' : m.f[0]}</b>`;
+      : `<span class="fcp-teinte"></span><b class="fcp-f">${accord ? signeLibre(m.effet) : m.f[0]}</b>`;
     return `<div class="fc-ombre fo-${m.rarete}"><div class="fc-carte fcp fr-${m.rarete}${o.origine ? ' fc-paquetage' : ''}${alt ? ` alt alt-${fs.length}` : ''}" style="--n:${fs.length || 1};--cp-img:url(${plein.img});--cp-masque:url(${plein.masque});--fx:${plein.f[0]}%;--fy:${plein.f[1]}%;--vx:${plein.v[0]}%;--vy:${plein.v[1]}%;--fc:${accord ? '#5d5470' : couleurFrequence(m.f[0]!)}" aria-label="${echap(m.nom)}, ${o.origine ? `fournie par la ${echap(o.origine)}` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + NOMS_EFFET[m.effet.type] : ''}">`
       + `<div class="fc-art">${art}${ill ? FX[m.rarete] : ''}</div>`
       + `<span class="fcp-cadre"></span>${cristal}`

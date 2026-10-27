@@ -7,7 +7,7 @@ import { CHARGE, composantsNiveau, doublonsRequis } from '../core/collection';
 import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
-import { BATTU_PAR, REGLES } from '../core/regles';
+import { BATTU_PAR, REGLES, frequenceLibre, signeLibre } from '../core/regles';
 import { NOMS_EFFET, texteEffet } from '../core/effets';
 import { multNiveau } from '../core/collection';
 import type { GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
@@ -125,7 +125,7 @@ const socle = (t: TypeGeste, v: number, classe: string) =>
 
 /** La Fréquence d'une carte en jeu : son chiffre (ou ses chiffres), ou ∗ pour un Accord */
 function cristalFreq(g: GesteDef): string {
-  if (g.effet?.type === 'accord') return `<b class="eq-f" style="--fc:#5d5470" title="Fréquence libre">∗</b>`;
+  if (frequenceLibre(g.effet)) return `<b class="eq-f" style="--fc:#5d5470" title="Fréquence libre">${signeLibre(g.effet)}</b>`;
   const fs = g.fs ?? [g.f];
   return `<b class="eq-f${fs.length > 1 ? ' multi' : ''}" style="--fc:${couleurFrequence(fs[0]!)}" title="Fréquence ${fs.join(' ou ')}">${fs.join('<i>/</i>')}</b>`;
 }
@@ -164,7 +164,7 @@ function bilanDeck(j: Jeu, esc: string[]): string {
   // chaque colonne empile les cartes de chaque lignée (les cartes du district en neutre)
   const couleurDe = (g: GesteDef) => (g.porteur ? COULEUR[porteurDef(g.porteur).lignee] : 'var(--x-doux)');
   const colonnes = freqs.map((k, i) => {
-    const ici = cartes.filter((g) => g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(i + 1));
+    const ici = cartes.filter((g) => !frequenceLibre(g.effet) && (g.fs ?? [g.f]).includes(i + 1));
     return `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}">`
       + `<span class="eq-pile" style="--h:${(100 * k) / max}%">${ici.map((g) => `<i style="--c:${couleurDe(g)}"></i>`).join('')}</span>`
       + `<b style="--fc:${couleurFrequence(i + 1)}">${i + 1}</b><small>${k || '—'}</small></span>`;

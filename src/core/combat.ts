@@ -2,7 +2,7 @@
 // l'interface appelle ces fonctions puis anime les « pas » qu'elles renvoient.
 
 import { DECK_DEPART, FAVEUR_CONDITION, ZONES, ennemiDef, porteurDef } from './donnees';
-import { REGLES, analyserChaine, avantage, frequencesEffectives, meilleureFrequence, places } from './regles';
+import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, places } from './regles';
 import { tireur } from './rng';
 import type {
   BonusMarques, CibleRegle, CombatEtat, EnnemiEtat, Evenement, Geste, GesteDef, Intention, Lignee, LigneeGeste, Pas, PorteurEtat, Trait,
@@ -452,9 +452,22 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
   const source = s.condition === 'sanctuaire' && g.type === 'soin' ? 1.3 : 1;
   // Débridage (Coup d'éclat des Augmentés) : les coups de ce tour frappent plus fort
   const debride = s.debride && g.type === 'atk' ? REGLES.eclat.debride : 1;
-  const force = g.v * mult * cresc * faveur * source * debride;
+  // Décharge (Moteur) : elle vide le Flux et gagne une part de force par Flux vidé
+  const vide = ef?.type === 'decharge' ? s.flux : 0;
+  if (ef?.type === 'decharge' && vide) {
+    s.flux = 0;
+    log(s, `Décharge : ${vide} Flux vidé${vide > 1 ? 's' : ''}, +${Math.round(ef.part * vide * 100)} % de force.`);
+    evs.push({ kind: 'effet', cible: 'escouade', texte: 'Décharge' });
+  }
+  const decharge = ef?.type === 'decharge' ? 1 + ef.part * vide : 1;
+  // Unisson (Chœur) : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne
+  const fsChaine = ef?.type === 'unisson' ? frequencesEffectives(s.chaine) : [];
+  const pareilles = ef?.type === 'unisson' ? fsChaine.filter((f, k) => k !== rang && f === fsChaine[rang]).length : 0;
+  const unisson = ef?.type === 'unisson' ? 1 + ef.part * pareilles : 1;
+  const force = g.v * mult * cresc * faveur * source * debride * decharge * unisson;
 
-  if (g.type === 'atk') {
+  /** Un coup porté à l'ennemi visé : lignées, Fissure, Évanescent, Blindé et bouclier ennemi (Perçant passe outre), puis Épines */
+  const frapper = (force: number, quoi: string): number => {
     const e = ennemiDef(s.ennemi.id);
     const av = avantage(ligneeGeste(g), e.lignee);
     // Évanescent : hors Résonance, l'ennemi ne prend qu'une part des coups ; Blindé : chaque coup perd quelques points (Perçant passe outre)
@@ -466,7 +479,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
     s.ennemi.bouclier -= abs;
     const net = dmg - abs;
     s.ennemi.pv = Math.max(0, s.ennemi.pv - net);
-    log(s, `${nomP} · ${g.nom} : ${net} dégâts${av > 1 ? ' (avantage de lignée)' : ''}${abs ? `, ${abs} absorbés` : ''}${ef?.type === 'percant' && s.ennemi.bouclier ? ', bouclier transpercé' : ''}.`);
+    log(s, `${nomP} · ${quoi} : ${net} dégâts${av > 1 ? ' (avantage de lignée)' : ''}${abs ? `, ${abs} absorbés` : ''}${ef?.type === 'percant' && s.ennemi.bouclier ? ', bouclier transpercé' : ''}.`);
     evs.push({ kind: 'degats', cible: 'ennemi', net, absorbe: abs, rang: s.ennemi.rang ?? 0 });
     // Épines : une part du coup revient au Porteur qui a frappé, sans jamais le mettre à terre
     const epines = trait(s.ennemi, 'epines');
@@ -477,6 +490,11 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
       log(s, `Épines : ${porteurDef(frappeur.id).nom} se blesse (−${retour}).`);
       evs.push({ kind: 'degats', cible: frappeur.id, net: retour, absorbe: 0, source: 'epines' });
     }
+    return net;
+  };
+
+  if (g.type === 'atk') {
+    const net = frapper(force, g.nom);
     if (ef?.type === 'siphon' && net > 0) {
       // le Siphon soigne le Porteur qui a joué la carte : c'est lui qui boit la vie (s'il est à terre, le plus blessé)
       const lui = s.porteurs.find((p) => p.id === g.porteur && p.pv > 0);
@@ -495,6 +513,8 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
     s.bouclier += v;
     log(s, `${nomP} · ${g.nom} : bouclier d’escouade +${v}.`);
     evs.push({ kind: 'bouclier', cible: 'escouade', v });
+    // Riposte (Carapace) : après son bouclier, elle frappe d'une part de tout le bouclier d'escouade, sans le dépenser
+    if (ef?.type === 'riposte' && s.ennemi.pv > 0) frapper(s.bouclier * ef.part * faveur * (s.debride ? REGLES.eclat.debride : 1), `${g.nom} (Riposte)`);
   } else {
     const choisi = g.cible ? s.porteurs.find((p) => p.id === g.cible && p.pv > 0) : undefined;
     const cibles = ef?.type === 'vague' ? vivants(s) : [choisi ?? plusBlesse(s)].filter((x): x is PorteurEtat => !!x);
@@ -696,7 +716,7 @@ export const felureVisible = (en: EnnemiEtat) => en.felure !== undefined && (!!e
 
 function fixerFelures(s: CombatEtat) {
   const r = tireur(s);
-  const enMain = [...new Set(s.main.flatMap((g) => (g.effet?.type === 'accord' || g.vide ? [] : g.fs ?? [g.f])))];
+  const enMain = [...new Set(s.main.flatMap((g) => (frequenceLibre(g.effet) || g.vide ? [] : g.fs ?? [g.f])))];
   for (const en of tousEnnemis(s)) {
     delete en.felureBrisee;
     if (en.pv <= 0 || en.simple) { delete en.felure; continue; }

@@ -107,7 +107,38 @@ export const MODULES: ModuleDef[] = [
   c('pressentiment', 'Pressentiment', 'reso', 'argent', 'bouclier', 12, [7, 8, 6], { type: 'desarmer', part: 0.4 }),
   c('chant-abysses', 'Chant des abysses', 'reso', 'or', 'atk', 26, [7, 8, 9], { type: 'accord' }),
   c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 22, [9, 8, 7], { type: 'crescendo', part: 0.3 }),
+
+  // ---------- Les voies, étape 1 (27 octobre 2026, docs/familles-de-decks.md) : une voie par lignée ----------
+  // Le Moteur (Liane) : remplir le Flux, puis tout vider d'un coup
+  c('bobine-recuperation', 'Bobine de récupération', 'tech', 'fer', 'bouclier', 9, [3, 2, 4], { type: 'flux', v: 1 }),
+  c('condensateur', 'Condensateur', 'tech', 'cuivre', 'atk', 12, [5, 4, 6], { type: 'flux', v: 1 }),
+  c('decharge-arc', 'Décharge d’arc', 'tech', 'cuivre', 'atk', 14, [6, 7, 5], { type: 'decharge', part: 0.5 }),
+  c('eclair-captif', 'Éclair captif', 'tech', 'argent', 'atk', 18, [4, 5, 7], { type: 'decharge', part: 0.55 }),
+  c('noyau-instable', 'Noyau instable', 'tech', 'or', 'atk', 38, [7, 6, 2], { type: 'decharge', part: 0.65 }, true),
+  // La Carapace (Doran) : parer, puis frapper avec tout le bouclier accumulé
+  c('coup-epaule', 'Coup d’épaule', 'bio', 'fer', 'bouclier', 10, [3, 2, 4], { type: 'riposte', part: 0.5 }),
+  c('queue-massue', 'Queue-massue', 'bio', 'cuivre', 'bouclier', 11, [4, 5, 3], { type: 'riposte', part: 0.6 }),
+  c('belier-os', 'Bélier d’os', 'bio', 'argent', 'bouclier', 22, [5, 4, 1], { type: 'riposte', part: 1 }, true),
+  c('retour-maree', 'Retour de marée', 'bio', 'or', 'bouclier', 18, [2, 3, 5], { type: 'riposte', part: 0.8 }),
+  // Le Chœur (Joss) : répéter une même Fréquence (Écho)
+  c('diapason-cristal', 'Diapason de cristal', 'reso', 'fer', 'bouclier', 9, [9, 8, 7], { type: 'diapason' }),
+  c('voix-basse', 'Voix basse', 'reso', 'fer', 'atk', 9, [9, 8, 7], { type: 'unisson', part: 1.2 }),
+  c('chorale-ombres', 'Chorale des ombres', 'reso', 'cuivre', 'atk', 10, [8, 9, 7], { type: 'unisson', part: 1.3 }),
+  c('cloche-abysses', 'Cloche des abysses', 'reso', 'argent', 'bouclier', 15, [9, 7, 8], { type: 'diapason' }),
+  c('grand-unisson', 'Grand unisson', 'reso', 'or', 'atk', 18, [9, 8, 6], { type: 'unisson', part: 1.4 }),
 ];
+
+/**
+ * Les voies (docs/familles-de-decks.md) : chaque Porteur nommé incarne une façon de gagner. Les cartes restent liées à la lignée
+ * (n'importe quel Porteur de la lignée peut les porter) ; le Porteur de la voie prête son portrait aux cartes encore sans illustration.
+ */
+export const VOIES: { id: string; nom: string; porteur: string; cartes: string[] }[] = [
+  { id: 'moteur', nom: 'Le Moteur', porteur: 'liane', cartes: ['bobine-recuperation', 'condensateur', 'decharge-arc', 'eclair-captif', 'noyau-instable'] },
+  { id: 'carapace', nom: 'La Carapace', porteur: 'doran', cartes: ['coup-epaule', 'queue-massue', 'belier-os', 'retour-maree'] },
+  { id: 'choeur', nom: 'Le Chœur', porteur: 'joss', cartes: ['diapason-cristal', 'voix-basse', 'chorale-ombres', 'cloche-abysses', 'grand-unisson'] },
+];
+/** La voie d'une carte (« voix-basse@or » → le Chœur), s'il y en a une */
+export const voieDe = (cle: string) => VOIES.find((v) => v.cartes.includes(cle.split('@')[0]!));
 
 /** Les 15 cartes de base (celles que les Porteurs nommés portent au départ, en plus de leur carte de départ) */
 export const CARTES_DE_BASE = MODULES.slice(0, 15).map((m) => m.id);
@@ -121,9 +152,12 @@ export const METAL_FREQ: Record<Rarete, number> = { fer: 1, cuivre: 1, argent: 2
 export const METAL_RENFORT: Record<Rarete, number> = { fer: 0, cuivre: 1, argent: 1, or: 1.25, nacre: 1.5 };
 
 function renforcer(e: Effet, k: number): Effet {
-  if (k <= 1) return e;
+  // la Décharge ne se renforce pas : en or et en nacre, les Fréquences en plus font déjà plus de Résonances, donc plus de Flux à vider
+  if (k <= 1 || e.type === 'decharge') return e;
   if (e.type === 'flux') return { ...e, v: e.v + (k >= 1.5 ? 1 : 0) };
-  if ('part' in e) return { ...e, part: Math.min(e.type === 'siphon' ? 1 : 0.9, Math.round(e.part * k * 100) / 100) };
+  // un plafond pour les parts qui retirent ou gardent (90 %) et pour le Siphon (100 %) ; les bonus de force des voies n'en ont pas
+  const plafond = e.type === 'siphon' ? 1 : e.type === 'riposte' || e.type === 'unisson' ? Infinity : 0.9;
+  if ('part' in e) return { ...e, part: Math.min(plafond, Math.round(e.part * k * 100) / 100) };
   return e;
 }
 const METAUX: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];

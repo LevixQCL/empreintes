@@ -16,6 +16,10 @@ export const NOMS_EFFET: Record<TypeEffet, string> = {
   accord: 'Accord',
   vague: 'Vague',
   rempart: 'Rempart',
+  riposte: 'Riposte',
+  decharge: 'Décharge',
+  diapason: 'Diapason',
+  unisson: 'Unisson',
 };
 
 /** Phrase courte qui explique l'effet au joueur */
@@ -31,6 +35,10 @@ export function texteEffet(e: Effet): string {
     case 'accord': return 'Fréquence libre : prolonge toujours la suite.';
     case 'vague': return 'Soigne toute l’escouade.';
     case 'rempart': return `Garde ${pc(e.part)} du bouclier d’escouade restant pour le tour suivant.`;
+    case 'riposte': return `Après son bouclier, frappe de ${pc(e.part)} du bouclier d’escouade.`;
+    case 'decharge': return `Vide le Flux : +${pc(e.part)} de force par Flux vidé.`;
+    case 'diapason': return 'Fréquence libre : reprend celle de la carte posée juste avant.';
+    case 'unisson': return `+${pc(e.part)} de force pour chaque autre carte de la même Fréquence dans la chaîne.`;
   }
 }
 

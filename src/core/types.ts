@@ -28,7 +28,16 @@ export type Effet =
   /** le soin touche toute l'escouade */
   | { type: 'vague' }
   /** une part du bouclier d'escouade restant est gardée au tour suivant */
-  | { type: 'rempart'; part: number };
+  | { type: 'rempart'; part: number }
+  // ---------- Les voies (27 octobre 2026, docs/familles-de-decks.md) ----------
+  /** Carapace (sur une carte de bouclier) : après son bouclier, frappe d'une part du bouclier d'escouade (sans le dépenser) */
+  | { type: 'riposte'; part: number }
+  /** Moteur : vide le Flux, une part de force en plus par Flux vidé */
+  | { type: 'decharge'; part: number }
+  /** Chœur : Fréquence libre, prend celle de la carte posée juste avant (le pendant de l'Accord) */
+  | { type: 'diapason' }
+  /** Chœur : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne */
+  | { type: 'unisson'; part: number };
 
 export type TypeEffet = Effet['type'];
 

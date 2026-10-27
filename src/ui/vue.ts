@@ -4,7 +4,7 @@
 
 import { ECLATS, apercuChaine, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, puissance, usureCombat } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
-import { BATTU_PAR, REGLES, analyserChaine, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
+import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale, signeLibre } from '../core/regles';
 import { NOMS_EFFET, libelleEffet } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
@@ -113,7 +113,7 @@ function socle(type: 'atk' | 'bouclier' | 'soin', v: number): string {
 export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean; felure?: boolean } = {}) {
   const lign = ligneeGeste(g);
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'District';
-  const accord = g.effet?.type === 'accord';
+  const accord = frequenceLibre(g.effet);
   const ill = g.carte ? illustrationModule(g.carte) : null;
   const fond = ill ?? (g.porteur ? portrait(g.porteur) : null);
   const metal = (g.carte?.split('@')[1] as Rarete | undefined) ?? 'fer';
@@ -123,7 +123,7 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
   const tourne = taille === 'main' && !accord && g.fs && g.fs.length > 1 ? [g.f, ...g.fs.filter((f) => f !== g.f)] : null;
   const cristalPlein = tourne
     ? tourne.map((f, i) => `<i class="cp-teinte cp-k" style="--fc:${couleurFrequence(f)};--i:${i}"></i>`).join('') + tourne.map((f, i) => `<b class="cp-f cp-k" style="--fc:${couleurFrequence(f)};--i:${i}">${f}</b>`).join('')
-    : `<i class="cp-teinte"></i><b class="cp-f">${accord ? '∗' : g.f}</b>`;
+    : `<i class="cp-teinte"></i><b class="cp-f">${accord ? signeLibre(g.effet) : g.f}</b>`;
   const cls = ['geste', taille, `gm-${metal}`, plein ? 'plein' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', g.effet ? 'a-effet' : '', o.felure ? 'brise-felure' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
   const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${g.effet ? ', ' + libelleEffet(g.effet) : ''}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}`;
@@ -169,7 +169,7 @@ export const carteDemo = (g: Geste, taille: 'chaine' | 'main' = 'main') => geste
 const FREQ_MAX = 9;
 
 function maillon(g: Geste, off: boolean) {
-  const choix = g.fs && g.fs.length > 1 && g.effet?.type !== 'accord';
+  const choix = g.fs && g.fs.length > 1 && !frequenceLibre(g.effet);
   // une carte de soin montre qui elle soigne ; la toucher passe au Porteur suivant
   const soin = soigneUnSeul(g) && g.cible
     ? `<button type="button" class="cibler" data-action="cibler" data-uid="${g.uid}"${off ? ' disabled' : ''} style="--c:${COULEUR[porteurDef(g.cible).lignee]}" aria-label="Soigne ${echap(porteurDef(g.cible).nom)} : toucher pour changer">${ICO.soin}<span>${echap(porteurDef(g.cible).nom)}</span></button>`
@@ -496,7 +496,7 @@ function htmlEcranCombat(e: Ecran): string {
   const felF = !brume && s.ennemi.pv > 0 && !s.ennemi.felureBrisee && felureVisible(s.ennemi) ? s.ennemi.felure : undefined;
   const prevue = felF !== undefined && fs.includes(felF);
   const felureHtml = s.ennemi.felure === undefined || brume || s.ennemi.pv <= 0 ? '' : ligneFelure(s, prevue, a.suite >= 3);
-  const brise = (g: Geste) => felF !== undefined && g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(felF);
+  const brise = (g: Geste) => felF !== undefined && !frequenceLibre(g.effet) && (g.fs ?? [g.f]).includes(felF);
 
   // combat guidé : ce que la leçon du tour désigne du doigt
   const guide = !!e.lecon && !verrou;

@@ -1,6 +1,7 @@
 # Familles de decks : proposition (26 octobre 2026)
 
-Rien n'est codé : c'est une proposition à valider. Les chiffres des cartes sont des points de départ, à régler au robot.
+**Étape 1 codée le 27 octobre 2026** (Moteur, Carapace, Chœur) : ses chiffres ci-dessous sont ceux du jeu, réglés au robot
+(`npm run voies`, rapport dans `docs/voies-rapport.md`). Le reste est encore une proposition, avec des chiffres de départ.
 
 ## 1. Ce qui marche déjà
 
@@ -62,8 +63,8 @@ On garde la règle actuelle : une carte = un seul effet. L'Harmonie n'en reçoit
 |---|---|---|
 | **Rafale** | Cadence | Frappe deux fois si la chaîne compte au moins 4 cartes. |
 | **Servo** | Machines | La prochaine carte lourde de la chaîne ne prend qu'une place. |
-| **Décharge** (X %) | Moteur | Vide le Flux : +X % de force par Flux vidé. |
-| **Riposte** (X %) | Carapace | Frappe en plus de X % du bouclier d'escouade. |
+| **Décharge** (X %) | Moteur | Vide le Flux : +X % de force par Flux vidé (pas renforcée en or et en nacre). |
+| **Riposte** (X %) | Carapace | Sur une carte de bouclier : après son bouclier, frappe de X % du bouclier d'escouade. |
 | **Curée** (X %) | Traque | +X % de force si l'ennemi visé est fissuré. |
 | **Débord** | Sève | Soigne toute l'escouade ; le soin en trop devient du bouclier d'escouade. |
 | **Lecture** | Lecture | Brise la Fêlure de l'ennemi visé, quelle que soit sa Fréquence (même cachée). |
@@ -101,15 +102,15 @@ la lignée. Les cartes existantes qui servent déjà une voie sont rappelées en
 | Exo de chantier | argent | bouclier | 32 (lourde) | 2 · 3 · 4 | Élan |
 | Foreuse des Strates | or | attaque | 40 (lourde) | 6 · 7 · 5 | Perçant |
 
-**Le Moteur (Liane)** — *déjà là : Tir vif, Gant à arc, Cœur-turbine (Surcharge)*
+**Le Moteur (Liane)** — *déjà là : Tir vif, Gant à arc, Cœur-turbine (Surcharge) ; le robot conseille d'y ajouter une carte Élan (Dorsale renforcée) : Flux et places vont ensemble*
 
 | Carte | Métal | Action | Force | Fréq. | Effet |
 |---|---|---|---|---|---|
 | Bobine de récupération | fer | bouclier | 9 | 3 · 2 · 4 | Surcharge +1 |
-| Condensateur | cuivre | attaque | 10 | 5 · 4 · 6 | Surcharge +1 |
-| Décharge d'arc | cuivre | attaque | 12 | 6 · 7 · 5 | Décharge 30 % |
-| Éclair captif | argent | attaque | 16 | 4 · 5 · 7 | Décharge 35 % |
-| Noyau instable | or | attaque | 30 (lourde) | 7 · 6 · 2 | Décharge 40 % |
+| Condensateur | cuivre | attaque | 12 | 5 · 4 · 6 | Surcharge +1 |
+| Décharge d'arc | cuivre | attaque | 14 | 6 · 7 · 5 | Décharge 50 % |
+| Éclair captif | argent | attaque | 18 | 4 · 5 · 7 | Décharge 55 % |
+| Noyau instable | or | attaque | 38 (lourde) | 7 · 6 · 2 | Décharge 65 % |
 
 ### Génés
 
@@ -117,10 +118,10 @@ la lignée. Les cartes existantes qui servent déjà une voie sont rappelées en
 
 | Carte | Métal | Action | Force | Fréq. | Effet |
 |---|---|---|---|---|---|
-| Coup d'épaule | fer | attaque | 10 | 3 · 2 · 4 | Riposte 30 % |
-| Queue-massue | cuivre | attaque | 10 | 4 · 5 · 3 | Riposte 40 % |
-| Bélier d'os | argent | attaque | 18 (lourde) | 5 · 4 · 1 | Riposte 75 % |
-| Retour de marée | or | attaque | 16 | 2 · 3 · 5 | Riposte 60 % |
+| Coup d'épaule | fer | bouclier | 10 | 3 · 2 · 4 | Riposte 50 % |
+| Queue-massue | cuivre | bouclier | 11 | 4 · 5 · 3 | Riposte 60 % |
+| Bélier d'os | argent | bouclier | 22 (lourde) | 5 · 4 · 1 | Riposte 100 % |
+| Retour de marée | or | bouclier | 18 | 2 · 3 · 5 | Riposte 80 % |
 
 **La Traque (Nuit)** — *déjà là : Yeux nocturnes, Charge (Fissure) ; Morsure, Crocs fossiles, Cœur de meute (Siphon)*
 
@@ -163,12 +164,12 @@ confirmer au robot. Une ou deux cartes au plus, seulement pour combler des Fréq
 | Carte | Métal | Action | Force | Fréq. | Effet |
 |---|---|---|---|---|---|
 | Diapason de cristal | fer | bouclier | 9 | 9 · 8 · 7 | Diapason |
-| Voix basse | fer | attaque | 9 | 9 · 8 · 7 | Unisson 30 % |
-| Chorale des ombres | cuivre | attaque | 10 | 8 · 9 · 7 | Unisson 35 % |
+| Voix basse | fer | attaque | 9 | 9 · 8 · 7 | Unisson 120 % |
+| Chorale des ombres | cuivre | attaque | 10 | 8 · 9 · 7 | Unisson 130 % |
 | Cloche des abysses | argent | bouclier | 15 | 9 · 7 · 8 | Diapason |
-| Grand unisson | or | attaque | 18 | 9 · 8 · 6 | Unisson 40 % |
+| Grand unisson | or | attaque | 18 | 9 · 8 · 6 | Unisson 140 % |
 
-Exemple de tour : Voix basse (9) + Diapason de cristal (prend 9) + Plume de givre (9). La Voix basse gagne +60 %, l'Écho
+Exemple de tour : Voix basse (9) + Diapason de cristal (prend 9) + Plume de givre (9). La Voix basse gagne +240 %, l'Écho
 donne du bouclier et 1 Flux, et la Dissonance n'y peut rien (elle ne brouille que les suites).
 
 ## 6. Chaque voie a sa faiblesse : les trois escouades prennent leur sens
@@ -218,7 +219,7 @@ Strate et le gardien.
 
 ## 9. Par étapes
 
-1. **Étape 1 : une voie par lignée, les plus éloignées des suites.** Carapace, Moteur, Chœur : 14 cartes, 4 effets
-   (Riposte, Décharge, Diapason, Unisson). Puis robot, et tu testes sur ton téléphone.
+1. **Étape 1 (faite le 27 octobre 2026) : une voie par lignée, les plus éloignées des suites.** Carapace, Moteur, Chœur :
+   14 cartes, 4 effets (Riposte, Décharge, Diapason, Unisson). Prompts des images dans `docs/prompts-cartes.md`.
 2. **Étape 2** : Lecture, Traque, Machines (15 cartes, 4 effets), plus le kit d'arrivée des Porteurs.
 3. **Étape 3** : Cadence, Sève, retouches de l’Harmonie (9 à 11 cartes, 2 effets), plus les fouilles par voie et l'onglet du guide.

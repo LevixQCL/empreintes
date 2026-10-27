@@ -303,3 +303,97 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a battered round shield made from an old riveted manhole cover, a worn leather strap on its back, deep dents and scratches, propped upright, the object softly lit by pale ivory-white light with small touches of pale gold, neutral soft lighting, cool grey-blue shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, needle
 ```
 
+
+## Les voies, étape 1 (27 octobre 2026)
+
+Les 14 cartes du Moteur, de la Carapace et du Chœur (`docs/familles-de-decks.md`). Même composition et mêmes lumières que leur lignée.
+
+### Augmentés · Le Moteur
+
+#### Bobine de récupération — `bobine-recuperation.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a forearm bracer wrapped with a tight coil of copper wire around a small blue crystal core, faint blue sparks crawling along the coil and flowing back into the crystal, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+#### Condensateur — `condensateur.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a sturdy glass cylinder capped with riveted steel ends, a small blue lightning bolt trapped and curling inside it, a worn leather belt clip on its side, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+#### Décharge d’arc — `decharge-arc.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a mechanical gauntlet with an open palm vent, a violent arc of blue-white lightning bursting out of it in one crackling discharge, empty glass gauges on the wrist, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+#### Éclair captif — `eclair-captif.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a heavy glass sphere held in a brass cage, a restless blue lightning bolt coiled inside like a caged creature pressing against the glass, tiny cracks of light on the surface, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+#### Noyau instable — `noyau-instable.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a massive old machine core of blackened steel plates, a blinding blue crystal heart showing through gaps between the plates, loose bolts and small arcs of energy escaping, heavy and dangerous, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+### Génés · La Carapace
+
+#### Coup d’épaule — `coup-epaule.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a thick shoulder pauldron grown from layered dark green chitin plates, knobbed and scarred like a beetle shell, a soft green glow between the plates, a cracked stone block beside it, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+#### Queue-massue — `queue-massue.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a heavy curled tail of bone and teal-green chitin ending in a rounded knobbed club, glowing green ridges along its length, resting coiled on the workbench, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+#### Bélier d’os — `belier-os.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a massive ram-like head crest of fused pale bone and green chitin, thick and curved like a battering ram, glowing green veins of light under the surface, a dented iron plate beside it, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+#### Retour de marée — `retour-maree.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a large round shell shield of dark green chitin, a frozen wave of glowing teal water curling over its rim as if about to crash back, small pebbles and seaweed around it, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, blood, gore, flesh, organ
+```
+
+### Résonants · Le Chœur
+
+#### Diapason de cristal — `diapason-cristal.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a single tall tuning fork made of clear violet crystal standing in a brass base, one perfect ring of violet light spreading from it and making nearby small crystals glow the same tone, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+#### Voix basse — `voix-basse.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a wide low crystal bowl of deep violet, a single slow heavy ring of sound light rising from it, the workbench dust trembling in a perfect circle around it, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+#### Chorale des ombres — `chorale-ombres.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a cluster of small violet crystal pipes like a tiny organ, every pipe glowing with the same note, soft violet shadows swaying on the wall behind it like a choir, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+#### Cloche des abysses — `cloche-abysses.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an old bronze bell crusted with strange spiral seashells and violet crystals, hanging from a small wooden frame, a deep violet ring of sound light pulsing out from its rim, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```
+
+#### Grand unisson — `grand-unisson.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a large faceted violet crystal pulsing with light, many thin threads of violet light converging into it from all directions like many voices joining as one, a strong single beam rising from its tip, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+```

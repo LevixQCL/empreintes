@@ -11,7 +11,7 @@ import { CHARGE, COLLECTION, NOMS_RARETE, RARETES, chargeNiveau } from '../core/
 import { DECK_DEPART, GESTES_SPECIAUX, METAL_FORCE, METAL_FREQ, METAL_RENFORT, MODULES, carteId, gesteDeCarte, moduleDe, moduleDef } from '../core/donnees';
 import { NOMS_EFFET } from '../core/effets';
 import { DISTRICT, EPREUVE_DECK_MIN } from '../core/jeu';
-import { REGLES } from '../core/regles';
+import { REGLES, frequenceLibre } from '../core/regles';
 import type { Geste, GesteDef, Lignee, TypeEffet, TypeGeste } from '../core/types';
 import { socleAction, textureMetal } from './art';
 import { COULEUR_RARETE, couleurFrequence, faceCarte } from './carte';
@@ -60,7 +60,7 @@ export const lienGuide = (onglet: OngletGuide, texte: string, classe = '') =>
 /** Combien de cartes de chaque lignée ont chaque Fréquence principale (1 à 9) */
 function frequencesLignee(l: Lignee): number[] {
   const n = Array.from({ length: 9 }, () => 0);
-  for (const m of MODULES) if (m.lignee === l && m.effet?.type !== 'accord') n[m.f[0]! - 1]!++;
+  for (const m of MODULES) if (m.lignee === l && !frequenceLibre(m.effet)) n[m.f[0]! - 1]!++;
   return n;
 }
 
@@ -272,6 +272,10 @@ const REGLE: Record<TypeEffet, () => string> = {
   fissure: () => `L’ennemi visé subit ${fourchette('fissure')} de dégâts en plus, ce tour-ci et le suivant.`,
   accord: () => 'Fréquence libre, notée ∗ : la carte prend toujours celle qui prolonge ta suite.',
   crescendo: () => `+${fourchette('crescendo')} de force pour chaque carte posée avant elle dans la chaîne.`,
+  riposte: () => `Une carte de bouclier qui riposte : après avoir donné son bouclier, elle frappe l’ennemi de ${fourchette('riposte')} du bouclier d’escouade. Le bouclier n’est pas dépensé.`,
+  decharge: () => `Vide tout le Flux : +${fourchette('decharge')} de force par Flux vidé. Sans Flux, elle frappe normalement.`,
+  diapason: () => 'Fréquence libre, notée = : la carte reprend la Fréquence de celle posée juste avant (en tête de chaîne, celle d’après).',
+  unisson: () => `+${fourchette('unisson')} de force pour chaque autre carte de la même Fréquence dans la chaîne.`,
 };
 
 function astuce(t: TypeEffet): string {
@@ -285,6 +289,10 @@ function astuce(t: TypeEffet): string {
     case 'desarmer': return 'Quand l’ennemi annonce un gros coup. S’il n’annonce pas d’attaque, l’effet ne fait rien.';
     case 'fissure': return 'Pose-la tôt : seules les cartes jouées après elle en profitent, et encore au tour suivant.';
     case 'accord': return 'Elle bouche le trou d’une suite. En tête de chaîne, elle se cale juste avant la carte qui la suit.';
+    case 'riposte': return 'Pose-la en dernier : elle profite de tout le bouclier déjà monté dans la chaîne, et de celui gardé par un Rempart ou la Marque de Doran.';
+    case 'decharge': return `Remplis le Flux (Surcharge, Résonance, Écho), puis vide-le d’un coup : à ${REGLES.fluxMax} Flux, la force fait plus que doubler. Mais ce Flux ne servira ni au Coup d’éclat ni à une place de plus.`;
+    case 'diapason': return `Elle complète un Écho : deux cartes de même Fréquence et un Diapason, et l’escouade gagne ${REGLES.bouclierEcho} de bouclier et 1 Flux.`;
+    case 'unisson': return 'Trois cartes de même Fréquence : chacune compte les deux autres. La Dissonance ne brouille que les suites, pas l’Unisson ni l’Écho.';
     case 'crescendo': {
       const parts = MODULES.map((m) => m.effet).filter((e): e is { type: 'crescendo'; part: number } => e?.type === 'crescendo').map((e) => e.part);
       const max = REGLES.capaciteMax - 1;
