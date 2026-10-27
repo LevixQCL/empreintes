@@ -101,8 +101,8 @@ par le code, net à toutes les tailles :
 - la valeur dans une capsule de verre de la même famille, liseré de la couleur de l'action, icônes au trait
   (épée, écu, +) ; ancienne description : le chiffre seul, avec une petite icône de couleur posée à sa gauche — épée rouge (attaque), écu bleu
   (bouclier), croix « + » verte (soin) — sur une pastille de verre fumé, au-dessus de la couture à droite ;
-- l'effet : une icône dorée au trait par effet, devant son nom en collection, et **en main une pastille dorée à gauche
-  de la valeur** (demande de Bryan : on doit voir en main qu'une carte a un effet, et lequel). Icônes : Vague (deux
+- l'effet : une icône dorée au trait par effet, devant son nom en collection, et **en main sous la barre de séparation**,
+  en grand, dans la bande vide (idée de Bryan) (demande de Bryan : on doit voir en main qu'une carte a un effet, et lequel). Icônes : Vague (deux
   vagues), Élan (double chevron), Surcharge (éclair), Perçant (flèche qui traverse une ligne) ; à dessiner : Siphon
   (flèche qui revient), Désarmer (lame brisée), Fissure (trait en zigzag), Crescendo (trois barres montantes),
   Accord (diapason), Rempart (créneaux) ; Lien (combo) : deux maillons ;
