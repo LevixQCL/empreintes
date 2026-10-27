@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { accorder, ajouter, allonger, capacite, creerCombat, deplacer, lancer, placesLibres, repiocher, retirer } from '../src/core/combat';
+import { accorder, ajouter, allonger, capacite, creerCombat, deplacer, lancer, peutRelancer, placesLibres, relancerMain, repiocher, retirer } from '../src/core/combat';
 import { nouvelleExpedition, combatSuivant, cloturerCombat } from '../src/core/expedition';
 import { analyserChaine, serieFinale } from '../src/core/regles';
 import { DECK_DEPART, PORTEURS, gesteDeCarte } from '../src/core/donnees';
@@ -65,6 +65,25 @@ describe('Combat', () => {
     expect(s.chaine).toHaveLength(0);
     expect(s.main).toHaveLength(5);
     expect(s.main.length + s.pioche.length + s.defausse.length).toBe(total);
+  });
+
+  it('relance de la première main : gratuite, une seule fois, seulement au premier tour', () => {
+    const s = creerCombat({ porteurs: equipe(), ennemiId: 'remanent', rng: 3 });
+    const total = s.main.length + s.pioche.length + s.defausse.length;
+    const taille = s.main.length;
+    ajouter(s, s.main[0]!.uid);
+    const flux = s.flux;
+    expect(relancerMain(s).ok).toBe(true);
+    expect(s.flux).toBe(flux);
+    expect(s.chaine).toHaveLength(0);
+    expect(s.main).toHaveLength(taille);
+    expect(s.main.length + s.pioche.length + s.defausse.length).toBe(total);
+    expect(peutRelancer(s)).toBe(false);
+    expect(relancerMain(s).ok).toBe(false);
+    const t = creerCombat({ porteurs: equipe(), ennemiId: 'remanent', rng: 4 });
+    ajouter(t, t.main[0]!.uid);
+    lancer(t);
+    expect(relancerMain(t).ok).toBe(false);
   });
 
   it('un joueur au hasard termine toujours une expédition (pas de blocage)', () => {
