@@ -77,7 +77,7 @@ export const LORE_CARTES: Record<string, string> = {
   'voix-basse': 'Une seule note, tenue très longtemps, si grave qu’on la sent dans les os avant de l’entendre. Seule, elle intrigue. Reprise par d’autres, elle fait céder les murs.',
   'chorale-ombres': 'Les ombres de plusieurs Résonants qui chantent ensemble, même quand leurs propriétaires se taisent. Joss dit que c’est la seule chorale qui ne fait jamais de fausse note.',
   'cloche-abysses': 'Une cloche remontée de la Strate −8, couverte de coquillages qui n’existent plus. Quand elle sonne, chaque empreinte autour d’elle répond sur le même ton.',
-  'grand-unisson': 'Le quartier entier, une nuit, a chanté la même note pour veiller un des siens. Les Veilleurs l’ont accordée dans un carillon doré, dont chaque tube porte une voix. Il frappe d’autant plus fort qu’on est nombreux à la porter.',
+  'grand-unisson': 'Le quartier entier, une nuit, a chanté la même note pour veiller un des siens. Les Veilleurs l’ont accordée dans un carillon doré, dont chaque tube porte une voix. Il frappe d’autant plus fort qu’on est nombreux à le faire sonner.',
 };
 
 /** Le lore d'une carte (« jambes-ressort@or » → celui de « jambes-ressort ») */
