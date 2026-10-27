@@ -90,7 +90,8 @@ socles peints actuels (éclat, écu, couronne de feuilles) ont aussi été écar
 
 **Décision : la carte n'a plus besoin d'aucune image Midjourney en dehors de l'illustration.** Tout le reste est dessiné
 par le code, net à toutes les tailles :
-- le cadre dans la matière du métal (texture `public/art/metaux/`, 2,8 % de la largeur, nacre irisée) : on reconnaît le
+- le cadre dans la matière du métal (texture `public/art/metaux/`, 2,8 % de la largeur) ; **la Nacre n'a aucun cadre** (règle de Bryan) : l'image va jusqu'aux bords, le texte sur un voile
+  sombre à peine irisé, et ses effets holographiques actuels suffisent à la reconnaître : on reconnaît le
   métal d'un coup d'œil ; son arête intérieure et la couture prennent la couleur de l'action (rouge attaque, bleu
   bouclier, vert soin) : on reconnaît l'action aussi (demande de Bryan : « les deux ») ;
 - les cristaux de Fréquence, petits (15 % de la largeur, les autres Fréquences à 11 %), en ligne en haut à gauche ;
