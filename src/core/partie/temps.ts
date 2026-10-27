@@ -5,7 +5,7 @@ import { batimentDef, moduleDef } from '../donnees';
 import { ajouterCarte } from '../collection';
 import { tireur } from '../rng';
 import { noterPalmares } from '../classements';
-import { ARCHIVE, CREUSEURS, enExpedition, energieParHeure, jourDe, log, semaineDe, stockage, type Jeu, typeDuJour } from './etat';
+import { ARCHIVE, CONFIANCE, CREUSEURS, confier, enExpedition, energieParHeure, jourDe, log, semaineDe, stockage, type Jeu, typeDuJour } from './etat';
 import { avancerFils, retourDeMission, verifierArrivees } from './descentes';
 import { creuser, energieEntrainement, entrainer, gagnerCreuseurs, garnirComptoir, heuresEntrainement, soinParHeure } from './district';
 import { RAVITAILLEMENT, eveillerLegs } from './recompenses';
@@ -48,7 +48,8 @@ export function tick(j: Jeu, now: number): string[] {
 
   for (const c of j.chantiers.filter((x) => now >= x.fin)) {
     j.batiments[c.batiment]++;
-    if (tireur(j).nombre() < CREUSEURS.chantier) gagnerCreuseurs(j, 1, 'le chantier attire un volontaire');
+    confier(j, CONFIANCE.chantier);
+    if ((j.confiance ?? 50) >= CONFIANCE.haute && tireur(j).nombre() < CREUSEURS.confiance) gagnerCreuseurs(j, 1, 'le district a confiance, un volontaire se présente');
     if (c.batiment === 'noyau' && creuser(j)) nouvelles.push(`La Tour du Noyau loge assez de creuseurs : la Strate −${j.strate} est ouverte.`);
     const t = `Chantier terminé : ${batimentDef(c.batiment).nom} passe au niveau ${j.batiments[c.batiment]}.`;
     log(j, t);

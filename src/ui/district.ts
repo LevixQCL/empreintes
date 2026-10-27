@@ -8,7 +8,7 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -247,10 +247,11 @@ function mission(e: EcranDistrict): string {
   const def = QUOTIDIENS[q.type];
   const max = ARCHIVE.paliers[ARCHIVE.paliers.length - 1]!;
   const crans = ARCHIVE.paliers.map((p) => `<i class="cran${j.archive.points >= p ? ' atteint' : ''}" style="left:${(p / max) * 100}%"></i>`).join('');
-  // Deux blocs : l'objectif et l'Archive (la Confiance est retirée le 27 octobre 2026), avec la rumeur du marché. Sur téléphone ils restent serrés dans un seul panneau ;
+  // Trois blocs : l'objectif, la confiance, l'Archive. Sur téléphone ils restent serrés dans un seul panneau ;
   // sur PC (panneau-district.css, 23 octobre 2026) chacun devient sa propre carte de verre, avec plus de détails.
   // Les éléments « pc » ne s'affichent que sur PC, les « mob » que sur téléphone.
   const points = Math.min(j.archive.points, max);
+  const confiance = j.confiance ?? 50;
   // sur téléphone, le panneau se replie (23 octobre 2026, Bryan : « je ne sais pas fermer cette page ») : replié,
   // il ne garde que l'objectif du jour et sa jauge ; on le touche pour tout voir. Sur PC, il reste toujours ouvert.
   const replie = e.panneauReplie !== false;
@@ -260,11 +261,11 @@ function mission(e: EcranDistrict): string {
     barre = `<section class="mission jour replie barre" aria-label="Objectif du jour">`
       + `<button type="button" class="mj-aller" data-action="objectif-aller" data-id="${q.type}" aria-label="Objectif du jour : ${echap(def.titre)}, ${q.progres} sur ${def.objectif}. Y aller">`
       + `<span class="surtitre">Objectif</span><strong>${echap(def.titre)}</strong><b class="chiffre">${q.progres}/${def.objectif}</b>${ICO.lancer}</button>`
-      + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="false" aria-label="Voir l’Archive et le marché"><i aria-hidden="true">▾</i></button></section>`;
+      + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="false" aria-label="Voir la confiance, l’Archive et le marché"><i aria-hidden="true">▾</i></button></section>`;
   }
   // avec la barre, le panneau complet n'est plus montré que sur PC (district.css)
   let h = barre + `<section class="mission jour${quotidienFait(j) ? ' faite' : ''}${replie ? ' replie' : ''}${barre ? ' pc-seul' : ''}" aria-label="Objectif du jour">`
-    + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="${!replie}" aria-label="${replie ? 'Voir l’Archive et le marché' : 'Réduire le panneau'}">${replie ? 'Détails' : 'Réduire'}<i aria-hidden="true">${replie ? '▾' : '▴'}</i></button><div class="mj-obj">`;
+    + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="${!replie}" aria-label="${replie ? 'Voir la confiance, l’Archive et le marché' : 'Réduire le panneau'}">${replie ? 'Détails' : 'Réduire'}<i aria-hidden="true">${replie ? '▾' : '▴'}</i></button><div class="mj-obj">`;
   if (quotidienActif(j)) {
     const reserve = q.reserve > 1
       ? `<span class="mj-reserve pc" title="${q.reserve} objectifs en réserve : ils s’accumulent jusqu’à 3 si tu ne joues pas">${Array.from({ length: 3 }, (_, i) => `<i class="${i < q.reserve ? 'plein' : ''}"></i>`).join('')}<small>${q.reserve} en réserve</small></span>`
@@ -276,7 +277,11 @@ function mission(e: EcranDistrict): string {
           + `<p class="mj-gain pc">${icone('coffre')}<span>Récompense : <b>une carte</b> ou <b>2 Éclats</b>, au choix</span></p>`);
   } else h += `<div class="mission-tete"><span class="surtitre">OBJECTIF DU JOUR</span></div><small class="aide">Tous faits : le prochain arrive demain.</small>`;
   h += `</div>`;
-  h += (j.chambre ? `<p class="rumeur"><b>Au marché</b> ${echap(rumeurDuJour(jourDe(Date.now()), j.strate))}</p>` : '');
+  const seuils = `<i class="seuil pc" style="left:${CONFIANCE.basse}%" title="En dessous : −10 % d’énergie"></i><i class="seuil pc" style="left:${CONFIANCE.haute}%" title="Au-dessus : +10 % d’énergie"></i>`;
+  h += `<div class="confiance" title="${echap(humeurDistrict(j))}"><span class="surtitre mob">CONFIANCE · ${confiance}</span><span class="surtitre pc">CONFIANCE DU QUARTIER</span>`
+    + `<span class="mj-valeur pc"><b>${confiance}</b>/100</span>`
+    + `<div class="jauge">${seuils}<i style="width:${confiance}%"></i><b class="curseur pc" style="left:${confiance}%"></b></div><small>${echap(humeurDistrict(j))}</small></div>`
+    + (j.chambre ? `<p class="rumeur"><b>Au marché</b> ${echap(rumeurDuJour(jourDe(Date.now()), j.strate))}</p>` : '');
   const reperes = ARCHIVE.paliers.map((p, i) => `<span class="${points >= p ? 'atteint' : ''}" style="left:${(p / max) * 100}%">${i === ARCHIVE.paliers.length - 1 ? '' : p}</span>`).join('');
   h += `<div class="archive"><span class="mj-ico pc">${icone('coffre')}</span>`
     + `<span class="surtitre mob">ARCHIVE · ${points}/${max}</span><span class="surtitre pc">ARCHIVE DE LA SEMAINE</span>`

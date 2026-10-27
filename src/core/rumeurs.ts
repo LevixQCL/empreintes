@@ -1,4 +1,4 @@
-// Les rumeurs du marché (23 octobre 2026, Bible « Petites histoires des districts ») : une par jour, dans le panneau du district.
+// Les rumeurs du marché (23 octobre 2026, Bible « Petites histoires des districts ») : une par jour, sous la Confiance.
 // La vie du quartier autour du directeur : teinturiers de mèches, maisons de mue, minute grise, le boulanger des toits.
 // Certaines n'apparaissent qu'une fois la chambre ouverte, ou qu'à partir d'une Strate.
 

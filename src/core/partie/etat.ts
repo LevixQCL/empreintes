@@ -1,4 +1,4 @@
-// Couche 1 — l'état d'une partie : réglages du district, types, expérience et Marques des Porteurs, creuseurs, escouade.
+// Couche 1 — l'état d'une partie : réglages du district, types, expérience et Marques des Porteurs, Confiance, creuseurs, escouade.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
 import { batimentDef, porteurDef, PORTEURS } from '../donnees';
@@ -214,8 +214,8 @@ export interface Jeu {
   arrives: string[];
   /** les grands choix de la campagne (Bible : un choix important par acte) */
   actes: { chambre?: GardeChambre; lecture?: LectureVela; fin?: FinCampagne };
-  /** l'ancienne Confiance des habitants (retirée le 27 octobre 2026) : encore présente dans les vieilles sauvegardes, plus lue par le jeu */
-  confiance?: number;
+  /** la Confiance des habitants, de 0 à 100 : elle ne destitue jamais le directeur, mais elle colore le jeu (Bible) */
+  confiance: number;
   /** les mécaniques de combat déjà expliquées la première fois qu'elles sont apparues (decouvertes.ts) */
   decouvertes?: string[];
   /** les scènes de la campagne déjà jouées, dans l'ordre (campagne.ts) */
@@ -341,17 +341,25 @@ export function multiplicateur(j: Jeu, b: Exclude<Poste, 'noyau'>): number {
   return porteurDef(id).lignee === batimentDef(b).affinite ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste;
 }
 
-export const energieParHeure = (j: Jeu) => Math.round((DISTRICT.energieParHeure[j.batiments.generateur] ?? 0) * multiplicateur(j, 'generateur'));
+export const energieParHeure = (j: Jeu) => Math.round((DISTRICT.energieParHeure[j.batiments.generateur] ?? 0) * multiplicateur(j, 'generateur') * effetConfiance(j));
 
-// ---------- L'Accord ouvert ----------
-// La Confiance des habitants est retirée (27 octobre 2026, Bryan : « elle était à 100 tout le temps, ça ne fait que mettre des contraintes ;
-// celui qui joue doit gagner du fait de jouer »). L'Accord ouvert ne dépend plus que de la Clinique.
+// ---------- La Confiance des habitants ----------
+// Elle monte avec les chantiers, les expéditions réussies et les choix qui protègent le quartier ; elle baisse avec les
+// défaites et certains choix. Jamais pendant l'absence : rien ne se dégrade quand on ne joue pas.
+export const CONFIANCE = { victoire: 3, chantier: 2, defaite: -2, haute: 70, basse: 30 } as const;
 
 /**
- * L'Accord ouvert (Bible, 23 octobre 2026) : quand la Clinique sait greffer, elle offre une pierre relevée à tout volontaire
- * du quartier. Un nouveau Résonant rejoint le district.
+ * L'Accord ouvert (Bible, 23 octobre 2026) : quand le district a confiance en son directeur et que la Clinique
+ * sait greffer, elle offre une pierre relevée à tout volontaire du quartier. Un nouveau Résonant rejoint le district.
  */
-export const ACCORD_OUVERT = { clinique: 3 } as const;
+export const ACCORD_OUVERT = { clinique: 3, confiance: CONFIANCE.haute } as const;
+
+export function confier(j: Jeu, delta: number) {
+  j.confiance = Math.max(0, Math.min(100, Math.round((j.confiance ?? 50) + delta)));
+}
+
+/** Haute : les habitants donnent un coup de main (+10 % d'énergie). Basse : le Générateur tourne au ralenti (−10 %). */
+export const effetConfiance = (j: Jeu) => ((j.confiance ?? 50) >= CONFIANCE.haute ? 1.1 : (j.confiance ?? 50) <= CONFIANCE.basse ? 0.9 : 1);
 
 export const CREUSEURS = {
   /** creuseurs logés selon le niveau du Noyau (index = niveau) */
@@ -365,8 +373,8 @@ export const CREUSEURS = {
   missionCourte: 0.1,
   missionLongue: 0.3,
   epreuve: 1,
-  /** un chantier terminé attire parfois un volontaire */
-  chantier: 0.3,
+  /** un chantier terminé quand la Confiance est haute attire parfois un volontaire */
+  confiance: 0.3,
 } as const;
 
 export function creuseursRequis(strate: number): number {

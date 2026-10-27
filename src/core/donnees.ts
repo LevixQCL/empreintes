@@ -18,7 +18,7 @@ export const PORTEURS: PorteurDef[] = [
   { id: 'aurel', nom: 'Aurel Orsève', lignee: 'reso', pvMax: 30, nomme: true,
     arrivee: { strate: 5, replique: 'Mon ombre a de meilleures manières que moi. C’est bien ça, le problème.' } },
   // Bible, 23 octobre 2026 (« Devenir Résonant, Géné ou Augmenté ») : une Née-de-mue, la cousine Refusée d'Aurel,
-  // et le Résonant que la Clinique trouve lors d'un Accord ouvert
+  // et le Résonant que la Clinique trouve lors d'un Accord ouvert, quand le district lui fait confiance
   { id: 'kessa', nom: 'Kessa', lignee: 'bio', pvMax: 40, nomme: true,
     arrivee: { strate: 4, replique: 'On n’a rien choisi. Mais on est les seuls à pouvoir dire ce que ça fait.' } },
   { id: 'liane', nom: 'Liane Orsève', lignee: 'tech', pvMax: 34, nomme: true,

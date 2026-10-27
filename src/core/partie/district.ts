@@ -5,9 +5,15 @@ import { batimentDef, porteurDef, PORTEURS, BATIMENTS, MODULES_TIRABLES, moduleD
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
-import { ACCORD_OUVERT, ARCHIVE, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Resultat, xpPourNiveau } from './etat';
+import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
 
+export function humeurDistrict(j: Jeu): string {
+  const c = j.confiance ?? 50;
+  if (c >= CONFIANCE.haute) return 'Le quartier croit en toi : les habitants donnent un coup de main (+10 % d’énergie).';
+  if (c <= CONFIANCE.basse) return 'Le quartier doute : le Générateur tourne au ralenti (−10 % d’énergie).';
+  return 'Le quartier t’observe. Les chantiers et les expéditions réussies feront monter sa confiance.';
+}
 export const soinParHeure = (j: Jeu) => (DISTRICT.soinParHeure[j.batiments.clinique] ?? 0) * multiplicateur(j, 'clinique');
 
 /** Ce que coûte la refabrication d'un exemplaire */
@@ -55,7 +61,7 @@ export function profondeurNoyau(niveau: number): number {
 
 /**
  * Ce que rapporte le niveau suivant d'un bâtiment, calculé avec les vraies règles sur une copie du district
- * (Porteur posté compris) : la feuille du bâtiment l'affiche à côté du bouton Améliorer. Vide au niveau maximum.
+ * (Porteur posté et Confiance compris) : la feuille du bâtiment l'affiche à côté du bouton Améliorer. Vide au niveau maximum.
  */
 export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
   const niv = j.batiments[b];
@@ -66,7 +72,7 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
   if (b === 'clinique') g.push({ quoi: 'soin', texte: 'Usure soignée par heure', avant: soinParHeure(j), apres: soinParHeure(apres), detail: 'pour chaque Porteur au repos' });
   if (b === 'clinique' && niv + 1 === ACCORD_OUVERT.clinique) {
     const joss = PORTEURS.find((p) => p.arrivee?.accord && !j.arrives.includes(p.id));
-    if (joss) g.push({ quoi: 'porteur', texte: 'La Clinique peut organiser un Accord ouvert', detail: 'un nouveau Résonant rejoint le district' });
+    if (joss) g.push({ quoi: 'porteur', texte: 'La Clinique peut organiser un Accord ouvert', detail: `un nouveau Résonant, quand la Confiance atteint ${ACCORD_OUVERT.confiance}` });
   }
   if (b === 'forge') {
     g.push({ quoi: 'forge', texte: 'Vitesse de refabrication', avant: Math.round(vitesseForge(niv) * 100), apres: Math.round(vitesseForge(niv + 1) * 100), unite: '%' });
@@ -292,7 +298,7 @@ export function degreffer(j: Jeu, moduleId: string): Resultat {
 // Décision du 22 octobre 2026 : on ne descend pas au rythme d'un minuteur, mais au rythme du jeu. Battre le gardien
 // du front prépare l'étage suivant ; il ne se creuse qu'avec assez de creuseurs, et la Tour du Noyau doit pouvoir les loger.
 // Les creuseurs qui percent un étage y restent pour l'étayer : on ne peut pas en faire de réserve pour plus tard.
-// On gagne des creuseurs en jouant : fouilles ciblées, missions, Épreuves, gardiens vaincus et chantiers terminés.
+// On gagne des creuseurs en jouant : fouilles ciblées, missions, Épreuves, gardiens vaincus et Confiance du district.
 
 export const logementCreuseurs = (j: Pick<Jeu, 'batiments'>) => CREUSEURS.logement[j.batiments.noyau] ?? CREUSEURS.logement[CREUSEURS.logement.length - 1]!;
 /** Le niveau du Noyau qu'il faut pour loger les creuseurs d'une Strate */
