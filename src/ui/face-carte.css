@@ -61,8 +61,13 @@
 .nf-val svg{width:8.5cqw;height:8.5cqw;filter:drop-shadow(0 0 1.2cqw currentColor)}
 .nf-val b{font-family:'Oxanium',var(--mono);font-weight:700;font-size:11cqw;line-height:1;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.6);font-variant-numeric:tabular-nums}
 /* la force réelle en combat (27 octobre 2026) : verte si la carte est renforcée, rouge si elle est affaiblie (détail dans la loupe) */
-.nf-val.hausse b{color:#9ff5b6;text-shadow:0 0 2.4cqw rgba(110,240,150,.75),0 1px 2px rgba(0,0,0,.7)}
-.nf-val.baisse b{color:#ff9b8c;text-shadow:0 0 2.4cqw rgba(255,110,90,.7),0 1px 2px rgba(0,0,0,.7)}
+.nf-val.hausse,.nf-val.baisse{--tc:#5ee88a;color:var(--tc);background:color-mix(in srgb,var(--tc) 30%,rgba(8,10,18,.7));
+  box-shadow:inset 0 0 0 .6cqw var(--tc),0 0 5cqw color-mix(in srgb,var(--tc) 70%,transparent)}
+.nf-val.baisse{--tc:#ff6a55}
+.nf-val.hausse b,.nf-val.baisse b{color:#fff;text-shadow:0 0 2cqw var(--tc),0 1px 2px rgba(0,0,0,.8)}
+/* une petite flèche, pour qui ne distingue pas le vert du rouge */
+.nf-val.hausse::after,.nf-val.baisse::after{content:'▲';font-size:7.5cqw;line-height:1;margin-left:-.4cqw;color:var(--tc);text-shadow:0 0 1.5cqw var(--tc)}
+.nf-val.baisse::after{content:'▼'}
 /* l'icône seule de l'effet, sous la barre : uniquement en main */
 .nf-eff{display:none;place-items:center;color:#f3d27a}
 .nf-eff svg{filter:drop-shadow(0 0 1.5cqw rgba(243,210,122,.7))}
