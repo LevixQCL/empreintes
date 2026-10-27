@@ -5,7 +5,7 @@
 // - en haut à gauche, les Fréquences dans une capsule de verre (la principale, puis les autres à sa droite) ;
 // - une barre de séparation aux trois quarts, la valeur posée dessus à droite (icône au trait + chiffre) ;
 // - dessous, sur un voile dans la matière du métal : la roue de niveau (couleur de la lignée) et le nom, puis l'effet ;
-// - en main (carte étroite), l'image entière avec la Fréquence en haut, le nom, et en bas deux capsules : lignée et effet, puis la force.
+// - en main (carte étroite), l'image entière avec la Fréquence en haut, le nom (dans la chaîne seulement), et en bas deux capsules : lignée et effet, puis la force.
 // Les tailles sont en unités de conteneur (cqw) : la même carte s'affiche en grand ou en petit.
 
 import { NOMS_EFFET, effetsDe, formuleEffet, nomsEffets } from '../core/effets';

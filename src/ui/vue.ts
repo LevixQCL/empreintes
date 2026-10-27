@@ -5,7 +5,7 @@
 import { ECLATS, apercuChaine, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, puissance, usureCombat } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
-import { effetsDe, libelleEffet } from '../core/effets';
+import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
 import { DISTRICT, PILLAGE } from '../core/jeu';
@@ -124,9 +124,28 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
   const cls = ['geste', taille, eteinte ? 'eteinte' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', o.felure ? 'brise-felure' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
   const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}${eteinte ? ', éteinte : son Porteur est à terre' : ''}`;
+  AFFICHES.set(g.uid, { g, d, nomP, eteinte });
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]}" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="nf nf-${metal}${o.halo ? ' nf-suite' : ''}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d)}</span>`
     + `</button>`;
+}
+
+/** les cartes de combat affichées (par uid), pour la loupe */
+const AFFICHES = new Map<string, { g: Geste; d: Face; nomP: string; eteinte: boolean }>();
+
+/**
+ * La loupe (27 octobre 2026, Bryan) : un appui prolongé sur une carte du combat la montre en grand, au milieu de l'écran,
+ * avec son nom, ses effets en entier et qui la joue ; elle disparaît quand on lève le doigt (main.ts), sans jouer la carte.
+ */
+export function loupe(uid: string): string | null {
+  const a = AFFICHES.get(uid);
+  if (!a) return null;
+  const { g, d, nomP, eteinte } = a;
+  const grand: Face = { ...d, suite: false, felure: undefined };
+  const effets = effetsDe(g).map((e) => `<li><b>${NOMS_EFFET[e.type]}</b> ${texteEffet(e)}</li>`).join('');
+  return `<div class="loupe" aria-hidden="true"><div class="loupe-face"><span class="nf nf-${d.metal}" style="${styleFace(d)}">${corpsFace(grand)}</span></div>`
+    + (effets ? `<ul class="loupe-effets">${effets}</ul>` : '')
+    + `<p class="loupe-qui">${eteinte ? `Éteinte : ${echap(nomP)} est à terre` : `Jouée par ${echap(nomP)}`}${g.lourd ? ' · prend 2 places' : ''}</p></div>`;
 }
 
 /**
@@ -249,7 +268,7 @@ function regles(): string {
   return `<div class="voile-feuille" data-action="regles" aria-hidden="true"></div><section class="feuille regles" role="dialog" aria-modal="true" aria-labelledby="regles-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">AIDE</span><h2 id="regles-titre">Comment on joue</h2></div><button type="button" class="btn-icone" data-action="regles" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
     + `<div class="liens-guide">${lienGuide('carte', 'Lire une carte')}${lienGuide('effets', 'Tous les effets')}</div><ol class="liste-regles">`
-    + '<li><b>Ton deck, ce sont tes cartes.</b> Chaque Porteur de l’escouade apporte celles que tu lui as confiées au district (6 au plus), plus les 2 cartes du paquetage du district (Stimulant et Repli). L’illustration est celle de la carte ; à défaut, le portrait du Porteur qui la joue.</li>'
+    + '<li><b>Ton deck, ce sont tes cartes.</b> Chaque Porteur de l’escouade apporte celles que tu lui as confiées au district (6 au plus), plus les 2 cartes du paquetage du district (Stimulant et Pavois de cuivre). L’illustration est celle de la carte ; à défaut, le portrait du Porteur qui la joue.</li>'
     + `<li><b>Compose une chaîne.</b> Touche les cartes de ta main (${REGLES.capaciteBase} places au départ), puis lance-la. Une carte posée se retire d’un toucher, ou se glisse de côté pour changer de place.</li>`
     + `<li><b>La force</b> est au milieu : ${ICO.atk} dégâts, ${ICO.bouclier} protection de l’escouade, ${ICO.soin} soin (dans la chaîne, touche le nom sous la carte pour choisir qui).</li>`
     + '<li><b>La Fréquence</b> est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.</li>'

@@ -271,7 +271,7 @@ export function analyser(parties: Partie[], now: number): Analyse {
     const v = jouees.get(m.id) ?? 0;
     return { id: m.id, nom: m.nom, metal: m.rarete, jouee: v, part: totalJouees ? v / totalJouees : 0, possedee, niveau: moyenne(niveaux) };
   });
-  // les cartes du district (Stimulant, Repli) : dans tous les decks, jamais dans la collection
+  // les cartes du district (Stimulant, Pavois de cuivre) : dans tous les decks, jamais dans la collection
   for (const [id, v] of jouees) {
     if (!MODULES.some((m) => m.id === id)) cartes.push({ id, nom: nomCarte(id), metal: 'fer', jouee: v, part: totalJouees ? v / totalJouees : 0, possedee: n, niveau: 1 });
   }

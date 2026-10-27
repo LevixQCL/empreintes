@@ -177,7 +177,7 @@ function ongletDeck(): string {
     + `<li>Chaque carte <b>pèse</b> selon sa force (le chiffre de glace sur sa tuile). Un Porteur porte une <b>Charge</b> de ${chargeNiveau(1)} au niveau 1, +${CHARGE.parNiveau} par niveau : une très grosse carte laisse moins de place aux autres.</li>`
     + `<li>Un Porteur combat toujours avec ses <b>${DISTRICT.cartesMax} places</b> : une place laissée vide se pioche comme une carte et <b>ne se joue pas</b> (sauf dans les Épreuves).</li>`
     + `<li>Une carte n’a qu’<b>un Porteur à la fois</b>. Un Porteur ne porte pas deux fois la même carte, même dans deux métaux.</li>`
-    + `<li><b>Stimulant</b> et <b>Repli</b>, le paquetage du district, sont toujours dans le deck.</li>`
+    + `<li><b>Stimulant</b> et <b>Pavois de cuivre</b>, le paquetage du district, sont toujours dans le deck.</li>`
     + `<li>Changer d’escouade change le deck. Un Porteur au travail (ou à l’entraînement) peut descendre : il quitte son poste, qui reste vacant.</li>`
     + `<li>Un Porteur en expédition ou en mission garde ses cartes jusqu’à son retour.</li>`
     + `<li>En combat, les cartes d’un Porteur <b>à terre</b> s’éteignent : elles restent dans le deck un peu moins fortes (−15 %) et sans effet, et leur Fréquence compte toujours pour les suites. Il se relève à un campement.</li>`
@@ -225,7 +225,7 @@ function ongletCarte(): string {
 
   // la même carte en combat
   h += `<section class="bloc">${titre(ICO.codex, 'En combat')}<div class="g-collection"><div class="g-main">${carteExemple(ex, 'main')}</div>`
-    + `<ul class="g-regles"><li>En main, la carte garde l’essentiel : la <b>Fréquence</b>, son <b>nom</b>, la <b>force</b> en bas à droite et, en bas à gauche, le <b>losange de la lignée</b> avec l’<b>icône de l’effet</b> (liseré d’or quand la carte en a un).</li>`
+    + `<ul class="g-regles"><li>En main, la carte garde l’essentiel : la <b>Fréquence</b>, la <b>force</b> en bas à droite et, en bas à gauche, le <b>losange de la lignée</b> avec l’<b>icône de l’effet</b> (liseré d’or quand la carte en a un). Posée dans la chaîne, elle montre aussi son <b>nom</b>.</li><li><b>Garde le doigt</b> sur une carte (ou le bouton de la souris) : elle s’affiche en grand avec ses effets en entier. Lâche : elle revient à sa place, sans être jouée.</li>`
     + `<li>La carte qui prolonge ta suite se soulève et sa capsule de Fréquence s’allume en or.</li></ul></div></section>`;
 
   // les trois actions
@@ -323,6 +323,6 @@ function ongletEffets(trouvees: ReadonlySet<string>): string {
   // le paquetage du district
   h += `<section class="bloc">${titre(ICO.district, 'Le paquetage du district')}<div class="g-district">`
     + GESTES_SPECIAUX.map((g) => `<div class="g-carte-district">${carteExemple(g, 'main')}<p><b>${echap(g.nom)}</b>${NOM_ACTION[g.type]} ${g.v}, Fréquence ${g.f}${g.effet ? `, ${NOMS_EFFET[g.effet.type]}` : ''}.</p></div>`).join('')
-    + `</div><p class="aide">Le district les fournit à chaque escouade qui descend : le Stimulant vient de la Clinique, le Repli de la Tour du Noyau. Jouées par personne, elles restent même quand un Porteur tombe. Elles n’ont pas de métal et ne montent pas de niveau.</p></section>`;
+    + `</div><p class="aide">Le district les fournit à chaque escouade qui descend : le Stimulant vient de la Clinique, le Pavois de cuivre de la Tour du Noyau. Jouées par personne, elles restent même quand un Porteur tombe. Elles n’ont pas de métal et ne montent pas de niveau.</p></section>`;
   return h;
 }

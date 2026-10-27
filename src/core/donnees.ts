@@ -59,20 +59,20 @@ const legs = (id: string, nom: string, lignee: Lignee, type: TypeGeste, v: numbe
 
 export const MODULES: ModuleDef[] = [
   // ---------- Les 15 cartes de base : 5 par Porteur nommé, qu'il porte dès le départ ----------
-  c('ruee', 'Ruée', 'tech', 'fer', 'atk', 8, [3, 4, 2], { type: 'percant' }),
-  c('bond', 'Bond', 'tech', 'fer', 'atk', 6, [4, 5, 3], { type: 'elan' }),
-  c('esquive', 'Esquive', 'tech', 'fer', 'bouclier', 6, [5, 6, 4], { type: 'elan' }),
-  c('tir', 'Tir', 'tech', 'fer', 'atk', 10, [6, 7, 5], { type: 'percant' }),
-  c('tir-vif', 'Tir vif', 'tech', 'fer', 'atk', 5, [2, 1, 3], { type: 'flux', v: 1 }),
-  c('morsure', 'Morsure', 'bio', 'fer', 'atk', 7, [2, 3, 1], { type: 'siphon', part: 0.5 }),
+  c('ruee', 'Plastron de choc', 'tech', 'fer', 'atk', 8, [3, 4, 2], { type: 'percant' }),
+  c('bond', 'Talon de cristal', 'tech', 'fer', 'atk', 6, [4, 5, 3], { type: 'elan' }),
+  c('esquive', 'Bracelet de déviation', 'tech', 'fer', 'bouclier', 6, [5, 6, 4], { type: 'elan' }),
+  c('tir', 'Canon à cristal', 'tech', 'fer', 'atk', 10, [6, 7, 5], { type: 'percant' }),
+  c('tir-vif', 'Pistolet à faisceau', 'tech', 'fer', 'atk', 5, [2, 1, 3], { type: 'flux', v: 1 }),
+  c('morsure', 'Pince de récif', 'bio', 'fer', 'atk', 7, [2, 3, 1], { type: 'siphon', part: 0.5 }),
   c('carapace', 'Carapace', 'bio', 'fer', 'bouclier', 8, [1, 2, 3], { type: 'rempart', part: 0.5 }),
-  c('regenerer', 'Régénérer', 'bio', 'fer', 'soin', 9, [4, 5, 3], { type: 'vague' }),
-  c('charge', 'Charge', 'bio', 'fer', 'atk', 9, [5, 4, 6], { type: 'fissure', part: 0.25 }),
-  c('grogner', 'Grogner', 'bio', 'fer', 'bouclier', 5, [3, 2, 4], { type: 'desarmer', part: 0.3 }),
-  c('murmure', 'Murmure', 'reso', 'fer', 'bouclier', 7, [7, 6, 8], { type: 'desarmer', part: 0.3 }),
-  c('echo', 'Écho', 'reso', 'fer', 'atk', 8, [9, 8, 7], { type: 'accord' }),
-  c('souffle', 'Souffle', 'reso', 'fer', 'atk', 20, [8, 9, 7], { type: 'fissure', part: 0.25 }, true),
-  c('apaiser', 'Apaiser', 'reso', 'fer', 'soin', 7, [6, 7, 5], { type: 'vague' }),
+  c('regenerer', 'Bol de sève', 'bio', 'fer', 'soin', 9, [4, 5, 3], { type: 'vague' }),
+  c('charge', 'Front de roche', 'bio', 'fer', 'atk', 9, [5, 4, 6], { type: 'fissure', part: 0.25 }),
+  c('grogner', 'Conque de garde', 'bio', 'fer', 'bouclier', 5, [3, 2, 4], { type: 'desarmer', part: 0.3 }),
+  c('murmure', 'Voile du murmure', 'reso', 'fer', 'bouclier', 7, [7, 6, 8], { type: 'desarmer', part: 0.3 }),
+  c('echo', 'Cristal d’écho', 'reso', 'fer', 'atk', 8, [9, 8, 7], { type: 'accord' }),
+  c('souffle', 'Cor de brume', 'reso', 'fer', 'atk', 20, [8, 9, 7], { type: 'fissure', part: 0.25 }, true),
+  c('apaiser', 'Cœur d’améthyste', 'reso', 'fer', 'soin', 7, [6, 7, 5], { type: 'vague' }),
   c('eclat', 'Éclat', 'reso', 'fer', 'atk', 11, [8, 7, 9], { type: 'crescendo', part: 0.3 }),
 
   // ---------- Augmentés : Fréquences basses et moyennes ----------
@@ -107,7 +107,7 @@ export const MODULES: ModuleDef[] = [
   c('plume-givre', 'Plume de givre', 'reso', 'cuivre', 'atk', 11, [9, 8, 7], { type: 'desarmer', part: 0.4 }),
   c('ombre-serpent', 'Ombre de serpent', 'reso', 'cuivre', 'atk', 14, [9, 6, 8], { type: 'fissure', part: 0.3 }),
   c('ombre-ailee', 'Ombre ailée', 'reso', 'argent', 'atk', 26, [9, 7, 8], { type: 'fissure', part: 0.4 }, true),
-  c('pressentiment', 'Pressentiment', 'reso', 'argent', 'bouclier', 12, [7, 8, 6], { type: 'desarmer', part: 0.4 }),
+  c('pressentiment', 'Sablier inversé', 'reso', 'argent', 'bouclier', 12, [7, 8, 6], { type: 'desarmer', part: 0.4 }),
   c('chant-abysses', 'Chant des abysses', 'reso', 'or', 'atk', 26, [7, 8, 9], { type: 'accord' }),
   c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 22, [9, 8, 7], { type: 'crescendo', part: 0.3 }),
 
@@ -119,10 +119,10 @@ export const MODULES: ModuleDef[] = [
   c('eclair-captif', 'Éclair captif', 'tech', 'argent', 'atk', 16, [4, 5, 7], { type: 'decharge', part: 0.55 }),
   c('noyau-instable', 'Noyau instable', 'tech', 'or', 'atk', 38, [7, 6, 2], { type: 'decharge', part: 0.65 }, true),
   // La Carapace (Doran) : parer, puis frapper avec tout le bouclier accumulé
-  c('coup-epaule', 'Coup d’épaule', 'bio', 'fer', 'bouclier', 10, [3, 2, 4], { type: 'riposte', part: 0.5 }),
+  c('coup-epaule', 'Épaulière de roche', 'bio', 'fer', 'bouclier', 10, [3, 2, 4], { type: 'riposte', part: 0.5 }),
   c('queue-massue', 'Queue-massue', 'bio', 'cuivre', 'bouclier', 11, [4, 5, 3], { type: 'riposte', part: 0.6 }),
   c('belier-os', 'Bélier d’os', 'bio', 'argent', 'bouclier', 22, [5, 4, 1], { type: 'riposte', part: 0.85 }, true),
-  c('retour-maree', 'Retour de marée', 'bio', 'or', 'bouclier', 18, [2, 3, 5], { type: 'riposte', part: 0.65 }),
+  c('retour-maree', 'Coquille de marée', 'bio', 'or', 'bouclier', 18, [2, 3, 5], { type: 'riposte', part: 0.65 }),
   // Le Chœur (Joss) : répéter une même Fréquence (Écho)
   c('diapason-cristal', 'Diapason de cristal', 'reso', 'fer', 'bouclier', 9, [9, 8, 7], { type: 'diapason' }),
   c('voix-basse', 'Voix basse', 'reso', 'fer', 'atk', 9, [9, 8, 7], { type: 'unisson', part: 1.2 }),
@@ -209,7 +209,7 @@ export const CARTE_CHAMBRE = carteId('oeil-relais', 'fer');
 // Pas de métal : on ne le trouve pas, on ne le fabrique pas, il ne monte pas de niveau (25 octobre 2026).
 const special = (id: string, nom: string, f: number, type: TypeGeste, v: number, effet?: Effet): GesteDef =>
   ({ id, carte: id, porteur: null, nom, f, type, v, ...(effet ? { effet } : {}) });
-export const GESTES_SPECIAUX: GesteDef[] = [special('stimulant', 'Stimulant', 1, 'soin', 5, { type: 'vague' }), special('repli', 'Repli', 9, 'bouclier', 10)];
+export const GESTES_SPECIAUX: GesteDef[] = [special('stimulant', 'Stimulant', 1, 'soin', 5, { type: 'vague' }), special('repli', 'Pavois de cuivre', 9, 'bouclier', 10)];
 /**
  * La Clé de l’Héritage (27 octobre 2026) : la dixième vierge, pour le directeur qui répond « tout le monde à la fois » à la lettre.
  * Elle rejoint le paquetage (jouée par personne, elle reste quand un Porteur tombe) dès qu'un Porteur de l'escouade a le niveau

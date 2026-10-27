@@ -5,7 +5,8 @@ import type { Entree } from './core/classements';
 import * as J from './core/jeu';
 import { montrer } from './ui/gains';
 import { initInstallation } from './ui/installer';
-import { initToucher } from './ui/toucher';
+import { initToucher, vibrer } from './ui/toucher';
+import { loupe } from './ui/vue';
 import { agir } from './app/actions/index';
 import { clavier } from './app/clavier';
 import { app, compteEtat, G, K, racine, reduit } from './app/etat';
@@ -26,15 +27,22 @@ racine.addEventListener('pointerdown', (ev) => { app.touche = { x: ev.clientX, y
 for (const t of ['touchstart', 'touchmove', 'pointerdown', 'wheel'] as const) racine.addEventListener(t, () => { app.dernierGeste = Date.now(); }, { passive: true, capture: true });
 racine.addEventListener('scroll', () => { app.dernierGeste = Date.now(); }, { passive: true, capture: true });
 
-/* appui long sur une carte de combat : montre son nom, sans la jouer */
+/* appui prolongé sur une carte de combat : la loupe la montre en grand ; elle disparaît quand on lève le doigt, sans jouer la carte */
 let appui: { el: HTMLElement; t: number; x: number; y: number } | null = null;
 let annulerClic = false;
-const finAppui = () => { if (appui) { clearTimeout(appui.t); const el = appui.el; appui = null; setTimeout(() => el.classList.remove('nom-visible'), 1200); } };
+const fermerLoupe = () => document.querySelectorAll('.loupe').forEach((l) => l.remove());
+const finAppui = () => { if (appui) { clearTimeout(appui.t); appui = null; } fermerLoupe(); };
 racine.addEventListener('pointerdown', (ev) => {
   const el = (ev.target as HTMLElement).closest<HTMLElement>('.geste');
   if (!el || app.mode !== 'combat') return;
   annulerClic = false;
-  appui = { el, x: ev.clientX, y: ev.clientY, t: window.setTimeout(() => { el.classList.add('nom-visible'); annulerClic = true; }, 450) };
+  appui = { el, x: ev.clientX, y: ev.clientY, t: window.setTimeout(() => {
+    const html = el.dataset.uid ? loupe(el.dataset.uid) : null;
+    if (!html) return;
+    document.body.insertAdjacentHTML('beforeend', html);
+    annulerClic = true;
+    vibrer(8);
+  }, 380) };
 });
 racine.addEventListener('pointermove', (ev) => { if (appui && Math.hypot(ev.clientX - appui.x, ev.clientY - appui.y) > 10) { clearTimeout(appui.t); appui = null; } });
 for (const t of ['pointerup', 'pointercancel', 'pointerleave'] as const) racine.addEventListener(t, finAppui);

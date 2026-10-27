@@ -6,7 +6,7 @@ import type { CombatEtat } from '../src/core/types';
 
 const equipe = () => PORTEURS.slice(0, 3).map((p) => ({ id: p.id, pv: p.pvMax, pvMax: p.pvMax, aTerre: false }));
 
-/** Un combat où l'ennemi annonce une attaque de 20 sur Ilka, et une main d'une seule carte (Bond, Fréquence 4) */
+/** Un combat où l'ennemi annonce une attaque de 20 sur Ilka, et une main d'une seule carte (Talon de cristal, Fréquence 4) */
 function preparer(ennemiId: string, felure: number): CombatEtat {
   const s = creerCombat({ porteurs: equipe(), ennemiId, rng: 7 });
   s.ennemi.pv = s.ennemi.pvMax = 999;

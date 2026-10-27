@@ -41,7 +41,7 @@ describe('District', () => {
     expect(echanger(j, 'tir-vif@fer', 'oeil-relais@fer', 'ilka').ok).toBe(true);
     const noms = gestesDe(j, 'ilka').map((g) => g.nom);
     expect(noms).toContain('Œil-relais');
-    expect(noms).not.toContain('Tir vif');
+    expect(noms).not.toContain('Pistolet à faisceau');
     expect(noms).toHaveLength(DISTRICT.cartesMax);
     // une carte portée par un autre Porteur de la lignée passe chez lui
     expect(greffer(j, 'tir-vif@fer', 'coursier').ok).toBe(true);
@@ -60,7 +60,7 @@ describe('District', () => {
     expect(greffer(j, 'oeil-relais@fer', 'ilka').ok).toBe(true);
     const noms = gestesDe(j, 'ilka').map((g) => g.nom);
     expect(noms).toContain('Œil-relais');
-    expect(noms).not.toContain('Tir vif');
+    expect(noms).not.toContain('Pistolet à faisceau');
     expect(noms).toHaveLength(6);
     // un exemplaire passe d'un Porteur à l'autre, de la même lignée
     expect(greffer(j, 'oeil-relais@fer', 'coursier').ok).toBe(true);
