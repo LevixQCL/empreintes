@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import * as J from '../src/core/jeu';
 import { noterCombat, noterExpedition } from '../src/core/partie/stats';
+import { creerCombat } from '../src/core/combat';
+import { PORTEURS, gesteDeCarte } from '../src/core/donnees';
 import type { CombatEtat } from '../src/core/types';
 
 const T = Date.parse('2026-10-25T10:00:00Z');
@@ -53,5 +55,18 @@ describe('Statistiques de la partie', () => {
     expect(j.stats!.suites![2]).toBe(1);
     J.noterAction(j, 'forge'); J.noterAction(j, 'forge');
     expect(j.stats!.actions).toEqual({ forge: 2 });
+  });
+});
+
+describe('Coups d’éclat (27 octobre 2026)', () => {
+  it('compte chaque Coup d’éclat par lignée, et ceux d’un deck du Moteur à part', () => {
+    const j = J.nouveauJeu(0);
+    const porteurs = PORTEURS.slice(0, 3).map((p) => ({ id: p.id, pv: p.pvMax, pvMax: p.pvMax, aTerre: false }));
+    const sans = creerCombat({ porteurs, ennemiId: 'remanent', rng: 1 });
+    const avec = creerCombat({ porteurs, ennemiId: 'remanent', rng: 1, deck: [gesteDeCarte('decharge-arc@cuivre', 'ilka'), gesteDeCarte('ruee@fer', 'ilka')] });
+    J.noterEclat(j, sans, 'tech');
+    J.noterEclat(j, avec, 'tech');
+    J.noterEclat(j, sans, 'bio');
+    expect(j.stats!.eclats).toEqual({ tech: 2, 'tech-decharge': 1, bio: 1 });
   });
 });

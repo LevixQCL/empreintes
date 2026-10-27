@@ -2,9 +2,9 @@
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
 import { PORTEURS, CARTE_CHAMBRE, MODULES, moduleDe, moduleDef, porteurDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
-import { poidsCarte } from '../collection';
+import { niveauRequis, poidsCarte } from '../collection';
 import { graine } from '../rng';
-import { DISTRICT, VERSION_JEU, chargeMax, chargePortee, enExpedition, confier, strateVaincue, jourDe, log, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
+import { DISTRICT, VERSION_JEU, chargeMax, chargePortee, enExpedition, confier, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
 import { SCENES, sceneEnAttente, type ContexteCampagne } from '../campagne';
 import { ESCOUADE_DEPART } from './descentes';
 import { comptoirVide } from './district';
@@ -268,6 +268,8 @@ function allegerSelonCharge(j: Jeu) {
     if (!PORTEURS.some((p) => p.id === id) || enExpedition(j, id)) continue;
     const d = j.porteurs[id]!;
     const rendues: string[] = [];
+    // le métal demande un niveau (27 octobre 2026) : une carte trop haute pour lui retourne à la collection
+    for (const k of d.modules.slice()) if (niveauRequis(k) > niveauPorteur(j, id).niveau) { d.modules = d.modules.filter((x) => x !== k); rendues.push(moduleDef(k).nom); }
     while (d.modules.length && chargePortee(j, id) > chargeMax(j, id)) {
       // la plus légère qui suffit à rentrer dans la Charge ; sinon la plus lourde, et on recommence
       const exces = chargePortee(j, id) - chargeMax(j, id);
@@ -276,6 +278,6 @@ function allegerSelonCharge(j: Jeu) {
       d.modules = d.modules.filter((k) => k !== lourde);
       rendues.push(moduleDef(lourde).nom);
     }
-    if (rendues.length) log(j, `La Charge : ${porteurDef(id).nom} portait trop lourd et rend ${rendues.join(', ')} à la collection.`);
+    if (rendues.length) log(j, `${porteurDef(id).nom} portait des cartes trop lourdes ou d’un métal trop haut pour son niveau, et rend ${rendues.join(', ')} à la collection.`);
   }
 }

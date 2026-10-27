@@ -30,6 +30,9 @@ export interface EcranDistrict {
   retour: string[];
   /** menu « Plus » ouvert */
   menu: boolean;
+  /** la lettre de l’Héritage : la lignée choisie à la première question, puis la carte reçue à montrer (27 octobre 2026) */
+  legsLignee?: 'tech' | 'bio' | 'reso' | null;
+  legsRevele?: boolean;
   /** carte ouverte en détail dans l'écran Cartes (clé module@métal) */
   carte: string | null;
   /** Porteur dont on construit le deck (feuille « Les cartes de… »), ou null */

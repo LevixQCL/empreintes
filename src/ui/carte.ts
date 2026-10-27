@@ -8,8 +8,9 @@
 // - en main (carte étroite), il ne reste que la Fréquence, la valeur et, sous la barre, l'icône de l'effet.
 // Les tailles sont en unités de conteneur (cqw) : la même carte s'affiche en grand ou en petit.
 
-import { NOMS_EFFET, formuleEffet } from '../core/effets';
-import { DEPART_PORTEURS, NOMS_LIGNEE } from '../core/donnees';
+import { NOMS_EFFET, effetsDe, formuleEffet, nomsEffets } from '../core/effets';
+import { DEPART_PORTEURS, NOMS_LIGNEE, PORTEUR_LEGS, voieDe } from '../core/donnees';
+import { frequenceLibre, signeLibre } from '../core/regles';
 import { COLLECTION, NOMS_RARETE } from '../core/collection';
 import type { Effet, ModuleDef, Rarete, TypeEffet } from '../core/types';
 import { illustrationModule, portrait, textureMetal } from './art';
@@ -42,6 +43,11 @@ export const ICONES_EFFET: Record<TypeEffet, string> = {
   accord: trait('<path d="M8 3v7a4 4 0 0 0 8 0V3"/><path d="M12 14v8"/>'),
   vague: trait('<path d="M2 14c3-4 5-4 7 0s4 4 7 0 4-4 6-1"/><path d="M2 19c3-3 5-3 7 0s4 3 7 0 4-3 6-1"/>'),
   rempart: trait('<path d="M3 21V9h3v3h3V9h3v3h3V9h3v3h3v9z"/>'),
+  // les voies (27 octobre 2026)
+  riposte: trait('<path d="M12 2.5l7 2.6v5.2c0 4.4-3 7.6-7 8.8-4-1.2-7-4.4-7-8.8V5.1z"/><path d="M14 8l-4 4h4l-4 4"/>'),
+  decharge: trait('<path d="M5 9h10a3 3 0 0 1 0 6H5z"/><path d="M19 11v2"/><path d="M8 3l-2 4h4l-2 4"/>'),
+  diapason: trait('<path d="M8 3v7a4 4 0 0 0 8 0V3"/><path d="M12 14v8"/><path d="M4 8h2M18 8h2"/>'),
+  unisson: trait('<path d="M4 9v6M9 6v12M14 6v12M19 9v6"/>', 2.6),
 };
 /** la couleur de l'arête du cadre, de la barre et de la capsule de valeur */
 const COULEUR_ACTION: Record<Action, string> = { atk: '#ff6a4a', bouclier: '#5fb0ff', soin: '#7fe06a' };
@@ -69,6 +75,8 @@ export interface Face {
   fs: number[];
   nom: string;
   effet?: Effet;
+  /** second effet (cartes de l'Héritage) */
+  effet2?: Effet;
   lourd?: boolean;
   /** niveau de la carte (absent : un losange de lignée à la place de la roue, en combat ou pour une carte du paquetage) */
   niveau?: number;
@@ -89,9 +97,10 @@ export function corpsFace(d: Face): string {
     ? `<img src="${ill}" alt="" decoding="async"${d.fx ? ` data-src-fx="${ill}"` : ''}>`
     : d.repli ? `<img class="nf-repli" src="${d.repli}" alt="" decoding="async">`
       : `<span class="nf-sans-image"></span>`;
-  const accord = d.effet?.type === 'accord';
+  // une Fréquence libre : ∗ pour l'Accord, = pour le Diapason
+  const accord = frequenceLibre(d.effet);
   const segs = accord
-    ? `<span class="nf-seg p" style="--fc:#5d5470">∗</span>`
+    ? `<span class="nf-seg p" style="--fc:#5d5470">${signeLibre(d.effet)}</span>`
     : d.fs.map((f, i) => `<span class="nf-seg${i ? '' : ' p'}" style="--fc:${couleurFrequence(f)}">${f}</span>`).join('');
   // la Fêlure : un segment de plus dans la capsule, la même icône que la gemme fêlée de l'ennemi, et « Brise » quand la carte est assez grande
   const fele = d.felure
@@ -100,13 +109,15 @@ export function corpsFace(d: Face): string {
     ? `<i class="nf-roue${d.niveau >= COLLECTION.niveauMax ? ' max' : ''}" style="--n:${d.niveau};--max:${COLLECTION.niveauMax}"></i>`
     // sans niveau (en combat, carte du paquetage) : un losange de la couleur de la lignée
     : '<i class="nf-lg"></i>';
-  const effet = d.effet
-    ? `<span class="nf-regle"><i class="nf-ico">${ICONES_EFFET[d.effet.type]}</i><strong>${NOMS_EFFET[d.effet.type]}</strong><span>${formuleEffet(d.effet)}</span></span>` : '';
+  // une carte de l'Héritage a deux effets : une ligne et une icône chacun
+  const effet = effetsDe(d).map((e) => `<span class="nf-regle"><i class="nf-ico">${ICONES_EFFET[e.type]}</i><strong>${NOMS_EFFET[e.type]}</strong><span>${formuleEffet(e)}</span></span>`).join('');
   return `<span class="nf-art">${art}${ill && d.fx ? FX[d.metal] : ''}</span>`
+    // une carte de l'Héritage (la seule à deux effets) porte son sceau en haut
+    + (d.effet2 ? '<span class="nf-heritage">Héritage</span>' : '')
     + `<span class="nf-freqs"><span class="nf-caps">${segs}${fele}</span>${d.lourd ? '<b class="nf-lourd">2 PL.</b>' : ''}</span>`
     + `<span class="nf-voile"><span class="nf-barre"></span>`
     + `<span class="nf-val ${d.type}">${ICONES_ACTION[d.type]}<b>${d.v}</b></span>`
-    + (d.effet ? `<span class="nf-eff">${ICONES_EFFET[d.effet.type]}</span>` : '')
+    + (d.effet ? `<span class="nf-eff">${effetsDe(d).map((e) => ICONES_EFFET[e.type]).join('')}</span>` : '')
     + `<span class="nf-ligne">${roue}<span class="nf-nom">${echap(d.nom)}</span></span>${effet}</span>`;
 }
 
@@ -122,16 +133,17 @@ export const styleFace = (d: Pick<Face, 'metal' | 'type' | 'lignee'>) =>
 export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?: string } = {}): string {
   // une carte de base sans illustration prend, en attendant, le portrait du Porteur qui la porte au départ
   const base = m.base ?? m.id;
-  const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base));
+  // (une carte de voie ou de l'Héritage : le portrait du Porteur de sa voie)
+  const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base)) ?? voieDe(base)?.porteur ?? PORTEUR_LEGS[base];
   const v = Math.round(m.v * mult);
-  const accord = m.effet?.type === 'accord';
+  const accord = frequenceLibre(m.effet);
   const d: Face = {
-    carte: m.id, repli: qui ? portrait(qui) : null, metal: m.rarete, type: m.type, v, fs: m.f, nom: m.nom, effet: m.effet, lourd: m.lourd,
+    carte: m.id, repli: qui ? portrait(qui) : null, metal: m.rarete, type: m.type, v, fs: m.f, nom: m.nom, effet: m.effet, ...(m.effet2 ? { effet2: m.effet2 } : {}), lourd: m.lourd,
     // une carte du paquetage n'a ni niveau ni lignée : le bâtiment qui la fournit est écrit sous elle
     niveau: o.origine ? undefined : niveau, lignee: o.origine ? '#CDEFFF' : COULEUR[m.lignee], fx: true,
   };
-  const label = `${m.nom}, ${o.origine ? `fournie par la ${o.origine}` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau} sur ${COLLECTION.niveauMax}, ${NOMS_LIGNEE[m.lignee].nom}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + NOMS_EFFET[m.effet.type] : ''}${m.lourd ? ', prend 2 places' : ''}`;
-  return `<div class="fc-ombre fo-${m.rarete}"><div class="fc-carte nf nf-${m.rarete}" style="${styleFace(d)}" role="img" aria-label="${echap(label)}">`
+  const label = `${m.nom}, ${o.origine ? `fournie par la ${o.origine}` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau} sur ${COLLECTION.niveauMax}, ${NOMS_LIGNEE[m.lignee].nom}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + nomsEffets(m) : ''}${m.lourd ? ', prend 2 places' : ''}`;
+  return `<div class="fc-ombre fo-${m.rarete}${m.legs ? ' fo-legs' : ''}"><div class="fc-carte nf nf-${m.rarete}" style="${styleFace(d)}" role="img" aria-label="${echap(label)}">`
     + corpsFace(d) + `</div></div>`;
 }
 

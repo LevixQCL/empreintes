@@ -118,6 +118,7 @@ describe('Une carte, cinq métaux', () => {
     ajouterCarte(j, 'jambes-ressort@or');
     expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@fer');
     const avant = j.porteurs.ilka!.modules.length;
+    j.porteurs.ilka!.xp = 700; // l'or demande un Porteur de niveau 7
     expect(greffer(j, 'jambes-ressort@or', 'ilka').ok).toBe(true);
     expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@or');
     expect(j.porteurs.ilka!.modules).not.toContain('jambes-ressort@fer');
@@ -201,7 +202,8 @@ describe('Migration', () => {
     expect(v3.collection['jambes-ressort@fer']).toEqual({ niveau: 2, doublons: 1 });
     expect(v3.collection['lames-orbitales@or']).toEqual({ niveau: 7, doublons: 0 });
     expect(Object.keys(v3.collection)).toHaveLength(17); // + les 15 cartes de base (version 6)
-    expect(v3.porteurs.ilka!.modules).toEqual(['lames-orbitales@or', 'ruee@fer', 'bond@fer', 'esquive@fer', 'tir@fer', 'tir-vif@fer']);
+    // la carte en or retourne à la collection : Ilka, niveau 1, ne peut pas encore la porter (NIVEAU_METAL)
+    expect(v3.porteurs.ilka!.modules).toEqual(['ruee@fer', 'bond@fer', 'esquive@fer', 'tir@fer', 'tir-vif@fer']);
     expect(v3.forge!.moduleId).toBe('jambes-ressort@fer');
     expect(v3.choix[0]!.options).toEqual(['bras-grue@argent', 'crocs-fossiles@fer']);
   });

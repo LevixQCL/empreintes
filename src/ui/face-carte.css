@@ -134,3 +134,9 @@
 @keyframes fc-pulse{0%,100%{opacity:.25}50%{opacity:1}}
 .fc-holo{background:conic-gradient(from calc(var(--ry) * 14) at var(--mx) var(--my),#ff9ad5,#9ad7ff,#b7ffcf,#fff1a8,#d3a8ff,#ff9ad5);mix-blend-mode:color-dodge;opacity:.22}
 @media (prefers-reduced-motion: reduce){ .fc-carte{transition:none} .fc-reflet,.fc-cristal{animation:none!important} .fc-cristal{opacity:.7} }
+
+/* Une carte de l’Héritage (27 octobre 2026) : la seule à deux effets ; un halo d'or et de nacre autour de la carte, et son sceau en haut */
+.fo-legs{--halo:rgba(240,214,160,.8);--halo-t:9px}
+.nf-heritage{position:absolute;z-index:6;top:calc(var(--bord) + 1.2cqw);left:50%;transform:translateX(-50%);padding:.7cqw 2.8cqw;font-family:var(--mono);font-size:max(9px,4cqw);font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:#2A1C05;background:linear-gradient(135deg,#F7E7B8,#D8B465 45%,#F2E6FF);clip-path:polygon(6% 0,94% 0,100% 50%,94% 100%,6% 100%,0 50%);pointer-events:none;white-space:nowrap}
+.geste .nf-heritage{display:none}

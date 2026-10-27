@@ -211,7 +211,8 @@ function campagne(a: Analyse): string {
 
 function fonctions(a: Analyse): string {
   return bloc('fonctions-part', 'Qui utilise quoi', 'Part des joueurs (avec statistiques de boutons) qui ont utilisé chaque fonction au moins une fois. Une fonction peu utilisée est peut-être mal expliquée.', barres(a.fonctions))
-    + bloc('actions', 'Les boutons les plus touchés', 'Tous les joueurs additionnés (les 30 premiers) : la navigation réelle dans le jeu.', barres(a.actions));
+    + bloc('actions', 'Les boutons les plus touchés', 'Tous les joueurs additionnés (les 30 premiers) : la navigation réelle dans le jeu.', barres(a.actions))
+    + bloc('eclats', 'Les Coups d’éclat', 'Tous les joueurs additionnés. Si « dont avec un deck du Moteur » reste très bas alors que le Moteur est joué (cartes Décharge dans « Cartes »), la Décharge a fait oublier le Débridage.', barres(a.eclats));
 }
 
 function joueurs(e: Donnees): string {

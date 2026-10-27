@@ -10,7 +10,7 @@ const base = new URL('art/', document.baseURI).href;
 /** à changer quand les portraits sont repeints sous le même nom : le navigateur recharge alors les nouveaux au lieu de garder les anciens en cache */
 const VERSION_PORTRAITS = 2;
 /** idem pour les illustrations des cartes */
-const VERSION_CARTES = 13;
+const VERSION_CARTES = 14;
 const PORTEURS_ILLUSTRES = new Set(['ilka', 'doran', 'vela', 'sasha', 'nuit', 'aurel', 'coursier', 'docker', 'guetteur', 'kessa', 'liane', 'joss']);
 
 /** Modules illustrés : id du Module dans donnees.ts → fichier */
@@ -64,6 +64,32 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   souffle: 'souffle',
   'stimulant': 'stimulant',
   'repli': 'repli',
+  // les voies, étape 1 (27 octobre 2026)
+  'bobine-recuperation': 'bobine-recuperation',
+  condensateur: 'condensateur',
+  'decharge-arc': 'decharge-arc',
+  'eclair-captif': 'eclair-captif',
+  'noyau-instable': 'noyau-instable',
+  'coup-epaule': 'coup-epaule',
+  'queue-massue': 'queue-massue',
+  'belier-os': 'belier-os',
+  'retour-maree': 'retour-maree',
+  'diapason-cristal': 'diapason-cristal',
+  'voix-basse': 'voix-basse',
+  'chorale-ombres': 'chorale-ombres',
+  'cloche-abysses': 'cloche-abysses',
+  'grand-unisson': 'grand-unisson',
+  // l'Héritage du district (27 octobre 2026)
+  'carapace-fondations': 'carapace-fondations',
+  'oeil-grande-nuit': 'oeil-grande-nuit',
+  'premiere-mue': 'premiere-mue',
+  'lanterne-lecture': 'lanterne-lecture',
+  'cle-legs': 'cle-legs',
+  'foulee-directrice': 'foulee-directrice',
+  'bras-fonderie': 'bras-fonderie',
+  'coeur-glaciere': 'coeur-glaciere',
+  'sceau-orseve': 'sceau-orseve',
+  'voix-quartier': 'voix-quartier',
 };
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */

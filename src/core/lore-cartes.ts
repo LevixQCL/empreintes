@@ -20,9 +20,9 @@ export const LORE_CARTES: Record<string, string> = {
   // ---------- Résonants : cartes de base ----------
   murmure: 'Le Résonant ne parle pas à l’ennemi : il parle à l’empreinte qui l’habite. Quelques mots dans une langue que personne n’a jamais apprise, et le bras levé retombe.',
   echo: 'Une Fréquence s’accorde toujours à celle qui la précède, comme une voix qui reprend la note d’une autre. Les Veilleurs pensent que c’est ainsi que les anciens se parlaient.',
-  souffle: 'L’ombre derrière le Résonant inspire, puis expire. Ce qui en sort n’est pas de l’air. Les murs touchés restent tièdes pendant des jours.',
+  souffle: 'Une vieille corne cerclée d’or, sonnée autrefois dans les salles des Hauts. Ce qui en sort quand un Résonant y souffle n’est pas de l’air. Les murs touchés restent fêlés pendant des jours.',
   apaiser: 'Une main sur l’épaule, une phrase à mi-voix : l’empreinte calme ce que la peur a déréglé. « Ce n’est pas moi qui soigne, dit Véla. C’est elle qui se souvient comment. »',
-  eclat: 'Un fragment de cristal qui brille de plus en plus fort à mesure que la chaîne s’allonge. Les apprentis Lecteurs s’exercent sur des éclats de rebut, et s’éblouissent souvent.',
+  eclat: 'Un miroir de poche des Hauts, brisé d’un seul regard. Chaque éclat renvoie plus de lumière que le précédent, à mesure que la chaîne s’allonge. Les apprentis Lecteurs s’exercent sur des miroirs de rebut, et s’éblouissent souvent.',
 
   // ---------- Augmentés ----------
   'jambes-ressort': 'Le premier modèle sorti des ateliers des districts, bien avant les implants de luxe des Hauts. Bruyant, increvable, réparable avec une clé de 12. Ilka refuse de changer les siennes.',
@@ -49,7 +49,7 @@ export const LORE_CARTES: Record<string, string> = {
   'mue-totale': 'Une fois dans sa vie, le Géné qui la porte quitte tout son corps abîmé, comme un crabe sa carapace. Il en sort neuf, affamé, et un peu étranger à lui-même.',
 
   // ---------- Résonants ----------
-  'eclat-chant': 'Un cristal qui fredonne une mélodie à trois notes, toujours la même, depuis qu’on l’a sorti des Strates. Plus on l’écoute, plus il chante fort. Personne n’a jamais entendu la quatrième note.',
+  'eclat-chant': 'Une boîte à musique remontée des Strates, qui joue une mélodie à trois notes, toujours la même. Plus on l’écoute, plus elle chante fort. Personne n’a jamais entendu la quatrième note.',
   'miroir-brume': 'Un miroir dont le tain est fait de brume figée. L’ennemi qui s’y regarde y voit quelqu’un d’autre que lui, et retient son geste, le temps de comprendre qui.',
   'encre-ancienne': 'Une encre qui ne sèche pas, tirée des parois des salles closes. Les signes qu’on trace avec ne veulent rien dire pour nous, mais ils fendent la pierre en séchant enfin.',
   'meche-or': 'La mèche d’or apparaît en une nuit, chez chaque Résonant, depuis les Sept. Certains la teignent pour qu’on les laisse tranquilles. L’empreinte, elle, ne se teint pas.',
@@ -59,6 +59,36 @@ export const LORE_CARTES: Record<string, string> = {
   pressentiment: 'Une lourdeur derrière les yeux, une envie soudaine de reculer d’un pas. C’est le don des Sept, celui qui a sauvé des villes entières : savoir avant les machines.',
   'chant-abysses': 'Une voix venue d’une mer dont personne ici n’a jamais entendu parler. Elle s’accorde à n’importe quelle Fréquence, comme si elle connaissait déjà la suite.',
   'souffle-wyrm': 'Le souffle d’un être ancien, immense, dont les Veilleurs n’ont retrouvé que l’ombre gravée dans un cristal de la Strate −9. Il grandit à chaque note, et ne s’arrête que lorsque la chaîne se tait.',
+
+  // ---------- Les voies, étape 1 (27 octobre 2026) ----------
+  // Le Moteur
+  'bobine-recuperation': 'Une bobine de cuivre cousue sous l’avant-bras. Chaque coup paré lui rend un peu de courant. « Rien ne se perd chez nous, dit Liane. Surtout pas la colère des autres. »',
+  condensateur: 'Un cylindre de verre où dort un éclair en réserve. Les mécaniciens des districts le portent à la ceinture, comme d’autres une gourde.',
+  'decharge-arc': 'Tout ce que le cristal a gardé part d’un seul coup, dans un claquement qui fait trembler les vitres trois rues plus loin. Après, il faut tout recharger. Ça en valait la peine.',
+  'eclair-captif': 'On dit qu’il a été pris dans un orage au-dessus des quais et qu’il cherche encore à rentrer chez lui. Il frappe d’autant plus fort qu’on l’a fait attendre.',
+  'noyau-instable': 'Un cœur de machine des Strates, trop vieux pour être réglé, trop puissant pour être jeté. Les Brigades ont une règle à son sujet : ne jamais se tenir derrière celui qui le porte.',
+  // La Carapace
+  'coup-epaule': 'Doran ne frappe pas souvent. Il avance, il encaisse, et quand l’autre s’est épuisé contre lui, il donne un seul coup d’épaule. Celui-là compte.',
+  'queue-massue': 'Une queue d’os et de chitine qui pousse aux Génés des quais après des années de travail dans l’eau froide. Plus on la frappe, plus elle durcit.',
+  'belier-os': 'Le front s’épaissit, la nuque se soude, et tout le corps devient une porte qui avance. Les piliers des Fondations portent encore la marque de ceux qui ont appris à s’en servir.',
+  'retour-maree': 'La mer recule, recule encore, et tout le monde croit qu’elle a renoncé. Puis elle revient avec tout ce qu’elle a retenu. Les Génés des quais se battent comme elle.',
+  // Le Chœur
+  'diapason-cristal': 'Un diapason de verre clair qu’on frappe une fois, et qui oblige toutes les empreintes autour de lui à chanter la même note. Les Résonants l’appellent « mettre la salle d’accord ».',
+  'voix-basse': 'Une seule note, tenue très longtemps, si grave qu’on la sent dans les os avant de l’entendre. Seule, elle intrigue. Reprise par d’autres, elle fait céder les murs.',
+  'chorale-ombres': 'Les ombres de plusieurs Résonants qui chantent ensemble, même quand leurs propriétaires se taisent. Joss dit que c’est la seule chorale qui ne fait jamais de fausse note.',
+  'cloche-abysses': 'Une cloche remontée de la Strate −8, couverte de coquillages qui n’existent plus. Quand elle sonne, chaque empreinte autour d’elle répond sur le même ton.',
+  'grand-unisson': 'Le quartier entier, une nuit, a chanté la même note pour veiller un des siens. Les Veilleurs l’ont accordée dans un carillon doré, dont chaque tube porte une voix. Il frappe d’autant plus fort qu’on est nombreux à le faire sonner.',
+
+  // ---------- L’Héritage du district (27 octobre 2026) : la directrice parle, dans sa lettre ----------
+  'foulee-directrice': '« Je n’ai jamais été la plus forte. J’étais toujours la première arrivée. Ces jambes-là m’ont portée à travers chaque Strate ouverte de ce district. Cours devant, directeur : les autres suivront. »',
+  'bras-fonderie': '« Ce bras a coulé les premiers piliers du district, du temps où on bâtissait à la main sur l’eau. Il ne sait rien faire de délicat. Il n’en a jamais eu besoin. »',
+  'coeur-glaciere': '« Un cœur dessiné par la Glacière elle-même, avant qu’on comprenne ce qu’elle était. Il garde tout, et rend tout d’un coup. Ne le laisse jamais s’éteindre. »',
+  'carapace-fondations': '« Cette carapace a tenu une nuit entière devant la porte de l’ascenseur, pendant la grande crue. Personne n’est passé. Elle se souvient de chaque coup, et les rend. »',
+  'oeil-grande-nuit': '« La nuit où les lumières du district se sont éteintes, quelqu’un voyait encore. Cet œil-là. Il trouve la faille, et il ne la quitte plus. »',
+  'premiere-mue': '« La toute première mue d’un Géné, gardée comme un trésor par sa famille, puis par moi. Elle rappelle au corps qu’il sait se refaire. À tous les corps autour. »',
+  'lanterne-lecture': '« La lanterne de la première Lectrice du district. Elle éclaire toujours la marche suivante, jamais plus loin : c’est assez pour monter un escalier entier. »',
+  'sceau-orseve': '« Je l’ai pris dans le bureau d’Isaure Orsève, le jour où elle a signé la fermeture de nos Berceaux. Il lit les fautes de ceux qui le regardent. Elle ne l’a jamais réclamé. »',
+  'voix-quartier': '« Le soir où on a appris la fermeture des Berceaux, le quartier entier est sorti chanter sous la Tour. Une seule note, des heures. Je l’ai gardée. Elle reprend toutes les voix qu’on lui donne. »',
 };
 
 /** Le lore d'une carte (« jambes-ressort@or » → celui de « jambes-ressort ») */

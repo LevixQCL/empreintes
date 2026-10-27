@@ -23,7 +23,12 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     case 'cibler': if (s && !K.verrou) { C.cibler(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'viser': if (s && !K.verrou) { C.viser(s, Number(b.dataset.id)); sauver(); } break;
     case 'eclats': K.eclats = !K.eclats; break;
-    case 'eclat': if (s && !K.verrou) { K.eclats = false; debloquerSon(); vibrer([20, 40, 30]); await jouer(C.eclater(s, b.dataset.id ?? '')); sauver(); } break;
+    case 'eclat': if (s && !K.verrou) {
+      K.eclats = false; debloquerSon(); vibrer([20, 40, 30]);
+      const lignee = C.eclatsPossibles(s).find((x) => x.porteur === b.dataset.id)?.lignee;
+      if (lignee) J.noterEclat(app.jeu, s, lignee);
+      await jouer(C.eclater(s, b.dataset.id ?? '')); sauver();
+    } break;
     case 'decouverte-ok': { const id = b.dataset.id ?? ''; if (id && !(app.jeu.decouvertes ??= []).includes(id)) app.jeu.decouvertes.push(id); sauver(); break; }
     case 'vider': if (s && !K.verrou) { C.viderChaine(s); sauver(); } break;
     case 'allonger': if (s && !K.verrou) { C.allonger(s); sauver(); } break;
