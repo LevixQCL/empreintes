@@ -45,6 +45,7 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut'; faire:
   { nom: 'pillages', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); } },
   { nom: 'pillages-fiche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.$eval('.pl-fiche', (e) => e.scrollIntoView({ block: 'end' })); } },
   { nom: 'pillage-depart', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); } },
+  { nom: 'pillages-journal', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.$eval('.pl-journal', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'pillage-modifier', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('.es-modifier'); } },
   { nom: 'garnison-composer', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="garnison-modifier"]'); } },
   { nom: 'pillage-combat', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(600); for (let i = 0; i < 3 && (await p.$('[data-action="decouverte-ok"]')); i++) { await p.click('[data-action="decouverte-ok"]'); await p.waitForTimeout(300); } } },
@@ -83,6 +84,14 @@ async function main() {
     for (const s of Object.values(saves)) s.data.ageVu = 2;
     const d = saves.district.data;
     d.forge = { moduleId: Object.keys(d.collection)[0]!.split('@')[0], debut: T - 600_000, fin: T + 1_234_000 };
+    // un journal du port rempli (les deux sens, gagné et perdu, un bouclier)
+    d.pillage = { coffre: 120, jetons: 3, jetonsLe: T - 3_600_000, gagnes: 2, perdus: 1, aEnvoyer: [], historique: [
+      { sens: 'defense', nom: 'Directeur anonyme', gagne: true, composants: 6, le: T - 1_800_000 },
+      { sens: 'attaque', nom: 'Cendrevigne', gagne: true, composants: 84, le: T - 7_200_000, bot: true },
+      { sens: 'defense', nom: 'Kessandre', gagne: false, composants: -12, le: T - 30_000_000 },
+      { sens: 'defense', nom: 'Kessandre', gagne: true, composants: 0, le: T - 29_000_000, refusee: true },
+      { sens: 'attaque', nom: 'Haut-Treuil', gagne: false, composants: -5, le: T - 90_000_000, bot: true },
+    ] };
     d.chantiers = [{ batiment: 'generateur', debut: T - 300_000, fin: T + 2_500_000 }];
 
     const serveurs = await Promise.all(['dist-avant', 'dist-apres'].map((dist, i) =>

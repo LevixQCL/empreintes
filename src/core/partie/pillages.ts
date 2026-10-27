@@ -152,8 +152,34 @@ export interface EtatPillage {
   /** les archipels déjà attaqués aujourd'hui (un seul pillage par archipel et par jour), et ce jour */
   faits?: string[];
   jour?: number;
+  /** le journal du port (27 octobre 2026) : les derniers pillages faits et subis, du plus récent au plus ancien */
+  historique?: EntreeHistorique[];
   /** les attaques subies déjà comptées (deux jours) : pour le bouclier, et pour ne rien compter deux fois */
   recus?: { id: string; victoire: boolean; le: number; refusee?: boolean }[];
+}
+
+/** Une ligne du journal du port, vue du joueur : `gagne` dit s'il l'a emporté, `composants` ce que son coffre a gagné (+) ou perdu (−) */
+export interface EntreeHistorique {
+  sens: 'attaque' | 'defense';
+  nom: string;
+  gagne: boolean;
+  composants: number;
+  le: number;
+  /** un archipel sans directeur (attaque seulement) */
+  bot?: boolean;
+  /** une attaque subie sans effet : bouclier levé ou trois attaques déjà reçues ce jour-là */
+  refusee?: boolean;
+}
+
+/** Les lignes gardées dans le journal du port */
+export const HISTORIQUE_MAX = 30;
+
+/** Ajoute une ligne au journal du port (les plus récentes d'abord) */
+export function noterHistorique(j: Jeu, e: EntreeHistorique) {
+  const h = (etatPillage(j).historique ??= []);
+  h.push(e);
+  h.sort((a, b) => b.le - a.le);
+  h.length = Math.min(h.length, HISTORIQUE_MAX);
 }
 
 export function etatPillage(j: Jeu): EtatPillage {
@@ -314,6 +340,7 @@ export function remonterPillage(j: Jeu, now: number): RetourPillage | null {
     etat.perdus++;
   }
   if (!pi.bot) etat.aEnvoyer.push({ cible: pi.cible, victoire, vol: victoire ? pi.vol : 0, perte, le: now });
+  noterHistorique(j, { sens: 'attaque', nom: pi.nom, gagne: victoire, composants: victoire ? gain : -perte, le: now, ...(pi.bot ? { bot: true } : {}) });
   // l'Usure (la moitié d'une expédition) et l'expérience d'un combat, comme une fouille
   const xp = victoire ? Math.round(XP.combat * (1 + 0.25 * (x.strate - 1)) * 0.75) : 0;
   for (const p of x.combat.porteurs) {
@@ -347,16 +374,18 @@ export function subirPillages(j: Jeu, subis: PillageSubi[]): string[] {
     if (s.id && recus.some((r) => r.id === s.id)) continue;
     const refusee = protege(recus, s.le);
     recus.push({ id: s.id ?? `${s.le}`, victoire: s.victoire && !refusee, le: s.le, ...(refusee ? { refusee: true } : {}) });
-    if (refusee) continue;
+    if (refusee) { noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: true, composants: 0, le: s.le, refusee: true }); continue; }
     if (s.victoire) {
       const pris = Math.min(Math.max(0, Math.floor(s.vol)), Math.floor(etat.coffre), plafond);
       etat.coffre -= pris;
       j.composants -= pris;
+      noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: false, composants: -pris, le: s.le });
       l.push(`${s.nom} a pillé ton archipel${pris ? ` et pris ${pris} composants de ton coffre` : ''}.`);
     } else {
       const gagne = Math.min(Math.max(0, Math.floor(s.perte)), plafond);
       etat.coffre += gagne;
       j.composants += gagne;
+      noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: true, composants: gagne, le: s.le });
       l.push(`Ta garnison a repoussé ${s.nom}${gagne ? ` : +${gagne} composants laissés dans ton coffre` : ''}.`);
     }
   }

@@ -3,7 +3,7 @@
 // Les règles sont dans src/core/partie/pillages.ts.
 
 import { porteurDef } from '../core/donnees';
-import { PILLAGE, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadeActive, escouadeDefense, escouadePourDepart, escouadesDe, etatPillage, faitsDuJour, forceEscouade, majJetons, strateVaincue, type Cible, type Jeu } from '../core/jeu';
+import { PILLAGE, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadeActive, escouadeDefense, escouadePourDepart, escouadesDe, etatPillage, faitsDuJour, forceEscouade, majJetons, strateVaincue, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
 import { ageArchipel, vignetteArchipel, visuel } from './art';
 import { avatar, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { ICO, icone } from './icones';
@@ -58,6 +58,7 @@ export function htmlPillages(e: EcranDistrict): string {
     + `</section>`;
 
   if (choisie) h += ficheCible(j, choisie, force, faits.includes(choisie.id), etat.jetons);
+  h += journal(etat.historique ?? [], e.now);
   h += `<p class="pl-regle">${ICO.bouclier}<span>Ton archipel est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus ${Math.round(PILLAGE.partVolee * 100)} % de ton coffre, puis ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus. Tes autres composants, tes cartes et tes Éclats ne risquent rien.</span></p>`;
   return coquille(e, h, 'pl');
 }
@@ -76,6 +77,29 @@ function garde(j: Jeu): string {
         + `<small>${l.length ? `Force ${f}` : 'Vide'}</small></button>`;
     }).join('') + `</div>`
     + `<small class="pl-garde-aide">Elle se défend seule quand d’autres directeurs t’attaquent. L’escouade qui attaque se choisit au départ du pillage${escouadeActive(j) === def ? ' : la même peut faire les deux' : ''}.</small></section>`;
+}
+
+/** Le journal du port (27 octobre 2026) : les derniers pillages faits et subis, du plus récent au plus ancien */
+function journal(h: EntreeHistorique[], now: number): string {
+  const ilYa = (le: number) => {
+    const m = Math.floor((now - le) / 60_000);
+    return m < 1 ? 'à l’instant' : m < 60 ? `il y a ${m} min` : m < 1440 ? `il y a ${Math.floor(m / 60)} h` : `il y a ${Math.floor(m / 1440)} j`;
+  };
+  const texte = (x: EntreeHistorique) => {
+    const nom = `<b>${echap(x.nom)}</b>`;
+    if (x.sens === 'attaque') return x.gagne ? `Tu as pillé ${nom}` : `${nom} a repoussé ton escouade`;
+    if (x.refusee) return `${nom} s’est heurté à ton bouclier`;
+    return x.gagne ? `Ta garnison a repoussé ${nom}` : `${nom} a pillé ton archipel`;
+  };
+  const lignes = h.slice(0, 10);
+  return `<section class="pl-journal" aria-label="Journal du port"><span class="surtitre">${ICO.grappin}Journal du port</span>`
+    + (lignes.length
+      ? `<ul>${lignes.map((x) => `<li class="${x.sens}${x.gagne ? ' gagne' : ' perdu'}">`
+        + `<span class="pl-j-ico" aria-label="${x.sens === 'attaque' ? 'Ton attaque' : 'Attaque subie'}">${x.sens === 'attaque' ? ICO.grappin : ICO.bouclier}</span>`
+        + `<span class="pl-j-txt"><span>${texte(x)}</span><small>${x.sens === 'attaque' ? (x.bot ? 'Archipel sans directeur · ' : 'Directeur · ') : 'En défense · '}${ilYa(x.le)}</small></span>`
+        + `<b class="pl-j-val${x.composants > 0 ? ' plus' : x.composants < 0 ? ' moins' : ''}">${x.composants > 0 ? '+' : x.composants < 0 ? '−' : ''}${x.composants ? ent(Math.abs(x.composants)) : '—'}</b></li>`).join('')}</ul>`
+      : `<p class="pl-j-vide">Aucun pillage pour l’instant. Tes attaques et celles que ta garnison subit s’inscriront ici.</p>`)
+    + `</section>`;
 }
 
 /** La fiche de l'archipel choisi : sa garnison, tes chances, ce que tu gagnes ou laisses */

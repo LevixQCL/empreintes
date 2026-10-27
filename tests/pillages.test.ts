@@ -36,6 +36,19 @@ describe('Les pillages', () => {
     expect(escouadesDe(j)[0]).not.toContain('vela');
   });
 
+  it('le journal du port garde les pillages faits et subis, les plus récents d’abord', () => {
+    const j = pret();
+    const cible = cibleDe('miroir', 'Miroir', garnisonDe(j));
+    expect(piller(j, ESC, cible, 1000, 7).ok).toBe(true);
+    j.dernierTick = 2000;
+    const r = jouer(j);
+    subirPillages(j, [{ id: 'a', nom: 'Rival', victoire: false, vol: 0, perte: 3, le: 5000 }]);
+    const h = etatPillage(j).historique!;
+    expect(h.map((x) => x.sens)).toEqual(['defense', 'attaque']);
+    expect(h[1]!.gagne).toBe(r.victoire);
+    expect(h[0]).toMatchObject({ nom: 'Rival', gagne: true });
+  });
+
   it('contre sa propre garnison, le joueur moyen gagne environ une fois sur deux', () => {
     let v = 0;
     const n = 60;
