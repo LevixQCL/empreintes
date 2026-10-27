@@ -8,6 +8,10 @@ Le but : donner envie de jouer pour enfin la porter.
 
 ## 0. Une seule carte par joueur : ce qui change
 
+> **Cap fixé par Bryan (27 octobre 2026) : c'est « la première nacre » du joueur**, un cadeau qui fait goûter au plus haut métal,
+> pas une carte incontournable. Deux effets qui existent déjà, pas d'effet unique ; réglée au robot au niveau d'une bonne carte en or
+> (+28 à +34 points pour les dix), pour qu'une nacre trouvée plus tard puisse la remplacer.
+
 - **L’Héritage devient une identité** : « tu as eu laquelle ? ». Il se voit dans la garnison (pillages) et pourra s'afficher au Grand Tableau.
 - **Les dix doivent se valoir** : plus question d'en avoir une « meilleure ». Chacune est la pièce maîtresse d'une voie, réglée au
   robot pour que l'écart entre la plus forte et la plus faible reste petit (quelques points).
