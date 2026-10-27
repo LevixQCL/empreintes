@@ -36,7 +36,7 @@ const CONSEILS_CONDITIONS: Record<string, string> = {
   echo: 'Une suite de 4 suffit pour le bonus maximal : vise 3-4-5-6.',
   sanctuaire: 'Les soins rendent plus : un bon endroit pour remettre l’escouade sur pied.',
   eboulis: 'Tout le monde s’use à chaque tour, ennemis compris : un combat long coûte cher, finis-le vite.',
-  brouillard: 'Pose une première carte pour voir ce que prépare l’ennemi, puis ajuste la suite de ta chaîne.',
+  brouillard: 'Ta première carte perce le brouillard et révèle ce que prépare l’ennemi, mais elle est engagée : impossible de la reprendre ce tour-ci. Choisis-la bien, puis ajuste la suite de ta chaîne.',
 };
 
 /** Les découvertes que ce combat peut déclencher, dans l'ordre où les montrer */

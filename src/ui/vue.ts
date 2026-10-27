@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, apercuChaine, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, puissance, usureCombat } from '../core/combat';
+import { ECLATS, apercuChaine, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, brumeActive as C_brume, estEngagee, puissance, usureCombat } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
@@ -109,7 +109,7 @@ function popsPour(e: Ecran, cible: string) {
 /** Les Porteurs à terre du combat affiché : leurs cartes s'affichent éteintes (−15 % de force, sans effet) */
 let ETEINTS = new Set<string>();
 
-export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean; felure?: boolean } = {}) {
+export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean; felure?: boolean; engagee?: boolean } = {}) {
   const lign = ligneeGeste(g);
   const eteinte = !!g.porteur && ETEINTS.has(g.porteur);
   if (eteinte) g = { ...g, v: Math.round(g.v * REGLES.eteinte), effet: frequenceLibre(g.effet) ? g.effet : undefined, effet2: undefined };
@@ -121,9 +121,9 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
     fs: [g.f, ...(g.fs ?? []).filter((f) => f !== g.f)], nom: g.nom, effet: g.effet, ...(g.effet2 ? { effet2: g.effet2 } : {}), lourd: g.lourd, lignee: COULEUR[lign], suite: o.halo,
     felure: o.felure ? ICO.fele : undefined,
   };
-  const cls = ['geste', taille, eteinte ? 'eteinte' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', o.felure ? 'brise-felure' : ''].filter(Boolean).join(' ');
+  const cls = ['geste', taille, eteinte ? 'eteinte' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', o.felure ? 'brise-felure' : '', o.engagee ? 'engagee' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
-  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}${eteinte ? ', éteinte : son Porteur est à terre' : ''}`;
+  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}${eteinte ? ', éteinte : son Porteur est à terre' : ''}${o.engagee ? ', engagée par le brouillard : elle ne revient plus en main ce tour-ci' : ''}`;
   AFFICHES.set(g.uid, { g, d, nomP, eteinte });
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]}" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="nf nf-${metal}${o.halo ? ' nf-suite' : ''}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d)}</span>`
@@ -172,17 +172,17 @@ export const carteDemo = (g: Geste, taille: 'chaine' | 'main' = 'main') => geste
 /** la plus haute Fréquence d'une carte : une suite s'arrête là */
 const FREQ_MAX = 9;
 
-function maillon(g: Geste, off: boolean) {
+function maillon(g: Geste, off: boolean, engagee = false) {
   const choix = g.fs && g.fs.length > 1 && !frequenceLibre(g.effet);
   // une carte de soin montre qui elle soigne ; la toucher passe au Porteur suivant
   const soin = soigneUnSeul(g) && g.cible
     ? `<button type="button" class="cibler" data-action="cibler" data-uid="${g.uid}"${off ? ' disabled' : ''} style="--c:${COULEUR[porteurDef(g.cible).lignee]}" aria-label="Soigne ${echap(porteurDef(g.cible).nom)} : toucher pour changer">${ICO.soin}<span>${echap(porteurDef(g.cible).nom)}</span></button>`
     : '';
   const c = `style="--c:${COULEUR[ligneeGeste(g)]}"`;
-  if (soin && !choix) return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off })}${soin}</div>`;
-  if (!choix) return geste(g, 'chaine', 'retirer', { off });
+  if (soin && !choix) return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off, engagee })}${soin}</div>`;
+  if (!choix) return geste(g, 'chaine', 'retirer', { off, engagee });
   const suivante = g.fs![(g.fs!.indexOf(g.f) + 1) % g.fs!.length]!;
-  return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off })}`
+  return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off, engagee })}`
     + `<button type="button" class="accorder" data-action="accorder" data-uid="${g.uid}"${off ? ' disabled' : ''} aria-label="Passer ${echap(g.nom)} en Fréquence ${suivante}">${g.fs!.map((f) => `<i class="${f === g.f ? 'actif' : ''}" style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</button>${soin}</div>`;
 }
 
@@ -426,7 +426,7 @@ function vignettesGroupe(e: Ecran): string {
     const vise = en === s.ennemi;
     const tombe = en.pv <= 0;
     const ill = visageEnnemi(en);
-    const cache = s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours';
+    const cache = C_brume(s);
     const val = cache ? '?' : it.type === 'atk' ? String(Math.round(it.v * puissance(en) * usureCombat(s).attaque)) : it.type === 'bouclier' || it.type === 'soin' ? String(it.v) : it.type === 'boost' ? '×2' : '';
     const cls = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
     const ico = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
@@ -497,7 +497,7 @@ function htmlEcranCombat(e: Ecran): string {
   const lieu = e.x.tutoriel ? 'Chambre scellée' : e.x.pillage ? `Pillage · ${e.x.pillage.nom}` : `Strate −${e.x.strate}`;
 
   // la Fêlure de l'ennemi visé : la Fréquence qui brise son intention (cachée par le brouillard tant que la chaîne est vide)
-  const brume = s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours';
+  const brume = C_brume(s);
   const felF = !brume && s.ennemi.pv > 0 && !s.ennemi.felureBrisee && felureVisible(s.ennemi) ? s.ennemi.felure : undefined;
   const prevue = felF !== undefined && fs.includes(felF);
   const felureHtml = s.ennemi.felure === undefined || brume || s.ennemi.pv <= 0 ? '' : ligneFelure(s, prevue, a.suite >= 3);
@@ -530,7 +530,7 @@ function htmlEcranCombat(e: Ecran): string {
     + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
 
     + vignettesGroupe(e)
-    + (s.condition === 'brouillard' && !s.chaine.length && s.issue === 'en-cours'
+    + (C_brume(s)
       ? `<div class="intention brume" aria-live="polite"><span class="int-ico">?</span><span class="int-txt"><small>BROUILLARD</small>Pose une carte pour la lire</span></div>`
       : plaqueIntention(s, classeIntention, iconeIntention, felureHtml))
     + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
@@ -546,7 +546,7 @@ function htmlEcranCombat(e: Ecran): string {
     const d = porteurDef(p.id);
     const ko = p.pv <= 0;
     // dans un groupe, chaque ennemi debout annonce sa propre attaque
-    const cible = !ko && !(s.condition === 'brouillard' && !s.chaine.length) && C_ennemisDebout(s).some((en) => { const i = intentionDe(s, en); return i.type === 'atk' && (i.zone || i.cibleId === p.id); });
+    const cible = !ko && !C_brume(s) && C_ennemisDebout(s).some((en) => { const i = intentionDe(s, en); return i.type === 'atk' && (i.zone || i.cibleId === p.id); });
     const img = portrait(d.id);
     const basPv = !ko && p.pv / p.pvMax <= 0.3;
     const soigne = !ko && s.chaine.some((g) => soigneUnSeul(g) && g.cible === p.id);
@@ -571,7 +571,7 @@ function htmlEcranCombat(e: Ecran): string {
   // pendant l'animation, la carte qui agit s'avance, celles déjà jouées s'éteignent
   s.chaine.forEach((g, i) => {
     const etat = e.actif === undefined ? '' : i === e.actif ? 'en-jeu' : i < e.actif ? 'jouee' : '';
-    const html = maillon(g, verrou);
+    const html = maillon(g, verrou, estEngagee(s, g.uid));
     h += etat ? html.replace('class="', `class="${etat} `) : html;
     // une carte lourde garde sa forme de carte : sa deuxième place est un emplacement relié, au lieu d'une carte étirée
     if (g.lourd) {

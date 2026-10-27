@@ -403,3 +403,10 @@
 .main-vide .mv-texte{position:relative;display:grid;gap:2px;text-align:center}
 .main-vide .mv-texte b{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#CDEFFF;line-height:1.15}
 .main-vide .mv-texte small{font-size:12px;color:var(--c,var(--quiet))}
+
+/* Brouillard : la carte qui a percé la brume est engagée (elle ne revient plus en main ce tour-ci) */
+.geste.chaine.engagee{position:relative;box-shadow:0 0 0 1.5px rgba(200,210,225,.75),0 0 14px rgba(200,210,225,.35);border-radius:10px}
+.geste.chaine.engagee::after{content:"";position:absolute;right:-5px;top:-5px;width:18px;height:18px;border-radius:50%;
+  box-shadow:0 1px 3px rgba(0,0,0,.45);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231a1f28' stroke-width='2.6' stroke-linecap='round'%3E%3Crect x='5' y='11' width='14' height='10' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E"),linear-gradient(180deg,#e2e7ef,#7c8798);
+  background-size:11px 11px,100% 100%;background-position:center,center;background-repeat:no-repeat;pointer-events:none}
