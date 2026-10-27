@@ -69,8 +69,16 @@ function visuel(s: Salle): string {
 }
 
 /** le nom affiché sous une salle */
-const nomSalle = (s: Salle) => (s.escorte?.length ? 'Un groupe' : s.ennemi && s.type !== 'elite' ? ennemiDef(s.ennemi).nom : NOMS[s.type]);
+// un groupe porte le nom de son meneur (le badge ×2 / ×3 dit qu'il n'est pas seul) : deux groupes ne s'appellent plus pareil
+const nomSalle = (s: Salle) => (s.ennemi && s.type !== 'elite' ? ennemiDef(s.ennemi).nom : NOMS[s.type]);
 const nomsGroupe = (s: Salle) => [s.ennemi!, ...(s.escorte ?? [])].map((id) => ennemiDef(id).nom).join(', ');
+/** « A et B », « A, B et C » */
+const titreGroupe = (s: Salle) => {
+  const n = [s.ennemi!, ...(s.escorte ?? [])].map((id) => ennemiDef(id).nom);
+  return n.length > 1 ? `${n.slice(0, -1).join(', ')} et ${n[n.length - 1]}` : n[0]!;
+};
+/** où se trouve chaque chemin sur le plan, pour relier la liste et la carte (27 octobre 2026) */
+const COTES: Record<number, string[]> = { 2: ['À gauche', 'À droite'], 3: ['À gauche', 'Au centre', 'À droite'] };
 const composantsSalle = (strate: number) => Math.round(8 * (1 + 0.25 * (strate - 1)));
 
 /** les PV réels des ennemis d'une salle (même calcul que le moteur : force de la Strate, renfort, part du groupe) */
@@ -93,7 +101,7 @@ function annonce(s: Salle, x: Expedition): { sur: string; titre: string; texte: 
     if (!s.escorte?.length) faits.push(`faible contre <b class="ex-lignee" style="--c:${COULEUR[faible]}">${NOMS_LIGNEE[faible].nom}</b>`);
     if (s.type === 'gardien') return { sur: 'Gardien de la zone', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 2)}`)} composants · fin de la Strate`] };
     if (s.type === 'elite') return { sur: 'Salle scellée', titre: d.nom, texte: 'Plus coriace, mais une carte dort derrière.', faits: [...faits, `${or(`+${Math.round(butinCombat(x.strate, 0) * 1.7)}`)} composants · ${or('1 carte')}`] };
-    if (s.escorte?.length) return { sur: `Combat · ${s.escorte.length + 1} ennemis`, titre: 'Un groupe', texte: `${nomsGroupe(s)} : choisis qui frapper.`, faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`] };
+    if (s.escorte?.length) return { sur: `Combat · ${s.escorte.length + 1} ennemis`, titre: titreGroupe(s), texte: 'Ils viennent ensemble : choisis qui frapper.', faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`] };
     return { sur: 'Combat', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`] };
   }
   switch (s.type) {
@@ -231,19 +239,22 @@ export function htmlExploration(j: Jeu): string {
     h += paroleEscouade(x);
     if (x.recit) h += `<p class="ex-recit">${echap(x.recit)}</p>`;
     if (libre) {
-      const routes = accessibles(x);
+      // même ordre que le plan : de gauche à droite (avant, l'ordre des couloirs du générateur, sans rapport avec la carte)
+      const routes = [...accessibles(x)].sort((a, b) => posX(a) - posX(b));
+      const cotes = COTES[routes.length];
       h += `<div class="ex-routes"><h2 class="ex-titre">${routes.length > 1 ? `Où aller ? <small>${routes.length} chemins</small>` : 'La suite'}</h2>`;
-      for (const s of routes) {
+      routes.forEach((s, k) => {
         const a = annonce(s, x);
+        const cote = cotes?.[k] ?? (routes.length > 1 ? `Chemin ${k + 1}` : '');
         const cond = s.condition && CONDITIONS[s.condition] ? CONDITIONS[s.condition]! : null;
         h += `<button type="button" class="ex-route t-${s.type}" data-action="salle" data-id="${s.id}">`
           + visuel(s)
-          + `<span class="ex-route-txt"><span class="ex-sur">${echap(a.sur)}</span><strong>${echap(a.titre)}</strong>`
+          + `<span class="ex-route-txt"><span class="ex-sur">${cote ? `<b class="ex-cote">${cote}</b> · ` : ''}${echap(a.sur)}</span><strong>${echap(a.titre)}</strong>`
           + (a.texte ? `<em>${echap(a.texte)}</em>` : '')
           + (a.faits.length ? `<span class="ex-faits">${a.faits.map((f) => `<span>${f}</span>`).join('')}</span>` : '')
           + (cond ? `<span class="ex-condition">${iconeCondition(cond.id) ? `<img class="ex-cond-ico" src="${iconeCondition(cond.id)}" alt="" decoding="async">` : ICO.cristal}<span><b>${echap(cond.nom)}</b> : ${echap(cond.texte)}</span></span>` : '')
           + `</span>${CHEVRON}</button>`;
-      }
+      });
       h += `</div>`;
     }
   }

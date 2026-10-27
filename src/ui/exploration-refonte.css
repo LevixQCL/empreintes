@@ -145,6 +145,7 @@
 .ex-route-txt strong{font-family:var(--display);font-weight:400;font-size:20px;line-height:1.1;color:#F6F2EA}
 .ex-route-txt em{font-style:normal;font-size:13.5px;line-height:1.4;color:var(--ex-doux)}
 .ex-route.t-gardien .ex-sur{color:var(--ex-rouge)}
+.ex-cote{color:var(--ex-or);font-weight:700}
 .ex-faits{display:flex;flex-wrap:wrap;gap:3px 14px;margin-top:2px;font-size:13.5px;line-height:1.35;color:var(--ex-txt)}
 .ex-pv b{font-family:var(--mono);font-size:15px;font-weight:600;color:#fff}
 .ex-or{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ex-or)}
