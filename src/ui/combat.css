@@ -82,6 +82,9 @@
 .rail{min-height:106px}
 /* une carte injouable reste lisible : un peu éteinte, pas grisée */
 .geste.serre,.geste:disabled{opacity:.72;filter:saturate(.45) brightness(.8) drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+.geste.eteinte{position:relative}
+.geste.eteinte .nf{filter:grayscale(.9) brightness(.62) contrast(.95)}
+.geste.eteinte::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:repeating-linear-gradient(135deg,rgba(11,13,18,0) 0 7px,rgba(11,13,18,.28) 7px 9px)}
 .verrouille .geste:disabled{opacity:1}
 @media (max-height:740px){
   .geste.main{width:66px;height:92px}

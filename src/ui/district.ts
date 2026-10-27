@@ -5,11 +5,11 @@
 import { portOuvert } from './pillages';
 import { PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
-import { CLE_LEGS, GESTES_SPECIAUX, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
+import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
   OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
-  COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
+  COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, Lignee, ModuleDef, Rarete } from '../core/types';
@@ -25,7 +25,7 @@ import { COULEUR } from './vue';
 import { decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
-import { feuillePorteur } from './porteurs';
+import { arrivee, feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { ICO, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
@@ -403,6 +403,42 @@ function reserve(j: Jeu, b: BatimentId): string {
  * L'entraînement à la Tour du Noyau (23 octobre 2026) : un Porteur qui ne descend pas gagne de l'XP avec le temps,
  * jusqu'à un plafond fixé par le niveau de la Tour. Même présentation que les postes des autres bâtiments.
  */
+/** Le convertisseur du Générateur (27 octobre 2026) : l'énergie en trop devient des composants, à un taux qui baisse dans la journée */
+function blocConvertisseur(j: Jeu): string {
+  const now = Date.now();
+  const taux = tauxConversion(j, now);
+  const faits = conversionsDuJour(j, now);
+  const fini = faits >= CONVERTISSEUR.lotsParJour;
+  const peut = j.energie >= CONVERTISSEUR.lot && !fini;
+  // les paliers du jour : 10, puis 6, puis 3 composants par lot
+  const paliers = [...new Set(CONVERTISSEUR.taux), CONVERTISSEUR.ensuite].map((t) => {
+    const debut = CONVERTISSEUR.taux.indexOf(t) < 0 ? CONVERTISSEUR.taux.length : CONVERTISSEUR.taux.indexOf(t);
+    const nb = CONVERTISSEUR.taux.filter((x) => x === t).length;
+    return `<li class="${!fini && t === taux ? 'actif' : faits > debut ? 'passe' : ''}"><b>+${t}</b><small>${nb ? `lots ${debut + 1} à ${debut + nb}` : `lots ${debut + 1} à ${CONVERTISSEUR.lotsParJour}`}</small></li>`;
+  }).join('');
+  return `<section class="fb-bloc fb-convertir"><h3 class="titre-bloc">${ICO.energie}Convertisseur</h3>`
+    + `<p class="fb-vide">L’énergie en trop devient des composants : <b>${CONVERTISSEUR.lot} énergie → +${taux} composants</b>. Le taux baisse avec les lots convertis aujourd’hui (${CONVERTISSEUR.lotsParJour} au plus) et repart demain.</p>`
+    + `<ol class="fb-paliers" aria-label="Composants par lot selon les lots déjà convertis aujourd’hui">${paliers}</ol>`
+    + `<button type="button" class="btn prim large" data-action="convertir"${peut ? '' : ' disabled'}>${ICO.energie}Convertir ${CONVERTISSEUR.lot} → +${taux} ${icone('composants')}</button>`
+    + `<small class="fb-note">${fini ? 'Assez tourné pour aujourd’hui : il repart demain.' : faits ? `${faits} lot${faits > 1 ? 's' : ''} sur ${CONVERTISSEUR.lotsParJour} converti${faits > 1 ? 's' : ''} aujourd’hui.` : `Aucun lot converti aujourd’hui (${CONVERTISSEUR.lotsParJour} au plus).`}</small></section>`;
+}
+
+/** Les soins intensifs de la Clinique (27 octobre 2026) : de l'énergie pour effacer l'Usure d'un Porteur tout de suite */
+function blocSoinsIntensifs(j: Jeu): string {
+  const blesses = PORTEURS.filter((p) => porteursPresents(j).includes(p.id) && !enExpedition(j, p.id) && j.porteurs[p.id]!.usure >= 1);
+  let h = `<section class="fb-bloc fb-soins"><h3 class="titre-bloc">${ICO.soin}Soins intensifs</h3>`
+    + `<p class="fb-vide">Pour repartir tout de suite : <b>${SOINS_INTENSIFS.energieParUsure} énergie par point d’Usure</b>, effacé sur-le-champ.</p>`;
+  if (!blesses.length) return h + `<p class="fb-note">Personne n’a d’Usure en ce moment.</p></section>`;
+  h += `<div class="fb-rangee">` + blesses.map((p) => {
+    const u = Math.ceil(j.porteurs[p.id]!.usure);
+    const cout = u * SOINS_INTENSIFS.energieParUsure;
+    const peut = j.energie >= SOINS_INTENSIFS.energieParUsure;
+    return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="soigner-vite" data-id="${p.id}"${peut ? '' : ' disabled'} aria-label="Soigner ${echap(p.nom)} : −${u} Usure pour ${cout} énergie">`
+      + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">−${u} Usure</span><small class="fb-cand-ailleurs">${ent(Math.min(cout, Math.floor(j.energie / SOINS_INTENSIFS.energieParUsure) * SOINS_INTENSIFS.energieParUsure))} énergie</small></button>`;
+  }).join('') + `</div>`;
+  return h + `</section>`;
+}
+
 function blocEntrainement(j: Jeu): string {
   if (!j.chambre) return '';
   const occupant = posteDe(j, 'noyau');
@@ -505,8 +541,8 @@ function feuilleBatiment(e: EcranDistrict): string {
   else h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
 
   // ce que le bâtiment rapporte
-  if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>+${ent(energieParHeure(j))}</b><small>énergie par heure</small></div></div>${reserve(j, b)}`;
-  if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur présent au district</small></div></div>`;
+  if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>+${ent(energieParHeure(j))}</b><small>énergie par heure</small></div></div>${reserve(j, b)}${niv ? blocConvertisseur(j) : ''}`;
+  if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur présent au district</small></div></div>${niv ? blocSoinsIntensifs(j) : ''}`;
   if (b === 'noyau') {
     h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>niveau maximum des autres bâtiments</small></div></div>${reserve(j, b)}`
       + blocEntrainement(j);
@@ -680,12 +716,38 @@ export function htmlArchipel(e: EcranDistrict): string {
 
 // ---------- Les cartes ----------
 
-function carteMini(id: string, j: Jeu, attrs = ''): string {
+function carteMini(id: string, j: Jeu, attrs = '', utile = false): string {
   const m = moduleDef(id);
   const c = j.collection[id];
   const niveau = c?.niveau ?? COLLECTION.niveauDepart[m.rarete];
+  // un doublon qui complète le niveau suivant se dit tout de suite
+  const requis = c ? doublonsRequis(id, c.niveau) : null;
+  const monte = c && requis !== null && c.doublons + 1 >= requis;
   return `<button type="button" class="carte-choix" ${attrs}>${faceCarte(m, niveau, multNiveau(id, niveau))}`
-    + `<span class="ruban${c ? '' : ' neuve'}">${c ? `Doublon · niv. ${c.niveau}` : 'Nouvelle'}</span></button>`;
+    + `<span class="ruban${c ? (monte ? ' monte' : '') : ' neuve'}">${c ? (monte ? `Niv. ${c.niveau + 1} prêt` : `Doublon · niv. ${c.niveau}`) : 'Nouvelle'}</span>`
+    + (utile ? `<span class="pour-qui">${pourQui(id, j)}</span>` : '') + `</button>`;
+}
+
+/**
+ * Pour qui est une carte proposée (27 octobre 2026 : une récompense ne doit pas tomber à plat) : les Porteurs présents
+ * qui peuvent la porter, le niveau qu'il manque, ou, pour une carte de voie, le Porteur qui arrivera.
+ */
+function pourQui(id: string, j: Jeu): string {
+  const m = moduleDef(id);
+  const presents = PORTEURS.filter((p) => p.lignee === m.lignee && porteursPresents(j).includes(p.id));
+  const voie = VOIES.find((v) => v.cartes.includes(m.base ?? m.id));
+  if (voie && !porteursPresents(j).includes(voie.porteur)) {
+    const p = porteurDef(voie.porteur);
+    return `${echap(voie.nom)} · ${echap(p.nom.split(' ')[0]!)} ${echap(arrivee(p).replace(/^Arrive /, '').replace(/\.$/, '').replace(/ ou plus$/, ''))}`;
+  }
+  const requis = niveauRequis(id);
+  const prets = presents.filter((p) => niveauPorteur(j, p.id).niveau >= requis);
+  if (!prets.length) return `Porteur ${NOM_LIGNEE[m.lignee].toLowerCase()} niv. ${requis} requis`;
+  // un seul nom (celui de l'escouade d'abord), et combien d'autres pourraient la porter
+  const esc = j.escouade ?? [];
+  const tri = prets.slice().sort((a, b) => Number(esc.includes(b.id)) - Number(esc.includes(a.id)));
+  const qui = `${echap(tri[0]!.nom.split(' ')[0]!)}${tri.length > 1 ? ` +${tri.length - 1}` : ''}`;
+  return voie ? `${echap(voie.nom)} · ${qui}` : `Pour ${qui}`;
 }
 
 /** L'effet de la carte, et ce que son métal lui ouvre */
@@ -738,7 +800,7 @@ function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
   const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : 'Archive de la semaine';
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><div class="cartes-choix">`
-    + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}"`)).join('')
+    + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}"`, true)).join('')
     + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
 }
 

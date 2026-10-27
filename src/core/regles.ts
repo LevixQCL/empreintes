@@ -3,6 +3,9 @@ import type { Geste, Lignee, LigneeGeste } from './types';
 /** Les réglages chiffrés du combat, au même endroit pour l'équilibrage */
 export const REGLES = {
   tailleMain: 5,
+  /** force d'une carte « éteinte » (son Porteur est à terre) : elle reste dans le deck, sans effet, et sa Fréquence compte (27 octobre 2026).
+   *  Mesuré au pillage miroir (joueur moyen) : avant 44 % de victoires en 18 tours ; ×0,5 → 23 % ; ×0,85 → 39 % en 13 tours ; ×1 → 47 % */
+  eteinte: 0.85,
   capaciteBase: 3,
   capaciteMax: 5,
   fluxMax: 3,

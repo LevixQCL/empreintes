@@ -43,7 +43,7 @@ function basTitre(introVue: boolean, c: TitreCompte | null): string {
     ? `<button type="button" class="prim titre-go attente" disabled aria-busy="true"><span class="titre-anneau" aria-hidden="true"></span>Récupération de ta partie…</button>`
     : `<button type="button" class="prim titre-go" data-action="titre-jouer">${introVue ? 'Reprendre' : 'Commencer'}</button>`;
   return `<div class="titre-bas">${go}`
-    + `<div class="titre-sec">${introVue ? `<button type="button" class="btn-sec" data-action="intro">Revoir l’intro</button>` : ''}<button type="button" class="btn-sec" data-action="bibliotheque">Chroniques</button></div>`
+    + `<div class="titre-sec">${introVue ? `<button type="button" class="btn-sec" data-action="intro">Revoir l’intro complète</button>` : ''}<button type="button" class="btn-sec" data-action="bibliotheque">Chroniques</button></div>`
     + (c ? ligneCompte(c) : '')
     + (peutInstaller() ? `<button type="button" class="titre-installer" data-action="installer"><img src="./favicon-32.png" alt="" width="16" height="16">Installer le jeu sur l’écran d’accueil</button>` : '')
     + `<small class="titre-version">Alpha</small></div>`;

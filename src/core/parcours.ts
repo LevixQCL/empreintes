@@ -172,7 +172,8 @@ function reponse(j: Jeu, id: string, sante: number): number {
 
 /** Joue une expédition jusqu'au retour au district ; renvoie la victoire */
 /** tours joués par combat, par type de salle (mesure du rythme) */
-type ToursCombat = Record<'normal' | 'gardien' | 'epreuve', number[]>;
+/** La durée des combats (en tours), par sorte de combat ; `strates` les range aussi par Strate (« groupe5 » : les groupes à −5) */
+export type ToursCombat = Record<'normal' | 'groupe' | 'gardien' | 'epreuve', number[]> & { strates?: Record<string, number[]> };
 
 function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) => void, tours?: ToursCombat): boolean {
   if (!depart()) return false;
@@ -188,7 +189,12 @@ function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) =
       continue;
     }
     if (x.phase === 'combat' && x.combat.issue === 'en-cours') { jouer(x.combat); continue; }
-    if (x.phase === 'combat' && !x.cloture) { tours?.[salleCourante(x).type === 'gardien' ? 'gardien' : 'normal'].push(x.combat.tour); finDeCombat(j); continue; }
+    if (x.phase === 'combat' && !x.cloture) {
+      const sorte = salleCourante(x).type === 'gardien' ? 'gardien' : salleCourante(x).escorte?.length ? 'groupe' : 'normal';
+      tours?.[sorte].push(x.combat.tour);
+      if (tours?.strates) (tours.strates[sorte + x.strate] ??= []).push(x.combat.tour);
+      finDeCombat(j); continue;
+    }
     if (j.expedition.terminee) return remonter(j).victoire;
     if (x.phase === 'combat') { continuer(j); continue; }
     const sante = x.porteurs.reduce((n, p) => n + Math.max(0, p.pv), 0) / x.porteurs.reduce((n, p) => n + p.pvMax, 0);

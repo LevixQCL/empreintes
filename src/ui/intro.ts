@@ -1,4 +1,5 @@
 // L'intro du premier lancement : 12 plans, on avance au toucher (aucune avance automatique).
+// Au premier lancement, la version courte (14 phrases) ; « Revoir l’intro » joue la version complète.
 // Chaque plan = une illustration (ou une scène animée en code tant qu'elle manque) et 2 à 4 phrases,
 // affichées une à la fois, comme des sous-titres, pour laisser voir l'image.
 // Le texte se place en haut ou en bas selon l'endroit où se trouve le sujet de l'illustration.
@@ -12,6 +13,8 @@ export interface Plan {
   epoque: string;
   titre: string;
   lignes: string[];
+  /** la version courte du premier lancement (27 octobre 2026) : 1 ou 2 phrases ; la version complète se revoit depuis le titre ou le menu */
+  court: string[];
   /** années du compteur : il défile de la première à la seconde ; d'un plan à l'autre, le temps n'avance jamais à rebours */
   annees: [number, number];
   scene: (k: number) => string;
@@ -115,53 +118,53 @@ const strates = (k: number) => svg(`
 const f = (id: string, des = 1) => ({ id, des });
 
 export const PLANS: Plan[] = [
-  { epoque: 'Au début du siècle', titre: 'On savait', annees: [2006, 2019], ambiance: 'chaleur', camera: 'approche', fonds: [f('01-on-savait')], scene: villeChaleur, lignes: [
+  { epoque: 'Au début du siècle', titre: 'On savait', annees: [2006, 2019], ambiance: 'chaleur', camera: 'approche', fonds: [f('01-on-savait')], scene: villeChaleur, court: ["On avait les chiffres, les cartes, presque les dates. Quand l’eau montait, on peignait une ligne bleue sur le mur, et on la montrait aux invités."], lignes: [
     'Un soir, un documentaire fait le tour du monde : des glaciers photographiés à trente ans d’écart, qui ont reculé comme une marée.',
     'Les savants ont les chiffres, les cartes, presque les dates. Des millions de jeunes marchent. Il y a des sommets, des promesses.',
     'Quand l’eau monte pour la première fois, on peint une ligne bleue sur le mur, là où elle s’est arrêtée. On la montre aux invités.'] },
-  { epoque: 'Aujourd’hui', titre: 'On a regardé ailleurs', annees: [2020, 2026], ambiance: 'colere', camera: 'recule', texte: 'haut', foyer: [47, 84], fonds: [f('02-ailleurs')], scene: ecrans, lignes: [
+  { epoque: 'Aujourd’hui', titre: 'On a regardé ailleurs', annees: [2020, 2026], ambiance: 'colere', camera: 'recule', texte: 'haut', foyer: [47, 84], fonds: [f('02-ailleurs')], scene: ecrans, court: ["Les prix montent, la colère cherche des visages, des guerres remplissent les écrans. Le climat glisse en fin de journal, vingt secondes entre la météo et le sport."], lignes: [
     'Les prix montent : le pain, le loyer, le chauffage. Quand on compte ses pièces, un glacier qu’on ne verra jamais pèse peu.',
     'La colère cherche des visages. À l’extrême gauche comme à l’extrême droite, chacun crie plus fort que l’autre.',
     'Des guerres reviennent remplir les écrans. Le climat glisse en fin de journal, vingt secondes entre la météo et le sport.',
     'Entre les deux foules, un enfant. Personne ne le regarde : c’est lui qui vivra la suite.'] },
-  { epoque: 'Un quart de siècle', titre: 'La Fonte', annees: [2030, 2055], ambiance: 'maree', camera: 'gauche', fonds: [f('03-tempetes')], scene: (k) => nature(Math.min(k, 2)), lignes: [
+  { epoque: 'Un quart de siècle', titre: 'La Fonte', annees: [2030, 2055], ambiance: 'maree', camera: 'gauche', fonds: [f('03-tempetes')], scene: (k) => nature(Math.min(k, 2)), court: ["Puis la mer monte pour de bon. Les côtes se vident, des centaines de millions de gens prennent la route. Les querelles d’avant paraissent soudain minuscules."], lignes: [
     'La mer ne monte que de trente centimètres. Mais un soir de tempête, c’est une digue qui cède, une rue qui devient rivière.',
     'Les côtes se vident, rue après rue. Des centaines de millions de gens prennent la route avec ce qu’ils peuvent porter.',
     'Il y aura des morts par millions. Les querelles qui remplissaient les écrans paraissent soudain minuscules. Elles l’étaient.'] },
-  { epoque: 'Un matin', titre: 'La Fracture', annees: [2057, 2057], ambiance: 'fracture', camera: 'descend', texte: 'haut', fonds: [f('03-fracture')], scene: () => nature(3), lignes: [
+  { epoque: 'Un matin', titre: 'La Fracture', annees: [2057, 2057], ambiance: 'fracture', camera: 'descend', texte: 'haut', fonds: [f('03-fracture')], scene: () => nature(3), court: ["Un matin de 2057, une partie de l’Antarctique se détache d’un bloc. Depuis, on dit « avant » et « après la Fracture »."], lignes: [
     'À six heures, toutes les radios se taisent au milieu d’une phrase.',
     'Au bout du monde, une partie de l’Antarctique se détache d’un bloc, comme une porte arrachée. Un marin la regarde glisser.',
     'La mer montera de plusieurs mètres en quelques décennies. Depuis, on dit « avant » et « après la Fracture ».'] },
-  { epoque: 'Après la Fracture', titre: 'La Montée', annees: [2057, 2062], ambiance: 'aube-doree', camera: 'monte', fonds: [f('04-hauteur')], scene: tours, lignes: [
+  { epoque: 'Après la Fracture', titre: 'La Montée', annees: [2057, 2062], ambiance: 'aube-doree', camera: 'monte', fonds: [f('04-hauteur')], scene: tours, court: ["On commence par monter : des tours sur des piliers plantés dans l’eau, reliées par des passerelles. En une génération, elles forment une seule ville : Vertiga."], lignes: [
     'Quand on ne peut plus fuir sur les côtés, il reste deux directions. On commence par monter.',
     'Des tours de secours poussent sur des piliers plantés dans l’eau. On vit aux étages finis pendant qu’on coule ceux du dessus.',
     'Des passerelles les relient. En une génération, elles se mêleront jusqu’à former une seule ville : Vertiga.'] },
-  { epoque: 'Sous les piliers', titre: 'Le Puits Zéro', annees: [2062, 2062], ambiance: 'profondeur', camera: 'descend', texte: 'haut', fonds: [f('05-puits-zero')], scene: puits, lignes: [
+  { epoque: 'Sous les piliers', titre: 'Le Puits Zéro', annees: [2062, 2062], ambiance: 'profondeur', camera: 'descend', texte: 'haut', fonds: [f('05-puits-zero')], scene: puits, court: ["Puis on creuse des abris sous les piliers. Un soir, une foreuse débouche dans une salle aux murs lisses et courbes. Rien n’y est à la taille d’un humain.", "On l’appelle la Strate zéro. Il y en a d’autres."], lignes: [
     'Puis on creuse : il faut des abris contre les tempêtes, et on ne peut les mettre qu’en bas, sous les piliers des Fondations.',
     'Un soir, une foreuse débouche dans une salle aux murs lisses et courbes. Rien n’y est à la taille d’un humain.',
     '« Ça sentait comme une pièce d’où quelqu’un vient de sortir », dira un ouvrier. On l’appelle la Strate zéro. Il y en a d’autres.'] },
-  { epoque: 'Six ans d’études', titre: 'Les empreintes', annees: [2062, 2068], ambiance: 'cristal', camera: 'approche', fonds: [f('06-empreintes')], scene: empreintes, lignes: [
+  { epoque: 'Six ans d’études', titre: 'Les empreintes', annees: [2062, 2068], ambiance: 'cristal', camera: 'approche', fonds: [f('06-empreintes')], scene: empreintes, court: ["Dans les murs, des cristaux. Chacun garde l’empreinte d’un être : ses gestes, sa force. Certains sont plus anciens que nous : dragons, esprits, sans-nom."], lignes: [
     'Dans les murs, des cristaux. Chacun garde l’empreinte d’un être : ses gestes, sa force, une part de ce qu’il était.',
     'En 2068, on apprend à graver nos propres empreintes et à les greffer. Le geste d’un vieux soudeur survit dans d’autres mains.',
     'Mais les cristaux des Strates sont déjà habités. Par des êtres plus anciens que nous : dragons, esprits, sans-nom.'] },
-  { epoque: 'Vingt ans', titre: 'L’Ascension', annees: [2071, 2090], ambiance: 'or', camera: 'monte', fonds: [f('07-ascension')], scene: ascension, lignes: [
+  { epoque: 'Vingt ans', titre: 'L’Ascension', annees: [2071, 2090], ambiance: 'or', camera: 'monte', fonds: [f('07-ascension')], scene: ascension, court: ["Greffés d’empreintes anciennes, quelques-uns deviennent les Résonants, une mèche d’or dans les cheveux. Leurs familles finissent au-dessus des nuages : les Hauts."], lignes: [
     'En 2071, sept volontaires reçoivent en secret des empreintes anciennes. Une mèche d’or leur pousse en une nuit. Leur ombre change.',
     'Ils sentent les tempêtes avant les machines, apaisent une foule d’un mot, et seuls savent éveiller les cristaux anciens : ce sont les Résonants. Certains sauvent des villes, d’autres les prennent.',
     'Leurs familles s’installent au sommet des tours. Bientôt, les Hauts s’en détacheront : des îles qui flottent au-dessus des nuages. Personne en bas ne demande comment.'] },
-  { epoque: 'Pendant ce temps, en bas', titre: 'La Réponse', annees: [2090, 2100], ambiance: 'atelier', camera: 'droite', fonds: [f('08-reponse')], scene: lignees, lignes: [
+  { epoque: 'Pendant ce temps, en bas', titre: 'La Réponse', annees: [2090, 2100], ambiance: 'atelier', camera: 'droite', fonds: [f('08-reponse')], scene: lignees, court: ["En bas, on se refait autrement : la machine donne les Augmentés, la génétique les Génés. Trois lignées, nées de la même peur."], lignes: [
     'Les empreintes anciennes sont rares, et les Hauts gardent les meilleures. Alors le reste de l’humanité se refait autrement.',
     'La machine donne les Augmentés. Leurs premiers implants à cœur de cristal servent à une chose : brouiller les Résonants.',
     'La génétique donne les Génés, qui empruntent au vivant ce qui résiste à l’eau et au noir. Trois lignées, nées de la même peur.'] },
-  { epoque: 'Vingt ans de calme', titre: 'On a oublié, encore', annees: [2101, 2121], ambiance: 'nuit', camera: 'recule', texte: 'haut', fonds: [f('09-oubli')], scene: oubli, lignes: [
+  { epoque: 'Vingt ans de calme', titre: 'On a oublié, encore', annees: [2101, 2121], ambiance: 'nuit', camera: 'recule', texte: 'haut', fonds: [f('09-oubli')], scene: oubli, court: ["Vingt ans de calme. Les districts élisent leurs directeurs, on se dispute ce qu’on a déterré… et les lignes bleues des vieux murs passent sous la marée."], lignes: [
     'En 2101, les Accords mettent fin à dix ans de grèves : les Hauts gouvernent, les districts élisent leurs directeurs.',
     'Une question reste « à préciser » : à qui appartient ce qui dort sous les piliers ? Les factions se la disputent encore.',
     'Pendant ce temps, les Fondations se fissurent. La mer remonte, et les lignes bleues des vieux murs passent sous la marée.',
     'On se dispute ce qu’on a déterré, et on oublie ce qui monte. Vingt secondes entre la météo et le sport. Comme avant.'] },
-  { epoque: 'Vertiga', titre: 'Ce qui dort en dessous', annees: [2121, 2121], ambiance: 'profondeur', camera: 'descend', texte: 'haut', fonds: [f('10-dessous')], scene: strates, lignes: [
+  { epoque: 'Vertiga', titre: 'Ce qui dort en dessous', annees: [2121, 2121], ambiance: 'profondeur', camera: 'descend', texte: 'haut', fonds: [f('10-dessous')], scene: strates, court: ["Sous chaque district, les Strates descendent, toujours plus anciennes. Plus on descend, plus les trouvailles sont puissantes, et plus il est difficile d’en remonter."], lignes: [
     'Sous chaque district, il y a d’abord les abris murés des années 2060. Plus bas, les Strates, toujours plus anciennes.',
     'On en remonte des cristaux d’empreinte. Greffés, ils font les Résonants ; gravés, ils font battre les implants des Augmentés. Chacun peut armer quelqu’un.',
     'Plus on descend, plus les trouvailles sont puissantes, et plus il est difficile d’en remonter.'] },
-  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-toi')], scene: toi, lignes: [
+  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-toi')], scene: toi, court: ["Hier, ton district t’a élu à sa tête. Ce matin, sous sa vieille tour, on a ouvert une porte scellée depuis soixante ans.", "Une coursière, un ancien des Fondations et une lectrice d’empreintes t’attendent en bas. Descends. Regarde tout."], lignes: [
     'Hier, ton district t’a élu à sa tête : quelques piliers reliés par des passerelles, une Forge au ralenti, une vieille tour.',
     'Ce matin, sous la tour, on a ouvert une porte scellée depuis soixante ans. Derrière, des dizaines d’empreintes, mêlées.',
     'Au même moment, dans les Hauts, des Résonants se réveillent sans savoir qui ils sont. Tout Vertiga va vouloir cette porte.',
@@ -221,8 +224,11 @@ export function particules(ambiance: string): string {
 }
 
 /** i = plan, k = nombre de lignes déjà lues (la k-ième est affichée seule), texteCache = mode « admirer l'image » */
-export function htmlIntro(i: number, k: number, mouvement = true, texteCache = false): string {
-  const p = PLANS[i]!;
+/** Les phrases d'un plan : la version courte au premier lancement, la complète quand on revoit l'intro */
+export const lignesDe = (i: number, longue: boolean): string[] => (longue ? PLANS[i]!.lignes : PLANS[i]!.court);
+
+export function htmlIntro(i: number, k: number, mouvement = true, texteCache = false, longue = false): string {
+  const p = { ...PLANS[i]!, lignes: lignesDe(i, longue) };
   const dernier = i === PLANS.length - 1;
   const n = Math.min(Math.max(1, k), p.lignes.length);
   const complet = n >= p.lignes.length;

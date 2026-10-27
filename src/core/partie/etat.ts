@@ -204,6 +204,8 @@ export interface Jeu {
   journal: string[];
   /** l'intro du premier lancement a été vue */
   introVue: boolean;
+  /** le tuto « Ton district » (après la chambre) a été lu jusqu'au bout : tant qu'il ne l'est pas, il revient à l'ouverture */
+  accueilVu?: boolean;
   /** la chambre scellée a été ouverte (fin du combat guidé) */
   chambre: boolean;
   /** les trois recrues anonymes ont rejoint le district */
@@ -251,6 +253,8 @@ export interface Jeu {
   epreuves: { semaine: number; faites: string[] };
   /** le Comptoir du jour : ses offres, celles déjà achetées, et son propre hasard (il ne touche pas aux trouvailles) */
   comptoir: Comptoir;
+  /** le convertisseur du Générateur : le jour du jeu et les lots déjà convertis ce jour-là */
+  conversion?: { jour: number; lots: number };
   /** « Mon escouade » (décision du 23 octobre 2026) : les trois Porteurs qui descendent. Elle ne change qu'au district,
    *  jamais pendant une descente (sinon c'est trop facile). Ancienne sauvegarde : complétée par `migrer`. */
   escouade: string[];

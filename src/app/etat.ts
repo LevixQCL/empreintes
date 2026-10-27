@@ -29,6 +29,8 @@ export const app: {
   mode: Mode;
   plan: number;
   lignesVues: number;
+  /** l'intro complète (revue depuis le titre ou le menu) plutôt que la courte du premier lancement */
+  introLongue: boolean;
   /** intro : texte masqué pour admirer l'illustration */
   texteCache: boolean;
   compte: typeof import('../net/compte') | null;
@@ -52,6 +54,7 @@ export const app: {
   mode: 'titre',
   plan: 0,
   lignesVues: 1,
+  introLongue: false,
   texteCache: false,
   compte: null,
   uid: null,
@@ -77,7 +80,7 @@ export const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utili
 export const compteProtege = () => !!compteEtat.utilisateur && !compteEtat.utilisateur.anonyme;
 /** l'écran titre n'ouvre la partie qu'une fois celle du compte récupérée : sinon, on ouvrirait celle de l'appareil */
 export const titrePret = () => !compteEtat.actif || !!compteEtat.pret;
-export const D: EcranDistrict = { j: app.jeu, vue: 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, porteur: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null, guide: null };
+export const D: EcranDistrict = { j: app.jeu, vue: app.jeu.chambre && !app.jeu.accueilVu && !app.jeu.expedition && app.jeu.objectif === 0 ? 'accueil' : 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, porteur: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null, guide: null };
 /** le Grand Tableau : lecture des classements en ligne, et ce qu'on a publié */
 export const G: GrandTableau = tableauVide();
 try { D.panneauReplie = localStorage.getItem('empreintes.panneau') !== 'ouvert'; } catch { D.panneauReplie = true; }

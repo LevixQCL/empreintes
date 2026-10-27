@@ -194,6 +194,9 @@ h1,h2,h3{font-weight:400}
 .carte-choix:hover,.carte-choix:focus-visible{transform:translateY(-4px)}
 .ruban{font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--quiet);text-transform:uppercase;letter-spacing:.06em}
 .ruban.neuve{color:var(--cristal)}
+.ruban.monte{color:var(--gold)}
+.carte-choix .ruban{text-align:center;font-size:12px;letter-spacing:.03em}
+.carte-choix .pour-qui{font-size:12px;line-height:1.3;color:var(--ink-2);text-align:center}
 .fenetre.fin.victoire .surtitre{color:var(--gold)}
 .fenetre.fin.defaite .surtitre{color:var(--danger)}
 

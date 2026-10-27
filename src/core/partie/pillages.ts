@@ -264,7 +264,7 @@ export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rn
   const x = nouvelleExpedition({ porteurs: e.porteurs, deck: e.deck, strate: Math.max(1, cible.strate), rng, sequence: [gardes[0]!], force: cible.force });
   // un groupe de gardes, un par Porteur de la garnison ; chacun garde le visage de son Porteur
   x.combat = creerCombat({
-    porteurs: e.porteurs, ennemiId: gardes[0]!, escorte: gardes.slice(1), rng, deck: e.deck, force: cible.force,
+    porteurs: e.porteurs, ennemiId: gardes[0]!, escorte: gardes.slice(1), rng, deck: e.deck, force: cible.force, pvPleins: true,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   });
   x.combat.ennemi.porteur = cible.porteurs[0];

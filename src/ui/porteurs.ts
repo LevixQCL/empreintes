@@ -36,7 +36,7 @@ function statut(j: Jeu, id: string): { texte: string; classe: string } {
 }
 
 /** Quand arrive un Porteur qui n'est pas encore là */
-function arrivee(p: PorteurDef): string {
+export function arrivee(p: PorteurDef): string {
   if (p.arrivee?.forge) return `Arrive quand la Forge atteint le niveau ${p.arrivee.forge}.`;
   if (p.arrivee?.strate) return `Arrive quand la Strate −${p.arrivee.strate} est ouverte.`;
   if (p.arrivee?.accord) return `Arrive par un Accord ouvert : Clinique niveau ${ACCORD_OUVERT.clinique} et Confiance du district à ${ACCORD_OUVERT.confiance} ou plus.`;

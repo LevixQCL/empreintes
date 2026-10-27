@@ -154,7 +154,8 @@ export function jouerTourMoyen(s: CombatEtat): void {
     if (groupe.reduce((n, g) => n + places(g), 0) > cap) continue;
     const ordre = groupe.slice().sort((a, b) => a.f - b.f);
     const mult = analyserChaine(ordre).mult;
-    const somme = (t: string) => ordre.filter((g) => g.type === t).reduce((n, g) => n + g.v, 0) * mult;
+    // une carte éteinte (son Porteur est à terre) se lit à sa force affichée : la moitié
+    const somme = (t: string) => ordre.filter((g) => g.type === t).reduce((n, g) => n + g.v * (s.porteurs.some((p) => p.id === g.porteur && p.pv <= 0) ? REGLES.eteinte : 1), 0) * mult;
     const brise = fel !== undefined && ordre.some((g) => !frequenceLibre(g.effet) && (g.fs ?? [g.f]).includes(fel));
     const score = somme('atk') + (danger ? 1.5 * Math.min(somme('bouclier'), menace) : 0.3 * somme('bouclier')) + (blesse ? somme('soin') : 0.2 * somme('soin')) + (brise ? gainFelure + (mult > 1 ? 4 : 0) : 0);
     if (!meilleur || score > meilleur.score) meilleur = { score, ordre };

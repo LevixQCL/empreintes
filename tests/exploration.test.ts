@@ -81,3 +81,16 @@ describe('Le robot sait explorer', () => {
     expect(r.combats).toBeGreaterThanOrEqual(3);
   });
 });
+
+describe('pas de faux choix (27 octobre 2026)', () => {
+  it('deux chemins qui partent d’une même salle ne se ressemblent jamais', () => {
+    const vu = (s: { type: string; ennemi?: string; escorte?: string[]; condition?: string }) => [s.type, s.ennemi ?? '', (s.escorte ?? []).join('+'), s.condition ?? ''].join('|');
+    for (let strate = 1; strate <= 12; strate++) for (let g = 1; g <= 60; g++) for (const fouille of [false, true]) {
+      const c = genererCarte(strate, g * 7919, undefined, fouille);
+      for (const s of c.salles) {
+        const sig = s.voisins.map((id) => vu(c.salles[id]!));
+        expect(new Set(sig).size, `Strate −${strate}, graine ${g}, salle ${s.id}`).toBe(sig.length);
+      }
+    }
+  });
+});

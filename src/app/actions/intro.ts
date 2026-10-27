@@ -16,7 +16,7 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
       if (!titrePret()) return 'fin';
       app.mode = apresTitre();
       if (app.mode === 'combat') K.fin = finPour();
-      if (app.mode === 'intro') { app.plan = 0; app.lignesVues = 1; app.texteCache = false; }
+      if (app.mode === 'intro') { app.introLongue = false; app.plan = 0; app.lignesVues = 1; app.texteCache = false; }
       break;
     case 'intro-suivant': if (app.texteCache) app.texteCache = false; else avancerIntro(); break;
     case 'intro-precedent': app.texteCache = false; reculerIntro(); break;
@@ -30,7 +30,7 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
       break;
     case 'titre-compte': compteEtat.ouvert = !compteEtat.ouvert; compteEtat.erreur = ''; compteEtat.info = ''; break;
     case 'installer': ev.stopPropagation(); await installer(); afficher(); return 'fin';
-    case 'intro': app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; break;
+    case 'intro': app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; break;
     default: return 'inconnu';
   }
   return 'afficher';

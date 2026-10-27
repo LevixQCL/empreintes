@@ -36,6 +36,8 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'ameliorer': resultat(J.ameliorer(app.jeu, id as BatimentId, Date.now())); break;
     case 'poster': resultat(J.poster(app.jeu, id, (b.dataset.poste as J.Poste) ?? null)); break;
     case 'liberer': resultat(J.poster(app.jeu, id, null)); break;
+    case 'convertir': { const r = J.convertir(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
+    case 'soigner-vite': { const r = J.soignerVite(app.jeu, id); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     case 'acheter': resultat(J.acheter(app.jeu, Number(b.dataset.index ?? -1), Date.now())); break;
     case 'fabriquer': resultat(J.fabriquer(app.jeu, b.dataset.module ?? '', Date.now())); break;
     case 'cartes': ouvrir('cartes'); break;
@@ -159,7 +161,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'accueil': ouvrir('accueil'); D.etape = 0; window.scrollTo(0, 0); break;
     case 'accueil-suite': D.etape = Math.min(D.etape + 1, nbEtapes('district') - 1); break;
     case 'accueil-retour': D.etape = Math.max(D.etape - 1, 0); break;
-    case 'accueil-fin': ouvrir('archipel'); if (id === 'generateur') D.selection = 'generateur'; window.scrollTo(0, 0); break;
+    case 'accueil-fin': app.jeu.accueilVu = true; sauver(); ouvrir('archipel'); if (id === 'generateur') D.selection = 'generateur'; window.scrollTo(0, 0); break;
     case 'codex':
     case 'bibliotheque':
       D.retourBiblio = app.mode === 'titre' ? 'titre' : D.vue === 'coupe' ? 'coupe' : 'archipel';

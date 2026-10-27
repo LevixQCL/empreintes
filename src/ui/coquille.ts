@@ -153,14 +153,16 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
   if (r === 'energie') {
     surtitre = 'RESSOURCE'; titre = 'L’énergie';
     resume = 'Le courant du district. Elle se produit toute seule, même quand tu ne joues pas, jusqu’à ce que le stockage soit plein.';
-    etat = `<b>${ent(j.energie)}</b> / ${ent(max)}<small>${j.energie >= max ? 'Stockage plein : la production est perdue tant que tu ne dépenses pas' : `+${energieParHeure(j)} par heure`}</small>`;
+    etat = `<b>${ent(j.energie)}</b> / ${ent(max)}<small>${j.energie >= max ? 'Stockage plein : la production est perdue. Le convertisseur du Générateur en fait des composants' : `+${energieParHeure(j)} par heure`}</small>`;
     gagner = [ligne('boost', 'Le Générateur', 'Produit l’énergie chaque heure. Un Porteur posté dessus produit davantage.'),
       ligne('tour', 'La Tour du Noyau', 'Chaque niveau agrandit le stockage.'),
       ligne('cartes', 'Les premiers objectifs', 'Le premier en rapporte.')];
     servir = [ligne('marteau', 'Améliorer les bâtiments', 'C’est la dépense principale de chaque chantier.'),
       ligne('marteau', 'Faire tourner la Forge', 'Chaque carte refabriquée consomme de l’énergie, plus pour les métaux rares.'),
       ligne('monter', 'Entraîner un Porteur', 'À la Tour du Noyau, l’entraînement consomme de l’énergie chaque heure.'),
-      ligne('porteurs', 'Équiper les missions', 'Vivres et lampes : un peu d’énergie au départ.')];
+      ligne('porteurs', 'Équiper les missions', 'Vivres et lampes : un peu d’énergie au départ.'),
+      ligne('boost', 'Le convertisseur du Générateur', 'L’énergie en trop devient des composants : 10 par lot de 100, puis moins, 20 lots par jour au plus.'),
+      ligne('soin', 'Les soins intensifs', 'À la Clinique, effacer l’Usure d’un Porteur tout de suite.')];
   } else if (r === 'composants') {
     surtitre = 'RESSOURCE'; titre = 'Les composants';
     resume = 'Les pièces récupérées dans les Strates : métal, mécanismes, cristaux brisés. On les rapporte des expéditions.';
@@ -279,7 +281,7 @@ export function menu(e: EcranDistrict): string {
     + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>Le Grand Tableau</strong><small>Les classements des directeurs : profondeur, Registre, et bientôt les Joutes et la Flèche</small></span></button>`
     + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur?.anonyme ? 'Protège ta partie : relie-la à Google ou à un e-mail' : c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : ' · choisis ton pseudo'}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
     + (e.j.chambre ? `<button type="button" class="ligne-menu" data-action="accueil">${icone('district')}<span><strong>Comment marche le district</strong><small>Les ressources, l’escouade et le but : creuser plus bas</small></span></button>` : '')
-    + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro</strong><small>L’histoire de 2121, depuis le début</small></span></button></div>`;
+    + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro complète</strong><small>L’histoire de 2121, en entier</small></span></button></div>`;
   h += panneauCompte(c);
   h += `<section class="bloc"><h3 class="titre-bloc">${icone('journal')}Journal du district</h3><ol class="journal-liste">${e.j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></section>`;
   return h + `</div></section>`;

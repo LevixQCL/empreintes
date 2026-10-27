@@ -103,7 +103,8 @@ export const FORCE = {
   // −7 % à partir de −2 (26 octobre 2026) : la Fêlure ne donne plus de Flux hors d'une suite ; réglé au robot pour garder
   // les mêmes repères (front 41 % / 37 %, Strate −10 au jour 29 / 22).
   //      −1   −2     −3     −4     −5     −6     −7     −8     −9     −10    −11    −12    −13    −14
-  table: [1, 1.39, 1.818, 2.139, 2.46, 2.781, 2.888, 3.016, 3.102, 3.262, 3.475, 3.743, 3.936, 4.064] as number[],
+  // −15 % dans la Strate −1 (27 octobre 2026, Bryan : trop dure pour un nouveau joueur) : Pilleur 70 → 60 PV, Vigie 95 → 81, Confluence 165 → 140.
+  table: [0.85, 1.39, 1.818, 2.139, 2.46, 2.781, 2.888, 3.016, 3.102, 3.262, 3.475, 3.743, 3.936, 4.064] as number[],
   /** hausse par Strate au-delà de la table */
   ensuite: 1.04,
   /** hausse par Strate pour suivre les niveaux des Porteurs. À 0 depuis les traits, phases et conditions (22 octobre 2026), qui
@@ -323,7 +324,45 @@ export function genererCarte(strate: number, rng: number, garde?: string, fouill
       }
     }
   }
+  distinguerChemins(salles, pool, t);
   return { zone, salles, position: 0, rng: etat.rng };
+}
+
+/** Ce qui rend une salle reconnaissable sur la carte : deux salles de même signature sont un faux choix */
+// (une rencontre ou une cache ne montre pas son contenu avant d'entrer : deux rencontres se ressemblent toujours)
+const signatureSalle = (s: Salle) => [s.type, s.ennemi ?? '', (s.escorte ?? []).join('+'), s.condition ?? ''].join('|');
+
+/**
+ * Pas de faux choix (Bryan, 27 octobre 2026) : quand une salle ouvre sur plusieurs chemins, ils ne se ressemblent jamais.
+ * Un combat en double change d'ennemi (ou devient une cache s'il n'y a qu'un ennemi possible) ; deux rencontres, deux caches
+ * ou deux autres salles sans combat : la seconde devient un combat. Le gardien et le campement ne bougent pas.
+ */
+function distinguerChemins(salles: Salle[], pool: string[], t: ReturnType<typeof tireur>) {
+  for (let passe = 0; passe < 3; passe++) {
+    let change = false;
+    for (const s of salles) {
+      const vus = new Map<string, Salle>();
+      for (const id of s.voisins) {
+        let v = salles[id]!;
+        const deja = vus.get(signatureSalle(v));
+        if (!deja) { vus.set(signatureSalle(v), v); continue; }
+        // le campement garanti (avant le gardien) et le fond de la carte ne changent jamais : on change l'autre salle
+        const garde = (x: Salle) => x.type === 'gardien' || x.type === 'filon' || (x.type === 'camp' && x.col === 0);
+        if (garde(v)) { if (garde(deja)) continue; vus.set(signatureSalle(v), v); v = deja; }
+        change = true;
+        if (v.type === 'combat' || v.type === 'elite') {
+          const autres = pool.filter((e) => e !== v.ennemi);
+          if (v.escorte?.length) delete v.escorte;
+          else if (autres.length && v.type === 'combat') v.ennemi = autres[t.entier(autres.length)]!;
+          else { v.type = 'cache'; delete v.ennemi; delete v.escorte; delete v.condition; }
+        } else if (pool.length) {
+          v.type = 'combat'; v.ennemi = pool[t.entier(pool.length)]!; delete v.rencontre;
+        }
+        vus.set(signatureSalle(v), v);
+      }
+    }
+    if (!change) break;
+  }
 }
 
 /** Une nouvelle expédition en exploration */

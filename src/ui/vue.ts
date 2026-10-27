@@ -106,8 +106,13 @@ function popsPour(e: Ecran, cible: string) {
  * est celle qui compte (`g.f`) ; une carte qui prolonge la suite fait briller sa Fréquence, une carte qui brise la Fêlure
  * de l'ennemi le dit dans sa capsule de Fréquence.
  */
+/** Les Porteurs à terre du combat affiché : leurs cartes s'affichent éteintes (−15 % de force, sans effet) */
+let ETEINTS = new Set<string>();
+
 export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean; felure?: boolean } = {}) {
   const lign = ligneeGeste(g);
+  const eteinte = !!g.porteur && ETEINTS.has(g.porteur);
+  if (eteinte) g = { ...g, v: Math.round(g.v * REGLES.eteinte), effet: frequenceLibre(g.effet) ? g.effet : undefined, effet2: undefined };
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'District';
   const accord = frequenceLibre(g.effet);
   const metal = (g.carte?.split('@')[1] as Rarete | undefined) ?? 'fer';
@@ -116,9 +121,9 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
     fs: [g.f, ...(g.fs ?? []).filter((f) => f !== g.f)], nom: g.nom, effet: g.effet, ...(g.effet2 ? { effet2: g.effet2 } : {}), lourd: g.lourd, lignee: COULEUR[lign], suite: o.halo,
     felure: o.felure ? ICO.fele : undefined,
   };
-  const cls = ['geste', taille, g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', o.felure ? 'brise-felure' : ''].filter(Boolean).join(' ');
+  const cls = ['geste', taille, eteinte ? 'eteinte' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', o.felure ? 'brise-felure' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
-  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}`;
+  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}${eteinte ? ', éteinte : son Porteur est à terre' : ''}`;
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]}" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="nf nf-${metal}${o.halo ? ' nf-suite' : ''}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d)}</span>`
     + (o.halo ? `<span class="g-suite" aria-hidden="true">${ICO.monter}</span>` : '')
@@ -426,6 +431,7 @@ export function htmlCombat(e: Ecran): string {
 
 function htmlEcranCombat(e: Ecran): string {
   const s = e.etat;
+  ETEINTS = new Set(s.porteurs.filter((p) => p.pv <= 0).map((p) => p.id));
   const def = ennemiDef(s.ennemi.id);
   const it = s.intention;
   const faible = BATTU_PAR[def.lignee];

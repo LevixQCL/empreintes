@@ -180,7 +180,7 @@ function ongletDeck(): string {
     + `<li><b>Stimulant</b> et <b>Repli</b>, le paquetage du district, sont toujours dans le deck.</li>`
     + `<li>Changer d’escouade change le deck. Un Porteur au travail (ou à l’entraînement) peut descendre : il quitte son poste, qui reste vacant.</li>`
     + `<li>Un Porteur en expédition ou en mission garde ses cartes jusqu’à son retour.</li>`
-    + `<li>En combat, un Porteur <b>à terre</b> emporte ses cartes : elles quittent le deck tant qu’il ne s’est pas relevé, à un campement.</li>`
+    + `<li>En combat, les cartes d’un Porteur <b>à terre</b> s’éteignent : elles restent dans le deck un peu moins fortes (−15 %) et sans effet, et leur Fréquence compte toujours pour les suites. Il se relève à un campement.</li>`
     + `</ul></section>`;
 
   // les conseils
@@ -192,7 +192,7 @@ function ongletDeck(): string {
     + idee(ICO.cartes, 'Double les Fréquences utiles', `Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : bouclier d’escouade +${REGLES.bouclierEcho} et +1 Flux.`)
     + idee(ICO.atk, 'Mélange les actions', `Attaque, protection et soin. Le deck de départ en compte ${depart.atk}, ${depart.bouclier} et ${depart.soin} sur ${nDepart} : un bon repère.`, `<div class="g-barre" role="img" aria-label="${depart.atk} attaques, ${depart.bouclier} protections, ${depart.soin} soins">${barre}</div>`)
     + idee(ICO.cristal, 'Choisis aussi pour les Marques', 'Chaque Porteur gagne une Marque par ses exploits, presque toujours en combattant. Elle ne joue que s’il est dans l’escouade : l’onglet Escouade dit ce qu’elle fait et combien il en reste à accomplir.')
-    + idee(ICO.soin, 'Répartis les soins', 'Un Porteur à terre emporte ses cartes. Si tous tes soins sont chez lui, l’escouade n’en a plus au pire moment.')
+    + idee(ICO.soin, 'Répartis les soins', 'Les cartes d’un Porteur à terre s’éteignent. Si tous tes soins sont chez lui, ils perdent leur effet au pire moment.')
     + idee(ICO.place, 'Peu de cartes lourdes', `« 2 PL. » : la carte est forte mais prend deux places. Avec une autre carte, elle remplit une chaîne de ${REGLES.capaciteBase} places : pas de suite de 3 sans Flux ni Élan.`)
     + idee('<b class="g-etoile">∗</b>', 'Des jokers pour les suites', 'Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.')
     + idee(ICO_TRIANGLE, 'Pense au triangle', `Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : +${Math.round((REGLES.bonusLignee - 1) * 100)} % de dégâts. Les ennemis en profitent aussi contre tes Porteurs. Le dessin est dans « Lire une carte ».`)
@@ -267,7 +267,7 @@ const REGLE: Record<TypeEffet, () => string> = {
   percant: () => 'Passe à travers le bouclier et le blindage de l’ennemi.',
   flux: () => 'Remplit le Flux : +1 (+2 en nacre). Le Flux achète une place de plus dans la chaîne, ou une nouvelle main.',
   elan: () => `Ta prochaine chaîne a une place de plus (${REGLES.capaciteMax} au plus).`,
-  siphon: () => `Le Porteur qui la joue récupère ${fourchette('siphon')} des dégâts infligés (le plus blessé, s’il est à terre).`,
+  siphon: () => `Le Porteur qui la joue récupère ${fourchette('siphon')} des dégâts infligés (sans effet si son Porteur est à terre).`,
   vague: () => 'Le soin touche toute l’escouade au lieu d’un seul Porteur.',
   rempart: () => `${fourchette('rempart').replace(/^./, (c) => c.toUpperCase())} du bouclier d’escouade qui reste après l’attaque ennemie passe au tour suivant.`,
   desarmer: () => `La prochaine attaque de l’ennemi visé perd ${fourchette('desarmer')} de sa force.`,

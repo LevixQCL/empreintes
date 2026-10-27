@@ -12,7 +12,7 @@
 
 import { accessibles, butinCombat, forceStrate, peutRemonter, rangsDe, salleCourante, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
 import { paroleDescente } from '../core/campagne';
-import { PART_GROUPE } from '../core/combat';
+import { PV_GROUPE, pvProfondeur } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR } from '../core/regles';
 import { CIBLES_FOUILLE, RENCONTRES, type Jeu } from '../core/jeu';
@@ -76,7 +76,8 @@ const composantsSalle = (strate: number) => Math.round(8 * (1 + 0.25 * (strate -
 /** les PV réels des ennemis d'une salle (même calcul que le moteur : force de la Strate, renfort, part du groupe) */
 function pvEnnemis(s: Salle, x: Expedition): number[] {
   const groupe = [s.ennemi!, ...(s.escorte ?? [])];
-  const force = forceStrate(x.strate) * (x.facteur ?? 1) * (s.type === 'elite' ? 1.15 : 1) * (PART_GROUPE[groupe.length] ?? PART_GROUPE[3]!);
+  const base = forceStrate(x.strate) * (x.facteur ?? 1) * (s.type === 'elite' ? 1.15 : 1);
+  const force = base * (PV_GROUPE[groupe.length] ?? PV_GROUPE[3]!) * pvProfondeur(base);
   return groupe.map((id) => Math.round(ennemiDef(id).pvMax * force));
 }
 

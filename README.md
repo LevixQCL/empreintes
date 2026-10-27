@@ -285,6 +285,19 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
   tout échoue sans bruit et la carte n'a que des archipels sans directeur.
 - *À venir* : les Joutes en temps réel (elles demanderont d'autres règles Firestore).
 
+**Le passage du 27 octobre 2026** (relecture « nouveau joueur, joueur expérimenté, game designer », décidé avec Bryan).
+- *Intro* : 14 phrases au premier lancement (`court` dans `PLANS`, `src/ui/intro.ts`) ; « Revoir l’intro complète » (titre, menu) joue toute la version.
+- *Tuto du district* : il revient à l’ouverture tant qu’il n’a pas été lu jusqu’au bout (`j.accueilVu`) ; menu Plus › « Comment marche le district ».
+- *Pas de faux choix* : deux chemins qui partent d’une même salle ne se ressemblent jamais (`distinguerChemins` dans `expedition.ts`).
+- *Strate −1* : ennemis −15 % (`FORCE.table[0]` = 0,85).
+- *Récompenses* : chaque carte proposée dit qui peut la porter (ou la voie et le Porteur qui l’attend) et « Niv. N prêt » si le doublon fait monter.
+- *Porteur à terre* : ses cartes restent dans le deck, éteintes (`REGLES.eteinte` = 0,85 de force, sans effet, Fréquence intacte), la main reste à 5.
+- *Durée des combats* : les PV montent moins vite que les coups en profondeur (`pvProfondeur`) et un groupe a moins de PV (`PV_GROUPE`) ;
+  `npx tsx scripts/durees.ts` mesure au parcours : normaux ~8 tours, groupes ~10, gardiens ~15 (cible 6-9 / 9-13 / 12-18), Strate −10 au jour 29.
+  Les pillages gardent leurs PV (`pvPleins`).
+- *Énergie* : convertisseur du Générateur (`CONVERTISSEUR` : 100 énergie → 10, puis 6, puis 3 composants, 20 lots par jour) et soins intensifs
+  de la Clinique (`SOINS_INTENSIFS` : 20 énergie par point d’Usure).
+
 ## Firebase
 
 Voir [docs/GUIDE.md](docs/GUIDE.md). Tant que `src/net/firebase-config.ts` est vide, le jeu tourne
