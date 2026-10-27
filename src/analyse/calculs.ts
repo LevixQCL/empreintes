@@ -111,7 +111,7 @@ const NOMS_ACTIONS: Record<string, string> = {
   guide: 'Mode d’emploi des cartes', 'guide-fermer': 'Fermer le mode d’emploi', descendre: 'Préparer une descente', 'fouiller-choix': 'Préparer une fouille ciblée', cible: 'Choisir la cible d’une fouille',
   epreuve: 'Préparer une Épreuve', choisir: 'Choisir un Porteur pour descendre', partir: 'Partir en expédition', mission: 'Envoyer en mission', entrer: 'Entrer dans la Tour',
   salle: 'Entrer dans une salle', repondre: 'Répondre à une rencontre', ajouter: 'Combat : ajouter une carte', retirer: 'Combat : retirer une carte', accorder: 'Combat : accorder une carte',
-  cibler: 'Combat : cibler un soin', viser: 'Combat : viser un ennemi', vider: 'Combat : vider la chaîne', allonger: 'Combat : allonger la main', repiocher: 'Combat : repiocher',
+  cibler: 'Combat : cibler un soin', viser: 'Combat : viser un ennemi', vider: 'Combat : vider la chaîne', allonger: 'Combat : allonger la main', repiocher: 'Combat : repiocher', relancer: 'Combat : relancer la première main',
   lancer: 'Combat : lancer la chaîne', regles: 'Combat : règles', fuir: 'Combat : fuir (choix)', 'fuir-salle': 'Fuir d’une salle', 'fuir-district': 'Fuir au district', suivant: 'Combat suivant',
   retraite: 'Remonter (retraite)', remonter: 'Remonter au district', reprendre: 'Reprendre l’expédition', 'decouverte-ok': 'Fermer une découverte', son: 'Son',
   colis: 'Ouvrir le Ravitaillement', 'reclamer-jour': 'Objectif du jour', reclamer: 'Réclamer un objectif guidé', 'objectif-aller': 'Aller vers l’objectif', prendre: 'Prendre une carte au choix',

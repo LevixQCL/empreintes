@@ -315,6 +315,27 @@ export function repiocher(s: CombatEtat): Resultat {
   return { ok: true };
 }
 
+/** La relance de la première main peut encore servir : une seule fois, avant de lancer la première chaîne */
+export const peutRelancer = (s: CombatEtat) => s.issue === 'en-cours' && s.tour === 1 && !s.relance;
+
+/**
+ * Relance gratuite de la première main (27 octobre 2026, Bryan) : une fois par combat, au premier tour seulement.
+ * Les cartes de la main (et celles déjà posées) retournent dans la pioche, mélangée, puis on repioche autant de cartes.
+ * Ne coûte pas de Flux, contrairement à Repiocher.
+ */
+export function relancerMain(s: CombatEtat): Resultat {
+  if (!peutRelancer(s)) return { ok: false };
+  for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
+  const n = s.main.length + s.chaine.length;
+  s.pioche = tireur(s).melanger([...s.pioche, ...s.main, ...s.chaine]);
+  s.main = [];
+  s.chaine = [];
+  s.relance = true;
+  piocher(s, n);
+  log(s, 'Première main relancée.', { sorte: 'flux' });
+  return { ok: true };
+}
+
 /** Pour un aperçu : une Fêlure que le joueur ne voit pas (évanescent, brouillard) ne doit rien trahir (27 octobre 2026) */
 function masquerFelures(s: CombatEtat, copie: CombatEtat) {
   const brume = brumeActive(s);

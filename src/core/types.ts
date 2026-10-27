@@ -284,6 +284,8 @@ export interface CombatEtat {
   /** Épreuve « Fréquences brouillées » : aucune Résonance de tout le combat */
   sansResonance?: boolean;
   tour: number;
+  /** la relance gratuite de la première main a servi (27 octobre 2026) */
+  relance?: boolean;
   rng: number;
   issue: Issue;
   journal: string[];

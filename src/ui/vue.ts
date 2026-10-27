@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, estGardien, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat } from '../core/combat';
+import { ECLATS, estGardien, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
@@ -729,7 +729,7 @@ function htmlEcranCombat(e: Ecran): string {
   if (e.lecon) h += `<section class="lecon" aria-live="polite"><span class="surtitre">${ICO.cristal}COMBAT GUIDÉ</span><p>${echap(e.lecon)}</p></section>`;
 
   // la main
-  h += `<section class="zone-main" aria-label="Main"><div class="main-tete"><span class="surtitre">MAIN · ${s.main.length}</span>${s.journal[0] ? `<button type="button" class="journal-ligne" data-action="journal" data-id="tours"${e.verrou ? ' disabled' : ''} aria-label="${echap(`${s.journal[0]} Ouvrir le journal du combat`)}"><span>${echap(s.journal[0])}</span>${ICO.journal}</button>` : ''}</div><div class="main${guide && s.tour >= 2 && s.main.some((g) => vise(g) && places(g) <= libres) ? ' tri' : ''}">`;
+  h += `<section class="zone-main" aria-label="Main"><div class="main-tete"><span class="surtitre">MAIN · ${s.main.length}</span>${!e.lecon && peutRelancer(s) ? `<button type="button" class="btn-relance" data-action="relancer"${verrou ? ' disabled' : ''} aria-label="Relancer la première main : gratuit, une seule fois, avant de lancer la première chaîne">${ICO.repiocher}Relancer</button>` : ''}${s.journal[0] ? `<button type="button" class="journal-ligne" data-action="journal" data-id="tours"${e.verrou ? ' disabled' : ''} aria-label="${echap(`${s.journal[0]} Ouvrir le journal du combat`)}"><span>${echap(s.journal[0])}</span>${ICO.journal}</button>` : ''}</div><div class="main${guide && s.tour >= 2 && s.main.some((g) => vise(g) && places(g) <= libres) ? ' tri' : ''}">`;
   for (const g of s.main) {
     // une place qu'on n'a pas remplie chez ce Porteur : elle prend sa place dans la main ce tour-ci, sans se jouer
     if (g.vide) {

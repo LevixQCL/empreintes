@@ -487,3 +487,17 @@
   .ecran-jeu .mc-qui img{width:18px;height:18px}
   .ecran-jeu .combattant .pop{font-size:26px}
 }
+
+/* Relance gratuite de la première main (27 octobre 2026) : un petit bouton de verre à côté de « MAIN », qui disparaît
+   une fois utilisé ou dès que la première chaîne est lancée */
+.btn-relance{--cut:5px;display:inline-flex;align-items:center;gap:4px;flex-shrink:0;min-height:30px;padding:0 9px;border:none;cursor:pointer;
+  font-size:12px;font-weight:600;letter-spacing:.02em;color:#CFEAFF;
+  background:linear-gradient(180deg,rgba(159,216,255,.16),rgba(159,216,255,.04));
+  box-shadow:inset 0 0 0 1px rgba(159,216,255,.45),inset 0 0 10px rgba(159,216,255,.12);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));
+  animation:relance-lueur 2.4s ease-in-out infinite}
+.btn-relance .ico{width:13px;height:13px;color:#9FD8FF}
+.btn-relance:not(:disabled):active{transform:scale(.96)}
+.btn-relance:disabled{opacity:.5;animation:none}
+@keyframes relance-lueur{50%{box-shadow:inset 0 0 0 1px rgba(159,216,255,.7),inset 0 0 14px rgba(159,216,255,.26)}}
+@media (prefers-reduced-motion:reduce){.btn-relance{animation:none}}
