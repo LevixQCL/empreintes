@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { coupsAttendus, creerCombat, lancer, proteger, protegeDe, zoneAnnoncee, ajouter } from '../src/core/combat';
+import { coupsAttendus, creerCombat, lancer, proteger, protegeDe, protectionUtile, ajouter } from '../src/core/combat';
 import { PORTEURS, gesteDeCarte } from '../src/core/donnees';
 
 const equipe = () => PORTEURS.slice(0, 3).map((p) => ({ id: p.id, pv: p.pvMax, pvMax: p.pvMax, aTerre: false }));
@@ -18,7 +18,7 @@ describe('Le protégé : sur une zone, le bouclier couvre d’abord un Porteur',
     const s = combatZone(8);
     const faible = s.porteurs[2]!;
     faible.pv = 6;
-    expect(zoneAnnoncee(s)).toBe(true);
+    expect(protectionUtile(s)).toBe(true);
     expect(protegeDe(s)).toBe(faible.id);
     const c = coupsAttendus(s);
     expect(c.get(faible.id)![0]!.absorbe).toBeGreaterThan(0);
@@ -46,5 +46,21 @@ describe('Le protégé : sur une zone, le bouclier couvre d’abord un Porteur',
     const s = combatZone(5);
     s.porteurs[0]!.pv = 0;
     expect(proteger(s, s.porteurs[0]!.id).ok).toBe(false);
+  });
+
+  it('à plusieurs ennemis, le bouclier garde de quoi couvrir le protégé même s’il est frappé en dernier', () => {
+    const s = creerCombat({ porteurs: equipe(), ennemiId: 'pilleur', escorte: ['vigie'], rng: 7 });
+    const [a, , c] = s.porteurs;
+    for (const en of [s.ennemi, ...(s.autres ?? [])]) en.pv = en.pvMax = 999;
+    s.intention = { type: 'atk', nom: 'Coup', v: 8, cibleId: a!.id };
+    s.autres![0]!.intention = { type: 'atk', nom: 'Coup', v: 8, cibleId: c!.id };
+    s.bouclier = 6;
+    c!.pv = 7;
+    expect(protectionUtile(s)).toBe(true);
+    expect(protegeDe(s)).toBe(c!.id);
+    const prevu = coupsAttendus(s);
+    // le premier coup tombe sur un autre : il ne mange pas le bouclier réservé au protégé
+    expect(prevu.get(a!.id)![0]!.absorbe).toBe(0);
+    expect(prevu.get(c!.id)![0]!.absorbe).toBe(6);
   });
 });

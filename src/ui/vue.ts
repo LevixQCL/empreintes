@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, estGardien, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, zoneAnnoncee, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer } from '../core/combat';
+import { ECLATS, estGardien, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
@@ -661,9 +661,9 @@ function htmlEcranCombat(e: Ecran): string {
   // l'escouade
   h += '<section class="escouade-combat" aria-label="Escouade">';
   const coups = coupsAttendus(s);
-  // Protégé : sur une attaque de zone annoncée, le bouclier couvre d'abord ce Porteur ; un toucher sur une tuile le change
+  // Protégé : quand les attaques annoncées touchent plusieurs Porteurs, le bouclier couvre d'abord celui-ci ; un toucher sur une tuile le change
   // (seulement s'il y a du bouclier, posé ou dans la chaîne : sans bouclier, rien à répartir)
-  const zone = !verrou && zoneAnnoncee(s) && s.bouclier + apercuChaine(s).bouclier > 0;
+  const zone = !verrou && protectionUtile(s) && s.bouclier + apercuChaine(s).bouclier > 0;
   const protege = zone ? protegeDe(s) : undefined;
   for (const p of s.porteurs) {
     const d = porteurDef(p.id);

@@ -254,27 +254,41 @@ export function cibler(s: CombatEtat, uid: string, porteurId?: string): Resultat
 
 /**
  * Protégé (27 octobre 2026, Bryan : « si on a une attaque qui va sur tous les personnages et qu'on a un bouclier, il faudrait
- * pouvoir rediriger le bouclier vers celui qui est le plus faible »). Le bouclier d'escouade reste un seul réservoir ; sur une
- * attaque de zone, il couvre d'abord le protégé, puis les autres dans l'ordre de l'escouade. Le jeu propose le plus menacé,
- * le joueur peut en choisir un autre d'un toucher (comme la cible d'un soin). Le choix vaut pour le tour.
+ * pouvoir rediriger le bouclier vers celui qui est le plus faible »). Le bouclier d'escouade reste un seul réservoir, mais il
+ * couvre d'abord le protégé : sur une zone, il est touché le premier ; quand plusieurs ennemis frappent des Porteurs
+ * différents, le bouclier garde de quoi couvrir les coups encore à venir sur lui, et les autres prennent le reste.
+ * Le jeu propose le plus menacé, le joueur peut en choisir un autre d'un toucher (comme la cible d'un soin). Le choix vaut pour le tour.
  */
-export const zoneAnnoncee = (s: CombatEtat) =>
-  s.issue === 'en-cours' && !brumeActive(s) && ennemisDebout(s).some((en) => { const it = intentionDe(s, en); return it.type === 'atk' && !!it.zone; });
 
-/** Le Porteur que le bouclier couvrira en premier : celui choisi ce tour, sinon celui qui finirait le plus bas après la zone */
+/** Ce qu'un ennemi va retirer à un Porteur s'il le frappe (0 s'il ne le vise pas) : même calcul que son vrai tour */
+function coupSur(s: CombatEtat, en: EnnemiEtat, porteurId: string): number {
+  const it = intentionDe(s, en);
+  if (s.ombre || it.type !== 'atk' || (!it.zone && it.cibleId !== porteurId)) return 0;
+  return Math.round(it.v * puissance(en) * usureCombat(s).attaque * avantage(ennemiDef(en.id).lignee, porteurDef(porteurId).lignee));
+}
+
+/** Ce que le bouclier doit encore garder pour le protégé : les coups qui l'attendent chez les ennemis qui n'ont pas encore frappé */
+function reservePour(s: CombatEtat, porteurId: string | undefined, ennemis: EnnemiEtat[]): number {
+  return porteurId ? ennemis.reduce((t, en) => t + coupSur(s, en, porteurId), 0) : 0;
+}
+
+/** Les Porteurs que les attaques annoncées vont toucher */
+function porteursVises(s: CombatEtat): PorteurEtat[] {
+  return vivants(s).filter((p) => ennemisDebout(s).some((en) => coupSur(s, en, p.id) > 0 || (intentionDe(s, en).type === 'atk' && intentionDe(s, en).cibleId === p.id)));
+}
+
+/** Choisir un protégé a un sens : les attaques annoncées touchent au moins deux Porteurs (une zone, ou plusieurs ennemis) */
+export const protectionUtile = (s: CombatEtat) => s.issue === 'en-cours' && !brumeActive(s) && porteursVises(s).length >= 2;
+
+/** Le Porteur que le bouclier couvrira en premier : celui choisi ce tour, sinon celui qui finirait le plus bas */
 export function protegeDe(s: CombatEtat): string | undefined {
   const debout = vivants(s);
   if (s.protege && debout.some((p) => p.id === s.protege)) return s.protege;
   if (brumeActive(s)) return plusBlesse(s)?.id;
-  const reste = (p: PorteurEtat) => {
-    let r = p.pv;
-    for (const en of ennemisDebout(s)) {
-      const it = intentionDe(s, en);
-      if (it.type === 'atk' && it.zone) r -= it.v * puissance(en) * avantage(ennemiDef(en.id).lignee, porteurDef(p.id).lignee);
-    }
-    return r / p.pvMax;
-  };
-  return debout.sort((a, b) => reste(a) - reste(b))[0]?.id;
+  const vises = porteursVises(s);
+  if (!vises.length) return plusBlesse(s)?.id;
+  const reste = (p: PorteurEtat) => (p.pv - reservePour(s, p.id, ennemisDebout(s))) / p.pvMax;
+  return vises.sort((a, b) => reste(a) - reste(b))[0]?.id;
 }
 
 /** Choisit le protégé du tour (un Porteur encore debout) */
@@ -290,6 +304,13 @@ function ordreZone<T extends { id: string }>(s: CombatEtat, debout: T[]): T[] {
   const p = debout.find((x) => x.id === id);
   return p ? [p, ...debout.filter((x) => x !== p)] : debout;
 }
+
+/** Le bouclier que peut prendre un coup sur ce Porteur : tout pour le protégé, le reste moins la réserve pour les autres */
+const bouclierPour = (bouclier: number, porteurId: string, protege: string | undefined, reserve: number) =>
+  porteurId === protege ? bouclier : Math.max(0, bouclier - reserve);
+
+/** Pendant le tour ennemi : la part du bouclier gardée pour les coups à venir sur le protégé (recalculée avant chaque ennemi) */
+let RESERVE = 0;
 
 /** Change la Fréquence d'une carte posée dans la chaîne (cartes à plusieurs Fréquences : argent et plus) */
 export function accorder(s: CombatEtat, uid: string, f?: number): Resultat {
@@ -878,9 +899,12 @@ export function coupDeFuite(s: CombatEtat): { porteurs: PorteurEtat[]; coups: { 
   let bouclier = s.bouclier;
   const coups: { id: string; net: number; absorbe: number }[] = [];
   const noms: string[] = [];
-  for (const en of ennemisDebout(s)) {
+  const ennemis = ennemisDebout(s);
+  const protege = protegeDe(s);
+  for (const [i, en] of ennemis.entries()) {
     const it = intentionDe(s, en);
     if (it.type !== 'atk') continue;
+    const reserve = reservePour(s, protege, ennemis.slice(i + 1));
     const e = ennemiDef(en.id);
     const debout = porteurs.filter((p) => p.pv > 0);
     let cibles: PorteurEtat[];
@@ -891,7 +915,7 @@ export function coupDeFuite(s: CombatEtat): { porteurs: PorteurEtat[]; coups: { 
     }
     for (const c of cibles) {
       const dmg = Math.round(it.v * puissance(en) * usureCombat(s).attaque * avantage(e.lignee, porteurDef(c.id).lignee));
-      const absorbe = Math.min(bouclier, dmg);
+      const absorbe = Math.min(bouclierPour(bouclier, c.id, protege, reserve), dmg);
       bouclier -= absorbe;
       const net = dmg - absorbe;
       c.pv = Math.max(0, c.pv - net);
@@ -917,11 +941,17 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
   }
   CAMP = 'ennemi';
   const groupe = enGroupe(s);
-  for (const en of ennemisDebout(s)) {
+  // le protégé proposé est fixé pour tout le tour : il ne change pas au fil des coups
+  s.protege = protegeDe(s);
+  const ennemis = ennemisDebout(s);
+  for (const [i, en] of ennemis.entries()) {
     if (!vivants(s).length) break;
     if (groupe) emettre({ kind: 'ennemi-agit', rang: en.rang ?? 0 });
+    // le bouclier garde de quoi couvrir les coups qui attendent encore le protégé
+    RESERVE = reservePour(s, protegeDe(s), ennemis.slice(i + 1).filter((x) => x.pv > 0));
     agir(s, en, intentionDe(s, en), emettre);
   }
+  RESERVE = 0;
   for (const p of s.porteurs) {
     if (p.pv <= 0 && !p.aTerre) {
       // Seconde chance (Sasha) : le premier qui tombe se relève, une fois par combat
@@ -1119,7 +1149,7 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
       // Ombre agissante (Coup d'éclat des Résonants) : l'ombre retient le coup
       const av = avantage(e.lignee, porteurDef(c.id).lignee);
       const dmg = s.ombre ? 0 : Math.round(it.v * puissance(en) * usureCombat(s).attaque * av);
-      const abs = Math.min(s.bouclier, dmg);
+      const abs = Math.min(bouclierPour(s.bouclier, c.id, protegeDe(s), RESERVE), dmg);
       s.bouclier -= abs;
       const net = dmg - abs;
       c.pv = Math.max(0, c.pv - net);
