@@ -10,6 +10,14 @@ Format : 600 × 848, à enregistrer sous le même nom dans `public/art/modules/<
 
 ## Résonants : lumière améthyste (lot d'essai)
 
+**Règle du 27 octobre 2026 (Bryan : « les cartes des Résonants sont toujours dans le même style »)** : 15 prompts Résonants sur 20
+avaient un cristal violet pour sujet. Désormais, **le cristal n'est jamais le sujet principal** d'une carte Résonante (au plus un détail).
+Chaque carte part d'une famille d'objets, avec sa matière et une seconde couleur, sous la même lumière améthyste :
+ombres (silhouettes projetées) · son (instruments de bois et de laiton) · plumes et ailes · encre et papier · brume et eau (miroirs,
+reflets) · fils et tissus (voiles, broderies) · masques. Seconde couleur selon la famille : argent, laiton, ivoire, noir d'encre, or pâle.
+Le `--no` ajoute « crystal, gemstone, amethyst rock » quand le nom de la carte n'en parle pas.
+Refaits selon cette règle : Murmure, Éclat, Éclat qui chante, Souffle, Grand unisson, Diapason de cristal.
+
 ### Apaiser — `apaiser.webp`
 
 ```
@@ -31,13 +39,13 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 ### Éclat — `eclat.webp`
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a single sharp crystal shard lying on a folded cloth, bursting with intense violet light, rays and sparkles, a few small rough fragments scattered around, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a shattered antique hand mirror with a silver handle, its broken shards floating outward in a burst, each shard reflecting a brighter flash of violet light than the last, dominant amethyst and violet lighting with cold silver-white accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, crystal, gemstone, amethyst rock
 ```
 
 ### Éclat qui chante — `eclat-chant.webp`
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a tall faceted crystal held upright in a brass cradle, three glowing rings of violet light circling it like a melody, dust trembling on the workbench, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an old open wooden music box with a polished brass comb and cylinder, three glowing violet musical notes of light rising from it, each one bigger than the one before, dominant amethyst and violet lighting with warm polished brass accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, crystal, gemstone, amethyst rock
 ```
 
 ### Encre ancienne — `encre-ancienne.webp`
@@ -61,7 +69,7 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 ### Murmure — `murmure.webp`
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an antique brass speaking trumpet with a violet crystal set in its mouthpiece, glowing violet wisps of whispered words curling out of its bell, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a translucent violet silk veil hanging from a small dark wooden frame, embroidered with swirling silver patterns, gently billowing as if someone had just whispered through it, a few silver threads drifting loose in the air, dominant amethyst and violet lighting with soft silver accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, crystal, gemstone, amethyst rock
 ```
 
 ### Ombre ailée — `ombre-ailee.webp`
@@ -91,7 +99,7 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 ### Souffle — `souffle.webp`
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an unstoppered crystal flask with a swirling cloud of shimmering violet breath escaping from its neck, not fire, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a large curved horn of pale bone bound with dark brass rings, a powerful violet gust of wind bursting from its mouth, a long crack splitting the workbench in front of it, dominant amethyst and violet lighting with pale ivory bone accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, crystal, gemstone, amethyst rock
 ```
 
 ### Souffle du wyrm — `souffle-wyrm.webp`
@@ -371,7 +379,7 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 #### Diapason de cristal — `diapason-cristal.webp`
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a single tall tuning fork made of clear violet crystal standing in a brass base, one perfect ring of violet light spreading from it and making nearby small crystals glow the same tone, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a slender tuning fork of clear colorless glass standing on a small square of black velvet, just struck, sharp violet ripples bending the air around its prongs, two small brass tuning forks beside it trembling in sympathy, dominant amethyst and violet lighting with silver and clear glass accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
 ```
 
 #### Voix basse — `voix-basse.webp`
@@ -395,5 +403,5 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 #### Grand unisson — `grand-unisson.webp`
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a large faceted violet crystal pulsing with light, many thin threads of violet light converging into it from all directions like many voices joining as one, a strong single beam rising from its tip, the object glowing with violet light, dominant amethyst and violet lighting, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a ring of small brass candle holders with cold violet flames, their many violet shadows on the wall behind merging into one single tall shadow shaped like a rising flame, dominant amethyst and violet lighting with warm brass accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, crystal, gemstone, amethyst rock
 ```
