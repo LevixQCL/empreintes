@@ -410,3 +410,80 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 ```
 bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a large ornate gilded wind chime hanging from a small dark wooden stand, many slender golden tubes all ringing together, violet sound waves rising from every tube and merging into one single wide ring of light above it, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
 ```
+
+## Le Legs du district (27 octobre 2026) : cartes légendaires
+
+Les dix vierges de l'ancienne directrice (`docs/legs-du-district.md`). Bryan : elles doivent être **légendaires**.
+Ce qui les distingue des autres cartes, tout en gardant le style et la lumière de leur lignée :
+- **une série** : chaque objet repose dans le même coffre ouvert, doublé de nacre irisée, à côté d'un sceau de cire doré brisé ;
+- **des matières nobles** : nacre irisée et filigrane d'or sur chaque objet, un halo de rayons derrière lui ;
+- **un objet héroïque** : plus grand, plus ouvragé, une relique de l'histoire du district (rien de religieux : pas d'autel, de cierge ni de symbole sacré).
+Format habituel : 600 × 848, dans `public/art/modules/<id>.webp` (la Clé du Legs : `cle-legs.webp`).
+
+### Augmentés
+
+#### Foulée de la directrice — `foulee-directrice.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. legendary still life, a single heroic object in close-up, centered and filling the frame, resting inside an open antique chest lined with iridescent mother-of-pearl, a broken gold wax seal beside it, a pair of sleek legendary running boots of pearl-white alloy with glowing blue crystal soles and small folded steel wings at the heels, faint blue afterimages trailing behind them as if they never stop moving, iridescent mother-of-pearl highlights and fine gold filigree, a soft halo of light rays behind it, awe-inspiring, ornate masterpiece detail, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```
+
+#### Bras de la Fonderie — `bras-fonderie.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. legendary still life, a single heroic object in close-up, centered and filling the frame, resting inside an open antique chest lined with iridescent mother-of-pearl, a broken gold wax seal beside it, a colossal mechanical forearm and clenched fist of blackened forge iron inlaid with mother-of-pearl plates, glowing blue molten seams, a riveted foundry stamp on the wrist, the chest straining under its weight, iridescent mother-of-pearl highlights and fine gold filigree, a soft halo of light rays behind it, awe-inspiring, ornate masterpiece detail, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```
+
+#### Cœur de la Glacière — `coeur-glaciere.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. legendary still life, a single heroic object in close-up, centered and filling the frame, resting inside an open antique chest lined with iridescent mother-of-pearl, a broken gold wax seal beside it, an ancient mechanical heart-shaped engine encased in frosted glass and pearl-white metal, a blizzard of blue lightning swirling inside it, frost spreading from it across the chest lining, iridescent mother-of-pearl highlights and fine gold filigree, a soft halo of light rays behind it, awe-inspiring, ornate masterpiece detail, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```
+
+### Génés
+
+#### Carapace des Fondations — `carapace-fondations.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. legendary still life, a single heroic object in close-up, centered and filling the frame, resting inside an open antique chest lined with iridescent mother-of-pearl, a broken gold wax seal beside it, a massive layered shell shield of dark green chitin edged with mother-of-pearl, deep scars of countless blows healed into glowing green seams, a small engraved pillar emblem at its center, iridescent mother-of-pearl highlights and fine gold filigree, a soft halo of light rays behind it, awe-inspiring, ornate masterpiece detail, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Œil de la Grande Nuit — `oeil-grande-nuit.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. legendary still life, a single heroic object in close-up, centered and filling the frame, resting inside an open antique chest lined with iridescent mother-of-pearl, a broken gold wax seal beside it, a large almond-shaped pendant of black pearl set in carved teal chitin, a glowing green-gold slit like a night predator's gaze at its center, a few pale night moths circling it, iridescent mother-of-pearl highlights and fine gold filigree, a soft halo of light rays behind it, awe-inspiring, ornate masterpiece detail, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Première mue — `premiere-mue.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. legendary still life, a single heroic object in close-up, centered and filling the frame, resting inside an open antique chest lined with iridescent mother-of-pearl, a broken gold wax seal beside it, a delicate translucent shed scale-skin of a mythical creature, perfectly preserved and folded like silk, shimmering with mother-of-pearl, soft green life-light breathing through it, tiny green sprouts growing around it, iridescent mother-of-pearl highlights and fine gold filigree, a soft halo of light rays behind it, awe-inspiring, ornate masterpiece detail, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+### Résonants
+
+#### Lanterne de la première Lecture — `lanterne-lecture.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. legendary still life, a single heroic object in close-up, centered and filling the frame, resting inside an open antique chest lined with iridescent mother-of-pearl, a broken gold wax seal beside it, an ornate antique lantern of gold filigree with mother-of-pearl panels, a calm violet flame inside casting a single path of glowing steps of light forward out of the chest, iridescent mother-of-pearl highlights and fine gold filigree, a soft halo of light rays behind it, awe-inspiring, ornate masterpiece detail, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```
+
+#### Sceau volé aux Orsève — `sceau-orseve.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. legendary still life, a single heroic object in close-up, centered and filling the frame, resting inside an open antique chest lined with iridescent mother-of-pearl, a broken gold wax seal beside it, a heavy aristocratic signet seal of gold and mother-of-pearl, its stamp face glowing violet, a half-melted violet wax imprint beside it, an elegant torn silk ribbon, iridescent mother-of-pearl highlights and fine gold filigree, a soft halo of light rays behind it, awe-inspiring, ornate masterpiece detail, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```
+
+#### Voix du quartier — `voix-quartier.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. legendary still life, a single heroic object in close-up, centered and filling the frame, resting inside an open antique chest lined with iridescent mother-of-pearl, a broken gold wax seal beside it, a grand gilded gramophone horn made of mother-of-pearl, countless thin violet sound threads pouring into it and leaving its mouth as one single shining wave, iridescent mother-of-pearl highlights and fine gold filigree, a soft halo of light rays behind it, awe-inspiring, ornate masterpiece detail, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```
+
+### Le district
+
+#### Clé du Legs — `cle-legs.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. legendary still life, a single heroic object in close-up, centered and filling the frame, resting inside an open antique chest lined with iridescent mother-of-pearl, a broken gold wax seal beside it, a large ornate key of mother-of-pearl and pale gold, its bow shaped like a small tower standing on stilts above water, glowing softly, the chest's ornate gold keyhole lock just beside it, iridescent mother-of-pearl highlights and fine gold filigree, a soft halo of light rays behind it, awe-inspiring, ornate masterpiece detail, soft ivory-white and pale gold lighting, cool grey-blue shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```

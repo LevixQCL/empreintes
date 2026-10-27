@@ -7,7 +7,7 @@
 // Les tailles sont en unités de conteneur (cqw) : la même carte s'affiche en grand ou en petit.
 
 import { nomsEffets } from '../core/effets';
-import { DEPART_PORTEURS, NOMS_LIGNEE, voieDe } from '../core/donnees';
+import { DEPART_PORTEURS, NOMS_LIGNEE, PORTEUR_LEGS, voieDe } from '../core/donnees';
 import { NOMS_RARETE } from '../core/collection';
 import { frequenceLibre, signeLibre } from '../core/regles';
 import type { ModuleDef, Rarete } from '../core/types';
@@ -47,7 +47,7 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?:
   const ill = illustrationModule(m.id);
   // une carte de base sans illustration prend, en attendant, le portrait du Porteur qui la porte au départ (une carte de voie, celui de sa voie)
   const base = m.base ?? m.id;
-  const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base)) ?? voieDe(base)?.porteur;
+  const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base)) ?? voieDe(base)?.porteur ?? PORTEUR_LEGS[base];
   const repli = !ill && qui ? portrait(qui) : null;
   const art = ill
     ? `<img src="${ill}" alt="" decoding="async" data-src-fx="${ill}">`

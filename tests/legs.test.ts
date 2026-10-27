@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { choisirLegs, cleDuLegs, deckEscouade, eveillerLegs, greffer, legsEnAttente, LETTRE_LEGS, nouveauJeu } from '../src/core/jeu';
 import { ajouter, creerCombat, lancer } from '../src/core/combat';
-import { MODULES, MODULES_TIRABLES, PORTEURS, moduleDef } from '../src/core/donnees';
+import { MODULES, MODULES_TIRABLES, PORTEURS, PORTEUR_LEGS, moduleDef, porteurDef } from '../src/core/donnees';
 import { tirerCarte, tirerTrouvaille } from '../src/core/collection';
 import type { Geste } from '../src/core/types';
 
@@ -18,6 +18,9 @@ describe('Le Legs du district', () => {
     const proposees = Object.values(LETTRE_LEGS.voies).flatMap((v) => v.options.map((o) => o.id));
     expect(proposees.sort()).toEqual(legs.map((m) => m.id).sort());
     expect(LETTRE_LEGS.lignees.some((l) => l.id === 'cle')).toBe(true);
+    // chacune est la pièce maîtresse d'un Porteur nommé de sa lignée, un Porteur par carte
+    for (const m of legs) expect(porteurDef(PORTEUR_LEGS[m.id]!).lignee, m.id).toBe(m.lignee);
+    expect(new Set(Object.values(PORTEUR_LEGS)).size).toBe(9);
   });
 
   it('jamais trouvées ailleurs : ni dans les trouvailles, ni dans les choix', () => {

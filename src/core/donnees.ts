@@ -144,6 +144,13 @@ export const MODULES: ModuleDef[] = [
   legs('voix-quartier', 'Voix du quartier', 'reso', 'atk', 14, [9, 8, 7], { type: 'diapason' }, { type: 'unisson', part: 0.7 }),
 ];
 
+/** Le Porteur dont chaque carte du Legs est la pièce maîtresse de la voie (il prête son portrait en attendant l'illustration) */
+export const PORTEUR_LEGS: Record<string, string> = {
+  'foulee-directrice': 'ilka', 'bras-fonderie': 'sasha', 'coeur-glaciere': 'liane',
+  'carapace-fondations': 'doran', 'oeil-grande-nuit': 'nuit', 'premiere-mue': 'kessa',
+  'lanterne-lecture': 'vela', 'sceau-orseve': 'aurel', 'voix-quartier': 'joss',
+};
+
 /** Les cartes qu'on peut trouver, acheter ou fabriquer : toutes, sauf celles du Legs */
 export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs);
 

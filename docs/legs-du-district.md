@@ -11,19 +11,18 @@ Le but : donner envie de jouer pour enfin la porter.
 - **Le Legs devient une identité** : « tu as eu laquelle ? ». Il se voit dans la garnison (pillages) et pourra s'afficher au Grand Tableau.
 - **Les dix doivent se valoir** : plus question d'en avoir une « meilleure ». Chacune est la pièce maîtresse d'une voie, réglée au
   robot pour que l'écart entre la plus forte et la plus faible reste petit (quelques points).
-- **Le sceau, c'est le niveau du Porteur qui la porte** (Bryan : le joueur n'a pas de niveau, ses Porteurs si). Elle ne se confie qu'à
-  un Porteur **de sa lignée** et **de niveau 8 au moins**. Elle grandit ensuite avec lui (« la vierge apprend son porteur ») :
+- **Le sceau, c'est le niveau du Porteur qui la porte**, comme pour toute carte depuis le 27 octobre 2026 (argent niveau 4, or 7,
+  nacre 10 : `NIVEAU_METAL`). Elle ne se confie qu'à un Porteur **de sa lignée** et **de niveau 10**, puis grandit avec lui :
 
   | Porteur | Le Legs | Joueur occasionnel | Joueur assidu |
   |---|---|---|---|
-  | niveau 8 | se porte, niveau 8 | vers le jour 7-8 | vers le jour 5 |
-  | niveau 12 | niveau 9 | vers le jour 22 | vers le jour 10 |
-  | niveau 15 | niveau 10 | vers le jour 32 | vers le jour 15 |
+  | niveau 10 | se porte, niveau 8 | vers le jour 13 | vers le jour 8 |
+  | niveau 13 | niveau 9 | vers le jour 23 | vers le jour 11 |
+  | niveau 16 | niveau 10 | vers le jour 37 | vers le jour 16 |
 
-  (Jours mesurés au parcours simulé, 6 parties par profil : le niveau du Porteur le plus avancé de l'escouade. Un Porteur en retard
-  rattrape vite : il apprend 1,5 fois plus vite à deux niveaux d'écart.)
-  Dès le départ, la carte est **visible** avec sa fiche complète, et l'écran montre la progression : « Doran niveau 5 / 8 ».
-  Le joueur sait quel Porteur faire monter : c'est l'envie de jouer.
+  (Jours mesurés au parcours simulé : le Porteur le plus avancé de l'escouade.) La Clé du Legs suit le Porteur le plus avancé de l'escouade.
+  **Codé le 27 octobre 2026** : `LETTRE_LEGS`, `choisirLegs`, `eveillerLegs` (`partie/recompenses.ts`), cartes en fin de `MODULES`
+  (`legs: true`, exclues de `MODULES_TIRABLES`), `CLE_LEGS` et `cleDuLegs`, second effet `effet2` dans le moteur.
 - **« Un seul Legs par Porteur » disparaît** (il n'y en a qu'un) ; la carte reste liée à sa lignée et pèse sa Charge.
 - **Comment le joueur reçoit la sienne : par un choix dans l'histoire** (validé par Bryan le 27 octobre 2026). La lettre de la directrice
   pose deux questions sur le directeur qu'on veut être, sans jamais montrer de chiffres :

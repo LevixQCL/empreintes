@@ -2,7 +2,7 @@
 // usage : npx tsx scripts/etat-demo.ts <dossier>  → district.json, combat.json
 import { writeFileSync } from 'node:fs';
 import * as J from '../src/core/jeu';
-import { MODULES, carteId } from '../src/core/donnees';
+import { MODULES_TIRABLES, carteId } from '../src/core/donnees';
 import { FRAGMENTS } from '../src/core/fragments';
 import { CHAPITRES } from '../src/core/chroniques';
 import { SCENES } from '../src/core/campagne';
@@ -17,7 +17,7 @@ j.batiments = { noyau: 4, generateur: 4, forge: 3, clinique: 3 };
 j.energie = 1840; j.composants = 620; j.eclats = 7;
 j.strate = 5; j.objectif = 4; j.confiance = 64;
 const metaux = ['fer', 'cuivre', 'argent', 'or', 'nacre'] as const;
-MODULES.forEach((m, i) => {
+MODULES_TIRABLES.forEach((m, i) => {
   const r = metaux[Math.min(4, Math.floor(i / 9))]!;
   j.collection[carteId(m.id, i % 3 === 0 ? 'fer' : r)] = { niveau: 1 + (i % 5), doublons: i % 4 };
 });
@@ -27,6 +27,9 @@ j.choix = [];
 // la campagne vécue jusqu'au gardien de −4 : la scène d'ouverture de −5 attend au retour sur l'archipel
 j.scenes = SCENES.slice(0, SCENES.findIndex((s) => s.id === 'entree-5')).map((s) => s.id);
 const env = (data: unknown) => JSON.stringify({ data, updatedAt: now });
+// la lettre du Legs attend (lettre.json), puis le Legs reçu : la Voix du quartier (pour que la lettre ne couvre pas les autres écrans)
+writeFileSync(`${dossier}/lettre.json`, env(j));
+J.choisirLegs(j, 'voix-quartier');
 writeFileSync(`${dossier}/district.json`, env(j));
 const k = structuredClone(j);
 J.partir(k, J.disponibles(k).slice(0, 3), 3, 777);
