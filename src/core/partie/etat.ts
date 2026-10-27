@@ -264,6 +264,8 @@ export interface Jeu {
    *  `escouadeActive` est celle qui descend, et `escouade` en est toujours la copie (c'est elle qui fait foi). */
   escouades: string[][];
   escouadeActive: number;
+  /** l'escouade qui garde le port contre les pillages (27 octobre 2026) ; absente : celle qui descend */
+  escouadeDefense?: number;
   /** les Porteurs et les cartes déjà vus par le joueur : le reste porte une pastille « Nouveau » (23 octobre 2026) */
   vus: { porteurs: string[]; cartes: string[] };
   /** les creuseurs du front de taille : il en faut assez pour creuser l'étage suivant (logés selon le niveau du Noyau) */
@@ -414,6 +416,13 @@ export const NB_ESCOUADES = 3;
 
 /** L'indice de l'escouade qui descend (0 à 2) */
 export const escouadeActive = (j: Jeu): number => (Number.isInteger(j.escouadeActive) && j.escouadeActive >= 0 && j.escouadeActive < NB_ESCOUADES ? j.escouadeActive : 0);
+
+/** L'indice de l'escouade qui défend le port (27 octobre 2026) : celle choisie, ou celle qui descend si elle est vide */
+export function escouadeDefense(j: Jeu): number {
+  const d = j.escouadeDefense;
+  if (Number.isInteger(d) && d! >= 0 && d! < NB_ESCOUADES && escouadesDe(j)[d!]!.length) return d!;
+  return escouadeActive(j);
+}
 
 /** Les trois escouades enregistrées (25 octobre 2026) : celle qui descend d'abord rangée à sa place,
  * puis les autres, chacune sans les Porteurs déjà pris par une autre (un Porteur n'est que dans une seule) */

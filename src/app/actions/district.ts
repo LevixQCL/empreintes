@@ -141,7 +141,20 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     }
     case 'mission': resultat(J.envoyerMission(app.jeu, id, (b.dataset.duree as J.DureeMission) ?? 'courte', Date.now())); break;
     // depuis l'écran de départ : on compose les escouades dans l'onglet Escouade, sur celle qui descend
-    case 'escouade-modifier': ouvrir('porteurs'); D.vueEscouade = J.escouadeActive(app.jeu); window.scrollTo(0, 0); break;
+    case 'escouade-modifier': ouvrir('porteurs'); D.retourModif = 'escouade'; D.vueEscouade = J.escouadeActive(app.jeu); window.scrollTo(0, 0); break;
+    // la garnison du port (27 octobre 2026) : choisir l'escouade qui défend, la composer, et revenir là d'où l'on vient
+    case 'defense-escouade': resultat(J.choisirDefense(app.jeu, Number(b.dataset.index ?? 0))); break;
+    case 'garnison-modifier': ouvrir('porteurs'); D.retourModif = 'pillages'; D.vueEscouade = J.escouadeDefense(app.jeu); window.scrollTo(0, 0); break;
+    case 'escouade-revenir': {
+      const v = D.retourModif;
+      if (v === 'escouade') {
+        ouvrir('escouade');
+        const ep = D.epreuve ? J.epreuveDef(D.epreuve) : undefined;
+        D.escouade = J.escouadePourDepart(app.jeu, ep?.interdits ?? []);
+      } else ouvrir('pillages');
+      window.scrollTo(0, 0);
+      break;
+    }
     case 'partir': {
       const r = D.pillage ? J.piller(app.jeu, D.escouade, D.pillage, Date.now())
         : D.epreuve ? J.partirEpreuve(app.jeu, D.escouade, D.epreuve, Date.now())

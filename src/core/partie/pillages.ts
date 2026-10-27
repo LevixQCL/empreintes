@@ -12,7 +12,7 @@ import { puissanceCarte } from '../collection';
 import { butinCombat, nouvelleExpedition } from '../expedition';
 import { graine, tireur } from '../rng';
 import type { Lignee } from '../types';
-import { CONFIANCE, DISTRICT, XP, bonusPv, confier, jourDe, escouadeDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureMax, type Jeu, type Resultat } from './etat';
+import { CONFIANCE, DISTRICT, XP, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureMax, type Jeu, type Resultat } from './etat';
 import { escouadePrete, remonter as remonterDescente, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 
@@ -67,10 +67,10 @@ export interface Garnison {
   coffre: number;
 }
 
-/** La garnison d'un district : son escouade active (complétée par les premiers Porteurs présents) */
+/** La garnison d'un district : l'escouade choisie pour défendre le port (complétée par les premiers Porteurs présents) */
 export function garnisonDe(j: Jeu): Garnison {
   const presents = porteursPresents(j);
-  const ids = [...new Set([...escouadeDe(j), ...presents])].slice(0, 3);
+  const ids = [...new Set([...escouadesDe(j)[escouadeDefense(j)]!, ...presents])].slice(0, 3);
   return {
     porteurs: ids.map((id) => ({
       id,
@@ -122,6 +122,16 @@ export function difficulte(ecart: number): { nom: string; niveau: 1 | 2 | 3 | 4 
   if (c >= 0.5) return { nom: 'Équilibré', niveau: 2 };
   if (c >= 0.15) return { nom: 'Risqué', niveau: 3 };
   return { nom: 'Redoutable', niveau: 4 };
+}
+
+/** Choisit l'escouade qui garde le port (27 octobre 2026). Possible à tout moment, même pendant une descente :
+ * la garnison ne quitte pas le district, elle se défend seule. */
+export function choisirDefense(j: Jeu, n: number): Resultat {
+  if (!Number.isInteger(n) || n < 0 || n >= escouadesDe(j).length) return non('Escouade inconnue.');
+  if (!escouadesDe(j)[n]!.length) return non('Cette escouade est vide : choisis-lui d’abord des Porteurs.');
+  j.escouadeDefense = n;
+  log(j, `L’escouade ${n + 1} garde désormais le port.`);
+  return { ok: true };
 }
 
 // ---------- L'état du joueur : jetons et coffre ----------

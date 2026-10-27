@@ -201,3 +201,12 @@
   .eq-marque{align-self:stretch}
   .eq-district .eq-cartes{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 26px}
 }
+
+/* Le retour au départ ou au Port (27 octobre 2026), et l'escouade qui garde le port */
+.eq-revenir{display:flex;align-items:center;gap:10px;width:100%;margin:0;padding:10px 12px;border:0;border-radius:4px;font:inherit;font-size:13px;line-height:1.35;text-align:left;cursor:pointer;
+  color:var(--x-txt);background:linear-gradient(90deg,rgba(242,213,140,.16),rgba(242,213,140,.03));box-shadow:inset 0 0 0 1.5px var(--x-or)}
+.eq-revenir>.ico{width:18px;height:18px;flex-shrink:0;color:var(--x-or)}
+.eq-revenir strong{display:block;font-size:14px;font-weight:600;color:var(--x-or)}
+.eq-revenir:hover{background:linear-gradient(90deg,rgba(242,213,140,.24),rgba(242,213,140,.06))}
+.eq-garde{display:inline-flex;margin-left:5px;vertical-align:-2px;color:#7FD4FF}
+.eq-garde .ico{width:13px;height:13px}

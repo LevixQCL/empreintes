@@ -3,7 +3,7 @@
 // Les règles sont dans src/core/partie/pillages.ts.
 
 import { porteurDef } from '../core/donnees';
-import { PILLAGE, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadePourDepart, etatPillage, faitsDuJour, forceEscouade, majJetons, strateVaincue, type Cible, type Jeu } from '../core/jeu';
+import { PILLAGE, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadeActive, escouadeDefense, escouadePourDepart, escouadesDe, etatPillage, faitsDuJour, forceEscouade, majJetons, strateVaincue, type Cible, type Jeu } from '../core/jeu';
 import { ageArchipel, vignetteArchipel, visuel } from './art';
 import { avatar, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { ICO, icone } from './icones';
@@ -39,6 +39,8 @@ export function htmlPillages(e: EcranDistrict): string {
     + `<div class="pl-coffre"><span class="surtitre">${icone('coffre')}Ton coffre</span><b>${ent(etat.coffre)}</b>`
     + `<small>composants gagnés en pillant : les seuls exposés</small></div></section>`;
 
+  h += garde(j);
+
   // la carte
   const age = visuel(j.batiments.noyau);
   h += `<section class="pl-carte" aria-label="La carte des archipels"><svg class="pl-routes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">`
@@ -56,8 +58,24 @@ export function htmlPillages(e: EcranDistrict): string {
     + `</section>`;
 
   if (choisie) h += ficheCible(j, choisie, force, faits.includes(choisie.id), etat.jetons);
-  h += `<p class="pl-regle">${ICO.bouclier}<span>Ton archipel est défendu par ton escouade, même jeu fermé. Une attaque gagnée contre toi prend au plus ${Math.round(PILLAGE.partVolee * 100)} % de ton coffre, puis ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus. Tes autres composants, tes cartes et tes Éclats ne risquent rien.</span></p>`;
+  h += `<p class="pl-regle">${ICO.bouclier}<span>Ton archipel est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus ${Math.round(PILLAGE.partVolee * 100)} % de ton coffre, puis ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus. Tes autres composants, tes cartes et tes Éclats ne risquent rien.</span></p>`;
   return coquille(e, h, 'pl');
+}
+
+/** La garnison (27 octobre 2026) : l'escouade qui garde le port, au choix parmi les trois, et de quoi la composer */
+function garde(j: Jeu): string {
+  const toutes = escouadesDe(j);
+  const def = escouadeDefense(j);
+  return `<section class="pl-garde" aria-label="Ta garnison"><div class="pl-garde-tete"><span class="surtitre">${ICO.bouclier}Ta garnison · en défense</span>`
+    + `<button type="button" class="pl-composer" data-action="garnison-modifier">${ICO.porteurs}Composer</button></div>`
+    + `<div class="pl-garde-choix" role="radiogroup" aria-label="Escouade qui défend le port">`
+    + toutes.map((l, k) => {
+      const f = l.length ? Math.round(forceEscouade(j, l) * 100) : 0;
+      return `<button type="button" role="radio" class="pl-garde-esc${k === def ? ' actif' : ''}${l.length ? '' : ' vide'}" data-action="defense-escouade" data-index="${k}" aria-checked="${k === def}"${l.length ? '' : ' disabled'}>`
+        + `<strong>Escouade ${k + 1}</strong><span class="pl-garde-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 28) : '<i class="pl-garde-place"></i>')).join('')}</span>`
+        + `<small>${l.length ? `Force ${f}` : 'Vide'}</small></button>`;
+    }).join('') + `</div>`
+    + `<small class="pl-garde-aide">Elle se défend seule quand d’autres directeurs t’attaquent. L’escouade qui attaque se choisit au départ du pillage${escouadeActive(j) === def ? ' : la même peut faire les deux' : ''}.</small></section>`;
 }
 
 /** La fiche de l'archipel choisi : sa garnison, tes chances, ce que tu gagnes ou laisses */
@@ -72,10 +90,10 @@ function ficheCible(j: Jeu, c: Cible, force: number, fait: boolean, jetons: numb
     + `<header><div><span class="surtitre">${c.bot ? 'Archipel sans directeur · un intendant le tient' : 'Directeur'} · Strate −${c.strate}</span><h2>${echap(c.nom)}</h2></div>`
     + `<span class="pl-badge">${d.nom}<small>${chance < 1 ? '< 1' : chance > 99 ? '> 99' : chance} % de chances</small></span></header>`
     + `<div class="pl-garnison"><span class="surtitre">La garnison</span><ul>${c.porteurs.map((id) => `<li style="--c:${COULEUR[porteurDef(id).lignee]}">${avatar(id, 40)}<span><strong>${echap(porteurDef(id).nom)}</strong><small>${NOM_LIGNEE[porteurDef(id).lignee]}</small></span></li>`).join('')}</ul>`
-    + `<div class="pl-forces"><span>Garnison <b>${Math.round(c.force * 100)}</b></span><span class="pl-jauge" aria-hidden="true"><i style="width:${Math.min(100, Math.round((50 * c.force) / force))}%"></i></span><span>Ton escouade <b>${Math.round(force * 100)}</b></span></div></div>`
+    + `<div class="pl-forces"><span>Garnison <b>${Math.round(c.force * 100)}</b></span><span class="pl-jauge" aria-hidden="true"><i style="width:${Math.min(100, Math.round((50 * c.force) / force))}%"></i></span><span>Escouade ${escouadeActive(j) + 1} <b>${Math.round(force * 100)}</b></span></div></div>`
     + `<dl class="pl-enjeu"><div class="pl-gain"><dt>Si tu gagnes</dt><dd>${ICO.composants}<b>+${ent(butin.base + butin.vol)}</b><small>${butin.vol ? `dont ${ent(butin.vol)} pris à son coffre` : 'composants'}</small></dd></div>`
     + `<div class="pl-perte"><dt>Si tu perds</dt><dd>${ICO.composants}<b>${perte ? `−${ent(perte)}` : '0'}</b><small>${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre</small></dd></div></dl>`
-    + (raison ? `<p class="pl-raison">${ICO.verrou}${raison}</p>` : '')
+    + (raison ? `<p class="pl-raison">${ICO.verrou}${raison}</p>` : `<p class="pl-raison pl-suite">${ICO.porteurs}Tu choisis l’escouade qui attaque à l’étape suivante.</p>`)
     + `<button type="button" class="btn prim large" data-action="pillage-preparer" data-id="${echap(c.id)}"${raison ? ' disabled' : ''}>${ICO.grappin}Préparer le pillage</button></section>`;
 }
 

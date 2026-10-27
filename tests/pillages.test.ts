@@ -1,7 +1,7 @@
 // Les pillages (26 octobre 2026) : garnison, force des gardes, butin, coffre, jetons et attaques subies.
 import { describe, expect, it } from 'vitest';
 import {
-  PILLAGE, butinPillage, chanceVictoire, cibleDe, ciblesBots, etatPillage, forceEscouade, garnisonDe, majJetons, multButin,
+  PILLAGE, butinPillage, chanceVictoire, choisirDefense, cibleDe, escouadeDefense, escouadesDe, placerDansEscouade, ciblesBots, etatPillage, forceEscouade, garnisonDe, majJetons, multButin,
   nouveauJeu, piller, protege, remonter, subirPillages, type Cible,
 } from '../src/core/jeu';
 import { jouerTourMoyen } from '../src/core/robot';
@@ -22,6 +22,18 @@ describe('Les pillages', () => {
     expect(g.porteurs.map((p) => p.id)).toEqual(ESC);
     expect(g.porteurs.every((p) => p.pv > 0 && p.cartes.length > 0)).toBe(true);
     expect(g.strate).toBe(1);
+  });
+
+  it('la garnison se choisit parmi les escouades, pas forcément celle qui descend', () => {
+    const j = pret();
+    expect(placerDansEscouade(j, 0, 'vela', 1).ok).toBe(true);
+    expect(escouadesDe(j)[1]).toEqual(['vela']);
+    expect(choisirDefense(j, 2).ok).toBe(false);
+    expect(choisirDefense(j, 1).ok).toBe(true);
+    expect(escouadeDefense(j)).toBe(1);
+    expect(garnisonDe(j).porteurs[0]!.id).toBe('vela');
+    // l'escouade qui descend ne change pas
+    expect(escouadesDe(j)[0]).not.toContain('vela');
   });
 
   it('contre sa propre garnison, le joueur moyen gagne environ une fois sur deux', () => {

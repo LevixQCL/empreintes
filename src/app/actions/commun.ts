@@ -12,6 +12,7 @@ export function ouvrir(v: EcranDistrict['vue']) {
   if (D.vue !== v) window.scrollTo(0, 0);
   D.vue = v; D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.guide = null; D.porteur = null; D.place = null;
   if (v === 'porteurs') D.reserve = false;
+  else D.retourModif = null;
 }
 
 export const resultat = (r: J.Resultat) => { D.message = r.ok ? '' : r.message ?? ''; if (r.ok) sauver(); };

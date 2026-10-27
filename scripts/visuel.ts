@@ -45,6 +45,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut'; faire:
   { nom: 'pillages', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); } },
   { nom: 'pillages-fiche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.$eval('.pl-fiche', (e) => e.scrollIntoView({ block: 'end' })); } },
   { nom: 'pillage-depart', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); } },
+  { nom: 'pillage-modifier', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('.es-modifier'); } },
+  { nom: 'garnison-composer', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="garnison-modifier"]'); } },
   { nom: 'pillage-combat', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(600); for (let i = 0; i < 3 && (await p.$('[data-action="decouverte-ok"]')); i++) { await p.click('[data-action="decouverte-ok"]'); await p.waitForTimeout(300); } } },
   { nom: 'scene', sauvegarde: 'district', faire: async (p) => { await p.click('.titre-go'); await p.waitForTimeout(400); for (let i = 0; i < 3; i++) { await p.click('.scene-campagne'); await p.waitForTimeout(150); } } },
   { nom: 'strate', sauvegarde: 'combat', faire: ENTRER },

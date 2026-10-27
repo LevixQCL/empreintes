@@ -4,7 +4,7 @@
 
 import { BATIMENTS, GESTES_SPECIAUX, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
 import { CHARGE, composantsNiveau, doublonsRequis } from '../core/collection';
-import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
+import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre, signeLibre } from '../core/regles';
@@ -259,11 +259,12 @@ export const escouadeVue = (e: EcranDistrict) => (e.vueEscouade !== undefined &&
 function ongletsEscouades(j: Jeu, vue: number): string {
   const toutes = escouadesDe(j);
   const active = escouadeActive(j);
+  const garde = strateVaincue(j) >= PILLAGE.strateMin ? escouadeDefense(j) : -1;
   return `<div class="eq-escouades" role="tablist" aria-label="Mes escouades">` + toutes.map((l, k) =>
     `<button type="button" role="tab" class="eq-esc${k === vue ? ' actif' : ''}${k === active ? ' descend' : ''}${l.length ? '' : ' vide'}" data-action="escouade-voir" data-index="${k}" aria-selected="${k === vue}">`
     + `<span class="eq-esc-nom">Escouade ${k + 1}</span>`
     + `<span class="eq-esc-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 26) : '<i class="eq-esc-place"></i>')).join('')}</span>`
-    + `<small>${k === active ? `${ICO.descendre}Descend` : l.length ? `${l.length} / 3` : 'Vide'}</small></button>`).join('') + `</div>`;
+    + `<small>${k === active ? `${ICO.descendre}Descend` : l.length ? `${l.length} / 3` : 'Vide'}${k === garde ? `<span class="eq-garde" title="Garde le port">${ICO.bouclier}</span>` : ''}</small></button>`).join('') + `</div>`;
 }
 
 function monEscouade(e: EcranDistrict): string {
@@ -278,6 +279,8 @@ function monEscouade(e: EcranDistrict): string {
   };
   const deck = deckEscouade(j, esc).length;
   let h = entete(`ESCOUADE ${vue + 1} · ${esc.length} / 3 · <span class="pt-dispo">${deck} CARTES</span>`, 'Escouade');
+  // venu du départ ou du Port : le chemin du retour, bien en vue
+  if (e.retourModif) h += `<button type="button" class="eq-revenir" data-action="escouade-revenir">${ICO.retour}<span><strong>${e.retourModif === 'pillages' ? 'Revenir au Port' : e.pillage ? 'Revenir au pillage' : 'Revenir au départ'}</strong>${e.retourModif === 'pillages' ? 'Ta garnison est prise en compte tout de suite.' : 'Avec l’escouade choisie ici.'}</span></button>`;
   h += voletsEscouade(e);
   h += ongletsEscouades(j, vue);
   if (verrou) h += `<p class="me-verrou">${ICO.verrou}<span><strong>En descente</strong>${echap(verrou.replace(/^L’escouade est en descente : /, 'L’escouade '))}</span></p>`;
