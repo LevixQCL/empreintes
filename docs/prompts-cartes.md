@@ -19,6 +19,7 @@ des Résonants, et le pourpre et l'or font une lignée de rois. Le violet reste 
 le métal or des cartes et l'or de la valeur dans l'interface.
 Le `--no` ajoute « crystal, gemstone, amethyst rock » quand le nom de la carte n'en parle pas.
 Refaits selon cette règle : Murmure, Éclat, Éclat qui chante, Souffle, Grand unisson, Diapason de cristal.
+Pas de bougies ni de cercle de cierges : ça évoque un autel, et le jeu ne montre rien de religieux (Grand unisson refait en carillon).
 
 ### Apaiser — `apaiser.webp`
 
@@ -405,5 +406,5 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 #### Grand unisson — `grand-unisson.webp`
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a ring of small ornate gilded candle holders with cold violet flames, their many violet shadows on the wall behind merging into one single tall shadow shaped like a rising flame, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, crystal, gemstone, amethyst rock
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a large ornate gilded wind chime hanging from a small dark wooden stand, many slender golden tubes all ringing together, violet sound waves rising from every tube and merging into one single wide ring of light above it, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no orange, amber, sunset, fire glow, text, person, character, crystal, gemstone, amethyst rock
 ```
