@@ -48,49 +48,17 @@
 .combattant.ko .jauge-vie{opacity:.5}
 
 /* ---------- Les cartes en combat ---------- */
-.geste{--g-cadre:linear-gradient(155deg,color-mix(in srgb,var(--c) 55%,#f1e3bd) 0%,color-mix(in srgb,var(--c) 45%,#5d4c30) 36%,#1b1711 70%,color-mix(in srgb,var(--c) 35%,#3d3121) 100%);
-  display:block;padding:0;background:var(--g-cadre);box-shadow:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+.geste{display:block;padding:0;background:none;box-shadow:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
 .geste::before,.geste::after{content:none}
-.g-cadre{position:absolute;inset:2px;overflow:hidden;background:#0b0e13;
-  clip-path:polygon(0 0,calc(100% - var(--cut) + 1px) 0,100% calc(var(--cut) - 1px),100% 100%,calc(var(--cut) - 1px) 100%,0 calc(100% - var(--cut) + 1px))}
-.geste .g-art{position:absolute;inset:0 0 auto 0;height:64%;background-size:cover;background-position:50% 24%;filter:none;z-index:0}
-.geste .g-art.g-portrait{background-position:50% 16%;filter:saturate(.5) brightness(.6)}
-.geste .g-art.g-vide{background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--c) 40%,#1a1c22),#0b0e13 75%)}
-.geste .g-art::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,8,12,.4) 0%,transparent 26%,transparent 66%,rgba(6,8,12,.75) 100%)}
 
 /* la Fréquence, sertie dans un chaton de laiton au coin */
-.g-socle{position:absolute;z-index:2;top:3px;left:3px;display:grid;place-items:center;width:26px;height:26px;
-  background:linear-gradient(150deg,#fff0c4 0%,#d0aa5c 34%,#6b5026 64%,#e6c47c 100%);
-  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);filter:drop-shadow(0 1px 2px rgba(0,0,0,.85))}
-.geste .g-socle .g-freq{width:calc(100% - 4px);height:calc(100% - 4px);font-size:14px;filter:none;
-  background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--fc) 55%,white) 0%,var(--fc) 46%,color-mix(in srgb,var(--fc) 55%,black) 100%);
-  box-shadow:inset 0 0 0 1px rgba(0,0,0,.5),inset 0 -2px 3px rgba(0,0,0,.4);text-shadow:0 1px 1px rgba(0,0,0,.75)}
-.geste.chaine .g-socle{width:29px;height:29px}
-.geste.chaine .g-socle .g-freq{font-size:16px}
 /* les autres Fréquences possibles : de petits chatons sous le premier */
-.g-pips{position:absolute;z-index:2;top:31px;left:6px;display:grid;gap:2px}
-.geste.chaine .g-pips{top:34px;left:7.5px}
-.g-pips i{display:grid;place-items:center;width:20px;height:20px;font:600 10px/1 var(--mono);font-style:normal;color:#fff;text-shadow:0 1px 1px rgba(0,0,0,.7);
-  border:1.5px solid transparent;
-  background:radial-gradient(circle at 34% 28%,color-mix(in srgb,var(--fc) 55%,white),var(--fc) 50%,color-mix(in srgb,var(--fc) 55%,black)) padding-box,
-    linear-gradient(150deg,#f7e4b0,#8a6a33 60%,#d9b56e) border-box;
-  clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);opacity:.85}
-.geste .g-lourd{position:absolute;z-index:2;padding:1px 3px;font:700 12px/1.1 var(--mono);letter-spacing:0;color:var(--ink);background:rgba(8,10,14,.85);
-  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 70%,transparent)}
 .geste .g-suite{position:absolute;z-index:2;top:12px;right:3px}
 
 /* la plaque, dans le métal de la carte */
-.g-plaque{position:absolute;z-index:1;left:0;right:0;bottom:0;height:40%;display:flex;flex-direction:column;justify-content:flex-start;gap:2px;padding:4px 5px 0 6px;
-  background:linear-gradient(180deg,rgba(14,16,22,.45),rgba(9,11,15,.8)),var(--tex) center/cover;
-  border-top:1px solid color-mix(in srgb,var(--c) 50%,#dcc99a);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 -5px 10px rgba(0,0,0,.5)}
-.g-ligne{display:flex;align-items:center;min-width:0}
-.geste .g-val{line-height:1;gap:3px;text-shadow:0 1px 2px rgba(0,0,0,.95)}
-.geste .g-effet{position:absolute;right:4px;bottom:calc(100% + 3px);max-width:calc(100% - 8px);line-height:1.3;
-  color:var(--gold);background:rgba(14,11,6,.82);box-shadow:inset 0 0 0 1px rgba(216,180,101,.55)}
-.geste .g-qui{line-height:1;margin-top:-1px;color:var(--quiet)}
 
 /* la carte qui prolonge la suite : son cadre passe à l'or */
-.geste.halo{--g-cadre:linear-gradient(155deg,#fff2c6 0%,#e4bf6c 38%,#8a6527 72%,#f2d28c 100%);box-shadow:none;
+.geste.halo{box-shadow:none;
   filter:drop-shadow(0 0 9px rgba(216,180,101,.6)) drop-shadow(0 3px 5px rgba(0,0,0,.6))}
 .verrouille .geste.chaine:disabled{filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
 
@@ -105,33 +73,21 @@
   clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);box-shadow:0 0 8px rgba(226,115,90,.8)}
 .combattant .marque-cible .ico{width:11px;height:11px}
 
-/* ---------- Lisibilité des cartes (22 octobre 2026) : plus hautes, nom sur deux lignes, chiffres plus gros ---------- */
-.geste.main{width:69px;height:114px}
+/* ---------- Taille des cartes : le format de l'illustration, 5:7 (27 octobre 2026) ---------- */
+.geste.main{width:69px;height:97px}
 .main{gap:4px}
 .scene-ennemi{min-height:140px}
-.geste.chaine{width:74px;height:112px}
-.place-vide{width:74px;height:112px}
-.rail{min-height:114px}
-.geste.main .g-art{height:56%}
-.geste.chaine .g-art{height:54%}
-.geste.main .g-plaque{height:46%}
-.geste.chaine .g-plaque{height:48%}
-.geste .g-plaque{padding:5px 5px 0 6px;gap:3px}
-.geste .g-val{font-size:17px}
-.geste .g-val .ico{width:13px;height:13px}
-.geste .g-nom{max-width:100%;text-shadow:0 1px 2px rgba(0,0,0,.95);font-size:10.5px;font-weight:600;line-height:1.12;white-space:normal;overflow:hidden;text-overflow:clip;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;color:#fff}
-.geste .g-qui{font-size:8.5px}
-.geste.chaine .g-nom{-webkit-line-clamp:1;display:-webkit-box}
-.geste .g-effet{font-size:8px;padding:1px 4px}
+.geste.chaine{width:74px;height:104px}
+.place-vide{width:74px;height:104px}
+.rail{min-height:106px}
 /* une carte injouable reste lisible : un peu éteinte, pas grisée */
 .geste.serre,.geste:disabled{opacity:.72;filter:saturate(.45) brightness(.8) drop-shadow(0 3px 5px rgba(0,0,0,.6))}
 .verrouille .geste:disabled{opacity:1}
 @media (max-height:740px){
-  .geste.main{width:66px;height:108px}
-  .geste.chaine{width:70px;height:106px}
-  .place-vide{width:70px;height:106px}
-  .rail{min-height:110px}
+  .geste.main{width:66px;height:92px}
+  .geste.chaine{width:70px;height:98px}
+  .place-vide{width:70px;height:98px}
+  .rail{min-height:100px}
 }
 
 /* ---------- Langage d'impact (22 octobre 2026) ---------- */
@@ -172,14 +128,10 @@
 #app .ecran-combat .zone-chaine .rail > .en-jeu{transform:translateY(-12px) scale(1.1);z-index:2;transition:transform .14s cubic-bezier(.2,.9,.3,1.3);
   filter:brightness(1.18) drop-shadow(0 0 10px var(--c,var(--gold))) drop-shadow(0 6px 10px rgba(0,0,0,.7))}
 #app .ecran-combat .zone-chaine .rail > .jouee{transform:translateY(5px) scale(.94);filter:saturate(.3) brightness(.5);transition:transform .2s ease,filter .2s ease}
-.en-jeu .g-cadre::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;mix-blend-mode:screen;
-  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 46%,color-mix(in srgb,var(--c,#fff) 60%,white) 50%,transparent 64%) 0 0/250% 100% no-repeat;
-  animation:carte-reflet .55s ease-out both}
 @keyframes carte-reflet{from{background-position:130% 0}to{background-position:-130% 0}}
 @media (prefers-reduced-motion:reduce){
   #app .ecran-combat .zone-chaine .rail > .en-jeu{transform:none}
   #app .ecran-combat .zone-chaine .rail > .jouee{transform:none}
-  .en-jeu .g-cadre::after{animation:none;opacity:0}
 }
 /* sous la chaîne, pendant qu'elle se joue : quelle carte agit, et qui la joue */
 .conseil .pas-chaine{display:inline-block;margin-right:8px;padding:1px 6px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--quiet);
@@ -410,9 +362,9 @@
   .combattant{padding-block:5px}
   .zone-chaine{padding:8px 10px 10px;gap:6px}
   .zone-chaine .conseil{font-size:12.5px;line-height:1.35}
-  .geste.chaine,.place-vide{width:64px;height:96px}
-  .rail{min-height:98px}
-  .geste.main{width:66px;height:108px}
+  .geste.chaine,.place-vide{width:64px;height:90px}
+  .rail{min-height:92px}
+  .geste.main{width:66px;height:92px}
   .actions-combat{padding-top:8px}
   .actions-combat .btn{min-height:44px}
 }

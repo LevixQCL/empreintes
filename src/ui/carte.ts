@@ -1,17 +1,19 @@
-// La face d'une carte Module, validée par Bryan le 21 octobre 2026 (maquette « Jambes à ressort, des cinq métaux ») :
-// - l'illustration Midjourney en haut, une silhouette à deux coins coupés, un onglet de métal qui porte le nom, une plaque pour l'action ;
-// - depuis le 22 octobre 2026, une carte = une action (celle qu'on joue en combat), avec ses Fréquences dans les octogones ;
-// - le métal (texture Midjourney, public/art/metaux) dit la rareté, avec une gemme de forme différente par métal ;
-// - un effet sur l'illustration monte avec la rareté : rien, lueur, reflet, paillettes d'or, cristaux qui pulsent ;
-// - la Nacre n'a pas de cadre : l'illustration va jusqu'aux bords.
+// La face d'une carte (refonte validée par Bryan le 27 octobre 2026, docs/carte-optimale.md) :
+// - l'illustration Midjourney entière, sans aucune coupe : elle occupe toute la carte ;
+// - un cadre dans la matière du métal (texture public/art/metaux), dont l'arête intérieure prend la couleur de l'action ;
+//   la Nacre n'a aucun cadre ;
+// - en haut à gauche, les Fréquences dans une capsule de verre (la principale, puis les autres à sa droite) ;
+// - une barre de séparation aux trois quarts, la valeur posée dessus à droite (icône au trait + chiffre) ;
+// - dessous, sur un voile dans la matière du métal : la roue de niveau (couleur de la lignée) et le nom, puis l'effet ;
+// - en main (carte étroite), il ne reste que la Fréquence, la valeur et, sous la barre, l'icône de l'effet.
 // Les tailles sont en unités de conteneur (cqw) : la même carte s'affiche en grand ou en petit.
 
-import { nomsEffets } from '../core/effets';
+import { NOMS_EFFET, effetsDe, formuleEffet, nomsEffets } from '../core/effets';
 import { DEPART_PORTEURS, NOMS_LIGNEE, PORTEUR_LEGS, voieDe } from '../core/donnees';
-import { NOMS_RARETE } from '../core/collection';
 import { frequenceLibre, signeLibre } from '../core/regles';
-import type { ModuleDef, Rarete } from '../core/types';
-import { cadrePlein, illustrationModule, portrait, textureMetal } from './art';
+import { COLLECTION, NOMS_RARETE } from '../core/collection';
+import type { Effet, ModuleDef, Rarete, TypeEffet } from '../core/types';
+import { illustrationModule, portrait, textureMetal } from './art';
 import { COULEUR } from './vue';
 import { echap, mouvementReduit as reduit } from './outils';
 
@@ -21,12 +23,34 @@ export const couleurFrequence = (f: number) => `hsl(${8 + (f - 1) * 34} 52% 38%)
 /** la couleur de chaque métal (titres, jauges, gemmes) */
 export const COULEUR_RARETE: Record<Rarete, string> = { fer: '#8E949C', cuivre: '#C47A48', argent: '#B8C4CE', or: '#E2B44A', nacre: '#E6D3EE' };
 
-const ICONES = {
-  atk: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M10.5 1.5h4v4l-7.8 7.8-1.4-1.4 1.1-1.1-2.1-2.1-1.1 1.1-1.4-1.4z"/><path d="M2 12.6l1.4 1.4-1.6 1.6-1.4-1.4z"/></svg>',
-  bouclier: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1l6 2v4.6c0 3.6-2.6 6.4-6 7.4-3.4-1-6-3.8-6-7.4V3z"/></svg>',
-  soin: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M6 1.5h4v4.5h4.5v4H10v4.5H6V10H1.5V6H6z"/></svg>',
-} as const;
-const LIBELLE = { atk: 'attaque', bouclier: 'protection', soin: 'soin' } as const;
+type Action = 'atk' | 'bouclier' | 'soin';
+const trait = (d: string, w = 2.2) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+/** l'action, au trait : une épée, un écu, un + */
+export const ICONES_ACTION: Record<Action, string> = {
+  atk: trait('<path d="M20.5 3.5l-1 5.5L9.5 19 5 14.5l10-10z"/><path d="M4 13.5l6.5 6.5"/><path d="M3 21l3.5-3.5"/>'),
+  bouclier: trait('<path d="M12 2.5l8 3v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10v-6z"/><path d="M12 7v10"/>'),
+  soin: trait('<path d="M12 5v14M5 12h14"/>', 2.6),
+};
+/** une icône dorée par effet : devant son nom sur la carte, et seule sous la barre en main */
+export const ICONES_EFFET: Record<TypeEffet, string> = {
+  percant: trait('<path d="M3 12h15"/><path d="M14 7l5 5-5 5"/><path d="M9 4v16" stroke-dasharray="2 3"/>'),
+  siphon: trait('<path d="M19 12a7 7 0 1 1-2-4.9"/><path d="M19 3v5h-5"/>'),
+  flux: trait('<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>'),
+  desarmer: trait('<path d="M20.5 3.5l-1 5.5-3 3"/><path d="M12.5 14l-3 3L7 14.5l3-3"/><path d="M4 13.5l6.5 6.5"/>'),
+  fissure: trait('<path d="M13 2l-4 6 5 4-4 5 2 5"/>'),
+  elan: trait('<path d="M5 6l6 6-6 6"/><path d="M12 6l6 6-6 6"/>'),
+  crescendo: trait('<path d="M5 20v-4M12 20v-9M19 20V5"/>', 2.8),
+  accord: trait('<path d="M8 3v7a4 4 0 0 0 8 0V3"/><path d="M12 14v8"/>'),
+  vague: trait('<path d="M2 14c3-4 5-4 7 0s4 4 7 0 4-4 6-1"/><path d="M2 19c3-3 5-3 7 0s4 3 7 0 4-3 6-1"/>'),
+  rempart: trait('<path d="M3 21V9h3v3h3V9h3v3h3V9h3v3h3v9z"/>'),
+  // les voies (27 octobre 2026)
+  riposte: trait('<path d="M12 2.5l7 2.6v5.2c0 4.4-3 7.6-7 8.8-4-1.2-7-4.4-7-8.8V5.1z"/><path d="M14 8l-4 4h4l-4 4"/>'),
+  decharge: trait('<path d="M5 9h10a3 3 0 0 1 0 6H5z"/><path d="M19 11v2"/><path d="M8 3l-2 4h4l-2 4"/>'),
+  diapason: trait('<path d="M8 3v7a4 4 0 0 0 8 0V3"/><path d="M12 14v8"/><path d="M4 8h2M18 8h2"/>'),
+  unisson: trait('<path d="M4 9v6M9 6v12M14 6v12M19 9v6"/>', 2.6),
+};
+/** la couleur de l'arête du cadre, de la barre et de la capsule de valeur */
+const COULEUR_ACTION: Record<Action, string> = { atk: '#ff6a4a', bouclier: '#5fb0ff', soin: '#7fe06a' };
 const ACTION = { atk: 'Attaque', bouclier: 'Bouclier', soin: 'Soin' } as const;
 
 /** les effets sur l'illustration, du Fer à la Nacre */
@@ -38,57 +62,82 @@ const FX: Record<Rarete, string> = {
   nacre: '<canvas class="fc-fx fc-cristal" data-fx="cristal"></canvas><span class="fc-fx fc-holo"></span>',
 };
 
+/** Ce qu'affiche une face de carte, qu'elle soit dans la collection ou en combat */
+export interface Face {
+  /** clé de la carte pour l'illustration (sans le métal) */
+  carte?: string;
+  /** image de remplacement quand la carte n'a pas d'illustration (le portrait du Porteur) */
+  repli?: string | null;
+  metal: Rarete;
+  type: Action;
+  v: number;
+  /** les Fréquences, la principale d'abord */
+  fs: number[];
+  nom: string;
+  effet?: Effet;
+  /** second effet (cartes de l'Héritage) */
+  effet2?: Effet;
+  lourd?: boolean;
+  /** niveau de la carte (absent : pas de roue, ex. une carte du paquetage) */
+  niveau?: number;
+  /** couleur de la lignée (la roue de niveau) */
+  lignee: string;
+  /** effets de métal sur l'illustration (collection) */
+  fx?: boolean;
+  /** la Fréquence principale s'allume : la carte prolonge la suite (combat) */
+  suite?: boolean;
+}
+
+/** Le dedans d'une carte : à poser dans un conteneur `.nf` (voir `faceCarte` et `geste`) */
+export function corpsFace(d: Face): string {
+  const ill = d.carte ? illustrationModule(d.carte) : null;
+  const art = ill
+    ? `<img src="${ill}" alt="" decoding="async"${d.fx ? ` data-src-fx="${ill}"` : ''}>`
+    : d.repli ? `<img class="nf-repli" src="${d.repli}" alt="" decoding="async">`
+      : `<span class="nf-sans-image"></span>`;
+  // une Fréquence libre : ∗ pour l'Accord, = pour le Diapason
+  const accord = frequenceLibre(d.effet);
+  const segs = accord
+    ? `<span class="nf-seg p" style="--fc:#5d5470">${signeLibre(d.effet)}</span>`
+    : d.fs.map((f, i) => `<span class="nf-seg${i ? '' : ' p'}" style="--fc:${couleurFrequence(f)}">${f}</span>`).join('');
+  const roue = d.niveau !== undefined
+    ? `<i class="nf-roue${d.niveau >= COLLECTION.niveauMax ? ' max' : ''}" style="--n:${d.niveau};--max:${COLLECTION.niveauMax}"></i>` : '';
+  // une carte de l'Héritage a deux effets : une ligne et une icône chacun
+  const effet = effetsDe(d).map((e) => `<span class="nf-regle"><i class="nf-ico">${ICONES_EFFET[e.type]}</i><strong>${NOMS_EFFET[e.type]}</strong><span>${formuleEffet(e)}</span></span>`).join('');
+  return `<span class="nf-art">${art}${ill && d.fx ? FX[d.metal] : ''}</span>`
+    // une carte de l'Héritage (la seule à deux effets) porte son sceau en haut
+    + (d.effet2 ? '<span class="nf-heritage">Héritage</span>' : '')
+    + `<span class="nf-freqs"><span class="nf-caps">${segs}</span>${d.lourd ? '<b class="nf-lourd">2 PL.</b>' : ''}</span>`
+    + `<span class="nf-voile"><span class="nf-barre"></span>`
+    + `<span class="nf-val ${d.type}">${ICONES_ACTION[d.type]}<b>${d.v}</b></span>`
+    + (d.effet ? `<span class="nf-eff">${effetsDe(d).map((e) => ICONES_EFFET[e.type]).join('')}</span>` : '')
+    + `<span class="nf-ligne">${roue}<span class="nf-nom">${echap(d.nom)}</span></span>${effet}</span>`;
+}
+
+/** les variables de couleur et de matière d'une face */
+export const styleFace = (d: Pick<Face, 'metal' | 'type' | 'lignee'>) =>
+  `--ac:${COULEUR_ACTION[d.type]};--lc:${d.lignee};--tex:url(${textureMetal(d.metal)})`;
+
 /**
- * La face de la carte.
+ * La face de la carte, dans la collection, la boutique, le détail et le guide.
  * @param niveau niveau à afficher (celui de la carte possédée, ou de départ pour une carte proposée)
  * @param mult multiplicateur de force du niveau (1 au niveau de départ)
  */
 export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?: string } = {}): string {
-  const ill = illustrationModule(m.id);
-  // une carte de base sans illustration prend, en attendant, le portrait du Porteur qui la porte au départ (une carte de voie, celui de sa voie)
+  // une carte de base sans illustration prend, en attendant, le portrait du Porteur qui la porte au départ
   const base = m.base ?? m.id;
+  // (une carte de voie ou de l'Héritage : le portrait du Porteur de sa voie)
   const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base)) ?? voieDe(base)?.porteur ?? PORTEUR_LEGS[base];
-  const repli = !ill && qui ? portrait(qui) : null;
-  const art = ill
-    ? `<img src="${ill}" alt="" decoding="async" data-src-fx="${ill}">`
-    : repli ? `<img class="fc-repli" src="${repli}" alt="" decoding="async">`
-      : `<span class="fc-sans-image" style="--c:${COULEUR[m.lignee]}"></span>`;
+  const v = Math.round(m.v * mult);
   const accord = frequenceLibre(m.effet);
-  const freqs = accord
-    ? `<span class="fc-freq" style="--fc:#5d5470" title="${m.effet?.type === 'diapason' ? 'Diapason : reprend la Fréquence de la carte d’avant' : 'Accord : prend la Fréquence qui prolonge ta suite'}">${signeLibre(m.effet)}</span>`
-    : m.f.map((f) => `<span class="fc-freq" style="--fc:${couleurFrequence(f)}" title="Fréquence ${f}">${f}</span>`).join('');
-  const tags = (m.lourd ? '<em>2 pl.</em>' : '') + (m.effet ? `<em>${nomsEffets(m)}</em>` : '');
-  const gestes = `<li><span class="fc-freqs"${m.f.length > 1 && !accord ? ` title="Fréquences au choix : ${m.f.join(' ou ')}"` : ''}>${freqs}</span>`
-    + `<span class="fc-gn">${ACTION[m.type]}${tags}</span>`
-    + `<span class="fc-val ${m.type}" title="${LIBELLE[m.type]}">${ICONES[m.type]}${Math.round(m.v * mult)}</span></li>`;
-  // depuis le 22 octobre 2026 : le même cadre peint qu'en combat (cristal de la Fréquence, socle de l'action, métal),
-  // avec en plus le niveau, la lignée, le nom en entier et l'effet en toutes lettres
-  const plein = cadrePlein(m.rarete, m.type);
-  if (plein) {
-    const v = Math.round(m.v * mult);
-    // plusieurs Fréquences (argent et plus) : le cristal les fait défiler, chiffre et couleur, au même endroit
-    const fs = accord ? [] : m.f;
-    const alt = fs.length > 1;
-    const cristal = alt
-      ? fs.map((f, i) => `<span class="fcp-teinte fcp-k" style="--fc:${couleurFrequence(f)};--i:${i}"></span>`).join('') + fs.map((f, i) => `<b class="fcp-f fcp-k" style="--fc:${couleurFrequence(f)};--i:${i}">${f}</b>`).join('')
-      : `<span class="fcp-teinte"></span><b class="fcp-f">${accord ? signeLibre(m.effet) : m.f[0]}</b>`;
-    return `<div class="fc-ombre fo-${m.rarete}"><div class="fc-carte fcp fr-${m.rarete}${m.legs ? ' fc-legs' : ''}${o.origine ? ' fc-paquetage' : ''}${alt ? ` alt alt-${fs.length}` : ''}" style="--n:${fs.length || 1};--cp-img:url(${plein.img});--cp-masque:url(${plein.masque});--fx:${plein.f[0]}%;--fy:${plein.f[1]}%;--vx:${plein.v[0]}%;--vy:${plein.v[1]}%;--fc:${accord ? '#5d5470' : couleurFrequence(m.f[0]!)}" aria-label="${echap(m.nom)}, ${o.origine ? `fournie par la ${echap(o.origine)}` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + nomsEffets(m) : ''}">`
-      + `<div class="fc-art">${art}${ill ? FX[m.rarete] : ''}</div>`
-      + `<span class="fcp-cadre"></span>${cristal}`
-      + `<b class="fcp-v${v >= 10 ? ' deux' : ''}">${v}</b>`
-      // le niveau et la lignée, gravés au-dessus du nom (24 octobre 2026) : le haut de la carte reste au cristal de la Fréquence
-      // une carte du paquetage n'a ni niveau ni lignée : le bâtiment qui la fournit prend leur place
-      + (o.origine
-        ? `<span class="fcp-puces"><span class="fc-lignee" style="--c:#CDEFFF">${echap(o.origine)}</span></span>`
-        : `<span class="fcp-puces"><b class="fcp-niv" title="Niveau ${niveau}">Niv.<i>${niveau}</i></b><span class="fc-lignee" style="--c:${COULEUR[m.lignee]}">${NOMS_LIGNEE[m.lignee].court}</span></span>`)
-      + (m.effet || m.lourd ? `<span class="fcp-effet">${m.effet ? nomsEffets(m) : ''}${m.lourd ? `${m.effet ? ' · ' : ''}2 pl.` : ''}</span>` : '')
-      + `<span class="fcp-nom">${echap(m.nom)}</span>`
-      + `</div></div>`;
-  }
-  return `<div class="fc-ombre fo-${m.rarete}"><div class="fc-carte fr-${m.rarete}" style="--tex:url(${textureMetal(m.rarete)})" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${niveau}">`
-    + `<div class="fc-art">${art}${ill ? FX[m.rarete] : ''}<span class="fc-puces"><span>Niv. ${niveau}</span><span class="fc-lignee" style="--c:${COULEUR[m.lignee]}">${NOMS_LIGNEE[m.lignee].court}</span></span></div>`
-    + `<div class="fc-plaque"><span class="fc-lumiere"></span><div class="fc-titre"><span class="fc-gemme" title="${NOMS_RARETE[m.rarete]}"></span><span class="fc-nom">${echap(m.nom)}</span></div><ul class="fc-gestes">${gestes}</ul></div>`
-    + `</div></div>`;
+  const d: Face = {
+    carte: m.id, repli: qui ? portrait(qui) : null, metal: m.rarete, type: m.type, v, fs: m.f, nom: m.nom, effet: m.effet, ...(m.effet2 ? { effet2: m.effet2 } : {}), lourd: m.lourd,
+    // une carte du paquetage n'a ni niveau ni lignée : le bâtiment qui la fournit est écrit sous elle
+    niveau: o.origine ? undefined : niveau, lignee: o.origine ? '#CDEFFF' : COULEUR[m.lignee], fx: true,
+  };
+  const label = `${m.nom}, ${o.origine ? `fournie par la ${o.origine}` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau} sur ${COLLECTION.niveauMax}, ${NOMS_LIGNEE[m.lignee].nom}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + nomsEffets(m) : ''}${m.lourd ? ', prend 2 places' : ''}`;
+  return `<div class="fc-ombre fo-${m.rarete}${m.legs ? ' fo-legs' : ''}"><div class="fc-carte nf nf-${m.rarete}" style="${styleFace(d)}" role="img" aria-label="${echap(label)}">`
+    + corpsFace(d) + `</div></div>`;
 }
 
 // ---------- Effets : le code lit l'illustration pour y trouver les cristaux bleus et les zones claires ----------
@@ -133,8 +182,8 @@ function masques(url: string): Promise<Masques> {
   return p;
 }
 
-/** même recadrage que l'image (object-fit: cover, centrée à 26 % de la hauteur) */
-function couvre(iw: number, ih: number, bw: number, bh: number) { const k = Math.max(bw / iw, bh / ih), w = iw * k, h = ih * k; return [(bw - w) * 0.5, (bh - h) * 0.26, w, h] as const; }
+/** même recadrage que l'image (object-fit: cover, centrée) */
+function couvre(iw: number, ih: number, bw: number, bh: number) { const k = Math.max(bw / iw, bh / ih), w = iw * k, h = ih * k; return [(bw - w) * 0.5, (bh - h) * 0.5, w, h] as const; }
 
 function preparer(cv: HTMLCanvasElement) {
   const dpr = Math.min(window.devicePixelRatio || 1, 2), bw = cv.clientWidth, bh = cv.clientHeight;

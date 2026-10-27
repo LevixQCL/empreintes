@@ -98,12 +98,19 @@ cartes par Porteur battaient six cartes bien choisies. Une vieille sauvegarde tr
 En combat, le moteur manipule des « Gestes » : c'est le nom interne d'une carte en jeu (`gesteDeCarte`), avec son Porteur,
 son niveau et la Fréquence choisie. Le tableau des cartes garde son nom historique `MODULES`.
 
+**La face des cartes** (refonte du 27 octobre 2026, `docs/carte-optimale.md`, `corpsFace` dans `src/ui/carte.ts`, `face-carte.css`).
+Une seule face pour la collection et le combat (`geste` dans `vue.ts` la reprend). L'illustration entière ; un cadre dans la texture du métal
+(aucun en Nacre) dont l'arête prend la couleur de l'action ; en haut à gauche les Fréquences dans une capsule de verre (police Oxanium) ;
+la valeur (icône au trait + chiffre) sur une barre aux trois quarts ; dessous, sur un voile du métal, la roue de niveau (couleur de la
+lignée) et le nom, puis l'effet (icône, nom, formule courte `formuleEffet` dans `effets.ts`). Une carte de 90 px au plus (la main,
+la chaîne) ne garde que la Fréquence principale, la valeur, « 2 PL. », et sous la barre le losange de la lignée et l'icône de l'effet.
+
 **L'onglet Escouade** (25 octobre 2026, `src/ui/porteurs.ts`, `equipe.css`). Les onglets Porteurs et Cartes n'en font plus qu'un,
 à trois volets (`voletsEscouade` dans `coquille.ts`) : *Escouade* (la feuille de match), *Porteurs* (tous, par lignée) et *Collection*
 (`htmlCartes`, fermée avant la chambre scellée). La feuille de match montre d'abord le bilan du deck (`bilanDeck` : nombre de cartes,
 échelle des Fréquences 1 à 9 empilée par lignée, trous et plus longue suite, attaques / protections / soins, un conseil), puis chaque Porteur
 (`blocPorteur` : portrait, PV, qui il bat, sa Marque en toutes lettres avec ce qu'il reste à accomplir, et ses cartes une par ligne :
-Fréquence, nom, niveau, effet en clair, force sur le socle peint des cartes), puis le paquetage du district.
+Fréquence, nom, niveau, effet en clair, force dans la capsule de son action), puis le paquetage du district.
 *Trois escouades* (`j.escouades`, `escouadesDe`, `placerDansEscouade(j, place, id, n)`, `choisirEscouade`) : on en compose trois, un Porteur
 n'est que dans une seule (le prendre ailleurs l'échange avec celui qu'il remplace), et une seule descend (`j.escouadeActive` ; `j.escouade`
 en est toujours la copie, c'est elle que lit le reste du jeu). On la choisit dans l'onglet (« Faire descendre l'escouade 2 ») ou sur l'écran

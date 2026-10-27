@@ -71,7 +71,9 @@
 .g-part.atk{background:linear-gradient(180deg,rgba(226,115,90,.26),rgba(226,115,90,.12))}
 .g-part.bouclier{background:linear-gradient(180deg,rgba(127,167,201,.26),rgba(127,167,201,.12))}
 .g-part.soin{background:linear-gradient(180deg,rgba(143,207,122,.26),rgba(143,207,122,.12))}
-.g-symbole{object-fit:contain;filter:drop-shadow(0 1px 2px #000)}
+.g-symbole{display:inline-grid;place-items:center;flex:none;color:var(--ac)}
+.g-symbole svg{width:100%;height:100%;filter:drop-shadow(0 0 4px currentColor)}
+.g-symbole.atk{--ac:#ff6a4a}.g-symbole.bouclier{--ac:#5fb0ff}.g-symbole.soin{--ac:#7fe06a}
 
 /* le triangle des lignées */
 .g-triangle{display:block;width:100%;max-width:230px;margin:10px auto 0;overflow:visible}
@@ -81,25 +83,16 @@
 
 /* ---------- Onglet « Lire une carte » ---------- */
 .g-anatomie{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
-.g-anat-carte{position:relative;zoom:1.75;width:74px;height:112px;margin:8px 14px 0 12px}
-.g-anat-carte .geste{position:relative;pointer-events:none}
-/* toujours à la taille du téléphone (le PC agrandit la chaîne) : les numéros sont placés pour cette taille */
-.g-anat-carte .geste.chaine{width:74px;height:112px}
-/* la carte montrée telle qu'en combat (même en dehors du combat) : le nom se cache, le médaillon descend */
-#app .guide .geste .g-nom{opacity:0}
-#app .guide .geste .g-plaque{position:absolute}
-#app .guide .geste.chaine .g-val{bottom:calc(var(--ep) + 13px)}
-#app .guide .geste.main .g-val{bottom:calc(var(--ep) + 2px)}
-#app .guide .geste.main .g-art::after{background:linear-gradient(180deg,rgba(6,8,12,.35) 0%,transparent 22%,transparent 72%,rgba(6,8,12,.55) 100%)}
-.g-num{position:absolute;z-index:5;display:grid;place-items:center;width:10px;height:10px;border-radius:50%;font:700 6.5px/1 var(--mono);font-style:normal;color:#1C1406;
-  background:linear-gradient(180deg,#f3d896,#c99d48);box-shadow:0 0 0 1.2px #0B0D12,0 1px 3px rgba(0,0,0,.6)}
-.g-num::before{content:"";position:absolute;top:50%;height:.8px;background:rgba(240,211,140,.7)}
-/* chaque numéro est posé au bord de la carte, un petit trait le relie à ce qu'il désigne */
-.g-num.n-freq{left:-13px;top:8px}      .g-num.n-freq::before{left:100%;width:8px}
-.g-num.n-effet{right:-13px;top:45px}   .g-num.n-effet::before{right:100%;width:9px}
-.g-num.n-force{right:-13px;top:92px}   .g-num.n-force::before{right:100%;width:6px}
-.g-num.n-nom{left:-13px;top:96px}      .g-num.n-nom::before{left:100%;width:10px}
-.g-num.n-cadre{right:-13px;top:20px}   .g-num.n-cadre::before{right:100%;width:7px}
+.g-anat-carte{position:relative;width:140px;margin:6px 22px 0;pointer-events:none}
+.g-num{position:absolute;z-index:5;display:grid;place-items:center;width:17px;height:17px;border-radius:50%;font:700 10px/1 var(--mono);font-style:normal;color:#1C1406;
+  background:linear-gradient(180deg,#f3d896,#c99d48);box-shadow:0 0 0 2px #0B0D12,0 1px 3px rgba(0,0,0,.6)}
+.g-num::before{content:"";position:absolute;top:50%;height:1.5px;background:rgba(240,211,140,.75)}
+/* chaque numéro est posé au bord de la carte, un petit trait le relie à ce qu'il désigne (hauteurs en % de la carte) */
+.g-num.n-freq{left:-21px;top:3.8%}    .g-num.n-freq::before{left:100%;width:12px}
+.g-num.n-force{right:-21px;top:69%}   .g-num.n-force::before{right:100%;width:10px}
+.g-num.n-niveau{left:-21px;top:78%}   .g-num.n-niveau::before{left:100%;width:12px}
+.g-num.n-effet{left:-21px;top:85.5%}  .g-num.n-effet::before{left:100%;width:12px}
+.g-num.n-cadre{right:-21px;top:20%}   .g-num.n-cadre::before{right:100%;width:8px}
 .g-legende{list-style:none;margin:0;padding:6px 0 0;display:grid;gap:10px;counter-reset:legende;font-size:13px;line-height:1.4;color:var(--quiet)}
 .g-legende li{counter-increment:legende;position:relative;padding-left:25px}
 .g-legende li::before{content:counter(legende);position:absolute;left:0;top:0;display:grid;place-items:center;width:17px;height:17px;border-radius:50%;
@@ -107,11 +100,12 @@
 .g-legende b{color:var(--ink)}
 
 .g-collection{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center}
-.g-face{container-type:inline-size;width:150px;pointer-events:none}
+.g-main{justify-self:center}
+.g-main .geste{pointer-events:none}
 
 .g-actions{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .g-actions li{display:grid;grid-template-columns:38px 1fr;gap:11px;align-items:center}
-.g-actions li > img{justify-self:center}
+.g-actions li > .g-symbole{justify-self:center}
 .g-actions b{display:block;font-size:14px;color:var(--ink)}
 .g-actions p{margin:2px 0 0;font-size:13px;line-height:1.4;color:var(--quiet)}
 .g-lourd{justify-self:center;white-space:nowrap;padding:2px 5px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);background:rgba(8,10,14,.85);box-shadow:inset 0 0 0 1px rgba(241,230,207,.35)}
@@ -155,6 +149,6 @@
 .g-carte-district p b{display:block;font-size:14px;color:var(--ink)}
 
 @media (max-width:370px){
-  .g-anat-carte{zoom:1.5}
+  .g-anat-carte{width:120px;margin-inline:22px 18px}
   .g-district{grid-template-columns:1fr}
 }

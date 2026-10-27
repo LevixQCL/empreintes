@@ -13,8 +13,8 @@ import { NOMS_EFFET } from '../core/effets';
 import { DISTRICT, EPREUVE_DECK_MIN } from '../core/jeu';
 import { REGLES, frequenceLibre } from '../core/regles';
 import type { Geste, GesteDef, Lignee, TypeEffet, TypeGeste } from '../core/types';
-import { socleAction, textureMetal } from './art';
-import { COULEUR_RARETE, couleurFrequence, faceCarte } from './carte';
+import { textureMetal } from './art';
+import { COULEUR_RARETE, ICONES_ACTION, couleurFrequence, faceCarte } from './carte';
 import { NOM_LIGNEES, avatar } from './coquille';
 import { ICO } from './icones';
 import { COULEUR, geste } from './vue';
@@ -101,8 +101,8 @@ export function effetsLignee(l: Lignee): TypeEffet[] {
 
 // ---------- Petits visuels ----------
 
-/** Le socle peint des cartes : sa forme dit l'action (étoile de feu = attaque, écu de glace = protection, fleur d'émeraude = soin) */
-const symbole = (t: TypeGeste, taille = 18) => `<img class="g-symbole" src="${socleAction(t)}" alt="" width="${taille}" height="${taille}" decoding="async">`;
+/** Le symbole de l'action, comme sur les cartes : une épée (attaque), un écu (protection), un + (soin), dans sa couleur */
+const symbole = (t: TypeGeste, taille = 18) => `<span class="g-symbole ${t}" style="width:${taille}px;height:${taille}px">${ICONES_ACTION[t]}</span>`;
 const NOM_ACTION: Record<TypeGeste, string> = { atk: 'Attaque', bouclier: 'Protection', soin: 'Soin' };
 
 /** Une carte de combat montrée en exemple : la vraie carte, qu'on ne peut pas jouer */
@@ -209,24 +209,24 @@ const EXEMPLE = carteId('coeur-meute', 'or');
 
 function ongletCarte(): string {
   const ex = gesteDeCarte(EXEMPLE, 'doran');
-  let h = `<section class="bloc">${titre(ICO.cartes, 'En combat')}<div class="g-anatomie">`
-    + `<div class="g-anat-carte">${carteExemple(ex, 'chaine')}`
-    + ['freq', 'effet', 'force', 'nom', 'cadre'].map((k, i) => `<i class="g-num n-${k}" aria-hidden="true">${i + 1}</i>`).join('')
+  let h = `<section class="bloc">${titre(ICO.cartes, 'La carte')}<div class="g-anatomie">`
+    + `<div class="g-anat-carte">${faceCarte(moduleDef(EXEMPLE), COLLECTION.niveauDepart.or)}`
+    + ['freq', 'force', 'niveau', 'effet', 'cadre'].map((k, i) => `<i class="g-num n-${k}" aria-hidden="true">${i + 1}</i>`).join('')
     + `</div><ol class="g-legende">`
-    + `<li><b>Fréquence</b> : le chiffre du cristal, en haut à gauche ; sa couleur suit la Fréquence.</li>`
-    + `<li><b>Effet</b>, en lettres d’or.</li>`
-    + `<li><b>Action et force</b> : la forme du socle dit ce qu’elle fait (étoile = attaque, écu = défense, fleur = soin), le chiffre combien.</li>`
-    + `<li><b>Nom</b> de la carte.</li>`
-    + `<li><b>Cadre</b> : le métal de la carte.</li>`
+    + `<li><b>Fréquences</b>, en haut à gauche : la principale d’abord ; leur couleur suit la Fréquence.</li>`
+    + `<li><b>Action et force</b> : l’icône dit ce qu’elle fait (épée = attaque, écu = protection, + = soin), le chiffre combien. La barre et le bord de l’image prennent sa couleur.</li>`
+    + `<li><b>Niveau et nom</b> : la roue compte les niveaux (${COLLECTION.niveauMax} crans, dorée au maximum), dans la couleur de la lignée.</li>`
+    + `<li><b>Effet</b> : son icône, son nom et ce qu’il fait, en bref.</li>`
+    + `<li><b>Cadre</b> : le métal de la carte, jusque sous le nom. La nacre n’en a pas.</li>`
     + `</ol></div><ul class="g-regles">`
     + `<li>Des Fréquences qui se suivent font une <b>Résonance</b>. Une carte à plusieurs Fréquences (argent et plus) prend seule celle qui prolonge ta suite ; en combat, le bouton sous la carte permet d’en changer.</li>`
-    + `<li>Plus le métal est rare, plus le cadre est fin. La nacre n’en a pas.</li>`
-    + `<li>Le <b>nom</b> est en bas à gauche de la carte.</li>`
+    + `<li>Dans la Collection (onglet Escouade), la jauge sous la carte compte les <b>doublons</b> qu’il faut pour monter. Touche la carte pour lire son effet en entier et sa petite histoire.</li>`
     + `</ul></section>`;
 
-  // la même carte dans la collection
-  h += `<section class="bloc">${titre(ICO.codex, 'Dans ta collection')}<div class="g-collection"><div class="g-face">${faceCarte(moduleDef(EXEMPLE), COLLECTION.niveauDepart.or)}</div>`
-    + `<ul class="g-regles"><li>En haut, son <b>niveau</b> et sa <b>lignée</b>.</li><li>Dans la Collection (onglet Escouade), la jauge sous la carte compte les <b>doublons</b> qu’il faut pour monter.</li><li>Touche la carte pour lire son effet en entier et sa petite histoire.</li></ul></div></section>`;
+  // la même carte en combat
+  h += `<section class="bloc">${titre(ICO.codex, 'En combat')}<div class="g-collection"><div class="g-main">${carteExemple(ex, 'main')}</div>`
+    + `<ul class="g-regles"><li>En main, la carte garde l’essentiel : la <b>Fréquence</b>, la <b>force</b> et, sous la barre, le <b>losange de la lignée</b> et l’<b>icône de l’effet</b>.</li>`
+    + `<li>La carte qui prolonge ta suite fait briller sa Fréquence.</li></ul></div></section>`;
 
   // les trois actions
   h += `<section class="bloc">${titre(ICO.atk, 'Trois actions')}<ul class="g-actions">`
