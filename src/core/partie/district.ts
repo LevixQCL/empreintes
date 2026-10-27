@@ -1,9 +1,9 @@
 // Couche 3 — la vie du district : chantiers et Forge, postes, cartes confiées, creuseurs, entraînement, Comptoir, quotidiens, objectif réclamé.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef, PORTEURS, BATIMENTS, MODULES, moduleDe, moduleDef, carteId } from '../donnees';
+import { batimentDef, porteurDef, PORTEURS, BATIMENTS, MODULES_TIRABLES, moduleDe, moduleDef, carteId } from '../donnees';
 import type { BatimentId, Rarete } from '../types';
-import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, poidsCarte } from '../collection';
+import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
 import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
@@ -177,6 +177,7 @@ export function poster(j: Jeu, id: string, b: Poste | null): Resultat {
 /** La Forge refabrique un exemplaire d'une carte déjà trouvée : un doublon de plus */
 export function fabriquer(j: Jeu, moduleId: string, now: number): Resultat {
   if (!j.collection[moduleId]) return non('On ne refabrique qu’une carte déjà trouvée.');
+  if (moduleDef(moduleId).legs) return non('Une carte de l’Héritage est unique : la Forge ne sait pas la refaire.');
   if (j.forge) return non('La Forge est déjà occupée.');
   if (!posteDe(j, 'forge')) return non('Il faut un Porteur au travail à la Forge.');
   const c = coutRefabrication(moduleId);
@@ -224,6 +225,13 @@ function tropLourd(j: Jeu, porteurId: string, cle: string, retire?: string): str
   return `Trop lourd : ${moduleDef(cle).nom} pèse ${poidsCarte(cle)}, il ne reste que ${libre} de Charge à ${porteurDef(porteurId).nom}.`;
 }
 
+/** Le métal d'une carte demande un niveau de Porteur (NIVEAU_METAL) */
+function tropBas(j: Jeu, porteurId: string, cle: string): string | null {
+  const requis = niveauRequis(cle);
+  if (niveauPorteur(j, porteurId).niveau >= requis) return null;
+  return `${moduleDef(cle).nom} en ${NOMS_RARETE[moduleDef(cle).rarete].toLowerCase()} demande un Porteur de niveau ${requis} : ${porteurDef(porteurId).nom} est niveau ${niveauPorteur(j, porteurId).niveau}.`;
+}
+
 /** Confie une carte à un Porteur de sa lignée (un exemplaire n'est porté que par un Porteur ; il passe de l'un à l'autre) */
 export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   const p = j.porteurs[porteurId];
@@ -238,6 +246,8 @@ export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   // n'apparaissait pas pour Doran, qui portait la Morsure en fer). Un Porteur ne porte toujours qu'un métal de chaque carte.
   const autreMetal = p.modules.find((k) => k !== moduleId && moduleDe(k) === moduleDe(moduleId));
   if (!autreMetal && p.modules.length >= DISTRICT.cartesMax) return non(`${porteurDef(porteurId).nom} porte déjà ${DISTRICT.cartesMax} cartes : retires-en une.`);
+  const bas = tropBas(j, porteurId, moduleId);
+  if (bas) return non(bas);
   const trop = tropLourd(j, porteurId, moduleId, autreMetal);
   if (trop) return non(trop);
   if (ancien) j.porteurs[ancien]!.modules = j.porteurs[ancien]!.modules.filter((m) => m !== moduleId);
@@ -263,6 +273,8 @@ export function echanger(j: Jeu, retireId: string, ajouteId: string, porteurId: 
   if (p.modules.includes(ajouteId)) return non(`${porteurDef(porteurId).nom} porte déjà cette carte.`);
   const autreMetal = p.modules.find((k) => k !== retireId && moduleDe(k) === moduleDe(ajouteId));
   if (autreMetal) return non(`${porteurDef(porteurId).nom} porte déjà ${moduleDef(ajouteId).nom} en ${NOMS_RARETE[moduleDef(autreMetal).rarete].toLowerCase()} : échange plutôt celle-là.`);
+  const bas = tropBas(j, porteurId, ajouteId);
+  if (bas) return non(bas);
   const trop = tropLourd(j, porteurId, ajouteId, retireId);
   if (trop) return non(trop);
   const ancien = greffesDe(j, ajouteId)[0];
@@ -407,10 +419,10 @@ export function garnirComptoir(j: Jeu, now: number): void {
   for (let i = c.offres.length; i < etals.length; i++) {
     const r = etals[i]!;
     let id: string | undefined;
-    const aMonter = Object.keys(j.collection).filter((k) => k.endsWith('@' + r) && !bases.has(moduleDe(k)) && doublonsRequis(k, j.collection[k]!.niveau) !== null);
+    const aMonter = Object.keys(j.collection).filter((k) => k.endsWith('@' + r) && !moduleDef(k).legs && !bases.has(moduleDe(k)) && doublonsRequis(k, j.collection[k]!.niveau) !== null);
     if (aMonter.length && t.nombre() < COMPTOIR.partDoublons) id = aMonter[t.entier(aMonter.length)];
     for (let g = 0; !id && g < 40; g++) {
-      const m = MODULES[t.entier(MODULES.length)]!;
+      const m = MODULES_TIRABLES[t.entier(MODULES_TIRABLES.length)]!;
       if (!bases.has(m.id)) id = carteId(m.id, r);
     }
     if (!id) break;

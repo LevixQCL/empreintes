@@ -28,14 +28,17 @@ describe('La Charge', () => {
     const j = nouveauJeu(0);
     j.chambre = true;
     j.collection['coeur-reprise@or'] = { niveau: 7, doublons: 0 };
-    j.porteurs.ilka!.modules = j.porteurs.ilka!.modules.slice(0, 5);
+    for (const k of ['bras-grue@argent', 'dorsale@argent']) j.collection[k] = { niveau: 5, doublons: 0 };
+    // niveau 7 : l'or lui est permis (NIVEAU_METAL), mais il porte déjà deux cartes en argent
+    j.porteurs.ilka!.xp = 700;
+    j.porteurs.ilka!.modules = ['bras-grue@argent', 'dorsale@argent', 'ruee@fer'];
     const avant = chargePortee(j, 'ilka');
     const r = greffer(j, 'coeur-reprise@or', 'ilka');
     expect(r.ok).toBe(false);
     expect(r.message).toMatch(/Trop lourd/);
     expect(chargePortee(j, 'ilka')).toBe(avant);
     // à la place d'une carte légère, elle ne tient pas non plus
-    expect(echanger(j, j.porteurs.ilka!.modules[0]!, 'coeur-reprise@or', 'ilka').ok).toBe(false);
+    expect(echanger(j, 'ruee@fer', 'coeur-reprise@or', 'ilka').ok).toBe(false);
   });
 
   it('une vieille sauvegarde trop lourde rend des cartes à la collection, sans rien perdre', () => {
@@ -46,7 +49,19 @@ describe('La Charge', () => {
     expect(estJeuValide(j)).toBe(true);
     expect(chargePortee(j, 'ilka')).toBeLessThanOrEqual(chargeMax(j, 'ilka'));
     expect(j.collection['coeur-reprise@or']).toBeDefined();
-    expect(j.journal[0]).toMatch(/La Charge : Ilka/);
+    expect(j.journal[0]).toMatch(/Ilka portait des cartes/);
+  });
+
+  it('le métal demande un niveau de Porteur : argent 4, or 7, nacre 10 (27 octobre 2026)', () => {
+    const j = nouveauJeu(0);
+    j.chambre = true;
+    j.collection['coeur-reprise@or'] = { niveau: 7, doublons: 0 };
+    j.porteurs.ilka!.modules = j.porteurs.ilka!.modules.slice(0, 4);
+    const r = greffer(j, 'coeur-reprise@or', 'ilka');
+    expect(r.ok).toBe(false);
+    expect(r.message).toMatch(/niveau 7/);
+    j.porteurs.ilka!.xp = 700;
+    expect(greffer(j, 'coeur-reprise@or', 'ilka').ok).toBe(true);
   });
 });
 

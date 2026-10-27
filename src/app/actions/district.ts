@@ -200,6 +200,11 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     }
     case 'reclamer': resultat(J.reclamer(app.jeu)); break;
     case 'decider': resultat(J.decider(app.jeu, b.dataset.acte ?? 'chambre', id)); break;
+    // l’Héritage du district : la première question choisit la lignée, la seconde la carte ; puis on la montre
+    case 'legs-lignee': D.legsLignee = id === 'tech' || id === 'bio' || id === 'reso' ? id : null; break;
+    case 'legs-retour': D.legsLignee = null; break;
+    case 'legs-choisir': { const r = J.choisirLegs(app.jeu, id); resultat(r); if (r.ok) { D.legsLignee = null; D.legsRevele = true; } break; }
+    case 'legs-ok': D.legsRevele = false; break;
     case 'retour-ok': D.retour = []; break;
     case 'rappel-plus-tard': D.rappel = false; break;
     case 'rappel-proteger': D.rappel = false; D.menu = true; compteEtat.ouvert = true; compteEtat.erreur = ''; compteEtat.info = ''; break;

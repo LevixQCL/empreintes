@@ -7,8 +7,8 @@ import { CHARGE, composantsNiveau, doublonsRequis } from '../core/collection';
 import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
-import { BATTU_PAR, REGLES } from '../core/regles';
-import { NOMS_EFFET, texteEffet } from '../core/effets';
+import { BATTU_PAR, REGLES, frequenceLibre, signeLibre } from '../core/regles';
+import { NOMS_EFFET, effetsDe, nomsEffets, texteEffet } from '../core/effets';
 import { multNiveau } from '../core/collection';
 import type { GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
 import { illustrationBatiment, illustrationModule, portrait } from './art';
@@ -125,7 +125,7 @@ const socle = (t: TypeGeste, v: number, classe: string) =>
 
 /** La Fréquence d'une carte en jeu : son chiffre (ou ses chiffres), ou ∗ pour un Accord */
 function cristalFreq(g: GesteDef): string {
-  if (g.effet?.type === 'accord') return `<b class="eq-f" style="--fc:#5d5470" title="Fréquence libre">∗</b>`;
+  if (frequenceLibre(g.effet)) return `<b class="eq-f" style="--fc:#5d5470" title="Fréquence libre">${signeLibre(g.effet)}</b>`;
   const fs = g.fs ?? [g.f];
   return `<b class="eq-f${fs.length > 1 ? ' multi' : ''}" style="--fc:${couleurFrequence(fs[0]!)}" title="Fréquence ${fs.join(' ou ')}">${fs.join('<i>/</i>')}</b>`;
 }
@@ -139,7 +139,7 @@ function ligneCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean): strin
   const origine = g.porteur === null ? ORIGINE_PAQUETAGE[g.id] : undefined;
   const img = cle ? illustrationModule(cle) : origine ? illustrationModule(g.id) : null;
   const effet = g.effet
-    ? `<span class="eq-effet"><b>${echap(NOMS_EFFET[g.effet.type])}</b> ${echap(texteEffet(g.effet))}</span>`
+    ? effetsDe(g).map((x) => `<span class="eq-effet"><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</span>`).join('')
     : `<span class="eq-effet sans">${NOM_ACTION[g.type]}</span>`;
   const corps = `<span class="eq-vignette" style="--m:${m ? COULEUR_RARETE[m.rarete] : 'rgba(205,239,255,.3)'}">`
     + (img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : `<span class="eq-sans">${g.porteur ? ICO.cartes : ICO.district}</span>`)
@@ -148,7 +148,7 @@ function ligneCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean): strin
     + socle(g.type, g.v, 'eq-force')
     + (cle && !j.vus.cartes.includes(cle) ? `<span class="eq-neuve">Nouvelle</span>` : '');
   return cle
-    ? `<li><button type="button" class="eq-carte" data-action="carte" data-id="${cle}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}${g.effet ? `, ${NOMS_EFFET[g.effet.type]}` : ''}. Voir la carte">${corps}</button></li>`
+    ? `<li><button type="button" class="eq-carte" data-action="carte" data-id="${cle}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}${g.effet ? `, ${nomsEffets(g)}` : ''}. Voir la carte">${corps}</button></li>`
     : `<li><div class="eq-carte fixe">${corps}</div></li>`;
 }
 
@@ -164,7 +164,7 @@ function bilanDeck(j: Jeu, esc: string[]): string {
   // chaque colonne empile les cartes de chaque lignée (les cartes du district en neutre)
   const couleurDe = (g: GesteDef) => (g.porteur ? COULEUR[porteurDef(g.porteur).lignee] : 'var(--x-doux)');
   const colonnes = freqs.map((k, i) => {
-    const ici = cartes.filter((g) => g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(i + 1));
+    const ici = cartes.filter((g) => !frequenceLibre(g.effet) && (g.fs ?? [g.f]).includes(i + 1));
     return `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}">`
       + `<span class="eq-pile" style="--h:${(100 * k) / max}%">${ici.map((g) => `<i style="--c:${couleurDe(g)}"></i>`).join('')}</span>`
       + `<b style="--fc:${couleurFrequence(i + 1)}">${i + 1}</b><small>${k || '—'}</small></span>`;

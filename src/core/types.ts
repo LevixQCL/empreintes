@@ -28,7 +28,16 @@ export type Effet =
   /** le soin touche toute l'escouade */
   | { type: 'vague' }
   /** une part du bouclier d'escouade restant est gardée au tour suivant */
-  | { type: 'rempart'; part: number };
+  | { type: 'rempart'; part: number }
+  // ---------- Les voies (27 octobre 2026, docs/familles-de-decks.md) ----------
+  /** Carapace (sur une carte de bouclier) : après son bouclier, frappe d'une part du bouclier d'escouade (sans le dépenser) */
+  | { type: 'riposte'; part: number }
+  /** Moteur : vide le Flux, une part de force en plus par Flux vidé */
+  | { type: 'decharge'; part: number }
+  /** Chœur : Fréquence libre, prend celle de la carte posée juste avant (le pendant de l'Accord) */
+  | { type: 'diapason' }
+  /** Chœur : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne */
+  | { type: 'unisson'; part: number };
 
 export type TypeEffet = Effet['type'];
 
@@ -73,6 +82,10 @@ export interface ModuleDef {
   f: number[];
   /** l'effet de la carte ; un exemplaire ne l'a qu'à partir du cuivre */
   effet?: Effet;
+  /** second effet : seules les cartes de l’Héritage en ont un (une Fréquence libre est toujours le premier) */
+  effet2?: Effet;
+  /** carte de l’Héritage du district : exclusive, jamais trouvée ailleurs (docs/heritage-du-district.md) */
+  legs?: true;
 }
 
 /** Une carte en jeu, telle que le moteur de combat la manipule */
@@ -93,6 +106,8 @@ export interface GesteDef {
   /** Prend 2 places dans la chaîne */
   lourd?: boolean;
   effet?: Effet;
+  /** second effet (cartes de l’Héritage) */
+  effet2?: Effet;
   /** Place vide : un Porteur combat toujours avec 6 places ; celle qu'on ne remplit pas se pioche et ne se joue pas */
   vide?: boolean;
 }

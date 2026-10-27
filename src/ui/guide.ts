@@ -7,11 +7,11 @@
 // Attention aux imports circulaires (vue.ts importe ce fichier) : rien d'importé de ./vue, ./carte ou ./coquille
 // ne doit servir au chargement du module, seulement dans les fonctions.
 
-import { CHARGE, COLLECTION, NOMS_RARETE, RARETES, chargeNiveau } from '../core/collection';
-import { DECK_DEPART, GESTES_SPECIAUX, METAL_FORCE, METAL_FREQ, METAL_RENFORT, MODULES, carteId, gesteDeCarte, moduleDe, moduleDef } from '../core/donnees';
+import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, chargeNiveau } from '../core/collection';
+import { DECK_DEPART, GESTES_SPECIAUX, METAL_FORCE, METAL_FREQ, METAL_RENFORT, MODULES_TIRABLES as MODULES, carteId, gesteDeCarte, moduleDe, moduleDef } from '../core/donnees';
 import { NOMS_EFFET } from '../core/effets';
 import { DISTRICT, EPREUVE_DECK_MIN } from '../core/jeu';
-import { REGLES } from '../core/regles';
+import { REGLES, frequenceLibre } from '../core/regles';
 import type { Geste, GesteDef, Lignee, TypeEffet, TypeGeste } from '../core/types';
 import { textureMetal } from './art';
 import { COULEUR_RARETE, ICONES_ACTION, couleurFrequence, faceCarte } from './carte';
@@ -60,7 +60,7 @@ export const lienGuide = (onglet: OngletGuide, texte: string, classe = '') =>
 /** Combien de cartes de chaque lignée ont chaque Fréquence principale (1 à 9) */
 function frequencesLignee(l: Lignee): number[] {
   const n = Array.from({ length: 9 }, () => 0);
-  for (const m of MODULES) if (m.lignee === l && m.effet?.type !== 'accord') n[m.f[0]! - 1]!++;
+  for (const m of MODULES) if (m.lignee === l && !frequenceLibre(m.effet)) n[m.f[0]! - 1]!++;
   return n;
 }
 
@@ -242,12 +242,14 @@ function ongletCarte(): string {
     ['Effet', (r) => (METAL_RENFORT[r] === 0 ? 'non' : METAL_RENFORT[r] === 1 ? 'oui' : `+${Math.round((METAL_RENFORT[r] - 1) * 100)} %`)],
     ['Fréquences', (r) => String(METAL_FREQ[r])],
     ['Niveau de départ', (r) => String(COLLECTION.niveauDepart[r])],
+    ['Porteur requis', (r) => (NIVEAU_METAL[r] > 1 ? `niv. ${NIVEAU_METAL[r]}` : '—')],
   ];
   h += `<section class="bloc">${titre(ICO.cristal, 'Cinq métaux')}<div class="g-metaux" role="table" aria-label="Ce que change le métal">`
     + `<div role="row" class="g-metal-tete"><span role="columnheader"></span>${RARETES.map((r) => `<span role="columnheader" style="--r:${COULEUR_RARETE[r]}"><i style="--tex:url(${textureMetal(r)})"></i>${NOMS_RARETE[r]}</span>`).join('')}</div>`
     + lignes.map(([nom, f]) => `<div role="row"><span role="rowheader">${nom}</span>${RARETES.map((r) => `<span role="cell">${f(r)}</span>`).join('')}</div>`).join('')
     + `</div><ul class="g-regles"><li>Une même carte existe dans les cinq métaux. Le métal est fixé quand tu la trouves : il ne change jamais.</li>`
     + `<li>En fer, une carte n’a pas d’effet. Il s’ouvre en cuivre ; en or et en nacre, ses chiffres montent.</li>`
+    + `<li>Un métal rare demande un Porteur expérimenté : argent au niveau ${NIVEAU_METAL.argent}, or au niveau ${NIVEAU_METAL.or}, nacre au niveau ${NIVEAU_METAL.nacre}. Trouvée plus tôt, la carte t’attend dans ta collection.</li>`
     + `<li>Deux métaux d’une carte sont deux cartes à part, chacune avec ses doublons et son niveau.</li>`
     + `<li>Doublons et composants font monter une carte : +${Math.round(COLLECTION.bonusNiveau * 100)} % de force par niveau, jusqu’au niveau ${COLLECTION.niveauMax}.</li></ul></section>`;
 
@@ -272,6 +274,10 @@ const REGLE: Record<TypeEffet, () => string> = {
   fissure: () => `L’ennemi visé subit ${fourchette('fissure')} de dégâts en plus, ce tour-ci et le suivant.`,
   accord: () => 'Fréquence libre, notée ∗ : la carte prend toujours celle qui prolonge ta suite.',
   crescendo: () => `+${fourchette('crescendo')} de force pour chaque carte posée avant elle dans la chaîne.`,
+  riposte: () => `Une carte de bouclier qui riposte : après avoir donné son bouclier, elle frappe l’ennemi de ${fourchette('riposte')} du bouclier d’escouade. Le bouclier n’est pas dépensé.`,
+  decharge: () => `Vide tout le Flux : +${fourchette('decharge')} de force par Flux vidé. Sans Flux, elle frappe normalement.`,
+  diapason: () => 'Fréquence libre, notée = : la carte reprend la Fréquence de celle posée juste avant (en tête de chaîne, celle d’après).',
+  unisson: () => `+${fourchette('unisson')} de force pour chaque autre carte de la même Fréquence dans la chaîne.`,
 };
 
 function astuce(t: TypeEffet): string {
@@ -285,6 +291,10 @@ function astuce(t: TypeEffet): string {
     case 'desarmer': return 'Quand l’ennemi annonce un gros coup. S’il n’annonce pas d’attaque, l’effet ne fait rien.';
     case 'fissure': return 'Pose-la tôt : seules les cartes jouées après elle en profitent, et encore au tour suivant.';
     case 'accord': return 'Elle bouche le trou d’une suite. En tête de chaîne, elle se cale juste avant la carte qui la suit.';
+    case 'riposte': return 'Pose-la en dernier : elle profite de tout le bouclier déjà monté dans la chaîne, et de celui gardé par un Rempart ou la Marque de Doran.';
+    case 'decharge': return `Remplis le Flux (Surcharge, Résonance, Écho), puis vide-le d’un coup : à ${REGLES.fluxMax} Flux, la force fait plus que doubler. Mais ce Flux ne servira ni au Coup d’éclat ni à une place de plus.`;
+    case 'diapason': return `Elle complète un Écho : deux cartes de même Fréquence et un Diapason, et l’escouade gagne ${REGLES.bouclierEcho} de bouclier et 1 Flux.`;
+    case 'unisson': return 'Trois cartes de même Fréquence : chacune compte les deux autres. La Dissonance ne brouille que les suites, pas l’Unisson ni l’Écho.';
     case 'crescendo': {
       const parts = MODULES.map((m) => m.effet).filter((e): e is { type: 'crescendo'; part: number } => e?.type === 'crescendo').map((e) => e.part);
       const max = REGLES.capaciteMax - 1;

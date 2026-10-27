@@ -7,7 +7,7 @@ import { lancer } from './combat';
 import { cartesEnJeu, placesVides } from './collection';
 import { GESTES_SPECIAUX, porteurDef } from './donnees';
 import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExpedition, nouvelleExploration, salleCourante } from './expedition';
-import { REGLES, analyserChaine, places } from './regles';
+import { REGLES, analyserChaine, frequenceLibre, places } from './regles';
 import type { CombatEtat, Geste } from './types';
 
 /** Copie rapide d'un combat (les cartes à plusieurs Fréquences changent de Fréquence : on les copie aussi) */
@@ -31,9 +31,13 @@ function ordres(groupe: Geste[]): Geste[][] {
   // au-delà, l'ordre croissant est presque toujours le meilleur ; on essaie aussi Crescendo en dernier
   const croissant = groupe.slice().sort((a, b) => a.f - b.f);
   const r = [croissant];
-  const cresc = croissant.filter((g) => g.effet?.type === 'crescendo');
-  if (cresc.length) r.push([...croissant.filter((g) => !cresc.includes(g)), ...cresc]);
-  const accords = croissant.filter((g) => g.effet?.type === 'accord');
+  // Crescendo et Riposte en dernier (la Riposte profite des boucliers posés avant elle)
+  for (const t of ['crescendo', 'riposte']) {
+    const fin = croissant.filter((g) => g.effet?.type === t);
+    if (fin.length) r.push([...croissant.filter((g) => !fin.includes(g)), ...fin]);
+  }
+  // les Fréquences libres (Accord, Diapason) : à chaque place possible
+  const accords = croissant.filter((g) => frequenceLibre(g.effet));
   for (const a of accords) {
     const reste = croissant.filter((g) => g !== a);
     for (let i = 0; i <= reste.length; i++) r.push([...reste.slice(0, i), a, ...reste.slice(i)]);
@@ -151,7 +155,7 @@ export function jouerTourMoyen(s: CombatEtat): void {
     const ordre = groupe.slice().sort((a, b) => a.f - b.f);
     const mult = analyserChaine(ordre).mult;
     const somme = (t: string) => ordre.filter((g) => g.type === t).reduce((n, g) => n + g.v, 0) * mult;
-    const brise = fel !== undefined && ordre.some((g) => g.effet?.type !== 'accord' && (g.fs ?? [g.f]).includes(fel));
+    const brise = fel !== undefined && ordre.some((g) => !frequenceLibre(g.effet) && (g.fs ?? [g.f]).includes(fel));
     const score = somme('atk') + (danger ? 1.5 * Math.min(somme('bouclier'), menace) : 0.3 * somme('bouclier')) + (blesse ? somme('soin') : 0.2 * somme('soin')) + (brise ? gainFelure + (mult > 1 ? 4 : 0) : 0);
     if (!meilleur || score > meilleur.score) meilleur = { score, ordre };
   }

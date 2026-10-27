@@ -53,6 +53,9 @@ export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string
 /** id, nom, lignée, métal d'origine, action, force (dans le métal d'origine), Fréquences (de la principale à la plus rare), effet, lourde */
 const c = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet?: Effet, lourd = false): ModuleDef =>
   ({ id, nom, lignee, rarete, type, v, f, ...(effet ? { effet } : {}), ...(lourd ? { lourd: true } : {}) });
+/** une carte de l’Héritage : en nacre, deux effets */
+const legs = (id: string, nom: string, lignee: Lignee, type: TypeGeste, v: number, f: number[], effet: Effet, effet2: Effet, lourd = false): ModuleDef =>
+  ({ ...c(id, nom, lignee, 'nacre', type, v, f, effet, lourd), effet2, legs: true });
 
 export const MODULES: ModuleDef[] = [
   // ---------- Les 15 cartes de base : 5 par Porteur nommé, qu'il porte dès le départ ----------
@@ -107,7 +110,61 @@ export const MODULES: ModuleDef[] = [
   c('pressentiment', 'Pressentiment', 'reso', 'argent', 'bouclier', 12, [7, 8, 6], { type: 'desarmer', part: 0.4 }),
   c('chant-abysses', 'Chant des abysses', 'reso', 'or', 'atk', 26, [7, 8, 9], { type: 'accord' }),
   c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 22, [9, 8, 7], { type: 'crescendo', part: 0.3 }),
+
+  // ---------- Les voies, étape 1 (27 octobre 2026, docs/familles-de-decks.md) : une voie par lignée ----------
+  // Le Moteur (Liane) : remplir le Flux, puis tout vider d'un coup
+  c('bobine-recuperation', 'Bobine de récupération', 'tech', 'fer', 'bouclier', 9, [3, 2, 4], { type: 'flux', v: 1 }),
+  c('condensateur', 'Condensateur', 'tech', 'cuivre', 'atk', 12, [5, 4, 6], { type: 'flux', v: 1 }),
+  c('decharge-arc', 'Décharge d’arc', 'tech', 'cuivre', 'atk', 16, [6, 7, 5], { type: 'decharge', part: 0.5 }),
+  c('eclair-captif', 'Éclair captif', 'tech', 'argent', 'atk', 16, [4, 5, 7], { type: 'decharge', part: 0.55 }),
+  c('noyau-instable', 'Noyau instable', 'tech', 'or', 'atk', 38, [7, 6, 2], { type: 'decharge', part: 0.65 }, true),
+  // La Carapace (Doran) : parer, puis frapper avec tout le bouclier accumulé
+  c('coup-epaule', 'Coup d’épaule', 'bio', 'fer', 'bouclier', 10, [3, 2, 4], { type: 'riposte', part: 0.5 }),
+  c('queue-massue', 'Queue-massue', 'bio', 'cuivre', 'bouclier', 11, [4, 5, 3], { type: 'riposte', part: 0.6 }),
+  c('belier-os', 'Bélier d’os', 'bio', 'argent', 'bouclier', 22, [5, 4, 1], { type: 'riposte', part: 0.85 }, true),
+  c('retour-maree', 'Retour de marée', 'bio', 'or', 'bouclier', 18, [2, 3, 5], { type: 'riposte', part: 0.65 }),
+  // Le Chœur (Joss) : répéter une même Fréquence (Écho)
+  c('diapason-cristal', 'Diapason de cristal', 'reso', 'fer', 'bouclier', 9, [9, 8, 7], { type: 'diapason' }),
+  c('voix-basse', 'Voix basse', 'reso', 'fer', 'atk', 9, [9, 8, 7], { type: 'unisson', part: 1.2 }),
+  c('chorale-ombres', 'Chorale des ombres', 'reso', 'cuivre', 'atk', 10, [8, 9, 7], { type: 'unisson', part: 1.3 }),
+  c('cloche-abysses', 'Cloche des abysses', 'reso', 'argent', 'bouclier', 15, [9, 7, 8], { type: 'diapason' }),
+  c('grand-unisson', 'Grand unisson', 'reso', 'or', 'atk', 18, [9, 8, 6], { type: 'unisson', part: 1.4 }),
+  // ---------- L’Héritage du district (27 octobre 2026, docs/heritage-du-district.md) ----------
+  // Dix vierges cachées par l'ancienne directrice ; chaque joueur n'en reçoit qu'une (lettre de la directrice, LETTRE_LEGS).
+  // Exclusives (jamais trouvées ailleurs : MODULES_TIRABLES), en nacre seulement, les seules à deux effets. La nacre renforce
+  // leurs parts (×1,5) comme pour toute carte : les parts ci-dessous sont avant ce renfort. Une Fréquence libre est le premier effet.
+  legs('foulee-directrice', 'Foulée de la directrice', 'tech', 'atk', 21, [4, 3, 5], { type: 'elan' }, { type: 'crescendo', part: 0.2 }),
+  legs('bras-fonderie', 'Bras de la Fonderie', 'tech', 'atk', 40, [5, 6, 4], { type: 'percant' }, { type: 'elan' }, true),
+  legs('coeur-glaciere', 'Cœur de la Glacière', 'tech', 'atk', 17, [6, 5, 7], { type: 'decharge', part: 0.5 }, { type: 'flux', v: 1 }),
+  legs('carapace-fondations', 'Carapace des Fondations', 'bio', 'bouclier', 18, [2, 3, 1], { type: 'rempart', part: 0.4 }, { type: 'riposte', part: 0.4 }),
+  legs('oeil-grande-nuit', 'Œil de la Grande Nuit', 'bio', 'atk', 13, [3, 2, 4], { type: 'fissure', part: 0.2 }, { type: 'siphon', part: 0.3 }),
+  legs('premiere-mue', 'Première mue', 'bio', 'soin', 18, [1, 2, 3], { type: 'vague' }, { type: 'rempart', part: 0.35 }),
+  legs('lanterne-lecture', 'Lanterne de la première Lecture', 'reso', 'atk', 17, [8, 7, 9], { type: 'accord' }, { type: 'desarmer', part: 0.3 }),
+  legs('sceau-orseve', 'Sceau volé aux Orsève', 'reso', 'atk', 18, [7, 6, 8], { type: 'desarmer', part: 0.3 }, { type: 'fissure', part: 0.2 }),
+  legs('voix-quartier', 'Voix du quartier', 'reso', 'atk', 17, [9, 8, 7], { type: 'diapason' }, { type: 'unisson', part: 0.7 }),
 ];
+
+/** Le Porteur dont chaque carte de l’Héritage est la pièce maîtresse de la voie (il prête son portrait en attendant l'illustration) */
+export const PORTEUR_LEGS: Record<string, string> = {
+  'foulee-directrice': 'ilka', 'bras-fonderie': 'sasha', 'coeur-glaciere': 'liane',
+  'carapace-fondations': 'doran', 'oeil-grande-nuit': 'nuit', 'premiere-mue': 'kessa',
+  'lanterne-lecture': 'vela', 'sceau-orseve': 'aurel', 'voix-quartier': 'joss',
+};
+
+/** Les cartes qu'on peut trouver, acheter ou fabriquer : toutes, sauf celles de l’Héritage */
+export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs);
+
+/**
+ * Les voies (docs/familles-de-decks.md) : chaque Porteur nommé incarne une façon de gagner. Les cartes restent liées à la lignée
+ * (n'importe quel Porteur de la lignée peut les porter) ; le Porteur de la voie prête son portrait aux cartes encore sans illustration.
+ */
+export const VOIES: { id: string; nom: string; porteur: string; cartes: string[] }[] = [
+  { id: 'moteur', nom: 'Le Moteur', porteur: 'liane', cartes: ['bobine-recuperation', 'condensateur', 'decharge-arc', 'eclair-captif', 'noyau-instable'] },
+  { id: 'carapace', nom: 'La Carapace', porteur: 'doran', cartes: ['coup-epaule', 'queue-massue', 'belier-os', 'retour-maree'] },
+  { id: 'choeur', nom: 'Le Chœur', porteur: 'joss', cartes: ['diapason-cristal', 'voix-basse', 'chorale-ombres', 'cloche-abysses', 'grand-unisson'] },
+];
+/** La voie d'une carte (« voix-basse@or » → le Chœur), s'il y en a une */
+export const voieDe = (cle: string) => VOIES.find((v) => v.cartes.includes(cle.split('@')[0]!));
 
 /** Les 15 cartes de base (celles que les Porteurs nommés portent au départ, en plus de leur carte de départ) */
 export const CARTES_DE_BASE = MODULES.slice(0, 15).map((m) => m.id);
@@ -121,9 +178,12 @@ export const METAL_FREQ: Record<Rarete, number> = { fer: 1, cuivre: 1, argent: 2
 export const METAL_RENFORT: Record<Rarete, number> = { fer: 0, cuivre: 1, argent: 1, or: 1.25, nacre: 1.5 };
 
 function renforcer(e: Effet, k: number): Effet {
-  if (k <= 1) return e;
+  // la Décharge ne se renforce pas : en or et en nacre, les Fréquences en plus font déjà plus de Résonances, donc plus de Flux à vider
+  if (k <= 1 || e.type === 'decharge') return e;
   if (e.type === 'flux') return { ...e, v: e.v + (k >= 1.5 ? 1 : 0) };
-  if ('part' in e) return { ...e, part: Math.min(e.type === 'siphon' ? 1 : 0.9, Math.round(e.part * k * 100) / 100) };
+  // un plafond pour les parts qui retirent ou gardent (90 %) et pour le Siphon (100 %) ; les bonus de force des voies n'en ont pas
+  const plafond = e.type === 'siphon' ? 1 : e.type === 'riposte' || e.type === 'unisson' ? Infinity : 0.9;
+  if ('part' in e) return { ...e, part: Math.min(plafond, Math.round(e.part * k * 100) / 100) };
   return e;
 }
 const METAUX: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
@@ -150,10 +210,19 @@ export const CARTE_CHAMBRE = carteId('oeil-relais', 'fer');
 const special = (id: string, nom: string, f: number, type: TypeGeste, v: number, effet?: Effet): GesteDef =>
   ({ id, carte: id, porteur: null, nom, f, type, v, ...(effet ? { effet } : {}) });
 export const GESTES_SPECIAUX: GesteDef[] = [special('stimulant', 'Stimulant', 1, 'soin', 5, { type: 'vague' }), special('repli', 'Repli', 9, 'bouclier', 10)];
+/**
+ * La Clé de l’Héritage (27 octobre 2026) : la dixième vierge, pour le directeur qui répond « tout le monde à la fois » à la lettre.
+ * Elle rejoint le paquetage (jouée par personne, elle reste quand un Porteur tombe) dès qu'un Porteur de l'escouade a le niveau
+ * de la nacre, et grandit avec le plus avancé d'entre eux (comme une carte de l’Héritage : niveaux 8, 9 et 10, +5 % par niveau).
+ */
+export const CLE_LEGS: GesteDef = special('cle-legs', 'Clé de l’Héritage', 1, 'bouclier', 18, { type: 'accord' });
+CLE_LEGS.effet2 = { type: 'rempart', part: 0.75 };
+
 /** D'où vient chaque carte du paquetage : le bâtiment qui la fournit et ce qu'elle est */
 export const ORIGINE_PAQUETAGE: Record<string, { batiment: string; texte: string }> = {
   stimulant: { batiment: 'Clinique', texte: 'Une seringue de lumière verte, préparée par la Clinique pour chaque escouade.' },
   repli: { batiment: 'Tour du Noyau', texte: 'Une balise de la Tour du Noyau : une porte blindée s’ouvre, l’escouade s’y abrite.' },
+  'cle-legs': { batiment: 'Héritage du district', texte: 'La dixième vierge de l’ancienne directrice : une clé de nacre qui ouvre toutes les portes, et les tient fermées derrière l’escouade.' },
 };
 
 // ---------- Bâtiments ----------
@@ -478,7 +547,9 @@ export const moduleDef = (cle: string): ModuleDef => {
   if (metal === undefined) return m;
   const def: ModuleDef = { ...m, id: cle, base: id, rarete: metal, v: Math.round(m.v * METAL_FORCE[metal] / METAL_FORCE[m.rarete]), f: m.f.slice(0, METAL_FREQ[metal]) };
   delete def.effet;
+  delete def.effet2;
   if (m.effet && METAL_RENFORT[metal] > 0) def.effet = renforcer(m.effet, METAL_RENFORT[metal]);
+  if (m.effet2 && METAL_RENFORT[metal] > 0) def.effet2 = renforcer(m.effet2, METAL_RENFORT[metal]);
   declinaisons.set(cle, def);
   return def;
 };
@@ -488,7 +559,7 @@ export function gesteDeCarte(cle: string, porteur: string, mult = 1): GesteDef {
   const m = moduleDef(cle);
   return {
     id: cle, carte: cle, porteur, nom: m.nom, f: m.f[0]!, ...(m.f.length > 1 ? { fs: m.f.slice() } : {}), type: m.type, v: Math.round(m.v * mult),
-    ...(m.lourd ? { lourd: true } : {}), ...(m.effet ? { effet: m.effet } : {}),
+    ...(m.lourd ? { lourd: true } : {}), ...(m.effet ? { effet: m.effet } : {}), ...(m.effet2 ? { effet2: m.effet2 } : {}),
   };
 }
 

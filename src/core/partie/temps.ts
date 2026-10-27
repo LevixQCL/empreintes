@@ -8,13 +8,14 @@ import { noterPalmares } from '../classements';
 import { ARCHIVE, CONFIANCE, CREUSEURS, confier, enExpedition, energieParHeure, jourDe, log, semaineDe, stockage, type Jeu, typeDuJour } from './etat';
 import { avancerFils, retourDeMission, verifierArrivees } from './descentes';
 import { creuser, energieEntrainement, entrainer, gagnerCreuseurs, garnirComptoir, heuresEntrainement, soinParHeure } from './district';
-import { RAVITAILLEMENT } from './recompenses';
+import { RAVITAILLEMENT, eveillerLegs } from './recompenses';
 
 /** Rattrape le temps écoulé : énergie, soins, Forge. Rien n'est perdu ni puni pendant l'absence. */
 export function tick(j: Jeu, now: number): string[] {
   const nouvelles: string[] = [];
   nouvelles.push(...verifierArrivees(j));
   nouvelles.push(...avancerFils(j));
+  eveillerLegs(j);
   const dt = Math.max(0, now - j.dernierTick);
   const heures = dt / 3_600_000;
   j.dernierTick = now;
