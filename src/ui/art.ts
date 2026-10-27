@@ -64,6 +64,12 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   souffle: 'souffle',
   'stimulant': 'stimulant',
   'repli': 'repli',
+  // les voies, étape 1 (27 octobre 2026)
+  'bobine-recuperation': 'bobine-recuperation',
+  condensateur: 'condensateur',
+  'decharge-arc': 'decharge-arc',
+  'eclair-captif': 'eclair-captif',
+  'noyau-instable': 'noyau-instable',
 };
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */
