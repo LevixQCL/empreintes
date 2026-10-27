@@ -478,7 +478,7 @@ function blocComptoir(e: EcranDistrict): string {
   }
   const c = j.comptoir;
   const demain = debutJour(c.jour + 1) - e.now;
-  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}En vente aujourd’hui<span class="cp-renouv">${ICO.chrono}${decompte(e.now + demain, e.now, 'nouvelles cartes dans ')}</span></h3><div class="cp-etals">`;
+  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}En vente aujourd’hui<span class="cp-renouv">${ICO.chrono}${decompte(e.now + demain, e.now, 'nouvelles cartes dans ')}</span></h3><small class="aide choix-loupe">Reste appuyé sur une carte pour lire son effet.</small><div class="cp-etals">`;
   c.offres.forEach((id, i) => {
     const m = moduleDef(id);
     const possede = j.collection[id];
@@ -487,7 +487,7 @@ function blocComptoir(e: EcranDistrict): string {
     const assez = j.composants >= p.composants && j.eclats >= p.eclats;
     const niveau = possede?.niveau ?? COLLECTION.niveauDepart[m.rarete];
     const ruban = possede ? `Doublon · niv. ${possede.niveau}` : 'Nouvelle';
-    h += `<div class="cp-offre${vendu ? ' vendue' : ''}"><div class="cp-face">${faceCarte(m, niveau, multNiveau(id, niveau))}${vendu ? `<span class="cp-vendu">${ICO.ok}Achetée</span>` : ''}</div>`
+    h += `<div class="cp-offre${vendu ? ' vendue' : ''}" data-carte="${id}"><div class="cp-face">${faceCarte(m, niveau, multNiveau(id, niveau))}${vendu ? `<span class="cp-vendu">${ICO.ok}Achetée</span>` : ''}</div>`
       + `<span class="ruban${possede ? '' : ' neuve'}">${ruban}</span>`
       + (vendu ? '' : `<button type="button" class="btn ${assez ? 'prim' : 'sec'} petit cp-acheter" data-action="acheter" data-index="${i}"${assez ? '' : ' disabled'} aria-label="Acheter ${echap(m.nom)} (${NOMS_RARETE[m.rarete]})">${couts(j, { composants: p.composants, eclats: p.eclats })}</button>`)
       + `</div>`;
@@ -564,7 +564,7 @@ function blocForge(e: EcranDistrict): string {
       const jauge = requis === null ? `<span class="fg-doublons max">Niveau max</span>`
         : c.doublons >= requis ? `<span class="fg-doublons pret">${ICO.monter}Peut monter</span>`
         : `<span class="fg-doublons"><span class="mini-jauge"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span>${c.doublons}/${requis}</span></span>`;
-      h += `<button type="button" class="fg-carte${assez && forgeron && !j.forge ? '' : ' attente'}" data-action="fabriquer" data-module="${m.id}" aria-label="Refabriquer ${echap(m.nom)}${requis === null ? ', niveau maximum' : `, ${c.doublons} doublons sur ${requis}`}">`
+      h += `<button type="button" class="fg-carte${assez && forgeron && !j.forge ? '' : ' attente'}" data-action="fabriquer" data-module="${m.id}" data-carte="${m.id}" aria-label="Refabriquer ${echap(m.nom)}${requis === null ? ', niveau maximum' : `, ${c.doublons} doublons sur ${requis}`}">`
         + `<span class="fg-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</span>${jauge}</button>`;
     }
     h += `</div>`;
@@ -849,8 +849,11 @@ function fenetreChoix(j: Jeu): string {
  * pour choisir en connaissance de cause ; lever le doigt la referme sans prendre la carte (main.ts).
  */
 export function loupeCarte(id: string, j: Jeu): string | null {
+  // une carte du paquetage (fournie à chaque escouade) n'est pas un Module : on la reconstruit comme dans l'écran Cartes
+  const g = GESTES_SPECIAUX.find((x) => x.id === id);
   let m: ModuleDef;
-  try { m = moduleDef(id); } catch { return null; }
+  if (g) m = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) };
+  else try { m = moduleDef(id); } catch { return null; }
   const c = j.collection[id];
   const niveau = c?.niveau ?? COLLECTION.niveauDepart[m.rarete];
   const origine = MODULES.find((x) => x.id === (m.base ?? m.id));
@@ -858,6 +861,8 @@ export function loupeCarte(id: string, j: Jeu): string | null {
     ? effetsDe(m).map((x) => `<li><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</li>`).join('')
     : origine?.effet ? `<li>En fer, pas d’effet. À partir du cuivre : <b>${echap(NOMS_EFFET[origine.effet.type])}</b>, ${echap(texteEffet(origine.effet).replace(/^./, (x) => x.toLowerCase()))}</li>`
     : '<li>Pas d’effet : sa force seule.</li>';
+  if (g) return `<div class="loupe" aria-hidden="true"><div class="loupe-face">${faceCarte(m, 1, 1, { origine: ORIGINE_PAQUETAGE[g.id]!.batiment })}</div>`
+    + `<ul class="loupe-effets"><li class="lc-nom"><b>${echap(m.nom)}</b> · paquetage</li>${lignes}</ul><p class="loupe-qui">${echap(ORIGINE_PAQUETAGE[g.id]!.texte)}</p></div>`;
   const freq = m.f.length > 1 && !frequenceLibre(m.effet) ? `<li>Fréquences au choix : <b>${m.f.join(' ou ')}</b></li>` : '';
   return `<div class="loupe" aria-hidden="true"><div class="loupe-face">${faceCarte(m, niveau, multNiveau(m.id, niveau))}</div>`
     + `<ul class="loupe-effets"><li class="lc-nom"><b>${echap(m.nom)}</b> · ${NOMS_RARETE[m.rarete].toLowerCase()} · ${NOM_LIGNEE[m.lignee].toLowerCase()}</li>${lignes}${freq}</ul>`
@@ -947,7 +952,7 @@ export function feuilleDeck(e: EcranDistrict): string {
     const m = moduleDef(cle);
     const c = j.collection[cle]!;
     const sel = cle === choisie;
-    return `<button type="button" class="carte-tuile${sel ? ' dk-choisie' : ''}" data-action="${action}" data-module="${cle}" data-id="${id}"${parti ? ' disabled' : ''} aria-pressed="${sel}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}, pèse ${poidsCarte(cle)}">${faceCarte(m, c.niveau, multNiveau(cle, c.niveau))}<span class="tuile-bas">${bas}${pastillePoids(cle)}</span></button>`;
+    return `<button type="button" class="carte-tuile${sel ? ' dk-choisie' : ''}" data-action="${action}" data-module="${cle}" data-id="${id}" data-carte="${cle}"${parti ? ' disabled' : ''} aria-pressed="${sel}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}, pèse ${poidsCarte(cle)}">${faceCarte(m, c.niveau, multNiveau(cle, c.niveau))}<span class="tuile-bas">${bas}${pastillePoids(cle)}</span></button>`;
   };
   // la Charge (26 octobre 2026) : ce qu'il peut encore porter ; une carte qui prend la place d'une autre libère son poids
   const max = chargeMax(j, id);
@@ -1053,7 +1058,7 @@ export function htmlCartes(e: EcranDistrict): string {
     const requis = doublonsRequis(m.id, c.niveau);
     const porte = greffesDe(j, m.id)[0];
     const pret = peutMonter(cle);
-    return `<button type="button" class="carte-tuile cl-carte${pret ? ' pret' : ''}" data-action="carte" data-id="${cle}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}${porte ? `, portée par ${echap(porteurDef(porte).nom)}` : ', libre'}${pret ? ', peut monter' : ''}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
+    return `<button type="button" class="carte-tuile cl-carte${pret ? ' pret' : ''}" data-action="carte" data-id="${cle}" data-carte="${cle}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}${porte ? `, portée par ${echap(porteurDef(porte).nom)}` : ', libre'}${pret ? ', peut monter' : ''}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
       + `<span class="cl-bas"><span class="cl-porteur">${porte ? `${avatar(porte, 20)}<span>${echap(porteurDef(porte).nom)}</span>` : '<span class="cl-libre">Libre</span>'}</span>`
       + `<span class="cl-niv" title="Niveau ${c.niveau}">Niv. ${c.niveau}</span>`
       + (m.legs ? `<span class="cl-max cl-legs">Héritage</span>` : requis === null ? `<span class="cl-max">Max</span>` : `<span class="cl-doublons" title="Doublons pour le niveau ${c.niveau + 1}"><span class="mini-jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span>${c.doublons}/${requis}</span></span>`)
@@ -1083,7 +1088,7 @@ export function htmlCartes(e: EcranDistrict): string {
       + `<div class="grille-cartes">` + GESTES_SPECIAUX.map((g) => {
         const o = ORIGINE_PAQUETAGE[g.id]!;
         const m: ModuleDef = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) };
-        return `<div class="carte-tuile cl-carte cl-paquetage">${faceCarte(m, 1, 1, { origine: o.batiment })}<span class="cl-bas"><span class="cl-origine">${echap(o.texte)}</span></span></div>`;
+        return `<div class="carte-tuile cl-carte cl-paquetage" data-carte="${g.id}">${faceCarte(m, 1, 1, { origine: o.batiment })}<span class="cl-bas"><span class="cl-origine">${echap(o.texte)}</span></span></div>`;
       }).join('') + `</div>`;
   }
   // le mode d'emploi prend la place des autres feuilles ; en le fermant, on retrouve celle d'où on venait

@@ -447,7 +447,7 @@ export function feuillePorteur(e: EcranDistrict): string {
   h += `<section class="fp-bloc"><h3 class="fp-h3">${ICO.cartes}Ses cartes <span class="fp-compte${places ? '' : ' plein'}">${cartes.length} / ${DISTRICT.cartesMax}</span></h3>`
     + jaugeCharge(chargePortee(j, id), chargeMax(j, id), `Ce que pèsent ses cartes sur ce qu’${IL.has(id) ? 'il' : 'elle'} peut porter : +${CHARGE.parNiveau} à chaque niveau.`)
     + `<div class="fp-cartes">${cartes.map((k) => { const cc = j.collection[k]!; const m = moduleDef(k);
-      return `<button type="button" class="fp-carte"${dispo}${parti ? ' disabled' : ''} aria-label="${echap(m.nom)}, niveau ${cc.niveau}. Changer ses cartes">${faceCarte(m, cc.niveau, multNiveau(k, cc.niveau))}</button>`; }).join('')}`
+      return `<button type="button" class="fp-carte" data-carte="${k}"${dispo}${parti ? ' disabled' : ''} aria-label="${echap(m.nom)}, niveau ${cc.niveau}. Changer ses cartes">${faceCarte(m, cc.niveau, multNiveau(k, cc.niveau))}</button>`; }).join('')}`
     + Array.from({ length: places }, () => `<button type="button" class="fp-place"${dispo}${parti ? ' disabled' : ''} aria-label="Place libre : lui confier une carte">${ICO.place}<span>Place libre</span></button>`).join('')
     + `</div>`
     + (parti ? `<p class="fp-note">${echap(p.nom)} est en route : ses cartes changeront à son retour.</p>`

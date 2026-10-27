@@ -35,9 +35,9 @@ const fermerLoupe = () => document.querySelectorAll('.loupe').forEach((l) => l.r
 const finAppui = () => { if (appui) { clearTimeout(appui.t); appui = null; } fermerLoupe(); };
 racine.addEventListener('pointerdown', (ev) => {
   // une carte (son détail) ou une tuile de l'escouade (nom, lignée, PV, le coup qu'il va prendre)
-  // au district : une carte proposée en récompense (lire son effet avant de la prendre)
+  // au district : toute carte affichée (récompense, Comptoir, Forge, Cartes, decks) pour lire son effet avant d'agir
   const el = app.mode === 'combat' ? (ev.target as HTMLElement).closest<HTMLElement>('.geste, .combattant')
-    : (ev.target as HTMLElement).closest<HTMLElement>('.carte-choix[data-carte]');
+    : (ev.target as HTMLElement).closest<HTMLElement>('[data-carte]');
   if (!el) return;
   annulerClic = false;
   appui = { el, x: ev.clientX, y: ev.clientY, t: window.setTimeout(() => {
@@ -50,7 +50,7 @@ racine.addEventListener('pointerdown', (ev) => {
 });
 racine.addEventListener('pointermove', (ev) => { if (appui && Math.hypot(ev.clientX - appui.x, ev.clientY - appui.y) > 10) { clearTimeout(appui.t); appui = null; } });
 for (const t of ['pointerup', 'pointercancel', 'pointerleave'] as const) racine.addEventListener(t, finAppui);
-racine.addEventListener('contextmenu', (ev) => { if ((ev.target as HTMLElement).closest(app.mode === 'combat' ? '.geste, .combattant' : '.carte-choix[data-carte]')) ev.preventDefault(); });
+racine.addEventListener('contextmenu', (ev) => { if ((ev.target as HTMLElement).closest(app.mode === 'combat' ? '.geste, .combattant' : '[data-carte]')) ev.preventDefault(); });
 racine.addEventListener('click', (ev) => { if (annulerClic) { annulerClic = false; ev.stopImmediatePropagation(); ev.preventDefault(); } }, true);
 
 /* glisser une carte posée le long de la chaîne la change de place */
