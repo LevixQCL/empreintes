@@ -26,13 +26,13 @@
 /* les Fréquences : une capsule de verre fumé, la principale d'abord */
 .nf-freqs{position:absolute;z-index:4;top:4.5cqw;left:4.5cqw;display:flex;align-items:center;gap:1.2cqw}
 .nf-nacre .nf-freqs{top:3.5cqw;left:3.5cqw}
-.nf-caps{display:inline-flex;align-items:stretch;height:14cqw;border-radius:8cqw;overflow:hidden;background:rgba(8,10,18,.62);
+.nf-caps{display:inline-flex;align-items:stretch;height:15.5cqw;border-radius:8cqw;overflow:hidden;background:rgba(8,10,18,.62);
   -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);box-shadow:inset 0 0 0 .3cqw rgba(220,240,255,.22),0 1cqw 3cqw rgba(0,0,0,.4)}
 .nf-seg{position:relative;display:grid;place-items:center;min-width:10cqw;padding:0 2cqw;font-family:'Oxanium',var(--mono);font-weight:700;font-size:8cqw;line-height:1;
   color:color-mix(in srgb,var(--fc) 35%,#fff);opacity:.75;text-shadow:0 1px 2px rgba(0,0,0,.6)}
 .nf-seg + .nf-seg{border-left:.3cqw solid rgba(220,240,255,.18)}
 .nf-seg::after{content:"";position:absolute;left:22%;right:22%;bottom:1.3cqw;height:.7cqw;border-radius:1cqw;background:color-mix(in srgb,var(--fc) 55%,#fff);opacity:.8}
-.nf-seg.p{min-width:15cqw;font-size:10.5cqw;opacity:1;background:color-mix(in srgb,var(--fc) 22%,rgba(8,10,18,.7));color:color-mix(in srgb,var(--fc) 30%,#fff)}
+.nf-seg.p{min-width:16.5cqw;font-size:12.2cqw;opacity:1;background:color-mix(in srgb,var(--fc) 22%,rgba(8,10,18,.7));color:color-mix(in srgb,var(--fc) 30%,#fff)}
 .nf-seg.p::after{left:18%;right:18%;height:.9cqw;opacity:1;background:color-mix(in srgb,var(--fc) 70%,#fff)}
 /* la carte brise la Fêlure de l'ennemi : un segment blanc dans la capsule, l'icône de la gemme fêlée, et « Brise » */
 .nf-seg.fele{gap:1cqw;grid-auto-flow:column;min-width:0;padding:0 2.4cqw;opacity:1;color:#fff;
@@ -82,9 +82,9 @@
 
 /* carte moyenne (91 à 150 px : main et chaîne sur PC, tuiles du deck) : gros chiffres, le nom et l'effet sans sa formule */
 @container (min-width:91px) and (max-width:150px){
-  .nf-caps{height:20cqw;border-radius:11cqw}
+  .nf-caps{height:22cqw;border-radius:12cqw}
   .nf-seg{min-width:14cqw;font-size:11cqw}
-  .nf-seg.p{min-width:21cqw;font-size:15cqw}
+  .nf-seg.p{min-width:23cqw;font-size:17.5cqw}
   .nf-seg.p::after{height:1.2cqw;bottom:2cqw}
   .nf-val{top:-14cqw;height:20cqw;padding:0 4cqw 0 3cqw;border-radius:11cqw}
   .nf-val svg{width:12cqw;height:12cqw}
@@ -110,8 +110,8 @@
   .nf-seg.fele{padding:0 3cqw}
   .nf-seg.fele svg{width:16cqw;height:16cqw}
   .nf-freqs{top:4cqw;left:4cqw}
-  .nf-caps{height:30cqw;border-radius:16cqw}
-  .nf-seg.p{min-width:32cqw;font-size:22cqw}
+  .nf-caps{height:32cqw;border-radius:17cqw}
+  .nf-seg.p{min-width:35cqw;font-size:25.5cqw}
   .nf-seg.p::after{height:1.8cqw;bottom:2.6cqw}
   .nf-val{height:28cqw;top:auto;bottom:3cqw;right:3cqw;gap:1cqw;padding:0 4cqw 0 3cqw;border-radius:15cqw}
   .nf-val svg{width:14cqw;height:14cqw}
@@ -128,6 +128,17 @@
 .geste{container-type:inline-size;clip-path:none}
 /* en main, pas de nom (Bryan : il allonge la carte) : un appui prolongé ouvre la loupe ; il revient sur les cartes posées dans la chaîne */
 .geste.main .nf-ligne,.geste.main .nf-art::after{display:none}
+/* en main sur grand écran (carte moyenne) : comme en petit, l'image entière et deux capsules en bas, sans bande vide */
+@container (min-width:91px){
+  .geste.main .nf-voile{height:0;padding:0;background:none}
+  .geste.main :is(.nf-barre,.nf-regle){display:none}
+  .geste.main .nf-val{top:auto;bottom:3cqw;right:3cqw}
+  .geste.main .nf-eff{display:flex;align-items:center;justify-content:center;gap:2cqw;position:absolute;left:3cqw;bottom:3cqw;min-width:22cqw;height:22cqw;padding:0 3cqw;
+    border-radius:12cqw;color:#f3d27a;background:rgba(8,10,18,.62);box-shadow:inset 0 0 0 1px rgba(220,240,255,.22)}
+  .geste.main .nf-eff.a-effet{box-shadow:inset 0 0 0 1px rgba(243,210,122,.6),0 0 8px rgba(243,210,122,.3)}
+  .geste.main .nf-eff-lg{flex:none;width:6cqw;height:6cqw;transform:rotate(45deg);background:var(--lc);box-shadow:0 0 2cqw var(--lc)}
+  .geste.main .nf-eff svg{width:12cqw;height:12cqw}
+}
 .geste > .nf{position:absolute;inset:0;width:auto;aspect-ratio:auto}
 /* en main, une carte lourde garde son « 2 PL. » en haut à droite */
 @container (max-width:90px){
