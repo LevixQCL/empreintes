@@ -1,6 +1,6 @@
 # Rapport du robot d'équilibrage
 
-2026-10-26 · 300 expéditions par mesure · 1611 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
+2026-10-27 · 300 expéditions par mesure · 1907 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
 
 ## Le deck de départ selon la profondeur
 
@@ -48,8 +48,22 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Pressentiment | Argent | Désarmer | +13 | +5 |  |
 | Chant des abysses | Or | Accord | +33 | +6 | TROP FORTE |
 | Souffle du wyrm | Or | Crescendo | +29 | +5 |  |
+| Bobine de récupération | Fer | Surcharge | +5 | +1 |  |
+| Condensateur | Cuivre | Surcharge | +1 | +1 |  |
+| Décharge d’arc | Cuivre | Décharge | −6 | −1 | trop faible |
+| Éclair captif | Argent | Décharge | +21 | +6 | TROP FORTE |
+| Noyau instable | Or | Décharge | +25 | +1 |  |
+| Coup d’épaule | Fer | Riposte | +0 | +3 |  |
+| Queue-massue | Cuivre | Riposte | +11 | −1 |  |
+| Bélier d’os | Argent | Riposte | +24 | +3 | TROP FORTE |
+| Retour de marée | Or | Riposte | +33 | +6 | TROP FORTE |
+| Diapason de cristal | Fer | Diapason | −4 | −1 |  |
+| Voix basse | Fer | Unisson | −2 | +1 |  |
+| Chorale des ombres | Cuivre | Unisson | +9 | +1 |  |
+| Cloche des abysses | Argent | Diapason | +7 | +4 |  |
+| Grand unisson | Or | Unisson | +21 | +3 |  |
 
-Moyenne par rareté, à la découverte : Fer −0 · Cuivre +7 · Argent +10 · Or +23. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
+Moyenne par rareté, à la découverte : Fer −0 · Cuivre +6 · Argent +13 · Or +24. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
 
 
 ## Une Strate entière avec le deck de départ
@@ -79,15 +93,14 @@ Une partie entière, jouée par le joueur moyen pendant 45 jours sur 12 parties 
 |---|---|---|
 | −2 | jour 1 (1 exp.) | jour 1 (1 exp.) |
 | −3 | jour 3 (4 exp.) | jour 3 (9 exp.) |
-| −4 | jour 4 (4 exp.) | jour 3 (2 exp.) |
-| −5 | jour 7 (6 exp.) | jour 5 (5 exp.) |
-| −6 | jour 10 (6 exp.) | jour 7 (13 exp.) |
-| −7 | jour 15 (10 exp.) | jour 10 (10 exp.) |
-| −8 | jour 20 (8 exp.) | jour 13 (15 exp.) |
-| −9 | jour 25 (12 exp.) | jour 18 (20 exp.) |
-| −10 | jour 31 (11 exp.) | jour 23 (27 exp.) |
-| −11 | jour 41 (19 exp.) | jour 29 (27 exp.) |
-| −12 | — | jour 35 (33 exp.) |
-| −13 | — | jour 41 (35 exp.) |
+| −4 | jour 4 (2 exp.) | jour 3 (2 exp.) |
+| −5 | jour 6 (4 exp.) | jour 4 (8 exp.) |
+| −6 | jour 13 (10 exp.) | jour 7 (10 exp.) |
+| −7 | jour 18 (12 exp.) | jour 10 (10 exp.) |
+| −8 | jour 21 (5 exp.) | jour 13 (15 exp.) |
+| −9 | jour 25 (9 exp.) | jour 17 (22 exp.) |
+| −10 | jour 32 (14 exp.) | jour 23 (28 exp.) |
+| −11 | — | jour 31 (38 exp.) |
+| −12 | — | jour 37 (31 exp.) |
 
-Victoires au front : Occasionnel 32 % · Assidu 30 %.
+Victoires au front : Occasionnel 23 % · Assidu 19 %.

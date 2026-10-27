@@ -108,8 +108,8 @@ la lignée. Les cartes existantes qui servent déjà une voie sont rappelées en
 |---|---|---|---|---|---|
 | Bobine de récupération | fer | bouclier | 9 | 3 · 2 · 4 | Surcharge +1 |
 | Condensateur | cuivre | attaque | 12 | 5 · 4 · 6 | Surcharge +1 |
-| Décharge d'arc | cuivre | attaque | 14 | 6 · 7 · 5 | Décharge 50 % |
-| Éclair captif | argent | attaque | 18 | 4 · 5 · 7 | Décharge 55 % |
+| Décharge d'arc | cuivre | attaque | 16 | 6 · 7 · 5 | Décharge 50 % |
+| Éclair captif | argent | attaque | 16 | 4 · 5 · 7 | Décharge 55 % |
 | Noyau instable | or | attaque | 38 (lourde) | 7 · 6 · 2 | Décharge 65 % |
 
 ### Génés
@@ -120,8 +120,8 @@ la lignée. Les cartes existantes qui servent déjà une voie sont rappelées en
 |---|---|---|---|---|---|
 | Coup d'épaule | fer | bouclier | 10 | 3 · 2 · 4 | Riposte 50 % |
 | Queue-massue | cuivre | bouclier | 11 | 4 · 5 · 3 | Riposte 60 % |
-| Bélier d'os | argent | bouclier | 22 (lourde) | 5 · 4 · 1 | Riposte 100 % |
-| Retour de marée | or | bouclier | 18 | 2 · 3 · 5 | Riposte 80 % |
+| Bélier d'os | argent | bouclier | 22 (lourde) | 5 · 4 · 1 | Riposte 85 % |
+| Retour de marée | or | bouclier | 18 | 2 · 3 · 5 | Riposte 65 % |
 
 **La Traque (Nuit)** — *déjà là : Yeux nocturnes, Charge (Fissure) ; Morsure, Crocs fossiles, Cœur de meute (Siphon)*
 

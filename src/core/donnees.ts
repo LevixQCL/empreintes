@@ -112,14 +112,14 @@ export const MODULES: ModuleDef[] = [
   // Le Moteur (Liane) : remplir le Flux, puis tout vider d'un coup
   c('bobine-recuperation', 'Bobine de récupération', 'tech', 'fer', 'bouclier', 9, [3, 2, 4], { type: 'flux', v: 1 }),
   c('condensateur', 'Condensateur', 'tech', 'cuivre', 'atk', 12, [5, 4, 6], { type: 'flux', v: 1 }),
-  c('decharge-arc', 'Décharge d’arc', 'tech', 'cuivre', 'atk', 14, [6, 7, 5], { type: 'decharge', part: 0.5 }),
-  c('eclair-captif', 'Éclair captif', 'tech', 'argent', 'atk', 18, [4, 5, 7], { type: 'decharge', part: 0.55 }),
+  c('decharge-arc', 'Décharge d’arc', 'tech', 'cuivre', 'atk', 16, [6, 7, 5], { type: 'decharge', part: 0.5 }),
+  c('eclair-captif', 'Éclair captif', 'tech', 'argent', 'atk', 16, [4, 5, 7], { type: 'decharge', part: 0.55 }),
   c('noyau-instable', 'Noyau instable', 'tech', 'or', 'atk', 38, [7, 6, 2], { type: 'decharge', part: 0.65 }, true),
   // La Carapace (Doran) : parer, puis frapper avec tout le bouclier accumulé
   c('coup-epaule', 'Coup d’épaule', 'bio', 'fer', 'bouclier', 10, [3, 2, 4], { type: 'riposte', part: 0.5 }),
   c('queue-massue', 'Queue-massue', 'bio', 'cuivre', 'bouclier', 11, [4, 5, 3], { type: 'riposte', part: 0.6 }),
-  c('belier-os', 'Bélier d’os', 'bio', 'argent', 'bouclier', 22, [5, 4, 1], { type: 'riposte', part: 1 }, true),
-  c('retour-maree', 'Retour de marée', 'bio', 'or', 'bouclier', 18, [2, 3, 5], { type: 'riposte', part: 0.8 }),
+  c('belier-os', 'Bélier d’os', 'bio', 'argent', 'bouclier', 22, [5, 4, 1], { type: 'riposte', part: 0.85 }, true),
+  c('retour-maree', 'Retour de marée', 'bio', 'or', 'bouclier', 18, [2, 3, 5], { type: 'riposte', part: 0.65 }),
   // Le Chœur (Joss) : répéter une même Fréquence (Écho)
   c('diapason-cristal', 'Diapason de cristal', 'reso', 'fer', 'bouclier', 9, [9, 8, 7], { type: 'diapason' }),
   c('voix-basse', 'Voix basse', 'reso', 'fer', 'atk', 9, [9, 8, 7], { type: 'unisson', part: 1.2 }),
