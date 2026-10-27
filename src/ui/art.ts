@@ -74,6 +74,11 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'queue-massue': 'queue-massue',
   'belier-os': 'belier-os',
   'retour-maree': 'retour-maree',
+  'diapason-cristal': 'diapason-cristal',
+  'voix-basse': 'voix-basse',
+  'chorale-ombres': 'chorale-ombres',
+  'cloche-abysses': 'cloche-abysses',
+  'grand-unisson': 'grand-unisson',
 };
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */
