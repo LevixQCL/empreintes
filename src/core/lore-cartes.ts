@@ -20,9 +20,9 @@ export const LORE_CARTES: Record<string, string> = {
   // ---------- Résonants : cartes de base ----------
   murmure: 'Le Résonant ne parle pas à l’ennemi : il parle à l’empreinte qui l’habite. Quelques mots dans une langue que personne n’a jamais apprise, et le bras levé retombe.',
   echo: 'Une Fréquence s’accorde toujours à celle qui la précède, comme une voix qui reprend la note d’une autre. Les Veilleurs pensent que c’est ainsi que les anciens se parlaient.',
-  souffle: 'L’ombre derrière le Résonant inspire, puis expire. Ce qui en sort n’est pas de l’air. Les murs touchés restent tièdes pendant des jours.',
+  souffle: 'Une vieille corne cerclée d’or, sonnée autrefois dans les salles des Hauts. Ce qui en sort quand un Résonant y souffle n’est pas de l’air. Les murs touchés restent fêlés pendant des jours.',
   apaiser: 'Une main sur l’épaule, une phrase à mi-voix : l’empreinte calme ce que la peur a déréglé. « Ce n’est pas moi qui soigne, dit Véla. C’est elle qui se souvient comment. »',
-  eclat: 'Un fragment de cristal qui brille de plus en plus fort à mesure que la chaîne s’allonge. Les apprentis Lecteurs s’exercent sur des éclats de rebut, et s’éblouissent souvent.',
+  eclat: 'Un miroir de poche des Hauts, brisé d’un seul regard. Chaque éclat renvoie plus de lumière que le précédent, à mesure que la chaîne s’allonge. Les apprentis Lecteurs s’exercent sur des miroirs de rebut, et s’éblouissent souvent.',
 
   // ---------- Augmentés ----------
   'jambes-ressort': 'Le premier modèle sorti des ateliers des districts, bien avant les implants de luxe des Hauts. Bruyant, increvable, réparable avec une clé de 12. Ilka refuse de changer les siennes.',
@@ -49,7 +49,7 @@ export const LORE_CARTES: Record<string, string> = {
   'mue-totale': 'Une fois dans sa vie, le Géné qui la porte quitte tout son corps abîmé, comme un crabe sa carapace. Il en sort neuf, affamé, et un peu étranger à lui-même.',
 
   // ---------- Résonants ----------
-  'eclat-chant': 'Un cristal qui fredonne une mélodie à trois notes, toujours la même, depuis qu’on l’a sorti des Strates. Plus on l’écoute, plus il chante fort. Personne n’a jamais entendu la quatrième note.',
+  'eclat-chant': 'Une boîte à musique remontée des Strates, qui joue une mélodie à trois notes, toujours la même. Plus on l’écoute, plus elle chante fort. Personne n’a jamais entendu la quatrième note.',
   'miroir-brume': 'Un miroir dont le tain est fait de brume figée. L’ennemi qui s’y regarde y voit quelqu’un d’autre que lui, et retient son geste, le temps de comprendre qui.',
   'encre-ancienne': 'Une encre qui ne sèche pas, tirée des parois des salles closes. Les signes qu’on trace avec ne veulent rien dire pour nous, mais ils fendent la pierre en séchant enfin.',
   'meche-or': 'La mèche d’or apparaît en une nuit, chez chaque Résonant, depuis les Sept. Certains la teignent pour qu’on les laisse tranquilles. L’empreinte, elle, ne se teint pas.',
@@ -73,7 +73,7 @@ export const LORE_CARTES: Record<string, string> = {
   'belier-os': 'Le front s’épaissit, la nuque se soude, et tout le corps devient une porte qui avance. Les piliers des Fondations portent encore la marque de ceux qui ont appris à s’en servir.',
   'retour-maree': 'La mer recule, recule encore, et tout le monde croit qu’elle a renoncé. Puis elle revient avec tout ce qu’elle a retenu. Les Génés des quais se battent comme elle.',
   // Le Chœur
-  'diapason-cristal': 'Une lame de cristal qu’on frappe une fois, et qui oblige toutes les empreintes autour d’elle à chanter la même note. Les Résonants l’appellent « mettre la salle d’accord ».',
+  'diapason-cristal': 'Un diapason de verre clair qu’on frappe une fois, et qui oblige toutes les empreintes autour de lui à chanter la même note. Les Résonants l’appellent « mettre la salle d’accord ».',
   'voix-basse': 'Une seule note, tenue très longtemps, si grave qu’on la sent dans les os avant de l’entendre. Seule, elle intrigue. Reprise par d’autres, elle fait céder les murs.',
   'chorale-ombres': 'Les ombres de plusieurs Résonants qui chantent ensemble, même quand leurs propriétaires se taisent. Joss dit que c’est la seule chorale qui ne fait jamais de fausse note.',
   'cloche-abysses': 'Une cloche remontée de la Strate −8, couverte de coquillages qui n’existent plus. Quand elle sonne, chaque empreinte autour d’elle répond sur le même ton.',
