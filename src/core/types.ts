@@ -82,9 +82,9 @@ export interface ModuleDef {
   f: number[];
   /** l'effet de la carte ; un exemplaire ne l'a qu'à partir du cuivre */
   effet?: Effet;
-  /** second effet : seules les cartes du Legs en ont un (une Fréquence libre est toujours le premier) */
+  /** second effet : seules les cartes de l’Héritage en ont un (une Fréquence libre est toujours le premier) */
   effet2?: Effet;
-  /** carte du Legs du district : exclusive, jamais trouvée ailleurs (docs/legs-du-district.md) */
+  /** carte de l’Héritage du district : exclusive, jamais trouvée ailleurs (docs/heritage-du-district.md) */
   legs?: true;
 }
 
@@ -106,7 +106,7 @@ export interface GesteDef {
   /** Prend 2 places dans la chaîne */
   lourd?: boolean;
   effet?: Effet;
-  /** second effet (cartes du Legs) */
+  /** second effet (cartes de l’Héritage) */
   effet2?: Effet;
   /** Place vide : un Porteur combat toujours avec 6 places ; celle qu'on ne remplit pas se pioche et ne se joue pas */
   vide?: boolean;

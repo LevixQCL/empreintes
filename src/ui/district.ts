@@ -700,7 +700,7 @@ function effetsCarte(m: ReturnType<typeof moduleDef>): string {
 }
 
 /**
- * Le Legs du district (27 octobre 2026) : la lettre de l'ancienne directrice, deux questions sans un chiffre, puis la vierge reçue.
+ * L’Héritage du district (27 octobre 2026) : la lettre de l'ancienne directrice, deux questions sans un chiffre, puis la vierge reçue.
  * Le choix est définitif ; la carte reste scellée jusqu'à un Porteur de niveau 10 (la nacre), puis s'éveille avec lui.
  */
 function fenetreLegs(e: EcranDistrict): string {
@@ -715,18 +715,18 @@ function fenetreLegs(e: EcranDistrict): string {
       ? { id: CLE_LEGS.id, nom: CLE_LEGS.nom, lignee: 'tech', rarete: 'nacre', type: CLE_LEGS.type, v: CLE_LEGS.v, f: [CLE_LEGS.f], effet: CLE_LEGS.effet!, effet2: CLE_LEGS.effet2!, legs: true }
       : moduleDef(carteId(j.legs, 'nacre'));
     const qui = cle ? 'un Porteur de ton escouade' : `un Porteur ${NOM_LIGNEE[m.lignee].toLowerCase()}`;
-    corps = `<span class="surtitre">LE LEGS DU DISTRICT</span><h2 id="legs-titre">${echap(m.nom)}</h2>`
+    corps = `<span class="surtitre">L’HÉRITAGE DU DISTRICT</span><h2 id="legs-titre">${echap(m.nom)}</h2>`
       + `<div class="legs-carte">${faceCarte(m, COLLECTION.niveauDepart.nacre, 1, cle ? { origine: ORIGINE_PAQUETAGE['cle-legs']!.batiment } : {})}</div>`
       + (loreCarte(m.id) ? `<blockquote class="lore-carte">${echap(loreCarte(m.id)!)}</blockquote>` : cle ? `<blockquote class="lore-carte">${echap(ORIGINE_PAQUETAGE['cle-legs']!.texte)}</blockquote>` : '')
       + `<p class="legs-sceau">${ICO.cristal}<span>Scellée : elle se portera avec ${qui} de <b>niveau ${NIVEAU_METAL.nacre}</b>${cle ? ', et rejoindra alors le paquetage de chaque escouade' : ''}. Elle s’éveillera ensuite avec lui, aux niveaux ${EVEIL_LEGS.map((x) => x.porteur).join(' et ')}.</span></p>`
       + `<button type="button" class="btn prim large" data-action="legs-ok">Je la garde</button>`;
   } else if (e.legsLignee) {
     const v = L.voies[e.legsLignee];
-    corps = `<span class="surtitre">LE LEGS DU DISTRICT · 2 / 2</span><h2 id="legs-titre">${echap(v.question)}</h2><div class="options-decision">`
+    corps = `<span class="surtitre">L’HÉRITAGE DU DISTRICT · 2 / 2</span><h2 id="legs-titre">${echap(v.question)}</h2><div class="options-decision">`
       + v.options.map((o) => option('legs-choisir', o.id, moduleDef(o.id).nom, o.phrase)).join('')
       + `</div><div class="ligne-btn"><button type="button" class="btn sec" data-action="legs-retour">Revenir à la première question</button></div>`;
   } else {
-    corps = `<span class="surtitre">LE LEGS DU DISTRICT · 1 / 2</span><h2 id="legs-titre">${echap(L.titre)}</h2><p>${echap(L.texte)}</p><h3 class="legs-question">${echap(L.question)}</h3><div class="options-decision">`
+    corps = `<span class="surtitre">L’HÉRITAGE DU DISTRICT · 1 / 2</span><h2 id="legs-titre">${echap(L.titre)}</h2><p>${echap(L.texte)}</p><h3 class="legs-question">${echap(L.question)}</h3><div class="options-decision">`
       + L.lignees.map((o) => option(o.id === 'cle' ? 'legs-choisir' : 'legs-lignee', o.id, o.nom, o.phrase)).join('') + `</div>`;
   }
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="legs-titre"><div class="fenetre decision legs">${corps}`
@@ -779,7 +779,7 @@ export function feuilleCarte(e: EcranDistrict): string {
     }).join('') + `</div></section>`;
   // progression : où on en est, et ce qui manque, en clair
   h += `<section class="bloc fc-prog"><h3 class="titre-bloc">${ICO.monter}Progression</h3>`;
-  if (m.legs) h += `<p class="fc-etat or">Une vierge du Legs du district : unique, elle ne monte pas avec des doublons. Elle s’éveille avec le Porteur qui la porte : ${EVEIL_LEGS.map((x) => `niveau ${x.niveau} avec un Porteur de niveau ${x.porteur}`).join(', ')}.</p>`;
+  if (m.legs) h += `<p class="fc-etat or">Une vierge de l’Héritage du district : unique, elle ne monte pas avec des doublons. Elle s’éveille avec le Porteur qui la porte : ${EVEIL_LEGS.map((x) => `niveau ${x.niveau} avec un Porteur de niveau ${x.porteur}`).join(', ')}.</p>`;
   else if (requis === null) h += `<p class="fc-etat or">Niveau maximum atteint.</p>`;
   else {
     const pret = c.doublons >= requis;
@@ -901,7 +901,7 @@ function choixTri(tri: TriCartes): string {
 
 export function htmlCartes(e: EcranDistrict): string {
   const j = e.j;
-  // le Legs n'entre pas dans le compte : chacun n'en reçoit qu'une sur dix
+  // l’Héritage n'entre pas dans le compte : chacun n'en reçoit qu'une sur dix
   const trouvees = MODULES_TIRABLES.filter((m) => exemplaires(j, m.id).length).length;
   const toutes = MODULES.flatMap((m) => exemplaires(j, m.id));
   const peutMonter = (cle: string) => {
@@ -933,7 +933,7 @@ export function htmlCartes(e: EcranDistrict): string {
     const pret = peutMonter(cle);
     return `<button type="button" class="carte-tuile cl-carte${pret ? ' pret' : ''}" data-action="carte" data-id="${cle}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, niveau ${c.niveau}${porte ? `, portée par ${echap(porteurDef(porte).nom)}` : ', libre'}${pret ? ', peut monter' : ''}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
       + `<span class="cl-bas"><span class="cl-porteur">${porte ? `${avatar(porte, 20)}<span>${echap(porteurDef(porte).nom)}</span>` : '<span class="cl-libre">Libre</span>'}</span>`
-      + (m.legs ? `<span class="cl-max cl-legs">Legs</span>` : requis === null ? `<span class="cl-max">Niveau max</span>` : `<span class="cl-doublons" title="Doublons pour le niveau ${c.niveau + 1}"><span class="mini-jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span>${c.doublons}/${requis}</span></span>`)
+      + (m.legs ? `<span class="cl-max cl-legs">Héritage</span>` : requis === null ? `<span class="cl-max">Niveau max</span>` : `<span class="cl-doublons" title="Doublons pour le niveau ${c.niveau + 1}"><span class="mini-jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span>${c.doublons}/${requis}</span></span>`)
       + `</span>${pret ? `<span class="cl-monter">${ICO.monter}Peut monter</span>` : ''}${e.j.vus.cartes.includes(cle) ? '' : `<span class="ruban-nouveau">Nouvelle</span>`}</button>`;
   };
 

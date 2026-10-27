@@ -53,7 +53,7 @@ export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string
 /** id, nom, lignée, métal d'origine, action, force (dans le métal d'origine), Fréquences (de la principale à la plus rare), effet, lourde */
 const c = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet?: Effet, lourd = false): ModuleDef =>
   ({ id, nom, lignee, rarete, type, v, f, ...(effet ? { effet } : {}), ...(lourd ? { lourd: true } : {}) });
-/** une carte du Legs : en nacre, deux effets */
+/** une carte de l’Héritage : en nacre, deux effets */
 const legs = (id: string, nom: string, lignee: Lignee, type: TypeGeste, v: number, f: number[], effet: Effet, effet2: Effet, lourd = false): ModuleDef =>
   ({ ...c(id, nom, lignee, 'nacre', type, v, f, effet, lourd), effet2, legs: true });
 
@@ -129,7 +129,7 @@ export const MODULES: ModuleDef[] = [
   c('chorale-ombres', 'Chorale des ombres', 'reso', 'cuivre', 'atk', 10, [8, 9, 7], { type: 'unisson', part: 1.3 }),
   c('cloche-abysses', 'Cloche des abysses', 'reso', 'argent', 'bouclier', 15, [9, 7, 8], { type: 'diapason' }),
   c('grand-unisson', 'Grand unisson', 'reso', 'or', 'atk', 18, [9, 8, 6], { type: 'unisson', part: 1.4 }),
-  // ---------- Le Legs du district (27 octobre 2026, docs/legs-du-district.md) ----------
+  // ---------- L’Héritage du district (27 octobre 2026, docs/heritage-du-district.md) ----------
   // Dix vierges cachées par l'ancienne directrice ; chaque joueur n'en reçoit qu'une (lettre de la directrice, LETTRE_LEGS).
   // Exclusives (jamais trouvées ailleurs : MODULES_TIRABLES), en nacre seulement, les seules à deux effets. La nacre renforce
   // leurs parts (×1,5) comme pour toute carte : les parts ci-dessous sont avant ce renfort. Une Fréquence libre est le premier effet.
@@ -144,14 +144,14 @@ export const MODULES: ModuleDef[] = [
   legs('voix-quartier', 'Voix du quartier', 'reso', 'atk', 14, [9, 8, 7], { type: 'diapason' }, { type: 'unisson', part: 0.7 }),
 ];
 
-/** Le Porteur dont chaque carte du Legs est la pièce maîtresse de la voie (il prête son portrait en attendant l'illustration) */
+/** Le Porteur dont chaque carte de l’Héritage est la pièce maîtresse de la voie (il prête son portrait en attendant l'illustration) */
 export const PORTEUR_LEGS: Record<string, string> = {
   'foulee-directrice': 'ilka', 'bras-fonderie': 'sasha', 'coeur-glaciere': 'liane',
   'carapace-fondations': 'doran', 'oeil-grande-nuit': 'nuit', 'premiere-mue': 'kessa',
   'lanterne-lecture': 'vela', 'sceau-orseve': 'aurel', 'voix-quartier': 'joss',
 };
 
-/** Les cartes qu'on peut trouver, acheter ou fabriquer : toutes, sauf celles du Legs */
+/** Les cartes qu'on peut trouver, acheter ou fabriquer : toutes, sauf celles de l’Héritage */
 export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs);
 
 /**
@@ -211,18 +211,18 @@ const special = (id: string, nom: string, f: number, type: TypeGeste, v: number,
   ({ id, carte: id, porteur: null, nom, f, type, v, ...(effet ? { effet } : {}) });
 export const GESTES_SPECIAUX: GesteDef[] = [special('stimulant', 'Stimulant', 1, 'soin', 5, { type: 'vague' }), special('repli', 'Repli', 9, 'bouclier', 10)];
 /**
- * La Clé du Legs (27 octobre 2026) : la dixième vierge, pour le directeur qui répond « tout le monde à la fois » à la lettre.
+ * La Clé de l’Héritage (27 octobre 2026) : la dixième vierge, pour le directeur qui répond « tout le monde à la fois » à la lettre.
  * Elle rejoint le paquetage (jouée par personne, elle reste quand un Porteur tombe) dès qu'un Porteur de l'escouade a le niveau
- * de la nacre, et grandit avec le plus avancé d'entre eux (comme une carte du Legs : niveaux 8, 9 et 10, +5 % par niveau).
+ * de la nacre, et grandit avec le plus avancé d'entre eux (comme une carte de l’Héritage : niveaux 8, 9 et 10, +5 % par niveau).
  */
-export const CLE_LEGS: GesteDef = special('cle-legs', 'Clé du Legs', 1, 'bouclier', 18, { type: 'accord' });
+export const CLE_LEGS: GesteDef = special('cle-legs', 'Clé de l’Héritage', 1, 'bouclier', 18, { type: 'accord' });
 CLE_LEGS.effet2 = { type: 'rempart', part: 0.75 };
 
 /** D'où vient chaque carte du paquetage : le bâtiment qui la fournit et ce qu'elle est */
 export const ORIGINE_PAQUETAGE: Record<string, { batiment: string; texte: string }> = {
   stimulant: { batiment: 'Clinique', texte: 'Une seringue de lumière verte, préparée par la Clinique pour chaque escouade.' },
   repli: { batiment: 'Tour du Noyau', texte: 'Une balise de la Tour du Noyau : une porte blindée s’ouvre, l’escouade s’y abrite.' },
-  'cle-legs': { batiment: 'Legs du district', texte: 'La dixième vierge de l’ancienne directrice : une clé de nacre qui ouvre toutes les portes, et les tient fermées derrière l’escouade.' },
+  'cle-legs': { batiment: 'Héritage du district', texte: 'La dixième vierge de l’ancienne directrice : une clé de nacre qui ouvre toutes les portes, et les tient fermées derrière l’escouade.' },
 };
 
 // ---------- Bâtiments ----------

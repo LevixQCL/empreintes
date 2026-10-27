@@ -79,7 +79,7 @@ export const LORE_CARTES: Record<string, string> = {
   'cloche-abysses': 'Une cloche remontée de la Strate −8, couverte de coquillages qui n’existent plus. Quand elle sonne, chaque empreinte autour d’elle répond sur le même ton.',
   'grand-unisson': 'Le quartier entier, une nuit, a chanté la même note pour veiller un des siens. Les Veilleurs l’ont accordée dans un carillon doré, dont chaque tube porte une voix. Il frappe d’autant plus fort qu’on est nombreux à le faire sonner.',
 
-  // ---------- Le Legs du district (27 octobre 2026) : la directrice parle, dans sa lettre ----------
+  // ---------- L’Héritage du district (27 octobre 2026) : la directrice parle, dans sa lettre ----------
   'foulee-directrice': '« Je n’ai jamais été la plus forte. J’étais toujours la première arrivée. Ces jambes-là m’ont portée à travers chaque Strate ouverte de ce district. Cours devant, directeur : les autres suivront. »',
   'bras-fonderie': '« Ce bras a coulé les premiers piliers du district, du temps où on bâtissait à la main sur l’eau. Il ne sait rien faire de délicat. Il n’en a jamais eu besoin. »',
   'coeur-glaciere': '« Un cœur dessiné par la Glacière elle-même, avant qu’on comprenne ce qu’elle était. Il garde tout, et rend tout d’un coup. Ne le laisse jamais s’éteindre. »',

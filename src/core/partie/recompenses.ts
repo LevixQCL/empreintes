@@ -183,7 +183,7 @@ export function quitterPostes(j: Jeu, escouade: string[]): void {
 
 /** Appelé quand le combat en cours vient de se terminer */
 
-// ---------- Le Legs du district (27 octobre 2026, docs/legs-du-district.md) ----------
+// ---------- L’Héritage du district (27 octobre 2026, docs/heritage-du-district.md) ----------
 // L'ancienne directrice a caché dix vierges (cartes en nacre) sous la Tour du Noyau. Chaque joueur n'en reçoit qu'une, par la
 // lettre qu'elle a laissée : deux questions sur le directeur qu'il veut être, sans un chiffre. Le choix est définitif.
 // Comme toute nacre, la carte se porte à partir d'un Porteur de niveau 10 (NIVEAU_METAL), puis s'éveille avec lui.
@@ -218,32 +218,32 @@ export const LETTRE_LEGS = {
   },
 } as const;
 
-/** La lettre attend le joueur : après la chambre scellée, au district, tant qu'il n'a pas reçu son Legs */
+/** La lettre attend le joueur : après la chambre scellée, au district, tant qu'il n'a pas reçu son Héritage */
 export const legsEnAttente = (j: Jeu) => !!j.chambre && !j.expedition && !j.legs;
 
-/** Le joueur répond à la lettre : sa carte du Legs (ou la Clé) lui revient, scellée jusqu'à un Porteur de niveau 10 */
+/** Le joueur répond à la lettre : sa carte de l’Héritage (ou la Clé) lui revient, scellée jusqu'à un Porteur de niveau 10 */
 export function choisirLegs(j: Jeu, id: string): Resultat {
   if (!j.chambre) return non('Ouvre d’abord la chambre scellée.');
-  if (j.legs) return non('Tu as déjà reçu ton Legs.');
+  if (j.legs) return non('Tu as déjà reçu ton Héritage.');
   if (id === 'cle') {
     j.legs = 'cle';
-    log(j, `Le Legs du district : la Clé du Legs rejoint le paquetage de tes escouades (avec un Porteur de niveau ${NIVEAU_METAL.nacre}).`);
+    log(j, `L’Héritage du district : la Clé de l’Héritage rejoint le paquetage de tes escouades (avec un Porteur de niveau ${NIVEAU_METAL.nacre}).`);
     return { ok: true };
   }
   const m = MODULES.find((x) => x.id === id && x.legs);
-  if (!m) return non('Cette carte ne fait pas partie du Legs.');
+  if (!m) return non('Cette carte ne fait pas partie de l’Héritage.');
   j.legs = id;
   ajouterCarte(j, carteId(id, 'nacre'));
-  log(j, `Le Legs du district : ${m.nom} est à toi. Elle se portera avec un Porteur ${NOMS_LIGNEE[m.lignee].nom.toLowerCase()} de niveau ${NIVEAU_METAL.nacre}.`);
+  log(j, `L’Héritage du district : ${m.nom} est à toi. Elle se portera avec un Porteur ${NOMS_LIGNEE[m.lignee].nom.toLowerCase()} de niveau ${NIVEAU_METAL.nacre}.`);
   return { ok: true };
 }
 
-/** L'éveil : la carte du Legs passe au niveau 9 avec un Porteur de niveau 13, au niveau 10 avec un Porteur de niveau 16 */
+/** L'éveil : la carte de l’Héritage passe au niveau 9 avec un Porteur de niveau 13, au niveau 10 avec un Porteur de niveau 16 */
 export const EVEIL_LEGS: { porteur: number; niveau: number }[] = [{ porteur: 13, niveau: 9 }, { porteur: 16, niveau: 10 }];
 export const niveauLegsPour = (niveauDuPorteur: number) =>
   EVEIL_LEGS.reduce((n, e) => (niveauDuPorteur >= e.porteur ? Math.max(n, e.niveau) : n), COLLECTION.niveauDepart.nacre);
 
-/** À chaque tick : la carte du Legs s'éveille avec le Porteur qui la porte (elle ne redescend jamais) */
+/** À chaque tick : la carte de l’Héritage s'éveille avec le Porteur qui la porte (elle ne redescend jamais) */
 export function eveillerLegs(j: Jeu) {
   if (!j.legs || j.legs === 'cle') return;
   const cle = carteId(j.legs, 'nacre');

@@ -27,7 +27,7 @@ j.choix = [];
 // la campagne vécue jusqu'au gardien de −4 : la scène d'ouverture de −5 attend au retour sur l'archipel
 j.scenes = SCENES.slice(0, SCENES.findIndex((s) => s.id === 'entree-5')).map((s) => s.id);
 const env = (data: unknown) => JSON.stringify({ data, updatedAt: now });
-// la lettre du Legs attend (lettre.json), puis le Legs reçu : la Voix du quartier (pour que la lettre ne couvre pas les autres écrans)
+// la lettre de l’Héritage attend (lettre.json), puis l’Héritage reçu : la Voix du quartier (pour que la lettre ne couvre pas les autres écrans)
 writeFileSync(`${dossier}/lettre.json`, env(j));
 J.choisirLegs(j, 'voix-quartier');
 writeFileSync(`${dossier}/district.json`, env(j));

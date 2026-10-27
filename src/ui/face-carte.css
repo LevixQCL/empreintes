@@ -124,8 +124,8 @@
 .fcp-puces .fc-lignee{position:relative;padding-left:3.4cqw;color:color-mix(in srgb,var(--c) 65%,white)}
 .fcp-puces .fc-lignee::before{content:"";position:absolute;left:0;top:50%;width:1cqw;height:1cqw;min-width:3px;min-height:3px;margin-top:-.5cqw;transform:rotate(45deg);background:currentColor;opacity:.8}
 
-/* Une carte du Legs (27 octobre 2026) : la seule à deux effets ; un liseré d'or et de nacre qui respire, et le sceau « Legs » */
+/* Une carte de l’Héritage (27 octobre 2026) : la seule à deux effets ; un liseré d'or et de nacre qui respire, et le sceau « Héritage » */
 .fc-legs{box-shadow:0 0 0 1.5px rgba(232,206,140,.9),0 0 18px 2px rgba(240,214,160,.45),0 0 42px 6px rgba(200,170,255,.22);animation:legs-souffle 4.5s ease-in-out infinite}
-.fc-legs::after{content:"LEGS";position:absolute;z-index:6;top:1.6cqw;left:50%;transform:translateX(-50%);padding:.6cqw 2.6cqw;font-family:var(--mono);font-size:max(9px,4.2cqw);letter-spacing:.18em;color:#2A1C05;background:linear-gradient(135deg,#F7E7B8,#D8B465 45%,#F2E6FF);clip-path:polygon(6% 0,94% 0,100% 50%,94% 100%,6% 100%,0 50%);pointer-events:none}
+.fc-legs::after{content:"HÉRITAGE";position:absolute;z-index:6;top:1.6cqw;left:50%;transform:translateX(-50%);padding:.6cqw 2.6cqw;font-family:var(--mono);font-size:max(9px,4.2cqw);letter-spacing:.1em;color:#2A1C05;background:linear-gradient(135deg,#F7E7B8,#D8B465 45%,#F2E6FF);clip-path:polygon(6% 0,94% 0,100% 50%,94% 100%,6% 100%,0 50%);pointer-events:none}
 @keyframes legs-souffle{50%{box-shadow:0 0 0 1.5px rgba(242,222,170,1),0 0 26px 4px rgba(244,222,170,.6),0 0 54px 10px rgba(210,180,255,.3)}}
 @media (prefers-reduced-motion:reduce){.fc-legs{animation:none}}

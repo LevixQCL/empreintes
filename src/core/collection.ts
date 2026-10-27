@@ -135,7 +135,7 @@ export function ajouterCarte(e: EtatCollection, id: string): boolean {
 
 /** Doublons nécessaires pour le niveau suivant (null au niveau max) */
 export function doublonsRequis(id: string, niveau: number): number | null {
-  // une carte du Legs est unique : elle ne monte pas avec des doublons, elle s'éveille avec son Porteur (eveillerLegs)
+  // une carte de l’Héritage est unique : elle ne monte pas avec des doublons, elle s'éveille avec son Porteur (eveillerLegs)
   if (moduleDef(id).legs) return null;
   const r = moduleDef(id).rarete;
   if (niveau >= COLLECTION.niveauMax) return null;

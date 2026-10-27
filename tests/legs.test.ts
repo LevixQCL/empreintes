@@ -5,12 +5,12 @@ import { MODULES, MODULES_TIRABLES, PORTEURS, PORTEUR_LEGS, moduleDef, porteurDe
 import { tirerCarte, tirerTrouvaille } from '../src/core/collection';
 import type { Geste } from '../src/core/types';
 
-// Le Legs du district (27 octobre 2026, docs/legs-du-district.md)
+// L’Héritage du district (27 octobre 2026, docs/heritage-du-district.md)
 
 /** XP d'un Porteur pour un niveau donné (xpPourNiveau : 12 × n^1,6) */
 const xpPour = (niveau: number) => Array.from({ length: niveau - 1 }, (_, i) => Math.round(12 * (i + 1) ** 1.6)).reduce((a, b) => a + b, 0);
 
-describe('Le Legs du district', () => {
+describe('L’Héritage du district', () => {
   it('dix vierges, toutes en nacre, à deux effets, et la lettre en propose chacune une fois', () => {
     const legs = MODULES.filter((m) => m.legs);
     expect(legs).toHaveLength(9);
@@ -74,7 +74,7 @@ describe('Le Legs du district', () => {
     expect(s.bouclier).toBe(15);
   });
 
-  it('la Clé du Legs rejoint le paquetage quand un Porteur de l’escouade a le niveau 10', () => {
+  it('la Clé de l’Héritage rejoint le paquetage quand un Porteur de l’escouade a le niveau 10', () => {
     const j = nouveauJeu(0);
     j.chambre = true;
     expect(choisirLegs(j, 'cle').ok).toBe(true);

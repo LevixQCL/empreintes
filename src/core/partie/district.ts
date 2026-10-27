@@ -177,7 +177,7 @@ export function poster(j: Jeu, id: string, b: Poste | null): Resultat {
 /** La Forge refabrique un exemplaire d'une carte déjà trouvée : un doublon de plus */
 export function fabriquer(j: Jeu, moduleId: string, now: number): Resultat {
   if (!j.collection[moduleId]) return non('On ne refabrique qu’une carte déjà trouvée.');
-  if (moduleDef(moduleId).legs) return non('Une carte du Legs est unique : la Forge ne sait pas la refaire.');
+  if (moduleDef(moduleId).legs) return non('Une carte de l’Héritage est unique : la Forge ne sait pas la refaire.');
   if (j.forge) return non('La Forge est déjà occupée.');
   if (!posteDe(j, 'forge')) return non('Il faut un Porteur au travail à la Forge.');
   const c = coutRefabrication(moduleId);

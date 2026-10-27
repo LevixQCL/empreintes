@@ -44,7 +44,7 @@ export function texteEffet(e: Effet): string {
 
 export const libelleEffet = (e: Effet) => `${NOMS_EFFET[e.type]} : ${texteEffet(e)}`;
 
-/** Les effets d'une carte (deux pour une carte du Legs) */
+/** Les effets d'une carte (deux pour une carte de l’Héritage) */
 export const effetsDe = (c: { effet?: Effet; effet2?: Effet }): Effet[] => [c.effet, c.effet2].filter((e): e is Effet => !!e);
 /** Leurs noms, à la suite (« Accord · Désarmer ») */
 export const nomsEffets = (c: { effet?: Effet; effet2?: Effet }) => effetsDe(c).map((e) => NOMS_EFFET[e.type]).join(' · ');

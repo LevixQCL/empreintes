@@ -30,7 +30,7 @@ export const deckEscouade = (j: Jeu, escouade: string[]): GesteDef[] => {
   return [...escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX, ...(cle ? [cle] : [])];
 };
 
-/** La Clé du Legs, si le joueur l'a choisie et qu'un Porteur de l'escouade a le niveau de la nacre ; sa force suit le plus avancé */
+/** La Clé de l’Héritage, si le joueur l'a choisie et qu'un Porteur de l'escouade a le niveau de la nacre ; sa force suit le plus avancé */
 export function cleDuLegs(j: Jeu, escouade: string[]): GesteDef | null {
   if (j.legs !== 'cle' || !escouade.length) return null;
   const n = Math.max(...escouade.map((id) => niveauPorteur(j, id).niveau));

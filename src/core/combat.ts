@@ -443,7 +443,7 @@ function plusBlesse(s: CombatEtat): PorteurEtat | undefined {
 
 function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Evenement[] {
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'Spécial';
-  // une carte du Legs a deux effets : chacun se lit par son type
+  // une carte de l’Héritage a deux effets : chacun se lit par son type
   const de = <T extends Effet['type']>(t: T) => [g.effet, g.effet2].find((e): e is Extract<Effet, { type: T }> => e?.type === t);
   const evs: Evenement[] = [];
   // Crescendo : plus la carte arrive tard dans la chaîne, plus elle frappe fort
@@ -536,7 +536,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
     else log(s, `${nomP} · ${g.nom} : ${morceaux.join(', ')} PV.`);
   }
 
-  // effets qui ne dépendent pas du type de la carte (les deux d'une carte du Legs, dans l'ordre)
+  // effets qui ne dépendent pas du type de la carte (les deux d'une carte de l’Héritage, dans l'ordre)
   for (const ef of [g.effet, g.effet2]) {
     if (ef?.type === 'flux') {
       const avant = s.flux;
