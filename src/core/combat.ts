@@ -5,7 +5,8 @@ import { CONDITIONS, DECK_DEPART, FAVEUR_CONDITION, NOMS_LIGNEE, ZONES, ennemiDe
 import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, places } from './regles';
 import { tireur } from './rng';
 import type {
-  BonusMarques, CibleRegle, CombatEtat, Effet, EnnemiEtat, Evenement, Geste, GesteDef, Intention, Lignee, LigneeGeste, Pas, PorteurEtat, Trait,
+  BonusMarques, CalculHisto, CarteHisto, CibleRegle, CombatEtat, Effet, EnnemiEtat, Evenement, Geste, GesteDef, Intention, Lignee, LigneeGeste,
+  LigneHisto, Pas, PorteurEtat, TourHisto, Trait,
 } from './types';
 
 export interface Resultat {
@@ -14,6 +15,19 @@ export interface Resultat {
 }
 
 const clone = <T>(x: T): T => structuredClone(x);
+/**
+ * Une photo de l'état pour l'animation : le journal complet n'est pas recopié à chaque pas (il ne fait que grandir,
+ * et l'écran ne le lit qu'entre deux tours) ; la photo partage celui de l'état.
+ */
+function photo(s: CombatEtat): CombatEtat {
+  const h = s.historique;
+  if (!h) return clone(s);
+  delete s.historique;
+  const c = clone(s);
+  s.historique = h;
+  c.historique = h;
+  return c;
+}
 
 export function creerCombat(opts: {
   porteurs: PorteurEtat[];
@@ -67,7 +81,8 @@ export function creerCombat(opts: {
   };
   const deck: Geste[] = (opts.deck ?? DECK_DEPART).map((g, k) => ({ ...g, uid: `g${k}` }));
   s.pioche = opts.ordonne ? deck.slice().reverse() : tireur(s).melanger(deck);
-  log(s, groupe.length > 1 ? `${groupe.map((id) => ennemiDef(id).nom).join(', ')} : un groupe surgit dans la Strate.` : `Un ${e.nom} surgit dans la Strate.`);
+  s.historique = [];
+  log(s, groupe.length > 1 ? `${groupe.map((id) => ennemiDef(id).nom).join(', ')} : un groupe surgit dans la Strate.` : `Un ${e.nom} surgit dans la Strate.`, { camp: 'neutre' });
   const b = opts.bonus;
   if (b?.places) s.capaBonus = b.places;
   if (b?.bouclier) s.bouclier = b.bouclier;
@@ -184,7 +199,7 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
   if (places(g) > placesLibres(s)) {
     const debut = g.lourd ? `${g.nom} prend 2 places, il n’en reste ${placesLibres(s)}.` : 'La chaîne est pleine.';
     const fin = s.flux > 0 && capacite(s) < REGLES.capaciteMax ? ' Retire une carte ou dépense 1 Flux (+1 place).' : ' Retire une carte.';
-    log(s, debut + fin);
+    log(s, debut + fin, false);
     return { ok: false, message: debut + fin };
   }
   s.main = s.main.filter((x) => x !== g);
@@ -282,7 +297,7 @@ export function allonger(s: CombatEtat): Resultat {
   if (s.flux < 1 || capacite(s) >= REGLES.capaciteMax) return { ok: false };
   s.flux--;
   s.capaBonus++;
-  log(s, 'Flux dépensé : la chaîne gagne une place ce tour-ci.');
+  log(s, 'Flux dépensé : la chaîne gagne une place ce tour-ci.', { sorte: 'flux' });
   return { ok: true };
 }
 
@@ -296,7 +311,7 @@ export function repiocher(s: CombatEtat): Resultat {
   s.main = [];
   s.chaine = [];
   piocher(s);
-  log(s, 'Flux dépensé : nouvelle main.');
+  log(s, 'Flux dépensé : nouvelle main (la main et la chaîne posée partent à la défausse).', { sorte: 'flux' });
   return { ok: true };
 }
 
@@ -308,7 +323,8 @@ export function repiocher(s: CombatEtat): Resultat {
 export function apercuChaine(s: CombatEtat): { degats: number; absorbe: number; bouclier: number; soin: number; vaincus: number } {
   const r = { degats: 0, absorbe: 0, bouclier: 0, soin: 0, vaincus: 0 };
   if (s.issue !== 'en-cours' || !s.chaine.length) return r;
-  const copie = clone(s);
+  const copie = photo(s);
+  delete copie.historique;
   const debout = ennemisDebout(copie).length;
   lancer(copie, {
     apercu: (ev) => {
@@ -327,7 +343,8 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   const pas: Pas[] = [];
   if (s.issue !== 'en-cours' || !s.chaine.length) return pas;
   // en mode silencieux (robot d'équilibrage), on ne garde pas les étapes d'animation
-  const emettre = opts.apercu ?? (opts.silencieux ? () => {} : (ev: Evenement) => { pas.push({ ev, etat: clone(s) }); });
+  const emettre = opts.apercu ?? (opts.silencieux ? () => {} : (ev: Evenement) => { pas.push({ ev, etat: photo(s) }); });
+  CAMP = 'joueur';
 
   const analyse = analyserChaine(s.chaine);
   // Écho ancien : une suite de 4 résonne comme une suite de 5
@@ -335,17 +352,19 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   // Dissonance : l'ennemi a brouillé les Fréquences, la suite ne compte pas ce tour-ci
   const brouille = s.dissonance || s.sansResonance;
   const a = brouille ? { ...brut, suite: 0, mult: 1 } : brut;
+  const freqs = frequencesEffectives(s.chaine);
+  noterChaine(s, freqs, a.suite >= 3 ? a : undefined, !!brouille && brut.suite >= 3, analyse.echo);
   if (brouille && brut.suite >= 3) {
-    log(s, 'Fréquences brouillées : pas de Résonance ce tour-ci.');
+    log(s, 'Fréquences brouillées : pas de Résonance ce tour-ci.', { sorte: 'effet' });
     emettre({ kind: 'effet', cible: 'escouade', texte: 'Brouillé' });
   }
   s.dissonance = false;
   if (a.suite >= 3) {
-    log(s, `Résonance ! Suite de ${a.suite} : effets +${Math.round((a.mult - 1) * 100)} %.`);
+    log(s, `Résonance ! Suite de ${a.suite} : effets +${Math.round((a.mult - 1) * 100)} %.`, { sorte: 'effet' });
     emettre({ kind: 'resonance', suite: a.suite, mult: a.mult });
   }
-  const freqs = frequencesEffectives(s.chaine);
   for (const [i, g] of s.chaine.entries()) {
+    RANG = i;
     emettre({ kind: 'carte', rang: i, total: s.chaine.length, lignee: ligneeGeste(g), type: g.type, porteur: g.porteur, suite: a.suite, ...(g.effet ? { effet: g.effet.type } : {}) });
     for (const ev of appliquer(s, g, a.mult, i, a.suite)) emettre(ev);
     if (s.ennemi.pv > 0 && freqs[i] === s.ennemi.felure && !s.ennemi.felureBrisee) briser(s, s.ennemi, emettre, a.suite >= 3);
@@ -359,9 +378,10 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
       } else break;
     }
   }
+  RANG = undefined;
   if (a.echo) {
     s.bouclier += REGLES.bouclierEcho;
-    log(s, `Écho : trois Fréquences identiques, bouclier d’escouade +${REGLES.bouclierEcho}.`);
+    log(s, `Écho : trois Fréquences identiques, bouclier d’escouade +${REGLES.bouclierEcho}.`, { sorte: 'protection', v: REGLES.bouclierEcho });
     emettre({ kind: 'echo' });
   }
   const gain = (a.suite >= 3 ? 1 : 0) + (a.echo ? 1 : 0);
@@ -369,12 +389,13 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     const avant = s.flux;
     s.flux = Math.min(REGLES.fluxMax, s.flux + gain);
     if (s.flux > avant) {
-      log(s, `La Résonance remplit le Flux (+${s.flux - avant}).`);
+      log(s, `La Résonance remplit le Flux (+${s.flux - avant}).`, { sorte: 'flux' });
       emettre({ kind: 'flux', gain: s.flux - avant });
     }
   }
   // l'aperçu s'arrête là : seule la chaîne compte, pas la riposte
   if (opts.apercu) return pas;
+  CAMP = 'neutre';
   s.debride = false;
   for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
   s.defausse.push(...s.chaine);
@@ -397,19 +418,75 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
 
   if (!ennemisDebout(s).length) {
     s.issue = 'victoire';
+    log(s, ennemisVaincus(s), { camp: 'neutre', sorte: 'info' });
     emettre({ kind: 'fin', issue: 'victoire' });
+    CAMP = 'joueur';
     return pas;
   }
   tourEnnemi(s, emettre);
+  CAMP = 'joueur';
   return pas;
 }
 
 // ---------- Interne ----------
 
-function log(s: CombatEtat, t: string) {
+/**
+ * Une ligne du journal. La dernière s'affiche sous la main ; toutes vont aussi dans le journal complet du tour
+ * (sauf `false` : un message passager, comme « la chaîne est pleine »).
+ */
+function log(s: CombatEtat, t: string, info: Partial<LigneHisto> | false = {}) {
   s.journal.unshift(t);
   s.journal = s.journal.slice(0, 6);
+  if (info === false) return;
+  const l: LigneHisto = { camp: CAMP, sorte: 'info', ...info, texte: t };
+  if (RANG !== undefined && l.camp === 'joueur' && l.rang === undefined) l.rang = RANG;
+  tourHisto(s).lignes.push(l);
 }
+
+// ---------- Le journal complet (27 octobre 2026) ----------
+// Bryan : pouvoir revoir les cartes jouées et comprendre les dégâts subis et reçus. Le moteur note chaque tour :
+// la chaîne lancée, chaque ligne du journal, et le calcul de chaque coup (la base, chaque bonus et malus, le bouclier).
+
+/** tours gardés dans le journal (un combat dure 6 à 18 tours ; au-delà, les plus anciens s'effacent) */
+export const HISTO_MAX = 30;
+/** qui agit en ce moment (le moteur est synchrone : une variable suffit) */
+let CAMP: LigneHisto['camp'] = 'joueur';
+/** la place de la carte de la chaîne qui agit */
+let RANG: number | undefined;
+
+function tourHisto(s: CombatEtat): TourHisto {
+  const h = (s.historique ??= []);
+  let t = h[h.length - 1];
+  if (!t || t.tour !== s.tour) {
+    t = { tour: s.tour, chaine: [], lignes: [] };
+    h.push(t);
+    if (h.length > HISTO_MAX) h.splice(0, h.length - HISTO_MAX);
+  }
+  return t;
+}
+
+/** La chaîne lancée, telle qu'elle est au lancer */
+function noterChaine(s: CombatEtat, freqs: number[], reso: { suite: number; mult: number } | undefined, brouille: boolean, echo: boolean) {
+  const t = tourHisto(s);
+  t.chaine = s.chaine.map((g, i): CarteHisto => {
+    const c: CarteHisto = { nom: g.nom, porteur: g.porteur, type: g.type, v: g.v, f: freqs[i] ?? g.f };
+    if (g.carte) c.carte = g.carte;
+    if (g.lourd) c.lourd = true;
+    if (g.effet) c.effet = g.effet;
+    if (g.effet2) c.effet2 = g.effet2;
+    if (estATerre(s, g.porteur)) c.eteinte = true;
+    return c;
+  });
+  if (reso) { t.suite = reso.suite; t.mult = reso.mult; }
+  if (echo) t.echo = true;
+  if (brouille) t.brouille = true;
+}
+
+const ennemisVaincus = (s: CombatEtat) => (enGroupe(s) ? 'Le groupe est vaincu.' : `${ennemiDef(s.ennemi.id).nom} est vaincu.`);
+const arrondi = (x: number) => Math.round(x * 100) / 100;
+/** Un calcul pour le journal (les multiplicateurs arrondis : le journal reste léger) */
+const calcul = (cible: string, base: number, lignes: CalculHisto['lignes'], brut: number, absorbe: number, net: number): CalculHisto =>
+  ({ cible, base: Math.round(base), lignes: lignes.map((l) => (l.m !== undefined ? { nom: l.nom, m: arrondi(l.m) } : l)), brut, absorbe, net });
 
 /**
  * Un Porteur à terre (27 octobre 2026, Bryan : retirer ses cartes et une carte de main était un trop gros malus) :
@@ -475,15 +552,18 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
   const facteurs = facteursGeste(s, g, mult, rang, s.chaine, eteinte, suite);
   if (dc && vide) {
     s.flux = 0;
-    log(s, `Décharge : ${vide} Flux vidé${vide > 1 ? 's' : ''}, +${Math.round(dc.part * vide * 100)} % de force.`);
+    log(s, `Décharge : ${vide} Flux vidé${vide > 1 ? 's' : ''}, +${Math.round(dc.part * vide * 100)} % de force.`, { sorte: 'flux' });
     evs.push({ kind: 'effet', cible: 'escouade', texte: 'Décharge' });
   }
   const faveur = s.condition && FAVEUR_CONDITION[s.condition] === ligneeGeste(g) ? 1.2 : 1;
   const percant = !!de('percant');
   const force = facteurs.reduce((f, x) => f * x.m, g.v);
 
-  /** Un coup porté à l'ennemi visé : lignées, Fissure, Évanescent, Blindé et bouclier ennemi (Perçant passe outre), puis Épines */
-  const frapper = (force: number, quoi: string): number => {
+  /**
+   * Un coup porté à l'ennemi visé : lignées, Fissure, Évanescent, Blindé et bouclier ennemi (Perçant passe outre), puis Épines.
+   * depart : d'où part le coup, pour le journal (la force de la carte et ses facteurs, ou la Riposte)
+   */
+  const frapper = (force: number, quoi: string, depart: { base: number; lignes: CalculHisto['lignes'] }): number => {
     const coup = facteursCoup(s, g, mult, percant);
     const av = coup.av;
     const dmg = Math.max(0, Math.round(coup.facteurs.reduce((f, x) => f * x.m, force)) - coup.blinde);
@@ -491,7 +571,9 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
     s.ennemi.bouclier -= abs;
     const net = dmg - abs;
     s.ennemi.pv = Math.max(0, s.ennemi.pv - net);
-    log(s, `${nomP} · ${quoi} : ${net} dégâts${av > 1 ? ' (avantage de lignée)' : ''}${abs ? `, ${abs} absorbés` : ''}${percant && s.ennemi.bouclier ? ', bouclier transpercé' : ''}.`);
+    const lignes = [...depart.lignes, ...coup.facteurs, ...(coup.blinde ? [{ nom: 'Blindé', v: -coup.blinde }] : []), ...(percant ? [{ nom: 'Perçant', v: 0 }] : [])];
+    log(s, `${nomP} · ${quoi} : ${net} dégâts${av > 1 ? ' (avantage de lignée)' : ''}${abs ? `, ${abs} absorbés` : ''}${percant && s.ennemi.bouclier ? ', bouclier transpercé' : ''}.`,
+      { sorte: 'coup', v: net, calculs: [calcul(ennemiDef(s.ennemi.id).nom, depart.base, lignes, dmg, abs, net)] });
     evs.push({ kind: 'degats', cible: 'ennemi', net, absorbe: abs, rang: s.ennemi.rang ?? 0 });
     // Épines : une part du coup revient au Porteur qui a frappé, sans jamais le mettre à terre
     const epines = trait(s.ennemi, 'epines');
@@ -499,14 +581,14 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
     if (epines && frappeur) {
       const retour = Math.min(frappeur.pv - 1, Math.max(1, Math.round(net * epines.part)));
       frappeur.pv -= retour;
-      log(s, `Épines : ${porteurDef(frappeur.id).nom} se blesse (−${retour}).`);
+      log(s, `Épines : ${porteurDef(frappeur.id).nom} se blesse (−${retour}).`, { camp: 'ennemi', sorte: 'blessure', v: retour });
       evs.push({ kind: 'degats', cible: frappeur.id, net: retour, absorbe: 0, source: 'epines' });
     }
     return net;
   };
 
   if (g.type === 'atk') {
-    const net = frapper(force, g.nom);
+    const net = frapper(force, g.nom, { base: g.v, lignes: facteurs });
     const si = de('siphon');
     if (si && net > 0) {
       // le Siphon soigne le Porteur qui a joué la carte : c'est lui qui boit la vie (s'il est à terre, le plus blessé)
@@ -516,7 +598,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
         const avant = c.pv;
         c.pv = Math.min(c.pvMax, c.pv + Math.round(net * si.part));
         if (c.pv > avant) {
-          log(s, `Siphon : ${porteurDef(c.id).nom} récupère ${c.pv - avant} PV.`);
+          log(s, `Siphon : ${porteurDef(c.id).nom} récupère ${c.pv - avant} PV.`, { sorte: 'soin', v: c.pv - avant });
           evs.push({ kind: 'soin', cible: c.id, v: c.pv - avant });
         }
       }
@@ -524,23 +606,34 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
   } else if (g.type === 'bouclier') {
     const v = Math.round(force);
     s.bouclier += v;
-    log(s, `${nomP} · ${g.nom} : bouclier d’escouade +${v}.`);
+    log(s, `${nomP} · ${g.nom} : bouclier d’escouade +${v}.`, { sorte: 'protection', v, calculs: [calcul('Escouade', g.v, facteurs, v, 0, v)] });
     evs.push({ kind: 'bouclier', cible: 'escouade', v });
     // Riposte (Carapace) : après son bouclier, elle frappe d'une part de tout le bouclier d'escouade, sans le dépenser
     const rp = de('riposte');
-    if (rp && s.ennemi.pv > 0) frapper(s.bouclier * rp.part * faveur * (s.debride ? REGLES.eclat.debride : 1), `${g.nom} (Riposte)`);
+    if (rp && s.ennemi.pv > 0) {
+      const lignes: CalculHisto['lignes'] = [{ nom: `Riposte (${Math.round(rp.part * 100)} % du bouclier)`, m: rp.part }];
+      if (faveur !== 1) lignes.push({ nom: CONDITIONS[s.condition!]?.nom ?? 'Salle favorable', m: faveur });
+      if (s.debride) lignes.push({ nom: 'Débridage', m: REGLES.eclat.debride });
+      frapper(s.bouclier * rp.part * faveur * (s.debride ? REGLES.eclat.debride : 1), `${g.nom} (Riposte)`, { base: s.bouclier, lignes });
+    }
   } else {
     const choisi = g.cible ? s.porteurs.find((p) => p.id === g.cible && p.pv > 0) : undefined;
     const cibles = de('vague') ? vivants(s) : [choisi ?? plusBlesse(s)].filter((x): x is PorteurEtat => !!x);
     const morceaux: string[] = [];
+    const calculs: CalculHisto[] = [];
+    let total = 0;
     for (const c of cibles) {
       const avant = c.pv;
       c.pv = Math.min(c.pvMax, c.pv + Math.round(force));
       morceaux.push(`${porteurDef(c.id).nom} +${c.pv - avant}`);
+      // un soin ne dépasse pas les PV max : le journal dit ce qui a été perdu
+      const perdu = Math.round(force) - (c.pv - avant);
+      calculs.push(calcul(porteurDef(c.id).nom, g.v, perdu > 0 ? [...facteurs, { nom: 'PV déjà pleins', v: -perdu }] : facteurs, c.pv - avant, 0, c.pv - avant));
+      total += c.pv - avant;
       evs.push({ kind: 'soin', cible: c.id, v: c.pv - avant });
     }
     if (!cibles.length) evs.push({ kind: 'soin', cible: 'escouade', v: 0 });
-    else log(s, `${nomP} · ${g.nom} : ${morceaux.join(', ')} PV.`);
+    else log(s, `${nomP} · ${g.nom} : ${morceaux.join(', ')} PV.`, { sorte: 'soin', v: total, calculs });
   }
 
   // effets qui ne dépendent pas du type de la carte (les deux d'une carte de l’Héritage, dans l'ordre)
@@ -549,25 +642,26 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
       const avant = s.flux;
       s.flux = Math.min(REGLES.fluxMax, s.flux + ef.v);
       if (s.flux > avant) {
-        log(s, `Surcharge : Flux +${s.flux - avant}.`);
+        log(s, `Surcharge : Flux +${s.flux - avant}.`, { sorte: 'flux' });
         evs.push({ kind: 'flux', gain: s.flux - avant });
       }
     } else if (ef?.type === 'desarmer' && s.intention.type === 'atk') {
       const avant = s.intention.v;
       s.intention.v = Math.round(avant * (1 - ef.part));
-      log(s, `Désarmé : sa prochaine attaque passe de ${avant} à ${s.intention.v}.`);
+      log(s, `Désarmé : sa prochaine attaque passe de ${avant} à ${s.intention.v}.`, { sorte: 'effet' });
       evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Désarmé', rang: s.ennemi.rang ?? 0 });
     } else if (ef?.type === 'fissure' && s.ennemi.pv > 0) {
       s.ennemi.fissure = Math.max(s.ennemi.fissure ?? 0, ef.part);
       s.ennemi.fissureTours = 2;
-      log(s, `Fissure : l’ennemi subit +${Math.round(ef.part * 100)} % de dégâts jusqu’au tour prochain.`);
+      log(s, `Fissure : l’ennemi subit +${Math.round(ef.part * 100)} % de dégâts jusqu’au tour prochain.`, { sorte: 'effet' });
       evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Fissure', rang: s.ennemi.rang ?? 0 });
     } else if (ef?.type === 'elan') {
       s.capaProchain = (s.capaProchain ?? 0) + 1;
-      log(s, 'Élan : la prochaine chaîne aura une place de plus.');
+      log(s, 'Élan : la prochaine chaîne aura une place de plus.', { sorte: 'effet' });
       evs.push({ kind: 'effet', cible: 'escouade', texte: 'Élan' });
     } else if (ef?.type === 'rempart') {
       s.garde = Math.max(s.garde ?? 0, ef.part);
+      log(s, `Rempart : ${Math.round(ef.part * 100)} % du bouclier restant sera gardé au tour suivant.`, { sorte: 'effet' });
       evs.push({ kind: 'effet', cible: 'escouade', texte: 'Rempart' });
     }
   }
@@ -621,6 +715,18 @@ function facteursCoup(s: CombatEtat, g: Geste, mult: number, percant: boolean): 
   // Blindé : chaque coup perd quelques points (Perçant passe outre) ; l'armure grandit doucement avec la puissance de l'ennemi
   const blinde = percant ? 0 : Math.round((trait(s.ennemi, 'blinde')?.v ?? 0) * (1 + 0.4 * (s.ennemi.force - 1)));
   return { facteurs, blinde, av };
+}
+
+/** Ce qui change l'attaque d'un ennemi, pour le journal : sa concentration, sa Furie, l'usure du combat, la lignée, l'Ombre */
+function facteursEnnemi(s: CombatEtat, en: EnnemiEtat, av: number, cible: string): Facteur[] {
+  const f: Facteur[] = [];
+  if (en.boost !== 1) f.push({ nom: 'Concentration', m: en.boost });
+  if (trait(en, 'furie') && en.pv > 0 && en.pv <= en.pvMax / 2) f.push({ nom: 'Furie', m: FURIE });
+  const usure = usureCombat(s).attaque;
+  if (usure !== 1) f.push({ nom: `Combat qui s’éternise (tour ${s.tour})`, m: usure });
+  if (av !== 1) f.push({ nom: `Lignée : ${NOMS_LIGNEE[ennemiDef(en.id).lignee].nom} bat ${NOMS_LIGNEE[porteurDef(cible).lignee].nom}`, m: av });
+  if (s.ombre) f.push({ nom: 'Ombre agissante', m: 0 });
+  return f;
 }
 
 /** Le détail d'une carte en combat : sa force de base, chaque bonus et malus, et le chiffre final */
@@ -703,13 +809,18 @@ export function coupDeFuite(s: CombatEtat): { porteurs: PorteurEtat[]; coups: { 
 }
 
 function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
+  CAMP = 'neutre';
   if (s.condition === 'eboulis') {
     // Éboulis : des pierres sur tout le monde, sans mettre personne à terre ni achever un ennemi
     const v = eboulis(s);
-    for (const p of vivants(s)) { const n = Math.min(v, p.pv - 1); if (n > 0) { p.pv -= n; emettre({ kind: 'degats', cible: p.id, net: n, absorbe: 0, source: 'eboulis' }); } }
-    for (const en of ennemisDebout(s)) { const n = Math.min(v, en.pv - 1); if (n > 0) { en.pv -= n; emettre({ kind: 'degats', cible: 'ennemi', net: n, absorbe: 0, rang: en.rang ?? 0, source: 'eboulis' }); } }
-    log(s, `Éboulis : des pierres tombent (−${v} chacun).`);
+    let escouade = 0;
+    let ennemis = 0;
+    for (const p of vivants(s)) { const n = Math.min(v, p.pv - 1); if (n > 0) { p.pv -= n; escouade += n; emettre({ kind: 'degats', cible: p.id, net: n, absorbe: 0, source: 'eboulis' }); } }
+    for (const en of ennemisDebout(s)) { const n = Math.min(v, en.pv - 1); if (n > 0) { en.pv -= n; ennemis += n; emettre({ kind: 'degats', cible: 'ennemi', net: n, absorbe: 0, rang: en.rang ?? 0, source: 'eboulis' }); } }
+    log(s, `Éboulis : des pierres tombent (−${v} chacun).`, { sorte: 'blessure', v: escouade });
+    if (ennemis) log(s, `Les pierres frappent aussi ${enGroupe(s) ? 'le groupe' : ennemiDef(s.ennemi.id).nom} (−${ennemis}).`, { sorte: 'coup', v: ennemis });
   }
+  CAMP = 'ennemi';
   const groupe = enGroupe(s);
   for (const en of ennemisDebout(s)) {
     if (!vivants(s).length) break;
@@ -722,12 +833,12 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
       if (s.releve && !s.releveFaite) {
         s.releveFaite = true;
         p.pv = Math.max(1, Math.round(p.pvMax * s.releve));
-        log(s, `Seconde chance : ${porteurDef(p.id).nom} se relève (${p.pv} PV).`);
+        log(s, `Seconde chance : ${porteurDef(p.id).nom} se relève (${p.pv} PV).`, { camp: 'neutre', sorte: 'soin', v: p.pv });
         emettre({ kind: 'soin', cible: p.id, v: p.pv });
         continue;
       }
       p.aTerre = true;
-      log(s, `${porteurDef(p.id).nom} est à terre : ses cartes s’éteignent (−15 % de force, sans effet).`);
+      log(s, `${porteurDef(p.id).nom} est à terre : ses cartes s’éteignent (−15 % de force, sans effet).`, { camp: 'neutre', sorte: 'terre' });
       emettre({ kind: 'a-terre', cible: p.id });
     }
   }
@@ -742,14 +853,14 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
     if (blesse) {
       const avant = blesse.pv;
       blesse.pv = Math.min(blesse.pvMax, blesse.pv + Math.max(1, Math.round(blesse.pvMax * s.veille * usureCombat(s).soins)));
-      log(s, `Nuit blanche : Joss veille sur ${porteurDef(blesse.id).nom} (+${blesse.pv - avant}).`);
+      log(s, `Nuit blanche : Joss veille sur ${porteurDef(blesse.id).nom} (+${blesse.pv - avant}).`, { camp: 'neutre', sorte: 'soin', v: blesse.pv - avant });
       emettre({ kind: 'soin', cible: blesse.id, v: blesse.pv - avant });
     }
   }
   // Rempart (et la Marque de Docker) : une part du bouclier restant passe au tour suivant
   const part = Math.max(s.garde ?? 0, s.gardeMarque ?? 0);
   const garde = Math.round(s.bouclier * part);
-  if (garde) log(s, `${(s.garde ?? 0) >= part ? 'Rempart' : 'Bras de quai'} : ${garde} de bouclier gardés.`);
+  if (garde) log(s, `${(s.garde ?? 0) >= part ? 'Rempart' : 'Bras de quai'} : ${garde} de bouclier gardés.`, { camp: 'neutre', sorte: 'effet' });
   s.bouclier = garde;
   s.garde = 0;
   s.ombre = false;
@@ -785,7 +896,8 @@ export function eclater(s: CombatEtat, porteurId: string, opts: { silencieux?: b
   const pas: Pas[] = [];
   const choix = eclatsPossibles(s).find((x) => x.porteur === porteurId);
   if (!choix) return pas;
-  const emettre = opts.silencieux ? () => {} : (ev: Evenement) => { pas.push({ ev, etat: clone(s) }); };
+  const emettre = opts.silencieux ? () => {} : (ev: Evenement) => { pas.push({ ev, etat: photo(s) }); };
+  CAMP = 'joueur';
   s.flux = 0;
   s.eclat = choix;
   const p = porteurEtat(s, porteurId)!;
@@ -794,10 +906,10 @@ export function eclater(s: CombatEtat, porteurId: string, opts: { silencieux?: b
   emettre({ kind: 'effet', cible: porteurId, texte: ECLATS[choix.lignee].nom });
   if (choix.lignee === 'tech') {
     s.debride = true;
-    log(s, `Débridage : ${nom} pousse ses implants au-delà du raisonnable. La chaîne frappera ${REGLES.eclat.debride * 100 - 100} % plus fort.`);
+    log(s, `Débridage : ${nom} pousse ses implants au-delà du raisonnable. La chaîne frappera ${REGLES.eclat.debride * 100 - 100} % plus fort.`, { sorte: 'effet' });
   } else if (choix.lignee === 'reso') {
     s.ombre = true;
-    log(s, `Ombre agissante : l’ombre de ${nom} se lève et retiendra les coups du prochain tour.`);
+    log(s, `Ombre agissante : l’ombre de ${nom} se lève et retiendra les coups du prochain tour.`, { sorte: 'effet' });
   } else {
     const aTerre = s.porteurs.find((x) => x.pv <= 0);
     if (aTerre) {
@@ -805,13 +917,15 @@ export function eclater(s: CombatEtat, porteurId: string, opts: { silencieux?: b
       aTerre.aTerre = false;
       emettre({ kind: 'soin', cible: aTerre.id, v: aTerre.pv });
     }
+    let total = aTerre ? aTerre.pv : 0;
     for (const c of vivants(s)) {
       if (c === aTerre) continue;
       const avant = c.pv;
       c.pv = Math.min(c.pvMax, c.pv + Math.round(c.pvMax * REGLES.eclat.sursaut));
+      total += c.pv - avant;
       if (c.pv > avant) emettre({ kind: 'soin', cible: c.id, v: c.pv - avant });
     }
-    log(s, `Sursaut : le corps de ${nom} répond pour tous.${aTerre ? ` ${porteurDef(aTerre.id).nom} se relève.` : ''}`);
+    log(s, `Sursaut : le corps de ${nom} répond pour tous.${aTerre ? ` ${porteurDef(aTerre.id).nom} se relève.` : ''}`, { sorte: 'soin', v: total });
   }
   return pas;
 }
@@ -849,13 +963,16 @@ function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void,
   if (it.type === 'atk' || it.type === 'bouclier' || it.type === 'soin') {
     const avant = it.v;
     it.v = Math.round(avant * (1 - part));
-    log(s, `Fêlure : ${nom} vacille, ${it.type === 'atk' ? 'son attaque' : it.type === 'bouclier' ? 'son bouclier' : 'son soin'} passe de ${avant} à ${it.v}.`);
-  } else log(s, `Fêlure : ${nom} vacille.`);
+    log(s, `Fêlure : ${nom} vacille, ${it.type === 'atk' ? 'son attaque' : it.type === 'bouclier' ? 'son bouclier' : 'son soin'} passe de ${avant} à ${it.v}.`, { sorte: 'effet' });
+  } else log(s, `Fêlure : ${nom} vacille.`, { sorte: 'effet' });
   emettre({ kind: 'effet', cible: 'ennemi', texte: 'Fêlure', rang: en.rang ?? 0 });
   if (!resonne) return;
   const avant = s.flux;
   s.flux = Math.min(REGLES.fluxMax, s.flux + REGLES.felure.flux + (s.felureFlux ?? 0));
-  if (s.flux > avant) emettre({ kind: 'flux', gain: s.flux - avant });
+  if (s.flux > avant) {
+    log(s, `Fêlure brisée en Résonance : Flux +${s.flux - avant}.`, { sorte: 'flux' });
+    emettre({ kind: 'flux', gain: s.flux - avant });
+  }
 }
 
 /** Ce que fait un ennemi à son tour */
@@ -865,23 +982,23 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
   en.bouclier = 0;
   if (it.type === 'bouclier') {
     en.bouclier = it.v;
-    log(s, `${e.nom} se protège : bouclier ${it.v}.`);
+    log(s, `${e.nom} se protège : bouclier ${it.v}.`, { sorte: 'ennemi-garde', v: it.v });
     emettre({ kind: 'bouclier', cible: 'ennemi', v: it.v, rang });
   } else if (it.type === 'boost') {
     en.boost = 2;
-    log(s, `${e.nom} se concentre. Sa prochaine attaque fera double dégâts.`);
+    log(s, `${e.nom} se concentre. Sa prochaine attaque fera double dégâts.`, { sorte: 'effet' });
     emettre({ kind: 'boost', rang });
   } else if (it.type === 'soin') {
     const avant = en.pv;
     en.pv = Math.min(en.pvMax, en.pv + Math.round(it.v * usureCombat(s).soins));
-    log(s, `${e.nom} · ${it.nom} : +${en.pv - avant} PV.`);
+    log(s, `${e.nom} · ${it.nom} : +${en.pv - avant} PV.`, { sorte: 'ennemi-soin', v: en.pv - avant });
     emettre({ kind: 'soin', cible: 'ennemi', v: en.pv - avant, rang });
   } else if (it.type === 'dissonance' && s.lucide) {
-    log(s, `${e.nom} · ${it.nom} : Véla lit le brouillage, tes Fréquences restent nettes.`);
+    log(s, `${e.nom} · ${it.nom} : Véla lit le brouillage, tes Fréquences restent nettes.`, { sorte: 'effet' });
     emettre({ kind: 'effet', cible: 'escouade', texte: 'Lucide' });
   } else if (it.type === 'dissonance') {
     s.dissonance = true;
-    log(s, `${e.nom} · ${it.nom} : tes Fréquences sont brouillées, pas de Résonance au prochain tour.`);
+    log(s, `${e.nom} · ${it.nom} : tes Fréquences sont brouillées, pas de Résonance au prochain tour.`, { sorte: 'effet' });
     emettre({ kind: 'effet', cible: 'escouade', texte: 'Dissonance' });
   } else {
     let cibles: PorteurEtat[];
@@ -892,20 +1009,26 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
       cibles = id ? [porteurEtat(s, id)!] : [];
     }
     const morceaux: string[] = [];
+    const calculs: CalculHisto[] = [];
+    const renvois: { texte: string; info: Partial<LigneHisto> }[] = [];
+    let total = 0;
     for (const c of cibles) {
       // Ombre agissante (Coup d'éclat des Résonants) : l'ombre retient le coup
-      const dmg = s.ombre ? 0 : Math.round(it.v * puissance(en) * usureCombat(s).attaque * avantage(e.lignee, porteurDef(c.id).lignee));
+      const av = avantage(e.lignee, porteurDef(c.id).lignee);
+      const dmg = s.ombre ? 0 : Math.round(it.v * puissance(en) * usureCombat(s).attaque * av);
       const abs = Math.min(s.bouclier, dmg);
       s.bouclier -= abs;
       const net = dmg - abs;
       c.pv = Math.max(0, c.pv - net);
+      total += net;
       morceaux.push(`${porteurDef(c.id).nom} ${net ? '−' + net : 'protégé'}`);
+      calculs.push(calcul(porteurDef(c.id).nom, it.v, facteursEnnemi(s, en, av, c.id), dmg, abs, net));
       emettre({ kind: 'degats', cible: c.id, net, absorbe: abs, rang, ...(it.zone ? { zone: true } : {}) });
       // Née-de-mue (Kessa) : la chitine renvoie une part du coup que le bouclier a pris (sans achever l'ennemi)
       if (s.chitine && abs > 0 && en.pv > 1) {
         const renvoi = Math.min(en.pv - 1, Math.max(1, Math.round(abs * s.chitine)));
         en.pv -= renvoi;
-        log(s, `Née-de-mue : la chitine renvoie ${renvoi} à ${e.nom}.`);
+        renvois.push({ texte: `Née-de-mue : la chitine renvoie ${renvoi} à ${e.nom}.`, info: { camp: 'neutre', sorte: 'coup', v: renvoi } });
         emettre({ kind: 'degats', cible: 'ennemi', net: renvoi, absorbe: 0, rang, source: 'epines' });
       }
     }
@@ -914,17 +1037,19 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
     if (aspire && !s.ombre && s.flux > 0) {
       const pris = Math.min(s.flux, aspire.v);
       s.flux -= pris;
-      log(s, `${e.nom} aspire ${pris} Flux.`);
+      renvois.push({ texte: `${e.nom} aspire ${pris} Flux.`, info: { sorte: 'flux' } });
       emettre({ kind: 'effet', cible: 'escouade', texte: 'Flux aspiré' });
     }
-    log(s, s.ombre ? `${e.nom} · ${it.nom} : l’ombre retient le coup.` : `${e.nom} · ${it.nom} : ${morceaux.join(', ')}.`);
+    // le coup d'abord, puis ce qu'il déclenche (même ordre dans le journal que dans l'animation)
+    log(s, s.ombre ? `${e.nom} · ${it.nom} : l’ombre retient le coup.` : `${e.nom} · ${it.nom} : ${morceaux.join(', ')}.`, { sorte: 'blessure', v: total, calculs });
+    for (const r of renvois) log(s, r.texte, r.info);
   }
   // Régénération : il regagne une part de ses PV à la fin de son tour
   const regen = trait(en, 'regeneration');
   if (regen && en.pv > 0 && en.pv < en.pvMax && usureCombat(s).soins > 0) {
     const avant = en.pv;
     en.pv = Math.min(en.pvMax, en.pv + Math.max(1, Math.round(en.pvMax * regen.part * usureCombat(s).soins)));
-    log(s, `${e.nom} se régénère (+${en.pv - avant}).`);
+    log(s, `${e.nom} se régénère (+${en.pv - avant}).`, { sorte: 'ennemi-soin', v: en.pv - avant });
     emettre({ kind: 'soin', cible: 'ennemi', v: en.pv - avant, rang });
   }
 }
@@ -941,7 +1066,7 @@ function invoquer(s: CombatEtat, id: string, part: number, emettre: (ev: Eveneme
   const en: EnnemiEtat = { id, pv, pvMax: pv, force, bouclier: 0, etape: 0, boost: 1, rang, rejeton: true };
   s.autres.push(en);
   choisirIntention(s, en);
-  log(s, `${ennemiDef(id).nom} surgit.`);
+  log(s, `${ennemiDef(id).nom} surgit.`, { camp: 'ennemi', sorte: 'info' });
   emettre({ kind: 'renfort', rang, id });
 }
 
@@ -952,7 +1077,7 @@ function tombe(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void) 
   for (const autre of ennemisDebout(s)) {
     if (autre !== en && trait(autre, 'vengeur') && autre.boost < 2) {
       autre.boost = 2;
-      log(s, `${ennemiDef(autre.id).nom} venge son allié : sa prochaine attaque est doublée.`);
+      log(s, `${ennemiDef(autre.id).nom} venge son allié : sa prochaine attaque est doublée.`, { camp: 'ennemi', sorte: 'effet' });
       emettre({ kind: 'boost', rang: autre.rang ?? 0 });
     }
   }
@@ -964,7 +1089,7 @@ function phaseGardien(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) =>
   if (!ph || en.simple || en.phase2 || en.pv <= 0 || en.pv > en.pvMax * ph.seuil) return;
   en.phase2 = true;
   en.etape = 0;
-  log(s, `${ennemiDef(en.id).nom} : ${ph.nom}. ${ph.texte}`);
+  log(s, `${ennemiDef(en.id).nom} : ${ph.nom}. ${ph.texte}`, { camp: 'ennemi', sorte: 'info' });
   emettre({ kind: 'phase', rang: en.rang ?? 0, nom: ph.nom });
   choisirIntention(s, en);
   for (const id of ph.renforts ?? []) invoquer(s, id, 0.25, emettre);

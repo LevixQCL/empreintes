@@ -108,7 +108,7 @@ export function afficher() {
     const decouverte = enAttente && (enAttente.id === 'phase' || K.decouverteTour !== tourCombat || K.decouverteId === enAttente.id) ? enAttente : null;
     if (decouverte) { K.decouverteTour = tourCombat; K.decouverteId = decouverte.id; }
     const parole = paroleGardien(etat);
-    h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, fuite: K.fuite, eclats: K.eclats, guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
+    h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, journal: K.journal, fuite: K.fuite, eclats: K.eclats, guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
   } else {
     app.mode = 'district';
     voirNouveautes();
@@ -125,9 +125,15 @@ export function afficher() {
   // chaque sorte de zone garde ses positions à part : une liste qui apparaît ou disparaît ne décale pas les autres
   const defile = DEFILANTS.map((sel) => [...racine.querySelectorAll<HTMLElement>(sel)].map((el) => [el.scrollTop, el.scrollLeft] as const));
   const avant = cles();
+  // les volets dépliés (journal du combat…) restent dépliés d'un rendu à l'autre : ceux qui portent un id
+  const deplies = new Set([...racine.querySelectorAll<HTMLDetailsElement>('details[id]')].map((d) => `${d.id}:${d.open}`));
   const places = noter(racine);
   horloge(racine);
   if (!(app.mode === 'intro' && majIntro(racine, h, reduit)) && !(app.mode === 'titre' && majTitre(h))) racine.innerHTML = h;
+  for (const d of racine.querySelectorAll<HTMLDetailsElement>('details[id]')) {
+    if (deplies.has(`${d.id}:true`)) d.open = true;
+    else if (deplies.has(`${d.id}:false`)) d.open = false;
+  }
   glisser(racine, places);
   DEFILANTS.forEach((sel, k) => racine.querySelectorAll<HTMLElement>(sel).forEach((el, i) => { const d = defile[k]?.[i]; if (d) { el.scrollTop = d[0]; el.scrollLeft = d[1]; } }));
   for (const [sel, cle] of Object.entries(cles())) if (cle && cle !== avant[sel]) racine.querySelector(sel)?.classList.add('entre');

@@ -29,3 +29,4 @@ import './panneau-district.css';
 import './classements.css';
 import './campagne.css';
 import './pillages.css';
+import './journal.css';

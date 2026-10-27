@@ -16,6 +16,7 @@ import { ICO } from './icones';
 import type { Decouverte } from '../core/decouvertes';
 import { feuilleGuide, lienGuide, type OngletGuide } from './guide';
 import { echap } from './outils';
+import { feuilleJournal, type OngletJournal } from './journal';
 
 interface Pop {
   id: number;
@@ -82,6 +83,8 @@ export interface Ecran {
   /** le mode d'emploi des cartes est ouvert (depuis l'aide), et les cartes trouvées qu'il peut nommer */
   guide?: OngletGuide | null;
   trouvees?: ReadonlySet<string>;
+  /** le journal du combat est ouvert (tours joués, ou défausse et pioche) */
+  journal?: OngletJournal | null;
 }
 
 export const COULEUR: Record<LigneeGeste, string> = {
@@ -318,6 +321,7 @@ function regles(): string {
     + '<li><b>Les conditions de salle</b> (inondée, éboulis, brouillard…) s’affichent en haut, et sur la carte avant d’entrer.</li>'
     + '<li><b>Contre un groupe</b>, chaque ennemi annonce son geste sur sa vignette, en haut à droite. Touche une vignette pour viser cet ennemi : toute la chaîne le frappe, et s’il tombe, le reste de la chaîne passe au suivant.</li>'
     + `<li><b>Fuir :</b> le bouton en haut à droite. L’attaque annoncée touche pendant la fuite (personne ne meurt), puis tu recules d’une salle sur la carte, ou tu remontes au district avec ${Math.round(DISTRICT.butinFuite * 100)} % des composants et un peu plus de fatigue.</li>`
+    + `<li><b>Le journal du combat</b> (${ICO.journal} à côté de la pioche et de la défausse, ou la dernière ligne au-dessus de ta main) : les cartes jouées à chaque tour, le calcul de chaque dégât subi ou infligé, ta défausse et ta pioche. Les « ? » expliquent chaque terme.</li>`
     + '<li><b>La Dissonance :</b> certains ennemis brouillent tes Fréquences. Au tour suivant, aucune suite ne résonne : mise sur la force brute ou la protection.</li></ol></div></section>';
 }
 
@@ -600,7 +604,8 @@ function htmlEcranCombat(e: Ecran): string {
       + (cible ? `<span class="marque-cible">${ICO.atk}CIBLE</span>` : '') + (soigne ? `<span class="marque-soin" aria-label="Sera soigné">${ICO.soin}</span>` : '') + `</div>`;
   }
   h += `</section><div class="ligne-escouade">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>${s.ombre ? `<span class="etat ombre actif">${ICO.eclat}Ombre agissante</span>` : ''}`
-    + `<span class="piles"><span title="Pioche">${ICO.cartes}<em>Pioche</em>${s.pioche.length}</span><span title="Défausse">${ICO.recycler}<em>Défausse</em>${s.defausse.length}</span></span></div>`;
+    // les piles ouvrent le journal du combat (27 octobre 2026) : les cartes jouées tour par tour, la défausse et la pioche
+    + `<button type="button" class="piles" data-action="journal" data-id="cartes" aria-label="${echap(`Pioche ${s.pioche.length}, défausse ${s.defausse.length} : ouvrir le journal du combat`)}"${e.verrou ? ' disabled' : ''}><span>${ICO.cartes}<em>Pioche</em>${s.pioche.length}</span><span>${ICO.recycler}<em>Défausse</em>${s.defausse.length}</span><i class="piles-journal" aria-hidden="true">${ICO.journal}</i></button></div>`;
 
   // la chaîne
   const mult = a.suite >= 3 ? `×${a.mult.toLocaleString('fr-BE')}` : '';
@@ -647,7 +652,7 @@ function htmlEcranCombat(e: Ecran): string {
   if (e.lecon) h += `<section class="lecon" aria-live="polite"><span class="surtitre">${ICO.cristal}COMBAT GUIDÉ</span><p>${echap(e.lecon)}</p></section>`;
 
   // la main
-  h += `<section class="zone-main" aria-label="Main"><div class="main-tete"><span class="surtitre">MAIN · ${s.main.length}</span><span class="journal-ligne">${echap(s.journal[0] ?? '')}</span></div><div class="main${guide && s.tour >= 2 && s.main.some((g) => vise(g) && places(g) <= libres) ? ' tri' : ''}">`;
+  h += `<section class="zone-main" aria-label="Main"><div class="main-tete"><span class="surtitre">MAIN · ${s.main.length}</span>${s.journal[0] ? `<button type="button" class="journal-ligne" data-action="journal" data-id="tours"${e.verrou ? ' disabled' : ''} aria-label="${echap(`${s.journal[0]} Ouvrir le journal du combat`)}"><span>${echap(s.journal[0])}</span>${ICO.journal}</button>` : ''}</div><div class="main${guide && s.tour >= 2 && s.main.some((g) => vise(g) && places(g) <= libres) ? ' tri' : ''}">`;
   for (const g of s.main) {
     // une place qu'on n'a pas remplie chez ce Porteur : elle prend sa place dans la main ce tour-ci, sans se jouer
     if (g.vide) {
@@ -666,7 +671,8 @@ function htmlEcranCombat(e: Ecran): string {
   h += `<footer class="actions-combat"><button type="button" class="btn sec" data-action="vider"${verrou || !s.chaine.length ? ' disabled' : ''}>${ICO.retirer}Retirer</button>`
     + `<button type="button" class="btn prim lancer${mult ? ' fort' : ''}${lancerVise ? ' vise' : ''}" data-action="lancer"${verrou || !s.chaine.length ? ' disabled' : ''}>${ICO.lancer}Lancer la chaîne${mult ? ` <b>${mult}</b>` : ''}</button></footer>`;
 
-  if (e.guide) h += feuilleGuide(e.guide, e.trouvees ?? new Set());
+  if (e.journal) h += feuilleJournal(s, e.journal);
+  else if (e.guide) h += feuilleGuide(e.guide, e.trouvees ?? new Set());
   else if (e.regles) h += regles();
   else if (e.fuite && peutFuir(e.x) && !verrou) h += feuilleFuite(e);
   if (e.decouverte && !e.fin) {
@@ -678,10 +684,11 @@ function htmlEcranCombat(e: Ecran): string {
       + (d.conseil ? `<p class="conseil-decouverte"><b>Conseil</b> ${echap(d.conseil)}</p>` : '')
       + `<button type="button" class="btn prim large" data-action="decouverte-ok" data-id="${echap(d.id)}">Compris</button></div></div>`;
   }
-  if (e.fin) {
+  if (e.fin && !e.journal) {
     const victoire = !/Défaite|Repoussés/.test(e.fin.titre);
     h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="fin-titre"><div class="fenetre fin ${victoire ? 'victoire' : 'defaite'}"><span class="surtitre">${victoire ? 'VICTOIRE' : 'L’ESCOUADE RECULE'}</span><h2 id="fin-titre">${echap(e.fin.titre)}</h2><p>${echap(e.fin.texte)}</p>`
-      + `<button type="button" class="btn prim large" data-action="${e.fin.action}">${echap(e.fin.bouton)}</button>${e.fin.bouton2 ? `<button type="button" class="btn sec large" data-action="${e.fin.action2}">${echap(e.fin.bouton2)}</button>` : ''}</div></div>`;
+      + `<button type="button" class="btn prim large" data-action="${e.fin.action}">${echap(e.fin.bouton)}</button>${e.fin.bouton2 ? `<button type="button" class="btn sec large" data-action="${e.fin.action2}">${echap(e.fin.bouton2)}</button>` : ''}`
+      + (s.historique?.some((t) => t.chaine.length) ? `<button type="button" class="lien fin-journal" data-action="journal" data-id="tours">${ICO.journal}Revoir le combat</button>` : '') + `</div></div>`;
   }
   return h + `</div>`;
 }

@@ -52,6 +52,7 @@ src/
     coquille.ts    ressources en haut, navigation en bas, menu, notifications (commun au district)
     district.ts    archipel, Tour du Noyau, escouade, cartes, Bibliothèque ; les détails s'ouvrent en feuille par le bas
     vue.ts         l'écran de combat
+    journal.ts     le journal du combat : cartes jouées tour par tour, calcul de chaque coup, défausse et pioche, lexique des « ? »
     icones.ts      le jeu d'icônes de l'interface (SVG, couleur du texte)
     feuilles.ts    l'ordre des feuilles de style (la cascade) : toutes les feuilles CSS sont importées là, et seulement là
     outils.ts      petits outils partagés (échapper un texte, animations réduites, virgule française)

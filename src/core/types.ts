@@ -287,6 +287,70 @@ export interface CombatEtat {
   rng: number;
   issue: Issue;
   journal: string[];
+  /** le journal complet, tour par tour (27 octobre 2026, Bryan : revoir les cartes jouées et comprendre les dégâts) */
+  historique?: TourHisto[];
+}
+
+/**
+ * Le journal du combat, tour par tour. Gardé dans la sauvegarde avec le combat : il doit rester léger
+ * (seulement ce qu'il faut pour relire le tour : les cartes jouées, chaque ligne du journal et le calcul des coups).
+ */
+export interface TourHisto {
+  tour: number;
+  /** la chaîne lancée ce tour-ci, dans l'ordre (vide si le combat s'est arrêté avant) */
+  chaine: CarteHisto[];
+  /** la suite qui a résonné (3 à 5) et son multiplicateur */
+  suite?: number;
+  mult?: number;
+  echo?: boolean;
+  /** les Fréquences étaient brouillées : pas de Résonance */
+  brouille?: boolean;
+  lignes: LigneHisto[];
+}
+
+/** Une carte jouée, telle qu'elle était au lancer */
+export interface CarteHisto {
+  nom: string;
+  porteur: string | null;
+  carte?: string;
+  type: TypeGeste;
+  /** force de la carte (sans les bonus) */
+  v: number;
+  /** la Fréquence jouée */
+  f: number;
+  lourd?: boolean;
+  effet?: Effet;
+  effet2?: Effet;
+  /** son Porteur était à terre */
+  eteinte?: boolean;
+}
+
+/**
+ * Une ligne du journal. camp : qui agit (le joueur, l'ennemi, ou la salle et les effets qui tombent d'eux-mêmes).
+ * sorte : coup (dégâts à l'ennemi), blessure (dégâts à un Porteur), soin, protection (bouclier d'escouade),
+ * ennemi-soin, ennemi-garde, flux, terre (un Porteur tombe), effet, info. v : le chiffre qui compte pour les totaux.
+ */
+export interface LigneHisto {
+  camp: 'joueur' | 'ennemi' | 'neutre';
+  sorte: 'coup' | 'blessure' | 'soin' | 'protection' | 'ennemi-soin' | 'ennemi-garde' | 'flux' | 'terre' | 'effet' | 'info';
+  texte: string;
+  v?: number;
+  /** la place de la carte qui agit dans la chaîne (0 = la première) */
+  rang?: number;
+  /** le calcul (un par cible) */
+  calculs?: CalculHisto[];
+}
+
+/** Le calcul d'un coup, d'une protection ou d'un soin : la base, chaque bonus et malus, ce que le bouclier a pris, le net */
+export interface CalculHisto {
+  /** sur qui (nom affiché) */
+  cible: string;
+  base: number;
+  lignes: { nom: string; m?: number; v?: number }[];
+  /** après les bonus et malus, avant le bouclier */
+  brut: number;
+  absorbe: number;
+  net: number;
 }
 
 export type Evenement =
