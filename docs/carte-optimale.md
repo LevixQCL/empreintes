@@ -96,6 +96,19 @@ par le code, net à toutes les tailles :
   (bouclier), goutte verte (soin) — sur une pastille de verre fumé, au-dessus de la couture à droite ;
 - la roue de niveau, le voile et ses deux lignes.
 
+Proposition de Bryan (27 octobre) : demander seulement **une plaque fine en bas**, un rectangle qui intègre le symbole
+de l'action à droite. Le code écrit le nom, l'effet et la valeur dessus. Test d'abord avec l'attaque :
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. a single thin horizontal nameplate for a game card, flat front view, orthographic, perfectly straight and level, not tilted, no perspective, a long narrow rectangle with a very thin elegant polished gold rim and small cut corners, the inside is plain smooth dark smoked glass with no pattern, at the right end the rim widens into a small round gold socket holding {SYMBOLE}, the rest of the plate empty for text, crystal and light, icy edges, isolated on a pure flat black background, family-friendly, no text, no letters, no numbers --ar 3:1 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, letters, numbers, perspective, tilt, thick frame, pattern, person
+```
+
+| Action | `{SYMBOLE}` |
+|---|---|
+| attaque | `a small sharp red crystal blade emblem` |
+| bouclier | `a small blue crystal shield emblem, no heraldry` |
+| soin | `a small green crystal drop emblem with a tiny leaf` |
+
 Midjourney reste réservé aux illustrations, avec la règle de composition du point 5.
 
 ## Ordre de travail
