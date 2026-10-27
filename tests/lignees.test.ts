@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ACCORD_OUVERT, avancerFils, gagnerXp, nouveauJeu, porteursPresents, verifierArrivees } from '../src/core/jeu';
+import { ACCORD_OUVERT, CONFIANCE, avancerFils, gagnerXp, nouveauJeu, porteursPresents, verifierArrivees } from '../src/core/jeu';
 import { FILS } from '../src/core/fils';
 import { ORIGINES, PRESENTATIONS, origineDe } from '../src/core/lore-porteurs';
 import { RANG_METAL } from '../src/core/lore-cartes';
@@ -19,11 +19,12 @@ describe('Lignées et origines (23 octobre 2026)', () => {
     expect(ilka.some((x) => !x.ouvert)).toBe(true);
   });
 
-  it('l’Accord ouvert amène Joss quand la Clinique atteint son niveau', () => {
+  it('l’Accord ouvert amène Joss seulement quand Clinique et Confiance sont assez hautes', () => {
     const j = partie();
     verifierArrivees(j);
     expect(porteursPresents(j)).not.toContain('joss');
     j.batiments.clinique = ACCORD_OUVERT.clinique;
+    j.confiance = 3 * CONFIANCE.seuil; // niveau 2
     const annonces = verifierArrivees(j);
     expect(porteursPresents(j)).toContain('joss');
     expect(annonces.join(' ')).toContain('Accord ouvert');

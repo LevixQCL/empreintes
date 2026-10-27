@@ -8,7 +8,7 @@ import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, plac
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
-import { ACCORD_OUVERT, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
+import { ACCORD_OUVERT, CONFIANCE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
 import { chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -72,6 +72,7 @@ export function avancerFils(j: Jeu): string[] {
       const e = fil.etapes[n]!;
       j.fils[id] = ++n;
       gagnerXp(j, id, e.xp);
+      if (e.confiance) confier(j, e.confiance);
       const t = `${porteurDef(id).nom} · ${fil.titre} : « ${e.titre} » (+${e.xp} XP). À lire dans sa fiche.`;
       log(j, t);
       annonces.push(t);
@@ -80,7 +81,7 @@ export function avancerFils(j: Jeu): string[] {
   return annonces;
 }
 
-const accordOuvertPret = (j: Jeu) => j.batiments.clinique >= ACCORD_OUVERT.clinique;
+const accordOuvertPret = (j: Jeu) => j.batiments.clinique >= ACCORD_OUVERT.clinique && niveauConfiance(j.confiance ?? 0).niveau >= ACCORD_OUVERT.confiance;
 
 export function disponibles(j: Jeu): string[] {
   return porteursPresents(j).filter((id) => !j.porteurs[id]!.poste && !enExpedition(j, id));
@@ -299,17 +300,17 @@ export function repondre(j: Jeu, choix: number): Resultat {
   let recit = 'L’escouade reprend sa route.';
   const allie = j.actes.chambre === 'orseve';
   if (id === 'veilleur') {
-    if (choix === 0) { y.porteurs = blesser(x, 4); gains.eclats++; recit = 'Le Veilleur, reconnaissant, te confie un Éclat trouvé plus bas. Le quartier en entendra parler.'; }
+    if (choix === 0) { y.porteurs = blesser(x, 4); gains.eclats++; confier(j, 3); recit = 'Le Veilleur, reconnaissant, te confie un Éclat trouvé plus bas. Le quartier en entendra parler.'; }
     else if (choix === 1) { y.butin += n * 2; recit = `Le carnet se revend bien : +${n * 2} composants. Le Veilleur, lui, s’en souviendra.`; }
   } else if (id === 'pilleur') {
-    if (choix === 0) { recit = 'Le pilleur file sans demander son reste. Il racontera que le directeur sait être juste.'; }
+    if (choix === 0) { confier(j, 2); recit = 'Le pilleur file sans demander son reste. Il racontera que le directeur sait être juste.'; }
     else if (choix === 1) { y.butin += n * 2; recit = `Il lâche son sac et s’enfuit : +${n * 2} composants.`; }
     else { gains.cartes++; y = lancerCombat({ ...y, recit: 'Le pilleur sort un pied-de-biche. Son sac contient une carte : elle sera à toi.' }, 'pilleur'); }
   } else if (id === 'brigade') {
     if (allie) { if (choix === 0) { y.porteurs = soigner(x, 0.25); recit = 'Les Brigades pansent l’escouade (+25 % de PV).'; } }
     else if (choix === 0) { y.butin = Math.max(0, y.butin - 20); recit = 'Le sergent empoche les composants et s’écarte.'; }
     else if (choix === 1) { y.porteurs = blesser(x, 5); recit = 'Les gaines sont étroites et brûlantes, mais vous passez (−5 PV chacun).'; }
-    else { y = lancerCombat({ ...y, recit: 'Le district ne paie pas pour passer chez lui.' }, 'brigadier'); }
+    else { confier(j, 2); y = lancerCombat({ ...y, recit: 'Le district ne paie pas pour passer chez lui.' }, 'brigadier'); }
   } else if (id === 'cristal') {
     const vela = x.porteurs.some((p) => p.id === 'vela' && p.pv > 0);
     if (choix === 0) {
@@ -329,14 +330,14 @@ export function repondre(j: Jeu, choix: number): Resultat {
   } else if (id === 'sauvage') {
     const vela = x.porteurs.some((p) => p.id === 'vela' && p.pv > 0);
     if (choix === 0) {
-      if (vela) { gains.eclats++; recit = 'Véla pose la main sur sa nuque. « C’est une brisure de créature des hauteurs. Elle a peur d’être enfermée. » Il se calme, et vous laisse un Éclat en remerciement. La Clinique le retirera.'; }
-      else { y.porteurs = blesser(x, 3); recit = 'Il finit par se calmer et accepte qu’on le conduise à la Clinique. Ses accès ont laissé des bleus à tout le monde (−3 PV chacun).'; }
+      if (vela) { confier(j, 3); gains.eclats++; recit = 'Véla pose la main sur sa nuque. « C’est une brisure de créature des hauteurs. Elle a peur d’être enfermée. » Il se calme, et vous laisse un Éclat en remerciement. La Clinique le retirera.'; }
+      else { y.porteurs = blesser(x, 3); confier(j, 2); recit = 'Il finit par se calmer et accepte qu’on le conduise à la Clinique. Ses accès ont laissé des bleus à tout le monde (−3 PV chacun).'; }
     } else if (choix === 1) { y = lancerCombat({ ...y, recit: 'Le penchant l’emporte : il se jette sur l’escouade.' }, 'sauvage'); }
   } else if (id === 'faussaire') {
     if (choix === 0) {
       if (y.butin < 25) return non('Il te faut 25 composants dans le butin de l’expédition.');
       y.butin -= 25; recit = 'Au district, la Clinique tranche : une pierre morte. Elle a refusé un Accord, et ne prendra plus jamais chez personne. Le quartier en rit encore.';
-    } else if (choix === 1) { y.butin += n; recit = `Il remballe en grommelant et rend ce qu’il a pris aux fouilleurs : +${n} composants. Les familles volées sauront qui remercier.`; }
+    } else if (choix === 1) { y.butin += n; confier(j, 2); recit = `Il remballe en grommelant et rend ce qu’il a pris aux fouilleurs : +${n} composants. Les familles volées sauront qui remercier.`; }
   }
   if (y.phase !== 'combat') y = { ...y, recit };
   y.gains = gains;
@@ -485,6 +486,8 @@ export function remonter(j: Jeu): Retour {
   }
   for (const c of cartes) ajouterCarte(j, c);
   j.eclats += eclats;
+  // la Confiance du quartier : chaque combat gagné, et la descente réussie (elle ne baisse jamais)
+  confier(j, victoires * CONFIANCE.combat + (victoire ? CONFIANCE.victoire : 0));
   // l'expérience : chaque combat gagné, les salles scellées et le gardien ; toute l'escouade la partage, debout ou à terre
   const facteur = 1 + 0.25 * (x.strate - 1);
   const gardien = victoire && !x.fouille && !x.epreuve ? XP.gardien : 0;

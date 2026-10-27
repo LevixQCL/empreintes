@@ -1,4 +1,4 @@
-// Couche 1 — l'état d'une partie : réglages du district, types, expérience et Marques des Porteurs, creuseurs, escouade.
+// Couche 1 — l'état d'une partie : réglages du district, types, expérience et Marques des Porteurs, Confiance, creuseurs, escouade.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
 import { batimentDef, porteurDef, PORTEURS } from '../donnees';
@@ -214,8 +214,10 @@ export interface Jeu {
   arrives: string[];
   /** les grands choix de la campagne (Bible : un choix important par acte) */
   actes: { chambre?: GardeChambre; lecture?: LectureVela; fin?: FinCampagne };
-  /** l'ancienne Confiance des habitants (retirée le 27 octobre 2026) : encore présente dans les vieilles sauvegardes, plus lue par le jeu */
-  confiance?: number;
+  /** la Confiance du quartier, en points cumulés (elle ne fait que monter ; le niveau se lit avec `niveauConfiance`) */
+  confiance: number;
+  /** niveaux de Confiance déjà récompensés (un creuseur volontaire par niveau) */
+  confianceRecue?: number;
   /** les mécaniques de combat déjà expliquées la première fois qu'elles sont apparues (decouvertes.ts) */
   decouvertes?: string[];
   /** les scènes de la campagne déjà jouées, dans l'ordre (campagne.ts) */
@@ -343,15 +345,36 @@ export function multiplicateur(j: Jeu, b: Exclude<Poste, 'noyau'>): number {
 
 export const energieParHeure = (j: Jeu) => Math.round((DISTRICT.energieParHeure[j.batiments.generateur] ?? 0) * multiplicateur(j, 'generateur'));
 
-// ---------- L'Accord ouvert ----------
-// La Confiance des habitants est retirée (27 octobre 2026, Bryan : « elle était à 100 tout le temps, ça ne fait que mettre des contraintes ;
-// celui qui joue doit gagner du fait de jouer »). L'Accord ouvert ne dépend plus que de la Clinique.
+// ---------- La Confiance du quartier ----------
+// Refaite le 27 octobre 2026 (Bryan : « celui qui joue est récompensé », plutôt que « celui qui ne joue pas est puni ») :
+// elle ne fait que monter, par niveaux (une roue dans la barre du haut). Chaque niveau atteint amène un creuseur volontaire
+// (`recompenserConfiance` dans district.ts). Elle ne baisse jamais : ni défaite, ni absence, ni mauvais choix.
+export const CONFIANCE = {
+  /** par combat gagné en descente, en plus pour une descente réussie, par chantier terminé, par pillage réussi */
+  combat: 1, victoire: 3, chantier: 2, pillage: 4,
+  /** points pour passer du niveau n au niveau n + 1 : `seuil × (n + 1)` (20, puis 40, 60…) */
+  seuil: 20,
+  /** niveau de Confiance qu'il faut pour l'Accord ouvert (avec la Clinique) */
+  accord: 2,
+} as const;
+
+/** Le niveau de Confiance, les points dans ce niveau et ceux qu'il faut pour le suivant */
+export function niveauConfiance(points: number): { niveau: number; dans: number; requis: number } {
+  let niveau = 0, base = 0;
+  while (points >= base + CONFIANCE.seuil * (niveau + 1)) { base += CONFIANCE.seuil * (niveau + 1); niveau++; }
+  return { niveau, dans: points - base, requis: CONFIANCE.seuil * (niveau + 1) };
+}
+
+/** La Confiance gagnée (jamais perdue : un nombre négatif ou nul ne fait rien) */
+export function confier(j: Jeu, delta: number) {
+  if (delta > 0) j.confiance = Math.round((j.confiance ?? 0) + delta);
+}
 
 /**
- * L'Accord ouvert (Bible, 23 octobre 2026) : quand la Clinique sait greffer, elle offre une pierre relevée à tout volontaire
- * du quartier. Un nouveau Résonant rejoint le district.
+ * L'Accord ouvert (Bible, 23 octobre 2026) : quand le quartier fait confiance à son directeur et que la Clinique
+ * sait greffer, elle offre une pierre relevée à tout volontaire du quartier. Un nouveau Résonant rejoint le district.
  */
-export const ACCORD_OUVERT = { clinique: 3 } as const;
+export const ACCORD_OUVERT = { clinique: 3, confiance: CONFIANCE.accord } as const;
 
 export const CREUSEURS = {
   /** creuseurs logés selon le niveau du Noyau (index = niveau) */
@@ -365,8 +388,8 @@ export const CREUSEURS = {
   missionCourte: 0.1,
   missionLongue: 0.3,
   epreuve: 1,
-  /** un chantier terminé attire parfois un volontaire */
-  chantier: 0.3,
+  /** creuseurs volontaires par niveau de Confiance atteint */
+  confiance: 1,
 } as const;
 
 export function creuseursRequis(strate: number): number {

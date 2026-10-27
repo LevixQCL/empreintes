@@ -224,10 +224,10 @@ ce sont les creuseurs et la Tour qui tiennent le rythme. Les images `public/art/
 - *Les fils* (`src/core/fils.ts`, appliqués par `avancerFils` dans `jeu.ts` à chaque tick) : la dette de Pim (Ilka), la porte de son père (Doran),
   retrouver Liane (Aurel). Trois étapes chacun, qui avancent toutes seules (niveau, arrivée, Strate, fragment, bâtiment) et rapportent de l'XP.
 - *Trois nouveaux Porteurs* : Kessa, Née-de-mue (Strate −4), Liane Orsève, la Refusée devenue Délavée (Strate −6), et Joss, trouvé par
-  un *Accord ouvert* de la Clinique (`ACCORD_OUVERT` : Clinique niveau 3 et Confiance 70). Portraits Midjourney du 23 octobre.
+  un *Accord ouvert* de la Clinique (`ACCORD_OUVERT` : Clinique niveau 3 et Confiance du quartier niveau 2). Portraits Midjourney du 23 octobre.
 - *Le rang des métaux* (`RANG_METAL` dans `lore-cartes.ts`) : la fiche d'une carte dit si c'est une copie lointaine (fer) ou une vierge (nacre).
 - *Le Sauvage* (ennemi des Fondations), les rencontres *Sauvage* et *vendeur de pierres mortes*,
-  la *rumeur du jour* sous la Confiance (`src/core/rumeurs.ts`), deux chapitres des Chroniques (« Les yeux d'or », « Le Registre des Vierges »)
+  la *rumeur du jour* au marché (`src/core/rumeurs.ts`), deux chapitres des Chroniques (« Les yeux d'or », « Le Registre des Vierges »)
   et deux fragments d'archives (« Non prioritaire », « Pas de notre côté »).
 
 **Les années de Nell et la Glacière** (26 octobre 2026, décidé avec Bryan ; `docs/lore-2026-2030.md`). Cinq chapitres du Livre I racontent 2026 à 2030
@@ -295,8 +295,9 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
 - *Durée des combats* : les PV montent moins vite que les coups en profondeur (`pvProfondeur`) et un groupe a moins de PV (`PV_GROUPE`) ;
   `npx tsx scripts/durees.ts` mesure au parcours : normaux ~8 tours, groupes ~10, gardiens ~15 (cible 6-9 / 9-13 / 12-18), Strate −10 au jour 29.
   Les pillages gardent leurs PV (`pvPleins`).
-- *Plus de Confiance des habitants* : elle restait à 100 et ne servait à rien (« celui qui joue doit gagner du fait de jouer »).
-  L’Accord ouvert ne demande plus que la Clinique niveau 3 ; un chantier terminé attire parfois un creuseur volontaire (`CREUSEURS.chantier`).
+- *La Confiance du quartier* (refaite) : elle ne fait que monter, par niveaux, et se lit dans une roue à côté de la Strate, en haut
+  (`niveauConfiance`, `CONFIANCE` dans `etat.ts`) : +1 par combat gagné, +3 par descente réussie, +2 par chantier, +4 par pillage gagné.
+  Chaque niveau amène un creuseur volontaire (`recompenserConfiance`) ; l’Accord ouvert de Joss demande le niveau 2.
 - *Énergie* : convertisseur du Générateur (`CONVERTISSEUR` : 100 énergie → 10, puis 6, puis 3 composants, 20 lots par jour) et soins intensifs
   de la Clinique (`SOINS_INTENSIFS` : 20 énergie par point d’Usure).
 
