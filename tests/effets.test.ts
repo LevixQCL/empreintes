@@ -47,7 +47,7 @@ describe('Effets des Gestes', () => {
     expect(doran.pv).toBe(25);
   });
 
-  it('Siphon : si celui qui a joué la carte est à terre, le plus blessé boit la vie', () => {
+  it('une carte éteinte (son Porteur est à terre) perd son effet : son Siphon ne soigne plus', () => {
     const s = combat([geste(5, 'atk', 10, { type: 'siphon', part: 0.5 }, 'vela')]);
     const vela = s.porteurs.find((p) => p.id === 'vela')!;
     s.porteurs.find((p) => p.id === 'doran')!.pv = 10;
@@ -55,7 +55,7 @@ describe('Effets des Gestes', () => {
     ajouter(s, s.main[0]!.uid);
     vela.pv = 0; vela.aTerre = true;
     lancer(s, { silencieux: true });
-    expect(s.porteurs.find((p) => p.id === 'doran')!.pv).toBe(15);
+    expect(s.porteurs.find((p) => p.id === 'doran')!.pv).toBe(10);
   });
 
   it('un soin vise le plus blessé par défaut, et on peut changer sa cible', () => {
@@ -142,3 +142,4 @@ describe('Effets des Gestes', () => {
     expect(s.bouclier).toBe(8);
   });
 });
+

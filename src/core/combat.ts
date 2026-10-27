@@ -165,7 +165,6 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
   const g = s.main.find((x) => x.uid === uid);
   if (!g) return { ok: false };
   if (g.vide) return { ok: false, message: 'Une place vide ne se joue pas : confie une carte de plus à ce Porteur.' };
-  if (estATerre(s, g.porteur)) return { ok: false, message: 'Ce Porteur est à terre.' };
   if (places(g) > placesLibres(s)) {
     const debut = g.lourd ? `${g.nom} prend 2 places, il n’en reste ${placesLibres(s)}.` : 'La chaîne est pleine.';
     const fin = s.flux > 0 && capacite(s) < REGLES.capaciteMax ? ' Retire une carte ou dépense 1 Flux (+1 place).' : ' Retire une carte.';
@@ -389,11 +388,12 @@ function log(s: CombatEtat, t: string) {
 }
 
 /**
- * Une escouade décimée joue moins de cartes (24 octobre 2026, Bryan : seul, un Porteur devenait « pratiquement imbattable »
- * en alternant dégâts, soin et bouclier, car sa main de 5 cartes reprenait presque tout son deck de 6 à chaque tour).
- * Une carte de moins en main par Porteur à terre : 5 à trois, 4 à deux, 3 seul.
+ * Un Porteur à terre (27 octobre 2026, Bryan : retirer ses cartes et une carte de main était un trop gros malus) :
+ * ses cartes restent dans le deck mais s'éteignent (−15 % de force, sans effet, Fréquence intacte). Le deck garde sa taille,
+ * donc un Porteur seul ne revoit plus ses 6 cartes à chaque tour (il était « pratiquement imbattable », 24 octobre 2026) :
+ * il pioche surtout des cartes éteintes. La main reste à 5.
  */
-const tailleMainDe = (s: CombatEtat) => REGLES.tailleMain - s.porteurs.filter((p) => p.pv <= 0).length;
+const tailleMainDe = (_s: CombatEtat) => REGLES.tailleMain;
 
 function piocher(s: CombatEtat, taille: number = tailleMainDe(s)) {
   const r = tireur(s);
@@ -404,12 +404,7 @@ function piocher(s: CombatEtat, taille: number = tailleMainDe(s)) {
       s.pioche = r.melanger(s.defausse);
       s.defausse = [];
     }
-    const g = s.pioche.pop() as Geste;
-    if (estATerre(s, g.porteur)) {
-      s.defausse.push(g);
-      continue;
-    }
-    s.main.push(g);
+    s.main.push(s.pioche.pop() as Geste);
   }
 }
 
@@ -443,8 +438,11 @@ function plusBlesse(s: CombatEtat): PorteurEtat | undefined {
 
 function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Evenement[] {
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'Spécial';
+  // une carte éteinte (son Porteur est à terre) frappe, protège ou soigne à moitié, sans son effet ; sa Fréquence compte toujours
+  const eteinte = estATerre(s, g.porteur);
+  const effets = eteinte ? [] : [g.effet, g.effet2];
   // une carte de l’Héritage a deux effets : chacun se lit par son type
-  const de = <T extends Effet['type']>(t: T) => [g.effet, g.effet2].find((e): e is Extract<Effet, { type: T }> => e?.type === t);
+  const de = <T extends Effet['type']>(t: T) => effets.find((e): e is Extract<Effet, { type: T }> => e?.type === t);
   const evs: Evenement[] = [];
   // Crescendo : plus la carte arrive tard dans la chaîne, plus elle frappe fort
   const cr = de('crescendo');
@@ -469,7 +467,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
   const pareilles = un ? fsChaine.filter((f, k) => k !== rang && f === fsChaine[rang]).length : 0;
   const unisson = un ? 1 + un.part * pareilles : 1;
   const percant = !!de('percant');
-  const force = g.v * mult * cresc * faveur * source * debride * decharge * unisson;
+  const force = g.v * mult * cresc * faveur * source * debride * decharge * unisson * (eteinte ? REGLES.eteinte : 1);
 
   /** Un coup porté à l'ennemi visé : lignées, Fissure, Évanescent, Blindé et bouclier ennemi (Perçant passe outre), puis Épines */
   const frapper = (force: number, quoi: string): number => {
@@ -537,7 +535,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
   }
 
   // effets qui ne dépendent pas du type de la carte (les deux d'une carte de l’Héritage, dans l'ordre)
-  for (const ef of [g.effet, g.effet2]) {
+  for (const ef of effets) {
     if (ef?.type === 'flux') {
       const avant = s.flux;
       s.flux = Math.min(REGLES.fluxMax, s.flux + ef.v);
@@ -628,14 +626,9 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
         continue;
       }
       p.aTerre = true;
-      log(s, `${porteurDef(p.id).nom} est à terre : ses cartes quittent le deck, et la main perd une carte.`);
+      log(s, `${porteurDef(p.id).nom} est à terre : ses cartes s’éteignent (−15 % de force, sans effet).`);
       emettre({ kind: 'a-terre', cible: p.id });
     }
-  }
-  const horsJeu = s.main.filter((g) => estATerre(s, g.porteur));
-  if (horsJeu.length) {
-    s.main = s.main.filter((g) => !horsJeu.includes(g));
-    s.defausse.push(...horsJeu);
   }
   if (!vivants(s).length) {
     s.issue = 'defaite';
