@@ -94,8 +94,9 @@ par le code, net à toutes les tailles :
   sombre à peine irisé, et ses effets holographiques actuels suffisent à la reconnaître : on reconnaît le
   métal d'un coup d'œil ; son arête intérieure et la couture prennent la couleur de l'action (rouge attaque, bleu
   bouclier, vert soin) : on reconnaît l'action aussi (demande de Bryan : « les deux ») ;
-- les Fréquences dans une capsule de verre fumé en haut à gauche (police Oxanium) : la principale en segment plein de sa
-  couleur, les autres à sa droite, plus petites, soulignées de leur couleur ;
+- les Fréquences dans une capsule de verre fumé en haut à gauche (police Oxanium) : la principale sur un verre à peine teinté, chiffre
+  clair et fin trait de sa couleur dessous, sans halo (Bryan la trouvait « criante ») ; les autres à sa droite, plus
+  petites, soulignées de leur couleur ;
 - le bas de la carte (sous le nom et l'effet) dans la même matière du métal, assombrie pour garder le texte lisible
   (demande de Bryan : le métal se lisait encore mal avec le seul cadre) ;
 - la valeur dans une capsule de verre de la même famille, liseré de la couleur de l'action, icônes au trait
