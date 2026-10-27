@@ -69,9 +69,9 @@ describe('L’Héritage du district', () => {
     s.intention = { type: 'bouclier', v: 0 };
     ajouter(s, 'l1');
     lancer(s, { silencieux: true });
-    // Riposte (0,4 × 1,5 en nacre = 60 %) sur 20 de bouclier : 12 ; Rempart (75 %) : 15 gardés pour le tour suivant
+    // Riposte (0,4 × 1,5 en nacre = 60 %) sur 20 de bouclier : 12 ; Rempart (0,4 × 1,5 = 60 %) : 12 gardés pour le tour suivant
     expect(s.ennemi.pvMax - s.ennemi.pv).toBe(12);
-    expect(s.bouclier).toBe(15);
+    expect(s.bouclier).toBe(12);
   });
 
   it('la Clé de l’Héritage rejoint le paquetage quand un Porteur de l’escouade a le niveau 10', () => {

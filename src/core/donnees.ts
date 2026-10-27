@@ -133,15 +133,15 @@ export const MODULES: ModuleDef[] = [
   // Dix vierges cachées par l'ancienne directrice ; chaque joueur n'en reçoit qu'une (lettre de la directrice, LETTRE_LEGS).
   // Exclusives (jamais trouvées ailleurs : MODULES_TIRABLES), en nacre seulement, les seules à deux effets. La nacre renforce
   // leurs parts (×1,5) comme pour toute carte : les parts ci-dessous sont avant ce renfort. Une Fréquence libre est le premier effet.
-  legs('foulee-directrice', 'Foulée de la directrice', 'tech', 'atk', 16, [4, 3, 5], { type: 'elan' }, { type: 'crescendo', part: 0.2 }),
-  legs('bras-fonderie', 'Bras de la Fonderie', 'tech', 'atk', 44, [5, 6, 4], { type: 'percant' }, { type: 'elan' }, true),
-  legs('coeur-glaciere', 'Cœur de la Glacière', 'tech', 'atk', 20, [6, 5, 7], { type: 'decharge', part: 0.5 }, { type: 'flux', v: 1 }),
-  legs('carapace-fondations', 'Carapace des Fondations', 'bio', 'bouclier', 24, [2, 3, 1], { type: 'rempart', part: 0.5 }, { type: 'riposte', part: 0.4 }),
-  legs('oeil-grande-nuit', 'Œil de la Grande Nuit', 'bio', 'atk', 18, [3, 2, 4], { type: 'fissure', part: 0.2 }, { type: 'siphon', part: 0.35 }),
-  legs('premiere-mue', 'Première mue', 'bio', 'soin', 14, [1, 2, 3], { type: 'vague' }, { type: 'rempart', part: 0.35 }),
-  legs('lanterne-lecture', 'Lanterne de la première Lecture', 'reso', 'atk', 20, [8, 7, 9], { type: 'accord' }, { type: 'desarmer', part: 0.3 }),
+  legs('foulee-directrice', 'Foulée de la directrice', 'tech', 'atk', 21, [4, 3, 5], { type: 'elan' }, { type: 'crescendo', part: 0.2 }),
+  legs('bras-fonderie', 'Bras de la Fonderie', 'tech', 'atk', 40, [5, 6, 4], { type: 'percant' }, { type: 'elan' }, true),
+  legs('coeur-glaciere', 'Cœur de la Glacière', 'tech', 'atk', 17, [6, 5, 7], { type: 'decharge', part: 0.5 }, { type: 'flux', v: 1 }),
+  legs('carapace-fondations', 'Carapace des Fondations', 'bio', 'bouclier', 18, [2, 3, 1], { type: 'rempart', part: 0.4 }, { type: 'riposte', part: 0.4 }),
+  legs('oeil-grande-nuit', 'Œil de la Grande Nuit', 'bio', 'atk', 13, [3, 2, 4], { type: 'fissure', part: 0.2 }, { type: 'siphon', part: 0.3 }),
+  legs('premiere-mue', 'Première mue', 'bio', 'soin', 18, [1, 2, 3], { type: 'vague' }, { type: 'rempart', part: 0.35 }),
+  legs('lanterne-lecture', 'Lanterne de la première Lecture', 'reso', 'atk', 17, [8, 7, 9], { type: 'accord' }, { type: 'desarmer', part: 0.3 }),
   legs('sceau-orseve', 'Sceau volé aux Orsève', 'reso', 'atk', 18, [7, 6, 8], { type: 'desarmer', part: 0.3 }, { type: 'fissure', part: 0.2 }),
-  legs('voix-quartier', 'Voix du quartier', 'reso', 'atk', 14, [9, 8, 7], { type: 'diapason' }, { type: 'unisson', part: 0.7 }),
+  legs('voix-quartier', 'Voix du quartier', 'reso', 'atk', 17, [9, 8, 7], { type: 'diapason' }, { type: 'unisson', part: 0.7 }),
 ];
 
 /** Le Porteur dont chaque carte de l’Héritage est la pièce maîtresse de la voie (il prête son portrait en attendant l'illustration) */

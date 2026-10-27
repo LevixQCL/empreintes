@@ -1,6 +1,6 @@
 # Rapport du robot d'équilibrage
 
-2026-10-27 · 300 expéditions par mesure · 1907 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
+2026-10-27 · 300 expéditions par mesure · 2468 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
 
 ## Le deck de départ selon la profondeur
 
@@ -50,20 +50,29 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Souffle du wyrm | Or | Crescendo | +29 | +5 |  |
 | Bobine de récupération | Fer | Surcharge | +5 | +1 |  |
 | Condensateur | Cuivre | Surcharge | +1 | +1 |  |
-| Décharge d’arc | Cuivre | Décharge | −6 | −1 | trop faible |
-| Éclair captif | Argent | Décharge | +21 | +6 | TROP FORTE |
+| Décharge d’arc | Cuivre | Décharge | +1 | −1 |  |
+| Éclair captif | Argent | Décharge | +9 | +1 |  |
 | Noyau instable | Or | Décharge | +25 | +1 |  |
 | Coup d’épaule | Fer | Riposte | +0 | +3 |  |
 | Queue-massue | Cuivre | Riposte | +11 | −1 |  |
-| Bélier d’os | Argent | Riposte | +24 | +3 | TROP FORTE |
-| Retour de marée | Or | Riposte | +33 | +6 | TROP FORTE |
+| Bélier d’os | Argent | Riposte | +26 | +5 | TROP FORTE |
+| Retour de marée | Or | Riposte | +23 | +5 |  |
 | Diapason de cristal | Fer | Diapason | −4 | −1 |  |
 | Voix basse | Fer | Unisson | −2 | +1 |  |
 | Chorale des ombres | Cuivre | Unisson | +9 | +1 |  |
 | Cloche des abysses | Argent | Diapason | +7 | +4 |  |
 | Grand unisson | Or | Unisson | +21 | +3 |  |
+| Foulée de la directrice | Nacre | Élan | +23 | +5 | trop faible |
+| Bras de la Fonderie | Nacre | Perçant | +34 | +4 |  |
+| Cœur de la Glacière | Nacre | Décharge | +37 | +7 | TROP FORTE |
+| Carapace des Fondations | Nacre | Rempart | +38 | +6 | TROP FORTE |
+| Œil de la Grande Nuit | Nacre | Fissure | +43 | +5 | TROP FORTE |
+| Première mue | Nacre | Vague | +27 | +7 |  |
+| Lanterne de la première Lecture | Nacre | Accord | +37 | +6 | TROP FORTE |
+| Sceau volé aux Orsève | Nacre | Désarmer | +31 | +5 |  |
+| Voix du quartier | Nacre | Diapason | +27 | +2 |  |
 
-Moyenne par rareté, à la découverte : Fer −0 · Cuivre +6 · Argent +13 · Or +24. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
+Moyenne par rareté, à la découverte : Fer −0 · Cuivre +6 · Argent +11 · Or +23 · Nacre +33. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
 
 
 ## Une Strate entière avec le deck de départ
@@ -92,15 +101,16 @@ Une partie entière, jouée par le joueur moyen pendant 45 jours sur 12 parties 
 | Strate | Occasionnel (2 expéditions par jour) | Assidu (5 expéditions par jour) |
 |---|---|---|
 | −2 | jour 1 (1 exp.) | jour 1 (1 exp.) |
-| −3 | jour 3 (4 exp.) | jour 3 (9 exp.) |
-| −4 | jour 4 (2 exp.) | jour 3 (2 exp.) |
-| −5 | jour 6 (4 exp.) | jour 4 (8 exp.) |
-| −6 | jour 13 (10 exp.) | jour 7 (10 exp.) |
-| −7 | jour 18 (12 exp.) | jour 10 (10 exp.) |
-| −8 | jour 21 (5 exp.) | jour 13 (15 exp.) |
-| −9 | jour 25 (9 exp.) | jour 17 (22 exp.) |
-| −10 | jour 32 (14 exp.) | jour 23 (28 exp.) |
-| −11 | — | jour 31 (38 exp.) |
-| −12 | — | jour 37 (31 exp.) |
+| −3 | jour 3 (4 exp.) | jour 2 (6 exp.) |
+| −4 | jour 4 (3 exp.) | jour 3 (3 exp.) |
+| −5 | jour 8 (6 exp.) | jour 5 (5 exp.) |
+| −6 | jour 12 (11 exp.) | jour 7 (12 exp.) |
+| −7 | jour 15 (8 exp.) | jour 10 (11 exp.) |
+| −8 | jour 20 (8 exp.) | jour 13 (15 exp.) |
+| −9 | jour 24 (10 exp.) | jour 17 (22 exp.) |
+| −10 | jour 32 (15 exp.) | jour 23 (25 exp.) |
+| −11 | jour 41 (16 exp.) | jour 29 (35 exp.) |
+| −12 | — | jour 36 (30 exp.) |
+| −13 | — | jour 43 (40 exp.) |
 
-Victoires au front : Occasionnel 23 % · Assidu 19 %.
+Victoires au front : Occasionnel 30 % · Assidu 20 %.
