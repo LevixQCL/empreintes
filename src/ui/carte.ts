@@ -78,6 +78,8 @@ export interface Face {
   fx?: boolean;
   /** la Fréquence principale s'allume : la carte prolonge la suite (combat) */
   suite?: boolean;
+  /** la carte brise la Fêlure de l'ennemi (combat) : l'icône de la Fêlure, posée dans la capsule de Fréquence */
+  felure?: string;
 }
 
 /** Le dedans d'une carte : à poser dans un conteneur `.nf` (voir `faceCarte` et `geste`) */
@@ -91,6 +93,9 @@ export function corpsFace(d: Face): string {
   const segs = accord
     ? `<span class="nf-seg p" style="--fc:#5d5470">∗</span>`
     : d.fs.map((f, i) => `<span class="nf-seg${i ? '' : ' p'}" style="--fc:${couleurFrequence(f)}">${f}</span>`).join('');
+  // la Fêlure : un segment de plus dans la capsule, la même icône que la gemme fêlée de l'ennemi, et « Brise » quand la carte est assez grande
+  const fele = d.felure
+    ? `<span class="nf-seg fele" style="--fc:${accord ? '#5d5470' : couleurFrequence(d.fs[0]!)}">${d.felure}<em>Brise</em></span>` : '';
   const roue = d.niveau !== undefined
     ? `<i class="nf-roue${d.niveau >= COLLECTION.niveauMax ? ' max' : ''}" style="--n:${d.niveau};--max:${COLLECTION.niveauMax}"></i>`
     // sans niveau (en combat, carte du paquetage) : un losange de la couleur de la lignée
@@ -98,7 +103,7 @@ export function corpsFace(d: Face): string {
   const effet = d.effet
     ? `<span class="nf-regle"><i class="nf-ico">${ICONES_EFFET[d.effet.type]}</i><strong>${NOMS_EFFET[d.effet.type]}</strong><span>${formuleEffet(d.effet)}</span></span>` : '';
   return `<span class="nf-art">${art}${ill && d.fx ? FX[d.metal] : ''}</span>`
-    + `<span class="nf-freqs"><span class="nf-caps">${segs}</span>${d.lourd ? '<b class="nf-lourd">2 PL.</b>' : ''}</span>`
+    + `<span class="nf-freqs"><span class="nf-caps">${segs}${fele}</span>${d.lourd ? '<b class="nf-lourd">2 PL.</b>' : ''}</span>`
     + `<span class="nf-voile"><span class="nf-barre"></span>`
     + `<span class="nf-val ${d.type}">${ICONES_ACTION[d.type]}<b>${d.v}</b></span>`
     + (d.effet ? `<span class="nf-eff">${ICONES_EFFET[d.effet.type]}</span>` : '')

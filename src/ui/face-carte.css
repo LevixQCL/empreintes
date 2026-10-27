@@ -34,6 +34,12 @@
 .nf-seg::after{content:"";position:absolute;left:22%;right:22%;bottom:1.3cqw;height:.7cqw;border-radius:1cqw;background:color-mix(in srgb,var(--fc) 55%,#fff);opacity:.8}
 .nf-seg.p{min-width:15cqw;font-size:10.5cqw;opacity:1;background:color-mix(in srgb,var(--fc) 22%,rgba(8,10,18,.7));color:color-mix(in srgb,var(--fc) 30%,#fff)}
 .nf-seg.p::after{left:18%;right:18%;height:.9cqw;opacity:1;background:color-mix(in srgb,var(--fc) 70%,#fff)}
+/* la carte brise la Fêlure de l'ennemi : un segment blanc dans la capsule, l'icône de la gemme fêlée, et « Brise » */
+.nf-seg.fele{gap:1cqw;grid-auto-flow:column;min-width:0;padding:0 2.4cqw;opacity:1;color:#fff;
+  background:color-mix(in srgb,var(--fc) 30%,rgba(8,10,18,.75));box-shadow:inset 0 0 0 .4cqw rgba(255,255,255,.75),inset 0 0 3cqw rgba(255,255,255,.35)}
+.nf-seg.fele::after{display:none}
+.nf-seg.fele svg{width:7cqw;height:7cqw;filter:drop-shadow(0 0 1.2cqw #fff)}
+.nf-seg.fele em{font-style:normal;font-family:'Oxanium',var(--mono);font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
 .nf-suite .nf-seg.p{color:#fff;box-shadow:0 0 4cqw #ffd76e,inset 0 0 0 .5cqw #ffd76e}
 .nf-lourd{font-family:'Oxanium',var(--mono);font-weight:700;font-size:max(9px,4.6cqw);color:var(--ink);background:rgba(8,10,18,.8);
   border:.35cqw solid rgba(220,240,255,.35);border-radius:6cqw;padding:.6cqw 2cqw;white-space:nowrap}
@@ -82,13 +88,16 @@
   .nf-val b{font-size:15cqw}
   .nf-voile{padding-top:7.5cqw}
   .nf-regle > span{display:none}
+  .nf-seg.fele svg{width:10cqw;height:10cqw}
 }
 
 /* en main (carte de 90 px au plus) : la Fréquence principale, la valeur et l'icône de l'effet, en grand */
 @container (max-width:90px){
   .nf{--bord:2.4cqw}
   .nf-voile{height:calc(20% - var(--bord));padding:0}
-  .nf-ligne,.nf-regle,.nf-seg:not(.p){display:none}
+  .nf-ligne,.nf-regle,.nf-seg:not(.p,.fele),.nf-seg.fele em{display:none}
+  .nf-seg.fele{padding:0 3cqw}
+  .nf-seg.fele svg{width:16cqw;height:16cqw}
   .nf-freqs{top:4cqw;left:4cqw}
   .nf-caps{height:30cqw;border-radius:16cqw}
   .nf-seg.p{min-width:32cqw;font-size:22cqw}
@@ -103,15 +112,14 @@
     background:var(--lc);box-shadow:0 0 3cqw var(--lc)}
 }
 
-/* en combat (src/ui/vue.ts, geste) : la face remplit le bouton de la carte ; la flèche de suite et la Fêlure par-dessus */
+/* en combat (src/ui/vue.ts, geste) : la face remplit le bouton de la carte ; la flèche de suite par-dessus */
 .geste{container-type:inline-size;clip-path:none}
 .geste > .nf{position:absolute;inset:0;width:auto;aspect-ratio:auto}
-.geste :is(.g-suite,.g-felure){z-index:6}
-.geste.lourd :is(.g-suite,.g-felure){top:26px}
-.geste.lourd.halo .g-felure{top:50px}
+.geste .g-suite{z-index:6}
+.geste.lourd .g-suite{top:26px}
 /* en main, une carte lourde garde son « 2 PL. » en haut à droite */
 @container (max-width:90px){
-  .nf-freqs{right:4cqw;justify-content:space-between}
+  .nf-freqs{right:4cqw;justify-content:space-between;flex-wrap:wrap;row-gap:1.5cqw}
   .nf-lourd{display:block;font-size:12px;line-height:1.2;padding:0 3px;border-radius:5px}
 }
 

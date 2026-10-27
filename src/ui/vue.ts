@@ -103,7 +103,8 @@ function popsPour(e: Ecran, cible: string) {
  * Une carte en combat (décision du 22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue).
  * Depuis le 27 octobre 2026, la même face que dans la collection (`corpsFace`, src/ui/carte.ts) : à cette taille,
  * elle ne garde que la Fréquence principale, la valeur et l'icône de l'effet. Posée dans la chaîne, la Fréquence affichée
- * est celle qui compte (`g.f`) ; une carte qui prolonge la suite fait briller sa Fréquence.
+ * est celle qui compte (`g.f`) ; une carte qui prolonge la suite fait briller sa Fréquence, une carte qui brise la Fêlure
+ * de l'ennemi le dit dans sa capsule de Fréquence.
  */
 export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean; felure?: boolean } = {}) {
   const lign = ligneeGeste(g);
@@ -113,6 +114,7 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
   const d: Face = {
     carte: g.carte, repli: g.porteur ? portrait(g.porteur) : null, metal, type: g.type, v: g.v,
     fs: [g.f, ...(g.fs ?? []).filter((f) => f !== g.f)], nom: g.nom, effet: g.effet, lourd: g.lourd, lignee: COULEUR[lign], suite: o.halo,
+    felure: o.felure ? ICO.fele : undefined,
   };
   const cls = ['geste', taille, g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', o.felure ? 'brise-felure' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
@@ -120,7 +122,6 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]}" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="nf nf-${metal}${o.halo ? ' nf-suite' : ''}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d)}</span>`
     + (o.halo ? `<span class="g-suite" aria-hidden="true">${ICO.monter}</span>` : '')
-    + (o.felure ? `<span class="g-felure" aria-hidden="true">${ICO.fele}</span>` : '')
     + `</button>`;
 }
 
@@ -251,7 +252,7 @@ function regles(): string {
     + '<li><b>Plusieurs Fréquences :</b> une carte en argent, en or ou en nacre en porte 2 ou 3. Posée, elle prend celle qui prolonge ta suite ; touche les chiffres sous elle pour en changer. Rien n’est tiré au sort.</li>'
     + `<li><b>L’Écho :</b> trois Fréquences identiques donnent un bouclier d’escouade de +${REGLES.bouclierEcho}.</li>`
     + '<li><b>Le Flux</b> se remplit à chaque Résonance, et encore plus si la suite brise aussi une Fêlure. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main, ou garde-le pour un Coup d’éclat.</li>'
-    + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé). Dans une suite (3, 4, 5), elle donne aussi 1 Flux. Les évanescents la cachent.</li>'
+    + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé) : en main, ces cartes portent l’icône de la Fêlure dans leur capsule de Fréquence (« Brise » sur grand écran). Dans une suite (3, 4, 5), elle donne aussi 1 Flux. Les évanescents la cachent.</li>'
     + `<li><b>Le Coup d’éclat</b> : Flux plein, un seul par combat, au choix selon les lignées de l’escouade. ${(Object.values(ECLATS)).map((x) => `<b>${x.nom}</b> : ${x.texte}`).join(' ')} Le Porteur qui le déclenche prend ${REGLES.eclat.usure} d’Usure.</li>`
     + '<li><b>« 2 PL. »</b> : cette carte est puissante mais occupe deux places.</li>'
     + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.</li>'
