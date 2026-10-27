@@ -96,7 +96,7 @@ export function afficher() {
   const pseudoTape = (racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value;
   let h = '';
   if (app.mode === 'titre') h = htmlTitre(app.jeu.introVue, !reduit, compteTitre());
-  else if (app.mode === 'intro') h = htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache);
+  else if (app.mode === 'intro') h = htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache, app.introLongue);
   else if (app.mode === 'combat' && app.jeu.expedition?.carte && app.jeu.expedition.phase === 'carte') h = htmlExploration(app.jeu);
   else if (app.mode === 'combat' && app.jeu.expedition) {
     const etat = K.etat ?? app.jeu.expedition.combat;

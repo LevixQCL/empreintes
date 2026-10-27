@@ -29,6 +29,8 @@ export const app: {
   mode: Mode;
   plan: number;
   lignesVues: number;
+  /** l'intro complète (revue depuis le titre ou le menu) plutôt que la courte du premier lancement */
+  introLongue: boolean;
   /** intro : texte masqué pour admirer l'illustration */
   texteCache: boolean;
   compte: typeof import('../net/compte') | null;
@@ -52,6 +54,7 @@ export const app: {
   mode: 'titre',
   plan: 0,
   lignesVues: 1,
+  introLongue: false,
   texteCache: false,
   compte: null,
   uid: null,
