@@ -270,10 +270,6 @@ export interface CombatEtat {
   dissonance?: boolean;
   /** Marque de Véla (Lectrice) : la Dissonance n'a pas de prise sur l'escouade */
   lucide?: boolean;
-  /** Brouillard (27 octobre 2026, Bryan : poser puis retirer une carte révélait l'intention gratuitement) :
-   *  la brume est levée pour ce tour, et la carte qui l'a levée est engagée (elle ne revient plus en main) */
-  brumeLevee?: boolean;
-  engagee?: string;
   /** Marque de Docker (Bras de quai) : part du bouclier gardée à chaque tour, même sans Rempart */
   gardeMarque?: number;
   /** Marque de Sasha (Seconde chance) : part des PV rendue au premier Porteur qui tombe, et si elle a déjà servi */

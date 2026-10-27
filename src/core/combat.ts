@@ -194,19 +194,15 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
   if (soigneUnSeul(g)) g.cible = cibleConseillee(s);
   else delete g.cible;
   s.chaine.push(g);
-  // Brouillard : la première carte posée lève la brume pour tout le tour, et elle est engagée
-  if (s.condition === 'brouillard' && !s.brumeLevee) {
-    s.brumeLevee = true;
-    s.engagee = g.uid;
-    log(s, `${g.nom} perce le brouillard : elle est engagée, elle ne peut plus revenir en main ce tour-ci.`);
-  }
   return { ok: true };
 }
 
-/** Brouillard : la carte qui a levé la brume ce tour-ci ne revient pas en main */
-export const estEngagee = (s: CombatEtat, uid: string) => s.condition === 'brouillard' && s.engagee === uid;
-/** La brume cache encore les intentions ennemies (aucune carte n'a été posée ce tour-ci) */
-export const brumeActive = (s: CombatEtat) => s.condition === 'brouillard' && !s.brumeLevee && s.issue === 'en-cours';
+/**
+ * Brouillard (27 octobre 2026, Bryan : poser puis retirer une carte révélait l'intention, le brouillard ne servait à rien).
+ * Il dure tout le combat : on voit ce que prépare l'ennemi (attaque, bouclier, soin…), jamais combien ni sur qui,
+ * et sa Fêlure reste cachée.
+ */
+export const brumeActive = (s: CombatEtat) => s.condition === 'brouillard' && s.issue === 'en-cours';
 
 /** Une carte qui soigne un seul Porteur (la Vague soigne toute l'escouade) */
 export const soigneUnSeul = (g: Geste) => g.type === 'soin' && g.effet?.type !== 'vague';
@@ -217,6 +213,7 @@ export const soigneUnSeul = (g: Geste) => g.type === 'soin' && g.effet?.type !==
  */
 function cibleConseillee(s: CombatEtat): string | undefined {
   const coups = new Map<string, number>();
+  if (brumeActive(s)) return plusBlesse(s)?.id;
   for (const en of ennemisDebout(s)) {
     const it = intentionDe(s, en);
     if (it.type === 'atk' && !it.zone && it.cibleId) coups.set(it.cibleId, (coups.get(it.cibleId) ?? 0) + it.v * puissance(en));
@@ -253,11 +250,6 @@ export function accorder(s: CombatEtat, uid: string, f?: number): Resultat {
 export function retirer(s: CombatEtat, uid: string): Resultat {
   const g = s.chaine.find((x) => x.uid === uid);
   if (!g) return { ok: false };
-  if (estEngagee(s, uid)) {
-    const message = `${g.nom} a percé le brouillard : elle reste engagée jusqu’à la fin du tour.`;
-    log(s, message);
-    return { ok: false, message };
-  }
   s.chaine = s.chaine.filter((x) => x !== g);
   if (g.fs) g.f = g.fs[0]!;
   s.main.push(g);
@@ -281,13 +273,9 @@ export function deplacer(s: CombatEtat, uid: string, vers: number): Resultat {
 }
 
 export function viderChaine(s: CombatEtat): void {
-  // la carte engagée par le brouillard reste dans la chaîne
-  const reste = s.chaine.filter((g) => estEngagee(s, g.uid));
-  const rendues = s.chaine.filter((g) => !reste.includes(g));
-  for (const g of rendues) if (g.fs) g.f = g.fs[0]!;
-  s.main.push(...rendues);
-  s.chaine = reste;
-  s.chaine.forEach((x, i) => { if (x.fs && x.fs.length > 1) x.f = meilleureFrequence(s.chaine.slice(0, i), x.fs); });
+  for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
+  s.main.push(...s.chaine);
+  s.chaine = [];
 }
 
 export function allonger(s: CombatEtat): Resultat {
@@ -391,9 +379,6 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
   s.defausse.push(...s.chaine);
   s.chaine = [];
-  // nouveau tour : le brouillard retombe
-  delete s.brumeLevee;
-  delete s.engagee;
   // les places vides ne restent pas en main : elles ont coûté leur place pour ce tour
   s.defausse.push(...s.main.filter((g) => g.vide));
   s.main = s.main.filter((g) => !g.vide);

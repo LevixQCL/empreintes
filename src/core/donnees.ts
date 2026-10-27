@@ -487,7 +487,7 @@ export const CONDITIONS: Record<string, ConditionDef> = {
   echo: { id: 'echo', nom: 'Écho ancien', texte: 'Une suite de 4 résonne comme une suite de 5.' },
   sanctuaire: { id: 'sanctuaire', nom: 'Source tiède', texte: 'Les soins de l’escouade font +30 %.' },
   eboulis: { id: 'eboulis', nom: 'Éboulis', texte: 'À chaque tour ennemi, des pierres tombent sur tout le monde (escouade et ennemis), sans jamais mettre personne à terre.' },
-  brouillard: { id: 'brouillard', nom: 'Brouillard', texte: 'L’intention de l’ennemi ne se lit qu’une fois la première carte posée, et cette carte reste engagée : elle ne revient plus en main ce tour-ci.' },
+  brouillard: { id: 'brouillard', nom: 'Brouillard', texte: 'Tout le combat, on voit ce que prépare l’ennemi, mais jamais combien ni sur qui. Sa Fêlure reste cachée.' },
 };
 /** La lignée que favorise une condition (+20 % à ses cartes) */
 export const FAVEUR_CONDITION: Record<string, Lignee> = { inondee: 'bio', courants: 'tech', chant: 'reso' };

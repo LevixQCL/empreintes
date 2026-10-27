@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, apercuChaine, detailForce, type DetailForce, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, brumeActive as C_brume, estEngagee, puissance, usureCombat } from '../core/combat';
+import { ECLATS, apercuChaine, detailForce, type DetailForce, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, brumeActive as C_brume, puissance, usureCombat } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
@@ -111,7 +111,7 @@ let ETEINTS = new Set<string>();
 /** Le combat affiché : chaque carte y lit sa force réelle (detailForce) */
 let ETAT: CombatEtat | null = null;
 
-export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean; felure?: boolean; engagee?: boolean } = {}) {
+export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean; felure?: boolean } = {}) {
   const lign = ligneeGeste(g);
   const eteinte = !!g.porteur && ETEINTS.has(g.porteur);
   // la force affichée est celle qui tombera (27 octobre 2026, Luc et Bryan) : vert si la carte est renforcée, rouge si elle est affaiblie ;
@@ -128,9 +128,9 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
     fs: [g.f, ...(g.fs ?? []).filter((f) => f !== g.f)], nom: g.nom, effet: g.effet, ...(g.effet2 ? { effet2: g.effet2 } : {}), lourd: g.lourd, lignee: COULEUR[lign], suite: o.halo,
     felure: o.felure ? ICO.fele : undefined,
   };
-  const cls = ['geste', taille, eteinte ? 'eteinte' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', o.felure ? 'brise-felure' : '', o.engagee ? 'engagee' : ''].filter(Boolean).join(' ');
+  const cls = ['geste', taille, eteinte ? 'eteinte' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', o.felure ? 'brise-felure' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
-  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${vReel}${tendance ? ` (${tendance === 'hausse' ? 'renforcée' : 'affaiblie'}, ${g.v} de base)` : ''}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}${eteinte ? ', éteinte : son Porteur est à terre' : ''}${o.engagee ? ', engagée par le brouillard : elle ne revient plus en main ce tour-ci' : ''}`;
+  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${vReel}${tendance ? ` (${tendance === 'hausse' ? 'renforcée' : 'affaiblie'}, ${g.v} de base)` : ''}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}${eteinte ? ', éteinte : son Porteur est à terre' : ''}`;
   AFFICHES.set(g.uid, { g, d, nomP, eteinte, detail });
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]}" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="nf nf-${metal}${o.halo ? ' nf-suite' : ''}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d)}</span>`
@@ -198,17 +198,17 @@ export const carteDemo = (g: Geste, taille: 'chaine' | 'main' = 'main') => geste
 /** la plus haute Fréquence d'une carte : une suite s'arrête là */
 const FREQ_MAX = 9;
 
-function maillon(g: Geste, off: boolean, engagee = false) {
+function maillon(g: Geste, off: boolean) {
   const choix = g.fs && g.fs.length > 1 && !frequenceLibre(g.effet);
   // une carte de soin montre qui elle soigne ; la toucher passe au Porteur suivant
   const soin = soigneUnSeul(g) && g.cible
     ? `<button type="button" class="cibler" data-action="cibler" data-uid="${g.uid}"${off ? ' disabled' : ''} style="--c:${COULEUR[porteurDef(g.cible).lignee]}" aria-label="Soigne ${echap(porteurDef(g.cible).nom)} : toucher pour changer">${ICO.soin}<span>${echap(porteurDef(g.cible).nom)}</span></button>`
     : '';
   const c = `style="--c:${COULEUR[ligneeGeste(g)]}"`;
-  if (soin && !choix) return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off, engagee })}${soin}</div>`;
-  if (!choix) return geste(g, 'chaine', 'retirer', { off, engagee });
+  if (soin && !choix) return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off })}${soin}</div>`;
+  if (!choix) return geste(g, 'chaine', 'retirer', { off });
   const suivante = g.fs![(g.fs!.indexOf(g.f) + 1) % g.fs!.length]!;
-  return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off, engagee })}`
+  return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off })}`
     + `<button type="button" class="accorder" data-action="accorder" data-uid="${g.uid}"${off ? ' disabled' : ''} aria-label="Passer ${echap(g.nom)} en Fréquence ${suivante}">${g.fs!.map((f) => `<i class="${f === g.f ? 'actif' : ''}" style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</button>${soin}</div>`;
 }
 
@@ -256,6 +256,9 @@ const NOMS_SALLE: Record<TypeSalle, string> = {
   camp: 'le campement', archive: 'les archives', gardien: 'la salle du gardien', filon: 'le filon',
 };
 
+/** Ce que prépare l'ennemi, sans chiffre ni cible (le brouillard laisse voir ça) */
+const GENRE_INTENTION: Record<string, string> = { atk: 'Va attaquer', bouclier: 'Va se protéger', soin: 'Va se réparer', boost: 'Se concentre', dissonance: 'Va brouiller tes Fréquences' };
+
 function feuilleFuite(e: Ecran): string {
   const x = e.x;
   const s = e.etat;
@@ -264,14 +267,17 @@ function feuilleFuite(e: Ecran): string {
   const touches = coups.filter((c) => c.net > 0);
   const tombent = porteurs.filter((p) => p.pv <= 0 && (s.porteurs.find((q) => q.id === p.id)?.pv ?? 0) > 0);
   let coup: string;
-  if (!attaque) coup = `${echap(nom)} ne prépare pas d’attaque : l’escouade s’échappe sans un coup.`;
+  if (C_brume(s)) coup = s.intention.type === 'atk' || enGroupe(s)
+    ? 'En fuyant, l’escouade encaisse l’attaque cachée dans le brouillard : impossible de savoir qui elle touchera, ni combien.'
+    : `${echap(nom)} ne semble pas préparer d’attaque : l’escouade devrait s’échapper sans un coup.`;
+  else if (!attaque) coup = `${echap(nom)} ne prépare pas d’attaque : l’escouade s’échappe sans un coup.`;
   else if (!touches.length) coup = `<b>${echap(attaque)}</b> s’écrasera sur le bouclier : l’escouade s’échappe sans une égratignure.`;
   else coup = `En fuyant, l’escouade encaisse l’attaque annoncée : <b>${echap(attaque)}</b> sur ${touches.map((c) => `${echap(porteurDef(c.id).nom)} (−${c.net})`).join(', ')}.`
     + (tombent.length ? ` <b class="tombe">${tombent.map((p) => echap(porteurDef(p.id).nom)).join(' et ')} ${tombent.length > 1 ? 'tomberont' : 'tombera'} à terre.</b>` : '');
 
   let h = `<div class="voile-feuille" data-action="fuir" aria-hidden="true"></div><section class="feuille fuite" role="dialog" aria-modal="true" aria-labelledby="fuite-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">FUIR</span><h2 id="fuite-titre">Quitter le combat ?</h2></div><button type="button" class="btn-icone" data-action="fuir" aria-label="Fermer">${ICO.fermer}</button></header>`
-    + `<div class="feuille-corps"><p class="fuite-coup${touches.length ? ' touche' : ''}">${touches.length ? ICO.atk : ICO.bouclier}<span>${coup}</span></p><div class="routes">`;
+    + `<div class="feuille-corps"><p class="fuite-coup${touches.length && !C_brume(s) ? ' touche' : ''}">${touches.length || C_brume(s) ? ICO.atk : ICO.bouclier}<span>${coup}</span></p><div class="routes">`;
   if (x.carte) {
     const prec = sallePrecedente(x);
     const ok = peutReculer(x);
@@ -366,6 +372,16 @@ export function htmlLieu(x: Expedition): string {
 function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtml: string): string {
   const it = s.intention;
   let nom = '', quoi = '', val = '', unite = '';
+  // Brouillard : on sait ce que l'ennemi prépare, pas combien ni sur qui
+  if (C_brume(s)) {
+    nom = 'Dans le brouillard';
+    quoi = it.type === 'atk' ? 'Cible inconnue' : it.type === 'dissonance' ? 'Pas de Résonance au tour suivant' : GENRE_INTENTION[it.type] ?? '';
+    if (it.type !== 'dissonance') { val = '?'; unite = it.type === 'atk' || it.type === 'boost' ? 'dégâts' : it.type === 'soin' ? 'PV' : 'bouclier'; }
+    return `<div class="intention plaque-int ${classe} brume" aria-live="polite" aria-label="${echap(`Brouillard : ${GENRE_INTENTION[it.type]}, force et cible cachées.`)}">`
+      + `<span class="int-ico">${icone}</span>`
+      + `<span class="int-corps" aria-hidden="true"><small class="int-nom">${nom}</small><span class="int-quoi">${it.type === 'atk' ? '<i class="int-fleche"></i>' : ''}${quoi}</span></span>`
+      + (val ? `<span class="int-val" aria-hidden="true"><b>${val}</b><small>${unite}</small></span>` : '') + '</div>';
+  }
   if (it.type === 'atk') {
     nom = it.nom;
     val = String(Math.round(it.v * puissance(s.ennemi) * usureCombat(s).attaque));
@@ -454,15 +470,15 @@ function vignettesGroupe(e: Ecran): string {
     const tombe = en.pv <= 0;
     const ill = visageEnnemi(en);
     const cache = C_brume(s);
-    const val = cache ? '?' : it.type === 'atk' ? String(Math.round(it.v * puissance(en) * usureCombat(s).attaque)) : it.type === 'bouclier' || it.type === 'soin' ? String(it.v) : it.type === 'boost' ? '×2' : '';
+    const val = cache ? (it.type === 'dissonance' ? '' : '?') : it.type === 'atk' ? String(Math.round(it.v * puissance(en) * usureCombat(s).attaque)) : it.type === 'bouclier' || it.type === 'soin' ? String(it.v) : it.type === 'boost' ? '×2' : '';
     const cls = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
     const ico = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
     const traits = (en.simple ? [] : d.traits ?? []).map((t) => texteTrait(t).nom);
     const nom = nomEnnemi(en);
-    const label = tombe ? `${nom}, vaincu` : `${vise ? 'Visé : ' : 'Viser '}${nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? 'Intention cachée par le brouillard.' : texteIntention(s, en)}`;
+    const label = tombe ? `${nom}, vaincu` : `${vise ? 'Visé : ' : 'Viser '}${nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? `${GENRE_INTENTION[it.type]}, force et cible cachées par le brouillard.` : texteIntention(s, en)}`;
     return `<button type="button" class="vignette-ennemi l-${d.lignee}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
       + (ill ? `<img src="${ill}" alt="" decoding="async">` : '<span class="vg-sans"></span>')
-      + (tombe ? '' : cache ? '<span class="vg-int"><b>?</b></span>' : `<span class="vg-int ${cls}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)
+      + (tombe ? '' : `<span class="vg-int ${cls}${cache ? ' brume' : ''}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)
       + (tombe || cache || !en.felure ? '' : !felureVisible(en) ? `<span class="vg-felure" aria-hidden="true">${ICO.fele}<b>?</b></span>` : `<span class="vg-felure${en.felureBrisee ? ' brisee' : ''}" style="--fc:${couleurFrequence(en.felure)}" aria-hidden="true">${ICO.fele}<b>${en.felure}</b></span>`)
       + `<span class="vg-vie"><i style="width:${Math.max(0, Math.round((100 * en.pv) / en.pvMax))}%"></i></span>`
       + popsPour(e, `ennemi-${en.rang ?? 0}`)
@@ -558,9 +574,7 @@ function htmlEcranCombat(e: Ecran): string {
     + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
 
     + vignettesGroupe(e)
-    + (C_brume(s)
-      ? `<div class="intention brume" aria-live="polite"><span class="int-ico">?</span><span class="int-txt"><small>BROUILLARD</small>Pose une carte pour la lire</span></div>`
-      : plaqueIntention(s, classeIntention, iconeIntention, felureHtml))
+    + plaqueIntention(s, classeIntention, iconeIntention, felureHtml)
     + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
     + `<h2 class="ennemi-nom">${echap(nomEnnemi(s.ennemi))}${s.ennemi.phase2 && def.phase ? ` <small class="phase">· ${echap(def.phase.nom)}</small>` : ''}</h2>`
     // les traits et les états passagers (bouclier, Fissure) sur la même ligne : la scène reste basse sur téléphone
@@ -599,7 +613,7 @@ function htmlEcranCombat(e: Ecran): string {
   // pendant l'animation, la carte qui agit s'avance, celles déjà jouées s'éteignent
   s.chaine.forEach((g, i) => {
     const etat = e.actif === undefined ? '' : i === e.actif ? 'en-jeu' : i < e.actif ? 'jouee' : '';
-    const html = maillon(g, verrou, estEngagee(s, g.uid));
+    const html = maillon(g, verrou);
     h += etat ? html.replace('class="', `class="${etat} `) : html;
     // une carte lourde garde sa forme de carte : sa deuxième place est un emplacement relié, au lieu d'une carte étirée
     if (g.lourd) {
