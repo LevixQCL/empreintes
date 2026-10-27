@@ -27,22 +27,23 @@ qui ne couvre que le quart du bas, et l'image reste visible à travers.
 
 ```
 ┌──────────────────────────╲   liseré fin du métal tout autour
-│                           │
-│   ILLUSTRATION ENTIÈRE    │   0 → 75 % : aucune interface
-│   (format 5:7, rien de    │
-│    coupé)                 │
-│ ⬡6 ⬡7 ⬡5 ━━━━━━━━━━━ ⬢12 │   75 % : la COUTURE — Fréquences à gauche,
-│░◌ Apaiser░░░░░░░░░░░░░░░░░│          valeur dans son médaillon d'or à droite
+│ ⬡6                        │   en haut à gauche : la Fréquence (les autres en dessous, plus petites)
+│ ⬡7  ILLUSTRATION ENTIÈRE  │
+│ ⬡5  (format 5:7, rien de  │   0 → 75 % : aucune autre interface
+│      coupé)               │
+│━━━━━━━━━━━━━━━━━━━━━━ ⬢12 │   75 % : la couture, et la valeur dans son médaillon d'or
+│░◌ Apaiser░░░░░░░░░░░░░░░░░│
 ╲░◆ Vague  soigne tous░░░░░░│   voile de verre fumé : 2 lignes seulement
  ╲──────────────────────────┘
 ```
 
 1. **L'image entière.** Le cadre n'est plus qu'un liseré de métal fin (1,6 % de la largeur) tout autour : il dit le métal
    (fer, cuivre, argent, or, nacre irisée) sans rien cacher. Le badge « Nouvelle » passe en haut à droite, petit.
-2. **La couture : la ligne de suite.** Une bande de cristal lumineux au trois quarts de la hauteur. À gauche, la ou les
-   Fréquences (cristaux octogonaux, la principale en grand, les autres côte à côte — **plus d'animation qui les fait
-   défiler**) ; à droite, la valeur dans un médaillon d'or dont la forme dit l'action : éclat (attaque), écu (bouclier),
-   goutte (soin). En combat, la couture d'une carte qui prolonge ta suite s'allume : le combo se lit par la lumière.
+2. **La Fréquence en haut à gauche** (choix de Bryan : c'est là qu'on la cherche, et elle reste visible quand les cartes
+   se chevauchent). La principale en grand ; les autres, en dessous, en colonne et plus petites — **plus d'animation qui
+   les fait défiler**. En combat, le cristal d'une carte qui prolonge ta suite s'allume : le combo se lit par la lumière.
+   **La valeur en bas à droite**, dans un médaillon d'or posé sur la couture (une fine bande de cristal à 75 % de la
+   hauteur) ; sa forme dit l'action : éclat (attaque), écu (bouclier), goutte (soin).
 3. **Le voile : deux lignes, pas une de plus.** Dégradé de verre fumé flouté, donc toujours clair sur foncé quel que soit
    le métal ou l'image.
    - Ligne 1 : **la roue de niveau** puis le nom en entier. La roue a 10 crans (`COLLECTION.niveauMax`), remplis jusqu'au
@@ -92,7 +93,7 @@ Toutes les pièces sur fond noir uni (fond blanc pour le cristal à teinter) : j
 ### Étape 0 — Le concept (4 images, on en garde une)
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. empty game card frame design, front view, flat and perfectly symmetrical, a very thin ornate polished gold border running around the whole card, the whole inside is an open window filled with flat pure black, a thin luminous pale blue crystal seam runs horizontally across the card at three quarters of its height, one empty octagonal faceted crystal socket on the left end of the seam, one larger round empty gold medallion on the right end of the seam, top right and bottom left corners cut at 45 degrees, crystal and light, icy edges, family-friendly, no text, no letters, no numbers --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, letters, numbers, symbols, person, character, creature, thick frame
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. empty game card frame design, front view, flat and perfectly symmetrical, a very thin ornate polished gold border running around the whole card, the whole inside is an open window filled with flat pure black, one empty octagonal faceted crystal socket in the top left corner, a thin luminous pale blue crystal seam runs horizontally across the card at three quarters of its height, one larger round empty gold medallion on the right end of the seam, top right and bottom left corners cut at 45 degrees, crystal and light, icy edges, family-friendly, no text, no letters, no numbers --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, letters, numbers, symbols, person, character, creature, thick frame
 ```
 
 ### Étape 1 — Les cinq liserés de métal (`public/art/cadres/bord-<metal>.webp`, 1000 × 1400)
