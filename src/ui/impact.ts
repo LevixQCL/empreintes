@@ -9,6 +9,7 @@
 import type { Evenement, LigneeGeste } from '../core/types';
 import { vibrer } from './toucher';
 import { echelleScene, ondeDeChoc } from './verre';
+import { annoncerPhase } from './bandeau';
 
 const TEINTE: Record<LigneeGeste, string> = { tech: '#8FDCFF', bio: '#FFB44A', reso: '#B98CFF', neutre: '#EBD9A8' };
 const SOIN = '#7CE3A0';
@@ -890,7 +891,10 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       secouer(ecran, 3);
       voileRouge(0.25);
       note(80, 'sawtooth', 0.8, 0.07, 2);
-      return 500;
+      note(55, 'triangle', 1.6, 0.08, 1.5);
+      // le bandeau : le nom de la phase, ce qui arrive, et la créature appelée en grand (27 octobre 2026)
+      annoncerPhase(ev.id, reduit);
+      return 2200;
     }
     case 'renfort': {
       // un ennemi surgit : sa vignette apparaît dans une gerbe de poussière

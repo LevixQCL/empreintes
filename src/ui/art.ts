@@ -118,6 +118,8 @@ export const illustrationModule = (cle: string): string | null => {
   const id = cle.split('@')[0]!;
   return MODULES_ILLUSTRES[id] ? `${base}modules/${MODULES_ILLUSTRES[id]}.webp?v=${VERSION_CARTES}` : null;
 };
+/** Les ornements peints des gardiens (27 octobre 2026) : plaque du nom, cadre de la barre de vie, cran de phase, bandeau d'annonce */
+export const artGardien = (n: 'plaque' | 'barre' | 'cran' | 'bandeau') => `${base}boss/${n}.webp`;
 export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
 export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;

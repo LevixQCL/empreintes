@@ -20,6 +20,7 @@ import { visuel as ageDistrict } from '../ui/art';
 import { htmlTitre, type TitreCompte } from '../ui/titre';
 import { glisser, horloge, noter } from '../ui/toucher';
 import { htmlCombat, panneauCompte } from '../ui/vue';
+import { annoncerGardien } from '../ui/bandeau';
 import { app, compteEtat, D, G, K, racine, reduit } from './etat';
 import { sauver } from './synchro';
 
@@ -139,6 +140,7 @@ export function afficher() {
   for (const [sel, cle] of Object.entries(cles())) if (cle && cle !== avant[sel]) racine.querySelector(sel)?.classList.add('entre');
   document.body.classList.toggle('fige', !!racine.querySelector('.feuille, .voile'));
   if (app.mode === 'district') { activerCartes(racine); brancherTableau(racine); }
+  if (app.mode === 'combat') entreeGardien();
   if (app.mode === 'intro') { precharger(app.plan); precharger(app.plan + 1); animerCompteur(racine, app.lignesVues, reduit); }
   D.uid = app.uid;
   const ie = racine.querySelector('#email') as HTMLInputElement | null;
@@ -147,6 +149,21 @@ export function afficher() {
   const ip = racine.querySelector('#gt-nom') as HTMLInputElement | null;
   if (ip && pseudoTape !== undefined) ip.value = pseudoTape;
   if (im) im.value = mdp;
+}
+
+/** L'entrée d'un gardien (27 octobre 2026) : un bandeau, une fois, quand l'escouade entre dans sa salle */
+let gardienAnnonce = '';
+function entreeGardien() {
+  const x = app.jeu.expedition;
+  const etat = K.etat ?? x?.combat;
+  if (!x?.carte || x.phase !== 'combat' || x.tutoriel || !etat || etat.issue !== 'en-cours' || etat.tour !== 1 || etat.chaine.length) return;
+  const salle = x.carte.salles[x.carte.position];
+  if (salle?.type !== 'gardien' || !salle.ennemi) return;
+  const cle = `${x.strate}:${x.sequence.length}:${x.carte.position}`;
+  // une fenêtre ouverte (première rencontre d'une mécanique) passe d'abord : le bandeau viendra quand elle sera fermée
+  if (cle === gardienAnnonce || racine.querySelector('.voile, .fenetre')) return;
+  gardienAnnonce = cle;
+  annoncerGardien(salle.ennemi, x.strate, reduit);
 }
 
 /**

@@ -2,14 +2,14 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, apercuChaine, detailForce, type DetailForce, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, brumeActive as C_brume, puissance, usureCombat } from '../core/combat';
+import { ECLATS, estGardien, apercuChaine, detailForce, type DetailForce, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, brumeActive as C_brume, puissance, usureCombat } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
 import { DISTRICT, PILLAGE } from '../core/jeu';
-import { ageArchipel, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait } from './art';
+import { ageArchipel, artGardien, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait } from './art';
 import { corpsFace, couleurFrequence, styleFace, type Face } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
@@ -467,7 +467,8 @@ function vignettesGroupe(e: Ecran): string {
   const s = e.etat;
   if (!enGroupe(s)) return '';
   const verrou = e.verrou || s.issue !== 'en-cours';
-  return '<div class="groupe-ennemis" role="group" aria-label="Le groupe : touche un ennemi pour le viser">' + tousEnnemis(s).map((en) => {
+  const avecGardien = tousEnnemis(s).some((en) => estGardien(en.id));
+  return `<div class="groupe-ennemis${avecGardien ? ' avec-gardien' : ''}" role="group" aria-label="Le groupe : touche un ennemi pour le viser">` + tousEnnemis(s).map((en) => {
     const d = ennemiDef(en.id);
     const it = intentionDe(s, en);
     const vise = en === s.ennemi;
@@ -480,14 +481,38 @@ function vignettesGroupe(e: Ecran): string {
     const traits = (en.simple ? [] : d.traits ?? []).map((t) => texteTrait(t).nom);
     const nom = nomEnnemi(en);
     const label = tombe ? `${nom}, vaincu` : `${vise ? 'Visé : ' : 'Viser '}${nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? `${GENRE_INTENTION[it.type]}, force et cible cachées par le brouillard.` : texteIntention(s, en)}`;
-    return `<button type="button" class="vignette-ennemi l-${d.lignee}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
+    return `<button type="button" class="vignette-ennemi l-${d.lignee}${estGardien(en.id) ? ' gardien' : ''}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
       + (ill ? `<img src="${ill}" alt="" decoding="async">` : '<span class="vg-sans"></span>')
       + (tombe ? '' : `<span class="vg-int ${cls}${cache ? ' brume' : ''}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)
       + (tombe || cache || !en.felure ? '' : !felureVisible(en) ? `<span class="vg-felure" aria-hidden="true">${ICO.fele}<b>?</b></span>` : `<span class="vg-felure${en.felureBrisee ? ' brisee' : ''}" style="--fc:${couleurFrequence(en.felure)}" aria-hidden="true">${ICO.fele}<b>${en.felure}</b></span>`)
+      + (avecGardien ? `<span class="vg-nom">${echap(nom)}</span>` : '')
       + `<span class="vg-vie"><i style="width:${Math.max(0, Math.round((100 * en.pv) / en.pvMax))}%"></i></span>`
       + popsPour(e, `ennemi-${en.rang ?? 0}`)
       + '</button>';
   }).join('') + '</div>';
+}
+
+/** Le nom d'un gardien, dans sa plaque de cristal violet et d'or (27 octobre 2026) */
+function plaqueGardien(nom: string, phase: string): string {
+  return `<div class="plaque-gardien" style="--plaque:url(${artGardien('plaque')})">`
+    + `<h2 class="ennemi-nom">${echap(nom)}</h2>`
+    + (phase ? `<span class="pg-phase">${echap(phase)}</span>` : '')
+    + '</div>';
+}
+
+/**
+ * La vie d'un gardien : la jauge coule dans la rainure d'une barre peinte, et un cran de cristal marque le seuil
+ * de sa seconde phase (il s'éteint une fois franchi). On voit d'avance qu'il se passera quelque chose, pas quoi.
+ */
+function vieGardien(e: Ecran): string {
+  const en = e.etat.ennemi;
+  const ph = ennemiDef(en.id).phase;
+  const cran = ph && !en.simple
+    ? `<img class="vg-cran${en.phase2 ? ' franchi' : en.pv / en.pvMax <= ph.seuil + 0.12 ? ' proche' : ''}" src="${artGardien('cran')}" alt="" style="--s:${ph.seuil}" title="${en.phase2 ? 'Seconde phase en cours' : 'Seuil de la seconde phase'}">`
+    : '';
+  return `<div class="vie-ennemi vie-gardien"><span class="vg-barre" style="--cadre:url(${artGardien('barre')})">`
+    + `<span class="vg-rainure">${jauge('je', en.pv, en.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: en.bouclier })}</span>${cran}</span>`
+    + `<span class="je-valeur"><b>${en.pv}</b><small>/ ${en.pvMax}</small></span></div>`;
 }
 
 export function htmlCombat(e: Ecran): string {
@@ -572,7 +597,9 @@ function htmlEcranCombat(e: Ecran): string {
     + (s.ennemi.fissure ? `<span class="etat fissure" tabindex="0" title="Fissure : il subit ${Math.round(s.ennemi.fissure * 100)} % de dégâts en plus">${ICO.fele}Fissure +${Math.round(s.ennemi.fissure * 100)} % dégâts</span>` : '');
 
   // la scène de l'ennemi
-  h += `<section class="scene-ennemi l-${def.lignee}${enGroupe(s) ? ' en-groupe' : ''}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'};--ng:${tousEnnemis(s).length}" aria-label="Ennemi">`
+  // un gardien (27 octobre 2026) : son nom dans une plaque peinte, sa vie dans une barre ornée avec le cran de sa seconde phase
+  const gardien = estGardien(def.id) && !s.ennemi.porteur;
+  h += `<section class="scene-ennemi l-${def.lignee}${gardien ? ' gardien' : ''}${enGroupe(s) ? ' en-groupe' : ''}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'};--ng:${tousEnnemis(s).length}" aria-label="Ennemi">`
     + (ill ? `<img class="ennemi-art${s.issue === 'victoire' ? ' dissous' : ''}${s.ennemi.porteur ? ' garde' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
     + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
     + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
@@ -580,10 +607,12 @@ function htmlEcranCombat(e: Ecran): string {
     + vignettesGroupe(e)
     + plaqueIntention(s, classeIntention, iconeIntention, felureHtml)
     + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
-    + `<h2 class="ennemi-nom">${echap(nomEnnemi(s.ennemi))}${s.ennemi.phase2 && def.phase ? ` <small class="phase">· ${echap(def.phase.nom)}</small>` : ''}</h2>`
+    + (gardien ? plaqueGardien(def.nom, s.ennemi.phase2 && def.phase ? def.phase.nom : '')
+      : `<h2 class="ennemi-nom">${echap(nomEnnemi(s.ennemi))}${s.ennemi.phase2 && def.phase ? ` <small class="phase">· ${echap(def.phase.nom)}</small>` : ''}</h2>`)
     // les traits et les états passagers (bouclier, Fissure) sur la même ligne : la scène reste basse sur téléphone
     + (marques ? `<div class="traits">${marques}</div>` : '')
-    + `<div class="vie-ennemi">${jauge('je', s.ennemi.pv, s.ennemi.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: s.ennemi.bouclier })}<span class="je-valeur"><b>${s.ennemi.pv}</b><small>/ ${s.ennemi.pvMax}</small></span></div>`
+    + (gardien ? vieGardien(e)
+      : `<div class="vie-ennemi">${jauge('je', s.ennemi.pv, s.ennemi.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: s.ennemi.bouclier })}<span class="je-valeur"><b>${s.ennemi.pv}</b><small>/ ${s.ennemi.pvMax}</small></span></div>`)
     + `</div></section>`;
 
   // l'escouade

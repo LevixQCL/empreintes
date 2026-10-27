@@ -1090,7 +1090,7 @@ function phaseGardien(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) =>
   en.phase2 = true;
   en.etape = 0;
   log(s, `${ennemiDef(en.id).nom} : ${ph.nom}. ${ph.texte}`, { camp: 'ennemi', sorte: 'info' });
-  emettre({ kind: 'phase', rang: en.rang ?? 0, nom: ph.nom });
+  emettre({ kind: 'phase', rang: en.rang ?? 0, id: en.id, nom: ph.nom });
   choisirIntention(s, en);
   for (const id of ph.renforts ?? []) invoquer(s, id, 0.25, emettre);
 }

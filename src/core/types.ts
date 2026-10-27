@@ -371,7 +371,7 @@ export type Evenement =
   /** un ennemi surgit en cours de combat (rejeton, renfort) */
   | { kind: 'renfort'; rang: number; id: string }
   /** un gardien entre dans sa seconde phase */
-  | { kind: 'phase'; rang: number; nom: string }
+  | { kind: 'phase'; rang: number; id: string; nom: string }
   | { kind: 'a-terre'; cible: string }
   | { kind: 'fin'; issue: Issue };
 
