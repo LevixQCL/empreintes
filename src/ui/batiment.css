@@ -192,3 +192,44 @@
 .fb-convertir .btn.prim{display:flex;align-items:center;justify-content:center;gap:8px}
 .fb-convertir .btn.prim svg{width:18px;height:18px}
 .fb-note{font-size:12px;color:var(--quiet)}
+
+/* ---------- La Forge (refonte du 27 octobre 2026) : forgeron sur une ligne, l'établi, les cartes par métal ---------- */
+.fg-forgeron{padding:8px 10px 8px 8px;gap:12px}
+.fg-forgeron strong{font-size:18px}
+.fg-forgeron .fb-apport{font-size:13px}
+.fg-forgeron .fb-liberer{min-height:40px;padding:0 14px}
+.fb-consigne .fg-replier{float:right;padding:0;border:0;background:none;font:inherit;font-weight:400;color:var(--fb-glace);cursor:pointer}
+.fg-etabli{--cut:8px;display:flex;align-items:center;gap:14px;padding:12px;border-radius:4px;
+  background:linear-gradient(180deg,rgba(242,213,140,.07),rgba(242,213,140,.02));box-shadow:inset 0 0 0 1px rgba(242,213,140,.28)}
+.fg-etabli>div{flex:1;display:grid;gap:5px;min-width:0}
+.fg-etabli small{font-size:12px;color:var(--fb-doux);line-height:1.35}
+.fg-etabli strong{font-family:var(--display);font-weight:400;font-size:19px;line-height:1.15;color:#F6F2EA}
+.fg-etabli .fg-reste{font-family:var(--mono);color:var(--fb-or)}
+.fg-etabli-face{flex:none;width:68px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.55))}
+.fg-etabli.vide{background:none;box-shadow:inset 0 0 0 1px rgba(205,239,255,.22);border:0}
+.fg-etabli.vide .fg-etabli-face{display:grid;place-items:center;width:52px;height:52px;border-radius:50%;color:var(--fb-or);
+  background:radial-gradient(circle,rgba(242,200,110,.16),transparent 70%);box-shadow:inset 0 0 0 1px rgba(242,213,140,.35)}
+.fg-etabli.vide .fg-etabli-face .ico{width:24px;height:24px}
+.fg-etabli.vide strong{font-size:17px}
+.fg-vues{display:flex;gap:6px;flex-wrap:wrap}
+.fg-metal{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:6px;padding-bottom:6px;border-bottom:1px solid color-mix(in srgb,var(--r) 35%,transparent)}
+.fg-metal-nom{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:600;color:color-mix(in srgb,var(--r) 70%,white)}
+.fg-metal-prix{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px}
+.fg-metal-prix .prix{display:inline-flex;align-items:center;gap:2px}
+.fg-metal-prix .ico{width:13px;height:13px}
+.fg-duree{display:inline-flex;align-items:center;gap:3px;color:var(--fb-doux)}
+.fg-cartes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 8px}
+.fg-carte{display:grid;gap:6px;align-content:start;min-width:0;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer;text-align:left}
+.fg-face{display:block;filter:drop-shadow(0 1px .5px rgba(0,0,0,.85)) drop-shadow(0 6px 8px rgba(0,0,0,.5));transition:transform .15s}
+.fg-carte:active .fg-face{transform:scale(.96)}
+.fg-carte:focus-visible{outline:1px solid var(--fb-glace);outline-offset:3px}
+.fg-carte.attente .fg-face{filter:saturate(.6) brightness(.72) drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+.fg-doublons{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;color:var(--fb-txt);font-variant-numeric:tabular-nums}
+.fg-doublons .mini-jauge{height:4px;border-radius:2px;background:rgba(205,239,255,.14);--jc:var(--fb-or)}
+.fg-doublons .mini-jauge i{border-radius:2px}
+.fg-doublons small{font-size:12px;color:var(--fb-doux)}
+.fg-doublons.max,.fg-doublons.pret{color:var(--fb-or);font-family:inherit;font-weight:600}
+.fg-doublons .ico{width:13px;height:13px}
+.fg-doublons .mini-jauge{flex:1}
+.fg-plus{justify-self:center;min-height:40px;padding:0 18px;font-size:14px}
+@media (min-width:1100px){.fg-cartes{grid-template-columns:repeat(4,minmax(0,1fr))}}

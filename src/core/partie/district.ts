@@ -194,8 +194,12 @@ export function fabriquer(j: Jeu, moduleId: string, now: number): Resultat {
   if (j.forge) return non('La Forge est déjà occupée.');
   if (!posteDe(j, 'forge')) return non('Il faut un Porteur au travail à la Forge.');
   const c = coutRefabrication(moduleId);
-  if (j.energie < c.energie) return non(`La Forge manque d’énergie : il en faut ${c.energie}.`);
-  if (j.composants < c.composants || j.eclats < c.eclats) return non('Pas assez de ressources.');
+  const manque = [
+    j.energie < c.energie ? `${c.energie - j.energie} d’énergie` : '',
+    j.composants < c.composants ? `${c.composants - j.composants} composants` : '',
+    j.eclats < c.eclats ? `${c.eclats - j.eclats} Éclat${c.eclats - j.eclats > 1 ? 's' : ''}` : '',
+  ].filter(Boolean);
+  if (manque.length) return non(`Pour refabriquer ${moduleDef(moduleId).nom}, il manque ${manque.join(' et ').replace(/ et (?=[^]* et )/, ', ')}.`);
   j.energie -= c.energie;
   j.composants -= c.composants;
   j.eclats -= c.eclats;

@@ -515,6 +515,64 @@ function feuilleLieuFutur(e: EcranDistrict, id: LieuFutur): string {
     + `<p class="fb-role">${echap(l.raison)}</p><p class="ff-promesse">${echap(l.promesse)}</p></div></section>`;
 }
 
+/**
+ * La Forge (refonte du 27 octobre 2026, Bryan : « super chargé et difficile à lire ») :
+ * l'établi au centre, puis les cartes groupées par métal — le prix ne dépend que du métal, il n'est écrit qu'une fois —
+ * avec leurs doublons. Par défaut, les cartes les plus proches de monter ; « Toutes » montre le reste.
+ */
+const FORGE_PROCHES = 6;
+function blocForge(e: EcranDistrict): string {
+  const j = e.j;
+  const forgeron = posteDe(j, 'forge');
+  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${icone('marteau')}L’établi</h3>`;
+  if (j.forge) {
+    const m = moduleDef(j.forge.moduleId);
+    const c = j.collection[j.forge.moduleId];
+    const pret = e.now >= j.forge.fin;
+    h += `<div class="fg-etabli occupe"><span class="fg-etabli-face">${faceCarte(m, c?.niveau ?? 1, multNiveau(m.id, c?.niveau ?? 1))}</span>`
+      + `<div><small>${pret ? 'Prête' : 'Sur l’établi'}</small><strong>${echap(m.nom)}</strong><div class="jauge or">${jaugeTemps(j.forge.debut, j.forge.fin, e.now)}</div>`
+      + `<small class="fg-reste">${pret ? 'Elle rejoint tes cartes : un doublon de plus.' : decompte(j.forge.fin, e.now, 'Prête dans ')}</small></div></div>`;
+  } else {
+    h += `<div class="fg-etabli vide"><span class="fg-etabli-face" aria-hidden="true">${ICO.marteau}</span><div><strong>${forgeron ? 'L’établi est libre' : 'Personne à la Forge'}</strong>`
+      + `<small>${forgeron ? 'Choisis une carte : elle revient en doublon, pour la faire monter.' : 'Poste d’abord un Porteur pour refabriquer une carte.'}</small></div></div>`;
+  }
+  // les cartes : celles qui peuvent encore monter, les plus proches d'abord (moins de doublons manquants, puis moins chères)
+  const ordre = (m: ModuleDef) => RARETES.indexOf(m.rarete);
+  const cartes = Object.keys(j.collection).map((k) => ({ m: moduleDef(k), c: j.collection[k]! })).filter((x) => !x.m.legs)
+    .map((x) => ({ ...x, requis: doublonsRequis(x.m.id, x.c.niveau) }));
+  // une carte qui a déjà ses doublons n'a pas besoin de la Forge pour monter : elle passe après les autres
+  const manque = (x: { requis: number | null; c: { doublons: number } }) => { const n = x.requis! - x.c.doublons; return n > 0 ? n : 1000 + n; };
+  const utiles = cartes.filter((x) => x.requis !== null)
+    .sort((a, b) => manque(a) - manque(b) || ordre(a.m) - ordre(b.m) || a.m.nom.localeCompare(b.m.nom));
+  const toutes = e.forgeToutes === true;
+  const montrees = toutes ? cartes : utiles.slice(0, FORGE_PROCHES);
+  if (!cartes.length) return h + `</section>`;
+  h += `<div class="fg-vues" role="tablist" aria-label="Cartes à refabriquer">`
+    + `<button type="button" role="tab" class="es-cible${toutes ? '' : ' actif'}" data-action="forge-vue" data-id="proches" aria-selected="${!toutes}">Proches de monter</button>`
+    + `<button type="button" role="tab" class="es-cible${toutes ? ' actif' : ''}" data-action="forge-vue" data-id="toutes" aria-selected="${toutes}">Toutes <b>${cartes.length}</b></button></div>`;
+  if (!montrees.length) return h + `<p class="fb-vide">Toutes tes cartes sont au niveau maximum.</p></section>`;
+  for (const r of RARETES) {
+    const groupe = montrees.filter((x) => x.m.rarete === r);
+    if (!groupe.length) continue;
+    if (toutes) groupe.sort((a, b) => Number(a.requis === null) - Number(b.requis === null) || a.m.nom.localeCompare(b.m.nom));
+    const prix = coutRefabrication(groupe[0]!.m.id);
+    h += `<div class="fg-metal" style="--r:${COULEUR_RARETE[r]}"><span class="fg-metal-nom">${gemme(r)}${NOMS_RARETE[r]}</span>`
+      + `<span class="fg-metal-prix">${couts(j, { energie: prix.energie, composants: prix.composants, eclats: prix.eclats })}<span class="fg-duree">${ICO.chrono}${duree(dureeFabrication(j, groupe[0]!.m.id))}</span></span></div>`
+      + `<div class="fg-cartes">`;
+    for (const { m, c, requis } of groupe) {
+      const assez = j.energie >= prix.energie && j.composants >= prix.composants && j.eclats >= prix.eclats;
+      const jauge = requis === null ? `<span class="fg-doublons max">Niveau max</span>`
+        : c.doublons >= requis ? `<span class="fg-doublons pret">${ICO.monter}Peut monter</span>`
+        : `<span class="fg-doublons"><span class="mini-jauge"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span>${c.doublons}/${requis}</span></span>`;
+      h += `<button type="button" class="fg-carte${assez && forgeron && !j.forge ? '' : ' attente'}" data-action="fabriquer" data-module="${m.id}" aria-label="Refabriquer ${echap(m.nom)}${requis === null ? ', niveau maximum' : `, ${c.doublons} doublons sur ${requis}`}">`
+        + `<span class="fg-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</span>${jauge}</button>`;
+    }
+    h += `</div>`;
+  }
+  if (!toutes && utiles.length > FORGE_PROCHES) h += `<button type="button" class="btn sec fg-plus" data-action="forge-vue" data-id="toutes">Voir les ${cartes.length} cartes</button>`;
+  return h + `</section>`;
+}
+
 function feuilleBatiment(e: EcranDistrict): string {
   const j = e.j;
   const sel = e.selection;
@@ -556,44 +614,31 @@ function feuilleBatiment(e: EcranDistrict): string {
       const apport = poste === 'forge' ? `fabrique ${virgule(actuel.v)} fois plus vite`
         : poste === 'clinique' ? `+${virgule(actuel.v - vide.v)} Usure soignée/h grâce à ${echap(o.nom)}`
           : `+${ent(actuel.v - vide.v)} énergie/h grâce à ${echap(o.nom)}`;
-      h += `<div class="fb-occupant" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 64)}${multPoste(poste, occupant)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-lignee">${NOM_LIGNEE[o.lignee]}</span><span class="fb-apport">${apport}</span></div>`
-        + `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Libérer ${echap(o.nom)} (${poste === 'forge' ? 'vitesse normale' : vide.long})">Libérer</button></div>`;
+      if (poste === 'forge') {
+        // 27 octobre 2026 (Bryan : écran trop chargé) : le forgeron tient sur une ligne ; les autres Porteurs ne s'affichent que pour en changer
+        h += `<div class="fb-occupant fg-forgeron" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 44)}${multPoste(poste, occupant)}</span><div><strong>${echap(o.nom)} forge</strong><span class="fb-apport">${actuel.v === 1 ? 'vitesse normale' : `${virgule(actuel.v)} fois plus vite`}</span></div>`
+          + (e.forgeChanger
+            ? `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Libérer ${echap(o.nom)}">Libérer</button>`
+            : `<button type="button" class="btn sec fb-liberer" data-action="forge-changer" aria-expanded="false">Changer</button>`) + `</div>`;
+      } else h += `<div class="fb-occupant" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 64)}${multPoste(poste, occupant)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-lignee">${NOM_LIGNEE[o.lignee]}</span><span class="fb-apport">${apport}</span></div>`
+        + `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Libérer ${echap(o.nom)} (${vide.long})">Libérer</button></div>`;
     } else {
       const avec = (lignee: boolean) => { const id = PORTEURS.find((p) => (p.lignee === d.affinite) === lignee)?.id; return id ? rendement(j, poste, id).court : ''; };
       h += `<p class="fb-vide">Personne au poste${poste === 'forge' ? ' : la Forge ne peut pas fabriquer.' : ` : ${actuel.long}.`} Avec un Porteur ${d.affinite ? `<b style="color:${COULEUR[d.affinite]}">${NOM_LIGNEE[d.affinite]}</b>` : 'de la bonne lignée'} : <b>${avec(true)}</b>, un autre : ${avec(false)}.</p>`;
     }
     const libres = PORTEURS.filter((p) => p.id !== occupant && !enExpedition(j, p.id) && porteursPresents(j).includes(p.id))
       .sort((x, y) => Number(y.lignee === d.affinite) - Number(x.lignee === d.affinite) || Number(!!j.porteurs[x.id]!.poste) - Number(!!j.porteurs[y.id]!.poste));
-    if (libres.length) {
-      h += `<p class="fb-consigne">${occupant ? 'Le remplacer' : 'Poster un Porteur'} <span>· touche un portrait</span></p>`
+    const replie = poste === 'forge' && !!occupant && !e.forgeChanger;
+    if (libres.length && !replie) {
+      h += `<p class="fb-consigne">${occupant ? 'Le remplacer' : 'Poster un Porteur'} <span>· touche un portrait</span>${poste === 'forge' && occupant ? `<button type="button" class="fg-replier" data-action="forge-changer" aria-expanded="true">Fermer</button>` : ''}</p>`
         + `<div class="fb-rangee">${libres.map((p) => candidat(j, p.id, poste, actuel.v)).join('')}</div>`;
     }
     const absents = PORTEURS.filter((p) => porteursPresents(j).includes(p.id) && enExpedition(j, p.id));
-    if (absents.length) h += `<small class="fb-absents">En expédition ou en mission : ${absents.map((p) => echap(p.nom)).join(', ')}.</small>`;
+    if (absents.length && !replie) h += `<small class="fb-absents">En expédition ou en mission : ${absents.map((p) => echap(p.nom)).join(', ')}.</small>`;
     h += `</section>`;
   }
 
-  // la Forge
-  if (b === 'forge') {
-    h += `<section class="fb-bloc"><h3 class="titre-bloc">${icone('marteau')}Refabriquer une carte</h3>`;
-    if (j.forge) {
-      const m = moduleDef(j.forge.moduleId);
-      h += `<div class="en-cours">${gemme(m.rarete)}<div><strong>${echap(m.nom)}</strong><small>${e.now >= j.forge.fin ? 'Prête : elle rejoint tes cartes' : decompte(j.forge.fin, e.now, 'Reste ')}</small><div class="jauge or">${jaugeTemps(j.forge.debut, j.forge.fin, e.now)}</div></div></div>`;
-    } else {
-      const forgeron = posteDe(j, 'forge');
-      h += `<p class="aide">Un exemplaire de plus devient un doublon, pour faire monter la carte.${forgeron ? '' : ' <b>Poste d’abord un Porteur à la Forge.</b>'}</p><ul class="liste-forge">`;
-      const possedees = Object.keys(j.collection).map(moduleDef).sort((x, y) => RARETES.indexOf(y.rarete) - RARETES.indexOf(x.rarete) || x.nom.localeCompare(y.nom));
-      for (const m of possedees) {
-        const c = coutRefabrication(m.id);
-        const assez = j.energie >= c.energie && j.composants >= c.composants && j.eclats >= c.eclats;
-        h += `<li style="--r:${COULEUR_RARETE[m.rarete]}">${gemme(m.rarete)}<div class="lf-nom"><strong>${echap(m.nom)}</strong><small>${ICO.chrono}${duree(dureeFabrication(j, m.id))}</small></div>`
-          + `<span class="lf-prix">${couts(j, { energie: c.energie, composants: c.composants, eclats: c.eclats })}</span>`
-          + `<button type="button" class="btn sec petit" data-action="fabriquer" data-module="${m.id}"${assez && forgeron ? '' : ' disabled'} aria-label="Refabriquer ${echap(m.nom)}">${ICO.marteau}</button></li>`;
-      }
-      h += `</ul>`;
-    }
-    h += `</section>`;
-  }
+  if (b === 'forge') h += blocForge(e);
 
   // Revue du 23 octobre 2026 : le pied fixe porte l'action qu'on fait le plus souvent. À la Tour du Noyau, c'est
   // « Entrer dans la tour » ; l'amélioration, rare, passe en bas de la feuille (un raccourci du pied y mène).
