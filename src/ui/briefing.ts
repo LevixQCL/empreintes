@@ -80,7 +80,7 @@ export const ETAPES: Etape[] = [
 // pas le district : à quoi servent les ressources, qui travaille et qui descend, et le but (creuser plus bas).
 
 const demoRessources = () => `<ul class="demo-liste">`
-  + `<li>${icone('energie')}<span><b>L’énergie</b>Le Générateur la produit chaque heure, même quand tu ne joues pas. Elle paie les chantiers.</span></li>`
+  + `<li>${icone('energie')}<span><b>L’énergie</b>Le Générateur la produit chaque heure, même quand tu ne joues pas. Elle paie les chantiers et l’entraînement ; en trop, le Générateur la convertit en composants.</span></li>`
   + `<li>${icone('composants')}<span><b>Les composants</b>Ce que l’escouade rapporte d’en bas. Avec l’énergie, ils améliorent les bâtiments.</span></li>`
   + `<li>${icone('eclats')}<span><b>Les Éclats</b>Rares, trouvés en profondeur. Pour les cartes précieuses.</span></li>`
   + `</ul>`;

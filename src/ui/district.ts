@@ -9,7 +9,7 @@ import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PA
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
   OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
-  COMPTOIR, prixComptoir, plafondEntrainement, xpEntrainement, energieEntrainement, debutJour
+  COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, xpEntrainement, energieEntrainement, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, Lignee, ModuleDef, Rarete } from '../core/types';
@@ -403,6 +403,41 @@ function reserve(j: Jeu, b: BatimentId): string {
  * L'entraînement à la Tour du Noyau (23 octobre 2026) : un Porteur qui ne descend pas gagne de l'XP avec le temps,
  * jusqu'à un plafond fixé par le niveau de la Tour. Même présentation que les postes des autres bâtiments.
  */
+/** Le convertisseur du Générateur (27 octobre 2026) : l'énergie en trop devient des composants, à un taux qui baisse dans la journée */
+function blocConvertisseur(j: Jeu): string {
+  const now = Date.now();
+  const taux = tauxConversion(j, now);
+  const faits = conversionsDuJour(j, now);
+  const peut = j.energie >= CONVERTISSEUR.lot;
+  // les paliers du jour : 10, puis 6, puis 3 composants par lot
+  const paliers = [...new Set(CONVERTISSEUR.taux), CONVERTISSEUR.ensuite].map((t) => {
+    const debut = CONVERTISSEUR.taux.indexOf(t) < 0 ? CONVERTISSEUR.taux.length : CONVERTISSEUR.taux.indexOf(t);
+    const nb = CONVERTISSEUR.taux.filter((x) => x === t).length;
+    return `<li class="${t === taux ? 'actif' : faits > debut ? 'passe' : ''}"><b>+${t}</b><small>${nb ? `lots ${debut + 1} à ${debut + nb}` : `ensuite`}</small></li>`;
+  }).join('');
+  return `<section class="fb-bloc fb-convertir"><h3 class="titre-bloc">${ICO.energie}Convertisseur</h3>`
+    + `<p class="fb-vide">L’énergie en trop devient des composants : <b>${CONVERTISSEUR.lot} énergie → +${taux} composants</b>. Le taux baisse avec les lots convertis aujourd’hui et repart demain.</p>`
+    + `<ol class="fb-paliers" aria-label="Composants par lot selon les lots déjà convertis aujourd’hui">${paliers}</ol>`
+    + `<button type="button" class="btn prim large" data-action="convertir"${peut ? '' : ' disabled'}>${ICO.energie}Convertir ${CONVERTISSEUR.lot} → +${taux} ${icone('composants')}</button>`
+    + `<small class="fb-note">${faits ? `${faits} lot${faits > 1 ? 's' : ''} converti${faits > 1 ? 's' : ''} aujourd’hui.` : 'Aucun lot converti aujourd’hui.'}</small></section>`;
+}
+
+/** Les soins intensifs de la Clinique (27 octobre 2026) : de l'énergie pour effacer l'Usure d'un Porteur tout de suite */
+function blocSoinsIntensifs(j: Jeu): string {
+  const blesses = PORTEURS.filter((p) => porteursPresents(j).includes(p.id) && !enExpedition(j, p.id) && j.porteurs[p.id]!.usure >= 1);
+  let h = `<section class="fb-bloc fb-soins"><h3 class="titre-bloc">${ICO.soin}Soins intensifs</h3>`
+    + `<p class="fb-vide">Pour repartir tout de suite : <b>${SOINS_INTENSIFS.energieParUsure} énergie par point d’Usure</b>, effacé sur-le-champ.</p>`;
+  if (!blesses.length) return h + `<p class="fb-note">Personne n’a d’Usure en ce moment.</p></section>`;
+  h += `<div class="fb-rangee">` + blesses.map((p) => {
+    const u = Math.ceil(j.porteurs[p.id]!.usure);
+    const cout = u * SOINS_INTENSIFS.energieParUsure;
+    const peut = j.energie >= SOINS_INTENSIFS.energieParUsure;
+    return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="soigner-vite" data-id="${p.id}"${peut ? '' : ' disabled'} aria-label="Soigner ${echap(p.nom)} : −${u} Usure pour ${cout} énergie">`
+      + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">−${u} Usure</span><small class="fb-cand-ailleurs">${ent(Math.min(cout, Math.floor(j.energie / SOINS_INTENSIFS.energieParUsure) * SOINS_INTENSIFS.energieParUsure))} énergie</small></button>`;
+  }).join('') + `</div>`;
+  return h + `</section>`;
+}
+
 function blocEntrainement(j: Jeu): string {
   if (!j.chambre) return '';
   const occupant = posteDe(j, 'noyau');
@@ -505,8 +540,8 @@ function feuilleBatiment(e: EcranDistrict): string {
   else h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
 
   // ce que le bâtiment rapporte
-  if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>+${ent(energieParHeure(j))}</b><small>énergie par heure</small></div></div>${reserve(j, b)}`;
-  if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur présent au district</small></div></div>`;
+  if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>+${ent(energieParHeure(j))}</b><small>énergie par heure</small></div></div>${reserve(j, b)}${niv ? blocConvertisseur(j) : ''}`;
+  if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur présent au district</small></div></div>${niv ? blocSoinsIntensifs(j) : ''}`;
   if (b === 'noyau') {
     h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>niveau maximum des autres bâtiments</small></div></div>${reserve(j, b)}`
       + blocEntrainement(j);

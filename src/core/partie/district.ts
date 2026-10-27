@@ -449,6 +449,43 @@ export function acheter(j: Jeu, index: number, now = j.dernierTick): Resultat {
   return { ok: true };
 }
 
+// ---------- Dépenser l'énergie (27 octobre 2026, Bryan : « après quelques jours, on en a un stock et il ne se passe plus rien ») ----------
+
+/**
+ * Le convertisseur du Générateur : un lot d'énergie devient des composants. Le taux baisse avec les lots convertis dans
+ * la journée (10, puis 6, puis 3 composants par lot) et repart chaque jour : une réserve pleine rapporte environ une expédition.
+ */
+export const CONVERTISSEUR = { lot: 100, taux: [10, 10, 10, 10, 10, 6, 6, 6, 6, 6] as number[], ensuite: 3 };
+export const conversionsDuJour = (j: Jeu, now = j.dernierTick) => (j.conversion?.jour === jourDe(now) ? j.conversion.lots : 0);
+export const tauxConversion = (j: Jeu, now = j.dernierTick) => CONVERTISSEUR.taux[conversionsDuJour(j, now)] ?? CONVERTISSEUR.ensuite;
+
+export function convertir(j: Jeu, now = j.dernierTick): Resultat {
+  if (j.batiments.generateur < 1) return non('Le Générateur est à l’arrêt.');
+  if (j.energie < CONVERTISSEUR.lot) return non(`Il faut ${CONVERTISSEUR.lot} énergie pour un lot.`);
+  const gain = tauxConversion(j, now);
+  j.energie -= CONVERTISSEUR.lot;
+  j.composants += gain;
+  j.conversion = { jour: jourDe(now), lots: conversionsDuJour(j, now) + 1 };
+  return { ok: true, message: `Convertisseur : ${CONVERTISSEUR.lot} énergie → +${gain} composants.` };
+}
+
+/** Les soins intensifs de la Clinique : de l'énergie pour effacer l'Usure d'un Porteur tout de suite (sans attendre le repos) */
+export const SOINS_INTENSIFS = { energieParUsure: 20 };
+
+export function soignerVite(j: Jeu, id: string): Resultat {
+  const p = j.porteurs[id];
+  if (!p || !porteursPresents(j).includes(id)) return non('Ce Porteur n’est pas au district.');
+  if (j.batiments.clinique < 1) return non('La Clinique est fermée.');
+  if (enExpedition(j, id)) return non('Ce Porteur est en bas.');
+  const usure = Math.ceil(p.usure);
+  if (usure < 1) return non('Il n’a pas d’Usure.');
+  const points = Math.min(usure, Math.floor(j.energie / SOINS_INTENSIFS.energieParUsure));
+  if (points < 1) return non(`Il faut ${SOINS_INTENSIFS.energieParUsure} énergie par point d’Usure.`);
+  j.energie -= points * SOINS_INTENSIFS.energieParUsure;
+  p.usure = Math.max(0, p.usure - points);
+  return { ok: true, message: `Soins intensifs : −${points} Usure pour ${porteurDef(id).nom} (${points * SOINS_INTENSIFS.energieParUsure} énergie).` };
+}
+
 /** Récupère la récompense de l'objectif en cours s'il est rempli */
 export function reclamer(j: Jeu): Resultat {
   const o = objectifCourant(j);
