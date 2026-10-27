@@ -164,7 +164,10 @@ export function htmlExploration(j: Jeu): string {
     + `<div class="ex-butin" aria-label="Butin de l’expédition"><span data-gain="x-composants">${icone('composants')}<b>${x.butin}</b><small>compos.</small></span>`
     + (cartes ? `<span data-gain="x-cartes">${icone('cartes')}<b>${cartes}</b><small>carte${cartes > 1 ? 's' : ''}</small></span>` : '')
     + (g?.eclats ? `<span data-gain="x-eclats">${icone('eclats')}<b>${g.eclats}</b><small>Éclat${g.eclats > 1 ? 's' : ''}</small></span>` : '')
-    + (g?.fragment ? `<span>${icone('codex')}<b>1</b><small>archive</small></span>` : '') + `</div></header>`;
+    + (g?.fragment ? `<span>${icone('codex')}<b>1</b><small>archive</small></span>` : '')
+    // 27 octobre 2026 : le bouton du bas restait sous les chemins, hors de l'écran sur téléphone → toujours visible en tête
+    + (!x.terminee && peutRemonter(x) ? `<button type="button" class="ex-tete-remonter" data-action="retraite" aria-label="Remonter au district${x.butin ? ` avec ${x.butin} composants` : ''}">${ICO.retour}<span>Remonter</span></button>` : '')
+    + `</div></header>`;
 
   // ---------- l'escouade : trois portraits, les vrais PV ----------
   h += '<section class="ex-escouade" aria-label="Escouade">';
