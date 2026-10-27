@@ -109,7 +109,7 @@ export function afficher() {
     const decouverte = enAttente && (enAttente.id === 'phase' || K.decouverteTour !== tourCombat || K.decouverteId === enAttente.id) ? enAttente : null;
     if (decouverte) { K.decouverteTour = tourCombat; K.decouverteId = decouverte.id; }
     const parole = paroleGardien(etat);
-    h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, journal: K.journal, fuite: K.fuite, eclats: K.eclats, guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
+    h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, journal: K.journal, fuite: K.fuite, eclats: K.eclats, ...(K.tuile ? { tuile: K.tuile } : {}), guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
   } else {
     app.mode = 'district';
     voirNouveautes();

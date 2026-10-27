@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { coupsAttendus, creerCombat, lancer, proteger, protegeDe, protectionUtile, ajouter } from '../src/core/combat';
+import { soignerVers, coupsAttendus, creerCombat, lancer, proteger, protegeDe, protectionUtile, ajouter } from '../src/core/combat';
 import { PORTEURS, gesteDeCarte } from '../src/core/donnees';
 
 const equipe = () => PORTEURS.slice(0, 3).map((p) => ({ id: p.id, pv: p.pvMax, pvMax: p.pvMax, aTerre: false }));
@@ -63,4 +63,16 @@ describe('Le protégé : sur une zone, le bouclier couvre d’abord un Porteur',
     expect(prevu.get(a!.id)![0]!.absorbe).toBe(0);
     expect(prevu.get(c!.id)![0]!.absorbe).toBe(6);
   });
+
+  it('toucher une tuile envoie les soins de la chaîne vers ce Porteur, et le protégé reste choisi', () => {
+    const s = combatZone(8);
+    const [a, b] = s.porteurs;
+    proteger(s, a!.id);
+    s.chaine = [{ ...s.main[0]!, uid: 'x', type: 'soin', cible: a!.id }, { ...s.main[0]!, uid: 'y', type: 'soin', cible: a!.id }] as typeof s.chaine;
+    for (const g of s.chaine) delete g.effet;
+    expect(soignerVers(s, b!.id).ok).toBe(true);
+    expect(s.chaine.every((g) => g.cible === b!.id)).toBe(true);
+    expect(protegeDe(s)).toBe(a!.id);
+  });
 });
+

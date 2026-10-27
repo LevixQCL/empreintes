@@ -312,6 +312,18 @@ const bouclierPour = (bouclier: number, porteurId: string, protege: string | und
 /** Pendant le tour ennemi : la part du bouclier gardée pour les coups à venir sur le protégé (recalculée avant chaque ennemi) */
 let RESERVE = 0;
 
+/**
+ * Soigner depuis l'escouade (27 octobre 2026, Bryan : « la protection se déplace mais pas le soin ») : un toucher sur une
+ * tuile envoie tous les soins à un seul Porteur de la chaîne vers lui. Le bouton sur chaque carte permet toujours de les séparer.
+ */
+export function soignerVers(s: CombatEtat, porteurId: string): Resultat {
+  if (s.issue !== 'en-cours' || !vivants(s).some((p) => p.id === porteurId)) return { ok: false };
+  const soins = s.chaine.filter(soigneUnSeul);
+  if (!soins.length) return { ok: false };
+  for (const g of soins) g.cible = porteurId;
+  return { ok: true };
+}
+
 /** Change la Fréquence d'une carte posée dans la chaîne (cartes à plusieurs Fréquences : argent et plus) */
 export function accorder(s: CombatEtat, uid: string, f?: number): Resultat {
   if (s.issue !== 'en-cours') return { ok: false };

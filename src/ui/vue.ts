@@ -80,6 +80,8 @@ export interface Ecran {
   fuite?: boolean;
   /** le choix du Coup d'éclat est déplié (à la place des boutons du Flux) */
   eclats?: boolean;
+  /** la tuile de l'escouade dont le choix « protéger ou soigner » est ouvert */
+  tuile?: string;
   /** le mode d'emploi des cartes est ouvert (depuis l'aide), et les cartes trouvées qu'il peut nommer */
   guide?: OngletGuide | null;
   trouvees?: ReadonlySet<string>;
@@ -665,6 +667,8 @@ function htmlEcranCombat(e: Ecran): string {
   // (seulement s'il y a du bouclier, posé ou dans la chaîne : sans bouclier, rien à répartir)
   const zone = !verrou && protectionUtile(s) && s.bouclier + apercuChaine(s).bouclier > 0;
   const protege = zone ? protegeDe(s) : undefined;
+  // un soin à un seul Porteur dans la chaîne : toucher une tuile y envoie les soins
+  const soins = !verrou && s.chaine.some(soigneUnSeul);
   for (const p of s.porteurs) {
     const d = porteurDef(p.id);
     const ko = p.pv <= 0;
@@ -679,12 +683,17 @@ function htmlEcranCombat(e: Ecran): string {
     const lignee = ko ? 'À terre' : NOMS_LIGNEE[d.lignee].nom;
     const dit = `${d.nom}, ${lignee}, ${ko ? 'à terre' : `${p.pv} PV sur ${p.pvMax}${p.usure ? `, l’Usure en retire ${p.usure}` : ''}`}`;
     TUILES.set(p.id, { nom: d.nom, lignee, couleur: COULEUR[d.lignee], img, cadre: cadragePortrait(d.id), pv: ko ? 0 : p.pv, pvMax: p.pvMax, usure: p.usure ?? 0, coups: cible ? texteCoups(s, recus, p.pv) : '' });
-    h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${cible && perte >= p.pv ? ' fatal' : ''}${basPv ? ' bas' : ''}${soigne ? ' soigne' : ''}${couvert ? ' couvert' : ''}" data-porteur="${p.id}" data-pvmax="${p.pvMax}"${zone && !ko ? ` data-action="proteger" data-id="${p.id}" role="button" tabindex="0"` : ' role="group"'} aria-label="${echap(dit + (couvert ? `, le bouclier le couvre en premier` : zone && !ko ? ', toucher pour que le bouclier le couvre en premier' : ''))}" style="--c:${COULEUR[d.lignee]}">`
+    h += `<div class="combattant${ko ? ' ko' : ''}${cible ? ' cible' : ''}${cible && perte >= p.pv ? ' fatal' : ''}${basPv ? ' bas' : ''}${soigne ? ' soigne' : ''}${couvert ? ' couvert' : ''}" data-porteur="${p.id}" data-pvmax="${p.pvMax}"${!ko && (zone || soins) ? ` data-action="${zone && soins ? 'tuile' : zone ? 'proteger' : 'soigner'}" data-id="${p.id}" role="button" tabindex="0"` : ' role="group"'} aria-label="${echap(dit + (couvert ? ', le bouclier le couvre en premier' : '') + (ko ? '' : zone && soins ? ', toucher pour le protéger ou le soigner' : zone && !couvert ? ', toucher pour que le bouclier le couvre en premier' : soins && !soigne ? ', toucher pour lui envoyer les soins' : ''))}" style="--c:${COULEUR[d.lignee]}">`
       + (img ? `<span class="cb-fond" style="background-image:url(${img});--cadre:${cadragePortrait(d.id)}%" aria-hidden="true"></span>` : `<span class="cb-fond sans-portrait" aria-hidden="true">${echap(d.nom.charAt(0))}</span>`)
       + popsPour(e, p.id)
       + `<div class="cb-vie" aria-hidden="true"><span class="chiffre">${ko ? '0' : p.pv}<small>/ ${p.pvMax}</small></span>${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5, ...(p.usure ? { usure: p.usure } : {}), ...(perte && !verrou ? { perte } : {}) })}</div>`
       + (cible && !verrou ? marqueCoups(s, recus, p.pv) : '') + (soigne ? `<span class="marque-soin" aria-label="Sera soigné">${ICO.soin}</span>` : '')
-      + (couvert ? `<span class="marque-protege" aria-hidden="true">${ICO.bouclier}</span>` : '') + `</div>`;
+      + (couvert ? `<span class="marque-protege" aria-hidden="true">${ICO.bouclier}</span>` : '')
+      // le petit choix, quand il y a à la fois du bouclier et des soins à répartir
+      + (!ko && zone && soins && e.tuile === p.id ? `<div class="tuile-choix" role="group" aria-label="${echap(d.nom)}">`
+        + `<button type="button" data-action="proteger" data-id="${p.id}" aria-pressed="${couvert}"${couvert ? ' class="pris"' : ''}>${ICO.bouclier}<span>Protéger</span></button>`
+        + `<button type="button" data-action="soigner" data-id="${p.id}" aria-pressed="${soigne}"${soigne ? ' class="pris"' : ''}>${ICO.soin}<span>Soigner</span></button></div>` : '')
+      + `</div>`;
   }
   h += `</section><div class="ligne-escouade">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>${s.ombre ? `<span class="etat ombre actif">${ICO.eclat}Ombre agissante</span>` : ''}`
     // les piles ouvrent le journal du combat (27 octobre 2026) : les cartes jouées tour par tour, la défausse et la pioche

@@ -417,6 +417,16 @@
 .combattant .marque-protege{position:absolute;z-index:4;right:5px;top:4px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;
   color:#d8ecff;background:radial-gradient(circle at 40% 35%,rgba(127,190,255,.55),rgba(30,60,110,.85));box-shadow:0 0 0 1px rgba(159,208,255,.7),0 0 10px rgba(127,190,255,.45)}
 .combattant .marque-protege .ico{width:12px;height:12px}
+/* Protéger ou soigner : le petit choix posé sur la tuile touchée */
+.combattant[data-action="tuile"],.combattant[data-action="soigner"]{cursor:pointer}
+.combattant .tuile-choix{position:absolute;z-index:6;inset:0;display:grid;grid-template-rows:1fr 1fr;gap:3px;padding:4px;border-radius:inherit;
+  background:rgba(8,14,26,.72);backdrop-filter:blur(3px)}
+.combattant .tuile-choix button{display:flex;align-items:center;justify-content:center;gap:5px;border:0;border-radius:6px;font:inherit;font-size:12px;font-weight:600;
+  color:#e8f2ff;background:rgba(127,190,255,.16);box-shadow:inset 0 0 0 1px rgba(159,208,255,.35)}
+.combattant .tuile-choix button[data-action="soigner"]{background:rgba(124,227,160,.14);box-shadow:inset 0 0 0 1px rgba(124,227,160,.4)}
+.combattant .tuile-choix button.pris{box-shadow:inset 0 0 0 2px #9fd0ff}
+.combattant .tuile-choix button[data-action="soigner"].pris{box-shadow:inset 0 0 0 2px #7CE3A0}
+.combattant .tuile-choix .ico{width:14px;height:14px}
 .combattant.soigne .marque-protege{right:27px}
 .combattant.cible{--lis:var(--danger)}
 .combattant.cible::after{box-shadow:inset 0 0 0 2px var(--lis),inset 0 0 18px rgba(255,90,70,.35)}

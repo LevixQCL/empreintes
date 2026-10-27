@@ -16,11 +16,16 @@ import type { Clic, Suite } from './commun';
 
 export async function agirCombat(a: string, c: Clic): Promise<Suite> {
   const { b, id, x, s, avantGains } = c;
+  // le choix « protéger ou soigner » d'une tuile se referme dès qu'on fait autre chose
+  if (a !== 'tuile') K.tuile = undefined;
   switch (a) {
     case 'ajouter': if (s && !K.verrou) { C.ajouter(s, id || b.dataset.uid || ''); vibrer(5); sauver(); } break;
     case 'retirer': if (s && !K.verrou) { C.retirer(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'accorder': if (s && !K.verrou) { C.accorder(s, b.dataset.uid ?? ''); sauver(); } break;
-    case 'proteger': if (s && !K.verrou) { C.proteger(s, id || b.dataset.id || ''); vibrer(5); sauver(); } break;
+    case 'proteger': if (s && !K.verrou) { C.proteger(s, id || b.dataset.id || ''); K.tuile = undefined; vibrer(5); sauver(); } break;
+    case 'soigner': if (s && !K.verrou) { C.soignerVers(s, id || b.dataset.id || ''); K.tuile = undefined; vibrer(5); sauver(); } break;
+    // bouclier et soin à répartir : le toucher ouvre un petit choix sur la tuile (toucher à nouveau le referme)
+    case 'tuile': if (s && !K.verrou) { const p = id || b.dataset.id || ''; K.tuile = K.tuile === p ? undefined : p; } break;
     case 'cibler': if (s && !K.verrou) { C.cibler(s, b.dataset.uid ?? ''); sauver(); } break;
     case 'viser': if (s && !K.verrou) { C.viser(s, Number(b.dataset.id)); sauver(); } break;
     case 'eclats': K.eclats = !K.eclats; break;
