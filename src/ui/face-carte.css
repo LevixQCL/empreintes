@@ -61,6 +61,7 @@
   -webkit-mask:radial-gradient(farthest-side,#0000 52%,#000 56%),repeating-conic-gradient(#000 0 calc(360deg / var(--max) - 6deg),#0000 0 calc(360deg / var(--max)));-webkit-mask-composite:source-in;
   mask:radial-gradient(farthest-side,#0000 52%,#000 56%),repeating-conic-gradient(#000 0 calc(360deg / var(--max) - 6deg),#0000 0 calc(360deg / var(--max)));mask-composite:intersect}
 .nf-roue.max{background:conic-gradient(#ffd873,#fff3c4,#e2b44a,#ffd873)}
+.nf-lg{flex:none;width:3.6cqw;height:3.6cqw;min-width:6px;min-height:6px;margin:0 1.4cqw 0 1cqw;transform:rotate(45deg);background:var(--lc);box-shadow:0 0 2cqw var(--lc)}
 .nf-nom{min-width:0;font-family:var(--display);font-size:max(12px,7cqw);line-height:1.1;color:#f7efdc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.9)}
 .nf-regle{display:flex;align-items:center;gap:1.6cqw;margin-top:1.2cqw;min-width:0;font-size:max(11px,6.4cqw);line-height:1.15;white-space:nowrap;
@@ -69,6 +70,19 @@
 .nf-regle > span{min-width:0;overflow:hidden;text-overflow:ellipsis;color:#d3d9e4}
 .nf-ico{flex:none;display:grid;place-items:center;width:max(11px,6.6cqw);height:max(11px,6.6cqw);color:#f3d27a}
 .nf-ico svg{width:100%;height:100%;filter:drop-shadow(0 0 1cqw rgba(243,210,122,.6))}
+
+/* carte moyenne (91 à 150 px : main et chaîne sur PC, tuiles du deck) : gros chiffres, le nom et l'effet sans sa formule */
+@container (min-width:91px) and (max-width:150px){
+  .nf-caps{height:20cqw;border-radius:11cqw}
+  .nf-seg{min-width:14cqw;font-size:11cqw}
+  .nf-seg.p{min-width:21cqw;font-size:15cqw}
+  .nf-seg.p::after{height:1.2cqw;bottom:2cqw}
+  .nf-val{top:-14cqw;height:20cqw;padding:0 4cqw 0 3cqw;border-radius:11cqw}
+  .nf-val svg{width:12cqw;height:12cqw}
+  .nf-val b{font-size:15cqw}
+  .nf-voile{padding-top:7.5cqw}
+  .nf-regle > span{display:none}
+}
 
 /* en main (carte de 90 px au plus) : la Fréquence principale, la valeur et l'icône de l'effet, en grand */
 @container (max-width:90px){
