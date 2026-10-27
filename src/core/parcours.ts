@@ -108,9 +108,9 @@ function preparer(j: Jeu): string[] {
     for (const k of j.porteurs[id]!.modules.slice()) if (!voulues.includes(k)) degreffer(j, k);
     for (const k of voulues) greffer(j, k, id);
   }
-  // les autres travaillent : Générateur et Forge pour les Augmentés, Clinique pour les Génés
+  // les autres travaillent : Générateur pour les Augmentés, Clinique pour les Génés, Forge pour les Résonants
   const libres = presents.filter((id) => !escouade.includes(id) && id !== forgeron);
-  const postes: [Poste, Lignee][] = [['generateur', 'tech'], ['clinique', 'bio'], ['forge', 'tech']];
+  const postes: [Poste, Lignee][] = [['generateur', 'tech'], ['clinique', 'bio'], ['forge', 'reso']];
   for (const [b, l] of postes) {
     if (posteDe(j, b)) continue;
     const k = libres.findIndex((id) => porteurDef(id).lignee === l);
