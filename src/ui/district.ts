@@ -5,7 +5,7 @@
 import { portOuvert } from './pillages';
 import { PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
-import { CLE_LEGS, GESTES_SPECIAUX, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
+import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
   OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CONFIANCE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, humeurDistrict, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
@@ -25,7 +25,7 @@ import { COULEUR } from './vue';
 import { decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
-import { feuillePorteur } from './porteurs';
+import { arrivee, feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { ICO, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
@@ -680,12 +680,35 @@ export function htmlArchipel(e: EcranDistrict): string {
 
 // ---------- Les cartes ----------
 
-function carteMini(id: string, j: Jeu, attrs = ''): string {
+function carteMini(id: string, j: Jeu, attrs = '', utile = false): string {
   const m = moduleDef(id);
   const c = j.collection[id];
   const niveau = c?.niveau ?? COLLECTION.niveauDepart[m.rarete];
+  // un doublon qui complète le niveau suivant se dit tout de suite
+  const requis = c ? doublonsRequis(id, c.niveau) : null;
+  const monte = c && requis !== null && c.doublons + 1 >= requis;
   return `<button type="button" class="carte-choix" ${attrs}>${faceCarte(m, niveau, multNiveau(id, niveau))}`
-    + `<span class="ruban${c ? '' : ' neuve'}">${c ? `Doublon · niv. ${c.niveau}` : 'Nouvelle'}</span></button>`;
+    + `<span class="ruban${c ? (monte ? ' monte' : '') : ' neuve'}">${c ? (monte ? `Niv. ${c.niveau + 1} prêt` : `Doublon · niv. ${c.niveau}`) : 'Nouvelle'}</span>`
+    + (utile ? `<span class="pour-qui">${pourQui(id, j)}</span>` : '') + `</button>`;
+}
+
+/**
+ * Pour qui est une carte proposée (27 octobre 2026 : une récompense ne doit pas tomber à plat) : les Porteurs présents
+ * qui peuvent la porter, le niveau qu'il manque, ou, pour une carte de voie, le Porteur qui arrivera.
+ */
+function pourQui(id: string, j: Jeu): string {
+  const m = moduleDef(id);
+  const presents = PORTEURS.filter((p) => p.lignee === m.lignee && porteursPresents(j).includes(p.id));
+  const voie = VOIES.find((v) => v.cartes.includes(m.base ?? m.id));
+  if (voie && !porteursPresents(j).includes(voie.porteur)) {
+    const p = porteurDef(voie.porteur);
+    return `${echap(voie.nom)} · ${echap(p.nom.split(' ')[0]!)} ${echap(arrivee(p).replace(/^Arrive /, '').replace(/\.$/, '').replace(/ ou plus$/, ''))}`;
+  }
+  const requis = niveauRequis(id);
+  const prets = presents.filter((p) => niveauPorteur(j, p.id).niveau >= requis);
+  if (!prets.length) return `Porteur ${NOM_LIGNEE[m.lignee].toLowerCase()} niv. ${requis} requis`;
+  const noms = prets.slice(0, 2).map((p) => echap(p.nom.split(' ')[0]!)).join(', ');
+  return `Pour ${noms}${prets.length > 2 ? '…' : ''}${voie ? ` · ${echap(voie.nom)}` : ''}`;
 }
 
 /** L'effet de la carte, et ce que son métal lui ouvre */
@@ -738,7 +761,7 @@ function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
   const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : 'Archive de la semaine';
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><div class="cartes-choix">`
-    + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}"`)).join('')
+    + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}"`, true)).join('')
     + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
 }
 
