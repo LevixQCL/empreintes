@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, apercuChaine, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, brumeActive as C_brume, estEngagee, puissance, usureCombat } from '../core/combat';
+import { ECLATS, apercuChaine, detailForce, type DetailForce, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, ennemisDebout as C_ennemisDebout, brumeActive as C_brume, estEngagee, puissance, usureCombat } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
@@ -108,30 +108,37 @@ function popsPour(e: Ecran, cible: string) {
  */
 /** Les Porteurs à terre du combat affiché : leurs cartes s'affichent éteintes (−15 % de force, sans effet) */
 let ETEINTS = new Set<string>();
+/** Le combat affiché : chaque carte y lit sa force réelle (detailForce) */
+let ETAT: CombatEtat | null = null;
 
 export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { halo?: boolean; off?: boolean; serre?: boolean; vise?: boolean; felure?: boolean; engagee?: boolean } = {}) {
   const lign = ligneeGeste(g);
   const eteinte = !!g.porteur && ETEINTS.has(g.porteur);
-  if (eteinte) g = { ...g, v: Math.round(g.v * REGLES.eteinte), effet: frequenceLibre(g.effet) ? g.effet : undefined, effet2: undefined };
+  // la force affichée est celle qui tombera (27 octobre 2026, Luc et Bryan) : vert si la carte est renforcée, rouge si elle est affaiblie ;
+  // le détail (chaque bonus et malus) s'ouvre en appui long, dans la loupe
+  const detail = ETAT && action !== 'demo' ? detailForce(ETAT, g.uid) : null;
+  const vReel = detail?.total ?? (eteinte ? Math.round(g.v * REGLES.eteinte) : g.v);
+  const tendance = vReel > g.v ? 'hausse' as const : vReel < g.v ? 'baisse' as const : undefined;
+  if (eteinte) g = { ...g, effet: frequenceLibre(g.effet) ? g.effet : undefined, effet2: undefined };
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'District';
   const accord = frequenceLibre(g.effet);
   const metal = (g.carte?.split('@')[1] as Rarete | undefined) ?? 'fer';
   const d: Face = {
-    carte: g.carte, repli: g.porteur ? portrait(g.porteur) : null, metal, type: g.type, v: g.v,
+    carte: g.carte, repli: g.porteur ? portrait(g.porteur) : null, metal, type: g.type, v: vReel, ...(tendance ? { tendance } : {}),
     fs: [g.f, ...(g.fs ?? []).filter((f) => f !== g.f)], nom: g.nom, effet: g.effet, ...(g.effet2 ? { effet2: g.effet2 } : {}), lourd: g.lourd, lignee: COULEUR[lign], suite: o.halo,
     felure: o.felure ? ICO.fele : undefined,
   };
   const cls = ['geste', taille, eteinte ? 'eteinte' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', o.felure ? 'brise-felure' : '', o.engagee ? 'engagee' : ''].filter(Boolean).join(' ');
   const freqs = g.fs && g.fs.length > 1 && !accord ? `, fréquences possibles ${g.fs.join(' ou ')}` : '';
-  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${g.v}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}${eteinte ? ', éteinte : son Porteur est à terre' : ''}${o.engagee ? ', engagée par le brouillard : elle ne revient plus en main ce tour-ci' : ''}`;
-  AFFICHES.set(g.uid, { g, d, nomP, eteinte });
+  const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${vReel}${tendance ? ` (${tendance === 'hausse' ? 'renforcée' : 'affaiblie'}, ${g.v} de base)` : ''}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}${eteinte ? ', éteinte : son Porteur est à terre' : ''}${o.engagee ? ', engagée par le brouillard : elle ne revient plus en main ce tour-ci' : ''}`;
+  AFFICHES.set(g.uid, { g, d, nomP, eteinte, detail });
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]}" data-action="${action}" data-uid="${g.uid}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="nf nf-${metal}${o.halo ? ' nf-suite' : ''}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d)}</span>`
     + `</button>`;
 }
 
 /** les cartes de combat affichées (par uid), pour la loupe */
-const AFFICHES = new Map<string, { g: Geste; d: Face; nomP: string; eteinte: boolean }>();
+const AFFICHES = new Map<string, { g: Geste; d: Face; nomP: string; eteinte: boolean; detail: DetailForce | null }>();
 
 /**
  * La loupe (27 octobre 2026, Bryan) : un appui prolongé sur une carte du combat la montre en grand, au milieu de l'écran,
@@ -140,12 +147,31 @@ const AFFICHES = new Map<string, { g: Geste; d: Face; nomP: string; eteinte: boo
 export function loupe(uid: string): string | null {
   const a = AFFICHES.get(uid);
   if (!a) return null;
-  const { g, d, nomP, eteinte } = a;
+  const { g, d, nomP, eteinte, detail } = a;
   const grand: Face = { ...d, suite: false, felure: undefined };
   const effets = effetsDe(g).map((e) => `<li><b>${NOMS_EFFET[e.type]}</b> ${texteEffet(e)}</li>`).join('');
   return `<div class="loupe" aria-hidden="true"><div class="loupe-face"><span class="nf nf-${d.metal}" style="${styleFace(d)}">${corpsFace(grand)}</span></div>`
+    + (detail && (detail.lignes.length || detail.bouclierEnnemi) ? calculLoupe(g, detail) : '')
     + (effets ? `<ul class="loupe-effets">${effets}</ul>` : '')
     + `<p class="loupe-qui">${eteinte ? `Éteinte : ${echap(nomP)} est à terre` : `Jouée par ${echap(nomP)}`}${g.lourd ? ' · prend 2 places' : ''}</p></div>`;
+}
+
+const QUOI = { atk: 'dégâts', bouclier: 'de bouclier', soin: 'PV soignés' };
+const pourcent = (m: number) => {
+  const p = Math.round((m - 1) * 100);
+  return `${p > 0 ? '+' : '−'}${Math.abs(p)} %`;
+};
+
+/** Le calcul de la carte dans la loupe : la base, chaque bonus (vert) et malus (rouge), puis le total */
+function calculLoupe(g: Geste, d: DetailForce): string {
+  const lignes = d.lignes.map((l) => {
+    const plus = l.m !== undefined ? l.m > 1 : (l.v ?? 0) > 0;
+    const val = l.m !== undefined ? pourcent(l.m) : `${(l.v ?? 0) > 0 ? '+' : '−'}${Math.abs(l.v ?? 0)}`;
+    return `<li class="${plus ? 'plus' : 'moins'}"><span>${echap(l.nom)}</span><b>${val}</b></li>`;
+  }).join('');
+  const total = `<li class="total"><span>${d.siPosee ? 'Posée maintenant' : 'Au lancer'}</span><b>${d.total} ${QUOI[g.type]}</b></li>`;
+  const bouclier = d.bouclierEnnemi > 0 ? `<p class="lc-note">Son bouclier (${d.bouclierEnnemi}) absorbe d’abord le coup.</p>` : '';
+  return `<div class="loupe-calcul"><ul><li class="base"><span>Force de la carte</span><b>${d.base}</b></li>${lignes}${total}</ul>${bouclier}</div>`;
 }
 
 /**
@@ -278,6 +304,7 @@ function regles(): string {
     + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé) : en main, ces cartes portent l’icône de la Fêlure dans leur capsule de Fréquence (« Brise » sur grand écran). Dans une suite (3, 4, 5), elle donne aussi 1 Flux. Les évanescents la cachent.</li>'
     + `<li><b>Le Coup d’éclat</b> : Flux plein, un seul par combat, au choix selon les lignées de l’escouade. ${(Object.values(ECLATS)).map((x) => `<b>${x.nom}</b> : ${x.texte}`).join(' ')} Le Porteur qui le déclenche prend ${REGLES.eclat.usure} d’Usure.</li>`
     + '<li><b>« 2 PL. »</b> : cette carte est puissante mais occupe deux places.</li>'
+    + '<li><b>La force</b> écrite sur la carte est celle qui tombera, tous bonus et malus compris : <b style="color:#9ff5b6">verte</b> si la carte est renforcée, <b style="color:#ff9b8c">rouge</b> si elle est affaiblie. Garde le doigt dessus pour voir le détail.</li>'
     + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.</li>'
     + '<li><b>Le triangle des lignées :</b> les Augmentés battent les Résonants, les Résonants battent les Génés, les Génés battent les Augmentés (+15 %).</li>'
     + '<li><b>L’ennemi annonce son attaque</b> en haut de l’écran : protège-toi ou finis-le avant.</li>'
@@ -450,6 +477,7 @@ export function htmlCombat(e: Ecran): string {
 function htmlEcranCombat(e: Ecran): string {
   const s = e.etat;
   ETEINTS = new Set(s.porteurs.filter((p) => p.pv <= 0).map((p) => p.id));
+  ETAT = s;
   const def = ennemiDef(s.ennemi.id);
   const it = s.intention;
   const faible = BATTU_PAR[def.lignee];

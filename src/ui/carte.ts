@@ -88,6 +88,8 @@ export interface Face {
   suite?: boolean;
   /** la carte brise la Fêlure de l'ennemi (combat) : l'icône de la Fêlure, posée dans la capsule de Fréquence */
   felure?: string;
+  /** en combat : la force affichée est renforcée (vert) ou affaiblie (rouge) par rapport à celle de la carte */
+  tendance?: 'hausse' | 'baisse';
 }
 
 /** Le dedans d'une carte : à poser dans un conteneur `.nf` (voir `faceCarte` et `geste`) */
@@ -116,7 +118,7 @@ export function corpsFace(d: Face): string {
     + (d.effet2 ? '<span class="nf-heritage">Héritage</span>' : '')
     + `<span class="nf-freqs"><span class="nf-caps">${segs}${fele}</span>${d.lourd ? '<b class="nf-lourd">2 PL.</b>' : ''}</span>`
     + `<span class="nf-voile"><span class="nf-barre"></span>`
-    + `<span class="nf-val ${d.type}">${ICONES_ACTION[d.type]}<b>${d.v}</b></span>`
+    + `<span class="nf-val ${d.type}${d.tendance ? ' ' + d.tendance : ''}">${ICONES_ACTION[d.type]}<b>${d.v}</b></span>`
     // en main : une capsule en bas à gauche, la lignée (losange) et l'icône de l'effet, en face de celle de la force
     + `<span class="nf-eff${d.effet ? ' a-effet' : ''}"><i class="nf-eff-lg"></i>${d.effet ? effetsDe(d).map((e) => ICONES_EFFET[e.type]).join('') : ''}</span>`
     + `<span class="nf-ligne">${roue}<span class="nf-nom">${echap(d.nom)}</span></span>${effet}</span>`;

@@ -1,7 +1,7 @@
 // Le moteur de combat. Fonctions pures sur un état sérialisable (JSON) :
 // l'interface appelle ces fonctions puis anime les « pas » qu'elles renvoient.
 
-import { DECK_DEPART, FAVEUR_CONDITION, ZONES, ennemiDef, porteurDef } from './donnees';
+import { CONDITIONS, DECK_DEPART, FAVEUR_CONDITION, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from './donnees';
 import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, places } from './regles';
 import { tireur } from './rng';
 import type {
@@ -359,7 +359,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   const freqs = frequencesEffectives(s.chaine);
   for (const [i, g] of s.chaine.entries()) {
     emettre({ kind: 'carte', rang: i, total: s.chaine.length, lignee: ligneeGeste(g), type: g.type, porteur: g.porteur, suite: a.suite, ...(g.effet ? { effet: g.effet.type } : {}) });
-    for (const ev of appliquer(s, g, a.mult, i)) emettre(ev);
+    for (const ev of appliquer(s, g, a.mult, i, a.suite)) emettre(ev);
     if (s.ennemi.pv > 0 && freqs[i] === s.ennemi.felure && !s.ennemi.felureBrisee) briser(s, s.ennemi, emettre, a.suite >= 3);
     phaseGardien(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) tombe(s, s.ennemi, emettre);
@@ -475,7 +475,7 @@ function plusBlesse(s: CombatEtat): PorteurEtat | undefined {
   return vivants(s).sort((a, b) => a.pv / a.pvMax - b.pv / b.pvMax)[0];
 }
 
-function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Evenement[] {
+function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 0): Evenement[] {
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'Spécial';
   // une carte éteinte (son Porteur est à terre) frappe, protège ou soigne à moitié, sans son effet ; sa Fréquence compte toujours
   const eteinte = estATerre(s, g.porteur);
@@ -483,40 +483,25 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
   // une carte de l’Héritage a deux effets : chacun se lit par son type
   const de = <T extends Effet['type']>(t: T) => effets.find((e): e is Extract<Effet, { type: T }> => e?.type === t);
   const evs: Evenement[] = [];
-  // Crescendo : plus la carte arrive tard dans la chaîne, plus elle frappe fort
-  const cr = de('crescendo');
-  const cresc = cr ? 1 + cr.part * rang : 1;
-  // les conditions de salle : une lignée favorisée, une source qui renforce les soins
-  const faveur = s.condition && FAVEUR_CONDITION[s.condition] === ligneeGeste(g) ? 1.2 : 1;
-  const source = s.condition === 'sanctuaire' && g.type === 'soin' ? 1.3 : 1;
-  // Débridage (Coup d'éclat des Augmentés) : les coups de ce tour frappent plus fort
-  const debride = s.debride && g.type === 'atk' ? REGLES.eclat.debride : 1;
-  // Décharge (Moteur) : elle vide le Flux et gagne une part de force par Flux vidé
+  // Décharge (Moteur) : elle vide le Flux et gagne une part de force par Flux vidé (le facteur est lu avant de vider)
   const dc = de('decharge');
   const vide = dc ? s.flux : 0;
+  // tous les multiplicateurs de la carte, ceux-là mêmes qu'affiche la loupe (detailForce)
+  const facteurs = facteursGeste(s, g, mult, rang, s.chaine, eteinte, suite);
   if (dc && vide) {
     s.flux = 0;
     log(s, `Décharge : ${vide} Flux vidé${vide > 1 ? 's' : ''}, +${Math.round(dc.part * vide * 100)} % de force.`);
     evs.push({ kind: 'effet', cible: 'escouade', texte: 'Décharge' });
   }
-  const decharge = dc ? 1 + dc.part * vide : 1;
-  // Unisson (Chœur) : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne
-  const un = de('unisson');
-  const fsChaine = un ? frequencesEffectives(s.chaine) : [];
-  const pareilles = un ? fsChaine.filter((f, k) => k !== rang && f === fsChaine[rang]).length : 0;
-  const unisson = un ? 1 + un.part * pareilles : 1;
+  const faveur = s.condition && FAVEUR_CONDITION[s.condition] === ligneeGeste(g) ? 1.2 : 1;
   const percant = !!de('percant');
-  const force = g.v * mult * cresc * faveur * source * debride * decharge * unisson * (eteinte ? REGLES.eteinte : 1);
+  const force = facteurs.reduce((f, x) => f * x.m, g.v);
 
   /** Un coup porté à l'ennemi visé : lignées, Fissure, Évanescent, Blindé et bouclier ennemi (Perçant passe outre), puis Épines */
   const frapper = (force: number, quoi: string): number => {
-    const e = ennemiDef(s.ennemi.id);
-    const av = avantage(ligneeGeste(g), e.lignee);
-    // Évanescent : hors Résonance, l'ennemi ne prend qu'une part des coups ; Blindé : chaque coup perd quelques points (Perçant passe outre)
-    const evan = trait(s.ennemi, 'evanescent');
-    // l'armure grandit doucement avec la puissance de l'ennemi (sinon les petites cartes ne servent plus à rien en profondeur)
-    const blinde = percant ? 0 : Math.round((trait(s.ennemi, 'blinde')?.v ?? 0) * (1 + 0.4 * (s.ennemi.force - 1)));
-    const dmg = Math.max(0, Math.round(force * av * (1 + (s.ennemi.fissure ?? 0)) * (evan && mult <= 1 ? 1 - evan.part : 1)) - blinde);
+    const coup = facteursCoup(s, g, mult, percant);
+    const av = coup.av;
+    const dmg = Math.max(0, Math.round(coup.facteurs.reduce((f, x) => f * x.m, force)) - coup.blinde);
     const abs = percant ? 0 : Math.min(s.ennemi.bouclier, dmg);
     s.ennemi.bouclier -= abs;
     const net = dmg - abs;
@@ -602,6 +587,98 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number): Eveneme
     }
   }
   return evs;
+}
+
+/**
+ * Ce qui change la force d'une carte (27 octobre 2026, Luc et Bryan : afficher sur la carte ce qu'elle fera vraiment).
+ * Un seul calcul sert au vrai coup (`appliquer`) et à la loupe (`detailForce`) : les deux ne peuvent pas se contredire.
+ * L'ordre des facteurs est celui du calcul d'origine, pour garder exactement les mêmes arrondis.
+ */
+export interface Facteur { nom: string; m: number }
+
+function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chaine: Geste[], eteinte: boolean, suite: number): Facteur[] {
+  const effets = eteinte ? [] : [g.effet, g.effet2];
+  const de = <T extends Effet['type']>(t: T) => effets.find((e): e is Extract<Effet, { type: T }> => e?.type === t);
+  const f: Facteur[] = [];
+  const mettre = (nom: string, m: number) => { if (m !== 1) f.push({ nom, m }); };
+  mettre(`Résonance (suite de ${suite})`, mult);
+  // Crescendo : plus la carte arrive tard dans la chaîne, plus elle frappe fort
+  const cr = de('crescendo');
+  if (cr) mettre(`Crescendo (${rang + 1}e de la chaîne)`, 1 + cr.part * rang);
+  // les conditions de salle : une lignée favorisée, une source qui renforce les soins
+  if (s.condition && FAVEUR_CONDITION[s.condition] === ligneeGeste(g)) mettre(CONDITIONS[s.condition]?.nom ?? 'Salle favorable', 1.2);
+  if (s.condition === 'sanctuaire' && g.type === 'soin') mettre(CONDITIONS.sanctuaire!.nom, 1.3);
+  // Débridage (Coup d'éclat des Augmentés) : les coups de ce tour frappent plus fort
+  if (s.debride && g.type === 'atk') mettre('Débridage', REGLES.eclat.debride);
+  const dc = de('decharge');
+  if (dc) mettre(`Décharge (${s.flux} Flux)`, 1 + dc.part * s.flux);
+  // Unisson (Chœur) : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne
+  const un = de('unisson');
+  if (un) {
+    const fs = frequencesEffectives(chaine);
+    const pareilles = fs.filter((x, k) => k !== rang && x === fs[rang]).length;
+    mettre(`Unisson (${pareilles} même${pareilles > 1 ? 's' : ''} Fréquence${pareilles > 1 ? 's' : ''})`, 1 + un.part * pareilles);
+  }
+  if (eteinte) mettre('Porteur à terre', REGLES.eteinte);
+  return f;
+}
+
+/** Ce que l'ennemi visé change à un coup : triangle des lignées, Fissure, Évanescent (en facteurs), Blindé (en points retirés) */
+function facteursCoup(s: CombatEtat, g: Geste, mult: number, percant: boolean): { facteurs: Facteur[]; blinde: number; av: number } {
+  const e = ennemiDef(s.ennemi.id);
+  const av = avantage(ligneeGeste(g), e.lignee);
+  const facteurs: Facteur[] = [];
+  if (av !== 1) facteurs.push({ nom: `Lignée : ${NOMS_LIGNEE[ligneeGeste(g)].nom} bat ${NOMS_LIGNEE[e.lignee].nom}`, m: av });
+  if (s.ennemi.fissure) facteurs.push({ nom: 'Fissure', m: 1 + s.ennemi.fissure });
+  // Évanescent : hors Résonance, l'ennemi ne prend qu'une part des coups
+  const evan = trait(s.ennemi, 'evanescent');
+  if (evan && mult <= 1) facteurs.push({ nom: 'Évanescent (hors Résonance)', m: 1 - evan.part });
+  // Blindé : chaque coup perd quelques points (Perçant passe outre) ; l'armure grandit doucement avec la puissance de l'ennemi
+  const blinde = percant ? 0 : Math.round((trait(s.ennemi, 'blinde')?.v ?? 0) * (1 + 0.4 * (s.ennemi.force - 1)));
+  return { facteurs, blinde, av };
+}
+
+/** Le détail d'une carte en combat : sa force de base, chaque bonus et malus, et le chiffre final */
+export interface DetailForce {
+  base: number;
+  total: number;
+  lignes: { nom: string; m?: number; v?: number }[];
+  /** une carte de la main : le calcul suppose qu'elle est posée au bout de la chaîne */
+  siPosee: boolean;
+  /** le bouclier de l'ennemi visé, qui absorbera d'abord le coup (Perçant passe outre) */
+  bouclierEnnemi: number;
+}
+
+/**
+ * Ce que fera une carte de la main ou de la chaîne, avec le pourquoi. Posée, elle est calculée à sa place dans la chaîne ;
+ * en main, comme si on la posait maintenant au bout. Mêmes règles que `lancer` (Résonance, Écho ancien, Dissonance…).
+ * Simplification assumée : l'ennemi visé est celui de maintenant (si un coup plus tôt dans la chaîne l'abat, le reste passe au suivant).
+ */
+export function detailForce(s: CombatEtat, uid: string): DetailForce | null {
+  let rang = s.chaine.findIndex((x) => x.uid === uid);
+  const siPosee = rang < 0;
+  const g = siPosee ? s.main.find((x) => x.uid === uid) : s.chaine[rang];
+  if (!g || g.vide) return null;
+  const chaine = siPosee ? [...s.chaine, g] : s.chaine;
+  if (siPosee) rang = chaine.length - 1;
+  const analyse = analyserChaine(chaine);
+  const brut = s.condition === 'echo' && analyse.suite === 4 ? { ...analyse, mult: REGLES.multSuite[5]! } : analyse;
+  const a = s.dissonance || s.sansResonance ? { ...brut, suite: 0, mult: 1 } : brut;
+  const eteinte = estATerre(s, g.porteur);
+  const facteurs = facteursGeste(s, g, a.mult, rang, chaine, eteinte, a.suite);
+  const force = facteurs.reduce((f, x) => f * x.m, g.v);
+  const lignes: DetailForce['lignes'] = [...facteurs];
+  let total = Math.round(force);
+  let bouclierEnnemi = 0;
+  if (g.type === 'atk') {
+    const percant = !eteinte && [g.effet, g.effet2].some((e) => e?.type === 'percant');
+    const coup = facteursCoup(s, g, a.mult, percant);
+    lignes.push(...coup.facteurs);
+    if (coup.blinde) lignes.push({ nom: 'Blindé', v: -coup.blinde });
+    total = Math.max(0, Math.round(coup.facteurs.reduce((f, x) => f * x.m, force)) - coup.blinde);
+    bouclierEnnemi = percant ? 0 : s.ennemi.bouclier;
+  }
+  return { base: g.v, total, lignes, siPosee, bouclierEnnemi };
 }
 
 /**
