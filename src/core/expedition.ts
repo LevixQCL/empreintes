@@ -103,7 +103,8 @@ export const FORCE = {
   // −7 % à partir de −2 (26 octobre 2026) : la Fêlure ne donne plus de Flux hors d'une suite ; réglé au robot pour garder
   // les mêmes repères (front 41 % / 37 %, Strate −10 au jour 29 / 22).
   //      −1   −2     −3     −4     −5     −6     −7     −8     −9     −10    −11    −12    −13    −14
-  table: [1, 1.39, 1.818, 2.139, 2.46, 2.781, 2.888, 3.016, 3.102, 3.262, 3.475, 3.743, 3.936, 4.064] as number[],
+  // −15 % dans la Strate −1 (27 octobre 2026, Bryan : trop dure pour un nouveau joueur) : Pilleur 70 → 60 PV, Vigie 95 → 81, Confluence 165 → 140.
+  table: [0.85, 1.39, 1.818, 2.139, 2.46, 2.781, 2.888, 3.016, 3.102, 3.262, 3.475, 3.743, 3.936, 4.064] as number[],
   /** hausse par Strate au-delà de la table */
   ensuite: 1.04,
   /** hausse par Strate pour suivre les niveaux des Porteurs. À 0 depuis les traits, phases et conditions (22 octobre 2026), qui
