@@ -85,6 +85,11 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'premiere-mue': 'premiere-mue',
   'lanterne-lecture': 'lanterne-lecture',
   'cle-legs': 'cle-legs',
+  'foulee-directrice': 'foulee-directrice',
+  'bras-fonderie': 'bras-fonderie',
+  'coeur-glaciere': 'coeur-glaciere',
+  'sceau-orseve': 'sceau-orseve',
+  'voix-quartier': 'voix-quartier',
 };
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */
