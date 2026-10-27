@@ -293,7 +293,7 @@ export type Evenement =
   | { kind: 'resonance'; suite: number; mult: number }
   /** une carte de la chaîne entre en jeu (pour l'animation) : sa place, sa lignée, son action */
   | { kind: 'carte'; rang: number; total: number; lignee: LigneeGeste; type: TypeGeste; porteur: string | null; suite: number; effet?: string }
-  | { kind: 'degats'; cible: string; net: number; absorbe: number; rang?: number; source?: 'epines' | 'eboulis' }
+  | { kind: 'degats'; cible: string; net: number; absorbe: number; rang?: number; source?: 'epines' | 'eboulis'; zone?: boolean }
   | { kind: 'bouclier'; cible: 'escouade' | 'ennemi'; v: number; rang?: number }
   | { kind: 'soin'; cible: string; v: number; rang?: number }
   | { kind: 'echo' }

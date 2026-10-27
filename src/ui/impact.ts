@@ -595,36 +595,106 @@ function versFlux(de: DOMPoint | null, a: DOMPoint | null) {
 
 /** Le coup d'un ennemi, selon sa lignée : rayon (Augmentés), griffes (Génés), onde qui se referme (Résonants) */
 const TEINTE_ENNEMI: Record<LigneeGeste, string> = { tech: '#FF5A6E', bio: '#FF7A3A', reso: '#C46BFF', neutre: DANGER };
-function coupEnnemi(de: DOMPoint | null, p: DOMPoint, lignee: LigneeGeste) {
+
+/** L'ennemi qui frappe se jette un instant vers sa cible, puis revient : le coup part d'un corps, pas de nulle part */
+function bond(src: Element | null, de: DOMPoint | null, p: DOMPoint) {
+  if (!src || !de || reduit) return;
+  const dx = p.x - de.x, dy = p.y - de.y, l = Math.hypot(dx, dy) || 1;
+  const amp = src.classList.contains('vignette-ennemi') ? 12 : 7;
+  const tx = (dx / l) * amp, ty = (dy / l) * amp;
+  (src as HTMLElement).animate([
+    { transform: 'none' },
+    { transform: `translate(${-tx * 0.35}px, ${-ty * 0.35}px) scale(.98)`, offset: 0.3 },
+    { transform: `translate(${tx}px, ${ty}px) scale(1.04)`, offset: 0.55 },
+    { transform: 'none' },
+  ], { duration: 360, easing: 'cubic-bezier(.3,.7,.3,1)' });
+}
+
+/** Le point d'impact sur un Porteur : un éclair blanc, une onde nette, quelques fêlures et des éclats chassés dans le sens du coup */
+function impactPorteur(p: DOMPoint, coul: string, angle: number, delai: number) {
+  const e = Math.sqrt(ech);
+  trait((c, k) => {
+    const r = (12 + k * 30) * e;
+    const g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
+    g.addColorStop(0, `rgba(255,255,255,${1 - k})`); g.addColorStop(0.35, coul); g.addColorStop(1, 'transparent');
+    c.globalAlpha = 1 - k * k; c.fillStyle = g; c.beginPath(); c.arc(p.x, p.y, r, 0, Math.PI * 2); c.fill();
+  }, 170, delai);
+  trait((c, k) => {
+    c.globalAlpha = (1 - k) * 0.9; c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 12; c.lineWidth = (3 - k * 2.4) * e;
+    c.beginPath(); c.arc(p.x, p.y, (10 + k * 42) * e, 0, Math.PI * 2); c.stroke();
+  }, 320, delai);
+  // les fêlures : de courtes lignes brisées, surtout vers l'avant du coup
+  const fels = Array.from({ length: 4 }, () => {
+    const a = angle + hasard(-1.1, 1.1), l = hasard(16, 30) * e, cassure = hasard(-0.5, 0.5);
+    return { a, l, cassure };
+  });
+  trait((c, k) => {
+    c.globalAlpha = 1 - k; c.strokeStyle = '#FFE8EA'; c.shadowColor = coul; c.shadowBlur = 8; c.lineWidth = 1.6 * e; c.lineCap = 'round';
+    const o = Math.min(1, k * 4);
+    for (const f of fels) {
+      const mx = p.x + Math.cos(f.a) * f.l * 0.5 * o, my = p.y + Math.sin(f.a) * f.l * 0.5 * o;
+      c.beginPath(); c.moveTo(p.x + Math.cos(f.a) * 6 * e, p.y + Math.sin(f.a) * 6 * e); c.lineTo(mx, my);
+      c.lineTo(mx + Math.cos(f.a + f.cassure) * f.l * 0.5 * o, my + Math.sin(f.a + f.cassure) * f.l * 0.5 * o); c.stroke();
+    }
+  }, 240, delai);
+  setTimeout(() => eclats(p.x, p.y, 14, coul, { vitesse: 320, taille: 2.2, trainee: true, angle, ouverture: 0.9, gravite: 120 }), delai);
+}
+
+/**
+ * Le coup d'un ennemi sur un Porteur, selon sa lignée. Renvoie le délai (ms) avant que le coup ne porte.
+ * Augmentés : une salve, un obus de lumière lourd qui part de l'ennemi avec un éclair de bouche et vient s'écraser.
+ * Génés : trois griffures qui lacèrent. Résonants : une onde qui se referme sur la cible.
+ */
+function coupEnnemi(de: DOMPoint | null, p: DOMPoint, lignee: LigneeGeste): number {
   const coul = TEINTE_ENNEMI[lignee];
+  const e = Math.sqrt(ech);
   if (lignee === 'tech' && de) {
+    const dx = p.x - de.x, dy = p.y - de.y, l = Math.hypot(dx, dy) || 1;
+    const angle = Math.atan2(dy, dx);
+    const vol = Math.round(Math.min(230, 120 + l * 0.12));
+    // l'éclair de bouche
     trait((c, k) => {
-      c.globalAlpha = (1 - k) * (0.8 + Math.random() * 0.2);
-      c.lineCap = 'round'; c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 16; c.lineWidth = 6 * (1 - k) + 1;
-      c.beginPath(); c.moveTo(de.x, de.y); c.lineTo(p.x, p.y); c.stroke();
-      c.strokeStyle = '#fff'; c.lineWidth = 1.2; c.stroke();
-    }, 260);
-    eclats(p.x, p.y, 10, coul, { vitesse: 200, taille: 2, trainee: true });
-  } else if (lignee === 'bio') {
+      const r = (14 + k * 16) * e;
+      const g = c.createRadialGradient(de.x, de.y, 0, de.x, de.y, r);
+      g.addColorStop(0, `rgba(255,255,255,${1 - k})`); g.addColorStop(0.4, coul); g.addColorStop(1, 'transparent');
+      c.globalAlpha = 1 - k; c.fillStyle = g; c.beginPath(); c.arc(de.x, de.y, r, 0, Math.PI * 2); c.fill();
+    }, 160);
+    // l'obus : une tête brillante, une gaine colorée, une traînée qui s'amenuise derrière lui
+    trait((c, k) => {
+      const t = k, q = Math.max(0, t - 0.32);
+      const hx = de.x + dx * t, hy = de.y + dy * t, qx = de.x + dx * q, qy = de.y + dy * q;
+      const g = c.createLinearGradient(qx, qy, hx, hy);
+      g.addColorStop(0, 'transparent'); g.addColorStop(0.7, coul); g.addColorStop(1, '#fff');
+      c.lineCap = 'round'; c.shadowColor = coul; c.shadowBlur = 18;
+      c.strokeStyle = g; c.lineWidth = 9 * e; c.beginPath(); c.moveTo(qx, qy); c.lineTo(hx, hy); c.stroke();
+      c.strokeStyle = '#fff'; c.lineWidth = 3 * e; c.beginPath();
+      c.moveTo(de.x + dx * Math.max(0, t - 0.1), de.y + dy * Math.max(0, t - 0.1)); c.lineTo(hx, hy); c.stroke();
+      c.fillStyle = '#fff'; c.beginPath(); c.arc(hx, hy, 5 * e, 0, Math.PI * 2); c.fill();
+    }, vol);
+    impactPorteur(p, coul, angle, vol);
+    return vol;
+  }
+  if (lignee === 'bio') {
     const angle = hasard(-0.8, -0.4) + (Math.random() < 0.5 ? 0 : Math.PI / 2.5);
     for (let i = 0; i < 3; i++) {
       const ox = Math.cos(angle + Math.PI / 2) * (i - 1) * 10, oy = Math.sin(angle + Math.PI / 2) * (i - 1) * 10;
       trait((c, k) => {
         const o = Math.min(1, k * 3.2);
-        c.globalAlpha = 1 - k * k; c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 10; c.lineCap = 'round'; c.lineWidth = 3 * (1 - k * 0.5);
+        c.globalAlpha = 1 - k * k; c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 10; c.lineCap = 'round'; c.lineWidth = 3.5 * (1 - k * 0.5) * e;
         const x0 = p.x + ox - Math.cos(angle) * 30, y0 = p.y + oy - Math.sin(angle) * 30;
         c.beginPath(); c.moveTo(x0, y0); c.lineTo(x0 + Math.cos(angle) * 60 * o, y0 + Math.sin(angle) * 60 * o); c.stroke();
-      }, 300, i * 40);
+      }, 300, 80 + i * 40);
     }
-    eclats(p.x, p.y, 8, coul, { vitesse: 140, taille: 2.4, gravite: 420 });
-  } else {
-    trait((c, k) => {
-      c.globalAlpha = Math.sin(k * Math.PI) * 0.9;
-      c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 18; c.lineWidth = 3;
-      c.beginPath(); c.arc(p.x, p.y, 70 * (1 - k) + 8, 0, Math.PI * 2); c.stroke();
-    }, 360);
-    setTimeout(() => eclats(p.x, p.y, 10, coul, { vitesse: 150, taille: 2.2, gravite: 0, vie: 0.6 }), 300);
+    impactPorteur(p, coul, angle, 110);
+    return 110;
   }
+  trait((c, k) => {
+    c.globalAlpha = Math.sin(k * Math.PI) * 0.9;
+    c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 18; c.lineWidth = 3;
+    c.beginPath(); c.arc(p.x, p.y, 70 * (1 - k) + 8, 0, Math.PI * 2); c.stroke();
+  }, 300);
+  impactPorteur(p, coul, hasard(0, Math.PI * 2), 260);
+  return 260;
 }
 
 /** Un bouclier qui se pose sur l'ennemi : une coque hexagonale qui scintille */
@@ -827,32 +897,39 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       }
       const el = [...racine.querySelectorAll('.combattant')].find((x) => x.getAttribute('data-porteur') === ev.cible);
       const p = centre(el ?? null);
+      let delai = 0;
       if (p && ev.net) {
         // d'où vient le coup : la vignette de l'ennemi qui agit (groupe), sinon l'ennemi de la scène ; sa lignée choisit le geste
         const src = (ev.rang !== undefined ? racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]:not(.visee)`) : null) ?? ennemi ?? scene;
         const porteuse = src?.closest('.vignette-ennemi') ?? scene;
         const lignee = (['tech', 'bio', 'reso'] as const).find((l) => porteuse?.classList.contains(`l-${l}`)) ?? 'neutre';
-        coupEnnemi(centre(src, -0.05), p, lignee);
+        const de = centre(src, -0.05);
+        bond(src, de, p);
+        delai = reduit ? 0 : coupEnnemi(de, p, lignee);
       }
-      if (el) { touche(el, DANGER, 1); secouer(el, 2); }
-      if (ev.net) {
+      // le Porteur encaisse quand le coup arrive, pas quand il part
+      const encaisser = () => {
+        if (el) { touche(el, DANGER, 1); secouer(el, 2); }
+        if (!ev.net) return;
         // ce qu'encaisse l'escouade : un voile rouge sur les bords, proportionné au coup (gardé même avec « réduire les animations »),
-        // et les cartes qui frémissent ; l'écran ne tremble que pour les gros coups
+        // et les cartes de CE Porteur qui frémissent (toutes ses cartes, en main et dans la chaîne) ; une attaque de zone les secoue toutes.
         const pvMax = Number(el?.getAttribute('data-pvmax')) || 40;
         const part = Math.min(1, ev.net / pvMax);
         voileRouge(0.1 + part * 0.3);
         if (!reduit) {
-          racine.querySelectorAll('.zone-main .geste, .zone-chaine .geste').forEach((c, i) => {
-            const a = 1.5 + part * 4;
-            (c as HTMLElement).animate([{ transform: 'none' }, { transform: `translate(${hasard(-a, a)}px, ${a * 0.6}px) rotate(${hasard(-1.2, 1.2)}deg)` }, { transform: 'none' }],
-              { duration: 220, delay: i * 18, easing: 'ease-out' });
+          const sel = ev.zone ? '.zone-main .geste, .zone-chaine .geste' : `.zone-main .geste[data-porteur="${ev.cible}"], .zone-chaine .geste[data-porteur="${ev.cible}"]`;
+          racine.querySelectorAll(sel).forEach((c, i) => {
+            const a = 2 + part * 5;
+            (c as HTMLElement).animate([{ transform: 'none' }, { transform: `translate(${hasard(-a, a)}px, ${a * 0.6}px) rotate(${hasard(-1.5, 1.5)}deg)` }, { transform: 'none' }],
+              { duration: 240, delay: i * 18, easing: 'ease-out' });
           });
           if (part >= 0.3) secouer(ecran, 2);
         }
         note(hasard(70, 80), 'sine', 0.22, 0.14, 0.5);
         vibrer(part >= 0.3 ? [30, 40, 25] : 18);
-      }
-      return 0;
+      };
+      if (delai) setTimeout(encaisser, delai); else encaisser();
+      return delai;
     }
     case 'resonance': {
       sonResonance(ev.suite);

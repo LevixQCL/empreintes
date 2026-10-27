@@ -900,7 +900,7 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
       const net = dmg - abs;
       c.pv = Math.max(0, c.pv - net);
       morceaux.push(`${porteurDef(c.id).nom} ${net ? '−' + net : 'protégé'}`);
-      emettre({ kind: 'degats', cible: c.id, net, absorbe: abs, rang });
+      emettre({ kind: 'degats', cible: c.id, net, absorbe: abs, rang, ...(it.zone ? { zone: true } : {}) });
       // Née-de-mue (Kessa) : la chitine renvoie une part du coup que le bouclier a pris (sans achever l'ennemi)
       if (s.chitine && abs > 0 && en.pv > 1) {
         const renvoi = Math.min(en.pv - 1, Math.max(1, Math.round(abs * s.chitine)));
