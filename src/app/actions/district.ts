@@ -159,7 +159,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'accueil': ouvrir('accueil'); D.etape = 0; window.scrollTo(0, 0); break;
     case 'accueil-suite': D.etape = Math.min(D.etape + 1, nbEtapes('district') - 1); break;
     case 'accueil-retour': D.etape = Math.max(D.etape - 1, 0); break;
-    case 'accueil-fin': ouvrir('archipel'); if (id === 'generateur') D.selection = 'generateur'; window.scrollTo(0, 0); break;
+    case 'accueil-fin': app.jeu.accueilVu = true; sauver(); ouvrir('archipel'); if (id === 'generateur') D.selection = 'generateur'; window.scrollTo(0, 0); break;
     case 'codex':
     case 'bibliotheque':
       D.retourBiblio = app.mode === 'titre' ? 'titre' : D.vue === 'coupe' ? 'coupe' : 'archipel';

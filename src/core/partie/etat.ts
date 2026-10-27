@@ -204,6 +204,8 @@ export interface Jeu {
   journal: string[];
   /** l'intro du premier lancement a été vue */
   introVue: boolean;
+  /** le tuto « Ton district » (après la chambre) a été lu jusqu'au bout : tant qu'il ne l'est pas, il revient à l'ouverture */
+  accueilVu?: boolean;
   /** la chambre scellée a été ouverte (fin du combat guidé) */
   chambre: boolean;
   /** les trois recrues anonymes ont rejoint le district */
