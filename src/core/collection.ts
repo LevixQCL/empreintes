@@ -166,6 +166,13 @@ export const poidsCarte = (cle: string): number =>
   Math.max(1, Math.round(puissanceCarte(cle, COLLECTION.niveauDepart[moduleDef(cle).rarete]) / CHARGE.diviseur));
 export const chargeNiveau = (niveau: number): number => CHARGE.base + CHARGE.parNiveau * (niveau - 1);
 
+/**
+ * Le niveau de Porteur qu'un métal demande (27 octobre 2026, Bryan : « un niveau 1 ne devrait pas pouvoir porter d'or »).
+ * Une carte trouvée trop tôt entre quand même dans la collection et y monte avec ses doublons : on sait quel Porteur faire monter.
+ */
+export const NIVEAU_METAL: Record<Rarete, number> = { fer: 1, cuivre: 1, argent: 4, or: 7, nacre: 10 };
+export const niveauRequis = (cle: string): number => NIVEAU_METAL[moduleDef(cle).rarete];
+
 /** Les cartes qu'un Porteur apporte au deck de combat : celles qu'on lui a confiées, à leur niveau */
 export function cartesEnJeu(porteurId: string, cartes: { id: string; niveau: number }[]): GesteDef[] {
   return cartes.map(({ id, niveau }) => gesteDeCarte(id, porteurId, multNiveau(id, niveau)));

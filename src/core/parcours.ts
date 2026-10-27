@@ -6,7 +6,7 @@
 // Aucun DOM ici : il tourne dans les tests et dans `npm run robot`.
 
 import { CHAPITRES, chapitreOuvert } from './chroniques';
-import { poidsCarte, puissanceCarte } from './collection';
+import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, salleCourante } from './expedition';
 import {
@@ -14,7 +14,7 @@ import {
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
   enMission, envoyerMission, epreuvesDeLaSemaine, fouiller, partirEpreuve,
-  chargeMax, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick,
+  chargeMax, niveauPorteur, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick,
   coutRefabrication, type Jeu, type Poste,
 } from './jeu';
 import { jouerTour, jouerTourMoyen } from './robot';
@@ -64,9 +64,9 @@ function valeurCarte(id: string, niveau: number): number { return puissanceCarte
  * Les 6 meilleures cartes d'une lignée que le Porteur peut porter (Charge comprise), en gardant autant de défenses que
  * le deck de départ quand c'est possible : un sac à dos, un seul métal par carte.
  */
-function meilleures(j: Jeu, l: Lignee, charge: number): string[] {
+function meilleures(j: Jeu, l: Lignee, charge: number, niveau: number): string[] {
   const parBase = new Map<string, string[]>();
-  for (const id of Object.keys(j.collection)) if (moduleDef(id).lignee === l) parBase.set(moduleDe(id), [...(parBase.get(moduleDe(id)) ?? []), id]);
+  for (const id of Object.keys(j.collection)) if (moduleDef(id).lignee === l && niveauRequis(id) <= niveau) parBase.set(moduleDe(id), [...(parBase.get(moduleDe(id)) ?? []), id]);
   // etat[n][d][w] : meilleure valeur avec n cartes, d défenses (plafonnées), w de Charge
   type Case = { v: number; pris: string[] } | null;
   const D = DEFENSES[l];
@@ -104,7 +104,7 @@ function preparer(j: Jeu): string[] {
   const escouade = LIGNEES.map((l) => presents.filter((id) => id !== forgeron && porteurDef(id).lignee === l)
     .sort((a, b) => pvMaxCombat(j, b) - pvMaxCombat(j, a))[0]!).filter(Boolean);
   for (const id of escouade) {
-    const voulues = meilleures(j, porteurDef(id).lignee, chargeMax(j, id));
+    const voulues = meilleures(j, porteurDef(id).lignee, chargeMax(j, id), niveauPorteur(j, id).niveau);
     for (const k of j.porteurs[id]!.modules.slice()) if (!voulues.includes(k)) degreffer(j, k);
     for (const k of voulues) greffer(j, k, id);
   }
@@ -260,7 +260,7 @@ export function simulerParcours(
       // le gardien du front est vaincu, mais il manque des creuseurs : on fouille le front pour en retrouver
       const attente = j.frontVaincu;
       const cible = attente ? front : echecs >= 2 && front > 1 ? front - 1 : front;
-      const faible = LIGNEES.map((l) => ({ l, v: meilleures(j, l, Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => chargeMax(j, id)), chargeMax(j, NOMME[l]))).reduce((n, id) => n + valeurCarte(id, j.collection[id]!.niveau), 0) / DEFENSES_POIDS[l] }))
+      const faible = LIGNEES.map((l) => ({ l, v: meilleures(j, l, Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => chargeMax(j, id)), chargeMax(j, NOMME[l])), Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => niveauPorteur(j, id).niveau), niveauPorteur(j, NOMME[l]).niveau)).reduce((n, id) => n + valeurCarte(id, j.collection[id]!.niveau), 0) / DEFENSES_POIDS[l] }))
         .sort((a, b) => a.v - b.v)[0]!.l;
       const g = suivant();
       const victoire = jouerExpedition(j, () => (cible === front && !attente ? partir(j, escouade, cible, g) : fouiller(j, escouade, cible, faible, g)).ok, jouer, opts.tours);

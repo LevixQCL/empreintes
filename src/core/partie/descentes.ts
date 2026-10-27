@@ -4,7 +4,7 @@
 import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, GESTES_SPECIAUX, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
 import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, forceStrate, nouvelleExploration, type CibleFouille } from '../expedition';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
-import { COLLECTION, ajouterCarte, cartesEnJeu, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
+import { COLLECTION, ajouterCarte, cartesEnJeu, niveauRequis, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
@@ -583,6 +583,8 @@ export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef)
   if (!j.chambre) return refus('Ouvre d’abord la chambre scellée.');
   for (const id of escouade) {
     if (chargePortee(j, id) > chargeMax(j, id)) return refus(`${porteurDef(id).nom} porte trop lourd (${chargePortee(j, id)} de Charge sur ${chargeMax(j, id)}) : reprends-lui une carte.`);
+    const haute = j.porteurs[id]?.modules.find((k) => niveauRequis(k) > niveauPorteur(j, id).niveau);
+    if (haute) return refus(`${moduleDef(haute).nom} demande un Porteur de niveau ${niveauRequis(haute)} : reprends-la à ${porteurDef(id).nom}.`);
   }
   const cartes = deckEscouade(j, escouade).filter((g) => !filtre || g.porteur === null || filtre(g));
   if (cartes.length < min) return refus(`Ton deck n’a que ${cartes.length} cartes : confie des cartes à ton escouade (${min} au moins).`);
