@@ -43,7 +43,7 @@ qui ne couvre que le quart du bas, et l'image reste visible à travers.
    se chevauchent). La principale en grand ; les autres à sa droite, en ligne et plus petites — **plus d'animation qui
    les fait défiler**. En combat, le cristal d'une carte qui prolonge ta suite s'allume : le combo se lit par la lumière.
    **La valeur en bas à droite**, au-dessus de la couture (une fine bande de cristal à 75 % de la hauteur) : le chiffre et une petite
-   icône de couleur — épée rouge (attaque), écu bleu (bouclier), goutte verte (soin).
+   icône de couleur — épée rouge (attaque), écu bleu (bouclier), croix « + » verte (soin).
 3. **Le voile : deux lignes, pas une de plus.** Dégradé de verre fumé flouté, donc toujours clair sur foncé quel que soit
    le métal ou l'image.
    - Ligne 1 : **la roue de niveau** puis le nom en entier. La roue a 10 crans (`COLLECTION.niveauMax`), remplis jusqu'au
@@ -97,7 +97,7 @@ par le code, net à toutes les tailles :
 - le bas de la carte (sous le nom et l'effet) dans la même matière du métal, assombrie pour garder le texte lisible
   (demande de Bryan : le métal se lisait encore mal avec le seul cadre) ;
 - la valeur : le chiffre seul, avec une petite icône de couleur posée à sa gauche — épée rouge (attaque), écu bleu
-  (bouclier), goutte verte (soin) — sur une pastille de verre fumé, au-dessus de la couture à droite ;
+  (bouclier), croix « + » verte (soin) — sur une pastille de verre fumé, au-dessus de la couture à droite ;
 - la roue de niveau, le voile et ses deux lignes.
 
 Proposition de Bryan (27 octobre) : demander seulement **une plaque fine en bas**, un rectangle qui intègre le symbole
