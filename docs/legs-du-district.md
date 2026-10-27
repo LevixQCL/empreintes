@@ -25,7 +25,13 @@ Le but : donner envie de jouer pour enfin la porter.
   Dès le départ, la carte est **visible** avec sa fiche complète, et l'écran montre la progression : « Doran niveau 5 / 8 ».
   Le joueur sait quel Porteur faire monter : c'est l'envie de jouer.
 - **« Un seul Legs par Porteur » disparaît** (il n'y en a qu'un) ; la carte reste liée à sa lignée et pèse sa Charge.
-- **Reste à décider : comment le joueur reçoit la sienne** (voir le message de Claude).
+- **Comment le joueur reçoit la sienne : par un choix dans l'histoire** (validé par Bryan le 27 octobre 2026). La lettre de la directrice
+  pose deux questions sur le directeur qu'on veut être, sans jamais montrer de chiffres :
+  1. « Qu'est-ce qui tient un district debout ? » → la machine (Augmentés), le corps (Génés) ou l'empreinte (Résonants),
+     ou « Tout le monde à la fois » (la **Clé du Legs**, qui rejoint le paquetage : jouée par personne, utile à toute escouade) ;
+  2. selon la lignée, trois réponses, une par voie (par exemple chez les Génés : « on encaisse ensemble » → Carapace,
+     « on ne lâche jamais une proie » → Traque, « on se relève toujours » → Sève).
+  La carte est révélée à la fin de la lettre, scellée. Le choix est définitif (c'est un héritage, pas un équipement).
 
 ## 1. L'histoire
 
