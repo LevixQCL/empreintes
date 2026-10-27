@@ -70,6 +70,10 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'decharge-arc': 'decharge-arc',
   'eclair-captif': 'eclair-captif',
   'noyau-instable': 'noyau-instable',
+  'coup-epaule': 'coup-epaule',
+  'queue-massue': 'queue-massue',
+  'belier-os': 'belier-os',
+  'retour-maree': 'retour-maree',
 };
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */
