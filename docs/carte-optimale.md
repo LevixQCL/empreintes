@@ -90,7 +90,9 @@ socles peints actuels (éclat, écu, couronne de feuilles) ont aussi été écar
 
 **Décision : la carte n'a plus besoin d'aucune image Midjourney en dehors de l'illustration.** Tout le reste est dessiné
 par le code, net à toutes les tailles :
-- le liseré du métal (dégradé ou texture `public/art/metaux/`) ;
+- le cadre dans la matière du métal (texture `public/art/metaux/`, 2,8 % de la largeur, nacre irisée) : on reconnaît le
+  métal d'un coup d'œil ; son arête intérieure et la couture prennent la couleur de l'action (rouge attaque, bleu
+  bouclier, vert soin) : on reconnaît l'action aussi (demande de Bryan : « les deux ») ;
 - les cristaux de Fréquence, petits (15 % de la largeur, les autres Fréquences à 11 %), en ligne en haut à gauche ;
 - la valeur : le chiffre seul, avec une petite icône de couleur posée à sa gauche — épée rouge (attaque), écu bleu
   (bouclier), goutte verte (soin) — sur une pastille de verre fumé, au-dessus de la couture à droite ;
