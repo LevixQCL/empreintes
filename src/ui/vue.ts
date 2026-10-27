@@ -415,7 +415,7 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
  */
 function ligneFelure(s: CombatEtat, prevue: boolean, resonne: boolean): string {
   const en = s.ennemi, it = s.intention;
-  if (en.felureBrisee) return `<span class="int-felure brisee"><span class="gemme">${ICO.fele}</span><span><b>Fêlure brisée</b> : ${it.type === 'atk' ? 'son attaque est affaiblie' : it.type === 'bouclier' ? 'son bouclier est affaibli' : it.type === 'soin' ? 'son soin est affaibli' : 'il vacille'}</span></span>`;
+  if (en.felureBrisee) return `<span class="int-felure brisee"><span class="gemme">${ICO.fele}</span><span><b>Fêlure brisée</b> : ${it.type === 'atk' ? 'son attaque est affaiblie' : it.type === 'bouclier' ? 'son bouclier est affaibli' : it.type === 'soin' ? 'son soin est affaibli' : 'sans effet sur ce qu’il prépare'}</span></span>`;
   if (!felureVisible(en)) return `<span class="int-felure cachee"><span class="gemme">${ICO.fele}<b>?</b></span><span><b>Fêlure cachée</b> : un évanescent ne montre pas la carte qui le brise</span></span>`;
   const f = en.felure!;
   // ce que la Fêlure retire, avec les mêmes arrondis que le moteur
@@ -425,7 +425,7 @@ function ligneFelure(s: CombatEtat, prevue: boolean, resonne: boolean): string {
   const effet = it.type === 'atk' ? `${chiffre(it.v)} → <b>${chiffre(reduit(it.v))}</b> dégâts`
     : it.type === 'bouclier' ? `bouclier +${it.v} → <b>+${reduit(it.v)}</b>`
     : it.type === 'soin' ? `soin +${it.v} → <b>+${reduit(it.v)}</b>`
-    : 'il vacille';
+    : 'sans effet sur ce qu’il prépare';
   // le Flux en plus ne s'annonce que quand la chaîne posée fait une suite (3, 4, 5) : avant, la ligne dit juste ce que la carte brise
   const flux = prevue && resonne && s.flux < REGLES.fluxMax ? `, <b class="gain-flux">+${REGLES.felure.flux} Flux</b>` : '';
   return `<span class="int-felure${prevue ? ' prevue' : ''}" style="--fc:${couleurFrequence(f)}"><span class="gemme">${ICO.fele}<b>${f}</b></span>`

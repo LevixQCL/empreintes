@@ -315,6 +315,12 @@ export function repiocher(s: CombatEtat): Resultat {
   return { ok: true };
 }
 
+/** Pour un aperçu : une Fêlure que le joueur ne voit pas (évanescent, brouillard) ne doit rien trahir (27 octobre 2026) */
+function masquerFelures(s: CombatEtat, copie: CombatEtat) {
+  const brume = brumeActive(s);
+  for (const en of tousEnnemis(copie)) if (!en.felureBrisee && (brume || !felureVisible(en))) delete en.felure;
+}
+
 /**
  * Ce que la chaîne posée fera si on la lance (26 octobre 2026). Bryan : « ça fait beaucoup de calculs à faire avant de lancer
  * une attaque ». La chaîne est jouée sur une copie du combat, avec exactement les règles du vrai lancer (Résonance, lignées,
@@ -325,6 +331,7 @@ export function apercuChaine(s: CombatEtat): { degats: number; absorbe: number; 
   if (s.issue !== 'en-cours' || !s.chaine.length) return r;
   const copie = photo(s);
   delete copie.historique;
+  masquerFelures(s, copie);
   const debout = ennemisDebout(copie).length;
   lancer(copie, {
     apercu: (ev) => {
@@ -352,6 +359,7 @@ export function coupsAttendus(s: CombatEtat): Map<string, CoupAttendu[]> {
   if (s.issue !== 'en-cours' || brumeActive(s)) return r;
   const copie = photo(s);
   delete copie.historique;
+  masquerFelures(s, copie);
   const noter = (ev: Evenement) => {
     if (ev.kind !== 'degats' || ev.cible === 'ennemi' || ev.cible === 'escouade' || ev.source) return;
     const l = r.get(ev.cible) ?? [];
@@ -962,7 +970,7 @@ export function eclater(s: CombatEtat, porteurId: string, opts: { silencieux?: b
 // qu'il est visé, brise son intention (attaque, bouclier ou soin réduits de moitié, d'un quart chez un gardien ou un blindé) ;
 // si la chaîne fait aussi une Résonance, elle remplit le Flux.
 // Deux fois sur trois, la Fréquence fêlée est l'une de celles de la main : jouable, pas automatique.
-// Un évanescent la cache (elle n'est pas affichée, mais existe) ; la Vigie aspire le Flux de ceux qui le gardent.
+// Un évanescent la cache (elle n'est pas affichée, mais existe) ; la Vigie aspire le Flux quand son coup passe le bouclier.
 
 export const estGardien = (id: string) => ZONES.some((z) => z.boss === id);
 /** La Fêlure d'un ennemi est-elle visible ? (cachée chez les évanescents tant qu'elle n'est pas brisée) */
@@ -983,16 +991,23 @@ export const partFelure = (en: EnnemiEtat) => (estGardien(en.id) || trait(en, 'b
 
 /** La Fréquence fêlée d'un ennemi est touchée : son intention se brise ; le Flux monte si la chaîne résonne */
 function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void, resonne: boolean) {
+  // chez un évanescent, la Fêlure était cachée : le joueur la découvre au moment où elle se brise (27 octobre 2026)
+  const trouvee = !felureVisible(en);
   en.felureBrisee = true;
   const it = intentionDe(s, en);
   const part = partFelure(en);
   const nom = ennemiDef(en.id).nom;
+  const titre = trouvee ? 'Fêlure trouvée' : 'Fêlure';
+  let retire = 0;
   if (it.type === 'atk' || it.type === 'bouclier' || it.type === 'soin') {
     const avant = it.v;
     it.v = Math.round(avant * (1 - part));
-    log(s, `Fêlure : ${nom} vacille, ${it.type === 'atk' ? 'son attaque' : it.type === 'bouclier' ? 'son bouclier' : 'son soin'} passe de ${avant} à ${it.v}.`, { sorte: 'effet' });
-  } else log(s, `Fêlure : ${nom} vacille.`, { sorte: 'effet' });
-  emettre({ kind: 'effet', cible: 'ennemi', texte: 'Fêlure', rang: en.rang ?? 0 });
+    // ce que le joueur verra vraiment en moins (l'attaque compte la concentration, la Furie et l'usure)
+    const force = it.type === 'atk' ? puissance(en) * usureCombat(s).attaque : 1;
+    retire = Math.round(avant * force) - Math.round(it.v * force);
+    log(s, `${titre} : ${nom} vacille, ${it.type === 'atk' ? 'son attaque' : it.type === 'bouclier' ? 'son bouclier' : 'son soin'} passe de ${avant} à ${it.v}.`, { sorte: 'effet' });
+  } else log(s, `${titre} : ${nom} vacille, mais ce qu’il prépare ne change pas.`, { sorte: 'effet' });
+  emettre({ kind: 'effet', cible: 'ennemi', texte: retire > 0 ? `${titre} −${retire}` : titre, rang: en.rang ?? 0 });
   if (!resonne) return;
   const avant = s.flux;
   s.flux = Math.min(REGLES.fluxMax, s.flux + REGLES.felure.flux + (s.felureFlux ?? 0));
@@ -1061,7 +1076,8 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
     }
     en.boost = 1;
     const aspire = trait(en, 'aspire');
-    if (aspire && !s.ombre && s.flux > 0) {
+    // seulement si au moins 1 dégât passe le bouclier (27 octobre 2026, Bryan : bloquer doit protéger le Flux)
+    if (aspire && !s.ombre && total > 0 && s.flux > 0) {
       const pris = Math.min(s.flux, aspire.v);
       s.flux -= pris;
       renvois.push({ texte: `${e.nom} aspire ${pris} Flux.`, info: { sorte: 'flux' } });

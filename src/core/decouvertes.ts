@@ -26,7 +26,7 @@ const CONSEILS_TRAITS: Record<Trait['type'], string> = {
   essaim: 'Il revient plus petit quand il tombe : garde de quoi finir le rejeton.',
   vengeur: 'Si tu abats son allié, il frappera double au tour suivant : protège-toi, ou abats-le en premier.',
   furie: 'Plus il est blessé, plus il frappe fort : une fois sous la moitié de ses PV, achève-le vite.',
-  aspire: 'Chacune de ses attaques vide ton Flux : déclenche ton Coup d’éclat ou dépense ton Flux avant qu’il ne frappe.',
+  aspire: 'Chaque coup qui passe ton bouclier te prend 1 Flux : bloque-le entièrement, ou dépense ton Flux avant qu’il ne frappe.',
 };
 
 const CONSEILS_CONDITIONS: Record<string, string> = {
@@ -45,7 +45,7 @@ export function decouvertesDuCombat(s: CombatEtat): Decouverte[] {
   if (tousEnnemis(s).some((en) => en.pv > 0 && felureVisible(en) && !en.felureBrisee)) {
     r.push({
       id: 'felure', sur: 'PREMIÈRE RENCONTRE', titre: 'La Fêlure',
-      texte: 'À côté de son intention, l’ennemi montre une gemme fêlée et une Fréquence. Pose une carte de cette Fréquence dans ta chaîne : son intention se brise (moitié moins forte, un quart chez un gardien ou un blindé). Si ta chaîne fait aussi une suite, ton Flux monte d’un cran. Les cartes de ta main qui la brisent portent la gemme.',
+      texte: 'À côté de son intention, l’ennemi montre une gemme fêlée et une Fréquence. Pose une carte de cette Fréquence dans ta chaîne : son attaque, son bouclier ou son soin se brise (moitié moins fort, un quart chez un gardien ou un blindé ; sans effet sur une Concentration ou une Dissonance). Si ta chaîne fait aussi une suite, ton Flux monte d’un cran. Les cartes de ta main qui la brisent portent la gemme.',
       conseil: 'Une Fêlure brisée vaut souvent mieux qu’une suite de plus : elle protège l’escouade. Glisse-la dans une suite : elle remplit aussi le Flux pour ton Coup d’éclat.',
     });
   }

@@ -459,7 +459,7 @@ export const ENNEMIS: EnnemiDef[] = [
     motif: [
       { type: 'dissonance', nom: 'Contre-chant' },
       { type: 'atk', nom: 'Onde', v: 11, cible: 'hasard' },
-      { type: 'atk', nom: 'Écho', v: 6, zone: true },
+      { type: 'atk', nom: 'Réverbération', v: 6, zone: true },
       { type: 'bouclier', v: 9 },
     ],
   },
@@ -468,14 +468,14 @@ export const ENNEMIS: EnnemiDef[] = [
 // ---------- Les traits des ennemis (décision du 22 octobre 2026) : leur nom et ce qu'ils font, pour l'écran ----------
 export function texteTrait(t: import('./types').Trait): { nom: string; texte: string } {
   switch (t.type) {
-    case 'blinde': return { nom: 'Blindé', texte: `Chaque coup perd ${t.v} dégâts (un peu plus en profondeur). Perçant passe outre. Sa Fêlure ne retire qu’un quart de son intention.` };
-    case 'regeneration': return { nom: 'Régénération', texte: `Regagne ${Math.round(t.part * 100)} % de ses PV à la fin de son tour.` };
+    case 'blinde': return { nom: 'Blindé', texte: `Chaque carte qui le frappe perd ${t.v} dégâts, un peu plus quand il est plus fort (plus bas dans les Strates). Perçant passe outre. Sa Fêlure ne retire qu’un quart de son intention.` };
+    case 'regeneration': return { nom: 'Régénération', texte: `Regagne ${Math.round(t.part * 100)} % de ses PV max à la fin de son tour.` };
     case 'epines': return { nom: 'Épines', texte: `Renvoie ${Math.round(t.part * 100)} % des dégâts au Porteur qui frappe (sans le mettre à terre).` };
-    case 'evanescent': return { nom: 'Évanescent', texte: `Hors Résonance, il ne prend que ${Math.round((1 - t.part) * 100)} % des coups : fais des suites. Sa Fêlure reste cachée.` };
+    case 'evanescent': return { nom: 'Évanescent', texte: `Hors Résonance, tes coups ne lui font que ${Math.round((1 - t.part) * 100)} % de leurs dégâts : fais des suites. Sa Fêlure reste cachée.` };
     case 'essaim': return { nom: 'Essaim', texte: 'Quand il tombe, un rejeton plus petit surgit (une fois).' };
     case 'vengeur': return { nom: 'Vengeur', texte: 'Quand un allié tombe, sa prochaine attaque est doublée.' };
     case 'furie': return { nom: 'Furie', texte: 'Sous la moitié de ses PV, ses attaques font +30 %.' };
-    case 'aspire': return { nom: 'Aspiration', texte: `Quand il frappe, il aspire ${t.v} Flux de l’escouade : ne garde pas ton Flux trop longtemps.` };
+    case 'aspire': return { nom: 'Aspiration', texte: `Si son coup passe ton bouclier, il aspire ${t.v} Flux à l’escouade. Bloque-le, ou dépense ton Flux avant.` };
   }
 }
 

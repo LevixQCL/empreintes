@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ajouter, creerCombat, eclater, eclatsPossibles, estGardien, lancer } from '../src/core/combat';
+import { ajouter, coupsAttendus, creerCombat, eclater, eclatsPossibles, estGardien, lancer } from '../src/core/combat';
 import { PORTEURS, gesteDeCarte } from '../src/core/donnees';
 import { REGLES } from '../src/core/regles';
 import type { CombatEtat } from '../src/core/types';
@@ -64,6 +64,23 @@ describe('La Fêlure', () => {
     expect(s.journal.find((l) => l.startsWith('Fêlure'))).toContain('de 20 à 15');
     expect(s.journal.some((l) => l.includes('aspire 1 Flux'))).toBe(true);
     expect(s.flux).toBe(1); // 2, rien pour la Fêlure (pas de suite), −1 (aspiré)
+  });
+
+  it('la Vigie n’aspire rien quand le bouclier prend tout le coup', () => {
+    const s = preparer('vigie', 4);
+    s.flux = 2;
+    ajouter(s, 'a'); s.bouclier = 999; lancer(s);
+    expect(s.journal.some((l) => l.includes('aspire'))).toBe(false);
+    expect(s.flux).toBe(2);
+  });
+
+  it('un évanescent ne trahit pas sa Fêlure dans l’aperçu, mais la révèle en se brisant', () => {
+    const brise = preparer('remanent', 4);
+    const rate = preparer('remanent', 9);
+    ajouter(brise, 'a'); ajouter(rate, 'a');
+    expect(coupsAttendus(brise).get('ilka')).toEqual(coupsAttendus(rate).get('ilka'));
+    lancer(brise);
+    expect(brise.journal.some((l) => l.startsWith('Fêlure trouvée'))).toBe(true);
   });
 
   it('pas de Fêlure à la Strate −1 (ennemis simples)', () => {

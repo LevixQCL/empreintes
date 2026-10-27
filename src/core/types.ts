@@ -151,7 +151,7 @@ export type Trait =
   | { type: 'essaim'; part: number }
   | { type: 'vengeur' }
   | { type: 'furie' }
-  /** Aspiration (25 octobre 2026) : quand il frappe, il vide une part du Flux de l'escouade */
+  /** Aspiration (25 octobre 2026) : quand son coup passe le bouclier, il prend du Flux à l'escouade */
   | { type: 'aspire'; v: number };
 
 export interface EnnemiDef {
