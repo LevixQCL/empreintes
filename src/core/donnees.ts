@@ -53,6 +53,9 @@ export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string
 /** id, nom, lignée, métal d'origine, action, force (dans le métal d'origine), Fréquences (de la principale à la plus rare), effet, lourde */
 const c = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet?: Effet, lourd = false): ModuleDef =>
   ({ id, nom, lignee, rarete, type, v, f, ...(effet ? { effet } : {}), ...(lourd ? { lourd: true } : {}) });
+/** une carte exclusive (28 octobre 2026) : elle n'existe que dans son métal d'origine, jamais dans un autre */
+const x = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet: Effet, lourd = false): ModuleDef =>
+  ({ ...c(id, nom, lignee, rarete, type, v, f, effet, lourd), seul: true });
 /** une carte de l’Héritage : en nacre, deux effets */
 const legs = (id: string, nom: string, lignee: Lignee, type: TypeGeste, v: number, f: number[], effet: Effet, effet2: Effet, lourd = false): ModuleDef =>
   ({ ...c(id, nom, lignee, 'nacre', type, v, f, effet, lourd), effet2, legs: true });
@@ -129,6 +132,49 @@ export const MODULES: ModuleDef[] = [
   c('chorale-ombres', 'Chorale des ombres', 'reso', 'cuivre', 'atk', 10, [8, 9, 7], { type: 'unisson', part: 1.3 }),
   c('cloche-abysses', 'Cloche des abysses', 'reso', 'argent', 'bouclier', 15, [9, 7, 8], { type: 'diapason' }),
   c('grand-unisson', 'Grand unisson', 'reso', 'or', 'atk', 18, [9, 8, 6], { type: 'unisson', part: 1.4 }),
+  // ---------- Les voies, étapes 2 et 3 (28 octobre 2026, docs/familles-de-decks.md) ----------
+  // La Traque (Nuit) : fissurer, puis achever
+  c('flair', 'Flair', 'bio', 'fer', 'bouclier', 8, [2, 3, 1], { type: 'fissure', part: 0.25 }),
+  c('bond-predateur', 'Bond du prédateur', 'bio', 'fer', 'atk', 10, [4, 3, 5], { type: 'curee', part: 0.4 }),
+  c('crocs-verre', 'Crocs de verre', 'bio', 'cuivre', 'atk', 11, [3, 4, 2], { type: 'curee', part: 0.4 }),
+  c('chasse-aveugle', 'Chasse à l’aveugle', 'bio', 'argent', 'atk', 16, [5, 4, 2], { type: 'curee', part: 0.5 }),
+  c('hallali', 'Hallali', 'bio', 'or', 'atk', 18, [4, 5, 1], { type: 'curee', part: 0.6 }),
+  // La Lecture (Aurel) : briser la Fêlure à coup sûr, puis frapper dans la faille
+  c('regard-biais', 'Regard en biais', 'reso', 'fer', 'bouclier', 9, [6, 7, 9], { type: 'lecture' }),
+  c('lame-doute', 'Lame de doute', 'reso', 'fer', 'atk', 11, [7, 8, 6], { type: 'faille', part: 0.4 }),
+  c('oeil-lecteur', 'Œil du Lecteur', 'reso', 'cuivre', 'atk', 10, [8, 7, 9], { type: 'lecture' }),
+  c('verdict', 'Verdict', 'reso', 'argent', 'atk', 17, [6, 8, 7], { type: 'faille', part: 0.5 }),
+  c('sentence-muette', 'Sentence muette', 'reso', 'or', 'atk', 20, [8, 6, 9], { type: 'faille', part: 0.6 }),
+  // La Sève (Kessa) : soigner en continu, le surplus devient bouclier
+  c('pollen-ambre', 'Pollen d’ambre', 'bio', 'fer', 'soin', 6, [2, 1, 3], { type: 'debord' }),
+  c('seve-piliers', 'Sève des piliers', 'bio', 'cuivre', 'soin', 7, [4, 3, 5], { type: 'debord' }),
+  c('mue-verre', 'Mue de verre', 'bio', 'argent', 'soin', 10, [3, 4, 1], { type: 'debord' }),
+  c('floraison', 'Floraison des Fondations', 'bio', 'or', 'soin', 13, [5, 4, 2], { type: 'debord' }),
+  // La Cadence (Ilka) : les longues chaînes, chaque coup doublé
+  c('pas-chasse', 'Pas chassé', 'tech', 'fer', 'atk', 9, [3, 2, 4], { type: 'elan' }),
+  c('lames-jumelles', 'Lames jumelles', 'tech', 'fer', 'atk', 8, [4, 5, 3], { type: 'rafale' }),
+  c('poings-pistons', 'Poings-pistons', 'tech', 'cuivre', 'atk', 9, [5, 4, 6], { type: 'rafale' }),
+  c('mitraille', 'Mitraille de clous', 'tech', 'argent', 'atk', 12, [6, 5, 7], { type: 'rafale' }),
+  c('cadence-folle', 'Cadence folle', 'tech', 'or', 'atk', 13, [3, 4, 5], { type: 'rafale' }),
+
+  // ---------- Les exclusives (28 octobre 2026) : une carte, un seul métal ----------
+  // Bryan : « une carte ne doit pas spécialement être déclinée dans tous les métaux ». Elles ne tombent que dans leur métal,
+  // et portent des effets qu'on ne trouve nulle part ailleurs. Leurs Fréquences sont volontairement mal commodes pour les suites
+  // (écartées, parfois hors de la plage de la lignée) : les meilleurs effets ne doivent pas rendre les Résonances faciles.
+  // Argent
+  x('gantelet-pillard', 'Gantelet-pillard', 'tech', 'argent', 'atk', 15, [6, 2], { type: 'rapt' }),
+  x('machoire-miroir', 'Mâchoire-miroir', 'bio', 'argent', 'atk', 13, [5, 1], { type: 'empreinte' }),
+  x('boucle-memoire', 'Boucle de mémoire', 'reso', 'argent', 'bouclier', 12, [6, 9], { type: 'rappel' }),
+  // Or
+  x('coeur-surregime', 'Cœur en surrégime', 'tech', 'or', 'atk', 20, [7, 2], { type: 'surtension', part: 0.6, cout: 0.12 }),
+  x('peau-ancetre', 'Peau de l’Ancêtre', 'bio', 'or', 'bouclier', 16, [1, 4], { type: 'rapt' }),
+  x('miroir-hauts', 'Miroir des Hauts', 'reso', 'or', 'atk', 18, [9, 6], { type: 'empreinte' }),
+  // Nacre
+  x('coeur-etoile', 'Cœur d’étoile', 'tech', 'nacre', 'atk', 44, [7, 4, 2], { type: 'surtension', part: 0.5, cout: 0.15 }, true),
+  x('seconde-naissance', 'Seconde naissance', 'bio', 'nacre', 'soin', 20, [1, 3, 5], { type: 'releve' }),
+  x('empreinte-vive', 'Empreinte vive', 'reso', 'nacre', 'atk', 22, [9, 6, 3], { type: 'empreinte' }),
+  x('silence-avant', 'Silence d’avant', 'reso', 'nacre', 'bouclier', 20, [7, 4, 9], { type: 'rappel' }),
+
   // ---------- L’Héritage du district (27 octobre 2026, docs/heritage-du-district.md) ----------
   // Dix vierges cachées par l'ancienne directrice ; chaque joueur n'en reçoit qu'une (lettre de la directrice, LETTRE_LEGS).
   // Exclusives (jamais trouvées ailleurs : MODULES_TIRABLES), en nacre seulement, les seules à deux effets. La nacre renforce
@@ -153,6 +199,12 @@ export const PORTEUR_LEGS: Record<string, string> = {
 
 /** Les cartes qu'on peut trouver, acheter ou fabriquer : toutes, sauf celles de l’Héritage */
 export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs);
+/** Une carte existe-t-elle dans ce métal ? Toutes, sauf les exclusives (seulement dans leur métal) et l’Héritage (en nacre) */
+export const existeEn = (m: ModuleDef, metal: Rarete) => (!m.seul && !m.legs) || m.rarete === metal;
+/** Les cartes qui peuvent tomber dans un métal donné (une exclusive ne tombe que dans le sien) */
+export const tirablesEn = (metal: Rarete) => MODULES_TIRABLES.filter((m) => existeEn(m, metal));
+/** Les cartes exclusives : un seul métal */
+export const EXCLUSIVES = MODULES.filter((m) => m.seul);
 
 /**
  * Les voies (docs/familles-de-decks.md) : chaque Porteur nommé incarne une façon de gagner. Les cartes restent liées à la lignée
@@ -162,7 +214,18 @@ export const VOIES: { id: string; nom: string; porteur: string; cartes: string[]
   { id: 'moteur', nom: 'Le Moteur', porteur: 'liane', cartes: ['bobine-recuperation', 'condensateur', 'decharge-arc', 'eclair-captif', 'noyau-instable'] },
   { id: 'carapace', nom: 'La Carapace', porteur: 'doran', cartes: ['coup-epaule', 'queue-massue', 'belier-os', 'retour-maree'] },
   { id: 'choeur', nom: 'Le Chœur', porteur: 'joss', cartes: ['diapason-cristal', 'voix-basse', 'chorale-ombres', 'cloche-abysses', 'grand-unisson'] },
+  // étapes 2 et 3 (28 octobre 2026)
+  { id: 'traque', nom: 'La Traque', porteur: 'nuit', cartes: ['flair', 'bond-predateur', 'crocs-verre', 'chasse-aveugle', 'hallali'] },
+  { id: 'lecture', nom: 'La Lecture', porteur: 'aurel', cartes: ['regard-biais', 'lame-doute', 'oeil-lecteur', 'verdict', 'sentence-muette'] },
+  { id: 'seve', nom: 'La Sève', porteur: 'kessa', cartes: ['pollen-ambre', 'seve-piliers', 'mue-verre', 'floraison'] },
+  { id: 'cadence', nom: 'La Cadence', porteur: 'ilka', cartes: ['pas-chasse', 'lames-jumelles', 'poings-pistons', 'mitraille', 'cadence-folle'] },
 ];
+/** Les exclusives sans illustration prêtent, en attendant, le portrait du Porteur qui leur ressemble le plus */
+export const PORTEUR_EXCLUSIVES: Record<string, string> = {
+  'gantelet-pillard': 'sasha', 'machoire-miroir': 'nuit', 'boucle-memoire': 'joss',
+  'coeur-surregime': 'liane', 'peau-ancetre': 'doran', 'miroir-hauts': 'vela',
+  'coeur-etoile': 'sasha', 'seconde-naissance': 'kessa', 'empreinte-vive': 'aurel', 'silence-avant': 'guetteur',
+};
 /** La voie d'une carte (« voix-basse@or » → le Chœur), s'il y en a une */
 export const voieDe = (cle: string) => VOIES.find((v) => v.cartes.includes(cle.split('@')[0]!));
 
@@ -182,7 +245,7 @@ function renforcer(e: Effet, k: number): Effet {
   if (k <= 1 || e.type === 'decharge') return e;
   if (e.type === 'flux') return { ...e, v: e.v + (k >= 1.5 ? 1 : 0) };
   // un plafond pour les parts qui retirent ou gardent (90 %) et pour le Siphon (100 %) ; les bonus de force des voies n'en ont pas
-  const plafond = e.type === 'siphon' ? 1 : e.type === 'riposte' || e.type === 'unisson' ? Infinity : 0.9;
+  const plafond = e.type === 'siphon' ? 1 : ['riposte', 'unisson', 'curee', 'faille', 'surtension'].includes(e.type) ? Infinity : 0.9;
   if ('part' in e) return { ...e, part: Math.min(plafond, Math.round(e.part * k * 100) / 100) };
   return e;
 }

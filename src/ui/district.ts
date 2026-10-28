@@ -796,6 +796,7 @@ function effetsCarte(m: ReturnType<typeof moduleDef>): string {
   let h = '';
   if (m.effet) h += `<ul class="effets-carte">${effetsDe(m).map((x) => `<li><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</li>`).join('')}</ul>`;
   else if (origine?.effet) h += `<p class="aide">En fer, pas d’effet. À partir du cuivre : <b>${echap(NOMS_EFFET[origine.effet.type])}</b>, ${echap(texteEffet(origine.effet).replace(/^./, (c) => c.toLowerCase()))}</p>`;
+  if (origine?.seul) h += `<p class="aide"><b>Exclusive</b> : cette empreinte refuse la copie. Elle n’existe qu’en ${echap(NOMS_RARETE[origine.rarete].toLowerCase())}, et son effet ne se trouve sur aucune autre carte.</p>`;
   if (m.f.length > 1 && !frequenceLibre(m.effet)) h += `<p class="aide">Fréquences au choix : <b>${m.f.join(' ou ')}</b>. Posée, elle prend celle qui prolonge ta suite.</p>`;
   else if (origine && origine.f.length > m.f.length && !frequenceLibre(m.effet)) h += `<p class="aide">Son métal ne lui ouvre qu’une Fréquence ; en argent et en or, elle en a 2, en nacre 3.</p>`;
   return h;

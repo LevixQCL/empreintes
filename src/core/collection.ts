@@ -1,7 +1,7 @@
 // La collection : les cartes qui tombent dans les Strates, leurs raretés, les doublons et les niveaux.
 // Tout le hasard passe par un état `rng` sauvegardé : aucun hasard n'est jamais payé.
 
-import { MODULES_TIRABLES, carteId, gesteDeCarte, moduleDef } from './donnees';
+import { carteId, gesteDeCarte, moduleDef, tirablesEn } from './donnees';
 import { tireur } from './rng';
 import type { GesteDef, Lignee, Rarete } from './types';
 
@@ -91,10 +91,10 @@ export function tirerRarete(e: EtatCollection, strate: number, minimum: Rarete =
   return r;
 }
 
-/** Tire une carte : un métal, puis une carte parmi toutes (chaque carte existe dans les cinq métaux) */
+/** Tire une carte : un métal, puis une carte parmi celles qui existent dans ce métal (les exclusives n'existent que dans le leur) */
 export function tirerCarte(e: EtatCollection, strate: number, minimum: Rarete = 'fer', lignee?: Lignee): string {
   const r = tirerRarete(e, strate, minimum);
-  const pool = lignee ? MODULES_TIRABLES.filter((m) => m.lignee === lignee) : MODULES_TIRABLES;
+  const pool = tirablesEn(r).filter((m) => !lignee || m.lignee === lignee);
   return carteId(pool[tireur(e).entier(pool.length)]!.id, r);
 }
 
@@ -107,7 +107,7 @@ export function tirerTrouvaille(e: EtatCollection, strate: number, minimum: Rare
   const t = tireur(e);
   const possedees = Object.keys(e.collection).filter((id) => id.endsWith('@' + r) && !moduleDef(id).legs && (!lignee || moduleDef(id).lignee === lignee));
   if (possedees.length && t.nombre() < COLLECTION.affinite) return possedees[t.entier(possedees.length)]!;
-  const pool = lignee ? MODULES_TIRABLES.filter((m) => m.lignee === lignee) : MODULES_TIRABLES;
+  const pool = tirablesEn(r).filter((m) => !lignee || m.lignee === lignee);
   return carteId(pool[t.entier(pool.length)]!.id, r);
 }
 

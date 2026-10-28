@@ -1,7 +1,7 @@
 // Couche 3 — la vie du district : chantiers et Forge, postes, cartes confiées, creuseurs, entraînement, Comptoir, quotidiens, objectif réclamé.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef, PORTEURS, BATIMENTS, MODULES_TIRABLES, moduleDe, moduleDef, carteId } from '../donnees';
+import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, moduleDef, carteId } from '../donnees';
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
@@ -439,7 +439,8 @@ export function garnirComptoir(j: Jeu, now: number): void {
     const aMonter = Object.keys(j.collection).filter((k) => k.endsWith('@' + r) && !moduleDef(k).legs && !bases.has(moduleDe(k)) && doublonsRequis(k, j.collection[k]!.niveau) !== null);
     if (aMonter.length && t.nombre() < COMPTOIR.partDoublons) id = aMonter[t.entier(aMonter.length)];
     for (let g = 0; !id && g < 40; g++) {
-      const m = MODULES_TIRABLES[t.entier(MODULES_TIRABLES.length)]!;
+      const pool = tirablesEn(r);
+      const m = pool[t.entier(pool.length)]!;
       if (!bases.has(m.id)) id = carteId(m.id, r);
     }
     if (!id) break;

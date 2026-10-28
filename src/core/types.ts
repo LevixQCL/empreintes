@@ -37,7 +37,29 @@ export type Effet =
   /** Chœur : Fréquence libre, prend celle de la carte posée juste avant (le pendant de l'Accord) */
   | { type: 'diapason' }
   /** Chœur : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne */
-  | { type: 'unisson'; part: number };
+  | { type: 'unisson'; part: number }
+  // ---------- Les voies, étapes 2 et 3 (28 octobre 2026) ----------
+  /** Traque : une part de force en plus si l'ennemi visé est fissuré */
+  | { type: 'curee'; part: number }
+  /** Lecture : brise la Fêlure de l'ennemi visé, quelle que soit sa Fréquence (même cachée) */
+  | { type: 'lecture' }
+  /** Lecture : une part de force en plus si la Fêlure de l'ennemi visé est brisée */
+  | { type: 'faille'; part: number }
+  /** Cadence : frappe une seconde fois si la chaîne compte au moins 4 cartes */
+  | { type: 'rafale' }
+  /** Sève : le soin en trop (PV déjà pleins) devient du bouclier d'escouade */
+  | { type: 'debord' }
+  // ---------- Les exclusives (28 octobre 2026) : des effets qu'on ne trouve que sur une carte d'un seul métal ----------
+  /** arrache tout le bouclier de l'ennemi visé et l'ajoute au bouclier d'escouade (avant de frapper) */
+  | { type: 'rapt' }
+  /** la carte la plus forte de la chaîne (hors elle-même) revient en tête de pioche : on la repioche au tour suivant */
+  | { type: 'rappel' }
+  /** le Porteur paie une part de ses PV max (jamais jusqu'à tomber) ; la carte gagne une part de force */
+  | { type: 'surtension'; part: number; cout: number }
+  /** copie l'effet de la carte posée juste avant (sauf une Fréquence libre ou une autre Empreinte) */
+  | { type: 'empreinte' }
+  /** relève le premier Porteur à terre avec tout le soin ; sinon, soigne normalement */
+  | { type: 'releve' };
 
 export type TypeEffet = Effet['type'];
 
@@ -86,6 +108,8 @@ export interface ModuleDef {
   effet2?: Effet;
   /** carte de l’Héritage du district : exclusive, jamais trouvée ailleurs (docs/heritage-du-district.md) */
   legs?: true;
+  /** carte exclusive (28 octobre 2026) : elle n'existe que dans son métal d'origine (`rarete`), jamais dans un autre */
+  seul?: true;
 }
 
 /** Une carte en jeu, telle que le moteur de combat la manipule */
@@ -361,7 +385,7 @@ export type Evenement =
   | { kind: 'resonance'; suite: number; mult: number }
   /** une carte de la chaîne entre en jeu (pour l'animation) : sa place, sa lignée, son action */
   | { kind: 'carte'; rang: number; total: number; lignee: LigneeGeste; type: TypeGeste; porteur: string | null; suite: number; effet?: string }
-  | { kind: 'degats'; cible: string; net: number; absorbe: number; rang?: number; source?: 'epines' | 'eboulis'; zone?: boolean }
+  | { kind: 'degats'; cible: string; net: number; absorbe: number; rang?: number; source?: 'epines' | 'eboulis' | 'surtension'; zone?: boolean }
   | { kind: 'bouclier'; cible: 'escouade' | 'ennemi'; v: number; rang?: number }
   | { kind: 'soin'; cible: string; v: number; rang?: number }
   | { kind: 'echo' }

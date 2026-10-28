@@ -79,6 +79,45 @@ export const LORE_CARTES: Record<string, string> = {
   'cloche-abysses': 'Une cloche remontée de la Strate −8, couverte de coquillages qui n’existent plus. Quand elle sonne, chaque empreinte autour d’elle répond sur le même ton.',
   'grand-unisson': 'Le quartier entier, une nuit, a chanté la même note pour veiller un des siens. Les Veilleurs l’ont accordée dans un carillon doré, dont chaque tube porte une voix. Il frappe d’autant plus fort qu’on est nombreux à le faire sonner.',
 
+  // ---------- Les voies, étapes 2 et 3 (28 octobre 2026) ----------
+  // La Traque
+  flair: 'Nuit ne regarde pas l’ennemi : elle le sent. La sueur, la rouille, la peur qui remonte. « Tout ce qui vit laisse une trace, dit-elle. Même dans le noir. Surtout dans le noir. »',
+  'bond-predateur': 'Un saut sans élan, sans bruit, des genoux repliés jusqu’à la gorge de la proie. Les Génés des Fondations l’ont pris aux bêtes des piliers, qui chassent toujours ce qui boite.',
+  'crocs-verre': 'Des dents si fines qu’on ne les voit qu’au moment où elles se referment. Elles cherchent d’instinct la fêlure, et ne lâchent plus ce qu’elles ont commencé.',
+  'chasse-aveugle': 'Les yeux fermés, l’oreille contre la roche. Quelque part, quelque chose saigne de l’empreinte. La meute de Nuit l’a déjà encerclé, et elle n’a pas eu besoin de lumière.',
+  hallali: 'Le cri de fin de chasse, poussé quand la proie ne peut plus fuir. Dans les Strates, les créatures fêlées l’entendent avant qu’on l’ait crié.',
+  // La Lecture
+  'regard-biais': 'Ne jamais regarder une empreinte en face : elle se cache. Aurel la regarde de côté, comme on regarde une étoile pâle, et la voit trembler à l’endroit exact où elle cédera.',
+  'lame-doute': 'Une lame fine, sans tranchant visible. Elle ne coupe rien de solide. Elle s’enfonce là où l’ennemi hésite déjà, et l’hésitation fait le reste.',
+  'oeil-lecteur': 'L’œil des Lecteurs des salles closes, voilé de nacre. Il lit une créature comme on lit un registre : son nom, sa faute, et la page où elle se déchire.',
+  verdict: 'Une seule phrase, prononcée sans colère. Ce que la Lecture a mis à nu ne se recouvre plus : le coup suivant tombe exactement là.',
+  'sentence-muette': 'Les Orsève jugeaient sans un mot, d’un geste de la main. Aurel a gardé le geste et oublié le reste. « Je n’ai pas besoin de parler. Ils savent déjà ce qu’ils ont fait. »',
+  // La Sève
+  'pollen-ambre': 'Une poudre dorée que Kessa souffle sur les plaies. Ce qui n’a pas besoin de guérir durcit en une fine écorce, et protège encore.',
+  'seve-piliers': 'La sève qui suinte des vieux piliers de bois des Fondations, tiède même en hiver. Les Nés-de-mue la boivent pour réparer leur corps, et le surplus les recouvre comme un vernis.',
+  'mue-verre': 'Une peau neuve, transparente, qui pousse sous l’ancienne en une seule nuit. Quand on n’en a pas besoin, on la porte comme une armure.',
+  floraison: 'Une fois par génération, le bois mort des piliers fleurit. Les Génés y voient un signe : la vie déborde, et ce qu’elle ne peut pas soigner, elle le protège.',
+  // La Cadence
+  'pas-chasse': 'Un pas de côté, un autre, et l’ennemi frappe l’air. Ilka danse quand elle se bat, et ne s’en rend même plus compte.',
+  'lames-jumelles': 'Deux lames courtes, montées sur les avant-bras. La première ouvre, la seconde suit avant que la première ne soit revenue. Elles n’aiment pas attendre.',
+  'poings-pistons': 'Des gantelets à air comprimé récupérés sur une presse de chantier. Ils frappent deux fois pour le prix d’une, dans un sifflement que tout le quartier reconnaît.',
+  mitraille: 'Un chargeur de clous de charpentier, recalibré pour tirer en rafale. « C’est pas propre, admet Ilka. Mais c’est rapide, et j’en ai plein les poches. »',
+  'cadence-folle': 'Le cristal s’emballe, le cœur suit, et le corps n’a plus le temps de penser. Les coursiers qui l’ont portée disent qu’on n’en garde aucun souvenir, seulement l’envie de recommencer.',
+
+  // ---------- Les exclusives (28 octobre 2026) : des empreintes qui refusent la copie ----------
+  // Une empreinte se recopie de porteur en porteur, et c'est ainsi qu'on la trouve dans tous les métaux. Certaines refusent :
+  // recopiées, elles s'effacent. On ne les trouve donc qu'au rang où elles se sont arrêtées.
+  'gantelet-pillard': 'Le gantelet d’un pilleur des Strates, connu pour revenir de chaque descente avec ce que les autres avaient laissé. Toute copie qu’on en tire tombe en poussière : l’empreinte n’aime pas qu’on lui prenne quoi que ce soit.',
+  'machoire-miroir': 'Une mâchoire de Géné qui mord comme mordait ce qui vient de mordre. Les Veilleurs n’ont jamais réussi à la recopier : la copie mord comme l’original, et se dévore elle-même.',
+  'boucle-memoire': 'Un anneau de cristal qui rejoue sans cesse la même seconde, celle du meilleur coup de son porteur. Recopié, il ne rejoue que du silence.',
+  'coeur-surregime': 'Un cœur de machine monté sans frein, par un mécanicien qui voulait sauver sa sœur coincée sous un éboulis. Elle est sortie ; lui, non. Le cœur refuse depuis toute autre poitrine que celles qui acceptent d’en payer le prix.',
+  'peau-ancetre': 'La peau d’un des tout premiers Génés, sortie des Berceaux bien avant la Montée. Elle n’a jamais servi à protéger : elle sert à prendre. Ce qui la frappe y laisse son armure.',
+  'miroir-hauts': 'Un miroir des grandes salles des Hauts, de ceux qui renvoient les gestes avant les visages. Les Orsève en ont fait fondre toutes les copies. Celui-ci a été volé à temps.',
+  'coeur-etoile': 'On ne sait pas d’où vient ce cœur, seulement qu’il brille dans le noir comme une étoile qui n’existe plus. Il demande beaucoup à son porteur, et il rend davantage. Aucun Berceau connu n’en garde la forme.',
+  'seconde-naissance': 'Une vierge que ceux d’avant n’ont jamais utilisée, rangée seule dans un Berceau. Elle ne soigne pas : elle recommence. Kessa dit qu’en la touchant, on entend un premier cri.',
+  'empreinte-vive': 'Une empreinte sans visage, qui prend celui de ce qu’elle touche. Les Veilleurs se demandent si elle n’imite pas, simplement, comme ceux d’avant imitaient les vivants.',
+  'silence-avant': 'Le silence qui suit une catastrophe, conservé dans une vierge de nacre. Il protège, puis rend aux vivants ce qu’ils ont de meilleur, comme pour s’excuser d’être resté si longtemps seul.',
+
   // ---------- L’Héritage du district (27 octobre 2026) : la directrice parle, dans sa lettre ----------
   'foulee-directrice': '« Je n’ai jamais été la plus forte. J’étais toujours la première arrivée. Ces jambes-là m’ont portée à travers chaque Strate ouverte de ce district. Cours devant, directeur : les autres suivront. »',
   'bras-fonderie': '« Ce bras a coulé les premiers piliers du district, du temps où on bâtissait à la main sur l’eau. Il ne sait rien faire de délicat. Il n’en a jamais eu besoin. »',
