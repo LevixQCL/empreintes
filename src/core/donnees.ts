@@ -172,7 +172,7 @@ export const MODULES: ModuleDef[] = [
   // Nacre
   x('coeur-etoile', 'Cœur d’étoile', 'tech', 'nacre', 'atk', 50, [7, 4, 2], { type: 'surtension', part: 0.5, cout: 0.15 }, true),
   x('seconde-naissance', 'Seconde naissance', 'bio', 'nacre', 'soin', 26, [1, 3, 5], { type: 'releve' }),
-  x('empreinte-vive', 'Empreinte vive', 'reso', 'nacre', 'atk', 25, [9, 6, 3], { type: 'empreinte' }),
+  x('empreinte-vive', 'Empreinte vive', 'reso', 'nacre', 'atk', 21, [9, 6, 3], { type: 'empreinte' }),
   x('silence-avant', 'Silence d’avant', 'reso', 'nacre', 'bouclier', 20, [7, 4, 9], { type: 'rappel' }),
 
   // ---------- L’Héritage du district (27 octobre 2026, docs/heritage-du-district.md) ----------
