@@ -85,7 +85,6 @@ export const titrePret = () => !compteEtat.actif || !!compteEtat.pret;
 export const D: EcranDistrict = { j: app.jeu, vue: app.jeu.chambre && !app.jeu.accueilVu && !app.jeu.expedition && app.jeu.objectif === 0 ? 'accueil' : 'archipel', selection: null, escouade: [], strateChoisie: 1, message: '', compte: compteEtat, now: Date.now(), retour: retourInitial, menu: false, carte: null, deck: null, porteur: null, filtre: 'tout', onglet: 'chroniques', chapitre: null, retourBiblio: 'archipel', bulles: 0, etape: 0, fouille: null, epreuve: null, guide: null };
 /** le Grand Tableau : lecture des classements en ligne, et ce qu'on a publié */
 export const G: GrandTableau = tableauVide();
-try { D.panneauReplie = localStorage.getItem('empreintes.panneau') !== 'ouvert'; } catch { D.panneauReplie = true; }
 try { const t = localStorage.getItem('empreintes.tri'); if (estTri(t)) D.tri = t; } catch { /* stockage bloqué */ }
 D.grand = G;
 export const K: { verrou: boolean; regles: boolean; fuite: boolean; eclats: boolean; tuile?: string; guide: OngletGuide | null; journal: OngletJournal | null; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; phaseTour?: number; decouverteId?: string; decouverteLot?: number; salleVue?: number } = {

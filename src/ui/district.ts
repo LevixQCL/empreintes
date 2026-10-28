@@ -28,7 +28,7 @@ import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { arrivee, feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
-import { ICO, icone, type Icone } from './icones';
+import { ICO, baseIcones, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { echap, mouvementReduit, virgule } from './outils';
@@ -242,7 +242,8 @@ function mission(e: EcranDistrict): string {
       + (o.recompense.creuseurs ? prix('ouvrier', o.recompense.creuseurs, true, 'creuseurs') : '');
     // sur téléphone, l'objectif guidé se replie en une barre comme celui du jour (25 octobre 2026, Bryan : « beaucoup trop de place ») :
     // la toucher emmène là où il se fait, la flèche déplie la consigne. Sur PC, il reste toujours ouvert.
-    const replie = e.panneauReplie !== false && !fait;
+    // 28 octobre 2026 : sur téléphone, l'objectif vit dans une bulle (bulles()) ; le panneau complet ne s'y montre que déplié
+    const replie = false;
     const barre = replie
       ? `<section class="mission jour replie barre guide" aria-label="Objectif">`
         + `<button type="button" class="mj-aller" data-action="objectif-guide" aria-label="Objectif ${j.objectif + 1} sur ${OBJECTIFS.length} : ${echap(o.titre)}. Y aller">`
@@ -252,7 +253,7 @@ function mission(e: EcranDistrict): string {
     return barre + `<section class="mission guide${fait ? ' faite' : ''}${replie ? ' pc-seul' : ''}" aria-label="Objectif"><div class="mission-tete"><span class="surtitre">OBJECTIF ${j.objectif + 1} / ${OBJECTIFS.length}</span><span class="gains">${gain}</span></div>`
       + `<strong>${echap(o.titre)}</strong>`
       + (fait ? `<button type="button" class="btn prim" data-action="reclamer">${ICO.ok}Récupérer la récompense</button>` : `<p>${echap(o.consigne)}</p>`
-        + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="true" aria-label="Réduire l’objectif">Réduire<i aria-hidden="true">▴</i></button>`)
+        + `<button type="button" class="btn sec mj-y-aller mob" data-action="objectif-guide">${ICO.lancer}Y aller</button>`)
       + `</section>`;
   }
   if (!j.chambre) return '';
@@ -266,7 +267,7 @@ function mission(e: EcranDistrict): string {
   const points = Math.min(j.archive.points, max);
   // sur téléphone, le panneau se replie (23 octobre 2026, Bryan : « je ne sais pas fermer cette page ») : replié,
   // il ne garde que l'objectif du jour et sa jauge ; on le touche pour tout voir. Sur PC, il reste toujours ouvert.
-  const replie = e.panneauReplie !== false;
+  const replie = false;
   // replié, sur téléphone : une seule barre fine. Toucher l'objectif emmène là où il se remplit ; la flèche ouvre les détails.
   let barre = '';
   if (replie && quotidienActif(j) && !quotidienFait(j)) {
@@ -277,7 +278,7 @@ function mission(e: EcranDistrict): string {
   }
   // avec la barre, le panneau complet n'est plus montré que sur PC (district.css)
   let h = barre + `<section class="mission jour${quotidienFait(j) ? ' faite' : ''}${replie ? ' replie' : ''}${barre ? ' pc-seul' : ''}" aria-label="Objectif du jour">`
-    + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="${!replie}" aria-label="${replie ? 'Voir le butin et le marché' : 'Réduire le panneau'}">${replie ? 'Détails' : 'Réduire'}<i aria-hidden="true">${replie ? '▾' : '▴'}</i></button><div class="mj-obj">`;
+    + `<div class="mj-obj">`;
   if (quotidienActif(j)) {
     const reserve = q.reserve > 1
       ? `<span class="mj-reserve pc" title="${q.reserve} objectifs en réserve : ils s’accumulent jusqu’à 3 si tu ne joues pas">${Array.from({ length: 3 }, (_, i) => `<i class="${i < q.reserve ? 'plein' : ''}"></i>`).join('')}<small>${q.reserve} en réserve</small></span>`
@@ -286,6 +287,7 @@ function mission(e: EcranDistrict): string {
       + (quotidienFait(j)
         ? `<button type="button" class="btn prim" data-action="reclamer-jour">${ICO.coffre}Récupérer : une carte ou 2 Éclats</button>`
         : `<div class="mj-progres"><div class="jauge"><i style="width:${(100 * q.progres) / def.objectif}%"></i></div><span class="chiffre pc"><b>${q.progres}</b> / ${def.objectif}</span></div>`
+          + `<button type="button" class="btn sec mj-y-aller mob" data-action="objectif-aller" data-id="${q.type}">${ICO.lancer}Y aller</button>`
           + `<p class="mj-gain pc">${icone('coffre')}<span>Récompense : <b>une carte</b> ou <b>2 Éclats</b>, au choix</span></p>`);
   } else h += `<div class="mission-tete"><span class="surtitre">OBJECTIF DU JOUR</span></div><small class="aide">Tous faits : le prochain arrive demain.</small>`;
   h += `</div>`;
@@ -300,6 +302,41 @@ function mission(e: EcranDistrict): string {
     + `<div class="mj-reperes pc" aria-hidden="true">${reperes}</div>`
     + `<small><span class="mob"><b>${points}</b>/${max} · </span><span class="pc">S’ouvre </span>${decompte(lundiSuivant(e.now), e.now, 'lundi, dans ')}</small></div>`;
   return h + `</section>`;
+}
+
+/**
+ * Les bulles du district, sur téléphone (28 octobre 2026, Bryan : « dans la plupart des jeux actuels, ça fait une bulle
+ * comme Messenger et en cliquant ça se déploie ») : l'objectif et l'appel du moment (ravitaillement, expédition, butin)
+ * deviennent des médaillons de verre en haut à gauche ; un toucher déplie le panneau complet, un autre le replie.
+ * La gemme orange dit qu'une chose attend (récompense prête, colis à ouvrir). Sur PC, les panneaux restent ouverts.
+ */
+function bulles(e: EcranDistrict): string {
+  const j = e.j;
+  const r: string[] = [];
+  const gemme = `<img class="bulle-gemme" src="${baseIcones}pastille.webp" alt="" aria-hidden="true">`;
+  const o = objectifCourant(j);
+  let part = 0, pret = false, titre = '';
+  // un objectif guidé (début de partie) respire aussi, pour qu'une recrue trouve la bulle
+  if (o) { pret = o.fait(j); part = pret ? 1 : 0; titre = `Objectif ${j.objectif + 1} sur ${OBJECTIFS.length} : ${o.titre}`; }
+  else if (j.chambre && quotidienActif(j)) {
+    const def = QUOTIDIENS[j.quotidien.type];
+    pret = quotidienFait(j); part = Math.min(1, j.quotidien.progres / def.objectif); titre = `Objectif du jour : ${def.titre}, ${j.quotidien.progres} sur ${def.objectif}`;
+  } else if (j.chambre) titre = 'Objectifs du jour faits, butin de la semaine';
+  if (titre) {
+    const ouvert = e.bulle === 'objectif';
+    r.push(`<button type="button" class="bulle-d objectif${ouvert ? ' ouverte' : ''}${pret || o ? ' prete' : ''}" data-action="bulle" data-id="objectif" aria-expanded="${ouvert}" aria-label="${echap(titre)}${pret ? ' : récompense prête' : ''}" style="--p:${Math.round(part * 100)}">`
+      + `<span class="bulle-med">${icone('journal')}</span>${pret ? gemme : ''}</button>`);
+  }
+  // l'appel du moment : la porte scellée (début du jeu) reste une grande carte, le reste passe en bulle
+  if (j.chambre && appel(e)) {
+    const ouvert = e.bulle === 'appel';
+    const ico = j.expedition ? icone('strate') : icone('coffre');
+    const nom = j.expedition ? `Expédition en cours, Strate −${j.expedition.strate}` : j.archive.aOuvrir && !o ? 'Le Butin de la semaine est prêt' : `Ravitaillement du jour${j.ravitaillement.reserve > 1 ? `, ${j.ravitaillement.reserve} colis` : ''}`;
+    const nb = !j.expedition && j.ravitaillement.reserve > 1 ? `<b class="bulle-nb">${j.ravitaillement.reserve}</b>` : '';
+    r.push(`<button type="button" class="bulle-d appel-bulle prete${ouvert ? ' ouverte' : ''}" data-action="bulle" data-id="appel" aria-expanded="${ouvert}" aria-label="${echap(nom)}">`
+      + `<span class="bulle-med">${ico}</span>${nb || gemme}</button>`);
+  }
+  return r.length ? `<div class="bulles" role="group" aria-label="Objectif et ravitaillement">${r.join('')}</div>` : '';
 }
 
 /** Le grand bouton d'action posé en bas du tableau, quand une chose attend le joueur */
@@ -803,7 +840,9 @@ export function htmlArchipel(e: EcranDistrict): string {
   let h = `<section class="archipel" aria-label="Ton district"><img class="tableau-fond" src="${scene.url}" alt="" aria-hidden="true">`
     + `<span class="mer-fond${scene.nuit ? ' nuit' : ''}" style="--mer:url(${scene.mer});--reflets:url(${reflets});--horizon:${scene.horizon}%" aria-hidden="true"><i class="mer-reflets"></i></span>`
     + `<div class="toile">${tableau(j)}${zonesBatiments(visuel(j.batiments.noyau), e.selection)}${plaques(e)}</div>`
-    + `<div class="archipel-haut">${mission(e)}${appel(e)}</div></section>`;
+    + bulles(e)
+    + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="Replier"></button>` : '')
+    + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}</div></section>`;
   h += feuilleBatiment(e);
   const acte = decisionEnAttente(j);
   if (acte) h += fenetreDecision(acte);

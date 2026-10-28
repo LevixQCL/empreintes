@@ -16,6 +16,8 @@ import { sauver } from '../synchro';
 import { ouvrir, resultat, type Clic, type Suite } from './commun';
 
 export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
+  // une bulle dépliée se replie dès qu'on fait autre chose (sauf la toucher elle-même)
+  if (a !== 'bulle') D.bulle = null;
   const { b, id } = c;
   switch (a) {
     // le Port ouvert (plaque ou bateau peint) : le bateau part vers les archipels voisins
@@ -269,10 +271,9 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
         try { localStorage.setItem('empreintes.tri', id); } catch { /* stockage bloqué */ }
       }
       break;
-    case 'panneau':
-      D.panneauReplie = D.panneauReplie === false;
-      try { localStorage.setItem('empreintes.panneau', D.panneauReplie ? 'replie' : 'ouvert'); } catch { /* stockage bloqué */ }
-      break;
+    case 'panneau': D.bulle = null; break;
+    // les bulles du district (téléphone) : un toucher déplie, un autre replie ; une seule ouverte à la fois
+    case 'bulle': D.bulle = id === 'objectif' || id === 'appel' ? (D.bulle === id ? null : id) : null; break;
     default: return 'inconnu';
   }
   return 'afficher';

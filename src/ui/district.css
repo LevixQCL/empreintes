@@ -230,3 +230,47 @@
     -webkit-mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent),linear-gradient(to bottom,transparent 0,#000 9%);
     -webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent),linear-gradient(to bottom,transparent 0,#000 9%);mask-composite:intersect}
 }
+
+/* ---------- Les bulles du district, sur téléphone (28 octobre 2026) ----------
+   L'objectif et l'appel du moment deviennent des médaillons de verre en haut à gauche, comme les bulles d'une messagerie :
+   un toucher déplie le panneau complet juste dessous, un autre (ou un toucher ailleurs) le replie. Anneau d'or = progression
+   de l'objectif ; gemme orange = une chose attend. Sur PC, rien ne change : les panneaux restent ouverts à droite. */
+.bulles{position:absolute;z-index:4;top:10px;left:10px;display:flex;gap:10px}
+.bulle-d{--p:0;position:relative;display:grid;place-items:center;width:54px;height:54px;padding:0;border:0;border-radius:50%;cursor:pointer;
+  background:conic-gradient(var(--d-or,#F2D58C) calc(var(--p) * 1%),rgba(205,239,255,.18) 0);
+  box-shadow:0 6px 16px rgba(0,0,0,.55);transition:transform .15s ease;-webkit-tap-highlight-color:transparent}
+.bulle-med{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;
+  background:radial-gradient(circle at 50% 35%,rgba(40,58,96,.95),rgba(8,11,24,.96) 75%);
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.35),inset 0 1px 0 rgba(255,255,255,.25);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.bulle-med .ico{width:30px;height:30px;color:var(--d-glace,#CDEFFF)}
+.bulle-med .ico.peinte{width:36px;height:36px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
+.bulle-d:active{transform:scale(.94)}
+.bulle-d.ouverte{background:conic-gradient(var(--d-or,#F2D58C) calc(var(--p) * 1%),rgba(205,239,255,.55) 0);box-shadow:0 0 0 2px rgba(205,239,255,.6),0 0 18px rgba(160,215,255,.45),0 6px 16px rgba(0,0,0,.55)}
+.appel-bulle{background:rgba(205,239,255,.25)}
+.appel-bulle.ouverte{background:rgba(205,239,255,.6)}
+.bulle-gemme{position:absolute;top:-6px;right:-6px;width:24px;height:24px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.7));pointer-events:none}
+.bulle-nb{position:absolute;top:-5px;right:-5px;display:grid;place-items:center;min-width:22px;height:22px;padding:0 5px;border-radius:11px;
+  font:700 12px/1 var(--mono);color:#2A1404;background:linear-gradient(180deg,#FFC977,#E2862A);box-shadow:0 0 0 2px rgba(6,8,18,.9),0 2px 4px rgba(0,0,0,.6);pointer-events:none}
+/* ce qui attend respire doucement (pas de clignotement) */
+.bulle-d.prete:not(.ouverte) .bulle-med{animation:bulle-appel 2.4s ease-in-out infinite}
+@keyframes bulle-appel{0%,100%{box-shadow:inset 0 0 0 1px rgba(205,239,255,.35),inset 0 1px 0 rgba(255,255,255,.25),0 0 0 rgba(242,170,80,0)}
+  50%{box-shadow:inset 0 0 0 1px rgba(255,214,150,.7),inset 0 1px 0 rgba(255,255,255,.25),0 0 16px rgba(242,170,80,.55)}}
+.bulle-voile{position:absolute;inset:0;z-index:3;padding:0;border:0;background:rgba(4,6,14,.35);cursor:default}
+
+@media (max-width:1099px),(max-height:599px){
+  /* les panneaux ne se montrent que dans leur bulle dépliée, juste sous les bulles */
+  #app[data-mode="district"] .archipel-haut{top:74px;z-index:5}
+  #app[data-mode="district"] .archipel-haut:not([data-porte])>*{display:none}
+  #app[data-mode="district"] .archipel-haut[data-bulle="objectif"]>.mission:not(.barre){display:grid;animation:bulle-deplie .18s ease-out}
+  #app[data-mode="district"] .archipel-haut[data-bulle="appel"]>.appel{display:flex;animation:bulle-deplie .18s ease-out}
+  /* la porte scellée (tout début du jeu) reste une grande carte, sans bulle */
+  #app[data-mode="district"] .archipel-haut[data-porte]{top:10px}
+  .mj-y-aller{justify-self:start;min-height:40px;padding:0 14px;font-size:14px;margin-top:4px}
+  .mj-y-aller .ico{width:15px;height:15px}
+}
+@keyframes bulle-deplie{from{opacity:0;transform:translateY(-8px) scale(.98)}to{opacity:1;transform:none}}
+@media (min-width:1100px) and (min-height:600px){ .bulles,.bulle-voile,.mj-y-aller{display:none} }
+@media (prefers-reduced-motion:reduce){
+  .bulle-d.prete:not(.ouverte) .bulle-med{animation:none;box-shadow:inset 0 0 0 1.5px rgba(255,214,150,.75),0 0 12px rgba(242,170,80,.45)}
+  #app[data-mode="district"] .archipel-haut>*{animation:none!important}
+}

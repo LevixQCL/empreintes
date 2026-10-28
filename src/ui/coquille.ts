@@ -94,6 +94,8 @@ export interface EcranDistrict {
   tri?: import('../core/collection').TriCartes;
   /** sur téléphone, le panneau du district (objectif, confiance, Archive, marché) est replié (par défaut) */
   panneauReplie?: boolean;
+  /** sur téléphone, la bulle du district dépliée (28 octobre 2026) : l'objectif ou l'appel (ravitaillement, expédition…) */
+  bulle?: 'objectif' | 'appel' | null;
   /** le Grand Tableau (classements.ts) et l'identifiant du compte connecté */
   grand?: import('./classements').GrandTableau;
   uid?: string | null;
