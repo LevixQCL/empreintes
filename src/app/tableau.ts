@@ -77,7 +77,7 @@ async function publierTableau() {
   // une Strate de plus ou un nouveau pseudo partent tout de suite (le premier arrivé passe devant) ;
   // le Registre et le reste attendent 5 minutes
   const attente = dernierePublication + PUBLIER_APRES - Date.now();
-  const urgent = !app.monEntree || e.profondeur !== app.monEntree.profondeur || e.nom !== app.monEntree.nom;
+  const urgent = !app.monEntree || e.profondeur !== app.monEntree.profondeur || e.nom !== app.monEntree.nom || e.fleche !== app.monEntree.fleche;
   if (!urgent && attente > 0) { planifierPublication(attente); return; }
   // le pseudo doit être réservé à ce compte (sauvegarde d'avant les réservations, ou autre appareil)
   if (app.pseudoReserve !== e.cle) {

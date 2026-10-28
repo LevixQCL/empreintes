@@ -53,6 +53,7 @@ function entreeDe(uid: string, d: Partial<Publie>): Entree | null {
     uid, nom: d.nom, cle: d.cle ?? clePseudo(d.nom), porteur: typeof d.porteur === 'string' ? d.porteur : 'ilka',
     profondeur: d.profondeur, profondeurLe: d.profondeurLe ?? 0, registre: d.registre, decouvertes: d.decouvertes ?? 0,
     semaine: d.semaine ?? 0, profondeurSemaine: d.profondeurSemaine ?? 0, registreSemaine: d.registreSemaine ?? 0, maj: d.maj ?? 0,
+    fleche: d.fleche ?? 0, flecheLe: d.flecheLe ?? 0, flecheSemaine: d.flecheSemaine ?? 0,
   };
 }
 

@@ -27,6 +27,11 @@ service cloud.firestore {
         // la date d'arrivée ne bouge que si la profondeur monte, et c'est alors maintenant : « premier arrivé » ne se falsifie pas
         && ((request.resource.data.profondeur > resource.data.profondeur && maintenant(request.resource.data.profondeurLe))
             || (request.resource.data.profondeur == resource.data.profondeur && request.resource.data.profondeurLe == resource.data.profondeurLe))
+        // la Flèche, pareil : le record ne redescend jamais, gagne au plus 12 quais d'un coup, et sa date n'est « maintenant » que s'il monte
+        && request.resource.data.get('fleche', 0) >= resource.data.get('fleche', 0)
+        && request.resource.data.get('fleche', 0) <= resource.data.get('fleche', 0) + 12
+        && ((request.resource.data.get('fleche', 0) > resource.data.get('fleche', 0) && maintenant(request.resource.data.get('flecheLe', 0)))
+            || (request.resource.data.get('fleche', 0) == resource.data.get('fleche', 0) && request.resource.data.get('flecheLe', 0) == resource.data.get('flecheLe', 0)))
         && request.resource.data.maj >= resource.data.maj + 20000;
     }
 
@@ -100,7 +105,7 @@ service cloud.firestore {
 
     function entreeValide(d) {
       return d.keys().hasOnly(['nom', 'cle', 'porteur', 'profondeur', 'profondeurLe', 'registre', 'decouvertes',
-          'semaine', 'profondeurSemaine', 'registreSemaine', 'maj'])
+          'semaine', 'profondeurSemaine', 'registreSemaine', 'fleche', 'flecheLe', 'flecheSemaine', 'maj'])
         && d.nom is string && d.nom.size() >= 3 && d.nom.size() <= 18
         // le pseudo affiché est bien celui que ce joueur a réservé
         && d.cle is string && d.cle.size() <= 24
@@ -114,6 +119,10 @@ service cloud.firestore {
         && d.semaine is int
         && d.profondeurSemaine is int && d.profondeurSemaine >= 0 && d.profondeurSemaine <= d.profondeur
         && d.registreSemaine is int && d.registreSemaine >= 0 && d.registreSemaine <= d.registre
+        // la Flèche (28 octobre 2026) : absente des anciennes entrées, sinon un quai entre 0 et 101
+        && d.get('fleche', 0) is int && d.get('fleche', 0) >= 0 && d.get('fleche', 0) <= 101
+        && d.get('flecheLe', 0) is int
+        && d.get('flecheSemaine', 0) is int && d.get('flecheSemaine', 0) >= 0 && d.get('flecheSemaine', 0) <= d.get('fleche', 0)
         && d.maj is int && maintenant(d.maj);
     }
 

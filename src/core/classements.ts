@@ -7,7 +7,7 @@
 //   - Profondeur : la Strate la plus profonde (gardien vaincu ou non), départagée par la date où on l'a atteinte ;
 //   - Registre   : la valeur de la collection (métal et niveau de chaque carte, plus chaque carte découverte) ;
 //   - Joutes     : les combats gagnés contre d'autres directeurs (grisé : arrive avec le multijoueur) ;
-//   - La Flèche  : l'ascension de la flèche d'amarrage vers les Hauts, quai par quai (grisé : à venir, voir FLECHE).
+//   - La Flèche  : l'ascension de la flèche d'amarrage vers les Hauts, quai par quai (le plus haut quai atteint, puis le premier arrivé).
 // Deux périodes : depuis le début, et la semaine en cours (ce qu'on a gagné depuis lundi), pour qu'un nouveau venu
 // puisse finir premier d'une semaine même face à quelqu'un qui joue depuis un mois.
 
@@ -26,8 +26,8 @@ export const TABLEAUX: { id: TableauId; nom: string; court: string; ouvert: bool
     texte: 'La valeur de ta collection : le métal et le niveau de chaque carte, et chaque carte découverte.' },
   { id: 'joutes', nom: 'Joutes', court: 'Duels', ouvert: false,
     texte: 'Les combats gagnés contre d’autres directeurs. Ouvre avec les combats entre joueurs.' },
-  { id: 'fleche', nom: 'La Flèche', court: 'Tour', ouvert: false,
-    texte: 'La seule route légale vers les Hauts : la Flèche, quai par quai, jusqu’aux Sièges du sommet. On y monte déjà depuis son onglet ; le classement en ligne arrive bientôt.' },
+  { id: 'fleche', nom: 'La Flèche', court: 'Tour', ouvert: true,
+    texte: 'Le plus haut quai atteint sur la Flèche d’amarrage, la seule route légale vers les Hauts. À quai égal, le premier arrivé passe devant.' },
 ];
 
 // ---------- Le Registre : la valeur d'une collection ----------
@@ -92,6 +92,8 @@ export interface Palmares {
   semaine: number;
   profondeurDebut: number;
   registreDebut: number;
+  /** le record de la Flèche au début de la semaine (28 octobre 2026 ; absent dans les anciennes parties : 0) */
+  flecheDebut?: number;
 }
 
 /**
@@ -99,18 +101,18 @@ export interface Palmares {
  * Le score ne redescend jamais : recycler un doublon n'efface pas un record.
  * @returns true si quelque chose a changé (à publier)
  */
-export function noterPalmares(j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares }, now: number, semaine: number): boolean {
+export function noterPalmares(j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares; fleche?: { record: number } }, now: number, semaine: number): boolean {
   const p = profondeurDe(j);
   const r = valeurRegistre(j.collection).points;
   const avant = j.palmares;
   if (!avant) {
     // première fois (nouvelle partie ou ancienne sauvegarde) : la semaine part d'ici, la date d'arrivée est maintenant
-    j.palmares = { profondeur: p, profondeurLe: now, registre: r, semaine, profondeurDebut: p, registreDebut: r };
+    j.palmares = { profondeur: p, profondeurLe: now, registre: r, semaine, profondeurDebut: p, registreDebut: r, flecheDebut: j.fleche?.record ?? 0 };
     return true;
   }
   let change = false;
   if (avant.semaine !== semaine) {
-    avant.semaine = semaine; avant.profondeurDebut = avant.profondeur; avant.registreDebut = avant.registre; change = true;
+    avant.semaine = semaine; avant.profondeurDebut = avant.profondeur; avant.registreDebut = avant.registre; avant.flecheDebut = j.fleche?.record ?? 0; change = true;
   }
   if (p > avant.profondeur) { avant.profondeur = p; avant.profondeurLe = now; change = true; }
   if (r > avant.registre) { avant.registre = r; change = true; }
@@ -134,6 +136,10 @@ export interface Entree {
   semaine: number;
   profondeurSemaine: number;
   registreSemaine: number;
+  /** la Flèche : le plus haut quai atteint (0 = jamais monté), quand, et les quais gagnés depuis lundi */
+  fleche: number;
+  flecheLe: number;
+  flecheSemaine: number;
   /** dernière publication (ms) */
   maj: number;
 }
@@ -188,18 +194,20 @@ export const DELAI_PSEUDO = 7 * 86_400_000;
 export function valeur(e: Entree, t: TableauId, per: Periode, semaine: number): number | null {
   if (t === 'profondeur') return per === 'total' ? e.profondeur : e.semaine === semaine ? e.profondeurSemaine : null;
   if (t === 'registre') return per === 'total' ? e.registre : e.semaine === semaine ? e.registreSemaine : null;
+  // la Flèche : seuls ceux qui y sont montés apparaissent
+  if (t === 'fleche') return per === 'total' ? (e.fleche > 1 ? e.fleche : null) : e.semaine === semaine ? e.flecheSemaine : null;
   return null;
 }
 
 /** Ordonne les entrées : la plus haute valeur d'abord ; à profondeur égale, le premier arrivé ; sinon le nom */
 export function classer(entrees: Entree[], t: TableauId, per: Periode, semaine: number): { e: Entree; v: number; rang: number }[] {
   const l = entrees.map((e) => ({ e, v: valeur(e, t, per, semaine) })).filter((x): x is { e: Entree; v: number } => x.v !== null && (per === 'total' || x.v > 0));
-  l.sort((a, b) => b.v - a.v || (t === 'profondeur' && per === 'total' ? a.e.profondeurLe - b.e.profondeurLe : 0) || a.e.nom.localeCompare(b.e.nom, 'fr'));
+  l.sort((a, b) => b.v - a.v || (t === 'profondeur' && per === 'total' ? a.e.profondeurLe - b.e.profondeurLe : t === 'fleche' && per === 'total' ? a.e.flecheLe - b.e.flecheLe : 0) || a.e.nom.localeCompare(b.e.nom, 'fr'));
   // ex æquo affichés au même rang, sauf en profondeur totale où la date départage toujours
   let rang = 0;
   return l.map((x, i) => {
     const prec = l[i - 1];
-    if (!prec || prec.v !== x.v || (t === 'profondeur' && per === 'total')) rang = i + 1;
+    if (!prec || prec.v !== x.v || ((t === 'profondeur' || t === 'fleche') && per === 'total')) rang = i + 1;
     return { ...x, rang };
   });
 }
@@ -240,6 +248,7 @@ export const demiStrates = (v: number) => `${Math.floor(v / 2) || (v % 2 ? '' : 
 /** Le texte de la valeur d'un tableau */
 export function texteValeur(t: TableauId, per: Periode, v: number): string {
   if (t === 'profondeur') return per === 'total' ? `−${strateDe(v)}` : `+${demiStrates(v)}`;
+  if (t === 'fleche') return per === 'total' ? `Quai ${v}` : `+${v}`;
   return (per === 'semaine' ? '+' : '') + Math.round(v).toLocaleString('fr-BE');
 }
 
@@ -249,7 +258,7 @@ export function texteValeur(t: TableauId, per: Periode, v: number): string {
  * et la date d'arrivée n'est « maintenant » que si la profondeur monte, sinon elle reste celle déjà publiée.
  */
 export function entreeAPublier(
-  j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares; escouade?: string[] },
+  j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares; escouade?: string[]; fleche?: { record: number; recordLe: number } },
   uid: string, nom: string, enLigne: Entree | null, now: number, semaine: number,
 ): Entree | null {
   const pal = j.palmares;
@@ -263,21 +272,35 @@ export function entreeAPublier(
     profondeurLe = profondeur > enLigne.profondeur ? now : enLigne.profondeurLe;
   }
   const memeSemaine = pal.semaine === semaine;
+  // la Flèche, comme la profondeur : le record ne redescend pas, gagne au plus 12 quais par publication,
+  // et sa date n'est « maintenant » que s'il monte (sinon celle déjà publiée)
+  let fleche = Math.min(FLECHE.quais, j.fleche?.record ?? 0);
+  let flecheLe = Math.round(j.fleche?.recordLe || now);
+  if (enLigne) {
+    fleche = Math.min(Math.max(fleche, enLigne.fleche), enLigne.fleche + FLECHE_PAS_MAX);
+    flecheLe = fleche > enLigne.fleche ? now : enLigne.flecheLe;
+  }
   return {
     uid, nom: nettoyerNom(nom), cle: clePseudo(nom), porteur: j.escouade?.[0] ?? 'ilka',
     profondeur, profondeurLe, registre, decouvertes: r.decouvertes,
     semaine,
     profondeurSemaine: memeSemaine ? Math.max(0, Math.min(profondeur, profondeur - pal.profondeurDebut)) : 0,
     registreSemaine: memeSemaine ? Math.max(0, Math.min(registre, registre - pal.registreDebut)) : 0,
+    fleche, flecheLe: Math.min(flecheLe, now),
+    flecheSemaine: memeSemaine ? Math.max(0, Math.min(fleche, fleche - (pal.flecheDebut ?? 0))) : 0,
     maj: now,
   };
 }
+
+/** Les quais de record qu'une publication peut ajouter (le reste suit à la suivante) : la même borne que firestore.rules */
+export const FLECHE_PAS_MAX = 12;
 
 /** Faut-il republier ? (un score, le nom ou le Porteur de tête a changé) */
 export function aChange(a: Entree, b: Entree | null): boolean {
   if (!b) return true;
   return a.nom !== b.nom || a.cle !== b.cle || a.porteur !== b.porteur || a.profondeur !== b.profondeur || a.registre !== b.registre || a.decouvertes !== b.decouvertes
-    || a.semaine !== b.semaine || a.profondeurSemaine !== b.profondeurSemaine || a.registreSemaine !== b.registreSemaine;
+    || a.semaine !== b.semaine || a.profondeurSemaine !== b.profondeurSemaine || a.registreSemaine !== b.registreSemaine
+    || a.fleche !== b.fleche || a.flecheSemaine !== b.flecheSemaine;
 }
 
 // ---------- La Flèche (à venir) ----------

@@ -87,14 +87,14 @@ export function htmlClassements(e: EcranDistrict, g: GrandTableau, uid: string |
     `<button type="button" role="tab" class="gt-onglet${t.id === def.id ? ' actif' : ''}${t.ouvert ? '' : ' grise'}" aria-selected="${t.id === def.id}" data-action="gt-tableau" data-id="${t.id}">`
     + `<span class="gt-onglet-ico">${t.ouvert ? ICO[ICONE_TABLEAU[t.id]] : ICO.verrou}</span><span>${t.nom}</span>${t.ouvert ? '' : '<small>bientôt</small>'}</button>`).join('') + `</div>`;
 
-  if (!def.ouvert) return coquille(e, h + (def.id === 'fleche' ? apercuFleche() : apercuJoutes()), 'gt');
+  if (!def.ouvert) return coquille(e, h + apercuJoutes(), 'gt');
 
   // la période
   const fin = lundiSuivant(e.now) - e.now;
   h += `<div class="gt-periode"><div class="segments-choix deux" role="tablist" aria-label="Période">`
     + `<button type="button" role="tab" class="seg${g.periode === 'total' ? ' actif' : ''}" aria-selected="${g.periode === 'total'}" data-action="gt-periode" data-id="total">Record</button>`
     + `<button type="button" role="tab" class="seg${g.periode === 'semaine' ? ' actif' : ''}" aria-selected="${g.periode === 'semaine'}" data-action="gt-periode" data-id="semaine">Cette semaine</button></div>`
-    + `<p class="gt-explique">${g.periode === 'total' ? echap(def.texte) : `${def.id === 'profondeur' ? 'Les Strates gagnées' : 'Les points de Registre gagnés'} depuis lundi. Tout le monde repart de zéro dans <b>${duree(fin)}</b>.`}`
+    + `<p class="gt-explique">${g.periode === 'total' ? echap(def.texte) : `${def.id === 'profondeur' ? 'Les Strates gagnées' : def.id === 'fleche' ? 'Les quais de record gagnés sur la Flèche' : 'Les points de Registre gagnés'} depuis lundi. Tout le monde repart de zéro dans <b>${duree(fin)}</b>.`}`
     + ` <button type="button" class="lien" data-action="gt-regles" aria-expanded="${g.regles}">Comment ça se calcule ?</button></p>`
     + (g.regles ? regles(def.id) : '') + `</div>`;
 
@@ -119,7 +119,7 @@ export function htmlClassements(e: EcranDistrict, g: GrandTableau, uid: string |
   return coquille(e, h, 'gt');
 }
 
-const ICONE_TABLEAU: Record<TableauId, 'strate' | 'cartes' | 'atk' | 'tour'> = { profondeur: 'strate', registre: 'cartes', joutes: 'atk', fleche: 'tour' };
+const ICONE_TABLEAU: Record<TableauId, 'strate' | 'cartes' | 'atk' | 'fleche'> = { profondeur: 'strate', registre: 'cartes', joutes: 'atk', fleche: 'fleche' };
 
 /** La carte du directeur : son Porteur de tête, son nom, ses rangs et ses records */
 function carteDirecteur(j: Jeu, g: GrandTableau, uid: string | null, nom: string, publie: boolean, semaine: number): string {
@@ -141,10 +141,13 @@ function carteDirecteur(j: Jeu, g: GrandTableau, uid: string | null, nom: string
 function seul(j: Jeu, t: TableauId, per: Periode, semaine: number, message: string, bouton: string): string {
   const p = j.palmares;
   const sem = p && p.semaine === semaine;
-  const v = t === 'profondeur'
+  const rec = j.fleche?.record ?? 0;
+  const v = t === 'fleche'
+    ? (per === 'total' ? (rec > 1 ? `Quai ${rec} de la Flèche` : 'Pas encore monté à la Flèche') : `+${sem ? Math.max(0, rec - (p!.flecheDebut ?? 0)) : 0} quais cette semaine`)
+    : t === 'profondeur'
     ? (per === 'total' ? `Strate −${strateDe(p?.profondeur ?? j.strate * 2)}` : `+${demiStrates(sem ? p!.profondeur - p!.profondeurDebut : 0)} Strate cette semaine`)
     : (per === 'total' ? `${ent(p?.registre ?? 0)} points` : `+${ent(sem ? p!.registre - p!.registreDebut : 0)} points cette semaine`);
-  return `<section class="gt-seul"><span class="gt-seul-ico">${icone(t === 'profondeur' ? 'strate' : 'cartes')}</span><strong>${v}</strong>`
+  return `<section class="gt-seul"><span class="gt-seul-ico">${icone(t === 'profondeur' ? 'strate' : t === 'fleche' ? 'fleche' : 'cartes')}</span><strong>${v}</strong>`
     + (t === 'registre' ? detailRegistre(j) : '') + `<p>${message}</p>${bouton}</section>`;
 }
 
@@ -205,11 +208,16 @@ function ligne(x: { e: Entree; v: number; rang: number }, uid: string | null, t:
   const inactif = now - e.maj > 7 * 86_400_000;
   return `<li class="gt-ligne${e.uid === uid ? ' moi' : ''}${inactif ? ' inactif' : ''}"><span class="gt-num">${x.rang}</span>${avatar(connuPorteur(e.porteur), 40)}`
     + `<span class="gt-qui"><strong>${echap(e.nom)}${e.uid === uid ? ' <em>toi</em>' : ''}</strong><small>${sous}</small></span>`
-    + `<span class="gt-droite"><b class="gt-valeur">${texteValeur(t, per, x.v)}</b>${t === 'profondeur' && per === 'total' && e.profondeurLe ? `<small>le ${dateCourte(e.profondeurLe)}</small>` : ''}</span></li>`;
+    + `<span class="gt-droite"><b class="gt-valeur">${texteValeur(t, per, x.v)}</b>${per === 'total' && t === 'profondeur' && e.profondeurLe ? `<small>le ${dateCourte(e.profondeurLe)}</small>` : per === 'total' && t === 'fleche' && e.flecheLe ? `<small>le ${dateCourte(e.flecheLe)}</small>` : ''}</span></li>`;
 }
 
 /** Comment chaque tableau se calcule : les vrais chiffres du jeu */
 function regles(t: TableauId): string {
+  if (t === 'fleche') {
+    return `<div class="gt-regles"><p>Le plus haut quai que ton escouade a atteint sur la Flèche (${FLECHE.quais} quais). Une défaite te fait redescendre, mais ton record ne bouge pas.</p>`
+      + `<p>À quai égal, le premier arrivé passe devant : la date est enregistrée au moment où tu atteins ton record.</p>`
+      + `<p>La semaine compte les quais de record gagnés depuis lundi.</p><button type="button" class="btn sec" data-action="fleche">${ICO.fleche}Monter à la Flèche</button></div>`;
+  }
   if (t === 'profondeur') {
     return `<div class="gt-regles"><p>La Strate la plus profonde ouverte sous ton district. Vaincre son gardien te place devant ceux qui ne l’ont pas encore battu.</p>`
       + `<p>À profondeur égale, le premier arrivé passe devant : la date est enregistrée au moment où tu atteins la Strate.</p>`
@@ -230,19 +238,6 @@ function apercuJoutes(): string {
     + `<li>${ICO.chrono}<span><strong>Une saison par mois</strong><small>Ton record reste, le classement de la saison repart à zéro.</small></span></li></ul></section>`;
 }
 
-function apercuFleche(): string {
-  // la Flèche dessinée de bas en haut : les quais gravés, la montée qui ralentit, les Sièges au sommet
-  const paliers = [...FLECHE.paliers].reverse();
-  const tranche = (n: number) => FLECHE.montee.find((m) => n <= m.jusqua)!.quais;
-  return `<section class="gt-avenir fleche"><span class="gt-avenir-ico">${ICO.tour}</span><h2>La Flèche <em class="gt-bientot">classement bientôt</em></h2>`
-    + `<p>La dernière flèche d’amarrage des Hauts. Depuis les Accords de 2101, tout district peut y envoyer une escouade : celle qui tient le sommet quand une île passe est reçue là-haut. Les gardiens, payés par les Hauts, sont plus forts à chaque quai.</p>`
-    + `<div class="gt-tour" aria-label="Les quais de la Flèche"><div class="gt-sommet"><strong>Les ${FLECHE.sieges} Sièges</strong><small>tenus par des directeurs, qu’on défie</small></div><ol>`
-    + paliers.map((n) => `<li><b>${n}</b><span>${n >= FLECHE.quais ? 'dernier quai : l’amarrage' : `quai gravé · on y monte ${tranche(n) > 1 ? `de ${tranche(n)} en ${tranche(n)}` : 'quai par quai'}`}</span></li>`).join('')
-    + `<li class="base"><b>1</b><span>le pied de la Flèche</span></li></ol></div>`
-    + `<ul class="gt-promesses"><li>${ICO.monter}<span><strong>Vite en bas, lentement en haut</strong><small>Chaque victoire fait monter de ${FLECHE.montee[0]!.quais} quais au début, d’un seul près du sommet.</small></span></li>`
-    + `<li>${ICO.bouclier}<span><strong>Des quais qui protègent</strong><small>Une défaite fait redescendre, jamais sous le dernier quai gravé.</small></span></li>`
-    + `<li>${ICO.porte}<span><strong>Au sommet, le passage d’une île</strong><small>Le temps qu’elle passe : ${FLECHE.defaitesMax} défaites t’éliminent, ${FLECHE.victoiresDefi} victoires t’ouvrent le défi d’un Siège.</small></span></li></ul><button type="button" class="btn sec large" data-action="fleche">${ICO.tour}Monter à la Flèche</button></section>`;
-}
 
 // ---------- Le nom de directeur ----------
 

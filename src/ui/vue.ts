@@ -9,7 +9,7 @@ import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
 import { DISTRICT, PILLAGE } from '../core/jeu';
-import { ageArchipel, artGardien, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, cadragePortrait } from './art';
+import { ageArchipel, artGardien, fondFleche, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, cadragePortrait } from './art';
 import { corpsFace, couleurFrequence, styleFace, type Face } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
@@ -360,8 +360,8 @@ const zoneDuLieu = (x: Expedition) => x.carte?.zone ?? Math.max(0, ZONES.indexOf
 export function htmlLieu(x: Expedition): string {
   const zone = zoneDuLieu(x);
   // un pillage se joue sur l'archipel attaqué, en pleine mer, pas dans une Strate
-  // la Flèche (28 octobre 2026) : en plein ciel, au-dessus de la mer ; en attendant sa peinture, le plus haut des archipels
-  const img = x.fleche ? vignetteArchipel(ageArchipel(99)) : x.pillage ? vignetteArchipel(ageArchipel(x.strate)) : fondCombat(zone);
+  // la Flèche (28 octobre 2026) : en plein ciel, sur une plateforme d'amarrage au-dessus des nuages
+  const img = x.fleche ? fondFleche : x.pillage ? vignetteArchipel(ageArchipel(x.strate)) : fondCombat(zone);
   const salle = x.carte?.salles[x.carte.position]?.type;
   const t = performance.now() / 1000;
   const phase = (duree: number, decalage = 0) => `-${((t + decalage * duree) % duree).toFixed(2)}s`;

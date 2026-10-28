@@ -8,7 +8,7 @@ import { nouveauJeu, semaineDe, tick } from '../src/core/jeu';
 
 const entree = (uid: string, p: Partial<Entree> = {}): Entree => ({
   uid, nom: uid, cle: uid, porteur: 'ilka', profondeur: 2, profondeurLe: 0, registre: 0, decouvertes: 0,
-  semaine: 1, profondeurSemaine: 0, registreSemaine: 0, maj: 0, ...p,
+  semaine: 1, profondeurSemaine: 0, registreSemaine: 0, fleche: 0, flecheLe: 0, flecheSemaine: 0, maj: 0, ...p,
 });
 
 describe('Le Registre', () => {
@@ -155,5 +155,30 @@ describe('Les pseudos', () => {
   it('filtre les grossièretés et les faux noms officiels, sans bloquer les prénoms', () => {
     for (const n of ['Connard', 'c0nnard', 'Admin', 'Modo', 'Support Empreintes', 'FDP', 'Hitler88']) expect(pseudoInterdit(n)).toBe(true);
     for (const n of ['Dominique', 'Nazim', 'Montenegro', 'Pedro', 'Kevin', 'Steph', 'Verhelle', 'Marie', 'Pascal', 'Charlotte', 'Bryan']) expect(pseudoInterdit(n)).toBe(false);
+  });
+});
+
+describe('Le tableau de la Flèche', () => {
+  it('classe le plus haut quai, puis le premier arrivé ; ceux qui n’y sont pas montés n’apparaissent pas', () => {
+    const l = classer([
+      entree('a', { fleche: 30, flecheLe: 200 }), entree('b', { fleche: 30, flecheLe: 100 }), entree('c', { fleche: 41 }), entree('d', { fleche: 0 }),
+    ], 'fleche', 'total', 1);
+    expect(l.map((x) => [x.e.uid, x.rang])).toEqual([['c', 1], ['b', 2], ['a', 3]]);
+  });
+
+  it('publie le record de la Flèche, sa date, et les quais gagnés depuis lundi', () => {
+    const j = nouveauJeu(0, 1);
+    tick(j, 1000);
+    j.palmares!.flecheDebut = 12;
+    j.fleche = { quai: 20, record: 27, recordLe: 900, recus: [20], victoires: 6, defaites: 1 };
+    const e = entreeAPublier(j, 'u', 'Bryan', null, 1000, j.palmares!.semaine)!;
+    expect([e.fleche, e.flecheLe, e.flecheSemaine]).toEqual([27, 900, 15]);
+    // le record en ligne ne redescend pas
+    const e2 = entreeAPublier(j, 'u', 'Bryan', { ...e, fleche: 31, flecheLe: 500 }, 2000, j.palmares!.semaine)!;
+    expect([e2.fleche, e2.flecheLe]).toEqual([31, 500]);
+    // un record plus haut : daté de maintenant, et au plus 12 quais d'un coup
+    j.fleche.record = 60;
+    const e3 = entreeAPublier(j, 'u', 'Bryan', { ...e, fleche: 31, flecheLe: 500 }, 3000, j.palmares!.semaine)!;
+    expect([e3.fleche, e3.flecheLe]).toEqual([43, 3000]);
   });
 });

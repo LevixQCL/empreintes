@@ -65,7 +65,9 @@ export type Icone = keyof typeof ICO;
 // Tant que le fichier n'est pas déposé, le SVG reste. Ajouter le nom ici dès que l'image est dans public/art/icones/.
 const PEINTES = new Set<Icone>(['energie', 'composants', 'eclats', 'strate', 'district', 'tour', 'porteurs', 'cartes', 'codex', 'plus',
   // le lot du 23 octobre 2026
-  'marteau', 'coffre', 'chrono', 'verrou', 'journal', 'ouvrier']);
+  'marteau', 'coffre', 'chrono', 'verrou', 'journal', 'ouvrier',
+  // les onglets Pillages et Flèche (28 octobre 2026)
+  'carte', 'fleche']);
 export const baseIcones = new URL('art/icones/', document.baseURI).href;
 
 /** L'icône peinte si elle existe, sinon le trait SVG */

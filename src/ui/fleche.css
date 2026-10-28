@@ -143,7 +143,7 @@
 }
 
 /* le combat de la Flèche : en plein ciel, la lumière dorée des Hauts au-dessus, du vent au lieu de la poussière */
-.fond-lieu.z-fleche .fl-image{background-position:center 30%;filter:saturate(.85)}
+.fond-lieu.z-fleche .fl-image{background-position:center 40%}
 .fond-lieu.z-fleche .fl-voile{background:
   radial-gradient(115% 85% at 50% 46%,transparent 34%,rgba(6,10,22,.74) 100%),
   linear-gradient(180deg,rgba(242,213,140,.24),rgba(242,213,140,0) 38%),
