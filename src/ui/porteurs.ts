@@ -7,12 +7,12 @@ import { CHARGE, composantsNiveau, doublonsRequis } from '../core/collection';
 import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
-import { BATTU_PAR, REGLES, frequenceLibre, signeLibre } from '../core/regles';
-import { NOMS_EFFET, effetsDe, nomsEffets, texteEffet } from '../core/effets';
+import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
+import { NOMS_EFFET, nomsEffets } from '../core/effets';
 import { multNiveau } from '../core/collection';
 import type { GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
-import { illustrationBatiment, illustrationModule, portrait } from './art';
-import { COULEUR_RARETE, ICONES_ACTION, couleurFrequence, faceCarte } from './carte';
+import { illustrationBatiment, portrait } from './art';
+import { ICONES_ACTION, couleurFrequence, faceCarte } from './carte';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, voletsEscouade, type EcranDistrict } from './coquille';
 import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugeCharge, jaugePv, plusLongueSuite } from './district';
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
@@ -123,33 +123,29 @@ const NOM_ACTION: Record<TypeGeste, string> = { atk: 'Attaque', bouclier: 'Prote
 const socle = (t: TypeGeste, v: number, classe: string) =>
   `<span class="${classe} ${t}" title="${NOM_ACTION[t]} ${v}">${ICONES_ACTION[t]}<b>${v}</b></span>`;
 
-/** La Fréquence d'une carte en jeu : son chiffre (ou ses chiffres), ou ∗ pour un Accord */
-function cristalFreq(g: GesteDef): string {
-  if (frequenceLibre(g.effet)) return `<b class="eq-f" style="--fc:#5d5470" title="Fréquence libre">${signeLibre(g.effet)}</b>`;
-  const fs = g.fs ?? [g.f];
-  return `<b class="eq-f${fs.length > 1 ? ' multi' : ''}" style="--fc:${couleurFrequence(fs[0]!)}" title="Fréquence ${fs.join(' ou ')}">${fs.join('<i>/</i>')}</b>`;
-}
 
-/** Une carte du deck, sur une ligne : l'illustration et sa Fréquence, le nom, l'effet en clair, l'action et la force */
-function ligneCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean): string {
+/**
+ * Une carte du deck en vignette (refonte du 28 octobre 2026, comme Clash Royale ou la Forge) : la vraie face de la carte
+ * (illustration, Fréquence, force, métal), trois par rangée ; dessous, seulement ce qui ne se lit pas sur la face :
+ * le nom de l'effet, « 2 places », l'origine du paquetage. Toucher ouvre le détail.
+ */
+function tuileCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean): string {
   const cle = g.carte && j.collection[g.carte] ? g.carte : null;
-  const m = cle ? moduleDef(cle) : null;
-  const c = cle ? j.collection[cle]! : null;
-  // le paquetage du district n'est pas dans la collection : son illustration vient de son identifiant
   const origine = g.porteur === null ? ORIGINE_PAQUETAGE[g.id] : undefined;
-  const img = cle ? illustrationModule(cle) : origine ? illustrationModule(g.id) : null;
-  const effet = g.effet
-    ? effetsDe(g).map((x) => `<span class="eq-effet"><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</span>`).join('')
-    : '';
-  const corps = `<span class="eq-vignette" style="--m:${m ? COULEUR_RARETE[m.rarete] : 'rgba(205,239,255,.3)'}">`
-    + (img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : `<span class="eq-sans">${g.porteur ? ICO.cartes : ICO.district}</span>`)
-    + cristalFreq(g) + `</span>`
-    + `<span class="eq-txt"><strong>${echap(g.nom)}${c ? `<small>Niv. ${c.niveau}</small>` : ''}${g.lourd ? '<small class="eq-lourd">2 places</small>' : ''}${origine ? `<small class="eq-origine">${echap(origine.batiment)}</small>` : ''}${cle && prete(cle) ? `<small class="eq-monte">${ICO.monter}Peut monter</small>` : ''}</strong>${effet}</span>`
-    + socle(g.type, g.v, 'eq-force')
-    + (cle && !j.vus.cartes.includes(cle) ? `<span class="eq-neuve">Nouvelle</span>` : '');
+  let face: string;
+  if (cle) {
+    const c = j.collection[cle]!;
+    face = faceCarte(moduleDef(cle), c.niveau, multNiveau(cle, c.niveau));
+  } else {
+    face = faceCarte({ id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) } as Parameters<typeof faceCarte>[0], 1, 1, origine ? { origine: origine.batiment } : {});
+  }
+  const sous = [g.effet ? `<b>${echap(nomsEffets(g))}</b>` : '', g.lourd ? '2 places' : ''].filter(Boolean).join(' · ');
+  const badges = (cle && prete(cle) ? `<span class="eq-t-monte" title="Peut monter">${ICO.monter}</span>` : '')
+    + (cle && !j.vus.cartes.includes(cle) ? `<span class="eq-t-neuve" title="Nouvelle"></span>` : '');
+  const corps = `<span class="eq-t-face">${face}${badges}</span>${sous ? `<span class="eq-t-sous">${sous}</span>` : ''}`;
   return cle
-    ? `<li><button type="button" class="eq-carte" data-action="carte" data-id="${cle}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}${g.effet ? `, ${nomsEffets(g)}` : ''}. Voir la carte">${corps}</button></li>`
-    : `<li><div class="eq-carte fixe">${corps}</div></li>`;
+    ? `<li><button type="button" class="eq-tuile" data-action="carte" data-id="${cle}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}${g.effet ? `, ${nomsEffets(g)}` : ''}${prete(cle) ? ', peut monter' : ''}. Voir la carte">${corps}</button></li>`
+    : `<li><div class="eq-tuile fixe">${corps}</div></li>`;
 }
 
 /** Ce que vaut le deck de l'escouade : sa taille, ses Fréquences (par lignée), ses actions */
@@ -246,9 +242,10 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
     + `<div class="eq-cartes-tete"><h3>${ICO.cartes}Ses cartes <span class="${places ? '' : 'plein'}">${nc} / ${DISTRICT.cartesMax}</span></h3>`
     + `<button type="button" class="eq-gerer" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''}>${ICO.greffe}<span>${parti ? 'À son retour' : 'Gérer ses cartes'}</span></button></div>`
     + jaugeCharge(chargePortee(j, id), chargeMax(j, id))
-    + `<ul class="eq-cartes">${gestes.map((g) => ligneCarte(j, g, prete)).join('')}`
-    + (places > 0 && !parti ? `<li><button type="button" class="eq-carte libre" data-action="deck" data-id="${id}"><span class="eq-vignette vide">${ICO.place}</span><span class="eq-txt"><strong>${places} place${places > 1 ? 's' : ''} libre${places > 1 ? 's' : ''} · piochée${places > 1 ? 's' : ''} vide${places > 1 ? 's' : ''}</strong>`
-      + `<span class="eq-effet sans">${attendent ? `${attendent} carte${attendent > 1 ? 's' : ''} de sa lignée ${attendent > 1 ? 'attendent' : 'attend'} dans ta collection` : 'Aucune carte libre de sa lignée pour l’instant'}</span></span>${attendent ? `<span class="eq-ajout">${ICO.greffe}Confier</span>` : ''}</button></li>` : '')
+    + `<ul class="eq-grille">${gestes.map((g) => tuileCarte(j, g, prete)).join('')}`
+    // les places libres, à la taille d'une carte : on voit tout de suite ce qui manque
+    + (places > 0 && !parti ? Array.from({ length: places }, (_, k) => `<li><button type="button" class="eq-tuile libre" data-action="deck" data-id="${id}" aria-label="Place libre : confier une carte${attendent ? ` (${attendent} de sa lignée attendent)` : ''}">`
+      + `<span class="eq-t-vide">${ICO.greffe}<span>${k === 0 ? (attendent ? `Confier<small>${attendent} en attente</small>` : 'Place libre') : ''}</span></span></button></li>`).join('') : '')
     + `</ul></section>`;
 }
 
@@ -292,7 +289,7 @@ function monEscouade(e: EcranDistrict): string {
   h += `<div class="eq-trio">${[0, 1, 2].map((i) => blocPorteur(j, esc[i], i, verrou, prete)).join('')}</div>`;
   // le paquetage du district, toujours là
   h += `<section class="eq-district"><div class="eq-cartes-tete"><h3>${ICO.district}Paquetage du district <span>${GESTES_SPECIAUX.length}</span></h3><small>Fourni à chaque escouade qui descend : il reste même si un Porteur tombe</small></div>`
-    + `<ul class="eq-cartes">${GESTES_SPECIAUX.map((g) => ligneCarte(j, g, prete)).join('')}</ul></section>`;
+    + `<ul class="eq-grille">${GESTES_SPECIAUX.map((g) => tuileCarte(j, g, prete)).join('')}</ul></section>`;
   return h;
 }
 
