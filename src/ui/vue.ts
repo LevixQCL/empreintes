@@ -70,6 +70,8 @@ export interface Ecran {
   lecon?: string;
   /** une mécanique rencontrée pour la première fois, à expliquer (decouvertes.ts) */
   decouverte?: Decouverte;
+  /** quand plusieurs découvertes s'enchaînent au premier tour : laquelle sur combien */
+  decouvertePage?: { n: number; total: number };
   /** ce que dit le gardien, à son entrée ou au passage de sa seconde phase (campagne.ts) */
   parole?: { nom: string; texte: string };
   /** PV (en %) juste avant le dernier coup reçu, par cible : la jauge laisse une traînée qui se vide */
@@ -205,11 +207,14 @@ export const carteDemo = (g: Geste, taille: 'chaine' | 'main' = 'main') => geste
 /** la plus haute Fréquence d'une carte : une suite s'arrête là */
 const FREQ_MAX = 9;
 
-function maillon(g: Geste, off: boolean) {
+function maillon(g: Geste, off: boolean, s: CombatEtat) {
   const choix = g.fs && g.fs.length > 1 && !frequenceLibre(g.effet);
   // une carte de soin montre qui elle soigne ; la toucher passe au Porteur suivant
+  // un soin vers un Porteur qui a tous ses PV serait perdu : le dire sur l'étiquette
+  const cible = g.cible ? s.porteurs.find((p) => p.id === g.cible) : undefined;
+  const plein = !!cible && cible.pv >= cible.pvMax;
   const soin = soigneUnSeul(g) && g.cible
-    ? `<button type="button" class="cibler" data-action="cibler" data-uid="${g.uid}"${off ? ' disabled' : ''} style="--c:${COULEUR[porteurDef(g.cible).lignee]}" aria-label="Soigne ${echap(porteurDef(g.cible).nom)} : toucher pour changer">${ICO.soin}<span>${echap(porteurDef(g.cible).nom)}</span></button>`
+    ? `<button type="button" class="cibler${plein ? ' plein' : ''}" data-action="cibler" data-uid="${g.uid}"${off ? ' disabled' : ''} style="--c:${COULEUR[porteurDef(g.cible).lignee]}" aria-label="Soigne ${echap(porteurDef(g.cible).nom)}${plein ? ', qui a déjà tous ses PV' : ''} : toucher pour changer">${ICO.soin}<span>${echap(porteurDef(g.cible).nom)}${plein ? ' · PV pleins' : ''}</span></button>`
     : '';
   const c = `style="--c:${COULEUR[ligneeGeste(g)]}"`;
   if (soin && !choix) return `<div class="maillon" ${c}>${geste(g, 'chaine', 'retirer', { off })}${soin}</div>`;
@@ -721,7 +726,7 @@ function htmlEcranCombat(e: Ecran): string {
   // pendant l'animation, la carte qui agit s'avance, celles déjà jouées s'éteignent
   s.chaine.forEach((g, i) => {
     const etat = e.actif === undefined ? '' : i === e.actif ? 'en-jeu' : i < e.actif ? 'jouee' : '';
-    const html = maillon(g, verrou);
+    const html = maillon(g, verrou, s);
     h += etat ? html.replace('class="', `class="${etat} `) : html;
     // une carte lourde garde sa forme de carte : sa deuxième place est un emplacement relié, au lieu d'une carte étirée
     if (g.lourd) {
@@ -783,9 +788,9 @@ function htmlEcranCombat(e: Ecran): string {
     const ill = d.ennemi ? illustrationEnnemi(d.ennemi) : null;
     h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="decouverte-titre"><div class="fenetre decouverte">`
       + (ill ? `<img class="decouverte-portrait" src="${ill}" alt="" decoding="async">` : `<span class="decouverte-ico" aria-hidden="true">${ICO.cristal}</span>`)
-      + `<span class="surtitre">${echap(d.sur)}</span><h2 id="decouverte-titre">${echap(d.titre)}</h2><p>${echap(d.texte)}</p>`
+      + `<span class="surtitre">${echap(d.sur)}${e.decouvertePage ? ` · ${e.decouvertePage.n} / ${e.decouvertePage.total}` : ''}</span><h2 id="decouverte-titre">${echap(d.titre)}</h2><p>${echap(d.texte)}</p>`
       + (d.conseil ? `<p class="conseil-decouverte"><b>Conseil</b> ${echap(d.conseil)}</p>` : '')
-      + `<button type="button" class="btn prim large" data-action="decouverte-ok" data-id="${echap(d.id)}">Compris</button></div></div>`;
+      + `<button type="button" class="btn prim large" data-action="decouverte-ok" data-id="${echap(d.id)}">${e.decouvertePage && e.decouvertePage.n < e.decouvertePage.total ? 'Suivant' : 'Compris'}</button></div></div>`;
   }
   if (e.fin && !e.journal) {
     const victoire = !/Défaite|Repoussés/.test(e.fin.titre);

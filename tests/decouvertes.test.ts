@@ -8,9 +8,15 @@ import { nouveauJeu } from '../src/core/jeu';
 const equipe = () => ['ilka', 'doran', 'vela'].map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
 
 describe('Les premières rencontres', () => {
-  it('une condition, un groupe et les traits de chaque ennemi, dans cet ordre', () => {
+  it('la salle et le groupe d’abord (ils comptent dès le premier coup), puis la Fêlure et les traits', () => {
     const s = creerCombat({ porteurs: equipe(), ennemiId: 'vigie', escorte: ['pilleur'], condition: 'brouillard', rng: 1 });
-    expect(decouvertesDuCombat(s).map((d) => d.id)).toEqual(['felure', 'condition-brouillard', 'groupe', 'trait-blinde', 'trait-aspire', 'trait-vengeur']);
+    expect(decouvertesDuCombat(s).map((d) => d.id)).toEqual(['condition-brouillard', 'groupe', 'felure', 'trait-blinde', 'trait-aspire', 'trait-vengeur']);
+  });
+  it('la Furie s’explique quand elle s’allume, sous la moitié des PV', () => {
+    const s = creerCombat({ porteurs: equipe(), ennemiId: 'brigadier', rng: 1 });
+    expect(decouvertesDuCombat(s).some((d) => d.id === 'trait-furie')).toBe(false);
+    s.ennemi.pv = Math.floor(s.ennemi.pvMax / 2);
+    expect(decouvertesDuCombat(s).some((d) => d.id === 'trait-furie')).toBe(true);
   });
   it('ce qui a été vu ne revient pas', () => {
     const s = creerCombat({ porteurs: equipe(), ennemiId: 'vigie', escorte: ['pilleur'], rng: 1 });

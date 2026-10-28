@@ -42,6 +42,18 @@ const CONSEILS_CONDITIONS: Record<string, string> = {
 /** Les découvertes que ce combat peut déclencher, dans l'ordre où les montrer */
 export function decouvertesDuCombat(s: CombatEtat): Decouverte[] {
   const r: Decouverte[] = [];
+  // d'abord ce qui compte dès le premier coup (la salle, le groupe), puis la Fêlure
+  if (s.condition && CONDITIONS[s.condition]) {
+    const c = CONDITIONS[s.condition]!;
+    r.push({ id: `condition-${c.id}`, sur: 'CONDITION DE SALLE', titre: c.nom, texte: c.texte, conseil: CONSEILS_CONDITIONS[c.id] ?? '' });
+  }
+  if (enGroupe(s)) {
+    r.push({
+      id: 'groupe', sur: 'PREMIÈRE RENCONTRE', titre: 'Un groupe d’ennemis',
+      texte: 'Chaque ennemi a sa vignette en haut à droite : ses PV, et ce qu’il prépare. Touche une vignette pour le viser : toute ta chaîne le frappe, et s’il tombe en route, le reste passe au suivant.',
+      conseil: 'Abats d’abord celui qui fait le plus mal, ou celui qui est presque à terre : un ennemi de moins, c’est une attaque de moins.',
+    });
+  }
   if (tousEnnemis(s).some((en) => en.pv > 0 && felureVisible(en) && !en.felureBrisee)) {
     r.push({
       id: 'felure', sur: 'PREMIÈRE RENCONTRE', titre: 'La Fêlure',
@@ -57,21 +69,12 @@ export function decouvertesDuCombat(s: CombatEtat): Decouverte[] {
       conseil: 'Garder son Flux pour le Coup d’éclat, ou le dépenser tout de suite pour une place ou une nouvelle main : c’est à toi de voir. Méfie-toi des ennemis qui l’aspirent.',
     });
   }
-  if (s.condition && CONDITIONS[s.condition]) {
-    const c = CONDITIONS[s.condition]!;
-    r.push({ id: `condition-${c.id}`, sur: 'CONDITION DE SALLE', titre: c.nom, texte: c.texte, conseil: CONSEILS_CONDITIONS[c.id] ?? '' });
-  }
-  if (enGroupe(s)) {
-    r.push({
-      id: 'groupe', sur: 'PREMIÈRE RENCONTRE', titre: 'Un groupe d’ennemis',
-      texte: 'Chaque ennemi a sa vignette en haut à droite : ses PV, et ce qu’il prépare. Touche une vignette pour le viser : toute ta chaîne le frappe, et s’il tombe en route, le reste passe au suivant.',
-      conseil: 'Abats d’abord celui qui fait le plus mal, ou celui qui est presque à terre : un ennemi de moins, c’est une attaque de moins.',
-    });
-  }
   for (const en of tousEnnemis(s)) {
     if (en.simple || en.pv <= 0) continue;
     const d = ennemiDef(en.id);
     for (const t of d.traits ?? []) {
+      // la Furie s'explique quand elle s'allume (sous la moitié des PV), pas avant
+      if (t.type === 'furie' && en.pv > en.pvMax / 2) continue;
       const x = texteTrait(t);
       r.push({ id: `trait-${t.type}`, sur: 'TRAIT D’ENNEMI', titre: x.nom, texte: `${d.nom} : ${x.texte}`, conseil: CONSEILS_TRAITS[t.type], ennemi: d.id });
     }
@@ -84,6 +87,11 @@ export function decouvertesDuCombat(s: CombatEtat): Decouverte[] {
     }
   }
   return r;
+}
+
+/** Les découvertes pas encore vues dans ce combat, dans l'ordre */
+export function decouvertesEnAttente(vues: readonly string[], s: CombatEtat): Decouverte[] {
+  return decouvertesDuCombat(s).filter((d) => !vues.includes(d.id));
 }
 
 /** La première découverte pas encore vue dans ce combat (null s'il n'y en a pas) */

@@ -5,7 +5,7 @@ import { htmlFleche } from '../ui/fleche';
 import { repliqueGardien, sceneDef } from '../core/campagne';
 import { tousEnnemis } from '../core/combat';
 import { ennemiDef } from '../core/donnees';
-import { decouverteEnAttente } from '../core/decouvertes';
+import { decouvertesEnAttente } from '../core/decouvertes';
 import * as J from '../core/jeu';
 import { htmlBriefing } from '../ui/briefing';
 import { htmlScene } from '../ui/campagne';
@@ -103,14 +103,24 @@ export function afficher() {
   else if (app.mode === 'combat' && app.jeu.expedition) {
     const etat = K.etat ?? app.jeu.expedition.combat;
     const lecon = app.jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;
-    // une mécanique rencontrée pour la première fois : expliquée entre deux tours (jamais pendant le combat guidé)
-    // une seule par tour (sauf la phase d'un gardien) : quatre fenêtres d'affilée noieraient le joueur
+    // une mécanique rencontrée pour la première fois : expliquée avant d'en avoir besoin (jamais pendant le combat guidé).
+    // Au premier tour, tout ce qui compte dès le départ s'enchaîne avant le premier coup (« 1 / 3 ») ;
+    // ensuite une seule par tour (sauf la phase d'un gardien), au moment où elle s'allume
     const tourCombat = `${app.jeu.expedition.sequence.length}:${etat.tour}`;
-    const enAttente = !K.verrou && !K.fin && !app.jeu.expedition.tutoriel && etat.issue === 'en-cours' ? decouverteEnAttente(app.jeu.decouvertes ?? [], etat) : null;
-    const decouverte = enAttente && (enAttente.id === 'phase' || K.decouverteTour !== tourCombat || K.decouverteId === enAttente.id) ? enAttente : null;
-    if (decouverte) { K.decouverteTour = tourCombat; K.decouverteId = decouverte.id; }
+    const attente = !K.verrou && !K.fin && !app.jeu.expedition.tutoriel && etat.issue === 'en-cours' ? decouvertesEnAttente(app.jeu.decouvertes ?? [], etat) : [];
+    const enAttente = attente[0] ?? null;
+    const lot = etat.tour === 1 && !etat.chaine.length;
+    const decouverte = enAttente && (lot || enAttente.id === 'phase' || K.decouverteTour !== tourCombat || K.decouverteId === enAttente.id) ? enAttente : null;
+    let page: { n: number; total: number } | undefined;
+    if (decouverte) {
+      if (K.decouverteTour !== tourCombat) K.decouverteLot = 0;
+      if (K.decouverteId !== decouverte.id) K.decouverteLot = (K.decouverteLot ?? 0) + 1;
+      K.decouverteTour = tourCombat; K.decouverteId = decouverte.id;
+      const total = lot ? (K.decouverteLot ?? 1) - 1 + attente.length : 1;
+      if (total > 1) page = { n: K.decouverteLot ?? 1, total };
+    }
     const parole = paroleGardien(etat);
-    h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, journal: K.journal, fuite: K.fuite, eclats: K.eclats, ...(K.tuile ? { tuile: K.tuile } : {}), guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte } : {}) });
+    h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, journal: K.journal, fuite: K.fuite, eclats: K.eclats, ...(K.tuile ? { tuile: K.tuile } : {}), guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte, ...(page ? { decouvertePage: page } : {}) } : {}) });
   } else {
     app.mode = 'district';
     voirNouveautes();
