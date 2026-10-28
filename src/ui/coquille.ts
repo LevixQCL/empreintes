@@ -18,7 +18,7 @@ export type Filtre = 'tout' | Lignee | 'monter' | 'libres';
 export interface EcranDistrict {
   j: Jeu;
   /** Forge (27 octobre 2026) : la rangée des Porteurs ouverte pour changer de forgeron, et toutes les cartes affichées */
-  forgeChanger?: boolean;
+  posteChanger?: boolean;
   forgeToutes?: boolean;
   /** Tour du Noyau (28 octobre 2026) : la liste des Porteurs ouverte pour changer celui qui s'entraîne */
   tourChanger?: boolean;

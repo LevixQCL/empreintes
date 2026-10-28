@@ -336,19 +336,20 @@ const multPoste = (b: Exclude<Poste, 'noyau'>, id: string) => {
   return `<span class="fb-mult${ideal ? ' ideal' : ''}" title="${ideal ? 'Lignée idéale pour ce bâtiment' : 'Autre lignée'}">×${virgule(ideal ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste)}</span>`;
 };
 
-/** Un Porteur qu'on peut poster : son portrait, ce que donnerait le poste avec lui, et ce qu'il quitterait */
+/** Le petit marteau sur un portrait : ce Porteur travaille ailleurs et quittera son poste (28 octobre 2026) */
+const badgePris = (j: Jeu, id: string) => { const b = j.porteurs[id]!.poste; return b ? `<span class="te-pris" title="Au travail : ${echap(batimentDef(b).nom)}">${ICO.marteau}</span>` : ''; };
+
+/** Un Porteur qu'on peut poster : son portrait, ce que donnerait le poste avec lui (et l'écart), un marteau s'il travaille ailleurs */
 function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: number): string {
   const d = porteurDef(id);
   const ailleurs = j.porteurs[id]!.poste;
   const r = rendement(j, poste, id);
   const ecart = Math.round((r.v - actuel) * 10) / 10;
   const signe = ecart > 0 ? 'plus' : ecart < 0 ? 'moins' : 'egal';
-  const delta = poste === 'forge' ? '' : ecart === 0 ? '<i>=</i>' : `<i>${ecart > 0 ? '+' : '−'}${virgule(Math.abs(ecart))}</i>`;
+  const delta = poste === 'forge' || ecart === 0 ? '' : `<i>${ecart > 0 ? '+' : '−'}${virgule(Math.abs(ecart))}</i>`;
   return `<button type="button" class="fb-cand ${signe}" style="--c:${COULEUR[d.lignee]}" data-action="poster" data-id="${id}" data-poste="${poste}" aria-label="Poster ${echap(d.nom)} : ${r.long}${ailleurs ? `, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}">`
-    + `<span class="fb-cand-portrait">${avatar(id, 56)}${multPoste(poste, id)}</span>`
-    + `<strong>${echap(d.nom)}</strong>${poste === 'forge' ? '' : `<span class="fb-cand-eff">${r.court}${delta}</span>`}`
-    + (ailleurs ? `<small class="fb-cand-ailleurs">quitte ${echap(batimentDef(ailleurs).nom)}</small>` : '')
-    + `</button>`;
+    + `<span class="fb-cand-portrait">${avatar(id, 52)}${badgePris(j, id)}</span>`
+    + `<strong>${echap(d.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">${r.court}${delta}</span></button>`;
 }
 
 const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
@@ -422,14 +423,14 @@ function blocConvertisseur(j: Jeu): string {
 function blocSoinsIntensifs(j: Jeu): string {
   const blesses = PORTEURS.filter((p) => porteursPresents(j).includes(p.id) && !enExpedition(j, p.id) && j.porteurs[p.id]!.usure >= 1);
   let h = `<section class="fb-bloc fb-soins"><h3 class="titre-bloc">${ICO.soin}Soins intensifs</h3>`
-    + `<p class="fb-vide">Pour repartir tout de suite : <b>${SOINS_INTENSIFS.energieParUsure} énergie par point d’Usure</b>, effacé sur-le-champ.</p>`;
+    + `<p class="fb-vide">Efface l’Usure tout de suite : <b>${SOINS_INTENSIFS.energieParUsure} énergie</b> par point.</p>`;
   if (!blesses.length) return h + `<p class="fb-note">Personne n’a d’Usure en ce moment.</p></section>`;
   h += `<div class="fb-rangee">` + blesses.map((p) => {
     const u = Math.ceil(j.porteurs[p.id]!.usure);
     const cout = u * SOINS_INTENSIFS.energieParUsure;
     const peut = j.energie >= SOINS_INTENSIFS.energieParUsure;
     return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="soigner-vite" data-id="${p.id}"${peut ? '' : ' disabled'} aria-label="Soigner ${echap(p.nom)} : −${u} Usure pour ${cout} énergie">`
-      + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">−${u} Usure</span><small class="fb-cand-ailleurs">${ent(Math.min(cout, Math.floor(j.energie / SOINS_INTENSIFS.energieParUsure) * SOINS_INTENSIFS.energieParUsure))} énergie</small></button>`;
+      + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">−${u} Usure</span><span class="te-prix${j.energie < cout ? ' manque' : ''}">${ICO.energie}${ent(Math.min(cout, Math.floor(j.energie / SOINS_INTENSIFS.energieParUsure) * SOINS_INTENSIFS.energieParUsure))}</span></button>`;
   }).join('') + `</div>`;
   return h + `</section>`;
 }
@@ -487,7 +488,7 @@ function blocEntrainement(e: EcranDistrict): string {
         const peut = j.energie + renduSeance >= a.energie;
         const ailleurs = j.porteurs[p.id]!.poste;
         return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="poster" data-id="${p.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="Entraîner ${echap(p.nom)}, niveau ${niveau(p.id)} vers ${a.cible}, ${duree(a.heures * 3_600_000)}, ${a.energie} énergie${ailleurs ? `, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}">`
-          + `<span class="fb-cand-portrait">${avatar(p.id, 52)}${ailleurs ? `<span class="te-pris" title="Au travail : ${echap(batimentDef(ailleurs).nom)}">${ICO.marteau}</span>` : ''}</span>`
+          + `<span class="fb-cand-portrait">${avatar(p.id, 52)}${badgePris(j, p.id)}</span>`
           + `<strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">${niveau(p.id)} <i>→ ${a.cible}</i></span>${prix(a.energie, !peut)}</button>`;
       }).join('') + `</div>`;
       if (eligibles.some((p) => j.porteurs[p.id]!.poste)) h += `<p class="te-note">${ICO.marteau}quitte son poste au district</p>`;
@@ -633,39 +634,39 @@ function feuilleBatiment(e: EcranDistrict): string {
   }
   if (b === 'comptoir') h += blocComptoir(e);
 
-  // le Porteur au travail
+  // le Porteur au travail (allégé le 28 octobre 2026) : une ligne pour l'occupant ; la liste ne s'ouvre que pour en changer,
+  // et ne montre alors que ceux qui feraient mieux
   if (b !== 'noyau' && b !== 'comptoir') {
     const poste = b;
     const occupant = posteDe(j, poste);
     const actuel = rendement(j, poste, occupant);
+    const vide = rendement(j, poste, null);
+    const ouvert = !occupant || !!e.posteChanger;
     h += `<section class="fb-bloc"><h3 class="titre-bloc">${icone('ouvrier')}Au travail</h3>`;
     if (occupant) {
       const o = porteurDef(occupant);
-      const vide = rendement(j, poste, null);
-      const apport = poste === 'forge' ? `fabrique ${virgule(actuel.v)} fois plus vite`
-        : poste === 'clinique' ? `+${virgule(actuel.v - vide.v)} Usure soignée/h grâce à ${echap(o.nom)}`
-          : `+${ent(actuel.v - vide.v)} énergie/h grâce à ${echap(o.nom)}`;
-      if (poste === 'forge') {
-        // 27 octobre 2026 (Bryan : écran trop chargé) : le forgeron tient sur une ligne ; les autres Porteurs ne s'affichent que pour en changer
-        h += `<div class="fb-occupant fg-forgeron" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 44)}${multPoste(poste, occupant)}</span><div><strong>${echap(o.nom)} forge</strong><span class="fb-apport">${actuel.v === 1 ? 'vitesse normale' : `${virgule(actuel.v)} fois plus vite`}</span></div>`
-          + (e.forgeChanger
-            ? `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Libérer ${echap(o.nom)}">Libérer</button>`
-            : `<button type="button" class="btn sec fb-liberer" data-action="forge-changer" aria-expanded="false">Changer</button>`) + `</div>`;
-      } else h += `<div class="fb-occupant" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 64)}${multPoste(poste, occupant)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-lignee">${NOM_LIGNEE[o.lignee]}</span><span class="fb-apport">${apport}</span></div>`
-        + `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Libérer ${echap(o.nom)} (${vide.long})">Libérer</button></div>`;
+      const apport = poste === 'forge' ? (actuel.v === 1 ? 'vitesse normale' : `fabrique ${virgule(actuel.v)} fois plus vite`)
+        : poste === 'clinique' ? `+${virgule(actuel.v - vide.v)} Usure soignée/h` : `+${ent(actuel.v - vide.v)} énergie/h`;
+      h += `<div class="fb-occupant fg-forgeron" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 44)}${multPoste(poste, occupant)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-apport">${apport}</span></div>`
+        + (ouvert ? `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Libérer ${echap(o.nom)} (${vide.long})">Libérer</button>`
+          : `<button type="button" class="btn sec fb-liberer" data-action="poste-changer" aria-expanded="false">Changer</button>`) + `</div>`;
     } else {
-      const avec = (lignee: boolean) => { const id = PORTEURS.find((p) => (p.lignee === d.affinite) === lignee)?.id; return id ? rendement(j, poste, id).court : ''; };
-      h += `<p class="fb-vide">Personne au poste${poste === 'forge' ? ' : la Forge ne peut pas fabriquer.' : ` : ${actuel.long}.`} Avec un Porteur ${d.affinite ? `<b style="color:${COULEUR[d.affinite]}">${NOM_LIGNEE[d.affinite]}</b>` : 'de la bonne lignée'} : <b>${avec(true)}</b>, un autre : ${avec(false)}.</p>`;
+      h += `<p class="fb-vide">Personne au poste : ${poste === 'forge' ? 'la Forge ne peut pas fabriquer' : actuel.long}.</p>`;
     }
-    const libres = PORTEURS.filter((p) => p.id !== occupant && !enExpedition(j, p.id) && porteursPresents(j).includes(p.id))
-      .sort((x, y) => Number(y.lignee === d.affinite) - Number(x.lignee === d.affinite) || Number(!!j.porteurs[x.id]!.poste) - Number(!!j.porteurs[y.id]!.poste));
-    const replie = poste === 'forge' && !!occupant && !e.forgeChanger;
-    if (libres.length && !replie) {
-      h += `<p class="fb-consigne">${occupant ? 'Le remplacer' : 'Poster un Porteur'} <span>· touche un portrait</span>${poste === 'forge' && occupant ? `<button type="button" class="fg-replier" data-action="forge-changer" aria-expanded="true">Fermer</button>` : ''}</p>`
-        + `<div class="fb-rangee">${libres.map((p) => candidat(j, p.id, poste, actuel.v)).join('')}</div>`;
+    if (ouvert) {
+      const libres = PORTEURS.filter((p) => p.id !== occupant && !enExpedition(j, p.id) && porteursPresents(j).includes(p.id))
+        .map((p) => ({ p, v: rendement(j, poste, p.id).v }))
+        .sort((x, y) => y.v - x.v || Number(!!j.porteurs[x.p.id]!.poste) - Number(!!j.porteurs[y.p.id]!.poste));
+      // en place, seuls ceux qui feraient mieux ; poste vide, tout le monde (le meilleur en premier)
+      const utiles = occupant ? libres.filter((x) => x.v > actuel.v) : libres;
+      if (utiles.length) {
+        h += `<div class="fb-rangee">${utiles.map((x) => candidat(j, x.p.id, poste, actuel.v)).join('')}</div>`;
+        if (utiles.some((x) => j.porteurs[x.p.id]!.poste)) h += `<p class="te-note">${ICO.marteau}quitte son poste au district</p>`;
+      } else if (occupant) {
+        h += `<p class="te-note">Personne de disponible ne ferait mieux que ${echap(porteurDef(occupant).nom)}.</p>`;
+      }
+      if (occupant) h += `<button type="button" class="te-fermer" data-action="poste-changer" aria-expanded="true">Fermer</button>`;
     }
-    const absents = PORTEURS.filter((p) => porteursPresents(j).includes(p.id) && enExpedition(j, p.id));
-    if (absents.length && !replie) h += `<small class="fb-absents">En expédition ou en mission : ${absents.map((p) => echap(p.nom)).join(', ')}.</small>`;
     h += `</section>`;
   }
 
