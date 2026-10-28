@@ -116,6 +116,20 @@ export const decompte = (fin: number, now: number, avant = '', apres = '') =>
 export const jaugeTemps = (debut: number, fin: number, now: number) =>
   `<i data-debut="${debut}" data-fin="${fin}" style="width:${Math.min(1, (now - debut) / (fin - debut)) * 100}%"></i>`;
 
+/**
+ * Où en est la barque d'une mission en mer : l'aller (45 % du temps), la fouille sur place (10 %), le retour (45 %).
+ * x va de 0 (le port du district) à 1 (le lieu de la mission).
+ */
+export type PhaseVoyage = 'aller' | 'fouille' | 'retour' | 'quai';
+export function etapeVoyage(debut: number, fin: number, now: number): { x: number; phase: PhaseVoyage } {
+  const p = Math.max(0, (now - debut) / Math.max(1, fin - debut));
+  if (p >= 1) return { x: 0, phase: 'quai' };
+  if (p < 0.45) return { x: p / 0.45, phase: 'aller' };
+  if (p < 0.55) return { x: 1, phase: 'fouille' };
+  return { x: 1 - (p - 0.55) / 0.45, phase: 'retour' };
+}
+export const NOM_PHASE: Record<PhaseVoyage, string> = { aller: 'En route', fouille: 'Fouille sur place', retour: 'Sur le retour', quai: 'À quai' };
+
 export const NOM_LIGNEE: Record<Lignee, string> = { tech: 'Augmenté', bio: 'Géné', reso: 'Résonant' };
 export const NOM_LIGNEES: Record<Lignee, string> = { tech: 'Augmentés', bio: 'Génés', reso: 'Résonants' };
 

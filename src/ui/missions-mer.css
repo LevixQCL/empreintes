@@ -1,0 +1,95 @@
+/* EMPREINTES — Les missions en mer (28 octobre 2026, Bryan : « cet écran gagnerait à être plus joli »).
+   Chaque mission est une fenêtre sur le large : le décor peint du lieu (ou la mer du district et ses piliers abandonnés),
+   des reflets qui glissent, et la route du passeur en bas : la barque quitte le port, accoste, fouille, revient.
+   --x (0 → 1) est la position de la barque, mise à jour chaque seconde par l'horloge. Textes à 12 px minimum. */
+
+.voyage{position:relative;display:grid;gap:10px;padding:12px 12px 10px;overflow:hidden;isolation:isolate;
+  --cut:12px;clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));
+  background:#0b2430;box-shadow:inset 0 0 0 1px rgba(205,239,255,.22),inset 0 1px 0 rgba(255,255,255,.22)}
+.voyages{display:grid;gap:10px}
+
+/* ---------- Le large ---------- */
+.vg-fond{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+/* le panorama : 4 fois la largeur utile, son horizon (24,6 % de sa hauteur) à 54 px du haut, le pilier du lieu à 96 px du bord droit */
+.vg-pano{position:absolute;right:96px;top:54px;width:calc(400% - 384px);aspect-ratio:8/3;background:var(--decor) center/100% 100% no-repeat;
+  transform:translate(calc((4000 - var(--px)) / 4000 * 100%), -24.6%) scaleX(var(--flip,1));transform-origin:center}
+.voyage.peint .vg-pano{inset:0;width:auto;aspect-ratio:auto;background-size:cover;background-position:center 40%;transform:none}
+/* un voile : le nom se lit sur le ciel, la route sur l'eau */
+.vg-fond::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,rgba(6,12,22,.82) 0,rgba(6,12,22,.45) 52%,rgba(6,12,22,.1) 100%),
+    linear-gradient(180deg,transparent 45%,rgba(4,14,22,.55) 100%)}
+.vg-reflets{position:absolute;left:0;right:0;top:54px;bottom:0;background:var(--reflets) 0 0/auto 100% repeat-x;mix-blend-mode:screen;opacity:.3;
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 30%);mask-image:linear-gradient(180deg,transparent,#000 30%)}
+.voyage.peint .vg-reflets{opacity:.16}
+
+/* ---------- Qui, où, quand ---------- */
+.vg-tete{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px}
+.vg-tete .avatar,.vg-tete>:first-child{filter:drop-shadow(0 2px 6px rgba(0,0,0,.7))}
+.vg-qui{display:grid;gap:1px;min-width:0}
+.vg-qui strong{font-size:15px;line-height:1.25;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.9)}
+.vg-qui small{font-size:12px;line-height:1.3;color:#C9D6E6;text-shadow:0 1px 3px #000}
+.vg-etat{display:grid;justify-items:end;gap:1px;text-align:right}
+.vg-etat b{padding:2px 8px;font-size:12px;font-weight:600;line-height:1.35;letter-spacing:.02em;color:#F2D58C;white-space:nowrap;
+  background:rgba(8,14,22,.72);box-shadow:inset 0 0 0 1px rgba(242,213,140,.38);border-radius:3px}
+.ph-fouille .vg-etat b{color:#CDEFFF;box-shadow:inset 0 0 0 1px rgba(205,239,255,.42)}
+.vg-etat small{font-family:var(--mono);font-size:12px;line-height:1.3;color:#E4ECF5;text-shadow:0 1px 3px #000;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ---------- La route du passeur ---------- */
+.vg-route{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:8px;margin-top:12px}
+.vg-port,.vg-lieu{position:relative;display:block;width:42px;height:42px;border-radius:50%;flex:none;
+  box-shadow:0 0 0 2px var(--or,#F2D58C),0 0 0 4px rgba(8,20,30,.8),0 4px 12px rgba(0,0,0,.6)}
+.vg-port{overflow:hidden}
+.vg-port img{width:100%;height:100%;object-fit:cover;object-position:50% 58%;display:block}
+/* le lieu : un pilier abandonné du large (ou le décor peint), cerclé de glace ; il s'allume quand on y fouille */
+.vg-lieu{width:46px;height:46px;--or:#CDEFFF;background:var(--decor) no-repeat;background-size:1080px auto;
+  background-position:calc(23px - var(--mx) * .27px) calc(25px - var(--my) * .27px)}
+.voyage.peint .vg-lieu{background-size:cover;background-position:center}
+.ph-fouille .vg-lieu{box-shadow:0 0 0 2px #F2D58C,0 0 0 4px rgba(8,20,30,.8),0 0 18px rgba(255,200,110,.75)}
+.vg-onde{position:absolute;inset:-2px;border-radius:50%;box-shadow:0 0 0 1.5px rgba(255,214,140,.8);opacity:0;pointer-events:none}
+
+.vg-eau{position:relative;height:30px}
+/* la route : une ligne de petites lueurs posée sur l'eau */
+.vg-trace{position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;border-radius:2px;
+  background:radial-gradient(circle,rgba(205,239,255,.55) 0 1px,transparent 1.5px) 0 50%/9px 2px repeat-x}
+/* le sillage : l'eau dorée derrière la barque (vers le port à l'aller, vers le lieu au retour) */
+.vg-sillage{position:absolute;top:50%;height:4px;margin-top:-2px;border-radius:3px;left:0;width:calc(var(--x) * 100%);
+  background:linear-gradient(90deg,rgba(242,213,140,.05),rgba(255,214,140,.85));box-shadow:0 0 10px rgba(255,200,110,.45);transition:width 1s linear,left 1s linear}
+.ph-retour .vg-sillage{left:calc(var(--x) * 100%);width:calc((1 - var(--x)) * 100%);background:linear-gradient(90deg,rgba(255,214,140,.85),rgba(242,213,140,.05))}
+.ph-fouille .vg-sillage,.ph-quai .vg-sillage{opacity:0}
+
+/* la barque : peinte quand l'image existe, sinon la lampe du passeur qui file sur l'eau */
+.vg-barque{position:absolute;top:50%;left:calc(var(--x) * 100%);width:52px;height:40px;margin:-30px 0 0 -26px;transition:left 1s linear;pointer-events:none}
+.vg-barque img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 4px rgba(0,0,0,.6))}
+.ph-retour .vg-barque img{transform:scaleX(-1)}
+.vg-lampe{position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4px 0 0 -4px;border-radius:50%;
+  background:radial-gradient(circle,#FFF6DC 0 30%,#FFC768 60%,rgba(255,170,70,0) 100%);
+  box-shadow:0 0 10px 3px rgba(255,190,90,.75),0 0 26px 8px rgba(255,170,70,.32)}
+.vg-barque:has(img) .vg-lampe{left:64%;top:22%;width:7px;height:7px}
+.vg-reflet-lampe{position:absolute;left:50%;top:calc(50% + 9px);width:4px;height:10px;margin-left:-2px;border-radius:50%;
+  background:linear-gradient(180deg,rgba(255,200,110,.7),rgba(255,200,110,0));filter:blur(1px)}
+.vg-barque:has(img) .vg-reflet-lampe{display:none}
+/* à quai au lieu, la lampe se pose contre le pilier : c'est l'onde du lieu qui vit */
+.ph-fouille .vg-barque{opacity:0}
+
+@media (prefers-reduced-motion:no-preference){
+  .vg-reflets{animation:vg-glisse 70s linear infinite,vg-respire 6s ease-in-out infinite alternate}
+  .vg-barque{animation:vg-houle 3.2s ease-in-out infinite}
+  .vg-lampe{animation:vg-flamme 1.7s ease-in-out infinite alternate}
+  .vg-sillage{-webkit-mask-image:linear-gradient(90deg,#000 0 40%,rgba(0,0,0,.55) 50%,#000 60%);mask-image:linear-gradient(90deg,#000 0 40%,rgba(0,0,0,.55) 50%,#000 60%);
+    -webkit-mask-size:60px 100%;mask-size:60px 100%;animation:vg-ecume 1.6s linear infinite}
+  .ph-retour .vg-sillage{animation-direction:reverse}
+  .ph-fouille .vg-onde{animation:vg-onde 2.6s ease-out infinite}
+  .ph-fouille .vg-onde+.vg-onde{animation-delay:1.3s}
+}
+@keyframes vg-glisse{to{background-position-x:-1600px}}
+@keyframes vg-respire{from{opacity:.18}to{opacity:.38}}
+@keyframes vg-houle{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-2px) rotate(2deg)}}
+@keyframes vg-flamme{from{opacity:.8;transform:scale(.9)}to{opacity:1;transform:scale(1.12)}}
+@keyframes vg-ecume{to{-webkit-mask-position:60px 0;mask-position:60px 0}}
+@keyframes vg-onde{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.75)}}
+
+@media (min-width:900px){
+  .voyage{padding:14px 16px 12px}
+  .voyages{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}
+  .vg-route{margin-top:18px}
+}

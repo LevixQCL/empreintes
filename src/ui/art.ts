@@ -220,6 +220,27 @@ export function prochainVisuel(niveau: number): number | null {
 const AGES_PEINTS = 4;
 /** L'horizon de chaque âge, en % de la hauteur de mer-N.webp (scripts/mer-district.py : HORIZONS, le tableau commence à 300 px sur 1500) */
 const HORIZON_MER = [24.6, 24.47, 24.27, 24.27];
+/**
+ * Les missions en mer (28 octobre 2026) : chaque lieu a son décor peint (art/missions/<lieu>.webp, panorama 3:1, l'ordre est celui de
+ * LIEUX_MISSION) et la barque du passeur est une image détourée (art/missions/barque.webp, proue vers la droite).
+ * Tant qu'un lieu n'est pas peint, sa carte montre le large de la mer du district (mer-1.webp) et ses piliers abandonnés.
+ */
+export const LIEUX_SLUGS = ['phare', 'serres', 'pilier-effondre', 'pompage', 'marche', 'transbordeur', 'gare', 'silos', 'pilier-sans-nom', 'dessalement', 'criee', 'clocher'] as const;
+const LIEUX_PEINTS = new Set<string>([]);
+export const decorLieu = (i: number): string | null => {
+  const s = LIEUX_SLUGS[i];
+  return s && LIEUX_PEINTS.has(s) ? `${base}missions/${s}.webp` : null;
+};
+export const BARQUE_PEINTE = false;
+export const barque = `${base}missions/barque.webp`;
+/**
+ * Le large, faute de décor peint : la mer du premier âge (4000 × 1500) et un de ses piliers abandonnés (centre x, y en pixels).
+ * Seuls les piliers du bord servent : le district, au centre du panorama, reste hors du cadre ; le premier est vu en miroir.
+ */
+export const merLarge = `${base}district/mer-1.webp`;
+export const PILIERS_LARGE: readonly { x: number; y: number; miroir: boolean }[] = [
+  { x: 3590, y: 415, miroir: false }, { x: 3710, y: 415, miroir: false }, { x: 360, y: 410, miroir: true },
+];
 /** Les reflets qui glissent sur la mer prolongée (PC) */
 export const reflets = `${base}district/mer-reflets.webp`;
 /** Âges dont l'animation (boucle Midjourney ralentie, raccord fondu) existe. Vide depuis les nouveaux tableaux à 7 bâtiments

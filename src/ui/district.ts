@@ -8,7 +8,7 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, LIEUX_MISSION, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -22,13 +22,13 @@ import { chapitreCampagne } from '../core/campagne';
 import { frequenceLibre } from '../core/regles';
 import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
-import { decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
+import { BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteArchipel, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { arrivee, feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { ICO, icone, type Icone } from './icones';
-import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { echap, mouvementReduit, virgule } from './outils';
 
@@ -1419,14 +1419,37 @@ function htmlEpreuves(e: EcranDistrict): string {
   return h + `</div></section>`;
 }
 
+/**
+ * Une barque en mer (28 octobre 2026, Bryan : « cet écran gagnerait à être plus joli ») : la carte est une fenêtre sur le large,
+ * le décor peint du lieu (ou, en attendant, la mer du district et ses piliers abandonnés), et la jauge est la route du passeur :
+ * la barque quitte le port du district, accoste au lieu, y fouille, puis revient, son sillage derrière elle.
+ */
+function voyage(e: EcranDistrict, m: Jeu['missions'][number]): string {
+  const p = porteurDef(m.porteur);
+  const lieu = lieuMission(m);
+  const i = Math.max(0, (LIEUX_MISSION as readonly string[]).indexOf(lieu));
+  const peint = decorLieu(i);
+  const pil = PILIERS_LARGE[i % PILIERS_LARGE.length]!;
+  const { x, phase } = etapeVoyage(m.debut, m.fin, e.now);
+  const fond = peint ? `--decor:url(${peint})` : `--decor:url(${merLarge});--px:${pil.miroir ? 4000 - pil.x : pil.x};--mx:${pil.x};--my:${pil.y};--flip:${pil.miroir ? -1 : 1}`;
+  const age = sceneDistrict(e.j.batiments.noyau).age;
+  return `<div class="voyage ph-${phase}${peint ? ' peint' : ''}" style="--c:${COULEUR[p.lignee]};--x:${x.toFixed(4)};${fond}" data-vdebut="${m.debut}" data-vfin="${m.fin}">`
+    + `<span class="vg-fond" aria-hidden="true"><i class="vg-pano"></i><i class="vg-reflets" style="--reflets:url(${reflets})"></i></span>`
+    + `<div class="vg-tete">${avatar(p.id, 40)}<span class="vg-qui"><strong>${echap(p.nom)}</strong><small>Vers ${echap(lieu)}</small></span>`
+    + `<span class="vg-etat"><b data-phase>${NOM_PHASE[phase]}</b><small>${e.now >= m.fin ? 'rentre au district' : decompte(m.fin, e.now, 'retour dans ')}</small></span></div>`
+    + `<div class="vg-route" role="img" aria-label="${NOM_PHASE[phase]}, vers ${echap(lieu)}">`
+    + `<span class="vg-port"><img src="${vignetteArchipel(age)}" alt="" decoding="async" loading="lazy"></span>`
+    + `<span class="vg-eau"><i class="vg-trace"></i><i class="vg-sillage"></i>`
+    + `<span class="vg-barque">${BARQUE_PEINTE ? `<img src="${barque}" alt="" decoding="async">` : ''}<i class="vg-lampe"></i><i class="vg-reflet-lampe"></i></span></span>`
+    + `<span class="vg-lieu"><i class="vg-onde"></i><i class="vg-onde"></i></span>`
+    + `</div></div>`;
+}
+
 /** Les missions en mer (au Port depuis le 28 octobre 2026) : qui part, qui est en mer, et les derniers rapports */
 export function htmlMissions(e: EcranDistrict): string {
   const j = e.j;
   let h = `<section class="bloc tr-volet pl-missions"><p class="aide">Un Porteur qui ne travaille pas prend la barque du passeur vers un pilier abandonné ou une ruine noyée, avec des vivres et des lampes (de l’énergie). La mission avance même jeu fermé : il rapporte des composants, des doublons de cartes de sa lignée, parfois une carte nouvelle ou des rescapés qui deviennent creuseurs, et un peu d’Usure.</p>`;
-  for (const m of j.missions) {
-    const p = porteurDef(m.porteur);
-    h += `<div class="en-cours" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 36)}<div><strong>${echap(p.nom)} · en mer</strong><small>Vers ${echap(lieuMission(m))} · ${e.now >= m.fin ? 'sur le retour' : decompte(m.fin, e.now, 'retour dans ')}</small><div class="jauge or">${jaugeTemps(m.debut, m.fin, e.now)}</div></div></div>`;
-  }
+  if (j.missions.length) h += `<div class="voyages">${j.missions.map((m) => voyage(e, m)).join('')}</div>`;
   const libres = disponibles(j);
   if (j.missions.length >= MISSIONS.max) h += `<small class="aide">${MISSIONS.max} missions au plus en même temps.</small>`;
   else if (!libres.length) h += `<small class="aide">Tous les Porteurs travaillent ou sont partis : libère-en un d’un bâtiment pour l’envoyer.</small>`;

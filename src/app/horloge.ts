@@ -1,7 +1,7 @@
 // Le temps qui passe : chaque seconde, la partie avance et les comptes à rebours du district se mettent à jour.
 
 import * as J from '../core/jeu';
-import { duree } from '../ui/coquille';
+import { NOM_PHASE, duree, etapeVoyage } from '../ui/coquille';
 import { comparer, montrer, relever } from '../ui/gains';
 import { app, compteEtat, D, racine } from './etat';
 import { afficher } from './rendu';
@@ -20,6 +20,17 @@ function majDecomptes(now: number): boolean {
       const debut = Number(el.dataset.debut);
       el.style.width = `${Math.min(1, (now - debut) / (fin - debut)) * 100}%`;
     } else el.textContent = (el.dataset.avant ?? '') + duree(fin - now) + (el.dataset.apres ?? '');
+  });
+  // les barques en mer avancent sur leur route (missions au Port)
+  racine.querySelectorAll<HTMLElement>('[data-vdebut]').forEach((el) => {
+    const { x, phase } = etapeVoyage(Number(el.dataset.vdebut), Number(el.dataset.vfin), now);
+    el.style.setProperty('--x', x.toFixed(4));
+    if (!el.classList.contains(`ph-${phase}`)) {
+      el.classList.remove('ph-aller', 'ph-fouille', 'ph-retour', 'ph-quai');
+      el.classList.add(`ph-${phase}`);
+      const b = el.querySelector<HTMLElement>('[data-phase]');
+      if (b) b.textContent = NOM_PHASE[phase];
+    }
   });
   return fini;
 }

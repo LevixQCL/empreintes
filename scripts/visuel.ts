@@ -105,6 +105,11 @@ async function main() {
       { sens: 'attaque', nom: 'Haut-Treuil', gagne: false, composants: -5, le: T - 90_000_000, bot: true },
     ] };
     d.chantiers = [{ batiment: 'generateur', debut: T - 300_000, fin: T + 2_500_000 }];
+    // deux barques en mer (Port) : l'une à l'aller, l'autre en pleine fouille sur place
+    const libres = Object.keys(d.porteurs).filter((id) => !d.porteurs[id].poste).slice(-2);
+    d.missions = libres.map((porteur, i) => i === 0
+      ? { porteur, strate: 1, duree: 'courte', debut: T - 1_800_000, fin: T + 5_400_000 }
+      : { porteur, strate: 1, duree: 'longue', debut: T - 14_400_000, fin: T + 14_400_000 });
     // la Flèche ouverte, en pleine montée (record plus haut que le quai)
     const fl = JSON.parse(JSON.stringify(saves.district));
     fl.data.scenes = [...(fl.data.scenes ?? []), 'convocation'];
@@ -122,7 +127,7 @@ async function main() {
     const erreurs: string[] = [];
     try {
       for (const [w, h] of TAILLES) {
-        for (const scene of SCENES) {
+        for (const scene of SCENES.filter((s) => !process.env.VISUEL_SEULEMENT || process.env.VISUEL_SEULEMENT.split(',').includes(s.nom))) {
           const photos: Buffer[] = [];
           for (const port of [4401, 4402]) {
             const ctx = await navigateur.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1, reducedMotion: 'reduce' });
