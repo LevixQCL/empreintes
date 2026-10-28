@@ -198,6 +198,8 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
   h += `<section class="ex-carte" aria-label="Carte de la Strate" style="--rangs:${rangs}${decor ? `;--decor:url(${decor})` : ''}"><span class="ex-decor" aria-hidden="true"></span><span class="ex-sur ex-carte-titre">Plan de la Strate</span><div class="ex-plan">`;
   let fils = '';
   let halos = '';
+  // 28 octobre 2026 : les couloirs se perdaient dans les décors peints → un liseré sombre sous chaque trait
+  let ombres = '';
   for (const s of c.salles) {
     for (const v of s.voisins) {
       const t = c.salles[v]!;
@@ -206,10 +208,11 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
       const x1 = posX(s), y1 = posY(s), x2 = posX(t), y2 = posY(t), ym = (y1 + y2) / 2;
       const d = `M${x1.toFixed(2)} ${y1.toFixed(2)}C${x1.toFixed(2)} ${ym.toFixed(2)} ${x2.toFixed(2)} ${ym.toFixed(2)} ${x2.toFixed(2)} ${y2.toFixed(2)}`;
       if (etat === 'ouvert' || etat === 'parcouru') halos += `<path class="c-${etat} halo" d="${d}"/>`;
+      ombres += `<path class="ombre o-${etat}" d="${d}"/>`;
       fils += `<path class="c-${etat}" d="${d}"/>`;
     }
   }
-  h += `<svg class="ex-couloirs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${halos}${fils}</svg>`;
+  h += `<svg class="ex-couloirs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${ombres}${halos}${fils}</svg>`;
 
   for (const s of c.salles) {
     const acces = voisines.has(s.id) && libre;
