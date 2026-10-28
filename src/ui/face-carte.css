@@ -173,7 +173,7 @@
   color:#2A1C05;background:linear-gradient(135deg,#F7E7B8,#D8B465 45%,#F2E6FF);clip-path:polygon(6% 0,94% 0,100% 50%,94% 100%,6% 100%,0 50%);pointer-events:none;white-space:nowrap}
 .geste .nf-heritage{display:none}
 /* Une carte exclusive (28 octobre 2026) : elle n'existe que dans son métal ; le même sceau que l’Héritage, dans la couleur de son métal */
-.nf-exclusive{color:#141821;background:linear-gradient(135deg,#F4F7FB,#B9C3D0 55%,#E9EEF4)}
+.nf-exclusive{left:auto;right:calc(var(--bord) + 1.6cqw);transform:none;color:#141821;background:linear-gradient(135deg,#F4F7FB,#B9C3D0 55%,#E9EEF4)}
 .nf-or .nf-exclusive{color:#2A1C05;background:linear-gradient(135deg,#FBEAB5,#D9A93F 55%,#F6DE97)}
 .nf-nacre .nf-exclusive{color:#2B2440;background:linear-gradient(135deg,#FFF6FB,#D9CCF4 45%,#C8F0EC)}
 

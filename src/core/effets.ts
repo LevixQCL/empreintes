@@ -87,9 +87,9 @@ export function formuleEffet(e: Effet): string {
     case 'debord': return 'tous, trop → bouclier';
     case 'rapt': return 'vole le bouclier';
     case 'rappel': return 'repioche la + forte';
-    case 'surtension': return `+${pc(e.part)}, −${pc(e.cout)} PV`;
+    case 'surtension': return `+${pc(e.part)}, −PV`;
     case 'empreinte': return 'copie l’effet';
-    case 'releve': return 'relève';
+    case 'releve': return 'remet debout';
   }
 }
 
