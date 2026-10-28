@@ -10,6 +10,7 @@ import type { Evenement, LigneeGeste } from '../core/types';
 import { vibrer } from './toucher';
 import { echelleScene, ondeDeChoc } from './verre';
 import { annoncerPhase } from './bandeau';
+import { dissoudre } from './dissolution';
 
 const TEINTE: Record<LigneeGeste, string> = { tech: '#8FDCFF', bio: '#FFB44A', reso: '#B98CFF', neutre: '#EBD9A8' };
 const SOIN = '#7CE3A0';
@@ -1100,10 +1101,15 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         const r = (ennemi ?? scene)!.getBoundingClientRect();
         // (après le coup des cristaux, s'il y en a : l'ennemi reste entier jusque-là)
         for (let i = 0; i < 6; i++) setTimeout(() => eclats(hasard(r.left + r.width * 0.2, r.right - r.width * 0.2), hasard(r.top + r.height * 0.2, r.bottom - r.height * 0.3), 14, TEINTE[lignee], { vitesse: 70, gravite: -90, taille: 2.6, vie: 1.4, ouverture: Math.PI }), finale + i * 60);
-        if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ opacity: 1, filter: 'none' }, { opacity: 0, filter: 'blur(6px) brightness(2)', transform: 'translateY(-10px) scale(1.04)' }], { duration: 900, delay: finale, fill: 'both', easing: 'ease-in' });
+        // l'illustration se cristallise puis se défait éclat par éclat (shader) ; à défaut, un simple fondu
+        const peinte = ennemi instanceof HTMLImageElement && !reduit && dissoudre(ennemi, {
+          delai: finale, duree: 1500,
+          surFront: (x, y) => eclats(x, y, 1, Math.random() < 0.6 ? '#CFF4FF' : TEINTE[lignee], { vitesse: 60, gravite: -110, taille: 2.2, vie: 1.1 }),
+        });
+        if (ennemi && !reduit && !peinte) (ennemi as HTMLElement).animate([{ opacity: 1, filter: 'none' }, { opacity: 0, filter: 'blur(6px) brightness(2)', transform: 'translateY(-10px) scale(1.04)' }], { duration: 900, delay: finale, fill: 'both', easing: 'ease-in' });
         [1, 5 / 4, 3 / 2, 2].forEach((k, i) => setTimeout(() => note(523 * k, 'triangle', 0.6, 0.035), finale + i * 90));
         vibrer([20, 60, 20, 60, 40]);
-        return 700 + finale;
+        return (peinte ? 1100 : 700) + finale;
       }
       if (ev.issue === 'defaite') note(110, 'sawtooth', 0.9, 0.05, 0.5);
       return 0;
