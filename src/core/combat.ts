@@ -500,11 +500,10 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     RANG = i;
     emettre({ kind: 'carte', rang: i, total: s.chaine.length, lignee: ligneeGeste(g), type: g.type, porteur: g.porteur, suite: a.suite, ...(g.effet ? { effet: g.effet.type } : {}) });
     for (const ev of appliquer(s, g, a.mult, i, a.suite)) emettre(ev);
-    // la Fêlure se brise sur chaque ennemi debout dont la chaîne porte la Fréquence, visé ou non (28 octobre 2026, plus intuitif) ;
-    // le Flux de la Fêlure ne se gagne qu'une fois par chaîne, même si plusieurs Fêlures cèdent
-    for (const en of tousEnnemis(s)) {
-      if (en.pv > 0 && freqs[i] === en.felure && !en.felureBrisee) { briser(s, en, emettre, a.suite >= 3 && !fluxFelure); fluxFelure = true; }
-    }
+    // la Fêlure (28 octobre 2026, validé par Bryan) : une carte en brise une seule, celle du visé d'abord, sinon celle d'un autre
+    // ennemi du groupe (qui ne perd alors qu'un quart de son intention) ; le Flux de la Fêlure ne se gagne qu'une fois par chaîne
+    const fele = ciblePourFelure(s, freqs[i]);
+    if (fele) { briser(s, fele, emettre, a.suite >= 3 && !fluxFelure); fluxFelure = true; }
     phaseGardien(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) tombe(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) {
@@ -1174,6 +1173,20 @@ function fixerFelures(s: CombatEtat) {
 
 /** La part retirée à l'intention quand la Fêlure se brise : les gardiens et les blindés résistent mieux (un quart seulement) */
 export const partFelure = (en: EnnemiEtat) => (estGardien(en.id) || trait(en, 'blinde') ? REGLES.felure.partGardien : REGLES.felure.part);
+/** Un ennemi du groupe qui n'est pas visé résiste mieux : sa Fêlure ne retire que la moitié de la part habituelle (28 octobre 2026) */
+export const partFelureSur = (s: CombatEtat, en: EnnemiEtat) => (en === s.ennemi ? partFelure(en) : partFelure(en) / 2);
+/** L'ennemi dont une carte de cette Fréquence brise la Fêlure : le visé d'abord, sinon le premier autre ennemi debout */
+export const ciblePourFelure = (s: CombatEtat, f: number | undefined) =>
+  f === undefined ? undefined : [s.ennemi, ...tousEnnemis(s)].find((en) => en.pv > 0 && en.felure === f && !en.felureBrisee);
+/** Les ennemis dont la chaîne posée va briser la Fêlure (une carte, une Fêlure), pour l'aperçu */
+export function feluresPrevues(s: CombatEtat): Set<EnnemiEtat> {
+  const prises = new Set<EnnemiEtat>();
+  for (const f of frequencesEffectives(s.chaine)) {
+    const en = [s.ennemi, ...tousEnnemis(s)].find((x) => x.pv > 0 && x.felure === f && !x.felureBrisee && !prises.has(x));
+    if (en) prises.add(en);
+  }
+  return prises;
+}
 
 /** La Fréquence fêlée d'un ennemi est touchée : son intention se brise ; le Flux monte si la chaîne résonne */
 function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void, resonne: boolean) {
@@ -1181,7 +1194,7 @@ function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void,
   const trouvee = !felureVisible(en);
   en.felureBrisee = true;
   const it = intentionDe(s, en);
-  const part = partFelure(en);
+  const part = partFelureSur(s, en);
   const nom = ennemiDef(en.id).nom;
   const titre = trouvee ? 'Fêlure trouvée' : 'Fêlure';
   let retire = 0;

@@ -19,7 +19,7 @@ function preparer(ennemiId: string, felure: number): CombatEtat {
 const pvIlka = (s: CombatEtat) => s.porteurs.find((p) => p.id === 'ilka')!.pv;
 
 describe('La Fêlure', () => {
-  it('se brise aussi sur un ennemi du groupe qui n’est pas visé (28 octobre 2026)', () => {
+  it('se brise aussi sur un ennemi du groupe qui n’est pas visé, deux fois moins fort (28 octobre 2026)', () => {
     const groupe = (felure: number) => {
       const s = creerCombat({ porteurs: equipe(), ennemiId: 'pilleur', escorte: ['rampeur'], rng: 7 });
       const [vise, autre] = tousEnnemis(s);
@@ -36,8 +36,20 @@ describe('La Fêlure', () => {
     const perte = (s: CombatEtat) => (coupsAttendus(s).get('ilka') ?? []).reduce((t, c) => t + c.net, 0);
     const brise = groupe(4), rate = groupe(2);
     expect(perte(brise)).toBeLessThan(perte(rate));
+    // un quart seulement sur l'ennemi non visé (au lieu de la moitié)
+    expect(tousEnnemis(brise)[1]!.felure).toBe(4);
     lancer(brise);
-    expect(brise.journal.some((l) => l.startsWith('Fêlure') && l.includes('Rampeur'))).toBe(true);
+    expect(brise.journal.some((l) => l.startsWith('Fêlure') && l.includes('Rampeur') && l.includes('de 20 à 15'))).toBe(true);
+  });
+
+  it('une carte ne brise qu’une Fêlure : celle du visé d’abord', () => {
+    const s = creerCombat({ porteurs: equipe(), ennemiId: 'pilleur', escorte: ['rampeur'], rng: 7 });
+    for (const en of tousEnnemis(s)) { en.pv = en.pvMax = 999; en.felure = 4; }
+    s.main = [{ ...gesteDeCarte('bond@fer', 'ilka'), uid: 'a' }];
+    ajouter(s, 'a'); lancer(s);
+    const fel = s.journal.filter((l) => l.startsWith('Fêlure'));
+    expect(fel).toHaveLength(1);
+    expect(fel[0]).not.toContain('Rampeur');
   });
 
   it('chaque ennemi montre une Fréquence fêlée dès le début du combat', () => {
