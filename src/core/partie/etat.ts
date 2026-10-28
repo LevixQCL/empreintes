@@ -131,7 +131,7 @@ interface MarqueDef { nom: string; fait: Fait; seuil: number; texte: string; cou
 export const MARQUES: Record<string, MarqueDef> = {
   ilka: { nom: 'Raccourci', fait: 'expeditions', seuil: 30, quoi: 'expéditions réussies', court: '+1 place au premier tour', bonus: { places: 1 },
     texte: 'Elle connaît tous les raccourcis : +1 place dans la chaîne au premier tour de chaque combat.' },
-  doran: { nom: 'Fondations', fait: 'fondations', seuil: 20, quoi: 'combats dans les Fondations', court: '8 de bouclier au départ', bonus: { bouclier: 8 },
+  doran: { nom: 'Fondations', fait: 'fondations', seuil: 20, quoi: 'combats dans les Seuils', court: '8 de bouclier au départ', bonus: { bouclier: 8 },
     texte: 'Il couvre les siens : chaque combat commence avec 8 de bouclier d’escouade.' },
   vela: { nom: 'Lectrice', fait: 'anciens', seuil: 10, quoi: 'empreintes anciennes vaincues', court: 'insensible à la Dissonance', bonus: { lucide: true },
     texte: 'Elle lit les Échos : la Dissonance n’a plus de prise sur l’escouade.' },
@@ -147,7 +147,7 @@ export const MARQUES: Record<string, MarqueDef> = {
     texte: 'Il ne lâche rien : à chaque tour, l’escouade garde 25 % de son bouclier pour le tour suivant.' },
   guetteur: { nom: 'Guet', fait: 'anciens', seuil: 12, quoi: 'empreintes anciennes vaincues', court: '+1 carte au premier tour', bonus: { main: 1 },
     texte: 'Il voit venir de loin : au premier tour de chaque combat, ta main compte une carte de plus.' },
-  kessa: { nom: 'Née-de-mue', fait: 'fondations', seuil: 25, quoi: 'combats dans les Fondations', court: 'le bouclier renvoie 30 % des coups', bonus: { chitine: 0.3 },
+  kessa: { nom: 'Née-de-mue', fait: 'fondations', seuil: 25, quoi: 'combats dans les Seuils', court: 'le bouclier renvoie 30 % des coups', bonus: { chitine: 0.3 },
     texte: 'Sa chitine pique qui la frappe : quand le bouclier d’escouade encaisse un coup, 30 % de ce qu’il absorbe revient à l’ennemi.' },
   liane: { nom: 'Galons blancs', fait: 'scellees', seuil: 12, quoi: 'salles scellées ouvertes', court: '+1 Flux par Fêlure résonnante', bonus: { felureFlux: 1 },
     texte: 'Chaque implant est un galon : une Fêlure brisée par une chaîne qui résonne donne 1 Flux de plus.' },

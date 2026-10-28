@@ -12,7 +12,7 @@ export const LORE_CARTES: Record<string, string> = {
 
   // ---------- Génés : cartes de base ----------
   morsure: 'Les mâchoires des Génés des Fondations ont été dessinées pour broyer la coque des moules géantes. Ce qu’elles arrachent à l’ennemi, le corps le garde pour lui.',
-  carapace: 'La chitine pousse là où le coup est le plus souvent tombé. Doran a l’épaule gauche d’un scarabée : « Trente ans de poutres. Elle a appris toute seule. »',
+  carapace: 'La chitine pousse là où le coup est le plus souvent tombé. Doran a l’épaule gauche d’un scarabée : « Vingt-sept ans de poutres. Elle a appris toute seule. »',
   regenerer: 'Une cicatrice de Géné se referme en une nuit, au prix d’une faim de trois jours. Dans les Fondations, on soigne une escouade à grands bols de soupe d’algues.',
   charge: 'Avancer tête baissée sous un plafond qui s’écroule, c’est un métier. Les Génés des chantiers le font sans y penser, et ce qu’ils heurtent garde une fêlure.',
   grogner: 'Un son grave, venu de la poitrine, que les oreilles humaines sentent plus qu’elles ne l’entendent. Les bêtes des Strates hésitent. Les contremaîtres aussi.',
@@ -37,12 +37,12 @@ export const LORE_CARTES: Record<string, string> = {
   'coeur-reprise': 'On l’appelle ainsi parce qu’il repart quand on le croyait éteint. Les médecins des districts le greffent aux sauveteurs. Ceux qui en portent un ne parlent jamais de leur premier arrêt.',
 
   // ---------- Génés ----------
-  'glande-ambre': 'Une glande qui sécrète une ambre tiède, empruntée à certains arbres de l’ancien monde. Étalée sur une plaie, elle durcit, protège, puis se dissout quand la peau est neuve.',
+  'glande-ambre': 'Le cristal garde le geste d’une soigneuse des bas-fonds, qui étalait de l’ambre tiède sur les plaies. Doran le tient au harnais, contre la poitrine : il n’a jamais voulu d’une troisième souche. « Deux, c’est assez pour un seul corps. »',
   'crocs-fossiles': 'Des dents retrouvées dans la roche des premières Strates, plus vieilles que la mer. Le Graveur en a tiré une forme ; les Génés en ont fait des mâchoires.',
-  'cuir-recif': 'Une peau épaisse et rugueuse, née des coraux que la Montée a engloutis. Elle aime l’eau froide et déteste le soleil. Les Génés qui en portent vivent la nuit.',
+  'cuir-recif': 'Une peau épaisse et rugueuse, née des coraux que la mer a engloutis. Elle aime l’eau froide et déteste le soleil. Les Génés qui en portent vivent la nuit.',
   'yeux-nocturnes': 'Des yeux de chouette dorés, qui boivent la moindre lueur. Ils repèrent la fissure dans l’armure d’un ennemi comme ils repèrent la fissure dans un mur des Fondations.',
   'poumons-abysse': 'Des poumons qui tiennent vingt minutes sous l’eau trouble des Fondations. Les plongeurs des égouts les ont demandés les premiers ; les sauveteurs ont suivi.',
-  branchies: 'Deux fentes discrètes sous les côtes, héritées des poissons des bassins de pilotis. Ceux qui en portent ne craignent plus la Montée. Ils craignent la sécheresse.',
+  branchies: 'Deux fentes discrètes sous les côtes, héritées des poissons des bassins de pilotis. Ceux qui en portent ne craignent plus la mer. Ils craignent la sécheresse.',
   'carapace-mere': 'Une carapace si large qu’elle protège aussi ceux qui se tiennent derrière. Dans les Fondations, on dit d’un Géné qui en porte une qu’il « fait l’abri ».',
   'sang-ambre': 'Un sang épais, doré, qui coagule en une seconde et en partage un peu avec les autres. Les Génés le disent gravé d’après une bête des Strates qui ne mourait jamais seule.',
   'coeur-meute': 'Un cœur qui bat plus fort quand l’escouade est proche. Il prend la force de l’ennemi et la redistribue, comme une louve partage sa chasse. On ne le greffe qu’à ceux qui ne travaillent jamais seuls.',
@@ -52,7 +52,7 @@ export const LORE_CARTES: Record<string, string> = {
   'eclat-chant': 'Une boîte à musique remontée des Strates, qui joue une mélodie à trois notes, toujours la même. Plus on l’écoute, plus elle chante fort. Personne n’a jamais entendu la quatrième note.',
   'miroir-brume': 'Un miroir dont le tain est fait de brume figée. L’ennemi qui s’y regarde y voit quelqu’un d’autre que lui, et retient son geste, le temps de comprendre qui.',
   'encre-ancienne': 'Une encre qui ne sèche pas, tirée des parois des salles closes. Les signes qu’on trace avec ne veulent rien dire pour nous, mais ils fendent la pierre en séchant enfin.',
-  'meche-or': 'La mèche d’or apparaît en une nuit, chez chaque Résonant, depuis les Sept. Certains la teignent pour qu’on les laisse tranquilles. L’empreinte, elle, ne se teint pas.',
+  'meche-or': 'Chez les Sept, la mèche d’or est apparue en une nuit. Chez ceux qui sont venus après, elle met un mois. Certains la teignent pour qu’on les laisse tranquilles. L’empreinte, elle, ne se teint pas.',
   'plume-givre': 'Une plume tombée d’une ombre ailée, glacée au toucher même en plein été. Elle ralentit tout ce qu’elle effleure, à commencer par les mauvaises intentions.',
   'ombre-serpent': 'L’ombre d’un Résonant qui s’allonge au sol, bien plus loin que la lumière ne le permet, et s’enroule autour des chevilles de l’ennemi. Elle bouge toujours une seconde trop tôt.',
   'ombre-ailee': 'Quand ce Résonant se tient dans la lumière, des ailes immenses se déploient sur le mur derrière lui. Les Hauts y voient une noblesse. Les districts, un orage qui attend son heure.',
@@ -111,15 +111,15 @@ export const LORE_CARTES: Record<string, string> = {
   'machoire-miroir': 'Une mâchoire de Géné qui mord comme mordait ce qui vient de mordre. Les Veilleurs n’ont jamais réussi à la recopier : la copie mord comme l’original, et se dévore elle-même.',
   'boucle-memoire': 'Un anneau de cristal qui rejoue sans cesse la même seconde, celle du meilleur coup de son porteur. Recopié, il ne rejoue que du silence.',
   'coeur-surregime': 'Un cœur de machine monté sans frein, par un mécanicien qui voulait sauver sa sœur coincée sous un éboulis. Elle est sortie ; lui, non. Le cœur refuse depuis toute autre poitrine que celles qui acceptent d’en payer le prix.',
-  'peau-ancetre': 'La peau d’un des tout premiers Génés, sortie des Berceaux bien avant la Montée. Elle n’a jamais servi à protéger : elle sert à prendre. Ce qui la frappe y laisse son armure.',
+  'peau-ancetre': 'La peau d’un des tout premiers Génés des Fondations, relevée une seule fois, à sa mort. Toutes les copies suivantes se sont effacées. Elle n’a jamais servi à protéger : elle sert à prendre. Ce qui la frappe y laisse son armure.',
   'miroir-hauts': 'Un miroir des grandes salles des Hauts, de ceux qui renvoient les gestes avant les visages. Les Orsève en ont fait fondre toutes les copies. Celui-ci a été volé à temps.',
-  'coeur-etoile': 'On ne sait pas d’où vient ce cœur, seulement qu’il brille dans le noir comme une étoile qui n’existe plus. Il demande beaucoup à son porteur, et il rend davantage. Aucun Berceau connu n’en garde la forme.',
+  'coeur-etoile': 'On ne sait pas d’où vient ce cœur, seulement qu’il brille dans le noir comme une étoile qui n’existe plus. C’est un original, que personne n’a jamais recopié. Il demande beaucoup à son porteur, et il rend davantage.',
   'seconde-naissance': 'Une vierge que ceux d’avant n’ont jamais utilisée, rangée seule dans un Berceau. Elle ne soigne pas : elle recommence. Kessa dit qu’en la touchant, on entend un premier cri.',
   'empreinte-vive': 'Une empreinte sans visage, qui prend celui de ce qu’elle touche. Les Veilleurs se demandent si elle n’imite pas, simplement, comme ceux d’avant imitaient les vivants.',
   'silence-avant': 'Le silence qui suit une catastrophe, conservé dans une vierge de nacre. Il protège, puis rend aux vivants ce qu’ils ont de meilleur, comme pour s’excuser d’être resté si longtemps seul.',
 
   // ---------- L’Héritage du district (27 octobre 2026) : la directrice parle, dans sa lettre ----------
-  'foulee-directrice': '« Je n’ai jamais été la plus forte. J’étais toujours la première arrivée. Ces jambes-là m’ont portée à travers chaque Strate ouverte de ce district. Cours devant, directeur : les autres suivront. »',
+  'foulee-directrice': '« Je n’ai jamais été la plus forte. J’étais toujours la première arrivée. Ces jambes-là m’ont portée sur chaque passerelle de ce district, et jusqu’aux abris murés. Jamais plus bas. Cours devant, directeur : les autres suivront. »',
   'bras-fonderie': '« Ce bras a coulé les premiers piliers du district, du temps où on bâtissait à la main sur l’eau. Il ne sait rien faire de délicat. Il n’en a jamais eu besoin. »',
   'coeur-glaciere': '« Un cœur dessiné par la Glacière elle-même, avant qu’on comprenne ce qu’elle était. Il garde tout, et rend tout d’un coup. Ne le laisse jamais s’éteindre. »',
   'carapace-fondations': '« Cette carapace a tenu une nuit entière devant la porte de l’ascenseur, pendant la grande crue. Personne n’est passé. Elle se souvient de chaque coup, et les rend. »',
@@ -134,14 +134,14 @@ export const LORE_CARTES: Record<string, string> = {
 export const loreCarte = (cle: string): string | null => LORE_CARTES[cle.split('@')[0]!] ?? null;
 
 /**
- * Le rang d'une empreinte selon son métal (Bible, 23 octobre 2026 : « le métal dit le rang »). Une carte de fer est une
- * copie lointaine d'une compétence, une carte de nacre en est la vierge : jamais portée par un humain, tirée d'un Berceau.
+ * Le rang d'une empreinte selon son métal (décisions du 28 octobre 2026 : « le métal dit combien de fois l'empreinte a été
+ * recopiée ») : nacre jamais (l'original), or une fois, argent deux, cuivre trois à cinq, fer davantage.
  * C'est pourquoi on trouve une carte directement dans son métal, et les métaux rares plus bas, où l'on a moins copié.
  */
 export const RANG_METAL: Record<import('./types').Rarete, { rang: string; texte: string }> = {
-  fer: { rang: 'Copie lointaine', texte: 'Recopiée tant de fois que le geste a perdu ses détails. Il en reste l’essentiel, et c’est déjà beaucoup.' },
-  cuivre: { rang: 'Copie de copie', texte: 'Passée par plusieurs porteurs : chacun en a perdu un peu, chacun en a inventé un peu.' },
-  argent: { rang: 'Copie de famille', texte: 'Relevée à la mort de son porteur et transmise avec soin. Elle se souvient encore de ses deux derniers visages.' },
-  or: { rang: 'Première copie', texte: 'Un seul passage la sépare de l’original. Les Hauts en gardent beaucoup, et les districts presque aucune.' },
-  nacre: { rang: 'Vierge', texte: 'Jamais portée par un humain. Elle sort d’un Berceau telle que ceux d’avant l’ont rangée.' },
+  fer: { rang: 'Copie lointaine', texte: 'Recopiée plus de cinq fois, de pierre neuve en pierre neuve. Le geste a perdu ses détails ; il en reste l’essentiel, et c’est déjà beaucoup.' },
+  cuivre: { rang: 'Copie de copie', texte: 'Recopiée trois à cinq fois. Chaque pierre neuve en a perdu un peu, et inventé un peu.' },
+  argent: { rang: 'Deuxième copie', texte: 'Recopiée deux fois : relevée à la mort d’un porteur, gravée sur une pierre neuve, puis encore une fois.' },
+  or: { rang: 'Première copie', texte: 'Recopiée une seule fois : un seul passage la sépare de l’original. Les Hauts en gardent beaucoup, et les districts presque aucune.' },
+  nacre: { rang: 'Vierge', texte: 'Jamais recopiée : c’est l’original. Une vierge de Berceau pour une empreinte ancienne, la gravure faite sur le Donneur lui-même pour un geste humain.' },
 };

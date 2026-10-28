@@ -145,28 +145,28 @@ export const PLANS: Plan[] = [
     '« Ça sentait comme une pièce d’où quelqu’un vient de sortir », dira un ouvrier. On l’appelle la Strate zéro. Il y en a d’autres.'] },
   { epoque: 'Six ans d’études', titre: 'Les empreintes', annees: [2062, 2068], ambiance: 'cristal', camera: 'approche', fonds: [f('06-empreintes')], scene: empreintes, court: ["Dans les murs, des cristaux. Chacun garde l’empreinte d’un être : ses gestes, sa force. Certains sont plus anciens que nous : dragons, esprits, sans-nom."], lignes: [
     'Dans les murs, des cristaux. Chacun garde l’empreinte d’un être : ses gestes, sa force, une part de ce qu’il était.',
-    'En 2068, on apprend à graver nos propres empreintes et à les greffer. Le geste d’un vieux soudeur survit dans d’autres mains.',
+    'En 2068, on apprend à graver nos propres empreintes et à les monter dans des outils. Le geste d’un vieux soudeur survit dans d’autres mains.',
     'Mais les cristaux des Strates sont déjà habités. Par des êtres plus anciens que nous : dragons, esprits, sans-nom.'] },
-  { epoque: 'Vingt ans', titre: 'L’Ascension', annees: [2071, 2090], ambiance: 'or', camera: 'monte', fonds: [f('07-ascension')], scene: ascension, court: ["Greffés d’empreintes anciennes, quelques-uns deviennent les Résonants, une mèche d’or dans les cheveux. Leurs familles finissent au-dessus des nuages : les Hauts."], lignes: [
+  { epoque: 'Vingt ans', titre: 'L’Ascension', annees: [2071, 2090], ambiance: 'or', camera: 'monte', fonds: [f('07-ascension')], scene: ascension, court: ["Greffés d’empreintes anciennes, quelques-uns deviennent les Résonants, une mèche d’or dans les cheveux. Leurs familles s’installent au sommet des tours, puis lèvent des îles au-dessus des nuages : les Hauts."], lignes: [
     'En 2071, sept volontaires reçoivent en secret des empreintes anciennes. Une mèche d’or leur pousse en une nuit. Leur ombre change.',
     'Ils sentent les tempêtes avant les machines, apaisent une foule d’un mot, et seuls savent éveiller les cristaux anciens : ce sont les Résonants. Certains sauvent des villes, d’autres les prennent.',
-    'Leurs familles s’installent au sommet des tours. Bientôt, les Hauts s’en détacheront : des îles qui flottent au-dessus des nuages. Personne en bas ne demande comment.'] },
+    'Leurs familles s’installent au sommet des tours. De 2090 à 2097, elles lèvent des îles qui flottent au-dessus des nuages : les Hauts. Personne en bas ne demande comment.'] },
   { epoque: 'Pendant ce temps, en bas', titre: 'La Réponse', annees: [2090, 2100], ambiance: 'atelier', camera: 'droite', fonds: [f('08-reponse')], scene: lignees, court: ["En bas, on se refait autrement : la machine donne les Augmentés, la génétique les Génés. Trois lignées, nées de la même peur."], lignes: [
     'Les empreintes anciennes sont rares, et les Hauts gardent les meilleures. Alors le reste de l’humanité se refait autrement.',
     'La machine donne les Augmentés. Leurs premiers implants à cœur de cristal servent à une chose : brouiller les Résonants.',
     'La génétique donne les Génés, qui empruntent au vivant ce qui résiste à l’eau et au noir. Trois lignées, nées de la même peur.'] },
   { epoque: 'Vingt ans de calme', titre: 'On a oublié, encore', annees: [2101, 2121], ambiance: 'nuit', camera: 'recule', texte: 'haut', fonds: [f('09-oubli')], scene: oubli, court: ["Vingt ans de calme. Les districts élisent leurs directeurs, on se dispute ce qu’on a déterré… et les lignes bleues des vieux murs passent sous la marée."], lignes: [
-    'En 2101, les Accords mettent fin à dix ans de grèves : les Hauts gouvernent, les districts élisent leurs directeurs.',
+    'En 2101, deux ans après la Grève des pompes, les Accords ramènent le calme : les Hauts gouvernent, les districts élisent leurs directeurs.',
     'Une question reste « à préciser » : à qui appartient ce qui dort sous les piliers ? Les factions se la disputent encore.',
     'Pendant ce temps, les Fondations se fissurent. La mer remonte, et les lignes bleues des vieux murs passent sous la marée.',
     'On se dispute ce qu’on a déterré, et on oublie ce qui monte. Vingt secondes entre la météo et le sport. Comme avant.'] },
-  { epoque: 'Vertiga', titre: 'Ce qui dort en dessous', annees: [2121, 2121], ambiance: 'profondeur', camera: 'descend', texte: 'haut', fonds: [f('10-dessous')], scene: strates, court: ["Sous chaque district, les Strates descendent, toujours plus anciennes. Plus on descend, plus les trouvailles sont puissantes, et plus il est difficile d’en remonter."], lignes: [
-    'Sous chaque district, il y a d’abord les abris murés des années 2060. Plus bas, les Strates, toujours plus anciennes.',
-    'On en remonte des cristaux d’empreinte. Greffés, ils font les Résonants ; gravés, ils font battre les implants des Augmentés. Chacun peut armer quelqu’un.',
+  { epoque: 'Vertiga', titre: 'Ce qui dort en dessous', annees: [2121, 2121], ambiance: 'profondeur', camera: 'descend', texte: 'haut', fonds: [f('10-dessous')], scene: strates, court: ["Sous chaque district, un puits descend vers les mêmes Strates, toujours plus anciennes. Plus on descend, plus les trouvailles sont puissantes, et plus il est difficile d’en remonter."], lignes: [
+    'Sous chaque district, un puits descend : d’abord ses pompes noyées, puis ses abris murés des années 2060. Plus bas, tous les puits débouchent dans les mêmes Strates, toujours plus anciennes.',
+    'On en remonte des cristaux d’empreinte. Greffés, ils font les Résonants. Tenus contre la peau, dans un harnais de fouille, ils prêtent leur geste le temps d’un combat.',
     'Plus on descend, plus les trouvailles sont puissantes, et plus il est difficile d’en remonter.'] },
-  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-toi')], scene: toi, court: ["Hier, ton district t’a élu à sa tête. Ce matin, sous sa vieille tour, on a ouvert une porte scellée depuis soixante ans.", "Une coursière, un ancien des Fondations et une lectrice d’empreintes t’attendent en bas. Descends. Regarde tout."], lignes: [
+  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-toi')], scene: toi, court: ["Hier, ton district t’a élu à sa tête. Ce matin, sous sa vieille tour, on a ouvert une porte scellée depuis cinquante-cinq ans.", "Une coursière, un ancien des Fondations et une lectrice d’empreintes t’attendent en bas. Descends. Regarde tout."], lignes: [
     'Hier, ton district t’a élu à sa tête : quelques piliers reliés par des passerelles, une Forge au ralenti, une vieille tour.',
-    'Ce matin, sous la tour, on a ouvert une porte scellée depuis soixante ans. Derrière, des dizaines d’empreintes, mêlées.',
+    'Ce matin, sous la tour, on a ouvert une porte scellée depuis cinquante-cinq ans. Derrière, des dizaines d’empreintes, mêlées.',
     'Au même moment, dans les Hauts, des Résonants se réveillent sans savoir qui ils sont. Tout Vertiga va vouloir cette porte.',
     'Une coursière, un ancien des Fondations et une lectrice d’empreintes t’attendent en bas. Descends. Regarde tout.'] },
 ];

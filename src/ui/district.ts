@@ -1235,7 +1235,7 @@ const REPLIQUES: { id: string; texte: string }[] = [
   { id: 'vela', texte: '« Quelque chose a peur, derrière cette porte. Et ce n’est pas moi. »' },
   // pourquoi ces trois-là : chacun dit ce qui l'amène (22 octobre 2026, Bryan : « c'est à expliquer dans le jeu »)
   { id: 'ilka', texte: '« Les ouvriers m’ont envoyée te chercher à l’aube. Quand ça presse, c’est moi qu’on envoie. Et là, ça presse. »' },
-  { id: 'doran', texte: '« En dessous, il y a les couloirs qu’on a murés en 2060. Je suis le dernier à savoir où ils passent. »' },
+  { id: 'doran', texte: '« En dessous, il y a les couloirs qu’on a murés en 2066. Je suis le dernier à savoir où ils passent. »' },
   { id: 'vela', texte: '« Oui, j’ai une mèche d’or. Mais je suis d’ici, pas des Hauts. Ce qui dort derrière, je l’entends : vous ne descendrez pas sans moi. »' },
 ];
 
@@ -1366,7 +1366,9 @@ function htmlChapitre(e: EcranDistrict, id: string): string {
 
 // ---------- La Tour du Noyau en coupe ----------
 
-const NOMS_ETAGES = ['Salle de fouilles', 'Bunker des années 2060', 'Galerie aux formes courbes', 'Ruines lumineuses'];
+/** Les dix Strates nommées (décisions du 28 octobre 2026) ; au-delà de −10, un seul libellé pour tout le Fond */
+const NOMS_ETAGES = ['Les Pompes noyées', 'Les Abris murés', 'La Galerie aux lueurs', 'Les Portes rondes', 'Le Treillis',
+  'Le Mur de 2066', 'Les Deux Rives', 'La Ruche d’ambre', 'Le Ciel d’en bas', 'Le Puits d’avant', 'Sous le Puits d’avant'];
 
 /** la barre d'expérience, fine et dorée, sous la jauge de PV */
 export function barreXp(j: EcranDistrict['j'], id: string): string {

@@ -8,10 +8,10 @@ const geste = (f: number, uid: string): Geste => ({ id: uid, uid, porteur: 'ilka
 
 describe('Les zones des Strates', () => {
   it('chaque profondeur a sa zone, et chaque ennemi de zone existe', () => {
-    expect(zoneDe(1).nom).toBe('Les Fondations');
-    expect(zoneDe(5).nom).toBe('Les salles closes');
-    expect(zoneDe(8).nom).toBe('Les mémoires contradictoires');
-    expect(zoneDe(14).nom).toBe('Le fond');
+    expect(zoneDe(1).nom).toBe('Les Seuils');
+    expect(zoneDe(5).nom).toBe('Les Salles closes');
+    expect(zoneDe(8).nom).toBe('Les Registres');
+    expect(zoneDe(14).nom).toBe('Le Fond');
     for (const z of ZONES) for (const id of [...z.ennemis, z.boss]) expect(ENNEMIS.some((e) => e.id === id)).toBe(true);
   });
 

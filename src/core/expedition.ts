@@ -381,8 +381,8 @@ export function nouvelleExploration(opts: {
     strate: opts.strate, sequence: [], index: -1, porteurs: opts.porteurs, deck: opts.deck, combat: attente,
     butin: 0, terminee: false, cloture: true, carte, phase: 'carte', gagnes: 0, gains: gainsVides(),
     recit: opts.fouille
-      ? `L’escouade descend fouiller ${ZONES[carte.zone]!.nom.toLowerCase()}. Pas de gardien cette fois : le filon est au fond.`
-      : `L’escouade entre dans ${ZONES[carte.zone]!.nom.toLowerCase()}. Choisis ton chemin : le gardien attend tout au fond.`,
+      ? `L’escouade descend fouiller ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Pas de gardien cette fois : le filon est au fond.`
+      : `L’escouade entre dans ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Choisis ton chemin : le gardien attend tout au fond.`,
     ...(opts.fouille ? { fouille: opts.fouille } : {}),
     ...(opts.facteur && opts.facteur !== 1 ? { facteur: opts.facteur } : {}),
     ...(opts.bonus ? { bonus: opts.bonus } : {}),

@@ -132,18 +132,18 @@ export const FRAGMENTS: Fragment[] = [
     ],
   },
   {
-    id: 'patient-5', titre: 'Patient 5', support: 'Une page arrachée au carnet d’un médecin',
+    id: 'patient-5', titre: 'Patient 6', support: 'Une page arrachée au carnet d’un médecin',
     lignes: [
-      'Troisième jour après la greffe. Le patient 5 me demande des nouvelles d’une mer dont personne ici n’a jamais entendu parler.',
-      'Vingt ans plus tard, il dessine toujours la même côte, avec ses criques et ses courants. Aucune carte ne la connaît.',
+      'Troisième jour après la greffe. Le patient 6 me demande des nouvelles d’une mer dont personne ici n’a jamais entendu parler.',
+      'Vingt ans plus tard, note de ses gardiens, au cœur de la première île : entre deux sommeils, il dessine toujours la même côte, avec ses criques et ses courants. Aucune carte ne la connaît.',
       'Ajout des Veilleurs, 2118 : son dessin correspond trait pour trait aux murs gravés d’une salle de la Strate −9.',
     ],
   },
   {
     id: 'formes', titre: 'Ce qu’ils voulaient être', support: 'Une note de travail des Veilleurs',
     lignes: [
-      'Dans les couches profondes, les formes sont rares et nettes : un dragon entier, un grand esprit aux contours précis.',
-      'Plus haut, on retrouve les mêmes dragons, mais recopiés cent fois, aux contours qui tremblent, et de plus en plus d’êtres sans nom.',
+      'Dans les couches profondes, les plus vieilles formes sont rares et nettes : un dragon entier, un grand esprit aux contours précis.',
+      'À côté d’elles, et plus haut, on retrouve les mêmes dragons, mais recopiés cent fois, aux contours qui tremblent, et de plus en plus d’êtres sans nom.',
       'Hypothèse : ce ne sont pas leurs corps, mais les visages qu’ils se donnaient. Les derniers ne savaient plus lequel choisir.',
     ],
   },
@@ -159,8 +159,8 @@ export const FRAGMENTS: Fragment[] = [
     id: 'noms', titre: 'La colonne des noms', support: 'Le relevé d’une table gravée',
     lignes: [
       'Colonne 1 : un nom. Colonne 2 : une date. Colonne 3 : les empreintes reçues, d’une à trente-deux.',
-      'Sur les tables des couches plus hautes, donc plus récentes, la colonne des noms rétrécit, puis disparaît.',
-      'Sur les plus récentes, il ne reste que les empreintes, et à côté de chacune, le nombre de fois où elle a été portée.',
+      'À côté, sur le même mur, d’autres tables, gravées plus tard et d’une main maladroite : la colonne des noms rétrécit, puis disparaît.',
+      'Sur celles-là, il ne reste que les empreintes, et à côté de chacune, le nombre de fois où elle a été recopiée.',
     ],
   },
   {
@@ -191,25 +191,28 @@ export const FRAGMENTS: Fragment[] = [
     id: 'pas-notre-cote', titre: 'Pas de notre côté', support: 'Un rapport de chantier de 2066, signé de quatre ouvriers',
     lignes: [
       'Chantier d’abris, niveau 7. Pose du mur de condamnation terminée à 4 h 10. Quatre hommes, deux tonnes de béton.',
-      'Pendant la prise, un bruit de l’autre côté. Pas un éboulement : un loquet qu’on tire, lentement, comme on ferme chez soi pour la nuit.',
+      'Pendant la prise, des pleurs de l’autre côté. Puis un autre bruit. Pas un éboulement : un loquet qu’on tire, lentement, comme on ferme chez soi pour la nuit.',
       'Le contremaître a dit qu’on avait rêvé. On a signé quand même, tous les quatre. On a fermé la porte, mais pas de notre côté.',
+      'Note des Veilleurs, en marge : « Le chantier comptait le pied de la Tour comme niveau 1. »',
     ],
   },
 ];
 
 /**
- * Le premier fragment vient de la chambre scellée ; les autres, un par nouvelle Strate conquise (deux dans les Fondations).
- * D'abord les papiers humains des abris (les Chroniques y renvoient), puis, plus profond,
+ * Le premier fragment vient de la chambre scellée ; les autres, un par nouvelle Strate conquise (deux dans les Seuils).
+ * D'abord les papiers humains des abris et des Archives du district (les Chroniques y renvoient), puis, plus profond,
  * les traces de ceux d'avant et les secrets d'aujourd'hui : plus on descend, plus c'est ancien et secret.
  */
 export const ORDRE_FRAGMENTS = [
-  // la chambre, puis deux par Strate dans les Fondations (les papiers des abris auxquels renvoient les Chroniques)
+  // la chambre, puis deux par Strate dans les Seuils (les papiers des abris auxquels renvoient les Chroniques)
   'mure', 'puits-zero', 'ligne-eau', 'graveur', 'regle', 'sept', 'colonne', 'passerelle',
-  // les salles closes (−4 à −6)
+  // les Salles closes (−4 à −6)
   'seuil', 'pas-notre-cote', 'choses', 'brigade',
-  // les mémoires contradictoires (−7 à −9)
+  // les Registres (−7 à −9)
   'deux-enfances', 'voix', 'noms',
-  // le fond (−10 et plus)
-  'mise-en-garde', 'porteurs', 'formes', 'patient-5', 'berceau', 'fracture', 'pierre', 'infos',
+  // le Fond (−10 et plus)
+  'mise-en-garde', 'porteurs', 'formes', 'patient-5', 'berceau',
+  // trois papiers humains restés dans les abris, retrouvés tard (les déplacer avancerait tout l'ordre : laissés ici)
+  'fracture', 'pierre', 'infos',
 ];
 export const fragmentDef = (id: string) => FRAGMENTS.find((f) => f.id === id);

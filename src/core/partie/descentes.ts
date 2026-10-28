@@ -732,7 +732,7 @@ export function remonter(j: Jeu): Retour {
     gagnerCreuseurs(j, CREUSEURS.gardien, 'le gardien vaincu, des fouilleurs se joignent au chantier');
     nouvelleStrate = creuser(j);
     fragment = ajouterFragment(j);
-    // dans les Fondations, les abris des années 2060 rendent deux papiers par Strate
+    // dans les Seuils, les abris des années 2060 rendent deux papiers par Strate
     if (x.strate <= 3) ajouterFragment(j);
     j.composants += 20;
     cartes.push(tirerTrouvaille(j, x.strate));

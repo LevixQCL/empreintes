@@ -77,16 +77,16 @@ const apresGardien = (strate: number, boss: string, titre: string, recit: string
 
 // Dans l'ordre où elles se jouent : une scène n'est proposée que si toutes celles d'avant sont vues (sceneEnAttente).
 export const SCENES: Scene[] = [
-  // ---------- Acte I · La chambre (Les Fondations, la Confluence) ----------
+  // ---------- Acte I · La chambre (Les Seuils, la Confluence) ----------
   apresGardien(1, 'confluence', 'Elle n’est pas morte',
     'La Confluence se défait sous vos coups. Ses empreintes ne s’éteignent pas : elles coulent dans les fissures du sol, comme de l’eau qui trouve sa pente.', [
       { qui: 'vela', texte: 'Elle n’est pas morte. Elle est descendue. Elle cherche quelque chose, plus bas.' },
-      { qui: 'doran', texte: 'Par là, il n’y a que les couloirs qu’on a murés en 2060. Enfin, il n’y avait.' },
+      { qui: 'doran', texte: 'Par là, il n’y a que les couloirs qu’on a murés en 2066. Enfin, il n’y avait.' },
       { qui: 'ilka', texte: 'Un monstre fait de morts mélangés, qui connaît nos tunnels mieux que nous. Parfait.' },
       { qui: 'doran', texte: 'Et regardez par terre : des traces de bottes, toutes fraîches. Quelqu’un est passé avant nous.' },
     ]),
   entree(2, 'Les couloirs murés',
-    'Au retour, la chambre aux empreintes était à moitié vide. Des traces de bottes mènent vers la Strate −2, que tes creuseurs viennent d’ouvrir.', [
+    'Au retour, la chambre aux empreintes était à moitié vide. Des traces de bottes s’enfoncent vers la Strate −2, les Abris murés. Tes creuseurs viennent d’en dégager l’accès.', [
       { qui: 'yse', texte: 'Des pilleurs. Ils ont pris les cristaux de la chambre pendant que Vertiga dormait. S’ils partent au marché noir, on ne les reverra jamais.' },
       { qui: 'doran', texte: 'Ils sont passés par l’ancien puits d’aération. Je connais le chemin. Mon père le connaissait mieux.' },
       { qui: 'vela', texte: 'Les cristaux qu’ils emportent ont peur. Je les entends d’ici. Et la Confluence les entend aussi.' },
@@ -101,7 +101,7 @@ export const SCENES: Scene[] = [
       { qui: 'hald', texte: 'Votre directeur décidera. En attendant, mes Brigades suivent la Confluence. Avec ou sans vous.' },
     ]),
   entree(3, 'Dans le noir',
-    'La Strate −3 n’a jamais vu une lampe. Les Brigades de la capitaine Hald y sont entrées hier ; aucune patrouille n’est remontée.', [
+    'À la Strate −3, aucune lampe humaine ne s’est jamais arrêtée. Tous les puits de Vertiga y débouchent. Les Brigades de la capitaine Hald y sont entrées hier, par le leur ; aucune patrouille n’est remontée.', [
       { qui: 'nuit', texte: 'Le noir n’est pas vide. Vos soldats sont vivants : je les entends respirer, loin, en bas.', si: present('nuit') },
       { qui: 'vela', texte: 'Les soldats sont vivants. Je les sens, loin en bas, serrés les uns contre les autres.', si: absent('nuit') },
       { qui: 'doran', texte: 'La Confluence s’est arrêtée quelque part en dessous. Elle a fini de chercher.' },
@@ -119,12 +119,12 @@ export const SCENES: Scene[] = [
 
   // ---------- Acte II · Les salles closes (le Gardien des registres) ----------
   entree(4, 'Fermées de l’intérieur',
-    'Sous les Fondations commencent les salles closes : des portes rondes, verrouillées de l’intérieur. Quelque part en dessous, l’accès du niveau 7, que le district a muré après « l’incident du 14 ».', [
-      { qui: 'doran', texte: 'L’ordre de service de la chambre porte le tampon de l’équipe de mon père. Ils ont muré quelque chose, ici, en 2066. Je veux savoir quoi.' },
+    'Sous la Galerie aux lueurs commencent les salles closes : des portes rondes, verrouillées de l’intérieur. Plus bas, à la Strate −6, l’accès du niveau 7, que le district a muré après « l’incident du 14 ».', [
+      { qui: 'doran', texte: 'L’ordre de service de la chambre porte le tampon de l’équipe de mon père. Ils ont muré quelque chose, plus bas, en 2066. Je veux savoir quoi.' },
       { qui: 'hald', texte: 'Mes Brigades ouvrent la marche, comme convenu. Les Hauts paient bien ceux qui ne posent pas de questions.', si: garde('orseve') },
       { qui: 'hald', texte: 'Le district a choisi de garder la chambre. Les salles closes, ce sera nous. Ne vous trouvez pas sur notre chemin.', si: garde('district') },
       { qui: 'tobin', texte: 'Les Veilleurs descendent avec vous. On note tout. Même ce qui nous fait peur. Surtout ça.', si: garde('commission') },
-      { qui: 'kessa', texte: 'On m’a fait muer pour ces couloirs-là, quand j’étais petite. Je n’en ai jamais vu le bout. Ce sera le bon jour.', si: present('kessa') },
+      { qui: 'kessa', texte: 'Mes parents ont mué pour ces couloirs-là. Moi, je suis née comme ça. Je n’en ai jamais vu le bout. Ce sera le bon jour.', si: present('kessa') },
       { qui: 'vela', texte: 'Derrière ces portes, quelqu’un a rangé les cristaux avec soin. Comme on range une chambre avant de partir pour de bon.' },
     ], (c) => !!c.actes.chambre),
   apresGardien(4, 'gardien-registres', 'L’appel',
@@ -154,7 +154,8 @@ export const SCENES: Scene[] = [
   entree(6, 'Le niveau 7',
     'La Strate −6 s’ouvre sur un mur de béton coulé à la hâte, couvert de tampons de 2066. Derrière, quelqu’un pleure. Il n’y a personne.', [
       { qui: 'liane', texte: 'Je connais ces pleurs. Les Berceaux qu’on vide font ce bruit-là. Dans les Hauts, on met de la musique pour ne pas l’entendre.', si: present('liane') },
-      { qui: 'doran', texte: 'Mon père n’a jamais parlé de cette nuit. Il disait seulement : « On a répondu à quelqu’un. » Je crois qu’il a muré la réponse.' },
+      { qui: 'doran', texte: 'Le chantier comptait le pied de la Tour comme niveau 1. Le niveau 7, c’est ici.' },
+      { qui: 'doran', texte: 'Mon père n’a jamais parlé de cette nuit. Il n’a dit qu’une phrase : « On a fermé la porte, mais pas de notre côté. » Je n’ai jamais su ce qu’il voulait dire.' },
       { qui: 'vela', texte: 'Le Gardien des registres est derrière ce mur. Il protège ce qui pleure. Il faudra passer par lui.' },
       { qui: 'ilka', texte: 'Alors on casse le mur que ton père a construit, Doran. Désolée.' },
       { qui: 'doran', texte: 'Ne t’excuse pas. Il aurait voulu qu’on sache.' },
@@ -200,7 +201,8 @@ export const SCENES: Scene[] = [
       { qui: 'tobin', texte: 'Ils ont relevé les tables gravées. Regardez : des noms, puis de moins en moins de noms, puis seulement des empreintes. Ils ont arrêté d’écrire au milieu d’une ligne.' },
       { qui: 'vela', texte: 'La Tisseuse les garde dans un souvenir heureux. Ils ne veulent pas en sortir. Je les comprends un peu.' },
       { qui: 'joss', texte: 'Les gens qu’on retient avec de beaux souvenirs, on ne les sauve pas en criant. On leur rappelle un vrai détail. Laissez-moi faire.', si: present('joss') },
-      { qui: 'ilka', texte: 'On les ramène tous. Pas de discussion.' },
+      { qui: 'tobin', texte: 'Ce n’est pas la première équipe qu’on perd ici. Il y a des années, de la Ruche d’ambre, une seule fouilleuse est remontée. Elle tenait un éclat de table. On l’a mis sous clé.' },
+      { qui: 'ilka', texte: 'Cette fois, on les ramène tous. Pas de discussion.' },
     ]),
   apresGardien(8, 'tisseuse', 'Un vrai détail',
     'Le souvenir se déchire. Les Veilleurs s’éveillent un à un, affamés, frigorifiés, et vivants. La Tisseuse a fui une dernière fois vers le bas.', [
@@ -208,7 +210,7 @@ export const SCENES: Scene[] = [
       { qui: 'doran', texte: 'Elle ne tue personne. Elle garde. Comme le Gardien des registres. Tout, ici, garde quelque chose.' },
       { qui: 'vela', texte: 'Elle garde les noms, ceux que les tables gravées ont perdus. Elle est la dernière à s’en souvenir.' },
     ]),
-  entree(9, 'Là où personne n’est allé',
+  entree(9, 'Le Ciel d’en bas',
     'Aucun fouilleur n’a jamais dépassé la Strate −9. Avant le départ, Ysé t’a fait porter une lettre. Tu la lis à la lueur des cristaux.', [
       { qui: 'yse', texte: 'Je suis trop vieille pour te suivre, alors je t’écris. Si la Tisseuse garde des noms, demande-lui le sien. Personne ne le lui a demandé depuis longtemps, j’en suis sûre.' },
       { qui: 'vela', texte: 'Elle est là, au fond. Fatiguée. Elle tient encore tous ses fils, mais ses mains tremblent.' },
@@ -223,15 +225,16 @@ export const SCENES: Scene[] = [
     ]),
   entree(10, 'Le fond',
     'La Strate −10 ne ressemble à aucune autre. Les salles sont nettes, les cristaux clairs, les portes mieux scellées que toutes les autres. Au centre, quelqu’un est assis. Il vous attendait.', [
-      { qui: 'vela', texte: 'Une seule voix. Pas de mélange, pas de double. C’est le plus ancien de tous, et il sait exactement qui il est.' },
-      { qui: 'doran', texte: 'En 2066, mon père a répondu à quelqu’un. Je crois que c’était à lui.' },
+      { qui: 'vela', texte: 'Une seule voix, la plus ancienne de toutes. Pas de mélange, pas de double. Celui qui la porte sait exactement qui il est.' },
+      { qui: 'doran', texte: 'En 2066, mon père a entendu quelqu’un tirer un loquet. Ici, toutes les portes ont été fermées de l’intérieur.' },
       { qui: 'ilka', texte: 'On est venus jusqu’ici pour des réponses. Allons lui en demander.' },
     ]),
   apresGardien(10, 'premier-porteur', 'Le premier registre',
-    'Avant de tomber, le Premier Porteur pose la main sur une table gravée, comme pour vous la confier. Une phrase y court, plus ancienne que tout ce que vous avez vu.', [
+    'Avant de tomber, le Premier Porteur pose la main sur une table gravée, comme pour vous la confier. En haut, une phrase plus ancienne que tout ce que vous avez vu. Dessous, une ligne plus récente, de la même écriture.', [
       { qui: 'premier-porteur', texte: 'Que celui qui lit ceci compte les voix qu’il porte.' },
       { qui: 'vela', texte: '« Compte. » Le mot de la Confluence, tout en haut. Depuis le début, ils nous disaient la même chose.' },
-      { qui: 'doran', texte: 'Ils étaient comme nous. Ils se sont gravé leurs morts pour ne rien oublier, et ils se sont perdus dedans.' },
+      { qui: 'premier-porteur', texte: 'Les voix ne nous ont pas pris, elles nous ont gardés. Ne fermez rien.' },
+      { qui: 'doran', texte: 'Il est descendu seul, il a écrit ça sous la mise en garde, et il a refermé derrière lui. De l’intérieur.' },
       { qui: 'ilka', texte: 'Et nous, on a pris leurs empreintes pour des cadeaux. Il faut le dire à tout Vertiga. Mais quoi, exactement ? Ça, c’est à toi.' },
     ]),
   {
@@ -266,13 +269,13 @@ export function sceneEnAttente(c: ContexteCampagne, vues: readonly string[]): Sc
 const ENJEUX: Record<number, { titre: string; enjeu: string; ensuite: string }> = {
   1: { titre: 'La chambre s’est réveillée', enjeu: 'Quelque chose est né des empreintes mêlées de la chambre. Trouve-le, au fond de la Strate −1.', ensuite: 'La Confluence a fui vers le bas, et des pilleurs ont vidé la chambre. Perce la roche pour les suivre.' },
   2: { titre: 'Les couloirs murés', enjeu: 'Rattrape les pilleurs qui ont vidé la chambre, avant que la Confluence ne les trouve.', ensuite: 'Les Brigades de la capitaine Hald suivent la Confluence vers la Strate −3. Ne les laisse pas arriver seules.' },
-  3: { titre: 'Dans le noir', enjeu: 'Abats la Confluence pour de bon, et retrouve les patrouilles de la capitaine Hald.', ensuite: 'La Confluence est tombée, et la chambre a trouvé sa garde. Sous les Fondations, les salles closes attendent.' },
+  3: { titre: 'Dans le noir', enjeu: 'Abats la Confluence pour de bon, et retrouve les patrouilles de la capitaine Hald.', ensuite: 'La Confluence est tombée, et la chambre a trouvé sa garde. Sous les Seuils, les salles closes attendent.' },
   4: { titre: 'Fermées de l’intérieur', enjeu: 'Trouve ce que les ouvriers de 2066 ont muré, plus bas, au niveau 7.', ensuite: 'Le Gardien des registres a reculé derrière ses portes rondes. Il connaît le nom du père de Doran.' },
   5: { titre: 'Les Berceaux vides', enjeu: 'Suis le Gardien des registres jusqu’aux Berceaux que les Hauts n’ont pas encore vidés.', ensuite: 'Un inventaire signé « I. Orsève ». Plus qu’un étage avant le mur de 2066.' },
   6: { titre: 'Le niveau 7', enjeu: 'Franchis le mur de 2066 et fais tomber le Gardien des registres.', ensuite: 'Derrière le mur, des cristaux qui pleuraient, et une lettre des Hauts sur ton bureau. Plus bas, les mémoires se contredisent.' },
   7: { titre: 'Deux passerelles', enjeu: 'Trouve ce qui tisse les souvenirs, avant qu’il ne touche à ceux de l’escouade.', ensuite: 'La Tisseuse a fui vers le bas, et une équipe des Veilleurs n’est jamais remontée.' },
-  8: { titre: 'Les Veilleurs perdus', enjeu: 'Ramène l’équipe des Veilleurs, prisonnière d’un souvenir heureux.', ensuite: 'Les Veilleurs sont sauvés. La Tisseuse s’est réfugiée là où personne n’est jamais allé.' },
-  9: { titre: 'Là où personne n’est allé', enjeu: 'Retrouve la Tisseuse au fond de sa toile, et demande-lui son nom.', ensuite: 'Sous la Tisseuse, le fond. Le premier d’entre eux y attend.' },
+  8: { titre: 'Les Veilleurs perdus', enjeu: 'Ramène l’équipe des Veilleurs, prisonnière d’un souvenir heureux.', ensuite: 'Les Veilleurs sont sauvés. La Tisseuse s’est réfugiée à la Strate −9, que personne n’a jamais dépassée.' },
+  9: { titre: 'Le Ciel d’en bas', enjeu: 'Retrouve la Tisseuse au fond de sa toile, et demande-lui son nom.', ensuite: 'Sous la Tisseuse, le fond. Le premier d’entre eux y attend.' },
   10: { titre: 'Le fond', enjeu: 'Affronte le Premier Porteur et lis son registre.', ensuite: 'Le premier registre a parlé. Il ne reste qu’à choisir ce que Vertiga en saura.' },
 };
 
@@ -298,7 +301,7 @@ const GARDIENS: Record<number, { avant: string; phase: string }> = {
   7: { avant: 'Oh. Des souvenirs neufs.', phase: 'Regardez donc ce qui vous attend.' },
   8: { avant: 'Ils sont heureux, ici. Pas vous ?', phase: 'Je tisse plus vite que vous ne cassez.' },
   9: { avant: 'Je suis fatiguée. Faites vite, ou laissez-moi.', phase: 'Tous mes fils, une dernière fois.' },
-  10: { avant: 'Vous portez peu de voix. C’est bien. Combien, déjà ?', phase: 'Écoutez-les toutes, alors. Comme nous.' },
+  10: { avant: 'Vous portez peu de voix. C’est bien. Combien, déjà ?', phase: 'Écoutez-les toutes, alors. Nous les avons écoutées.' },
 };
 /** au-delà de −10, le Premier Porteur revient, sans plus rien à révéler */
 const GARDIEN_FOND = { avant: 'Encore vous. Combien de voix, cette fois ?', phase: 'Ceux d’avant ne se battent jamais seuls.' };
@@ -307,7 +310,7 @@ export const repliqueGardien = (strate: number, moment: 'avant' | 'phase') => (G
 
 // ---------- Les Porteurs parlent pendant la descente ----------
 
-/** Par zone (0 : les Fondations, 1 : les salles closes, 2 : les mémoires contradictoires, 3 : le fond) */
+/** Par zone (0 : les Seuils, 1 : les Salles closes, 2 : les Registres, 3 : le Fond) */
 const PAROLES: Record<'entree' | 'gardien', Record<string, [string, string, string, string]>> = {
   entree: {
     ilka: ['Les piliers grincent. Tant qu’ils grincent, ils tiennent.', 'Des portes fermées de l’intérieur. J’aime pas les portes qu’on n’a pas le droit d’ouvrir.', 'Si je dis un truc bizarre, secouez-moi. Ici, on n’est jamais sûr que c’est son propre souvenir.', 'C’est trop propre, ici. Comme une maison où quelqu’un attend de la visite.'],
@@ -315,14 +318,14 @@ const PAROLES: Record<'entree' | 'gardien', Record<string, [string, string, stri
     vela: ['Les cristaux d’ici ont des voix d’ouvriers. Fatiguées, mais gentilles.', 'Derrière les portes, ça dort. Ne parlez pas trop fort.', 'Les murs ici essaient de me vendre des souvenirs. Je n’achète pas.', 'Il n’y a qu’une voix, ici. Je l’entends même quand je me bouche les oreilles.'],
     sasha: ['Des câbles de 2060, encore sous tension. Quel gâchis. Je les réparerais tous, si on avait le temps.', 'Des serrures sans vis ni ressort. Ceux qui ont fait ça savaient travailler.', 'Ces automates graveurs, j’aimerais en ouvrir un. Juste un. Pour voir.', 'Rien ne rouille, ici. Rien n’a jamais servi. C’est presque triste.'],
     nuit: ['Éteignez donc vos lampes. Vous verrez mieux.', 'Il y a des yeux derrière les portes. Ils ne nous veulent pas de mal. Ils nous regardent.', 'Même dans le noir, ici, il y a des choses qui brillent pour rien. Je n’aime pas ça.', 'Le noir du fond est différent. Il est vieux. Il a l’habitude qu’on le laisse tranquille.'],
-    kessa: ['On m’a fait muer pour descendre ici. Au moins, ça sert.', 'Mes yeux d’enfant voient dans ces couloirs mieux que mes yeux d’adulte. C’est drôle, non ?', 'Mes souvenirs de mue reviennent, ici. Ceux que j’avais rangés.', 'Ceux d’avant ont choisi ce qu’ils voulaient devenir. Nous, on n’a rien choisi. Je ne sais pas qui est le plus à plaindre.'],
+    kessa: ['Je suis née avec des yeux faits pour descendre ici. Au moins, ça sert.', 'Mes yeux d’enfant voient dans ces couloirs mieux que mes yeux d’adulte. C’est drôle, non ?', 'Les récits de la mue de mes parents me reviennent, ici. Ceux que j’avais rangés.', 'Ceux d’avant ont choisi ce qu’ils voulaient devenir. Nous, on n’a rien choisi. Je ne sais pas qui est le plus à plaindre.'],
     aurel: ['Le béton des districts. Chez moi, on ne marche que sur du marbre. Ça glisse plus.', 'Ma famille connaît ces salles. Elle n’en parle jamais au dîner.', 'Mon ombre a l’air de connaître le chemin. Ça ne me rassure pas.', 'Si ma tante savait où je suis, elle ferait une syncope. C’est une bonne raison d’y être.'],
     liane: ['Je suis une Refusée, au cas où quelqu’un aurait un doute. Ici, ça ne compte pas.', 'Les Hauts ont pris ce qu’il y avait ici. Moi, je viens voir ce qu’ils ont laissé.', 'Mes implants captent des interférences. Comme si quelqu’un parlait sur toutes les fréquences à la fois.', 'Ma mère disait que le fond était un mythe. Elle disait ça de beaucoup de choses.'],
     joss: ['J’entends les gens du quartier, même d’ici. Ça me tient compagnie.', 'Il y a de la peur derrière ces portes. Pas la nôtre. Plus vieille.', 'Je sais reconnaître quelqu’un qui ment. Ici, ce sont les murs qui mentent.', 'Je n’ai jamais caché mon or ici. Personne n’est là pour le voir.'],
   },
   gardien: {
     ilka: ['Le gros morceau. On y va vite, on y va fort.', 'Je déteste les gardiens qui parlent. Celui-là parle.', 'Si elle nous montre encore un souvenir, je ferme les yeux et je frappe.', 'C’est lui. Pas de discours. On a fait tout ce chemin.'],
-    doran: ['Tenez la ligne. Je prends les coups, vous prenez le reste.', 'Il garde quelque chose. Comme nous. Ça ne veut pas dire qu’il a raison.', 'Elle tient trop de fils. On en coupe un, puis un autre.', 'Mon père a fermé une porte pour ne pas le voir. Moi, je l’ouvre.'],
+    doran: ['Tenez la ligne. Je prends les coups, vous prenez le reste.', 'Il garde quelque chose. Ça ne veut pas dire qu’il a raison.', 'Elle tient trop de fils. On en coupe un, puis un autre.', 'Mon père a fermé une porte pour ne pas le voir. Moi, je l’ouvre.'],
     vela: ['Elle a peur, elle aussi. Ne la laissez pas nous entraîner dedans.', 'Il récite. Il n’entend plus. Il faudra le faire taire.', 'Je ne regarde pas ses fils. Si je les regarde, je les suis.', 'Il sait qui il est. C’est pour ça qu’il est si fort.'],
   },
 };

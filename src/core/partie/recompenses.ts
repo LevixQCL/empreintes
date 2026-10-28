@@ -192,7 +192,7 @@ export function quitterPostes(j: Jeu, escouade: string[]): void {
 /** La lettre de la directrice : la première question choisit la lignée (ou la Clé), la seconde la voie */
 export const LETTRE_LEGS = {
   titre: 'La lettre de la directrice',
-  texte: 'Sous la Tour du Noyau, derrière une plaque que personne n’avait pensé à dévisser, un coffre de nacre et une lettre. « Directeur, j’ai tenu ce district avant toi. Les Hauts vident les Berceaux ; j’ai sauvé ce que j’ai pu. Dix vierges, jamais portées. Une seule est pour toi : dis-moi qui tu es, et je te dirai laquelle. »',
+  texte: 'Sous la Tour du Noyau, derrière une plaque que personne n’avait pensé à dévisser, un coffre de nacre et une lettre. « Directeur, j’ai tenu ce district avant toi. Les Hauts vident les Berceaux ; j’ai sauvé ce que j’ai pu. Dix vierges, jamais recopiées. Une seule est pour toi : dis-moi qui tu es, et je te dirai laquelle. »',
   question: 'Qu’est-ce qui tient un district debout ?',
   lignees: [
     { id: 'tech', nom: 'La machine', phrase: 'Des mains qui réparent ce que les autres jettent.' },

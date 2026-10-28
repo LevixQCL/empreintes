@@ -22,7 +22,7 @@ export const PORTEURS: PorteurDef[] = [
   { id: 'kessa', nom: 'Kessa', lignee: 'bio', pvMax: 40, nomme: true,
     arrivee: { strate: 4, replique: 'On n’a rien choisi. Mais on est les seuls à pouvoir dire ce que ça fait.' } },
   { id: 'liane', nom: 'Liane Orsève', lignee: 'tech', pvMax: 34, nomme: true,
-    arrivee: { strate: 6, replique: 'Ils m’ont pris la mèche d’or. J’ai fait pousser autre chose.' } },
+    arrivee: { strate: 6, replique: 'Ils m’ont refusé la mèche d’or. J’ai fait pousser autre chose.' } },
   { id: 'joss', nom: 'Joss', lignee: 'reso', pvMax: 29, nomme: true,
     arrivee: { accord: true, replique: 'J’ai passé des années à cacher l’or des autres. Le mien, je le laisse briller.' } },
 ];
@@ -367,7 +367,7 @@ export const ENNEMIS: EnnemiDef[] = [
       { type: 'bouclier', v: 12 },
     ],
   },
-  // ---------- Les salles closes (−4 à −6) ----------
+  // ---------- Les Salles closes (−4 à −6) ----------
   {
     id: 'brigadier', nom: 'Brigadier du Serment', lignee: 'reso', tag: 'BRIGADES DU SERMENT DE VEYR', pvMax: 85,
     traits: [{ type: 'furie' }],
@@ -412,7 +412,7 @@ export const ENNEMIS: EnnemiDef[] = [
       { type: 'bouclier', v: 14 },
     ],
   },
-  // ---------- Les mémoires contradictoires (−7 à −9) ----------
+  // ---------- Les Registres (−7 à −9) ----------
   {
     id: 'double', nom: 'Double', lignee: 'reso', tag: 'ÉCHO DÉDOUBLÉ', pvMax: 90,
     traits: [{ type: 'essaim', part: 0.35 }, { type: 'assimilation' }],
@@ -457,7 +457,7 @@ export const ENNEMIS: EnnemiDef[] = [
       { type: 'atk', nom: 'Fil', v: 12, cible: 'hasard' },
     ],
   },
-  // ---------- Le fond (−10 et plus) ----------
+  // ---------- Le Fond (−10 et plus) ----------
   {
     id: 'premier-porteur', nom: 'Le Premier Porteur', lignee: 'reso', tag: 'BOSS · CEUX D’AVANT', pvMax: 185,
     traits: [{ type: 'evanescent', part: 0.3 }],
@@ -473,9 +473,9 @@ export const ENNEMIS: EnnemiDef[] = [
       { type: 'bouclier', v: 16 },
     ],
   },
-  // ---------- Les Fondations (−1 à −3), en plus du Rémanent et de la Vigie ----------
+  // ---------- Les Seuils (−1 à −3), en plus du Rémanent et de la Vigie ----------
   {
-    id: 'rampeur', nom: 'Rampeur des piliers', lignee: 'bio', tag: 'FAUNE DES FONDATIONS', pvMax: 80,
+    id: 'rampeur', nom: 'Rampeur des piliers', lignee: 'bio', tag: 'FAUNE DES SEUILS', pvMax: 80,
     traits: [{ type: 'regeneration', part: 0.04 }],
     motif: [
       { type: 'atk', nom: 'Morsure', v: 9, cible: 'faible' },
@@ -570,10 +570,10 @@ export const FAVEUR_CONDITION: Record<string, Lignee> = { inondee: 'bio', couran
  * Une expédition = deux combats tirés dans la zone, puis son gardien.
  */
 export const ZONES: { nom: string; jusqua: number; ennemis: string[]; boss: string }[] = [
-  { nom: 'Les Fondations', jusqua: 3, ennemis: ['remanent', 'vigie', 'rampeur', 'pilleur', 'sauvage'], boss: 'confluence' },
-  { nom: 'Les salles closes', jusqua: 6, ennemis: ['brigadier', 'echo-veilleur', 'sentinelle-verre', 'remanent'], boss: 'gardien-registres' },
-  { nom: 'Les mémoires contradictoires', jusqua: 9, ennemis: ['double', 'essaim-ambre', 'automate-graveur', 'echo-veilleur'], boss: 'tisseuse' },
-  { nom: 'Le fond', jusqua: Infinity, ennemis: ['double', 'automate-graveur', 'sentinelle-verre', 'echo-veilleur'], boss: 'premier-porteur' },
+  { nom: 'Les Seuils', jusqua: 3, ennemis: ['remanent', 'vigie', 'rampeur', 'pilleur', 'sauvage'], boss: 'confluence' },
+  { nom: 'Les Salles closes', jusqua: 6, ennemis: ['brigadier', 'echo-veilleur', 'sentinelle-verre', 'remanent'], boss: 'gardien-registres' },
+  { nom: 'Les Registres', jusqua: 9, ennemis: ['double', 'essaim-ambre', 'automate-graveur', 'echo-veilleur'], boss: 'tisseuse' },
+  { nom: 'Le Fond', jusqua: Infinity, ennemis: ['double', 'automate-graveur', 'sentinelle-verre', 'echo-veilleur'], boss: 'premier-porteur' },
 ];
 export const zoneDe = (strate: number) => ZONES.find((z) => strate <= z.jusqua)!;
 

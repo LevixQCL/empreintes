@@ -24,7 +24,7 @@ export const ORIGINES: Record<string, PalierOrigine[]> = {
   ilka: [
     { niveau: 1, titre: 'La passerelle', texte: 'Ilka avait quatorze ans quand la passerelle des Hauts-Ponts a cédé sous elle. La rouille la rongeait depuis des années ; une fissure avait été signalée trois fois. Le Présage n’avait rien dit, puisque rien de soudain ne s’annonçait. Elle est tombée entre deux piliers, les jambes prises sous la passerelle, l’eau jusqu’au menton.' },
     { niveau: 4, titre: 'Celui qui a plongé', texte: 'Un ouvrier des Fondations a plongé sans hésiter : un Géné aux poumons d’amphibien, qui tient sous l’eau bien plus longtemps qu’un humain. Il lui a tenu la tête hors de l’eau pendant deux heures, jusqu’à ce qu’on relance les pompes. C’était Doran. Elle ne l’en a jamais remercié à voix haute. Elle lui garde la meilleure part de chaque marché.' },
-    { niveau: 8, titre: 'Le goût de la pièce', texte: 'La Clinique n’a pas pu sauver ses jambes. Ilka a signé un prêt-de-vie : quinze ans de courses contre des jambes neuves. Leur cœur de cristal porte le geste d’une coursière des années 2070 qu’elle n’a jamais connue. Depuis, elle ne sait plus marcher lentement et parle aussi vite qu’elle court. « Je ne sais pas si c’est moi qui suis pressée, ou elle. » Ses cheveux ont blanchi en un an.' },
+    { niveau: 8, titre: 'Le goût de la pièce', texte: 'La Clinique n’a pas pu sauver ses jambes. Ilka a signé un prêt-de-vie avec la compagnie de transport : quinze ans de courses contre des jambes neuves. Leur cœur de cristal porte le geste d’une coursière des années 2070 qu’elle n’a jamais connue. Depuis, elle ne sait plus marcher lentement et parle aussi vite qu’elle court. « Je ne sais pas si c’est moi qui suis pressée, ou elle. » Ses cheveux ont blanchi en un an.' },
     { niveau: 12, titre: 'Pim', texte: 'Si Ilka meurt avant la fin du contrat, la clause de survivance fait passer la dette à son petit frère, Pim, douze ans. C’est pour lui qu’elle accepte toutes les courses, même celles qu’on ne devrait pas accepter. Même un colis qui contenait un cristal volé.' },
   ],
   doran: [
@@ -56,7 +56,7 @@ export const ORIGINES: Record<string, PalierOrigine[]> = {
   ],
   liane: [
     { niveau: 1, titre: 'Une pierre morte', texte: 'Liane Orsève avait seize ans quand elle a tenté l’Accord, l’âge permis par les Accords. Le matin, la pierre de la famille était ternie pour toujours. On l’a envoyée « étudier ailleurs », dans un district, avec une valise et une rente. Son nom a été effacé des registres de la Maison.' },
-    { niveau: 4, titre: 'Ce qui remplace l’or', texte: 'Dans le district, une Refusée des Hauts n’est ni d’ici ni de là-haut. Liane a choisi les implants, un par un, comme on gagne des galons. Sa tête est presque blanche : on la compte parmi les Délavés. « Ils m’ont pris la mèche d’or. J’ai fait pousser autre chose. »' },
+    { niveau: 4, titre: 'Ce qui remplace l’or', texte: 'Dans le district, une Refusée des Hauts n’est ni d’ici ni de là-haut. Liane a choisi les implants, un par un, comme on gagne des galons. Sa tête est presque blanche : on la compte parmi les Délavés. « Ils m’ont refusé la mèche d’or. J’ai fait pousser autre chose. »' },
     { niveau: 8, titre: 'Les Refusés', texte: 'Liane a retrouvé d’autres Refusés des Hauts, cachés dans les districts. Plusieurs sont devenus directeurs, sans le dire. Elle tient leur liste de mémoire, et ne l’écrit nulle part.' },
   ],
   kessa: [
@@ -85,7 +85,7 @@ export const origineDe = (id: string, niveau: number) => (ORIGINES[id] ?? []).ma
 export const PRESENTATIONS: Record<string, PresentationPorteur> = {
   ilka: {
     titre: 'Coursière des Hauts-Ponts',
-    texte: 'Vingt-quatre ans, la plus rapide coursière du district, et la plus bavarde. Ses jambes mécaniques lui ont été posées en prêt-de-vie après une chute, à quatorze ans : chaque course rembourse un peu la dette. Elle connaît tous les raccourcis entre les tours.',
+    texte: 'Vingt-quatre ans, la plus rapide coursière du district, et la plus bavarde. Ses jambes mécaniques lui ont été posées en prêt-de-vie après une chute, à quatorze ans : chaque course rembourse un peu sa dette à la compagnie de transport. Elle connaît tous les raccourcis entre les tours.',
     replique: 'Je livre tout, partout, sauf les mauvaises nouvelles. Celles-là, je les fais traîner.',
     pourquoi: 'Le matin de l’ouverture, ce sont les ouvriers qui l’ont envoyée chercher le nouveau directeur : quand ça presse, c’est toujours Ilka qu’on envoie. Elle aurait pu repartir. Elle est restée, parce qu’elle connaît tous les raccourcis entre les tours et qu’une course pareille ne se refuse pas. Ses jambes d’Augmentée la portent là où les autres n’osent pas sauter.',
   },
@@ -102,7 +102,7 @@ export const PRESENTATIONS: Record<string, PresentationPorteur> = {
     pourquoi: 'Depuis que la chambre est ouverte, Véla ressent des peurs qui ne sont pas les siennes. Personne ne l’a appelée : elle est venue d’elle-même, parce qu’elle est la seule du district à savoir lire une empreinte, et qu’elle veut comprendre ce qui a peur là-dessous avant que quelqu’un d’autre ne s’en serve.',
     aParte: {
       titre: 'Une Résonante des districts',
-      texte: 'Les Résonants qu’on voit sur les écrans vivent dans les Hauts et gouvernent Vertiga. Mais les empreintes anciennes ne sont pas toutes restées là-haut, et ceux qui les portent dans les districts vivent comme leurs voisins : ils ont plus en commun avec eux qu’avec les Hauts. Beaucoup teignent leur mèche d’or pour qu’on les laisse tranquilles. Véla ne la cache plus. Le district la connaît depuis quinze ans : c’est elle qu’on va chercher quand un fouilleur remonte un cristal, ou quand la Clinique ne comprend pas ce qui arrive à un malade.',
+      texte: 'Les Résonants qu’on voit sur les écrans vivent dans les Hauts et gouvernent Vertiga. Mais les empreintes anciennes ne sont pas toutes restées là-haut, et ceux qui les portent dans les districts vivent comme leurs voisins : ils ont plus en commun avec eux qu’avec les Hauts. Beaucoup teignent leur mèche d’or pour qu’on les laisse tranquilles. Véla ne la cache plus. Le district la connaît depuis vingt ans : c’est elle qu’on va chercher quand un fouilleur remonte un cristal, ou quand la Clinique ne comprend pas ce qui arrive à un malade.',
     },
   },
   sasha: {
@@ -122,8 +122,8 @@ export const PRESENTATIONS: Record<string, PresentationPorteur> = {
   },
   liane: {
     titre: 'La Refusée des Hauts',
-    texte: 'Vingt-huit ans, cousine d’Aurel, effacée des registres de la Maison Orsève le jour où sa pierre est morte. Elle a remplacé la mèche d’or par des implants, un par un : sa tête est presque blanche. Elle connaît les Hauts de l’intérieur, et les districts mieux que les Hauts.',
-    replique: 'Ils m’ont pris la mèche d’or. J’ai fait pousser autre chose.',
+    texte: 'Vingt-huit ans, cousine d’Aurel, effacée des registres de la Maison Orsève le jour où sa pierre est morte. La mèche d’or ne lui est jamais venue ; elle a choisi des implants, un par un : sa tête est presque blanche. Elle connaît les Hauts de l’intérieur, et les districts mieux que les Hauts.',
+    replique: 'Ils m’ont refusé la mèche d’or. J’ai fait pousser autre chose.',
   },
   kessa: {
     titre: 'Née-de-mue',
