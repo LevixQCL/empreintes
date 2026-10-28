@@ -110,6 +110,16 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'regard-biais': 'regard-biais',
   'mue-verre': 'mue-verre',
   'flair': 'flair',
+  'cadence-folle': 'cadence-folle',
+  'pas-chasse': 'pas-chasse',
+  'peau-ancetre': 'peau-ancetre',
+  'machoire-miroir': 'machoire-miroir',
+  'crocs-verre': 'crocs-verre',
+  'hallali': 'hallali',
+  'bond-predateur': 'bond-predateur',
+  'coeur-etoile': 'coeur-etoile',
+  'chasse-aveugle': 'chasse-aveugle',
+  'mitraille': 'mitraille',
 };
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */
