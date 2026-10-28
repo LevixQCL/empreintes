@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ajouter, coupsAttendus, creerCombat, eclater, eclatsPossibles, estGardien, lancer } from '../src/core/combat';
+import { ajouter, coupsAttendus, creerCombat, eclater, eclatsPossibles, estGardien, lancer, tousEnnemis } from '../src/core/combat';
 import { PORTEURS, gesteDeCarte } from '../src/core/donnees';
 import { REGLES } from '../src/core/regles';
 import type { CombatEtat } from '../src/core/types';
@@ -19,6 +19,27 @@ function preparer(ennemiId: string, felure: number): CombatEtat {
 const pvIlka = (s: CombatEtat) => s.porteurs.find((p) => p.id === 'ilka')!.pv;
 
 describe('La Fêlure', () => {
+  it('se brise aussi sur un ennemi du groupe qui n’est pas visé (28 octobre 2026)', () => {
+    const groupe = (felure: number) => {
+      const s = creerCombat({ porteurs: equipe(), ennemiId: 'pilleur', escorte: ['rampeur'], rng: 7 });
+      const [vise, autre] = tousEnnemis(s);
+      for (const en of tousEnnemis(s)) en.pv = en.pvMax = 999;
+      vise!.felure = 9;
+      s.intention = { type: 'bouclier', v: 10 };
+      autre!.felure = felure;
+      autre!.intention = { type: 'atk', nom: 'Coup', v: 20, cibleId: 'ilka' };
+      s.main = [{ ...gesteDeCarte('bond@fer', 'ilka'), uid: 'a' }];
+      s.flux = 0;
+      ajouter(s, 'a');
+      return s;
+    };
+    const perte = (s: CombatEtat) => (coupsAttendus(s).get('ilka') ?? []).reduce((t, c) => t + c.net, 0);
+    const brise = groupe(4), rate = groupe(2);
+    expect(perte(brise)).toBeLessThan(perte(rate));
+    lancer(brise);
+    expect(brise.journal.some((l) => l.startsWith('Fêlure') && l.includes('Rampeur'))).toBe(true);
+  });
+
   it('chaque ennemi montre une Fréquence fêlée dès le début du combat', () => {
     const s = creerCombat({ porteurs: equipe(), ennemiId: 'remanent', rng: 3 });
     expect(s.ennemi.felure).toBeGreaterThanOrEqual(1);
