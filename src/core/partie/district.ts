@@ -378,9 +378,10 @@ export const ENTRAINEMENT = {
   niveauxParNoyau: 4,
   /**
    * Les places de la salle d'entraînement selon le niveau de la Tour (index = niveau), 28 octobre 2026, Bryan :
-   * chaque palier de la Tour se ressent, sans tout ouvrir d'un coup. 1 place aux niveaux 1-2, 2 aux niveaux 3-4, 3 au dernier.
+   * chaque palier de la Tour se ressent, sans tout ouvrir d'un coup, étalé sur les dix niveaux :
+   * 1 place aux niveaux 1-2, 2 aux niveaux 3-5, 3 aux niveaux 6-8, 4 aux niveaux 9-10.
    */
-  places: [0, 1, 1, 2, 2, 3],
+  places: [0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4],
   /** durée d'une séance complète vers le niveau visé : 2 h pour le niveau 2, + 1 h 09 par niveau (≈ 23 h pour le 20) */
   heuresBase: 2,
   heuresParNiveau: 1.15,
@@ -392,9 +393,9 @@ export const ENTRAINEMENT = {
 } as const;
 /**
  * Les barques en mer en même temps selon le niveau de la Tour du Noyau (index = niveau), 28 octobre 2026, Bryan :
- * 1 aux niveaux 1-2, 2 aux niveaux 3-4, 3 au dernier. Les destinations du jour (2 à 5) laissent toujours un choix.
+ * 1 aux niveaux 1-2, 2 aux niveaux 3-5, 3 aux niveaux 6-8, 4 aux niveaux 9-10. Les destinations du jour (2 à 5) laissent un choix.
  */
-export const BARQUES = [0, 1, 1, 2, 2, 3] as const;
+export const BARQUES = [0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4] as const;
 export const barquesMax = (j: Jeu): number => BARQUES[Math.min(j.batiments.noyau, BARQUES.length - 1)] ?? 1;
 export const placesEntrainement = (j: Jeu) => ENTRAINEMENT.places[Math.min(j.batiments.noyau, ENTRAINEMENT.places.length - 1)] ?? 1;
 /** Les séances en cours (répare au passage une sauvegarde qui n'en a pas encore la liste) */
@@ -491,7 +492,11 @@ export function entrainer(j: Jeu, heures: number): string[] {
 export const COMPTOIR = {
   /** les étals de chaque jour selon le niveau du Comptoir (index = niveau ; 0 = pas encore construit) */
   etals: [[], ['fer', 'fer', 'cuivre'], ['fer', 'fer', 'cuivre', 'cuivre'], ['fer', 'cuivre', 'cuivre', 'argent'],
-    ['fer', 'fer', 'cuivre', 'cuivre', 'argent'], ['fer', 'fer', 'cuivre', 'cuivre', 'argent', 'argent']] as Rarete[][],
+    ['fer', 'fer', 'cuivre', 'cuivre', 'argent'], ['fer', 'fer', 'cuivre', 'cuivre', 'argent', 'argent'],
+    // niveaux 6 à 10 (28 octobre 2026) : plus d'étals et davantage d'argent, jamais d'or ni de nacre
+    ['fer', 'fer', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent'], ['fer', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent', 'argent'],
+    ['fer', 'fer', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent', 'argent'], ['fer', 'cuivre', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent', 'argent'],
+    ['fer', 'cuivre', 'cuivre', 'cuivre', 'argent', 'argent', 'argent', 'argent']] as Rarete[][],
   /** prix fixes : environ 1,5 fois la refabrication à la Forge (qui, elle, ne refait qu'une carte déjà trouvée) */
   prix: { fer: { composants: 40, eclats: 0 }, cuivre: { composants: 120, eclats: 0 }, argent: { composants: 300, eclats: 3 } } as Partial<Record<Rarete, { composants: number; eclats: number }>>,
   strateArgent: 4,

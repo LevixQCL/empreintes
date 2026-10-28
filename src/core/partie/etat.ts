@@ -12,11 +12,11 @@ export const VERSION_JEU = 7;
 /** Réglages du district, au même endroit pour l'équilibrage */
 export const DISTRICT = {
   /** énergie par heure selon le niveau du Générateur (index = niveau) */
-  energieParHeure: [0, 60, 110, 180, 260, 350],
+  energieParHeure: [0, 60, 110, 180, 260, 350, 450, 560, 680, 810, 950],
   /** stockage maximum selon le niveau du Noyau */
-  stockage: [0, 300, 650, 1300, 2300, 4100],
+  stockage: [0, 300, 650, 1300, 2300, 4100, 6000, 9000, 13000, 19000, 27000],
   /** points d'Usure soignés par heure selon le niveau de la Clinique */
-  soinParHeure: [0, 6, 10, 16, 22, 30],
+  soinParHeure: [0, 6, 10, 16, 22, 30, 36, 42, 48, 55, 62],
   /** durée du chantier pour atteindre un niveau, en minutes (index = niveau visé) */
   chantierMinutes: [0, 0, 0, 5, 30, 120, 240, 720, 1440, 2160, 2880],
   /** chantiers en même temps : 1, puis 2 à partir du Noyau niveau 4 */
@@ -408,7 +408,7 @@ export const ACCORD_OUVERT = { clinique: 3, confiance: CONFIANCE.accord } as con
 
 export const CREUSEURS = {
   /** creuseurs logés selon le niveau du Noyau (index = niveau) */
-  logement: [0, 4, 7, 10, 14, 24],
+  logement: [0, 4, 7, 10, 14, 24, 30, 36, 42, 50, 60],
   /** creuseurs qu'il faut pour ouvrir la Strate −n, qui y restent (au-delà de la table : +1 par Strate, au plus le logement) */
   requis: [0, 0, 2, 3, 4, 5, 6, 7, 9, 11, 13] as number[],
   parStrateEnsuite: 1,

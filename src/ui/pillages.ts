@@ -157,7 +157,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
     // allégé le 28 octobre 2026 : une phrase et trois chiffres par bloc, le détail se déplie
     + bloc(ICO.porteurs, 'Les missions en mer', 'Un Porteur libre part en barque et revient chargé, même jeu fermé.', [
       cle(ICO.chrono, `${MISSIONS.courte.heures} · ${MISSIONS.longue.heures} h`, 'courte ou longue'),
-      cle(ICO.porteurs, '1 à 3', 'barques à la fois, selon la Tour'),
+      cle(ICO.porteurs, '1 à 4', 'barques à la fois, selon la Tour'),
       cle(ICO.coffre, 'Butin', 'composants, cartes, creuseurs'),
     ])
     + bloc(ICO.grappin, 'Les pillages', 'Ton escouade attaque la garnison d’un archipel voisin de ta force.', [
@@ -174,7 +174,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
     + replie('L’histoire', `<p>Quand la mer est montée, chaque quartier s’est accroché à son pilier. Entre eux, il ne reste que l’eau, les ruines de l’ancien monde, et les passeurs qui connaissent les courants.</p>`
       + `<p>Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : on pille, on se défend, et chacun garde un œil sur son coffre.</p>`)
     + replie('Les règles en détail', `<ul class="fl-pr-etapes">`
-      + etape(ICO.porteurs, 'Un Porteur libre prend la barque', `Vers un pilier abandonné ou une ruine noyée : ${MISSIONS.courte.heures} h ou ${MISSIONS.longue.heures} h, avec des vivres et des lampes payés en énergie. Le nombre de barques en mer en même temps grandit avec la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 5.`)
+      + etape(ICO.porteurs, 'Un Porteur libre prend la barque', `Vers un pilier abandonné ou une ruine noyée : ${MISSIONS.courte.heures} h ou ${MISSIONS.longue.heures} h, avec des vivres et des lampes payés en énergie. Le nombre de barques en mer en même temps grandit avec la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 6 et 4 au niveau 9.`)
       + etape(ICO.coffre, 'Il revient chargé', 'Des composants, des doublons de cartes de sa lignée, parfois une carte nouvelle, et des rescapés qui deviennent creuseurs. L’eau froide laisse un peu d’Usure.')
       + etape(ICO.grappin, `${PILLAGE.jetonsMax} jetons, un toutes les ${recharge}`, 'Chaque pillage en coûte un. Rien ne se perd pendant ton absence : ils t’attendent.')
       + etape(ICO.atk, 'Un combat contre la garnison', 'Des archipels de ta force : de vrais directeurs, et des archipels sans directeur pour que la carte ne soit jamais vide. Un archipel par jour au plus.')

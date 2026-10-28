@@ -179,7 +179,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
 
   it('chaque séance coûte moins que le stockage de la Tour qui l’autorise', () => {
     const j = pret();
-    for (let noyau = 1; noyau <= 5; noyau++) {
+    for (let noyau = 1; noyau <= 10; noyau++) {
       j.batiments.noyau = noyau;
       j.porteurs.doran!.xp = 0;
       const max = plafondEntrainement(j);
@@ -198,10 +198,10 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
     expect(j.seances).toEqual([]);
   });
 
-  it('les places de la Tour suivent son niveau : 1, puis 2 au niveau 3, 3 au niveau 5 (28 octobre 2026)', () => {
+  it('les places de la Tour suivent son niveau : 1, puis 2 au niveau 3, 3 au 6, 4 au 9 (28 octobre 2026)', () => {
     const j = pret();
     j.energie = 5000;
-    expect([1, 2, 3, 4, 5].map((n) => { j.batiments.noyau = n; return placesEntrainement(j); })).toEqual([1, 1, 2, 2, 3]);
+    expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => { j.batiments.noyau = n; return placesEntrainement(j); })).toEqual([1, 1, 2, 2, 2, 3, 3, 3, 4, 4]);
     j.batiments.noyau = 1;
     expect(poster(j, 'doran', 'noyau').ok).toBe(true);
     // la place est prise : un autre ne chasse plus le premier

@@ -43,7 +43,7 @@ describe('Ce que rapporte le niveau suivant (22 octobre 2026)', () => {
   });
 
   it('la profondeur permise par le logement des creuseurs augmente avec la Tour, puis n’a plus de limite', () => {
-    for (let n = 2; n <= 5; n++) expect(profondeurNoyau(n)).toBeGreaterThan(profondeurNoyau(n - 1));
-    expect(profondeurNoyau(5)).toBe(Infinity);
+    for (let n = 2; n <= 10; n++) expect(profondeurNoyau(n)).toBeGreaterThan(profondeurNoyau(n - 1));
+    expect(profondeurNoyau(10)).toBe(Infinity);
   });
 });

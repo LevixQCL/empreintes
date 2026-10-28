@@ -98,9 +98,9 @@ describe('Missions', () => {
     expect(j.rapports).toHaveLength(2); // gardés pour les relire à la Tour
   });
 
-  it('les barques en mer suivent la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 5 (28 octobre 2026)', () => {
+  it('les barques en mer suivent la Tour du Noyau : 1, puis 2 au niveau 3, 3 au 6, 4 au 9 (28 octobre 2026)', () => {
     const j = avance();
-    expect([1, 2, 3, 4, 5].map((n) => { j.batiments.noyau = n; return barquesMax(j); })).toEqual([1, 1, 2, 2, 3]);
+    expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => { j.batiments.noyau = n; return barquesMax(j); })).toEqual([1, 1, 2, 2, 2, 3, 3, 3, 4, 4]);
     for (const id of ['coursier', 'docker']) poster(j, id, null);
     j.batiments.noyau = 1;
     j.energie = 2 * MISSIONS.courte.energie;

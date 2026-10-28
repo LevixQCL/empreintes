@@ -8,7 +8,7 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, destinationsPrises, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, destinationsPrises, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -557,7 +557,7 @@ function blocEntrainement(e: EcranDistrict): string {
     const auMax = presents.filter((p) => !apercuSeance(j, p.id)).length;
     if (auMax) h += `<p class="te-note">${auMax} Porteur${auMax > 1 ? 's' : ''} au niveau ${plafond} : ${plafond < XP.niveauMax ? 'monte la Tour pour aller plus loin' : 'le reste se gagne dans les Strates'}.</p>`;
   }
-  if (!libresN && j.batiments.noyau < ENTRAINEMENT.places.length - 1) {
+  if (!libresN) {
     const prochain = ENTRAINEMENT.places.findIndex((n) => n > places);
     if (prochain > 0) h += `<p class="te-note">${ICO.tour}Une place de plus au niveau ${prochain} de la Tour.</p>`;
   }
@@ -571,7 +571,7 @@ function blocEntrainement(e: EcranDistrict): string {
 function blocComptoir(e: EcranDistrict): string {
   const j = e.j;
   if (!j.batiments.comptoir) {
-    return `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}Une fois rouvert</h3><p class="fb-vide"><b>${COMPTOIR.etals[1]!.length} cartes</b> en vente chaque jour (fer et cuivre), jusqu’à ${COMPTOIR.etals[5]!.length} avec les niveaux. L’or et la nacre ne se vendent pas.</p></section>`;
+    return `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}Une fois rouvert</h3><p class="fb-vide"><b>${COMPTOIR.etals[1]!.length} cartes</b> en vente chaque jour (fer et cuivre), jusqu’à ${COMPTOIR.etals[COMPTOIR.etals.length - 1]!.length} avec les niveaux. L’or et la nacre ne se vendent pas.</p></section>`;
   }
   const c = j.comptoir;
   const demain = debutJour(c.jour + 1) - e.now;
@@ -1572,7 +1572,7 @@ export function htmlMissions(e: EcranDistrict): string {
 
   const libres = disponibles(j);
   if (!choisie) h += `<small class="aide">Le passeur a déjà emmené une barque vers chaque destination du jour : de nouvelles s’ouvrent demain à 4 h.</small>`;
-  else if (j.missions.length >= barquesMax(j)) h += `<small class="aide">${barquesMax(j) > 1 ? `Tes ${barquesMax(j)} barques sont en mer` : 'Ta barque est en mer'} : attends son retour${j.batiments.noyau < 5 ? ', ou monte la Tour du Noyau pour en armer une de plus' : ''}.</small>`;
+  else if (j.missions.length >= barquesMax(j)) h += `<small class="aide">${barquesMax(j) > 1 ? `Tes ${barquesMax(j)} barques sont en mer` : 'Ta barque est en mer'} : attends son retour${barquesMax(j) < BARQUES[BARQUES.length - 1]! ? ', ou monte la Tour du Noyau pour en armer une de plus' : ''}.</small>`;
   else if (!libres.length) h += `<small class="aide">Tous les Porteurs travaillent ou sont partis : libère-en un d’un bâtiment pour l’envoyer.</small>`;
   else {
     // le meilleur choix d'abord : affinité, puis niveau
