@@ -3,7 +3,7 @@
 // les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
 
 import { portOuvert } from './pillages';
-import { PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
+import { epitheteAffiche, epithetesDe, journalCarte, NOMS_PALIER, palierDe, vecuDe, versPalierSuivant, PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
@@ -933,7 +933,7 @@ export function feuilleCarte(e: EcranDistrict): string {
   const cout = composantsNiveau(c.niveau + 1);
   const porteurs = PORTEURS.filter((p) => p.lignee === m.lignee && porteursPresents(j).includes(p.id));
   let h = `<div class="voile-feuille" data-action="carte-fermer" aria-hidden="true"></div><section class="feuille carte-detail" role="dialog" aria-modal="true" aria-label="${echap(m.nom)}"><span class="poignee" aria-hidden="true"></span>`
-    + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR_RARETE[m.rarete]}">${NOMS_RARETE[m.rarete].toUpperCase()} · ${NOM_LIGNEE[m.lignee].toUpperCase()} · NIVEAU ${c.niveau}</span><h2>${echap(m.nom)}</h2></div>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR_RARETE[m.rarete]}">${NOMS_RARETE[m.rarete].toUpperCase()} · ${NOM_LIGNEE[m.lignee].toUpperCase()} · NIVEAU ${c.niveau}</span><h2>${echap(m.nom)}</h2>${epitheteAffiche(cle, vecuDe(j, cle)) ? `<span class="fc-epithete">${echap(epitheteAffiche(cle, vecuDe(j, cle))!)}</span>` : ''}</div>`
     + `<button type="button" class="btn-icone" data-action="guide" data-id="effets" aria-label="Les cartes et leurs effets">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
     + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}</div><div class="detail-infos">${effetsCarte(m)}</div></div>`
@@ -973,7 +973,32 @@ export function feuilleCarte(e: EcranDistrict): string {
   }
   if (requis === null && c.doublons > 0) h += `<div class="ligne-btn"><button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button></div>`;
   h += `</section>`;
+  h += blocEmpreinte(j, cle);
   return h + `</div></section>`;
+}
+
+/**
+ * L'empreinte de la carte (28 octobre 2026) : son palier, ce qui manque pour le suivant, ses épithètes à choisir et son journal.
+ * Pur prestige : la section le dit, pour qu'aucun joueur ne croie qu'une carte neuve est plus faible.
+ */
+function blocEmpreinte(j: Jeu, cle: string): string {
+  const x = vecuDe(j, cle);
+  const p = palierDe(x);
+  const suite = versPalierSuivant(x);
+  const ep = epithetesDe(cle, x);
+  const affiche = epitheteAffiche(cle, x);
+  const journal = journalCarte(x);
+  let h = `<section class="bloc fc-emp"><h3 class="titre-bloc">${ICO.cristal}Empreinte</h3>`
+    + `<div class="emp-tete"><span class="emp-palier p${p}">${p ? NOMS_PALIER[p] : 'Vierge'}</span>${affiche ? `<span class="emp-epithete">${echap(affiche)}</span>` : ''}</div>`;
+  if (suite) {
+    const part = Math.min(100, (100 * (suite.points - suite.depart)) / Math.max(1, suite.seuil - suite.depart));
+    h += `<div class="progression"><div class="jauge" style="--jc:${['#8fd0f0', '#e8be5e', '#c9a8ff'][suite.palier - 1]}"><i style="width:${part}%"></i></div><span class="chiffre">${NOMS_PALIER[suite.palier]} · ${suite.points} / ${suite.seuil}</span></div>`;
+  }
+  h += `<p class="emp-aide">${p ? 'La carte garde la trace de ses combats : ' : 'Chaque combat gagné, chaque dernier coup, chaque Fêlure brisée et chaque Gardien vaincu s’inscrivent dans la carte : '}son filigrane s’allume à chaque palier. Pur souvenir : aucun effet en combat.</p>`;
+  if (ep.length > 1) h += `<div class="emp-epithetes" role="group" aria-label="Épithète affiché">${ep.map((e) => `<button type="button" class="emp-choix" data-action="epithete" data-module="${cle}" data-id="${e.id}" aria-pressed="${e.texte === affiche}">${echap(e.texte)}</button>`).join('')}</div>`;
+  else if (!ep.length) h += `<p class="emp-aide">Premier épithète : porter le dernier coup d’un combat.</p>`;
+  if (journal.length) h += `<ul class="emp-journal">${journal.map((l) => `<li>${echap(l)}</li>`).join('')}</ul>`;
+  return h + `</section>`;
 }
 
 

@@ -8,6 +8,7 @@ import { initInstallation } from './ui/installer';
 import { initToucher, vibrer } from './ui/toucher';
 import { loupe, loupePorteur } from './ui/vue';
 import { loupeCarte } from './ui/district';
+import { brancherEmpreintes } from './ui/carte';
 import { agir } from './app/actions/index';
 import { clavier } from './app/clavier';
 import { app, compteEtat, G, K, racine, reduit } from './app/etat';
@@ -15,6 +16,9 @@ import { brancherChaine } from './app/chaine';
 import { annoncer, battre } from './app/horloge';
 import { afficher } from './app/rendu';
 import { demarrerCompte, envoyer, sauver } from './app/synchro';
+
+// l'empreinte des cartes vétéranes : chaque face lit le palier de son exemplaire dans la partie en cours
+brancherEmpreintes((cle) => (app.jeu ? J.palierCarte(app.jeu, cle) : 0));
 
 initToucher(racine, reduit);
 

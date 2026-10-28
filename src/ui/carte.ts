@@ -13,7 +13,7 @@ import { DEPART_PORTEURS, NOMS_LIGNEE, PORTEUR_EXCLUSIVES, PORTEUR_LEGS, voieDe 
 import { frequenceLibre, signeLibre } from '../core/regles';
 import { COLLECTION, NOMS_RARETE } from '../core/collection';
 import type { Effet, ModuleDef, Rarete, TypeEffet } from '../core/types';
-import { illustrationModule, portrait, textureMetal } from './art';
+import { filigrane, illustrationModule, portrait, textureMetal } from './art';
 import { COULEUR } from './vue';
 import { echap, mouvementReduit as reduit } from './outils';
 
@@ -74,6 +74,18 @@ const FX: Record<Rarete, string> = {
   nacre: '<canvas class="fc-fx fc-cristal" data-fx="cristal"></canvas><span class="fc-fx fc-holo"></span>',
 };
 
+/**
+ * L'empreinte des cartes vétéranes (28 octobre 2026, src/core/partie/vecu.ts) : le palier de chaque exemplaire.
+ * Branché une fois par l'application (la face ne connaît pas la partie) ; 0 tant qu'il n'est pas branché.
+ */
+let palierDeCarte: (cle: string) => 0 | 1 | 2 | 3 = () => 0;
+export function brancherEmpreintes(f: (cle: string) => 0 | 1 | 2 | 3) { palierDeCarte = f; }
+/**
+ * Le filigrane : une empreinte peinte (Midjourney) posée en mode lumière dans le coin haut droit, le seul libre de la face.
+ * Au repos, un murmure ; un reflet la traverse de temps en temps (Sillon, Empreinte) dans la collection, jamais en combat.
+ */
+const filigraneFace = (p: 0 | 1 | 2 | 3) => (p ? `<span class="nf-emp e${p}" style="--fil:url(${filigrane(p)})" aria-hidden="true"><i></i><b></b></span>` : '');
+
 /** Ce qu'affiche une face de carte, qu'elle soit dans la collection ou en combat */
 export interface Face {
   /** clé de la carte pour l'illustration (sans le métal) */
@@ -127,7 +139,7 @@ export function corpsFace(d: Face): string {
     : '<i class="nf-lg"></i>';
   // une carte de l'Héritage a deux effets : une ligne et une icône chacun
   const effet = effetsDe(d).map((e) => `<span class="nf-regle"><i class="nf-ico">${ICONES_EFFET[e.type]}</i><strong>${NOMS_EFFET[e.type]}</strong><span>${formuleEffet(e)}</span></span>`).join('');
-  return `<span class="nf-art">${art}${ill && d.fx ? FX[d.metal] : ''}</span>`
+  return `<span class="nf-art">${art}${ill && d.fx ? FX[d.metal] : ''}${d.carte ? filigraneFace(palierDeCarte(d.carte)) : ''}</span>`
     // une carte de l'Héritage (la seule à deux effets) porte son sceau en haut
     + (d.effet2 ? '<span class="nf-heritage">Héritage</span>' : d.seul ? '<span class="nf-heritage nf-exclusive">Exclusive</span>' : '')
     + `<span class="nf-freqs"><span class="nf-caps">${segs}${fele}</span>${d.lourd ? '<b class="nf-lourd">2 PL.</b>' : ''}</span>`

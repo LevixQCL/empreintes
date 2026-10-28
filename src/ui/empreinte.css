@@ -1,0 +1,56 @@
+/* L'empreinte des cartes vétéranes (28 octobre 2026, validée par Bryan sur le banc d'essai « Filigrane d'empreinte »).
+   Une empreinte peinte sur fond noir, posée en mode lumière : le noir disparaît, seules les lignes restent.
+   Elle entre par le coin haut droit (le cristal de Fréquence tient le haut gauche, la valeur et le nom le bas) et s'efface
+   avant le milieu de la carte. Au repos, un murmure ; dans la collection, un reflet la traverse une fois par cycle
+   (Sillon : or, toutes les 9 s ; Empreinte : irisée, toutes les 6 s) ; toucher la carte la montre en entier.
+   En combat, jamais de reflet : rien ne doit distraire pendant qu'on joue. */
+.nf-emp{position:absolute;inset:0;z-index:1;pointer-events:none;mix-blend-mode:screen;
+  -webkit-mask:radial-gradient(circle at 100% 0,#000 6%,rgba(0,0,0,.5) 26%,transparent 50%);
+  mask:radial-gradient(circle at 100% 0,#000 6%,rgba(0,0,0,.5) 26%,transparent 50%)}
+.nf-emp i,.nf-emp b{position:absolute;width:118%;aspect-ratio:540/717;left:40%;top:-44%;background:var(--fil) center/contain no-repeat}
+.nf-emp i{opacity:var(--repos);transition:opacity .35s}
+.nf-emp b{display:none}
+.nf-emp.e1{--repos:.16}
+.nf-emp.e2{--repos:.2;--eclat:.75;--cycle:9s}
+.nf-emp.e3{--repos:.28;--eclat:1;--cycle:6s}
+.nf-emp.e3 i{animation:emp-irise 7s ease-in-out infinite alternate}
+
+/* dans la collection, la boutique, les fiches : le reflet qui passe */
+.fc-carte .nf-emp.e2 b,.fc-carte .nf-emp.e3 b{display:block;opacity:var(--eclat);
+  -webkit-mask:linear-gradient(115deg,transparent 42%,#000 50%,transparent 58%) 0 0/320% 100% no-repeat;
+  mask:linear-gradient(115deg,transparent 42%,#000 50%,transparent 58%) 0 0/320% 100% no-repeat;
+  animation:emp-reflet var(--cycle) ease-in-out infinite}
+.fc-carte .nf-emp.e3 b{animation:emp-reflet var(--cycle) ease-in-out infinite,emp-irise 7s ease-in-out infinite alternate}
+/* les cartes voisines ne brillent pas d'un bloc */
+.carte-tuile:nth-child(3n+2) .nf-emp b{animation-delay:-2s}
+.carte-tuile:nth-child(3n) .nf-emp b{animation-delay:-4s}
+/* toucher la carte (la face suit le doigt : .touchee) : l'empreinte se montre en entier */
+.fc-carte.touchee .nf-emp i{opacity:calc(var(--repos) * 2.2)}
+
+@keyframes emp-reflet{0%,62%{-webkit-mask-position:100% 0;mask-position:100% 0}88%,100%{-webkit-mask-position:0 0;mask-position:0 0}}
+@keyframes emp-irise{from{filter:hue-rotate(-14deg) brightness(.92)}to{filter:hue-rotate(16deg) brightness(1.12)}}
+@media (prefers-reduced-motion:reduce){.nf-emp i,.nf-emp b{animation:none!important}}
+
+/* ---------- La fiche de la carte : la section Empreinte ---------- */
+.fc-emp .emp-tete{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.fc-emp .emp-palier{font:700 13px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:999px;
+  border:1px solid var(--emp-c);color:var(--emp-c);background:color-mix(in srgb,var(--emp-c) 12%,transparent)}
+.fc-emp .emp-palier.p0{--emp-c:#9aa6b4}
+.fc-emp .emp-palier.p1{--emp-c:#8fd0f0}
+.fc-emp .emp-palier.p2{--emp-c:#e8be5e}
+.fc-emp .emp-palier.p3{--emp-c:#c9a8ff;background:linear-gradient(100deg,rgba(232,190,94,.18),rgba(127,212,230,.18),rgba(201,168,255,.18))}
+.fc-emp .emp-epithete{font-style:italic;color:var(--ink);font-size:15px}
+.fc-emp .emp-journal{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:4px;font-size:14px;color:#C9D6E6}
+.fc-emp .emp-journal li{padding-left:14px;position:relative}
+.fc-emp .emp-journal li::before{content:"";position:absolute;left:2px;top:.62em;width:5px;height:5px;border-radius:50%;background:var(--gold);opacity:.7}
+.fc-emp .emp-epithetes{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.fc-emp .emp-choix{font:inherit;font-size:13px;font-style:italic;color:#C9D6E6;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 11px;cursor:pointer;min-height:32px}
+.fc-emp .emp-choix[aria-pressed="true"]{color:#1b1406;background:var(--gold);border-color:var(--gold);font-weight:700}
+.fc-emp .emp-choix:focus-visible{outline:2px solid #8fd0f0;outline-offset:2px}
+.fc-emp .emp-aide{font-size:13px;color:#C9D6E6;margin:8px 0 0}
+
+/* ---------- Le reçu « la carte se souvient » ---------- */
+.gain-revele.empreinte .gv-carte{position:relative;overflow:hidden}
+.gain-revele.empreinte .gv-carte::after{content:"";position:absolute;inset:0;background:var(--fil) 70% 0/170% auto no-repeat;mix-blend-mode:screen;opacity:.85}
+.carte-detail .fc-epithete{display:block;margin-top:2px;font-family:var(--display);font-size:13px;letter-spacing:.06em;color:var(--gold);font-variant:small-caps;opacity:.92}

@@ -41,6 +41,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'porteurs', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); } },
   { nom: 'deck-echange', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.eq-gerer'); await p.click('.deck-porteur [data-action="dk-porte"]'); } },
   { nom: 'cartes', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.seg[data-action="cartes"]'); } },
+  // la fiche d'une carte vétérane : son empreinte, ses épithètes, son journal (28 octobre 2026)
+  { nom: 'carte-fiche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.seg[data-action="cartes"]'); await p.click('.cl-carte >> nth=0'); await p.waitForTimeout(300); await p.$eval('.fc-emp', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
   { nom: 'chroniques', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="codex"]'); } },
   { nom: 'menu', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="compte"]').catch(() => {}); } },
   { nom: 'classements', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="classements"]'); } },

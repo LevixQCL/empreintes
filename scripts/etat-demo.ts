@@ -22,6 +22,15 @@ MODULES_TIRABLES.forEach((m, i) => {
   // une exclusive n'existe que dans son métal
   j.collection[carteId(m.id, m.seul ? m.rarete : i % 3 === 0 ? 'fer' : r)] = { niveau: 1 + (i % 5), doublons: i % 4 };
 });
+// l'empreinte des cartes (28 octobre 2026) : quelques vétéranes, une par palier, et une carte au journal fourni
+const vec = (v: number, a: number, f: number, g: number[], ga: number[], z: number, d = v * 40, b = v * 25, s = v * 20): J.VecuCarte => ({ o: 2, p: 'ilka', l: v * 7, v, d, b, s, a, f, z, g, ga });
+const cles = Object.keys(j.collection);
+j.vecu = {};
+cles.forEach((k, i) => {
+  if (i % 4 === 0) j.vecu![k] = vec(70, 14, 12, [1, 2, 3, 4], [2, 4], 5);
+  else if (i % 4 === 1) j.vecu![k] = vec(40, 6, 5, [1, 2, 3], [], 4);
+  else if (i % 4 === 2) j.vecu![k] = vec(9, 1, 1, [], [], 2);
+});
 j.fragments = FRAGMENTS.slice(0, 12).map((f) => f.id);
 j.lus = CHAPITRES.slice(0, 8).map((c) => c.id);
 j.choix = [];

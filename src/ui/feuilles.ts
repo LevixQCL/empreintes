@@ -6,6 +6,7 @@ import './styles.css';
 import './scenes.css';
 import './face-carte.css';
 import './holo.css';
+import './empreinte.css';
 import './combat.css';
 import './cristal.css';
 import './bureau.css';

@@ -2,7 +2,7 @@
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
 import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, CLE_LEGS, GESTES_SPECIAUX, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
-import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, forceStrate, nouvelleExploration, type CibleFouille } from '../expedition';
+import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, salleCourante, forceStrate, nouvelleExploration, type CibleFouille } from '../expedition';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
 import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
@@ -12,6 +12,7 @@ import { ACCORD_OUVERT, CONFIANCE, niveauConfiance, chargeMax, chargePortee, CRE
 import { chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
+import { noterOrigine, noterVecu } from './vecu';
 import { LIEUX, RECIT_BON, RECIT_MAUVAIS, RECIT_NEUTRE, affinite, lieuDef, type Affinite, type LieuDef, type SpecialiteLieu } from '../lieux';
 
 // ---------- Expéditions ----------
@@ -588,7 +589,12 @@ export function fuir(j: Jeu): Resultat {
 export function finDeCombat(j: Jeu): void {
   if (!j.expedition) return;
   const c = j.expedition.combat;
-  if (c.issue === 'victoire' || c.issue === 'defaite') noterCombat(j, c, c.issue);
+  if (c.issue === 'victoire' || c.issue === 'defaite') {
+    noterCombat(j, c, c.issue);
+    // l'empreinte des cartes jouées (pas pendant le tutoriel)
+    const x = j.expedition;
+    if (!x.tutoriel) noterVecu(j, c, { strate: x.strate, gardien: !x.fouille && !x.epreuve && !!x.carte && salleCourante(x).type === 'gardien' });
+  }
   j.expedition = cloturerCombat(j.expedition);
 }
 
@@ -698,7 +704,7 @@ export function remonter(j: Jeu): Retour {
     eclats += x.gains.eclats;
     if (x.gains.fragment) fragment = ajouterFragment(j) ?? fragment;
   }
-  for (const c of cartes) ajouterCarte(j, c);
+  for (const c of cartes) { ajouterCarte(j, c); if (!x.tutoriel) noterOrigine(j, c, x.strate); }
   j.eclats += eclats;
   // la Confiance du quartier : chaque combat gagné, et la descente réussie (elle ne baisse jamais)
   confier(j, victoires * CONFIANCE.combat + (victoire ? CONFIANCE.victoire : 0));

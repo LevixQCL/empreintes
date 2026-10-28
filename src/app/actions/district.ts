@@ -106,6 +106,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     }
     case 'monter': resultat(J.monter(app.jeu, b.dataset.module ?? '')); break;
     case 'recycler': resultat(J.recycler(app.jeu, b.dataset.module ?? '')); break;
+    case 'epithete': J.choisirEpithete(app.jeu, b.dataset.module ?? '', b.dataset.id ?? ''); break;
     case 'prendre': resultat(J.prendre(app.jeu, Number(b.dataset.index ?? 0))); break;
     case 'reclamer-jour': resultat(J.reclamerQuotidien(app.jeu)); break;
     case 'colis': {

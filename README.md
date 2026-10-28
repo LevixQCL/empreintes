@@ -171,6 +171,13 @@ de même Fréquence, et **Diapason**, Fréquence libre qui reprend celle d'avant
 Une carte de voie sans illustration prend le portrait du Porteur de sa voie. Une carte de voie seule vaut peu : `npm run voies` compare une voie
 entière (les 6 cartes d'un Porteur) au meilleur deck classique de même Charge, en cuivre et en or (`docs/voies-rapport.md`).
 
+**L'empreinte des cartes** (28 octobre 2026, `src/core/partie/vecu.ts`, `src/ui/empreinte.css`). Chaque exemplaire garde ce qu'il a vécu
+(`Jeu.vecu`) : lieu de découverte, premier Porteur, lancers, combats gagnés, dégâts, bouclier, soins, derniers coups, Fêlures, profondeur, Gardiens.
+Tout se lit à la fin du combat dans le journal (`noterVecu`, appelé par `finDeCombat`) : rien n'est branché dans le moteur.
+Des points (`VECU`) font passer trois paliers, Trace, Sillon et Empreinte, qui allument un filigrane peint dans le coin haut droit de la face
+(`public/art/empreinte/`) ; dans la collection un reflet le traverse (Sillon, Empreinte), jamais en combat. La fiche de la carte montre le palier,
+la jauge du suivant, les épithètes à choisir (`EPITHETES`) et le journal. **Aucun effet en combat** : c'est du souvenir, pas de la puissance.
+
 **Pas de Fusion.** Un métal se trouve dans les Strates, les boss, les choix et les garanties ; il ne se fabrique pas et ne
 se gagne pas en fusionnant des cartes (décision du 21 octobre 2026).
 

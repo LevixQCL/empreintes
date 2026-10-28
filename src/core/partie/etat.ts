@@ -259,6 +259,8 @@ export interface Jeu {
   eclats: number;
   /** les cartes possédées */
   collection: Record<string, CarteCollection>;
+  /** ce que chaque carte a vécu : son empreinte (vecu.ts, 28 octobre 2026) ; absent avant le premier combat */
+  vecu?: Record<string, import('./vecu').VecuCarte>;
   /** cartes tirées depuis la dernière de chaque rareté, pour les garanties */
   sans: { argent: number; or: number; nacre: number };
   /** hasard des trouvailles (déterministe, sauvegardé) */

@@ -161,6 +161,8 @@ export const artGardien = (n: 'plaque' | 'barre' | 'cran' | 'bandeau') => `${bas
 export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
 export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
+/** Le filigrane d'empreinte d'une carte vétérane (28 octobre 2026) : Trace (bleu), Sillon (or), Empreinte (irisée) */
+export const filigrane = (palier: 1 | 2 | 3) => `${base}empreinte/${['trace', 'sillon', 'empreinte'][palier - 1]}.webp`;
 /**
  * Décor d'une Strate : une illustration et une ambiance par Strate (28 octobre 2026, Bryan : « des thèmes différents »),
  * de −1 (fondations noyées, vert d'eau) à −10 (le fond, obsidienne et braise). Au-delà de −10, le décor du fond.

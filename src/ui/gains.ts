@@ -7,11 +7,11 @@
 // Tout vit dans un calque posé sur <body>, hors de #app : le rendu du jeu (innerHTML) ne l'interrompt pas.
 
 import type { Jeu } from '../core/jeu';
-import { niveauPorteur } from '../core/jeu';
+import { epithetesDe, NOMS_PALIER, niveauPorteur, palierDe } from '../core/jeu';
 import { moduleDef, porteurDef } from '../core/donnees';
 import { NOMS_RARETE } from '../core/collection';
 import type { Rarete } from '../core/types';
-import { illustrationModule, portrait } from './art';
+import { filigrane, illustrationModule, portrait } from './art';
 import { icone } from './icones';
 import { vibrer } from './toucher';
 import { centreDe, echap, mouvementReduit as reduit } from './outils';
@@ -27,6 +27,8 @@ interface Releve {
   cartes: Record<string, { niveau: number; doublons: number }>;
   porteurs: string[];
   niveaux: Record<string, number>;
+  /** l'empreinte des cartes (28 octobre 2026) : [palier, épithètes débloqués] */
+  empreintes: Record<string, [number, number]>;
 }
 
 export function relever(j: Jeu): Releve {
@@ -41,6 +43,7 @@ export function relever(j: Jeu): Releve {
     cartes: Object.fromEntries(Object.entries(j.collection).map(([k, c]) => [k, { niveau: c.niveau, doublons: c.doublons }])),
     porteurs: Object.keys(j.porteurs),
     niveaux,
+    empreintes: Object.fromEntries(Object.entries(j.vecu ?? {}).map(([k, x]) => [k, [palierDe(x), epithetesDe(k, x).length]])),
   };
 }
 
@@ -49,7 +52,9 @@ type Gain =
   | { kind: 'carte'; cle: string }
   | { kind: 'doublons'; cles: string[] }
   | { kind: 'porteur'; id: string }
-  | { kind: 'niveaux'; ids: { id: string; niveau: number }[] };
+  | { kind: 'niveaux'; ids: { id: string; niveau: number }[] }
+  /** une carte passe un palier d'empreinte, ou gagne un épithète */
+  | { kind: 'empreinte'; cle: string; palier: number; epithete?: string };
 
 /**
  * Ce qui a été reçu entre deux relevés. Les dépenses ne s'affichent pas.
@@ -77,6 +82,14 @@ export function comparer(a: Releve, b: Releve, o: { energie?: boolean } = {}): G
   if (doublons.length) g.push({ kind: 'doublons', cles: doublons });
   const niv = Object.entries(b.niveaux).filter(([id, n]) => a.niveaux[id] !== undefined && n > a.niveaux[id]!).map(([id, niveau]) => ({ id, niveau }));
   if (niv.length) g.push({ kind: 'niveaux', ids: niv });
+  // la carte se souvient : un palier passé (le plus haut d'abord), sinon un épithète gagné ; deux reçus au plus
+  const souvenirs: Extract<Gain, { kind: 'empreinte' }>[] = [];
+  for (const [cle, [p, e]] of Object.entries(b.empreintes ?? {})) {
+    const [pa, ea] = a.empreintes?.[cle] ?? [0, 0];
+    if (p > pa) souvenirs.push({ kind: 'empreinte', cle, palier: p });
+    else if (e > ea) souvenirs.push({ kind: 'empreinte', cle, palier: p, epithete: 'oui' });
+  }
+  g.push(...souvenirs.sort((x, y) => y.palier - x.palier).slice(0, 2));
   return g;
 }
 
@@ -141,6 +154,7 @@ export function palier(g: Gain): number {
   if (g.kind === 'carte') return PALIER_METAL[moduleDef(g.cle).rarete];
   if (g.kind === 'porteur') return 4;
   if (g.kind === 'niveaux') return 2;
+  if (g.kind === 'empreinte') return g.epithete ? 2 : 1 + g.palier;
   if (g.kind === 'doublons') return Math.max(1, Math.max(...g.cles.map((c) => PALIER_METAL[moduleDef(c).rarete])) - 1);
   if (g.r === 'eclats' || g.r === 'cartes') return 2;
   return g.n >= 100 ? 2 : 1;
@@ -251,6 +265,15 @@ function contenu(g: Exclude<Gain, { kind: 'res' }>): { html: string; onglet: str
     return {
       classe: 'doublons', onglet: 'porteurs',
       html: `<span class="gv-pile">${uniques.slice(0, 4).map((c) => vignetteCarte(c, true)).join('')}</span><span class="gv-texte"><small>+${g.cles.length} doublon${g.cles.length > 1 ? 's' : ''}</small><strong>${echap(titre)}</strong><em>vers le niveau suivant</em></span>`,
+    };
+  }
+  if (g.kind === 'empreinte') {
+    const m = moduleDef(g.cle);
+    const p = Math.max(1, g.palier) as 1 | 2 | 3;
+    return {
+      classe: 'empreinte', onglet: 'porteurs',
+      html: `<span class="gv-carte" style="--metal:${COULEUR_METAL[m.rarete]};--fil:url(${filigrane(p)})">${illustrationModule(g.cle) ? `<img src="${illustrationModule(g.cle)}" alt="" decoding="async">` : `<i>${echap(m.nom.charAt(0))}</i>`}</span>`
+        + `<span class="gv-texte"><small>${g.epithete ? 'Nouvel épithète' : 'La carte se souvient'}</small><strong>${echap(m.nom)}</strong><em>${g.epithete ? 'à choisir dans sa fiche' : `palier ${NOMS_PALIER[p]}`}</em></span>`,
     };
   }
   if (g.kind === 'porteur') {
