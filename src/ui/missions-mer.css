@@ -13,7 +13,7 @@
 /* le panorama : 4 fois la largeur utile, son horizon (24,6 % de sa hauteur) à 54 px du haut, le pilier du lieu à 96 px du bord droit */
 .vg-pano{position:absolute;right:96px;top:54px;width:calc(400% - 384px);aspect-ratio:8/3;background:var(--decor) center/100% 100% no-repeat;
   transform:translate(calc((4000 - var(--px)) / 4000 * 100%), -24.6%) scaleX(var(--flip,1));transform-origin:center}
-.voyage.peint .vg-pano{inset:0;width:auto;aspect-ratio:auto;background-size:cover;background-position:center 40%;transform:none}
+.voyage.peint .vg-pano{inset:0;width:auto;aspect-ratio:auto;background-size:cover;background-position:70% 50%;transform:none}
 /* un voile : le nom se lit sur le ciel, la route sur l'eau */
 .vg-fond::after{content:"";position:absolute;inset:0;
   background:linear-gradient(90deg,rgba(6,12,22,.82) 0,rgba(6,12,22,.45) 52%,rgba(6,12,22,.1) 100%),
@@ -21,6 +21,8 @@
 .vg-reflets{position:absolute;left:0;right:0;top:54px;bottom:0;background:var(--reflets) 0 0/auto 100% repeat-x;mix-blend-mode:screen;opacity:.3;
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 30%);mask-image:linear-gradient(180deg,transparent,#000 30%)}
 .voyage.peint .vg-reflets{opacity:.16}
+.voyage.peint .vg-fond::after{background:linear-gradient(90deg,rgba(6,12,22,.78) 0,rgba(6,12,22,.3) 55%,rgba(6,12,22,0) 100%),
+  linear-gradient(180deg,transparent 55%,rgba(4,14,22,.35) 100%)}
 
 /* ---------- Qui, où, quand ---------- */
 .vg-tete{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px}
@@ -43,7 +45,7 @@
 /* le lieu : un pilier abandonné du large (ou le décor peint), cerclé de glace ; il s'allume quand on y fouille */
 .vg-lieu{width:46px;height:46px;--or:#CDEFFF;background:var(--decor) no-repeat;background-size:1080px auto;
   background-position:calc(23px - var(--mx) * .27px) calc(25px - var(--my) * .27px)}
-.voyage.peint .vg-lieu{background-size:cover;background-position:center}
+.voyage.peint .vg-lieu{background-size:auto 100%;background-position:82% 50%}
 .ph-fouille .vg-lieu{box-shadow:0 0 0 2px #F2D58C,0 0 0 4px rgba(8,20,30,.8),0 0 18px rgba(255,200,110,.75)}
 .vg-onde{position:absolute;inset:-2px;border-radius:50%;box-shadow:0 0 0 1.5px rgba(255,214,140,.8);opacity:0;pointer-events:none}
 
@@ -58,13 +60,13 @@
 .ph-fouille .vg-sillage,.ph-quai .vg-sillage{opacity:0}
 
 /* la barque : peinte quand l'image existe, sinon la lampe du passeur qui file sur l'eau */
-.vg-barque{position:absolute;top:50%;left:calc(var(--x) * 100%);width:52px;height:40px;margin:-30px 0 0 -26px;transition:left 1s linear;pointer-events:none}
-.vg-barque img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 4px rgba(0,0,0,.6))}
+.vg-barque{position:absolute;top:50%;left:calc(var(--x) * 100%);width:74px;height:56px;margin:-44px 0 0 -37px;transition:left 1s linear;pointer-events:none}
+.vg-barque img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 0 1px rgba(255,236,200,.7)) drop-shadow(0 3px 5px rgba(0,0,0,.7)) brightness(1.15)}
 .ph-retour .vg-barque img{transform:scaleX(-1)}
 .vg-lampe{position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4px 0 0 -4px;border-radius:50%;
   background:radial-gradient(circle,#FFF6DC 0 30%,#FFC768 60%,rgba(255,170,70,0) 100%);
   box-shadow:0 0 10px 3px rgba(255,190,90,.75),0 0 26px 8px rgba(255,170,70,.32)}
-.vg-barque:has(img) .vg-lampe{left:64%;top:22%;width:7px;height:7px}
+.vg-barque:has(img) .vg-lampe{display:none}
 .vg-reflet-lampe{position:absolute;left:50%;top:calc(50% + 9px);width:4px;height:10px;margin-left:-2px;border-radius:50%;
   background:linear-gradient(180deg,rgba(255,200,110,.7),rgba(255,200,110,0));filter:blur(1px)}
 .vg-barque:has(img) .vg-reflet-lampe{display:none}

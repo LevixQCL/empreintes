@@ -226,12 +226,12 @@ const HORIZON_MER = [24.6, 24.47, 24.27, 24.27];
  * Tant qu'un lieu n'est pas peint, sa carte montre le large de la mer du district (mer-1.webp) et ses piliers abandonnés.
  */
 export const LIEUX_SLUGS = ['phare', 'serres', 'pilier-effondre', 'pompage', 'marche', 'transbordeur', 'gare', 'silos', 'pilier-sans-nom', 'dessalement', 'criee', 'clocher'] as const;
-const LIEUX_PEINTS = new Set<string>([]);
+const LIEUX_PEINTS = new Set<string>(LIEUX_SLUGS);
 export const decorLieu = (i: number): string | null => {
   const s = LIEUX_SLUGS[i];
   return s && LIEUX_PEINTS.has(s) ? `${base}missions/${s}.webp` : null;
 };
-export const BARQUE_PEINTE = false;
+export const BARQUE_PEINTE = true;
 export const barque = `${base}missions/barque.webp`;
 /**
  * Le large, faute de décor peint : la mer du premier âge (4000 × 1500) et un de ses piliers abandonnés (centre x, y en pixels).
