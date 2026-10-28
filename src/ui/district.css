@@ -215,3 +215,18 @@
 .poids-carte::before{content:"";width:9px;height:12px;background:linear-gradient(160deg,#E6F8FF,#7FD4FF 50%,#3E8DB8);clip-path:polygon(50% 0,100% 35%,50% 100%,0 35%);filter:drop-shadow(0 0 3px rgba(127,212,255,.6))}
 .dk-lourd{color:var(--danger)}
 .fc-poids{color:var(--cristal);font-family:var(--mono)}
+
+/* ---------- Téléphone : l'archipel un peu dézoomé (28 octobre 2026, Bryan : « regarde les bords ») ----------
+   Le tableau ne remplit plus toute la largeur : il garde 5 % de mer de chaque côté, et la mer prolongée du PC
+   (mer-N.webp, 4000 × 1500, le tableau au centre en bas) continue derrière lui jusqu'aux bords de l'écran. */
+@media not all and (min-width:1100px) and (min-height:600px){
+  .archipel{--tw:90%}
+  .archipel .mer-fond{display:block;position:absolute;z-index:0;bottom:0;left:50%;width:calc(var(--tw) * 5);aspect-ratio:8/3;transform:translateX(-50%);
+    background:var(--mer) center/100% 100% no-repeat;pointer-events:none;
+    -webkit-mask-image:linear-gradient(180deg,transparent,#000 22%);mask-image:linear-gradient(180deg,transparent,#000 22%)}
+  /* le masque passe sur l'image seule : une plaque poussée hors du tableau reste visible */
+  .archipel .toile{left:50%;right:auto;width:var(--tw);transform:translateX(-50%);-webkit-mask-image:none;mask-image:none}
+  .archipel .toile :is(.tableau,.anime){
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent),linear-gradient(to bottom,transparent 0,#000 9%);
+    -webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent),linear-gradient(to bottom,transparent 0,#000 9%);mask-composite:intersect}
+}

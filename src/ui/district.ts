@@ -138,6 +138,18 @@ function degagerPlaques(racine: HTMLElement) {
     if (dy) p.style.marginTop = `${dy}px`;
     places.push(new DOMRect(r.left, r.top + dy, r.width, r.height));
   }
+  // aucune plaque ne sort de l'écran ni ne passe sous la barre de navigation (28 octobre 2026, Bryan : « regarde les bords »)
+  const cadre = racine.querySelector<HTMLElement>('.archipel')?.getBoundingClientRect();
+  if (!cadre) return;
+  const nav = racine.querySelector<HTMLElement>('.nav');
+  const navHaut = nav && getComputedStyle(nav).position === 'fixed' ? nav.getBoundingClientRect().top : Infinity;
+  const bas = Math.min(cadre.bottom, navHaut) - 8, marge = 8;
+  for (const p of ps) {
+    const r = p.getBoundingClientRect();
+    const dx = r.left < cadre.left + marge ? cadre.left + marge - r.left : r.right > cadre.right - marge ? cadre.right - marge - r.right : 0;
+    if (dx) p.style.marginLeft = `${dx}px`;
+    if (r.bottom > bas) p.style.marginTop = `${(parseFloat(p.style.marginTop) || 0) + bas - r.bottom}px`;
+  }
 }
 
 export function brancherTableau(racine: HTMLElement) {
