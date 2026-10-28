@@ -4,6 +4,7 @@
 import { CONDITIONS, DECK_DEPART, FAVEUR_CONDITION, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from './donnees';
 import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, places } from './regles';
 import { tireur } from './rng';
+import { NOMS_EFFET } from './effets';
 import type {
   BonusMarques, CalculHisto, CarteHisto, CibleRegle, CombatEtat, Effet, EnnemiEtat, Evenement, Geste, GesteDef, Intention, Lignee, LigneeGeste,
   LigneHisto, Pas, PorteurEtat, TourHisto, Trait,
@@ -220,7 +221,7 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
 export const brumeActive = (s: CombatEtat) => s.condition === 'brouillard' && s.issue === 'en-cours';
 
 /** Une carte qui soigne un seul Porteur (la Vague soigne toute l'escouade) */
-export const soigneUnSeul = (g: Geste) => g.type === 'soin' && g.effet?.type !== 'vague';
+export const soigneUnSeul = (g: Geste) => g.type === 'soin' && g.effet?.type !== 'vague' && g.effet?.type !== 'debord';
 
 /**
  * La cible proposée pour un soin : le Porteur visé par l'attaque annoncée s'il risque de tomber bas,
@@ -524,7 +525,15 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   CAMP = 'neutre';
   s.debride = false;
   for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
-  s.defausse.push(...s.chaine);
+  // Rappel (exclusive) : la carte la plus forte de la chaîne, hors celles qui rappellent, revient en tête de pioche
+  const rappel = s.chaine.find((g, i) => effetsEnJeu(g, s.chaine, i, estATerre(s, g.porteur)).some((e) => e?.type === 'rappel'));
+  const rappelee = rappel ? s.chaine.filter((g) => g !== rappel && !g.vide && g.effet?.type !== 'rappel').sort((a, b) => b.v - a.v)[0] : undefined;
+  s.defausse.push(...s.chaine.filter((g) => g !== rappelee));
+  if (rappelee) {
+    s.pioche.push(rappelee);
+    log(s, `Rappel : ${rappelee.nom} revient en tête de pioche.`, { sorte: 'effet' });
+    emettre({ kind: 'effet', cible: 'escouade', texte: 'Rappel' });
+  }
   s.chaine = [];
   // les places vides ne restent pas en main : elles ont coûté leur place pour ce tour
   s.defausse.push(...s.main.filter((g) => g.vide));
@@ -667,10 +676,34 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
   const nomP = g.porteur ? porteurDef(g.porteur).nom : 'Spécial';
   // une carte éteinte (son Porteur est à terre) frappe, protège ou soigne à moitié, sans son effet ; sa Fréquence compte toujours
   const eteinte = estATerre(s, g.porteur);
-  const effets = eteinte ? [] : [g.effet, g.effet2];
-  // une carte de l’Héritage a deux effets : chacun se lit par son type
+  // une carte de l’Héritage a deux effets : chacun se lit par son type ; l'Empreinte prend celui de la carte d'avant
+  const effets = effetsEnJeu(g, s.chaine, rang, eteinte);
   const de = <T extends Effet['type']>(t: T) => effets.find((e): e is Extract<Effet, { type: T }> => e?.type === t);
   const evs: Evenement[] = [];
+  const copie = !eteinte && g.effet?.type === 'empreinte' ? effets[0] : undefined;
+  if (copie) {
+    log(s, `Empreinte : ${g.nom} reprend l’effet de la carte d’avant (${NOMS_EFFET[copie.type]}).`, { sorte: 'effet' });
+    evs.push({ kind: 'effet', cible: 'escouade', texte: 'Empreinte' });
+  }
+  // Surtension : le Porteur paie de ses PV la force en plus (jamais jusqu'à tomber)
+  const st = de('surtension');
+  const payeur = st ? s.porteurs.find((p) => p.id === g.porteur && p.pv > 1) : undefined;
+  if (st && payeur) {
+    const prix = Math.min(payeur.pv - 1, Math.max(1, Math.round(payeur.pvMax * st.cout)));
+    payeur.pv -= prix;
+    log(s, `Surtension : ${porteurDef(payeur.id).nom} brûle ${prix} PV, +${Math.round(st.part * 100)} % de force.`, { sorte: 'blessure', v: prix });
+    evs.push({ kind: 'degats', cible: payeur.id, net: prix, absorbe: 0, source: 'surtension' });
+  }
+  // Rapt : tout le bouclier de l'ennemi visé passe à l'escouade, avant le coup
+  if (de('rapt') && s.ennemi.pv > 0 && s.ennemi.bouclier > 0) {
+    const pris = s.ennemi.bouclier;
+    s.ennemi.bouclier = 0;
+    s.bouclier += pris;
+    log(s, `Rapt : ${pris} de bouclier arrachés à l’ennemi, pour l’escouade.`, { sorte: 'protection', v: pris });
+    evs.push({ kind: 'bouclier', cible: 'escouade', v: pris });
+  }
+  // Lecture : la Fêlure de l'ennemi visé se brise, quelle que soit sa Fréquence (avant le coup : la Faille en profite déjà)
+  if (de('lecture') && s.ennemi.pv > 0 && s.ennemi.felure !== undefined && !s.ennemi.felureBrisee) briser(s, s.ennemi, (ev) => evs.push(ev), suite >= 3);
   // Décharge (Moteur) : elle vide le Flux et gagne une part de force par Flux vidé (le facteur est lu avant de vider)
   const dc = de('decharge');
   const vide = dc ? s.flux : 0;
@@ -690,7 +723,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
    * depart : d'où part le coup, pour le journal (la force de la carte et ses facteurs, ou la Riposte)
    */
   const frapper = (force: number, quoi: string, depart: { base: number; lignes: CalculHisto['lignes'] }): number => {
-    const coup = facteursCoup(s, g, mult, percant);
+    const coup = facteursCoup(s, g, mult, percant, effets);
     const av = coup.av;
     const dmg = Math.max(0, Math.round(coup.facteurs.reduce((f, x) => f * x.m, force)) - coup.blinde);
     const abs = percant ? 0 : Math.min(s.ennemi.bouclier, dmg);
@@ -715,6 +748,11 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
 
   if (g.type === 'atk') {
     const net = frapper(force, g.nom, { base: g.v, lignes: facteurs });
+    // Rafale (Cadence) : dans une chaîne d'au moins 4 cartes, elle frappe une seconde fois
+    if (de('rafale') && s.chaine.length >= 4 && s.ennemi.pv > 0) {
+      evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Rafale', rang: s.ennemi.rang ?? 0 });
+      frapper(force, `${g.nom} (Rafale)`, { base: g.v, lignes: facteurs });
+    }
     const si = de('siphon');
     if (si && net > 0) {
       // le Siphon soigne le Porteur qui a joué la carte : c'est lui qui boit la vie (s'il est à terre, le plus blessé)
@@ -743,23 +781,39 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
       frapper(s.bouclier * rp.part * faveur * (s.debride ? REGLES.eclat.debride : 1), `${g.nom} (Riposte)`, { base: s.bouclier, lignes });
     }
   } else {
+    // Relève : le premier Porteur à terre se relève avec tout le soin (sinon, la carte soigne normalement)
+    const aTerre = de('releve') ? s.porteurs.find((p) => p.pv <= 0) : undefined;
+    if (aTerre) {
+      aTerre.pv = Math.max(1, Math.min(aTerre.pvMax, Math.round(force)));
+      aTerre.aTerre = false;
+      log(s, `Relève : ${porteurDef(aTerre.id).nom} se relève avec ${aTerre.pv} PV.`, { sorte: 'soin', v: aTerre.pv, calculs: [calcul(porteurDef(aTerre.id).nom, g.v, facteurs, aTerre.pv, 0, aTerre.pv)] });
+      evs.push({ kind: 'soin', cible: aTerre.id, v: aTerre.pv });
+    }
     const choisi = g.cible ? s.porteurs.find((p) => p.id === g.cible && p.pv > 0) : undefined;
-    const cibles = de('vague') ? vivants(s) : [choisi ?? plusBlesse(s)].filter((x): x is PorteurEtat => !!x);
+    const cibles = aTerre ? [] : de('vague') || de('debord') ? vivants(s) : [choisi ?? plusBlesse(s)].filter((x): x is PorteurEtat => !!x);
     const morceaux: string[] = [];
     const calculs: CalculHisto[] = [];
     let total = 0;
+    let trop = 0;
     for (const c of cibles) {
       const avant = c.pv;
       c.pv = Math.min(c.pvMax, c.pv + Math.round(force));
       morceaux.push(`${porteurDef(c.id).nom} +${c.pv - avant}`);
       // un soin ne dépasse pas les PV max : le journal dit ce qui a été perdu
       const perdu = Math.round(force) - (c.pv - avant);
+      trop += perdu;
       calculs.push(calcul(porteurDef(c.id).nom, g.v, perdu > 0 ? [...facteurs, { nom: 'PV déjà pleins', v: -perdu }] : facteurs, c.pv - avant, 0, c.pv - avant));
       total += c.pv - avant;
       evs.push({ kind: 'soin', cible: c.id, v: c.pv - avant });
     }
-    if (!cibles.length) evs.push({ kind: 'soin', cible: 'escouade', v: 0 });
-    else log(s, `${nomP} · ${g.nom} : ${morceaux.join(', ')} PV.`, { sorte: 'soin', v: total, calculs });
+    if (!cibles.length && !aTerre) evs.push({ kind: 'soin', cible: 'escouade', v: 0 });
+    else if (cibles.length) log(s, `${nomP} · ${g.nom} : ${morceaux.join(', ')} PV.`, { sorte: 'soin', v: total, calculs });
+    // Débord (Sève) : le soin en trop devient du bouclier d'escouade
+    if (de('debord') && trop > 0) {
+      s.bouclier += trop;
+      log(s, `Débord : le soin en trop devient ${trop} de bouclier d’escouade.`, { sorte: 'protection', v: trop });
+      evs.push({ kind: 'bouclier', cible: 'escouade', v: trop });
+    }
   }
 
   // effets qui ne dépendent pas du type de la carte (les deux d'une carte de l’Héritage, dans l'ordre)
@@ -802,7 +856,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
 export interface Facteur { nom: string; m: number }
 
 function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chaine: Geste[], eteinte: boolean, suite: number): Facteur[] {
-  const effets = eteinte ? [] : [g.effet, g.effet2];
+  const effets = effetsEnJeu(g, chaine, rang, eteinte);
   const de = <T extends Effet['type']>(t: T) => effets.find((e): e is Extract<Effet, { type: T }> => e?.type === t);
   const f: Facteur[] = [];
   const mettre = (nom: string, m: number) => { if (m !== 1) f.push({ nom, m }); };
@@ -825,17 +879,41 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
     const pareilles = fs.filter((x, k) => k !== rang && x === fs[rang]).length;
     mettre(`Unisson (${pareilles} même${pareilles > 1 ? 's' : ''} Fréquence${pareilles > 1 ? 's' : ''})`, 1 + un.part * pareilles);
   }
+  // Empreinte (exclusive) sans rien à copier (en tête de chaîne, ou après une carte sans effet) : elle imite la force à la place
+  if (!eteinte && g.effet?.type === 'empreinte' && !effets[0]) mettre('Empreinte (rien à copier)', REGLES.empreinteSeule);
+  // Surtension (exclusive) : le Porteur paie de ses PV une part de force en plus
+  const st = de('surtension');
+  if (st) mettre('Surtension', 1 + st.part);
   if (eteinte) mettre('Porteur à terre', REGLES.eteinte);
   return f;
 }
 
+/**
+ * Les effets d'une carte à sa place dans la chaîne (aucun si son Porteur est à terre). L'Empreinte (exclusive) prend l'effet
+ * de la carte posée juste avant elle, sauf une Fréquence libre (elle changerait la suite) ou une autre Empreinte.
+ */
+export function effetsEnJeu(g: Pick<Geste, 'effet' | 'effet2'>, chaine: readonly Pick<Geste, 'effet'>[], rang: number, eteinte = false): (Effet | undefined)[] {
+  if (eteinte) return [];
+  return [g.effet, g.effet2].map((e) => {
+    if (e?.type !== 'empreinte') return e;
+    const copie = rang > 0 ? chaine[rang - 1]?.effet : undefined;
+    return copie && !frequenceLibre(copie) && copie.type !== 'empreinte' ? copie : undefined;
+  });
+}
+
 /** Ce que l'ennemi visé change à un coup : triangle des lignées, Fissure, Évanescent (en facteurs), Blindé (en points retirés) */
-function facteursCoup(s: CombatEtat, g: Geste, mult: number, percant: boolean): { facteurs: Facteur[]; blinde: number; av: number } {
+function facteursCoup(s: CombatEtat, g: Geste, mult: number, percant: boolean, effets: (Effet | undefined)[] = []): { facteurs: Facteur[]; blinde: number; av: number } {
   const e = ennemiDef(s.ennemi.id);
   const av = avantage(ligneeGeste(g), e.lignee);
   const facteurs: Facteur[] = [];
   if (av !== 1) facteurs.push({ nom: `Lignée : ${NOMS_LIGNEE[ligneeGeste(g)].nom} bat ${NOMS_LIGNEE[e.lignee].nom}`, m: av });
   if (s.ennemi.fissure) facteurs.push({ nom: 'Fissure', m: 1 + s.ennemi.fissure });
+  // Curée (Traque) : l'ennemi fissuré est achevé plus fort ; Faille (Lecture) : de même quand sa Fêlure est brisée
+  // la Curée vise une proie affaiblie : fissurée, ou sous la moitié de ses PV
+  const curee = effets.find((x): x is Extract<Effet, { type: 'curee' }> => x?.type === 'curee');
+  if (curee && (s.ennemi.fissure || s.ennemi.pv <= s.ennemi.pvMax / 2)) facteurs.push({ nom: s.ennemi.fissure ? 'Curée (ennemi fissuré)' : 'Curée (ennemi à moins de la moitié de ses PV)', m: 1 + curee.part });
+  const faille = effets.find((x): x is Extract<Effet, { type: 'faille' }> => x?.type === 'faille');
+  if (faille && s.ennemi.felureBrisee) facteurs.push({ nom: 'Faille (Fêlure brisée)', m: 1 + faille.part });
   // Évanescent : hors Résonance, l'ennemi ne prend qu'une part des coups
   const evan = trait(s.ennemi, 'evanescent');
   if (evan && mult <= 1) facteurs.push({ nom: 'Évanescent (hors Résonance)', m: 1 - evan.part });
@@ -889,8 +967,9 @@ export function detailForce(s: CombatEtat, uid: string): DetailForce | null {
   let total = Math.round(force);
   let bouclierEnnemi = 0;
   if (g.type === 'atk') {
-    const percant = !eteinte && [g.effet, g.effet2].some((e) => e?.type === 'percant');
-    const coup = facteursCoup(s, g, a.mult, percant);
+    const effets = effetsEnJeu(g, chaine, rang, eteinte);
+    const percant = effets.some((e) => e?.type === 'percant');
+    const coup = facteursCoup(s, g, a.mult, percant, effets);
     lignes.push(...coup.facteurs);
     if (coup.blinde) lignes.push({ nom: 'Blindé', v: -coup.blinde });
     total = Math.max(0, Math.round(coup.facteurs.reduce((f, x) => f * x.m, force)) - coup.blinde);

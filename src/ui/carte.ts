@@ -9,7 +9,7 @@
 // Les tailles sont en unités de conteneur (cqw) : la même carte s'affiche en grand ou en petit.
 
 import { NOMS_EFFET, effetsDe, formuleEffet, nomsEffets } from '../core/effets';
-import { DEPART_PORTEURS, NOMS_LIGNEE, PORTEUR_LEGS, voieDe } from '../core/donnees';
+import { DEPART_PORTEURS, NOMS_LIGNEE, PORTEUR_EXCLUSIVES, PORTEUR_LEGS, voieDe } from '../core/donnees';
 import { frequenceLibre, signeLibre } from '../core/regles';
 import { COLLECTION, NOMS_RARETE } from '../core/collection';
 import type { Effet, ModuleDef, Rarete, TypeEffet } from '../core/types';
@@ -48,6 +48,18 @@ export const ICONES_EFFET: Record<TypeEffet, string> = {
   decharge: trait('<path d="M5 9h10a3 3 0 0 1 0 6H5z"/><path d="M19 11v2"/><path d="M8 3l-2 4h4l-2 4"/>'),
   diapason: trait('<path d="M8 3v7a4 4 0 0 0 8 0V3"/><path d="M12 14v8"/><path d="M4 8h2M18 8h2"/>'),
   unisson: trait('<path d="M4 9v6M9 6v12M14 6v12M19 9v6"/>', 2.6),
+  // les voies, étapes 2 et 3 (28 octobre 2026)
+  curee: trait('<path d="M13 2l-4 6 5 4-4 5 2 5"/><path d="M17 8l4 4-4 4"/>'),
+  lecture: trait('<path d="M2 12s3.6-6 10-6 10 6 10 6-3.6 6-10 6S2 12 2 12z"/><path d="M13 9l-2 3 2 1-2 3"/>'),
+  faille: trait('<path d="M12 3l-3 7 4 3-3 8"/><path d="M4 12h3M17 12h3"/>'),
+  rafale: trait('<path d="M3 7h13M12 3.5l4 3.5-4 3.5"/><path d="M3 17h13M12 13.5l4 3.5-4 3.5"/>'),
+  debord: trait('<path d="M12 4v8M8 8h8"/><path d="M5 14l7 3 7-3v4l-7 3-7-3z"/>'),
+  // les exclusives
+  rapt: trait('<path d="M12 2.5l7 2.6v5.2c0 4.4-3 7.6-7 8.8-4-1.2-7-4.4-7-8.8V5.1z"/><path d="M8 11h8M12 7l4 4-4 4"/>'),
+  rappel: trait('<path d="M5 12a7 7 0 1 0 2-5"/><path d="M5 3v5h5"/><path d="M12 9v4l2 2"/>'),
+  surtension: trait('<path d="M13 2L4 14h7l-1 8 9-12h-7z"/><path d="M20 4l2-2M2 22l2-2"/>'),
+  empreinte: trait('<path d="M7 20c-1.5-2-2-4-2-7a7 7 0 0 1 14 0"/><path d="M10 20c-1-2-1.5-4-1.5-7a3.5 3.5 0 0 1 7 0c0 2 0 3-.5 5"/><path d="M12 13c0 3 .5 5 1.5 7"/>'),
+  releve: trait('<path d="M12 21V8"/><path d="M7 12l5-5 5 5"/><path d="M5 4h14"/>'),
 };
 /** la couleur de l'arête du cadre, de la barre et de la capsule de valeur */
 const COULEUR_ACTION: Record<Action, string> = { atk: '#ff6a4a', bouclier: '#5fb0ff', soin: '#7fe06a' };
@@ -77,6 +89,8 @@ export interface Face {
   effet?: Effet;
   /** second effet (cartes de l'Héritage) */
   effet2?: Effet;
+  /** carte exclusive : elle n'existe que dans ce métal (un sceau discret en haut, comme l’Héritage) */
+  seul?: boolean;
   lourd?: boolean;
   /** niveau de la carte (absent : un losange de lignée à la place de la roue, en combat ou pour une carte du paquetage) */
   niveau?: number;
@@ -115,7 +129,7 @@ export function corpsFace(d: Face): string {
   const effet = effetsDe(d).map((e) => `<span class="nf-regle"><i class="nf-ico">${ICONES_EFFET[e.type]}</i><strong>${NOMS_EFFET[e.type]}</strong><span>${formuleEffet(e)}</span></span>`).join('');
   return `<span class="nf-art">${art}${ill && d.fx ? FX[d.metal] : ''}</span>`
     // une carte de l'Héritage (la seule à deux effets) porte son sceau en haut
-    + (d.effet2 ? '<span class="nf-heritage">Héritage</span>' : '')
+    + (d.effet2 ? '<span class="nf-heritage">Héritage</span>' : d.seul ? '<span class="nf-heritage nf-exclusive">Exclusive</span>' : '')
     + `<span class="nf-freqs"><span class="nf-caps">${segs}${fele}</span>${d.lourd ? '<b class="nf-lourd">2 PL.</b>' : ''}</span>`
     + `<span class="nf-voile"><span class="nf-barre"></span>`
     + `<span class="nf-val ${d.type}${d.tendance ? ' ' + d.tendance : ''}">${ICONES_ACTION[d.type]}<b>${d.v}</b></span>`
@@ -137,15 +151,15 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?:
   // une carte de base sans illustration prend, en attendant, le portrait du Porteur qui la porte au départ
   const base = m.base ?? m.id;
   // (une carte de voie ou de l'Héritage : le portrait du Porteur de sa voie)
-  const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base)) ?? voieDe(base)?.porteur ?? PORTEUR_LEGS[base];
+  const qui = Object.keys(DEPART_PORTEURS).find((p) => DEPART_PORTEURS[p]!.slice(0, 5).includes(base)) ?? voieDe(base)?.porteur ?? PORTEUR_LEGS[base] ?? PORTEUR_EXCLUSIVES[base];
   const v = Math.round(m.v * mult);
   const accord = frequenceLibre(m.effet);
   const d: Face = {
-    carte: m.id, repli: qui ? portrait(qui) : null, metal: m.rarete, type: m.type, v, fs: m.f, nom: m.nom, effet: m.effet, ...(m.effet2 ? { effet2: m.effet2 } : {}), lourd: m.lourd,
+    carte: m.id, repli: qui ? portrait(qui) : null, metal: m.rarete, type: m.type, v, fs: m.f, nom: m.nom, effet: m.effet, ...(m.effet2 ? { effet2: m.effet2 } : {}), ...(m.seul ? { seul: true } : {}), lourd: m.lourd,
     // une carte du paquetage n'a ni niveau ni lignée : le bâtiment qui la fournit est écrit sous elle
     niveau: o.origine ? undefined : niveau, lignee: o.origine ? '#CDEFFF' : COULEUR[m.lignee], fx: true,
   };
-  const label = `${m.nom}, ${o.origine ? `fournie par la ${o.origine}` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau} sur ${COLLECTION.niveauMax}, ${NOMS_LIGNEE[m.lignee].nom}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + nomsEffets(m) : ''}${m.lourd ? ', prend 2 places' : ''}`;
+  const label = `${m.nom}, ${o.origine ? `fournie par la ${o.origine}` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau} sur ${COLLECTION.niveauMax}, ${NOMS_LIGNEE[m.lignee].nom}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + nomsEffets(m) : ''}${m.lourd ? ', prend 2 places' : ''}${m.seul ? `, exclusive : n’existe qu’en ${NOMS_RARETE[m.rarete].toLowerCase()}` : ''}`;
   return `<div class="fc-ombre fo-${m.rarete}${m.legs ? ' fo-legs' : ''}"><div class="fc-carte nf nf-${m.rarete}" style="${styleFace(d)}" role="img" aria-label="${echap(label)}">`
     + corpsFace(d) + `</div></div>`;
 }

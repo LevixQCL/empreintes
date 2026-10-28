@@ -1,7 +1,7 @@
 // Couche 4 — ce que le district donne : kit des recrues, lectures et Ravitaillement, nouveautés.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef, MODULES, MODULES_TIRABLES, NOMS_LIGNEE, moduleDe, moduleDef, carteId } from '../donnees';
+import { batimentDef, porteurDef, MODULES, tirablesEn, NOMS_LIGNEE, moduleDe, moduleDef, carteId } from '../donnees';
 import type { Rarete } from '../types';
 import { COLLECTION, NIVEAU_METAL, ajouterCarte, tirerChoix, NOMS_RARETE } from '../collection';
 import { tireur } from '../rng';
@@ -60,7 +60,7 @@ export function recompenserLecture(j: Jeu, chapitreId: string): string | null {
   if (j.luesRecompensees.includes(chapitreId)) return null;
   j.luesRecompensees.push(chapitreId);
   const lignee = ligneeLaMoinsFournie(j);
-  const pool = MODULES_TIRABLES.filter((m) => m.lignee === lignee);
+  const pool = tirablesEn('fer').filter((m) => m.lignee === lignee);
   // d'abord une carte qu'on n'a pas encore en fer ; sinon un doublon
   const neuves = pool.filter((m) => !j.collection[carteId(m.id, 'fer')]);
   const liste = neuves.length ? neuves : pool;

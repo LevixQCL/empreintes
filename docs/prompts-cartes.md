@@ -489,3 +489,210 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 ```
 bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. legendary artifact, a single impossible magical object levitating above an open dark chest lined with pale pearl-white satin, the inside of the chest glowing with the same color as the object, centered and filling the frame, a giant key of mother-of-pearl and pale gold, its bow shaped like a tower on stilts above water, slowly turning in the air, a keyhole of pure white light opening in the darkness before it, bathed in soft ivory-white and pale gold light that tints the whole scene, pearly white energy swirling around it, cool grey-blue shadows, iridescent mother-of-pearl surfaces, a small broken wax seal on the edge of the chest, epic, awe-inspiring, ornate masterpiece detail, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, sepia, brown, orange, mundane
 ```
+
+## Les voies, étapes 2 et 3 (28 octobre 2026)
+
+Les 19 cartes de la Traque, de la Lecture, de la Sève et de la Cadence (`docs/familles-de-decks.md`). Même composition et mêmes
+lumières que leur lignée : un seul objet en gros plan sur l'établi. Format : 600 × 848, dans `public/art/modules/<id>.webp`.
+
+### Génés · La Traque (Nuit)
+
+#### Flair — `flair.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a carved wooden muzzle mask of a night predator with wide flared nostrils, thin glowing green scent trails curling toward it through the dark air like smoke, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Bond du prédateur — `bond-predateur.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a pair of sleek leg braces shaped like the hind legs of a big cat, coiled springs of green-glowing sinew-like cord, frozen in the instant before a leap, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Crocs de verre — `crocs-verre.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a naturalist's display of long thin fangs made of clear green glass, set in a dark polished jaw-shaped wooden mount, one fang wedged into a cracked stone block, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Chasse à l’aveugle — `chasse-aveugle.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a blindfold of dark woven cloth lying over a large seashell ear-trumpet, faint green sound ripples and paw-print shaped glows spreading across the workbench in the dark, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Hallali — `hallali.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a long curved hunting horn carved from pale bone-colored coral, a bright green cry of light bursting from its mouth and cracking the stone wall behind it, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+
+### Résonants · La Lecture (Aurel)
+
+#### Regard en biais — `regard-biais.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an ornate gilded lorgnette held at an angle on a small stand, its tilted violet lens revealing a thin glowing crack in an otherwise smooth stone mask behind it, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```
+
+#### Lame de doute — `lame-doute.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a long thin dagger with an almost invisible translucent violet blade and a gilded hilt, a wisp of violet mist hesitating around its tip, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```
+
+#### Œil du Lecteur — `oeil-lecteur.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an open antique ledger with gilded corners and a brass reading lens on a hinged arm, the lens projecting a glowing violet tear across the blank page, abstract shapes not letters, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```
+
+#### Verdict — `verdict.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a heavy ornate gilded gavel resting on its sounding block, a ring of violet shockwave spreading from the block and splitting a small stone tablet in two, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```
+
+#### Sentence muette — `sentence-muette.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an elegant long glove of dark violet silk embroidered with gold, laid flat with one finger pointing, a sharp beam of violet light shooting from the fingertip, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```
+
+
+### Génés · La Sève (Kessa)
+
+#### Pollen d’ambre — `pollen-ambre.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a small open seed pod made of polished wood spilling glowing golden-green pollen, the pollen settling into a thin protective bark-like shell on a cracked stone, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Sève des piliers — `seve-piliers.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a thick slice of an old wooden stilt pillar with glowing green sap slowly oozing from its rings into a small glass bowl, a glossy varnish forming over the wood, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Mue de verre — `mue-verre.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a delicate translucent shed skin of a lizard-like creature, perfectly whole and glassy, standing upright on the bench like a hollow crystal armor, faint green glow inside, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Floraison des Fondations — `floraison.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a dead grey wooden beam suddenly blooming with luminous green and white flowers, the overflowing petals hardening into a protective dome of leaves around it, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+
+### Augmentés · La Cadence (Ilka)
+
+#### Pas chassé — `pas-chasse.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a pair of light running boots with small blue crystal thrusters at the heels, faint blue sideways afterimages of the boots showing a quick dodging step, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```
+
+#### Lames jumelles — `lames-jumelles.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, two short twin blades mounted on matching steel forearm bracers, crossed on the workbench, a double blue motion streak showing one strike following the other, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```
+
+#### Poings-pistons — `poings-pistons.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a pair of heavy pneumatic gauntlets salvaged from a construction press, brass pistons and hoses, puffs of steam and a doubled blue impact ring in front of the knuckles, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```
+
+#### Mitraille de clous — `mitraille.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a rough handmade nail launcher built from a carpenter's nail gun and a rotating drum magazine, a spray of glowing blue nails frozen in mid-flight, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```
+
+#### Cadence folle — `cadence-folle.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a racing mechanical heart of steel and brass with a blue crystal core, its tiny gears spinning so fast they blur, rhythmic blue pulses beating out of it in rapid rings, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```
+
+
+## Les exclusives (28 octobre 2026) : une carte, un seul métal
+
+Dix cartes qui n'existent que dans un métal (argent, or ou nacre), avec un effet qu'aucune autre carte ne porte. Dans le jeu :
+« des empreintes qui refusent la copie ». Pour qu'on les reconnaisse au premier coup d'œil, elles partagent une composition à part :
+**l'objet seul sous une cloche de verre, sur un coussin de velours**, comme la pièce unique d'un cabinet de collectionneur, avec
+quelques copies fantômes de l'objet qui tombent en poussière autour de la cloche (la copie échoue). La couleur de la lignée domine ;
+les ferrures de la cloche prennent la couleur du métal. Format habituel : 600 × 848, dans `public/art/modules/<id>.webp`.
+
+### Argent
+
+#### Gantelet-pillard — `gantelet-pillard.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. unique specimen, a single object resting alone on a dark velvet cushion under a tall glass dome, like the only one of its kind in a collector's cabinet, centered and filling the frame, a battered scavenger's gauntlet of steel plates with long hooked fingers, clutching a torn glowing blue shield fragment ripped from something else, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, cool polished silver fittings and moonlit silver highlights on the dome, a few faint ghostly copies of the object crumbling to dust around the dome, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```
+
+#### Mâchoire-miroir — `machoire-miroir.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. unique specimen, a single object resting alone on a dark velvet cushion under a tall glass dome, like the only one of its kind in a collector's cabinet, centered and filling the frame, a naturalist's specimen of a creature's jaw made of polished green mirror-like shell, its teeth reflecting a different creature's bite in each mirrored surface, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, cool polished silver fittings and moonlit silver highlights on the dome, a few faint ghostly copies of the object crumbling to dust around the dome, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Boucle de mémoire — `boucle-memoire.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. unique specimen, a single object resting alone on a dark velvet cushion under a tall glass dome, like the only one of its kind in a collector's cabinet, centered and filling the frame, a wide ring of dark gilded bronze with a looping violet ribbon of light running endlessly through it, the same tiny frozen moment replaying inside the loop like a moving picture, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, cool polished silver fittings and moonlit silver highlights on the dome, a few faint ghostly copies of the object crumbling to dust around the dome, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```
+
+
+### Or
+
+#### Cœur en surrégime — `coeur-surregime.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. unique specimen, a single object resting alone on a dark velvet cushion under a tall glass dome, like the only one of its kind in a collector's cabinet, centered and filling the frame, an overclocked mechanical heart with no governor, glowing white-hot blue at the core, its safety valves torn off, small cracks of light running across its brass plates, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, warm polished gold fittings and gold highlights on the dome, a few faint ghostly copies of the object crumbling to dust around the dome, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```
+
+#### Peau de l’Ancêtre — `peau-ancetre.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. unique specimen, a single object resting alone on a dark velvet cushion under a tall glass dome, like the only one of its kind in a collector's cabinet, centered and filling the frame, an ancient folded scaled hide, thick and armored like a primordial reptile, its scales slowly absorbing small floating fragments of foreign armor plates, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, warm polished gold fittings and gold highlights on the dome, a few faint ghostly copies of the object crumbling to dust around the dome, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Miroir des Hauts — `miroir-hauts.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. unique specimen, a single object resting alone on a dark velvet cushion under a tall glass dome, like the only one of its kind in a collector's cabinet, centered and filling the frame, a tall ornate gilded hand mirror from an aristocratic hall, its violet glass reflecting a graceful gesture of a hand that is not in front of it, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, warm polished gold fittings and gold highlights on the dome, a few faint ghostly copies of the object crumbling to dust around the dome, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```
+
+
+### Nacre
+
+#### Cœur d’étoile — `coeur-etoile.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. unique specimen, a single object resting alone on a dark velvet cushion under a tall glass dome, like the only one of its kind in a collector's cabinet, centered and filling the frame, a heart-shaped machine core holding a tiny bright star inside a cage of blue crystal ribs, starlight leaking between the ribs, heavy and blinding, the object glowing with cold blue light, dominant cold steel-blue and electric cyan lighting, blue rim light, deep navy shadows, iridescent mother-of-pearl fittings and pearly rainbow sheen on the dome, a few faint ghostly copies of the object crumbling to dust around the dome, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character
+```
+
+#### Seconde naissance — `seconde-naissance.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. unique specimen, a single object resting alone on a dark velvet cushion under a tall glass dome, like the only one of its kind in a collector's cabinet, centered and filling the frame, a luminous green seed shaped like a sleeping curled figure inside a pearly translucent pod, a tiny new sprout opening at its top, the object glowing with soft green bioluminescent light, dominant emerald and moss-green lighting, teal reflections, deep green-black shadows, iridescent mother-of-pearl fittings and pearly rainbow sheen on the dome, a few faint ghostly copies of the object crumbling to dust around the dome, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, gore, flesh, organ
+```
+
+#### Empreinte vive — `empreinte-vive.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. unique specimen, a single object resting alone on a dark velvet cushion under a tall glass dome, like the only one of its kind in a collector's cabinet, centered and filling the frame, a floating glowing violet fingerprint made of light, slowly reshaping itself into the shapes of the objects around it, a blank smooth mask beneath it, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, iridescent mother-of-pearl fittings and pearly rainbow sheen on the dome, a few faint ghostly copies of the object crumbling to dust around the dome, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```
+
+#### Silence d’avant — `silence-avant.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. unique specimen, a single object resting alone on a dark velvet cushion under a tall glass dome, like the only one of its kind in a collector's cabinet, centered and filling the frame, a closed hand-bell of mother-of-pearl and gold with no clapper, a perfectly still violet hush of light around it, motionless dust hanging in the air, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, iridescent mother-of-pearl fittings and pearly rainbow sheen on the dome, a few faint ghostly copies of the object crumbling to dust around the dome, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock
+```

@@ -278,6 +278,16 @@ const REGLE: Record<TypeEffet, () => string> = {
   decharge: () => `Vide tout le Flux : +${fourchette('decharge')} de force par Flux vidé. Sans Flux, elle frappe normalement.`,
   diapason: () => 'Fréquence libre, notée = : la carte reprend la Fréquence de celle posée juste avant (en tête de chaîne, celle d’après).',
   unisson: () => `+${fourchette('unisson')} de force pour chaque autre carte de la même Fréquence dans la chaîne.`,
+  curee: () => `+${fourchette('curee')} de force si l’ennemi visé est fissuré (une Fissure posée plus tôt, ce tour-ci ou le précédent), ou s’il lui reste moins de la moitié de ses PV.`,
+  lecture: () => 'Brise la Fêlure de l’ennemi visé, quelle que soit sa Fréquence, même cachée. Brisée en Résonance, elle rapporte du Flux comme d’habitude.',
+  faille: () => `+${fourchette('faille')} de force si la Fêlure de l’ennemi visé est déjà brisée ce tour-ci.`,
+  rafale: () => 'Si la chaîne compte au moins 4 cartes, elle frappe une seconde fois, avec la même force.',
+  debord: () => 'Soigne toute l’escouade, et le soin qui dépasse les PV max n’est pas perdu : il devient du bouclier d’escouade.',
+  rapt: () => 'Avant d’agir, la carte arrache tout le bouclier de l’ennemi visé et l’ajoute au bouclier d’escouade.',
+  rappel: () => 'Après le lancer, la carte la plus forte de la chaîne ne va pas à la défausse : elle revient en tête de pioche, tu la retrouves dans ta prochaine main.',
+  surtension: () => 'Le Porteur qui la joue brûle une part de ses PV max (jamais au point de tomber), et la carte frappe beaucoup plus fort.',
+  empreinte: () => `La carte copie l’effet de celle posée juste avant elle (pas une Fréquence libre). S’il n’y a rien à copier (en tête de chaîne, après une carte sans effet), elle frappe +${Math.round((REGLES.empreinteSeule - 1) * 100)} % plus fort.`,
+  releve: () => 'Si un Porteur est à terre, il se relève avec tout le soin. Sinon, la carte soigne comme une autre.',
 };
 
 function astuce(t: TypeEffet): string {
@@ -295,6 +305,16 @@ function astuce(t: TypeEffet): string {
     case 'decharge': return `Remplis le Flux (Surcharge, Résonance, Écho), puis vide-le d’un coup : à ${REGLES.fluxMax} Flux, la force fait plus que doubler. Mais ce Flux ne servira ni au Coup d’éclat ni à une place de plus.`;
     case 'diapason': return `Elle complète un Écho : deux cartes de même Fréquence et un Diapason, et ces trois cartes sont renforcées de +${Math.round((REGLES.echo - 1) * 100)} %, avec 1 Flux.`;
     case 'unisson': return 'Trois cartes de même Fréquence : chacune compte les deux autres. La Dissonance ne brouille que les suites, pas l’Unisson ni l’Écho.';
+    case 'curee': return 'Fissure d’abord, Curée ensuite : la Fissure dure deux tours. Et quand l’ennemi passe sous la moitié de ses PV, toutes tes Curées mordent.';
+    case 'lecture': return 'Contre un Évanescent, elle trouve la Fêlure cachée ; contre un gros coup annoncé, elle le casse sans chercher la bonne Fréquence.';
+    case 'faille': return 'Pose-la après une Lecture, ou après la carte qui a la Fréquence fêlée.';
+    case 'rafale': return 'Une chaîne de 4 demande de la place : Élan et Flux la préparent.';
+    case 'debord': return 'Même quand personne n’est blessé, elle protège : joue-la avant un gros coup annoncé.';
+    case 'rapt': return 'Garde-la pour le tour où l’ennemi vient de se protéger : son bouclier devient le tien.';
+    case 'rappel': return 'Monte une chaîne autour de ta meilleure carte : elle revient tout de suite au tour d’après.';
+    case 'surtension': return 'Quand le Porteur a de la marge, et qu’un soin suit : chaque PV brûlé se rachète.';
+    case 'empreinte': return 'Pose-la juste après ta meilleure carte d’effet : un Perçant, un Siphon, une Fissure…';
+    case 'releve': return 'Garde-la en main quand un Porteur faiblit : elle annule la chute au lieu de la prévenir.';
     case 'crescendo': {
       const parts = MODULES.map((m) => m.effet).filter((e): e is { type: 'crescendo'; part: number } => e?.type === 'crescendo').map((e) => e.part);
       const max = REGLES.capaciteMax - 1;

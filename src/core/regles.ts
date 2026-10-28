@@ -10,6 +10,9 @@ export const REGLES = {
   capaciteMax: 5,
   fluxMax: 3,
   bonusLignee: 1.15,
+  /** Empreinte (carte exclusive, 28 octobre 2026) : sans effet à copier, la carte gagne cette force en plus.
+   *  Mesuré au robot : sans elle, une Empreinte dans un deck encore en fer (aucun effet) ne valait rien. */
+  empreinteSeule: 1.4,
   /** Écho (trois Fréquences identiques dans la chaîne) : les cartes qui résonnent ensemble frappent, protègent et soignent
    *  plus fort (27 octobre 2026). Avant : bouclier d'escouade +8, quelle que soit la chaîne — trop peu pour un tirage
    *  environ 10 fois plus rare qu'une suite de 3 dans un deck normal (3 à 7 % des mains contre ~40 %), et toujours du bouclier.

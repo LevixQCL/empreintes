@@ -19,7 +19,8 @@ j.strate = 5; j.objectif = 4; j.confiance = 64;
 const metaux = ['fer', 'cuivre', 'argent', 'or', 'nacre'] as const;
 MODULES_TIRABLES.forEach((m, i) => {
   const r = metaux[Math.min(4, Math.floor(i / 9))]!;
-  j.collection[carteId(m.id, i % 3 === 0 ? 'fer' : r)] = { niveau: 1 + (i % 5), doublons: i % 4 };
+  // une exclusive n'existe que dans son métal
+  j.collection[carteId(m.id, m.seul ? m.rarete : i % 3 === 0 ? 'fer' : r)] = { niveau: 1 + (i % 5), doublons: i % 4 };
 });
 j.fragments = FRAGMENTS.slice(0, 12).map((f) => f.id);
 j.lus = CHAPITRES.slice(0, 8).map((c) => c.id);

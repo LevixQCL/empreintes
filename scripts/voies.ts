@@ -6,7 +6,7 @@
 
 import { writeFileSync } from 'node:fs';
 import { COLLECTION, poidsCarte, puissanceCarte, chargeNiveau } from '../src/core/collection';
-import { DEPART_PORTEURS, MODULES, carteId, moduleDef } from '../src/core/donnees';
+import { DEPART_PORTEURS, MODULES, carteId, existeEn, moduleDef } from '../src/core/donnees';
 import { jouerTour, tauxExploration, type Escouade } from '../src/core/robot';
 import type { Lignee, Rarete } from '../src/core/types';
 
@@ -24,13 +24,18 @@ const VOIES: { nom: string; lignee: Lignee; porteur: string; cartes: string[] }[
   { nom: 'Le Moteur', lignee: 'tech', porteur: 'ilka', cartes: ['bobine-recuperation', 'condensateur', 'decharge-arc', 'eclair-captif', 'noyau-instable', 'dorsale'] },
   { nom: 'La Carapace', lignee: 'bio', porteur: 'doran', cartes: ['coup-epaule', 'queue-massue', 'belier-os', 'retour-maree', 'carapace', 'cuir-recif'] },
   { nom: 'Le Chœur', lignee: 'reso', porteur: 'vela', cartes: ['diapason-cristal', 'voix-basse', 'chorale-ombres', 'cloche-abysses', 'grand-unisson', 'plume-givre'] },
+  // étapes 2 et 3 (28 octobre 2026)
+  { nom: 'La Cadence', lignee: 'tech', porteur: 'ilka', cartes: ['pas-chasse', 'lames-jumelles', 'poings-pistons', 'mitraille', 'cadence-folle', 'dorsale'] },
+  { nom: 'La Traque', lignee: 'bio', porteur: 'doran', cartes: ['flair', 'bond-predateur', 'crocs-verre', 'chasse-aveugle', 'hallali', 'yeux-nocturnes'] },
+  { nom: 'La Sève', lignee: 'bio', porteur: 'doran', cartes: ['pollen-ambre', 'seve-piliers', 'mue-verre', 'floraison', 'glande-ambre', 'sang-ambre'] },
+  { nom: 'La Lecture', lignee: 'reso', porteur: 'vela', cartes: ['regard-biais', 'lame-doute', 'oeil-lecteur', 'verdict', 'sentence-muette', 'miroir-brume'] },
 ];
 /** --cartes a,b,c… : essayer un autre deck pour la voie mesurée (avec --seule) */
 if (process.argv.includes('--cartes')) {
-  const v = VOIES.find((x) => x.lignee === process.argv[process.argv.indexOf('--seule') + 1]);
+  const v = VOIES.find((x) => x.nom === process.argv[process.argv.indexOf('--seule') + 1]);
   if (v) v.cartes = process.argv[process.argv.indexOf('--cartes') + 1]!.split(',');
 }
-const EFFETS_VOIES = ['riposte', 'decharge', 'diapason', 'unisson'];
+const EFFETS_VOIES = ['riposte', 'decharge', 'diapason', 'unisson', 'curee', 'lecture', 'faille', 'rafale', 'debord'];
 const CARTES_VOIES = new Set(VOIES.flatMap((v) => v.cartes.filter((id) => EFFETS_VOIES.includes(moduleDef(id).effet?.type ?? ''))));
 
 const niv = (cle: string) => ({ id: cle, niveau: COLLECTION.niveauDepart[moduleDef(cle).rarete] });
@@ -42,7 +47,7 @@ const depart = (): Escouade => Object.fromEntries(Object.entries(DEPART_PORTEURS
  */
 function classique(l: Lignee, metal: Rarete, charge: number): string[] {
   const n = COLLECTION.niveauDepart[metal];
-  const pool = MODULES.filter((m) => m.lignee === l && !m.legs && !CARTES_VOIES.has(m.id) && !EFFETS_VOIES.includes(m.effet?.type ?? ''))
+  const pool = MODULES.filter((m) => m.lignee === l && existeEn(m, metal) && !m.seul && !CARTES_VOIES.has(m.id) && !EFFETS_VOIES.includes(m.effet?.type ?? ''))
     .map((m) => carteId(m.id, metal)).map((k) => ({ k, p: puissanceCarte(k, n), w: poidsCarte(k) }));
   let meilleur: { p: number; ks: string[] } = { p: -1, ks: [] };
   const choisir = (i: number, pris: typeof pool, p: number, w: number) => {
@@ -65,11 +70,13 @@ const t0 = Date.now();
 const base = mesure(depart());
 const lignes: string[] = [];
 const classiques: string[] = [];
-/** --seule <lignée> et --metal <métal> : ne mesurer qu'une voie ou un métal (pour régler vite) */
+/** --seule <nom de la voie> et --metal <métal> : ne mesurer qu'une voie ou un métal (pour régler vite) */
 const seule = process.argv[process.argv.indexOf('--seule') + 1];
 const unMetal = process.argv[process.argv.indexOf('--metal') + 1];
 for (const metal of (['cuivre', 'or'] as Rarete[]).filter((m) => !process.argv.includes('--metal') || m === unMetal)) {
-  for (const v of VOIES.filter((x) => !process.argv.includes('--seule') || x.lignee === seule)) {
+  // --seule « La Traque » ; --nouvelles : seulement les voies des étapes 2 et 3
+  const nouvelles = ['La Cadence', 'La Traque', 'La Sève', 'La Lecture'];
+  for (const v of VOIES.filter((x) => (!process.argv.includes('--seule') || x.nom === seule) && (!process.argv.includes('--nouvelles') || nouvelles.includes(x.nom)))) {
     process.stdout.write(`\r${v.nom} en ${metal}…`.padEnd(50));
     const vo = v.cartes.map((id) => carteId(id, metal));
     const cl = classique(v.lignee, metal, poids(vo));
@@ -95,5 +102,5 @@ ${lignes.join('\n')}
 Les decks classiques comparés :
 ${classiques.map((t) => `- ${t}`).join('\n')}
 `;
-writeFileSync('docs/voies-rapport.md', texte);
+writeFileSync(process.argv.includes('--sortie') ? process.argv[process.argv.indexOf('--sortie') + 1]! : 'docs/voies-rapport.md', texte);
 process.stdout.write('\r' + texte);

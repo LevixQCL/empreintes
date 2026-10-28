@@ -1,7 +1,10 @@
 # Familles de decks : proposition (26 octobre 2026)
 
 **Étape 1 codée le 27 octobre 2026** (Moteur, Carapace, Chœur) : ses chiffres ci-dessous sont ceux du jeu, réglés au robot
-(`npm run voies`, rapport dans `docs/voies-rapport.md`). Le reste est encore une proposition, avec des chiffres de départ.
+(`npm run voies`, rapport dans `docs/voies-rapport.md`).
+**Étapes 2 et 3 codées le 28 octobre 2026** : Traque, Lecture, Sève et Cadence (19 cartes, 5 effets : Curée, Lecture, Faille, Débord,
+Rafale). Les Machines et leur Servo restent à faire (le Servo touche au compte des places dans la chaîne). Les chiffres du jeu
+sont dans `src/core/donnees.ts`, réglés au robot. Le même jour : **dix cartes exclusives**, voir la fin de ce document.
 
 ## 1. Ce qui marche déjà
 
@@ -223,3 +226,27 @@ Strate et le gardien.
    14 cartes, 4 effets (Riposte, Décharge, Diapason, Unisson). Prompts des images dans `docs/prompts-cartes.md`.
 2. **Étape 2** : Lecture, Traque, Machines (15 cartes, 4 effets), plus le kit d'arrivée des Porteurs.
 3. **Étape 3** : Cadence, Sève, retouches de l’Harmonie (9 à 11 cartes, 2 effets), plus les fouilles par voie et l'onglet du guide.
+
+
+## 10. Les exclusives (28 octobre 2026)
+
+Bryan : « une carte ne doit pas spécialement être déclinée dans toutes les versions de métaux ». Dix cartes n'existent que dans un
+métal (`seul: true` dans `donnees.ts`) : on ne les trouve, ne les achète et ne les refabrique que dans ce métal. Chacune porte un effet
+qu'aucune carte ordinaire n'a. Leurs Fréquences sont volontairement écartées, parfois hors de la plage de la lignée : les meilleurs
+effets ne doivent pas rendre les suites plus faciles (règle de Bryan du 27 octobre).
+
+| Carte | Lignée | Métal | Action | Effet exclusif |
+|---|---|---|---|---|
+| Gantelet-pillard | Augmentés | argent | attaque | **Rapt** : arrache le bouclier de l'ennemi pour l'escouade |
+| Mâchoire-miroir | Génés | argent | attaque | **Empreinte** : copie l'effet de la carte d'avant |
+| Boucle de mémoire | Résonants | argent | bouclier | **Rappel** : la carte la plus forte de la chaîne revient en tête de pioche |
+| Cœur en surrégime | Augmentés | or | attaque | **Surtension** : le Porteur brûle des PV, la carte frappe bien plus fort |
+| Peau de l'Ancêtre | Génés | or | bouclier | **Rapt** |
+| Miroir des Hauts | Résonants | or | attaque | **Empreinte** |
+| Cœur d'étoile | Augmentés | nacre | attaque (lourde) | **Surtension** |
+| Seconde naissance | Génés | nacre | soin | **Relève** : relève un Porteur à terre avec tout le soin |
+| Empreinte vive | Résonants | nacre | attaque | **Empreinte** |
+| Silence d'avant | Résonants | nacre | bouclier | **Rappel** |
+
+Mesure au robot : `npm run exclusives` (rapport dans `docs/exclusives-rapport.md`), chaque exclusive comparée aux cartes ordinaires
+de son métal mesurées dans la même passe (en nacre, aux cartes de l'Héritage).
