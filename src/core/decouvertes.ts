@@ -3,7 +3,7 @@
 // avec un conseil concret. Une seule fois par partie : ce qui a été vu est gardé dans `Jeu.decouvertes`.
 // Aucun DOM ici : l'écran affiche la découverte que renvoie `decouverteEnAttente`.
 
-import { ECLATS, eclatsPossibles, enGroupe, felureVisible, tousEnnemis } from './combat';
+import { ECLATS, eclatsPossibles, enGroupe, felureVisible, tousEnnemis, traitsActifs } from './combat';
 import { CONDITIONS, ennemiDef, texteTrait } from './donnees';
 import type { CombatEtat, Trait } from './types';
 
@@ -72,7 +72,7 @@ export function decouvertesDuCombat(s: CombatEtat): Decouverte[] {
   for (const en of tousEnnemis(s)) {
     if (en.simple || en.pv <= 0) continue;
     const d = ennemiDef(en.id);
-    for (const t of d.traits ?? []) {
+    for (const t of traitsActifs(en) ? d.traits ?? [] : []) {
       // la Furie s'explique quand elle s'allume (sous la moitié des PV), pas avant
       if (t.type === 'furie' && en.pv > en.pvMax / 2) continue;
       const x = texteTrait(t);

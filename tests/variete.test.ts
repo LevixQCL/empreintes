@@ -129,10 +129,10 @@ describe('Les conditions de salle', () => {
     expect(s.porteurs[1]!.pv).toBeLessThanOrEqual(pv - eboulis(s) + 0);
   });
 
-  it('les conditions apparaissent à partir de la Strate −2, plus souvent chez le gardien', () => {
-    expect(genererCarte(1, 3).salles.some((x) => x.condition)).toBe(false);
+  it('les conditions apparaissent à partir de la Strate −5 (une nouveauté à la fois), plus souvent chez le gardien', () => {
+    for (let st = 1; st <= 4; st++) for (let r = 0; r < 10; r++) expect(genererCarte(st, r).salles.some((x) => x.condition)).toBe(false);
     let k = 0;
-    for (let r = 0; r < 20; r++) k += genererCarte(4, r).salles.filter((x) => x.condition).length;
+    for (let r = 0; r < 20; r++) k += genererCarte(5, r).salles.filter((x) => x.condition).length;
     expect(k).toBeGreaterThan(10);
     for (let id = 0; id < 50; id++) { const c = conditionDe(5, 9, id, 'combat'); if (c) expect(CONDITIONS[c]).toBeTruthy(); }
   });

@@ -224,6 +224,8 @@ export interface EnnemiEtat {
   phase2?: boolean;
   /** Strate −1 : l'ennemi joue sans ses traits ni sa seconde phase (on apprend d'abord les bases) */
   simple?: boolean;
+  /** Strates −2 et −3 : l'ennemi a sa Fêlure et sa seconde phase, mais pas encore ses traits (REGLES.apparition) */
+  sansTraits?: boolean;
   /** Fêlure (25 octobre 2026) : la Fréquence qui brise son intention ce tour-ci, et si elle a déjà été brisée */
   felure?: number;
   felureBrisee?: boolean;

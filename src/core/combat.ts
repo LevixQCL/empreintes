@@ -47,6 +47,8 @@ export function creerCombat(opts: {
   condition?: string;
   /** false : les ennemis jouent sans traits ni seconde phase (Strate −1) */
   traits?: boolean;
+  /** false : les ennemis gardent Fêlure et phases, mais jouent sans leurs traits (Strates −2 et −3) */
+  traitsEnnemis?: boolean;
   /** PV au même rythme que les coups (les pillages, réglés à part sur la force des garnisons) */
   pvPleins?: boolean;
 }): CombatEtat {
@@ -59,7 +61,7 @@ export function creerCombat(opts: {
   const etat = (id: string, rang: number): EnnemiEtat => {
     const d = ennemiDef(id);
     const pv = Math.round(d.pvMax * pvForce);
-    return { id, pv, pvMax: pv, force, bouclier: 0, etape: rang, boost: 1, ...(groupe.length > 1 ? { rang } : {}), ...(opts.traits === false ? { simple: true } : {}) };
+    return { id, pv, pvMax: pv, force, bouclier: 0, etape: rang, boost: 1, ...(groupe.length > 1 ? { rang } : {}), ...(opts.traits === false ? { simple: true } : {}), ...(opts.traitsEnnemis === false ? { sansTraits: true } : {}) };
   };
   const s: CombatEtat = {
     porteurs: clone(opts.porteurs),
@@ -127,11 +129,14 @@ export const pvProfondeur = (force: number) => Math.max(PV_PROFONDEUR.plancher, 
 
 /** Le trait d'un ennemi, s'il l'a */
 export function trait<T extends Trait['type']>(en: EnnemiEtat, type: T): Extract<Trait, { type: T }> | undefined {
-  if (en.simple) return undefined;
+  if (!traitsActifs(en)) return undefined;
   return ennemiDef(en.id).traits?.find((t) => t.type === type) as Extract<Trait, { type: T }> | undefined;
 }
 /** Furie : sous la moitié de ses PV, un ennemi frappe 30 % plus fort */
 export const FURIE = 1.3;
+/** L'ennemi joue-t-il avec ses traits ? (pas à la Strate −1, ni avant REGLES.apparition.traits) */
+export const traitsActifs = (en: EnnemiEtat) => !en.simple && !en.sansTraits;
+
 /** Ce qui multiplie les attaques d'un ennemi : sa concentration, et sa furie */
 export const puissance = (en: EnnemiEtat) => en.boost * (trait(en, 'furie') && en.pv > 0 && en.pv <= en.pvMax / 2 ? FURIE : 1);
 /**

@@ -2,6 +2,10 @@ import type { Geste, Lignee, LigneeGeste } from './types';
 
 /** Les réglages chiffrés du combat, au même endroit pour l'équilibrage */
 export const REGLES = {
+  /** À quelle Strate chaque mécanique de combat apparaît (28 octobre 2026) : une nouveauté à la fois, rien n'est retiré.
+   *  −1 : chaîne, Résonance, Flux ; −2 : Fêlure ; −3 : groupes ; −4 : traits d'ennemis ; −5 : conditions de salle.
+   *  Les phases des gardiens restent dès la −2. */
+  apparition: { felure: 2, groupes: 3, traits: 4, conditions: 5 },
   tailleMain: 5,
   /** force d'une carte « éteinte » (son Porteur est à terre) : elle reste dans le deck, sans effet, et sa Fréquence compte (27 octobre 2026).
    *  Mesuré au pillage miroir (joueur moyen) : avant 44 % de victoires en 18 tours ; ×0,5 → 23 % ; ×0,85 → 39 % en 13 tours ; ×1 → 47 % */

@@ -135,7 +135,7 @@ export function nouvelleExpedition(opts: {
     combat: creerCombat({
       porteurs: opts.porteurs, ennemiId: sequence[0]!, rng: opts.rng, deck: opts.deck,
       force: opts.force ?? forceStrate(opts.strate) * (opts.facteur ?? 1), ordonne: opts.tutoriel, bonus: opts.bonus,
-      ...(opts.strate < 2 ? { traits: false } : {}),
+      ...mecaniques(opts.strate),
     }),
     butin: 0,
     terminee: false,
@@ -183,7 +183,7 @@ export function combatSuivant(x: Expedition): Expedition {
     index,
     porteurs,
     cloture: false,
-    combat: creerCombat({ porteurs, ennemiId: x.sequence[index]!, rng: x.combat.rng, deck: x.deck, force: forceStrate(x.strate) * (x.facteur ?? 1), bonus: x.bonus, ...(x.strate < 2 ? { traits: false } : {}) }),
+    combat: creerCombat({ porteurs, ennemiId: x.sequence[index]!, rng: x.combat.rng, deck: x.deck, force: forceStrate(x.strate) * (x.facteur ?? 1), bonus: x.bonus, ...mecaniques(x.strate) }),
   };
 }
 
@@ -394,7 +394,7 @@ export function nouvelleExploration(opts: {
  * (deux ennemis, trois à partir de la Strate −5). Tirage à part, pour ne pas changer le reste de la carte.
  */
 export function escorteDe(strate: number, rng: number, salleId: number, pool: string[]): string[] {
-  if (strate < 2 || !pool.length) return [];
+  if (strate < REGLES.apparition.groupes || !pool.length) return [];
   const t = tireur({ rng: (rng ^ Math.imul(salleId + 1, 0x85ebca6b)) >>> 0 });
   if (t.nombre() >= (strate >= 5 ? 0.4 : 0.32)) return [];
   const n = strate >= 5 && t.nombre() < 0.4 ? 2 : 1;
@@ -406,11 +406,21 @@ export function escorteDe(strate: number, rng: number, salleId: number, pool: st
  * (une sur deux pour le gardien). Tirage à part, pour ne pas changer le reste de la carte.
  */
 export function conditionDe(strate: number, rng: number, salleId: number, type: TypeSalle): string | null {
-  if (strate < 2) return null;
+  if (strate < REGLES.apparition.conditions) return null;
   const t = tireur({ rng: (rng ^ Math.imul(salleId + 7, 0xc2b2ae35)) >>> 0 });
   if (t.nombre() >= (type === 'gardien' ? 0.5 : 0.33)) return null;
   const ids = Object.keys(CONDITIONS);
   return ids[t.entier(ids.length)]!;
+}
+
+/**
+ * Les mécaniques de combat présentes à cette Strate (REGLES.apparition, 28 octobre 2026) : à la −1 les bases seules,
+ * puis la Fêlure (et les phases des gardiens), puis les traits des ennemis. Groupes et conditions se règlent au tirage de la salle.
+ */
+function mecaniques(strate: number): { traits?: false; traitsEnnemis?: false } {
+  if (strate < REGLES.apparition.felure) return { traits: false };
+  if (strate < REGLES.apparition.traits) return { traitsEnnemis: false };
+  return {};
 }
 
 /** Ouvre un combat dans la salle courante */
@@ -421,7 +431,7 @@ export function lancerCombat(x: Expedition, ennemi: string, renfort = 1, escorte
     ...x, phase: 'combat', sequence, index: sequence.length - 1, cloture: false, porteurs,
     combat: creerCombat({ porteurs, ennemiId: ennemi, rng: x.combat.rng ^ (sequence.length * 0x9e3779b1), deck: x.deck,
       force: forceStrate(x.strate) * (x.facteur ?? 1) * renfort, bonus: x.bonus, ...(escorte?.length ? { escorte } : {}), ...(condition ? { condition } : {}),
-      ...(x.strate < 2 ? { traits: false } : {}) }),
+      ...mecaniques(x.strate) }),
   };
 }
 
