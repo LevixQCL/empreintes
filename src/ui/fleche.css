@@ -11,7 +11,7 @@
 .fle .surtitre .ico{width:15px;height:15px}
 
 /* le verre commun des blocs */
-.fl-tete,.fl-assaut,.fl-paliers,.fl-sommet,.fl-fermee{--cut:12px;
+.fl-tete,.fl-assaut,.fl-paliers,.fl-sommet,.fl-pr,.fl-intro{--cut:12px;
   background:linear-gradient(180deg,rgba(28,36,54,.86),rgba(12,16,26,.93));box-shadow:inset 0 0 0 1px rgba(205,239,255,.2),inset 0 1px 0 rgba(255,255,255,.16),0 14px 30px -12px rgba(0,0,0,.8);
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 
@@ -106,7 +106,7 @@
 .fl-paliers li.recu>em{color:var(--ok,#8FCF7A)}
 .fl-paliers li.recu>em .ico{color:var(--ok,#8FCF7A)}
 
-/* ---------- Le sommet, et la Flèche fermée ---------- */
+/* ---------- Le sommet ---------- */
 .fl-sommet{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:12px;padding:14px}
 .fl-sommet>div{display:grid;gap:3px}
 .fl-sommet strong{font-family:var(--display);font-weight:400;font-size:18px;color:var(--f-or)}
@@ -115,15 +115,6 @@
 .fl-sommet-ico{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;color:var(--f-or);
   background:radial-gradient(circle,rgba(242,213,140,.2),transparent 70%);box-shadow:inset 0 0 0 1px rgba(242,213,140,.35)}
 .fl-sommet-ico .ico{width:24px;height:24px}
-.fl-fermee{display:grid;justify-items:start;gap:12px;padding:18px 16px}
-.fl-fermee .fl-sommet-ico{color:var(--f-glace);background:radial-gradient(circle,rgba(127,212,255,.2),transparent 70%);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3)}
-.fl-fermee h2{margin:0;font-family:var(--display);font-weight:400;font-size:24px;color:#fff}
-.fl-fermee>p{margin:0;font-size:14px;line-height:1.5;color:var(--f-txt)}
-.fl-condition{display:flex !important;gap:10px;padding:10px 12px;width:100%;box-sizing:border-box;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14);border-radius:3px}
-.fl-condition>.ico{flex-shrink:0;width:20px;height:20px;color:var(--f-glace)}
-.fl-condition span{display:grid;gap:2px}
-.fl-condition strong{font-size:14px;color:#fff}
-.fl-condition small{font-size:12.5px;color:var(--f-doux)}
 .fl-regle{display:flex;gap:10px;margin:0;font-size:13px;line-height:1.45;color:var(--f-doux)}
 .fl-regle .ico{flex-shrink:0;width:18px;height:18px;margin-top:2px;color:var(--f-glace)}
 
@@ -132,8 +123,11 @@
 /* ---------- PC : la flèche et les quais gravés à gauche, l'assaut à droite ---------- */
 @media (min-width:1100px){
   .fle .contenu{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,1.1fr);align-items:start;column-gap:22px;row-gap:16px}
-  .fle .contenu>.entete,.fl-fermee{grid-column:1 / -1}
-  .fl-fermee{max-width:720px}
+  .fle .contenu{align-content:start}
+  .fle .contenu>.entete{grid-column:1 / -1}
+  /* la présentation : une seule colonne de lecture, centrée */
+  .fle-pres .contenu{display:flex;max-width:860px;margin:0 auto;width:100%}
+  .fl-intro{min-height:300px}
   .fl-tete{grid-column:1;grid-row:2}
   .fl-paliers{grid-column:1;grid-row:3 / span 2}
   .fl-assaut{grid-column:2;grid-row:2}
@@ -150,3 +144,29 @@
   linear-gradient(0deg,rgba(6,10,22,.75),rgba(6,10,22,0) 32%),
   rgba(10,16,32,.42)}
 .fond-lieu.z-fleche .fl-p{background:#FFF4D8;box-shadow:0 0 calc(var(--s) * 3) rgba(242,213,140,.6)}
+
+/* ---------- La présentation (28 octobre 2026) : l'histoire, la montée, et ce qui arrive ---------- */
+.fl-intro{position:relative;display:grid;align-items:end;min-height:240px;padding:18px 16px;overflow:hidden;isolation:isolate;
+  background:linear-gradient(0deg,rgba(8,12,24,.94) 8%,rgba(8,12,24,.55) 48%,rgba(8,12,24,.05)),var(--decor) center 38%/cover no-repeat}
+.fl-intro-texte{display:grid;gap:6px}
+.fl-intro .surtitre{color:var(--f-or)}
+.fl-intro h2{margin:0;font-family:var(--display);font-weight:400;font-size:26px;line-height:1.15;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+.fl-intro p{margin:0;font-size:14px;line-height:1.5;color:#E3EAF4;text-shadow:0 1px 6px rgba(0,0,0,.9)}
+.fl-pr{display:grid;gap:10px;padding:14px 16px}
+.fl-pr>p{margin:0;font-size:14px;line-height:1.55;color:var(--f-txt)}
+.fl-pr .surtitre em{margin-left:6px;padding:1px 6px;font-style:normal;font-size:12px;letter-spacing:.06em;color:#1A1405;background:var(--f-or);border-radius:2px}
+.fl-pr-etapes{display:grid;gap:0;margin:0;padding:0;list-style:none}
+.fl-pr-etapes li{display:grid;grid-template-columns:36px minmax(0,1fr);gap:12px;align-items:start;padding:10px 0;border-top:1px solid rgba(205,239,255,.08)}
+.fl-pr-etapes li:first-child{border-top:none}
+.fl-pr-etapes li>span:last-child{display:grid;gap:2px}
+.fl-pr-etapes strong{font-size:14px;color:#fff}
+.fl-pr-etapes small{font-size:13px;line-height:1.45;color:var(--f-doux)}
+.fl-pr-ico{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;color:var(--f-glace);background:radial-gradient(circle,rgba(127,212,255,.18),transparent 70%);box-shadow:inset 0 0 0 1px rgba(205,239,255,.25)}
+.fl-pr-ico .ico{width:18px;height:18px}
+.fl-pr-bientot{box-shadow:inset 0 0 0 1px rgba(242,213,140,.35),inset 0 2px 0 var(--f-or),0 14px 30px -12px rgba(0,0,0,.8)}
+.fl-pr-bientot .fl-pr-ico{color:var(--f-or);background:radial-gradient(circle,rgba(242,213,140,.18),transparent 70%);box-shadow:inset 0 0 0 1px rgba(242,213,140,.35)}
+.fl-condition{display:flex;gap:12px;margin:0;padding:12px 14px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.18);border-radius:3px}
+.fl-condition>.ico{flex-shrink:0;width:20px;height:20px;margin-top:2px;color:var(--f-glace)}
+.fl-condition span{display:grid;gap:3px}
+.fl-condition strong{font-size:14px;color:#fff}
+.fl-condition small{font-size:13px;line-height:1.45;color:var(--f-doux)}

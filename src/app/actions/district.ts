@@ -122,7 +122,9 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     // les pillages (26 octobre 2026) : la carte des archipels, la fiche d'un archipel, puis le départ
     case 'pillages': ouvrir('pillages'); if (portOuvert(app.jeu)) lireCiblesEnLigne(); break;
     // la Flèche (28 octobre 2026) : son onglet, puis le départ de l'escouade vers le quai suivant
-    case 'fleche': ouvrir('fleche'); break;
+    case 'fleche': ouvrir('fleche'); D.flecheAide = false; break;
+    case 'fleche-aide': D.flecheAide = true; window.scrollTo(0, 0); break;
+    case 'fleche-entrer': J.etatFleche(app.jeu); D.flecheAide = false; sauver(); window.scrollTo(0, 0); break;
     case 'fleche-preparer': {
       const r = J.peutMonter(app.jeu);
       if (!r.ok) { resultat(r); break; }

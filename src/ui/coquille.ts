@@ -67,6 +67,8 @@ export interface EcranDistrict {
   pillageCible?: string | null;
   /** l'escouade part monter à la Flèche (fleche.ts) */
   fleche?: boolean;
+  /** la présentation de la Flèche est rouverte (bouton « ? ») */
+  flecheAide?: boolean;
   /** les garnisons des vrais directeurs à portée, lues en ligne (vide sans compte) */
   pillagesEnLigne?: import('../core/jeu').Cible[];
   /** la fiche d'une ressource du haut est ouverte (22 octobre 2026) */

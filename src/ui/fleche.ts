@@ -6,6 +6,7 @@ import { porteurDef } from '../core/donnees';
 import { ASCENSION, chanceQuai, etatFleche, FLECHE, flecheOuverte, forceEscouade, forceQuai, gardiensQuai, pas, plancher, prochainPalier, escouadePourDepart, type Jeu } from '../core/jeu';
 import { avatar, coquille, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { ICO } from './icones';
+import { fondFleche } from './art';
 import { echap } from './outils';
 import { COULEUR } from './vue';
 
@@ -14,8 +15,12 @@ const hauteur = (q: number) => ((q - 1) / (FLECHE.quais - 1)) * 100;
 
 export function htmlFleche(e: EcranDistrict): string {
   const j = e.j;
-  let h = entete('Les Hauts · Flèche d’amarrage', 'La Flèche');
-  if (!flecheOuverte(j)) return coquille(e, h + fermee(), 'fle');
+  const ouverte = flecheOuverte(j);
+  // la présentation : Flèche fermée, première visite (rien n'est encore noté), ou à la demande
+  const pres = !ouverte ? 'fermee' : !j.fleche ? 'premiere' : e.flecheAide ? 'aide' : null;
+  const aide = pres ? '' : `<button type="button" class="btn-icone" data-action="fleche-aide" aria-label="Comment marche la Flèche">${ICO.aide}</button>`;
+  let h = entete('Les Hauts · Flèche d’amarrage', 'La Flèche', aide);
+  if (pres) return coquille(e, h + presentation(pres), 'fle fle-pres');
   const f = etatFleche(j);
   const sommet = f.quai >= FLECHE.quais;
   const suivant = prochainPalier(f.quai);
@@ -89,10 +94,39 @@ function sieges(atteint: boolean): string {
     + `<small>Tenus par des directeurs, défendus par leur escouade. Le temps du passage d’une île : ${FLECHE.defaitesMax} défaites éliminent, ${FLECHE.victoiresDefi} victoires ouvrent le défi d’un Siège. Ils s’ouvriront avec les combats entre directeurs.</small></div></section>`;
 }
 
-/** Avant la lettre des Hauts : la Flèche se voit, mais ses quais sont fermés */
-function fermee(): string {
-  return `<section class="fl-fermee"><span class="fl-sommet-ico">${ICO.verrou}</span>`
-    + `<h2>Les quais sont fermés</h2>`
-    + `<p>La Flèche est la dernière flèche d’amarrage des Hauts. Depuis les Accords de 2101, tout district peut y envoyer une escouade, mais seulement sur invitation : les Hauts n’écrivent qu’aux directeurs qui ont fait parler d’eux.</p>`
-    + `<p class="fl-condition">${ICO.strate}<span><strong>Vaincs le gardien de la Strate −6</strong><small>Une lettre scellée de cire blanche t’ouvrira les quais.</small></span></p></section>`;
+/**
+ * La présentation de la Flèche (28 octobre 2026, Bryan : « explique tout ça dans l'écran d'ouverture ») : son histoire,
+ * comment on y monte, et ce qui arrive (tenir un quai et en devenir le gardien, les Sièges du sommet).
+ * Montrée tant que la Flèche est fermée, à la première visite, puis à la demande (bouton « ? »).
+ */
+function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
+  const etape = (ico: string, titre: string, texte: string) => `<li><span class="fl-pr-ico">${ico}</span><span><strong>${titre}</strong><small>${texte}</small></span></li>`;
+  return `<section class="fl-intro" style="--decor:url(${fondFleche})"><div class="fl-intro-texte">`
+    + `<span class="surtitre">Clause de la Flèche · Accords de 2101</span>`
+    + `<h2>La dernière route vers les Hauts</h2>`
+    + `<p>Une aiguille de laiton et de verre plantée dans la mer, si haute qu’elle traverse les nuages. Tout en haut, les îles des Hauts viennent s’y amarrer.</p></div></section>`
+
+    + `<section class="fl-pr"><span class="surtitre">${ICO.codex}L’histoire</span>`
+    + `<p>Les îles des Hauts ne se posent jamais : elles dérivent au-dessus de la mer et ne s’arrêtent qu’aux flèches d’amarrage. Il n’en reste qu’une debout, et ce sont les Hauts qui la tiennent.</p>`
+    + `<p>Avant 2101, les districts d’en bas montaient à l’abordage. Les Accords y ont mis fin et n’ont laissé qu’une route légale vers le haut : la Flèche, quai par quai. Tout district invité peut y envoyer une escouade.</p>`
+    + `<p>Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. Le district qui tient le sommet quand une île passe est reçu là-haut.</p></section>`
+
+    + `<section class="fl-pr"><span class="surtitre">${ICO.monter}Comment on monte</span><ul class="fl-pr-etapes">`
+    + etape(ICO.atk, 'Un combat par quai', 'Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.')
+    + etape(ICO.monter, 'Vite en bas, lentement en haut', `Une victoire fait monter de ${FLECHE.montee[0]!.quais} quais jusqu’au ${FLECHE.montee[0]!.jusqua}, de ${FLECHE.montee[1]!.quais} jusqu’au ${FLECHE.montee[1]!.jusqua}, puis d’un seul.`)
+    + etape(ICO.descendre, 'Une défaite fait redescendre', 'D’autant de quais, mais jamais sous le dernier quai gravé que tu as atteint.')
+    + etape(ICO.cristal, 'Les quais gravés', `${FLECHE.paliers.join(', ')} : chacun donne des composants et des Éclats, une seule fois. Ton record compte au Grand Tableau.`)
+    + `</ul></section>`
+
+    + `<section class="fl-pr fl-pr-bientot"><span class="surtitre">${ICO.bouclier}Bientôt · tenir un quai <em>à venir</em></span>`
+    + `<p>Les Hauts préfèrent payer un directeur qui tient bon qu’un gardien de location. Bientôt, ton escouade pourra s’arrêter sur un quai qu’elle vient de prendre et en devenir le gardien.</p><ul class="fl-pr-etapes">`
+    + etape(ICO.porteurs, 'Tu remplaces les gardiens payés', 'Ton escouade s’installe sur le quai. Ceux qui montent doivent passer par elle.')
+    + etape(ICO.coffre, 'Les Hauts te versent un gage', 'Chaque jour où tu tiens le quai, et plus il est haut, plus il rapporte.')
+    + etape(ICO.bouclier, 'D’autres directeurs viennent te déloger', 'Ton escouade se défend seule, même jeu fermé. Si elle tombe, le quai change de gardien et tu redescends.')
+    + etape(ICO.porte, `Au sommet, les ${FLECHE.sieges} Sièges`, `Tenus par des directeurs. Le temps du passage d’une île, ${FLECHE.defaitesMax} défaites t’éliminent et ${FLECHE.victoiresDefi} victoires t’ouvrent le défi d’un Siège.`)
+    + `</ul></section>`
+
+    + (etat === 'fermee'
+      ? `<p class="fl-condition">${ICO.verrou}<span><strong>Les quais sont fermés · vaincs le gardien de la Strate −6</strong><small>Les Hauts n’écrivent qu’aux directeurs qui ont fait parler d’eux. Une lettre scellée de cire blanche t’ouvrira les quais.</small></span></p>`
+      : `<button type="button" class="btn prim large" data-action="fleche-entrer">${ICO.fleche}${etat === 'premiere' ? 'Entrer sur les quais' : 'Retour aux quais'}</button>`);
 }
