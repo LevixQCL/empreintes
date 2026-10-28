@@ -520,3 +520,6 @@
 .btn-relance:disabled{opacity:.5;animation:none}
 @keyframes relance-lueur{50%{box-shadow:inset 0 0 0 1px rgba(159,216,255,.7),inset 0 0 14px rgba(159,216,255,.26)}}
 @media (prefers-reduced-motion:reduce){.btn-relance{animation:none}}
+/* la chaîne posée brise la Fêlure de cet ennemi, même s'il n'est pas visé (28 octobre 2026) */
+.vg-felure.prevue{box-shadow:inset 0 0 0 1px var(--fc,#fff),0 0 8px var(--fc,#fff);animation:felure-prevue 1s ease-in-out infinite alternate}
+@media (prefers-reduced-motion: reduce){ .vg-felure.prevue{animation:none} }

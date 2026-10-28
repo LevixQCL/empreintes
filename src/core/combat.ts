@@ -495,11 +495,16 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     log(s, `Écho ! Trois Fréquences identiques : ces cartes +${Math.round((REGLES.echo - 1) * 100)} %.`, { sorte: 'effet' });
     emettre({ kind: 'echo' });
   }
+  let fluxFelure = false;
   for (const [i, g] of s.chaine.entries()) {
     RANG = i;
     emettre({ kind: 'carte', rang: i, total: s.chaine.length, lignee: ligneeGeste(g), type: g.type, porteur: g.porteur, suite: a.suite, ...(g.effet ? { effet: g.effet.type } : {}) });
     for (const ev of appliquer(s, g, a.mult, i, a.suite)) emettre(ev);
-    if (s.ennemi.pv > 0 && freqs[i] === s.ennemi.felure && !s.ennemi.felureBrisee) briser(s, s.ennemi, emettre, a.suite >= 3);
+    // la Fêlure se brise sur chaque ennemi debout dont la chaîne porte la Fréquence, visé ou non (28 octobre 2026, plus intuitif) ;
+    // le Flux de la Fêlure ne se gagne qu'une fois par chaîne, même si plusieurs Fêlures cèdent
+    for (const en of tousEnnemis(s)) {
+      if (en.pv > 0 && freqs[i] === en.felure && !en.felureBrisee) { briser(s, en, emettre, a.suite >= 3 && !fluxFelure); fluxFelure = true; }
+    }
     phaseGardien(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) tombe(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) {
