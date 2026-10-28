@@ -32,6 +32,12 @@ describe('Les voies : étapes 2 et 3', () => {
     const sans = combat([geste(5, 'atk', 10, { type: 'curee', part: 0.5 })]);
     jouer(sans);
     expect(degats(sans)).toBe(10);
+    // une proie à moins de la moitié de ses PV compte aussi
+    const blessee = combat([geste(5, 'atk', 10, { type: 'curee', part: 0.5 })]);
+    blessee.ennemi.pv = Math.floor(blessee.ennemi.pvMax / 2);
+    const avant = blessee.ennemi.pv;
+    jouer(blessee);
+    expect(avant - blessee.ennemi.pv).toBe(15);
     const avec = combat([geste(1, 'atk', 0, { type: 'fissure', part: 0.2 }), geste(5, 'atk', 10, { type: 'curee', part: 0.5 })]);
     jouer(avec);
     // 10 × 1,2 (Fissure) × 1,5 (Curée)
@@ -58,14 +64,14 @@ describe('Les voies : étapes 2 et 3', () => {
     expect(degats(quatre)).toBe(20);
   });
 
-  it('Débord : le soin en trop devient du bouclier d’escouade', () => {
+  it('Débord : soigne toute l’escouade, le soin en trop devient du bouclier d’escouade', () => {
     const s = combat([geste(2, 'soin', 12, { type: 'debord' })]);
     s.porteurs[0]!.pv -= 5;
-    s.porteurs[1]!.pv = s.porteurs[1]!.pvMax;
+    s.porteurs[1]!.pv -= 12;
     s.porteurs[2]!.pv = s.porteurs[2]!.pvMax;
     jouer(s);
-    expect(s.porteurs[0]!.pv).toBe(s.porteurs[0]!.pvMax);
-    expect(lignes(s)).toContain('Débord : le soin en trop devient 7 de bouclier d’escouade.');
+    // 7 en trop chez le premier, 12 chez le troisième déjà plein
+    expect(lignes(s)).toContain('Débord : le soin en trop devient 19 de bouclier d’escouade.');
   });
 });
 
@@ -85,10 +91,11 @@ describe('Les effets exclusifs', () => {
     expect(degats(s)).toBe(15);
     const seule = combat([geste(5, 'atk', 10, { type: 'empreinte' })]);
     jouer(seule);
-    expect(degats(seule)).toBe(10);
+    // rien à copier : elle imite la force à la place
+    expect(degats(seule)).toBe(14);
     const accord = combat([geste(1, 'atk', 0, { type: 'accord' }), geste(5, 'atk', 10, { type: 'empreinte' })]);
     jouer(accord);
-    expect(degats(accord)).toBe(10);
+    expect(degats(accord)).toBe(14);
   });
 
   it('Surtension brûle des PV sans jamais faire tomber, et frappe plus fort', () => {

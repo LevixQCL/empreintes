@@ -221,7 +221,7 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
 export const brumeActive = (s: CombatEtat) => s.condition === 'brouillard' && s.issue === 'en-cours';
 
 /** Une carte qui soigne un seul Porteur (la Vague soigne toute l'escouade) */
-export const soigneUnSeul = (g: Geste) => g.type === 'soin' && g.effet?.type !== 'vague';
+export const soigneUnSeul = (g: Geste) => g.type === 'soin' && g.effet?.type !== 'vague' && g.effet?.type !== 'debord';
 
 /**
  * La cible proposée pour un soin : le Porteur visé par l'attaque annoncée s'il risque de tomber bas,
@@ -790,7 +790,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
       evs.push({ kind: 'soin', cible: aTerre.id, v: aTerre.pv });
     }
     const choisi = g.cible ? s.porteurs.find((p) => p.id === g.cible && p.pv > 0) : undefined;
-    const cibles = aTerre ? [] : de('vague') ? vivants(s) : [choisi ?? plusBlesse(s)].filter((x): x is PorteurEtat => !!x);
+    const cibles = aTerre ? [] : de('vague') || de('debord') ? vivants(s) : [choisi ?? plusBlesse(s)].filter((x): x is PorteurEtat => !!x);
     const morceaux: string[] = [];
     const calculs: CalculHisto[] = [];
     let total = 0;
@@ -879,6 +879,8 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
     const pareilles = fs.filter((x, k) => k !== rang && x === fs[rang]).length;
     mettre(`Unisson (${pareilles} même${pareilles > 1 ? 's' : ''} Fréquence${pareilles > 1 ? 's' : ''})`, 1 + un.part * pareilles);
   }
+  // Empreinte (exclusive) sans rien à copier (en tête de chaîne, ou après une carte sans effet) : elle imite la force à la place
+  if (!eteinte && g.effet?.type === 'empreinte' && !effets[0]) mettre('Empreinte (rien à copier)', REGLES.empreinteSeule);
   // Surtension (exclusive) : le Porteur paie de ses PV une part de force en plus
   const st = de('surtension');
   if (st) mettre('Surtension', 1 + st.part);
@@ -907,8 +909,9 @@ function facteursCoup(s: CombatEtat, g: Geste, mult: number, percant: boolean, e
   if (av !== 1) facteurs.push({ nom: `Lignée : ${NOMS_LIGNEE[ligneeGeste(g)].nom} bat ${NOMS_LIGNEE[e.lignee].nom}`, m: av });
   if (s.ennemi.fissure) facteurs.push({ nom: 'Fissure', m: 1 + s.ennemi.fissure });
   // Curée (Traque) : l'ennemi fissuré est achevé plus fort ; Faille (Lecture) : de même quand sa Fêlure est brisée
+  // la Curée vise une proie affaiblie : fissurée, ou sous la moitié de ses PV
   const curee = effets.find((x): x is Extract<Effet, { type: 'curee' }> => x?.type === 'curee');
-  if (curee && s.ennemi.fissure) facteurs.push({ nom: 'Curée (ennemi fissuré)', m: 1 + curee.part });
+  if (curee && (s.ennemi.fissure || s.ennemi.pv <= s.ennemi.pvMax / 2)) facteurs.push({ nom: s.ennemi.fissure ? 'Curée (ennemi fissuré)' : 'Curée (ennemi à moins de la moitié de ses PV)', m: 1 + curee.part });
   const faille = effets.find((x): x is Extract<Effet, { type: 'faille' }> => x?.type === 'faille');
   if (faille && s.ennemi.felureBrisee) facteurs.push({ nom: 'Faille (Fêlure brisée)', m: 1 + faille.part });
   // Évanescent : hors Résonance, l'ennemi ne prend qu'une part des coups

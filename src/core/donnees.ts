@@ -148,12 +148,12 @@ export const MODULES: ModuleDef[] = [
   // La Sève (Kessa) : soigner en continu, le surplus devient bouclier
   c('pollen-ambre', 'Pollen d’ambre', 'bio', 'fer', 'soin', 6, [2, 1, 3], { type: 'debord' }),
   c('seve-piliers', 'Sève des piliers', 'bio', 'cuivre', 'soin', 7, [4, 3, 5], { type: 'debord' }),
-  c('mue-verre', 'Mue de verre', 'bio', 'argent', 'soin', 13, [3, 4, 1], { type: 'debord' }),
-  c('floraison', 'Floraison des Fondations', 'bio', 'or', 'soin', 17, [5, 4, 2], { type: 'debord' }),
+  c('mue-verre', 'Mue de verre', 'bio', 'argent', 'soin', 10, [3, 4, 1], { type: 'debord' }),
+  c('floraison', 'Floraison des Fondations', 'bio', 'or', 'soin', 13, [5, 4, 2], { type: 'debord' }),
   // La Cadence (Ilka) : les longues chaînes, chaque coup doublé
   c('pas-chasse', 'Pas chassé', 'tech', 'fer', 'atk', 10, [3, 2, 4], { type: 'elan' }),
-  c('lames-jumelles', 'Lames jumelles', 'tech', 'fer', 'atk', 10, [4, 5, 3], { type: 'rafale' }),
-  c('poings-pistons', 'Poings-pistons', 'tech', 'cuivre', 'atk', 11, [5, 4, 6], { type: 'rafale' }),
+  c('lames-jumelles', 'Lames jumelles', 'tech', 'fer', 'atk', 11, [4, 5, 3], { type: 'rafale' }),
+  c('poings-pistons', 'Poings-pistons', 'tech', 'cuivre', 'atk', 12, [5, 4, 6], { type: 'rafale' }),
   c('mitraille', 'Mitraille de clous', 'tech', 'argent', 'atk', 14, [6, 5, 7], { type: 'rafale' }),
   c('cadence-folle', 'Cadence folle', 'tech', 'or', 'atk', 15, [3, 4, 5], { type: 'rafale' }),
 
@@ -167,12 +167,12 @@ export const MODULES: ModuleDef[] = [
   x('boucle-memoire', 'Boucle de mémoire', 'reso', 'argent', 'bouclier', 12, [6, 9], { type: 'rappel' }),
   // Or
   x('coeur-surregime', 'Cœur en surrégime', 'tech', 'or', 'atk', 20, [7, 2], { type: 'surtension', part: 0.6, cout: 0.12 }),
-  x('peau-ancetre', 'Peau de l’Ancêtre', 'bio', 'or', 'bouclier', 21, [1, 4], { type: 'rapt' }),
-  x('miroir-hauts', 'Miroir des Hauts', 'reso', 'or', 'atk', 18, [9, 6], { type: 'empreinte' }),
+  x('peau-ancetre', 'Peau de l’Ancêtre', 'bio', 'or', 'bouclier', 26, [1, 4], { type: 'rapt' }),
+  x('miroir-hauts', 'Miroir des Hauts', 'reso', 'or', 'atk', 20, [9, 6], { type: 'empreinte' }),
   // Nacre
-  x('coeur-etoile', 'Cœur d’étoile', 'tech', 'nacre', 'atk', 44, [7, 4, 2], { type: 'surtension', part: 0.5, cout: 0.15 }, true),
-  x('seconde-naissance', 'Seconde naissance', 'bio', 'nacre', 'soin', 20, [1, 3, 5], { type: 'releve' }),
-  x('empreinte-vive', 'Empreinte vive', 'reso', 'nacre', 'atk', 22, [9, 6, 3], { type: 'empreinte' }),
+  x('coeur-etoile', 'Cœur d’étoile', 'tech', 'nacre', 'atk', 50, [7, 4, 2], { type: 'surtension', part: 0.5, cout: 0.15 }, true),
+  x('seconde-naissance', 'Seconde naissance', 'bio', 'nacre', 'soin', 26, [1, 3, 5], { type: 'releve' }),
+  x('empreinte-vive', 'Empreinte vive', 'reso', 'nacre', 'atk', 25, [9, 6, 3], { type: 'empreinte' }),
   x('silence-avant', 'Silence d’avant', 'reso', 'nacre', 'bouclier', 20, [7, 4, 9], { type: 'rappel' }),
 
   // ---------- L’Héritage du district (27 octobre 2026, docs/heritage-du-district.md) ----------

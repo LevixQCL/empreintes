@@ -39,7 +39,7 @@ export type Effet =
   /** Chœur : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne */
   | { type: 'unisson'; part: number }
   // ---------- Les voies, étapes 2 et 3 (28 octobre 2026) ----------
-  /** Traque : une part de force en plus si l'ennemi visé est fissuré */
+  /** Traque : une part de force en plus si l'ennemi visé est fissuré, ou sous la moitié de ses PV */
   | { type: 'curee'; part: number }
   /** Lecture : brise la Fêlure de l'ennemi visé, quelle que soit sa Fréquence (même cachée) */
   | { type: 'lecture' }
@@ -47,7 +47,7 @@ export type Effet =
   | { type: 'faille'; part: number }
   /** Cadence : frappe une seconde fois si la chaîne compte au moins 4 cartes */
   | { type: 'rafale' }
-  /** Sève : le soin en trop (PV déjà pleins) devient du bouclier d'escouade */
+  /** Sève : soigne toute l'escouade, et le soin en trop (PV déjà pleins) devient du bouclier d'escouade */
   | { type: 'debord' }
   // ---------- Les exclusives (28 octobre 2026) : des effets qu'on ne trouve que sur une carte d'un seul métal ----------
   /** arrache tout le bouclier de l'ennemi visé et l'ajoute au bouclier d'escouade (avant de frapper) */
