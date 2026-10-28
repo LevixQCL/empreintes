@@ -34,6 +34,9 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="forge"]'); } },
   { nom: 'generateur', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="generateur"]'); } },
   { nom: 'noyau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="noyau"]'); } },
+  // le Butin de la semaine (28 octobre 2026) : sur téléphone, on déplie d'abord le panneau, puis on touche le bandeau
+  { nom: 'butin', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.mj-plier.mob[data-action="panneau"]:visible').first(); if (await d.count()) { await d.click(); await p.waitForTimeout(250); } await p.click('.mission.jour .archive'); } },
+  { nom: 'panneau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.mj-plier.mob[data-action="panneau"]:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'tour', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); } },
   { nom: 'porteurs', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); } },
   { nom: 'deck-echange', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.eq-gerer'); await p.click('.deck-porteur [data-action="dk-porte"]'); } },

@@ -82,7 +82,7 @@ export function tick(j: Jeu, now: number): string[] {
     const paliers = ARCHIVE.paliers.filter((p) => j.archive.points >= p).length;
     if (paliers > 0) {
       j.archive.aOuvrir = Math.max(j.archive.aOuvrir, paliers);
-      const t = 'L’Archive de la semaine est prête à être ouverte.';
+      const t = 'Le Butin de la semaine est prêt à être ouvert.';
       log(j, t);
       nouvelles.push(t);
     }

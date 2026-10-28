@@ -132,14 +132,14 @@ export function reclamerQuotidien(j: Jeu): Resultat {
 /** Ouvre l'Archive de la semaine passée */
 export function ouvrirArchive(j: Jeu): Resultat {
   const n = j.archive.aOuvrir;
-  if (!n) return non('L’Archive n’est pas encore prête.');
+  if (!n) return non('Le Butin de la semaine n’est pas encore prêt.');
   j.composants += 40;
   j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate) });
   if (n >= 2) j.eclats += 3;
   if (n >= 3) j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent') });
   if (n >= 4) { j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent') }); j.eclats += 5; }
   j.archive.aOuvrir = 0;
-  log(j, `Archive de la semaine ouverte : palier ${n} sur ${ARCHIVE.paliers.length}.`);
+  log(j, `Butin de la semaine ouvert : palier ${n} sur ${ARCHIVE.paliers.length}.`);
   return { ok: true };
 }
 

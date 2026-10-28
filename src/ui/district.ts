@@ -260,11 +260,11 @@ function mission(e: EcranDistrict): string {
     barre = `<section class="mission jour replie barre" aria-label="Objectif du jour">`
       + `<button type="button" class="mj-aller" data-action="objectif-aller" data-id="${q.type}" aria-label="Objectif du jour : ${echap(def.titre)}, ${q.progres} sur ${def.objectif}. Y aller">`
       + `<span class="surtitre">Objectif</span><strong>${echap(def.titre)}</strong><b class="chiffre">${q.progres}/${def.objectif}</b>${ICO.lancer}</button>`
-      + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="false" aria-label="Voir l’Archive et le marché"><i aria-hidden="true">▾</i></button></section>`;
+      + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="false" aria-label="Voir le butin et le marché"><i aria-hidden="true">▾</i></button></section>`;
   }
   // avec la barre, le panneau complet n'est plus montré que sur PC (district.css)
   let h = barre + `<section class="mission jour${quotidienFait(j) ? ' faite' : ''}${replie ? ' replie' : ''}${barre ? ' pc-seul' : ''}" aria-label="Objectif du jour">`
-    + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="${!replie}" aria-label="${replie ? 'Voir l’Archive et le marché' : 'Réduire le panneau'}">${replie ? 'Détails' : 'Réduire'}<i aria-hidden="true">${replie ? '▾' : '▴'}</i></button><div class="mj-obj">`;
+    + `<button type="button" class="mj-plier mob" data-action="panneau" aria-expanded="${!replie}" aria-label="${replie ? 'Voir le butin et le marché' : 'Réduire le panneau'}">${replie ? 'Détails' : 'Réduire'}<i aria-hidden="true">${replie ? '▾' : '▴'}</i></button><div class="mj-obj">`;
   if (quotidienActif(j)) {
     const reserve = q.reserve > 1
       ? `<span class="mj-reserve pc" title="${q.reserve} objectifs en réserve : ils s’accumulent jusqu’à 3 si tu ne joues pas">${Array.from({ length: 3 }, (_, i) => `<i class="${i < q.reserve ? 'plein' : ''}"></i>`).join('')}<small>${q.reserve} en réserve</small></span>`
@@ -278,12 +278,14 @@ function mission(e: EcranDistrict): string {
   h += `</div>`;
   h += (j.chambre ? `<p class="rumeur"><b>Au marché</b> ${echap(rumeurDuJour(jourDe(Date.now()), j.strate))}</p>` : '');
   const reperes = ARCHIVE.paliers.map((p, i) => `<span class="${points >= p ? 'atteint' : ''}" style="left:${(p / max) * 100}%">${i === ARCHIVE.paliers.length - 1 ? '' : p}</span>`).join('');
-  h += `<div class="archive"><span class="mj-ico pc">${icone('coffre')}</span>`
-    + `<span class="surtitre mob">ARCHIVE · ${points}/${max}</span><span class="surtitre pc">ARCHIVE DE LA SEMAINE</span>`
+  // le Butin de la semaine (ex-« Archive », renommé le 28 octobre 2026 : on ne comprenait pas ce que c'était) : un toucher ouvre sa fiche
+  h += `<div class="archive" role="button" tabindex="0" data-action="ressource" data-id="butin" aria-label="Butin de la semaine : ${points} sur ${max} points. Comment ça marche">`
+    + `<span class="mj-ico pc">${icone('coffre')}</span>`
+    + `<span class="surtitre mob">BUTIN<i class="info-butin" aria-hidden="true">?</i></span><span class="surtitre pc">BUTIN DE LA SEMAINE<i class="info-butin" aria-hidden="true">?</i></span>`
     + `<span class="mj-valeur pc"><b>${points}</b>/${max}</span>`
     + `<div class="jauge reso">${crans}<i style="width:${Math.min(100, (100 * j.archive.points) / max)}%"></i></div>`
     + `<div class="mj-reperes pc" aria-hidden="true">${reperes}</div>`
-    + `<small><span class="pc">S’ouvre </span>${decompte(lundiSuivant(e.now), e.now, 'lundi, dans ')}</small></div>`;
+    + `<small><span class="mob"><b>${points}</b>/${max} · </span><span class="pc">S’ouvre </span>${decompte(lundiSuivant(e.now), e.now, 'lundi, dans ')}</small></div>`;
   return h + `</section>`;
 }
 
@@ -297,7 +299,7 @@ function appel(e: EcranDistrict): string {
     return `<button type="button" class="appel reso" data-action="rencontre">${ICO.porte}<span><strong>La porte scellée</strong><small>Sous la Tour du Noyau, trois personnes t’attendent</small></span></button>`;
   }
   if (j.archive.aOuvrir && !objectifCourant(j)) {
-    return `<button type="button" class="appel reso" data-action="ouvrir-archive">${icone('coffre')}<span><strong>L’Archive de la semaine est prête</strong><small>Palier ${j.archive.aOuvrir} sur ${ARCHIVE.paliers.length} atteint : ouvre-la</small></span></button>`;
+    return `<button type="button" class="appel reso" data-action="ouvrir-archive">${icone('coffre')}<span><strong>Le Butin de la semaine est prêt</strong><small>Palier ${j.archive.aOuvrir} sur ${ARCHIVE.paliers.length} atteint : ouvre-le</small></span></button>`;
   }
   if (colisDisponible(j)) {
     const reste = colisAvantChoix(j);
@@ -871,7 +873,7 @@ function fenetreLegs(e: EcranDistrict): string {
 
 function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
-  const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : 'Archive de la semaine';
+  const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : 'Butin de la semaine';
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><small class="aide choix-loupe">Reste appuyé sur une carte pour lire son effet.</small><div class="cartes-choix">`
     + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}" data-carte="${id}"`, true)).join('')
     + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;

@@ -3,7 +3,7 @@
 
 import { moduleDef, porteurDef } from '../core/donnees';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
-import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
+import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, CREUSEURS, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
@@ -139,7 +139,7 @@ export function couts(j: Jeu, c: { energie?: number; composants?: number; eclats
 }
 
 /** La barre des ressources, toujours en haut */
-type Ressource = 'energie' | 'composants' | 'eclats' | 'strate' | 'confiance';
+type Ressource = 'energie' | 'composants' | 'eclats' | 'strate' | 'confiance' | 'butin';
 
 function hud(j: Jeu, ouverte: Ressource | null = null): string {
   const max = stockage(j);
@@ -196,7 +196,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
       ligne('cartes', 'Le ravitaillement du jour', 'Quelques composants chaque jour.'),
       ligne('porteurs', 'Les missions', 'Un Porteur envoyé dans une Strate vaincue en rapporte à son retour.'),
       ligne('recycler', 'Recycler des doublons', 'Chaque doublon recyclé rapporte quelques composants.'),
-      ligne('coffre', 'L’Archive de la semaine', 'Chaque lundi, selon les paliers atteints.')];
+      ligne('coffre', 'Le Butin de la semaine', 'Chaque lundi, selon les paliers atteints.')];
     servir = [ligne('marteau', 'Améliorer les bâtiments', 'Avec l’énergie.'),
       ligne('cartes', 'Acheter au Comptoir', 'Des cartes précises, à prix fixe, renouvelées chaque jour.'),
       ligne('cartes', 'Monter une carte de niveau', 'Avec ses doublons.'),
@@ -207,7 +207,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
     etat = `<b>${ent(j.eclats)}</b><small>Éclats en réserve</small>`;
     gagner = [ligne('strate', 'Les gardiens', 'Chaque gardien vaincu en donne, davantage à partir de la Strate −5.'),
       ligne('coffre', 'Les caches et les rencontres', 'À partir de la Strate −3, une cache en cache parfois un.'),
-      ligne('cristal', 'Les fouilles « Éclats » et les Archives de la semaine', 'Pour en gagner quand on bloque.')];
+      ligne('cristal', 'Les fouilles « Éclats » et le Butin de la semaine', 'Pour en gagner quand on bloque.')];
     servir = [ligne('marteau', 'Refabriquer les cartes rares', 'Argent, or et nacre en demandent à la Forge.'),
       ligne('cartes', 'Les cartes en argent du Comptoir', 'Elles coûtent aussi des Éclats.'),
       ligne('marteau', 'Les grands chantiers', 'Les derniers niveaux des bâtiments.')];
@@ -222,6 +222,23 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
       ligne('porteurs', 'Certains choix en bas', 'Aider ceux qu’on croise se sait au quartier.')];
     servir = [ligne('ouvrier', 'Des creuseurs volontaires', `Chaque niveau atteint amène ${CREUSEURS.confiance} creuseur (s’il reste de la place à la Tour du Noyau).`),
       ligne('soin', 'L’Accord ouvert', `Au niveau ${ACCORD_OUVERT.confiance}, avec la Clinique au niveau ${ACCORD_OUVERT.clinique}, un nouveau Résonant rejoint le district.`)];
+  } else if (r === 'butin') {
+    // 28 octobre 2026 (Bryan : « c'est quoi en fait l'Archive de la semaine ») : la fiche explique tout, sans rien à deviner
+    const pts = j.archive.points;
+    const prochain = ARCHIVE.paliers.find((p) => pts < p);
+    const atteints = ARCHIVE.paliers.filter((p) => pts >= p).length;
+    surtitre = 'CHAQUE SEMAINE'; titre = 'Le Butin de la semaine';
+    resume = 'Tout ce que tu fais cette semaine remplit un coffre. Chaque cran atteint y ajoute des récompenses. Lundi, le coffre s’ouvre au district et une nouvelle semaine repart de zéro. Rien n’est jamais perdu : un cran atteint reste acquis.';
+    etat = `<b>${pts}</b> / ${ARCHIVE.paliers[ARCHIVE.paliers.length - 1]}<small>${prochain ? `Encore ${prochain - pts} points pour le cran ${atteints + 1}` : 'Tous les crans sont atteints : bravo'} · s’ouvre lundi</small>`;
+    gagner = [ligne('porte', 'Gagner un combat en bas', `+${ARCHIVE.points.combat} points.`),
+      ligne('strate', 'Finir une descente', `+${ARCHIVE.points.expedition} points.`),
+      ligne('marteau', 'Finir un chantier', `+${ARCHIVE.points.chantier} points.`),
+      ligne('cartes', 'Remplir l’objectif du jour', `+${ARCHIVE.points.quotidien} points.`)];
+    const d = ARCHIVE.paliers;
+    servir = [ligne('coffre', `Cran 1 · ${d[0]} points`, '40 composants et une carte au choix parmi trois.'),
+      ligne('cristal', `Cran 2 · ${d[1]} points`, '3 Éclats en plus.'),
+      ligne('cartes', `Cran 3 · ${d[2]} points`, 'Une deuxième carte au choix, dont au moins une en argent.'),
+      ligne('boost', `Cran 4 · ${d[3]} points`, 'Une troisième carte au choix avec de l’argent, et 5 Éclats de plus. Pour les plus assidus.')];
   } else {
     const manque = manquePourCreuser(j);
     surtitre = 'PROFONDEUR'; titre = `La Strate −${j.strate}`;
@@ -234,9 +251,9 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
   }
   return `<div class="voile-feuille" data-action="ressource" data-id="" aria-hidden="true"></div><section class="feuille ressource-fiche res-${r}" role="dialog" aria-modal="true" aria-labelledby="res-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">${surtitre}</span><h2 id="res-titre">${titre}</h2></div><button type="button" class="btn-icone" data-action="ressource" data-id="" aria-label="Fermer">${ICO.fermer}</button></header>`
-    + `<div class="feuille-corps"><div class="res-etat">${icone(r === 'confiance' ? 'district' : r)}<span>${etat}</span></div><p class="res-resume">${resume}</p>`
-    + `<h3 class="titre-bloc">Comment en obtenir</h3><ul class="res-liste">${gagner.join('')}</ul>`
-    + `<h3 class="titre-bloc">À quoi ça sert</h3><ul class="res-liste">${servir.join('')}</ul>`
+    + `<div class="feuille-corps"><div class="res-etat">${icone(r === 'confiance' ? 'district' : r === 'butin' ? 'coffre' : r)}<span>${etat}</span></div><p class="res-resume">${resume}</p>`
+    + `<h3 class="titre-bloc">${r === 'butin' ? 'Comment gagner des points' : 'Comment en obtenir'}</h3><ul class="res-liste">${gagner.join('')}</ul>`
+    + `<h3 class="titre-bloc">${r === 'butin' ? 'Ce que contient le coffre' : 'À quoi ça sert'}</h3><ul class="res-liste">${servir.join('')}</ul>`
     + (r === 'strate' ? `<button type="button" class="btn sec large" data-action="classements" data-id="profondeur">${ICO.monter}Voir le classement des profondeurs</button>` : '')
     + `</div></section>`;
 }
