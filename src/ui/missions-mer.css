@@ -133,3 +133,24 @@
   .ds-lieu{min-height:150px;padding:10px 12px}
   .ds-lieu strong{font-size:14px}
 }
+
+/* ---------- Le butin annoncé, le nombre de destinations du jour (28 octobre 2026) ---------- */
+.ds-lieux.n2,.ds-lieux.n4{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ds-lieux.n5{grid-template-columns:repeat(6,minmax(0,1fr))}
+.ds-lieux.n5>.ds-lieu{grid-column:span 2}
+.ds-lieux.n5>.ds-lieu:nth-child(4){grid-column:2 / span 2}
+.ds-butin{position:absolute;top:7px;left:7px;display:inline-flex;align-items:center;gap:4px;padding:2px 7px 2px 5px;font-size:12px;font-weight:600;line-height:1.3;
+  color:#F2D58C;background:rgba(8,14,22,.82);box-shadow:inset 0 0 0 1px rgba(242,213,140,.4);border-radius:3px}
+.ds-butin .ico{width:14px;height:14px}
+.ds-lieu.b-pierre .ds-butin{color:#CDEFFF;box-shadow:inset 0 0 0 1px rgba(205,239,255,.45)}
+.ds-lieu.b-naufrages .ds-butin{color:#B8E3A8;box-shadow:inset 0 0 0 1px rgba(184,227,168,.4)}
+.ds-lieu.b-eclats .ds-butin{color:#D8C4FF;box-shadow:inset 0 0 0 1px rgba(200,180,255,.45)}
+.ds-lieu.prise{cursor:default;filter:grayscale(.85) brightness(.5)}
+.ds-prise{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#E4ECF5}
+.ds-prise .ico{width:13px;height:13px}
+.ds-lore em .ico{width:14px;height:14px;margin-right:4px;vertical-align:-2px}
+.vg-butin .ico{width:13px;height:13px;margin-right:4px;vertical-align:-2px;color:#F2D58C}
+@media (min-width:900px){
+  .ds-lieux,.ds-lieux.n2,.ds-lieux.n4,.ds-lieux.n5{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  .ds-lieux.n5>.ds-lieu,.ds-lieux.n5>.ds-lieu:nth-child(4){grid-column:auto}
+}

@@ -157,7 +157,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       D.escouade = J.escouadePourDepart(app.jeu, ep?.interdits ?? []); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
-    case 'mission': resultat(J.envoyerMission(app.jeu, id, (b.dataset.duree as J.DureeMission) ?? 'courte', Date.now(), b.dataset.lieu)); break;
+    case 'mission': resultat(J.envoyerMission(app.jeu, id, (b.dataset.duree as J.DureeMission) ?? 'courte', Date.now(), b.dataset.cle)); break;
     case 'mission-lieu': D.destination = id; break;
     // depuis l'écran de départ : on compose les escouades dans l'onglet Escouade, sur celle qui descend
     case 'escouade-modifier': ouvrir('porteurs'); D.retourModif = 'escouade'; D.vueEscouade = J.escouadeActive(app.jeu); window.scrollTo(0, 0); break;

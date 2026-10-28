@@ -13,7 +13,7 @@ import {
   choisirLegs, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
-  enMission, envoyerMission, epreuvesDeLaSemaine, fouiller, partirEpreuve,
+  enMission, envoyerMission, destinationsDuJour, destinationsPrises, epreuvesDeLaSemaine, fouiller, partirEpreuve,
   chargeMax, niveauPorteur, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick,
   coutRefabrication, type Jeu, type Poste,
 } from './jeu';
@@ -118,7 +118,12 @@ function preparer(j: Jeu): string[] {
     if (id) poster(j, id, b);
   }
   // ceux qui restent partent en mission (longue : le joueur revient plus tard) ; s'il n'y a plus de place, ils s'entraînent à la Tour
-  for (const id of libres) if (!envoyerMission(j, id, 'longue', j.dernierTick).ok && !posteDe(j, 'noyau')) poster(j, id, 'noyau');
+  // (28 octobre 2026) les naufragés d'abord, puisque les creuseurs ouvrent les Strates ; sinon la meilleure destination pour lui
+  for (const id of libres) {
+    const prises = destinationsPrises(j, j.dernierTick);
+    const nauf = destinationsDuJour(j.dernierTick).find((d) => d.butin === 'naufrages' && !prises.includes(d.cle));
+    if (!envoyerMission(j, id, 'longue', j.dernierTick, nauf?.cle).ok && !posteDe(j, 'noyau')) poster(j, id, 'noyau');
+  }
   return escouade;
 }
 

@@ -271,6 +271,8 @@ export interface Jeu {
   archive: { semaine: number; points: number; aOuvrir: number };
   /** les Porteurs partis en mission en mer, depuis le Port (le niveau de la mission est celui de la dernière Strate vaincue) */
   missions: Mission[];
+  /** les destinations du jour déjà prises au Port (une barque par destination) */
+  missionsJour?: { jour: number; cles: string[] };
   /** les rapports des missions rentrées : ceux pas encore lus s'ouvrent au district, les derniers lus restent consultables */
   rapports?: RapportMission[];
   /** Épreuves de la semaine déjà réussies (une récompense par Épreuve et par semaine) */
@@ -464,11 +466,11 @@ export function escouadesDe(j: Jeu): string[][] {
 export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 1);
 
 /** lieu : l'id du lieu choisi (src/core/lieux.ts) ; absent sur les missions parties avant le 28 octobre 2026 */
-export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number; lieu?: string }
+export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number; lieu?: string; butin?: 'cargaison' | 'pierre' | 'naufrages' | 'eclats' }
 
 /** Le rapport d'une mission rentrée (demande de Luc, 28 octobre 2026) : un petit récit et tout ce qu'elle a rapporté */
 export interface RapportMission {
-  porteur: string; strate: number; duree: DureeMission; fin: number; lieu?: string;
+  porteur: string; strate: number; duree: DureeMission; fin: number; lieu?: string; butin?: Mission['butin']; eclats?: number;
   /** l'affinité du Porteur avec le lieu, et le bonus total (niveau × affinité) appliqué aux gains */
   affinite?: 'bon' | 'neutre' | 'mauvais'; mult?: number;
   recit: string[];

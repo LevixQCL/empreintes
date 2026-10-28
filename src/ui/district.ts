@@ -8,7 +8,7 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, lieuxDuJour, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, destinationsPrises, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -22,7 +22,7 @@ import { chapitreCampagne } from '../core/campagne';
 import { frequenceLibre } from '../core/regles';
 import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
-import { NOM_SPECIALITE, type Affinite, type SpecialiteLieu } from '../core/lieux';
+import type { Affinite } from '../core/lieux';
 import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteArchipel, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
@@ -1439,7 +1439,7 @@ function voyage(e: EcranDistrict, m: Jeu['missions'][number]): string {
   const age = sceneDistrict(e.j.batiments.noyau).age;
   return `<div class="voyage ph-${phase}${peint ? ' peint' : ''}" style="--c:${COULEUR[p.lignee]};--x:${x.toFixed(4)};${fond}" data-vdebut="${m.debut}" data-vfin="${m.fin}">`
     + `<span class="vg-fond" aria-hidden="true"><i class="vg-pano"></i><i class="vg-reflets" style="--reflets:url(${reflets})"></i></span>`
-    + `<div class="vg-tete">${avatar(p.id, 40)}<span class="vg-qui"><strong>${echap(p.nom)}</strong><small>Vers ${echap(lieu)}${bm && pct ? ` · <span class="vg-af af-${bm.affinite}">${pct >= 0 ? '+' : '−'}${Math.abs(pct)} %</span>` : ''}</small></span>`
+    + `<div class="vg-tete">${avatar(p.id, 40)}<span class="vg-qui"><strong>${echap(p.nom)}</strong><small>${m.butin ? `<span class="vg-butin">${ICO[ICONE_BUTIN[m.butin]]}</span>` : ''}Vers ${echap(lieu)}${bm && pct ? ` · <span class="vg-af af-${bm.affinite}">${pct >= 0 ? '+' : '−'}${Math.abs(pct)} %</span>` : ''}</small></span>`
     + `<span class="vg-etat"><b data-phase>${NOM_PHASE[phase]}</b><small>${e.now >= m.fin ? 'rentre au district' : decompte(m.fin, e.now, 'retour dans ')}</small></span></div>`
     + `<div class="vg-route" role="img" aria-label="${NOM_PHASE[phase]}, vers ${echap(lieu)}">`
     + `<span class="vg-port"><img src="${vignetteArchipel(age)}" alt="" decoding="async" loading="lazy"></span>`
@@ -1451,45 +1451,65 @@ function voyage(e: EcranDistrict, m: Jeu['missions'][number]): string {
 
 const majuscule = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
 const NOM_AFFINITE: Record<Affinite, string> = { bon: 'Bon type', neutre: 'Neutre', mauvais: 'Mauvais type' };
-const TEXTE_SPECIALITE: Record<SpecialiteLieu, string> = {
-  composants: 'On en revient chargé de composants (+25 %).',
-  cartes: 'Des pierres y dorment : un doublon de plus, et plus de chances d’en trouver une nouvelle.',
-  rescapes: 'Des gens y survivent encore : deux fois plus de chances de ramener des creuseurs.',
+const ICONE_BUTIN: Record<Butin, Icone> = { cargaison: 'composants', pierre: 'cartes', naufrages: 'ouvrier', eclats: 'eclats' };
+const TEXTE_BUTIN: Record<Butin, string> = {
+  cargaison: 'Une cargaison oubliée : beaucoup de composants, mais aucune pierre.',
+  pierre: 'Une pierre attend quelqu’un : une carte à coup sûr, nouvelle ou en doublon (du cuivre possible en 8 h), mais peu de composants.',
+  naufrages: 'Des naufragés guettent une barque : ils deviendront creuseurs (une chance sur deux en 2 h ; en 8 h, un à coup sûr, parfois deux).',
+  eclats: 'Des Éclats affleurent dans la ruine : un en 2 h, un ou deux en 8 h.',
 };
+/** Ce que rapporterait une mission, pour son bouton : le butin principal en grand */
+function gainMission(j: Jeu, id: string, d: Destination, duree: DureeMission, mult: number): { html: string; texte: string } {
+  const c = composantsMission(j, id, d.lieu.id, duree, d.butin);
+  if (d.butin === 'pierre') { const n = Math.round(chanceNouvelleMission(mult, duree) * 100); return { html: `${ICO.cartes}1`, texte: `une carte, ${n} % de chances qu’elle soit nouvelle, ${c} composants` }; }
+  if (d.butin === 'naufrages') { const k = MISSIONS.butins.naufrages.creuseurs[duree]; return { html: `${ICO.ouvrier}${k > 1 ? '1+' : k >= 1 ? '1' : '50 %'}`, texte: `${k >= 1 ? 'un creuseur, parfois deux' : 'une chance sur deux de ramener un creuseur'}, ${c} composants` }; }
+  if (d.butin === 'eclats') { const k = MISSIONS.butins.eclats.eclats[duree] * mult; return { html: `${ICO.eclats}${virgule(Math.round(k * 10) / 10)}`, texte: `environ ${virgule(Math.round(k * 10) / 10)} Éclats, ${c} composants` }; }
+  return { html: `${ICO.composants}${c}`, texte: `${c} composants` };
+}
 
 /** Les missions en mer (au Port depuis le 28 octobre 2026) : qui est en mer, les destinations du jour, qui part, et les derniers rapports */
 export function htmlMissions(e: EcranDistrict): string {
   const j = e.j;
-  let h = `<section class="bloc tr-volet pl-missions"><p class="aide">Le passeur emmène un Porteur libre vers une ruine au large, avec des vivres et des lampes (de l’énergie). Chaque ruine garde l’empreinte de ce qu’elle était : les machines s’ouvrent aux Augmentés, le vivant aux Génés, les échos aux Résonants. Le bon Porteur au bon endroit rapporte bien plus, et chaque niveau compte.</p>`;
+  let h = `<section class="bloc tr-volet pl-missions"><p class="aide">Le passeur emmène un Porteur libre vers une ruine au large, avec des vivres et des lampes (de l’énergie). Chaque jour, il connaît de 2 à 5 destinations et ce qu’on y trouvera : une cargaison, une pierre oubliée, des naufragés ou des Éclats. Chaque ruine garde l’empreinte de ce qu’elle était : les machines s’ouvrent aux Augmentés, le vivant aux Génés, les échos aux Résonants. Le bon Porteur au bon endroit rapporte plus, et chaque niveau compte.</p>`;
   if (j.missions.length) h += `<div class="voyages">${j.missions.map((m) => voyage(e, m)).join('')}</div>`;
 
-  // les destinations du jour : une par lignée
-  const offre = lieuxDuJour(e.now);
-  const choisi = offre.find((l) => l.id === e.destination) ?? offre[0]!;
-  h += `<div class="ds-tete"><h3 class="titre-bloc">${icone('carte')}Destinations du jour</h3><small>${decompte(debutJour(jourDe(e.now) + 1), e.now, 'Nouvelles dans ')}</small></div>`
-    + `<div class="ds-lieux" role="radiogroup" aria-label="Destinations du jour">`
-    + offre.map((l) => {
-      const i = LIEUX_SLUGS.indexOf(l.id as typeof LIEUX_SLUGS[number]);
-      const img = decorLieu(i);
-      return `<button type="button" role="radio" aria-checked="${l.id === choisi.id}" class="ds-lieu${l.id === choisi.id ? ' choisi' : ''}" style="--c:${COULEUR[l.lignee]}${img ? `;--decor:url(${img})` : ''}" data-action="mission-lieu" data-id="${l.id}">`
-        + `<span class="ds-lignee">${NOM_LIGNEES[l.lignee]}</span><strong>${echap(majuscule(l.nom))}</strong><span class="ds-spe">${NOM_SPECIALITE[l.specialite]}</span></button>`;
-    }).join('')
-    + `</div><p class="ds-lore" style="--c:${COULEUR[choisi.lignee]}"><b>${echap(majuscule(choisi.nom))}.</b> ${echap(choisi.lore)} <em>${TEXTE_SPECIALITE[choisi.specialite]}</em></p>`;
+  // les destinations du jour : de 2 à 5, chacune avec son butin annoncé, une barque par destination
+  const offre = destinationsDuJour(e.now);
+  const prises = destinationsPrises(j, e.now);
+  const libresDest = offre.filter((d) => !prises.includes(d.cle));
+  const choisie = libresDest.find((d) => d.cle === e.destination) ?? libresDest[0] ?? null;
+  h += `<div class="ds-tete"><h3 class="titre-bloc">${icone('carte')}Destinations du jour · ${libresDest.length} / ${offre.length}</h3><small>${decompte(debutJour(jourDe(e.now) + 1), e.now, 'Nouvelles dans ')}</small></div>`
+    + `<div class="ds-lieux n${offre.length}" role="radiogroup" aria-label="Destinations du jour">`
+    + offre.map((d) => {
+      const l = d.lieu;
+      const img = decorLieu(LIEUX_SLUGS.indexOf(l.id as typeof LIEUX_SLUGS[number]));
+      const prise = prises.includes(d.cle);
+      const sel = choisie?.cle === d.cle;
+      return `<button type="button" role="radio" aria-checked="${sel}" class="ds-lieu b-${d.butin}${sel ? ' choisi' : ''}${prise ? ' prise' : ''}" style="--c:${COULEUR[l.lignee]}${img ? `;--decor:url(${img})` : ''}" data-action="mission-lieu" data-id="${d.cle}"${prise ? ' disabled' : ''}>`
+        + `<span class="ds-butin">${ICO[ICONE_BUTIN[d.butin]]}${NOM_BUTIN[d.butin]}</span>`
+        + `<span class="ds-lignee">${NOM_LIGNEES[l.lignee]}</span><strong>${echap(majuscule(l.nom))}</strong>`
+        + (prise ? `<span class="ds-prise">${ICO.ok}Barque partie</span>` : '') + `</button>`;
+    }).join('') + `</div>`;
+  if (choisie) h += `<p class="ds-lore" style="--c:${COULEUR[choisie.lieu.lignee]}"><b>${echap(majuscule(choisie.lieu.nom))}.</b> ${echap(choisie.lieu.lore)} <em>${ICO[ICONE_BUTIN[choisie.butin]]}${TEXTE_BUTIN[choisie.butin]}</em></p>`;
 
   const libres = disponibles(j);
-  if (j.missions.length >= MISSIONS.max) h += `<small class="aide">${MISSIONS.max} missions au plus en même temps : attends le retour d’une barque.</small>`;
+  if (!choisie) h += `<small class="aide">Le passeur a déjà emmené une barque vers chaque destination du jour : de nouvelles s’ouvrent demain à 4 h.</small>`;
+  else if (j.missions.length >= MISSIONS.max) h += `<small class="aide">${MISSIONS.max} missions au plus en même temps : attends le retour d’une barque.</small>`;
   else if (!libres.length) h += `<small class="aide">Tous les Porteurs travaillent ou sont partis : libère-en un d’un bâtiment pour l’envoyer.</small>`;
   else {
     // le meilleur choix d'abord : affinité, puis niveau
     const rang = { bon: 0, neutre: 1, mauvais: 2 } as const;
-    const tries = libres.map((id) => ({ id, b: bonusMission(j, id, choisi.id) })).sort((a, b) => rang[a.b.affinite] - rang[b.b.affinite] || b.b.niveau - a.b.niveau);
+    const tries = libres.map((id) => ({ id, b: bonusMission(j, id, choisie.lieu.id) })).sort((a, b) => rang[a.b.affinite] - rang[b.b.affinite] || b.b.niveau - a.b.niveau);
     h += `<ul class="missions-libres">`;
     for (const { id, b } of tries) {
       const p = porteurDef(id);
       const pct = Math.round((b.mult - 1) * 100);
       h += `<li class="af-${b.affinite}" style="--c:${COULEUR[p.lignee]}">${avatar(id, 36)}<span><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · niv. ${b.niveau}</small>`
         + `<span class="ds-affinite">${NOM_AFFINITE[b.affinite]}${pct ? `<b>${pct > 0 ? '+' : '−'}${Math.abs(pct)} %</b>` : ''}</span></span>`
-        + (['courte', 'longue'] as const).map((d) => `<button type="button" class="btn sec mission-duree" data-action="mission" data-id="${id}" data-lieu="${choisi.id}" data-duree="${d}"${j.energie >= MISSIONS[d].energie ? '' : ' disabled'} aria-label="Mission de ${MISSIONS[d].heures} heures vers ${echap(choisi.nom)}, ${MISSIONS[d].energie} énergie, environ ${composantsMission(j, id, choisi.id, d)} composants"><span>${MISSIONS[d].heures} h</span><span class="ds-gain">${ICO.composants}${composantsMission(j, id, choisi.id, d)}</span>${prix('energie', MISSIONS[d].energie, j.energie >= MISSIONS[d].energie)}</button>`).join('') + `</li>`;
+        + (['courte', 'longue'] as const).map((d) => {
+          const g = gainMission(j, id, choisie, d, b.mult);
+          return `<button type="button" class="btn sec mission-duree" data-action="mission" data-id="${id}" data-cle="${choisie.cle}" data-duree="${d}"${j.energie >= MISSIONS[d].energie ? '' : ' disabled'} aria-label="Mission de ${MISSIONS[d].heures} heures vers ${echap(choisie.lieu.nom)}, ${MISSIONS[d].energie} énergie : ${g.texte}"><span>${MISSIONS[d].heures} h</span><span class="ds-gain">${g.html}</span>${prix('energie', MISSIONS[d].energie, j.energie >= MISSIONS[d].energie)}</button>`;
+        }).join('') + `</li>`;
     }
     h += `</ul>`;
   }

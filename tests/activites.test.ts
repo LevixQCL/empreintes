@@ -1,9 +1,9 @@
-import { affinite } from '../src/core/lieux';
+import { affinite, lieuDef } from '../src/core/lieux';
 import { describe, expect, it } from 'vitest';
 import { FORCE, accessibles, genererCarte, salleCourante } from '../src/core/expedition';
 import { moduleDef, porteurDef } from '../src/core/donnees';
 import {
-  EPREUVES, MISSIONS, entrer, envoyerMission, lieuxDuJour, bonusMission, niveauPorteur, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
+  EPREUVES, MISSIONS, entrer, envoyerMission, destinationsDuJour, bonusMission, niveauPorteur, jourDe, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
   remonter, tick, type Jeu,
 } from '../src/core/jeu';
 import { simulerParcours, PROFILS } from '../src/core/parcours';
@@ -73,7 +73,7 @@ describe('Missions', () => {
     tick(j, T0 + 2 * H + 1);
     expect(j.missions).toHaveLength(1);
     expect(j.composants).toBeGreaterThan(compo);
-    expect(j.porteurs.docker!.usure).toBe(MISSIONS.courte.usure);
+    expect(j.porteurs.docker!.usure).toBeGreaterThanOrEqual(MISSIONS.courte.usure); // +2 si la seule destination libre est du mauvais type
     tick(j, T0 + 8 * H + 1);
     expect(j.missions).toHaveLength(0);
   });
@@ -96,30 +96,50 @@ describe('Missions', () => {
     expect(j.rapports).toHaveLength(2); // gardés pour les relire à la Tour
   });
 
-  it('le niveau et l’affinité avec le lieu changent ce qu’une mission rapporte (28 octobre 2026)', () => {
+  it('de 2 à 5 destinations par jour, et sur la semaine autant pour chaque lignée et chaque butin (28 octobre 2026)', () => {
+    const lundi = T0 - (((jourDe(T0) % 7) + 7) % 7) * 24 * H;
+    const semaine = Array.from({ length: 7 }, (_, k) => destinationsDuJour(lundi + k * 24 * H));
+    for (const jour of semaine) {
+      expect(jour.length).toBeGreaterThanOrEqual(2);
+      expect(jour.length).toBeLessThanOrEqual(5);
+      expect(new Set(jour.map((d) => d.lieu.id)).size).toBe(jour.length); // jamais deux fois le même lieu le même jour
+    }
+    const toutes = semaine.flat();
+    expect(toutes).toHaveLength(21);
+    for (const lg of ['tech', 'bio', 'reso']) {
+      const l = toutes.filter((d) => d.lieu.lignee === lg);
+      expect(l).toHaveLength(7);
+      expect(l.filter((d) => d.butin === 'cargaison')).toHaveLength(2);
+      expect(l.filter((d) => d.butin === 'pierre')).toHaveLength(2);
+      expect(l.filter((d) => d.butin === 'naufrages')).toHaveLength(2);
+      expect(l.filter((d) => d.butin === 'eclats')).toHaveLength(1);
+    }
+    expect(destinationsDuJour(T0 + H).map((d) => d.cle)).toEqual(destinationsDuJour(T0).map((d) => d.cle)); // les mêmes toute la journée
+  });
+
+  it('le niveau et l’affinité changent le butin ; une barque par destination ; la pierre rapporte une carte à coup sûr', () => {
     const j = avance();
-    const offre = lieuxDuJour(T0);
-    expect(new Set(offre.map((l) => l.lignee)).size).toBe(3); // une destination par lignée
-    expect(lieuxDuJour(T0 + H).map((l) => l.id)).toEqual(offre.map((l) => l.id)); // les mêmes toute la journée
-    const lg = porteurDef('docker').lignee;
-    const bon = offre.find((l) => l.lignee === lg)!;
-    const mauvais = offre.find((l) => affinite(l.lignee, lg) === 'mauvais')!;
-    const neutre = offre.find((l) => affinite(l.lignee, lg) === 'neutre')!;
-    expect(bonusMission(j, 'docker', bon.id).affinite).toBe('bon');
-    const n = niveauPorteur(j, 'docker').niveau;
-    expect(bonusMission(j, 'docker', bon.id).mult).toBeCloseTo((1 + 0.03 * (n - 1)) * 1.3);
-    expect(bonusMission(j, 'docker', mauvais.id).mult).toBeCloseTo((1 + 0.03 * (n - 1)) * 0.8);
-    expect(bonusMission(j, 'docker', neutre.id).mult).toBeCloseTo(1 + 0.03 * (n - 1));
-    // le mauvais type rentre plus usé
-    poster(j, 'docker', null);
+    for (const id of ['coursier', 'docker', 'guetteur']) poster(j, id, null);
     j.energie = 500;
-    expect(envoyerMission(j, 'docker', 'courte', T0, mauvais.id).ok).toBe(true);
-    expect(envoyerMission(j, 'coursier', 'courte', T0, 'lieu-inconnu').ok).toBe(false);
-    tick(j, T0 + 2 * H + 1);
-    expect(j.porteurs.docker!.usure).toBe(MISSIONS.courte.usure + MISSIONS.usureMauvais);
+    const n = niveauPorteur(j, 'docker').niveau;
+    const lg = porteurDef('docker').lignee;
+    const lieuDe = (a: 'bon' | 'mauvais' | 'neutre') => ['pompage', 'serres', 'clocher'].find((id) => affinite(lieuDef(id)!.lignee, lg) === a)!;
+    expect(bonusMission(j, 'docker', lieuDe('bon')).mult).toBeCloseTo((1 + 0.03 * (n - 1)) * 1.3);
+    expect(bonusMission(j, 'docker', lieuDe('mauvais')).mult).toBeCloseTo((1 + 0.03 * (n - 1)) * 0.8);
+    expect(bonusMission(j, 'docker', lieuDe('neutre')).mult).toBeCloseTo(1 + 0.03 * (n - 1));
+    // une destination Pierre oubliée, cherchée sur quelques jours
+    let t = T0;
+    let d = destinationsDuJour(t).find((x) => x.butin === 'pierre');
+    for (let k = 1; !d && k < 14; k++) { t = T0 + k * 24 * H; d = destinationsDuJour(t).find((x) => x.butin === 'pierre'); }
+    expect(d).toBeDefined();
+    const cartes = Object.values(j.collection).reduce((a, x) => a + (typeof x === 'number' ? x : 1), 0);
+    expect(envoyerMission(j, 'docker', 'courte', t, d!.cle).ok).toBe(true);
+    expect(envoyerMission(j, 'coursier', 'courte', t, d!.cle).ok).toBe(false); // déjà partie
+    tick(j, t + 2 * H + 1);
     const r = rapportALire(j)!;
-    expect(r.lieu).toBe(mauvais.id);
-    expect(r.affinite).toBe('mauvais');
+    expect(r.butin).toBe('pierre');
+    expect(r.cartes).toHaveLength(1);
+    expect(cartes).toBeGreaterThan(0);
   });
 
   it('pas de mission avant d’avoir vaincu une Strate', () => {

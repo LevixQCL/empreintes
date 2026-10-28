@@ -12,7 +12,7 @@ import { ACCORD_OUVERT, CONFIANCE, niveauConfiance, chargeMax, chargePortee, CRE
 import { chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
-import { LIEUX, RECIT_BON, RECIT_MAUVAIS, RECIT_NEUTRE, affinite, lieuDef, type Affinite, type LieuDef } from '../lieux';
+import { LIEUX, RECIT_BON, RECIT_MAUVAIS, RECIT_NEUTRE, affinite, lieuDef, type Affinite, type LieuDef, type SpecialiteLieu } from '../lieux';
 
 // ---------- Expéditions ----------
 
@@ -204,19 +204,37 @@ export const MISSIONS = {
   // l'énergie au départ (23 octobre 2026) : vivres, lampes et piles pour l'expédition
   courte: { heures: 2, composants: 14, doublons: 1, nouvelle: 0, usure: 4, energie: 30 },
   longue: { heures: 8, composants: 45, doublons: 2, nouvelle: 0.35, usure: 8, energie: 100 },
-  // le Porteur compte (28 octobre 2026, Bryan) : son niveau et son affinité avec le lieu multiplient composants, XP et chance de carte nouvelle
+  // le Porteur compte (28 octobre 2026, Bryan) : son niveau et son affinité avec le lieu multiplient le butin et l'XP (jamais les creuseurs)
   parNiveau: 0.03,
   affinite: { bon: 1.3, neutre: 1, mauvais: 0.8 },
   /** le mauvais Porteur au mauvais endroit rentre plus usé */
   usureMauvais: 2,
-  nouvelleMax: 0.6,
-  // la spécialité du lieu : ce qu'on y trouve le plus
-  specialite: { composants: 1.25, cartesDoublon: 1, cartesNouvelle: 0.1, rescapes: 2 },
-  /** lieux proposés chaque jour au Port, un par lignée */
-  parJour: 3,
+  /**
+   * Le butin annoncé de chaque destination (28 octobre 2026, Bryan : « parfois une carte plutôt que des pièces ») :
+   * compo = part des composants d'une mission ordinaire. Chaque semaine, 21 destinations, 7 par lignée,
+   * et pour chaque lignée 2 cargaisons, 2 pierres, 2 naufragés, 1 éclats : aucune classe n'est avantagée sur la semaine.
+   * Naufragés réglés au robot : Strate −10 au jour 31 (occasionnel) et 22 (assidu), contre 29,5 et 20 avant.
+   */
+  butins: {
+    cargaison: { compo: 1.4 },
+    pierre: { compo: 0.4, nouvelle: { courte: 0.4, longue: 0.6 }, nouvelleMax: 0.9 },
+    naufrages: { compo: 0.4, creuseurs: { courte: 0.5, longue: 1.25 } },
+    eclats: { compo: 0.4, eclats: { courte: 1, longue: 1.5 } },
+  },
+  parLignee: { cargaison: 2, pierre: 2, naufrages: 2, eclats: 1 },
+  /** le nombre de destinations de chaque jour de la semaine (mélangé chaque semaine) : 21 en tout */
+  parJour: [2, 2, 2, 3, 3, 4, 5],
 } as const;
 
-/** Le multiplicateur de gains d'un Porteur envoyé vers un lieu : niveau (+3 % par niveau) × affinité */
+/** Le niveau des missions : celui de la dernière Strate vaincue (il fixe les gains) */
+export const strateMission = (j: Jeu) => strateVaincue(j);
+
+export type Butin = keyof typeof MISSIONS.butins;
+export const NOM_BUTIN: Record<Butin, string> = { cargaison: 'Cargaison', pierre: 'Pierre oubliée', naufrages: 'Naufragés', eclats: 'Éclats' };
+/** Une destination du jour : un lieu, son butin annoncé, et sa clé (une seule barque par destination) */
+export interface Destination { cle: string; lieu: LieuDef; butin: Butin }
+
+/** Le multiplicateur de butin d'un Porteur envoyé vers un lieu : niveau (+3 % par niveau) × affinité */
 export function bonusMission(j: Jeu, porteur: string, lieu: string): { affinite: Affinite; mult: number; niveau: number } {
   const l = lieuDef(lieu);
   const a = l ? affinite(l.lignee, porteurDef(porteur).lignee) : 'neutre';
@@ -225,22 +243,45 @@ export function bonusMission(j: Jeu, porteur: string, lieu: string): { affinite:
 }
 
 /** Les composants que rapporterait une mission (pour l'afficher avant le départ) */
-export function composantsMission(j: Jeu, porteur: string, lieu: string, duree: DureeMission, strate = strateMission(j)): number {
-  const d = MISSIONS[duree];
-  const l = lieuDef(lieu);
-  return Math.round(d.composants * (1 + 0.25 * (strate - 1)) * bonusMission(j, porteur, lieu).mult * (l?.specialite === 'composants' ? MISSIONS.specialite.composants : 1));
+export function composantsMission(j: Jeu, porteur: string, lieu: string, duree: DureeMission, butin: Butin, strate = strateMission(j)): number {
+  return Math.round(MISSIONS[duree].composants * (1 + 0.25 * (strate - 1)) * MISSIONS.butins[butin].compo * bonusMission(j, porteur, lieu).mult);
 }
 
-/** Les destinations du jour au Port : une par lignée, les mêmes pour tous, qui changent chaque jour (à 4 h) */
-export function lieuxDuJour(now: number): LieuDef[] {
+/** La chance de ramener une carte nouvelle (destination « Pierre oubliée ») ; sinon c'est un doublon */
+export const chanceNouvelleMission = (mult: number, duree: DureeMission) => Math.min(MISSIONS.butins.pierre.nouvelleMax, MISSIONS.butins.pierre.nouvelle[duree] * mult);
+
+const TENDANCE: Record<Butin, SpecialiteLieu | null> = { cargaison: 'composants', pierre: 'cartes', naufrages: 'rescapes', eclats: null };
+
+/**
+ * Les destinations du jour au Port : de 2 à 5 selon le jour, les mêmes pour tous, qui changent à 4 h.
+ * Tirées par semaine : chaque lignée a autant de lieux et de chaque butin. Un lieu va de préférence avec le butin de sa spécialité.
+ */
+export function destinationsDuJour(now: number): Destination[] {
   const jour = jourDe(now);
-  return (['tech', 'bio', 'reso'] as const).map((lg, k) => {
-    const liste = LIEUX.filter((l) => l.lignee === lg);
-    return liste[(((jour + k * 3) % liste.length) + liste.length) % liste.length]!;
+  const semaine = Math.floor(jour / 7);
+  const t = tireur({ rng: (Math.imul(semaine + 1, 2654435761) ^ 0x5eed) >>> 0 });
+  const slots: { lignee: Lignee; butin: Butin }[] = [];
+  for (const lg of ['tech', 'bio', 'reso'] as const)
+    for (const [b, n] of Object.entries(MISSIONS.parLignee) as [Butin, number][]) for (let k = 0; k < n; k++) slots.push({ lignee: lg, butin: b });
+  const melange = t.melanger(slots);
+  const comptes = t.melanger([...MISSIONS.parJour]);
+  const idx = ((jour % 7) + 7) % 7;
+  const debut = comptes.slice(0, idx).reduce((a, n) => a + n, 0);
+  const choix: Destination[] = [];
+  melange.slice(debut, debut + comptes[idx]!).forEach((sl, i) => {
+    const pris = new Set(choix.map((d) => d.lieu.id));
+    const libres = LIEUX.filter((l) => l.lignee === sl.lignee && !pris.has(l.id));
+    const tend = libres.filter((l) => l.specialite === TENDANCE[sl.butin]);
+    const liste = tend.length ? tend : libres;
+    // le lieu suit le jour : la même destination ne revient pas tous les jours
+    const lieu = liste[(((jour + i) % liste.length) + liste.length) % liste.length]!;
+    choix.push({ cle: `${jour}-${i}`, lieu, butin: sl.butin });
   });
+  return choix;
 }
-/** Le niveau des missions : celui de la dernière Strate vaincue (il fixe les gains) */
-export const strateMission = (j: Jeu) => strateVaincue(j);
+
+/** Les destinations du jour déjà prises (une barque par destination) */
+export const destinationsPrises = (j: Jeu, now: number): string[] => (j.missionsJour?.jour === jourDe(now) ? j.missionsJour.cles : []);
 
 /**
  * Les missions en mer (28 octobre 2026, Bryan : les missions partent du Port) : un Porteur prend le bateau du passeur
@@ -265,14 +306,19 @@ export const lieuIdMission = (m: { porteur: string; fin: number; lieu?: string }
   m.lieu ?? LIEUX.find((l) => l.nom === lieuMission(m))?.id;
 
 /**
- * Envoie un Porteur en mer. Le lieu doit être une destination du jour ; sans lieu donné, il part vers celle de sa lignée.
+ * Envoie un Porteur en mer vers une destination du jour (par sa clé). Sans clé, il part vers la meilleure destination
+ * encore libre pour lui (le robot et les tests).
  */
-export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: number, lieu?: string): Resultat {
+export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: number, cle?: string): Resultat {
   const m = MISSIONS[duree];
-  const offre = lieuxDuJour(now);
-  const dest = lieu ? offre.find((l) => l.id === lieu) : offre.find((l) => porteurDef(id)?.lignee === l.lignee) ?? offre[0];
-  if (!dest) return non('Le passeur ne va pas là aujourd’hui.');
   if (!m) return non('Durée inconnue.');
+  const prises = destinationsPrises(j, now);
+  const libres = destinationsDuJour(now).filter((d) => !prises.includes(d.cle));
+  const lg = porteurDef(id)?.lignee;
+  const rang = { bon: 0, neutre: 1, mauvais: 2 } as const;
+  const dest = cle ? libres.find((d) => d.cle === cle)
+    : libres.slice().sort((a, b) => (lg ? rang[affinite(a.lieu.lignee, lg)] - rang[affinite(b.lieu.lignee, lg)] : 0))[0];
+  if (!dest) return non(cle ? 'Une barque est déjà partie vers cette destination.' : 'Plus aucune destination libre aujourd’hui.');
   if (!j.chambre || strateMission(j) < 1) return non('Il faut avoir vaincu une Strate pour y envoyer quelqu’un.');
   if (!porteursPresents(j).includes(id)) return non('Porteur inconnu.');
   if (j.porteurs[id]!.poste) return non(`${porteurDef(id).nom} travaille au district.`);
@@ -280,7 +326,8 @@ export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: num
   if (j.missions.length >= MISSIONS.max) return non(`${MISSIONS.max} missions au plus en même temps.`);
   if (j.energie < m.energie) return non(`Il faut ${m.energie} énergie pour équiper la mission.`);
   j.energie -= m.energie;
-  j.missions.push({ porteur: id, strate: strateMission(j), duree, debut: now, fin: now + m.heures * 3_600_000, lieu: dest.id });
+  j.missions.push({ porteur: id, strate: strateMission(j), duree, debut: now, fin: now + m.heures * 3_600_000, lieu: dest.lieu.id, butin: dest.butin });
+  j.missionsJour = { jour: jourDe(now), cles: [...prises, dest.cle] };
   log(j, `${porteurDef(id).nom} prend le bateau vers ${lieuMission(j.missions[j.missions.length - 1]!)} (${m.heures} h).`);
   return { ok: true };
 }
@@ -290,22 +337,36 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   const d = MISSIONS[m.duree];
   const p = porteurDef(m.porteur);
   const lieuId = lieuIdMission(m);
-  const l = lieuId ? lieuDef(lieuId) : undefined;
   const b = lieuId ? bonusMission(j, m.porteur, lieuId) : { affinite: 'neutre' as Affinite, mult: 1 };
-  const spe = l?.specialite;
-  const composants = lieuId ? composantsMission(j, m.porteur, lieuId, m.duree, m.strate) : Math.round(d.composants * (1 + 0.25 * (m.strate - 1)));
-  j.composants += composants;
   const t = tireur(j);
+  const sf = 1 + 0.25 * (m.strate - 1);
   const cartes: string[] = [];
+  let composants: number;
+  let recrues = 0;
+  let eclats = 0;
   // des doublons de cartes qu'on a déjà, dans la lignée du Porteur (fer et cuivre)
   const possedees = Object.keys(j.collection).filter((k) => moduleDef(k).lignee === p.lignee && ['fer', 'cuivre'].includes(moduleDef(k).rarete));
-  const doublons = d.doublons + (spe === 'cartes' ? MISSIONS.specialite.cartesDoublon : 0);
-  for (let k = 0; k < doublons && possedees.length; k++) cartes.push(possedees[t.entier(possedees.length)]!);
-  const chanceNouvelle = Math.min(MISSIONS.nouvelleMax, (d.nouvelle + (spe === 'cartes' ? MISSIONS.specialite.cartesNouvelle : 0)) * b.mult);
-  if (t.nombre() < chanceNouvelle) cartes.push(tirerTrouvaille(j, m.strate, 'fer', p.lignee));
+  if (m.butin && lieuId) {
+    // le butin annoncé de la destination (28 octobre 2026)
+    const bt = MISSIONS.butins;
+    composants = composantsMission(j, m.porteur, lieuId, m.duree, m.butin, m.strate);
+    if (m.butin === 'pierre') {
+      // une carte à coup sûr : nouvelle (fer, ou cuivre en mission longue) ou un doublon de sa lignée
+      if (!possedees.length || t.nombre() < chanceNouvelleMission(b.mult, m.duree)) cartes.push(tirerTrouvaille(j, m.strate, m.duree === 'longue' ? 'cuivre' : 'fer', p.lignee));
+      else cartes.push(possedees[t.entier(possedees.length)]!);
+    }
+    if (m.butin === 'naufrages') { const c = bt.naufrages.creuseurs[m.duree]; recrues = Math.floor(c) + (t.nombre() < c % 1 ? 1 : 0); }
+    if (m.butin === 'eclats') { const e = bt.eclats.eclats[m.duree] * b.mult; eclats = Math.floor(e) + (t.nombre() < e % 1 ? 1 : 0); j.eclats += eclats; }
+  } else {
+    // une mission partie avant le 28 octobre 2026 : les gains d'avant
+    composants = Math.round(d.composants * sf);
+    for (let k = 0; k < d.doublons && possedees.length; k++) cartes.push(possedees[t.entier(possedees.length)]!);
+    if (t.nombre() < d.nouvelle) cartes.push(tirerTrouvaille(j, m.strate, 'fer', p.lignee));
+    recrues = t.nombre() < (m.duree === 'longue' ? CREUSEURS.missionLongue : CREUSEURS.missionCourte) ? 1 : 0;
+  }
+  j.composants += composants;
   const trouvees = cartes.map((c) => ({ id: c, nouvelle: ajouterCarte(j, c) }));
-  const recrues = t.nombre() < (m.duree === 'longue' ? CREUSEURS.missionLongue : CREUSEURS.missionCourte) * (spe === 'rescapes' ? MISSIONS.specialite.rescapes : 1) ? 1 : 0;
-  const arrives = recrues ? gagnerCreuseurs(j, recrues, `${p.nom} ramène des fouilleurs de mission`) : 0;
+  const arrives = recrues ? gagnerCreuseurs(j, recrues, `${p.nom} ramène des naufragés`) : 0;
   if (arrives) creuser(j);
   const q = j.porteurs[m.porteur]!;
   const usureAvant = q.usure;
@@ -315,12 +376,12 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   const marque = progresMarque(j, m.porteur);
   const nouvelleMarque = marque?.acquise && !avantMarque ? marque : null;
   if (nouvelleMarque) log(j, `${p.nom} gagne la Marque ${nouvelleMarque.nom} : ${nouvelleMarque.texte}`);
-  const gainXp = Math.round(XP.missionHeure * d.heures * (1 + 0.25 * (m.strate - 1)) * b.mult);
+  const gainXp = Math.round(XP.missionHeure * d.heures * sf * b.mult);
   const monte = gagnerXp(j, m.porteur, gainXp);
-  const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}.`;
+  const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? `, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
   const rapport: RapportMission = {
-    porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, lieu: lieuId, affinite: b.affinite, mult: Math.round(b.mult * 100) / 100, recit: [],
+    porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, lieu: lieuId, butin: m.butin, eclats, affinite: b.affinite, mult: Math.round(b.mult * 100) / 100, recit: [],
     composants, xp: gainXp, niveau: monte || null, cartes: trouvees, creuseurs: arrives,
     usure: q.usure - usureAvant, marque: nouvelleMarque ? nouvelleMarque.nom : null, lu: false,
   };
