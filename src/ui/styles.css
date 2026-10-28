@@ -687,3 +687,30 @@ button.res:focus-visible{outline:1.5px solid var(--glace,#CDEFFF);outline-offset
 .roue-confiance::before{content:"";position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#1d2a46,#0e1424)}
 .roue-confiance b{position:relative;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink);line-height:1}
 .hud .res.confiance small{font-size:9.5px !important;line-height:1.1 !important;text-align:center}
+
+/* ---------- Rapport de mission (28 octobre 2026) : le récit d'un retour et ce qu'il a rapporté ---------- */
+.rapport-mission .feuille-tete{gap:12px;align-items:center}
+.rapport-mission .feuille-tete .avatar{flex:none;box-shadow:0 0 0 1px var(--c),0 0 14px color-mix(in srgb,var(--c) 45%,transparent)}
+.rapport-mission .feuille-corps{display:grid;align-content:start;gap:16px}
+.rm-recit{display:grid;gap:8px;padding-left:12px;border-left:2px solid color-mix(in srgb,var(--c,var(--gold)) 70%,transparent)}
+.rm-recit p{margin:0;font-size:14px;line-height:1.55;color:var(--ink-2)}
+.rm-gains{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.rm-gains li{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(216,180,101,.22);font-size:13px;color:var(--ink)}
+.rm-gains li .ico,.rm-gains li svg{width:16px;height:16px;color:var(--or-pale)}
+.rm-gains li b{font-weight:700;color:var(--ink)}
+.rm-gains li small{font-size:12px;color:var(--quiet)}
+.rm-gains li.nouvelle{border-color:var(--gold);box-shadow:0 0 12px rgba(216,180,101,.35)}
+.rm-gains li.nouvelle small{color:var(--gold)}
+.rm-gains li.rm-usure svg{color:var(--quiet)}
+.rapport-mission .btn.large{min-height:48px;justify-content:center}
+.rm-histo-titre{margin-top:18px}
+.rm-histo{display:grid;gap:8px}
+.rm-ligne{border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(216,180,101,.16);padding:8px 10px}
+.rm-ligne summary{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none}
+.rm-ligne summary::-webkit-details-marker{display:none}
+.rm-ligne summary span{display:grid;gap:2px;min-width:0}
+.rm-ligne summary strong{font-size:14px;color:var(--ink)}
+.rm-ligne summary small{font-size:12px;color:var(--quiet)}
+.rm-ligne[open]{display:grid;gap:10px}
+.rm-ligne[open] .rm-recit{margin-top:4px}

@@ -28,7 +28,7 @@ import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { arrivee, feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { ICO, icone, type Icone } from './icones';
-import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { echap, mouvementReduit, virgule } from './outils';
 
@@ -1390,6 +1390,17 @@ function htmlMissions(e: EcranDistrict): string {
         + (['courte', 'longue'] as const).map((d) => `<button type="button" class="btn sec mission-duree" data-action="mission" data-id="${id}" data-duree="${d}"${j.energie >= MISSIONS[d].energie ? '' : ' disabled'} aria-label="Mission de ${MISSIONS[d].heures} heures, ${MISSIONS[d].energie} énergie"><span>${MISSIONS[d].heures} h</span>${prix('energie', MISSIONS[d].energie, j.energie >= MISSIONS[d].energie)}</button>`).join('') + `</li>`;
     }
     h += `</ul>`;
+  }
+  // les derniers rapports, à relire (le plus récent en haut)
+  const lus = (j.rapports ?? []).filter((r) => r.lu).reverse();
+  if (lus.length) {
+    h += `<h3 class="titre-bloc rm-histo-titre">${icone('journal')}Derniers rapports</h3><div class="rm-histo">`;
+    for (const r of lus) {
+      const p = porteurDef(r.porteur);
+      h += `<details class="rm-ligne" style="--c:${COULEUR[p.lignee]}"><summary>${avatar(r.porteur, 32)}<span><strong>${echap(p.nom)} · Strate −${r.strate}</strong><small>+${r.composants} composants${r.cartes.length ? ` · ${r.cartes.length} carte${r.cartes.length > 1 ? 's' : ''}` : ''}${r.creuseurs ? ` · +${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}` : ''}</small></span></summary>`
+        + `<div class="rm-recit">${r.recit.map((l) => `<p>${echap(l)}</p>`).join('')}</div>${gainsRapport(r)}</details>`;
+    }
+    h += `</div>`;
   }
   return h + `</section>`;
 }

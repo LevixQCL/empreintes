@@ -251,6 +251,8 @@ export interface Jeu {
   archive: { semaine: number; points: number; aOuvrir: number };
   /** les Porteurs partis en mission dans une Strate déjà vaincue */
   missions: Mission[];
+  /** les rapports des missions rentrées : ceux pas encore lus s'ouvrent au district, les derniers lus restent consultables */
+  rapports?: RapportMission[];
   /** Épreuves de la semaine déjà réussies (une récompense par Épreuve et par semaine) */
   epreuves: { semaine: number; faites: string[] };
   /** le Comptoir du jour : ses offres, celles déjà achetées, et son propre hasard (il ne touche pas aux trouvailles) */
@@ -442,6 +444,18 @@ export function escouadesDe(j: Jeu): string[][] {
 export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 1);
 
 export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number }
+
+/** Le rapport d'une mission rentrée (demande de Luc, 28 octobre 2026) : un petit récit et tout ce qu'elle a rapporté */
+export interface RapportMission {
+  porteur: string; strate: number; duree: DureeMission; fin: number;
+  recit: string[];
+  composants: number; xp: number; niveau: number | null;
+  cartes: { id: string; nouvelle: boolean }[];
+  creuseurs: number; usure: number; marque: string | null;
+  lu: boolean;
+}
+/** rapports lus gardés pour les relire (les non lus ne sont jamais effacés) */
+export const RAPPORTS_LUS_MAX = 5;
 
 export interface Comptoir { jour: number; offres: string[]; achetes: number[]; rng: number }
 

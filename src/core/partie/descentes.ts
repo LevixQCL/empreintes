@@ -8,7 +8,7 @@ import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, plac
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
-import { ACCORD_OUVERT, CONFIANCE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type Resultat, usureMax } from './etat';
+import { ACCORD_OUVERT, CONFIANCE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, usureMax } from './etat';
 import { chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -222,7 +222,7 @@ export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: num
   return { ok: true };
 }
 
-/** Le retour d'une mission (appelé par tick) : renvoie l'annonce */
+/** Le retour d'une mission (appelé par tick) : range un rapport à lire au district et renvoie l'annonce */
 export function retourDeMission(j: Jeu, m: Mission): string {
   const d = MISSIONS[m.duree];
   const p = porteurDef(m.porteur);
@@ -234,21 +234,98 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   const possedees = Object.keys(j.collection).filter((k) => moduleDef(k).lignee === p.lignee && ['fer', 'cuivre'].includes(moduleDef(k).rarete));
   for (let k = 0; k < d.doublons && possedees.length; k++) cartes.push(possedees[t.entier(possedees.length)]!);
   if (t.nombre() < d.nouvelle) cartes.push(tirerTrouvaille(j, m.strate, 'fer', p.lignee));
-  for (const c of cartes) ajouterCarte(j, c);
+  const trouvees = cartes.map((c) => ({ id: c, nouvelle: ajouterCarte(j, c) }));
   const recrues = t.nombre() < (m.duree === 'longue' ? CREUSEURS.missionLongue : CREUSEURS.missionCourte) ? 1 : 0;
   const arrives = recrues ? gagnerCreuseurs(j, recrues, `${p.nom} ramène des fouilleurs de mission`) : 0;
   if (arrives) creuser(j);
   const q = j.porteurs[m.porteur]!;
+  const usureAvant = q.usure;
   q.usure = Math.min(usureMax(m.porteur), q.usure + d.usure);
   const avantMarque = progresMarque(j, m.porteur)?.acquise;
   q.faits = { ...q.faits, missions: (q.faits?.missions ?? 0) + 1 };
   const marque = progresMarque(j, m.porteur);
-  if (marque?.acquise && !avantMarque) log(j, `${p.nom} gagne la Marque ${marque.nom} : ${marque.texte}`);
+  const nouvelleMarque = marque?.acquise && !avantMarque ? marque : null;
+  if (nouvelleMarque) log(j, `${p.nom} gagne la Marque ${nouvelleMarque.nom} : ${nouvelleMarque.texte}`);
   const gainXp = Math.round(XP.missionHeure * d.heures * (1 + 0.25 * (m.strate - 1)));
   const monte = gagnerXp(j, m.porteur, gainXp);
   const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
+  const rapport: RapportMission = {
+    porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, recit: [],
+    composants, xp: gainXp, niveau: monte || null, cartes: trouvees, creuseurs: arrives,
+    usure: q.usure - usureAvant, marque: nouvelleMarque ? nouvelleMarque.nom : null, lu: false,
+  };
+  rapport.recit = recitMission(rapport);
+  rangerRapport(j, rapport);
   return texte;
+}
+
+/** Range un rapport : les non lus restent tous, on ne garde que les derniers lus */
+function rangerRapport(j: Jeu, r?: RapportMission) {
+  const tous = [...(j.rapports ?? []), ...(r ? [r] : [])].sort((x, y) => x.fin - y.fin);
+  const garder = new Set(tous.filter((x) => x.lu).slice(-RAPPORTS_LUS_MAX));
+  j.rapports = tous.filter((x) => !x.lu || garder.has(x));
+}
+
+/** Le rapport à lire en premier (le plus ancien pas encore lu) */
+export const rapportALire = (j: Jeu) => (j.rapports ?? []).find((x) => !x.lu) ?? null;
+
+/** Marque comme lu le plus ancien rapport pas encore lu */
+export function lireRapport(j: Jeu): Resultat {
+  const r = rapportALire(j);
+  if (!r) return non('Aucun rapport à lire.');
+  r.lu = true;
+  rangerRapport(j);
+  return { ok: true };
+}
+
+/**
+ * Le petit récit d'une mission : quelques phrases choisies selon ce qui s'est passé.
+ * Le choix des tournures ne touche pas au hasard des trouvailles (il dépend seulement de la mission elle-même).
+ */
+export function recitMission(r: RapportMission): string[] {
+  const nom = porteurDef(r.porteur).nom;
+  const zone = zoneDe(r.strate).nom;
+  let h = (r.fin >>> 0) ^ [...r.porteur].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+  const choisir = <T,>(l: T[]): T => { h = (Math.imul(h ^ (h >>> 15), 2246822507) + 0x9e3779b9) >>> 0; return l[h % l.length]!; };
+  const heures = MISSIONS[r.duree].heures;
+  const s = `la Strate −${r.strate}`;
+  const recit: string[] = [];
+  recit.push(choisir([
+    `${nom} a pris les gaines de service jusqu’à ${s}, dans ${zone.charAt(0).toLowerCase() + zone.slice(1)}.`,
+    `Lampe à algues au poing, ${nom} a rejoint ${s} par l’ancien puits des creuseurs.`,
+    `${nom} a suivi les marques laissées par les creuseurs jusqu’à ${s}.`,
+    `${heures} heures loin du district : ${nom} a ratissé ${s}, salle après salle.`,
+  ]));
+  recit.push(choisir([
+    `Dans les salles déjà vaincues traînait encore du matériel : ${r.composants} composants récupérés.`,
+    `Une réserve oubliée derrière un éboulis : ${r.composants} composants remontés au district.`,
+    `Des carcasses de machines, démontées pièce par pièce : ${r.composants} composants.`,
+  ]));
+  const nouvelles = r.cartes.filter((c) => c.nouvelle);
+  const doublons = r.cartes.filter((c) => !c.nouvelle);
+  for (const c of nouvelles) {
+    const md = moduleDef(c.id);
+    recit.push(choisir([
+      `Dans une niche scellée, une pierre jamais vue : ${md.nom}. Elle rejoint tes cartes.`,
+      `Au fond d’une galerie effondrée, ${nom} a trouvé ce que personne n’avait encore rapporté : ${md.nom}.`,
+    ]));
+  }
+  if (doublons.length) {
+    const noms = [...new Set(doublons.map((c) => moduleDef(c.id).nom))];
+    recit.push(choisir([
+      `${nom} a reconnu des pierres familières : ${noms.join(', ')}. De quoi faire monter des cartes.`,
+      `Des éclats de sa propre lignée attendaient dans la roche : ${noms.join(', ')}.`,
+    ]));
+  }
+  if (!r.cartes.length) recit.push('Aucune pierre à rapporter cette fois : la roche était muette.');
+  if (r.creuseurs) recit.push(`En chemin, des fouilleurs égarés ont suivi ${nom} jusqu’au district : +${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}.`);
+  if (r.marque) recit.push(`Un exploit qui ne s’oublie pas : ${nom} gagne la Marque ${r.marque}.`);
+  if (r.niveau) recit.push(`L’expérience paie : ${nom} passe au niveau ${r.niveau}.`);
+  recit.push(r.usure > 0
+    ? choisir([`Le retour s’est fait sans encombre, mais la descente laisse des traces : la Clinique s’en chargera.`, `${nom} rentre fourbu : un peu de repos à la Clinique ne sera pas de trop.`])
+    : `${nom} rentre sans une égratignure.`);
+  return recit;
 }
 
 // ---------- L'exploration des Strates ----------

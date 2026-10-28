@@ -130,6 +130,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     quotidien: { jour: jourDe(now), reserve: 1, type: typeDuJour(jourDe(now)), progres: 0 },
     archive: { semaine: semaineDe(now), points: 0, aOuvrir: 0 },
     missions: [],
+    rapports: [],
     epreuves: { semaine: semaineDe(now), faites: [] },
     creuseurs: 0,
     frontVaincu: false,
@@ -179,6 +180,7 @@ function migrer(j: Jeu) {
   if (j.kitRecrues === undefined) { j.kitRecrues = false; if (j.recrues && j.collection) donnerKitRecrues(j); }
   j.ravitaillement ??= { jour: jourDe(j.dernierTick), reserve: 1, ouverts: 0 };
   j.missions ??= [];
+  j.rapports ??= [];
   // sauvegarde d'avant les creuseurs : on commence avec une équipe vide, les Strates déjà ouvertes le restent
   j.creuseurs ??= 0;
   j.frontVaincu ??= false;

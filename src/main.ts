@@ -12,7 +12,7 @@ import { agir } from './app/actions/index';
 import { clavier } from './app/clavier';
 import { app, compteEtat, G, K, racine, reduit } from './app/etat';
 import { brancherChaine } from './app/chaine';
-import { battre } from './app/horloge';
+import { annoncer, battre } from './app/horloge';
 import { afficher } from './app/rendu';
 import { demarrerCompte, envoyer, sauver } from './app/synchro';
 
@@ -61,7 +61,8 @@ brancherChaine();
 setInterval(battre, 1000);
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { void envoyer(); return; }
-  J.tick(app.jeu, Date.now()); sauver(); if (app.mode === 'district') afficher();
+  // au retour sur l'appli : ce qui s'est passé entre-temps est annoncé (avant, ces nouvelles étaient perdues)
+  annoncer(J.tick(app.jeu, Date.now())); sauver(); if (app.mode === 'district') afficher();
 });
 addEventListener('pagehide', () => void envoyer());
 

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { FORCE, accessibles, genererCarte, salleCourante } from '../src/core/expedition';
 import { moduleDef } from '../src/core/donnees';
 import {
-  EPREUVES, MISSIONS, entrer, envoyerMission, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
+  EPREUVES, MISSIONS, entrer, envoyerMission, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
   remonter, tick, type Jeu,
 } from '../src/core/jeu';
 import { simulerParcours, PROFILS } from '../src/core/parcours';
@@ -75,6 +75,24 @@ describe('Missions', () => {
     expect(j.porteurs.docker!.usure).toBe(MISSIONS.courte.usure);
     tick(j, T0 + 8 * H + 1);
     expect(j.missions).toHaveLength(0);
+  });
+
+  it('chaque retour laisse un rapport à lire, même quand deux missions rentrent ensemble (28 octobre 2026)', () => {
+    const j = avance();
+    for (const id of ['coursier', 'docker']) poster(j, id, null);
+    j.energie = 2 * MISSIONS.courte.energie;
+    envoyerMission(j, 'docker', 'courte', T0);
+    envoyerMission(j, 'coursier', 'courte', T0 + 1000);
+    tick(j, T0 + 3 * H); // les deux rentrent pendant la même absence
+    expect(j.rapports!.filter((r) => !r.lu).map((r) => r.porteur)).toEqual(['docker', 'coursier']);
+    const r = rapportALire(j)!;
+    expect(r.recit.length).toBeGreaterThanOrEqual(3);
+    expect(r.composants).toBeGreaterThan(0);
+    expect(lireRapport(j).ok).toBe(true);
+    expect(rapportALire(j)!.porteur).toBe('coursier');
+    lireRapport(j);
+    expect(rapportALire(j)).toBeNull();
+    expect(j.rapports).toHaveLength(2); // gardés pour les relire à la Tour
   });
 
   it('pas de mission avant d’avoir vaincu une Strate', () => {

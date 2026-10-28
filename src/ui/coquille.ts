@@ -1,9 +1,9 @@
 // La coquille des écrans du district : barre de ressources en haut, navigation en bas, notifications, menu.
 // Tout l'affichage du district passe par ici pour rester cohérent d'un écran à l'autre.
 
-import { porteurDef } from '../core/donnees';
+import { moduleDef, porteurDef } from '../core/donnees';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
-import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, stockage, type Jeu } from '../core/jeu';
+import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
@@ -299,6 +299,35 @@ function feuilleRappel(e: EcranDistrict): string {
     + `<button type="button" class="btn sec" data-action="rappel-plus-tard">Plus tard</button></div></div></section>`;
 }
 
+const METAL = (r: string) => r.charAt(0).toUpperCase() + r.slice(1);
+
+/** Ce qu'une mission a rapporté, en pastilles (fenêtre du rapport et historique de la Tour) */
+export function gainsRapport(r: RapportMission): string {
+  return `<ul class="rm-gains">`
+    + `<li>${ICO.composants}<b>+${r.composants}</b><small>composants</small></li>`
+    + `<li>${ICO.monter}<b>+${r.xp}</b><small>XP${r.niveau ? ` · niveau ${r.niveau}` : ''}</small></li>`
+    + r.cartes.map((c) => `<li class="rm-carte${c.nouvelle ? ' nouvelle' : ''}">${ICO.cartes}<b>${echap(moduleDef(c.id).nom)}</b><small>${METAL(moduleDef(c.id).rarete)}${c.nouvelle ? ' · nouvelle' : ' · doublon'}</small></li>`).join('')
+    + (r.creuseurs ? `<li>${ICO.ouvrier}<b>+${r.creuseurs}</b><small>creuseur${r.creuseurs > 1 ? 's' : ''}</small></li>` : '')
+    + (r.usure ? `<li class="rm-usure">${ICO.soin}<b>+${r.usure}</b><small>Usure</small></li>` : '')
+    + `</ul>`;
+}
+
+/** Le rapport de mission (28 octobre 2026) : il s'ouvre au district tant qu'un retour n'a pas été lu */
+function feuilleRapport(e: EcranDistrict): string {
+  const autreChose = e.retour.length || e.menu || e.rappel || e.ressource || e.selection || e.carte || e.deck || e.porteur || e.guide;
+  const r = autreChose ? null : rapportALire(e.j);
+  if (!r) return '';
+  const p = porteurDef(r.porteur);
+  const reste = (e.j.rapports ?? []).filter((x) => !x.lu).length - 1;
+  return `<div class="voile-feuille" data-action="rapport-lu" aria-hidden="true"></div><section class="feuille rapport-mission" role="dialog" aria-modal="true" aria-labelledby="rm-titre" style="--c:${COULEUR[p.lignee]}">`
+    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete">${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">Mission · Strate −${r.strate}</span><h2 id="rm-titre">Retour de ${echap(p.nom)}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="rapport-lu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
+    + `<div class="rm-recit">${r.recit.map((l) => `<p>${echap(l)}</p>`).join('')}</div>`
+    + gainsRapport(r)
+    + `<button type="button" class="btn prim large" data-action="rapport-lu">${reste > 0 ? `Rapport suivant (${reste})` : 'Bien reçu'}</button>`
+    + `</div></section>`;
+}
+
 /** Le menu « Plus » : compte, intro, journal */
 export function menu(e: EcranDistrict): string {
   if (!e.menu) return '';
@@ -324,5 +353,5 @@ export function entete(surtitre: string, titre: string, droite = ''): string {
 /** L'écran complet du district : ressources, contenu, message, navigation, menu */
 export function coquille(e: EcranDistrict, contenu: string, classe = ''): string {
   const pseudo = e.grand?.edition ? feuilleNom(e.j, e.compte.utilisateur?.nom ?? '', e.grand.erreur, !!e.grand.accueil) : '';
-  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}${pseudo}${feuilleRappel(e)}</div>`;
+  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}${pseudo}${feuilleRappel(e)}${feuilleRapport(e)}</div>`;
 }

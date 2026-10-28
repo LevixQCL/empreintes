@@ -24,6 +24,17 @@ function majDecomptes(now: number): boolean {
   return fini;
 }
 
+/**
+ * Annonce ce que le temps a rapporté. Les retours de mission ont leur propre rapport (fenêtre au district) :
+ * le message en bas dit tout le reste, et plus seulement la première nouvelle du lot.
+ */
+export function annoncer(nouvelles: string[]) {
+  if (!nouvelles.length) return;
+  const autres = nouvelles.filter((t) => !t.includes(' rentre de mission'));
+  if (autres.length) D.message = autres.join(' ');
+  sauver();
+}
+
 /** Chaque seconde : la partie avance ; au district, les comptes à rebours bougent, et l'écran se redessine quand il le faut */
 export function battre() {
   const now = Date.now();
@@ -37,7 +48,7 @@ export function battre() {
     appareil: matchMedia('(min-width: 1100px)').matches ? 'pc' : 'telephone',
     compte: !u ? 'aucun' : u.anonyme ? 'invisible' : 'protege',
   });
-  if (nouvelles.length) { D.message = nouvelles[0]!; sauver(); }
+  annoncer(nouvelles);
   if (app.mode !== 'district') return;
   const fini = majDecomptes(now);
   if (nouvelles.length > 0 || fini || now - app.dernierRendu > 15_000) {

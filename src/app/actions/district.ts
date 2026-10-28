@@ -224,6 +224,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'legs-ok': D.legsRevele = false; break;
     case 'retour-ok': D.retour = []; break;
     case 'rappel-plus-tard': D.rappel = false; break;
+    case 'rapport-lu': if (J.lireRapport(app.jeu).ok) sauver(); break;
     case 'rappel-proteger': D.rappel = false; D.menu = true; compteEtat.ouvert = true; compteEtat.erreur = ''; compteEtat.info = ''; break;
 
     case 'age-ok': app.jeu.ageVu = Math.max(app.jeu.ageVu ?? 1, ageDistrict(app.jeu.batiments.noyau)); sauver(); break;
