@@ -267,3 +267,14 @@
 /* le bas de l'écran titre redessiné (le compte qui répond) : il est déjà apparu, il ne rejoue pas son entrée */
 #app .titre-bas.vu{animation:none;opacity:1}
 #app .titre-compte.fantome{visibility:hidden}
+
+/* Premier lancement : « J'ai déjà une partie », aussi visible que « Nouvelle partie » (28 octobre 2026) */
+#app .titre-retrouver{display:flex;align-items:center;justify-content:center;gap:12px;width:min(100%,320px);min-height:56px;padding:8px 18px;border:0;border-radius:14px;cursor:pointer;
+  background:rgba(12,18,30,.62);color:var(--x-glace);box-shadow:inset 0 0 0 1px rgba(205,239,255,.32);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);text-align:left}
+#app .titre-retrouver:hover{background:rgba(20,28,44,.8);box-shadow:inset 0 0 0 1px rgba(205,239,255,.5)}
+#app .titre-retrouver:focus-visible{outline:2px solid var(--x-glace);outline-offset:3px}
+#app .titre-retrouver .ico{width:20px;height:20px;flex:none}
+#app .titre-retrouver span{display:grid;gap:3px}
+#app .titre-retrouver b{font-size:16px;font-weight:600;letter-spacing:.02em}
+#app .titre-retrouver small{font-size:12.5px;color:var(--x-doux)}
+@media (min-width:900px){#app .titre-retrouver{width:340px}}

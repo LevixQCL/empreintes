@@ -228,7 +228,8 @@ function ligneSecours(c: Compte): string {
     + `<div class="ligne"><button type="button" class="btn sec" data-action="${s.confirmer ? 'secours-confirmer' : 'secours'}">${s.confirmer ? 'Confirmer l’échange' : 'Restaurer cette partie'}</button></div>`;
 }
 
-export function panneauCompte(c: Compte): string {
+/** retrouver : ouvert depuis le premier écran d'un appareil neuf, pour reprendre une partie jouée ailleurs */
+export function panneauCompte(c: Compte, retrouver = false): string {
   if (!c.ouvert) return '';
   if (c.utilisateur && !c.utilisateur.anonyme) {
     const etat = { aucune: '', 'en-cours': 'Synchronisation…', ok: 'Progression enregistrée dans ton compte.', erreur: `Synchronisation impossible pour l’instant, la sauvegarde reste sur l’appareil.${c.codeErreur ? ` (${c.codeErreur})` : ''}` }[c.synchro];
@@ -240,8 +241,10 @@ export function panneauCompte(c: Compte): string {
       + `<div class="ligne"><button type="button" class="btn sec" data-action="deconnexion"${c.occupe ? ' disabled' : ''}>Se déconnecter</button></div></section>`;
   }
   const invisible = !!c.utilisateur?.anonyme;
-  return `<section class="panneau" aria-label="Compte"><strong>${invisible ? 'Protège ta partie' : 'Compte'}</strong>`
-    + `<p class="discret">${invisible
+  return `<section class="panneau" aria-label="Compte"><strong>${invisible ? 'Protège ta partie' : retrouver ? 'Retrouve ta partie' : 'Compte'}</strong>`
+    + `<p class="discret">${retrouver && !invisible
+      ? 'Connecte-toi avec le compte utilisé sur ton autre appareil : ta partie s’ouvrira ici, là où tu l’as laissée.'
+      : invisible
       ? 'Ta partie est sauvegardée, mais seulement pour ce téléphone. Relie-la à Google ou à un e-mail : elle ne sera jamais perdue, et tu la retrouveras sur un autre appareil.'
       : 'Optionnel : retrouve ta progression sur un autre appareil.'}</p>`
     + `<div class="ligne"><button type="button" class="btn prim" data-action="google"${c.occupe ? ' disabled' : ''}>Continuer avec Google</button></div>`

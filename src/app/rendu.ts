@@ -83,7 +83,7 @@ function compteTitre(): TitreCompte | null {
     etat: !compteEtat.pret ? 'attente' : u?.anonyme ? 'invisible' : u ? 'connecte' : 'invite',
     nom: app.jeu.directeur?.nom ?? u?.nom ?? '',
     strate: app.jeu.strate,
-    panneau: compteEtat.ouvert ? panneauCompte(compteEtat) : null,
+    panneau: compteEtat.ouvert ? panneauCompte(compteEtat, !app.jeu.introVue) : null,
   };
 }
 

@@ -37,8 +37,20 @@ function ligneCompte(c: TitreCompte): string {
   return `<button type="button" class="titre-compte" data-action="titre-compte">${ICO.compte}<span>Déjà un compte ? <b>Se connecter</b></span></button>`;
 }
 
+/**
+ * Premier lancement sur cet appareil (28 octobre 2026) : deux choix de même poids, avant l'intro.
+ * Qui a déjà joué ailleurs retrouve sa partie tout de suite, sans traverser l'intro ni chercher le compte dans le menu.
+ */
+export const premierLancement = (introVue: boolean, c: TitreCompte | null) => !introVue && c?.etat === 'invite';
+
 /** Les boutons du bas */
 function basTitre(introVue: boolean, c: TitreCompte | null): string {
+  if (premierLancement(introVue, c)) return `<div class="titre-bas titre-accueil">`
+    + `<button type="button" class="prim titre-go" data-action="titre-jouer">Nouvelle partie</button>`
+    + `<button type="button" class="titre-retrouver" data-action="titre-compte">${ICO.compte}<span><b>J’ai déjà une partie</b><small>Je me connecte pour la retrouver</small></span></button>`
+    + `<div class="titre-sec"><button type="button" class="btn-sec" data-action="bibliotheque">Chroniques</button></div>`
+    + (peutInstaller() ? `<button type="button" class="titre-installer" data-action="installer"><img src="./favicon-32.png" alt="" width="16" height="16">Installer le jeu sur l’écran d’accueil</button>` : '')
+    + `<small class="titre-version">Alpha</small></div>`;
   const go = c?.etat === 'attente'
     ? `<button type="button" class="prim titre-go attente" disabled aria-busy="true"><span class="titre-anneau" aria-hidden="true"></span>Récupération de ta partie…</button>`
     : `<button type="button" class="prim titre-go" data-action="titre-jouer">${introVue ? 'Reprendre' : 'Commencer'}</button>`;
@@ -50,8 +62,10 @@ function basTitre(introVue: boolean, c: TitreCompte | null): string {
 }
 
 export function htmlTitre(introVue: boolean, mouvement: boolean, c: TitreCompte | null = null): string {
-  // toucher l'écran ouvre la partie, sauf pendant qu'on récupère celle du compte
-  return `<section class="titre"${c?.etat === 'attente' ? '' : ' data-action="titre-jouer"'} style="--image:url(./intro/00-titre.webp)" aria-label="EMPREINTES, écran titre">`
+  // toucher l'écran ouvre la partie, sauf pendant qu'on récupère celle du compte,
+  // et au premier lancement : un toucher à côté ne doit pas lancer une nouvelle partie à la place de « J'ai déjà une partie »
+  const toucher = c?.etat !== 'attente' && !premierLancement(introVue, c);
+  return `<section class="titre"${toucher ? ' data-action="titre-jouer"' : ''} style="--image:url(./intro/00-titre.webp)" aria-label="EMPREINTES, écran titre">`
     + `<div class="titre-fond" aria-hidden="true">${imageAnimee()}</div>`
     + (mouvement ? particules('cristal') : '')
     + `<div class="titre-voile" aria-hidden="true"></div>`
