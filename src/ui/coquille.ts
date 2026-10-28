@@ -22,6 +22,8 @@ export interface EcranDistrict {
   forgeToutes?: boolean;
   /** Tour du Noyau (28 octobre 2026) : la liste des Porteurs ouverte pour changer celui qui s'entraîne */
   tourChanger?: boolean;
+  /** Port, missions en mer (28 octobre 2026) : la destination du jour choisie */
+  destination?: string | null;
   /** la feuille « Protège ta partie », proposée aux paliers tant que la partie n'est reliée à aucun compte */
   rappel?: boolean;
   vue: Vue;

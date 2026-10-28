@@ -463,11 +463,14 @@ export function escouadesDe(j: Jeu): string[][] {
 /** La Strate vaincue la plus profonde (le front compte s'il a été vaincu) */
 export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 1);
 
-export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number }
+/** lieu : l'id du lieu choisi (src/core/lieux.ts) ; absent sur les missions parties avant le 28 octobre 2026 */
+export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number; lieu?: string }
 
 /** Le rapport d'une mission rentrée (demande de Luc, 28 octobre 2026) : un petit récit et tout ce qu'elle a rapporté */
 export interface RapportMission {
-  porteur: string; strate: number; duree: DureeMission; fin: number;
+  porteur: string; strate: number; duree: DureeMission; fin: number; lieu?: string;
+  /** l'affinité du Porteur avec le lieu, et le bonus total (niveau × affinité) appliqué aux gains */
+  affinite?: 'bon' | 'neutre' | 'mauvais'; mult?: number;
   recit: string[];
   composants: number; xp: number; niveau: number | null;
   cartes: { id: string; nouvelle: boolean }[];

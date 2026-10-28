@@ -28,7 +28,7 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'port'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="forge"]'); } },
@@ -56,6 +56,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'onglet-pillages', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); } },
   { nom: 'port-presentation', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); } },
   { nom: 'port-missions', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); } },
+  // les destinations du jour et les Porteurs libres (une seule barque en mer)
+  { nom: 'port-destinations', sauvegarde: 'port', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.ds-lieux', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'onglet-fleche', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
   { nom: 'onglet-fleche-bas', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.$eval('.fl-paliers', (e) => e.scrollIntoView({ block: 'end' })); } },
   { nom: 'fleche-fermee', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
@@ -115,6 +117,12 @@ async function main() {
     fl.data.scenes = [...(fl.data.scenes ?? []), 'convocation'];
     fl.data.fleche = { quai: 23, record: 31, recordLe: T - 86_400_000, recus: [20], victoires: 9, defaites: 3 };
     (saves as Record<string, unknown>).fleche = fl;
+    // une seule barque en mer : les destinations du jour et les Porteurs libres se voient
+    const po = JSON.parse(JSON.stringify(saves.district));
+    po.data.missions = po.data.missions.slice(0, 1);
+    po.data.portVu = true;
+    po.data.energie = 500;
+    (saves as Record<string, unknown>).port = po;
     // le Port déjà présenté dans la sauvegarde du district (la sauvegarde « fleche » garde sa présentation)
     d.portVu = true;
 
