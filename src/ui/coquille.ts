@@ -266,10 +266,11 @@ const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
   { vue: 'coupe', nom: 'Tour', icone: 'tour' },
   // Porteurs et Cartes ne font plus qu'un onglet (25 octobre 2026) : l'escouade, ses Porteurs et leurs cartes au même endroit
   { vue: 'porteurs', nom: 'Escouade', icone: 'porteurs' },
-  { vue: 'codex', nom: 'Chroniques', icone: 'codex' },
   // les Pillages et la Flèche ont leur onglet (28 octobre 2026, Bryan) : la carte des archipels voisins ne passe plus par le Port
   { vue: 'pillages', nom: 'Port', icone: 'carte' },
   { vue: 'fleche', nom: 'Flèche', icone: 'fleche' },
+  // les Chroniques juste avant Plus (28 octobre 2026, Bryan) : on y va moins souvent qu'au reste
+  { vue: 'codex', nom: 'Chroniques', icone: 'codex' },
   { vue: 'plus', nom: 'Plus', icone: 'plus' },
 ];
 

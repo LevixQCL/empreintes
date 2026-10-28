@@ -17,6 +17,17 @@
 /* la Strate était coupée (« S… », « −. ») sur téléphone : même disposition que les autres */
 #app[data-mode="district"] .hud .res.abysse{grid-template-columns:32px minmax(0,1fr);text-align:left}
 #app[data-mode="district"] .hud .res.abysse .v,#app[data-mode="district"] .hud .res.abysse small{grid-column:2;justify-self:start;overflow:visible}
+/* téléphones (28 octobre 2026) : la Confiance a pris sa case, les chiffres et les mots se serrent d'un cran pour tenir en entier */
+@media (max-width:440px){
+  #app[data-mode="district"] .hud .res .v{font-size:15px}
+  #app[data-mode="district"] .hud .res small{font-size:11px}
+  #app[data-mode="district"] .hud .res.abysse{grid-template-columns:28px minmax(0,1fr)}
+}
+@media (max-width:380px){
+  #app[data-mode="district"] .hud .res .v{font-size:14px}
+  #app[data-mode="district"] .hud .res small{font-size:10.5px}
+  #app[data-mode="district"] .hud .res.abysse{grid-template-columns:24px minmax(0,1fr)}
+}
 
 /* ---------- Ce qui flotte sur le tableau : objectif et appel, compacts ---------- */
 #app[data-mode="district"] .archipel-haut{gap:6px}

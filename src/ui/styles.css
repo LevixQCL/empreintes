@@ -676,15 +676,20 @@ button.res:focus-visible{outline:1.5px solid var(--glace,#CDEFFF);outline-offset
 .legs-sceau{display:flex;gap:8px;align-items:flex-start;margin:4px 0 10px;font-size:13px;line-height:1.45;color:var(--ink-2)}
 .legs-sceau svg{flex:none;width:18px;height:18px;color:var(--gold)}
 
-/* La Confiance du quartier dans la barre du haut (27 octobre 2026) : une roue qui se remplit, le niveau au centre */
-.hud .res.confiance{display:grid;grid-template-columns:auto !important;justify-items:center;align-content:center;row-gap:1px !important;padding:3px 2px 4px !important;min-width:36px}
-/* sur téléphone, la roue seule (le niveau au centre) : les autres ressources gardent leur mot en entier */
+/* La Confiance du quartier dans la barre du haut (27 octobre 2026, revue le 28 : Bryan trouvait la roue dorée « criarde »
+   et collée au bord). Elle prend la même matière que les autres ressources : le niveau serti dans le même écrin hexagonal,
+   une lueur verte discrète (la couleur de la Confiance dans le panneau du district), et une fine jauge vers le niveau
+   suivant en bas de la case, comme celle de l'Énergie. Un peu d'air à gauche et à droite pour ne plus toucher le bord. */
+.hud .res.confiance{display:grid;grid-template-columns:auto !important;justify-items:center;align-content:center;row-gap:1px !important;padding:3px 10px 7px !important;min-width:48px;--lueur:rgba(158,230,180,.28)}
+/* sur téléphone, l'écrin seul (le niveau au centre) : les autres ressources gardent leur mot en entier */
 @media (max-width:1099px){.hud .res.confiance small{display:none}}
-.roue-confiance{--p:0%;position:relative;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;
-  background:conic-gradient(var(--gold) var(--p),rgba(205,239,255,.14) 0);box-shadow:0 0 8px rgba(216,180,101,.35)}
-.roue-confiance::before{content:"";position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#1d2a46,#0e1424)}
-.roue-confiance b{position:relative;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--ink);line-height:1}
+.roue-confiance{--p:0%;position:relative;display:grid;place-items:center;width:28px;height:32px;background:var(--ecrin-hex) 50% 50% / 28px 32px no-repeat;
+  filter:drop-shadow(0 0 4px var(--lueur)) drop-shadow(0 2px 3px rgba(0,0,0,.6))}
+.roue-confiance b{position:relative;top:1px;font-family:var(--mono);font-size:14px;font-weight:600;color:#E4F6EA;line-height:1;text-shadow:0 0 6px rgba(158,230,180,.35)}
+.roue-confiance::after{content:"";position:absolute;left:3px;right:3px;bottom:-6px;height:2px;border-radius:1px;
+  background:linear-gradient(90deg,#9EE6B4 var(--p),rgba(205,239,255,.12) 0)}
 .hud .res.confiance small{font-size:9.5px !important;line-height:1.1 !important;text-align:center}
+@media (min-width:1100px){.roue-confiance::after{bottom:-5px}}
 
 /* ---------- Rapport de mission (28 octobre 2026) : le récit d'un retour et ce qu'il a rapporté ---------- */
 .rapport-mission .feuille-tete{gap:12px;align-items:center}

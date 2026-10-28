@@ -76,6 +76,8 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .zone-chaine.resonne{box-shadow:inset 0 0 0 1.5px var(--glace),inset 0 0 40px rgba(160,210,255,.15),0 10px 26px rgba(0,0,0,.45)}
 
 /* ---------- Le district (22 octobre 2026) ---------- */
+/* l'écrin hexagonal des ressources, partagé avec la Confiance (28 octobre 2026) */
+#app{--ecrin-hex:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'%3E%3Cdefs%3E%3ClinearGradient id='f' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%2329376a'/%3E%3Cstop offset='1' stop-color='%23070a19'/%3E%3C/linearGradient%3E%3ClinearGradient id='r' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f2fbff'/%3E%3Cstop offset='.5' stop-color='%238fb3e8' stop-opacity='.55'/%3E%3Cstop offset='1' stop-color='%23c9b6ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M15 1 29 9v16L15 33 1 25V9z' fill='url(%23f)' fill-opacity='.94' stroke='url(%23r)' stroke-width='1.2'/%3E%3Cpath d='M15 4.6 26 11v12L15 29.4 4 23V11z' fill='none' stroke='%23cdefff' stroke-opacity='.16'/%3E%3Cpath d='M2.6 9.7 15 2.6' stroke='%23fff' stroke-opacity='.65' stroke-width='.9'/%3E%3C/svg%3E")}
 /* bandeau des ressources et barre de navigation : verre bleu nuit, arête de glace */
 #app:is([data-mode="combat"],[data-mode="district"]) .hud{background:linear-gradient(rgba(10,13,30,.94),rgba(8,10,24,.86));box-shadow:0 1px 0 var(--glace-3),0 6px 20px rgba(0,0,0,.45)}
 #app:is([data-mode="combat"],[data-mode="district"]) .nav{background:linear-gradient(rgba(12,16,36,.9),rgba(6,8,18,.98))}
@@ -88,7 +90,7 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .hud{grid-template-columns:minmax(0,1.12fr) minmax(0,1.02fr) minmax(0,.95fr) minmax(0,.95fr) auto;gap:6px;padding:max(8px,var(--sat)) 8px 8px}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res{grid-template-columns:32px minmax(0,1fr);column-gap:6px;row-gap:0;min-height:48px;padding:4px 7px 6px 5px}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .ico.peinte{grid-row:1 / span 2;align-self:end;width:32px;height:38px;margin:-4px 0 -2px;padding:0 1px 6px;object-fit:contain;object-position:50% 100%;
-  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 34'%3E%3Cdefs%3E%3ClinearGradient id='f' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%2329376a'/%3E%3Cstop offset='1' stop-color='%23070a19'/%3E%3C/linearGradient%3E%3ClinearGradient id='r' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23f2fbff'/%3E%3Cstop offset='.5' stop-color='%238fb3e8' stop-opacity='.55'/%3E%3Cstop offset='1' stop-color='%23c9b6ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M15 1 29 9v16L15 33 1 25V9z' fill='url(%23f)' fill-opacity='.94' stroke='url(%23r)' stroke-width='1.2'/%3E%3Cpath d='M15 4.6 26 11v12L15 29.4 4 23V11z' fill='none' stroke='%23cdefff' stroke-opacity='.16'/%3E%3Cpath d='M2.6 9.7 15 2.6' stroke='%23fff' stroke-opacity='.65' stroke-width='.9'/%3E%3C/svg%3E") 50% 100% / 28px 32px no-repeat;
+  background:var(--ecrin-hex) 50% 100% / 28px 32px no-repeat;
   filter:drop-shadow(0 0 5px var(--lueur,rgba(160,210,255,.4))) drop-shadow(0 2px 3px rgba(0,0,0,.6))}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.energie{--lueur:rgba(255,190,90,.45)}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.composants{--lueur:rgba(150,200,255,.4)}
@@ -102,14 +104,28 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .jauge-res{left:43px;right:8px;bottom:4px;height:2px;background:rgba(205,239,255,.12)}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .jauge-res i{background:linear-gradient(90deg,#c98a35,#ffd98a);box-shadow:0 0 6px rgba(255,200,110,.8)}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.energie.plein .jauge-res i{background:linear-gradient(90deg,#e8902c,#ffc768)}
-/* petits téléphones (360 px) : écrin un peu plus petit pour que « Éclats » et « Strate » tiennent en entier */
-@media (max-width:380px){
+/* téléphones (jusqu'à 440 px, 28 octobre 2026 : la Confiance prend sa place dans la barre) : écrin un peu plus petit
+   pour que l'Énergie, « Éclats » et « Strate » tiennent en entier */
+@media (max-width:440px){
   #app:is([data-mode="combat"],[data-mode="district"]) .hud{gap:4px;padding-inline:6px}
   #app:is([data-mode="combat"],[data-mode="district"]) .hud .res{grid-template-columns:28px minmax(0,1fr);column-gap:5px;padding:4px 5px 6px 4px}
   #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .ico.peinte{width:28px;height:34px;background-size:25px 29px}
   #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .v{font-size:15px}
   #app:is([data-mode="combat"],[data-mode="district"]) .hud .res small{font-size:10px;letter-spacing:0}
   #app:is([data-mode="combat"],[data-mode="district"]) .hud .jauge-res{left:37px;right:6px}
+  #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.confiance{padding:3px 7px 7px !important;min-width:42px}
+}
+/* très petits téléphones (360 px) : écrins et chiffres encore un cran plus petits */
+@media (max-width:380px){
+  #app:is([data-mode="combat"],[data-mode="district"]) .hud{padding-inline:4px}
+  #app:is([data-mode="combat"],[data-mode="district"]) .hud .res{grid-template-columns:24px minmax(0,1fr);column-gap:4px;padding:4px 3px 6px 3px}
+  #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .ico.peinte{width:24px;height:30px;background-size:22px 26px}
+  #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .v{font-size:14px}
+  #app[data-mode="district"] .hud .res.abysse{grid-template-columns:24px minmax(0,1fr)}
+  #app:is([data-mode="combat"],[data-mode="district"]) .hud .jauge-res{left:31px;right:4px}
+  #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.confiance{padding:3px 5px 7px !important;min-width:36px}
+  .roue-confiance{width:24px;height:28px;background-size:24px 28px}
+  .roue-confiance b{font-size:13px}
 }
 /* les plaques des bâtiments, posées sur le tableau : du verre, plus compact */
 #app:is([data-mode="combat"],[data-mode="district"]) .plaque{max-width:44%;padding:5px 9px 5px 6px;background:
