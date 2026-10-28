@@ -90,6 +90,26 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'coeur-glaciere': 'coeur-glaciere',
   'sceau-orseve': 'sceau-orseve',
   'voix-quartier': 'voix-quartier',
+  // les voies, étapes 2 et 3, et les exclusives (28 octobre 2026)
+  'lames-jumelles': 'lames-jumelles',
+  'oeil-lecteur': 'oeil-lecteur',
+  'boucle-memoire': 'boucle-memoire',
+  'lame-doute': 'lame-doute',
+  'seve-piliers': 'seve-piliers',
+  'miroir-hauts': 'miroir-hauts',
+  'seconde-naissance': 'seconde-naissance',
+  'pollen-ambre': 'pollen-ambre',
+  'gantelet-pillard': 'gantelet-pillard',
+  'coeur-surregime': 'coeur-surregime',
+  'silence-avant': 'silence-avant',
+  'floraison': 'floraison',
+  'verdict': 'verdict',
+  'empreinte-vive': 'empreinte-vive',
+  'poings-pistons': 'poings-pistons',
+  'sentence-muette': 'sentence-muette',
+  'regard-biais': 'regard-biais',
+  'mue-verre': 'mue-verre',
+  'flair': 'flair',
 };
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */
