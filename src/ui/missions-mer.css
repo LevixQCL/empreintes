@@ -145,7 +145,23 @@
 .ds-lieu.b-pierre .ds-butin{color:#CDEFFF;box-shadow:inset 0 0 0 1px rgba(205,239,255,.45)}
 .ds-lieu.b-naufrages .ds-butin{color:#B8E3A8;box-shadow:inset 0 0 0 1px rgba(184,227,168,.4)}
 .ds-lieu.b-eclats .ds-butin{color:#D8C4FF;box-shadow:inset 0 0 0 1px rgba(200,180,255,.45)}
-.ds-lieu.prise{cursor:default;filter:grayscale(.85) brightness(.5)}
+/* une destination de naufragés déjà recueillis : encore ouverte (composants), mais éteinte */
+.ds-lieu.vide{filter:grayscale(.7) brightness(.6)}
+.ds-lieu.vide.choisi{filter:grayscale(.45) brightness(.8)}
+
+/* ---------- Les deux jauges du Port : la cargaison du prochain départ, les naufragés de la Strate ---------- */
+.ds-jauges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
+.ds-jauge{--cut:8px;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;padding:8px 10px;
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));
+  background:linear-gradient(180deg,rgba(20,38,58,.72),rgba(8,16,26,.82));box-shadow:inset 0 0 0 1px rgba(242,213,140,.32),inset 0 1px 0 rgba(255,255,255,.14)}
+.ds-jauge>.ico{width:22px;height:22px;color:#F2D58C;filter:drop-shadow(0 0 6px rgba(242,213,140,.35))}
+.ds-jauge span{display:grid;gap:1px;min-width:0}
+.ds-jauge small{font-size:12px;line-height:1.3;color:#93A3B8}
+.ds-jauge strong{font-size:14px;line-height:1.3;color:#fff;font-variant-numeric:tabular-nums}
+.ds-jauge.basse{box-shadow:inset 0 0 0 1px rgba(205,239,255,.2),inset 0 1px 0 rgba(255,255,255,.1)}
+.ds-jauge.basse>.ico{color:#9FB3C8;filter:none}
+.ds-jauge.basse strong{color:#CDEFFF}
+@media (max-width:380px){.ds-jauges{grid-template-columns:1fr}}
 .ds-prise{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:#E4ECF5}
 .ds-prise .ico{width:13px;height:13px}
 .ds-lore em .ico{width:14px;height:14px;margin-right:4px;vertical-align:-2px}

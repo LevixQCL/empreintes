@@ -278,8 +278,14 @@ export interface Jeu {
   archive: { semaine: number; points: number; aOuvrir: number };
   /** les Porteurs partis en mission en mer, depuis le Port (le niveau de la mission est celui de la dernière Strate vaincue) */
   missions: Mission[];
-  /** les destinations du jour déjà prises au Port (une barque par destination) */
+  /** (ancien, jusqu'au 28 octobre 2026) les destinations du jour déjà prises au Port : les missions sont maintenant illimitées */
   missionsJour?: { jour: number; cles: string[] };
+  /** les creuseurs ramenés par les naufragés pendant la Strate en cours (plafonnés par Strate, idée de Luc du 28 octobre 2026) */
+  naufrages?: { strate: number; n: number };
+  /** les barques parties aujourd'hui (les premières reviennent pleines, les suivantes moins : les ruines proches s'épuisent) */
+  departsJour?: { jour: number; n: number };
+  /** les destinations dont les naufragés ont déjà été recueillis aujourd'hui */
+  secoursJour?: { jour: number; cles: string[] };
   /** les rapports des missions rentrées : ceux pas encore lus s'ouvrent au district, les derniers lus restent consultables */
   rapports?: RapportMission[];
   /** Épreuves de la semaine déjà réussies (une récompense par Épreuve et par semaine) */
@@ -421,9 +427,22 @@ export const CREUSEURS = {
   missionCourte: 0.1,
   missionLongue: 0.3,
   epreuve: 1,
+  /**
+   * Les missions en mer sont illimitées (28 octobre 2026, idée de Luc) : on peut farmer composants, cartes et XP autant
+   * qu'on veut, mais les naufragés ne ramènent au plus que cette part des creuseurs de l'étage suivant, par Strate.
+   * Le reste vient du front (gardien, fouilles, Épreuves, Confiance) : on ne peut pas avancer plus vite dans l'histoire en mer.
+   */
+  naufragesParStrate: 0.65, // ≈ deux tiers (réglé au robot : le rythme de descente reste celui d'avant)
   /** creuseurs volontaires par niveau de Confiance atteint */
   confiance: 1,
 } as const;
+
+/** Les creuseurs que les naufragés peuvent encore ramener pendant la Strate en cours (plafond et déjà ramenés) */
+export function naufragesDeLaStrate(j: Pick<Jeu, 'strate' | 'naufrages'>): { plafond: number; ramenes: number; restants: number } {
+  const plafond = Math.max(1, Math.round(creuseursRequis(j.strate + 1) * CREUSEURS.naufragesParStrate));
+  const ramenes = j.naufrages?.strate === j.strate ? j.naufrages.n : 0;
+  return { plafond, ramenes, restants: Math.max(0, plafond - ramenes) };
+}
 
 export function creuseursRequis(strate: number): number {
   const t = CREUSEURS.requis;
@@ -473,7 +492,11 @@ export function escouadesDe(j: Jeu): string[][] {
 export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 1);
 
 /** lieu : l'id du lieu choisi (src/core/lieux.ts) ; absent sur les missions parties avant le 28 octobre 2026 */
-export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number; lieu?: string; butin?: 'cargaison' | 'pierre' | 'naufrages' | 'eclats' }
+export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number; lieu?: string; butin?: 'cargaison' | 'pierre' | 'naufrages' | 'eclats';
+  /** la part du butin (1 = plein) : les ruines proches s'épuisent au fil des départs du jour */
+  rendement?: number;
+  /** des naufragés ont été recueillis (la première barque du jour vers ce lieu, dans le plafond de la Strate) */
+  secours?: boolean }
 
 /** Le rapport d'une mission rentrée (demande de Luc, 28 octobre 2026) : un petit récit et tout ce qu'elle a rapporté */
 export interface RapportMission {
@@ -482,6 +505,8 @@ export interface RapportMission {
   affinite?: 'bon' | 'neutre' | 'mauvais'; mult?: number;
   recit: string[];
   composants: number; xp: number; niveau: number | null;
+  /** la part du butin rapportée (1 = pleine cargaison) */
+  rendement?: number;
   cartes: { id: string; nouvelle: boolean }[];
   creuseurs: number; usure: number; marque: string | null;
   lu: boolean;

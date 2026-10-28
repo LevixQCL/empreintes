@@ -13,7 +13,7 @@ import {
   choisirLegs, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
-  enMission, envoyerMission, destinationsDuJour, destinationsPrises, epreuvesDeLaSemaine, fouiller, partirEpreuve,
+  enMission, envoyerMission, destinationsDuJour, secoursPossible, epreuvesDeLaSemaine, fouiller, partirEpreuve,
   chargeMax, niveauPorteur, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick,
   coutRefabrication, placesEntrainement, seancesDe, type Jeu, type Poste,
 } from './jeu';
@@ -97,7 +97,7 @@ function meilleures(j: Jeu, l: Lignee, charge: number, niveau: number): string[]
 }
 
 /** Choisit l'escouade (un Porteur par lignée, le plus solide), lui confie les meilleures cartes et poste les autres */
-function preparer(j: Jeu): string[] {
+function preparer(j: Jeu, duree: 'courte' | 'longue' = 'longue'): string[] {
   const forgeron = j.forge ? posteDe(j, 'forge') : null;
   const presents = porteursPresents(j).filter((id) => !enMission(j, id));
   for (const id of presents) if (id !== forgeron) poster(j, id, null);
@@ -118,11 +118,10 @@ function preparer(j: Jeu): string[] {
     if (id) poster(j, id, b);
   }
   // ceux qui restent partent en mission (longue : le joueur revient plus tard) ; s'il n'y a plus de place, ils s'entraînent à la Tour
-  // (28 octobre 2026) les naufragés d'abord, puisque les creuseurs ouvrent les Strates ; sinon la meilleure destination pour lui
+  // (28 octobre 2026) les naufragés d'abord tant qu'ils ramènent des creuseurs (plafond par Strate), sinon la meilleure destination pour lui
   for (const id of libres) {
-    const prises = destinationsPrises(j, j.dernierTick);
-    const nauf = destinationsDuJour(j.dernierTick).find((d) => d.butin === 'naufrages' && !prises.includes(d.cle));
-    if (!envoyerMission(j, id, 'longue', j.dernierTick, nauf?.cle).ok && seancesDe(j).length < placesEntrainement(j)) poster(j, id, 'noyau');
+    const nauf = destinationsDuJour(j.dernierTick).find((d) => secoursPossible(j, d, j.dernierTick));
+    if (!envoyerMission(j, id, duree, j.dernierTick, nauf?.cle).ok && seancesDe(j).length < placesEntrainement(j)) poster(j, id, 'noyau');
   }
   return escouade;
 }
@@ -223,7 +222,7 @@ function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) =
  */
 export function simulerParcours(
   profil: Profil, jours: number, graine: number,
-  opts: { trace?: (j: Jeu, jour: number, escouade: string[]) => void; jusqua?: number; joueur?: 'robot' | 'moyen'; tours?: ToursCombat } = {},
+  opts: { trace?: (j: Jeu, jour: number, escouade: string[]) => void; jusqua?: number; joueur?: 'robot' | 'moyen'; tours?: ToursCombat; duree?: 'courte' | 'longue'; fin?: (j: Jeu) => void } = {},
 ): Parcours {
   const debut = Date.UTC(2026, 9, 5, 6); // un lundi matin
   const j = nouveauJeu(debut, graine);
@@ -251,7 +250,7 @@ export function simulerParcours(
       r.expeditions[derniere] = depuis;
       depuis = 0;
       opts.trace?.(j, d + 1, escouade);
-      if (opts.jusqua && derniere >= opts.jusqua) { r.strate = j.strate; return true; }
+      if (opts.jusqua && derniere >= opts.jusqua) { r.strate = j.strate; opts.fin?.(j); return true; }
     }
     return false;
   };
@@ -262,7 +261,7 @@ export function simulerParcours(
       tick(j, now);
       gerer(j, now);
       if (noter(d, [])) return r;
-      const escouade = preparer(j);
+      const escouade = preparer(j, opts.duree);
       const front = j.strate;
       const jouer = opts.joueur === 'robot' ? jouerTour : jouerTourMoyen;
       // une fois par jour, les Épreuves de la semaine pas encore réussies
@@ -290,6 +289,7 @@ export function simulerParcours(
     }
   }
   r.strate = j.strate;
+  opts.fin?.(j);
   return r;
 }
 

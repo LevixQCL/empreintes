@@ -8,7 +8,7 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, destinationsPrises, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -1533,45 +1533,64 @@ const ICONE_BUTIN: Record<Butin, Icone> = { cargaison: 'composants', pierre: 'ca
 const TEXTE_BUTIN: Record<Butin, string> = {
   cargaison: 'Une cargaison oubliée : beaucoup de composants, mais aucune pierre.',
   pierre: 'Une pierre attend quelqu’un : une carte à coup sûr, nouvelle ou en doublon (du cuivre possible en 8 h), mais peu de composants.',
-  naufrages: 'Des naufragés guettent une barque : ils deviendront creuseurs (une chance sur deux en 2 h ; en 8 h, un à coup sûr, parfois deux).',
+  naufrages: 'Des naufragés guettent une barque : la première du jour les ramène, et ils deviennent creuseurs (un à coup sûr, parfois deux en 8 h).',
   eclats: 'Des Éclats affleurent dans la ruine : un en 2 h, un ou deux en 8 h.',
 };
 /** Ce que rapporterait une mission, pour son bouton : le butin principal en grand */
-function gainMission(j: Jeu, id: string, d: Destination, duree: DureeMission, mult: number): { html: string; texte: string } {
-  const c = composantsMission(j, id, d.lieu.id, duree, d.butin);
-  if (d.butin === 'pierre') { const n = Math.round(chanceNouvelleMission(mult, duree) * 100); return { html: `${ICO.cartes}1`, texte: `une carte, ${n} % de chances qu’elle soit nouvelle, ${c} composants` }; }
-  if (d.butin === 'naufrages') { const k = MISSIONS.butins.naufrages.creuseurs[duree]; return { html: `${ICO.ouvrier}${k > 1 ? '1+' : k >= 1 ? '1' : '50 %'}`, texte: `${k >= 1 ? 'un creuseur, parfois deux' : 'une chance sur deux de ramener un creuseur'}, ${c} composants` }; }
-  if (d.butin === 'eclats') { const k = MISSIONS.butins.eclats.eclats[duree] * mult; return { html: `${ICO.eclats}${virgule(Math.round(k * 10) / 10)}`, texte: `environ ${virgule(Math.round(k * 10) / 10)} Éclats, ${c} composants` }; }
+function gainMission(j: Jeu, id: string, d: Destination, duree: DureeMission, mult: number, now: number): { html: string; texte: string } {
+  const rd = rendementMission(j, now).part;
+  const secours = secoursPossible(j, d, now);
+  const c = composantsMission(j, id, d.lieu.id, duree, d.butin, undefined, rd, secours);
+  if (d.butin === 'pierre') {
+    const n = Math.round(chanceNouvelleMission(mult, duree) * 100);
+    if (rd < 1) return { html: `${ICO.cartes}${Math.round(rd * 100)} %`, texte: `${Math.round(rd * 100)} % de chances de trouver une carte (ruine déjà fouillée), ${c} composants` };
+    return { html: `${ICO.cartes}1`, texte: `une carte, ${n} % de chances qu’elle soit nouvelle, ${c} composants` };
+  }
+  if (d.butin === 'naufrages' && secours) { const k = MISSIONS.butins.naufrages.creuseurs[duree]; return { html: `${ICO.ouvrier}${k > 1 ? '1+' : '1'}`, texte: `${k > 1 ? 'un creuseur, parfois deux' : 'un creuseur'}, ${c} composants` }; }
+  if (d.butin === 'eclats') { const k = MISSIONS.butins.eclats.eclats[duree] * mult * rd; return { html: `${ICO.eclats}${virgule(Math.round(k * 10) / 10)}`, texte: `environ ${virgule(Math.round(k * 10) / 10)} Éclats, ${c} composants` }; }
   return { html: `${ICO.composants}${c}`, texte: `${c} composants` };
 }
 
 /** Les missions en mer (au Port depuis le 28 octobre 2026) : qui est en mer, les destinations du jour, qui part, et les derniers rapports */
 export function htmlMissions(e: EcranDistrict): string {
   const j = e.j;
-  let h = `<section class="bloc tr-volet pl-missions"><p class="aide">Le passeur emmène un Porteur libre vers une ruine au large, avec des vivres et des lampes (de l’énergie). Chaque jour, il connaît de 2 à 5 destinations et ce qu’on y trouvera : une cargaison, une pierre oubliée, des naufragés ou des Éclats. Chaque ruine garde l’empreinte de ce qu’elle était : les machines s’ouvrent aux Augmentés, le vivant aux Génés, les échos aux Résonants. Le bon Porteur au bon endroit rapporte plus, et chaque niveau compte.</p>`;
+  let h = `<section class="bloc tr-volet pl-missions"><p class="aide">Le passeur emmène un Porteur libre vers une ruine au large, avec des vivres et des lampes (de l’énergie). Chaque jour, il connaît de 2 à 5 destinations et ce qu’on y trouvera : une cargaison, une pierre oubliée, des naufragés ou des Éclats. Tu peux y retourner autant que tu veux : les ${MISSIONS.pleines} premiers départs du jour reviennent pleins, les suivants trouvent des ruines déjà fouillées. Le bon Porteur au bon endroit rapporte plus, et chaque niveau compte.</p>`;
   if (j.missions.length) h += `<div class="voyages">${j.missions.map((m) => voyage(e, m)).join('')}</div>`;
 
-  // les destinations du jour : de 2 à 5, chacune avec son butin annoncé, une barque par destination
+  // les destinations du jour : de 2 à 5, chacune avec son butin annoncé ; on y retourne autant qu'on veut (28 octobre 2026)
   const offre = destinationsDuJour(e.now);
-  const prises = destinationsPrises(j, e.now);
-  const libresDest = offre.filter((d) => !prises.includes(d.cle));
-  const choisie = libresDest.find((d) => d.cle === e.destination) ?? libresDest[0] ?? null;
-  h += `<div class="ds-tete"><h3 class="titre-bloc">${icone('carte')}Destinations du jour · ${libresDest.length} / ${offre.length}</h3><small>${decompte(debutJour(jourDe(e.now) + 1), e.now, 'Nouvelles dans ')}</small></div>`
+  const choisie = offre.find((d) => d.cle === e.destination) ?? offre[0] ?? null;
+  // deux jauges claires à la place d'un quota caché : la cargaison du prochain départ, et les naufragés de la Strate
+  const rd = rendementMission(j, e.now);
+  const nf = naufragesDeLaStrate(j);
+  const pct = Math.round(rd.part * 100);
+  h += `<div class="ds-jauges">`
+    + `<div class="ds-jauge${rd.part < 1 ? ' basse' : ''}" title="Les ${MISSIONS.pleines} premiers départs du jour reviennent pleins ; ensuite les ruines proches sont déjà fouillées.">${ICO.composants}<span><small>Prochain départ</small><strong>${rd.part >= 1 ? 'Cargaison pleine' : `Ruines fouillées · ${pct} %`}</strong><small>${Number.isFinite(rd.restants) ? `encore ${rd.restants} départ${rd.restants > 1 ? 's' : ''}${rd.part < 1 ? ` à ${pct} %` : ''}` : 'jusqu’à demain 4 h'}</small></span></div>`
+    + `<div class="ds-jauge${nf.restants ? '' : ' basse'}" title="Les naufragés ne fournissent qu’une partie des creuseurs de chaque Strate : le reste se gagne au front (gardien, fouilles, Épreuves).">${ICO.ouvrier}<span><small>Naufragés · Strate −${j.strate}</small><strong>${nf.ramenes} / ${nf.plafond} creuseur${nf.plafond > 1 ? 's' : ''}</strong><small>${nf.restants ? `encore ${nf.restants} en mer` : 'le reste se gagne au front'}</small></span></div>`
+    + `</div>`;
+  h += `<div class="ds-tete"><h3 class="titre-bloc">${icone('carte')}Destinations du jour</h3><small>${decompte(debutJour(jourDe(e.now) + 1), e.now, 'Nouvelles dans ')}</small></div>`
     + `<div class="ds-lieux n${offre.length}" role="radiogroup" aria-label="Destinations du jour">`
     + offre.map((d) => {
       const l = d.lieu;
       const img = decorLieu(LIEUX_SLUGS.indexOf(l.id as typeof LIEUX_SLUGS[number]));
-      const prise = prises.includes(d.cle);
       const sel = choisie?.cle === d.cle;
-      return `<button type="button" role="radio" aria-checked="${sel}" class="ds-lieu b-${d.butin}${sel ? ' choisi' : ''}${prise ? ' prise' : ''}" style="--c:${COULEUR[l.lignee]}${img ? `;--decor:url(${img})` : ''}" data-action="mission-lieu" data-id="${d.cle}"${prise ? ' disabled' : ''}>`
+      const enRoute = barquesVers(j, d);
+      // des naufragés déjà recueillis aujourd'hui (ou plafond de la Strate atteint) : le lieu reste ouvert, pour ses composants
+      const vide = d.butin === 'naufrages' && !secoursPossible(j, d, e.now);
+      const etat = enRoute ? `${ICO.ok}${enRoute > 1 ? `${enRoute} barques` : 'Barque'} en route` : vide ? 'Plus de naufragés' : '';
+      return `<button type="button" role="radio" aria-checked="${sel}" class="ds-lieu b-${d.butin}${sel ? ' choisi' : ''}${vide ? ' vide' : ''}" style="--c:${COULEUR[l.lignee]}${img ? `;--decor:url(${img})` : ''}" data-action="mission-lieu" data-id="${d.cle}">`
         + `<span class="ds-butin">${ICO[ICONE_BUTIN[d.butin]]}${NOM_BUTIN[d.butin]}</span>`
         + `<span class="ds-lignee">${NOM_LIGNEES[l.lignee]}</span><strong>${echap(majuscule(l.nom))}</strong>`
-        + (prise ? `<span class="ds-prise">${ICO.ok}Barque partie</span>` : '') + `</button>`;
+        + (etat ? `<span class="ds-prise">${etat}</span>` : '') + `</button>`;
     }).join('') + `</div>`;
-  if (choisie) h += `<p class="ds-lore" style="--c:${COULEUR[choisie.lieu.lignee]}"><b>${echap(majuscule(choisie.lieu.nom))}.</b> ${echap(choisie.lieu.lore)} <em>${ICO[ICONE_BUTIN[choisie.butin]]}${TEXTE_BUTIN[choisie.butin]}</em></p>`;
+  if (choisie) {
+    const vide = choisie.butin === 'naufrages' && !secoursPossible(j, choisie, e.now);
+    const texte = vide ? (nf.restants ? 'Les naufragés d’ici ont déjà été recueillis aujourd’hui : une barque y trouvera seulement des composants.' : `Les naufragés ont fourni leur part de creuseurs pour la Strate −${j.strate} : le reste se gagne au front. Une barque y trouvera des composants.`) : TEXTE_BUTIN[choisie.butin];
+    h += `<p class="ds-lore" style="--c:${COULEUR[choisie.lieu.lignee]}"><b>${echap(majuscule(choisie.lieu.nom))}.</b> ${echap(choisie.lieu.lore)} <em>${ICO[vide ? 'composants' : ICONE_BUTIN[choisie.butin]]}${texte}</em></p>`;
+  }
 
   const libres = disponibles(j);
-  if (!choisie) h += `<small class="aide">Le passeur a déjà emmené une barque vers chaque destination du jour : de nouvelles s’ouvrent demain à 4 h.</small>`;
+  if (!choisie) h += `<small class="aide">Aucune destination aujourd’hui : de nouvelles s’ouvrent demain à 4 h.</small>`;
   else if (j.missions.length >= barquesMax(j)) h += `<small class="aide">${barquesMax(j) > 1 ? `Tes ${barquesMax(j)} barques sont en mer` : 'Ta barque est en mer'} : attends son retour${barquesMax(j) < BARQUES[BARQUES.length - 1]! ? ', ou monte la Tour du Noyau pour en armer une de plus' : ''}.</small>`;
   else if (!libres.length) h += `<small class="aide">Tous les Porteurs travaillent ou sont partis : libère-en un d’un bâtiment pour l’envoyer.</small>`;
   else {
@@ -1585,7 +1604,7 @@ export function htmlMissions(e: EcranDistrict): string {
       h += `<li class="af-${b.affinite}" style="--c:${COULEUR[p.lignee]}">${avatar(id, 36)}<span><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · niv. ${b.niveau}</small>`
         + `<span class="ds-affinite">${NOM_AFFINITE[b.affinite]}${pct ? `<b>${pct > 0 ? '+' : '−'}${Math.abs(pct)} %</b>` : ''}</span></span>`
         + (['courte', 'longue'] as const).map((d) => {
-          const g = gainMission(j, id, choisie, d, b.mult);
+          const g = gainMission(j, id, choisie, d, b.mult, e.now);
           return `<button type="button" class="btn sec mission-duree" data-action="mission" data-id="${id}" data-cle="${choisie.cle}" data-duree="${d}"${j.energie >= MISSIONS[d].energie ? '' : ' disabled'} aria-label="Mission de ${MISSIONS[d].heures} heures vers ${echap(choisie.lieu.nom)}, ${MISSIONS[d].energie} énergie : ${g.texte}"><span>${MISSIONS[d].heures} h</span><span class="ds-gain">${g.html}</span>${prix('energie', MISSIONS[d].energie, j.energie >= MISSIONS[d].energie)}</button>`;
         }).join('') + `</li>`;
     }

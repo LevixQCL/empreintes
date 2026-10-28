@@ -8,7 +8,7 @@ import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, plac
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
-import { ACCORD_OUVERT, CONFIANCE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, usureMax } from './etat';
+import { ACCORD_OUVERT, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, usureMax } from './etat';
 import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -213,18 +213,40 @@ export const MISSIONS = {
    * Le butin annoncé de chaque destination (28 octobre 2026, Bryan : « parfois une carte plutôt que des pièces ») :
    * compo = part des composants d'une mission ordinaire. Chaque semaine, 21 destinations, 7 par lignée,
    * et pour chaque lignée 2 cargaisons, 2 pierres, 2 naufragés, 1 éclats : aucune classe n'est avantagée sur la semaine.
-   * Naufragés réglés au robot : Strate −10 au jour 31 (occasionnel) et 22 (assidu), contre 29,5 et 20 avant.
+   * Missions illimitées (28 octobre 2026), réglées au robot sur 16 parties : Strate −10 au jour 30 (occasionnel), 20 (assidu)
+   * et 17 (acharné, 8 sessions par jour en missions de 2 h), contre 32, 20 et 20 avec l'ancienne limite de destinations.
    */
   butins: {
     cargaison: { compo: 1.4 },
     pierre: { compo: 0.4, nouvelle: { courte: 0.4, longue: 0.6 }, nouvelleMax: 0.9 },
-    naufrages: { compo: 0.4, creuseurs: { courte: 0.5, longue: 1.25 } },
+    // les naufragés d'un lieu ne montent qu'une fois par jour dans une barque (la première) ; la même durée ou presque
+    // rapporte un creuseur, pour ne plus forcer les missions longues. Une barque arrivée après (ou au-delà du plafond
+    // de la Strate) trouve le lieu vide de monde : elle ramène des composants comme une cargaison ordinaire.
+    naufrages: { compo: 0.4, compoPlafond: 1, creuseurs: { courte: 1, longue: 1.5 } },
     eclats: { compo: 0.4, eclats: { courte: 1, longue: 1.5 } },
   },
   parLignee: { cargaison: 2, pierre: 2, naufrages: 2, eclats: 1 },
   /** le nombre de destinations de chaque jour de la semaine (mélangé chaque semaine) : 21 en tout */
   parJour: [2, 2, 2, 3, 3, 4, 5],
+  /**
+   * Missions illimitées (28 octobre 2026) : les premiers départs du jour reviennent pleins, les suivants rapportent moins,
+   * parce que le passeur va chercher plus loin des ruines déjà fouillées. Par paquets de `pleines` départs : 100 %, puis 50 %, puis 25 %.
+   * L'XP reste entière (on peut toujours monter ses Porteurs de réserve) ; les creuseurs ont leur propre plafond par Strate.
+   */
+  pleines: 4,
+  rendements: [1, 0.5, 0.25],
 } as const;
+
+/** Les départs déjà faits aujourd'hui */
+export const departsDuJour = (j: Jeu, now: number): number => (j.departsJour?.jour === jourDe(now) ? j.departsJour.n : 0);
+
+/** La part du butin du prochain départ (1 = pleine cargaison), et combien de départs il reste à ce rendement */
+export function rendementMission(j: Jeu, now: number): { part: number; restants: number } {
+  const n = departsDuJour(j, now);
+  const bloc = Math.floor(n / MISSIONS.pleines);
+  const r = MISSIONS.rendements;
+  return { part: r[Math.min(bloc, r.length - 1)]!, restants: bloc >= r.length - 1 ? Infinity : MISSIONS.pleines * (bloc + 1) - n };
+}
 
 /** Le niveau des missions : celui de la dernière Strate vaincue (il fixe les gains) */
 export const strateMission = (j: Jeu) => strateVaincue(j);
@@ -243,8 +265,9 @@ export function bonusMission(j: Jeu, porteur: string, lieu: string): { affinite:
 }
 
 /** Les composants que rapporterait une mission (pour l'afficher avant le départ) */
-export function composantsMission(j: Jeu, porteur: string, lieu: string, duree: DureeMission, butin: Butin, strate = strateMission(j)): number {
-  return Math.round(MISSIONS[duree].composants * (1 + 0.25 * (strate - 1)) * MISSIONS.butins[butin].compo * bonusMission(j, porteur, lieu).mult);
+export function composantsMission(j: Jeu, porteur: string, lieu: string, duree: DureeMission, butin: Butin, strate = strateMission(j), rendement = 1, secours = !naufragesPleins(j)): number {
+  const part = butin === 'naufrages' && !secours ? MISSIONS.butins.naufrages.compoPlafond : MISSIONS.butins[butin].compo;
+  return Math.round(MISSIONS[duree].composants * (1 + 0.25 * (strate - 1)) * part * bonusMission(j, porteur, lieu).mult * rendement);
 }
 
 /** La chance de ramener une carte nouvelle (destination « Pierre oubliée ») ; sinon c'est un doublon */
@@ -280,8 +303,15 @@ export function destinationsDuJour(now: number): Destination[] {
   return choix;
 }
 
-/** Les destinations du jour déjà prises (une barque par destination) */
-export const destinationsPrises = (j: Jeu, now: number): string[] => (j.missionsJour?.jour === jourDe(now) ? j.missionsJour.cles : []);
+/** Les barques en mer vers chaque destination du jour (missions illimitées depuis le 28 octobre 2026 : on y retourne autant qu'on veut) */
+export const barquesVers = (j: Jeu, d: Destination): number => j.missions.filter((m) => m.lieu === d.lieu.id && m.butin === d.butin).length;
+
+/** Les naufragés ramènent-ils encore des creuseurs pendant cette Strate ? Sinon, ils paient leur passage en composants */
+export const naufragesPleins = (j: Jeu): boolean => naufragesDeLaStrate(j).restants === 0;
+
+/** Des naufragés attendent-ils encore à cette destination aujourd'hui ? (une seule barque les recueille par jour, dans le plafond de la Strate) */
+export const secoursPossible = (j: Jeu, d: Destination, now: number): boolean =>
+  d.butin === 'naufrages' && !naufragesPleins(j) && !(j.secoursJour?.jour === jourDe(now) && j.secoursJour.cles.includes(d.cle));
 
 /**
  * Les missions en mer (28 octobre 2026, Bryan : les missions partent du Port) : un Porteur prend le bateau du passeur
@@ -307,18 +337,17 @@ export const lieuIdMission = (m: { porteur: string; fin: number; lieu?: string }
 
 /**
  * Envoie un Porteur en mer vers une destination du jour (par sa clé). Sans clé, il part vers la meilleure destination
- * encore libre pour lui (le robot et les tests).
+ * pour lui (le robot et les tests). Plus de destination « prise » : seules les barques limitent les départs.
  */
 export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: number, cle?: string): Resultat {
   const m = MISSIONS[duree];
   if (!m) return non('Durée inconnue.');
-  const prises = destinationsPrises(j, now);
-  const libres = destinationsDuJour(now).filter((d) => !prises.includes(d.cle));
+  const libres = destinationsDuJour(now);
   const lg = porteurDef(id)?.lignee;
   const rang = { bon: 0, neutre: 1, mauvais: 2 } as const;
   const dest = cle ? libres.find((d) => d.cle === cle)
     : libres.slice().sort((a, b) => (lg ? rang[affinite(a.lieu.lignee, lg)] - rang[affinite(b.lieu.lignee, lg)] : 0))[0];
-  if (!dest) return non(cle ? 'Une barque est déjà partie vers cette destination.' : 'Plus aucune destination libre aujourd’hui.');
+  if (!dest) return non(cle ? 'Cette destination n’est plus au programme du passeur : de nouvelles s’ouvrent chaque jour à 4 h.' : 'Aucune destination aujourd’hui.');
   if (!j.chambre || strateMission(j) < 1) return non('Il faut avoir vaincu une Strate pour y envoyer quelqu’un.');
   if (!porteursPresents(j).includes(id)) return non('Porteur inconnu.');
   if (j.porteurs[id]!.poste) return non(`${porteurDef(id).nom} travaille au district.`);
@@ -327,8 +356,11 @@ export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: num
   if (j.missions.length >= nb) return non(nb > 1 ? `${nb} barques au plus en mer en même temps : monte la Tour du Noyau pour en armer d’autres.` : 'Une seule barque en mer à la fois : monte la Tour du Noyau pour en armer d’autres.');
   if (j.energie < m.energie) return non(`Il faut ${m.energie} énergie pour équiper la mission.`);
   j.energie -= m.energie;
-  j.missions.push({ porteur: id, strate: strateMission(j), duree, debut: now, fin: now + m.heures * 3_600_000, lieu: dest.lieu.id, butin: dest.butin });
-  j.missionsJour = { jour: jourDe(now), cles: [...prises, dest.cle] };
+  const rendement = rendementMission(j, now).part;
+  const secours = secoursPossible(j, dest, now);
+  if (secours) j.secoursJour = { jour: jourDe(now), cles: [...(j.secoursJour?.jour === jourDe(now) ? j.secoursJour.cles : []), dest.cle] };
+  j.missions.push({ porteur: id, strate: strateMission(j), duree, debut: now, fin: now + m.heures * 3_600_000, lieu: dest.lieu.id, butin: dest.butin, rendement, ...(dest.butin === 'naufrages' ? { secours } : {}) });
+  j.departsJour = { jour: jourDe(now), n: departsDuJour(j, now) + 1 };
   log(j, `${porteurDef(id).nom} prend le bateau vers ${lieuMission(j.missions[j.missions.length - 1]!)} (${m.heures} h).`);
   return { ok: true };
 }
@@ -350,14 +382,18 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   if (m.butin && lieuId) {
     // le butin annoncé de la destination (28 octobre 2026)
     const bt = MISSIONS.butins;
-    composants = composantsMission(j, m.porteur, lieuId, m.duree, m.butin, m.strate);
-    if (m.butin === 'pierre') {
+    const rd = m.rendement ?? 1;
+    // les naufragés recueillis au départ, et encore dans le plafond de la Strate au retour
+    const secours = m.butin === 'naufrages' && (m.secours ?? true) && !naufragesPleins(j);
+    composants = composantsMission(j, m.porteur, lieuId, m.duree, m.butin, m.strate, rd, secours);
+    // une ruine déjà fouillée n'a plus toujours sa pierre : la carte devient une chance égale au rendement
+    if (m.butin === 'pierre' && (rd >= 1 || t.nombre() < rd)) {
       // une carte à coup sûr : nouvelle (fer, ou cuivre en mission longue) ou un doublon de sa lignée
       if (!possedees.length || t.nombre() < chanceNouvelleMission(b.mult, m.duree)) cartes.push(tirerTrouvaille(j, m.strate, m.duree === 'longue' ? 'cuivre' : 'fer', p.lignee));
       else cartes.push(possedees[t.entier(possedees.length)]!);
     }
-    if (m.butin === 'naufrages') { const c = bt.naufrages.creuseurs[m.duree]; recrues = Math.floor(c) + (t.nombre() < c % 1 ? 1 : 0); }
-    if (m.butin === 'eclats') { const e = bt.eclats.eclats[m.duree] * b.mult; eclats = Math.floor(e) + (t.nombre() < e % 1 ? 1 : 0); j.eclats += eclats; }
+    if (secours) { const c = bt.naufrages.creuseurs[m.duree]; recrues = Math.floor(c) + (t.nombre() < c % 1 ? 1 : 0); }
+    if (m.butin === 'eclats') { const e = bt.eclats.eclats[m.duree] * b.mult * rd; eclats = Math.floor(e) + (t.nombre() < e % 1 ? 1 : 0); j.eclats += eclats; }
   } else {
     // une mission partie avant le 28 octobre 2026 : les gains d'avant
     composants = Math.round(d.composants * sf);
@@ -365,10 +401,13 @@ export function retourDeMission(j: Jeu, m: Mission): string {
     if (t.nombre() < d.nouvelle) cartes.push(tirerTrouvaille(j, m.strate, 'fer', p.lignee));
     recrues = t.nombre() < (m.duree === 'longue' ? CREUSEURS.missionLongue : CREUSEURS.missionCourte) ? 1 : 0;
   }
+  // le plafond de la Strate (missions illimitées) : au-delà, les naufragés restent au Port
+  const nf = naufragesDeLaStrate(j);
+  recrues = Math.min(recrues, nf.restants);
   j.composants += composants;
   const trouvees = cartes.map((c) => ({ id: c, nouvelle: ajouterCarte(j, c) }));
   const arrives = recrues ? gagnerCreuseurs(j, recrues, `${p.nom} ramène des naufragés`) : 0;
-  if (arrives) creuser(j);
+  if (arrives) { j.naufrages = { strate: j.strate, n: nf.ramenes + arrives }; creuser(j); }
   const q = j.porteurs[m.porteur]!;
   const usureAvant = q.usure;
   q.usure = Math.min(usureMax(m.porteur), q.usure + d.usure + (b.affinite === 'mauvais' ? MISSIONS.usureMauvais : 0));
@@ -382,7 +421,7 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? `, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
   const rapport: RapportMission = {
-    porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, lieu: lieuId, butin: m.butin, eclats, affinite: b.affinite, mult: Math.round(b.mult * 100) / 100, recit: [],
+    porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, lieu: lieuId, butin: m.butin, eclats, rendement: m.rendement ?? 1, affinite: b.affinite, mult: Math.round(b.mult * 100) / 100, recit: [],
     composants, xp: gainXp, niveau: monte || null, cartes: trouvees, creuseurs: arrives,
     usure: q.usure - usureAvant, marque: nouvelleMarque ? nouvelleMarque.nom : null, lu: false,
   };
@@ -433,6 +472,8 @@ export function recitMission(r: RapportMission): string[] {
     `Lampe à algues au poing, ${nom} a plongé dans ${lieu}, salle après salle.`,
     `Au lever du brouillard, la barque a touché ${lieu}. ${nom} est monté seul.`,
   ]));
+  if ((r.rendement ?? 1) < 1) recit.push(`D’autres barques étaient passées avant aujourd’hui : ${nom} a dû chercher plus loin, dans des salles à moitié vidées.`);
+  if (r.butin === 'naufrages' && !r.creuseurs) recit.push('Plus personne à recueillir sur place : les naufragés étaient déjà partis. La barque est revenue chargée de matériel.');
   recit.push(choisir([
     `Sous l’eau dormait encore du matériel d’avant : ${r.composants} composants hissés à bord.`,
     `Une réserve oubliée, au sec sous un toit effondré : ${r.composants} composants rapportés au district.`,
