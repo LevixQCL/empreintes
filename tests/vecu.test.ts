@@ -1,6 +1,6 @@
 // L'empreinte des cartes (28 octobre 2026) : ce qu'une carte retient de ses combats, ses paliers et ses épithètes.
 import { describe, expect, it } from 'vitest';
-import { epitheteAffiche, epithetesDe, journalCarte, noterOrigine, noterVecu, palierCarte, palierDe, pointsVecu, VECU, vecuDe } from '../src/core/jeu';
+import { epitheteAffiche, epithetesDe, journalCarte, noterOrigine, noterVecu, palierCarte, palierDe, pointsVecu, VECU, vecuDe, versPalierSuivant } from '../src/core/jeu';
 import { nouveauJeu } from '../src/core/jeu';
 import { DEPART_PORTEURS, carteId } from '../src/core/donnees';
 import type { CombatEtat, TourHisto } from '../src/core/types';
@@ -48,24 +48,36 @@ describe('Empreinte des cartes', () => {
     expect(vecuDe(j, ATK)!.ga).toEqual([]);
     expect(vecuDe(j, AUTRE)!.ga).toEqual([6]);
     expect(epitheteAffiche(AUTRE, vecuDe(j, AUTRE))).toContain('Gardien de −6');
+    expect(epithetesDe(ATK, vecuDe(j, ATK)).map((e) => e.id)).toEqual(['profond']);
     expect(journalCarte(vecuDe(j, AUTRE))).toContain('A fendu le Gardien de −6.');
   });
 
-  it('les paliers suivent les seuils', () => {
+  it('un palier demande des points ET un exploit : un vrai trophée', () => {
+    const x = { l: 0, v: 0, d: 0, b: 0, s: 0, a: 0, f: 0, z: 0, g: [] as number[], ga: [] as number[] };
     expect(palierDe(undefined)).toBe(0);
-    const x = { l: 0, v: 0, d: 0, b: 0, s: 0, a: 0, f: 0, z: 0, g: [], ga: [] };
-    for (const [i, seuil] of VECU.paliers.entries()) {
-      const v = Math.ceil(seuil / VECU.points.victoire);
-      expect(palierDe({ ...x, v })).toBe(i + 1);
-      expect(pointsVecu({ ...x, v: v - 1 })).toBeLessThan(seuil);
-    }
+    // beaucoup de combats à −1, sans Gardien : rien
+    expect(palierDe({ ...x, v: 500 })).toBe(0);
+    // Trace : les points et un Gardien vaincu
+    expect(palierDe({ ...x, v: 125, g: [1] })).toBe(1);
+    expect(palierDe({ ...x, v: 115, g: [1] })).toBe(0);
+    // Sillon : il faut aussi le dernier coup sur un Gardien et une victoire à −5
+    const sillon = { ...x, v: 495, g: [1, 3], ga: [3], z: 5 };
+    expect(palierDe(sillon)).toBe(2);
+    expect(palierDe({ ...sillon, z: 4 })).toBe(1);
+    // Empreinte : un Gardien à −8 et 25 derniers coups
+    const emp = { ...x, v: 1450, a: 25, g: [1, 8], ga: [3], z: 8 };
+    expect(palierDe(emp)).toBe(3);
+    expect(palierDe({ ...emp, g: [1, 7] })).toBe(2);
+    expect(versPalierSuivant({ ...emp, g: [1, 7] })!.exploits).toEqual([
+      { texte: 'Vaincre un Gardien à −8 ou plus bas', fait: false }, { texte: 'Porter 25 derniers coups', fait: true },
+    ]);
   });
 
-  it('une descente ordinaire allume la Trace', () => {
+  it('une seule descente ne suffit jamais pour la Trace', () => {
     const j = nouveauJeu(0);
-    for (let k = 0; k < 5; k++) noterVecu(j, combat('victoire', k % 2 === 0), { strate: 2, gardien: false });
-    noterVecu(j, combat('victoire'), { strate: 2, gardien: true });
-    expect(palierCarte(j, ATK)).toBe(1);
+    for (let k = 0; k < 6; k++) noterVecu(j, combat('victoire', true), { strate: 2, gardien: k === 5 });
+    expect(pointsVecu(vecuDe(j, ATK))).toBeLessThan(VECU.paliers[0]!);
+    expect(palierCarte(j, ATK)).toBe(0);
   });
 
   it('l’origine ne s’écrit qu’une fois', () => {
@@ -78,7 +90,7 @@ describe('Empreinte des cartes', () => {
 });
 
 describe('Empreinte : une vraie descente', () => {
-  it('les cartes jouées par le moteur s’inscrivent, et une descente allume au moins une Trace', async () => {
+  it('les cartes jouées par le moteur s’inscrivent, sans allumer de Trace en une descente', async () => {
     const { partir, entrer, repondre, RENCONTRES, finDeCombat, continuer, remonter } = await import('../src/core/jeu');
     const { jouerTour } = await import('../src/core/robot');
     const j = nouveauJeu(0); j.chambre = true; j.recrues = true;
@@ -101,7 +113,7 @@ describe('Empreinte : une vraie descente', () => {
     expect(tout.reduce((n, x) => n + x.l, 0)).toBeGreaterThan(20);
     expect(tout.reduce((n, x) => n + x.d + x.b + x.s, 0)).toBeGreaterThan(0);
     if (tout.some((x) => x.v > 0)) expect(tout.some((x) => x.a > 0)).toBe(true);
-    // une descente gagnée allume la Trace des cartes les plus jouées (étude du 28/10 : 14 à 28 points par carte)
-    if (j.strate > 1 || j.frontVaincu) expect(Object.keys(j.vecu!).some((k) => palierCarte(j, k) >= 1)).toBe(true);
+    // un vrai trophée : une descente ne suffit pas (étude du 28/10 : 15 à 25 points par carte et par descente)
+    expect(Object.keys(j.vecu!).every((k) => palierCarte(j, k) === 0)).toBe(true);
   });
 });

@@ -37,14 +37,17 @@ export interface VecuCarte {
 }
 
 /**
- * Les réglages (étude du 28 octobre 2026, une vraie descente jouée par le robot à −1) : une carte du deck y gagne 14 à 28 points,
- * dont 10 pour un Gardien vaincu pour la première fois ; une descente de plus dans une Strate déjà vaincue en rapporte ~12.
- * La Trace s'allume donc dès la 1re descente pour les cartes les plus jouées (récompense immédiate), le Sillon vers la 9e,
- * l'Empreinte vers la 28e (une à deux semaines pour un joueur régulier, plus pour une carte qu'on change souvent).
+ * Un vrai trophée (Bryan, 28 octobre 2026 : « pas s'obtenir dès qu'on a joué un peu »). Chaque palier demande des points
+ * ET un exploit : on ne l'obtient pas en jouant longtemps à −1, il faut descendre avec la carte et qu'elle y fasse ses preuves.
+ * Étude au robot (12 descentes par Strate, 6 cartes les plus jouées) : par descente, une carte gagne ~5 à 6 combats, ~0,7 dernier coup,
+ * ~2,5 Fêlures à partir de −3, soit ~15 à 25 points (plus 10 pour chaque nouveau Gardien vaincu).
+ *   Trace     250 pts  + un Gardien vaincu avec elle                         ≈ 12 descentes avec la même carte (une semaine)
+ *   Sillon   1000 pts  + le dernier coup sur un Gardien + un combat gagné à −5 ≈ 45 descentes (3 à 4 semaines)
+ *   Empreinte 3000 pts + un Gardien vaincu à −8 ou plus bas + 25 derniers coups ≈ 130 descentes (deux mois et plus)
  */
 export const VECU = {
   points: { victoire: 2, dernierCoup: 4, felure: 3, gardien: 10 },
-  paliers: [20, 120, 360] as number[],
+  paliers: [250, 1000, 3000] as number[],
 } as const;
 
 export const NOMS_PALIER = ['', 'Trace', 'Sillon', 'Empreinte'] as const;
@@ -62,17 +65,37 @@ export function pointsVecu(x: VecuCarte | undefined): number {
   return x.v * P.victoire + x.a * P.dernierCoup + x.f * P.felure + x.g.length * P.gardien;
 }
 
+const plusProfond = (t: number[]) => (t.length ? Math.max(...t) : 0);
+/** L'exploit demandé par chaque palier, en plus des points (index = palier − 1) */
+export const EXPLOITS: { texte: string; ok: (x: VecuCarte) => boolean }[][] = [
+  [{ texte: 'Vaincre un Gardien avec elle dans la chaîne', ok: (x) => x.g.length > 0 }],
+  [
+    { texte: 'Porter le dernier coup à un Gardien', ok: (x) => x.ga.length > 0 },
+    { texte: 'Gagner un combat à −5 ou plus bas', ok: (x) => x.z >= 5 },
+  ],
+  [
+    { texte: 'Vaincre un Gardien à −8 ou plus bas', ok: (x) => plusProfond(x.g) >= 8 },
+    { texte: 'Porter 25 derniers coups', ok: (x) => x.a >= 25 },
+  ],
+];
+
 export function palierDe(x: VecuCarte | undefined): Palier {
+  if (!x) return 0;
   const pts = pointsVecu(x);
-  return (VECU.paliers.filter((s) => pts >= s).length) as Palier;
+  let p = 0;
+  while (p < 3 && pts >= VECU.paliers[p]! && EXPLOITS[p]!.every((e) => e.ok(x))) p++;
+  return p as Palier;
 }
 export const palierCarte = (j: Jeu, cle: string): Palier => palierDe(vecuDe(j, cle));
 
-/** Ce qu'il manque pour le palier suivant (null au dernier) */
-export function versPalierSuivant(x: VecuCarte | undefined): { palier: Palier; points: number; seuil: number; depart: number } | null {
+/** Ce qu'il manque pour le palier suivant : les points, et chaque exploit (fait ou non). null au dernier palier. */
+export function versPalierSuivant(x: VecuCarte | undefined): { palier: Palier; points: number; seuil: number; depart: number; exploits: { texte: string; fait: boolean }[] } | null {
   const p = palierDe(x);
   if (p >= 3) return null;
-  return { palier: (p + 1) as Palier, points: pointsVecu(x), seuil: VECU.paliers[p]!, depart: p ? VECU.paliers[p - 1]! : 0 };
+  return {
+    palier: (p + 1) as Palier, points: pointsVecu(x), seuil: VECU.paliers[p]!, depart: p ? VECU.paliers[p - 1]! : 0,
+    exploits: EXPLOITS[p]!.map((e) => ({ texte: e.texte, fait: !!x && e.ok(x) })),
+  };
 }
 
 // ---------- Les épithètes ----------
@@ -82,14 +105,15 @@ interface EpitheteDef { id: string; texte: (x: VecuCarte) => string; ok: (x: Vec
 const max = (t: number[]) => (t.length ? Math.max(...t) : 0);
 
 export const EPITHETES: EpitheteDef[] = [
-  { id: 'premier', texte: () => 'qui a porté le dernier coup', ok: (x) => x.a >= 1, aide: 'Abattre le dernier ennemi d’un combat.' },
-  { id: 'profond', texte: (x) => `qui a vu −${x.z}`, ok: (x) => x.z >= 3, aide: 'Gagner un combat à la Strate −3 ou plus bas.' },
+  // les seuils suivent l'étude au robot : chacun demande plusieurs semaines avec la même carte, ou un exploit rare
+  { id: 'premier', texte: () => 'qui achève', ok: (x) => x.a >= 10, aide: 'Porter 10 derniers coups.' },
+  { id: 'profond', texte: (x) => `qui a vu −${x.z}`, ok: (x) => x.z >= 5, aide: 'Gagner un combat à la Strate −5 ou plus bas.' },
   { id: 'gardien', texte: (x) => `qui a fendu le Gardien de −${max(x.ga)}`, ok: (x) => x.ga.length > 0, aide: 'Porter le dernier coup à un Gardien.' },
-  { id: 'felures', texte: () => 'qui fend les Fêlures', ok: (x) => x.f >= 10, aide: 'Briser 10 Fêlures.' },
-  { id: 'tenu', texte: (x) => `qui a tenu à −${x.z}`, ok: (x, t) => t === 'bouclier' && x.b >= 600 && x.z >= 2, aide: 'Une carte de bouclier : protéger beaucoup, loin dans les Strates.' },
-  { id: 'veille', texte: () => 'qui n’a laissé tomber personne', ok: (x, t) => t === 'soin' && x.s >= 500, aide: 'Une carte de soin : soigner beaucoup.' },
-  { id: 'mille', texte: () => 'aux mille coups', ok: (x, t) => t === 'atk' && x.d >= 3000, aide: 'Une carte d’attaque : infliger 3 000 dégâts.' },
-  { id: 'veteran', texte: () => 'de toutes les descentes', ok: (x) => x.v >= 60, aide: 'Gagner 60 combats.' },
+  { id: 'felures', texte: () => 'qui fend les Fêlures', ok: (x) => x.f >= 60, aide: 'Briser 60 Fêlures.' },
+  { id: 'tenu', texte: (x) => `qui a tenu à −${x.z}`, ok: (x, t) => t === 'bouclier' && x.b >= 1500 && x.z >= 4, aide: 'Une carte de bouclier : donner 1 500 de bouclier et gagner à −4 ou plus bas.' },
+  { id: 'veille', texte: () => 'qui n’a laissé tomber personne', ok: (x, t) => t === 'soin' && x.s >= 1500, aide: 'Une carte de soin : soigner 1 500 PV.' },
+  { id: 'mille', texte: () => 'aux mille coups', ok: (x, t) => t === 'atk' && x.d >= 6000, aide: 'Une carte d’attaque : infliger 6 000 dégâts.' },
+  { id: 'veteran', texte: () => 'de toutes les descentes', ok: (x) => x.v >= 300, aide: 'Gagner 300 combats.' },
 ];
 
 /** Les épithètes débloqués, dans l'ordre de la liste */

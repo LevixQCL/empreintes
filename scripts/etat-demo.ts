@@ -27,9 +27,9 @@ const vec = (v: number, a: number, f: number, g: number[], ga: number[], z: numb
 const cles = Object.keys(j.collection);
 j.vecu = {};
 cles.forEach((k, i) => {
-  if (i % 4 === 0) j.vecu![k] = vec(70, 14, 12, [1, 2, 3, 4], [2, 4], 5);
-  else if (i % 4 === 1) j.vecu![k] = vec(40, 6, 5, [1, 2, 3], [], 4);
-  else if (i % 4 === 2) j.vecu![k] = vec(9, 1, 1, [], [], 2);
+  if (i % 4 === 0) j.vecu![k] = vec(1100, 40, 200, [1, 2, 3, 4, 5, 6, 7, 8], [4, 8], 9);
+  else if (i % 4 === 1) j.vecu![k] = vec(400, 12, 60, [1, 2, 3, 4, 5], [3], 6);
+  else if (i % 4 === 2) j.vecu![k] = vec(100, 3, 10, [1, 2], [], 3);
 });
 j.fragments = FRAGMENTS.slice(0, 12).map((f) => f.id);
 j.lus = CHAPITRES.slice(0, 8).map((c) => c.id);

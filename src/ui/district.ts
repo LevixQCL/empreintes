@@ -992,11 +992,12 @@ function blocEmpreinte(j: Jeu, cle: string): string {
     + `<div class="emp-tete"><span class="emp-palier p${p}">${p ? NOMS_PALIER[p] : 'Vierge'}</span>${affiche ? `<span class="emp-epithete">${echap(affiche)}</span>` : ''}</div>`;
   if (suite) {
     const part = Math.min(100, (100 * (suite.points - suite.depart)) / Math.max(1, suite.seuil - suite.depart));
-    h += `<div class="progression"><div class="jauge" style="--jc:${['#8fd0f0', '#e8be5e', '#c9a8ff'][suite.palier - 1]}"><i style="width:${part}%"></i></div><span class="chiffre">${NOMS_PALIER[suite.palier]} · ${suite.points} / ${suite.seuil}</span></div>`;
+    h += `<div class="progression"><div class="jauge" style="--jc:${['#8fd0f0', '#e8be5e', '#c9a8ff'][suite.palier - 1]}"><i style="width:${part}%"></i></div><span class="chiffre">${NOMS_PALIER[suite.palier]} · ${Math.min(suite.points, suite.seuil)} / ${suite.seuil}</span></div>`
+      + `<ul class="emp-exploits" aria-label="Exploits demandés pour ${NOMS_PALIER[suite.palier]}">${suite.exploits.map((e) => `<li class="${e.fait ? 'fait' : ''}" aria-label="${echap(e.texte)}${e.fait ? ', fait' : ', à faire'}"><i aria-hidden="true">${e.fait ? ICO.ok : ''}</i>${echap(e.texte)}</li>`).join('')}</ul>`;
   }
-  h += `<p class="emp-aide">${p ? 'La carte garde la trace de ses combats : ' : 'Chaque combat gagné, chaque dernier coup, chaque Fêlure brisée et chaque Gardien vaincu s’inscrivent dans la carte : '}son filigrane s’allume à chaque palier. Pur souvenir : aucun effet en combat.</p>`;
+  h += `<p class="emp-aide">${p ? 'Un trophée gagné au fil des descentes : ' : 'Un trophée, pas un dû : il faut des semaines de combats avec la même carte, et des exploits qu’elle seule a vécus. '}chaque palier allume son filigrane. Pur souvenir : aucun effet en combat.</p>`;
   if (ep.length > 1) h += `<div class="emp-epithetes" role="group" aria-label="Épithète affiché">${ep.map((e) => `<button type="button" class="emp-choix" data-action="epithete" data-module="${cle}" data-id="${e.id}" aria-pressed="${e.texte === affiche}">${echap(e.texte)}</button>`).join('')}</div>`;
-  else if (!ep.length) h += `<p class="emp-aide">Premier épithète : porter le dernier coup d’un combat.</p>`;
+  else if (!ep.length) h += `<p class="emp-aide">Épithètes : des exploits rares, comme porter le dernier coup à un Gardien.</p>`;
   if (journal.length) h += `<ul class="emp-journal">${journal.map((l) => `<li>${echap(l)}</li>`).join('')}</ul>`;
   return h + `</section>`;
 }

@@ -22,6 +22,8 @@ const clone = (s: CombatEtat): CombatEtat => ({
   main: s.main.map((g) => (g.fs ? { ...g } : g)),
   chaine: s.chaine.map((g) => (g.fs ? { ...g } : g)),
   journal: s.journal.slice(),
+  // le journal complet reste au vrai combat : les chaînes essayées puis jetées n'y laissent aucune trace
+  historique: undefined,
   ...(s.eclat ? { eclat: { ...s.eclat } } : {}),
 });
 

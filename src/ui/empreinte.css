@@ -54,3 +54,9 @@
 .gain-revele.empreinte .gv-carte{position:relative;overflow:hidden}
 .gain-revele.empreinte .gv-carte::after{content:"";position:absolute;inset:0;background:var(--fil) 70% 0/170% auto no-repeat;mix-blend-mode:screen;opacity:.85}
 .carte-detail .fc-epithete{display:block;margin-top:2px;font-family:var(--display);font-size:13px;letter-spacing:.06em;color:var(--gold);font-variant:small-caps;opacity:.92}
+.fc-emp .emp-exploits{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:5px;font-size:13.5px;color:#C9D6E6}
+.fc-emp .emp-exploits li{display:flex;align-items:center;gap:8px}
+.fc-emp .emp-exploits i{flex:none;width:16px;height:16px;border-radius:50%;border:1px solid rgba(201,214,230,.45);display:grid;place-items:center}
+.fc-emp .emp-exploits i svg{width:11px;height:11px}
+.fc-emp .emp-exploits li.fait{color:var(--gold)}
+.fc-emp .emp-exploits li.fait i{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 22%,transparent);color:var(--gold)}
