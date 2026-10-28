@@ -6,7 +6,7 @@ import type { Rarete } from '../types';
 import { COLLECTION, NIVEAU_METAL, ajouterCarte, tirerChoix, NOMS_RARETE } from '../collection';
 import { tireur } from '../rng';
 import { ARCHIVE, DISTRICT, log, niveauPorteur, non, porteursPresents, type Jeu, type Resultat, typeDuJour } from './etat';
-import { progresser, quotidienFait } from './district';
+import { interrompreSeance, progresser, quotidienFait } from './district';
 
 // ---------- Kit de départ des recrues ----------
 
@@ -168,6 +168,7 @@ export function quitterPostes(j: Jeu, escouade: string[]): void {
   for (const id of escouade) {
     const b = j.porteurs[id]!.poste;
     if (!b) continue;
+    if (b === 'noyau') interrompreSeance(j);
     j.porteurs[id]!.poste = null;
     log(j, b === 'noyau' ? `${porteurDef(id).nom} quitte l’entraînement pour descendre.` : `${porteurDef(id).nom} quitte son poste (${batimentDef(b).nom}) pour descendre.`);
   }

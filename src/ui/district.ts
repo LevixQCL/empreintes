@@ -9,7 +9,7 @@ import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PA
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
   OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
-  COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, xpEntrainement, energieEntrainement, debutJour
+  COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, Lignee, ModuleDef, Rarete } from '../core/types';
@@ -434,33 +434,41 @@ function blocSoinsIntensifs(j: Jeu): string {
   return h + `</section>`;
 }
 
-function blocEntrainement(j: Jeu): string {
+function blocEntrainement(j: Jeu, now: number): string {
   if (!j.chambre) return '';
-  const occupant = posteDe(j, 'noyau');
+  const s = j.seance ?? null;
+  const occupant = s?.porteur ?? null;
   const plafond = plafondEntrainement(j);
-  const xph = xpEntrainement(j);
-  const eh = energieEntrainement(j);
   let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.monter}Entraînement</h3><div class="fb-entrainement" aria-hidden="true"><img src="${salleEntrainement}" alt="" decoding="async"></div>`
-    + `<p class="fb-vide">Un Porteur posté ici s’entraîne avec les creuseurs : <b>+${xph} XP par heure</b> pour <b>${eh} énergie par heure</b>, même jeu fermé, jusqu’au <b>niveau ${plafond}</b>. Sans énergie, il s’arrête. S’il rejoint l’escouade, il quitte l’entraînement.</p>`;
+    + `<p class="fb-vide">Une séance fait monter un Porteur d’<b>un niveau</b>, même jeu fermé, jusqu’au <b>niveau ${plafond}</b> ici. L’énergie se paie au lancement. À la fin, il quitte la salle : reviens lancer la suivante. S’il descend avant, il garde l’XP gagnée et l’énergie du reste est rendue.</p>`;
   const niveau = (id: string) => niveauPorteur(j, id).niveau;
-  if (occupant) {
+  if (s && occupant) {
     const o = porteurDef(occupant);
-    const n = niveauPorteur(j, occupant);
-    const fini = n.niveau >= plafond;
-    const reste = !fini && n.requis ? Math.ceil(((n.requis - n.xp) / xph) * 3_600_000) : 0;
-    h += `<div class="fb-occupant" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 64)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-lignee">Niveau ${n.niveau} · ${pvNiveau(j, occupant)} PV</span>`
-      + `<span class="fb-apport">${fini ? `Plafond atteint : monte la Tour pour aller plus loin` : j.energie < 1 ? `En pause : plus d’énergie` : decompte(Date.now() + reste, Date.now(), `Niveau ${n.niveau + 1} dans `)}</span></div>`
-      + `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Arrêter l’entraînement de ${echap(o.nom)}">Arrêter</button></div>`;
+    const heuresFaites = s.xpGagnee / s.xpHeure;
+    const heuresRestantes = (s.xpTotale - s.xpGagnee) / s.xpHeure;
+    const debut = now - heuresFaites * 3_600_000;
+    const fin = now + heuresRestantes * 3_600_000;
+    const rendu = Math.min(Math.floor(s.energie * (1 - s.xpGagnee / s.xpTotale)), Math.max(0, stockage(j) - j.energie));
+    h += `<div class="fb-occupant" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 64)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-lignee">Niveau ${niveau(occupant)} → ${s.cible} · ${pvNiveau(j, occupant)} PV</span>`
+      + `<span class="fb-apport">${decompte(fin, now, `Niveau ${s.cible} dans `)}</span><div class="jauge or">${jaugeTemps(debut, fin, now)}</div></div>`
+      + `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Arrêter la séance de ${echap(o.nom)}${rendu ? ` : ${rendu} énergie rendue` : ''}">Arrêter</button></div>`;
   }
+  // le dernier à avoir fini sa séance vient en premier : le relancer est le geste le plus courant
   const libres = PORTEURS.filter((p) => p.id !== occupant && porteursPresents(j).includes(p.id) && !enExpedition(j, p.id))
-    .sort((x, y) => niveau(x.id) - niveau(y.id));
+    .sort((x, y) => Number(y.id === j.derniereSeance) - Number(x.id === j.derniereSeance) || niveau(x.id) - niveau(y.id));
   if (libres.length) {
-    h += `<p class="fb-consigne">${occupant ? 'Le remplacer' : 'Entraîner un Porteur'} <span>· les moins avancés d’abord</span></p><div class="fb-rangee">`
+    h += `<p class="fb-consigne">${occupant ? 'Lancer plutôt' : 'Lancer une séance'} <span>· un niveau, payé d’avance</span></p><div class="fb-rangee">`
       + libres.map((p) => {
         const ailleurs = j.porteurs[p.id]!.poste;
         const n = niveau(p.id);
-        return `<button type="button" class="fb-cand${n >= plafond ? ' egal' : ' plus'}" style="--c:${COULEUR[p.lignee]}" data-action="poster" data-id="${p.id}" data-poste="noyau"${n >= plafond ? ' disabled' : ''} aria-label="Entraîner ${echap(p.nom)}, niveau ${n}${ailleurs ? `, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}">`
-          + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom)}</strong><span class="fb-cand-eff">niv. ${n}${n >= plafond ? ' · max' : ''}</span>`
+        const a = apercuSeance(j, p.id);
+        const rendu = s ? Math.floor(s.energie * Math.max(0, 1 - s.xpGagnee / s.xpTotale)) : 0;
+        const peut = !!a && j.energie + rendu >= a.energie;
+        const relance = p.id === j.derniereSeance && !occupant;
+        const info = !a ? 'plafond atteint' : `${duree(a.heures * 3_600_000)} · ${ent(a.energie)} énergie`;
+        return `<button type="button" class="fb-cand${!a ? ' egal' : ' plus'}" style="--c:${COULEUR[p.lignee]}" data-action="poster" data-id="${p.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="${relance ? 'Relancer' : 'Entraîner'} ${echap(p.nom)}, niveau ${n}${a ? ` vers ${a.cible}, ${duree(a.heures * 3_600_000)}, ${a.energie} énergie` : ', plafond atteint'}${ailleurs ? `, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}">`
+          + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom)}</strong><span class="fb-cand-eff">${a ? `niv. ${n} <i>→ ${a.cible}</i>` : `niv. ${n} · max`}</span>`
+          + `<small class="fb-cand-info${a && !peut ? ' manque' : ''}">${relance && a ? 'Relancer · ' : ''}${info}</small>`
           + (ailleurs ? `<small class="fb-cand-ailleurs">quitte ${echap(batimentDef(ailleurs).nom)}</small>` : '') + `</button>`;
       }).join('') + `</div>`;
   }
@@ -598,7 +606,7 @@ function feuilleBatiment(e: EcranDistrict): string {
   if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur présent au district</small></div></div>${niv ? blocSoinsIntensifs(j) : ''}`;
   if (b === 'noyau') {
     h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>niveau maximum des autres bâtiments</small></div></div>${reserve(j, b)}`
-      + blocEntrainement(j);
+      + blocEntrainement(j, e.now);
   }
   if (b === 'comptoir') h += blocComptoir(e);
 

@@ -7,7 +7,7 @@ import { graine } from '../rng';
 import { DISTRICT, VERSION_JEU, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
 import { SCENES, sceneEnAttente, type ContexteCampagne } from '../campagne';
 import { ESCOUADE_DEPART } from './descentes';
-import { comptoirVide } from './district';
+import { accorderSeance, comptoirVide } from './district';
 import { OBJECTIFS } from './objectifs';
 import { donnerKitRecrues, recompenserLecture } from './recompenses';
 
@@ -188,6 +188,8 @@ function migrer(j: Jeu) {
   // sauvegarde d'avant le Comptoir (23 octobre 2026) : il reste à construire
   j.batiments.comptoir ??= 0;
   j.comptoir ??= comptoirVide(j.dernierTick, j.rng ?? graine());
+  // sauvegarde d'avant les séances d'entraînement (28 octobre 2026) : le Porteur posté finit son niveau en cours, offert
+  accorderSeance(j);
   // sauvegarde d'avant les pastilles « Nouveau » : tout ce qui est déjà là est considéré comme vu
   j.vus ??= { porteurs: porteursPresents(j), cartes: Object.keys(j.collection ?? {}) };
   // sauvegarde d'avant « Mon escouade » : l'escouade de départ, ou les trois premiers Porteurs présents

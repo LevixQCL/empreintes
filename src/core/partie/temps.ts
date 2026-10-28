@@ -6,7 +6,7 @@ import { ajouterCarte } from '../collection';
 import { noterPalmares } from '../classements';
 import { ARCHIVE, CONFIANCE, confier, enExpedition, energieParHeure, jourDe, log, semaineDe, stockage, type Jeu, typeDuJour } from './etat';
 import { avancerFils, retourDeMission, verifierArrivees } from './descentes';
-import { creuser, recompenserConfiance, energieEntrainement, entrainer, garnirComptoir, heuresEntrainement, soinParHeure } from './district';
+import { creuser, recompenserConfiance, entrainer, garnirComptoir, soinParHeure } from './district';
 import { RAVITAILLEMENT, eveillerLegs } from './recompenses';
 
 /** Rattrape le temps écoulé : énergie, soins, Forge. Rien n'est perdu ni puni pendant l'absence. */
@@ -19,15 +19,8 @@ export function tick(j: Jeu, now: number): string[] {
   const heures = dt / 3_600_000;
   j.dernierTick = now;
 
-  // l'énergie produite, moins ce que consomme l'entraînement tant qu'il dure (23 octobre 2026) :
-  // si la Tour consomme plus que le Générateur ne produit, l'entraînement s'arrête quand la réserve est vide
-  const prod = energieParHeure(j);
-  const entrainement = heuresEntrainement(j, heures);
-  const conso = energieEntrainement(j);
-  let paye = entrainement;
-  if (conso > prod && paye > 0) paye = Math.min(paye, j.energie / (conso - prod));
-  j.energie = Math.max(0, Math.min(stockage(j), j.energie + (prod - conso) * paye));
-  j.energie = Math.min(stockage(j), j.energie + prod * (heures - paye));
+  // l'énergie produite (l'entraînement, lui, se paie au lancement de chaque séance : 28 octobre 2026)
+  j.energie = Math.min(stockage(j), j.energie + energieParHeure(j) * heures);
 
   const soin = soinParHeure(j) * heures;
   for (const id of Object.keys(j.porteurs)) {
@@ -61,7 +54,7 @@ export function tick(j: Jeu, now: number): string[] {
     if (creuser(j)) nouvelles.push(`Les volontaires suffisent : la Strate −${j.strate} est ouverte.`);
   }
 
-  const entraine = entrainer(j, paye);
+  const entraine = entrainer(j, heures);
   if (entraine) nouvelles.push(entraine);
 
   for (const m of j.missions.filter((x) => now >= x.fin)) nouvelles.push(retourDeMission(j, m));

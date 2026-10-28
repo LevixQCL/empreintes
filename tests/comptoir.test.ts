@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { moduleDe, moduleDef } from '../src/core/donnees';
 import {
   COMPTOIR, ENTRAINEMENT, XP, acheter, ameliorer, estJeuValide, etalsDuComptoir, gainsAmelioration, garnirComptoir, niveauPorteur,
-  nouveauJeu, partir, plafondEntrainement, poster, prixComptoir, tick, xpEntrainement,
+  nouveauJeu, partir, plafondEntrainement, poster, prixComptoir, tick, apercuSeance, accorderSeance, DISTRICT,
 } from '../src/core/jeu';
 
 const HEURE = 3_600_000;
@@ -97,67 +97,125 @@ describe('Le Comptoir', () => {
   });
 });
 
-describe('L’entraînement à la Tour du Noyau', () => {
-  it('un Porteur posté à la Tour gagne de l’XP avec le temps', () => {
+describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 2026)', () => {
+  it('une séance fait monter d’un seul niveau, puis le Porteur quitte la salle', () => {
     const j = pret();
+    const a = apercuSeance(j, 'doran')!;
+    expect(a.cible).toBe(2);
     expect(poster(j, 'doran', 'noyau').ok).toBe(true);
-    tick(j, 10 * HEURE);
-    expect(j.porteurs.doran!.xp).toBeCloseTo(10 * xpEntrainement(j), 5);
-    expect(j.porteurs.ilka!.xp ?? 0).toBe(0);
+    const annonces = tick(j, j.dernierTick + 1000 * JOUR);
+    expect(niveauPorteur(j, 'doran').niveau).toBe(2);
+    expect(j.porteurs.doran!.poste).toBeNull();
+    expect(j.seance).toBeNull();
+    expect(j.derniereSeance).toBe('doran');
+    expect(annonces.some((t) => t.includes('séance'))).toBe(true);
+    // rien ne se relance tout seul
+    tick(j, j.dernierTick + 1000 * JOUR);
+    expect(niveauPorteur(j, 'doran').niveau).toBe(2);
+  });
+
+  it('l’énergie se paie au lancement, et la durée annoncée est respectée', () => {
+    const j = pret();
+    j.energie = 200;
+    const a = apercuSeance(j, 'doran')!;
+    poster(j, 'doran', 'noyau');
+    expect(j.energie).toBe(200 - a.energie);
+    tick(j, j.dernierTick + (a.heures * HEURE) / 2);
+    expect(niveauPorteur(j, 'doran').niveau).toBe(1);
+    tick(j, j.dernierTick + (a.heures * HEURE) / 2 + 1000);
+    expect(niveauPorteur(j, 'doran').niveau).toBe(2);
   });
 
   it('l’XP s’accumule aussi seconde par seconde', () => {
     const j = pret();
+    const a = apercuSeance(j, 'doran')!;
     poster(j, 'doran', 'noyau');
-    for (let s = 1; s <= 3600; s++) tick(j, s * 1000);
-    expect(j.porteurs.doran!.xp).toBeCloseTo(xpEntrainement(j), 5);
+    for (let s = 1; s <= 600; s++) tick(j, j.dernierTick + 1000);
+    expect(j.porteurs.doran!.xp).toBeCloseTo((a.xp / a.heures) / 6, 5);
+  });
+
+  it('sans assez d’énergie, la séance ne se lance pas', () => {
+    const j = pret();
+    j.energie = 0;
+    expect(poster(j, 'doran', 'noyau').ok).toBe(false);
+    expect(j.porteurs.doran!.poste).not.toBe('noyau');
+  });
+
+  it('interrompre garde l’XP gagnée et rend l’énergie du reste', () => {
+    const j = pret();
+    j.batiments.generateur = 0;
+    j.energie = 100;
+    const a = apercuSeance(j, 'doran')!;
+    poster(j, 'doran', 'noyau');
+    tick(j, j.dernierTick + (a.heures * HEURE) / 2);
+    const xp = j.porteurs.doran!.xp!;
+    const avant = j.energie;
+    expect(poster(j, 'doran', null).ok).toBe(true);
+    expect(j.porteurs.doran!.xp).toBe(xp);
+    expect(j.energie - avant).toBe(Math.floor(a.energie / 2));
+    expect(j.seance).toBeNull();
+  });
+
+  it('la séance suivante reprend là où l’XP s’était arrêtée : moins longue et moins chère', () => {
+    const j = pret();
+    const plein = apercuSeance(j, 'doran')!;
+    poster(j, 'doran', 'noyau');
+    tick(j, j.dernierTick + (plein.heures * HEURE) / 2);
+    poster(j, 'doran', null);
+    const suite = apercuSeance(j, 'doran')!;
+    expect(suite.heures).toBeCloseTo(plein.heures / 2, 5);
+    expect(suite.energie).toBeLessThanOrEqual(Math.ceil(plein.energie / 2));
   });
 
   it('plafonne à 4 niveaux par niveau de la Tour', () => {
     const j = pret();
-    poster(j, 'doran', 'noyau');
-    tick(j, 1000 * JOUR);
+    for (let k = 0; k < 10; k++) { poster(j, 'doran', 'noyau'); tick(j, j.dernierTick + 10 * JOUR); }
     expect(plafondEntrainement(j)).toBe(ENTRAINEMENT.niveauxParNoyau);
     expect(niveauPorteur(j, 'doran').niveau).toBe(plafondEntrainement(j));
+    expect(poster(j, 'doran', 'noyau').ok).toBe(false);
     j.batiments.noyau = 5;
     expect(plafondEntrainement(j)).toBe(XP.niveauMax);
   });
 
-  it('s’il descend, il quitte l’entraînement', () => {
+  it('chaque séance coûte moins que le stockage de la Tour qui l’autorise', () => {
+    const j = pret();
+    for (let noyau = 1; noyau <= 5; noyau++) {
+      j.batiments.noyau = noyau;
+      j.porteurs.doran!.xp = 0;
+      const max = plafondEntrainement(j);
+      // le Porteur juste sous le plafond : la séance la plus chère de cette Tour
+      let xp = 0; for (let n = 1; n < max - 1; n++) xp += Math.round(12 * n ** 1.6);
+      j.porteurs.doran!.xp = xp;
+      expect(apercuSeance(j, 'doran')!.energie).toBeLessThan(DISTRICT.stockage[noyau]!);
+    }
+  });
+
+  it('s’il descend, il quitte l’entraînement et récupère l’énergie du reste', () => {
     const j = pret();
     poster(j, 'doran', 'noyau');
-    // il peut descendre quand même (23 octobre 2026) : il quitte la Tour, l'entraînement s'arrête
     expect(partir(j, ['ilka', 'doran', 'vela'], 1, 5).ok).toBe(true);
     expect(j.porteurs.doran!.poste).toBeNull();
+    expect(j.seance).toBeNull();
   });
 
-  it('la Tour montre son entraînement au niveau suivant', () => {
-    const j = pret();
-    expect(gainsAmelioration(j, 'noyau').find((g) => g.quoi === 'entrainement')).toMatchObject({ avant: xpEntrainement(j), apres: ENTRAINEMENT.xpHeure[2] });
-  });
-});
-
-describe('L’entraînement consomme de l’énergie (23 octobre 2026)', () => {
-  it('il s’arrête quand la réserve est vide, si la Tour consomme plus que le Générateur ne produit', () => {
+  it('remplacer un Porteur interrompt sa séance', () => {
     const j = pret();
     poster(j, 'doran', 'noyau');
-    for (const id of Object.keys(j.porteurs)) if (j.porteurs[id]!.poste === 'generateur') poster(j, id, null);
-    j.batiments.generateur = 0;
-    j.energie = 30;
-    const xp = j.porteurs.doran!.xp ?? 0;
-    tick(j, j.dernierTick + 10 * 3_600_000);
-    expect(j.energie).toBeCloseTo(0, 5);
-    // 30 énergie à 15 par heure : 2 heures d'entraînement seulement
-    expect((j.porteurs.doran!.xp ?? 0) - xp).toBeCloseTo(2 * ENTRAINEMENT.xpHeure[1]!, 5);
+    expect(poster(j, 'ilka', 'noyau').ok).toBe(true);
+    expect(j.porteurs.doran!.poste).toBeNull();
+    expect(j.seance?.porteur).toBe('ilka');
   });
 
-  it('avec un Générateur qui suit, il continue et l’énergie monte moins vite', () => {
+  it('une ancienne sauvegarde avec un Porteur posté reçoit une séance offerte', () => {
     const j = pret();
-    j.energie = 0;
-    const sans = structuredClone(j);
-    poster(j, 'doran', 'noyau');
-    tick(j, j.dernierTick + 3_600_000);
-    tick(sans, sans.dernierTick + 3_600_000);
-    expect(sans.energie - j.energie).toBeCloseTo(ENTRAINEMENT.energieHeure[1]!, 5);
+    j.porteurs.doran!.poste = 'noyau';
+    delete j.seance;
+    accorderSeance(j);
+    expect(j.seance).toMatchObject({ porteur: 'doran', cible: 2, energie: 0 });
+  });
+
+  it('la Tour montre le plafond d’entraînement au niveau suivant', () => {
+    const j = pret();
+    expect(gainsAmelioration(j, 'noyau').find((g) => g.quoi === 'entrainement')).toMatchObject({ avant: 4, apres: 8 });
   });
 });

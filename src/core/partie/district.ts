@@ -107,7 +107,7 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
     const manque = manquePourCreuser(j);
     if (manque && manque.creuseurs === 0 && noyauRequis(j.strate + 1) === niv + 1) g.push({ quoi: 'strate', texte: `Ouvre la Strate −${j.strate + 1}`, detail: 'les creuseurs attendent déjà la place' });
     g.push({ quoi: 'plafond', texte: 'Niveau max. des autres bâtiments', avant: niv, apres: niv + 1 });
-    g.push({ quoi: 'entrainement', texte: 'Entraînement à la Tour', avant: xpEntrainement(j), apres: xpEntrainement(apres), detail: `XP par heure, jusqu’au niveau ${plafondEntrainement(apres)}` });
+    if (plafondEntrainement(apres) > plafondEntrainement(j)) g.push({ quoi: 'entrainement', texte: 'Entraînement à la Tour jusqu’au niveau', avant: plafondEntrainement(j), apres: plafondEntrainement(apres), detail: `séances ${Math.round(ENTRAINEMENT.vitesseParNoyau * 100)} % plus courtes` });
     if (niv + 1 === DISTRICT.chantiersNoyau2) g.push({ quoi: 'chantiers', texte: 'Deux chantiers en même temps' });
   }
   return g;
@@ -174,16 +174,33 @@ export function poster(j: Jeu, id: string, b: Poste | null): Resultat {
   if (!p || !porteursPresents(j).includes(id)) return non('Porteur inconnu.');
   if (enExpedition(j, id)) return non('Ce Porteur est en expédition.');
   if (b === 'forge' && j.forge && p.poste === 'forge') return non('La Forge travaille : attends la fin de la fabrication.');
+  if (p.poste === 'forge' && j.forge && b !== 'forge') return non('La Forge travaille : attends la fin de la fabrication.');
+  if (b === 'noyau') {
+    if (j.seance?.porteur === id) return { ok: true };
+    const a = apercuSeance(j, id);
+    if (!a) return non(`${porteurDef(id).nom} a atteint le plafond de la Tour : monte-la pour aller plus loin.`);
+    // l'énergie que rendrait l'interruption de la séance en cours compte pour payer la nouvelle
+    const rendu = j.seance ? Math.floor(j.seance.energie * Math.max(0, 1 - j.seance.xpGagnee / Math.max(1e-9, j.seance.xpTotale))) : 0;
+    if (j.energie + rendu < a.energie) return non(`Il manque ${a.energie - Math.floor(j.energie + rendu)} énergie pour cette séance.`);
+  }
   if (b) {
     const occupant = posteDe(j, b);
     if (occupant && occupant !== id) {
       if (b === 'forge' && j.forge) return non('La Forge travaille : attends la fin de la fabrication.');
-      j.porteurs[occupant]!.poste = null;
+      if (b === 'noyau') interrompreSeance(j);
+      else j.porteurs[occupant]!.poste = null;
     }
   }
-  if (p.poste === 'forge' && j.forge) return non('La Forge travaille : attends la fin de la fabrication.');
+  if (p.poste === 'noyau' && b !== 'noyau') interrompreSeance(j);
+  if (b === 'noyau') {
+    const a = apercuSeance(j, id)!;
+    j.energie -= a.energie;
+    ouvrirSeance(j, id, a.energie);
+    log(j, `${porteurDef(id).nom} commence une séance à la Tour du Noyau : niveau ${a.cible} (${a.energie} énergie).`);
+    return { ok: true };
+  }
   p.poste = b;
-  log(j, b === 'noyau' ? `${porteurDef(id).nom} s’entraîne à la Tour du Noyau.` : b ? `${porteurDef(id).nom} travaille maintenant : ${batimentDef(b).nom}.` : `${porteurDef(id).nom} se repose.`);
+  log(j, b ? `${porteurDef(id).nom} travaille maintenant : ${batimentDef(b).nom}.` : `${porteurDef(id).nom} se repose.`);
   return { ok: true };
 }
 
@@ -349,52 +366,94 @@ export function creuser(j: Jeu): boolean {
   return true;
 }
 
-// ---------- L'entraînement à la Tour (23 octobre 2026) ----------
-// Pour devenir plus fort sans descendre : un Porteur posté à la Tour du Noyau s'entraîne avec les creuseurs et gagne
-// de l'XP avec le temps, même jeu fermé. Plus lent qu'une mission, sans risque ni Usure, et s'il rejoint l'escouade, il quitte l'entraînement.
-// Plafond : 4 niveaux par niveau de la Tour ; au-delà, l'expérience se gagne dans les Strates.
+// ---------- L'entraînement à la Tour : des séances d'un niveau (refonte du 28 octobre 2026) ----------
+// Avant : un Porteur posté gagnait de l'XP sans fin et payait l'énergie à l'heure. On pouvait l'oublier là des jours,
+// ou y garer ses meilleurs Porteurs entre deux parties : la Tour travaillait à la place du joueur.
+// Maintenant (modèle « laboratoire » des jeux de gestion) : une séance = UN niveau. L'énergie se paie au lancement,
+// la durée et le prix se voient avant de lancer, et à la fin le Porteur quitte la salle : il faut revenir le relancer.
+// Rien n'est puni : interrompre (escouade, remplacement, « Arrêter ») garde l'XP gagnée et rend l'énergie du reste.
+// Plafond inchangé : 4 niveaux par niveau de la Tour ; au-delà, l'expérience se gagne dans les Strates.
 export const ENTRAINEMENT = {
-  /** XP par heure selon le niveau de la Tour du Noyau (index = niveau) */
-  xpHeure: [0, 3, 4, 5, 6, 8],
-  /** énergie consommée par heure d'entraînement (23 octobre 2026) : sans énergie, l'entraînement s'arrête */
-  energieHeure: [0, 15, 25, 35, 50, 70],
   niveauxParNoyau: 4,
+  /** durée d'une séance complète vers le niveau visé : 2 h pour le niveau 2, + 1 h 09 par niveau (≈ 23 h pour le 20) */
+  heuresBase: 2,
+  heuresParNiveau: 1.15,
+  /** chaque niveau de la Tour au-delà du premier raccourcit les séances de 6 % */
+  vitesseParNoyau: 0.06,
+  /** énergie d'une séance complète : 12 × (niveau visé)^1,8, arrondi à 10 (toujours sous le stockage de la Tour qui l'autorise) */
+  coutBase: 12,
+  coutExposant: 1.8,
 } as const;
-export const xpEntrainement = (j: Jeu) => ENTRAINEMENT.xpHeure[j.batiments.noyau] ?? 0;
-export const energieEntrainement = (j: Jeu) => ENTRAINEMENT.energieHeure[j.batiments.noyau] ?? ENTRAINEMENT.energieHeure[ENTRAINEMENT.energieHeure.length - 1]!;
 export const plafondEntrainement = (j: Jeu) => Math.min(XP.niveauMax, ENTRAINEMENT.niveauxParNoyau * j.batiments.noyau);
+/** Raccourcissement des séances dû à la Tour (1 = aucun) */
+export const vitesseEntrainement = (noyau: number) => 1 - ENTRAINEMENT.vitesseParNoyau * Math.max(0, noyau - 1);
 /** XP totale pour atteindre un niveau depuis le niveau 1 */
 const xpPourAtteindre = (niveau: number) => { let s = 0; for (let n = 1; n < niveau; n++) s += xpPourNiveau(n); return s; };
 
-/** Les heures d'entraînement à compter sur une durée : 0 sans Porteur à la Tour, et pas au-delà du plafond
- *  (l'énergie, elle, est décomptée par tick) */
-export function heuresEntrainement(j: Jeu, heures: number): number {
-  const id = posteDe(j, 'noyau');
-  if (!id || heures <= 0 || enExpedition(j, id)) return 0;
-  const plafond = plafondEntrainement(j);
-  const n = niveauPorteur(j, id).niveau;
-  if (n >= plafond) return 0;
+/** Ce que coûterait et durerait la séance d'un Porteur (null : rien à gagner, plafond atteint) */
+export function apercuSeance(j: Jeu, id: string): { cible: number; heures: number; energie: number; xp: number } | null {
+  const n = niveauPorteur(j, id);
+  if (n.requis === null || n.niveau >= plafondEntrainement(j)) return null;
+  const cible = n.niveau + 1;
+  const xp = xpPourAtteindre(cible) - (j.porteurs[id]!.xp ?? 0);
+  const part = Math.max(0, Math.min(1, xp / n.requis));
   const tete = Math.max(...Object.keys(j.porteurs).map((k) => niveauPorteur(j, k).niveau));
-  const parHeure = xpEntrainement(j) * (tete - n >= 2 ? XP.rattrapage : 1);
-  if (parHeure <= 0) return 0;
-  return Math.min(heures, (xpPourAtteindre(plafond) - (j.porteurs[id]!.xp ?? 0)) / parHeure);
+  const heuresCompletes = (ENTRAINEMENT.heuresBase + ENTRAINEMENT.heuresParNiveau * (cible - 2)) * vitesseEntrainement(j.batiments.noyau)
+    / (tete - n.niveau >= 2 ? XP.rattrapage : 1);
+  const coutComplet = Math.round((ENTRAINEMENT.coutBase * cible ** ENTRAINEMENT.coutExposant) / 10) * 10;
+  return { cible, heures: Math.max(1 / 60, heuresCompletes * part), energie: Math.ceil(coutComplet * part), xp };
 }
 
-/** Le temps passé à la Tour (appelé par tick) : renvoie l'annonce d'un niveau gagné */
-export function entrainer(j: Jeu, heures: number): string | null {
+/** Ouvre une séance (le paiement est vérifié par poster) */
+function ouvrirSeance(j: Jeu, id: string, energie: number): boolean {
+  const a = apercuSeance(j, id);
+  if (!a) return false;
+  j.seance = { porteur: id, cible: a.cible, xpTotale: a.xp, xpGagnee: 0, xpHeure: a.xp / a.heures, energie };
+  j.porteurs[id]!.poste = 'noyau';
+  return true;
+}
+
+/** Arrête la séance en cours : l'XP gagnée reste, l'énergie des heures non faites est rendue. Renvoie l'énergie rendue. */
+export function interrompreSeance(j: Jeu): number {
+  const s = j.seance;
+  if (!s) return 0;
+  const reste = s.xpTotale > 0 ? Math.max(0, 1 - s.xpGagnee / s.xpTotale) : 0;
+  // rendue dans la limite du stockage, comme toute énergie
+  const rendu = Math.max(0, Math.min(Math.floor(s.energie * reste), stockage(j) - j.energie));
+  j.energie += rendu;
+  const p = j.porteurs[s.porteur];
+  if (p?.poste === 'noyau') p.poste = null;
+  j.seance = null;
+  log(j, `Séance interrompue : ${porteurDef(s.porteur).nom} quitte la Tour${rendu ? ` (${rendu} énergie rendue)` : ''}.`);
+  return rendu;
+}
+
+/** Reprend les anciennes sauvegardes (Porteur posté sans séance) et répare une séance orpheline */
+export function accorderSeance(j: Jeu): void {
+  j.seance ??= null;
   const id = posteDe(j, 'noyau');
-  if (!id || heures <= 0 || enExpedition(j, id)) return null;
-  const d = j.porteurs[id]!;
-  const plafond = plafondEntrainement(j);
-  const avant = niveauPorteur(j, id).niveau;
-  if (avant >= plafond) return null;
-  const tete = Math.max(...Object.keys(j.porteurs).map((k) => niveauPorteur(j, k).niveau));
-  const gain = xpEntrainement(j) * heures * (tete - avant >= 2 ? XP.rattrapage : 1);
-  // l'XP s'accumule à la fraction près (le district se met à jour chaque seconde), sans dépasser le plafond
-  d.xp = Math.min((d.xp ?? 0) + gain, xpPourAtteindre(plafond));
-  const apres = niveauPorteur(j, id).niveau;
-  if (apres <= avant) return null;
-  const t = `${porteurDef(id).nom} s’est entraîné à la Tour : niveau ${apres}, ${pvNiveau(j, id)} PV.`;
+  if (j.seance && j.seance.porteur !== id) interrompreSeance(j);
+  if (id && !j.seance && !ouvrirSeance(j, id, 0)) j.porteurs[id]!.poste = null;
+}
+
+/** Le temps passé à la Tour (appelé par tick) : renvoie l'annonce de la fin de séance */
+export function entrainer(j: Jeu, heures: number): string | null {
+  const s = j.seance;
+  if (!s) return null;
+  const d = j.porteurs[s.porteur];
+  if (!d || d.poste !== 'noyau' || enExpedition(j, s.porteur)) { interrompreSeance(j); return null; }
+  if (heures > 0) {
+    // l'XP s'accumule à la fraction près (le district se met à jour chaque seconde)
+    const gain = Math.min(s.xpTotale - s.xpGagnee, s.xpHeure * heures);
+    s.xpGagnee += gain;
+    d.xp = (d.xp ?? 0) + gain;
+  }
+  if (s.xpGagnee < s.xpTotale - 1e-6) return null;
+  d.xp = Math.max(d.xp ?? 0, xpPourAtteindre(s.cible));
+  d.poste = null;
+  j.seance = null;
+  j.derniereSeance = s.porteur;
+  const t = `${porteurDef(s.porteur).nom} a fini sa séance à la Tour : niveau ${niveauPorteur(j, s.porteur).niveau}, ${pvNiveau(j, s.porteur)} PV. La salle est libre.`;
   log(j, t);
   return t;
 }

@@ -190,6 +190,18 @@ export const QUOTIDIENS: Record<TypeQuotidien, { titre: string; objectif: number
   chantier: { titre: 'Lancer une amélioration de bâtiment', objectif: 1 },
 };
 
+/** Une séance d'entraînement à la Tour du Noyau : un niveau, payé au lancement (refonte du 28 octobre 2026) */
+export interface Seance {
+  porteur: string;
+  /** le niveau que la séance fait atteindre */
+  cible: number;
+  xpTotale: number;
+  xpGagnee: number;
+  xpHeure: number;
+  /** énergie payée au lancement (0 pour une séance reprise d'une ancienne sauvegarde) */
+  energie: number;
+}
+
 export interface Jeu {
   version: number;
   energie: number;
@@ -197,6 +209,10 @@ export interface Jeu {
   batiments: Record<BatimentId, number>;
   porteurs: Record<string, PorteurDistrict>;
   forge: Fabrication | null;
+  /** la séance d'entraînement en cours à la Tour (null : salle libre) */
+  seance?: Seance | null;
+  /** le dernier Porteur à avoir fini une séance, proposé en premier pour la relancer */
+  derniereSeance?: string;
   /** Strate la plus profonde ouverte (le prochain étage à creuser) */
   strate: number;
   dernierTick: number;
