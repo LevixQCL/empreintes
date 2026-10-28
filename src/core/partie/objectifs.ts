@@ -15,7 +15,7 @@ export interface Objectif {
   /** le bâtiment à signaler sur le district (null : l'objectif se fait ailleurs) */
   pilier: BatimentId | null;
   /** l'onglet du bas à signaler */
-  onglet: 'archipel' | 'cartes' | 'coupe' | 'porteurs';
+  onglet: 'archipel' | 'cartes' | 'coupe' | 'porteurs' | 'pillages';
   recompense: { energie?: number; composants?: number; creuseurs?: number };
   fait: (j: Jeu) => boolean;
 }
@@ -43,8 +43,8 @@ export const OBJECTIFS: Objectif[] = [
     fait: (j) => j.strate >= 2 || j.frontVaincu,
   },
   {
-    id: 'creuseurs', titre: 'Trouver des creuseurs', pilier: 'noyau', onglet: 'coupe',
-    consigne: `Pour percer la Strate −2, il faut ${creuseursRequis(2)} creuseurs : le gardien t’en a amené un. Dans la Tour, envoie une recrue en mission dans la Strate −1 : des volontaires suivront.`,
+    id: 'creuseurs', titre: 'Trouver des creuseurs', pilier: null, onglet: 'pillages',
+    consigne: `Pour percer la Strate −2, il faut ${creuseursRequis(2)} creuseurs : le gardien t’en a amené un. Au Port (onglet Pillages), envoie une recrue en mission en mer : des rescapés des ruines noyées suivront.`,
     recompense: { composants: 10, creuseurs: 1 },
     fait: (j) => j.strate >= 2 || j.missions.length > 0,
   },

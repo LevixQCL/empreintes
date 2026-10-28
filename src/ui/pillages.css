@@ -109,10 +109,10 @@
 /* ---------- PC : la carte à gauche, la fiche à droite ---------- */
 @media (min-width:1100px){
   .pl .contenu{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(340px,1fr);align-items:start;column-gap:22px;row-gap:16px}
-  .pl .contenu>.entete,.pl-etat{grid-column:1 / -1}
-  .pl-carte{grid-column:1;grid-row:3 / span 2;aspect-ratio:5/4;margin:0}
-  .pl-fiche{grid-column:2;grid-row:3}
-  .pl-regle{grid-column:2;grid-row:4}
+  .pl .contenu>.entete,.pl-etat,.pl-volets,.pl-missions{grid-column:1 / -1}
+  .pl-carte{grid-column:1;grid-row:4 / span 2;aspect-ratio:5/4;margin:0}
+  .pl-fiche{grid-column:2;grid-row:4}
+  .pl-regle{grid-column:2;grid-row:5}
   .pl-medaillon{width:76px;height:76px}
   .pl-moi .pl-medaillon{width:92px;height:92px}
 }
@@ -173,16 +173,7 @@
 .pl-j-val.moins{color:var(--d4)}
 .pl-j-vide{margin:0 0 6px;font-size:13px;line-height:1.4;color:var(--p-doux)}
 
-/* ---------- Avant la première Strate vaincue (28 octobre 2026) ---------- */
-.pl-fermee{--cut:12px;display:grid;justify-items:start;gap:12px;padding:18px 16px;
-  background:linear-gradient(180deg,rgba(28,36,54,.86),rgba(12,16,26,.93));box-shadow:inset 0 0 0 1px rgba(205,239,255,.2),inset 0 1px 0 rgba(255,255,255,.16);
-  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
-.pl-fermee-ico{display:grid;place-items:center;width:46px;height:46px;border-radius:50%;color:var(--p-glace);background:radial-gradient(circle,rgba(127,212,255,.2),transparent 70%);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3)}
-.pl-fermee-ico .ico{width:24px;height:24px}
-.pl-fermee h2{margin:0;font-family:var(--display);font-weight:400;font-size:24px;color:#fff}
-.pl-fermee>p{margin:0;font-size:14px;line-height:1.5;color:var(--p-txt)}
-.pl-fermee-cond{display:flex !important;gap:10px;width:100%;box-sizing:border-box;padding:10px 12px;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14);border-radius:3px}
-.pl-fermee-cond>.ico{flex-shrink:0;width:20px;height:20px;color:var(--p-glace)}
-.pl-fermee-cond span{display:grid;gap:2px}
-.pl-fermee-cond strong{font-size:14px;color:#fff}
-.pl-fermee-cond small{font-size:12.5px;color:var(--p-doux)}
+/* ---------- Le Port en deux volets (28 octobre 2026) : pillages et missions en mer ---------- */
+.pl-volets .seg{display:grid;gap:1px}
+.pl-volets .seg small{font-size:12px;font-weight:500;opacity:.75}
+.pl-intro{background-position:center 62%}

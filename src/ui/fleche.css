@@ -3,11 +3,11 @@
    les quais gravés en crans dorés, le cristal de l'escouade qui brille là où elle se tient. À droite, le quai en grand.
    Mêmes matières que les pillages (verre fumé, arêtes coupées, or pour la valeur). Textes à 12 px minimum. */
 
-.fle{--f-txt:#C9D6E6;--f-doux:#93A3B8;--f-glace:#CDEFFF;--f-or:#F2D58C;
+.fle,.pl-pres{--f-txt:#C9D6E6;--f-doux:#93A3B8;--f-glace:#CDEFFF;--f-or:#F2D58C;
   --d1:#8FCF7A;--d2:#7FD4FF;--d3:#FFB547;--d4:#E2735A}
 .fle .contenu{gap:16px}
 .fle .d1{--dc:var(--d1)} .fle .d2{--dc:var(--d2)} .fle .d3{--dc:var(--d3)} .fle .d4{--dc:var(--d4)}
-.fle .surtitre{color:var(--f-doux)}
+.fle .surtitre,.pl-pres .surtitre{color:var(--f-doux)}
 .fle .surtitre .ico{width:15px;height:15px}
 
 /* le verre commun des blocs */
@@ -126,7 +126,7 @@
   .fle .contenu{align-content:start}
   .fle .contenu>.entete{grid-column:1 / -1}
   /* la présentation : une seule colonne de lecture, centrée */
-  .fle-pres .contenu{display:flex;max-width:860px;margin:0 auto;width:100%}
+  .fle-pres .contenu,.pl-pres .contenu{display:flex;max-width:860px;margin:0 auto;width:100%}
   .fl-intro{min-height:300px}
   .fl-tete{grid-column:1;grid-row:2}
   .fl-paliers{grid-column:1;grid-row:3 / span 2}

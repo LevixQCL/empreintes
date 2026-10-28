@@ -204,8 +204,24 @@ export const MISSIONS = {
   courte: { heures: 2, composants: 14, doublons: 1, nouvelle: 0, usure: 4, energie: 30 },
   longue: { heures: 8, composants: 45, doublons: 2, nouvelle: 0.35, usure: 8, energie: 100 },
 } as const;
-/** La Strate où partent les missions : la dernière vaincue */
+/** Le niveau des missions : celui de la dernière Strate vaincue (il fixe les gains) */
 export const strateMission = (j: Jeu) => strateVaincue(j);
+
+/**
+ * Les missions en mer (28 octobre 2026, Bryan : les missions partent du Port) : un Porteur prend le bateau du passeur
+ * vers un pilier abandonné ou une ruine noyée, et en revient avec ce qu'il a récupéré. Le lieu ne change rien aux gains :
+ * il est tiré de l'heure de retour et du Porteur, toujours le même pour une mission donnée.
+ */
+export const LIEUX_MISSION = [
+  'le phare couché de Basse-Lune', 'les serres noyées du Jardin d’Hiver', 'le pilier effondré de Sombreverse',
+  'la station de pompage engloutie', 'les toits du vieux marché des Basses-Eaux', 'l’épave du transbordeur Héron',
+  'la gare suspendue à demi noyée', 'les silos de la digue rompue', 'le pilier sans nom au large de Brume-Haute',
+  'l’usine de dessalement abandonnée', 'les quais morts de l’ancienne criée', 'le clocher de verre sous la marée',
+] as const;
+export function lieuMission(m: { porteur: string; fin: number }): string {
+  const h = [...m.porteur].reduce((a, c) => (Math.imul(a, 31) + c.charCodeAt(0)) >>> 0, (m.fin / 60_000) >>> 0);
+  return LIEUX_MISSION[h % LIEUX_MISSION.length]!;
+}
 
 export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: number): Resultat {
   const m = MISSIONS[duree];
@@ -218,7 +234,7 @@ export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: num
   if (j.energie < m.energie) return non(`Il faut ${m.energie} énergie pour équiper la mission.`);
   j.energie -= m.energie;
   j.missions.push({ porteur: id, strate: strateMission(j), duree, debut: now, fin: now + m.heures * 3_600_000 });
-  log(j, `${porteurDef(id).nom} part en mission dans la Strate −${strateMission(j)} (${m.heures} h).`);
+  log(j, `${porteurDef(id).nom} prend le bateau vers ${lieuMission(j.missions[j.missions.length - 1]!)} (${m.heures} h).`);
   return { ok: true };
 }
 
@@ -285,45 +301,44 @@ export function lireRapport(j: Jeu): Resultat {
  */
 export function recitMission(r: RapportMission): string[] {
   const nom = porteurDef(r.porteur).nom;
-  const zone = zoneDe(r.strate).nom;
+  const lieu = lieuMission(r);
   let h = (r.fin >>> 0) ^ [...r.porteur].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
   const choisir = <T,>(l: T[]): T => { h = (Math.imul(h ^ (h >>> 15), 2246822507) + 0x9e3779b9) >>> 0; return l[h % l.length]!; };
   const heures = MISSIONS[r.duree].heures;
-  const s = `la Strate −${r.strate}`;
   const recit: string[] = [];
   recit.push(choisir([
-    `${nom} a pris les gaines de service jusqu’à ${s}, dans ${zone.charAt(0).toLowerCase() + zone.slice(1)}.`,
-    `Lampe à algues au poing, ${nom} a rejoint ${s} par l’ancien puits des creuseurs.`,
-    `${nom} a suivi les marques laissées par les creuseurs jusqu’à ${s}.`,
-    `${heures} heures loin du district : ${nom} a ratissé ${s}, salle après salle.`,
+    `Le passeur a déposé ${nom} devant ${lieu}, à marée basse.`,
+    `${heures} heures de mer : ${nom} a gagné ${lieu} sur la barque du passeur.`,
+    `Lampe à algues au poing, ${nom} a plongé dans ${lieu}, salle après salle.`,
+    `Au lever du brouillard, la barque a touché ${lieu}. ${nom} est monté seul.`,
   ]));
   recit.push(choisir([
-    `Dans les salles déjà vaincues traînait encore du matériel : ${r.composants} composants récupérés.`,
-    `Une réserve oubliée derrière un éboulis : ${r.composants} composants remontés au district.`,
-    `Des carcasses de machines, démontées pièce par pièce : ${r.composants} composants.`,
+    `Sous l’eau dormait encore du matériel d’avant : ${r.composants} composants hissés à bord.`,
+    `Une réserve oubliée, au sec sous un toit effondré : ${r.composants} composants rapportés au district.`,
+    `Des machines noyées, démontées pièce par pièce : ${r.composants} composants.`,
   ]));
   const nouvelles = r.cartes.filter((c) => c.nouvelle);
   const doublons = r.cartes.filter((c) => !c.nouvelle);
   for (const c of nouvelles) {
     const md = moduleDef(c.id);
     recit.push(choisir([
-      `Dans une niche scellée, une pierre jamais vue : ${md.nom}. Elle rejoint tes cartes.`,
-      `Au fond d’une galerie effondrée, ${nom} a trouvé ce que personne n’avait encore rapporté : ${md.nom}.`,
+      `Dans un coffre scellé par le sel, une pierre jamais vue : ${md.nom}. Elle rejoint tes cartes.`,
+      `Au fond d’une salle noyée, ${nom} a trouvé ce que personne n’avait encore rapporté : ${md.nom}.`,
     ]));
   }
   if (doublons.length) {
     const noms = [...new Set(doublons.map((c) => moduleDef(c.id).nom))];
     recit.push(choisir([
       `${nom} a reconnu des pierres familières : ${noms.join(', ')}. De quoi faire monter des cartes.`,
-      `Des éclats de sa propre lignée attendaient dans la roche : ${noms.join(', ')}.`,
+      `Des éclats de sa propre lignée attendaient dans les ruines : ${noms.join(', ')}.`,
     ]));
   }
-  if (!r.cartes.length) recit.push('Aucune pierre à rapporter cette fois : la roche était muette.');
-  if (r.creuseurs) recit.push(`En chemin, des fouilleurs égarés ont suivi ${nom} jusqu’au district : +${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}.`);
+  if (!r.cartes.length) recit.push('Aucune pierre à rapporter cette fois : les ruines étaient muettes.');
+  if (r.creuseurs) recit.push(`Des rescapés vivaient sur place : ils sont montés dans la barque et creuseront pour toi (+${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}).`);
   if (r.marque) recit.push(`Un exploit qui ne s’oublie pas : ${nom} gagne la Marque ${r.marque}.`);
   if (r.niveau) recit.push(`L’expérience paie : ${nom} passe au niveau ${r.niveau}.`);
   recit.push(r.usure > 0
-    ? choisir([`Le retour s’est fait sans encombre, mais la descente laisse des traces : la Clinique s’en chargera.`, `${nom} rentre fourbu : un peu de repos à la Clinique ne sera pas de trop.`])
+    ? choisir([`Le retour s’est fait sans encombre, mais l’eau froide laisse des traces : la Clinique s’en chargera.`, `${nom} rentre trempé et fourbu : un peu de repos à la Clinique ne sera pas de trop.`])
     : `${nom} rentre sans une égratignure.`);
   return recit;
 }

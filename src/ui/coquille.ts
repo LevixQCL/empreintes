@@ -69,6 +69,9 @@ export interface EcranDistrict {
   fleche?: boolean;
   /** la présentation de la Flèche est rouverte (bouton « ? ») */
   flecheAide?: boolean;
+  /** le Port : sa présentation rouverte, et le volet affiché (pillages ou missions en mer) */
+  portAide?: boolean;
+  voletPort?: 'pillages' | 'missions';
   /** les garnisons des vrais directeurs à portée, lues en ligne (vide sans compte) */
   pillagesEnLigne?: import('../core/jeu').Cible[];
   /** la fiche d'une ressource du haut est ouverte (22 octobre 2026) */
@@ -194,7 +197,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
     gagner = [ligne('strate', 'Les expéditions', 'Chaque combat gagné, chaque cache et chaque salle d’archives en rapporte. Fuir en garde les trois quarts, une défaite la moitié.'),
       ligne('cristal', 'Les fouilles ciblées', 'Une descente courte qui peut viser les composants.'),
       ligne('cartes', 'Le ravitaillement du jour', 'Quelques composants chaque jour.'),
-      ligne('porteurs', 'Les missions', 'Un Porteur envoyé dans une Strate vaincue en rapporte à son retour.'),
+      ligne('porteurs', 'Les missions en mer', 'Un Porteur envoyé depuis le Port vers les ruines noyées en rapporte à son retour.'),
       ligne('recycler', 'Recycler des doublons', 'Chaque doublon recyclé rapporte quelques composants.'),
       ligne('coffre', 'Le Butin de la semaine', 'Chaque lundi, selon les paliers atteints.')];
     servir = [ligne('marteau', 'Améliorer les bâtiments', 'Avec l’énergie.'),
@@ -265,7 +268,7 @@ const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
   { vue: 'porteurs', nom: 'Escouade', icone: 'porteurs' },
   { vue: 'codex', nom: 'Chroniques', icone: 'codex' },
   // les Pillages et la Flèche ont leur onglet (28 octobre 2026, Bryan) : la carte des archipels voisins ne passe plus par le Port
-  { vue: 'pillages', nom: 'Pillages', icone: 'carte' },
+  { vue: 'pillages', nom: 'Port', icone: 'carte' },
   { vue: 'fleche', nom: 'Flèche', icone: 'fleche' },
   { vue: 'plus', nom: 'Plus', icone: 'plus' },
 ];
@@ -280,7 +283,7 @@ export function navigation(e: EcranDistrict): string {
     coupe: !!j.expedition || !!(o && o.onglet === 'coupe' && !o.fait(j)),
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
     // une pastille quand l'onglet vient de s'ouvrir et qu'on n'y est jamais allé
-    pillages: !!j.chambre && strateVaincue(j) >= PILLAGE.strateMin && !j.pillage,
+    pillages: (!!j.chambre && strateVaincue(j) >= PILLAGE.strateMin && !j.portVu) || !!(o && o.onglet === 'pillages' && !o.fait(j)),
     fleche: flecheOuverte(j) && !j.fleche,
   };
   const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage ? 'pillages' : 'coupe') : e.vue === 'cartes' ? 'porteurs' : e.vue;
@@ -349,7 +352,7 @@ function feuilleRapport(e: EcranDistrict): string {
   const p = porteurDef(r.porteur);
   const reste = (e.j.rapports ?? []).filter((x) => !x.lu).length - 1;
   return `<div class="voile-feuille" data-action="rapport-lu" aria-hidden="true"></div><section class="feuille rapport-mission" role="dialog" aria-modal="true" aria-labelledby="rm-titre" style="--c:${COULEUR[p.lignee]}">`
-    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete">${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">Mission · Strate −${r.strate}</span><h2 id="rm-titre">Retour de ${echap(p.nom)}</h2></div>`
+    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete">${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">Mission en mer</span><h2 id="rm-titre">Retour de ${echap(p.nom)}</h2></div>`
     + `<button type="button" class="btn-icone" data-action="rapport-lu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
     + `<div class="rm-recit">${r.recit.map((l) => `<p>${echap(l)}</p>`).join('')}</div>`
     + gainsRapport(r)

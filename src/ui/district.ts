@@ -8,7 +8,7 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -1337,24 +1337,22 @@ export function htmlCoupe(e: EcranDistrict): string {
   // le Grand Tableau : ton rang en profondeur, et l'entrée vers les classements
   if (j.chambre && e.grand) h += bandeauTableau(e, e.grand, e.uid ?? null);
 
-  // trois volets au lieu d'une page sans fin : les Strates, les Épreuves, les missions
+  // deux volets : les Strates et les Épreuves (les missions partent du Port depuis le 28 octobre 2026)
   const ouvert = j.chambre && strateVaincue(j) >= 1;
-  const volet = ouvert ? e.ongletTour ?? 'strates' : 'strates';
+  const volet = ouvert && e.ongletTour === 'epreuves' ? 'epreuves' : 'strates';
   if (ouvert) {
     const faites = epreuvesDeLaSemaine(e.now).filter((ep) => j.epreuves.faites.includes(ep.id)).length;
     const nEp = epreuvesDeLaSemaine(e.now).length;
     const seg = (id: typeof volet, nom: string, plus: string) =>
       `<button type="button" role="tab" class="seg${volet === id ? ' actif' : ''}" data-action="tour-volet" data-id="${id}" aria-selected="${volet === id}">${nom}<small>${plus}</small></button>`;
-    h += `<div class="segments-choix trois tr-volets" role="tablist" aria-label="Strates, Épreuves ou missions">`
+    h += `<div class="segments-choix deux tr-volets" role="tablist" aria-label="Strates ou Épreuves">`
       + seg('strates', 'Strates', `${j.strate} creusée${j.strate > 1 ? 's' : ''}`)
       + seg('epreuves', 'Épreuves', `${faites} / ${nEp} cette semaine`)
-      + seg('missions', 'Missions', `${j.missions.length} / ${MISSIONS.max} en cours`)
       + `</div>`;
   }
   if (volet === 'epreuves') h += htmlEpreuves(e);
-  else if (volet === 'missions') h += htmlMissions(e);
   else h += htmlStrates(e, off, manque);
-  if (j.chambre && !ouvert) h += `<p class="tr-note">${ICO.verrou}Les Épreuves et les missions s’ouvrent quand le gardien de la Strate −1 est vaincu.</p>`;
+  if (j.chambre && !ouvert) h += `<p class="tr-note">${ICO.verrou}Les Épreuves s’ouvrent quand le gardien de la Strate −1 est vaincu.</p>`;
   h += feuilleBatiment(e);
   return coquille(e, h, 'ecran-coupe tr');
 }
@@ -1409,13 +1407,13 @@ function htmlEpreuves(e: EcranDistrict): string {
   return h + `</div></section>`;
 }
 
-function htmlMissions(e: EcranDistrict): string {
+/** Les missions en mer (au Port depuis le 28 octobre 2026) : qui part, qui est en mer, et les derniers rapports */
+export function htmlMissions(e: EcranDistrict): string {
   const j = e.j;
-  const st = strateMission(j);
-  let h = `<section class="bloc tr-volet"><p class="aide">Un Porteur qui ne travaille pas peut partir en mission dans la Strate −${st}, équipé d’un peu d’énergie. La mission avance même jeu fermé : il rapporte des composants et des doublons de cartes de sa lignée, et un peu d’Usure.</p>`;
+  let h = `<section class="bloc tr-volet pl-missions"><p class="aide">Un Porteur qui ne travaille pas prend la barque du passeur vers un pilier abandonné ou une ruine noyée, avec des vivres et des lampes (de l’énergie). La mission avance même jeu fermé : il rapporte des composants, des doublons de cartes de sa lignée, parfois une carte nouvelle ou des rescapés qui deviennent creuseurs, et un peu d’Usure.</p>`;
   for (const m of j.missions) {
     const p = porteurDef(m.porteur);
-    h += `<div class="en-cours" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 36)}<div><strong>${echap(p.nom)} · Strate −${m.strate}</strong><small>${e.now >= m.fin ? 'Sur le retour' : decompte(m.fin, e.now, 'Retour dans ')}</small><div class="jauge or">${jaugeTemps(m.debut, m.fin, e.now)}</div></div></div>`;
+    h += `<div class="en-cours" style="--c:${COULEUR[p.lignee]}">${avatar(p.id, 36)}<div><strong>${echap(p.nom)} · en mer</strong><small>Vers ${echap(lieuMission(m))} · ${e.now >= m.fin ? 'sur le retour' : decompte(m.fin, e.now, 'retour dans ')}</small><div class="jauge or">${jaugeTemps(m.debut, m.fin, e.now)}</div></div></div>`;
   }
   const libres = disponibles(j);
   if (j.missions.length >= MISSIONS.max) h += `<small class="aide">${MISSIONS.max} missions au plus en même temps.</small>`;
@@ -1435,7 +1433,7 @@ function htmlMissions(e: EcranDistrict): string {
     h += `<h3 class="titre-bloc rm-histo-titre">${icone('journal')}Derniers rapports</h3><div class="rm-histo">`;
     for (const r of lus) {
       const p = porteurDef(r.porteur);
-      h += `<details class="rm-ligne" style="--c:${COULEUR[p.lignee]}"><summary>${avatar(r.porteur, 32)}<span><strong>${echap(p.nom)} · Strate −${r.strate}</strong><small>+${r.composants} composants${r.cartes.length ? ` · ${r.cartes.length} carte${r.cartes.length > 1 ? 's' : ''}` : ''}${r.creuseurs ? ` · +${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}` : ''}</small></span></summary>`
+      h += `<details class="rm-ligne" style="--c:${COULEUR[p.lignee]}"><summary>${avatar(r.porteur, 32)}<span><strong>${echap(p.nom)} · ${echap(lieuMission(r))}</strong><small>+${r.composants} composants${r.cartes.length ? ` · ${r.cartes.length} carte${r.cartes.length > 1 ? 's' : ''}` : ''}${r.creuseurs ? ` · +${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}` : ''}</small></span></summary>`
         + `<div class="rm-recit">${r.recit.map((l) => `<p>${echap(l)}</p>`).join('')}</div>${gainsRapport(r)}</details>`;
     }
     h += `</div>`;

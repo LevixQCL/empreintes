@@ -19,7 +19,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
   const { b, id } = c;
   switch (a) {
     // le Port ouvert (plaque ou bateau peint) : le bateau part vers les archipels voisins
-    case 'batiment': if (id === 'port' && portOuvert(app.jeu)) { ouvrir('pillages'); lireCiblesEnLigne(); break; }
+    case 'batiment': if (id === 'port' && portOuvert(app.jeu)) { ouvrir('pillages'); D.portAide = false; lireCiblesEnLigne(); break; }
       D.selection = D.selection === id ? null : (id as typeof D.selection); D.menu = false; D.posteChanger = false; D.tourChanger = false;
       if (b.dataset.amelio !== undefined) requestAnimationFrame(() => document.getElementById('fb-amelio')?.scrollIntoView({ block: 'start' }));
       break;
@@ -120,7 +120,11 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'archipel': ouvrir('archipel'); break;
     case 'coupe': ouvrir('coupe'); break;
     // les pillages (26 octobre 2026) : la carte des archipels, la fiche d'un archipel, puis le départ
-    case 'pillages': ouvrir('pillages'); if (portOuvert(app.jeu)) lireCiblesEnLigne(); break;
+    case 'pillages': ouvrir('pillages'); D.portAide = false; if (portOuvert(app.jeu)) lireCiblesEnLigne(); break;
+    // le Port (28 octobre 2026) : sa présentation, ses deux volets
+    case 'port-aide': D.portAide = true; window.scrollTo(0, 0); break;
+    case 'port-entrer': app.jeu.portVu = true; D.portAide = false; sauver(); window.scrollTo(0, 0); break;
+    case 'port-volet': D.voletPort = id === 'missions' ? 'missions' : 'pillages'; break;
     // la Flèche (28 octobre 2026) : son onglet, puis le départ de l'escouade vers le quai suivant
     case 'fleche': ouvrir('fleche'); D.flecheAide = false; break;
     case 'fleche-aide': D.flecheAide = true; window.scrollTo(0, 0); break;
@@ -252,6 +256,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       if (!o) break;
       ouvrir(o.onglet);
       if (o.onglet === 'archipel' && o.pilier) D.selection = o.pilier;
+      if (o.onglet === 'pillages') D.voletPort = 'missions';
       // construire le deck : droit aux cartes d'Ilka, où attend l'Œil-relais
       if (o.id === 'deck') D.deck = 'ilka';
       break;

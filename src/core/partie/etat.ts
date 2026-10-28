@@ -252,6 +252,8 @@ export interface Jeu {
   ravitaillement: { jour: number; reserve: number; ouverts: number };
   /** les pillages : jetons, coffre et attaques à envoyer (pillages.ts) ; absent avant le premier */
   pillage?: import('./pillages').EtatPillage;
+  /** la présentation du Port a été lue (28 octobre 2026) : elle s'affiche à la première visite */
+  portVu?: boolean;
   /** la Flèche : le quai atteint, le record, les quais gravés reçus (fleche.ts) ; absente avant la première montée */
   fleche?: import('./fleche').EtatFleche;
   eclats: number;
@@ -267,7 +269,7 @@ export interface Jeu {
   quotidien: { jour: number; reserve: number; type: TypeQuotidien; progres: number };
   /** Archive de la semaine : points de la semaine en cours, paliers à ouvrir de la semaine passée */
   archive: { semaine: number; points: number; aOuvrir: number };
-  /** les Porteurs partis en mission dans une Strate déjà vaincue */
+  /** les Porteurs partis en mission en mer, depuis le Port (le niveau de la mission est celui de la dernière Strate vaincue) */
   missions: Mission[];
   /** les rapports des missions rentrées : ceux pas encore lus s'ouvrent au district, les derniers lus restent consultables */
   rapports?: RapportMission[];
