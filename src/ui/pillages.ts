@@ -24,12 +24,14 @@ export function cartePillages(j: Jeu, now: number, enLigne: Cible[] = []) {
 
 export function htmlPillages(e: EcranDistrict): string {
   const j = e.j;
+  // un onglet à part entière (28 octobre 2026) : avant la première Strate vaincue, il dit ce qui l'ouvrira
+  if (!portOuvert(j)) return coquille(e, entete('La mer des piliers', 'Pillages') + fermee(), 'pl');
   const prochain = majJetons(j, e.now);
   const etat = etatPillage(j);
   const { cibles, force, faits } = cartePillages(j, e.now, e.pillagesEnLigne ?? []);
   const choisie = cibles.find((c) => c.id === e.pillageCible) ?? cibles.find((c) => !faits.includes(c.id)) ?? cibles[0];
 
-  let h = entete('Le Port · La mer des piliers', 'Archipels voisins', `<button type="button" class="btn-icone" data-action="archipel" aria-label="Retour au district">${ICO.retour}</button>`);
+  let h = entete('La mer des piliers · Archipels voisins', 'Pillages');
 
   // les jetons et le coffre : ce qu'on peut faire, ce qu'on risque
   h += `<section class="pl-etat" aria-label="Jetons et coffre">`
@@ -123,3 +125,10 @@ function ficheCible(j: Jeu, c: Cible, force: number, fait: boolean, jetons: numb
 
 /** Le Port est ouvert : la Strate −1 est vaincue, le bateau peut quitter le ponton */
 export const portOuvert = (j: Jeu) => j.chambre && strateVaincue(j) >= PILLAGE.strateMin;
+
+/** Avant la première Strate vaincue : la carte reste fermée, et on dit pourquoi */
+function fermee(): string {
+  return `<section class="pl-fermee"><span class="pl-fermee-ico">${ICO.verrou}</span><h2>Les passeurs attendent</h2>`
+    + `<p>Les archipels voisins ne prêtent leurs bateaux qu’aux districts qui ont fait leurs preuves sous la mer. Une fois la première Strate vaincue, ton escouade pourra aller piller leurs coffres, et ta garnison défendra le tien.</p>`
+    + `<p class="pl-fermee-cond">${ICO.strate}<span><strong>Vaincs le gardien de la Strate −${PILLAGE.strateMin}</strong><small>La carte des archipels s’ouvrira ici.</small></span></p></section>`;
+}

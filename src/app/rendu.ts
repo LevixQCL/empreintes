@@ -1,6 +1,7 @@
 // Le rendu : redessine l'écran courant à partir de l'état (positions de défilement et champs de saisie gardés).
 
 import { htmlPillages } from '../ui/pillages';
+import { htmlFleche } from '../ui/fleche';
 import { repliqueGardien, sceneDef } from '../core/campagne';
 import { tousEnnemis } from '../core/combat';
 import { ennemiDef } from '../core/donnees';
@@ -115,7 +116,7 @@ export function afficher() {
     voirNouveautes();
     proposerProtection();
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape) : D.vue === 'accueil' ? htmlBriefing(D.etape, 'district')
-      : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : D.vue === 'classements' ? htmlClassements(D, G, app.uid) : D.vue === 'pillages' ? htmlPillages(D) : htmlArchipel(D);
+      : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : D.vue === 'classements' ? htmlClassements(D, G, app.uid) : D.vue === 'pillages' ? htmlPillages(D) : D.vue === 'fleche' ? htmlFleche(D) : htmlArchipel(D);
     // une scène de la campagne : au retour sur l'archipel ou dans la Tour, par-dessus tout (ou rejouée depuis la Bibliothèque)
     const revoir = D.revoir ? sceneDef(D.revoir) : undefined;
     const scene = revoir ?? (!D.menu && (D.vue === 'archipel' || D.vue === 'coupe') ? J.sceneCampagne(app.jeu) : null);

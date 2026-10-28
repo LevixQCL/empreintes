@@ -298,9 +298,9 @@ function feuilleFuite(e: Ecran): string {
   }
   const garde = Math.floor(x.butin * DISTRICT.butinFuite);
   h += `<button type="button" class="route" style="--t:#F0C96A" data-action="fuir-district"><span class="route-ico">${ICO.strate}</span>`
-    + `<span class="route-txt"><small>${x.pillage ? 'ABANDONNER LE PILLAGE' : x.epreuve ? 'ABANDONNER L’ÉPREUVE' : 'REMONTER AU DISTRICT'}</small>`
-    + `<strong>${x.epreuve || x.pillage ? 'Rentrer au district' : x.butin ? `Rentrer avec ${garde} composants sur ${x.butin}` : 'Rentrer au district'}</strong>`
-    + `<em>${x.pillage ? `Le pillage compte comme perdu : tu laisses ${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre à ${echap(x.pillage.nom)}.` : x.epreuve ? 'Tu pourras la retenter cette semaine.' : `Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % des composants et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.</em></span>${CHEVRON_FUITE}</button>`
+    + `<span class="route-txt"><small>${x.fleche ? 'ABANDONNER L’ASSAUT' : x.pillage ? 'ABANDONNER LE PILLAGE' : x.epreuve ? 'ABANDONNER L’ÉPREUVE' : 'REMONTER AU DISTRICT'}</small>`
+    + `<strong>${x.epreuve || x.pillage || x.fleche ? 'Rentrer au district' : x.butin ? `Rentrer avec ${garde} composants sur ${x.butin}` : 'Rentrer au district'}</strong>`
+    + `<em>${x.fleche ? 'L’assaut compte comme perdu : l’escouade redescend comme après une défaite.' : x.pillage ? `Le pillage compte comme perdu : tu laisses ${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre à ${echap(x.pillage.nom)}.` : x.epreuve ? 'Tu pourras la retenter cette semaine.' : `Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % des composants et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.</em></span>${CHEVRON_FUITE}</button>`
     + `</div><button type="button" class="btn sec large" data-action="fuir">Continuer le combat</button></div></section>`;
   return h;
 }
@@ -360,11 +360,12 @@ const zoneDuLieu = (x: Expedition) => x.carte?.zone ?? Math.max(0, ZONES.indexOf
 export function htmlLieu(x: Expedition): string {
   const zone = zoneDuLieu(x);
   // un pillage se joue sur l'archipel attaqué, en pleine mer, pas dans une Strate
-  const img = x.pillage ? vignetteArchipel(ageArchipel(x.strate)) : fondCombat(zone);
+  // la Flèche (28 octobre 2026) : en plein ciel, au-dessus de la mer ; en attendant sa peinture, le plus haut des archipels
+  const img = x.fleche ? vignetteArchipel(ageArchipel(99)) : x.pillage ? vignetteArchipel(ageArchipel(x.strate)) : fondCombat(zone);
   const salle = x.carte?.salles[x.carte.position]?.type;
   const t = performance.now() / 1000;
   const phase = (duree: number, decalage = 0) => `-${((t + decalage * duree) % duree).toFixed(2)}s`;
-  let h = `<div class="fond-lieu ${x.pillage ? 'z-pillage' : `z-${zone}`}${salle === 'gardien' || salle === 'elite' ? ' gardien' : ''}" aria-hidden="true"${img ? ` style="--decor:url(${img})"` : ''}>`
+  let h = `<div class="fond-lieu ${x.fleche ? 'z-pillage z-fleche' : x.pillage ? 'z-pillage' : `z-${zone}`}${salle === 'gardien' || salle === 'elite' ? ' gardien' : ''}" aria-hidden="true"${img ? ` style="--decor:url(${img})"` : ''}>`
     + `<span class="fl-image" style="animation-delay:${phase(90)}"></span><span class="fl-voile"></span><span class="fl-lueur"></span>`;
   for (const p of PARTICULES) {
     h += `<i class="fl-p${p.eclat ? ' eclat' : ''}" style="--x:${p.x.toFixed(1)}%;--y:${p.y.toFixed(1)}%;--s:${p.taille.toFixed(1)}px;--d:${p.duree.toFixed(1)}s;--dx:${p.derive.toFixed(0)}px;animation-delay:${phase(p.duree, p.decalage)}"></i>`;
@@ -619,7 +620,7 @@ function htmlEcranCombat(e: Ecran): string {
   const ill = visageEnnemi(s.ennemi);
   const classeIntention = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
   const iconeIntention = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
-  const lieu = e.x.tutoriel ? 'Chambre scellée' : e.x.pillage ? `Pillage · ${e.x.pillage.nom}` : `Strate −${e.x.strate}`;
+  const lieu = e.x.tutoriel ? 'Chambre scellée' : e.x.fleche ? `La Flèche · quai ${e.x.fleche.quai}` : e.x.pillage ? `Pillage · ${e.x.pillage.nom}` : `Strate −${e.x.strate}`;
 
   // la Fêlure de l'ennemi visé : la Fréquence qui brise son intention (cachée par le brouillard tant que la chaîne est vide)
   const brume = C_brume(s);
@@ -639,8 +640,8 @@ function htmlEcranCombat(e: Ecran): string {
   const lancerVise = guide && s.chaine.length > 0 && (libres === 0 || (s.tour === 2 && a.suite >= 3));
 
   let h = `<div class="ecran ecran-jeu ecran-combat${verrou ? ' verrouille' : ''}${guide ? ` guide lecon-t${Math.min(s.tour, 4)}` : ''}">`;
-  h += `<header class="combat-barre"><div class="puces">${e.x.pillage ? `<span class="puce">${ICO.grappin}<span class="puce-mot">Pillage · </span>${echap(e.x.pillage.nom)}</span>` : `<span class="puce">${ICO.strate}${e.x.tutoriel ? lieu : `<span class="puce-mot">Strate </span>−${e.x.strate}`}</span>`}`
-    + (e.x.tutoriel || e.x.pillage ? '' : e.x.carte ? `<span class="puce">${e.x.carte.salles[e.x.carte.position]?.type === 'gardien' ? 'Gardien' : e.x.carte.salles[e.x.carte.position]?.type === 'elite' ? 'Salle scellée' : `Combat ${(e.x.gagnes ?? 0) + 1}`}</span>` : `<span class="puce">Combat ${e.x.index + 1}/${e.x.sequence.length}</span>`)
+  h += `<header class="combat-barre"><div class="puces">${e.x.fleche ? `<span class="puce">${ICO.fleche}<span class="puce-mot">Flèche · quai </span>${e.x.fleche.quai}</span>` : e.x.pillage ? `<span class="puce">${ICO.grappin}<span class="puce-mot">Pillage · </span>${echap(e.x.pillage.nom)}</span>` : `<span class="puce">${ICO.strate}${e.x.tutoriel ? lieu : `<span class="puce-mot">Strate </span>−${e.x.strate}`}</span>`}`
+    + (e.x.tutoriel || e.x.pillage || e.x.fleche ? '' : e.x.carte ? `<span class="puce">${e.x.carte.salles[e.x.carte.position]?.type === 'gardien' ? 'Gardien' : e.x.carte.salles[e.x.carte.position]?.type === 'elite' ? 'Salle scellée' : `Combat ${(e.x.gagnes ?? 0) + 1}`}</span>` : `<span class="puce">Combat ${e.x.index + 1}/${e.x.sequence.length}</span>`)
     + `<span class="puce">Tour ${s.tour}</span>`
     + (s.condition && CONDITIONS[s.condition] ? `<span class="puce condition" tabindex="0" title="${echap(CONDITIONS[s.condition]!.texte)}" aria-label="${echap(`${CONDITIONS[s.condition]!.nom} : ${CONDITIONS[s.condition]!.texte}`)}">${ICO.cristal}${echap(CONDITIONS[s.condition]!.nom)}</span>` : '')
     + `</div>`
@@ -661,7 +662,7 @@ function htmlEcranCombat(e: Ecran): string {
 
     + vignettesGroupe(e)
     + plaqueIntention(s, classeIntention, iconeIntention, felureHtml)
-    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
+    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(e.x.fleche ? `GARDIENS · QUAI ${e.x.fleche.quai}` : e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
     + (gardien ? plaqueGardien(def.nom, s.ennemi.phase2 && def.phase ? def.phase.nom : '')
       : `<h2 class="ennemi-nom">${echap(nomEnnemi(s.ennemi))}${s.ennemi.phase2 && def.phase ? ` <small class="phase">· ${echap(def.phase.nom)}</small>` : ''}</h2>`)
     // les traits et les états passagers (bouclier, Fissure) sur la même ligne : la scène reste basse sur téléphone

@@ -22,6 +22,16 @@ export function finPour(): Fin | null {
     if (s.issue === 'defaite') return { titre: 'Repoussés', texte: 'Le gardien a eu le dessus, cette fois. Vise les suites et protège-toi quand il annonce une grosse attaque.', bouton: 'Remonter et réessayer', action: 'remonter' };
     return null;
   }
+  if (x.fleche) {
+    const q = x.fleche.quai;
+    const f = J.etatFleche(app.jeu);
+    if (s.issue === 'victoire') return { titre: `Le quai ${q} est à toi`, texte: `Les gardiens des Hauts s’écartent de la passerelle. L’escouade monte au quai ${Math.min(J.FLECHE.quais, q + J.pas(q))}.`, bouton: 'Prendre le quai', action: 'remonter' };
+    if (s.issue === 'defaite') {
+      const bas = Math.max(J.plancher(f.record), q - J.pas(q));
+      return { titre: 'Repoussés sur la passerelle', texte: `Les gardiens du quai ${q} tiennent bon.${bas < q ? ` L’escouade redescend au quai ${bas}.` : ' L’escouade garde son quai gravé.'} Une escouade mieux montée, ou mieux reposée, passera.`, bouton: 'Rentrer au district', action: 'remonter' };
+    }
+    return null;
+  }
   if (x.pillage) {
     const p = x.pillage;
     if (s.issue === 'victoire') return { titre: `${p.nom} est pillé`, texte: `La garnison se replie. L’escouade rapporte ${p.base + p.vol} composants${p.vol ? `, dont ${p.vol} pris à son coffre` : ''}.`, bouton: 'Rentrer avec le butin', action: 'remonter' };

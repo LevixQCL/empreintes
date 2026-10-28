@@ -40,7 +40,6 @@
   filter:drop-shadow(0 0 5px rgba(255,181,71,.85)) drop-shadow(0 1px 1px rgba(0,0,0,.8));animation:nav-eclat 2.2s ease-in-out infinite}
 @keyframes nav-eclat{50%{transform:scale(1.14);filter:drop-shadow(0 0 9px rgba(255,190,90,1)) drop-shadow(0 1px 1px rgba(0,0,0,.8))}}
 
-.nav-strates{display:none}
 
 /* ================= Téléphone : la barre du bas ================= */
 @media not ((min-width:1100px) and (min-height:600px)){
@@ -55,6 +54,15 @@
   /* une encoche de lumière sur l'arête haute de la barre, au-dessus de l'onglet ouvert */
   .nav .onglet.actif::after{content:"";position:absolute;z-index:0;left:50%;top:-1px;width:64px;height:2px;transform:translateX(-50%);
     background:linear-gradient(90deg,transparent,#BFE2FF 30%,#fff 50%,#BFE2FF 70%,transparent);box-shadow:0 0 12px rgba(140,200,255,.9)}
+  /* sept onglets depuis les Pillages et la Flèche (28 octobre 2026) : seul l'onglet ouvert garde son nom, les autres
+     ne gardent que leur icône (le nom reste lu par les lecteurs d'écran) ; la barre tient en une ligne dès 360 px */
+  .nav{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .nav .onglet{min-width:0}
+  .nav .onglet:not(.actif){justify-content:center}
+  .nav .onglet-ico{width:46px;height:36px;--ico:33px;--serti:42px}
+  .nav .onglet.actif .onglet-ico{--ico:46px;--serti:56px}
+  .nav .onglet:not(.actif) .onglet-nom{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
+  .nav .onglet.actif .onglet-nom{position:relative;z-index:1;white-space:nowrap}
 }
 
 /* ================= PC : le rail à gauche ================= */
@@ -92,40 +100,9 @@
   .ecran > .nav .onglet-ico .pastille-alerte{top:2px;right:2px;width:19px;height:19px}
 
   /* le « Plus » du bas, sous une arête fine */
-  .ecran > .nav .onglet:last-child{margin-top:0;min-height:84px;padding-top:10px;
+  .ecran > .nav .onglet:last-child{margin-top:auto;min-height:84px;padding-top:10px;
     background:linear-gradient(90deg,transparent 18%,rgba(160,210,255,.22) 50%,transparent 82%) top/100% 1px no-repeat}
 
-  /* ---------- la jauge des Strates : remplit le rail entre Chroniques et Plus ---------- */
-  .ecran > .nav .nav-strates{display:flex;flex:1;min-height:0;flex-direction:column;align-items:center;gap:6px;margin:10px 0 12px;padding:6px 0;
-    border:0;background:none;color:#8D9BBA;cursor:pointer}
-  .nav-strates .ns-titre{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#7F8BA6}
-  .nav-strates .ns-val{font-size:20px;font-weight:700;color:var(--gold);text-shadow:0 0 12px rgba(216,180,101,.45),0 1px 2px rgba(0,0,0,.8)}
-  .nav-strates .ns-colonne{position:relative;flex:1;min-height:0;width:22px;display:flex;flex-direction:column;
-    border-radius:3px;overflow:visible;box-shadow:0 0 0 1px rgba(160,210,255,.18),inset 0 0 8px rgba(0,0,0,.6)}
-  /* chaque couche de roche, de plus en plus sombre en descendant ; les traversées gardent un reflet de glace */
-  .nav-strates .ns-couche{position:relative;flex:1;min-height:6px;font-style:normal;
-    background:linear-gradient(90deg,rgba(255,255,255,.05),transparent 40%,rgba(0,0,0,.25)),
-      hsl(calc(215 + var(--p) * 4) 28% calc(24% - var(--p) * 3.2%));
-    border-top:1px solid rgba(0,0,0,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
-  .nav-strates .ns-couche:first-child{border-top:0;border-radius:3px 3px 0 0}
-  .nav-strates .ns-couche:last-child{border-radius:0 0 3px 3px;
-    -webkit-mask:linear-gradient(180deg,#000 30%,transparent);mask:linear-gradient(180deg,#000 30%,transparent)}
-  .nav-strates .ns-couche.passee{background:linear-gradient(90deg,rgba(190,225,255,.22),rgba(120,180,255,.08) 50%,rgba(0,0,0,.2)),hsl(212 40% 30%)}
-  .nav-strates .ns-couche.ici{background:linear-gradient(90deg,rgba(255,226,160,.25),rgba(216,180,101,.1) 50%,rgba(0,0,0,.2)),hsl(36 30% 26%);
-    box-shadow:inset 0 0 0 1px rgba(216,180,101,.6),0 0 14px rgba(216,180,101,.35)}
-  /* le numéro de chaque couche, à côté de la colonne */
-  .nav-strates .ns-couche em{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);font-style:normal;
-    font-size:12px;font-weight:600;color:#56627E;white-space:nowrap}
-  .nav-strates .ns-couche.passee em{color:#7F95B8}
-  .nav-strates .ns-couche.ici em{display:none}
-  /* le cristal qui marque la Strate atteinte, posé à cheval sur la colonne */
-  .nav-strates .ns-cristal{position:absolute;left:50%;top:50%;width:26px;height:26px;transform:translate(-50%,-50%);
-    background:url("/art/icones/pastille.webp") center/contain no-repeat;
-    filter:drop-shadow(0 0 7px rgba(255,190,90,.9)) drop-shadow(0 1px 2px rgba(0,0,0,.8));animation:nav-eclat 3s ease-in-out infinite}
-  .nav-strates:hover .ns-titre{color:#D5E3F7}
-  .nav-strates:hover .ns-colonne{box-shadow:0 0 0 1px rgba(160,210,255,.35),inset 0 0 8px rgba(0,0,0,.6)}
-  .nav-strates:focus-visible{outline:none}
-  .nav-strates:focus-visible .ns-colonne{box-shadow:0 0 0 2px rgba(200,230,255,.8)}
 
   @media (prefers-reduced-motion:reduce){
     .ecran > .nav .nav-embleme img{animation:none}
@@ -142,9 +119,8 @@
   .ecran > .nav .onglet-ico{height:50px;--ico:42px;--serti:54px}
   .ecran > .nav .onglet.actif .onglet-ico{--ico:48px;--serti:60px}
   .ecran > .nav .onglet:last-child{min-height:70px}
-  .nav-strates .ns-titre{display:none}
 }
 
 @media (prefers-reduced-motion:reduce){
-  .nav .onglet-ico .pastille-alerte,.nav-strates .ns-cristal{animation:none}
+  .nav .onglet-ico .pastille-alerte{animation:none}
 }

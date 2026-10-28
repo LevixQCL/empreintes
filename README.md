@@ -44,6 +44,8 @@ src/
       partie/district.ts     chantiers, Forge, postes, cartes confiées, creuseurs, entraînement, Comptoir, quotidiens
       partie/recompenses.ts  kit des recrues, lectures et Ravitaillement, nouveautés
       partie/descentes.ts    départs (expédition, fouille, Épreuve), escouade, missions, exploration des Strates
+      partie/pillages.ts     les pillages : garnison, jetons, coffre, archipels voisins, attaques subies
+      partie/fleche.ts       la Flèche : quais, gardiens des Hauts, montée et descente, quais gravés
       partie/temps.ts        le temps qui passe
       partie/nouvelle.ts     nouvelle partie, décisions de la campagne, mise à jour des anciennes sauvegardes
     expedition.ts  une suite de combats ; c'est ce qui est sauvegardé
@@ -52,6 +54,8 @@ src/
     coquille.ts    ressources en haut, navigation en bas, menu, notifications (commun au district)
     district.ts    archipel, Tour du Noyau, escouade, cartes, Bibliothèque ; les détails s'ouvrent en feuille par le bas
     vue.ts         l'écran de combat
+    pillages.ts    l'onglet Pillages : la carte des archipels voisins, la garnison, le journal du port
+    fleche.ts      l'onglet Flèche : la flèche dessinée, le prochain quai, les quais gravés
     journal.ts     le journal du combat : cartes jouées tour par tour, calcul de chaque coup, défausse et pioche, lexique des « ? »
     icones.ts      le jeu d'icônes de l'interface (SVG, couleur du texte)
     feuilles.ts    l'ordre des feuilles de style (la cascade) : toutes les feuilles CSS sont importées là, et seulement là

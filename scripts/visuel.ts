@@ -28,7 +28,7 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="forge"]'); } },
@@ -49,6 +49,13 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut'; faire:
   { nom: 'pillage-modifier', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('.es-modifier'); } },
   { nom: 'garnison-composer', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="garnison-modifier"]'); } },
   { nom: 'pillage-combat', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(600); for (let i = 0; i < 3 && (await p.$('[data-action="decouverte-ok"]')); i++) { await p.click('[data-action="decouverte-ok"]'); await p.waitForTimeout(300); } } },
+  // les onglets Pillages et Flèche (28 octobre 2026)
+  { nom: 'onglet-pillages', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); } },
+  { nom: 'onglet-fleche', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
+  { nom: 'onglet-fleche-bas', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.$eval('.fl-paliers', (e) => e.scrollIntoView({ block: 'end' })); } },
+  { nom: 'fleche-fermee', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
+  { nom: 'fleche-depart', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.click('[data-action="fleche-preparer"]'); } },
+  { nom: 'fleche-combat', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.click('[data-action="fleche-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(800); } },
   { nom: 'scene', sauvegarde: 'district', faire: async (p) => { await p.click('.titre-go'); await p.waitForTimeout(400); for (let i = 0; i < 3; i++) { await p.click('.scene-campagne'); await p.waitForTimeout(150); } } },
   { nom: 'strate', sauvegarde: 'combat', faire: ENTRER },
   { nom: 'combat', sauvegarde: 'combat', faire: async (p) => { await ENTRER(p); await p.click('[data-action="salle"]'); await p.waitForTimeout(600); } },
@@ -93,6 +100,11 @@ async function main() {
       { sens: 'attaque', nom: 'Haut-Treuil', gagne: false, composants: -5, le: T - 90_000_000, bot: true },
     ] };
     d.chantiers = [{ batiment: 'generateur', debut: T - 300_000, fin: T + 2_500_000 }];
+    // la Flèche ouverte, en pleine montée (record plus haut que le quai)
+    const fl = JSON.parse(JSON.stringify(saves.district));
+    fl.data.scenes = [...(fl.data.scenes ?? []), 'convocation'];
+    fl.data.fleche = { quai: 23, record: 31, recordLe: T - 86_400_000, recus: [20], victoires: 9, defaites: 3 };
+    (saves as Record<string, unknown>).fleche = fl;
 
     const serveurs = await Promise.all(['dist-avant', 'dist-apres'].map((dist, i) =>
       preview({ root: racine, logLevel: 'error', build: { outDir: resolve(sortie, dist) }, preview: { port: 4401 + i, strictPort: true } })));
@@ -126,7 +138,7 @@ async function main() {
                 get() { return html.get!.call(this); },
                 set(v: string) { html.set!.call(this, typeof v === 'string' ? v.replaceAll('loading="lazy"', 'loading="eager"').replaceAll('decoding="async"', 'decoding="sync"') : v); },
               });
-            }, [JSON.stringify(saves[scene.sauvegarde])]);
+            }, [JSON.stringify((saves as Record<string, unknown>)[scene.sauvegarde])]);
             await p.goto(`http://localhost:${port}/`);
             await p.waitForTimeout(300);
             try { await scene.faire(p); } catch (e) { console.log(`  ${scene.nom} ${w} px : geste impossible (${String(e).split('\n')[0]})`); }

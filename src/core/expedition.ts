@@ -48,6 +48,8 @@ export interface Expedition {
   /** une Épreuve de la semaine : un seul combat à règle spéciale */
   /** un pillage (pillages.ts) : un seul combat contre la garnison d'un autre archipel */
   pillage?: import('./partie/pillages').PillageEnCours;
+  /** un combat de la Flèche (fleche.ts) : les gardiens d'un quai */
+  fleche?: import('./partie/fleche').AscensionEnCours;
   epreuve?: string;
 }
 

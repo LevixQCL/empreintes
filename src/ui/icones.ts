@@ -10,6 +10,10 @@ export const ICO = {
   tour: svg('<path d="M9 3h6l1 4H8z"/><path d="M8.5 7v7h7V7"/><path d="M12 14v7"/><path d="M9 18l3 3 3-3"/><path d="M4 14h4M16 14h4"/>'),
   cartes: svg('<path d="M8 4h9l2 2v12H8z"/><path d="M5 7v13h10"/><path d="M11 9h5M11 12h5"/>'),
   codex: svg('<path d="M5 4h11l3 3v13H5z"/><path d="M16 4v3h3"/><path d="M8 10h8M8 13h8M8 16h5"/>'),
+  // une carte marine pliée en trois, une route pointillée vers une île (les Pillages, 28 octobre 2026)
+  carte: svg('<path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/><path d="M5.5 14.5c1.5-1 2.5-1 3.5-2.5" stroke-dasharray="1.4 1.6"/><path d="M17 9.5l1.5 1.5M18.5 9.5 17 11"/>'),
+  // la Flèche d'amarrage : une aiguille effilée, ses quais en traverses, le cristal du sommet (28 octobre 2026)
+  fleche: svg('<path d="M12 2l1.4 3h-2.8z"/><path d="M10.6 5h2.8l1.6 16H9z"/><path d="M8 9h8M7 13.5h10M6 18h12"/><path d="M4 21h16"/>'),
   plus: svg('<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>'),
   // ressources
   energie: svg('<path d="M13 2 5 13h6l-1 9 8-11h-6z"/>'),

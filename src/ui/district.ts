@@ -3,7 +3,7 @@
 // les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
 
 import { portOuvert } from './pillages';
-import { PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons } from '../core/jeu';
+import { PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
@@ -1446,14 +1446,24 @@ export function htmlEscouade(e: EcranDistrict): string {
   const deck = deckEscouade(j, e.escouade).filter((g) => !ep?.filtre || g.porteur === null || ep.filtre(g)).length;
   const deckMin = ep ? EPREUVE_DECK_MIN : DISTRICT.deckMin;
   const zone = zoneDe(e.strateChoisie);
-  const pi = !ep && !fouille ? e.pillage ?? null : null;
-  const titre = pi ? `PILLAGE · ${pi.nom.toUpperCase()}` : ep ? `ÉPREUVE · ${ep.nom.toUpperCase()}` : `${fouille ? 'FOUILLE · ' : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`;
+  const fl = !ep && !fouille && e.fleche ? etatFleche(j) : null;
+  const pi = !ep && !fouille && !fl ? e.pillage ?? null : null;
+  const titre = fl ? `FLÈCHE · QUAI ${fl.quai}` : pi ? `PILLAGE · ${pi.nom.toUpperCase()}` : ep ? `ÉPREUVE · ${ep.nom.toUpperCase()}` : `${fouille ? 'FOUILLE · ' : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`;
   let h = `<div class="ecran ecran-escouade es"><main class="contenu">`
-    + entete(titre, 'Escouade', `<button type="button" class="btn-icone" data-action="${pi ? 'pillages' : 'coupe'}" aria-label="Retour">${ICO.retour}</button>`);
+    + entete(titre, 'Escouade', `<button type="button" class="btn-icone" data-action="${fl ? 'fleche' : pi ? 'pillages' : 'coupe'}" aria-label="Retour">${ICO.retour}</button>`);
 
   // 1. ce qu'on part faire
   h += `<section class="es-mission">`;
-  if (pi) {
+  if (fl) {
+    // le quai suivant : ses gardiens, et les chances de l'escouade choisie (elles changent avec l'escouade)
+    const g = gardiensQuai(fl.quai);
+    const c = chanceQuai(forceEscouade(j, e.escouade), fl.quai);
+    const d = difficulte(c >= 0.85 ? 0.9 : c >= 0.5 ? 1 : c >= 0.15 ? 1.05 : 1.2);
+    h += `<p class="es-but">${ICO.fleche}<span><strong>La Flèche · quai ${fl.quai}</strong>Un seul combat contre les gardiens des Hauts : ${g.map((id) => echap(porteurDef(id).nom)).join(', ')}.</span></p>`
+      + `<div class="es-pillage d${d.niveau}"><span class="es-pillage-visages">${g.map((id) => avatar(id, 34)).join('')}</span>`
+      + `<span><b>${d.nom}</b><small>${e.escouade.length === 3 ? `${Math.round(c * 100)} % de chances avec cette escouade` : 'Choisis 3 Porteurs'}</small></span>`
+      + `<span class="es-pillage-butin">${ICO.monter}<b>${Math.min(FLECHE.quais, fl.quai + pas(fl.quai))}</b></span></div>`;
+  } else if (pi) {
     // la cible : sa garnison, et les chances de l'escouade choisie (elles changent avec l'escouade)
     const ecart = pi.force / Math.max(0.01, forceEscouade(j, e.escouade));
     const d = difficulte(ecart);
@@ -1543,7 +1553,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const pret = e.escouade.length === 3 && !maigre;
   h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
     + `<span><b>${e.escouade.length} / 3</b><small class="${maigre ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? `Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? `${deck} cartes · ${deckMin} au moins` : `${deck} cartes, prêt`}</small></span></div>`
-    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${pi ? `${ICO.grappin}Piller` : ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}</button></footer>`;
+    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${fl ? `${ICO.monter}Monter` : pi ? `${ICO.grappin}Piller` : ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}</button></footer>`;
   h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : e.deck ? feuilleDeck(e) : feuillePorteur(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;

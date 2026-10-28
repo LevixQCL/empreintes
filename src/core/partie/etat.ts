@@ -236,6 +236,8 @@ export interface Jeu {
   ravitaillement: { jour: number; reserve: number; ouverts: number };
   /** les pillages : jetons, coffre et attaques à envoyer (pillages.ts) ; absent avant le premier */
   pillage?: import('./pillages').EtatPillage;
+  /** la Flèche : le quai atteint, le record, les quais gravés reçus (fleche.ts) ; absente avant la première montée */
+  fleche?: import('./fleche').EtatFleche;
   eclats: number;
   /** les cartes possédées */
   collection: Record<string, CarteCollection>;

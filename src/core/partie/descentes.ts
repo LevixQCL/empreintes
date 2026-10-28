@@ -472,6 +472,8 @@ export interface Retour {
   xp?: { id: string; xp: number; niveau?: number }[];
   /** le retour d'un pillage (pillages.ts) */
   pillage?: { nom: string; victoire: boolean; gain: number; perte: number };
+  /** le retour d'un combat de la Flèche (fleche.ts) */
+  fleche?: import('./fleche').RetourFleche;
 }
 
 export function remonter(j: Jeu): Retour {

@@ -27,7 +27,7 @@ export const TABLEAUX: { id: TableauId; nom: string; court: string; ouvert: bool
   { id: 'joutes', nom: 'Joutes', court: 'Duels', ouvert: false,
     texte: 'Les combats gagnés contre d’autres directeurs. Ouvre avec les combats entre joueurs.' },
   { id: 'fleche', nom: 'La Flèche', court: 'Tour', ouvert: false,
-    texte: 'La seule route légale vers les Hauts : la Flèche, quai par quai, jusqu’aux Sièges du sommet. En préparation.' },
+    texte: 'La seule route légale vers les Hauts : la Flèche, quai par quai, jusqu’aux Sièges du sommet. On y monte déjà depuis son onglet ; le classement en ligne arrive bientôt.' },
 ];
 
 // ---------- Le Registre : la valeur d'une collection ----------

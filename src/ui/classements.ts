@@ -234,14 +234,14 @@ function apercuFleche(): string {
   // la Flèche dessinée de bas en haut : les quais gravés, la montée qui ralentit, les Sièges au sommet
   const paliers = [...FLECHE.paliers].reverse();
   const tranche = (n: number) => FLECHE.montee.find((m) => n <= m.jusqua)!.quais;
-  return `<section class="gt-avenir fleche"><span class="gt-avenir-ico">${ICO.tour}</span><h2>La Flèche <em class="gt-bientot">en préparation</em></h2>`
+  return `<section class="gt-avenir fleche"><span class="gt-avenir-ico">${ICO.tour}</span><h2>La Flèche <em class="gt-bientot">classement bientôt</em></h2>`
     + `<p>La dernière flèche d’amarrage des Hauts. Depuis les Accords de 2101, tout district peut y envoyer une escouade : celle qui tient le sommet quand une île passe est reçue là-haut. Les gardiens, payés par les Hauts, sont plus forts à chaque quai.</p>`
     + `<div class="gt-tour" aria-label="Les quais de la Flèche"><div class="gt-sommet"><strong>Les ${FLECHE.sieges} Sièges</strong><small>tenus par des directeurs, qu’on défie</small></div><ol>`
     + paliers.map((n) => `<li><b>${n}</b><span>${n >= FLECHE.quais ? 'dernier quai : l’amarrage' : `quai gravé · on y monte ${tranche(n) > 1 ? `de ${tranche(n)} en ${tranche(n)}` : 'quai par quai'}`}</span></li>`).join('')
     + `<li class="base"><b>1</b><span>le pied de la Flèche</span></li></ol></div>`
     + `<ul class="gt-promesses"><li>${ICO.monter}<span><strong>Vite en bas, lentement en haut</strong><small>Chaque victoire fait monter de ${FLECHE.montee[0]!.quais} quais au début, d’un seul près du sommet.</small></span></li>`
     + `<li>${ICO.bouclier}<span><strong>Des quais qui protègent</strong><small>Une défaite fait redescendre, jamais sous le dernier quai gravé.</small></span></li>`
-    + `<li>${ICO.porte}<span><strong>Au sommet, le passage d’une île</strong><small>Le temps qu’elle passe : ${FLECHE.defaitesMax} défaites t’éliminent, ${FLECHE.victoiresDefi} victoires t’ouvrent le défi d’un Siège.</small></span></li></ul></section>`;
+    + `<li>${ICO.porte}<span><strong>Au sommet, le passage d’une île</strong><small>Le temps qu’elle passe : ${FLECHE.defaitesMax} défaites t’éliminent, ${FLECHE.victoiresDefi} victoires t’ouvrent le défi d’un Siège.</small></span></li></ul><button type="button" class="btn sec large" data-action="fleche">${ICO.tour}Monter à la Flèche</button></section>`;
 }
 
 // ---------- Le nom de directeur ----------

@@ -119,7 +119,16 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'archipel': ouvrir('archipel'); break;
     case 'coupe': ouvrir('coupe'); break;
     // les pillages (26 octobre 2026) : la carte des archipels, la fiche d'un archipel, puis le départ
-    case 'pillages': ouvrir('pillages'); lireCiblesEnLigne(); break;
+    case 'pillages': ouvrir('pillages'); if (portOuvert(app.jeu)) lireCiblesEnLigne(); break;
+    // la Flèche (28 octobre 2026) : son onglet, puis le départ de l'escouade vers le quai suivant
+    case 'fleche': ouvrir('fleche'); break;
+    case 'fleche-preparer': {
+      const r = J.peutMonter(app.jeu);
+      if (!r.ok) { resultat(r); break; }
+      D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = true;
+      D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      break;
+    }
     case 'pillage-voir': D.pillageCible = id; break;
     case 'pillage-preparer': {
       const c = cartePillages(app.jeu, Date.now(), D.pillagesEnLigne ?? []).cibles.find((x) => x.id === id);
@@ -127,17 +136,17 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       // un vrai directeur : son bouclier se vérifie en ligne juste avant
       const bouclier = await sousBouclier(c);
       if (bouclier !== false) { D.message = bouclier ? `${c.nom} est sous bouclier pour l’instant : choisis un autre archipel.` : `Impossible de joindre ${c.nom} pour l’instant : réessaie dans un moment.`; break; }
-      D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = c; D.strateChoisie = c.strate;
+      D.deck = null; D.fouille = null; D.epreuve = null; D.fleche = false; D.pillage = c; D.strateChoisie = c.strate;
       D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
     case 'tour-volet': D.ongletTour = id === 'epreuves' || id === 'missions' ? id : 'strates'; break;
-    case 'descendre': D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
-    case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.pillage = null; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
+    case 'descendre': D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
+    case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
     case 'cible': D.fouille = id as typeof D.fouille; break;
     case 'epreuve': {
       const ep = J.epreuveDef(id);
-      D.deck = null; D.fouille = null; D.epreuve = id; D.pillage = null; D.strateChoisie = J.strateEpreuve(app.jeu);
+      D.deck = null; D.fouille = null; D.epreuve = id; D.pillage = null; D.fleche = false; D.strateChoisie = J.strateEpreuve(app.jeu);
       D.escouade = J.escouadePourDepart(app.jeu, ep?.interdits ?? []); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
@@ -158,7 +167,8 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     }
     case 'partir': {
-      const r = D.pillage ? J.piller(app.jeu, D.escouade, D.pillage, Date.now())
+      const r = D.fleche ? J.monterFleche(app.jeu, D.escouade)
+        : D.pillage ? J.piller(app.jeu, D.escouade, D.pillage, Date.now())
         : D.epreuve ? J.partirEpreuve(app.jeu, D.escouade, D.epreuve, Date.now())
         : D.fouille ? J.fouiller(app.jeu, D.escouade, D.strateChoisie, D.fouille)
           : J.partir(app.jeu, D.escouade, D.strateChoisie);

@@ -88,6 +88,12 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
         D.message = r.victoire
           ? 'La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans les Chroniques (onglet Archives).'
           : 'L’escouade se repose. La porte scellée t’attend toujours.';
+      } else if (r.fleche) {
+        const f = r.fleche;
+        D.vue = 'fleche'; D.fleche = false;
+        D.message = f.victoire
+          ? `Quai ${f.a} atteint${f.record ? ' : nouveau record' : ''}.${f.paliers.map((p) => ` Quai gravé ${p.quai} : +${p.composants} composants, +${p.eclats} Éclats.`).join('')}`
+          : f.a < f.de ? `Repoussés au quai ${f.de} : l’escouade redescend au quai ${f.a}.` : `Repoussés au quai ${f.de} : l’escouade garde son quai.`;
       } else if (r.pillage) {
         const p = r.pillage;
         D.vue = 'pillages';

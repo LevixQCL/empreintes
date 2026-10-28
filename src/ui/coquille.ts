@@ -3,7 +3,7 @@
 
 import { moduleDef, porteurDef } from '../core/donnees';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
-import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, type Jeu, type RapportMission } from '../core/jeu';
+import { ACCORD_OUVERT, CONFIANCE, CREUSEURS, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
@@ -11,7 +11,7 @@ import { feuilleNom } from './classements';
 import { COULEUR, panneauCompte, type Compte } from './vue';
 import { echap } from './outils';
 
-export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages';
+export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages' | 'fleche';
 /** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */
 export type Filtre = 'tout' | Lignee | 'monter' | 'libres';
 
@@ -63,6 +63,8 @@ export interface EcranDistrict {
   /** l'escouade part piller cet archipel (pillages.ts) ; et l'archipel choisi sur la carte */
   pillage?: import('../core/jeu').Cible | null;
   pillageCible?: string | null;
+  /** l'escouade part monter à la Flèche (fleche.ts) */
+  fleche?: boolean;
   /** les garnisons des vrais directeurs à portée, lues en ligne (vide sans compte) */
   pillagesEnLigne?: import('../core/jeu').Cible[];
   /** la fiche d'une ressource du haut est ouverte (22 octobre 2026) */
@@ -241,23 +243,11 @@ const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
   // Porteurs et Cartes ne font plus qu'un onglet (25 octobre 2026) : l'escouade, ses Porteurs et leurs cartes au même endroit
   { vue: 'porteurs', nom: 'Escouade', icone: 'porteurs' },
   { vue: 'codex', nom: 'Chroniques', icone: 'codex' },
+  // les Pillages et la Flèche ont leur onglet (28 octobre 2026, Bryan) : la carte des archipels voisins ne passe plus par le Port
+  { vue: 'pillages', nom: 'Pillages', icone: 'carte' },
+  { vue: 'fleche', nom: 'Flèche', icone: 'fleche' },
   { vue: 'plus', nom: 'Plus', icone: 'plus' },
 ];
-
-/**
- * La jauge des Strates (rail PC, 28 octobre 2026) : une coupe de roche qui descend, la Strate atteinte marquée d'un cristal.
- * Les couches au-dessus sont déjà traversées (éclairées), celles du dessous attendent. Un toucher ouvre la fiche Strate.
- */
-function jaugeStrates(strate: number): string {
-  const couches: string[] = [];
-  for (let k = strate - 2; k <= strate + 3; k++) {
-    if (k < 0) continue;
-    const etat = k < strate ? 'passee' : k === strate ? 'ici' : 'profonde';
-    couches.push(`<i class="ns-couche ${etat}" style="--p:${k - strate}">${etat === 'ici' ? '<b class="ns-cristal"></b>' : ''}<em>−${k}</em></i>`);
-  }
-  return `<button type="button" class="nav-strates" data-action="ressource" data-id="strate" aria-label="Strate −${strate} : voir la profondeur">`
-    + `<span class="ns-titre">Strate</span><span class="ns-colonne" aria-hidden="true">${couches.join('')}</span><span class="ns-val">−${strate}</span></button>`;
-}
 
 /** La navigation du bas */
 export function navigation(e: EcranDistrict): string {
@@ -268,13 +258,16 @@ export function navigation(e: EcranDistrict): string {
     porteurs: !!(o && (o.onglet === 'porteurs' || o.onglet === 'cartes') && !o.fait(j)) || porteursNouveaux(j).length > 0 || (j.chambre && cartesNouvelles(j).length > 0),
     coupe: !!j.expedition || !!(o && o.onglet === 'coupe' && !o.fait(j)),
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
+    // une pastille quand l'onglet vient de s'ouvrir et qu'on n'y est jamais allé
+    pillages: !!j.chambre && strateVaincue(j) >= PILLAGE.strateMin && !j.pillage,
+    fleche: flecheOuverte(j) && !j.fleche,
   };
-  const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'pillages' ? 'archipel' : e.vue === 'escouade' ? 'coupe' : e.vue === 'cartes' ? 'porteurs' : e.vue;
-  // sur PC (rail.css) : le cristal en tête, et la jauge des Strates qui remplit le rail jusqu'au « Plus » du bas
+  const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage ? 'pillages' : 'coupe') : e.vue === 'cartes' ? 'porteurs' : e.vue;
+  // sur PC (rail.css) : le cristal en tête, puis les sept onglets ; la jauge des Strates a cédé sa place aux Pillages
+  // et à la Flèche (28 octobre 2026) : la Strate reste dans la barre du haut
   return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./art/embleme-cristal.webp" alt=""></span>` + ONGLETS.map((t) => {
     const action = t.vue === 'plus' ? 'menu' : t.vue;
-    return (t.vue === 'plus' ? jaugeStrates(j.strate) : '')
-      + `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${actif === t.vue ? ' aria-current="page"' : ''}>`
+    return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${actif === t.vue ? ' aria-current="page"' : ''}>`
       + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span class="onglet-nom">${t.nom}</span></button>`;
   }).join('') + `</nav>`;
 }

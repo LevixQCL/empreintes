@@ -280,7 +280,7 @@ function monEscouade(e: EcranDistrict): string {
   const deck = deckEscouade(j, esc).length;
   let h = entete(`ESCOUADE ${vue + 1} · ${esc.length} / 3 · <span class="pt-dispo">${deck} CARTES</span>`, 'Escouade');
   // venu du départ ou du Port : le chemin du retour, bien en vue
-  if (e.retourModif) h += `<button type="button" class="eq-revenir" data-action="escouade-revenir">${ICO.retour}<span><strong>${e.retourModif === 'pillages' ? 'Revenir au Port' : e.pillage ? 'Revenir au pillage' : 'Revenir au départ'}</strong>${e.retourModif === 'pillages' ? 'Ta garnison est prise en compte tout de suite.' : 'Avec l’escouade choisie ici.'}</span></button>`;
+  if (e.retourModif) h += `<button type="button" class="eq-revenir" data-action="escouade-revenir">${ICO.retour}<span><strong>${e.retourModif === 'pillages' ? 'Revenir aux Pillages' : e.pillage ? 'Revenir au pillage' : 'Revenir au départ'}</strong>${e.retourModif === 'pillages' ? 'Ta garnison est prise en compte tout de suite.' : 'Avec l’escouade choisie ici.'}</span></button>`;
   h += voletsEscouade(e);
   h += ongletsEscouades(j, vue);
   if (verrou) h += `<p class="me-verrou">${ICO.verrou}<span><strong>En descente</strong>${echap(verrou.replace(/^L’escouade est en descente : /, 'L’escouade '))}</span></p>`;

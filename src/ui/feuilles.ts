@@ -29,6 +29,7 @@ import './panneau-district.css';
 import './classements.css';
 import './campagne.css';
 import './pillages.css';
+import './fleche.css';
 import './journal.css';
 // en dernier : les gardiens reprennent la main sur les réglages du téléphone et du PC
 import './gardien.css';
