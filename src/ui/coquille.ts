@@ -20,6 +20,8 @@ export interface EcranDistrict {
   /** Forge (27 octobre 2026) : la rangée des Porteurs ouverte pour changer de forgeron, et toutes les cartes affichées */
   forgeChanger?: boolean;
   forgeToutes?: boolean;
+  /** Tour du Noyau (28 octobre 2026) : la liste des Porteurs ouverte pour changer celui qui s'entraîne */
+  tourChanger?: boolean;
   /** la feuille « Protège ta partie », proposée aux paliers tant que la partie n'est reliée à aucun compte */
   rappel?: boolean;
   vue: Vue;

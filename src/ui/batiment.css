@@ -92,9 +92,6 @@
 .fb-cand.moins .fb-cand-eff i{color:var(--fb-rouge)}
 .fb-cand.egal .fb-cand-eff i{color:var(--fb-doux)}
 .fb-cand-ailleurs{font-size:12px;color:#E8B86A;line-height:1.2;text-align:center}
-.fb-cand-info{font-size:11.5px;color:var(--fb-doux);line-height:1.25;text-align:center;font-variant-numeric:tabular-nums}
-.fb-cand-info.manque{color:var(--fb-rouge)}
-.fb-occupant .jauge{margin-top:5px}
 .fb-vide{margin:0;font-size:14px;line-height:1.5;color:var(--fb-txt)}
 .fb-vide>b{color:var(--fb-or);font-family:var(--mono)}
 .fb-absents{font-size:12.5px;color:var(--fb-doux)}
@@ -236,3 +233,35 @@
 .fg-doublons .mini-jauge{flex:1}
 .fg-plus{justify-self:center;min-height:40px;padding:0 18px;font-size:14px}
 @media (min-width:1100px){.fg-cartes{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
+/* L'entraînement à la Tour (28 octobre 2026) : la salle elle-même porte la séance, le choix ne s'ouvre qu'à la demande */
+.te .titre-bloc{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
+.te-regle{margin-left:auto;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:0;text-transform:none;color:var(--fb-doux)}
+.te-salle{position:relative;overflow:hidden;border-radius:10px;min-height:116px;display:flex;align-items:flex-end;
+  border:1px solid color-mix(in srgb,var(--c,#9BD6F0) 45%,var(--filet));box-shadow:inset 0 0 0 1px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.35)}
+.te-fond{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 58%}
+.te-salle::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(8,12,18,.92) 0%,rgba(8,12,18,.78) 55%,rgba(8,12,18,.25) 100%),linear-gradient(0deg,color-mix(in srgb,var(--c,#9BD6F0) 16%,transparent),transparent 60%)}
+.te-salle.vide .te-fond{filter:saturate(.6) brightness(.85)}
+.te-contenu{position:relative;z-index:1;display:flex;align-items:center;gap:12px;width:100%;padding:12px}
+.te-qui{flex:1;min-width:0;display:grid;gap:3px}
+.te-qui strong{font-family:var(--display);font-weight:400;font-size:21px;line-height:1.1;color:#F6F2EA;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.te-etat{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fb-glace,#9BD6F0)}
+.te-niv{font-family:var(--mono);font-size:13px;color:var(--fb-txt);font-variant-numeric:tabular-nums}
+.te-niv i{font-style:normal;color:var(--fb-or)}
+.te-qui .jauge{margin-top:3px}
+.te-temps{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--fb-or);font-variant-numeric:tabular-nums}
+.te-actions{display:flex;gap:8px;margin-top:8px}
+.te-actions .btn{flex:1;min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.te-actions .btn.prim{flex:1.6}
+.te-actions small{font-family:var(--mono);font-size:12px;color:var(--fb-or)}
+.te-prix{display:inline-flex;align-items:center;gap:2px;font-family:var(--mono);font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.te-prix .ico{width:12px;height:12px}
+.fb-cand .te-prix{color:var(--fb-doux)}
+.te-prix.manque,.fb-cand .te-prix.manque{color:var(--fb-rouge)}
+.te-choix{margin-top:8px}
+.te-pris{position:absolute;right:-4px;bottom:-2px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;
+  background:#2A2214;color:#E8B86A;box-shadow:0 0 0 1.5px #E8B86A}
+.te-pris .ico{width:12px;height:12px}
+.te-note{display:flex;align-items:center;gap:6px;margin:6px 0 0;font-size:12.5px;color:var(--fb-doux)}
+.te-note .ico{width:13px;height:13px;color:#E8B86A}

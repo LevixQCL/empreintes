@@ -20,7 +20,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
   switch (a) {
     // le Port ouvert (plaque ou bateau peint) : le bateau part vers les archipels voisins
     case 'batiment': if (id === 'port' && portOuvert(app.jeu)) { ouvrir('pillages'); lireCiblesEnLigne(); break; }
-      D.selection = D.selection === id ? null : (id as typeof D.selection); D.menu = false; D.forgeChanger = false;
+      D.selection = D.selection === id ? null : (id as typeof D.selection); D.menu = false; D.forgeChanger = false; D.tourChanger = false;
       if (b.dataset.amelio !== undefined) requestAnimationFrame(() => document.getElementById('fb-amelio')?.scrollIntoView({ block: 'start' }));
       break;
     case 'ok-message': D.message = ''; break;
@@ -34,12 +34,13 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'filtre': D.filtre = (id as typeof D.filtre) || 'tout'; window.scrollTo(0, 0); break;
     case 'fermer': D.selection = null; break;
     case 'ameliorer': resultat(J.ameliorer(app.jeu, id as BatimentId, Date.now())); break;
-    case 'poster': resultat(J.poster(app.jeu, id, (b.dataset.poste as J.Poste) ?? null)); D.forgeChanger = false; break;
+    case 'poster': resultat(J.poster(app.jeu, id, (b.dataset.poste as J.Poste) ?? null)); D.forgeChanger = false; D.tourChanger = false; break;
     case 'liberer': resultat(J.poster(app.jeu, id, null)); break;
     case 'convertir': { const r = J.convertir(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     case 'soigner-vite': { const r = J.soignerVite(app.jeu, id); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     case 'acheter': resultat(J.acheter(app.jeu, Number(b.dataset.index ?? -1), Date.now())); break;
     case 'forge-changer': D.forgeChanger = !D.forgeChanger; break;
+    case 'tour-changer': D.tourChanger = !D.tourChanger; break;
     case 'forge-vue': D.forgeToutes = id === 'toutes'; break;
     case 'fabriquer': resultat(J.fabriquer(app.jeu, b.dataset.module ?? '', Date.now())); break;
     case 'cartes': ouvrir('cartes'); break;

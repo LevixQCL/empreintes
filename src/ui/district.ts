@@ -8,7 +8,7 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, pvNiveau, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -434,43 +434,66 @@ function blocSoinsIntensifs(j: Jeu): string {
   return h + `</section>`;
 }
 
-function blocEntrainement(j: Jeu, now: number): string {
+/**
+ * L'entraînement à la Tour (écran refait le 28 octobre 2026, modèle « laboratoire ») : une seule salle, au centre.
+ * Occupée : qui, vers quel niveau, la jauge. Libre : relancer le dernier en un geste. Le choix d'un autre Porteur
+ * ne s'ouvre qu'à la demande, et ne montre que ceux qui peuvent encore progresser ici.
+ */
+function blocEntrainement(e: EcranDistrict): string {
+  const j = e.j;
+  const now = e.now;
   if (!j.chambre) return '';
   const s = j.seance ?? null;
   const occupant = s?.porteur ?? null;
   const plafond = plafondEntrainement(j);
-  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.monter}Entraînement</h3><div class="fb-entrainement" aria-hidden="true"><img src="${salleEntrainement}" alt="" decoding="async"></div>`
-    + `<p class="fb-vide">Une séance fait monter un Porteur d’<b>un niveau</b>, même jeu fermé, jusqu’au <b>niveau ${plafond}</b> ici. L’énergie se paie au lancement. À la fin, il quitte la salle : reviens lancer la suivante. S’il descend avant, il garde l’XP gagnée et l’énergie du reste est rendue.</p>`;
   const niveau = (id: string) => niveauPorteur(j, id).niveau;
+  const renduSeance = s ? Math.floor(s.energie * Math.max(0, 1 - s.xpGagnee / s.xpTotale)) : 0;
+  const prix = (n: number, manque = false) => `<span class="te-prix${manque ? ' manque' : ''}">${ICO.energie}${ent(n)}</span>`;
+  const presents = PORTEURS.filter((p) => p.id !== occupant && porteursPresents(j).includes(p.id) && !enExpedition(j, p.id));
+  const eligibles = presents.filter((p) => apercuSeance(j, p.id)).sort((x, y) => niveau(x.id) - niveau(y.id));
+  const relance = !occupant && j.derniereSeance ? eligibles.find((p) => p.id === j.derniereSeance) : undefined;
+
+  let h = `<section class="fb-bloc te"><h3 class="titre-bloc">${ICO.monter}Entraînement<span class="te-regle">1 séance = 1 niveau · jusqu’au niv. ${plafond}</span></h3>`;
+  const fond = `<img class="te-fond" src="${salleEntrainement}" alt="" decoding="async">`;
+
   if (s && occupant) {
     const o = porteurDef(occupant);
-    const heuresFaites = s.xpGagnee / s.xpHeure;
-    const heuresRestantes = (s.xpTotale - s.xpGagnee) / s.xpHeure;
-    const debut = now - heuresFaites * 3_600_000;
-    const fin = now + heuresRestantes * 3_600_000;
-    const rendu = Math.min(Math.floor(s.energie * (1 - s.xpGagnee / s.xpTotale)), Math.max(0, stockage(j) - j.energie));
-    h += `<div class="fb-occupant" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 64)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-lignee">Niveau ${niveau(occupant)} → ${s.cible} · ${pvNiveau(j, occupant)} PV</span>`
-      + `<span class="fb-apport">${decompte(fin, now, `Niveau ${s.cible} dans `)}</span><div class="jauge or">${jaugeTemps(debut, fin, now)}</div></div>`
-      + `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Arrêter la séance de ${echap(o.nom)}${rendu ? ` : ${rendu} énergie rendue` : ''}">Arrêter</button></div>`;
+    const debut = now - (s.xpGagnee / s.xpHeure) * 3_600_000;
+    const fin = now + ((s.xpTotale - s.xpGagnee) / s.xpHeure) * 3_600_000;
+    const rendu = Math.min(renduSeance, Math.max(0, stockage(j) - j.energie));
+    h += `<div class="te-salle" style="--c:${COULEUR[o.lignee]}">${fond}<div class="te-contenu"><span class="fb-cand-portrait">${avatar(occupant, 64)}</span>`
+      + `<div class="te-qui"><strong>${echap(o.nom)}</strong><span class="te-niv">Niv. ${niveau(occupant)} <i>→ ${s.cible}</i></span>`
+      + `<div class="jauge or">${jaugeTemps(debut, fin, now)}</div><span class="te-temps">${decompte(fin, now)}</span></div></div></div>`
+      + `<div class="te-actions"><button type="button" class="btn sec" data-action="tour-changer" aria-expanded="${e.tourChanger ? 'true' : 'false'}">${e.tourChanger ? 'Fermer' : 'Changer'}</button>`
+      + `<button type="button" class="btn sec" data-action="liberer" data-id="${occupant}" aria-label="Arrêter la séance de ${echap(o.nom)}${rendu ? ` : ${rendu} énergie rendue` : ''}">Arrêter${rendu ? ` <small>+${ent(rendu)}</small>` : ''}</button></div>`;
+  } else if (relance) {
+    const a = apercuSeance(j, relance.id)!;
+    const peut = j.energie >= a.energie;
+    h += `<div class="te-salle libre" style="--c:${COULEUR[relance.lignee]}">${fond}<div class="te-contenu"><span class="fb-cand-portrait">${avatar(relance.id, 64)}</span>`
+      + `<div class="te-qui"><span class="te-etat">Séance terminée</span><strong>${echap(relance.nom)}</strong><span class="te-niv">Niv. ${niveau(relance.id)} <i>→ ${a.cible}</i> · ${duree(a.heures * 3_600_000)}</span></div></div></div>`
+      + `<div class="te-actions"><button type="button" class="btn sec" data-action="tour-changer" aria-expanded="${e.tourChanger ? 'true' : 'false'}">${e.tourChanger ? 'Fermer' : 'Un autre'}</button>`
+      + `<button type="button" class="btn prim" data-action="poster" data-id="${relance.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="Relancer ${echap(relance.nom)} vers le niveau ${a.cible} : ${a.energie} énergie">Relancer ${prix(a.energie, !peut)}</button></div>`;
+  } else {
+    h += `<div class="te-salle vide">${fond}<div class="te-contenu"><div class="te-qui"><span class="te-etat">Salle libre</span><strong>Choisis un Porteur</strong>`
+      + `<span class="te-niv">l’énergie se paie au lancement</span></div></div></div>`;
   }
-  // le dernier à avoir fini sa séance vient en premier : le relancer est le geste le plus courant
-  const libres = PORTEURS.filter((p) => p.id !== occupant && porteursPresents(j).includes(p.id) && !enExpedition(j, p.id))
-    .sort((x, y) => Number(y.id === j.derniereSeance) - Number(x.id === j.derniereSeance) || niveau(x.id) - niveau(y.id));
-  if (libres.length) {
-    h += `<p class="fb-consigne">${occupant ? 'Lancer plutôt' : 'Lancer une séance'} <span>· un niveau, payé d’avance</span></p><div class="fb-rangee">`
-      + libres.map((p) => {
+
+  // le choix d'un Porteur : ouvert d'office quand la salle est vide, sinon à la demande
+  const ouvert = (!occupant && !relance) || !!e.tourChanger;
+  if (ouvert) {
+    if (eligibles.length) {
+      h += `<div class="fb-rangee te-choix">` + eligibles.filter((p) => p.id !== relance?.id || e.tourChanger).map((p) => {
+        const a = apercuSeance(j, p.id)!;
+        const peut = j.energie + renduSeance >= a.energie;
         const ailleurs = j.porteurs[p.id]!.poste;
-        const n = niveau(p.id);
-        const a = apercuSeance(j, p.id);
-        const rendu = s ? Math.floor(s.energie * Math.max(0, 1 - s.xpGagnee / s.xpTotale)) : 0;
-        const peut = !!a && j.energie + rendu >= a.energie;
-        const relance = p.id === j.derniereSeance && !occupant;
-        const info = !a ? 'plafond atteint' : `${duree(a.heures * 3_600_000)} · ${ent(a.energie)} énergie`;
-        return `<button type="button" class="fb-cand${!a ? ' egal' : ' plus'}" style="--c:${COULEUR[p.lignee]}" data-action="poster" data-id="${p.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="${relance ? 'Relancer' : 'Entraîner'} ${echap(p.nom)}, niveau ${n}${a ? ` vers ${a.cible}, ${duree(a.heures * 3_600_000)}, ${a.energie} énergie` : ', plafond atteint'}${ailleurs ? `, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}">`
-          + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom)}</strong><span class="fb-cand-eff">${a ? `niv. ${n} <i>→ ${a.cible}</i>` : `niv. ${n} · max`}</span>`
-          + `<small class="fb-cand-info${a && !peut ? ' manque' : ''}">${relance && a ? 'Relancer · ' : ''}${info}</small>`
-          + (ailleurs ? `<small class="fb-cand-ailleurs">quitte ${echap(batimentDef(ailleurs).nom)}</small>` : '') + `</button>`;
+        return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="poster" data-id="${p.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="Entraîner ${echap(p.nom)}, niveau ${niveau(p.id)} vers ${a.cible}, ${duree(a.heures * 3_600_000)}, ${a.energie} énergie${ailleurs ? `, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}">`
+          + `<span class="fb-cand-portrait">${avatar(p.id, 52)}${ailleurs ? `<span class="te-pris" title="Au travail : ${echap(batimentDef(ailleurs).nom)}">${ICO.marteau}</span>` : ''}</span>`
+          + `<strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">${niveau(p.id)} <i>→ ${a.cible}</i></span>${prix(a.energie, !peut)}</button>`;
       }).join('') + `</div>`;
+      if (eligibles.some((p) => j.porteurs[p.id]!.poste)) h += `<p class="te-note">${ICO.marteau}quitte son poste au district</p>`;
+    }
+    const auMax = presents.filter((p) => !apercuSeance(j, p.id)).length;
+    if (auMax) h += `<p class="te-note">${auMax} Porteur${auMax > 1 ? 's' : ''} au niveau ${plafond} : ${plafond < XP.niveauMax ? 'monte la Tour pour aller plus loin' : 'le reste se gagne dans les Strates'}.</p>`;
   }
   return h + `</section>`;
 }
@@ -606,7 +629,7 @@ function feuilleBatiment(e: EcranDistrict): string {
   if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur présent au district</small></div></div>${niv ? blocSoinsIntensifs(j) : ''}`;
   if (b === 'noyau') {
     h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>niveau maximum des autres bâtiments</small></div></div>${reserve(j, b)}`
-      + blocEntrainement(j, e.now);
+      + blocEntrainement(e);
   }
   if (b === 'comptoir') h += blocComptoir(e);
 
