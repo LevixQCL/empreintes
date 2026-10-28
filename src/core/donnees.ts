@@ -162,12 +162,12 @@ export const MODULES: ModuleDef[] = [
   // et portent des effets qu'on ne trouve nulle part ailleurs. Leurs Fréquences sont volontairement mal commodes pour les suites
   // (écartées, parfois hors de la plage de la lignée) : les meilleurs effets ne doivent pas rendre les Résonances faciles.
   // Argent
-  x('gantelet-pillard', 'Gantelet-pillard', 'tech', 'argent', 'atk', 15, [6, 2], { type: 'rapt' }),
-  x('machoire-miroir', 'Mâchoire-miroir', 'bio', 'argent', 'atk', 13, [5, 1], { type: 'empreinte' }),
+  x('gantelet-pillard', 'Gantelet-pillard', 'tech', 'argent', 'atk', 17, [6, 2], { type: 'rapt' }),
+  x('machoire-miroir', 'Mâchoire-miroir', 'bio', 'argent', 'atk', 17, [5, 1], { type: 'empreinte' }),
   x('boucle-memoire', 'Boucle de mémoire', 'reso', 'argent', 'bouclier', 12, [6, 9], { type: 'rappel' }),
   // Or
   x('coeur-surregime', 'Cœur en surrégime', 'tech', 'or', 'atk', 20, [7, 2], { type: 'surtension', part: 0.6, cout: 0.12 }),
-  x('peau-ancetre', 'Peau de l’Ancêtre', 'bio', 'or', 'bouclier', 16, [1, 4], { type: 'rapt' }),
+  x('peau-ancetre', 'Peau de l’Ancêtre', 'bio', 'or', 'bouclier', 21, [1, 4], { type: 'rapt' }),
   x('miroir-hauts', 'Miroir des Hauts', 'reso', 'or', 'atk', 18, [9, 6], { type: 'empreinte' }),
   // Nacre
   x('coeur-etoile', 'Cœur d’étoile', 'tech', 'nacre', 'atk', 44, [7, 4, 2], { type: 'surtension', part: 0.5, cout: 0.15 }, true),

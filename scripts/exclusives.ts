@@ -45,7 +45,9 @@ for (const metal of metaux) {
   const exclusives = MODULES.filter((m) => m.seul && m.rarete === metal && (!seules || seules.includes(m.id)));
   if (!exclusives.length) continue;
   // les cartes ordinaires de référence : celles de ce métal d'origine ; en nacre, l’Héritage (les seules nacres d'origine)
-  const refs = seules ? [] : MODULES.filter((m) => !m.seul && !CARTES_DE_BASE.includes(m.id) && (metal === 'nacre' ? m.legs : m.rarete === metal && !m.legs));
+  // --refs a,b : les cartes de référence à mesurer (sinon toutes celles du métal, ou aucune avec --seules)
+  const choix = process.argv.includes('--refs') ? process.argv[process.argv.indexOf('--refs') + 1]!.split(',') : null;
+  const refs = choix ? MODULES.filter((m) => choix.includes(m.id) && (metal === 'nacre' ? m.legs : m.rarete === metal)) : seules ? [] : MODULES.filter((m) => !m.seul && !CARTES_DE_BASE.includes(m.id) && (metal === 'nacre' ? m.legs : m.rarete === metal && !m.legs));
   const val = (m: ModuleDef) => mesure(escouade(moduleDef(carteId(m.id, metal)))) - base;
   const vr: number[] = [];
   for (const [k, m] of refs.entries()) { process.stdout.write(`\r${NOMS_RARETE[metal]} réf. ${k + 1}/${refs.length}`.padEnd(40)); vr.push(val(m)); }
