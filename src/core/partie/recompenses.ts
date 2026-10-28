@@ -168,7 +168,7 @@ export function quitterPostes(j: Jeu, escouade: string[]): void {
   for (const id of escouade) {
     const b = j.porteurs[id]!.poste;
     if (!b) continue;
-    if (b === 'noyau') interrompreSeance(j);
+    if (b === 'noyau') interrompreSeance(j, id);
     j.porteurs[id]!.poste = null;
     log(j, b === 'noyau' ? `${porteurDef(id).nom} quitte l’entraînement pour descendre.` : `${porteurDef(id).nom} quitte son poste (${batimentDef(b).nom}) pour descendre.`);
   }

@@ -9,7 +9,7 @@ import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { ACCORD_OUVERT, CONFIANCE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, usureMax } from './etat';
-import { chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
+import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
 import { noterOrigine, noterVecu } from './vecu';
@@ -201,7 +201,6 @@ export function escouadePourDepart(j: Jeu, interdits: readonly string[] = []): s
 // La mission tourne même jeu fermé ; au retour, il rapporte des composants et des doublons de cartes de sa lignée.
 
 export const MISSIONS = {
-  max: 2,
   // l'énergie au départ (23 octobre 2026) : vivres, lampes et piles pour l'expédition
   courte: { heures: 2, composants: 14, doublons: 1, nouvelle: 0, usure: 4, energie: 30 },
   longue: { heures: 8, composants: 45, doublons: 2, nouvelle: 0.35, usure: 8, energie: 100 },
@@ -324,7 +323,8 @@ export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: num
   if (!porteursPresents(j).includes(id)) return non('Porteur inconnu.');
   if (j.porteurs[id]!.poste) return non(`${porteurDef(id).nom} travaille au district.`);
   if (enExpedition(j, id)) return non(`${porteurDef(id).nom} n’est pas au district.`);
-  if (j.missions.length >= MISSIONS.max) return non(`${MISSIONS.max} missions au plus en même temps.`);
+  const nb = barquesMax(j);
+  if (j.missions.length >= nb) return non(nb > 1 ? `${nb} barques au plus en mer en même temps : monte la Tour du Noyau pour en armer d’autres.` : 'Une seule barque en mer à la fois : monte la Tour du Noyau pour en armer d’autres.');
   if (j.energie < m.energie) return non(`Il faut ${m.energie} énergie pour équiper la mission.`);
   j.energie -= m.energie;
   j.missions.push({ porteur: id, strate: strateMission(j), duree, debut: now, fin: now + m.heures * 3_600_000, lieu: dest.lieu.id, butin: dest.butin });

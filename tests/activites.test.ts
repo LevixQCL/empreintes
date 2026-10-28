@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { FORCE, accessibles, genererCarte, salleCourante } from '../src/core/expedition';
 import { moduleDef, porteurDef } from '../src/core/donnees';
 import {
-  EPREUVES, MISSIONS, entrer, envoyerMission, destinationsDuJour, bonusMission, niveauPorteur, jourDe, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
+  EPREUVES, MISSIONS, barquesMax, entrer, envoyerMission, destinationsDuJour, bonusMission, niveauPorteur, jourDe, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
   remonter, tick, type Jeu,
 } from '../src/core/jeu';
 import { simulerParcours, PROFILS } from '../src/core/parcours';
@@ -62,6 +62,7 @@ describe('Missions', () => {
   it('un Porteur libre part en mission, n’est plus disponible, et revient avec des composants et des cartes de sa lignée', () => {
     const j = avance();
     for (const id of ['coursier', 'docker', 'guetteur']) poster(j, id, null);
+    j.batiments.noyau = 3; // deux barques au niveau 3 de la Tour
     const compo = j.composants;
     j.energie = MISSIONS.courte.energie + MISSIONS.longue.energie;
     expect(envoyerMission(j, 'docker', 'courte', T0).ok).toBe(true);
@@ -69,7 +70,7 @@ describe('Missions', () => {
     expect(j.energie).toBe(MISSIONS.longue.energie);
     expect(partir(j, ['ilka', 'docker', 'vela'], 1, 3).ok).toBe(false);
     expect(envoyerMission(j, 'coursier', 'longue', T0).ok).toBe(true);
-    expect(envoyerMission(j, 'guetteur', 'courte', T0).ok).toBe(false); // deux au plus
+    expect(envoyerMission(j, 'guetteur', 'courte', T0).ok).toBe(false); // deux barques au plus à ce niveau
     tick(j, T0 + 2 * H + 1);
     expect(j.missions).toHaveLength(1);
     expect(j.composants).toBeGreaterThan(compo);
@@ -81,6 +82,7 @@ describe('Missions', () => {
   it('chaque retour laisse un rapport à lire, même quand deux missions rentrent ensemble (28 octobre 2026)', () => {
     const j = avance();
     for (const id of ['coursier', 'docker']) poster(j, id, null);
+    j.batiments.noyau = 3;
     j.energie = 2 * MISSIONS.courte.energie;
     envoyerMission(j, 'docker', 'courte', T0);
     envoyerMission(j, 'coursier', 'courte', T0 + 1000);
@@ -94,6 +96,16 @@ describe('Missions', () => {
     lireRapport(j);
     expect(rapportALire(j)).toBeNull();
     expect(j.rapports).toHaveLength(2); // gardés pour les relire à la Tour
+  });
+
+  it('les barques en mer suivent la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 5 (28 octobre 2026)', () => {
+    const j = avance();
+    expect([1, 2, 3, 4, 5].map((n) => { j.batiments.noyau = n; return barquesMax(j); })).toEqual([1, 1, 2, 2, 3]);
+    for (const id of ['coursier', 'docker']) poster(j, id, null);
+    j.batiments.noyau = 1;
+    j.energie = 2 * MISSIONS.courte.energie;
+    expect(envoyerMission(j, 'docker', 'courte', T0).ok).toBe(true);
+    expect(envoyerMission(j, 'coursier', 'courte', T0).ok).toBe(false);
   });
 
   it('de 2 à 5 destinations par jour, et sur la semaine autant pour chaque lignée et chaque butin (28 octobre 2026)', () => {

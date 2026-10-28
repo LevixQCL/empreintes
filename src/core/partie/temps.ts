@@ -54,8 +54,7 @@ export function tick(j: Jeu, now: number): string[] {
     if (creuser(j)) nouvelles.push(`Les volontaires suffisent : la Strate −${j.strate} est ouverte.`);
   }
 
-  const entraine = entrainer(j, heures);
-  if (entraine) nouvelles.push(entraine);
+  nouvelles.push(...entrainer(j, heures));
 
   for (const m of j.missions.filter((x) => now >= x.fin)) nouvelles.push(retourDeMission(j, m));
   j.missions = j.missions.filter((x) => now < x.fin);

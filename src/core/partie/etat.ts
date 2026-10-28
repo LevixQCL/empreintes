@@ -209,7 +209,9 @@ export interface Jeu {
   batiments: Record<BatimentId, number>;
   porteurs: Record<string, PorteurDistrict>;
   forge: Fabrication | null;
-  /** la séance d'entraînement en cours à la Tour (null : salle libre) */
+  /** les séances d'entraînement en cours à la Tour, une par place (28 octobre 2026 : plusieurs places selon le niveau de la Tour) */
+  seances?: Seance[];
+  /** ancienne sauvegarde : une seule place, reprise dans seances au chargement */
   seance?: Seance | null;
   /** le dernier Porteur à avoir fini une séance, proposé en premier pour la relancer */
   derniereSeance?: string;

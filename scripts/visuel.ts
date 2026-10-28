@@ -28,12 +28,13 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'port'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'port' | 'tour'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="forge"]'); } },
   { nom: 'generateur', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="generateur"]'); } },
   { nom: 'noyau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="noyau"]'); } },
+  { nom: 'noyau-places', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="noyau"]'); await p.locator('.fb-bloc.te').scrollIntoViewIfNeeded(); } },
   // le Butin de la semaine (28 octobre 2026) : sur téléphone, on déplie d'abord le panneau, puis on touche le bandeau
   { nom: 'butin', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.mj-plier.mob[data-action="panneau"]:visible').first(); if (await d.count()) { await d.click(); await p.waitForTimeout(250); } await p.click('.mission.jour .archive'); } },
   { nom: 'panneau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.mj-plier.mob[data-action="panneau"]:visible').first(); if (await d.count()) await d.click(); } },
@@ -125,6 +126,15 @@ async function main() {
     po.data.portVu = true;
     po.data.energie = 500;
     (saves as Record<string, unknown>).port = po;
+    // la Tour à plusieurs places (28 octobre 2026) : deux Porteurs en séance, le dernier entraîné prêt à relancer
+    const te = JSON.parse(JSON.stringify(saves.district));
+    te.data.batiments.noyau = 5;
+    te.data.energie = 2000;
+    const auDistrict = Object.keys(te.data.porteurs).filter((id) => !te.data.porteurs[id].poste && !te.data.missions.some((m: { porteur: string }) => m.porteur === id));
+    const trois = auDistrict.slice(-3);
+    for (const id of trois.slice(0, 2)) te.data.porteurs[id].poste = 'noyau';
+    te.data.derniereSeance = trois[2];
+    (saves as Record<string, unknown>).tour = te;
     // le Port déjà présenté dans la sauvegarde du district (la sauvegarde « fleche » garde sa présentation)
     d.portVu = true;
 

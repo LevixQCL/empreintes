@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { moduleDe, moduleDef } from '../src/core/donnees';
 import {
   COMPTOIR, ENTRAINEMENT, XP, acheter, ameliorer, estJeuValide, etalsDuComptoir, gainsAmelioration, garnirComptoir, niveauPorteur,
-  nouveauJeu, partir, plafondEntrainement, poster, prixComptoir, tick, apercuSeance, accorderSeance, DISTRICT,
+  nouveauJeu, partir, plafondEntrainement, poster, prixComptoir, tick, apercuSeance, accorderSeance, DISTRICT, placesEntrainement,
 } from '../src/core/jeu';
 
 const HEURE = 3_600_000;
@@ -106,7 +106,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
     const annonces = tick(j, j.dernierTick + 1000 * JOUR);
     expect(niveauPorteur(j, 'doran').niveau).toBe(2);
     expect(j.porteurs.doran!.poste).toBeNull();
-    expect(j.seance).toBeNull();
+    expect(j.seances).toEqual([]);
     expect(j.derniereSeance).toBe('doran');
     expect(annonces.some((t) => t.includes('séance'))).toBe(true);
     // rien ne se relance tout seul
@@ -153,7 +153,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
     expect(poster(j, 'doran', null).ok).toBe(true);
     expect(j.porteurs.doran!.xp).toBe(xp);
     expect(j.energie - avant).toBe(Math.floor(a.energie / 2));
-    expect(j.seance).toBeNull();
+    expect(j.seances).toEqual([]);
   });
 
   it('la séance suivante reprend là où l’XP s’était arrêtée : moins longue et moins chère', () => {
@@ -195,23 +195,45 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
     poster(j, 'doran', 'noyau');
     expect(partir(j, ['ilka', 'doran', 'vela'], 1, 5).ok).toBe(true);
     expect(j.porteurs.doran!.poste).toBeNull();
-    expect(j.seance).toBeNull();
+    expect(j.seances).toEqual([]);
   });
 
-  it('remplacer un Porteur interrompt sa séance', () => {
+  it('les places de la Tour suivent son niveau : 1, puis 2 au niveau 3, 3 au niveau 5 (28 octobre 2026)', () => {
+    const j = pret();
+    j.energie = 5000;
+    expect([1, 2, 3, 4, 5].map((n) => { j.batiments.noyau = n; return placesEntrainement(j); })).toEqual([1, 1, 2, 2, 3]);
+    j.batiments.noyau = 1;
+    expect(poster(j, 'doran', 'noyau').ok).toBe(true);
+    // la place est prise : un autre ne chasse plus le premier
+    expect(poster(j, 'ilka', 'noyau').ok).toBe(false);
+    expect(j.porteurs.doran!.poste).toBe('noyau');
+    j.batiments.noyau = 3;
+    expect(poster(j, 'ilka', 'noyau').ok).toBe(true);
+    expect(j.seances!.map((s) => s.porteur)).toEqual(['doran', 'ilka']);
+    // chaque séance avance de son côté, et l'arrêt de l'une ne touche pas l'autre
+    poster(j, 'doran', null);
+    expect(j.seances!.map((s) => s.porteur)).toEqual(['ilka']);
+    tick(j, j.dernierTick + 1000 * JOUR);
+    expect(niveauPorteur(j, 'ilka').niveau).toBe(2);
+    expect(j.seances).toEqual([]);
+  });
+
+  it('une ancienne sauvegarde à une seule séance la retrouve dans la liste', () => {
     const j = pret();
     poster(j, 'doran', 'noyau');
-    expect(poster(j, 'ilka', 'noyau').ok).toBe(true);
-    expect(j.porteurs.doran!.poste).toBeNull();
-    expect(j.seance?.porteur).toBe('ilka');
+    j.seance = j.seances![0]!;
+    delete j.seances;
+    accorderSeance(j);
+    expect(j.seance).toBeUndefined();
+    expect(j.seances).toMatchObject([{ porteur: 'doran', cible: 2 }]);
   });
 
   it('une ancienne sauvegarde avec un Porteur posté reçoit une séance offerte', () => {
     const j = pret();
     j.porteurs.doran!.poste = 'noyau';
-    delete j.seance;
+    delete j.seances;
     accorderSeance(j);
-    expect(j.seance).toMatchObject({ porteur: 'doran', cible: 2, energie: 0 });
+    expect(j.seances).toMatchObject([{ porteur: 'doran', cible: 2, energie: 0 }]);
   });
 
   it('la Tour montre le plafond d’entraînement au niveau suivant', () => {

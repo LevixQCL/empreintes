@@ -250,6 +250,17 @@
 .te-qui .jauge{margin-top:3px}
 .te-temps{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--fb-or);font-variant-numeric:tabular-nums}
 .te-actions{display:flex;gap:8px;margin-top:8px}
+/* plusieurs places (28 octobre 2026) : une ligne par Porteur dans la même salle */
+.te-salle.multi .te-contenu{flex-direction:column;align-items:stretch;gap:10px}
+.te-occ{display:flex;align-items:center;gap:12px;width:100%}
+.te-salle.multi .te-occ+.te-occ{padding-top:10px;border-top:1px solid rgba(255,255,255,.08)}
+.te-salle.multi .te-qui strong{font-size:18px}
+.te-occ .te-niv{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.te-stop{flex:none;min-height:40px;padding:0 12px;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:13px}
+.te-stop small{font-family:var(--mono);font-size:12px;color:var(--fb-or)}
+.te-stop.prim{flex-direction:row;gap:6px}
+.te-place{display:flex;align-items:center;gap:6px;margin:0;padding:8px 10px;border:1px dashed rgba(255,255,255,.18);border-radius:8px;font-size:12.5px;color:var(--fb-doux)}
+.te-place .ico{width:14px;height:14px;color:var(--fb-glace,#9BD6F0)}
 .te-actions .btn{flex:1;min-height:42px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .te-actions .btn.prim{flex:1.6}
 .te-actions small{font-family:var(--mono);font-size:12px;color:var(--fb-or)}

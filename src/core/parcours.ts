@@ -15,7 +15,7 @@ import {
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
   enMission, envoyerMission, destinationsDuJour, destinationsPrises, epreuvesDeLaSemaine, fouiller, partirEpreuve,
   chargeMax, niveauPorteur, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick,
-  coutRefabrication, type Jeu, type Poste,
+  coutRefabrication, placesEntrainement, seancesDe, type Jeu, type Poste,
 } from './jeu';
 import { jouerTour, jouerTourMoyen } from './robot';
 // (les creuseurs se gagnent par les fouilles, missions et Épreuves que joue déjà ce joueur simulé)
@@ -122,7 +122,7 @@ function preparer(j: Jeu): string[] {
   for (const id of libres) {
     const prises = destinationsPrises(j, j.dernierTick);
     const nauf = destinationsDuJour(j.dernierTick).find((d) => d.butin === 'naufrages' && !prises.includes(d.cle));
-    if (!envoyerMission(j, id, 'longue', j.dernierTick, nauf?.cle).ok && !posteDe(j, 'noyau')) poster(j, id, 'noyau');
+    if (!envoyerMission(j, id, 'longue', j.dernierTick, nauf?.cle).ok && seancesDe(j).length < placesEntrainement(j)) poster(j, id, 'noyau');
   }
   return escouade;
 }
