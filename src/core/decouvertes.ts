@@ -3,7 +3,7 @@
 // avec un conseil concret. Une seule fois par partie : ce qui a été vu est gardé dans `Jeu.decouvertes`.
 // Aucun DOM ici : l'écran affiche la découverte que renvoie `decouverteEnAttente`.
 
-import { ECLATS, eclatsPossibles, enGroupe, felureVisible, tousEnnemis, traitsActifs } from './combat';
+import { ECLATS, PHASES3, eclatsPossibles, enGroupe, felureVisible, tousEnnemis, traitsEnJeu } from './combat';
 import { CONDITIONS, ennemiDef, texteTrait } from './donnees';
 import type { CombatEtat, Trait } from './types';
 
@@ -26,6 +26,7 @@ const CONSEILS_TRAITS: Record<Trait['type'], string> = {
   essaim: 'Il revient plus petit quand il tombe : garde de quoi finir le rejeton.',
   vengeur: 'Si tu abats son allié, il frappera double au tour suivant : protège-toi, ou abats-le en premier.',
   furie: 'Plus il est blessé, plus il frappe fort : une fois sous la moitié de ses PV, achève-le vite.',
+  assimilation: 'Il prend la lignée de la dernière carte qui le frappe : finis ta chaîne par la lignée qu’il craint le plus pour le tour suivant, et varie tes coups.',
   aspire: 'Chaque coup qui passe ton bouclier te prend 1 Flux : bloque-le entièrement, ou dépense ton Flux avant qu’il ne frappe.',
 };
 
@@ -72,11 +73,21 @@ export function decouvertesDuCombat(s: CombatEtat): Decouverte[] {
   for (const en of tousEnnemis(s)) {
     if (en.simple || en.pv <= 0) continue;
     const d = ennemiDef(en.id);
-    for (const t of traitsActifs(en) ? d.traits ?? [] : []) {
+    for (const t of traitsEnJeu(en)) {
       // la Furie s'explique quand elle s'allume (sous la moitié des PV), pas avant
       if (t.type === 'furie' && en.pv > en.pvMax / 2) continue;
       const x = texteTrait(t);
       r.push({ id: `trait-${t.type}`, sur: 'TRAIT D’ENNEMI', titre: x.nom, texte: `${d.nom} : ${x.texte}`, conseil: CONSEILS_TRAITS[t.type], ennemi: d.id });
+    }
+    // 3ᵉ phase (28 octobre 2026) : une découverte par variante
+    if (en.phase3Active && en.phase3) {
+      const p = PHASES3[en.phase3];
+      const renfort = ennemiDef(d.phase?.renforts?.[0] ?? 'remanent').nom;
+      r.push({
+        id: `phase3-${en.phase3}`, sur: 'GARDIEN · DERNIÈRE PHASE', titre: `${d.nom} : ${p.nom}`,
+        texte: `${p.texte(d.nom, renfort)} Au dernier quart de ses PV, un gardien des Strates profondes change encore : sa dernière phase n’est pas toujours la même.`,
+        conseil: p.conseil, ennemi: d.id,
+      });
     }
     if (en.phase2 && d.phase) {
       r.push({

@@ -146,12 +146,15 @@ export interface Geste extends GesteDef {
 /** 'hasard', 'faible', une lignée, ou l'id d'un Porteur précis */
 export type CibleRegle = 'hasard' | 'faible' | Lignee | (string & {});
 
-type IntentionDef =
+export type IntentionDef =
   | { type: 'atk'; nom: string; v: number; cible?: CibleRegle; zone?: boolean }
-  | { type: 'bouclier'; v: number }
+  /** allie : le bouclier va à un allié (soutiens d'un gardien en 3ᵉ phase) */
+  | { type: 'bouclier'; v: number; allie?: boolean }
   | { type: 'boost' }
-  /** se répare : regagne des PV */
-  | { type: 'soin'; nom: string; v: number }
+  /** se répare : regagne des PV (allie : soigne un allié à la place, 28 octobre 2026) */
+  | { type: 'soin'; nom: string; v: number; allie?: boolean }
+  /** appelle un renfort (gardien invocateur, 3ᵉ phase) */
+  | { type: 'appel'; nom: string; rompu?: boolean }
   /** brouille les Fréquences : la prochaine chaîne du joueur ne fait pas de Résonance */
   | { type: 'dissonance'; nom: string };
 
@@ -176,7 +179,13 @@ export type Trait =
   | { type: 'vengeur' }
   | { type: 'furie' }
   /** Aspiration (25 octobre 2026) : quand son coup passe le bouclier, il prend du Flux à l'escouade */
-  | { type: 'aspire'; v: number };
+  | { type: 'aspire'; v: number }
+  /** Assimilation (28 octobre 2026, idée de Luc) : à la fin de ta chaîne, il prend la lignée de la dernière carte qui l'a frappé */
+  | { type: 'assimilation' };
+
+/** Les quatre 3ᵉ phases d'un gardien (28 octobre 2026, idées de Luc) */
+export type VariantePhase = 'front' | 'garde' | 'deferlement' | 'appel';
+export type RoleEnnemi = 'front' | 'soutien' | 'invocateur' | 'assaut';
 
 export interface EnnemiDef {
   id: string;
@@ -229,6 +238,18 @@ export interface EnnemiEtat {
   /** Fêlure (25 octobre 2026) : la Fréquence qui brise son intention ce tour-ci, et si elle a déjà été brisée */
   felure?: number;
   felureBrisee?: boolean;
+  /** Assimilation : la lignée qu'il a prise (à la place de la sienne) ; `frappe` = la dernière lignée qui l'a frappé dans la chaîne */
+  assimile?: Lignee;
+  frappe?: Lignee;
+  /** avant REGLES.apparition.assimilation : l'Assimilation dort */
+  sansAssimilation?: boolean;
+  /** gardien : la 3ᵉ phase qu'il gardera sous REGLES.troisiemePhase.seuil (tirée au début du combat), et si elle est ouverte */
+  phase3?: VariantePhase;
+  phase3Active?: boolean;
+  /** Déferlement : multiplicateur de ses attaques, qui monte à chaque tour */
+  crescendo?: number;
+  /** un rôle qui remplace ses gestes (3ᵉ phase d'un gardien) : voir MOTIFS_ROLE dans combat.ts */
+  role?: RoleEnnemi;
   /** garde d'un archipel pillé : le Porteur de la garnison dont il prend le visage et le nom */
   porteur?: string;
 }

@@ -415,12 +415,16 @@ export function conditionDe(strate: number, rng: number, salleId: number, type: 
 
 /**
  * Les mécaniques de combat présentes à cette Strate (REGLES.apparition, 28 octobre 2026) : à la −1 les bases seules,
- * puis la Fêlure (et les phases des gardiens), puis les traits des ennemis. Groupes et conditions se règlent au tirage de la salle.
+ * puis la Fêlure (et les phases des gardiens), puis les traits des ennemis, l'Assimilation (−6) et la 3ᵉ phase des gardiens (−7). Groupes et conditions se règlent au tirage de la salle.
  */
-function mecaniques(strate: number): { traits?: false; traitsEnnemis?: false } {
+function mecaniques(strate: number): { traits?: false; traitsEnnemis?: false; assimilation?: false; troisiemePhase?: true } {
   if (strate < REGLES.apparition.felure) return { traits: false };
   if (strate < REGLES.apparition.traits) return { traitsEnnemis: false };
-  return {};
+  // puis l'Assimilation, puis la 3ᵉ phase des gardiens (28 octobre 2026)
+  return {
+    ...(strate < REGLES.apparition.assimilation ? { assimilation: false as const } : {}),
+    ...(strate >= REGLES.apparition.troisiemePhase ? { troisiemePhase: true as const } : {}),
+  };
 }
 
 /** Ouvre un combat dans la salle courante */

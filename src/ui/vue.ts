@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, estGardien, feluresPrevues, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer, traitsActifs, avantageAnnonce } from '../core/combat';
+import { ECLATS, estGardien, feluresPrevues, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer, traitsEnJeu, avantageAnnonce, ligneeEnnemi, nomPhase } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
@@ -272,7 +272,7 @@ const NOMS_SALLE: Record<TypeSalle, string> = {
 };
 
 /** Ce que prépare l'ennemi, sans chiffre ni cible (le brouillard laisse voir ça) */
-const GENRE_INTENTION: Record<string, string> = { atk: 'Va attaquer', bouclier: 'Va se protéger', soin: 'Va se réparer', boost: 'Se concentre', dissonance: 'Va brouiller tes Fréquences' };
+const GENRE_INTENTION: Record<string, string> = { atk: 'Va attaquer', bouclier: 'Va se protéger', soin: 'Va se réparer', boost: 'Se concentre', dissonance: 'Va brouiller tes Fréquences', appel: 'Va appeler un renfort' };
 
 function feuilleFuite(e: Ecran): string {
   const x = e.x;
@@ -411,8 +411,9 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
       // le nom n'est plus écrit : le portrait suffit, et la marque sur sa carte dit le reste (27 octobre 2026)
       quoi = im ? `<span class="int-qui">${`<img src="${im}" alt="" style="--c:${COULEUR[d.lignee]}">`}</span>` : echap(d.nom);
     } else quoi = '?';
-  } else if (it.type === 'bouclier') { nom = 'Se protège'; quoi = 'Bouclier'; val = `+${it.v}`; unite = 'bouclier'; }
-  else if (it.type === 'soin') { nom = it.nom; quoi = 'Se répare'; val = `+${it.v}`; unite = 'PV'; }
+  } else if (it.type === 'bouclier') { nom = it.allie ? 'Couvre un allié' : 'Se protège'; quoi = 'Bouclier'; val = `+${it.v}`; unite = 'bouclier'; }
+  else if (it.type === 'soin') { nom = it.nom; quoi = it.allie ? 'Soigne un allié' : 'Se répare'; val = `+${it.v}`; unite = 'PV'; }
+  else if (it.type === 'appel') { nom = it.nom; quoi = it.rompu ? 'Appel rompu' : 'Un renfort va surgir'; }
   else if (it.type === 'boost') { nom = 'Se concentre'; quoi = 'Prochaine attaque'; val = '×2'; unite = 'dégâts'; }
   else { nom = it.nom; quoi = 'Pas de Résonance au tour suivant'; }
   return `<div class="intention plaque-int ${classe}" aria-live="polite" aria-label="${echap(texteIntention(s))}">`
@@ -525,7 +526,6 @@ function vignettesGroupe(e: Ecran): string {
   const verrou = e.verrou || s.issue !== 'en-cours';
   const avecGardien = tousEnnemis(s).some((en) => estGardien(en.id));
   return `<div class="groupe-ennemis${avecGardien ? ' avec-gardien' : ''}" role="group" aria-label="Le groupe : touche un ennemi pour le viser">` + tousEnnemis(s).map((en) => {
-    const d = ennemiDef(en.id);
     const it = intentionDe(s, en);
     const vise = en === s.ennemi;
     const tombe = en.pv <= 0;
@@ -534,10 +534,10 @@ function vignettesGroupe(e: Ecran): string {
     const val = cache ? (it.type === 'dissonance' ? '' : '?') : it.type === 'atk' ? String(Math.round(it.v * puissance(en) * usureCombat(s).attaque)) : it.type === 'bouclier' || it.type === 'soin' ? String(it.v) : it.type === 'boost' ? '×2' : '';
     const cls = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
     const ico = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
-    const traits = (!traitsActifs(en) ? [] : d.traits ?? []).map((t) => texteTrait(t).nom);
+    const traits = traitsEnJeu(en).map((t) => texteTrait(t).nom);
     const nom = nomEnnemi(en);
     const label = tombe ? `${nom}, vaincu` : `${vise ? 'Visé : ' : 'Viser '}${nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? `${GENRE_INTENTION[it.type]}, force et cible cachées par le brouillard.` : texteIntention(s, en)}`;
-    return `<button type="button" class="vignette-ennemi l-${d.lignee}${estGardien(en.id) ? ' gardien' : ''}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
+    return `<button type="button" class="vignette-ennemi l-${ligneeEnnemi(en)}${estGardien(en.id) ? ' gardien' : ''}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
       + (ill ? `<img src="${ill}" alt="" decoding="async">` : '<span class="vg-sans"></span>')
       + (tombe ? '' : `<span class="vg-int ${cls}${cache ? ' brume' : ''}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)
       + (tombe || cache || !en.felure ? '' : !felureVisible(en) ? `<span class="vg-felure" aria-hidden="true">${ICO.fele}<b>?</b></span>` : `<span class="vg-felure${en.felureBrisee ? ' brisee' : feluresPrevues(s).has(en) ? ' prevue' : ''}" style="--fc:${couleurFrequence(en.felure)}" aria-hidden="true">${ICO.fele}<b>${en.felure}</b></span>`)
@@ -566,8 +566,13 @@ function vieGardien(e: Ecran): string {
   const cran = ph && !en.simple
     ? `<img class="vg-cran${en.phase2 ? ' franchi' : en.pv / en.pvMax <= ph.seuil + 0.12 ? ' proche' : ''}" src="${artGardien('cran')}" alt="" style="--s:${ph.seuil}" title="${en.phase2 ? 'Seconde phase en cours' : 'Seuil de la seconde phase'}">`
     : '';
+  // 3ᵉ phase (28 octobre 2026) : un second cran, au dernier quart
+  const s3 = REGLES.troisiemePhase.seuil;
+  const cran3 = en.phase3 && !en.simple
+    ? `<img class="vg-cran${en.phase3Active ? ' franchi' : en.phase2 && en.pv / en.pvMax <= s3 + 0.12 ? ' proche' : ''}" src="${artGardien('cran')}" alt="" style="--s:${s3}" title="${en.phase3Active ? 'Dernière phase en cours' : 'Seuil de la dernière phase'}">`
+    : '';
   return `<div class="vie-ennemi vie-gardien"><span class="vg-barre" style="--cadre:url(${artGardien('barre')})">`
-    + `<span class="vg-rainure">${jauge('je', en.pv, en.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: en.bouclier })}</span>${cran}</span>`
+    + `<span class="vg-rainure">${jauge('je', en.pv, en.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: en.bouclier })}</span>${cran}${cran3}</span>`
     + `<span class="je-valeur"><b>${en.pv}</b><small>/ ${en.pvMax}</small></span></div>`;
 }
 
@@ -581,7 +586,8 @@ function htmlEcranCombat(e: Ecran): string {
   ETAT = s;
   const def = ennemiDef(s.ennemi.id);
   const it = s.intention;
-  const faible = BATTU_PAR[def.lignee];
+  const lig = ligneeEnnemi(s.ennemi);
+  const faible = BATTU_PAR[lig];
   // Fréquences brouillées : la suite ne compte pas (même règle que le moteur), ni badge ni multiplicateur affiché
   const brut = analyserChaine(s.chaine);
   const a = s.dissonance || s.sansResonance ? { ...brut, suite: 0, mult: 1 } : brut;
@@ -655,23 +661,29 @@ function htmlEcranCombat(e: Ecran): string {
     + `<div class="boutons-barre">${peutFuir(e.x) && s.issue === 'en-cours' ? `<button type="button" class="btn-fuir" data-action="fuir" aria-expanded="${!!e.fuite}" aria-label="Fuir le combat"${verrou ? ' disabled' : ''}>${ICO.retour}<span>Fuir</span></button>` : ''}<button type="button" class="btn-icone" data-action="son" aria-pressed="${sonActif()}" aria-label="${sonActif() ? 'Couper le son' : 'Activer le son'}">${sonActif() ? ICONE_SON : ICONE_MUET}</button>`
     + `<button type="button" class="btn-icone" data-action="regles" aria-expanded="${e.regles}" aria-label="Règles">${ICO.aide}</button></div></header>`;
 
-  const marques = (traitsActifs(s.ennemi) && def.traits?.length ? def.traits.map((t) => { const x = texteTrait(t); return `<span class="trait" tabindex="0" title="${echap(x.texte)}" aria-label="${echap(`${x.nom} : ${x.texte}`)}">${echap(x.nom)}</span>`; }).join('') : '')
+  const enJeuTraits = traitsEnJeu(s.ennemi);
+  // l'Assimilation dit la lignée prise, dans sa couleur (28 octobre 2026) : on voit le changement sans lire le journal
+  const marques = (enJeuTraits.length ? enJeuTraits.map((t) => {
+    const x = texteTrait(t);
+    const pris = t.type === 'assimilation' && s.ennemi.assimile ? NOMS_LIGNEE[s.ennemi.assimile].court : '';
+    return `<span class="trait${pris ? ' assimile' : ''}" tabindex="0" title="${echap(x.texte)}" aria-label="${echap(`${x.nom}${pris ? ` (devenu ${pris})` : ''} : ${x.texte}`)}"${pris ? ` style="--c:${COULEUR[s.ennemi.assimile!]}"` : ''}>${echap(x.nom)}${pris ? ` · ${echap(pris)}` : ''}</span>`;
+  }).join('') : '')
     + (s.ennemi.bouclier ? `<span class="etat garde">${ICO.bouclier}${s.ennemi.bouclier}</span>` : '')
     + (s.ennemi.fissure ? `<span class="etat fissure" tabindex="0" title="Fissure : il subit ${Math.round(s.ennemi.fissure * 100)} % de dégâts en plus">${ICO.fele}Fissure +${Math.round(s.ennemi.fissure * 100)} % dégâts</span>` : '');
 
   // la scène de l'ennemi
   // un gardien (27 octobre 2026) : son nom dans une plaque peinte, sa vie dans une barre ornée avec le cran de sa seconde phase
   const gardien = estGardien(def.id) && !s.ennemi.porteur;
-  h += `<section class="scene-ennemi l-${def.lignee}${gardien ? ' gardien' : ''}${enGroupe(s) ? ' en-groupe' : ''}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'};--ng:${tousEnnemis(s).length}" aria-label="Ennemi">`
+  h += `<section class="scene-ennemi l-${lig}${gardien ? ' gardien' : ''}${enGroupe(s) ? ' en-groupe' : ''}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'};--ng:${tousEnnemis(s).length}" aria-label="Ennemi">`
     + (ill ? `<img class="ennemi-art${s.issue === 'victoire' ? ' dissous' : ''}${s.ennemi.porteur ? ' garde' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
     + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
     + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
 
     + vignettesGroupe(e)
     + plaqueIntention(s, classeIntention, iconeIntention, felureHtml)
-    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[def.lignee]}">${echap(e.x.fleche ? `GARDIENS · QUAI ${e.x.fleche.quai}` : e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
-    + (gardien ? plaqueGardien(def.nom, s.ennemi.phase2 && def.phase ? def.phase.nom : '')
-      : `<h2 class="ennemi-nom">${echap(nomEnnemi(s.ennemi))}${s.ennemi.phase2 && def.phase ? ` <small class="phase">· ${echap(def.phase.nom)}</small>` : ''}</h2>`)
+    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[lig]}">${echap(e.x.fleche ? `GARDIENS · QUAI ${e.x.fleche.quai}` : e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
+    + (gardien ? plaqueGardien(def.nom, nomPhase(s.ennemi))
+      : `<h2 class="ennemi-nom">${echap(nomEnnemi(s.ennemi))}${nomPhase(s.ennemi) ? ` <small class="phase">· ${echap(nomPhase(s.ennemi))}</small>` : ''}</h2>`)
     // les traits et les états passagers (bouclier, Fissure) sur la même ligne : la scène reste basse sur téléphone
     + (marques ? `<div class="traits">${marques}</div>` : '')
     + (gardien ? vieGardien(e)

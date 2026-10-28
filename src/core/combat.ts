@@ -6,8 +6,8 @@ import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives,
 import { tireur } from './rng';
 import { NOMS_EFFET } from './effets';
 import type {
-  BonusMarques, CalculHisto, CarteHisto, CibleRegle, CombatEtat, Effet, EnnemiEtat, Evenement, Geste, GesteDef, Intention, Lignee, LigneeGeste,
-  LigneHisto, Pas, PorteurEtat, TourHisto, Trait,
+  BonusMarques, CalculHisto, CarteHisto, CibleRegle, CombatEtat, Effet, EnnemiEtat, Evenement, Geste, GesteDef, Intention, Lignee, LigneeGeste, RoleEnnemi, VariantePhase,
+  IntentionDef, LigneHisto, Pas, PorteurEtat, TourHisto, Trait,
 } from './types';
 
 export interface Resultat {
@@ -51,6 +51,10 @@ export function creerCombat(opts: {
   traitsEnnemis?: boolean;
   /** PV au même rythme que les coups (les pillages, réglés à part sur la force des garnisons) */
   pvPleins?: boolean;
+  /** false : l'Assimilation dort (avant REGLES.apparition.assimilation) */
+  assimilation?: boolean;
+  /** true : les gardiens gardent une 3ᵉ phase (à partir de REGLES.apparition.troisiemePhase) */
+  troisiemePhase?: boolean;
 }): CombatEtat {
   const e = ennemiDef(opts.ennemiId);
   const groupe = [opts.ennemiId, ...(opts.escorte ?? [])];
@@ -61,7 +65,7 @@ export function creerCombat(opts: {
   const etat = (id: string, rang: number): EnnemiEtat => {
     const d = ennemiDef(id);
     const pv = Math.round(d.pvMax * pvForce);
-    return { id, pv, pvMax: pv, force, bouclier: 0, etape: rang, boost: 1, ...(groupe.length > 1 ? { rang } : {}), ...(opts.traits === false ? { simple: true } : {}), ...(opts.traitsEnnemis === false ? { sansTraits: true } : {}) };
+    return { id, pv, pvMax: pv, force, bouclier: 0, etape: rang, boost: 1, ...(groupe.length > 1 ? { rang } : {}), ...(opts.traits === false ? { simple: true } : {}), ...(opts.traitsEnnemis === false ? { sansTraits: true } : {}), ...(opts.assimilation === false ? { sansAssimilation: true } : {}) };
   };
   const s: CombatEtat = {
     porteurs: clone(opts.porteurs),
@@ -97,6 +101,10 @@ export function creerCombat(opts: {
   if (b?.chitine) s.chitine = b.chitine;
   if (b?.felureFlux) s.felureFlux = b.felureFlux;
   if (b?.fissure) { s.ennemi.fissure = b.fissure; s.ennemi.fissureTours = 2; }
+  // 3ᵉ phase (28 octobre 2026) : tirée à part du hasard du combat (le reste du combat ne change pas), gardée secrète jusqu'au seuil
+  if (opts.troisiemePhase && opts.traits !== false) {
+    for (const en of tousEnnemis(s)) if (ennemiDef(en.id).phase) en.phase3 = VARIANTES[((opts.rng >>> 7) + (en.rang ?? 0)) % VARIANTES.length]!;
+  }
   for (const en of tousEnnemis(s)) choisirIntention(s, en);
   // Ombre courtoise (Aurel) : la première attaque annoncée de chaque ennemi est retenue
   if (b?.desarme) for (const en of tousEnnemis(s)) { const it = intentionDe(s, en); if (it.type === 'atk') it.v = Math.round(it.v * (1 - b.desarme)); }
@@ -129,16 +137,81 @@ export const pvProfondeur = (force: number) => Math.max(PV_PROFONDEUR.plancher, 
 
 /** Le trait d'un ennemi, s'il l'a */
 export function trait<T extends Trait['type']>(en: EnnemiEtat, type: T): Extract<Trait, { type: T }> | undefined {
-  if (!traitsActifs(en)) return undefined;
+  if (!traitsActifs(en) || (type === 'assimilation' && en.sansAssimilation)) return undefined;
   return ennemiDef(en.id).traits?.find((t) => t.type === type) as Extract<Trait, { type: T }> | undefined;
 }
 /** Furie : sous la moitié de ses PV, un ennemi frappe 30 % plus fort */
 export const FURIE = 1.3;
 /** L'ennemi joue-t-il avec ses traits ? (pas à la Strate −1, ni avant REGLES.apparition.traits) */
 export const traitsActifs = (en: EnnemiEtat) => !en.simple && !en.sansTraits;
+/** Les traits qu'un ennemi a vraiment dans ce combat (l'Assimilation dort avant REGLES.apparition.assimilation) */
+export const traitsEnJeu = (en: EnnemiEtat): Trait[] =>
+  (traitsActifs(en) ? ennemiDef(en.id).traits ?? [] : []).filter((t) => t.type !== 'assimilation' || !en.sansAssimilation);
+/** La lignée d'un ennemi en ce moment : la sienne, ou celle qu'il a assimilée */
+export const ligneeEnnemi = (en: EnnemiEtat): Lignee => en.assimile ?? ennemiDef(en.id).lignee;
+
+// ---------- La 3ᵉ phase des gardiens (28 octobre 2026, idées de Luc) ----------
+// Les deux premières phases ne changent pas ; sous REGLES.troisiemePhase.seuil de ses PV, un gardien des Strates profondes
+// prend l'une de quatre variantes, tirée au début du combat : on sait qu'il se passera quelque chose (le cran), pas quoi.
+export const VARIANTES: VariantePhase[] = ['front', 'garde', 'deferlement', 'appel'];
+export const PHASES3: Record<VariantePhase, { nom: string; texte: (gardien: string, renfort: string) => string; conseil: string }> = {
+  front: {
+    nom: 'Front commun',
+    texte: (g, r) => `${g} appelle ${r} à ses côtés : à deux, ils ne font plus qu’attaquer.`,
+    conseil: 'Plus de bouclier ni de soin en face : protège l’escouade et abats le plus faible des deux avant qu’ils ne te débordent.',
+  },
+  garde: {
+    nom: 'Garde rapprochée',
+    texte: (g, r) => `Deux ${r} accourent : ils ne frappent pas, ils soignent ${g} et le couvrent de leur bouclier.`,
+    conseil: 'Tant que sa garde tient, le gardien remonte : abats d’abord ceux qui le soignent.',
+  },
+  deferlement: {
+    nom: 'Déferlement',
+    texte: (g) => `${g} ne retient plus rien : ses coups enflent à chaque tour.`,
+    conseil: 'Chaque tour qui passe le rend plus dangereux : mise tout sur les dégâts pour le finir vite.',
+  },
+  appel: {
+    nom: 'Appel des profondeurs',
+    texte: (g, r) => `${g} cesse de frapper : il appelle ${r} et soigne les siens. Eux ne font qu’attaquer.`,
+    conseil: 'Le gardien ne frappe plus mais ses renforts reviennent sans cesse : frappe-le, lui, dès que tu peux.',
+  },
+};
+/** Les gestes d'un ennemi à qui la 3ᵉ phase donne un rôle (valeurs ×sa force, comme ses gestes à lui) */
+const MOTIFS_ROLE: Record<RoleEnnemi, IntentionDef[]> = {
+  front: [
+    { type: 'atk', nom: 'Assaut commun', v: 6, zone: true },
+    { type: 'atk', nom: 'Coup concerté', v: 10, cible: 'faible' },
+    { type: 'atk', nom: 'Coup concerté', v: 9, cible: 'hasard' },
+  ],
+  soutien: [
+    { type: 'soin', nom: 'Panser le gardien', v: 9, allie: true },
+    { type: 'bouclier', v: 7, allie: true },
+  ],
+  invocateur: [
+    { type: 'soin', nom: 'Soigner les siens', v: 18, allie: true },
+    { type: 'bouclier', v: 14, allie: true },
+  ],
+  assaut: [
+    { type: 'atk', nom: 'Assaut', v: 12, cible: 'hasard' },
+    { type: 'atk', nom: 'Curée', v: 13, cible: 'faible' },
+    { type: 'atk', nom: 'Ruée', v: 7, zone: true },
+  ],
+};
+/** Le nom de la phase en cours d'un gardien ('' en première phase) */
+export function nomPhase(en: EnnemiEtat): string {
+  if (en.phase3Active && en.phase3) return PHASES3[en.phase3].nom;
+  const ph = ennemiDef(en.id).phase;
+  return en.phase2 && ph ? ph.nom : '';
+}
+/** L'allié qu'un soutien ou un invocateur soigne ou protège : le gardien d'abord pour un soutien, sinon le plus blessé */
+function allieDe(s: CombatEtat, en: EnnemiEtat): EnnemiEtat | undefined {
+  const autres = ennemisDebout(s).filter((x) => x !== en);
+  if (en.role === 'soutien') { const g = autres.find((x) => x.phase3); if (g) return g; }
+  return autres.sort((a, b) => a.pv / a.pvMax - b.pv / b.pvMax)[0];
+}
 
 /** Ce qui multiplie les attaques d'un ennemi : sa concentration, et sa furie */
-export const puissance = (en: EnnemiEtat) => en.boost * (trait(en, 'furie') && en.pv > 0 && en.pv <= en.pvMax / 2 ? FURIE : 1);
+export const puissance = (en: EnnemiEtat) => en.boost * (trait(en, 'furie') && en.pv > 0 && en.pv <= en.pvMax / 2 ? FURIE : 1) * (en.crescendo ?? 1);
 /**
  * Combats qui s'éternisent : à partir du tour 10, les ennemis se soignent de moins en moins (plus du tout au tour 20),
  * et à partir du tour 25 leurs attaques grossissent de 10 % par tour. Aucun combat ne peut tourner en rond.
@@ -185,7 +258,9 @@ function viserSuivant(s: CombatEtat): boolean {
 
 export function texteIntention(s: CombatEtat, en: EnnemiEtat = s.ennemi): string {
   const it = intentionDe(s, en);
-  if (it.type === 'bouclier') return `Va se protéger : bouclier ${it.v}`;
+  if (it.type === 'bouclier') return it.allie ? `Va couvrir un allié : bouclier ${it.v}` : `Va se protéger : bouclier ${it.v}`;
+  if (it.type === 'appel') return `${it.nom} : va appeler un renfort`;
+  if (it.type === 'soin' && it.allie) return `${it.nom} : va soigner un allié, +${it.v} PV`;
   if (it.type === 'boost') return 'Se concentre : sa prochaine attaque fera double dégâts';
   if (it.type === 'soin') return `Va se réparer : ${it.nom} +${it.v} PV`;
   if (it.type === 'dissonance') return `${it.nom} : va brouiller tes Fréquences, pas de Résonance au tour suivant`;
@@ -274,14 +349,14 @@ export function cibler(s: CombatEtat, uid: string, porteurId?: string): Resultat
 export function avantageAnnonce(s: CombatEtat, en: EnnemiEtat = s.ennemi): number {
   const it = intentionDe(s, en);
   if (it.type !== 'atk' || it.zone || !it.cibleId) return 1;
-  return avantage(ennemiDef(en.id).lignee, porteurDef(it.cibleId).lignee);
+  return avantage(ligneeEnnemi(en), porteurDef(it.cibleId).lignee);
 }
 
 /** Ce qu'un ennemi va retirer à un Porteur s'il le frappe (0 s'il ne le vise pas) : même calcul que son vrai tour */
 function coupSur(s: CombatEtat, en: EnnemiEtat, porteurId: string): number {
   const it = intentionDe(s, en);
   if (s.ombre || it.type !== 'atk' || (!it.zone && it.cibleId !== porteurId)) return 0;
-  return Math.round(it.v * puissance(en) * usureCombat(s).attaque * avantage(ennemiDef(en.id).lignee, porteurDef(porteurId).lignee));
+  return Math.round(it.v * puissance(en) * usureCombat(s).attaque * avantage(ligneeEnnemi(en), porteurDef(porteurId).lignee));
 }
 
 /** Ce que le bouclier doit encore garder pour le protégé : les coups qui l'attendent chez les ennemis qui n'ont pas encore frappé */
@@ -531,6 +606,15 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     }
   }
   RANG = undefined;
+  // Assimilation (28 octobre 2026) : à la fin de la chaîne, il prend la lignée de la dernière carte qui l'a frappé
+  for (const en of tousEnnemis(s)) {
+    const l = en.frappe;
+    delete en.frappe;
+    if (!l || en.pv <= 0 || l === ligneeEnnemi(en)) continue;
+    en.assimile = l;
+    log(s, `${ennemiDef(en.id).nom} assimile ton dernier coup : le voilà ${NOMS_LIGNEE[l].nom}.`, { sorte: 'effet' });
+    emettre({ kind: 'effet', cible: 'escouade', texte: 'Assimilation' });
+  }
   const gain = (a.suite >= 3 ? 1 : 0) + (a.echo ? 1 : 0);
   if (gain) {
     const avant = s.flux;
@@ -679,10 +763,12 @@ function choisirCible(s: CombatEtat, regle: CibleRegle = 'hasard'): string | nul
 
 function choisirIntention(s: CombatEtat, en: EnnemiEtat) {
   const e = ennemiDef(en.id);
-  const motif = en.phase2 && e.phase ? e.phase.motif : e.motif;
+  const motif = en.role ? MOTIFS_ROLE[en.role] : en.phase2 && e.phase ? e.phase.motif : e.motif;
   const m = motif[en.etape % motif.length]!;
   en.etape++;
-  const it: Intention = { ...m };
+  // l'invocateur rappelle des renforts quand il lui en reste moins de deux debout
+  const seuls = en.role === 'invocateur' && ennemisDebout(s).filter((x) => x !== en).length < 2;
+  const it: Intention = seuls ? { type: 'appel', nom: 'Appel' } : { ...m };
   if (it.type === 'atk' || it.type === 'bouclier' || it.type === 'soin') it.v = Math.round(it.v * en.force);
   if (it.type === 'atk' && !it.zone) it.cibleId = choisirCible(s, it.cible);
   fixerIntention(s, en, it);
@@ -754,6 +840,9 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
     log(s, `${nomP} · ${quoi} : ${net} dégâts${av > 1 ? ' (avantage de lignée)' : ''}${abs ? `, ${abs} absorbés` : ''}${percant && s.ennemi.bouclier ? ', bouclier transpercé' : ''}.`,
       { sorte: 'coup', v: net, calculs: [calcul(ennemiDef(s.ennemi.id).nom, depart.base, lignes, dmg, abs, net)] });
     evs.push({ kind: 'degats', cible: 'ennemi', net, absorbe: abs, rang: s.ennemi.rang ?? 0 });
+    // Assimilation : il retient la lignée du dernier coup (appliquée à la fin de la chaîne)
+    const lg = ligneeGeste(g);
+    if (lg !== 'neutre' && trait(s.ennemi, 'assimilation')) s.ennemi.frappe = lg;
     // Épines : une part du coup revient au Porteur qui a frappé, sans jamais le mettre à terre
     const epines = trait(s.ennemi, 'epines');
     const frappeur = epines && net > 0 ? s.porteurs.find((p) => p.id === g.porteur && p.pv > 1) : undefined;
@@ -923,10 +1012,9 @@ export function effetsEnJeu(g: Pick<Geste, 'effet' | 'effet2'>, chaine: readonly
 
 /** Ce que l'ennemi visé change à un coup : triangle des lignées, Fissure, Évanescent (en facteurs), Blindé (en points retirés) */
 function facteursCoup(s: CombatEtat, g: Geste, mult: number, percant: boolean, effets: (Effet | undefined)[] = []): { facteurs: Facteur[]; blinde: number; av: number } {
-  const e = ennemiDef(s.ennemi.id);
-  const av = avantage(ligneeGeste(g), e.lignee);
+  const av = avantage(ligneeGeste(g), ligneeEnnemi(s.ennemi));
   const facteurs: Facteur[] = [];
-  if (av !== 1) facteurs.push({ nom: `Lignée : ${NOMS_LIGNEE[ligneeGeste(g)].nom} bat ${NOMS_LIGNEE[e.lignee].nom}`, m: av });
+  if (av !== 1) facteurs.push({ nom: `Lignée : ${NOMS_LIGNEE[ligneeGeste(g)].nom} bat ${NOMS_LIGNEE[ligneeEnnemi(s.ennemi)].nom}`, m: av });
   if (s.ennemi.fissure) facteurs.push({ nom: 'Fissure', m: 1 + s.ennemi.fissure });
   // Curée (Traque) : l'ennemi fissuré est achevé plus fort ; Faille (Lecture) : de même quand sa Fêlure est brisée
   // la Curée vise une proie affaiblie : fissurée, ou sous la moitié de ses PV
@@ -947,9 +1035,10 @@ function facteursEnnemi(s: CombatEtat, en: EnnemiEtat, av: number, cible: string
   const f: Facteur[] = [];
   if (en.boost !== 1) f.push({ nom: 'Concentration', m: en.boost });
   if (trait(en, 'furie') && en.pv > 0 && en.pv <= en.pvMax / 2) f.push({ nom: 'Furie', m: FURIE });
+  if (en.crescendo && en.crescendo !== 1) f.push({ nom: 'Déferlement', m: en.crescendo });
   const usure = usureCombat(s).attaque;
   if (usure !== 1) f.push({ nom: `Combat qui s’éternise (tour ${s.tour})`, m: usure });
-  if (av !== 1) f.push({ nom: `Lignée : ${NOMS_LIGNEE[ennemiDef(en.id).lignee].nom} bat ${NOMS_LIGNEE[porteurDef(cible).lignee].nom}`, m: av });
+  if (av !== 1) f.push({ nom: `Lignée : ${NOMS_LIGNEE[ligneeEnnemi(en)].nom} bat ${NOMS_LIGNEE[porteurDef(cible).lignee].nom}`, m: av });
   if (s.ombre) f.push({ nom: 'Ombre agissante', m: 0 });
   return f;
 }
@@ -1015,7 +1104,6 @@ export function coupDeFuite(s: CombatEtat): { porteurs: PorteurEtat[]; coups: { 
     const it = intentionDe(s, en);
     if (it.type !== 'atk') continue;
     const reserve = reservePour(s, protege, ennemis.slice(i + 1));
-    const e = ennemiDef(en.id);
     const debout = porteurs.filter((p) => p.pv > 0);
     let cibles: PorteurEtat[];
     if (it.zone) cibles = ordreZone(s, debout);
@@ -1024,7 +1112,7 @@ export function coupDeFuite(s: CombatEtat): { porteurs: PorteurEtat[]; coups: { 
       cibles = visee ? [visee] : debout.slice(0, 1);
     }
     for (const c of cibles) {
-      const dmg = Math.round(it.v * puissance(en) * usureCombat(s).attaque * avantage(e.lignee, porteurDef(c.id).lignee));
+      const dmg = Math.round(it.v * puissance(en) * usureCombat(s).attaque * avantage(ligneeEnnemi(en), porteurDef(c.id).lignee));
       const absorbe = Math.min(bouclierPour(bouclier, c.id, protege, reserve), dmg);
       bouclier -= absorbe;
       const net = dmg - absorbe;
@@ -1101,6 +1189,10 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
   delete s.protege;
   s.ombre = false;
   s.tour++;
+  // Déferlement : ses coups enflent à chaque tour
+  for (const en of ennemisDebout(s)) {
+    if (en.crescendo) en.crescendo = Math.min(REGLES.troisiemePhase.deferlementMax, en.crescendo + REGLES.troisiemePhase.deferlement);
+  }
   for (const en of ennemisDebout(s)) choisirIntention(s, en);
   piocher(s);
   fixerFelures(s);
@@ -1221,6 +1313,9 @@ function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void,
     const force = it.type === 'atk' ? puissance(en) * usureCombat(s).attaque : 1;
     retire = Math.round(avant * force) - Math.round(it.v * force);
     log(s, `${titre} : ${nom} vacille, ${it.type === 'atk' ? 'son attaque' : it.type === 'bouclier' ? 'son bouclier' : 'son soin'} passe de ${avant} à ${it.v}.`, { sorte: 'effet' });
+  } else if (it.type === 'appel') {
+    it.rompu = true;
+    log(s, `${titre} : ${nom} vacille, son appel se perd dans les profondeurs.`, { sorte: 'effet' });
   } else log(s, `${titre} : ${nom} vacille, mais ce qu’il prépare ne change pas.`, { sorte: 'effet' });
   emettre({ kind: 'effet', cible: 'ennemi', texte: retire > 0 ? `${titre} −${retire}` : titre, rang: en.rang ?? 0 });
   if (!resonne) return;
@@ -1237,7 +1332,23 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
   const e = ennemiDef(en.id);
   const rang = en.rang ?? 0;
   en.bouclier = 0;
-  if (it.type === 'bouclier') {
+  const allie = (it.type === 'soin' || it.type === 'bouclier') && it.allie ? allieDe(s, en) : undefined;
+  if (it.type === 'appel' && it.rompu) {
+    log(s, `${e.nom} · ${it.nom} : personne ne répond, la Fêlure a rompu l’appel.`, { sorte: 'info' });
+  } else if (it.type === 'appel') {
+    const r = ennemiDef(en.id).phase?.renforts?.[0] ?? 'remanent';
+    log(s, `${e.nom} · ${it.nom} : un renfort surgit des profondeurs.`, { sorte: 'info' });
+    invoquer(s, r, REGLES.troisiemePhase.renfort, emettre, 'assaut');
+  } else if (it.type === 'bouclier' && allie) {
+    allie.bouclier += it.v;
+    log(s, `${e.nom} couvre ${ennemiDef(allie.id).nom} : bouclier ${it.v}.`, { sorte: 'ennemi-garde', v: it.v });
+    emettre({ kind: 'bouclier', cible: 'ennemi', v: it.v, rang: allie.rang ?? 0 });
+  } else if (it.type === 'soin' && allie) {
+    const avant = allie.pv;
+    allie.pv = Math.min(allie.pvMax, allie.pv + Math.round(it.v * usureCombat(s).soins));
+    log(s, `${e.nom} · ${it.nom} : ${ennemiDef(allie.id).nom} +${allie.pv - avant} PV.`, { sorte: 'ennemi-soin', v: allie.pv - avant });
+    emettre({ kind: 'soin', cible: 'ennemi', v: allie.pv - avant, rang: allie.rang ?? 0 });
+  } else if (it.type === 'bouclier') {
     en.bouclier = it.v;
     log(s, `${e.nom} se protège : bouclier ${it.v}.`, { sorte: 'ennemi-garde', v: it.v });
     emettre({ kind: 'bouclier', cible: 'ennemi', v: it.v, rang });
@@ -1271,7 +1382,7 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
     let total = 0;
     for (const c of cibles) {
       // Ombre agissante (Coup d'éclat des Résonants) : l'ombre retient le coup
-      const av = avantage(e.lignee, porteurDef(c.id).lignee);
+      const av = avantage(ligneeEnnemi(en), porteurDef(c.id).lignee);
       const dmg = s.ombre ? 0 : Math.round(it.v * puissance(en) * usureCombat(s).attaque * av);
       const abs = Math.min(bouclierPour(s.bouclier, c.id, protegeDe(s), RESERVE), dmg);
       s.bouclier -= abs;
@@ -1313,15 +1424,17 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
 }
 
 /** Un ennemi surgit en cours de combat (rejeton d'un essaim, renfort d'un gardien) : le combat devient un groupe */
-function invoquer(s: CombatEtat, id: string, part: number, emettre: (ev: Evenement) => void) {
+function invoquer(s: CombatEtat, id: string, part: number, emettre: (ev: Evenement) => void, role?: RoleEnnemi) {
   const tous = tousEnnemis(s);
   if (ennemisDebout(s).length >= 4) return;
   if (s.ennemi.rang === undefined) s.ennemi.rang = 0;
   s.autres ??= [];
   const rang = Math.max(...tous.map((e) => e.rang ?? 0)) + 1;
-  const force = (s.forceBase ?? s.ennemi.force) * part;
-  const pv = Math.max(1, Math.round(ennemiDef(id).pvMax * force));
-  const en: EnnemiEtat = { id, pv, pvMax: pv, force, bouclier: 0, etape: 0, boost: 1, rang, rejeton: true };
+  const base = s.forceBase ?? s.ennemi.force;
+  const pv = Math.max(1, Math.round(ennemiDef(id).pvMax * base * part));
+  // un renfort à rôle (3ᵉ phase) frappe ou soigne moins fort qu'un ennemi seul (REGLES.troisiemePhase.renfortForce)
+  const force = role ? base * REGLES.troisiemePhase.renfortForce : base * part;
+  const en: EnnemiEtat = { id, pv, pvMax: pv, force, bouclier: 0, etape: 0, boost: 1, rang, rejeton: true, ...(role ? { role } : {}) };
   s.autres.push(en);
   choisirIntention(s, en);
   log(s, `${ennemiDef(id).nom} surgit.`, { camp: 'ennemi', sorte: 'info' });
@@ -1344,6 +1457,7 @@ function tombe(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void) 
 /** Gardien à deux phases : sous son seuil de PV, il change de gestes et appelle des renforts */
 function phaseGardien(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void) {
   const ph = ennemiDef(en.id).phase;
+  if (en.phase2 && en.phase3 && !en.phase3Active && en.pv > 0 && en.pv <= en.pvMax * REGLES.troisiemePhase.seuil) return troisiemePhase(s, en, emettre);
   if (!ph || en.simple || en.phase2 || en.pv <= 0 || en.pv > en.pvMax * ph.seuil) return;
   en.phase2 = true;
   en.etape = 0;
@@ -1351,4 +1465,22 @@ function phaseGardien(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) =>
   emettre({ kind: 'phase', rang: en.rang ?? 0, id: en.id, nom: ph.nom });
   choisirIntention(s, en);
   for (const id of ph.renforts ?? []) invoquer(s, id, 0.25, emettre);
+}
+
+/** 3ᵉ phase (28 octobre 2026) : sous son dernier seuil, le gardien prend la variante tirée au début du combat */
+function troisiemePhase(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void) {
+  const v = en.phase3!;
+  const d = ennemiDef(en.id);
+  const r = d.phase?.renforts?.[0] ?? 'remanent';
+  en.phase3Active = true;
+  en.etape = 0;
+  const p = PHASES3[v];
+  log(s, `${d.nom} : ${p.nom}. ${p.texte(d.nom, ennemiDef(r).nom)}`, { camp: 'ennemi', sorte: 'info' });
+  emettre({ kind: 'phase', rang: en.rang ?? 0, id: en.id, nom: p.nom });
+  const part = REGLES.troisiemePhase.renfort;
+  if (v === 'front') { en.role = 'front'; invoquer(s, r, part, emettre, 'front'); }
+  else if (v === 'garde') { invoquer(s, r, part, emettre, 'soutien'); invoquer(s, r, part, emettre, 'soutien'); }
+  else if (v === 'deferlement') en.crescendo = 1;
+  else { en.role = 'invocateur'; invoquer(s, r, part, emettre, 'assaut'); invoquer(s, r, part, emettre, 'assaut'); }
+  choisirIntention(s, en);
 }

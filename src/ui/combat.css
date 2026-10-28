@@ -177,6 +177,8 @@
 .traits{display:flex;flex-wrap:wrap;gap:5px;margin-top:-1px}
 .trait{padding:2px 7px;font:600 10px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#ffe4c8;cursor:help;
   background:linear-gradient(180deg,rgba(120,40,30,.75),rgba(50,14,10,.85));box-shadow:inset 0 0 0 1px rgba(255,170,140,.55);border-radius:2px}
+/* Assimilation : la puce prend la couleur de la lignée assimilée (28 octobre 2026) */
+.trait.assimile{color:#fff;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 55%,transparent),rgba(20,16,30,.88));box-shadow:inset 0 0 0 1px var(--c),0 0 10px color-mix(in srgb,var(--c) 45%,transparent)}
 .ennemi-nom .phase{font-size:.55em;color:#ffb3a3;letter-spacing:.02em;text-shadow:0 0 12px rgba(255,90,70,.7)}
 .puce.condition{color:#f3dca6;box-shadow:inset 0 0 0 1px rgba(243,198,106,.6);cursor:help}
 .puce.condition .ico{color:#f3c66a}

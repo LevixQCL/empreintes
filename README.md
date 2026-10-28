@@ -151,6 +151,12 @@ Un Porteur en retard de deux niveaux sur le plus avancé apprend 1,5 fois plus v
 - *Traits des ennemis* (`traits` dans `ENNEMIS`, règles dans `combat.ts`, textes `texteTrait`) : Blindé, Régénération, Épines,
   Évanescent, Essaim, Vengeur, Furie. Dans la Strate −1, les ennemis jouent sans (`simple`) : on apprend d'abord les bases.
 - *Gardiens à deux phases* (`phase`) : sous la moitié de leurs PV, nouveaux gestes et un renfort (`invoquer`).
+- *Assimilation* (28 octobre 2026, idée de Luc ; trait `assimilation` de l'Écho de veilleur et du Double, à partir de −6) : à la fin de
+  la chaîne, l'ennemi prend la lignée de la dernière carte qui l'a frappé (`ligneeEnnemi`) ; sa puce de trait le dit dans la couleur de la lignée.
+- *3ᵉ phase des gardiens* (28 octobre 2026, idées de Luc ; à partir de −7, `REGLES.troisiemePhase`) : sous 20 % de ses PV (un second cran
+  sur sa barre), le gardien prend une variante tirée au début du combat (`VARIANTES`, `PHASES3` dans `combat.ts`) : *Front commun* (un renfort,
+  et tous deux n'attaquent plus), *Garde rapprochée* (deux soutiens qui le soignent et le couvrent), *Déferlement* (ses coups +25 % par tour,
+  plafond ×2) ou *Appel des profondeurs* (il ne frappe plus, soigne ses renforts et les rappelle quand ils tombent ; une Fêlure brise l'appel).
 - *Conditions de salle* (`CONDITIONS`, `conditionDe`) : à partir de −2, une salle de combat sur trois (un gardien sur deux) ;
   visibles sur la carte avant d'entrer.
 - *Pas de combat sans fin* (`usureCombat`) : après le tour 10 les ennemis se soignent de moins en moins, après le tour 25 ils frappent plus fort.

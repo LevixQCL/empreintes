@@ -6,8 +6,8 @@ import { traitsActifs } from '../src/core/combat';
 import { REGLES } from '../src/core/regles';
 
 describe('Les mécaniques de combat arrivent Strate après Strate', () => {
-  it('l’ordre décidé : Fêlure, puis groupes, puis traits, puis conditions', () => {
-    expect(REGLES.apparition).toEqual({ felure: 2, groupes: 3, traits: 4, conditions: 5 });
+  it('l’ordre décidé : Fêlure, puis groupes, traits, conditions, Assimilation, 3ᵉ phase des gardiens', () => {
+    expect(REGLES.apparition).toEqual({ felure: 2, groupes: 3, traits: 4, conditions: 5, assimilation: 6, troisiemePhase: 7 });
   });
   it('pas de groupe avant la Strate −3', () => {
     for (let id = 0; id < 60; id++) expect(escorteDe(2, 7, id, ['vigie'])).toEqual([]);

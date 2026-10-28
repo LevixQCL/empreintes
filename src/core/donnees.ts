@@ -373,7 +373,7 @@ export const ENNEMIS: EnnemiDef[] = [
   },
   {
     id: 'echo-veilleur', nom: 'Écho de veilleur', lignee: 'reso', tag: 'ÉCHO', pvMax: 78,
-    traits: [{ type: 'evanescent', part: 0.25 }],
+    traits: [{ type: 'evanescent', part: 0.25 }, { type: 'assimilation' }],
     motif: [
       { type: 'atk', nom: 'Griffe d’ombre', v: 12, cible: 'faible' },
       { type: 'dissonance', nom: 'Murmure' },
@@ -408,7 +408,7 @@ export const ENNEMIS: EnnemiDef[] = [
   // ---------- Les mémoires contradictoires (−7 à −9) ----------
   {
     id: 'double', nom: 'Double', lignee: 'reso', tag: 'ÉCHO DÉDOUBLÉ', pvMax: 90,
-    traits: [{ type: 'essaim', part: 0.35 }],
+    traits: [{ type: 'essaim', part: 0.35 }, { type: 'assimilation' }],
     motif: [
       { type: 'atk', nom: 'Premier souvenir', v: 12, cible: 'hasard' },
       { type: 'atk', nom: 'Second souvenir', v: 12, cible: 'hasard' },
@@ -538,6 +538,7 @@ export function texteTrait(t: import('./types').Trait): { nom: string; texte: st
     case 'essaim': return { nom: 'Essaim', texte: 'Quand il tombe, un rejeton plus petit surgit (une fois).' };
     case 'vengeur': return { nom: 'Vengeur', texte: 'Quand un allié tombe, sa prochaine attaque est doublée.' };
     case 'furie': return { nom: 'Furie', texte: 'Sous la moitié de ses PV, ses attaques font +30 %.' };
+    case 'assimilation': return { nom: 'Assimilation', texte: 'À la fin de ta chaîne, il prend la lignée de la dernière carte qui l’a frappé : ses forces et ses faiblesses changent avec elle.' };
     case 'aspire': return { nom: 'Aspiration', texte: `Si son coup passe ton bouclier, il aspire ${t.v} Flux à l’escouade. Bloque-le, ou dépense ton Flux avant.` };
   }
 }
