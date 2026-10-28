@@ -239,9 +239,9 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
     + (verrou ? '' : `<button type="button" class="eq-changer" data-action="escouade-place" data-index="${i}" aria-label="Changer ${echap(p.nom)}">${ICO.recycler}<span>Changer</span></button>`)
     + `</header>`
     + blocMarque(j, id) + alerte
-    + `<div class="eq-cartes-tete"><h3>${ICO.cartes}Ses cartes <span class="${places ? '' : 'plein'}">${nc} / ${DISTRICT.cartesMax}</span></h3>`
-    + `<button type="button" class="eq-gerer" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''}>${ICO.greffe}<span>${parti ? 'À son retour' : 'Gérer ses cartes'}</span></button></div>`
-    + jaugeCharge(chargePortee(j, id), chargeMax(j, id))
+    // la Charge et « Gérer » sur une seule ligne, juste au-dessus des cartes (28 octobre 2026)
+    + `<div class="eq-cartes-tete eq-charge-ligne">${jaugeCharge(chargePortee(j, id), chargeMax(j, id))}`
+    + `<button type="button" class="eq-gerer" data-action="deck" data-id="${id}"${parti ? ' disabled' : ''} aria-label="${parti ? 'Ses cartes changeront à son retour' : `Gérer ses cartes (${nc} sur ${DISTRICT.cartesMax})`}">${ICO.greffe}<span>${parti ? 'À son retour' : 'Gérer'}</span></button></div>`
     + `<ul class="eq-grille">${gestes.map((g) => tuileCarte(j, g, prete)).join('')}`
     // les places libres, à la taille d'une carte : on voit tout de suite ce qui manque
     + (places > 0 && !parti ? Array.from({ length: places }, (_, k) => `<li><button type="button" class="eq-tuile libre" data-action="deck" data-id="${id}" aria-label="Place libre : confier une carte${attendent ? ` (${attendent} de sa lignée attendent)` : ''}">`
