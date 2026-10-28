@@ -5,6 +5,7 @@
 import { porteurDef } from '../core/donnees';
 import { ASCENSION, chanceQuai, etatFleche, FLECHE, flecheOuverte, forceEscouade, forceQuai, gardiensQuai, pas, plancher, prochainPalier, escouadePourDepart, type Jeu } from '../core/jeu';
 import { avatar, coquille, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
+import { bloc, cle, etape, replie } from './presentation';
 import { ICO } from './icones';
 import { fondFleche } from './art';
 import { echap } from './outils';
@@ -36,7 +37,7 @@ export function htmlFleche(e: EcranDistrict): string {
   h += sommet ? sieges(true) : assaut(j, f.quai, f.record);
   h += paliers(f.quai, f.recus);
   if (!sommet) h += sieges(false);
-  h += `<p class="fl-regle">${ICO.chrono}<span>Pas de jeton : tu montes autant que tu veux. Chaque combat use l’escouade comme la moitié d’une expédition, et la Clinique la remet sur pied. Une défaite fait redescendre, jamais sous le dernier quai gravé atteint.</span></p>`;
+  h += `<p class="fl-regle">${ICO.chrono}<span>Pas de jeton : monte autant que tu veux. La Clinique soigne l’Usure entre deux assauts.</span></p>`;
   return coquille(e, h, 'fle');
 }
 
@@ -79,19 +80,20 @@ function assaut(j: Jeu, quai: number, record: number): string {
 
 /** Les quais gravés : récompense reçue, ou à gagner */
 function paliers(quai: number, recus: number[]): string {
-  return `<section class="fl-paliers" aria-label="Les quais gravés"><span class="surtitre">${ICO.cristal}Les quais gravés</span><ol>`
+  // repliés (28 octobre 2026) : le prochain quai gravé est déjà annoncé en tête, la liste complète se déplie
+  return `<details class="fl-paliers fl-repli" aria-label="Les quais gravés"><summary><span class="surtitre">${ICO.cristal}Les ${FLECHE.paliers.length} quais gravés · ${recus.length} reçu${recus.length > 1 ? 's' : ''}</span></summary><ol>`
     + [...FLECHE.paliers].reverse().map((p) => {
       const recu = recus.includes(p);
       return `<li class="${recu ? 'recu' : p <= quai ? 'atteint' : ''}"><b>${p}</b><span>${p >= FLECHE.quais ? 'Le dernier quai : l’amarrage' : 'Quai gravé'}<small>${p <= 40 ? 'on y monte de 4 en 4' : p <= 70 ? 'on y monte de 2 en 2' : 'on y monte quai par quai'}</small></span>`
         + `<em>${recu ? `${ICO.ok}Reçu` : recompense(p)}</em></li>`;
-    }).join('') + `</ol></section>`;
+    }).join('') + `</ol></details>`;
 }
 
 /** Le sommet : les Sièges, tenus par des directeurs, qui viendront avec le multijoueur */
 function sieges(atteint: boolean): string {
   return `<section class="fl-sommet${atteint ? ' atteint' : ''}"><span class="fl-sommet-ico">${ICO.porte}</span><div>`
     + `<strong>${atteint ? 'Ton escouade tient le dernier quai' : `Au sommet : les ${FLECHE.sieges} Sièges`}</strong>`
-    + `<small>Tenus par des directeurs, défendus par leur escouade. Le temps du passage d’une île : ${FLECHE.defaitesMax} défaites éliminent, ${FLECHE.victoiresDefi} victoires ouvrent le défi d’un Siège. Ils s’ouvriront avec les combats entre directeurs.</small></div></section>`;
+    + `<small>Tenus par des directeurs, ils s’ouvriront avec les combats entre directeurs.</small></div></section>`;
 }
 
 /**
@@ -100,25 +102,28 @@ function sieges(atteint: boolean): string {
  * Montrée tant que la Flèche est fermée, à la première visite, puis à la demande (bouton « ? »).
  */
 function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
-  const etape = (ico: string, titre: string, texte: string) => `<li><span class="fl-pr-ico">${ico}</span><span><strong>${titre}</strong><small>${texte}</small></span></li>`;
   return `<section class="fl-intro" style="--decor:url(${fondFleche})"><div class="fl-intro-texte">`
     + `<span class="surtitre">Clause de la Flèche · Accords de 2101</span>`
     + `<h2>La dernière route vers les Hauts</h2>`
-    + `<p>Une aiguille de laiton et de verre plantée dans la mer, si haute qu’elle traverse les nuages. Tout en haut, les îles des Hauts viennent s’y amarrer.</p></div></section>`
-
-    // allégé le 28 octobre 2026 : fermée, la condition vient tout de suite ; l'histoire et la suite se déplient à la demande
+    + `<p>Une aiguille de laiton et de verre, si haute qu’elle traverse les nuages. Les îles des Hauts viennent s’y amarrer.</p></div></section>`
     + (etat === 'fermee' ? `<p class="fl-condition">${ICO.verrou}<span><strong>Les quais sont fermés · vaincs le gardien de la Strate −6</strong><small>Une lettre scellée de cire blanche t’ouvrira les quais.</small></span></p>` : '')
-    + `<details class="fl-pr fl-repli"><summary><span class="surtitre">${ICO.codex}L’histoire</span></summary>`
-    + `<p>Les îles des Hauts ne se posent jamais : elles dérivent au-dessus de la mer et ne s’arrêtent qu’aux flèches d’amarrage. Il n’en reste qu’une debout, et ce sont les Hauts qui la tiennent.</p>`
-    + `<p>Avant 2101, les districts d’en bas montaient à l’abordage. Les Accords y ont mis fin et n’ont laissé qu’une route légale vers le haut : la Flèche, quai par quai. Tout district invité peut y envoyer une escouade.</p>`
-    + `<p>Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. Le district qui tient le sommet quand une île passe est reçu là-haut.</p></details>`
 
-    + `<section class="fl-pr"><span class="surtitre">${ICO.monter}Comment on monte</span><ul class="fl-pr-etapes">`
-    + etape(ICO.atk, 'Un combat par quai', 'Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.')
-    + etape(ICO.monter, 'Vite en bas, lentement en haut', `Une victoire fait monter de ${FLECHE.montee[0]!.quais} quais jusqu’au ${FLECHE.montee[0]!.jusqua}, de ${FLECHE.montee[1]!.quais} jusqu’au ${FLECHE.montee[1]!.jusqua}, puis d’un seul.`)
-    + etape(ICO.descendre, 'Une défaite fait redescendre', 'D’autant de quais, mais jamais sous le dernier quai gravé que tu as atteint.')
-    + etape(ICO.cristal, 'Les quais gravés', `${FLECHE.paliers.join(', ')} : chacun donne des composants et des Éclats, une seule fois. Ton record compte au Grand Tableau.`)
-    + `</ul></section>`
+    // allégé le 28 octobre 2026 : une phrase et trois chiffres, l'histoire et le détail se déplient
+    + bloc(ICO.monter, 'Comment on monte', 'Un combat par quai, autant que tu veux : seule l’Usure te freine.', [
+      cle(ICO.monter, `+${FLECHE.montee[0]!.quais} → +1`, 'quais par victoire, de moins en moins vite'),
+      cle(ICO.descendre, 'Plancher', 'jamais sous ton dernier quai gravé'),
+      cle(ICO.cristal, String(FLECHE.paliers.length), 'quais gravés à récompense'),
+    ])
+
+    + replie('L’histoire', `<p>Les îles des Hauts ne se posent jamais : elles dérivent au-dessus de la mer et ne s’arrêtent qu’aux flèches d’amarrage. Il n’en reste qu’une debout, et ce sont les Hauts qui la tiennent.</p>`
+      + `<p>Avant 2101, les districts d’en bas montaient à l’abordage. Les Accords y ont mis fin et n’ont laissé qu’une route légale vers le haut : la Flèche, quai par quai. Tout district invité peut y envoyer une escouade.</p>`
+      + `<p>Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. Le district qui tient le sommet quand une île passe est reçu là-haut.</p>`)
+    + replie('Les règles en détail', `<ul class="fl-pr-etapes">`
+      + etape(ICO.atk, 'Un combat par quai', 'Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.')
+      + etape(ICO.monter, 'Vite en bas, lentement en haut', `Une victoire fait monter de ${FLECHE.montee[0]!.quais} quais jusqu’au ${FLECHE.montee[0]!.jusqua}, de ${FLECHE.montee[1]!.quais} jusqu’au ${FLECHE.montee[1]!.jusqua}, puis d’un seul.`)
+      + etape(ICO.descendre, 'Une défaite fait redescendre', 'D’autant de quais, mais jamais sous le dernier quai gravé que tu as atteint.')
+      + etape(ICO.cristal, 'Les quais gravés', `${FLECHE.paliers.join(', ')} : chacun donne des composants et des Éclats, une seule fois. Ton record compte au Grand Tableau.`)
+      + `</ul>`, ICO.aide)
 
     + `<details class="fl-pr fl-pr-bientot fl-repli"><summary><span class="surtitre">${ICO.bouclier}Bientôt · tenir un quai <em>à venir</em></span></summary>`
     + `<p>Les Hauts préfèrent payer un directeur qui tient bon qu’un gardien de location. Bientôt, ton escouade pourra s’arrêter sur un quai qu’elle vient de prendre et en devenir le gardien.</p><ul class="fl-pr-etapes">`

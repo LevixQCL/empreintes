@@ -7,8 +7,9 @@
 // - direction artistique : plus de cartouches ni de plaques à coins coupés, plus de balayage ni de couronne d'ornement ;
 //   deux accents seulement : glace pour les salles où l'on peut aller, or pour le chemin parcouru et le butin ;
 //   le rouge doux ne marque que le gardien. Les ennemis des routes sont montrés en grand (portraits 3:4 qui se fondent) ;
-// - UX : « Où aller ? » dit ce que chaque salle rapporte et coûte en vrais chiffres (PV de l'ennemi, composants,
+// - UX : la fiche d'une salle dit ce qu'elle rapporte et coûte en vrais chiffres (PV de l'ennemi, composants,
 //   PV rendus au campement), la sortie possible est chiffrée, le butin ne s'affiche qu'une fois.
+// 28 octobre 2026 : plus de liste « Où aller ? » ; on choisit sur le plan, la fiche s'ouvre en bas.
 
 import { accessibles, butinCombat, forceStrate, peutRemonter, rangsDe, salleCourante, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
 import { paroleDescente } from '../core/campagne';
@@ -77,8 +78,6 @@ const titreGroupe = (s: Salle) => {
   const n = [s.ennemi!, ...(s.escorte ?? [])].map((id) => ennemiDef(id).nom);
   return n.length > 1 ? `${n.slice(0, -1).join(', ')} et ${n[n.length - 1]}` : n[0]!;
 };
-/** où se trouve chaque chemin sur le plan, pour relier la liste et la carte (27 octobre 2026) */
-const COTES: Record<number, string[]> = { 2: ['À gauche', 'À droite'], 3: ['À gauche', 'Au centre', 'À droite'] };
 const composantsSalle = (strate: number) => Math.round(8 * (1 + 0.25 * (strate - 1)));
 
 /** les PV réels des ennemis d'une salle (même calcul que le moteur : force de la Strate, renfort, part du groupe) */
@@ -137,12 +136,19 @@ function paroleEscouade(x: Expedition): string {
     + `<p><strong>${echap(d.nom)}</strong>${echap(p.texte)}</p></div>`;
 }
 
-export function htmlExploration(j: Jeu): string {
+/**
+ * Choisir son chemin sur le plan lui-même (28 octobre 2026, revue : « Où aller ? » était une liste de texte) :
+ * on touche une salle qui brille, une fiche s'ouvre en bas (ce qui attend l'escouade, en vrais chiffres) avec « Entrer ».
+ * `choisie` : la salle touchée ; s'il n'y a qu'un chemin, il est choisi d'office.
+ */
+export function htmlExploration(j: Jeu, choisie?: number): string {
   const x = j.expedition as Expedition;
   const c = x.carte!;
   const ici = salleCourante(x);
   const voisines = new Set(accessibles(x).map((s) => s.id));
   const libre = !x.rencontre && x.phase === 'carte' && !x.terminee;
+  const routes = libre ? accessibles(x) : [];
+  const vue = routes.find((s) => s.id === choisie) ?? (routes.length === 1 ? routes[0] : undefined);
   const zone = ZONES[c.zone]!;
   const rangs = rangsDe(c);
   const decor = decorStrate(x.strate);
@@ -208,7 +214,7 @@ export function htmlExploration(j: Jeu): string {
   for (const s of c.salles) {
     const acces = voisines.has(s.id) && libre;
     const etat = s.id === ici.id ? 'ici' : acces ? 'accessible' : s.faite ? 'faite' : perdue(s) ? 'perdue' : 'loin';
-    const classes = `ex-salle t-${s.type} ${etat}`;
+    const classes = `ex-salle t-${s.type} ${etat}${vue?.id === s.id ? ' choisie' : ''}`;
     const label = `${s.condition && CONDITIONS[s.condition] ? `${CONDITIONS[s.condition]!.nom} · ` : ''}${NOMS[s.type]}${s.escorte?.length ? ` : un groupe (${nomsGroupe(s)})` : s.ennemi ? ` : ${ennemiDef(s.ennemi).nom}` : ''}${etat === 'ici' ? ' (tu es ici)' : s.faite ? ' (visitée)' : ''}`;
     let dedans = medaillon(s);
     if (s.type === 'elite') dedans += `<span class="ex-badge sceau" aria-hidden="true">${ICO.verrou}</span>`;
@@ -218,7 +224,7 @@ export function htmlExploration(j: Jeu): string {
     dedans += `<span class="ex-nom">${echap(nom)}</span>`;
     const style = `left:${posX(s).toFixed(2)}%;top:${posY(s).toFixed(2)}%`;
     h += acces
-      ? `<button type="button" class="${classes}" style="${style}" data-action="salle" data-id="${s.id}" aria-label="Aller : ${echap(label)}">${dedans}</button>`
+      ? `<button type="button" class="${classes}" style="${style}" data-action="salle-voir" data-id="${s.id}" aria-pressed="${vue?.id === s.id}" aria-label="Voir : ${echap(label)}">${dedans}</button>`
       : `<span class="${classes}" style="${style}" role="img" aria-label="${echap(label)}" title="${echap(label)}">${dedans}</span>`;
   }
   h += `</div></section>`;
@@ -241,24 +247,22 @@ export function htmlExploration(j: Jeu): string {
   } else {
     h += paroleEscouade(x);
     if (x.recit) h += `<p class="ex-recit">${echap(x.recit)}</p>`;
-    if (libre) {
-      // même ordre que le plan : de gauche à droite (avant, l'ordre des couloirs du générateur, sans rapport avec la carte)
-      const routes = [...accessibles(x)].sort((a, b) => posX(a) - posX(b));
-      const cotes = COTES[routes.length];
-      h += `<div class="ex-routes"><h2 class="ex-titre">${routes.length > 1 ? `Où aller ? <small>${routes.length} chemins</small>` : 'La suite'}</h2>`;
-      routes.forEach((s, k) => {
-        const a = annonce(s, x);
-        const cote = cotes?.[k] ?? (routes.length > 1 ? `Chemin ${k + 1}` : '');
-        const cond = s.condition && CONDITIONS[s.condition] ? CONDITIONS[s.condition]! : null;
-        h += `<button type="button" class="ex-route t-${s.type}" data-action="salle" data-id="${s.id}">`
-          + visuel(s)
-          + `<span class="ex-route-txt"><span class="ex-sur">${cote ? `<b class="ex-cote">${cote}</b> · ` : ''}${echap(a.sur)}</span><strong>${echap(a.titre)}</strong>`
-          + (a.texte ? `<em>${echap(a.texte)}</em>` : '')
-          + (a.faits.length ? `<span class="ex-faits">${a.faits.map((f) => `<span>${f}</span>`).join('')}</span>` : '')
-          + (cond ? `<span class="ex-condition">${iconeCondition(cond.id) ? `<img class="ex-cond-ico" src="${iconeCondition(cond.id)}" alt="" decoding="async">` : ICO.cristal}<span><b>${echap(cond.nom)}</b> : ${echap(cond.texte)}</span></span>` : '')
-          + `</span>${CHEVRON}</button>`;
-      });
-      h += `</div>`;
+    if (libre && vue) {
+      // la fiche de la salle touchée : en bas de l'écran sur téléphone, dans la colonne de droite sur PC
+      const a = annonce(vue, x);
+      const cond = vue.condition && CONDITIONS[vue.condition] ? CONDITIONS[vue.condition]! : null;
+      const entrer = vue.type === 'gardien' ? 'Affronter le gardien' : vue.ennemi ? 'Combattre' : vue.type === 'camp' ? 'S’arrêter au campement' : 'Entrer';
+      h += `<div class="ex-fiche t-${vue.type}" role="region" aria-label="Salle choisie">`
+        + (routes.length > 1 ? `<button type="button" class="ex-fiche-fermer" data-action="salle-voir" data-id="-1" aria-label="Fermer la fiche">${ICO.fermer}</button>` : '')
+        + `<div class="ex-fiche-corps">${visuel(vue)}`
+        + `<span class="ex-route-txt"><span class="ex-sur">${echap(a.sur)}</span><strong>${echap(a.titre)}</strong>`
+        + (a.texte ? `<em>${echap(a.texte)}</em>` : '')
+        + (a.faits.length ? `<span class="ex-faits">${a.faits.map((f) => `<span>${f}</span>`).join('')}</span>` : '')
+        + (cond ? `<span class="ex-condition">${iconeCondition(cond.id) ? `<img class="ex-cond-ico" src="${iconeCondition(cond.id)}" alt="" decoding="async">` : ICO.cristal}<span><b>${echap(cond.nom)}</b> : ${echap(cond.texte)}</span></span>` : '')
+        + `</span></div>`
+        + `<button type="button" class="btn prim large ex-entrer" data-action="salle" data-id="${vue.id}">${echap(entrer)}${CHEVRON}</button></div>`;
+    } else if (libre) {
+      h += `<p class="ex-indice">${ICO.cristal}<span>Touche une salle qui brille sur le plan : tu verras ce qui t’y attend avant d’entrer.${routes.length > 1 ? ` <b>${routes.length} chemins</b>` : ''}</span></p>`;
     }
   }
   if (x.terminee) h += `<button type="button" class="btn prim large ex-sortie" data-action="remonter">${ICO.cristal}Remonter avec le filon</button>`;

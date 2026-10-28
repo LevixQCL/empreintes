@@ -5,7 +5,7 @@ import { moduleDef, porteurDef } from '../core/donnees';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
 import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, CREUSEURS, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
-import { portrait } from './art';
+import { miniature, portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
 import { feuilleNom } from './classements';
 import { COULEUR, panneauCompte, type Compte } from './vue';
@@ -125,7 +125,8 @@ export const NOM_LIGNEES: Record<Lignee, string> = { tech: 'Augmentés', bio: 'G
  */
 export function avatar(id: string, taille = 40, extra = ''): string {
   const d = porteurDef(id);
-  const p = portrait(id);
+  // jusqu'à 60 px, la miniature suffit (nette sur un écran de téléphone) et arrive tout de suite : plus d'hexagones vides
+  const p = taille <= 60 ? miniature(id) : portrait(id);
   return `<span class="avatar${p ? '' : ' sans-portrait'}${extra ? ' ' + extra : ''}" style="--c:${COULEUR[d.lignee]};--t:${taille}px" aria-hidden="true">`
     + (p ? `<img src="${p}" alt="" decoding="async" loading="lazy">` : `<b>${echap(d.nom.charAt(0))}</b>`) + `</span>`;
 }

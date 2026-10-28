@@ -263,6 +263,7 @@
 .int-val small{font:600 8.5px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--quiet)}
 .plaque-int.danger .int-val b{color:#ffe1d9;text-shadow:0 0 12px rgba(255,90,70,.85),0 2px 4px #000}
 .plaque-int.garde .int-val b{text-shadow:0 0 12px rgba(150,200,255,.8),0 2px 4px #000}
+.plaque-int .int-val.alourdi small{color:#ffb4a4}
 .plaque-int.boost .int-val b{color:#ffe7b0;text-shadow:0 0 12px rgba(216,180,101,.85),0 2px 4px #000}
 /* sur téléphone, « Faible contre » passe à droite du nom (l'étiquette de famille s'efface) : une ligne de gagnée,
    et l'intention ne chevauche plus le bas de la scène sur les téléphones de 844 px de haut */

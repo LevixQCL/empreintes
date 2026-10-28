@@ -266,6 +266,17 @@ export function cibler(s: CombatEtat, uid: string, porteurId?: string): Resultat
  * Le jeu propose le plus menacé, le joueur peut en choisir un autre d'un toucher (comme la cible d'un soin). Le choix vaut pour le tour.
  */
 
+/**
+ * Le multiplicateur d'une attaque annoncée sur sa cible (28 octobre 2026) : le triangle des lignées quand l'attaque vise
+ * un seul Porteur, 1 sur une zone (chaque Porteur a alors le sien, affiché sur sa vignette). La plaque d'intention et la ligne
+ * de Fêlure s'en servent pour annoncer le même chiffre que la vignette du Porteur visé.
+ */
+export function avantageAnnonce(s: CombatEtat, en: EnnemiEtat = s.ennemi): number {
+  const it = intentionDe(s, en);
+  if (it.type !== 'atk' || it.zone || !it.cibleId) return 1;
+  return avantage(ennemiDef(en.id).lignee, porteurDef(it.cibleId).lignee);
+}
+
 /** Ce qu'un ennemi va retirer à un Porteur s'il le frappe (0 s'il ne le vise pas) : même calcul que son vrai tour */
 function coupSur(s: CombatEtat, en: EnnemiEtat, porteurId: string): number {
   const it = intentionDe(s, en);

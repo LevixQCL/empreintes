@@ -523,6 +523,17 @@ function dissiper() {
   suspendus = [];
 }
 
+/** Défaite : les cristaux de la chaîne s'éteignent et tombent en cendre grise, sans gerbe de couleur (pas de fête) */
+function eteindre() {
+  clearTimeout(filet);
+  const t = maintenant();
+  for (const s of suspendus) {
+    const [x, y] = ou(s, t);
+    eclats(x, y, 4, '#6f7480', { vitesse: 25, gravite: 120, taille: 1.6, vie: 0.7, angle: Math.PI / 2, ouverture: 0.6 });
+  }
+  suspendus = [];
+}
+
 /**
  * Les cristaux plongent sur l'ennemi, l'un après l'autre, puis frappent ensemble : une onde dorée, un éclair, une note.
  * Renvoie le temps (ms) que la chaîne doit attendre pour laisser ce moment respirer.
@@ -1094,7 +1105,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
     case 'fin': {
       derniere = null;
       // l'ennemi tombe avant la fin de la chaîne : les cristaux l'achèvent
-      const finale = ev.issue === 'victoire' && pEnnemi ? converger(pEnnemi) : (dissiper(), 0);
+      const finale = ev.issue === 'victoire' && pEnnemi ? converger(pEnnemi) : (ev.issue === 'defaite' ? eteindre() : dissiper(), 0);
       if (ev.issue === 'victoire' && pEnnemi) {
         // l'ennemi se dissout en poussière lumineuse, de la couleur de sa lignée
         const lignee = (['tech', 'bio', 'reso'] as const).find((l) => scene?.classList.contains(`l-${l}`)) ?? 'neutre';
@@ -1111,7 +1122,11 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         vibrer([20, 60, 20, 60, 40]);
         return (peinte ? 1100 : 700) + finale;
       }
-      if (ev.issue === 'defaite') note(110, 'sawtooth', 0.9, 0.05, 0.5);
+      if (ev.issue === 'defaite') {
+        note(110, 'sawtooth', 0.9, 0.05, 0.5);
+        // la fenêtre de défaite attend que les derniers éclats retombent : elle s'ouvre sur un écran calme
+        return 900;
+      }
       return 0;
     }
     case 'a-terre': {

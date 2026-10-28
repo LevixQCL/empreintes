@@ -56,7 +56,10 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     }
     case 'son': basculerSon(); break;
     case 'suivant': J.continuer(app.jeu); K.fin = null; sauver(); window.scrollTo(0, 0); break;
+    // le plan de la Strate : toucher une salle ouvre sa fiche (ou la referme), « Entrer » y va
+    case 'salle-voir': { const n = Number(id); K.salleVue = n >= 0 && K.salleVue !== n ? n : undefined; break; }
     case 'salle': {
+      K.salleVue = undefined;
       const r = J.entrer(app.jeu, Number(id));
       if (!r.ok && app.jeu.expedition) app.jeu.expedition.recit = r.message ?? '';
       K.fin = null; K.etat = null; sauver(); window.scrollTo(0, 0);

@@ -7,6 +7,7 @@ import { porteurDef } from '../core/donnees';
 import { PILLAGE, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadeActive, escouadeDefense, escouadePourDepart, escouadesDe, etatPillage, faitsDuJour, forceEscouade, majJetons, MISSIONS, strateVaincue, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
 import { ageArchipel, vignetteArchipel, visuel } from './art';
 import { avatar, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
+import { bloc, cle, etape, replie } from './presentation';
 import { ICO, icone } from './icones';
 import { htmlMissions } from './district';
 import { echap } from './outils';
@@ -146,35 +147,43 @@ export const portOuvert = (j: Jeu) => j.chambre && strateVaincue(j) >= PILLAGE.s
  * les pillages et la défense. Montrée tant que le Port est fermé, à la première visite, puis à la demande (« ? »).
  */
 function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
-  const etape = (ico: string, titre: string, texte: string) => `<li><span class="fl-pr-ico">${ico}</span><span><strong>${titre}</strong><small>${texte}</small></span></li>`;
   const recharge = `${Math.floor(PILLAGE.rechargeMs / 3_600_000)} h ${Math.round((PILLAGE.rechargeMs % 3_600_000) / 60_000)}`;
+  const vole = `+${Math.round(PILLAGE.partVolee * 100)} %`, perte = `−${Math.round(PILLAGE.perteDefaite * 100)} %`;
   return `<section class="fl-intro pl-intro" style="--decor:url(${vignetteArchipel(2)})"><div class="fl-intro-texte">`
     + `<span class="surtitre">Le ponton du district</span><h2>Le ponton reprend du service</h2>`
-    + `<p>Le vieux bateau quitte enfin son amarre. D’ici partent les barques du passeur : vers les ruines noyées, pour récupérer ce que la mer a gardé, et vers les archipels voisins, pour prendre ce qu’on ne te donnera pas.</p></div></section>`
+    + `<p>D’ici partent les barques du passeur : vers les ruines noyées, et vers les archipels voisins.</p></div></section>`
+    + (etat === 'fermee' ? `<p class="fl-condition">${ICO.verrou}<span><strong>Le bateau reste à quai · vaincs le gardien de la Strate −${PILLAGE.strateMin}</strong><small>Tant que le gardien tient le puits, personne ne quitte le district.</small></span></p>` : '')
 
-    + `<section class="fl-pr"><span class="surtitre">${ICO.codex}L’histoire</span>`
-    + `<p>Quand la mer est montée, chaque quartier s’est accroché à son pilier. Entre eux, il ne reste que l’eau, les ruines de l’ancien monde, et les passeurs qui connaissent les courants.</p>`
-    + `<p>Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : on pille, on se défend, et chacun garde un œil sur son coffre.</p></section>`
+    // allégé le 28 octobre 2026 : une phrase et trois chiffres par bloc, le détail se déplie
+    + bloc(ICO.porteurs, 'Les missions en mer', 'Un Porteur libre part en barque et revient chargé, même jeu fermé.', [
+      cle(ICO.chrono, `${MISSIONS.courte.heures} · ${MISSIONS.longue.heures} h`, 'courte ou longue'),
+      cle(ICO.porteurs, String(MISSIONS.max), 'missions à la fois'),
+      cle(ICO.coffre, 'Butin', 'composants, cartes, creuseurs'),
+    ])
+    + bloc(ICO.grappin, 'Les pillages', 'Ton escouade attaque la garnison d’un archipel voisin de ta force.', [
+      cle(ICO.grappin, String(PILLAGE.jetonsMax), `jetons, un toutes les ${recharge}`),
+      cle(ICO.composants, vole, 'du coffre adverse'),
+      cle(ICO.descendre, perte, 'de ton coffre si tu perds'),
+    ])
+    + bloc(ICO.bouclier, 'Ta défense', 'Seul ton coffre est exposé, et ta garnison se défend seule.', [
+      cle(ICO.coffre, 'Coffre', 'gains de pillage seulement'),
+      cle(ICO.bouclier, `${PILLAGE.bouclierMs / 3_600_000} h`, 'de bouclier après une défaite'),
+      cle(ICO.atk, String(PILLAGE.subiesMax), 'attaques subies par jour au plus'),
+    ])
 
-    + `<section class="fl-pr"><span class="surtitre">${ICO.porteurs}Les missions en mer</span><ul class="fl-pr-etapes">`
-    + etape(ICO.porteurs, 'Un Porteur libre prend la barque', `Vers un pilier abandonné ou une ruine noyée : ${MISSIONS.courte.heures} h ou ${MISSIONS.longue.heures} h, avec des vivres et des lampes payés en énergie. ${MISSIONS.max} missions à la fois.`)
-    + etape(ICO.coffre, 'Il revient chargé', 'Des composants, des doublons de cartes de sa lignée, parfois une carte nouvelle, et des rescapés qui deviennent creuseurs.')
-    + etape(ICO.chrono, 'Même jeu fermé', 'La mission avance sans toi. À son retour, son rapport t’attend au district. L’eau froide laisse un peu d’Usure.')
-    + `</ul></section>`
+    + replie('L’histoire', `<p>Quand la mer est montée, chaque quartier s’est accroché à son pilier. Entre eux, il ne reste que l’eau, les ruines de l’ancien monde, et les passeurs qui connaissent les courants.</p>`
+      + `<p>Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : on pille, on se défend, et chacun garde un œil sur son coffre.</p>`)
+    + replie('Les règles en détail', `<ul class="fl-pr-etapes">`
+      + etape(ICO.porteurs, 'Un Porteur libre prend la barque', `Vers un pilier abandonné ou une ruine noyée : ${MISSIONS.courte.heures} h ou ${MISSIONS.longue.heures} h, avec des vivres et des lampes payés en énergie. ${MISSIONS.max} missions à la fois.`)
+      + etape(ICO.coffre, 'Il revient chargé', 'Des composants, des doublons de cartes de sa lignée, parfois une carte nouvelle, et des rescapés qui deviennent creuseurs. L’eau froide laisse un peu d’Usure.')
+      + etape(ICO.grappin, `${PILLAGE.jetonsMax} jetons, un toutes les ${recharge}`, 'Chaque pillage en coûte un. Rien ne se perd pendant ton absence : ils t’attendent.')
+      + etape(ICO.atk, 'Un combat contre la garnison', 'Des archipels de ta force : de vrais directeurs, et des archipels sans directeur pour que la carte ne soit jamais vide. Un archipel par jour au plus.')
+      + etape(ICO.composants, 'Le butin', `Des composants, plus ${vole.slice(1)} du coffre adverse. Plus la garnison est forte, plus le butin est gros. Perdre te coûte ${perte.slice(1)} de ton coffre.`)
+      + etape(ICO.coffre, 'Seul ton coffre est exposé', 'Le coffre, ce sont les composants gagnés en pillant. Ceux des descentes, des missions et du district sont à l’abri, comme tes cartes et tes Éclats.')
+      + etape(ICO.porteurs, 'Ta garnison se défend seule', 'Choisis laquelle de tes trois escouades garde le port. Elle se bat même jeu fermé.')
+      + etape(ICO.bouclier, 'Bouclier et limite', `Après une attaque perdue, ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus. Le journal du port garde tout.`)
+      + `</ul>`, ICO.aide)
 
-    + `<section class="fl-pr"><span class="surtitre">${ICO.grappin}Les pillages</span><ul class="fl-pr-etapes">`
-    + etape(ICO.grappin, `${PILLAGE.jetonsMax} jetons, un toutes les ${recharge}`, 'Chaque pillage en coûte un. Rien ne se perd pendant ton absence : ils t’attendent.')
-    + etape(ICO.atk, 'Un combat contre la garnison', 'Des archipels de ta force : de vrais directeurs, et des archipels sans directeur pour que la carte ne soit jamais vide. Un archipel par jour au plus.')
-    + etape(ICO.composants, 'Le butin', `Des composants, plus ${Math.round(PILLAGE.partVolee * 100)} % du coffre adverse. Plus la garnison est forte, plus le butin est gros. Perdre te coûte ${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre.`)
-    + `</ul></section>`
-
-    + `<section class="fl-pr"><span class="surtitre">${ICO.bouclier}Ta défense</span><ul class="fl-pr-etapes">`
-    + etape(ICO.coffre, 'Seul ton coffre est exposé', 'Le coffre, ce sont les composants gagnés en pillant. Ceux des descentes, des missions et du district sont à l’abri, comme tes cartes et tes Éclats.')
-    + etape(ICO.porteurs, 'Ta garnison se défend seule', 'Choisis laquelle de tes trois escouades garde le port. Elle se bat même jeu fermé.')
-    + etape(ICO.bouclier, 'Bouclier et limite', `Après une attaque perdue, ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus. Le journal du port garde tout.`)
-    + `</ul></section>`
-
-    + (etat === 'fermee'
-      ? `<p class="fl-condition">${ICO.verrou}<span><strong>Le bateau reste à quai · vaincs le gardien de la Strate −${PILLAGE.strateMin}</strong><small>Tant que le gardien tient le puits, personne ne laisse le district sans défense pour prendre la mer.</small></span></p>`
+    + (etat === 'fermee' ? ''
       : `<button type="button" class="btn prim large" data-action="port-entrer">${ICO.carte}${etat === 'premiere' ? 'Larguer les amarres' : 'Retour au Port'}</button>`);
 }

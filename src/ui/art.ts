@@ -148,6 +148,8 @@ const ENNEMIS_ILLUSTRES: Record<string, string> = {
  */
 const CADRAGE: Record<string, number> = { vela: 52, nuit: 25, sasha: 25, coursier: 20 };
 export const cadragePortrait = (id: string): number => CADRAGE[id] ?? 18;
+/** La miniature d'un portrait (120 × 132 px, le visage cadré comme dans les avatars) : pour les petits hexagones, quelques Ko au lieu de 80 */
+export const miniature = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/mini/${id}.webp?v=${VERSION_PORTRAITS}` : null);
 export const portrait = (id: string): string | null => (PORTEURS_ILLUSTRES.has(id) ? `${base}porteurs/${id}.webp?v=${VERSION_PORTRAITS}` : null);
 /** l'illustration ne dépend pas du métal : « jambes-ressort@or » reprend celle de « jambes-ressort » */
 export const illustrationModule = (cle: string): string | null => {

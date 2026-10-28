@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, estGardien, feluresPrevues, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer, traitsActifs } from '../core/combat';
+import { ECLATS, estGardien, feluresPrevues, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer, traitsActifs, avantageAnnonce } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
@@ -388,7 +388,7 @@ export function htmlLieu(x: Expedition): string {
  */
 function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtml: string): string {
   const it = s.intention;
-  let nom = '', quoi = '', val = '', unite = '';
+  let nom = '', quoi = '', val = '', unite = '', av = 1;
   // Brouillard : on sait ce que l'ennemi prépare, pas combien ni sur qui
   if (C_brume(s)) {
     nom = 'Dans le brouillard';
@@ -401,8 +401,10 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
   }
   if (it.type === 'atk') {
     nom = it.nom;
-    val = String(Math.round(it.v * puissance(s.ennemi) * usureCombat(s).attaque));
-    unite = 'dégâts';
+    // le chiffre que prendra vraiment la cible : avantage de lignée compris, comme sur sa vignette
+    av = avantageAnnonce(s);
+    val = String(Math.round(it.v * puissance(s.ennemi) * usureCombat(s).attaque * av));
+    unite = av > 1 ? 'dégâts · lignée' : 'dégâts';
     if (it.zone) quoi = `<span class="int-qui">${s.porteurs.filter((p) => p.pv > 0).map((p) => { const im = portrait(p.id); return im ? `<img src="${im}" alt="" style="--c:${COULEUR[porteurDef(p.id).lignee]}">` : ''; }).join('')}</span>Tous`;
     else if (it.cibleId) {
       const d = porteurDef(it.cibleId), im = portrait(it.cibleId);
@@ -416,7 +418,7 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
   return `<div class="intention plaque-int ${classe}" aria-live="polite" aria-label="${echap(texteIntention(s))}">`
     + `<span class="int-ico">${icone}</span>`
     + `<span class="int-corps" aria-hidden="true"><small class="int-nom">${echap(nom)}</small><span class="int-quoi">${it.type === 'atk' ? '<i class="int-fleche"></i>' : ''}${quoi}</span></span>`
-    + (val ? `<span class="int-val" aria-hidden="true"><b>${val}</b><small>${unite}</small></span>` : '')
+    + (val ? `<span class="int-val${av > 1 ? ' alourdi' : ''}" aria-hidden="true"><b>${val}</b><small>${unite}</small></span>` : '')
     + felureHtml + '</div>';
 }
 
@@ -431,7 +433,7 @@ function ligneFelure(s: CombatEtat, prevue: boolean, resonne: boolean): string {
   const f = en.felure!;
   // ce que la Fêlure retire, avec les mêmes arrondis que le moteur
   const reduit = (v: number) => Math.round(v * (1 - partFelure(en)));
-  const force = it.type === 'atk' ? puissance(en) * usureCombat(s).attaque : 1;
+  const force = it.type === 'atk' ? puissance(en) * usureCombat(s).attaque * avantageAnnonce(s) : 1;
   const chiffre = (v: number) => Math.round(v * force);
   const effet = it.type === 'atk' ? `${chiffre(it.v)} → <b>${chiffre(reduit(it.v))}</b> dégâts`
     : it.type === 'bouclier' ? `bouclier +${it.v} → <b>+${reduit(it.v)}</b>`

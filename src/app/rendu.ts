@@ -99,7 +99,7 @@ export function afficher() {
   let h = '';
   if (app.mode === 'titre') h = htmlTitre(app.jeu.introVue, !reduit, compteTitre());
   else if (app.mode === 'intro') h = htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache, app.introLongue);
-  else if (app.mode === 'combat' && app.jeu.expedition?.carte && app.jeu.expedition.phase === 'carte') h = htmlExploration(app.jeu);
+  else if (app.mode === 'combat' && app.jeu.expedition?.carte && app.jeu.expedition.phase === 'carte') h = htmlExploration(app.jeu, K.salleVue);
   else if (app.mode === 'combat' && app.jeu.expedition) {
     const etat = K.etat ?? app.jeu.expedition.combat;
     const lecon = app.jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;
@@ -151,7 +151,7 @@ export function afficher() {
   for (const [sel, cle] of Object.entries(cles())) if (cle && cle !== avant[sel]) racine.querySelector(sel)?.classList.add('entre');
   document.body.classList.toggle('fige', !!racine.querySelector('.feuille, .voile'));
   if (app.mode === 'district') { activerCartes(racine); brancherTableau(racine); }
-  if (app.mode === 'combat') entreeGardien();
+  if (app.mode === 'combat') { entreeGardien(); centrerPlan(); }
   if (app.mode === 'intro') { precharger(app.plan); precharger(app.plan + 1); animerCompteur(racine, app.lignesVues, reduit); }
   D.uid = app.uid;
   const ie = racine.querySelector('#email') as HTMLInputElement | null;
@@ -160,6 +160,23 @@ export function afficher() {
   const ip = racine.querySelector('#gt-nom') as HTMLInputElement | null;
   if (ip && pseudoTape !== undefined) ip.value = pseudoTape;
   if (im) im.value = mdp;
+}
+
+/**
+ * Le plan de la Strate (28 octobre 2026) : à chaque nouvelle salle, le plan défile pour montrer l'escouade et les salles
+ * où elle peut aller (sur téléphone, le plan est plus haut que l'écran). Une fois par salle : le joueur reste libre de faire défiler.
+ */
+let planCentre = '';
+function centrerPlan() {
+  const x = app.jeu.expedition;
+  const ici = racine.querySelector<HTMLElement>('.ex-salle.ici');
+  if (!x?.carte || !ici) return;
+  const cle = `${x.strate}:${x.carte.rng}:${x.carte.position}`;
+  if (cle === planCentre) return;
+  planCentre = cle;
+  // l'entrée est déjà en haut de l'écran : on ne bouge que plus bas dans la Strate
+  if (x.carte.salles[x.carte.position]?.type === 'entree') return;
+  requestAnimationFrame(() => ici.scrollIntoView({ block: 'center', behavior: reduit ? 'auto' : 'smooth' }));
 }
 
 /** L'entrée d'un gardien (27 octobre 2026) : un bandeau, une fois, quand l'escouade entre dans sa salle */
