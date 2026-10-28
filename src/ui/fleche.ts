@@ -106,10 +106,12 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
     + `<h2>La dernière route vers les Hauts</h2>`
     + `<p>Une aiguille de laiton et de verre plantée dans la mer, si haute qu’elle traverse les nuages. Tout en haut, les îles des Hauts viennent s’y amarrer.</p></div></section>`
 
-    + `<section class="fl-pr"><span class="surtitre">${ICO.codex}L’histoire</span>`
+    // allégé le 28 octobre 2026 : fermée, la condition vient tout de suite ; l'histoire et la suite se déplient à la demande
+    + (etat === 'fermee' ? `<p class="fl-condition">${ICO.verrou}<span><strong>Les quais sont fermés · vaincs le gardien de la Strate −6</strong><small>Une lettre scellée de cire blanche t’ouvrira les quais.</small></span></p>` : '')
+    + `<details class="fl-pr fl-repli"><summary><span class="surtitre">${ICO.codex}L’histoire</span></summary>`
     + `<p>Les îles des Hauts ne se posent jamais : elles dérivent au-dessus de la mer et ne s’arrêtent qu’aux flèches d’amarrage. Il n’en reste qu’une debout, et ce sont les Hauts qui la tiennent.</p>`
     + `<p>Avant 2101, les districts d’en bas montaient à l’abordage. Les Accords y ont mis fin et n’ont laissé qu’une route légale vers le haut : la Flèche, quai par quai. Tout district invité peut y envoyer une escouade.</p>`
-    + `<p>Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. Le district qui tient le sommet quand une île passe est reçu là-haut.</p></section>`
+    + `<p>Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. Le district qui tient le sommet quand une île passe est reçu là-haut.</p></details>`
 
     + `<section class="fl-pr"><span class="surtitre">${ICO.monter}Comment on monte</span><ul class="fl-pr-etapes">`
     + etape(ICO.atk, 'Un combat par quai', 'Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.')
@@ -118,15 +120,14 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
     + etape(ICO.cristal, 'Les quais gravés', `${FLECHE.paliers.join(', ')} : chacun donne des composants et des Éclats, une seule fois. Ton record compte au Grand Tableau.`)
     + `</ul></section>`
 
-    + `<section class="fl-pr fl-pr-bientot"><span class="surtitre">${ICO.bouclier}Bientôt · tenir un quai <em>à venir</em></span>`
+    + `<details class="fl-pr fl-pr-bientot fl-repli"><summary><span class="surtitre">${ICO.bouclier}Bientôt · tenir un quai <em>à venir</em></span></summary>`
     + `<p>Les Hauts préfèrent payer un directeur qui tient bon qu’un gardien de location. Bientôt, ton escouade pourra s’arrêter sur un quai qu’elle vient de prendre et en devenir le gardien.</p><ul class="fl-pr-etapes">`
     + etape(ICO.porteurs, 'Tu remplaces les gardiens payés', 'Ton escouade s’installe sur le quai. Ceux qui montent doivent passer par elle.')
     + etape(ICO.coffre, 'Les Hauts te versent un gage', 'Chaque jour où tu tiens le quai, et plus il est haut, plus il rapporte.')
     + etape(ICO.bouclier, 'D’autres directeurs viennent te déloger', 'Ton escouade se défend seule, même jeu fermé. Si elle tombe, le quai change de gardien et tu redescends.')
     + etape(ICO.porte, `Au sommet, les ${FLECHE.sieges} Sièges`, `Tenus par des directeurs. Le temps du passage d’une île, ${FLECHE.defaitesMax} défaites t’éliminent et ${FLECHE.victoiresDefi} victoires t’ouvrent le défi d’un Siège.`)
-    + `</ul></section>`
+    + `</ul></details>`
 
-    + (etat === 'fermee'
-      ? `<p class="fl-condition">${ICO.verrou}<span><strong>Les quais sont fermés · vaincs le gardien de la Strate −6</strong><small>Les Hauts n’écrivent qu’aux directeurs qui ont fait parler d’eux. Une lettre scellée de cire blanche t’ouvrira les quais.</small></span></p>`
+    + (etat === 'fermee' ? ''
       : `<button type="button" class="btn prim large" data-action="fleche-entrer">${ICO.fleche}${etat === 'premiere' ? 'Entrer sur les quais' : 'Retour aux quais'}</button>`);
 }

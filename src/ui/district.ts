@@ -385,7 +385,7 @@ function coutDetail(icone: Icone, besoin: number, possede: number, nom: string):
 }
 
 /** Une réserve : jauge remplie / maximum et ce qu'elle dit */
-function reserve(j: Jeu, b: BatimentId): string {
+function reserve(j: Jeu, _b: BatimentId): string {
   const max = stockage(j);
   const v = Math.min(j.energie, max);
   const eph = energieParHeure(j);
@@ -394,7 +394,7 @@ function reserve(j: Jeu, b: BatimentId): string {
     : eph > 0 ? decompte(Date.now() + ((max - v) / eph) * 3_600_000, Date.now(), 'Pleine dans ', '.') : '';
   return `<div class="fb-reserve${plein ? ' pleine' : ''}"><div class="fb-reserve-tete">${ICO.coffre}<span>Réserve d’énergie</span><b>${ent(v)}<small> / ${ent(max)}</small></b></div>`
     + `<div class="fb-jauge" role="meter" aria-valuemin="0" aria-valuemax="${max}" aria-valuenow="${v}" aria-label="Réserve d’énergie"><i style="width:${max ? (v / max) * 100 : 0}%"></i></div>`
-    + `<small>${note}${b === 'generateur' ? ' La taille de la réserve dépend de la Tour du Noyau.' : ''}</small></div>`;
+    + (note ? `<small>${note}</small>` : '') + `</div>`;
 }
 
 /**
@@ -415,10 +415,10 @@ function blocConvertisseur(j: Jeu): string {
     return `<li class="${!fini && t === taux ? 'actif' : faits > debut ? 'passe' : ''}"><b>+${t}</b><small>${nb ? `lots ${debut + 1} à ${debut + nb}` : `lots ${debut + 1} à ${CONVERTISSEUR.lotsParJour}`}</small></li>`;
   }).join('');
   return `<section class="fb-bloc fb-convertir"><h3 class="titre-bloc">${ICO.energie}Convertisseur</h3>`
-    + `<p class="fb-vide">L’énergie en trop devient des composants : <b>${CONVERTISSEUR.lot} énergie → +${taux} composants</b>. Le taux baisse avec les lots convertis aujourd’hui (${CONVERTISSEUR.lotsParJour} au plus) et repart demain.</p>`
+    + `<p class="fb-vide">L’énergie en trop devient des composants. Le taux baisse au fil des lots du jour et repart demain.</p>`
     + `<ol class="fb-paliers" aria-label="Composants par lot selon les lots déjà convertis aujourd’hui">${paliers}</ol>`
     + `<button type="button" class="btn prim large" data-action="convertir"${peut ? '' : ' disabled'}>${ICO.energie}Convertir ${CONVERTISSEUR.lot} → +${taux} ${icone('composants')}</button>`
-    + `<small class="fb-note">${fini ? 'Assez tourné pour aujourd’hui : il repart demain.' : faits ? `${faits} lot${faits > 1 ? 's' : ''} sur ${CONVERTISSEUR.lotsParJour} converti${faits > 1 ? 's' : ''} aujourd’hui.` : `Aucun lot converti aujourd’hui (${CONVERTISSEUR.lotsParJour} au plus).`}</small></section>`;
+    + (fini ? `<small class="fb-note">Assez tourné pour aujourd’hui : il repart demain.</small>` : faits ? `<small class="fb-note">${faits} lot${faits > 1 ? 's' : ''} sur ${CONVERTISSEUR.lotsParJour} aujourd’hui.</small>` : '') + `</section>`;
 }
 
 /** Les soins intensifs de la Clinique (27 octobre 2026) : de l'énergie pour effacer l'Usure d'un Porteur tout de suite */
@@ -508,7 +508,7 @@ function blocEntrainement(e: EcranDistrict): string {
 function blocComptoir(e: EcranDistrict): string {
   const j = e.j;
   if (!j.batiments.comptoir) {
-    return `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}Une fois rouvert</h3><p class="fb-vide">Chaque jour, <b>${COMPTOIR.etals[1]!.length} cartes</b> en vente (fer et cuivre), une fois chacune. Il montera jusqu’à ${COMPTOIR.etals[5]!.length} cartes par jour, avec de l’argent après la Strate −${COMPTOIR.strateArgent}. L’or et la nacre restent à trouver dans les Strates.</p></section>`;
+    return `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}Une fois rouvert</h3><p class="fb-vide"><b>${COMPTOIR.etals[1]!.length} cartes</b> en vente chaque jour (fer et cuivre), jusqu’à ${COMPTOIR.etals[5]!.length} avec les niveaux. L’or et la nacre ne se vendent pas.</p></section>`;
   }
   const c = j.comptoir;
   const demain = debutJour(c.jour + 1) - e.now;
@@ -628,10 +628,10 @@ function feuilleBatiment(e: EcranDistrict): string {
   else h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
 
   // ce que le bâtiment rapporte
-  if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>+${ent(energieParHeure(j))}</b><small>énergie par heure</small></div></div>${reserve(j, b)}${niv ? blocConvertisseur(j) : ''}`;
-  if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure par heure, pour chaque Porteur présent au district</small></div></div>${niv ? blocSoinsIntensifs(j) : ''}`;
+  if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>+${ent(energieParHeure(j))}</b><small>énergie par heure</small></div></div>${reserve(j, b)}`;
+  if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure soignée par heure</small></div></div>`;
   if (b === 'noyau') {
-    h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>niveau maximum des autres bâtiments</small></div></div>${reserve(j, b)}`
+    h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>niveau maximum des autres bâtiments</small></div></div>`
       + blocEntrainement(e);
   }
   if (b === 'comptoir') h += blocComptoir(e);
@@ -671,6 +671,9 @@ function feuilleBatiment(e: EcranDistrict): string {
     }
     h += `</section>`;
   }
+  // les gestes en plus du bâtiment, sous le Porteur au travail (qui, lui, change ce que le bâtiment rapporte)
+  if (niv && b === 'generateur') h += blocConvertisseur(j);
+  if (niv && b === 'clinique') h += blocSoinsIntensifs(j);
 
   if (b === 'forge') h += blocForge(e);
 

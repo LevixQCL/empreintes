@@ -170,3 +170,11 @@
 .fl-condition span{display:grid;gap:3px}
 .fl-condition strong{font-size:14px;color:#fff}
 .fl-condition small{font-size:13px;line-height:1.45;color:var(--f-doux)}
+
+/* L'histoire et « Bientôt » se déplient à la demande (28 octobre 2026) */
+.fl-repli>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;list-style:none;cursor:pointer;min-height:28px}
+.fl-repli>summary::-webkit-details-marker{display:none}
+.fl-repli>summary::after{content:"";flex:none;width:8px;height:8px;margin-right:4px;border-right:1.5px solid var(--f-glace);border-bottom:1.5px solid var(--f-glace);transform:rotate(45deg) translateY(-3px);transition:transform .2s}
+.fl-repli[open]>summary::after{transform:rotate(-135deg) translateY(-2px)}
+.fl-repli>p{margin:0;font-size:14px;line-height:1.55;color:var(--f-txt)}
+.fl-repli[open]{gap:10px}

@@ -301,13 +301,13 @@ interface BatimentDef {
 }
 
 export const BATIMENTS: BatimentDef[] = [
-  { id: 'noyau', nom: 'Tour du Noyau', role: 'Le cœur du district. Son niveau limite celui des autres bâtiments, le stockage et les creuseurs qu’il loge pour percer les Strates. Un Porteur peut s’y entraîner.', affinite: null,
+  { id: 'noyau', nom: 'Tour du Noyau', role: 'Le cœur du district : il fixe le niveau des autres bâtiments, le stockage d’énergie et les creuseurs qui percent les Strates.', affinite: null,
     couts: [{ energie: 0, composants: 0 }, { energie: 120, composants: 15 }, { energie: 300, composants: 40 }, { energie: 650, composants: 80, eclats: 3 }, { energie: 1300, composants: 160, eclats: 8 }], niveauMax: 5 },
   { id: 'generateur', nom: 'Générateur', role: 'Produit de l’énergie en continu, même quand tu ne joues pas.', affinite: 'tech',
     couts: [{ energie: 0, composants: 0 }, { energie: 80, composants: 10 }, { energie: 200, composants: 25 }, { energie: 450, composants: 55, eclats: 2 }, { energie: 900, composants: 110, eclats: 5 }], niveauMax: 5 },
   // 27 octobre 2026 (Bryan) : la Forge passe aux Résonants, pour que chaque lignée ait son poste idéal
   // (Générateur : Augmentés, Clinique : Génés, Forge : Résonants).
-  { id: 'forge', nom: 'Forge', role: 'Refabrique un exemplaire d’une carte déjà trouvée : un doublon de plus. Il faut un Porteur au travail. Chaque carte garde une empreinte : un Résonant l’entend et la recopie plus vite.', affinite: 'reso',
+  { id: 'forge', nom: 'Forge', role: 'Refabrique une carte déjà trouvée : un doublon de plus. Il faut un Porteur au travail.', affinite: 'reso',
     couts: [{ energie: 0, composants: 0 }, { energie: 100, composants: 12 }, { energie: 240, composants: 30 }, { energie: 500, composants: 60, eclats: 2 }, { energie: 1000, composants: 120, eclats: 5 }], niveauMax: 5 },
   { id: 'clinique', nom: 'Clinique', role: 'Soigne l’Usure des Porteurs présents au district, même au travail.', affinite: 'bio',
     couts: [{ energie: 0, composants: 0 }, { energie: 90, composants: 10 }, { energie: 220, composants: 28 }, { energie: 480, composants: 58, eclats: 2 }, { energie: 950, composants: 115, eclats: 5 }], niveauMax: 5 },

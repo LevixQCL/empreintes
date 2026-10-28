@@ -140,7 +140,7 @@ function ligneCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean): strin
   const img = cle ? illustrationModule(cle) : origine ? illustrationModule(g.id) : null;
   const effet = g.effet
     ? effetsDe(g).map((x) => `<span class="eq-effet"><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</span>`).join('')
-    : `<span class="eq-effet sans">${NOM_ACTION[g.type]}</span>`;
+    : '';
   const corps = `<span class="eq-vignette" style="--m:${m ? COULEUR_RARETE[m.rarete] : 'rgba(205,239,255,.3)'}">`
     + (img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : `<span class="eq-sans">${g.porteur ? ICO.cartes : ICO.district}</span>`)
     + cristalFreq(g) + `</span>`
@@ -198,10 +198,10 @@ function blocMarque(j: Jeu, id: string): string {
   const fait = Math.min(m.n, m.seuil);
   return `<button type="button" class="eq-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" aria-label="Marque ${echap(m.nom)} : ${echap(effet)} Voir la fiche de ${echap(p.nom)}">`
     + `<span class="eq-marque-ico" aria-hidden="true">${m.acquise ? ICO.ok : ICO.cristal}</span><span class="eq-marque-txt">`
-    + `<span class="eq-marque-sur">${m.acquise ? 'Marque active' : 'Marque à gagner'}</span>`
-    + `<strong>${echap(m.nom)}</strong><span class="eq-marque-effet">${echap(effet.replace(/^./, (x) => x.toUpperCase()))}</span>`
-    + (m.acquise ? ''
-      : `<span class="eq-marque-prog"><i class="eq-jauge"><i style="width:${(100 * fait) / m.seuil}%"></i></i><small><b>${fr(fait)} / ${fr(m.seuil)}</b> ${echap(m.quoi)}${m.fait === 'missions' ? ' (en mission)' : ` avec ${IL.has(id) ? 'lui' : 'elle'} dans l’escouade`}</small></span>`)
+    // allégé le 28 octobre 2026 : le nom et l'effet sur une ligne, la progression en chiffres ; le détail est sur la fiche
+    + `<strong>${echap(m.nom)}${m.acquise ? '' : `<small class="eq-marque-compte">${fr(fait)} / ${fr(m.seuil)} ${echap(m.quoi)}</small>`}</strong>`
+    + `<span class="eq-marque-effet">${echap(effet.replace(/^./, (x) => x.toUpperCase()))}</span>`
+    + (m.acquise ? '' : `<i class="eq-jauge"><i style="width:${(100 * fait) / m.seuil}%"></i></i>`)
     + `</span></button>`;
 }
 
@@ -285,9 +285,9 @@ function monEscouade(e: EcranDistrict): string {
   h += ongletsEscouades(j, vue);
   if (verrou) h += `<p class="me-verrou">${ICO.verrou}<span><strong>En descente</strong>${echap(verrou.replace(/^L’escouade est en descente : /, 'L’escouade '))}</span></p>`;
   // celle qui descend, ou le bouton pour qu'elle descende
-  else if (vue === active) h += `<p class="eq-descend">${ICO.descendre}<span><strong>C’est elle qui descend</strong>Elle part quand tu descends dans la Tour. Compose les autres pour changer d’équipe en un geste.</span></p>`;
-  else if (esc.length) h += `<button type="button" class="eq-descend bouton" data-action="escouade-active" data-index="${vue}">${ICO.descendre}<span><strong>Faire descendre l’escouade ${vue + 1}</strong>Elle partira à la place de l’escouade ${active + 1} à la prochaine descente.</span></button>`;
-  else h += `<p class="eq-descend vide">${ICO.porteurs}<span><strong>Une équipe de réserve</strong>Compose-la pour un autre ennemi, une autre lignée ou une Épreuve : un Porteur n’est que dans une seule escouade, et ses cartes le suivent.</span></p>`;
+  // celle qui descend : l'onglet le dit déjà (« Descend »), rien de plus (allégé le 28 octobre 2026)
+  else if (vue !== active && esc.length) h += `<button type="button" class="eq-descend bouton" data-action="escouade-active" data-index="${vue}">${ICO.descendre}<span><strong>Faire descendre l’escouade ${vue + 1}</strong>Elle partira à la place de l’escouade ${active + 1} à la prochaine descente.</span></button>`;
+  else if (vue !== active) h += `<p class="eq-descend vide">${ICO.porteurs}<span><strong>Une équipe de réserve</strong>Compose-la pour un autre ennemi, une autre lignée ou une Épreuve : un Porteur n’est que dans une seule escouade, et ses cartes le suivent.</span></p>`;
   if (esc.length) h += bilanDeck(j, esc);
   h += `<div class="eq-trio">${[0, 1, 2].map((i) => blocPorteur(j, esc[i], i, verrou, prete)).join('')}</div>`;
   // le paquetage du district, toujours là
