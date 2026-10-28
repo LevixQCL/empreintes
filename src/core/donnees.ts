@@ -305,22 +305,22 @@ interface BatimentDef {
 export const BATIMENTS: BatimentDef[] = [
   { id: 'noyau', nom: 'Tour du Noyau', role: 'Le cœur du district : il fixe le niveau des autres bâtiments, le stockage d’énergie et les creuseurs qui percent les Strates.', affinite: null,
     couts: [{ energie: 0, composants: 0 }, { energie: 120, composants: 15 }, { energie: 300, composants: 40 }, { energie: 650, composants: 80, eclats: 3 }, { energie: 1300, composants: 160, eclats: 8 },
-      { energie: 2300, composants: 280, eclats: 12 }, { energie: 3800, composants: 450, eclats: 16 }, { energie: 6000, composants: 700, eclats: 22 }, { energie: 9200, composants: 1050, eclats: 30 }, { energie: 13500, composants: 1500, eclats: 40 }], niveauMax: 10 },
+      { energie: 2300, composants: 280, eclats: 6 }, { energie: 3800, composants: 450, eclats: 7 }, { energie: 6000, composants: 700, eclats: 8 }, { energie: 9200, composants: 1050, eclats: 10 }, { energie: 13500, composants: 1500, eclats: 12 }], niveauMax: 10 },
   { id: 'generateur', nom: 'Générateur', role: 'Produit de l’énergie en continu, même quand tu ne joues pas.', affinite: 'tech',
     couts: [{ energie: 0, composants: 0 }, { energie: 80, composants: 10 }, { energie: 200, composants: 25 }, { energie: 450, composants: 55, eclats: 2 }, { energie: 900, composants: 110, eclats: 5 },
-      { energie: 1600, composants: 190, eclats: 7 }, { energie: 2600, composants: 310, eclats: 10 }, { energie: 4100, composants: 480, eclats: 14 }, { energie: 6300, composants: 720, eclats: 19 }, { energie: 9300, composants: 1050, eclats: 25 }], niveauMax: 10 },
+      { energie: 1600, composants: 190, eclats: 4 }, { energie: 2600, composants: 310, eclats: 5 }, { energie: 4100, composants: 480, eclats: 7 }, { energie: 6300, composants: 720, eclats: 9 }, { energie: 9300, composants: 1050, eclats: 11 }], niveauMax: 10 },
   // 27 octobre 2026 (Bryan) : la Forge passe aux Résonants, pour que chaque lignée ait son poste idéal
   // (Générateur : Augmentés, Clinique : Génés, Forge : Résonants).
   { id: 'forge', nom: 'Forge', role: 'Refabrique une carte déjà trouvée : un doublon de plus. Il faut un Porteur au travail.', affinite: 'reso',
     couts: [{ energie: 0, composants: 0 }, { energie: 100, composants: 12 }, { energie: 240, composants: 30 }, { energie: 500, composants: 60, eclats: 2 }, { energie: 1000, composants: 120, eclats: 5 },
-      { energie: 1750, composants: 210, eclats: 7 }, { energie: 2850, composants: 340, eclats: 10 }, { energie: 4500, composants: 530, eclats: 14 }, { energie: 6900, composants: 790, eclats: 19 }, { energie: 10200, composants: 1150, eclats: 25 }], niveauMax: 10 },
+      { energie: 1750, composants: 210, eclats: 4 }, { energie: 2850, composants: 340, eclats: 5 }, { energie: 4500, composants: 530, eclats: 7 }, { energie: 6900, composants: 790, eclats: 9 }, { energie: 10200, composants: 1150, eclats: 11 }], niveauMax: 10 },
   { id: 'clinique', nom: 'Clinique', role: 'Soigne l’Usure des Porteurs présents au district, même au travail.', affinite: 'bio',
     couts: [{ energie: 0, composants: 0 }, { energie: 90, composants: 10 }, { energie: 220, composants: 28 }, { energie: 480, composants: 58, eclats: 2 }, { energie: 950, composants: 115, eclats: 5 },
-      { energie: 1700, composants: 200, eclats: 7 }, { energie: 2750, composants: 330, eclats: 10 }, { energie: 4300, composants: 500, eclats: 14 }, { energie: 6600, composants: 760, eclats: 19 }, { energie: 9700, composants: 1100, eclats: 25 }], niveauMax: 10 },
+      { energie: 1700, composants: 200, eclats: 4 }, { energie: 2750, composants: 330, eclats: 5 }, { energie: 4300, composants: 500, eclats: 7 }, { energie: 6600, composants: 760, eclats: 9 }, { energie: 9700, composants: 1100, eclats: 11 }], niveauMax: 10 },
   // 23 octobre 2026 : le « acheter » de « forger, acheter ou combattre ». Il commence au niveau 0 : on le construit.
   { id: 'comptoir', nom: 'Comptoir', role: 'Les fouilleurs du quartier y revendent chaque jour quelques cartes trouvées dans les Strates. Prix fixes : tu vois toujours ce que tu achètes.', affinite: null,
     couts: [{ energie: 150, composants: 20 }, { energie: 220, composants: 30 }, { energie: 480, composants: 60, eclats: 2 }, { energie: 950, composants: 115, eclats: 5 }, { energie: 1500, composants: 180, eclats: 8 },
-      { energie: 2400, composants: 290, eclats: 11 }, { energie: 3800, composants: 450, eclats: 15 }, { energie: 5900, composants: 690, eclats: 20 }, { energie: 9000, composants: 1030, eclats: 27 }], niveauMax: 10 },
+      { energie: 2400, composants: 290, eclats: 5 }, { energie: 3800, composants: 450, eclats: 6 }, { energie: 5900, composants: 690, eclats: 8 }, { energie: 9000, composants: 1030, eclats: 10 }], niveauMax: 10 },
 ];
 
 // ---------- Ennemis ----------
