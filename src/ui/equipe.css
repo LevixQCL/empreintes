@@ -103,8 +103,8 @@
 .eq-marque.acquise .eq-marque-ico{color:#2A1A04;background:linear-gradient(180deg,#F8E3A6,#D4A54E)}
 .eq-marque-ico .ico{width:15px;height:15px}
 .eq-marque-txt{display:grid;gap:2px;min-width:0}
-.eq-marque strong{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:15px;font-weight:600;color:#F6F2EA}
-.eq-marque-compte{flex:none;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--x-or)}
+.eq-marque strong{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;font-size:15px;font-weight:600;color:#F6F2EA}
+.eq-marque-compte{margin-left:auto;text-align:right;font-family:var(--mono);font-size:12px;font-weight:500;color:var(--x-or)}
 .eq-marque-txt>.eq-jauge{margin-top:4px}
 .eq-marque-effet{font-size:13.5px;line-height:1.4;color:var(--x-txt)}
 .eq-jauge{display:block;height:4px;border-radius:2px;background:rgba(205,239,255,.1);overflow:hidden}
