@@ -244,6 +244,21 @@ const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
   { vue: 'plus', nom: 'Plus', icone: 'plus' },
 ];
 
+/**
+ * La jauge des Strates (rail PC, 28 octobre 2026) : une coupe de roche qui descend, la Strate atteinte marquée d'un cristal.
+ * Les couches au-dessus sont déjà traversées (éclairées), celles du dessous attendent. Un toucher ouvre la fiche Strate.
+ */
+function jaugeStrates(strate: number): string {
+  const couches: string[] = [];
+  for (let k = strate - 2; k <= strate + 3; k++) {
+    if (k < 0) continue;
+    const etat = k < strate ? 'passee' : k === strate ? 'ici' : 'profonde';
+    couches.push(`<i class="ns-couche ${etat}" style="--p:${k - strate}">${etat === 'ici' ? '<b class="ns-cristal"></b>' : ''}<em>−${k}</em></i>`);
+  }
+  return `<button type="button" class="nav-strates" data-action="ressource" data-id="strate" aria-label="Strate −${strate} : voir la profondeur">`
+    + `<span class="ns-titre">Strate</span><span class="ns-colonne" aria-hidden="true">${couches.join('')}</span><span class="ns-val">−${strate}</span></button>`;
+}
+
 /** La navigation du bas */
 export function navigation(e: EcranDistrict): string {
   const j = e.j;
@@ -255,12 +270,12 @@ export function navigation(e: EcranDistrict): string {
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
   };
   const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'pillages' ? 'archipel' : e.vue === 'escouade' ? 'coupe' : e.vue === 'cartes' ? 'porteurs' : e.vue;
-  // sur PC (rail.css) : le cristal seul en tête, et un filet de lumière qui relie les onglets au « Plus » du bas
+  // sur PC (rail.css) : le cristal en tête, et la jauge des Strates qui remplit le rail jusqu'au « Plus » du bas
   return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./art/embleme-cristal.webp" alt=""></span>` + ONGLETS.map((t) => {
     const action = t.vue === 'plus' ? 'menu' : t.vue;
-    return (t.vue === 'plus' ? '<span class="nav-filet" aria-hidden="true"></span>' : '')
+    return (t.vue === 'plus' ? jaugeStrates(j.strate) : '')
       + `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${actif === t.vue ? ' aria-current="page"' : ''}>`
-      + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span>${t.nom}</span></button>`;
+      + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span class="onglet-nom">${t.nom}</span></button>`;
   }).join('') + `</nav>`;
 }
 

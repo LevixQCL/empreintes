@@ -1,102 +1,150 @@
-/* EMPREINTES — le rail de navigation sur PC, refait le 23 octobre 2026 (Bryan : « améliorer ce visuel »).
-   Chargé en dernier. Le téléphone ne change pas : la barre du bas reste celle de styles.css / holo.css.
-   Direction « cristal et lumière » : verre bleu nuit, arêtes de glace fines, chaque icône peinte posée sur un socle
-   en losange ; l'onglet ouvert s'allume (faisceau, socle lumineux, texte clair) au lieu d'un bloc gris plat.
-   Le grand vide entre Chroniques et Plus devient un filet de lumière qui descend, avec quelques nœuds. */
+/* EMPREINTES — la navigation, téléphone et PC, refaite le 28 octobre 2026 (Bryan : « plus premium »).
+   Chargée après holo.css, cristal.css et bureau.css : elle remplace leurs règles d'onglets.
+   Icônes peintes sur Midjourney (district, tour, porteurs, codex, plus), posées sur un serti de glace peint (serti.webp),
+   et la pastille « nouveau » est un éclat d'ambre peint (pastille.webp).
+   Téléphone : l'onglet ouvert sort de la barre, sur son serti allumé ; les autres restent éteints, sans serti.
+   PC : chaque icône a son serti ; l'onglet ouvert s'allume ; le vide du rail devient la jauge des Strates. */
 
-.nav-filet{display:none}
+/* ================= Commun ================= */
+.nav .onglet{color:#7F8BA6;font-size:12px;font-weight:600;letter-spacing:.04em;-webkit-tap-highlight-color:transparent}
+.nav .onglet::before{display:none}
+.nav .onglet-ico{position:relative;z-index:1;display:grid;place-items:center;isolation:isolate}
+/* le serti : peint, derrière l'icône ; la flaque de lumière : derrière le serti */
+.nav .onglet-ico::before,.nav .onglet.actif .onglet-ico::before{content:"";inset:auto;position:absolute;z-index:-1;left:50%;top:50%;width:var(--serti,44px);height:var(--serti,44px);
+  transform:translate(-50%,-50%);clip-path:none;border-radius:0;background:url("/art/icones/serti.webp") center/contain no-repeat;
+  opacity:0;filter:brightness(.7) saturate(.7);transition:opacity .25s ease,filter .25s ease,width .25s ease,height .25s ease}
+.nav .onglet-ico::after{content:"";position:absolute;z-index:-2;left:50%;top:50%;width:calc(var(--serti,44px) * 1.7);height:calc(var(--serti,44px) * 1.3);
+  transform:translate(-50%,-45%);background:radial-gradient(closest-side,rgba(110,185,255,.42),rgba(110,185,255,.12) 55%,transparent);
+  opacity:0;transition:opacity .25s ease;pointer-events:none}
+.nav .onglet .ico.peinte{position:relative;margin:0;width:var(--ico,38px);height:var(--ico,38px);object-fit:contain;
+  filter:saturate(.55) brightness(.68) drop-shadow(0 2px 3px rgba(0,0,0,.7));
+  transition:filter .2s ease,transform .3s cubic-bezier(.2,1.4,.4,1),width .25s ease,height .25s ease}
+.nav .onglet .ico:not(.peinte){transition:transform .3s cubic-bezier(.2,1.4,.4,1)}
+.nav .onglet:not(:disabled):hover .ico.peinte{filter:saturate(.85) brightness(.9) drop-shadow(0 2px 3px rgba(0,0,0,.7))}
+.nav .onglet:not(:disabled):active .onglet-ico{transform:scale(.93)}
+.nav .onglet-ico{transition:transform .12s ease}
 
+/* l'onglet ouvert : le serti s'allume, la lumière monte, l'icône reprend toutes ses couleurs */
+.nav .onglet.actif{color:#F2F7FF;text-shadow:0 0 10px rgba(120,190,255,.55)}
+.nav .onglet.actif .onglet-ico{background:none}
+.nav .onglet.actif .onglet-ico::before{opacity:1;filter:brightness(1.15) drop-shadow(0 0 8px rgba(120,190,255,.7))}
+.nav .onglet.actif .onglet-ico::after{opacity:1}
+.nav .onglet.actif .ico.peinte{filter:saturate(1.1) brightness(1.06) drop-shadow(0 0 8px rgba(255,214,150,.35)) drop-shadow(0 3px 4px rgba(0,0,0,.75))}
+.nav .onglet.actif .ico:not(.peinte){color:#CFE8FF;filter:drop-shadow(0 0 6px rgba(140,200,255,.8))}
+.nav .onglet:focus-visible{outline:none}
+.nav .onglet:focus-visible .onglet-nom{text-decoration:underline;text-underline-offset:3px}
+
+/* la pastille « nouveau » : l'éclat d'ambre peint, qui respire */
+.nav .onglet-ico .pastille-alerte{z-index:2;top:-2px;right:-4px;width:17px;height:17px;border-radius:0;transform:none;
+  background:url("/art/icones/pastille.webp") center/contain no-repeat;box-shadow:none;
+  filter:drop-shadow(0 0 5px rgba(255,181,71,.85)) drop-shadow(0 1px 1px rgba(0,0,0,.8));animation:nav-eclat 2.2s ease-in-out infinite}
+@keyframes nav-eclat{50%{transform:scale(1.14);filter:drop-shadow(0 0 9px rgba(255,190,90,1)) drop-shadow(0 1px 1px rgba(0,0,0,.8))}}
+
+.nav-strates{display:none}
+
+/* ================= Téléphone : la barre du bas ================= */
+@media not ((min-width:1100px) and (min-height:600px)){
+  .nav{overflow:visible}
+  .nav .onglet{min-height:58px;gap:1px;padding:2px 0 3px;justify-content:flex-end}
+  .nav .onglet-ico{width:54px;height:38px;--ico:36px;--serti:46px}
+  /* l'onglet ouvert sort de la barre : plus grand, soulevé, posé sur son serti */
+  .nav .onglet.actif .onglet-ico{--ico:50px;--serti:60px;transform:translateY(-13px)}
+  .nav .onglet.actif:not(:disabled):active .onglet-ico{transform:translateY(-13px) scale(.94)}
+  .nav .onglet.actif .onglet-nom{transform:translateY(-3px)}
+  .nav .onglet-nom{transition:transform .25s ease}
+  /* une encoche de lumière sur l'arête haute de la barre, au-dessus de l'onglet ouvert */
+  .nav .onglet.actif::after{content:"";position:absolute;z-index:0;left:50%;top:-1px;width:64px;height:2px;transform:translateX(-50%);
+    background:linear-gradient(90deg,transparent,#BFE2FF 30%,#fff 50%,#BFE2FF 70%,transparent);box-shadow:0 0 12px rgba(140,200,255,.9)}
+}
+
+/* ================= PC : le rail à gauche ================= */
 @media (min-width:1100px) and (min-height:600px){
   :root{--rail:112px}
 
-  .ecran > .nav{gap:2px;padding:18px 0 16px;
+  .ecran > .nav{gap:2px;padding:18px 0 14px;
     background:
       radial-gradient(120px 160px at 50% 40px,rgba(95,168,255,.16),transparent 70%),
       linear-gradient(180deg,rgba(14,20,44,.98),rgba(7,10,22,.98) 55%,rgba(5,7,16,.99));
     box-shadow:1px 0 0 rgba(160,210,255,.14),8px 0 30px rgba(0,0,0,.35)}
 
-  /* ---------- le cristal en tête, sans carré de fond, sur un petit filet à losange ---------- */
-  .ecran > .nav .nav-embleme{position:relative;height:84px;margin:0 0 14px}
+  /* le cristal en tête */
+  .ecran > .nav .nav-embleme{position:relative;height:84px;margin:0 0 10px}
   .ecran > .nav .nav-embleme img{width:auto;height:70px;
     filter:drop-shadow(0 0 16px rgba(95,168,255,.55)) drop-shadow(0 4px 6px rgba(0,0,0,.6));animation:rail-cristal 6s ease-in-out infinite alternate}
-  .ecran > .nav .nav-embleme::after{content:"";position:absolute;left:22px;right:22px;bottom:-6px;height:7px;
-    background:
-      url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 10 10%27%3E%3Cpath d=%27M5 0L10 5L5 10L0 5Z%27 fill=%27rgba(205,239,255,.85)%27/%3E%3C/svg%3E") center/7px 7px no-repeat,
-      linear-gradient(90deg,transparent,rgba(160,210,255,.4) 30%,transparent 46%,transparent 54%,rgba(160,210,255,.4) 70%,transparent) center/100% 1px no-repeat}
   @keyframes rail-cristal{from{filter:drop-shadow(0 0 12px rgba(95,168,255,.4)) drop-shadow(0 4px 6px rgba(0,0,0,.6))}
     to{filter:drop-shadow(0 0 20px rgba(120,190,255,.7)) drop-shadow(0 4px 6px rgba(0,0,0,.6))}}
 
-  /* ---------- un onglet ---------- */
-  .ecran > .nav .onglet{min-height:88px;gap:7px;padding:6px 0 8px;border-radius:0;background:none;
-    color:#8D9BBA;font-size:12.5px;font-weight:600;letter-spacing:.03em;transition:color .2s ease}
-  .ecran > .nav .onglet-ico{width:62px;height:54px;display:grid;place-items:center}
-  /* le socle : un losange de verre sous chaque icône */
-  .ecran > .nav .onglet-ico::before{content:"";position:absolute;inset:auto;left:50%;top:50%;width:40px;height:40px;
-    transform:translate(-50%,-44%) rotate(45deg);clip-path:none;border-radius:3px;
-    background:radial-gradient(closest-side,rgba(120,180,255,.13),rgba(120,180,255,.03));
-    box-shadow:inset 0 0 0 1px rgba(160,210,255,.2);transition:box-shadow .25s ease,background .25s ease}
-  .ecran > .nav .onglet .ico.peinte{position:relative;width:50px;height:50px;margin:0;
-    filter:saturate(.8) brightness(.8) drop-shadow(0 3px 4px rgba(0,0,0,.75));transition:filter .2s ease,transform .25s cubic-bezier(.2,.8,.2,1)}
-  .ecran > .nav .onglet > .onglet-ico > svg{position:relative;width:28px;height:28px}
-
-  /* survol : l'icône reprend ses couleurs, le socle s'éclaire un peu */
+  /* un onglet : chaque icône sur son serti, éteint ; l'ouvert s'allume et grandit */
+  .ecran > .nav .onglet{min-height:90px;gap:5px;padding:4px 0 8px;border-radius:0;background:none;font-size:12.5px}
+  .ecran > .nav .onglet-ico{width:72px;height:62px;--ico:50px;--serti:64px}
+  .ecran > .nav .onglet-ico::before{opacity:.55}
   .ecran > .nav .onglet:not(:disabled):hover{background:none;color:#D5E3F7}
-  .ecran > .nav .onglet:not(:disabled):hover .ico.peinte{filter:saturate(1) brightness(1) drop-shadow(0 3px 4px rgba(0,0,0,.75));transform:translateY(-2px)}
-  .ecran > .nav .onglet:not(:disabled):hover .onglet-ico::before{box-shadow:inset 0 0 0 1px rgba(160,210,255,.3)}
-
-  /* l'onglet ouvert : un faisceau de lumière depuis le bord, le socle s'allume, l'icône se soulève */
-  .ecran > .nav .onglet.actif{color:#EEF6FF;text-shadow:0 0 12px rgba(120,190,255,.6);
-    background:
-      linear-gradient(90deg,rgba(150,200,255,.16),rgba(150,200,255,.04) 70%,transparent),
-      linear-gradient(90deg,rgba(170,215,255,.45),transparent 80%) top/100% 1px no-repeat,
-      linear-gradient(90deg,rgba(170,215,255,.45),transparent 80%) bottom/100% 1px no-repeat}
-  .ecran > .nav .onglet.actif::before{left:0;top:50%;width:3px;height:56px;transform:translateY(-50%);border-radius:0 2px 2px 0;
-    background:linear-gradient(180deg,transparent,#fff 20%,#9CCBFF 60%,transparent);box-shadow:0 0 14px rgba(140,200,255,.95)}
-  .ecran > .nav .onglet.actif .onglet-ico::before{background:radial-gradient(closest-side,rgba(120,190,255,.38),rgba(80,140,230,.08));
-    box-shadow:inset 0 0 0 1px rgba(200,230,255,.65),0 0 18px rgba(95,168,255,.45)}
-  .ecran > .nav .onglet.actif .ico.peinte{filter:saturate(1.1) brightness(1.08) drop-shadow(0 0 10px rgba(140,200,255,.55)) drop-shadow(0 3px 4px rgba(0,0,0,.7));transform:translateY(-3px) scale(1.08)}
-  .ecran > .nav .onglet.actif .ico:not(.peinte){color:#CFE8FF;filter:drop-shadow(0 0 6px rgba(140,200,255,.8))}
-
-  .ecran > .nav .onglet:focus-visible{outline:none;box-shadow:inset 0 0 0 1px rgba(200,230,255,.7)}
+  .ecran > .nav .onglet:not(:disabled):hover .onglet-ico::before{opacity:.85}
+  .ecran > .nav .onglet:not(:disabled):hover .ico.peinte{transform:translateY(-2px)}
+  .ecran > .nav .onglet.actif{background:none}
+  .ecran > .nav .onglet.actif .onglet-ico{--ico:58px;--serti:72px}
+  .ecran > .nav .onglet.actif .onglet-ico::before{opacity:1}
+  .ecran > .nav .onglet.actif .ico.peinte{transform:translateY(-2px)}
+  /* un trait de lumière sur le bord gauche */
+  .ecran > .nav .onglet.actif::before{display:block;content:"";position:absolute;left:0;top:50%;width:3px;height:56px;transform:translateY(-50%);
+    border-radius:0 2px 2px 0;clip-path:none;background:linear-gradient(180deg,transparent,#fff 20%,#9CCBFF 60%,transparent);box-shadow:0 0 14px rgba(140,200,255,.95)}
   .ecran > .nav .onglet:disabled{opacity:.42}
+  .ecran > .nav .onglet-ico .pastille-alerte{top:2px;right:2px;width:19px;height:19px}
 
-  /* la pastille « nouveau » : un petit éclat en losange, plutôt qu'un rond orange posé dessus */
-  .ecran > .nav .onglet-ico .pastille-alerte{top:4px;right:6px;width:9px;height:9px;border-radius:1px;transform:rotate(45deg);
-    background:linear-gradient(135deg,#FFE2A8,var(--alerte) 60%);box-shadow:0 0 0 2px #0A0E20,0 0 10px var(--alerte)}
-
-  /* ---------- le filet qui remplit le vide jusqu'au « Plus » ---------- */
-  .ecran > .nav .nav-filet{display:block;flex:1;position:relative;min-height:24px;margin:6px 0}
-  .ecran > .nav .nav-filet::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;transform:translateX(-50%);
-    background:linear-gradient(180deg,rgba(160,210,255,.28),rgba(160,210,255,.06) 40%,rgba(160,210,255,.06) 60%,rgba(160,210,255,.28))}
-  /* trois nœuds lumineux le long du filet, et une goutte de lumière qui descend lentement */
-  .ecran > .nav .nav-filet::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:7px;transform:translateX(-50%);
-    background:
-      url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 10 10%27%3E%3Cpath d=%27M5 0L10 5L5 10L0 5Z%27 fill=%27rgba(205,239,255,.6)%27/%3E%3C/svg%3E") 50% 25%/6px 6px no-repeat,
-      url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 10 10%27%3E%3Cpath d=%27M5 0L10 5L5 10L0 5Z%27 fill=%27rgba(205,239,255,.4)%27/%3E%3C/svg%3E") 50% 50%/6px 6px no-repeat,
-      url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 10 10%27%3E%3Cpath d=%27M5 0L10 5L5 10L0 5Z%27 fill=%27rgba(205,239,255,.6)%27/%3E%3C/svg%3E") 50% 75%/6px 6px no-repeat,
-      linear-gradient(180deg,transparent,rgba(190,225,255,.85),transparent) 50% -40px/1px 40px no-repeat;
-    animation:rail-goutte 9s linear infinite}
-  @keyframes rail-goutte{to{background-position:50% 25%,50% 50%,50% 75%,50% calc(100% + 40px)}}
-
-  /* le « Plus » du bas : posé sous une arête fine, plus discret que les onglets du jeu */
-  .ecran > .nav .onglet:last-child{margin-top:0;min-height:80px;padding-top:12px;
+  /* le « Plus » du bas, sous une arête fine */
+  .ecran > .nav .onglet:last-child{margin-top:0;min-height:84px;padding-top:10px;
     background:linear-gradient(90deg,transparent 18%,rgba(160,210,255,.22) 50%,transparent 82%) top/100% 1px no-repeat}
-  .ecran > .nav .onglet:last-child.actif{background:
-      linear-gradient(90deg,rgba(150,200,255,.16),rgba(150,200,255,.04) 70%,transparent),
-      linear-gradient(90deg,rgba(170,215,255,.45),transparent 80%) top/100% 1px no-repeat}
+
+  /* ---------- la jauge des Strates : remplit le rail entre Chroniques et Plus ---------- */
+  .ecran > .nav .nav-strates{display:flex;flex:1;min-height:0;flex-direction:column;align-items:center;gap:6px;margin:10px 0 12px;padding:6px 0;
+    border:0;background:none;color:#8D9BBA;cursor:pointer}
+  .nav-strates .ns-titre{font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#7F8BA6}
+  .nav-strates .ns-val{font-size:20px;font-weight:700;color:var(--gold);text-shadow:0 0 12px rgba(216,180,101,.45),0 1px 2px rgba(0,0,0,.8)}
+  .nav-strates .ns-colonne{position:relative;flex:1;min-height:0;width:22px;display:flex;flex-direction:column;
+    border-radius:3px;overflow:visible;box-shadow:0 0 0 1px rgba(160,210,255,.18),inset 0 0 8px rgba(0,0,0,.6)}
+  /* chaque couche de roche, de plus en plus sombre en descendant ; les traversées gardent un reflet de glace */
+  .nav-strates .ns-couche{position:relative;flex:1;min-height:6px;font-style:normal;
+    background:linear-gradient(90deg,rgba(255,255,255,.05),transparent 40%,rgba(0,0,0,.25)),
+      hsl(calc(215 + var(--p) * 4) 28% calc(24% - var(--p) * 3.2%));
+    border-top:1px solid rgba(0,0,0,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+  .nav-strates .ns-couche:first-child{border-top:0;border-radius:3px 3px 0 0}
+  .nav-strates .ns-couche:last-child{border-radius:0 0 3px 3px;
+    -webkit-mask:linear-gradient(180deg,#000 30%,transparent);mask:linear-gradient(180deg,#000 30%,transparent)}
+  .nav-strates .ns-couche.passee{background:linear-gradient(90deg,rgba(190,225,255,.22),rgba(120,180,255,.08) 50%,rgba(0,0,0,.2)),hsl(212 40% 30%)}
+  .nav-strates .ns-couche.ici{background:linear-gradient(90deg,rgba(255,226,160,.25),rgba(216,180,101,.1) 50%,rgba(0,0,0,.2)),hsl(36 30% 26%);
+    box-shadow:inset 0 0 0 1px rgba(216,180,101,.6),0 0 14px rgba(216,180,101,.35)}
+  /* le numéro de chaque couche, à côté de la colonne */
+  .nav-strates .ns-couche em{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);font-style:normal;
+    font-size:12px;font-weight:600;color:#56627E;white-space:nowrap}
+  .nav-strates .ns-couche.passee em{color:#7F95B8}
+  .nav-strates .ns-couche.ici em{display:none}
+  /* le cristal qui marque la Strate atteinte, posé à cheval sur la colonne */
+  .nav-strates .ns-cristal{position:absolute;left:50%;top:50%;width:26px;height:26px;transform:translate(-50%,-50%);
+    background:url("/art/icones/pastille.webp") center/contain no-repeat;
+    filter:drop-shadow(0 0 7px rgba(255,190,90,.9)) drop-shadow(0 1px 2px rgba(0,0,0,.8));animation:nav-eclat 3s ease-in-out infinite}
+  .nav-strates:hover .ns-titre{color:#D5E3F7}
+  .nav-strates:hover .ns-colonne{box-shadow:0 0 0 1px rgba(160,210,255,.35),inset 0 0 8px rgba(0,0,0,.6)}
+  .nav-strates:focus-visible{outline:none}
+  .nav-strates:focus-visible .ns-colonne{box-shadow:0 0 0 2px rgba(200,230,255,.8)}
 
   @media (prefers-reduced-motion:reduce){
-    .ecran > .nav .nav-embleme img,.ecran > .nav .nav-filet::after{animation:none}
+    .ecran > .nav .nav-embleme img{animation:none}
   }
 }
 
 @media (min-width:1700px) and (min-height:900px){ :root{--rail:120px} }
 
+/* PC peu haut : tout se resserre, la jauge garde au moins sa valeur */
 @media (min-width:1100px) and (min-height:600px) and (max-height:760px){
-  .ecran > .nav .nav-embleme{height:64px;margin-bottom:8px}
+  .ecran > .nav .nav-embleme{height:60px;margin-bottom:4px}
   .ecran > .nav .nav-embleme img{height:46px}
-  .ecran > .nav .onglet{min-height:74px;gap:4px}
-  .ecran > .nav .onglet-ico{height:46px}
-  .ecran > .nav .onglet .ico.peinte{width:42px;height:42px}
-  .ecran > .nav .onglet-ico::before{width:34px;height:34px}
+  .ecran > .nav .onglet{min-height:72px;gap:3px}
+  .ecran > .nav .onglet-ico{height:50px;--ico:42px;--serti:54px}
+  .ecran > .nav .onglet.actif .onglet-ico{--ico:48px;--serti:60px}
+  .ecran > .nav .onglet:last-child{min-height:70px}
+  .nav-strates .ns-titre{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .nav .onglet-ico .pastille-alerte,.nav-strates .ns-cristal{animation:none}
 }
