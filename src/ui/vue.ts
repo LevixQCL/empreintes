@@ -361,7 +361,7 @@ export function htmlLieu(x: Expedition): string {
   const zone = zoneDuLieu(x);
   // un pillage se joue sur l'archipel attaqué, en pleine mer, pas dans une Strate
   // la Flèche (28 octobre 2026) : en plein ciel, sur une plateforme d'amarrage au-dessus des nuages
-  const img = x.fleche ? fondFleche : x.pillage ? vignetteArchipel(ageArchipel(x.strate)) : fondCombat(zone);
+  const img = x.fleche ? fondFleche : x.pillage ? vignetteArchipel(ageArchipel(x.strate)) : fondCombat(x.strate);
   const salle = x.carte?.salles[x.carte.position]?.type;
   const t = performance.now() / 1000;
   const phase = (duree: number, decalage = 0) => `-${((t + decalage * duree) % duree).toFixed(2)}s`;

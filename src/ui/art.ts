@@ -159,14 +159,19 @@ export const artGardien = (n: 'plaque' | 'barre' | 'cran' | 'bandeau') => `${bas
 export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
 export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
-/** Fond de la carte d'une Strate, une illustration par zone (0 Fondations, 1 salles closes, 2 mémoires, 3 le fond), quand elle existe */
-const STRATES_ILLUSTREES = new Set<number>([0, 1, 2, 3]);
-export const decorStrate = (zone: number): string | null => (STRATES_ILLUSTREES.has(zone) ? `${base}strates/zone-${zone}.webp` : null);
 /**
- * Fond de l'écran de combat : la même illustration de zone, floutée et assombrie d'avance (strates/zone-N-fond.webp, 600 × 750).
+ * Décor d'une Strate : une illustration et une ambiance par Strate (28 octobre 2026, Bryan : « des thèmes différents »),
+ * de −1 (fondations noyées, vert d'eau) à −10 (le fond, obsidienne et braise). Au-delà de −10, le décor du fond.
+ * Les anciennes images par zone (strates/zone-N.webp) restent pour les --sref des prompts.
+ */
+const STRATES_PEINTES = 10;
+const numStrate = (strate: number) => Math.min(STRATES_PEINTES, Math.max(1, Math.round(strate) || 1));
+export const decorStrate = (strate: number): string => `${base}strates/strate-${numStrate(strate)}.webp`;
+/**
+ * Fond de l'écran de combat : la même illustration de Strate, floutée et assombrie d'avance (strates/strate-N-fond.webp, 600 × 750).
  * Floutée dans le fichier plutôt qu'en CSS : un filtre plein écran coûte cher sur téléphone, une petite image floue s'agrandit sans défaut.
  */
-export const fondCombat = (zone: number): string | null => (STRATES_ILLUSTREES.has(zone) ? `${base}strates/zone-${zone}-fond.webp` : null);
+export const fondCombat = (strate: number): string => `${base}strates/strate-${numStrate(strate)}-fond.webp`;
 /** Icônes peintes des conditions de salle (23 octobre 2026), les sept */
 const CONDITIONS_PEINTES = new Set(['inondee', 'courants', 'chant', 'echo', 'sanctuaire', 'eboulis', 'brouillard']);
 export const iconeCondition = (id: string): string | null => (CONDITIONS_PEINTES.has(id) ? `${base}conditions/${id}.webp` : null);

@@ -145,7 +145,7 @@ export function htmlExploration(j: Jeu): string {
   const libre = !x.rencontre && x.phase === 'carte' && !x.terminee;
   const zone = ZONES[c.zone]!;
   const rangs = rangsDe(c);
-  const decor = decorStrate(c.zone);
+  const decor = decorStrate(x.strate);
   const posX = (s: Salle) => ((s.col + 1) / (s.nCol + 1)) * 100;
   const posY = (s: Salle) => (s.rang / Math.max(1, rangs - 1)) * 100;
   /** une salle qu'on ne visitera plus : sur une rangée déjà passée, ou au même niveau que l'escouade */

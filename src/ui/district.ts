@@ -5,7 +5,7 @@
 import { portOuvert } from './pillages';
 import { PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
-import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, ZONES as ZONES_STRATES, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
+import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
   OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, strateMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
@@ -1366,7 +1366,7 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
     const vaincue = !front || j.frontVaincu;
     const nom = NOMS_ETAGES[Math.min(n - 1, NOMS_ETAGES.length - 1)];
     const zone = zoneDe(n);
-    const img = decorStrate(ZONES_STRATES.indexOf(zone));
+    const img = decorStrate(n);
     h += `<li class="tr-strate${front ? ' front' : ''}${vaincue ? ' vaincue' : ''}">`
       + `<span class="tr-vignette">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}<b>−${n}</b></span>`
       + `<div class="tr-infos"><strong>${nom}</strong><small>${echap(zone.nom)}${vaincue ? ` · ${ICO.ok}vaincue` : ' · <em>front : son gardien t’attend</em>'}</small>`

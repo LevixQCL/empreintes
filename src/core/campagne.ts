@@ -37,7 +37,7 @@ export interface Replique {
 }
 
 /** L'illustration d'une scène : le décor de la zone, le portrait d'un gardien, ou un tableau de l'intro */
-export type ImageScene = { zone: number } | { ennemi: string } | { intro: string };
+export type ImageScene = { strate: number } | { ennemi: string } | { intro: string };
 
 export interface Scene {
   id: string;
@@ -66,7 +66,7 @@ const fin = (f: string) => (c: ContexteCampagne) => c.actes.fin === f;
 
 /** une scène d'ouverture de Strate (l'enjeu) ; les Strates −4, −7 attendent la décision de l'acte précédent */
 const entree = (strate: number, titre: string, recit: string, repliques: Replique[], apres?: (c: ContexteCampagne) => boolean): Scene => ({
-  id: `entree-${strate}`, acte: acteDe(strate), sur: `${ROMAIN[acteDe(strate)]} · STRATE −${strate}`, titre, image: { zone: strate <= 3 ? 0 : strate <= 6 ? 1 : strate <= 9 ? 2 : 3 },
+  id: `entree-${strate}`, acte: acteDe(strate), sur: `${ROMAIN[acteDe(strate)]} · STRATE −${strate}`, titre, image: { strate },
   recit, repliques, quand: (c) => c.strate >= strate && (!apres || apres(c)),
 });
 /** une scène après le gardien d'une Strate (ce qu'on a trouvé) */

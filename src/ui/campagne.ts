@@ -13,7 +13,7 @@ import { COULEUR } from './vue';
 // URL absolue : elle sert aussi dans une variable CSS (le fond flouté sur PC), qui se résoudrait depuis la feuille de style
 const intro = (id: string) => new URL(`intro/${id}.webp`, document.baseURI).href;
 const imageDecor = (i: ImageScene): string =>
-  'zone' in i ? decorStrate(i.zone) ?? intro('10-dessous') : 'ennemi' in i ? illustrationEnnemi(i.ennemi) ?? intro('10-dessous') : intro(i.intro);
+  'strate' in i ? decorStrate(i.strate) : 'ennemi' in i ? illustrationEnnemi(i.ennemi) ?? intro('10-dessous') : intro(i.intro);
 
 /** l'illustration propre à la scène, sinon le décor qu'elle reprend */
 const imageScene = (s: Scene): string => illustrationScene(s.id) ?? imageDecor(s.image);
