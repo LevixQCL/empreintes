@@ -12,7 +12,7 @@ describe('District', () => {
   it('le Générateur produit pendant l’absence, plafonné par le stockage', () => {
     const j = nouveauJeu(0);
     tick(j, 1 * H);
-    expect(j.energie).toBeCloseTo(DISTRICT.depart.energie + 60, 5);
+    expect(j.energie).toBeCloseTo(DISTRICT.depart.energie + DISTRICT.energieParHeure[1]!, 5);
     tick(j, 100 * H);
     expect(j.energie).toBe(stockage(j));
   });
@@ -20,9 +20,9 @@ describe('District', () => {
   it('un Porteur de la bonne lignée double la production', () => {
     const j = nouveauJeu(0);
     poster(j, 'ilka', 'generateur');
-    expect(energieParHeure(j)).toBe(120);
+    expect(energieParHeure(j)).toBe(DISTRICT.energieParHeure[1]! * DISTRICT.bonusAffinite);
     poster(j, 'doran', 'generateur');
-    expect(energieParHeure(j)).toBe(90);
+    expect(energieParHeure(j)).toBe(DISTRICT.energieParHeure[1]! * DISTRICT.bonusPoste);
     expect(j.porteurs.ilka!.poste).toBeNull();
   });
 

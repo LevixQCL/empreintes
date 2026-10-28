@@ -11,8 +11,11 @@ export const VERSION_JEU = 7;
 
 /** Réglages du district, au même endroit pour l'équilibrage */
 export const DISTRICT = {
-  /** énergie par heure selon le niveau du Générateur (index = niveau) */
-  energieParHeure: [0, 60, 110, 180, 260, 350, 450, 560, 680, 810, 950],
+  /** énergie par heure selon le niveau du Générateur (index = niveau). 28 octobre 2026, Bryan : « elle est au max tout le temps ».
+   *  Production divisée par ~3 (avant 60/110/180/260/350…950) : la Tour met ~15 à 18 h à se remplir au lieu de 5 à 7 h
+   *  (un peu plus aux derniers niveaux, où les chantiers coûtent des milliers),
+   *  et le robot ouvre toujours la Strate −10 vers le jour 30 (l'énergie ne freine pas la progression). */
+  energieParHeure: [0, 20, 35, 70, 125, 225, 320, 430, 550, 680, 820],
   /** stockage maximum selon le niveau du Noyau */
   stockage: [0, 300, 650, 1300, 2300, 4100, 6000, 9000, 13000, 19000, 27000],
   /** points d'Usure soignés par heure selon le niveau de la Clinique */
