@@ -43,6 +43,11 @@ if (process.argv.includes('--genes-atk')) {
   const k = Number(arg('genes-atk', '1'));
   for (const m of MODULES) if (m.lignee === 'bio' && m.type === 'atk') m.v = Math.round(m.v * k);
 }
+/** --reso-atk 0.8 : pareil pour les attaques Résonantes (les Résonants « orchestrent ») */
+if (process.argv.includes('--reso-atk')) {
+  const k = Number(arg('reso-atk', '1'));
+  for (const m of MODULES) if (m.lignee === 'reso' && m.type === 'atk') m.v = Math.round(m.v * k);
+}
 /** --sortie fichier.md : écrit le rapport ailleurs que dans docs/ (pour comparer plusieurs réglages) */
 const SORTIE = arg('sortie', '');
 /** Charge d'un Porteur de niveau 6 : assez pour 6 cartes moyennes, pas pour 6 grosses */
@@ -153,7 +158,7 @@ function composer(porteurs: string[], lignees: Lignee[], choix: Choix, graine = 
 }
 
 // ---------- Une descente ----------
-interface Compte { tours: number; resonances: number; echos: number }
+interface Compte { tours: number; resonances: number; echos: number; combats: number }
 /** Une Strate entière, comme le robot d'équilibrage (simulerExploration), avec les mêmes PV pour chacun */
 function descente(e: Escouade, rng: number, jouer: (s: CombatEtat) => void, facteur: number, compte: Compte): boolean {
   const ids = Object.keys(e);
@@ -172,6 +177,7 @@ function descente(e: Escouade, rng: number, jouer: (s: CombatEtat) => void, fact
       continue;
     }
     if (x.combat.issue !== 'en-cours') {
+      compte.combats++;
       x = cloturerCombat(x);
       if (!x.terminee) x = combatSuivant(x);
       continue;
@@ -188,10 +194,10 @@ function descente(e: Escouade, rng: number, jouer: (s: CombatEtat) => void, fact
 }
 
 function mesurer(e: Escouade, jouer: (s: CombatEtat) => void, facteur: number, parties = PARTIES) {
-  const compte: Compte = { tours: 0, resonances: 0, echos: 0 };
+  const compte: Compte = { tours: 0, resonances: 0, echos: 0, combats: 0 };
   let v = 0;
   for (let k = 0; k < parties; k++) if (descente(e, 1 + k * 7919, jouer, facteur, compte)) v++;
-  return { victoire: v / parties, reso: compte.resonances / Math.max(1, compte.tours), echo: compte.echos / Math.max(1, compte.tours) };
+  return { victoire: v / parties, toursCombat: compte.tours / Math.max(1, compte.combats), reso: compte.resonances / Math.max(1, compte.tours), echo: compte.echos / Math.max(1, compte.tours) };
 }
 
 // ---------- Les escouades ----------
@@ -217,7 +223,7 @@ const PAR_HASARD = Math.max(20, Math.round(PARTIES / HASARDS));
 const moyenneHasard = (jouer: (s: CombatEtat) => void, facteur: number, parties: number) => {
   const ms = hasards.map((e) => mesurer(e, jouer, facteur, parties));
   const moy = (f: (m: ReturnType<typeof mesurer>) => number) => ms.reduce((n, m) => n + f(m), 0) / ms.length;
-  return { victoire: moy((m) => m.victoire), reso: moy((m) => m.reso), echo: moy((m) => m.echo), detail: ms.map((m) => m.victoire) };
+  return { victoire: moy((m) => m.victoire), toursCombat: moy((m) => m.toursCombat), reso: moy((m) => m.reso), echo: moy((m) => m.echo), detail: ms.map((m) => m.victoire) };
 };
 let bas = 0.6, haut = 3;
 for (let i = 0; i < 7; i++) {
@@ -259,9 +265,9 @@ r += `${new Date().toISOString().slice(0, 10)} · ${PARTIES} descentes par mesur
 r += `Une Strate −${STRATE} entière, salle par salle jusqu'au gardien, ennemis ×${FACTEUR.toFixed(2)} (réglés pour que les decks de référence, composés au hasard, gagnent en moyenne une descente sur deux avec le robot). `;
 r += `Toutes les cartes en ${METAL}, au niveau ${NIVEAU_CARTES} ; chaque Porteur porte 6 cartes au plus, ${CHARGE} de Charge et ${DEFENSES_MIN} défenses au moins ; ${PV} PV chacun.\n\n`;
 r += `- **Force** : les cartes les plus puissantes, sans regarder leur Fréquence.\n- **Suites** : les cartes qui donnent le plus de chances de suite, la force ne départage qu'à égalité.\n- **Échos** : les cartes qui donnent le plus de chances d'Écho (une Fréquence empilée), la force ne départage qu'à égalité.\n\n`;
-r += `| Escouade | Suite possible en main | Écho possible | Puissance du deck | Victoires (robot) | Écart | Victoires (joueur moyen) | Écart | Tours avec Résonance (robot) | Échos |\n|---|---|---|---|---|---|---|---|---|---|\n`;
+r += `| Escouade | Suite possible en main | Écho possible | Puissance du deck | Victoires (robot) | Écart | Victoires (joueur moyen) | Écart | Tours avec Résonance (robot) | Échos | Tours par combat (joueur moyen) |\n|---|---|---|---|---|---|---|---|---|---|---|\n`;
 for (const x of resultats) {
-  r += `| ${x.ref ? '**' + x.nom + '**' : x.nom} | ${pct(x.main)} | ${pct(x.mainEcho)} | ${Math.round(x.puissance)} | ${pct(x.robot.victoire)} | ${ecart(x.robot.victoire, r0.robot.victoire)} | ${pct(x.moyen.victoire)} | ${ecart(x.moyen.victoire, r0.moyen.victoire)} | ${pct(x.robot.reso)} | ${pct(x.robot.echo)} |\n`;
+  r += `| ${x.ref ? '**' + x.nom + '**' : x.nom} | ${pct(x.main)} | ${pct(x.mainEcho)} | ${Math.round(x.puissance)} | ${pct(x.robot.victoire)} | ${ecart(x.robot.victoire, r0.robot.victoire)} | ${pct(x.moyen.victoire)} | ${ecart(x.moyen.victoire, r0.moyen.victoire)} | ${pct(x.robot.reso)} | ${pct(x.robot.echo)} | ${x.moyen.toursCombat.toFixed(1)} |\n`;
 }
 r += `\nVictoires des ${HASARDS} decks au hasard (robot) : ${refRobot.detail.map(pct).join(', ')}.\n`;
 r += `\nÉcart : points de victoire par rapport à l'escouade de référence (+10 = une descente gagnée de plus sur dix). Le bruit de la mesure est d'environ ±${Math.round(100 / Math.sqrt(PARTIES))} points.\n\n## Les decks\n\n`;
