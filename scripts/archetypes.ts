@@ -48,6 +48,10 @@ if (process.argv.includes('--reso-atk')) {
   const k = Number(arg('reso-atk', '1'));
   for (const m of MODULES) if (m.lignee === 'reso' && m.type === 'atk') m.v = Math.round(m.v * k);
 }
+/** --troubler : étape 2 du game designer (29 octobre 2026) — 4 boucliers Résonants « désarmer » deviennent des attaques à 70 % */
+if (process.argv.includes('--troubler')) {
+  for (const m of MODULES) if (['murmure', 'miroir-brume', 'meche-or', 'pressentiment'].includes(m.id)) { m.type = 'atk'; m.v = Math.round(m.v * 0.7); }
+}
 /** --sortie fichier.md : écrit le rapport ailleurs que dans docs/ (pour comparer plusieurs réglages) */
 const SORTIE = arg('sortie', '');
 /** Charge d'un Porteur de niveau 6 : assez pour 6 cartes moyennes, pas pour 6 grosses */
