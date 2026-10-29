@@ -1,3 +1,4 @@
+import { porteurDef } from './donnees';
 import type { Geste, Lignee, LigneeGeste } from './types';
 
 /** Les réglages chiffrés du combat, au même endroit pour l'équilibrage */
@@ -29,6 +30,8 @@ export const REGLES = {
   echo: 1.5,
   /** multiplicateur selon la longueur de la meilleure suite */
   multSuite: { 3: 1.3, 4: 1.6, 5: 2 } as Record<number, number>,
+  /** part du bonus de suite gardée quand toute la suite vient d'une seule lignée (1 = bonus entier) */
+  suiteMono: 1,
   soinEntreCombats: 0.5,
   /** Fêlure (25 octobre 2026) : une carte de la Fréquence fêlée brise l'intention de l'ennemi visé */
   felure: {
@@ -70,7 +73,7 @@ interface Analyse {
   echoF?: number;
 }
 
-type Maillon = Pick<Geste, 'f'> & { effet?: Geste['effet'] };
+type Maillon = Pick<Geste, 'f'> & { effet?: Geste['effet']; porteur?: Geste['porteur'] };
 
 /** Une carte à Fréquence libre : l'Accord (prolonge la suite) et le Diapason (répète la Fréquence d'avant) */
 export const frequenceLibre = (e?: { type: string }) => e?.type === 'accord' || e?.type === 'diapason';
@@ -99,16 +102,22 @@ export function analyserChaine(chaine: Maillon[]): Analyse {
   const fs = frequencesEffectives(chaine);
   let meilleur = fs.length ? 1 : 0;
   let serie = 1;
+  let fin = 0;
   for (let i = 1; i < fs.length; i++) {
     if (fs[i] === fs[i - 1]! + 1) {
       serie++;
-      meilleur = Math.max(meilleur, serie);
+      if (serie > meilleur) { meilleur = serie; fin = i; }
     } else serie = 1;
   }
   const compte = new Map<number, number>();
   for (const f of fs) compte.set(f, (compte.get(f) ?? 0) + 1);
   const echoF = [...compte.entries()].find(([, n]) => n >= 3)?.[0];
-  const mult = REGLES.multSuite[Math.min(meilleur, 5)] ?? 1;
+  let mult = REGLES.multSuite[Math.min(meilleur, 5)] ?? 1;
+  // suite d'une seule lignée : bonus réduit (les lignées se complètent sur l'échelle 1 à 9)
+  if (meilleur >= 3 && REGLES.suiteMono < 1) {
+    const ls = new Set(chaine.slice(fin - meilleur + 1, fin + 1).map((m) => (m.porteur ? porteurDef(m.porteur).lignee : null)).filter(Boolean));
+    if (ls.size === 1) mult = 1 + (mult - 1) * REGLES.suiteMono;
+  }
   return { suite: meilleur, mult, echo: echoF !== undefined, ...(echoF !== undefined ? { echoF } : {}) };
 }
 

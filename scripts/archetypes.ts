@@ -25,6 +25,8 @@ const METAL = arg('metal', 'fer') as Rarete;
 const NIVEAU_CARTES = Number(arg('niveau', '10'));
 /** --echo 1.6 : essaie un autre bonus d'Écho sans toucher aux règles */
 if (process.argv.includes('--echo')) (REGLES as { echo: number }).echo = Number(arg('echo', String(REGLES.echo)));
+/** --mono 0.5 : essaie un bonus de suite réduit quand la suite vient d'une seule lignée */
+if (process.argv.includes('--suite-mono')) (REGLES as { suiteMono: number }).suiteMono = Number(arg('suite-mono', '1'));
 /** --sortie fichier.md : écrit le rapport ailleurs que dans docs/ (pour comparer plusieurs réglages) */
 const SORTIE = arg('sortie', '');
 /** Charge d'un Porteur de niveau 6 : assez pour 6 cartes moyennes, pas pour 6 grosses */
