@@ -90,6 +90,8 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   'coeur-glaciere': 'coeur-glaciere',
   'sceau-orseve': 'sceau-orseve',
   'voix-quartier': 'voix-quartier',
+  // le parrainage (29 octobre 2026)
+  'empreinte-jumelle': 'empreinte-jumelle',
   // les voies, étapes 2 et 3, et les exclusives (28 octobre 2026)
   'lames-jumelles': 'lames-jumelles',
   'oeil-lecteur': 'oeil-lecteur',
