@@ -64,20 +64,12 @@
 .insigne-recruteur,.gt-qui strong em.insigne-recruteur{font-style:normal;display:inline-block;padding:1px 7px;border-radius:0;font:700 11px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;
   color:#1C1406;background:var(--laiton);clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);vertical-align:1px}
 
-/* le dos « Empreinte partagée » : en miniature ici, et sur les grandes révélations (gains.ts) */
-.rc-dos{position:relative;display:grid;place-items:center;width:56px;aspect-ratio:3/4;margin:0 auto;border-radius:6px;overflow:hidden}
-.rc-dos img{width:78%}
-.dos-partage.rc-dos,.gr-dos.dos-partage{border:2px solid transparent;
-  background:radial-gradient(circle at 30% 30%,rgba(216,180,101,.32),transparent 55%) padding-box,radial-gradient(circle at 70% 75%,rgba(127,212,255,.3),transparent 55%) padding-box,
-    radial-gradient(circle at 50% 45%,#2A2A3E,#0E1220 70%) padding-box,linear-gradient(135deg,#F4DC97,#B1832F 45%,#7FD4FF 100%) border-box}
-.gr-dos.dos-partage{border-width:3px}
-.rc-dos.dos-partage::before,.rc-dos.dos-partage::after{content:"";position:absolute;width:62%;aspect-ratio:1;border-radius:50%;
-  background:repeating-radial-gradient(circle,transparent 0 3px,rgba(244,220,151,.55) 3px 4px);opacity:.55}
-.rc-dos.dos-partage::before{left:-18%;top:-10%}
-.rc-dos.dos-partage::after{right:-18%;bottom:-10%;background:repeating-radial-gradient(circle,transparent 0 3px,rgba(127,212,255,.55) 3px 4px)}
-.rc-dos img{position:relative;z-index:1}
-/* la seconde empreinte répond à la première : retournée, décalée, dans l'or */
-.gr-holo.jumelle{rotate:180deg;translate:12% -10%;filter:sepia(.8) saturate(1.6) hue-rotate(-12deg)}
+/* le dos « Empreinte partagée » : peint sur Midjourney (deux empreintes, or et glace, qui se rejoignent au centre).
+   L'emblème se pose, plus petit, là où elles se rencontrent : en miniature ici, et sur les grandes révélations (gains.ts) */
+.rc-dos{position:relative;display:grid;place-items:center;width:56px;aspect-ratio:3/4;margin:0 auto;border-radius:5px;overflow:hidden}
+.dos-partage.rc-dos{background:#0E1220 var(--dos) 50% 50%/cover no-repeat;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.gr-dos.dos-partage{border:none;background:#0E1220 var(--dos) 50% 50%/cover no-repeat}
+.dos-partage img{width:44%;position:relative;z-index:1;filter:drop-shadow(0 0 10px rgba(127,212,255,.55)) drop-shadow(0 0 4px rgba(216,180,101,.5))}
 
 /* la saisie du code d'un parrain */
 .rc-champ{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}

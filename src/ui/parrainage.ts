@@ -96,7 +96,7 @@ export function htmlRecruter(e: EcranDistrict, r: EtatRecruter, enLigne: boolean
     + PARRAINAGE.distinctions.map((d) => {
       const gagne = !!p?.cosmetiques.includes(d.id);
       const n = Math.min(actives, d.recrues);
-      return `<div class="rc-distinction${gagne ? ' gagne' : ''}">${d.id === 'dos-partage' ? `<span class="rc-dos dos-partage" aria-hidden="true"><img src="./art/embleme.webp" alt=""></span>` : `<span class="rc-titre-ex"><em class="insigne-recruteur">Recruteur</em></span>`}`
+      return `<div class="rc-distinction${gagne ? ' gagne' : ''}">${d.id === 'dos-partage' ? `<span class="rc-dos dos-partage" style="--dos:url(./art/dos-partage-mini.webp)" aria-hidden="true"><img src="./art/embleme.webp" alt=""></span>` : `<span class="rc-titre-ex"><em class="insigne-recruteur">Recruteur</em></span>`}`
         + `<div><strong>${echap(d.nom)}</strong><p class="aide">${echap(d.texte)}</p>`
         + `<span class="rc-jauge" role="img" aria-label="${gagne ? 'Gagnée' : `${n} sur ${d.recrues} recrues actives`}"><i style="width:${gagne ? 100 : (n / d.recrues) * 100}%"></i></span>`
         + `<small class="chiffre">${gagne ? 'Gagnée' : `${n} / ${d.recrues} recrues actives`}</small></div></div>`;
