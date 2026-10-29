@@ -971,6 +971,8 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   const mettre = (nom: string, m: number) => { if (m !== 1) f.push({ nom, m }); };
   mettre(`Résonance (suite de ${suite})`, mult);
   mettre('Écho (trois Fréquences identiques)', multEcho(chaine, rang));
+  // Trois lignées dans l'escouade : elles se complètent sur l'échelle des Fréquences
+  if (REGLES.trioLignees !== 1 && new Set(s.porteurs.map((p) => porteurDef(p.id).lignee)).size >= 3) mettre('Trois lignées', REGLES.trioLignees);
   // Crescendo : plus la carte arrive tard dans la chaîne, plus elle frappe fort
   const cr = de('crescendo');
   if (cr) mettre(`Crescendo (${rang + 1}e de la chaîne)`, 1 + cr.part * rang);

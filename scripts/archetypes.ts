@@ -33,6 +33,8 @@ if (process.argv.includes('--reso-large')) {
   for (const m of neufs) m.f = [5, ...m.f.slice(1)];
   console.log('Passent en 5 :', neufs.map((m) => m.nom).join(', '));
 }
+/** --trio 1.15 : essaie un bonus pour l'escouade qui réunit les trois lignées */
+if (process.argv.includes('--trio')) (REGLES as { trioLignees: number }).trioLignees = Number(arg('trio', '1'));
 /** --sortie fichier.md : écrit le rapport ailleurs que dans docs/ (pour comparer plusieurs réglages) */
 const SORTIE = arg('sortie', '');
 /** Charge d'un Porteur de niveau 6 : assez pour 6 cartes moyennes, pas pour 6 grosses */

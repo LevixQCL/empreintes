@@ -32,6 +32,8 @@ export const REGLES = {
   multSuite: { 3: 1.3, 4: 1.6, 5: 2 } as Record<number, number>,
   /** part du bonus de suite gardée quand toute la suite vient d'une seule lignée (1 = bonus entier) */
   suiteMono: 1,
+  /** force en plus de toutes les cartes quand l'escouade réunit les trois lignées (1 = aucun bonus) */
+  trioLignees: 1,
   soinEntreCombats: 0.5,
   /** Fêlure (25 octobre 2026) : une carte de la Fréquence fêlée brise l'intention de l'ennemi visé */
   felure: {
