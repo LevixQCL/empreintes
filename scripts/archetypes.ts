@@ -38,6 +38,11 @@ if (process.argv.includes('--trio')) (REGLES as { trioLignees: number }).trioLig
 /** --empile-bouclier 0.75 --empile-soin 0.75 : essaie des boucliers et soins dégressifs dans une même chaîne */
 if (process.argv.includes('--empile-bouclier')) REGLES.empilement.bouclier = Number(arg('empile-bouclier', '1'));
 if (process.argv.includes('--empile-soin')) REGLES.empilement.soin = Number(arg('empile-soin', '1'));
+/** --genes-atk 0.7 : essai (29 octobre 2026, rôles des lignées) des attaques Génés affaiblies, les Génés devenant le soutien */
+if (process.argv.includes('--genes-atk')) {
+  const k = Number(arg('genes-atk', '1'));
+  for (const m of MODULES) if (m.lignee === 'bio' && m.type === 'atk') m.v = Math.round(m.v * k);
+}
 /** --sortie fichier.md : écrit le rapport ailleurs que dans docs/ (pour comparer plusieurs réglages) */
 const SORTIE = arg('sortie', '');
 /** Charge d'un Porteur de niveau 6 : assez pour 6 cartes moyennes, pas pour 6 grosses */
