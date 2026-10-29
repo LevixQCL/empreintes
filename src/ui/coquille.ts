@@ -9,7 +9,7 @@ import { miniature, portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
 import { feuilleNom } from './classements';
 import { COULEUR, panneauCompte, type Compte } from './vue';
-import { echap } from './outils';
+import { echap, virgule } from './outils';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages' | 'fleche';
 /** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */
@@ -360,7 +360,7 @@ export function gainsRapport(r: RapportMission): string {
     + `<li>${ICO.monter}<b>+${r.xp}</b><small>XP${r.niveau ? ` · niveau ${r.niveau}` : ''}</small></li>`
     + r.cartes.map((c) => `<li class="rm-carte${c.nouvelle ? ' nouvelle' : ''}">${ICO.cartes}<b>${echap(moduleDef(c.id).nom)}</b><small>${METAL(moduleDef(c.id).rarete)}${c.nouvelle ? ' · nouvelle' : ' · doublon'}</small></li>`).join('')
     + (r.creuseurs ? `<li>${ICO.ouvrier}<b>+${r.creuseurs}</b><small>creuseur${r.creuseurs > 1 ? 's' : ''}</small></li>` : '')
-    + (r.usure ? `<li class="rm-usure">${ICO.soin}<b>+${r.usure}</b><small>Usure</small></li>` : '')
+    + (r.usure ? `<li class="rm-usure">${ICO.soin}<b>+${virgule(r.usure)}</b><small>Usure</small></li>` : '')
     + `</ul>`;
 }
 

@@ -423,7 +423,7 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   const rapport: RapportMission = {
     porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, lieu: lieuId, butin: m.butin, eclats, rendement: m.rendement ?? 1, affinite: b.affinite, mult: Math.round(b.mult * 100) / 100, recit: [],
     composants, xp: gainXp, niveau: monte || null, cartes: trouvees, creuseurs: arrives,
-    usure: q.usure - usureAvant, marque: nouvelleMarque ? nouvelleMarque.nom : null, lu: false,
+    usure: Math.round((q.usure - usureAvant) * 10) / 10, marque: nouvelleMarque ? nouvelleMarque.nom : null, lu: false,
   };
   rapport.recit = recitMission(rapport);
   rangerRapport(j, rapport);
