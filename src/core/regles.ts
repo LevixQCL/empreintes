@@ -34,8 +34,9 @@ export const REGLES = {
   suiteMono: 1,
   /** force en plus de toutes les cartes quand l'escouade réunit les trois lignées (1 = aucun bonus) */
   trioLignees: 1,
-  /** force en plus de la carte Augmentée qui termine une suite (1 = aucun bonus) */
-  finisseur: 1,
+  /** Finisseur (29 octobre 2026, rôles des lignées) : la carte Augmentée qui termine une suite de 3 au moins frappe plus fort.
+   *  Les Augmentés « frappent », les Génés « tiennent », les Résonants « troublent » : aucune lignée ne gagne seule. */
+  finisseur: 1.25 as number,
   /** part gardée par un bouclier (ou un soin) pour chaque carte du même genre déjà posée dans la chaîne (1 = aucune perte) */
   empilement: { bouclier: 1, soin: 1 },
   soinEntreCombats: 0.5,
