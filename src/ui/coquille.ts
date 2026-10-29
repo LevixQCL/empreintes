@@ -307,9 +307,9 @@ export function navigation(e: EcranDistrict): string {
     fleche: flecheOuverte(j) && !j.fleche,
   };
   const actif = e.menu || e.vue === 'classements' || e.vue === 'recruter' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage ? 'pillages' : 'coupe') : e.vue === 'cartes' ? 'porteurs' : e.vue;
-  // sur PC (rail.css) : le cristal en tête, puis les sept onglets ; la jauge des Strates a cédé sa place aux Pillages
+  // sur PC (rail.css) : le cristal en tête (il ramène au district, comme le logo d'un site : 29 octobre 2026), puis les sept onglets ; la jauge des Strates a cédé sa place aux Pillages
   // et à la Flèche (28 octobre 2026) : la Strate reste dans la barre du haut
-  return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./art/embleme-cristal.webp" alt=""></span>` + ONGLETS.map((t) => {
+  return `<nav class="nav" aria-label="Navigation"><button type="button" class="nav-embleme" data-action="archipel" title="Retour au district" aria-label="Retour au district"><img src="./art/embleme-cristal.webp" alt=""></button>` + ONGLETS.map((t) => {
     const action = t.vue === 'plus' ? 'menu' : t.vue;
     return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${actif === t.vue ? ' aria-current="page"' : ''}>`
       + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span class="onglet-nom">${t.nom}</span></button>`;
