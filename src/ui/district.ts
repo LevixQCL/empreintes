@@ -509,7 +509,7 @@ function blocEntrainement(e: EcranDistrict): string {
   const eligibles = presents.filter((p) => apercuSeance(j, p.id)).sort((x, y) => niveau(x.id) - niveau(y.id));
   const relance = libresN && j.derniereSeance ? eligibles.find((p) => p.id === j.derniereSeance) : undefined;
 
-  let h = `<section class="fb-bloc te"><h3 class="titre-bloc">${ICO.monter}Entraînement<span class="te-regle">${places > 1 && seances.length ? `${seances.length}/${places} places · niv. ${plafond} max` : `1 séance = 1 niveau · jusqu’au niv. ${plafond}`}</span></h3>`;
+  let h = `<section class="fb-bloc te"><h3 class="titre-bloc">${ICO.monter}Entraînement<span class="te-regle">${places > 1 && seances.length ? `${seances.length}/${places} places · niv. ${plafond} max${ps.par === 'escouade' ? ' (titulaire)' : ''}` : `1 séance = 1 niveau · jusqu’au niv. ${plafond}${ps.par === 'escouade' ? ' (ton meilleur titulaire)' : ''}`}</span></h3>`;
   const fond = `<img class="te-fond" src="${salleEntrainement}" alt="" decoding="async">`;
   const lignes: string[] = [];
 
