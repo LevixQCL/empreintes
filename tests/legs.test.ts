@@ -32,6 +32,15 @@ describe('L’Héritage du district', () => {
     }
   });
 
+  it('la lettre attend aussi pendant une descente en cours (un joueur qui ne finit jamais sa descente la reçoit)', () => {
+    const j = nouveauJeu(0);
+    j.chambre = true;
+    j.expedition = {} as typeof j.expedition;
+    expect(legsEnAttente(j)).toBe(true);
+    expect(choisirLegs(j, 'premiere-mue').ok).toBe(true);
+    expect(legsEnAttente(j)).toBe(false);
+  });
+
   it('une seule par joueur, après la chambre, et définitive', () => {
     const j = nouveauJeu(0);
     expect(legsEnAttente(j)).toBe(false);

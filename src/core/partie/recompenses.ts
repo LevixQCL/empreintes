@@ -219,8 +219,12 @@ export const LETTRE_LEGS = {
   },
 } as const;
 
-/** La lettre attend le joueur : après la chambre scellée, au district, tant qu'il n'a pas reçu son Héritage */
-export const legsEnAttente = (j: Jeu) => !!j.chambre && !j.expedition && !j.legs;
+/**
+ * La lettre attend le joueur : après la chambre scellée, au district, tant qu'il n'a pas reçu son Héritage.
+ * Aussi pendant une descente en cours (29 octobre 2026) : un joueur qui repasse au district sans jamais finir sa descente
+ * ne la voyait jamais.
+ */
+export const legsEnAttente = (j: Jeu) => !!j.chambre && !j.legs;
 
 /** Le joueur répond à la lettre : sa carte de l’Héritage (ou la Clé) lui revient, scellée jusqu'à un Porteur de niveau 10 */
 export function choisirLegs(j: Jeu, id: string): Resultat {
