@@ -40,6 +40,8 @@ async function agirSansFilet(ev: MouseEvent) {
   const avantGains = releverSur();
   const depart = ev.detail === 0 ? centreDe(b) : app.touche;
   D.message = a === 'poster' || a === 'liberer' || a === 'fabriquer' || a === 'ameliorer' || a === 'greffer' || a === 'monter' || a === 'carte' || a === 'colis' || a === 'chapitre' ? D.message : '';
+  // la fiche du directeur se referme dès qu'on fait autre chose (une récompense, un classement, la collection…)
+  if (a !== 'fiche') D.fiche = false;
   const c: Clic = { b, ev, id, x, s, avantGains };
   let suite: Suite = 'inconnu';
   for (const theme of THEMES) {

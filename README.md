@@ -57,6 +57,8 @@ src/
     vue.ts         l'écran de combat
     pillages.ts    l'onglet Pillages : la carte des archipels voisins, la garnison, le journal du port
     parrainage.ts  l'écran « Recruter » (menu Plus) : le code, ce que chacun gagne, les recrues, les distinctions, la saisie d'un code
+    fiche.ts       la fiche du directeur (29 octobre 2026) : ce qui l'attend (core/partie/attente.ts), ses records, ses cartes marquantes, son code ;
+                   sur PC le cristal du rail l'ouvre et s'allume quand une récompense importante attend, sur téléphone elle est en tête du menu Plus
     fleche.ts      l'onglet Flèche : la flèche dessinée, le prochain quai, les quais gravés
     journal.ts     le journal du combat : cartes jouées tour par tour, calcul de chaque coup, défausse et pioche, lexique des « ? »
     icones.ts      le jeu d'icônes de l'interface (SVG, couleur du texte)

@@ -12,7 +12,7 @@ export function clavier(ev: KeyboardEvent) {
   }
   if (ev.key === 'Escape') {
     if (app.mode === 'district' && D.deck && D.echange) { D.echange = null; afficher(); return; }
-    if (app.mode === 'district' && (D.selection || D.carte || D.deck || D.menu || D.porteur || D.place != null)) { D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.porteur = null; D.place = null; afficher(); return; }
+    if (app.mode === 'district' && (D.selection || D.carte || D.deck || D.menu || D.fiche || D.porteur || D.place != null)) { D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.fiche = false; D.porteur = null; D.place = null; afficher(); return; }
     if (app.mode === 'combat' && K.journal) { K.journal = null; afficher(); return; }
     if (app.mode === 'combat' && K.regles) { K.regles = false; afficher(); return; }
   }

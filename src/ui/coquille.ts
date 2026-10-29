@@ -8,6 +8,7 @@ import type { Lignee } from '../core/types';
 import { miniature, portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
 import { feuilleNom } from './classements';
+import { cristalAllume, cristalRail, entreeFiche, feuilleFiche } from './fiche';
 import { COULEUR, panneauCompte, type Compte } from './vue';
 import { echap, virgule } from './outils';
 
@@ -37,6 +38,8 @@ export interface EcranDistrict {
   retour: string[];
   /** menu « Plus » ouvert */
   menu: boolean;
+  /** la fiche du directeur ouverte (le cristal du rail, le médaillon du haut ; 29 octobre 2026) */
+  fiche?: boolean;
   /** la lettre de l’Héritage : la lignée choisie à la première question, puis la carte reçue à montrer (27 octobre 2026) */
   legsLignee?: 'tech' | 'bio' | 'reso' | null;
   legsRevele?: boolean;
@@ -307,12 +310,14 @@ export function navigation(e: EcranDistrict): string {
     fleche: flecheOuverte(j) && !j.fleche,
   };
   const actif = e.menu || e.vue === 'classements' || e.vue === 'recruter' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage ? 'pillages' : 'coupe') : e.vue === 'cartes' ? 'porteurs' : e.vue;
-  // sur PC (rail.css) : le cristal en tête (il ramène au district, comme le logo d'un site : 29 octobre 2026), puis les sept onglets ; la jauge des Strates a cédé sa place aux Pillages
+  // sur PC (rail.css) : le cristal en tête (il ouvre la fiche du directeur et s'allume quand une récompense attend : 29 octobre 2026), puis les sept onglets ; la jauge des Strates a cédé sa place aux Pillages
   // et à la Flèche (28 octobre 2026) : la Strate reste dans la barre du haut
-  return `<nav class="nav" aria-label="Navigation"><button type="button" class="nav-embleme" data-action="archipel" title="Retour au district" aria-label="Retour au district"><img src="./art/embleme-cristal.webp" alt=""></button>` + ONGLETS.map((t) => {
+  return `<nav class="nav" aria-label="Navigation">${cristalRail(e)}` + ONGLETS.map((t) => {
     const action = t.vue === 'plus' ? 'menu' : t.vue;
     return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${actif === t.vue ? ' aria-current="page"' : ''}>`
-      + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>' : ''}</span><span class="onglet-nom">${t.nom}</span></button>`;
+      + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>'
+        // sur téléphone, le cristal n'existe pas : c'est l'onglet Plus (où vit la fiche) qui porte l'appel
+        : t.vue === 'plus' && cristalAllume(e) ? '<i class="pastille-alerte appel-fiche" aria-label="une récompense t’attend"></i>' : ''}</span><span class="onglet-nom">${t.nom}</span></button>`;
   }).join('') + `</nav>`;
 }
 
@@ -366,7 +371,7 @@ export function gainsRapport(r: RapportMission): string {
 
 /** Le rapport de mission (28 octobre 2026) : il s'ouvre au district tant qu'un retour n'a pas été lu */
 function feuilleRapport(e: EcranDistrict): string {
-  const autreChose = e.retour.length || e.menu || e.rappel || e.ressource || e.selection || e.carte || e.deck || e.porteur || e.guide;
+  const autreChose = e.retour.length || e.menu || e.fiche || e.rappel || e.ressource || e.selection || e.carte || e.deck || e.porteur || e.guide;
   const r = autreChose ? null : rapportALire(e.j);
   if (!r) return '';
   const p = porteurDef(r.porteur);
@@ -387,7 +392,7 @@ export function menu(e: EcranDistrict): string {
   let h = `<div class="voile-feuille" data-action="menu" aria-hidden="true"></div><section class="feuille menu" role="dialog" aria-modal="true" aria-label="Menu">`
     + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">EMPREINTES · ALPHA</span><h2>Menu</h2></div>`
     + `<button type="button" class="btn-icone" data-action="menu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
-  h += `<div class="liste-menu">`
+  h += entreeFiche(e) + `<div class="liste-menu">`
     + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>Le Grand Tableau</strong><small>Les classements des directeurs : profondeur, Registre, et bientôt les Joutes et la Flèche</small></span></button>`
     + (c.actif ? `<button type="button" class="ligne-menu rc-menu" data-action="recruter">${ICO.porteurs}<span><strong>Recruter des amis</strong><small>Ton code de parrainage : vous êtes récompensés tous les deux quand ton ami joue</small></span></button>` : '')
     + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur?.anonyme ? 'Protège ta partie : relie-la à Google ou à un e-mail' : c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : ' · choisis ton pseudo'}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
@@ -406,5 +411,5 @@ export function entete(surtitre: string, titre: string, droite = ''): string {
 /** L'écran complet du district : ressources, contenu, message, navigation, menu */
 export function coquille(e: EcranDistrict, contenu: string, classe = ''): string {
   const pseudo = e.grand?.edition ? feuilleNom(e.j, e.compte.utilisateur?.nom ?? '', e.grand.erreur, !!e.grand.accueil) : '';
-  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}${pseudo}${feuilleRappel(e)}${feuilleRapport(e)}</div>`;
+  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}${pseudo}${feuilleRappel(e)}${feuilleRapport(e)}${feuilleFiche(e)}</div>`;
 }

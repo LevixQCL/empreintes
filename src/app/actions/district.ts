@@ -27,6 +27,20 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     case 'ok-message': D.message = ''; break;
     case 'ressource': D.ressource = id && D.ressource !== id ? (id as typeof D.ressource) : null; D.menu = false; D.selection = null; break;
+    // la fiche du directeur (29 octobre 2026) : le cristal du rail, le médaillon de la barre du haut
+    case 'fiche': D.fiche = !D.fiche; D.ressource = null; D.menu = false; D.selection = null; D.bulle = null; break;
+    // récupérer depuis la fiche : on revient au district, où la récompense se montre (carte au choix, animation des gains)
+    case 'fiche-prendre':
+      ouvrir('archipel');
+      if (id === 'guide') resultat(J.reclamer(app.jeu));
+      else if (id === 'jour') resultat(J.reclamerQuotidien(app.jeu));
+      else if (id === 'butin') resultat(J.ouvrirArchive(app.jeu));
+      else if (id === 'colis') {
+        const r = J.ouvrirColis(app.jeu);
+        resultat(r);
+        if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} composants${r.colis.doublon ? `, un doublon de ${moduleDef(r.colis.doublon).nom}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
+      }
+      break;
     case 'menu': D.ressource = null; D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; D.guide = null; D.porteur = null; break;
     // le mode d'emploi des cartes : ouvrir sur un onglet, changer d'onglet, fermer (district et combat)
     case 'guide': if (app.mode === 'combat') { K.guide = id as OngletGuide; K.regles = false; } else D.guide = id as OngletGuide; break;
@@ -45,7 +59,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'tour-changer': D.tourChanger = !D.tourChanger; break;
     case 'forge-vue': D.forgeToutes = id === 'toutes'; break;
     case 'fabriquer': resultat(J.fabriquer(app.jeu, b.dataset.module ?? '', Date.now())); break;
-    case 'cartes': ouvrir('cartes'); break;
+    case 'cartes': ouvrir('cartes'); if (b.dataset.carte) D.carte = b.dataset.carte; break;
     case 'porteurs': ouvrir('porteurs'); break;
     case 'porteur': D.porteur = id; D.deck = null; D.place = null; break;
     // l'onglet Escouade (25 octobre 2026) s'ouvre sur l'escouade ; « Porteurs » et « Collection » sont ses deux autres volets
