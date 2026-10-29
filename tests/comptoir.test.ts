@@ -3,12 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { moduleDe, moduleDef } from '../src/core/donnees';
 import {
   COMPTOIR, ENTRAINEMENT, XP, acheter, ameliorer, estJeuValide, etalsDuComptoir, gainsAmelioration, garnirComptoir, niveauPorteur,
-  nouveauJeu, partir, plafondEntrainement, poster, prixComptoir, tick, apercuSeance, accorderSeance, DISTRICT, placesEntrainement,
+  nouveauJeu, partir, plafondEntrainement, poster, prixComptoir, tick, apercuSeance, accorderSeance, DISTRICT, placesEntrainement, plafondSeance,
 } from '../src/core/jeu';
 
 const HEURE = 3_600_000;
 const JOUR = 24 * HEURE;
 const pret = () => { const j = nouveauJeu(0, 1); j.chambre = true; j.recrues = true; j.energie = 1e6; j.composants = 1e6; j.eclats = 1e3; return j; };
+/** pour l'entraînement : un titulaire déjà au niveau 20, pour que seule la Tour plafonne */
+const pretT = () => { const j = pret(); j.porteurs.vela!.xp = 1e6; return j; };
 const construit = (niveau = 1) => { const j = pret(); j.batiments.comptoir = niveau; j.batiments.noyau = Math.max(j.batiments.noyau, niveau); garnirComptoir(j, 0); return j; };
 
 describe('Le Comptoir', () => {
@@ -99,7 +101,7 @@ describe('Le Comptoir', () => {
 
 describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 2026)', () => {
   it('une séance fait monter d’un seul niveau, puis le Porteur quitte la salle', () => {
-    const j = pret();
+    const j = pretT();
     const a = apercuSeance(j, 'doran')!;
     expect(a.cible).toBe(2);
     expect(poster(j, 'doran', 'noyau').ok).toBe(true);
@@ -115,7 +117,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
   });
 
   it('l’énergie se paie au lancement, et la durée annoncée est respectée', () => {
-    const j = pret();
+    const j = pretT();
     j.energie = 200;
     const a = apercuSeance(j, 'doran')!;
     poster(j, 'doran', 'noyau');
@@ -127,7 +129,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
   });
 
   it('l’XP s’accumule aussi seconde par seconde', () => {
-    const j = pret();
+    const j = pretT();
     const a = apercuSeance(j, 'doran')!;
     poster(j, 'doran', 'noyau');
     for (let s = 1; s <= 600; s++) tick(j, j.dernierTick + 1000);
@@ -135,14 +137,14 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
   });
 
   it('sans assez d’énergie, la séance ne se lance pas', () => {
-    const j = pret();
+    const j = pretT();
     j.energie = 0;
     expect(poster(j, 'doran', 'noyau').ok).toBe(false);
     expect(j.porteurs.doran!.poste).not.toBe('noyau');
   });
 
   it('interrompre garde l’XP gagnée et rend l’énergie du reste', () => {
-    const j = pret();
+    const j = pretT();
     j.batiments.generateur = 0;
     j.energie = 100;
     const a = apercuSeance(j, 'doran')!;
@@ -157,7 +159,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
   });
 
   it('la séance suivante reprend là où l’XP s’était arrêtée : moins longue et moins chère', () => {
-    const j = pret();
+    const j = pretT();
     const plein = apercuSeance(j, 'doran')!;
     poster(j, 'doran', 'noyau');
     tick(j, j.dernierTick + (plein.heures * HEURE) / 2);
@@ -167,18 +169,34 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
     expect(suite.energie).toBeLessThanOrEqual(Math.ceil(plein.energie / 2));
   });
 
-  it('plafonne à 4 niveaux par niveau de la Tour', () => {
-    const j = pret();
+  it('plafonne à 3 niveaux par niveau de la Tour (niveau 20 à la Tour 7)', () => {
+    const j = pretT();
     for (let k = 0; k < 10; k++) { poster(j, 'doran', 'noyau'); tick(j, j.dernierTick + 10 * JOUR); }
     expect(plafondEntrainement(j)).toBe(ENTRAINEMENT.niveauxParNoyau);
     expect(niveauPorteur(j, 'doran').niveau).toBe(plafondEntrainement(j));
     expect(poster(j, 'doran', 'noyau').ok).toBe(false);
-    j.batiments.noyau = 5;
+    j.batiments.noyau = 6;
+    expect(plafondEntrainement(j)).toBe(18);
+    j.batiments.noyau = 7;
     expect(plafondEntrainement(j)).toBe(XP.niveauMax);
   });
 
-  it('chaque séance coûte moins que le stockage de la Tour qui l’autorise', () => {
+  it('ne fait jamais dépasser le meilleur Porteur de l’escouade (29 octobre 2026)', () => {
     const j = pret();
+    j.batiments.noyau = 7;
+    let xp = 0; for (let n = 1; n < 5; n++) xp += Math.round(12 * n ** 1.6);
+    j.porteurs.vela!.xp = xp; // le meilleur titulaire est niveau 5
+    expect(plafondSeance(j)).toEqual({ niveau: 5, par: 'escouade' });
+    for (let k = 0; k < 10; k++) { poster(j, 'doran', 'noyau'); tick(j, j.dernierTick + 10 * JOUR); }
+    expect(niveauPorteur(j, 'doran').niveau).toBe(5);
+    expect(poster(j, 'doran', 'noyau').ok).toBe(false);
+    // le titulaire monte en combattant : la Tour suit
+    j.porteurs.vela!.xp += 2000;
+    expect(poster(j, 'doran', 'noyau').ok).toBe(true);
+  });
+
+  it('chaque séance coûte moins que le stockage de la Tour qui l’autorise', () => {
+    const j = pretT();
     for (let noyau = 1; noyau <= 10; noyau++) {
       j.batiments.noyau = noyau;
       j.porteurs.doran!.xp = 0;
@@ -191,7 +209,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
   });
 
   it('s’il descend, il quitte l’entraînement et récupère l’énergie du reste', () => {
-    const j = pret();
+    const j = pretT();
     poster(j, 'doran', 'noyau');
     expect(partir(j, ['ilka', 'doran', 'vela'], 1, 5).ok).toBe(true);
     expect(j.porteurs.doran!.poste).toBeNull();
@@ -199,7 +217,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
   });
 
   it('les places de la Tour suivent son niveau : 1, puis 2 au niveau 3, 3 au 6, 4 au 9 (28 octobre 2026)', () => {
-    const j = pret();
+    const j = pretT();
     j.energie = 5000;
     expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => { j.batiments.noyau = n; return placesEntrainement(j); })).toEqual([1, 1, 2, 2, 2, 3, 3, 3, 4, 4]);
     j.batiments.noyau = 1;
@@ -219,7 +237,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
   });
 
   it('une ancienne sauvegarde à une seule séance la retrouve dans la liste', () => {
-    const j = pret();
+    const j = pretT();
     poster(j, 'doran', 'noyau');
     j.seance = j.seances![0]!;
     delete j.seances;
@@ -229,7 +247,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
   });
 
   it('une ancienne sauvegarde avec un Porteur posté reçoit une séance offerte', () => {
-    const j = pret();
+    const j = pretT();
     j.porteurs.doran!.poste = 'noyau';
     delete j.seances;
     accorderSeance(j);
@@ -237,7 +255,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
   });
 
   it('la Tour montre le plafond d’entraînement au niveau suivant', () => {
-    const j = pret();
-    expect(gainsAmelioration(j, 'noyau').find((g) => g.quoi === 'entrainement')).toMatchObject({ avant: 4, apres: 8 });
+    const j = pretT();
+    expect(gainsAmelioration(j, 'noyau').find((g) => g.quoi === 'entrainement')).toMatchObject({ avant: 3, apres: 6 });
   });
 });

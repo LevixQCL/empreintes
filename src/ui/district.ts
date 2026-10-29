@@ -9,7 +9,7 @@ import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PA
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
   OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
-  COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
+  COMPTOIR, prixComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, Lignee, ModuleDef, Rarete } from '../core/types';
@@ -501,7 +501,8 @@ function blocEntrainement(e: EcranDistrict): string {
   const seances = seancesDe(j);
   const places = placesEntrainement(j);
   const libresN = Math.max(0, places - seances.length);
-  const plafond = plafondEntrainement(j);
+  const ps = plafondSeance(j);
+  const plafond = ps.niveau;
   const niveau = (id: string) => niveauPorteur(j, id).niveau;
   const prix = (n: number, manque = false) => `<span class="te-prix${manque ? ' manque' : ''}">${ICO.energie}${ent(n)}</span>`;
   const presents = PORTEURS.filter((p) => !seanceDe(j, p.id) && porteursPresents(j).includes(p.id) && !enExpedition(j, p.id));
@@ -555,7 +556,7 @@ function blocEntrainement(e: EcranDistrict): string {
       if (choix.some((p) => j.porteurs[p.id]!.poste)) h += `<p class="te-note">${ICO.marteau}quitte son poste au district</p>`;
     }
     const auMax = presents.filter((p) => !apercuSeance(j, p.id)).length;
-    if (auMax) h += `<p class="te-note">${auMax} Porteur${auMax > 1 ? 's' : ''} au niveau ${plafond} : ${plafond < XP.niveauMax ? 'monte la Tour pour aller plus loin' : 'le reste se gagne dans les Strates'}.</p>`;
+    if (auMax) h += `<p class="te-note">${auMax} Porteur${auMax > 1 ? 's' : ''} au niveau ${plafond} : ${ps.par === 'escouade' ? 'la Tour ne fait pas dépasser ton meilleur Porteur d’escouade, il monte en combattant' : plafond < XP.niveauMax ? 'monte la Tour pour aller plus loin' : 'le reste se gagne dans les Strates'}.</p>`;
   }
   if (!libresN) {
     const prochain = ENTRAINEMENT.places.findIndex((n) => n > places);

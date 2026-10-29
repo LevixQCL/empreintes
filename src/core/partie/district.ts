@@ -5,7 +5,7 @@ import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, mod
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
-import { ACCORD_OUVERT, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
+import { ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
 
 export function humeurDistrict(j: Jeu): string {
@@ -180,7 +180,7 @@ export function poster(j: Jeu, id: string, b: Poste | null): Resultat {
   if (b === 'noyau') {
     if (seanceDe(j, id)) return { ok: true };
     const a = apercuSeance(j, id);
-    if (!a) return non(`${porteurDef(id).nom} a atteint le plafond de la Tour : monte-la pour aller plus loin.`);
+    if (!a) return non(plafondSeance(j).par === 'escouade' ? `${porteurDef(id).nom} a rattrapé ton meilleur Porteur d’escouade : la suite se gagne dans les Strates.` : `${porteurDef(id).nom} a atteint le plafond de la Tour : monte-la pour aller plus loin.`);
     const n = placesEntrainement(j);
     if (seancesDe(j).length >= n) return non(n > 1 ? `Les ${n} places de la Tour sont prises : arrête une séance ou attends qu’une se termine.` : 'La place de la Tour est prise : arrête la séance ou attends qu’elle se termine.');
     if (j.energie < a.energie) return non(`Il manque ${a.energie - Math.floor(j.energie)} énergie pour cette séance.`);
@@ -373,9 +373,11 @@ export function creuser(j: Jeu): boolean {
 // Maintenant (modèle « laboratoire » des jeux de gestion) : une séance = UN niveau. L'énergie se paie au lancement,
 // la durée et le prix se voient avant de lancer, et à la fin le Porteur quitte la salle : il faut revenir le relancer.
 // Rien n'est puni : interrompre (escouade, remplacement, « Arrêter ») garde l'XP gagnée et rend l'énergie du reste.
-// Plafond inchangé : 4 niveaux par niveau de la Tour ; au-delà, l'expérience se gagne dans les Strates.
+// Plafond (29 octobre 2026, Bryan : l'entraînement allait 4 à 10 fois plus vite que les missions et montait tout l'effectif
+// au niveau 20 dès la Tour 5, sans jouer) : 3 niveaux par niveau de la Tour (niveau 20 à la Tour 7), et jamais au-delà du
+// meilleur Porteur de l'escouade. Ce sont les combats qui font monter l'escouade ; la Tour fait suivre les réserves.
 export const ENTRAINEMENT = {
-  niveauxParNoyau: 4,
+  niveauxParNoyau: 3,
   /**
    * Les places de la salle d'entraînement selon le niveau de la Tour (index = niveau), 28 octobre 2026, Bryan :
    * chaque palier de la Tour se ressent, sans tout ouvrir d'un coup, étalé sur les dix niveaux :
@@ -401,7 +403,19 @@ export const placesEntrainement = (j: Jeu) => ENTRAINEMENT.places[Math.min(j.bat
 /** Les séances en cours (répare au passage une sauvegarde qui n'en a pas encore la liste) */
 export const seancesDe = (j: Jeu): Seance[] => (j.seances ??= []);
 export const seanceDe = (j: Jeu, id: string) => seancesDe(j).find((s) => s.porteur === id) ?? null;
-export const plafondEntrainement = (j: Jeu) => Math.min(XP.niveauMax, ENTRAINEMENT.niveauxParNoyau * j.batiments.noyau);
+export const plafondEntrainement = (j: Pick<Jeu, 'batiments'>) => Math.min(XP.niveauMax, ENTRAINEMENT.niveauxParNoyau * j.batiments.noyau);
+/** Le niveau du meilleur Porteur de l'escouade (sans escouade : le plus avancé du district) */
+export function niveauTitulaire(j: Jeu): number {
+  const esc = escouadeDe(j);
+  const ids = esc.length ? esc : porteursPresents(j);
+  return Math.max(1, ...ids.map((id) => niveauPorteur(j, id).niveau));
+}
+/** Le niveau qu'on peut atteindre à la Tour aujourd'hui, et ce qui le fixe : la Tour, ou le meilleur titulaire */
+export function plafondSeance(j: Jeu): { niveau: number; par: 'tour' | 'escouade' } {
+  const tour = plafondEntrainement(j);
+  const tit = niveauTitulaire(j);
+  return tit < tour ? { niveau: tit, par: 'escouade' } : { niveau: tour, par: 'tour' };
+}
 /** Raccourcissement des séances dû à la Tour (1 = aucun) */
 export const vitesseEntrainement = (noyau: number) => 1 - ENTRAINEMENT.vitesseParNoyau * Math.max(0, noyau - 1);
 /** XP totale pour atteindre un niveau depuis le niveau 1 */
@@ -410,7 +424,7 @@ const xpPourAtteindre = (niveau: number) => { let s = 0; for (let n = 1; n < niv
 /** Ce que coûterait et durerait la séance d'un Porteur (null : rien à gagner, plafond atteint) */
 export function apercuSeance(j: Jeu, id: string): { cible: number; heures: number; energie: number; xp: number } | null {
   const n = niveauPorteur(j, id);
-  if (n.requis === null || n.niveau >= plafondEntrainement(j)) return null;
+  if (n.requis === null || n.niveau >= plafondSeance(j).niveau) return null;
   const cible = n.niveau + 1;
   const xp = xpPourAtteindre(cible) - (j.porteurs[id]!.xp ?? 0);
   const part = Math.max(0, Math.min(1, xp / n.requis));
