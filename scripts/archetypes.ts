@@ -52,6 +52,8 @@ if (process.argv.includes('--reso-atk')) {
 if (process.argv.includes('--troubler')) {
   for (const m of MODULES) if (['murmure', 'miroir-brume', 'meche-or', 'pressentiment'].includes(m.id)) { m.type = 'atk'; m.v = Math.round(m.v * 0.7); }
 }
+/** --finisseur 1.25 : étape 3, l'Augmenté qui termine une suite frappe plus fort */
+if (process.argv.includes('--finisseur')) (REGLES as { finisseur: number }).finisseur = Number(arg('finisseur', '1'));
 /** --sortie fichier.md : écrit le rapport ailleurs que dans docs/ (pour comparer plusieurs réglages) */
 const SORTIE = arg('sortie', '');
 /** Charge d'un Porteur de niveau 6 : assez pour 6 cartes moyennes, pas pour 6 grosses */

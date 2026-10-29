@@ -977,6 +977,12 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
     const avant = chaine.slice(0, rang).filter((x) => x.type === g.type).length;
     if (avant) mettre(`${g.type === 'bouclier' ? 'Boucliers' : 'Soins'} empilés (${avant + 1}e)`, emp ** avant);
   }
+  // Finisseur : la carte Augmentée qui termine une suite (de 3 au moins) frappe plus fort
+  if (REGLES.finisseur !== 1 && g.type === 'atk' && ligneeGeste(g) === 'tech') {
+    const fs = frequencesEffectives(chaine);
+    const finit = rang >= 2 && fs[rang - 1] === fs[rang]! - 1 && fs[rang - 2] === fs[rang]! - 2 && fs[rang + 1] !== fs[rang]! + 1;
+    if (finit) mettre('Finisseur (termine la suite)', REGLES.finisseur);
+  }
   // Trois lignées dans l'escouade : elles se complètent sur l'échelle des Fréquences
   if (REGLES.trioLignees !== 1 && new Set(s.porteurs.map((p) => porteurDef(p.id).lignee)).size >= 3) mettre('Trois lignées', REGLES.trioLignees);
   // Crescendo : plus la carte arrive tard dans la chaîne, plus elle frappe fort

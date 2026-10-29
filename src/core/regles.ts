@@ -34,6 +34,8 @@ export const REGLES = {
   suiteMono: 1,
   /** force en plus de toutes les cartes quand l'escouade réunit les trois lignées (1 = aucun bonus) */
   trioLignees: 1,
+  /** force en plus de la carte Augmentée qui termine une suite (1 = aucun bonus) */
+  finisseur: 1,
   /** part gardée par un bouclier (ou un soin) pour chaque carte du même genre déjà posée dans la chaîne (1 = aucune perte) */
   empilement: { bouclier: 1, soin: 1 },
   soinEntreCombats: 0.5,
