@@ -38,6 +38,9 @@ export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string
 // Décision du 22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue. Les Gestes, cartes d'action à part, ont disparu.
 // Une carte = une place dans le deck. On la confie à un Porteur de sa lignée (6 cartes au plus par Porteur, voir jeu.ts) ;
 // le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les 2 cartes du district.
+// Rôles des lignées (29 octobre 2026, mesuré au robot, docs/robot-archetypes.md) : les attaques Génés passent à 65 % de leur force
+// (les Génés tiennent, ils ne gagnaient plus besoin de personne) ; Voile du murmure, Miroir de brume, Mèche d’or et Sablier inversé
+// deviennent des attaques « Troubler » (désarmer) à 70 % de leur ancien bouclier (les Résonants affaiblissent l'ennemi).
 // (Le tableau garde son nom historique, MODULES : dans la première version, les cartes étaient des Modules greffés.)
 //
 // Une carte existe dans les cinq métaux. Un exemplaire se note « carte@métal » (« jambes-ressort@or »). Le métal :
@@ -71,12 +74,12 @@ export const MODULES: ModuleDef[] = [
   c('esquive', 'Bracelet de déviation', 'tech', 'fer', 'bouclier', 6, [5, 6, 4], { type: 'elan' }),
   c('tir', 'Canon à cristal', 'tech', 'fer', 'atk', 10, [6, 7, 5], { type: 'percant' }),
   c('tir-vif', 'Pistolet à faisceau', 'tech', 'fer', 'atk', 5, [2, 1, 3], { type: 'flux', v: 1 }),
-  c('morsure', 'Pince de récif', 'bio', 'fer', 'atk', 7, [2, 3, 1], { type: 'siphon', part: 0.5 }),
+  c('morsure', 'Pince de récif', 'bio', 'fer', 'atk', 5, [2, 3, 1], { type: 'siphon', part: 0.5 }),
   c('carapace', 'Carapace', 'bio', 'fer', 'bouclier', 8, [1, 2, 3], { type: 'rempart', part: 0.5 }),
   c('regenerer', 'Bol de sève', 'bio', 'fer', 'soin', 9, [4, 5, 3], { type: 'vague' }),
-  c('charge', 'Front de roche', 'bio', 'fer', 'atk', 9, [5, 4, 6], { type: 'fissure', part: 0.25 }),
+  c('charge', 'Front de roche', 'bio', 'fer', 'atk', 6, [5, 4, 6], { type: 'fissure', part: 0.25 }),
   c('grogner', 'Conque de garde', 'bio', 'fer', 'bouclier', 5, [3, 2, 4], { type: 'desarmer', part: 0.3 }),
-  c('murmure', 'Voile du murmure', 'reso', 'fer', 'bouclier', 7, [7, 6, 8], { type: 'desarmer', part: 0.3 }),
+  c('murmure', 'Voile du murmure', 'reso', 'fer', 'atk', 5, [7, 6, 8], { type: 'desarmer', part: 0.3 }),
   c('echo', 'Cristal d’écho', 'reso', 'fer', 'atk', 8, [9, 8, 7], { type: 'accord' }),
   c('souffle', 'Cor de brume', 'reso', 'fer', 'atk', 20, [8, 9, 7], { type: 'fissure', part: 0.25 }, true),
   c('apaiser', 'Cœur d’améthyste', 'reso', 'fer', 'soin', 7, [6, 7, 5], { type: 'vague' }),
@@ -96,25 +99,25 @@ export const MODULES: ModuleDef[] = [
 
   // ---------- Génés : Fréquences basses ----------
   c('glande-ambre', 'Glande d’ambre', 'bio', 'fer', 'soin', 7, [3, 2, 4], { type: 'vague' }),
-  c('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', 'atk', 15, [1, 3, 2], { type: 'siphon', part: 0.6 }),
+  c('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', 'atk', 10, [1, 3, 2], { type: 'siphon', part: 0.6 }),
   c('cuir-recif', 'Cuir de récif', 'bio', 'fer', 'bouclier', 11, [4, 5, 3], { type: 'rempart', part: 0.5 }),
-  c('yeux-nocturnes', 'Yeux nocturnes', 'bio', 'fer', 'atk', 14, [3, 4, 2], { type: 'fissure', part: 0.25 }),
+  c('yeux-nocturnes', 'Yeux nocturnes', 'bio', 'fer', 'atk', 9, [3, 4, 2], { type: 'fissure', part: 0.25 }),
   c('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', 'bouclier', 15, [2, 4, 3], { type: 'rempart', part: 0.5 }),
   c('branchies', 'Branchies des Fondations', 'bio', 'cuivre', 'bouclier', 13, [2, 1, 3], { type: 'rempart', part: 0.5 }),
   c('carapace-mere', 'Carapace-mère', 'bio', 'argent', 'bouclier', 14, [5, 6, 1], { type: 'rempart', part: 0.75 }),
   c('sang-ambre', 'Sang d’ambre', 'bio', 'argent', 'soin', 8, [3, 2, 5], { type: 'vague' }),
-  c('coeur-meute', 'Cœur de meute', 'bio', 'or', 'atk', 11, [5, 4, 3], { type: 'siphon', part: 0.5 }),
+  c('coeur-meute', 'Cœur de meute', 'bio', 'or', 'atk', 7, [5, 4, 3], { type: 'siphon', part: 0.5 }),
   c('mue-totale', 'Mue totale', 'bio', 'or', 'soin', 16, [1, 2, 4], { type: 'vague' }),
 
   // ---------- Résonants : Fréquences hautes ----------
   c('eclat-chant', 'Éclat qui chante', 'reso', 'fer', 'atk', 13, [8, 7, 9], { type: 'crescendo', part: 0.3 }),
-  c('miroir-brume', 'Miroir de brume', 'reso', 'fer', 'bouclier', 10, [8, 9, 7], { type: 'desarmer', part: 0.3 }),
+  c('miroir-brume', 'Miroir de brume', 'reso', 'fer', 'atk', 7, [8, 9, 7], { type: 'desarmer', part: 0.3 }),
   c('encre-ancienne', 'Encre ancienne', 'reso', 'fer', 'atk', 11, [6, 7, 5], { type: 'fissure', part: 0.25 }),
-  c('meche-or', 'Mèche d’or', 'reso', 'fer', 'bouclier', 11, [7, 8, 6], { type: 'desarmer', part: 0.3 }),
+  c('meche-or', 'Mèche d’or', 'reso', 'fer', 'atk', 8, [7, 8, 6], { type: 'desarmer', part: 0.3 }),
   c('plume-givre', 'Plume de givre', 'reso', 'cuivre', 'atk', 11, [9, 8, 7], { type: 'desarmer', part: 0.4 }),
   c('ombre-serpent', 'Ombre de serpent', 'reso', 'cuivre', 'atk', 14, [9, 6, 8], { type: 'fissure', part: 0.3 }),
   c('ombre-ailee', 'Ombre ailée', 'reso', 'argent', 'atk', 26, [9, 7, 8], { type: 'fissure', part: 0.4 }, true),
-  c('pressentiment', 'Sablier inversé', 'reso', 'argent', 'bouclier', 12, [7, 8, 6], { type: 'desarmer', part: 0.4 }),
+  c('pressentiment', 'Sablier inversé', 'reso', 'argent', 'atk', 8, [7, 8, 6], { type: 'desarmer', part: 0.4 }),
   c('chant-abysses', 'Chant des abysses', 'reso', 'or', 'atk', 26, [7, 8, 9], { type: 'accord' }),
   c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 22, [9, 8, 7], { type: 'crescendo', part: 0.3 }),
 
@@ -139,10 +142,10 @@ export const MODULES: ModuleDef[] = [
   // ---------- Les voies, étapes 2 et 3 (28 octobre 2026, docs/familles-de-decks.md) ----------
   // La Traque (Nuit) : fissurer, puis achever
   c('flair', 'Flair', 'bio', 'fer', 'bouclier', 10, [2, 3, 1], { type: 'fissure', part: 0.3 }),
-  c('bond-predateur', 'Bond du prédateur', 'bio', 'fer', 'atk', 12, [4, 3, 5], { type: 'curee', part: 0.6 }),
-  c('crocs-verre', 'Crocs de verre', 'bio', 'cuivre', 'atk', 14, [3, 4, 2], { type: 'curee', part: 0.6 }),
-  c('chasse-aveugle', 'Chasse à l’aveugle', 'bio', 'argent', 'atk', 20, [5, 4, 2], { type: 'curee', part: 0.7 }),
-  c('hallali', 'Hallali', 'bio', 'or', 'atk', 22, [4, 5, 1], { type: 'curee', part: 0.8 }),
+  c('bond-predateur', 'Bond du prédateur', 'bio', 'fer', 'atk', 8, [4, 3, 5], { type: 'curee', part: 0.6 }),
+  c('crocs-verre', 'Crocs de verre', 'bio', 'cuivre', 'atk', 9, [3, 4, 2], { type: 'curee', part: 0.6 }),
+  c('chasse-aveugle', 'Chasse à l’aveugle', 'bio', 'argent', 'atk', 13, [5, 4, 2], { type: 'curee', part: 0.7 }),
+  c('hallali', 'Hallali', 'bio', 'or', 'atk', 14, [4, 5, 1], { type: 'curee', part: 0.8 }),
   // La Lecture (Aurel) : briser la Fêlure à coup sûr, puis frapper dans la faille
   c('regard-biais', 'Regard en biais', 'reso', 'fer', 'bouclier', 11, [6, 7, 9], { type: 'lecture' }),
   c('lame-doute', 'Lame de doute', 'reso', 'fer', 'atk', 13, [7, 8, 6], { type: 'faille', part: 0.5 }),
@@ -167,7 +170,7 @@ export const MODULES: ModuleDef[] = [
   // (écartées, parfois hors de la plage de la lignée) : les meilleurs effets ne doivent pas rendre les Résonances faciles.
   // Argent
   x('gantelet-pillard', 'Gantelet-pillard', 'tech', 'argent', 'atk', 17, [6, 2], { type: 'rapt' }),
-  x('machoire-miroir', 'Mâchoire-miroir', 'bio', 'argent', 'atk', 17, [5, 1], { type: 'empreinte' }),
+  x('machoire-miroir', 'Mâchoire-miroir', 'bio', 'argent', 'atk', 11, [5, 1], { type: 'empreinte' }),
   x('boucle-memoire', 'Boucle de mémoire', 'reso', 'argent', 'bouclier', 12, [6, 9], { type: 'rappel' }),
   // Or
   x('coeur-surregime', 'Cœur en surrégime', 'tech', 'or', 'atk', 20, [7, 2], { type: 'surtension', part: 0.6, cout: 0.12 }),
@@ -187,7 +190,7 @@ export const MODULES: ModuleDef[] = [
   legs('bras-fonderie', 'Bras de la Fonderie', 'tech', 'atk', 40, [5, 6, 4], { type: 'percant' }, { type: 'elan' }, true),
   legs('coeur-glaciere', 'Cœur de la Glacière', 'tech', 'atk', 17, [6, 5, 7], { type: 'decharge', part: 0.5 }, { type: 'flux', v: 1 }),
   legs('carapace-fondations', 'Carapace des Fondations', 'bio', 'bouclier', 18, [2, 3, 1], { type: 'rempart', part: 0.4 }, { type: 'riposte', part: 0.4 }),
-  legs('oeil-grande-nuit', 'Œil de la Grande Nuit', 'bio', 'atk', 13, [3, 2, 4], { type: 'fissure', part: 0.2 }, { type: 'siphon', part: 0.3 }),
+  legs('oeil-grande-nuit', 'Œil de la Grande Nuit', 'bio', 'atk', 8, [3, 2, 4], { type: 'fissure', part: 0.2 }, { type: 'siphon', part: 0.3 }),
   legs('premiere-mue', 'Première mue', 'bio', 'soin', 18, [1, 2, 3], { type: 'vague' }, { type: 'rempart', part: 0.35 }),
   legs('lanterne-lecture', 'Lanterne de la première Lecture', 'reso', 'atk', 17, [8, 7, 9], { type: 'accord' }, { type: 'desarmer', part: 0.3 }),
   legs('sceau-orseve', 'Sceau volé aux Orsève', 'reso', 'atk', 18, [7, 6, 8], { type: 'desarmer', part: 0.3 }, { type: 'fissure', part: 0.2 }),
