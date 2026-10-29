@@ -1683,13 +1683,22 @@ export function htmlEscouade(e: EcranDistrict): string {
   const zone = zoneDe(e.strateChoisie);
   const fl = !ep && !fouille && e.fleche ? etatFleche(j) : null;
   const pi = !ep && !fouille && !fl ? e.pillage ?? null : null;
-  const titre = fl ? `FLÈCHE · QUAI ${fl.quai}` : pi ? `PILLAGE · ${pi.nom.toUpperCase()}` : ep ? `ÉPREUVE · ${ep.nom.toUpperCase()}` : `${fouille ? 'FOUILLE · ' : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`;
+  const df = fl ? e.defi ?? null : null;
+  const titre = df ? `FLÈCHE · DÉFI DU QUAI ${df.quai}` : fl ? `FLÈCHE · QUAI ${fl.quai}` : pi ? `PILLAGE · ${pi.nom.toUpperCase()}` : ep ? `ÉPREUVE · ${ep.nom.toUpperCase()}` : `${fouille ? 'FOUILLE · ' : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`;
   let h = `<div class="ecran ecran-escouade es"><main class="contenu">`
     + entete(titre, 'Escouade', `<button type="button" class="btn-icone" data-action="${fl ? 'fleche' : pi ? 'pillages' : 'coupe'}" aria-label="Retour">${ICO.retour}</button>`);
 
   // 1. ce qu'on part faire
   h += `<section class="es-mission">`;
-  if (fl) {
+  if (df) {
+    // un défi (29 octobre 2026) : la garnison figée du directeur qui tient le quai
+    const c = chanceVictoire(df.force / Math.max(0.01, forceEscouade(j, e.escouade)));
+    const d = difficulte(c >= 0.85 ? 0.9 : c >= 0.5 ? 1 : c >= 0.15 ? 1.05 : 1.2);
+    h += `<p class="es-but">${ICO.bouclier}<span><strong>Défi · quai ${df.quai}</strong>Un seul combat contre l’escouade de ${echap(df.nom)}. Gagné, le quai est à toi ; perdu, ta montée ne bouge pas.</span></p>`
+      + `<div class="es-pillage d${d.niveau}"><span class="es-pillage-visages">${df.porteurs.map((id) => avatar(id, 34)).join('')}</span>`
+      + `<span><b>${d.nom}</b><small>${e.escouade.length === 3 ? `${Math.round(c * 100)} % de chances avec cette escouade` : 'Choisis 3 Porteurs'}</small></span>`
+      + `<span class="es-pillage-butin">${ICO.bouclier}<b>${df.quai}</b></span></div>`;
+  } else if (fl) {
     // le quai suivant : ses gardiens, et les chances de l'escouade choisie (elles changent avec l'escouade)
     const g = gardiensQuai(fl.quai);
     const c = chanceQuai(forceEscouade(j, e.escouade), fl.quai);

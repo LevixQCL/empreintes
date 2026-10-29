@@ -74,8 +74,10 @@ export interface EcranDistrict {
   fleche?: boolean;
   /** la présentation de la Flèche est rouverte (bouton « ? ») */
   flecheAide?: boolean;
-  /** le directeur qui tient le quai d'où l'on monte, lu en ligne (null : les gardiens payés des Hauts) */
-  gardienQuai?: { quai: number; gardien: import('../core/jeu').GardienQuai | null; lu: number } | null;
+  /** les gardiens de la Flèche lus en ligne : les plus hauts, et ceux des quais déjà atteints (max) */
+  gardiens?: { top: import('../core/jeu').GardienQuai[]; portee: import('../core/jeu').GardienQuai[]; max: number; lu: number } | null;
+  /** le défi préparé (écran de départ) */
+  defi?: import('../core/jeu').GardienQuai | null;
   /** le Port : sa présentation rouverte, et le volet affiché (pillages ou missions en mer) */
   portAide?: boolean;
   voletPort?: 'pillages' | 'missions';

@@ -6,9 +6,12 @@
 //   - une défaite fait redescendre d'autant, jamais sous le dernier quai gravé atteint ;
 //   - chaque quai gravé donne sa récompense une seule fois ;
 //   - pas de jeton : on monte autant qu'on veut, l'Usure de l'escouade est la seule limite (rien à attendre pour jouer).
-// Tenir un quai (29 octobre 2026, Bryan : « go pour 1+2 ») : l'escouade s'arrête sur son quai et remplace les gardiens
-// payés ; les Hauts versent un gage tant qu'elle le tient ; ceux qui montent de ce quai l'affrontent (sa garnison figée
-// au moment de s'installer) ; si elle tombe, le directeur redescend comme après une défaite.
+// Deux couches (29 octobre 2026, Bryan : « une partie histoire où l'on finit par réussir à monter et une partie
+// compétition où l'on veut devenir le gardien de l'étage le plus haut ») :
+//   - la montée (l'histoire) se fait toujours contre les gardiens payés par les Hauts : aucun joueur ne bloque personne ;
+//   - la garde (la compétition) : on tient un quai libre déjà atteint, avec une escouade figée qui le garde pendant qu'on
+//     continue de monter ; les Hauts versent un gage ; un quai déjà tenu se prend en défiant son gardien. Un défi perdu
+//     ne coûte que l'Usure ; un gardien battu perd son quai (jamais sa progression dans l'histoire).
 // Le sommet (les Sièges tenus par des joueurs, le passage d'une île) viendra plus tard.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
@@ -20,7 +23,7 @@ import { graine, tireur } from '../rng';
 import { DISTRICT, XP, bonusPv, gagnerXp, log, niveauPorteur, non, pvNiveau, usureMax, type Jeu, type Resultat } from './etat';
 import { escouadePrete, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
-import { PILLAGE, forceGarnison, remonter as remonterPillage, type Garnison } from './pillages';
+import { PILLAGE, remonter as remonterPillage, type Garnison } from './pillages';
 
 export { FLECHE };
 
@@ -51,8 +54,6 @@ export const ASCENSION = {
   caisseJours: 2,
   /** une défense tenue rapporte un quart de jour de gage */
   partDefense: 0.25,
-  /** les Hauts ne confient un quai qu'à une escouade à sa mesure : au plus 1,25 fois la force des gardiens payés */
-  mesure: 1.25,
 } as const;
 
 /** L'état du joueur sur la Flèche ; absent tant qu'il n'y est pas monté */
@@ -70,7 +71,7 @@ export interface EtatFleche {
   garde?: GardeQuai;
   /** les assauts subis déjà comptés (ids en ligne, deux jours) */
   assautsRecus?: { id: string; le: number }[];
-  /** les assauts joués contre des directeurs gardiens, pas encore envoyés en ligne */
+  /** les défis joués contre des directeurs gardiens, pas encore envoyés en ligne */
   aEnvoyer?: AssautJoue[];
 }
 
@@ -84,17 +85,17 @@ export interface GardeQuai {
   repousses: number;
 }
 
-/** Un directeur qui tient le quai qu'on veut quitter (lu en ligne) */
-export interface GardienQuai { id: string; nom: string; quai: number; porteurs: string[]; force: number }
+/** Un directeur qui tient un quai (lu en ligne) */
+export interface GardienQuai { id: string; nom: string; quai: number; porteurs: string[]; force: number; /** son installation (en ligne) */ depuis?: number }
 
 /** Un assaut joué contre un directeur gardien (à noter chez lui) */
-export interface AssautJoue { cible: string; quai: number; victoire: boolean; le: number }
+export interface AssautJoue { cible: string; quai: number; victoire: boolean; le: number; /** l'installation du gardien défié */ depuis?: number }
 
 /** Un assaut subi, reçu du réseau (victoire : celle de l'attaquant) */
 export interface AssautSubi { id: string; nom: string; quai: number; victoire: boolean; le: number }
 
 /** Une ascension en cours (dans l'expédition) */
-export interface AscensionEnCours { quai: number; force: number; gardien?: { id: string; nom: string } }
+export interface AscensionEnCours { quai: number; force: number; gardien?: { id: string; nom: string; depuis?: number }; defi?: boolean }
 
 /** Ce que le retour d'un combat de la Flèche a donné */
 export interface RetourFleche {
@@ -104,8 +105,8 @@ export interface RetourFleche {
   /** les quais gravés passés pour la première fois, et ce qu'ils ont donné */
   paliers: { quai: number; composants: number; eclats: number }[];
   record: boolean;
-  /** le directeur gardien affronté, s'il y en avait un */
-  gardien?: string;
+  /** un défi contre un directeur gardien : son nom, et le quai pris (victoire) ou visé */
+  defi?: { nom: string; quai: number };
 }
 
 /** La Flèche s'ouvre avec la lettre des Hauts (la scène « La convocation », après le gardien de la Strate −6) */
@@ -141,22 +142,14 @@ export function gardiensQuai(quai: number): string[] {
 export function peutMonter(j: Jeu): Resultat {
   if (!flecheOuverte(j)) return non('La Flèche s’ouvrira quand les Hauts t’y auront convié.');
   if (j.expedition) return non('Une expédition est déjà en cours.');
-  if (etatFleche(j).garde) return non('Ton escouade tient son quai : quitte-le pour reprendre la montée.');
   if (etatFleche(j).quai >= FLECHE.quais) return non('Ton escouade tient le dernier quai : les Sièges s’ouvriront au passage de la prochaine île.');
   return { ok: true };
 }
 
-/** Monte affronter les gardiens du quai suivant : un seul combat */
-export function monterFleche(j: Jeu, escouade: string[], rng = graine(), gardien?: GardienQuai | null): Resultat {
-  const p = peutMonter(j);
-  if (!p.ok) return p;
+/** Lance un combat de la Flèche (gardiens payés, ou garnison d'un directeur pour un défi) */
+function combatFleche(j: Jeu, escouade: string[], quai: number, force: number, porteurs: string[], journal: string, rng: number, defi?: GardienQuai): Resultat {
   const e = escouadePrete(j, escouade);
   if (!e.ok) return e;
-  const quai = etatFleche(j).quai;
-  // un directeur tient le quai : c'est sa garnison qui barre la passerelle
-  const g = gardien && gardien.quai === quai && gardien.porteurs.length ? gardien : null;
-  const force = g ? g.force : forceQuai(quai);
-  const porteurs = g ? [...g.porteurs, ...gardiensQuai(quai)].slice(0, 3) : gardiensQuai(quai);
   const gardes = porteurs.map((id) => `garde-${porteurDef(id).lignee}`);
   const x = nouvelleExpedition({ porteurs: e.porteurs, deck: e.deck, strate: 1, rng, sequence: [gardes[0]!], force });
   x.combat = creerCombat({
@@ -165,15 +158,46 @@ export function monterFleche(j: Jeu, escouade: string[], rng = graine(), gardien
   });
   x.combat.ennemi.porteur = porteurs[0];
   x.combat.autres?.forEach((en, k) => { en.porteur = porteurs[k + 1]; });
-  x.combat.journal = [g ? `Quai ${quai} de la Flèche : l’escouade de ${g.nom}, qui tient le quai, barre la passerelle.`
-    : `Quai ${quai} de la Flèche : les gardiens des Hauts barrent la passerelle (${porteurs.map((id) => porteurDef(id).nom).join(', ')}).`];
+  x.combat.journal = [journal];
   quitterPostes(j, escouade);
-  j.expedition = { ...x, fleche: { quai, force, ...(g ? { gardien: { id: g.id, nom: g.nom } } : {}) } };
-  log(j, `L’escouade monte à l’assaut du quai ${quai} de la Flèche.`);
+  j.expedition = { ...x, fleche: { quai, force, ...(defi ? { gardien: { id: defi.id, nom: defi.nom, ...(defi.depuis !== undefined ? { depuis: defi.depuis } : {}) }, defi: true } : {}) } };
   return { ok: true };
 }
 
-/** Le retour d'un combat de la Flèche : montée ou descente, quais gravés, Usure et expérience */
+/** Monte affronter les gardiens payés du quai suivant : un seul combat (jamais un joueur : personne ne bloque l'histoire) */
+export function monterFleche(j: Jeu, escouade: string[], rng = graine()): Resultat {
+  const p = peutMonter(j);
+  if (!p.ok) return p;
+  const quai = etatFleche(j).quai;
+  const porteurs = gardiensQuai(quai);
+  const r = combatFleche(j, escouade, quai, forceQuai(quai), porteurs,
+    `Quai ${quai} de la Flèche : les gardiens des Hauts barrent la passerelle (${porteurs.map((id) => porteurDef(id).nom).join(', ')}).`, rng);
+  if (r.ok) log(j, `L’escouade monte à l’assaut du quai ${quai} de la Flèche.`);
+  return r;
+}
+
+export function peutDefier(j: Jeu, gardien: GardienQuai | null | undefined): Resultat {
+  if (!flecheOuverte(j)) return non('La Flèche s’ouvrira quand les Hauts t’y auront convié.');
+  if (j.expedition) return non('Une expédition est déjà en cours.');
+  if (!gardien || gardien.porteurs.length < 1) return non('Aucun gardien à défier.');
+  const f = etatFleche(j);
+  if (gardien.quai > f.record) return non(`Il faut avoir atteint le quai ${gardien.quai} pour en défier le gardien.`);
+  if (f.garde && f.garde.quai >= gardien.quai) return non(`Tu tiens déjà un quai plus haut que le ${gardien.quai}.`);
+  return { ok: true };
+}
+
+/** Défie le directeur qui tient un quai : gagner, c'est prendre sa place ; perdre ne coûte que l'Usure */
+export function defierGardien(j: Jeu, escouade: string[], gardien: GardienQuai, rng = graine()): Resultat {
+  const p = peutDefier(j, gardien);
+  if (!p.ok) return p;
+  const porteurs = [...gardien.porteurs, ...gardiensQuai(gardien.quai)].slice(0, 3);
+  const r = combatFleche(j, escouade, gardien.quai, gardien.force, porteurs,
+    `Quai ${gardien.quai} de la Flèche : l’escouade de ${gardien.nom}, qui tient le quai, accepte le défi.`, rng, gardien);
+  if (r.ok) log(j, `L’escouade défie ${gardien.nom}, gardien du quai ${gardien.quai}.`);
+  return r;
+}
+
+/** Le retour d'un combat de la Flèche : montée ou descente (ou quai pris au défi), quais gravés, Usure et expérience */
 export function remonterFleche(j: Jeu, now: number): RetourFleche | null {
   const x = j.expedition;
   if (!x?.fleche) return null;
@@ -182,7 +206,15 @@ export function remonterFleche(j: Jeu, now: number): RetourFleche | null {
   const de = f.quai;
   const paliers: RetourFleche['paliers'] = [];
   let record = false;
-  if (victoire) {
+  const defi = x.fleche.defi && x.fleche.gardien ? { ...x.fleche.gardien, quai: x.fleche.quai } : null;
+  if (defi) {
+    // la compétition : la montée de l'histoire ne bouge pas
+    (f.aEnvoyer ??= []).push({ cible: defi.id, quai: defi.quai, victoire, le: now, ...(defi.depuis !== undefined ? { depuis: defi.depuis } : {}) });
+    if (victoire) {
+      if (f.garde) recevoirGage(j, now);
+      f.garde = { quai: defi.quai, depuis: now, gageLe: now, garnison: garnisonFleche(j, x.combat.porteurs.map((p) => p.id)), repousses: 0 };
+    }
+  } else if (victoire) {
     f.victoires++;
     f.quai = Math.min(FLECHE.quais, de + pas(de));
     if (f.quai > f.record) { f.record = f.quai; f.recordLe = now; record = true; }
@@ -199,21 +231,22 @@ export function remonterFleche(j: Jeu, now: number): RetourFleche | null {
     f.quai = Math.max(plancher(f.record), de - pas(de));
   }
   // l'Usure (la moitié d'une expédition) et l'expérience d'un combat, comme un pillage
-  const xp = victoire ? Math.round(XP.combat * (1 + 0.04 * (de - 1)) * 0.75) : 0;
+  const q = x.fleche.quai;
+  const xp = victoire ? Math.round(XP.combat * (1 + 0.04 * (q - 1)) * 0.75) : 0;
   for (const p of x.combat.porteurs) {
     const d = j.porteurs[p.id]!;
     d.usure = Math.min(usureMax(p.id), d.usure + DISTRICT.usureExpedition * ASCENSION.usure + (p.pv <= 0 ? DISTRICT.usureATerre : 0) + (p.usureEclat ?? 0));
     if (xp) { const avant = niveauPorteur(j, p.id).niveau; const n = gagnerXp(j, p.id, xp); if (n && n > avant) log(j, `${porteurDef(p.id).nom} passe au niveau ${n} !`); }
     if (victoire) { const fa = (d.faits ??= {}); fa.combats = (fa.combats ?? 0) + 1; }
   }
-  if (x.fleche.gardien) (f.aEnvoyer ??= []).push({ cible: x.fleche.gardien.id, quai: de, victoire, le: now });
   j.expedition = null;
-  log(j, victoire ? `Flèche : le quai ${de} tombe, l’escouade monte au quai ${f.quai}.`
+  log(j, defi ? (victoire ? `Flèche : ${defi.nom} est battu, ton escouade tient désormais le quai ${defi.quai}.` : `Flèche : ${defi.nom} garde le quai ${defi.quai}.`)
+    : victoire ? `Flèche : le quai ${de} tombe, l’escouade monte au quai ${f.quai}.`
     : `Flèche : repoussés au quai ${de}${f.quai < de ? `, l’escouade redescend au quai ${f.quai}` : ''}.`);
-  return { victoire, de, a: f.quai, paliers, record, ...(x.fleche.gardien ? { gardien: x.fleche.gardien.nom } : {}) };
+  return { victoire, de, a: f.quai, paliers, record, ...(defi ? { defi: { nom: defi.nom, quai: defi.quai } } : {}) };
 }
 
-// ---------- Tenir un quai ----------
+// ---------- Tenir un quai (la compétition) ----------
 
 /** Le gage d'un quai pour un jour */
 export function gageJour(quai: number): { composants: number; eclats: number } {
@@ -221,7 +254,7 @@ export function gageJour(quai: number): { composants: number; eclats: number } {
   return { composants: G.base + G.parQuai * quai, eclats: [...G.eclats].filter((e) => quai >= e.des).pop()?.n ?? 0 };
 }
 
-/** La garnison que l'escouade laisserait sur le quai (PV pleins, sans l'Usure) */
+/** La garnison que l'escouade laisse sur le quai (PV pleins, sans l'Usure) */
 export function garnisonFleche(j: Jeu, escouade: string[]): Garnison {
   return {
     porteurs: escouade.slice(0, 3).map((id) => ({
@@ -234,34 +267,46 @@ export function garnisonFleche(j: Jeu, escouade: string[]): Garnison {
   };
 }
 
-/** La force la plus haute qu'on accepte sur un quai */
-export const mesureQuai = (quai: number) => Math.round(forceQuai(quai) * ASCENSION.mesure * 1000) / 1000;
+/** Le plus haut quai qu'on peut tenir : son record (le dernier quai attend les Sièges) */
+export const quaiMaxTenable = (j: Jeu) => Math.min(FLECHE.quais - 1, etatFleche(j).record);
 
-export function peutTenir(j: Jeu, escouade: string[]): Resultat {
+/** Le gardien qu'on peut défier : le plus haut des quais atteints, au-dessus du quai qu'on tient (portee : triée du plus haut au plus bas) */
+export const cibleDefiDe = (j: Jeu, portee: GardienQuai[]): GardienQuai | null =>
+  portee.find((g) => g.quai <= etatFleche(j).record && g.quai > (j.fleche?.garde?.quai ?? 0)) ?? null;
+
+/** Le plus haut quai libre qu'on peut tenir (les quais tenus par d'autres sont dans portee) */
+export function quaiLibreDe(j: Jeu, portee: GardienQuai[]): number | null {
+  const pris = new Set(portee.map((g) => g.quai));
+  for (let q = quaiMaxTenable(j); q >= 2; q--) if (!pris.has(q)) return q;
+  return null;
+}
+
+/**
+ * Tenir un quai libre déjà atteint (la liberté du quai se vérifie en ligne, avant). Changer de quai verse le gage
+ * du précédent. L'escouade reste libre : c'est une copie figée qui garde le quai.
+ */
+export function peutTenir(j: Jeu, escouade: string[], quai: number): Resultat {
   if (!flecheOuverte(j)) return non('La Flèche s’ouvrira quand les Hauts t’y auront convié.');
   const f = etatFleche(j);
-  if (f.garde) return non(`Ton escouade tient déjà le quai ${f.garde.quai}.`);
-  if (j.expedition) return non('Une expédition est déjà en cours.');
-  if (f.quai < 2) return non('Le pied de la Flèche n’a pas de gardien : monte d’abord d’un quai.');
-  if (f.quai >= FLECHE.quais) return non('Le dernier quai attend les Sièges.');
+  if (quai < 2) return non('Le pied de la Flèche n’a pas de gardien : monte d’abord d’un quai.');
+  if (quai > quaiMaxTenable(j)) return non(`Il faut avoir atteint le quai ${quai} pour le tenir.`);
+  if (f.garde?.quai === quai) return non(`Ton escouade tient déjà le quai ${quai}.`);
   if (escouade.length < 3) return non('Il faut trois Porteurs pour tenir un quai.');
-  const force = forceGarnison(garnisonFleche(j, escouade));
-  if (force > mesureQuai(f.quai)) return non(`Ton escouade est trop forte pour le quai ${f.quai} : les Hauts la veulent plus haut.`);
   return { ok: true };
 }
 
-/** S'installer sur son quai : la garnison est figée, le gage commence à courir */
-export function tenirQuai(j: Jeu, escouade: string[], now: number): Resultat {
-  const p = peutTenir(j, escouade);
+export function tenirQuai(j: Jeu, escouade: string[], quai: number, now: number): Resultat {
+  const p = peutTenir(j, escouade, quai);
   if (!p.ok) return p;
   const f = etatFleche(j);
-  f.garde = { quai: f.quai, depuis: now, gageLe: now, garnison: garnisonFleche(j, escouade), repousses: 0 };
-  log(j, `L’escouade s’installe sur le quai ${f.quai} de la Flèche : elle en devient le gardien.`);
+  if (f.garde) recevoirGage(j, now);
+  f.garde = { quai, depuis: now, gageLe: now, garnison: garnisonFleche(j, escouade), repousses: 0 };
+  log(j, `Ton escouade s’installe sur le quai ${quai} de la Flèche : elle en devient le gardien.`);
   return { ok: true };
 }
 
 /** Ce que la caisse du quai contient à cet instant (au plus deux jours) */
-export function gageEnCaisse(j: Jeu, now: number): { composants: number; eclats: number } {
+export function gageEnCaisse(j: Pick<Jeu, 'fleche'>, now: number): { composants: number; eclats: number } {
   const g = j.fleche?.garde;
   if (!g) return { composants: 0, eclats: 0 };
   const jours = Math.min(ASCENSION.caisseJours, Math.max(0, now - g.gageLe) / 86_400_000);
@@ -276,7 +321,6 @@ export function recevoirGage(j: Jeu, now: number): { composants: number; eclats:
   const r = gageEnCaisse(j, now);
   const d = gageJour(g.quai);
   if (!r.composants && !r.eclats) return r;
-  // on avance l'horloge de ce qui a été payé en composants (les Éclats suivent le même temps)
   const plein = now - g.gageLe >= ASCENSION.caisseJours * 86_400_000;
   g.gageLe = plein ? now : g.gageLe + Math.floor((r.composants / d.composants) * 86_400_000);
   j.composants += r.composants;
@@ -284,20 +328,20 @@ export function recevoirGage(j: Jeu, now: number): { composants: number; eclats:
   return r;
 }
 
-/** Quitter son quai : le gage est versé, l'escouade reprend la montée */
+/** Quitter son quai : le gage est versé */
 export function quitterQuai(j: Jeu, now: number): { composants: number; eclats: number } | null {
   const f = j.fleche;
   if (!f?.garde) return null;
   const r = recevoirGage(j, now);
-  log(j, `L’escouade quitte le quai ${f.garde.quai} de la Flèche.`);
+  log(j, `Ton escouade quitte le quai ${f.garde.quai} de la Flèche.`);
   delete f.garde;
   return r;
 }
 
 /**
- * Les assauts subis pendant l'absence, dans l'ordre : une défense tenue rapporte un quart de jour de gage ;
- * une défense perdue fait quitter le quai (le gage dû jusque-là est versé) et redescendre comme une défaite.
- * Chaque assaut n'est compté qu'une fois ; ceux d'un autre quai ou d'avant l'installation sont ignorés.
+ * Les défis subis pendant l'absence, dans l'ordre : une défense tenue rapporte un quart de jour de gage ;
+ * une défense perdue fait perdre le quai (le gage dû jusque-là est versé), jamais la progression de la montée.
+ * Chaque défi n'est compté qu'une fois ; ceux d'un autre quai ou d'avant l'installation sont ignorés.
  */
 export function subirAssauts(j: Jeu, assauts: AssautSubi[]): string[] {
   const f = j.fleche;
@@ -315,12 +359,9 @@ export function subirAssauts(j: Jeu, assauts: AssautSubi[]): string[] {
       j.composants += bonus;
       l.push(`Ton escouade a tenu le quai ${g.quai} face à ${a.nom} : les Hauts versent +${bonus} composants.`);
     } else {
-      // le gage court jusqu'à l'assaut perdu
       const r = recevoirGage(j, Math.max(g.gageLe, a.le));
-      const de = g.quai;
       delete f.garde;
-      f.quai = Math.max(plancher(f.record), de - pas(de));
-      l.push(`${a.nom} a délogé ton escouade du quai ${de}${f.quai < de ? ` : elle redescend au quai ${f.quai}` : ''}.${r.composants ? ` Gage versé : +${r.composants} composants${r.eclats ? `, +${r.eclats} Éclats` : ''}.` : ''}`);
+      l.push(`${a.nom} t’a pris le quai ${g.quai}.${r.composants ? ` Gage versé : +${r.composants} composants${r.eclats ? `, +${r.eclats} Éclats` : ''}.` : ''} Ta montée, elle, ne bouge pas.`);
     }
   }
   const dernier = recus.reduce((m, r) => Math.max(m, r.le), 0);

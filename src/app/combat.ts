@@ -22,6 +22,13 @@ export function finPour(): Fin | null {
     if (s.issue === 'defaite') return { titre: 'Repoussés', texte: 'Le gardien a eu le dessus, cette fois. Vise les suites et protège-toi quand il annonce une grosse attaque.', bouton: 'Remonter et réessayer', action: 'remonter' };
     return null;
   }
+  if (x.fleche?.defi) {
+    const q = x.fleche.quai;
+    const nom = x.fleche.gardien?.nom ?? 'le gardien';
+    if (s.issue === 'victoire') return { titre: `Le quai ${q} est à toi`, texte: `L’escouade de ${nom} cède la passerelle. Une copie de ton escouade y monte la garde ; les Hauts te versent le gage du quai.`, bouton: 'Prendre le quai', action: 'remonter' };
+    if (s.issue === 'defaite') return { titre: `${nom} tient bon`, texte: `Le quai ${q} reste à ${nom}. Ta montée, elle, ne bouge pas : seule l’Usure compte.`, bouton: 'Rentrer au district', action: 'remonter' };
+    return null;
+  }
   if (x.fleche) {
     const q = x.fleche.quai;
     const f = J.etatFleche(app.jeu);

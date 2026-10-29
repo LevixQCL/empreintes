@@ -64,16 +64,19 @@ service cloud.firestore {
     }
 
     // La Flèche (29 octobre 2026, src/net/fleche.ts) : le directeur qui tient un quai publie sa garnison figée dans
-    // quais/{uid} ; celui qui monte de ce quai note l'assaut joué dans quais/{uid}/assauts (sur le quai réellement tenu) ;
-    // seul le gardien efface ses assauts et sa fiche. Le gardien applique lui-même les assauts (subirAssauts).
+    // quais/{uid} ; celui qui le défie note le défi dans quais/{uid}/assauts (sur le quai réellement tenu). Un défi gagné
+    // porte l'identifiant « attaquant_installation » : il autorise le vainqueur à effacer la fiche du battu, qui disparaît
+    // aussitôt de la Flèche. Le gardien applique lui-même les défis subis (subirAssauts) et efface les anciens.
     match /quais/{uid} {
       allow read: if request.auth != null;
-      allow delete: if request.auth != null && request.auth.uid == uid;
+      allow delete: if request.auth != null && (request.auth.uid == uid
+        || get(/databases/$(database)/documents/quais/$(uid)/assauts/$(request.auth.uid + '_' + string(resource.data.depuis))).data.victoire == true);
       allow create, update: if request.auth != null && request.auth.uid == uid && quaiValide(request.resource.data);
       match /assauts/{id} {
         allow read: if request.auth != null;
         allow delete: if request.auth != null && request.auth.uid == uid;
-        allow create: if request.auth != null && request.auth.uid != uid && assautValide(request.resource.data, uid);
+        allow create: if request.auth != null && request.auth.uid != uid && assautValide(request.resource.data, uid)
+          && (!request.resource.data.victoire || id == request.auth.uid + '_' + string(get(/databases/$(database)/documents/quais/$(uid)).data.depuis));
       }
     }
 

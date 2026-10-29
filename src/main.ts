@@ -11,7 +11,7 @@ import { loupeCarte } from './ui/district';
 import { brancherEmpreintes } from './ui/carte';
 import { agir } from './app/actions/index';
 import { clavier } from './app/clavier';
-import { app, compteEtat, G, K, racine, reduit } from './app/etat';
+import { app, compteEtat, D, G, K, racine, reduit } from './app/etat';
 import { brancherChaine } from './app/chaine';
 import { annoncer, battre } from './app/horloge';
 import { afficher } from './app/rendu';
@@ -92,5 +92,7 @@ if (import.meta.env.DEV) Object.assign(window, {
   __combat: (f: (s: NonNullable<typeof app.jeu.expedition>['combat']) => void) => { const s = app.jeu.expedition?.combat; if (s) { f(s); afficher(); } },
   // l'écran Recruter sans réseau (captures) : __recrues([{ uid, nom, paliers }], 'CODE6X')
   __recrues: (l: J.Recrue[], code: string) => { J.etatParrainage(app.jeu).code = code; R.recrues = l; R.etat = 'ok'; J.reclamerRecrues(app.jeu, l); app.uid ??= 'essai'; afficher(); },
+  // la garde de la Flèche sans réseau (captures) : __gardiens(les plus hauts, ceux à portée)
+  __gardiens: (top: J.GardienQuai[], portee: J.GardienQuai[]) => { D.gardiens = { top, portee, max: J.quaiMaxTenable(app.jeu), lu: Date.now() }; app.uid ??= 'essai'; compteEtat.utilisateur = { nom: 'Essai' }; afficher(); },
   __tableau: (l: Entree[], moi: string) => { G.entrees = l; G.etat = 'ok'; G.lu = Date.now(); app.uid = moi; compteEtat.utilisateur = { nom: 'Essai' }; afficher(); },
 });

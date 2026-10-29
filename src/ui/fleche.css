@@ -11,7 +11,7 @@
 .fle .surtitre .ico{width:15px;height:15px}
 
 /* le verre commun des blocs */
-.fl-tete,.fl-assaut,.fl-paliers,.fl-sommet,.fl-tenir,.fl-pr,.fl-intro{--cut:12px;
+.fl-tete,.fl-assaut,.fl-paliers,.fl-sommet,.fl-tenir,.fl-defi,.fl-top,.fl-pr,.fl-intro{--cut:12px;
   background:linear-gradient(180deg,rgba(28,36,54,.86),rgba(12,16,26,.93));box-shadow:inset 0 0 0 1px rgba(205,239,255,.2),inset 0 1px 0 rgba(255,255,255,.16),0 14px 30px -12px rgba(0,0,0,.8);
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 
@@ -132,6 +132,30 @@
 .fl-garde h2{color:var(--f-or)}
 .fl-garde dd b{font-size:17px}
 .fl-garde-actions{display:grid;gap:8px}
+.fl-garde-actions .petit{justify-self:center}
+
+/* la compétition : un en-tête, puis ses blocs de verre (garde ou quai à prendre, défi, gardiens les plus hauts) */
+.fl-compet{display:grid;gap:10px;min-width:0}
+.fl-compet-tete{display:grid;gap:4px;padding:4px 2px 0}
+.fl-compet-tete .surtitre{color:var(--f-or)}
+.fl-compet-tete small{font-size:13px;line-height:1.45;color:var(--f-doux)}
+.fl-compet>.fl-raison{padding:12px 14px;border-radius:3px;background:rgba(255,255,255,.035);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+.fl-defi{display:grid;gap:10px;padding:14px;--dc:#8FB8DA}
+.fl-defi.d3,.fl-defi.d4{--dc:#E9A08F}
+.fl-defi header{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:10px}
+.fl-defi h3{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:19px;line-height:1.2;color:#fff;overflow-wrap:anywhere}
+.fl-defi-visages{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0}
+.fl-defi-visages small{flex:1 1 160px;font-size:13px;line-height:1.4;color:var(--f-doux)}
+.fl-defi .btn{justify-self:start}
+.fl-top{padding:12px 14px}
+.fl-top ol{display:grid;gap:4px;margin:10px 0 0;padding:0;list-style:none}
+.fl-top li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;align-items:center;gap:8px;padding:7px 8px;border-radius:3px;background:rgba(255,255,255,.03)}
+.fl-top li b{font-family:var(--mono);font-size:13px;color:var(--f-doux);text-align:center}
+.fl-top li:first-child b{color:var(--f-or)}
+.fl-top li span{font-size:14px;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fl-top li em{font-style:normal;font-family:var(--mono);font-size:13px;color:var(--f-or)}
+.fl-top li.moi{box-shadow:inset 0 0 0 1px rgba(242,213,140,.5);background:rgba(242,213,140,.08)}
+.fl-vide{margin:10px 0 0;font-size:13px;line-height:1.45;color:var(--f-doux)}
 
 /* ---------- PC : la flèche et les quais gravés à gauche, l'assaut à droite ---------- */
 @media (min-width:1100px){
@@ -141,11 +165,11 @@
   /* la présentation : une seule colonne de lecture, centrée */
   .fle-pres .contenu,.pl-pres .contenu{display:flex;max-width:860px;margin:0 auto;width:100%}
   .fl-intro{min-height:300px}
-  .fl-tete{grid-column:1;grid-row:2}
-  .fl-paliers{grid-column:1;grid-row:3 / span 2}
-  .fl-assaut{grid-column:2;grid-row:2}
-  .fl-tenir{grid-column:2;grid-row:3}
-  .fl-sommet{grid-column:2;grid-row:4}
+  .fle .contenu>.fl-tete{grid-column:1;grid-row:2}
+  .fle .contenu>.fl-paliers{grid-column:1;grid-row:3}
+  .fle .contenu>.fl-assaut{grid-column:2;grid-row:2}
+  .fle .contenu>.fl-compet{grid-column:2;grid-row:3}
+  .fle .contenu>.fl-sommet{grid-column:2;grid-row:4}
   .fle .contenu>.fl-regle{grid-column:2;grid-row:5}
   .fl-colonne{height:320px}
 }

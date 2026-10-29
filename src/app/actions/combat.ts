@@ -1,7 +1,7 @@
 // Actions du combat et de l'exploration des Strates.
 
 import { envoyerPillages } from '../pillages';
-import { envoyerAssauts, lireGardienEnLigne } from '../fleche';
+import { envoyerAssauts, synchroGarde } from '../fleche';
 import { NOMS_RARETE } from '../../core/collection';
 import * as C from '../../core/combat';
 import { moduleDef, porteurDef } from '../../core/donnees';
@@ -95,8 +95,11 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
       } else if (r.fleche) {
         const f = r.fleche;
         D.vue = 'fleche'; D.fleche = false;
-        envoyerAssauts().then(() => lireGardienEnLigne(true));
-        D.message = f.victoire
+        D.defi = null;
+        envoyerAssauts();
+        if (f.defi) synchroGarde();
+        D.message = f.defi ? (f.victoire ? `${f.defi.nom} est battu : ton escouade tient désormais le quai ${f.defi.quai}.` : `${f.defi.nom} garde le quai ${f.defi.quai}. Ta montée ne bouge pas.`)
+          : f.victoire
           ? `Quai ${f.a} atteint${f.record ? ' : nouveau record' : ''}.${f.paliers.map((p) => ` Quai gravé ${p.quai} : +${p.composants} composants, +${p.eclats} Éclats.`).join('')}`
           : f.a < f.de ? `Repoussés au quai ${f.de} : l’escouade redescend au quai ${f.a}.` : `Repoussés au quai ${f.de} : l’escouade garde son quai.`;
       } else if (r.pillage) {

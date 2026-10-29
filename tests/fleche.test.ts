@@ -1,7 +1,7 @@
 // La Flèche (28 octobre 2026) : ouverture, force des gardiens, montée, descente, quais gravés, et vrais combats.
 import { describe, expect, it } from 'vitest';
 import { ASCENSION, FLECHE, etatFleche, flecheOuverte, forceEscouade, forceQuai, gardiensQuai, monterFleche, nouveauJeu, pas, plancher, remonter, remonterFleche } from '../src/core/jeu';
-import { gageEnCaisse, gageJour, mesureQuai, peutTenir, quitterQuai, recevoirGage, subirAssauts, tenirQuai } from '../src/core/jeu';
+import { defierGardien, gageEnCaisse, gageJour, peutDefier, peutTenir, quitterQuai, recevoirGage, subirAssauts, tenirQuai } from '../src/core/jeu';
 import { jouerTourMoyen } from '../src/core/robot';
 
 const ESC = ['ilka', 'doran', 'vela'];
@@ -88,56 +88,75 @@ describe('La Flèche', () => {
   });
 });
 
-// Tenir un quai (29 octobre 2026)
-
-describe('Tenir un quai', () => {
+// Deux couches (29 octobre 2026) : la montée de l'histoire, la garde et les défis de la compétition
+describe('Tenir un quai et défier les gardiens', () => {
   const H = 3_600_000;
-  const surQuai = (q: number) => { const j = pret(); etatFleche(j).quai = q; etatFleche(j).record = q; return j; };
+  const surQuai = (q: number, record = q) => { const j = pret(); etatFleche(j).quai = q; etatFleche(j).record = record; return j; };
+  const GARDIEN = { id: 'uid-x', nom: 'Haut-Treuil', quai: 20, porteurs: ['doran', 'vela', 'ilka'], force: 3.5 };
 
-  it('on ne tient ni le pied, ni un quai trop bas pour son escouade', () => {
-    expect(peutTenir(surQuai(1), ESC).ok).toBe(false);
-    expect(peutTenir(surQuai(12), ESC).ok).toBe(true);
-    expect(mesureQuai(12)).toBeCloseTo(forceQuai(12) * ASCENSION.mesure, 2);
+  it('on tient un quai déjà atteint (pas le pied), et l’on continue de monter en le tenant', () => {
+    const j = surQuai(23, 31);
+    expect(peutTenir(j, ESC, 1).ok).toBe(false);
+    expect(peutTenir(j, ESC, 32).ok).toBe(false);
+    expect(tenirQuai(j, ESC, 31, 0).ok).toBe(true);
+    expect(monterFleche(j, ESC).ok).toBe(true);
   });
 
-  it('le gage court, plafonné à deux jours, et bloque la montée tant qu’on tient', () => {
+  it('le gage court, plafonné à deux jours ; changer de quai verse le précédent', () => {
     const j = surQuai(20);
-    expect(tenirQuai(j, ESC, 0).ok).toBe(true);
-    expect(monterFleche(j, ESC).ok).toBe(false);
+    tenirQuai(j, ESC, 20, 0);
     expect(gageJour(20)).toEqual({ composants: 90, eclats: 0 });
     expect(gageEnCaisse(j, 12 * H).composants).toBe(45);
     expect(gageEnCaisse(j, 10 * 24 * H).composants).toBe(180);
     const avant = j.composants;
     expect(recevoirGage(j, 12 * H).composants).toBe(45);
     expect(j.composants).toBe(avant + 45);
-    expect(gageEnCaisse(j, 12 * H).composants).toBe(0);
-    expect(quitterQuai(j, 24 * H)!.composants).toBe(45);
+    tenirQuai(j, ESC, 12, 24 * H);
+    expect(j.composants).toBe(avant + 90);
+    expect(etatFleche(j).garde!.quai).toBe(12);
+    expect(quitterQuai(j, 24 * H)!.composants).toBe(0);
     expect(etatFleche(j).garde).toBeUndefined();
   });
 
-  it('une défense tenue rapporte, une défense perdue fait redescendre ; chaque assaut ne compte qu’une fois', () => {
+  it('une défense tenue rapporte ; une défense perdue fait perdre le quai, jamais la montée', () => {
     const j = surQuai(64);
-    tenirQuai(j, ESC, 0);
+    tenirQuai(j, ESC, 64, 0);
     const avant = j.composants;
     subirAssauts(j, [{ id: 'a', nom: 'Verrelune', quai: 64, victoire: false, le: H }]);
     subirAssauts(j, [{ id: 'a', nom: 'Verrelune', quai: 64, victoire: false, le: H }]);
     expect(etatFleche(j).garde!.repousses).toBe(1);
     expect(j.composants).toBe(avant + Math.round(gageJour(64).composants * ASCENSION.partDefense));
-    // un assaut d'un autre quai ne compte pas
     subirAssauts(j, [{ id: 'b', nom: 'X', quai: 30, victoire: true, le: 2 * H }]);
     expect(etatFleche(j).garde).toBeDefined();
     subirAssauts(j, [{ id: 'c', nom: 'Brisecôte', quai: 64, victoire: true, le: 12 * H }]);
     expect(etatFleche(j).garde).toBeUndefined();
-    expect(etatFleche(j).quai).toBe(62);
+    expect(etatFleche(j).quai).toBe(64);
   });
 
-  it('monter contre un directeur gardien : sa garnison barre la passerelle, l’assaut part en ligne', () => {
+  it('on ne défie qu’un quai déjà atteint, et plus haut que celui qu’on tient', () => {
+    expect(peutDefier(surQuai(10, 15), GARDIEN).ok).toBe(false);
     const j = surQuai(20);
-    expect(monterFleche(j, ESC, 7, { id: 'uid-x', nom: 'Haut-Treuil', quai: 20, porteurs: ['doran', 'vela', 'ilka'], force: 3.5 }).ok).toBe(true);
-    expect(j.expedition!.fleche!.gardien!.nom).toBe('Haut-Treuil');
+    tenirQuai(j, ESC, 20, 0);
+    expect(peutDefier(j, GARDIEN).ok).toBe(false);
+    expect(peutDefier(surQuai(5, 20), GARDIEN).ok).toBe(true);
+  });
+
+  it('un défi ne fait ni monter ni descendre : gagné, il donne le quai ; il part en ligne', () => {
+    const j = surQuai(5, 24);
+    expect(defierGardien(j, ESC, GARDIEN, 7).ok).toBe(true);
     expect(j.expedition!.combat.ennemi.porteur).toBe('doran');
     const r = jouer(j);
-    expect(r.fleche!.gardien).toBe('Haut-Treuil');
+    expect(r.fleche!.defi).toEqual({ nom: 'Haut-Treuil', quai: 20 });
+    expect(etatFleche(j).quai).toBe(5);
+    expect(etatFleche(j).garde?.quai).toBe(r.victoire ? 20 : undefined);
     expect(etatFleche(j).aEnvoyer).toEqual([{ cible: 'uid-x', quai: 20, victoire: r.victoire, le: expect.any(Number) }]);
+  });
+
+  it('la montée de l’histoire n’affronte jamais un joueur', () => {
+    const j = surQuai(20);
+    monterFleche(j, ESC, 7);
+    expect(j.expedition!.fleche!.gardien).toBeUndefined();
+    jouer(j);
+    expect(etatFleche(j).aEnvoyer ?? []).toEqual([]);
   });
 });

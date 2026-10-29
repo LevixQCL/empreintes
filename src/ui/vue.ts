@@ -305,7 +305,7 @@ function feuilleFuite(e: Ecran): string {
   h += `<button type="button" class="route" style="--t:#F0C96A" data-action="fuir-district"><span class="route-ico">${ICO.strate}</span>`
     + `<span class="route-txt"><small>${x.fleche ? 'ABANDONNER L’ASSAUT' : x.pillage ? 'ABANDONNER LE PILLAGE' : x.epreuve ? 'ABANDONNER L’ÉPREUVE' : 'REMONTER AU DISTRICT'}</small>`
     + `<strong>${x.epreuve || x.pillage || x.fleche ? 'Rentrer au district' : x.butin ? `Rentrer avec ${garde} composants sur ${x.butin}` : 'Rentrer au district'}</strong>`
-    + `<em>${x.fleche ? 'L’assaut compte comme perdu : l’escouade redescend comme après une défaite.' : x.pillage ? `Le pillage compte comme perdu : tu laisses ${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre à ${echap(x.pillage.nom)}.` : x.epreuve ? 'Tu pourras la retenter cette semaine.' : `Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % des composants et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.</em></span>${CHEVRON_FUITE}</button>`
+    + `<em>${x.fleche?.defi ? 'Le défi compte comme perdu : ta montée, elle, ne bouge pas.' : x.fleche ? 'L’assaut compte comme perdu : l’escouade redescend comme après une défaite.' : x.pillage ? `Le pillage compte comme perdu : tu laisses ${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre à ${echap(x.pillage.nom)}.` : x.epreuve ? 'Tu pourras la retenter cette semaine.' : `Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % des composants et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.</em></span>${CHEVRON_FUITE}</button>`
     + `</div><button type="button" class="btn sec large" data-action="fuir">Continuer le combat</button></div></section>`;
   return h;
 }
@@ -633,7 +633,7 @@ function htmlEcranCombat(e: Ecran): string {
   const ill = visageEnnemi(s.ennemi);
   const classeIntention = it.type === 'atk' ? 'danger' : it.type === 'bouclier' || it.type === 'soin' ? 'garde' : 'boost';
   const iconeIntention = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
-  const lieu = e.x.tutoriel ? 'Chambre scellée' : e.x.fleche ? `La Flèche · quai ${e.x.fleche.quai}` : e.x.pillage ? `Pillage · ${e.x.pillage.nom}` : `Strate −${e.x.strate}`;
+  const lieu = e.x.tutoriel ? 'Chambre scellée' : e.x.fleche ? `La Flèche · ${e.x.fleche.defi ? 'défi du ' : ''}quai ${e.x.fleche.quai}` : e.x.pillage ? `Pillage · ${e.x.pillage.nom}` : `Strate −${e.x.strate}`;
 
   // la Fêlure de l'ennemi visé : la Fréquence qui brise son intention (cachée par le brouillard tant que la chaîne est vide)
   const brume = C_brume(s);

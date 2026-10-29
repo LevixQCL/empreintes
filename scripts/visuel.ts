@@ -64,7 +64,7 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'port-destinations', sauvegarde: 'port', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.ds-lieux', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'onglet-fleche', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
   { nom: 'onglet-fleche-bas', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.$eval('.fl-paliers', (e) => e.scrollIntoView({ block: 'end' })); } },
-  { nom: 'fleche-garde', sauvegarde: 'flecheGarde', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
+  { nom: 'fleche-garde', sauvegarde: 'flecheGarde', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.$eval('.fl-compet', (e) => e.scrollIntoView({ block: 'start' })); } },
   { nom: 'fleche-fermee', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
   { nom: 'fleche-depart', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.click('[data-action="fleche-preparer"]'); } },
   { nom: 'fleche-combat', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.click('[data-action="fleche-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(800); } },

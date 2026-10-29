@@ -1,5 +1,5 @@
-// La Flèche en ligne (29 octobre 2026) : la garde qu'on publie quand on tient un quai, le directeur qui tient le quai
-// d'où l'on monte, les assauts envoyés et subis. Hors ligne (ou règles pas encore publiées), tout échoue sans bruit :
+// La Flèche en ligne (29 octobre 2026) : la garde qu'on publie quand on tient un quai, les gardiens des autres
+// (les plus hauts, ceux à portée), les défis envoyés et subis. Hors ligne (ou règles pas encore publiées), tout échoue sans bruit :
 // les quais restent gardés par les gardiens payés des Hauts.
 
 import * as J from '../core/jeu';
@@ -30,40 +30,34 @@ export async function synchroGarde() {
   } catch { /* on réessaiera au prochain passage */ }
 }
 
-// ---------- Le directeur qui tient le quai d'où l'on monte ----------
+// ---------- Les gardiens de la Flèche ----------
 
-/** Une garnison qu'on sait jouer, et à la mesure du quai (les Hauts ne confient pas un quai bas à une escouade trop forte) */
-function jouable(quai: number) {
-  return (g: J.Garnison, force: number) => {
-    try {
-      for (const p of g.porteurs) porteurDef(p.id);
-      const f = J.forceGarnison(g);
-      return f > 0 && Math.abs(f - force) < 0.01 && f <= J.mesureQuai(quai) + 0.001;
-    } catch {
-      return false;
-    }
-  };
-}
-
-/** Relu en ouvrant l'onglet, au plus toutes les 2 minutes pour un même quai */
-export async function lireGardienEnLigne(force = false) {
-  const uid = app.uid;
-  const f = app.jeu.fleche;
-  if (!app.compte || !uid || !f || f.garde) return;
-  const quai = f.quai;
-  if (!force && D.gardienQuai?.quai === quai && Date.now() - D.gardienQuai.lu < 2 * 60_000) return;
+/** Une garnison qu'on sait jouer : des Porteurs que ce jeu connaît, une force qui correspond à ses cartes */
+function jouable(g: J.Garnison, force: number): boolean {
   try {
-    const g = await (await reseau()).lireGardien(uid, quai, jouable(quai));
-    D.gardienQuai = { quai, gardien: g, lu: Date.now() };
-    if (app.mode === 'district' && D.vue === 'fleche') afficher();
-  } catch { /* hors ligne : les gardiens payés */ }
+    for (const p of g.porteurs) porteurDef(p.id);
+    const f = J.forceGarnison(g);
+    return f > 0 && Math.abs(f - force) < 0.01;
+  } catch {
+    return false;
+  }
 }
 
-/** Le gardien connu du quai où se tient l'escouade (null : gardiens payés) */
-export const gardienActuel = (): J.GardienQuai | null => {
-  const q = app.jeu.fleche?.quai;
-  return D.gardienQuai && D.gardienQuai.quai === q ? D.gardienQuai.gardien : null;
-};
+/** Relus en ouvrant l'onglet, au plus toutes les 2 minutes (ou tout de suite après un changement) */
+export async function lireGardiensEnLigne(force = false) {
+  const uid = app.uid;
+  if (!app.compte || !uid || !app.jeu.fleche) return;
+  const max = J.quaiMaxTenable(app.jeu);
+  if (!force && D.gardiens && D.gardiens.max === max && Date.now() - D.gardiens.lu < 2 * 60_000) return;
+  try {
+    const r = await (await reseau()).lireGardiens(uid, max, jouable);
+    D.gardiens = { ...r, max, lu: Date.now() };
+    if (app.mode === 'district' && D.vue === 'fleche') afficher();
+  } catch { /* hors ligne, ou règles pas encore publiées */ }
+}
+
+/** Le gardien qu'on peut défier : le plus haut à portée, au-dessus du quai qu'on tient */
+export const cibleDefi = (): J.GardienQuai | null => J.cibleDefiDe(app.jeu, D.gardiens?.portee ?? []);
 
 // ---------- Les assauts envoyés et subis ----------
 
@@ -81,8 +75,9 @@ export async function envoyerAssauts() {
       if ((e as { code?: string })?.code === 'permission-denied' || Date.now() - a.le > 48 * 3_600_000) f.aEnvoyer = f.aEnvoyer.filter((x) => x !== a);
     }
   }
-  // un gardien délogé ne doit plus être proposé
-  D.gardienQuai = null;
+  // le gardien battu a disparu, et l'on tient peut-être un nouveau quai
+  await synchroGarde();
+  lireGardiensEnLigne(true);
 }
 
 /** À l'ouverture : les assauts subis sur son quai. Renvoie vrai si la partie a changé */

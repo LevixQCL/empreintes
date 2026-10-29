@@ -2,7 +2,7 @@
 
 import { cartePillages, portOuvert } from '../../ui/pillages';
 import { lireCiblesEnLigne, sousBouclier } from '../pillages';
-import { gardienActuel, lireGardienEnLigne, recevoirAssauts, synchroGarde } from '../fleche';
+import { cibleDefi, lireGardiensEnLigne, recevoirAssauts, synchroGarde } from '../fleche';
 import { moduleDe, moduleDef, porteurDef } from '../../core/donnees';
 import { estTri, poidsCarte } from '../../core/collection';
 import * as J from '../../core/jeu';
@@ -144,12 +144,24 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'port-entrer': app.jeu.portVu = true; D.portAide = false; sauver(); window.scrollTo(0, 0); break;
     case 'port-volet': D.voletPort = id === 'missions' ? 'missions' : 'pillages'; break;
     // la Flèche (28 octobre 2026) : son onglet, puis le départ de l'escouade vers le quai suivant
-    case 'fleche': ouvrir('fleche'); D.flecheAide = false; lireGardienEnLigne(); recevoirAssauts().then((c) => { if (c) sauver(); }); break;
+    case 'fleche': ouvrir('fleche'); D.flecheAide = false; lireGardiensEnLigne(); recevoirAssauts().then((c) => { if (c) sauver(); }); break;
     // tenir un quai (29 octobre 2026)
     case 'fleche-tenir': {
-      const r = J.tenirQuai(app.jeu, J.escouadePourDepart(app.jeu), Date.now());
+      // la compétition (29 octobre 2026) : un quai libre déjà atteint ; sa liberté se revérifie en ligne juste avant
+      const quai = Number(b.dataset.quai ?? 0);
+      await lireGardiensEnLigne(true);
+      if (D.gardiens?.portee.some((g) => g.quai === quai)) { D.message = `Le quai ${quai} vient d’être pris : défie son gardien, ou tiens un autre quai.`; break; }
+      const r = J.tenirQuai(app.jeu, J.escouadePourDepart(app.jeu), quai, Date.now());
       resultat(r);
-      if (r.ok) { D.message = `Ton escouade tient le quai ${app.jeu.fleche!.quai}. Les Hauts te versent un gage tant qu’elle y reste.`; synchroGarde(); }
+      if (r.ok) { D.message = `Ton escouade tient le quai ${quai}. Les Hauts te versent un gage tant qu’elle y reste ; toi, tu peux continuer de monter.`; await synchroGarde(); lireGardiensEnLigne(true); }
+      break;
+    }
+    case 'fleche-defier': {
+      const c = cibleDefi();
+      const r = J.peutDefier(app.jeu, c);
+      if (!r.ok || !c) { resultat(r); break; }
+      D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = true; D.defi = c;
+      D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
     case 'fleche-gage': {
@@ -160,7 +172,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'fleche-quitter': {
       const q = app.jeu.fleche?.garde?.quai;
       const g = J.quitterQuai(app.jeu, Date.now());
-      if (g) { D.message = `L’escouade quitte le quai ${q}.${g.composants ? ` Gage versé : +${g.composants} composants${g.eclats ? `, +${g.eclats} Éclats` : ''}.` : ''}`; sauver(); synchroGarde(); D.gardienQuai = null; lireGardienEnLigne(true); }
+      if (g) { D.message = `L’escouade quitte le quai ${q}.${g.composants ? ` Gage versé : +${g.composants} composants${g.eclats ? `, +${g.eclats} Éclats` : ''}.` : ''}`; sauver(); await synchroGarde(); lireGardiensEnLigne(true); }
       break;
     }
     case 'fleche-aide': D.flecheAide = true; window.scrollTo(0, 0); break;
@@ -168,7 +180,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'fleche-preparer': {
       const r = J.peutMonter(app.jeu);
       if (!r.ok) { resultat(r); break; }
-      D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = true;
+      D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = true; D.defi = null;
       D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
@@ -211,7 +223,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     }
     case 'partir': {
-      const r = D.fleche ? J.monterFleche(app.jeu, D.escouade, undefined, gardienActuel())
+      const r = D.fleche ? (D.defi ? J.defierGardien(app.jeu, D.escouade, D.defi) : J.monterFleche(app.jeu, D.escouade))
         : D.pillage ? J.piller(app.jeu, D.escouade, D.pillage, Date.now())
         : D.epreuve ? J.partirEpreuve(app.jeu, D.escouade, D.epreuve, Date.now())
         : D.fouille ? J.fouiller(app.jeu, D.escouade, D.strateChoisie, D.fouille)
