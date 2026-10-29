@@ -10,7 +10,7 @@
 
 import { writeFileSync } from 'node:fs';
 import { cartesEnJeu, chargeNiveau, placesVides, poidsCarte, puissanceCarte } from '../src/core/collection';
-import { GESTES_SPECIAUX, MODULES_TIRABLES, NOMS_LIGNEE, carteId, moduleDef } from '../src/core/donnees';
+import { GESTES_SPECIAUX, MODULES, MODULES_TIRABLES, NOMS_LIGNEE, carteId, moduleDef } from '../src/core/donnees';
 import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExploration, salleCourante } from '../src/core/expedition';
 import { REGLES, frequenceLibre } from '../src/core/regles';
 import { jouerTour, jouerTourMoyen, type Escouade } from '../src/core/robot';
@@ -27,6 +27,12 @@ const NIVEAU_CARTES = Number(arg('niveau', '10'));
 if (process.argv.includes('--echo')) (REGLES as { echo: number }).echo = Number(arg('echo', String(REGLES.echo)));
 /** --mono 0.5 : essaie un bonus de suite réduit quand la suite vient d'une seule lignée */
 if (process.argv.includes('--suite-mono')) (REGLES as { suiteMono: number }).suiteMono = Number(arg('suite-mono', '1'));
+/** --reso-large : essai (29 octobre 2026) d'une échelle Résonante élargie à 5-9, les six cartes en 9 les moins fortes passent en 5 */
+if (process.argv.includes('--reso-large')) {
+  const neufs = MODULES.filter((m) => m.lignee === 'reso' && !m.exclusif && m.f[0] === 9).sort((a, b) => a.v - b.v).slice(0, 6);
+  for (const m of neufs) m.f = [5, ...m.f.slice(1)];
+  console.log('Passent en 5 :', neufs.map((m) => m.nom).join(', '));
+}
 /** --sortie fichier.md : écrit le rapport ailleurs que dans docs/ (pour comparer plusieurs réglages) */
 const SORTIE = arg('sortie', '');
 /** Charge d'un Porteur de niveau 6 : assez pour 6 cartes moyennes, pas pour 6 grosses */
