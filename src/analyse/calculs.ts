@@ -26,6 +26,10 @@ export interface LigneEconomie { tranche: string; joueurs: number; energie: numb
 export interface LigneJoueur {
   joueur: number; strate: number; minutes: number; sessions: number; jours: number; derniere: number; premierJour: number | null;
   appareil: string; compte: string; cartes: number; porteurs: number; noyau: number;
+  /** l’Héritage reçu (id de la carte, « cle »), « attend » si la lettre n'est pas encore lue, ou « — » avant la chambre (29 octobre 2026) */
+  heritage: string;
+  /** la descente en cours (Strate), ou 0 */
+  descente: number;
 }
 export interface Cohorte { debut: number; taille: number; retention: (number | null)[] }
 
@@ -331,6 +335,7 @@ export function analyser(parties: Partie[], now: number): Analyse {
       joueur: i + 1, strate: p.jeu.strate, minutes: Math.round((s?.secondes ?? 0) / 60), sessions: s?.sessions ?? 0, jours: s?.jours.length ?? 0,
       derniere: p.maj, premierJour: s?.premierJour ?? null, appareil: s?.appareil ?? '—', compte: s?.compte ?? '—',
       cartes: Object.keys(p.jeu.collection).length, porteurs: Object.keys(p.jeu.porteurs).length, noyau: p.jeu.batiments.noyau,
+      heritage: p.jeu.legs ?? (p.jeu.chambre ? 'attend' : '—'), descente: p.jeu.expedition ? p.jeu.expedition.strate || -1 : 0,
     };
   }).sort((a, b) => b.derniere - a.derniere);
 

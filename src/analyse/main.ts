@@ -229,6 +229,8 @@ function joueurs(e: Donnees): string {
       { cle: 'cartes', nom: 'Cartes', val: (x) => x.cartes, aff: (x) => fr(x.cartes) },
       { cle: 'porteurs', nom: 'Porteurs', val: (x) => x.porteurs, aff: (x) => fr(x.porteurs) },
       { cle: 'noyau', nom: 'Tour', val: (x) => x.noyau, aff: (x) => fr(x.noyau) },
+      { cle: 'heritage', nom: 'Héritage', val: (x) => x.heritage, aff: (x) => x.heritage, texte: true },
+      { cle: 'descente', nom: 'Descente', val: (x) => x.descente, aff: (x) => (x.descente ? (x.descente > 0 ? `−${x.descente}` : 'oui') : '—') },
     ], e.a.liste, e.tri.joueurs, 200));
 }
 
