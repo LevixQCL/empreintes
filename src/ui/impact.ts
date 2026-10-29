@@ -11,6 +11,8 @@ import { vibrer } from './toucher';
 import { echelleScene, ondeDeChoc } from './verre';
 import { annoncerPhase } from './bandeau';
 import { dissoudre } from './dissolution';
+import * as S from './son';
+export { debloquerSon, sonActif, basculerSon } from './son';
 
 const TEINTE: Record<LigneeGeste, string> = { tech: '#8FDCFF', bio: '#FFB44A', reso: '#B98CFF', neutre: '#EBD9A8' };
 const SOIN = '#7CE3A0';
@@ -388,7 +390,7 @@ function fissures(p: DOMPoint) {
       c.beginPath(); pts.slice(0, m).forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y))); c.stroke();
     }
   }, 900);
-  note(1800, 'square', 0.08, 0.02, 0.6);
+  S.sonFissure();
 }
 
 /** Désarmer : l'intention de l'ennemi est frappée, elle tremble et pâlit ; une gerbe d'étincelles métalliques */
@@ -398,7 +400,7 @@ function desarme(el: Element | null) {
   if (el && !reduit) (el as HTMLElement).animate([
     { transform: 'none', filter: 'none' }, { transform: 'translateX(-6px) rotate(-3deg)', filter: 'grayscale(.8) brightness(1.6)' },
     { transform: 'translateX(5px) rotate(2deg)' }, { transform: 'none', filter: 'none' }], { duration: 420, easing: 'ease-out' });
-  note(2400, 'triangle', 0.12, 0.03, 0.7);
+  S.sonDesarme();
 }
 
 /** Élan : des traînées de vitesse qui montent depuis la chaîne */
@@ -412,7 +414,7 @@ function elan(r: DOMRect) {
       c.beginPath(); c.moveTo(x, y - k * 50); c.lineTo(x, y - k * 50 - l); c.stroke();
     }, 380, i * 30);
   }
-  note(700, 'triangle', 0.18, 0.025, 1.6);
+  S.sonElan();
 }
 
 /** Rempart : des pans hexagonaux qui se posent l'un après l'autre devant l'escouade */
@@ -474,7 +476,7 @@ function place(p: DOMPoint, i: number): DOMPoint {
 function suspendre(p: DOMPoint, couleur: string) {
   if (reduit || suspendus.length >= MAX_SUSPENDUS) return;
   suspendus.push({ de: p, vers: place(p, suspendus.length), couleur, ne: maintenant(), phase: hasard(0, 6.28) });
-  note(1046 * GAMME[Math.min(GAMME.length - 1, suspendus.length - 1)]!, 'sine', 0.25, 0.018);
+  S.sonSuspendu(suspendus.length - 1);
   // filet de sécurité : si la chaîne s'arrête sans fin reconnue, les cristaux s'évanouissent d'eux-mêmes
   clearTimeout(filet);
   filet = window.setTimeout(dissiper, 8000);
@@ -583,8 +585,7 @@ function converger(p: DOMPoint): number {
     const ecran = document.querySelector('.ecran-combat');
     secouer(ecran, Math.min(5, 1 + n));
     if (!reduit && n >= 3) ecran?.animate([{ filter: 'brightness(1.5)' }, { filter: 'none' }], { duration: 260, easing: 'ease-out' });
-    sonImpact(5);
-    [1, 5 / 4, 3 / 2, 2, 5 / 2].slice(0, Math.min(5, n + 1)).forEach((k, i) => setTimeout(() => note(392 * k, 'triangle', 0.45, 0.04), i * 35));
+    S.sonConvergence(n);
     vibrer(n >= 3 ? [25, 30, 70] : 30);
   }, arrivee);
   return arrivee + 160;
@@ -709,14 +710,13 @@ function parade(r: DOMRect, angle: number, delai: number, brise: boolean) {
     }, 300, delai);
     setTimeout(() => {
       eclats(cx, cy, 22, '#CFE6FF', { vitesse: 260, taille: 2.6, gravite: 520, vie: 0.8 });
-      note(1900, 'triangle', 0.16, 0.05, 0.55);
+      S.sonBrise();
     }, delai + 90);
   } else {
     // le coup ricoche : des étincelles repartent vers l'ennemi
     setTimeout(() => {
       eclats(ix, iy, 12, '#CFE6FF', { vitesse: 300, taille: 2, trainee: true, angle: angle + Math.PI, ouverture: 1.1, gravite: 80 });
-      note(1320, 'triangle', 0.22, 0.05, 1.04);
-      note(1980, 'sine', 0.18, 0.025);
+      S.sonRicochet();
     }, delai);
   }
 }
@@ -794,50 +794,10 @@ function coqueEnnemi(el: Element | null) {
     for (let j = 0; j <= 6; j++) { const a = (j / 6) * Math.PI * 2 + k * 0.4; c[j ? 'lineTo' : 'moveTo'](cx + Math.cos(a) * t, cy + Math.sin(a) * t); }
     c.stroke();
   }, 620);
-  note(880, 'sine', 0.3, 0.025, 0.8);
+  S.sonCoque();
 }
 
-// ---------- Sons (synthétisés : aucun fichier à charger) ----------
-
-let audio: AudioContext | null = null;
-/** iOS ne laisse jouer le son que s'il a été ouvert pendant un toucher : à appeler dans le clic « Lancer la chaîne » */
-export function debloquerSon(): void {
-  if (!sonActif()) return;
-  try { audio ??= new AudioContext(); if (audio.state === 'suspended') void audio.resume(); } catch { /* pas d'audio */ }
-}
-export const sonActif = () => { try { return localStorage.getItem('empreintes.son') !== '0'; } catch { return true; } };
-export function basculerSon(): boolean {
-  const on = !sonActif();
-  try { localStorage.setItem('empreintes.son', on ? '1' : '0'); } catch { /* stockage indisponible */ }
-  return on;
-}
-/** gamme pentatonique : chaque carte de la chaîne monte d'un cran */
-const GAMME = [1, 9 / 8, 5 / 4, 3 / 2, 5 / 3, 2];
-const BASE: Record<LigneeGeste, { f: number; forme: OscillatorType }> = {
-  tech: { f: 523, forme: 'square' }, bio: { f: 330, forme: 'sawtooth' }, reso: { f: 440, forme: 'sine' }, neutre: { f: 392, forme: 'triangle' },
-};
-
-function note(f: number, forme: OscillatorType, duree: number, volume: number, glisse = 1) {
-  if (!sonActif()) return;
-  try {
-    audio ??= new AudioContext();
-    const t = audio.currentTime;
-    const o = audio.createOscillator(), g = audio.createGain(), filtre = audio.createBiquadFilter();
-    o.type = forme; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * glisse, t + duree);
-    filtre.type = 'lowpass'; filtre.frequency.value = forme === 'sine' ? 6000 : 2200;
-    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(volume, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + duree);
-    o.connect(filtre); filtre.connect(g); g.connect(audio.destination);
-    o.start(t); o.stop(t + duree + 0.02);
-  } catch { /* pas d'audio : tant pis */ }
-}
-const sonCarte = (l: LigneeGeste, rang: number) => {
-  const b = BASE[l];
-  const f = b.f * GAMME[Math.min(rang, GAMME.length - 1)]! * hasard(0.985, 1.015);
-  note(f, b.forme, 0.22, 0.05);
-  if (l === 'reso') note(f * 1.5, 'sine', 0.35, 0.025);
-};
-const sonImpact = (fort: number) => note(hasard(90, 110), 'sine', 0.18 + fort * 0.04, 0.12 + fort * 0.03, 0.45);
-const sonResonance = (suite: number) => [1, 5 / 4, 3 / 2, 2].slice(0, Math.min(4, suite - 1)).forEach((k, i) => setTimeout(() => note(392 * k, 'triangle', 0.5, 0.04), i * 40));
+// ---------- Sons : voir son.ts (une seule tonalité, des instruments de cristal, une salle) ----------
 
 // ---------- Réactions de l'écran et de l'ennemi ----------
 
@@ -902,8 +862,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       if (ennemi && !reduit) (ennemi as HTMLElement).animate([{ filter: 'none' }, { filter: `brightness(2.2) drop-shadow(0 0 30px ${DANGER})`, transform: 'scale(1.05)' }, { filter: 'none', transform: 'none' }], { duration: 700, easing: 'ease-out' });
       secouer(ecran, 3);
       voileRouge(0.25);
-      note(80, 'sawtooth', 0.8, 0.07, 2);
-      note(55, 'triangle', 1.6, 0.08, 1.5);
+      S.sonPhase();
       // le bandeau : le nom de la phase, ce qui arrive, et la créature appelée en grand (27 octobre 2026)
       annoncerPhase(ev.id, reduit);
       return 2200;
@@ -914,7 +873,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       const p = centre(v);
       if (p) eclats(p.x, p.y, 18, '#c9b8a0', { vitesse: 120, gravite: 120, taille: 2.4, vie: 0.8 });
       if (v && !reduit) (v as HTMLElement).animate([{ opacity: 0, transform: 'translateY(-14px) scale(.6)' }, { opacity: 1, transform: 'none' }], { duration: 420, easing: 'cubic-bezier(.2,.8,.3,1.3)' });
-      note(180, 'triangle', 0.3, 0.05, 1.4);
+      S.sonRenfort();
       return 250;
     }
     case 'cible': {
@@ -926,7 +885,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
     case 'carte': {
       derniere = { lignee: ev.lignee, rang: ev.rang, total: ev.total, suite: ev.suite, type: ev.type, ...(ev.effet ? { effet: ev.effet } : {}) };
       if (ev.rang === 0) dissiper();
-      sonCarte(ev.lignee, ev.rang);
+      S.sonCarte(ev.lignee, ev.rang);
       // la carte qui part : celle de la chaîne à cette place (une carte lourde prend deux places, d'où l'élément réel)
       const carte = racine.querySelectorAll('.zone-chaine .rail > :not(.place-vide)')[ev.rang];
       const de = centre(carte ?? racine.querySelector('.zone-chaine'), -0.1);
@@ -951,7 +910,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         // le dernier coup de la chaîne : les cristaux suspendus plongent avec lui
         const dernierCoup = !!derniere && derniere.type === 'atk' && d.rang === d.total - 1;
         const finale = dernierCoup && pEnnemi ? converger(pEnnemi) : 0;
-        if (!ev.net) { if (pEnnemi) eclats(pEnnemi.x, pEnnemi.y, 6, '#9aa4b2', { vitesse: 200, taille: 2, trainee: true }); note(1400, 'triangle', 0.08, 0.03); return finale; }
+        if (!ev.net) { if (pEnnemi) eclats(pEnnemi.x, pEnnemi.y, 6, '#9aa4b2', { vitesse: 200, taille: 2, trainee: true }); S.sonVain(); return finale; }
         if (pEnnemi && !dernierCoup && derniere?.type === 'atk') suspendre(pEnnemi, couleur);
         if (pEnnemi) {
           // l'éclair blanc de l'impact, plus large à chaque carte de la chaîne
@@ -978,7 +937,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         }
         touche(ennemi, couleur, force);
         secouer(ecran, force - 1);
-        sonImpact(force);
+        S.sonImpact(force);
         vibrer(8 + force * 6);
         // l'arrêt sur image retient aussi la suite de la chaîne : le coup suivant attend que celui-ci ait « porté »
         return Math.max(finale, force >= 2 ? 20 + force * 14 : 0);
@@ -1019,14 +978,14 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
           });
           if (part >= 0.3) secouer(ecran, 2);
         }
-        note(hasard(70, 80), 'sine', 0.22, 0.14, 0.5);
+        S.sonEncaisse(part);
         vibrer(part >= 0.3 ? [30, 40, 25] : 18);
       };
       if (delai) setTimeout(encaisser, delai); else encaisser();
       return delai;
     }
     case 'resonance': {
-      sonResonance(ev.suite);
+      S.sonResonance(ev.suite);
       const zone = racine.querySelector('.zone-chaine');
       if (zone) (zone as HTMLElement).animate([{ filter: 'brightness(1.9)', boxShadow: '0 0 40px rgba(216,180,101,.8)' }, { filter: 'none', boxShadow: 'none' }], { duration: 520, easing: 'ease-out' });
       // la salle derrière l'interface s'éclaire elle aussi, d'autant plus que la suite est longue
@@ -1048,7 +1007,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         // l'ennemi se répare : une lueur verte qui remonte sur lui
         if (pEnnemi) eclats(pEnnemi.x, pEnnemi.y + 30, 14, SOIN, { vitesse: 70, gravite: -140, taille: 2.6, vie: 1, angle: -Math.PI / 2, ouverture: 0.9 });
         if (ennemi) (ennemi as HTMLElement).animate([{ filter: `drop-shadow(0 0 0 ${SOIN})` }, { filter: `drop-shadow(0 0 18px ${SOIN})` }, { filter: 'none' }], { duration: 600 });
-        note(520, 'sine', 0.35, 0.03, 1.25);
+        S.sonSoinEnnemi();
         return 0;
       }
       const el = [...racine.querySelectorAll('.combattant')].find((x) => x.getAttribute('data-porteur') === ev.cible);
@@ -1073,7 +1032,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         eclats(p.x, p.y, 8, SOIN, { vitesse: 60, gravite: -120, taille: 2.4, vie: 0.9 });
       }
       if (el) (el as HTMLElement).animate([{ filter: `brightness(1.4) drop-shadow(0 0 10px ${SOIN})` }, { filter: 'none' }], { duration: 500 });
-      note(660 * hasard(0.98, 1.02), 'sine', 0.3, 0.03, 1.12);
+      S.sonSoin();
       return 0;
     }
     case 'effet': {
@@ -1093,13 +1052,13 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
     case 'echo': {
       const r = racine.querySelector('.escouade-combat')?.getBoundingClientRect();
       if (r) { bouclierSur(r); eclats(r.left + r.width / 2, r.top, 14, '#F3D27A', { vitesse: 120, gravite: -40, taille: 2.2 }); }
-      note(660, 'triangle', 0.4, 0.04);
+      S.sonEcho();
       return 0;
     }
     case 'boost': {
       const qui = (ev.rang !== undefined ? racine.querySelector(`.vignette-ennemi[data-id="${ev.rang}"]:not(.visee) img`) : null) ?? ennemi;
       if (qui) (qui as HTMLElement).animate([{ filter: `drop-shadow(0 0 0 ${DANGER})` }, { filter: `drop-shadow(0 0 24px ${DANGER}) brightness(1.2)` }, { filter: 'none' }], { duration: 600 });
-      note(150, 'sawtooth', 0.4, 0.04, 1.6);
+      S.sonBoost();
       return 0;
     }
     case 'fin': {
@@ -1118,12 +1077,12 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
           surFront: (x, y) => eclats(x, y, 1, Math.random() < 0.6 ? '#CFF4FF' : TEINTE[lignee], { vitesse: 60, gravite: -110, taille: 2.2, vie: 1.1 }),
         });
         if (ennemi && !reduit && !peinte) (ennemi as HTMLElement).animate([{ opacity: 1, filter: 'none' }, { opacity: 0, filter: 'blur(6px) brightness(2)', transform: 'translateY(-10px) scale(1.04)' }], { duration: 900, delay: finale, fill: 'both', easing: 'ease-in' });
-        [1, 5 / 4, 3 / 2, 2].forEach((k, i) => setTimeout(() => note(523 * k, 'triangle', 0.6, 0.035), finale + i * 90));
+        setTimeout(S.sonVictoire, finale);
         vibrer([20, 60, 20, 60, 40]);
         return (peinte ? 1100 : 700) + finale;
       }
       if (ev.issue === 'defaite') {
-        note(110, 'sawtooth', 0.9, 0.05, 0.5);
+        S.sonDefaite();
         // la fenêtre de défaite attend que les derniers éclats retombent : elle s'ouvre sur un écran calme
         return 900;
       }
@@ -1135,7 +1094,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       if (p) eclats(p.x, p.y, 16, '#8a8f99', { vitesse: 90, gravite: 160, taille: 2.4, vie: 1 });
       if (el) (el as HTMLElement).animate([{ filter: 'brightness(1.6)' }, { filter: 'grayscale(1) brightness(.45)' }], { duration: 500, easing: 'ease-in' });
       voileRouge(0.35);
-      note(62, 'sine', 0.7, 0.16, 0.6);
+      S.sonATerre();
       vibrer([60, 50, 90]);
       return 400;
     }
