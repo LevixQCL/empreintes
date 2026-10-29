@@ -31,6 +31,8 @@ export const ICO = {
   lancer: svg('<path d="M5 12h12"/><path d="M13 6l6 6-6 6"/>'),
   retirer: svg('<path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6 7l1 13h10l1-13"/>'),
   // général
+  /** un parchemin roulé : l'objectif du moment (la bulle du district) */
+  objectif: svg('<path d="M7 4h10a2 2 0 0 1 2 2v1H9V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v11a3 3 0 0 0 3 3h9a2 2 0 0 0 2-2V8"/><path d="M11 11h5M11 15h3"/>'),
   fermer: svg('<path d="M6 6l12 12M18 6 6 18"/>'),
   aide: svg('<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6" fill="currentColor"/>'),
   verrou: svg('<rect x="5" y="11" width="14" height="10" rx="1"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'),
@@ -67,7 +69,9 @@ const PEINTES = new Set<Icone>(['energie', 'composants', 'eclats', 'strate', 'di
   // le lot du 23 octobre 2026
   'marteau', 'coffre', 'chrono', 'verrou', 'journal', 'ouvrier',
   // les onglets Pillages et Flèche (28 octobre 2026)
-  'carte', 'fleche']);
+  'carte', 'fleche',
+  // l'objectif du district, un parchemin scellé (29 octobre 2026)
+  'objectif']);
 export const baseIcones = new URL('art/icones/', document.baseURI).href;
 
 /** L'icône peinte si elle existe, sinon le trait SVG */

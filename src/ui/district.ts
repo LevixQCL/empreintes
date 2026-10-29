@@ -325,7 +325,7 @@ function bulles(e: EcranDistrict): string {
   if (titre) {
     const ouvert = e.bulle === 'objectif';
     r.push(`<button type="button" class="bulle-d objectif${ouvert ? ' ouverte' : ''}${pret || o ? ' prete' : ''}" data-action="bulle" data-id="objectif" aria-expanded="${ouvert}" aria-label="${echap(titre)}${pret ? ' : récompense prête' : ''}" style="--p:${Math.round(part * 100)}">`
-      + `<span class="bulle-med">${icone('journal')}</span>${pret ? gemme : ''}</button>`);
+      + `<span class="bulle-med">${icone('objectif')}</span>${pret ? gemme : ''}</button>`);
   }
   // l'appel du moment : la porte scellée (début du jeu) reste une grande carte, le reste passe en bulle
   if (j.chambre && appel(e)) {
