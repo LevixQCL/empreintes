@@ -35,6 +35,9 @@ if (process.argv.includes('--reso-large')) {
 }
 /** --trio 1.15 : essaie un bonus pour l'escouade qui réunit les trois lignées */
 if (process.argv.includes('--trio')) (REGLES as { trioLignees: number }).trioLignees = Number(arg('trio', '1'));
+/** --empile-bouclier 0.75 --empile-soin 0.75 : essaie des boucliers et soins dégressifs dans une même chaîne */
+if (process.argv.includes('--empile-bouclier')) REGLES.empilement.bouclier = Number(arg('empile-bouclier', '1'));
+if (process.argv.includes('--empile-soin')) REGLES.empilement.soin = Number(arg('empile-soin', '1'));
 /** --sortie fichier.md : écrit le rapport ailleurs que dans docs/ (pour comparer plusieurs réglages) */
 const SORTIE = arg('sortie', '');
 /** Charge d'un Porteur de niveau 6 : assez pour 6 cartes moyennes, pas pour 6 grosses */

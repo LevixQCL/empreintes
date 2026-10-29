@@ -971,6 +971,12 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   const mettre = (nom: string, m: number) => { if (m !== 1) f.push({ nom, m }); };
   mettre(`Résonance (suite de ${suite})`, mult);
   mettre('Écho (trois Fréquences identiques)', multEcho(chaine, rang));
+  // Empilement : chaque bouclier (ou soin) déjà posé dans la chaîne réduit le suivant (une carte seule garde toute sa force)
+  const emp = g.type === 'bouclier' ? REGLES.empilement.bouclier : g.type === 'soin' ? REGLES.empilement.soin : 1;
+  if (emp !== 1) {
+    const avant = chaine.slice(0, rang).filter((x) => x.type === g.type).length;
+    if (avant) mettre(`${g.type === 'bouclier' ? 'Boucliers' : 'Soins'} empilés (${avant + 1}e)`, emp ** avant);
+  }
   // Trois lignées dans l'escouade : elles se complètent sur l'échelle des Fréquences
   if (REGLES.trioLignees !== 1 && new Set(s.porteurs.map((p) => porteurDef(p.id).lignee)).size >= 3) mettre('Trois lignées', REGLES.trioLignees);
   // Crescendo : plus la carte arrive tard dans la chaîne, plus elle frappe fort
