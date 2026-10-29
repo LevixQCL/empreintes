@@ -44,7 +44,7 @@ const SORTIE = arg('sortie', '');
 const CHARGE = chargeNiveau(6);
 /** Mêmes PV pour tout le monde : les recrues et les Porteurs nommés n'ont pas les mêmes, ça fausserait la comparaison */
 const PV = 38;
-const STRATE = 3;
+const STRATE = Number(arg('strate', '3'));
 const DEFENSES_MIN = 2;
 
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];
