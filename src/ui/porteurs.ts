@@ -2,9 +2,9 @@
 // tous les Porteurs (une grille par lignée, 22 octobre 2026), et la collection (htmlCartes dans district.ts).
 // La fiche complète d'un Porteur : qui il est, son état (PV, niveau, Usure), sa Marque, sa lignée, son poste et ses cartes.
 
-import { BATIMENTS, GESTES_SPECIAUX, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
-import { CHARGE, composantsNiveau, doublonsRequis } from '../core/collection';
-import { ACCORD_OUVERT, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
+import { BATIMENTS, CLE_LEGS, GESTES_SPECIAUX, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
+import { CHARGE, NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
+import { ACCORD_OUVERT, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
@@ -129,7 +129,7 @@ const socle = (t: TypeGeste, v: number, classe: string) =>
  * (illustration, Fréquence, force, métal), trois par rangée ; dessous, seulement ce qui ne se lit pas sur la face :
  * le nom de l'effet, « 2 places », l'origine du paquetage. Toucher ouvre le détail.
  */
-function tuileCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean): string {
+function tuileCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean, scellee = false): string {
   const cle = g.carte && j.collection[g.carte] ? g.carte : null;
   const origine = g.porteur === null ? ORIGINE_PAQUETAGE[g.id] : undefined;
   let face: string;
@@ -139,13 +139,14 @@ function tuileCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean): strin
   } else {
     face = faceCarte({ id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) } as Parameters<typeof faceCarte>[0], 1, 1, origine ? { origine: origine.batiment } : {});
   }
-  const sous = [g.effet ? `<b>${echap(nomsEffets(g))}</b>` : '', g.lourd ? '2 places' : ''].filter(Boolean).join(' · ');
+  const sous = scellee ? `${ICO.cristal}<b>Scellée</b> · un Porteur niv. ${NIVEAU_METAL.nacre}`
+    : [g.effet ? `<b>${echap(nomsEffets(g))}</b>` : '', g.lourd ? '2 places' : ''].filter(Boolean).join(' · ');
   const badges = (cle && prete(cle) ? `<span class="eq-t-monte" title="Peut monter">${ICO.monter}</span>` : '')
     + (cle && !j.vus.cartes.includes(cle) ? `<span class="eq-t-neuve" title="Nouvelle"></span>` : '');
   const corps = `<span class="eq-t-face">${face}${badges}</span>${sous ? `<span class="eq-t-sous">${sous}</span>` : ''}`;
   return cle
     ? `<li><button type="button" class="eq-tuile" data-action="carte" data-id="${cle}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}${g.effet ? `, ${nomsEffets(g)}` : ''}${prete(cle) ? ', peut monter' : ''}. Voir la carte">${corps}</button></li>`
-    : `<li><div class="eq-tuile fixe">${corps}</div></li>`;
+    : `<li><div class="eq-tuile fixe${scellee ? ' scellee' : ''}">${corps}</div></li>`;
 }
 
 /** Ce que vaut le deck de l'escouade : sa taille, ses Fréquences (par lignée), ses actions */
@@ -288,8 +289,10 @@ function monEscouade(e: EcranDistrict): string {
   if (esc.length) h += bilanDeck(j, esc);
   h += `<div class="eq-trio">${[0, 1, 2].map((i) => blocPorteur(j, esc[i], i, verrou, prete)).join('')}</div>`;
   // le paquetage du district, toujours là
-  h += `<section class="eq-district"><div class="eq-cartes-tete"><h3>${ICO.district}Paquetage du district <span>${GESTES_SPECIAUX.length}</span></h3><small>Fourni à chaque escouade qui descend : il reste même si un Porteur tombe</small></div>`
-    + `<ul class="eq-grille">${GESTES_SPECIAUX.map((g) => tuileCarte(j, g, prete)).join('')}</ul></section>`;
+  // la Clé de l’Héritage (29 octobre 2026) : visible dès qu'on l'a choisie, scellée tant qu'aucun Porteur de l'escouade n'a le niveau 10
+  const cle = j.legs === 'cle' ? cleDuLegs(j, esc) : null;
+  h += `<section class="eq-district"><div class="eq-cartes-tete"><h3>${ICO.district}Paquetage du district <span>${GESTES_SPECIAUX.length + (j.legs === 'cle' ? 1 : 0)}</span></h3><small>Fourni à chaque escouade qui descend : il reste même si un Porteur tombe</small></div>`
+    + `<ul class="eq-grille">${GESTES_SPECIAUX.map((g) => tuileCarte(j, g, prete)).join('')}${j.legs === 'cle' ? tuileCarte(j, cle ?? CLE_LEGS, prete, !cle) : ''}</ul></section>`;
   return h;
 }
 

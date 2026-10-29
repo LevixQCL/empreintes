@@ -1218,13 +1218,27 @@ export function htmlCartes(e: EcranDistrict): string {
         const o = ORIGINE_PAQUETAGE[g.id]!;
         const m: ModuleDef = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) };
         return `<div class="carte-tuile cl-carte cl-paquetage" data-carte="${g.id}">${faceCarte(m, 1, 1, { origine: o.batiment })}<span class="cl-bas"><span class="cl-origine">${echap(o.texte)}</span></span></div>`;
-      }).join('') + `</div>`;
+      }).join('') + (j.legs === 'cle' ? carteCle(j) : '') + `</div>`;
   }
   // le mode d'emploi prend la place des autres feuilles ; en le fermant, on retrouve celle d'où on venait
   if (e.guide) h += feuilleGuide(e.guide, trouveesDe(j.collection));
   else h += feuilleCarte(e) + feuilleDeck(e);
   if (j.choix.length) h += fenetreChoix(j);
   return coquille(e, h, 'ecran-cartes cl');
+}
+
+/**
+ * La Clé de l’Héritage dans l'écran Cartes (29 octobre 2026, Luc ne la trouvait nulle part) : elle n'est pas dans la collection
+ * (elle rejoint le paquetage), on la montre donc ici, scellée tant qu'aucun Porteur n'a le niveau de la nacre.
+ */
+function carteCle(j: Jeu): string {
+  const g = CLE_LEGS;
+  const o = ORIGINE_PAQUETAGE['cle-legs']!;
+  const m: ModuleDef = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'nacre', type: g.type, v: g.v, f: [g.f], effet: g.effet!, effet2: g.effet2!, legs: true };
+  const pret = Object.keys(j.porteurs).some((id) => niveauPorteur(j, id).niveau >= NIVEAU_METAL.nacre);
+  const bas = pret ? `<span class="cl-origine">Ton Héritage : dans chaque escouade qui compte un Porteur de niveau ${NIVEAU_METAL.nacre}.</span>`
+    : `<span class="cl-origine">${ICO.cristal}<b>Scellée</b> : elle rejoindra le paquetage quand un Porteur de l’escouade aura le niveau ${NIVEAU_METAL.nacre}.</span>`;
+  return `<div class="carte-tuile cl-carte cl-paquetage${pret ? '' : ' cl-scellee'}">${faceCarte(m, COLLECTION.niveauDepart.nacre, 1, { origine: o.batiment })}<span class="cl-bas">${bas}</span></div>`;
 }
 
 // ---------- La rencontre, avant la chambre scellée ----------
