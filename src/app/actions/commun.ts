@@ -25,7 +25,7 @@ export interface Clic {
   x: Jeu['expedition'];
   s: NonNullable<Jeu['expedition']>['combat'] | undefined;
   /** l'état d'avant l'action, pour montrer les gains */
-  avantGains: ReturnType<typeof relever>;
+  avantGains: ReturnType<typeof relever> | null;
 }
 
 /** afficher : redessiner et montrer les gains ; fin : tout est déjà fait ; inconnu : ce n'est pas une action de ce thème */

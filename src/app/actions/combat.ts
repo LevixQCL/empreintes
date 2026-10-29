@@ -40,7 +40,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     case 'allonger': if (s && !K.verrou) { C.allonger(s); sauver(); } break;
     case 'relancer': if (s && !K.verrou) { C.relancerMain(s); vibrer(8); sauver(); } break;
     case 'repiocher': if (s && !K.verrou) { C.repiocher(s); sauver(); } break;
-    case 'lancer': if (s && !K.verrou) { debloquerSon(); J.noterChaine(app.jeu, s.chaine); await jouer(C.lancer(s)); montrer(comparer(avantGains, relever(app.jeu))); return 'fin'; } break;
+    case 'lancer': if (s && !K.verrou) { debloquerSon(); J.noterChaine(app.jeu, s.chaine); await jouer(C.lancer(s)); if (avantGains) montrer(comparer(avantGains, relever(app.jeu))); return 'fin'; } break;
     case 'regles': K.regles = !K.regles; K.fuite = false; K.guide = null; K.journal = null; break;
     case 'fuir': if (!K.verrou) { K.fuite = !K.fuite; K.regles = false; K.guide = null; K.journal = null; } break;
     // le journal du combat : les piles l'ouvrent sur la défausse, la dernière ligne du journal et la fin du combat sur les tours

@@ -24,6 +24,7 @@ import { htmlCombat, panneauCompte } from '../ui/vue';
 import { annoncerGardien } from '../ui/bandeau';
 import { app, compteEtat, D, G, K, racine, reduit } from './etat';
 import { sauver } from './synchro';
+import { signaler } from './incident';
 
 // ---------- Rendu ----------
 
@@ -88,7 +89,12 @@ function compteTitre(): TitreCompte | null {
   };
 }
 
+/** Redessine l'écran. Une erreur d'affichage ouvre la fenêtre du filet de sécurité au lieu de figer le jeu */
 export function afficher() {
+  try { dessiner(); } catch (e) { signaler(e, 'affichage', afficher); }
+}
+
+function dessiner() {
   D.j = app.jeu;
   D.uid = app.uid;
   compteEtat.pseudo = app.jeu.directeur?.nom;

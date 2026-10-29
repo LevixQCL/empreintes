@@ -15,6 +15,7 @@ import { app, compteEtat, G, K, racine, reduit } from './app/etat';
 import { brancherChaine } from './app/chaine';
 import { annoncer, battre } from './app/horloge';
 import { afficher } from './app/rendu';
+import { signaler } from './app/incident';
 import { demarrerCompte, envoyer, sauver } from './app/synchro';
 
 // l'empreinte des cartes vétéranes : chaque face lit le palier de son exemplaire dans la partie en cours
@@ -69,6 +70,10 @@ document.addEventListener('visibilitychange', () => {
   annoncer(J.tick(app.jeu, Date.now())); sauver(); if (app.mode === 'district') afficher();
 });
 addEventListener('pagehide', () => void envoyer());
+
+// ---------- Le filet de sécurité ----------
+// une erreur ailleurs (horloge, minuteurs) : notée et expliquée au lieu de figer le jeu en silence
+addEventListener('error', (ev) => { if (ev.error) signaler(ev.error, 'horloge', afficher); });
 
 // ---------- Démarrage ----------
 
