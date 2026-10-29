@@ -604,6 +604,9 @@ export const ennemiDef = (id: string): EnnemiDef => {
   return e;
 };
 
+/** Une vraie carte de collection ? (les cartes du district, Stimulant et Pavois de cuivre, n'en sont pas) */
+export const estCarteConnue = (cle: string): boolean => { try { moduleDef(cle); return true; } catch { return false; } };
+
 export const batimentDef = (id: BatimentId): BatimentDef => BATIMENTS.find((b) => b.id === id)!;
 const declinaisons = new Map<string, ModuleDef>();
 

@@ -5,7 +5,7 @@
 // Pur prestige : AUCUN effet en combat (une carte vétérane ne frappe pas plus fort, un nouveau joueur n'est pas désavantagé).
 // Tout se lit dans le journal du combat (CombatEtat.historique) : rien à brancher dans le moteur.
 
-import { moduleDef, porteurDef } from '../donnees';
+import { estCarteConnue, moduleDef, porteurDef } from '../donnees';
 import type { CombatEtat } from '../types';
 import type { Jeu } from './etat';
 
@@ -118,7 +118,7 @@ export const EPITHETES: EpitheteDef[] = [
 
 /** Les épithètes débloqués, dans l'ordre de la liste */
 export function epithetesDe(cle: string, x: VecuCarte | undefined): { id: string; texte: string }[] {
-  if (!x) return [];
+  if (!x || !estCarteConnue(cle)) return [];
   const type = moduleDef(cle).type;
   return EPITHETES.filter((e) => e.ok(x, type)).map((e) => ({ id: e.id, texte: e.texte(x) }));
 }
@@ -153,7 +153,7 @@ export function journalCarte(x: VecuCarte | undefined): string[] {
 
 /** Une carte trouvée dans une Strate : le lieu reste gravé (seulement la première fois) */
 export function noterOrigine(j: Jeu, cle: string, strate: number): void {
-  if (strate < 1) return;
+  if (strate < 1 || !estCarteConnue(cle)) return;
   const x = vecuOuNeuf(j, cle);
   x.o ??= strate;
 }
@@ -169,7 +169,8 @@ export function noterVecu(j: Jeu, c: CombatEtat, o: { strate: number; gardien: b
   let dernier: string | undefined;
   for (const t of histo) {
     for (const k of t.chaine) {
-      if (!k.carte) continue;
+      // les cartes du district (Stimulant, Pavois de cuivre) n'ont pas d'empreinte
+      if (!k.carte || !estCarteConnue(k.carte)) continue;
       const x = vecuOuNeuf(j, k.carte);
       x.l++;
       if (!x.p && k.porteur) x.p = k.porteur;
@@ -178,7 +179,7 @@ export function noterVecu(j: Jeu, c: CombatEtat, o: { strate: number; gardien: b
     for (const ligne of t.lignes) {
       if (ligne.camp !== 'joueur' || ligne.rang === undefined) continue;
       const cle = t.chaine[ligne.rang]?.carte;
-      if (!cle) continue;
+      if (!cle || !estCarteConnue(cle)) continue;
       const x = vecuOuNeuf(j, cle);
       const v = Math.max(0, Math.round(ligne.v ?? 0));
       if (ligne.sorte === 'coup') { x.d += v; dernier = cle; }

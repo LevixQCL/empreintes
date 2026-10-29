@@ -2,6 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { epitheteAffiche, epithetesDe, journalCarte, noterOrigine, noterVecu, palierCarte, palierDe, pointsVecu, VECU, vecuDe, versPalierSuivant } from '../src/core/jeu';
 import { nouveauJeu } from '../src/core/jeu';
+import * as J from '../src/core/jeu';
 import { DEPART_PORTEURS, carteId } from '../src/core/donnees';
 import type { CombatEtat, TourHisto } from '../src/core/types';
 
@@ -115,5 +116,16 @@ describe('Empreinte : une vraie descente', () => {
     if (tout.some((x) => x.v > 0)) expect(tout.some((x) => x.a > 0)).toBe(true);
     // un vrai trophée : une descente ne suffit pas (étude du 28/10 : 15 à 25 points par carte et par descente)
     expect(Object.keys(j.vecu!).every((k) => palierCarte(j, k) === 0)).toBe(true);
+  });
+});
+
+describe('Cartes du district et empreinte (29 octobre 2026, partie de Luc bloquée)', () => {
+  it('une sauvegarde avec une empreinte sur Stimulant ou Pavois se charge et se nettoie', () => {
+    const j = J.nouveauJeu(Date.now(), 7);
+    j.vecu = { stimulant: { l: 1, v: 1, d: 0, b: 0, s: 5, a: 0, f: 0, z: 1, g: [], ga: [] }, repli: { l: 1, v: 1, d: 0, b: 9, s: 0, a: 0, f: 0, z: 1, g: [], ga: [] } };
+    const copie = JSON.parse(JSON.stringify(j));
+    expect(J.estJeuValide(copie)).toBe(true);
+    expect(Object.keys(copie.vecu)).toEqual([]);
+    expect(J.epithetesDe('stimulant', j.vecu.stimulant)).toEqual([]);
   });
 });

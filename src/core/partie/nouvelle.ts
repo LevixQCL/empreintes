@@ -1,7 +1,7 @@
 // Couche 7 — une nouvelle partie, les décisions de la campagne, et la mise à jour des anciennes sauvegardes.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { PORTEURS, CARTE_CHAMBRE, MODULES, moduleDe, moduleDef, porteurDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
+import { PORTEURS, CARTE_CHAMBRE, MODULES, estCarteConnue, moduleDe, moduleDef, porteurDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
 import { niveauRequis, poidsCarte } from '../collection';
 import { graine } from '../rng';
 import { DISTRICT, VERSION_JEU, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
@@ -164,6 +164,9 @@ function migrer(j: Jeu) {
   // la Confiance par niveaux (27 octobre 2026) : les niveaux déjà atteints par une vieille sauvegarde ne rapportent pas de creuseur d'un coup
   j.confianceRecue ??= niveauConfiance(j.confiance).niveau;
   j.decouvertes ??= [];
+  // l'empreinte des cartes (28 octobre 2026) notait par erreur les cartes du district (Stimulant, Pavois de cuivre) :
+  // ces lignes bloquaient tous les boutons (29 octobre 2026, partie de Luc)
+  if (j.vecu) for (const k of Object.keys(j.vecu)) if (!estCarteConnue(k)) delete j.vecu[k];
   if (!j.scenes) {
     // sauvegarde d'avant la campagne vécue (25 octobre 2026) : seule la dernière scène déjà atteinte se joue,
     // les précédentes sont comptées comme vues (elles se revoient dans la Bibliothèque)
