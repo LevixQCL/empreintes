@@ -63,6 +63,44 @@ service cloud.firestore {
       }
     }
 
+    // Le parrainage (29 octobre 2026, src/net/parrainage.ts) : `parrains/{code}` dit à qui est un code (une fiche par code,
+    // comme les pseudos) ; `recrues/{uid}` est créée une seule fois par le filleul (un seul parrain, définitif, jamais soi-même),
+    // et ses paliers ne font que s'ajouter. Le parrain lit ses recrues avec une requête sur son uid.
+    match /parrains/{code} {
+      allow get: if request.auth != null;
+      allow create: if request.auth != null && code.matches('^[A-Z2-9]{6}$') && parrainValide(request.resource.data)
+        && request.resource.data.uid == request.auth.uid && maintenant(request.resource.data.le);
+      allow update: if request.auth != null && resource.data.uid == request.auth.uid && parrainValide(request.resource.data)
+        && request.resource.data.uid == resource.data.uid && request.resource.data.le == resource.data.le;
+    }
+    match /recrues/{uid} {
+      allow get: if request.auth != null && (request.auth.uid == uid || resource.data.parrain == request.auth.uid);
+      allow list: if request.auth != null && resource.data.parrain == request.auth.uid;
+      allow create: if request.auth != null && request.auth.uid == uid && recrueValide(request.resource.data)
+        && request.resource.data.parrain != uid
+        && request.resource.data.paliers.size() == 0
+        && maintenant(request.resource.data.le) && request.resource.data.maj == request.resource.data.le
+        && get(/databases/$(database)/documents/parrains/$(request.resource.data.code)).data.uid == request.resource.data.parrain;
+      allow update: if request.auth != null && request.auth.uid == uid && recrueValide(request.resource.data)
+        && request.resource.data.parrain == resource.data.parrain && request.resource.data.code == resource.data.code
+        && request.resource.data.le == resource.data.le
+        && request.resource.data.paliers.hasAll(resource.data.paliers)
+        && maintenant(request.resource.data.maj);
+    }
+
+    function parrainValide(d) {
+      return d.keys().hasOnly(['uid', 'nom', 'le']) && d.uid is string && d.le is int
+        && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24;
+    }
+
+    function recrueValide(d) {
+      return d.keys().hasOnly(['parrain', 'code', 'nom', 'paliers', 'le', 'maj'])
+        && d.parrain is string && d.code is string && d.code.matches('^[A-Z2-9]{6}$')
+        && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24
+        && d.paliers is list && d.paliers.size() <= 3 && d.paliers.hasOnly(['strate1', 'strate3', 'noyau3'])
+        && d.le is int && d.maj is int;
+    }
+
     function garnisonValide(d) {
       return d.keys().hasOnly(['nom', 'porteurs', 'strate', 'coffre', 'force', 'maj'])
         && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24
@@ -105,7 +143,7 @@ service cloud.firestore {
 
     function entreeValide(d) {
       return d.keys().hasOnly(['nom', 'cle', 'porteur', 'profondeur', 'profondeurLe', 'registre', 'decouvertes',
-          'semaine', 'profondeurSemaine', 'registreSemaine', 'fleche', 'flecheLe', 'flecheSemaine', 'maj'])
+          'semaine', 'profondeurSemaine', 'registreSemaine', 'fleche', 'flecheLe', 'flecheSemaine', 'insigne', 'maj'])
         && d.nom is string && d.nom.size() >= 3 && d.nom.size() <= 18
         // le pseudo affiché est bien celui que ce joueur a réservé
         && d.cle is string && d.cle.size() <= 24
@@ -123,6 +161,8 @@ service cloud.firestore {
         && d.get('fleche', 0) is int && d.get('fleche', 0) >= 0 && d.get('fleche', 0) <= 101
         && d.get('flecheLe', 0) is int
         && d.get('flecheSemaine', 0) is int && d.get('flecheSemaine', 0) >= 0 && d.get('flecheSemaine', 0) <= d.get('fleche', 0)
+        // le titre « Recruteur » du parrainage (29 octobre 2026) : absent, ou ce seul mot
+        && d.get('insigne', 'recruteur') == 'recruteur'
         && d.maj is int && maintenant(d.maj);
     }
 

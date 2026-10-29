@@ -32,6 +32,8 @@ export interface VecuCarte {
   /** les Strates dont elle a vaincu le Gardien (présente dans la chaîne), et celles où elle a porté le dernier coup */
   g: number[];
   ga: number[];
+  /** les directeurs auxquels elle est liée (carte du parrainage) */
+  li?: string[];
   /** l'épithète choisi (son identifiant) ; absent : le plus récent débloqué */
   e?: string;
 }
@@ -139,6 +141,7 @@ export function choisirEpithete(j: Jeu, cle: string, id: string): boolean {
 export function journalCarte(x: VecuCarte | undefined): string[] {
   if (!x) return [];
   const l: string[] = [];
+  if (x.li?.length) l.push(`Liée à ${x.li.join(', ')}.`);
   if (x.o) l.push(`Mise au jour à −${x.o}.`);
   if (x.p) l.push(`Premier Porteur : ${porteurDef(x.p).nom}.`);
   if (x.l) l.push(`${x.l} lancer${x.l > 1 ? 's' : ''} · ${x.v} combat${x.v > 1 ? 's' : ''} gagné${x.v > 1 ? 's' : ''}.`);
@@ -152,6 +155,13 @@ export function journalCarte(x: VecuCarte | undefined): string[] {
 // ---------- Ce qui s'inscrit ----------
 
 /** Une carte trouvée dans une Strate : le lieu reste gravé (seulement la première fois) */
+/** La carte du parrainage retient le nom de l'autre directeur */
+export function noterLien(j: Jeu, cle: string, nom: string): void {
+  if (!estCarteConnue(cle)) return;
+  const x = vecuOuNeuf(j, cle);
+  if (!(x.li ??= []).includes(nom)) x.li.push(nom);
+}
+
 export function noterOrigine(j: Jeu, cle: string, strate: number): void {
   if (strate < 1 || !estCarteConnue(cle)) return;
   const x = vecuOuNeuf(j, cle);

@@ -17,6 +17,7 @@ import { annoncer, battre } from './app/horloge';
 import { afficher } from './app/rendu';
 import { signaler } from './app/incident';
 import { demarrerCompte, envoyer, sauver } from './app/synchro';
+import { R, retenirLien } from './app/parrainage';
 
 // l'empreinte des cartes vétéranes : chaque face lit le palier de son exemplaire dans la partie en cours
 brancherEmpreintes((cle) => (app.jeu ? J.palierCarte(app.jeu, cle) : 0));
@@ -78,6 +79,7 @@ addEventListener('error', (ev) => { if (ev.error) signaler(ev.error, 'horloge', 
 // ---------- Démarrage ----------
 
 K.fin = null;
+retenirLien();
 afficher();
 demarrerCompte();
 initInstallation(() => { if (app.mode === 'titre') afficher(); });
@@ -88,5 +90,7 @@ if (import.meta.env.DEV) Object.assign(window, {
   __pseudo: () => { G.edition = true; G.accueil = true; afficher(); },
   // pour régler un combat à la main (captures) : __combat(s => { s.flux = 3; })
   __combat: (f: (s: NonNullable<typeof app.jeu.expedition>['combat']) => void) => { const s = app.jeu.expedition?.combat; if (s) { f(s); afficher(); } },
+  // l'écran Recruter sans réseau (captures) : __recrues([{ uid, nom, paliers }], 'CODE6X')
+  __recrues: (l: J.Recrue[], code: string) => { J.etatParrainage(app.jeu).code = code; R.recrues = l; R.etat = 'ok'; J.reclamerRecrues(app.jeu, l); app.uid ??= 'essai'; afficher(); },
   __tableau: (l: Entree[], moi: string) => { G.entrees = l; G.etat = 'ok'; G.lu = Date.now(); app.uid = moi; compteEtat.utilisateur = { nom: 'Essai' }; afficher(); },
 });

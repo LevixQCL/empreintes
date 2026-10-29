@@ -108,6 +108,8 @@ export interface ModuleDef {
   effet2?: Effet;
   /** carte de l’Héritage du district : exclusive, jamais trouvée ailleurs (docs/heritage-du-district.md) */
   legs?: true;
+  /** une carte du parrainage (29 octobre 2026) : elle ne se trouve jamais, on la reçoit avec un ami, et seulement dans son métal */
+  lien?: true;
   /** carte exclusive (28 octobre 2026) : elle n'existe que dans son métal d'origine (`rarete`), jamais dans un autre */
   seul?: true;
 }

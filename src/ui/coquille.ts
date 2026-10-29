@@ -11,7 +11,7 @@ import { feuilleNom } from './classements';
 import { COULEUR, panneauCompte, type Compte } from './vue';
 import { echap, virgule } from './outils';
 
-export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages' | 'fleche';
+export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages' | 'fleche' | 'recruter';
 /** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */
 export type Filtre = 'tout' | Lignee | 'monter' | 'libres';
 
@@ -306,7 +306,7 @@ export function navigation(e: EcranDistrict): string {
     pillages: (!!j.chambre && strateVaincue(j) >= PILLAGE.strateMin && !j.portVu) || !!(o && o.onglet === 'pillages' && !o.fait(j)),
     fleche: flecheOuverte(j) && !j.fleche,
   };
-  const actif = e.menu || e.vue === 'classements' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage ? 'pillages' : 'coupe') : e.vue === 'cartes' ? 'porteurs' : e.vue;
+  const actif = e.menu || e.vue === 'classements' || e.vue === 'recruter' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage ? 'pillages' : 'coupe') : e.vue === 'cartes' ? 'porteurs' : e.vue;
   // sur PC (rail.css) : le cristal en tête, puis les sept onglets ; la jauge des Strates a cédé sa place aux Pillages
   // et à la Flèche (28 octobre 2026) : la Strate reste dans la barre du haut
   return `<nav class="nav" aria-label="Navigation"><span class="nav-embleme" aria-hidden="true"><img src="./art/embleme-cristal.webp" alt=""></span>` + ONGLETS.map((t) => {
@@ -389,6 +389,7 @@ export function menu(e: EcranDistrict): string {
     + `<button type="button" class="btn-icone" data-action="menu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   h += `<div class="liste-menu">`
     + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>Le Grand Tableau</strong><small>Les classements des directeurs : profondeur, Registre, et bientôt les Joutes et la Flèche</small></span></button>`
+    + (c.actif ? `<button type="button" class="ligne-menu rc-menu" data-action="recruter">${ICO.porteurs}<span><strong>Recruter des amis</strong><small>Ton code de parrainage : vous êtes récompensés tous les deux quand ton ami joue</small></span></button>` : '')
     + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur?.anonyme ? 'Protège ta partie : relie-la à Google ou à un e-mail' : c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : ' · choisis ton pseudo'}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
     + (e.j.chambre ? `<button type="button" class="ligne-menu" data-action="accueil">${icone('district')}<span><strong>Comment marche le district</strong><small>Les ressources, l’escouade et le but : creuser plus bas</small></span></button>` : '')
     + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro complète</strong><small>L’histoire de 2121, en entier</small></span></button></div>`;

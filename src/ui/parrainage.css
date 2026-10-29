@@ -1,0 +1,92 @@
+/* ---------- L'écran « Recruter » (parrainage, 29 octobre 2026) ----------
+   Matière commune : verre fumé, arêtes de glace, or pour ce qui a de la valeur (le code, les récompenses). */
+.recruter{display:flex;flex-direction:column;gap:16px}
+.rc-intro{margin:-4px 0 0;font-family:var(--lecture,Georgia,serif);font-style:italic;font-size:15px;line-height:1.5;color:var(--ink-2)}
+
+/* le code : une plaque de cristal, l'emblème en filigrane, le code gravé en or */
+.rc-code{--cut:12px;position:relative;overflow:hidden;display:grid;justify-items:center;gap:10px;padding:20px 16px 16px;text-align:center;
+  background:radial-gradient(120% 90% at 50% 0%,rgba(127,212,255,.16),transparent 60%),var(--verre-2);
+  box-shadow:inset 0 0 0 1px rgba(159,216,255,.35),inset 0 1px 0 rgba(255,255,255,.12);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.rc-embleme{position:absolute;right:-26px;top:-18px;width:132px;opacity:.16;pointer-events:none;filter:drop-shadow(0 0 16px rgba(127,212,255,.6))}
+.rc-code .surtitre{color:#BFD9EC}
+.rc-valeur{position:relative;font:400 34px/1.1 var(--display);letter-spacing:.08em;white-space:nowrap;
+  background:var(--laiton);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(216,180,101,.35))}
+.rc-valeur.rc-attente{background:none;color:var(--quiet);filter:none;font-size:24px}
+.rc-boutons{display:grid;grid-template-columns:1.3fr 1fr;gap:8px;width:100%}
+.rc-boutons .btn.prim{background:var(--laiton)}
+.rc-code small.aide{font-size:12.5px}
+
+/* les paliers : une marque à gauche, ce que chacun gagne à droite */
+.rc-gains,.rc-recrues,.rc-distinctions,.rc-parrain,.rc-saisie{display:grid;gap:10px}
+.rc-palier{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:start;padding:10px 12px;background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet)}
+.rc-palier strong{display:block;color:#fff;font-size:14.5px;margin-bottom:2px}
+.rc-palier p{margin:2px 0 0;font-size:13.5px;line-height:1.4;color:var(--ink-2)}
+.rc-palier p b{color:var(--gold);font-weight:600}
+.rc-marque{display:grid;place-items:center;min-height:40px;padding:0 4px;font:600 12px/1.1 var(--mono);text-align:center;color:#0B1424;
+  background:linear-gradient(180deg,#CFEFFF,#7FD4FF);clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%)}
+.rc-marque .ico{width:20px;height:20px}
+.rc-palier.depart .rc-marque{background:var(--laiton);color:#1C1406}
+
+/* la carte du parrainage */
+.rc-carte{display:grid;grid-template-columns:118px minmax(0,1fr);gap:14px;align-items:center}
+.rc-carte-face{width:118px}
+.rc-carte h3{margin:2px 0 4px;font:400 21px/1.15 var(--display);color:#fff}
+.rc-carte .surtitre{color:var(--gold)}
+
+/* les recrues */
+.rc-recrues .titre-bloc{display:flex;align-items:center}
+.rc-maj{margin-left:auto;font-size:12.5px;color:#BFD9EC}
+.rc-vide{margin:0;padding:12px;font-size:14px;color:var(--ink-2);background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet)}
+.rc-liste{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.rc-liste li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 12px;background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet)}
+.rc-liste li.active{box-shadow:inset 0 0 0 1px rgba(159,216,255,.4),inset 3px 0 0 #7FD4FF}
+.rc-nom{display:grid;min-width:0;color:#fff;font-weight:600;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rc-nom small{font-weight:400;font-size:12px;color:var(--quiet)}
+.rc-puces{display:flex;flex-wrap:wrap;gap:5px}
+.rc-puce{display:inline-flex;align-items:center;gap:3px;min-height:24px;padding:0 8px;font:600 12px/1 var(--mono);color:var(--mute);
+  box-shadow:inset 0 0 0 1px var(--line);clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
+.rc-puce .ico{width:12px;height:12px}
+.rc-puce.faite{color:#0B1424;background:linear-gradient(180deg,#CFEFFF,#7FD4FF);box-shadow:none}
+
+/* les distinctions */
+.rc-distinction{display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:center;padding:10px 12px;background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet)}
+.rc-distinction strong{display:block;color:#fff;font-size:14.5px}
+.rc-distinction .aide{margin:2px 0 6px}
+.rc-distinction:not(.gagne) .rc-dos,.rc-distinction:not(.gagne) .rc-titre-ex{filter:saturate(.35) brightness(.7)}
+.rc-distinction.gagne{box-shadow:inset 0 0 0 1px var(--filet-fort)}
+.rc-jauge{display:block;height:5px;background:var(--track);overflow:hidden}
+.rc-jauge i{display:block;height:100%;background:var(--laiton)}
+.rc-distinction .chiffre{display:block;margin-top:4px}
+.rc-titre-ex{display:grid;place-items:center;height:56px}
+
+/* le titre « Recruteur » : une petite plaque d'or, ici et sur le Grand Tableau */
+.insigne-recruteur,.gt-qui strong em.insigne-recruteur{font-style:normal;display:inline-block;padding:1px 7px;border-radius:0;font:700 11px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;
+  color:#1C1406;background:var(--laiton);clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);vertical-align:1px}
+
+/* le dos « Empreinte partagée » : en miniature ici, et sur les grandes révélations (gains.ts) */
+.rc-dos{position:relative;display:grid;place-items:center;width:56px;aspect-ratio:3/4;margin:0 auto;border-radius:6px;overflow:hidden}
+.rc-dos img{width:78%}
+.dos-partage.rc-dos,.gr-dos.dos-partage{border:2px solid transparent;
+  background:radial-gradient(circle at 30% 30%,rgba(216,180,101,.32),transparent 55%) padding-box,radial-gradient(circle at 70% 75%,rgba(127,212,255,.3),transparent 55%) padding-box,
+    radial-gradient(circle at 50% 45%,#2A2A3E,#0E1220 70%) padding-box,linear-gradient(135deg,#F4DC97,#B1832F 45%,#7FD4FF 100%) border-box}
+.gr-dos.dos-partage{border-width:3px}
+.rc-dos.dos-partage::before,.rc-dos.dos-partage::after{content:"";position:absolute;width:62%;aspect-ratio:1;border-radius:50%;
+  background:repeating-radial-gradient(circle,transparent 0 3px,rgba(244,220,151,.55) 3px 4px);opacity:.55}
+.rc-dos.dos-partage::before{left:-18%;top:-10%}
+.rc-dos.dos-partage::after{right:-18%;bottom:-10%;background:repeating-radial-gradient(circle,transparent 0 3px,rgba(127,212,255,.55) 3px 4px)}
+.rc-dos img{position:relative;z-index:1}
+/* la seconde empreinte répond à la première : retournée, décalée, dans l'or */
+.gr-holo.jumelle{rotate:180deg;translate:12% -10%;filter:sepia(.8) saturate(1.6) hue-rotate(-12deg)}
+
+/* la saisie du code d'un parrain */
+.rc-champ{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.rc-champ input{min-height:44px;padding:0 12px;border:none;background:var(--bg-2);color:#fff;font:600 16px var(--mono);letter-spacing:.08em;text-transform:uppercase;
+  box-shadow:inset 0 0 0 1px rgba(159,216,255,.35)}
+.rc-champ input::placeholder{color:var(--mute);letter-spacing:.04em}
+.rc-erreur{margin:0;font-size:13.5px;color:var(--danger)}
+.rc-parrain .rc-puce{font-family:var(--body);font-size:12.5px}
+
+@media (min-width:1100px){
+  .recruter{max-width:720px;margin:0 auto;width:100%}
+}

@@ -11,6 +11,9 @@ import { htmlBriefing } from '../ui/briefing';
 import { htmlScene } from '../ui/campagne';
 import { activerCartes } from '../ui/carte';
 import { htmlClassements } from '../ui/classements';
+import { htmlRecruter } from '../ui/parrainage';
+import { choisirDos } from '../ui/gains';
+import { R } from './parrainage';
 import { brancherTableau, htmlArchipel, htmlCartes, htmlCodex, htmlCoupe, htmlEscouade, htmlRencontre } from '../ui/district';
 import { htmlExploration } from '../ui/exploration';
 import { trouveesDe } from '../ui/guide';
@@ -96,6 +99,7 @@ export function afficher() {
 
 function dessiner() {
   D.j = app.jeu;
+  choisirDos(J.aCosmetique(app.jeu, 'dos-partage') ? 'dos-partage' : '');
   D.uid = app.uid;
   compteEtat.pseudo = app.jeu.directeur?.nom;
   D.now = Date.now();
@@ -132,7 +136,7 @@ function dessiner() {
     voirNouveautes();
     proposerProtection();
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape) : D.vue === 'accueil' ? htmlBriefing(D.etape, 'district')
-      : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : D.vue === 'classements' ? htmlClassements(D, G, app.uid) : D.vue === 'pillages' ? htmlPillages(D) : D.vue === 'fleche' ? htmlFleche(D) : htmlArchipel(D);
+      : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : D.vue === 'classements' ? htmlClassements(D, G, app.uid) : D.vue === 'pillages' ? htmlPillages(D) : D.vue === 'fleche' ? htmlFleche(D) : D.vue === 'recruter' ? htmlRecruter(D, R, !!app.uid) : htmlArchipel(D);
     // une scène de la campagne : au retour sur l'archipel ou dans la Tour, par-dessus tout (ou rejouée depuis la Bibliothèque)
     const revoir = D.revoir ? sceneDef(D.revoir) : undefined;
     const scene = revoir ?? (!D.menu && (D.vue === 'archipel' || D.vue === 'coupe') ? J.sceneCampagne(app.jeu) : null);

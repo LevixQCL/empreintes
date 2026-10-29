@@ -60,6 +60,10 @@ const x = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGe
 const legs = (id: string, nom: string, lignee: Lignee, type: TypeGeste, v: number, f: number[], effet: Effet, effet2: Effet, lourd = false): ModuleDef =>
   ({ ...c(id, nom, lignee, 'nacre', type, v, f, effet, lourd), effet2, legs: true });
 
+/** la carte du parrainage : exclusive, dans son seul métal, jamais tirée */
+const lien = (id: string, nom: string, lignee: Lignee, rarete: Rarete, type: TypeGeste, v: number, f: number[], effet: Effet): ModuleDef =>
+  ({ ...c(id, nom, lignee, rarete, type, v, f, effet), lien: true });
+
 export const MODULES: ModuleDef[] = [
   // ---------- Les 15 cartes de base : 5 par Porteur nommé, qu'il porte dès le départ ----------
   c('ruee', 'Plastron de choc', 'tech', 'fer', 'atk', 8, [3, 4, 2], { type: 'percant' }),
@@ -188,7 +192,15 @@ export const MODULES: ModuleDef[] = [
   legs('lanterne-lecture', 'Lanterne de la première Lecture', 'reso', 'atk', 17, [8, 7, 9], { type: 'accord' }, { type: 'desarmer', part: 0.3 }),
   legs('sceau-orseve', 'Sceau volé aux Orsève', 'reso', 'atk', 18, [7, 6, 8], { type: 'desarmer', part: 0.3 }, { type: 'fissure', part: 0.2 }),
   legs('voix-quartier', 'Voix du quartier', 'reso', 'atk', 17, [9, 8, 7], { type: 'diapason' }, { type: 'unisson', part: 0.7 }),
+
+  // ---------- Le parrainage (29 octobre 2026) ----------
+  // Reçue par le parrain et son filleul quand le filleul monte sa Tour du Noyau au niveau 3. Une Résonante (les Résonants orchestrent) :
+  // la force et l'effet d'une carte de cuivre ordinaire (comme Plume de givre), pour ne jamais faire du parrainage un avantage en combat.
+  lien('empreinte-jumelle', 'Empreinte jumelle', 'reso', 'cuivre', 'atk', 11, [7, 8, 6], { type: 'accord' }),
 ];
+
+/** La carte du parrainage */
+export const PARRAINAGE_CARTE = 'empreinte-jumelle';
 
 /** Le Porteur dont chaque carte de l’Héritage est la pièce maîtresse de la voie (il prête son portrait en attendant l'illustration) */
 export const PORTEUR_LEGS: Record<string, string> = {
@@ -198,9 +210,9 @@ export const PORTEUR_LEGS: Record<string, string> = {
 };
 
 /** Les cartes qu'on peut trouver, acheter ou fabriquer : toutes, sauf celles de l’Héritage */
-export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs);
+export const MODULES_TIRABLES = MODULES.filter((m) => !m.legs && !m.lien);
 /** Une carte existe-t-elle dans ce métal ? Toutes, sauf les exclusives (seulement dans leur métal) et l’Héritage (en nacre) */
-export const existeEn = (m: ModuleDef, metal: Rarete) => (!m.seul && !m.legs) || m.rarete === metal;
+export const existeEn = (m: ModuleDef, metal: Rarete) => (!m.seul && !m.legs && !m.lien) || m.rarete === metal;
 /** Les cartes qui peuvent tomber dans un métal donné (une exclusive ne tombe que dans le sien) */
 export const tirablesEn = (metal: Rarete) => MODULES_TIRABLES.filter((m) => existeEn(m, metal));
 /** Les cartes exclusives : un seul métal */
@@ -225,6 +237,7 @@ export const PORTEUR_EXCLUSIVES: Record<string, string> = {
   'gantelet-pillard': 'sasha', 'machoire-miroir': 'nuit', 'boucle-memoire': 'joss',
   'coeur-surregime': 'liane', 'peau-ancetre': 'doran', 'miroir-hauts': 'vela',
   'coeur-etoile': 'sasha', 'seconde-naissance': 'kessa', 'empreinte-vive': 'aurel', 'silence-avant': 'guetteur',
+  'empreinte-jumelle': 'vela',
 };
 /** La voie d'une carte (« voix-basse@or » → le Chœur), s'il y en a une */
 export const voieDe = (cle: string) => VOIES.find((v) => v.cartes.includes(cle.split('@')[0]!));

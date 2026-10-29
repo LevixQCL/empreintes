@@ -371,7 +371,13 @@ const MASQUE_EMPREINTE = (() => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 130"><g fill="none" stroke="#fff" stroke-width=".75" stroke-linecap="round">${sillons.join('')}</g></svg>`;
   return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
 })();
+/** la seconde empreinte du dos « partagé » : la même volute, retournée, qui répond à la première */
+const EMPREINTE_JUMELLE = `<span class="gr-holo jumelle" aria-hidden="true" style="--fp:${MASQUE_EMPREINTE.replace(/"/g, '&quot;')}"></span>`;
 const EMPREINTE = `<span class="gr-holo" aria-hidden="true" style="--fp:${MASQUE_EMPREINTE.replace(/"/g, '&quot;')}"></span>`;
+
+/** le dos des cartes qui se révèlent : celui du parrainage (« Empreinte partagée », 3 recrues actives), ou le dos ordinaire */
+let dosChoisi = '';
+export const choisirDos = (d: string) => { dosChoisi = d; };
 
 const NOM_PALIER: Record<number, string> = { 3: 'Rare', 4: 'Très rare', 5: 'Légendaire' };
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -392,7 +398,7 @@ function grandeRevelation(g: Extract<Gain, { kind: 'carte' | 'porteur' }>, p: nu
     el.setAttribute('aria-label', `${sur} : ${nom}`);
     el.innerHTML = `<div class="gr-voile"></div><div class="gr-rayons"></div><div class="gr-halo"></div><div class="gr-flash"></div>`
       + `<div class="gr-pose"><div class="gr-carte${carte ? '' : ' rond'}">`
-      + `<div class="gr-face gr-dos">${EMPREINTE}<img src="./art/embleme.webp" alt=""></div>`
+      + `<div class="gr-face gr-dos${dosChoisi ? ` ${dosChoisi}` : ''}">${EMPREINTE}${dosChoisi === 'dos-partage' ? EMPREINTE_JUMELLE : ''}<img src="./art/embleme.webp" alt=""></div>`
       + `<div class="gr-face gr-recto">${img ? `<img src="${img}" alt="">` : `<i>${echap(nom.charAt(0))}</i>`}</div></div></div>`
       + `<div class="gr-texte"><small>${echap(sur)}</small><strong>${echap(nom)}</strong><em>${echap(sous)}</em><span class="gr-suite">Touche pour continuer</span></div>`;
     c.appendChild(el);

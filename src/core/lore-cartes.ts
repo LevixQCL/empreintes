@@ -75,6 +75,7 @@ export const LORE_CARTES: Record<string, string> = {
   // Le Chœur
   'diapason-cristal': 'Un diapason de verre clair qu’on frappe une fois, et qui oblige toutes les empreintes autour de lui à chanter la même note. Les Résonants l’appellent « mettre la salle d’accord ».',
   'voix-basse': 'Une seule note, tenue très longtemps, si grave qu’on la sent dans les os avant de l’entendre. Seule, elle intrigue. Reprise par d’autres, elle fait céder les murs.',
+  'empreinte-jumelle': 'Deux directeurs ont pressé le pouce sur le même éclat de cristal bleu, chacun dans son archipel. Depuis, l’éclat garde deux empreintes qui ne se recouvrent jamais tout à fait : quand l’une frappe, l’autre se souvient du coup.',
   'chorale-ombres': 'Les ombres de plusieurs Résonants qui chantent ensemble, même quand leurs propriétaires se taisent. Joss dit que c’est la seule chorale qui ne fait jamais de fausse note.',
   'cloche-abysses': 'Une cloche remontée de la Strate −8, couverte de coquillages qui n’existent plus. Quand elle sonne, chaque empreinte autour d’elle répond sur le même ton.',
   'grand-unisson': 'Le quartier entier, une nuit, a chanté la même note pour veiller un des siens. Les Veilleurs l’ont accordée dans un carillon doré, dont chaque tube porte une voix. Il frappe d’autant plus fort qu’on est nombreux à le faire sonner.',

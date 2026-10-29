@@ -180,7 +180,7 @@ export interface Chantier {
 
 /** Un choix de carte en attente (boss, objectif du jour, Archive) */
 export interface Choix {
-  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve';
+  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve' | 'parrainage';
   options: string[];
   /** le joueur peut prendre des Éclats à la place */
   eclats?: number;
@@ -321,6 +321,8 @@ export interface Jeu {
   stats?: import('./stats').Stats;
   /** le Grand Tableau (23 octobre 2026) : records personnels et scores du début de semaine (classements.ts) */
   palmares?: Palmares;
+  /** le parrainage (29 octobre 2026, parrainage.ts) : son code, son parrain, les récompenses reçues ; absent avant le premier usage */
+  parrainage?: import('./parrainage').EtatParrainage;
   /** le nom de directeur choisi pour le Grand Tableau, et si on y apparaît (jamais l'e-mail du compte) */
   directeur?: { nom: string; public: boolean; /** dernier changement de pseudo (ms) : un par semaine au plus */ change?: number };
 }

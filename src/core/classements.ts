@@ -140,6 +140,8 @@ export interface Entree {
   fleche: number;
   flecheLe: number;
   flecheSemaine: number;
+  /** la distinction affichée à côté du pseudo (parrainage, 29 octobre 2026) : « recruteur », ou absente */
+  insigne?: 'recruteur';
   /** dernière publication (ms) */
   maj: number;
 }
@@ -258,7 +260,7 @@ export function texteValeur(t: TableauId, per: Periode, v: number): string {
  * et la date d'arrivée n'est « maintenant » que si la profondeur monte, sinon elle reste celle déjà publiée.
  */
 export function entreeAPublier(
-  j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares; escouade?: string[]; fleche?: { record: number; recordLe: number } },
+  j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares; escouade?: string[]; fleche?: { record: number; recordLe: number }; parrainage?: { cosmetiques: string[] } },
   uid: string, nom: string, enLigne: Entree | null, now: number, semaine: number,
 ): Entree | null {
   const pal = j.palmares;
@@ -288,6 +290,7 @@ export function entreeAPublier(
     registreSemaine: memeSemaine ? Math.max(0, Math.min(registre, registre - pal.registreDebut)) : 0,
     fleche, flecheLe: Math.min(flecheLe, now),
     flecheSemaine: memeSemaine ? Math.max(0, Math.min(fleche, fleche - (pal.flecheDebut ?? 0))) : 0,
+    ...(j.parrainage?.cosmetiques.includes('recruteur') ? { insigne: 'recruteur' as const } : {}),
     maj: now,
   };
 }
@@ -300,7 +303,7 @@ export function aChange(a: Entree, b: Entree | null): boolean {
   if (!b) return true;
   return a.nom !== b.nom || a.cle !== b.cle || a.porteur !== b.porteur || a.profondeur !== b.profondeur || a.registre !== b.registre || a.decouvertes !== b.decouvertes
     || a.semaine !== b.semaine || a.profondeurSemaine !== b.profondeurSemaine || a.registreSemaine !== b.registreSemaine
-    || a.fleche !== b.fleche || a.flecheSemaine !== b.flecheSemaine;
+    || a.fleche !== b.fleche || a.flecheSemaine !== b.flecheSemaine || (a.insigne ?? '') !== (b.insigne ?? '');
 }
 
 // ---------- La Flèche (à venir) ----------

@@ -76,6 +76,9 @@ export function lireChapitre(j: Jeu, chapitreId: string): string | null {
   return recompenserLecture(j, chapitreId);
 }
 
+/** les jours où le filleul d'un parrain reçoit des colis doublés (parrainage.ts) */
+export const COLIS_DOUBLES_JOURS = 3;
+
 export const colisDisponible = (j: Jeu) => j.chambre && j.ravitaillement.reserve > 0;
 /** colis restants avant la carte au choix */
 export const colisAvantChoix = (j: Jeu) => RAVITAILLEMENT.cycle - (j.ravitaillement.ouverts % RAVITAILLEMENT.cycle);
@@ -88,7 +91,10 @@ export function ouvrirColis(j: Jeu): Resultat & { colis?: Colis } {
   const r = j.ravitaillement;
   r.reserve--;
   r.ouverts++;
-  const composants = RAVITAILLEMENT.composants + RAVITAILLEMENT.composantsParStrate * j.strate;
+  // le filleul d'un parrain : colis doublés pendant ses premiers jours (parrainage.ts ; même règle, sans importer la couche du dessus)
+  const p = j.parrainage?.parrain;
+  const double = !!p && r.jour < p.jour + COLIS_DOUBLES_JOURS;
+  const composants = (RAVITAILLEMENT.composants + RAVITAILLEMENT.composantsParStrate * j.strate) * (double ? 2 : 1);
   j.composants += composants;
   const enFer = Object.keys(j.collection).filter((id) => moduleDef(id).rarete === 'fer');
   const doublon = enFer.length ? enFer[tireur(j).entier(enFer.length)]! : null;

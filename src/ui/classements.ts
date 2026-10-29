@@ -172,7 +172,7 @@ function liste(g: GrandTableau, uid: string | null, t: TableauId, semaine: numbe
     const combien = t === 'profondeur' ? manqueProfondeur(ecart.manque, g.periode) : `${ent(ecart.manque)} point${ecart.manque > 1 ? 's' : ''}`;
     h += `<p class="gt-cible">${ICO.monter}<span>Encore <b>${combien}</b> pour passer devant <b>${echap(ecart.nom)}</b>.</span></p>`;
   } else if (moi && moi.rang === 1 && l.length > 1) h += `<p class="gt-cible tete">${ICO.ok}<span>Tu mènes le Tableau. ${echap(l[1]!.e.nom)} te suit.</span></p>`;
-  else if (l.length === 1) h += `<p class="gt-cible">${ICO.porteurs}<span>Tu es le seul directeur pour l’instant : invite tes amis à jouer.</span></p>`;
+  else if (l.length === 1) h += `<p class="gt-cible">${ICO.porteurs}<span>Tu es le seul directeur pour l’instant : <button type="button" class="lien" data-action="recruter">invite tes amis à jouer</button>.</span></p>`;
 
   // le podium, puis la liste
   const podium = l.slice(0, 3);
@@ -207,7 +207,7 @@ function ligne(x: { e: Entree; v: number; rang: number }, uid: string | null, t:
     : `${e.decouvertes} cartes découvertes`;
   const inactif = now - e.maj > 7 * 86_400_000;
   return `<li class="gt-ligne${e.uid === uid ? ' moi' : ''}${inactif ? ' inactif' : ''}"><span class="gt-num">${x.rang}</span>${avatar(connuPorteur(e.porteur), 40)}`
-    + `<span class="gt-qui"><strong>${echap(e.nom)}${e.uid === uid ? ' <em>toi</em>' : ''}</strong><small>${sous}</small></span>`
+    + `<span class="gt-qui"><strong>${echap(e.nom)}${e.insigne === 'recruteur' ? ' <em class="insigne-recruteur">Recruteur</em>' : ''}${e.uid === uid ? ' <em>toi</em>' : ''}</strong><small>${sous}</small></span>`
     + `<span class="gt-droite"><b class="gt-valeur">${texteValeur(t, per, x.v)}</b>${per === 'total' && t === 'profondeur' && e.profondeurLe ? `<small>le ${dateCourte(e.profondeurLe)}</small>` : per === 'total' && t === 'fleche' && e.flecheLe ? `<small>le ${dateCourte(e.flecheLe)}</small>` : ''}</span></li>`;
 }
 

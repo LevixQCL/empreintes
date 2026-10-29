@@ -28,6 +28,7 @@ import './gains.css';
 import './rail.css';
 import './panneau-district.css';
 import './classements.css';
+import './parrainage.css';
 import './campagne.css';
 import './pillages.css';
 import './missions-mer.css';

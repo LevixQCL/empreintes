@@ -941,7 +941,7 @@ function fenetreLegs(e: EcranDistrict): string {
 
 function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
-  const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : 'Butin de la semaine';
+  const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : c.source === 'parrainage' ? 'Le parrainage' : 'Butin de la semaine';
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><small class="aide choix-loupe">Reste appuyé sur une carte pour lire son effet.</small><div class="cartes-choix">`
     + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}" data-carte="${id}"`, true)).join('')
     + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
@@ -1204,7 +1204,7 @@ export function htmlCartes(e: EcranDistrict): string {
     for (const lignee of lignees) {
       h += `<h2 class="titre-section" style="--c:${COULEUR[lignee]}">${NOM_LIGNEES[lignee]}</h2><div class="grille-cartes">`;
       // les cartes trouvées, triées ; celles qui restent à trouver à la fin
-      const bases = MODULES.filter((x) => x.lignee === lignee && (!x.legs || exemplaires(j, x.id).length));
+      const bases = MODULES.filter((x) => x.lignee === lignee && ((!x.legs && !x.lien) || exemplaires(j, x.id).length));
       for (const cle of trierCartes(bases.flatMap((b) => exemplaires(j, b.id)), j.collection, tri, j.vus.cartes)) h += tuileCarte(cle);
       for (const base of bases.filter((b) => !exemplaires(j, b.id).length)) h += `<div class="carte-dos cl-dos" aria-label="Carte pas encore trouvée">${gemme(base.rarete)}<span>?</span><small>À trouver</small><em>Fouille « ${echap(CIBLES_FOUILLE[lignee].nom)} »</em></div>`;
       h += `</div>`;

@@ -43,6 +43,7 @@ src/
       partie/objectifs.ts    les objectifs guidés
       partie/district.ts     chantiers, Forge, postes, cartes confiées, creuseurs, entraînement, Comptoir, quotidiens
       partie/recompenses.ts  kit des recrues, lectures et Ravitaillement, nouveautés
+      partie/parrainage.ts   le parrainage : code, départ du filleul, paliers (−1, −3, Noyau 3), récompenses du parrain (5 recrues), distinctions
       partie/descentes.ts    départs (expédition, fouille, Épreuve), escouade, missions, exploration des Strates
       partie/pillages.ts     les pillages : garnison, jetons, coffre, archipels voisins, attaques subies
       partie/fleche.ts       la Flèche : quais, gardiens des Hauts, montée et descente, quais gravés
@@ -55,6 +56,7 @@ src/
     district.ts    archipel, Tour du Noyau, escouade, cartes, Bibliothèque ; les détails s'ouvrent en feuille par le bas
     vue.ts         l'écran de combat
     pillages.ts    l'onglet Pillages : la carte des archipels voisins, la garnison, le journal du port
+    parrainage.ts  l'écran « Recruter » (menu Plus) : le code, ce que chacun gagne, les recrues, les distinctions, la saisie d'un code
     fleche.ts      l'onglet Flèche : la flèche dessinée, le prochain quai, les quais gravés
     journal.ts     le journal du combat : cartes jouées tour par tour, calcul de chaque coup, défausse et pioche, lexique des « ? »
     icones.ts      le jeu d'icônes de l'interface (SVG, couleur du texte)
@@ -265,6 +267,16 @@ Les répliques tiennent compte des décisions et des Porteurs arrivés (`si`). L
 l'acte (−3, −6, −10) au lieu d'attendre l'étage suivant, et l'acte suivant attend la décision. La Tour montre le chapitre en
 cours (`chapitreCampagne`) ; la Bibliothèque, onglet Campagne, rejoue les scènes vues. Une ancienne sauvegarde ne rejoue que la
 dernière scène atteinte. Les illustrations à faire sont dans `docs/prompts-campagne.md`.
+
+**Le parrainage** (29 octobre 2026, `src/core/partie/parrainage.ts`, `src/net/parrainage.ts`, `src/app/parrainage.ts`, `src/ui/parrainage.ts`, `docs/prompts-parrainage.md`).
+Chaque directeur a un code (`EMP-` + 6 caractères tirés de son uid, réservé dans `parrains/{code}`) et un lien `?ref=CODE`, retenu sur l'appareil
+jusqu'à ce que la partie commence. Le filleul ne peut entrer un code qu'avant d'avoir vaincu la Strate −2 : il reçoit 100 composants, une carte au choix
+(au moins du cuivre) et 3 jours de colis doublés, puis publie ses paliers dans `recrues/{uid}` (Strate −1 vaincue, Strate −3, Tour du Noyau 3).
+Le parrain relit ses recrues (au lancement et sur l'écran Recruter) : 150 composants et 2 Éclats à −1, une carte au choix dont une d'argent à −3
+(le filleul aussi), la carte exclusive *Empreinte jumelle* (cuivre, jamais tirée : `lien` dans `donnees.ts`) au Noyau 3 pour les deux, son journal
+retenant le nom de l'autre. Récompenses pour 5 recrues au plus ; les distinctions comptent toutes les recrues actives : dos « Empreinte partagée »
+à 3, titre « Recruteur » sur le Grand Tableau à 5. Sans Cloud Functions, les paliers sont déclarés par l'appareil du filleul : les règles
+bloquent un second parrain, le parrainage de soi-même et les paliers qui reculent. En développement : `__recrues(liste, code)` dans la console.
 
 **Le Grand Tableau** (23 octobre 2026, `src/core/classements.ts`, `src/ui/classements.ts`, `src/net/classement.ts`).
 Les classements entre directeurs, sur les « écrans des marchés de Vertiga ». On y entre par le menu Plus, le bandeau de la

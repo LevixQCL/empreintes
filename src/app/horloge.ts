@@ -6,6 +6,7 @@ import { comparer, montrer, relever } from '../ui/gains';
 import { app, compteEtat, D, racine } from './etat';
 import { afficher } from './rendu';
 import { sauver } from './synchro';
+import { battreParrainage } from './parrainage';
 
 /**
  * Les comptes à rebours et les jauges de durée du district (decompte, jaugeTemps) avancent chaque seconde sans redessiner l'écran.
@@ -60,6 +61,7 @@ export function battre() {
     compte: !u ? 'aucun' : u.anonyme ? 'invisible' : 'protege',
   });
   annoncer(nouvelles);
+  battreParrainage();
   if (app.mode !== 'district') return;
   const fini = majDecomptes(now);
   if (nouvelles.length > 0 || fini || now - app.dernierRendu > 15_000) {
