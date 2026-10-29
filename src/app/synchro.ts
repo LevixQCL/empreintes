@@ -8,6 +8,7 @@ import { app, compteEtat, compteProtege, D, G, K, racine } from './etat';
 import { afficher } from './rendu';
 import { lireMonEntree, planifierPublication } from './tableau';
 import { envoyerPillages, planifierGarnison, recevoirPillages } from './pillages';
+import { envoyerAssauts, recevoirAssauts } from './fleche';
 
 let minuteur: number | undefined;
 /** la partie à envoyer au compte (la plus récente), et quand on l'a envoyée la dernière fois */
@@ -149,6 +150,8 @@ export async function demarrerCompte() {
         comptePret();
         // les pillages : attaques subies pendant l'absence, pillages pas encore envoyés, garnison à jour
         if (reconcilie) recevoirPillages().then((change) => { if (change) sauver(); envoyerPillages(); planifierGarnison(); });
+        // la Flèche : assauts subis sur son quai, assauts pas encore envoyés, garde à jour
+        if (reconcilie) recevoirAssauts().then((change) => { if (change) sauver(); envoyerAssauts(); });
         if (app.uid && compteProtege() && !app.jeu.directeur?.nom && !app.pseudoDemande) { app.pseudoDemande = true; G.edition = true; G.accueil = true; G.erreur = ''; if (app.mode === 'district') afficher(); }
       });
       lireMonEntree();

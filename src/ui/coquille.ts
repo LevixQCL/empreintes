@@ -74,6 +74,8 @@ export interface EcranDistrict {
   fleche?: boolean;
   /** la présentation de la Flèche est rouverte (bouton « ? ») */
   flecheAide?: boolean;
+  /** le directeur qui tient le quai d'où l'on monte, lu en ligne (null : les gardiens payés des Hauts) */
+  gardienQuai?: { quai: number; gardien: import('../core/jeu').GardienQuai | null; lu: number } | null;
   /** le Port : sa présentation rouverte, et le volet affiché (pillages ou missions en mer) */
   portAide?: boolean;
   voletPort?: 'pillages' | 'missions';

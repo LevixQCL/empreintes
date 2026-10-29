@@ -11,7 +11,7 @@ let net: typeof import('../net/pillages') | null = null;
 const reseau = async () => (net ??= await import('../net/pillages'));
 
 /** Le nom montré aux autres : le pseudo du Grand Tableau s'il est public, sinon rien qui permette de reconnaître le joueur */
-const nomPublic = () => (app.jeu.directeur?.public && app.jeu.directeur.nom ? app.jeu.directeur.nom : 'Directeur anonyme');
+export const nomPublic = () => (app.jeu.directeur?.public && app.jeu.directeur.nom ? app.jeu.directeur.nom : 'Directeur anonyme');
 
 // ---------- La garnison publiée ----------
 // Une écriture quand elle change, au plus toutes les 5 minutes (comme le Grand Tableau).

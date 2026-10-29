@@ -28,7 +28,7 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'port' | 'tour'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="forge"]'); } },
@@ -64,6 +64,7 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'port-destinations', sauvegarde: 'port', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.ds-lieux', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'onglet-fleche', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
   { nom: 'onglet-fleche-bas', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.$eval('.fl-paliers', (e) => e.scrollIntoView({ block: 'end' })); } },
+  { nom: 'fleche-garde', sauvegarde: 'flecheGarde', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
   { nom: 'fleche-fermee', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
   { nom: 'fleche-depart', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.click('[data-action="fleche-preparer"]'); } },
   { nom: 'fleche-combat', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.click('[data-action="fleche-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(800); } },
@@ -121,6 +122,11 @@ async function main() {
     fl.data.scenes = [...(fl.data.scenes ?? []), 'convocation'];
     fl.data.fleche = { quai: 23, record: 31, recordLe: T - 86_400_000, recus: [20], victoires: 9, defaites: 3 };
     (saves as Record<string, unknown>).fleche = fl;
+    // la Flèche, l'escouade tenant son quai depuis un jour et demi (29 octobre 2026)
+    const fg = JSON.parse(JSON.stringify(fl));
+    const garnison = { strate: 1, coffre: 0, porteurs: Object.keys(fg.data.porteurs).slice(0, 3).map((id) => ({ id, pv: 40, cartes: (fg.data.porteurs[id].modules ?? []).filter((k: string) => fg.data.collection[k]).map((k: string) => ({ id: k, niveau: fg.data.collection[k].niveau })) })) };
+    fg.data.fleche = { ...fg.data.fleche, garde: { quai: 23, depuis: T - 36 * 3_600_000, gageLe: T - 30 * 3_600_000, garnison, repousses: 2 } };
+    (saves as Record<string, unknown>).flecheGarde = fg;
     // une seule barque en mer : les destinations du jour et les Porteurs libres se voient
     const po = JSON.parse(JSON.stringify(saves.district));
     po.data.missions = po.data.missions.slice(0, 1);

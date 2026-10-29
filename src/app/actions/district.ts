@@ -2,6 +2,7 @@
 
 import { cartePillages, portOuvert } from '../../ui/pillages';
 import { lireCiblesEnLigne, sousBouclier } from '../pillages';
+import { gardienActuel, lireGardienEnLigne, recevoirAssauts, synchroGarde } from '../fleche';
 import { moduleDe, moduleDef, porteurDef } from '../../core/donnees';
 import { estTri, poidsCarte } from '../../core/collection';
 import * as J from '../../core/jeu';
@@ -143,7 +144,25 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'port-entrer': app.jeu.portVu = true; D.portAide = false; sauver(); window.scrollTo(0, 0); break;
     case 'port-volet': D.voletPort = id === 'missions' ? 'missions' : 'pillages'; break;
     // la Flèche (28 octobre 2026) : son onglet, puis le départ de l'escouade vers le quai suivant
-    case 'fleche': ouvrir('fleche'); D.flecheAide = false; break;
+    case 'fleche': ouvrir('fleche'); D.flecheAide = false; lireGardienEnLigne(); recevoirAssauts().then((c) => { if (c) sauver(); }); break;
+    // tenir un quai (29 octobre 2026)
+    case 'fleche-tenir': {
+      const r = J.tenirQuai(app.jeu, J.escouadePourDepart(app.jeu), Date.now());
+      resultat(r);
+      if (r.ok) { D.message = `Ton escouade tient le quai ${app.jeu.fleche!.quai}. Les Hauts te versent un gage tant qu’elle y reste.`; synchroGarde(); }
+      break;
+    }
+    case 'fleche-gage': {
+      const g = J.recevoirGage(app.jeu, Date.now());
+      if (g.composants || g.eclats) { D.message = `Gage du quai : +${g.composants} composants${g.eclats ? `, +${g.eclats} Éclat${g.eclats > 1 ? 's' : ''}` : ''}.`; sauver(); }
+      break;
+    }
+    case 'fleche-quitter': {
+      const q = app.jeu.fleche?.garde?.quai;
+      const g = J.quitterQuai(app.jeu, Date.now());
+      if (g) { D.message = `L’escouade quitte le quai ${q}.${g.composants ? ` Gage versé : +${g.composants} composants${g.eclats ? `, +${g.eclats} Éclats` : ''}.` : ''}`; sauver(); synchroGarde(); D.gardienQuai = null; lireGardienEnLigne(true); }
+      break;
+    }
     case 'fleche-aide': D.flecheAide = true; window.scrollTo(0, 0); break;
     case 'fleche-entrer': J.etatFleche(app.jeu); D.flecheAide = false; sauver(); window.scrollTo(0, 0); break;
     case 'fleche-preparer': {
@@ -192,7 +211,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     }
     case 'partir': {
-      const r = D.fleche ? J.monterFleche(app.jeu, D.escouade)
+      const r = D.fleche ? J.monterFleche(app.jeu, D.escouade, undefined, gardienActuel())
         : D.pillage ? J.piller(app.jeu, D.escouade, D.pillage, Date.now())
         : D.epreuve ? J.partirEpreuve(app.jeu, D.escouade, D.epreuve, Date.now())
         : D.fouille ? J.fouiller(app.jeu, D.escouade, D.strateChoisie, D.fouille)

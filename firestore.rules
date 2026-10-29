@@ -63,6 +63,20 @@ service cloud.firestore {
       }
     }
 
+    // La Flèche (29 octobre 2026, src/net/fleche.ts) : le directeur qui tient un quai publie sa garnison figée dans
+    // quais/{uid} ; celui qui monte de ce quai note l'assaut joué dans quais/{uid}/assauts (sur le quai réellement tenu) ;
+    // seul le gardien efface ses assauts et sa fiche. Le gardien applique lui-même les assauts (subirAssauts).
+    match /quais/{uid} {
+      allow read: if request.auth != null;
+      allow delete: if request.auth != null && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid && quaiValide(request.resource.data);
+      match /assauts/{id} {
+        allow read: if request.auth != null;
+        allow delete: if request.auth != null && request.auth.uid == uid;
+        allow create: if request.auth != null && request.auth.uid != uid && assautValide(request.resource.data, uid);
+      }
+    }
+
     // Le parrainage (29 octobre 2026, src/net/parrainage.ts) : `parrains/{code}` dit à qui est un code (une fiche par code,
     // comme les pseudos) ; `recrues/{uid}` est créée une seule fois par le filleul (un seul parrain, définitif, jamais soi-même),
     // et ses paliers ne font que s'ajouter. Le parrain lit ses recrues avec une requête sur son uid.
@@ -109,6 +123,25 @@ service cloud.firestore {
         && d.coffre is int && d.coffre >= 0 && d.coffre <= 1000000
         && d.force is number && d.force > 0 && d.force < 1000
         && maintenant(d.maj);
+    }
+
+    function quaiValide(d) {
+      return d.keys().hasOnly(['nom', 'quai', 'force', 'porteurs', 'depuis', 'maj'])
+        && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24
+        && d.quai is int && d.quai >= 2 && d.quai <= 100
+        && d.force is number && d.force > 0 && d.force < 1000
+        && d.porteurs is list && d.porteurs.size() == 3
+        && d.depuis is int && d.depuis <= request.time.toMillis() + 300000
+        && maintenant(d.maj);
+    }
+
+    function assautValide(d, gardien) {
+      return d.keys().hasOnly(['attaquant', 'nom', 'quai', 'victoire', 'le'])
+        && d.attaquant == request.auth.uid
+        && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24
+        && d.victoire is bool
+        && d.quai == get(/databases/$(database)/documents/quais/$(gardien)).data.quai
+        && maintenant(d.le);
     }
 
     function subiValide(d, defenseur) {

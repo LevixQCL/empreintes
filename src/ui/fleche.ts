@@ -3,7 +3,7 @@
 // ce qu'on gagne ou perd, et les quais gravés avec leurs récompenses. Les règles sont dans src/core/partie/fleche.ts.
 
 import { porteurDef } from '../core/donnees';
-import { ASCENSION, chanceQuai, etatFleche, FLECHE, flecheOuverte, forceEscouade, forceQuai, gardiensQuai, pas, plancher, prochainPalier, escouadePourDepart, type Jeu } from '../core/jeu';
+import { ASCENSION, chanceQuai, chanceVictoire, etatFleche, FLECHE, flecheOuverte, forceEscouade, forceGarnison, forceQuai, gageEnCaisse, gageJour, gardiensQuai, pas, peutTenir, plancher, prochainPalier, escouadePourDepart, type EtatFleche, type GardienQuai, type Jeu } from '../core/jeu';
 import { avatar, coquille, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO } from './icones';
@@ -34,7 +34,8 @@ export function htmlFleche(e: EcranDistrict): string {
     + (suivant ? `<p class="fl-palier">${ICO.cristal}<span>Prochain quai gravé : <b>${suivant}</b>${f.recus.includes(suivant) ? '' : ` · ${recompense(suivant)}`}</span></p>` : '')
     + `</div></section>`;
 
-  h += sommet ? sieges(true) : assaut(j, f.quai, f.record);
+  const gardien = !f.garde && e.gardienQuai && e.gardienQuai.quai === f.quai ? e.gardienQuai.gardien : null;
+  h += f.garde ? garde(f) : sommet ? sieges(true) : assaut(j, f.quai, f.record, gardien) + tenir(e);
   h += paliers(f.quai, f.recus);
   if (!sommet) h += sieges(false);
   h += `<p class="fl-regle">${ICO.chrono}<span>Pas de jeton : monte autant que tu veux. La Clinique soigne l’Usure entre deux assauts.</span></p>`;
@@ -56,19 +57,19 @@ const recompense = (q: number) => {
 };
 
 /** Les gardiens du prochain quai, les chances, et l'enjeu */
-function assaut(j: Jeu, quai: number, record: number): string {
+function assaut(j: Jeu, quai: number, record: number, gardien: GardienQuai | null): string {
   const escouade = escouadePourDepart(j);
   const force = forceEscouade(j, escouade);
-  const gardiens = gardiensQuai(quai);
-  const fq = forceQuai(quai);
-  const chance = Math.round(chanceQuai(force, quai) * 100);
+  const gardiens = gardien ? gardien.porteurs : gardiensQuai(quai);
+  const fq = gardien ? gardien.force : forceQuai(quai);
+  const chance = Math.round((gardien ? chanceVictoire(fq / Math.max(0.01, force)) : chanceQuai(force, quai)) * 100);
   const niveau = chance >= 85 ? 1 : chance >= 50 ? 2 : chance >= 15 ? 3 : 4;
   const nomNiveau = ['Facile', 'Équilibré', 'Risqué', 'Redoutable'][niveau - 1];
   const haut = Math.min(FLECHE.quais, quai + pas(quai));
   const bas = Math.max(plancher(record), quai - pas(quai));
   const raison = j.expedition ? 'Une expédition est déjà en cours.' : '';
   return `<section class="fl-assaut d${niveau}" aria-label="Le quai ${quai}">`
-    + `<header><div><span class="surtitre">Gardiens payés par les Hauts</span><h2>Quai ${quai}</h2></div>`
+    + `<header><div><span class="surtitre">${gardien ? `Tenu par ${echap(gardien.nom)}` : 'Gardiens payés par les Hauts'}</span><h2>Quai ${quai}</h2></div>`
     + `<span class="fl-badge">${nomNiveau}<small>${chance < 1 ? '< 1' : chance > 99 ? '> 99' : chance} % de chances</small></span></header>`
     + `<ul class="fl-gardiens">${gardiens.map((id) => `<li style="--c:${COULEUR[porteurDef(id).lignee]}">${avatar(id, 40)}<span><strong>${echap(porteurDef(id).nom)}</strong><small>${NOM_LIGNEE[porteurDef(id).lignee]}</small></span></li>`).join('')}</ul>`
     + `<div class="fl-forces"><span>Gardiens <b>${Math.round(fq * 100)}</b></span><span class="fl-jauge" aria-hidden="true"><i style="width:${Math.min(100, Math.round((50 * fq) / Math.max(0.01, force)))}%"></i></span><span>Escouade <b>${Math.round(force * 100)}</b></span></div>`
@@ -76,6 +77,44 @@ function assaut(j: Jeu, quai: number, record: number): string {
     + `<div class="perte"><dt>Si tu perds</dt><dd>${ICO.descendre}<b>Quai ${bas}</b><small>${bas === quai ? 'tu restes sur ton quai gravé' : `−${quai - bas} quai${quai - bas > 1 ? 's' : ''}`}</small></dd></div></dl>`
     + (raison ? `<p class="fl-raison">${ICO.verrou}${raison}</p>` : '')
     + `<button type="button" class="btn prim large" data-action="fleche-preparer"${raison ? ' disabled' : ''}>${ICO.monter}Monter à l’assaut</button></section>`;
+}
+
+const gage = (q: number) => {
+  const g = gageJour(q);
+  return `${ICO.composants}${ent(g.composants)}${g.eclats ? ` ${ICO.eclats}${g.eclats}` : ''}`;
+};
+
+/** Tenir le quai où l'on se tient (29 octobre 2026) : ce que ça rapporte, et pourquoi ce n'est pas possible */
+function tenir(e: EcranDistrict): string {
+  const j = e.j;
+  const quai = etatFleche(j).quai;
+  if (quai < 2) return '';
+  const p = peutTenir(j, escouadePourDepart(j));
+  const raison = !e.compte.utilisateur ? 'Relie ta partie à un compte : les autres directeurs doivent pouvoir t’affronter.' : p.ok ? '' : p.message ?? '';
+  return `<section class="fl-tenir" aria-label="Tenir le quai ${quai}"><span class="fl-sommet-ico">${ICO.bouclier}</span><div>`
+    + `<strong>Tenir le quai ${quai}</strong>`
+    + `<small>Ton escouade s’arrête et remplace les gardiens payés. Les Hauts te versent <b>${gage(quai)}</b> par jour.</small>`
+    + (raison ? `<p class="fl-raison">${ICO.verrou}${echap(raison)}</p>` : '')
+    + `<button type="button" class="btn sec" data-action="fleche-tenir"${raison ? ' disabled' : ''}>${ICO.bouclier}S’installer sur ce quai</button></div></section>`;
+}
+
+/** Le quai tenu : la garnison figée, la caisse du gage, les défenses, et quitter */
+function garde(f: EtatFleche): string {
+  const g = f.garde!;
+  const now = Date.now();
+  const caisse = gageEnCaisse({ fleche: f } as Jeu, now);
+  const pleine = now - g.gageLe >= ASCENSION.caisseJours * 86_400_000;
+  const bas = Math.max(plancher(f.record), g.quai - pas(g.quai));
+  const jours = Math.floor((now - g.depuis) / 86_400_000);
+  return `<section class="fl-assaut fl-garde" aria-label="Le quai ${g.quai}, tenu par ton escouade">`
+    + `<header><div><span class="surtitre">Gardien du quai</span><h2>Tu tiens le quai ${g.quai}</h2></div>`
+    + `<span class="fl-badge">${g.repousses}<small>défense${g.repousses > 1 ? 's' : ''} tenue${g.repousses > 1 ? 's' : ''}</small></span></header>`
+    + `<ul class="fl-gardiens">${g.garnison.porteurs.map((p) => `<li style="--c:${COULEUR[porteurDef(p.id).lignee]}">${avatar(p.id, 40)}<span><strong>${echap(porteurDef(p.id).nom)}</strong><small>${NOM_LIGNEE[porteurDef(p.id).lignee]}</small></span></li>`).join('')}</ul>`
+    + `<dl class="fl-enjeu"><div class="gain"><dt>Gage par jour</dt><dd>${ICO.coffre}<b>${gage(g.quai)}</b><small>${jours ? `tenu depuis ${jours} jour${jours > 1 ? 's' : ''}` : 'tenu depuis aujourd’hui'}</small></dd></div>`
+    + `<div class="gain"><dt>Dans la caisse</dt><dd>${ICO.composants}<b>${ent(caisse.composants)}${caisse.eclats ? ` ${ICO.eclats}${caisse.eclats}` : ''}</b><small>${pleine ? 'pleine : deux jours au plus' : `jusqu’à ${ASCENSION.caisseJours} jours de gage`}</small></dd></div></dl>`
+    + `<p class="fl-regle">${ICO.porteurs}<span>Ceux qui montent du quai ${g.quai} affrontent ton escouade telle qu’elle était en s’installant (force ${Math.round(forceGarnison(g.garnison) * 100)}). Chaque défense tenue rapporte un quart de jour de gage ; si elle tombe, tu redescends au quai ${bas}.</span></p>`
+    + `<div class="fl-garde-actions"><button type="button" class="btn prim large" data-action="fleche-gage"${caisse.composants || caisse.eclats ? '' : ' disabled'}>${ICO.coffre}Recevoir le gage</button>`
+    + `<button type="button" class="btn sec" data-action="fleche-quitter">${ICO.monter}Quitter le quai et reprendre la montée</button></div></section>`;
 }
 
 /** Les quais gravés : récompense reçue, ou à gagner */
@@ -125,13 +164,14 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
       + etape(ICO.cristal, 'Les quais gravés', `${FLECHE.paliers.join(', ')} : chacun donne des composants et des Éclats, une seule fois. Ton record compte au Grand Tableau.`)
       + `</ul>`, ICO.aide)
 
-    + `<details class="fl-pr fl-pr-bientot fl-repli"><summary><span class="surtitre">${ICO.bouclier}Bientôt · tenir un quai <em>à venir</em></span></summary>`
-    + `<p>Les Hauts préfèrent payer un directeur qui tient bon qu’un gardien de location. Bientôt, ton escouade pourra s’arrêter sur un quai qu’elle vient de prendre et en devenir le gardien.</p><ul class="fl-pr-etapes">`
-    + etape(ICO.porteurs, 'Tu remplaces les gardiens payés', 'Ton escouade s’installe sur le quai. Ceux qui montent doivent passer par elle.')
-    + etape(ICO.coffre, 'Les Hauts te versent un gage', 'Chaque jour où tu tiens le quai, et plus il est haut, plus il rapporte.')
-    + etape(ICO.bouclier, 'D’autres directeurs viennent te déloger', 'Ton escouade se défend seule, même jeu fermé. Si elle tombe, le quai change de gardien et tu redescends.')
-    + etape(ICO.porte, `Au sommet, les ${FLECHE.sieges} Sièges`, `Tenus par des directeurs. Le temps du passage d’une île, ${FLECHE.defaitesMax} défaites t’éliminent et ${FLECHE.victoiresDefi} victoires t’ouvrent le défi d’un Siège.`)
-    + `</ul></details>`
+    + replie('Tenir un quai', `<p>Les Hauts préfèrent payer un directeur qui tient bon qu’un gardien de location. Ton escouade peut s’arrêter sur le quai où elle se tient et en devenir le gardien.</p><ul class="fl-pr-etapes">`
+      + etape(ICO.porteurs, 'Tu remplaces les gardiens payés', 'Ton escouade s’installe, figée telle qu’elle est. Ceux qui montent de ce quai doivent passer par elle.')
+      + etape(ICO.coffre, 'Les Hauts te versent un gage', `Plus le quai est haut, plus il rapporte (${gage(20)} par jour au quai 20, ${gage(80)} au quai 80). La caisse garde jusqu’à ${ASCENSION.caisseJours} jours.`)
+      + etape(ICO.bouclier, 'D’autres directeurs viennent te déloger', 'Ton escouade se défend seule, même jeu fermé. Chaque défense tenue rapporte ; si elle tombe, tu redescends comme après une défaite.')
+      + etape(ICO.tour, 'Un quai à ta mesure', 'Les Hauts ne confient pas un quai bas à une escouade trop forte : pour tenir, il faut d’abord monter à sa hauteur. Tant que tu tiens, tu ne montes plus.')
+      + `</ul>`, ICO.bouclier)
+    + `<details class="fl-pr fl-pr-bientot fl-repli"><summary><span class="surtitre">${ICO.porte}Bientôt · les ${FLECHE.sieges} Sièges <em>à venir</em></span></summary>`
+    + `<p>Au sommet, les Sièges sont tenus par des directeurs. Le temps du passage d’une île, ${FLECHE.defaitesMax} défaites t’éliminent et ${FLECHE.victoiresDefi} victoires t’ouvrent le défi d’un Siège.</p></details>`
 
     + (etat === 'fermee' ? ''
       : `<button type="button" class="btn prim large" data-action="fleche-entrer">${ICO.fleche}${etat === 'premiere' ? 'Entrer sur les quais' : 'Retour aux quais'}</button>`);
