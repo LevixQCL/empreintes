@@ -197,7 +197,7 @@ function ongletDeck(): string {
     + idee('<b class="g-etoile">∗</b>', 'Des jokers pour les suites', 'Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.')
     + idee(ICO_TRIANGLE, 'Pense au triangle', `Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : +${Math.round((REGLES.bonusLignee - 1) * 100)} % de dégâts. Les ennemis en profitent aussi contre tes Porteurs. Le dessin est dans « Lire une carte ».`)
     + idee(ICO.repiocher, 'Un deck court tourne plus vite', `Un Porteur peut porter moins de ${DISTRICT.cartesMax} cartes : tes meilleures reviennent plus souvent en main, mais tu couvres moins de Fréquences.`)
-    + idee(ICO.monter, 'Fais monter tes favorites', `Doublons et composants : +${Math.round(COLLECTION.bonusNiveau * 100)} % de force par niveau. Confie-les aux Porteurs que tu emmènes le plus souvent.`)
+    + idee(ICO.monter, 'Fais monter tes favorites', `Doublons et composants : chaque niveau ajoute au moins +1 de force (une carte de 10 passe à 19 au niveau 10). Confie-les aux Porteurs que tu emmènes le plus souvent.`)
     + `</ul></section>`;
   return h;
 }
@@ -251,7 +251,7 @@ function ongletCarte(): string {
     + `<li>En fer, une carte n’a pas d’effet. Il s’ouvre en cuivre ; en or et en nacre, ses chiffres montent.</li>`
     + `<li>Un métal rare demande un Porteur expérimenté : argent au niveau ${NIVEAU_METAL.argent}, or au niveau ${NIVEAU_METAL.or}, nacre au niveau ${NIVEAU_METAL.nacre}. Trouvée plus tôt, la carte t’attend dans ta collection.</li>`
     + `<li>Deux métaux d’une carte sont deux cartes à part, chacune avec ses doublons et son niveau.</li>`
-    + `<li>Doublons et composants font monter une carte : +${Math.round(COLLECTION.bonusNiveau * 100)} % de force par niveau, jusqu’au niveau ${COLLECTION.niveauMax}.</li></ul></section>`;
+    + `<li>Doublons et composants font monter une carte : chaque niveau ajoute environ un dixième de sa force de départ, jamais moins de +1, jusqu’au niveau ${COLLECTION.niveauMax}. Au maximum, la carte est <b>maîtrisée</b> : un liseré de lumière parcourt son cadre.</li></ul></section>`;
 
   // les lignées
   const plages = plageFrequences;

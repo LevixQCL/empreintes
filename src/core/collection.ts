@@ -14,8 +14,9 @@ export const COLLECTION = {
   /** une trouvaille d'expédition est, à cette fréquence, un doublon d'une carte qu'on possède déjà dans ce métal :
    *  plus on joue, plus les cartes montent (étude du 22/10/2026 : les doublons se diluaient sur 225 exemplaires) */
   affinite: 0.4,
-  /** +5 % de force par niveau */
-  bonusNiveau: 0.05,
+  /** Chaque niveau ajoute environ 10 % de la force de départ, arrondi à l'entier et jamais moins de +1 (29 octobre 2026,
+   *  Bryan : « +5 % ce n'est pas clair ». Avant, une montée sur trois ne changeait aucun chiffre à cause de l'arrondi). */
+  bonusNiveau: 0.1,
   niveauMax: 10,
   /** niveau de départ selon la rareté */
   niveauDepart: { fer: 1, cuivre: 3, argent: 5, or: 7, nacre: 8 } as Record<Rarete, number>,
@@ -145,10 +146,21 @@ export function doublonsRequis(id: string, niveau: number): number | null {
 /** Composants demandés pour monter au niveau suivant */
 export const composantsNiveau = (niveau: number) => 8 * niveau;
 
-/** Multiplicateur de force d'une carte selon son niveau */
+/** Ce qu'un niveau ajoute à la force d'une carte : un entier, au moins +1 */
+export function gainNiveau(id: string): number {
+  return Math.max(1, Math.round(moduleDef(id).v * COLLECTION.bonusNiveau));
+}
+
+/** La force d'une carte à son niveau : sa force de départ, plus un gain entier par niveau gagné */
+export function forceNiveau(id: string, niveau: number): number {
+  const m = moduleDef(id);
+  return m.v + gainNiveau(id) * Math.max(0, niveau - COLLECTION.niveauDepart[m.rarete]);
+}
+
+/** Multiplicateur de force d'une carte selon son niveau (tombe pile sur `forceNiveau` une fois arrondi) */
 export function multNiveau(id: string, niveau: number): number {
-  const depart = COLLECTION.niveauDepart[moduleDef(id).rarete];
-  return 1 + COLLECTION.bonusNiveau * (niveau - depart);
+  const v = moduleDef(id).v;
+  return v > 0 ? forceNiveau(id, niveau) / v : 1;
 }
 
 /**

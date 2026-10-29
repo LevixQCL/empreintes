@@ -37,7 +37,7 @@ export function cleDuLegs(j: Jeu, escouade: string[]): GesteDef | null {
   if (j.legs !== 'cle' || !escouade.length) return null;
   const n = Math.max(...escouade.map((id) => niveauPorteur(j, id).niveau));
   if (n < NIVEAU_METAL.nacre) return null;
-  return { ...CLE_LEGS, v: Math.round(CLE_LEGS.v * (1 + COLLECTION.bonusNiveau * (niveauLegsPour(n) - COLLECTION.niveauDepart.nacre))) };
+  return { ...CLE_LEGS, v: CLE_LEGS.v + Math.max(1, Math.round(CLE_LEGS.v * COLLECTION.bonusNiveau)) * Math.max(0, niveauLegsPour(n) - COLLECTION.niveauDepart.nacre) };
 }
 
 /** Les Porteurs de l'histoire qui rejoignent le district quand leur moment arrive ; renvoie les annonces */

@@ -78,6 +78,15 @@
   background:conic-gradient(var(--lc) calc(var(--n) * 360deg / var(--max)),rgba(255,255,255,.22) 0);
   -webkit-mask:radial-gradient(farthest-side,#0000 52%,#000 56%),repeating-conic-gradient(#000 0 calc(360deg / var(--max) - 6deg),#0000 0 calc(360deg / var(--max)));-webkit-mask-composite:source-in;
   mask:radial-gradient(farthest-side,#0000 52%,#000 56%),repeating-conic-gradient(#000 0 calc(360deg / var(--max) - 6deg),#0000 0 calc(360deg / var(--max)));mask-composite:intersect}
+/* la maîtrise (niveau maximum) : un fin liseré doré sur l'arête du cadre, qu'un éclat parcourt lentement */
+@property --ma{syntax:'<angle>';inherits:false;initial-value:0deg}
+.nf-maitre{position:absolute;z-index:6;pointer-events:none;inset:max(0px,calc(var(--bord) - max(1.5px,1cqw)));padding:max(1.5px,1cqw);
+  background:conic-gradient(from var(--ma),rgba(255,214,120,.5) 0 58%,rgba(255,248,215,1) 72%,rgba(255,214,120,.5) 86%);
+  filter:drop-shadow(0 0 max(2px,1.5cqw) rgba(255,214,120,.7));
+  -webkit-mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);
+  animation:maitrise 7s linear infinite}
+@keyframes maitrise{to{--ma:360deg}}
+@media (prefers-reduced-motion:reduce){.nf-maitre{animation:none;background:rgba(255,226,150,.5)}}
 .nf-roue.max{background:conic-gradient(#ffd873,#fff3c4,#e2b44a,#ffd873)}
 .nf-lg{flex:none;width:3.6cqw;height:3.6cqw;min-width:6px;min-height:6px;margin:0 1.4cqw 0 1cqw;transform:rotate(45deg);background:var(--lc);box-shadow:0 0 2cqw var(--lc)}
 .nf-nom{min-width:0;font-family:var(--display);font-size:max(12px,7cqw);line-height:1.1;color:#f7efdc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;

@@ -11,7 +11,7 @@ import {
   OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondEntrainement, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
 } from '../core/jeu';
-import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
+import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { FRAGMENTS } from '../core/fragments';
@@ -1010,7 +1010,7 @@ export function feuilleCarte(e: EcranDistrict): string {
   // progression : où on en est, et ce qui manque, en clair
   h += `<section class="bloc fc-prog"><h3 class="titre-bloc">${ICO.monter}Progression</h3>`;
   if (m.legs) h += `<p class="fc-etat or">Une vierge de l’Héritage du district : unique, elle ne monte pas avec des doublons. Elle s’éveille avec le Porteur qui la porte : ${EVEIL_LEGS.map((x) => `niveau ${x.niveau} avec un Porteur de niveau ${x.porteur}`).join(', ')}.</p>`;
-  else if (requis === null) h += `<p class="fc-etat or">Niveau maximum atteint.</p>`;
+  else if (requis === null) h += `<p class="fc-etat or">Niveau maximum : la carte est maîtrisée, un liseré de lumière parcourt son cadre.</p>`;
   else {
     const pret = c.doublons >= requis;
     const manqueD = Math.max(0, requis - c.doublons);
@@ -1018,7 +1018,7 @@ export function feuilleCarte(e: EcranDistrict): string {
     const etat = !pret ? `Encore <b>${manqueD} doublon${manqueD > 1 ? 's' : ''}</b> pour le niveau ${c.niveau + 1}. On en trouve en expédition, en mission, dans les colis du ravitaillement, au Comptoir et à la Forge.`
       : manqueC ? `Doublons réunis. Il manque <b>${manqueC} composant${manqueC > 1 ? 's' : ''}</b>.` : `Prête : elle peut passer au niveau ${c.niveau + 1}.`;
     h += `<div class="progression"><div class="jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></div><span class="chiffre">${c.doublons} / ${requis} doublons</span></div>`
-      + `<p class="fc-etat${pret && !manqueC ? ' or' : ''}">${etat} <span>Niveau ${c.niveau + 1} : +${Math.round(COLLECTION.bonusNiveau * 100)} % de force.</span></p>`
+      + `<p class="fc-etat${pret && !manqueC ? ' or' : ''}">${etat} <span>Niveau ${c.niveau + 1} : force ${forceNiveau(cle, c.niveau)} → <b>${forceNiveau(cle, c.niveau + 1)}</b>${c.niveau + 1 >= COLLECTION.niveauMax ? ', et la carte est maîtrisée' : ''}.</span></p>`
       + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="monter" data-module="${cle}"${pret && j.composants >= cout ? '' : ' disabled'}>${ICO.monter}Passer au niveau ${c.niveau + 1} · ${prix('composants', cout, j.composants >= cout)}</button>`;
     if (c.doublons > 0) h += `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button>`;
     h += `</div>`;

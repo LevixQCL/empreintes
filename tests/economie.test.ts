@@ -65,7 +65,16 @@ describe('Collection', () => {
     expect(doublonsRequis('jambes-ressort@fer', 1)).toBe(1);
     expect(monter(j, 'jambes-ressort@fer').ok).toBe(true);
     expect(j.collection['jambes-ressort@fer']).toEqual({ niveau: 2, doublons: 0 });
-    expect(multNiveau('jambes-ressort@fer', 10)).toBeCloseTo(1.45, 5);
+    const v = Math.round(10 * multNiveau('jambes-ressort@fer', 1)) / 10;
+    expect(v).toBe(1);
+    // chaque montée change la force affichée, d'un entier
+    for (const cle of ['jambes-ressort@fer', 'jambes-ressort@cuivre']) {
+      const base = Math.round(moduleDef(cle).v * multNiveau(cle, 1));
+      let avant = 0;
+      for (let n = 1; n <= 10; n++) { const f = Math.round(moduleDef(cle).v * multNiveau(cle, n)); expect(f).toBeGreaterThanOrEqual(avant); if (n > 3) expect(f).toBeGreaterThan(avant); avant = f; }
+      expect(base).toBeGreaterThan(0);
+    }
+    expect(multNiveau('jambes-ressort@fer', 10)).toBeGreaterThan(1.8);
     // une carte en or démarre au niveau 7
     expect(ajouterCarte(j, 'lames-orbitales@or')).toBe(true);
     expect(j.collection['lames-orbitales@or']!.niveau).toBe(7);
