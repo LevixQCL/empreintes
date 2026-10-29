@@ -89,9 +89,16 @@ function chanceEcho(deck: string[], tirages = 400): number {
   return ok / tirages;
 }
 
-type Choix = 'force' | 'suites' | 'echos';
-/** Compose les cartes de chaque Porteur : 6 au plus, Charge respectée, 2 défenses au moins */
-function composer(porteurs: string[], lignees: Lignee[], choix: Choix): Escouade {
+type Choix = 'force' | 'suites' | 'echos' | 'hasard';
+/**
+ * Compose les cartes de chaque Porteur : 6 au plus, Charge respectée, 2 défenses au moins.
+ * « hasard » (29 octobre 2026) : un joueur qui équipe ce qu'il a sans calculer, ni force ni Fréquence ;
+ * la graine change le deck. C'est la référence « joueur normal », plus réaliste que le deck « force »
+ * qui ne tombait sur une suite que dans 15 % des mains.
+ */
+function composer(porteurs: string[], lignees: Lignee[], choix: Choix, graine = 1): Escouade {
+  let g = graine * 48271 + 13;
+  const alea = () => ((g = (g * 16807) % 2147483647) / 2147483647);
   const pris: Record<string, string[]> = Object.fromEntries(porteurs.map((p) => [p, []]));
   const poids = (p: string) => pris[p]!.reduce((n, c) => n + poidsCarte(c), 0);
   const utilisees = new Set<string>();
@@ -108,14 +115,14 @@ function composer(porteurs: string[], lignees: Lignee[], choix: Choix): Escouade
   for (;;) {
     const deck = Object.values(pris).flat();
     const chance = choix === 'suites' ? chanceSuite : chanceEcho;
-    const base = choix === 'force' ? 0 : chance(deck);
+    const base = choix === 'force' || choix === 'hasard' ? 0 : chance(deck);
     let meilleur: { p: string; c: string; note: number } | null = null;
     porteurs.forEach((p, i) => {
       for (const c of pool(lignees[i]!)) {
         if (!peut(p, c, i)) continue;
         // « suites » : ce que la carte ajoute aux chances de suite, la force ne départage qu'à égalité
         // « échos » : pareil, avec les chances d'Écho (l'escouade qui empile une seule Fréquence)
-        const note = choix === 'force' ? force(c) : (chance([...deck, c]) - base) * 1000 + force(c) / 1000;
+        const note = choix === 'hasard' ? alea() : choix === 'force' ? force(c) : (chance([...deck, c]) - base) * 1000 + force(c) / 1000;
         if (!meilleur || note > meilleur.note) meilleur = { p, c, note };
       }
     });
@@ -172,36 +179,56 @@ function mesurer(e: Escouade, jouer: (s: CombatEtat) => void, facteur: number, p
 // ---------- Les escouades ----------
 const t0 = Date.now();
 const progres = (t: string) => process.stdout.write(`\r${t.padEnd(70)}`);
+/** Nombre de decks « au hasard » qui forment la référence (leur moyenne) */
+const HASARDS = Number(arg('hasards', '8'));
+const hasards = Array.from({ length: HASARDS }, (_, k) => composer(MIXTE, LIGNEES, 'hasard', k + 1));
 const escouades: { nom: string; e: Escouade; ref?: boolean }[] = [
-  { nom: 'Mixte · force (joueur normal)', e: composer(MIXTE, LIGNEES, 'force'), ref: true },
+  { nom: 'Mixte · force', e: composer(MIXTE, LIGNEES, 'force') },
   { nom: 'Mixte · suites', e: composer(MIXTE, LIGNEES, 'suites') },
   { nom: 'Mixte · échos', e: composer(MIXTE, LIGNEES, 'echos') },
-  ...LIGNEES.flatMap((l) => [
+  ...(process.argv.includes('--mono') ? LIGNEES.flatMap((l) => [
     { nom: `${NOMS_LIGNEE[l].nom}s seuls · force`, e: composer(MONO[l], [l, l, l], 'force') },
     { nom: `${NOMS_LIGNEE[l].nom}s seuls · suites`, e: composer(MONO[l], [l, l, l], 'suites') },
     { nom: `${NOMS_LIGNEE[l].nom}s seuls · échos`, e: composer(MONO[l], [l, l, l], 'echos') },
-  ]),
+  ]) : [{ nom: 'Résonants seuls · suites', e: composer(MONO.reso, ['reso', 'reso', 'reso'], 'suites') }]),
 ];
 const deckDe = (e: Escouade) => Object.values(e).flat().map((c) => c.id);
 
-// Force des ennemis réglée pour que la référence gagne une descente sur deux avec le robot
-const ref = escouades[0]!.e;
+// Force des ennemis réglée pour que les decks « au hasard » gagnent une descente sur deux en moyenne avec le robot
+const PAR_HASARD = Math.max(20, Math.round(PARTIES / HASARDS));
+const moyenneHasard = (jouer: (s: CombatEtat) => void, facteur: number, parties: number) => {
+  const ms = hasards.map((e) => mesurer(e, jouer, facteur, parties));
+  const moy = (f: (m: ReturnType<typeof mesurer>) => number) => ms.reduce((n, m) => n + f(m), 0) / ms.length;
+  return { victoire: moy((m) => m.victoire), reso: moy((m) => m.reso), echo: moy((m) => m.echo), detail: ms.map((m) => m.victoire) };
+};
 let bas = 0.6, haut = 3;
-for (let i = 0; i < 8; i++) {
-  progres(`Réglage de la difficulté ${i + 1}/8…`);
+for (let i = 0; i < 7; i++) {
+  progres(`Réglage de la difficulté ${i + 1}/7…`);
   const m = (bas + haut) / 2;
-  if (mesurer(ref, jouerTour, m, Math.max(60, PARTIES / 2)).victoire > 0.5) bas = m; else haut = m;
+  if (moyenneHasard(jouerTour, m, Math.max(8, Math.round(PAR_HASARD / 2))).victoire > 0.5) bas = m; else haut = m;
 }
 const FACTEUR = (bas + haut) / 2;
 
-const resultats = escouades.map((x, i) => {
+progres('Référence : decks au hasard (robot)');
+const refRobot = moyenneHasard(jouerTour, FACTEUR, PAR_HASARD);
+progres('Référence : decks au hasard (joueur moyen)');
+const refMoyen = moyenneHasard(jouerTourMoyen, FACTEUR, PAR_HASARD);
+const moyDeck = (f: (d: string[]) => number) => hasards.reduce((n, e) => n + f(deckDe(e)), 0) / hasards.length;
+const reference = {
+  nom: `Mixte · au hasard (joueur normal, moyenne de ${HASARDS} decks)`, e: hasards[0]!, ref: true,
+  robot: refRobot, moyen: refMoyen,
+  main: moyDeck((d) => chanceSuite(d, 2000)), mainEcho: moyDeck((d) => chanceEcho(d, 2000)),
+  puissance: moyDeck((d) => d.reduce((n, c) => n + force(c), 0)),
+};
+
+const resultats = [reference, ...escouades.map((x, i) => {
   progres(`${i + 1}/${escouades.length} : ${x.nom} (robot)`);
   const robot = mesurer(x.e, jouerTour, FACTEUR);
   progres(`${i + 1}/${escouades.length} : ${x.nom} (joueur moyen)`);
   const moyen = mesurer(x.e, jouerTourMoyen, FACTEUR);
   const deck = deckDe(x.e);
   return { ...x, robot, moyen, main: chanceSuite(deck, 4000), mainEcho: chanceEcho(deck, 4000), puissance: deck.reduce((n, c) => n + force(c), 0) };
-});
+})];
 process.stdout.write('\r'.padEnd(72) + '\r');
 
 // ---------- Rapport ----------
@@ -209,14 +236,16 @@ const pct = (x: number) => `${Math.round(x * 100)} %`;
 const ecart = (x: number, r: number) => (x === r ? '—' : `${x >= r ? '+' : '−'}${Math.abs(Math.round((x - r) * 100))}`);
 const r0 = resultats[0]!;
 let r = `# Les decks « tout en suites » ou « tout en échos » cassent-ils le jeu ?\n\n`;
+r += `Référence refaite le 29 octobre 2026 : un joueur normal ne choisit pas ses cartes pour leur seule force, il équipe ce qu'il a. On prend donc la moyenne de plusieurs decks composés au hasard (Charge et défenses respectées).\n\n`;
 r += `${new Date().toISOString().slice(0, 10)} · ${PARTIES} descentes par mesure · ${Math.round((Date.now() - t0) / 1000)} s de calcul.\n\n`;
-r += `Une Strate −${STRATE} entière, salle par salle jusqu'au gardien, ennemis ×${FACTEUR.toFixed(2)} (réglés pour que l'escouade de référence gagne une descente sur deux avec le robot). `;
+r += `Une Strate −${STRATE} entière, salle par salle jusqu'au gardien, ennemis ×${FACTEUR.toFixed(2)} (réglés pour que les decks de référence, composés au hasard, gagnent en moyenne une descente sur deux avec le robot). `;
 r += `Toutes les cartes en ${METAL}, au niveau ${NIVEAU_CARTES} ; chaque Porteur porte 6 cartes au plus, ${CHARGE} de Charge et ${DEFENSES_MIN} défenses au moins ; ${PV} PV chacun.\n\n`;
 r += `- **Force** : les cartes les plus puissantes, sans regarder leur Fréquence.\n- **Suites** : les cartes qui donnent le plus de chances de suite, la force ne départage qu'à égalité.\n- **Échos** : les cartes qui donnent le plus de chances d'Écho (une Fréquence empilée), la force ne départage qu'à égalité.\n\n`;
 r += `| Escouade | Suite possible en main | Écho possible | Puissance du deck | Victoires (robot) | Écart | Victoires (joueur moyen) | Écart | Tours avec Résonance (robot) | Échos |\n|---|---|---|---|---|---|---|---|---|---|\n`;
 for (const x of resultats) {
   r += `| ${x.ref ? '**' + x.nom + '**' : x.nom} | ${pct(x.main)} | ${pct(x.mainEcho)} | ${Math.round(x.puissance)} | ${pct(x.robot.victoire)} | ${ecart(x.robot.victoire, r0.robot.victoire)} | ${pct(x.moyen.victoire)} | ${ecart(x.moyen.victoire, r0.moyen.victoire)} | ${pct(x.robot.reso)} | ${pct(x.robot.echo)} |\n`;
 }
+r += `\nVictoires des ${HASARDS} decks au hasard (robot) : ${refRobot.detail.map(pct).join(', ')}.\n`;
 r += `\nÉcart : points de victoire par rapport à l'escouade de référence (+10 = une descente gagnée de plus sur dix). Le bruit de la mesure est d'environ ±${Math.round(100 / Math.sqrt(PARTIES))} points.\n\n## Les decks\n\n`;
 for (const x of resultats) {
   r += `**${x.nom}**\n\n`;
