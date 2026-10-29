@@ -25,6 +25,14 @@ export const RUMEURS: Rumeur[] = [
   { texte: 'Les Brigades sont passées à l’école demander combien d’enfants « ont des yeux qui brillent ». Les parents ont répondu : aucun.', strate: 4 },
   { texte: 'Le Réseau des Reprises colle des affiches la nuit : « Vos implants, vos mains. » Ce matin, quelqu’un avait ajouté au crayon : « Et qui écrit les mises à jour ? »', strate: 6 },
   { texte: 'Des ouvriers de l’ouest disent qu’un vieux mur d’acier, sous un pilier, est tiède au toucher en plein hiver. Le chef d’équipe leur a interdit d’y poser l’oreille.', strate: 8 },
+  // Sous la ligne (29 octobre 2026) : le district sait que l'eau monte ; jamais un reproche, une voix de voisin parmi d'autres.
+  { texte: 'La ligne bleue du quai est passée sous la marée haute. Quelqu’un a laissé un pot de peinture à côté. Personne n’y a encore touché.' },
+  { texte: 'Doran a noté les heures des pompes dans son carnet : encore plus que l’an dernier. Il ne l’a montré à personne. On l’a vu le relire deux fois.' },
+  { texte: 'Au marché, une vendeuse d’algues t’a demandé, l’air de rien : « Alors, l’Écluse ? » Puis elle t’a rendu la monnaie en souriant.', strate: 1 },
+  { texte: 'On raconte que ceux d’avant savaient retenir la mer, qu’ils ont laissé une Écluse quelque part en dessous. Les Veilleurs haussent les épaules quand on leur en parle.', strate: 2 },
+  { texte: 'Le charpentier du port a encore rehaussé le ponton. « Huit centimètres », a-t-il dit à Doran. Doran n’a rien répondu.', strate: 4 },
+  { texte: 'Des fouilleurs revenus des Deux Rives parlent d’un mur couvert de lignes gravées, l’une au-dessus de l’autre. Le marché s’est tu un moment.', strate: 7 },
+  { texte: 'Le Noyé a été vu au pied de la Flèche, un vieux papier plié dans la poche. Il demandait quel district était monté le plus haut.', strate: 10 },
   { texte: 'On raconte qu’une famille des Hauts a envoyé une fille « étudier ailleurs », il y a longtemps. Dans quel district, personne ne le dit.', strate: 5 },
 ];
 

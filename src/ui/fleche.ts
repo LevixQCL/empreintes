@@ -3,7 +3,7 @@
 // ce qu'on gagne ou perd, et les quais gravés avec leurs récompenses. Les règles sont dans src/core/partie/fleche.ts.
 
 import { porteurDef } from '../core/donnees';
-import { ASCENSION, chanceQuai, chanceVictoire, etatFleche, FLECHE, flecheOuverte, forceEscouade, forceGarnison, forceQuai, gageEnCaisse, gageJour, gardiensQuai, pas, peutTenir, plancher, prochainPalier, escouadePourDepart, type EtatFleche, type GardienQuai, type Jeu } from '../core/jeu';
+import { ASCENSION, chanceQuai, chanceVictoire, etatFleche, FLECHE, flecheOuverte, forceEscouade, forceGarnison, forceQuai, gageEnCaisse, gageJour, gardiensQuai, pas, peutTenir, plancher, prochainPalier, escouadePourDepart, type EtatFleche, type GardienQuai, type Jeu, strateVaincue } from '../core/jeu';
 import { avatar, coquille, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO } from './icones';
@@ -14,6 +14,9 @@ import { COULEUR } from './vue';
 /** hauteur d'un quai sur la flèche dessinée (0 = pied, 100 = sommet) */
 const hauteur = (q: number) => ((q - 1) / (FLECHE.quais - 1)) * 100;
 
+/** Le récit des Îles ouvertes (arc « Sous la ligne », 29 octobre 2026) : il s'ouvre une fois le Premier Porteur vaincu (−10) */
+const recitOuvert = (j: Jeu) => strateVaincue(j) >= 10;
+
 export function htmlFleche(e: EcranDistrict): string {
   const j = e.j;
   const ouverte = flecheOuverte(j);
@@ -21,7 +24,7 @@ export function htmlFleche(e: EcranDistrict): string {
   const pres = !ouverte ? 'fermee' : !j.fleche ? 'premiere' : e.flecheAide ? 'aide' : null;
   const aide = pres ? '' : `<button type="button" class="btn-icone" data-action="fleche-aide" aria-label="Comment marche la Flèche">${ICO.aide}</button>`;
   let h = entete('Les Hauts · Flèche d’amarrage', 'La Flèche', aide);
-  if (pres) return coquille(e, h + presentation(pres), 'fle fle-pres');
+  if (pres) return coquille(e, h + presentation(pres, recitOuvert(j)), 'fle fle-pres');
   const f = etatFleche(j);
   const sommet = f.quai >= FLECHE.quais;
   const suivant = prochainPalier(f.quai);
@@ -140,7 +143,7 @@ function sieges(atteint: boolean): string {
  * comment on y monte, et ce qui arrive (tenir un quai et en devenir le gardien, les Sièges du sommet).
  * Montrée tant que la Flèche est fermée, à la première visite, puis à la demande (bouton « ? »).
  */
-function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
+function presentation(etat: 'fermee' | 'premiere' | 'aide', recit = false): string {
   return `<section class="fl-intro" style="--decor:url(${fondFleche})"><div class="fl-intro-texte">`
     + `<span class="surtitre">Clause de la Flèche · Accords de 2101</span>`
     + `<h2>La dernière route vers les Hauts</h2>`
@@ -156,7 +159,9 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
 
     + replie('L’histoire', `<p>Les îles des Hauts ne se posent jamais : elles dérivent au-dessus de la mer et ne s’arrêtent qu’aux flèches d’amarrage. Il n’en reste qu’une debout, et ce sont les Hauts qui la tiennent.</p>`
       + `<p>Avant 2101, les districts d’en bas montaient à l’abordage. Les Accords y ont mis fin et n’ont laissé qu’une route légale vers le haut : la Flèche, quai par quai. Tout district invité peut y envoyer une escouade.</p>`
-      + `<p>Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. Le district qui tient le sommet quand une île passe est reçu là-haut.</p>`)
+      + `<p>Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. « S’il tient le sommet au passage d’une île, il y est reçu », dit la Clause. Les Hauts ont toujours lu « l’escouade ».</p>`)
+    + (recit ? replie('Les Îles ouvertes', `<p>Le Noyé garde un brouillon de la Clause, écrit à la main pendant la Grève des pompes : « le district dont l’escouade tient le sommet au passage d’une île y est reçu ». Pas l’escouade : le district.</p>`
+      + `<p>Ceux qui sont montés ont tous accepté le palais qu’on leur offrait. Le Noyé attend un directeur qui tiendra le sommet, puis refusera, pour réclamer l’île au nom de tous. Le sommet et ses Sièges arrivent bientôt ; l’histoire complète t’attend dans les Chroniques (« Il y est reçu »).</p>`, ICO.porte) : '')
     + replie('Les règles en détail', `<ul class="fl-pr-etapes">`
       + etape(ICO.atk, 'Un combat par quai', 'Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.')
       + etape(ICO.monter, 'Vite en bas, lentement en haut', `Une victoire fait monter de ${FLECHE.montee[0]!.quais} quais jusqu’au ${FLECHE.montee[0]!.jusqua}, de ${FLECHE.montee[1]!.quais} jusqu’au ${FLECHE.montee[1]!.jusqua}, puis d’un seul.`)

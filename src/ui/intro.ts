@@ -164,9 +164,9 @@ export const PLANS: Plan[] = [
     'Sous chaque district, un puits descend : d’abord ses pompes noyées, puis ses abris murés des années 2060. Plus bas, tous les puits débouchent dans les mêmes Strates, toujours plus anciennes.',
     'On en remonte des cristaux d’empreinte. Greffés, ils font les Résonants. Tenus contre la peau, dans un harnais de fouille, ils prêtent leur geste le temps d’un combat.',
     'Plus on descend, plus les trouvailles sont puissantes, et plus il est difficile d’en remonter.'] },
-  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-toi')], scene: toi, court: ["Hier, ton district t’a élu à sa tête. Ce matin, sous sa vieille tour, on a ouvert une porte scellée depuis cinquante-cinq ans.", "Une coursière, un ancien des Fondations et une lectrice d’empreintes t’attendent en bas. Descends. Regarde tout."], lignes: [
-    'Hier, ton district t’a élu à sa tête : quelques piliers reliés par des passerelles, une Forge au ralenti, une vieille tour.',
-    'Ce matin, sous la tour, on a ouvert une porte scellée depuis cinquante-cinq ans. Derrière, des dizaines d’empreintes, mêlées.',
+  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-toi')], scene: toi, court: ["Cette année, la ligne bleue de ton district est passée sous la marée. Hier, il t’a élu à sa tête.", "Ce matin, en creusant pour sauver les pompes, on a ouvert sous sa tour une porte scellée depuis cinquante-cinq ans. On t’attend en bas. Descends. Regarde tout."], lignes: [
+    'Hier, ton district t’a élu à sa tête : quelques piliers reliés par des passerelles, une Forge au ralenti, une vieille tour. Et une ligne bleue qui, cette année, est passée sous la marée.',
+    'Ce matin, en creusant plus bas pour sauver les pompes, on a ouvert sous la tour une porte scellée depuis cinquante-cinq ans. Derrière, des dizaines d’empreintes, mêlées.',
     'Au même moment, dans les Hauts, des Résonants se réveillent sans savoir qui ils sont. Tout Vertiga va vouloir cette porte.',
     'Une coursière, un ancien des Fondations et une lectrice d’empreintes t’attendent en bas. Descends. Regarde tout.'] },
 ];

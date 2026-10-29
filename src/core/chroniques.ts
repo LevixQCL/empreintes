@@ -322,6 +322,7 @@ export const CHAPITRES: Chapitre[] = [
       'Les factions se disputent les empreintes. La Maison Orsève, la plus puissante des familles des Hauts, descend de l’un des Sept ; elle veut garder les greffes anciennes sous son contrôle, et son Serment de Veyr envoie ses Brigades « sécuriser » tout ce qui brille. Les Racines franches, le mouvement des Génés, veulent que plus personne ne modifie un corps sur commande. Le Réseau des Reprises, des réparateurs augmentés, veut libérer les implants de leurs brevets. Et nous, les Veilleurs de Sédime, voulons comprendre avant qu’on exploite. On nous trouve lents. Nous le sommes. C’est voulu.',
       'Chacune de ces factions a ses gens bien et ses brutes. Ne te fie jamais à une bannière. Fie-toi aux gens, un par un.',
       'Pendant ce temps, il se passe autre chose, et presque personne ne regarde. Les Fondations se fissurent. Pas partout, pas beaucoup : des lignes fines dans le béton, que les équipes d’entretien rebouchent la nuit. Et la mer remonte, de quelques centimètres par an. Les lignes d’eau peintes sur les vieux murs, celles qu’on montrait aux enfants comme des souvenirs, ne sont plus tout à fait au-dessus de la marée.',
+      'La tienne non plus. La ligne de ton district, peinte quand on a fini ses piliers, est passée sous la marée haute cette année. Ton ancienne directrice l’a fait repeindre plus haut, de nuit. Le quartier l’a vu. Je crois que c’est aussi pour ça qu’il a voté pour toi.',
       'J’ai écrit des rapports. On les a classés. J’ai écrit aux Hauts. On m’a répondu très poliment. Je suis vieille, alors j’ai fini par reconnaître la musique : c’est celle des infos du soir dont parlait ma grand-mère. Vingt secondes, à la fin, entre la météo et le sport. Comme avant.',
     ],
   },
@@ -330,9 +331,10 @@ export const CHAPITRES: Chapitre[] = [
     paragraphes: [
       'Il y a trois jours, ton district t’a élu. Pas par enthousiasme, ne te vexe pas : l’ancienne directrice est partie après une saison de pannes et de raids, la Forge tourne au ralenti, la Clinique manque de tout, et le Bastion n’est qu’une palissade. Les gens ont voté pour le changement sans trop y croire. Ça leur laisse une chance d’être surpris.',
       'Ton district est un archipel, comme tous ceux du milieu : des sommets de vieux piliers couverts de verdure, reliés par des passerelles, avec un bâtiment sur chacun. Au centre, le pilier le plus large porte la Tour du Noyau, bâtie au-dessus d’un puits de chantier des années 2060. Doran te montrera les accès qu’on a murés après « un accident » dont personne ne parle. Il les connaît. Il connaît tout ce qu’on a voulu oublier sous ce district.',
-      'Le lendemain matin, des ouvriers ont rouvert sous la Tour, dans les abris murés, une chambre scellée depuis cinquante-cinq ans. Une porte ronde, gravée de motifs qu’aucune main humaine n’a dessinés, et qui luit faiblement par ses joints. Derrière, des empreintes. Pas une : beaucoup, mêlées, comme si quelqu’un les avait remises en place n’importe comment, à la hâte.',
+      'Le lendemain matin, des ouvriers qui creusaient un puisard plus profond, parce que les pompes ne suivaient plus la mer, ont rouvert sous la Tour, dans les abris murés, une chambre scellée depuis cinquante-cinq ans. Une porte ronde, gravée de motifs qu’aucune main humaine n’a dessinés, et qui luit faiblement par ses joints. Derrière, des empreintes. Pas une : beaucoup, mêlées, comme si quelqu’un les avait remises en place n’importe comment, à la hâte.',
       'Véla est venue me voir juste après. Elle lit les empreintes pour les fouilleurs depuis vingt ans, et je ne l’avais jamais vue comme ça. Elle m’a dit qu’elle avait peur, et que cette peur n’était pas la sienne. Et qu’on racontait que dans les Hauts, cette même nuit, des Résonants s’étaient réveillés sans savoir qui ils étaient.',
       'Je ne sais pas encore ce qu’il y a dans cette chambre. Mais je sais que tout Vertiga va vouloir le savoir, et que tu es la personne la plus proche de la porte. Descends. Prends Ilka, Doran et Véla. Regarde tout. Et quand tu remonteras, viens me raconter. Je garde la suite ouverte pour toi.',
+      'Au marché, on dit déjà que tu descends chercher l’Écluse : le moyen qu’auraient laissé ceux d’en dessous pour retenir la mer. Je ne crois pas aux Écluses. Mais je crois aux gens qui descendent voir.',
     ],
   },
   {
@@ -377,6 +379,7 @@ export const CHAPITRES: Chapitre[] = [
       'Dans les Strates, on trouve parfois plusieurs cristaux qui portent l’empreinte du même individu. Rien d’étrange, au début : on se gravait sans doute plusieurs fois au cours d’une vie, comme on prend des photos. Mais dans certains cas, les souvenirs ne concordent pas. Le même être se souvient, dans un cristal, d’avoir grandi au bord d’une mer chaude, et dans un autre, d’être né sous la glace. Il aime ici ce qu’il hait là. Il porte deux enfances, trois deuils, des vies qui ne peuvent pas avoir été les siennes toutes à la fois.',
       'Au début, nous avons cru à des erreurs de lecture. Véla elle-même l’a cru. Puis nous avons compris ce qui nous gênait. Ici, les murs sont plus vieux que tout ce que nous avons traversé. Les cristaux devraient y être les plus nets. Ce sont les plus confus. Les murs sont anciens. Ce qu’on a rangé dedans ne l’est pas.',
       'Et il y a les registres. Des tables gravées, que nous commençons à peine à lire, et qui ressemblent à des listes de greffes : des noms, des dates, des empreintes reçues. Certaines lignes portent dix, vingt, trente empreintes pour un seul individu. Les plus vieilles portent des noms. À côté d’elles, sur le même mur, d’autres tables, d’une gravure plus fraîche et plus maladroite, n’ont plus de colonne des noms. On n’y a plus gravé que les empreintes.',
+      'Il y a autre chose, aux Deux Rives, et celle-là, tu la comprendras sans moi. Sur la pierre, entre les deux passerelles, une ligne gravée. Puis une autre, un peu plus haut. Puis une autre. Des dizaines, l’une au-dessus de l’autre. Ils mesuraient leur eau, directeur, et ils regravaient la ligne plus haut, comme nous la repeignons à la Nuit des lignes.',
       'Je ne sais pas encore ce que ça veut dire. Ou plutôt si : je crois que je le sais, et je n’ai pas encore le courage de l’écrire. Et un peu plus bas, il y a des salles mieux scellées que toutes les autres. Si ce peuple a laissé une explication, c’est là. Descends encore. Quand tu seras là où une de nos fouilleuses est allée, je te dirai ce que je crois.',
     ],
   },
@@ -434,8 +437,32 @@ export const CHAPITRES: Chapitre[] = [
       'Tu m’as rapporté la suite, directeur. La même main, la même écriture, et dessous, une ligne que je n’avais jamais lue : « Les voix ne nous ont pas pris, elles nous ont gardés. Ne fermez rien. »',
       'J’ai passé ma vie à croire que la mise en garde était leur dernier mot. C’était le premier. Bien plus tard, quelqu’un qui portait la voix de celui qui l’avait écrite est descendu jusque-là pour lui répondre, de sa propre main. Je ne sais pas lequel des deux avait raison. Je sais seulement qu’ils étaient la même personne, et qu’ils ne se sont pas entendus.',
       'Hessa dira qu’il faut ranger cette table avec l’autre, sous clé. Moi, je voudrais l’exposer un an au marché, comme un Rendu. Ce n’est ni à elle ni à moi de décider.',
+      'Et l’Écluse, me demanderas-tu. Il n’y en avait pas, dans ce registre. Ils n’ont pas manqué de remède : ils se sont perdus dans leurs voix pendant que leur eau montait. Ils ont perdu les deux combats.',
+      'Véla, en remontant, a dit une chose que je n’arrive pas à oublier. Une Écluse a existé, mais ce n’était pas une machine. C’étaient les cœurs des Berceaux, ce qui éveille, ce qui soulève et ce qui tient. Nous les avons trouvés il y a trente ans, et nous les avons fait monter au-dessus des nuages, pour cinq familles, sur le dos des Soutiers. « Ils cherchaient le ciel, a-t-elle dit. Nous l’avons. Il flotte au-dessus de nous, et il est fermé. »',
       'Ma grand-mère disait qu’on mettait le monde en sourdine. Eux n’ont jamais rien voulu éteindre. Il doit exister un chemin entre les deux. Je suis trop vieille pour le trouver. Toi, peut-être.',
       '— Ysé',
+    ],
+  },
+  {
+    id: 'clause', livre: 3, titre: 'Il y est reçu', epoque: '2099 – 2121', image: 'chap-accords', strate: 10,
+    teaser: 'Ce que dit vraiment la Clause de la Flèche.',
+    paragraphes: [
+      'Tu connais la Clause de la Flèche. Tout le monde la connaît, comme on connaît une chanson dont on ne lit jamais les paroles. Je les ai relues pour toi, dans le texte signé des Accords : « Tout district peut envoyer une escouade ; s’il tient le sommet au passage d’une île, il y est reçu. »',
+      'Il. Les Hauts ont toujours lu « l’escouade ». Ceux qui sont montés ont été reçus, seuls : un palais, une place, parfois une pierre vierge. Ils ont tous accepté. Je ne leur en veux pas. On ne refuse pas facilement le ciel quand on vient d’en bas.',
+      'Le Noyé m’a montré un papier, la semaine dernière. Il ne montre rien à personne, d’habitude. C’est un brouillon de la Clause, écrit à la main pendant la Grève des pompes, sur une feuille de chantier. Il l’a pris sur la table des négociateurs, la nuit où les Accords ont été recopiés au propre. On y lit, sans détour : « le district dont l’escouade tient le sommet y est reçu ». Ce papier ne fait pas le droit, directeur. Il dit ce que voulaient ceux qui ont monté les îles : une porte, pas une soupape.',
+      'Il m’a dit qu’il attendait. Pas un district qui monte : il en a vu monter. Un district qui monte, et qui refuse le palais.',
+      'Je ne te dirai pas de refuser. Dame Isaure n’a pas tort sur un point : une île porte tant de vies, pas une de plus, et chaque île qu’on ouvre puise un peu plus dans des Berceaux qui s’usent. Mais je voulais que tu saches ce qui est écrit, et ce qui a été voulu. Le reste t’appartient.',
+      '— Ysé',
+    ],
+    documents: [
+      {
+        titre: 'Le brouillon de la Clause', support: 'Une feuille de chantier pliée en huit, écriture au crayon gras',
+        lignes: [
+          'Art. 14 (à recopier) : tout district peut envoyer une escouade à la dernière flèche.',
+          'Le district dont l’escouade tient le sommet au passage d’une île y est reçu.',
+          'En marge, une autre main : « Pas les nôtres. Tout le monde. »',
+        ],
+      },
     ],
   },
 ];

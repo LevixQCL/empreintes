@@ -84,6 +84,8 @@ export const SCENES: Scene[] = [
       { qui: 'doran', texte: 'Par là, il n’y a que les couloirs qu’on a murés en 2066. Enfin, il n’y avait.' },
       { qui: 'ilka', texte: 'Un monstre fait de morts mélangés, qui connaît nos tunnels mieux que nous. Parfait.' },
       { qui: 'doran', texte: 'Et regardez par terre : des traces de bottes, toutes fraîches. Quelqu’un est passé avant nous.' },
+      { qui: 'ilka', texte: 'Au marché, ils disent que tu descends chercher l’Écluse : le truc de ceux d’avant pour retenir la mer. Dis-moi que tu y crois un peu.' },
+      { qui: 'doran', texte: 'Les pompes ont tourné quatorze heures cette nuit. Écluse ou pas, la mer ne nous attendra pas.' },
     ]),
   entree(2, 'Les couloirs murés',
     'Au retour, la chambre aux empreintes était à moitié vide. Des traces de bottes s’enfoncent vers la Strate −2, les Abris murés. Tes creuseurs viennent d’en dégager l’accès.', [
@@ -173,7 +175,7 @@ export const SCENES: Scene[] = [
     quand: (c) => !!c.actes.lecture,
     repliques: [
       { qui: 'isaure', texte: 'Directeur. Votre escouade est descendue plus bas que nos Brigades. Les Hauts savent reconnaître le talent, même quand il vient d’en bas.' },
-      { qui: 'isaure', texte: 'La Flèche d’amarrage accueillera votre escouade. Le district qui tient son sommet quand une île passe est reçu là-haut. Ce sont nos usages depuis les Accords.' },
+      { qui: 'isaure', texte: 'La Flèche d’amarrage accueillera votre escouade. L’escouade qui tient son sommet quand une île passe est reçue là-haut. Ce sont nos usages depuis les Accords.' },
       { qui: 'vela', texte: 'Elle sait ce que j’ai lu. Je ne sais pas comment, mais elle le sait. C’est pour ça qu’elle nous veut près d’elle.', si: lecture('autoriser') },
       { qui: 'vela', texte: 'Elle croit que j’ai lu les cristaux. Elle préfère nous avoir sous les yeux.', si: lecture('refuser') },
       { qui: 'aurel', texte: 'Ma tante n’invite jamais : elle convoque. Monte, si tu veux. Mais monte en sachant qu’elle te regarde.', si: present('aurel') },
@@ -183,7 +185,9 @@ export const SCENES: Scene[] = [
 
   // ---------- Acte III · Ceux d'avant (la Tisseuse, puis le Premier Porteur) ----------
   entree(7, 'Deux passerelles',
-    'Sous les salles closes, les mémoires se contredisent. Les murs montrent des souvenirs qui ne sont à personne. Et parfois, ils montrent les vôtres.', [
+    'Sous les salles closes, les mémoires se contredisent. Entre les deux passerelles, sur la pierre, une ligne d’eau gravée, puis une autre plus haut, puis des dizaines, l’une au-dessus de l’autre.', [
+      { qui: 'doran', texte: 'Ils regravaient leur ligne plus haut. Comme nous à la Nuit des lignes.' },
+      { qui: 'ilka', texte: 'Alors eux non plus, ils ne l’avaient pas, leur Écluse.' },
       { qui: 'ilka', texte: 'Je me souviens de la passerelle qui a cédé. Ici, je m’en souviens deux fois. Une fois, quelqu’un plonge. L’autre fois, personne.' },
       { qui: 'doran', texte: 'Accroche-toi à celle où quelqu’un plonge. C’est la tienne. Les autres, on te les prête.' },
       { qui: 'vela', texte: 'Depuis la lecture, j’entends tout en double. Restez près de moi. Si je me trompe de souvenir, dites-le-moi.', si: lecture('autoriser') },
@@ -236,6 +240,9 @@ export const SCENES: Scene[] = [
       { qui: 'premier-porteur', texte: 'Les voix ne nous ont pas pris, elles nous ont gardés. Ne fermez rien.' },
       { qui: 'doran', texte: 'Il est descendu seul, il a écrit ça sous la mise en garde, et il a refermé derrière lui. De l’intérieur.' },
       { qui: 'ilka', texte: 'Et nous, on a pris leurs empreintes pour des cadeaux. Il faut le dire à tout Vertiga. Mais quoi, exactement ? Ça, c’est à toi.' },
+      { qui: 'doran', texte: 'Et l’Écluse ? Pas une ligne dessus. Ils ont perdu contre leur eau, comme contre leurs voix.' },
+      { qui: 'vela', texte: 'Une Écluse a existé, Doran. Ce qui éveille, ce qui soulève, ce qui tient : les cœurs des Berceaux. On les a trouvés, et on les a montés là-haut, pour cinq familles.' },
+      { qui: 'vela', texte: 'Ils cherchaient le ciel. Nous l’avons. Il flotte au-dessus de nous, et il est fermé.' },
     ]),
   {
     id: 'epilogue', acte: 4, sur: 'ÉPILOGUE', titre: 'Ce que tu as choisi', image: { intro: '00-titre' },
@@ -247,6 +254,7 @@ export const SCENES: Scene[] = [
       { qui: 'yse', texte: 'Tout le monde sait, maintenant. Ce que chacun en fera, je n’en sais rien. C’est ça, la liberté : on ne sait pas.', si: fin('archives') },
       { qui: 'vela', texte: 'Les voix se sont calmées. Pas toutes. Assez pour que j’entende la mienne.' },
       { qui: 'ilka', texte: 'Et maintenant ? Il reste des Berceaux, des pilleurs, et une île qui passe. Les Strates continuent.' },
+      { qui: 'yse', texte: 'Le Noyé est passé me voir, avec un vieux papier plié en huit. Il dit que la Clause de la Flèche parle de ton district, pas seulement de ton escouade. Je t’ai recopié tout ça dans les Chroniques.' },
       { qui: 'yse', texte: 'Regarde la mer, directeur. Elle n’a pas oublié de monter. Mais toi, tu as regardé. Je ferme mon cahier : la suite est à toi.' },
     ],
   },
