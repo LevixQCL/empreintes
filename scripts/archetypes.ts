@@ -22,7 +22,7 @@ const arg = (nom: string, defaut: string) => {
 };
 const PARTIES = Number(arg('parties', '120'));
 const METAL = arg('metal', 'fer') as Rarete;
-const NIVEAU_CARTES = 10;
+const NIVEAU_CARTES = Number(arg('niveau', '10'));
 /** --echo 1.6 : essaie un autre bonus d'Écho sans toucher aux règles */
 if (process.argv.includes('--echo')) (REGLES as { echo: number }).echo = Number(arg('echo', String(REGLES.echo)));
 /** --sortie fichier.md : écrit le rapport ailleurs que dans docs/ (pour comparer plusieurs réglages) */
