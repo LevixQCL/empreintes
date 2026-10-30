@@ -64,6 +64,12 @@ const MODULES_ILLUSTRES: Record<string, string> = {
   souffle: 'souffle',
   'stimulant': 'stimulant',
   'repli': 'repli',
+  // les cartes communes du Râtelier (30 octobre 2026)
+  'lame-atelier': 'lame-atelier',
+  'plan-galeries': 'plan-galeries',
+  'groupe-secours': 'groupe-secours',
+  breche: 'breche',
+  'ampoule-releve': 'ampoule-releve',
   // les voies, étape 1 (27 octobre 2026)
   'bobine-recuperation': 'bobine-recuperation',
   condensateur: 'condensateur',
