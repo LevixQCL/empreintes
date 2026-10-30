@@ -193,7 +193,9 @@ export const portraitYse = `${base}personnages/yse.webp`;
 const PERSONNAGES_ILLUSTRES = new Set(['yse', 'hald', 'isaure', 'brac', 'tobin']);
 export const portraitPersonnage = (id: string): string | null => (PERSONNAGES_ILLUSTRES.has(id) ? `${base}personnages/${id}.webp` : null);
 /** Les scènes de la campagne qui ont leur propre illustration (public/art/scenes/) ; les autres reprennent un décor existant */
-const SCENES_ILLUSTREES = new Set(['entree-2', 'entree-4', 'entree-5', 'entree-6', 'gardien-2', 'gardien-3', 'convocation', 'entree-8', 'gardien-9', 'epilogue']);
+const SCENES_ILLUSTREES = new Set(['entree-2', 'entree-4', 'entree-5', 'entree-6', 'gardien-2', 'gardien-3', 'convocation', 'entree-8', 'gardien-9', 'epilogue',
+  // les onze dernières (30 octobre 2026) : toute la campagne est illustrée
+  'gardien-1', 'entree-3', 'gardien-4', 'gardien-5', 'gardien-6', 'entree-7', 'gardien-7', 'gardien-8', 'entree-9', 'entree-10', 'gardien-10']);
 /** Le décor des combats de la Flèche : une plateforme d'amarrage au-dessus des nuages (28 octobre 2026) */
 export const fondFleche = `${base}scenes/fleche.webp`;
 /** La Flèche peinte (30 octobre 2026) : la Flèche entière, le médaillon de l'escouade, les plaques, les fanions, la passerelle, le sceau du gardien */
