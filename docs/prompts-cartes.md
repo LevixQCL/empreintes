@@ -317,6 +317,42 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 ```
 
 
+### Les cartes communes du Râtelier (30 octobre 2026)
+
+Cinq nouvelles cartes communes, même lumière ivoire que Stimulant et Repli : du matériel du district, jamais un pouvoir.
+Aucun cœur, aucune chaussure, aucune carapace (thèmes déjà trop vus). Format 600 × 848, dans `public/art/modules/<id>.webp`.
+
+#### Lame d’atelier — `lame-atelier.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a short sturdy machete forged from a recycled saw blade, its teeth ground down into a clean bright edge, a handle wrapped in worn leather and copper wire, fresh grinding sparks still cooling on the bench beside a whetstone, the object softly lit by pale ivory-white light with small touches of pale gold, neutral soft lighting, cool grey-blue shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, needle, sword hilt jewels, crystal
+```
+
+#### Plan des galeries — `plan-galeries.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a rolled-out hand-drawn map of underground tunnels on thick oilcloth, held flat by a brass compass and a small miner's lamp, tunnels marked with chalk arrows and little safe-room symbols, one corner curling up, the object softly lit by pale ivory-white light with small touches of pale gold, neutral soft lighting, cool grey-blue shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, needle, crystal, gemstone, skull
+```
+
+#### Groupe de secours — `groupe-secours.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a rescue kit hanging on a hook: a coiled climbing rope, a dented brass signal horn and a heavy crowbar bundled together with a canvas strap, a small round emergency lamp glowing beside them, the object softly lit by pale ivory-white light with small touches of pale gold, neutral soft lighting, cool grey-blue shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, needle, crystal, shield, heart
+```
+
+#### Brèche — `breche.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a small breaching charge: a squat iron canister bound with riveted straps, a short braided fuse curling from its top, a chalk cross drawn on a cracked stone slab beneath it, a few stone chips scattered around, the object softly lit by pale ivory-white light with small touches of pale gold, neutral soft lighting, cool grey-blue shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, needle, fire, explosion, crystal, skull
+```
+
+#### Ampoule de relève — `ampoule-releve.webp`
+
+```
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a single tall glass ampoule of glowing pale gold liquid standing upright in a carved wooden cradle, a thin trail of light rising from it like a slow breath, a folded clean cloth beside it, the object softly lit by pale ivory-white light with small touches of pale gold, neutral soft lighting, cool grey-blue shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, blood, needle, syringe, crystal, heart
+```
+
+
 ## Les voies, étape 1 (27 octobre 2026)
 
 Les 14 cartes du Moteur, de la Carapace et du Chœur (`docs/familles-de-decks.md`). Même composition et mêmes lumières que leur lignée.

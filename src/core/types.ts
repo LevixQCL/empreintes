@@ -59,7 +59,14 @@ export type Effet =
   /** copie l'effet de la carte posée juste avant (sauf une Fréquence libre ou une autre Empreinte) */
   | { type: 'empreinte' }
   /** relève le premier Porteur à terre avec tout le soin ; sinon, soigne normalement */
-  | { type: 'releve' };
+  | { type: 'releve' }
+  // ---------- Les cartes communes du district (30 octobre 2026) : la logistique, pas la puissance ----------
+  /** la main du tour suivant compte une carte de plus */
+  | { type: 'pioche' }
+  /** brise tout le bouclier de l'ennemi visé, avant de frapper */
+  | { type: 'breche' }
+  /** une part de force en plus pour chaque Porteur à terre */
+  | { type: 'secours'; part: number };
 
 export type TypeEffet = Effet['type'];
 
@@ -134,6 +141,10 @@ export interface GesteDef {
   effet?: Effet;
   /** second effet (cartes de l’Héritage) */
   effet2?: Effet;
+  /** une fois son effet utilisé (une Relève), la carte quitte le combat (cartes communes du district) */
+  unique?: boolean;
+  /** la carte a servi : elle ne revient plus dans la pioche */
+  epuise?: boolean;
   /** Place vide : un Porteur combat toujours avec 6 places ; celle qu'on ne remplit pas se pioche et ne se joue pas */
   vide?: boolean;
 }
@@ -304,6 +315,8 @@ export interface CombatEtat {
   chaine: Geste[];
   capaBonus: number;
   /** places en plus gagnées pour le tour suivant (Élan) */
+  /** cartes de plus dans la main du tour suivant (Plan des galeries) */
+  piocheProchain?: number;
   capaProchain?: number;
   bouclier: number;
   /** le Porteur que le bouclier couvre en premier sur une attaque de zone, choisi par le joueur pour ce tour (sinon proposé) */

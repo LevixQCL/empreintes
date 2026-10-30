@@ -632,7 +632,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   // Rappel (exclusive) : la carte la plus forte de la chaîne, hors celles qui rappellent, revient en tête de pioche
   const rappel = s.chaine.find((g, i) => effetsEnJeu(g, s.chaine, i, estATerre(s, g.porteur)).some((e) => e?.type === 'rappel'));
   const rappelee = rappel ? s.chaine.filter((g) => g !== rappel && !g.vide && g.effet?.type !== 'rappel').sort((a, b) => b.v - a.v)[0] : undefined;
-  s.defausse.push(...s.chaine.filter((g) => g !== rappelee));
+  s.defausse.push(...s.chaine.filter((g) => g !== rappelee && !g.epuise));
   if (rappelee) {
     s.pioche.push(rappelee);
     log(s, `Rappel : ${rappelee.nom} revient en tête de pioche.`, { sorte: 'effet' });
@@ -808,6 +808,15 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
     log(s, `Rapt : ${pris} de bouclier arrachés à l’ennemi, pour l’escouade.`, { sorte: 'protection', v: pris });
     evs.push({ kind: 'bouclier', cible: 'escouade', v: pris });
   }
+  // Brèche (carte du district) : le bouclier de l'ennemi visé vole en éclats, avant le coup
+  if (de('breche') && s.ennemi.pv > 0 && s.ennemi.bouclier > 0) {
+    const brise = s.ennemi.bouclier;
+    s.ennemi.bouclier = 0;
+    log(s, `Brèche : ${brise} de bouclier ennemi brisés.`, { sorte: 'effet' });
+    evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Brèche' });
+  }
+  // Plan des galeries (carte du district) : une carte de plus dans la main du tour suivant
+  if (de('pioche')) s.piocheProchain = 1;
   // Lecture : la Fêlure de l'ennemi visé se brise, quelle que soit sa Fréquence (avant le coup : la Faille en profite déjà)
   if (de('lecture') && s.ennemi.pv > 0 && s.ennemi.felure !== undefined && !s.ennemi.felureBrisee) briser(s, s.ennemi, (ev) => evs.push(ev), suite >= 3);
   // Décharge (Moteur) : elle vide le Flux et gagne une part de force par Flux vidé (le facteur est lu avant de vider)
@@ -895,6 +904,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
     if (aTerre) {
       aTerre.pv = Math.max(1, Math.min(aTerre.pvMax, Math.round(force)));
       aTerre.aTerre = false;
+      if (g.unique) g.epuise = true;
       log(s, `Relève : ${porteurDef(aTerre.id).nom} se relève avec ${aTerre.pv} PV.`, { sorte: 'soin', v: aTerre.pv, calculs: [calcul(porteurDef(aTerre.id).nom, g.v, facteurs, aTerre.pv, 0, aTerre.pv)] });
       evs.push({ kind: 'soin', cible: aTerre.id, v: aTerre.pv });
     }
@@ -993,6 +1003,9 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   if (s.condition === 'sanctuaire' && g.type === 'soin') mettre(CONDITIONS.sanctuaire!.nom, 1.3);
   // Débridage (Coup d'éclat des Augmentés) : les coups de ce tour frappent plus fort
   if (s.debride && g.type === 'atk') mettre('Débridage', REGLES.eclat.debride);
+  const sc = de('secours');
+  const tombes = s.porteurs.filter((p) => p.pv <= 0).length;
+  if (sc && tombes) mettre(`Groupe de secours (${tombes} à terre)`, 1 + sc.part * tombes);
   const dc = de('decharge');
   if (dc) mettre(`Décharge (${s.flux} Flux)`, 1 + dc.part * s.flux);
   // Unisson (Chœur) : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne
@@ -1208,7 +1221,8 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
     if (en.crescendo) en.crescendo = Math.min(REGLES.troisiemePhase.deferlementMax, en.crescendo + REGLES.troisiemePhase.deferlement);
   }
   for (const en of ennemisDebout(s)) choisirIntention(s, en);
-  piocher(s);
+  piocher(s, tailleMainDe(s) + (s.piocheProchain ?? 0));
+  s.piocheProchain = 0;
   fixerFelures(s);
 }
 

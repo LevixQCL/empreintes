@@ -5,10 +5,10 @@
 import { portOuvert } from './pillages';
 import { epitheteAffiche, epithetesDe, journalCarte, NOMS_PALIER, palierDe, vecuDe, versPalierSuivant, PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
-import { CLE_LEGS, GESTES_SPECIAUX, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
+import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, CARTES_COMMUNES, communeOuverte, coutRatelier, gesteCommun, ratelierDe, ratelierPayable, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -954,7 +954,8 @@ function fenetreChoix(j: Jeu): string {
  */
 export function loupeCarte(id: string, j: Jeu): string | null {
   // une carte du paquetage (fournie à chaque escouade) n'est pas un Module : on la reconstruit comme dans l'écran Cartes
-  const g = GESTES_SPECIAUX.find((x) => x.id === id);
+  const c0 = CARTES_COMMUNES.find((x) => x.geste.id === id);
+  const g = c0 ? gesteCommun(j, c0) : undefined;
   let m: ModuleDef;
   if (g) m = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) };
   else try { m = moduleDef(id); } catch { return null; }
@@ -1211,14 +1212,18 @@ export function htmlCartes(e: EcranDistrict): string {
       h += `</div>`;
     }
   }
-  // le paquetage du district : dans chaque deck, jamais dans la collection (on le montre pour qu'on sache d'où il vient)
+  // les cartes communes du district (Râtelier, 30 octobre 2026) : jamais dans la collection, on les montre pour qu'on sache d'où elles viennent
   if (f === 'tout') {
-    h += `<h2 class="titre-section" style="--c:#CDEFFF">Paquetage du district</h2>`
-      + `<p class="cl-intro">Fourni à chaque escouade qui descend, en plus des cartes de tes Porteurs. Ces cartes restent même si un Porteur tombe ; elles n’ont pas de métal et ne montent pas de niveau.</p>`
-      + `<div class="grille-cartes">` + GESTES_SPECIAUX.map((g) => {
+    const choisies = ratelierDe(j);
+    h += `<h2 class="titre-section" style="--c:#CDEFFF">Cartes communes du district</h2>`
+      + `<p class="cl-intro">Préparées par tes bâtiments : sans lignée ni métal, elles ne s’éteignent jamais quand un Porteur tombe et gagnent de la force quand leur bâtiment monte. Choisis celles qui descendent dans le Râtelier de l’escouade.</p>`
+      + `<div class="grille-cartes">` + CARTES_COMMUNES.map((c) => {
+        const g = gesteCommun(j, c);
         const o = ORIGINE_PAQUETAGE[g.id]!;
+        const ouverte = communeOuverte(j, c);
         const m: ModuleDef = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) };
-        return `<div class="carte-tuile cl-carte cl-paquetage" data-carte="${g.id}">${faceCarte(m, 1, 1, { origine: o.batiment })}<span class="cl-bas"><span class="cl-origine">${echap(o.texte)}</span></span></div>`;
+        const bas = !ouverte ? `${ICO.cristal}<b>${echap(o.batiment)} niveau ${c.niveau}</b>` : choisies.includes(g.id) ? `<b>Au Râtelier</b> · ${echap(o.texte)}` : echap(o.texte);
+        return `<div class="carte-tuile cl-carte cl-paquetage${ouverte ? '' : ' cl-scellee'}" data-carte="${g.id}">${faceCarte(m, 1, 1, { origine: o.batiment })}<span class="cl-bas"><span class="cl-origine">${bas}</span></span></div>`;
       }).join('') + (j.legs === 'cle' ? carteCle(j) : '') + `</div>`;
   }
   // le mode d'emploi prend la place des autres feuilles ; en le fermant, on retrouve celle d'où on venait
@@ -1775,6 +1780,9 @@ export function htmlEscouade(e: EcranDistrict): string {
       + `<div class="es-freq" role="img" aria-label="Fréquences du deck : ${n.map((k, i) => `${i + 1} : ${k}`).join(', ')}">`
       + n.map((k, i) => `<span class="es-f${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}${i && n[i - 1] && k ? ' lie' : ''}" style="--fc:${couleurFrequence(i + 1)}"><b>${i + 1}</b><small>${k ? `×${k}` : '—'}</small></span>`).join('')
       + `</div><p class="es-freq-aide">Des chiffres qui se suivent font des Résonances${suite.length >= 2 ? ` : ta plus longue suite va de <b>${suite[0]} à ${suite[suite.length - 1]}</b>` : ''}. Un chiffre absent coupe la suite${jokers ? ` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</p>`;
+    // le Râtelier (30 octobre 2026) : ce que coûte la préparation des cartes communes, et celle qui reste au district faute d'énergie
+    const prevues = ratelierDe(j).length, payees = ratelierPayable(j).length, prix = coutRatelier(j, payees);
+    if (prix || payees < prevues) h += `<p class="es-freq-aide">${ICO.energie}Râtelier : ${payees} carte${payees > 1 ? 's' : ''} commune${payees > 1 ? 's' : ''}${prix ? `, <b>${prix} énergie</b> au départ` : ''}${payees < prevues ? ` · il manque de l’énergie : ${prevues - payees} reste${prevues - payees > 1 ? 'nt' : ''} au district` : ''}.</p>`;
     if (maigre) {
       const aRemplir = e.escouade.filter((id) => j.porteurs[id]!.modules.length < DISTRICT.cartesMax);
       const cible = aRemplir.sort((x, y) => j.porteurs[x]!.modules.length - j.porteurs[y]!.modules.length)[0];

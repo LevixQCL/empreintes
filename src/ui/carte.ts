@@ -59,6 +59,9 @@ export const ICONES_EFFET: Record<TypeEffet, string> = {
   rappel: trait('<path d="M5 12a7 7 0 1 0 2-5"/><path d="M5 3v5h5"/><path d="M12 9v4l2 2"/>'),
   surtension: trait('<path d="M13 2L4 14h7l-1 8 9-12h-7z"/><path d="M20 4l2-2M2 22l2-2"/>'),
   empreinte: trait('<path d="M7 20c-1.5-2-2-4-2-7a7 7 0 0 1 14 0"/><path d="M10 20c-1-2-1.5-4-1.5-7a3.5 3.5 0 0 1 7 0c0 2 0 3-.5 5"/><path d="M12 13c0 3 .5 5 1.5 7"/>'),
+  pioche: trait('<path d="M4 6l5-2 6 2 5-2v14l-5 2-6-2-5 2z"/><path d="M9 4v14M15 6v14"/>'),
+  breche: trait('<path d="M12 2.5l7 2.6v5.2c0 4.4-3 7.6-7 8.8-4-1.2-7-4.4-7-8.8V5.1z"/><path d="M12 5l-2 5 3 2-2 6"/>'),
+  secours: trait('<path d="M12 4v16M4 12h16"/><circle cx="12" cy="12" r="9"/>'),
   releve: trait('<path d="M12 21V8"/><path d="M7 12l5-5 5 5"/><path d="M5 4h14"/>'),
 };
 /** la couleur de l'arête du cadre, de la barre et de la capsule de valeur */
@@ -171,7 +174,7 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?:
     // une carte du paquetage n'a ni niveau ni lignée : le bâtiment qui la fournit est écrit sous elle
     niveau: o.origine ? undefined : niveau, lignee: o.origine ? '#CDEFFF' : COULEUR[m.lignee], fx: true,
   };
-  const label = `${m.nom}, ${o.origine ? `fournie par la ${o.origine}` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau} sur ${COLLECTION.niveauMax}, ${NOMS_LIGNEE[m.lignee].nom}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + nomsEffets(m) : ''}${m.lourd ? ', prend 2 places' : ''}${m.seul ? `, exclusive : n’existe qu’en ${NOMS_RARETE[m.rarete].toLowerCase()}` : ''}`;
+  const label = `${m.nom}, ${o.origine ? `fournie par le district (${o.origine})` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau} sur ${COLLECTION.niveauMax}, ${NOMS_LIGNEE[m.lignee].nom}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + nomsEffets(m) : ''}${m.lourd ? ', prend 2 places' : ''}${m.seul ? `, exclusive : n’existe qu’en ${NOMS_RARETE[m.rarete].toLowerCase()}` : ''}`;
   // au niveau maximum, un fin liseré de lumière parcourt le cadre : la maîtrise, sans force en plus (29 octobre 2026)
   const maitre = !o.origine && !m.legs && niveau >= COLLECTION.niveauMax;
   return `<div class="fc-ombre fo-${m.rarete}${m.legs ? ' fo-legs' : ''}${maitre ? ' fo-maitre' : ''}"><div class="fc-carte nf nf-${m.rarete}" style="${styleFace(d)}" role="img" aria-label="${echap(label + (maitre ? ', maîtrisée' : ''))}">`

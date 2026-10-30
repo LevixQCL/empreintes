@@ -2,15 +2,15 @@
 // tous les Porteurs (une grille par lignée, 22 octobre 2026), et la collection (htmlCartes dans district.ts).
 // La fiche complète d'un Porteur : qui il est, son état (PV, niveau, Usure), sa Marque, sa lignée, son poste et ses cartes.
 
-import { BATIMENTS, CLE_LEGS, GESTES_SPECIAUX, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
+import { BATIMENTS, CLE_LEGS, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
 import { CHARGE, NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
-import { ACCORD_OUVERT, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
+import { ACCORD_OUVERT, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
-import { NOMS_EFFET, nomsEffets } from '../core/effets';
+import { NOMS_EFFET, nomsEffets, texteEffet } from '../core/effets';
 import { multNiveau } from '../core/collection';
-import type { GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
+import type { BatimentId, GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
 import { illustrationBatiment, portrait } from './art';
 import { ICONES_ACTION, couleurFrequence, faceCarte } from './carte';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, voletsEscouade, type EcranDistrict } from './coquille';
@@ -102,6 +102,7 @@ export function htmlPorteurs(e: EcranDistrict): string {
   let h = e.reserve ? listeTous(e) : monEscouade(e);
   // le mode d'emploi prend la place des autres feuilles ; en le fermant, on retrouve celle d'où on venait
   if (e.guide) h += feuilleGuide(e.guide, trouveesDe(e.j.collection));
+  else if (e.ratelier && !e.reserve) h += voletRatelier(e);
   else if (e.place !== null && e.place !== undefined && !e.reserve) h += voletPlace(e, e.place);
   else if (e.deck) h += feuilleDeck(e);
   else if (e.carte) h += feuilleCarte(e);
@@ -292,9 +293,78 @@ function monEscouade(e: EcranDistrict): string {
   // le paquetage du district, toujours là
   // la Clé de l’Héritage (29 octobre 2026) : visible dès qu'on l'a choisie, scellée tant qu'aucun Porteur de l'escouade n'a le niveau 10
   const cle = j.legs === 'cle' ? cleDuLegs(j, esc) : null;
-  h += `<section class="eq-district"><div class="eq-cartes-tete"><h3>${ICO.district}Paquetage du district <span>${GESTES_SPECIAUX.length + (j.legs === 'cle' ? 1 : 0)}</span></h3><small>Fourni à chaque escouade qui descend : il reste même si un Porteur tombe</small></div>`
-    + `<ul class="eq-grille">${GESTES_SPECIAUX.map((g) => tuileCarte(j, g, prete)).join('')}${j.legs === 'cle' ? tuileCarte(j, cle ?? CLE_LEGS, prete, !cle) : ''}</ul></section>`;
+  h += ratelierSection(j, esc, prete, !!verrou, cle);
   return h;
+}
+
+/**
+ * Le Râtelier du district (30 octobre 2026) : les cartes communes qui descendent avec l'escouade. Bryan : « pouvoir les échanger ».
+ * Les deux premières sont fournies ; les suivantes coûtent de l'énergie à chaque départ. Elles restent quand un Porteur tombe.
+ */
+function ratelierSection(j: Jeu, esc: string[], prete: (cle: string) => boolean, verrou: boolean, cle: GesteDef | null): string {
+  const choisies = ratelierDe(j);
+  const payees = ratelierPayable(j).length;
+  const places = placesRatelier(j);
+  const cout = coutRatelier(j);
+  const manque = payees < choisies.length;
+  const vides = Math.max(0, places - choisies.length);
+  const sous = cout ? `${ICO.energie}<b>${cout}</b> énergie à chaque départ${manque ? ' · <em>pas assez : la dernière reste au district</em>' : ''}` : 'Fournies à chaque départ, elles restent même si un Porteur tombe';
+  let h = `<section class="eq-district"><div class="eq-cartes-tete"><h3>${ICO.district}Râtelier du district <span>${choisies.length} / ${places}</span></h3>`
+    + (verrou ? '' : `<button type="button" class="eq-gerer" data-action="ratelier" aria-label="Changer les cartes du Râtelier">${ICO.recycler}<span>Changer</span></button>`) + `<small>${sous}</small></div>`;
+  h += `<ul class="eq-grille">${choisies.map((id) => tuileCarte(j, gesteCommun(j, CARTES_COMMUNES.find((c) => c.geste.id === id)!), prete)).join('')}`
+    + (verrou ? '' : Array.from({ length: vides }, (_, k) => `<li><button type="button" class="eq-tuile libre" data-action="ratelier" aria-label="Emplacement libre : choisir une carte commune"><span class="eq-t-vide">${ICO.district}<span>${k === 0 ? 'Emplacement libre' : ''}</span></span></button></li>`).join(''))
+    + `${j.legs === 'cle' ? tuileCarte(j, cle ?? CLE_LEGS, prete, !cle) : ''}</ul></section>`;
+  void esc;
+  return h;
+}
+
+/** Le volet du Râtelier : toutes les cartes communes, celles qu'on peut prendre et celles qu'un bâtiment ouvrira */
+function voletRatelier(e: EcranDistrict): string {
+  const j = e.j;
+  const choisies = ratelierDe(j);
+  const places = placesRatelier(j);
+  const plein = choisies.length >= places;
+  const prochaine = RATELIER.places.find((p) => p.n > places);
+  const ligne = (c: (typeof CARTES_COMMUNES)[number], k: number) => {
+    const ouverte = communeOuverte(j, c);
+    const pris = choisies.includes(c.geste.id);
+    const g = gesteCommun(j, c);
+    const bat = BATIMENTS.find((b) => b.id === c.batiment)!;
+    const rang = choisies.indexOf(c.geste.id);
+    const prix = pris && rang >= RATELIER.gratuits ? RATELIER.energie[rang - RATELIER.gratuits] : !pris && choisies.length >= RATELIER.gratuits ? RATELIER.energie[choisies.length - RATELIER.gratuits] : 0;
+    const raison = ouverte ? '' : `${bat.nom} niveau ${c.niveau} : ${echap(raisonFermee(c.batiment))}`;
+    const etat = !ouverte ? '' : pris ? `<span class="me-prendre retirer">Retirer</span>` : plein ? '' : `<span class="me-prendre">Prendre</span>`;
+    return `<button type="button" class="me-choix rt-choix${ouverte ? '' : ' indispo'}${pris ? ' pris' : ''}" data-action="ratelier-basculer" data-id="${c.geste.id}"${!ouverte || (plein && !pris) ? ' disabled' : ''} style="--c:#CDEFFF;--i:${k}">`
+      + `<span class="rt-face">${tuileFace(g)}</span>`
+      + `<span class="me-choix-txt"><strong>${echap(g.nom)}</strong><small class="me-stats">${NOM_ACTION[g.type]} ${g.v} · Fréquence ${g.f}${g.effet ? ` · ${echap(nomsEffets(g))}` : ''}</small>`
+      + (g.effet ? `<small class="me-raison">${echap(texteEffet(g.effet))}${c.geste.unique ? ' Une fois par combat.' : ''}</small>` : '')
+      + `<small class="me-raison">${raison || `${echap(bat.nom)} · grandit avec le bâtiment${prix ? ` · ${prix} énergie par départ` : ''}`}</small></span>${etat}</button>`;
+  };
+  let h = `<div class="voile-feuille" data-action="ratelier-fermer" aria-hidden="true"></div>`
+    + `<section class="feuille me-volet" role="dialog" aria-modal="true" aria-labelledby="volet-titre"><span class="poignee" aria-hidden="true"></span>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">Râtelier · ${choisies.length} / ${places}</span><h2 id="volet-titre">Cartes communes du district</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="ratelier-fermer" aria-label="Fermer">${ICO.fermer}</button></header>`
+    + `<div class="feuille-corps"><p class="me-aide">Chaque bâtiment prépare ses cartes : elles n’ont ni lignée ni métal, ne s’éteignent jamais quand un Porteur tombe, et gagnent de la force quand leur bâtiment monte. Les ${RATELIER.gratuits} premières sont fournies ; les suivantes demandent de l’énergie à chaque départ.</p>`
+    + `<div class="me-choix-liste">${CARTES_COMMUNES.map(ligne).join('')}</div>`
+    + (prochaine ? `<p class="me-aide">Un emplacement de plus au niveau ${prochaine.noyau} de la Tour du Noyau.</p>` : '');
+  return h + `</div></section>`;
+}
+
+/** Pourquoi une carte commune n'est pas encore prête : une raison du district, pas un voile sombre (23 octobre 2026) */
+function raisonFermee(b: BatimentId): string {
+  return ({
+    noyau: 'les creuseurs n’ont pas encore relevé ces galeries.',
+    generateur: 'le courant ne suffit pas encore pour équiper une équipe.',
+    forge: 'le forgeron n’a pas encore l’outillage pour ça.',
+    clinique: 'la Clinique n’a pas encore le matériel.',
+    comptoir: 'les fouilleurs n’en ont pas encore rapporté.',
+  } as Record<BatimentId, string>)[b];
+}
+
+/** La face d'une carte commune, en petit */
+function tuileFace(g: GesteDef): string {
+  const o = ORIGINE_PAQUETAGE[g.id];
+  return faceCarte({ id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) } as Parameters<typeof faceCarte>[0], 1, 1, o ? { origine: o.batiment } : {});
 }
 
 /** Le volet « Choisir un Porteur » pour une place de l'escouade */

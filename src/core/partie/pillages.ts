@@ -17,7 +17,7 @@ const butinCombat = (strate: number, _index: 0) => Math.round(6 * (1 + 0.25 * (s
 import { graine, tireur } from '../rng';
 import type { Lignee } from '../types';
 import { CONFIANCE, XP, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureAuRetour, type Jeu, type Resultat } from './etat';
-import { escouadePrete, remonter as remonterDescente, type Retour } from './descentes';
+import { escouadePrete, payerRatelier, remonter as remonterDescente, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 
 export const PILLAGE = {
@@ -308,6 +308,7 @@ export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rn
   x.combat.ennemi.porteur = cible.porteurs[0];
   x.combat.autres?.forEach((en, k) => { en.porteur = cible.porteurs[k + 1]; });
   x.combat.journal = [`La garnison de ${cible.nom} sort à ta rencontre : ${cible.porteurs.slice(0, 3).map((id) => porteurDef(id).nom).join(', ')}.`];
+  payerRatelier(j);
   quitterPostes(j, escouade);
   faits.push(cible.id);
   const etat = etatPillage(j);

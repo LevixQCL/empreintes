@@ -14,7 +14,8 @@
     "voies": "tsx scripts/voies.ts",
     "exclusives": "tsx scripts/exclusives.ts",
     "visuel": "tsx scripts/visuel.ts",
-    "css": "node scripts/css-propre.cjs"
+    "css": "node scripts/css-propre.cjs",
+    "ratelier": "tsx scripts/ratelier.ts"
   },
   "devDependencies": {
     "postcss": "^8.5.31",

@@ -89,6 +89,8 @@ export interface EcranDistrict {
   reserve?: boolean;
   /** onglet Escouade : la place de l'escouade (0 à 2) dont on choisit le Porteur, volet ouvert */
   place?: number | null;
+  /** le volet du Râtelier (cartes communes du district) est ouvert (30 octobre 2026) */
+  ratelier?: boolean;
   /** onglet Escouade : l'escouade affichée (0 à 2) ; par défaut, celle qui descend */
   vueEscouade?: number;
   /** onglet Escouade ouvert depuis le départ ou le Port (27 octobre 2026) : le bouton pour y revenir */

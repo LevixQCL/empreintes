@@ -289,6 +289,41 @@ export const CARTE_CHAMBRE = carteId('oeil-relais', 'fer');
 const special = (id: string, nom: string, f: number, type: TypeGeste, v: number, effet?: Effet): GesteDef =>
   ({ id, carte: id, porteur: null, nom, f, type, v, ...(effet ? { effet } : {}) });
 export const GESTES_SPECIAUX: GesteDef[] = [special('stimulant', 'Stimulant', 1, 'soin', 5, { type: 'vague' }), special('repli', 'Pavois de cuivre', 9, 'bouclier', 10)];
+
+// ---------- Le Râtelier du district (30 octobre 2026) ----------
+// Bryan et Luc : « on aime l'idée des cartes communes et de leur provenance, mais il en faut des nouvelles et pouvoir les échanger ».
+// Les cartes communes restent sans lignée, sans métal, portées par personne. Chacune vient d'un bâtiment, s'ouvre à un niveau
+// de ce bâtiment, et gagne de la force quand il monte. Au district, le Râtelier choisit celles qui descendent.
+export interface CarteCommuneDef {
+  geste: GesteDef;
+  batiment: BatimentId;
+  /** niveau du bâtiment qui ouvre la carte */
+  niveau: number;
+  /** d'où elle vient, en une phrase */
+  texte: string;
+}
+// Revue d'un game designer (30 octobre 2026) : le district fournit la logistique, pas la puissance. Ses cartes garantissent un
+// minimum (soin, bouclier, de quoi relier une suite), servent de filet quand un Porteur tombe (elles ne s'éteignent jamais),
+// et ne prennent jamais l'effet d'une lignée. Écartées pour ça : soin ciblé fort (Génés), Rempart (Génés), Désarmer et Fissure
+// (Résonants). Une carte d'attaque commune reste sous une carte de fer (7 contre 8-9) : elle ne s'éteint pas, ça vaut déjà un surplus.
+const commune = (g: GesteDef, batiment: BatimentId, niveau: number, texte: string): CarteCommuneDef => ({ geste: g, batiment, niveau, texte });
+const ampoule = special('ampoule-releve', 'Ampoule de relève', 6, 'soin', 8, { type: 'releve' });
+ampoule.unique = true;
+export const CARTES_COMMUNES: CarteCommuneDef[] = [
+  commune(GESTES_SPECIAUX[0]!, 'clinique', 1, 'Une seringue de lumière verte, préparée par la Clinique pour chaque escouade.'),
+  commune(GESTES_SPECIAUX[1]!, 'noyau', 1, 'Une balise de la Tour du Noyau : une porte blindée s’ouvre, l’escouade s’y abrite.'),
+  commune(special('lame-atelier', 'Lame d’atelier', 4, 'atk', 7), 'forge', 2, 'Une lame de récupération, affûtée à la Forge entre deux commandes. Rien de rare : elle ne lâche jamais.'),
+  commune(special('plan-galeries', 'Plan des galeries', 5, 'bouclier', 4, { type: 'pioche' }), 'noyau', 4, 'Les creuseurs de la Tour tiennent le plan des galeries à jour : on sait où se mettre à l’abri, et ce qui vient ensuite.'),
+  commune(special('groupe-secours', 'Groupe de secours', 7, 'atk', 6, { type: 'secours', part: 0.6 }), 'generateur', 6, 'Une équipe du Générateur, prête à descendre au premier signal : plus l’escouade tombe, plus elle frappe fort.'),
+  commune(special('breche', 'Brèche', 8, 'atk', 5, { type: 'breche' }), 'forge', 6, 'Une charge de forge, posée contre la carapace de l’ennemi : elle ne fait pas mal, elle ouvre.'),
+  commune(ampoule, 'clinique', 7, 'La dernière trouvaille de la Clinique : une ampoule qui remet un Porteur debout. Une seule par combat.'),
+];
+/** Les cartes communes qui descendent sans rien choisir (une partie neuve, une ancienne sauvegarde) */
+export const RATELIER_DEPART = ['stimulant', 'repli'];
+/** La force d'une carte commune monte avec son bâtiment : +6 % par niveau au-delà de celui qui l'ouvre (comme la Clé de l’Héritage) */
+export const forceCommune = (c: CarteCommuneDef, niveauBatiment: number) =>
+  Math.round(c.geste.v * (1 + 0.06 * Math.max(0, niveauBatiment - c.niveau)));
+export const communeDef = (id: string) => CARTES_COMMUNES.find((c) => c.geste.id === id);
 /**
  * La Clé de l’Héritage (27 octobre 2026) : la dixième vierge, pour le directeur qui répond « tout le monde à la fois » à la lettre.
  * Elle rejoint le paquetage (jouée par personne, elle reste quand un Porteur tombe) dès qu'un Porteur de l'escouade a le niveau
@@ -298,9 +333,9 @@ export const CLE_LEGS: GesteDef = special('cle-legs', 'Clé de l’Héritage', 1
 CLE_LEGS.effet2 = { type: 'rempart', part: 0.75 };
 
 /** D'où vient chaque carte du paquetage : le bâtiment qui la fournit et ce qu'elle est */
+const NOM_BATIMENT_COMMUNE: Record<BatimentId, string> = { noyau: 'Tour du Noyau', generateur: 'Générateur', forge: 'Forge', clinique: 'Clinique', comptoir: 'Comptoir' };
 export const ORIGINE_PAQUETAGE: Record<string, { batiment: string; texte: string }> = {
-  stimulant: { batiment: 'Clinique', texte: 'Une seringue de lumière verte, préparée par la Clinique pour chaque escouade.' },
-  repli: { batiment: 'Tour du Noyau', texte: 'Une balise de la Tour du Noyau : une porte blindée s’ouvre, l’escouade s’y abrite.' },
+  ...Object.fromEntries(CARTES_COMMUNES.map((c) => [c.geste.id, { batiment: NOM_BATIMENT_COMMUNE[c.batiment], texte: c.texte }])),
   'cle-legs': { batiment: 'Héritage du district', texte: 'La dixième vierge de l’ancienne directrice : une clé de nacre qui ouvre toutes les portes, et les tient fermées derrière l’escouade.' },
 };
 

@@ -54,3 +54,12 @@
 /* sur un portrait de la liste : l'état descend sous la pastille pour ne pas la chevaucher */
 .pt-portrait:has(>.ruban-nouveau)>.pt-etat{top:40px}
 .pt-portrait>.pt-escouade~.ruban-nouveau{top:8px;left:38px}
+
+/* ---------- Le Râtelier du district (30 octobre 2026) : les cartes communes, en vraie face ---------- */
+.rt-face{display:block;width:56px}
+.rt-face .fc-ombre{width:100%}
+.rt-choix.pris{box-shadow:inset 2px 0 0 var(--x-or),inset 0 0 0 1px rgba(242,200,110,.35)}
+.rt-choix.indispo .rt-face{filter:grayscale(.85) brightness(.6)}
+.rt-choix .me-prendre.retirer{background:transparent;color:var(--x-doux)}
+.eq-district .eq-cartes-tete>small b{color:var(--x-or)}
+.eq-district .eq-cartes-tete>small .ico{width:13px;height:13px;vertical-align:-2px;color:var(--x-or)}

@@ -313,6 +313,8 @@ export interface Jeu {
   fils?: Record<string, number>;
   /** l’Héritage du district choisi dans la lettre de la directrice (27 octobre 2026) : une carte de l’Héritage, ou « cle » (la Clé de l’Héritage) */
   legs?: string;
+  /** le Râtelier du district (30 octobre 2026) : les cartes communes choisies pour descendre ; absent : celles de départ */
+  ratelier?: string[];
   /** le dernier âge du district montré au joueur (fenêtre « nouvel âge », 23 octobre 2026) */
   ageVu?: number;
   /** la dernière Strate où le jeu a proposé de protéger la partie (compte invisible) : une seule fois par palier */

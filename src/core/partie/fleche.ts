@@ -21,7 +21,7 @@ import { FLECHE } from '../classements';
 import { nouvelleExpedition } from '../expedition';
 import { graine, tireur } from '../rng';
 import { XP, bonusPv, gagnerXp, log, niveauPorteur, non, pvNiveau, usureAuRetour, type Jeu, type Resultat } from './etat';
-import { escouadePrete, type Retour } from './descentes';
+import { escouadePrete, payerRatelier, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 import { PILLAGE, remonter as remonterPillage, type Garnison } from './pillages';
 
@@ -157,6 +157,7 @@ function combatFleche(j: Jeu, escouade: string[], quai: number, force: number, p
   x.combat.ennemi.porteur = porteurs[0];
   x.combat.autres?.forEach((en, k) => { en.porteur = porteurs[k + 1]; });
   x.combat.journal = [journal];
+  payerRatelier(j);
   quitterPostes(j, escouade);
   j.expedition = { ...x, fleche: { quai, force, ...(defi ? { gardien: { id: defi.id, nom: defi.nom, ...(defi.depuis !== undefined ? { depuis: defi.depuis } : {}) }, defi: true } : {}) } };
   return { ok: true };

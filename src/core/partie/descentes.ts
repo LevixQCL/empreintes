@@ -1,7 +1,7 @@
 // Couche 5 — les descentes : départs (expédition, fouille ciblée, Épreuve), escouade, missions, exploration des Strates, chambre scellée.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, CLE_LEGS, GESTES_SPECIAUX, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
+import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, CLE_LEGS, CARTES_COMMUNES, RATELIER_DEPART, communeDef, forceCommune, type CarteCommuneDef, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
 import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, salleCourante, forceStrate, nouvelleExploration, type CibleFouille } from '../expedition';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
 import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
@@ -26,11 +26,74 @@ export function gestesDe(j: Jeu, id: string): GesteDef[] {
   return jeu;
 }
 
-/** Le deck de combat d'une escouade : les cartes de ses Porteurs, plus les cartes du district */
+/** Le deck de combat d'une escouade : les cartes de ses Porteurs, plus les cartes communes du Râtelier */
 export const deckEscouade = (j: Jeu, escouade: string[]): GesteDef[] => {
   const cle = cleDuLegs(j, escouade);
-  return [...escouade.flatMap((id) => gestesDe(j, id)), ...GESTES_SPECIAUX, ...(cle ? [cle] : [])];
+  return [...escouade.flatMap((id) => gestesDe(j, id)), ...gestesCommuns(j), ...(cle ? [cle] : [])];
 };
+
+// ---------- Le Râtelier du district (30 octobre 2026) ----------
+// Bryan : « pouvoir les échanger » (changer les cartes communes du deck). On les choisit au district, jamais pendant une descente.
+// Les deux premières sont fournies ; les suivantes se préparent avec de l'énergie à chaque départ (enfin un usage régulier de l'énergie).
+export const RATELIER = {
+  /** emplacements selon le niveau de la Tour du Noyau : 2, 3 au niveau 5, 4 au niveau 9 */
+  places: [{ noyau: 1, n: 2 }, { noyau: 5, n: 3 }, { noyau: 9, n: 4 }],
+  /** emplacements fournis sans énergie */
+  gratuits: 2,
+  /** énergie pour préparer la 3e, puis la 4e carte, à chaque départ (montant fixe : améliorer le Générateur ne doit pas punir) */
+  energie: [150, 300],
+};
+
+export const placesRatelier = (j: Jeu) => RATELIER.places.filter((p) => j.batiments.noyau >= p.noyau).reduce((n, p) => Math.max(n, p.n), 0);
+/** La carte commune est ouverte : son bâtiment a le niveau */
+export const communeOuverte = (j: Jeu, c: CarteCommuneDef) => (j.batiments[c.batiment] ?? 0) >= c.niveau;
+/** La carte commune à la force de son bâtiment */
+export function gesteCommun(j: Jeu, c: CarteCommuneDef): GesteDef {
+  return { ...c.geste, v: forceCommune(c, j.batiments[c.batiment] ?? 0) };
+}
+/** Les cartes choisies au Râtelier (ouvertes, dans la limite des emplacements) */
+export function ratelierDe(j: Jeu): string[] {
+  const ids = (j.ratelier ?? RATELIER_DEPART).filter((id) => { const c = communeDef(id); return !!c && communeOuverte(j, c); });
+  return [...new Set(ids)].slice(0, placesRatelier(j));
+}
+/** Ce que coûte la préparation des cartes au-delà des gratuites, à chaque départ */
+export const coutRatelier = (j: Jeu, n = ratelierDe(j).length) =>
+  RATELIER.energie.slice(0, Math.max(0, n - RATELIER.gratuits)).reduce((a, b) => a + b, 0);
+/** Les cartes du Râtelier qu'on peut préparer avec l'énergie qu'on a : une carte qu'on ne peut pas payer reste au district */
+export function ratelierPayable(j: Jeu): string[] {
+  const ids = ratelierDe(j);
+  let n = Math.min(ids.length, RATELIER.gratuits);
+  while (n < ids.length && j.energie >= coutRatelier(j, n + 1)) n++;
+  return ids.slice(0, n);
+}
+export const gestesCommuns = (j: Jeu): GesteDef[] => ratelierPayable(j).map((id) => gesteCommun(j, communeDef(id)!));
+/** Au départ : l'énergie des cartes préparées est dépensée (pas de remboursement) */
+export function payerRatelier(j: Jeu): void {
+  const cout = coutRatelier(j, ratelierPayable(j).length);
+  if (cout > 0) j.energie -= cout;
+}
+
+/** Change les cartes communes du Râtelier ; jamais pendant une descente */
+export function choisirRatelier(j: Jeu, ids: string[]): Resultat {
+  if (j.expedition) return non('L’escouade est en descente : le Râtelier se change au district.');
+  const propres = [...new Set(ids)];
+  for (const id of propres) {
+    const c = communeDef(id);
+    if (!c) return non('Carte commune inconnue.');
+    if (!communeOuverte(j, c)) return non(`${c.geste.nom} s’ouvre au niveau ${c.niveau} du bâtiment.`);
+  }
+  if (propres.length > placesRatelier(j)) return non(`Le Râtelier n’a que ${placesRatelier(j)} emplacements.`);
+  j.ratelier = propres;
+  return { ok: true };
+}
+/** Met une carte commune au Râtelier, ou l'en retire */
+export function basculerRatelier(j: Jeu, id: string): Resultat {
+  const l = ratelierDe(j);
+  if (l.includes(id)) return choisirRatelier(j, l.filter((x) => x !== id));
+  if (l.length >= placesRatelier(j)) return non(`Le Râtelier est plein (${placesRatelier(j)} emplacements) : retire d’abord une carte.`);
+  return choisirRatelier(j, [...l, id]);
+}
+export { CARTES_COMMUNES };
 
 /** La Clé de l’Héritage, si le joueur l'a choisie et qu'un Porteur de l'escouade a le niveau de la nacre ; sa force suit le plus avancé */
 export function cleDuLegs(j: Jeu, escouade: string[]): GesteDef | null {
@@ -132,6 +195,7 @@ function ranger(j: Jeu, toutes: string[][]): void {
 /** Retient l'escouade qui part (l'écran de départ a pu la changer) : elle devient celle qui descend,
  * et ses Porteurs quittent les autres escouades */
 function retenirDepart(j: Jeu, escouade: string[]): void {
+  payerRatelier(j);
   const a = escouadeActive(j);
   ranger(j, escouadesDe(j).map((l, k) => (k === a ? [...escouade] : l.filter((id) => !escouade.includes(id)))));
 }
@@ -959,6 +1023,7 @@ export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: numbe
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   });
   if (ep.sansResonance) x.combat.sansResonance = true;
+  payerRatelier(j);
   quitterPostes(j, escouade);
   j.expedition = { ...x, epreuve: id };
   log(j, `Épreuve de la semaine : ${ep.nom}.`);

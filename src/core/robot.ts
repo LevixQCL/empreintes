@@ -8,7 +8,7 @@ import { cartesEnJeu, placesVides } from './collection';
 import { GESTES_SPECIAUX, porteurDef } from './donnees';
 import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExpedition, nouvelleExploration, salleCourante, typeApparent } from './expedition';
 import { REGLES, analyserChaine, frequenceLibre, places } from './regles';
-import type { CombatEtat, Geste } from './types';
+import type { CombatEtat, Geste, GesteDef } from './types';
 
 /** Copie rapide d'un combat (les cartes à plusieurs Fréquences changent de Fréquence : on les copie aussi) */
 const clone = (s: CombatEtat): CombatEtat => ({
@@ -75,6 +75,10 @@ function note(s: CombatEtat): number {
  * Joue un tour : essaie toutes les chaînes raisonnables, simule chacune avec le vrai moteur
  * (tour ennemi compris) et garde la meilleure. Peut dépenser 1 Flux pour une place de plus.
  */
+/** Les cartes communes du district que le robot emporte (par défaut, les deux de départ) : pour mesurer le Râtelier */
+let COMMUNES_ROBOT: GesteDef[] = GESTES_SPECIAUX;
+export function communesRobot(g: GesteDef[] = GESTES_SPECIAUX): void { COMMUNES_ROBOT = g; }
+
 export function jouerTour(s: CombatEtat): void {
   let meilleur: { score: number; uids: string[]; allonge: boolean; eclat: string | null } | null = null;
   // Coup d'éclat (Flux plein) : il essaie aussi chaque coup possible avant sa chaîne ; le Flux vidé se paie dans la note
@@ -184,7 +188,7 @@ interface ResultatExpedition {
 export function simulerExpedition(escouade: Escouade, strate: number, rng: number): ResultatExpedition {
   const ids = Object.keys(escouade);
   const porteurs = ids.map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
-  const deck = [...ids.flatMap((id) => [...cartesEnJeu(id, escouade[id]!), ...placesVides(id, escouade[id]!.length)]), ...GESTES_SPECIAUX];
+  const deck = [...ids.flatMap((id) => [...cartesEnJeu(id, escouade[id]!), ...placesVides(id, escouade[id]!.length)]), ...COMMUNES_ROBOT];
   let x = nouvelleExpedition({ porteurs, deck, strate, rng });
   let tours = 0;
   let combats = 0;
@@ -237,7 +241,7 @@ export const tauxVictoire = (escouade: Escouade, strate: number, parties: number
 export function simulerExploration(escouade: Escouade, strate: number, rng: number, jouer = jouerTour, facteur = 1, tours?: { normal: number[]; gardien: number[] }): { victoire: boolean; combats: number } {
   const ids = Object.keys(escouade);
   const porteurs = ids.map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
-  const deck = [...ids.flatMap((id) => [...cartesEnJeu(id, escouade[id]!), ...placesVides(id, escouade[id]!.length)]), ...GESTES_SPECIAUX];
+  const deck = [...ids.flatMap((id) => [...cartesEnJeu(id, escouade[id]!), ...placesVides(id, escouade[id]!.length)]), ...COMMUNES_ROBOT];
   let x = nouvelleExploration({ porteurs, deck, strate, rng, ...(facteur !== 1 ? { facteur } : {}) });
   let garde = 0;
   while (!x.terminee && garde++ < 3000) {

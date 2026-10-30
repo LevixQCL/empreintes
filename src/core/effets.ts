@@ -28,6 +28,9 @@ export const NOMS_EFFET: Record<TypeEffet, string> = {
   debord: 'Débord',
   rapt: 'Rapt',
   rappel: 'Rappel',
+  pioche: 'Plan',
+  breche: 'Brèche',
+  secours: 'Secours',
   surtension: 'Surtension',
   empreinte: 'Empreinte',
   releve: 'Relève',
@@ -60,6 +63,9 @@ export function texteEffet(e: Effet): string {
     case 'surtension': return `Le Porteur brûle ${pc(e.cout)} de ses PV max (sans tomber) : +${pc(e.part)} de force.`;
     case 'empreinte': return `Copie l’effet de la carte posée juste avant ; s’il n’y en a pas, +${pc(REGLES.empreinteSeule - 1)} de force.`;
     case 'releve': return 'Relève un Porteur à terre avec tout le soin ; sinon, soigne normalement.';
+    case 'pioche': return 'Au tour suivant, ta main compte une carte de plus.';
+    case 'breche': return 'Brise tout le bouclier de l’ennemi visé avant de frapper.';
+    case 'secours': return `+${pc(e.part)} de force pour chaque Porteur à terre.`;
   }
 }
 
@@ -90,6 +96,9 @@ export function formuleEffet(e: Effet): string {
     case 'surtension': return `+${pc(e.part)}, −PV`;
     case 'empreinte': return 'copie l’effet';
     case 'releve': return 'remet debout';
+    case 'pioche': return '+1 carte au tour suivant';
+    case 'breche': return 'brise le bouclier';
+    case 'secours': return `+${pc(e.part)} / Porteur à terre`;
   }
 }
 
