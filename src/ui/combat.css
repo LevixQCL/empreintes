@@ -193,7 +193,7 @@
   background:radial-gradient(circle at 40% 30%,rgba(255,231,168,.25),rgba(20,16,10,.9));box-shadow:0 0 0 1.5px rgba(243,198,106,.6),0 0 18px rgba(243,198,106,.35)}
 .decouverte-ico .ico{width:28px;height:28px}
 .conseil-decouverte{margin:4px 0 14px;padding:9px 12px;text-align:left;font-size:14px;line-height:1.45;color:var(--ink);
-  background:rgba(243,198,106,.08);box-shadow:inset 3px 0 0 #f3c66a}
+  background:rgba(243,198,106,.08);box-shadow:inset 0 22px 22px -18px color-mix(in srgb,#f3c66a 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,#f3c66a 28%,color-mix(in srgb,#f3c66a 60%,white) 50%,#f3c66a 72%,transparent 98%) 1}
 .conseil-decouverte b{display:block;font:600 10px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#f3c66a}
 
 /* ---------- Cartes lourdes (23 octobre 2026) : plus d'illustration étirée ----------

@@ -163,9 +163,10 @@ function bilanDeck(j: Jeu, esc: string[]): string {
   const couleurDe = (g: GesteDef) => (g.porteur ? COULEUR[porteurDef(g.porteur).lignee] : 'var(--x-doux)');
   const colonnes = freqs.map((k, i) => {
     const ici = cartes.filter((g) => !frequenceLibre(g.effet) && (g.fs ?? [g.f]).includes(i + 1));
-    return `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}">`
-      + `<span class="eq-pile" style="--h:${(100 * k) / max}%">${ici.map((g) => `<i style="--c:${couleurDe(g)}"></i>`).join('')}</span>`
-      + `<b style="--fc:${couleurFrequence(i + 1)}">${i + 1}</b><small>${k || '—'}</small></span>`;
+    // l'échelle des Fréquences (30 octobre 2026) : un cristal par chiffre, allumé s'il est couvert, une perle par carte (couleur de sa lignée)
+    const perles = ici.slice(0, 6).map((g) => `<i style="--c:${couleurDe(g)}"></i>`).join('') + (ici.length > 6 ? `<em>+${ici.length - 6}</em>` : '');
+    return `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}" style="--fc:${couleurFrequence(i + 1)};--n:${Math.min(1, k / max)}">`
+      + `<b class="eq-cristal">${i + 1}</b><span class="eq-perles">${perles}</span><small>${k ? `×${k}` : '—'}</small></span>`;
   }).join('');
   const trous = freqs.map((k, i) => (k ? 0 : i + 1)).filter(Boolean);
   const actions = (['atk', 'bouclier', 'soin'] as TypeGeste[]).map((t) => {
@@ -263,8 +264,9 @@ function ongletsEscouades(j: Jeu, vue: number): string {
   return `<div class="eq-escouades" role="tablist" aria-label="Mes escouades">` + toutes.map((l, k) =>
     `<button type="button" role="tab" class="eq-esc${k === vue ? ' actif' : ''}${k === active ? ' descend' : ''}${l.length ? '' : ' vide'}" data-action="escouade-voir" data-index="${k}" aria-selected="${k === vue}">`
     + `<span class="eq-esc-nom">Escouade ${k + 1}</span>`
-    + `<span class="eq-esc-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 26) : '<i class="eq-esc-place"></i>')).join('')}</span>`
-    + `<small>${k === active ? `${ICO.descendre}Descend` : l.length ? `${l.length} / 3` : 'Vide'}${k === garde ? `<span class="eq-garde" title="Garde le port">${ICO.bouclier}</span>` : ''}</small></button>`).join('') + `</div>`;
+    // une escouade vide (30 octobre 2026) : un serti de cristal qui attend ses Porteurs, plutôt que trois fantômes
+    + (l.length ? `<span class="eq-esc-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 26) : '<i class="eq-esc-place"></i>')).join('')}</span>` : `<span class="esc-serti plus" aria-hidden="true"></span>`)
+    + `<small>${k === active ? `${ICO.descendre}Descend` : l.length ? `${l.length} / 3` : 'Former'}${k === garde ? `<span class="eq-garde" title="Garde le port">${ICO.bouclier}</span>` : ''}</small></button>`).join('') + `</div>`;
 }
 
 function monEscouade(e: EcranDistrict): string {

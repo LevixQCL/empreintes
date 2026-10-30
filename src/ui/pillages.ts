@@ -91,8 +91,8 @@ function garde(j: Jeu): string {
     + toutes.map((l, k) => {
       const f = l.length ? Math.round(forceEscouade(j, l) * 100) : 0;
       return `<button type="button" role="radio" class="pl-garde-esc${k === def ? ' actif' : ''}${l.length ? '' : ' vide'}" data-action="defense-escouade" data-index="${k}" aria-checked="${k === def}"${l.length ? '' : ' disabled'}>`
-        + `<strong>Escouade ${k + 1}</strong><span class="pl-garde-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 28) : '<i class="pl-garde-place"></i>')).join('')}</span>`
-        + `<small>${l.length ? `Force ${f}` : 'Vide'}</small></button>`;
+        + `<strong>Escouade ${k + 1}</strong>${l.length ? `<span class="pl-garde-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 28) : '<i class="pl-garde-place"></i>')).join('')}</span>` : '<span class="esc-serti" aria-hidden="true"></span>'}`
+        + `<small>${l.length ? `Force ${f}` : 'À former'}</small></button>`;
     }).join('') + `</div>`
     + `<small class="pl-garde-aide">Elle se défend seule quand d’autres directeurs t’attaquent. L’escouade qui attaque se choisit au départ du pillage${escouadeActive(j) === def ? ' : la même peut faire les deux' : ''}.</small></section>`;
 }

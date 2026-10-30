@@ -113,14 +113,14 @@
 @media (hover:hover){.ds-lieu:not(.choisi):hover{filter:saturate(.9) brightness(.92)}}
 .ds-lieu:active{transform:scale(.98)}
 .ds-lore{margin:10px 0 12px;padding:10px 12px;font-size:13px;line-height:1.5;color:#C9D6E6;
-  background:rgba(12,18,30,.7);box-shadow:inset 3px 0 0 var(--c),inset 0 0 0 1px rgba(205,239,255,.14)}
+  background:rgba(12,18,30,.7);box-shadow:inset 0 22px 22px -18px color-mix(in srgb,var(--c) 30%,transparent),inset 0 0 0 1px rgba(205,239,255,.14);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--c) 28%,color-mix(in srgb,var(--c) 60%,white) 50%,var(--c) 72%,transparent 98%) 1}
 .ds-lore b{color:#fff;font-weight:600}
 .ds-lore em{display:block;margin-top:4px;font-style:normal;color:#F2D58C}
 
 /* chaque Porteur libre : son affinité avec le lieu choisi, et ce qu'il rapporterait */
 .ds-affinite{display:inline-flex;align-items:center;gap:6px;justify-self:start;margin-top:2px;font-size:12px;line-height:1.3;color:var(--quiet,#93A3B8)}
 .ds-affinite b{font-family:var(--mono);font-weight:600}
-.missions-libres li.af-bon{box-shadow:inset 0 0 0 1px rgba(242,213,140,.45),inset 3px 0 0 var(--c)}
+.missions-libres li.af-bon{box-shadow:inset 0 0 0 1px rgba(242,213,140,.45),inset 0 22px 22px -18px color-mix(in srgb,var(--c) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--c) 28%,color-mix(in srgb,var(--c) 60%,white) 50%,var(--c) 72%,transparent 98%) 1}
 .af-bon .ds-affinite,.vg-af.af-bon{color:#F2D58C}
 .af-mauvais .ds-affinite,.vg-af.af-mauvais{color:#C9A7D9}
 .missions-libres li.af-mauvais{opacity:.85}

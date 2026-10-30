@@ -21,15 +21,30 @@
 .eq-bilan-tete .lien-guide::before,.eq-bilan-tete .lien-guide::after{display:none}
 
 /* l'échelle des Fréquences : une colonne par chiffre, les cartes empilées à la couleur de leur lignée */
-.eq-freqs{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px;align-items:end}
-.eq-col{display:grid;justify-items:center;gap:3px}
-.eq-pile{display:flex;flex-direction:column-reverse;gap:2px;width:100%;height:46px;justify-content:flex-start}
-.eq-pile i{display:block;flex:1 1 0;max-height:9px;min-height:3px;border-radius:1px;background:var(--c);box-shadow:0 0 6px color-mix(in srgb,var(--c) 45%,transparent)}
-.eq-col b{display:grid;place-items:center;width:100%;height:24px;border-radius:3px;font-family:var(--mono);font-size:13px;font-weight:700;color:#fff;
-  background:color-mix(in srgb,var(--fc) 75%,#0B0F1C);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fc) 60%,white 15%)}
-.eq-col small{font-family:var(--mono);font-size:12px;color:var(--x-doux)}
-.eq-col.suite b{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fc) 60%,white 15%),0 2px 0 var(--x-or)}
-.eq-col.trou b{background:transparent;color:var(--x-rouge);box-shadow:inset 0 0 0 1px rgba(255,156,138,.5)}
+/* l'échelle des Fréquences (30 octobre 2026) : neuf cristaux taillés comme celui des cartes, allumés selon le nombre de cartes,
+   la plus longue suite reliée par un rayon d'or, un chiffre absent laissé en cristal éteint et fêlé */
+.eq-freqs{position:relative;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px;align-items:start}
+.eq-col{position:relative;display:grid;justify-items:center;gap:4px}
+.eq-cristal{--taille:polygon(50% 0,100% 20%,100% 80%,50% 100%,0 80%,0 20%);position:relative;z-index:1;display:grid;place-items:center;width:min(100%,30px);height:38px;
+  font-family:var(--mono);font-size:15px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);clip-path:var(--taille);
+  background:linear-gradient(155deg,color-mix(in srgb,var(--fc) 45%,white) 0%,color-mix(in srgb,var(--fc) 80%,white 8%) 38%,var(--fc) 62%,color-mix(in srgb,var(--fc) 55%,black) 100%);
+  filter:brightness(calc(.85 + .35 * var(--n,1))) drop-shadow(0 0 calc(6px * var(--n,1)) color-mix(in srgb,var(--fc) 70%,white))}
+/* le reflet d'une facette, comme sur le cristal des cartes */
+.eq-cristal::after{content:"";position:absolute;inset:0;clip-path:polygon(50% 0,100% 20%,50% 42%,0 20%);background:linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,.05))}
+.eq-perles{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;min-height:9px;max-width:32px}
+.eq-perles i{display:block;width:7px;height:7px;transform:rotate(45deg);background:var(--c);box-shadow:0 0 0 1px #0A0E1A,0 0 5px color-mix(in srgb,var(--c) 70%,transparent)}
+.eq-perles em{font-style:normal;font-family:var(--mono);font-size:10px;line-height:6px;color:var(--x-doux)}
+.eq-col small{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--x-doux)}
+/* la suite : un rayon d'or traverse les cristaux qui se suivent */
+.eq-col.suite::before{content:"";position:absolute;z-index:0;top:18px;left:-3px;right:-3px;height:2px;background:linear-gradient(90deg,#c98a35,#ffe2a0,#c98a35);box-shadow:0 0 8px rgba(255,205,120,.85)}
+.eq-col.suite:not(.suite + .suite)::before{left:50%}
+.eq-col.suite:not(:has(+ .suite))::before{right:50%}
+.eq-col.suite small{color:var(--x-or)}
+.eq-col.trou .eq-cristal{color:rgba(255,170,150,.8);text-shadow:none;filter:none;
+  background:linear-gradient(155deg,rgba(255,156,138,.35),rgba(255,156,138,.12) 60%,rgba(255,156,138,.3))}
+.eq-col.trou .eq-cristal::before{content:"";position:absolute;inset:1.5px;z-index:-1;clip-path:var(--taille);background:#0F1424}
+/* la fêlure du cristal éteint */
+.eq-col.trou .eq-cristal::after{clip-path:polygon(58% 6%,62% 6%,44% 46%,60% 56%,40% 96%,36% 96%,54% 58%,38% 48%);background:rgba(255,156,138,.45)}
 .eq-col.trou small{color:var(--x-rouge)}
 .eq-conseil{margin:0;font-size:13.5px;line-height:1.45;color:var(--x-txt)}
 .eq-conseil b{color:#F6F2EA;font-weight:600}
@@ -58,13 +73,13 @@
 
 /* celle qui descend, ou le bouton pour qu'elle descende */
 .eq-descend{display:flex;align-items:flex-start;gap:10px;width:100%;margin:0;padding:10px 12px;border:0;border-radius:4px;font:inherit;font-size:13px;line-height:1.4;text-align:left;color:var(--x-doux);
-  background:linear-gradient(90deg,rgba(242,213,140,.12),rgba(242,213,140,.02));box-shadow:inset 2px 0 0 var(--x-or)}
+  background:linear-gradient(90deg,rgba(242,213,140,.12),rgba(242,213,140,.02));box-shadow:inset 0 22px 22px -18px color-mix(in srgb,var(--x-or) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--x-or) 28%,color-mix(in srgb,var(--x-or) 60%,white) 50%,var(--x-or) 72%,transparent 98%) 1}
 .eq-descend>.ico{width:17px;height:17px;flex-shrink:0;margin-top:1px;color:var(--x-or)}
 .eq-descend strong{display:block;font-size:14px;font-weight:600;color:var(--x-or)}
 .eq-descend.bouton{cursor:pointer;color:var(--x-txt);background:linear-gradient(90deg,rgba(205,239,255,.1),rgba(205,239,255,.02));box-shadow:inset 0 0 0 1px rgba(205,239,255,.3)}
 .eq-descend.bouton:hover{background:linear-gradient(90deg,rgba(205,239,255,.16),rgba(205,239,255,.04))}
 .eq-descend.bouton>.ico,.eq-descend.bouton strong{color:var(--x-glace)}
-.eq-descend.vide{background:rgba(205,239,255,.04);box-shadow:inset 2px 0 0 rgba(205,239,255,.3)}
+.eq-descend.vide{background:rgba(205,239,255,.04);box-shadow:inset 0 22px 22px -18px color-mix(in srgb,rgba(205,239,255,.3) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,rgba(205,239,255,.3) 28%,color-mix(in srgb,rgba(205,239,255,.3) 60%,white) 50%,rgba(205,239,255,.3) 72%,transparent 98%) 1}
 .eq-descend.vide>.ico,.eq-descend.vide strong{color:var(--x-glace)}
 
 /* ---------- un Porteur de l'escouade ---------- */
@@ -96,9 +111,9 @@
 
 /* la Marque, en toutes lettres */
 .eq-marque{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:start;width:100%;padding:10px 12px;border:0;border-radius:4px;font:inherit;text-align:left;cursor:pointer;color:var(--x-txt);
-  background:linear-gradient(90deg,rgba(205,239,255,.06),rgba(205,239,255,.015));box-shadow:inset 2px 0 0 rgba(205,239,255,.35)}
+  background:linear-gradient(90deg,rgba(205,239,255,.06),rgba(205,239,255,.015));box-shadow:inset 0 22px 22px -18px color-mix(in srgb,rgba(205,239,255,.35) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,rgba(205,239,255,.35) 28%,color-mix(in srgb,rgba(205,239,255,.35) 60%,white) 50%,rgba(205,239,255,.35) 72%,transparent 98%) 1}
 .eq-marque:hover{background:linear-gradient(90deg,rgba(205,239,255,.1),rgba(205,239,255,.02))}
-.eq-marque.acquise{background:linear-gradient(90deg,rgba(242,213,140,.13),rgba(242,213,140,.02));box-shadow:inset 2px 0 0 var(--x-or)}
+.eq-marque.acquise{background:linear-gradient(90deg,rgba(242,213,140,.13),rgba(242,213,140,.02));box-shadow:inset 0 22px 22px -18px color-mix(in srgb,var(--x-or) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--x-or) 28%,color-mix(in srgb,var(--x-or) 60%,white) 50%,var(--x-or) 72%,transparent 98%) 1}
 .eq-marque-ico{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;color:var(--x-glace);background:rgba(205,239,255,.08)}
 .eq-marque.acquise .eq-marque-ico{color:#2A1A04;background:linear-gradient(180deg,#F8E3A6,#D4A54E)}
 .eq-marque-ico .ico{width:15px;height:15px}
@@ -187,7 +202,6 @@
   .eq-freqs{grid-column:2}
   .eq-conseil{grid-column:2}
   .eq-actions{grid-column:1 / -1}
-  .eq-pile{height:56px}
   /* chaque Porteur occupe les 6 mêmes rangées (tête, Marque, alerte, titre, Charge, cartes) : les colonnes s’alignent */
   .eq-escouades{max-width:720px}
   .eq-descend{max-width:720px}
@@ -232,3 +246,13 @@
 @media (min-width:1100px){.eq-district .eq-grille{grid-template-columns:repeat(6,minmax(0,1fr))}}
 .eq-charge-ligne{flex-wrap:nowrap}
 .eq-charge-ligne .charge{flex:1;min-width:0;margin:0}
+
+/* une escouade vide (30 octobre 2026) : le serti de cristal peint, éteint, qui attend ses Porteurs (onglet, départ, garnison) */
+.esc-serti{position:relative;display:block;width:34px;height:34px;background:url("/art/icones/serti.webp") center/contain no-repeat;opacity:.5;filter:saturate(.55) brightness(.9)}
+.esc-serti.plus{opacity:.7}
+.esc-serti.plus::after{content:"";position:absolute;inset:0;margin:auto;width:12px;height:12px;
+  background:linear-gradient(var(--x-glace,#CDEFFF),var(--x-glace,#CDEFFF)) center/12px 1.6px no-repeat,linear-gradient(var(--x-glace,#CDEFFF),var(--x-glace,#CDEFFF)) center/1.6px 12px no-repeat;opacity:.85}
+.eq-esc.vide:hover .esc-serti{opacity:.95;filter:none}
+.eq-esc.vide small{color:var(--x-glace)}
+.es-equipe.vide,.pl-garde-esc.vide{opacity:.7}
+.es-equipe.vide strong,.pl-garde-esc.vide strong{color:var(--x-doux,#93A3B8)}

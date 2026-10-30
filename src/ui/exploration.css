@@ -3,15 +3,15 @@
 .routes{display:grid;gap:8px}
 .route{--t:#CDEFFF;position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:64px;padding:9px 12px 9px 10px;border:none;text-align:left;color:var(--ink);cursor:pointer;
   background:linear-gradient(90deg,color-mix(in srgb,var(--t) 16%,transparent),transparent 60%),linear-gradient(165deg,rgba(26,33,60,.92),rgba(10,12,26,.95));
-  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t) 42%,transparent),inset 3px 0 0 var(--t);
-  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:transform .15s ease,filter .15s ease,box-shadow .15s ease}
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t) 42%,transparent),inset 0 22px 22px -18px color-mix(in srgb,var(--t) 30%,transparent);
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));transition:transform .15s ease,filter .15s ease,box-shadow .15s ease;border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--t) 28%,color-mix(in srgb,var(--t) 60%,white) 50%,var(--t) 72%,transparent 98%) 1}
 
 .route-txt{flex:1;display:grid;gap:2px;min-width:0}
 .route-txt small{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:color-mix(in srgb,var(--t) 70%,white)}
 .route-txt strong{font-family:var(--display);font-weight:400;font-size:17px;line-height:1.15;color:var(--ink)}
 .route-txt em{font-style:normal;font-size:12.5px;line-height:1.35;color:var(--quiet)}
 .route-fleche{flex:none;width:18px;height:18px;color:color-mix(in srgb,var(--t) 70%,white);opacity:.8;transition:transform .15s ease}
-.route:hover,.route:focus-visible{outline:none;filter:brightness(1.12);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t) 75%,transparent),inset 3px 0 0 var(--t),inset 0 0 24px color-mix(in srgb,var(--t) 18%,transparent)}
+.route:hover,.route:focus-visible{outline:none;filter:brightness(1.12);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--t) 75%,transparent),inset 0 22px 22px -18px color-mix(in srgb,var(--t) 30%,transparent),inset 0 0 24px color-mix(in srgb,var(--t) 18%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--t) 28%,color-mix(in srgb,var(--t) 60%,white) 50%,var(--t) 72%,transparent 98%) 1}
 .route:hover .route-fleche{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-2)}
 .route-txt .faible{color:var(--quiet)}
 .route-txt .faible b{font-weight:600;color:var(--c)}
@@ -39,8 +39,8 @@
 
 .feuille.fuite .feuille-corps{display:grid;align-content:start;gap:12px}
 .fuite-coup{display:flex;align-items:flex-start;gap:10px;margin:0;padding:11px 12px;font-size:14px;line-height:1.45;color:var(--ink-2);
-  background:rgba(205,239,255,.05);box-shadow:inset 3px 0 0 #8FC2FF}
-.fuite-coup.touche{background:rgba(255,110,90,.08);box-shadow:inset 3px 0 0 #FF8A7A}
+  background:rgba(205,239,255,.05);box-shadow:inset 0 22px 22px -18px color-mix(in srgb,#8FC2FF 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,#8FC2FF 28%,color-mix(in srgb,#8FC2FF 60%,white) 50%,#8FC2FF 72%,transparent 98%) 1}
+.fuite-coup.touche{background:rgba(255,110,90,.08);box-shadow:inset 0 22px 22px -18px color-mix(in srgb,#FF8A7A 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,#FF8A7A 28%,color-mix(in srgb,#FF8A7A 60%,white) 50%,#FF8A7A 72%,transparent 98%) 1}
 .fuite-coup > .ico{flex:none;width:18px;height:18px;margin-top:2px;color:#8FC2FF}
 .fuite-coup.touche > .ico{color:#FF8A7A}
 .fuite-coup b{color:var(--ink);font-weight:600}

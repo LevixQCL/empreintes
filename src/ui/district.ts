@@ -1043,11 +1043,11 @@ function blocEmpreinte(j: Jeu, cle: string): string {
   const affiche = epitheteAffiche(cle, x);
   const journal = journalCarte(x);
   let h = `<section class="bloc fc-emp"><h3 class="titre-bloc">${ICO.cristal}Empreinte</h3>`
-    + `<div class="emp-tete"><span class="emp-palier p${p}">${p ? NOMS_PALIER[p] : 'Vierge'}</span>${affiche ? `<span class="emp-epithete">${echap(affiche)}</span>` : ''}</div>`;
+    + `<div class="emp-tete"><span class="emp-palier p${p}"><i aria-hidden="true"></i><span><small>${p ? `Palier ${p} / 3` : 'Aucun palier'}</small><b>${p ? NOMS_PALIER[p] : 'Vierge'}</b></span></span>${affiche ? `<span class="emp-epithete">${echap(affiche)}</span>` : ''}</div>`;
   if (suite) {
     const part = Math.min(100, (100 * (suite.points - suite.depart)) / Math.max(1, suite.seuil - suite.depart));
     h += `<div class="progression"><div class="jauge" style="--jc:${['#8fd0f0', '#e8be5e', '#c9a8ff'][suite.palier - 1]}"><i style="width:${part}%"></i></div><span class="chiffre">${NOMS_PALIER[suite.palier]} · ${Math.min(suite.points, suite.seuil)} / ${suite.seuil}</span></div>`
-      + `<ul class="emp-exploits" aria-label="Exploits demandés pour ${NOMS_PALIER[suite.palier]}">${suite.exploits.map((e) => `<li class="${e.fait ? 'fait' : ''}" aria-label="${echap(e.texte)}${e.fait ? ', fait' : ', à faire'}"><i aria-hidden="true">${e.fait ? ICO.ok : ''}</i>${echap(e.texte)}</li>`).join('')}</ul>`;
+      + `<ul class="emp-exploits" aria-label="Exploits demandés pour ${NOMS_PALIER[suite.palier]}">${suite.exploits.map((e) => `<li class="${e.fait ? 'fait' : ''}" aria-label="${echap(e.texte)}${e.fait ? ', fait' : ', à faire'}"><i aria-hidden="true"></i>${echap(e.texte)}</li>`).join('')}</ul>`;
   }
   h += `<p class="emp-aide">${p ? 'Un trophée gagné au fil des descentes : ' : 'Un trophée, pas un dû : il faut des semaines de combats avec la même carte, et des exploits qu’elle seule a vécus. '}chaque palier allume son filigrane. Pur souvenir : aucun effet en combat.</p>`;
   if (ep.length > 1) h += `<div class="emp-epithetes" role="group" aria-label="Épithète affiché">${ep.map((e) => `<button type="button" class="emp-choix" data-action="epithete" data-module="${cle}" data-id="${e.id}" aria-pressed="${e.texte === affiche}">${echap(e.texte)}</button>`).join('')}</div>`;
@@ -1747,8 +1747,8 @@ export function htmlEscouade(e: EcranDistrict): string {
     + toutes.map((l, k) => {
       const n = deckEscouade(j, l).length;
       return `<button type="button" role="radio" class="es-equipe${k === active ? ' actif' : ''}${l.length ? '' : ' vide'}" data-action="depart-escouade" data-index="${k}" aria-checked="${k === active}"${l.length ? '' : ' disabled'}>`
-        + `<strong>Escouade ${k + 1}</strong><span class="es-equipe-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 30) : '<i class="es-pastille-vide"></i>')).join('')}</span>`
-        + `<small>${l.length ? `${l.length < 3 ? `${l.length} / 3 · ` : ''}${n} cartes` : 'Vide'}</small></button>`;
+        + `<strong>Escouade ${k + 1}</strong>${l.length ? `<span class="es-equipe-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 30) : '<i class="es-pastille-vide"></i>')).join('')}</span>` : '<span class="esc-serti" aria-hidden="true"></span>'}`
+        + `<small>${l.length ? `${l.length < 3 ? `${l.length} / 3 · ` : ''}${n} cartes` : 'À former'}</small></button>`;
     }).join('') + `</div></section>`;
 
   // les trois Porteurs qui partent : toucher un portrait ouvre sa fiche
@@ -1777,8 +1777,9 @@ export function htmlEscouade(e: EcranDistrict): string {
     const jokers = cartes.filter((g) => g.effet?.type === 'accord').length;
     const suite = plusLongueSuite(n, jokers);
     h += `<section class="es-deck" aria-label="Le deck de l’escouade"><div class="es-deck-tete"><span class="surtitre">Le deck · ${deck} cartes</span>${lienGuide('deck', 'Bien construire son deck')}</div>`
-      + `<div class="es-freq" role="img" aria-label="Fréquences du deck : ${n.map((k, i) => `${i + 1} : ${k}`).join(', ')}">`
-      + n.map((k, i) => `<span class="es-f${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}${i && n[i - 1] && k ? ' lie' : ''}" style="--fc:${couleurFrequence(i + 1)}"><b>${i + 1}</b><small>${k ? `×${k}` : '—'}</small></span>`).join('')
+      // la même échelle de cristaux que l'onglet Escouade (30 octobre 2026)
+      + `<div class="eq-freqs es-freq" role="img" aria-label="Fréquences du deck : ${n.map((k, i) => `${i + 1} : ${k}`).join(', ')}">`
+      + n.map((k, i) => `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}" style="--fc:${couleurFrequence(i + 1)};--n:${Math.min(1, k / Math.max(1, ...n))}"><b class="eq-cristal">${i + 1}</b><small>${k ? `×${k}` : '—'}</small></span>`).join('')
       + `</div><p class="es-freq-aide">Des chiffres qui se suivent font des Résonances${suite.length >= 2 ? ` : ta plus longue suite va de <b>${suite[0]} à ${suite[suite.length - 1]}</b>` : ''}. Un chiffre absent coupe la suite${jokers ? ` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</p>`;
     // le Râtelier (30 octobre 2026) : ce que coûte la préparation des cartes communes, et celle qui reste au district faute d'énergie
     const prevues = ratelierDe(j).length, payees = ratelierPayable(j).length, prix = coutRatelier(j, payees);

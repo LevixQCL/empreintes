@@ -70,7 +70,7 @@
 .es-freq-aide{margin:0;font-size:13px;line-height:1.45;color:var(--es-doux)}
 .es-freq-aide b{color:var(--es-glace);font-weight:600}
 .es-alerte{display:flex;align-items:center;gap:10px;padding:10px 10px 10px 12px;border-radius:4px;font-size:13.5px;line-height:1.4;color:var(--es-txt);
-  background:linear-gradient(90deg,rgba(255,156,138,.12),rgba(255,156,138,.03));box-shadow:inset 2px 0 0 var(--es-rouge)}
+  background:linear-gradient(90deg,rgba(255,156,138,.12),rgba(255,156,138,.03));box-shadow:inset 0 22px 22px -18px color-mix(in srgb,var(--es-rouge) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--es-rouge) 28%,color-mix(in srgb,var(--es-rouge) 60%,white) 50%,var(--es-rouge) 72%,transparent 98%) 1}
 .es-alerte>.ico{width:18px;height:18px;flex-shrink:0;color:var(--es-rouge)}
 .es-alerte strong{color:var(--es-rouge)}
 .es-alerte span{flex:1}

@@ -7,7 +7,7 @@
 
 /* le bandeau « en descente » : l'escouade ne change qu'au district */
 .me-verrou{display:flex;align-items:flex-start;gap:10px;margin:0;padding:10px 12px;border-radius:4px;font-size:13.5px;line-height:1.4;color:var(--x-txt);
-  background:linear-gradient(90deg,rgba(242,213,140,.12),rgba(242,213,140,.02));box-shadow:inset 2px 0 0 var(--x-or)}
+  background:linear-gradient(90deg,rgba(242,213,140,.12),rgba(242,213,140,.02));box-shadow:inset 0 22px 22px -18px color-mix(in srgb,var(--x-or) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--x-or) 28%,color-mix(in srgb,var(--x-or) 60%,white) 50%,var(--x-or) 72%,transparent 98%) 1}
 .me-verrou>.ico{width:17px;height:17px;flex-shrink:0;margin-top:1px;color:var(--x-or)}
 .me-verrou strong{display:block;color:var(--x-or);font-weight:600}
 
@@ -20,7 +20,7 @@
 .me-volet .feuille-corps{gap:12px}
 .me-choix-liste{display:grid;gap:8px}
 .me-choix{display:grid;grid-template-columns:56px 1fr auto;align-items:center;gap:12px;width:100%;padding:6px 10px 6px 6px;border:0;border-radius:4px;font:inherit;text-align:left;cursor:pointer;color:inherit;
-  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 10%,transparent),transparent 70%);box-shadow:inset 2px 0 0 color-mix(in srgb,var(--c) 70%,transparent),inset 0 0 0 1px rgba(205,239,255,.08);transition:background .15s}
+  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 10%,transparent),transparent 70%);box-shadow:inset 0 22px 22px -18px color-mix(in srgb,color-mix(in srgb,var(--c) 70%,transparent) 30%,transparent),inset 0 0 0 1px rgba(205,239,255,.08);transition:background .15s;border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,color-mix(in srgb,var(--c) 70%,transparent) 28%,color-mix(in srgb,color-mix(in srgb,var(--c) 70%,transparent) 60%,white) 50%,color-mix(in srgb,var(--c) 70%,transparent) 72%,transparent 98%) 1}
 .me-choix:not(:disabled):hover{background:linear-gradient(90deg,color-mix(in srgb,var(--c) 18%,transparent),transparent 80%)}
 .me-choix:focus-visible{outline:1px solid var(--x-glace);outline-offset:2px}
 .me-vignette{display:grid;place-items:center;width:56px;height:72px;border-radius:3px;overflow:hidden;
@@ -58,7 +58,7 @@
 /* ---------- Le Râtelier du district (30 octobre 2026) : les cartes communes, en vraie face ---------- */
 .rt-face{display:block;width:56px}
 .rt-face .fc-ombre{width:100%}
-.rt-choix.pris{box-shadow:inset 2px 0 0 var(--x-or),inset 0 0 0 1px rgba(242,200,110,.35)}
+.rt-choix.pris{box-shadow:inset 0 22px 22px -18px color-mix(in srgb,var(--x-or) 30%,transparent),inset 0 0 0 1px rgba(242,200,110,.35);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--x-or) 28%,color-mix(in srgb,var(--x-or) 60%,white) 50%,var(--x-or) 72%,transparent 98%) 1}
 .rt-choix.indispo .rt-face{filter:grayscale(.85) brightness(.6)}
 .rt-choix .me-prendre.retirer{background:transparent;color:var(--x-doux)}
 .eq-district .eq-cartes-tete>small b{color:var(--x-or)}

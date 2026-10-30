@@ -49,7 +49,7 @@
 .g-regles b{color:var(--ink)}
 
 .g-idees{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.g-idee{display:grid;grid-template-columns:30px 1fr;gap:11px;padding:11px 12px 12px;background:rgba(255,255,255,.025);box-shadow:inset 0 0 0 1px var(--line),inset 2px 0 0 rgba(216,180,101,.45)}
+.g-idee{display:grid;grid-template-columns:30px 1fr;gap:11px;padding:11px 12px 12px;background:rgba(255,255,255,.025);box-shadow:inset 0 0 0 1px var(--line),inset 0 22px 22px -18px color-mix(in srgb,rgba(216,180,101,.45) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,rgba(216,180,101,.45) 28%,color-mix(in srgb,rgba(216,180,101,.45) 60%,white) 50%,rgba(216,180,101,.45) 72%,transparent 98%) 1}
 .g-idee .g-ico{display:grid;place-items:center;width:30px;height:33px;color:var(--gold);background:rgba(216,180,101,.1);
   clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
 .g-idee .g-ico .ico,.g-idee .g-ico svg{width:16px;height:16px}
@@ -129,11 +129,11 @@
 .g-lignees small{font-size:11.5px;line-height:1.35;color:var(--quiet)}
 
 /* ---------- Onglet « Les effets » ---------- */
-.g-chapeau{margin:0;padding:10px 12px;font-size:13.5px;line-height:1.5;color:var(--ink-2);background:rgba(216,180,101,.06);box-shadow:inset 2px 0 0 var(--gold)}
+.g-chapeau{margin:0;padding:10px 12px;font-size:13.5px;line-height:1.5;color:var(--ink-2);background:rgba(216,180,101,.06);box-shadow:inset 0 22px 22px -18px color-mix(in srgb,var(--gold) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--gold) 28%,color-mix(in srgb,var(--gold) 60%,white) 50%,var(--gold) 72%,transparent 98%) 1}
 .g-chapeau b{color:var(--ink)}
 .g-pastille{width:9px;height:10px;flex-shrink:0;background:var(--c);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
 .g-effets{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.g-effets li{display:grid;gap:5px;padding:11px 12px 12px;background:rgba(255,255,255,.025);box-shadow:inset 0 0 0 1px var(--line),inset 2px 0 0 var(--c)}
+.g-effets li{display:grid;gap:5px;padding:11px 12px 12px;background:rgba(255,255,255,.025);box-shadow:inset 0 0 0 1px var(--line),inset 0 22px 22px -18px color-mix(in srgb,var(--c) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--c) 28%,color-mix(in srgb,var(--c) 60%,white) 50%,var(--c) 72%,transparent 98%) 1}
 .g-effet-tete b{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);text-shadow:0 0 10px rgba(216,180,101,.35)}
 .g-effets p{margin:0;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
 .g-effets .g-astuce{display:flex;gap:7px;align-items:flex-start;font-size:12.5px;color:var(--quiet)}

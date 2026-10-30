@@ -29,7 +29,7 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .zone-chaine::before{background:repeating-linear-gradient(90deg,var(--glace-3) 0 1px,transparent 1px 8px)}
 #app:is([data-mode="combat"],[data-mode="district"]) .intention.danger{box-shadow:inset 0 0 0 1px rgba(255,150,140,.85),inset 0 0 24px rgba(255,100,100,.2)}
 #app:is([data-mode="combat"],[data-mode="district"]) .int-ico,#app:is([data-mode="combat"],[data-mode="district"]) .intention.danger .int-ico{background:conic-gradient(from 30deg,#ffd5cc,#ff6f63,#a3243a,#ff8c7d,#ffd5cc);color:#2a0612}
-#app:is([data-mode="combat"],[data-mode="district"]) .lecon{box-shadow:inset 0 0 0 1px var(--glace-3),inset 3px 0 0 var(--glace),0 10px 26px rgba(0,0,0,.45)}
+#app:is([data-mode="combat"],[data-mode="district"]) .lecon{box-shadow:inset 0 0 0 1px var(--glace-3),inset 0 22px 22px -18px color-mix(in srgb,var(--glace) 30%,transparent),0 10px 26px rgba(0,0,0,.45);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--glace) 28%,color-mix(in srgb,var(--glace) 60%,white) 50%,var(--glace) 72%,transparent 98%) 1}
 #app:is([data-mode="combat"],[data-mode="district"]) :is(.surtitre,.titre-bloc){color:#CFE6FF}
 #app:is([data-mode="combat"],[data-mode="district"]) .ennemi-nom{text-shadow:0 0 22px rgba(150,190,255,.35),0 2px 8px rgba(0,0,0,.8)}
 

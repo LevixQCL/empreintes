@@ -95,7 +95,7 @@ export function htmlClassements(e: EcranDistrict, g: GrandTableau, uid: string |
     + `<button type="button" role="tab" class="seg${g.periode === 'total' ? ' actif' : ''}" aria-selected="${g.periode === 'total'}" data-action="gt-periode" data-id="total">Record</button>`
     + `<button type="button" role="tab" class="seg${g.periode === 'semaine' ? ' actif' : ''}" aria-selected="${g.periode === 'semaine'}" data-action="gt-periode" data-id="semaine">Cette semaine</button></div>`
     + `<p class="gt-explique">${g.periode === 'total' ? echap(def.texte) : `${def.id === 'profondeur' ? 'Les Strates gagnées' : def.id === 'fleche' ? 'Les quais de record gagnés sur la Flèche' : 'Les points de Registre gagnés'} depuis lundi. Tout le monde repart de zéro dans <b>${duree(fin)}</b>.`}`
-    + ` <button type="button" class="lien" data-action="gt-regles" aria-expanded="${g.regles}">Comment ça se calcule ?</button></p>`
+    + ` <button type="button" class="lien" data-action="gt-regles" aria-expanded="${g.regles}">${ICO.aide}Comment ça se calcule ?</button></p>`
     + (g.regles ? regles(def.id) : '') + `</div>`;
 
   // la liste
