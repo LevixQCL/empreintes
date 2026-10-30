@@ -8,7 +8,7 @@ import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, plac
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
-import { ACCORD_OUVERT, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, usureMax } from './etat';
+import { ACCORD_OUVERT, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -410,7 +410,7 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   if (arrives) { j.naufrages = { strate: j.strate, n: nf.ramenes + arrives }; creuser(j); }
   const q = j.porteurs[m.porteur]!;
   const usureAvant = q.usure;
-  q.usure = Math.min(usureMax(m.porteur), q.usure + d.usure + (b.affinite === 'mauvais' ? MISSIONS.usureMauvais : 0));
+  q.usure = Math.min(usureMax(j, m.porteur), q.usure + d.usure + (b.affinite === 'mauvais' ? MISSIONS.usureMauvais : 0));
   const avantMarque = progresMarque(j, m.porteur)?.acquise;
   q.faits = { ...q.faits, missions: (q.faits?.missions ?? 0) + 1 };
   const marque = progresMarque(j, m.porteur);
@@ -668,11 +668,7 @@ export function remonter(j: Jeu): Retour {
   const butin = x.tutoriel ? brut : Math.round(brut * (j.actes.chambre === 'district' ? 1.2 : 1) * (j.actes.fin === 'pacte' ? 1.1 : 1));
   j.composants += butin;
   const finaux = x.carte && x.phase !== 'combat' ? x.porteurs : x.combat.porteurs;
-  for (const p of finaux) {
-    const d = j.porteurs[p.id]!;
-    const usure = DISTRICT.usureExpedition * (j.actes.fin === 'archives' ? 1.5 : 1) * (x.fouille || x.epreuve ? 0.5 : 1);
-    d.usure = Math.min(usureMax(p.id), d.usure + usure + (p.pv <= 0 ? DISTRICT.usureATerre : 0) + (x.fuite ? DISTRICT.usureFuite : 0) + (p.usureEclat ?? 0));
-  }
+  for (const p of finaux) usureAuRetour(j, p, x.fuite ? DISTRICT.usureFuite : 0);
   let nouvelleStrate = false;
   let butinFilon = 0;
   let fragment: string | null = null;
@@ -852,6 +848,8 @@ export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef)
     if (!porteursPresents(j).includes(id)) return refus('Ce Porteur n’est pas encore arrivé au district.');
     if (enMission(j, id)) return refus(`${porteurDef(id).nom} est en mission.`);
     if (j.porteurs[id]?.poste === 'forge' && j.forge) return refus(`${porteurDef(id).nom} ne peut pas quitter la Forge pendant une fabrication.`);
+    const blesse = tropBlesse(j, id);
+    if (blesse) return refus(blesse);
   }
   if (!j.chambre) return refus('Ouvre d’abord la chambre scellée.');
   for (const id of escouade) {

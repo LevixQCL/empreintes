@@ -87,11 +87,13 @@ describe('Remonter en fuyant', () => {
     const usure = j.porteurs.ilka!.usure;
     const cartes = Object.keys(j.collection).length;
     expect(fuir(j).ok).toBe(true);
+    const p = j.expedition!.combat.porteurs.find((q) => q.id === 'ilka')!;
+    const perdus = p.pvMax - Math.max(0, p.pv);
     const r = remonter(j);
     expect(r.fuite).toBe(true);
     expect(r.victoire).toBe(false);
     expect(r.butin).toBe(Math.floor(40 * DISTRICT.butinFuite));
-    expect(j.porteurs.ilka!.usure).toBe(usure + DISTRICT.usureExpedition + DISTRICT.usureFuite);
+    expect(j.porteurs.ilka!.usure).toBe(usure + perdus + DISTRICT.usureFuite + (p.pv <= 0 ? DISTRICT.usureATerre : 0));
     expect(Object.keys(j.collection).length).toBeGreaterThanOrEqual(cartes); // la carte trouvée en route est gardée
     expect(j.expedition).toBeNull();
   });

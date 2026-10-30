@@ -12,7 +12,7 @@ import { puissanceCarte } from '../collection';
 import { butinCombat, nouvelleExpedition } from '../expedition';
 import { graine, tireur } from '../rng';
 import type { Lignee } from '../types';
-import { CONFIANCE, DISTRICT, XP, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureMax, type Jeu, type Resultat } from './etat';
+import { CONFIANCE, XP, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, remonter as remonterDescente, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 
@@ -52,8 +52,6 @@ export const PILLAGE = {
   ecartMax: 1.15,
   /** archipels proposés sur la carte */
   cibles: 6,
-  /** l'Usure d'un pillage : la moitié d'une expédition (un seul combat) */
-  usure: 0.5,
 } as const;
 
 // ---------- La garnison : ce qu'un directeur publie pour être pillé ----------
@@ -341,11 +339,11 @@ export function remonterPillage(j: Jeu, now: number): RetourPillage | null {
   }
   if (!pi.bot) etat.aEnvoyer.push({ cible: pi.cible, victoire, vol: victoire ? pi.vol : 0, perte, le: now });
   noterHistorique(j, { sens: 'attaque', nom: pi.nom, gagne: victoire, composants: victoire ? gain : -perte, le: now, ...(pi.bot ? { bot: true } : {}) });
-  // l'Usure (la moitié d'une expédition) et l'expérience d'un combat, comme une fouille
+  // l'Usure (les PV perdus) et l'expérience d'un combat, comme une fouille
   const xp = victoire ? Math.round(XP.combat * (1 + 0.25 * (x.strate - 1)) * 0.75) : 0;
   for (const p of x.combat.porteurs) {
     const d = j.porteurs[p.id]!;
-    d.usure = Math.min(usureMax(p.id), d.usure + DISTRICT.usureExpedition * PILLAGE.usure + (p.pv <= 0 ? DISTRICT.usureATerre : 0) + (p.usureEclat ?? 0));
+    usureAuRetour(j, p);
     if (xp) { const avant = niveauPorteur(j, p.id).niveau; const n = gagnerXp(j, p.id, xp); if (n && n > avant) log(j, `${porteurDef(p.id).nom} passe au niveau ${n} !`); }
     if (victoire) { const f = (d.faits ??= {}); f.combats = (f.combats ?? 0) + 1; }
   }

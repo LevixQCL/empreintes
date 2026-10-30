@@ -44,7 +44,7 @@ const DECISION_FIN: { titre: string; texte: string; options: { id: FinCampagne; 
     { id: 'pacte', nom: 'Le Pacte des empreintes', phrase: 'Nous héritons de la responsabilité de les contenir, ensemble.',
       effet: 'Leur contrôle est partagé entre les Hauts et les districts. Une paix fragile : +10 % de composants. Une nouvelle bureaucratie : les chantiers durent 25 % plus longtemps.' },
     { id: 'archives', nom: 'Les Archives ouvertes', phrase: 'Une empreinte n’est qu’une donnée. Elle n’a rien de sacré.',
-      effet: 'Tout est révélé et accessible à tous. Plus de liberté : deux fois plus de cartes en nacre. Des accidents de greffe : l’Usure des expéditions augmente de moitié.' },
+      effet: 'Tout est révélé et accessible à tous. Plus de liberté : deux fois plus de cartes en nacre. Des accidents de greffe : l’Usure en plus d’un Porteur à terre ou d’une fuite augmente de moitié.' },
   ],
 };
 

@@ -4,7 +4,7 @@
 
 import { BATIMENTS, CLE_LEGS, GESTES_SPECIAUX, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
 import { CHARGE, NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
-import { ACCORD_OUVERT, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, usureMax, type Jeu } from '../core/jeu';
+import { ACCORD_OUVERT, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
@@ -70,7 +70,7 @@ function tuile(j: Jeu, p: PorteurDef): string {
     + (j.vus.porteurs.includes(p.id) ? '' : `<span class="ruban-nouveau">Nouveau</span>`)
     + `<span class="pt-nom"><strong>${echap(p.nom)}</strong><small>${echap(PRESENTATIONS[p.id]?.titre ?? NOM_LIGNEE[p.lignee])}</small></span></span>`
     + `<span class="pt-chiffres"><b>Niv. ${n.niveau}</b><span>${pv}/${pvM} PV</span><span class="${nc >= DISTRICT.cartesMax ? 'plein' : nc ? '' : 'zero'}">${nc}/${DISTRICT.cartesMax} cartes</span></span>`
-    + `<span class="pt-jauges" title="PV et expérience${n.requis ? ` (${n.xp} / ${n.requis} XP vers le niveau ${n.niveau + 1})` : ''}">${jaugePv(pv, pvM, d.usure, usureMax(p.id))}${barreXp(j, p.id)}</span>`
+    + `<span class="pt-jauges" title="PV et expérience${n.requis ? ` (${n.xp} / ${n.requis} XP vers le niveau ${n.niveau + 1})` : ''}">${jaugePv(pv, pvM, d.usure, usureMax(j, p.id))}${barreXp(j, p.id)}</span>`
     + marqueTuile(j, p.id)
     + aFaire(j, p)
     + `</button>`;
@@ -84,7 +84,7 @@ function aFaire(j: Jeu, p: PorteurDef): string {
   const places = DISTRICT.cartesMax - d.modules.length;
   const bouts: string[] = [];
   if (places > 0 && libresLignee > 0) bouts.push(`<span class="pt-afaire">${ICO.cartes}Peut porter ${Math.min(places, libresLignee)} carte${Math.min(places, libresLignee) > 1 ? 's' : ''} de plus</span>`);
-  if (d.usure >= usureMax(p.id) * 0.5) bouts.push(`<span class="pt-afaire usure">${ICO.soin}Usure élevée : repos à la Clinique</span>`);
+  if (d.usure >= usureMax(j, p.id) * 0.5) bouts.push(`<span class="pt-afaire usure">${ICO.soin}Usure élevée : repos à la Clinique</span>`);
   return bouts.join('');
 }
 
@@ -227,7 +227,8 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
     : raison && !j.expedition
     ? `<p class="eq-alerte">${ICO.verrou}<span>${echap(raison.replace(/\.$/, ''))} : ${IL.has(id) ? 'il' : 'elle'} ne pourra pas descendre.</span></p>`
     : textePosteQuitte(j, id) && !j.expedition ? `<p class="eq-alerte doux">${ICO.ouvrier}<span>Au départ, ${echap(textePosteQuitte(j, id)!)}</span></p>`
-    : d.usure >= usureMax(id) * 0.5 ? `<p class="eq-alerte">${ICO.soin}<span>Usure élevée : −${Math.floor(d.usure)} PV en combat. La Clinique la soigne au district.</span></p>`
+    : tropBlesse(j, id) && !j.expedition ? `<p class="eq-alerte">${ICO.soin}<span>${echap(tropBlesse(j, id)!.replace(/\.$/, ''))} : soins intensifs possibles à la Clinique.</span></p>`
+    : d.usure >= usureMax(j, id) * 0.5 ? `<p class="eq-alerte">${ICO.soin}<span>Usure élevée : −${Math.floor(d.usure)} PV en combat. La Clinique la soigne au district.</span></p>`
     // vide, la ligne garde sa place : sur PC, les trois colonnes restent alignées
     : '<p class="eq-alerte"></p>';
   const bat = LIGNEES.find((l) => BATTU_PAR[l] === p.lignee)!;
@@ -235,7 +236,7 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
     + `<header class="eq-tete">`
     + `<button type="button" class="eq-portrait" data-action="porteur" data-id="${id}" aria-label="Fiche de ${echap(p.nom)}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 64)}<span class="eq-rang" aria-hidden="true">${i + 1}</span></button>`
     + `<div class="eq-id"><button type="button" class="eq-nom" data-action="porteur" data-id="${id}"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · Niv. ${n.niveau}</small></button>`
-    + `<span class="eq-pv">${jaugePv(pv, pvM, d.usure, usureMax(id))}<small><b>${pv}</b> / ${pvM} PV</small></span>`
+    + `<span class="eq-pv">${jaugePv(pv, pvM, d.usure, usureMax(j, id))}<small><b>${pv}</b> / ${pvM} PV</small></span>`
     + `<small class="eq-fort" style="--l:${COULEUR[bat]}">Fort contre les <b>${NOM_LIGNEES[bat]}</b></small></div>`
     + (verrou ? '' : `<button type="button" class="eq-changer" data-action="escouade-place" data-index="${i}" aria-label="Changer ${echap(p.nom)}">${ICO.recycler}<span>Changer</span></button>`)
     + `</header>`
@@ -381,7 +382,7 @@ export function feuillePorteur(e: EcranDistrict): string {
   const pv = pvMaxCombat(j, id);
   const pvM = pvNiveau(j, id) + bonusPv(j, id);
   const usure = Math.floor(d.usure);
-  const uMax = usureMax(id);
+  const uMax = usureMax(j, id);
   const st = statut(j, id);
   const img = portrait(id);
   const parti = enExpedition(j, id);

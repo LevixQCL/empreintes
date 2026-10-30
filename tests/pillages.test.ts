@@ -91,6 +91,7 @@ describe('Les pillages', () => {
     for (let k = 0; k < PILLAGE.jetonsMax; k++) {
       expect(piller(j, ESC, bots[k]!, 0, k + 1).ok).toBe(true);
       jouer(j);
+      for (const id of ESC) j.porteurs[id]!.usure = 0; // la Clinique a fait son œuvre entre deux pillages
     }
     expect(piller(j, ESC, bots[5]!, 0).ok).toBe(false);
     expect(majJetons(j, PILLAGE.rechargeMs - 1)).toBe(PILLAGE.rechargeMs);

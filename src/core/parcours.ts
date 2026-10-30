@@ -15,7 +15,7 @@ import {
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
   enMission, envoyerMission, destinationsDuJour, secoursPossible, epreuvesDeLaSemaine, fouiller, partirEpreuve,
   chargeMax, niveauPorteur, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick,
-  coutRefabrication, placesEntrainement, seancesDe, type Jeu, type Poste,
+  coutRefabrication, soignerVite, placesEntrainement, seancesDe, type Jeu, type Poste,
 } from './jeu';
 import { jouerTour, jouerTourMoyen } from './robot';
 // (les creuseurs se gagnent par les fouilles, missions et Épreuves que joue déjà ce joueur simulé)
@@ -275,6 +275,8 @@ export function simulerParcours(
       const cible = attente ? front : echecs >= 2 && front > 1 ? front - 1 : front;
       const faible = LIGNEES.map((l) => ({ l, v: meilleures(j, l, Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => chargeMax(j, id)), chargeMax(j, NOMME[l])), Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => niveauPorteur(j, id).niveau), niveauPorteur(j, NOMME[l]).niveau)).reduce((n, id) => n + valeurCarte(id, j.collection[id]!.niveau), 0) / DEFENSES_POIDS[l] }))
         .sort((a, b) => a.v - b.v)[0]!.l;
+      // un joueur moyen paie les soins intensifs avant de retenter le front, si l'énergie ne manque pas aux chantiers
+      if (cible === front && !attente) for (const id of escouade) if (j.energie >= 300) soignerVite(j, id);
       const g = suivant();
       const victoire = jouerExpedition(j, () => (cible === front && !attente ? partir(j, escouade, cible, g) : fouiller(j, escouade, cible, faible, g)).ok, jouer, opts.tours);
       depuis++;

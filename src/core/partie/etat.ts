@@ -27,11 +27,11 @@ export const DISTRICT = {
   /** bonus d'un Porteur posté : de la bonne lignée / d'une autre lignée */
   bonusAffinite: 2,
   bonusPoste: 1.5,
-  /** Usure gagnée par expédition, et en plus si le Porteur finit à terre */
-  usureExpedition: 6,
+  /** Usure (30 octobre 2026, demande de Bryan) : les PV perdus en bas restent perdus au retour, la Clinique les rend au repos.
+   *  En plus des PV perdus : un malus si le Porteur finit à terre, et un autre si l'escouade fuit (`usureFuite`). */
   usureATerre: 3,
-  /** Usure maximale, en fraction des PV max */
-  usureMaxRatio: 0.5,
+  /** part de ses PV qu'un Porteur doit avoir retrouvée pour redescendre (un Porteur à terre reste d'abord à la Clinique) */
+  pvMinDepart: 0.25,
   /** cartes qu'un Porteur peut porter (décision du 22 octobre 2026 : la carte qu'on collectionne est celle qu'on joue) ;
    *  ce sont aussi ses places en combat, remplies ou vides (`PLACES_PORTEUR`) */
   cartesMax: PLACES_PORTEUR,
@@ -376,7 +376,22 @@ export const enMission = (j: Jeu, id: string) => !!j.missions?.some((m) => m.por
 export const posteDe = (j: Jeu, b: Poste) => Object.keys(j.porteurs).find((id) => j.porteurs[id]!.poste === b) ?? null;
 export const stockage = (j: Jeu) => DISTRICT.stockage[j.batiments.noyau] ?? 0;
 export const pvMaxCombat = (j: Jeu, id: string) => pvNiveau(j, id) + bonusPv(j, id) - Math.floor(j.porteurs[id]!.usure);
-export const usureMax = (id: string) => Math.floor(porteurDef(id).pvMax * DISTRICT.usureMaxRatio);
+/** L'Usure ne peut pas dépasser tous les PV du Porteur */
+export const usureMax = (j: Jeu, id: string) => pvNiveau(j, id) + bonusPv(j, id);
+/** Les PV qu'il faut avoir retrouvés pour redescendre */
+export const pvMinDepart = (j: Jeu, id: string) => Math.ceil(usureMax(j, id) * DISTRICT.pvMinDepart);
+/** Trop blessé pour redescendre : il se repose à la Clinique (null = il peut partir) */
+export function tropBlesse(j: Jeu, id: string): string | null {
+  const manque = pvMinDepart(j, id) - pvMaxCombat(j, id);
+  return manque > 0 ? `${porteurDef(id).nom} se remet à la Clinique : il lui faut ${pvMinDepart(j, id)} PV pour redescendre (encore ${manque}).` : null;
+}
+/** L'Usure au retour d'un combat : les PV perdus, plus les malus (à terre, fuite, Coup d'éclat) */
+export function usureAuRetour(j: Jeu, p: { id: string; pv: number; pvMax: number; usureEclat?: number }, malus = 0): void {
+  const d = j.porteurs[p.id]!;
+  const perdus = Math.max(0, p.pvMax - Math.max(0, p.pv));
+  const extra = (p.pv <= 0 ? DISTRICT.usureATerre : 0) + malus + (p.usureEclat ?? 0);
+  d.usure = Math.min(usureMax(j, p.id), d.usure + perdus + extra * (j.actes.fin === 'archives' ? 1.5 : 1));
+}
 
 export function multiplicateur(j: Jeu, b: Exclude<Poste, 'noyau'>): number {
   const id = posteDe(j, b);

@@ -20,7 +20,7 @@ import { creerCombat } from '../combat';
 import { FLECHE } from '../classements';
 import { nouvelleExpedition } from '../expedition';
 import { graine, tireur } from '../rng';
-import { DISTRICT, XP, bonusPv, gagnerXp, log, niveauPorteur, non, pvNiveau, usureMax, type Jeu, type Resultat } from './etat';
+import { XP, bonusPv, gagnerXp, log, niveauPorteur, non, pvNiveau, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 import { PILLAGE, remonter as remonterPillage, type Garnison } from './pillages';
@@ -35,8 +35,6 @@ export const ASCENSION = {
    *  Au sommet 8,8 : un peu au-dessus de la meilleure escouade, il faut aussi bien jouer. */
   forcePied: 3.4,
   forceSommet: 8.8,
-  /** l'Usure d'un combat de la Flèche : la moitié d'une expédition, comme un pillage */
-  usure: 0.5,
   /** les récompenses des quais gravés, une seule fois chacune */
   recompenses: {
     20: { composants: 150, eclats: 3 },
@@ -230,12 +228,12 @@ export function remonterFleche(j: Jeu, now: number): RetourFleche | null {
     f.defaites++;
     f.quai = Math.max(plancher(f.record), de - pas(de));
   }
-  // l'Usure (la moitié d'une expédition) et l'expérience d'un combat, comme un pillage
+  // l'Usure (les PV perdus) et l'expérience d'un combat, comme un pillage
   const q = x.fleche.quai;
   const xp = victoire ? Math.round(XP.combat * (1 + 0.04 * (q - 1)) * 0.75) : 0;
   for (const p of x.combat.porteurs) {
     const d = j.porteurs[p.id]!;
-    d.usure = Math.min(usureMax(p.id), d.usure + DISTRICT.usureExpedition * ASCENSION.usure + (p.pv <= 0 ? DISTRICT.usureATerre : 0) + (p.usureEclat ?? 0));
+    usureAuRetour(j, p);
     if (xp) { const avant = niveauPorteur(j, p.id).niveau; const n = gagnerXp(j, p.id, xp); if (n && n > avant) log(j, `${porteurDef(p.id).nom} passe au niveau ${n} !`); }
     if (victoire) { const fa = (d.faits ??= {}); fa.combats = (fa.combats ?? 0) + 1; }
   }

@@ -593,7 +593,7 @@ export function convertir(j: Jeu, now = j.dernierTick): Resultat {
 }
 
 /** Les soins intensifs de la Clinique : de l'énergie pour effacer l'Usure d'un Porteur tout de suite (sans attendre le repos) */
-export const SOINS_INTENSIFS = { energieParUsure: 20 };
+export const SOINS_INTENSIFS = { energieParUsure: 5 };
 
 export function soignerVite(j: Jeu, id: string): Resultat {
   const p = j.porteurs[id];
