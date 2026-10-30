@@ -7,12 +7,17 @@ import { ASCENSION, chanceQuai, chanceVictoire, cibleDefiDe, etatFleche, FLECHE,
 import { avatar, coquille, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO } from './icones';
-import { fondFleche } from './art';
+import { artFleche, fondFleche, miniature } from './art';
 import { echap } from './outils';
 import { COULEUR } from './vue';
 
-/** hauteur d'un quai sur la flèche dessinée (0 = pied, 100 = sommet) */
-const hauteur = (q: number) => ((q - 1) / (FLECHE.quais - 1)) * 100;
+/**
+ * La Flèche peinte (30 octobre 2026, Bryan : « refaire un truc entièrement original ») : où se trouve un quai sur
+ * l'image de la Flèche entière, en % de sa hauteur depuis le haut (le pied posé sur la mer, le sommet sous l'île).
+ */
+const PIED = 90;
+const SOMMET = 13;
+const hauteur = (q: number) => PIED - ((Math.min(FLECHE.quais, Math.max(1, q)) - 1) / (FLECHE.quais - 1)) * (PIED - SOMMET);
 
 /** Le récit des Îles ouvertes (arc « Sous la ligne », 29 octobre 2026) : il s'ouvre une fois le Premier Porteur vaincu (−10) */
 const recitOuvert = (j: Jeu) => strateVaincue(j) >= 10;
@@ -29,8 +34,8 @@ export function htmlFleche(e: EcranDistrict): string {
   const sommet = f.quai >= FLECHE.quais;
   const suivant = prochainPalier(f.quai);
 
-  // la flèche et où l'on en est
-  h += `<section class="fl-tete">${fleche(f.quai, f.record)}<div class="fl-ou">`
+  // la Flèche peinte et où l'on en est
+  h += `<section class="fl-tete">${fleche(j, f, e.gardiens?.top ?? [])}<div class="fl-ou">`
     + `<span class="surtitre">${ICO.tour}Ton escouade tient</span>`
     + `<p class="fl-quai"><small>Quai</small><b>${f.quai}</b><em>/ ${FLECHE.quais}</em></p>`
     + `<dl class="fl-chiffres"><div><dt>Record</dt><dd>${f.record}</dd></div><div><dt>Gagnés</dt><dd>${f.victoires}</dd></div><div><dt>Perdus</dt><dd>${f.defaites}</dd></div></dl>`
@@ -46,13 +51,25 @@ export function htmlFleche(e: EcranDistrict): string {
   return coquille(e, h, 'fle');
 }
 
-/** La flèche dessinée : la colonne, les quais gravés, le record et le quai de l'escouade */
-function fleche(quai: number, record: number): string {
-  return `<div class="fl-colonne" role="img" aria-label="Quai ${quai} sur ${FLECHE.quais}, record ${record}">`
-    + `<i class="fl-fut"></i><i class="fl-monte" style="--h:${hauteur(quai)}%"></i>`
-    + FLECHE.paliers.map((p) => `<i class="fl-cran${p <= record ? ' atteint' : ''}" style="--h:${hauteur(p)}%"><em>${p}</em></i>`).join('')
-    + (record > quai ? `<i class="fl-record" style="--h:${hauteur(record)}%"></i>` : '')
-    + `<b class="fl-ici" style="--h:${hauteur(quai)}%"></b><i class="fl-sieges"></i></div>`;
+/**
+ * La Flèche peinte : l'image de la Flèche entière (le même tableau flouté derrière, pour remplir la largeur),
+ * les plaques des quais gravés de part et d'autre du fût, les fanions des quais tenus, et le médaillon de l'escouade
+ * (le portrait de son chef) à la hauteur de son quai.
+ */
+function fleche(j: Jeu, f: EtatFleche, top: GardienQuai[]): string {
+  const chef = escouadePourDepart(j)[0] ?? 'ilka';
+  const mini = miniature(chef);
+  const fanions = [
+    ...top.filter((g) => !(f.garde && g.quai === f.garde.quai && g.depuis === f.garde.depuis)).slice(0, 4)
+      .map((g) => `<i class="fl-fanion autre" style="--y:${hauteur(g.quai)}%" title="${echap(g.nom)} · quai ${g.quai}"></i>`),
+    ...(f.garde ? [`<i class="fl-fanion moi" style="--y:${hauteur(f.garde.quai)}%" title="Ton quai : ${f.garde.quai}"></i>`] : []),
+  ];
+  return `<div class="fl-scene" style="--decor:url(${artFleche('fleche-entiere')});--plaque:url(${artFleche('plaque')});--fanion:url(${artFleche('fanion')});--medaillon:url(${artFleche('medaillon')})" role="img" aria-label="La Flèche : ton escouade au quai ${f.quai} sur ${FLECHE.quais}, record ${f.record}${f.garde ? `, tu tiens le quai ${f.garde.quai}` : ''}">`
+    + `<div class="fl-vue">`
+    + FLECHE.paliers.map((p, i) => `<i class="fl-plaque${p <= f.record ? ' atteint' : ''}${i % 2 ? ' d' : ' g'}" style="--y:${hauteur(p)}%"><em>${p}</em></i>`).join('')
+    + fanions.join('')
+    + `<b class="fl-esc" style="--y:${hauteur(f.quai)}%">${mini ? `<img src="${mini}" alt="" decoding="async">` : ''}</b>`
+    + `</div></div>`;
 }
 
 const recompense = (q: number) => {
@@ -73,6 +90,7 @@ function assaut(j: Jeu, quai: number, record: number): string {
   const bas = Math.max(plancher(record), quai - pas(quai));
   const raison = j.expedition ? 'Une expédition est déjà en cours.' : '';
   return `<section class="fl-assaut d${niveau}" aria-label="Le quai ${quai}">`
+    + `<div class="fl-passerelle" style="--decor:url(${artFleche('passerelle')})" aria-hidden="true"></div>`
     + `<header><div><span class="surtitre">La montée · gardiens payés par les Hauts</span><h2>Quai ${quai}</h2></div>`
     + `<span class="fl-badge">${nomNiveau}<small>${chance < 1 ? '< 1' : chance > 99 ? '> 99' : chance} % de chances</small></span></header>`
     + `<ul class="fl-gardiens">${gardiens.map((id) => `<li style="--c:${COULEUR[porteurDef(id).lignee]}">${avatar(id, 40)}<span><strong>${echap(porteurDef(id).nom)}</strong><small>${NOM_LIGNEE[porteurDef(id).lignee]}</small></span></li>`).join('')}</ul>`
@@ -117,7 +135,7 @@ function competition(e: EcranDistrict, f: EtatFleche): string {
 /** Tenir le plus haut quai libre déjà atteint */
 function tenir(libre: number | null): string {
   if (!libre) return `<p class="fl-raison">${ICO.monter}Monte d’abord au-dessus du pied de la Flèche : on ne tient qu’un quai déjà atteint.</p>`;
-  return `<div class="fl-tenir"><span class="fl-sommet-ico">${ICO.bouclier}</span><div>`
+  return `<div class="fl-tenir"><img class="fl-sceau" src="${artFleche('sceau-gardien')}" alt="" decoding="async"><div>`
     + `<strong>Tenir le quai ${libre}</strong>`
     + `<small>Le plus haut quai libre que tu as atteint. Une copie de ton escouade y monte la garde pendant que tu continues de grimper ; les Hauts te versent <b>${gage(libre)}</b> par jour.</small>`
     + `<button type="button" class="btn sec" data-action="fleche-tenir" data-quai="${libre}">${ICO.bouclier}S’installer sur le quai ${libre}</button></div></div>`;
@@ -132,7 +150,7 @@ function garde(f: EtatFleche, libre: number | null): string {
   const jours = Math.floor((now - g.depuis) / 86_400_000);
   const plusHaut = libre && libre > g.quai ? libre : null;
   return `<div class="fl-assaut fl-garde" aria-label="Le quai ${g.quai}, tenu par ton escouade">`
-    + `<header><div><span class="surtitre">Gardien du quai</span><h2>Tu tiens le quai ${g.quai}</h2></div>`
+    + `<header><img class="fl-sceau" src="${artFleche('sceau-gardien')}" alt="" decoding="async"><div><span class="surtitre">Gardien du quai</span><h2>Tu tiens le quai ${g.quai}</h2></div>`
     + `<span class="fl-badge">${g.repousses}<small>défense${g.repousses > 1 ? 's' : ''} tenue${g.repousses > 1 ? 's' : ''}</small></span></header>`
     + visages(g.garnison.porteurs.map((p) => p.id))
     + `<dl class="fl-enjeu"><div class="gain"><dt>Gage par jour</dt><dd>${ICO.chrono}<b>${gage(g.quai)}</b><small>${jours ? `tenu depuis ${jours} jour${jours > 1 ? 's' : ''}` : 'tenu depuis aujourd’hui'}</small></dd></div>`
@@ -162,17 +180,17 @@ function classement(top: GardienQuai[] | null, f: EtatFleche, connecte: boolean)
   return `<details class="fl-repli fl-top"${f.garde ? '' : ' open'}><summary><span class="surtitre">${ICO.monter}Les gardiens les plus hauts</span></summary>`
     + (top === null ? `<p class="fl-vide">Les quais se chargent…</p>`
       : !l.length ? `<p class="fl-vide">Aucun directeur ne tient encore de quai : le plus haut est à prendre.</p>`
-      : `<ol>${l.map((g, i) => `<li${moi(g) ? ' class="moi"' : ''}><b>${i + 1}</b><span>${moi(g) ? 'Toi' : echap(g.nom)}</span><em>Quai ${g.quai}</em></li>`).join('')}</ol>`)
+      : `<ol>${l.map((g, i) => `<li${moi(g) ? ' class="moi"' : ''}>${i ? `<b>${i + 1}</b>` : `<img class="fl-sceau" src="${artFleche('sceau-gardien')}" alt="1">`}<span>${moi(g) ? 'Toi' : echap(g.nom)}</span><em>Quai ${g.quai}</em></li>`).join('')}</ol>`)
     + `</details>`;
 }
 
 /** Les quais gravés : récompense reçue, ou à gagner */
 function paliers(quai: number, recus: number[]): string {
   // repliés (28 octobre 2026) : le prochain quai gravé est déjà annoncé en tête, la liste complète se déplie
-  return `<details class="fl-paliers fl-repli" aria-label="Les quais gravés"><summary><span class="surtitre">${ICO.cristal}Les ${FLECHE.paliers.length} quais gravés · ${recus.length} reçu${recus.length > 1 ? 's' : ''}</span></summary><ol>`
+  return `<details class="fl-paliers fl-repli" style="--plaque:url(${artFleche('plaque')})" aria-label="Les quais gravés"><summary><span class="surtitre">${ICO.cristal}Les ${FLECHE.paliers.length} quais gravés · ${recus.length} reçu${recus.length > 1 ? 's' : ''}</span></summary><ol>`
     + [...FLECHE.paliers].reverse().map((p) => {
       const recu = recus.includes(p);
-      return `<li class="${recu ? 'recu' : p <= quai ? 'atteint' : ''}"><b>${p}</b><span>${p >= FLECHE.quais ? 'Le dernier quai : l’amarrage' : 'Quai gravé'}<small>${p <= 40 ? 'on y monte de 4 en 4' : p <= 70 ? 'on y monte de 2 en 2' : 'on y monte quai par quai'}</small></span>`
+      return `<li class="${recu ? 'recu' : p <= quai ? 'atteint' : ''}"><b class="fl-plaque-num">${p}</b><span>${p >= FLECHE.quais ? 'Le dernier quai : l’amarrage' : 'Quai gravé'}<small>${p <= 40 ? 'on y monte de 4 en 4' : p <= 70 ? 'on y monte de 2 en 2' : 'on y monte quai par quai'}</small></span>`
         + `<em>${recu ? `${ICO.ok}Reçu` : recompense(p)}</em></li>`;
     }).join('') + `</ol></details>`;
 }

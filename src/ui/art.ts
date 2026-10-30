@@ -196,6 +196,8 @@ export const portraitPersonnage = (id: string): string | null => (PERSONNAGES_IL
 const SCENES_ILLUSTREES = new Set(['entree-2', 'entree-4', 'entree-5', 'entree-6', 'gardien-2', 'gardien-3', 'convocation', 'entree-8', 'gardien-9', 'epilogue']);
 /** Le décor des combats de la Flèche : une plateforme d'amarrage au-dessus des nuages (28 octobre 2026) */
 export const fondFleche = `${base}scenes/fleche.webp`;
+/** La Flèche peinte (30 octobre 2026) : la Flèche entière, le médaillon de l'escouade, les plaques, les fanions, la passerelle, le sceau du gardien */
+export const artFleche = (n: 'fleche-entiere' | 'medaillon' | 'plaque' | 'fanion' | 'passerelle' | 'sceau-gardien') => `${base}fleche/${n}.webp`;
 export const illustrationScene = (id: string): string | null => (SCENES_ILLUSTREES.has(id) ? `${base}scenes/${id}.webp` : null);
 /** La salle d'entraînement de la Tour du Noyau (23 octobre 2026) */
 export const salleEntrainement = `${base}salles/entrainement.webp`;

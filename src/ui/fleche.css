@@ -16,35 +16,33 @@
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 
 /* ---------- La flèche et le quai ---------- */
-.fl-tete{position:relative;display:grid;grid-template-columns:84px minmax(0,1fr);gap:16px;padding:16px 16px 16px 10px;overflow:hidden;
-  background:radial-gradient(70% 60% at 18% 8%,rgba(242,213,140,.16),transparent 70%),radial-gradient(90% 80% at 20% 100%,rgba(47,127,176,.22),transparent 70%),
-    linear-gradient(180deg,rgba(26,34,54,.9),rgba(10,14,24,.95))}
-.fl-colonne{position:relative;height:280px;margin:6px 0 2px}
-/* le fût : une aiguille qui s'effile vers le haut */
-.fl-fut{position:absolute;left:50%;top:0;bottom:0;width:14px;transform:translateX(-50%);
-  background:linear-gradient(90deg,#1A2333,#3B4A62 45%,#1A2333);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);
-  box-shadow:inset 0 0 0 1px rgba(205,239,255,.15)}
-/* la part gravie : de la glace qui monte dans le fût */
-.fl-monte{position:absolute;left:50%;bottom:0;width:14px;height:var(--h);min-height:4px;transform:translateX(-50%);
-  background:linear-gradient(0deg,rgba(127,212,255,.25),#BFEAFF);clip-path:polygon(42% 0,58% 0,100% 100%,0 100%);
-  filter:drop-shadow(0 0 6px rgba(127,212,255,.6))}
-/* un quai gravé : une traverse et son numéro */
-.fl-cran{position:absolute;left:0;right:0;bottom:var(--h);height:0}
-.fl-cran::before{content:"";position:absolute;left:50%;top:-1px;width:26px;height:2px;transform:translateX(-50%);background:rgba(205,239,255,.28)}
-.fl-cran em{position:absolute;right:0;top:-8px;font-family:var(--mono);font-style:normal;font-size:12px;line-height:16px;color:var(--f-doux);font-variant-numeric:tabular-nums}
-.fl-cran:nth-child(odd) em{right:auto;left:0}
-.fl-cran.atteint::before{background:var(--f-or);box-shadow:0 0 6px rgba(242,213,140,.7)}
-.fl-cran.atteint em{color:var(--f-or)}
-/* le record, quand l'escouade est redescendue : un trait pointillé */
-.fl-record{position:absolute;left:50%;bottom:var(--h);width:34px;height:0;transform:translateX(-50%);border-top:1px dashed rgba(242,213,140,.8)}
-/* l'escouade : le cristal qui brille sur la flèche */
-.fl-ici{position:absolute;left:50%;bottom:var(--h);width:16px;height:16px;transform:translate(-50%,50%) rotate(45deg);
-  background:linear-gradient(135deg,#FFFFFF,#9FE0FF 50%,#2F7FB0);box-shadow:0 0 0 2px rgba(8,14,22,.9),0 0 16px 3px rgba(127,212,255,.75);
-  animation:fl-pulse 2.6s ease-in-out infinite}
-@keyframes fl-pulse{50%{box-shadow:0 0 0 2px rgba(8,14,22,.9),0 0 24px 6px rgba(127,212,255,.9)}}
-/* le sommet : les Sièges, une couronne de lumière dorée */
-.fl-sieges{position:absolute;left:50%;top:-8px;width:20px;height:20px;transform:translateX(-50%) rotate(45deg);
-  background:radial-gradient(circle,rgba(242,213,140,.9),rgba(242,213,140,.15) 60%,transparent 72%);box-shadow:0 0 18px rgba(242,213,140,.55)}
+.fl-tete{position:relative;display:grid;gap:14px;padding:0 0 16px;overflow:hidden}
+.fl-tete .fl-ou{padding:0 16px}
+
+/* La Flèche peinte (30 octobre 2026) : le tableau entier au centre, le même flouté et assombri sur les côtés */
+.fl-scene{position:relative;height:440px;overflow:hidden;isolation:isolate}
+.fl-scene::before{content:"";position:absolute;inset:-24px;z-index:-1;background:var(--decor) center 40%/cover no-repeat;filter:blur(14px) brightness(.55) saturate(1.1)}
+.fl-scene::after{content:"";position:absolute;inset:auto 0 0;height:70px;z-index:1;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(12,16,26,.95))}
+.fl-vue{position:relative;height:100%;aspect-ratio:816 / 1456;margin:0 auto;background:var(--decor) center/100% 100% no-repeat;
+  box-shadow:0 0 40px 10px rgba(6,10,18,.55)}
+/* les quais gravés : une plaque de laiton peinte, de part et d'autre du fût, le numéro posé dessus */
+.fl-plaque{position:absolute;top:var(--y);width:52px;height:24px;transform:translateY(-50%);display:grid;place-items:center;z-index:2;
+  background:var(--plaque) center/100% 100% no-repeat;filter:grayscale(.45) brightness(.72) drop-shadow(0 2px 3px rgba(0,0,0,.7))}
+.fl-plaque.g{right:calc(50% + 14px)}
+.fl-plaque.d{left:calc(50% + 14px)}
+.fl-plaque em{padding-left:6px;font-family:var(--mono);font-style:normal;font-weight:700;font-size:12px;line-height:1;color:#2A1606;font-variant-numeric:tabular-nums}
+.fl-plaque.atteint{filter:drop-shadow(0 0 6px rgba(242,213,140,.55)) drop-shadow(0 2px 3px rgba(0,0,0,.7))}
+/* les quais tenus : un fanion peint (doré : le tien ; bleuté : les autres directeurs) */
+.fl-fanion{position:absolute;top:var(--y);width:40px;height:40px;transform:translateY(-82%);z-index:3;
+  background:var(--fanion) center bottom/contain no-repeat;filter:drop-shadow(0 2px 3px rgba(0,0,0,.7))}
+.fl-fanion.moi{left:calc(50% + 2px);width:46px;height:46px;filter:drop-shadow(0 0 8px rgba(242,213,140,.7)) drop-shadow(0 2px 3px rgba(0,0,0,.7))}
+.fl-fanion.autre{right:calc(50% + 2px);transform:translateY(-82%) scaleX(-1);filter:hue-rotate(185deg) saturate(1.3) brightness(1.1) drop-shadow(0 2px 3px rgba(0,0,0,.7))}
+/* l'escouade : le médaillon peint, le portrait de son chef au centre */
+.fl-esc{position:absolute;left:50%;top:var(--y);width:62px;height:66px;transform:translate(-50%,-50%);z-index:4;
+  background:var(--medaillon) center/contain no-repeat;filter:drop-shadow(0 0 12px rgba(127,212,255,.55)) drop-shadow(0 3px 5px rgba(0,0,0,.8))}
+.fl-esc img{position:absolute;left:50%;top:47.5%;width:76%;height:auto;aspect-ratio:1;transform:translate(-50%,-50%);z-index:-1;border-radius:50%;object-fit:cover}
+@media (prefers-reduced-motion:no-preference){.fl-esc{animation:fl-flotte 3.2s ease-in-out infinite}}
+@keyframes fl-flotte{50%{transform:translate(-50%,calc(-50% - 3px))}}
 
 .fl-ou{display:grid;align-content:center;gap:12px;min-width:0}
 .fl-quai{display:flex;align-items:baseline;gap:8px;margin:0}
@@ -63,6 +61,9 @@
 .fl-palier .ico:not(:first-child){width:14px;height:14px;vertical-align:-2px;margin:0 2px 0 4px;color:#8FB8DA}
 
 /* ---------- L'assaut du prochain quai ---------- */
+.fl-passerelle{height:104px;margin:-14px -14px -40px;background:var(--decor) center 55%/cover no-repeat;
+  -webkit-mask-image:linear-gradient(180deg,#000 45%,transparent);mask-image:linear-gradient(180deg,#000 45%,transparent)}
+.fl-assaut>header{position:relative}
 .fl-assaut{display:grid;gap:14px;padding:14px;box-shadow:inset 0 0 0 1px rgba(205,239,255,.2),inset 0 2px 0 var(--dc),0 14px 30px -12px rgba(0,0,0,.8)}
 .fl-assaut header{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:10px}
 .fl-assaut h2{margin:2px 0 0;font-family:var(--display);font-weight:400;font-size:26px;line-height:1.1;color:#fff}
@@ -118,7 +119,6 @@
 .fl-regle{display:flex;gap:10px;margin:0;font-size:13px;line-height:1.45;color:var(--f-doux)}
 .fl-regle .ico{flex-shrink:0;width:18px;height:18px;margin-top:2px;color:var(--f-glace)}
 
-@media (prefers-reduced-motion:reduce){.fl-ici{animation:none}}
 
 /* ---------- Tenir un quai (29 octobre 2026) ---------- */
 .fl-tenir{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:12px;padding:14px}
@@ -130,6 +130,12 @@
 .fl-tenir .fl-raison{font-size:12.5px;line-height:1.4}
 .fl-garde{--dc:var(--f-or);box-shadow:inset 0 0 0 1px rgba(242,213,140,.42),inset 0 2px 0 var(--f-or),0 0 30px -10px rgba(242,213,140,.35),0 14px 30px -12px rgba(0,0,0,.8)}
 .fl-garde h2{color:var(--f-or)}
+.fl-garde>header{grid-template-columns:auto minmax(0,1fr) auto;align-items:center}
+.fl-sceau{display:block;width:52px;height:auto;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
+.fl-tenir>.fl-sceau{width:48px}
+.fl-top li .fl-sceau{width:26px;justify-self:center}
+.fl-plaque-num{display:inline-grid;place-items:center;width:48px;height:22px;padding-left:5px;box-sizing:border-box;background:var(--plaque) center/100% 100% no-repeat;
+  font-family:var(--mono);font-size:12px;font-weight:700;color:#2A1606!important}
 .fl-garde dd b{font-size:17px}
 .fl-garde-actions{display:grid;gap:8px}
 .fl-garde-actions .petit{justify-self:center}
@@ -171,7 +177,7 @@
   .fle .contenu>.fl-compet{grid-column:2;grid-row:3}
   .fle .contenu>.fl-sommet{grid-column:2;grid-row:4}
   .fle .contenu>.fl-regle{grid-column:2;grid-row:5}
-  .fl-colonne{height:320px}
+  .fl-scene{height:600px}
 }
 
 /* le combat de la Flèche : en plein ciel, la lumière dorée des Hauts au-dessus, du vent au lieu de la poussière */
