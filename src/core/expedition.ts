@@ -119,7 +119,10 @@ export const forceStrate = (strate: number) => {
   return Math.round(base * (1 + FORCE.niveaux * Math.max(0, strate - 1)) * 1000) / 1000;
 };
 /** Composants gagnés par victoire */
-export const butinCombat = (strate: number, index: number) => Math.round((index === 2 ? 14 : 6) * (1 + 0.25 * (strate - 1)));
+export const butinCombat = (strate: number, index: number) => Math.round((index === 2 ? 14 : REGLES.salles.combat) * (1 + 0.25 * (strate - 1)));
+/** Composants d'une cache, et d'une salle d'archives */
+export const butinCache = (strate: number) => Math.round(REGLES.salles.cache * (1 + 0.25 * (strate - 1)));
+export const butinArchive = (strate: number) => Math.round(REGLES.salles.archive * (1 + 0.25 * (strate - 1)));
 
 export function nouvelleExpedition(opts: {
   porteurs: PorteurEtat[]; deck: GesteDef[]; strate: number; rng: number;
@@ -248,6 +251,54 @@ export function fuirAuDistrict(x: Expedition): { x: Expedition; ok: boolean; mes
     ok: true,
     x: { ...x, fuite: true, terminee: true, cloture: true, porteurs, combat: { ...x.combat, porteurs: porteurs.map((p) => ({ ...p })) }, recit: recitCoup(x) },
   };
+}
+
+// ---------- Le brouillard (30 octobre 2026) ----------
+
+/** Ce qu'on voit d'une salle : tout, un simple indice, ou rien (la brume) */
+export type Vision = 'claire' | 'indice' | 'brume';
+/** Les indices : volontairement ambigus (une lueur peut être une cache, une salle scellée… ou un ennemi Résonant) */
+export type Indice = 'bruits' | 'lueur' | 'silence' | 'traces' | 'chaleur';
+export const INDICES: Record<Indice, { nom: string; texte: string }> = {
+  bruits: { nom: 'Des bruits', texte: 'Des pas, un grattement, quelque chose qui respire derrière la paroi.' },
+  lueur: { nom: 'Une lueur', texte: 'Une lueur bleutée au bout du couloir. Quelque chose de précieux… ou quelqu’un qui résonne.' },
+  silence: { nom: 'Le silence', texte: 'Rien ne bouge. De la poussière, des gravats : une salle oubliée.' },
+  traces: { nom: 'Des traces', texte: 'Des traces fraîches dans la poussière. Quelqu’un est passé il y a peu.' },
+  chaleur: { nom: 'De la chaleur', texte: 'Une odeur de feu éteint, un air plus doux. Des fouilleurs ont fait halte ici.' },
+};
+
+/** L'indice que laisse deviner une salle (toujours le même pour une même salle) */
+export function indiceSalle(s: Salle): Indice {
+  switch (s.type) {
+    case 'camp': return 'chaleur';
+    case 'rencontre': return 'traces';
+    case 'archive': return 'silence';
+    case 'cache': return s.id % 2 ? 'silence' : 'lueur';
+    case 'elite': return 'lueur';
+    default: return s.ennemi && !s.escorte?.length && ennemiDef(s.ennemi).lignee === 'reso' ? 'lueur' : 'bruits';
+  }
+}
+
+/** Ce que l'escouade voit d'une salle du plan, d'après la Strate, sa position et la présence d'un Résonant debout */
+export function visionSalle(x: Expedition, s: Salle): Vision {
+  if (!x.carte) return 'claire';
+  const ici = salleCourante(x);
+  if (s.faite || s.id === ici.id || s.type === 'gardien' || s.type === 'filon' || s.type === 'entree') return 'claire';
+  const proche: Vision = x.strate >= REGLES.brouillard.indices ? 'indice' : 'claire';
+  // une salle déjà passée : on l'a vue comme voisine d'une salle visitée, ou jamais
+  if (s.rang <= ici.rang) return x.carte.salles.some((v) => v.faite && v.voisins.includes(s.id)) ? proche : 'brume';
+  if (ici.voisins.includes(s.id)) return proche;
+  const resonant = x.porteurs.some((p) => p.pv > 0 && porteurDef(p.id).lignee === 'reso');
+  const portee = 1 + (x.strate <= REGLES.brouillard.loin ? 1 : 0) + (resonant ? 1 : 0);
+  return s.rang - ici.rang <= portee ? 'indice' : 'brume';
+}
+
+/** Ce qu'un joueur croit trouver dans une salle d'après ce qu'il en voit (pour les robots, qui ne trichent pas) */
+export function typeApparent(x: Expedition, s: Salle): TypeSalle {
+  const v = visionSalle(x, s);
+  if (v === 'claire') return s.type;
+  if (v === 'brume') return 'combat';
+  return ({ chaleur: 'camp', traces: 'rencontre', silence: 'cache', lueur: 'cache', bruits: 'combat' } as const)[indiceSalle(s)];
 }
 
 /** On ne peut remonter de soi-même qu'à l'entrée ou depuis un campement */
@@ -453,7 +504,6 @@ export function entrerSalle(x: Expedition, id: number): { x: Expedition; ok: boo
   const etat = { rng: x.carte.rng };
   const t = tireur(etat);
   let y: Expedition = { ...x, carte: { ...x.carte, salles, position: id, rng: etat.rng } };
-  const n = Math.round(8 * (1 + 0.25 * (x.strate - 1)));
   switch (salle.type) {
     case 'combat':
     case 'gardien':
@@ -463,9 +513,12 @@ export function entrerSalle(x: Expedition, id: number): { x: Expedition; ok: boo
       y = lancerCombat({ ...y, recit: 'Une salle scellée : son occupant est plus coriace, mais quelque chose de précieux dort derrière lui.' }, salle.ennemi!, 1.15, undefined, salle.condition);
       break;
     case 'cache': {
+      const n = butinCache(x.strate);
       const eclat = x.strate >= 3 && t.nombre() < 0.3;
       const gains = { ...(y.gains ?? gainsVides()), eclats: (y.gains?.eclats ?? 0) + (eclat ? 1 : 0) };
-      y = { ...y, butin: y.butin + n, gains, recit: `Une cache de fouilleur, oubliée sous des gravats : +${n} composants${eclat ? ' et un Éclat' : ''}.` };
+      // la voie sûre panse un peu l'escouade (30 octobre 2026) : bandages et eau propre oubliés avec les composants
+      const porteurs = y.porteurs.map((p) => (p.pv > 0 ? { ...p, pv: Math.min(p.pvMax, p.pv + Math.round(p.pvMax * REGLES.salles.cacheSoin)) } : p));
+      y = { ...y, porteurs, butin: y.butin + n, gains, recit: `Une cache de fouilleur, oubliée sous des gravats : +${n} composants${eclat ? ', un Éclat' : ''} et de quoi panser l’escouade.` };
       break;
     }
     case 'camp': {
@@ -475,7 +528,8 @@ export function entrerSalle(x: Expedition, id: number): { x: Expedition; ok: boo
     }
     case 'archive': {
       const gains = { ...(y.gains ?? gainsVides()), fragment: true };
-      y = { ...y, gains, butin: y.butin + Math.round(n / 2), recit: `Une salle d’archives : des papiers d’époque, rangés avec soin. Tu les rapporteras au district (+${Math.round(n / 2)} composants).` };
+      const n = butinArchive(x.strate);
+      y = { ...y, gains, butin: y.butin + n, recit: `Une salle d’archives : des papiers d’époque, rangés avec soin. Tu les rapporteras au district (+${n} composants).` };
       break;
     }
     case 'rencontre':

@@ -28,7 +28,7 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="forge"]'); } },
@@ -70,6 +70,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'fleche-combat', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.click('[data-action="fleche-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(800); } },
   { nom: 'scene', sauvegarde: 'district', faire: async (p) => { await p.click('.titre-go'); await p.waitForTimeout(400); for (let i = 0; i < 3; i++) { await p.click('.scene-campagne'); await p.waitForTimeout(150); } } },
   { nom: 'strate', sauvegarde: 'combat', faire: ENTRER },
+  // le brouillard des Strates profondes (30 octobre 2026) : les voisines ne montrent qu'un indice, la fiche d'une salle voilée
+  { nom: 'strate-brume', sauvegarde: 'brume', faire: async (p) => { await ENTRER(p); await p.click('.ex-salle.accessible >> nth=0'); await p.waitForTimeout(300); } },
   { nom: 'combat', sauvegarde: 'combat', faire: async (p) => { await ENTRER(p); await p.click('[data-action="salle"]'); await p.waitForTimeout(600); } },
   { nom: 'debut', sauvegarde: 'debut', faire: ENTRER },
 ];
@@ -142,6 +144,10 @@ async function main() {
     for (const id of trois.slice(0, 2)) te.data.porteurs[id].poste = 'noyau';
     te.data.derniereSeance = trois[2];
     (saves as Record<string, unknown>).tour = te;
+    // la même expédition, mais à la Strate −6 : le brouillard ne laisse voir que des indices (30 octobre 2026)
+    const br = JSON.parse(JSON.stringify(saves.combat));
+    if (br.data.expedition) br.data.expedition.strate = 6;
+    (saves as Record<string, unknown>).brume = br;
     // le Port déjà présenté dans la sauvegarde du district (la sauvegarde « fleche » garde sa présentation)
     d.portVu = true;
 

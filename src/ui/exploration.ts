@@ -11,12 +11,14 @@
 //   PV rendus au campement), la sortie possible est chiffrée, le butin ne s'affiche qu'une fois.
 // 28 octobre 2026 : plus de liste « Où aller ? » ; on choisit sur le plan, la fiche s'ouvre en bas.
 
-import { accessibles, butinCombat, forceStrate, peutRemonter, rangsDe, salleCourante, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
+import { INDICES, accessibles, butinArchive, butinCache, butinCombat, forceStrate, indiceSalle, peutRemonter, rangsDe, salleCourante, visionSalle, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
 import { paroleDescente } from '../core/campagne';
 import { PV_GROUPE, pvProfondeur } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR } from '../core/regles';
-import { CIBLES_FOUILLE, RENCONTRES, type Jeu } from '../core/jeu';
+import { CIBLES_FOUILLE, RENCONTRES, XP, type Jeu } from '../core/jeu';
+import { COLLECTION } from '../core/collection';
+import { REGLES } from '../core/regles';
 import { decorStrate, illustrationEnnemi, portrait, iconeCondition } from './art';
 import { COULEUR, htmlLieu } from './vue';
 import { ICO, baseIcones, icone } from './icones';
@@ -59,8 +61,14 @@ function medaillon(s: Pick<Salle, 'type' | 'ennemi'>): string {
   return `<span class="ex-med peinte">${peinte ? `<img src="${baseIcones}${peinte}.webp" alt="" decoding="async">` : ICO.cristal}</span>`;
 }
 
+/** une salle voilée par le brouillard : un disque de verre fumé, l'indice deviné (ou rien que la brume) */
+function medaillonVoile(ind: keyof typeof INDICES | null): string {
+  return `<span class="ex-med brouillee${ind ? ` i-${ind}` : ' brume'}">${icone(ind ?? 'brume')}</span>`;
+}
+
 /** la grande image d'une route : l'ennemi en portrait 3:4, sinon la scène ou l'icône peinte */
-function visuel(s: Salle): string {
+function visuel(s: Salle, x?: Expedition): string {
+  if (x && visionSalle(x, s) === 'indice') return `<span class="ex-visuel brouillee i-${indiceSalle(s)}">${icone(indiceSalle(s))}</span>`;
   const ill = s.ennemi ? illustrationEnnemi(s.ennemi) : null;
   if (ill) return `<span class="ex-visuel portrait"><img src="${ill}" alt="" decoding="async"></span>`;
   const scene = SCENES[s.type];
@@ -78,7 +86,6 @@ const titreGroupe = (s: Salle) => {
   const n = [s.ennemi!, ...(s.escorte ?? [])].map((id) => ennemiDef(id).nom);
   return n.length > 1 ? `${n.slice(0, -1).join(', ')} et ${n[n.length - 1]}` : n[0]!;
 };
-const composantsSalle = (strate: number) => Math.round(8 * (1 + 0.25 * (strate - 1)));
 
 /** les PV réels des ennemis d'une salle (même calcul que le moteur : force de la Strate, renfort, part du groupe) */
 function pvEnnemis(s: Salle, x: Expedition): number[] {
@@ -90,8 +97,16 @@ function pvEnnemis(s: Salle, x: Expedition): number[] {
 
 /** ce qui attend l'escouade dans une salle accessible, en vrais chiffres */
 function annonce(s: Salle, x: Expedition): { sur: string; titre: string; texte: string; faits: string[] } {
-  const n = composantsSalle(x.strate);
   const or = (t: string) => `<b class="ex-or">${t}</b>`;
+  // le brouillard (30 octobre 2026) : une salle voisine qui ne montre qu'un indice ne dit rien de plus
+  if (visionSalle(x, s) === 'indice') {
+    const i = INDICES[indiceSalle(s)];
+    return { sur: 'Dans le brouillard', titre: i.nom, texte: i.texte, faits: ['On ne sait pas ce qui attend l’escouade avant d’entrer.'] };
+  }
+  // ce que tout combat gagné rapporte en plus des composants : l'XP de l'escouade et une chance de carte (30 octobre 2026, Luc)
+  const xp = Math.round(XP.combat * (1 + 0.25 * (x.strate - 1)));
+  const chance = Math.round(COLLECTION.chanceCombat * 100);
+  const enPlus = `${or(`+${xp} XP`)} chacun · ${or(`${chance} %`)} de chance de carte`;
   if (s.ennemi) {
     const d = ennemiDef(s.ennemi);
     const faible = BATTU_PAR[d.lignee];
@@ -100,16 +115,16 @@ function annonce(s: Salle, x: Expedition): { sur: string; titre: string; texte: 
     if (!s.escorte?.length) faits.push(`faible contre <b class="ex-lignee" style="--c:${COULEUR[faible]}">${NOMS_LIGNEE[faible].nom}</b>`);
     if (s.type === 'gardien') return { sur: 'Gardien de la zone', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 2)}`)} composants · fin de la Strate`] };
     if (s.type === 'elite') return { sur: 'Salle scellée', titre: d.nom, texte: 'Plus coriace, mais une carte dort derrière.', faits: [...faits, `${or(`+${Math.round(butinCombat(x.strate, 0) * 1.7)}`)} composants · ${or('1 carte')}`] };
-    if (s.escorte?.length) return { sur: `Combat · ${s.escorte.length + 1} ennemis`, titre: titreGroupe(s), texte: 'Ils viennent ensemble : choisis qui frapper.', faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`] };
-    return { sur: 'Combat', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`] };
+    if (s.escorte?.length) return { sur: `Combat · ${s.escorte.length + 1} ennemis`, titre: titreGroupe(s), texte: 'Ils viennent ensemble : choisis qui frapper.', faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`, enPlus] };
+    return { sur: 'Combat', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`, enPlus] };
   }
   switch (s.type) {
-    case 'cache': return { sur: 'Cache', titre: 'Une cache de fouilleur', texte: 'Des composants oubliés sous les gravats, sans combat.', faits: [`${or(`+${n}`)} composants${x.strate >= 3 ? ' · parfois un Éclat' : ''}`] };
+    case 'cache': return { sur: 'Cache', titre: 'Une cache de fouilleur', texte: 'La voie sûre : quelques composants et de quoi panser l’escouade, sans combat.', faits: [`${or(`+${butinCache(x.strate)}`)} composants${x.strate >= 3 ? ' · parfois un Éclat' : ''}`, `<span class="ex-vert">+${Math.round(REGLES.salles.cacheSoin * 100)} % de PV</span> pour l’escouade debout`] };
     case 'camp': {
       const rendus = x.porteurs.reduce((t, p) => t + Math.min(p.pvMax, Math.max(0, p.pv) + Math.round(p.pvMax * 0.35)) - Math.max(0, p.pv), 0);
       return { sur: 'Campement', titre: 'Un campement', texte: 'L’escouade souffle. On peut remonter d’ici avec tout le butin.', faits: [rendus ? `<span class="ex-vert">+${rendus} PV</span> pour l’escouade (+35 %)` : 'L’escouade est déjà en pleine forme'] };
     }
-    case 'archive': return { sur: 'Archives', titre: 'Une salle d’archives', texte: 'Un fragment de l’histoire, à rapporter au district.', faits: [`${or(`+${Math.round(n / 2)}`)} composants · ${or('1 archive')}`] };
+    case 'archive': return { sur: 'Archives', titre: 'Une salle d’archives', texte: 'Un fragment de l’histoire, à rapporter au district.', faits: [`${or(`+${butinArchive(x.strate)}`)} composants · ${or('1 archive')}`] };
     case 'rencontre': return { sur: 'Rencontre', titre: 'Quelqu’un, dans le noir', texte: 'Un choix à faire. On ne sait pas encore qui.', faits: [] };
     case 'filon': return { sur: 'Filon', titre: 'Le filon', texte: 'Ce que tu cherchais : la fouille s’achève ici.', faits: x.fouille ? [echap(CIBLES_FOUILLE[x.fouille].texte)] : [] };
     default: return { sur: NOMS[s.type], titre: NOMS[s.type], texte: '', faits: [] };
@@ -217,14 +232,26 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
   for (const s of c.salles) {
     const acces = voisines.has(s.id) && libre;
     const etat = s.id === ici.id ? 'ici' : acces ? 'accessible' : s.faite ? 'faite' : perdue(s) ? 'perdue' : 'loin';
-    const classes = `ex-salle t-${s.type} ${etat}${vue?.id === s.id ? ' choisie' : ''}`;
-    const label = `${s.condition && CONDITIONS[s.condition] ? `${CONDITIONS[s.condition]!.nom} · ` : ''}${NOMS[s.type]}${s.escorte?.length ? ` : un groupe (${nomsGroupe(s)})` : s.ennemi ? ` : ${ennemiDef(s.ennemi).nom}` : ''}${etat === 'ici' ? ' (tu es ici)' : s.faite ? ' (visitée)' : ''}`;
-    let dedans = medaillon(s);
-    if (s.type === 'elite') dedans += `<span class="ex-badge sceau" aria-hidden="true">${ICO.verrou}</span>`;
-    if (s.escorte?.length) dedans += `<span class="ex-badge groupe" aria-hidden="true">×${s.escorte.length + 1}</span>`;
-    if (s.condition) { const ic = iconeCondition(s.condition); dedans += `<span class="ex-badge condition${ic ? ' peinte' : ''}" aria-hidden="true">${ic ? `<img src="${ic}" alt="" decoding="async">` : ICO.cristal}</span>`; }
-    const nom = etat === 'ici' ? 'Vous êtes ici' : nomSalle(s);
-    dedans += `<span class="ex-nom">${echap(nom)}</span>`;
+    // le brouillard (30 octobre 2026) : une salle voilée ne dit rien de son type, même dans ses classes
+    const vision = visionSalle(x, s);
+    const classes = `ex-salle ${vision === 'claire' ? `t-${s.type}` : `voilee v-${vision}`} ${etat}${vue?.id === s.id ? ' choisie' : ''}`;
+    let label: string;
+    let dedans: string;
+    let nom: string;
+    if (vision === 'claire') {
+      label = `${s.condition && CONDITIONS[s.condition] ? `${CONDITIONS[s.condition]!.nom} · ` : ''}${NOMS[s.type]}${s.escorte?.length ? ` : un groupe (${nomsGroupe(s)})` : s.ennemi ? ` : ${ennemiDef(s.ennemi).nom}` : ''}${etat === 'ici' ? ' (tu es ici)' : s.faite ? ' (visitée)' : ''}`;
+      dedans = medaillon(s);
+      if (s.type === 'elite') dedans += `<span class="ex-badge sceau" aria-hidden="true">${ICO.verrou}</span>`;
+      if (s.escorte?.length) dedans += `<span class="ex-badge groupe" aria-hidden="true">×${s.escorte.length + 1}</span>`;
+      if (s.condition) { const ic = iconeCondition(s.condition); dedans += `<span class="ex-badge condition${ic ? ' peinte' : ''}" aria-hidden="true">${ic ? `<img src="${ic}" alt="" decoding="async">` : ICO.cristal}</span>`; }
+      nom = etat === 'ici' ? 'Vous êtes ici' : nomSalle(s);
+    } else {
+      const ind = vision === 'indice' ? indiceSalle(s) : null;
+      label = ind ? `${INDICES[ind].nom} : on ne sait pas ce qui attend` : 'Une salle dans la brume';
+      dedans = medaillonVoile(ind);
+      nom = ind ? INDICES[ind].nom : '';
+    }
+    if (nom) dedans += `<span class="ex-nom">${echap(nom)}</span>`;
     const style = `left:${posX(s).toFixed(2)}%;top:${posY(s).toFixed(2)}%`;
     h += acces
       ? `<button type="button" class="${classes}" style="${style}" data-action="salle-voir" data-id="${s.id}" aria-pressed="${vue?.id === s.id}" aria-label="Voir : ${echap(label)}">${dedans}</button>`
@@ -253,11 +280,12 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
     if (libre && vue) {
       // la fiche de la salle touchée : en bas de l'écran sur téléphone, dans la colonne de droite sur PC
       const a = annonce(vue, x);
-      const cond = vue.condition && CONDITIONS[vue.condition] ? CONDITIONS[vue.condition]! : null;
-      const entrer = vue.type === 'gardien' ? 'Affronter le gardien' : vue.ennemi ? 'Combattre' : vue.type === 'camp' ? 'S’arrêter au campement' : 'Entrer';
-      h += `<div class="ex-fiche t-${vue.type}" role="region" aria-label="Salle choisie">`
+      const voilee = visionSalle(x, vue) !== 'claire';
+      const cond = !voilee && vue.condition && CONDITIONS[vue.condition] ? CONDITIONS[vue.condition]! : null;
+      const entrer = voilee ? 'Avancer dans le brouillard' : vue.type === 'gardien' ? 'Affronter le gardien' : vue.ennemi ? 'Combattre' : vue.type === 'camp' ? 'S’arrêter au campement' : 'Entrer';
+      h += `<div class="ex-fiche ${voilee ? 'voilee' : `t-${vue.type}`}" role="region" aria-label="Salle choisie">`
         + (routes.length > 1 ? `<button type="button" class="ex-fiche-fermer" data-action="salle-voir" data-id="-1" aria-label="Fermer la fiche">${ICO.fermer}</button>` : '')
-        + `<div class="ex-fiche-corps">${visuel(vue)}`
+        + `<div class="ex-fiche-corps">${visuel(vue, x)}`
         + `<span class="ex-route-txt"><span class="ex-sur">${echap(a.sur)}</span><strong>${echap(a.titre)}</strong>`
         + (a.texte ? `<em>${echap(a.texte)}</em>` : '')
         + (a.faits.length ? `<span class="ex-faits">${a.faits.map((f) => `<span>${f}</span>`).join('')}</span>` : '')
@@ -265,7 +293,7 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
         + `</span></div>`
         + `<button type="button" class="btn prim large ex-entrer" data-action="salle" data-id="${vue.id}">${echap(entrer)}${CHEVRON}</button></div>`;
     } else if (libre) {
-      h += `<p class="ex-indice">${ICO.cristal}<span>Touche une salle qui brille sur le plan : tu verras ce qui t’y attend avant d’entrer.${routes.length > 1 ? ` <b>${routes.length} chemins</b>` : ''}</span></p>`;
+      h += `<p class="ex-indice">${ICO.cristal}<span>Touche une salle qui brille sur le plan : tu verras ce qui t’y attend avant d’entrer${x.strate >= REGLES.brouillard.indices ? ', ou du moins ce que le brouillard en laisse deviner' : ''}.${routes.length > 1 ? ` <b>${routes.length} chemins</b>` : ''}</span></p>`;
     }
   }
   if (x.terminee) h += `<button type="button" class="btn prim large ex-sortie" data-action="remonter">${ICO.cristal}Remonter avec le filon</button>`;

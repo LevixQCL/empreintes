@@ -6,7 +6,7 @@ import { allonger, ajouter, capacite, eclater, eclatsPossibles, ennemisDebout, f
 import { lancer } from './combat';
 import { cartesEnJeu, placesVides } from './collection';
 import { GESTES_SPECIAUX, porteurDef } from './donnees';
-import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExpedition, nouvelleExploration, salleCourante } from './expedition';
+import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExpedition, nouvelleExploration, salleCourante, typeApparent } from './expedition';
 import { REGLES, analyserChaine, frequenceLibre, places } from './regles';
 import type { CombatEtat, Geste } from './types';
 
@@ -247,7 +247,8 @@ export function simulerExploration(escouade: Escouade, strate: number, rng: numb
       if (!choix.length) break;
       const sante = x.porteurs.reduce((n, p) => n + Math.max(0, p.pv), 0) / x.porteurs.reduce((n, p) => n + p.pvMax, 0);
       const prefere = (t: string) => (t === 'camp' ? (sante < 0.7 ? 0 : 3) : t === 'cache' || t === 'archive' ? 1 : t === 'combat' || t === 'gardien' ? 2 : t === 'rencontre' ? 2 : 4);
-      const cible = choix.slice().sort((a, b) => prefere(a.type) - prefere(b.type))[0]!;
+      // il ne voit que ce que le brouillard laisse voir (30 octobre 2026)
+      const cible = choix.slice().sort((a, b) => prefere(typeApparent(x, a)) - prefere(typeApparent(x, b)))[0]!;
       x = entrerSalle(x, cible.id).x;
       continue;
     }

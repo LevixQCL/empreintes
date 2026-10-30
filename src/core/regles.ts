@@ -7,6 +7,15 @@ export const REGLES = {
    *  −1 : chaîne, Résonance, Flux ; −2 : Fêlure ; −3 : groupes ; −4 : traits d'ennemis ; −5 : conditions de salle.
    *  Les phases des gardiens restent dès la −2. */
   apparition: { felure: 2, groupes: 3, traits: 4, conditions: 5, assimilation: 6, troisiemePhase: 7 },
+  /** Brouillard sur le plan des Strates (30 octobre 2026, idée de Bryan après une remarque de Luc) : on ne sait plus d'avance où mène un chemin.
+   *  Les salles voisines sont claires jusqu'à la Strate `indices` − 1, puis elles ne montrent qu'un indice (bruits, lueur…).
+   *  Au-delà des voisines, tout est dans la brume ; jusqu'à la Strate `loin`, on devine encore les indices de la rangée d'après.
+   *  Un Résonant debout dans l'escouade « sent » une rangée de plus (indices seulement). Le gardien se voit toujours. */
+  brouillard: { loin: 1, indices: 4 },
+  /** Ce que rapportent les salles (30 octobre 2026, Luc : « quel intérêt de faire le combat ? La cache donne plus et on ne perd pas de PV ») :
+   *  le combat rapporte plus de composants que la cache, en plus de l'XP et de la chance de carte ; la cache devient la voie sûre et modeste,
+   *  qui panse un peu l'escouade. Avant : combat 6, cache 8 (sans soin). Tout est multiplié par 1 + 0,25 × (Strate − 1). */
+  salles: { combat: 8, cache: 5, cacheSoin: 0.1, archive: 4 },
   /** 3ᵉ phase des gardiens (28 octobre 2026) : sous ce seuil de PV, une variante tirée au début du combat ; Déferlement : +X par tour, plafond */
   troisiemePhase: { seuil: 0.2, deferlement: 0.25, deferlementMax: 2, renfort: 0.2, renfortForce: 0.28 },
   tailleMain: 5,

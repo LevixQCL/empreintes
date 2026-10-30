@@ -58,6 +58,13 @@ export const ICO = {
   coffre: svg('<path d="M3 9h18v11H3z"/><path d="M3 9l2-5h14l2 5"/><path d="M10 13h4"/>'),
   // le grappin des pillages (26 octobre 2026)
   grappin: svg('<circle cx="12" cy="4.5" r="1.8"/><path d="M12 6.3V20"/><path d="M8.5 9.5h7"/><path d="M4.5 13.5a7.5 7.5 0 0 0 15 0"/><path d="M4.5 13.5 3 11.5M19.5 13.5l1.5-2"/>'),
+  // le brouillard des Strates (30 octobre 2026) : ce qu'on devine d'une salle avant d'y entrer
+  bruits: svg('<path d="M4 10v4"/><path d="M8 7v10"/><path d="M12 4v16"/><path d="M16 8v8"/><path d="M20 11v2"/>'),
+  lueur: svg('<path d="M12 4l1.6 5.4L19 11l-5.4 1.6L12 18l-1.6-5.4L5 11l5.4-1.6z"/><path d="M18.5 3.5v3M17 5h3"/><path d="M5.5 17.5v2.5M4.25 18.75h2.5"/>'),
+  silence: svg('<path d="M4 15h16"/><path d="M6 19h12"/><circle cx="8" cy="10" r=".9"/><circle cx="13" cy="7.5" r=".9"/><circle cx="16.5" cy="11" r=".9"/>'),
+  traces: svg('<path d="M8.5 4.5c1.4 0 2 1.6 2 3.2S9.8 11 8.5 11 6.5 9.3 6.5 7.7s.6-3.2 2-3.2z"/><path d="M7.4 13.5h2.2"/><path d="M15.5 9.5c1.4 0 2 1.6 2 3.2s-.7 3.3-2 3.3-2-1.7-2-3.3.6-3.2 2-3.2z"/><path d="M14.4 18.5h2.2"/>'),
+  chaleur: svg('<path d="M12 3c1 3 4.5 5 4.5 9.5A4.5 4.5 0 0 1 12 17a4.5 4.5 0 0 1-4.5-4.5C7.5 9.5 10 8 10 5.5c1 .8 1.5 1.8 2-2.5z"/><path d="M5 21h14"/>'),
+  brume: svg('<path d="M4 8h11"/><path d="M8 12h12"/><path d="M3 16h10"/><path d="M15 16h3"/>'),
 } as const;
 
 export type Icone = keyof typeof ICO;

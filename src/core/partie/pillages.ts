@@ -9,7 +9,11 @@
 import { porteurDef } from '../donnees';
 import { creerCombat } from '../combat';
 import { puissanceCarte } from '../collection';
-import { butinCombat, nouvelleExpedition } from '../expedition';
+import { nouvelleExpedition } from '../expedition';
+
+/** Un combat de référence pour les pillages : 6 composants × (1 + 0,25 × (Strate − 1)). Gardé tel quel quand les combats des Strates
+ *  sont passés à 8 (30 octobre 2026), pour ne pas changer l'équilibre des pillages */
+const butinCombat = (strate: number, _index: 0) => Math.round(6 * (1 + 0.25 * (strate - 1)));
 import { graine, tireur } from '../rng';
 import type { Lignee } from '../types';
 import { CONFIANCE, XP, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureAuRetour, type Jeu, type Resultat } from './etat';

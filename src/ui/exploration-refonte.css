@@ -275,3 +275,26 @@
   .ex-fiche .ex-visuel{width:96px}
   .ex:has(.ex-fiche){padding-bottom:24px}
 }
+
+/* ================= Le brouillard (30 octobre 2026) ================= */
+/* une salle voilée : un disque de verre fumé, l'indice en glace ; la brume, presque rien */
+.ex-med.brouillee{background:radial-gradient(circle at 38% 30%,rgba(205,239,255,.16),rgba(120,150,190,.06) 45%,rgba(8,11,22,.92) 80%);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.ex-med.brouillee .ico{width:46%;height:46%;color:var(--ex-glace);filter:drop-shadow(0 0 6px rgba(160,215,255,.45))}
+.ex-med.brouillee img.ico{width:72%;height:72%;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.85))}
+.ex-med.brouillee.i-chaleur .ico{color:#F6C98A;filter:drop-shadow(0 0 6px rgba(255,170,70,.45))}
+.ex-med.brouillee.i-lueur .ico{color:#D9F0FF}
+.ex-med.brouillee.brume{background:radial-gradient(circle at 50% 40%,rgba(205,239,255,.08),rgba(8,11,22,.85) 75%)}
+.ex-med.brouillee.brume .ico{width:42%;height:42%;opacity:.45;filter:none;animation:ex-brume 6s ease-in-out infinite}
+@keyframes ex-brume{0%,100%{transform:translateX(-6%);opacity:.3}50%{transform:translateX(6%);opacity:.55}}
+.ex-salle.v-brume{--d:34px}
+.ex-salle.v-brume .ex-med{box-shadow:0 0 0 1px rgba(205,239,255,.14),0 0 0 3px rgba(6,8,18,.7),0 0 16px rgba(160,200,240,.12)}
+.ex-salle.loin.v-indice .ex-med{filter:none;opacity:.8}
+/* la fiche d'une salle voilée */
+.ex-visuel.brouillee{aspect-ratio:1;align-self:center;border-radius:50%;
+  background:radial-gradient(circle at 38% 30%,rgba(205,239,255,.18),rgba(120,150,190,.06) 45%,rgba(8,11,22,.92) 80%);
+  box-shadow:0 0 0 1px rgba(205,239,255,.3),0 0 18px rgba(140,205,255,.15)}
+.ex-visuel.brouillee .ico{width:46%;height:46%;color:var(--ex-glace)}
+.ex-visuel.brouillee img.ico{width:72%;height:72%;object-fit:contain}
+.ex-visuel.brouillee.i-chaleur .ico{color:#F6C98A}
+@media (prefers-reduced-motion:reduce){.ex-med.brouillee.brume .ico{animation:none}}

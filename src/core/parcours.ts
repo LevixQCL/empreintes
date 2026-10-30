@@ -8,7 +8,7 @@
 import { CHAPITRES, chapitreOuvert } from './chroniques';
 import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, MODULES, moduleDe, moduleDef, porteurDef } from './donnees';
-import { accessibles, salleCourante } from './expedition';
+import { accessibles, salleCourante, typeApparent } from './expedition';
 import {
   choisirLegs, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
@@ -209,8 +209,10 @@ function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) =
     if (salleCourante(x).type === 'camp' && sante < 0.3) { retraite(j); continue; }
     const choix = accessibles(x);
     if (!choix.length) break;
-    const prefere = (t: string) => (t === 'camp' ? (sante < 0.7 ? 0 : 3) : t === 'cache' || t === 'archive' ? 1 : t === 'elite' ? (sante > 0.8 ? 1.5 : 4) : 2);
-    entrer(j, choix.slice().sort((a, b) => prefere(a.type) - prefere(b.type))[0]!.id);
+    // 30 octobre 2026 : le combat rapporte plus (composants, XP, carte) ; la cache est la voie sûre quand l'escouade est entamée.
+    // Il ne voit que ce que le brouillard laisse voir.
+    const prefere = (t: string) => (t === 'camp' ? (sante < 0.7 ? 0 : 3) : t === 'cache' || t === 'archive' ? (sante < 0.6 ? 1 : 2.5) : t === 'elite' ? (sante > 0.8 ? 1.5 : 4) : 2);
+    entrer(j, choix.slice().sort((a, b) => prefere(typeApparent(x, a)) - prefere(typeApparent(x, b)))[0]!.id);
   }
   if (j.expedition) return remonter(j).victoire;
   return false;
