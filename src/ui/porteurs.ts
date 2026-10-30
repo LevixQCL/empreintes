@@ -23,7 +23,7 @@ import { echap, virgule } from './outils';
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];
 /** pour accorder « Pourquoi il / elle est là » */
 const IL = new Set(['doran', 'sasha', 'aurel', 'coursier', 'docker', 'guetteur']);
-const fr = (x: number) => x.toLocaleString('fr-BE');
+const fr = (x: number) => x.toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
 
 /** Où est le Porteur en ce moment */
 function statut(j: Jeu, id: string): { texte: string; classe: string } {

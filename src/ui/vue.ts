@@ -627,7 +627,7 @@ function htmlEcranCombat(e: Ecran): string {
   if (enJeu) {
     const qui = enJeu.porteur ? porteurDef(enJeu.porteur).nom : 'District';
     conseil = `<span class="pas-chaine">${e.actif! + 1} / ${s.chaine.length}</span><span class="carte-agit" style="--c:${COULEUR[ligneeGeste(enJeu)]}">${echap(enJeu.nom)}</span> · ${echap(qui)}`
-      + (a.suite >= 3 ? ` · Résonance <b>×${a.mult.toLocaleString('fr-BE')}</b>` : '');
+      + (a.suite >= 3 ? ` · Résonance <b>×${a.mult.toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')}</b>` : '');
   } else if (e.verrou && !s.chaine.length && s.issue === 'en-cours' && s.ennemi.pv > 0) conseil = enGroupe(s) ? 'Le groupe riposte…' : `${echap(nomEnnemi(s.ennemi))} riposte…`;
 
   const ill = visageEnnemi(s.ennemi);
@@ -730,7 +730,7 @@ function htmlEcranCombat(e: Ecran): string {
     + `<button type="button" class="piles" data-action="journal" data-id="cartes" aria-label="${echap(`Pioche ${s.pioche.length}, défausse ${s.defausse.length} : ouvrir le journal du combat`)}"${e.verrou ? ' disabled' : ''}><span>${ICO.cartes}<em>Pioche</em>${s.pioche.length}</span><span>${ICO.recycler}<em>Défausse</em>${s.defausse.length}</span><i class="piles-journal" aria-hidden="true">${ICO.journal}</i></button></div>`;
 
   // la chaîne
-  const mult = a.suite >= 3 ? `×${a.mult.toLocaleString('fr-BE')}` : '';
+  const mult = a.suite >= 3 ? `×${a.mult.toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')}` : '';
   h += `<section class="zone-chaine${a.suite >= 3 ? ' resonne' : ''}" aria-label="Chaîne"><div class="chaine-tete"><span class="surtitre">CHAÎNE · ${placesPrises(s)} / ${capacite(s)}</span>`
     + (mult ? `<span class="badge-reso">${ICO.flux}RÉSONANCE ${mult}</span>` : a.suite === 2 ? '<span class="badge-reso faible">SUITE EN COURS</span>' : '')
     + (a.echo ? `<span class="badge-reso echo">${ICO.boost}ÉCHO +${Math.round((REGLES.echo - 1) * 100)} %</span>` : '')

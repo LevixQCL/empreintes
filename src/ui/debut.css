@@ -10,7 +10,7 @@
 /* le haut et le bas assombris pour le logotype et les boutons, le tableau libre au milieu */
 #app .titre-voile{background:linear-gradient(180deg,rgba(6,8,14,.78) 0%,rgba(6,8,14,.25) 24%,rgba(6,8,14,0) 46%,rgba(6,8,14,.35) 66%,rgba(6,8,14,.88) 86%,rgba(6,8,14,.96) 100%)}
 #app .titre-haut{gap:14px}
-#app .titre-sous{max-width:30ch;margin-inline:auto;padding:0;font-size:13px;line-height:1.55;letter-spacing:.06em;color:var(--x-txt);text-wrap:balance;
+#app .titre-sous{max-width:30ch;margin-inline:auto;padding:0;font-family:var(--lecture,'Literata',Georgia,serif);font-style:italic;font-size:15.5px;line-height:1.5;letter-spacing:0;color:var(--x-txt);text-wrap:balance;
   text-shadow:0 1px 2px #000,0 0 14px rgba(0,0,0,.9)}
 #app .titre-bas{width:100%;gap:12px}
 #app .titre-go{width:min(100%,320px);min-height:56px;font-size:17px;letter-spacing:.05em}
@@ -26,7 +26,7 @@
   #app .titre{padding:0}
   #app .titre-haut{gap:22px}
   #app .titre-nom svg{max-width:560px}
-  #app .titre-sous{max-width:34em;margin:0;font-size:15px;letter-spacing:.05em;text-align:left;text-wrap:pretty}
+  #app .titre-sous{max-width:34em;margin:0;font-size:17px;letter-spacing:0;text-align:left;text-wrap:pretty}
   /* un filet d'or qui se fond, entre l'accroche et les boutons */
   #app .titre-haut::after{content:"";width:280px;height:1px;background:linear-gradient(90deg,rgba(242,213,140,.55),transparent)}
   #app .titre-bas{width:auto;gap:14px}

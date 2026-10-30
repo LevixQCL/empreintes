@@ -1,6 +1,6 @@
 /* L'outil d'analyse : la même matière que le jeu (verre fumé, glace pour ce qui se touche, or pour la valeur), en plus sobre. */
 :root{--fond:#0B0F19;--verre:#121826;--verre-2:#182033;--arete:rgba(205,239,255,.16);--txt:#DCE4EE;--doux:#A9B6C7;--glace:#CDEFFF;--barre:#7FC8F0;--or:#F2D58C;
-  --mono:'IBM Plex Mono',ui-monospace,monospace;--body:'IBM Plex Sans Condensed','Arial Narrow',system-ui,sans-serif;--titre:'Marcellus SC',Georgia,serif;color-scheme:dark}
+  --mono:'Saira Semi Condensed','IBM Plex Sans Condensed','Arial Narrow',sans-serif;--body:'IBM Plex Sans Condensed','Arial Narrow',system-ui,sans-serif;--titre:'Marcellus SC',Georgia,serif;color-scheme:dark}
 *{box-sizing:border-box}
 html{background:var(--fond)}
 body{margin:0;min-height:100vh;background:radial-gradient(120% 900px at 50% 0%,#18213A 0%,var(--fond) 70%) no-repeat var(--fond);color:var(--txt);font:15px/1.45 var(--body);-webkit-font-smoothing:antialiased}

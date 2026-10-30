@@ -16,7 +16,7 @@ import type { EcranDistrict } from './coquille';
 /** Le titre du joueur, écrit à un seul endroit (un renommage est en réflexion) */
 export const TITRE_JOUEUR = 'Directeur';
 
-const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');
+const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
 const GEMME = `<img class="fj-gemme" src="${baseIcones}pastille.webp" alt="" aria-hidden="true">`;
 const CRISTAL = './art/embleme-cristal.webp';
 

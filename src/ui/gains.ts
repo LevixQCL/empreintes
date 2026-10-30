@@ -95,7 +95,7 @@ export function comparer(a: Releve, b: Releve, o: { energie?: boolean } = {}): G
 
 // ---------- L'affichage ----------
 
-const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');
+const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
 const COULEUR_METAL: Record<Rarete, string> = { fer: '#A7B0BA', cuivre: '#D88A55', argent: '#DDE3EC', or: '#E8BE5E', nacre: '#E6D6F5' };
 const NOMS: Record<Res | 'cartes', [string, string]> = {
   energie: ['énergie', 'énergie'], composants: ['composant', 'composants'], eclats: ['Éclat', 'Éclats'], cartes: ['carte', 'cartes'],

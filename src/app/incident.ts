@@ -25,7 +25,7 @@ function lire(): Incident[] {
 /** Les incidents gardés sur cet appareil (le plus récent en dernier) */
 export const incidents = (): Incident[] => lire();
 
-const texteDe = (i: Incident) => `EMPREINTES · ${new Date(i.quand).toLocaleString('fr-BE')} · ${i.ou} · écran ${i.mode}/${i.vue}\n${i.message}\n${i.pile}`;
+const texteDe = (i: Incident) => `EMPREINTES · ${new Date(i.quand).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')} · ${i.ou} · écran ${i.mode}/${i.vue}\n${i.message}\n${i.pile}`;
 
 let ouvert = false;
 let dernier = '';

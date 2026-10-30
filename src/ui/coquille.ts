@@ -110,7 +110,7 @@ export interface EcranDistrict {
   uid?: string | null;
 }
 
-export const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE');
+export const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
 export const duree = (ms: number) => {
   const s = Math.max(0, Math.ceil(ms / 1000));
   if (s >= 86_400) return `${Math.floor(s / 86_400)} j ${Math.floor((s % 86_400) / 3600)} h`;

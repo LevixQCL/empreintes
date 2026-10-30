@@ -89,7 +89,7 @@ const ascension = () => svg(`
 
 const lignees = (k: number) => svg(`
   <rect width="360" height="400" fill="#17191F"/>
-  ${[['#7FA7C9', 'AUGMENTÉ'], ['#8FAF6A', 'GÉNÉ'], ['#A98BDF', 'RÉSONANT']].map(([c, n], i) => `<g class="carte-l${k >= 2 ? ' rapproche' : ''}" style="--i:${i}"><rect x="${30 + i * 105}" y="120" width="90" height="128" rx="10" fill="#1C1F26" stroke="${c}" stroke-width="3"/><circle cx="${75 + i * 105}" cy="170" r="22" fill="${c}" opacity=".5"/><text x="${75 + i * 105}" y="225" text-anchor="middle" font-family="IBM Plex Mono" font-size="11" fill="${c}">${n}</text></g>`).join('')}`);
+  ${[['#7FA7C9', 'AUGMENTÉ'], ['#8FAF6A', 'GÉNÉ'], ['#A98BDF', 'RÉSONANT']].map(([c, n], i) => `<g class="carte-l${k >= 2 ? ' rapproche' : ''}" style="--i:${i}"><rect x="${30 + i * 105}" y="120" width="90" height="128" rx="10" fill="#1C1F26" stroke="${c}" stroke-width="3"/><circle cx="${75 + i * 105}" cy="170" r="22" fill="${c}" opacity=".5"/><text x="${75 + i * 105}" y="225" text-anchor="middle" font-family="Saira Semi Condensed" font-size="11" fill="${c}">${n}</text></g>`).join('')}`);
 
 const oubli = () => svg(`
   <rect width="360" height="400" fill="#0C0F18"/>

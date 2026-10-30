@@ -409,7 +409,7 @@ const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
   plafond: 'tour', chantiers: 'marteau', porteur: 'porteurs', apparence: 'district', entrainement: 'monter', offres: 'cartes', argent: 'cristal',
   places: 'monter', barques: 'porteurs',
 };
-const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${Number.isInteger(v) ? ent(v) : (Math.round(v * 10) / 10).toLocaleString('fr-BE')}${unite ? ` ${unite}` : ''}`);
+const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${Number.isInteger(v) ? ent(v) : (Math.round(v * 10) / 10).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')}${unite ? ` ${unite}` : ''}`);
 
 /** Ce que change le niveau suivant : les chiffres qui montent (avant → après), ce qui se débloque, et la nouvelle apparence */
 function gainsNiveau(j: Jeu, b: BatimentId): string {

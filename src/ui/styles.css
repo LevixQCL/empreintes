@@ -15,13 +15,14 @@
   --laiton:linear-gradient(180deg,#F4DC97 0%,#D9AE58 48%,#B1832F 100%);
   --display:'Marcellus SC', 'Cormorant SC', Georgia, serif;
   --body:'IBM Plex Sans Condensed', 'Arial Narrow', system-ui, sans-serif;
-  --mono:'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  /* chiffres, chronos et étiquettes : une police technique étroite (Saira), plus la machine à écrire (30 octobre 2026) */
+  --mono:'Saira Semi Condensed', 'IBM Plex Sans Condensed', 'Arial Narrow', system-ui, sans-serif;
   --hud-h:64px; --nav-h:66px; --sab:env(safe-area-inset-bottom,0px); --sat:env(safe-area-inset-top,0px);
   --cut:10px;
 }
 html,body{margin:0;min-height:100%}
 *{box-sizing:border-box}
-body{color:var(--ink-2);font-family:var(--body);font-size:15px;line-height:1.4;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+body{color:var(--ink-2);font-family:var(--body);font-size:15px;line-height:1.4;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
 body.fige{overflow:hidden}
 #app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;position:relative}
 #app[data-mode="titre"],#app[data-mode="intro"]{max-width:430px;padding:12px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
