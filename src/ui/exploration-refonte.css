@@ -281,7 +281,7 @@
 .ex-med.brouillee{background:radial-gradient(circle at 38% 30%,rgba(205,239,255,.16),rgba(120,150,190,.06) 45%,rgba(8,11,22,.92) 80%);
   -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .ex-med.brouillee .ico{width:46%;height:46%;color:var(--ex-glace);filter:drop-shadow(0 0 6px rgba(160,215,255,.45))}
-.ex-med.brouillee img.ico{width:72%;height:72%;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.85))}
+.ex-med.brouillee img.ico{width:92%;height:92%;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,.85))}
 .ex-med.brouillee.i-chaleur .ico{color:#F6C98A;filter:drop-shadow(0 0 6px rgba(255,170,70,.45))}
 .ex-med.brouillee.i-lueur .ico{color:#D9F0FF}
 .ex-med.brouillee.brume{background:radial-gradient(circle at 50% 40%,rgba(205,239,255,.08),rgba(8,11,22,.85) 75%)}
@@ -295,6 +295,6 @@
   background:radial-gradient(circle at 38% 30%,rgba(205,239,255,.18),rgba(120,150,190,.06) 45%,rgba(8,11,22,.92) 80%);
   box-shadow:0 0 0 1px rgba(205,239,255,.3),0 0 18px rgba(140,205,255,.15)}
 .ex-visuel.brouillee .ico{width:46%;height:46%;color:var(--ex-glace)}
-.ex-visuel.brouillee img.ico{width:72%;height:72%;object-fit:contain}
+.ex-visuel.brouillee img.ico{width:86%;height:86%;object-fit:contain}
 .ex-visuel.brouillee.i-chaleur .ico{color:#F6C98A}
 @media (prefers-reduced-motion:reduce){.ex-med.brouillee.brume .ico{animation:none}}

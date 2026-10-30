@@ -78,7 +78,9 @@ const PEINTES = new Set<Icone>(['energie', 'composants', 'eclats', 'strate', 'di
   // les onglets Pillages et Flèche (28 octobre 2026)
   'carte', 'fleche',
   // l'objectif du district, un parchemin scellé (29 octobre 2026)
-  'objectif']);
+  'objectif',
+  // les indices du brouillard des Strates (30 octobre 2026)
+  'bruits', 'lueur', 'silence', 'traces', 'chaleur', 'brume']);
 export const baseIcones = new URL('art/icones/', document.baseURI).href;
 
 /** L'icône peinte si elle existe, sinon le trait SVG */
