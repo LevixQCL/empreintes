@@ -117,7 +117,7 @@
   .nf{--bord:2.4cqw}
   /* l'image prend toute la carte : plus de voile ni de barre, deux capsules de verre en bas, face à face */
   .nf-voile{height:0;padding:0;background:none;-webkit-backdrop-filter:none;backdrop-filter:none}
-  .nf-barre,.nf-regle,.nf-roue,.nf-lg,.nf-seg:not(.p,.fele),.nf-seg.fele em{display:none}
+  .nf-barre,.nf-regle,.nf-roue,.nf-lg,.nf-seg.fele em{display:none}
   /* le nom, pour se souvenir de la carte : au-dessus des capsules, sur un dégradé sombre, deux lignes au plus */
   .nf-art::after{content:"";position:absolute;inset:auto 0 0 0;height:62%;pointer-events:none;
     background:linear-gradient(to top,rgba(6,8,14,.82) 0%,rgba(6,8,14,.5) 40%,transparent 100%)}
@@ -131,6 +131,11 @@
   .nf-caps{height:32cqw;border-radius:17cqw}
   .nf-seg.p{min-width:35cqw;font-size:25.5cqw}
   .nf-seg.p::after{height:1.8cqw;bottom:2.6cqw}
+  /* les doubles numéros (30 octobre 2026, idée de Luc) : les autres Fréquences possibles restent visibles, plus petites,
+     dans la même capsule ; la principale (celle que la carte prend) garde son gros chiffre */
+  .nf-caps:has(.nf-seg:not(.p,.fele)) .nf-seg.p{min-width:27cqw;padding:0 1.5cqw}
+  .nf-seg:not(.p,.fele){min-width:15cqw;padding:0 1.2cqw;font-size:max(12px,15.5cqw);opacity:.9}
+  .nf-seg:not(.p,.fele)::after{height:1.2cqw;bottom:2.6cqw;left:24%;right:24%}
   .nf-val{height:28cqw;top:auto;bottom:3cqw;right:3cqw;gap:1cqw;padding:0 4cqw 0 3cqw;border-radius:15cqw}
   .nf-val svg{width:14cqw;height:14cqw}
   .nf-val b{font-size:21cqw}
