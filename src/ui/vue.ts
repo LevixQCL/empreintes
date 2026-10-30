@@ -10,7 +10,7 @@ import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
 import { DISTRICT, PILLAGE } from '../core/jeu';
 import { ageArchipel, artGardien, fondFleche, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, cadragePortrait } from './art';
-import { corpsFace, couleurFrequence, styleFace, type Face } from './carte';
+import { SIGNE_LOURD, corpsFace, couleurFrequence, styleFace, type Face } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
 import type { Decouverte } from '../core/decouvertes';
@@ -324,7 +324,7 @@ function regles(): string {
     + '<li><b>Le Flux</b> se remplit à chaque Résonance, et encore plus si la suite brise aussi une Fêlure. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main, ou garde-le pour un Coup d’éclat.</li>'
     + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé) ; dans un groupe, elle brise aussi la Fêlure d’un ennemi non visé, deux fois moins fort. Une carte ne brise qu’une Fêlure, celle de l’ennemi visé d’abord : en main, ces cartes portent l’icône de la Fêlure dans leur capsule de Fréquence (« Brise » sur grand écran). Dans une suite (3, 4, 5), elle donne aussi 1 Flux. Les évanescents la cachent.</li>'
     + `<li><b>Le Coup d’éclat</b> : Flux plein, un seul par combat, au choix selon les lignées de l’escouade. ${(Object.values(ECLATS)).map((x) => `<b>${x.nom}</b> : ${x.texte}`).join(' ')} Le Porteur qui le déclenche prend ${REGLES.eclat.usure} d’Usure.</li>`
-    + '<li><b>« 2 PL. »</b> : cette carte est puissante mais occupe deux places.</li>'
+    + `<li><span class="signe-lourd">${SIGNE_LOURD}</span> <b>Deux places</b> : cette carte est puissante mais occupe deux places.</li>`
     + '<li><b>La force</b> écrite sur la carte est celle qui tombera, tous bonus et malus compris : <b style="color:#9ff5b6">verte</b> si la carte est renforcée, <b style="color:#ff9b8c">rouge</b> si elle est affaiblie. Garde le doigt dessus pour voir le détail.</li>'
     + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.</li>'
     + '<li><b>Le triangle des lignées :</b> les Augmentés battent les Résonants, les Résonants battent les Génés, les Génés battent les Augmentés (+15 %).</li>'

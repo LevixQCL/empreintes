@@ -18,6 +18,9 @@ import { COULEUR } from './vue';
 import { echap, mouvementReduit as reduit } from './outils';
 
 /** une couleur par Fréquence, du 1 (chaud) au 9 (froid) : des Fréquences qui se suivent ont des couleurs voisines */
+/** le signe d'une carte lourde (30 octobre 2026) : deux lames de lumière, deux places dans la chaîne, plutôt que « 2 PL. » */
+export const SIGNE_LOURD = '<b class="nf-lourd" title="Prend deux places dans la chaîne" aria-label="Deux places"><i></i><i></i></b>';
+
 export const couleurFrequence = (f: number) => `hsl(${8 + (f - 1) * 34} 52% 38%)`;
 
 /** la couleur de chaque métal (titres, jauges, gemmes) */
@@ -145,7 +148,7 @@ export function corpsFace(d: Face): string {
   return `<span class="nf-art">${art}${ill && d.fx ? FX[d.metal] : ''}${d.carte ? filigraneFace(palierDeCarte(d.carte)) : ''}</span>`
     // une carte de l'Héritage (la seule à deux effets) porte son sceau en haut
     + (d.effet2 ? '<span class="nf-heritage">Héritage</span>' : d.seul ? '<span class="nf-heritage nf-exclusive">Exclusive</span>' : '')
-    + `<span class="nf-freqs"><span class="nf-caps">${segs}${fele}</span>${d.lourd ? '<b class="nf-lourd">2 PL.</b>' : ''}</span>`
+    + `<span class="nf-freqs"><span class="nf-caps">${segs}${fele}</span>${d.lourd ? SIGNE_LOURD : ''}</span>`
     + `<span class="nf-voile"><span class="nf-barre"></span>`
     + `<span class="nf-val ${d.type}${d.tendance ? ' ' + d.tendance : ''}">${ICONES_ACTION[d.type]}<b>${d.v}</b></span>`
     // en main : une capsule en bas à gauche, la lignée (losange) et l'icône de l'effet, en face de celle de la force

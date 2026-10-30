@@ -14,7 +14,7 @@ import { DISTRICT, EPREUVE_DECK_MIN } from '../core/jeu';
 import { REGLES, frequenceLibre } from '../core/regles';
 import type { Geste, GesteDef, Lignee, TypeEffet, TypeGeste } from '../core/types';
 import { textureMetal } from './art';
-import { COULEUR_RARETE, ICONES_ACTION, couleurFrequence, faceCarte } from './carte';
+import { COULEUR_RARETE, ICONES_ACTION, SIGNE_LOURD, couleurFrequence, faceCarte } from './carte';
 import { NOM_LIGNEES, avatar } from './coquille';
 import { ICO } from './icones';
 import { COULEUR, geste } from './vue';
@@ -193,7 +193,7 @@ function ongletDeck(): string {
     + idee(ICO.atk, 'Mélange les actions', `Attaque, protection et soin. Le deck de départ en compte ${depart.atk}, ${depart.bouclier} et ${depart.soin} sur ${nDepart} : un bon repère.`, `<div class="g-barre" role="img" aria-label="${depart.atk} attaques, ${depart.bouclier} protections, ${depart.soin} soins">${barre}</div>`)
     + idee(ICO.cristal, 'Choisis aussi pour les Marques', 'Chaque Porteur gagne une Marque par ses exploits, presque toujours en combattant. Elle ne joue que s’il est dans l’escouade : l’onglet Escouade dit ce qu’elle fait et combien il en reste à accomplir.')
     + idee(ICO.soin, 'Répartis les soins', 'Les cartes d’un Porteur à terre s’éteignent. Si tous tes soins sont chez lui, ils perdent leur effet au pire moment.')
-    + idee(ICO.place, 'Peu de cartes lourdes', `« 2 PL. » : la carte est forte mais prend deux places. Avec une autre carte, elle remplit une chaîne de ${REGLES.capaciteBase} places : pas de suite de 3 sans Flux ni Élan.`)
+    + idee(ICO.place, 'Peu de cartes lourdes', `Deux lames (deux places) : la carte est forte mais prend deux places. Avec une autre carte, elle remplit une chaîne de ${REGLES.capaciteBase} places : pas de suite de 3 sans Flux ni Élan.`)
     + idee('<b class="g-etoile">∗</b>', 'Des jokers pour les suites', 'Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.')
     + idee(ICO_TRIANGLE, 'Pense au triangle', `Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : +${Math.round((REGLES.bonusLignee - 1) * 100)} % de dégâts. Les ennemis en profitent aussi contre tes Porteurs. Le dessin est dans « Lire une carte ».`)
     + idee(ICO.repiocher, 'Un deck court tourne plus vite', `Un Porteur peut porter moins de ${DISTRICT.cartesMax} cartes : tes meilleures reviennent plus souvent en main, mais tu couvres moins de Fréquences.`)
@@ -233,7 +233,7 @@ function ongletCarte(): string {
     + `<li>${symbole('atk', 36)}<div><b>Attaque</b><p>Des dégâts à l’ennemi visé. Son bouclier encaisse d’abord.</p></div></li>`
     + `<li>${symbole('bouclier', 36)}<div><b>Protection</b><p>Un bouclier pour toute l’escouade. Il encaisse les coups de l’ennemi, puis disparaît (sauf Rempart).</p></div></li>`
     + `<li>${symbole('soin', 36)}<div><b>Soin</b><p>Des PV à un Porteur : touche son nom sous la carte, dans la chaîne, pour choisir qui. Avec Vague, toute l’escouade.</p></div></li>`
-    + `<li><span class="g-lourd">2 PL.</span><div><b>Carte lourde</b><p>Plus forte, mais elle prend deux places dans la chaîne.</p></div></li>`
+    + `<li><span class="g-lourd signe-lourd">${SIGNE_LOURD}</span><div><b>Carte lourde</b><p>Plus forte, mais elle prend deux places dans la chaîne.</p></div></li>`
     + `</ul></section>`;
 
   // les métaux

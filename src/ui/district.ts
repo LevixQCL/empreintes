@@ -1193,7 +1193,7 @@ export function htmlCartes(e: EcranDistrict): string {
       + `<span class="cl-bas"><span class="cl-porteur">${porte ? `${avatar(porte, 20)}<span>${echap(porteurDef(porte).nom)}</span>` : '<span class="cl-libre">Libre</span>'}</span>`
       + `<span class="cl-niv" title="Niveau ${c.niveau}">Niv. ${c.niveau}</span>`
       + (m.legs ? `<span class="cl-max cl-legs">Héritage</span>` : requis === null ? `<span class="cl-max">Max</span>` : `<span class="cl-doublons" title="Doublons pour le niveau ${c.niveau + 1}"><span class="mini-jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></span><span>${c.doublons}/${requis}</span></span>`)
-      + `</span>${pret ? `<span class="cl-monter">${ICO.monter}Peut monter</span>` : ''}${e.j.vus.cartes.includes(cle) ? '' : `<span class="ruban-nouveau">Nouvelle</span>`}</button>`;
+      + `</span>${pret ? `<span class="cl-monter">${ICO.monter}Peut monter</span>` : ''}${e.j.vus.cartes.includes(cle) ? '' : `<span class="gemme-nouveau" role="img" aria-label="Nouvelle"></span>`}</button>`;
   };
 
   if (f === 'monter' || f === 'libres') {

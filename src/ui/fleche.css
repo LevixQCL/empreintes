@@ -6,6 +6,9 @@
 .fle,.pl-pres{--f-txt:#C9D6E6;--f-doux:#93A3B8;--f-glace:#CDEFFF;--f-or:#F2D58C;
   --d1:#8FCF7A;--d2:#7FD4FF;--d3:#FFB547;--d4:#E2735A}
 .fle .contenu{gap:16px}
+/* sur téléphone, les deux colonnes s'effacent : une seule file, dans l'ordre de lecture (la Flèche, la montée, la garde, les quais) */
+.fl-col{display:contents}
+.fl-col>.fl-tete{order:1}.fl-d>:first-child{order:2}.fl-col>.fl-compet{order:3}.fl-col>.fl-paliers{order:4}.fl-g>.fl-sommet{order:5}.fl-col>.fl-regle{order:6}
 .fle .d1{--dc:var(--d1)} .fle .d2{--dc:var(--d2)} .fle .d3{--dc:var(--d3)} .fle .d4{--dc:var(--d4)}
 .fle .surtitre,.pl-pres .surtitre{color:var(--f-doux)}
 .fle .surtitre .ico{width:15px;height:15px}
@@ -171,12 +174,10 @@
   /* la présentation : une seule colonne de lecture, centrée */
   .fle-pres .contenu,.pl-pres .contenu{display:flex;max-width:860px;margin:0 auto;width:100%}
   .fl-intro{min-height:300px}
-  .fle .contenu>.fl-tete{grid-column:1;grid-row:2}
-  .fle .contenu>.fl-paliers{grid-column:1;grid-row:3}
-  .fle .contenu>.fl-assaut{grid-column:2;grid-row:2}
-  .fle .contenu>.fl-compet{grid-column:2;grid-row:3}
-  .fle .contenu>.fl-sommet{grid-column:2;grid-row:4}
-  .fle .contenu>.fl-regle{grid-column:2;grid-row:5}
+  /* 30 octobre 2026 : deux colonnes indépendantes, chacune empile ses blocs sans laisser de trou en face de l'autre */
+  .fle .contenu>.fl-col{display:grid;gap:16px;align-content:start;grid-row:2}
+  .fle .contenu>.fl-g{grid-column:1}
+  .fle .contenu>.fl-d{grid-column:2}
   .fl-scene{height:600px}
 }
 

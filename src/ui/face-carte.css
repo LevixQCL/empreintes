@@ -44,8 +44,10 @@
 .nf-suite .nf-caps{box-shadow:inset 0 0 0 2px #ffd76e,0 0 10px rgba(255,215,110,.8)}
 .nf-suite .nf-seg.p{color:#fff4cf;background:color-mix(in srgb,#ffd76e 38%,rgba(8,10,18,.7));box-shadow:inset 0 0 0 2px #ffd76e}
 .nf-suite .nf-seg.p::after{background:#ffe9a6}
-.nf-lourd{font-family:var(--mono);font-weight:700;font-size:max(9px,4.6cqw);color:var(--ink);background:rgba(8,10,18,.8);
-  border:.35cqw solid rgba(220,240,255,.35);border-radius:6cqw;padding:.6cqw 2cqw;white-space:nowrap}
+/* une carte lourde (30 octobre 2026) : deux cartes de verre l'une sur l'autre (deux places dans la chaîne), plutôt que « 2 PL. » */
+.nf-lourd{position:relative;display:inline-block;width:12cqw;height:11cqw;border-radius:6cqw;background:rgba(8,10,18,.62);box-shadow:inset 0 0 0 .35cqw rgba(220,240,255,.28)}
+.nf-lourd i{position:absolute;top:2.2cqw;left:3.2cqw;width:4.4cqw;height:6.4cqw;border-radius:.7cqw;border:.5cqw solid #d6efff;background:rgba(120,180,255,.25);box-shadow:0 0 1.4cqw rgba(160,210,255,.8);transform:rotate(-12deg)}
+.nf-lourd i+i{left:5cqw;top:2cqw;transform:rotate(10deg);background:rgba(160,210,255,.45)}
 
 /* le bas : un voile dans la matière du métal, assombrie pour lire le texte */
 .nf-voile{position:absolute;z-index:3;left:var(--bord);right:var(--bord);bottom:var(--bord);height:calc(25% - var(--bord));
@@ -163,10 +165,12 @@
   .geste.main .nf-eff svg{width:12cqw;height:12cqw}
 }
 .geste > .nf{position:absolute;inset:0;width:auto;aspect-ratio:auto}
-/* en main, une carte lourde garde son « 2 PL. » en haut à droite */
+/* en main, une carte lourde garde ses deux lames en haut à droite */
 @container (max-width:90px){
   .nf-freqs{right:4cqw;justify-content:space-between;flex-wrap:wrap;row-gap:1.5cqw}
-  .nf-lourd{display:block;font-size:12px;line-height:1.2;padding:0 3px;border-radius:5px}
+  .nf-lourd{width:max(16px,17cqw);height:max(14px,15cqw)}
+  .nf-lourd i{top:22%;left:24%;width:32%;height:56%}
+  .nf-lourd i+i{left:40%;top:20%}
 }
 
 /* Effets sur l'illustration, du Cuivre à la Nacre */
@@ -187,7 +191,7 @@
   color:#2A1C05;background:linear-gradient(135deg,#F7E7B8,#D8B465 45%,#F2E6FF);clip-path:polygon(6% 0,94% 0,100% 50%,94% 100%,6% 100%,0 50%);pointer-events:none;white-space:nowrap}
 .geste .nf-heritage{display:none}
 /* Une carte exclusive (28 octobre 2026) : elle n'existe que dans son métal ; le même sceau que l’Héritage, dans la couleur de son métal */
-.nf-exclusive{left:auto;right:calc(var(--bord) + 1.6cqw);transform:none;color:#141821;background:linear-gradient(135deg,#F4F7FB,#B9C3D0 55%,#E9EEF4)}
+.nf-exclusive{color:#141821;background:linear-gradient(135deg,#F4F7FB,#B9C3D0 55%,#E9EEF4)}
 .nf-or .nf-exclusive{color:#2A1C05;background:linear-gradient(135deg,#FBEAB5,#D9A93F 55%,#F6DE97)}
 .nf-nacre .nf-exclusive{color:#2B2440;background:linear-gradient(135deg,#FFF6FB,#D9CCF4 45%,#C8F0EC)}
 

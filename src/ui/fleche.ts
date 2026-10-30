@@ -35,7 +35,8 @@ export function htmlFleche(e: EcranDistrict): string {
   const suivant = prochainPalier(f.quai);
 
   // la Flèche peinte et où l'on en est
-  h += `<section class="fl-tete">${fleche(j, f, e.gardiens?.top ?? [])}<div class="fl-ou">`
+  // deux colonnes sur PC (30 octobre 2026) : à gauche la Flèche et ses quais, à droite la montée et la garde ; sur téléphone, une seule file
+  h += `<div class="fl-col fl-g"><section class="fl-tete">${fleche(j, f, e.gardiens?.top ?? [])}<div class="fl-ou">`
     + `<span class="surtitre">${ICO.tour}Ton escouade tient</span>`
     + `<p class="fl-quai"><small>Quai</small><b>${f.quai}</b><em>/ ${FLECHE.quais}</em></p>`
     + `<dl class="fl-chiffres"><div><dt>Record</dt><dd>${f.record}</dd></div><div><dt>Gagnés</dt><dd>${f.victoires}</dd></div><div><dt>Perdus</dt><dd>${f.defaites}</dd></div></dl>`
@@ -43,11 +44,10 @@ export function htmlFleche(e: EcranDistrict): string {
     + `</div></section>`;
 
   // l'histoire : la montée contre les gardiens payés ; puis la compétition : la garde, le défi, les gardiens
-  h += sommet ? sieges(true) : assaut(j, f.quai, f.record);
-  h += competition(e, f);
   h += paliers(f.quai, f.recus);
   if (!sommet) h += sieges(false);
-  h += `<p class="fl-regle">${ICO.chrono}<span>Pas de jeton : monte autant que tu veux. La Clinique soigne l’Usure entre deux assauts.</span></p>`;
+  h += `<p class="fl-regle">${ICO.chrono}<span>Pas de jeton : monte autant que tu veux. La Clinique soigne l’Usure entre deux assauts.</span></p></div>`;
+  h += `<div class="fl-col fl-d">${sommet ? sieges(true) : assaut(j, f.quai, f.record)}${competition(e, f)}</div>`;
   return coquille(e, h, 'fle');
 }
 
