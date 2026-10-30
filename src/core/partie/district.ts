@@ -5,28 +5,56 @@ import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, mod
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
-import { ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
+import { CONFIANCE, coutPompe, confier, nuitDesLignes, pompesRestantes, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
+import { ORDRE_FAMILLES, fragmentDef } from '../fragments';
 
 export function humeurDistrict(j: Jeu): string {
   const n = niveauConfiance(j.confiance ?? 0);
-  return `Niveau ${n.niveau} : encore ${n.requis - n.dans} points pour le suivant. Chaque niveau amène un creuseur volontaire.`;
+  return n.requis ? `${j.confiance ?? 0} habitants sur ${CONFIANCE.population} te suivent : encore ${n.requis - n.dans} pour le prochain palier.` : 'Tout le district te suit.';
 }
 
 /**
- * Les niveaux de Confiance atteints et pas encore récompensés : un creuseur volontaire chacun (s'il y a de quoi le loger ;
- * sinon il attend le prochain niveau). Renvoie les annonces à montrer.
+ * Les paliers de Confiance atteints et pas encore récompensés (30 octobre 2026) : chacun amène un creuseur volontaire
+ * (s'il y a de quoi le loger) et une famille qui apporte un souvenir pour les Archives. Renvoie les annonces à montrer.
  */
 export function recompenserConfiance(j: Jeu): string[] {
   const n = niveauConfiance(j.confiance ?? 0).niveau;
   const annonces: string[] = [];
   while ((j.confianceRecue ?? 0) < n) {
     j.confianceRecue = (j.confianceRecue ?? 0) + 1;
-    const venus = gagnerCreuseurs(j, CREUSEURS.confiance, `le quartier te fait confiance (niveau ${j.confianceRecue})`);
-    annonces.push(`Confiance du quartier : niveau ${j.confianceRecue}${venus ? ` ! ${venus > 1 ? `${venus} volontaires rejoignent` : 'Un volontaire rejoint'} les creuseurs.` : '.'}`);
+    const palier = j.confianceRecue;
+    const venus = gagnerCreuseurs(j, CREUSEURS.confiance, `${palier * CONFIANCE.palier} habitants te suivent`);
+    const famille = ORDRE_FAMILLES.find((f) => !j.fragments.includes(f));
+    if (famille) j.fragments.push(famille);
+    const plus = [venus ? `${venus > 1 ? `${venus} volontaires rejoignent` : 'un volontaire rejoint'} les creuseurs` : '',
+      famille ? `une famille apporte « ${fragmentDef(famille)!.titre} » aux Archives` : '',
+      palier === CONFIANCE.comptoir && j.batiments.comptoir > 0 ? 'un étal de plus rouvre au Comptoir' : ''].filter(Boolean);
+    const t = `${palier * CONFIANCE.palier} habitants te suivent${palier === 8 ? ' : tout le district' : ''} !${plus.length ? ` ${plus.join(', ').replace(/^./, (c) => c.toUpperCase())}.` : ''}`;
+    log(j, t);
+    annonces.push(t);
   }
   return annonces;
 }
+
+/**
+ * Les pompes du Générateur (30 octobre 2026) : envoyer du courant aux pompes retient l'eau des quais bas, et le quartier
+ * le voit. 7 pompages par semaine, quand on veut (ceux qu'on ne fait pas ne coûtent rien) ; chacun coûte six heures de production.
+ */
+export function pomper(j: Jeu, now = j.dernierTick): Resultat {
+  if (j.batiments.generateur < 1) return non('Le Générateur est à l’arrêt.');
+  if (!j.chambre) return non('Les pompes attendent leur directeur.');
+  if (pompesRestantes(j, now) < 1) return non('Les pompes ont assez tourné cette semaine : elles repartent lundi, après la Nuit des lignes.');
+  if (j.confiance >= CONFIANCE.population) return non('Tout le district te suit déjà.');
+  const cout = coutPompe(j);
+  if (j.energie < cout) return non(`Il faut ${cout} énergie pour faire tourner les pompes.`);
+  j.energie -= cout;
+  nuitDesLignes(j, now);
+  const venus = confier(j, CONFIANCE.pompe, 'pompes', now);
+  j.lignes!.pompes++;
+  return { ok: true, message: `Les pompes tournent : le quai bas reste sec. +${venus} habitants te suivent.` };
+}
+
 export const soinParHeure = (j: Jeu) => (DISTRICT.soinParHeure[j.batiments.clinique] ?? 0) * multiplicateur(j, 'clinique');
 
 /** Ce que coûte la refabrication d'un exemplaire */
@@ -85,7 +113,7 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
   if (b === 'clinique') g.push({ quoi: 'soin', texte: 'Usure soignée par heure', avant: soinParHeure(j), apres: soinParHeure(apres), detail: 'pour chaque Porteur au repos' });
   if (b === 'clinique' && niv + 1 === ACCORD_OUVERT.clinique) {
     const joss = PORTEURS.find((p) => p.arrivee?.accord && !j.arrives.includes(p.id));
-    if (joss) g.push({ quoi: 'porteur', texte: 'La Clinique peut organiser un Accord ouvert', detail: `un nouveau Résonant, quand la Confiance du quartier atteint le niveau ${ACCORD_OUVERT.confiance}` });
+    if (joss) g.push({ quoi: 'porteur', texte: 'La Clinique peut organiser un Accord ouvert', detail: `un nouveau Résonant, quand ${ACCORD_OUVERT.confiance * CONFIANCE.palier} habitants te suivent` });
   }
   if (b === 'forge') {
     g.push({ quoi: 'forge', texte: 'Vitesse de refabrication', avant: Math.round(vitesseForge(niv) * 100), apres: Math.round(vitesseForge(niv + 1) * 100), unite: '%' });
@@ -523,7 +551,9 @@ export function comptoirVide(now: number, rng: number): Comptoir {
 
 /** Les métaux des étals du jour (l'argent n'arrive qu'une fois la Strate −4 vaincue ; avant, du cuivre à sa place) */
 export function etalsDuComptoir(j: Jeu): Rarete[] {
-  return (COMPTOIR.etals[j.batiments.comptoir] ?? []).map((r) => (r === 'argent' && strateVaincue(j) < COMPTOIR.strateArgent ? 'cuivre' : r));
+  const etals = (COMPTOIR.etals[j.batiments.comptoir] ?? []).map((r) => (r === 'argent' && strateVaincue(j) < COMPTOIR.strateArgent ? 'cuivre' : r));
+  // 225 habitants qui te suivent (30 octobre 2026) : un marchand du quartier rouvre son étal
+  return etals.length && niveauConfiance(j.confiance ?? 0).niveau >= CONFIANCE.comptoir ? [...etals, 'cuivre'] : etals;
 }
 export const prixComptoir = (id: string) => COMPTOIR.prix[moduleDef(id).rarete] ?? { composants: 0, eclats: 0 };
 

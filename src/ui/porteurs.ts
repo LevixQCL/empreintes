@@ -4,7 +4,7 @@
 
 import { BATIMENTS, CLE_LEGS, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
 import { CHARGE, NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
-import { ACCORD_OUVERT, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
+import { ACCORD_OUVERT, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
@@ -39,7 +39,7 @@ function statut(j: Jeu, id: string): { texte: string; classe: string } {
 export function arrivee(p: PorteurDef): string {
   if (p.arrivee?.forge) return `Arrive quand la Forge atteint le niveau ${p.arrivee.forge}.`;
   if (p.arrivee?.strate) return `Arrive quand la Strate −${p.arrivee.strate} est ouverte.`;
-  if (p.arrivee?.accord) return `Arrive par un Accord ouvert : Clinique niveau ${ACCORD_OUVERT.clinique} et Confiance du quartier au niveau ${ACCORD_OUVERT.confiance}.`;
+  if (p.arrivee?.accord) return `Arrive par un Accord ouvert : Clinique niveau ${ACCORD_OUVERT.clinique} et ${ACCORD_OUVERT.confiance * CONFIANCE.palier} habitants qui te suivent.`;
   return 'Arrive quand la chambre scellée est ouverte.';
 }
 

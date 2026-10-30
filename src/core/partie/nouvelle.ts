@@ -4,11 +4,12 @@
 import { PORTEURS, CARTE_CHAMBRE, MODULES, estCarteConnue, moduleDe, moduleDef, porteurDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
 import { niveauRequis, poidsCarte } from '../collection';
 import { graine } from '../rng';
-import { DISTRICT, VERSION_JEU, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
+import { CONFIANCE, DISTRICT, VERSION_JEU, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
 import { SCENES, sceneEnAttente, type ContexteCampagne } from '../campagne';
 import { ESCOUADE_DEPART } from './descentes';
 import { accorderSeance, comptoirVide } from './district';
 import { OBJECTIFS } from './objectifs';
+import { ORDRE_FAMILLES } from '../fragments';
 import { donnerKitRecrues, recompenserLecture } from './recompenses';
 
 const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: GardeChambre; nom: string; phrase: string; effet: string }[] } = {
@@ -112,7 +113,8 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     recrues: false,
     arrives: [],
     actes: {},
-    confiance: 0,
+    confiance: CONFIANCE.depart,
+    confianceV: 2,
     decouvertes: [],
     scenes: [],
     objectif: 0,
@@ -161,7 +163,15 @@ function migrer(j: Jeu) {
   j.arrives ??= [];
   j.actes ??= {};
   j.confiance ??= 0;
-  // la Confiance par niveaux (27 octobre 2026) : les niveaux déjà atteints par une vieille sauvegarde ne rapportent pas de creuseur d'un coup
+  if (j.confianceV !== 2) {
+    // la Confiance devient les habitants qui te suivent (30 octobre 2026) : les anciens points sont convertis,
+    // les paliers déjà atteints ne rapportent pas de creuseur d'un coup, mais les familles apportent leurs souvenirs
+    j.confiance = Math.min(CONFIANCE.population, CONFIANCE.depart + Math.round(j.confiance * 0.8));
+    // les creuseurs déjà reçus aux anciens niveaux restent comptés : pas de double récompense
+    j.confianceRecue = Math.max(j.confianceRecue ?? 0, niveauConfiance(j.confiance).niveau);
+    for (const f of ORDRE_FAMILLES.slice(0, j.confianceRecue)) if (!j.fragments.includes(f)) j.fragments.push(f);
+    j.confianceV = 2;
+  }
   j.confianceRecue ??= niveauConfiance(j.confiance).niveau;
   j.decouvertes ??= [];
   // l'empreinte des cartes (28 octobre 2026) notait par erreur les cartes du district (Stimulant, Pavois de cuivre) :

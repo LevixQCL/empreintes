@@ -335,7 +335,6 @@ export function remonterPillage(j: Jeu, now: number): RetourPillage | null {
     j.composants += gain;
     etat.coffre += gain;
     etat.gagnes++;
-    confier(j, CONFIANCE.pillage);
   } else {
     perte = Math.floor(etat.coffre * PILLAGE.perteDefaite);
     j.composants -= perte;
@@ -389,7 +388,8 @@ export function subirPillages(j: Jeu, subis: PillageSubi[]): string[] {
       etat.coffre += gagne;
       j.composants += gagne;
       noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: true, composants: gagne, le: s.le });
-      l.push(`Ta garnison a repoussé ${s.nom}${gagne ? ` : +${gagne} composants laissés dans ton coffre` : ''}.`);
+      const venus = confier(j, CONFIANCE.defense, 'defense');
+      l.push(`Ta garnison a repoussé ${s.nom}${gagne ? ` : +${gagne} composants laissés dans ton coffre` : ''}.${venus ? ` Le quartier l’a vu : +${venus} habitants te suivent.` : ''}`);
     }
   }
   // on ne garde que deux jours d'attaques : assez pour le bouclier et pour ne rien compter deux fois

@@ -740,3 +740,21 @@ button.res:focus-visible{outline:1.5px solid var(--glace,#CDEFFF);outline-offset
 .incident-btns{display:flex;flex-direction:column;gap:8px}
 .incident-btns button{min-height:44px;padding:10px 14px;border:1px solid var(--filet-fort);background:rgba(255,255,255,.04);font-size:15px}
 .incident-btns .prim{background:var(--laiton);color:#1A1307;border-color:transparent;font-weight:600}
+
+/* Ceux qui te suivent (30 octobre 2026) : les pompes du Générateur, la Nuit des lignes et les paliers */
+.ressource-fiche .fb-bloc{display:grid;gap:10px;margin:4px 0 14px;padding:12px;background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14)}
+.ressource-fiche .fb-bloc .titre-bloc{margin:0}
+.ressource-fiche .fb-vide{margin:0;font-size:13px;line-height:1.45;color:#C9D6E6}
+.pompes-crans{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.pompes-crans i{height:8px;border-radius:2px;background:rgba(205,239,255,.10);box-shadow:inset 0 0 0 1px rgba(205,239,255,.22)}
+.pompes-crans i.fait{background:linear-gradient(180deg,#9FD8FF,#4C8FD0);box-shadow:0 0 8px rgba(120,190,255,.45)}
+.nuit-semaine{margin:0;font-size:13px;color:#C9D6E6}
+.nuit-semaine b,.nuit-liste b{font-family:var(--mono);color:var(--gold)}
+.nuit-titre{margin:2px 0 0;font-size:13px;font-weight:600;color:var(--ink)}
+.nuit-liste{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.nuit-liste li{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:#C9D6E6;padding:4px 0;border-bottom:1px solid rgba(205,239,255,.08)}
+.nuit-liste li.nuit-bonus{color:var(--ink)}
+.res-confiance .res-liste li:not(.fait) .ico{opacity:.55}
+.res-confiance .res-liste li.fait strong{color:var(--gold)}
+.archives-familles{display:flex;align-items:center;gap:8px;margin:22px 0 4px}
+.fragment.famille{background:linear-gradient(180deg,#14202A,#0F171E);box-shadow:inset 0 0 0 1px rgba(150,200,240,.28)}

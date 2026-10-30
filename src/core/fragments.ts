@@ -199,6 +199,80 @@ export const FRAGMENTS: Fragment[] = [
 ];
 
 /**
+ * Les souvenirs des familles (30 octobre 2026) : à chaque palier de Confiance, une famille du district rejoint son directeur
+ * et confie aux Archives ce qu'elle a gardé de plus précieux. Des voix d'aujourd'hui, autour de papiers d'hier.
+ */
+export const FAMILLES: Fragment[] = [
+  {
+    id: 'famille-pompes', titre: 'Le carnet des pompes', support: 'Apporté par la famille Orlan : un carnet de quart, taché d’huile',
+    lignes: [
+      'Trois générations ont tenu ce carnet. Une ligne par nuit : l’heure, le niveau, « tenu » ou « pas tenu ».',
+      'Les premières pages disent presque toujours « tenu ». Les dernières, de moins en moins.',
+      'La dernière ligne est d’hier : « Le directeur a fait tourner les pompes. Tenu. »',
+    ],
+  },
+  {
+    id: 'famille-route', titre: 'Les noms de la route', support: 'Apporté par les Méric : une couverture brodée',
+    lignes: [
+      'Sur la bordure, un nom brodé par ville traversée, chacune un peu plus loin de la mer que la précédente.',
+      'Les fils changent de couleur au fil des haltes : on brodait avec ce qu’on trouvait.',
+      'Le dernier nom est celui du district. La grand-mère a laissé de la place après, au cas où.',
+    ],
+  },
+  {
+    id: 'famille-fondations', titre: 'Le premier pilier', support: 'Apporté par la famille Sorne : une photo de chantier',
+    lignes: [
+      'Des ouvriers en rang devant une colonne fraîche, les pieds dans l’eau jusqu’aux chevilles.',
+      'Au dos : « On coule le pilier douze. Ceux d’en haut disent que ça tiendra cent ans. »',
+      'Une autre main a ajouté, plus tard : « Soixante ans plus tard, il tient. Nous aussi. »',
+    ],
+  },
+  {
+    id: 'famille-ligne', titre: 'La ligne de la cuisine', support: 'Apporté par les Taverne : un morceau de carrelage',
+    lignes: [
+      'Un carreau bleu, découpé au burin dans le mur d’une cuisine noyée, avec un trait de peinture dessus.',
+      'Chaque Nuit des lignes, la famille le pose sur la table et raconte d’où il vient.',
+      'Ils disent que le trait n’était qu’à hauteur de genou, la première fois. On riait, à l’époque.',
+    ],
+  },
+  {
+    id: 'famille-accords', titre: 'Le ticket de l’hiver', support: 'Apporté par la famille Vey : un ticket de rationnement jamais utilisé',
+    lignes: [
+      'Un ticket de pain de l’année des Accords, au nom d’un aïeul qui ne l’a jamais échangé.',
+      'Cet hiver-là, il a donné sa part à une voisine qui attendait un enfant.',
+      'La famille garde le ticket plié en quatre. Elle dit qu’il n’a jamais servi, et qu’il a servi quand même.',
+    ],
+  },
+  {
+    id: 'famille-semis', titre: 'Les graines du toit', support: 'Apporté par les Halde : une boîte en fer de semences',
+    lignes: [
+      'Des sachets cousus main, chacun avec une date et un nom de plante qui ne pousse plus au bord de l’eau.',
+      'Le sel a gagné les potagers bas un par un. Les Halde ont remonté leurs bacs d’un étage à chaque fois.',
+      'Sur le couvercle, gravé à la pointe : « Là-haut, il y aura de la terre. On plantera tout. »',
+    ],
+  },
+  {
+    id: 'famille-veille', titre: 'La lampe de veille', support: 'Apporté par la famille Doucet : une lampe à algues cabossée',
+    lignes: [
+      'La lampe qu’on allumait à la fenêtre quand quelqu’un était encore en mer.',
+      'Elle est restée allumée onze nuits, une fois. Le pêcheur est rentré la douzième.',
+      'Depuis que tes barques ramènent des naufragés, disent les Doucet, la lampe ne s’éteint plus.',
+    ],
+  },
+  {
+    id: 'famille-tous', titre: 'Tout le monde à la fois', support: 'Apporté par le conseil des anciens : le registre du district',
+    lignes: [
+      'Le registre de tous les foyers du district, recopié à chaque génération, sans en oublier un seul.',
+      'Pour la première fois, aucune page n’a de nom barré au crayon rouge : celui des familles qui restaient en bas.',
+      'En marge de la dernière page, les anciens ont écrit : « Ils montent tous. Le directeur l’a promis. »',
+    ],
+  },
+];
+
+/** L'ordre dans lequel les familles arrivent, un souvenir par palier de Confiance (75, 150… 600 habitants) */
+export const ORDRE_FAMILLES = FAMILLES.map((f) => f.id);
+
+/**
  * Le premier fragment vient de la chambre scellée ; les autres, un par nouvelle Strate conquise (deux dans les Seuils).
  * D'abord les papiers humains des abris et des Archives du district (les Chroniques y renvoient), puis, plus profond,
  * les traces de ceux d'avant et les secrets d'aujourd'hui : plus on descend, plus c'est ancien et secret.
@@ -215,4 +289,4 @@ export const ORDRE_FRAGMENTS = [
   // trois papiers humains restés dans les abris, retrouvés tard (les déplacer avancerait tout l'ordre : laissés ici)
   'fracture', 'pierre', 'infos',
 ];
-export const fragmentDef = (id: string) => FRAGMENTS.find((f) => f.id === id);
+export const fragmentDef = (id: string) => FRAGMENTS.find((f) => f.id === id) ?? FAMILLES.find((f) => f.id === id);

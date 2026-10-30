@@ -9,7 +9,7 @@ import { CHAPITRES, chapitreOuvert } from './chroniques';
 import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, MODULES, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, salleCourante, typeApparent } from './expedition';
-import {
+import { coutPompe, pomper,
   choisirLegs, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
@@ -145,6 +145,8 @@ function gerer(j: Jeu, now: number): void {
   const ordre = Object.keys(j.collection).sort((a, b) => Number(enDeck.has(b)) - Number(enDeck.has(a)));
   for (const id of ordre) while (monter(j, id).ok);
   for (const b of ['noyau', 'generateur', 'clinique', 'forge', 'comptoir'] as const) ameliorer(j, b, now);
+  // les pompes (30 octobre 2026) : un pompage par passage au district, s'il reste deux fois de quoi le payer
+  if (j.energie >= 2 * coutPompe(j)) pomper(j, now);
   // le Comptoir : il achète les doublons des cartes de son deck, et une carte neuve si elle vaut mieux que la plus faible,
   // en gardant de quoi monter ses niveaux (une réserve de 2 fois le prix)
   garnirComptoir(j, now);

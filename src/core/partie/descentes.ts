@@ -137,7 +137,7 @@ export function avancerFils(j: Jeu): string[] {
       const e = fil.etapes[n]!;
       j.fils[id] = ++n;
       gagnerXp(j, id, e.xp);
-      if (e.confiance) confier(j, e.confiance);
+      if (e.confiance) confier(j, e.confiance, 'histoire');
       const t = `${porteurDef(id).nom} · ${fil.titre} : « ${e.titre} » (+${e.xp} XP). À lire dans sa fiche.`;
       log(j, t);
       annonces.push(t);
@@ -441,6 +441,7 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   let composants: number;
   let recrues = 0;
   let eclats = 0;
+  let secoursFait = false;
   // des doublons de cartes qu'on a déjà, dans la lignée du Porteur (fer et cuivre)
   const possedees = Object.keys(j.collection).filter((k) => moduleDef(k).lignee === p.lignee && ['fer', 'cuivre'].includes(moduleDef(k).rarete));
   if (m.butin && lieuId) {
@@ -449,6 +450,7 @@ export function retourDeMission(j: Jeu, m: Mission): string {
     const rd = m.rendement ?? 1;
     // les naufragés recueillis au départ, et encore dans le plafond de la Strate au retour
     const secours = m.butin === 'naufrages' && (m.secours ?? true) && !naufragesPleins(j);
+    secoursFait = secours;
     composants = composantsMission(j, m.porteur, lieuId, m.duree, m.butin, m.strate, rd, secours);
     // une ruine déjà fouillée n'a plus toujours sa pierre : la carte devient une chance égale au rendement
     if (m.butin === 'pierre' && (rd >= 1 || t.nombre() < rd)) {
@@ -472,6 +474,8 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   const trouvees = cartes.map((c) => ({ id: c, nouvelle: ajouterCarte(j, c) }));
   const arrives = recrues ? gagnerCreuseurs(j, recrues, `${p.nom} ramène des naufragés`) : 0;
   if (arrives) { j.naufrages = { strate: j.strate, n: nf.ramenes + arrives }; creuser(j); }
+  // les familles des naufragés restent au district (30 octobre 2026) : seulement quand la barque en ramène vraiment
+  const familles = m.butin === 'naufrages' && secoursFait ? confier(j, CONFIANCE.naufrages[m.duree], 'naufrages') : 0;
   const q = j.porteurs[m.porteur]!;
   const usureAvant = q.usure;
   q.usure = Math.min(usureMax(j, m.porteur), q.usure + d.usure + (b.affinite === 'mauvais' ? MISSIONS.usureMauvais : 0));
@@ -482,11 +486,11 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   if (nouvelleMarque) log(j, `${p.nom} gagne la Marque ${nouvelleMarque.nom} : ${nouvelleMarque.texte}`);
   const gainXp = Math.round(XP.missionHeure * d.heures * sf * b.mult);
   const monte = gagnerXp(j, m.porteur, gainXp);
-  const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? `, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
+  const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${familles ? `, +${familles} habitants` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? `, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
   const rapport: RapportMission = {
     porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, lieu: lieuId, butin: m.butin, eclats, rendement: m.rendement ?? 1, affinite: b.affinite, mult: Math.round(b.mult * 100) / 100, recit: [],
-    composants, xp: gainXp, niveau: monte || null, cartes: trouvees, creuseurs: arrives,
+    composants, xp: gainXp, niveau: monte || null, cartes: trouvees, creuseurs: arrives, ...(familles ? { habitants: familles } : {}),
     usure: Math.round((q.usure - usureAvant) * 10) / 10, marque: nouvelleMarque ? nouvelleMarque.nom : null, lu: false,
   };
   rapport.recit = recitMission(rapport);
@@ -537,7 +541,8 @@ export function recitMission(r: RapportMission): string[] {
     `Au lever du brouillard, la barque a touché ${lieu}. ${nom} est monté seul.`,
   ]));
   if ((r.rendement ?? 1) < 1) recit.push(`D’autres barques étaient passées avant aujourd’hui : ${nom} a dû chercher plus loin, dans des salles à moitié vidées.`);
-  if (r.butin === 'naufrages' && !r.creuseurs) recit.push('Plus personne à recueillir sur place : les naufragés étaient déjà partis. La barque est revenue chargée de matériel.');
+  if (r.habitants) recit.push(`Les familles recueillies ont choisi de rester au district : ${r.habitants} habitants de plus te suivent.`);
+  if (r.butin === 'naufrages' && !r.creuseurs && !r.habitants) recit.push('Plus personne à recueillir sur place : les naufragés étaient déjà partis. La barque est revenue chargée de matériel.');
   recit.push(choisir([
     `Sous l’eau dormait encore du matériel d’avant : ${r.composants} composants hissés à bord.`,
     `Une réserve oubliée, au sec sous un toit effondré : ${r.composants} composants rapportés au district.`,
@@ -618,17 +623,17 @@ export function repondre(j: Jeu, choix: number): Resultat {
   let recit = 'L’escouade reprend sa route.';
   const allie = j.actes.chambre === 'orseve';
   if (id === 'veilleur') {
-    if (choix === 0) { y.porteurs = blesser(x, 4); gains.eclats++; confier(j, 3); recit = 'Le Veilleur, reconnaissant, te confie un Éclat trouvé plus bas. Le quartier en entendra parler.'; }
+    if (choix === 0) { y.porteurs = blesser(x, 4); gains.eclats++; confier(j, 6, 'rencontres'); recit = 'Le Veilleur, reconnaissant, te confie un Éclat trouvé plus bas. Le quartier en entendra parler.'; }
     else if (choix === 1) { y.butin += n * 2; recit = `Le carnet se revend bien : +${n * 2} composants. Le Veilleur, lui, s’en souviendra.`; }
   } else if (id === 'pilleur') {
-    if (choix === 0) { confier(j, 2); recit = 'Le pilleur file sans demander son reste. Il racontera que le directeur sait être juste.'; }
+    if (choix === 0) { confier(j, 4, 'rencontres'); recit = 'Le pilleur file sans demander son reste. Il racontera que le directeur sait être juste.'; }
     else if (choix === 1) { y.butin += n * 2; recit = `Il lâche son sac et s’enfuit : +${n * 2} composants.`; }
     else { gains.cartes++; y = lancerCombat({ ...y, recit: 'Le pilleur sort un pied-de-biche. Son sac contient une carte : elle sera à toi.' }, 'pilleur'); }
   } else if (id === 'brigade') {
     if (allie) { if (choix === 0) { y.porteurs = soigner(x, 0.25); recit = 'Les Brigades pansent l’escouade (+25 % de PV).'; } }
     else if (choix === 0) { y.butin = Math.max(0, y.butin - 20); recit = 'Le sergent empoche les composants et s’écarte.'; }
     else if (choix === 1) { y.porteurs = blesser(x, 5); recit = 'Les gaines sont étroites et brûlantes, mais vous passez (−5 PV chacun).'; }
-    else { confier(j, 2); y = lancerCombat({ ...y, recit: 'Le district ne paie pas pour passer chez lui.' }, 'brigadier'); }
+    else { confier(j, 4, 'rencontres'); y = lancerCombat({ ...y, recit: 'Le district ne paie pas pour passer chez lui.' }, 'brigadier'); }
   } else if (id === 'cristal') {
     const vela = x.porteurs.some((p) => p.id === 'vela' && p.pv > 0);
     if (choix === 0) {
@@ -648,14 +653,14 @@ export function repondre(j: Jeu, choix: number): Resultat {
   } else if (id === 'sauvage') {
     const vela = x.porteurs.some((p) => p.id === 'vela' && p.pv > 0);
     if (choix === 0) {
-      if (vela) { confier(j, 3); gains.eclats++; recit = 'Véla pose la main sur sa nuque. « C’est une brisure de créature des hauteurs. Elle a peur d’être enfermée. » Il se calme, et vous laisse un Éclat en remerciement. La Clinique le retirera.'; }
-      else { y.porteurs = blesser(x, 3); confier(j, 2); recit = 'Il finit par se calmer et accepte qu’on le conduise à la Clinique. Ses accès ont laissé des bleus à tout le monde (−3 PV chacun).'; }
+      if (vela) { confier(j, 6, 'rencontres'); gains.eclats++; recit = 'Véla pose la main sur sa nuque. « C’est une brisure de créature des hauteurs. Elle a peur d’être enfermée. » Il se calme, et vous laisse un Éclat en remerciement. La Clinique le retirera.'; }
+      else { y.porteurs = blesser(x, 3); confier(j, 4, 'rencontres'); recit = 'Il finit par se calmer et accepte qu’on le conduise à la Clinique. Ses accès ont laissé des bleus à tout le monde (−3 PV chacun).'; }
     } else if (choix === 1) { y = lancerCombat({ ...y, recit: 'Le penchant l’emporte : il se jette sur l’escouade.' }, 'sauvage'); }
   } else if (id === 'faussaire') {
     if (choix === 0) {
       if (y.butin < 25) return non('Il te faut 25 composants dans le butin de l’expédition.');
       y.butin -= 25; recit = 'Au district, la Clinique tranche : une pierre morte. Elle a refusé un Accord, et ne prendra plus jamais chez personne. Le quartier en rit encore.';
-    } else if (choix === 1) { y.butin += n; confier(j, 2); recit = `Il remballe en grommelant et rend ce qu’il a pris aux fouilleurs : +${n} composants. Les familles volées sauront qui remercier.`; }
+    } else if (choix === 1) { y.butin += n; confier(j, 4, 'rencontres'); recit = `Il remballe en grommelant et rend ce qu’il a pris aux fouilleurs : +${n} composants. Les familles volées sauront qui remercier.`; }
   }
   if (y.phase !== 'combat') y = { ...y, recit };
   y.gains = gains;
@@ -790,6 +795,8 @@ export function remonter(j: Jeu): Retour {
     // le gardien du front est vaincu : l'étage suivant est prêt à être creusé, s'il y a assez de creuseurs
     j.frontVaincu = true;
     gagnerCreuseurs(j, CREUSEURS.gardien, 'le gardien vaincu, des fouilleurs se joignent au chantier');
+    // l'espoir de l'Écluse grandit au quartier (30 octobre 2026)
+    confier(j, x.strate <= 10 ? CONFIANCE.gardien : CONFIANCE.gardienProfond, 'gardiens');
     nouvelleStrate = creuser(j);
     fragment = ajouterFragment(j);
     // dans les Seuils, les abris des années 2060 rendent deux papiers par Strate
@@ -807,8 +814,6 @@ export function remonter(j: Jeu): Retour {
   }
   for (const c of cartes) { ajouterCarte(j, c); if (!x.tutoriel) noterOrigine(j, c, x.strate); }
   j.eclats += eclats;
-  // la Confiance du quartier : chaque combat gagné, et la descente réussie (elle ne baisse jamais)
-  confier(j, victoires * CONFIANCE.combat + (victoire ? CONFIANCE.victoire : 0));
   // l'expérience : chaque combat gagné, les salles scellées et le gardien ; toute l'escouade la partage, debout ou à terre
   const facteur = 1 + 0.25 * (x.strate - 1);
   const gardien = victoire && !x.fouille && !x.epreuve ? XP.gardien : 0;

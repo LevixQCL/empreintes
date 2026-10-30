@@ -3,7 +3,7 @@
 
 import { moduleDef, porteurDef } from '../core/donnees';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
-import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, CREUSEURS, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
+import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, coutPompe, nomConfiance, pompesRestantes, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { miniature, portrait } from './art';
 import { ICO, icone, type Icone } from './icones';
@@ -188,15 +188,57 @@ function hud(j: Jeu, ouverte: Ressource | null = null): string {
 }
 
 /**
- * La Confiance du quartier dans la barre du haut (27 octobre 2026, Bryan : « une section à côté de la Strate avec une roue à niveau ») :
- * le niveau au centre d'une roue qui se remplit vers le suivant. Elle ne fait que monter.
+ * Les habitants qui te suivent, dans la barre du haut (30 octobre 2026) : le palier au centre d'une roue qui se remplit
+ * vers le suivant, et le nombre d'habitants dessous. Elle ne fait que monter.
  */
 function roueConfiance(j: Jeu, b: (r: Ressource, extra: string, label: string) => string): string {
   if (!j.chambre) return '';
   const n = niveauConfiance(j.confiance ?? 0);
-  const p = Math.round((100 * n.dans) / n.requis);
-  return b('confiance', '', `Confiance du quartier : niveau ${n.niveau}, ${n.dans} sur ${n.requis} points vers le suivant. Détails`)
-    + `<span class="roue-confiance" style="--p:${p}%" aria-hidden="true"><b>${n.niveau}</b></span><small>Confiance</small></button>`;
+  const p = n.requis ? Math.round((100 * n.dans) / n.requis) : 100;
+  return b('confiance', '', `${j.confiance} habitants sur ${CONFIANCE.population} te suivent, palier ${n.niveau}. Détails`)
+    + `<span class="roue-confiance" style="--p:${p}%" aria-hidden="true"><b>${n.niveau}</b></span><small>${j.confiance} hab.</small></button>`;
+}
+
+/** D'où viennent les habitants, pour le bilan de la Nuit des lignes */
+const NOMS_SOURCE: Record<SourceHabitants, string> = {
+  pompes: 'Les pompes ont tenu', naufrages: 'Des naufragés recueillis', gardiens: 'Des gardiens vaincus', rencontres: 'Des choix justes en bas',
+  defense: 'Des pillages repoussés', fleche: 'Des quais gagnés sur la Flèche', histoire: 'L’histoire du district',
+};
+
+/** Ce que chaque palier apporte en plus du creuseur volontaire et du souvenir de famille */
+const PALIERS_CONFIANCE: Record<number, string> = {
+  [ACCORD_OUVERT.confiance]: `L’Accord ouvert : avec la Clinique au niveau ${ACCORD_OUVERT.clinique}, un nouveau Résonant rejoint le district.`,
+  [CONFIANCE.comptoir]: 'Un marchand du quartier rouvre son étal : une carte de plus chaque jour au Comptoir.',
+  8: 'Tout le district te suit. Le jour où tu réclameras l’île, personne ne restera en bas.',
+};
+
+/** Les pompes du Générateur, dans la fiche des habitants */
+function blocPompes(j: Jeu): string {
+  const restantes = pompesRestantes(j, Date.now());
+  const cout = coutPompe(j);
+  const plein = j.confiance >= CONFIANCE.population;
+  const peut = j.batiments.generateur > 0 && restantes > 0 && j.energie >= cout && !plein;
+  const raison = plein ? 'Tout le district te suit déjà.' : j.batiments.generateur < 1 ? 'Le Générateur est à l’arrêt.' : !restantes ? 'Assez pompé cette semaine : les pompes repartent lundi, après la Nuit des lignes.'
+    : j.energie < cout ? `Il manque ${ent(cout - j.energie)} énergie.` : `${restantes} pompage${restantes > 1 ? 's' : ''} sur ${CONFIANCE.pompesSemaine} encore possible${restantes > 1 ? 's' : ''} cette semaine.`;
+  const crans = Array.from({ length: CONFIANCE.pompesSemaine }, (_, k) => `<i class="${k < CONFIANCE.pompesSemaine - restantes ? 'fait' : ''}"></i>`).join('');
+  return `<section class="fb-bloc pompes"><h3 class="titre-bloc">${ICO.energie}Les pompes du Générateur</h3>`
+    + `<p class="fb-vide">Le courant envoyé aux pompes retient l’eau des quais bas. Le quartier le voit, et ceux qui doutaient te rejoignent.</p>`
+    + `<div class="pompes-crans" aria-label="${CONFIANCE.pompesSemaine - restantes} pompages faits cette semaine sur ${CONFIANCE.pompesSemaine}">${crans}</div>`
+    + `<button type="button" class="btn prim large" data-action="pomper"${peut ? '' : ' disabled'}>${ICO.energie}Pomper : ${ent(cout)} ${icone('energie')} → +${CONFIANCE.pompe} habitants</button>`
+    + `<small class="fb-note">${raison}</small></section>`;
+}
+
+/** Le bilan de la dernière Nuit des lignes */
+function blocNuit(j: Jeu): string {
+  const n = j.lignes?.derniere;
+  const cette = j.lignes && j.lignes.semaine === semaineDe(Date.now()) ? Object.values(j.lignes.sources).reduce((x, v) => x + (v ?? 0), 0) : 0;
+  const lignes = n ? (Object.entries(n.sources) as [SourceHabitants, number][]).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1])
+    .map(([k, v]) => `<li><span>${NOMS_SOURCE[k]}</span><b>+${v}</b></li>`).join('') + (n.bonus ? `<li class="nuit-bonus"><span>Ceux qui ont vu, cette nuit-là</span><b>+${n.bonus}</b></li>` : '') : '';
+  return `<section class="fb-bloc nuit-lignes"><h3 class="titre-bloc">${ICO.district}La Nuit des lignes</h3>`
+    + `<p class="fb-vide">Chaque lundi, le district repeint sa ligne bleue un peu plus haut et fait le bilan. Ceux qui ont vu ce que tu as fait en entraînent d’autres : ${Math.round(CONFIANCE.nuit * 100)} % de plus que les habitants gagnés dans la semaine. Une semaine sans rien ne fait rien perdre.</p>`
+    + `<p class="nuit-semaine">Cette semaine : <b>+${cette}</b> habitant${cette > 1 ? 's' : ''} pour l’instant.</p>`
+    + (n ? `<h4 class="nuit-titre">La dernière Nuit · +${n.gagnes + n.bonus} habitants</h4><ul class="nuit-liste">${lignes}</ul>` : '')
+    + `</section>`;
 }
 
 /** La fiche d'une ressource : ce que c'est, ce qu'on a, comment en gagner, à quoi elle sert */
@@ -244,15 +286,20 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
       ligne('marteau', 'Les grands chantiers', 'Les derniers niveaux des bâtiments.')];
   } else if (r === 'confiance') {
     const n = niveauConfiance(j.confiance ?? 0);
-    surtitre = 'QUARTIER'; titre = 'La Confiance du quartier';
-    resume = 'Ce que les habitants pensent de leur directeur. Elle ne fait que monter : chaque victoire, chaque chantier la nourrit, et rien ne la fait baisser.';
-    etat = `<b>Niveau ${n.niveau}</b><small>${n.dans} / ${n.requis} points vers le niveau ${n.niveau + 1}</small>`;
-    gagner = [ligne('porte', 'Gagner des combats en bas', `+${CONFIANCE.combat} par combat gagné, +${CONFIANCE.victoire} de plus pour une descente réussie.`),
-      ligne('marteau', 'Finir des chantiers', `+${CONFIANCE.chantier} par bâtiment amélioré.`),
-      ligne('boost', 'Réussir un pillage', `+${CONFIANCE.pillage} par pillage gagné.`),
-      ligne('porteurs', 'Certains choix en bas', 'Aider ceux qu’on croise se sait au quartier.')];
-    servir = [ligne('ouvrier', 'Des creuseurs volontaires', `Chaque niveau atteint amène ${CREUSEURS.confiance} creuseur (s’il reste de la place à la Tour du Noyau).`),
-      ligne('soin', 'L’Accord ouvert', `Au niveau ${ACCORD_OUVERT.confiance}, avec la Clinique au niveau ${ACCORD_OUVERT.clinique}, un nouveau Résonant rejoint le district.`)];
+    surtitre = 'LE DISTRICT'; titre = 'Ceux qui te suivent';
+    resume = 'L’eau monte, et tout le district le sait. Chaque fois que tu protèges des gens, d’autres décident de te suivre, et ils ne te quittent plus. Le jour où tu réclameras l’île, ils monteront avec toi.';
+    etat = `<b>${j.confiance}</b> / ${CONFIANCE.population}<small>${nomConfiance(n.niveau)}${n.requis ? ` · encore ${n.requis - n.dans} pour le palier ${n.niveau + 1}` : ''}</small>`;
+    gagner = [ligne('energie', 'Faire tourner les pompes', `+${CONFIANCE.pompe} par pompage, ${CONFIANCE.pompesSemaine} par semaine (plus haut).`),
+      ligne('porteurs', 'Recueillir des naufragés', `Une mission « Naufragés » depuis le Port : +${CONFIANCE.naufrages.courte} (courte) ou +${CONFIANCE.naufrages.longue} (longue) quand la barque en ramène.`),
+      ligne('porte', 'Vaincre les gardiens', `+${CONFIANCE.gardien} pour chaque gardien vaincu de −1 à −10 : l’espoir de l’Écluse grandit.`),
+      ligne('cristal', 'Les choix justes en bas', 'Aider ceux qu’on croise se sait au quartier.'),
+      ligne('boost', 'Repousser un pillage', `+${CONFIANCE.defense} quand la garnison du Port tient.`),
+      ligne('monter', 'Gagner des quais sur la Flèche', `+${CONFIANCE.quaiGrave} par quai gravé : de la place sur les îles.`)];
+    servir = Array.from({ length: CONFIANCE.population / CONFIANCE.palier }, (_, k) => {
+      const p = k + 1;
+      const fait = n.niveau >= p;
+      return `<li class="${fait ? 'fait' : ''}">${ICO[fait ? 'ouvrier' : 'verrou'] ?? ''}<span><strong>${p * CONFIANCE.palier} habitants${NOMS_CONFIANCE[p] ? ` · ${NOMS_CONFIANCE[p]}` : ''}</strong><small>${PALIERS_CONFIANCE[p] ? `${PALIERS_CONFIANCE[p]} Avec` : 'Un'} creuseur volontaire et un souvenir de famille.</small></span></li>`;
+    });
   } else if (r === 'butin') {
     // 28 octobre 2026 (Bryan : « c'est quoi en fait l'Archive de la semaine ») : la fiche explique tout, sans rien à deviner
     const pts = j.archive.points;
@@ -283,8 +330,10 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
   return `<div class="voile-feuille" data-action="ressource" data-id="" aria-hidden="true"></div><section class="feuille ressource-fiche res-${r}" role="dialog" aria-modal="true" aria-labelledby="res-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">${surtitre}</span><h2 id="res-titre">${titre}</h2></div><button type="button" class="btn-icone" data-action="ressource" data-id="" aria-label="Fermer">${ICO.fermer}</button></header>`
     + `<div class="feuille-corps"><div class="res-etat">${icone(r === 'confiance' ? 'district' : r === 'butin' ? 'coffre' : r)}<span>${etat}</span></div><p class="res-resume">${resume}</p>`
+    + (r === 'confiance' ? blocPompes(j) + blocNuit(j) : '')
     + `<h3 class="titre-bloc">${r === 'butin' ? 'Comment gagner des points' : 'Comment en obtenir'}</h3><ul class="res-liste">${gagner.join('')}</ul>`
-    + `<h3 class="titre-bloc">${r === 'butin' ? 'Ce que contient le coffre' : 'À quoi ça sert'}</h3><ul class="res-liste">${servir.join('')}</ul>`
+    + `<h3 class="titre-bloc">${r === 'butin' ? 'Ce que contient le coffre' : r === 'confiance' ? 'Les paliers' : 'À quoi ça sert'}</h3>`
+    + (r === 'confiance' ? `<p class="res-resume">Chaque palier amène un creuseur volontaire et une famille qui confie un souvenir aux Archives.</p>` : '') + `<ul class="res-liste">${servir.join('')}</ul>`
     + (r === 'strate' ? `<button type="button" class="btn sec large" data-action="classements" data-id="profondeur">${ICO.monter}Voir le classement des profondeurs</button>` : '')
     + `</div></section>`;
 }

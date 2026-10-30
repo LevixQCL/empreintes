@@ -4,7 +4,7 @@
 import { batimentDef, moduleDef } from '../donnees';
 import { ajouterCarte } from '../collection';
 import { noterPalmares } from '../classements';
-import { ARCHIVE, CONFIANCE, confier, enExpedition, energieParHeure, jourDe, log, semaineDe, stockage, type Jeu, typeDuJour } from './etat';
+import { ARCHIVE, enExpedition, nuitDesLignes, energieParHeure, jourDe, log, semaineDe, stockage, type Jeu, typeDuJour } from './etat';
 import { avancerFils, retourDeMission, verifierArrivees } from './descentes';
 import { creuser, recompenserConfiance, entrainer, garnirComptoir, soinParHeure } from './district';
 import { RAVITAILLEMENT, eveillerLegs } from './recompenses';
@@ -42,14 +42,16 @@ export function tick(j: Jeu, now: number): string[] {
 
   for (const c of j.chantiers.filter((x) => now >= x.fin)) {
     j.batiments[c.batiment]++;
-    confier(j, CONFIANCE.chantier);
     if (c.batiment === 'noyau' && creuser(j)) nouvelles.push(`La Tour du Noyau loge assez de creuseurs : la Strate −${j.strate} est ouverte.`);
     const t = `Chantier terminé : ${batimentDef(c.batiment).nom} passe au niveau ${j.batiments[c.batiment]}.`;
     log(j, t);
     nouvelles.push(t);
   }
   j.chantiers = j.chantiers.filter((x) => now < x.fin);
-  // la Confiance du quartier : chaque niveau atteint amène un creuseur volontaire, qui peut ouvrir l'étage suivant
+  // la Nuit des lignes, chaque lundi : le bilan de la semaine, et ceux qui rejoignent en plus
+  const nuit = nuitDesLignes(j, now);
+  if (nuit) nouvelles.push(nuit);
+  // la Confiance du quartier : chaque palier atteint amène un creuseur volontaire, qui peut ouvrir l'étage suivant
   const confiance = recompenserConfiance(j);
   if (confiance.length) {
     nouvelles.push(...confiance);

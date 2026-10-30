@@ -24,7 +24,7 @@ describe('Lignées et origines (23 octobre 2026)', () => {
     verifierArrivees(j);
     expect(porteursPresents(j)).not.toContain('joss');
     j.batiments.clinique = ACCORD_OUVERT.clinique;
-    j.confiance = 3 * CONFIANCE.seuil; // niveau 2
+    j.confiance = ACCORD_OUVERT.confiance * CONFIANCE.palier; // 150 habitants
     const annonces = verifierArrivees(j);
     expect(porteursPresents(j)).toContain('joss');
     expect(annonces.join(' ')).toContain('Accord ouvert');

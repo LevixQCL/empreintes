@@ -37,6 +37,9 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'noyau-places', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="noyau"]'); await p.locator('.fb-bloc.te').scrollIntoViewIfNeeded(); } },
   // le Butin de la semaine (28 octobre 2026) : sur téléphone, on déplie d'abord la bulle de l'objectif, puis on touche le bandeau
   { nom: 'butin', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.objectif:visible').first(); if (await d.count()) { await d.click(); await p.waitForTimeout(250); } await p.click('.mission.jour .archive'); } },
+  // ceux qui te suivent (30 octobre 2026) : la roue de la barre du haut ouvre la fiche des habitants, avec les pompes
+  { nom: 'habitants', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.hud button.res.confiance'); } },
+  { nom: 'habitants-paliers', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.hud button.res.confiance'); await p.$eval('.ressource-fiche .res-liste:last-of-type li:nth-child(3)', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'panneau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.objectif:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'bulle-appel', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.appel-bulle:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'tour', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); } },

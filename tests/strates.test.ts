@@ -166,33 +166,65 @@ describe('Acte III : les trois fins', () => {
   });
 });
 
-import { CONFIANCE, CREUSEURS, confier, niveauConfiance, recompenserConfiance } from '../src/core/jeu';
+import { CONFIANCE, CREUSEURS, confier, coutPompe, energieParHeure, niveauConfiance, nuitDesLignes, pomper, recompenserConfiance } from '../src/core/jeu';
+import { ORDRE_FAMILLES } from '../src/core/fragments';
+import { estJeuValide } from '../src/core/jeu';
 
-describe('La Confiance du quartier (27 octobre 2026 : elle ne fait que monter, par niveaux)', () => {
-  it('ne baisse jamais et passe des niveaux de plus en plus longs', () => {
+describe('La Confiance du quartier (30 octobre 2026 : les habitants qui te suivent)', () => {
+  it('commence à 20 habitants, ne baisse jamais et plafonne à 600', () => {
     const j = nouveauJeu(0, 1);
-    expect(j.confiance).toBe(0);
+    expect(j.confiance).toBe(CONFIANCE.depart);
     confier(j, -50);
-    expect(j.confiance).toBe(0);
-    expect(niveauConfiance(CONFIANCE.seuil - 1).niveau).toBe(0);
-    expect(niveauConfiance(CONFIANCE.seuil).niveau).toBe(1);
-    expect(niveauConfiance(CONFIANCE.seuil * 3).niveau).toBe(2);
-    expect(niveauConfiance(CONFIANCE.seuil * 3 - 1)).toEqual({ niveau: 1, dans: CONFIANCE.seuil * 2 - 1, requis: CONFIANCE.seuil * 2 });
+    expect(j.confiance).toBe(CONFIANCE.depart);
+    expect(niveauConfiance(CONFIANCE.palier - 1).niveau).toBe(0);
+    expect(niveauConfiance(CONFIANCE.palier).niveau).toBe(1);
+    expect(niveauConfiance(2 * CONFIANCE.palier + 10)).toEqual({ niveau: 2, dans: 10, requis: CONFIANCE.palier });
+    expect(confier(j, 10_000)).toBe(CONFIANCE.population - CONFIANCE.depart);
+    expect(j.confiance).toBe(CONFIANCE.population);
+    expect(niveauConfiance(j.confiance)).toEqual({ niveau: 8, dans: CONFIANCE.palier, requis: 0 });
   });
 
-  it('chaque niveau atteint amène un creuseur volontaire, une seule fois', () => {
+  it('chaque palier amène un creuseur volontaire et un souvenir de famille, une seule fois', () => {
     const j = nouveauJeu(0, 1); j.chambre = true;
     j.creuseurs = 0;
-    confier(j, CONFIANCE.seuil * 3);
+    confier(j, 2 * CONFIANCE.palier);
     expect(recompenserConfiance(j)).toHaveLength(2);
     expect(j.creuseurs).toBe(2 * CREUSEURS.confiance);
+    expect(j.fragments.filter((f) => ORDRE_FAMILLES.includes(f))).toEqual(ORDRE_FAMILLES.slice(0, 2));
     expect(recompenserConfiance(j)).toHaveLength(0);
   });
+
+  it('les pompes : 7 par semaine, six heures de production chacune, +3 habitants', () => {
+    const j = nouveauJeu(0, 1); j.chambre = true; j.batiments.generateur = 3;
+    j.energie = 1e6;
+    const cout = coutPompe(j);
+    expect(cout).toBe(Math.round(energieParHeure(j) * 6 / 10) * 10);
+    const avant = j.confiance;
+    for (let k = 0; k < CONFIANCE.pompesSemaine; k++) expect(pomper(j, 0).ok).toBe(true);
+    expect(pomper(j, 0).ok).toBe(false);
+    expect(j.confiance - avant).toBe(CONFIANCE.pompesSemaine * CONFIANCE.pompe);
+    expect(j.energie).toBe(1e6 - CONFIANCE.pompesSemaine * cout);
+    // la semaine suivante, les pompes repartent
+    expect(pomper(j, 8 * 86_400_000).ok).toBe(true);
+  });
+
+  it('la Nuit des lignes ajoute 15 % des habitants gagnés de la semaine, et rien si on n’a pas joué', () => {
+    const j = nouveauJeu(0, 1); j.chambre = true;
+    confier(j, 40, 'naufrages', 0);
+    const avant = j.confiance;
+    expect(nuitDesLignes(j, 7 * 86_400_000 * 2)).toContain('Nuit des lignes');
+    expect(j.confiance - avant).toBe(6);
+    expect(j.lignes?.derniere).toMatchObject({ gagnes: 40, bonus: 6, sources: { naufrages: 40 } });
+    // une semaine sans rien : pas de bilan, rien de perdu
+    expect(nuitDesLignes(j, 7 * 86_400_000 * 4)).toBeNull();
+    expect(j.confiance).toBe(avant + 6);
+  });
+
 
   it('le choix de l’acte I la fait monter', () => {
     const j = nouveauJeu(0, 1); j.chambre = true; j.strate = 4;
     decider(j, 'chambre', 'district');
-    expect(j.confiance).toBe(10);
+    expect(j.confiance).toBe(CONFIANCE.depart + 10);
   });
 });
 
@@ -226,5 +258,24 @@ describe('Les Marques des Porteurs', () => {
     j.expedition!.terminee = true;
     remonter(j);
     expect(j.porteurs.ilka!.faits).toBeDefined();
+  });
+});
+
+describe('Les habitants viennent de ce qui protège les gens (30 octobre 2026)', () => {
+  it('les combats ordinaires et les chantiers n’en rapportent plus ; une vieille sauvegarde est convertie', () => {
+    const j = nouveauJeu(0, 1); j.chambre = true;
+    j.chantiers.push({ batiment: 'forge', debut: 0, fin: 1 } as never);
+    const avant = j.confiance;
+    tick(j, 10);
+    expect(j.confiance).toBe(avant);
+    // une sauvegarde aux anciens points (385 au jour 30) : 20 + 80 % des points, paliers acquis sans creuseur d'un coup
+    const vieille = JSON.parse(JSON.stringify(nouveauJeu(0, 2))) as typeof j;
+    delete vieille.confianceV; vieille.confiance = 385; vieille.confianceRecue = 5; vieille.creuseurs = 3;
+    expect(estJeuValide(vieille)).toBe(true);
+    expect(vieille.confiance).toBe(328);
+    expect(vieille.confianceRecue).toBe(5);
+    expect(vieille.fragments.filter((f) => ORDRE_FAMILLES.includes(f))).toHaveLength(5);
+    expect(recompenserConfiance(vieille)).toHaveLength(0);
+    expect(vieille.creuseurs).toBe(3);
   });
 });

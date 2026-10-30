@@ -14,7 +14,8 @@ import {
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
-import { FRAGMENTS } from '../core/fragments';
+import { FAMILLES, FRAGMENTS } from '../core/fragments';
+import { CONFIANCE } from '../core/jeu';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
@@ -1298,7 +1299,7 @@ export function htmlCodex(e: EcranDistrict): string {
   }
   const ouverts = CHAPITRES.filter((c) => chapitreOuvert(c, j.strate)).length;
   const retour = e.retourBiblio === 'titre' ? `<button type="button" class="btn-icone" data-action="biblio-retour" aria-label="Retour à l’écran titre">${ICO.retour}</button>` : '';
-  let h = entete(`${ouverts} / ${CHAPITRES.length} CHAPITRES · ${j.fragments.length} / ${FRAGMENTS.length} ARCHIVES`, 'Bibliothèque', retour);
+  let h = entete(`${ouverts} / ${CHAPITRES.length} CHAPITRES · ${j.fragments.filter((f) => FRAGMENTS.some((x) => x.id === f)).length} / ${FRAGMENTS.length} ARCHIVES`, 'Bibliothèque', retour);
   const nouveaux = chapitresNouveaux(j);
   h += `<div class="segments-choix trois" role="tablist">`
     + `<button type="button" role="tab" class="seg${e.onglet === 'chroniques' ? ' actif' : ''}" aria-selected="${e.onglet === 'chroniques'}" data-action="biblio-onglet" data-id="chroniques">Chroniques${nouveaux ? ` <span class="pastille-n">${nouveaux}</span>` : ''}</button>`
@@ -1307,14 +1308,22 @@ export function htmlCodex(e: EcranDistrict): string {
   if (e.onglet === 'campagne') return coquille(e, h + htmlListeScenes(j.scenes ?? []), 'ecran-codex');
   if (e.onglet === 'archives') {
     h += `<p class="aide intro-ecran">Des papiers d’époque, trouvés un à un dans les Strates. Ysé y renvoie souvent dans ses Chroniques.</p>`;
-    if (!j.fragments.length) h += `<p class="vide-ecran">${ICO.codex}Aucun fragment pour l’instant. On les trouve en ouvrant de nouvelles Strates.</p>`;
-    j.fragments.forEach((id, i) => {
+    const papiers = j.fragments.filter((f) => FRAGMENTS.some((x) => x.id === f));
+    if (!papiers.length) h += `<p class="vide-ecran">${ICO.codex}Aucun fragment pour l’instant. On les trouve en ouvrant de nouvelles Strates.</p>`;
+    papiers.forEach((id, i) => {
       const f = FRAGMENTS.find((x) => x.id === id);
       if (!f) return;
       h += `<article class="fragment"><span class="surtitre">N° ${String(i + 1).padStart(2, '0')} · ${echap(f.support.toUpperCase())}</span><h2>${echap(f.titre)}</h2>${f.lignes.map((l) => `<p>${echap(l)}</p>`).join('')}</article>`;
     });
-    const reste = FRAGMENTS.length - j.fragments.length;
+    const reste = FRAGMENTS.length - papiers.length;
     if (reste > 0) h += `<div class="fragment enfoui">${ICO.verrou}<span>${reste} fragment${reste > 1 ? 's' : ''} encore enfoui${reste > 1 ? 's' : ''} dans les Strates</span></div>`;
+    // les souvenirs des familles (30 octobre 2026) : un par palier de 75 habitants qui te suivent
+    const souvenirs = FAMILLES.filter((f) => j.fragments.includes(f.id));
+    h += `<h2 class="titre-bloc archives-familles">${ICO.district}Souvenirs des familles · ${souvenirs.length} / ${FAMILLES.length}</h2>`
+      + `<p class="aide">Chaque fois que ${CONFIANCE.palier} habitants de plus te suivent, une famille confie aux Archives ce qu’elle a gardé de plus précieux.</p>`;
+    for (const f of souvenirs) h += `<article class="fragment famille"><span class="surtitre">${echap(f.support.toUpperCase())}</span><h2>${echap(f.titre)}</h2>${f.lignes.map((l) => `<p>${echap(l)}</p>`).join('')}</article>`;
+    const restent = FAMILLES.length - souvenirs.length;
+    if (restent > 0) h += `<div class="fragment enfoui">${ICO.verrou}<span>Prochaine famille à ${(souvenirs.length + 1) * CONFIANCE.palier} habitants qui te suivent</span></div>`;
     return coquille(e, h, 'ecran-codex');
   }
   h += `<p class="chroniques-intro"><img class="yse-medaillon" src="${portraitYse}" alt="Ysé" decoding="async">Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi la troisième nuit après ton élection.</p>`;

@@ -20,7 +20,7 @@ import { creerCombat } from '../combat';
 import { FLECHE } from '../classements';
 import { nouvelleExpedition } from '../expedition';
 import { graine, tireur } from '../rng';
-import { XP, bonusPv, gagnerXp, log, niveauPorteur, non, pvNiveau, usureAuRetour, type Jeu, type Resultat } from './etat';
+import { CONFIANCE, XP, bonusPv, confier, gagnerXp, log, niveauPorteur, non, pvNiveau, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, payerRatelier, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 import { PILLAGE, remonter as remonterPillage, type Garnison } from './pillages';
@@ -223,6 +223,8 @@ export function remonterFleche(j: Jeu, now: number): RetourFleche | null {
       f.recus.push(q);
       j.composants += r.composants;
       j.eclats += r.eclats;
+      // un quai gravé, c'est de la place gagnée sur les îles (30 octobre 2026)
+      confier(j, CONFIANCE.quaiGrave, 'fleche', now);
       paliers.push({ quai: q, ...r });
     }
   } else {

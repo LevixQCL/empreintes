@@ -235,10 +235,14 @@ export interface Jeu {
   arrives: string[];
   /** les grands choix de la campagne (Bible : un choix important par acte) */
   actes: { chambre?: GardeChambre; lecture?: LectureVela; fin?: FinCampagne };
-  /** la Confiance du quartier, en points cumulés (elle ne fait que monter ; le niveau se lit avec `niveauConfiance`) */
+  /** la Confiance du quartier : les habitants qui suivent le directeur, sur 600 (elle ne fait que monter ; le palier se lit avec `niveauConfiance`) */
   confiance: number;
-  /** niveaux de Confiance déjà récompensés (un creuseur volontaire par niveau) */
+  /** 2 : la Confiance compte des habitants (30 octobre 2026) ; absent : une sauvegarde aux anciens points, convertie au chargement */
+  confianceV?: 2;
+  /** paliers de Confiance déjà récompensés (un creuseur volontaire et une famille par palier) */
   confianceRecue?: number;
+  /** la semaine des lignes : pompages faits, habitants gagnés par source, et le bilan de la dernière Nuit des lignes */
+  lignes?: { semaine: number; pompes: number; sources: Partial<Record<SourceHabitants, number>>; derniere?: NuitDesLignes };
   /** les mécaniques de combat déjà expliquées la première fois qu'elles sont apparues (decouvertes.ts) */
   decouvertes?: string[];
   /** les scènes de la campagne déjà jouées, dans l'ordre (campagne.ts) */
@@ -403,36 +407,106 @@ export function multiplicateur(j: Jeu, b: Exclude<Poste, 'noyau'>): number {
 
 export const energieParHeure = (j: Jeu) => Math.round((DISTRICT.energieParHeure[j.batiments.generateur] ?? 0) * multiplicateur(j, 'generateur'));
 
-// ---------- La Confiance du quartier ----------
-// Refaite le 27 octobre 2026 (Bryan : « celui qui joue est récompensé », plutôt que « celui qui ne joue pas est puni ») :
-// elle ne fait que monter, par niveaux (une roue dans la barre du haut). Chaque niveau atteint amène un creuseur volontaire
-// (`recompenserConfiance` dans district.ts). Elle ne baisse jamais : ni défaite, ni absence, ni mauvais choix.
+// ---------- La Confiance du quartier : les habitants qui te suivent ----------
+// Refaite le 30 octobre 2026 (Bryan : la Confiance doit être liée à l'implication du joueur pour sauver les habitants
+// de la montée des eaux). Le district compte 600 habitants ; `j.confiance` est le nombre de ceux qui te suivent.
+// On les gagne en protégeant des gens (pompes, naufragés, gardiens vaincus, choix justes, défense du Port, quais de la Flèche),
+// jamais en combattant pour rien. Elle ne baisse jamais : ni défaite, ni absence, ni eau qui monte.
+// Chaque palier de 75 habitants amène un creuseur volontaire et une famille avec un souvenir pour les Archives.
 export const CONFIANCE = {
-  /** par combat gagné en descente, en plus pour une descente réussie, par chantier terminé, par pillage réussi */
-  combat: 1, victoire: 3, chantier: 2, pillage: 4,
-  /** points pour passer du niveau n au niveau n + 1 : `seuil × (n + 1)` (20, puis 40, 60…) */
-  seuil: 20,
-  /** niveau de Confiance qu'il faut pour l'Accord ouvert (avec la Clinique) */
+  /** le district entier : « tout le monde à la fois » */
+  population: 600,
+  /** les ouvriers qui ont envoyé Ilka chercher le directeur */
+  depart: 20,
+  /** un palier tous les 75 habitants (8 jusqu'à 600) */
+  palier: 75,
+  /** gardien du front vaincu la première fois, de −1 à −10 (l'espoir de l'Écluse) ; plus bas, un peu moins */
+  gardien: 10, gardienProfond: 5,
+  /** naufragés recueillis en mer (seulement quand la barque en ramène vraiment) */
+  naufrages: { courte: 3, longue: 5 },
+  /** un pillage repoussé par la garnison du Port */
+  defense: 5,
+  /** un quai gravé de la Flèche atteint (de la place gagnée sur les îles) */
+  quaiGrave: 25,
+  /** les pompes du Générateur : habitants rassurés par pompage, pompages par semaine, heures de production qu'un pompage coûte */
+  pompe: 3, pompesSemaine: 7, pompeHeures: 6,
+  /** la Nuit des lignes, chaque lundi : part des habitants gagnés pendant la semaine qui rejoignent en plus */
+  nuit: 0.15,
+  /** palier qu'il faut pour l'Accord ouvert (avec la Clinique) : 150 habitants */
   accord: 2,
+  /** palier qui ajoute un étal au Comptoir (225 habitants) */
+  comptoir: 3,
 } as const;
 
-/** Le niveau de Confiance, les points dans ce niveau et ceux qu'il faut pour le suivant */
-export function niveauConfiance(points: number): { niveau: number; dans: number; requis: number } {
-  let niveau = 0, base = 0;
-  while (points >= base + CONFIANCE.seuil * (niveau + 1)) { base += CONFIANCE.seuil * (niveau + 1); niveau++; }
-  return { niveau, dans: points - base, requis: CONFIANCE.seuil * (niveau + 1) };
+/** Les grands paliers, nommés */
+export const NOMS_CONFIANCE: Record<number, string> = { 0: 'Ils t’observent', 1: 'Ils t’écoutent', 4: 'Ils t’aident', 8: 'Tout le district te suit' };
+export const nomConfiance = (palier: number) => NOMS_CONFIANCE[Object.keys(NOMS_CONFIANCE).map(Number).filter((n) => n <= palier).pop() ?? 0]!;
+
+/** Le palier atteint, les habitants dans ce palier et ceux qu'il faut pour le suivant (requis = 0 quand tout le district suit) */
+export function niveauConfiance(habitants: number): { niveau: number; dans: number; requis: number } {
+  const h = Math.min(CONFIANCE.population, Math.max(0, habitants));
+  const max = Math.floor(CONFIANCE.population / CONFIANCE.palier);
+  const niveau = Math.min(max, Math.floor(h / CONFIANCE.palier));
+  return niveau >= max ? { niveau, dans: CONFIANCE.palier, requis: 0 } : { niveau, dans: h - niveau * CONFIANCE.palier, requis: CONFIANCE.palier };
 }
 
-/** La Confiance gagnée (jamais perdue : un nombre négatif ou nul ne fait rien) */
-export function confier(j: Jeu, delta: number) {
-  if (delta > 0) j.confiance = Math.round((j.confiance ?? 0) + delta);
+/** D'où viennent les habitants de la semaine (pour le récit de la Nuit des lignes) */
+export type SourceHabitants = 'pompes' | 'naufrages' | 'gardiens' | 'rencontres' | 'defense' | 'fleche' | 'histoire';
+
+/** Des habitants qui rejoignent (jamais perdus : un nombre négatif ou nul ne fait rien) ; renvoie ceux qui sont vraiment venus */
+export function confier(j: Jeu, delta: number, source: SourceHabitants = 'histoire', now = j.dernierTick): number {
+  if (!(delta > 0)) return 0;
+  // une semaine passée se referme d'abord (son bonus est compté), puis la nouvelle s'ouvre
+  nuitDesLignes(j, now);
+  const s = semaineDe(now);
+  if (!j.lignes || j.lignes.semaine < s) j.lignes = { semaine: s, pompes: 0, sources: {}, ...(j.lignes?.derniere ? { derniere: j.lignes.derniere } : {}) };
+  const avant = j.confiance ?? 0;
+  j.confiance = Math.min(CONFIANCE.population, Math.round(avant + delta));
+  const venus = j.confiance - avant;
+  if (venus > 0) j.lignes.sources[source] = (j.lignes.sources[source] ?? 0) + venus;
+  return venus;
 }
+
+/**
+ * La Nuit des lignes (chaque lundi) : le district repeint sa ligne bleue un peu plus haut et fait le bilan de la semaine.
+ * Ceux qui ont vu ce que tu as fait en entraînent d'autres : +15 % des habitants gagnés. Une semaine sans rien ne coûte rien.
+ */
+export function nuitDesLignes(j: Jeu, now: number): string | null {
+  const s = semaineDe(now);
+  const l = j.lignes;
+  if (!l || l.semaine >= s) return null;
+  const gagnes = Object.values(l.sources).reduce((n, v) => n + (v ?? 0), 0);
+  const derniere = l.derniere;
+  j.lignes = { semaine: s, pompes: 0, sources: {}, ...(derniere ? { derniere } : {}) };
+  if (gagnes <= 0) return null;
+  const sources = { ...l.sources };
+  const bonus = Math.min(CONFIANCE.population - (j.confiance ?? 0), Math.round(gagnes * CONFIANCE.nuit));
+  if (bonus > 0) j.confiance += bonus;
+  // le bonus de la nuit ne compte pas dans la semaine qui commence
+  j.lignes.derniere = { semaine: l.semaine, sources, gagnes, bonus, total: j.confiance };
+  const t = `La Nuit des lignes : la ligne bleue est repeinte plus haut. ${gagnes + bonus} habitants t’ont rejoint cette semaine${bonus ? `, dont ${bonus} cette nuit` : ''}.`;
+  log(j, t);
+  return t;
+}
+
+
+
+/** Les pompages encore possibles cette semaine */
+export function pompesRestantes(j: Jeu, now = j.dernierTick): number {
+  const faits = j.lignes?.semaine === semaineDe(now) ? j.lignes.pompes : 0;
+  return Math.max(0, CONFIANCE.pompesSemaine - faits);
+}
+/** Ce que coûte un pompage : six heures de ce que produit le Générateur */
+export const coutPompe = (j: Jeu) => Math.max(100, Math.round(energieParHeure(j) * CONFIANCE.pompeHeures / 10) * 10);
 
 /**
  * L'Accord ouvert (Bible, 23 octobre 2026) : quand le quartier fait confiance à son directeur et que la Clinique
  * sait greffer, elle offre une pierre relevée à tout volontaire du quartier. Un nouveau Résonant rejoint le district.
  */
 export const ACCORD_OUVERT = { clinique: 3, confiance: CONFIANCE.accord } as const;
+
+/** Le bilan d'une Nuit des lignes : la semaine écoulée, ce qui a fait venir les habitants, et le bonus de la nuit */
+export interface NuitDesLignes { semaine: number; sources: Partial<Record<SourceHabitants, number>>; gagnes: number; bonus: number; total: number; lue?: boolean }
 
 export const CREUSEURS = {
   /** creuseurs logés selon le niveau du Noyau (index = niveau) */
@@ -452,7 +526,7 @@ export const CREUSEURS = {
    * Le reste vient du front (gardien, fouilles, Épreuves, Confiance) : on ne peut pas avancer plus vite dans l'histoire en mer.
    */
   naufragesParStrate: 0.65, // ≈ deux tiers (réglé au robot : le rythme de descente reste celui d'avant)
-  /** creuseurs volontaires par niveau de Confiance atteint */
+  /** creuseurs volontaires par palier de Confiance atteint */
   confiance: 1,
 } as const;
 
@@ -528,6 +602,8 @@ export interface RapportMission {
   rendement?: number;
   cartes: { id: string; nouvelle: boolean }[];
   creuseurs: number; usure: number; marque: string | null;
+  /** les habitants des familles recueillies qui restent au district (30 octobre 2026) */
+  habitants?: number;
   lu: boolean;
 }
 /** rapports lus gardés pour les relire (les non lus ne sont jamais effacés) */
