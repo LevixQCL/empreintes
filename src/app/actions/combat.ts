@@ -9,6 +9,7 @@ import { suitePorte } from '../../core/expedition';
 import { comparer, montrer, relever } from '../../ui/gains';
 import { basculerSon, debloquerSon } from '../../ui/impact';
 import { vibrer } from '../../ui/toucher';
+import { autoActif, basculerAuto } from '../../ui/options';
 import { jouer, jouerFuite } from '../combat';
 import { app, D, K } from '../etat';
 import { afficher } from '../rendu';
@@ -44,7 +45,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     case 'lancer': if (s && !K.verrou) { debloquerSon(); J.noterChaine(app.jeu, s.chaine); await jouer(C.lancer(s)); if (avantGains) montrer(comparer(avantGains, relever(app.jeu))); return 'fin'; } break;
     // le combat automatique (31 octobre 2026) : l'escouade joue seule, en accéléré, tant que le joueur ne reprend pas la main
     case 'auto': {
-      if (!s || K.verrou || !J.combatAutoPermis(app.jeu)) break;
+      if (!s || K.verrou || !autoActif() || !J.combatAutoPermis(app.jeu)) break;
       K.auto = true; K.eclats = false; K.tuile = undefined; vibrer(8); debloquerSon();
       for (let n = 0; n < 60 && K.auto; n++) {
         const cs = app.jeu.expedition?.combat;
@@ -62,6 +63,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
       return 'fin';
     }
     case 'auto-stop': K.auto = false; break;
+    case 'option-auto': basculerAuto(); vibrer(5); break;
     case 'regles': K.regles = !K.regles; K.fuite = false; K.guide = null; K.journal = null; break;
     case 'fuir': if (!K.verrou) { K.fuite = !K.fuite; K.regles = false; K.guide = null; K.journal = null; } break;
     // le journal du combat : les piles l'ouvrent sur la défausse, la dernière ligne du journal et la fin du combat sur les tours

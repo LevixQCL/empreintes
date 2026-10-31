@@ -301,3 +301,14 @@
 .cm-esc-txt small svg{width:12px;height:12px}
 .cm-esc-visages{display:flex;flex:none}
 .cm-esc-visages>*+*{margin-left:-6px}
+
+/* Paramètres (31 octobre 2026) : un interrupteur de verre au bout de la ligne, or quand il est allumé */
+.ligne-menu.option{display:flex;align-items:center}
+.ligne-menu.option > span{flex:1;min-width:0}
+.interrupteur{position:relative;flex:0 0 44px;width:44px;height:24px;margin-left:10px;border-radius:12px;
+  background:rgba(205,239,255,.08);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3);transition:background .2s,box-shadow .2s}
+.interrupteur::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+  background:#A3B2C6;box-shadow:0 1px 3px rgba(0,0,0,.5);transition:transform .2s,background .2s}
+.ligne-menu.option[aria-checked="true"] .interrupteur{background:rgba(255,206,110,.22);box-shadow:inset 0 0 0 1px rgba(255,206,110,.7)}
+.ligne-menu.option[aria-checked="true"] .interrupteur::after{transform:translateX(20px);background:#FFD67A}
+@media (prefers-reduced-motion:reduce){.interrupteur,.interrupteur::after{transition:none}}

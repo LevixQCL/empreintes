@@ -1,5 +1,6 @@
 // Le rendu : redessine l'écran courant à partir de l'état (positions de défilement et champs de saisie gardés).
 
+import { autoActif } from '../ui/options';
 import { htmlPillages } from '../ui/pillages';
 import { htmlFleche } from '../ui/fleche';
 import { repliqueGardien, sceneDef } from '../core/campagne';
@@ -141,7 +142,7 @@ function dessiner() {
       if (total > 1) page = { n: K.decouverteLot ?? 1, total };
     }
     const parole = paroleGardien(etat);
-    h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, journal: K.journal, fuite: K.fuite, autoPermis: J.combatAutoPermis(app.jeu), auto: !!K.auto, eclats: K.eclats, ...(K.tuile ? { tuile: K.tuile } : {}), guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte, ...(page ? { decouvertePage: page } : {}) } : {}) });
+    h = htmlCombat({ x: app.jeu.expedition, etat, parole, verrou: K.verrou, regles: K.regles, journal: K.journal, fuite: K.fuite, autoPermis: autoActif() && J.combatAutoPermis(app.jeu), auto: !!K.auto, eclats: K.eclats, ...(K.tuile ? { tuile: K.tuile } : {}), guide: K.guide, trouvees: trouveesDe(app.jeu.collection), pops: K.pops, fin: K.fin, lecon, traces: K.traces, ...(K.actif !== undefined ? { actif: K.actif } : {}), ...(decouverte ? { decouverte, ...(page ? { decouvertePage: page } : {}) } : {}) });
   } else {
     app.mode = 'district';
     voirNouveautes();

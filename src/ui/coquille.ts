@@ -1,6 +1,7 @@
 // La coquille des écrans du district : barre de ressources en haut, navigation en bas, notifications, menu.
 // Tout l'affichage du district passe par ici pour rester cohérent d'un écran à l'autre.
 
+import { autoActif } from './options';
 import { ennemiDef, moduleDef, porteurDef } from '../core/donnees';
 import { COLLECTION, doublonsRequis, multNiveau } from '../core/collection';
 import { vestigeDef } from '../core/explorer';
@@ -559,6 +560,11 @@ export function menu(e: EcranDistrict): string {
     // le glossaire (31 octobre 2026, Luc) : tous les mots du jeu, avec une recherche
     + `<button type="button" class="ligne-menu" data-action="guide" data-id="glossaire">${ICO.aide}<span><strong>Glossaire</strong><small>Tous les mots du jeu expliqués : Fissure, Flux, Résonance, Charge…</small></span></button>`
     + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro complète</strong><small>L’histoire de 2121, en entier</small></span></button></div>`;
+  // les paramètres (31 octobre 2026) : le combat automatique est une option, éteinte au départ
+  const auto = autoActif();
+  h += `<section class="bloc parametres"><h3 class="titre-bloc">${ICO.cristal}Paramètres</h3><div class="liste-menu">`
+    + `<button type="button" class="ligne-menu option" data-action="option-auto" role="switch" aria-checked="${auto}">${ICO.lancer}<span><strong>Combat automatique</strong><small>Un bouton « Auto » dans les combats ordinaires des Strates déjà vaincues : l’escouade joue seule, en accéléré</small></span><i class="interrupteur" aria-hidden="true"></i></button>`
+    + `</div></section>`;
   h += panneauCompte(c);
   h += `<section class="bloc"><h3 class="titre-bloc">${icone('journal')}Journal du district</h3><ol class="journal-liste">${e.j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></section>`;
   return h + `</div></section>`;

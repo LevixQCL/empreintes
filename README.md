@@ -273,7 +273,7 @@ dernière scène atteinte. Les illustrations à faire sont dans `docs/prompts-ca
 
 **Le combat automatique** (31 octobre 2026, `combatAutoPermis` dans `partie/descentes.ts`, `composerTourMoyen` dans `robot.ts`, `tests/combat-auto.test.ts`).
 Dans une Strate déjà vaincue, un combat ordinaire (pas le gardien, ni une salle scellée, une Épreuve, un pillage ou la Flèche) peut se jouer
-tout seul : bouton « Auto » à côté de « MAIN ». L'escouade joue comme le « joueur moyen » du parcours, avec le vrai moteur, en accéléré ;
+tout seul : bouton « Auto » à côté de « MAIN ». C'est une option (Bryan, 31 octobre 2026) : éteinte au départ, on l'allume dans le menu Plus › Paramètres (`src/ui/options.ts`, gardée sur l'appareil). L'escouade joue comme le « joueur moyen » du parcours, avec le vrai moteur, en accéléré ;
 « Reprendre » rend la main après la chaîne en cours. On peut perdre : rien n'est donné, c'est seulement plus court pour une session de métro.
 
 **Le contenu des Strates** (31 octobre 2026, `src/core/strates.ts`, `docs/strates-contenu.md`, `tests/strates-contenu.test.ts`). Pour que les Strates
