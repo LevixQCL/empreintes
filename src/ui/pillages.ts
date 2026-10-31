@@ -4,7 +4,7 @@
 // Les règles sont dans src/core/partie/pillages.ts.
 
 import { porteurDef } from '../core/donnees';
-import { PILLAGE, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadeActive, escouadeDefense, escouadePourDepart, escouadesDe, etatPillage, faitsDuJour, forceEscouade, majJetons, MISSIONS, barquesMax, strateVaincue, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
+import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadeActive, escouadeDefense, escouadePourDepart, escouadesDe, etatPillage, faitsDuJour, forceEscouade, majJetons, MISSIONS, barquesMax, strateVaincue, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
 import { ageArchipel, vignetteArchipel, visuel } from './art';
 import { avatar, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
@@ -53,7 +53,7 @@ export function htmlPillages(e: EcranDistrict): string {
   h += `<section class="pl-etat" aria-label="Jetons et coffre">`
     + `<div class="pl-jetons"><span class="surtitre">${ICO.grappin}Jetons</span>`
     + `<span class="pl-gemmes" role="img" aria-label="${etat.jetons} jetons sur ${PILLAGE.jetonsMax}">${Array.from({ length: PILLAGE.jetonsMax }, (_, k) => `<i class="${k < etat.jetons ? 'plein' : ''}"></i>`).join('')}</span>`
-    + `<small>${prochain ? decompte(prochain, e.now, 'Un de plus dans ') : 'Tous là : rien ne se perd.'}</small></div>`
+    + `<small>${prochain ? decompte(prochain, e.now, 'Un de plus dans ') : 'Tous là : rien ne se perd.'}</small>${boutonAchat(j, e.now, etat.jetons)}</div>`
     + `<div class="pl-coffre"><span class="surtitre">${icone('coffre')}Ton coffre</span><b>${ent(etat.coffre)}</b>`
     + `<small>composants gagnés en pillant : les seuls exposés</small></div></section>`;
 
@@ -186,4 +186,14 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
 
     + (etat === 'fermee' ? ''
       : `<button type="button" class="btn prim large" data-action="port-entrer">${ICO.carte}${etat === 'premiere' ? 'Larguer les amarres' : 'Retour au Port'}</button>`);
+}
+
+/** Un jeton de plus contre de l'énergie (31 octobre 2026) : visible seulement quand il en manque */
+function boutonAchat(j: Jeu, now: number, jetons: number): string {
+  if (jetons >= PILLAGE.jetonsMax || j.batiments.generateur < 1) return '';
+  const reste = achatsRestants(j, now);
+  const cout = coutJeton(j);
+  const peut = reste > 0 && j.energie >= cout;
+  return `<button type="button" class="btn sec pl-achat" data-action="pillage-jeton"${peut ? '' : ' disabled'} aria-label="Acheter un jeton pour ${cout} énergie, encore ${reste} aujourd’hui">`
+    + `<span class="pl-achat-l">+1 jeton · ${ent(cout)} ${icone('energie')}</span><small>${reste ? `${reste} / ${PILLAGE.achatsJour} aujourd’hui` : 'demain'}</small></button>`;
 }

@@ -192,6 +192,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     }
     case 'pillage-voir': D.pillageCible = id; break;
+    case 'pillage-jeton': { const r = J.acheterJeton(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     case 'pillage-preparer': {
       const c = cartePillages(app.jeu, Date.now(), D.pillagesEnLigne ?? []).cibles.find((x) => x.id === id);
       if (!c) break;

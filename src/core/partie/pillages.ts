@@ -16,7 +16,7 @@ import { nouvelleExpedition } from '../expedition';
 const butinCombat = (strate: number, _index: 0) => Math.round(6 * (1 + 0.25 * (strate - 1)));
 import { graine, tireur } from '../rng';
 import type { Lignee } from '../types';
-import { CONFIANCE, XP, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureAuRetour, type Jeu, type Resultat } from './etat';
+import { CONFIANCE, XP, energieParHeure, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, payerRatelier, remonter as remonterDescente, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 
@@ -24,6 +24,9 @@ export const PILLAGE = {
   /** jetons de pillage : 5 au plus, un revient toutes les 4 h 48 (5 par jour) ; rien ne se perd pendant l'absence */
   jetonsMax: 5,
   rechargeMs: (24 * 3_600_000) / 5,
+  /** un jeton de plus contre de l'énergie (idée de Luc, 31 octobre 2026) : 4 h de production du Générateur, 2 fois par jour au plus */
+  achatHeures: 4,
+  achatsJour: 2,
   /** les pillages s'ouvrent après la première Strate vaincue */
   strateMin: 1,
   /** butin de base d'une victoire : autant que ce nombre de combats de la Strate du défenseur (butinCombat) */
@@ -151,6 +154,8 @@ export interface EtatPillage {
   perdus: number;
   /** les pillages joués contre de vrais directeurs, en attente d'envoi */
   aEnvoyer: PillageJoue[];
+  /** les jetons achetés avec l'énergie, et le jour de ces achats */
+  achats?: { jour: number; n: number };
   /** les archipels déjà attaqués aujourd'hui (un seul pillage par archipel et par jour), et ce jour */
   faits?: string[];
   jour?: number;
@@ -278,6 +283,32 @@ export interface PillageEnCours {
   ecart: number;
   base: number;
   vol: number;
+}
+
+/** Ce que coûte un jeton de pillage en énergie : quelques heures de production du Générateur, arrondi à la dizaine */
+export const coutJeton = (j: Jeu) => Math.max(60, Math.round((energieParHeure(j) * PILLAGE.achatHeures) / 10) * 10);
+
+/** Les jetons qu'on peut encore acheter aujourd'hui */
+export function achatsRestants(j: Jeu, now: number): number {
+  const a = etatPillage(j).achats;
+  return Math.max(0, PILLAGE.achatsJour - (a && a.jour === jourDe(now) ? a.n : 0));
+}
+
+/** Acheter un jeton de pillage avec l'énergie du Générateur */
+export function acheterJeton(j: Jeu, now: number): Resultat {
+  majJetons(j, now);
+  const e = etatPillage(j);
+  if (j.batiments.generateur < 1) return non('Le Générateur est à l’arrêt.');
+  if (e.jetons >= PILLAGE.jetonsMax) return non('Tous tes jetons sont déjà là.');
+  if (achatsRestants(j, now) < 1) return non(`Déjà ${PILLAGE.achatsJour} jetons achetés aujourd’hui : reviens demain.`);
+  const cout = coutJeton(j);
+  if (j.energie < cout) return non(`Il faut ${cout} énergie pour armer une barque de plus.`);
+  j.energie -= cout;
+  const jour = jourDe(now);
+  e.achats = { jour, n: (e.achats?.jour === jour ? e.achats.n : 0) + 1 };
+  e.jetons++;
+  if (e.jetons >= PILLAGE.jetonsMax) e.jetonsLe = now;
+  return { ok: true, message: 'Le Générateur charge une barque de plus : +1 jeton de pillage.' };
 }
 
 export function peutPiller(j: Jeu, now: number): Resultat {
