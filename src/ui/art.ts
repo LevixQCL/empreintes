@@ -132,7 +132,7 @@ const MODULES_ILLUSTRES: Record<string, string> = {
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */
 /** Les Rôdeurs déjà peints (à compléter à l'arrivée des images), et le cousin dont ils empruntent le portrait en attendant */
-const RODEURS_PEINTS = new Set<string>([]);
+const RODEURS_PEINTS = new Set<string>(['maree-basse', 'sentinelle-orpheline', 'liseur', 'plongeur']);
 const RODEURS_PROVISOIRES: Record<string, string> = { 'maree-basse': 'rampeur', 'sentinelle-orpheline': 'sentinelle-verre', liseur: 'echo-veilleur', plongeur: 'automate-graveur' };
 /** Un Rôdeur sans son propre portrait : l'image empruntée est teintée (classe .provisoire) pour ne pas le confondre avec son cousin */
 export const portraitProvisoire = (id: string) => id in RODEURS_PROVISOIRES && !RODEURS_PEINTS.has(id);
@@ -175,7 +175,9 @@ export const illustrationModule = (cle: string): string | null => {
 export const artGardien = (n: 'plaque' | 'barre' | 'cran' | 'bandeau') => `${base}boss/${n}.webp`;
 /** Les gardes de la Flèche déjà peints (public/art/ennemis/<id>.webp, prompts dans docs/prompts-gardes-fleche.md : un visage
  *  par garde) ; en attendant le sien, un garde porte l'uniforme des Brigades. La capitaine Hald a déjà son portrait. */
-const GARDES_PEINTS = new Set<string>([]);
+const GARDES_PEINTS = new Set<string>([
+  'flc-arrimeur', 'flc-treuilliste', 'flc-gaffeur', 'flc-debardeuse', 'flc-brigadier', 'flc-vigie', 'flc-canonnier', 'flc-mecanicienne', 'flc-aile-verre', 'flc-cordiere', 'flc-ecouteuse', 'flc-brigadiere', 'flc-lancier', 'flc-duelliste', 'flc-orseve', 'flc-intendante', 'flc-heraut', 'flc-chantre', 'flc-contremaitre', 'flc-commandeur', 'flc-champion',
+]);
 function illustrationGarde(id: string): string {
   if (id === 'flc-hald') return `${base}personnages/hald.webp`;
   if (!GARDES_PEINTS.has(id)) return `${base}ennemis/brigadier.webp`;

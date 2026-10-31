@@ -94,7 +94,9 @@ const PEINTES = new Set<Icone>(['energie', 'composants', 'eclats', 'strate', 'di
   // l'objectif du district, un parchemin scellé (29 octobre 2026)
   'objectif',
   // les indices du brouillard des Strates (30 octobre 2026)
-  'bruits', 'lueur', 'silence', 'traces', 'chaleur', 'brume']);
+  'bruits', 'lueur', 'silence', 'traces', 'chaleur', 'brume',
+  // le contenu des Strates et Explorer (31 octobre 2026)
+  'halte', 'porte', 'quete', 'fissure', 'mur', 'fil', 'bestiaire', 'vestige', 'griffes']);
 export const baseIcones = new URL('art/icones/', document.baseURI).href;
 
 /** L'icône peinte si elle existe, sinon le trait SVG */
