@@ -2,10 +2,7 @@
 
 import { envoyerPillages } from '../pillages';
 import { envoyerAssauts, synchroGarde } from '../fleche';
-import { NOMS_RARETE } from '../../core/collection';
 import * as C from '../../core/combat';
-import { ennemiDef, moduleDef, porteurDef } from '../../core/donnees';
-import { ETOILES, releveDef, vestigeDef } from '../../core/explorer';
 import * as J from '../../core/jeu';
 import { suitePorte } from '../../core/expedition';
 import { comparer, montrer, relever } from '../../ui/gains';
@@ -116,6 +113,12 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
       }
     // falls through : remonter avec 75 % du butin
     case 'remonter': {
+      // pour le rapport d'expédition : ce que le joueur avait avant de remonter
+      const avant = { cartes: new Set(Object.keys(app.jeu.collection)), choix: app.jeu.choix.length, creuseurs: app.jeu.creuseurs ?? 0 };
+      const xr = app.jeu.expedition;
+      const issue = !xr ? 'retraite' : xr.fuite ? 'fuite' : xr.retraite ? 'retraite' : xr.combat.issue === 'defaite' ? 'defaite' : xr.terminee && xr.combat.issue === 'victoire' ? 'victoire' : 'retraite';
+      const type = !xr ? 'Descente' : xr.fouille ? `Fouille · ${J.CIBLES_FOUILLE[xr.fouille].nom.toLowerCase()}` : xr.epreuve ? `Épreuve · ${J.epreuveDef(xr.epreuve)?.nom ?? ''}` : 'Descente';
+      const strate = xr?.strate ?? 1;
       const r = J.remonter(app.jeu);
       K.fin = null;
       app.mode = 'district';
@@ -142,19 +145,22 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
         D.message = p.victoire ? `Pillage réussi à ${p.nom} : +${p.gain} composants, rangés dans ton coffre.`
           : `Repoussés à ${p.nom}.${p.perte ? ` L’escouade a laissé ${p.perte} composants de son coffre.` : ''}`;
       } else {
-        const fuite = r.fuite ? `L’escouade a fui : elle rentre épuisée (+${J.DISTRICT.usureFuite} d’Usure chacun). ` : '';
         D.vue = app.jeu.choix.length ? 'archipel' : 'coupe';
         const manque = J.manquePourCreuser(app.jeu);
-        D.message = fuite + (r.nouvelleStrate ? `Un nouvel étage est creusé : la Strate −${app.jeu.strate} est ouverte.`
-          : r.victoire && manque && app.jeu.frontVaincu && r.butin >= 0 && J.strateVaincue(app.jeu) === app.jeu.strate
-            ? `Le gardien est vaincu, mais l’étage suivant attend : ${manque.creuseurs ? `il manque ${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : ''}${manque.creuseurs && manque.noyau ? ' et ' : ''}${manque.noyau ? `la Tour du Noyau doit passer au niveau ${J.noyauRequis(app.jeu.strate + 1)}` : ''}. +${r.butin} composants rapportés.`
-            : `+${r.butin} composants rapportés.`)
-          + (r.cartes.length ? ` Carte${r.cartes.length > 1 ? 's' : ''} trouvée${r.cartes.length > 1 ? 's' : ''} : ${r.cartes.map((c) => `${moduleDef(c).nom} (${NOMS_RARETE[moduleDef(c).rarete]})`).join(', ')}.` : '')
-          + (r.eclats ? ` +${r.eclats} Éclat${r.eclats > 1 ? 's' : ''}.` : '')
-          + (r.fragment ? ' Un fragment d’archives rejoint le Codex.' : '')
-          + (r.quete ? ` Quête « ${r.quete.nom} » : ${r.quete.finie ? `achevée ! ${r.quete.fin}` : `étape ${r.quete.etape} sur ${r.quete.total}. ${r.quete.texte}`}` : '')
-          + texteExplorer(r)
-          + (r.xp?.length ? ` +${r.xp[0]!.xp} XP pour l’escouade.${r.xp.filter((e) => e.niveau).map((e) => ` ${porteurDef(e.id).nom} passe au niveau ${e.niveau} !`).join('')}` : '');
+        const note = (r.fuite ? `L’escouade a fui : elle rentre épuisée (+${J.DISTRICT.usureFuite} d’Usure chacun). ` : '')
+          + (r.nouvelleStrate ? `Un nouvel étage est creusé : la Strate −${app.jeu.strate} est ouverte.`
+          : r.victoire && manque && app.jeu.frontVaincu && J.strateVaincue(app.jeu) === app.jeu.strate
+            ? `Le gardien est vaincu, mais l’étage suivant attend : ${manque.creuseurs ? `il manque ${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : ''}${manque.creuseurs && manque.noyau ? ' et ' : ''}${manque.noyau ? `la Tour du Noyau doit passer au niveau ${J.noyauRequis(app.jeu.strate + 1)}` : ''}.`
+            : '')
+          + (r.quete?.finie && r.quete.fin ? ` ${r.quete.fin}` : '');
+        // le rapport d'expédition (31 octobre 2026) remplace la longue phrase du bandeau
+        D.message = '';
+        D.expedition = {
+          type, strate, issue, retour: r, note: note.trim(),
+          nouvelles: [...new Set(r.cartes)].filter((c) => !avant.cartes.has(c)),
+          choix: Math.max(0, app.jeu.choix.length - avant.choix),
+          creuseurs: Math.max(0, (app.jeu.creuseurs ?? 0) - avant.creuseurs),
+        };
       }
       sauver();
       window.scrollTo(0, 0);
@@ -165,15 +171,3 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
   return 'afficher';
 }
 
-/** Ce qu'Explorer a rapporté (31 octobre 2026, explorer.ts) : Vestiges, Strate relevée, étoiles, Rôdeur */
-function texteExplorer(r: J.Retour): string {
-  const e = r.explorer;
-  if (!e) return '';
-  let t = '';
-  if (e.vestiges.length) t += ` ${e.vestiges.length > 1 ? `${e.vestiges.length} Vestiges rapportés` : 'Un Vestige rapporté'} : ${e.vestiges.map((id) => vestigeDef(id)?.nom.toLowerCase() ?? '').join(', ')}.`;
-  if (e.releve) t += ` La Strate −${e.releve} est relevée : « ${releveDef(e.releve)?.titre ?? ''} » se lit à la Tour, et tes fouilles y verront tout le plan.`;
-  if (e.etoiles.length) t += ` Nouvelle${e.etoiles.length > 1 ? 's' : ''} étoile${e.etoiles.length > 1 ? 's' : ''} : ${e.etoiles.map((k) => ETOILES[k as 1].nom).join(', ')}.`;
-  if (e.paliers) t += ` Les étoiles des Strates t’offrent ${e.paliers > 1 ? `${e.paliers} cartes` : 'une carte'} au choix.`;
-  if (e.rodeur) t += e.rodeur.part ? ` ${ennemiDef(e.rodeur.id).nom} s’est enfui : il ne lui reste que ${Math.round(e.rodeur.part * 100)} % de sa vie.` : ` ${ennemiDef(e.rodeur.id).nom} est abattu : son trophée t’attend.`;
-  return t;
-}

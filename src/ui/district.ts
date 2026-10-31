@@ -853,7 +853,9 @@ export function htmlArchipel(e: EcranDistrict): string {
     + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}</div></section>`;
   h += feuilleBatiment(e);
   const acte = decisionEnAttente(j);
-  if (acte) h += fenetreDecision(acte);
+  // le rapport d'expédition passe d'abord : la carte au choix s'ouvre une fois qu'il est lu
+  if (e.expedition) { /* rien d'autre par-dessus */ }
+  else if (acte) h += fenetreDecision(acte);
   else if (legsEnAttente(j) || e.legsRevele) h += fenetreLegs(e);
   else if (j.choix.length) h += fenetreChoix(j);
   else if (visuel(j.batiments.noyau) > (j.ageVu ?? 1)) h += fenetreAge(j);

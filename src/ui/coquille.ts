@@ -1,7 +1,10 @@
 // La coquille des écrans du district : barre de ressources en haut, navigation en bas, notifications, menu.
 // Tout l'affichage du district passe par ici pour rester cohérent d'un écran à l'autre.
 
-import { moduleDef, porteurDef } from '../core/donnees';
+import { ennemiDef, moduleDef, porteurDef } from '../core/donnees';
+import { COLLECTION, doublonsRequis, multNiveau } from '../core/collection';
+import { vestigeDef } from '../core/explorer';
+import { faceCarte } from './carte';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
 import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, coutPompe, nomConfiance, pompesRestantes, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
@@ -37,6 +40,8 @@ export interface EcranDistrict {
   now: number;
   /** lignes du résumé « Pendant ton absence » (vide = rien à montrer) */
   retour: string[];
+  /** le rapport d'expédition à la remontée d'une descente, d'une fouille ou d'une Épreuve (31 octobre 2026) */
+  expedition?: RapportExpedition | null;
   /** menu « Plus » ouvert */
   menu: boolean;
   /** la fiche du directeur ouverte (le cristal du rail, le médaillon du haut ; 29 octobre 2026) */
@@ -443,6 +448,90 @@ function feuilleRapport(e: EcranDistrict): string {
     + `</div></section>`;
 }
 
+/** Le rapport d'expédition (31 octobre 2026, Bryan : « j'ai gagné des cartes mais je sais pas c'est lesquelles ») :
+ *  tout ce que la descente a rapporté, d'un coup d'œil, sans aller fouiller l'onglet Cartes */
+export interface RapportExpedition {
+  /** « Descente », « Fouille · cartes augmentées », « Épreuve · Le fer seulement » */
+  type: string;
+  strate: number;
+  issue: 'victoire' | 'retraite' | 'fuite' | 'defaite';
+  retour: import('../core/jeu').Retour;
+  /** les cartes que le joueur n'avait pas avant de descendre */
+  nouvelles: string[];
+  /** les cartes au choix qui attendent au district (gardien, filon, Épreuve, étoiles) */
+  choix: number;
+  creuseurs: number;
+  /** une précision (fuite, étage qui attend des creuseurs…) */
+  note: string;
+}
+
+/** la face d'une carte trouvée, à son niveau actuel */
+function faceRapport(j: Jeu, id: string): string {
+  const m = moduleDef(id);
+  const n = j.collection[id]?.niveau ?? COLLECTION.niveauDepart[m.rarete];
+  return faceCarte(m, n, multNiveau(id, n));
+}
+
+const ISSUE_EXPEDITION: Record<RapportExpedition['issue'], [string, string]> = {
+  victoire: ['Mission accomplie', 'victoire'],
+  retraite: ['Retour au district', 'retraite'],
+  fuite: ['Repli précipité', 'fuite'],
+  defaite: ['L’escouade a été repoussée', 'defaite'],
+};
+
+function feuilleExpedition(e: EcranDistrict): string {
+  const r = e.expedition;
+  if (!r) return '';
+  const g = r.retour;
+  const [titre, cls] = ISSUE_EXPEDITION[r.issue];
+  const ligne = (ico: string, n: string, txt: string, c = '') => `<li${c ? ` class="${c}"` : ''}>${ico}<b>${n}</b><small>${txt}</small></li>`;
+  const ex = g.explorer;
+  let h = `<div class="voile-feuille" data-action="expedition-lu" aria-hidden="true"></div><section class="feuille rapport-expedition rx-${cls}" role="dialog" aria-modal="true" aria-labelledby="rx-titre">`
+    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><span class="rx-sceau" aria-hidden="true">${ICO.descendre}<b>−${r.strate}</b></span>`
+    + `<div class="titres"><span class="surtitre">Rapport · ${echap(r.type)}</span><h2 id="rx-titre">${titre}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="expedition-lu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
+  if (r.note) h += `<p class="rx-note">${echap(r.note)}</p>`;
+  // les ressources
+  h += `<ul class="rm-gains rx-res">`
+    + ligne(ICO.composants, `+${virgule(g.butin)}`, 'composants')
+    + (g.eclats ? ligne(ICO.eclats, `+${g.eclats}`, `Éclat${g.eclats > 1 ? 's' : ''}`) : '')
+    + (r.creuseurs ? ligne(ICO.ouvrier, `+${r.creuseurs}`, `creuseur${r.creuseurs > 1 ? 's' : ''}`) : '')
+    + (g.fragment ? ligne(ICO.journal, '+1', 'fragment d’archives') : '')
+    + (g.nouvelleStrate ? ligne(ICO.descendre, `−${e.j.strate}`, 'nouvelle Strate ouverte', 'nouvelle') : '')
+    + `</ul>`;
+  // les cartes trouvées, avec leur face : nouvelle, doublon, ou niveau suivant prêt
+  if (g.cartes.length) {
+    h += `<h3 class="rx-titre">${ICO.cartes}${g.cartes.length > 1 ? `${g.cartes.length} cartes trouvées` : 'Une carte trouvée'}</h3><div class="rx-cartes">`;
+    const vues = new Set<string>();
+    for (const id of g.cartes) {
+      const c = e.j.collection[id];
+      const neuve = r.nouvelles.includes(id) && !vues.has(id);
+      vues.add(id);
+      const requis = c ? doublonsRequis(id, c.niveau) : null;
+      const pret = !neuve && c && requis !== null && c.doublons >= requis;
+      h += `<div class="rx-carte${neuve ? ' neuve' : ''}">`
+        + faceRapport(e.j, id) + `<span class="ruban">${neuve ? 'Nouvelle' : pret ? `Niv. ${c!.niveau + 1} prêt` : 'Doublon'}</span></div>`;
+    }
+    h += `</div>`;
+  }
+  if (r.choix) h += `<p class="rx-choix">${ICO.cartes}<span><b>${r.choix > 1 ? `${r.choix} cartes au choix` : 'Une carte au choix'}</b> t’attend${r.choix > 1 ? 'ent' : ''} au district : tu la choisis juste après.</span></p>`;
+  // l'escouade : l'XP de chacun, et les niveaux pris
+  if (g.xp?.length) {
+    h += `<h3 class="rx-titre">${ICO.monter}L’escouade · +${g.xp[0]!.xp} XP</h3><ul class="rx-escouade">`
+      + g.xp.map((x) => `<li class="${x.niveau ? 'monte' : ''}">${avatar(x.id, 40)}<span><b>${echap(porteurDef(x.id).nom)}</b><small>${x.niveau ? `Niveau ${x.niveau} !` : `+${x.xp} XP`}</small></span></li>`).join('')
+      + `</ul>`;
+  }
+  // la Strate : quête, Vestiges, étoiles, Rôdeur
+  const strate: string[] = [];
+  if (g.quete) strate.push(ligne(ICO.quete, g.quete.finie ? 'Achevée' : `${g.quete.etape} / ${g.quete.total}`, `quête « ${echap(g.quete.nom)} »`, g.quete.finie ? 'nouvelle' : ''));
+  if (ex?.vestiges.length) strate.push(ligne(ICO.vestige, `+${ex.vestiges.length}`, `Vestige${ex.vestiges.length > 1 ? 's' : ''} : ${echap(ex.vestiges.map((v) => vestigeDef(v)?.nom ?? '').join(', '))}`));
+  if (ex?.releve) strate.push(ligne(ICO.vestige, `−${ex.releve}`, 'Strate relevée', 'nouvelle'));
+  if (ex?.etoiles.length) strate.push(ligne(ICO.etoile, `+${ex.etoiles.length}`, `étoile${ex.etoiles.length > 1 ? 's' : ''} de Strate`, 'nouvelle'));
+  if (ex?.rodeur) strate.push(ligne(ICO.griffes, ex.rodeur.part ? `${Math.round(ex.rodeur.part * 100)} %` : 'Abattu', `${echap(ennemiDef(ex.rodeur.id).nom)}${ex.rodeur.part ? ' s’est enfui' : ''}`));
+  if (strate.length) h += `<h3 class="rx-titre">${ICO.strate}Dans la Strate</h3><ul class="rm-gains">${strate.join('')}</ul>`;
+  return h + `<button type="button" class="btn prim large" data-action="expedition-lu">${r.choix ? 'Choisir ma carte' : 'Bien reçu'}</button></div></section>`;
+}
+
 /** Le menu « Plus » : compte, intro, journal */
 export function menu(e: EcranDistrict): string {
   if (!e.menu) return '';
@@ -473,5 +562,5 @@ export function coquille(e: EcranDistrict, contenu: string, classe = ''): string
   const pseudo = e.grand?.edition ? feuilleNom(e.j, e.compte.utilisateur?.nom ?? '', e.grand.erreur, !!e.grand.accueil) : '';
   // le mode d'emploi ouvert depuis un écran qui ne le montre pas lui-même (le Glossaire du menu, une bulle de mot)
   const guide = e.guide && !contenu.includes('class="feuille guide"') ? feuilleGuide(e.guide, trouveesDe(e.j.collection)) : '';
-  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${guide}${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}${pseudo}${feuilleRappel(e)}${feuilleRapport(e)}${feuilleFiche(e)}</div>`;
+  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${guide}${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}${pseudo}${feuilleRappel(e)}${e.expedition ? feuilleExpedition(e) : feuilleRapport(e)}${feuilleFiche(e)}</div>`;
 }

@@ -73,7 +73,7 @@ function proposerProtection() {
   const j = app.jeu;
   const palier = palierRappel(j.strate);
   if (!compteEtat.utilisateur?.anonyme || D.rappel || !palier || palier <= (j.rappelCompte ?? 0)) return;
-  if (D.vue !== 'archipel' || D.menu || D.selection || D.ressource || D.retour.length || J.decisionEnAttente(j)) return;
+  if (D.vue !== 'archipel' || D.menu || D.selection || D.ressource || D.retour.length || D.expedition || J.decisionEnAttente(j)) return;
   if ((j.ageVu ?? 1) < ageDistrict(j.batiments.noyau)) return;
   j.rappelCompte = palier;
   D.rappel = true;

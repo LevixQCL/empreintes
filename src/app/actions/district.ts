@@ -299,6 +299,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'legs-choisir': { const r = J.choisirLegs(app.jeu, id); resultat(r); if (r.ok) { D.legsLignee = null; D.legsRevele = true; } break; }
     case 'legs-ok': D.legsRevele = false; break;
     case 'retour-ok': D.retour = []; break;
+    case 'expedition-lu': D.expedition = null; break;
     case 'rappel-plus-tard': D.rappel = false; break;
     case 'rapport-lu': if (J.lireRapport(app.jeu).ok) sauver(); break;
     case 'rappel-proteger': D.rappel = false; D.menu = true; compteEtat.ouvert = true; compteEtat.erreur = ''; compteEtat.info = ''; break;

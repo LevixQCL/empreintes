@@ -712,6 +712,48 @@ button.res:focus-visible{outline:1.5px solid var(--glace,#CDEFFF);outline-offset
 .rm-gains li.rm-usure svg{color:var(--quiet)}
 .rapport-mission .btn.large{min-height:48px;justify-content:center}
 .rm-histo-titre{margin-top:18px}
+/* ---------- Rapport d'expédition (31 octobre 2026) : ce qu'une descente, une fouille ou une Épreuve a rapporté ---------- */
+.rapport-expedition{--c:var(--gold)}
+.rapport-expedition.rx-fuite,.rapport-expedition.rx-defaite{--c:#B79AD8}
+.rapport-expedition .feuille-tete{gap:12px;align-items:center}
+.rapport-expedition .feuille-corps{display:grid;align-content:start;gap:14px}
+.rx-sceau{flex:none;display:grid;place-items:center;align-content:center;width:48px;height:52px;gap:0;
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+  background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--c) 38%,transparent),rgba(10,14,22,.9) 75%);
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 60%,transparent)}
+.rx-sceau svg{width:14px;height:14px;color:var(--c);opacity:.85}
+.rx-sceau b{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink);line-height:1.1}
+.rapport-expedition h2{color:color-mix(in srgb,var(--c) 55%,var(--ink))}
+.rx-note{margin:0;padding:8px 12px;border-left:2px solid var(--c);background:rgba(255,255,255,.035);font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+.rx-titre{display:flex;align-items:center;gap:8px;margin:4px 0 0;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--quiet)}
+.rx-titre svg{width:16px;height:16px;color:var(--or-pale)}
+.rx-res li{padding:8px 12px}
+.rx-res li b{font-family:var(--mono);font-size:15px}
+.rx-cartes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px}
+.rx-carte{display:grid;gap:5px;justify-items:center;min-width:0;opacity:0;animation:rx-carte .45s cubic-bezier(.2,.8,.3,1.2) forwards}
+.rx-carte:nth-child(2){animation-delay:.08s}.rx-carte:nth-child(3){animation-delay:.16s}.rx-carte:nth-child(4){animation-delay:.24s}
+.rx-carte:nth-child(5){animation-delay:.32s}.rx-carte:nth-child(n+6){animation-delay:.4s}
+@keyframes rx-carte{from{opacity:0;transform:translateY(10px) scale(.92)}to{opacity:1;transform:none}}
+.rx-carte .fc-ombre{width:100%}
+.rx-carte .ruban{font-size:12px;letter-spacing:.03em;color:var(--quiet)}
+.rx-carte.neuve .ruban{color:var(--gold);font-weight:600}
+.rx-carte.neuve .fc-ombre{--halo:rgba(216,180,101,.55);--halo-t:10px}
+.rx-carte small{font-size:12px;line-height:1.25;color:var(--ink-2);text-align:center;overflow-wrap:anywhere}
+.rx-choix{display:flex;gap:10px;align-items:center;margin:0;padding:10px 12px;border-radius:10px;border:1px solid var(--gold);
+  background:rgba(216,180,101,.08);box-shadow:0 0 14px rgba(216,180,101,.18);font-size:13.5px;line-height:1.4;color:var(--ink-2)}
+.rx-choix svg{flex:none;width:20px;height:20px;color:var(--gold)}
+.rx-choix b{color:var(--gold)}
+.rx-escouade{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.rx-escouade li{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;min-width:0;padding:8px 6px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(205,239,255,.1)}
+.rx-escouade li > span{display:grid;min-width:0;max-width:100%}
+.rx-escouade b{font-size:13px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rx-escouade small{font-size:12px;color:var(--quiet)}
+.rx-escouade li.monte{border-color:var(--gold);box-shadow:0 0 12px rgba(216,180,101,.28)}
+.rx-escouade li.monte small{color:var(--gold);font-weight:600}
+.rx-escouade .avatar{flex:none}
+.rapport-expedition .btn.large{min-height:48px;justify-content:center;margin-top:4px}
+@media (prefers-reduced-motion: reduce){.rx-carte{animation:none;opacity:1}}
+
 .rm-histo{display:grid;gap:8px}
 .rm-ligne{border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(216,180,101,.16);padding:8px 10px}
 .rm-ligne summary{display:flex;align-items:center;gap:10px;cursor:pointer;list-style:none}
