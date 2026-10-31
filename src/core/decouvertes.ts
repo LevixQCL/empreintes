@@ -147,6 +147,22 @@ export function decouvertesExploration(x: Expedition, quetes: Record<number, num
       texte: `Chaque Strate cache une quête en plusieurs étapes. Ici : « ${q.nom} ». À chaque descente, une salle porte la marque ✦, visible même dans le brouillard. Passes-y, et gagne le combat s’il y en a un : l’étape est relevée. Elle compte au retour au district, même si la descente finit mal.`,
       conseil: 'Les points sous le nom de la Strate (●○○) montrent où tu en es. Au bout de la quête : une carte, de l’XP et un morceau de l’histoire.' });
   }
+  // Explorer (31 octobre 2026, explorer.ts) : Vestiges, gardien éveillé, Rôdeur
+  if (x.carte.salles.some((s) => s.vestige)) {
+    r.push({ id: 'vestige', sur: 'PREMIÈRE RENCONTRE', titre: 'Les Vestiges', ico: 'vestige',
+      texte: 'Chaque Strate cache 5 Vestiges, des objets d’autrefois. Ils ne se trouvent qu’en explorant, jamais en fouille : quelques-uns par descente, marqués d’un losange turquoise sur le plan, même dans le brouillard. Entre dans la salle (et gagne son combat s’il y en a un) pour le ramasser.',
+      conseil: 'Les cinq réunis, la Strate est relevée : une carte au choix, et tes fouilles y verront tout le plan. La Tour montre où tu en es.' });
+  }
+  if (x.eveille) {
+    r.push({ id: 'eveille', sur: 'PREMIÈRE RENCONTRE', titre: 'Le gardien éveillé', ico: 'lueur',
+      texte: 'Tu explores une Strate déjà vaincue : son gardien s’est éveillé. Il est un peu plus fort (+10 %), mais il laisse de meilleures cartes et un Éclat de plus. Le vaincre peut aussi rapporter les étoiles de la Strate.',
+      conseil: 'Trois étoiles par Strate : vaincre le gardien, sans qu’aucun Porteur ne tombe, et sans entrer dans un campement.' });
+  }
+  if (x.rodeur) {
+    r.push({ id: 'rodeur', sur: 'PREMIÈRE RENCONTRE', titre: 'Un Rôdeur', ico: 'griffes',
+      texte: 'Des griffures corail sur le plan : un Rôdeur rôde dans cette zone. Il se bat 4 tours, puis s’enfuit. Ses blessures restent d’une descente à l’autre : il faut le croiser plusieurs fois pour l’abattre.',
+      conseil: 'Frappe fort dès le premier tour. Abattu, il laisse un trophée : une carte au choix, et une épithète pour la carte qui l’achève.' });
+  }
   if (x.enHalte) {
     r.push({ id: 'halte', sur: 'PREMIÈRE RENCONTRE', titre: 'Une Halte', ico: 'halte',
       texte: 'Tous les chemins passent par ici. Pas de combat : un lieu de l’histoire. Touche les détails pour entendre ton escouade, puis fais un choix. Il rapporte un Éclat, des composants ou une lampe, et l’histoire s’en souviendra plus loin. Chaque descente mène à la Halte suivante.',
