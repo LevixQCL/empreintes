@@ -2,7 +2,8 @@
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
 import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, CLE_LEGS, CARTES_COMMUNES, RATELIER_DEPART, communeDef, forceCommune, type CarteCommuneDef, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
-import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, salleCourante, forceStrate, nouvelleExploration, type CibleFouille } from '../expedition';
+import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, salleCourante, forceStrate, nouvelleExploration, type CibleFouille, butinCombat, butinCache, halteSuivante, ouvrirPorte as ouvrirPorteX, relancerPorte as relancerPorteX, passerPorte as passerPorteX, suivrePassage as suivrePassageX, RANG_HALTE } from '../expedition';
+import { halteDef, queteDef, type HalteDef } from '../strates';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
 import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
@@ -603,9 +604,9 @@ export const RENCONTRES: Record<string, (j: Jeu) => { titre: string; texte: stri
 const soigner = (x: Expedition, part: number) => x.porteurs.map((p) => ({ ...p, pv: Math.min(p.pvMax, Math.max(0, p.pv) + Math.round(p.pvMax * part)) }));
 const blesser = (x: Expedition, v: number) => x.porteurs.map((p) => ({ ...p, pv: p.pv > 0 ? Math.max(1, p.pv - v) : p.pv }));
 
-export function entrer(j: Jeu, salle: number): Resultat {
+export function entrer(j: Jeu, salle: number, second = false): Resultat {
   if (!j.expedition) return non('Aucune expédition en cours.');
-  const r = entrerSalle(j.expedition, salle);
+  const r = entrerSalle(j.expedition, salle, second);
   j.expedition = r.x;
   return r.ok ? { ok: true } : non(r.message ?? 'Impossible d’aller par là.');
 }
@@ -725,6 +726,8 @@ export interface Retour {
   pillage?: { nom: string; victoire: boolean; gain: number; perte: number };
   /** le retour d'un combat de la Flèche (fleche.ts) */
   fleche?: import('./fleche').RetourFleche;
+  /** l'étape de la quête de la Strate trouvée pendant la descente (strates.ts) */
+  quete?: EtapeQuete;
 }
 
 export function remonter(j: Jeu): Retour {
@@ -812,12 +815,17 @@ export function remonter(j: Jeu): Retour {
     eclats += x.gains.eclats;
     if (x.gains.fragment) fragment = ajouterFragment(j) ?? fragment;
   }
+  // la quête de la Strate (strates.ts) : l'étape trouvée en route compte même si la descente a mal fini (aucune punition)
+  const quete = x.gains?.etape ? avancerQuete(j, x.strate) : null;
+  if (quete?.finie) cartes.push(tirerTrouvaille(j, x.strate, x.strate >= 5 ? 'argent' : 'cuivre'));
   for (const c of cartes) { ajouterCarte(j, c); if (!x.tutoriel) noterOrigine(j, c, x.strate); }
   j.eclats += eclats;
   // l'expérience : chaque combat gagné, les salles scellées et le gardien ; toute l'escouade la partage, debout ou à terre
   const facteur = 1 + 0.25 * (x.strate - 1);
   const gardien = victoire && !x.fouille && !x.epreuve ? XP.gardien : 0;
-  const brutXp = Math.round((victoires * XP.combat + (x.gains?.elites ?? 0) * XP.elite + gardien) * facteur * (x.epreuve || x.fouille ? 0.75 : 1));
+  // une Halte vue pour la première fois vaut une salle scellée ; la fin d'une quête, la moitié d'un gardien
+  const contenu = (x.gains?.haltes ?? 0) * XP.elite + (quete?.finie ? XP.gardien / 2 : 0);
+  const brutXp = Math.round((victoires * XP.combat + (x.gains?.elites ?? 0) * XP.elite + gardien + contenu) * facteur * (x.epreuve || x.fouille ? 0.75 : 1));
   const xp = finaux.map((p) => { const avant = niveauPorteur(j, p.id).niveau; const n = gagnerXp(j, p.id, brutXp); return { id: p.id, xp: brutXp, ...(n && n > avant ? { niveau: n } : {}) }; });
   // ce que chacun a vécu, pour ses Marques
   const vaincus = x.sequence.slice(0, victoires);
@@ -840,7 +848,7 @@ export function remonter(j: Jeu): Retour {
     ? `L’escouade remonte victorieuse avec ${butin} composants.${nouvelleStrate ? ` Un nouvel étage est creusé : la Strate −${j.strate} est ouverte.` : ''}`
     : x.fuite ? `L’escouade a fui et remonte avec ${butin} composants. Elle rentre épuisée.`
     : `L’escouade remonte avec ${butin} composants. Elle a besoin de repos.`);
-  return { butin: butin + butinFilon, nouvelleStrate, victoire, fragment, cartes, eclats, ...(x.fuite ? { fuite: true } : {}), ...(brutXp ? { xp } : {}) };
+  return { butin: butin + butinFilon + (quete?.composants ?? 0), nouvelleStrate, victoire, fragment, cartes, eclats, ...(x.fuite ? { fuite: true } : {}), ...(brutXp ? { xp } : {}), ...(quete ? { quete } : {}) };
 }
 
 function ajouterFragment(j: Jeu): string | null {
@@ -944,9 +952,11 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   if (strate < 1 || strate > j.strate) return non('Cette Strate n’est pas encore creusée.');
   // la Strate se parcourt salle par salle (exploration), jusqu'à son gardien
   quitterPostes(j, escouade);
+  const halte = halteSuivante(strate, j.haltes?.[strate] ?? 0);
   j.expedition = nouvelleExploration({
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
+    ...(halte !== undefined ? { halte } : {}), quete: queteOuverte(j, strate),
   });
   retenirDepart(j, escouade);
   log(j, `L’escouade descend dans la Strate −${strate}.`);
@@ -974,7 +984,7 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
   quitterPostes(j, escouade);
   j.expedition = nouvelleExploration({
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1, fouille: cible,
-    ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
+    ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}), quete: queteOuverte(j, strate),
   });
   retenirDepart(j, escouade);
   log(j, `L’escouade part fouiller la Strate −${strate} (${CIBLES_FOUILLE[cible].nom.toLowerCase()}).`);
@@ -1032,5 +1042,85 @@ export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: numbe
   quitterPostes(j, escouade);
   j.expedition = { ...x, epreuve: id };
   log(j, `Épreuve de la semaine : ${ep.nom}.`);
+  return { ok: true };
+}
+
+// ---------- Le contenu des Strates (31 octobre 2026, strates.ts) ----------
+
+/** La quête de la Strate n'est pas encore finie */
+export const queteOuverte = (j: Jeu, strate: number) => { const q = queteDef(strate); return !!q && (j.quetes?.[strate] ?? 0) < q.etapes.length; };
+
+export interface EtapeQuete { strate: number; nom: string; etape: number; total: number; texte: string; composants: number; finie: boolean; fin?: string }
+
+/** Une étape de la quête trouvée : des composants (ceux d'une cache), et à la fin une carte, de l'XP et une ligne de lore */
+function avancerQuete(j: Jeu, strate: number): EtapeQuete | null {
+  const q = queteDef(strate);
+  if (!q || !queteOuverte(j, strate)) return null;
+  const n = (j.quetes ??= {})[strate] = (j.quetes[strate] ?? 0) + 1;
+  const composants = butinCache(strate);
+  j.composants += composants;
+  const finie = n >= q.etapes.length;
+  log(j, finie ? `Quête de la Strate −${strate} achevée : « ${q.nom} ». ${q.fin}` : `« ${q.nom} » : étape ${n} sur ${q.etapes.length}.`);
+  return { strate, nom: q.nom, etape: n, total: q.etapes.length, texte: q.etapes[n - 1]!, composants, finie, ...(finie ? { fin: q.fin } : {}) };
+}
+
+/** La Halte où se trouve l'escouade, si elle attend un choix */
+export function halteEnCours(j: Jeu): HalteDef | null {
+  const x = j.expedition;
+  return x?.enHalte && typeof x.halte === 'number' ? halteDef(x.strate, x.halte) ?? null : null;
+}
+
+/** Ce que rapporte chaque choix d'une Halte, en vrais chiffres (l'écran les affiche sur les boutons) */
+export function gainChoixHalte(j: Jeu, k: number): string {
+  const h = halteEnCours(j);
+  const c = h?.choix[k];
+  if (!c || !j.expedition) return '';
+  return c.effet === 'eclat' ? '+1 Éclat' : c.effet === 'lampe' ? 'Lampe : 2 salles éclairées' : `+${butinCombat(j.expedition.strate, 0)} composants`;
+}
+
+/** Choisir à la Halte : le souvenir du choix est gardé, la Halte est vue (la suivante attendra la prochaine descente) */
+export function choisirHalte(j: Jeu, k: number): Resultat {
+  const x = j.expedition;
+  const h = halteEnCours(j);
+  if (!x || !h) return non('Aucune Halte en cours.');
+  const c = h.choix[k];
+  if (!c) return non('Choix inconnu.');
+  const gains = { ...x.gains!, haltes: (x.gains?.haltes ?? 0) + 1 };
+  let y: Expedition = { ...x, enHalte: false, gains, recit: c.recit };
+  if (c.effet === 'eclat') gains.eclats++;
+  else if (c.effet === 'lampe') y.lumiere = RANG_HALTE + 2;
+  else y.butin += butinCombat(x.strate, 0);
+  if (c.drapeau && !(j.drapeaux ??= []).includes(c.drapeau)) j.drapeaux.push(c.drapeau);
+  (j.haltes ??= {})[x.strate] = Math.max(j.haltes[x.strate] ?? 0, h.n);
+  y.gains = gains;
+  j.expedition = y;
+  return { ok: true };
+}
+
+export function ouvrirPorte(j: Jeu, rangs: number[]): Resultat {
+  if (!j.expedition) return non('Aucune expédition en cours.');
+  const r = ouvrirPorteX(j.expedition, rangs);
+  if (!r.ok) return non(r.message ?? 'La porte ne s’ouvre pas.');
+  j.expedition = r.x;
+  return { ok: true };
+}
+export function relancerPorte(j: Jeu): Resultat {
+  if (!j.expedition) return non('Aucune expédition en cours.');
+  const r = relancerPorteX(j.expedition);
+  if (!r.ok) return non(r.message ?? 'Impossible.');
+  j.expedition = r.x;
+  return { ok: true };
+}
+export function passerPorte(j: Jeu): Resultat {
+  if (!j.expedition) return non('Aucune expédition en cours.');
+  const r = passerPorteX(j.expedition);
+  if (r.ok) j.expedition = r.x;
+  return r.ok ? { ok: true } : non('Aucune porte.');
+}
+export function suivrePassage(j: Jeu): Resultat {
+  if (!j.expedition) return non('Aucune expédition en cours.');
+  const r = suivrePassageX(j.expedition);
+  if (!r.ok) return non(r.message ?? 'Pas de passage.');
+  j.expedition = r.x;
   return { ok: true };
 }

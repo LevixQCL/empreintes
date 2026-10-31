@@ -257,7 +257,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       if (app.mode === 'titre') app.mode = 'district';
       ouvrir('codex'); D.chapitre = null; window.scrollTo(0, 0);
       break;
-    case 'biblio-onglet': D.onglet = id === 'archives' || id === 'campagne' ? id : 'chroniques'; D.chapitre = null; break;
+    case 'biblio-onglet': D.onglet = id === 'archives' || id === 'campagne' || id === 'bestiaire' ? id : 'chroniques'; D.chapitre = null; break;
     // les scènes de la campagne : la suivante réplique, la fin (vue pour de bon), et revoir depuis la Bibliothèque
     case 'scene-suite': D.scene = (D.scene ?? 0) + 1; break;
     case 'scene-fin': {

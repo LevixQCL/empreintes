@@ -8,9 +8,9 @@
 import { CHAPITRES, chapitreOuvert } from './chroniques';
 import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, MODULES, moduleDe, moduleDef, porteurDef } from './donnees';
-import { accessibles, salleCourante, typeApparent } from './expedition';
+import { accessibles, mainAccordable, reperentPassage, salleCourante, typeApparent } from './expedition';
 import { coutPompe, pomper,
-  choisirLegs, acheter, garnirComptoir, prixComptoir,
+  choisirLegs, choisirHalte, ouvrirPorte, passerPorte, relancerPorte, suivrePassage, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
   enMission, envoyerMission, destinationsDuJour, secoursPossible, epreuvesDeLaSemaine, fouiller, partirEpreuve,
@@ -208,6 +208,14 @@ function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) =
       if (!repondre(j, reponse(j, x.rencontre, sante)).ok) repondre(j, RENCONTRES[x.rencontre]!(j).options.length - 1);
       continue;
     }
+    // le contenu des Strates (31 octobre 2026) : le joueur choisit à la Halte, essaie les portes, suit les passages qu'il voit
+    if (x.enHalte) { choisirHalte(j, x.strate % 2); continue; }
+    if (x.porte) {
+      const main = mainAccordable(x);
+      if (main) ouvrirPorte(j, main); else if (!x.porte.relance) relancerPorte(j); else passerPorte(j);
+      continue;
+    }
+    if (reperentPassage(x, salleCourante(x)).length) { suivrePassage(j); continue; }
     if (salleCourante(x).type === 'camp' && sante < 0.3) { retraite(j); continue; }
     const choix = accessibles(x);
     if (!choix.length) break;

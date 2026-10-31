@@ -24,11 +24,13 @@ describe('Brouillard sur le plan des Strates (30 octobre 2026)', () => {
     }
   });
   it('un Résonant debout voit une rangée de plus', () => {
-    const avec = exploration(3, 11);
-    const sans = exploration(3, 11, ['ilka', 'doran']);
+    const avec = exploration(2, 11);
+    const sans = exploration(2, 11, ['ilka', 'doran']);
     const rang2 = (x: Expedition) => x.carte!.salles.filter((s) => s.rang === 2).map((s) => visionSalle(x, s));
     expect(rang2(avec).every((v) => v === 'indice')).toBe(true);
     expect(rang2(sans).every((v) => v === 'brume')).toBe(true);
+    // −3, le noir complet (31 octobre 2026) : même un Résonant n'y sent rien au-delà des voisines
+    expect(rang2(exploration(3, 11)).every((v) => v === 'brume')).toBe(true);
   });
   it('la brume se lève salle après salle', () => {
     let x = exploration(6, 3);

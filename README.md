@@ -270,6 +270,13 @@ l'acte (−3, −6, −10) au lieu d'attendre l'étage suivant, et l'acte suivan
 cours (`chapitreCampagne`) ; la Bibliothèque, onglet Campagne, rejoue les scènes vues. Une ancienne sauvegarde ne rejoue que la
 dernière scène atteinte. Les illustrations à faire sont dans `docs/prompts-campagne.md`.
 
+**Le contenu des Strates** (31 octobre 2026, `src/core/strates.ts`, `docs/strates-contenu.md`, `tests/strates-contenu.test.ts`). Pour que les Strates
+ne soient plus des combats en chaîne, sans toucher au combat : une **Halte** obligatoire au milieu de chaque carte (1 à −1, 2 à −2, 3 ensuite ;
+une de plus à chaque descente, des détails à toucher qui font parler l'escouade, puis un choix), une **particularité** par Strate
+(murs, noir complet, salles scellées, niches, archives, souvenirs doubles, Veilleur égaré, fils, portes), une **quête** par Strate (marque ✦,
+aussi en fouille), des **portes à Fréquence** dès −5 (une suite avec 5 cartes tirées), des **passages secrets** que seuls certains Porteurs
+repèrent, et le **bestiaire** (Bibliothèque). La Tour montre la quête et les Haltes de chaque Strate. Icônes à peindre : `docs/prompts-strates.md`.
+
 **Le parrainage** (29 octobre 2026, `src/core/partie/parrainage.ts`, `src/net/parrainage.ts`, `src/app/parrainage.ts`, `src/ui/parrainage.ts`, `docs/prompts-parrainage.md`).
 Chaque directeur a un code (`EMP-` + 6 caractères tirés de son uid, réservé dans `parrains/{code}`) et un lien `?ref=CODE`, retenu sur l'appareil
 jusqu'à ce que la partie commence. Le filleul ne peut entrer un code qu'avant d'avoir vaincu la Strate −2 : il reçoit 100 composants, une carte au choix

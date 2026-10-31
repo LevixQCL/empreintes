@@ -2,6 +2,8 @@
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
 // les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
 
+import { nombreHaltes, queteDef } from '../core/strates';
+import { htmlBestiaire } from './bestiaire';
 import { portOuvert } from './pillages';
 import { epitheteAffiche, epithetesDe, journalCarte, NOMS_PALIER, palierDe, vecuDe, versPalierSuivant, PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
@@ -1405,11 +1407,13 @@ export function htmlCodex(e: EcranDistrict): string {
   const retour = e.retourBiblio === 'titre' ? `<button type="button" class="btn-icone" data-action="biblio-retour" aria-label="Retour à l’écran titre">${ICO.retour}</button>` : '';
   let h = entete(`${ouverts} / ${CHAPITRES.length} CHAPITRES · ${j.fragments.filter((f) => FRAGMENTS.some((x) => x.id === f)).length} / ${FRAGMENTS.length} ARCHIVES`, 'Bibliothèque', retour);
   const nouveaux = chapitresNouveaux(j);
-  h += `<div class="segments-choix trois" role="tablist">`
+  h += `<div class="segments-choix" role="tablist">`
     + `<button type="button" role="tab" class="seg${e.onglet === 'chroniques' ? ' actif' : ''}" aria-selected="${e.onglet === 'chroniques'}" data-action="biblio-onglet" data-id="chroniques">Chroniques${nouveaux ? ` <span class="pastille-n">${nouveaux}</span>` : ''}</button>`
     + `<button type="button" role="tab" class="seg${e.onglet === 'archives' ? ' actif' : ''}" aria-selected="${e.onglet === 'archives'}" data-action="biblio-onglet" data-id="archives">Archives</button>`
-    + `<button type="button" role="tab" class="seg${e.onglet === 'campagne' ? ' actif' : ''}" aria-selected="${e.onglet === 'campagne'}" data-action="biblio-onglet" data-id="campagne">Campagne</button></div>`;
+    + `<button type="button" role="tab" class="seg${e.onglet === 'campagne' ? ' actif' : ''}" aria-selected="${e.onglet === 'campagne'}" data-action="biblio-onglet" data-id="campagne">Campagne</button>`
+    + `<button type="button" role="tab" class="seg${e.onglet === 'bestiaire' ? ' actif' : ''}" aria-selected="${e.onglet === 'bestiaire'}" data-action="biblio-onglet" data-id="bestiaire">Bestiaire</button></div>`;
   if (e.onglet === 'campagne') return coquille(e, h + htmlListeScenes(j.scenes ?? []), 'ecran-codex');
+  if (e.onglet === 'bestiaire') return coquille(e, h + htmlBestiaire(j), 'ecran-codex');
   if (e.onglet === 'archives') {
     h += `<p class="aide intro-ecran">Des papiers d’époque, trouvés un à un dans les Strates. Ysé y renvoie souvent dans ses Chroniques.</p>`;
     const papiers = j.fragments.filter((f) => FRAGMENTS.some((x) => x.id === f));
@@ -1583,6 +1587,19 @@ export function htmlCoupe(e: EcranDistrict): string {
   return coquille(e, h, 'ecran-coupe tr');
 }
 
+/** Le contenu d'une Strate (31 octobre 2026, strates.ts) : sa quête (●●○) et ses Haltes déjà vues, sur une ligne */
+function contenuStrate(j: EcranDistrict['j'], n: number): string {
+  const q = queteDef(n);
+  const nh = nombreHaltes(n);
+  if (!q && !nh) return '';
+  const faites = j.quetes?.[n] ?? 0;
+  const vues = Math.min(nh, j.haltes?.[n] ?? 0);
+  return `<span class="tr-contenu">`
+    + (q ? `<span class="tr-quete${faites >= q.etapes.length ? ' finie' : ''}" title="${echap(q.but)}">${ICO.quete}<b>${echap(q.nom)}</b><i class="tr-points">${q.etapes.map((_, k) => `<i${k < faites ? ' class="ok"' : ''}></i>`).join('')}</i></span>` : '')
+    + (nh ? `<span class="tr-haltes" title="Haltes vues">${ICO.halte}${vues} / ${nh}</span>` : '')
+    + `</span>`;
+}
+
 /** Les Strates, de −1 à la roche : ce qu'on peut y faire, expliqué une fois en tête plutôt qu'à chaque ligne */
 function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof manquePourCreuser>): string {
   const j = e.j;
@@ -1599,6 +1616,7 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
     h += `<li class="tr-strate${front ? ' front' : ''}${vaincue ? ' vaincue' : ''}">`
       + `<span class="tr-vignette">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}<b>−${n}</b></span>`
       + `<div class="tr-infos"><strong>${nom}</strong><small>${echap(zone.nom)}${vaincue ? ` · ${ICO.ok}vaincue` : ' · <em>front : son gardien t’attend</em>'}</small>`
+      + contenuStrate(j, n)
       + `<div class="tr-actions">${vaincue ? `<button type="button" class="btn sec" data-action="fouiller-choix" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller</button>` : ''}`
       + `<button type="button" class="btn ${front && !j.frontVaincu ? 'prim' : 'sec'}" data-action="descendre" data-strate="${n}"${off ? ' disabled' : ''}>${ICO.descendre}Explorer</button></div></div></li>`;
   }

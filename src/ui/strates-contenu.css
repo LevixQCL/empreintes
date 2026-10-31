@@ -1,0 +1,155 @@
+/* EMPREINTES — le contenu des Strates (31 octobre 2026, src/core/strates.ts) : la particularité et la quête sous le nom de la Strate,
+   les badges du plan (marque de quête, mur, souvenirs doubles, passage, fil), la Halte, les portes à Fréquence et les passages secrets.
+   Même matière que la carte de Strate (exploration-refonte.css) : verre fumé, glace pour ce qui se touche, or pour la valeur. */
+
+/* ---------- sous le nom de la Strate ---------- */
+.ex-partic,.ex-quete{display:flex;align-items:center;gap:7px;margin-top:3px;font-size:13px;line-height:1.3;color:var(--ex-txt);text-shadow:0 1px 4px #000;white-space:nowrap}
+.ex-partic b,.ex-quete b{overflow:hidden;text-overflow:ellipsis}
+.ex-partic .ico,.ex-quete>.ico{width:14px;height:14px;flex-shrink:0}
+.ex-partic .ico{color:var(--ex-glace)}
+.ex-partic b{color:var(--ex-glace);font-weight:600}
+.ex-quete>.ico{color:var(--ex-or)}
+.ex-quete b{color:var(--ex-or);font-weight:600}
+.ex-points{display:inline-flex;gap:4px;flex-shrink:0;margin-left:2px}
+.ex-points i{width:7px;height:7px;border-radius:50%;box-shadow:inset 0 0 0 1.5px rgba(242,213,140,.6)}
+.ex-points i.ok{background:var(--ex-or);box-shadow:0 0 6px rgba(242,213,140,.6)}
+.ex-quete.trouvee b{text-shadow:0 0 10px rgba(242,213,140,.55)}
+
+/* ---------- les badges du plan ---------- */
+.ex-badge.quete{top:-6px;right:-6px;bottom:auto;min-width:20px;color:#2A1A04;background:linear-gradient(180deg,#F8E3A6,#D4A54E);
+  box-shadow:0 0 0 2px rgba(6,8,18,.9),0 0 12px rgba(242,213,140,.7);animation:ex-quete 2.4s ease-in-out infinite}
+.ex-badge.quete .ico{width:12px;height:12px}
+@keyframes ex-quete{50%{box-shadow:0 0 0 2px rgba(6,8,18,.9),0 0 18px rgba(242,213,140,1)}}
+.ex-salle.perdue .ex-badge.quete{display:none}
+.ex-badge.mur{left:-6px;color:#1A1208;background:linear-gradient(180deg,#E2C9A6,#A9865C)}
+.ex-badge.double{left:-6px;color:var(--ex-fond);background:linear-gradient(180deg,#E8F6FF,#9FC9E6)}
+.ex-badge.secret{top:-6px;left:-6px;bottom:auto;color:#120E08;background:linear-gradient(180deg,#CFEAD9,#7FBF9A);box-shadow:0 0 0 2px rgba(6,8,18,.9),0 0 10px rgba(158,230,180,.55)}
+.ex-couloirs .c-fil{stroke:var(--ex-or);stroke-width:2;stroke-dasharray:2 4;opacity:.85}
+.ex-couloirs .c-fil.pris{opacity:.3}
+.ex-salle.t-halte{--d:52px}
+.ex-salle.t-halte:not(.faite):not(.accessible):not(.ici) .ex-med{box-shadow:0 0 0 2px var(--ex-or),0 0 0 4px rgba(6,8,18,.9),0 0 18px rgba(242,213,140,.4),0 6px 14px rgba(0,0,0,.7)}
+.ex-salle.t-halte .ex-nom{opacity:1;font-family:var(--display);font-weight:400;font-size:13px;color:var(--ex-or)}
+.ex-salle.t-halte .ex-med .ico,.ex-salle.t-porte .ex-med .ico{color:var(--ex-or)}
+.ex-salle.t-halte .ex-med,.ex-salle.t-porte .ex-med{background:radial-gradient(circle at 50% 40%,#2A2618,#080B16 78%)}
+.ex-visuel.icone .ico{color:var(--ex-or)}
+
+/* ---------- deux souvenirs : deux boutons ---------- */
+.ex-doubles{display:grid;gap:8px}
+
+/* ---------- la Halte ---------- */
+.ex-halte{display:grid;gap:12px}
+.hx-scene{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;min-height:132px;padding:14px 16px;border-radius:6px;overflow:hidden;
+  background:linear-gradient(180deg,rgba(6,8,18,.05) 20%,rgba(6,8,18,.88)),var(--decor) center 40%/cover no-repeat;
+  box-shadow:inset 0 0 0 1px rgba(242,213,140,.35),0 10px 26px rgba(0,0,0,.5)}
+.hx-scene .ex-sur{color:var(--ex-or);text-shadow:0 1px 4px #000}
+.hx-scene h2{margin:0;font-family:var(--display);font-weight:400;font-size:25px;line-height:1.1;color:#F6F2EA;text-shadow:0 2px 10px #000}
+.hx-recit{font-family:var(--lecture);font-style:italic}
+.hx-details{display:grid;gap:8px}
+.hx-detail{display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:48px;padding:8px 14px;border:0;border-radius:6px;
+  text-align:left;font:inherit;font-size:15px;font-weight:600;color:#F6F2EA;cursor:pointer;
+  background:linear-gradient(rgba(242,213,140,.06),rgba(242,213,140,.06)),rgba(8,11,22,.62);box-shadow:inset 0 0 0 1px rgba(242,213,140,.28);
+  transition:background .15s ease,box-shadow .15s ease}
+.hx-detail .ico{width:20px;height:20px;color:var(--ex-or);animation:hx-lueur 2s ease-in-out infinite}
+.hx-detail small{font:600 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ex-or)}
+.hx-detail:hover,.hx-detail:focus-visible{outline:none;box-shadow:inset 0 0 0 1px rgba(242,213,140,.6),0 0 16px rgba(242,213,140,.15)}
+@keyframes hx-lueur{50%{opacity:.55;transform:scale(.9)}}
+.hx-voix{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:start;padding:9px 12px;border-radius:6px;
+  background:rgba(8,11,22,.55);box-shadow:inset 3px 0 0 color-mix(in srgb,var(--c,var(--ex-or)) 70%,transparent);animation:hx-ouvre .25s ease-out}
+@keyframes hx-ouvre{from{opacity:0;transform:translateY(4px)}}
+.hx-voix p{margin:0;font-size:14.5px;line-height:1.45;color:var(--ex-txt)}
+.hx-voix small{display:block;font:600 12px/1.3 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ex-doux)}
+.hx-voix strong{display:block;font-family:var(--display);font-weight:400;font-size:14px;color:color-mix(in srgb,var(--c,var(--ex-or)) 70%,#fff)}
+.hx-pp{width:40px;height:40px;border-radius:50%;overflow:hidden;display:grid;place-items:center;background:#141A26;box-shadow:0 0 0 1.5px var(--c,var(--ex-or))}
+.hx-pp img{width:100%;height:100%;object-fit:cover;object-position:50% 18%}
+.hx-pp b{font-family:var(--display);font-weight:400;font-size:18px;color:var(--c)}
+.hx-pp.recit .ico{width:20px;height:20px;color:var(--ex-or)}
+.hx-choisir{margin-top:2px;color:var(--ex-or)}
+.hx-choix .hx-gain{color:var(--ex-or)!important;font:600 13px/1.2 var(--mono)!important}
+
+/* ---------- la porte à Fréquence ---------- */
+.ex-porte{display:grid;gap:12px}
+.ex-porte .ex-visuel{background:radial-gradient(circle at 50% 40%,#2A2618,#0B0F1C 78%)}
+.ex-porte .ex-visuel .ico{width:46%;height:46%}
+.px-cases{display:flex;justify-content:center;gap:10px}
+.px-case{display:flex;align-items:center;justify-content:center;gap:2px;width:58px;height:58px;border-radius:50%;
+  box-shadow:inset 0 0 0 1.5px rgba(242,213,140,.4),inset 0 0 18px rgba(0,0,0,.6);background:rgba(8,11,22,.6)}
+.px-case.pleine{box-shadow:inset 0 0 0 2px var(--ex-or),0 0 16px rgba(242,213,140,.35);background:rgba(30,26,14,.7)}
+.px-main{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.px-carte{display:grid;justify-items:center;align-content:start;gap:6px;min-height:92px;padding:10px 4px 8px;border:0;border-radius:6px;cursor:pointer;
+  font:inherit;color:#F6F2EA;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 16%,transparent),rgba(8,11,22,.7));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 45%,transparent);transition:transform .12s ease,box-shadow .15s ease}
+.px-carte span{font-size:12px;line-height:1.2;text-align:center;color:var(--ex-txt);overflow-wrap:anywhere}
+.px-carte.choisie{transform:translateY(-3px);box-shadow:inset 0 0 0 2px var(--ex-or),0 0 18px rgba(242,213,140,.35)}
+.px-carte:active{transform:scale(.97)}
+.px-f{display:inline-grid;place-items:center;min-width:28px;height:34px;padding:0 4px;clip-path:polygon(50% 0,100% 30%,100% 70%,50% 100%,0 70%,0 30%);
+  font:600 17px/1 var(--mono);color:#fff;background:linear-gradient(180deg,color-mix(in srgb,var(--fc) 70%,#fff 30%),var(--fc));text-shadow:0 1px 2px rgba(0,0,0,.6)}
+.px-carte .px-f+.px-f{margin-left:-4px}
+.px-f.libre{--fc:#8A7A4A;font-size:20px}
+.px-case .px-f{min-width:30px;height:38px}
+.px-aide{display:flex;gap:8px;align-items:flex-start;margin:0;font-size:13.5px;line-height:1.4;color:var(--ex-doux)}
+.px-aide .ico{width:16px;height:16px;flex-shrink:0;margin-top:1px;color:var(--ex-glace)}
+.px-actions{display:grid;gap:8px}
+.px-actions .btn.prim .ico{width:18px;height:18px}
+.px-sec{display:flex;gap:8px;flex-wrap:wrap}
+.px-sec .btn{flex:1;min-height:44px;font-size:14px}
+.px-sec .btn .ico{width:16px;height:16px}
+.px-actions .btn[disabled]{opacity:.6;filter:saturate(.4);cursor:not-allowed}
+
+/* ---------- le passage secret ---------- */
+.ex-passage{display:grid;grid-template-columns:40px minmax(0,1fr);gap:10px;align-items:start;padding:11px 12px;border-radius:6px;
+  background:linear-gradient(rgba(158,230,180,.06),rgba(158,230,180,.06)),rgba(8,11,22,.62);box-shadow:inset 0 0 0 1px rgba(158,230,180,.35);animation:hx-ouvre .3s ease-out}
+.ex-passage .ex-sur{display:inline-flex;align-items:center;gap:6px;color:var(--ex-vert)}
+.ex-passage .ex-sur .ico{width:13px;height:13px}
+.ex-passage p{margin:4px 0 8px;font-size:14px;line-height:1.45;color:var(--ex-txt)}
+.ex-passage strong{display:block;font-family:var(--display);font-weight:400;font-size:14px;color:color-mix(in srgb,var(--c) 70%,#fff)}
+.ex-suivre{min-height:42px;font-size:14px}
+.ex-suivre .ex-fleche{width:16px;height:16px}
+
+@media (prefers-reduced-motion:reduce){ .ex-badge.quete,.hx-detail .ico,.hx-voix,.ex-passage{animation:none} }
+@media (max-width:370px){ .px-main{gap:4px} .px-carte span{font-size:12px} .px-case{width:52px;height:52px} }
+@media (min-width:1100px) and (min-height:600px){
+  .ex-salle.t-halte{--d:60px}
+  .hx-scene{min-height:150px}
+}
+
+/* ---------- la Tour : la quête et les Haltes de chaque Strate ---------- */
+.tr-contenu{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;font-size:12.5px;color:var(--ink-dim,#93A3B8)}
+.tr-contenu .ico{width:13px;height:13px;flex-shrink:0}
+.tr-quete,.tr-haltes{display:inline-flex;align-items:center;gap:5px;min-width:0}
+.tr-quete .ico{color:#F2D58C}
+.tr-quete b{font-weight:600;color:#F2D58C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tr-quete.finie b{color:#9EE6B4}
+.tr-points{display:inline-flex;gap:3px}
+.tr-points i{width:6px;height:6px;border-radius:50%;box-shadow:inset 0 0 0 1.2px rgba(242,213,140,.6)}
+.tr-points i.ok{background:#F2D58C}
+.tr-quete.finie .tr-points i{background:#9EE6B4;box-shadow:none}
+.tr-haltes .ico{color:#CDEFFF}
+@media (min-width:1100px) and (min-height:600px){
+  .tr-strates .tr-infos>.tr-contenu{grid-column:1}
+  .tr-strates .tr-infos>.tr-contenu~.tr-actions{grid-row:1 / span 3}
+}
+
+/* ---------- le bestiaire (Bibliothèque) ---------- */
+.bs-zone{display:grid;gap:10px;margin-top:18px}
+.bs-liste{display:grid;gap:10px}
+.bs-fiche{display:grid;grid-template-columns:76px minmax(0,1fr);gap:14px;align-items:start;padding:12px;border-radius:6px;
+  background:linear-gradient(rgba(205,239,255,.04),rgba(205,239,255,.04)),rgba(8,11,22,.6);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c,#93A3B8) 30%,transparent)}
+.bs-img{display:grid;place-items:center;width:76px;aspect-ratio:3/4;border-radius:4px;overflow:hidden;background:radial-gradient(circle at 50% 35%,#1B2340,#0B0F1C 75%)}
+.bs-img img{width:100%;height:100%;object-fit:cover;object-position:50% 15%}
+.bs-img .ico{width:26px;height:26px;color:#93A3B8}
+.bs-fiche strong{display:block;font-family:var(--display);font-weight:400;font-size:19px;line-height:1.15;color:#F6F2EA}
+.bs-fiche small{display:block;margin:3px 0 6px;font-size:12px;letter-spacing:.04em;color:#93A3B8}
+.bs-fiche small b{color:#F2D58C;font-family:var(--mono)}
+.bs-fiche p{margin:6px 0 0;font-size:14px;line-height:1.45;color:#C9D6E6}
+.bs-fiche p b{display:block;font:600 12px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:color-mix(in srgb,var(--c,#CDEFFF) 65%,#fff)}
+.bs-fiche .bs-cache{display:flex;align-items:center;gap:7px;font-size:13px;color:#7D8BA0}
+.bs-fiche .bs-cache .ico{width:13px;height:13px;flex-shrink:0}
+.bs-fiche.inconnue{grid-template-columns:52px minmax(0,1fr);align-items:center;opacity:.75}
+.bs-fiche.inconnue .bs-img{width:52px;aspect-ratio:1}
+.bs-fiche.inconnue strong{font-size:16px;color:#93A3B8}
+.bs-fiche.inconnue small{margin:2px 0 0}
+
+/* ---------- la fiche d'une salle : la marque de quête, le passage ---------- */
+.ex-c-quete .ico{color:var(--ex-or)}
+.ex-c-secret .ico{color:var(--ex-vert)}
+.ex-c-secret b{color:var(--ex-vert)}

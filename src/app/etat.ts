@@ -87,6 +87,6 @@ export const D: EcranDistrict = { j: app.jeu, vue: app.jeu.chambre && !app.jeu.a
 export const G: GrandTableau = tableauVide();
 try { const t = localStorage.getItem('empreintes.tri'); if (estTri(t)) D.tri = t; } catch { /* stockage bloqué */ }
 D.grand = G;
-export const K: { verrou: boolean; regles: boolean; fuite: boolean; eclats: boolean; tuile?: string; guide: OngletGuide | null; journal: OngletJournal | null; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; phaseTour?: number; decouverteId?: string; decouverteLot?: number; salleVue?: number } = {
+export const K: { verrou: boolean; regles: boolean; fuite: boolean; eclats: boolean; tuile?: string; guide: OngletGuide | null; journal: OngletJournal | null; pops: EcranCombat['pops']; fin: Fin | null; etat: CombatEtat | null; traces: Record<string, number>; actif?: number; decouverteTour?: string; phaseTour?: number; decouverteId?: string; decouverteLot?: number; salleVue?: number; halteVus?: number[]; porteChoix?: number[] } = {
   verrou: false, regles: false, fuite: false, eclats: false, guide: null, journal: null, pops: [], fin: null, etat: null, traces: {},
 };

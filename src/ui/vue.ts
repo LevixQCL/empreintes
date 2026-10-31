@@ -268,7 +268,7 @@ export function panneauCompte(c: Compte, retrouver = false): string {
 // touche pendant la fuite (la feuille dit qui elle va toucher, et si quelqu'un tombera). Personne ne meurt.
 const NOMS_SALLE: Record<TypeSalle, string> = {
   entree: 'l’entrée', combat: 'la salle de combat', elite: 'la salle scellée', cache: 'la cache', rencontre: 'la salle de la rencontre',
-  camp: 'le campement', archive: 'les archives', gardien: 'la salle du gardien', filon: 'le filon',
+  camp: 'le campement', archive: 'les archives', gardien: 'la salle du gardien', filon: 'le filon', halte: 'la Halte', porte: 'la porte ancienne',
 };
 
 /** Ce que prépare l'ennemi, sans chiffre ni cible (le brouillard laisse voir ça) */

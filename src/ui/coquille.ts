@@ -54,7 +54,7 @@ export interface EcranDistrict {
   /** lignée affichée dans l'écran Cartes */
   filtre: Filtre;
   /** Bibliothèque : onglet, chapitre ouvert, et écran où revenir */
-  onglet: 'chroniques' | 'archives' | 'campagne';
+  onglet: 'chroniques' | 'archives' | 'campagne' | 'bestiaire';
   chapitre: string | null;
   retourBiblio: 'archipel' | 'coupe' | 'titre';
   /** rencontre : nombre de répliques affichées */

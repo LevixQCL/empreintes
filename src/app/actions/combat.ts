@@ -6,6 +6,7 @@ import { NOMS_RARETE } from '../../core/collection';
 import * as C from '../../core/combat';
 import { moduleDef, porteurDef } from '../../core/donnees';
 import * as J from '../../core/jeu';
+import { suitePorte } from '../../core/expedition';
 import { comparer, montrer, relever } from '../../ui/gains';
 import { basculerSon, debloquerSon } from '../../ui/impact';
 import { vibrer } from '../../ui/toucher';
@@ -60,10 +61,41 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     // le plan de la Strate : toucher une salle ouvre sa fiche (ou la referme), « Entrer » y va
     case 'salle-voir': { const n = Number(id); K.salleVue = n >= 0 && K.salleVue !== n ? n : undefined; break; }
     case 'salle': {
-      K.salleVue = undefined;
-      const r = J.entrer(app.jeu, Number(id));
+      K.salleVue = undefined; K.halteVus = []; K.porteChoix = [];
+      const r = J.entrer(app.jeu, Number(id), b.dataset.second === '1');
       if (!r.ok && app.jeu.expedition) app.jeu.expedition.recit = r.message ?? '';
       K.fin = null; K.etat = null; sauver(); window.scrollTo(0, 0);
+      break;
+    }
+    // le contenu des Strates (31 octobre 2026) : la Halte, les portes à Fréquence, les passages secrets
+    case 'halte-detail': { const k = Number(id); if (!(K.halteVus ??= []).includes(k)) K.halteVus.push(k); vibrer(5); break; }
+    case 'halte-choix': {
+      const r = J.choisirHalte(app.jeu, Number(id));
+      if (!r.ok && app.jeu.expedition) app.jeu.expedition.recit = r.message ?? '';
+      K.halteVus = []; sauver(); window.scrollTo(0, 0);
+     
+      break;
+    }
+    case 'porte-carte': {
+      const k = Number(id);
+      const n = x ? suitePorte(x.strate) : 3;
+      const l = (K.porteChoix ??= []);
+      if (l.includes(k)) K.porteChoix = l.filter((i) => i !== k);
+      else if (l.length < n) l.push(k);
+      vibrer(5);
+      break;
+    }
+    case 'porte-ouvrir': {
+      const r = J.ouvrirPorte(app.jeu, K.porteChoix ?? []);
+      if (!r.ok) { if (app.jeu.expedition) app.jeu.expedition.recit = r.message ?? ''; D.message = r.message ?? ''; }
+      else { K.porteChoix = []; vibrer([10, 30, 20]); sauver(); }
+      break;
+    }
+    case 'porte-relancer': if (J.relancerPorte(app.jeu).ok) { K.porteChoix = []; sauver(); } break;
+    case 'porte-passer': if (J.passerPorte(app.jeu).ok) { K.porteChoix = []; sauver(); } break;
+    case 'passage': {
+      const r = J.suivrePassage(app.jeu);
+      if (r.ok) { sauver(); window.scrollTo(0, 0); }
       break;
     }
     case 'repondre': {
@@ -119,6 +151,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
           + (r.cartes.length ? ` Carte${r.cartes.length > 1 ? 's' : ''} trouvée${r.cartes.length > 1 ? 's' : ''} : ${r.cartes.map((c) => `${moduleDef(c).nom} (${NOMS_RARETE[moduleDef(c).rarete]})`).join(', ')}.` : '')
           + (r.eclats ? ` +${r.eclats} Éclat${r.eclats > 1 ? 's' : ''}.` : '')
           + (r.fragment ? ' Un fragment d’archives rejoint le Codex.' : '')
+          + (r.quete ? ` Quête « ${r.quete.nom} » : ${r.quete.finie ? `achevée ! ${r.quete.fin}` : `étape ${r.quete.etape} sur ${r.quete.total}. ${r.quete.texte}`}` : '')
           + (r.xp?.length ? ` +${r.xp[0]!.xp} XP pour l’escouade.${r.xp.filter((e) => e.niveau).map((e) => ` ${porteurDef(e.id).nom} passe au niveau ${e.niveau} !`).join('')}` : '');
       }
       sauver();

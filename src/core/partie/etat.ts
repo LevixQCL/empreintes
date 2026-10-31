@@ -247,6 +247,10 @@ export interface Jeu {
   decouvertes?: string[];
   /** les scènes de la campagne déjà jouées, dans l'ordre (campagne.ts) */
   scenes?: string[];
+  /** le contenu des Strates (31 octobre 2026, strates.ts) : Haltes vues et étapes de quête trouvées par Strate, souvenirs des choix */
+  haltes?: Record<number, number>;
+  quetes?: Record<number, number>;
+  drapeaux?: string[];
   /** index de l'objectif guidé en cours (OBJECTIFS.length = tous faits) */
   objectif: number;
   /** fragments d'archives trouvés, dans l'ordre */

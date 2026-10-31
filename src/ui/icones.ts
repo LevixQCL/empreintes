@@ -65,6 +65,13 @@ export const ICO = {
   traces: svg('<path d="M8.5 4.5c1.4 0 2 1.6 2 3.2S9.8 11 8.5 11 6.5 9.3 6.5 7.7s.6-3.2 2-3.2z"/><path d="M7.4 13.5h2.2"/><path d="M15.5 9.5c1.4 0 2 1.6 2 3.2s-.7 3.3-2 3.3-2-1.7-2-3.3.6-3.2 2-3.2z"/><path d="M14.4 18.5h2.2"/>'),
   chaleur: svg('<path d="M12 3c1 3 4.5 5 4.5 9.5A4.5 4.5 0 0 1 12 17a4.5 4.5 0 0 1-4.5-4.5C7.5 9.5 10 8 10 5.5c1 .8 1.5 1.8 2-2.5z"/><path d="M5 21h14"/>'),
   brume: svg('<path d="M4 8h11"/><path d="M8 12h12"/><path d="M3 16h10"/><path d="M15 16h3"/>'),
+  // le contenu des Strates (31 octobre 2026) : la Halte (une stèle gravée), la quête (une étoile de fouilleur), le mur, la fissure, le fil
+  halte: svg('<path d="M7 21V7a5 5 0 0 1 10 0v14"/><path d="M5 21h14"/><path d="M10 9h4M10 12.5h4M10 16h2.5"/>'),
+  quete: svg('<path d="M12 2.5l1.9 6.2 6.6.1-5.3 3.9 2 6.3L12 15.2 6.8 19l2-6.3-5.3-3.9 6.6-.1z"/>', true),
+  mur: svg('<path d="M3 5h18v14H3z"/><path d="M3 9.7h18M3 14.3h18"/><path d="M9 5v4.7M15 5v4.7M6 9.7v4.6M12 9.7v4.6M18 9.7v4.6M9 14.3V19M15 14.3V19"/>'),
+  fissure: svg('<path d="M13 2l-3 6 4 3-4 4 3 3-2 4"/><path d="M14 11l4-1M10 15l-4 1"/>'),
+  fil: svg('<path d="M3 14c3-6 6-6 9 0s6 6 9 0"/><circle cx="3" cy="14" r="1.6"/><circle cx="21" cy="14" r="1.6"/>'),
+  bestiaire: svg('<path d="M5 4h11l3 3v13H5z"/><path d="M9 14c0-2.5 1.3-4 3-4s3 1.5 3 4"/><circle cx="10.5" cy="9" r=".8"/><circle cx="13.5" cy="9" r=".8"/><path d="M8.5 17h7"/>'),
 } as const;
 
 export type Icone = keyof typeof ICO;

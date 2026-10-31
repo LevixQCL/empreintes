@@ -11,12 +11,14 @@
 //   PV rendus au campement), la sortie possible est chiffrée, le butin ne s'affiche qu'une fois.
 // 28 octobre 2026 : plus de liste « Où aller ? » ; on choisit sur le plan, la fiche s'ouvre en bas.
 
-import { INDICES, accessibles, butinArchive, butinCache, butinCombat, forceStrate, indiceSalle, peutRemonter, rangsDe, salleCourante, visionSalle, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
+import { INDICES, accessibles, butinArchive, butinCache, butinCombat, enAttente, forceStrate, indiceSalle, mainAccordable, peutRemonter, rangsDe, reperentPassage, salleCourante, suitePorte, visionSalle, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
+import { CONTENU, halteDef, nombreHaltes, particularite, queteDef, secretDef, voixDetail } from '../core/strates';
+import { couleurFrequence } from './carte';
 import { paroleDescente } from '../core/campagne';
 import { PV_GROUPE, pvProfondeur } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR } from '../core/regles';
-import { CIBLES_FOUILLE, RENCONTRES, XP, type Jeu } from '../core/jeu';
+import { CIBLES_FOUILLE, RENCONTRES, XP, gainChoixHalte, halteEnCours, type Jeu } from '../core/jeu';
 import { COLLECTION } from '../core/collection';
 import { REGLES } from '../core/regles';
 import { decorStrate, illustrationEnnemi, portrait, iconeCondition } from './art';
@@ -25,11 +27,13 @@ import { ICO, baseIcones, icone } from './icones';
 import { echap } from './outils';
 
 const NOMS: Record<TypeSalle, string> = {
-  entree: 'Entrée', combat: 'Combat', elite: 'Salle scellée', cache: 'Cache', rencontre: 'Rencontre', camp: 'Campement', archive: 'Archives', gardien: 'Gardien', filon: 'Filon',
+  entree: 'Entrée', combat: 'Combat', elite: 'Salle scellée', cache: 'Cache', rencontre: 'Rencontre', camp: 'Campement', archive: 'Archives', gardien: 'Gardien', filon: 'Filon', halte: 'Halte', porte: 'Porte ancienne',
 };
 
 /** icônes peintes (public/art/icones/) des salles qui en ont une */
 const PEINTES: Partial<Record<TypeSalle, string>> = { entree: 'strate', cache: 'composants', archive: 'codex', filon: 'eclats' };
+/** les salles du contenu des Strates (31 octobre 2026) : en trait, en attendant leurs icônes peintes (docs/prompts-strates.md) */
+const TRAITS: Partial<Record<TypeSalle, keyof typeof ICO>> = { halte: 'halte', porte: 'porte' };
 
 /** scènes peintes (public/art/salles/), recadrées dans le médaillon */
 const baseSalles = new URL('art/salles/', document.baseURI).href;
@@ -58,7 +62,7 @@ function medaillon(s: Pick<Salle, 'type' | 'ennemi'>): string {
     return `<span class="ex-med" style="--img:url(${baseSalles}${scene.fichier}.webp);--pos:${cx}% ${cy}%;--zoom:${z}%"><i></i></span>`;
   }
   const peinte = PEINTES[s.type];
-  return `<span class="ex-med peinte">${peinte ? `<img src="${baseIcones}${peinte}.webp" alt="" decoding="async">` : ICO.cristal}</span>`;
+  return `<span class="ex-med peinte">${peinte ? `<img src="${baseIcones}${peinte}.webp" alt="" decoding="async">` : ICO[TRAITS[s.type] ?? 'cristal']}</span>`;
 }
 
 /** une salle voilée par le brouillard : un disque de verre fumé, l'indice deviné (ou rien que la brume) */
@@ -74,7 +78,7 @@ function visuel(s: Salle, x?: Expedition): string {
   const scene = SCENES[s.type];
   if (scene) return `<span class="ex-visuel scene"><img src="${baseSalles}${scene.fichier}.webp" alt="" decoding="async"></span>`;
   const peinte = PEINTES[s.type];
-  return `<span class="ex-visuel icone">${peinte ? `<img src="${baseIcones}${peinte}.webp" alt="" decoding="async">` : ICO.cristal}</span>`;
+  return `<span class="ex-visuel icone">${peinte ? `<img src="${baseIcones}${peinte}.webp" alt="" decoding="async">` : ICO[TRAITS[s.type] ?? 'cristal']}</span>`;
 }
 
 /** le nom affiché sous une salle */
@@ -116,20 +120,41 @@ function annonce(s: Salle, x: Expedition): { sur: string; titre: string; texte: 
     if (s.type === 'gardien') return { sur: 'Gardien de la zone', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 2)}`)} composants · fin de la Strate`] };
     if (s.type === 'elite') return { sur: 'Salle scellée', titre: d.nom, texte: 'Plus coriace, mais une carte dort derrière.', faits: [...faits, `${or(`+${Math.round(butinCombat(x.strate, 0) * 1.7)}`)} composants · ${or('1 carte')}`] };
     if (s.escorte?.length) return { sur: `Combat · ${s.escorte.length + 1} ennemis`, titre: titreGroupe(s), texte: 'Ils viennent ensemble : choisis qui frapper.', faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`, enPlus] };
+    // −7 : deux souvenirs se disputent la salle ; on choisit lequel affronter en entrant
+    if (s.double) return { sur: 'Souvenirs doubles', titre: `${d.nom} ou ${ennemiDef(s.double).nom}`, texte: 'Deux souvenirs de la même salle. Choisis celui que l’escouade traverse.', faits: [`${or(`+${butinCombat(x.strate, 0)}`)} composants`, enPlus] };
     return { sur: 'Combat', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`, enPlus] };
   }
   switch (s.type) {
-    case 'cache': return { sur: 'Cache', titre: 'Une cache de fouilleur', texte: 'La voie sûre : quelques composants et de quoi panser l’escouade, sans combat.', faits: [`${or(`+${butinCache(x.strate)}`)} composants${x.strate >= 3 ? ' · parfois un Éclat' : ''}`, `<span class="ex-vert">+${Math.round(REGLES.salles.cacheSoin * 100)} % de PV</span> pour l’escouade debout`] };
+    case 'cache':
+      if (s.mur) {
+        const force = x.porteurs.some((p) => p.pv > 0 && porteurDef(p.id).lignee === 'tech');
+        return { sur: 'Cache murée', titre: 'Un abri muré en 2066', texte: force ? 'Ton Augmenté peut forcer le mur : derrière, une réserve intacte.' : 'Il faudrait un Augmenté debout pour forcer le mur.', faits: [`${or(`+${butinCache(x.strate) * (force ? 2 : 1)}`)} composants${force ? ' (le double)' : ''}`, `<span class="ex-vert">+${Math.round(REGLES.salles.cacheSoin * 100)} % de PV</span> pour l’escouade debout`] };
+      }
+      if (x.strate === 5) return { sur: 'Niche', titre: 'Une niche du Treillis', texte: 'Vidée par les Hauts, presque toujours. Parfois, un cristal y dort encore.', faits: [`${or(`+${butinCache(x.strate)}`)} composants · ${or(`${Math.round(CONTENU.niche * 100)} %`)} de chance de carte`, `<span class="ex-vert">+${Math.round(REGLES.salles.cacheSoin * 100)} % de PV</span>`] };
+      return { sur: 'Cache', titre: 'Une cache de fouilleur', texte: 'La voie sûre : quelques composants et de quoi panser l’escouade, sans combat.', faits: [`${or(`+${butinCache(x.strate)}`)} composants${x.strate >= 3 ? ' · parfois un Éclat' : ''}`, `<span class="ex-vert">+${Math.round(REGLES.salles.cacheSoin * 100)} % de PV</span> pour l’escouade debout`] };
     case 'camp': {
       const rendus = x.porteurs.reduce((t, p) => t + Math.min(p.pvMax, Math.max(0, p.pv) + Math.round(p.pvMax * 0.35)) - Math.max(0, p.pv), 0);
       return { sur: 'Campement', titre: 'Un campement', texte: 'L’escouade souffle. On peut remonter d’ici avec tout le butin.', faits: [rendus ? `<span class="ex-vert">+${rendus} PV</span> pour l’escouade (+35 %)` : 'L’escouade est déjà en pleine forme'] };
     }
     case 'archive': return { sur: 'Archives', titre: 'Une salle d’archives', texte: 'Un fragment de l’histoire, à rapporter au district.', faits: [`${or(`+${butinArchive(x.strate)}`)} composants · ${or('1 archive')}`] };
     case 'rencontre': return { sur: 'Rencontre', titre: 'Quelqu’un, dans le noir', texte: 'Un choix à faire. On ne sait pas encore qui.', faits: [] };
+    case 'halte': {
+      const h = typeof x.halte === 'number' ? halteDef(x.strate, x.halte) : undefined;
+      return h
+        ? { sur: `Halte ${ROMAIN[h.n - 1]} sur ${nombreHaltes(x.strate)} · passage obligatoire`, titre: h.titre, texte: 'Tous les chemins passent par ici. Un lieu à regarder de près, et un choix à faire.', faits: [`${or(`+${Math.round(XP.elite * (1 + 0.25 * (x.strate - 1)))} XP`)} chacun · un choix`] }
+        : { sur: 'Halte · lieu connu', titre: 'Un lieu connu', texte: 'L’escouade connaît cet endroit, maintenant. Elle y passe sans s’arrêter.', faits: [] };
+    }
+    case 'porte': {
+      const n = suitePorte(x.strate);
+      const ecl = x.strate >= 10 ? CONTENU.porte.eclatsFond : CONTENU.porte.eclats;
+      return { sur: 'Porte ancienne', titre: 'Une porte à Fréquence', texte: `Elle s’ouvre à qui accorde ${n} cartes dont les Fréquences se suivent. Rien à perdre si on échoue.`, faits: [`${or(`+${ecl}`)} Éclat${ecl > 1 ? 's' : ''} · ${or(`+${Math.round(butinCache(x.strate) * CONTENU.porte.composants)}`)} composants`] };
+    }
     case 'filon': return { sur: 'Filon', titre: 'Le filon', texte: 'Ce que tu cherchais : la fouille s’achève ici.', faits: x.fouille ? [echap(CIBLES_FOUILLE[x.fouille].texte)] : [] };
     default: return { sur: NOMS[s.type], titre: NOMS[s.type], texte: '', faits: [] };
   }
 }
+
+const ROMAIN = ['I', 'II', 'III'];
 
 const CHEVRON = '<svg class="ico ex-fleche" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
 
@@ -156,12 +181,12 @@ function paroleEscouade(x: Expedition): string {
  * on touche une salle qui brille, une fiche s'ouvre en bas (ce qui attend l'escouade, en vrais chiffres) avec « Entrer ».
  * `choisie` : la salle touchée ; s'il n'y a qu'un chemin, il est choisi d'office.
  */
-export function htmlExploration(j: Jeu, choisie?: number): string {
+export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readonly number[]; porte?: readonly number[] } = {}): string {
   const x = j.expedition as Expedition;
   const c = x.carte!;
   const ici = salleCourante(x);
   const voisines = new Set(accessibles(x).map((s) => s.id));
-  const libre = !x.rencontre && x.phase === 'carte' && !x.terminee;
+  const libre = !enAttente(x) && x.phase === 'carte' && !x.terminee;
   const routes = libre ? accessibles(x) : [];
   const vue = routes.find((s) => s.id === choisie) ?? (routes.length === 1 ? routes[0] : undefined);
   const zone = ZONES[c.zone]!;
@@ -181,7 +206,8 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
   const cartes = (g?.elites ?? 0) + (g?.cartes ?? 0);
   h += `<header class="ex-tete"><div class="ex-lieu"><span class="ex-sur">${x.fouille ? `Fouille · ${echap(CIBLES_FOUILLE[x.fouille].nom)}` : `Strate −${x.strate}`}</span>`
     + `<h1>${echap(zone.nom)}</h1>`
-    + `<span class="ex-profondeur">${reste > 0 ? `Salle <b>${ici.rang + 1}</b> sur ${rangs} · ${fin} dans <b>${reste}</b> salle${reste > 1 ? 's' : ''}` : `Tu es devant ${fin}`}</span></div>`
+    + `<span class="ex-profondeur">${reste > 0 ? `Salle <b>${ici.rang + 1}</b> sur ${rangs} · ${fin} dans <b>${reste}</b> salle${reste > 1 ? 's' : ''}` : `Tu es devant ${fin}`}</span>`
+    + teteContenu(j, x) + `</div>`
     + `<div class="ex-butin" aria-label="Butin de l’expédition"><span data-gain="x-composants">${icone('composants')}<b>${x.butin}</b><small>compos.</small></span>`
     + (cartes ? `<span data-gain="x-cartes">${icone('cartes')}<b>${cartes}</b><small>carte${cartes > 1 ? 's' : ''}</small></span>` : '')
     + (g?.eclats ? `<span data-gain="x-eclats">${icone('eclats')}<b>${g.eclats}</b><small>Éclat${g.eclats > 1 ? 's' : ''}</small></span>` : '')
@@ -227,6 +253,13 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
       fils += `<path class="c-${etat}" d="${d}"/>`;
     }
   }
+  // −9 : le fil qui relie deux salles côte à côte (on le suit une fois)
+  for (const s of c.salles) {
+    if (s.fil === undefined || s.fil < s.id) continue;
+    const t = c.salles[s.fil]!;
+    const d = `M${posX(s).toFixed(2)} ${posY(s).toFixed(2)}Q${((posX(s) + posX(t)) / 2).toFixed(2)} ${(posY(s) + 4).toFixed(2)} ${posX(t).toFixed(2)} ${posY(t).toFixed(2)}`;
+    fils += `<path class="c-fil${x.filPris ? ' pris' : ''}" d="${d}"/>`;
+  }
   h += `<svg class="ex-couloirs" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">${ombres}${halos}${fils}</svg>`;
 
   for (const s of c.salles) {
@@ -244,6 +277,9 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
       if (s.type === 'elite') dedans += `<span class="ex-badge sceau" aria-hidden="true">${ICO.verrou}</span>`;
       if (s.escorte?.length) dedans += `<span class="ex-badge groupe" aria-hidden="true">×${s.escorte.length + 1}</span>`;
       if (s.condition) { const ic = iconeCondition(s.condition); dedans += `<span class="ex-badge condition${ic ? ' peinte' : ''}" aria-hidden="true">${ic ? `<img src="${ic}" alt="" decoding="async">` : ICO.cristal}</span>`; }
+      if (s.mur) dedans += `<span class="ex-badge mur" aria-hidden="true">${ICO.mur}</span>`;
+      if (s.double) dedans += `<span class="ex-badge double" aria-hidden="true">${ICO.fil}</span>`;
+
       nom = etat === 'ici' ? 'Vous êtes ici' : nomSalle(s);
     } else {
       const ind = vision === 'indice' ? indiceSalle(s) : null;
@@ -251,6 +287,10 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
       dedans = medaillonVoile(ind);
       nom = ind ? INDICES[ind].nom : '';
     }
+    // un passage que repère un Porteur debout : il le voit même dans le brouillard, dès que la salle est à portée
+    if (reperentPassage(x, s).length && (etat === 'accessible' || etat === 'ici')) { dedans += `<span class="ex-badge secret" aria-hidden="true">${ICO.fissure}</span>`; label += ' · un passage repéré'; }
+    // la marque de la quête se voit même dans le brouillard
+    if (s.quete && !x.gains?.etape && !s.faite) { dedans += `<span class="ex-badge quete" aria-hidden="true">${ICO.quete}</span>`; label += ' · la marque de la quête'; }
     if (nom) dedans += `<span class="ex-nom">${echap(nom)}</span>`;
     const style = `left:${posX(s).toFixed(2)}%;top:${posY(s).toFixed(2)}%`;
     h += acces
@@ -261,7 +301,10 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
 
   // ---------- le panneau : la rencontre en cours, ou la suite du chemin ----------
   h += `<section class="ex-panneau" aria-live="polite">`;
-  if (x.rencontre) {
+  const halte = halteEnCours(j);
+  if (halte) h += htmlHalte(j, x, ui.details ?? []);
+  else if (x.porte) h += htmlPorte(x, ui.porte ?? []);
+  else if (x.rencontre) {
     const r = RENCONTRES[x.rencontre]!(j);
     h += `<div class="ex-rencontre"><span class="ex-visuel scene"><img src="${baseSalles}rencontre.webp" alt="" decoding="async"></span>`
       + `<div><span class="ex-sur">Rencontre</span><h2>${echap(r.titre)}</h2></div></div>`
@@ -277,6 +320,7 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
   } else {
     h += paroleEscouade(x);
     if (x.recit) h += `<p class="ex-recit">${echap(x.recit)}</p>`;
+    if (libre) h += htmlPassage(x);
     if (libre && vue) {
       // la fiche de la salle touchée : en bas de l'écran sur téléphone, dans la colonne de droite sur PC
       const a = annonce(vue, x);
@@ -289,9 +333,14 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
         + `<span class="ex-route-txt"><span class="ex-sur">${echap(a.sur)}</span><strong>${echap(a.titre)}</strong>`
         + (a.texte ? `<em>${echap(a.texte)}</em>` : '')
         + (a.faits.length ? `<span class="ex-faits">${a.faits.map((f) => `<span>${f}</span>`).join('')}</span>` : '')
+        + (vue.quete && !x.gains?.etape && queteDef(x.strate) ? `<span class="ex-condition ex-c-quete">${ICO.quete}<span><b>${echap(queteDef(x.strate)!.nom)}</b> : la marque de la quête est ici${vue.ennemi ? ' (gagne le combat pour la relever)' : ''}.</span></span>` : '')
+        + (reperentPassage(x, vue).length ? `<span class="ex-condition ex-c-secret">${ICO.fissure}<span><b>${echap(porteurDef(reperentPassage(x, vue)[0]!).nom)}</b> y repère un passage caché.</span></span>` : '')
         + (cond ? `<span class="ex-condition">${iconeCondition(cond.id) ? `<img class="ex-cond-ico" src="${iconeCondition(cond.id)}" alt="" decoding="async">` : ICO.cristal}<span><b>${echap(cond.nom)}</b> : ${echap(cond.texte)}</span></span>` : '')
         + `</span></div>`
-        + `<button type="button" class="btn prim large ex-entrer" data-action="salle" data-id="${vue.id}">${echap(entrer)}${CHEVRON}</button></div>`;
+        + (!voilee && vue.double
+          ? `<div class="ex-doubles">${[vue.ennemi!, vue.double].map((e, k) => `<button type="button" class="btn ${k ? 'sec' : 'prim'} large ex-entrer" data-action="salle" data-id="${vue.id}"${k ? ' data-second="1"' : ''}>${echap(`Affronter ${ennemiDef(e).nom}`)}${CHEVRON}</button>`).join('')}</div>`
+          : `<button type="button" class="btn prim large ex-entrer" data-action="salle" data-id="${vue.id}">${echap(entrer)}${CHEVRON}</button>`)
+        + `</div>`;
     } else if (libre) {
       h += `<p class="ex-indice">${ICO.cristal}<span>Touche une salle qui brille sur le plan : tu verras ce qui t’y attend avant d’entrer${x.strate >= REGLES.brouillard.indices ? ', ou du moins ce que le brouillard en laisse deviner' : ''}.${routes.length > 1 ? ` <b>${routes.length} chemins</b>` : ''}</span></p>`;
     }
@@ -304,4 +353,92 @@ export function htmlExploration(j: Jeu, choisie?: number): string {
   h += `</section>`;
 
   return h + `</div>`;
+}
+
+// ---------- Le contenu des Strates (31 octobre 2026, src/core/strates.ts) ----------
+
+/** Sous le nom de la Strate : sa particularité, et la quête en cours (●●○) */
+function teteContenu(j: Jeu, x: Expedition): string {
+  let h = '';
+  const p = particularite(x.strate);
+  // une ligne chacune, sans phrase (28 octobre 2026, Bryan : écrans « surchargés pour rien ») ; la phrase est dans le récit d'entrée
+  if (p) h += `<span class="ex-partic" title="${echap(p.texte)}">${ICO.strate}<b>${echap(p.nom)}</b></span>`;
+  const q = queteDef(x.strate);
+  const faites = j.quetes?.[x.strate] ?? 0;
+  if (q && faites < q.etapes.length && x.carte!.salles.some((s) => s.quete)) {
+    const n = faites + (x.gains?.etape ? 1 : 0);
+    h += `<span class="ex-quete${x.gains?.etape ? ' trouvee' : ''}" title="${echap(q.but)}">${ICO.quete}<b>${echap(q.nom)}</b>`
+      + `<span class="ex-points" aria-label="${n} étape${n > 1 ? 's' : ''} sur ${q.etapes.length}">${q.etapes.map((_, k) => `<i${k < n ? ' class="ok"' : ''}></i>`).join('')}</span></span>`;
+  }
+  return h;
+}
+
+/** Le portrait rond d'un Porteur (ou de personne : le récit) */
+function rond(qui: string): string {
+  if (!qui) return `<span class="hx-pp recit" aria-hidden="true">${ICO.halte}</span>`;
+  const img = portrait(qui);
+  return `<span class="hx-pp" aria-hidden="true" style="--c:${COULEUR[porteurDef(qui).lignee]}">${img ? `<img src="${img}" alt="">` : `<b>${echap(porteurDef(qui).nom.charAt(0))}</b>`}</span>`;
+}
+
+/** La Halte : le décor de la Strate, des détails à toucher (chacun fait parler un Porteur debout), puis un choix */
+function htmlHalte(j: Jeu, x: Expedition, vus: readonly number[]): string {
+  const h = halteEnCours(j)!;
+  const debout = x.porteurs.filter((p) => p.pv > 0).map((p) => p.id);
+  const drapeaux = j.drapeaux ?? [];
+  let r = `<div class="ex-halte"><div class="hx-scene" style="--decor:url(${decorStrate(x.strate)})"><span class="ex-sur">Halte ${ROMAIN[h.n - 1]} sur ${nombreHaltes(x.strate)} · Strate −${x.strate}</span><h2>${echap(h.titre)}</h2></div>`
+    + `<p class="ex-recit hx-recit">${echap(h.recit)}</p><div class="hx-details">`;
+  h.details.forEach((dt, k) => {
+    if (vus.includes(k)) {
+      const v = voixDetail(dt, debout, drapeaux);
+      r += `<div class="hx-voix"${v.qui ? ` style="--c:${COULEUR[porteurDef(v.qui).lignee]}"` : ''}>${rond(v.qui)}<p><small>${echap(dt.nom)}</small>${v.qui ? `<strong>${echap(porteurDef(v.qui).nom)}</strong>` : ''}${echap(v.texte)}</p></div>`;
+    } else {
+      r += `<button type="button" class="hx-detail" data-action="halte-detail" data-id="${k}">${ICO.lueur}<span>${echap(dt.nom)}</span><small>Regarder</small></button>`;
+    }
+  });
+  r += `</div><span class="ex-sur hx-choisir">Que fais-tu ?</span><div class="ex-choix">`
+    + h.choix.map((c, k) => `<button type="button" class="ex-choix-btn hx-choix" data-action="halte-choix" data-id="${k}"><span>${echap(c.texte)}<small class="hx-gain">${echap(gainChoixHalte(j, k))}</small></span>${CHEVRON}</button>`).join('')
+    + `</div></div>`;
+  return r;
+}
+
+/** Une porte à Fréquence : 5 cartes tirées, en choisir 3 (4 au fond) dont les Fréquences se suivent */
+function htmlPorte(x: Expedition, choisies: readonly number[]): string {
+  const p = x.porte!;
+  const n = suitePorte(x.strate);
+  const sel = choisies.filter((i) => p.main.includes(i));
+  const possible = !!mainAccordable(x);
+  let r = `<div class="ex-porte"><div class="ex-rencontre"><span class="ex-visuel icone">${ICO.porte}</span><div><span class="ex-sur">Porte ancienne</span><h2>Accorde ${n} Fréquences</h2></div></div>`
+    + `<p class="ex-recit">Choisis ${n} cartes dont les Fréquences se suivent, comme une suite en combat (par exemple ${Array.from({ length: n }, (_, k) => k + 4).join(', ')}). Une carte à Accord ∗ prolonge toute suite.</p>`
+    + `<div class="px-cases" aria-label="${sel.length} carte${sel.length > 1 ? 's' : ''} choisie${sel.length > 1 ? 's' : ''} sur ${n}">`
+    + Array.from({ length: n }, (_, k) => { const g = sel[k] !== undefined ? x.deck[sel[k]!] : undefined; return `<span class="px-case${g ? ' pleine' : ''}">${g ? frequences(g) : ''}</span>`; }).join('')
+    + `</div><div class="px-main">`;
+  for (const i of p.main) {
+    const g = x.deck[i]!;
+    const c = g.porteur ? COULEUR[porteurDef(g.porteur).lignee] : COULEUR.neutre;
+    const on = sel.includes(i);
+    r += `<button type="button" class="px-carte${on ? ' choisie' : ''}" data-action="porte-carte" data-id="${i}" aria-pressed="${on}" style="--c:${c}">${frequences(g)}<span>${echap(g.nom)}</span></button>`;
+  }
+  r += `</div>`
+    + (!possible ? `<p class="px-aide">${ICO.aide}<span>Aucune suite de ${n} dans cette main.${p.relance ? ' La porte reste fermée pour cette fois.' : ' Tu peux tirer une autre main.'}</span></p>` : '')
+    + `<div class="px-actions"><button type="button" class="btn prim large" data-action="porte-ouvrir"${sel.length === n ? '' : ' disabled'}>${ICO.porte}Ouvrir la porte</button>`
+    + `<div class="px-sec">${p.relance ? '' : `<button type="button" class="btn sec" data-action="porte-relancer">${ICO.repiocher}Autre main</button>`}`
+    + `<button type="button" class="btn sec" data-action="porte-passer">Laisser la porte</button></div></div></div>`;
+  return r;
+}
+
+/** Les Fréquences d'une carte, dans de petits cristaux colorés (∗ pour l'Accord) */
+function frequences(g: Expedition['deck'][number]): string {
+  if (g.effet?.type === 'accord' || g.effet?.type === 'diapason') return `<b class="px-f libre">${g.effet.type === 'accord' ? '∗' : '='}</b>`;
+  return (g.fs?.length ? g.fs : [g.f]).map((f) => `<b class="px-f" style="--fc:${couleurFrequence(f)}">${f}</b>`).join('');
+}
+
+/** Un passage secret repéré dans la salle où se trouve l'escouade : le Porteur qui l'a vu le dit */
+function htmlPassage(x: Expedition): string {
+  const ici = salleCourante(x);
+  const qui = reperentPassage(x, ici)[0];
+  const def = ici.secret ? secretDef(ici.secret) : undefined;
+  if (!qui || !def) return '';
+  return `<div class="ex-passage" style="--c:${COULEUR[porteurDef(qui).lignee]}">${rond(qui)}<div><span class="ex-sur">${ICO.fissure}${echap(def.nom)}</span>`
+    + `<p><strong>${echap(porteurDef(qui).nom)}</strong>${echap(def.voix[qui]!)}</p>`
+    + `<button type="button" class="btn sec ex-suivre" data-action="passage">Suivre le passage${CHEVRON}</button></div></div>`;
 }

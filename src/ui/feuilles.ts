@@ -22,6 +22,7 @@ import './mon-escouade.css';
 import './equipe.css';
 import './district.css';
 import './exploration-refonte.css';
+import './strates-contenu.css';
 import './toucher.css';
 import './matieres.css';
 import './gains.css';
