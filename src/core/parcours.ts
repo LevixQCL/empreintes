@@ -16,6 +16,7 @@ import { coutPompe, pomper,
   enMission, envoyerMission, destinationsDuJour, secoursPossible, epreuvesDeLaSemaine, fouiller, partirEpreuve,
   chargeMax, niveauPorteur, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick,
   coutRefabrication, soignerVite, placesEntrainement, seancesDe, type Jeu, type Poste,
+  contratsDuMoment, envoyerContrat, equipeConseillee, mareesDe, raisonHorsContrat, tauxContrat,
 } from './jeu';
 import { jouerTour, jouerTourMoyen } from './robot';
 // (les creuseurs se gagnent par les fouilles, missions et Épreuves que joue déjà ce joueur simulé)
@@ -116,6 +117,14 @@ function preparer(j: Jeu, duree: 'courte' | 'longue' = 'longue'): string[] {
     const k = libres.findIndex((id) => porteurDef(id).lignee === l);
     const id = libres.splice(k >= 0 ? k : 0, 1)[0];
     if (id) poster(j, id, b);
+  }
+  // les contrats de marée (31 octobre 2026) : la gabare emmène les Porteurs de réserve, si l'équipe a au moins une chance sur deux
+  if (!mareesDe(j).contrat) {
+    for (const c of contratsDuMoment(j, j.dernierTick).filter((x) => x.ouvert && !x.reussi).reverse()) {
+      const eq = equipeConseillee(j, c.def, libres.filter((id) => !raisonHorsContrat(j, id)));
+      if (eq.some((x) => !x) || tauxContrat(j, c.def, eq, c.indices) < 50) continue;
+      if (envoyerContrat(j, c.id, eq as string[], j.dernierTick).ok) { for (const id of eq) libres.splice(libres.indexOf(id!), 1); break; }
+    }
   }
   // ceux qui restent partent en mission (longue : le joueur revient plus tard) ; s'il n'y a plus de place, ils s'entraînent à la Tour
   // (28 octobre 2026) les naufragés d'abord tant qu'ils ramènent des creuseurs (plafond par Strate), sinon la meilleure destination pour lui

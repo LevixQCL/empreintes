@@ -1,0 +1,136 @@
+/* EMPREINTES — Les contrats de marée, au Port (31 octobre 2026).
+   Même matière que les missions en mer : verre fumé, arêtes de glace, or pour la valeur.
+   Trois marées en tuiles (le coefficient en filigrane), puis le contrat : la ruine peinte en tête, les épreuves comme des postes
+   à pourvoir, et le taux de réussite dans un anneau de lumière. Textes à 12 px minimum. */
+
+.pl-marees .mr-gabare{margin-bottom:12px}
+.mr-equipe{display:flex}
+.mr-equipe>*+*{margin-left:-10px}
+.mr-equipe>*{filter:drop-shadow(0 2px 6px rgba(0,0,0,.7))}
+.mr-taux-mini{font-family:var(--mono);color:#F2D58C;font-weight:600}
+
+/* ---------- Les trois marées ---------- */
+.mr-tuiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.mr-tuile{--cut:8px;position:relative;display:grid;gap:3px;justify-items:start;min-height:84px;padding:8px 9px;border:none;text-align:left;cursor:pointer;overflow:hidden;isolation:isolate;color:#fff;
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));
+  background:linear-gradient(180deg,rgba(20,38,58,.78),rgba(8,16,26,.9));box-shadow:inset 0 0 0 1px rgba(205,239,255,.2),inset 0 1px 0 rgba(255,255,255,.12);transition:transform .15s ease,box-shadow .2s ease}
+/* la houle de la marée, plus haute au fil des rangs */
+.mr-tuile::before{content:"";position:absolute;left:0;right:0;bottom:0;z-index:-1;height:var(--h,30%);
+  background:linear-gradient(180deg,rgba(120,200,235,.22),rgba(40,110,150,.08));
+  -webkit-mask:radial-gradient(14px 6px at 50% 0,transparent 98%,#000) 0 0/28px 100% repeat-x;mask:radial-gradient(14px 6px at 50% 0,transparent 98%,#000) 0 0/28px 100% repeat-x}
+.mr-tuile.r-vive{--h:48%}
+.mr-tuile.r-grande{--h:66%}
+.mr-coef{position:absolute;right:6px;top:2px;z-index:-1;font-family:var(--mono);font-size:30px;font-weight:700;line-height:1;color:rgba(205,239,255,.1)}
+.mr-tuile strong{font-size:13px;font-weight:600;line-height:1.25;text-shadow:0 1px 3px #000}
+.mr-etat{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;line-height:1.3;color:#F2D58C}
+.mr-etat .ico{width:13px;height:13px}
+.mr-tuile small{font-family:var(--mono);font-size:12px;line-height:1.3;color:#93A3B8}
+.mr-tuile.choisi{box-shadow:inset 0 0 0 2px #F2D58C,0 0 18px rgba(242,213,140,.22)}
+.mr-tuile.fait .mr-etat{color:#B8E3A8}
+.mr-tuile.fermee{color:#9FB3C8}
+.mr-tuile.fermee .mr-etat{color:#9FB3C8}
+.mr-tuile:active{transform:scale(.98)}
+
+/* ---------- Le contrat ---------- */
+.mr-contrat{--cut:12px;position:relative;display:grid;gap:12px;margin-top:12px;padding:0 12px 12px;overflow:hidden;isolation:isolate;
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));
+  background:rgba(10,18,30,.82);box-shadow:inset 0 0 0 1px rgba(205,239,255,.18),inset 0 1px 0 rgba(255,255,255,.14)}
+.mr-tete{position:relative;display:grid;gap:2px;margin:0 -12px;padding:70px 12px 12px;isolation:isolate;
+  background:var(--decor,linear-gradient(160deg,#16364a,#0b1a26)) 70% 45%/cover no-repeat;border-bottom:2px solid transparent;
+  border-image:linear-gradient(90deg,transparent 2%,var(--c) 28%,color-mix(in srgb,var(--c) 60%,white) 50%,var(--c) 72%,transparent 98%) 1}
+.mr-tete::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,12,22,0) 10%,rgba(6,12,22,.55) 50%,rgba(6,12,22,.92) 100%)}
+.mr-tete .surtitre{font-size:12px;color:#F2D58C;text-shadow:0 1px 3px #000}
+.mr-tete h3{margin:0;font-family:var(--titre,inherit);font-size:20px;line-height:1.2;color:#fff;text-shadow:0 2px 6px #000}
+.mr-tete small{font-size:12px;color:#C9D6E6;text-shadow:0 1px 3px #000}
+.mr-ambiance{margin:4px 0 0;font-family:var(--lore,inherit);font-style:italic;font-size:13.5px;line-height:1.45;color:#E4ECF5;text-shadow:0 1px 3px #000}
+.mr-contrat.fermee .mr-tete{filter:saturate(.55) brightness(.75)}
+.mr-ferme,.mr-fait{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;margin:0;font-size:13px;line-height:1.45;color:#C9D6E6}
+.mr-ferme .ico,.mr-fait .ico{width:18px;height:18px;color:#CDEFFF;margin-top:1px}
+.mr-fait .ico{color:#B8E3A8}
+.mr-ferme b{color:#fff}
+
+.mr-gains{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.mr-gains li{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:center;font-size:13px;line-height:1.4;color:#C9D6E6}
+.mr-gains .ico{width:18px;height:18px;color:#F2D58C;filter:drop-shadow(0 0 5px rgba(242,213,140,.35))}
+.mr-gains b{color:#fff;font-weight:600}
+.m-cuivre{color:#E8A877!important}
+.m-argent{color:#DCE6F0!important}
+.m-or{color:#F2D58C!important}
+
+/* ---------- Les épreuves : un poste à pourvoir chacune ---------- */
+.mr-epreuves{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.mr-ep{--cut:8px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 8px 8px 10px;
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));
+  background:linear-gradient(90deg,color-mix(in srgb,var(--c) 14%,rgba(12,20,32,.9)),rgba(12,20,32,.9) 45%);box-shadow:inset 3px 0 0 var(--c),inset 0 0 0 1px rgba(205,239,255,.12)}
+.mr-role{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;color:var(--c);background:rgba(6,12,22,.7);box-shadow:inset 0 0 0 1.5px var(--c),0 0 10px color-mix(in srgb,var(--c) 35%,transparent)}
+.mr-role .ico{width:17px;height:17px}
+.mr-ep-nom{display:grid;gap:1px;min-width:0}
+.mr-ep-nom strong{font-size:13.5px;font-weight:600;line-height:1.3;color:#fff}
+.mr-ep-nom small{font-size:12px;line-height:1.3;color:#93A3B8}
+.mr-poste{display:grid;grid-template-columns:auto auto;gap:8px;align-items:center;min-width:132px;padding:4px 10px 4px 4px;border:none;text-align:left;cursor:pointer;color:#fff;
+  background:rgba(6,12,22,.72);border-radius:22px;box-shadow:inset 0 0 0 1px rgba(205,239,255,.25);transition:box-shadow .2s ease,transform .15s ease}
+.mr-poste span{display:grid;gap:0;min-width:0}
+.mr-poste b{font-size:13px;font-weight:600;line-height:1.25}
+.mr-poste small{font-size:12px;line-height:1.25;color:#C9D6E6;white-space:nowrap}
+.mr-poste:active{transform:scale(.97)}
+.mr-ep.ouverte .mr-poste{box-shadow:inset 0 0 0 2px #F2D58C}
+.mr-ep.af-bon .mr-poste{box-shadow:inset 0 0 0 1px rgba(242,213,140,.55),0 0 10px rgba(242,213,140,.15)}
+.mr-ep.af-bon .af{color:#F2D58C}
+.mr-ep.af-mauvais .af{color:#C9A7D9}
+.mr-vide{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;font-size:20px;line-height:1;color:#F2D58C;box-shadow:inset 0 0 0 1.5px rgba(242,213,140,.6)}
+.mr-ep.vide .mr-poste{box-shadow:inset 0 0 0 1px rgba(242,213,140,.5)}
+
+/* la liste des Porteurs pour l'épreuve ouverte */
+.mr-choix ul{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin:0 0 4px;padding:0;list-style:none}
+.mr-cand{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-rows:auto auto;column-gap:8px;align-items:center;width:100%;padding:6px 8px 6px 6px;border:none;text-align:left;cursor:pointer;color:#fff;
+  background:rgba(12,20,32,.85);box-shadow:inset 0 0 0 1px rgba(205,239,255,.16),inset 0 -2px 0 var(--c);border-radius:4px}
+.mr-cand>:first-child{grid-row:span 2}
+.mr-cand span{display:grid;gap:0;min-width:0}
+.mr-cand b{font-size:13px;font-weight:600;line-height:1.25}
+.mr-cand small{font-size:12px;line-height:1.25;color:#93A3B8}
+.mr-cand em{font-style:normal;font-size:12px;line-height:1.25;color:#E4ECF5}
+.mr-cand.af-bon{box-shadow:inset 0 0 0 1px rgba(242,213,140,.5),inset 0 -2px 0 var(--c)}
+.mr-cand.af-bon em{color:#F2D58C}
+.mr-cand.af-mauvais em{color:#C9A7D9}
+.mr-cand.pris{box-shadow:inset 0 0 0 2px #F2D58C,inset 0 -2px 0 var(--c)}
+.mr-ailleurs{grid-column:2;font-style:normal;font-size:12px;line-height:1.25;color:#9FB3C8}
+.mr-cand.indispo{cursor:default;opacity:.55;filter:grayscale(.6)}
+
+/* ---------- Le taux et le départ ---------- */
+.mr-depart{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;padding-top:4px}
+.mr-taux{position:relative;display:grid;place-items:center;align-content:center;width:96px;height:96px;text-align:center}
+.mr-anneau{position:absolute;inset:0;border-radius:50%;
+  background:conic-gradient(from -90deg,#F2D58C 0,#FFF2C8 calc(var(--t) * 100%),rgba(205,239,255,.12) calc(var(--t) * 100%) 100%);
+  -webkit-mask:radial-gradient(closest-side,transparent 78%,#000 80%);mask:radial-gradient(closest-side,transparent 78%,#000 80%);
+  filter:drop-shadow(0 0 8px rgba(242,213,140,.35))}
+.mr-taux b{font-family:var(--mono);font-size:30px;font-weight:700;line-height:1;color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(242,213,140,.4)}
+.mr-taux b small{font-size:15px;color:#F2D58C;margin-left:1px}
+.mr-taux>span:last-child{font-size:12px;line-height:1.2;color:#93A3B8}
+.mr-infos{display:grid;gap:6px;min-width:0}
+.mr-infos small{font-size:12px;line-height:1.4;color:#93A3B8}
+.mr-infos small .ico{width:13px;height:13px;margin-right:4px;vertical-align:-2px}
+.mr-indice{justify-self:start;display:inline-flex;align-items:center;gap:5px;padding:2px 8px;font-size:12px;font-weight:600;line-height:1.35;color:#D8C4FF;
+  background:rgba(8,14,22,.72);box-shadow:inset 0 0 0 1px rgba(200,180,255,.45);border-radius:3px}
+.mr-indice .ico{width:14px;height:14px}
+.mr-alerte{color:#F2C08C!important}
+.mr-boutons{display:flex;flex-wrap:wrap;gap:8px}
+.mr-boutons .btn{flex:1 1 auto}
+
+@media (max-width:380px){
+  .mr-ep{grid-template-columns:auto minmax(0,1fr)}
+  .mr-poste{grid-column:1 / -1}
+  .mr-depart{grid-template-columns:1fr;justify-items:center}
+  .mr-infos{justify-items:stretch;width:100%}
+}
+@media (min-width:900px){
+  .mr-tuile{min-height:96px;padding:10px 12px}
+  .mr-tuile strong{font-size:15px}
+  .mr-tete{padding-top:120px}
+  .mr-tete h3{font-size:24px}
+}
+
+/* ---------- Le rapport d'un contrat ---------- */
+.rm-equipe{display:flex}
+.rm-equipe>*+*{margin-left:-10px}
+.rm-contrat.reussi h2{color:#F2D58C}
+.rm-contrat.manque h2{color:#CDEFFF}

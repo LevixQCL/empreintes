@@ -526,7 +526,7 @@ export function retourDeMission(j: Jeu, m: Mission): string {
 }
 
 /** Range un rapport : les non lus restent tous, on ne garde que les derniers lus */
-function rangerRapport(j: Jeu, r?: RapportMission) {
+export function rangerRapport(j: Jeu, r?: RapportMission) {
   const tous = [...(j.rapports ?? []), ...(r ? [r] : [])].sort((x, y) => x.fin - y.fin);
   const garder = new Set(tous.filter((x) => x.lu).slice(-RAPPORTS_LUS_MAX));
   j.rapports = tous.filter((x) => !x.lu || garder.has(x));

@@ -34,6 +34,7 @@ import './fiche.css';
 import './campagne.css';
 import './pillages.css';
 import './missions-mer.css';
+import './marees.css';
 import './fleche.css';
 import './journal.css';
 import './lexique.css';

@@ -9,6 +9,7 @@ import { avancerFils, retourDeMission, verifierArrivees } from './descentes';
 import { creuser, recompenserConfiance, entrainer, garnirComptoir, soinParHeure } from './district';
 import { RAVITAILLEMENT, eveillerLegs } from './recompenses';
 import { recompenserFilleul } from './parrainage';
+import { retourDeContrat } from './marees';
 
 /** Rattrape le temps écoulé : énergie, soins, Forge. Rien n'est perdu ni puni pendant l'absence. */
 export function tick(j: Jeu, now: number): string[] {
@@ -65,6 +66,7 @@ export function tick(j: Jeu, now: number): string[] {
 
   for (const m of j.missions.filter((x) => now >= x.fin)) nouvelles.push(retourDeMission(j, m));
   j.missions = j.missions.filter((x) => now < x.fin);
+  if (j.marees?.contrat && now >= j.marees.contrat.fin) nouvelles.push(retourDeContrat(j));
   if (semaineDe(now) > j.epreuves.semaine) j.epreuves = { semaine: semaineDe(now), faites: [] };
 
   // un objectif du jour de plus en réserve chaque jour, 3 au plus : rien ne se perd pendant une courte absence

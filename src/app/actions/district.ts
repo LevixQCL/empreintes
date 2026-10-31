@@ -10,6 +10,7 @@ import type { BatimentId } from '../../core/types';
 import { visuel as ageDistrict } from '../../ui/art';
 import { nbEtapes } from '../../ui/briefing';
 import { NB_REPLIQUES } from '../../ui/district';
+import { contratAffiche, equipeAffichee } from '../../ui/marees';
 import type { OngletGuide } from '../../ui/guide';
 import { finPour } from '../combat';
 import { app, compteEtat, D, K, reduit } from '../etat';
@@ -149,7 +150,37 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     // le Port (28 octobre 2026) : sa présentation, ses deux volets
     case 'port-aide': D.portAide = true; window.scrollTo(0, 0); break;
     case 'port-entrer': app.jeu.portVu = true; D.portAide = false; sauver(); window.scrollTo(0, 0); break;
-    case 'port-volet': D.voletPort = id === 'missions' ? 'missions' : 'pillages'; break;
+    case 'port-volet': D.voletPort = id === 'missions' || id === 'marees' ? id : 'pillages'; D.mareePlace = null; break;
+    // les contrats de marée (31 octobre 2026) : la marée affichée, le Porteur de chaque épreuve, puis le départ de la gabare
+    case 'maree-rang': D.mareeRang = id as J.RangMaree; D.mareePlace = null; break;
+    case 'maree-place': { const k = Number(b.dataset.index ?? 0); D.mareePlace = D.mareePlace === k ? null : k; break; }
+    case 'maree-choisir': {
+      const c = contratAffiche(app.jeu, D.mareeRang, Date.now());
+      if (D.mareePlace == null) break;
+      const eq = equipeAffichee(app.jeu, c, D.mareeEquipe?.[c.id]);
+      const k = D.mareePlace;
+      const ailleurs = eq.indexOf(id);
+      // un Porteur déjà posté ailleurs échange sa place avec celui de l'épreuve choisie
+      if (ailleurs >= 0 && ailleurs !== k) eq[ailleurs] = eq[k] ?? null;
+      eq[k] = id;
+      D.mareeEquipe = { ...(D.mareeEquipe ?? {}), [c.id]: eq };
+      D.mareePlace = null;
+      break;
+    }
+    case 'maree-conseil': {
+      const c = contratAffiche(app.jeu, D.mareeRang, Date.now());
+      if (D.mareeEquipe) delete D.mareeEquipe[c.id];
+      D.mareePlace = null;
+      break;
+    }
+    case 'maree-partir': {
+      const c = J.contratsDuMoment(app.jeu, Date.now()).find((x) => x.id === id);
+      if (!c) break;
+      const eq = equipeAffichee(app.jeu, c, D.mareeEquipe?.[c.id]);
+      resultat(J.envoyerContrat(app.jeu, id, eq.filter((x): x is string => !!x), Date.now()));
+      D.mareePlace = null;
+      break;
+    }
     // la Flèche (28 octobre 2026) : son onglet, puis le départ de l'escouade vers le quai suivant
     case 'fleche': ouvrir('fleche'); D.flecheAide = false; lireGardiensEnLigne(); recevoirAssauts().then((c) => { if (c) sauver(); }); break;
     // tenir un quai (29 octobre 2026)

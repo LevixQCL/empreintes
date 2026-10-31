@@ -180,7 +180,7 @@ export interface Chantier {
 
 /** Un choix de carte en attente (boss, objectif du jour, Archive) */
 export interface Choix {
-  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve' | 'parrainage' | 'releve' | 'etoiles' | 'rodeur';
+  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve' | 'parrainage' | 'releve' | 'etoiles' | 'rodeur' | 'maree';
   options: string[];
   /** le joueur peut prendre des Éclats à la place */
   eclats?: number;
@@ -292,6 +292,8 @@ export interface Jeu {
   archive: { semaine: number; points: number; aOuvrir: number };
   /** les Porteurs partis en mission en mer, depuis le Port (le niveau de la mission est celui de la dernière Strate vaincue) */
   missions: Mission[];
+  /** les contrats de marée (31 octobre 2026) : la gabare en mer, les contrats remplis, les Indices laissés par les échecs */
+  marees?: { contrat: ContratEnMer | null; reussis: string[]; indices: Record<string, number> };
   /** (ancien, jusqu'au 28 octobre 2026) les destinations du jour déjà prises au Port : les missions sont maintenant illimitées */
   missionsJour?: { jour: number; cles: string[] };
   /** les creuseurs ramenés par les naufragés pendant la Strate en cours (plafonnés par Strate, idée de Luc du 28 octobre 2026) */
@@ -390,7 +392,8 @@ export function log(j: Jeu, t: string) {
 // ---------- Lecture ----------
 
 export const enExpedition = (j: Jeu, id: string) => (!!j.expedition && j.expedition.porteurs.some((p) => p.id === id)) || enMission(j, id);
-export const enMission = (j: Jeu, id: string) => !!j.missions?.some((m) => m.porteur === id);
+/** en mer : sur une barque, ou sur la gabare d'un contrat de marée (31 octobre 2026) */
+export const enMission = (j: Jeu, id: string) => !!j.missions?.some((m) => m.porteur === id) || !!j.marees?.contrat?.porteurs.includes(id);
 export const posteDe = (j: Jeu, b: Poste) => Object.keys(j.porteurs).find((id) => j.porteurs[id]!.poste === b) ?? null;
 export const stockage = (j: Jeu) => DISTRICT.stockage[j.batiments.noyau] ?? 0;
 export const pvMaxCombat = (j: Jeu, id: string) => pvNiveau(j, id) + bonusPv(j, id) - Math.floor(j.porteurs[id]!.usure);
@@ -616,8 +619,13 @@ export interface RapportMission {
   creuseurs: number; usure: number; marque: string | null;
   /** les habitants des familles recueillies qui restent au district (30 octobre 2026) */
   habitants?: number;
+  /** un contrat de marée (31 octobre 2026) : toute l'équipe, réussi ou non, et l'épreuve qui a cédé */
+  contrat?: { rang: 'montante' | 'vive' | 'grande'; titre: string; reussi: boolean; porteurs: string[]; taux: number; choix: boolean; cedee?: string };
   lu: boolean;
 }
+
+/** Un contrat de marée en mer : un Porteur par épreuve, dans l'ordre ; le taux est fixé au départ */
+export interface ContratEnMer { id: string; rang: 'montante' | 'vive' | 'grande'; porteurs: string[]; debut: number; fin: number; taux: number; strate: number }
 /** rapports lus gardés pour les relire (les non lus ne sont jamais effacés) */
 export const RAPPORTS_LUS_MAX = 5;
 

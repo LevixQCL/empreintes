@@ -6,7 +6,7 @@ import { COLLECTION, doublonsRequis, multNiveau } from '../core/collection';
 import { vestigeDef } from '../core/explorer';
 import { faceCarte } from './carte';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
-import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, coutPompe, nomConfiance, pompesRestantes, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
+import { MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, coutPompe, nomConfiance, pompesRestantes, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { miniature, portrait } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
@@ -88,7 +88,11 @@ export interface EcranDistrict {
   defi?: import('../core/jeu').GardienQuai | null;
   /** le Port : sa présentation rouverte, et le volet affiché (pillages ou missions en mer) */
   portAide?: boolean;
-  voletPort?: 'pillages' | 'missions';
+  voletPort?: 'pillages' | 'missions' | 'marees';
+  /** les contrats de marée (31 octobre 2026) : la marée affichée, l'équipe composée par contrat, l'épreuve dont on choisit le Porteur */
+  mareeRang?: import('../core/jeu').RangMaree;
+  mareeEquipe?: Record<string, (string | null)[]>;
+  mareePlace?: number | null;
   /** les garnisons des vrais directeurs à portée, lues en ligne (vide sans compte) */
   pillagesEnLigne?: import('../core/jeu').Cible[];
   /** la feuille des Vestiges d'une Strate est ouverte (Tour, 31 octobre 2026) */
@@ -430,6 +434,8 @@ export function gainsRapport(r: RapportMission): string {
     + `<li>${ICO.monter}<b>+${r.xp}</b><small>XP${r.niveau ? ` · niveau ${r.niveau}` : ''}</small></li>`
     + r.cartes.map((c) => `<li class="rm-carte${c.nouvelle ? ' nouvelle' : ''}">${ICO.cartes}<b>${echap(moduleDef(c.id).nom)}</b><small>${METAL(moduleDef(c.id).rarete)}${c.nouvelle ? ' · nouvelle' : ' · doublon'}</small></li>`).join('')
     + (r.creuseurs ? `<li>${ICO.ouvrier}<b>+${r.creuseurs}</b><small>creuseur${r.creuseurs > 1 ? 's' : ''}</small></li>` : '')
+    + (r.contrat?.choix ? `<li class="rm-carte nouvelle">${ICO.cartes}<b>3 cartes</b><small>au choix, au district</small></li>` : '')
+    + (r.contrat && !r.contrat.reussi ? `<li>${ICO.lueur}<b>+1 Indice</b><small>pour la prochaine tentative</small></li>` : '')
     + (r.usure ? `<li class="rm-usure">${ICO.soin}<b>+${virgule(r.usure)}</b><small>Usure</small></li>` : '')
     + `</ul>`;
 }
@@ -441,8 +447,12 @@ function feuilleRapport(e: EcranDistrict): string {
   if (!r) return '';
   const p = porteurDef(r.porteur);
   const reste = (e.j.rapports ?? []).filter((x) => !x.lu).length - 1;
-  return `<div class="voile-feuille" data-action="rapport-lu" aria-hidden="true"></div><section class="feuille rapport-mission" role="dialog" aria-modal="true" aria-labelledby="rm-titre" style="--c:${COULEUR[p.lignee]}">`
-    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete">${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">Mission en mer</span><h2 id="rm-titre">Retour de ${echap(p.nom)}</h2></div>`
+  const ct = r.contrat;
+  const tete = ct
+    ? `<span class="rm-equipe">${ct.porteurs.map((x) => avatar(x, 36)).join('')}</span><div class="titres"><span class="surtitre">${MAREES[ct.rang].nom} · ${ct.taux} % de chances</span><h2 id="rm-titre">${echap(ct.titre)} : ${ct.reussi ? 'réussi' : 'manqué'}</h2></div>`
+    : `${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">Mission en mer</span><h2 id="rm-titre">Retour de ${echap(p.nom)}</h2></div>`;
+  return `<div class="voile-feuille" data-action="rapport-lu" aria-hidden="true"></div><section class="feuille rapport-mission${ct ? ` rm-contrat${ct.reussi ? ' reussi' : ' manque'}` : ''}" role="dialog" aria-modal="true" aria-labelledby="rm-titre" style="--c:${COULEUR[p.lignee]}">`
+    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete">${tete}`
     + `<button type="button" class="btn-icone" data-action="rapport-lu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
     + `<div class="rm-recit">${r.recit.map((l) => `<p>${echap(l)}</p>`).join('')}</div>`
     + gainsRapport(r)

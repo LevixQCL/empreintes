@@ -4,12 +4,13 @@
 // Les règles sont dans src/core/partie/pillages.ts.
 
 import { porteurDef } from '../core/donnees';
-import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadeActive, escouadeDefense, escouadePourDepart, escouadesDe, etatPillage, faitsDuJour, forceEscouade, majJetons, MISSIONS, barquesMax, strateVaincue, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
+import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadeActive, escouadeDefense, escouadePourDepart, escouadesDe, etatPillage, faitsDuJour, forceEscouade, majJetons, MISSIONS, barquesMax, strateVaincue, MAREES, contratsDuMoment, mareesDe, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
 import { ageArchipel, vignetteArchipel, visuel } from './art';
 import { avatar, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO, icone } from './icones';
 import { htmlMissions } from './district';
+import { htmlMarees } from './marees';
 import { echap } from './outils';
 import { COULEUR } from './vue';
 
@@ -37,12 +38,18 @@ export function htmlPillages(e: EcranDistrict): string {
   const volet = e.voletPort ?? 'pillages';
   const enMer = j.missions.length;
   majJetons(j, e.now);
-  const seg = (id: 'pillages' | 'missions', nom: string, plus: string) =>
+  const seg = (id: 'pillages' | 'missions' | 'marees', nom: string, plus: string) =>
     `<button type="button" role="tab" class="seg${volet === id ? ' actif' : ''}" data-action="port-volet" data-id="${id}" aria-selected="${volet === id}">${nom}<small>${plus}</small></button>`;
-  h += `<div class="segments-choix deux pl-volets" role="tablist" aria-label="Pillages ou missions en mer">`
+  // les contrats de marée (31 octobre 2026) : un troisième volet ; le compte des contrats encore à remplir
+  const marees = contratsDuMoment(j, e.now);
+  const aRemplir = marees.filter((c) => c.ouvert && !c.reussi).length;
+  const gabare = mareesDe(j).contrat;
+  h += `<div class="segments-choix trois pl-volets" role="tablist" aria-label="Pillages, missions en mer ou contrats de marée">`
     + seg('pillages', 'Pillages', `${etatPillage(j).jetons} / ${PILLAGE.jetonsMax} jetons`)
-    + seg('missions', 'Missions en mer', `${enMer} / ${barquesMax(j)} en mer`) + `</div>`;
+    + seg('missions', 'Missions', `${enMer} / ${barquesMax(j)} en mer`)
+    + seg('marees', 'Marées', gabare ? 'gabare en mer' : marees.some((c) => c.ouvert) ? `${aRemplir} à remplir` : `dès la Strate −${MAREES.montante.strate}`) + `</div>`;
   if (volet === 'missions') return coquille(e, h + htmlMissions(e), 'pl');
+  if (volet === 'marees') return coquille(e, h + htmlMarees(e), 'pl');
 
   const prochain = majJetons(j, e.now);
   const etat = etatPillage(j);

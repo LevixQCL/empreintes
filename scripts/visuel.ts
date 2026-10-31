@@ -28,7 +28,7 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="forge"]'); } },
@@ -77,6 +77,11 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'port-presentation', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); } },
   { nom: 'port-missions', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); } },
   // les destinations du jour et les Porteurs libres (une seule barque en mer)
+  // les contrats de marée (31 octobre 2026) : les trois marées et le contrat, la liste des Porteurs d'une épreuve, la gabare en mer
+  { nom: 'port-marees', sauvegarde: 'marees', faire: async (p) => { await ENTRER(p); await p.$eval('.onglet[data-action="pillages"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('[data-action="port-volet"][data-id="marees"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); } },
+  { nom: 'port-marees-bas', sauvegarde: 'marees', faire: async (p) => { await ENTRER(p); await p.$eval('.onglet[data-action="pillages"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('[data-action="port-volet"][data-id="marees"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.mr-depart', (e) => e.scrollIntoView({ block: 'end' })); } },
+  { nom: 'port-marees-choix', sauvegarde: 'marees', faire: async (p) => { await ENTRER(p); await p.$eval('.onglet[data-action="pillages"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('[data-action="port-volet"][data-id="marees"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.click('.mr-poste >> nth=1'); await p.waitForTimeout(200); await p.$eval('.mr-choix', (e) => e.scrollIntoView({ block: 'center' })); } },
+  { nom: 'port-marees-mer', sauvegarde: 'mareesMer', faire: async (p) => { await ENTRER(p); await p.$eval('.onglet[data-action="pillages"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('[data-action="port-volet"][data-id="marees"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); } },
   { nom: 'port-destinations', sauvegarde: 'port', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); await p.$eval('[data-action="port-volet"][data-id="missions"]', (b) => (b as HTMLElement).click()); await p.waitForTimeout(300); await p.$eval('.ds-lieux', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'onglet-fleche', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); } },
   { nom: 'onglet-fleche-bas', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="fleche"]'); await p.$eval('.fl-paliers', (e) => e.scrollIntoView({ block: 'end' })); } },
@@ -151,6 +156,14 @@ async function main() {
     po.data.portVu = true;
     po.data.energie = 500;
     (saves as Record<string, unknown>).port = po;
+    // les contrats de marée (31 octobre 2026) : Strate −6 vaincue (marée montante et vive-eau ouvertes), des Porteurs libres
+    const ma = JSON.parse(JSON.stringify(po));
+    ma.data.strate = 7; ma.data.frontVaincu = false; ma.data.energie = 2000; ma.data.missions = [];
+    for (const id of Object.keys(ma.data.porteurs)) if (ma.data.porteurs[id].poste !== 'forge') ma.data.porteurs[id].poste = null;
+    (saves as Record<string, unknown>).marees = ma;
+    const mm = JSON.parse(JSON.stringify(ma));
+    mm.data.marees = { contrat: { id: 'montante-0', rang: 'montante', porteurs: Object.keys(mm.data.porteurs).filter((id: string) => !mm.data.porteurs[id].poste).slice(0, 2), debut: T - 3_600_000, fin: T + 3 * 3_600_000, taux: 78, strate: 6 }, reussis: [], indices: {} };
+    (saves as Record<string, unknown>).mareesMer = mm;
     // la Tour à plusieurs places (28 octobre 2026) : deux Porteurs en séance, le dernier entraîné prêt à relancer
     const te = JSON.parse(JSON.stringify(saves.district));
     te.data.batiments.noyau = 5;
