@@ -6,6 +6,8 @@
 import { ECLATS, PHASES3, eclatsPossibles, enGroupe, felureVisible, tousEnnemis, traitsEnJeu } from './combat';
 import { CONDITIONS, ennemiDef, texteTrait } from './donnees';
 import type { CombatEtat, Trait } from './types';
+import { reperentPassage, suitePorte, type Expedition } from './expedition';
+import { PALIERS_BESTIAIRE, particularite, queteDef } from './strates';
 
 export interface Decouverte {
   id: string;
@@ -16,6 +18,8 @@ export interface Decouverte {
   conseil: string;
   /** l'ennemi à montrer en portrait, s'il y en a un */
   ennemi?: string;
+  /** l'icône à montrer sinon (nom dans ICO) */
+  ico?: string;
 }
 
 const CONSEILS_TRAITS: Record<Trait['type'], string> = {
@@ -108,4 +112,66 @@ export function decouvertesEnAttente(vues: readonly string[], s: CombatEtat): De
 /** La première découverte pas encore vue dans ce combat (null s'il n'y en a pas) */
 export function decouverteEnAttente(vues: readonly string[], s: CombatEtat): Decouverte | null {
   return decouvertesDuCombat(s).find((d) => !vues.includes(d.id)) ?? null;
+}
+
+// ---------- Les premières rencontres de l'exploration (31 octobre 2026) ----------
+// Bryan : « un nouveau joueur, tout ça lui sera à chaque fois expliqué avant une descente ? » Le contenu des Strates
+// (particularité, quête, Halte, passage secret, porte à Fréquence, bestiaire) s'explique la première fois qu'il apparaît,
+// au moment où il sert, une seule fois par partie : même mémoire (`Jeu.decouvertes`) que les découvertes du combat.
+
+const CONSEILS_PARTICULARITE: Record<number, string> = {
+  2: 'Garde un Augmenté debout dans l’escouade : sans lui, les murs restent fermés.',
+  3: 'Avance salle par salle jusqu’à la Halte : la lanterne qui t’y attend rallume le plan.',
+  4: 'Une salle scellée est plus dure, mais rend une carte de cuivre : entre-y quand l’escouade est en forme.',
+  5: 'Ne néglige pas les caches : une niche peut rendre une carte au lieu de composants.',
+  6: 'Passe par les archives quand tu peux : elles complètent les Chroniques.',
+  7: 'Regarde les deux occupants avant d’entrer, et choisis celui que ton escouade bat le mieux.',
+  8: 'Ouvre l’œil sur le plan : le Veilleur égaré vaut le détour.',
+  9: 'Le fil ne sert qu’une fois : garde-le pour éviter une salle trop dure ou rejoindre un meilleur chemin.',
+  10: 'Garde dans le deck des cartes aux Fréquences variées : il faudra quatre Fréquences qui se suivent.',
+};
+
+/** Ce que l'expédition montre pour la première fois, dans l'ordre */
+export function decouvertesExploration(x: Expedition, quetes: Record<number, number> = {}): Decouverte[] {
+  const r: Decouverte[] = [];
+  if (!x.carte || x.tutoriel || x.epreuve || x.pillage || x.fleche) return r;
+  const p = particularite(x.strate);
+  if (p) {
+    r.push({ id: `strate-${x.strate}`, sur: `STRATE −${x.strate} · SA PARTICULARITÉ`, titre: p.nom, ico: 'strate',
+      texte: `Chaque Strate a sa façon d’être. Ici : ${p.texte.charAt(0).toLowerCase()}${p.texte.slice(1)} Elle reste rappelée sous le nom de la Strate.`,
+      conseil: CONSEILS_PARTICULARITE[x.strate] ?? '' });
+  }
+  const q = queteDef(x.strate);
+  if (q && (quetes[x.strate] ?? 0) < q.etapes.length && x.carte.salles.some((s) => s.quete)) {
+    r.push({ id: 'quete', sur: 'PREMIÈRE RENCONTRE', titre: 'La quête de la Strate', ico: 'quete',
+      texte: `Chaque Strate cache une quête en plusieurs étapes. Ici : « ${q.nom} ». À chaque descente, une salle porte la marque ✦, visible même dans le brouillard. Passes-y, et gagne le combat s’il y en a un : l’étape est relevée. Elle compte au retour au district, même si la descente finit mal.`,
+      conseil: 'Les points sous le nom de la Strate (●○○) montrent où tu en es. Au bout de la quête : une carte, de l’XP et un morceau de l’histoire.' });
+  }
+  if (x.enHalte) {
+    r.push({ id: 'halte', sur: 'PREMIÈRE RENCONTRE', titre: 'Une Halte', ico: 'halte',
+      texte: 'Tous les chemins passent par ici. Pas de combat : un lieu de l’histoire. Touche les détails pour entendre ton escouade, puis fais un choix. Il rapporte un Éclat, des composants ou une lampe, et l’histoire s’en souviendra plus loin. Chaque descente mène à la Halte suivante.',
+      conseil: 'Ce que l’on entend dépend de qui est là : avec une autre escouade, les mêmes détails racontent autre chose.' });
+  }
+  if (x.carte.salles.some((s) => !s.faite && reperentPassage(x, s).length)) {
+    r.push({ id: 'passage', sur: 'PREMIÈRE RENCONTRE', titre: 'Un passage secret', ico: 'fissure',
+      texte: 'Un de tes Porteurs repère une fissure que les autres ne voient pas (marque sur le plan). Entre dans cette salle et suis-le : une salle cachée hors du chemin, quelques mots de lui, des composants et une archive.',
+      conseil: 'Chaque passage n’est repéré que par certains Porteurs : change d’escouade de temps en temps pour en découvrir d’autres.' });
+  }
+  if (x.porte) {
+    const n = suitePorte(x.strate);
+    r.push({ id: 'porte', sur: 'PREMIÈRE RENCONTRE', titre: 'Une porte à Fréquence', ico: 'porte',
+      texte: `Une porte ancienne, gravée de Fréquences. Cinq cartes de ton deck sont tirées : choisis-en ${n} dont les Fréquences se suivent, comme une suite en combat (l’Accord ∗ prolonge toute suite). Derrière : un Éclat et des composants.`,
+      conseil: 'Aucun risque : tu peux retirer la main une fois, ou passer ton chemin si la suite n’y est pas.' });
+  }
+  if ((x.gagnes ?? 0) >= 1) {
+    r.push({ id: 'bestiaire', sur: 'PREMIÈRE VICTOIRE', titre: 'Le bestiaire', ico: 'codex',
+      texte: `Chaque ennemi vaincu ouvre sa fiche dans la Bibliothèque, onglet Bestiaire. Elle se complète à force de le battre : d’où il vient (${PALIERS_BESTIAIRE[0]} victoire), comment le battre (${PALIERS_BESTIAIRE[1]}), puis son secret (${PALIERS_BESTIAIRE[2]}).`,
+      conseil: 'Bloqué contre un ennemi ? Sa fiche donne un conseil concret pour le battre.' });
+  }
+  return r;
+}
+
+/** Les découvertes de l'exploration pas encore vues */
+export function decouvertesExplorationEnAttente(vues: readonly string[], x: Expedition, quetes?: Record<number, number>): Decouverte[] {
+  return decouvertesExploration(x, quetes).filter((d) => !vues.includes(d.id));
 }

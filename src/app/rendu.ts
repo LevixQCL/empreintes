@@ -5,7 +5,7 @@ import { htmlFleche } from '../ui/fleche';
 import { repliqueGardien, sceneDef } from '../core/campagne';
 import { tousEnnemis } from '../core/combat';
 import { ennemiDef } from '../core/donnees';
-import { decouvertesEnAttente } from '../core/decouvertes';
+import { decouvertesEnAttente, decouvertesExploration } from '../core/decouvertes';
 import * as J from '../core/jeu';
 import { htmlBriefing } from '../ui/briefing';
 import { htmlScene } from '../ui/campagne';
@@ -23,7 +23,7 @@ import { htmlPorteurs } from '../ui/porteurs';
 import { visuel as ageDistrict } from '../ui/art';
 import { htmlTitre, type TitreCompte } from '../ui/titre';
 import { glisser, horloge, noter } from '../ui/toucher';
-import { htmlCombat, panneauCompte } from '../ui/vue';
+import { htmlCombat, htmlDecouverte, panneauCompte } from '../ui/vue';
 import { annoncerGardien } from '../ui/bandeau';
 import { app, compteEtat, D, G, K, racine, reduit } from './etat';
 import { sauver } from './synchro';
@@ -109,7 +109,18 @@ function dessiner() {
   let h = '';
   if (app.mode === 'titre') h = htmlTitre(app.jeu.introVue, !reduit, compteTitre());
   else if (app.mode === 'intro') h = htmlIntro(app.plan, app.lignesVues, !reduit, app.texteCache, app.introLongue);
-  else if (app.mode === 'combat' && app.jeu.expedition?.carte && app.jeu.expedition.phase === 'carte') h = htmlExploration(app.jeu, K.salleVue, { details: K.halteVus ?? [], porte: K.porteChoix ?? [] });
+  else if (app.mode === 'combat' && app.jeu.expedition?.carte && app.jeu.expedition.phase === 'carte') {
+    h = htmlExploration(app.jeu, K.salleVue, { details: K.halteVus ?? [], porte: K.porteChoix ?? [] });
+    // le contenu des Strates s'explique la première fois qu'il apparaît (31 octobre 2026), une fenêtre à la fois
+    const vues = app.jeu.decouvertes ?? [];
+    const toutes = decouvertesExploration(app.jeu.expedition, app.jeu.quetes);
+    const attente = toutes.filter((d) => !vues.includes(d.id));
+    if (attente[0]) {
+      const lot = toutes.filter((d) => !vues.includes(d.id) || K.decouvertesExpl?.includes(d.id));
+      K.decouvertesExpl = lot.map((d) => d.id);
+      h += htmlDecouverte(attente[0], lot.length > 1 ? { n: lot.length - attente.length + 1, total: lot.length } : undefined);
+    } else K.decouvertesExpl = undefined;
+  }
   else if (app.mode === 'combat' && app.jeu.expedition) {
     const etat = K.etat ?? app.jeu.expedition.combat;
     const lecon = app.jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;

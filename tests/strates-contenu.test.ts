@@ -224,3 +224,30 @@ describe('Le bestiaire', () => {
     expect(lignesBestiaire('vigie', 10).secret).toBeTruthy();
   });
 });
+
+import { decouvertesExploration } from '../src/core/decouvertes';
+
+describe('Les premières rencontres de l’exploration (31 octobre 2026)', () => {
+  it('la particularité, la quête et la Halte s’expliquent quand elles apparaissent ; rien pendant le tutoriel', () => {
+    const j = pret(3);
+    partir(j, ESC, 3, 11);
+    const ids = () => decouvertesExploration(j.expedition!, j.quetes).map((d) => d.id);
+    expect(ids()).toContain('strate-3');
+    if (j.expedition!.carte!.salles.some((s) => s.quete)) expect(ids()).toContain('quete');
+    expect(ids()).not.toContain('halte');
+    allerALaHalte(j);
+    expect(ids()).toContain('halte');
+    expect(ids()).toContain('bestiaire');
+    expect(decouvertesExploration({ ...j.expedition!, tutoriel: true }, j.quetes)).toHaveLength(0);
+  });
+
+  it('chaque Strate à particularité a son conseil, et la quête finie ne s’annonce plus', () => {
+    for (const p of PARTICULARITES) {
+      const j = pret(p.strate);
+      partir(j, ESC, p.strate, 5);
+      const d = decouvertesExploration(j.expedition!, { [p.strate]: 99 });
+      expect(d.find((x) => x.id === `strate-${p.strate}`)!.conseil).not.toBe('');
+      expect(d.some((x) => x.id === 'quete')).toBe(false);
+    }
+  });
+});
