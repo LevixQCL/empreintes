@@ -271,6 +271,11 @@ l'acte (−3, −6, −10) au lieu d'attendre l'étage suivant, et l'acte suivan
 cours (`chapitreCampagne`) ; la Bibliothèque, onglet Campagne, rejoue les scènes vues. Une ancienne sauvegarde ne rejoue que la
 dernière scène atteinte. Les illustrations à faire sont dans `docs/prompts-campagne.md`.
 
+**Le combat automatique** (31 octobre 2026, `combatAutoPermis` dans `partie/descentes.ts`, `composerTourMoyen` dans `robot.ts`, `tests/combat-auto.test.ts`).
+Dans une Strate déjà vaincue, un combat ordinaire (pas le gardien, ni une salle scellée, une Épreuve, un pillage ou la Flèche) peut se jouer
+tout seul : bouton « Auto » à côté de « MAIN ». L'escouade joue comme le « joueur moyen » du parcours, avec le vrai moteur, en accéléré ;
+« Reprendre » rend la main après la chaîne en cours. On peut perdre : rien n'est donné, c'est seulement plus court pour une session de métro.
+
 **Le contenu des Strates** (31 octobre 2026, `src/core/strates.ts`, `docs/strates-contenu.md`, `tests/strates-contenu.test.ts`). Pour que les Strates
 ne soient plus des combats en chaîne, sans toucher au combat : une **Halte** obligatoire au milieu de chaque carte (1 à −1, 2 à −2, 3 ensuite ;
 une de plus à chaque descente, des détails à toucher qui font parler l'escouade, puis un choix), une **particularité** par Strate

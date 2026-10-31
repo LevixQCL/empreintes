@@ -4,6 +4,7 @@ import { envoyerPillages } from '../pillages';
 import { envoyerAssauts, synchroGarde } from '../fleche';
 import * as C from '../../core/combat';
 import * as J from '../../core/jeu';
+import { composerTourMoyen } from '../../core/robot';
 import { suitePorte } from '../../core/expedition';
 import { comparer, montrer, relever } from '../../ui/gains';
 import { basculerSon, debloquerSon } from '../../ui/impact';
@@ -41,6 +42,26 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     case 'relancer': if (s && !K.verrou) { C.relancerMain(s); vibrer(8); sauver(); } break;
     case 'repiocher': if (s && !K.verrou) { C.repiocher(s); sauver(); } break;
     case 'lancer': if (s && !K.verrou) { debloquerSon(); J.noterChaine(app.jeu, s.chaine); await jouer(C.lancer(s)); if (avantGains) montrer(comparer(avantGains, relever(app.jeu))); return 'fin'; } break;
+    // le combat automatique (31 octobre 2026) : l'escouade joue seule, en accéléré, tant que le joueur ne reprend pas la main
+    case 'auto': {
+      if (!s || K.verrou || !J.combatAutoPermis(app.jeu)) break;
+      K.auto = true; K.eclats = false; K.tuile = undefined; vibrer(8); debloquerSon();
+      for (let n = 0; n < 60 && K.auto; n++) {
+        const cs = app.jeu.expedition?.combat;
+        if (!cs || cs.issue !== 'en-cours' || K.fin || !J.combatAutoPermis(app.jeu)) break;
+        C.viderChaine(cs);
+        composerTourMoyen(cs);
+        if (!cs.chaine.length) break;
+        J.noterChaine(app.jeu, cs.chaine);
+        await jouer(C.lancer(cs), true);
+      }
+      K.auto = false;
+      if (avantGains) montrer(comparer(avantGains, relever(app.jeu)));
+      sauver();
+      afficher();
+      return 'fin';
+    }
+    case 'auto-stop': K.auto = false; break;
     case 'regles': K.regles = !K.regles; K.fuite = false; K.guide = null; K.journal = null; break;
     case 'fuir': if (!K.verrou) { K.fuite = !K.fuite; K.regles = false; K.guide = null; K.journal = null; } break;
     // le journal du combat : les piles l'ouvrent sur la défausse, la dernière ligne du journal et la fin du combat sur les tours

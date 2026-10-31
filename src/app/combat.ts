@@ -113,9 +113,9 @@ function popsDe(ev: Evenement, etat?: CombatEtat) {
   else if (ev.kind === 'effet') pop(ev.cible, ev.texte, 'var(--gold)');
   else if (ev.kind === 'flux') pop('escouade', `+${ev.gain} Flux`, 'var(--gold)');
 }
-export async function jouer(pas: Pas[]) {
+export async function jouer(pas: Pas[], rapide = false) {
   K.verrou = true;
-  app.rapide = false;
+  app.rapide = rapide;
   initImpacts(reduit);
   let bonus = 0;
   for (const p of pas) {

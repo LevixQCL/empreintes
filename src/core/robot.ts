@@ -127,6 +127,15 @@ export function jouerTour(s: CombatEtat): void {
  * C'est la référence pour régler la difficulté : le robot, lui, gagne bien plus souvent qu'un vrai joueur.
  */
 export function jouerTourMoyen(s: CombatEtat): void {
+  composerTourMoyen(s);
+  lancer(s, { silencieux: true });
+}
+
+/**
+ * Ce que poserait le joueur moyen, sans lancer : son Coup d'éclat éventuel, sa cible, puis sa chaîne.
+ * Le combat automatique (31 octobre 2026) s'en sert pour jouer à la place du joueur dans une Strate déjà vaincue.
+ */
+export function composerTourMoyen(s: CombatEtat): void {
   // il garde son Flux pour le Coup d'éclat tant qu'il ne l'a pas déclenché ; ensuite, il s'offre une place de plus
   if (s.eclat && s.flux >= 2 && capacite(s) < REGLES.capaciteMax) allonger(s);
   // dans un groupe, il frappe le plus entamé (le plus proche de tomber)
@@ -167,7 +176,6 @@ export function jouerTourMoyen(s: CombatEtat): void {
     if (!meilleur || score > meilleur.score) meilleur = { score, ordre };
   }
   for (const g of meilleur?.ordre ?? []) ajouter(s, g.uid);
-  lancer(s, { silencieux: true });
 }
 
 export interface Escouade {

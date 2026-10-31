@@ -1400,3 +1400,19 @@ export function suivrePassage(j: Jeu): Resultat {
   j.expedition = r.x;
   return { ok: true };
 }
+
+// ---------- Le combat automatique (31 octobre 2026) ----------
+/**
+ * Dans une Strate déjà vaincue, un combat ordinaire peut se jouer tout seul : l'escouade suit le « joueur moyen »
+ * du parcours simulé (robot.ts, composerTourMoyen), avec le vrai moteur, le vrai hasard et les vrais PV.
+ * Pour les sessions courtes, sans rien donner : on peut perdre, et le gardien, les salles scellées, les Épreuves,
+ * les pillages et la Flèche se jouent toujours à la main. Le front (la Strate pas encore vaincue) reste à la main.
+ */
+export function combatAutoPermis(j: Jeu): boolean {
+  const x = j.expedition;
+  if (!x || x.tutoriel || x.pillage || x.fleche || x.epreuve || x.cloture) return false;
+  if (x.phase !== 'combat' || x.combat.issue !== 'en-cours' || !x.carte) return false;
+  if (x.strate > strateVaincue(j)) return false;
+  const t = salleCourante(x).type;
+  return t === 'combat';
+}

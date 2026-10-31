@@ -527,6 +527,14 @@
 .btn-relance:disabled{opacity:.5;animation:none}
 @keyframes relance-lueur{50%{box-shadow:inset 0 0 0 1px rgba(159,216,255,.7),inset 0 0 14px rgba(159,216,255,.26)}}
 @media (prefers-reduced-motion:reduce){.btn-relance{animation:none}}
+/* Combat automatique (31 octobre 2026) : même verre que « Relancer », sans lueur au repos ; doré pendant qu'il tourne */
+.btn-auto{animation:none;margin-left:auto}
+.btn-auto + .journal-ligne{margin-left:0}
+.btn-auto.en-cours{color:#FFE7A8;background:linear-gradient(180deg,rgba(255,206,110,.2),rgba(255,206,110,.05));
+  box-shadow:inset 0 0 0 1px rgba(255,206,110,.6),inset 0 0 12px rgba(255,206,110,.18);animation:auto-lueur 1.6s ease-in-out infinite}
+.btn-auto.en-cours .ico{color:#FFD67A}
+@keyframes auto-lueur{50%{box-shadow:inset 0 0 0 1px rgba(255,206,110,.9),inset 0 0 16px rgba(255,206,110,.3)}}
+@media (prefers-reduced-motion:reduce){.btn-auto.en-cours{animation:none}}
 /* la chaîne posée brise la Fêlure de cet ennemi, même s'il n'est pas visé (28 octobre 2026) */
 .vg-felure.prevue{box-shadow:inset 0 0 0 1px var(--fc,#fff),0 0 8px var(--fc,#fff);animation:felure-prevue 1s ease-in-out infinite alternate}
 @media (prefers-reduced-motion: reduce){ .vg-felure.prevue{animation:none} }
