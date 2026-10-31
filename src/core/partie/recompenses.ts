@@ -5,7 +5,7 @@ import { batimentDef, porteurDef, MODULES, tirablesEn, NOMS_LIGNEE, moduleDe, mo
 import type { Rarete } from '../types';
 import { COLLECTION, NIVEAU_METAL, ajouterCarte, tirerChoix, NOMS_RARETE } from '../collection';
 import { tireur } from '../rng';
-import { ARCHIVE, DISTRICT, log, niveauPorteur, non, porteursPresents, type Jeu, type Resultat, typeDuJour } from './etat';
+import { ARCHIVE, DISTRICT, log, niveauPorteur, non, porteursPresents, strateVaincue, type Jeu, type Resultat, typeDuJour } from './etat';
 import { interrompreSeance, progresser, quotidienFait } from './district';
 
 // ---------- Kit de départ des recrues ----------
@@ -198,7 +198,9 @@ export function quitterPostes(j: Jeu, escouade: string[]): void {
 /** La lettre de la directrice : la première question choisit la lignée (ou la Clé), la seconde la voie */
 export const LETTRE_LEGS = {
   titre: 'La lettre de la directrice',
-  texte: 'Sous la Tour du Noyau, derrière une plaque que personne n’avait pensé à dévisser, un coffre de nacre et une lettre. « Directeur, j’ai tenu ce district avant toi. Les Hauts vident les Berceaux ; j’ai sauvé ce que j’ai pu. Dix vierges, jamais recopiées. Une seule est pour toi : dis-moi qui tu es, et je te dirai laquelle. »',
+  texte: 'Sous la Tour du Noyau, derrière une plaque, les ouvriers avaient trouvé un coffre de nacre, gravé à la main : « Pour celui qui remontera de la première Strate. Pas avant. » Ce soir, Ilka te le tend. Dedans, une lettre.',
+  /** la lettre elle-même, mise à part (31 octobre 2026) */
+  lettre: 'Directeur, tu es descendu là où je ne suis jamais allée, et tu es revenu avec les tiens. Alors tu es digne de ce que je n’ai confié à personne. Les Hauts vident les Berceaux ; j’ai sauvé dix vierges, jamais recopiées. Une seule est pour toi : dis-moi qui tu es, et je te dirai laquelle.',
   question: 'Qu’est-ce qui tient un district debout ?',
   lignees: [
     { id: 'tech', nom: 'La machine', phrase: 'Des mains qui réparent ce que les autres jettent.' },
@@ -226,11 +228,11 @@ export const LETTRE_LEGS = {
 } as const;
 
 /**
- * La lettre attend le joueur : après la chambre scellée, au district, tant qu'il n'a pas reçu son Héritage.
- * Aussi pendant une descente en cours (29 octobre 2026) : un joueur qui repasse au district sans jamais finir sa descente
- * ne la voyait jamais.
+ * La lettre attend le joueur au district, tant qu'il n'a pas reçu son Héritage, une fois le gardien de la Strate −1 vaincu
+ * (31 octobre 2026, Bryan : à l'arrivée au district, le joueur ne savait pas encore ce que sont les lignées ; la directrice
+ * réserve son coffre à celui qui remonte de la première Strate). Aussi pendant une descente en cours (29 octobre 2026).
  */
-export const legsEnAttente = (j: Jeu) => !!j.chambre && !j.legs;
+export const legsEnAttente = (j: Jeu) => !!j.chambre && !j.legs && strateVaincue(j) >= 1;
 
 /** Le joueur répond à la lettre : sa carte de l’Héritage (ou la Clé) lui revient, scellée jusqu'à un Porteur de niveau 10 */
 export function choisirLegs(j: Jeu, id: string): Resultat {

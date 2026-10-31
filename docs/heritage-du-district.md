@@ -29,7 +29,9 @@ Le but : donner envie de jouer pour enfin la porter.
   (`legs: true`, exclues de `MODULES_TIRABLES`), `CLE_LEGS` et `cleDuLegs`, second effet `effet2` dans le moteur.
 - **« Un seul Legs par Porteur » disparaît** (il n'y en a qu'un) ; la carte reste liée à sa lignée et pèse sa Charge.
 - **Comment le joueur reçoit la sienne : par un choix dans l'histoire** (validé par Bryan le 27 octobre 2026). La lettre de la directrice
-  pose deux questions sur le directeur qu'on veut être, sans jamais montrer de chiffres :
+  pose deux questions sur le directeur qu'on veut être, sans jamais montrer de chiffres. Elle arrive au retour du gardien de la Strate −1
+  (Bryan, 31 octobre 2026) : le coffre est gravé « Pour celui qui remontera de la première Strate. Pas avant. » et la directrice
+  y juge le directeur digne ; avant, le joueur ne savait pas encore ce que sont les lignées.
   1. « Qu'est-ce qui tient un district debout ? » → la machine (Augmentés), le corps (Génés) ou l'empreinte (Résonants),
      ou « Tout le monde à la fois » (la **Clé de l’Héritage**, qui rejoint le paquetage : jouée par personne, utile à toute escouade) ;
   2. selon la lignée, trois réponses, une par voie (par exemple chez les Génés : « on encaisse ensemble » → Carapace,

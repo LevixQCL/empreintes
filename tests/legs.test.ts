@@ -35,16 +35,20 @@ describe('L’Héritage du district', () => {
   it('la lettre attend aussi pendant une descente en cours (un joueur qui ne finit jamais sa descente la reçoit)', () => {
     const j = nouveauJeu(0);
     j.chambre = true;
+    j.frontVaincu = true;
     j.expedition = {} as typeof j.expedition;
     expect(legsEnAttente(j)).toBe(true);
     expect(choisirLegs(j, 'premiere-mue').ok).toBe(true);
     expect(legsEnAttente(j)).toBe(false);
   });
 
-  it('une seule par joueur, après la chambre, et définitive', () => {
+  it('une seule par joueur, après le gardien de la Strate −1, et définitive', () => {
     const j = nouveauJeu(0);
     expect(legsEnAttente(j)).toBe(false);
     j.chambre = true;
+    // à l'arrivée au district, la lettre attend encore : le coffre est « pour celui qui remontera de la première Strate »
+    expect(legsEnAttente(j)).toBe(false);
+    j.frontVaincu = true;
     expect(legsEnAttente(j)).toBe(true);
     expect(choisirLegs(j, 'carapace-fondations').ok).toBe(true);
     expect(j.collection['carapace-fondations@nacre']).toEqual({ niveau: 8, doublons: 0 });

@@ -941,7 +941,7 @@ function fenetreLegs(e: EcranDistrict): string {
       + v.options.map((o) => option('legs-choisir', o.id, moduleDef(o.id).nom, o.phrase)).join('')
       + `</div><div class="ligne-btn"><button type="button" class="btn sec" data-action="legs-retour">Revenir à la première question</button></div>`;
   } else {
-    corps = `<span class="surtitre">L’HÉRITAGE DU DISTRICT · 1 / 2</span><h2 id="legs-titre">${echap(L.titre)}</h2><p>${echap(L.texte)}</p><h3 class="legs-question">${echap(L.question)}</h3><div class="options-decision">`
+    corps = `<span class="surtitre">L’HÉRITAGE DU DISTRICT · 1 / 2</span><h2 id="legs-titre">${echap(L.titre)}</h2><p>${echap(L.texte)}</p><blockquote class="lore-carte legs-lettre">${echap(L.lettre)}</blockquote><h3 class="legs-question">${echap(L.question)}</h3><div class="options-decision">`
       + L.lignees.map((o) => option(o.id === 'cle' ? 'legs-choisir' : 'legs-lignee', o.id, o.nom, o.phrase)).join('') + `</div>`;
   }
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="legs-titre"><div class="fenetre decision legs">${corps}`
