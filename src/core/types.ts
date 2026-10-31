@@ -226,6 +226,8 @@ export interface PorteurEtat {
 
 export interface EnnemiEtat {
   id: string;
+  /** sa première attaque a déjà été retenue par l'Ombre courtoise (Aurel) */
+  retenu?: boolean;
   pv: number;
   pvMax: number;
   /** multiplicateur de puissance selon la profondeur de la Strate */
@@ -285,7 +287,7 @@ export interface BonusMarques {
   fissure?: number;
   /** part du bouclier d'escouade gardée d'un tour à l'autre (Docker, Bras de quai) */
   garde?: number;
-  /** part retirée à l'attaque annoncée de chaque ennemi au premier tour (Aurel, Ombre courtoise) */
+  /** part retirée à la première attaque de chaque ennemi, quel que soit le tour (Aurel, Ombre courtoise) */
   desarme?: number;
   /** cartes en plus dans la main du premier tour (Guetteur, Guet) */
   main?: number;
@@ -341,6 +343,8 @@ export interface CombatEtat {
   releveFaite?: boolean;
   /** Marque de Joss (Nuit blanche) : part des PV max rendue au plus blessé à la fin de chaque tour ennemi */
   veille?: number;
+  /** Marque d'Aurel (Ombre courtoise) : part retirée à la première attaque de chaque ennemi */
+  desarme?: number;
   /** Marque de Kessa (Née-de-mue) : part des dégâts absorbés par le bouclier renvoyée à l'attaquant */
   chitine?: number;
   /** Marque de Liane (Galons blancs) : Flux en plus par Fêlure brisée en résonance */

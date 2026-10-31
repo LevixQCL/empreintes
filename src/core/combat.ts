@@ -98,6 +98,7 @@ export function creerCombat(opts: {
   if (b?.garde) s.gardeMarque = b.garde;
   if (b?.releve) s.releve = b.releve;
   if (b?.veille) s.veille = b.veille;
+  if (b?.desarme) s.desarme = b.desarme;
   if (b?.chitine) s.chitine = b.chitine;
   if (b?.felureFlux) s.felureFlux = b.felureFlux;
   if (b?.fissure) { s.ennemi.fissure = b.fissure; s.ennemi.fissureTours = 2; }
@@ -106,8 +107,6 @@ export function creerCombat(opts: {
     for (const en of tousEnnemis(s)) if (ennemiDef(en.id).phase) en.phase3 = VARIANTES[((opts.rng >>> 7) + (en.rang ?? 0)) % VARIANTES.length]!;
   }
   for (const en of tousEnnemis(s)) choisirIntention(s, en);
-  // Ombre courtoise (Aurel) : la première attaque annoncée de chaque ennemi est retenue
-  if (b?.desarme) for (const en of tousEnnemis(s)) { const it = intentionDe(s, en); if (it.type === 'atk') it.v = Math.round(it.v * (1 - b.desarme)); }
   piocher(s, REGLES.tailleMain + (b?.main ?? 0));
   fixerFelures(s);
   return s;
@@ -771,6 +770,9 @@ function choisirIntention(s: CombatEtat, en: EnnemiEtat) {
   const it: Intention = seuls ? { type: 'appel', nom: 'Appel' } : { ...m };
   if (it.type === 'atk' || it.type === 'bouclier' || it.type === 'soin') it.v = Math.round(it.v * en.force);
   if (it.type === 'atk' && !it.zone) it.cibleId = choisirCible(s, it.cible);
+  // Ombre courtoise (Aurel, 31 octobre 2026, remarque de Luc) : la première attaque de chaque ennemi est retenue,
+  // quel que soit le tour où elle arrive (avant, seule l'intention du premier tour comptait) ; les renforts appelés aussi
+  if (it.type === 'atk' && s.desarme && !en.retenu) { it.v = Math.round(it.v * (1 - s.desarme)); en.retenu = true; }
   fixerIntention(s, en, it);
 }
 

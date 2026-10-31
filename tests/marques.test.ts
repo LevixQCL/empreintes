@@ -65,6 +65,23 @@ describe('Les effets des nouvelles Marques', () => {
     });
   });
 
+  it('Ombre courtoise : retient la première vraie attaque, même si l’ennemi ne frappe pas au premier tour', () => {
+    // remarque de Luc (31 octobre 2026) : la Sentinelle de verre se protège d'abord, son premier coup arrive au tour 2
+    const tour2 = (bonus?: BonusMarques) => {
+      const s = combat(bonus, 'sentinelle-verre');
+      expect(intentionDe(s, s.ennemi).type).toBe('bouclier');
+      s.chaine = [s.main[0]!];
+      s.main = s.main.slice(1);
+      lancer(s, { silencieux: true });
+      return s;
+    };
+    const sans = tour2(), avec = tour2({ desarme: 0.4 });
+    const x = intentionDe(sans, sans.ennemi), y = intentionDe(avec, avec.ennemi);
+    expect(x.type).toBe('atk');
+    if (x.type === 'atk' && y.type === 'atk') expect(y.v).toBe(Math.round(x.v * 0.6));
+    expect(avec.ennemi.retenu).toBe(true);
+  });
+
   it('Bras de quai (Docker) : un quart du bouclier passe au tour suivant', () => {
     const s = combat({ garde: 0.25 });
     s.bouclier = 100;

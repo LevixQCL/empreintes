@@ -140,7 +140,7 @@ export const MARQUES: Record<string, MarqueDef> = {
   nuit: { nom: 'Œil de nuit', fait: 'abysses', seuil: 25, quoi: 'combats gagnés sous la Strate −3', court: 'l’ennemi commence fissuré', bonus: { fissure: 0.25 },
     texte: 'Elle voit la faille dans le noir : l’ennemi visé commence chaque combat fissuré (+25 % de dégâts pendant deux tours).' },
   aurel: { nom: 'Ombre courtoise', fait: 'gardiens', seuil: 6, quoi: 'gardiens vaincus', court: '1re attaque ennemie −40 %', bonus: { desarme: 0.4 },
-    texte: 'Son ombre retient le premier coup : au premier tour, l’attaque annoncée de chaque ennemi perd 40 % de sa force.' },
+    texte: 'Son ombre retient le premier coup : la première attaque de chaque ennemi perd 40 % de sa force, quel que soit le tour où elle tombe.' },
   coursier: { nom: 'Foulée', fait: 'combats', seuil: 40, quoi: 'combats gagnés', court: '1 Flux au départ', bonus: { flux: 1 },
     texte: 'Il court devant l’escouade : chaque combat commence avec 1 Flux.' },
   docker: { nom: 'Bras de quai', fait: 'missions', seuil: 8, quoi: 'missions accomplies', court: 'garde 25 % du bouclier', bonus: { garde: 0.25 },
