@@ -62,7 +62,11 @@ export function finPour(): Fin | null {
     if (x.terminee) {
       return { titre: `Strate −${x.strate} vaincue`, texte: `${nom} se disperse. L’escouade remonte avec ${x.butin} composants.${x.strate === app.jeu.strate ? ' Le passage est libre : avec assez de creuseurs, l’étage suivant pourra être percé (voir la Tour du Noyau).' : ''}`, bouton: 'Remonter au district', action: 'remonter' };
     }
-    if (x.carte) return { titre: 'Victoire', texte: `${nom} se dissipe. Butin : ${x.butin} composants. L’escouade reprend sa route : les PV remontent surtout aux campements.`, bouton: 'Retour à la carte', action: 'suivant' };
+    if (x.carte) {
+      // la marque de la quête relevée se dit tout de suite, avec ce qu'on a trouvé (31 octobre 2026)
+      const q = x.carte.salles[x.carte.position]?.quete ? J.etapeQueteTrouvee(app.jeu, x.strate) : null;
+      return { titre: q ? 'Victoire · marque de la quête relevée' : 'Victoire', texte: (q ? `✦ ${q.nom}, étape ${q.etape} sur ${q.total} : ${q.texte} ` : '') + `${nom} se dissipe. Butin : ${x.butin} composants. L’escouade reprend sa route : les PV remontent surtout aux campements.`, bouton: 'Retour à la carte', action: 'suivant' };
+    }
     return { titre: 'Victoire', texte: `${nom} se dissipe. Butin : ${x.butin} composants. L’escouade souffle un peu (+50 % de PV) : tu continues, ou tu remontes avec ce que tu as ?`, bouton: 'Combat suivant', action: 'suivant', bouton2: 'Remonter avec le butin', action2: 'remonter' };
   }
   return null;

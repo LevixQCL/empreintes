@@ -153,3 +153,14 @@
 .ex-c-quete .ico{color:var(--ex-or)}
 .ex-c-secret .ico{color:var(--ex-vert)}
 .ex-c-secret b{color:var(--ex-vert)}
+
+/* la marque de la quête relevée, juste après la victoire (31 octobre 2026) */
+.ex-quete-trouvee{display:flex;gap:12px;align-items:flex-start;margin:10px 0 14px;padding:12px 14px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(242,213,140,.16),rgba(242,213,140,.04));box-shadow:inset 0 0 0 1px rgba(242,213,140,.55),0 0 22px rgba(242,213,140,.18);
+  animation:ex-qt-in .6s ease-out both}
+.ex-quete-trouvee>.ico{width:26px;height:26px;flex-shrink:0;color:var(--ex-or,#f2d58c);filter:drop-shadow(0 0 8px rgba(242,213,140,.9))}
+.ex-quete-trouvee b{display:block;color:var(--ex-or,#f2d58c);font-size:15px;margin:2px 0 4px}
+.ex-quete-trouvee p{margin:0 0 6px;font-style:italic;line-height:1.4}
+.ex-quete-trouvee small{display:block;opacity:.75;font-size:11.5px}
+@keyframes ex-qt-in{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.ex-quete-trouvee{animation:none}}

@@ -18,7 +18,7 @@ import { paroleDescente } from '../core/campagne';
 import { PV_GROUPE, pvProfondeur } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR } from '../core/regles';
-import { CIBLES_FOUILLE, RENCONTRES, XP, gainChoixHalte, halteEnCours, type Jeu } from '../core/jeu';
+import { CIBLES_FOUILLE, RENCONTRES, XP, etapeQueteTrouvee, gainChoixHalte, halteEnCours, type Jeu } from '../core/jeu';
 import { COLLECTION } from '../core/collection';
 import { REGLES } from '../core/regles';
 import { decorStrate, illustrationEnnemi, portrait, iconeCondition } from './art';
@@ -320,6 +320,9 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
   } else {
     h += paroleEscouade(x);
     if (x.recit) h += `<p class="ex-recit">${echap(x.recit)}</p>`;
+    // juste après la victoire dans la salle marquée : ce que l'escouade a trouvé (31 octobre 2026)
+    const qt = x.gains?.etape && x.carte!.salles[x.carte!.position]?.quete ? etapeQueteTrouvee(j, x.strate) : null;
+    if (qt) h += `<div class="ex-quete-trouvee" role="status">${ICO.quete}<div><small>Marque de la quête relevée · étape ${qt.etape} sur ${qt.total}</small><b>${echap(qt.nom)}</b><p>${echap(qt.texte)}</p><small>Elle sera rangée dans la quête au retour au district.</small></div></div>`;
     if (libre) h += htmlPassage(x);
     if (libre && vue) {
       // la fiche de la salle touchée : en bas de l'écran sur téléphone, dans la colonne de droite sur PC

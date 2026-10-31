@@ -16,6 +16,7 @@ import { ICO } from './icones';
 import type { Decouverte } from '../core/decouvertes';
 import { feuilleGuide, lienGuide, type OngletGuide } from './guide';
 import { echap } from './outils';
+import { queteDef } from '../core/strates';
 import { feuilleJournal, type OngletJournal } from './journal';
 
 interface Pop {
@@ -656,6 +657,8 @@ function htmlEcranCombat(e: Ecran): string {
   h += `<header class="combat-barre"><div class="puces">${e.x.fleche ? `<span class="puce">${ICO.fleche}<span class="puce-mot">Flèche · quai </span>${e.x.fleche.quai}</span>` : e.x.pillage ? `<span class="puce">${ICO.grappin}<span class="puce-mot">Pillage · </span>${echap(e.x.pillage.nom)}</span>` : `<span class="puce">${ICO.strate}${e.x.tutoriel ? lieu : `<span class="puce-mot">Strate </span>−${e.x.strate}`}</span>`}`
     + (e.x.tutoriel || e.x.pillage || e.x.fleche ? '' : e.x.carte ? `<span class="puce">${e.x.carte.salles[e.x.carte.position]?.type === 'gardien' ? 'Gardien' : e.x.carte.salles[e.x.carte.position]?.type === 'elite' ? 'Salle scellée' : `Combat ${(e.x.gagnes ?? 0) + 1}`}</span>` : `<span class="puce">Combat ${e.x.index + 1}/${e.x.sequence.length}</span>`)
     + `<span class="puce">Tour ${s.tour}</span>`
+    // 31 octobre 2026 (Bryan : « quand on fait le combat, on voit rien ») : la marque de la quête se voit aussi pendant le combat
+    + (e.x.carte?.salles[e.x.carte.position]?.quete && queteDef(e.x.strate) ? `<span class="puce condition quete" tabindex="0" title="${echap(`${queteDef(e.x.strate)!.nom} : gagne ce combat pour relever la marque de la quête.`)}" aria-label="${echap(`Marque de la quête ${queteDef(e.x.strate)!.nom} : gagne ce combat pour la relever`)}">${ICO.quete}<span class="puce-mot">Quête</span></span>` : '')
     + (s.condition && CONDITIONS[s.condition] ? `<span class="puce condition" tabindex="0" title="${echap(CONDITIONS[s.condition]!.texte)}" aria-label="${echap(`${CONDITIONS[s.condition]!.nom} : ${CONDITIONS[s.condition]!.texte}`)}">${ICO.cristal}${echap(CONDITIONS[s.condition]!.nom)}</span>` : '')
     + `</div>`
     + `<div class="boutons-barre">${peutFuir(e.x) && s.issue === 'en-cours' ? `<button type="button" class="btn-fuir" data-action="fuir" aria-expanded="${!!e.fuite}" aria-label="Fuir le combat"${verrou ? ' disabled' : ''}>${ICO.retour}<span>Fuir</span></button>` : ''}<button type="button" class="btn-icone" data-action="son" aria-pressed="${sonActif()}" aria-label="${sonActif() ? 'Couper le son' : 'Activer le son'}">${sonActif() ? ICONE_SON : ICONE_MUET}</button>`

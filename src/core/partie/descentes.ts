@@ -1053,6 +1053,14 @@ export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: numbe
 /** La quête de la Strate n'est pas encore finie */
 export const queteOuverte = (j: Jeu, strate: number) => { const q = queteDef(strate); return !!q && (j.quetes?.[strate] ?? 0) < q.etapes.length; };
 
+/** L'étape de quête relevée pendant la descente en cours (comptée au retour) : pour l'afficher dès la victoire */
+export function etapeQueteTrouvee(j: Jeu, strate: number): { nom: string; etape: number; total: number; texte: string } | null {
+  const q = queteDef(strate);
+  if (!q || !queteOuverte(j, strate)) return null;
+  const n = (j.quetes?.[strate] ?? 0) + 1;
+  return { nom: q.nom, etape: n, total: q.etapes.length, texte: q.etapes[n - 1]! };
+}
+
 export interface EtapeQuete { strate: number; nom: string; etape: number; total: number; texte: string; composants: number; finie: boolean; fin?: string }
 
 /** Une étape de la quête trouvée : des composants (ceux d'une cache), et à la fin une carte, de l'XP et une ligne de lore */
