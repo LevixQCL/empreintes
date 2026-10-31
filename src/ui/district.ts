@@ -775,7 +775,7 @@ function amelioration(j: Jeu, b: BatimentId) {
   const assez = !!cout && j.energie >= cout.energie && j.composants >= cout.composants && j.eclats >= (cout.eclats ?? 0);
   const plein = j.chantiers.length >= chantiersMax(j) || (b === 'noyau' && j.chantiers.length > 0);
   // les ressources manquantes se lisent déjà en rouge dans le coût : la phrase ne sert que pour les autres blocages
-  const raison = bloque ? `Il faut d’abord monter la Tour du Noyau (niveau ${j.batiments.noyau}).`
+  const raison = bloque ? `Il faut d’abord monter la Tour du Noyau au niveau ${niv + 1}.`
     : plein ? (b === 'noyau' && j.chantiers.length ? 'Attends la fin des chantiers en cours.' : chantiersMax(j) === 1 ? 'Un seul chantier à la fois (deux au Noyau niveau 4).' : 'Deux chantiers sont déjà en cours.') : '';
   return { ch, cout, bloque, raison, pret: !ch && assez && !bloque && !plein };
 }
