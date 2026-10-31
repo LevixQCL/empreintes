@@ -3,6 +3,7 @@
 // les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
 
 import { nombreHaltes, queteDef } from '../core/strates';
+import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
 import { htmlBestiaire } from './bestiaire';
 import { visageGarde } from './fleche';
 import { portOuvert } from './pillages';
@@ -12,7 +13,8 @@ import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
   OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, gesteCommun, ratelierDe, ratelierPayable, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
-  COMPTOIR, prixComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
+  COMPTOIR, prixComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
+  etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
@@ -947,7 +949,7 @@ function fenetreLegs(e: EcranDistrict): string {
 
 function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
-  const titre = c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : c.source === 'parrainage' ? 'Le parrainage' : 'Butin de la semaine';
+  const titre = c.source === 'releve' ? 'La Strate est relevée' : c.source === 'etoiles' ? 'Les étoiles des Strates' : c.source === 'rodeur' ? 'Le trophée du Rôdeur' : c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : c.source === 'parrainage' ? 'Le parrainage' : 'Butin de la semaine';
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><small class="aide choix-loupe">Reste appuyé sur une carte pour lire son effet.</small><div class="cartes-choix">`
     + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}" data-carte="${id}"`, true)).join('')
     + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
@@ -1585,8 +1587,29 @@ export function htmlCoupe(e: EcranDistrict): string {
   if (volet === 'epreuves') h += htmlEpreuves(e);
   else h += htmlStrates(e, off, manque);
   if (j.chambre && !ouvert) h += `<p class="tr-note">${ICO.verrou}Les Épreuves s’ouvrent quand le gardien de la Strate −1 est vaincu.</p>`;
-  h += feuilleBatiment(e);
+  h += feuilleBatiment(e) + feuilleVestiges(e);
   return coquille(e, h, 'ecran-coupe tr');
+}
+
+/** Les Vestiges d'une Strate (31 octobre 2026, explorer.ts) : ceux trouvés et leur ligne, ceux qui manquent ; relevée, son histoire */
+function feuilleVestiges(e: EcranDistrict): string {
+  const n = e.vestiges;
+  if (!n) return '';
+  const j = e.j;
+  const tous = vestigesDe(n);
+  const trouves = new Set(vestigesTrouves(j, n).map((v) => v.id));
+  const r = releveDef(n);
+  const fini = trouves.size >= tous.length;
+  const fermer = `data-action="vestiges-voir" data-strate=""`;
+  return `<div class="voile-feuille" ${fermer} aria-hidden="true"></div><section class="feuille vestiges-fiche" role="dialog" aria-modal="true" aria-labelledby="vs-titre">`
+    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">Strate −${n} · Vestiges ${trouves.size} / ${tous.length}</span><h2 id="vs-titre">${fini && r ? echap(r.titre) : 'Ce que la Strate garde'}</h2></div>`
+    + `<button type="button" class="btn-icone" ${fermer} aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
+    + (fini ? '' : `<p class="aide">Les Vestiges ne se trouvent qu’en <b>explorant</b> la Strate : ${n <= 5 ? 'deux' : 'trois'} par descente, marqués ${ICO.vestige} sur le plan, même dans le brouillard. Les cinq réunis, la Strate est relevée : une carte au choix, et tes fouilles y verront tout le plan, avec un filon plus riche.</p>`)
+    + `<ol class="vs-liste">` + tous.map((v) => (trouves.has(v.id)
+      ? `<li class="trouve">${ICO.vestige}<p><b>${echap(v.nom)}</b>${echap(v.texte)}</p></li>`
+      : `<li class="manque">${ICO.vestige}<p><b>Un Vestige à trouver</b>Quelque part dans la Strate −${n}.</p></li>`)).join('') + `</ol>`
+    + (fini && r ? `<p class="vs-fin">${echap(r.fin)}</p>` : '')
+    + `</div></section>`;
 }
 
 /** Le contenu d'une Strate (31 octobre 2026, strates.ts) : sa quête (●●○) et ses Haltes déjà vues, sur une ligne */
@@ -1594,9 +1617,14 @@ function contenuStrate(j: EcranDistrict['j'], n: number): string {
   const q = queteDef(n);
   const nh = nombreHaltes(n);
   if (!q && !nh) return '';
+  // Explorer (31 octobre 2026) : les étoiles de la Strate, ses Vestiges (le losange ouvre leur histoire)
+  const et = etoilesDe(j, n);
+  const nv = vestigesTrouves(j, n).length;
+  const explo = `<span class="tr-etoiles" title="${[1, 2, 3].map((k) => `${et.includes(k as 1) ? '★' : '☆'} ${ETOILES[k as 1].texte}`).join('\n')}" aria-label="${et.length} étoile${et.length > 1 ? 's' : ''} sur 3">${[1, 2, 3].map((k) => (et.includes(k as 1) ? ICO.etoile : ICO.etoileVide)).join('')}</span>`
+    + (vestigesDe(n).length ? `<button type="button" class="tr-vestiges${nv >= 5 ? ' complet' : ''}" data-action="vestiges-voir" data-strate="${n}" aria-label="Vestiges : ${nv} sur 5">${ICO.vestige}${nv} / 5</button>` : '');
   const faites = j.quetes?.[n] ?? 0;
   const vues = Math.min(nh, j.haltes?.[n] ?? 0);
-  return `<span class="tr-contenu">`
+  return `<span class="tr-contenu">${explo}`
     + (q ? `<span class="tr-quete${faites >= q.etapes.length ? ' finie' : ''}" title="${echap(q.but)}">${ICO.quete}<b>${echap(q.nom)}</b><i class="tr-points">${q.etapes.map((_, k) => `<i${k < faites ? ' class="ok"' : ''}></i>`).join('')}</i></span>` : '')
     + (nh ? `<span class="tr-haltes" title="Haltes vues">${ICO.halte}${vues} / ${nh}</span>` : '')
     + `</span>`;
@@ -1608,7 +1636,8 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
   const cible = j.strate + 1;
   let h = `<section class="tr-strates" aria-label="Les Strates">`
     + `<ul class="tr-legende"><li>${ICO.cristal}<span><b>Fouiller</b> : une descente courte, sans gardien, vers un filon (cartes, composants ou Éclats).</span></li>`
-    + `<li>${ICO.descendre}<span><b>Explorer</b> : toute la Strate, salle par salle, jusqu’à son gardien.</span></li></ul><ol>`;
+    + `<li>${ICO.descendre}<span><b>Explorer</b> : toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.</span></li></ul>`
+    + `<p class="tr-etoiles-total">${ICO.etoile}<b>${totalEtoiles(j)}</b> étoile${totalEtoiles(j) > 1 ? 's' : ''}${prochainPalierEtoiles(j) ? ` · prochaine récompense à ${prochainPalierEtoiles(j)!.etoiles} (une carte au choix, dont une en ${NOMS_RARETE[prochainPalierEtoiles(j)!.metal]})` : ' · toutes les récompenses sont prises'}</p><ol>`;
   for (let n = 1; n <= j.strate; n++) {
     const front = n === j.strate;
     const vaincue = !front || j.frontVaincu;

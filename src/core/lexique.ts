@@ -106,6 +106,11 @@ export const LEXIQUE: Record<string, Terme> = {
   composants: { nom: 'Composants', theme: 'district', mots: mot('composants?'), texte: 'La monnaie de base du district. On en gagne en bas, en mission et en recyclant ses doublons ; ils servent au Comptoir, à monter les cartes de niveau et à la Forge.' },
   eclats: { nom: 'Éclats', theme: 'district', mots: mot('Éclats'), texte: 'Des fragments de cristal chargés d’empreintes, rares : gardiens, caches profondes, Butin de la semaine. Ils servent aux cartes rares de la Forge et du Comptoir, et aux grands chantiers.' },
   energie: { nom: 'Énergie', theme: 'district', mots: mot('énergie', 'i'), texte: 'Le courant produit par le Générateur. Il sert surtout à améliorer les bâtiments et à faire tourner les pompes.' },
+  // Explorer ou fouiller (31 octobre 2026, explorer.ts)
+  vestige: { nom: 'Vestige', theme: 'ennemi', mots: mot('Vestiges?'), texte: 'Un objet d’autrefois caché dans une Strate, 5 par Strate. On ne les trouve qu’en explorant (jamais en fouille), marqués d’un losange turquoise sur le plan. Les cinq réunis, la Strate est relevée : une carte au choix, et ses fouilles voient tout le plan avec un filon plus riche.' },
+  rodeur: { nom: 'Rôdeur', theme: 'ennemi', mots: mot('Rôdeurs?'), texte: 'Une créature unique par zone, croisée en explorant une Strate déjà vaincue. Elle s’enfuit au bout de 4 tours, et garde ses blessures d’une descente à l’autre. Abattue, elle laisse un trophée : une carte au choix.' },
+  etoiles: { nom: 'Étoiles de Strate', theme: 'ennemi', mots: mot('étoiles?', 'i'), texte: 'Trois par Strate, gagnées en explorant jusqu’au gardien : le vaincre, le vaincre sans qu’aucun Porteur ne tombe, le vaincre sans campement. Chaque étoile donne des Éclats, et tous les 5 étoiles, une carte au choix.' },
+  eveille: { nom: 'Gardien éveillé', theme: 'ennemi', mots: mot('Gardien éveillé', 'i'), texte: 'Le gardien d’une Strate déjà vaincue, quand on y retourne explorer : un peu plus fort (+10 %), mais il laisse de meilleures cartes et un Éclat de plus.' },
   marque: { nom: 'Marque', theme: 'marque', mots: mot('Marques?'), texte: 'L’effet propre à un Porteur, gagné par ses exploits. Chaque Porteur a la sienne.' },
 };
 // les conditions de salle : leur nom dans le calcul, leur texte tel quel

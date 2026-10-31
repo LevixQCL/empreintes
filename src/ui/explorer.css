@@ -1,0 +1,62 @@
+/* EMPREINTES — Explorer ou fouiller (31 octobre 2026, src/core/explorer.ts) : Vestiges, étoiles, gardien éveillé, Rôdeurs.
+   Trois marques bien distinctes sur le plan (revue du game designer) : l'étoile dorée de la quête (en haut à droite),
+   le losange turquoise du Vestige (en haut à gauche), les griffures corail du Rôdeur (en haut à droite : jamais sur la salle de la quête). */
+
+.ex{--ex-vestige:#7FE3D6;--ex-rodeur:#FF8A6E}
+
+/* ---------- le plan ---------- */
+.ex-badge.vestige{top:-6px;left:-6px;bottom:auto;min-width:20px;color:#04201C;background:linear-gradient(180deg,#C4FFF5,#3FB9A8);
+  box-shadow:0 0 0 2px rgba(6,8,18,.9),0 0 12px rgba(127,227,214,.65);animation:ex-vestige 2.8s ease-in-out infinite}
+.ex-badge.vestige .ico{width:12px;height:12px}
+@keyframes ex-vestige{50%{box-shadow:0 0 0 2px rgba(6,8,18,.9),0 0 18px rgba(127,227,214,1)}}
+.ex-badge.rodeur{top:-6px;right:-6px;bottom:auto;min-width:20px;color:#2A0905;background:linear-gradient(180deg,#FFC2B0,#E0563A);
+  box-shadow:0 0 0 2px rgba(6,8,18,.9),0 0 12px rgba(255,138,110,.65)}
+.ex-badge.rodeur .ico{width:12px;height:12px}
+.ex-salle.perdue .ex-badge.vestige,.ex-salle.perdue .ex-badge.rodeur{display:none}
+.ex-med.provisoire{filter:hue-rotate(150deg) saturate(1.3) brightness(.85)}
+
+/* ---------- sous le nom de la Strate ---------- */
+.ex-vestiges,.ex-eveille{display:flex;align-items:center;gap:7px;margin-top:3px;font-size:13px;line-height:1.3;color:var(--ex-txt);text-shadow:0 1px 4px #000;white-space:nowrap}
+.ex-vestiges .ico,.ex-eveille .ico{width:14px;height:14px;flex-shrink:0}
+.ex-vestiges .ico,.ex-vestiges b{color:var(--ex-vestige)}
+.ex-vestiges b,.ex-eveille b{font-weight:600}
+.ex-vestiges small,.ex-eveille small{color:var(--ex-doux);font-size:12px;overflow:hidden;text-overflow:ellipsis}
+.ex-eveille .ico,.ex-eveille b{color:var(--ex-rodeur)}
+.ex-butin-vestige .ico,.ex-butin-vestige b{color:var(--ex-vestige)!important}
+
+/* ---------- la fiche de la salle ---------- */
+.ex-c-vestige .ico{color:var(--ex-vestige)}
+.ex-c-vestige b{color:var(--ex-vestige)}
+
+/* ---------- le combat : le compte à rebours du Rôdeur ---------- */
+.fuyard{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:10px;font-size:11.5px;font-weight:600;letter-spacing:.02em;
+  color:#2A0905;background:linear-gradient(180deg,#FFC2B0,#E0563A);box-shadow:0 0 10px rgba(255,138,110,.45)}
+.fuyard .ico{width:12px;height:12px}
+.ennemi-art.provisoire{filter:hue-rotate(150deg) saturate(1.3) brightness(.85)}
+
+/* ---------- la Tour : étoiles et Vestiges de chaque Strate ---------- */
+.tr-etoiles{display:inline-flex;gap:1px;color:#F2D58C}
+.tr-contenu .tr-etoiles .ico{width:14px;height:14px}
+.tr-vestiges{display:inline-flex;align-items:center;gap:5px;min-height:28px;padding:0 9px;border-radius:14px;font:inherit;font-size:12.5px;font-weight:600;
+  color:#7FE3D6;background:rgba(127,227,214,.08);border:1px solid rgba(127,227,214,.35);cursor:pointer}
+.tr-vestiges .ico{color:#7FE3D6}
+.tr-vestiges.complet{background:rgba(127,227,214,.18);border-color:#7FE3D6}
+.tr-etoiles-total{display:flex;align-items:center;gap:6px;margin:4px 0 10px;font-size:13px;color:var(--ink-dim,#93A3B8)}
+.tr-etoiles-total .ico{width:15px;height:15px;color:#F2D58C}
+.tr-etoiles-total b{color:#F2D58C;font-weight:600}
+
+/* ---------- la feuille des Vestiges ---------- */
+.vs-liste{display:grid;gap:10px;margin:12px 0 0;padding:0;list-style:none}
+.vs-liste li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.035);border:1px solid rgba(127,227,214,.18)}
+.vs-liste .ico{width:18px;height:18px;margin-top:2px;color:#7FE3D6}
+.vs-liste p{margin:0;font-size:14px;line-height:1.45;color:var(--ink,#DDE6F0)}
+.vs-liste b{display:block;margin-bottom:2px;color:#7FE3D6;font-weight:600}
+.vs-liste li.manque{opacity:.55;border-style:dashed}
+.vs-liste li.manque b{color:var(--ink-dim,#93A3B8)}
+.vs-fin{margin:14px 0 0;font-family:var(--lore,serif);font-style:italic;font-size:15px;line-height:1.5;color:#F2D58C}
+
+/* ---------- le bestiaire : les Rôdeurs ---------- */
+.bs-rodeurs .bs-fiche.traque{border-color:rgba(255,138,110,.45)}
+.bs-rodeurs .bs-img .ico{color:#FF8A6E}
+.bs-img.provisoire img{filter:hue-rotate(150deg) saturate(1.3) brightness(.85)}
+.bs-abattu{color:#9EE6B4}

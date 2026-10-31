@@ -7,6 +7,7 @@ import { CONDITIONS, ZONES, ennemiDef, porteurDef, sequenceStrate, zoneDe } from
 import { tireur } from './rng';
 import { REGLES, analyserChaine } from './regles';
 import { CONTENU, SECRETS, nombreHaltes, particularite } from './strates';
+import { EXPLORER, STRATE_RODEUR, rodeurDef } from './explorer';
 import type { BonusMarques, CombatEtat, GesteDef, PorteurEtat } from './types';
 
 export interface Expedition {
@@ -65,6 +66,18 @@ export interface Expedition {
   filPris?: boolean;
   /** le passage secret de la carte a été suivi */
   secretVu?: boolean;
+  // ---------- Explorer ou fouiller (31 octobre 2026, explorer.ts) ----------
+  /** le gardien d'une Strate déjà vaincue s'est éveillé : plus fort, plus généreux */
+  eveille?: boolean;
+  /** la Strate est relevée (ses 5 Vestiges) : une fouille y voit tout le plan */
+  releve?: boolean;
+  /** un Porteur est tombé pendant la descente (étoile 2), l'escouade est entrée dans un campement (étoile 3) */
+  chute?: boolean;
+  campe?: boolean;
+  /** le Vestige que rend le passage secret, s'il est suivi */
+  vestigeSecret?: string;
+  /** le Rôdeur de la carte, et la part de vie qu'il lui reste en arrivant */
+  rodeur?: { id: string; part: number };
 }
 
 /** Ce que cherche une fouille ciblée : les cartes d'une lignée, des composants ou des Éclats */
@@ -84,6 +97,10 @@ interface Gains {
   etape?: boolean;
   /** portes à Fréquence ouvertes, passages suivis */
   portes?: number;
+  /** les Vestiges ramassés (explorer.ts) */
+  vestiges?: string[];
+  /** le Rôdeur affronté : la part de vie qu'il garde en s'enfuyant (0 : abattu) */
+  rodeur?: { id: string; part: number };
 }
 
 export type TypeSalle = 'entree' | 'combat' | 'elite' | 'cache' | 'rencontre' | 'camp' | 'archive' | 'gardien' | 'filon' | 'halte' | 'porte';
@@ -113,6 +130,10 @@ export interface Salle {
   quete?: boolean;
   /** un passage secret (SECRETS), que seuls certains Porteurs repèrent */
   secret?: string;
+  /** un Vestige (explorer.ts), ramassé en entrant, en gagnant le combat ou en ouvrant la porte */
+  vestige?: string;
+  /** la salle du Rôdeur de la zone (son ennemi est le Rôdeur) */
+  rodeur?: string;
 }
 interface CarteStrate {
   zone: number;
@@ -187,10 +208,17 @@ export function cloturerCombat(x: Expedition): Expedition {
       const salle = salleCourante(x);
       const fin = salle.type === 'gardien';
       const gain = fin ? butinCombat(x.strate, 2) : salle.type === 'elite' ? Math.round(butinCombat(x.strate, 0) * 1.7) : butinCombat(x.strate, 0);
-      const gains = { ...(x.gains ?? gainsVides()), elites: (x.gains?.elites ?? 0) + (salle.type === 'elite' ? 1 : 0), ...(salle.quete ? { etape: true } : {}) };
-      return { ...x, butin: x.butin + gain, terminee: fin, cloture: true, gagnes: (x.gagnes ?? 0) + 1, gains, porteurs: x.combat.porteurs.map((p) => ({ ...p })) };
+      let gains: Gains = { ...(x.gains ?? gainsVides()), elites: (x.gains?.elites ?? 0) + (salle.type === 'elite' ? 1 : 0), ...(salle.quete ? { etape: true } : {}) };
+      if (salle.vestige) gains = ramasser(gains, salle.vestige);
+      // le Rôdeur : enfui, il garde la part de vie qui lui reste ; abattu, il compte comme une salle scellée
+      if (salle.rodeur) {
+        const part = x.combat.enfui ? Math.max(0.01, x.combat.ennemi.pv / x.combat.ennemi.pvMax) : 0;
+        gains = { ...gains, rodeur: { id: salle.rodeur, part }, ...(part ? {} : { elites: gains.elites + 1 }) };
+      }
+      const chute = x.chute || x.combat.porteurs.some((p) => p.pv <= 0 || p.aTerre);
+      return { ...x, butin: x.butin + gain, terminee: fin, cloture: true, gagnes: (x.gagnes ?? 0) + 1, gains, porteurs: x.combat.porteurs.map((p) => ({ ...p })), ...(chute ? { chute: true } : {}) };
     }
-    if (x.combat.issue === 'defaite') return { ...x, terminee: true, cloture: true };
+    if (x.combat.issue === 'defaite') return { ...x, terminee: true, cloture: true, chute: true };
     return x;
   }
   if (x.combat.issue === 'victoire') {
@@ -223,6 +251,11 @@ export function combatSuivant(x: Expedition): Expedition {
 // ---------- L'exploration ----------
 
 const gainsVides = (): Gains => ({ elites: 0, cartes: 0, eclats: 0, fragment: false });
+/** Un Vestige ramassé (une seule fois par descente) */
+const ramasser = (g: Gains | undefined, id: string): Gains => {
+  const b = g ?? gainsVides();
+  return b.vestiges?.includes(id) ? b : { ...b, vestiges: [...(b.vestiges ?? []), id] };
+};
 export const salleCourante = (x: Expedition): Salle => x.carte!.salles[x.carte!.position]!;
 /** Les salles où l'escouade peut aller : les voisines de la salle où elle se trouve */
 export const accessibles = (x: Expedition): Salle[] => {
@@ -323,6 +356,8 @@ export function visionSalle(x: Expedition, s: Salle): Vision {
   if (!x.carte) return 'claire';
   const ici = salleCourante(x);
   if (s.faite || s.id === ici.id || s.type === 'gardien' || s.type === 'filon' || s.type === 'entree' || s.type === 'halte') return 'claire';
+  // une Strate relevée (ses 5 Vestiges) : ses fouilles voient tout le plan
+  if (x.releve) return 'claire';
   // −7 : une salle à deux souvenirs se montre telle qu'elle est quand on arrive devant (le choix se fait en connaissance de cause)
   if (s.double && ici.voisins.includes(s.id)) return 'claire';
   // la lampe à algues (strates.ts) éclaire les rangées devant elle
@@ -372,7 +407,7 @@ export const rangsDe = (c: CarteStrate) => Math.max(...c.salles.map((s) => s.ran
  * Une carte de Strate : l'entrée en haut, 2 ou 3 salles par rangée, et tout en bas le gardien
  * (ou, pour une fouille ciblée, le filon : une carte plus courte, sans gardien ni salle scellée).
  */
-export function genererCarte(strate: number, rng: number, garde?: string, fouille = false, contenu: { halte?: boolean; quete?: boolean } = {}): CarteStrate {
+export function genererCarte(strate: number, rng: number, garde?: string, fouille = false, contenu: { halte?: boolean; quete?: boolean; vestiges?: string[]; rodeur?: string } = {}): CarteStrate {
   const etat = { rng: (rng ^ 0x27d4eb2f) >>> 0 };
   const t = tireur(etat);
   const z = zoneDe(strate);
@@ -438,7 +473,45 @@ export function genererCarte(strate: number, rng: number, garde?: string, fouill
   }
   distinguerChemins(salles, pool, t);
   particularites(salles, strate, rng, pool, fouille, !!contenu.quete);
+  if (!fouille) explorer(salles, rng, contenu.vestiges ?? [], contenu.rodeur);
   return { zone, salles, position: 0, rng: etat.rng };
+}
+
+/** Les salles qu'on peut atteindre depuis une salle (elle comprise), en descendant */
+function descendants(salles: Salle[], id: number): Set<number> {
+  const vus = new Set<number>([id]);
+  const pile = [id];
+  while (pile.length) for (const v of salles[pile.pop()!]!.voisins) if (!vus.has(v)) { vus.add(v); pile.push(v); }
+  return vus;
+}
+/** Deux salles sur un même chemin (l'une mène à l'autre) */
+const memeChemin = (salles: Salle[], a: Salle, b: Salle) => (a.rang < b.rang ? descendants(salles, a.id).has(b.id) : descendants(salles, b.id).has(a.id));
+
+/**
+ * Explorer (31 octobre 2026, explorer.ts), tirage à part posé après tout le reste : la salle du Rôdeur, puis les Vestiges.
+ * Les Vestiges vont sur des rangées différentes ; le deuxième est sur un même chemin que le premier (revue du game designer :
+ * un chemin doit pouvoir en ramasser deux), le troisième n'importe où. Le premier préfère une salle scellée ou une porte.
+ */
+function explorer(salles: Salle[], rng: number, vestiges: readonly string[], rodeur?: string) {
+  const t = tireur({ rng: (rng ^ 0x5f356495) >>> 0 });
+  const fond = Math.max(...salles.map((s) => s.rang));
+  const libre = (s: Salle) => s.rang > 0 && s.rang < fond && s.type !== 'halte' && !(s.type === 'camp' && s.rang === fond - 1 && s.col === 0) && !s.quete && !s.secret && !s.rodeur && !s.vestige;
+  const prendre = (l: Salle[]) => (l.length ? l[t.entier(l.length)]! : undefined);
+  if (rodeur) {
+    const c = prendre(salles.filter((s) => libre(s) && s.type === 'combat' && s.rang >= 2 && s.rang <= fond - 2));
+    if (c) { c.rodeur = rodeur; c.ennemi = rodeur; delete c.escorte; delete c.condition; delete c.double; }
+  }
+  const poses: Salle[] = [];
+  for (const v of vestiges) {
+    const rangs = new Set(poses.map((p) => p.rang));
+    let l = salles.filter((s) => libre(s) && !rangs.has(s.rang));
+    if (poses.length === 1) { const lie = l.filter((s) => memeChemin(salles, poses[0]!, s)); if (lie.length) l = lie; }
+    if (!poses.length) { const rare = l.filter((s) => s.type === 'elite' || s.type === 'porte'); if (rare.length) l = rare; }
+    const c = prendre(l);
+    if (!c) break;
+    c.vestige = v;
+    poses.push(c);
+  }
 }
 
 /**
@@ -531,8 +604,17 @@ export function nouvelleExploration(opts: {
   fouille?: CibleFouille;
   /** la Halte de cette descente (strates.ts) et la quête de la Strate encore à finir */
   halte?: number | 'connu'; quete?: boolean;
+  /** Explorer (explorer.ts) : les Vestiges encore à trouver dans la Strate, son Rôdeur, le gardien éveillé, la Strate relevée */
+  vestiges?: string[]; rodeur?: { id: string; part: number }; eveille?: boolean; releve?: boolean;
 }): Expedition {
-  const carte = genererCarte(opts.strate, opts.rng, opts.garde, !!opts.fouille, { halte: !opts.fouille && opts.halte !== undefined, quete: !!opts.quete });
+  // les Vestiges de la carte : 2 jusqu'à −5, 3 plus bas, tirés parmi ceux qui manquent ; le suivant attend derrière le passage secret
+  const manque = opts.fouille ? [] : tireur({ rng: (opts.rng ^ 0x2545f491) >>> 0 }).melanger([...(opts.vestiges ?? [])]);
+  const n = opts.strate <= 5 ? EXPLORER.vestiges.haut : EXPLORER.vestiges.bas;
+  const rodeur = opts.fouille ? undefined : opts.rodeur;
+  const carte = genererCarte(opts.strate, opts.rng, opts.garde, !!opts.fouille, { halte: !opts.fouille && opts.halte !== undefined, quete: !!opts.quete, vestiges: manque.slice(0, n), ...(rodeur ? { rodeur: rodeur.id } : {}) });
+  const places = new Set(carte.salles.map((s) => s.vestige).filter(Boolean));
+  const secret = manque.find((v) => !places.has(v));
+  const traque = rodeur && carte.salles.some((s) => s.rodeur) ? rodeur : undefined;
   const premier = carte.salles.find((s) => s.ennemi)!.ennemi!;
   // le combat n'existe qu'une fois une salle de combat ouverte : en attendant, un combat clôturé tient la place
   const attente = creerCombat({ porteurs: opts.porteurs, ennemiId: premier, rng: opts.rng, deck: opts.deck });
@@ -542,11 +624,15 @@ export function nouvelleExploration(opts: {
     butin: 0, terminee: false, cloture: true, carte, phase: 'carte', gagnes: 0, gains: gainsVides(),
     recit: opts.fouille
       ? `L’escouade descend fouiller ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Pas de gardien cette fois : le filon est au fond.`
-      : `L’escouade entre dans ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Choisis ton chemin : le gardien attend tout au fond.${particularite(opts.strate) ? ` ${particularite(opts.strate)!.nom}. ${particularite(opts.strate)!.texte}` : ''}${carte.salles.some((s) => s.quete) ? ` Une marque de quête ✦ brille quelque part sur le plan.` : ''}`,
+      : `L’escouade entre dans ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Choisis ton chemin : le gardien attend tout au fond.${particularite(opts.strate) ? ` ${particularite(opts.strate)!.nom}. ${particularite(opts.strate)!.texte}` : ''}${carte.salles.some((s) => s.quete) ? ` Une marque de quête ✦ brille quelque part sur le plan.` : ''}${places.size ? ` ${places.size > 1 ? `${places.size} Vestiges dorment` : 'Un Vestige dort'} sur le plan.` : ''}${traque ? ` ${rodeurDef(traque.id)!.traces}` : ''}`,
     ...(opts.fouille ? { fouille: opts.fouille } : {}),
     ...(opts.facteur && opts.facteur !== 1 ? { facteur: opts.facteur } : {}),
     ...(opts.bonus ? { bonus: opts.bonus } : {}),
     ...(!opts.fouille && opts.halte !== undefined ? { halte: opts.halte } : {}),
+    ...(!opts.fouille && opts.eveille ? { eveille: true } : {}),
+    ...(opts.fouille && opts.releve ? { releve: true } : {}),
+    ...(secret ? { vestigeSecret: secret } : {}),
+    ...(traque ? { rodeur: traque } : {}),
   };
 }
 
@@ -589,14 +675,15 @@ function mecaniques(strate: number): { traits?: false; traitsEnnemis?: false; as
 }
 
 /** Ouvre un combat dans la salle courante */
-export function lancerCombat(x: Expedition, ennemi: string, renfort = 1, escorte?: string[], condition?: string): Expedition {
+export function lancerCombat(x: Expedition, ennemi: string, renfort = 1, escorte?: string[], condition?: string,
+  opts: { fuyard?: { tours: number; part: number }; force?: number; troisiemePhase?: boolean } = {}): Expedition {
   const porteurs = x.porteurs.map((p) => ({ ...p, aTerre: p.pv <= 0 }));
   const sequence = [...x.sequence, ennemi];
   return {
     ...x, phase: 'combat', sequence, index: sequence.length - 1, cloture: false, porteurs,
     combat: creerCombat({ porteurs, ennemiId: ennemi, rng: x.combat.rng ^ (sequence.length * 0x9e3779b1), deck: x.deck,
-      force: forceStrate(x.strate) * (x.facteur ?? 1) * renfort, bonus: x.bonus, ...(escorte?.length ? { escorte } : {}), ...(condition ? { condition } : {}),
-      ...mecaniques(x.strate) }),
+      force: (opts.force ?? forceStrate(x.strate)) * (x.facteur ?? 1) * renfort, bonus: x.bonus, ...(escorte?.length ? { escorte } : {}), ...(condition ? { condition } : {}),
+      ...mecaniques(x.strate), ...(opts.troisiemePhase ? { troisiemePhase: true } : {}), ...(opts.fuyard ? { fuyard: opts.fuyard } : {}) }),
   };
 }
 
@@ -621,11 +708,22 @@ export function entrerSalle(x: Expedition, id: number, second = false): { x: Exp
   let y: Expedition = { ...x, carte: { ...x.carte, salles, position: id, rng: etat.rng }, ...(parFil ? { filPris: true } : {}) };
   // la marque de la quête : trouvée en entrant, sauf dans un combat (il faut d'abord le gagner : cloturerCombat)
   if (salle.quete && !salle.ennemi) y.gains = { ...(y.gains ?? gainsVides()), etape: true };
+  // un Vestige : ramassé en entrant, sauf derrière un combat (il faut le gagner) ou une porte (il faut l'ouvrir)
+  if (salle.vestige && !salle.ennemi && salle.type !== 'porte') y.gains = ramasser(y.gains, salle.vestige);
   const avant = parFil ? 'L’escouade suit le fil d’une salle à l’autre. ' : '';
   switch (salle.type) {
     case 'combat':
+      if (salle.rodeur && x.rodeur) {
+        // le Rôdeur : la force de la Strate la plus profonde de sa zone, sa vie d'avant, et il fuit au bout de quelques tours
+        const def = rodeurDef(salle.rodeur)!;
+        y = lancerCombat({ ...y, recit: def.traces }, salle.ennemi!, 1, undefined, undefined,
+          { force: forceStrate(STRATE_RODEUR[def.zone]!), fuyard: { tours: EXPLORER.rodeur.tours, part: x.rodeur.part } });
+      } else y = lancerCombat(y, salle.ennemi!, 1, salle.escorte, salle.condition);
+      break;
     case 'gardien':
-      y = lancerCombat(y, salle.ennemi!, 1, salle.escorte, salle.condition);
+      y = x.eveille
+        ? lancerCombat(y, salle.ennemi!, EXPLORER.eveille.force, salle.escorte, salle.condition, { troisiemePhase: true })
+        : lancerCombat(y, salle.ennemi!, 1, salle.escorte, salle.condition);
       break;
     case 'halte':
       // la Halte : un choix à faire (descentes.ts, choisirHalte), ou un lieu déjà connu
@@ -661,7 +759,7 @@ export function entrerSalle(x: Expedition, id: number, second = false): { x: Exp
     }
     case 'camp': {
       const porteurs = y.porteurs.map((p) => ({ ...p, pv: Math.min(p.pvMax, Math.max(0, p.pv) + Math.round(p.pvMax * 0.35)), aTerre: false }));
-      y = { ...y, porteurs, recit: 'Un campement de fouilleurs, encore tiède. L’escouade souffle (+35 % de PV). Tu peux remonter d’ici avec ce que tu as trouvé.' };
+      y = { ...y, porteurs, campe: true, recit: 'Un campement de fouilleurs, encore tiède. L’escouade souffle (+35 % de PV). Tu peux remonter d’ici avec ce que tu as trouvé.' };
       break;
     }
     case 'archive': {
@@ -725,7 +823,9 @@ export function ouvrirPorte(x: Expedition, rangs: number[]): { x: Expedition; ok
   if (!cartesAccordees(rangs.map((r) => x.deck[r]!), n)) return { x, ok: false, message: `Ces Fréquences ne se suivent pas : il faut une suite de ${n} (par exemple ${Array.from({ length: n }, (_, k) => k + 3).join(', ')}).` };
   const eclats = x.strate >= 10 ? CONTENU.porte.eclatsFond : CONTENU.porte.eclats;
   const plus = Math.round(butinCache(x.strate) * CONTENU.porte.composants);
-  const gains = { ...(x.gains ?? gainsVides()), eclats: (x.gains?.eclats ?? 0) + eclats, portes: (x.gains?.portes ?? 0) + 1 };
+  let gains: Gains = { ...(x.gains ?? gainsVides()), eclats: (x.gains?.eclats ?? 0) + eclats, portes: (x.gains?.portes ?? 0) + 1 };
+  const vestige = x.carte ? salleCourante(x).vestige : undefined;
+  if (vestige) gains = ramasser(gains, vestige);
   return { ok: true, x: { ...x, porte: undefined, gains, butin: x.butin + plus,
     recit: `Les Fréquences s’accordent. La porte tourne sur elle-même sans un bruit : derrière, ${eclats > 1 ? `${eclats} Éclats` : 'un Éclat'} et ${plus} composants, rangés là depuis toujours.` } };
 }
@@ -761,9 +861,11 @@ export function suivrePassage(x: Expedition): { x: Expedition; ok: boolean; mess
   const def = SECRETS.find((d) => d.id === ici.secret);
   if (!qui || !def) return { x, ok: false, message: 'Personne ne voit de passage ici.' };
   const plus = butinCache(x.strate);
-  const gains = { ...(x.gains ?? gainsVides()), fragment: true, portes: (x.gains?.portes ?? 0) + 1 };
+  let gains: Gains = { ...(x.gains ?? gainsVides()), fragment: true, portes: (x.gains?.portes ?? 0) + 1 };
+  // derrière le passage, un Vestige de plus quand il en manque encore (explorer.ts)
+  if (x.vestigeSecret) gains = ramasser(gains, x.vestigeSecret);
   return { ok: true, qui, x: { ...x, secretVu: true, gains, butin: x.butin + plus,
-    recit: `${def.derriere[Math.min(3, x.carte.zone)]} L’escouade en rapporte ${plus} composants et des papiers d’époque.` } };
+    recit: `${def.derriere[Math.min(3, x.carte.zone)]} L’escouade en rapporte ${plus} composants et des papiers d’époque${x.vestigeSecret ? ', et un Vestige posé là, comme pour vous' : ''}.` } };
 }
 
 /** Les Haltes encore à voir dans une Strate (strates.ts) : la prochaine, ou « connu » */

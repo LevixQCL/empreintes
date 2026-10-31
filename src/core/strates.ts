@@ -469,6 +469,27 @@ export const reperent = (s: SecretDef, debout: readonly string[]) => debout.filt
 export const PALIERS_BESTIAIRE = [1, 4, 10] as const;
 export interface FicheBestiaire { origine: string; conseil: string; secret: string }
 export const BESTIAIRE: Record<string, FicheBestiaire> = {
+  // les Rôdeurs (31 octobre 2026, explorer.ts) : un par zone, croisé seulement en Explorer
+  'maree-basse': {
+    origine: 'Un Rampeur qui n’a jamais cessé de grandir, né dans les eaux chaudes des pompes de 2066. Les fouilleurs l’entendent respirer sous les piliers.',
+    conseil: 'Elle s’enfuit au bout de quatre tours : frappe fort dès le premier. Ses Ressacs touchent toute l’escouade, garde du bouclier.',
+    secret: 'Marée-Basse ne s’approche jamais des piliers qui tiennent. Elle suit l’eau qui monte, comme tout le monde.',
+  },
+  'sentinelle-orpheline': {
+    origine: 'Une Sentinelle de verre dont la porte a été murée en 2066. Elle cherche depuis une porte à garder.',
+    conseil: 'Blindée : mise sur des cartes fortes ou sur Perçant. Elle fuit au bout de quatre tours, ne garde rien pour la fin.',
+    secret: 'Elle ne frappe jamais quelqu’un qui se tient dans l’encadrement d’une porte. Personne ne sait pourquoi.',
+  },
+  liseur: {
+    origine: 'Un Écho qui lit à voix haute les noms gravés des Registres. Là où il est passé, les noms s’effacent.',
+    conseil: 'Hors Résonance, tes coups glissent sur lui : enchaîne des suites. Il brouille tes Fréquences un tour sur quatre.',
+    secret: 'Il ne lit jamais deux fois le même nom. Ceux qu’il a lus, la Tisseuse les avait déjà oubliés.',
+  },
+  plongeur: {
+    origine: 'Un scaphandre de ceux d’avant, lesté, qui marche encore vers la surface. Il ne s’est jamais arrêté.',
+    conseil: 'Très blindé, et ses Poids morts font mal : protège le plus faible, et frappe gros avant qu’il reparte.',
+    secret: 'Sur son casque, quelqu’un a gravé des vagues, les mêmes que sur la couverture tissée de −4. Il est passé par les portes rondes, un jour.',
+  },
   remanent: {
     origine: 'Une empreinte trop vieille pour se souvenir de son porteur. Elle erre dans les Seuils en cherchant un corps qui n’existe plus.',
     conseil: 'Ses Fêlures sont cachées : sans suite de Fréquences, tes coups glissent sur lui. Enchaîne 3, 4, 5.',

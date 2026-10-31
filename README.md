@@ -50,6 +50,7 @@ src/
       partie/temps.ts        le temps qui passe
       partie/nouvelle.ts     nouvelle partie, décisions de la campagne, mise à jour des anciennes sauvegardes
     expedition.ts  une suite de combats ; c'est ce qui est sauvegardé
+    explorer.ts    Explorer ou fouiller : Vestiges, étoiles de Strate, gardien éveillé, Rôdeurs (textes et réglages, docs/strates-explorer.md)
     rng.ts         hasard déterministe (même graine = même partie)
   ui/            l'affichage
     coquille.ts    ressources en haut, navigation en bas, menu, notifications (commun au district)

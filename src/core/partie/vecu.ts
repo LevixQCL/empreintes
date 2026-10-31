@@ -5,8 +5,9 @@
 // Pur prestige : AUCUN effet en combat (une carte vétérane ne frappe pas plus fort, un nouveau joueur n'est pas désavantagé).
 // Tout se lit dans le journal du combat (CombatEtat.historique) : rien à brancher dans le moteur.
 
-import { estCarteConnue, moduleDef, porteurDef } from '../donnees';
+import { ennemiDef, estCarteConnue, moduleDef, porteurDef } from '../donnees';
 import type { CombatEtat } from '../types';
+import { rodeurDef } from '../explorer';
 import type { Jeu } from './etat';
 
 /** Ce qu'une carte (un exemplaire « carte@métal ») a vécu. Clés courtes : la sauvegarde reste légère. */
@@ -36,6 +37,8 @@ export interface VecuCarte {
   li?: string[];
   /** l'épithète choisi (son identifiant) ; absent : le plus récent débloqué */
   e?: string;
+  /** les Rôdeurs qu'elle a achevés (explorer.ts) */
+  ro?: string[];
 }
 
 /**
@@ -116,6 +119,8 @@ export const EPITHETES: EpitheteDef[] = [
   { id: 'veille', texte: () => 'qui n’a laissé tomber personne', ok: (x, t) => t === 'soin' && x.s >= 1500, aide: 'Une carte de soin : soigner 1 500 PV.' },
   { id: 'mille', texte: () => 'aux mille coups', ok: (x, t) => t === 'atk' && x.d >= 6000, aide: 'Une carte d’attaque : infliger 6 000 dégâts.' },
   { id: 'veteran', texte: () => 'de toutes les descentes', ok: (x) => x.v >= 300, aide: 'Gagner 300 combats.' },
+  // les Rôdeurs (31 octobre 2026) : un exploit rare, une seule carte par Rôdeur
+  { id: 'rodeur', texte: (x) => `qui a abattu ${rodeurDef(x.ro![x.ro!.length - 1]!)?.dans ?? ennemiDef(x.ro![x.ro!.length - 1]!).nom}`, ok: (x) => !!x.ro?.length, aide: 'Porter le dernier coup à un Rôdeur.' },
 ];
 
 /** Les épithètes débloqués, dans l'ordre de la liste */
@@ -146,6 +151,7 @@ export function journalCarte(x: VecuCarte | undefined): string[] {
   if (x.p) l.push(`Premier Porteur : ${porteurDef(x.p).nom}.`);
   if (x.l) l.push(`${x.l} lancer${x.l > 1 ? 's' : ''} · ${x.v} combat${x.v > 1 ? 's' : ''} gagné${x.v > 1 ? 's' : ''}.`);
   if (x.a || x.f) l.push([x.a ? `${x.a} dernier${x.a > 1 ? 's' : ''} coup${x.a > 1 ? 's' : ''}` : '', x.f ? `${x.f} Fêlure${x.f > 1 ? 's' : ''} brisée${x.f > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ') + '.');
+  if (x.ro?.length) l.push(`A abattu ${x.ro.map((id) => ennemiDef(id).nom).join(', ')}.`);
   if (x.ga.length) l.push(`A fendu le Gardien de −${max(x.ga)}.`);
   else if (x.g.length) l.push(`Était là contre le Gardien de −${max(x.g)}.`);
   if (x.z) l.push(`Profondeur atteinte : −${x.z}.`);
@@ -172,7 +178,7 @@ export function noterOrigine(j: Jeu, cle: string, strate: number): void {
  * La fin d'un combat gagné ou perdu : chaque carte jouée y inscrit ses coups, protections, soins et Fêlures ;
  * une victoire inscrit le combat gagné, la profondeur, le dernier coup et le Gardien.
  */
-export function noterVecu(j: Jeu, c: CombatEtat, o: { strate: number; gardien: boolean }): void {
+export function noterVecu(j: Jeu, c: CombatEtat, o: { strate: number; gardien: boolean; rodeur?: string }): void {
   const histo = c.historique ?? [];
   const victoire = c.issue === 'victoire';
   const jouees = new Set<string>();
@@ -205,9 +211,11 @@ export function noterVecu(j: Jeu, c: CombatEtat, o: { strate: number; gardien: b
     x.z = Math.max(x.z, o.strate);
     if (o.gardien && !x.g.includes(o.strate)) x.g.push(o.strate);
   }
-  if (dernier) {
+  // un Rôdeur enfui n'a pas été abattu : pas de dernier coup
+  if (dernier && !c.enfui) {
     const x = vecuOuNeuf(j, dernier);
     x.a++;
     if (o.gardien && !x.ga.includes(o.strate)) x.ga.push(o.strate);
+    if (o.rodeur && !c.enfui && !(x.ro ??= []).includes(o.rodeur)) x.ro.push(o.rodeur);
   }
 }

@@ -589,6 +589,49 @@ export const ENNEMIS: EnnemiDef[] = [
       { type: 'bouclier', v: 9 },
     ],
   },
+  // ---------- Les Rôdeurs (31 octobre 2026, explorer.ts) : un par zone, croisé seulement en Explorer ----------
+  // Il se bat quelques tours puis s'enfuit ; sa vie est gardée d'une descente à l'autre. Sa force est celle de la Strate
+  // la plus profonde de sa zone (STRATE_RODEUR). Pas de trait au-delà d'un seul, lisible : c'est sa vie qui fait le défi.
+  {
+    id: 'maree-basse', nom: 'Marée-Basse', lignee: 'bio', tag: 'RÔDEUR DES SEUILS', pvMax: 175,
+    traits: [{ type: 'regeneration', part: 0.02 }],
+    motif: [
+      { type: 'atk', nom: 'Ressac', v: 8, zone: true },
+      { type: 'atk', nom: 'Étreinte', v: 13, cible: 'faible' },
+      { type: 'bouclier', v: 12 },
+      { type: 'atk', nom: 'Ressac', v: 9, zone: true },
+    ],
+  },
+  {
+    id: 'sentinelle-orpheline', nom: 'Sentinelle orpheline', lignee: 'tech', tag: 'RÔDEUR DES SALLES CLOSES', pvMax: 170,
+    traits: [{ type: 'blinde', v: 2 }],
+    motif: [
+      { type: 'atk', nom: 'Éclat perdu', v: 13, cible: 'hasard' },
+      { type: 'boost' },
+      { type: 'atk', nom: 'Seuil de verre', v: 8, zone: true },
+      { type: 'bouclier', v: 14 },
+    ],
+  },
+  {
+    id: 'liseur', nom: 'Le Liseur', lignee: 'reso', tag: 'RÔDEUR DES REGISTRES', pvMax: 150,
+    traits: [{ type: 'evanescent', part: 0.2 }],
+    motif: [
+      { type: 'atk', nom: 'Nom prononcé', v: 14, cible: 'faible' },
+      { type: 'dissonance', nom: 'Lecture à voix haute' },
+      { type: 'atk', nom: 'Page tournée', v: 8, zone: true },
+      { type: 'soin', nom: 'Relire', v: 10 },
+    ],
+  },
+  {
+    id: 'plongeur', nom: 'Le Plongeur', lignee: 'tech', tag: 'RÔDEUR DU FOND', pvMax: 185,
+    traits: [{ type: 'blinde', v: 3 }],
+    motif: [
+      { type: 'atk', nom: 'Poids mort', v: 15, cible: 'hasard' },
+      { type: 'bouclier', v: 14 },
+      { type: 'atk', nom: 'Pression', v: 9, zone: true },
+      { type: 'atk', nom: 'Poids mort', v: 15, cible: 'faible' },
+    ],
+  },
 ];
 
 /**

@@ -13,6 +13,7 @@
 
 import { INDICES, accessibles, butinArchive, butinCache, butinCombat, enAttente, forceStrate, indiceSalle, mainAccordable, peutRemonter, rangsDe, reperentPassage, salleCourante, suitePorte, visionSalle, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
 import { CONTENU, halteDef, nombreHaltes, particularite, queteDef, secretDef, voixDetail } from '../core/strates';
+import { EXPLORER, rodeurDef, vestigesDe } from '../core/explorer';
 import { couleurFrequence } from './carte';
 import { paroleDescente } from '../core/campagne';
 import { PV_GROUPE, pvProfondeur } from '../core/combat';
@@ -21,7 +22,7 @@ import { BATTU_PAR } from '../core/regles';
 import { CIBLES_FOUILLE, RENCONTRES, XP, etapeQueteTrouvee, gainChoixHalte, halteEnCours, type Jeu } from '../core/jeu';
 import { COLLECTION } from '../core/collection';
 import { REGLES } from '../core/regles';
-import { decorStrate, illustrationEnnemi, portrait, iconeCondition } from './art';
+import { decorStrate, illustrationEnnemi, portrait, iconeCondition, portraitProvisoire } from './art';
 import { COULEUR, htmlLieu } from './vue';
 import { ICO, baseIcones, icone } from './icones';
 import { echap } from './outils';
@@ -54,7 +55,7 @@ function medaillon(s: Pick<Salle, 'type' | 'ennemi'>): string {
   const ill = s.ennemi ? illustrationEnnemi(s.ennemi) : null;
   if (ill) {
     const [cx, cy, z] = CADRAGE[s.ennemi!] ?? [50, 28, 210];
-    return `<span class="ex-med" style="--img:url(${ill});--pos:${cx}% ${cy}%;--zoom:${z}%"><i></i></span>`;
+    return `<span class="ex-med${portraitProvisoire(s.ennemi!) ? ' provisoire' : ''}" style="--img:url(${ill});--pos:${cx}% ${cy}%;--zoom:${z}%"><i></i></span>`;
   }
   const scene = SCENES[s.type];
   if (scene) {
@@ -111,6 +112,12 @@ function annonce(s: Salle, x: Expedition): { sur: string; titre: string; texte: 
   const xp = Math.round(XP.combat * (1 + 0.25 * (x.strate - 1)));
   const chance = Math.round(COLLECTION.chanceCombat * 100);
   const enPlus = `${or(`+${xp} XP`)} chacun · ${or(`${chance} %`)} de chance de carte`;
+  if (s.rodeur && s.ennemi) {
+    const d = ennemiDef(s.ennemi);
+    const reste = Math.round((x.rodeur?.part ?? 1) * 100);
+    return { sur: 'Rôdeur', titre: d.nom, texte: rodeurDef(s.rodeur)?.traces ?? d.tag,
+      faits: [`il s’enfuit au bout de <b>${EXPLORER.rodeur.tours} tours</b>`, `il lui reste <b>${reste} %</b> de sa vie`, `faible contre <b class="ex-lignee" style="--c:${COULEUR[BATTU_PAR[d.lignee]]}">${NOMS_LIGNEE[BATTU_PAR[d.lignee]].nom}</b>`, `abattu : ${or('1 trophée')}`] };
+  }
   if (s.ennemi) {
     const d = ennemiDef(s.ennemi);
     const faible = BATTU_PAR[d.lignee];
@@ -212,6 +219,7 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
     + (cartes ? `<span data-gain="x-cartes">${icone('cartes')}<b>${cartes}</b><small>carte${cartes > 1 ? 's' : ''}</small></span>` : '')
     + (g?.eclats ? `<span data-gain="x-eclats">${icone('eclats')}<b>${g.eclats}</b><small>Éclat${g.eclats > 1 ? 's' : ''}</small></span>` : '')
     + (g?.fragment ? `<span>${icone('codex')}<b>1</b><small>archive</small></span>` : '')
+    + (g?.vestiges?.length ? `<span class="ex-butin-vestige">${ICO.vestige}<b>${g.vestiges.length}</b><small>Vestige${g.vestiges.length > 1 ? 's' : ''}</small></span>` : '')
     // 27 octobre 2026 : le bouton du bas restait sous les chemins, hors de l'écran sur téléphone → toujours visible en tête
     + (!x.terminee && peutRemonter(x) ? `<button type="button" class="ex-tete-remonter" data-action="retraite" aria-label="Remonter au district${x.butin ? ` avec ${x.butin} composants` : ''}">${ICO.retour}<span>Remonter</span></button>` : '')
     + `</div></header>`;
@@ -291,6 +299,10 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
     if (reperentPassage(x, s).length && (etat === 'accessible' || etat === 'ici')) { dedans += `<span class="ex-badge secret" aria-hidden="true">${ICO.fissure}</span>`; label += ' · un passage repéré'; }
     // la marque de la quête se voit même dans le brouillard
     if (s.quete && !x.gains?.etape && !s.faite) { dedans += `<span class="ex-badge quete" aria-hidden="true">${ICO.quete}</span>`; label += ' · la marque de la quête'; }
+    // Explorer (31 octobre 2026) : le Vestige (losange turquoise, en haut à gauche) et les traces du Rôdeur (griffures rouges, en haut)
+    // se voient eux aussi dans le brouillard ; formes et couleurs bien distinctes de l'étoile dorée de la quête (revue du game designer)
+    if (s.vestige && !s.faite && !x.gains?.vestiges?.includes(s.vestige)) { dedans += `<span class="ex-badge vestige" aria-hidden="true">${ICO.vestige}</span>`; label += ' · un Vestige'; }
+    if (s.rodeur && !s.faite) { dedans += `<span class="ex-badge rodeur" aria-hidden="true">${ICO.griffes}</span>`; label += ` · les traces de ${rodeurDef(s.rodeur)?.dans ?? 'un Rôdeur'}`; }
     if (nom) dedans += `<span class="ex-nom">${echap(nom)}</span>`;
     const style = `left:${posX(s).toFixed(2)}%;top:${posY(s).toFixed(2)}%`;
     h += acces
@@ -337,6 +349,7 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
         + (a.texte ? `<em>${echap(a.texte)}</em>` : '')
         + (a.faits.length ? `<span class="ex-faits">${a.faits.map((f) => `<span>${f}</span>`).join('')}</span>` : '')
         + (vue.quete && !x.gains?.etape && queteDef(x.strate) ? `<span class="ex-condition ex-c-quete">${ICO.quete}<span><b>${echap(queteDef(x.strate)!.nom)}</b> : la marque de la quête est ici${vue.ennemi ? ' (gagne le combat pour la relever)' : ''}.</span></span>` : '')
+        + (vue.vestige && !x.gains?.vestiges?.includes(vue.vestige) ? `<span class="ex-condition ex-c-vestige">${ICO.vestige}<span><b>Un Vestige</b> dort ici${vue.ennemi ? ' (gagne le combat pour le ramasser)' : vue.type === 'porte' ? ' (ouvre la porte pour le ramasser)' : ''}.</span></span>` : '')
         + (reperentPassage(x, vue).length ? `<span class="ex-condition ex-c-secret">${ICO.fissure}<span><b>${echap(porteurDef(reperentPassage(x, vue)[0]!).nom)}</b> y repère un passage caché.</span></span>` : '')
         + (cond ? `<span class="ex-condition">${iconeCondition(cond.id) ? `<img class="ex-cond-ico" src="${iconeCondition(cond.id)}" alt="" decoding="async">` : ICO.cristal}<span><b>${echap(cond.nom)}</b> : ${echap(cond.texte)}</span></span>` : '')
         + `</span></div>`
@@ -373,6 +386,14 @@ function teteContenu(j: Jeu, x: Expedition): string {
     h += `<span class="ex-quete${x.gains?.etape ? ' trouvee' : ''}" title="${echap(q.but)}">${ICO.quete}<b>${echap(q.nom)}</b>`
       + `<span class="ex-points" aria-label="${n} étape${n > 1 ? 's' : ''} sur ${q.etapes.length}">${q.etapes.map((_, k) => `<i${k < n ? ' class="ok"' : ''}></i>`).join('')}</span></span>`;
   }
+  // Explorer (31 octobre 2026) : les Vestiges de la Strate (◆ 2 / 5), le gardien éveillé
+  if (!x.fouille && vestigesDe(x.strate).length) {
+    const n = vestigesDe(x.strate).filter((v) => j.vestiges?.includes(v.id) || x.gains?.vestiges?.includes(v.id)).length;
+    const poses = x.carte!.salles.filter((s) => s.vestige).length;
+    if (poses || n < 5) h += `<span class="ex-vestiges${n >= 5 ? ' complet' : ''}" title="Vestiges de la Strate">${ICO.vestige}<b>Vestiges ${n} / 5</b>${x.gains?.vestiges?.length ? `<small>+${x.gains.vestiges.length} cette descente</small>` : ''}</span>`;
+  }
+  if (x.eveille) h += `<span class="ex-eveille">${ICO.lueur}<b>Gardien éveillé</b><small>plus fort, plus généreux</small></span>`;
+  if (x.releve) h += `<span class="ex-vestiges complet">${ICO.vestige}<b>Strate relevée</b><small>tout le plan est visible</small></span>`;
   return h;
 }
 

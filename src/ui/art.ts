@@ -131,6 +131,11 @@ const MODULES_ILLUSTRES: Record<string, string> = {
 };
 
 /** Ennemis illustrés : id de l'ennemi → fichier (le Rémanent affaibli reprend le Rémanent) */
+/** Les Rôdeurs déjà peints (à compléter à l'arrivée des images), et le cousin dont ils empruntent le portrait en attendant */
+const RODEURS_PEINTS = new Set<string>([]);
+const RODEURS_PROVISOIRES: Record<string, string> = { 'maree-basse': 'rampeur', 'sentinelle-orpheline': 'sentinelle-verre', liseur: 'echo-veilleur', plongeur: 'automate-graveur' };
+/** Un Rôdeur sans son propre portrait : l'image empruntée est teintée (classe .provisoire) pour ne pas le confondre avec son cousin */
+export const portraitProvisoire = (id: string) => id in RODEURS_PROVISOIRES && !RODEURS_PEINTS.has(id);
 const ENNEMIS_ILLUSTRES: Record<string, string> = {
   'remanent-faible': 'remanent',
   remanent: 'remanent',
@@ -148,6 +153,8 @@ const ENNEMIS_ILLUSTRES: Record<string, string> = {
   'tisseuse': 'tisseuse',
   'premier-porteur': 'premier-porteur',
   sauvage: 'sauvage',
+  // les Rôdeurs (31 octobre 2026) : leur portrait Midjourney s'il est là (ennemis/<id>.webp), sinon celui d'un cousin de leur zone
+  ...Object.fromEntries(Object.entries(RODEURS_PROVISOIRES).map(([id, cousin]) => [id, RODEURS_PEINTS.has(id) ? id : cousin])),
 };
 
 /**

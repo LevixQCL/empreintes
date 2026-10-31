@@ -84,6 +84,8 @@ export interface EcranDistrict {
   voletPort?: 'pillages' | 'missions';
   /** les garnisons des vrais directeurs à portée, lues en ligne (vide sans compte) */
   pillagesEnLigne?: import('../core/jeu').Cible[];
+  /** la feuille des Vestiges d'une Strate est ouverte (Tour, 31 octobre 2026) */
+  vestiges?: number | null;
   /** la fiche d'une ressource du haut est ouverte (22 octobre 2026) */
   ressource?: Ressource | null;
   /** onglet Escouade : le volet « Porteurs » (tous les Porteurs) est affiché au lieu de l’escouade */

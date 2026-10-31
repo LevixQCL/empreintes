@@ -55,6 +55,8 @@ export function creerCombat(opts: {
   assimilation?: boolean;
   /** true : les gardiens gardent une 3ᵉ phase (à partir de REGLES.apparition.troisiemePhase) */
   troisiemePhase?: boolean;
+  /** un Rôdeur : il s'enfuit à la fin de ce tour, et commence avec cette part de sa vie (ses blessures d'avant) */
+  fuyard?: { tours: number; part: number };
 }): CombatEtat {
   const e = ennemiDef(opts.ennemiId);
   const groupe = [opts.ennemiId, ...(opts.escorte ?? [])];
@@ -85,7 +87,9 @@ export function creerCombat(opts: {
     rng: opts.rng,
     issue: 'en-cours',
     journal: [],
+    ...(opts.fuyard ? { fuyard: opts.fuyard.tours } : {}),
   };
+  if (opts.fuyard) s.ennemi.pv = Math.max(1, Math.round(s.ennemi.pvMax * Math.min(1, opts.fuyard.part)));
   const deck: Geste[] = (opts.deck ?? DECK_DEPART).map((g, k) => ({ ...g, uid: `g${k}` }));
   s.pioche = opts.ordonne ? deck.slice().reverse() : tireur(s).melanger(deck);
   s.historique = [];
@@ -662,6 +666,13 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     return pas;
   }
   tourEnnemi(s, emettre);
+  // le Rôdeur (explorer.ts) : passé son dernier tour, il s'enfuit avec ses blessures ; le combat compte comme gagné
+  if (s.fuyard && s.issue === 'en-cours' && s.tour > s.fuyard) {
+    s.issue = 'victoire';
+    s.enfui = true;
+    log(s, `${ennemiDef(s.ennemi.id).nom} s’enfuit dans le noir, blessé. Ses blessures resteront.`, { camp: 'neutre', sorte: 'info' });
+    emettre({ kind: 'fin', issue: 'victoire' });
+  }
   CAMP = 'joueur';
   return pas;
 }

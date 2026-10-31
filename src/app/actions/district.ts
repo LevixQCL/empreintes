@@ -205,6 +205,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     }
     case 'tour-volet': D.ongletTour = id === 'epreuves' || id === 'missions' ? id : 'strates'; break;
     case 'descendre': D.deck = null; D.fouille = null; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
+    case 'vestiges-voir': D.vestiges = b.dataset.strate ? Number(b.dataset.strate) : null; break;
     case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
     case 'cible': D.fouille = id as typeof D.fouille; break;
     case 'epreuve': {

@@ -4,7 +4,8 @@
 import { ZONES, ennemiDef, NOMS_LIGNEE } from '../core/donnees';
 import { BESTIAIRE, PALIERS_BESTIAIRE, lignesBestiaire } from '../core/strates';
 import type { Jeu } from '../core/jeu';
-import { illustrationEnnemi } from './art';
+import { illustrationEnnemi, portraitProvisoire } from './art';
+import { RODEURS } from '../core/explorer';
 import { ICO } from './icones';
 import { echap } from './outils';
 import { COULEUR } from './vue';
@@ -19,7 +20,7 @@ function parZone(): string[][] {
 
 export function htmlBestiaire(j: Jeu): string {
   const victoires = (id: string) => j.stats?.ennemis[id]?.[0] ?? 0;
-  const tous = Object.keys(BESTIAIRE);
+  const tous = Object.keys(BESTIAIRE).filter((id) => !RODEURS.some((r) => r.id === id));
   const connus = tous.filter((id) => victoires(id) > 0).length;
   let h = `<p class="aide intro-ecran">Ce que les Veilleurs savent des habitants des Strates. Une fiche s’écrit à force de les vaincre : d’où ils viennent, comment ils se battent, puis leur secret. <b>${connus} / ${tous.length}</b> rencontrés.</p>`;
   parZone().forEach((ids, z) => {
@@ -44,5 +45,27 @@ export function htmlBestiaire(j: Jeu): string {
     }
     h += `</div></section>`;
   });
-  return h;
+  return h + htmlRodeurs(j);
+}
+
+/** Les Rôdeurs (31 octobre 2026, explorer.ts) : leurs traces, leur vie restante, leur fiche ; la fiche entière s'ouvre quand il tombe */
+function htmlRodeurs(j: Jeu): string {
+  let h = `<section class="bs-zone bs-rodeurs"><span class="surtitre">Les Rôdeurs · un par zone, en Explorer</span><div class="bs-liste">`;
+  for (const r of RODEURS) {
+    const d = ennemiDef(r.id);
+    const e = j.rodeurs?.[r.id];
+    const f = BESTIAIRE[r.id]!;
+    if (!e) {
+      h += `<article class="bs-fiche inconnue"><span class="bs-img" aria-hidden="true">${ICO.griffes}</span><div><strong>Des traces, quelque part</strong><small>${echap(d.tag)} · se croise en explorant une Strate déjà vaincue</small></div></article>`;
+      continue;
+    }
+    const img = illustrationEnnemi(r.id);
+    const etat = e.abattu ? `<b class="bs-abattu">Abattu</b>` : `il lui reste <b>${Math.round(e.part * 100)} %</b> de sa vie`;
+    h += `<article class="bs-fiche${e.abattu ? '' : ' traque'}" style="--c:${COULEUR[d.lignee]}"><span class="bs-img${portraitProvisoire(r.id) ? ' provisoire' : ''}" aria-hidden="true">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ICO.griffes}</span>`
+      + `<div><strong>${echap(d.nom)}</strong><small>${echap(d.tag)} · ${echap(NOMS_LIGNEE[d.lignee].nom)} · ${e.rencontres} rencontre${e.rencontres > 1 ? 's' : ''} · ${etat}</small>`
+      + `<p><b>Origine</b>${echap(f.origine)}</p><p><b>Au combat</b>${echap(f.conseil)}</p>`
+      + (e.abattu ? `<p><b>Secret</b>${echap(f.secret)}</p>` : `<p class="bs-cache">${ICO.verrou}<span>Secret : quand il tombera</span></p>`)
+      + `</div></article>`;
+  }
+  return h + `</div></section>`;
 }

@@ -4,6 +4,8 @@
 import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, CLE_LEGS, CARTES_COMMUNES, RATELIER_DEPART, communeDef, forceCommune, type CarteCommuneDef, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
 import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, salleCourante, forceStrate, nouvelleExploration, type CibleFouille, butinCombat, butinCache, halteSuivante, ouvrirPorte as ouvrirPorteX, relancerPorte as relancerPorteX, passerPorte as passerPorteX, suivrePassage as suivrePassageX, RANG_HALTE } from '../expedition';
 import { halteDef, queteDef, type HalteDef } from '../strates';
+import { ETOILES, EXPLORER, PALIERS_ETOILES, RODEURS, metalEveille, rodeurDeZone, type EtoileId, vestigesDe } from '../explorer';
+import { ZONES } from '../donnees';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
 import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
@@ -704,7 +706,7 @@ export function finDeCombat(j: Jeu): void {
     noterCombat(j, c, c.issue);
     // l'empreinte des cartes jouées (pas pendant le tutoriel)
     const x = j.expedition;
-    if (!x.tutoriel) noterVecu(j, c, { strate: x.strate, gardien: !x.fouille && !x.epreuve && !!x.carte && salleCourante(x).type === 'gardien' });
+    if (!x.tutoriel) noterVecu(j, c, { strate: x.strate, gardien: !x.fouille && !x.epreuve && !!x.carte && salleCourante(x).type === 'gardien', ...(x.carte && salleCourante(x).rodeur ? { rodeur: salleCourante(x).rodeur } : {}) });
   }
   j.expedition = cloturerCombat(j.expedition);
 }
@@ -728,6 +730,17 @@ export interface Retour {
   fleche?: import('./fleche').RetourFleche;
   /** l'étape de la quête de la Strate trouvée pendant la descente (strates.ts) */
   quete?: EtapeQuete;
+  /** Explorer (explorer.ts) : Vestiges trouvés, Strate relevée, étoiles et paliers gagnés, Rôdeur affronté, gardien éveillé */
+  explorer?: RetourExplorer;
+}
+
+export interface RetourExplorer {
+  vestiges: string[];
+  releve?: number;
+  etoiles: number[];
+  paliers: number;
+  rodeur?: { id: string; part: number };
+  eveille?: boolean;
 }
 
 export function remonter(j: Jeu): Retour {
@@ -735,6 +748,7 @@ export function remonter(j: Jeu): Retour {
   if (!x) return { butin: 0, nouvelleStrate: false, victoire: false, fragment: null, cartes: [], eclats: 0 };
   const victoire = x.terminee && !x.retraite && x.combat.issue === 'victoire';
   const defaite = x.combat.issue === 'defaite' && !x.retraite;
+  const etoilesAvant = etoilesDe(j, x.strate);
   if (!x.tutoriel) noterExpedition(j, x.strate, victoire && !x.fouille && !x.epreuve ? 'gardien' : defaite ? 'defaite' : x.fuite ? 'fuite' : x.retraite ? 'retraite' : 'autre', x.porteurs.map((p) => p.id));
   const brut = defaite ? Math.floor(x.butin * DISTRICT.butinDefaite) : x.fuite ? Math.floor(x.butin * DISTRICT.butinFuite) : x.butin;
   const butin = x.tutoriel ? brut : Math.round(brut * (j.actes.chambre === 'district' ? 1.2 : 1) * (j.actes.fin === 'pacte' ? 1.1 : 1));
@@ -773,10 +787,12 @@ export function remonter(j: Jeu): Retour {
   if (victoire && x.fouille) {
     if (tireur(j).nombre() < CREUSEURS.fouille) gagnerCreuseurs(j, 1, 'un fouilleur perdu retrouvé pendant la fouille');
     // le filon : ce que la fouille visait
-    if (lignee) j.choix.push({ source: 'fouille', options: tirerChoix(j, x.strate, 'fer', lignee) });
+    // une Strate relevée (explorer.ts) : la première carte du filon est au moins en cuivre, +25 % de composants, un Éclat de plus
+    if (x.releve) eclats += EXPLORER.releve.eclats;
+    if (lignee) j.choix.push({ source: 'fouille', options: tirerChoix(j, x.strate, x.releve ? EXPLORER.releve.metal : 'fer', lignee) });
     // le filon « composants » rapporte selon l'effort (24 octobre 2026) : une part par combat gagné dans la fouille,
     // au lieu de doubler le butin et d'ajouter une prime fixe (un chemin d'un seul combat rapportait ~3 fois plus par combat qu'une expédition)
-    else if (x.fouille === 'composants') { const plus = Math.max(1, victoires) * Math.round(FILON_COMPOSANTS * (1 + 0.25 * (x.strate - 1))); j.composants += plus; butinFilon = plus; }
+    else if (x.fouille === 'composants') { const plus = Math.round(Math.max(1, victoires) * Math.round(FILON_COMPOSANTS * (1 + 0.25 * (x.strate - 1))) * (x.releve ? EXPLORER.releve.composants : 1)); j.composants += plus; butinFilon = plus; }
     else eclats += x.strate >= 5 ? 3 : 2;
     progresser(j, 'expedition');
   } else if (victoire && x.epreuve) {
@@ -790,8 +806,9 @@ export function remonter(j: Jeu): Retour {
   } else if (victoire) {
     // le gardien est généreux (24 octobre 2026, Bryan : « toujours des cartes fer, on est un peu radin ») :
     // à partir de la Strate −3, la première des trois cartes est au moins en cuivre
-    j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, x.strate >= 3 ? 'cuivre' : 'fer') });
-    eclats += (x.strate >= 5 ? 2 : 1) + (j.actes.chambre === 'orseve' ? 1 : 0);
+    // le gardien éveillé d'une Strate déjà vaincue (explorer.ts) monte d'un cran : cuivre, argent dès −3, or à −9
+    j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, x.eveille ? metalEveille(x.strate) : x.strate >= 3 ? 'cuivre' : 'fer') });
+    eclats += (x.strate >= 5 ? 2 : 1) + (j.actes.chambre === 'orseve' ? 1 : 0) + (x.eveille ? EXPLORER.eveille.eclats : 0);
     progresser(j, 'expedition');
   }
   if (victoire && x.strate === j.strate && !j.frontVaincu) {
@@ -821,13 +838,16 @@ export function remonter(j: Jeu): Retour {
   // la quête de la Strate (strates.ts) : l'étape trouvée en route compte même si la descente a mal fini (aucune punition)
   const quete = x.gains?.etape ? avancerQuete(j, x.strate) : null;
   if (quete?.finie) cartes.push(tirerTrouvaille(j, x.strate, x.strate >= 5 ? 'argent' : 'cuivre'));
+  // Explorer (explorer.ts) : Vestiges, étoiles et Rôdeur ; aucune punition, ce qui est trouvé compte même après une défaite
+  const explo = x.carte && !x.fouille && !x.epreuve ? remonterExplorer(j, x, victoire, etoilesAvant) : null;
+  if (explo) { eclats += explo.eclats; j.composants += explo.composants; }
   for (const c of cartes) { ajouterCarte(j, c); if (!x.tutoriel) noterOrigine(j, c, x.strate); }
   j.eclats += eclats;
   // l'expérience : chaque combat gagné, les salles scellées et le gardien ; toute l'escouade la partage, debout ou à terre
   const facteur = 1 + 0.25 * (x.strate - 1);
   const gardien = victoire && !x.fouille && !x.epreuve ? XP.gardien : 0;
   // une Halte vue pour la première fois vaut une salle scellée ; la fin d'une quête, la moitié d'un gardien
-  const contenu = (x.gains?.haltes ?? 0) * XP.elite + (quete?.finie ? XP.gardien / 2 : 0);
+  const contenu = (x.gains?.haltes ?? 0) * XP.elite + (quete?.finie ? XP.gardien / 2 : 0) + (explo?.xp ?? 0);
   const brutXp = Math.round((victoires * XP.combat + (x.gains?.elites ?? 0) * XP.elite + gardien + contenu) * facteur * (x.epreuve || x.fouille ? 0.75 : 1));
   const xp = finaux.map((p) => { const avant = niveauPorteur(j, p.id).niveau; const n = gagnerXp(j, p.id, brutXp); return { id: p.id, xp: brutXp, ...(n && n > avant ? { niveau: n } : {}) }; });
   // ce que chacun a vécu, pour ses Marques
@@ -851,7 +871,85 @@ export function remonter(j: Jeu): Retour {
     ? `L’escouade remonte victorieuse avec ${butin} composants.${nouvelleStrate ? ` Un nouvel étage est creusé : la Strate −${j.strate} est ouverte.` : ''}`
     : x.fuite ? `L’escouade a fui et remonte avec ${butin} composants. Elle rentre épuisée.`
     : `L’escouade remonte avec ${butin} composants. Elle a besoin de repos.`);
-  return { butin: butin + butinFilon + (quete?.composants ?? 0), nouvelleStrate, victoire, fragment, cartes, eclats, ...(x.fuite ? { fuite: true } : {}), ...(brutXp ? { xp } : {}), ...(quete ? { quete } : {}) };
+  return { butin: butin + butinFilon + (quete?.composants ?? 0) + (explo?.composants ?? 0), nouvelleStrate, victoire, fragment, cartes, eclats, ...(x.fuite ? { fuite: true } : {}), ...(brutXp ? { xp } : {}), ...(quete ? { quete } : {}), ...(explo ? { explorer: explo.retour } : {}) };
+}
+
+// ---------- Explorer ou fouiller (31 octobre 2026, explorer.ts, docs/strates-explorer.md) ----------
+
+/** Les Vestiges d'une Strate déjà trouvés, et ceux qui manquent */
+export const vestigesTrouves = (j: Jeu, strate: number) => vestigesDe(strate).filter((v) => j.vestiges?.includes(v.id));
+export const vestigesManquants = (j: Jeu, strate: number) => vestigesDe(strate).filter((v) => !j.vestiges?.includes(v.id)).map((v) => v.id);
+/** La Strate est relevée : ses 5 Vestiges sont trouvés */
+export const strateRelevee = (j: Jeu, strate: number) => vestigesDe(strate).length > 0 && !vestigesManquants(j, strate).length;
+/** Les étoiles d'une Strate : ★1 est acquise d'office dès qu'elle est vaincue (anciennes sauvegardes comprises) */
+export function etoilesDe(j: Jeu, strate: number): EtoileId[] {
+  const l = new Set<number>(j.etoiles?.[strate] ?? []);
+  if (strate >= 1 && strate <= strateVaincue(j)) l.add(1);
+  return ([1, 2, 3] as EtoileId[]).filter((e) => l.has(e));
+}
+/** Le total d'étoiles de la partie (−1 à −10) */
+export const totalEtoiles = (j: Jeu) => Array.from({ length: 10 }, (_, k) => etoilesDe(j, k + 1).length).reduce((a, b) => a + b, 0);
+/** Le prochain palier d'étoiles, s'il en reste */
+export const prochainPalierEtoiles = (j: Jeu) => PALIERS_ETOILES[j.paliersEtoiles ?? 0];
+/** Le gardien d'une Strate déjà vaincue s'éveille quand on y retourne explorer */
+export const gardienEveille = (j: Jeu, strate: number) => strate >= 1 && strate <= strateVaincue(j);
+/** La première Strate d'une zone */
+const debutZone = (zone: number) => (zone === 0 ? 1 : ZONES[zone - 1]!.jusqua + 1);
+/** Le Rôdeur de la zone d'une Strate, s'il rôde encore et qu'une Strate de sa zone est vaincue */
+export function rodeurDispo(j: Jeu, strate: number): { id: string; part: number } | undefined {
+  const zone = ZONES.indexOf(zoneDe(strate));
+  const def = rodeurDeZone(zone);
+  if (!def || j.rodeurs?.[def.id]?.abattu || strateVaincue(j) < debutZone(zone)) return undefined;
+  return { id: def.id, part: j.rodeurs?.[def.id]?.part ?? 1 };
+}
+export { RODEURS };
+
+/** Ce qu'Explorer rapporte au retour : Vestiges et Strate relevée, étoiles et paliers, Rôdeur ; le district est mis à jour ici */
+function remonterExplorer(j: Jeu, x: Expedition, victoire: boolean, avant: EtoileId[]): { retour: RetourExplorer; eclats: number; composants: number; xp: number } {
+  let eclats = 0, composants = 0, xp = 0;
+  // les Vestiges
+  const releveAvant = strateRelevee(j, x.strate);
+  const nouveaux = (x.gains?.vestiges ?? []).filter((v) => !j.vestiges?.includes(v));
+  if (nouveaux.length) (j.vestiges ??= []).push(...nouveaux);
+  composants += nouveaux.length * butinCache(x.strate);
+  xp += nouveaux.length * XP.combat;
+  const releve = !releveAvant && strateRelevee(j, x.strate);
+  if (releve) {
+    j.choix.push({ source: 'releve', options: tirerChoix(j, x.strate, x.strate >= 5 ? 'argent' : 'cuivre') });
+    xp += XP.gardien / 2;
+    log(j, `La Strate −${x.strate} est relevée : ses cinq Vestiges sont au district. Tes fouilles y verront tout le plan.`);
+  }
+  // les étoiles : seulement jusqu'au gardien vaincu
+  const etoiles: number[] = [];
+  if (victoire) {
+    const gagnees: EtoileId[] = [1];
+    if (!x.chute) gagnees.push(2);
+    if (!x.campe) gagnees.push(3);
+    const t = (j.etoiles ??= {});
+    t[x.strate] = [...new Set([...(t[x.strate] ?? []), ...gagnees])].sort();
+    for (const e of gagnees) if (!avant.includes(e)) { etoiles.push(e); eclats += ETOILES[e].eclats; }
+  }
+  // les paliers d'étoiles (versés au premier retour qui les atteint, anciennes sauvegardes comprises)
+  let paliers = 0;
+  for (let p = prochainPalierEtoiles(j); p && totalEtoiles(j) >= p.etoiles; p = prochainPalierEtoiles(j)) {
+    j.choix.push({ source: 'etoiles', options: tirerChoix(j, x.strate, p.metal) });
+    j.paliersEtoiles = (j.paliersEtoiles ?? 0) + 1;
+    paliers++;
+  }
+  // le Rôdeur
+  const r = x.gains?.rodeur;
+  if (r) {
+    const etat = ((j.rodeurs ??= {})[r.id] ??= { part: 1, rencontres: 0 });
+    etat.rencontres++;
+    etat.part = r.part;
+    if (!r.part) {
+      etat.abattu = true;
+      const def = RODEURS.find((d) => d.id === r.id)!;
+      j.choix.push({ source: 'rodeur', options: tirerChoix(j, x.strate, def.trophee) });
+      log(j, `${ennemiDef(r.id).nom} est abattu. ${def.chute}`);
+    }
+  }
+  return { retour: { vestiges: nouveaux, ...(releve ? { releve: x.strate } : {}), etoiles, paliers, ...(r ? { rodeur: r } : {}), ...(x.eveille && victoire ? { eveille: true } : {}) }, eclats, composants, xp };
 }
 
 function ajouterFragment(j: Jeu): string | null {
@@ -956,10 +1054,14 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   // la Strate se parcourt salle par salle (exploration), jusqu'à son gardien
   quitterPostes(j, escouade);
   const halte = halteSuivante(strate, j.haltes?.[strate] ?? 0);
+  // le Rôdeur ne rôde que dans les Strates déjà vaincues : le front garde sa difficulté
+  const rodeur = gardienEveille(j, strate) ? rodeurDispo(j, strate) : undefined;
   j.expedition = nouvelleExploration({
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
     ...(halte !== undefined ? { halte } : {}), quete: queteOuverte(j, strate),
+    vestiges: vestigesManquants(j, strate), eveille: gardienEveille(j, strate),
+    ...(rodeur && tireur({ rng: (rng ^ 0x68e31da4) >>> 0 }).nombre() < EXPLORER.rodeur.chance ? { rodeur } : {}),
   });
   retenirDepart(j, escouade);
   log(j, `L’escouade descend dans la Strate −${strate}.`);
@@ -987,7 +1089,7 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
   quitterPostes(j, escouade);
   j.expedition = nouvelleExploration({
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1, fouille: cible,
-    ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}), quete: queteOuverte(j, strate),
+    ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}), quete: queteOuverte(j, strate), releve: strateRelevee(j, strate),
   });
   retenirDepart(j, escouade);
   log(j, `L’escouade part fouiller la Strate −${strate} (${CIBLES_FOUILLE[cible].nom.toLowerCase()}).`);

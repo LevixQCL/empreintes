@@ -69,6 +69,11 @@ export const ICO = {
   brume: svg('<path d="M4 8h11"/><path d="M8 12h12"/><path d="M3 16h10"/><path d="M15 16h3"/>'),
   // le contenu des Strates (31 octobre 2026) : la Halte (une stèle gravée), la quête (une étoile de fouilleur), le mur, la fissure, le fil
   halte: svg('<path d="M7 21V7a5 5 0 0 1 10 0v14"/><path d="M5 21h14"/><path d="M10 9h4M10 12.5h4M10 16h2.5"/>'),
+  // Explorer (31 octobre 2026) : le Vestige (un losange taillé), les traces du Rôdeur (trois griffures), l'étoile de Strate
+  vestige: svg('<path d="M12 2.5l6.5 7-6.5 12-6.5-12z"/><path d="M5.5 9.5h13M9 9.5l3 12 3-12M9 9.5l3-7 3 7"/>'),
+  griffes: svg('<path d="M6 4c1 4 1 9-1 16"/><path d="M11.5 3c1 5 1 11-1 18"/><path d="M17 4c1 4 1 9-1 16"/>'),
+  etoile: svg('<path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/>', true),
+  etoileVide: svg('<path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z"/>'),
   quete: svg('<path d="M12 2.5l1.9 6.2 6.6.1-5.3 3.9 2 6.3L12 15.2 6.8 19l2-6.3-5.3-3.9 6.6-.1z"/>', true),
   mur: svg('<path d="M3 5h18v14H3z"/><path d="M3 9.7h18M3 14.3h18"/><path d="M9 5v4.7M15 5v4.7M6 9.7v4.6M12 9.7v4.6M18 9.7v4.6M9 14.3V19M15 14.3V19"/>'),
   fissure: svg('<path d="M13 2l-3 6 4 3-4 4 3 3-2 4"/><path d="M14 11l4-1M10 15l-4 1"/>'),

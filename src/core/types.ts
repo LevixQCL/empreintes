@@ -356,6 +356,10 @@ export interface CombatEtat {
   relance?: boolean;
   rng: number;
   issue: Issue;
+  /** un Rôdeur (explorer.ts) : il s'enfuit à la fin de ce tour-là s'il tient encore debout */
+  fuyard?: number;
+  /** le Rôdeur s'est enfui : le combat est fini (compté comme gagné), il garde ses blessures */
+  enfui?: boolean;
   journal: string[];
   /** le journal complet, tour par tour (27 octobre 2026, Bryan : revoir les cartes jouées et comprendre les dégâts) */
   historique?: TourHisto[];

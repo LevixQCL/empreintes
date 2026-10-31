@@ -10,7 +10,7 @@ import { sauver } from '../synchro';
 /** change d'onglet : ferme ce qui était ouvert et remonte en haut */
 export function ouvrir(v: EcranDistrict['vue']) {
   if (D.vue !== v) window.scrollTo(0, 0);
-  D.vue = v; D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.fiche = false; D.guide = null; D.porteur = null; D.place = null;
+  D.vue = v; D.selection = null; D.carte = null; D.deck = null; D.menu = false; D.fiche = false; D.guide = null; D.porteur = null; D.place = null; D.vestiges = null;
   if (v === 'porteurs') D.reserve = false;
   else D.retourModif = null;
 }

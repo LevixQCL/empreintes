@@ -180,7 +180,7 @@ export interface Chantier {
 
 /** Un choix de carte en attente (boss, objectif du jour, Archive) */
 export interface Choix {
-  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve' | 'parrainage';
+  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve' | 'parrainage' | 'releve' | 'etoiles' | 'rodeur';
   options: string[];
   /** le joueur peut prendre des Éclats à la place */
   eclats?: number;
@@ -251,6 +251,12 @@ export interface Jeu {
   haltes?: Record<number, number>;
   quetes?: Record<number, number>;
   drapeaux?: string[];
+  /** Explorer ou fouiller (31 octobre 2026, explorer.ts) : les Vestiges trouvés, les étoiles gagnées par Strate (★1 est aussi
+   *  compté d'office pour toute Strate vaincue), les paliers d'étoiles déjà récompensés, et l'état de chaque Rôdeur */
+  vestiges?: string[];
+  etoiles?: Record<number, number[]>;
+  paliersEtoiles?: number;
+  rodeurs?: Record<string, { part: number; rencontres: number; abattu?: boolean }>;
   /** index de l'objectif guidé en cours (OBJECTIFS.length = tous faits) */
   objectif: number;
   /** fragments d'archives trouvés, dans l'ordre */

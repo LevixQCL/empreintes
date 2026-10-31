@@ -9,7 +9,7 @@ import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
 import { DISTRICT, PILLAGE } from '../core/jeu';
-import { ageArchipel, artGardien, fondFleche, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, cadragePortrait } from './art';
+import { portraitProvisoire, ageArchipel, artGardien, fondFleche, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, cadragePortrait } from './art';
 import { SIGNE_LOURD, corpsFace, couleurFrequence, styleFace, type Face } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
@@ -678,13 +678,16 @@ function htmlEcranCombat(e: Ecran): string {
   // un gardien (27 octobre 2026) : son nom dans une plaque peinte, sa vie dans une barre ornée avec le cran de sa seconde phase
   const gardien = estGardien(def.id) && !s.ennemi.porteur;
   h += `<section class="scene-ennemi l-${lig}${gardien ? ' gardien' : ''}${enGroupe(s) ? ' en-groupe' : ''}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'};--ng:${tousEnnemis(s).length}" aria-label="Ennemi">`
-    + (ill ? `<img class="ennemi-art${s.issue === 'victoire' ? ' dissous' : ''}${s.ennemi.porteur ? ' garde' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
+    + (ill ? `<img class="ennemi-art${portraitProvisoire(def.id) ? ' provisoire' : ''}${s.issue === 'victoire' && !s.enfui ? ' dissous' : ''}${s.ennemi.porteur ? ' garde' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
     + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
     + `<span class="scene-voile" aria-hidden="true"></span>${popsPour(e, 'ennemi')}`
 
     + vignettesGroupe(e)
     + plaqueIntention(s, classeIntention, iconeIntention, felureHtml)
-    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[lig]}">${echap(e.x.fleche ? `GARDIENS · QUAI ${e.x.fleche.quai}` : e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span></div>`
+    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[lig]}">${echap(e.x.fleche ? `GARDIENS · QUAI ${e.x.fleche.quai}` : e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span>`
+      // le Rôdeur (explorer.ts) : il s'enfuit à la fin de son dernier tour ; le compte à rebours reste sous les yeux
+      + (s.fuyard && s.issue === 'en-cours' ? `<span class="fuyard" title="Il s’enfuit à la fin de son tour ${s.fuyard}. Ses blessures resteront.">${ICO.griffes}${s.tour >= s.fuyard ? 'S’enfuit à la fin du tour' : `S’enfuit dans ${s.fuyard - s.tour + 1} tours`}</span>` : '')
+      + `</div>`
     + (gardien ? plaqueGardien(def.nom, nomPhase(s.ennemi))
       : `<h2 class="ennemi-nom">${echap(nomEnnemi(s.ennemi))}${nomPhase(s.ennemi) ? ` <small class="phase">· ${echap(nomPhase(s.ennemi))}</small>` : ''}</h2>`)
     // les traits et les états passagers (bouclier, Fissure) sur la même ligne : la scène reste basse sur téléphone

@@ -4,7 +4,8 @@ import { envoyerPillages } from '../pillages';
 import { envoyerAssauts, synchroGarde } from '../fleche';
 import { NOMS_RARETE } from '../../core/collection';
 import * as C from '../../core/combat';
-import { moduleDef, porteurDef } from '../../core/donnees';
+import { ennemiDef, moduleDef, porteurDef } from '../../core/donnees';
+import { ETOILES, releveDef, vestigeDef } from '../../core/explorer';
 import * as J from '../../core/jeu';
 import { suitePorte } from '../../core/expedition';
 import { comparer, montrer, relever } from '../../ui/gains';
@@ -152,6 +153,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
           + (r.eclats ? ` +${r.eclats} Éclat${r.eclats > 1 ? 's' : ''}.` : '')
           + (r.fragment ? ' Un fragment d’archives rejoint le Codex.' : '')
           + (r.quete ? ` Quête « ${r.quete.nom} » : ${r.quete.finie ? `achevée ! ${r.quete.fin}` : `étape ${r.quete.etape} sur ${r.quete.total}. ${r.quete.texte}`}` : '')
+          + texteExplorer(r)
           + (r.xp?.length ? ` +${r.xp[0]!.xp} XP pour l’escouade.${r.xp.filter((e) => e.niveau).map((e) => ` ${porteurDef(e.id).nom} passe au niveau ${e.niveau} !`).join('')}` : '');
       }
       sauver();
@@ -161,4 +163,17 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     default: return 'inconnu';
   }
   return 'afficher';
+}
+
+/** Ce qu'Explorer a rapporté (31 octobre 2026, explorer.ts) : Vestiges, Strate relevée, étoiles, Rôdeur */
+function texteExplorer(r: J.Retour): string {
+  const e = r.explorer;
+  if (!e) return '';
+  let t = '';
+  if (e.vestiges.length) t += ` ${e.vestiges.length > 1 ? `${e.vestiges.length} Vestiges rapportés` : 'Un Vestige rapporté'} : ${e.vestiges.map((id) => vestigeDef(id)?.nom.toLowerCase() ?? '').join(', ')}.`;
+  if (e.releve) t += ` La Strate −${e.releve} est relevée : « ${releveDef(e.releve)?.titre ?? ''} » se lit à la Tour, et tes fouilles y verront tout le plan.`;
+  if (e.etoiles.length) t += ` Nouvelle${e.etoiles.length > 1 ? 's' : ''} étoile${e.etoiles.length > 1 ? 's' : ''} : ${e.etoiles.map((k) => ETOILES[k as 1].nom).join(', ')}.`;
+  if (e.paliers) t += ` Les étoiles des Strates t’offrent ${e.paliers > 1 ? `${e.paliers} cartes` : 'une carte'} au choix.`;
+  if (e.rodeur) t += e.rodeur.part ? ` ${ennemiDef(e.rodeur.id).nom} s’est enfui : il ne lui reste que ${Math.round(e.rodeur.part * 100)} % de sa vie.` : ` ${ennemiDef(e.rodeur.id).nom} est abattu : son trophée t’attend.`;
+  return t;
 }

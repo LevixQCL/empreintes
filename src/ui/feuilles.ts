@@ -37,5 +37,6 @@ import './missions-mer.css';
 import './fleche.css';
 import './journal.css';
 import './lexique.css';
+import './explorer.css';
 // en dernier : les gardiens reprennent la main sur les réglages du téléphone et du PC
 import './gardien.css';
