@@ -1234,8 +1234,11 @@ export function feuilleDeck(e: EcranDistrict): string {
       : choixPorte || aEchanger ? `<span class="dk-action dk-remplace">${ICO.recycler}Échanger</span>`
       : r ? `<span class="dk-action dk-remplace">${ICO.recycler}<span>Remplace<br>celle en ${NOMS_RARETE[moduleDef(r).rarete].toLowerCase()}</span></span>`
       : qui ? `${avatar(qui, 20)}<span class="dk-chez">chez ${echap(porteurDef(qui).nom)}</span>` : `<span class="dk-action">${ICO.greffe}Confier</span>`;
+    // qui la porte reste visible quel que soit l'état de la carte (retour de Luc, 31 octobre 2026) : avant, « Échanger »,
+    // « Remplace… » ou « Trop lourde » cachaient le Porteur, et certaines cartes portées semblaient libres
+    const chez = qui && !bas.includes('dk-chez') ? `<span class="dk-qui" title="Portée par ${echap(porteurDef(qui).nom)}">${avatar(qui, 18)}</span>` : '';
     // pleine, il ne peut plus en recevoir de nouvelle ; une carte qui en remplace une autre reste possible
-    return tuile(k, 'dk-libre', bas).replace('class="carte-tuile"', `class="carte-tuile${(plein && !r && !choixPorte) || lourde || haute ? ' grisee' : ''}"`);
+    return tuile(k, 'dk-libre', chez + bas).replace('class="carte-tuile"', `class="carte-tuile${(plein && !r && !choixPorte) || lourde || haute ? ' grisee' : ''}"`);
   }).join('')}</div>` : `<p class="aide">Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.</p>`;
   h += `</section></div>`;
   // la carte choisie attend sa partenaire : le pied de la feuille le dit, toujours visible

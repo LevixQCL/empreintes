@@ -107,6 +107,7 @@
 .dk-action{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:#CDEFFF}
 .dk-action .ico{width:13px;height:13px}
 .dk-chez{font-size:12.5px;color:#E8B86A}
+.dk-qui{display:inline-flex;flex:none;border-radius:50%;box-shadow:0 0 0 1.5px #E8B86A}
 .deck-porteur .carte-tuile:not(:disabled):hover{transform:translateY(-3px)}
 
 /* ---------- Menu « Plus » et fiche d'une ressource : sans cartouches, une ligne par entrée ---------- */
