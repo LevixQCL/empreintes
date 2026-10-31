@@ -67,13 +67,15 @@ describe('Le Râtelier du district', () => {
     expect(choisirRatelier(j, ['stimulant']).ok).toBe(false);
   });
 
-  it('la force monte avec le bâtiment (+6 % par niveau), jamais l’effet', () => {
+  it('la force monte avec le bâtiment (un gain entier par niveau, au moins +1), jamais l’effet', () => {
     const pavois = communeDef('repli')!;
     expect(forceCommune(pavois, 1)).toBe(10);
-    expect(forceCommune(pavois, 10)).toBe(15);
+    expect(forceCommune(pavois, 10)).toBe(19);
     const j = nouveauJeu(0);
     j.batiments.noyau = 10;
-    expect(gestesCommuns(j).find((g) => g.id === 'repli')!.v).toBe(15);
+    expect(gestesCommuns(j).find((g) => g.id === 'repli')!.v).toBe(19);
+    // chaque niveau du bâtiment se voit sur chaque carte
+    for (const c of CARTES_COMMUNES) for (let n = c.niveau; n < 10; n++) expect(forceCommune(c, n + 1)).toBeGreaterThan(forceCommune(c, n));
   });
 });
 

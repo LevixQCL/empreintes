@@ -320,9 +320,14 @@ export const CARTES_COMMUNES: CarteCommuneDef[] = [
 ];
 /** Les cartes communes qui descendent sans rien choisir (une partie neuve, une ancienne sauvegarde) */
 export const RATELIER_DEPART = ['stimulant', 'repli'];
-/** La force d'une carte commune monte avec son bâtiment : +6 % par niveau au-delà de celui qui l'ouvre (comme la Clé de l’Héritage) */
+/**
+ * La force d'une carte commune monte avec son bâtiment, comme une carte de collection avec ses niveaux (31 octobre 2026,
+ * Luc : « savoir améliorer les cartes de district ») : un gain entier par niveau au-delà de celui qui l'ouvre, environ 10 %
+ * de sa force et au moins +1, pour que chaque niveau du bâtiment se voie (avant : +6 % arrondi, des niveaux sans rien).
+ */
+export const gainCommune = (c: CarteCommuneDef) => Math.max(1, Math.round(c.geste.v * 0.1));
 export const forceCommune = (c: CarteCommuneDef, niveauBatiment: number) =>
-  Math.round(c.geste.v * (1 + 0.06 * Math.max(0, niveauBatiment - c.niveau)));
+  c.geste.v + gainCommune(c) * Math.max(0, niveauBatiment - c.niveau);
 export const communeDef = (id: string) => CARTES_COMMUNES.find((c) => c.geste.id === id);
 /**
  * La Clé de l’Héritage (27 octobre 2026) : la dixième vierge, pour le directeur qui répond « tout le monde à la fois » à la lettre.
