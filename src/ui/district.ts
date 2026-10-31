@@ -29,6 +29,7 @@ import type { Affinite } from '../core/lieux';
 import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteArchipel, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
+import { avecMots } from './lexique';
 import { arrivee, feuillePorteur } from './porteurs';
 import { bandeauTableau } from './classements';
 import { ICO, baseIcones, icone, type Icone } from './icones';
@@ -900,11 +901,11 @@ function pourQui(id: string, j: Jeu): string {
 function effetsCarte(m: ReturnType<typeof moduleDef>): string {
   const origine = MODULES.find((x) => x.id === (m.base ?? m.id));
   let h = '';
-  if (m.effet) h += `<ul class="effets-carte">${effetsDe(m).map((x) => `<li><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</li>`).join('')}</ul>`;
-  else if (origine?.effet) h += `<p class="aide">En fer, pas d’effet. À partir du cuivre : <b>${echap(NOMS_EFFET[origine.effet.type])}</b>, ${echap(texteEffet(origine.effet).replace(/^./, (c) => c.toLowerCase()))}</p>`;
+  if (m.effet) h += `<ul class="effets-carte">${effetsDe(m).map((x) => `<li><b>${echap(NOMS_EFFET[x.type])}</b> ${avecMots(texteEffet(x), [x.type])}</li>`).join('')}</ul>`;
+  else if (origine?.effet) h += `<p class="aide">En fer, pas d’effet. À partir du cuivre : <b>${echap(NOMS_EFFET[origine.effet.type])}</b>, ${avecMots(texteEffet(origine.effet).replace(/^./, (c) => c.toLowerCase()), [origine.effet.type])}</p>`;
   if (origine?.seul) h += `<p class="aide"><b>Exclusive</b> : cette empreinte refuse la copie. Elle n’existe qu’en ${echap(NOMS_RARETE[origine.rarete].toLowerCase())}, et son effet ne se trouve sur aucune autre carte.</p>`;
-  if (m.f.length > 1 && !frequenceLibre(m.effet)) h += `<p class="aide">Fréquences au choix : <b>${m.f.join(' ou ')}</b>. Posée, elle prend celle qui prolonge ta suite.</p>`;
-  else if (origine && origine.f.length > m.f.length && !frequenceLibre(m.effet)) h += `<p class="aide">Son métal ne lui ouvre qu’une Fréquence ; en argent et en or, elle en a 2, en nacre 3.</p>`;
+  if (m.f.length > 1 && !frequenceLibre(m.effet)) h += `<p class="aide">${avecMots('Fréquences au choix')} : <b>${m.f.join(' ou ')}</b>. ${avecMots('Posée, elle prend celle qui prolonge ta suite.')}</p>`;
+  else if (origine && origine.f.length > m.f.length && !frequenceLibre(m.effet)) h += `<p class="aide">${avecMots('Son métal ne lui ouvre qu’une Fréquence ; en argent et en or, elle en a 2, en nacre 3.')}</p>`;
   return h;
 }
 
@@ -1057,7 +1058,7 @@ function feuilleCommune(e: EcranDistrict, c: CarteCommuneDef): string {
   // ce que coûte sa place : la sienne si elle est prise, celle qu'elle prendrait sinon
   const k = pris ? rang : choisies.length;
   const prixPlace = k >= RATELIER.gratuits ? RATELIER.energie[k - RATELIER.gratuits] ?? 0 : 0;
-  const effets = g.effet ? `<ul class="effets-carte">${effetsDe(m).map((x) => `<li><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</li>`).join('')}</ul>` : '<p class="aide">Pas d’effet : sa force seule.</p>';
+  const effets = g.effet ? `<ul class="effets-carte">${effetsDe(m).map((x) => `<li><b>${echap(NOMS_EFFET[x.type])}</b> ${avecMots(texteEffet(x), [x.type])}</li>`).join('')}</ul>` : '<p class="aide">Pas d’effet : sa force seule.</p>';
   let h = `<div class="voile-feuille" data-action="carte-fermer" aria-hidden="true"></div><section class="feuille carte-detail cm-detail" role="dialog" aria-modal="true" aria-label="${echap(g.nom)}"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:#CDEFFF">CARTE COMMUNE · ${echap(bat.nom.toUpperCase())}${ouverte ? ` · NIVEAU ${niv}` : ''}</span><h2>${echap(g.nom)}</h2></div>`
     + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`

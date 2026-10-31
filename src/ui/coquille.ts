@@ -6,6 +6,7 @@ import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
 import { ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, coutPompe, nomConfiance, pompesRestantes, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { miniature, portrait } from './art';
+import { feuilleGuide, trouveesDe } from './guide';
 import { ICO, icone, type Icone } from './icones';
 import { feuilleNom } from './classements';
 import { cristalAllume, cristalRail, entreeFiche, feuilleFiche } from './fiche';
@@ -452,6 +453,8 @@ export function menu(e: EcranDistrict): string {
     + (c.actif ? `<button type="button" class="ligne-menu rc-menu" data-action="recruter">${ICO.porteurs}<span><strong>Recruter des amis</strong><small>Ton code de parrainage : vous êtes récompensés tous les deux quand ton ami joue</small></span></button>` : '')
     + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur?.anonyme ? 'Protège ta partie : relie-la à Google ou à un e-mail' : c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : ' · choisis ton pseudo'}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
     + (e.j.chambre ? `<button type="button" class="ligne-menu" data-action="accueil">${icone('district')}<span><strong>Comment marche le district</strong><small>Les ressources, l’escouade et le but : creuser plus bas</small></span></button>` : '')
+    // le glossaire (31 octobre 2026, Luc) : tous les mots du jeu, avec une recherche
+    + `<button type="button" class="ligne-menu" data-action="guide" data-id="glossaire">${ICO.aide}<span><strong>Glossaire</strong><small>Tous les mots du jeu expliqués : Fissure, Flux, Résonance, Charge…</small></span></button>`
     + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro complète</strong><small>L’histoire de 2121, en entier</small></span></button></div>`;
   h += panneauCompte(c);
   h += `<section class="bloc"><h3 class="titre-bloc">${icone('journal')}Journal du district</h3><ol class="journal-liste">${e.j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></section>`;
@@ -466,5 +469,7 @@ export function entete(surtitre: string, titre: string, droite = ''): string {
 /** L'écran complet du district : ressources, contenu, message, navigation, menu */
 export function coquille(e: EcranDistrict, contenu: string, classe = ''): string {
   const pseudo = e.grand?.edition ? feuilleNom(e.j, e.compte.utilisateur?.nom ?? '', e.grand.erreur, !!e.grand.accueil) : '';
-  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}${pseudo}${feuilleRappel(e)}${feuilleRapport(e)}${feuilleFiche(e)}</div>`;
+  // le mode d'emploi ouvert depuis un écran qui ne le montre pas lui-même (le Glossaire du menu, une bulle de mot)
+  const guide = e.guide && !contenu.includes('class="feuille guide"') ? feuilleGuide(e.guide, trouveesDe(e.j.collection)) : '';
+  return `<div class="ecran ${classe}">${hud(e.j, e.ressource ?? null)}<main class="contenu">${contenu}</main>${guide}${toast(e.message)}${navigation(e)}${menu(e)}${feuilleRessource(e.j, e.ressource)}${pseudo}${feuilleRappel(e)}${feuilleRapport(e)}${feuilleFiche(e)}</div>`;
 }

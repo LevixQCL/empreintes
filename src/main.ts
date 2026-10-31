@@ -9,6 +9,7 @@ import { initToucher, vibrer } from './ui/toucher';
 import { loupe, loupePorteur } from './ui/vue';
 import { loupeCarte } from './ui/district';
 import { brancherEmpreintes } from './ui/carte';
+import { brancherMots, viserTerme } from './ui/lexique';
 import { agir } from './app/actions/index';
 import { clavier } from './app/clavier';
 import { app, compteEtat, D, G, K, racine, reduit } from './app/etat';
@@ -23,6 +24,14 @@ import { R, retenirLien } from './app/parrainage';
 brancherEmpreintes((cle) => (app.jeu ? J.palierCarte(app.jeu, cle) : 0));
 
 initToucher(racine, reduit);
+
+// les mots du jeu, touchables : « Tout le glossaire » ouvre l'onglet Glossaire du mode d'emploi sur ce mot
+brancherMots((terme) => {
+  viserTerme(terme);
+  if (app.mode === 'combat') { K.guide = 'glossaire'; K.regles = false; } else if (app.mode === 'district') { D.guide = 'glossaire'; D.menu = false; D.ressource = null; }
+  else return;
+  afficher();
+});
 
 // ---------- Les gestes du joueur ----------
 

@@ -2,7 +2,7 @@
    Une feuille à trois onglets. Une idée par ligne, des visuels plutôt que des paragraphes. */
 
 .feuille.guide{max-height:92dvh}
-.guide-onglets{position:static;grid-template-columns:repeat(3,1fr);margin:10px 16px 2px}
+.guide-onglets{position:static;grid-template-columns:repeat(4,1fr);margin:10px 16px 2px}
 .guide-onglets .seg{padding:0 4px;line-height:1.15}
 .guide-corps{gap:24px;padding-top:16px}
 .guide-corps .bloc{gap:12px}

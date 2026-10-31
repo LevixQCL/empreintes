@@ -44,7 +44,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       break;
     case 'menu': D.ressource = null; D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; D.guide = null; D.porteur = null; break;
     // le mode d'emploi des cartes : ouvrir sur un onglet, changer d'onglet, fermer (district et combat)
-    case 'guide': if (app.mode === 'combat') { K.guide = id as OngletGuide; K.regles = false; } else D.guide = id as OngletGuide; break;
+    case 'guide': if (app.mode === 'combat') { K.guide = id as OngletGuide; K.regles = false; } else { D.guide = id as OngletGuide; D.menu = false; D.ressource = null; } break;
     case 'guide-fermer': if (app.mode === 'combat') { K.guide = null; K.regles = true; } else D.guide = null; break;
     case 'carte': D.carte = id; break;
     case 'carte-fermer': D.carte = null; break;

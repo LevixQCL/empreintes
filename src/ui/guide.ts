@@ -19,13 +19,16 @@ import { NOM_LIGNEES, avatar } from './coquille';
 import { ICO } from './icones';
 import { COULEUR, geste } from './vue';
 import { echap } from './outils';
+import { avecMots, ongletGlossaire } from './lexique';
 
-export type OngletGuide = 'deck' | 'carte' | 'effets';
+export type OngletGuide = 'deck' | 'carte' | 'effets' | 'glossaire';
 
 const ONGLETS: { id: OngletGuide; nom: string }[] = [
   { id: 'deck', nom: 'Le deck' },
   { id: 'carte', nom: 'Lire une carte' },
   { id: 'effets', nom: 'Les effets' },
+  // 31 octobre 2026 (Luc) : tous les mots du jeu au même endroit
+  { id: 'glossaire', nom: 'Glossaire' },
 ];
 
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];
@@ -38,7 +41,7 @@ const ESCOUADE = 3;
  * @param trouvees les cartes déjà trouvées (id de base, sans métal) : l'onglet des effets ne dévoile que celles-là
  */
 export function feuilleGuide(onglet: OngletGuide, trouvees: ReadonlySet<string>): string {
-  const corps = onglet === 'deck' ? ongletDeck() : onglet === 'carte' ? ongletCarte() : ongletEffets(trouvees);
+  const corps = onglet === 'deck' ? ongletDeck() : onglet === 'carte' ? ongletCarte() : onglet === 'glossaire' ? ongletGlossaire((t) => REGLE[t]()) : ongletEffets(trouvees);
   return `<div class="voile-feuille" data-action="guide-fermer" aria-hidden="true"></div>`
     + `<section class="feuille guide" role="dialog" aria-modal="true" aria-labelledby="guide-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">MODE D’EMPLOI</span><h2 id="guide-titre">Les cartes et le deck</h2></div>`
@@ -344,7 +347,7 @@ function ongletEffets(trouvees: ReadonlySet<string>): string {
       const reste = cartes.length - vues.length;
       const liste = (vues.length ? vues.map((m) => `<span style="--c:${COULEUR[m.lignee]}">${echap(m.nom)}</span>`).join('') : '')
         + (reste ? `<span class="a-trouver">${vues.length ? '+ ' : ''}${reste} à trouver</span>` : '');
-      h += `<li style="--c:${COULEUR[l]}"><div class="g-effet-tete"><b>${NOMS_EFFET[t]}</b></div><p>${REGLE[t]()}</p><p class="g-astuce">${ICO.cristal}<span>${astuce(t)}</span></p><div class="g-sur">${liste}</div></li>`;
+      h += `<li style="--c:${COULEUR[l]}"><div class="g-effet-tete"><b>${NOMS_EFFET[t]}</b></div><p>${avecMots(REGLE[t](), [t])}</p><p class="g-astuce">${ICO.cristal}<span>${avecMots(astuce(t), [t])}</span></p><div class="g-sur">${liste}</div></li>`;
     }
     h += `</ul></section>`;
   }

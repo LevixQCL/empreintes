@@ -5,6 +5,8 @@ const svg = (corps: string, plein = false) =>
   `<svg class="ico" viewBox="0 0 24 24" ${plein ? 'fill="currentColor" stroke="none"' : 'fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"'} aria-hidden="true">${corps}</svg>`;
 
 export const ICO = {
+  // la recherche du glossaire (31 octobre 2026)
+  chercher: svg('<circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/>'),
   // navigation
   district: svg('<path d="M4 20h16"/><path d="M6 20v-5l3-2 3 2v5"/><path d="M12 20V7l3-3 3 3v13"/><path d="M15 9.5v1.5M15 13.5v1.5"/><path d="M3 17c1.2-.8 2.4-.8 3 0"/>'),
   tour: svg('<path d="M9 3h6l1 4H8z"/><path d="M8.5 7v7h7V7"/><path d="M12 14v7"/><path d="M9 18l3 3 3-3"/><path d="M4 14h4M16 14h4"/>'),

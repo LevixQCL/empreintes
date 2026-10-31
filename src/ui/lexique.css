@@ -1,0 +1,42 @@
+/* Les mots du jeu, touchables, et le glossaire (31 octobre 2026, Luc). Matière « cristal et lumière » : pointillé d'or, bulle de verre fumé. */
+
+/* le mot : un pointillé doré discret, rien de plus ; la zone de toucher déborde un peu du texte */
+.mot-jeu{position:relative;cursor:help;color:inherit;text-decoration:underline dotted rgba(216,180,101,.75);text-decoration-thickness:1.5px;text-underline-offset:3px;border-radius:3px;-webkit-tap-highlight-color:transparent}
+.mot-jeu::after{content:'';position:absolute;inset:-6px -2px}
+.mot-jeu:hover,.mot-jeu:focus-visible{color:#F2D58C;text-decoration-color:#F2D58C;outline:none}
+.mot-jeu:focus-visible{box-shadow:0 0 0 2px rgba(205,239,255,.5)}
+.mot-jeu.exemple{cursor:default}
+.mot-jeu.exemple::after{display:none}
+
+/* la bulle : verre fumé, arête de glace, posée sous le mot (ou au-dessus) */
+.bulle-mot{position:fixed;z-index:9000;box-sizing:border-box;padding:11px 13px 10px;border-radius:12px;
+  background:linear-gradient(180deg,rgba(26,33,46,.97),rgba(13,17,25,.97));border:1px solid rgba(205,239,255,.28);
+  box-shadow:0 14px 34px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08),0 0 0 1px rgba(216,180,101,.12);
+  color:#DCE4EE;font:14px/1.4 var(--body);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);animation:bm-entree .16s ease-out}
+.bulle-mot.dessus{animation-name:bm-entree-haut}
+@keyframes bm-entree{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@keyframes bm-entree-haut{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.bulle-mot{animation:none}}
+.bm-tete{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:4px}
+.bm-tete b{font:15px/1.2 var(--display);letter-spacing:.04em;color:#F2D58C}
+.bm-fermer{flex:none;display:grid;place-items:center;width:32px;height:32px;margin:-6px -6px -6px 0;padding:0;border:0;background:none;color:#A9B6C7;border-radius:8px}
+.bm-fermer svg{width:16px;height:16px}
+.bulle-mot p{margin:0;color:#DCE4EE}
+.bm-glossaire{display:inline-flex;align-items:center;gap:6px;min-height:36px;margin:6px 0 -4px -2px;padding:0 4px;border:0;background:none;color:#CDEFFF;font:600 13px/1 var(--body)}
+.bm-glossaire svg{width:15px;height:15px}
+
+/* le glossaire : une recherche, puis les termes par thème */
+.gl-champ{display:flex;align-items:center;gap:8px;margin:4px 0 6px;padding:0 12px;min-height:44px;border-radius:10px;
+  background:rgba(10,14,20,.6);border:1px solid rgba(205,239,255,.2);color:#A9B6C7}
+.gl-champ:focus-within{border-color:rgba(205,239,255,.5)}
+.gl-champ svg{flex:none;width:16px;height:16px}
+.gl-recherche{flex:1;min-width:0;height:42px;border:0;background:none;color:#F3EEE4;font:15px var(--body);outline:none}
+.gl-recherche::placeholder{color:#7D8796}
+.gl-liste{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.gl-terme{padding:9px 2px 10px;border-bottom:1px solid rgba(205,239,255,.08);scroll-margin:80px}
+.gl-terme:last-child{border-bottom:0}
+.gl-terme b{display:block;font:15px/1.25 var(--display);letter-spacing:.03em;color:#F2D58C}
+.gl-terme p{margin:3px 0 0;font-size:14px;line-height:1.45;color:#DCE4EE}
+.gl-terme.vise{animation:gl-vise 2.2s ease-out}
+@keyframes gl-vise{0%,35%{background:rgba(216,180,101,.16)}100%{background:transparent}}
+.gl-vide{text-align:center;margin:18px 0}
