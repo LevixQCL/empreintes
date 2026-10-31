@@ -287,3 +287,17 @@
 .cm-echelle li.ici small{color:#F2D58C}
 .cm-cout{display:inline-flex;align-items:center;gap:3px;color:var(--danger)!important;font-weight:600;white-space:nowrap}
 .cm-cout svg{width:13px;height:13px}
+/* Une carte commune dans plusieurs Râteliers (31 octobre 2026) : une ligne par escouade, cochée si elle y est */
+.cm-escouades{display:grid;gap:6px;margin-top:6px}
+.cm-esc{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;border-radius:12px;text-align:left;color:inherit;background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+.cm-esc.pris{background:rgba(242,213,140,.08);box-shadow:inset 0 0 0 1px rgba(242,213,140,.45)}
+.cm-esc:disabled{opacity:.55}
+.cm-esc-coche{display:grid;place-items:center;flex:none;width:22px;height:22px;border-radius:7px;box-shadow:inset 0 0 0 1.5px rgba(205,239,255,.3);color:#F2D58C}
+.cm-esc.pris .cm-esc-coche{box-shadow:inset 0 0 0 1.5px rgba(242,213,140,.7)}
+.cm-esc.fixe:not(.pris) .cm-esc-coche{color:#93A3B8}
+.cm-esc-coche svg{width:14px;height:14px}
+.cm-esc-txt{display:grid;flex:1;min-width:0}
+.cm-esc-txt small{display:inline-flex;align-items:center;gap:3px;font-size:12px;color:#93A3B8}
+.cm-esc-txt small svg{width:12px;height:12px}
+.cm-esc-visages{display:flex;flex:none}
+.cm-esc-visages>*+*{margin-left:-6px}

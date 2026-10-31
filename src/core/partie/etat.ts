@@ -329,6 +329,8 @@ export interface Jeu {
   legs?: string;
   /** le Râtelier du district (30 octobre 2026) : les cartes communes choisies pour descendre ; absent : celles de départ */
   ratelier?: string[];
+  /** un Râtelier par escouade (31 octobre 2026) : une même carte commune peut être dans plusieurs ; absent : l'ancien `ratelier` commun */
+  rateliers?: string[][];
   /** le dernier âge du district montré au joueur (fenêtre « nouvel âge », 23 octobre 2026) */
   ageVu?: number;
   /** la dernière Strate où le jeu a proposé de protéger la partie (compte invisible) : une seule fois par palier */

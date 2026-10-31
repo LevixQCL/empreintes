@@ -74,7 +74,8 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     // le Râtelier du district (30 octobre 2026) : changer les cartes communes du deck
     case 'ratelier': D.ratelier = true; D.place = null; D.porteur = null; D.deck = null; break;
     case 'ratelier-fermer': D.ratelier = false; break;
-    case 'ratelier-basculer': resultat(J.basculerRatelier(app.jeu, id)); break;
+    // le Râtelier d'une escouade précise (31 octobre 2026) : celle de l'onglet ouvert, ou celle choisie dans le détail de la carte
+    case 'ratelier-basculer': resultat(J.basculerRatelier(app.jeu, id, b.dataset.index !== undefined ? Number(b.dataset.index) : J.escouadeActive(app.jeu))); break;
     // les trois escouades (25 octobre 2026) : en voir une, la faire descendre
     case 'escouade-voir': D.vueEscouade = Number(b.dataset.index ?? 0); D.place = null; D.porteur = null; D.deck = null; D.carte = null; break;
     case 'depart-escouade': {

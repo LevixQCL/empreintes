@@ -30,10 +30,20 @@ export function gestesDe(j: Jeu, id: string): GesteDef[] {
 }
 
 /** Le deck de combat d'une escouade : les cartes de ses Porteurs, plus les cartes communes du Râtelier */
-export const deckEscouade = (j: Jeu, escouade: string[]): GesteDef[] => {
+export const deckEscouade = (j: Jeu, escouade: string[], k = indiceEscouade(j, escouade)): GesteDef[] => {
   const cle = cleDuLegs(j, escouade);
-  return [...escouade.flatMap((id) => gestesDe(j, id)), ...gestesCommuns(j), ...(cle ? [cle] : [])];
+  return [...escouade.flatMap((id) => gestesDe(j, id)), ...gestesCommuns(j, k), ...(cle ? [cle] : [])];
 };
+
+/** L'escouade (son numéro) d'une liste de Porteurs : celle qui compte le premier d'entre eux, sinon celle qui descend */
+export function indiceEscouade(j: Jeu, escouade: readonly string[]): number {
+  const toutes = escouadesDe(j);
+  for (const id of escouade) {
+    const k = toutes.findIndex((l) => l.includes(id));
+    if (k >= 0) return k;
+  }
+  return escouadeActive(j);
+}
 
 // ---------- Le Râtelier du district (30 octobre 2026) ----------
 // Bryan : « pouvoir les échanger » (changer les cartes communes du deck). On les choisit au district, jamais pendant une descente.
@@ -54,31 +64,41 @@ export const communeOuverte = (j: Jeu, c: CarteCommuneDef) => (j.batiments[c.bat
 export function gesteCommun(j: Jeu, c: CarteCommuneDef): GesteDef {
   return { ...c.geste, v: forceCommune(c, j.batiments[c.batiment] ?? 0) };
 }
-/** Les cartes choisies au Râtelier (ouvertes, dans la limite des emplacements) */
-export function ratelierDe(j: Jeu): string[] {
-  const ids = (j.ratelier ?? RATELIER_DEPART).filter((id) => { const c = communeDef(id); return !!c && communeOuverte(j, c); });
+/**
+ * Les cartes choisies au Râtelier d'une escouade (ouvertes, dans la limite des emplacements).
+ * Un Râtelier par escouade (31 octobre 2026, Bryan : « assignables à plusieurs escouades, puisque ce sont des cartes communes ») :
+ * une même carte commune peut descendre avec plusieurs escouades, sans la retirer de l'une pour la mettre dans l'autre.
+ * Une escouade qui n'a jamais rien choisi garde l'ancien Râtelier commun (ou celui de départ).
+ */
+export function ratelierDe(j: Jeu, k = escouadeActive(j)): string[] {
+  const ids = (j.rateliers?.[k] ?? j.ratelier ?? RATELIER_DEPART).filter((id) => { const c = communeDef(id); return !!c && communeOuverte(j, c); });
   return [...new Set(ids)].slice(0, placesRatelier(j));
 }
+/** Les escouades (numéros) dont le Râtelier compte cette carte commune */
+export const escouadesAvecCommune = (j: Jeu, id: string): number[] =>
+  Array.from({ length: NB_ESCOUADES }, (_, k) => k).filter((k) => ratelierDe(j, k).includes(id));
 /** Ce que coûte la préparation des cartes au-delà des gratuites, à chaque départ */
 export const coutRatelier = (j: Jeu, n = ratelierDe(j).length) =>
   RATELIER.energie.slice(0, Math.max(0, n - RATELIER.gratuits)).reduce((a, b) => a + b, 0);
 /** Les cartes du Râtelier qu'on peut préparer avec l'énergie qu'on a : une carte qu'on ne peut pas payer reste au district */
-export function ratelierPayable(j: Jeu): string[] {
-  const ids = ratelierDe(j);
+export function ratelierPayable(j: Jeu, k = escouadeActive(j)): string[] {
+  const ids = ratelierDe(j, k);
   let n = Math.min(ids.length, RATELIER.gratuits);
   while (n < ids.length && j.energie >= coutRatelier(j, n + 1)) n++;
   return ids.slice(0, n);
 }
-export const gestesCommuns = (j: Jeu): GesteDef[] => ratelierPayable(j).map((id) => gesteCommun(j, communeDef(id)!));
-/** Au départ : l'énergie des cartes préparées est dépensée (pas de remboursement) */
-export function payerRatelier(j: Jeu): void {
-  const cout = coutRatelier(j, ratelierPayable(j).length);
+export const gestesCommuns = (j: Jeu, k = escouadeActive(j)): GesteDef[] => ratelierPayable(j, k).map((id) => gesteCommun(j, communeDef(id)!));
+/** Au départ : l'énergie des cartes préparées pour l'escouade qui part est dépensée (pas de remboursement) */
+export function payerRatelier(j: Jeu, escouade?: readonly string[]): void {
+  const k = escouade ? indiceEscouade(j, escouade) : escouadeActive(j);
+  const cout = coutRatelier(j, ratelierPayable(j, k).length);
   if (cout > 0) j.energie -= cout;
 }
 
-/** Change les cartes communes du Râtelier ; jamais pendant une descente */
-export function choisirRatelier(j: Jeu, ids: string[]): Resultat {
+/** Change les cartes communes du Râtelier d'une escouade ; jamais pendant une descente */
+export function choisirRatelier(j: Jeu, ids: string[], k = escouadeActive(j)): Resultat {
   if (j.expedition) return non('L’escouade est en descente : le Râtelier se change au district.');
+  if (!Number.isInteger(k) || k < 0 || k >= NB_ESCOUADES) return non('Escouade inconnue.');
   const propres = [...new Set(ids)];
   for (const id of propres) {
     const c = communeDef(id);
@@ -86,15 +106,18 @@ export function choisirRatelier(j: Jeu, ids: string[]): Resultat {
     if (!communeOuverte(j, c)) return non(`${c.geste.nom} s’ouvre au niveau ${c.niveau} du bâtiment.`);
   }
   if (propres.length > placesRatelier(j)) return non(`Le Râtelier n’a que ${placesRatelier(j)} emplacements.`);
-  j.ratelier = propres;
+  // la première fois, chaque escouade part de l'ancien Râtelier commun : rien ne bouge pour les autres
+  const avant = Array.from({ length: NB_ESCOUADES }, (_, n) => [...(j.rateliers?.[n] ?? j.ratelier ?? RATELIER_DEPART)]);
+  avant[k] = propres;
+  j.rateliers = avant;
   return { ok: true };
 }
-/** Met une carte commune au Râtelier, ou l'en retire */
-export function basculerRatelier(j: Jeu, id: string): Resultat {
-  const l = ratelierDe(j);
-  if (l.includes(id)) return choisirRatelier(j, l.filter((x) => x !== id));
-  if (l.length >= placesRatelier(j)) return non(`Le Râtelier est plein (${placesRatelier(j)} emplacements) : retire d’abord une carte.`);
-  return choisirRatelier(j, [...l, id]);
+/** Met une carte commune au Râtelier d'une escouade, ou l'en retire */
+export function basculerRatelier(j: Jeu, id: string, k = escouadeActive(j)): Resultat {
+  const l = ratelierDe(j, k);
+  if (l.includes(id)) return choisirRatelier(j, l.filter((x) => x !== id), k);
+  if (l.length >= placesRatelier(j)) return non(`Le Râtelier de l’escouade ${k + 1} est plein (${placesRatelier(j)} emplacements) : retire d’abord une carte.`);
+  return choisirRatelier(j, [...l, id], k);
 }
 export { CARTES_COMMUNES };
 
@@ -198,7 +221,7 @@ function ranger(j: Jeu, toutes: string[][]): void {
 /** Retient l'escouade qui part (l'écran de départ a pu la changer) : elle devient celle qui descend,
  * et ses Porteurs quittent les autres escouades */
 function retenirDepart(j: Jeu, escouade: string[]): void {
-  payerRatelier(j);
+  payerRatelier(j, escouade);
   const a = escouadeActive(j);
   ranger(j, escouadesDe(j).map((l, k) => (k === a ? [...escouade] : l.filter((id) => !escouade.includes(id)))));
 }
@@ -1143,7 +1166,7 @@ export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: numbe
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   });
   if (ep.sansResonance) x.combat.sansResonance = true;
-  payerRatelier(j);
+  payerRatelier(j, escouade);
   quitterPostes(j, escouade);
   j.expedition = { ...x, epreuve: id };
   log(j, `Épreuve de la semaine : ${ep.nom}.`);

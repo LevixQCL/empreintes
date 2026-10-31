@@ -28,7 +28,7 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="forge"]'); } },
@@ -58,6 +58,9 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'depart-strate', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); await p.click('[data-action="descendre"] >> nth=0'); await p.waitForTimeout(300); await p.$eval('.es-ratelier', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
   { nom: 'cartes-communes', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.seg[data-action="cartes"]'); await p.$eval('.cl-paquetage', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'escouade-commune', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.eq-district .eq-tuile[data-id="stimulant"]'); await p.waitForTimeout(300); } },
+  // la Clé de l’Héritage se touche comme les autres cartes, scellée ou non (31 octobre 2026)
+  { nom: 'heritage-cle', sauvegarde: 'legs', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.eq-district .eq-tuile[data-id="cle-legs"]'); await p.waitForTimeout(300); } },
+  { nom: 'heritage-cle-bas', sauvegarde: 'legs', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.eq-district .eq-tuile[data-id="cle-legs"]'); await p.waitForTimeout(300); await p.$eval('.cm-detail .feuille-corps', (e) => e.scrollTo(0, e.scrollHeight)); } },
   { nom: 'chroniques', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="codex"]'); } },
   { nom: 'menu', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="compte"]').catch(() => {}); } },
   { nom: 'classements', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="classements"]'); } },
@@ -161,6 +164,11 @@ async function main() {
     const br = JSON.parse(JSON.stringify(saves.combat));
     if (br.data.expedition) br.data.expedition.strate = 6;
     (saves as Record<string, unknown>).brume = br;
+    // l’Héritage reçu sous la forme de la Clé (31 octobre 2026)
+    const lg = JSON.parse(JSON.stringify(saves.district));
+    lg.data.legs = 'cle';
+    lg.data.portVu = true;
+    (saves as Record<string, unknown>).legs = lg;
     // le Port déjà présenté dans la sauvegarde du district (la sauvegarde « fleche » garde sa présentation)
     d.portVu = true;
 

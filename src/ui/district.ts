@@ -12,7 +12,7 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, gesteCommun, ratelierDe, ratelierPayable, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
@@ -988,6 +988,7 @@ export function feuilleCarte(e: EcranDistrict): string {
   const cle = e.carte;
   const commune = cle ? communeDef(cle) : undefined;
   if (commune) return feuilleCommune(e, commune);
+  if (cle === CLE_LEGS.id && j.legs === 'cle') return feuilleCle(e);
   if (!cle || !j.collection[cle]) return '';
   const m = moduleDef(cle);
   const c = j.collection[cle]!;
@@ -1052,15 +1053,7 @@ function feuilleCommune(e: EcranDistrict, c: CarteCommuneDef): string {
   const niv = j.batiments[c.batiment] ?? 0;
   const ouverte = communeOuverte(j, c);
   const m: ModuleDef = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) };
-  const choisies = ratelierDe(j);
-  const rang = choisies.indexOf(g.id);
-  const pris = rang >= 0;
   const places = placesRatelier(j);
-  const plein = !pris && choisies.length >= places;
-  const payee = ratelierPayable(j).includes(g.id);
-  // ce que coûte sa place : la sienne si elle est prise, celle qu'elle prendrait sinon
-  const k = pris ? rang : choisies.length;
-  const prixPlace = k >= RATELIER.gratuits ? RATELIER.energie[k - RATELIER.gratuits] ?? 0 : 0;
   const effets = g.effet ? `<ul class="effets-carte">${effetsDe(m).map((x) => `<li><b>${echap(NOMS_EFFET[x.type])}</b> ${avecMots(texteEffet(x), [x.type])}</li>`).join('')}</ul>` : '<p class="aide">Pas d’effet : sa force seule.</p>';
   let h = `<div class="voile-feuille" data-action="carte-fermer" aria-hidden="true"></div><section class="feuille carte-detail cm-detail" role="dialog" aria-modal="true" aria-label="${echap(g.nom)}"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:#CDEFFF">CARTE COMMUNE · ${echap(bat.nom.toUpperCase())}${ouverte ? ` · NIVEAU ${niv}` : ''}</span><h2>${echap(g.nom)}</h2></div>`
@@ -1084,16 +1077,74 @@ function feuilleCommune(e: EcranDistrict, c: CarteCommuneDef): string {
       + `<div class="ligne-btn"><button type="button" class="btn sec" data-action="commune-batiment" data-id="${c.batiment}">${ICO.district}Voir ${echap(bat.nom)}</button></div>`;
   }
   h += `</section>`;
-  // le Râtelier : la mettre dans le deck une fois pour toutes
-  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.district}Râtelier de l’escouade · ${choisies.length} / ${places}</h3>`;
-  const cout = prixPlace ? `<b class="cm-cout">${ICO.energie}−${prixPlace}</b> énergie à chaque départ` : 'fournie, sans énergie';
-  if (pris) h += `<p class="fc-aide"><b>Au Râtelier</b> : elle descend avec l’escouade à chaque départ, sans rien refaire. Sa place : ${cout}.${payee ? '' : ` <b class="cm-cout">Il manque de l’énergie</b> : au prochain départ, elle restera au district.`}</p>`;
-  else if (!ouverte) h += `<p class="fc-aide">Elle pourra rejoindre le Râtelier quand ${echap(bat.nom)} aura le niveau ${c.niveau}.</p>`;
-  else if (plein) h += `<p class="fc-aide">Le Râtelier est plein : retire d’abord une carte pour faire de la place.${RATELIER.places.find((p) => p.n > places) ? ` Un emplacement de plus au niveau ${RATELIER.places.find((p) => p.n > places)!.noyau} de la Tour du Noyau.` : ''}</p>`;
-  else h += `<p class="fc-aide">Prends-la une fois : elle restera au Râtelier d’une descente à l’autre. Sa place : ${cout}.</p>`;
-  if (ouverte) h += `<div class="ligne-btn"><button type="button" class="btn ${pris ? 'sec' : 'prim'}" data-action="ratelier-basculer" data-id="${g.id}"${j.expedition || plein ? ' disabled' : ''}>${pris ? `${ICO.recycler}Retirer du Râtelier` : `${ICO.ok}Mettre au Râtelier`}</button></div>`;
-  if (j.expedition) h += `<p class="fc-aide">L’escouade est en descente : le Râtelier se change au district.</p>`;
+  // le Râtelier : une carte commune se met dans autant d'escouades qu'on veut (31 octobre 2026, Bryan), une ligne par escouade
+  const toutes = escouadesDe(j);
+  const dans = escouadesAvecCommune(j, g.id);
+  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.district}Râtelier des escouades${dans.length ? ` · dans ${dans.length}` : ''}</h3>`;
+  if (!ouverte) h += `<p class="fc-aide">Elle pourra rejoindre un Râtelier quand ${echap(bat.nom)} aura le niveau ${c.niveau}.</p>`;
+  else {
+    h += `<p class="fc-aide">Chaque escouade a son Râtelier : mets-la dans toutes celles qui en ont besoin, elle y reste d’une descente à l’autre.</p><div class="cm-escouades">`;
+    h += toutes.map((l, k) => {
+      const choisies = ratelierDe(j, k);
+      const rang = choisies.indexOf(g.id);
+      const pris = rang >= 0;
+      const plein = !pris && choisies.length >= places;
+      const payee = ratelierPayable(j, k).includes(g.id);
+      // ce que coûte sa place dans ce Râtelier : la sienne si elle est prise, celle qu'elle prendrait sinon
+      const n = pris ? rang : choisies.length;
+      const prix = n >= RATELIER.gratuits ? RATELIER.energie[n - RATELIER.gratuits] ?? 0 : 0;
+      const etat = pris ? (payee ? (prix ? `${ICO.energie}−${prix} par départ` : 'Fournie') : '<b class="cm-cout">Énergie insuffisante</b>')
+        : plein ? `Plein (${choisies.length} / ${places})` : prix ? `${ICO.energie}−${prix} par départ` : 'Fournie';
+      const visages = l.length ? `<span class="cm-esc-visages">${l.map((id) => avatar(id, 22)).join('')}</span>` : '';
+      return `<button type="button" class="cm-esc${pris ? ' pris' : ''}" data-action="ratelier-basculer" data-id="${g.id}" data-index="${k}"${j.expedition || plein ? ' disabled' : ''} aria-pressed="${pris}">`
+        + `<span class="cm-esc-coche" aria-hidden="true">${pris ? ICO.ok : ''}</span><span class="cm-esc-txt"><strong>Escouade ${k + 1}</strong><small>${etat}</small></span>${visages}`
+        + `<span class="me-prendre${pris ? ' retirer' : ''}">${pris ? 'Retirer' : 'Ajouter'}</span></button>`;
+    }).join('') + `</div>`;
+    if (toutes.some((_, k) => !ratelierDe(j, k).includes(g.id) && ratelierDe(j, k).length >= places) && RATELIER.places.find((p) => p.n > places)) h += `<p class="fc-aide">Un emplacement de plus au niveau ${RATELIER.places.find((p) => p.n > places)!.noyau} de la Tour du Noyau.</p>`;
+  }
+  if (j.expedition) h += `<p class="fc-aide">L’escouade est en descente : les Râteliers se changent au district.</p>`;
   return h + `</section></div></section>`;
+}
+
+/**
+ * Le détail de la Clé de l’Héritage (31 octobre 2026, Bryan : « on ne sait pas cliquer dessus comme les autres ») :
+ * ses effets, son histoire, ce qui la descelle et la fait grandir, et les escouades avec qui elle descend.
+ */
+function feuilleCle(e: EcranDistrict): string {
+  const j = e.j;
+  const o = ORIGINE_PAQUETAGE[CLE_LEGS.id]!;
+  const toutes = escouadesDe(j);
+  // la force qu'elle a dans l'escouade la plus avancée (celle qu'on montre sur la face)
+  const forces = toutes.map((l) => cleDuLegs(j, l));
+  const meilleure = forces.reduce<GesteDef | null>((a, g) => (g && (!a || g.v > a.v) ? g : a), null);
+  const g = meilleure ?? CLE_LEGS;
+  const m: ModuleDef = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'nacre', type: g.type, v: g.v, f: [g.f], effet: g.effet!, effet2: g.effet2!, legs: true };
+  const niv = Math.max(0, ...Object.keys(j.porteurs).filter((id) => porteursPresents(j).includes(id)).map((id) => niveauPorteur(j, id).niveau));
+  const paliers = [{ porteur: NIVEAU_METAL.nacre, niveau: COLLECTION.niveauDepart.nacre }, ...EVEIL_LEGS];
+  let h = `<div class="voile-feuille" data-action="carte-fermer" aria-hidden="true"></div><section class="feuille carte-detail cm-detail" role="dialog" aria-modal="true" aria-label="${echap(g.nom)}"><span class="poignee" aria-hidden="true"></span>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR_RARETE.nacre}">NACRE · HÉRITAGE DU DISTRICT</span><h2>${echap(g.nom)}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="guide" data-id="effets" aria-label="Les cartes et leurs effets">${ICO.aide}</button>`
+    + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
+    + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, COLLECTION.niveauDepart.nacre, 1, { origine: o.batiment })}</div><div class="detail-infos">${effetsCarte(m)}`
+    + `<p class="aide">Portée par personne : elle descend avec chaque escouade qui compte un Porteur de niveau ${NIVEAU_METAL.nacre}, et ne s’éteint jamais quand un Porteur tombe.</p></div></div>`
+    + `<blockquote class="lore-carte">${echap(o.texte)}</blockquote>`;
+  // ce qui la descelle, puis la fait grandir : le niveau du Porteur le plus avancé de l'escouade
+  h += `<section class="bloc fc-prog"><h3 class="titre-bloc">${ICO.monter}${meilleure ? 'Son éveil' : 'La desceller'}</h3>`
+    + `<p class="fc-aide">${meilleure ? `Elle grandit avec le Porteur le plus avancé de l’escouade.` : `${ICO.cristal}<b>Scellée</b> : elle s’ouvre quand un Porteur de l’escouade atteint le <b>niveau ${NIVEAU_METAL.nacre}</b> (aujourd’hui, ton plus avancé est niveau ${niv}).`}</p>`
+    + `<ol class="cm-echelle ${g.type}" aria-label="Niveau de la carte selon le niveau du Porteur">${paliers.map((p, k) => {
+      const atteint = niv >= p.porteur;
+      const ici = atteint && (k === paliers.length - 1 || niv < paliers[k + 1]!.porteur);
+      return `<li class="${ici ? 'ici' : atteint ? 'fait' : ''}"><small>Porteur ${p.porteur}</small><b>niv. ${p.niveau}</b></li>`;
+    }).join('')}</ol></section>`;
+  // les escouades avec qui elle descend : rien à choisir, elle suit toute seule
+  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.district}Dans tes escouades</h3><div class="cm-escouades">`
+    + toutes.map((l, k) => {
+      const f = forces[k];
+      const etat = !l.length ? 'Escouade vide' : f ? `Descend avec elle · force ${f.v}` : `Scellée : aucun Porteur niv. ${NIVEAU_METAL.nacre}`;
+      return `<div class="cm-esc fixe${f ? ' pris' : ''}"><span class="cm-esc-coche" aria-hidden="true">${f ? ICO.ok : ICO.verrou}</span><span class="cm-esc-txt"><strong>Escouade ${k + 1}</strong><small>${etat}</small></span>`
+        + (l.length ? `<span class="cm-esc-visages">${l.map((id) => avatar(id, 22)).join('')}</span>` : '') + `</div>`;
+    }).join('') + `</div><p class="fc-aide">Elle s’ajoute au deck en plus des cartes des Porteurs et du Râtelier : un deck peut donc compter une carte de plus que d’habitude.</p></section>`;
+  return h + `</div></section>`;
 }
 
 /**
@@ -1101,10 +1152,10 @@ function feuilleCommune(e: EcranDistrict, c: CarteCommuneDef): string {
  * vous avez telle carte de district, le coût est de tant », marqué en rouge sur chaque carte). Fouille, Strate ou Épreuve :
  * toutes passent par cet écran. Chaque carte montre sa face et son prix ; celle qu'on ne peut pas payer reste au district.
  */
-function departRatelier(j: Jeu): string {
-  const prevues = ratelierDe(j);
+function departRatelier(j: Jeu, k: number): string {
+  const prevues = ratelierDe(j, k);
   if (!prevues.length) return '';
-  const payees = ratelierPayable(j);
+  const payees = ratelierPayable(j, k);
   const total = coutRatelier(j, payees.length);
   const cartes = prevues.map((id, k) => {
     const g = gesteCommun(j, communeDef(id)!);
@@ -1118,7 +1169,7 @@ function departRatelier(j: Jeu): string {
     ? `Préparer ces cartes coûte <b class="es-rt-total">${ICO.energie}${ent(total)} énergie</b> à ce départ (tu en as ${ent(Math.floor(j.energie))}).`
     : `Fournies par le district, sans énergie.`;
   return `<div class="es-ratelier"><span class="surtitre">${ICO.district}Cartes du district · ${payees.length}</span><ul class="es-rt">${cartes}</ul>`
-    + `<p class="es-freq-aide">${phrase}${manque ? ` Il manque de l’énergie : ${manque > 1 ? `${manque} cartes restent` : 'une carte reste'} au district.` : ''} Elles restent au Râtelier d’une descente à l’autre ; tu les changes dans l’onglet Escouade.</p></div>`;
+    + `<p class="es-freq-aide">${phrase}${manque ? ` Il manque de l’énergie : ${manque > 1 ? `${manque} cartes restent` : 'une carte reste'} au district.` : ''} Elles restent au Râtelier de l’escouade ${k + 1} d’une descente à l’autre ; tu les changes dans l’onglet Escouade.</p></div>`;
 }
 
 /** La face d'une carte commune, en petit */
@@ -1324,17 +1375,18 @@ export function htmlCartes(e: EcranDistrict): string {
   }
   // les cartes communes du district (Râtelier, 30 octobre 2026) : jamais dans la collection, on les montre pour qu'on sache d'où elles viennent
   if (f === 'tout') {
-    const choisies = ratelierDe(j);
+    const ou = (id: string) => escouadesAvecCommune(j, id).map((k) => k + 1);
     h += `<h2 class="titre-section" style="--c:#CDEFFF">Cartes communes du district</h2>`
-      + `<p class="cl-intro">Préparées par tes bâtiments : sans lignée ni métal, elles ne s’éteignent jamais quand un Porteur tombe et gagnent de la force quand leur bâtiment monte. Choisis celles qui descendent dans le Râtelier de l’escouade.</p>`
+      + `<p class="cl-intro">Préparées par tes bâtiments : sans lignée ni métal, elles ne s’éteignent jamais quand un Porteur tombe et gagnent de la force quand leur bâtiment monte. Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.</p>`
       + `<div class="grille-cartes">` + CARTES_COMMUNES.map((c) => {
         const g = gesteCommun(j, c);
         const o = ORIGINE_PAQUETAGE[g.id]!;
         const ouverte = communeOuverte(j, c);
         const m: ModuleDef = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) };
-        const bas = !ouverte ? `${ICO.cristal}<b>${echap(o.batiment)} niveau ${c.niveau}</b>` : choisies.includes(g.id) ? `<b>Au Râtelier</b> · ${echap(o.texte)}` : echap(o.texte);
+        const esc = ou(g.id);
+        const bas = !ouverte ? `${ICO.cristal}<b>${echap(o.batiment)} niveau ${c.niveau}</b>` : esc.length ? `<b>Escouade${esc.length > 1 ? 's' : ''} ${esc.join(', ')}</b> · ${echap(o.texte)}` : echap(o.texte);
         // on la touche comme les autres pour voir ses effets et comment l'améliorer (31 octobre 2026, Luc)
-        return `<button type="button" class="carte-tuile cl-carte cl-paquetage${ouverte ? '' : ' cl-scellee'}" data-action="carte" data-id="${g.id}" data-carte="${g.id}" aria-label="${echap(g.nom)}, carte commune${choisies.includes(g.id) ? ', au Râtelier' : ''}. Voir la carte">${faceCarte(m, 1, 1, { origine: o.batiment })}<span class="cl-bas"><span class="cl-origine">${bas}</span></span></button>`;
+        return `<button type="button" class="carte-tuile cl-carte cl-paquetage${ouverte ? '' : ' cl-scellee'}" data-action="carte" data-id="${g.id}" data-carte="${g.id}" aria-label="${echap(g.nom)}, carte commune${esc.length ? `, au Râtelier de l’escouade ${esc.join(', ')}` : ''}. Voir la carte">${faceCarte(m, 1, 1, { origine: o.batiment })}<span class="cl-bas"><span class="cl-origine">${bas}</span></span></button>`;
       }).join('') + (j.legs === 'cle' ? carteCle(j) : '') + `</div>`;
   }
   // le mode d'emploi prend la place des autres feuilles ; en le fermant, on retrouve celle d'où on venait
@@ -1355,7 +1407,8 @@ function carteCle(j: Jeu): string {
   const pret = Object.keys(j.porteurs).some((id) => niveauPorteur(j, id).niveau >= NIVEAU_METAL.nacre);
   const bas = pret ? `<span class="cl-origine">Ton Héritage : dans chaque escouade qui compte un Porteur de niveau ${NIVEAU_METAL.nacre}.</span>`
     : `<span class="cl-origine">${ICO.cristal}<b>Scellée</b> : elle rejoindra le paquetage quand un Porteur de l’escouade aura le niveau ${NIVEAU_METAL.nacre}.</span>`;
-  return `<div class="carte-tuile cl-carte cl-paquetage${pret ? '' : ' cl-scellee'}">${faceCarte(m, COLLECTION.niveauDepart.nacre, 1, { origine: o.batiment })}<span class="cl-bas">${bas}</span></div>`;
+  // on la touche comme les autres (31 octobre 2026, Bryan), scellée ou non
+  return `<button type="button" class="carte-tuile cl-carte cl-paquetage${pret ? '' : ' cl-scellee'}" data-action="carte" data-id="${g.id}" data-carte="${g.id}" aria-label="${echap(g.nom)}, ton Héritage${pret ? '' : ', scellée'}. Voir la carte">${faceCarte(m, COLLECTION.niveauDepart.nacre, 1, { origine: o.batiment })}<span class="cl-bas">${bas}</span></button>`;
 }
 
 // ---------- La rencontre, avant la chambre scellée ----------
@@ -1943,7 +1996,7 @@ export function htmlEscouade(e: EcranDistrict): string {
       + `<div class="eq-freqs es-freq" role="img" aria-label="Fréquences du deck : ${n.map((k, i) => `${i + 1} : ${k}`).join(', ')}">`
       + n.map((k, i) => `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}" style="--fc:${couleurFrequence(i + 1)};--n:${Math.min(1, k / Math.max(1, ...n))}"><b class="eq-cristal">${i + 1}</b><small>${k ? `×${k}` : '—'}</small></span>`).join('')
       + `</div><p class="es-freq-aide">Des chiffres qui se suivent font des Résonances${suite.length >= 2 ? ` : ta plus longue suite va de <b>${suite[0]} à ${suite[suite.length - 1]}</b>` : ''}. Un chiffre absent coupe la suite${jokers ? ` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</p>`;
-    h += departRatelier(j);
+    h += departRatelier(j, indiceEscouade(j, e.escouade));
     if (maigre) {
       const aRemplir = e.escouade.filter((id) => j.porteurs[id]!.modules.length < DISTRICT.cartesMax);
       const cible = aRemplir.sort((x, y) => j.porteurs[x]!.modules.length - j.porteurs[y]!.modules.length)[0];
@@ -1965,7 +2018,7 @@ export function htmlEscouade(e: EcranDistrict): string {
 
   const pret = e.escouade.length === 3 && !maigre;
   // l'énergie des cartes du Râtelier, rappelée sur le bouton (31 octobre 2026, Luc)
-  const coutDepart = e.escouade.length ? coutRatelier(j, ratelierPayable(j).length) : 0;
+  const coutDepart = e.escouade.length ? coutRatelier(j, ratelierPayable(j, indiceEscouade(j, e.escouade)).length) : 0;
   h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
     + `<span><b>${e.escouade.length} / 3</b><small class="${maigre ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? `Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? `${deck} cartes · ${deckMin} au moins` : `${deck} cartes, prêt`}</small></span></div>`
     + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${fl ? `${ICO.monter}Monter` : pi ? `${ICO.grappin}Piller` : ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;

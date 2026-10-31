@@ -178,7 +178,7 @@ function combatFleche(j: Jeu, escouade: string[], quai: number, force: number, p
   if (!estGardeFleche(porteurs[0]!)) x.combat.ennemi.porteur = porteurs[0];
   x.combat.autres?.forEach((en, k) => { if (!estGardeFleche(porteurs[k + 1]!)) en.porteur = porteurs[k + 1]; });
   x.combat.journal = [journal];
-  payerRatelier(j);
+  payerRatelier(j, escouade);
   quitterPostes(j, escouade);
   j.expedition = { ...x, fleche: { quai, force, ...(defi ? { gardien: { id: defi.id, nom: defi.nom, ...(defi.depuis !== undefined ? { depuis: defi.depuis } : {}) }, defi: true } : {}) } };
   return { ok: true };

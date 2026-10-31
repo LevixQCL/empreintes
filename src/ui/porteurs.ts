@@ -4,7 +4,7 @@
 
 import { BATIMENTS, CLE_LEGS, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
 import { CHARGE, NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
-import { ACCORD_OUVERT, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
+import { ACCORD_OUVERT, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
@@ -149,6 +149,8 @@ function tuileCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean, scelle
     ? `<li><button type="button" class="eq-tuile" data-action="carte" data-id="${cle}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}${g.effet ? `, ${nomsEffets(g)}` : ''}${prete(cle) ? ', peut monter' : ''}. Voir la carte">${corps}</button></li>`
     // une carte commune du Râtelier s'ouvre aussi d'un toucher (31 octobre 2026, Luc : « on ne sait pas appuyer dessus comme les autres »)
     : origine && !scellee && g.id !== 'cle-legs' ? `<li><button type="button" class="eq-tuile" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}, carte commune. Voir la carte">${corps}</button></li>`
+    // la Clé de l’Héritage aussi, scellée ou descellée (31 octobre 2026, Bryan : « on ne sait pas cliquer dessus comme les autres »)
+    : g.id === 'cle-legs' ? `<li><button type="button" class="eq-tuile${scellee ? ' scellee' : ''}" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}, ton Héritage${scellee ? ', scellée' : `, ${NOM_ACTION[g.type]} ${g.v}`}. Voir la carte">${corps}</button></li>`
     : `<li><div class="eq-tuile fixe${scellee ? ' scellee' : ''}">${corps}</div></li>`;
 }
 
@@ -297,7 +299,7 @@ function monEscouade(e: EcranDistrict): string {
   // le paquetage du district, toujours là
   // la Clé de l’Héritage (29 octobre 2026) : visible dès qu'on l'a choisie, scellée tant qu'aucun Porteur de l'escouade n'a le niveau 10
   const cle = j.legs === 'cle' ? cleDuLegs(j, esc) : null;
-  h += ratelierSection(j, esc, prete, !!verrou, cle);
+  h += ratelierSection(j, vue, prete, !!verrou, cle);
   return h;
 }
 
@@ -305,27 +307,27 @@ function monEscouade(e: EcranDistrict): string {
  * Le Râtelier du district (30 octobre 2026) : les cartes communes qui descendent avec l'escouade. Bryan : « pouvoir les échanger ».
  * Les deux premières sont fournies ; les suivantes coûtent de l'énergie à chaque départ. Elles restent quand un Porteur tombe.
  */
-function ratelierSection(j: Jeu, esc: string[], prete: (cle: string) => boolean, verrou: boolean, cle: GesteDef | null): string {
-  const choisies = ratelierDe(j);
-  const payees = ratelierPayable(j).length;
+function ratelierSection(j: Jeu, k: number, prete: (cle: string) => boolean, verrou: boolean, cle: GesteDef | null): string {
+  const choisies = ratelierDe(j, k);
+  const payees = ratelierPayable(j, k).length;
   const places = placesRatelier(j);
-  const cout = coutRatelier(j);
+  const cout = coutRatelier(j, choisies.length);
   const manque = payees < choisies.length;
   const vides = Math.max(0, places - choisies.length);
   const sous = cout ? `${ICO.energie}<b>${cout}</b> énergie à chaque départ${manque ? ' · <em>pas assez : la dernière reste au district</em>' : ''}` : 'Fournies à chaque départ, elles restent même si un Porteur tombe';
-  let h = `<section class="eq-district"><div class="eq-cartes-tete"><h3>${ICO.district}Râtelier du district <span>${choisies.length} / ${places}</span></h3>`
-    + (verrou ? '' : `<button type="button" class="eq-gerer" data-action="ratelier" aria-label="Changer les cartes du Râtelier">${ICO.recycler}<span>Changer</span></button>`) + `<small>${sous}</small></div>`;
+  let h = `<section class="eq-district"><div class="eq-cartes-tete"><h3>${ICO.district}Râtelier de l’escouade ${k + 1} <span>${choisies.length} / ${places}</span></h3>`
+    + (verrou ? '' : `<button type="button" class="eq-gerer" data-action="ratelier" aria-label="Changer les cartes du Râtelier de l’escouade ${k + 1}">${ICO.recycler}<span>Changer</span></button>`) + `<small>${sous}</small></div>`;
   h += `<ul class="eq-grille">${choisies.map((id) => tuileCarte(j, gesteCommun(j, CARTES_COMMUNES.find((c) => c.geste.id === id)!), prete)).join('')}`
-    + (verrou ? '' : Array.from({ length: vides }, (_, k) => `<li><button type="button" class="eq-tuile libre" data-action="ratelier" aria-label="Emplacement libre : choisir une carte commune"><span class="eq-t-vide">${ICO.district}<span>${k === 0 ? 'Emplacement libre' : ''}</span></span></button></li>`).join(''))
+    + (verrou ? '' : Array.from({ length: vides }, (_, n) => `<li><button type="button" class="eq-tuile libre" data-action="ratelier" aria-label="Emplacement libre : choisir une carte commune"><span class="eq-t-vide">${ICO.district}<span>${n === 0 ? 'Emplacement libre' : ''}</span></span></button></li>`).join(''))
     + `${j.legs === 'cle' ? tuileCarte(j, cle ?? CLE_LEGS, prete, !cle) : ''}</ul></section>`;
-  void esc;
   return h;
 }
 
 /** Le volet du Râtelier : toutes les cartes communes, celles qu'on peut prendre et celles qu'un bâtiment ouvrira */
 function voletRatelier(e: EcranDistrict): string {
   const j = e.j;
-  const choisies = ratelierDe(j);
+  const vue = escouadeVue(e);
+  const choisies = ratelierDe(j, vue);
   const places = placesRatelier(j);
   const plein = choisies.length >= places;
   const prochaine = RATELIER.places.find((p) => p.n > places);
@@ -337,18 +339,21 @@ function voletRatelier(e: EcranDistrict): string {
     const rang = choisies.indexOf(c.geste.id);
     const prix = pris && rang >= RATELIER.gratuits ? RATELIER.energie[rang - RATELIER.gratuits] : !pris && choisies.length >= RATELIER.gratuits ? RATELIER.energie[choisies.length - RATELIER.gratuits] : 0;
     const raison = ouverte ? '' : `${bat.nom} niveau ${c.niveau} : ${echap(raisonFermee(c.batiment))}`;
+    // une carte commune peut être dans plusieurs Râteliers : on dit où elle est déjà, sans rien imposer
+    const ailleurs = escouadesAvecCommune(j, c.geste.id).filter((n) => n !== vue).map((n) => n + 1);
+    const aussi = ailleurs.length ? ` · aussi dans l’escouade ${ailleurs.join(' et ')}` : '';
     const etat = !ouverte ? '' : pris ? `<span class="me-prendre retirer">Retirer</span>` : plein ? '' : `<span class="me-prendre">Prendre</span>`;
-    return `<button type="button" class="me-choix rt-choix${ouverte ? '' : ' indispo'}${pris ? ' pris' : ''}" data-action="ratelier-basculer" data-id="${c.geste.id}"${!ouverte || (plein && !pris) ? ' disabled' : ''} style="--c:#CDEFFF;--i:${k}">`
+    return `<button type="button" class="me-choix rt-choix${ouverte ? '' : ' indispo'}${pris ? ' pris' : ''}" data-action="ratelier-basculer" data-id="${c.geste.id}" data-index="${vue}"${!ouverte || (plein && !pris) ? ' disabled' : ''} style="--c:#CDEFFF;--i:${k}">`
       + `<span class="rt-face">${tuileFace(g)}</span>`
       + `<span class="me-choix-txt"><strong>${echap(g.nom)}</strong><small class="me-stats">${NOM_ACTION[g.type]} ${g.v} · Fréquence ${g.f}${g.effet ? ` · ${echap(nomsEffets(g))}` : ''}</small>`
       + (g.effet ? `<small class="me-raison">${echap(texteEffet(g.effet))}${c.geste.unique ? ' Une fois par combat.' : ''}</small>` : '')
-      + `<small class="me-raison">${raison || `${echap(bat.nom)} · grandit avec le bâtiment${prix ? ` · ${prix} énergie par départ` : ''}`}</small></span>${etat}</button>`;
+      + `<small class="me-raison">${raison || `${echap(bat.nom)} · grandit avec le bâtiment${prix ? ` · ${prix} énergie par départ` : ''}${aussi}`}</small></span>${etat}</button>`;
   };
   let h = `<div class="voile-feuille" data-action="ratelier-fermer" aria-hidden="true"></div>`
     + `<section class="feuille me-volet" role="dialog" aria-modal="true" aria-labelledby="volet-titre"><span class="poignee" aria-hidden="true"></span>`
-    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">Râtelier · ${choisies.length} / ${places}</span><h2 id="volet-titre">Cartes communes du district</h2></div>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">Râtelier de l’escouade ${vue + 1} · ${choisies.length} / ${places}</span><h2 id="volet-titre">Cartes communes du district</h2></div>`
     + `<button type="button" class="btn-icone" data-action="ratelier-fermer" aria-label="Fermer">${ICO.fermer}</button></header>`
-    + `<div class="feuille-corps"><p class="me-aide">Chaque bâtiment prépare ses cartes : elles n’ont ni lignée ni métal, ne s’éteignent jamais quand un Porteur tombe, et gagnent de la force quand leur bâtiment monte. Les ${RATELIER.gratuits} premières sont fournies ; les suivantes demandent de l’énergie à chaque départ.</p>`
+    + `<div class="feuille-corps"><p class="me-aide">Chaque bâtiment prépare ses cartes : elles n’ont ni lignée ni métal, ne s’éteignent jamais quand un Porteur tombe, et gagnent de la force quand leur bâtiment monte. Les ${RATELIER.gratuits} premières sont fournies ; les suivantes demandent de l’énergie à chaque départ. Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.</p>`
     + `<div class="me-choix-liste">${CARTES_COMMUNES.map(ligne).join('')}</div>`
     + (prochaine ? `<p class="me-aide">Un emplacement de plus au niveau ${prochaine.noyau} de la Tour du Noyau.</p>` : '');
   return h + `</div></section>`;

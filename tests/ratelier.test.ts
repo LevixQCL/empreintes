@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ajouter, creerCombat, lancer } from '../src/core/combat';
 import { CARTES_COMMUNES, PORTEURS, communeDef, forceCommune } from '../src/core/donnees';
-import { basculerRatelier, choisirRatelier, coutRatelier, deckEscouade, gestesCommuns, nouveauJeu, placesRatelier, ratelierDe, ratelierPayable } from '../src/core/jeu';
+import { basculerRatelier, choisirRatelier, coutRatelier, deckEscouade, escouadesAvecCommune, gestesCommuns, nouveauJeu, placesRatelier, ratelierDe, ratelierPayable } from '../src/core/jeu';
 import type { CombatEtat, Effet, Geste, TypeGeste } from '../src/core/types';
 
 // Le Râtelier du district (30 octobre 2026) : les cartes communes, leur bâtiment, leurs emplacements, leur énergie
@@ -140,5 +140,37 @@ describe('Améliorer les cartes communes', () => {
     expect(noyau.some((g) => g.texte.includes('Pavois de cuivre') && g.apres! > g.avant!)).toBe(true);
     const forge = gainsAmelioration(j, 'forge').filter((g) => g.quoi === 'commune');
     expect(forge.some((g) => g.texte.includes('Lame d’atelier'))).toBe(true);
+  });
+
+  it('un Râtelier par escouade : une même carte commune peut être dans plusieurs (31 octobre 2026)', () => {
+    const j = nouveauJeu(0);
+    j.batiments.forge = 2;
+    j.batiments.noyau = 5;
+    // au départ, toutes les escouades ont le Râtelier commun
+    expect(ratelierDe(j, 1)).toEqual(['stimulant', 'repli']);
+    // ajouter une carte à l'escouade 1 ne touche pas les autres
+    expect(basculerRatelier(j, 'lame-atelier', 0).ok).toBe(true);
+    expect(ratelierDe(j, 0)).toEqual(['stimulant', 'repli', 'lame-atelier']);
+    expect(ratelierDe(j, 1)).toEqual(['stimulant', 'repli']);
+    // la même carte dans l'escouade 2, sans la retirer de la 1
+    expect(basculerRatelier(j, 'lame-atelier', 1).ok).toBe(true);
+    expect(escouadesAvecCommune(j, 'lame-atelier')).toEqual([0, 1]);
+    // retirer d'une escouade la laisse dans l'autre
+    expect(basculerRatelier(j, 'stimulant', 1).ok).toBe(true);
+    expect(ratelierDe(j, 0)).toContain('stimulant');
+    expect(ratelierDe(j, 1)).not.toContain('stimulant');
+  });
+
+  it('le deck et le prix au départ suivent le Râtelier de l’escouade qui part', () => {
+    const j = nouveauJeu(0);
+    j.batiments.forge = 2;
+    j.batiments.noyau = 5;
+    j.energie = 1000;
+    expect(choisirRatelier(j, ['stimulant', 'repli', 'lame-atelier'], 0).ok).toBe(true);
+    expect(choisirRatelier(j, ['repli'], 1).ok).toBe(true);
+    expect(coutRatelier(j, ratelierPayable(j, 0).length)).toBe(150);
+    expect(coutRatelier(j, ratelierPayable(j, 1).length)).toBe(0);
+    expect(gestesCommuns(j, 1).map((g) => g.id)).toEqual(['repli']);
+    expect(deckEscouade(j, ['ilka', 'doran', 'vela'], 1).filter((g) => g.porteur === null).map((g) => g.id)).toEqual(['repli']);
   });
 });
