@@ -603,6 +603,8 @@ h1,h2,h3{font-weight:400}
 .epreuve small{font-size:12px;color:var(--quiet);line-height:1.4}
 .epreuve .gain{display:flex;align-items:center;gap:5px;color:var(--gold)}
 .epreuve .gain .ico{width:14px;height:14px}
+.epreuve .ep-famille{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);opacity:.85}
+.epreuve .gain.felee{color:var(--ink)}
 .epreuve.faite{opacity:.75}
 .epreuve.faite .gain{color:var(--quiet)}
 .epreuve .btn{flex-shrink:0;min-height:40px;padding:0 14px;font-size:14px}

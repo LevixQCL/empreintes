@@ -5,12 +5,13 @@ import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, CLE_LEGS, 
 import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, salleCourante, forceStrate, nouvelleExploration, type CibleFouille, butinCombat, butinCache, halteSuivante, ouvrirPorte as ouvrirPorteX, relancerPorte as relancerPorteX, passerPorte as passerPorteX, suivrePassage as suivrePassageX, RANG_HALTE } from '../expedition';
 import { halteDef, queteDef, type HalteDef } from '../strates';
 import { ETOILES, EXPLORER, PALIERS_ETOILES, RODEURS, metalEveille, rodeurDeZone, type EtoileId, vestigesDe } from '../explorer';
-import { ZONES } from '../donnees';
+import { ZONES, sequenceStrate } from '../donnees';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
 import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
+import { REGLES } from '../regles';
 import { ACCORD_OUVERT, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
@@ -777,7 +778,9 @@ export function remonter(j: Jeu): Retour {
   const butin = x.tutoriel ? brut : Math.round(brut * (j.actes.chambre === 'district' ? 1.2 : 1) * (j.actes.fin === 'pacte' ? 1.1 : 1));
   j.composants += butin;
   const finaux = x.carte && x.phase !== 'combat' ? x.porteurs : x.combat.porteurs;
-  for (const p of finaux) usureAuRetour(j, p, x.fuite ? DISTRICT.usureFuite : 0);
+  // « À mi-souffle » : la moitié des PV retirée au départ est rendue (seuls les PV perdus en combat comptent comme Usure)
+  const rendus = (p: PorteurEtat) => (x.demiPv && p.pv > 0 ? { ...p, pv: Math.min(p.pvMax, p.pv + p.pvMax - Math.max(1, Math.round(p.pvMax * 0.5))) } : p);
+  for (const p of finaux) usureAuRetour(j, rendus(p), x.fuite ? DISTRICT.usureFuite : 0);
   let nouvelleStrate = false;
   let butinFilon = 0;
   let fragment: string | null = null;
@@ -819,11 +822,18 @@ export function remonter(j: Jeu): Retour {
     else eclats += x.strate >= 5 ? 3 : 2;
     progresser(j, 'expedition');
   } else if (victoire && x.epreuve) {
-    // la première victoire de la semaine dans cette Épreuve : une carte au choix, dont une en argent au moins
+    // la première victoire de la semaine dans cette Épreuve : une carte au choix, dont une en argent au moins (et des creuseurs)
     if (!j.epreuves.faites.includes(x.epreuve)) {
       j.epreuves.faites.push(x.epreuve);
       gagnerCreuseurs(j, CREUSEURS.epreuve, 'l’Épreuve réussie fait des émules');
       j.choix.push({ source: 'epreuve', options: tirerChoix(j, x.strate, 'argent') });
+    }
+    // le palier Fêlé, une fois par semaine : un second choix (en or à partir de FELEE.orDes) et des Éclats
+    const cle = cleEpreuve(x.epreuve, true);
+    if (x.felee && !j.epreuves.faites.includes(cle)) {
+      j.epreuves.faites.push(cle);
+      j.choix.push({ source: 'epreuve', options: tirerChoix(j, x.strate, x.strate >= FELEE.orDes ? 'or' : 'argent') });
+      eclats += FELEE.eclats;
     }
     progresser(j, 'expedition');
   } else if (victoire) {
@@ -1119,57 +1129,140 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
   return { ok: true };
 }
 
-interface EpreuveDef {
+/**
+ * Les Épreuves de la semaine, refaites le 31 octobre 2026 (Bryan : « trop faciles, pas assez variées »).
+ * Avant : un combat contre le gardien de la dernière Strate vaincue, à sa force, avec une restriction de deck qu'on
+ * contournait en changeant de cartes (le robot les gagnait 85 à 95 fois sur 100). Maintenant chaque Épreuve a UNE règle
+ * forte qui change le format (enchaînement, chrono, groupe, 3ᵉ phase, brouillard…), une famille (deux Épreuves de la même
+ * famille ne tombent jamais la même semaine) et une Strate minimale (une règle n'arrive qu'après la mécanique qu'elle utilise).
+ * Deux paliers : l'Épreuve, et la Fêlée (mêmes règles, ennemis plus forts, mieux récompensée).
+ */
+export type FamilleEpreuve = 'endurance' | 'tempo' | 'tactique' | 'lecture' | 'deck';
+export const NOMS_FAMILLE: Record<FamilleEpreuve, string> = { endurance: 'Endurance', tempo: 'Tempo', tactique: 'Tactique', lecture: 'Lecture', deck: 'Deck' };
+
+export interface EpreuveDef {
   id: string;
   nom: string;
   regle: string;
-  /** les cartes qui restent au district (les cartes du district viennent toujours) */
-  filtre?: (g: GesteDef) => boolean;
-  /** les Porteurs qui ne peuvent pas venir */
-  interdits?: string[];
-  /** aucune Résonance de tout le combat */
-  sansResonance?: boolean;
+  famille: FamilleEpreuve;
+  /** la première Strate vaincue où elle peut tomber (et la dernière, si la règle devient la norme plus bas) */
+  strateMin: number;
+  strateMax?: number;
+  /** puissance des ennemis, par rapport à celle de la Strate */
+  force: number;
+  /** la puissance à partir de la Strate −7, quand les gardiens gagnent leur 3ᵉ phase (sinon `force`) */
+  forceBas?: number;
+  /** trois combats d'affilée (deux ennemis de la Strate, puis son gardien), avec cette part des PV rendue entre deux */
+  enchainement?: { soin: number };
+  /** deux ennemis de la Strate accompagnent le gardien */
+  meute?: boolean;
+  /** la condition de salle imposée (CONDITIONS) */
+  condition?: string;
+  /** le gardien garde une 3ᵉ phase */
+  troisiemePhase?: boolean;
+  /** l'escouade part avec cette part de ses PV */
+  pvDepart?: number;
+  regles?: { sansResonance?: boolean; chrono?: number; sansChute?: boolean; monoLignee?: boolean };
 }
 
 export const EPREUVES: EpreuveDef[] = [
-  { id: 'brouillage', nom: 'Fréquences brouillées', regle: 'Aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.', sansResonance: true },
-  { id: 'fer', nom: 'Le fer seulement', regle: 'Seules tes cartes en fer descendent : c’est le moment de les avoir montées de niveau.', filtre: (g) => !!g.carte && moduleDef(g.carte).rarete === 'fer' },
-  { id: 'nus', nom: 'À découvert', regle: 'Les cartes qui protègent restent au district : aucun bouclier.', filtre: (g) => g.type !== 'bouclier' },
-  { id: 'sans-soin', nom: 'Sans soigneur', regle: 'Les cartes qui soignent restent au district.', filtre: (g) => g.type !== 'soin' },
-  { id: 'releve', nom: 'La relève', regle: 'Ilka, Doran et Véla restent au district : ce combat est pour les autres.', interdits: ['ilka', 'doran', 'vela'] },
+  { id: 'couloir', nom: 'Le couloir sans halte', famille: 'endurance', strateMin: 1, force: 1.3, enchainement: { soin: 0 },
+    regle: 'Trois combats d’affilée, puis le gardien : aucun PV rendu entre eux.' },
+  { id: 'nul-ne-tombe', nom: 'Nul ne reste au fond', famille: 'endurance', strateMin: 1, force: 1.05, regles: { sansChute: true },
+    regle: 'Le premier Porteur à terre fait perdre l’Épreuve.' },
+  { id: 'mi-souffle', nom: 'À mi-souffle', famille: 'endurance', strateMin: 1, force: 1.2, pvDepart: 0.5,
+    regle: 'L’escouade part avec la moitié de ses PV (rendus au retour).' },
+  { id: 'extinction', nom: 'Avant l’extinction', famille: 'tempo', strateMin: 1, force: 1, regles: { chrono: 13 },
+    regle: 'Abats le gardien en 13 tours, sinon il s’éteint dans le noir.' },
+  { id: 'meute', nom: 'La meute', famille: 'tactique', strateMin: 3, force: 1.9, forceBas: 1.45, meute: true,
+    regle: 'Le gardien vient avec deux bêtes de la Strate : choisis qui tomber d’abord.' },
+  { id: 'derniere-frequence', nom: 'La dernière Fréquence', famille: 'tactique', strateMin: 2, strateMax: 6, force: 1.28, troisiemePhase: true,
+    regle: 'Le gardien garde une 3ᵉ phase cachée sous ses derniers PV.' },
+  { id: 'brouillard', nom: 'Brouillard total', famille: 'lecture', strateMin: 5, force: 1.3, condition: 'brouillard',
+    regle: 'On voit ce que prépare le gardien, jamais combien ni sur qui ; sa Fêlure est cachée.' },
+  { id: 'brouillage', nom: 'Fréquences brouillées', famille: 'lecture', strateMin: 1, force: 1.12, regles: { sansResonance: true },
+    regle: 'Aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.' },
+  { id: 'une-voix', nom: 'Une seule voix', famille: 'deck', strateMin: 1, force: 0.95, regles: { monoLignee: true },
+    regle: 'Chaque chaîne ne joue qu’une lignée (les cartes du district vont avec toutes).' },
 ];
 
 export const EPREUVE_DECK_MIN = 9;
+/** Le palier Fêlé : mêmes règles, ennemis plus forts, mieux récompensé */
+export const FELEE = { force: 1.2, eclats: 2, orDes: 8 };
+export const EPREUVES_PAR_SEMAINE = 3;
+/** La semaine du lancement des nouvelles Épreuves : le tirage s'enchaîne depuis elle */
+const SEMAINE_ZERO = semaineDe(Date.UTC(2026, 9, 26));
 
-/** Les trois Épreuves de la semaine (les mêmes pour tous les joueurs, tirées d'après le numéro de la semaine) */
-export function epreuvesDeLaSemaine(now: number): EpreuveDef[] {
-  const t = tireur({ rng: (semaineDe(now) * 2654435761) >>> 0 });
-  return t.melanger(EPREUVES.slice()).slice(0, 3);
+/** L'ordre de la semaine (le même pour tous les joueurs, tiré d'après le numéro de la semaine) */
+const ordreDeLaSemaine = (semaine: number) => tireur({ rng: (semaine * 2654435761) >>> 0 }).melanger(EPREUVES.slice());
+
+function choisirEpreuves(semaine: number, vaincue: number, eviter: string[]): EpreuveDef[] {
+  const ouvertes = ordreDeLaSemaine(semaine).filter((e) => vaincue >= e.strateMin && (!e.strateMax || vaincue <= e.strateMax));
+  const prises: EpreuveDef[] = [];
+  // une par famille ; on évite celles de la semaine d'avant, sauf s'il n'en reste pas assez
+  for (const passe of [true, false]) for (const e of ouvertes) {
+    if (prises.length >= EPREUVES_PAR_SEMAINE) break;
+    if (prises.includes(e) || prises.some((p) => p.famille === e.famille) || (passe && eviter.includes(e.id))) continue;
+    prises.push(e);
+  }
+  return prises;
+}
+
+/**
+ * Les trois Épreuves de la semaine : l'ordre est le même pour tous, puis chacun ne voit que celles que ses Strates ont ouvertes,
+ * une par famille, sans reprendre celles de la semaine d'avant.
+ */
+export function epreuvesDeLaSemaine(now: number, j?: Jeu): EpreuveDef[] {
+  const v = j ? Math.max(1, strateVaincue(j)) : 1;
+  // de semaine en semaine depuis un point fixe : chaque semaine évite exactement celles de la semaine d'avant
+  let prises: EpreuveDef[] = [];
+  for (let s = Math.min(semaineDe(now), Math.max(SEMAINE_ZERO, semaineDe(now) - 104)); s <= semaineDe(now); s++) prises = choisirEpreuves(s, v, prises.map((e) => e.id));
+  return prises;
 }
 
 export const epreuveDef = (id: string) => EPREUVES.find((e) => e.id === id);
+/** Ce qui est noté réussi cette semaine : l'id, et « id:felee » pour le palier Fêlé */
+export const cleEpreuve = (id: string, felee?: boolean) => (felee ? `${id}:felee` : id);
+export const epreuveReussie = (j: Jeu, id: string, felee?: boolean) => j.epreuves.faites.includes(cleEpreuve(id, felee));
 
 /** La Strate d'une Épreuve : la dernière vaincue */
 export const strateEpreuve = (j: Jeu) => Math.max(1, strateVaincue(j));
+/** La puissance des ennemis d'une Épreuve */
+export const forceEpreuve = (ep: EpreuveDef, strate: number, felee?: boolean) =>
+  forceStrate(strate) * (strate >= REGLES.apparition.troisiemePhase && ep.forceBas ? ep.forceBas : ep.force) * (felee ? FELEE.force : 1);
 
-export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: number, rng = graine()): Resultat {
+export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: number, rng = graine(), felee = false): Resultat {
   const ep = epreuveDef(id);
-  if (!ep || !epreuvesDeLaSemaine(now).some((e) => e.id === id)) return non('Cette Épreuve n’est pas au programme cette semaine.');
+  if (!ep || !epreuvesDeLaSemaine(now, j).some((e) => e.id === id)) return non('Cette Épreuve n’est pas au programme cette semaine.');
   if (strateVaincue(j) < 1) return non('Les Épreuves s’ouvrent après la première Strate vaincue.');
-  const interdit = escouade.find((p) => ep.interdits?.includes(p));
-  if (interdit) return non(`${porteurDef(interdit).nom} ne peut pas participer à cette Épreuve.`);
-  const e = escouadePrete(j, escouade, ep.filtre, EPREUVE_DECK_MIN);
+  const e = escouadePrete(j, escouade, undefined, EPREUVE_DECK_MIN);
   if (!e.ok) return e;
   const strate = strateEpreuve(j);
+  const zone = zoneDe(strate);
+  const t = tireur({ rng: (rng ^ 0x2545f491) >>> 0 });
+  const force = forceEpreuve(ep, strate, felee);
+  const porteurs = ep.pvDepart ? e.porteurs.map((p) => ({ ...p, pv: Math.max(1, Math.round(p.pvMax * ep.pvDepart!)) })) : e.porteurs;
   const x = nouvelleExpedition({
-    porteurs: e.porteurs, deck: e.deck, strate, rng, sequence: [zoneDe(strate).boss], force: forceStrate(strate),
+    porteurs, deck: e.deck, strate, rng, force,
+    sequence: ep.enchainement ? sequenceStrate(strate, rng) : [zone.boss],
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
+    combat: {
+      ...(ep.meute ? { escorte: t.melanger(zone.ennemis.slice()).slice(0, 2) } : {}),
+      ...(ep.condition ? { condition: ep.condition } : {}),
+      ...(ep.troisiemePhase ? { troisiemePhase: true } : {}),
+      ...(ep.regles ? { epreuve: ep.regles } : {}),
+    },
   });
-  if (ep.sansResonance) x.combat.sansResonance = true;
   payerRatelier(j, escouade);
   quitterPostes(j, escouade);
-  j.expedition = { ...x, epreuve: id };
-  log(j, `Épreuve de la semaine : ${ep.nom}.`);
+  j.expedition = {
+    ...x, epreuve: id, forceFixe: force,
+    ...(felee ? { felee: true } : {}),
+    ...(ep.regles ? { regles: ep.regles } : {}),
+    ...(ep.enchainement ? { soinEntre: ep.enchainement.soin } : {}),
+    ...(ep.pvDepart ? { demiPv: true } : {}),
+  };
+  log(j, `Épreuve de la semaine : ${ep.nom}${felee ? ' (Fêlée)' : ''}.`);
   return { ok: true };
 }
 

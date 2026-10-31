@@ -73,6 +73,8 @@ export interface EcranDistrict {
   /** l'escouade part pour une fouille ciblée (et ce qu'elle cherche), ou pour une Épreuve de la semaine */
   fouille: import('../core/expedition').CibleFouille | null;
   epreuve: string | null;
+  /** l'Épreuve choisie est tentée au palier Fêlé */
+  felee?: boolean;
   /** l'escouade part piller cet archipel (pillages.ts) ; et l'archipel choisi sur la carte */
   pillage?: import('../core/jeu').Cible | null;
   pillageCible?: string | null;

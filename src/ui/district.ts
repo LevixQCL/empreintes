@@ -12,7 +12,7 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
@@ -1630,8 +1630,8 @@ export function htmlCoupe(e: EcranDistrict): string {
   const ouvert = j.chambre && strateVaincue(j) >= 1;
   const volet = ouvert && e.ongletTour === 'epreuves' ? 'epreuves' : 'strates';
   if (ouvert) {
-    const faites = epreuvesDeLaSemaine(e.now).filter((ep) => j.epreuves.faites.includes(ep.id)).length;
-    const nEp = epreuvesDeLaSemaine(e.now).length;
+    const faites = epreuvesDeLaSemaine(e.now, j).filter((ep) => j.epreuves.faites.includes(ep.id)).length;
+    const nEp = epreuvesDeLaSemaine(e.now, j).length;
     const seg = (id: typeof volet, nom: string, plus: string) =>
       `<button type="button" role="tab" class="seg${volet === id ? ' actif' : ''}" data-action="tour-volet" data-id="${id}" aria-selected="${volet === id}">${nom}<small>${plus}</small></button>`;
     h += `<div class="segments-choix deux tr-volets" role="tablist" aria-label="Strates ou Épreuves">`
@@ -1727,14 +1727,33 @@ function htmlEpreuves(e: EcranDistrict): string {
   const j = e.j;
   const st = strateEpreuve(j);
   const gardien = ennemiDef(zoneDe(st).boss).nom;
-  let h = `<section class="bloc tr-volet"><p class="aide">Un combat contre ${echap(gardien)} (Strate −${st}), avec une règle qui change ta façon de jouer. La première victoire de chaque Épreuve rapporte une carte au choix, dont une en argent au moins. ${decompte(lundiSuivant(e.now), e.now, 'Nouvelles Épreuves lundi, dans ', '.')}</p><div class="epreuves">`;
-  for (const ep of epreuvesDeLaSemaine(e.now)) {
-    const faite = j.epreuves.faites.includes(ep.id);
-    h += `<div class="epreuve${faite ? ' faite' : ''}"><div><strong>${echap(ep.nom)}</strong><small>${echap(ep.regle)}</small>`
-      + `<small class="gain">${faite ? `${ICO.ok}Réussie cette semaine` : `${ICO.cartes}1 carte au choix, argent au moins`}</small></div>`
-      + `<button type="button" class="btn ${faite ? 'sec' : 'prim'}" data-action="epreuve" data-id="${ep.id}"${j.expedition ? ' disabled' : ''}>${faite ? 'Rejouer' : 'Tenter'}</button></div>`;
+  let h = `<section class="bloc tr-volet"><p class="aide">Trois défis contre ${echap(gardien)} (Strate −${st}), chacun avec sa règle. Plus dur encore : la <b>Fêlée</b>, ennemis +${Math.round((FELEE.force - 1) * 100)} %, une carte de plus et ${FELEE.eclats} Éclats. ${decompte(lundiSuivant(e.now), e.now, 'Nouvelles Épreuves lundi, dans ', '.')}</p><div class="epreuves">`;
+  for (const ep of epreuvesDeLaSemaine(e.now, j)) {
+    const faite = epreuveReussie(j, ep.id);
+    const felee = epreuveReussie(j, ep.id, true);
+    const gain = felee ? `${ICO.ok}Réussie, et en Fêlée` : faite ? `${ICO.ok}Réussie · la Fêlée t’attend` : `${ICO.cartes}1 carte au choix, argent au moins`;
+    h += `<div class="epreuve${faite && felee ? ' faite' : ''}"><div><span class="ep-famille">${NOMS_FAMILLE[ep.famille]}</span><strong>${echap(ep.nom)}</strong><small>${echap(ep.regle)}</small>`
+      + `<small class="gain${faite && !felee ? ' felee' : ''}">${gain}</small></div>`
+      + `<button type="button" class="btn ${faite && felee ? 'sec' : 'prim'}" data-action="epreuve" data-id="${ep.id}"${j.expedition ? ' disabled' : ''}>${faite && felee ? 'Rejouer' : 'Tenter'}</button></div>`;
   }
   return h + `</div></section>`;
+}
+
+/** Ce qu'on affronte dans une Épreuve, en une phrase */
+function formatEpreuve(ep: EpreuveDef, strate: number): string {
+  const z = zoneDe(strate);
+  const g = echap(ennemiDef(z.boss).nom);
+  if (ep.enchainement) return `Trois combats d’affilée dans ${echap(z.nom)}, le dernier contre ${g}.`;
+  if (ep.meute) return `Un combat contre ${g} et deux bêtes de ${echap(z.nom)}.`;
+  return `Un seul combat, contre ${g}.`;
+}
+
+/** Le palier de l'Épreuve : normale, ou Fêlée */
+function tuilePalier(j: Jeu, ep: EpreuveDef, felee: boolean, choisi: boolean, strate: number): string {
+  const fait = epreuveReussie(j, ep.id, felee);
+  const bref = fait ? 'déjà réussie cette semaine' : felee ? `+${Math.round((FELEE.force - 1) * 100)} % de force · 1 carte${strate >= FELEE.orDes ? ' en or' : ''} et ${FELEE.eclats} Éclats` : '1 carte au choix, argent au moins';
+  return `<button type="button" role="radio" class="es-tuile${choisi ? ' actif' : ''}" style="--c:${felee ? 'var(--gold)' : '#8FB8DA'}" data-action="palier" data-id="${felee ? 'felee' : 'normale'}" aria-checked="${choisi}">`
+    + `${felee ? ICO.cristal : ICO.boost}<strong>${felee ? 'Fêlée' : 'Épreuve'}</strong><small>${bref}</small></button>`;
 }
 
 /**
@@ -1900,7 +1919,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
   const ep = e.epreuve ? epreuveDef(e.epreuve) ?? null : null;
   const fouille = ep ? null : e.fouille;
-  const deck = deckEscouade(j, e.escouade).filter((g) => !ep?.filtre || g.porteur === null || ep.filtre(g)).length;
+  const deck = deckEscouade(j, e.escouade).length;
   const deckMin = ep ? EPREUVE_DECK_MIN : DISTRICT.deckMin;
   const zone = zoneDe(e.strateChoisie);
   const fl = !ep && !fouille && e.fleche ? etatFleche(j) : null;
@@ -1939,7 +1958,8 @@ export function htmlEscouade(e: EcranDistrict): string {
       + `<span><b>${d.nom}</b><small>${e.escouade.length === 3 ? `${Math.round(chanceVictoire(ecart) * 100)} % de chances avec cette escouade` : 'Choisis 3 Porteurs'}</small></span>`
       + `<span class="es-pillage-butin">${ICO.composants}<b>+${ent(b.base + b.vol)}</b></span></div>`;
   } else if (ep) {
-    h += `<p class="es-but">${ICO.boost}<span><strong>${echap(ep.nom)}</strong>${echap(ep.regle)} Un seul combat, contre ${echap(ennemiDef(zone.boss).nom)}.</span></p>`;
+    h += `<p class="es-but">${ICO.boost}<span><strong>${echap(ep.nom)}</strong>${echap(ep.regle)} ${formatEpreuve(ep, e.strateChoisie)}</span></p>`
+      + `<div class="es-cibles-grille es-paliers" role="radiogroup" aria-label="Palier de l’Épreuve">${tuilePalier(j, ep, false, !e.felee, e.strateChoisie)}${tuilePalier(j, ep, true, !!e.felee, e.strateChoisie)}</div>`;
   } else if (fouille) {
     h += `<p class="es-but">${ICO.cristal}<span><strong>Fouille ciblée · ${echap(zone.nom)}</strong>Une descente courte, sans gardien : quelques salles, puis le filon.</span></p>`
       // ce que l'on cherche : des tuiles toujours visibles, en deux groupes (24 octobre 2026 : la fouille de cartes passait inaperçue,
@@ -2023,7 +2043,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const coutDepart = e.escouade.length ? coutRatelier(j, ratelierPayable(j, indiceEscouade(j, e.escouade)).length) : 0;
   h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
     + `<span><b>${e.escouade.length} / 3</b><small class="${maigre ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? `Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? `${deck} cartes · ${deckMin} au moins` : `${deck} cartes, prêt`}</small></span></div>`
-    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${fl ? `${ICO.monter}Monter` : pi ? `${ICO.grappin}Piller` : ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;
+    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${fl ? `${ICO.monter}Monter` : pi ? `${ICO.grappin}Piller` : ep ? `${ICO.boost}${e.felee ? 'Tenter la Fêlée' : 'Tenter l’Épreuve'}` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;
   h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : e.deck ? feuilleDeck(e) : e.carte ? feuilleCarte(e) : feuillePorteur(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;

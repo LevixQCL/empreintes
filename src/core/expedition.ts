@@ -53,6 +53,16 @@ export interface Expedition {
   /** un combat de la Flèche (fleche.ts) : les gardiens d'un quai */
   fleche?: import('./partie/fleche').AscensionEnCours;
   epreuve?: string;
+  /** l'Épreuve est tentée au palier Fêlé (plus fort, mieux récompensé) */
+  felee?: boolean;
+  /** les règles de combat de l'Épreuve, gardées pour chaque combat de l'enchaînement */
+  regles?: { sansResonance?: boolean; chrono?: number; sansChute?: boolean; monoLignee?: boolean };
+  /** puissance des ennemis fixée par l'Épreuve (sinon celle de la Strate) */
+  forceFixe?: number;
+  /** part des PV rendue entre deux combats d'un enchaînement (sinon REGLES.soinEntreCombats) */
+  soinEntre?: number;
+  /** l'escouade est partie avec la moitié de ses PV (« À mi-souffle ») : rendue au retour, pour ne pas compter comme de l'Usure */
+  demiPv?: boolean;
   // ---------- le contenu des Strates (31 octobre 2026, strates.ts) ----------
   /** la Halte de cette descente : son numéro dans la Strate, ou « connu » quand toutes ont été vues */
   halte?: number | 'connu';
@@ -178,6 +188,8 @@ export const butinArchive = (strate: number) => Math.round(REGLES.salles.archive
 export function nouvelleExpedition(opts: {
   porteurs: PorteurEtat[]; deck: GesteDef[]; strate: number; rng: number;
   sequence?: string[]; force?: number; tutoriel?: boolean; facteur?: number; bonus?: BonusMarques;
+  /** ce que l'Épreuve change au premier combat (escorte, condition, 3ᵉ phase, règles) */
+  combat?: { escorte?: string[]; condition?: string; troisiemePhase?: boolean; epreuve?: Expedition['regles'] };
 }): Expedition {
   const sequence = opts.sequence ?? sequenceStrate(opts.strate, opts.rng);
   return {
@@ -189,7 +201,7 @@ export function nouvelleExpedition(opts: {
     combat: creerCombat({
       porteurs: opts.porteurs, ennemiId: sequence[0]!, rng: opts.rng, deck: opts.deck,
       force: opts.force ?? forceStrate(opts.strate) * (opts.facteur ?? 1), ordonne: opts.tutoriel, bonus: opts.bonus,
-      ...mecaniques(opts.strate),
+      ...mecaniques(opts.strate), ...(opts.combat ?? {}),
     }),
     butin: 0,
     terminee: false,
@@ -235,7 +247,7 @@ export function combatSuivant(x: Expedition): Expedition {
   if (x.carte) return { ...x, phase: 'carte', recit: `Victoire. ${x.gains?.elites && salleCourante(x).type === 'elite' ? 'Derrière la salle scellée, une carte t’attend : elle te sera remise au retour. ' : ''}L’escouade reprend sa route.` };
   const porteurs = x.combat.porteurs.map((p) => ({
     ...p,
-    pv: Math.min(p.pvMax, Math.max(p.pv, 0) + Math.round(p.pvMax * REGLES.soinEntreCombats)),
+    pv: Math.min(p.pvMax, Math.max(p.pv, 0) + Math.round(p.pvMax * (x.soinEntre ?? REGLES.soinEntreCombats))),
     aTerre: false,
   }));
   const index = x.index + 1;
@@ -244,7 +256,7 @@ export function combatSuivant(x: Expedition): Expedition {
     index,
     porteurs,
     cloture: false,
-    combat: creerCombat({ porteurs, ennemiId: x.sequence[index]!, rng: x.combat.rng, deck: x.deck, force: forceStrate(x.strate) * (x.facteur ?? 1), bonus: x.bonus, ...mecaniques(x.strate) }),
+    combat: creerCombat({ porteurs, ennemiId: x.sequence[index]!, rng: x.combat.rng, deck: x.deck, force: x.forceFixe ?? forceStrate(x.strate) * (x.facteur ?? 1), bonus: x.bonus, ...mecaniques(x.strate), ...(x.regles ? { epreuve: x.regles } : {}) }),
   };
 }
 

@@ -4,8 +4,10 @@ import { FORCE, accessibles, genererCarte, salleCourante } from '../src/core/exp
 import { moduleDef, porteurDef } from '../src/core/donnees';
 import {
   EPREUVES, MISSIONS, barquesMax, naufragesDeLaStrate, rendementMission, secoursPossible, creuseursRequis, CREUSEURS, entrer, envoyerMission, destinationsDuJour, bonusMission, niveauPorteur, jourDe, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
-  remonter, tick, type Jeu,
+  remonter, tick, type Jeu, FELEE, forceEpreuve, epreuveReussie,
 } from '../src/core/jeu';
+import { ajouter, creerCombat } from '../src/core/combat';
+import { jouerTour } from '../src/core/robot';
 import { simulerParcours, PROFILS } from '../src/core/parcours';
 
 const H = 3_600_000;
@@ -214,46 +216,114 @@ describe('Missions illimitées (idée de Luc, 28 octobre 2026)', () => {
 });
 
 describe('Épreuves de la semaine', () => {
-  it('trois Épreuves différentes par semaine, les mêmes pour tous, qui changent d’une semaine à l’autre', () => {
-    const a = epreuvesDeLaSemaine(T0).map((e) => e.id);
-    expect(new Set(a).size).toBe(3);
-    expect(epreuvesDeLaSemaine(T0 + H).map((e) => e.id)).toEqual(a);
-    const semaines = new Set(Array.from({ length: 6 }, (_, k) => epreuvesDeLaSemaine(T0 + k * 7 * 24 * H).map((e) => e.id).join()));
-    expect(semaines.size).toBeGreaterThan(1);
+  const SEM = 7 * 24 * H;
+  /** une partie qui a vaincu les Strates −1 à −5 */
+  const profonde = (): Jeu => { const j = avance(); j.strate = 6; return j; };
+  const semaineAvec = (j: Jeu, id: string) => Array.from({ length: 80 }, (_, k) => T0 + k * SEM).find((t) => epreuvesDeLaSemaine(t, j).some((e) => e.id === id))!;
+
+  it('trois Épreuves par semaine, une par famille, les mêmes pour tous, jamais celles de la semaine d’avant', () => {
+    const j = profonde();
+    const a = epreuvesDeLaSemaine(T0, j);
+    expect(a).toHaveLength(3);
+    expect(new Set(a.map((e) => e.famille)).size).toBe(3);
+    expect(epreuvesDeLaSemaine(T0 + H, profonde()).map((e) => e.id)).toEqual(a.map((e) => e.id));
+    for (let k = 1; k < 12; k++) {
+      const avant = epreuvesDeLaSemaine(T0 + (k - 1) * SEM, j).map((e) => e.id);
+      for (const e of epreuvesDeLaSemaine(T0 + k * SEM, j)) expect(avant).not.toContain(e.id);
+    }
   });
 
-  it('une Épreuve applique sa règle, et sa première victoire de la semaine donne un choix avec une carte en argent au moins', () => {
+  it('une règle n’arrive qu’avec sa mécanique : pas de meute ni de brouillard après la seule Strate −1', () => {
+    const j = avance(); j.strate = 2; j.frontVaincu = false; // −1 vaincue
+    for (let k = 0; k < 40; k++) for (const e of epreuvesDeLaSemaine(T0 + k * SEM, j)) expect(e.strateMin).toBeLessThanOrEqual(1);
+  });
+
+  it('chaque Épreuve applique sa règle, sa victoire donne un choix en argent au moins, une fois par semaine', () => {
     for (const ep of EPREUVES) {
-      const j = avance();
-      const semaine = Array.from({ length: 30 }, (_, k) => T0 + k * 7 * 24 * H).find((t) => epreuvesDeLaSemaine(t).some((e) => e.id === ep.id))!;
+      const j = profonde();
+      const semaine = semaineAvec(j, ep.id);
+      expect(semaine).toBeDefined();
       tick(j, semaine);
-      const escouade = ep.interdits ? ['coursier', 'docker', 'guetteur'] : ['ilka', 'doran', 'vela'];
+      const escouade = ['ilka', 'doran', 'vela'];
       for (const id of escouade) poster(j, id, null);
       const r = partirEpreuve(j, escouade, ep.id, semaine, 3);
-      if (!r.ok) { expect(r.message).toMatch(/deck/); continue; }
+      expect(r.ok).toBe(true);
       const x = j.expedition!;
       expect(x.epreuve).toBe(ep.id);
-      if (ep.sansResonance) expect(x.combat.sansResonance).toBe(true);
-      if (ep.filtre) for (const g of x.deck) expect(g.porteur === null || ep.filtre(g)).toBe(true);
+      if (ep.regles?.sansResonance) expect(x.combat.sansResonance).toBe(true);
+      if (ep.regles?.chrono) expect(x.combat.chrono).toBe(ep.regles.chrono);
+      if (ep.regles?.sansChute) expect(x.combat.sansChute).toBe(true);
+      if (ep.regles?.monoLignee) expect(x.combat.monoLignee).toBe(true);
+      if (ep.meute) expect(x.combat.autres).toHaveLength(2);
+      if (ep.condition) expect(x.combat.condition).toBe(ep.condition);
+      if (ep.enchainement) expect(x.sequence).toHaveLength(3); else expect(x.sequence).toHaveLength(1);
+      if (ep.pvDepart) for (const p of x.combat.porteurs) expect(p.pv).toBeLessThan(p.pvMax);
       x.combat.issue = 'victoire';
-      j.expedition = { ...x, terminee: true, cloture: true };
+      j.expedition = { ...x, index: x.sequence.length - 1, terminee: true, cloture: true };
       remonter(j);
       const c = j.choix.find((k) => k.source === 'epreuve')!;
       expect(['argent', 'or', 'nacre']).toContain(moduleDef(c.options[0]!).rarete);
-      // une seule récompense par semaine
       j.choix = [];
-      partirEpreuve(j, escouade, ep.id, semaine, 4);
+      for (const id of escouade) j.porteurs[id]!.usure = 0;
+      expect(partirEpreuve(j, escouade, ep.id, semaine, 4).ok).toBe(true);
       j.expedition!.combat.issue = 'victoire';
-      j.expedition = { ...j.expedition!, terminee: true, cloture: true };
+      j.expedition = { ...j.expedition!, index: j.expedition!.sequence.length - 1, terminee: true, cloture: true };
       remonter(j);
       expect(j.choix.some((k) => k.source === 'epreuve')).toBe(false);
     }
   });
 
-  it('La relève refuse Ilka, Doran et Véla', () => {
-    const j = avance();
-    const semaine = Array.from({ length: 30 }, (_, k) => T0 + k * 7 * 24 * H).find((t) => epreuvesDeLaSemaine(t).some((e) => e.id === 'releve'))!;
-    expect(partirEpreuve(j, ['ilka', 'docker', 'guetteur'], 'releve', semaine, 3).ok).toBe(false);
+  it('la Fêlée : ennemis plus forts, un second choix et des Éclats, une fois par semaine', () => {
+    const j = profonde();
+    const ep = epreuvesDeLaSemaine(T0, j)[0]!;
+    tick(j, T0);
+    const escouade = ['ilka', 'doran', 'vela'];
+    for (const id of escouade) poster(j, id, null);
+    partirEpreuve(j, escouade, ep.id, T0, 5, true);
+    const x = j.expedition!;
+    expect(x.felee).toBe(true);
+    expect(x.forceFixe).toBeCloseTo(forceEpreuve(ep, x.strate) * FELEE.force);
+    const eclats = j.eclats;
+    x.combat.issue = 'victoire';
+    j.expedition = { ...x, index: x.sequence.length - 1, terminee: true, cloture: true };
+    remonter(j);
+    // première victoire, en Fêlée : la récompense normale et celle de la Fêlée
+    expect(j.choix.filter((k) => k.source === 'epreuve')).toHaveLength(2);
+    expect(j.eclats).toBeGreaterThanOrEqual(eclats + FELEE.eclats);
+    expect(epreuveReussie(j, ep.id) && epreuveReussie(j, ep.id, true)).toBe(true);
+  });
+
+  it('les règles de combat : le chrono, la chute, une seule voix', () => {
+    const porteurs = ['ilka', 'doran', 'vela'].map((id) => ({ id, pv: 40, pvMax: 40, aTerre: false }));
+    // Avant l'extinction : le gardien tient au-delà du dernier tour, l'Épreuve est perdue
+    const a = creerCombat({ porteurs, ennemiId: 'confluence', rng: 1, force: 3, epreuve: { chrono: 1 } });
+    jouerTour(a);
+    expect(a.issue).toBe('defaite');
+    // Nul ne reste au fond : un seul Porteur à terre suffit
+    const b = creerCombat({ porteurs: porteurs.map((p, k) => ({ ...p, pv: k === 0 ? 1 : 400, pvMax: 400 })), ennemiId: 'confluence', rng: 2, force: 6, epreuve: { sansChute: true } });
+    for (let t = 0; t < 6 && b.issue === 'en-cours'; t++) jouerTour(b);
+    expect(b.issue).toBe('defaite');
+    expect(b.porteurs.some((p) => p.pv > 0)).toBe(true);
+    // Une seule voix : une carte d'une autre lignée est refusée
+    const c = creerCombat({ porteurs, ennemiId: 'confluence', rng: 3, epreuve: { monoLignee: true } });
+    const premiere = c.main.find((g) => g.porteur)!;
+    expect(ajouter(c, premiere.uid).ok).toBe(true);
+    const autre = c.main.find((g) => g.porteur && porteurDef(g.porteur).lignee !== porteurDef(premiere.porteur!).lignee);
+    if (autre) expect(ajouter(c, autre.uid).ok).toBe(false);
+  });
+
+  it('À mi-souffle rend au retour la moitié des PV retirée au départ', () => {
+    const j = profonde();
+    const t = semaineAvec(j, 'mi-souffle');
+    tick(j, t);
+    const escouade = ['ilka', 'doran', 'vela'];
+    for (const id of escouade) { poster(j, id, null); j.porteurs[id]!.usure = 0; }
+    partirEpreuve(j, escouade, 'mi-souffle', t, 6);
+    const x = j.expedition!;
+    x.combat.issue = 'victoire';
+    j.expedition = { ...x, terminee: true, cloture: true };
+    remonter(j);
+    for (const id of escouade) expect(j.porteurs[id]!.usure).toBeLessThanOrEqual(1);
   });
 });
 

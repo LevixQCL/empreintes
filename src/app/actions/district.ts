@@ -81,8 +81,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'depart-escouade': {
       const r = J.choisirEscouade(app.jeu, Number(b.dataset.index ?? 0));
       resultat(r);
-      const ep = D.epreuve ? J.epreuveDef(D.epreuve) : undefined;
-      if (r.ok) D.escouade = J.escouadePourDepart(app.jeu, ep?.interdits ?? []);
+      if (r.ok) D.escouade = J.escouadePourDepart(app.jeu);
       break;
     }
     case 'escouade-active': resultat(J.choisirEscouade(app.jeu, Number(b.dataset.index ?? 0))); break;
@@ -209,10 +208,10 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'vestiges-voir': D.vestiges = b.dataset.strate ? Number(b.dataset.strate) : null; break;
     case 'fouiller-choix': D.deck = null; D.fouille = 'composants'; D.epreuve = null; D.pillage = null; D.fleche = false; D.strateChoisie = Number(b.dataset.strate ?? 1); D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0); break;
     case 'cible': D.fouille = id as typeof D.fouille; break;
+    case 'palier': D.felee = id === 'felee'; break;
     case 'epreuve': {
-      const ep = J.epreuveDef(id);
-      D.deck = null; D.fouille = null; D.epreuve = id; D.pillage = null; D.fleche = false; D.strateChoisie = J.strateEpreuve(app.jeu);
-      D.escouade = J.escouadePourDepart(app.jeu, ep?.interdits ?? []); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
+      D.deck = null; D.fouille = null; D.epreuve = id; D.felee = false; D.pillage = null; D.fleche = false; D.strateChoisie = J.strateEpreuve(app.jeu);
+      D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
     }
     case 'mission': resultat(J.envoyerMission(app.jeu, id, (b.dataset.duree as J.DureeMission) ?? 'courte', Date.now(), b.dataset.cle)); break;
@@ -226,8 +225,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       const v = D.retourModif;
       if (v === 'escouade') {
         ouvrir('escouade');
-        const ep = D.epreuve ? J.epreuveDef(D.epreuve) : undefined;
-        D.escouade = J.escouadePourDepart(app.jeu, ep?.interdits ?? []);
+        D.escouade = J.escouadePourDepart(app.jeu);
       } else ouvrir('pillages');
       window.scrollTo(0, 0);
       break;
@@ -235,7 +233,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'partir': {
       const r = D.fleche ? (D.defi ? J.defierGardien(app.jeu, D.escouade, D.defi) : J.monterFleche(app.jeu, D.escouade))
         : D.pillage ? J.piller(app.jeu, D.escouade, D.pillage, Date.now())
-        : D.epreuve ? J.partirEpreuve(app.jeu, D.escouade, D.epreuve, Date.now())
+        : D.epreuve ? J.partirEpreuve(app.jeu, D.escouade, D.epreuve, Date.now(), undefined, !!D.felee)
         : D.fouille ? J.fouiller(app.jeu, D.escouade, D.strateChoisie, D.fouille)
           : J.partir(app.jeu, D.escouade, D.strateChoisie);
       resultat(r);

@@ -57,6 +57,8 @@ export function creerCombat(opts: {
   troisiemePhase?: boolean;
   /** un Rôdeur : il s'enfuit à la fin de ce tour, et commence avec cette part de sa vie (ses blessures d'avant) */
   fuyard?: { tours: number; part: number };
+  /** les règles d'une Épreuve de la semaine (descentes.ts) */
+  epreuve?: { sansResonance?: boolean; chrono?: number; sansChute?: boolean; monoLignee?: boolean };
 }): CombatEtat {
   const e = ennemiDef(opts.ennemiId);
   const groupe = [opts.ennemiId, ...(opts.escorte ?? [])];
@@ -88,6 +90,10 @@ export function creerCombat(opts: {
     issue: 'en-cours',
     journal: [],
     ...(opts.fuyard ? { fuyard: opts.fuyard.tours } : {}),
+    ...(opts.epreuve?.sansResonance ? { sansResonance: true } : {}),
+    ...(opts.epreuve?.chrono ? { chrono: opts.epreuve.chrono } : {}),
+    ...(opts.epreuve?.sansChute ? { sansChute: true } : {}),
+    ...(opts.epreuve?.monoLignee ? { monoLignee: true } : {}),
   };
   if (opts.fuyard) s.ennemi.pv = Math.max(1, Math.round(s.ennemi.pvMax * Math.min(1, opts.fuyard.part)));
   const deck: Geste[] = (opts.deck ?? DECK_DEPART).map((g, k) => ({ ...g, uid: `g${k}` }));
@@ -286,6 +292,8 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
     log(s, debut + fin, false);
     return { ok: false, message: debut + fin };
   }
+  const voix = voixRefusee(s, g);
+  if (voix) { log(s, voix, false); return { ok: false, message: voix }; }
   s.main = s.main.filter((x) => x !== g);
   // une carte à plusieurs Fréquences prend celle qui prolonge la suite
   if (g.fs && g.fs.length > 1) g.f = meilleureFrequence(s.chaine, g.fs);
@@ -295,6 +303,20 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
   s.chaine.push(g);
   return { ok: true };
 }
+
+/**
+ * Épreuve « Une seule voix » (31 octobre 2026) : une chaîne ne mêle pas deux lignées.
+ * Les cartes du district (sans Porteur) vont avec toutes. Renvoie la raison du refus, ou null.
+ */
+export function voixRefusee(s: CombatEtat, g: GesteDef): string | null {
+  if (!s.monoLignee || !g.porteur) return null;
+  const l = ligneeGeste(g);
+  const autre = s.chaine.find((x) => x.porteur && ligneeGeste(x) !== l);
+  return autre ? `Une seule voix : cette chaîne joue déjà les ${NOMS_LIGNEE[ligneeGeste(autre) as Lignee].nom}.` : null;
+}
+/** Une chaîne possible sous « Une seule voix » (pour les robots) */
+export const voixAdmise = (s: CombatEtat, cartes: GesteDef[]) =>
+  !s.monoLignee || new Set(cartes.filter((g) => g.porteur).map(ligneeGeste)).size <= 1;
 
 /**
  * Brouillard (27 octobre 2026, Bryan : poser puis retirer une carte révélait l'intention, le brouillard ne servait à rien).
@@ -666,6 +688,12 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     return pas;
   }
   tourEnnemi(s, emettre);
+  // Épreuve « Avant l'extinction » : le dernier tour est passé et l'ennemi tient encore
+  if (s.chrono && s.issue === 'en-cours' && s.tour > s.chrono) {
+    s.issue = 'defaite';
+    log(s, `${ennemiDef(s.ennemi.id).nom} s’éteint dans le noir avant d’être abattu : l’Épreuve est manquée.`, { camp: 'neutre', sorte: 'info' });
+    emettre({ kind: 'fin', issue: 'defaite' });
+  }
   // le Rôdeur (explorer.ts) : passé son dernier tour, il s'enfuit avec ses blessures ; le combat compte comme gagné
   if (s.fuyard && s.issue === 'en-cours' && s.tour > s.fuyard) {
     s.issue = 'victoire';
@@ -1204,6 +1232,13 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
       log(s, `${porteurDef(p.id).nom} est à terre : ses cartes s’éteignent (−15 % de force, sans effet).`, { camp: 'neutre', sorte: 'terre' });
       emettre({ kind: 'a-terre', cible: p.id });
     }
+  }
+  // Épreuve « Nul ne reste au fond » : un Porteur à terre, et l'Épreuve est perdue
+  if (s.sansChute && s.porteurs.some((p) => p.aTerre)) {
+    s.issue = 'defaite';
+    log(s, 'Un Porteur est à terre : l’Épreuve « Nul ne reste au fond » est manquée.', { camp: 'neutre', sorte: 'info' });
+    emettre({ kind: 'fin', issue: 'defaite' });
+    return;
   }
   if (!vivants(s).length) {
     s.issue = 'defaite';

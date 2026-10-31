@@ -278,7 +278,7 @@ export function simulerParcours(
       const jouer = opts.joueur === 'robot' ? jouerTour : jouerTourMoyen;
       // une fois par jour, les Épreuves de la semaine pas encore réussies
       if (h === profil.sessions[0] && front >= 2) {
-        const ep = epreuvesDeLaSemaine(now).find((e) => !j.epreuves.faites.includes(e.id) && !e.interdits);
+        const ep = epreuvesDeLaSemaine(now, j).find((e) => !j.epreuves.faites.includes(e.id));
         if (ep) { jouerExpedition(j, () => partirEpreuve(j, escouade, ep.id, now, suivant()).ok, jouer, opts.tours); gerer(j, now); }
       }
       // bloqué au front (deux échecs d'affilée) : une fouille ciblée juste au-dessus, pour la lignée la plus faible du deck

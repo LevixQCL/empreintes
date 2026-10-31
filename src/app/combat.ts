@@ -51,8 +51,22 @@ export function finPour(): Fin | null {
   }
   if (x.epreuve) {
     const ep = J.epreuveDef(x.epreuve);
-    if (s.issue === 'victoire') return { titre: 'Épreuve réussie', texte: `${ep?.nom ?? 'L’Épreuve'} : ${ennemiDef(s.ennemi.id).nom} se dissipe.${app.jeu.epreuves.faites.includes(x.epreuve) ? ' Tu l’avais déjà réussie cette semaine : pas de nouvelle carte.' : ' Une carte au choix t’attend au district.'}`, bouton: 'Remonter au district', action: 'remonter' };
-    if (s.issue === 'defaite') return { titre: 'Épreuve manquée', texte: 'L’escouade a été repoussée. Tu peux la retenter quand tu veux cette semaine : change de cartes ou de Porteurs pour contourner la règle.', bouton: 'Remonter au district', action: 'remonter' };
+    const nom = s.autres?.length ? 'Le groupe' : ennemiDef(s.ennemi.id).nom;
+    // « Le couloir sans halte » : on enchaîne, sans PV rendus
+    if (s.issue === 'victoire' && !x.terminee) return { titre: `Combat ${x.index + 1} sur ${x.sequence.length}`, texte: `${nom} se dissipe. Pas de halte : l’escouade garde ses blessures et avance vers le combat suivant.`, bouton: 'Combat suivant', action: 'suivant' };
+    if (s.issue === 'victoire') {
+      const deja = J.epreuveReussie(app.jeu, x.epreuve, false) && (!x.felee || J.epreuveReussie(app.jeu, x.epreuve, true));
+      const gain = deja ? ' Tu l’avais déjà réussie cette semaine : pas de nouvelle récompense.'
+        : x.felee && !J.epreuveReussie(app.jeu, x.epreuve, false) ? ` Fêlée du premier coup : deux cartes au choix et ${J.FELEE.eclats} Éclats t’attendent au district.`
+        : x.felee ? ` Une carte au choix et ${J.FELEE.eclats} Éclats t’attendent au district.` : ' Une carte au choix t’attend au district. La Fêlée est ouverte.';
+      return { titre: x.felee ? 'Épreuve Fêlée réussie' : 'Épreuve réussie', texte: `${ep?.nom ?? 'L’Épreuve'} : ${nom} se dissipe.${gain}`, bouton: 'Remonter au district', action: 'remonter' };
+    }
+    if (s.issue === 'defaite') {
+      const pourquoi = s.chrono && s.tour > s.chrono ? `${ennemiDef(s.ennemi.id).nom} s’est éteint dans le noir avant de tomber : il fallait frapper plus vite.`
+        : s.sansChute && C.vivants(s).length ? 'Un Porteur est tombé : l’Épreuve demandait que personne ne reste au fond.'
+        : 'L’escouade a été repoussée.';
+      return { titre: 'Épreuve manquée', texte: `${pourquoi} Tu peux la retenter quand tu veux cette semaine.`, bouton: 'Remonter au district', action: 'remonter' };
+    }
     return null;
   }
   if (s.issue === 'defaite') {

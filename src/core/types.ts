@@ -351,6 +351,12 @@ export interface CombatEtat {
   felureFlux?: number;
   /** Épreuve « Fréquences brouillées » : aucune Résonance de tout le combat */
   sansResonance?: boolean;
+  /** Épreuve « Avant l'extinction » : passé ce tour, si l'ennemi tient encore, le combat est perdu */
+  chrono?: number;
+  /** Épreuve « Nul ne reste au fond » : le premier Porteur à terre fait perdre le combat */
+  sansChute?: boolean;
+  /** Épreuve « Une seule voix » : chaque chaîne ne joue qu'une lignée (les cartes du district sont libres) */
+  monoLignee?: boolean;
   tour: number;
   /** la relance gratuite de la première main a servi (27 octobre 2026) */
   relance?: boolean;

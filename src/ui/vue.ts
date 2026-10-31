@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, estGardien, feluresPrevues, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer, traitsEnJeu, avantageAnnonce, ligneeEnnemi, nomPhase } from '../core/combat';
+import { ECLATS, estGardien, feluresPrevues, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer, traitsEnJeu, avantageAnnonce, ligneeEnnemi, nomPhase, voixRefusee } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
@@ -599,6 +599,8 @@ function htmlEcranCombat(e: Ecran): string {
 
   let conseil: string;
   if (s.sansResonance) conseil = `<b>Épreuve · Fréquences brouillées</b> : aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.`;
+  else if (s.monoLignee && !s.chaine.length) conseil = `<b>Épreuve · Une seule voix</b> : chaque chaîne ne joue qu’une lignée. Les cartes du district vont avec toutes.`;
+  else if (s.sansChute && !s.chaine.length) conseil = `<b>Épreuve · Nul ne reste au fond</b> : si un Porteur tombe, l’Épreuve est perdue. Protège le plus exposé.`;
   else if (s.dissonance && !s.chaine.length) conseil = `<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci. Mise sur la force brute ou la protection.`;
   // le gardien parle (campagne.ts) : à la place du conseil, tant que la chaîne est vide
   else if (e.parole && !s.chaine.length) conseil = `<span class="parole-gardien" role="status"><b>${echap(e.parole.nom)}</b>« ${echap(e.parole.texte)} »</span>`;
@@ -686,6 +688,8 @@ function htmlEcranCombat(e: Ecran): string {
     + plaqueIntention(s, classeIntention, iconeIntention, felureHtml)
     + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[lig]}">${echap(e.x.fleche ? `GARDIENS · QUAI ${e.x.fleche.quai}` : e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span>`
       // le Rôdeur (explorer.ts) : il s'enfuit à la fin de son dernier tour ; le compte à rebours reste sous les yeux
+      // Épreuve « Avant l'extinction » : les tours qui restent pour abattre le gardien
+      + (s.chrono && s.issue === 'en-cours' ? `<span class="fuyard chrono" title="Passé le tour ${s.chrono}, l’Épreuve est perdue.">${ICO.griffes}${s.tour >= s.chrono ? 'Dernier tour !' : `S’éteint dans ${s.chrono - s.tour + 1} tours`}</span>` : '')
       + (s.fuyard && s.issue === 'en-cours' ? `<span class="fuyard" title="Il s’enfuit à la fin de son tour ${s.fuyard}. Ses blessures resteront.">${ICO.griffes}${s.tour >= s.fuyard ? 'S’enfuit à la fin du tour' : `S’enfuit dans ${s.fuyard - s.tour + 1} tours`}</span>` : '')
       + `</div>`
     + (gardien ? plaqueGardien(def.nom, nomPhase(s.ennemi))
@@ -792,7 +796,7 @@ function htmlEcranCombat(e: Ecran): string {
       continue;
     }
     const halo = !!dernier && prolonge(g, fs[fs.length - 1]) && places(g) <= libres;
-    h += geste(g, 'main', 'ajouter', { halo, off: verrou, serre: places(g) > libres, vise: vise(g) && places(g) <= libres, felure: brise(g) });
+    h += geste(g, 'main', 'ajouter', { halo, off: verrou, serre: places(g) > libres || !!voixRefusee(s, g), vise: vise(g) && places(g) <= libres, felure: brise(g) });
   }
   h += '</div></section>';
 
