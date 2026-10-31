@@ -59,6 +59,9 @@ export function tick(j: Jeu, now: number): string[] {
   }
 
   nouvelles.push(...entrainer(j, heures));
+  // filet de sécurité (31 octobre 2026) : une sauvegarde où tout est prêt (gardien vaincu, assez de creuseurs, Tour assez haute)
+  // perce la roche au lieu d'attendre un événement qui ne viendra plus
+  if (creuser(j)) nouvelles.push(`Tes creuseurs percent la roche : la Strate −${j.strate} est ouverte.`);
 
   for (const m of j.missions.filter((x) => now >= x.fin)) nouvelles.push(retourDeMission(j, m));
   j.missions = j.missions.filter((x) => now < x.fin);

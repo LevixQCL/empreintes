@@ -808,6 +808,9 @@ export function remonter(j: Jeu): Retour {
     cartes.push(tirerTrouvaille(j, x.strate));
     eclats += 2;
   }
+  // 31 octobre 2026 (Luc : « 6 / 6 creuseurs, tout est prêt » mais la Strate −6 ne s'ouvrait pas) : les creuseurs gagnés
+  // en fouille ou à une Épreuve ne perçaient pas la roche ; on creuse dès qu'ils suffisent, quelle que soit leur source
+  if (!nouvelleStrate && creuser(j)) nouvelleStrate = true;
   // les trouvailles de l'exploration : une carte par salle scellée, les cartes offertes en route, Éclats et archives
   if (x.gains) {
     for (let k = 0; k < x.gains.elites; k++) cartes.push(tirerTrouvaille(j, x.strate, 'cuivre'));
