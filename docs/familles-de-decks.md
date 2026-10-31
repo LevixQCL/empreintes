@@ -8,7 +8,7 @@ sont dans `src/core/donnees.ts`, réglés au robot. Le même jour : **dix cartes
 
 ## 1. Ce qui marche déjà
 
-- **L'échelle des Fréquences 1 à 9, partagée entre les lignées** (Génés 1-5, Augmentés 2-7, Résonants 6-9). Pour faire une longue
+- **L'échelle des Fréquences 1 à 9, partagée entre les lignées** (Génés 1-5, Augmentés 3-7, Résonants 6-9). Pour faire une longue
   suite, il faut mélanger les lignées : l'escouade de trois est un vrai choix. C'est la meilleure idée du combat, il faut la garder.
 - **L'état du combat se lit d'un coup d'œil** : bouclier d'escouade, Flux, Fissure, Fêlure, intention de l'ennemi.
 - **Les traits des ennemis demandent des réponses différentes** (Blindé → Perçant, Évanescent → suites, Dissonance → Véla…).

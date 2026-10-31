@@ -66,7 +66,9 @@ function frequencesLignee(l: Lignee): number[] {
 
 /** Les Fréquences principales des cartes d'une lignée, de la plus basse à la plus haute (« 1 à 5 ») */
 export function plageFrequences(l: Lignee): string {
-  const ok = frequencesLignee(l).map((k, i) => (k ? i + 1 : 0)).filter(Boolean);
+  // Seules les Fréquences portées par au moins 3 cartes comptent : quelques cartes isolées (Augmentés à 2, 8 ou 9)
+  // ne doivent pas faire croire à une plage plus large qu'en vrai (31 oct. 2026 : « 2 à 9 » affiché pour un vrai 3 à 7)
+  const ok = frequencesLignee(l).map((k, i) => (k >= 3 ? i + 1 : 0)).filter(Boolean);
   return `${Math.min(...ok)} à ${Math.max(...ok)}`;
 }
 
