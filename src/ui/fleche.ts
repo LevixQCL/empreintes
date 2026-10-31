@@ -2,12 +2,15 @@
 // le quai de l'escouade, le record), à droite où l'on en est ; puis les gardiens du prochain quai, les chances,
 // ce qu'on gagne ou perd, et les quais gravés avec leurs récompenses. Les règles sont dans src/core/partie/fleche.ts.
 
-import { porteurDef } from '../core/donnees';
-import { ASCENSION, chanceQuai, chanceVictoire, cibleDefiDe, etatFleche, FLECHE, flecheOuverte, forceEscouade, forceGarnison, forceQuai, gageEnCaisse, gageJour, gardiensQuai, pas, plancher, prochainPalier, quaiLibreDe, quaiMaxTenable, escouadePourDepart, type EtatFleche, type GardienQuai, type Jeu, strateVaincue } from '../core/jeu';
+import { ennemiDef, porteurDef } from '../core/donnees';
+import { ASCENSION, chanceQuai, chanceVictoire, cibleDefiDe, etatFleche, FLECHE, flecheOuverte, forceEscouade, forceGarnison, forceQuai, gageEnCaisse, gageJour, gardiensQuai, voixDuQuartier, jourDe, pas, plancher, prochainPalier, quaiLibreDe, quaiMaxTenable, escouadePourDepart, type EtatFleche, type GardienQuai, type Jeu, strateVaincue } from '../core/jeu';
 import { avatar, coquille, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO } from './icones';
-import { artFleche, fondFleche, miniature } from './art';
+import { artFleche, fondFleche, illustrationEnnemi, miniature } from './art';
+
+/** Les chefs de quai : ils mènent le trio au combat qui passe un quai gravé */
+const CHEFS = new Set(['flc-contremaitre', 'flc-hald', 'flc-champion']);
 import { echap } from './outils';
 import { COULEUR } from './vue';
 
@@ -43,6 +46,10 @@ export function htmlFleche(e: EcranDistrict): string {
     + (suivant ? `<p class="fl-palier">${ICO.cristal}<span>Prochain quai gravé : <b>${suivant}</b>${f.recus.includes(suivant) ? '' : ` · ${recompense(suivant)}`}</span></p>` : '')
     + `</div></section>`;
 
+  // ceux qui te suivent (31 octobre 2026) : tant que le fond n'a pas parlé (−10), ils rappellent que l'eau vient d'en bas
+  const voix = voixDuQuartier(j, jourDe(e.now));
+  if (voix) h += `<blockquote class="fl-voix"><span class="surtitre">${ICO.porteurs}Ceux qui te suivent</span><p>${echap(voix.texte)}</p><cite>${echap(voix.qui)}</cite>`
+    + `<small>Le récit des îles s’ouvrira quand le fond aura parlé : vaincs le gardien de la Strate −10.</small></blockquote>`;
   // l'histoire : la montée contre les gardiens payés ; puis la compétition : la garde, le défi, les gardiens
   h += paliers(f.quai, f.recus);
   if (!sommet) h += sieges(false);
@@ -72,6 +79,12 @@ function fleche(j: Jeu, f: EtatFleche, top: GardienQuai[]): string {
     + `</div></div>`;
 }
 
+/** Le visage rond d'un garde de la Flèche (même gabarit que l'avatar d'un Porteur) */
+export function visageGarde(id: string, taille = 40): string {
+  const img = illustrationEnnemi(id);
+  return `<span class="avatar garde-fleche" style="--c:${COULEUR[ennemiDef(id).lignee]};--t:${taille}px" aria-hidden="true">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : ''}</span>`;
+}
+
 const recompense = (q: number) => {
   const r = ASCENSION.recompenses[q];
   return r ? `${ICO.composants}${ent(r.composants)} ${ICO.eclats}${r.eclats}` : '';
@@ -93,7 +106,7 @@ function assaut(j: Jeu, quai: number, record: number): string {
     + `<div class="fl-passerelle" style="--decor:url(${artFleche('passerelle')})" aria-hidden="true"></div>`
     + `<header><div><span class="surtitre">La montée · gardiens payés par les Hauts</span><h2>Quai ${quai}</h2></div>`
     + `<span class="fl-badge">${nomNiveau}<small>${chance < 1 ? '< 1' : chance > 99 ? '> 99' : chance} % de chances</small></span></header>`
-    + `<ul class="fl-gardiens">${gardiens.map((id) => `<li style="--c:${COULEUR[porteurDef(id).lignee]}">${avatar(id, 40)}<span><strong>${echap(porteurDef(id).nom)}</strong><small>${NOM_LIGNEE[porteurDef(id).lignee]}</small></span></li>`).join('')}</ul>`
+    + `<ul class="fl-gardiens">${gardiens.map((id) => `<li style="--c:${COULEUR[ennemiDef(id).lignee]}"${CHEFS.has(id) ? ' class="chef"' : ''}>${visageGarde(id, 40)}<span><strong>${echap(ennemiDef(id).nom)}</strong><small>${NOM_LIGNEE[ennemiDef(id).lignee]}</small></span></li>`).join('')}</ul>`
     + `<div class="fl-forces"><span>Gardiens <b>${Math.round(fq * 100)}</b></span><span class="fl-jauge" aria-hidden="true"><i style="width:${Math.min(100, Math.round((50 * fq) / Math.max(0.01, force)))}%"></i></span><span>Escouade <b>${Math.round(force * 100)}</b></span></div>`
     + `<dl class="fl-enjeu"><div class="gain"><dt>Si tu gagnes</dt><dd>${ICO.monter}<b>Quai ${haut}</b><small>+${haut - quai} quai${haut - quai > 1 ? 's' : ''}</small></dd></div>`
     + `<div class="perte"><dt>Si tu perds</dt><dd>${ICO.descendre}<b>Quai ${bas}</b><small>${bas === quai ? 'tu restes sur ton quai gravé' : `−${quai - bas} quai${quai - bas > 1 ? 's' : ''}`}</small></dd></div></dl>`

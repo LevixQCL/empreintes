@@ -561,6 +561,91 @@ export const ENNEMIS: EnnemiDef[] = [
       { type: 'soin', nom: 'Stimulant', v: 8 },
     ],
   },
+  // ---------- Les gardes de la Flèche (31 octobre 2026, Bryan : de vrais adversaires plutôt que ses propres Porteurs) ----------
+  // Payés par les Hauts. Mêmes forces que les gardes des pillages (la force du quai fait le reste) : seuls le visage et le nom changent.
+  // Quais 1 à 50 : arrimeurs, gaffeurs, brigadiers ; 51 à 101 : la Garde blanche, la Maison Orsève, les hérauts de la Clause.
+  // Un chef mène le trio au combat qui passe un quai gravé : le contremaître (20, 40), la capitaine Hald (50 à 70), le champion des Hauts (80 à 101).
+  {
+    id: 'flc-arrimeur', nom: 'Arrimeur des quais', lignee: 'tech', tag: 'GARDE DE LA FLÈCHE · QUAIS DU BAS', pvMax: 72,
+    motif: [
+      { type: 'atk', nom: 'Salve', v: 10, cible: 'hasard' },
+      { type: 'bouclier', v: 9 },
+      { type: 'atk', nom: 'Frappe ciblée', v: 12, cible: 'faible' },
+      { type: 'atk', nom: 'Balayage', v: 6, zone: true },
+    ],
+  },
+  {
+    id: 'flc-gaffeur', nom: 'Gaffeur des Hauts', lignee: 'bio', tag: 'GARDE DE LA FLÈCHE · QUAIS DU BAS', pvMax: 80,
+    motif: [
+      { type: 'atk', nom: 'Morsure', v: 9, cible: 'faible' },
+      { type: 'bouclier', v: 11 },
+      { type: 'soin', nom: 'Sève', v: 9 },
+      { type: 'atk', nom: 'Charge', v: 11, cible: 'hasard' },
+    ],
+  },
+  {
+    id: 'flc-brigadier', nom: 'Brigadier de la Flèche', lignee: 'reso', tag: 'BRIGADES DU SERMENT DE VEYR', pvMax: 64,
+    motif: [
+      { type: 'dissonance', nom: 'Contre-chant' },
+      { type: 'atk', nom: 'Onde', v: 11, cible: 'hasard' },
+      { type: 'atk', nom: 'Réverbération', v: 6, zone: true },
+      { type: 'bouclier', v: 9 },
+    ],
+  },
+  {
+    id: 'flc-lancier', nom: 'Lancier de la Garde blanche', lignee: 'tech', tag: 'GARDE DE LA FLÈCHE · QUAIS DU HAUT', pvMax: 72,
+    motif: [
+      { type: 'atk', nom: 'Salve', v: 10, cible: 'hasard' },
+      { type: 'bouclier', v: 9 },
+      { type: 'atk', nom: 'Frappe ciblée', v: 12, cible: 'faible' },
+      { type: 'atk', nom: 'Balayage', v: 6, zone: true },
+    ],
+  },
+  {
+    id: 'flc-orseve', nom: 'Garde de la Maison Orsève', lignee: 'bio', tag: 'GARDE DE LA FLÈCHE · QUAIS DU HAUT', pvMax: 80,
+    motif: [
+      { type: 'atk', nom: 'Morsure', v: 9, cible: 'faible' },
+      { type: 'bouclier', v: 11 },
+      { type: 'soin', nom: 'Sève', v: 9 },
+      { type: 'atk', nom: 'Charge', v: 11, cible: 'hasard' },
+    ],
+  },
+  {
+    id: 'flc-heraut', nom: 'Héraut de la Clause', lignee: 'reso', tag: 'GARDE DE LA FLÈCHE · QUAIS DU HAUT', pvMax: 64,
+    motif: [
+      { type: 'dissonance', nom: 'Contre-chant' },
+      { type: 'atk', nom: 'Onde', v: 11, cible: 'hasard' },
+      { type: 'atk', nom: 'Réverbération', v: 6, zone: true },
+      { type: 'bouclier', v: 9 },
+    ],
+  },
+  {
+    id: 'flc-contremaitre', nom: 'Contremaître des quais', lignee: 'bio', tag: 'CHEF DE QUAI · QUAIS GRAVÉS 20 ET 40', pvMax: 80,
+    motif: [
+      { type: 'atk', nom: 'Morsure', v: 9, cible: 'faible' },
+      { type: 'bouclier', v: 11 },
+      { type: 'soin', nom: 'Sève', v: 9 },
+      { type: 'atk', nom: 'Charge', v: 11, cible: 'hasard' },
+    ],
+  },
+  {
+    id: 'flc-hald', nom: 'Capitaine Hald', lignee: 'reso', tag: 'CHEF DE QUAI · BRIGADES DU SERMENT', pvMax: 64,
+    motif: [
+      { type: 'dissonance', nom: 'Contre-chant' },
+      { type: 'atk', nom: 'Onde', v: 11, cible: 'hasard' },
+      { type: 'atk', nom: 'Réverbération', v: 6, zone: true },
+      { type: 'bouclier', v: 9 },
+    ],
+  },
+  {
+    id: 'flc-champion', nom: 'Champion des Hauts', lignee: 'tech', tag: 'CHEF DE QUAI · QUAIS GRAVÉS 80 À 101', pvMax: 72,
+    motif: [
+      { type: 'atk', nom: 'Salve', v: 10, cible: 'hasard' },
+      { type: 'bouclier', v: 9 },
+      { type: 'atk', nom: 'Frappe ciblée', v: 12, cible: 'faible' },
+      { type: 'atk', nom: 'Balayage', v: 6, zone: true },
+    ],
+  },
   // ---------- Les gardes d'un archipel pillé (pillage.ts) : un par Porteur de la garnison, joués par le district attaqué ----------
   {
     id: 'garde-tech', nom: 'Garde augmenté', lignee: 'tech', tag: 'GARNISON', pvMax: 72,

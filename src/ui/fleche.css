@@ -239,3 +239,17 @@
 details.fl-paliers{display:grid;gap:0;padding:14px 16px}
 details.fl-paliers[open]{gap:10px}
 .pr-bloc,.pr-detail,details.fl-paliers,.pl-pres .fl-intro,.fle-pres .fl-intro,.fle-pres .fl-condition,.pl-pres .fl-condition,.fle-pres .fl-repli,.pl-pres .btn.large{justify-self:stretch;width:100%;box-sizing:border-box}
+
+/* ---------- Les gardes de la Flèche (31 octobre 2026) : un visage d'ennemi dans le gabarit des avatars ; le chef de quai cerclé d'or ---------- */
+.avatar.garde-fleche img{object-fit:cover;object-position:50% 14%}
+.fl-gardiens li.chef .avatar{box-shadow:0 0 0 2px #F2D58C,0 0 12px rgba(242,213,140,.55)}
+.fl-gardiens li.chef strong{color:#F2D58C}
+
+/* ---------- Ceux qui te suivent : tant que le fond n'a pas parlé (−10), le quartier rappelle que l'eau vient d'en bas ---------- */
+.fl-voix{display:grid;gap:6px;margin:0;padding:12px 14px;border-radius:6px;
+  background:linear-gradient(rgba(242,213,140,.05),rgba(242,213,140,.05)),rgba(8,11,22,.6);box-shadow:inset 3px 0 0 rgba(242,213,140,.6),inset 0 0 0 1px rgba(242,213,140,.18)}
+.fl-voix .surtitre{display:inline-flex;align-items:center;gap:6px;color:#F2D58C}
+.fl-voix .surtitre .ico{width:14px;height:14px}
+.fl-voix p{margin:0;font-family:var(--lecture);font-style:italic;font-size:15px;line-height:1.45;color:#E6ECF4}
+.fl-voix cite{font-style:normal;font-size:12.5px;color:#93A3B8}
+.fl-voix small{font-size:12.5px;line-height:1.4;color:#93A3B8}

@@ -166,7 +166,16 @@ export const illustrationModule = (cle: string): string | null => {
 };
 /** Les ornements peints des gardiens (27 octobre 2026) : plaque du nom, cadre de la barre de vie, cran de phase, bandeau d'annonce */
 export const artGardien = (n: 'plaque' | 'barre' | 'cran' | 'bandeau') => `${base}boss/${n}.webp`;
-export const illustrationEnnemi = (id: string): string | null => (ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
+/** Les gardes de la Flèche déjà peints (public/art/ennemis/<id>.webp, prompts dans docs/prompts-gardes-fleche.md) ;
+ *  en attendant leur portrait, ils portent l'uniforme des Brigades. La capitaine Hald a déjà le sien. */
+const GARDES_PEINTS = new Set<string>([]);
+function illustrationGarde(id: string): string {
+  if (id === 'flc-hald') return `${base}personnages/hald.webp`;
+  if (id === 'flc-brigadier' || !GARDES_PEINTS.has(id)) return `${base}ennemis/brigadier.webp`;
+  return `${base}ennemis/${id}.webp`;
+}
+export const illustrationEnnemi = (id: string): string | null =>
+  (id.startsWith('flc-') ? illustrationGarde(id) : ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
 export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
 /** Le filigrane d'empreinte d'une carte vétérane (28 octobre 2026) : Trace (bleu), Sillon (or), Empreinte (irisée) */

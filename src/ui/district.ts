@@ -4,6 +4,7 @@
 
 import { nombreHaltes, queteDef } from '../core/strates';
 import { htmlBestiaire } from './bestiaire';
+import { visageGarde } from './fleche';
 import { portOuvert } from './pillages';
 import { epitheteAffiche, epithetesDe, journalCarte, NOMS_PALIER, palierDe, vecuDe, versPalierSuivant, PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
@@ -1840,8 +1841,8 @@ export function htmlEscouade(e: EcranDistrict): string {
     const g = gardiensQuai(fl.quai);
     const c = chanceQuai(forceEscouade(j, e.escouade), fl.quai);
     const d = difficulte(c >= 0.85 ? 0.9 : c >= 0.5 ? 1 : c >= 0.15 ? 1.05 : 1.2);
-    h += `<p class="es-but">${ICO.fleche}<span><strong>La Flèche · quai ${fl.quai}</strong>Un seul combat contre les gardiens des Hauts : ${g.map((id) => echap(porteurDef(id).nom)).join(', ')}.</span></p>`
-      + `<div class="es-pillage d${d.niveau}"><span class="es-pillage-visages">${g.map((id) => avatar(id, 34)).join('')}</span>`
+    h += `<p class="es-but">${ICO.fleche}<span><strong>La Flèche · quai ${fl.quai}</strong>Un seul combat contre les gardiens des Hauts : ${g.map((id) => echap(ennemiDef(id).nom)).join(', ')}.</span></p>`
+      + `<div class="es-pillage d${d.niveau}"><span class="es-pillage-visages">${g.map((id) => visageGarde(id, 34)).join('')}</span>`
       + `<span><b>${d.nom}</b><small>${e.escouade.length === 3 ? `${Math.round(c * 100)} % de chances avec cette escouade` : 'Choisis 3 Porteurs'}</small></span>`
       + `<span class="es-pillage-butin">${ICO.monter}<b>${Math.min(FLECHE.quais, fl.quai + pas(fl.quai))}</b></span></div>`;
   } else if (pi) {

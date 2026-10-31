@@ -15,12 +15,12 @@
 // Le sommet (les Sièges tenus par des joueurs, le passage d'une île) viendra plus tard.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { PORTEURS, porteurDef } from '../donnees';
+import { ennemiDef, porteurDef } from '../donnees';
 import { creerCombat } from '../combat';
 import { FLECHE } from '../classements';
 import { nouvelleExpedition } from '../expedition';
 import { graine, tireur } from '../rng';
-import { CONFIANCE, XP, bonusPv, confier, gagnerXp, log, niveauPorteur, non, pvNiveau, usureAuRetour, type Jeu, type Resultat } from './etat';
+import { CONFIANCE, XP, bonusPv, strateVaincue, confier, gagnerXp, log, niveauPorteur, non, pvNiveau, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, payerRatelier, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 import { PILLAGE, remonter as remonterPillage, type Garnison } from './pillages';
@@ -133,9 +133,30 @@ export const prochainPalier = (quai: number) => FLECHE.paliers.find((p) => p > q
 
 /** Les gardiens d'un quai : trois Porteurs loués par les Hauts, toujours les mêmes pour un même quai */
 export function gardiensQuai(quai: number): string[] {
+  // 31 octobre 2026 (Bryan) : les gardes des Hauts (donnees.ts, « flc- »), un par lignée, au lieu de trois Porteurs du jeu
   const t = tireur({ rng: (quai * 2246822519 + 3266489917) >>> 0 });
-  return t.melanger(PORTEURS.map((p) => p.id)).slice(0, 3);
+  const bande = quai <= 50 ? GARDES_FLECHE.bas : GARDES_FLECHE.haut;
+  const trio: string[] = t.melanger([...bande]);
+  // le combat qui passe un quai gravé est mené par un chef de quai
+  const grave = FLECHE.paliers.find((p) => p > quai && p <= Math.min(FLECHE.quais, quai + pas(quai)));
+  if (grave) {
+    const chef = chefDeQuai(grave);
+    const k = trio.findIndex((id) => ennemiDef(id).lignee === ennemiDef(chef).lignee);
+    trio.splice(Math.max(0, k), 1);
+    trio.unshift(chef);
+  }
+  return trio;
 }
+
+/** Les gardes de la Flèche, par moitié de la montée (un par lignée) */
+export const GARDES_FLECHE = {
+  bas: ['flc-arrimeur', 'flc-gaffeur', 'flc-brigadier'],
+  haut: ['flc-lancier', 'flc-orseve', 'flc-heraut'],
+} as const;
+/** Le chef qui garde un quai gravé : le contremaître (20, 40), la capitaine Hald (50 à 70), le champion des Hauts (80 et plus) */
+export const chefDeQuai = (grave: number) => (grave <= 40 ? 'flc-contremaitre' : grave <= 70 ? 'flc-hald' : 'flc-champion');
+/** Un garde de la Flèche (et pas un Porteur d'une garnison de directeur) */
+export const estGardeFleche = (id: string) => id.startsWith('flc-');
 
 export function peutMonter(j: Jeu): Resultat {
   if (!flecheOuverte(j)) return non('La Flèche s’ouvrira quand les Hauts t’y auront convié.');
@@ -148,14 +169,15 @@ export function peutMonter(j: Jeu): Resultat {
 function combatFleche(j: Jeu, escouade: string[], quai: number, force: number, porteurs: string[], journal: string, rng: number, defi?: GardienQuai): Resultat {
   const e = escouadePrete(j, escouade);
   if (!e.ok) return e;
-  const gardes = porteurs.map((id) => `garde-${porteurDef(id).lignee}`);
+  // un Porteur (la garnison d'un directeur) combat sous les traits d'un garde de sa lignée ; un garde de la Flèche, tel quel
+  const gardes = porteurs.map((id) => (estGardeFleche(id) ? id : `garde-${porteurDef(id).lignee}`));
   const x = nouvelleExpedition({ porteurs: e.porteurs, deck: e.deck, strate: 1, rng, sequence: [gardes[0]!], force });
   x.combat = creerCombat({
     porteurs: e.porteurs, ennemiId: gardes[0]!, escorte: gardes.slice(1), rng, deck: e.deck, force, pvPleins: true,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
   });
-  x.combat.ennemi.porteur = porteurs[0];
-  x.combat.autres?.forEach((en, k) => { en.porteur = porteurs[k + 1]; });
+  if (!estGardeFleche(porteurs[0]!)) x.combat.ennemi.porteur = porteurs[0];
+  x.combat.autres?.forEach((en, k) => { if (!estGardeFleche(porteurs[k + 1]!)) en.porteur = porteurs[k + 1]; });
   x.combat.journal = [journal];
   payerRatelier(j);
   quitterPostes(j, escouade);
@@ -170,7 +192,7 @@ export function monterFleche(j: Jeu, escouade: string[], rng = graine()): Result
   const quai = etatFleche(j).quai;
   const porteurs = gardiensQuai(quai);
   const r = combatFleche(j, escouade, quai, forceQuai(quai), porteurs,
-    `Quai ${quai} de la Flèche : les gardiens des Hauts barrent la passerelle (${porteurs.map((id) => porteurDef(id).nom).join(', ')}).`, rng);
+    `Quai ${quai} de la Flèche : les gardiens des Hauts barrent la passerelle (${porteurs.map((id) => ennemiDef(id).nom).join(', ')}).`, rng);
   if (r.ok) log(j, `L’escouade monte à l’assaut du quai ${quai} de la Flèche.`);
   return r;
 }
@@ -380,3 +402,21 @@ export function remonter(j: Jeu): Retour {
 
 /** Les chances du joueur moyen contre les gardiens d'un quai (même courbe que les pillages) */
 export const chanceQuai = (forceEscouade: number, quai: number) => 1 / (1 + Math.exp((forceQuai(quai) / Math.max(0.01, forceEscouade) - 1) / PILLAGE.pente));
+
+// ---------- Ceux qui te suivent, tant que le fond n'a pas parlé (31 octobre 2026) ----------
+// Bryan : la Flèche s'ouvre à −6 (on garde l'occasion de monter tôt), mais c'est à −10 qu'on apprend que l'Écluse a déjà été
+// emportée là-haut. Avant ça, le quartier qui te suit te rappelle, quand tu montes, que la solution pour l'eau devrait être en bas.
+// Rien n'est retiré ni bloqué : ce sont des voix, pas une règle.
+export const VOIX_DU_QUARTIER: { qui: string; texte: string }[] = [
+  { qui: 'Une pompière de la Nuit des lignes', texte: 'Monter, c’est bien, directeur. Mais l’eau, elle, vient d’en bas. L’Écluse, c’est en dessous qu’on la cherche.' },
+  { qui: 'Le vieux Marek, au marché', texte: 'Les Hauts t’ont ouvert leurs quais ? Méfie-toi des cadeaux qui viennent d’en haut. Les réponses, on les a toujours creusées.' },
+  { qui: 'Une mère de la rue des pompes', texte: 'Mes enfants dorment au premier étage maintenant. Si tu trouves l’Écluse, dis-le-nous avant d’aller saluer les îles.' },
+  { qui: 'Un creuseur du chantier', texte: 'On a percé la roche pour toi. Ne laisse pas nos galeries à moitié faites pour aller faire le beau sur la Flèche.' },
+  { qui: 'Ysé, dans un mot glissé sous ta porte', texte: 'La Flèche ne partira pas. Le fond non plus. Mais c’est lui qui sait ce que ceux d’avant ont fait de leur eau.' },
+  { qui: 'Un gamin du quai', texte: 'Tu nous emmèneras là-haut, dis ? Mais d’abord tu arrêtes la mer. Promis ?' },
+];
+/** La voix du jour (toujours la même pour un même jour), seulement tant que le gardien de −10 n'est pas vaincu */
+export function voixDuQuartier(j: Jeu, jour: number): { qui: string; texte: string } | null {
+  if (strateVaincue(j) >= 10) return null;
+  return VOIX_DU_QUARTIER[((jour % VOIX_DU_QUARTIER.length) + VOIX_DU_QUARTIER.length) % VOIX_DU_QUARTIER.length]!;
+}
