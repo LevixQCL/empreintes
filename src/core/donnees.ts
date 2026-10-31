@@ -561,91 +561,6 @@ export const ENNEMIS: EnnemiDef[] = [
       { type: 'soin', nom: 'Stimulant', v: 8 },
     ],
   },
-  // ---------- Les gardes de la Flèche (31 octobre 2026, Bryan : de vrais adversaires plutôt que ses propres Porteurs) ----------
-  // Payés par les Hauts. Mêmes forces que les gardes des pillages (la force du quai fait le reste) : seuls le visage et le nom changent.
-  // Quais 1 à 50 : arrimeurs, gaffeurs, brigadiers ; 51 à 101 : la Garde blanche, la Maison Orsève, les hérauts de la Clause.
-  // Un chef mène le trio au combat qui passe un quai gravé : le contremaître (20, 40), la capitaine Hald (50 à 70), le champion des Hauts (80 à 101).
-  {
-    id: 'flc-arrimeur', nom: 'Arrimeur des quais', lignee: 'tech', tag: 'GARDE DE LA FLÈCHE · QUAIS DU BAS', pvMax: 72,
-    motif: [
-      { type: 'atk', nom: 'Salve', v: 10, cible: 'hasard' },
-      { type: 'bouclier', v: 9 },
-      { type: 'atk', nom: 'Frappe ciblée', v: 12, cible: 'faible' },
-      { type: 'atk', nom: 'Balayage', v: 6, zone: true },
-    ],
-  },
-  {
-    id: 'flc-gaffeur', nom: 'Gaffeur des Hauts', lignee: 'bio', tag: 'GARDE DE LA FLÈCHE · QUAIS DU BAS', pvMax: 80,
-    motif: [
-      { type: 'atk', nom: 'Morsure', v: 9, cible: 'faible' },
-      { type: 'bouclier', v: 11 },
-      { type: 'soin', nom: 'Sève', v: 9 },
-      { type: 'atk', nom: 'Charge', v: 11, cible: 'hasard' },
-    ],
-  },
-  {
-    id: 'flc-brigadier', nom: 'Brigadier de la Flèche', lignee: 'reso', tag: 'BRIGADES DU SERMENT DE VEYR', pvMax: 64,
-    motif: [
-      { type: 'dissonance', nom: 'Contre-chant' },
-      { type: 'atk', nom: 'Onde', v: 11, cible: 'hasard' },
-      { type: 'atk', nom: 'Réverbération', v: 6, zone: true },
-      { type: 'bouclier', v: 9 },
-    ],
-  },
-  {
-    id: 'flc-lancier', nom: 'Lancier de la Garde blanche', lignee: 'tech', tag: 'GARDE DE LA FLÈCHE · QUAIS DU HAUT', pvMax: 72,
-    motif: [
-      { type: 'atk', nom: 'Salve', v: 10, cible: 'hasard' },
-      { type: 'bouclier', v: 9 },
-      { type: 'atk', nom: 'Frappe ciblée', v: 12, cible: 'faible' },
-      { type: 'atk', nom: 'Balayage', v: 6, zone: true },
-    ],
-  },
-  {
-    id: 'flc-orseve', nom: 'Garde de la Maison Orsève', lignee: 'bio', tag: 'GARDE DE LA FLÈCHE · QUAIS DU HAUT', pvMax: 80,
-    motif: [
-      { type: 'atk', nom: 'Morsure', v: 9, cible: 'faible' },
-      { type: 'bouclier', v: 11 },
-      { type: 'soin', nom: 'Sève', v: 9 },
-      { type: 'atk', nom: 'Charge', v: 11, cible: 'hasard' },
-    ],
-  },
-  {
-    id: 'flc-heraut', nom: 'Héraut de la Clause', lignee: 'reso', tag: 'GARDE DE LA FLÈCHE · QUAIS DU HAUT', pvMax: 64,
-    motif: [
-      { type: 'dissonance', nom: 'Contre-chant' },
-      { type: 'atk', nom: 'Onde', v: 11, cible: 'hasard' },
-      { type: 'atk', nom: 'Réverbération', v: 6, zone: true },
-      { type: 'bouclier', v: 9 },
-    ],
-  },
-  {
-    id: 'flc-contremaitre', nom: 'Contremaître des quais', lignee: 'bio', tag: 'CHEF DE QUAI · QUAIS GRAVÉS 20 ET 40', pvMax: 80,
-    motif: [
-      { type: 'atk', nom: 'Morsure', v: 9, cible: 'faible' },
-      { type: 'bouclier', v: 11 },
-      { type: 'soin', nom: 'Sève', v: 9 },
-      { type: 'atk', nom: 'Charge', v: 11, cible: 'hasard' },
-    ],
-  },
-  {
-    id: 'flc-hald', nom: 'Capitaine Hald', lignee: 'reso', tag: 'CHEF DE QUAI · BRIGADES DU SERMENT', pvMax: 64,
-    motif: [
-      { type: 'dissonance', nom: 'Contre-chant' },
-      { type: 'atk', nom: 'Onde', v: 11, cible: 'hasard' },
-      { type: 'atk', nom: 'Réverbération', v: 6, zone: true },
-      { type: 'bouclier', v: 9 },
-    ],
-  },
-  {
-    id: 'flc-champion', nom: 'Champion des Hauts', lignee: 'tech', tag: 'CHEF DE QUAI · QUAIS GRAVÉS 80 À 101', pvMax: 72,
-    motif: [
-      { type: 'atk', nom: 'Salve', v: 10, cible: 'hasard' },
-      { type: 'bouclier', v: 9 },
-      { type: 'atk', nom: 'Frappe ciblée', v: 12, cible: 'faible' },
-      { type: 'atk', nom: 'Balayage', v: 6, zone: true },
-    ],
-  },
   // ---------- Les gardes d'un archipel pillé (pillage.ts) : un par Porteur de la garnison, joués par le district attaqué ----------
   {
     id: 'garde-tech', nom: 'Garde augmenté', lignee: 'tech', tag: 'GARNISON', pvMax: 72,
@@ -675,6 +590,41 @@ export const ENNEMIS: EnnemiDef[] = [
     ],
   },
 ];
+
+/**
+ * Les gardes de la Flèche (31 octobre 2026, Bryan : de vrais adversaires plutôt que ses propres Porteurs, et pas deux fois le même visage).
+ * Payés par les Hauts. Mêmes forces que les gardes des pillages de leur lignée (la force du quai fait le reste) : seuls le visage et le nom changent.
+ * Trois hauteurs (celles de la montée : quais 1 à 40, 41 à 70, 71 à 101), deux gardes par lignée et par hauteur ; un chef de quai
+ * mène le combat qui passe un quai gravé. Prompts : docs/prompts-gardes-fleche.md.
+ */
+export const GARDES_FLC: { id: string; nom: string; lignee: Lignee; hauteur: 'bas' | 'milieu' | 'haut' | 'chef'; tag: string }[] = [
+  { id: 'flc-arrimeur', nom: 'Arrimeur des quais', lignee: 'tech', hauteur: 'bas', tag: 'GARDE DE LA FLÈCHE · QUAIS DU BAS' },
+  { id: 'flc-treuilliste', nom: 'Treuilliste', lignee: 'tech', hauteur: 'bas', tag: 'GARDE DE LA FLÈCHE · QUAIS DU BAS' },
+  { id: 'flc-gaffeur', nom: 'Gaffeur des Hauts', lignee: 'bio', hauteur: 'bas', tag: 'GARDE DE LA FLÈCHE · QUAIS DU BAS' },
+  { id: 'flc-debardeuse', nom: 'Débardeuse à carapace', lignee: 'bio', hauteur: 'bas', tag: 'GARDE DE LA FLÈCHE · QUAIS DU BAS' },
+  { id: 'flc-brigadier', nom: 'Brigadier de la Flèche', lignee: 'reso', hauteur: 'bas', tag: 'BRIGADES DU SERMENT DE VEYR' },
+  { id: 'flc-vigie', nom: 'Vigie des fanions', lignee: 'reso', hauteur: 'bas', tag: 'GARDE DE LA FLÈCHE · QUAIS DU BAS' },
+  { id: 'flc-canonnier', nom: 'Canonnier des nuages', lignee: 'tech', hauteur: 'milieu', tag: 'GARDE DE LA FLÈCHE · QUAIS DES NUAGES' },
+  { id: 'flc-mecanicienne', nom: 'Mécanicienne d’amarrage', lignee: 'tech', hauteur: 'milieu', tag: 'GARDE DE LA FLÈCHE · QUAIS DES NUAGES' },
+  { id: 'flc-aile-verre', nom: 'Sentinelle aux ailes de verre', lignee: 'bio', hauteur: 'milieu', tag: 'GARDE DE LA FLÈCHE · QUAIS DES NUAGES' },
+  { id: 'flc-cordiere', nom: 'Gardienne des cordages', lignee: 'bio', hauteur: 'milieu', tag: 'GARDE DE LA FLÈCHE · QUAIS DES NUAGES' },
+  { id: 'flc-ecouteuse', nom: 'Écouteuse des vents', lignee: 'reso', hauteur: 'milieu', tag: 'GARDE DE LA FLÈCHE · QUAIS DES NUAGES' },
+  { id: 'flc-brigadiere', nom: 'Brigadière du Serment', lignee: 'reso', hauteur: 'milieu', tag: 'BRIGADES DU SERMENT DE VEYR' },
+  { id: 'flc-lancier', nom: 'Lancier de la Garde blanche', lignee: 'tech', hauteur: 'haut', tag: 'GARDE DE LA FLÈCHE · QUAIS DES ÎLES' },
+  { id: 'flc-duelliste', nom: 'Duelliste de la Garde blanche', lignee: 'tech', hauteur: 'haut', tag: 'GARDE DE LA FLÈCHE · QUAIS DES ÎLES' },
+  { id: 'flc-orseve', nom: 'Garde de la Maison Orsève', lignee: 'bio', hauteur: 'haut', tag: 'GARDE DE LA FLÈCHE · QUAIS DES ÎLES' },
+  { id: 'flc-intendante', nom: 'Intendante des Hauts', lignee: 'bio', hauteur: 'haut', tag: 'GARDE DE LA FLÈCHE · QUAIS DES ÎLES' },
+  { id: 'flc-heraut', nom: 'Héraut de la Clause', lignee: 'reso', hauteur: 'haut', tag: 'GARDE DE LA FLÈCHE · QUAIS DES ÎLES' },
+  { id: 'flc-chantre', nom: 'Chantre des Sièges', lignee: 'reso', hauteur: 'haut', tag: 'GARDE DE LA FLÈCHE · QUAIS DES ÎLES' },
+  { id: 'flc-contremaitre', nom: 'Contremaître des quais', lignee: 'bio', hauteur: 'chef', tag: 'CHEF DE QUAI · QUAIS GRAVÉS 20 ET 40' },
+  { id: 'flc-hald', nom: 'Capitaine Hald', lignee: 'reso', hauteur: 'chef', tag: 'CHEF DE QUAI · BRIGADES DU SERMENT' },
+  { id: 'flc-commandeur', nom: 'Commandeur de la Garde blanche', lignee: 'tech', hauteur: 'chef', tag: 'CHEF DE QUAI · QUAIS GRAVÉS 80 ET 90' },
+  { id: 'flc-champion', nom: 'Champion des Hauts', lignee: 'tech', hauteur: 'chef', tag: 'CHEF DE QUAI · LE DERNIER QUAI' },
+];
+for (const g of GARDES_FLC) {
+  const modele = ENNEMIS.find((e) => e.id === `garde-${g.lignee}`)!;
+  ENNEMIS.push({ ...modele, id: g.id, nom: g.nom, tag: g.tag });
+}
 
 // ---------- Les traits des ennemis (décision du 22 octobre 2026) : leur nom et ce qu'ils font, pour l'écran ----------
 export function texteTrait(t: import('./types').Trait): { nom: string; texte: string } {

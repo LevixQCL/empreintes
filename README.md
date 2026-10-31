@@ -278,9 +278,9 @@ aussi en fouille), des **portes à Fréquence** dès −5 (une suite avec 5 cart
 repèrent, et le **bestiaire** (Bibliothèque). La Tour montre la quête et les Haltes de chaque Strate. Icônes à peindre : `docs/prompts-strates.md`.
 
 **Les gardes de la Flèche** (31 octobre 2026, `GARDES_FLECHE` dans `src/core/partie/fleche.ts`, `docs/prompts-gardes-fleche.md`). Les quais ne sont plus
-gardés par des Porteurs du joueur mais par des gardes payés par les Hauts, un par lignée : arrimeurs, gaffeurs et brigadiers jusqu'au quai 50,
-Garde blanche, Maison Orsève et hérauts de la Clause au-dessus ; un chef mène le combat qui passe un quai gravé (contremaître, capitaine Hald,
-champion des Hauts). Mêmes forces qu'avant. Tant que le gardien de −10 n'est pas vaincu, « Ceux qui te suivent » rappellent sur l'écran de la Flèche
+gardés par des Porteurs du joueur mais par des gardes payés par les Hauts (`GARDES_FLC`, un visage chacun) : un par lignée, tiré parmi deux à chaque
+hauteur (quais du bas, des nuages, des îles) ; un chef mène le combat qui passe un quai gravé (contremaître, capitaine Hald, commandeur de la
+Garde blanche, champion des Hauts). Mêmes forces qu'avant. Tant que le gardien de −10 n'est pas vaincu, « Ceux qui te suivent » rappellent sur l'écran de la Flèche
 que la solution pour l'eau est en bas (`voixDuQuartier`) : la Flèche reste ouverte dès −6, sans rien bloquer.
 
 **Le parrainage** (29 octobre 2026, `src/core/partie/parrainage.ts`, `src/net/parrainage.ts`, `src/app/parrainage.ts`, `src/ui/parrainage.ts`, `docs/prompts-parrainage.md`).

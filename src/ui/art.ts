@@ -166,12 +166,12 @@ export const illustrationModule = (cle: string): string | null => {
 };
 /** Les ornements peints des gardiens (27 octobre 2026) : plaque du nom, cadre de la barre de vie, cran de phase, bandeau d'annonce */
 export const artGardien = (n: 'plaque' | 'barre' | 'cran' | 'bandeau') => `${base}boss/${n}.webp`;
-/** Les gardes de la Flèche déjà peints (public/art/ennemis/<id>.webp, prompts dans docs/prompts-gardes-fleche.md) ;
- *  en attendant leur portrait, ils portent l'uniforme des Brigades. La capitaine Hald a déjà le sien. */
+/** Les gardes de la Flèche déjà peints (public/art/ennemis/<id>.webp, prompts dans docs/prompts-gardes-fleche.md : un visage
+ *  par garde) ; en attendant le sien, un garde porte l'uniforme des Brigades. La capitaine Hald a déjà son portrait. */
 const GARDES_PEINTS = new Set<string>([]);
 function illustrationGarde(id: string): string {
   if (id === 'flc-hald') return `${base}personnages/hald.webp`;
-  if (id === 'flc-brigadier' || !GARDES_PEINTS.has(id)) return `${base}ennemis/brigadier.webp`;
+  if (!GARDES_PEINTS.has(id)) return `${base}ennemis/brigadier.webp`;
   return `${base}ennemis/${id}.webp`;
 }
 export const illustrationEnnemi = (id: string): string | null =>

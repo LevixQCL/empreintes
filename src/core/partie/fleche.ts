@@ -15,7 +15,7 @@
 // Le sommet (les Sièges tenus par des joueurs, le passage d'une île) viendra plus tard.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { ennemiDef, porteurDef } from '../donnees';
+import { GARDES_FLC, ennemiDef, porteurDef } from '../donnees';
 import { creerCombat } from '../combat';
 import { FLECHE } from '../classements';
 import { nouvelleExpedition } from '../expedition';
@@ -133,11 +133,15 @@ export const prochainPalier = (quai: number) => FLECHE.paliers.find((p) => p > q
 
 /** Les gardiens d'un quai : trois Porteurs loués par les Hauts, toujours les mêmes pour un même quai */
 export function gardiensQuai(quai: number): string[] {
-  // 31 octobre 2026 (Bryan) : les gardes des Hauts (donnees.ts, « flc- »), un par lignée, au lieu de trois Porteurs du jeu
+  // 31 octobre 2026 (Bryan) : des gardes des Hauts (GARDES_FLC, donnees.ts) au lieu de trois Porteurs du jeu, un par lignée,
+  // tirés parmi les deux de chaque lignée à cette hauteur
   const t = tireur({ rng: (quai * 2246822519 + 3266489917) >>> 0 });
-  const bande = quai <= 50 ? GARDES_FLECHE.bas : GARDES_FLECHE.haut;
-  const trio: string[] = t.melanger([...bande]);
-  // le combat qui passe un quai gravé est mené par un chef de quai
+  const hauteur = quai <= 40 ? 'bas' : quai <= 70 ? 'milieu' : 'haut';
+  const trio: string[] = t.melanger((['tech', 'bio', 'reso'] as const).map((l) => {
+    const l2 = GARDES_FLC.filter((g) => g.hauteur === hauteur && g.lignee === l);
+    return l2[t.entier(l2.length)]!.id;
+  }));
+  // le combat qui passe un quai gravé est mené par un chef de quai, à la place du garde de sa lignée
   const grave = FLECHE.paliers.find((p) => p > quai && p <= Math.min(FLECHE.quais, quai + pas(quai)));
   if (grave) {
     const chef = chefDeQuai(grave);
@@ -148,13 +152,8 @@ export function gardiensQuai(quai: number): string[] {
   return trio;
 }
 
-/** Les gardes de la Flèche, par moitié de la montée (un par lignée) */
-export const GARDES_FLECHE = {
-  bas: ['flc-arrimeur', 'flc-gaffeur', 'flc-brigadier'],
-  haut: ['flc-lancier', 'flc-orseve', 'flc-heraut'],
-} as const;
-/** Le chef qui garde un quai gravé : le contremaître (20, 40), la capitaine Hald (50 à 70), le champion des Hauts (80 et plus) */
-export const chefDeQuai = (grave: number) => (grave <= 40 ? 'flc-contremaitre' : grave <= 70 ? 'flc-hald' : 'flc-champion');
+/** Le chef qui garde un quai gravé : le contremaître (20, 40), la capitaine Hald (50 à 70), le commandeur de la Garde blanche (80, 90), le champion des Hauts (101) */
+export const chefDeQuai = (grave: number) => (grave <= 40 ? 'flc-contremaitre' : grave <= 70 ? 'flc-hald' : grave < FLECHE.quais ? 'flc-commandeur' : 'flc-champion');
 /** Un garde de la Flèche (et pas un Porteur d'une garnison de directeur) */
 export const estGardeFleche = (id: string) => id.startsWith('flc-');
 

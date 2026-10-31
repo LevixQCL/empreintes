@@ -2,7 +2,7 @@
 // le quai de l'escouade, le record), à droite où l'on en est ; puis les gardiens du prochain quai, les chances,
 // ce qu'on gagne ou perd, et les quais gravés avec leurs récompenses. Les règles sont dans src/core/partie/fleche.ts.
 
-import { ennemiDef, porteurDef } from '../core/donnees';
+import { GARDES_FLC, ennemiDef, porteurDef } from '../core/donnees';
 import { ASCENSION, chanceQuai, chanceVictoire, cibleDefiDe, etatFleche, FLECHE, flecheOuverte, forceEscouade, forceGarnison, forceQuai, gageEnCaisse, gageJour, gardiensQuai, voixDuQuartier, jourDe, pas, plancher, prochainPalier, quaiLibreDe, quaiMaxTenable, escouadePourDepart, type EtatFleche, type GardienQuai, type Jeu, strateVaincue } from '../core/jeu';
 import { avatar, coquille, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
@@ -10,7 +10,7 @@ import { ICO } from './icones';
 import { artFleche, fondFleche, illustrationEnnemi, miniature } from './art';
 
 /** Les chefs de quai : ils mènent le trio au combat qui passe un quai gravé */
-const CHEFS = new Set(['flc-contremaitre', 'flc-hald', 'flc-champion']);
+const CHEFS = new Set(GARDES_FLC.filter((g) => g.hauteur === 'chef').map((g) => g.id));
 import { echap } from './outils';
 import { COULEUR } from './vue';
 
