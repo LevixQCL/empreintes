@@ -11,7 +11,7 @@ import { interrompreSeance, progresser, quotidienFait } from './district';
 // ---------- Kit de départ des recrues ----------
 
 /** Trois cartes en fer par recrue, de sa lignée, différentes des cartes de départ des Porteurs nommés */
-const KIT_RECRUES: Record<string, string[]> = {
+export const KIT_RECRUES: Record<string, string[]> = {
   coursier: ['gant-arc', 'grappin-cable', 'coeur-turbine'],
   docker: ['crocs-fossiles', 'cuir-recif', 'yeux-nocturnes'],
   guetteur: ['miroir-brume', 'encre-ancienne', 'meche-or'],

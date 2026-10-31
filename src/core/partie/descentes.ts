@@ -5,7 +5,7 @@ import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, CLE_LEGS, 
 import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, salleCourante, forceStrate, nouvelleExploration, type CibleFouille, butinCombat, butinCache, halteSuivante, ouvrirPorte as ouvrirPorteX, relancerPorte as relancerPorteX, passerPorte as passerPorteX, suivrePassage as suivrePassageX, RANG_HALTE } from '../expedition';
 import { halteDef, queteDef, type HalteDef } from '../strates';
 import { ETOILES, EXPLORER, PALIERS_ETOILES, RODEURS, metalEveille, rodeurDeZone, type EtoileId, vestigesDe } from '../explorer';
-import { ZONES, sequenceStrate } from '../donnees';
+import { ZONES, sequenceStrate, gesteDeCarte, GESTES_SPECIAUX, carteId } from '../donnees';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
 import { COLLECTION, NIVEAU_METAL, ajouterCarte, cartesEnJeu, niveauRequis, placesVides, tirerChoix, tirerTrouvaille } from '../collection';
 import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
@@ -14,7 +14,7 @@ import { graine, tireur } from '../rng';
 import { REGLES } from '../regles';
 import { ACCORD_OUVERT, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
-import { donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
+import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
 import { noterOrigine, noterVecu } from './vecu';
 import { LIEUX, RECIT_BON, RECIT_MAUVAIS, RECIT_NEUTRE, affinite, lieuDef, type Affinite, type LieuDef, type SpecialiteLieu } from '../lieux';
@@ -780,7 +780,8 @@ export function remonter(j: Jeu): Retour {
   const finaux = x.carte && x.phase !== 'combat' ? x.porteurs : x.combat.porteurs;
   // « À mi-souffle » : la moitié des PV retirée au départ est rendue (seuls les PV perdus en combat comptent comme Usure)
   const rendus = (p: PorteurEtat) => (x.demiPv && p.pv > 0 ? { ...p, pv: Math.min(p.pvMax, p.pv + p.pvMax - Math.max(1, Math.round(p.pvMax * 0.5))) } : p);
-  for (const p of finaux) usureAuRetour(j, rendus(p), x.fuite ? DISTRICT.usureFuite : 0);
+  // « Les recrues » est un exercice : pas d'Usure
+  if (!x.imposee) for (const p of finaux) usureAuRetour(j, rendus(p), x.fuite ? DISTRICT.usureFuite : 0);
   let nouvelleStrate = false;
   let butinFilon = 0;
   let fragment: string | null = null;
@@ -1163,6 +1164,8 @@ export interface EpreuveDef {
   /** l'escouade part avec cette part de ses PV */
   pvDepart?: number;
   regles?: { sansResonance?: boolean; chrono?: number; sansChute?: boolean; monoLignee?: boolean };
+  /** l'escouade est imposée (ESCOUADE_RECRUES), contre le gardien des Seuils à une force fixe : la même Épreuve pour tous */
+  imposee?: boolean;
 }
 
 export const EPREUVES: EpreuveDef[] = [
@@ -1182,11 +1185,32 @@ export const EPREUVES: EpreuveDef[] = [
     regle: 'On voit ce que prépare le gardien, jamais combien ni sur qui ; sa Fêlure est cachée.' },
   { id: 'brouillage', nom: 'Fréquences brouillées', famille: 'lecture', strateMin: 1, force: 1.12, regles: { sansResonance: true },
     regle: 'Aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.' },
+  { id: 'recrues', nom: 'Les recrues', famille: 'deck', strateMin: 2, force: 1, imposee: true,
+    regle: 'Le Coursier, le Docker et le Guetteur, avec leurs cartes de départ : ta collection ne compte pas.' },
   { id: 'une-voix', nom: 'Une seule voix', famille: 'deck', strateMin: 1, force: 0.95, regles: { monoLignee: true },
     regle: 'Chaque chaîne ne joue qu’une lignée (les cartes du district vont avec toutes).' },
 ];
 
 export const EPREUVE_DECK_MIN = 9;
+
+/**
+ * « Les recrues » (31 octobre 2026, Bryan : « ça peut être sympa si ça ne surcharge pas les écrans ») : un pur défi d'adresse,
+ * le même pour tous. Les trois recrues, niveau 1, avec leur kit et trois cartes de base de leur lignée, en fer niveau 1,
+ * plus le paquetage du district. Elles affrontent le gardien des Seuils à une force fixe, quelle que soit la profondeur du joueur.
+ * C'est un exercice : ni Usure, ni poste quitté.
+ */
+export const ESCOUADE_RECRUES: Record<string, string[]> = {
+  coursier: [...KIT_RECRUES.coursier!, 'ruee', 'tir', 'esquive'],
+  docker: [...KIT_RECRUES.docker!, 'morsure', 'carapace', 'regenerer'],
+  guetteur: [...KIT_RECRUES.guetteur!, 'murmure', 'echo', 'apaiser'],
+};
+/** La force du gardien des Seuils dans « Les recrues » : celle de la Strate −2, × force (× felee en Fêlée : la pente est raide,
+ *  réglée au robot le 31 octobre 2026 : ~70 % pour un joueur qui calcule tout, ~30 % pour un joueur moyen ; en Fêlée ~35 % et ~5 %) */
+export const RECRUES = { strate: 2, force: 1.25, felee: 1.1 };
+const deckRecrues = (): GesteDef[] => [
+  ...Object.entries(ESCOUADE_RECRUES).flatMap(([p, cartes]) => cartes.map((c) => gesteDeCarte(carteId(c, 'fer'), p))),
+  ...GESTES_SPECIAUX,
+];
 /** Le palier Fêlé : mêmes règles, ennemis plus forts, mieux récompensé */
 export const FELEE = { force: 1.2, eclats: 2, orDes: 8 };
 export const EPREUVES_PAR_SEMAINE = 3;
@@ -1227,14 +1251,17 @@ export const epreuveReussie = (j: Jeu, id: string, felee?: boolean) => j.epreuve
 
 /** La Strate d'une Épreuve : la dernière vaincue */
 export const strateEpreuve = (j: Jeu) => Math.max(1, strateVaincue(j));
+/** Ce que la Fêlée ajoute à la force, en % (« Les recrues » a sa propre pente) */
+export const hausseFelee = (ep: EpreuveDef) => Math.round(((ep.imposee ? RECRUES.felee : FELEE.force) - 1) * 100);
 /** La puissance des ennemis d'une Épreuve */
 export const forceEpreuve = (ep: EpreuveDef, strate: number, felee?: boolean) =>
-  forceStrate(strate) * (strate >= REGLES.apparition.troisiemePhase && ep.forceBas ? ep.forceBas : ep.force) * (felee ? FELEE.force : 1);
+  ep.imposee ? forceStrate(RECRUES.strate) * RECRUES.force * (felee ? RECRUES.felee : 1) : forceStrate(strate) * (strate >= REGLES.apparition.troisiemePhase && ep.forceBas ? ep.forceBas : ep.force) * (felee ? FELEE.force : 1);
 
 export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: number, rng = graine(), felee = false): Resultat {
   const ep = epreuveDef(id);
   if (!ep || !epreuvesDeLaSemaine(now, j).some((e) => e.id === id)) return non('Cette Épreuve n’est pas au programme cette semaine.');
   if (strateVaincue(j) < 1) return non('Les Épreuves s’ouvrent après la première Strate vaincue.');
+  if (ep.imposee) return partirRecrues(j, ep, now, rng, felee);
   const e = escouadePrete(j, escouade, undefined, EPREUVE_DECK_MIN);
   if (!e.ok) return e;
   const strate = strateEpreuve(j);
@@ -1262,6 +1289,26 @@ export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: numbe
     ...(ep.enchainement ? { soinEntre: ep.enchainement.soin } : {}),
     ...(ep.pvDepart ? { demiPv: true } : {}),
   };
+  log(j, `Épreuve de la semaine : ${ep.nom}${felee ? ' (Fêlée)' : ''}.`);
+  return { ok: true };
+}
+
+/** « Les recrues » : escouade et deck imposés, contre le gardien des Seuils, sans Usure ni poste quitté */
+function partirRecrues(j: Jeu, ep: EpreuveDef, _now: number, rng: number, felee: boolean): Resultat {
+  if (j.expedition) return non('Une expédition est déjà en cours.');
+  const ids = Object.keys(ESCOUADE_RECRUES);
+  for (const id of ids) {
+    if (!porteursPresents(j).includes(id)) return non(`${porteurDef(id).nom} n’est pas encore au district.`);
+    if (enMission(j, id)) return non(`${porteurDef(id).nom} est en mission : attends son retour.`);
+  }
+  const porteurs: PorteurEtat[] = ids.map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
+  const force = forceEpreuve(ep, RECRUES.strate, felee);
+  const x = nouvelleExpedition({
+    porteurs, deck: deckRecrues(), strate: strateEpreuve(j), rng, force, sequence: [ZONES[0]!.boss],
+    // les règles des Seuils, quelle que soit la profondeur du joueur
+    combat: { traitsEnnemis: false, assimilation: false, troisiemePhase: false },
+  });
+  j.expedition = { ...x, epreuve: ep.id, forceFixe: force, imposee: true, ...(felee ? { felee: true } : {}) };
   log(j, `Épreuve de la semaine : ${ep.nom}${felee ? ' (Fêlée)' : ''}.`);
   return { ok: true };
 }

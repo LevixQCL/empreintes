@@ -63,6 +63,8 @@ export interface Expedition {
   soinEntre?: number;
   /** l'escouade est partie avec la moitié de ses PV (« À mi-souffle ») : rendue au retour, pour ne pas compter comme de l'Usure */
   demiPv?: boolean;
+  /** « Les recrues » : escouade imposée, pas d'Usure au retour */
+  imposee?: boolean;
   // ---------- le contenu des Strates (31 octobre 2026, strates.ts) ----------
   /** la Halte de cette descente : son numéro dans la Strate, ou « connu » quand toutes ont été vues */
   halte?: number | 'connu';
@@ -189,7 +191,7 @@ export function nouvelleExpedition(opts: {
   porteurs: PorteurEtat[]; deck: GesteDef[]; strate: number; rng: number;
   sequence?: string[]; force?: number; tutoriel?: boolean; facteur?: number; bonus?: BonusMarques;
   /** ce que l'Épreuve change au premier combat (escorte, condition, 3ᵉ phase, règles) */
-  combat?: { escorte?: string[]; condition?: string; troisiemePhase?: boolean; epreuve?: Expedition['regles'] };
+  combat?: { escorte?: string[]; condition?: string; troisiemePhase?: boolean; traitsEnnemis?: false; assimilation?: false; epreuve?: Expedition['regles'] };
 }): Expedition {
   const sequence = opts.sequence ?? sequenceStrate(opts.strate, opts.rng);
   return {

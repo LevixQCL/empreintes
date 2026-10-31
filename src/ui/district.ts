@@ -12,7 +12,7 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
@@ -1743,6 +1743,7 @@ function htmlEpreuves(e: EcranDistrict): string {
 function formatEpreuve(ep: EpreuveDef, strate: number): string {
   const z = zoneDe(strate);
   const g = echap(ennemiDef(z.boss).nom);
+  if (ep.imposee) return `Un combat contre ${echap(ennemiDef(zoneDe(1).boss).nom)}, à la même force pour tous : seule ton adresse compte.`;
   if (ep.enchainement) return `Trois combats d’affilée dans ${echap(z.nom)}, le dernier contre ${g}.`;
   if (ep.meute) return `Un combat contre ${g} et deux bêtes de ${echap(z.nom)}.`;
   return `Un seul combat, contre ${g}.`;
@@ -1751,7 +1752,7 @@ function formatEpreuve(ep: EpreuveDef, strate: number): string {
 /** Le palier de l'Épreuve : normale, ou Fêlée */
 function tuilePalier(j: Jeu, ep: EpreuveDef, felee: boolean, choisi: boolean, strate: number): string {
   const fait = epreuveReussie(j, ep.id, felee);
-  const bref = fait ? 'déjà réussie cette semaine' : felee ? `+${Math.round((FELEE.force - 1) * 100)} % de force · 1 carte${strate >= FELEE.orDes ? ' en or' : ''} et ${FELEE.eclats} Éclats` : '1 carte au choix, argent au moins';
+  const bref = fait ? 'déjà réussie cette semaine' : felee ? `+${hausseFelee(ep)} % de force · 1 carte${strate >= FELEE.orDes ? ' en or' : ''} et ${FELEE.eclats} Éclats` : '1 carte au choix, argent au moins';
   return `<button type="button" role="radio" class="es-tuile${choisi ? ' actif' : ''}" style="--c:${felee ? 'var(--gold)' : '#8FB8DA'}" data-action="palier" data-id="${felee ? 'felee' : 'normale'}" aria-checked="${choisi}">`
     + `${felee ? ICO.cristal : ICO.boost}<strong>${felee ? 'Fêlée' : 'Épreuve'}</strong><small>${bref}</small></button>`;
 }
@@ -1973,6 +1974,24 @@ export function htmlEscouade(e: EcranDistrict): string {
     h += `<p class="es-but">${ICO.strate}<span><strong>${echap(zone.nom)}</strong>Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien : ${echap(ennemiDef(zone.boss).nom)}.</span></p>`;
   }
   h += `</section>`;
+
+  // « Les recrues » (31 octobre 2026) : l'escouade est imposée, rien à composer ; trois portraits et on part
+  if (ep?.imposee) {
+    const ids = Object.keys(ESCOUADE_RECRUES);
+    h += `<section class="es-trio" aria-label="Escouade imposée">` + ids.map((id) => {
+      const p = porteurDef(id);
+      const img = portrait(id);
+      return `<div class="es-place" style="--c:${COULEUR[p.lignee]}"><span class="es-portrait">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 72)}`
+        + `<span class="es-nom"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · PV ${p.pvMax}</small></span></span>`
+        + `<span class="es-cartes pleine">${ICO.cartes}<span>${ESCOUADE_RECRUES[id]!.length} cartes de départ</span></span></div>`;
+    }).join('') + `</section>`
+      + `<p class="es-note">${ICO.soin}Un exercice : niveau 1, cartes en fer, ni Usure ni poste quitté.</p></main>`
+      + `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${ids.map((id) => avatar(id, 30)).join('')}</span>`
+      + `<span><b>Imposée</b><small class="ok">prête</small></span></div>`
+      + `<button type="button" class="btn prim large" data-action="partir"${j.expedition ? ' disabled' : ''}>${ICO.boost}${e.felee ? 'Tenter la Fêlée' : 'Tenter l’Épreuve'}</button></footer>`;
+    h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
+    return h + `</div>`;
+  }
 
   // 2. quelle escouade part (25 octobre 2026) : on choisit une des trois escouades composées dans l'onglet Escouade,
   // on ne compose plus ici (la grille de tous les Porteurs prenait l'écran)

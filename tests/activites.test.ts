@@ -4,7 +4,7 @@ import { FORCE, accessibles, genererCarte, salleCourante } from '../src/core/exp
 import { moduleDef, porteurDef } from '../src/core/donnees';
 import {
   EPREUVES, MISSIONS, barquesMax, naufragesDeLaStrate, rendementMission, secoursPossible, creuseursRequis, CREUSEURS, entrer, envoyerMission, destinationsDuJour, bonusMission, niveauPorteur, jourDe, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
-  remonter, tick, type Jeu, FELEE, forceEpreuve, epreuveReussie,
+  remonter, tick, type Jeu, FELEE, forceEpreuve, epreuveReussie, epreuveDef,
 } from '../src/core/jeu';
 import { ajouter, creerCombat } from '../src/core/combat';
 import { jouerTour } from '../src/core/robot';
@@ -258,6 +258,7 @@ describe('Épreuves de la semaine', () => {
       if (ep.condition) expect(x.combat.condition).toBe(ep.condition);
       if (ep.enchainement) expect(x.sequence).toHaveLength(3); else expect(x.sequence).toHaveLength(1);
       if (ep.pvDepart) for (const p of x.combat.porteurs) expect(p.pv).toBeLessThan(p.pvMax);
+      if (ep.imposee) expect(x.combat.porteurs.map((p) => p.id).sort()).toEqual(['coursier', 'docker', 'guetteur']);
       x.combat.issue = 'victoire';
       j.expedition = { ...x, index: x.sequence.length - 1, terminee: true, cloture: true };
       remonter(j);
@@ -310,6 +311,21 @@ describe('Épreuves de la semaine', () => {
     expect(ajouter(c, premiere.uid).ok).toBe(true);
     const autre = c.main.find((g) => g.porteur && porteurDef(g.porteur).lignee !== porteurDef(premiere.porteur!).lignee);
     if (autre) expect(ajouter(c, autre.uid).ok).toBe(false);
+  });
+
+  it('Les recrues : escouade imposée, même force pour tous, et pas d’Usure', () => {
+    const j = profonde();
+    const t = semaineAvec(j, 'recrues');
+    tick(j, t);
+    const usure = j.porteurs.coursier!.usure;
+    expect(partirEpreuve(j, [], 'recrues', t, 7).ok).toBe(true);
+    const x = j.expedition!;
+    expect(x.forceFixe).toBeCloseTo(forceEpreuve(epreuveDef('recrues')!, 9));
+    x.combat.porteurs[0]!.pv = 1;
+    x.combat.issue = 'defaite';
+    j.expedition = { ...x, terminee: true, cloture: true };
+    remonter(j);
+    expect(j.porteurs.coursier!.usure).toBe(usure);
   });
 
   it('À mi-souffle rend au retour la moitié des PV retirée au départ', () => {
