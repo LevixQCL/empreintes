@@ -5,14 +5,14 @@
 import { portOuvert } from './pillages';
 import { epitheteAffiche, epithetesDe, journalCarte, NOMS_PALIER, palierDe, vecuDe, versPalierSuivant, PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
-import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
+import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, CARTES_COMMUNES, communeOuverte, coutRatelier, gesteCommun, ratelierDe, ratelierPayable, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, gesteCommun, ratelierDe, ratelierPayable, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
-import type { BatimentId, Lignee, ModuleDef, Rarete } from '../core/types';
+import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
 import { CONFIANCE } from '../core/jeu';
@@ -408,7 +408,7 @@ function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: nu
 const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
   energie: 'energie', soin: 'soin', stockage: 'coffre', creuseurs: 'ouvrier', strate: 'descendre', forge: 'chrono',
   plafond: 'tour', chantiers: 'marteau', porteur: 'porteurs', apparence: 'district', entrainement: 'monter', offres: 'cartes', argent: 'cristal',
-  places: 'monter', barques: 'porteurs',
+  places: 'monter', barques: 'porteurs', commune: 'cartes',
 };
 const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${Number.isInteger(v) ? ent(v) : (Math.round(v * 10) / 10).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')}${unite ? ` ${unite}` : ''}`);
 
@@ -980,6 +980,8 @@ const exemplaires = (j: Jeu, moduleId: string) => [...RARETES].reverse().map((r)
 export function feuilleCarte(e: EcranDistrict): string {
   const j = e.j;
   const cle = e.carte;
+  const commune = cle ? communeDef(cle) : undefined;
+  if (commune) return feuilleCommune(e, commune);
   if (!cle || !j.collection[cle]) return '';
   const m = moduleDef(cle);
   const c = j.collection[cle]!;
@@ -1030,6 +1032,104 @@ export function feuilleCarte(e: EcranDistrict): string {
   h += `</section>`;
   h += blocEmpreinte(j, cle);
   return h + `</div></section>`;
+}
+
+/**
+ * Le détail d'une carte commune du district (31 octobre 2026, retours de Luc) : on la touche comme les autres pour voir ses effets,
+ * on voit comment l'améliorer (en montant son bâtiment, niveau par niveau) et on la met au Râtelier ou l'en retire d'ici.
+ * Une fois au Râtelier, elle y reste d'une descente à l'autre : rien à refaire à chaque partie.
+ */
+function feuilleCommune(e: EcranDistrict, c: CarteCommuneDef): string {
+  const j = e.j;
+  const g = gesteCommun(j, c);
+  const bat = batimentDef(c.batiment);
+  const niv = j.batiments[c.batiment] ?? 0;
+  const ouverte = communeOuverte(j, c);
+  const m: ModuleDef = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) };
+  const choisies = ratelierDe(j);
+  const rang = choisies.indexOf(g.id);
+  const pris = rang >= 0;
+  const places = placesRatelier(j);
+  const plein = !pris && choisies.length >= places;
+  const payee = ratelierPayable(j).includes(g.id);
+  // ce que coûte sa place : la sienne si elle est prise, celle qu'elle prendrait sinon
+  const k = pris ? rang : choisies.length;
+  const prixPlace = k >= RATELIER.gratuits ? RATELIER.energie[k - RATELIER.gratuits] ?? 0 : 0;
+  const effets = g.effet ? `<ul class="effets-carte">${effetsDe(m).map((x) => `<li><b>${echap(NOMS_EFFET[x.type])}</b> ${echap(texteEffet(x))}</li>`).join('')}</ul>` : '<p class="aide">Pas d’effet : sa force seule.</p>';
+  let h = `<div class="voile-feuille" data-action="carte-fermer" aria-hidden="true"></div><section class="feuille carte-detail cm-detail" role="dialog" aria-modal="true" aria-label="${echap(g.nom)}"><span class="poignee" aria-hidden="true"></span>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:#CDEFFF">CARTE COMMUNE · ${echap(bat.nom.toUpperCase())}${ouverte ? ` · NIVEAU ${niv}` : ''}</span><h2>${echap(g.nom)}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
+    + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, 1, 1, { origine: bat.nom })}</div><div class="detail-infos">${effets}`
+    + `<p class="aide">Sans lignée ni métal, portée par personne : elle ne s’éteint jamais quand un Porteur tombe.${g.unique ? ' Une fois par combat.' : ''}</p></div></div>`
+    + `<blockquote class="lore-carte">${echap(c.texte)}</blockquote>`;
+  // l'améliorer : c'est son bâtiment qui la fait grandir
+  h += `<section class="bloc fc-prog"><h3 class="titre-bloc">${ICO.monter}L’améliorer</h3>`;
+  if (!ouverte) {
+    h += `<p class="fc-etat">${echap(bat.nom)} niveau ${c.niveau} (aujourd’hui ${niv}) : ${echap(raisonCommune(c.batiment))}</p>`;
+  } else {
+    const max = bat.niveauMax;
+    // le premier niveau du bâtiment où sa force monte vraiment (l'arrondi en saute parfois un)
+    const prochain = Array.from({ length: max - niv }, (_, i) => niv + 1 + i).find((n) => forceCommune(c, n) > forceCommune(c, niv));
+    const echelle = Array.from({ length: max - c.niveau + 1 }, (_, i) => c.niveau + i)
+      .map((n) => `<li class="${n === niv ? 'ici' : n < niv ? 'fait' : ''}"><small>niv. ${n}</small><b>${forceCommune(c, n)}</b></li>`).join('');
+    h += `<p class="fc-aide">Elle grandit avec <b>${echap(bat.nom)}</b> : améliore le bâtiment, et sa force monte.</p>`
+      + `<ol class="cm-echelle ${g.type}" aria-label="Force selon le niveau de ${echap(bat.nom)}">${echelle}</ol>`
+      + (prochain ? `<p class="fc-etat">Prochain gain : au niveau ${prochain} de ${echap(bat.nom)}, force ${forceCommune(c, niv)} → <b>${forceCommune(c, prochain)}</b>.</p>` : `<p class="fc-etat or">${echap(bat.nom)} au niveau maximum : la carte a toute sa force.</p>`)
+      + `<div class="ligne-btn"><button type="button" class="btn sec" data-action="commune-batiment" data-id="${c.batiment}">${ICO.district}Voir ${echap(bat.nom)}</button></div>`;
+  }
+  h += `</section>`;
+  // le Râtelier : la mettre dans le deck une fois pour toutes
+  h += `<section class="bloc"><h3 class="titre-bloc">${ICO.district}Râtelier de l’escouade · ${choisies.length} / ${places}</h3>`;
+  const cout = prixPlace ? `<b class="cm-cout">${ICO.energie}−${prixPlace}</b> énergie à chaque départ` : 'fournie, sans énergie';
+  if (pris) h += `<p class="fc-aide"><b>Au Râtelier</b> : elle descend avec l’escouade à chaque départ, sans rien refaire. Sa place : ${cout}.${payee ? '' : ` <b class="cm-cout">Il manque de l’énergie</b> : au prochain départ, elle restera au district.`}</p>`;
+  else if (!ouverte) h += `<p class="fc-aide">Elle pourra rejoindre le Râtelier quand ${echap(bat.nom)} aura le niveau ${c.niveau}.</p>`;
+  else if (plein) h += `<p class="fc-aide">Le Râtelier est plein : retire d’abord une carte pour faire de la place.${RATELIER.places.find((p) => p.n > places) ? ` Un emplacement de plus au niveau ${RATELIER.places.find((p) => p.n > places)!.noyau} de la Tour du Noyau.` : ''}</p>`;
+  else h += `<p class="fc-aide">Prends-la une fois : elle restera au Râtelier d’une descente à l’autre. Sa place : ${cout}.</p>`;
+  if (ouverte) h += `<div class="ligne-btn"><button type="button" class="btn ${pris ? 'sec' : 'prim'}" data-action="ratelier-basculer" data-id="${g.id}"${j.expedition || plein ? ' disabled' : ''}>${pris ? `${ICO.recycler}Retirer du Râtelier` : `${ICO.ok}Mettre au Râtelier`}</button></div>`;
+  if (j.expedition) h += `<p class="fc-aide">L’escouade est en descente : le Râtelier se change au district.</p>`;
+  return h + `</section></div></section>`;
+}
+
+/**
+ * Les cartes du district qui descendent, au moment du départ (31 octobre 2026, Luc : « un message avant de débuter :
+ * vous avez telle carte de district, le coût est de tant », marqué en rouge sur chaque carte). Fouille, Strate ou Épreuve :
+ * toutes passent par cet écran. Chaque carte montre sa face et son prix ; celle qu'on ne peut pas payer reste au district.
+ */
+function departRatelier(j: Jeu): string {
+  const prevues = ratelierDe(j);
+  if (!prevues.length) return '';
+  const payees = ratelierPayable(j);
+  const total = coutRatelier(j, payees.length);
+  const cartes = prevues.map((id, k) => {
+    const g = gesteCommun(j, communeDef(id)!);
+    const paye = payees.includes(id);
+    const p = k >= RATELIER.gratuits ? RATELIER.energie[k - RATELIER.gratuits] ?? 0 : 0;
+    const etiquette = !paye ? `<em class="es-rt-prix reste">Reste au district</em>` : p ? `<em class="es-rt-prix cout">${ICO.energie}−${ent(p)}</em>` : `<em class="es-rt-prix">Fournie</em>`;
+    return `<li class="${paye ? '' : 'reste'}"><button type="button" class="es-rt-carte" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}${!paye ? ', reste au district faute d’énergie' : p ? `, ${p} énergie` : ', fournie'}. Voir la carte">${tuileFace(g)}</button>${etiquette}</li>`;
+  }).join('');
+  const manque = prevues.length - payees.length;
+  const phrase = total
+    ? `Préparer ces cartes coûte <b class="es-rt-total">${ICO.energie}${ent(total)} énergie</b> à ce départ (tu en as ${ent(Math.floor(j.energie))}).`
+    : `Fournies par le district, sans énergie.`;
+  return `<div class="es-ratelier"><span class="surtitre">${ICO.district}Cartes du district · ${payees.length}</span><ul class="es-rt">${cartes}</ul>`
+    + `<p class="es-freq-aide">${phrase}${manque ? ` Il manque de l’énergie : ${manque > 1 ? `${manque} cartes restent` : 'une carte reste'} au district.` : ''} Elles restent au Râtelier d’une descente à l’autre ; tu les changes dans l’onglet Escouade.</p></div>`;
+}
+
+/** La face d'une carte commune, en petit */
+function tuileFace(g: GesteDef): string {
+  const o = ORIGINE_PAQUETAGE[g.id];
+  return faceCarte({ id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) } as ModuleDef, 1, 1, o ? { origine: o.batiment } : {});
+}
+
+/** Pourquoi une carte commune n'est pas encore prête : une raison du district (comme dans l'onglet Escouade) */
+function raisonCommune(b: BatimentId): string {
+  return ({
+    noyau: 'les creuseurs n’ont pas encore relevé ces galeries.',
+    generateur: 'le courant ne suffit pas encore pour équiper une équipe.',
+    forge: 'le forgeron n’a pas encore l’outillage pour ça.',
+    clinique: 'la Clinique n’a pas encore le matériel.',
+    comptoir: 'les fouilleurs n’en ont pas encore rapporté.',
+  } as Record<BatimentId, string>)[b];
 }
 
 /**
@@ -1224,7 +1324,8 @@ export function htmlCartes(e: EcranDistrict): string {
         const ouverte = communeOuverte(j, c);
         const m: ModuleDef = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) };
         const bas = !ouverte ? `${ICO.cristal}<b>${echap(o.batiment)} niveau ${c.niveau}</b>` : choisies.includes(g.id) ? `<b>Au Râtelier</b> · ${echap(o.texte)}` : echap(o.texte);
-        return `<div class="carte-tuile cl-carte cl-paquetage${ouverte ? '' : ' cl-scellee'}" data-carte="${g.id}">${faceCarte(m, 1, 1, { origine: o.batiment })}<span class="cl-bas"><span class="cl-origine">${bas}</span></span></div>`;
+        // on la touche comme les autres pour voir ses effets et comment l'améliorer (31 octobre 2026, Luc)
+        return `<button type="button" class="carte-tuile cl-carte cl-paquetage${ouverte ? '' : ' cl-scellee'}" data-action="carte" data-id="${g.id}" data-carte="${g.id}" aria-label="${echap(g.nom)}, carte commune${choisies.includes(g.id) ? ', au Râtelier' : ''}. Voir la carte">${faceCarte(m, 1, 1, { origine: o.batiment })}<span class="cl-bas"><span class="cl-origine">${bas}</span></span></button>`;
       }).join('') + (j.legs === 'cle' ? carteCle(j) : '') + `</div>`;
   }
   // le mode d'emploi prend la place des autres feuilles ; en le fermant, on retrouve celle d'où on venait
@@ -1790,9 +1891,7 @@ export function htmlEscouade(e: EcranDistrict): string {
       + `<div class="eq-freqs es-freq" role="img" aria-label="Fréquences du deck : ${n.map((k, i) => `${i + 1} : ${k}`).join(', ')}">`
       + n.map((k, i) => `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}" style="--fc:${couleurFrequence(i + 1)};--n:${Math.min(1, k / Math.max(1, ...n))}"><b class="eq-cristal">${i + 1}</b><small>${k ? `×${k}` : '—'}</small></span>`).join('')
       + `</div><p class="es-freq-aide">Des chiffres qui se suivent font des Résonances${suite.length >= 2 ? ` : ta plus longue suite va de <b>${suite[0]} à ${suite[suite.length - 1]}</b>` : ''}. Un chiffre absent coupe la suite${jokers ? ` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</p>`;
-    // le Râtelier (30 octobre 2026) : ce que coûte la préparation des cartes communes, et celle qui reste au district faute d'énergie
-    const prevues = ratelierDe(j).length, payees = ratelierPayable(j).length, prix = coutRatelier(j, payees);
-    if (prix || payees < prevues) h += `<p class="es-freq-aide">${ICO.energie}Râtelier : ${payees} carte${payees > 1 ? 's' : ''} commune${payees > 1 ? 's' : ''}${prix ? `, <b>${prix} énergie</b> au départ` : ''}${payees < prevues ? ` · il manque de l’énergie : ${prevues - payees} reste${prevues - payees > 1 ? 'nt' : ''} au district` : ''}.</p>`;
+    h += departRatelier(j);
     if (maigre) {
       const aRemplir = e.escouade.filter((id) => j.porteurs[id]!.modules.length < DISTRICT.cartesMax);
       const cible = aRemplir.sort((x, y) => j.porteurs[x]!.modules.length - j.porteurs[y]!.modules.length)[0];
@@ -1813,10 +1912,12 @@ export function htmlEscouade(e: EcranDistrict): string {
   h += `<p class="es-note">${ICO.soin}Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p></main>`;
 
   const pret = e.escouade.length === 3 && !maigre;
+  // l'énergie des cartes du Râtelier, rappelée sur le bouton (31 octobre 2026, Luc)
+  const coutDepart = e.escouade.length ? coutRatelier(j, ratelierPayable(j).length) : 0;
   h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
     + `<span><b>${e.escouade.length} / 3</b><small class="${maigre ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? `Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? `${deck} cartes · ${deckMin} au moins` : `${deck} cartes, prêt`}</small></span></div>`
-    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${fl ? `${ICO.monter}Monter` : pi ? `${ICO.grappin}Piller` : ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}</button></footer>`;
-  h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : e.deck ? feuilleDeck(e) : feuillePorteur(e);
+    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${fl ? `${ICO.monter}Monter` : pi ? `${ICO.grappin}Piller` : ep ? `${ICO.boost}Tenter l’Épreuve` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;
+  h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : e.deck ? feuilleDeck(e) : e.carte ? feuilleCarte(e) : feuillePorteur(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;
 }

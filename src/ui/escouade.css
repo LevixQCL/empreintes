@@ -151,3 +151,21 @@
 .es-equipe.vide{cursor:default;opacity:.55}
 button.es-place.vide{width:100%;border:0;font:inherit;cursor:pointer;color:inherit}
 @media (max-width:380px){.es-equipe-visages .avatar{width:24px;height:26px}}
+
+/* Les cartes du district au départ (31 octobre 2026, Luc) : leur face et leur prix, en rouge quand elles coûtent de l'énergie */
+.es-ratelier{display:grid;gap:8px;padding-top:12px;box-shadow:inset 0 1px 0 rgba(205,239,255,.1)}
+.es-ratelier>.surtitre{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--es-glace)}
+.es-ratelier>.surtitre::before{display:none}
+.es-ratelier>.surtitre svg{width:14px;height:14px}
+.es-rt{display:flex;gap:10px;margin:0;padding:0;list-style:none;flex-wrap:wrap}
+.es-rt li{display:grid;justify-items:center;gap:5px;width:74px}
+.es-rt-carte{display:block;width:100%;padding:0;border:0;background:none;cursor:pointer;border-radius:8px}
+.es-rt li.reste .es-rt-carte{filter:grayscale(.85) brightness(.6)}
+.es-rt-prix{display:inline-flex;align-items:center;gap:3px;font-style:normal;font-family:var(--mono);font-size:12px;color:var(--es-doux);white-space:nowrap}
+.es-rt-prix svg{width:12px;height:12px}
+.es-rt-prix.cout{padding:2px 7px;border-radius:999px;color:#FFD9CF;background:rgba(226,115,90,.18);box-shadow:inset 0 0 0 1px rgba(226,115,90,.6)}
+.es-rt-prix.reste{font-size:11px;color:#9AA3B2}
+.es-rt-total{display:inline-flex;align-items:center;gap:3px;color:var(--danger)!important}
+.es-rt-total svg{width:13px;height:13px}
+.es-btn-cout{display:inline-flex;align-items:center;gap:2px;margin-left:8px;padding:2px 7px;border-radius:999px;font-family:var(--mono);font-size:12.5px;color:#FFE3DA;background:rgba(160,40,20,.45);box-shadow:inset 0 0 0 1px rgba(255,160,140,.55)}
+.es-btn-cout svg{width:12px;height:12px}

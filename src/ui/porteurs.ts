@@ -147,6 +147,8 @@ function tuileCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean, scelle
   const corps = `<span class="eq-t-face">${face}${badges}</span>${sous ? `<span class="eq-t-sous">${sous}</span>` : ''}`;
   return cle
     ? `<li><button type="button" class="eq-tuile" data-action="carte" data-id="${cle}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}${g.effet ? `, ${nomsEffets(g)}` : ''}${prete(cle) ? ', peut monter' : ''}. Voir la carte">${corps}</button></li>`
+    // une carte commune du Râtelier s'ouvre aussi d'un toucher (31 octobre 2026, Luc : « on ne sait pas appuyer dessus comme les autres »)
+    : origine && !scellee && g.id !== 'cle-legs' ? `<li><button type="button" class="eq-tuile" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}, carte commune. Voir la carte">${corps}</button></li>`
     : `<li><div class="eq-tuile fixe${scellee ? ' scellee' : ''}">${corps}</div></li>`;
 }
 

@@ -128,3 +128,15 @@ describe('Les effets des cartes communes', () => {
     expect([...s.pioche, ...s.main, ...s.defausse].some((g) => g.uid === amp.uid)).toBe(false);
   });
 });
+
+// 31 octobre 2026 (Luc : « savoir améliorer les cartes de district ») : la feuille du bâtiment dit ce que gagnent ses cartes
+import { gainsAmelioration } from '../src/core/jeu';
+describe('Améliorer les cartes communes', () => {
+  it('le niveau suivant du bâtiment annonce la force gagnée et les cartes ouvertes', () => {
+    const j = nouveauJeu(0);
+    const noyau = gainsAmelioration(j, 'noyau').filter((g) => g.quoi === 'commune');
+    expect(noyau.some((g) => g.texte.includes('Pavois de cuivre') && g.apres! > g.avant!)).toBe(true);
+    const forge = gainsAmelioration(j, 'forge').filter((g) => g.quoi === 'commune');
+    expect(forge.some((g) => g.texte.includes('Lame d’atelier'))).toBe(true);
+  });
+});

@@ -1,7 +1,7 @@
 // Couche 3 — la vie du district : chantiers et Forge, postes, cartes confiées, creuseurs, entraînement, Comptoir, quotidiens, objectif réclamé.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, moduleDef, carteId } from '../donnees';
+import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, moduleDef, carteId, CARTES_COMMUNES, forceCommune } from '../donnees';
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
@@ -82,7 +82,7 @@ export const chantiersMax = (j: Jeu) => (j.batiments.noyau >= DISTRICT.chantiers
 
 /** Une chose que le niveau suivant d'un bâtiment change : un chiffre qui monte (avant → après) ou un déblocage */
 export interface GainNiveau {
-  quoi: 'energie' | 'soin' | 'stockage' | 'creuseurs' | 'strate' | 'forge' | 'plafond' | 'chantiers' | 'porteur' | 'entrainement' | 'offres' | 'argent' | 'places' | 'barques';
+  quoi: 'energie' | 'soin' | 'stockage' | 'creuseurs' | 'strate' | 'forge' | 'plafond' | 'chantiers' | 'porteur' | 'entrainement' | 'offres' | 'argent' | 'places' | 'barques' | 'commune';
   texte: string;
   avant?: number;
   apres?: number;
@@ -139,6 +139,15 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
     if (barquesMax(apres) > barquesMax(j)) g.push({ quoi: 'barques', texte: 'Barques en mer', avant: barquesMax(j), apres: barquesMax(apres), detail: 'des missions en même temps' });
     if (plafondEntrainement(apres) > plafondEntrainement(j)) g.push({ quoi: 'entrainement', texte: 'Entraînement à la Tour jusqu’au niveau', avant: plafondEntrainement(j), apres: plafondEntrainement(apres), detail: `séances ${Math.round(ENTRAINEMENT.vitesseParNoyau * 100)} % plus courtes` });
     if (niv + 1 === DISTRICT.chantiersNoyau2) g.push({ quoi: 'chantiers', texte: 'Deux chantiers en même temps' });
+  }
+  // les cartes communes du Râtelier (31 octobre 2026, Luc : « savoir améliorer les cartes de district ») : on les améliore
+  // en montant leur bâtiment ; la feuille du bâtiment le dit, carte par carte
+  for (const c of CARTES_COMMUNES.filter((x) => x.batiment === b)) {
+    if (c.niveau === niv + 1) g.push({ quoi: 'commune', texte: `Nouvelle carte commune : ${c.geste.nom}`, detail: 'à prendre au Râtelier de l’escouade' });
+    else if (c.niveau <= niv) {
+      const avant = forceCommune(c, niv), apres = forceCommune(c, niv + 1);
+      if (apres > avant) g.push({ quoi: 'commune', texte: `Force de la carte ${c.geste.nom}`, avant, apres });
+    }
   }
   return g;
 }

@@ -48,6 +48,8 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'guide-fermer': if (app.mode === 'combat') { K.guide = null; K.regles = true; } else D.guide = null; break;
     case 'carte': D.carte = id; break;
     case 'carte-fermer': D.carte = null; break;
+    // depuis le détail d'une carte commune : le bâtiment qui la fait grandir (31 octobre 2026)
+    case 'commune-batiment': ouvrir('archipel'); D.selection = id as typeof D.selection; break;
     case 'filtre': D.filtre = (id as typeof D.filtre) || 'tout'; window.scrollTo(0, 0); break;
     case 'fermer': D.selection = null; break;
     case 'ameliorer': resultat(J.ameliorer(app.jeu, id as BatimentId, Date.now())); break;

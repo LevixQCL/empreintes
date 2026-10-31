@@ -274,3 +274,15 @@
   .bulle-d.prete:not(.ouverte) .bulle-med{animation:none;box-shadow:inset 0 0 0 1.5px rgba(255,214,150,.75),0 0 12px rgba(242,170,80,.45)}
   #app[data-mode="district"] .archipel-haut>*{animation:none!important}
 }
+
+/* Détail d'une carte commune (31 octobre 2026) : l'échelle de force selon le niveau du bâtiment, le prix de sa place en rouge */
+.cm-echelle{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 2px;padding:0;list-style:none}
+.cm-echelle li{display:grid;justify-items:center;min-width:44px;padding:5px 6px 6px;border-radius:9px;background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.1)}
+.cm-echelle small{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:#93A3B8}
+.cm-echelle b{font-family:var(--mono);font-size:16px;font-weight:600;color:#C9D6E6}
+.cm-echelle li.fait b{color:#93A3B8}
+.cm-echelle li.ici{background:rgba(242,213,140,.12);box-shadow:inset 0 0 0 1px rgba(242,213,140,.55),0 0 12px rgba(242,213,140,.18)}
+.cm-echelle li.ici b{color:#F2D58C}
+.cm-echelle li.ici small{color:#F2D58C}
+.cm-cout{display:inline-flex;align-items:center;gap:3px;color:var(--danger)!important;font-weight:600;white-space:nowrap}
+.cm-cout svg{width:13px;height:13px}
