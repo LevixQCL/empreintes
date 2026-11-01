@@ -38,6 +38,12 @@ function ordres(groupe: Geste[]): Geste[][] {
     const fin = croissant.filter((g) => g.effet?.type === t);
     if (fin.length) r.push([...croissant.filter((g) => !fin.includes(g)), ...fin]);
   }
+  // Amorce : juste avant la carte la plus forte (elle lui donne sa force en plus)
+  for (const am of croissant.filter((g) => g.effet?.type === 'amorce')) {
+    const reste = croissant.filter((g) => g !== am);
+    const fort = reste.reduce((m, g) => (g.v > m.v ? g : m), reste[0]!);
+    if (fort) { const i = reste.indexOf(fort); r.push([...reste.slice(0, i), am, ...reste.slice(i)]); }
+  }
   // les Fréquences libres (Accord, Diapason) : à chaque place possible
   const accords = croissant.filter((g) => frequenceLibre(g.effet));
   for (const a of accords) {

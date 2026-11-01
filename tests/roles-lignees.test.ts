@@ -38,11 +38,14 @@ describe('Rôles des lignées', () => {
     expect(v1).toBe(v2);
   });
 
-  it('les quatre cartes « Troubler » sont des attaques qui désarment', () => {
-    for (const id of ['murmure', 'miroir-brume', 'meche-or', 'pressentiment']) {
+  it('les quatre anciennes cartes « Troubler » restent des attaques Résonantes, chacune avec son effet (1er novembre 2026)', () => {
+    // avant, les quatre désarmaient à 30-40 % : presque des doublons (remarque de Luc)
+    const attendu: Record<string, string> = { murmure: 'desarmer', 'miroir-brume': 'amorce', 'meche-or': 'lecture', pressentiment: 'sourdine' };
+    for (const [id, effet] of Object.entries(attendu)) {
       const m = moduleDef(id);
       expect(m.type).toBe('atk');
-      expect(m.effet?.type).toBe('desarmer');
+      expect(m.lignee).toBe('reso');
+      expect(m.effet?.type).toBe(effet);
     }
   });
 });

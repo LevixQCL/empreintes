@@ -905,13 +905,21 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
   if (de('lecture') && s.ennemi.pv > 0 && s.ennemi.felure !== undefined && !s.ennemi.felureBrisee) briser(s, s.ennemi, (ev) => evs.push(ev), suite >= 3);
   // Décharge (Moteur) : elle vide le Flux et gagne une part de force par Flux vidé (le facteur est lu avant de vider)
   const dc = de('decharge');
-  const vide = dc ? s.flux : 0;
+  // Éclair captif ne prend qu'une partie du Flux (max) ; Noyau instable remplit le Flux s'il le trouve vide (recharge)
+  const vide = dc ? Math.min(s.flux, dc.max ?? REGLES.fluxMax) : 0;
   // tous les multiplicateurs de la carte, ceux-là mêmes qu'affiche la loupe (detailForce)
   const facteurs = facteursGeste(s, g, mult, rang, s.chaine, eteinte, suite);
   if (dc && vide) {
-    s.flux = 0;
-    log(s, `Décharge : ${vide} Flux vidé${vide > 1 ? 's' : ''}, +${Math.round(dc.part * vide * 100)} % de force.`, { sorte: 'flux' });
+    s.flux -= vide;
+    log(s, `Décharge : ${vide} Flux ${dc.max ? 'pris' : 'vidé'}${vide > 1 ? 's' : ''}, +${Math.round(dc.part * vide * 100)} % de force.`, { sorte: 'flux' });
     evs.push({ kind: 'effet', cible: 'escouade', texte: 'Décharge' });
+  } else if (dc?.recharge && !vide) {
+    const avant = s.flux;
+    s.flux = Math.min(REGLES.fluxMax, s.flux + dc.recharge);
+    if (s.flux > avant) {
+      log(s, `Décharge : le Flux était vide, ${g.nom} le remplit (+${s.flux - avant}).`, { sorte: 'flux' });
+      evs.push({ kind: 'flux', gain: s.flux - avant });
+    }
   }
   const faveur = s.condition && FAVEUR_CONDITION[s.condition] === ligneeGeste(g) ? 1.2 : 1;
   const percant = !!de('percant');
@@ -1033,6 +1041,13 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
       s.intention.v = Math.round(avant * (1 - ef.part));
       log(s, `Désarmé : sa prochaine attaque passe de ${avant} à ${s.intention.v}.`, { sorte: 'effet' });
       evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Désarmé', rang: s.ennemi.rang ?? 0 });
+    } else if (ef?.type === 'sourdine' && s.ennemi.pv > 0 && (s.intention.type === 'atk' || s.intention.type === 'bouclier' || s.intention.type === 'soin')) {
+      // Sourdine : comme Désarmer, mais sur tout ce que l'ennemi prépare (attaque, bouclier ou soin)
+      const avant = s.intention.v;
+      s.intention.v = Math.round(avant * (1 - ef.part));
+      const quoi = s.intention.type === 'atk' ? 'sa prochaine attaque' : s.intention.type === 'bouclier' ? 'son bouclier' : 'son soin';
+      log(s, `Sourdine : ${quoi} passe de ${avant} à ${s.intention.v}.`, { sorte: 'effet' });
+      evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Sourdine', rang: s.ennemi.rang ?? 0 });
     } else if (ef?.type === 'fissure' && s.ennemi.pv > 0) {
       s.ennemi.fissure = Math.max(s.ennemi.fissure ?? 0, ef.part);
       s.ennemi.fissureTours = 2;
@@ -1091,7 +1106,12 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   const tombes = s.porteurs.filter((p) => p.pv <= 0).length;
   if (sc && tombes) mettre(`Groupe de secours (${tombes} à terre)`, 1 + sc.part * tombes);
   const dc = de('decharge');
-  if (dc) mettre(`Décharge (${s.flux} Flux)`, 1 + dc.part * s.flux);
+  const pris = dc ? Math.min(s.flux, dc.max ?? REGLES.fluxMax) : 0;
+  if (dc) mettre(`Décharge (${pris} Flux)`, 1 + dc.part * pris);
+  // Amorce : la carte posée juste avant (si son Porteur est debout) donne de la force à celle-ci
+  const prec = rang > 0 ? chaine[rang - 1] : undefined;
+  const am = prec ? effetsEnJeu(prec, chaine, rang - 1, estATerre(s, prec.porteur)).find((e): e is Extract<Effet, { type: 'amorce' }> => e?.type === 'amorce') : undefined;
+  if (am) mettre(`Amorce (${prec!.nom})`, 1 + am.part);
   // Unisson (Chœur) : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne
   const un = de('unisson');
   if (un) {

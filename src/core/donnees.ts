@@ -41,6 +41,10 @@ export const NOMS_LIGNEE: Record<Lignee | 'neutre', { nom: string; court: string
 // Rôles des lignées (29 octobre 2026, mesuré au robot, docs/robot-archetypes.md) : les attaques Génés passent à 65 % de leur force
 // (les Génés tiennent, ils ne gagnaient plus besoin de personne) ; Voile du murmure, Miroir de brume, Mèche d’or et Sablier inversé
 // deviennent des attaques « Troubler » (désarmer) à 70 % de leur ancien bouclier (les Résonants affaiblissent l'ennemi).
+// Refonte des quasi-doublons (1er novembre 2026, remarque de Luc, docs/refonte-doublons.md) : aucune carte supprimée ; celles qui
+// faisaient la même chose qu'une autre en plus gros changent d'effet (Miroir de brume : Amorce ; Mèche d’or : Lecture ;
+// Sablier inversé : Sourdine ; Éclat qui chante : Diapason ; Éclair captif et Noyau instable : deux Décharges différentes ;
+// Cœur-turbine : Élan ; Branchies : soin Vague ; Cuir de récif : Riposte ; Jambes à ressort : Fréquences 7-8-6).
 // (Le tableau garde son nom historique, MODULES : dans la première version, les cartes étaient des Modules greffés.)
 //
 // Une carte existe dans les cinq métaux. Un exemplaire se note « carte@métal » (« jambes-ressort@or »). Le métal :
@@ -86,11 +90,11 @@ export const MODULES: ModuleDef[] = [
   c('eclat', 'Éclat', 'reso', 'fer', 'atk', 11, [8, 7, 9], { type: 'crescendo', part: 0.3 }),
 
   // ---------- Augmentés : Fréquences basses et moyennes ----------
-  c('jambes-ressort', 'Jambes à ressort', 'tech', 'fer', 'atk', 11, [4, 5, 3], { type: 'elan' }),
+  c('jambes-ressort', 'Jambes à ressort', 'tech', 'fer', 'atk', 11, [7, 8, 6], { type: 'elan' }),
   c('gant-arc', 'Gant à arc', 'tech', 'fer', 'atk', 13, [7, 6, 8], { type: 'flux', v: 1 }),
   c('oeil-relais', 'Œil-relais', 'tech', 'fer', 'atk', 14, [5, 3, 6], { type: 'percant' }),
   c('grappin-cable', 'Grappin à câble', 'tech', 'fer', 'bouclier', 8, [4, 5, 3], { type: 'elan' }),
-  c('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', 'atk', 15, [7, 6, 8], { type: 'flux', v: 1 }),
+  c('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', 'atk', 15, [8, 7, 6], { type: 'elan' }),
   c('oeil-brouilleur', 'Œil-brouilleur', 'tech', 'cuivre', 'atk', 11, [6, 7, 5], { type: 'desarmer', part: 0.3 }),
   c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 36, [8, 6, 4], { type: 'percant' }, true),
   c('dorsale', 'Dorsale renforcée', 'tech', 'argent', 'bouclier', 20, [3, 4, 7], { type: 'elan' }),
@@ -100,24 +104,24 @@ export const MODULES: ModuleDef[] = [
   // ---------- Génés : Fréquences basses ----------
   c('glande-ambre', 'Glande d’ambre', 'bio', 'fer', 'soin', 7, [3, 2, 4], { type: 'vague' }),
   c('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', 'atk', 10, [1, 3, 2], { type: 'siphon', part: 0.6 }),
-  c('cuir-recif', 'Cuir de récif', 'bio', 'fer', 'bouclier', 11, [4, 5, 3], { type: 'rempart', part: 0.5 }),
+  c('cuir-recif', 'Cuir de récif', 'bio', 'fer', 'bouclier', 11, [4, 5, 3], { type: 'riposte', part: 0.4 }),
   c('yeux-nocturnes', 'Yeux nocturnes', 'bio', 'fer', 'atk', 9, [3, 4, 2], { type: 'fissure', part: 0.25 }),
   c('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', 'bouclier', 15, [2, 4, 3], { type: 'rempart', part: 0.5 }),
-  c('branchies', 'Branchies des Fondations', 'bio', 'cuivre', 'bouclier', 13, [2, 1, 3], { type: 'rempart', part: 0.5 }),
+  c('branchies', 'Branchies des Fondations', 'bio', 'cuivre', 'soin', 7, [2, 1, 3], { type: 'vague' }),
   c('carapace-mere', 'Carapace-mère', 'bio', 'argent', 'bouclier', 14, [5, 6, 1], { type: 'rempart', part: 0.75 }),
   c('sang-ambre', 'Sang d’ambre', 'bio', 'argent', 'soin', 8, [3, 2, 5], { type: 'vague' }),
   c('coeur-meute', 'Cœur de meute', 'bio', 'or', 'atk', 7, [5, 4, 3], { type: 'siphon', part: 0.5 }),
   c('mue-totale', 'Mue totale', 'bio', 'or', 'soin', 16, [1, 2, 4], { type: 'vague' }),
 
   // ---------- Résonants : Fréquences hautes ----------
-  c('eclat-chant', 'Éclat qui chante', 'reso', 'fer', 'atk', 13, [8, 7, 9], { type: 'crescendo', part: 0.3 }),
-  c('miroir-brume', 'Miroir de brume', 'reso', 'fer', 'atk', 7, [8, 9, 7], { type: 'desarmer', part: 0.3 }),
+  c('eclat-chant', 'Éclat qui chante', 'reso', 'fer', 'atk', 11, [7, 9, 8], { type: 'diapason' }),
+  c('miroir-brume', 'Miroir de brume', 'reso', 'fer', 'atk', 7, [8, 9, 7], { type: 'amorce', part: 0.5 }),
   c('encre-ancienne', 'Encre ancienne', 'reso', 'fer', 'atk', 11, [6, 7, 5], { type: 'fissure', part: 0.25 }),
-  c('meche-or', 'Mèche d’or', 'reso', 'fer', 'atk', 8, [7, 8, 6], { type: 'desarmer', part: 0.3 }),
+  c('meche-or', 'Mèche d’or', 'reso', 'fer', 'atk', 9, [7, 8, 6], { type: 'lecture' }),
   c('plume-givre', 'Plume de givre', 'reso', 'cuivre', 'atk', 11, [9, 8, 7], { type: 'desarmer', part: 0.4 }),
   c('ombre-serpent', 'Ombre de serpent', 'reso', 'cuivre', 'atk', 14, [9, 6, 8], { type: 'fissure', part: 0.3 }),
   c('ombre-ailee', 'Ombre ailée', 'reso', 'argent', 'atk', 26, [9, 7, 8], { type: 'fissure', part: 0.4 }, true),
-  c('pressentiment', 'Sablier inversé', 'reso', 'argent', 'atk', 8, [7, 8, 6], { type: 'desarmer', part: 0.4 }),
+  c('pressentiment', 'Sablier inversé', 'reso', 'argent', 'atk', 8, [6, 8, 7], { type: 'sourdine', part: 0.4 }),
   c('chant-abysses', 'Chant des abysses', 'reso', 'or', 'atk', 26, [7, 8, 9], { type: 'accord' }),
   c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 22, [9, 8, 7], { type: 'crescendo', part: 0.3 }),
 
@@ -126,8 +130,8 @@ export const MODULES: ModuleDef[] = [
   c('bobine-recuperation', 'Bobine de récupération', 'tech', 'fer', 'bouclier', 9, [3, 2, 4], { type: 'flux', v: 1 }),
   c('condensateur', 'Condensateur', 'tech', 'cuivre', 'atk', 12, [5, 4, 6], { type: 'flux', v: 1 }),
   c('decharge-arc', 'Décharge d’arc', 'tech', 'cuivre', 'atk', 16, [6, 7, 5], { type: 'decharge', part: 0.5 }),
-  c('eclair-captif', 'Éclair captif', 'tech', 'argent', 'atk', 16, [4, 5, 7], { type: 'decharge', part: 0.55 }),
-  c('noyau-instable', 'Noyau instable', 'tech', 'or', 'atk', 38, [7, 6, 2], { type: 'decharge', part: 0.65 }, true),
+  c('eclair-captif', 'Éclair captif', 'tech', 'argent', 'atk', 16, [4, 5, 7], { type: 'decharge', part: 0.9, max: 1 }),
+  c('noyau-instable', 'Noyau instable', 'tech', 'or', 'atk', 38, [7, 6, 2], { type: 'decharge', part: 0.65, recharge: 2 }, true),
   // La Carapace (Doran) : parer, puis frapper avec tout le bouclier accumulé
   c('coup-epaule', 'Épaulière de roche', 'bio', 'fer', 'bouclier', 10, [3, 2, 4], { type: 'riposte', part: 0.5 }),
   c('queue-massue', 'Queue-massue', 'bio', 'cuivre', 'bouclier', 11, [4, 5, 3], { type: 'riposte', part: 0.6 }),
@@ -261,7 +265,7 @@ function renforcer(e: Effet, k: number): Effet {
   if (k <= 1 || e.type === 'decharge') return e;
   if (e.type === 'flux') return { ...e, v: e.v + (k >= 1.5 ? 1 : 0) };
   // un plafond pour les parts qui retirent ou gardent (90 %) et pour le Siphon (100 %) ; les bonus de force des voies n'en ont pas
-  const plafond = e.type === 'siphon' ? 1 : ['riposte', 'unisson', 'curee', 'faille', 'surtension'].includes(e.type) ? Infinity : 0.9;
+  const plafond = e.type === 'siphon' ? 1 : ['riposte', 'unisson', 'curee', 'faille', 'surtension', 'amorce'].includes(e.type) ? Infinity : 0.9;
   if ('part' in e) return { ...e, part: Math.min(plafond, Math.round(e.part * k * 100) / 100) };
   return e;
 }

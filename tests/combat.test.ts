@@ -106,7 +106,7 @@ describe('Fréquences au choix (argent et plus)', () => {
   it('une carte prend la Fréquence qui prolonge la suite, et on peut en changer', () => {
     const s = creerCombat({ porteurs: equipe(), ennemiId: 'remanent', rng: 3 });
     const bond = { ...gesteDeCarte('bond@fer', 'ilka'), uid: 'a' }; // Fréquence 4
-    const jambes = { ...gesteDeCarte('jambes-ressort@argent', 'ilka'), uid: 'b' }; // Fréquences 4 ou 5
+    const jambes = { ...gesteDeCarte('lames-jumelles@argent', 'ilka'), uid: 'b' }; // Fréquences 4 ou 5
     expect(jambes.fs).toEqual([4, 5]);
     s.main = [bond, jambes];
     ajouter(s, 'a');
@@ -121,7 +121,7 @@ describe('Fréquences au choix (argent et plus)', () => {
 
   it('une carte posée change de place dans la chaîne sans revenir en main', () => {
     const s = creerCombat({ porteurs: equipe(), ennemiId: 'remanent', rng: 3 });
-    const jambes = { ...gesteDeCarte('jambes-ressort@argent', 'ilka'), uid: 'b' }; // Fréquences 4 ou 5
+    const jambes = { ...gesteDeCarte('lames-jumelles@argent', 'ilka'), uid: 'b' }; // Fréquences 4 ou 5
     const bond = { ...gesteDeCarte('bond@fer', 'ilka'), uid: 'a' }; // Fréquence 4
     s.main = [jambes, bond];
     ajouter(s, 'b');

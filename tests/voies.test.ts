@@ -102,7 +102,7 @@ describe('Les voies : étape 1', () => {
     expect(voie('riposte').every((m) => m.lignee === 'bio' && m.f.every((f) => f <= 5))).toBe(true);
     expect(voie('decharge').every((m) => m.lignee === 'tech' && m.f.every((f) => f >= 2 && f <= 7))).toBe(true);
     expect([...voie('diapason'), ...voie('unisson')].every((m) => m.lignee === 'reso' && m.f.every((f) => f >= 6))).toBe(true);
-    expect(voie('riposte').length + voie('decharge').length + voie('diapason').length + voie('unisson').length).toBe(12);
+    expect(voie('riposte').length + voie('decharge').length + voie('diapason').length + voie('unisson').length).toBe(14); // + Cuir de récif (Riposte) et Éclat qui chante (Diapason), 1er novembre 2026
     // chaque carte de voie existe et appartient à la lignée du Porteur de sa voie
     for (const v of VOIES) for (const id of v.cartes) expect(MODULES.find((m) => m.id === id)?.lignee, id).toBe(porteurDef(v.porteur).lignee);
   });

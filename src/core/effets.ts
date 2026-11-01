@@ -34,6 +34,8 @@ export const NOMS_EFFET: Record<TypeEffet, string> = {
   surtension: 'Surtension',
   empreinte: 'Empreinte',
   releve: 'Relève',
+  sourdine: 'Sourdine',
+  amorce: 'Amorce',
 };
 
 /** Phrase courte qui explique l'effet au joueur */
@@ -50,7 +52,9 @@ export function texteEffet(e: Effet): string {
     case 'vague': return 'Soigne toute l’escouade.';
     case 'rempart': return `Garde ${pc(e.part)} du bouclier d’escouade restant pour le tour suivant.`;
     case 'riposte': return `Après son bouclier, frappe de ${pc(e.part)} du bouclier d’escouade.`;
-    case 'decharge': return `Vide le Flux : +${pc(e.part)} de force par Flux vidé.`;
+    case 'decharge':
+      if (e.max) return `Prend ${e.max} Flux au plus : +${pc(e.part)} de force par Flux pris ; le reste est gardé.`;
+      return `Vide le Flux : +${pc(e.part)} de force par Flux vidé.${e.recharge ? ` S’il était déjà vide, le remplit (+${e.recharge}).` : ''}`;
     case 'diapason': return 'Fréquence libre : reprend celle de la carte posée juste avant.';
     case 'unisson': return `+${pc(e.part)} de force pour chaque autre carte de la même Fréquence dans la chaîne.`;
     case 'curee': return `+${pc(e.part)} de force si l’ennemi visé est fissuré ou à moins de la moitié de ses PV.`;
@@ -66,6 +70,8 @@ export function texteEffet(e: Effet): string {
     case 'pioche': return 'Au tour suivant, ta main compte une carte de plus.';
     case 'breche': return 'Brise tout le bouclier de l’ennemi visé avant de frapper.';
     case 'secours': return `+${pc(e.part)} de force pour chaque Porteur à terre.`;
+    case 'sourdine': return `L’ennemi visé perd ${pc(e.part)} de ce qu’il prépare : attaque, bouclier ou soin.`;
+    case 'amorce': return `La carte posée juste après elle gagne +${pc(e.part)} de force.`;
   }
 }
 
@@ -83,7 +89,7 @@ export function formuleEffet(e: Effet): string {
     case 'vague': return 'soigne tous';
     case 'rempart': return `garde ${pc(e.part)}`;
     case 'riposte': return `frappe ${pc(e.part)} du bouclier`;
-    case 'decharge': return `+${pc(e.part)} / Flux vidé`;
+    case 'decharge': return e.max ? `+${pc(e.part)}, ${e.max} Flux` : e.recharge ? `+${pc(e.part)} / Flux, recharge` : `+${pc(e.part)} / Flux vidé`;
     case 'diapason': return 'Fréq. d’avant';
     case 'unisson': return `+${pc(e.part)} / pareille`;
     case 'curee': return `+${pc(e.part)} proie blessée`;
@@ -99,6 +105,8 @@ export function formuleEffet(e: Effet): string {
     case 'pioche': return '+1 carte au tour suivant';
     case 'breche': return 'brise le bouclier';
     case 'secours': return `+${pc(e.part)} / Porteur à terre`;
+    case 'sourdine': return `−${pc(e.part)} intention`;
+    case 'amorce': return `+${pc(e.part)} suivante`;
   }
 }
 

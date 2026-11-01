@@ -66,6 +66,9 @@ export const ICONES_EFFET: Record<TypeEffet, string> = {
   breche: trait('<path d="M12 2.5l7 2.6v5.2c0 4.4-3 7.6-7 8.8-4-1.2-7-4.4-7-8.8V5.1z"/><path d="M12 5l-2 5 3 2-2 6"/>'),
   secours: trait('<path d="M12 4v16M4 12h16"/><circle cx="12" cy="12" r="9"/>'),
   releve: trait('<path d="M12 21V8"/><path d="M7 12l5-5 5 5"/><path d="M5 4h14"/>'),
+  // la refonte des quasi-doublons (1er novembre 2026) : une onde coupée (Sourdine), une étincelle qui passe à la suivante (Amorce)
+  sourdine: trait('<path d="M2 12c2-4 4-4 6 0"/><path d="M14 12c2 4 4 4 6 0" stroke-dasharray="2 2.5"/><path d="M11 5v14"/>'),
+  amorce: trait('<path d="M4 18l6-6"/><path d="M10 6v4M8 8h4"/><path d="M14 12l6 0M17 9l3 3-3 3"/>'),
 };
 /** la couleur de l'arête du cadre, de la barre et de la capsule de valeur */
 const COULEUR_ACTION: Record<Action, string> = { atk: '#ff6a4a', bouclier: '#5fb0ff', soin: '#7fe06a' };

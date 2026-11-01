@@ -280,7 +280,7 @@ const REGLE: Record<TypeEffet, () => string> = {
   accord: () => 'Fréquence libre, notée ∗ : la carte prend toujours celle qui prolonge ta suite.',
   crescendo: () => `+${fourchette('crescendo')} de force pour chaque carte posée avant elle dans la chaîne.`,
   riposte: () => `Une carte de bouclier qui riposte : après avoir donné son bouclier, elle frappe l’ennemi de ${fourchette('riposte')} du bouclier d’escouade. Le bouclier n’est pas dépensé.`,
-  decharge: () => `Vide tout le Flux : +${fourchette('decharge')} de force par Flux vidé. Sans Flux, elle frappe normalement.`,
+  decharge: () => `Vide tout le Flux : +${fourchette('decharge')} de force par Flux vidé. Sans Flux, elle frappe normalement. Deux variantes : l’Éclair captif ne prend qu’un Flux et garde le reste ; le Noyau instable, s’il trouve le Flux vide, le remplit.`,
   diapason: () => 'Fréquence libre, notée = : la carte reprend la Fréquence de celle posée juste avant (en tête de chaîne, celle d’après).',
   unisson: () => `+${fourchette('unisson')} de force pour chaque autre carte de la même Fréquence dans la chaîne.`,
   curee: () => `+${fourchette('curee')} de force si l’ennemi visé est fissuré (une Fissure posée plus tôt, ce tour-ci ou le précédent), ou s’il lui reste moins de la moitié de ses PV.`,
@@ -296,6 +296,8 @@ const REGLE: Record<TypeEffet, () => string> = {
   breche: () => 'Avant d’agir, la carte brise tout le bouclier de l’ennemi visé.',
   secours: () => 'La carte gagne de la force pour chaque Porteur à terre : le district tient quand l’escouade s’effondre.',
   releve: () => 'Si un Porteur est à terre, il se relève avec tout le soin. Sinon, la carte soigne comme une autre.',
+  sourdine: () => `L’ennemi visé perd ${fourchette('sourdine')} de ce qu’il prépare, quoi que ce soit : son attaque, son bouclier ou son soin.`,
+  amorce: () => `La carte posée juste après elle dans la chaîne gagne +${fourchette('amorce')} de force.`,
 };
 
 function astuce(t: TypeEffet): string {
@@ -326,6 +328,8 @@ function astuce(t: TypeEffet): string {
     case 'pioche': return 'Pose-la quand ta main ne fait pas de suite : la prochaine aura plus de chances.';
     case 'breche': return 'Garde-la pour le tour où l’ennemi vient de se protéger.';
     case 'secours': return 'Ta carte de dernier recours : plus l’escouade tombe, plus elle frappe.';
+    case 'sourdine': return 'Moins forte que Désarmer contre une attaque, mais elle sert aussi quand l’ennemi va se protéger ou se soigner.';
+    case 'amorce': return 'Pose-la juste avant ta carte la plus forte : la suivante profite de tout le bonus.';
     case 'crescendo': {
       const parts = MODULES.map((m) => m.effet).filter((e): e is { type: 'crescendo'; part: number } => e?.type === 'crescendo').map((e) => e.part);
       const max = REGLES.capaciteMax - 1;

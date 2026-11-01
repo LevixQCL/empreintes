@@ -32,8 +32,9 @@ export type Effet =
   // ---------- Les voies (27 octobre 2026, docs/familles-de-decks.md) ----------
   /** Carapace (sur une carte de bouclier) : après son bouclier, frappe d'une part du bouclier d'escouade (sans le dépenser) */
   | { type: 'riposte'; part: number }
-  /** Moteur : vide le Flux, une part de force en plus par Flux vidé */
-  | { type: 'decharge'; part: number }
+  /** Moteur : vide le Flux, une part de force en plus par Flux vidé.
+   *  max : ne vide qu'autant de Flux (Éclair captif, 1er novembre 2026) ; recharge : si le Flux est déjà vide, le remplit d'autant (Noyau instable) */
+  | { type: 'decharge'; part: number; max?: number; recharge?: number }
   /** Chœur : Fréquence libre, prend celle de la carte posée juste avant (le pendant de l'Accord) */
   | { type: 'diapason' }
   /** Chœur : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne */
@@ -66,7 +67,12 @@ export type Effet =
   /** brise tout le bouclier de l'ennemi visé, avant de frapper */
   | { type: 'breche' }
   /** une part de force en plus pour chaque Porteur à terre */
-  | { type: 'secours'; part: number };
+  | { type: 'secours'; part: number }
+  // ---------- La refonte des quasi-doublons (1er novembre 2026, remarque de Luc) ----------
+  /** Résonants : l'ennemi visé perd une part de ce qu'il prépare, quoi que ce soit (attaque, bouclier ou soin) */
+  | { type: 'sourdine'; part: number }
+  /** Résonants : la carte posée juste après elle gagne une part de force */
+  | { type: 'amorce'; part: number };
 
 export type TypeEffet = Effet['type'];
 
