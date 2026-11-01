@@ -7,7 +7,7 @@
 // Tout vit dans un calque posé sur <body>, hors de #app : le rendu du jeu (innerHTML) ne l'interrompt pas.
 
 import type { Jeu } from '../core/jeu';
-import { epithetesDe, NOMS_PALIER, NOMS_PALIER_MARQUE, niveauPorteur, palierDe, progresMarque } from '../core/jeu';
+import { energieParHeure, epithetesDe, NOMS_PALIER, NOMS_PALIER_MARQUE, niveauPorteur, palierDe, progresMarque } from '../core/jeu';
 import { moduleDef, porteurDef } from '../core/donnees';
 import { NOMS_RARETE } from '../core/collection';
 import type { Rarete } from '../core/types';
@@ -20,6 +20,8 @@ type Res = 'energie' | 'composants' | 'eclats';
 
 interface Releve {
   energie: number;
+  /** l'énergie exacte, l'heure du dernier tick et la production horaire : pour retirer ce que le Générateur a produit tout seul entre deux relevés */
+  e?: { brute: number; tick: number; parHeure: number };
   composants: number;
   eclats: number;
   /** ce que porte l'expédition en cours (versé au district au retour) */
@@ -39,6 +41,7 @@ export function relever(j: Jeu): Releve {
   for (const id of Object.keys(j.porteurs)) niveaux[id] = niveauPorteur(j, id).niveau;
   return {
     energie: Math.floor(j.energie),
+    e: { brute: j.energie, tick: j.dernierTick, parHeure: energieParHeure(j) },
     composants: Math.floor(j.composants),
     eclats: j.eclats,
     x: x ? { butin: x.butin, cartes: (x.gains?.elites ?? 0) + (x.gains?.cartes ?? 0), eclats: x.gains?.eclats ?? 0 } : null,
@@ -68,7 +71,15 @@ type Gain =
 export function comparer(a: Releve, b: Releve, o: { energie?: boolean } = {}): Gain[] {
   const g: Gain[] = [];
   const res = (r: Res) => { const n = b[r] - a[r]; if (n >= 1) g.push({ kind: 'res', r, n, avant: a[r], cible: r }); };
-  if (o.energie !== false) res('energie');
+  // l'énergie (1er novembre 2026, remarque de Luc) : la production du Générateur pendant l'action (les secondes d'une chaîne
+  // en combat) s'affichait comme un « +1 énergie » gagné. On ne montre que ce qui vient vraiment de l'action.
+  if (o.energie !== false) {
+    if (a.e && b.e) {
+      const produite = a.e.parHeure * Math.max(0, b.e.tick - a.e.tick) / 3_600_000;
+      const n = Math.round(b.e.brute - a.e.brute - produite);
+      if (n >= 1) g.push({ kind: 'res', r: 'energie', n, avant: a.energie, cible: 'energie' });
+    } else res('energie');
+  }
   res('composants');
   res('eclats');
   // le butin de l'expédition, tant qu'on est en bas
