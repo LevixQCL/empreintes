@@ -190,7 +190,8 @@ function reponse(j: Jeu, id: string, sante: number): number {
 /** La durée des combats (en tours), par sorte de combat ; `strates` les range aussi par Strate (« groupe5 » : les groupes à −5) */
 export type ToursCombat = Record<'normal' | 'groupe' | 'gardien' | 'epreuve', number[]> & { strates?: Record<string, number[]> };
 
-function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) => void, tours?: ToursCombat): boolean {
+export function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) => void, tours?: ToursCombat, bilan?: { retour?: ReturnType<typeof remonter> }): boolean {
+  const fin = () => { const r = remonter(j); if (bilan) bilan.retour = r; return r.victoire; };
   if (!depart()) return false;
   let garde = 0;
   while (j.expedition && garde++ < 5000) {
@@ -199,7 +200,7 @@ function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) =
       // un combat seul (Épreuve)
       if (x.combat.issue === 'en-cours') jouer(x.combat);
       else if (!x.cloture) { tours?.epreuve.push(x.combat.tour); finDeCombat(j); }
-      else if (x.terminee) return remonter(j).victoire;
+      else if (x.terminee) return fin();
       else continuer(j);
       continue;
     }
@@ -210,7 +211,7 @@ function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) =
       if (tours?.strates) (tours.strates[sorte + x.strate] ??= []).push(x.combat.tour);
       finDeCombat(j); continue;
     }
-    if (j.expedition.terminee) return remonter(j).victoire;
+    if (j.expedition.terminee) return fin();
     if (x.phase === 'combat') { continuer(j); continue; }
     const sante = x.porteurs.reduce((n, p) => n + Math.max(0, p.pv), 0) / x.porteurs.reduce((n, p) => n + p.pvMax, 0);
     if (x.rencontre) {
@@ -233,7 +234,7 @@ function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: CombatEtat) =
     const prefere = (t: string) => (t === 'camp' ? (sante < 0.7 ? 0 : 3) : t === 'cache' || t === 'archive' ? (sante < 0.6 ? 1 : 2.5) : t === 'elite' ? (sante > 0.8 ? 1.5 : 4) : 2);
     entrer(j, choix.slice().sort((a, b) => prefere(typeApparent(x, a)) - prefere(typeApparent(x, b)))[0]!.id);
   }
-  if (j.expedition) return remonter(j).victoire;
+  if (j.expedition) return fin();
   return false;
 }
 

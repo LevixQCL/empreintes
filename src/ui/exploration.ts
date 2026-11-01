@@ -211,7 +211,7 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
   // ---------- la tête : où l'on est, combien il reste, ce qu'on rapporte ----------
   const g = x.gains;
   const cartes = (g?.elites ?? 0) + (g?.cartes ?? 0);
-  h += `<header class="ex-tete"><div class="ex-lieu"><span class="ex-sur">${x.fouille ? `Fouille · ${echap(CIBLES_FOUILLE[x.fouille].nom)}` : `Strate −${x.strate}`}</span>`
+  h += `<header class="ex-tete"><div class="ex-lieu"><span class="ex-sur">${x.fouille ? `Fouille · ${echap(CIBLES_FOUILLE[x.fouille].nom)}${x.difficulte && x.difficulte !== 'normale' ? ` · ${x.difficulte}` : ''}` : `Strate −${x.strate}`}</span>`
     + `<h1>${echap(zone.nom)}</h1>`
     + `<span class="ex-profondeur">${reste > 0 ? `Salle <b>${ici.rang + 1}</b> sur ${rangs} · ${fin} dans <b>${reste}</b> salle${reste > 1 ? 's' : ''}` : `Tu es devant ${fin}`}</span>`
     + teteContenu(j, x) + `</div>`

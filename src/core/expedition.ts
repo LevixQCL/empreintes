@@ -47,6 +47,8 @@ export interface Expedition {
   fuite?: boolean;
   /** une fouille ciblée : courte descente sans gardien dans une Strate déjà vaincue, vers un filon choisi */
   fouille?: CibleFouille;
+  /** la difficulté choisie pour la fouille (1er novembre 2026) : facile, normale ou difficile */
+  difficulte?: 'facile' | 'normale' | 'difficile';
   /** une Épreuve de la semaine : un seul combat à règle spéciale */
   /** un pillage (pillages.ts) : un seul combat contre la garnison d'un autre archipel */
   pillage?: import('./partie/pillages').PillageEnCours;
@@ -421,7 +423,7 @@ export const rangsDe = (c: CarteStrate) => Math.max(...c.salles.map((s) => s.ran
  * Une carte de Strate : l'entrée en haut, 2 ou 3 salles par rangée, et tout en bas le gardien
  * (ou, pour une fouille ciblée, le filon : une carte plus courte, sans gardien ni salle scellée).
  */
-export function genererCarte(strate: number, rng: number, garde?: string, fouille = false, contenu: { halte?: boolean; quete?: boolean; vestiges?: string[]; rodeur?: string } = {}): CarteStrate {
+export function genererCarte(strate: number, rng: number, garde?: string, fouille = false, contenu: { halte?: boolean; quete?: boolean; vestiges?: string[]; rodeur?: string; rangs?: number } = {}): CarteStrate {
   const etat = { rng: (rng ^ 0x27d4eb2f) >>> 0 };
   const t = tireur(etat);
   const z = zoneDe(strate);
@@ -431,7 +433,7 @@ export function genererCarte(strate: number, rng: number, garde?: string, fouill
   const salles: Salle[] = [];
   const rangs: number[][] = [];
   const halte = !fouille && !!contenu.halte;
-  const RANGS = fouille ? RANGS_FOUILLE : RANGS_EXPEDITION + (halte ? 1 : 0);
+  const RANGS = fouille ? (contenu.rangs ?? RANGS_FOUILLE) : RANGS_EXPEDITION + (halte ? 1 : 0);
   const poids = poidsDe(strate);
   for (let r = 0; r < RANGS; r++) {
     const seule = r === 0 || r === RANGS - 1 || (halte && r === RANG_HALTE);
@@ -616,6 +618,8 @@ function distinguerChemins(salles: Salle[], pool: string[], t: ReturnType<typeof
 export function nouvelleExploration(opts: {
   porteurs: PorteurEtat[]; deck: GesteDef[]; strate: number; rng: number; garde?: string; facteur?: number; bonus?: BonusMarques;
   fouille?: CibleFouille;
+  /** la difficulté d'une fouille : le nombre de rangées de sa carte */
+  difficulte?: 'facile' | 'normale' | 'difficile'; rangs?: number;
   /** la Halte de cette descente (strates.ts) et la quête de la Strate encore à finir */
   halte?: number | 'connu'; quete?: boolean;
   /** Explorer (explorer.ts) : les Vestiges encore à trouver dans la Strate, son Rôdeur, le gardien éveillé, la Strate relevée */
@@ -625,7 +629,7 @@ export function nouvelleExploration(opts: {
   const manque = opts.fouille ? [] : tireur({ rng: (opts.rng ^ 0x2545f491) >>> 0 }).melanger([...(opts.vestiges ?? [])]);
   const n = opts.strate <= 5 ? EXPLORER.vestiges.haut : EXPLORER.vestiges.bas;
   const rodeur = opts.fouille ? undefined : opts.rodeur;
-  const carte = genererCarte(opts.strate, opts.rng, opts.garde, !!opts.fouille, { halte: !opts.fouille && opts.halte !== undefined, quete: !!opts.quete, vestiges: manque.slice(0, n), ...(rodeur ? { rodeur: rodeur.id } : {}) });
+  const carte = genererCarte(opts.strate, opts.rng, opts.garde, !!opts.fouille, { halte: !opts.fouille && opts.halte !== undefined, quete: !!opts.quete, vestiges: manque.slice(0, n), ...(rodeur ? { rodeur: rodeur.id } : {}), ...(opts.fouille && opts.rangs ? { rangs: opts.rangs } : {}) });
   const places = new Set(carte.salles.map((s) => s.vestige).filter(Boolean));
   const secret = manque.find((v) => !places.has(v));
   const traque = rodeur && carte.salles.some((s) => s.rodeur) ? rodeur : undefined;
@@ -640,6 +644,7 @@ export function nouvelleExploration(opts: {
       ? `L’escouade descend fouiller ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Pas de gardien cette fois : le filon est au fond.`
       : `L’escouade entre dans ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Choisis ton chemin : le gardien attend tout au fond.${particularite(opts.strate) ? ` ${particularite(opts.strate)!.nom}. ${particularite(opts.strate)!.texte}` : ''}${carte.salles.some((s) => s.quete) ? ` Une marque de quête ✦ brille quelque part sur le plan.` : ''}${places.size ? ` ${places.size > 1 ? `${places.size} Vestiges dorment` : 'Un Vestige dort'} sur le plan.` : ''}${traque ? ` ${rodeurDef(traque.id)!.traces}` : ''}`,
     ...(opts.fouille ? { fouille: opts.fouille } : {}),
+    ...(opts.fouille && opts.difficulte ? { difficulte: opts.difficulte } : {}),
     ...(opts.facteur && opts.facteur !== 1 ? { facteur: opts.facteur } : {}),
     ...(opts.bonus ? { bonus: opts.bonus } : {}),
     ...(!opts.fouille && opts.halte !== undefined ? { halte: opts.halte } : {}),

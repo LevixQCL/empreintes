@@ -16,7 +16,8 @@
     "visuel": "tsx scripts/visuel.ts",
     "css": "node scripts/css-propre.cjs",
     "ratelier": "tsx scripts/ratelier.ts",
-    "epreuves": "tsx scripts/epreuves.ts"
+    "epreuves": "tsx scripts/epreuves.ts",
+    "fouilles": "tsx scripts/fouilles.ts"
   },
   "devDependencies": {
     "postcss": "^8.5.31",

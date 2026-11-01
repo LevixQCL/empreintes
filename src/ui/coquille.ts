@@ -73,6 +73,8 @@ export interface EcranDistrict {
   etape: number;
   /** l'escouade part pour une fouille ciblée (et ce qu'elle cherche), ou pour une Épreuve de la semaine */
   fouille: import('../core/expedition').CibleFouille | null;
+  /** la difficulté de la fouille (1er novembre 2026) : normale par défaut */
+  niveauFouille?: import('../core/jeu').DifficulteFouille;
   epreuve: string | null;
   /** l'Épreuve choisie est tentée au palier Fêlé */
   felee?: boolean;

@@ -2,7 +2,7 @@ import { affinite, lieuDef } from '../src/core/lieux';
 import { describe, expect, it } from 'vitest';
 import { FORCE, accessibles, genererCarte, salleCourante } from '../src/core/expedition';
 import { moduleDef, porteurDef } from '../src/core/donnees';
-import {
+import { DIFFICULTES_FOUILLE,
   EPREUVES, MISSIONS, barquesMax, naufragesDeLaStrate, rendementMission, secoursPossible, creuseursRequis, CREUSEURS, entrer, envoyerMission, destinationsDuJour, bonusMission, niveauPorteur, jourDe, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
   remonter, tick, type Jeu, FELEE, forceEpreuve, epreuveReussie, epreuveDef,
 } from '../src/core/jeu';
@@ -40,23 +40,52 @@ describe('Fouilles ciblées', () => {
     expect(j.expedition!.fouille).toBe('tech');
   });
 
-  it('atteindre le filon d’une fouille de cartes donne trois cartes au choix de la lignée visée', () => {
-    const j = avance();
-    fouiller(j, ['ilka', 'doran', 'vela'], 2, 'bio', 3);
+  const jusquAuFilon = (j: ReturnType<typeof avance>) => {
     let garde = 0;
-    while (!j.expedition!.terminee && garde++ < 20) {
+    while (!j.expedition!.terminee && garde++ < 30) {
       const x = j.expedition!;
       if (x.rencontre) { j.expedition = { ...x, rencontre: undefined }; continue; }
       if (x.phase === 'combat') { j.expedition = { ...x, phase: 'carte', combat: { ...x.combat, issue: 'victoire' } }; continue; }
       entrer(j, accessibles(j.expedition!)[0]!.id);
     }
     expect(salleCourante(j.expedition!).type).toBe('filon');
+  };
+
+  it('fouille difficile : le filon d’une lignée offre trois cartes au choix de la lignée visée, cuivre au moins', () => {
+    const j = avance();
+    expect(fouiller(j, ['ilka', 'doran', 'vela'], 2, 'bio', 3, 'difficile').ok).toBe(true);
+    expect(j.expedition!.facteur).toBeCloseTo(DIFFICULTES_FOUILLE.difficile.force);
+    jusquAuFilon(j);
     const r = remonter(j);
     expect(r.victoire).toBe(true);
     expect(r.nouvelleStrate).toBe(false);
     const choix = j.choix.find((c) => c.source === 'fouille')!;
     expect(choix.options).toHaveLength(3);
     for (const id of choix.options) expect(moduleDef(id).lignee).toBe('bio');
+    expect(moduleDef(choix.options[0]!).rarete).not.toBe('fer');
+  });
+
+  it('fouille normale : le filon d’une lignée donne une carte de cette lignée, sans choix (1er novembre 2026)', () => {
+    const j = avance();
+    fouiller(j, ['ilka', 'doran', 'vela'], 2, 'bio', 3);
+    expect(j.expedition!.difficulte).toBe('normale');
+    jusquAuFilon(j);
+    const r = remonter(j);
+    expect(j.choix.some((c) => c.source === 'fouille')).toBe(false);
+    expect(r.cartes.length).toBeGreaterThanOrEqual(1);
+    expect(r.cartes.some((id) => moduleDef(id).lignee === 'bio')).toBe(true);
+  });
+
+  it('la carte d’une fouille est plus longue et ses ennemis plus forts quand la difficulté monte', () => {
+    const rangs = (['facile', 'normale', 'difficile'] as const).map((d) => {
+      const j = avance();
+      fouiller(j, ['ilka', 'doran', 'vela'], 2, 'composants', 7, d);
+      return Math.max(...j.expedition!.carte!.salles.map((s) => s.rang)) + 1;
+    });
+    expect(rangs).toEqual([DIFFICULTES_FOUILLE.facile.rangs, DIFFICULTES_FOUILLE.normale.rangs, DIFFICULTES_FOUILLE.difficile.rangs]);
+    expect(DIFFICULTES_FOUILLE.facile.force).toBeLessThan(DIFFICULTES_FOUILLE.difficile.force);
+    expect(DIFFICULTES_FOUILLE.facile.gain).toBeLessThan(DIFFICULTES_FOUILLE.normale.gain);
+    expect(DIFFICULTES_FOUILLE.normale.gain).toBeLessThan(DIFFICULTES_FOUILLE.difficile.gain);
   });
 });
 

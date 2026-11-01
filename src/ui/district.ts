@@ -19,6 +19,7 @@ import {
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/types';
 import type { CibleFouille } from '../core/expedition';
+import { DIFFICULTES_FOUILLE, type DifficulteFouille } from '../core/jeu';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
 import { CONFIANCE } from '../core/jeu';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
@@ -1907,9 +1908,26 @@ export function plusLongueSuite(n: number[], jokers: number): number[] {
 function tuileCible(c: CibleFouille, choisie: CibleFouille): string {
   const lignee = c === 'tech' || c === 'bio' || c === 'reso';
   const ico = lignee ? ICO.cartes : c === 'composants' ? ICO.composants : ICO.eclats;
-  const bref = lignee ? '3 cartes au choix au filon' : c === 'composants' ? 'selon les combats gagnés' : 'selon les combats gagnés';
+  const bref = lignee ? 'une carte de lignée au filon' : c === 'composants' ? 'selon les combats gagnés' : 'selon les combats gagnés';
   return `<button type="button" role="radio" class="es-tuile${choisie === c ? ' actif' : ''}${lignee ? ' carte' : ''}" style="--c:${lignee ? COULEUR[c] : c === 'eclats' ? 'var(--reso)' : '#8FB8DA'}" data-action="cible" data-id="${c}" aria-checked="${choisie === c}">`
     + `${ico}<strong>${echap(CIBLES_FOUILLE[c].nom)}</strong><small>${bref}</small></button>`;
+}
+
+/**
+ * Une tuile de difficulté de fouille (1er novembre 2026, Bryan : « facile, normal, difficile, des récompenses proportionnelles ») :
+ * ce que la difficulté change, dit pour la cible choisie. Les chiffres viennent de DIFFICULTES_FOUILLE.
+ */
+function tuileNiveau(n: DifficulteFouille, choisi: DifficulteFouille, cible: CibleFouille): string {
+  const d = DIFFICULTES_FOUILLE[n];
+  const lignee = cible === 'tech' || cible === 'bio' || cible === 'reso';
+  const force = d.force === 1 ? 'ennemis normaux' : `ennemis ${d.force < 1 ? '−' : '+'}${Math.round(Math.abs(d.force - 1) * 100)} %`;
+  const filon = lignee
+    ? (d.carte < 1 ? `${Math.round(d.carte * 100)} % de chances d’une carte` : d.choix > 1 ? `${d.choix} cartes au choix, ${d.metal} au moins` : '1 carte assurée')
+    : `filon ×${String(d.gain).replace('.', ',')}`;
+  const salles = d.rangs - 2;
+  const coul = n === 'facile' ? '#8FD6A8' : n === 'normale' ? '#8FB8DA' : '#E79A72';
+  return `<button type="button" role="radio" class="es-tuile${choisi === n ? ' actif' : ''}" style="--c:${coul}" data-action="niveau-fouille" data-id="${n}" aria-checked="${choisi === n}">`
+    + `${n === 'facile' ? ICO.soin : n === 'normale' ? ICO.strate : ICO.boost}<strong>${d.nom}</strong><small>${salles} rangée${salles > 1 ? 's' : ''} · ${force}</small><small class="es-tuile-filon">${filon}</small></button>`;
 }
 
 export function htmlEscouade(e: EcranDistrict): string {
@@ -1968,7 +1986,10 @@ export function htmlEscouade(e: EcranDistrict): string {
       + `<div class="es-cibles-grille" role="radiogroup" aria-label="Ce que tu cherches">`
       + (['tech', 'bio', 'reso'] as CibleFouille[]).map((c) => tuileCible(c, fouille)).join('')
       + (['composants', 'eclats'] as CibleFouille[]).map((c) => tuileCible(c, fouille)).join('') + `</div>`
-      + `<p class="es-cible-texte">${echap(CIBLES_FOUILLE[fouille].texte)}</p>`;
+      + `<p class="es-cible-texte">${echap(CIBLES_FOUILLE[fouille].texte)}</p>`
+      + `<h3 class="es-cibles-titre">Difficulté</h3>`
+      + `<div class="es-cibles-grille es-niveaux" role="radiogroup" aria-label="Difficulté de la fouille">`
+      + (Object.keys(DIFFICULTES_FOUILLE) as DifficulteFouille[]).map((n) => tuileNiveau(n, e.niveauFouille ?? 'normale', fouille)).join('') + `</div>`;
   } else {
     h += `<p class="es-but">${ICO.strate}<span><strong>${echap(zone.nom)}</strong>Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien : ${echap(ennemiDef(zone.boss).nom)}.</span></p>`;
   }

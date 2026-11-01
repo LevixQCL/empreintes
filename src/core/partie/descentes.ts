@@ -812,13 +812,19 @@ export function remonter(j: Jeu): Retour {
     if (tireur(j).nombre() < CREUSEURS.fouille) gagnerCreuseurs(j, 1, 'un fouilleur perdu retrouvé pendant la fouille');
     // le filon : ce que la fouille visait
     // une Strate relevée (explorer.ts) : la première carte du filon est au moins en cuivre, +25 % de composants, Éclats plus fréquents
-    if (lignee) j.choix.push({ source: 'fouille', options: tirerChoix(j, x.strate, x.releve ? EXPLORER.releve.metal : 'fer', lignee) });
+    // la difficulté (1er novembre 2026) : le filon d'une lignée offre 1, 2 ou 3 cartes au choix, et le difficile part du cuivre
+    const d = DIFFICULTES_FOUILLE[x.difficulte ?? 'normale'];
+    const ordre: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
+    const metal = x.releve && ordre.indexOf(EXPLORER.releve.metal) > ordre.indexOf(d.metal) ? EXPLORER.releve.metal : d.metal;
+    if (lignee && t.nombre() >= d.carte) { /* filon vide : la fouille facile ne trouve pas toujours sa carte */ }
+    else if (lignee && d.choix <= 1) cartes.push(tirerTrouvaille(j, x.strate, metal, lignee));
+    else if (lignee) j.choix.push({ source: 'fouille', options: tirerChoix(j, x.strate, metal, lignee).slice(0, d.choix) });
     // le filon « composants » rapporte selon l'effort (24 octobre 2026) : une part par combat gagné dans la fouille,
     // au lieu de doubler le butin et d'ajouter une prime fixe (un chemin d'un seul combat rapportait ~3 fois plus par combat qu'une expédition)
-    else if (x.fouille === 'composants') { const plus = Math.round(Math.max(1, victoires) * Math.round(FILON_COMPOSANTS * (1 + 0.25 * (x.strate - 1))) * (x.releve ? EXPLORER.releve.composants : 1)); j.composants += plus; butinFilon = plus; }
+    else if (x.fouille === 'composants') { const plus = Math.round(Math.max(1, victoires) * FILON_COMPOSANTS * (1 + 0.25 * (x.strate - 1)) * d.gain * (x.releve ? EXPLORER.releve.composants : 1)); j.composants += plus; butinFilon = plus; }
     // le filon « Éclats » rapporte lui aussi selon l'effort (1er novembre 2026, Luc : « 2 en 5 minutes, contre un pour 2 h ») :
     // chaque combat gagné en route a une chance de laisser un Éclat, au lieu de 2 ou 3 garantis pour une descente sans gardien
-    else { const chance = FILON_ECLATS.chance + (x.strate >= 5 ? FILON_ECLATS.profond : 0) + (x.releve ? FILON_ECLATS.releve : 0);
+    else { const chance = (FILON_ECLATS.chance + (x.strate >= 5 ? FILON_ECLATS.profond : 0) + (x.releve ? FILON_ECLATS.releve : 0)) * d.gain;
       for (let k = 0; k < Math.max(1, victoires); k++) if (t.nombre() < chance) eclats++; }
     progresser(j, 'expedition');
   } else if (victoire && x.epreuve) {
@@ -1106,28 +1112,44 @@ export const FILON_COMPOSANTS = 8;
 /** filon « Éclats » : chance d'un Éclat par combat gagné pendant la fouille ; plus à partir de −5, et sur une Strate relevée */
 export const FILON_ECLATS = { chance: 0.35, profond: 0.1, releve: 0.2 };
 
+/**
+ * Les trois difficultés d'une fouille (1er novembre 2026, Bryan : « des modes facile, normal, difficile, et des récompenses
+ * proportionnelles, sans trop favoriser la fouille ni l'expédition »). rangs : rangées de la carte (entrée et filon compris) ;
+ * force : puissance des ennemis ; gain : multiplie le filon (composants, chances d'Éclat) ; choix : cartes offertes par le filon
+ * d'une lignée (1 = une seule carte, sans choix) ; carte : chance que ce filon ait sa carte ; metal : métal de la première carte du filon.
+ */
+export const DIFFICULTES_FOUILLE = {
+  facile: { nom: 'Facile', rangs: 4, force: 0.8, gain: 0.35, choix: 1, carte: 0.35, metal: 'fer' },
+  normale: { nom: 'Normale', rangs: 5, force: 1, gain: 0.9, choix: 1, carte: 1, metal: 'fer' },
+  difficile: { nom: 'Difficile', rangs: 6, force: 1.35, gain: 2.5, choix: 3, carte: 1, metal: 'cuivre' },
+} as const satisfies Record<string, { nom: string; rangs: number; force: number; gain: number; choix: number; carte: number; metal: Rarete }>;
+export type DifficulteFouille = keyof typeof DIFFICULTES_FOUILLE;
+
 export const CIBLES_FOUILLE: Record<CibleFouille, { nom: string; texte: string }> = {
-  tech: { nom: 'Cartes augmentées', texte: 'Les cartes trouvées sont des cartes d’Augmentés, et le filon en offre trois au choix.' },
-  bio: { nom: 'Cartes génés', texte: 'Les cartes trouvées sont des cartes de Génés, et le filon en offre trois au choix.' },
-  reso: { nom: 'Cartes résonantes', texte: 'Les cartes trouvées sont des cartes de Résonants, et le filon en offre trois au choix.' },
+  tech: { nom: 'Cartes augmentées', texte: 'Les cartes trouvées sont des cartes d’Augmentés, et le filon en garde une (trois au choix en difficile).' },
+  bio: { nom: 'Cartes génés', texte: 'Les cartes trouvées sont des cartes de Génés, et le filon en garde une (trois au choix en difficile).' },
+  reso: { nom: 'Cartes résonantes', texte: 'Les cartes trouvées sont des cartes de Résonants, et le filon en garde une (trois au choix en difficile).' },
   composants: { nom: 'Composants', texte: 'Le filon rapporte des composants pour chaque combat gagné en route : plus le chemin est long, plus il donne.' },
   eclats: { nom: 'Éclats', texte: 'Chaque combat gagné en route peut laisser un Éclat au filon : plus le chemin est long, plus tu as de chances.' },
 };
 
 export const estLignee = (c?: CibleFouille): c is Lignee => c === 'tech' || c === 'bio' || c === 'reso';
 
-export function fouiller(j: Jeu, escouade: string[], strate: number, cible: CibleFouille, rng = graine()): Resultat {
+export function fouiller(j: Jeu, escouade: string[], strate: number, cible: CibleFouille, rng = graine(), difficulte: DifficulteFouille = 'normale'): Resultat {
+  const d = DIFFICULTES_FOUILLE[difficulte];
+  if (!d) return non('Difficulté inconnue.');
   const e = escouadePrete(j, escouade, undefined, DISTRICT.deckMin, 'courte');
   if (!e.ok) return e;
   if (!CIBLES_FOUILLE[cible]) return non('Cible inconnue.');
   if (strate < 1 || strate > strateVaincue(j)) return non('On ne fouille que les Strates déjà vaincues.');
   quitterPostes(j, escouade);
   j.expedition = nouvelleExploration({
-    porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1, fouille: cible,
+    porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: (j.actes.fin === 'scellement' ? 0.9 : 1) * d.force, fouille: cible,
+    difficulte, rangs: d.rangs,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}), quete: queteOuverte(j, strate), releve: strateRelevee(j, strate),
   });
   retenirDepart(j, escouade, 'courte');
-  log(j, `L’escouade part fouiller la Strate −${strate} (${CIBLES_FOUILLE[cible].nom.toLowerCase()}).`);
+  log(j, `L’escouade part fouiller la Strate −${strate} (${CIBLES_FOUILLE[cible].nom.toLowerCase()}, ${d.nom.toLowerCase()}).`);
   return { ok: true };
 }
 
