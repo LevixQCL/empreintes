@@ -811,13 +811,15 @@ export function remonter(j: Jeu): Retour {
   if (victoire && x.fouille) {
     if (tireur(j).nombre() < CREUSEURS.fouille) gagnerCreuseurs(j, 1, 'un fouilleur perdu retrouvé pendant la fouille');
     // le filon : ce que la fouille visait
-    // une Strate relevée (explorer.ts) : la première carte du filon est au moins en cuivre, +25 % de composants, un Éclat de plus
-    if (x.releve) eclats += EXPLORER.releve.eclats;
+    // une Strate relevée (explorer.ts) : la première carte du filon est au moins en cuivre, +25 % de composants, Éclats plus fréquents
     if (lignee) j.choix.push({ source: 'fouille', options: tirerChoix(j, x.strate, x.releve ? EXPLORER.releve.metal : 'fer', lignee) });
     // le filon « composants » rapporte selon l'effort (24 octobre 2026) : une part par combat gagné dans la fouille,
     // au lieu de doubler le butin et d'ajouter une prime fixe (un chemin d'un seul combat rapportait ~3 fois plus par combat qu'une expédition)
     else if (x.fouille === 'composants') { const plus = Math.round(Math.max(1, victoires) * Math.round(FILON_COMPOSANTS * (1 + 0.25 * (x.strate - 1))) * (x.releve ? EXPLORER.releve.composants : 1)); j.composants += plus; butinFilon = plus; }
-    else eclats += x.strate >= 5 ? 3 : 2;
+    // le filon « Éclats » rapporte lui aussi selon l'effort (1er novembre 2026, Luc : « 2 en 5 minutes, contre un pour 2 h ») :
+    // chaque combat gagné en route a une chance de laisser un Éclat, au lieu de 2 ou 3 garantis pour une descente sans gardien
+    else { const chance = FILON_ECLATS.chance + (x.strate >= 5 ? FILON_ECLATS.profond : 0) + (x.releve ? FILON_ECLATS.releve : 0);
+      for (let k = 0; k < Math.max(1, victoires); k++) if (t.nombre() < chance) eclats++; }
     progresser(j, 'expedition');
   } else if (victoire && x.epreuve) {
     // la première victoire de la semaine dans cette Épreuve : une carte au choix, dont une en argent au moins (et des creuseurs)
@@ -1101,13 +1103,15 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
 
 /** composants du filon par combat gagné pendant la fouille, en Strate −1 (+25 % par Strate) */
 export const FILON_COMPOSANTS = 8;
+/** filon « Éclats » : chance d'un Éclat par combat gagné pendant la fouille ; plus à partir de −5, et sur une Strate relevée */
+export const FILON_ECLATS = { chance: 0.35, profond: 0.1, releve: 0.2 };
 
 export const CIBLES_FOUILLE: Record<CibleFouille, { nom: string; texte: string }> = {
   tech: { nom: 'Cartes augmentées', texte: 'Les cartes trouvées sont des cartes d’Augmentés, et le filon en offre trois au choix.' },
   bio: { nom: 'Cartes génés', texte: 'Les cartes trouvées sont des cartes de Génés, et le filon en offre trois au choix.' },
   reso: { nom: 'Cartes résonantes', texte: 'Les cartes trouvées sont des cartes de Résonants, et le filon en offre trois au choix.' },
   composants: { nom: 'Composants', texte: 'Le filon rapporte des composants pour chaque combat gagné en route : plus le chemin est long, plus il donne.' },
-  eclats: { nom: 'Éclats', texte: 'Le filon rapporte des Éclats : 2, et 3 à partir de la Strate −5.' },
+  eclats: { nom: 'Éclats', texte: 'Chaque combat gagné en route peut laisser un Éclat au filon : plus le chemin est long, plus tu as de chances.' },
 };
 
 export const estLignee = (c?: CibleFouille): c is Lignee => c === 'tech' || c === 'bio' || c === 'reso';

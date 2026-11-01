@@ -1907,7 +1907,7 @@ export function plusLongueSuite(n: number[], jokers: number): number[] {
 function tuileCible(c: CibleFouille, choisie: CibleFouille): string {
   const lignee = c === 'tech' || c === 'bio' || c === 'reso';
   const ico = lignee ? ICO.cartes : c === 'composants' ? ICO.composants : ICO.eclats;
-  const bref = lignee ? '3 cartes au choix au filon' : c === 'composants' ? 'selon les combats gagnés' : '2 à 3 Éclats au filon';
+  const bref = lignee ? '3 cartes au choix au filon' : c === 'composants' ? 'selon les combats gagnés' : 'selon les combats gagnés';
   return `<button type="button" role="radio" class="es-tuile${choisie === c ? ' actif' : ''}${lignee ? ' carte' : ''}" style="--c:${lignee ? COULEUR[c] : c === 'eclats' ? 'var(--reso)' : '#8FB8DA'}" data-action="cible" data-id="${c}" aria-checked="${choisie === c}">`
     + `${ico}<strong>${echap(CIBLES_FOUILLE[c].nom)}</strong><small>${bref}</small></button>`;
 }

@@ -156,8 +156,8 @@ export const PALIERS_ETOILES: { etoiles: number; metal: Rarete }[] = [
 export const EXPLORER = {
   /** Vestiges par carte d'expédition : jusqu'à −5, puis au-delà */
   vestiges: { haut: 2, bas: 3 },
-  /** une Strate relevée : au filon d'une lignée, la première carte au moins en cuivre ; composants +25 % ; un Éclat de plus */
-  releve: { metal: 'cuivre' as Rarete, composants: 1.25, eclats: 1 },
+  /** une Strate relevée : au filon d'une lignée, la première carte au moins en cuivre ; composants +25 % ; Éclats plus fréquents (FILON_ECLATS) */
+  releve: { metal: 'cuivre' as Rarete, composants: 1.25 },
   /** le gardien éveillé d'une Strate déjà vaincue : force (×1,1 après revue, ×1,2 rendait ★2 trop dure), et Éclats en plus */
   eveille: { force: 1.1, eclats: 1 },
   /** le Rôdeur : chance d'en croiser un par descente, tours avant de fuir */
