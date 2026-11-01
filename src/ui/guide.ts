@@ -11,7 +11,7 @@ import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, chargeNiveau } 
 import { DECK_DEPART, GESTES_SPECIAUX, METAL_FORCE, METAL_FREQ, METAL_RENFORT, MODULES_TIRABLES as MODULES, carteId, gesteDeCarte, moduleDe, moduleDef } from '../core/donnees';
 import { NOMS_EFFET } from '../core/effets';
 import { DISTRICT, EPREUVE_DECK_MIN } from '../core/jeu';
-import { REGLES, frequenceLibre } from '../core/regles';
+import { REGLES, frequenceLibre, pctEcho } from '../core/regles';
 import type { Geste, GesteDef, Lignee, TypeEffet, TypeGeste } from '../core/types';
 import { textureMetal } from './art';
 import { COULEUR_RARETE, ICONES_ACTION, SIGNE_LOURD, couleurFrequence, faceCarte } from './carte';
@@ -194,7 +194,7 @@ function ongletDeck(): string {
   const suite = Object.entries(REGLES.multSuite).map(([n, m]) => `${n} = +${Math.round((m - 1) * 100)} %`).join(', ');
   h += `<section class="bloc">${titre(ICO.boost, 'Bien construire')}<ul class="g-idees">`
     + idee(ICO.flux, 'Couvre les Fréquences de 1 à 9', `Des Fréquences qui se suivent font une Résonance (suite de ${suite}). Chaque lignée a sa zone : une escouade des trois lignées couvre l’échelle, et un chiffre absent coupe tes suites.`, echelleFrequences())
-    + idee(ICO.cartes, 'Double les Fréquences utiles', `Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : ces trois cartes +${Math.round((REGLES.echo - 1) * 100)} % et +1 Flux. Mais une Fréquence empilée, ce sont moins de suites.`)
+    + idee(ICO.cartes, 'Double les Fréquences utiles', `Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : ces cartes +${Math.round((REGLES.echo - 1) * 100)} % et +1 Flux (quatre : ${pctEcho(4)}, cinq : ${pctEcho(5)}). Mais une Fréquence empilée, ce sont moins de suites.`)
     + idee(ICO.atk, 'Mélange les actions', `Attaque, protection et soin. Le deck de départ en compte ${depart.atk}, ${depart.bouclier} et ${depart.soin} sur ${nDepart} : un bon repère.`, `<div class="g-barre" role="img" aria-label="${depart.atk} attaques, ${depart.bouclier} protections, ${depart.soin} soins">${barre}</div>`)
     + idee(ICO.cristal, 'Choisis aussi pour les Marques', 'Chaque Porteur gagne une Marque par ses exploits, presque toujours en combattant. Elle ne joue que s’il est dans l’escouade : l’onglet Escouade dit ce qu’elle fait et combien il en reste à accomplir.')
     + idee(ICO.soin, 'Répartis les soins', 'Les cartes d’un Porteur à terre s’éteignent. Si tous tes soins sont chez lui, ils perdent leur effet au pire moment.')

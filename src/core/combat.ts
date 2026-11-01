@@ -2,7 +2,7 @@
 // l'interface appelle ces fonctions puis anime les « pas » qu'elles renvoient.
 
 import { CONDITIONS, DECK_DEPART, FAVEUR_CONDITION, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from './donnees';
-import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, places } from './regles';
+import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, nomEcho, pctEcho, places } from './regles';
 import { tireur } from './rng';
 import { NOMS_EFFET } from './effets';
 import type {
@@ -608,8 +608,9 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     emettre({ kind: 'resonance', suite: a.suite, mult: a.mult });
   }
   if (a.echo) {
-    log(s, `Écho ! Trois Fréquences identiques : ces cartes +${Math.round((REGLES.echo - 1) * 100)} %.`, { sorte: 'effet' });
-    emettre({ kind: 'echo' });
+    const n = a.echoN ?? 3;
+    log(s, `${nomEcho(n)} ! ${n === 5 ? 'Cinq' : n === 4 ? 'Quatre' : 'Trois'} Fréquences identiques : ces cartes ${pctEcho(n)}.`, { sorte: 'effet' });
+    emettre({ kind: 'echo', n });
   }
   let fluxFelure = false;
   for (const [i, g] of s.chaine.entries()) {
@@ -640,7 +641,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     log(s, `${ennemiDef(en.id).nom} assimile ton dernier coup : le voilà ${NOMS_LIGNEE[l].nom}.`, { sorte: 'effet' });
     emettre({ kind: 'effet', cible: 'escouade', texte: 'Assimilation' });
   }
-  const gain = (a.suite >= 3 ? 1 : 0) + (a.echo ? 1 : 0);
+  const gain = (a.suite >= 3 ? 1 : 0) + (a.echo ? 1 : 0) + ((a.echoN ?? 0) >= 5 ? REGLES.fluxEcho5 : 0);
   if (gain) {
     const avant = s.flux;
     s.flux = Math.min(REGLES.fluxMax, s.flux + gain);
@@ -1021,7 +1022,7 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   const f: Facteur[] = [];
   const mettre = (nom: string, m: number) => { if (m !== 1) f.push({ nom, m }); };
   mettre(`Résonance (suite de ${suite})`, mult);
-  mettre('Écho (trois Fréquences identiques)', multEcho(chaine, rang));
+  { const n = analyserChaine(chaine).echoN ?? 3; mettre(`${nomEcho(n)} (${n} Fréquences identiques)`, multEcho(chaine, rang)); }
   // Empilement : chaque bouclier (ou soin) déjà posé dans la chaîne réduit le suivant (une carte seule garde toute sa force)
   const emp = g.type === 'bouclier' ? REGLES.empilement.bouclier : g.type === 'soin' ? REGLES.empilement.soin : 1;
   if (emp !== 1) {

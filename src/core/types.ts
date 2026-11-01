@@ -440,7 +440,7 @@ export type Evenement =
   | { kind: 'degats'; cible: string; net: number; absorbe: number; rang?: number; source?: 'epines' | 'eboulis' | 'surtension'; zone?: boolean }
   | { kind: 'bouclier'; cible: 'escouade' | 'ennemi'; v: number; rang?: number }
   | { kind: 'soin'; cible: string; v: number; rang?: number }
-  | { kind: 'echo' }
+  | { kind: 'echo'; n?: number }
   | { kind: 'flux'; gain: number }
   | { kind: 'boost'; rang?: number }
   | { kind: 'effet'; cible: string; texte: string; rang?: number }

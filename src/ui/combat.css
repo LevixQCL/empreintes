@@ -206,6 +206,7 @@
 .place-vide.place-liee.jouee{opacity:.4}
 /* l'Écho (trois Fréquences identiques) se voit aussi en tête de chaîne, comme la Résonance */
 #app:is([data-mode="combat"],[data-mode="district"]) .badge-reso.echo{background:linear-gradient(180deg,#e9f4ff,#9fc3ee 55%,#5f86c4);color:#0b1733;box-shadow:0 0 14px rgba(120,170,240,.5)}
+#app:is([data-mode="combat"],[data-mode="district"]) .badge-reso.echo.fort{background:linear-gradient(180deg,#fff8e4,#f3d27a 50%,#c8933a);color:#2a1a05;box-shadow:0 0 18px rgba(243,210,122,.6)}
 .chaine-tete{flex-wrap:wrap;gap:6px}
 
 /* l'Usure pendant la descente (24 octobre 2026) : les PV qu'elle retire, hachurés au bout de la jauge, comme au district */

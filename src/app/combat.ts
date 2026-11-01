@@ -3,6 +3,7 @@
 import { rodeurDef } from '../core/explorer';
 import * as C from '../core/combat';
 import { ennemiDef } from '../core/donnees';
+import { nomEcho } from '../core/regles';
 import * as J from '../core/jeu';
 import type { CombatEtat, Evenement, Pas } from '../core/types';
 import { impact, initImpacts } from '../ui/impact';
@@ -109,7 +110,7 @@ function popsDe(ev: Evenement, etat?: CombatEtat) {
   if (ev.kind === 'degats') pop(ev.cible, ev.net ? `−${ev.net}` : 'bloqué', 'var(--danger)', ev.cible === 'ennemi' && ev.net ? Math.min(2, 1 + 0.18 * (K.actif ?? 0) + (ev.net >= 25 ? 0.25 : 0) + (ev.net >= 45 ? 0.2 : 0)) : 1);
   else if (ev.kind === 'bouclier') pop(ev.cible, `+${ev.v}`, 'var(--ivory)');
   else if (ev.kind === 'soin' && ev.v) pop(ev.cible, `+${ev.v}`, 'var(--bio)');
-  else if (ev.kind === 'echo') pop('escouade', 'Écho', 'var(--gold)');
+  else if (ev.kind === 'echo') pop('escouade', nomEcho(ev.n ?? 3), 'var(--gold)', (ev.n ?? 3) >= 5 ? 1.6 : (ev.n ?? 3) >= 4 ? 1.3 : 1);
   else if (ev.kind === 'effet') pop(ev.cible, ev.texte, 'var(--gold)');
   else if (ev.kind === 'flux') pop('escouade', `+${ev.gain} Flux`, 'var(--gold)');
 }

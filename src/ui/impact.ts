@@ -1051,7 +1051,13 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
     }
     case 'echo': {
       const r = racine.querySelector('.escouade-combat')?.getBoundingClientRect();
-      if (r) { bouclierSur(r); eclats(r.left + r.width / 2, r.top, 14, '#F3D27A', { vitesse: 120, gravite: -40, taille: 2.2 }); }
+      // plus l'Écho compte de cartes, plus il éclate (14, 26 puis 40 éclats, en deux salves pour la quintuplette)
+      const n = ev.n ?? 3;
+      if (r) {
+        bouclierSur(r);
+        eclats(r.left + r.width / 2, r.top, n >= 5 ? 24 : n >= 4 ? 26 : 14, '#F3D27A', { vitesse: n >= 4 ? 160 : 120, gravite: -40, taille: n >= 4 ? 2.6 : 2.2 });
+        if (n >= 5) setTimeout(() => eclats(r.left + r.width / 2, r.top + r.height / 2, 16, '#FFF4D6', { vitesse: 200, gravite: -20, taille: 3, ouverture: Math.PI * 2 }), 160);
+      }
       S.sonEcho();
       return 0;
     }

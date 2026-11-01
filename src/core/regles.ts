@@ -37,6 +37,12 @@ export const REGLES = {
    *  (archétypes, 80 descentes) : de ×1,25 à ×1,6, le deck « tout en échos » ne bat jamais le deck normal chez le joueur moyen
    *  (−4 à −7 points) et reste loin derrière le deck « tout en suites » (voir docs/robot-archetypes.md). */
   echo: 1.5,
+  /** Écho à 4 et à 5 cartes (1er novembre 2026, demande de Bryan) : chaque carte de plus est 4 à 5 fois plus rare, mais elle
+   *  ajoute déjà une carte entière renforcée ; le palier reste donc modéré pour ne pas pousser au deck « une seule Fréquence ».
+   *  Avant : +50 % quel que soit le nombre de cartes. La quintuplette (qui demande une place de Flux) rend en plus 1 Flux. */
+  echoPaliers: { 3: 1.5, 4: 1.65, 5: 1.8 } as Record<number, number>,
+  /** Flux en plus rendu par une quintuplette (cinq Fréquences identiques) */
+  fluxEcho5: 1,
   /** multiplicateur selon la longueur de la meilleure suite */
   multSuite: { 3: 1.3, 4: 1.6, 5: 2 } as Record<number, number>,
   /** part du bonus de suite gardée quand toute la suite vient d'une seule lignée (1 = bonus entier) */
@@ -87,6 +93,8 @@ interface Analyse {
   echo: boolean;
   /** la Fréquence qui fait l'Écho (celle des cartes renforcées), s'il y en a un */
   echoF?: number;
+  /** combien de cartes font l'Écho (3, 4 ou 5) */
+  echoN?: number;
 }
 
 type Maillon = Pick<Geste, 'f'> & { effet?: Geste['effet']; porteur?: Geste['porteur'] };
@@ -127,21 +135,29 @@ export function analyserChaine(chaine: Maillon[]): Analyse {
   }
   const compte = new Map<number, number>();
   for (const f of fs) compte.set(f, (compte.get(f) ?? 0) + 1);
-  const echoF = [...compte.entries()].find(([, n]) => n >= 3)?.[0];
+  const echoE = [...compte.entries()].filter(([, n]) => n >= 3).sort((x, y) => y[1] - x[1])[0];
+  const echoF = echoE?.[0];
   let mult = REGLES.multSuite[Math.min(meilleur, 5)] ?? 1;
   // suite d'une seule lignée : bonus réduit (les lignées se complètent sur l'échelle 1 à 9)
   if (meilleur >= 3 && REGLES.suiteMono < 1) {
     const ls = new Set(chaine.slice(fin - meilleur + 1, fin + 1).map((m) => (m.porteur ? porteurDef(m.porteur).lignee : null)).filter(Boolean));
     if (ls.size === 1) mult = 1 + (mult - 1) * REGLES.suiteMono;
   }
-  return { suite: meilleur, mult, echo: echoF !== undefined, ...(echoF !== undefined ? { echoF } : {}) };
+  return { suite: meilleur, mult, echo: echoF !== undefined, ...(echoE ? { echoF, echoN: echoE[1] } : {}) };
 }
 
 /** Multiplicateur d'Écho de la carte au rang donné : seules les cartes de la Fréquence répétée sont renforcées */
 export function multEcho(chaine: Maillon[], rang: number): number {
   const a = analyserChaine(chaine);
-  return a.echoF !== undefined && frequencesEffectives(chaine)[rang] === a.echoF ? REGLES.echo : 1;
+  return a.echoF !== undefined && frequencesEffectives(chaine)[rang] === a.echoF ? multEchoN(a.echoN ?? 3) : 1;
 }
+
+/** Multiplicateur d'un Écho de n cartes (3, 4 ou 5) */
+export const multEchoN = (n: number) => REGLES.echoPaliers[Math.min(5, Math.max(3, n))] ?? REGLES.echo;
+/** « +65 % » pour un Écho de n cartes */
+export const pctEcho = (n = 3) => `+${Math.round((multEchoN(n) - 1) * 100)} %`;
+/** « Écho », « Écho ×4 », « Écho ×5 » */
+export const nomEcho = (n = 3) => (n >= 4 ? `Écho ×${Math.min(5, n)}` : 'Écho');
 
 /** Longueur de la suite qui se termine sur le dernier Geste posé */
 export function serieFinale(chaine: Maillon[]): number {
@@ -158,14 +174,23 @@ export const places = (g: Pick<Geste, 'lourd'>) => (g.lourd ? 2 : 1);
 
 /**
  * La Fréquence que prend une carte à plusieurs Fréquences quand on la pose (décision du 22 octobre 2026, sans tirage) :
- * celle qui prolonge la suite, sinon celle qui complète un Écho, sinon sa Fréquence principale.
+ * celle qui fait tout de suite une Résonance (suite de 3 ou plus), sinon celle qui complète ou agrandit un Écho,
+ * sinon celle qui prolonge une suite naissante, sinon sa Fréquence principale.
+ * (1er novembre 2026 : avant, un 4/5 posé après trois 4 prenait le 5 pour une suite 4 → 5 sans valeur, et cassait la quadruplette.)
  */
 export function meilleureFrequence(chaine: Maillon[], fs: number[]): number {
   if (fs.length < 2) return fs[0]!;
   const eff = frequencesEffectives(chaine);
   const der = eff[eff.length - 1];
-  if (der !== undefined && fs.includes(der + 1)) return der + 1;
-  for (const f of fs) if (eff.filter((x) => x === f).length >= 2) return f;
+  const prolonge = der !== undefined && fs.includes(der + 1);
+  if (prolonge && serieFinale([...chaine, { f: der + 1 }]) >= 3) return der + 1;
+  let echo: number | undefined;
+  for (const f of fs) {
+    const n = eff.filter((x) => x === f).length;
+    if (n >= 2 && (echo === undefined || n > eff.filter((x) => x === echo).length)) echo = f;
+  }
+  if (echo !== undefined) return echo;
+  if (prolonge) return der + 1;
   return fs[0]!;
 }
 

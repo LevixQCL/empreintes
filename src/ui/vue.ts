@@ -4,7 +4,7 @@
 
 import { ECLATS, estGardien, feluresPrevues, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer, traitsEnJeu, avantageAnnonce, ligneeEnnemi, nomPhase, voixRefusee } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
-import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, places, prolonge, serieFinale } from '../core/regles';
+import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, nomEcho, pctEcho, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
@@ -324,7 +324,7 @@ function regles(): string {
     + `<li><b>La force</b> est au milieu : ${ICO.atk} dégâts, ${ICO.bouclier} protection de l’escouade, ${ICO.soin} soin (dans la chaîne, touche le nom sous la carte pour choisir qui).</li>`
     + '<li><b>La Fréquence</b> est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.</li>'
     + '<li><b>Plusieurs Fréquences :</b> une carte en argent, en or ou en nacre en porte 2 ou 3. Posée, elle prend celle qui prolonge ta suite ; touche les chiffres sous elle pour en changer. Rien n’est tiré au sort.</li>'
-    + `<li><b>L’Écho :</b> trois Fréquences identiques dans la chaîne renforcent ces trois cartes de +${Math.round((REGLES.echo - 1) * 100)} %, quelle que soit leur action (dégâts, protection ou soin), et donnent 1 Flux. Plus rare qu’une suite, il paie davantage.</li>`
+    + `<li><b>L’Écho :</b> trois Fréquences identiques dans la chaîne renforcent ces cartes de +${Math.round((REGLES.echo - 1) * 100)} %, quelle que soit leur action (dégâts, protection ou soin), et donnent 1 Flux. Plus rare qu’une suite, il paie davantage. Quatre identiques : ${pctEcho(4)} ; cinq : ${pctEcho(5)} et 1 Flux de plus.</li>`
     + '<li><b>Le Flux</b> se remplit à chaque Résonance, et encore plus si la suite brise aussi une Fêlure. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main, ou garde-le pour un Coup d’éclat.</li>'
     + '<li><b>La Fêlure</b> : chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé) ; dans un groupe, elle brise aussi la Fêlure d’un ennemi non visé, deux fois moins fort. Une carte ne brise qu’une Fêlure, celle de l’ennemi visé d’abord : en main, ces cartes portent l’icône de la Fêlure dans leur capsule de Fréquence (« Brise » sur grand écran). Dans une suite (3, 4, 5), elle donne aussi 1 Flux. Les évanescents la cachent.</li>'
     + `<li><b>Le Coup d’éclat</b> : Flux plein, un seul par combat, au choix selon les lignées de l’escouade. ${(Object.values(ECLATS)).map((x) => `<b>${x.nom}</b> : ${x.texte}`).join(' ')} Le Porteur qui le déclenche prend ${REGLES.eclat.usure} d’Usure.</li>`
@@ -624,7 +624,7 @@ function htmlEcranCombat(e: Ecran): string {
     }
     else if (fin === 2) conseil = `Suite ${f - 1} → ${f} : ajoute un <b>${f + 1}</b> pour +30 %`;
     else conseil = `Ajoute un <b>${f + 1}</b> pour commencer une suite`;
-    if (a.echo) conseil = (conseil ? `${conseil} · ` : '') + `<b>Écho</b> : les trois ${a.echoF} <b>+${Math.round((REGLES.echo - 1) * 100)} %</b>`;
+    if (a.echo) { const n = a.echoN ?? 3; conseil = (conseil ? `${conseil} · ` : '') + `<b>${nomEcho(n)}</b> : les ${n === 5 ? 'cinq' : n === 4 ? 'quatre' : 'trois'} ${a.echoF} <b>${pctEcho(n)}</b>` + (n === 5 ? ' et +1 Flux' : ''); }
     if (dernier?.effet) conseil += `<span class="effet-texte">${echap(libelleEffet(dernier.effet))}</span>`;
   }
 
@@ -746,7 +746,7 @@ function htmlEcranCombat(e: Ecran): string {
   const mult = a.suite >= 3 ? `×${a.mult.toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')}` : '';
   h += `<section class="zone-chaine${a.suite >= 3 ? ' resonne' : ''}" aria-label="Chaîne"><div class="chaine-tete"><span class="surtitre">CHAÎNE · ${placesPrises(s)} / ${capacite(s)}</span>`
     + (mult ? `<span class="badge-reso">${ICO.flux}RÉSONANCE ${mult}</span>` : a.suite === 2 ? '<span class="badge-reso faible">SUITE EN COURS</span>' : '')
-    + (a.echo ? `<span class="badge-reso echo">${ICO.boost}ÉCHO +${Math.round((REGLES.echo - 1) * 100)} %</span>` : '')
+    + (a.echo ? `<span class="badge-reso echo${(a.echoN ?? 3) >= 4 ? ' fort' : ''}">${ICO.boost}${nomEcho(a.echoN ?? 3).toUpperCase()} ${pctEcho(a.echoN ?? 3)}</span>` : '')
     + (s.debride ? `<span class="badge-reso eclat">${ICO.eclat}DÉBRIDAGE ×${String(REGLES.eclat.debride).replace('.', ',')}</span>` : '')
     + (s.chaine.length && e.actif === undefined && !verrou ? bilanChaine(s) : '')
     + `</div><div class="rail">`;
