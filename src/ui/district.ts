@@ -12,7 +12,7 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
@@ -1092,11 +1092,9 @@ function feuilleCommune(e: EcranDistrict, c: CarteCommuneDef): string {
       const pris = rang >= 0;
       const plein = !pris && choisies.length >= places;
       const payee = ratelierPayable(j, k).includes(g.id);
-      // ce que coûte sa place dans ce Râtelier : la sienne si elle est prise, celle qu'elle prendrait sinon
-      const n = pris ? rang : choisies.length;
-      const prix = n >= RATELIER.gratuits ? RATELIER.energie[n - RATELIER.gratuits] ?? 0 : 0;
-      const etat = pris ? (payee ? (prix ? `${ICO.energie}−${prix} par départ` : 'Fournie') : '<b class="cm-cout">Énergie insuffisante</b>')
-        : plein ? `Plein (${choisies.length} / ${places})` : prix ? `${ICO.energie}−${prix} par départ` : 'Fournie';
+      // le prix du départ ne dépend pas du nombre de cartes : on rappelle seulement si l'énergie manque
+      const etat = pris ? (payee ? 'Dans le Râtelier' : '<b class="cm-cout">Énergie insuffisante</b>')
+        : plein ? `Plein (${choisies.length} / ${places})` : `${choisies.length} / ${places}`;
       const visages = l.length ? `<span class="cm-esc-visages">${l.map((id) => avatar(id, 22)).join('')}</span>` : '';
       return `<button type="button" class="cm-esc${pris ? ' pris' : ''}" data-action="ratelier-basculer" data-id="${g.id}" data-index="${k}"${j.expedition || plein ? ' disabled' : ''} aria-pressed="${pris}">`
         + `<span class="cm-esc-coche" aria-hidden="true">${pris ? ICO.ok : ''}</span><span class="cm-esc-txt"><strong>Escouade ${k + 1}</strong><small>${etat}</small></span>${visages}`
@@ -1154,24 +1152,22 @@ function feuilleCle(e: EcranDistrict): string {
  * vous avez telle carte de district, le coût est de tant », marqué en rouge sur chaque carte). Fouille, Strate ou Épreuve :
  * toutes passent par cet écran. Chaque carte montre sa face et son prix ; celle qu'on ne peut pas payer reste au district.
  */
-function departRatelier(j: Jeu, k: number): string {
+function departRatelier(j: Jeu, k: number, sortie: Sortie = 'explorer'): string {
   const prevues = ratelierDe(j, k);
   if (!prevues.length) return '';
-  const payees = ratelierPayable(j, k);
-  const total = coutRatelier(j, payees.length);
-  const cartes = prevues.map((id, k) => {
+  const payees = ratelierPayable(j, k, sortie);
+  const total = coutRatelier(j, sortie, k);
+  const cartes = prevues.map((id) => {
     const g = gesteCommun(j, communeDef(id)!);
     const paye = payees.includes(id);
-    const p = k >= RATELIER.gratuits ? RATELIER.energie[k - RATELIER.gratuits] ?? 0 : 0;
-    const etiquette = !paye ? `<em class="es-rt-prix reste">Reste au district</em>` : p ? `<em class="es-rt-prix cout">${ICO.energie}−${ent(p)}</em>` : `<em class="es-rt-prix">Fournie</em>`;
-    return `<li class="${paye ? '' : 'reste'}"><button type="button" class="es-rt-carte" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}${!paye ? ', reste au district faute d’énergie' : p ? `, ${p} énergie` : ', fournie'}. Voir la carte">${tuileFace(g)}</button>${etiquette}</li>`;
+    const etiquette = paye ? '' : `<em class="es-rt-prix reste">Reste au district</em>`;
+    return `<li class="${paye ? '' : 'reste'}"><button type="button" class="es-rt-carte" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}${!paye ? ', reste au district faute d’énergie' : ''}. Voir la carte">${tuileFace(g)}</button>${etiquette}</li>`;
   }).join('');
   const manque = prevues.length - payees.length;
-  const phrase = total
-    ? `Préparer ces cartes coûte <b class="es-rt-total">${ICO.energie}${ent(total)} énergie</b> à ce départ (tu en as ${ent(Math.floor(j.energie))}).`
-    : `Fournies par le district, sans énergie.`;
+  const duree = sortie === 'explorer' ? '2 h' : '40 min';
+  const phrase = `Toutes ensemble, elles coûtent <b class="es-rt-total">${ICO.energie}${ent(total)} énergie</b> à ce départ : ${duree} de production du Générateur${sortie === 'explorer' ? ' pour une exploration' : ' pour une sortie courte'} (tu en as ${ent(Math.floor(j.energie))}).`;
   return `<div class="es-ratelier"><span class="surtitre">${ICO.district}Cartes du district · ${payees.length}</span><ul class="es-rt">${cartes}</ul>`
-    + `<p class="es-freq-aide">${phrase}${manque ? ` Il manque de l’énergie : ${manque > 1 ? `${manque} cartes restent` : 'une carte reste'} au district.` : ''} Elles restent au Râtelier de l’escouade ${k + 1} d’une descente à l’autre ; tu les changes dans l’onglet Escouade.</p></div>`;
+    + `<p class="es-freq-aide">${phrase}${manque ? ` Il manque de l’énergie : elles restent au district, l’escouade part sans elles.` : ''} Elles restent au Râtelier de l’escouade ${k + 1} d’une descente à l’autre ; tu les changes dans l’onglet Escouade.</p></div>`;
 }
 
 /** La face d'une carte commune, en petit */
@@ -1920,7 +1916,10 @@ export function htmlEscouade(e: EcranDistrict): string {
   const j = e.j;
   const ep = e.epreuve ? epreuveDef(e.epreuve) ?? null : null;
   const fouille = ep ? null : e.fouille;
-  const deck = deckEscouade(j, e.escouade).length;
+  // une fouille ne paie qu'un tiers du Râtelier (1er novembre 2026)
+  // le prix des cartes du district : 2 h de Générateur pour explorer, 40 min pour une sortie courte (1er novembre 2026)
+  const sortie: Sortie = fouille || ep || e.fleche || e.pillage ? 'courte' : 'explorer';
+  const deck = deckEscouade(j, e.escouade, indiceEscouade(j, e.escouade), sortie).length;
   const deckMin = ep ? EPREUVE_DECK_MIN : DISTRICT.deckMin;
   const zone = zoneDe(e.strateChoisie);
   const fl = !ep && !fouille && e.fleche ? etatFleche(j) : null;
@@ -2028,7 +2027,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   // 3. ce que donne leur deck
   const maigre = e.escouade.length === 3 && deck < deckMin;
   if (e.escouade.length) {
-    const cartes = deckEscouade(j, e.escouade);
+    const cartes = deckEscouade(j, e.escouade, indiceEscouade(j, e.escouade), sortie);
     const n = frequencesDe(cartes);
     const jokers = cartes.filter((g) => g.effet?.type === 'accord').length;
     const suite = plusLongueSuite(n, jokers);
@@ -2037,7 +2036,7 @@ export function htmlEscouade(e: EcranDistrict): string {
       + `<div class="eq-freqs es-freq" role="img" aria-label="Fréquences du deck : ${n.map((k, i) => `${i + 1} : ${k}`).join(', ')}">`
       + n.map((k, i) => `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}" style="--fc:${couleurFrequence(i + 1)};--n:${Math.min(1, k / Math.max(1, ...n))}"><b class="eq-cristal">${i + 1}</b><small>${k ? `×${k}` : '—'}</small></span>`).join('')
       + `</div><p class="es-freq-aide">Des chiffres qui se suivent font des Résonances${suite.length >= 2 ? ` : ta plus longue suite va de <b>${suite[0]} à ${suite[suite.length - 1]}</b>` : ''}. Un chiffre absent coupe la suite${jokers ? ` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} n’importe quel trou` : ''}.</p>`;
-    h += departRatelier(j, indiceEscouade(j, e.escouade));
+    h += departRatelier(j, indiceEscouade(j, e.escouade), sortie);
     if (maigre) {
       const aRemplir = e.escouade.filter((id) => j.porteurs[id]!.modules.length < DISTRICT.cartesMax);
       const cible = aRemplir.sort((x, y) => j.porteurs[x]!.modules.length - j.porteurs[y]!.modules.length)[0];
@@ -2059,7 +2058,7 @@ export function htmlEscouade(e: EcranDistrict): string {
 
   const pret = e.escouade.length === 3 && !maigre;
   // l'énergie des cartes du Râtelier, rappelée sur le bouton (31 octobre 2026, Luc)
-  const coutDepart = e.escouade.length ? coutRatelier(j, ratelierPayable(j, indiceEscouade(j, e.escouade)).length) : 0;
+  const coutDepart = e.escouade.length ? (ratelierPayable(j, indiceEscouade(j, e.escouade), sortie).length ? coutRatelier(j, sortie, indiceEscouade(j, e.escouade)) : 0) : 0;
   h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
     + `<span><b>${e.escouade.length} / 3</b><small class="${maigre ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? `Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? `${deck} cartes · ${deckMin} au moins` : `${deck} cartes, prêt`}</small></span></div>`
     + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${fl ? `${ICO.monter}Monter` : pi ? `${ICO.grappin}Piller` : ep ? `${ICO.boost}${e.felee ? 'Tenter la Fêlée' : 'Tenter l’Épreuve'}` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;

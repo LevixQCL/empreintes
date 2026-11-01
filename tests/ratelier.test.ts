@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ajouter, creerCombat, lancer } from '../src/core/combat';
 import { CARTES_COMMUNES, PORTEURS, communeDef, forceCommune } from '../src/core/donnees';
-import { basculerRatelier, choisirRatelier, coutRatelier, deckEscouade, escouadesAvecCommune, gestesCommuns, nouveauJeu, placesRatelier, ratelierDe, ratelierPayable } from '../src/core/jeu';
+import { basculerRatelier, choisirRatelier, coutRatelier, energieParHeure, deckEscouade, escouadesAvecCommune, gestesCommuns, nouveauJeu, placesRatelier, ratelierDe, ratelierPayable } from '../src/core/jeu';
 import type { CombatEtat, Effet, Geste, TypeGeste } from '../src/core/types';
 
 // Le Râtelier du district (30 octobre 2026) : les cartes communes, leur bâtiment, leurs emplacements, leur énergie
@@ -11,7 +11,7 @@ describe('Le Râtelier du district', () => {
     const j = nouveauJeu(0);
     expect(ratelierDe(j)).toEqual(['stimulant', 'repli']);
     expect(deckEscouade(j, ['ilka', 'doran', 'vela']).filter((g) => g.porteur === null).map((g) => g.id)).toEqual(['stimulant', 'repli']);
-    expect(coutRatelier(j)).toBe(0);
+    expect(coutRatelier(j)).toBe(40); // 2 h d'un Générateur niveau 1 (20 / h)
   });
 
   it('chaque carte commune vient d’un bâtiment, sans effet de lignée', () => {
@@ -45,20 +45,29 @@ describe('Le Râtelier du district', () => {
     expect(basculerRatelier(j, 'lame-atelier').ok).toBe(true);
   });
 
-  it('les cartes au-delà de la 2e coûtent de l’énergie au départ ; sans énergie, elles restent au district', () => {
+  it('un seul prix par départ pour toutes les cartes du district : 2 h de Générateur pour explorer, 40 min pour une sortie courte', () => {
     const j = nouveauJeu(0);
     j.batiments.noyau = 9;
     j.batiments.forge = 2;
     j.batiments.clinique = 7;
+    j.batiments.generateur = 5;
+    for (const id of Object.keys(j.porteurs)) j.porteurs[id]!.poste = null;
+    expect(energieParHeure(j)).toBe(225);
     expect(choisirRatelier(j, ['stimulant', 'repli', 'lame-atelier', 'ampoule-releve']).ok).toBe(true);
-    j.energie = 1000;
-    expect(coutRatelier(j)).toBe(450);
-    expect(ratelierPayable(j)).toHaveLength(4);
+    expect(coutRatelier(j, 'explorer')).toBe(450);
+    expect(coutRatelier(j, 'courte')).toBe(150);
+    // le nombre de cartes ne change pas le prix
+    expect(choisirRatelier(j, ['stimulant']).ok).toBe(true);
+    expect(coutRatelier(j, 'explorer')).toBe(450);
+    expect(choisirRatelier(j, ['stimulant', 'repli', 'lame-atelier', 'ampoule-releve']).ok).toBe(true);
     j.energie = 200;
-    expect(ratelierPayable(j)).toEqual(['stimulant', 'repli', 'lame-atelier']);
-    expect(gestesCommuns(j)).toHaveLength(3);
-    j.energie = 0;
-    expect(ratelierPayable(j)).toEqual(['stimulant', 'repli']);
+    expect(ratelierPayable(j, 0, 'courte')).toHaveLength(4);
+    // pas assez pour explorer : toutes restent au district, l'escouade part sans elles
+    expect(ratelierPayable(j, 0, 'explorer')).toEqual([]);
+    expect(gestesCommuns(j)).toHaveLength(0);
+    // Râtelier vide : rien à payer
+    expect(choisirRatelier(j, []).ok).toBe(true);
+    expect(coutRatelier(j, 'explorer')).toBe(0);
   });
 
   it('jamais pendant une descente', () => {
@@ -168,8 +177,8 @@ describe('Améliorer les cartes communes', () => {
     j.energie = 1000;
     expect(choisirRatelier(j, ['stimulant', 'repli', 'lame-atelier'], 0).ok).toBe(true);
     expect(choisirRatelier(j, ['repli'], 1).ok).toBe(true);
-    expect(coutRatelier(j, ratelierPayable(j, 0).length)).toBe(150);
-    expect(coutRatelier(j, ratelierPayable(j, 1).length)).toBe(0);
+    expect(ratelierPayable(j, 0)).toHaveLength(3);
+    expect(coutRatelier(j, 'explorer', 0)).toBeGreaterThan(0);
     expect(gestesCommuns(j, 1).map((g) => g.id)).toEqual(['repli']);
     expect(deckEscouade(j, ['ilka', 'doran', 'vela'], 1).filter((g) => g.porteur === null).map((g) => g.id)).toEqual(['repli']);
   });

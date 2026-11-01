@@ -325,7 +325,7 @@ export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rn
   if (!p.ok) return p;
   const faits = faitsDuJour(j, now);
   if (faits.includes(cible.id)) return non(`${cible.nom} a déjà été attaqué aujourd’hui.`);
-  const e = escouadePrete(j, escouade);
+  const e = escouadePrete(j, escouade, undefined, undefined, 'courte');
   if (!e.ok) return e;
   const ecart = cible.force / Math.max(0.01, forceEscouade(j, escouade));
   const butin = butinPillage(cible, ecart);
@@ -339,7 +339,7 @@ export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rn
   x.combat.ennemi.porteur = cible.porteurs[0];
   x.combat.autres?.forEach((en, k) => { en.porteur = cible.porteurs[k + 1]; });
   x.combat.journal = [`La garnison de ${cible.nom} sort à ta rencontre : ${cible.porteurs.slice(0, 3).map((id) => porteurDef(id).nom).join(', ')}.`];
-  payerRatelier(j, escouade);
+  payerRatelier(j, escouade, 'courte');
   quitterPostes(j, escouade);
   faits.push(cible.id);
   const etat = etatPillage(j);

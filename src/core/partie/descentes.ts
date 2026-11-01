@@ -12,7 +12,7 @@ import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { REGLES } from '../regles';
-import { ACCORD_OUVERT, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
+import { ACCORD_OUVERT, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -31,9 +31,9 @@ export function gestesDe(j: Jeu, id: string): GesteDef[] {
 }
 
 /** Le deck de combat d'une escouade : les cartes de ses Porteurs, plus les cartes communes du Râtelier */
-export const deckEscouade = (j: Jeu, escouade: string[], k = indiceEscouade(j, escouade)): GesteDef[] => {
+export const deckEscouade = (j: Jeu, escouade: string[], k = indiceEscouade(j, escouade), sortie: Sortie = 'explorer'): GesteDef[] => {
   const cle = cleDuLegs(j, escouade);
-  return [...escouade.flatMap((id) => gestesDe(j, id)), ...gestesCommuns(j, k), ...(cle ? [cle] : [])];
+  return [...escouade.flatMap((id) => gestesDe(j, id)), ...gestesCommuns(j, k, sortie), ...(cle ? [cle] : [])];
 };
 
 /** L'escouade (son numéro) d'une liste de Porteurs : celle qui compte le premier d'entre eux, sinon celle qui descend */
@@ -52,12 +52,13 @@ export function indiceEscouade(j: Jeu, escouade: readonly string[]): number {
 export const RATELIER = {
   /** emplacements selon le niveau de la Tour du Noyau : 2, 3 au niveau 5, 4 au niveau 9 */
   places: [{ noyau: 1, n: 2 }, { noyau: 5, n: 3 }, { noyau: 9, n: 4 }],
-  /** emplacements fournis sans énergie */
-  gratuits: 2,
-  /** énergie pour préparer la 3e, puis la 4e carte, à chaque départ (montant fixe : améliorer le Générateur ne doit pas punir) */
-  energie: [150, 300],
+  /** prix d'un départ avec les cartes du district (1er novembre 2026, Bryan : un prix clair par sortie plutôt qu'un prix par carte) :
+   *  des heures de production du Générateur, pour toutes les cartes du Râtelier à la fois ; le prix suit les revenus.
+   *  Explorer (≈ 6 combats) : 2 h ; Fouiller et les sorties d'un ou deux combats (Épreuve, Pillage, Flèche) : 40 min */
+  heures: { explorer: 2, courte: 2 / 3 },
 };
-
+/** Une sortie longue (explorer une Strate) ou courte (fouiller, Épreuve, Pillage, Flèche) */
+export type Sortie = keyof typeof RATELIER.heures;
 export const placesRatelier = (j: Jeu) => RATELIER.places.filter((p) => j.batiments.noyau >= p.noyau).reduce((n, p) => Math.max(n, p.n), 0);
 /** La carte commune est ouverte : son bâtiment a le niveau */
 export const communeOuverte = (j: Jeu, c: CarteCommuneDef) => (j.batiments[c.batiment] ?? 0) >= c.niveau;
@@ -78,22 +79,18 @@ export function ratelierDe(j: Jeu, k = escouadeActive(j)): string[] {
 /** Les escouades (numéros) dont le Râtelier compte cette carte commune */
 export const escouadesAvecCommune = (j: Jeu, id: string): number[] =>
   Array.from({ length: NB_ESCOUADES }, (_, k) => k).filter((k) => ratelierDe(j, k).includes(id));
-/** Ce que coûte la préparation des cartes au-delà des gratuites, à chaque départ */
-export const coutRatelier = (j: Jeu, n = ratelierDe(j).length) =>
-  RATELIER.energie.slice(0, Math.max(0, n - RATELIER.gratuits)).reduce((a, b) => a + b, 0);
-/** Les cartes du Râtelier qu'on peut préparer avec l'énergie qu'on a : une carte qu'on ne peut pas payer reste au district */
-export function ratelierPayable(j: Jeu, k = escouadeActive(j)): string[] {
-  const ids = ratelierDe(j, k);
-  let n = Math.min(ids.length, RATELIER.gratuits);
-  while (n < ids.length && j.energie >= coutRatelier(j, n + 1)) n++;
-  return ids.slice(0, n);
+/** Le prix d'un départ avec les cartes du Râtelier : toutes ensemble, en heures de Générateur, arrondi à 5 ; rien si le Râtelier est vide */
+export const coutRatelier = (j: Jeu, sortie: Sortie = 'explorer', k = escouadeActive(j)) =>
+  ratelierDe(j, k).length ? Math.max(5, Math.round(energieParHeure(j) * RATELIER.heures[sortie] / 5) * 5) : 0;
+/** Les cartes du Râtelier qui partent : toutes si l'énergie suffit, sinon aucune (l'escouade part quand même, sans elles) */
+export function ratelierPayable(j: Jeu, k = escouadeActive(j), sortie: Sortie = 'explorer'): string[] {
+  return j.energie >= coutRatelier(j, sortie, k) ? ratelierDe(j, k) : [];
 }
-export const gestesCommuns = (j: Jeu, k = escouadeActive(j)): GesteDef[] => ratelierPayable(j, k).map((id) => gesteCommun(j, communeDef(id)!));
-/** Au départ : l'énergie des cartes préparées pour l'escouade qui part est dépensée (pas de remboursement) */
-export function payerRatelier(j: Jeu, escouade?: readonly string[]): void {
+export const gestesCommuns = (j: Jeu, k = escouadeActive(j), sortie: Sortie = 'explorer'): GesteDef[] => ratelierPayable(j, k, sortie).map((id) => gesteCommun(j, communeDef(id)!));
+/** Au départ : l'énergie des cartes du district est dépensée pour l'escouade qui part (pas de remboursement) */
+export function payerRatelier(j: Jeu, escouade?: readonly string[], sortie: Sortie = 'explorer'): void {
   const k = escouade ? indiceEscouade(j, escouade) : escouadeActive(j);
-  const cout = coutRatelier(j, ratelierPayable(j, k).length);
-  if (cout > 0) j.energie -= cout;
+  if (ratelierPayable(j, k, sortie).length) j.energie -= coutRatelier(j, sortie, k);
 }
 
 /** Change les cartes communes du Râtelier d'une escouade ; jamais pendant une descente */
@@ -221,8 +218,8 @@ function ranger(j: Jeu, toutes: string[][]): void {
 
 /** Retient l'escouade qui part (l'écran de départ a pu la changer) : elle devient celle qui descend,
  * et ses Porteurs quittent les autres escouades */
-function retenirDepart(j: Jeu, escouade: string[]): void {
-  payerRatelier(j, escouade);
+function retenirDepart(j: Jeu, escouade: string[], sortie: Sortie = 'explorer'): void {
+  payerRatelier(j, escouade, sortie);
   const a = escouadeActive(j);
   ranger(j, escouadesDe(j).map((l, k) => (k === a ? [...escouade] : l.filter((id) => !escouade.includes(id)))));
 }
@@ -1052,7 +1049,7 @@ export type { Rarete };
 
 // ---------- Les départs : expédition, fouille ciblée, Épreuve ----------
 
-export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boolean, min: number = DISTRICT.deckMin):
+export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boolean, min: number = DISTRICT.deckMin, sortie: Sortie = 'explorer'):
   { ok: false; message: string } | { ok: true; message?: undefined; porteurs: PorteurEtat[]; deck: GesteDef[]; bonus: BonusMarques } {
   if (j.expedition) return refus('Une expédition est déjà en cours.');
   if (escouade.length !== 3 || new Set(escouade).size !== 3) return refus('Choisis 3 Porteurs.');
@@ -1069,7 +1066,7 @@ export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef)
     const haute = j.porteurs[id]?.modules.find((k) => niveauRequis(k) > niveauPorteur(j, id).niveau);
     if (haute) return refus(`${moduleDef(haute).nom} demande un Porteur de niveau ${niveauRequis(haute)} : reprends-la à ${porteurDef(id).nom}.`);
   }
-  const cartes = deckEscouade(j, escouade).filter((g) => !filtre || g.porteur === null || filtre(g));
+  const cartes = deckEscouade(j, escouade, indiceEscouade(j, escouade), sortie).filter((g) => !filtre || g.porteur === null || filtre(g));
   if (cartes.length < min) return refus(`Ton deck n’a que ${cartes.length} cartes : confie des cartes à ton escouade (${min} au moins).`);
   // chaque Porteur combat avec ses 6 places : celles qu'on n'a pas remplies descendent vides (pas dans les Épreuves, qui retirent des cartes)
   const deck = filtre ? cartes : [...cartes, ...escouade.flatMap((id) => placesVides(id, (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).length))];
@@ -1116,7 +1113,7 @@ export const CIBLES_FOUILLE: Record<CibleFouille, { nom: string; texte: string }
 export const estLignee = (c?: CibleFouille): c is Lignee => c === 'tech' || c === 'bio' || c === 'reso';
 
 export function fouiller(j: Jeu, escouade: string[], strate: number, cible: CibleFouille, rng = graine()): Resultat {
-  const e = escouadePrete(j, escouade);
+  const e = escouadePrete(j, escouade, undefined, DISTRICT.deckMin, 'courte');
   if (!e.ok) return e;
   if (!CIBLES_FOUILLE[cible]) return non('Cible inconnue.');
   if (strate < 1 || strate > strateVaincue(j)) return non('On ne fouille que les Strates déjà vaincues.');
@@ -1125,7 +1122,7 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1, fouille: cible,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}), quete: queteOuverte(j, strate), releve: strateRelevee(j, strate),
   });
-  retenirDepart(j, escouade);
+  retenirDepart(j, escouade, 'courte');
   log(j, `L’escouade part fouiller la Strate −${strate} (${CIBLES_FOUILLE[cible].nom.toLowerCase()}).`);
   return { ok: true };
 }
@@ -1262,7 +1259,7 @@ export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: numbe
   if (!ep || !epreuvesDeLaSemaine(now, j).some((e) => e.id === id)) return non('Cette Épreuve n’est pas au programme cette semaine.');
   if (strateVaincue(j) < 1) return non('Les Épreuves s’ouvrent après la première Strate vaincue.');
   if (ep.imposee) return partirRecrues(j, ep, now, rng, felee);
-  const e = escouadePrete(j, escouade, undefined, EPREUVE_DECK_MIN);
+  const e = escouadePrete(j, escouade, undefined, EPREUVE_DECK_MIN, 'courte');
   if (!e.ok) return e;
   const strate = strateEpreuve(j);
   const zone = zoneDe(strate);
@@ -1280,7 +1277,7 @@ export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: numbe
       ...(ep.regles ? { epreuve: ep.regles } : {}),
     },
   });
-  payerRatelier(j, escouade);
+  payerRatelier(j, escouade, 'courte');
   quitterPostes(j, escouade);
   j.expedition = {
     ...x, epreuve: id, forceFixe: force,

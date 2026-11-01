@@ -166,7 +166,7 @@ export function peutMonter(j: Jeu): Resultat {
 
 /** Lance un combat de la Flèche (gardiens payés, ou garnison d'un directeur pour un défi) */
 function combatFleche(j: Jeu, escouade: string[], quai: number, force: number, porteurs: string[], journal: string, rng: number, defi?: GardienQuai): Resultat {
-  const e = escouadePrete(j, escouade);
+  const e = escouadePrete(j, escouade, undefined, undefined, 'courte');
   if (!e.ok) return e;
   // un Porteur (la garnison d'un directeur) combat sous les traits d'un garde de sa lignée ; un garde de la Flèche, tel quel
   const gardes = porteurs.map((id) => (estGardeFleche(id) ? id : `garde-${porteurDef(id).lignee}`));
@@ -178,7 +178,7 @@ function combatFleche(j: Jeu, escouade: string[], quai: number, force: number, p
   if (!estGardeFleche(porteurs[0]!)) x.combat.ennemi.porteur = porteurs[0];
   x.combat.autres?.forEach((en, k) => { if (!estGardeFleche(porteurs[k + 1]!)) en.porteur = porteurs[k + 1]; });
   x.combat.journal = [journal];
-  payerRatelier(j, escouade);
+  payerRatelier(j, escouade, 'courte');
   quitterPostes(j, escouade);
   j.expedition = { ...x, fleche: { quai, force, ...(defi ? { gardien: { id: defi.id, nom: defi.nom, ...(defi.depuis !== undefined ? { depuis: defi.depuis } : {}) }, defi: true } : {}) } };
   return { ok: true };
