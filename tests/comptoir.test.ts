@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import { moduleDe, moduleDef } from '../src/core/donnees';
 import {
-  COMPTOIR, ENTRAINEMENT, XP, acheter, ameliorer, estJeuValide, etalsDuComptoir, gainsAmelioration, garnirComptoir, niveauPorteur,
+  COMPTOIR, ENTRAINEMENT, XP, acheter, renouvelerComptoir, renouvelablesComptoir, ameliorer, estJeuValide, etalsDuComptoir, gainsAmelioration, garnirComptoir, niveauPorteur,
   nouveauJeu, partir, plafondEntrainement, poster, prixComptoir, tick, apercuSeance, accorderSeance, DISTRICT, placesEntrainement, plafondSeance,
 } from '../src/core/jeu';
 
@@ -14,6 +14,29 @@ const pretT = () => { const j = pret(); j.porteurs.vela!.xp = 1e6; return j; };
 const construit = (niveau = 1) => { const j = pret(); j.batiments.comptoir = niveau; j.batiments.noyau = Math.max(j.batiments.noyau, niveau); garnirComptoir(j, 0); return j; };
 
 describe('Le Comptoir', () => {
+  it('se renouvelle une fois par jour contre des composants, sans toucher aux cartes achetées', () => {
+    const j = construit(2);
+    const avant = [...j.comptoir.offres];
+    expect(acheter(j, 0, 0).ok).toBe(true);
+    const composants = j.composants;
+    expect(renouvelerComptoir(j, 0).ok).toBe(true);
+    expect(j.composants).toBe(composants - COMPTOIR.renouveler);
+    expect(j.comptoir.offres[0]).toBe(avant[0]);
+    j.comptoir.offres.forEach((id, i) => { expect(moduleDef(id).rarete).toBe(moduleDef(avant[i]!).rarete); if (i > 0) expect(avant.map(moduleDe)).not.toContain(moduleDe(id)); });
+    expect(new Set(j.comptoir.offres.map(moduleDe)).size).toBe(j.comptoir.offres.length);
+    expect(renouvelablesComptoir(j)).toEqual([]);
+    expect(renouvelerComptoir(j, 0).ok).toBe(false);
+    // le lendemain, on peut de nouveau
+    garnirComptoir(j, JOUR + HEURE);
+    expect(renouvelerComptoir(j, JOUR + HEURE).ok).toBe(true);
+    // sans assez de composants : rien ne bouge
+    garnirComptoir(j, 2 * JOUR + HEURE);
+    j.composants = COMPTOIR.renouveler - 1;
+    const offres = [...j.comptoir.offres];
+    expect(renouvelerComptoir(j, 2 * JOUR + HEURE).ok).toBe(false);
+    expect(j.comptoir.offres).toEqual(offres);
+  });
+
   it('commence à construire : aucune offre tant qu’il n’existe pas', () => {
     const j = pret();
     expect(j.batiments.comptoir).toBe(0);

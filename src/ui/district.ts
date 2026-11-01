@@ -13,7 +13,7 @@ import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
   OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, rendementMission, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
-  COMPTOIR, prixComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
+  COMPTOIR, prixComptoir, renouvelablesComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -599,7 +599,16 @@ function blocComptoir(e: EcranDistrict): string {
       + (vendu ? '' : `<button type="button" class="btn ${assez ? 'prim' : 'sec'} petit cp-acheter" data-action="acheter" data-index="${i}"${assez ? '' : ' disabled'} aria-label="Acheter ${echap(m.nom)} (${NOMS_RARETE[m.rarete]})">${couts(j, { composants: p.composants, eclats: p.eclats })}</button>`)
       + `</div>`;
   });
-  return h + `</div><small class="fb-absents">Un doublon fait monter une carte que tu as déjà. L’or et la nacre ne se vendent pas : ils se trouvent dans les Strates.</small></section>`;
+  // renouveler les étals encore en vente, une fois par jour (1er novembre 2026)
+  const places = renouvelablesComptoir(j).length;
+  const assezR = j.composants >= COMPTOIR.renouveler;
+  h += `</div><div class="cp-renouveler">`
+    + (c.renouvele ? `<small class="aide">${ICO.ok}Étals déjà renouvelés aujourd’hui : nouvel arrivage demain.</small>`
+      : !places ? `<small class="aide">Tout est vendu : nouvel arrivage demain.</small>`
+      : `<small class="aide">Une fois par jour, les fouilleurs ressortent d’autres cartes du même métal à la place de ${places > 1 ? `celles encore en vente (${places})` : 'celle encore en vente'}.</small>`
+        + `<button type="button" class="btn sec petit" data-action="comptoir-renouveler"${assezR ? '' : ' disabled'} aria-label="Renouveler les étals pour ${COMPTOIR.renouveler} composants">${ICO.chrono}Renouveler les étals ${couts(j, { composants: COMPTOIR.renouveler, eclats: 0 })}</button>`)
+    + `</div>`;
+  return h + `<small class="fb-absents">Un doublon fait monter une carte que tu as déjà. L’or et la nacre ne se vendent pas : ils se trouvent dans les Strates.</small></section>`;
 }
 
 /** Un lieu déjà peint mais pas encore ouvert : sa vue tirée du tableau, et la raison, dans le lore */

@@ -552,6 +552,8 @@ export const COMPTOIR = {
   prix: { fer: { composants: 40, eclats: 0 }, cuivre: { composants: 120, eclats: 0 }, argent: { composants: 300, eclats: 3 } } as Partial<Record<Rarete, { composants: number; eclats: number }>>,
   strateArgent: 4,
   partDoublons: 0.5,
+  /** renouveler les étals encore en vente, une fois par jour (1er novembre 2026, Bryan) : la moitié d'une carte en cuivre */
+  renouveler: 60,
 } as const;
 
 export function comptoirVide(now: number, rng: number): Comptoir {
@@ -570,25 +572,63 @@ export const prixComptoir = (id: string) => COMPTOIR.prix[moduleDef(id).rarete] 
 export function garnirComptoir(j: Jeu, now: number): void {
   const c = j.comptoir;
   const jour = jourDe(now);
-  if (c.jour !== jour) { c.jour = jour; c.offres = []; c.achetes = []; }
+  if (c.jour !== jour) { c.jour = jour; c.offres = []; c.achetes = []; c.renouvele = false; }
   const etals = etalsDuComptoir(j);
   if (c.offres.length >= etals.length) return;
   const t = tireur(c);
   const bases = new Set(c.offres.map(moduleDe));
   for (let i = c.offres.length; i < etals.length; i++) {
-    const r = etals[i]!;
-    let id: string | undefined;
-    const aMonter = Object.keys(j.collection).filter((k) => k.endsWith('@' + r) && !moduleDef(k).legs && !bases.has(moduleDe(k)) && doublonsRequis(k, j.collection[k]!.niveau) !== null);
-    if (aMonter.length && t.nombre() < COMPTOIR.partDoublons) id = aMonter[t.entier(aMonter.length)];
-    for (let g = 0; !id && g < 40; g++) {
-      const pool = tirablesEn(r);
-      const m = pool[t.entier(pool.length)]!;
-      if (!bases.has(m.id)) id = carteId(m.id, r);
-    }
+    const id = tirerOffre(j, t, etals[i]!, bases);
     if (!id) break;
     bases.add(moduleDe(id));
     c.offres.push(id);
   }
+}
+
+/** Une offre du métal r : un doublon utile une fois sur deux, sinon une carte tirable ; jamais un module déjà dans bases */
+function tirerOffre(j: Jeu, t: ReturnType<typeof tireur>, r: Rarete, bases: Set<string>): string | undefined {
+  let id: string | undefined;
+  const aMonter = Object.keys(j.collection).filter((k) => k.endsWith('@' + r) && !moduleDef(k).legs && !bases.has(moduleDe(k)) && doublonsRequis(k, j.collection[k]!.niveau) !== null);
+  if (aMonter.length && t.nombre() < COMPTOIR.partDoublons) id = aMonter[t.entier(aMonter.length)];
+  for (let g = 0; !id && g < 40; g++) {
+    const pool = tirablesEn(r);
+    const m = pool[t.entier(pool.length)]!;
+    if (!bases.has(m.id)) id = carteId(m.id, r);
+  }
+  return id;
+}
+
+/** Peut-on renouveler les étals aujourd'hui ? (une fois par jour, s'il reste au moins une carte en vente) */
+export function renouvelablesComptoir(j: Jeu): number[] {
+  const c = j.comptoir;
+  if (!j.batiments.comptoir || c.renouvele) return [];
+  return c.offres.map((_, i) => i).filter((i) => !c.achetes.includes(i));
+}
+
+/**
+ * Renouveler les étals (1er novembre 2026, Bryan : « une fois par jour, payant en composants ») : les cartes encore en
+ * vente sont remplacées par d'autres du même métal, jamais les mêmes ; les cartes achetées restent achetées.
+ */
+export function renouvelerComptoir(j: Jeu, now = j.dernierTick): Resultat {
+  if (!j.batiments.comptoir) return non('Le Comptoir est fermé : remets-le d’abord en état.');
+  garnirComptoir(j, now);
+  const c = j.comptoir;
+  if (c.renouvele) return non('Les étals ont déjà été renouvelés aujourd’hui : nouvel arrivage demain.');
+  const places = renouvelablesComptoir(j);
+  if (!places.length) return non('Tout est vendu : nouvel arrivage demain.');
+  if (j.composants < COMPTOIR.renouveler) return non('Pas assez de composants.');
+  const t = tireur(c);
+  const metaux = places.map((i) => moduleDef(c.offres[i]!).rarete);
+  // jamais une carte déjà proposée aujourd'hui ; si le métal n'en a plus assez, on garde l'ancienne
+  const bases = new Set(c.offres.map(moduleDe));
+  places.forEach((i, n) => {
+    const id = tirerOffre(j, t, metaux[n]!, bases);
+    if (id) { bases.add(moduleDe(id)); c.offres[i] = id; }
+  });
+  j.composants -= COMPTOIR.renouveler;
+  c.renouvele = true;
+  log(j, 'Comptoir : les étals ont été renouvelés.');
+  return { ok: true };
 }
 
 /** Achète l'offre n° index du Comptoir : la carte rejoint la collection (nouvelle carte, ou doublon) */

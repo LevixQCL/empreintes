@@ -682,6 +682,7 @@ export interface ContratEnMer { id: string; rang: 'montante' | 'vive' | 'grande'
 /** rapports lus gardés pour les relire (les non lus ne sont jamais effacés) */
 export const RAPPORTS_LUS_MAX = 5;
 
-export interface Comptoir { jour: number; offres: string[]; achetes: number[]; rng: number }
+/** renouvele : les étals ont déjà été renouvelés aujourd'hui (1er novembre 2026) */
+export interface Comptoir { jour: number; offres: string[]; achetes: number[]; rng: number; renouvele?: boolean }
 
 export type DureeMission = 'courte' | 'longue';

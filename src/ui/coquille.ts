@@ -288,7 +288,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
       ligne('recycler', 'Recycler des doublons', 'Chaque doublon recyclé rapporte quelques composants.'),
       ligne('coffre', 'Le Butin de la semaine', 'Chaque lundi, selon les paliers atteints.')];
     servir = [ligne('marteau', 'Améliorer les bâtiments', 'Avec l’énergie.'),
-      ligne('cartes', 'Acheter au Comptoir', 'Des cartes précises, à prix fixe, renouvelées chaque jour.'),
+      ligne('cartes', 'Acheter au Comptoir', 'Des cartes précises, à prix fixe, renouvelées chaque jour (et une fois de plus contre des composants).'),
       ligne('cartes', 'Monter une carte de niveau', 'Avec ses doublons.'),
       ligne('marteau', 'Refabriquer une carte à la Forge', 'De 25 composants (fer) à 1 250 (nacre).')];
   } else if (r === 'eclats') {

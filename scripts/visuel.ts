@@ -28,11 +28,13 @@ const ENTRER = async (p: Page) => {
     await p.waitForTimeout(300);
   }
 };
-const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer'; faire: (p: Page) => Promise<void> }[] = [
+const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
   { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="forge"]'); } },
   { nom: 'generateur', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="generateur"]'); } },
+  // le Comptoir (1er novembre 2026) : les étals du jour et le bouton pour les renouveler une fois par jour
+  { nom: 'comptoir', sauvegarde: 'comptoir', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="comptoir"]'); await p.waitForTimeout(300); await p.$eval('.cp-renouveler', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
   { nom: 'noyau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="noyau"]'); } },
   { nom: 'noyau-places', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="noyau"]'); await p.locator('.fb-bloc.te').scrollIntoViewIfNeeded(); } },
   // le Butin de la semaine (28 octobre 2026) : sur téléphone, on déplie d'abord la bulle de l'objectif, puis on touche le bandeau
@@ -175,6 +177,11 @@ async function main() {
     for (const id of trois.slice(0, 2)) te.data.porteurs[id].poste = 'noyau';
     te.data.derniereSeance = trois[2];
     (saves as Record<string, unknown>).tour = te;
+    // le Comptoir ouvert, au niveau 3, avec assez de composants (1er novembre 2026)
+    const cp = JSON.parse(JSON.stringify(saves.district));
+    cp.data.batiments.comptoir = 3;
+    cp.data.composants = Math.max(cp.data.composants ?? 0, 500);
+    (saves as Record<string, unknown>).comptoir = cp;
     // la même expédition, mais à la Strate −6 : le brouillard ne laisse voir que des indices (30 octobre 2026)
     const br = JSON.parse(JSON.stringify(saves.combat));
     if (br.data.expedition) br.data.expedition.strate = 6;
