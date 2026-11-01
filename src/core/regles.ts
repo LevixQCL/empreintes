@@ -101,6 +101,14 @@ type Maillon = Pick<Geste, 'f'> & { effet?: Geste['effet']; porteur?: Geste['por
 
 /** Une carte à Fréquence libre : l'Accord (prolonge la suite) et le Diapason (répète la Fréquence d'avant) */
 export const frequenceLibre = (e?: { type: string }) => e?.type === 'accord' || e?.type === 'diapason';
+/**
+ * La zone de Fréquences de chaque lignée (1er novembre 2026, Bryan : « il faut un truc cohérent »).
+ * La Fréquence principale d'une carte est toujours dans la zone de sa lignée ; les autres (débloquées par le métal)
+ * peuvent en déborder d'un cran ; seules les exclusives, l'Héritage et la carte du parrainage s'écartent plus loin.
+ * Les trois zones se chevauchent et couvrent ensemble l'échelle 1 à 9 (tests/zones-frequences.test.ts).
+ */
+export const ZONES_FREQUENCES: Record<Lignee, readonly [number, number]> = { bio: [1, 5], tech: [3, 7], reso: [6, 9] };
+
 /** Le signe d'une Fréquence libre sur la carte : ∗ pour l'Accord, = pour le Diapason */
 export const signeLibre = (e?: { type: string }) => (e?.type === 'diapason' ? '=' : '∗');
 

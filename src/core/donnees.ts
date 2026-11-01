@@ -77,7 +77,7 @@ export const MODULES: ModuleDef[] = [
   c('bond', 'Talon de cristal', 'tech', 'fer', 'atk', 6, [4, 5, 3], { type: 'elan' }),
   c('esquive', 'Bracelet de déviation', 'tech', 'fer', 'bouclier', 6, [5, 6, 4], { type: 'elan' }),
   c('tir', 'Canon à cristal', 'tech', 'fer', 'atk', 10, [6, 7, 5], { type: 'percant' }),
-  c('tir-vif', 'Pistolet à faisceau', 'tech', 'fer', 'atk', 5, [2, 1, 3], { type: 'flux', v: 1 }),
+  c('tir-vif', 'Pistolet à faisceau', 'tech', 'fer', 'atk', 5, [3, 2, 4], { type: 'flux', v: 1 }),
   c('morsure', 'Pince de récif', 'bio', 'fer', 'atk', 5, [2, 3, 1], { type: 'siphon', part: 0.5 }),
   c('carapace', 'Carapace', 'bio', 'fer', 'bouclier', 8, [1, 2, 3], { type: 'rempart', part: 0.5 }),
   c('regenerer', 'Bol de sève', 'bio', 'fer', 'soin', 9, [4, 5, 3], { type: 'vague' }),
@@ -89,16 +89,16 @@ export const MODULES: ModuleDef[] = [
   c('apaiser', 'Cœur d’améthyste', 'reso', 'fer', 'soin', 7, [6, 7, 5], { type: 'vague' }),
   c('eclat', 'Éclat', 'reso', 'fer', 'atk', 11, [8, 7, 9], { type: 'crescendo', part: 0.3 }),
 
-  // ---------- Augmentés : Fréquences basses et moyennes ----------
+  // ---------- Augmentés : Fréquences moyennes (zone 3 à 7, ZONES_FREQUENCES) ----------
   c('jambes-ressort', 'Jambes à ressort', 'tech', 'fer', 'atk', 11, [7, 8, 6], { type: 'elan' }),
   c('gant-arc', 'Gant à arc', 'tech', 'fer', 'atk', 13, [7, 6, 8], { type: 'flux', v: 1 }),
   c('oeil-relais', 'Œil-relais', 'tech', 'fer', 'atk', 14, [5, 3, 6], { type: 'percant' }),
   c('grappin-cable', 'Grappin à câble', 'tech', 'fer', 'bouclier', 8, [4, 5, 3], { type: 'elan' }),
-  c('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', 'atk', 15, [8, 7, 6], { type: 'elan' }),
+  c('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', 'atk', 15, [6, 8, 7], { type: 'elan' }),
   c('oeil-brouilleur', 'Œil-brouilleur', 'tech', 'cuivre', 'atk', 11, [6, 7, 5], { type: 'desarmer', part: 0.3 }),
-  c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 36, [8, 6, 4], { type: 'percant' }, true),
+  c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 36, [6, 8, 4], { type: 'percant' }, true),
   c('dorsale', 'Dorsale renforcée', 'tech', 'argent', 'bouclier', 20, [3, 4, 7], { type: 'elan' }),
-  c('lames-orbitales', 'Lames orbitales', 'tech', 'or', 'atk', 26, [9, 3, 2], { type: 'crescendo', part: 0.25 }, true),
+  c('lames-orbitales', 'Lames orbitales', 'tech', 'or', 'atk', 26, [7, 3, 2], { type: 'crescendo', part: 0.25 }, true),
   c('coeur-reprise', 'Cœur de reprise', 'tech', 'or', 'atk', 28, [6, 2, 5], { type: 'percant' }),
 
   // ---------- Génés : Fréquences basses ----------

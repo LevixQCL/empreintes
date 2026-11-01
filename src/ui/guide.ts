@@ -11,7 +11,7 @@ import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, chargeNiveau } 
 import { DECK_DEPART, GESTES_SPECIAUX, METAL_FORCE, METAL_FREQ, METAL_RENFORT, MODULES_TIRABLES as MODULES, carteId, gesteDeCarte, moduleDe, moduleDef } from '../core/donnees';
 import { NOMS_EFFET } from '../core/effets';
 import { DISTRICT, EPREUVE_DECK_MIN } from '../core/jeu';
-import { REGLES, frequenceLibre, pctEcho } from '../core/regles';
+import { REGLES, ZONES_FREQUENCES, frequenceLibre, pctEcho } from '../core/regles';
 import type { Geste, GesteDef, Lignee, TypeEffet, TypeGeste } from '../core/types';
 import { textureMetal } from './art';
 import { COULEUR_RARETE, ICONES_ACTION, SIGNE_LOURD, couleurFrequence, faceCarte } from './carte';
@@ -67,12 +67,10 @@ function frequencesLignee(l: Lignee): number[] {
   return n;
 }
 
-/** Les Fréquences principales des cartes d'une lignée, de la plus basse à la plus haute (« 1 à 5 ») */
+/** La zone de Fréquences d'une lignée (« 1 à 5 »), la même que dans les règles */
 export function plageFrequences(l: Lignee): string {
-  // Seules les Fréquences portées par au moins 3 cartes comptent : quelques cartes isolées (Augmentés à 2, 8 ou 9)
-  // ne doivent pas faire croire à une plage plus large qu'en vrai (31 oct. 2026 : « 2 à 9 » affiché pour un vrai 3 à 7)
-  const ok = frequencesLignee(l).map((k, i) => (k >= 3 ? i + 1 : 0)).filter(Boolean);
-  return `${Math.min(...ok)} à ${Math.max(...ok)}`;
+  const [a, b] = ZONES_FREQUENCES[l];
+  return `${a} à ${b}`;
 }
 
 /** Les actions du deck de départ : le repère conseillé */
@@ -116,7 +114,9 @@ function carteExemple(g: GesteDef, taille: 'chaine' | 'main', o: { lourd?: boole
   return html.replace(/^<button type="button"/, '<div role="img"').replace(/ data-action="" data-uid="[^"]*"/, '').replace(/<\/button>$/, '</div>');
 }
 
-/** L'échelle des Fréquences 1 à 9, et la part de chaque lignée */
+const dansZone = (l: Lignee, f: number) => f >= ZONES_FREQUENCES[l][0] && f <= ZONES_FREQUENCES[l][1];
+
+/** L'échelle des Fréquences 1 à 9 : la zone de chaque lignée, plus vive là où ses cartes sont nombreuses */
 function echelleFrequences(): string {
   let h = `<div class="g-echelle" role="img" aria-label="Les Fréquences de chaque lignée : Génés en bas, Augmentés au milieu, Résonants en haut">`
     + `<span></span>${Array.from({ length: 9 }, (_, i) => `<b style="--fc:${couleurFrequence(i + 1)}">${i + 1}</b>`).join('')}`;
@@ -124,7 +124,7 @@ function echelleFrequences(): string {
     const n = frequencesLignee(l);
     const max = Math.max(...n);
     h += `<small style="--c:${COULEUR[l]}">${NOM_LIGNEES[l]}</small>`
-      + n.map((k) => `<i style="--c:${COULEUR[l]};--a:${k ? 0.25 + 0.75 * (k / max) : 0}"></i>`).join('');
+      + n.map((k, i) => `<i style="--c:${COULEUR[l]};--a:${dansZone(l, i + 1) ? 0.25 + 0.75 * (k / max) : 0}"></i>`).join('');
   }
   return h + `</div>`;
 }

@@ -109,7 +109,7 @@ describe('Une carte, cinq métaux', () => {
     // une carte d'origine or trouvée en fer : plus faible, une seule Fréquence, sans effet
     expect(moduleDef('lames-orbitales').rarete).toBe('or');
     expect(moduleDef('lames-orbitales@fer').v).toBeLessThan(moduleDef('lames-orbitales').v);
-    expect(moduleDef('lames-orbitales@fer').f).toEqual([9]);
+    expect(moduleDef('lames-orbitales@fer').f).toEqual([7]);
     expect(moduleDef('lames-orbitales@fer').effet).toBeUndefined();
   });
 
