@@ -153,6 +153,8 @@ function tuileCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean, scelle
     // une carte commune du Râtelier s'ouvre aussi d'un toucher (31 octobre 2026, Luc : « on ne sait pas appuyer dessus comme les autres »)
     : origine && !scellee && g.id !== 'cle-legs' ? `<li><button type="button" class="eq-tuile" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}, ${NOM_ACTION[g.type]} ${g.v}, carte commune. Voir la carte">${corps}</button></li>`
     // la Clé de l’Héritage aussi, scellée ou descellée (31 octobre 2026, Bryan : « on ne sait pas cliquer dessus comme les autres »)
+    // la Lecture profonde de Véla aussi (1er novembre 2026, Luc : « qu'elle soit cliquable qu'on voit ce qu'elle fait »)
+    : g.id === 'lecture-profonde' ? `<li><button type="button" class="eq-tuile" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}, carte unique de Véla, ${NOM_ACTION[g.type]} ${g.v}, Accord. Voir la carte">${corps}</button></li>`
     : g.id === 'cle-legs' ? `<li><button type="button" class="eq-tuile${scellee ? ' scellee' : ''}" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}, ton Héritage${scellee ? ', scellée' : `, ${NOM_ACTION[g.type]} ${g.v}`}. Voir la carte">${corps}</button></li>`
     : `<li><div class="eq-tuile fixe${scellee ? ' scellee' : ''}">${corps}</div></li>`;
 }

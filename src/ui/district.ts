@@ -22,6 +22,7 @@ import type { CibleFouille } from '../core/expedition';
 import { DIFFICULTES_FOUILLE, type DifficulteFouille } from '../core/jeu';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
 import { CONFIANCE } from '../core/jeu';
+import { LECTURE_PROFONDE } from '../core/partie/etat';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
 import { CHAPITRES, LIVRES, chapitreDef, chapitreOuvert } from '../core/chroniques';
@@ -992,6 +993,7 @@ export function feuilleCarte(e: EcranDistrict): string {
   const commune = cle ? communeDef(cle) : undefined;
   if (commune) return feuilleCommune(e, commune);
   if (cle === CLE_LEGS.id && j.legs === 'cle') return feuilleCle(e);
+  if (cle === LECTURE_PROFONDE.id && j.actes.lecture === 'autoriser') return feuilleLecture();
   if (!cle || !j.collection[cle]) return '';
   const m = moduleDef(cle);
   const c = j.collection[cle]!;
@@ -1111,6 +1113,26 @@ function feuilleCommune(e: EcranDistrict, c: CarteCommuneDef): string {
  * Le détail de la Clé de l’Héritage (31 octobre 2026, Bryan : « on ne sait pas cliquer dessus comme les autres ») :
  * ses effets, son histoire, ce qui la descelle et la fait grandir, et les escouades avec qui elle descend.
  */
+/**
+ * La Lecture profonde de Véla (1er novembre 2026, Luc : « j'arrive pas à voir ce qu'elle fait ») : la carte gagnée à la
+ * dernière lecture n'est pas dans la collection (elle est liée à Véla), on la montre donc ici, comme la Clé de l'Héritage.
+ */
+function feuilleLecture(): string {
+  const g = LECTURE_PROFONDE;
+  const m: ModuleDef = { id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], effet: g.effet! };
+  const vela = porteurDef('vela');
+  return `<div class="voile-feuille" data-action="carte-fermer" aria-hidden="true"></div><section class="feuille carte-detail cm-detail" role="dialog" aria-modal="true" aria-label="${echap(g.nom)}"><span class="poignee" aria-hidden="true"></span>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">CARTE UNIQUE · ${echap(vela.nom.toUpperCase())}</span><h2>${echap(g.nom)}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="guide" data-id="effets" aria-label="Les cartes et leurs effets">${ICO.aide}</button>`
+    + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
+    + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, 1, 1)}</div><div class="detail-infos">`
+    + `<ul class="effets-carte"><li><b>Attaque ${g.v}</b> : une des plus fortes attaques du jeu, fixe (elle ne monte pas de niveau).</li>`
+    + `<li><b>${echap(NOMS_EFFET.accord)}</b> ${avecMots(texteEffet(g.effet!), ['accord'])} Elle prend toujours le chiffre qui manque : un vrai joker pour finir une Résonance.</li></ul>`
+    + `<p class="aide">Elle n’appartient qu’à ${echap(vela.nom)} : on ne peut pas la confier à un autre Porteur. Elle entre dans le deck dès que ${echap(vela.nom)} est dans l’escouade, en plus de ses cartes.</p></div></div>`
+    + `<blockquote class="lore-carte">Sous les salles closes, ${echap(vela.nom)} a lu jusqu’au bout ce que cachaient les cristaux. Elle en est revenue plus fragile, mais elle sait désormais entendre n’importe quelle suite et s’y glisser.</blockquote>`
+    + `</div></section>`;
+}
+
 function feuilleCle(e: EcranDistrict): string {
   const j = e.j;
   const o = ORIGINE_PAQUETAGE[CLE_LEGS.id]!;
