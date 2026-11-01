@@ -1126,7 +1126,7 @@ function feuilleLecture(): string {
     + `<button type="button" class="btn-icone" data-action="guide" data-id="effets" aria-label="Les cartes et leurs effets">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="carte-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
     + `<div class="detail-haut"><div class="detail-face">${faceCarte(m, 1, 1)}</div><div class="detail-infos">`
-    + `<ul class="effets-carte"><li><b>Attaque ${g.v}</b> : une des plus fortes attaques du jeu, fixe (elle ne monte pas de niveau).</li>`
+    + `<ul class="effets-carte"><li><b>Attaque ${g.v}</b> Une des plus fortes attaques du jeu, fixe (elle ne monte pas de niveau).</li>`
     + `<li><b>${echap(NOMS_EFFET.accord)}</b> ${avecMots(texteEffet(g.effet!), ['accord'])} Elle prend toujours le chiffre qui manque : un vrai joker pour finir une Résonance.</li></ul>`
     + `<p class="aide">Elle n’appartient qu’à ${echap(vela.nom)} : on ne peut pas la confier à un autre Porteur. Elle entre dans le deck dès que ${echap(vela.nom)} est dans l’escouade, en plus de ses cartes.</p></div></div>`
     + `<blockquote class="lore-carte">Sous les salles closes, ${echap(vela.nom)} a lu jusqu’au bout ce que cachaient les cristaux. Elle en est revenue plus fragile, mais elle sait désormais entendre n’importe quelle suite et s’y glisser.</blockquote>`
