@@ -1187,7 +1187,7 @@ function departRatelier(j: Jeu, k: number, sortie: Sortie = 'explorer'): string 
     return `<li class="${paye ? '' : 'reste'}"><button type="button" class="es-rt-carte" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}${!paye ? ', reste au district faute d’énergie' : ''}. Voir la carte">${tuileFace(g)}</button>${etiquette}</li>`;
   }).join('');
   const manque = prevues.length - payees.length;
-  const duree = sortie === 'explorer' ? '1 h' : '20 min';
+  const duree = sortie === 'explorer' ? '30 min' : '15 min';
   const phrase = `Toutes ensemble, elles coûtent <b class="es-rt-total">${ICO.energie}${ent(total)} énergie</b> à ce départ : ${duree} de production du Générateur${sortie === 'explorer' ? ' pour une exploration' : ' pour une sortie courte'} (tu en as ${ent(Math.floor(j.energie))}).`;
   return `<div class="es-ratelier"><span class="surtitre">${ICO.district}Cartes du district · ${payees.length}</span><ul class="es-rt">${cartes}</ul>`
     + `<p class="es-freq-aide">${phrase}${manque ? ` Il manque de l’énergie : elles restent au district, l’escouade part sans elles.` : ''} Elles restent au Râtelier de l’escouade ${k + 1} d’une descente à l’autre ; tu les changes dans l’onglet Escouade.</p></div>`;
@@ -1957,7 +1957,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const ep = e.epreuve ? epreuveDef(e.epreuve) ?? null : null;
   const fouille = ep ? null : e.fouille;
   // une fouille ne paie qu'un tiers du Râtelier (1er novembre 2026)
-  // le prix des cartes du district : 1 h de Générateur pour explorer, 20 min pour une sortie courte (1er novembre 2026)
+  // le prix des cartes du district : 30 min de Générateur pour explorer, 15 min pour une sortie courte (1er novembre 2026)
   const sortie: Sortie = fouille || ep || e.fleche || e.pillage ? 'courte' : 'explorer';
   const deck = deckEscouade(j, e.escouade, indiceEscouade(j, e.escouade), sortie).length;
   const deckMin = ep ? EPREUVE_DECK_MIN : DISTRICT.deckMin;

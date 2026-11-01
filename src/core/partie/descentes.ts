@@ -54,9 +54,9 @@ export const RATELIER = {
   places: [{ noyau: 1, n: 2 }, { noyau: 5, n: 3 }, { noyau: 9, n: 4 }],
   /** prix d'un départ avec les cartes du district (1er novembre 2026, Bryan : un prix clair par sortie plutôt qu'un prix par carte) :
    *  des heures de production du Générateur, pour toutes les cartes du Râtelier à la fois ; le prix suit les revenus.
-   *  Explorer (≈ 6 combats) : 1 h ; Fouiller et les sorties d'un ou deux combats (Épreuve, Pillage, Flèche) : 20 min.
-   *  (1er novembre 2026, Bryan : 2 h et 40 min, c'était trop cher, ≈ 900 pour descendre : prix divisés par deux) */
-  heures: { explorer: 1, courte: 1 / 3 },
+   *  Explorer (≈ 6 combats) : 30 min ; Fouiller et les sorties d'un ou deux combats (Épreuve, Pillage, Flèche) : 15 min.
+   *  (1er novembre 2026, Bryan : 2 h et 40 min, c'était trop cher, ≈ 900 pour descendre : puis encore un peu trop à 1 h et 20 min : 30 min et 15 min) */
+  heures: { explorer: 0.5, courte: 0.25 },
 };
 /** Une sortie longue (explorer une Strate) ou courte (fouiller, Épreuve, Pillage, Flèche) */
 export type Sortie = keyof typeof RATELIER.heures;
