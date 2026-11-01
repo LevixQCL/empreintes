@@ -310,7 +310,7 @@ function monEscouade(e: EcranDistrict): string {
 
 /**
  * Le Râtelier du district (30 octobre 2026) : les cartes communes qui descendent avec l'escouade. Bryan : « pouvoir les échanger ».
- * Un prix par départ pour toutes les cartes (2 h de Générateur pour explorer, 40 min pour une sortie courte). Elles restent quand un Porteur tombe.
+ * Un prix par départ pour toutes les cartes (1 h de Générateur pour explorer, 20 min pour une sortie courte). Elles restent quand un Porteur tombe.
  */
 function ratelierSection(j: Jeu, k: number, prete: (cle: string) => boolean, verrou: boolean, cle: GesteDef | null): string {
   const choisies = ratelierDe(j, k);
@@ -356,7 +356,7 @@ function voletRatelier(e: EcranDistrict): string {
     + `<section class="feuille me-volet" role="dialog" aria-modal="true" aria-labelledby="volet-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">Râtelier de l’escouade ${vue + 1} · ${choisies.length} / ${places}</span><h2 id="volet-titre">Cartes communes du district</h2></div>`
     + `<button type="button" class="btn-icone" data-action="ratelier-fermer" aria-label="Fermer">${ICO.fermer}</button></header>`
-    + `<div class="feuille-corps"><p class="me-aide">Chaque bâtiment prépare ses cartes : elles n’ont ni lignée ni métal, ne s’éteignent jamais quand un Porteur tombe, et gagnent de la force quand leur bâtiment monte. Le départ coûte de l’énergie pour toutes les cartes à la fois, quel que soit leur nombre : 2 h de production du Générateur pour explorer, 40 min pour fouiller (et pour une Épreuve, un Pillage ou la Flèche). Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.</p>`
+    + `<div class="feuille-corps"><p class="me-aide">Chaque bâtiment prépare ses cartes : elles n’ont ni lignée ni métal, ne s’éteignent jamais quand un Porteur tombe, et gagnent de la force quand leur bâtiment monte. Le départ coûte de l’énergie pour toutes les cartes à la fois, quel que soit leur nombre : 1 h de production du Générateur pour explorer, 20 min pour fouiller (et pour une Épreuve, un Pillage ou la Flèche). Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.</p>`
     + `<div class="me-choix-liste">${CARTES_COMMUNES.map(ligne).join('')}</div>`
     + (prochaine ? `<p class="me-aide">Un emplacement de plus au niveau ${prochaine.noyau} de la Tour du Noyau.</p>` : '');
   return h + `</div></section>`;

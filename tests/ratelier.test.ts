@@ -11,7 +11,7 @@ describe('Le Râtelier du district', () => {
     const j = nouveauJeu(0);
     expect(ratelierDe(j)).toEqual(['stimulant', 'repli']);
     expect(deckEscouade(j, ['ilka', 'doran', 'vela']).filter((g) => g.porteur === null).map((g) => g.id)).toEqual(['stimulant', 'repli']);
-    expect(coutRatelier(j)).toBe(40); // 2 h d'un Générateur niveau 1 (20 / h)
+    expect(coutRatelier(j)).toBe(20); // 1 h d'un Générateur niveau 1 (20 / h)
   });
 
   it('chaque carte commune vient d’un bâtiment, sans effet de lignée', () => {
@@ -45,7 +45,7 @@ describe('Le Râtelier du district', () => {
     expect(basculerRatelier(j, 'lame-atelier').ok).toBe(true);
   });
 
-  it('un seul prix par départ pour toutes les cartes du district : 2 h de Générateur pour explorer, 40 min pour une sortie courte', () => {
+  it('un seul prix par départ pour toutes les cartes du district : 1 h de Générateur pour explorer, 20 min pour une sortie courte', () => {
     const j = nouveauJeu(0);
     j.batiments.noyau = 9;
     j.batiments.forge = 2;
@@ -54,11 +54,11 @@ describe('Le Râtelier du district', () => {
     for (const id of Object.keys(j.porteurs)) j.porteurs[id]!.poste = null;
     expect(energieParHeure(j)).toBe(225);
     expect(choisirRatelier(j, ['stimulant', 'repli', 'lame-atelier', 'ampoule-releve']).ok).toBe(true);
-    expect(coutRatelier(j, 'explorer')).toBe(450);
-    expect(coutRatelier(j, 'courte')).toBe(150);
+    expect(coutRatelier(j, 'explorer')).toBe(225);
+    expect(coutRatelier(j, 'courte')).toBe(75);
     // le nombre de cartes ne change pas le prix
     expect(choisirRatelier(j, ['stimulant']).ok).toBe(true);
-    expect(coutRatelier(j, 'explorer')).toBe(450);
+    expect(coutRatelier(j, 'explorer')).toBe(225);
     expect(choisirRatelier(j, ['stimulant', 'repli', 'lame-atelier', 'ampoule-releve']).ok).toBe(true);
     j.energie = 200;
     expect(ratelierPayable(j, 0, 'courte')).toHaveLength(4);
