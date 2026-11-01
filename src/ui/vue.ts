@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, estGardien, feluresPrevues, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer, traitsEnJeu, avantageAnnonce, ligneeEnnemi, nomPhase, voixRefusee } from '../core/combat';
+import { ECLATS, estGardien, genreSuivant, feluresPrevues, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer, traitsEnJeu, avantageAnnonce, ligneeEnnemi, nomPhase, voixRefusee } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, nomEcho, pctEcho, places, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
@@ -275,6 +275,15 @@ const NOMS_SALLE: Record<TypeSalle, string> = {
   camp: 'le campement', archive: 'les archives', gardien: 'la salle du gardien', filon: 'le filon', halte: 'la Halte', porte: 'la porte ancienne',
 };
 
+/** Guet affirmé (Guetteur) : la petite pastille « ensuite » de l'intention, le genre du tour d'après */
+function ensuite(s: CombatEtat): string {
+  const g = genreSuivant(s, s.ennemi);
+  if (!g) return '';
+  const ico = g === 'atk' ? ICO.atk : g === 'bouclier' ? ICO.bouclier : g === 'soin' ? ICO.soin : g === 'dissonance' ? ICO.flux : ICO.boost;
+  const cls = g === 'atk' ? 'danger' : g === 'bouclier' || g === 'soin' ? 'garde' : 'boost';
+  return `<span class="int-ensuite ${cls}" role="img" aria-label="${echap(`Guet : au tour suivant, ${(GENRE_INTENTION[g] ?? '').toLowerCase()}`)}" title="Guet : ce qu’il prépare ensuite"><small>puis</small>${ico}</span>`;
+}
+
 /** Ce que prépare l'ennemi, sans chiffre ni cible (le brouillard laisse voir ça) */
 const GENRE_INTENTION: Record<string, string> = { atk: 'Va attaquer', bouclier: 'Va se protéger', soin: 'Va se réparer', boost: 'Se concentre', dissonance: 'Va brouiller tes Fréquences', appel: 'Va appeler un renfort' };
 
@@ -305,11 +314,13 @@ function feuilleFuite(e: Ecran): string {
       + `<span class="route-txt"><small>RECULER D’UNE SALLE</small><strong>Retour à ${prec ? NOMS_SALLE[prec.type] : 'la salle d’avant'}</strong>`
       + `<em>${ok ? `${echap(nom)} garde sa salle : prends un autre chemin, ou reviens l’affronter (un combat neuf). Les PV perdus restent perdus.${sortie ? ' De là, tu pourras remonter avec tout ton butin.' : ''}` : 'Personne ne tiendrait debout après ce coup : il faut remonter.'}</em></span>${ok ? CHEVRON_FUITE : ''}</button>`;
   }
-  const garde = Math.floor(x.butin * DISTRICT.butinFuite);
+  // Foulée gravée (Coursier) : la fuite ne coûte plus de butin
+  const sure = !!x.bonus?.fuiteSure;
+  const garde = sure ? x.butin : Math.floor(x.butin * DISTRICT.butinFuite);
   h += `<button type="button" class="route" style="--t:#F0C96A" data-action="fuir-district"><span class="route-ico">${ICO.strate}</span>`
     + `<span class="route-txt"><small>${x.fleche ? 'ABANDONNER L’ASSAUT' : x.pillage ? 'ABANDONNER LE PILLAGE' : x.epreuve ? 'ABANDONNER L’ÉPREUVE' : 'REMONTER AU DISTRICT'}</small>`
-    + `<strong>${x.epreuve || x.pillage || x.fleche ? 'Rentrer au district' : x.butin ? `Rentrer avec ${garde} composants sur ${x.butin}` : 'Rentrer au district'}</strong>`
-    + `<em>${x.fleche?.defi ? 'Le défi compte comme perdu : ta montée, elle, ne bouge pas.' : x.fleche ? 'L’assaut compte comme perdu : l’escouade redescend comme après une défaite.' : x.pillage ? `Le pillage compte comme perdu : tu laisses ${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre à ${echap(x.pillage.nom)}.` : x.epreuve ? 'Tu pourras la retenter cette semaine.' : `Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % des composants et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.</em></span>${CHEVRON_FUITE}</button>`
+    + `<strong>${x.epreuve || x.pillage || x.fleche ? 'Rentrer au district' : x.butin ? (sure ? `Rentrer avec tes ${garde} composants` : `Rentrer avec ${garde} composants sur ${x.butin}`) : 'Rentrer au district'}</strong>`
+    + `<em>${x.fleche?.defi ? 'Le défi compte comme perdu : ta montée, elle, ne bouge pas.' : x.fleche ? 'L’assaut compte comme perdu : l’escouade redescend comme après une défaite.' : x.pillage ? `Le pillage compte comme perdu : tu laisses ${Math.round(PILLAGE.perteDefaite * 100)} % de ton coffre à ${echap(x.pillage.nom)}.` : x.epreuve ? 'Tu pourras la retenter cette semaine.' : sure ? 'Foulée : le Coursier a ouvert la route du retour, tu gardes tout le butin.' : `Tu gardes ${Math.round(DISTRICT.butinFuite * 100)} % des composants et toutes les cartes trouvées.`} L’escouade rentre épuisée : +${DISTRICT.usureFuite} d’Usure chacun, en plus de l’expédition.</em></span>${CHEVRON_FUITE}</button>`
     + `</div><button type="button" class="btn sec large" data-action="fuir">Continuer le combat</button></div></section>`;
   return h;
 }
@@ -401,7 +412,7 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
     return `<div class="intention plaque-int ${classe} brume" aria-live="polite" aria-label="${echap(`Brouillard : ${GENRE_INTENTION[it.type]}, force et cible cachées.`)}">`
       + `<span class="int-ico">${icone}</span>`
       + `<span class="int-corps" aria-hidden="true"><small class="int-nom">${nom}</small><span class="int-quoi">${it.type === 'atk' ? '<i class="int-fleche"></i>' : ''}${quoi}</span></span>`
-      + (val ? `<span class="int-val" aria-hidden="true"><b>${val}</b><small>${unite}</small></span>` : '') + '</div>';
+      + (val ? `<span class="int-val" aria-hidden="true"><b>${val}</b><small>${unite}</small></span>` : '') + ensuite(s) + '</div>';
   }
   if (it.type === 'atk') {
     nom = it.nom;
@@ -424,7 +435,7 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
     + `<span class="int-ico">${icone}</span>`
     + `<span class="int-corps" aria-hidden="true"><small class="int-nom">${echap(nom)}</small><span class="int-quoi">${it.type === 'atk' ? '<i class="int-fleche"></i>' : ''}${quoi}</span></span>`
     + (val ? `<span class="int-val${av > 1 ? ' alourdi' : ''}" aria-hidden="true"><b>${val}</b><small>${unite}</small></span>` : '')
-    + felureHtml + '</div>';
+    + ensuite(s) + felureHtml + '</div>';
 }
 
 /**

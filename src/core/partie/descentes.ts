@@ -771,7 +771,9 @@ export function remonter(j: Jeu): Retour {
   const defaite = x.combat.issue === 'defaite' && !x.retraite;
   const etoilesAvant = etoilesDe(j, x.strate);
   if (!x.tutoriel) noterExpedition(j, x.strate, victoire && !x.fouille && !x.epreuve ? 'gardien' : defaite ? 'defaite' : x.fuite ? 'fuite' : x.retraite ? 'retraite' : 'autre', x.porteurs.map((p) => p.id));
-  const brut = defaite ? Math.floor(x.butin * DISTRICT.butinDefaite) : x.fuite ? Math.floor(x.butin * DISTRICT.butinFuite) : x.butin;
+  // Foulée gravée (Coursier, 1er novembre 2026) : il a ouvert la route du retour, la fuite ne coûte plus de butin
+  const fuiteSure = x.fuite && !!x.bonus?.fuiteSure;
+  const brut = defaite ? Math.floor(x.butin * DISTRICT.butinDefaite) : x.fuite && !fuiteSure ? Math.floor(x.butin * DISTRICT.butinFuite) : x.butin;
   const butin = x.tutoriel ? brut : Math.round(brut * (j.actes.chambre === 'district' ? 1.2 : 1) * (j.actes.fin === 'pacte' ? 1.1 : 1));
   j.composants += butin;
   const finaux = x.carte && x.phase !== 'combat' ? x.porteurs : x.combat.porteurs;

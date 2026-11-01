@@ -148,3 +148,15 @@
 .fp-paliers li.ferme strong{font-size:14px;color:#8E9BAD}
 .fp-paliers li.ferme strong svg{width:14px;height:14px}
 .fp-paliers li.ferme p{color:#6F7C8E;font-style:italic}
+
+/* Les paliers de la Marque (1er novembre 2026) : trois marches, la dernière atteinte en or */
+.fp-mpaliers{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:8px}
+.fp-palier{display:grid;gap:3px;padding:9px 12px 10px;border-radius:12px;background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12);opacity:.72}
+.fp-palier-tete{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.fp-palier-tete b{font:600 12px/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#cfe0ee}
+.fp-palier-tete small{display:inline-flex;align-items:center;gap:4px;font:500 12px/1.3 var(--mono);color:var(--fp-doux)}
+.fp-palier-tete small .ico{width:12px;height:12px}
+.fp-palier-txt{font-size:14px;line-height:1.45;color:#EEF2F8}
+.fp-palier.pret{opacity:.9;box-shadow:inset 0 0 0 1px rgba(242,200,110,.3)}
+.fp-palier.atteint{opacity:1;background:linear-gradient(180deg,rgba(242,200,110,.10),rgba(242,200,110,.03));box-shadow:inset 0 0 0 1px rgba(242,200,110,.45)}
+.fp-palier.atteint .fp-palier-tete b,.fp-palier.atteint .fp-palier-tete small{color:var(--fp-or)}

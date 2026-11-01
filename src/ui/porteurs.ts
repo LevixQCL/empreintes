@@ -4,7 +4,7 @@
 
 import { BATIMENTS, CLE_LEGS, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
 import { CHARGE, NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
-import { ACCORD_OUVERT, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
+import { ACCORD_OUVERT, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
@@ -43,12 +43,15 @@ export function arrivee(p: PorteurDef): string {
   return 'Arrive quand la chambre scellée est ouverte.';
 }
 
+/** Le palier d'une Marque gagnée (1er novembre 2026) : rien à la base, « Affirmée » ou « Gravée » ensuite */
+export const badgePalier = (palier: number) => (palier ? `<i class="palier-marque p${palier}">${NOMS_PALIER_MARQUE[palier]}</i>` : '');
+
 /** La Marque, sans boîte : son nom, où on en est, un filet qui se remplit */
 function marqueTuile(j: Jeu, id: string): string {
   const m = progresMarque(j, id);
   if (!m) return '';
   return m.acquise
-    ? `<span class="pt-marque acquise">${ICO.ok}<span><b>${echap(m.nom)}</b> ${echap(m.court)}</span></span>`
+    ? `<span class="pt-marque acquise">${ICO.ok}<span><b>${echap(m.nom)}</b>${badgePalier(m.palier)} ${echap(m.courtEffectif)}</span></span>`
     : `<span class="pt-marque"><span><b>${echap(m.nom)}</b> ${fr(Math.min(m.n, m.seuil))} / ${fr(m.seuil)} ${echap(m.quoi)}</span><i class="pt-marque-jauge"><i style="width:${Math.min(100, (100 * m.n) / m.seuil)}%"></i></i></span>`;
 }
 
@@ -202,8 +205,8 @@ function blocMarque(j: Jeu, id: string): string {
   return `<button type="button" class="eq-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" aria-label="Marque ${echap(m.nom)} : ${echap(effet)} Voir la fiche de ${echap(p.nom)}">`
     + `<span class="eq-marque-ico" aria-hidden="true">${m.acquise ? ICO.ok : ICO.cristal}</span><span class="eq-marque-txt">`
     // allégé le 28 octobre 2026 : le nom et l'effet sur une ligne, la progression en chiffres ; le détail est sur la fiche
-    + `<strong>${echap(m.nom)}${m.acquise ? '' : `<small class="eq-marque-compte">${fr(fait)} / ${fr(m.seuil)} ${echap(m.quoi)}</small>`}</strong>`
-    + `<span class="eq-marque-effet">${echap(effet.replace(/^./, (x) => x.toUpperCase()))}</span>`
+    + `<strong>${echap(m.nom)}${m.acquise ? badgePalier(m.palier) : `<small class="eq-marque-compte">${fr(fait)} / ${fr(m.seuil)} ${echap(m.quoi)}</small>`}</strong>`
+    + `<span class="eq-marque-effet">${echap((m.acquise && m.palier ? m.courtEffectif : effet).replace(/^./, (x) => x.toUpperCase()))}</span>`
     + (m.acquise ? '' : `<i class="eq-jauge"><i style="width:${(100 * fait) / m.seuil}%"></i></i>`)
     + `</span></button>`;
 }
@@ -401,7 +404,7 @@ function voletPlace(e: EcranDistrict, place: number): string {
       + (raison ? `<small class="me-raison">${echap(raison.replace(/\.$/, ''))}</small>`
         : (ailleurs(p.id) >= 0 ? `<small class="me-raison">Dans l’escouade ${ailleurs(p.id) + 1}${actuel ? ` : ${echap(porteurDef(actuel).nom)} y prendra sa place` : ' : il la quittera'}</small>` : '')
         + (d.poste ? `<small class="me-raison">${d.poste === 'noyau' ? 'À l’entraînement' : 'Au travail'} · son poste restera vacant</small>` : '') + `<small class="me-stats">${pv}/${pvM} PV · <span class="${nc ? '' : 'zero'}">${nc} carte${nc > 1 ? 's' : ''}</span></small>`
-          + (m?.acquise ? `<small class="me-stats or">${ICO.ok}${echap(m.nom)}</small>` : ''))
+          + (m?.acquise ? `<small class="me-stats or">${ICO.ok}${echap(m.nom)}${m.palier ? ` · ${NOMS_PALIER_MARQUE[m.palier]}` : ''}</small>` : ''))
       + `</span>${raison ? '' : `<span class="me-prendre">Prendre</span>`}</button>`;
   };
   let h = `<div class="voile-feuille" data-action="escouade-fermer" aria-hidden="true"></div>`
@@ -539,12 +542,16 @@ export function feuillePorteur(e: EcranDistrict): string {
   if (m) {
     const fait = Math.min(m.n, m.seuil);
     h += `<section class="fp-bloc fp-marque${m.acquise ? ' acquise' : ''}"><h3 class="fp-h3">${ICO.cristal}Sa Marque</h3>`
-      + `<div class="fp-marque-tete"><strong>${echap(m.nom)}</strong>${m.acquise ? `<span class="fp-acquise">${ICO.ok}Acquise</span>` : `<span class="fp-marque-n"><b>${fr(fait)}</b> / ${fr(m.seuil)}</span>`}</div>`
-      + `<p class="fp-marque-effet">${echap(m.texte)}</p>`
-      + (m.acquise
-        ? `<p class="fp-note or">Active dans chaque combat où ${echap(p.nom)} fait partie de l’escouade.</p>`
-        : `<i class="fp-jauge"><i style="width:${Math.min(100, (100 * m.n) / m.seuil)}%"></i></i>`
+      + `<div class="fp-marque-tete"><strong>${echap(m.nom)}</strong>${m.acquise ? `<span class="fp-acquise">${ICO.ok}${NOMS_PALIER_MARQUE[m.palier] === 'Gagnée' ? 'Acquise' : NOMS_PALIER_MARQUE[m.palier]}</span>` : `<span class="fp-marque-n"><b>${fr(fait)}</b> / ${fr(m.seuil)}</span>`}</div>`
+      + (m.acquise ? '' : `<i class="fp-jauge"><i style="width:${Math.min(100, (100 * m.n) / m.seuil)}%"></i></i>`
           + `<p class="fp-note"><b>Comment la gagner :</b> ${m.fait === 'missions' ? `envoie ${echap(p.nom)} en mission en mer depuis le Port` : `emmène ${echap(p.nom)} dans l’escouade`}. Encore <b class="or">${fr(m.seuil - fait)} ${echap(m.quoi)}</b> et elle lui est acquise pour toujours.</p>`)
+      // les paliers (1er novembre 2026) : la Marque grandit avec le niveau du Porteur, une fois gagnée
+      + `<ol class="fp-mpaliers">` + [{ nom: NOMS_PALIER_MARQUE[0], quand: 'par l’exploit', texte: m.texte }, ...m.paliers.map((x, k) => ({ nom: NOMS_PALIER_MARQUE[k + 1], quand: `niveau ${PALIERS_MARQUE[k]}`, texte: x.texte }))].map((x, k) => {
+        const atteint = m.acquise && m.palier >= k;
+        const etat = atteint ? 'atteint' : k && m.niveau >= PALIERS_MARQUE[k - 1]! ? 'pret' : '';
+        return `<li class="fp-palier${etat ? ' ' + etat : ''}"><span class="fp-palier-tete"><b>${x.nom}</b><small>${atteint ? `${ICO.ok}Active` : etat === 'pret' ? 'Niveau atteint · Marque à gagner' : x.quand}</small></span><span class="fp-palier-txt">${echap(x.texte)}</span></li>`;
+      }).join('') + `</ol>`
+      + (m.acquise ? `<p class="fp-note or">Active dans chaque combat où ${echap(p.nom)} fait partie de l’escouade${m.palier < 2 ? ` : elle s’affirme au niveau ${PALIERS_MARQUE[0]} et se grave au niveau ${PALIERS_MARQUE[1]}` : ''}.</p>` : '')
       + `</section>`;
   }
 

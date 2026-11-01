@@ -171,7 +171,9 @@ export type IntentionDef =
   /** brouille les Fréquences : la prochaine chaîne du joueur ne fait pas de Résonance */
   | { type: 'dissonance'; nom: string };
 
-export type Intention = IntentionDef & { cibleId?: string | null };
+export type Intention = IntentionDef & { cibleId?: string | null;
+  /** attaque retenue par l'Ombre courtoise (Aurel) : gravée, elle donne du Flux en tombant */
+  retenue?: boolean };
 
 /**
  * Les traits d'un ennemi (décision du 22 octobre 2026 : varier les combats). Affichés sous son nom.
@@ -228,6 +230,10 @@ export interface EnnemiEtat {
   id: string;
   /** sa première attaque a déjà été retenue par l'Ombre courtoise (Aurel) */
   retenu?: boolean;
+  /** achevé par la chitine pendant son propre tour (Née-de-mue gravée) : sa chute reste à compter */
+  acheve?: boolean;
+  /** Lectrice gravée (Véla) : sa Dissonance lui est revenue, sa prochaine attaque perd cette part */
+  trouble?: number;
   pv: number;
   pvMax: number;
   /** multiplicateur de puissance selon la profondeur de la Strate */
@@ -297,6 +303,42 @@ export interface BonusMarques {
   chitine?: number;
   /** Flux en plus pour chaque Fêlure brisée par une chaîne qui résonne (Liane, Galons blancs) */
   felureFlux?: number;
+  // ---- Paliers des Marques (1er novembre 2026, Bryan : monter un Porteur doit changer sa Marque) ----
+  // Affirmée au niveau 10 (le même effet, plus fort), gravée au niveau 20 (l'effet change de nature).
+  /** Raccourci gravé (Ilka) : places en plus aussi au deuxième tour */
+  places2?: number;
+  /** Fondations gravées (Doran) : une fois par combat, ce bouclier se reforme quand l'escouade passe sous la moitié de ses PV */
+  rempart?: number;
+  /** Lectrice affirmée (Véla) : sous le brouillard, la première intention de chaque ennemi se lit en entier */
+  lecture?: boolean;
+  /** Lectrice gravée (Véla) : une Dissonance repoussée revient à l'ennemi, sa prochaine attaque perd cette part */
+  retourne?: number;
+  /** Seconde chance gravée (Sasha) : nombre de relèves par combat */
+  releveFois?: number;
+  /** Œil de nuit affirmé (Nuit) : tours de la Fissure du départ */
+  fissureTours?: number;
+  /** Œil de nuit gravé (Nuit) : tout le groupe ennemi commence fissuré */
+  fissureGroupe?: boolean;
+  /** Ombre courtoise gravée (Aurel) : Flux gagné quand tombe une attaque retenue */
+  retenueFlux?: number;
+  /** Foulée affirmée (Coursier) : Flux au départ contre un gardien */
+  fluxGardien?: number;
+  /** Foulée gravée (Coursier) : fuir ne fait plus perdre de butin */
+  fuiteSure?: boolean;
+  /** Bras de quai gravé (Docker) : à la victoire, cette part du bouclier restant soigne le plus blessé */
+  soinQuai?: number;
+  /** Guet affirmé (Guetteur) : on voit aussi le genre de la prochaine intention de chaque ennemi */
+  presage?: boolean;
+  /** Guet gravé (Guetteur) : cartes piochées en plus quand un gardien change de phase */
+  phaseMain?: number;
+  /** Née-de-mue gravée (Kessa) : le renvoi de la chitine peut achever l'ennemi */
+  chitineAcheve?: boolean;
+  /** Galons blancs affirmés (Liane) : Flux par Fêlure résonnante contre un gardien (remplace felureFlux) */
+  felureFluxGardien?: number;
+  /** Galons blancs gravés (Liane) : cartes piochées quand une Fêlure se brise en résonance */
+  felurePioche?: number;
+  /** Nuit blanche gravée (Joss) : il veille sur les deux plus blessés */
+  veilleDeux?: boolean;
 }
 
 export interface CombatEtat {
@@ -349,6 +391,12 @@ export interface CombatEtat {
   chitine?: number;
   /** Marque de Liane (Galons blancs) : Flux en plus par Fêlure brisée en résonance */
   felureFlux?: number;
+  /** paliers des Marques (affirmées au niv. 10, gravées au niv. 20) : les bonus qui n'ont pas de champ à eux */
+  marques?: BonusMarques;
+  /** relèves de Seconde chance déjà faites (gravée : deux par combat) */
+  releves?: number;
+  /** Fondations gravées : le bouclier s'est déjà reformé */
+  rempartFait?: boolean;
   /** Épreuve « Fréquences brouillées » : aucune Résonance de tout le combat */
   sansResonance?: boolean;
   /** Épreuve « Avant l'extinction » : passé ce tour, si l'ennemi tient encore, le combat est perdu */

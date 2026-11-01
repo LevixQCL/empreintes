@@ -7,7 +7,7 @@
 // Tout vit dans un calque posé sur <body>, hors de #app : le rendu du jeu (innerHTML) ne l'interrompt pas.
 
 import type { Jeu } from '../core/jeu';
-import { epithetesDe, NOMS_PALIER, niveauPorteur, palierDe } from '../core/jeu';
+import { epithetesDe, NOMS_PALIER, NOMS_PALIER_MARQUE, niveauPorteur, palierDe, progresMarque } from '../core/jeu';
 import { moduleDef, porteurDef } from '../core/donnees';
 import { NOMS_RARETE } from '../core/collection';
 import type { Rarete } from '../core/types';
@@ -29,6 +29,8 @@ interface Releve {
   niveaux: Record<string, number>;
   /** l'empreinte des cartes (28 octobre 2026) : [palier, épithètes débloqués] */
   empreintes: Record<string, [number, number]>;
+  /** le palier de Marque de chaque Porteur (1er novembre 2026) : −1 tant qu'elle n'est pas gagnée, puis 0, 1 (affirmée), 2 (gravée) */
+  marques?: Record<string, { p: number; nom: string; court: string }>;
 }
 
 export function relever(j: Jeu): Releve {
@@ -44,6 +46,7 @@ export function relever(j: Jeu): Releve {
     porteurs: Object.keys(j.porteurs),
     niveaux,
     empreintes: Object.fromEntries(Object.entries(j.vecu ?? {}).map(([k, x]) => [k, [palierDe(x), epithetesDe(k, x).length]])),
+    marques: Object.fromEntries(Object.keys(j.porteurs).flatMap((id) => { const m = progresMarque(j, id); return m ? [[id, { p: m.acquise ? m.palier : -1, nom: m.nom, court: m.courtEffectif }]] : []; })),
   };
 }
 
@@ -54,7 +57,9 @@ type Gain =
   | { kind: 'porteur'; id: string }
   | { kind: 'niveaux'; ids: { id: string; niveau: number }[] }
   /** une carte passe un palier d'empreinte, ou gagne un épithète */
-  | { kind: 'empreinte'; cle: string; palier: number; epithete?: string };
+  | { kind: 'empreinte'; cle: string; palier: number; epithete?: string }
+  /** une Marque gagnée, affirmée ou gravée (1er novembre 2026) */
+  | { kind: 'marque'; id: string; palier: number; nom: string; court: string };
 
 /**
  * Ce qui a été reçu entre deux relevés. Les dépenses ne s'affichent pas.
@@ -90,6 +95,12 @@ export function comparer(a: Releve, b: Releve, o: { energie?: boolean } = {}): G
     else if (e > ea) souvenirs.push({ kind: 'empreinte', cle, palier: p, epithete: 'oui' });
   }
   g.push(...souvenirs.sort((x, y) => y.palier - x.palier).slice(0, 2));
+  // les Marques : gagnée par l'exploit, puis affirmée et gravée avec le niveau
+  if (a.marques && b.marques) for (const [id, m] of Object.entries(b.marques)) {
+    const pa = a.marques[id]?.p;
+    if (pa === undefined || m.p <= pa || m.p < 0) continue;
+    g.push({ kind: 'marque', id, palier: m.p, nom: m.nom, court: m.court });
+  }
   return g;
 }
 
@@ -154,6 +165,8 @@ export function palier(g: Gain): number {
   if (g.kind === 'carte') return PALIER_METAL[moduleDef(g.cle).rarete];
   if (g.kind === 'porteur') return 4;
   if (g.kind === 'niveaux') return 2;
+  // une Marque gagnée ou affirmée se voit comme un niveau fort ; gravée, comme un or
+  if (g.kind === 'marque') return g.palier >= 2 ? 4 : 3;
   if (g.kind === 'empreinte') return g.epithete ? 2 : 1 + g.palier;
   if (g.kind === 'doublons') return Math.max(1, Math.max(...g.cles.map((c) => PALIER_METAL[moduleDef(c).rarete])) - 1);
   if (g.r === 'eclats' || g.r === 'cartes') return 2;
@@ -274,6 +287,12 @@ function contenu(g: Exclude<Gain, { kind: 'res' }>): { html: string; onglet: str
       classe: 'empreinte', onglet: 'porteurs',
       html: `<span class="gv-carte" style="--metal:${COULEUR_METAL[m.rarete]};--fil:url(${filigrane(p)})">${illustrationModule(g.cle) ? `<img src="${illustrationModule(g.cle)}" alt="" decoding="async">` : `<i>${echap(m.nom.charAt(0))}</i>`}</span>`
         + `<span class="gv-texte"><small>${g.epithete ? 'Nouvel épithète' : 'La carte se souvient'}</small><strong>${echap(m.nom)}</strong><em>${g.epithete ? 'à choisir dans sa fiche' : `palier ${NOMS_PALIER[p]}`}</em></span>`,
+    };
+  }
+  if (g.kind === 'marque') {
+    return {
+      classe: `marque p${g.palier}`, onglet: 'porteurs',
+      html: `${vignettePorteur(g.id)}<span class="gv-texte"><small>${g.palier ? `Marque ${NOMS_PALIER_MARQUE[g.palier]!.toLowerCase()}` : 'Marque gagnée'}</small><strong>${echap(g.nom)} · ${echap(porteurDef(g.id).nom)}</strong><em>${echap(g.court)}</em></span>`,
     };
   }
   if (g.kind === 'porteur') {

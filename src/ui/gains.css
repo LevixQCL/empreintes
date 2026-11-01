@@ -175,3 +175,4 @@
 @keyframes gr-ouvre{0%{--hr:24%;opacity:.16}100%{--hr:70%;opacity:.4}}
 .gr:not(.charge):not(.revelee) .gr-holo{--hr:30%}
 @media (prefers-reduced-motion:reduce){.gr .gr-holo,.gr.charge .gr-holo{animation:none;--hr:70%;--hx:50%;--hy:50%}}
+.gain-revele.marque{--accent:var(--or,#f2c86e)}

@@ -111,7 +111,22 @@ export function creerCombat(opts: {
   if (b?.desarme) s.desarme = b.desarme;
   if (b?.chitine) s.chitine = b.chitine;
   if (b?.felureFlux) s.felureFlux = b.felureFlux;
-  if (b?.fissure) { s.ennemi.fissure = b.fissure; s.ennemi.fissureTours = 2; }
+  if (b?.fissure) {
+    // Œil de nuit : affirmé, la Fissure dure un tour de plus ; gravé, tout le groupe commence fissuré
+    for (const en of b.fissureGroupe ? tousEnnemis(s) : [s.ennemi]) { en.fissure = b.fissure; en.fissureTours = b.fissureTours ?? 2; }
+  }
+  // Foulée affirmée (Coursier) : plus de Flux au départ contre un gardien
+  if (b?.fluxGardien && estGardien(opts.ennemiId)) s.flux = Math.min(REGLES.fluxMax, Math.max(s.flux, b.fluxGardien));
+  // Galons blancs affirmés (Liane) : plus de Flux par Fêlure résonnante contre un gardien
+  if (b?.felureFluxGardien && estGardien(opts.ennemiId)) s.felureFlux = b.felureFluxGardien;
+  // les autres paliers des Marques (1er novembre 2026)
+  if (b) {
+    const m: BonusMarques = {};
+    for (const k of ['places2', 'rempart', 'lecture', 'retourne', 'releveFois', 'retenueFlux', 'soinQuai', 'presage', 'phaseMain', 'chitineAcheve', 'felurePioche', 'veilleDeux'] as const) {
+      if (b[k] !== undefined) (m as Record<string, unknown>)[k] = b[k];
+    }
+    if (Object.keys(m).length) s.marques = m;
+  }
   // 3ᵉ phase (28 octobre 2026) : tirée à part du hasard du combat (le reste du combat ne change pas), gardée secrète jusqu'au seuil
   if (opts.troisiemePhase && opts.traits !== false) {
     for (const en of tousEnnemis(s)) if (ennemiDef(en.id).phase) en.phase3 = VARIANTES[((opts.rng >>> 7) + (en.rang ?? 0)) % VARIANTES.length]!;
@@ -323,7 +338,7 @@ export const voixAdmise = (s: CombatEtat, cartes: GesteDef[]) =>
  * Il dure tout le combat : on voit ce que prépare l'ennemi (attaque, bouclier, soin…), jamais combien ni sur qui,
  * et sa Fêlure reste cachée.
  */
-export const brumeActive = (s: CombatEtat) => s.condition === 'brouillard' && s.issue === 'en-cours';
+export const brumeActive = (s: CombatEtat) => s.condition === 'brouillard' && s.issue === 'en-cours' && !(s.marques?.lecture && s.tour === 1);
 
 /** Une carte qui soigne un seul Porteur (la Vague soigne toute l'escouade) */
 export const soigneUnSeul = (g: Geste) => g.type === 'soin' && g.effet?.type !== 'vague' && g.effet?.type !== 'debord';
@@ -669,7 +684,8 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   s.defausse.push(...s.main.filter((g) => g.vide));
   s.main = s.main.filter((g) => !g.vide);
   // Élan : les places gagnées servent au tour suivant
-  s.capaBonus = Math.min(REGLES.capaciteMax - REGLES.capaciteBase, s.capaProchain ?? 0);
+  // Raccourci gravé (Ilka) : la fin du premier tour prépare le deuxième, avec sa place en plus
+  s.capaBonus = Math.min(REGLES.capaciteMax - REGLES.capaciteBase, (s.capaProchain ?? 0) + (s.tour === 1 ? s.marques?.places2 ?? 0 : 0));
   s.capaProchain = 0;
   // Fissure : dure ce tour-ci et le suivant
   for (const en of tousEnnemis(s)) {
@@ -682,9 +698,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   if (s.ennemi.pv <= 0) viserSuivant(s);
 
   if (!ennemisDebout(s).length) {
-    s.issue = 'victoire';
-    log(s, ennemisVaincus(s), { camp: 'neutre', sorte: 'info' });
-    emettre({ kind: 'fin', issue: 'victoire' });
+    victoire(s, emettre);
     CAMP = 'joueur';
     return pas;
   }
@@ -800,6 +814,17 @@ function choisirCible(s: CombatEtat, regle: CibleRegle = 'hasard'): string | nul
   return v[tireur(s).entier(v.length)]!.id;
 }
 
+/**
+ * Guet affirmé (Guetteur, 1er novembre 2026) : le genre de ce que l'ennemi préparera au tour d'après (attaque, bouclier…),
+ * sans force ni cible ; null sans la Marque. C'est ce que dit son motif : un changement de phase peut encore le déjouer.
+ */
+export function genreSuivant(s: CombatEtat, en: EnnemiEtat): IntentionDef['type'] | null {
+  if (!s.marques?.presage || en.pv <= 0) return null;
+  const e = ennemiDef(en.id);
+  const motif = en.role ? MOTIFS_ROLE[en.role] : en.phase2 && e.phase ? e.phase.motif : e.motif;
+  return motif[en.etape % motif.length]!.type;
+}
+
 function choisirIntention(s: CombatEtat, en: EnnemiEtat) {
   const e = ennemiDef(en.id);
   const motif = en.role ? MOTIFS_ROLE[en.role] : en.phase2 && e.phase ? e.phase.motif : e.motif;
@@ -812,8 +837,25 @@ function choisirIntention(s: CombatEtat, en: EnnemiEtat) {
   if (it.type === 'atk' && !it.zone) it.cibleId = choisirCible(s, it.cible);
   // Ombre courtoise (Aurel, 31 octobre 2026, remarque de Luc) : la première attaque de chaque ennemi est retenue,
   // quel que soit le tour où elle arrive (avant, seule l'intention du premier tour comptait) ; les renforts appelés aussi
-  if (it.type === 'atk' && s.desarme && !en.retenu) { it.v = Math.round(it.v * (1 - s.desarme)); en.retenu = true; }
+  if (it.type === 'atk' && s.desarme && !en.retenu) { it.v = Math.round(it.v * (1 - s.desarme)); en.retenu = true; it.retenue = true; }
+  // Lectrice gravée (Véla) : la Dissonance repoussée lui revient, sa prochaine attaque est troublée
+  if (it.type === 'atk' && en.trouble) { it.v = Math.round(it.v * (1 - en.trouble)); delete en.trouble; }
   fixerIntention(s, en, it);
+}
+
+/** La victoire : le journal, et le soin de Bras de quai gravé (Docker) */
+function victoire(s: CombatEtat, emettre: (ev: Evenement) => void) {
+  s.issue = 'victoire';
+  log(s, ennemisVaincus(s), { camp: 'neutre', sorte: 'info' });
+  // Bras de quai gravé (1er novembre 2026) : le bouclier qui reste devient du soin pour le plus blessé
+  const blesse = vivants(s).filter((p) => p.pv < p.pvMax).sort((a, b) => a.pv / a.pvMax - b.pv / b.pvMax)[0];
+  if (s.marques?.soinQuai && s.bouclier > 0 && blesse && usureCombat(s).soins > 0) {
+    const avant = blesse.pv;
+    blesse.pv = Math.min(blesse.pvMax, blesse.pv + Math.max(1, Math.round(s.bouclier * s.marques.soinQuai)));
+    log(s, `Bras de quai : le bouclier restant soigne ${porteurDef(blesse.id).nom} (+${blesse.pv - avant}).`, { camp: 'neutre', sorte: 'soin', v: blesse.pv - avant });
+    emettre({ kind: 'soin', cible: blesse.id, v: blesse.pv - avant });
+  }
+  emettre({ kind: 'fin', issue: 'victoire' });
 }
 
 function plusBlesse(s: CombatEtat): PorteurEtat | undefined {
@@ -1223,7 +1265,9 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
     if (p.pv <= 0 && !p.aTerre) {
       // Seconde chance (Sasha) : le premier qui tombe se relève, une fois par combat
       if (s.releve && !s.releveFaite) {
-        s.releveFaite = true;
+        // gravée (1er novembre 2026) : deux relèves par combat
+        s.releves = (s.releves ?? 0) + 1;
+        if (s.releves >= (s.marques?.releveFois ?? 1)) s.releveFaite = true;
         p.pv = Math.max(1, Math.round(p.pvMax * s.releve));
         log(s, `Seconde chance : ${porteurDef(p.id).nom} se relève (${p.pv} PV).`, { camp: 'neutre', sorte: 'soin', v: p.pv });
         emettre({ kind: 'soin', cible: p.id, v: p.pv });
@@ -1246,10 +1290,30 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
     emettre({ kind: 'fin', issue: 'defaite' });
     return;
   }
-  // Nuit blanche (Joss) : il veille sur les siens comme le quartier l'a veillé
+  // Née-de-mue gravée (Kessa) : un ennemi achevé par la chitine tombe pendant son propre tour
+  const acheves = tousEnnemis(s).filter((en) => en.acheve);
+  if (acheves.length) {
+    for (const en of acheves) { delete en.acheve; tombe(s, en, emettre); }
+    if (s.ennemi.pv <= 0) viserSuivant(s);
+    if (!ennemisDebout(s).length) {
+      victoire(s, emettre);
+      return;
+    }
+  }
+  // Fondations gravées (Doran) : une fois par combat, le bouclier se reforme quand l'escouade passe sous la moitié de ses PV
+  if (s.marques?.rempart && !s.rempartFait) {
+    const pv = s.porteurs.reduce((n, p) => n + Math.max(0, p.pv), 0);
+    const max = s.porteurs.reduce((n, p) => n + p.pvMax, 0);
+    if (pv < max / 2) {
+      s.rempartFait = true;
+      s.bouclier += s.marques.rempart;
+      log(s, `Fondations : Doran relève le mur, +${s.marques.rempart} de bouclier.`, { camp: 'neutre', sorte: 'effet' });
+      emettre({ kind: 'bouclier', cible: 'escouade', v: s.marques.rempart });
+    }
+  }
+  // Nuit blanche (Joss) : il veille sur les siens comme le quartier l'a veillé (gravée : sur les deux plus blessés)
   if (s.veille && usureCombat(s).soins > 0) {
-    const blesse = vivants(s).filter((p) => p.pv < p.pvMax).sort((a, b) => a.pv / a.pvMax - b.pv / b.pvMax)[0];
-    if (blesse) {
+    for (const blesse of vivants(s).filter((p) => p.pv < p.pvMax).sort((a, b) => a.pv / a.pvMax - b.pv / b.pvMax).slice(0, s.marques?.veilleDeux ? 2 : 1)) {
       const avant = blesse.pv;
       blesse.pv = Math.min(blesse.pvMax, blesse.pv + Math.max(1, Math.round(blesse.pvMax * s.veille * usureCombat(s).soins)));
       log(s, `Nuit blanche : Joss veille sur ${porteurDef(blesse.id).nom} (+${blesse.pv - avant}).`, { camp: 'neutre', sorte: 'soin', v: blesse.pv - avant });
@@ -1398,6 +1462,11 @@ function briser(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void,
   if (!resonne) return;
   const avant = s.flux;
   s.flux = Math.min(REGLES.fluxMax, s.flux + REGLES.felure.flux + (s.felureFlux ?? 0));
+  // Galons blancs gravés (Liane, 1er novembre 2026) : la Fêlure brisée en résonance fait piocher
+  if (s.marques?.felurePioche) {
+    piocher(s, s.main.length + s.marques.felurePioche);
+    log(s, `Galons blancs : +${s.marques.felurePioche} carte en main.`, { camp: 'neutre', sorte: 'effet' });
+  }
   if (s.flux > avant) {
     log(s, `Fêlure brisée en Résonance : Flux +${s.flux - avant}.`, { sorte: 'flux' });
     emettre({ kind: 'flux', gain: s.flux - avant });
@@ -1441,6 +1510,11 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
   } else if (it.type === 'dissonance' && s.lucide) {
     log(s, `${e.nom} · ${it.nom} : Véla lit le brouillage, tes Fréquences restent nettes.`, { sorte: 'effet' });
     emettre({ kind: 'effet', cible: 'escouade', texte: 'Lucide' });
+    if (s.marques?.retourne) {
+      en.trouble = s.marques.retourne;
+      log(s, `Lectrice : Véla lui renvoie son brouillage, sa prochaine attaque perd ${Math.round(s.marques.retourne * 100)} %.`, { sorte: 'effet' });
+      emettre({ kind: 'effet', cible: 'ennemi', texte: 'Troublé', rang });
+    }
   } else if (it.type === 'dissonance') {
     s.dissonance = true;
     log(s, `${e.nom} · ${it.nom} : tes Fréquences sont brouillées, pas de Résonance au prochain tour.`, { sorte: 'effet' });
@@ -1470,14 +1544,25 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
       calculs.push(calcul(porteurDef(c.id).nom, it.v, facteursEnnemi(s, en, av, c.id), dmg, abs, net));
       emettre({ kind: 'degats', cible: c.id, net, absorbe: abs, rang, ...(it.zone ? { zone: true } : {}) });
       // Née-de-mue (Kessa) : la chitine renvoie une part du coup que le bouclier a pris (sans achever l'ennemi)
-      if (s.chitine && abs > 0 && en.pv > 1) {
-        const renvoi = Math.min(en.pv - 1, Math.max(1, Math.round(abs * s.chitine)));
+      // gravée (1er novembre 2026) : le renvoi peut achever l'ennemi
+      if (s.chitine && abs > 0 && en.pv > (s.marques?.chitineAcheve ? 0 : 1)) {
+        const renvoi = Math.min(en.pv - (s.marques?.chitineAcheve ? 0 : 1), Math.max(1, Math.round(abs * s.chitine)));
         en.pv -= renvoi;
+        if (en.pv <= 0) en.acheve = true;
         renvois.push({ texte: `Née-de-mue : la chitine renvoie ${renvoi} à ${e.nom}.`, info: { camp: 'neutre', sorte: 'coup', v: renvoi } });
         emettre({ kind: 'degats', cible: 'ennemi', net: renvoi, absorbe: 0, rang, source: 'epines' });
       }
     }
     en.boost = 1;
+    // Ombre courtoise gravée (Aurel) : le coup retenu nourrit l'escouade
+    if (it.retenue && s.marques?.retenueFlux && !s.ombre) {
+      const avant = s.flux;
+      s.flux = Math.min(REGLES.fluxMax, s.flux + s.marques.retenueFlux);
+      if (s.flux > avant) {
+        renvois.push({ texte: `Ombre courtoise : le coup retenu donne ${s.flux - avant} Flux.`, info: { sorte: 'flux' } });
+        emettre({ kind: 'flux', gain: s.flux - avant });
+      }
+    }
     const aspire = trait(en, 'aspire');
     // seulement si au moins 1 dégât passe le bouclier (27 octobre 2026, Bryan : bloquer doit protéger le Flux)
     if (aspire && !s.ombre && total > 0 && s.flux > 0) {
@@ -1531,12 +1616,21 @@ function tombe(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void) 
   }
 }
 
+/** Guet gravé (Guetteur, 1er novembre 2026) : quand un gardien change de phase, la main prend des cartes en plus */
+function piocheDePhase(s: CombatEtat) {
+  const n = s.marques?.phaseMain ?? 0;
+  if (!n) return;
+  piocher(s, s.main.length + n);
+  log(s, `Guet : le Guetteur l’a vu venir, +${n} carte${n > 1 ? 's' : ''} en main.`, { camp: 'neutre', sorte: 'effet' });
+}
+
 /** Gardien à deux phases : sous son seuil de PV, il change de gestes et appelle des renforts */
 function phaseGardien(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) => void) {
   const ph = ennemiDef(en.id).phase;
   if (en.phase2 && en.phase3 && !en.phase3Active && en.pv > 0 && en.pv <= en.pvMax * REGLES.troisiemePhase.seuil) return troisiemePhase(s, en, emettre);
   if (!ph || en.simple || en.phase2 || en.pv <= 0 || en.pv > en.pvMax * ph.seuil) return;
   en.phase2 = true;
+  piocheDePhase(s);
   en.etape = 0;
   log(s, `${ennemiDef(en.id).nom} : ${ph.nom}. ${ph.texte}`, { camp: 'ennemi', sorte: 'info' });
   emettre({ kind: 'phase', rang: en.rang ?? 0, id: en.id, nom: ph.nom });
@@ -1550,6 +1644,7 @@ function troisiemePhase(s: CombatEtat, en: EnnemiEtat, emettre: (ev: Evenement) 
   const d = ennemiDef(en.id);
   const r = d.phase?.renforts?.[0] ?? 'remanent';
   en.phase3Active = true;
+  piocheDePhase(s);
   en.etape = 0;
   const p = PHASES3[v];
   log(s, `${d.nom} : ${p.nom}. ${p.texte(d.nom, ennemiDef(r).nom)}`, { camp: 'ennemi', sorte: 'info' });
