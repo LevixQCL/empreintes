@@ -6,6 +6,11 @@ Lumière de lignée : Augmentés = bleu acier / cyan, Génés = vert émeraude, 
 
 À déposer dans Téléchargements : Claude convertit en webp, met à la taille et range sous le nom indiqué.
 
+## Déjà intégrées (2 novembre, 17 h)
+
+N° 1, 2, 4, 5, 7, 9, 10 : contremaître, chantre, Lame de doute, Œil du Lecteur, Sentence muette, Boucle de mémoire, Miroir des Hauts.
+À relancer avec le prompt corrigé : n° 3, 6, 8 (Regard en biais, Verdict, Éclat), restés orange.
+
 ## La liste (24 images)
 
 | # | Fichier à remplacer | Ce qui change |
@@ -57,10 +62,10 @@ Mêmes sujets que dans `docs/prompts-cartes.md`, avec « dominant amethyst and v
 et « orange, copper glow, brass glow » dans le `--no`.
 
 ### 3. Regard en biais — `regard-biais.webp`
-Change : la lumière orange devient violette.
+Change : la lumière orange devient violette. **2e essai (2 nov.)** : le 1er rendu restait orange ; la référence de style passe sur des cartes violettes et le décor n'est plus l'atelier boisé.
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, an ornate gilded lorgnette held at an angle on a small stand, its tilted violet lens revealing a thin glowing crack in an otherwise smooth stone mask behind it, the whole scene lit only by cold violet light, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock, orange, copper glow, brass glow
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark slate table in a dim violet-lit study, an ornate gilded lorgnette held at an angle on a small stand, its tilted violet lens revealing a thin glowing crack in an otherwise smooth stone mask behind it, the whole scene lit only by cold violet light, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/modules/voix-basse.webp https://levixqcl.github.io/empreintes/art/modules/miroir-hauts.webp --sw 80 --no text, person, character, crystal, gemstone, amethyst rock, orange, copper glow, brass glow, warm light, candle, fire, amber, sepia, brown
 ```
 
 ### 4. Lame de doute — `lame-doute.webp`
@@ -78,10 +83,10 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 ```
 
 ### 6. Verdict — `verdict.webp`
-Change : la lumière orange devient violette, l'onde de choc est violette.
+Change : la lumière orange devient violette, l'onde de choc est violette. **2e essai (2 nov.)** : le 1er rendu restait orange ; la référence de style passe sur des cartes violettes et le décor n'est plus l'atelier boisé.
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a heavy ornate gilded gavel resting on its sounding block, a ring of violet shockwave spreading from the block and splitting a small stone tablet in two, the whole scene lit only by cold violet light, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock, orange, copper glow, brass glow
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark slate table in a dim violet-lit study, a heavy ornate gilded gavel resting on its sounding block, a ring of violet shockwave spreading from the block and splitting a small stone tablet in two, the whole scene lit only by cold violet light, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/modules/voix-basse.webp https://levixqcl.github.io/empreintes/art/modules/miroir-hauts.webp --sw 80 --no text, person, character, crystal, gemstone, amethyst rock, orange, copper glow, brass glow, warm light, candle, fire, amber, sepia, brown
 ```
 
 ### 7. Sentence muette — `sentence-muette.webp`
@@ -92,10 +97,10 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 ```
 
 ### 8. Éclat — `eclat.webp`
-Change : la lumière orange devient violette.
+Change : la lumière orange devient violette. **2e essai (2 nov.)** : le 1er rendu restait orange ; la référence de style passe sur des cartes violettes et le décor n'est plus l'atelier boisé.
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a shattered antique hand mirror with an ornate gilded handle, its broken shards floating outward in a burst, each shard reflecting a brighter flash of violet light than the last, the whole scene lit only by cold violet light, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock, orange, copper glow, brass glow
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark slate table in a dim violet-lit study, a shattered antique hand mirror with an ornate gilded handle, its broken shards floating outward in a burst, each shard reflecting a brighter flash of violet light than the last, the whole scene lit only by cold violet light, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/modules/voix-basse.webp https://levixqcl.github.io/empreintes/art/modules/miroir-hauts.webp --sw 80 --no text, person, character, crystal, gemstone, amethyst rock, orange, copper glow, brass glow, warm light, candle, fire, amber, sepia, brown
 ```
 
 ### 9. Boucle de mémoire (exclusive, argent) — `boucle-memoire.webp`
