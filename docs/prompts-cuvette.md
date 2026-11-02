@@ -65,4 +65,4 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
   (Cuvette recollée en pleine résolution, sauf le Port repeint par Midjourney avec l'eau). La mer monte haut contre la digue
   (Cuvette plus basse que la mer). Détourage : `art/district/cuvette-detouree.webp` (Cuvette décalée de 304 px en x).
   Maquette animée : `docs/maquette-cuvette.html` (houle sur l'eau seule, reflets dorés, cristaux qui pulsent).
-  À refaire : le Port, en zoom Edit sur cette image avec l'eau (il est flou).
+  Port repeint en zoom Edit directement dans la mer (zoom (1612, 1552) de la carte 2464) : net, une seule barque.
