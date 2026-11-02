@@ -70,3 +70,4 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
   imposée dans le prompt (soleil à droite, ombre portée à gauche). Les anciens bâtiments ont d'abord été effacés en remettant le
   dallage de `cuvette-nue.webp`. Clinique déplacée à gauche du chemin (690, 1462) pour aérer. Formes des zones : `scripts/cuvette-integrer-forme.py`.
 - Reste à faire avant les paliers : habitations dans la paroi de la digue et maisons de pompes sur le haut, cadrage plus serré et contraste en code.
+- Ombres portées calculées en code (`scripts/cuvette-ombres.py`) : silhouette de chaque bâtiment (écart avec la Cuvette nue), projetée vers la gauche, plus une ombre de contact au pied. À relancer après chaque nouveau bâtiment, sur l'image sans ombres.
