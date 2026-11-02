@@ -3,6 +3,10 @@
 Décision de Bryan : aucune lignée ne doit gagner seule, chacune garde sa spécialité.
 **Augmentés : frapper. Génés : tenir. Résonants : troubler l'ennemi** (lire et influencer les esprits, pas de vocabulaire musical).
 
+> Mise à jour du 2 novembre 2026 (audit de cohérence, choix de Bryan) : les Résonants **orchestrent** (Fréquences, suites, Échos,
+> affaiblir l'ennemi) ; l'effet s'appelle **Troubler**. Le vocabulaire musical reste réservé au deck de Joss (le Chœur).
+> Couleurs de lignée : Augmentés bleu acier / cyan, Génés vert émeraude (jamais ambre), Résonants améthyste et or.
+
 ## Constat (robot, `npm run archetypes -- --mono`, Strate −3, joueur moyen)
 Référence (escouades mixtes composées au hasard) 29 % ; Génés seuls 85-91 % ; Résonants seuls 26-65 % ; Augmentés seuls 0 %.
 Cause : les Génés avaient de quoi tenir (12 boucliers, 9 soins) ET des attaques presque aussi fortes que les autres ;
