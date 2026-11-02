@@ -935,7 +935,7 @@ export function htmlArchipel(e: EcranDistrict): string {
   const scene = sceneDistrict(j.batiments.noyau);
   let h = `<section class="archipel${CUVETTE ? ' cuvette' : ''}" aria-label="Ton district"><img class="tableau-fond" src="${scene.url}" alt="" aria-hidden="true">`
     + `<span class="mer-fond${scene.nuit ? ' nuit' : ''}" style="--mer:url(${scene.mer});--reflets:url(${reflets});--horizon:${scene.horizon}%" aria-hidden="true"><i class="mer-reflets"></i></span>`
-    + `<div class="toile${!j.accueilVu || j.batiments.noyau < 2 ? ' noms' : ''}">${tableau(j)}${zonesBatiments(visuel(j.batiments.noyau), e.selection)}${balises(e)}</div>`
+    + `<div class="toile${j.batiments.noyau < 2 ? ' noms' : ''}">${tableau(j)}${zonesBatiments(visuel(j.batiments.noyau), e.selection)}${balises(e)}</div>`
     + bulles(e)
     + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="Replier"></button>` : '')
     + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}</div></section>`;
