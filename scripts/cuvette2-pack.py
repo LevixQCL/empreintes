@@ -16,9 +16,10 @@ def generateur(z,cx,cy):  # corps large et bas, turbines, colonne de cristal fin
     cyl(z,cx,cy,145,cy-120,.5);ell(z,cx-150,cy-70,36,62);ell(z,cx+150,cy-70,36,62);cyl(z,cx+20,cy-90,30,cy-330);ell(z,cx+20,cy-330,40,20)
 def comptoir(z,cx,cy):  # comptoir + grue à contrepoids et caisse
     cyl(z,cx,cy,135,cy-95);rect(z,cx-120,cy-330,cx-90,cy-60);rect(z,cx-160,cy-345,cx+120,cy-315);rect(z,cx-190,cy-355,cx-140,cy-290);rect(z,cx+90,cy-315,cx+100,cy-260);rect(z,cx+65,cy-262,cx+125,cy-205)
-def port(z,cx,cy):      # capitainerie sur le ponton + barque amarrée
-    cyl(z,cx,cy,95,cy-200,.5);ell(z,cx-30,cy-205,70,35);ell(z,cx-150,cy+90,140,55);rect(z,cx-160,cy-60,cx-140,cy+80)
-L=[('2-forge',forge,560,1235),('3-clinique',clinique,536,1545),('4-labo',labo,1444,1215),('5-generateur',generateur,830,1705),('6-comptoir',comptoir,1264,1630),('7-port',port,1640,2150)]
+def port(z,cx,cy):      # capitainerie sur le ponton du bas + barque dans le chenal entre les deux pontons
+    cyl(z,cx,cy,80,cy-170,.5)
+    cv2.ellipse(z,(cx+290,cy-125),(110,30),27,0,360,255,-1);rect(z,cx+282,cy-235,cx+296,cy-125)
+L=[('2-forge',forge,560,1235),('3-clinique',clinique,536,1545),('4-labo',labo,1444,1215),('5-generateur',generateur,830,1705),('6-comptoir',comptoir,1264,1630),('7-port',port,1430,2340)]
 ap=[]
 for nom,f,cx,cy in L:
     z=np.zeros((H,W),np.uint8);f(z,cx,cy)
