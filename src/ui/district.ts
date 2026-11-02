@@ -41,6 +41,7 @@ import { ICO, baseIcones, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
 import { echap, mouvementReduit, virgule } from './outils';
+import { brancherHoule } from './houle';
 
 export type { EcranDistrict, Vue } from './coquille';
 
@@ -184,6 +185,7 @@ function degagerBalises(racine: HTMLElement) {
 
 export function brancherTableau(racine: HTMLElement) {
   degagerBalises(racine);
+  if (!mouvementReduit()) brancherHoule(racine);
   const place = racine.querySelector<HTMLElement>('.archipel .anime');
   if (!place || mouvementReduit()) return;
   const src = place.dataset.video!;
@@ -204,12 +206,28 @@ export function brancherTableau(racine: HTMLElement) {
 }
 
 
+/**
+ * Les lueurs de la Cuvette (d'après docs/maquette-cuvette2.html) : les cristaux bleus respirent lentement, chacun à son rythme,
+ * le feu de la Forge plus vite. Repère 400 × 600 : centre, largeur du halo, couleur.
+ */
+const LUEURS: [number, number, number, 'b' | 'o'][] = [
+  [203, 148, 22, 'b'], // le cristal au sommet de la Tour du Noyau
+  [313, 237, 22, 'b'], // la cuve du Labo
+  [178, 354, 19, 'b'], // le tube du Générateur
+  [123, 334, 17, 'b'], // la verrière de la Clinique
+  [278, 373, 19, 'b'], // le bassin du Comptoir
+  [316, 523, 17, 'b'], // la lanterne du Port
+  [121, 289, 22, 'o'], // le feu de la Forge
+];
+
 function tableau(j: Jeu): string {
   const s = sceneDistrict(j.batiments.noyau);
   const nouveau = ageAffiche !== 0 && ageAffiche !== s.age;
   ageAffiche = s.age;
   return `<img class="tableau${s.nuit ? ' nuit' : ''}${nouveau ? ' nouvel-age' : ''}" src="${s.url}" alt="" draggable="false"/>`
     + (s.video ? `<div class="anime" data-video="${s.video}"></div>` : '')
+    + (s.houle && !mouvementReduit() ? `<div class="houle" data-image="${s.url}" data-masque="${s.houle}"></div>` : '')
+    + (CUVETTE ? LUEURS.map(([x, y, l, c], i) => `<i class="lueur ${c}" style="left:${x / 4}%;top:${y / 6}%;width:${l / 4}%;--d:${(i * .6).toFixed(1)}s" aria-hidden="true"></i>`).join('') : '')
     + `${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
 }
 

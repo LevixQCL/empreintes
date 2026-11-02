@@ -234,7 +234,7 @@ h1,h2,h3{font-weight:400}
 /* la nuit (22 octobre 2026) : une teinte, pas un voile. Bryan trouvait le voile gris (multiply) terne : on assombrit un peu,
    on bleuit légèrement et on garde le contraste. Le même filtre sur le tableau, sa vidéo et la mer du PC : pas de colonne plus sombre. */
 .toile .nuit-voile{display:none}
-.toile .tableau.nuit,.toile:has(.tableau.nuit) .anime video,.mer-fond.nuit{filter:brightness(.8) contrast(1.06) saturate(1.08) hue-rotate(-6deg)}
+.toile .tableau.nuit,.toile:has(.tableau.nuit) .anime video,.toile:has(.tableau.nuit) .houle canvas,.mer-fond.nuit{filter:brightness(.8) contrast(1.06) saturate(1.08) hue-rotate(-6deg)}
 .niv{display:grid;place-items:center;width:20px;height:22px;font-family:var(--mono);font-size:11px;font-weight:600;color:#1C1406;background:var(--laiton);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
 .archipel-haut{position:absolute;z-index:2;top:10px;left:10px;right:10px;display:grid;gap:8px}
 .archipel-haut:empty{display:none}

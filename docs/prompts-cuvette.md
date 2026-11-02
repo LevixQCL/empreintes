@@ -83,8 +83,10 @@ Pack des zooms et prompts : `scripts/cuvette2-pack.py`.
   (`CUVETTE` dans src/ui/art.ts). Zones cliquables et repères : `ZONES_CUVETTE` / `BALISES_CUVETTE` dans src/ui/district.ts (repère 400 × 600).
 - Téléphone : tableau sur toute la hauteur. PC : `art/district/cuvette-large.webp` (Midjourney a élargi la scène, district recollé en pleine
   résolution) derrière la toile, centre du tableau à 50,57 % de sa largeur (district.css, fin du fichier).
-- Reste : paliers bas/haut des 7 bâtiments (méthode du pack : scripts/cuvette2-pack.py, cuvette2-integrer.py), animations (houle, lueurs)
-  de docs/maquette-cuvette2.html à porter dans le jeu.
+- Reste : paliers bas/haut des 7 bâtiments (méthode du pack : scripts/cuvette2-pack.py, cuvette2-integrer.py).
+- Animations (2 nov. 2026, nuit) : la houle en WebGL (src/ui/houle.ts) sur la mer seule, masque `art/district/cuvette-houle.webp`
+  (blanc = mer, 400 × 600, tiré de la maquette) ; les lueurs des cristaux et de la Forge (`LUEURS` dans src/ui/district.ts).
+  Rien ne bouge si le joueur a réduit les animations.
 - Plus de plaques (2 nov. 2026, nuit) : un cristal de niveau au pied de chaque bâtiment (`pied`), une bulle au-dessus du toit (`haut`)
   seulement quand il y a une action (carte prête, objectif, chantier ou forge en cours, poste vide avec un Porteur libre, étals du Comptoir,
   jetons de pillage au complet). Le nom sort du cristal au survol, au choix du bâtiment, et pour tous tant que la Tour est au niveau 1.
