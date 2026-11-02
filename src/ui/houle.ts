@@ -5,6 +5,8 @@
 //  - le fourneau de la Forge vacille et rougeoie, et sa cheminée fume : un panache qui monte, se tord et part avec le vent.
 // Bryan (2 novembre 2026) : des halos ronds qui pulsent et une cascade qui ondule, « hyper cheap » ; ici, tout part des pixels
 // du tableau lui-même, découpés par trois masques (scripts/cuvette-animation-masques.py).
+// Bryan (même soir) : la nappe juste avant la chute restait figée et la mer au pied de la digue aussi ; la nappe glisse
+// désormais vers la lèvre, et la mer a un ressac (vagues qui montent vers la digue, frange d'écume, éclats sur l'écume crème).
 // Tout se calcule sur la carte graphique, 30 images par seconde au plus ; la houle s'éteint vers les bords du tableau et ne
 // déborde jamais sur la digue. Rien ne tourne si le joueur a réduit les animations, si WebGL manque, ou hors du district.
 
@@ -52,15 +54,40 @@ void main(){
   vec2 e=p-FUMEE;float hf=-e.y;
   bool fumee=hf>-4.&&hf<104.&&e.x>-20.&&e.x<62.;
   if(mer+eau+cr+feu+hc+fh<.015&&!fumee)discard;
-  vec2 q=uv;float w=0.,bord=0.;
+  vec2 q=uv;float w=0.,bord=0.,ress=0.,prox=0.;
   if(mer>.02){
+    // la houle de fond, plus le ressac : des vagues qui montent vers la digue, poussent l'écume peinte contre elle puis la ramènent
+    float d=texture2D(m3,uv).g;
+    vec2 ex=vec2(2./400.,0.),ey=vec2(0.,2./600.);
+    vec2 gr=vec2(texture2D(m3,uv+ex).g-texture2D(m3,uv-ex).g,texture2D(m3,uv+ey).g-texture2D(m3,uv-ey).g);
+    vec2 vers=-gr/max(length(gr),.0005);
+    prox=1.-smoothstep(.05,1.,d);
+    ress=sin(d*11.-t*1.15+(n(p*.025+vec2(0.,t*.05))-.5)*2.4);
     w=sin(p.x*.045+p.y*.11-t*1.1)*.6+sin(-p.x*.07+p.y*.05-t*.7)*.4+sin(p.y*.31+p.x*.02-t*2.3)*.15;
     bord=smoothstep(0.,.07,uv.x)*smoothstep(0.,.07,1.-uv.x)*smoothstep(0.,.05,uv.y)*smoothstep(0.,.03,1.-uv.y);
-    q=uv+vec2(sin(p.y*.09+p.x*.02-t*.9)*.7,w)*.0024*bord;
+    // en pixels du tableau (repère 400 × 600) : la houle déplace d'1 px, le ressac jusqu'à 3,5 px près du bord
+    vec2 dpx=vec2(sin(p.y*.09+p.x*.02-t*.9)*.9,w*1.3)+vers*ress*(.6+2.9*prox)*step(.0005,length(gr));
+    // l'écume dérive doucement le long du rivage
+    dpx+=vec2(vers.y,-vers.x)*(n(p*.04+vec2(t*.12,0.))-.5)*1.6*prox;
+    q=uv+dpx/vec2(400.,600.)*bord;
     if(texture2D(m1,q).r<.5)q=uv;
   }
   vec3 c=texture2D(img,q).rgb;
-  if(mer>.02){float cr2=smoothstep(.55,1.,w*.5+.5);c*=1.+bord*mer*(.07*cr2-.035*(1.-cr2));}
+  if(mer>.02){
+    float cr2=smoothstep(.55,1.,w*.5+.5);c*=1.+bord*mer*(.07*cr2-.035*(1.-cr2));
+    // la vague qui arrive éclaircit l'eau devant elle, celle qui se retire l'assombrit
+    c*=1.+bord*mer*prox*.06*ress;
+    // une frange d'écume vivante contre la digue : elle monte quand la vague touche et se déchire en dentelle
+    float d=texture2D(m3,uv).g;
+    float frange=1.-smoothstep(0.,.05+.07*(ress*.5+.5),d);
+    float dentelle=smoothstep(.48,.78,fbm(p*vec2(.22,.3)+vec2(t*.35,-t*.25)));
+    c=mix(c,vec3(.99,.97,.72),frange*dentelle*.75*bord*mer);
+    // et des éclats qui scintillent sur les plaques d'écume crème du tableau
+    float creme=smoothstep(.72,.9,dot(c,vec3(.33)))*step(c.b,c.r-.1);
+    float eclat=smoothstep(.78,.95,n(p*.5+vec2(t*.6,-t*.9))*.6+n(p*1.1-vec2(t*.8,t*.3))*.4);
+    c=mix(c,c*.86,creme*smoothstep(.55,.8,n(p*.18+vec2(-t*.3,t*.22)))*prox*mer);
+    c=ecran(c,vec3(.3)*eclat*creme*mer);
+  }
   if(eau>.02){
     float chute=smoothstep(.6,.9,eau);
     if(chute>.01){
@@ -71,12 +98,28 @@ void main(){
       vec3 c2=texture2D(m1,a2).g>.6?texture2D(img,a2).rgb:c;
       c=mix(c,mix(c1,c2,abs(f1*2.-1.)),chute);
     }
+    // la nappe du déversoir glisse vers la lèvre et accélère avant de tomber (Bryan : « l'eau juste avant de tomber ne bouge pas »)
+    float nappe=(1.-chute)*step(.35,eau)*step(p.x,94.)*step(419.,p.y);
+    if(nappe>.01){
+      vec2 D=normalize(vec2(-.62,.8));
+      float lev=437.+.5*(p.x-50.),vers=clamp(1.-(lev-p.y)/22.,0.,1.);   // 0 au fond, 1 sur la lèvre
+      float L=5.+5.*vers,g1=fract(t*1.2),g2=fract(t*1.2+.5);
+      vec2 b1=uv-D*g1*L/vec2(400.,600.),b2=uv-D*g2*L/vec2(400.,600.);
+      vec3 n1=texture2D(m1,b1).g>.3?texture2D(img,b1).rgb:c;
+      vec3 n2=texture2D(m1,b2).g>.3?texture2D(img,b2).rgb:c;
+      c=mix(c,mix(n1,n2,abs(g1*2.-1.)),.85);
+      vec2 e2=p-vec2(70.,435.);float along=dot(e2,D),across=dot(e2,vec2(D.y,-D.x));
+      float bande=sin(across*.42+(n(vec2(across*.15,along*.05))-.5)*4.);
+      float stries=smoothstep(.2,1.,bande)*smoothstep(.4,.8,n(vec2(across*.25,(along+vers*vers*9.)*.09-t*2.4)));
+      float tension=smoothstep(.6,1.,vers)*(.5+.5*n(vec2(across*.8,t*2.)));   // le bourrelet clair sur la lèvre
+      c=mix(c,vec3(.88,1.,.97),clamp(stries*(.35+.4*vers)+tension*.35,0.,1.));
+    }
     float f=n(vec2(p.x*1.5,p.y*.22-t*7.))*.6+n(vec2(p.x*2.6+7.,p.y*.35-t*10.))*.4;
     float filets=smoothstep(.5,.85,f);
     float rides=smoothstep(.6,.9,n(vec2(p.x*.45+t*.9,p.y*.7-t*1.8))*.7+n(vec2(p.x*.9-t*.4,p.y*1.3-t*2.6))*.3);
     float bulles=n(vec2(p.x*1.1+t*1.5,p.y*1.4-t*4.))*.6+n(vec2(p.x*2.7-t*2.,p.y*2.9-t*7.))*.4;
     float ecume=smoothstep(.45,1.,av)*smoothstep(.38,.75,bulles);
-    float s=chute*(filets*.75+ecume*.9)+(1.-chute)*(rides*.3+ecume*.85);
+    float s=chute*(filets*.75+ecume*.9)+(1.-chute)*(1.-nappe)*(rides*.3+ecume*.85);
     c*=1.-chute*.22*(1.-filets);
     c=mix(c,vec3(.88,1.,.97),clamp(s,0.,1.)*smoothstep(.02,.25,eau));
   }

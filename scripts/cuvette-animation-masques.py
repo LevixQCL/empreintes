@@ -3,7 +3,7 @@
 #   cuvette-anim-1.webp : R = mer (houle), G = eau qui coule (255 chute, 120 nappe qui avance), B = cristaux (leurs pixels)
 #   cuvette-anim-2.webp : R = avancée dans la chute (0 en haut, 255 en bas, où naît l'écume), G = feu de la Forge,
 #                         B = halo des cristaux (leurs pixels floutés)
-#   cuvette-anim-3.webp : R = halo du feu
+#   cuvette-anim-3.webp : R = halo du feu, G = distance au rivage (0 contre la digue, 255 à 60 px au large), pour le ressac
 # usage : python3 scripts/cuvette-animation-masques.py   (depuis la racine du dépôt ; refait les trois fichiers)
 import numpy as np
 from PIL import Image, ImageFilter
@@ -26,8 +26,17 @@ eau_coul = (g > r + 25) & (b > r + 15)
 blanc = (lum > 175) & (b > 140)
 mouille = eau_coul | blanc
 levre = 437 + 0.5 * (X - 50)                          # le bord du déversoir
-chuteB = boite(45, 434, 80, 468) & (Y >= levre) & (Y <= levre + 16) & mouille
+chuteB = boite(45, 434, 80, 468) & (Y >= levre + .5) & (Y <= levre + 16) & mouille
 nappeB = boite(45, 420, 92, 448) & (Y < levre) & eau_coul
+# la nappe d'un seul tenant, reflets clairs compris (sinon ses reflets restent figés pendant que l'eau autour glisse)
+from scipy import ndimage as nd
+from scipy.spatial import ConvexHull
+from PIL import ImageDraw
+pts = np.argwhere(nd.binary_opening(nappeB, iterations=1))[:, ::-1]
+coque = Image.new('L', (W, H), 0)
+ImageDraw.Draw(coque).polygon([tuple(pts[i]) for i in ConvexHull(pts).vertices], fill=1)
+clair = (lum > 150) & (r - b < 60)                     # les reflets pâles de la nappe, pas la margelle brune
+nappeB = nd.binary_fill_holes((np.asarray(coque) > 0) & (eau_coul | clair)) & (Y < levre + .5)
 chuteA = (boite(96, 396, 104, 420) | boite(106, 399, 116, 418)) & mouille
 bassinA = boite(78, 414, 120, 432) & eau_coul & ~chuteA
 eau = np.zeros((H, W))
@@ -58,10 +67,21 @@ feu = np.where(boite(110, 270, 136, 298) | boite(83, 193, 97, 207), orange, 0)  
 
 # la mer, sans la chute ni la nappe (elles coulent, elles n'ondulent pas)
 mer = np.asarray(Image.open(D + 'cuvette-houle.webp').convert('L').resize((W, H), Image.LANCZOS)).astype(float) / 255
+# le masque d'origine laissait de côté les grandes plaques d'écume crème au pied de la digue (Bryan, 2 nov. : « l'eau autour
+# de la cuvette, pas moyen de l'avoir animée ? ») : tout trou fermé dans la mer, sous la digue, redevient de la mer
+from scipy import ndimage as nd
+trous, nb = nd.label(mer < .5)
+tailles = nd.sum(np.ones_like(trous), trous, range(1, nb + 1))
+for i in range(1, nb + 1):
+    if i == 1 + int(np.argmax(tailles)): continue           # la ville elle-même
+    sel = trous == i
+    if Y[sel].mean() > 380: mer[nd.binary_dilation(sel, iterations=3)] = 1
+# la distance au rivage, pour faire monter les vagues vers la digue (calculée sur la mer entière, chute comprise)
+rivage = np.clip(nd.distance_transform_edt(mer > .3) / 2.0 / 60, 0, 1)
 mer[lisse((eau > 0).astype(float), 3) > .05] = 0
 
 u8 = lambda a: (np.clip(a, 0, 1) * 255).astype(np.uint8)
 Image.fromarray(np.dstack([u8(mer), u8(eau), u8(cristal)])).save(D + 'cuvette-anim-1.webp', lossless=True)
 Image.fromarray(np.dstack([u8(avance), u8(feu), u8(lisse(cristal, 9) * 2.2)])).save(D + 'cuvette-anim-2.webp', lossless=True)
-Image.fromarray(np.dstack([u8(lisse(feu, 12) * 2.5)] * 3)).save(D + 'cuvette-anim-3.webp', lossless=True)
+Image.fromarray(np.dstack([u8(lisse(feu, 12) * 2.5), u8(lisse(rivage, 2)), u8(rivage * 0)])).save(D + 'cuvette-anim-3.webp', lossless=True)
 print('eau', int((eau > 0).sum()), 'chute', int((chuteA | chuteB).sum()), 'cristal', int((cristal > .3).sum()), 'feu', int((feu > .3).sum()))
