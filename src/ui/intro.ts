@@ -18,8 +18,9 @@ export interface Plan {
   /** années du compteur : il défile de la première à la seconde ; d'un plan à l'autre, le temps n'avance jamais à rebours */
   annees: [number, number];
   scene: (k: number) => string;
-  /** illustrations Midjourney du plan (public/intro/<id>.webp), chacune visible à partir de la ligne « des » (1 = début) */
-  fonds?: { id: string; des: number }[];
+  /** illustrations Midjourney du plan (public/intro/<id>.webp), chacune visible à partir de la ligne « des » (1 = début) ;
+   *  « camera » remplace celle du plan pour cette illustration */
+  fonds?: { id: string; des: number; camera?: Plan['camera'] }[];
   ambiance: string;
   /** mouvement de caméra sur l'illustration */
   /** porte : plan large à la première phrase, puis la caméra s'approche de la porte et s'arrête */
@@ -115,7 +116,7 @@ const strates = (k: number) => svg(`
 
 // ---------- Les 12 plans ----------
 
-const f = (id: string, des = 1) => ({ id, des });
+const f = (id: string, des = 1, camera?: Plan['camera']) => ({ id, des, camera });
 
 export const PLANS: Plan[] = [
   { epoque: 'Au début du siècle', titre: 'On savait', annees: [2006, 2019], ambiance: 'chaleur', camera: 'approche', fonds: [f('01-on-savait')], scene: villeChaleur, court: ["On avait les chiffres, les cartes, presque les dates. Quand l’eau montait, on peignait une ligne bleue sur le mur, et on la montrait aux invités."], lignes: [
@@ -164,7 +165,7 @@ export const PLANS: Plan[] = [
     'Sous chaque district, un puits descend : d’abord ses pompes noyées, puis ses abris murés des années 2060. Plus bas, tous les puits débouchent dans les mêmes Strates, toujours plus anciennes.',
     'On en remonte des cristaux d’empreinte. Greffés, ils font les Résonants. Tenus contre la peau, dans un harnais de fouille, ils prêtent leur geste le temps d’un combat.',
     'Plus on descend, plus les trouvailles sont puissantes, et plus il est difficile d’en remonter.'] },
-  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-toi')], scene: toi, court: ["Cette année, la ligne bleue de ton district est passée sous la marée. Hier, il t’a élu à sa tête.", "Ce matin, en creusant pour sauver les pompes, on a ouvert sous sa tour une porte scellée depuis cinquante-cinq ans. Une coursière est venue te chercher. Descends. Regarde tout."], lignes: [
+  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-cuvette', 1, 'recule'), f('10-toi', 2)], scene: toi, court: ["Cette année, la ligne bleue de ton district est passée sous la marée. Hier, il t’a élu à sa tête.", "Ce matin, en creusant pour sauver les pompes, on a ouvert sous sa tour une porte scellée depuis cinquante-cinq ans. Une coursière est venue te chercher. Descends. Regarde tout."], lignes: [
     'Hier, ton district t’a élu à sa tête : une cuvette cernée d’une digue, une Forge au ralenti, une vieille tour. Et une ligne bleue qui, cette année, est passée sous la marée.',
     'Ce matin, en creusant plus bas pour sauver les pompes, on a ouvert sous la tour une porte scellée depuis cinquante-cinq ans. Derrière, des dizaines d’empreintes, mêlées.',
     'Au même moment, dans les Hauts, des Résonants se réveillent sans savoir qui ils sont. Tout Vertiga va vouloir cette porte.',
@@ -172,7 +173,7 @@ export const PLANS: Plan[] = [
 ];
 
 /** Illustrations Midjourney déjà déposées dans public/intro/ */
-const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-tempetes', '03-fracture', '04-hauteur', '05-puits-zero', '06-empreintes', '07-ascension', '08-reponse', '09-oubli', '10-dessous', '10-toi']);
+const IMAGES_DISPONIBLES = new Set<string>(['01-on-savait', '02-ailleurs', '03-tempetes', '03-fracture', '04-hauteur', '05-puits-zero', '06-empreintes', '07-ascension', '08-reponse', '09-oubli', '10-dessous', '10-cuvette', '10-toi']);
 /** Plans qui ont aussi une courte vidéo en boucle (public/intro/<id>.mp4), l'image sert d'affiche.
  *  10-toi n'en a plus : sa boucle sautait ; l'image fixe et le zoom vers la porte la remplacent. */
 const VIDEOS_DISPONIBLES = new Set<string>([]);
@@ -238,7 +239,7 @@ export function htmlIntro(i: number, k: number, mouvement = true, texteCache = f
   // une seule phrase à la fois, comme un sous-titre : l'image reste visible
   const pas = p.lignes.length > 1 ? `<div class="intro-pas" aria-hidden="true">${p.lignes.map((_, m) => `<span class="${m < n ? 'fait' : ''}"></span>`).join('')}</div>` : '';
   return `<section class="intro amb-${p.ambiance}${actif ? ' illustree' : ''}${texteCache ? ' admirer' : ''} texte-${p.texte ?? 'bas'}" data-plan="${i}" data-k="${n}"${actif ? ` style="--image:url(./intro/${actif}.webp)"` : ''} aria-label="Introduction" data-action="intro-suivant">`
-    + (actif ? fond(actif, p.camera, mouvement, p.foyer) : '')
+    + (actif ? fond(actif, p.fonds?.find((x) => x.id === actif)?.camera ?? p.camera, mouvement, p.foyer) : '')
     + `<div class="intro-scene" aria-hidden="true">${p.scene(n)}</div>`
     + (mouvement ? particules(p.ambiance) : '')
     + `<div class="intro-voile" aria-hidden="true"></div>`

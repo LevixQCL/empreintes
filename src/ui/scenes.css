@@ -147,11 +147,11 @@
 .cam-descend img{animation-name:cam-descend}
 .cam-gauche img{animation-name:cam-gauche}
 .cam-droite img{animation-name:cam-droite}
-/* porte (« Toi ») : le trio devant la porte, plan large à la première phrase ; dès la deuxième, la caméra
-   s'approche doucement de la porte et s'arrête. Cadré à gauche : sur téléphone, Ilka (bord gauche) reste dans l'image */
-.cam-porte img{object-position:25% 50%;transform:scale(1.02);transform-origin:35% 50%;transition:transform 9s cubic-bezier(.3,0,.15,1)}
-.intro:not([data-k="1"]) .cam-porte img{transform:scale(1.1)}
-@media (prefers-reduced-motion: reduce){ .cam-porte img{transition:none} }
+/* porte (« Toi ») : le trio devant la porte, plan large un instant, puis la caméra s'approche doucement de la porte
+   et s'arrête (le plan s'ouvre d'abord sur la Cuvette, 2 novembre 2026). Cadré à gauche : sur téléphone, Ilka (bord gauche) reste dans l'image */
+.cam-porte img{object-position:25% 50%;transform-origin:35% 50%;animation:cam-porte 11s cubic-bezier(.3,0,.15,1) both}
+@keyframes cam-porte{0%,22%{transform:scale(1.02)}to{transform:scale(1.1)}}
+@media (prefers-reduced-motion: reduce){ .cam-porte img{animation:none;transform:scale(1.02)} }
 @keyframes cam-approche{from{transform:scale(1.04)}to{transform:scale(1.2)}}
 @keyframes cam-recule{from{transform:scale(1.22)}to{transform:scale(1.04)}}
 /* monte : le regard glisse vers le haut de l'image et finit sur le sommet ; descend : il finit sur le bas */
