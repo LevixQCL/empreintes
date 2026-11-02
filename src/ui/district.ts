@@ -21,7 +21,7 @@ import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/ty
 import type { CibleFouille } from '../core/expedition';
 import { DIFFICULTES_FOUILLE, type DifficulteFouille } from '../core/jeu';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
-import { CONFIANCE } from '../core/jeu';
+import { CONFIANCE, niveauConfiance } from '../core/jeu';
 import { LECTURE_PROFONDE } from '../core/partie/etat';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
@@ -136,10 +136,17 @@ const ZONES_CUVETTE: Record<Lieu, string> = {
   port: '296,520 400,520 400,588 300,590',
 };
 if (CUVETTE) for (const a of [1, 2, 3, 4] as const) ZONES[a] = ZONES_CUVETTE;
+/**
+ * Les habitations du haut de la Cuvette (2 novembre 2026, Bryan : « c'est presque étrange qu'il ne soit pas cliquable ») :
+ * le gros bâtiment aux fenêtres allumées, là où vit la population qui te suit. Il ouvre le même panneau que la roue de Confiance.
+ */
+const ZONE_HABITANTS = '318,40 356,0 400,0 400,200 372,214 330,192 300,150 304,90';
+const BALISE_HABITANTS = { x: 356, y: 200 };
 
 function zonesBatiments(age: 1 | 2 | 3 | 4, selection: string | null): string {
   return '<svg class="zones-bat" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">'
     + ORDRE.map((id) => `<polygon class="zone-bat${selection === id ? ' choisie' : ''}" points="${ZONES[age][id]}" data-action="batiment" data-id="${id}" data-lieu="${id}"/>`).join('')
+    + (CUVETTE ? `<polygon class="zone-bat" points="${ZONE_HABITANTS}" data-action="ressource" data-id="confiance" data-lieu="habitants"/>` : '')
     + '</svg>';
 }
 
@@ -291,6 +298,12 @@ function balises(e: EcranDistrict): string {
       const reste = j.comptoir.offres.length - j.comptoir.achetes.length;
       if (reste > 0) h += bulle('info', `${ICO.cartes}<em>${reste}</em>`, `Comptoir : ${reste} carte${reste > 1 ? 's' : ''} en vente`);
     }
+  }
+  // les habitations : pas un bâtiment à monter, donc pas de niveau ni de poste, seulement le palier de Confiance et la population
+  if (CUVETTE) {
+    const n = niveauConfiance(j.confiance ?? 0);
+    h += `<button type="button" class="balise habitants" ${pos(BALISE_HABITANTS)} data-action="ressource" data-id="confiance" data-lieu="habitants" aria-label="Habitations : ${j.confiance ?? 0} habitants sur ${CONFIANCE.population} te suivent, palier ${n.niveau}">`
+      + `<b class="bal-cristal glace">${ICO.porteurs}</b><span class="bal-nom">Habitants · ${j.confiance ?? 0}</span></button>`;
   }
   return h;
 }
