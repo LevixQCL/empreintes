@@ -44,7 +44,7 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
   - Générateur, quart gauche contre la digue (380, 1160), 165, sommet 900.
   - Clinique, devant, entre les deux chemins (860, 1430), 125, sommet 1295 — bas, pour ne pas cacher le pied de la Tour.
   - Comptoir, devant à droite, entre la Clinique et le chemin (1135, 1462), 125, sommet 1290 — fondation hors du chemin.
-  - Labo génétique, fond à droite (1270, 830), 120, sommet 620 — trapu, en retrait.
+  - Labo génétique, fond, entre la Tour et l'escalier (1228, 848), 125, sommet 655 — bunker large + cloche décalée.
   - Port : dehors, devant le sas (≈ 1640, 1960), sur la mer en code.
   - Plus aucune place libre au sol : les ajouts futurs se construisent **sur la digue** (chemin de ronde, à cheval sur le mur).
 - Zoom du Générateur : `zoom-generateur.png`, coin haut gauche (10, 640), 756 px, zone vidée en transparence.
@@ -54,3 +54,7 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
   contient Forge + Tour + Générateur + Clinique. Intégration : `python3 scripts/cuvette-integrer.py base.png sortie.png x0 y0 cx cy rx sommet sortie.png`.
 - Comptoir fait (kiosque hexagonal de cuivre, balance, éclats de cristal) : `art/district/cuvette-essai-comptoir.webp`
   contient Forge + Tour + Générateur + Clinique + Comptoir. Règle : un bâtiment peut cacher un chemin, sa fondation ne doit jamais être dessus.
+- Labo génétique fait (bunker, porte de coffre, cloche à double hélice de cristal) : `art/district/cuvette-essai-labo.webp`
+  contient les 6 bâtiments du sol au palier du milieu.
+- **Leçon : la zone vidée doit dessiner la silhouette voulue** (étages, décrochements, mât…). Un cylindre vide donne toujours une canette,
+  quel que soit le prompt.
