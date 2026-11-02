@@ -282,9 +282,15 @@ const AGES_ANIMES = new Set<number>([1, 2, 3, 4]);
 /** L'âge d'un archipel d'après sa profondeur : plus il a creusé, plus il a grandi */
 export const ageArchipel = (strate: number) => (strate <= 2 ? 1 : strate <= 5 ? 2 : strate <= 9 ? 3 : 4);
 export const vignetteArchipel = (age: number) => `${base}district/age-${Math.max(1, Math.min(age, AGES_PEINTS))}.webp`;
+/**
+ * La Cuvette (2 novembre 2026) : un seul tableau peint pour tous les âges en attendant les paliers des bâtiments
+ * (art/district/cuvette.webp, 800 × 1200, recadré de cuvette2-batiments.webp).
+ */
+export const CUVETTE = true;
 export function sceneDistrict(niveauNoyau: number, maintenant = new Date()): { age: 1 | 2 | 3 | 4; url: string; mer: string; horizon: number; video: string | null; nuit: boolean } {
   const age = visuel(niveauNoyau);
   const h = maintenant.getHours();
+  if (CUVETTE) return { age, url: `${base}district/cuvette.webp`, mer: `${base}district/mer-1.webp`, horizon: 0, video: null, nuit: h < 7 || h >= 20 };
   return {
     age,
     url: `${base}district/age-${Math.min(age, AGES_PEINTS)}.webp`,

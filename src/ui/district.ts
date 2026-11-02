@@ -31,7 +31,7 @@ import { frequenceLibre } from '../core/regles';
 import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
 import type { Affinite } from '../core/lieux';
-import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteArchipel, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, visuel, portraitYse, salleEntrainement } from './art';
+import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteArchipel, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { avecMots } from './lexique';
@@ -88,6 +88,11 @@ const LIEUX: Record<1 | 2 | 3 | 4, Record<Lieu, { x: number; y: number }>> = {
   1: { ...PLAQUES_234, noyau: { x: 196, y: 312 }, generateur: { x: 64, y: 194 }, forge: { x: 325, y: 238 }, port: { x: 322, y: 552 } },
   2: PLAQUES_234, 3: PLAQUES_234, 4: PLAQUES_234,
 };
+const PLAQUES_CUVETTE: Record<Lieu, { x: number; y: number }> = {
+  noyau: { x: 207, y: 284 }, labo: { x: 324, y: 316 }, forge: { x: 110, y: 318 }, clinique: { x: 98, y: 398 },
+  generateur: { x: 178, y: 440 }, comptoir: { x: 278, y: 422 }, port: { x: 346, y: 560 },
+};
+if (CUVETTE) for (const a of [1, 2, 3, 4] as const) LIEUX[a] = PLAQUES_CUVETTE;
 const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'comptoir', 'labo', 'port'];
 /**
  * Les bâtiments eux-mêmes sont cliquables (22 octobre 2026, Bryan : sur téléphone, les plaques seules faisaient de petites cibles
@@ -115,6 +120,17 @@ const ZONES: Record<1 | 2 | 3 | 4, Record<Lieu, string>> = {
   },
   2: ZONES_234, 3: ZONES_234, 4: ZONES_234,
 };
+/** La Cuvette (2 novembre 2026) : un seul tableau pour tous les âges, mêmes repères 400 × 600 */
+const ZONES_CUVETTE: Record<Lieu, string> = {
+  noyau: '182,146 232,146 236,250 232,282 182,282 178,250',
+  labo: '286,240 358,238 362,300 330,316 288,312',
+  forge: '72,232 144,228 148,300 120,322 74,318',
+  clinique: '60,326 134,326 138,380 104,398 62,392',
+  generateur: '138,354 212,354 216,420 176,438 140,430',
+  comptoir: '240,312 312,312 314,400 280,420 240,410',
+  port: '296,520 400,520 400,588 300,590',
+};
+if (CUVETTE) for (const a of [1, 2, 3, 4] as const) ZONES[a] = ZONES_CUVETTE;
 
 function zonesBatiments(age: 1 | 2 | 3 | 4, selection: string | null): string {
   return '<svg class="zones-bat" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">'
@@ -856,7 +872,7 @@ export function htmlArchipel(e: EcranDistrict): string {
   // le tableau garde ses proportions (les plaques sont placées en % de l'image) ; au-dessus, son ciel flouté prolonge l'écran.
   // Sur PC, la mer et le ciel du tableau continuent jusqu'aux bords de l'écran (.mer-fond, chargée seulement sur PC : bureau.css)
   const scene = sceneDistrict(j.batiments.noyau);
-  let h = `<section class="archipel" aria-label="Ton district"><img class="tableau-fond" src="${scene.url}" alt="" aria-hidden="true">`
+  let h = `<section class="archipel${CUVETTE ? ' cuvette' : ''}" aria-label="Ton district"><img class="tableau-fond" src="${scene.url}" alt="" aria-hidden="true">`
     + `<span class="mer-fond${scene.nuit ? ' nuit' : ''}" style="--mer:url(${scene.mer});--reflets:url(${reflets});--horizon:${scene.horizon}%" aria-hidden="true"><i class="mer-reflets"></i></span>`
     + `<div class="toile">${tableau(j)}${zonesBatiments(visuel(j.batiments.noyau), e.selection)}${plaques(e)}</div>`
     + bulles(e)
