@@ -61,3 +61,8 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 - Port fait (ponton sur pilotis de cuivre, barque à lanterne de cristal, bollard) : `art/district/cuvette-essai-port.webp`
   contient les 7 bâtiments au palier du milieu. Midjourney a gardé le fond gris (prompt « no water drawn ») : la mer en code passera dessous.
   Zone du Port : ponton (1500,1800)-(1640,1770)-(1830,2000)-(1830,2070)-(1700,2080), barque ellipse (1520,1975) 130×48 à 52°, zoom (1100, 1500).
+- Mer peinte par Midjourney (Edit) autour de la Cuvette détourée, carré 2464 : `art/district/cuvette-mer.webp`
+  (Cuvette recollée en pleine résolution, sauf le Port repeint par Midjourney avec l'eau). La mer monte haut contre la digue
+  (Cuvette plus basse que la mer). Détourage : `art/district/cuvette-detouree.webp` (Cuvette décalée de 304 px en x).
+  Maquette animée : `docs/maquette-cuvette.html` (houle sur l'eau seule, reflets dorés, cristaux qui pulsent).
+  À refaire : le Port, en zoom Edit sur cette image avec l'eau (il est flou).
