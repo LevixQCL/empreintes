@@ -6,14 +6,9 @@ Lumière de lignée : Augmentés = bleu acier / cyan, Génés = vert émeraude, 
 
 À déposer dans Téléchargements : Claude convertit en webp, met à la taille et range sous le nom indiqué.
 
-## Déjà intégrées (2 novembre, 19 h)
+## Déjà intégrées (2 novembre, 20 h)
 
-21 sur 24 : tout sauf les trois ci-dessous.
-Les variantes de missions non retenues sont gardées dans `sources/missions-variantes/` (hors du jeu).
-
-À faire encore :
-- n° 21 Mèche d'or et n° 22 Souffle du wyrm : à relancer avec le prompt corrigé (rendus restés orange) ;
-- n° 24 Carapace des Fondations : pas encore générée.
+Les 24 images sont intégrées. Les variantes de missions non retenues sont gardées dans `sources/missions-variantes/` (hors du jeu).
 
 ## La liste (24 images)
 
