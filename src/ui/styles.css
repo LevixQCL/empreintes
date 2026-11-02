@@ -39,10 +39,10 @@ h1,h2,h3{font-weight:400}
 .label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--quiet);text-transform:uppercase}
 
 /* ---------- Matières : verre à coins coupés ---------- */
-.res,.mission,.plaque,.appel,.feuille-tete .vignette,.stat,.occupant,.liste-forge li,.ligne-menu,.panneau,.fenetre,
+.res,.mission,.appel,.feuille-tete .vignette,.stat,.occupant,.liste-forge li,.ligne-menu,.panneau,.fenetre,
 .habitant,.puits,.emplacement,.replique,.fragment,.segments-choix,.zone-chaine,.scene-ennemi,.puce,.lecon,.toast,.btn,button.prim,.btn-sec,.btn-icone,.btn-flux,.en-cours,.chantier-cours,.carte-dos{
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
-.res,.mission,.plaque,.appel,.panneau,.habitant,.emplacement,.replique,.segments-choix,.zone-chaine,.puce,.lecon,.toast,.ligne-menu,.occupant,.stat,.liste-forge li,.en-cours,.chantier-cours{
+.res,.mission,.appel,.panneau,.habitant,.emplacement,.replique,.segments-choix,.zone-chaine,.puce,.lecon,.toast,.ligne-menu,.occupant,.stat,.liste-forge li,.en-cours,.chantier-cours{
   background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 
 /* ---------- Boutons ---------- */
@@ -235,23 +235,7 @@ h1,h2,h3{font-weight:400}
    on bleuit légèrement et on garde le contraste. Le même filtre sur le tableau, sa vidéo et la mer du PC : pas de colonne plus sombre. */
 .toile .nuit-voile{display:none}
 .toile .tableau.nuit,.toile:has(.tableau.nuit) .anime video,.mer-fond.nuit{filter:brightness(.8) contrast(1.06) saturate(1.08) hue-rotate(-6deg)}
-.plaque{--cut:6px;position:absolute;transform:translate(-50%,0);display:grid;justify-items:start;gap:1px;min-height:44px;max-width:46%;padding:5px 10px 5px 6px;border:none;color:var(--ink);text-align:left;transition:transform .15s ease}
-.plaque:not(:disabled):active{transform:translate(-50%,0) scale(.96)}
-.plaque-nom{display:flex;align-items:center;gap:6px;font-family:var(--display);font-size:14px;white-space:nowrap}
 .niv{display:grid;place-items:center;width:20px;height:22px;font-family:var(--mono);font-size:11px;font-weight:600;color:#1C1406;background:var(--laiton);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
-.plaque small{display:inline-flex;align-items:center;gap:4px;padding-left:26px;font-family:var(--mono);font-size:10px;color:var(--quiet);white-space:nowrap}
-.plaque small .ico{width:11px;height:11px}
-.plaque small.vacant{color:var(--alerte)}
-.plaque small.pret{color:var(--ok)}
-.plaque small.en-chantier{color:var(--gold)}
-.plaque small.occupe{color:var(--ink-2);font-family:var(--body);font-size:11px;gap:5px}
-.plaque.choisie{background:rgba(14,30,40,.86)}
-.plaque.visee{animation:visee 1.8s ease-in-out infinite}
-@keyframes visee{50%{box-shadow:inset 0 0 0 2px var(--gold);background:rgba(50,38,14,.88)}}
-.plaque.verrou{opacity:.72;background:rgba(10,12,17,.6);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
-.plaque.verrou .plaque-nom{font-size:13px;color:var(--ink-2)}
-.plaque.verrou small{padding-left:0}
-.plaque .pastille-alerte{top:3px;right:3px}
 .archipel-haut{position:absolute;z-index:2;top:10px;left:10px;right:10px;display:grid;gap:8px}
 .archipel-haut:empty{display:none}
 .mission{--cut:10px;display:grid;gap:5px;padding:10px 12px;background:rgba(10,12,17,.82)}
@@ -450,7 +434,7 @@ h1,h2,h3{font-weight:400}
 @media (prefers-reduced-motion: reduce){
   .pop{animation-duration:.01s}
   .jauge>i,.jauge-pv .pv,.geste{transition:none}
-  .ennemi-art,.intention.danger,.lancer.fort,.appel,.plaque.visee,.pastille-alerte,.toast.entre,.feuille.entre,.fenetre.entre,.toile .tableau.nouvel-age{animation:none}
+  .ennemi-art,.intention.danger,.lancer.fort,.appel,.pastille-alerte,.toast.entre,.feuille.entre,.fenetre.entre,.toile .tableau.nouvel-age{animation:none}
   .replique,.appel-porte{opacity:1;transform:none;animation:none}
 }
 .ecran-combat>:not(.scene-ennemi){flex-shrink:0}
@@ -628,21 +612,13 @@ h1,h2,h3{font-weight:400}
 .barre-xp i{display:block;height:100%;background:linear-gradient(90deg,#c9a24a,#ffe39a)}
 
 /* ---------- Les bâtiments cliquables (22 octobre 2026) ----------
-   Une zone invisible épouse chaque bâtiment du tableau, sous les plaques. Au survol (PC) ou au toucher, elle s'éclaire
-   d'un contour de lumière, et sa plaque aussi ; le bâtiment choisi garde son contour doré. */
+   Une zone invisible épouse chaque bâtiment du tableau. Au survol (PC) ou au toucher, elle s'éclaire
+   d'un halo de lumière, et son nom apparaît (balises.css) ; le bâtiment choisi garde son halo doré. */
 .zones-bat{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible}
 .zone-bat{fill:rgba(255,220,150,0);stroke:none;cursor:pointer;filter:blur(10px);transition:fill .25s ease;-webkit-tap-highlight-color:transparent}
 .zone-bat:hover,.zone-bat:active{fill:rgba(255,220,150,.2)}
 .zone-bat.choisie{fill:rgba(255,214,140,.14)}
 @media (hover:none){ .zone-bat:hover{fill:rgba(255,220,150,0)} .zone-bat:active,.zone-bat.choisie{fill:rgba(255,220,150,.18)} }
-.toile .plaque{z-index:2}
-.toile:has(.zone-bat[data-lieu="noyau"]:hover) .plaque[data-lieu="noyau"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
-.toile:has(.zone-bat[data-lieu="generateur"]:hover) .plaque[data-lieu="generateur"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
-.toile:has(.zone-bat[data-lieu="forge"]:hover) .plaque[data-lieu="forge"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
-.toile:has(.zone-bat[data-lieu="clinique"]:hover) .plaque[data-lieu="clinique"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
-.toile:has(.zone-bat[data-lieu="comptoir"]:hover) .plaque[data-lieu="comptoir"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
-.toile:has(.zone-bat[data-lieu="port"]:hover) .plaque[data-lieu="port"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
-.toile:has(.zone-bat[data-lieu="labo"]:hover) .plaque[data-lieu="labo"]{filter:brightness(1.25);box-shadow:inset 0 0 0 1.5px rgba(255,226,160,.8),0 0 14px rgba(255,200,120,.45)}
 
 /* ---------- Les ressources du haut sont des boutons (22 octobre 2026) : elles ouvrent leur fiche ---------- */
 button.res{font:inherit;color:inherit;text-align:left;border:none;cursor:pointer;transition:filter .15s ease,transform .12s ease}

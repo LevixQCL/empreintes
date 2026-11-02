@@ -1,6 +1,6 @@
 // Écrans du district : l'archipel (accueil), la Tour du Noyau en coupe, l'escouade, les cartes, le Codex.
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
-// les plaques cliquables des bâtiments sont posées dessus, le détail s'ouvre en feuille par le bas.
+// chaque bâtiment y porte son cristal de niveau et, s'il y a quelque chose à faire, une bulle, le détail s'ouvre en feuille par le bas.
 
 import { nombreHaltes, queteDef } from '../core/strates';
 import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
@@ -77,22 +77,26 @@ const COMPTOIR_FERME = 'Ses volets sont cloués depuis que le dernier marchand a
 const estFutur = (id: string | null): id is LieuFutur => id === 'port' || id === 'labo';
 
 /**
- * Où se trouve chaque plaque dans le tableau de chaque âge (repère 400 × 600, haut de la plaque) : dans l'eau, au pied de
- * son îlot, pour ne jamais cacher le bâtiment lui-même (Bryan : les bâtiments doivent se voir et se distinguer).
+ * Les repères des bâtiments sur le tableau (2 novembre 2026, Bryan : « des plaques toutes rassemblées », comme les autres jeux,
+ * le bâtiment se reconnaît à son dessin). Repère 400 × 600 : `pied`, où se pose le petit cristal du niveau, au pied du bâtiment,
+ * et `haut`, d'où part la bulle qui signale une action à faire (au-dessus du toit).
  */
-const PLAQUES_234: Record<Lieu, { x: number; y: number }> = {
+type Balise = { pied: { x: number; y: number }; haut: { x: number; y: number } };
+const BALISES_CUVETTE: Record<Lieu, Balise> = {
+  noyau: { pied: { x: 207, y: 276 }, haut: { x: 207, y: 146 } },
+  forge: { pied: { x: 104, y: 314 }, haut: { x: 102, y: 244 } },
+  clinique: { pied: { x: 96, y: 392 }, haut: { x: 140, y: 350 } },
+  generateur: { pied: { x: 176, y: 430 }, haut: { x: 176, y: 364 } },
+  comptoir: { pied: { x: 278, y: 412 }, haut: { x: 278, y: 352 } },
+  labo: { pied: { x: 322, y: 308 }, haut: { x: 318, y: 232 } },
+  port: { pied: { x: 318, y: 584 }, haut: { x: 318, y: 516 } },
+};
+/** Les anciens tableaux d'âge (avant la Cuvette) : le repère au milieu de l'ancienne plaque, la bulle un peu plus haut */
+const ANCIENS: Record<Lieu, { x: number; y: number }> = {
   noyau: { x: 200, y: 312 }, generateur: { x: 64, y: 184 }, forge: { x: 322, y: 228 }, clinique: { x: 62, y: 304 },
   comptoir: { x: 322, y: 382 }, labo: { x: 112, y: 538 }, port: { x: 326, y: 556 },
 };
-const LIEUX: Record<1 | 2 | 3 | 4, Record<Lieu, { x: number; y: number }>> = {
-  1: { ...PLAQUES_234, noyau: { x: 196, y: 312 }, generateur: { x: 64, y: 194 }, forge: { x: 325, y: 238 }, port: { x: 322, y: 552 } },
-  2: PLAQUES_234, 3: PLAQUES_234, 4: PLAQUES_234,
-};
-const PLAQUES_CUVETTE: Record<Lieu, { x: number; y: number }> = {
-  noyau: { x: 207, y: 284 }, labo: { x: 324, y: 316 }, forge: { x: 110, y: 318 }, clinique: { x: 98, y: 398 },
-  generateur: { x: 178, y: 440 }, comptoir: { x: 278, y: 422 }, port: { x: 346, y: 560 },
-};
-if (CUVETTE) for (const a of [1, 2, 3, 4] as const) LIEUX[a] = PLAQUES_CUVETTE;
+const balise = (id: Lieu): Balise => CUVETTE ? BALISES_CUVETTE[id] : { pied: ANCIENS[id], haut: { x: ANCIENS[id].x, y: ANCIENS[id].y - 50 } };
 const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'comptoir', 'labo', 'port'];
 /**
  * Les bâtiments eux-mêmes sont cliquables (22 octobre 2026, Bryan : sur téléphone, les plaques seules faisaient de petites cibles
@@ -147,29 +151,29 @@ let ageAffiche = 0;
  */
 let video: HTMLVideoElement | null = null;
 /**
- * Les plaques des bâtiments ne se chevauchent jamais : après chaque rendu, une plaque qui en recouvre
- * une autre, plus haut sur le tableau, descend juste en dessous (sur téléphone, les noms longs se touchaient).
+ * Les noms et les bulles ne se chevauchent jamais : après chaque rendu, un élément qui en recouvre un autre, plus haut sur
+ * le tableau, descend juste en dessous ; aucun ne sort de l'écran ni ne passe sous la barre de navigation
+ * (28 octobre 2026, Bryan : « regarde les bords »).
  */
-function degagerPlaques(racine: HTMLElement) {
-  const ps = [...racine.querySelectorAll<HTMLElement>('.toile .plaque')];
+function degagerBalises(racine: HTMLElement) {
+  const ps = [...racine.querySelectorAll<HTMLElement>('.toile :is(.balise,.bulle-bat)')];
   const places: DOMRect[] = [];
   for (const p of ps.sort((a, b) => a.getBoundingClientRect().top - b.getBoundingClientRect().top)) {
     const r = p.getBoundingClientRect();
     let dy = 0;
     for (let essai = 0; essai < 6; essai++) {
-      const gene = places.find((q) => r.left < q.right + 4 && r.right > q.left - 4 && r.top + dy < q.bottom + 4 && r.bottom + dy > q.top - 4);
+      const gene = places.find((q) => r.left < q.right + 3 && r.right > q.left - 3 && r.top + dy < q.bottom + 3 && r.bottom + dy > q.top - 3);
       if (!gene) break;
-      dy = gene.bottom + 6 - r.top;
+      dy = gene.bottom + 4 - r.top;
     }
     if (dy) p.style.marginTop = `${dy}px`;
     places.push(new DOMRect(r.left, r.top + dy, r.width, r.height));
   }
-  // aucune plaque ne sort de l'écran ni ne passe sous la barre de navigation (28 octobre 2026, Bryan : « regarde les bords »)
   const cadre = racine.querySelector<HTMLElement>('.archipel')?.getBoundingClientRect();
   if (!cadre) return;
   const nav = racine.querySelector<HTMLElement>('.nav');
   const navHaut = nav && getComputedStyle(nav).position === 'fixed' ? nav.getBoundingClientRect().top : Infinity;
-  const bas = Math.min(cadre.bottom, navHaut) - 8, marge = 8;
+  const bas = Math.min(cadre.bottom, navHaut) - 6, marge = 6;
   for (const p of ps) {
     const r = p.getBoundingClientRect();
     const dx = r.left < cadre.left + marge ? cadre.left + marge - r.left : r.right > cadre.right - marge ? cadre.right - marge - r.right : 0;
@@ -179,7 +183,7 @@ function degagerPlaques(racine: HTMLElement) {
 }
 
 export function brancherTableau(racine: HTMLElement) {
-  degagerPlaques(racine);
+  degagerBalises(racine);
   const place = racine.querySelector<HTMLElement>('.archipel .anime');
   if (!place || mouvementReduit()) return;
   const src = place.dataset.video!;
@@ -209,52 +213,63 @@ function tableau(j: Jeu): string {
     + `${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
 }
 
-function plaques(e: EcranDistrict): string {
+/**
+ * Sur le tableau, chaque bâtiment ne porte plus qu'un petit cristal à son pied (son niveau) et, seulement quand il y a
+ * quelque chose à faire, une bulle au-dessus de son toit (2 novembre 2026, Bryan : comme les autres jeux de gestion).
+ * Le nom s'affiche au survol (PC), quand le bâtiment est choisi, et pour tous tant que le district est neuf (tutoriel,
+ * Tour du Noyau au niveau 1) : les nouveaux venus apprennent la carte, puis elle se dégage.
+ */
+function balises(e: EcranDistrict): string {
   const j = e.j;
-  const lieux = LIEUX[visuel(j.batiments.noyau)];
   const o = objectifCourant(j);
-  return ORDRE.map((id) => {
-    const p = lieux[id];
-    // une plaque près du bord droit ou gauche reste dans le tableau
-    const left = Math.min(84, Math.max(16, (p.x / 400) * 100)), top = (p.y / 600) * 100;
-    const pos = `style="left:${left}%;top:${top}%"`;
-    // le Port s'ouvre avec les pillages (26 octobre 2026, Bryan : « il faut un bateau pour aller piller des gens »)
+  const libres = disponibles(j).length > 0;
+  const pos = (p: { x: number; y: number }) => `style="left:${(p.x / 400) * 100}%;top:${(p.y / 600) * 100}%"`;
+  let h = '';
+  for (const id of ORDRE) {
+    const b = balise(id);
+    const choisie = e.selection === id ? ' choisie' : '';
+    const bulle = (classe: string, contenu: string, label: string, action = 'batiment') =>
+      `<button type="button" class="bulle-bat ${classe}" ${pos(b.haut)} data-action="${action}" data-id="${id}" data-lieu="${id}" aria-label="${label}">${contenu}</button>`;
+    // le Port ouvert mène aux archipels voisins (26 octobre 2026, Bryan : « il faut un bateau pour aller piller des gens »)
     if (id === 'port' && portOuvert(j)) {
       majJetons(j, e.now);
       const n = etatPillage(j).jetons;
-      return `<button type="button" class="plaque" ${pos} data-action="pillages" data-lieu="port" aria-label="Port : archipels voisins, ${n} jeton${n > 1 ? 's' : ''} de pillage sur ${PILLAGE.jetonsMax}">`
-        + `<span class="plaque-nom">${ICO.grappin}Port</span><small>${n} / ${PILLAGE.jetonsMax} jetons</small></button>`;
+      h += `<button type="button" class="balise ouverte" ${pos(b.pied)} data-action="pillages" data-lieu="port" aria-label="Port : archipels voisins, ${n} jeton${n > 1 ? 's' : ''} de pillage sur ${PILLAGE.jetonsMax}">`
+        + `<b class="bal-cristal glace">${ICO.grappin}</b><span class="bal-nom">Port</span></button>`;
+      if (n >= PILLAGE.jetonsMax) h += bulle('alerte', `${ICO.grappin}<em>${n}</em>`, `Jetons de pillage au complet : ${n}`, 'pillages');
+      continue;
     }
-    if (estFutur(id)) {
-      return `<button type="button" class="plaque futur${e.selection === id ? ' choisie' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(LIEUX_FUTURS[id].nom)}, pas encore ouvert">`
-        + `<span class="plaque-nom">${echap(LIEUX_FUTURS[id].nom)}</span></button>`;
+    const ferme = estFutur(id) || (id === 'comptoir' && !j.batiments.comptoir && !chantierDe(j, id));
+    if (ferme) {
+      const nom = estFutur(id) ? LIEUX_FUTURS[id].nom : batimentDef(id).nom;
+      h += `<button type="button" class="balise fermee${choisie}" ${pos(b.pied)} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(nom)}, pas encore ouvert">`
+        + `<b class="bal-cristal glace">${ICO.verrou}</b><span class="bal-nom">${echap(nom)}</span></button>`;
+      continue;
     }
     const d = batimentDef(id);
-    if (id === 'comptoir' && !j.batiments.comptoir && !chantierDe(j, id)) {
-      return `<button type="button" class="plaque futur${e.selection === id ? ' choisie' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(d.nom)}, fermé">`
-        + `<span class="plaque-nom">${echap(d.nom)}</span></button>`;
-    }
-    const prete = id === 'forge' && !!j.forge && e.now >= j.forge.fin;
+    const niv = j.batiments[id];
     const ch = chantierDe(j, id);
     const vise = !!o && o.pilier === id && !o.fait(j);
     const occupant = id !== 'comptoir' ? posteDe(j, id) : null;
-    let etat = '';
-    if (ch) etat = `<small class="en-chantier">${ICO.marteau}${decompte(ch.fin, e.now)}</small>`;
+    const prete = id === 'forge' && !!j.forge && e.now >= j.forge.fin;
+    // un poste vide ne se signale que si quelqu'un peut le prendre, une fois la chambre ouverte (avant, le seul but est la porte ;
+    // la Tour : l'entraînement reste un choix, pas un oubli)
+    const vacant = j.chambre && !!niv && id !== 'noyau' && id !== 'comptoir' && !occupant && libres;
+    h += `<button type="button" class="balise${choisie}${vise ? ' visee' : ''}" ${pos(b.pied)} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(d.nom)}${niv ? `, niveau ${niv}` : ', à construire'}${occupant ? `, ${echap(porteurDef(occupant).nom)} au poste` : ''}">`
+      + (niv ? `<b class="bal-cristal">${niv}</b>` : `<b class="bal-cristal a-construire" title="À construire">${ICO.marteau}</b>`)
+      + `<span class="bal-nom">${echap(d.nom)}</span></button>`;
+    // une seule bulle par bâtiment, la plus urgente
+    if (prete) h += bulle('alerte', ICO.ok, 'Forge : la carte est prête');
+    else if (vise) h += bulle('alerte objectif', ICO.objectif, `${echap(d.nom)} : l'objectif se fait ici`);
+    else if (ch) h += bulle('info', `${ICO.marteau}<em>${decompte(ch.fin, e.now)}</em>`, `${echap(d.nom)} : amélioration en cours`);
+    else if (j.forge && id === 'forge') h += bulle('info', `${ICO.chrono}<em>${decompte(j.forge.fin, e.now)}</em>`, 'Forge : fabrication en cours');
+    else if (vacant) h += bulle('vacant', ICO.posteLibre, `${echap(d.nom)} : personne au poste`);
     else if (id === 'comptoir') {
-      // le Comptoir : à construire, ou ce qui reste en vente aujourd'hui
       const reste = j.comptoir.offres.length - j.comptoir.achetes.length;
-      etat = !j.batiments.comptoir ? ''
-        : reste > 0 ? `<small class="occupe">${ICO.cartes}${reste} en vente</small>` : `<small>${ICO.ok}Tout vendu</small>`;
+      if (reste > 0) h += bulle('info', `${ICO.cartes}<em>${reste}</em>`, `Comptoir : ${reste} carte${reste > 1 ? 's' : ''} en vente`);
     }
-    else if (prete) etat = `<small class="pret">${ICO.ok}Prêt</small>`;
-    else if (j.forge && id === 'forge') etat = `<small>${ICO.chrono}${decompte(j.forge.fin, e.now)}</small>`;
-    // le travailleur : un petit médaillon, vide si personne, avec son visage sinon (23 octobre 2026, Bryan : les noms prenaient trop de place sur téléphone)
-    const med = id === 'comptoir' || !j.batiments[id] || (id === 'noyau' && !occupant) ? ''
-      : occupant ? `<span class="poste-med" title="${echap(porteurDef(occupant).nom)}">${avatar(occupant, 22)}</span>`
-      : `<span class="poste-med vide" title="Personne au poste">${ICO.ouvrier}</span>`;
-    return `<button type="button" class="plaque${e.selection === id ? ' choisie' : ''}${vise ? ' visee' : ''}" ${pos} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(d.nom)}${j.batiments[id] ? `, niveau ${j.batiments[id]}` : ', à construire'}${occupant ? `, ${echap(porteurDef(occupant).nom)} au poste` : med ? ', personne au poste' : ''}">`
-      + `<span class="plaque-nom">${j.batiments[id] ? `<b class="niv">${j.batiments[id]}</b>` : `<b class="niv a-construire" title="À construire">${ICO.marteau}</b>`}${echap(d.nom)}${med}</span>${etat}${prete || vise ? '<i class="pastille-alerte" aria-hidden="true"></i>' : ''}</button>`;
-  }).join('');
+  }
+  return h;
 }
 
 /** La mission du moment, posée en haut du tableau */
@@ -869,12 +884,12 @@ function fenetreAge(j: Jeu): string {
 
 export function htmlArchipel(e: EcranDistrict): string {
   const j = e.j;
-  // le tableau garde ses proportions (les plaques sont placées en % de l'image) ; au-dessus, son ciel flouté prolonge l'écran.
+  // le tableau garde ses proportions (les repères des bâtiments sont placés en % de l'image) ; au-dessus, son ciel flouté prolonge l'écran.
   // Sur PC, la mer et le ciel du tableau continuent jusqu'aux bords de l'écran (.mer-fond, chargée seulement sur PC : bureau.css)
   const scene = sceneDistrict(j.batiments.noyau);
   let h = `<section class="archipel${CUVETTE ? ' cuvette' : ''}" aria-label="Ton district"><img class="tableau-fond" src="${scene.url}" alt="" aria-hidden="true">`
     + `<span class="mer-fond${scene.nuit ? ' nuit' : ''}" style="--mer:url(${scene.mer});--reflets:url(${reflets});--horizon:${scene.horizon}%" aria-hidden="true"><i class="mer-reflets"></i></span>`
-    + `<div class="toile">${tableau(j)}${zonesBatiments(visuel(j.batiments.noyau), e.selection)}${plaques(e)}</div>`
+    + `<div class="toile${!j.accueilVu || j.batiments.noyau < 2 ? ' noms' : ''}">${tableau(j)}${zonesBatiments(visuel(j.batiments.noyau), e.selection)}${balises(e)}</div>`
     + bulles(e)
     + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="Replier"></button>` : '')
     + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}</div></section>`;

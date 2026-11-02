@@ -31,12 +31,12 @@ const ENTRER = async (p: Page) => {
 const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'fleche' | 'flecheGarde' | 'port' | 'tour' | 'brume' | 'legs' | 'marees' | 'mareesMer' | 'comptoir'; faire: (p: Page) => Promise<void> }[] = [
   { nom: 'titre', sauvegarde: 'district', faire: async () => {} },
   { nom: 'archipel', sauvegarde: 'district', faire: ENTRER },
-  { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="forge"]'); } },
-  { nom: 'generateur', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="generateur"]'); } },
+  { nom: 'forge', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="forge"]'); } },
+  { nom: 'generateur', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="generateur"]'); } },
   // le Comptoir (1er novembre 2026) : les étals du jour et le bouton pour les renouveler une fois par jour
-  { nom: 'comptoir', sauvegarde: 'comptoir', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="comptoir"]'); await p.waitForTimeout(300); await p.$eval('.cp-renouveler', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
-  { nom: 'noyau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="noyau"]'); } },
-  { nom: 'noyau-places', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('button.plaque[data-id="noyau"]'); await p.locator('.fb-bloc.te').scrollIntoViewIfNeeded(); } },
+  { nom: 'comptoir', sauvegarde: 'comptoir', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="comptoir"]'); await p.waitForTimeout(300); await p.$eval('.cp-renouveler', (e) => e.scrollIntoView({ block: 'center' })).catch(() => {}); } },
+  { nom: 'noyau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="noyau"]'); } },
+  { nom: 'noyau-places', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('button.balise[data-id="noyau"]'); await p.locator('.fb-bloc.te').scrollIntoViewIfNeeded(); } },
   // le Butin de la semaine (28 octobre 2026) : sur téléphone, on déplie d'abord la bulle de l'objectif, puis on touche le bandeau
   { nom: 'butin', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.objectif:visible').first(); if (await d.count()) { await d.click(); await p.waitForTimeout(250); } await p.click('.mission.jour .archive'); } },
   // ceux qui te suivent (30 octobre 2026) : la roue de la barre du haut ouvre la fiche des habitants, avec les pompes
@@ -69,13 +69,13 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'menu', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="compte"]').catch(() => {}); } },
   { nom: 'classements', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="classements"]'); } },
   { nom: 'fleche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="classements"]'); await p.click('[data-action="gt-tableau"][data-id="fleche"]'); } },
-  { nom: 'pillages', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); } },
-  { nom: 'pillages-fiche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.$eval('.pl-fiche', (e) => e.scrollIntoView({ block: 'end' })); } },
-  { nom: 'pillage-depart', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); } },
-  { nom: 'pillages-journal', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.$eval('.pl-journal', (e) => e.scrollIntoView({ block: 'center' })); } },
-  { nom: 'pillage-modifier', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('.es-modifier'); } },
-  { nom: 'garnison-composer', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="garnison-modifier"]'); } },
-  { nom: 'pillage-combat', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.plaque[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(600); for (let i = 0; i < 3 && (await p.$('[data-action="decouverte-ok"]')); i++) { await p.click('[data-action="decouverte-ok"]'); await p.waitForTimeout(300); } } },
+  { nom: 'pillages', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); } },
+  { nom: 'pillages-fiche', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.$eval('.pl-fiche', (e) => e.scrollIntoView({ block: 'end' })); } },
+  { nom: 'pillage-depart', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); } },
+  { nom: 'pillages-journal', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.$eval('.pl-journal', (e) => e.scrollIntoView({ block: 'center' })); } },
+  { nom: 'pillage-modifier', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('.es-modifier'); } },
+  { nom: 'garnison-composer', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="garnison-modifier"]'); } },
+  { nom: 'pillage-combat', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.balise[data-lieu="port"]'); await p.click('[data-action="pillage-preparer"]'); await p.click('[data-action="partir"]'); await p.waitForTimeout(600); for (let i = 0; i < 3 && (await p.$('[data-action="decouverte-ok"]')); i++) { await p.click('[data-action="decouverte-ok"]'); await p.waitForTimeout(300); } } },
   // les onglets Pillages et Flèche (28 octobre 2026)
   { nom: 'onglet-pillages', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); } },
   { nom: 'port-presentation', sauvegarde: 'fleche', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="pillages"]'); } },

@@ -47,6 +47,8 @@ export const ICO = {
   compte: svg('<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4.5-6 8-6s7 2 8 6"/>'),
   film: svg('<rect x="3" y="5" width="18" height="14" rx="1"/><path d="M10 9l5 3-5 3z"/>'),
   journal: svg('<path d="M5 6h14M5 12h14M5 18h9"/>'),
+  // un poste à pourvoir : une silhouette et un « + » (bulle du district, 2 novembre 2026)
+  posteLibre: svg('<circle cx="10" cy="7.6" r="3.6"/><path d="M3.4 20c.7-3.9 3.4-5.9 6.6-5.9 1.3 0 2.5.3 3.5.9"/><path d="M18 13.2v7M14.5 16.7h7"/>'),
   ouvrier: svg('<path d="M5 13a7 7 0 0 1 14 0"/><path d="M3 13h18"/><path d="M12 6V4"/><path d="M8 17v3M16 17v3"/>'),
   recycler: svg('<path d="M7 19H4l3-5"/><path d="M10 5l2-3 3 5"/><path d="M20 15l-2 4h-6"/><path d="M5.5 11.5 8 7.5"/><path d="M16 9.5l2.5 4"/>'),
   monter: svg('<path d="M12 20V6"/><path d="M6 12l6-6 6 6"/><path d="M5 3h14"/>'),

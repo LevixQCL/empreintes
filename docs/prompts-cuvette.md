@@ -80,8 +80,12 @@ Pack des zooms et prompts : `scripts/cuvette2-pack.py`.
 
 ## Dans le jeu (2 nov. 2026, soir)
 - `art/district/cuvette.webp` (800 × 1200, recadré x 120-1763 de cuvette2-batiments.webp) remplace les tableaux d'âge pour tous les âges
-  (`CUVETTE` dans src/ui/art.ts). Zones et plaques : `ZONES_CUVETTE` / `PLAQUES_CUVETTE` dans src/ui/district.ts (repère 400 × 600).
+  (`CUVETTE` dans src/ui/art.ts). Zones cliquables et repères : `ZONES_CUVETTE` / `BALISES_CUVETTE` dans src/ui/district.ts (repère 400 × 600).
 - Téléphone : tableau sur toute la hauteur. PC : `art/district/cuvette-large.webp` (Midjourney a élargi la scène, district recollé en pleine
   résolution) derrière la toile, centre du tableau à 50,57 % de sa largeur (district.css, fin du fichier).
 - Reste : paliers bas/haut des 7 bâtiments (méthode du pack : scripts/cuvette2-pack.py, cuvette2-integrer.py), animations (houle, lueurs)
-  de docs/maquette-cuvette2.html à porter dans le jeu, plaques serrées (Forge, Clinique).
+  de docs/maquette-cuvette2.html à porter dans le jeu.
+- Plus de plaques (2 nov. 2026, nuit) : un cristal de niveau au pied de chaque bâtiment (`pied`), une bulle au-dessus du toit (`haut`)
+  seulement quand il y a une action (carte prête, objectif, chantier ou forge en cours, poste vide avec un Porteur libre, étals du Comptoir,
+  jetons de pillage au complet). Le nom sort du cristal au survol, au choix du bâtiment, et pour tous tant que la Tour est au niveau 1.
+  Style : src/ui/balises.css. Un nouveau bâtiment = une zone + un `pied` + un `haut`.

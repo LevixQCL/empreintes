@@ -29,7 +29,7 @@ body{background:
 
 /* ---------- Le panneau de verre : grain, trame, reflet, filet, équerres ---------- */
 .res,.mission,.panneau,.habitant,.emplacement,.replique,.zone-chaine,.ligne-menu,.occupant,.stat,
-.liste-forge li,.en-cours,.chantier-cours,.puce,.lecon,.segments-choix,.appel,.plaque,.toast{
+.liste-forge li,.en-cours,.chantier-cours,.puce,.lecon,.segments-choix,.appel,.toast{
   background:
     linear-gradient(180deg,rgba(190,225,255,.075) 0%,rgba(190,225,255,0) 38%),
     var(--trame),
@@ -39,7 +39,7 @@ body{background:
   box-shadow:inset 0 0 0 1px var(--holo-3),inset 0 1px 0 rgba(220,240,255,.12),0 8px 24px rgba(0,0,0,.35)}
 .res::after,.mission::after,.panneau::after,.habitant::after,.emplacement::after,.replique::after,.zone-chaine::after,
 .ligne-menu::after,.occupant::after,.stat::after,.en-cours::after,.chantier-cours::after,.lecon::after,.appel::after,
-.plaque::after,.fenetre::after,.scene-ennemi::after,.puits::after,.fragment::after{
+.fenetre::after,.scene-ennemi::after,.puits::after,.fragment::after{
   content:"";position:absolute;inset:0;pointer-events:none;z-index:3;background:var(--equerres)}
 .res,.mission,.panneau,.habitant,.emplacement,.replique,.zone-chaine,.ligne-menu,.occupant,.stat,.en-cours,.chantier-cours,.lecon,.fenetre,.puits,.fragment{position:relative}
 
@@ -103,12 +103,6 @@ body{background:
 .avatar{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 100%,white 30%),color-mix(in srgb,var(--c) 70%,black));filter:drop-shadow(0 0 6px color-mix(in srgb,var(--c) 45%,transparent))}
 
 /* ---------- District ---------- */
-.plaque{--eq:var(--holo-2);background:
-  linear-gradient(180deg,rgba(190,225,255,.09),rgba(190,225,255,0) 50%),var(--trame),linear-gradient(165deg,rgba(18,24,34,.9),rgba(8,11,17,.9));
-  box-shadow:inset 0 0 0 1px var(--holo-3),0 6px 18px rgba(0,0,0,.5)}
-.plaque::before{content:"";position:absolute;left:50%;top:100%;width:1px;height:16px;background:linear-gradient(var(--holo-2),transparent);pointer-events:none}
-.plaque.choisie{--eq:var(--holo);box-shadow:inset 0 0 0 1.5px var(--holo),0 0 20px rgba(159,216,255,.35)}
-.plaque.verrou::before{display:none}
 .niv{filter:drop-shadow(0 0 4px rgba(216,180,101,.6))}
 .mission{--eq:var(--holo)}
 .mission.faite{--eq:var(--gold)}
