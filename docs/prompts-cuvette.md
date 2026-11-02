@@ -58,3 +58,6 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
   contient les 6 bâtiments du sol au palier du milieu.
 - **Leçon : la zone vidée doit dessiner la silhouette voulue** (étages, décrochements, mât…). Un cylindre vide donne toujours une canette,
   quel que soit le prompt.
+- Port fait (ponton sur pilotis de cuivre, barque à lanterne de cristal, bollard) : `art/district/cuvette-essai-port.webp`
+  contient les 7 bâtiments au palier du milieu. Midjourney a gardé le fond gris (prompt « no water drawn ») : la mer en code passera dessous.
+  Zone du Port : ponton (1500,1800)-(1640,1770)-(1830,2000)-(1830,2070)-(1700,2080), barque ellipse (1520,1975) 130×48 à 52°, zoom (1100, 1500).
