@@ -46,3 +46,5 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
   - Port : dehors, devant le sas (≈ 1640, 1960), sur la mer en code.
   - Plus aucune place libre au sol : les ajouts futurs se construisent **sur la digue** (chemin de ronde, à cheval sur le mur).
 - Zoom du Générateur : `zoom-generateur.png`, coin haut gauche (10, 640), 756 px, zone vidée en transparence.
+- Générateur fait (dynamo de cuivre rapiécée, turbines, colonne de cristal) : `art/district/cuvette-essai-generateur.webp`
+  contient Forge + Tour + Générateur. À ajouter plus tard : câbles vers les pompes de la digue, lueur du cristal animée.
