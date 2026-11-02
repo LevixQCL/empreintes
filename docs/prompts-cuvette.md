@@ -77,3 +77,11 @@ Décor refait : digue claire habitée, terrasses, jardins, canaux turquoise, soc
 Socles (pixels 1856 × 2464) : Tour (966, 1095, socle du fond, le bassin lumineux devant est l'entrée du puits) ; Forge (560, 1235) ; Clinique (536, 1545) ;
 Labo (1444, 1215) ; Générateur (830, 1705) ; Comptoir (1264, 1630) ; Port au ponton (1640, 2150). Plus de place libre au sol : futurs ajouts sur la digue.
 Pack des zooms et prompts : `scripts/cuvette2-pack.py`.
+
+## Dans le jeu (2 nov. 2026, soir)
+- `art/district/cuvette.webp` (800 × 1200, recadré x 120-1763 de cuvette2-batiments.webp) remplace les tableaux d'âge pour tous les âges
+  (`CUVETTE` dans src/ui/art.ts). Zones et plaques : `ZONES_CUVETTE` / `PLAQUES_CUVETTE` dans src/ui/district.ts (repère 400 × 600).
+- Téléphone : tableau sur toute la hauteur. PC : `art/district/cuvette-large.webp` (Midjourney a élargi la scène, district recollé en pleine
+  résolution) derrière la toile, centre du tableau à 50,57 % de sa largeur (district.css, fin du fichier).
+- Reste : paliers bas/haut des 7 bâtiments (méthode du pack : scripts/cuvette2-pack.py, cuvette2-integrer.py), animations (houle, lueurs)
+  de docs/maquette-cuvette2.html à porter dans le jeu, plaques serrées (Forge, Clinique).
