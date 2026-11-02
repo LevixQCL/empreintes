@@ -34,14 +34,16 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
   (réservoir de tôle sur pied de câbles, treuil, fenêtre de cristal) : `art/district/cuvette-essai-tour.webp` contient les deux.
   Le zoom de la Tour couvrait (554, 560) → (1310, 1316) ; la sortie Midjourney (1024 px) est réduite à 756 px puis fondue
   sur un masque élargi (≈ 35 px) qui couvre l'ancienne et la nouvelle silhouette, pour qu'aucun fantôme ne reste.
+- **3 paliers par bâtiment** (niveaux 1-3, 4-7, 8-10), chacun enregistré comme un calque séparé posé sur la Cuvette nue :
+  aucune combinaison à peindre. Le palier du bas se fait en repassant le zoom du palier du milieu dans Edit.
 - Plan des emplacements validé (2 nov. 2026, pixels de la Cuvette 1856 × 2464) — une seule Cuvette, jamais agrandie.
   Chaque emprise est réglée sur le **palier final** : les paliers inférieurs sont plus petits dedans, jamais plus grands.
   Centre au sol, demi-largeur, sommet maximal :
   - Tour du Noyau (930, 1140), 180, sommet 560 — faite ; ne monte plus, elle grandit en creusant (chevalement, puits, lueur).
   - Forge (1460, 1130), 170, sommet 700 — faite.
   - Générateur, quart gauche contre la digue (380, 1160), 165, sommet 900.
-  - Clinique, devant à gauche (720, 1400), 140, sommet 1120 — bas, pour ne pas cacher le pied de la Tour.
-  - Comptoir, devant près du sas (1120, 1420), 140, sommet 1140 — bas.
+  - Clinique, devant, entre les deux chemins (860, 1430), 125, sommet 1295 — bas, pour ne pas cacher le pied de la Tour.
+  - Comptoir, devant à droite, près du sas (≈ 1160, 1440), 125, sommet ≈ 1300 — bas.
   - Labo génétique, fond à droite (1270, 830), 120, sommet 620 — trapu, en retrait.
   - Port : dehors, devant le sas (≈ 1640, 1960), sur la mer en code.
   - Plus aucune place libre au sol : les ajouts futurs se construisent **sur la digue** (chemin de ronde, à cheval sur le mur).
