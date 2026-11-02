@@ -318,24 +318,40 @@ export const MISSIONS = {
   /** le nombre de destinations de chaque jour de la semaine (mélangé chaque semaine) : 21 en tout */
   parJour: [2, 2, 2, 3, 3, 4, 5],
   /**
-   * Missions illimitées (28 octobre 2026) : les premiers départs du jour reviennent pleins, les suivants rapportent moins,
-   * parce que le passeur va chercher plus loin des ruines déjà fouillées. Par paquets de `pleines` départs : 100 %, puis 50 %, puis 25 %.
-   * L'XP reste entière (on peut toujours monter ses Porteurs de réserve) ; les creuseurs ont leur propre plafond par Strate.
+   * Fouiller en profondeur (2 novembre 2026, Bryan : « plus on joue, plus on est récompensé ») : remplace les rendements
+   * dégressifs (100 %, 50 %, 25 %) qui punissaient le joueur actif. Chaque destination du jour se fouille par niveaux :
+   * la première barque reste en Surface, la deuxième descend dans les Cales, la troisième atteint le Cœur, qui rapporte
+   * le plus et cache une trouvaille (une carte en plus). Ensuite la ruine est fouillée à fond pour la journée : les barques
+   * suivantes rapportent un butin plein de Surface, jamais moins. L'XP et les creuseurs ne changent pas (plafond par Strate).
    */
-  pleines: 4,
-  rendements: [1, 0.5, 0.25],
+  profondeurs: [
+    { nom: 'Surface', mult: 1 },
+    { nom: 'Cales', mult: 1.25 },
+    { nom: 'Cœur', mult: 1.6 },
+  ],
 } as const;
 
-/** Les départs déjà faits aujourd'hui */
-export const departsDuJour = (j: Jeu, now: number): number => (j.departsJour?.jour === jourDe(now) ? j.departsJour.n : 0);
-
-/** La part du butin du prochain départ (1 = pleine cargaison), et combien de départs il reste à ce rendement */
-export function rendementMission(j: Jeu, now: number): { part: number; restants: number } {
-  const n = departsDuJour(j, now);
-  const bloc = Math.floor(n / MISSIONS.pleines);
-  const r = MISSIONS.rendements;
-  return { part: r[Math.min(bloc, r.length - 1)]!, restants: bloc >= r.length - 1 ? Infinity : MISSIONS.pleines * (bloc + 1) - n };
+/** Les barques déjà parties aujourd'hui vers une destination (sa clé) */
+export function fouillesVers(j: Jeu, cle: string, now: number): number {
+  const jour = jourDe(now);
+  const note = j.fouillesJour?.jour === jour ? j.fouillesJour.cles[cle] ?? 0 : 0;
+  // les barques parties aujourd'hui avant la mise à jour (2 novembre 2026) comptent aussi
+  const d = destinationsDuJour(now).find((x) => x.cle === cle);
+  const enMer = d ? j.missions.filter((m) => m.lieu === d.lieu.id && m.butin === d.butin && jourDe(m.debut) === jour).length : 0;
+  return Math.max(note, enMer);
 }
+
+/**
+ * Le niveau de fouille du prochain départ vers une destination : 0 Surface, 1 Cales, 2 Cœur, puis null quand la ruine
+ * est fouillée à fond pour la journée (le butin reste plein, celui de la Surface).
+ */
+export function profondeurMission(j: Jeu, cle: string, now: number): { niveau: number | null; mult: number } {
+  const n = fouillesVers(j, cle, now);
+  const p = MISSIONS.profondeurs;
+  return n < p.length ? { niveau: n, mult: p[n]!.mult } : { niveau: null, mult: 1 };
+}
+/** Le niveau le plus profond : le Cœur, avec sa trouvaille */
+export const COEUR = MISSIONS.profondeurs.length - 1;
 
 /** Le niveau des missions : celui de la dernière Strate vaincue (il fixe les gains) */
 export const strateMission = (j: Jeu) => strateVaincue(j);
@@ -445,11 +461,13 @@ export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: num
   if (j.missions.length >= nb) return non(nb > 1 ? `${nb} barques au plus en mer en même temps : monte la Tour du Noyau pour en armer d’autres.` : 'Une seule barque en mer à la fois : monte la Tour du Noyau pour en armer d’autres.');
   if (j.energie < m.energie) return non(`Il faut ${m.energie} énergie pour équiper la mission.`);
   j.energie -= m.energie;
-  const rendement = rendementMission(j, now).part;
+  const prof = profondeurMission(j, dest.cle, now);
+  const rendement = prof.mult;
   const secours = secoursPossible(j, dest, now);
   if (secours) j.secoursJour = { jour: jourDe(now), cles: [...(j.secoursJour?.jour === jourDe(now) ? j.secoursJour.cles : []), dest.cle] };
-  j.missions.push({ porteur: id, strate: strateMission(j), duree, debut: now, fin: now + m.heures * 3_600_000, lieu: dest.lieu.id, butin: dest.butin, rendement, ...(dest.butin === 'naufrages' ? { secours } : {}) });
-  j.departsJour = { jour: jourDe(now), n: departsDuJour(j, now) + 1 };
+  j.missions.push({ porteur: id, strate: strateMission(j), duree, debut: now, fin: now + m.heures * 3_600_000, lieu: dest.lieu.id, butin: dest.butin, rendement, ...(prof.niveau !== null ? { profondeur: prof.niveau } : {}), ...(dest.butin === 'naufrages' ? { secours } : {}) });
+  const fj = j.fouillesJour?.jour === jourDe(now) ? j.fouillesJour.cles : {};
+  j.fouillesJour = { jour: jourDe(now), cles: { ...fj, [dest.cle]: (fj[dest.cle] ?? 0) + 1 } };
   log(j, `${porteurDef(id).nom} prend le bateau vers ${lieuMission(j.missions[j.missions.length - 1]!)} (${m.heures} h).`);
   return { ok: true };
 }
@@ -480,6 +498,11 @@ export function retourDeMission(j: Jeu, m: Mission): string {
     // une ruine déjà fouillée n'a plus toujours sa pierre : la carte devient une chance égale au rendement
     if (m.butin === 'pierre' && (rd >= 1 || t.nombre() < rd)) {
       // une carte à coup sûr : nouvelle (fer, ou cuivre en mission longue) ou un doublon de sa lignée
+      if (!possedees.length || t.nombre() < chanceNouvelleMission(b.mult, m.duree)) cartes.push(tirerTrouvaille(j, m.strate, m.duree === 'longue' ? 'cuivre' : 'fer', p.lignee));
+      else cartes.push(possedees[t.entier(possedees.length)]!);
+    }
+    // le Cœur de la ruine (2 novembre 2026) : une trouvaille en plus, quel que soit le butin annoncé
+    if (m.profondeur === COEUR) {
       if (!possedees.length || t.nombre() < chanceNouvelleMission(b.mult, m.duree)) cartes.push(tirerTrouvaille(j, m.strate, m.duree === 'longue' ? 'cuivre' : 'fer', p.lignee));
       else cartes.push(possedees[t.entier(possedees.length)]!);
     }
@@ -514,7 +537,7 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${familles ? `, +${familles} habitants` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? `, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
   const rapport: RapportMission = {
-    porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, lieu: lieuId, butin: m.butin, eclats, rendement: m.rendement ?? 1, affinite: b.affinite, mult: Math.round(b.mult * 100) / 100, recit: [],
+    porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, lieu: lieuId, butin: m.butin, eclats, rendement: m.rendement ?? 1, ...(m.profondeur !== undefined ? { profondeur: m.profondeur } : {}), affinite: b.affinite, mult: Math.round(b.mult * 100) / 100, recit: [],
     composants, xp: gainXp, niveau: monte || null, cartes: trouvees, creuseurs: arrives, ...(familles ? { habitants: familles } : {}),
     usure: Math.round((q.usure - usureAvant) * 10) / 10, marque: nouvelleMarque ? nouvelleMarque.nom : null, lu: false,
   };
@@ -566,6 +589,14 @@ export function recitMission(r: RapportMission): string[] {
     `Au lever du brouillard, la barque a touché ${lieu}. ${nom} est monté seul.`,
   ]));
   if ((r.rendement ?? 1) < 1) recit.push(`D’autres barques étaient passées avant aujourd’hui : ${nom} a dû chercher plus loin, dans des salles à moitié vidées.`);
+  if (r.profondeur === 1) recit.push(choisir([
+    `Les barques du matin avaient balisé l’entrée : ${nom} est descendu droit vers les Cales, là où personne n’était encore allé.`,
+    `Grâce aux marques laissées par la première barque, ${nom} a trouvé l’escalier des Cales sous la vase.`,
+  ]));
+  if (r.profondeur === COEUR) recit.push(choisir([
+    `Deux barques avaient ouvert le chemin : ${nom} a pu atteindre le Cœur de la ruine, une salle restée au sec depuis la montée des eaux. Une pierre y attendait.`,
+    `Au bout des Cales, une porte que les autres n’avaient pas pu forcer : ${nom} l’a passée, et le Cœur de la ruine lui a livré une pierre.`,
+  ]));
   if (r.habitants) recit.push(`Les familles recueillies ont choisi de rester au district : ${r.habitants} habitants de plus te suivent.`);
   if (r.butin === 'naufrages' && !r.creuseurs && !r.habitants) recit.push('Plus personne à recueillir sur place : les naufragés étaient déjà partis. La barque est revenue chargée de matériel.');
   recit.push(choisir([

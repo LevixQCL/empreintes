@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { FORCE, accessibles, genererCarte, salleCourante } from '../src/core/expedition';
 import { moduleDef, porteurDef } from '../src/core/donnees';
 import { DIFFICULTES_FOUILLE,
-  EPREUVES, MISSIONS, barquesMax, naufragesDeLaStrate, rendementMission, secoursPossible, creuseursRequis, CREUSEURS, entrer, envoyerMission, destinationsDuJour, bonusMission, niveauPorteur, jourDe, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
-  remonter, tick, type Jeu, FELEE, forceEpreuve, epreuveReussie, epreuveDef,
+  EPREUVES, MISSIONS, barquesMax, naufragesDeLaStrate, profondeurMission, secoursPossible, creuseursRequis, CREUSEURS, entrer, envoyerMission, destinationsDuJour, bonusMission, niveauPorteur, jourDe, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
+  remonter, tick, disponibles, type Jeu, FELEE, forceEpreuve, epreuveReussie, epreuveDef,
 } from '../src/core/jeu';
 import { ajouter, creerCombat } from '../src/core/combat';
 import { jouerTour } from '../src/core/robot';
@@ -209,13 +209,31 @@ describe('Missions illimitées (idée de Luc, 28 octobre 2026)', () => {
     expect(j.rapports!.length).toBe(5);
   });
 
-  it('les premiers départs du jour reviennent pleins, les suivants rapportent moins (100 %, 50 %, 25 %)', () => {
+  it('plus on retourne à une destination, plus on descend : Surface, Cales, Cœur, puis toujours plein (jamais moins)', () => {
     const j = avance();
+    for (const id of ['coursier', 'docker', 'guetteur']) poster(j, id, null);
     j.energie = 5000;
-    const parts: number[] = [];
-    for (let k = 0; k < 10; k++) { parts.push(rendementMission(j, T0).part); j.departsJour = { jour: jourDe(T0), n: k + 1 }; }
-    expect(parts).toEqual([1, 1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.25, 0.25]);
-    expect(rendementMission(j, T0 + 24 * H).part).toBe(1); // le lendemain, tout repart à plein
+    const d = destinationsDuJour(T0)[0]!;
+    const mults: number[] = [];
+    for (let k = 0; k < 5; k++) { mults.push(profondeurMission(j, d.cle, T0).mult); j.fouillesJour = { jour: jourDe(T0), cles: { [d.cle]: k + 1 } }; }
+    expect(mults).toEqual([1, 1.25, 1.6, 1, 1]);
+    expect(Math.min(...mults)).toBeGreaterThanOrEqual(1);
+    expect(profondeurMission(j, d.cle, T0 + 24 * H).mult).toBe(1); // le lendemain, nouvelles destinations
+  });
+
+  it('la barque qui atteint le Cœur rapporte une carte en plus', () => {
+    const j = avance();
+    for (const id of ['coursier', 'docker', 'guetteur']) poster(j, id, null);
+    j.energie = 5000;
+    const d = destinationsDuJour(T0).find((x) => x.butin === 'cargaison') ?? destinationsDuJour(T0)[0]!;
+    j.fouillesJour = { jour: jourDe(T0), cles: { [d.cle]: 2 } };
+    const id = disponibles(j)[0]!;
+    expect(envoyerMission(j, id, 'courte', T0, d.cle).ok).toBe(true);
+    expect(j.missions.at(-1)!.profondeur).toBe(2);
+    tick(j, T0 + 2 * H + 1);
+    const r = j.rapports!.at(-1)!;
+    expect(r.profondeur).toBe(2);
+    expect(r.cartes.length).toBeGreaterThanOrEqual(d.butin === 'pierre' ? 2 : 1);
   });
 
   it('les naufragés d’un lieu ne montent qu’une fois par jour, et pas au-delà du plafond de la Strate', () => {

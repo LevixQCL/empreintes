@@ -353,6 +353,8 @@ export interface Jeu {
   naufrages?: { strate: number; n: number };
   /** les barques parties aujourd'hui (les premières reviennent pleines, les suivantes moins : les ruines proches s'épuisent) */
   departsJour?: { jour: number; n: number };
+  /** les barques parties aujourd'hui vers chaque destination (fouille en profondeur, 2 novembre 2026) */
+  fouillesJour?: { jour: number; cles: Record<string, number> };
   /** les destinations dont les naufragés ont déjà été recueillis aujourd'hui */
   secoursJour?: { jour: number; cles: string[] };
   /** les rapports des missions rentrées : ceux pas encore lus s'ouvrent au district, les derniers lus restent consultables */
@@ -656,6 +658,8 @@ export const strateVaincue = (j: Jeu) => (j.frontVaincu ? j.strate : j.strate - 
 export interface Mission { porteur: string; strate: number; duree: DureeMission; debut: number; fin: number; lieu?: string; butin?: 'cargaison' | 'pierre' | 'naufrages' | 'eclats';
   /** la part du butin (1 = plein) : les ruines proches s'épuisent au fil des départs du jour */
   rendement?: number;
+  /** le niveau de fouille atteint (0 Surface, 1 Cales, 2 Cœur) ; absent quand la ruine était déjà fouillée à fond */
+  profondeur?: number;
   /** des naufragés ont été recueillis (la première barque du jour vers ce lieu, dans le plafond de la Strate) */
   secours?: boolean }
 
@@ -666,8 +670,10 @@ export interface RapportMission {
   affinite?: 'bon' | 'neutre' | 'mauvais'; mult?: number;
   recit: string[];
   composants: number; xp: number; niveau: number | null;
-  /** la part du butin rapportée (1 = pleine cargaison) */
+  /** la part du butin rapportée (1 = pleine cargaison, plus en profondeur) */
   rendement?: number;
+  /** le niveau de fouille atteint (0 Surface, 1 Cales, 2 Cœur) */
+  profondeur?: number;
   cartes: { id: string; nouvelle: boolean }[];
   creuseurs: number; usure: number; marque: string | null;
   /** les habitants des familles recueillies qui restent au district (30 octobre 2026) */
