@@ -18,3 +18,17 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 ```
 bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. Fixed isometric three-quarter top-down view, camera tilted 45 degrees, a single building standing on its own round paved sandstone base: the Core Tower, a sturdy round tower of warm stone and brass built over a deep mine shaft, a big winch with cables and a lift cage at its foot, soft blue crystal glow rising from the shaft opening, red tile roof, small warm lit windows, a few miners' tools and crates around the base. Whole building visible and centered, nothing beyond the round base, golden late afternoon light, cheerful, no people, no text, isolated on a plain flat solid light grey background --ar 1:1 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp https://levixqcl.github.io/empreintes/art/district/cuvette-essai.webp
 ```
+
+## Méthode retenue (2 novembre 2026)
+
+- Décor : `art/district/cuvette-nue.webp` (validé). Les bâtiments sont peints **dans** la Cuvette avec l'éditeur de Midjourney (Edit),
+  jamais à part : chaque image à part a sa propre perspective et le raccord se voit toujours.
+- Claude prépare un **zoom** de la Cuvette (≈ 756 px autour de l'emplacement) avec la zone vidée : Midjourney a assez de pixels pour le détail.
+  Pas d'Upscale : le zoom est réduit à sa taille réelle à l'intégration, l'Upscale ne fait que durcir le trait.
+- **Midjourney remplit la forme vidée** : la zone a la silhouette voulue du bâtiment (plus haute pour un palier supérieur).
+  Les chemins et les autres bâtiments sont protégés (jamais vidés).
+- Un bâtiment par passe. Références : `--sref art/personnages/yse.webp art/district/cuvette-nue.webp --sw 100`.
+- Direction : « technologie de récupération » — grès et cuivre de la Cuvette, machines récupérées, câbles, verre, cristal bleu des empreintes ;
+  une silhouette unique par bâtiment. Pas de maisonnettes de village.
+- Emplacements (pixels de la Cuvette 1856 × 2464) : Tour (932, 1128) ; Générateur/Clinique quart gauche (420, 1150) ;
+  Forge quart droit (1450, 1160) ; Comptoir devant (930, 1500) ; Port dehors devant le sas (≈ 1650, 1900) ; restent le quart du fond et deux places libres devant.
