@@ -145,7 +145,7 @@ function corpsTour(t: TourHisto, n: number): string {
   let h = '';
   if (t.chaine.length) {
     const reso = t.suite ? `<span class="jb reso">${ICO.flux}Résonance ×${String(t.mult).replace('.', ',')}</span>` : '';
-    const echo = t.echo ? `<span class="jb echo">${ICO.boost}Écho</span>` : '';
+    const echo = t.echo ? `<span class="jb echo">${ICO.boost}Écho${t.echoN && t.echoN > 3 ? ` ×${t.echoN}` : ''}</span>` : '';
     const brouille = t.brouille ? `<span class="jb brouille">Brouillée</span>` : '';
     h += `<div class="jt-chaine"><div class="jt-cartes">${t.chaine.map((c, i) => carteMini(c, i)).join('')}</div>${reso || echo || brouille ? `<div class="jt-badges">${reso}${echo}${brouille}</div>` : ''}</div>`;
   }

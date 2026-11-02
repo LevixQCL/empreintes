@@ -656,7 +656,7 @@ export function nouvelleExploration(opts: {
 }
 
 /**
- * Combats à plusieurs (décision du 22 octobre 2026) : à partir de la Strate −2, une salle de combat sur trois abrite un groupe
+ * Combats à plusieurs (décision du 22 octobre 2026) : à partir de la Strate −3 (introduction progressive du 28 octobre), une salle de combat sur trois abrite un groupe
  * (deux ennemis, trois à partir de la Strate −5). Tirage à part, pour ne pas changer le reste de la carte.
  */
 export function escorteDe(strate: number, rng: number, salleId: number, pool: string[]): string[] {
@@ -668,7 +668,7 @@ export function escorteDe(strate: number, rng: number, salleId: number, pool: st
 }
 
 /**
- * Conditions de salle (décision du 22 octobre 2026) : à partir de la Strate −2, environ une salle de combat sur trois
+ * Conditions de salle (décision du 22 octobre 2026) : à partir de la Strate −5 (introduction progressive du 28 octobre), environ une salle de combat sur trois
  * (une sur deux pour le gardien). Tirage à part, pour ne pas changer le reste de la carte.
  */
 export function conditionDe(strate: number, rng: number, salleId: number, type: TypeSalle): string | null {

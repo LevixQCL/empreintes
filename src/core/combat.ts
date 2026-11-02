@@ -257,7 +257,7 @@ export const intentionDe = (s: CombatEtat, en: EnnemiEtat): Intention => (en ===
 const fixerIntention = (s: CombatEtat, en: EnnemiEtat, it: Intention) => { if (en === s.ennemi) s.intention = it; else en.intention = it; };
 
 /**
- * Vise un autre ennemi du groupe : toute la chaîne le frappera (Désarmer et Fissure aussi).
+ * Vise un autre ennemi du groupe : toute la chaîne le frappera (Troubler et Fissure aussi).
  * L'ennemi visé passe dans `s.ennemi` (et son intention dans `s.intention`) : le reste du moteur ne change pas.
  */
 export function viser(s: CombatEtat, rang: number): Resultat {
@@ -301,6 +301,7 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
   const g = s.main.find((x) => x.uid === uid);
   if (!g) return { ok: false };
   if (g.vide) return { ok: false, message: 'Une place vide ne se joue pas : confie une carte de plus à ce Porteur.' };
+  delete g.accorde;
   if (places(g) > placesLibres(s)) {
     const debut = g.lourd ? `${g.nom} prend 2 places, il n’en reste ${placesLibres(s)}.` : 'La chaîne est pleine.';
     const fin = s.flux > 0 && capacite(s) < REGLES.capaciteMax ? ' Retire une carte ou dépense 1 Flux (+1 place).' : ' Retire une carte.';
@@ -410,7 +411,8 @@ function porteursVises(s: CombatEtat): PorteurEtat[] {
 }
 
 /** Choisir un protégé a un sens : les attaques annoncées touchent au moins deux Porteurs (une zone, ou plusieurs ennemis) */
-export const protectionUtile = (s: CombatEtat) => s.issue === 'en-cours' && !brumeActive(s) && porteursVises(s).length >= 2;
+// sous le brouillard, on ne voit pas qui est visé : le joueur peut quand même choisir qui couvrir dès que deux Porteurs sont debout (audit du 2 novembre 2026)
+export const protectionUtile = (s: CombatEtat) => s.issue === 'en-cours' && (brumeActive(s) ? vivants(s).length >= 2 : porteursVises(s).length >= 2);
 
 /** Le Porteur que le bouclier couvrira en premier : celui choisi ce tour, sinon celui qui finirait le plus bas */
 export function protegeDe(s: CombatEtat): string | undefined {
@@ -463,6 +465,7 @@ export function accorder(s: CombatEtat, uid: string, f?: number): Resultat {
   if (!g || !g.fs || g.fs.length < 2) return { ok: false };
   const k = g.fs.indexOf(g.f);
   g.f = f !== undefined && g.fs.includes(f) ? f : g.fs[(k + 1) % g.fs.length]!;
+  g.accorde = true;
   return { ok: true };
 }
 
@@ -471,9 +474,10 @@ export function retirer(s: CombatEtat, uid: string): Resultat {
   if (!g) return { ok: false };
   s.chaine = s.chaine.filter((x) => x !== g);
   if (g.fs) g.f = g.fs[0]!;
+  delete g.accorde;
   s.main.push(g);
   // les cartes à plusieurs Fréquences qui restent reprennent celle qui prolonge la nouvelle suite
-  s.chaine.forEach((x, i) => { if (x.fs && x.fs.length > 1) x.f = meilleureFrequence(s.chaine.slice(0, i), x.fs); });
+  s.chaine.forEach((x, i) => { if (x.fs && x.fs.length > 1 && !x.accorde) x.f = meilleureFrequence(s.chaine.slice(0, i), x.fs); });
   return { ok: true };
 }
 
@@ -487,12 +491,12 @@ export function deplacer(s: CombatEtat, uid: string, vers: number): Resultat {
   const [g] = s.chaine.splice(de, 1);
   s.chaine.splice(a, 0, g!);
   // les cartes à plusieurs Fréquences reprennent celle qui prolonge la suite à leur nouvelle place
-  s.chaine.forEach((x, i) => { if (x.fs && x.fs.length > 1) x.f = meilleureFrequence(s.chaine.slice(0, i), x.fs); });
+  s.chaine.forEach((x, i) => { if (x.fs && x.fs.length > 1 && !x.accorde) x.f = meilleureFrequence(s.chaine.slice(0, i), x.fs); });
   return { ok: true };
 }
 
 export function viderChaine(s: CombatEtat): void {
-  for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
+  for (const g of s.chaine) { if (g.fs) g.f = g.fs[0]!; delete g.accorde; }
   s.main.push(...s.chaine);
   s.chaine = [];
 }
@@ -612,7 +616,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   const brouille = s.dissonance || s.sansResonance;
   const a = brouille ? { ...brut, suite: 0, mult: 1 } : brut;
   const freqs = frequencesEffectives(s.chaine);
-  noterChaine(s, freqs, a.suite >= 3 ? a : undefined, !!brouille && brut.suite >= 3, analyse.echo);
+  noterChaine(s, freqs, a.suite >= 3 ? a : undefined, !!brouille && brut.suite >= 3, analyse.echo, analyse.echoN);
   if (brouille && brut.suite >= 3) {
     log(s, 'Fréquences brouillées : pas de Résonance ce tour-ci.', { sorte: 'effet' });
     emettre({ kind: 'effet', cible: 'escouade', texte: 'Brouillé' });
@@ -627,15 +631,16 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     log(s, `${nomEcho(n)} ! ${n === 5 ? 'Cinq' : n === 4 ? 'Quatre' : 'Trois'} Fréquences identiques : ces cartes ${pctEcho(n)}.`, { sorte: 'effet' });
     emettre({ kind: 'echo', n });
   }
-  let fluxFelure = false;
+  FLUX_FELURE = false;
   for (const [i, g] of s.chaine.entries()) {
     RANG = i;
+    FELURE_FAITE = false;
     emettre({ kind: 'carte', rang: i, total: s.chaine.length, lignee: ligneeGeste(g), type: g.type, porteur: g.porteur, suite: a.suite, ...(g.effet ? { effet: g.effet.type } : {}) });
     for (const ev of appliquer(s, g, a.mult, i, a.suite)) emettre(ev);
     // la Fêlure (28 octobre 2026, validé par Bryan) : une carte en brise une seule, celle du visé d'abord, sinon celle d'un autre
     // ennemi du groupe (qui ne perd alors qu'un quart de son intention) ; le Flux de la Fêlure ne se gagne qu'une fois par chaîne
-    const fele = ciblePourFelure(s, freqs[i]);
-    if (fele) { briser(s, fele, emettre, a.suite >= 3 && !fluxFelure); fluxFelure = true; }
+    const fele = FELURE_FAITE ? undefined : ciblePourFelure(s, freqs[i]);
+    if (fele) { briser(s, fele, emettre, a.suite >= 3 && !FLUX_FELURE); FLUX_FELURE = true; }
     phaseGardien(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) tombe(s, s.ennemi, emettre);
     if (s.ennemi.pv <= 0) {
@@ -745,6 +750,9 @@ export const HISTO_MAX = 30;
 let CAMP: LigneHisto['camp'] = 'joueur';
 /** la place de la carte de la chaîne qui agit */
 let RANG: number | undefined;
+/** La carte en cours a déjà brisé une Fêlure (Lecture) ; le Flux de la Fêlure est déjà gagné dans cette chaîne */
+let FELURE_FAITE = false;
+let FLUX_FELURE = false;
 
 function tourHisto(s: CombatEtat): TourHisto {
   const h = (s.historique ??= []);
@@ -758,7 +766,7 @@ function tourHisto(s: CombatEtat): TourHisto {
 }
 
 /** La chaîne lancée, telle qu'elle est au lancer */
-function noterChaine(s: CombatEtat, freqs: number[], reso: { suite: number; mult: number } | undefined, brouille: boolean, echo: boolean) {
+function noterChaine(s: CombatEtat, freqs: number[], reso: { suite: number; mult: number } | undefined, brouille: boolean, echo: boolean, echoN?: number) {
   const t = tourHisto(s);
   t.chaine = s.chaine.map((g, i): CarteHisto => {
     const c: CarteHisto = { nom: g.nom, porteur: g.porteur, type: g.type, v: g.v, f: freqs[i] ?? g.f };
@@ -771,6 +779,7 @@ function noterChaine(s: CombatEtat, freqs: number[], reso: { suite: number; mult
   });
   if (reso) { t.suite = reso.suite; t.mult = reso.mult; }
   if (echo) t.echo = true;
+  if (echo && echoN && echoN > 3) t.echoN = echoN;
   if (brouille) t.brouille = true;
 }
 
@@ -902,7 +911,12 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
   // Plan des galeries (carte du district) : une carte de plus dans la main du tour suivant
   if (de('pioche')) s.piocheProchain = 1;
   // Lecture : la Fêlure de l'ennemi visé se brise, quelle que soit sa Fréquence (avant le coup : la Faille en profite déjà)
-  if (de('lecture') && s.ennemi.pv > 0 && s.ennemi.felure !== undefined && !s.ennemi.felureBrisee) briser(s, s.ennemi, (ev) => evs.push(ev), suite >= 3);
+  // une carte ne brise qu'une Fêlure et le Flux ne se gagne qu'une fois par chaîne : la Lecture devient la Fêlure de la carte (audit du 2 novembre 2026)
+  if (de('lecture') && s.ennemi.pv > 0 && s.ennemi.felure !== undefined && !s.ennemi.felureBrisee) {
+    briser(s, s.ennemi, (ev) => evs.push(ev), suite >= 3 && !FLUX_FELURE);
+    FELURE_FAITE = true;
+    FLUX_FELURE = true;
+  }
   // Décharge (Moteur) : elle vide le Flux et gagne une part de force par Flux vidé (le facteur est lu avant de vider)
   const dc = de('decharge');
   // Éclair captif ne prend qu'une partie du Flux (max) ; Noyau instable remplit le Flux s'il le trouve vide (recharge)
@@ -1039,10 +1053,10 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
     } else if (ef?.type === 'desarmer' && s.intention.type === 'atk') {
       const avant = s.intention.v;
       s.intention.v = Math.round(avant * (1 - ef.part));
-      log(s, `Désarmé : sa prochaine attaque passe de ${avant} à ${s.intention.v}.`, { sorte: 'effet' });
-      evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Désarmé', rang: s.ennemi.rang ?? 0 });
+      log(s, `Troublé : l’attaque annoncée passe de ${avant} à ${s.intention.v}.`, { sorte: 'effet' });
+      evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Troublé', rang: s.ennemi.rang ?? 0 });
     } else if (ef?.type === 'sourdine' && s.ennemi.pv > 0 && (s.intention.type === 'atk' || s.intention.type === 'bouclier' || s.intention.type === 'soin')) {
-      // Sourdine : comme Désarmer, mais sur tout ce que l'ennemi prépare (attaque, bouclier ou soin)
+      // Sourdine : comme Troubler, mais sur tout ce que l'ennemi prépare (attaque, bouclier ou soin)
       const avant = s.intention.v;
       s.intention.v = Math.round(avant * (1 - ef.part));
       const quoi = s.intention.type === 'atk' ? 'sa prochaine attaque' : s.intention.type === 'bouclier' ? 'son bouclier' : 'son soin';
@@ -1243,7 +1257,8 @@ export function coupDeFuite(s: CombatEtat): { porteurs: PorteurEtat[]; coups: { 
       cibles = visee ? [visee] : debout.slice(0, 1);
     }
     for (const c of cibles) {
-      const dmg = Math.round(it.v * puissance(en) * usureCombat(s).attaque * avantage(ligneeEnnemi(en), porteurDef(c.id).lignee));
+      // l'Ombre agissante retient aussi le coup de la fuite, comme au tour ennemi
+      const dmg = s.ombre ? 0 : Math.round(it.v * puissance(en) * usureCombat(s).attaque * avantage(ligneeEnnemi(en), porteurDef(c.id).lignee));
       const absorbe = Math.min(bouclierPour(bouclier, c.id, protege, reserve), dmg);
       bouclier -= absorbe;
       const net = dmg - absorbe;

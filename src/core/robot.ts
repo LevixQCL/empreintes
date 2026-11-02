@@ -2,7 +2,7 @@
 // Il sert à mesurer ce qu'une carte change aux chances de victoire, à chaque modification de chiffre.
 // Aucun DOM ici : il tourne dans les tests et dans `npm run robot`.
 
-import { allonger, ajouter, capacite, eclater, eclatsPossibles, ennemisDebout, felureVisible, intentionDe, placesLibres, tousEnnemis, viser, vivants } from './combat';
+import { allonger, ajouter, brumeActive, capacite, eclater, eclatsPossibles, ennemisDebout, felureVisible, intentionDe, placesLibres, tousEnnemis, viser, vivants } from './combat';
 import { lancer, voixAdmise } from './combat';
 import { cartesEnJeu, placesVides } from './collection';
 import { GESTES_SPECIAUX, porteurDef } from './donnees';
@@ -152,9 +152,13 @@ export function composerTourMoyen(s: CombatEtat): void {
   const pvTotal = vie.reduce((n, p) => n + p.pv, 0);
   let menace = 0;
   let unCoupFatal = false;
+  // sous le brouillard, il ne voit que le genre d'intention, comme le joueur : il compte chaque attaque pour un coup moyen,
+  // sans savoir qui elle vise ni si elle peut abattre (audit du 2 novembre 2026 : le combat auto ne triche plus)
+  const brume = brumeActive(s);
   for (const en of ennemisDebout(s)) {
     const it = intentionDe(s, en);
     if (it.type !== 'atk') continue;
+    if (brume) { menace += 0.12 * pvTotal; continue; }
     menace += (it.v ?? 0) * (it.zone ? vie.length : 1);
     if (vie.some((p) => p.pv <= (it.v ?? 0))) unCoupFatal = true;
   }
@@ -167,7 +171,7 @@ export function composerTourMoyen(s: CombatEtat): void {
     ?? eclats.find((c) => c.lignee === 'tech');
   if (choix) eclater(s, choix.porteur, { silencieux: true });
   // la Fêlure affichée sur l'ennemi qu'il frappe : une carte de cette Fréquence brise son intention
-  const fel = s.ennemi.felureBrisee || !felureVisible(s.ennemi) ? undefined : s.ennemi.felure;
+  const fel = brume || s.ennemi.felureBrisee || !felureVisible(s.ennemi) ? undefined : s.ennemi.felure;
   const itVise = intentionDe(s, s.ennemi);
   const gainFelure = fel === undefined ? 0 : (itVise.type === 'atk' ? itVise.v * 0.5 * (danger ? 1.5 : 1) : itVise.type === 'bouclier' || itVise.type === 'soin' ? itVise.v * 0.5 : 0);
   let meilleur: { score: number; ordre: Geste[] } | null = null;

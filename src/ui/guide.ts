@@ -182,7 +182,7 @@ function ongletDeck(): string {
     + `<li>Chaque carte <b>pèse</b> selon sa force (le chiffre de glace sur sa tuile). Un Porteur porte une <b>Charge</b> de ${chargeNiveau(1)} au niveau 1, +${CHARGE.parNiveau} par niveau : une très grosse carte laisse moins de place aux autres.</li>`
     + `<li>Un Porteur combat toujours avec ses <b>${DISTRICT.cartesMax} places</b> : une place laissée vide se pioche comme une carte et <b>ne se joue pas</b> (sauf dans les Épreuves).</li>`
     + `<li>Une carte n’a qu’<b>un Porteur à la fois</b>. Un Porteur ne porte pas deux fois la même carte, même dans deux métaux.</li>`
-    + `<li><b>Stimulant</b> et <b>Pavois de cuivre</b>, le paquetage du district, sont toujours dans le deck.</li>`
+    + `<li>Les cartes communes du <b>Râtelier</b> de l’escouade (2 à 4, choisies au district) s’ajoutent au deck, si l’énergie du départ est payée.</li>`
     + `<li>Changer d’escouade change le deck. Un Porteur au travail (ou à l’entraînement) peut descendre : il quitte son poste, qui reste vacant.</li>`
     + `<li>Un Porteur en expédition ou en mission garde ses cartes jusqu’à son retour.</li>`
     + `<li>En combat, les cartes d’un Porteur <b>à terre</b> s’éteignent : elles restent dans le deck un peu moins fortes (−15 %) et sans effet, et leur Fréquence compte toujours pour les suites. Il se relève à un campement.</li>`
@@ -328,7 +328,7 @@ function astuce(t: TypeEffet): string {
     case 'pioche': return 'Pose-la quand ta main ne fait pas de suite : la prochaine aura plus de chances.';
     case 'breche': return 'Garde-la pour le tour où l’ennemi vient de se protéger.';
     case 'secours': return 'Ta carte de dernier recours : plus l’escouade tombe, plus elle frappe.';
-    case 'sourdine': return 'Moins forte que Désarmer contre une attaque, mais elle sert aussi quand l’ennemi va se protéger ou se soigner.';
+    case 'sourdine': return 'Moins forte que Troubler contre une attaque, mais elle sert aussi quand l’ennemi va se protéger ou se soigner.';
     case 'amorce': return 'Pose-la juste avant ta carte la plus forte : la suivante profite de tout le bonus.';
     case 'crescendo': {
       const parts = MODULES.map((m) => m.effet).filter((e): e is { type: 'crescendo'; part: number } => e?.type === 'crescendo').map((e) => e.part);
@@ -358,6 +358,6 @@ function ongletEffets(trouvees: ReadonlySet<string>): string {
   // le paquetage du district
   h += `<section class="bloc">${titre(ICO.district, 'Le Râtelier du district')}<div class="g-district">`
     + GESTES_SPECIAUX.map((g) => `<div class="g-carte-district">${carteExemple(g, 'main')}<p><b>${echap(g.nom)}</b>${NOM_ACTION[g.type]} ${g.v}, Fréquence ${g.f}${g.effet ? `, ${NOMS_EFFET[g.effet.type]}` : ''}.</p></div>`).join('')
-    + `</div><p class="aide">Au départ, le district fournit ces deux cartes communes : le Stimulant vient de la Clinique, le Pavois de cuivre de la Tour du Noyau. En montant, tes bâtiments en préparent d’autres (Lame d’atelier, Plan des galeries, Brèche, Groupe de secours, Ampoule de relève), et leur force grandit avec eux : chaque niveau du bâtiment leur ajoute de la force (touche une carte pour voir son échelle). Tu choisis celles qui descendent dans le Râtelier de l’escouade : 2 emplacements, 3 au niveau 5 de la Tour du Noyau, 4 au niveau 9. Les 2 premières sont fournies, les suivantes coûtent de l’énergie à chaque départ. Jouées par personne, elles ne s’éteignent jamais quand un Porteur tombe.</p></section>`;
+    + `</div><p class="aide">Au départ, le district fournit ces deux cartes communes : le Stimulant vient de la Clinique, le Pavois de cuivre de la Tour du Noyau. En montant, tes bâtiments en préparent d’autres (Lame d’atelier, Plan des galeries, Brèche, Groupe de secours, Ampoule de relève), et leur force grandit avec eux : chaque niveau du bâtiment leur ajoute de la force (touche une carte pour voir son échelle). Tu choisis celles qui descendent dans le Râtelier de l’escouade : 2 emplacements, 3 au niveau 5 de la Tour du Noyau, 4 au niveau 9. Chaque départ coûte un peu d’énergie pour tout le Râtelier à la fois (une demi-heure de Générateur pour explorer, un quart d’heure pour une sortie courte) ; sans assez d’énergie, l’escouade part sans elles. Jouées par personne, elles ne s’éteignent jamais quand un Porteur tombe.</p></section>`;
   return h;
 }

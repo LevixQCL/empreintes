@@ -31,7 +31,7 @@ Chaque `git push` sur `main` lance les tests, construit le site et le publie sur
 src/
   core/          les règles du jeu, sans affichage (pourront tourner sur un serveur)
     types.ts       les types : Porteurs, cartes, ennemis, état du combat
-    donnees.ts     le contenu : Porteurs, les 45 cartes, deck de départ, ennemis
+    donnees.ts     le contenu : Porteurs, les cartes (98, dont 10 exclusives), deck de départ, ennemis
     regles.ts      les réglages chiffrés (équilibrage) + Résonance, Écho, triangle
     combat.ts      le moteur de combat
     effets.ts      les noms et textes des effets spéciaux (Perçant, Siphon, Accord…)
@@ -99,7 +99,7 @@ Tous les chiffres sont dans deux fichiers :
 
 **La carte qu'on collectionne est celle qu'on joue** (décision du 22 octobre 2026). Une carte = une place dans le deck.
 On la confie à un Porteur de sa lignée (`greffer` dans `jeu.ts`, 6 cartes au plus par Porteur, `DISTRICT.cartesMax`) ;
-le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les 2 cartes du paquetage du district (`GESTES_SPECIAUX`, origine dans `ORIGINE_PAQUETAGE`).
+le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les cartes communes du Râtelier de l'escouade (2 à 4, `ratelierDe` dans `partie/descentes.ts`, payées en énergie à chaque départ).
 Au départ, Ilka, Doran et Véla portent chacun 6 cartes en fer : leurs 5 cartes de base et leur carte de départ (`DEPART_PORTEURS`).
 **La Charge** (26 octobre 2026) : chaque carte pèse selon sa puissance (`poidsCarte`, dans son métal, à son niveau de départ) et chaque
 Porteur porte une Charge qui grandit avec son niveau (`CHARGE` dans `collection.ts`, `chargeMax` / `chargePortee`). Un Porteur combat toujours
@@ -139,10 +139,10 @@ et en or, 3 en nacre : `METAL_FREQ`). Une carte à plusieurs Fréquences prend d
 (`meilleureFrequence`), et le joueur peut en changer dans la chaîne (`accorder`) : aucun tirage au sort.
 Deux métaux d'une même carte sont deux cartes à part : chacune ses doublons, son niveau, et un Porteur n'en porte qu'une.
 
-**Combats à plusieurs** (22 octobre 2026). À partir de la Strate −2, une salle de combat sur trois abrite un groupe
+**Combats à plusieurs** (22 octobre 2026). À partir de la Strate −3, une salle de combat sur trois abrite un groupe
 (deux ennemis, trois à partir de la Strate −5 : `escorteDe` dans `expedition.ts`). Chaque ennemi a ses PV (`PART_GROUPE` :
 un groupe pèse un peu plus qu'un ennemi seul) et sa propre intention. Le joueur vise un ennemi (`viser`) : toute la chaîne
-le frappe, Désarmer et Fissure compris ; s'il tombe, le reste de la chaîne passe au suivant. Au tour ennemi, chacun agit.
+le frappe, Troubler et Fissure compris ; s'il tombe, le reste de la chaîne passe au suivant. Au tour ennemi, chacun agit.
 Côté moteur, l'ennemi visé est toujours `s.ennemi` (et son intention `s.intention`) ; les autres sont dans `s.autres`,
 chacun avec son `intention` : `viser` les échange, le reste du moteur ne change pas. `tousEnnemis(s)` les rend dans l'ordre.
 
@@ -162,7 +162,7 @@ Un Porteur en retard de deux niveaux sur le plus avancé apprend 1,5 fois plus v
   sur sa barre), le gardien prend une variante tirée au début du combat (`VARIANTES`, `PHASES3` dans `combat.ts`) : *Front commun* (un renfort,
   et tous deux n'attaquent plus), *Garde rapprochée* (deux soutiens qui le soignent et le couvrent), *Déferlement* (ses coups +25 % par tour,
   plafond ×2) ou *Appel des profondeurs* (il ne frappe plus, soigne ses renforts et les rappelle quand ils tombent ; une Fêlure brise l'appel).
-- *Conditions de salle* (`CONDITIONS`, `conditionDe`) : à partir de −2, une salle de combat sur trois (un gardien sur deux) ;
+- *Conditions de salle* (`CONDITIONS`, `conditionDe`) : à partir de −5, une salle de combat sur trois (un gardien sur deux) ;
   visibles sur la carte avant d'entrer.
 - *Pas de combat sans fin* (`usureCombat`) : après le tour 10 les ennemis se soignent de moins en moins, après le tour 25 ils frappent plus fort.
 - *Premières rencontres* (`src/core/decouvertes.ts`) : la première fois qu'un groupe, un trait, une condition ou une phase de gardien

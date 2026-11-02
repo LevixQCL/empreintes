@@ -1037,7 +1037,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
     }
     case 'effet': {
       if (ev.texte === 'Fissure' && pEnnemi) fissures(pEnnemi);
-      else if (ev.texte === 'Désarmé') desarme(racine.querySelector('.scene-ennemi .intention'));
+      else if (ev.texte === 'Troublé') desarme(racine.querySelector('.scene-ennemi .intention'));
       else if (ev.texte === 'Élan') { const r = racine.querySelector('.zone-chaine')?.getBoundingClientRect(); if (r) elan(r); }
       else if (ev.texte === 'Dissonance' && !reduit) racine.querySelector('.zone-chaine')?.animate([{ filter: 'none' }, { filter: 'hue-rotate(70deg) blur(1px)', transform: 'translateX(3px)' }, { filter: 'hue-rotate(-50deg)', transform: 'translateX(-3px)' }, { filter: 'none', transform: 'none' }], { duration: 480 });
       return 0;

@@ -10,7 +10,7 @@ export const NOMS_EFFET: Record<TypeEffet, string> = {
   percant: 'Perçant',
   siphon: 'Siphon',
   flux: 'Surcharge',
-  desarmer: 'Désarmer',
+  desarmer: 'Troubler',
   fissure: 'Fissure',
   elan: 'Élan',
   crescendo: 'Crescendo',
@@ -44,7 +44,7 @@ export function texteEffet(e: Effet): string {
     case 'percant': return 'Ignore le bouclier et le blindage de l’ennemi.';
     case 'siphon': return `Le Porteur qui la joue récupère ${pc(e.part)} des dégâts infligés.`;
     case 'flux': return `Remplit le Flux (+${e.v}).`;
-    case 'desarmer': return `La prochaine attaque ennemie perd ${pc(e.part)} de sa force.`;
+    case 'desarmer': return `L’attaque annoncée par l’ennemi visé perd ${pc(e.part)} de sa force.`;
     case 'fissure': return `L’ennemi subit ${pc(e.part)} de dégâts en plus, ce tour-ci et le suivant.`;
     case 'elan': return '+1 place dans la chaîne au tour suivant.';
     case 'crescendo': return `+${pc(e.part)} de force pour chaque carte posée avant elle.`;
@@ -114,5 +114,5 @@ export const libelleEffet = (e: Effet) => `${NOMS_EFFET[e.type]} : ${texteEffet(
 
 /** Les effets d'une carte (deux pour une carte de l’Héritage) */
 export const effetsDe = (c: { effet?: Effet; effet2?: Effet }): Effet[] => [c.effet, c.effet2].filter((e): e is Effet => !!e);
-/** Leurs noms, à la suite (« Accord · Désarmer ») */
+/** Leurs noms, à la suite (« Accord · Troubler ») */
 export const nomsEffets = (c: { effet?: Effet; effet2?: Effet }) => effetsDe(c).map((e) => NOMS_EFFET[e.type]).join(' · ');

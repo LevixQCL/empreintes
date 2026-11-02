@@ -48,7 +48,7 @@ export function indiceEscouade(j: Jeu, escouade: readonly string[]): number {
 
 // ---------- Le Râtelier du district (30 octobre 2026) ----------
 // Bryan : « pouvoir les échanger » (changer les cartes communes du deck). On les choisit au district, jamais pendant une descente.
-// Les deux premières sont fournies ; les suivantes se préparent avec de l'énergie à chaque départ (enfin un usage régulier de l'énergie).
+// Chaque départ coûte de l'énergie pour tout le Râtelier à la fois (1er novembre 2026) ; sans assez d'énergie, l'escouade part sans ses cartes communes.
 export const RATELIER = {
   /** emplacements selon le niveau de la Tour du Noyau : 2, 3 au niveau 5, 4 au niveau 9 */
   places: [{ noyau: 1, n: 2 }, { noyau: 5, n: 3 }, { noyau: 9, n: 4 }],
@@ -959,7 +959,7 @@ function remonterExplorer(j: Jeu, x: Expedition, victoire: boolean, avant: Etoil
   if (releve) {
     j.choix.push({ source: 'releve', options: tirerChoix(j, x.strate, x.strate >= 5 ? 'argent' : 'cuivre') });
     xp += XP.gardien / 2;
-    log(j, `La Strate −${x.strate} est relevée : ses cinq Vestiges sont au district. Tes fouilles y verront tout le plan.`);
+    log(j, `La Strate −${x.strate} est complète : ses cinq Vestiges sont au district. Tes fouilles y verront tout le plan.`);
   }
   // les étoiles : seulement jusqu'au gardien vaincu
   const etoiles: number[] = [];

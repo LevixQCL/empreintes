@@ -139,6 +139,8 @@ export interface GesteDef {
   f: number;
   /** les Fréquences que la carte peut prendre (argent et plus) ; `f` est celle choisie */
   fs?: number[];
+  /** le joueur a choisi lui-même la Fréquence dans la chaîne : on ne la recalcule plus tant que la carte y reste */
+  accorde?: boolean;
   type: TypeGeste;
   /** Force : dégâts, bouclier ou soin */
   v: number;
@@ -437,6 +439,8 @@ export interface TourHisto {
   suite?: number;
   mult?: number;
   echo?: boolean;
+  /** l'Écho à 4 ou 5 Fréquences identiques (absent pour 3) */
+  echoN?: number;
   /** les Fréquences étaient brouillées : pas de Résonance */
   brouille?: boolean;
   lignes: LigneHisto[];
