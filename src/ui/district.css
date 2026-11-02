@@ -322,10 +322,13 @@
   .archipel.cuvette .toile :is(.tableau,.anime){-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 6%);mask-image:linear-gradient(to bottom,transparent 0,#000 6%)}
   .archipel.cuvette{background:#123c3f}
 }
-/* Sur PC, la Cuvette se pose sur un fond de mer sombre uni (la mer prolongée en flou faisait des traînées) */
+/* Sur PC, la Cuvette est prolongée en largeur (art/district/cuvette-large.webp, peinte avec Midjourney autour du district) :
+   l'image large est posée derrière la toile, son district exactement sous le tableau (centre du tableau à 50,57 % de sa largeur). */
 @media (min-width:1100px) and (min-height:600px){
-  .archipel.cuvette .mer-fond{display:none}
-  .archipel.cuvette{background:radial-gradient(60% 80% at 35% 55%,#1d4f55 0,#12353b 45%,#0a1a20 100%)}
-  .archipel.cuvette .toile{-webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent),linear-gradient(180deg,transparent 0,#000 6%);
-    mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent),linear-gradient(180deg,transparent 0,#000 6%)}
+  .archipel.cuvette{background:linear-gradient(90deg,#2a625d,#1f4d4c 55%,#2b3c34)}
+  .archipel.cuvette .mer-fond{display:block;top:0;height:100%;aspect-ratio:3924/2464;left:calc((100% - var(--panneau)) / 2);transform:translateX(-50.57%);
+    background:var(--mer) center/100% 100% no-repeat;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+  .archipel.cuvette .mer-fond::before{background:linear-gradient(90deg,rgba(6,10,22,.35),transparent 20%,transparent 80%,rgba(6,10,22,.35))}
+  .archipel.cuvette .mer-reflets{display:none}
+  .archipel.cuvette .toile{-webkit-mask-image:none;mask-image:none}
 }
