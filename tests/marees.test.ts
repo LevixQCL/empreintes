@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { lieuDef } from '../src/core/lieux';
 import { moduleDef, porteurDef } from '../src/core/donnees';
 import {
-  CONTRAT, CONTRATS, MAREES, contratsDuMoment, cycleMaree, enMission, envoyerContrat, equipeConseillee, jourDe, nouveauJeu, partir, poster, rapportALire,
+  CONTRAT, CONTRATS, MAREES, PRISES, priseDe, contratsDuMoment, cycleMaree, enMission, envoyerContrat, equipeConseillee, jourDe, nouveauJeu, partir, poster, rapportALire,
   raisonHorsContrat, tauxContrat, tick, type ContratDef, type Jeu,
 } from '../src/core/jeu';
 
@@ -98,9 +98,11 @@ describe('Contrats de marée (31 octobre 2026)', () => {
     expect(r.contrat?.porteurs).toEqual(eq);
     expect(r.creuseurs).toBe(0);
     if (r.contrat!.reussi) {
-      expect(r.cartes).toHaveLength(1);
-      expect(moduleDef(r.cartes[0]!.id).rarete).toBe('cuivre');
-      expect(moduleDef(r.cartes[0]!.id).lignee).toBe(c.lieu.lignee);
+      if (c.prise === 'lignee') {
+        expect(r.cartes).toHaveLength(1);
+        expect(moduleDef(r.cartes[0]!.id).rarete).toBe('cuivre');
+        expect(moduleDef(r.cartes[0]!.id).lignee).toBe(c.lieu.lignee);
+      } else expect(r.cartes).toHaveLength(0);
       expect(contratsDuMoment(j, T0 + 5 * H).find((x) => x.id === c.id)!.reussi).toBe(true);
     } else {
       expect(r.cartes).toHaveLength(0);
@@ -149,5 +151,55 @@ describe('Contrats de marée (31 octobre 2026)', () => {
     }
     expect(vu).toBeGreaterThan(0);
     expect(jourDe(T0)).toBeGreaterThan(0);
+  });
+
+  it('la prise tourne (2 novembre 2026) : annoncée d’avance, la même pour tous, et le métal reste celui du rang', () => {
+    // sur une semaine, la marée montante propose au moins trois prises différentes ; l'or n'existe qu'en grande marée
+    expect(new Set(PRISES.montante)).toEqual(new Set(['lignee', 'choix', 'cargaison']));
+    expect(PRISES.vive).not.toContain('or');
+    expect(PRISES.grande.filter((p) => p === 'or')).toHaveLength(1);
+    expect(priseDe('montante', -3)).toBe(priseDe('montante', 4));
+    const j = avance(9);
+    for (let d = 0; d < 7; d++) {
+      const now = T0 + d * 24 * H;
+      for (const c of contratsDuMoment(j, now)) expect(c.prise).toBe(priseDe(c.rang, cycleMaree(c.rang, now).n));
+    }
+  });
+
+  it('chaque prise donne ce qu’elle annonce', () => {
+    const vus = new Set<string>();
+    for (let d = 0; d < 7; d++) for (let g = 1; g <= 12; g++) {
+      const now = T0 + d * 24 * H;
+      const j = avance(6); j.rng = g * 7919 + d;
+      for (const rang of ['montante', 'vive'] as const) {
+        const c = contratsDuMoment(j, now).find((x) => x.rang === rang)!;
+        if (j.marees?.contrat || c.reussi) continue;
+        const compo = j.composants;
+        expect(envoyerContrat(j, c.id, equipeConseillee(j, c.def) as string[], now).ok).toBe(true);
+        tick(j, now + MAREES[rang].heures * H + 1);
+        const r = rapportALire(j)!;
+        j.rapports = [];
+        if (!r.contrat!.reussi) continue;
+        vus.add(`${rang}-${c.prise}`);
+        const metal = rang === 'montante' ? 'cuivre' : 'argent';
+        const ch = j.choix.find((x) => x.source === 'maree');
+        if (c.prise === 'choix') {
+          expect(r.cartes).toHaveLength(0);
+          expect(ch!.options.map((id) => moduleDef(id).lignee).sort()).toEqual(['bio', 'reso', 'tech']);
+          for (const id of ch!.options) expect(moduleDef(id).rarete).toBe(metal);
+        } else if (c.prise === 'cargaison') {
+          expect(r.cartes).toHaveLength(0);
+          expect(ch).toBeUndefined();
+          expect(j.composants - compo).toBe(Math.round(MAREES[rang].composants * (1 + 0.25 * 5) * CONTRAT.cargaison));
+        } else {
+          expect(r.cartes).toHaveLength(1);
+          expect(moduleDef(r.cartes[0]!.id).rarete).toBe(metal);
+        }
+        j.choix = [];
+      }
+    }
+    expect(vus).toContain('montante-cargaison');
+    expect(vus).toContain('montante-choix');
+    expect(vus).toContain('vive-choix');
   });
 });

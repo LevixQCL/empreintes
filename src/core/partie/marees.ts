@@ -44,11 +44,36 @@ export const CONTRAT = {
   /** en cas d'échec : part des composants, Usure ×1,5 */
   partEchec: 0.3,
   usureEchec: 1.5,
-  /** grande marée : la première carte du choix est en argent au moins, parfois en or, rarement en nacre (Strate −10 et plus) */
-  chanceOr: 0.2,
+  /** grande marée : la première carte du choix est en argent au moins, rarement en nacre (Strate −10 et plus) ;
+   *  l'or ne tombe plus par surprise, il vient de la « Prise d'or » annoncée une semaine sur cinq (2 novembre 2026) */
   chanceNacre: 0.03,
+  /** cargaison : les composants du rang multipliés, sans carte */
+  cargaison: 2,
   strateNacre: 10,
 } as const;
+
+/**
+ * La prise d'un contrat (2 novembre 2026, Luc : « ça ne varie pas, la première c'est toujours du cuivre, la deuxième de
+ * l'argent »). Revu par un game designer : le métal reste lié au rang (l'échelle reste lisible), c'est la forme de la prise
+ * qui tourne, annoncée avant le départ et la même pour tous (aucune surprise, aucun hasard caché) :
+ * - lignee : une carte du métal du rang, de la lignée du lieu (comme avant) ;
+ * - choix : une carte du métal du rang à choisir parmi trois, une par lignée ;
+ * - cargaison : composants ×2, pas de carte (marée montante seulement) ;
+ * - or : grande marée, trois cartes au choix dont la première en or (remplace les 20 % d'or au hasard : même moyenne).
+ */
+export type Prise = 'lignee' | 'choix' | 'cargaison' | 'or';
+export const PRISES: Record<RangMaree, readonly Prise[]> = {
+  /** un motif de 7 jours : le même jour de la semaine garde la même prise */
+  montante: ['lignee', 'lignee', 'choix', 'lignee', 'lignee', 'cargaison', 'lignee'],
+  vive: ['lignee', 'lignee', 'choix', 'lignee', 'choix'],
+  grande: ['lignee', 'lignee', 'or', 'lignee', 'lignee'],
+};
+
+/** La prise d'un contrat selon son rang et son numéro de cycle */
+export function priseDe(rang: RangMaree, n: number): Prise {
+  const m = PRISES[rang];
+  return m[((n % m.length) + m.length) % m.length]!;
+}
 
 export interface EpreuveContrat { nom: string; lignee: Lignee }
 export interface ContratDef { rang: RangMaree; lieu: string; titre: string; ambiance: string; epreuves: EpreuveContrat[] }
@@ -117,7 +142,7 @@ export function cycleMaree(rang: RangMaree, now: number): { n: number; debut: nu
   return { n, debut: debutJour(d), fin: debutJour(d + 7) };
 }
 
-export interface ContratOuvert { id: string; def: ContratDef; lieu: LieuDef; rang: RangMaree; fin: number; reussi: boolean; indices: number; ouvert: boolean }
+export interface ContratOuvert { id: string; def: ContratDef; lieu: LieuDef; rang: RangMaree; prise: Prise; fin: number; reussi: boolean; indices: number; ouvert: boolean }
 
 /** L'état des contrats dans la sauvegarde (répare une sauvegarde d'avant le 31 octobre 2026) */
 export function mareesDe(j: Jeu): NonNullable<Jeu['marees']> {
@@ -135,7 +160,7 @@ export function contratsDuMoment(j: Jeu, now: number): ContratOuvert[] {
     const liste = contratsDuRang(rang);
     const def = liste[((c.n % liste.length) + liste.length) % liste.length]!;
     const id = `${rang}-${c.n}`;
-    return { id, def, lieu: lieuDef(def.lieu)!, rang, fin: c.fin, reussi: m.reussis.includes(id), indices: m.indices[id] ?? 0, ouvert: rangOuvert(j, rang) };
+    return { id, def, lieu: lieuDef(def.lieu)!, rang, prise: priseDe(rang, c.n), fin: c.fin, reussi: m.reussis.includes(id), indices: m.indices[id] ?? 0, ouvert: rangOuvert(j, rang) };
   });
 }
 
@@ -211,12 +236,16 @@ function carteFixe(j: Jeu, metal: Rarete, lignee: Lignee): string {
   return carteId(pool[t.entier(pool.length)]!.id, metal);
 }
 
-/** Le rang minimum de la première carte d'une grande marée */
-function minimumGrande(j: Jeu, strate: number, lignee: Lignee): Rarete {
+/** Le rang minimum de la première carte d'une grande marée (la Prise d'or garantit l'or) */
+function minimumGrande(j: Jeu, strate: number, lignee: Lignee, prise: Prise): Rarete {
+  if (prise === 'or') return 'or';
   const x = tireur(j).nombre();
   if (strate >= CONTRAT.strateNacre && x < CONTRAT.chanceNacre && tirablesEn('nacre').some((m) => m.lignee === lignee)) return 'nacre';
-  return x < CONTRAT.chanceOr ? 'or' : 'argent';
+  return 'argent';
 }
+
+/** Les lignées, pour la prise « au choix » : une carte de chaque */
+const LIGNEES: readonly Lignee[] = ['tech', 'bio', 'reso'];
 
 /** Le retour de la gabare (appelé par tick) : réussite ou échec, gains, rapport */
 export function retourDeContrat(j: Jeu): string {
@@ -230,16 +259,19 @@ export function retourDeContrat(j: Jeu): string {
   const lieu = lieuDef(def.lieu)!;
   const t = tireur(j);
   const reussi = t.nombre() * 100 < c.taux;
+  const prise = priseDe(c.rang, n);
   const sf = 1 + 0.25 * (Math.max(1, c.strate) - 1);
-  const composants = Math.round(r.composants * sf * (reussi ? 1 : CONTRAT.partEchec));
+  const composants = Math.round(r.composants * sf * (prise === 'cargaison' ? CONTRAT.cargaison : 1) * (reussi ? 1 : CONTRAT.partEchec));
   j.composants += composants;
   const cartes: { id: string; nouvelle: boolean }[] = [];
   let choix = false;
   if (reussi) {
     m.reussis = [...m.reussis.filter((x) => x !== c.id), c.id].slice(-12);
     delete m.indices[c.id];
-    if (c.rang !== 'grande') { const id = carteFixe(j, c.rang === 'montante' ? 'cuivre' : 'argent', lieu.lignee); cartes.push({ id, nouvelle: ajouterCarte(j, id) }); }
-    else { j.choix.push({ source: 'maree', options: tirerChoix(j, c.strate, minimumGrande(j, c.strate, lieu.lignee), lieu.lignee) }); choix = true; }
+    const metal: Rarete = c.rang === 'montante' ? 'cuivre' : 'argent';
+    if (c.rang === 'grande') { j.choix.push({ source: 'maree', options: tirerChoix(j, c.strate, minimumGrande(j, c.strate, lieu.lignee, prise), lieu.lignee) }); choix = true; }
+    else if (prise === 'choix') { j.choix.push({ source: 'maree', options: LIGNEES.map((l) => carteFixe(j, metal, l)) }); choix = true; }
+    else if (prise === 'lignee') { const id = carteFixe(j, metal, lieu.lignee); cartes.push({ id, nouvelle: ajouterCarte(j, id) }); }
   } else {
     m.indices[c.id] = Math.min(CONTRAT.indicesMax, (m.indices[c.id] ?? 0) + 1);
     // on ne garde les Indices que des contrats encore récents
@@ -275,7 +307,9 @@ export function retourDeContrat(j: Jeu): string {
   const recit: string[] = [lieu.arrivee.replaceAll('{nom}', equipe), def.ambiance];
   if (reussi) {
     recit.push(`${forces.map(({ ep, k }) => `${porteurDef(c.porteurs[k]!).nom} : ${ep.nom.charAt(0).toLowerCase()}${ep.nom.slice(1)}`).join(' ; ')}. Tout a tenu.`);
-    recit.push(choix ? 'Au cœur de la ruine, trois pierres attendaient côte à côte : à toi de choisir celle qui rentre au district.' : `La gabare est rentrée chargée : ${composants} composants, et une pierre de plus pour tes cartes.`);
+    recit.push(choix ? 'Au cœur de la ruine, trois pierres attendaient côte à côte : à toi de choisir celle qui rentre au district.'
+      : prise === 'cargaison' ? `La gabare est rentrée à ras bord : ${composants} composants arrachés à la ruine.`
+      : `La gabare est rentrée chargée : ${composants} composants, et une pierre de plus pour tes cartes.`);
   } else {
     recit.push(`${porteurDef(c.porteurs[faible.k]!).nom} n’a pas pu ${faible.ep.nom.charAt(0).toLowerCase()}${faible.ep.nom.slice(1)} : l’équipe a dû faire demi-tour avant la marée descendante.`);
     recit.push(`Ils rapportent ${composants} composants, et surtout un Indice : la prochaine tentative sur ce contrat aura +${CONTRAT.indice} % de chances.`);

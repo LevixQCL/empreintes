@@ -30,6 +30,11 @@
 .mr-tuile.fermee{color:#9FB3C8}
 .mr-tuile.fermee .mr-etat{color:#9FB3C8}
 .mr-tuile:active{transform:scale(.98)}
+/* la prise du moment : la lignée dans sa couleur, ou une prise spéciale en or */
+.mr-prise{font-style:normal;font-size:12px;font-weight:600;line-height:1.2;letter-spacing:.02em;text-shadow:0 1px 3px #000;color:#CDEFFF}
+.mr-prise.p-choix,.mr-prise.p-cargaison{color:#F2D58C}
+.mr-prise.p-or{color:#FFD86B;text-shadow:0 0 8px rgba(255,200,80,.55),0 1px 3px #000}
+.mr-tuile.fermee .mr-prise{opacity:.6}
 
 /* ---------- Le contrat ---------- */
 .mr-contrat{--cut:12px;position:relative;display:grid;gap:12px;margin-top:12px;padding:0 12px 12px;overflow:hidden;isolation:isolate;

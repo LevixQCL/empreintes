@@ -40,12 +40,18 @@ export function contratAffiche(j: Jeu, rang: RangMaree | undefined, now: number)
 /** Ce que rapporte un contrat réussi */
 function recompense(j: Jeu, c: ContratOuvert): string {
   const r = MAREES[c.rang];
-  const compo = Math.round(r.composants * (1 + 0.25 * (Math.max(1, strateVaincue(j)) - 1)));
-  const lg = NOM_LIGNEES[c.lieu.lignee].toLowerCase();
-  const carte = c.rang === 'montante' ? `1 carte <b class="m-cuivre">cuivre</b> des ${lg}` : c.rang === 'vive' ? `1 carte <b class="m-argent">argent</b> des ${lg}`
-    : `3 cartes des ${lg} au choix, la première <b class="m-argent">argent</b> au moins, parfois <b class="m-or">or</b>`;
+  const compo = Math.round(r.composants * (1 + 0.25 * (Math.max(1, strateVaincue(j)) - 1)) * (c.prise === 'cargaison' ? CONTRAT.cargaison : 1));
+  const lg = `<b style="color:${COULEUR[c.lieu.lignee]}">${NOM_LIGNEES[c.lieu.lignee]}</b>`;
+  const metal = c.rang === 'montante' ? '<b class="m-cuivre">cuivre</b>' : '<b class="m-argent">argent</b>';
+  if (c.prise === 'cargaison') return `<li>${ICO.composants}<span>Cargaison : <b>${compo}</b> composants, pas de carte</span></li><li>${ICO.lueur}<span>De l’XP pour toute l’équipe</span></li>`;
+  const carte = c.rang === 'grande'
+    ? (c.prise === 'or' ? `Prise d’or : 3 cartes des ${lg} au choix, la première en <b class="m-or">or</b>` : `3 cartes des ${lg} au choix, la première ${'<b class="m-argent">argent</b>'} au moins`)
+    : c.prise === 'choix' ? `1 carte ${metal} au choix parmi 3, une par lignée` : `1 carte ${metal} des ${lg}`;
   return `<li>${ICO.cartes}<span>${carte}</span></li><li>${ICO.composants}<span><b>${compo}</b> composants, et de l’XP pour toute l’équipe</span></li>`;
 }
+
+/** L'étiquette de la prise sur la tuile (la prise « lignée » montre le nom de la lignée, dans sa couleur) */
+const ETIQUETTE: Partial<Record<ContratOuvert['prise'], string>> = { choix: 'Au choix', cargaison: 'Cargaison', or: 'Prise d’or' };
 
 /** Une tuile de marée, en haut */
 function tuile(j: Jeu, c: ContratOuvert, choisie: boolean, now: number): string {
@@ -54,6 +60,7 @@ function tuile(j: Jeu, c: ContratOuvert, choisie: boolean, now: number): string 
   const etat = !c.ouvert ? `${ICO.verrou}Strate −${r.strate}` : enMer ? `${ICO.chrono}En mer` : c.reussi ? `${ICO.ok}Rempli` : `${r.porteurs} Porteurs`;
   return `<button type="button" role="tab" class="mr-tuile r-${c.rang}${choisie ? ' choisi' : ''}${c.ouvert ? '' : ' fermee'}${c.reussi ? ' fait' : ''}" data-action="maree-rang" data-id="${c.rang}" aria-selected="${choisie}">`
     + `<span class="mr-coef" aria-hidden="true">${r.coef}</span><strong>${r.nom}</strong><span class="mr-etat">${etat}</span>`
+    + `<em class="mr-prise p-${c.prise}"${c.prise === 'lignee' ? ` style="color:${COULEUR[c.lieu.lignee]}"` : ''}>${ETIQUETTE[c.prise] ?? NOM_LIGNEES[c.lieu.lignee]}</em>`
     + `<small>${c.ouvert ? decompte(c.fin, now, 'encore ') : 'plus bas'}</small></button>`;
 }
 
