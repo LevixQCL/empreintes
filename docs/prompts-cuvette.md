@@ -30,5 +30,9 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 - Un bâtiment par passe. Références : `--sref art/personnages/yse.webp art/district/cuvette-nue.webp --sw 100`.
 - Direction : « technologie de récupération » — grès et cuivre de la Cuvette, machines récupérées, câbles, verre, cristal bleu des empreintes ;
   une silhouette unique par bâtiment. Pas de maisonnettes de village.
+- Avancement : Forge (`art/district/cuvette-essai-forge.webp`), puis Tour du Noyau refaite en « récupération »
+  (réservoir de tôle sur pied de câbles, treuil, fenêtre de cristal) : `art/district/cuvette-essai-tour.webp` contient les deux.
+  Le zoom de la Tour couvrait (554, 560) → (1310, 1316) ; la sortie Midjourney (1024 px) est réduite à 756 px puis fondue
+  sur un masque élargi (≈ 35 px) qui couvre l'ancienne et la nouvelle silhouette, pour qu'aucun fantôme ne reste.
 - Emplacements (pixels de la Cuvette 1856 × 2464) : Tour (932, 1128) ; Générateur/Clinique quart gauche (420, 1150) ;
   Forge quart droit (1450, 1160) ; Comptoir devant (930, 1500) ; Port dehors devant le sas (≈ 1650, 1900) ; restent le quart du fond et deux places libres devant.
