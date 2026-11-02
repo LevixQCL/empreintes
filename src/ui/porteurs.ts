@@ -4,7 +4,7 @@
 
 import { BATIMENTS, CLE_LEGS, ORIGINE_PAQUETAGE, PORTEURS, moduleDef, porteurDef } from '../core/donnees';
 import { CHARGE, NIVEAU_METAL, composantsNiveau, doublonsRequis } from '../core/collection';
-import { ACCORD_OUVERT, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, NB_ESCOUADES, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
+import { ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, CARTES_COMMUNES, RATELIER, communeOuverte, coutRatelier, gesteCommun, placesRatelier, ratelierDe, ratelierPayable, escouadesAvecCommune, cleDuLegs, DISTRICT, XP, bonusPv, chargeMax, chargePortee, deckEscouade, enExpedition, gestesDe, enMission, escouadeActive, escouadeDe, escouadeDefense, PILLAGE, strateVaincue, escouadesDe, escouadeVerrouillee, niveauPorteur, NOMS_PALIER_MARQUE, PALIERS_MARQUE, porteursPresents, progresMarque, pvMaxCombat, pvNiveau, raisonHorsEscouade, soinParHeure, textePosteQuitte, tropBlesse, usureMax, type Jeu } from '../core/jeu';
 import { PRESENTATIONS, origineDe } from '../core/lore-porteurs';
 import { FILS, etapesDe } from '../core/fils';
 import { BATTU_PAR, REGLES, frequenceLibre } from '../core/regles';
@@ -263,7 +263,7 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
 }
 
 /** L'escouade affichée dans l'onglet : celle choisie par le joueur, sinon celle qui descend */
-export const escouadeVue = (e: EcranDistrict) => (e.vueEscouade !== undefined && e.vueEscouade >= 0 && e.vueEscouade < NB_ESCOUADES ? e.vueEscouade : escouadeActive(e.j));
+export const escouadeVue = (e: EcranDistrict) => (e.vueEscouade !== undefined && e.vueEscouade >= 0 && e.vueEscouade < escouadesOuvertes(e.j) ? e.vueEscouade : escouadeActive(e.j));
 
 /** Les trois escouades en onglets : leurs portraits, et celle qui descend marquée d'or */
 function ongletsEscouades(j: Jeu, vue: number): string {
@@ -293,7 +293,9 @@ function monEscouade(e: EcranDistrict): string {
   // venu du départ ou du Port : le chemin du retour, bien en vue
   if (e.retourModif) h += `<button type="button" class="eq-revenir" data-action="escouade-revenir">${ICO.retour}<span><strong>${e.retourModif === 'pillages' ? 'Revenir aux Pillages' : e.pillage ? 'Revenir au pillage' : 'Revenir au départ'}</strong>${e.retourModif === 'pillages' ? 'Ta garnison est prise en compte tout de suite.' : 'Avec l’escouade choisie ici.'}</span></button>`;
   h += voletsEscouade(e);
-  h += ongletsEscouades(j, vue);
+  // une seule escouade avant −4 (2 novembre 2026) : pas d'onglets, une ligne qui dit quand viendront les autres
+  if (escouadesOuvertes(j) > 1) h += ongletsEscouades(j, vue);
+  else h += `<p class="tr-note">${ICO.verrou}Une seule escouade pour l’instant : tant que le gardien de la Strate −${ESCOUADES_STRATE} tient, le puits n’a d’étais que pour une équipe à la fois.</p>`;
   if (verrou) h += `<p class="me-verrou">${ICO.verrou}<span><strong>En descente</strong>${echap(verrou.replace(/^L’escouade est en descente : /, 'L’escouade '))}</span></p>`;
   // celle qui descend, ou le bouton pour qu'elle descende
   // celle qui descend : l'onglet le dit déjà (« Descend »), rien de plus (allégé le 28 octobre 2026)

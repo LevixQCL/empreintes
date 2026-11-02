@@ -378,7 +378,7 @@ export function navigation(e: EcranDistrict): string {
     coupe: !!j.expedition || !!(o && o.onglet === 'coupe' && !o.fait(j)),
     codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
     // une pastille quand l'onglet vient de s'ouvrir et qu'on n'y est jamais allé
-    pillages: (!!j.chambre && strateVaincue(j) >= PILLAGE.strateMin && !j.portVu) || !!(o && o.onglet === 'pillages' && !o.fait(j)),
+    pillages: (!!j.chambre && strateVaincue(j) >= PILLAGE.strateDuPort && !j.portVu) || !!(o && o.onglet === 'pillages' && !o.fait(j)),
     fleche: flecheOuverte(j) && !j.fleche,
   };
   const actif = e.menu || e.vue === 'classements' || e.vue === 'recruter' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage ? 'pillages' : 'coupe') : e.vue === 'cartes' ? 'porteurs' : e.vue;

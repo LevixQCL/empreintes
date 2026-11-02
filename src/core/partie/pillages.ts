@@ -27,8 +27,10 @@ export const PILLAGE = {
   /** un jeton de plus contre de l'énergie (idée de Luc, 31 octobre 2026) : 4 h de production du Générateur, 2 fois par jour au plus */
   achatHeures: 4,
   achatsJour: 2,
-  /** les pillages s'ouvrent après la première Strate vaincue */
-  strateMin: 1,
+  /** les pillages s'ouvrent après le gardien de −3 (2 novembre 2026, Bryan : « par étapes douces » ; avant, dès −1) ;
+   *  le Port et ses missions en mer, eux, ouvrent toujours après −1 (`strateDuPort`) */
+  strateMin: 3,
+  strateDuPort: 1,
   /** butin de base d'une victoire : autant que ce nombre de combats de la Strate du défenseur (butinCombat) */
   combats: 2,
   /** part du coffre du défenseur prise par une victoire, plafonnée à `plafondVol` combats de sa Strate */
@@ -312,7 +314,7 @@ export function acheterJeton(j: Jeu, now: number): Resultat {
 }
 
 export function peutPiller(j: Jeu, now: number): Resultat {
-  if (strateVaincue(j) < PILLAGE.strateMin) return non('Les pillages s’ouvrent après la première Strate vaincue.');
+  if (strateVaincue(j) < PILLAGE.strateMin) return non(`Les pillages s’ouvrent quand le gardien de la Strate −${PILLAGE.strateMin} est vaincu.`);
   if (j.expedition) return non('Une expédition est déjà en cours.');
   majJetons(j, now);
   if (etatPillage(j).jetons < 1) return non('Plus de jeton de pillage : le prochain revient bientôt.');

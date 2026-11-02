@@ -35,7 +35,8 @@ export function htmlPillages(e: EcranDistrict): string {
   if (pres) return coquille(e, h + presentation(pres), 'pl pl-pres');
 
   // deux volets : les pillages et les missions en mer
-  const volet = e.voletPort ?? 'pillages';
+  const pillOk = pillagesOuverts(j);
+  const volet = e.voletPort ?? (pillOk ? 'pillages' : 'missions');
   const enMer = j.missions.length;
   majJetons(j, e.now);
   const seg = (id: 'pillages' | 'missions' | 'marees', nom: string, plus: string) =>
@@ -45,11 +46,14 @@ export function htmlPillages(e: EcranDistrict): string {
   const aRemplir = marees.filter((c) => c.ouvert && !c.reussi).length;
   const gabare = mareesDe(j).contrat;
   h += `<div class="segments-choix trois pl-volets" role="tablist" aria-label="Pillages, missions en mer ou contrats de marée">`
-    + seg('pillages', 'Pillages', `${etatPillage(j).jetons} / ${PILLAGE.jetonsMax} jetons`)
+    + seg('pillages', 'Pillages', pillOk ? `${etatPillage(j).jetons} / ${PILLAGE.jetonsMax} jetons` : `dès la Strate −${PILLAGE.strateMin}`)
     + seg('missions', 'Missions', `${enMer} / ${barquesMax(j)} en mer`)
     + seg('marees', 'Marées', gabare ? 'gabare en mer' : marees.some((c) => c.ouvert) ? `${aRemplir} à remplir` : `dès la Strate −${MAREES.montante.strate}`) + `</div>`;
   if (volet === 'missions') return coquille(e, h + htmlMissions(e), 'pl');
   if (volet === 'marees') return coquille(e, h + htmlMarees(e), 'pl');
+  // pas encore de pillages : la raison, tirée du district, plutôt qu'une carte grisée
+  if (!pillOk) return coquille(e, h + `<p class="fl-condition">${ICO.verrou}<span><strong>Les archipels voisins attendent · vaincs le gardien de la Strate −${PILLAGE.strateMin}</strong>`
+    + `<small>Le passeur ne mène pas de grappin chez les voisins pour un district qu’on ne connaît pas encore. Les missions en mer, elles, partent déjà.</small></span></p>`, 'pl');
 
   const prochain = majJetons(j, e.now);
   const etat = etatPillage(j);
@@ -147,7 +151,9 @@ function ficheCible(j: Jeu, c: Cible, force: number, fait: boolean, jetons: numb
 }
 
 /** Le Port est ouvert : la Strate −1 est vaincue, le bateau peut quitter le ponton */
-export const portOuvert = (j: Jeu) => j.chambre && strateVaincue(j) >= PILLAGE.strateMin;
+export const portOuvert = (j: Jeu) => j.chambre && strateVaincue(j) >= PILLAGE.strateDuPort;
+/** Les pillages (2 novembre 2026) : après le gardien de −3 ; avant, le Port ne sert qu'aux missions et aux marées */
+export const pillagesOuverts = (j: Jeu) => j.chambre && strateVaincue(j) >= PILLAGE.strateMin;
 
 /**
  * La présentation du Port (28 octobre 2026, Bryan : « refais tout convenablement ») : son histoire, les missions en mer,
@@ -159,7 +165,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
   return `<section class="fl-intro pl-intro" style="--decor:url(${vignetteArchipel(2)})"><div class="fl-intro-texte">`
     + `<span class="surtitre">Le Port du district</span><h2>Le Port reprend du service</h2>`
     + `<p>Devant le sas de la digue, sur ses pilotis, le Port voit partir les barques du passeur : vers les ruines noyées, et vers les archipels voisins.</p></div></section>`
-    + (etat === 'fermee' ? `<p class="fl-condition">${ICO.verrou}<span><strong>Le bateau reste à quai · vaincs le gardien de la Strate −${PILLAGE.strateMin}</strong><small>Tant que le gardien tient le puits, personne ne quitte le district.</small></span></p>` : '')
+    + (etat === 'fermee' ? `<p class="fl-condition">${ICO.verrou}<span><strong>Le bateau reste à quai · vaincs le gardien de la Strate −${PILLAGE.strateDuPort}</strong><small>Tant que le gardien tient le puits, personne ne quitte le district.</small></span></p>` : '')
 
     // allégé le 28 octobre 2026 : une phrase et trois chiffres par bloc, le détail se déplie
     + bloc(ICO.porteurs, 'Les missions en mer', 'Un Porteur libre part en barque et revient chargé, même jeu fermé.', [

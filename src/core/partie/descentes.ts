@@ -12,7 +12,7 @@ import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { REGLES } from '../regles';
-import { ACCORD_OUVERT, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
+import { ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -234,7 +234,7 @@ export function placerDansEscouade(j: Jeu, place: number, id: string, n = escoua
   const verrou = escouadeVerrouillee(j);
   if (verrou) return non(verrou);
   if (!Number.isInteger(place) || place < 0 || place > 2) return non('Place inconnue.');
-  if (!Number.isInteger(n) || n < 0 || n >= NB_ESCOUADES) return non('Escouade inconnue.');
+  if (!Number.isInteger(n) || n < 0 || n >= escouadesOuvertes(j)) return non(n >= 0 && n < NB_ESCOUADES ? `Les autres escouades se forment quand le gardien de la Strate −${ESCOUADES_STRATE} est vaincu.` : 'Escouade inconnue.');
   const toutes = escouadesDe(j).map((l) => [...l]);
   const suite = toutes[n]!;
   const ancienne = suite.indexOf(id);
@@ -267,7 +267,7 @@ export function placerDansEscouade(j: Jeu, place: number, id: string, n = escoua
 export function choisirEscouade(j: Jeu, n: number): Resultat {
   const verrou = escouadeVerrouillee(j);
   if (verrou) return non(verrou);
-  if (!Number.isInteger(n) || n < 0 || n >= NB_ESCOUADES) return non('Escouade inconnue.');
+  if (!Number.isInteger(n) || n < 0 || n >= escouadesOuvertes(j)) return non(n >= 0 && n < NB_ESCOUADES ? `Les autres escouades se forment quand le gardien de la Strate −${ESCOUADES_STRATE} est vaincu.` : 'Escouade inconnue.');
   const toutes = escouadesDe(j);
   if (!toutes[n]!.length) return non('Cette escouade est vide : choisis-lui d’abord des Porteurs.');
   j.escouadeActive = n;
@@ -1314,10 +1314,13 @@ export const hausseFelee = (ep: EpreuveDef) => Math.round(((ep.imposee ? RECRUES
 export const forceEpreuve = (ep: EpreuveDef, strate: number, felee?: boolean) =>
   ep.imposee ? forceStrate(RECRUES.strate) * RECRUES.force * (felee ? RECRUES.felee : 1) : forceStrate(strate) * (strate >= REGLES.apparition.troisiemePhase && ep.forceBas ? ep.forceBas : ep.force) * (felee ? FELEE.force : 1);
 
+/** les Épreuves de la semaine s'ouvrent après le gardien de −2 (2 novembre 2026, Bryan : « par étapes douces » ; avant, dès −1) */
+export const EPREUVES_STRATE = 2;
+
 export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: number, rng = graine(), felee = false): Resultat {
   const ep = epreuveDef(id);
   if (!ep || !epreuvesDeLaSemaine(now, j).some((e) => e.id === id)) return non('Cette Épreuve n’est pas au programme cette semaine.');
-  if (strateVaincue(j) < 1) return non('Les Épreuves s’ouvrent après la première Strate vaincue.');
+  if (strateVaincue(j) < EPREUVES_STRATE) return non(`Les Épreuves s’ouvrent quand le gardien de la Strate −${EPREUVES_STRATE} est vaincu.`);
   if (ep.imposee) return partirRecrues(j, ep, now, rng, felee);
   const e = escouadePrete(j, escouade, undefined, EPREUVE_DECK_MIN, 'courte');
   if (!e.ok) return e;

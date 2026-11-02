@@ -311,6 +311,11 @@ au plus toutes les 5 minutes (une nouvelle Strate ou un nouveau pseudo partent t
 Les règles Firestore valident chaque entrée (champs, bornes, profondeur qui ne redescend pas et monte de 2 Strates au plus,
 date d'arrivée = maintenant quand la profondeur monte). Les pseudos sont uniques : chacun est réservé dans `pseudos/{clé}` (`reserver` dans `src/net/classement.ts`, une transaction), la clé ignore majuscules, accents et séparateurs (`clePseudo`, même table que les règles), le Tableau n'accepte que le pseudo réservé par ce compte, un filtre écarte grossièretés et faux noms officiels (`pseudoInterdit`), et on en change au plus une fois par semaine (`DELAI_PSEUDO`, vérifié dans le jeu). En développement : `__tableau(entrées, uid)` dans la console pour l'essayer sans compte.
 
+**Les ouvertures par étapes** (2 novembre 2026, Bryan : « par étapes douces », sans ralentir la descente) : après le gardien
+de −1, le Port et ses missions en mer ; −2, les Épreuves de la semaine (`EPREUVES_STRATE`) ; −3, les pillages
+(`PILLAGE.strateMin`, le Port reste ouvert dès −1 avec `PILLAGE.strateDuPort`) et la première marée ; −4, les 2ᵉ et 3ᵉ escouades
+(`ESCOUADES_STRATE`, `escouadesOuvertes`). Avant, presque tout s'ouvrait après −1. Le parcours simulé ne change pas (−10 au jour 31).
+
 **Les pillages** (26 octobre 2026, décidé avec Bryan ; `src/core/partie/pillages.ts`, `src/ui/pillages.ts`).
 Le Port du district (fermé jusque-là) s'ouvre après la Strate −1 sur les « Archipels voisins » (Bryan : « il faut un bateau pour aller piller ») : une carte marine, ton archipel en bas, six archipels
 autour, rangés du plus facile au plus dur. Un pillage = un seul combat contre la garnison de l'archipel (ses trois Porteurs,

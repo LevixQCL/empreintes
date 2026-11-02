@@ -627,13 +627,19 @@ export function escouadeDe(j: Jeu): string[] {
 /** Combien d'escouades on peut enregistrer */
 export const NB_ESCOUADES = 3;
 
+/** les 2ᵉ et 3ᵉ escouades s'ouvrent après le gardien de −4 (2 novembre 2026, Bryan : « par étapes douces ») ; avant, une seule */
+export const ESCOUADES_STRATE = 4;
+
+/** Combien d'escouades on peut composer maintenant : une, puis trois après le gardien de −4 */
+export const escouadesOuvertes = (j: Jeu): number => (strateVaincue(j) >= ESCOUADES_STRATE ? NB_ESCOUADES : 1);
+
 /** L'indice de l'escouade qui descend (0 à 2) */
-export const escouadeActive = (j: Jeu): number => (Number.isInteger(j.escouadeActive) && j.escouadeActive >= 0 && j.escouadeActive < NB_ESCOUADES ? j.escouadeActive : 0);
+export const escouadeActive = (j: Jeu): number => (Number.isInteger(j.escouadeActive) && j.escouadeActive >= 0 && j.escouadeActive < escouadesOuvertes(j) ? j.escouadeActive : 0);
 
 /** L'indice de l'escouade qui défend le port (27 octobre 2026) : celle choisie, ou celle qui descend si elle est vide */
 export function escouadeDefense(j: Jeu): number {
   const d = j.escouadeDefense;
-  if (Number.isInteger(d) && d! >= 0 && d! < NB_ESCOUADES && escouadesDe(j)[d!]!.length) return d!;
+  if (Number.isInteger(d) && d! >= 0 && d! < escouadesOuvertes(j) && escouadesDe(j)[d!]!.length) return d!;
   return escouadeActive(j);
 }
 
@@ -643,7 +649,8 @@ export function escouadesDe(j: Jeu): string[][] {
   const presents = porteursPresents(j);
   const a = escouadeActive(j);
   const pris = new Set(escouadeDe(j));
-  return Array.from({ length: NB_ESCOUADES }, (_, k) => {
+  // une seule escouade avant −4 : les autres restent enregistrées, mais pas montrées
+  return Array.from({ length: escouadesOuvertes(j) }, (_, k) => {
     if (k === a) return escouadeDe(j);
     const liste = [...new Set(j.escouades?.[k] ?? [])].filter((id) => presents.includes(id) && !pris.has(id)).slice(0, 3);
     liste.forEach((id) => pris.add(id));

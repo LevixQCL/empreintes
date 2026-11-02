@@ -6,13 +6,13 @@ import { nombreHaltes, queteDef } from '../core/strates';
 import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
 import { htmlBestiaire } from './bestiaire';
 import { visageGarde } from './fleche';
-import { portOuvert } from './pillages';
+import { pillagesOuverts, portOuvert } from './pillages';
 import { epitheteAffiche, epithetesDe, journalCarte, NOMS_PALIER, palierDe, vecuDe, versPalierSuivant, PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, EPREUVES_STRATE, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, renouvelablesComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
@@ -254,10 +254,11 @@ function balises(e: EcranDistrict): string {
     // le Port ouvert mène aux archipels voisins (26 octobre 2026, Bryan : « il faut un bateau pour aller piller des gens »)
     if (id === 'port' && portOuvert(j)) {
       majJetons(j, e.now);
-      const n = etatPillage(j).jetons;
-      h += `<button type="button" class="balise ouverte" ${pos(b.pied)} data-action="pillages" data-lieu="port" aria-label="Port : archipels voisins, ${n} jeton${n > 1 ? 's' : ''} de pillage sur ${PILLAGE.jetonsMax}">`
-        + `<b class="bal-cristal glace">${ICO.grappin}</b><span class="bal-nom">Port</span></button>`;
-      if (n >= PILLAGE.jetonsMax) h += bulle('alerte', `${ICO.grappin}<em>${n}</em>`, `Jetons de pillage au complet : ${n}`, 'pillages');
+      const pill = pillagesOuverts(j);
+      const n = pill ? etatPillage(j).jetons : 0;
+      h += `<button type="button" class="balise ouverte" ${pos(b.pied)} data-action="pillages" data-lieu="port" aria-label="${pill ? `Port : archipels voisins, ${n} jeton${n > 1 ? 's' : ''} de pillage sur ${PILLAGE.jetonsMax}` : 'Port : missions en mer'}">`
+        + `<b class="bal-cristal glace">${pill ? ICO.grappin : ICO.porteurs}</b><span class="bal-nom">Port</span></button>`;
+      if (pill && n >= PILLAGE.jetonsMax) h += bulle('alerte', `${ICO.grappin}<em>${n}</em>`, `Jetons de pillage au complet : ${n}`, 'pillages');
       continue;
     }
     const ferme = estFutur(id) || (id === 'comptoir' && !j.batiments.comptoir && !chantierDe(j, id));
@@ -1718,7 +1719,7 @@ export function htmlCoupe(e: EcranDistrict): string {
   if (j.chambre && e.grand) h += bandeauTableau(e, e.grand, e.uid ?? null);
 
   // deux volets : les Strates et les Épreuves (les missions partent du Port depuis le 28 octobre 2026)
-  const ouvert = j.chambre && strateVaincue(j) >= 1;
+  const ouvert = j.chambre && strateVaincue(j) >= EPREUVES_STRATE;
   const volet = ouvert && e.ongletTour === 'epreuves' ? 'epreuves' : 'strates';
   if (ouvert) {
     const faites = epreuvesDeLaSemaine(e.now, j).filter((ep) => j.epreuves.faites.includes(ep.id)).length;
@@ -1732,7 +1733,7 @@ export function htmlCoupe(e: EcranDistrict): string {
   }
   if (volet === 'epreuves') h += htmlEpreuves(e);
   else h += htmlStrates(e, off, manque);
-  if (j.chambre && !ouvert) h += `<p class="tr-note">${ICO.verrou}Les Épreuves s’ouvrent quand le gardien de la Strate −1 est vaincu.</p>`;
+  if (j.chambre && !ouvert) h += `<p class="tr-note">${ICO.verrou}Les Épreuves de la semaine s’ouvrent quand le gardien de la Strate −${EPREUVES_STRATE} est vaincu : les Veilleurs ne mettent à l’épreuve que ceux qui ont passé le couloir muré.</p>`;
   h += feuilleBatiment(e) + feuilleVestiges(e);
   return coquille(e, h, 'ecran-coupe tr');
 }
@@ -2119,7 +2120,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   // on ne compose plus ici (la grille de tous les Porteurs prenait l'écran)
   const toutes = escouadesDe(j);
   const active = escouadeActive(j);
-  h += `<section class="es-equipes" aria-label="Escouade qui part"><div class="es-equipes-tete"><span class="surtitre">Quelle escouade part ?</span>`
+  h += `<section class="es-equipes" aria-label="Escouade qui part"><div class="es-equipes-tete"><span class="surtitre">${toutes.length > 1 ? 'Quelle escouade part ?' : 'L’escouade qui part'}</span>`
     + `<button type="button" class="es-modifier" data-action="escouade-modifier">${ICO.porteurs}Modifier</button></div>`
     + `<div class="es-equipes-choix" role="radiogroup" aria-label="Escouade qui part">`
     + toutes.map((l, k) => {

@@ -1,8 +1,9 @@
 // « Mon escouade » (décision du 23 octobre 2026) : l'escouade est enregistrée, et ne change qu'au district.
 import { describe, expect, it } from 'vitest';
-import { choisirEscouade, escouadesDe, cartesNouvelles, marquerVus, porteursNouveaux, escouadeDe, escouadePourDepart, nouveauJeu, partir, placerDansEscouade, poster, estJeuValide, type Jeu } from '../src/core/jeu';
+import { choisirEscouade, escouadesDe, cartesNouvelles, marquerVus, porteursNouveaux, escouadeDe, escouadePourDepart, nouveauJeu, partir, placerDansEscouade, ESCOUADES_STRATE, poster, estJeuValide, type Jeu } from '../src/core/jeu';
 
 const pret = () => { const j = nouveauJeu(0, 1); j.chambre = true; j.recrues = true; return j; };
+const pretDebut = pret;
 
 describe('Mon escouade', () => {
   it('commence avec Ilka, Doran et Véla', () => {
@@ -110,6 +111,17 @@ describe('Changer d’appareil (25 octobre 2026)', () => {
 
 // Les trois escouades (25 octobre 2026) : on en enregistre trois, une seule descend, un Porteur n'est que dans une seule.
 describe('Les trois escouades', () => {
+  // les 2ᵉ et 3ᵉ escouades s'ouvrent après le gardien de −4 (2 novembre 2026)
+  const pret = () => { const j = pretDebut(); j.strate = ESCOUADES_STRATE; j.frontVaincu = true; return j; };
+
+  it('avant −4, une seule escouade ; les autres viennent après son gardien', () => {
+    const j = pretDebut();
+    expect(escouadesDe(j)).toHaveLength(1);
+    expect(choisirEscouade(j, 1).ok).toBe(false);
+    j.strate = ESCOUADES_STRATE; j.frontVaincu = true;
+    expect(escouadesDe(j)).toHaveLength(3);
+  });
+
   const autres = (j: Jeu) => escouadePourDepart({ ...j, escouade: [] }).filter((id) => !['ilka', 'doran', 'vela'].includes(id));
 
   it('une ancienne sauvegarde garde son escouade en escouade 1, les deux autres vides', () => {

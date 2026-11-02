@@ -1,13 +1,15 @@
 // Les pillages (26 octobre 2026) : garnison, force des gardes, butin, coffre, jetons et attaques subies.
 import { describe, expect, it } from 'vitest';
 import {
+  ESCOUADES_STRATE,
   PILLAGE, butinPillage, chanceVictoire, choisirDefense, cibleDe, escouadeDefense, escouadesDe, placerDansEscouade, ciblesBots, etatPillage, forceEscouade, garnisonDe, majJetons, multButin,
   nouveauJeu, piller, protege, remonter, subirPillages, type Cible,
 } from '../src/core/jeu';
 import { jouerTourMoyen } from '../src/core/robot';
 
 const ESC = ['ilka', 'doran', 'vela'];
-const pret = () => { const j = nouveauJeu(0, 1); j.chambre = true; j.recrues = true; j.frontVaincu = true; return j; };
+// les pillages s'ouvrent après le gardien de −3 (2 novembre 2026)
+const pret = (strate: number = PILLAGE.strateMin) => { const j = nouveauJeu(0, 1); j.chambre = true; j.recrues = true; j.strate = strate; j.frontVaincu = true; return j; };
 
 /** Joue le pillage en cours jusqu'au bout (joueur moyen) et remonte */
 function jouer(j: ReturnType<typeof pret>) {
@@ -18,14 +20,14 @@ function jouer(j: ReturnType<typeof pret>) {
 
 describe('Les pillages', () => {
   it('la garnison reprend l’escouade, ses PV et ses cartes', () => {
-    const g = garnisonDe(pret());
+    const g = garnisonDe(pret(1));
     expect(g.porteurs.map((p) => p.id)).toEqual(ESC);
     expect(g.porteurs.every((p) => p.pv > 0 && p.cartes.length > 0)).toBe(true);
     expect(g.strate).toBe(1);
   });
 
   it('la garnison se choisit parmi les escouades, pas forcément celle qui descend', () => {
-    const j = pret();
+    const j = pret(ESCOUADES_STRATE);
     expect(placerDansEscouade(j, 0, 'vela', 1).ok).toBe(true);
     expect(escouadesDe(j)[1]).toEqual(['vela']);
     expect(choisirDefense(j, 2).ok).toBe(false);
@@ -126,7 +128,7 @@ describe('Les pillages', () => {
   });
 
   it('les attaques subies ne touchent que le coffre, plafonnées, chacune une seule fois', () => {
-    const j = pret();
+    const j = pret(1);
     j.composants = 500;
     etatPillage(j).coffre = 40;
     const subis = [
