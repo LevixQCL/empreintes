@@ -72,7 +72,7 @@ export const HALTES: HalteDef[] = [
   H(2, 2, 'La pièce aux lits',
     'Des lits de camp alignés, des couvertures pliées au carré. Les pilleurs ont dormi ici cette nuit. Ils ont laissé un mot sur un oreiller.', [
       d('Le mot', v('ilka', '« Elles nous parlent toute la nuit. On les emmène plus bas, c’est ce qu’elles veulent. » Signé : B. Super. Des pilleurs poètes.'), v('', '« Elles nous parlent toute la nuit. On les emmène plus bas. » Signé : B.')),
-      d('Un dessin d’enfant', v('doran', 'Un dessin de 2060 : une maison sur l’eau, un soleil, et une grande porte tout en bas. Les enfants des abris dessinaient l’Écluse.'), v('', 'Un dessin d’enfant, punaisé au mur : une maison sur l’eau et une grande porte tout en bas.')),
+      d('Un dessin d’enfant', v('doran', 'Un dessin de 2066 : une maison sur l’eau, un soleil, et une grande porte tout en bas. Les enfants des abris dessinaient l’Écluse.'), v('', 'Un dessin d’enfant, punaisé au mur : une maison sur l’eau et une grande porte tout en bas.')),
       d('Les couvertures', v('vela', 'Elles sentent la peur. Pas celle des pilleurs. Celle des cristaux qu’ils portaient.', ), v('', 'Les couvertures sont encore chaudes. Les pilleurs sont partis il y a peu.')),
     ], [
       { texte: 'Fouiller leurs affaires', effet: 'composants', recit: 'Dans un sac, des outils de fouille et quelques pièces. Brac, ou qui que ce soit, n’en aura plus besoin.' },
@@ -200,15 +200,15 @@ export const HALTES: HalteDef[] = [
     'Deux passerelles franchissent le même gouffre, côte à côte. L’une est neuve, l’autre a cédé. Les deux existent en même temps.', [
       d('La passerelle cassée', v('ilka', 'Celle des Hauts-Ponts. Celle qui a cédé sous moi. Elle n’a rien à faire ici.'), v('', 'Une passerelle cassée en son milieu, rouillée.')),
       d('La passerelle neuve', v('ilka', 'Et celle-là, c’est celle qui n’a jamais cédé. Celle où j’ai encore mes jambes. Je ne veux pas la regarder.'), v('', 'Une passerelle neuve, intacte, juste à côté de l’autre.')),
-      d('Les lignes d’eau', v('doran', 'Ils regravaient leur ligne plus haut, chaque année. Comme nous à la Nuit des lignes.'), v('', 'Des dizaines de lignes d’eau gravées, l’une au-dessus de l’autre.')),
+      d('Les lignes d’eau', v('doran', 'Ils regravaient leur ligne plus haut, chaque fois. Ils ont tenu le compte longtemps.'), v('', 'Des dizaines de lignes d’eau gravées, l’une au-dessus de l’autre.')),
     ], [
       { texte: 'Prendre la passerelle cassée', effet: 'eclat', drapeau: 'vraie-rive', recit: 'Vous traversez par la vraie, en sautant le trou. Ilka passe la première. De l’autre côté, un Éclat, là où la passerelle neuve aurait dû arriver.' },
       { texte: 'Prendre la passerelle neuve', effet: 'lampe', recit: 'La passerelle neuve tient, bien sûr. Au bout, une lanterne qui n’existe que dans ce souvenir. Elle éclaire quand même.' },
     ]),
   H(7, 2, 'Ceux qui regravaient',
     'Un mur entier couvert de lignes d’eau, et sous chaque ligne, une phrase. Ceux d’avant écrivaient ce qu’ils espéraient encore.', [
-      d('La première ligne', v('vela', '« L’Écluse tiendra. » Tout en bas, la plus vieille. Ils y croyaient.'), v('', 'Sous la ligne la plus basse : « L’Écluse tiendra. »')),
-      d('Une ligne au milieu', v('ilka', '« On montera plus haut. » Alors eux non plus, ils ne l’avaient pas, leur Écluse.'), v('', 'Plus haut : « On montera plus haut. »')),
+      d('La première ligne', v('vela', '« L’eau s’arrêtera ici. » Tout en bas, la plus vieille. Ils y croyaient.'), v('', 'Sous la ligne la plus basse : « L’eau s’arrêtera ici. »')),
+      d('Une ligne au milieu', v('ilka', '« On montera plus haut. » Ils ne savaient pas la retenir. Ils savaient graver.'), v('', 'Plus haut : « On montera plus haut. »')),
       d('La dernière ligne', v('doran', 'Il n’y a rien sous la dernière. Juste une empreinte de main.'), v('', 'Sous la ligne la plus haute, pas de phrase. Une empreinte de main.')),
     ], [
       { texte: 'Graver une ligne', effet: 'eclat', drapeau: 'ligne-gravee', recit: 'Tu graves une ligne au-dessus de toutes les autres, et dessous : « On ne la laissera pas monter seule. » Un Éclat se détache du mur.' },
@@ -295,7 +295,7 @@ export const HALTES: HalteDef[] = [
   H(10, 2, 'La salle des tables',
     'Des tables gravées, alignées comme dans une école. Sur chacune, la même phrase, de plus en plus effacée.', [
       d('La phrase', v('vela', '« Que celui qui lit ceci compte les voix qu’il porte. » Compte. Le mot de la Confluence.'), v('', '« Que celui qui lit ceci compte les voix qu’il porte. »')),
-      d('Les bancs', v('ilka', 'Ils apprenaient ça par cœur. Comme une leçon. Comme nous la Nuit des lignes.'), v('', 'Des bancs de pierre, usés par des générations.')),
+      d('Les bancs', v('ilka', 'Ils apprenaient ça par cœur. Comme une leçon qu’on récite chaque semaine.'), v('', 'Des bancs de pierre, usés par des générations.')),
       d('Une table neuve', v('doran', 'Celle-là est plus récente. Même écriture que les autres. Il a ajouté quelque chose dessous, puis il l’a effacé.'), v('', 'Une table plus récente, dont la dernière ligne a été effacée.')),
     ], [
       { texte: 'Compter tes voix', effet: 'eclat', drapeau: 'voix-comptees', recit: 'Tu fais compter à l’escouade les voix qu’elle porte. Véla s’arrête à un chiffre et sourit. Un Éclat se détache d’une table.' },
@@ -374,20 +374,20 @@ export const QUETES: QueteDef[] = [
   { strate: 5, nom: 'Les sceaux de cire', but: 'Relever les sceaux de la Maison Orsève sur les niches vidées.', etapes: [
     'Un sceau, daté de cette année. Les Hauts sont encore venus récemment.',
     'Un sceau plus ancien, d’il y a vingt ans. Ça ne date pas d’hier.',
-    'Un sceau de 2066. La Maison Orsève vidait les Berceaux avant même l’incident du 14.',
-  ], fin: 'La Maison Orsève vide les Berceaux depuis au moins 2066. L’incident du 14 n’a rien arrêté. Il a juste fermé une porte de plus.' },
+    'Un sceau de 2094, posé pendant le Levage. La Maison Orsève vidait déjà les Berceaux.',
+  ], fin: 'La Maison Orsève vide les Berceaux depuis au moins 2094, pendant le Levage. Le mur de 2066 n’a rien arrêté. Il a juste fermé une porte de plus.' },
   { strate: 6, nom: 'Les tampons de 2066', but: 'Retrouver les ordres de service du chantier de la nuit du 14.', etapes: [
     'Un ordre de service : « Couler le mur, niveau 7. Urgent. »',
     'Un deuxième : « Ne pas écouter. Ne pas répondre. »',
-    'Un troisième, signé de la direction du district de l’époque : « Sur demande de la Maison Orsève. »',
+    'Un troisième, signé du chef de chantier : « Sur ordre du bureau des abris. »',
     'Le dernier, de la main du père de Doran : « J’ai entendu le loquet. Ce n’était pas nous. »',
-  ], fin: 'En 2066, c’est la Maison Orsève qui a demandé au district de murer le niveau 7. Le loquet, lui, a été tiré de l’autre côté.' },
+  ], fin: 'En 2066, l’ordre de murer le niveau 7 est venu du bureau des abris. Le loquet, lui, a été tiré de l’autre côté.' },
   { strate: 7, nom: 'Les lignes d’eau', but: 'Relever les lignes d’eau de ceux d’avant, de la plus basse à la plus haute.', etapes: [
-    'La ligne la plus basse : « L’Écluse tiendra. »',
-    'Une ligne plus haut : « L’Écluse a cédé. On montera. »',
-    'Plus haut encore : « Les cœurs des Berceaux soulèvent. Les familles montent. »',
-    'La dernière : « Cinq familles. Les autres restent. »',
-  ], fin: 'Ceux d’avant ont soulevé leurs villes avec les cœurs des Berceaux. Pas pour tout le monde : pour cinq familles. Comme les Hauts.' },
+    'La ligne la plus basse, gravée profond, presque effacée par l’eau.',
+    'Une ligne plus haut, d’une autre main, plus pressée.',
+    'Plus haut encore, des dizaines de lignes serrées, à quelques doigts l’une de l’autre.',
+    'La dernière, tout en haut. Personne n’a gravé au-dessus.',
+  ], fin: 'Ils regravaient leur ligne plus haut, chaque fois. Rien ne dit ce qu’ils comptaient faire de l’eau.' },
   { strate: 8, nom: 'Les six Veilleurs', but: 'Retrouver les Veilleurs de Tobin égarés dans les souvenirs de la Ruche.', etapes: [
     'Une Veilleuse, endormie contre un pilier. Elle se réveille en demandant l’heure.',
     'Deux Veilleurs, qui se tenaient la main dans le même rêve.',
@@ -526,9 +526,9 @@ export const BESTIAIRE: Record<string, FicheBestiaire> = {
     secret: 'Les brigadiers prêtent serment sur une empreinte de la Maison. Certains récitent, en combat, un serment qui n’est pas le leur.',
   },
   'echo-veilleur': {
-    origine: 'L’écho d’un Veilleur mort en service, qui fait encore sa ronde dans les salles closes.',
+    origine: 'Le rémanent d’un Veilleur mort en service, qui fait encore sa ronde dans les salles closes.',
     conseil: 'Fêlures cachées, et il prend la lignée de la dernière carte qui le frappe : varie tes coups, et termine par celle qu’il craint.',
-    secret: 'Les échos de veilleurs connaissent encore les mots de passe des Veilleurs de Sédime. Tobin les a tous notés.',
+    secret: 'Les rémanents de veilleurs connaissent encore les mots de passe des Veilleurs de Sédime. Tobin les a tous notés.',
   },
   'sentinelle-verre': {
     origine: 'Une machine de ceux d’avant, en verre trempé, qui garde les portes rondes.',
@@ -548,7 +548,7 @@ export const BESTIAIRE: Record<string, FicheBestiaire> = {
   'essaim-ambre': {
     origine: 'Des insectes nés dans l’ambre de la Ruche. Ils gardent les tables gravées comme une reine.',
     conseil: 'Ses piqûres touchent toute l’escouade et il revient plus petit : un bouclier d’escouade vaut mieux qu’un soin.',
-    secret: 'L’ambre de la Ruche ne vient pas des insectes. Il suinte de quelque chose d’enfoui, plus bas : la Glacière.',
+    secret: 'L’ambre ne vient pas des insectes : il remonte des empreintes que la Ruche couve.',
   },
   'automate-graveur': {
     origine: 'Une machine de ceux d’avant, qui grave les tables. Elle continue, même quand plus personne ne lit.',

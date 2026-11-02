@@ -393,7 +393,7 @@ function teteContenu(j: Jeu, x: Expedition): string {
     if (poses || n < 5) h += `<span class="ex-vestiges${n >= 5 ? ' complet' : ''}" title="Vestiges de la Strate">${ICO.vestige}<b>Vestiges ${n} / 5</b>${x.gains?.vestiges?.length ? `<small>+${x.gains.vestiges.length} cette descente</small>` : ''}</span>`;
   }
   if (x.eveille) h += `<span class="ex-eveille">${ICO.lueur}<b>Gardien éveillé</b><small>plus fort, plus généreux</small></span>`;
-  if (x.releve) h += `<span class="ex-vestiges complet">${ICO.vestige}<b>Strate relevée</b><small>tout le plan est visible</small></span>`;
+  if (x.releve) h += `<span class="ex-vestiges complet">${ICO.vestige}<b>Strate complète</b><small>tout le plan est visible</small></span>`;
   return h;
 }
 

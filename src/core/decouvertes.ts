@@ -151,7 +151,7 @@ export function decouvertesExploration(x: Expedition, quetes: Record<number, num
   if (x.carte.salles.some((s) => s.vestige)) {
     r.push({ id: 'vestige', sur: 'PREMIÈRE RENCONTRE', titre: 'Les Vestiges', ico: 'vestige',
       texte: 'Chaque Strate cache 5 Vestiges, des objets d’autrefois. Ils ne se trouvent qu’en explorant, jamais en fouille : quelques-uns par descente, marqués d’un losange turquoise sur le plan, même dans le brouillard. Entre dans la salle (et gagne son combat s’il y en a un) pour le ramasser.',
-      conseil: 'Les cinq réunis, la Strate est relevée : une carte au choix, et tes fouilles y verront tout le plan. La Tour montre où tu en es.' });
+      conseil: 'Les cinq réunis, la Strate est complète : une carte au choix, et tes fouilles y verront tout le plan. La Tour montre où tu en es.' });
   }
   if (x.eveille) {
     r.push({ id: 'eveille', sur: 'PREMIÈRE RENCONTRE', titre: 'Le gardien éveillé', ico: 'lueur',

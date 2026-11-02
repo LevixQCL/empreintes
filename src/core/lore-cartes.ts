@@ -75,7 +75,7 @@ export const LORE_CARTES: Record<string, string> = {
   // Le Chœur
   'diapason-cristal': 'Un diapason de verre clair qu’on frappe une fois, et qui oblige toutes les empreintes autour de lui à chanter la même note. Les Résonants l’appellent « mettre la salle d’accord ».',
   'voix-basse': 'Une seule note, tenue très longtemps, si grave qu’on la sent dans les os avant de l’entendre. Seule, elle intrigue. Reprise par d’autres, elle fait céder les murs.',
-  'empreinte-jumelle': 'Deux directeurs ont pressé le pouce sur le même éclat de cristal bleu, chacun dans son archipel. Depuis, l’éclat garde deux empreintes qui ne se recouvrent jamais tout à fait : quand l’une frappe, l’autre se souvient du coup.',
+  'empreinte-jumelle': 'Deux directeurs ont pressé le pouce sur le même éclat de cristal bleu, chacun dans son district. Depuis, l’éclat garde deux empreintes qui ne se recouvrent jamais tout à fait : quand l’une frappe, l’autre se souvient du coup.',
   'chorale-ombres': 'Les ombres de plusieurs Résonants qui chantent ensemble, même quand leurs propriétaires se taisent. Joss dit que c’est la seule chorale qui ne fait jamais de fausse note.',
   'cloche-abysses': 'Une cloche remontée de la Strate −8, couverte de coquillages qui n’existent plus. Quand elle sonne, chaque empreinte autour d’elle répond sur le même ton.',
   'grand-unisson': 'Le quartier entier, une nuit, a chanté la même note pour veiller un des siens. Les Veilleurs l’ont accordée dans un carillon doré, dont chaque tube porte une voix. Il frappe d’autant plus fort qu’on est nombreux à le faire sonner.',
@@ -95,9 +95,9 @@ export const LORE_CARTES: Record<string, string> = {
   'sentence-muette': 'Les Orsève jugeaient sans un mot, d’un geste de la main. Aurel a gardé le geste et oublié le reste. « Je n’ai pas besoin de parler. Ils savent déjà ce qu’ils ont fait. »',
   // La Sève
   'pollen-ambre': 'Une poudre dorée que Kessa souffle sur les plaies. Ce qui n’a pas besoin de guérir durcit en une fine écorce, et protège encore.',
-  'seve-piliers': 'La sève qui suinte des vieux piliers de bois des Fondations, tiède même en hiver. Les Nés-de-mue la boivent pour réparer leur corps, et le surplus les recouvre comme un vernis.',
+  'seve-piliers': 'La sève qui suinte des fissures des vieux piliers des Fondations, entre la roche et le béton, tiède même en hiver. Les Nés-de-mue la boivent pour réparer leur corps, et le surplus les recouvre comme un vernis.',
   'mue-verre': 'Une peau neuve, transparente, qui pousse sous l’ancienne en une seule nuit. Quand on n’en a pas besoin, on la porte comme une armure.',
-  floraison: 'Une fois par génération, le bois mort des piliers fleurit. Les Génés y voient un signe : la vie déborde, et ce qu’elle ne peut pas soigner, elle le protège.',
+  floraison: 'Une fois par génération, la mousse sèche des piliers fleurit. Les Génés y voient un signe : la vie déborde, et ce qu’elle ne peut pas soigner, elle le protège.',
   // La Cadence
   'pas-chasse': 'Un pas de côté, un autre, et l’ennemi frappe l’air. Ilka danse quand elle se bat, et ne s’en rend même plus compte.',
   'lames-jumelles': 'Deux lames courtes, montées sur les avant-bras. La première ouvre, la seconde suit avant que la première ne soit revenue. Elles n’aiment pas attendre.',
@@ -121,7 +121,7 @@ export const LORE_CARTES: Record<string, string> = {
 
   // ---------- L’Héritage du district (27 octobre 2026) : la directrice parle, dans sa lettre ----------
   'foulee-directrice': '« Je n’ai jamais été la plus forte. J’étais toujours la première arrivée. Ces jambes-là m’ont portée sur chaque passerelle de ce district, et jusqu’aux abris murés. Jamais plus bas. Cours devant, directeur : les autres suivront. »',
-  'bras-fonderie': '« Ce bras a coulé les premiers piliers du district, du temps où on bâtissait à la main sur l’eau. Il ne sait rien faire de délicat. Il n’en a jamais eu besoin. »',
+  'bras-fonderie': '« Ce bras a coulé la première digue du district, du temps où on creusait à sec autour du puits. Il ne sait rien faire de délicat. Il n’en a jamais eu besoin. »',
   'coeur-glaciere': '« Un cœur dessiné par la Glacière elle-même, avant qu’on comprenne ce qu’elle était. Il garde tout, et rend tout d’un coup. Ne le laisse jamais s’éteindre. »',
   'carapace-fondations': '« Cette carapace a tenu une nuit entière devant la porte de l’ascenseur, pendant la grande crue. Personne n’est passé. Elle se souvient de chaque coup, et les rend. »',
   'oeil-grande-nuit': '« La nuit où les lumières du district se sont éteintes, quelqu’un voyait encore. Cet œil-là. Il trouve la faille, et il ne la quitte plus. »',

@@ -60,13 +60,13 @@ type Lieu = BatimentId | LieuFutur;
 const LIEUX_FUTURS: Record<LieuFutur, { nom: string; raison: string; promesse: string }> = {
   port: {
     nom: 'Port',
-    raison: 'Le vieux bateau reste amarré au ponton : tant que le gardien de la Strate −1 tient le puits, personne ne laisse le district sans défense pour prendre la mer.',
-    promesse: 'Le passage sûr, des équipages partiront d’ici vers les autres piliers, piller les archipels voisins.',
+    raison: 'Le bateau du passeur reste amarré sous les pilotis du Port, devant le sas de la digue : tant que le gardien de la Strate −1 tient le puits, personne ne laisse le district sans défense pour prendre la mer.',
+    promesse: 'Le passage sûr, des équipages partiront d’ici vers les ruines au large, et piller les archipels voisins.',
   },
   labo: {
     nom: 'Labo génétique',
     raison: 'Les cuves d’ambre sont vides. Pour les rallumer, il faudrait de l’ambre vivant, et on n’en trouve qu’au fond des Strates.',
-    promesse: 'Les Génés du quartier y tailleront un jour de nouvelles greffes.',
+    promesse: 'Les Génés du quartier y prépareront un jour de nouvelles sèves.',
   },
 };
 /**
@@ -833,9 +833,9 @@ function iconeRetour(l: string): Icone {
 
 /** Les âges du district : il change de visage avec la Tour du Noyau (art.ts, visuel) */
 const AGES: Record<1 | 2 | 3 | 4, { nom: string; texte: string }> = {
-  1: { nom: 'Le campement', texte: 'Quelques cabanes sur les piliers, et une Tour qui tient debout.' },
-  2: { nom: 'Le quartier s’éveille', texte: 'La Tour du Noyau tient bon : les habitants rallongent les pontons, réparent les toits et rouvrent les ateliers. Le district ressemble enfin à un quartier.' },
-  3: { nom: 'Le district prospère', texte: 'L’énergie circule, les marchands reviennent, et des maisons neuves poussent sur chaque pilier. On parle de ton district jusque dans les autres quartiers.' },
+  1: { nom: 'Le campement', texte: 'Quelques cabanes au fond de la cuvette, et une Tour qui tient debout.' },
+  2: { nom: 'Le quartier s’éveille', texte: 'La Tour du Noyau tient bon : les habitants consolident la digue, réparent les toits et rouvrent les ateliers. Le district ressemble enfin à un quartier.' },
+  3: { nom: 'Le district prospère', texte: 'L’énergie circule, les marchands reviennent, et des maisons neuves montent contre la digue. On parle de ton district jusque dans les autres quartiers.' },
   4: { nom: 'Le phare de Vertiga', texte: 'La Tour du Noyau illumine la mer. Ton district est devenu un repère, et même les Hauts le regardent.' },
 };
 
@@ -962,7 +962,7 @@ function fenetreLegs(e: EcranDistrict): string {
 
 function fenetreChoix(j: Jeu): string {
   const c = j.choix[0]!;
-  const titre = c.source === 'releve' ? 'La Strate est relevée' : c.source === 'etoiles' ? 'Les étoiles des Strates' : c.source === 'rodeur' ? 'Le trophée du Rôdeur' : c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : c.source === 'parrainage' ? 'Le parrainage' : c.source === 'maree' ? 'La grande marée' : 'Butin de la semaine';
+  const titre = c.source === 'releve' ? 'La Strate est complète' : c.source === 'etoiles' ? 'Les étoiles des Strates' : c.source === 'rodeur' ? 'Le trophée du Rôdeur' : c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : c.source === 'parrainage' ? 'Le parrainage' : c.source === 'maree' ? 'La grande marée' : 'Butin de la semaine';
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><small class="aide choix-loupe">Reste appuyé sur une carte pour lire son effet.</small><div class="cartes-choix">`
     + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}" data-carte="${id}"`, true)).join('')
     + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
@@ -1687,7 +1687,7 @@ function feuilleVestiges(e: EcranDistrict): string {
   return `<div class="voile-feuille" ${fermer} aria-hidden="true"></div><section class="feuille vestiges-fiche" role="dialog" aria-modal="true" aria-labelledby="vs-titre">`
     + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">Strate −${n} · Vestiges ${trouves.size} / ${tous.length}</span><h2 id="vs-titre">${fini && r ? echap(r.titre) : 'Ce que la Strate garde'}</h2></div>`
     + `<button type="button" class="btn-icone" ${fermer} aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
-    + (fini ? '' : `<p class="aide">Les Vestiges ne se trouvent qu’en <b>explorant</b> la Strate : ${n <= 5 ? 'deux' : 'trois'} par descente, marqués ${ICO.vestige} sur le plan, même dans le brouillard. Les cinq réunis, la Strate est relevée : une carte au choix, et tes fouilles y verront tout le plan, avec un filon plus riche.</p>`)
+    + (fini ? '' : `<p class="aide">Les Vestiges ne se trouvent qu’en <b>explorant</b> la Strate : ${n <= 5 ? 'deux' : 'trois'} par descente, marqués ${ICO.vestige} sur le plan, même dans le brouillard. Les cinq réunis, la Strate est complète : une carte au choix, et tes fouilles y verront tout le plan, avec un filon plus riche.</p>`)
     + `<ol class="vs-liste">` + tous.map((v) => (trouves.has(v.id)
       ? `<li class="trouve">${ICO.vestige}<p><b>${echap(v.nom)}</b>${echap(v.texte)}</p></li>`
       : `<li class="manque">${ICO.vestige}<p><b>Un Vestige à trouver</b>Quelque part dans la Strate −${n}.</p></li>`)).join('') + `</ol>`

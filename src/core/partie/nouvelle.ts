@@ -18,7 +18,7 @@ const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: GardeCham
   options: [
     { id: 'orseve', nom: 'La Maison Orsève', phrase: 'Nous n’héritons pas du pouvoir. Nous héritons de la responsabilité de le contenir.',
       effet: 'Les Brigades sécurisent la chambre et ne te barrent plus la route dans les Strates. Les Hauts paient : +1 Éclat sur chaque gardien vaincu.' },
-    { id: 'district', nom: 'Le district seul', phrase: 'Ce qui est sous nos piliers est à nous.',
+    { id: 'district', nom: 'Le district seul', phrase: 'Ce qui est sous notre digue est à nous.',
       effet: 'Le quartier se mobilise : +20 % de composants à chaque expédition. Mais les Brigades contestent, et tu les croiseras dans les salles closes.' },
     { id: 'commission', nom: 'Une commission avec les Veilleurs', phrase: 'Nous ne sommes pas les propriétaires du passé. Nous sommes les prochains à pouvoir le perdre.',
       effet: 'Les Veilleurs partagent leurs fouilles : 25 % de chances de carte par combat au lieu de 20 %.' },
@@ -107,7 +107,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     strate: 1,
     dernierTick: now,
     expedition: null,
-    journal: ['Tu viens d’être élu à la tête du district. Les piliers t’attendent.'],
+    journal: ['Tu viens d’être élu à la tête du district. La digue t’attend.'],
     introVue: false,
     chambre: false,
     recrues: false,

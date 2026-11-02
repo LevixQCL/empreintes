@@ -200,7 +200,7 @@ export const LETTRE_LEGS = {
   titre: 'La lettre de la directrice',
   texte: 'Sous la Tour du Noyau, derrière une plaque, les ouvriers avaient trouvé un coffre de nacre, gravé à la main : « Pour celui qui remontera de la première Strate. Pas avant. » Ce soir, Ilka te le tend. Dedans, une lettre.',
   /** la lettre elle-même, mise à part (31 octobre 2026) */
-  lettre: 'Directeur, tu es descendu là où je ne suis jamais allée, et tu es revenu avec les tiens. Alors tu es digne de ce que je n’ai confié à personne. Les Hauts vident les Berceaux ; j’ai sauvé dix vierges, jamais recopiées. Une seule est pour toi : dis-moi qui tu es, et je te dirai laquelle.',
+  lettre: 'Directeur, tu es descendu là où je ne suis jamais allée, et tu es revenu avec les tiens. Alors tu es digne de ce que je n’ai confié à personne. Les Hauts vident les Berceaux ; j’ai sauvé dix originaux, jamais recopiés. Une seule est pour toi : dis-moi qui tu es, et je te dirai laquelle.',
   question: 'Qu’est-ce qui tient un district debout ?',
   lignees: [
     { id: 'tech', nom: 'La machine', phrase: 'Des mains qui réparent ce que les autres jettent.' },

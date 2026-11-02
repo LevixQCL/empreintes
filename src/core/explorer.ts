@@ -52,11 +52,11 @@ export const VESTIGES: VestigeDef[] = [
   V(6, 3, 'Une radio de chantier', 'Une radio de chantier, bloquée sur une fréquence. Quand on l’allume, on entend respirer.'),
   V(6, 4, 'Un plan du niveau 7', 'Un plan du niveau 7, annoté au crayon rouge : « Ici. Et ici. Et là. Couler partout. »'),
   V(6, 5, 'Une berceuse', 'Une feuille de papier, une berceuse écrite à la main. En marge : « Pour qu’ils arrêtent de pleurer. Ça marche. »'),
-  // −7 : ceux d'avant, l'Écluse, les lignes d'eau
+  // −7 : ceux d'avant et leurs lignes d'eau (rien sur l'Écluse ni les Berceaux : la révélation est à −10)
   V(7, 1, 'Une jauge de crue', 'Une règle de bronze graduée, scellée au mur. Ses chiffres ne ressemblent à rien de connu, mais les traits montent.'),
-  V(7, 2, 'Une rame de verre', 'Une rame taillée dans un verre épais et léger. Ceux d’avant ramaient, eux aussi, quand l’eau est montée.'),
-  V(7, 3, 'Un cœur de Berceau', 'Un cristal énorme, éteint, pris dans une monture d’or. Il a soulevé quelque chose, autrefois. Quelque chose de lourd.'),
-  V(7, 4, 'Une liste de noms', 'Une plaque couverte de noms. Cinq sont dorés. Tous les autres ont été rayés, un par un, avec soin.'),
+  V(7, 2, 'Une rame de verre', 'Une rame taillée dans un verre épais et léger. Ceux d’avant ont ramé, quand l’eau est montée.'),
+  V(7, 3, 'Un cœur de Berceau', 'Un cristal énorme, éteint, pris dans une monture d’or. Il a tenu quelque chose, autrefois. Quelque chose de lourd.'),
+  V(7, 4, 'Une liste de noms', 'Une plaque couverte de noms, ligne après ligne. Chacun a été rayé, un par un, avec soin.'),
   V(7, 5, 'Un jouet d’enfant', 'Un petit bateau de bois, la voile en tissu. Ceux d’avant avaient des enfants, et des enfants qui jouaient à la mer.'),
   // −8 : la Ruche, les tables, les Veilleurs
   V(8, 1, 'Un éclat de table', 'Un morceau de table de pierre, gravé de lignes fines. Les mêmes lignes que sur la paume d’une main.'),
@@ -78,7 +78,7 @@ export const VESTIGES: VestigeDef[] = [
   V(10, 5, 'Une lampe allumée', 'Une lampe qui brûle encore, au fond d’une niche. Personne ne l’a allumée pour vous : elle n’a jamais été éteinte.'),
 ];
 
-/** L'histoire d'une Strate relevée : son titre, et la ligne qui la conclut */
+/** L'histoire d'une Strate complète (ses 5 Vestiges) : son titre, et la ligne qui la conclut */
 export const RELEVES: ReleveDef[] = [
   { strate: 1, titre: 'Le quai 4', fin: 'Une équipe de six est descendue le 14 octobre 2066, entre la soupe et le pain. Elle a marqué le chemin du retour à la craie bleue.' },
   { strate: 2, titre: 'Les cailloux de Brac', fin: 'Brac comptait ses cristaux comme ses cailloux : un par un, rangés. Il a su lesquels il ne fallait pas vendre.' },
@@ -86,10 +86,10 @@ export const RELEVES: ReleveDef[] = [
   { strate: 4, titre: 'Le veilleur et l’enfant', fin: 'Derrière les portes rondes, quelqu’un a compté les semaines, tissé, bu son thé. Et il n’était pas seul : il y avait une petite lampe.' },
   { strate: 5, titre: 'L’arrivée', fin: 'La Maison Orsève emporte les cristaux des Berceaux « avant l’arrivée ». Elle ne dit pas l’arrivée de qui, ni d’où.' },
   { strate: 6, titre: 'La berceuse du niveau 7', fin: 'En 2066, on a coulé le mur sur des voix. Une ouvrière leur chantait une berceuse pour qu’elles se taisent. Elles se sont tues.' },
-  { strate: 7, titre: 'Les enfants de ceux d’avant', fin: 'Ceux d’avant avaient des enfants qui jouaient à la mer. Cinq familles sont montées ; les autres ont gardé leurs jouets.' },
+  { strate: 7, titre: 'Les enfants de ceux d’avant', fin: 'Ceux d’avant avaient des enfants qui jouaient à la mer. Ils ont gravé leur ligne plus haut, et laissé les jouets en bas.' },
   { strate: 8, titre: 'Mille deux cents tables', fin: 'Chaque table de la Ruche garde un rêve. Les Veilleurs les comptaient pour ne pas s’y perdre, jusqu’à ce qu’ils s’y perdent.' },
   { strate: 9, titre: 'La lettre sur la bobine', fin: 'La Tisseuse a tissé jusqu’au dernier fil. Il ne reste de son nom qu’une lettre, sur le bois d’une bobine.' },
-  { strate: 10, titre: 'Celui qui garde', fin: 'Une seule personne veille au Fond depuis toujours. Elle n’a jamais éteint sa lampe. Elle attendait qu’on descende.' },
+  { strate: 10, titre: 'Celui qui garde', fin: 'Une seule personne veille au Fond depuis très longtemps. Elle n’a jamais éteint sa lampe. Elle attendait qu’on descende.' },
 ];
 
 export const vestigeDef = (id: string) => VESTIGES.find((v) => v.id === id);

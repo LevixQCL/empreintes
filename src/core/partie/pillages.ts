@@ -413,7 +413,7 @@ export function subirPillages(j: Jeu, subis: PillageSubi[]): string[] {
       etat.coffre -= pris;
       j.composants -= pris;
       noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: false, composants: -pris, le: s.le });
-      l.push(`${s.nom} a pillé ton archipel${pris ? ` et pris ${pris} composants de ton coffre` : ''}.`);
+      l.push(`${s.nom} a pillé ton district${pris ? ` et pris ${pris} composants de ton coffre` : ''}.`);
     } else {
       const gagne = Math.min(Math.max(0, Math.floor(s.perte)), plafond);
       etat.coffre += gagne;

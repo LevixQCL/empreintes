@@ -103,7 +103,7 @@ export const SCENES: Scene[] = [
       { qui: 'hald', texte: 'Votre directeur décidera. En attendant, mes Brigades suivent la Confluence. Avec ou sans vous.' },
     ]),
   entree(3, 'Dans le noir',
-    'À la Strate −3, aucune lampe humaine ne s’est jamais arrêtée. Tous les puits de Vertiga y débouchent. Les Brigades de la capitaine Hald y sont entrées hier, par le leur ; aucune patrouille n’est remontée.', [
+    'À la Strate −3, loin du Puits Zéro et de ses rampes de visite, aucune lampe humaine ne s’est jamais arrêtée longtemps. Tous les puits de Vertiga y débouchent. Les Brigades de la capitaine Hald y sont entrées hier, par le leur ; aucune patrouille n’est remontée.', [
       { qui: 'nuit', texte: 'Le noir n’est pas vide. Vos soldats sont vivants : je les entends respirer, loin, en bas.', si: present('nuit') },
       { qui: 'vela', texte: 'Les soldats sont vivants. Je les sens, loin en bas, serrés les uns contre les autres.', si: absent('nuit') },
       { qui: 'doran', texte: 'La Confluence s’est arrêtée quelque part en dessous. Elle a fini de chercher.' },
@@ -186,8 +186,8 @@ export const SCENES: Scene[] = [
   // ---------- Acte III · Ceux d'avant (la Tisseuse, puis le Premier Porteur) ----------
   entree(7, 'Deux passerelles',
     'Sous les salles closes, les mémoires se contredisent. Entre les deux passerelles, sur la pierre, une ligne d’eau gravée, puis une autre plus haut, puis des dizaines, l’une au-dessus de l’autre.', [
-      { qui: 'doran', texte: 'Ils regravaient leur ligne plus haut. Comme nous à la Nuit des lignes.' },
-      { qui: 'ilka', texte: 'Alors eux non plus, ils ne l’avaient pas, leur Écluse.' },
+      { qui: 'doran', texte: 'Ils regravaient leur ligne plus haut. Chaque fois un peu plus haut.' },
+      { qui: 'ilka', texte: 'Ils n’ont pas arrêté l’eau. Ils ont gravé plus haut, c’est tout.' },
       { qui: 'ilka', texte: 'Je me souviens de la passerelle qui a cédé. Ici, je m’en souviens deux fois. Une fois, quelqu’un plonge. L’autre fois, personne.' },
       { qui: 'doran', texte: 'Accroche-toi à celle où quelqu’un plonge. C’est la tienne. Les autres, on te les prête.' },
       { qui: 'vela', texte: 'Depuis la lecture, j’entends tout en double. Restez près de moi. Si je me trompe de souvenir, dites-le-moi.', si: lecture('autoriser') },
@@ -229,7 +229,7 @@ export const SCENES: Scene[] = [
     ]),
   entree(10, 'Le fond',
     'La Strate −10 ne ressemble à aucune autre. Les salles sont nettes, les cristaux clairs, les portes mieux scellées que toutes les autres. Au centre, quelqu’un est assis. Il vous attendait.', [
-      { qui: 'vela', texte: 'Une seule voix, la plus ancienne de toutes. Pas de mélange, pas de double. Celui qui la porte sait exactement qui il est.' },
+      { qui: 'vela', texte: 'Une seule voix, la plus ancienne, portée par un autre. Pas de mélange. Celui qui la porte sait exactement qui il est.' },
       { qui: 'doran', texte: 'En 2066, mon père a entendu quelqu’un tirer un loquet. Ici, toutes les portes ont été fermées de l’intérieur.' },
       { qui: 'ilka', texte: 'On est venus jusqu’ici pour des réponses. Allons lui en demander.' },
     ]),

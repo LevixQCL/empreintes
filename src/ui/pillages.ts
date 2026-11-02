@@ -84,7 +84,7 @@ export function htmlPillages(e: EcranDistrict): string {
 
   if (choisie) h += ficheCible(j, choisie, force, faits.includes(choisie.id), etat.jetons);
   h += journal(etat.historique ?? [], e.now);
-  h += `<p class="pl-regle">${ICO.bouclier}<span>Ton archipel est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus ${Math.round(PILLAGE.partVolee * 100)} % de ton coffre, puis ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus. Tes autres composants, tes cartes et tes Éclats ne risquent rien.</span></p>`;
+  h += `<p class="pl-regle">${ICO.bouclier}<span>Ton district est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus ${Math.round(PILLAGE.partVolee * 100)} % de ton coffre, puis ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus. Tes autres composants, tes cartes et tes Éclats ne risquent rien.</span></p>`;
   return coquille(e, h, 'pl');
 }
 
@@ -114,7 +114,7 @@ function journal(h: EntreeHistorique[], now: number): string {
     const nom = `<b>${echap(x.nom)}</b>`;
     if (x.sens === 'attaque') return x.gagne ? `Tu as pillé ${nom}` : `${nom} a repoussé ton escouade`;
     if (x.refusee) return `${nom} s’est heurté à ton bouclier`;
-    return x.gagne ? `Ta garnison a repoussé ${nom}` : `${nom} a pillé ton archipel`;
+    return x.gagne ? `Ta garnison a repoussé ${nom}` : `${nom} a pillé ton district`;
   };
   const lignes = h.slice(0, 10);
   return `<section class="pl-journal" aria-label="Journal du port"><span class="surtitre">${ICO.grappin}Journal du port</span>`
@@ -157,8 +157,8 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
   const recharge = `${Math.floor(PILLAGE.rechargeMs / 3_600_000)} h ${Math.round((PILLAGE.rechargeMs % 3_600_000) / 60_000)}`;
   const vole = `+${Math.round(PILLAGE.partVolee * 100)} %`, perte = `−${Math.round(PILLAGE.perteDefaite * 100)} %`;
   return `<section class="fl-intro pl-intro" style="--decor:url(${vignetteArchipel(2)})"><div class="fl-intro-texte">`
-    + `<span class="surtitre">Le ponton du district</span><h2>Le ponton reprend du service</h2>`
-    + `<p>D’ici partent les barques du passeur : vers les ruines noyées, et vers les archipels voisins.</p></div></section>`
+    + `<span class="surtitre">Le Port du district</span><h2>Le Port reprend du service</h2>`
+    + `<p>Devant le sas de la digue, sur ses pilotis, le Port voit partir les barques du passeur : vers les ruines noyées, et vers les archipels voisins.</p></div></section>`
     + (etat === 'fermee' ? `<p class="fl-condition">${ICO.verrou}<span><strong>Le bateau reste à quai · vaincs le gardien de la Strate −${PILLAGE.strateMin}</strong><small>Tant que le gardien tient le puits, personne ne quitte le district.</small></span></p>` : '')
 
     // allégé le 28 octobre 2026 : une phrase et trois chiffres par bloc, le détail se déplie
@@ -178,7 +178,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
       cle(ICO.atk, String(PILLAGE.subiesMax), 'attaques subies par jour au plus'),
     ])
 
-    + replie('L’histoire', `<p>Quand la mer est montée, chaque quartier s’est accroché à son pilier. Entre eux, il ne reste que l’eau, les ruines de l’ancien monde, et les passeurs qui connaissent les courants.</p>`
+    + replie('L’histoire', `<p>Quand la mer est montée, chaque quartier s’est accroché à ses piliers ; le tien s’est retranché derrière sa digue. Entre eux, il ne reste que l’eau, les ruines de l’ancien monde, et les passeurs qui connaissent les courants.</p>`
       + `<p>Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : on pille, on se défend, et chacun garde un œil sur son coffre.</p>`)
     + replie('Les règles en détail', `<ul class="fl-pr-etapes">`
       + etape(ICO.porteurs, 'Un Porteur libre prend la barque', `Vers un pilier abandonné ou une ruine noyée : ${MISSIONS.courte.heures} h ou ${MISSIONS.longue.heures} h, avec des vivres et des lampes payés en énergie. Le nombre de barques en mer en même temps grandit avec la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 6 et 4 au niveau 9.`)

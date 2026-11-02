@@ -439,7 +439,7 @@ export const ENNEMIS: EnnemiDef[] = [
     ],
   },
   {
-    id: 'echo-veilleur', nom: 'Écho de veilleur', lignee: 'reso', tag: 'ÉCHO', pvMax: 78,
+    id: 'echo-veilleur', nom: 'Rémanent de veilleur', lignee: 'reso', tag: 'RÉMANENT', pvMax: 78,
     traits: [{ type: 'evanescent', part: 0.25 }, { type: 'assimilation' }],
     motif: [
       { type: 'atk', nom: 'Griffe d’ombre', v: 12, cible: 'faible' },

@@ -540,7 +540,7 @@ function feuilleExpedition(e: EcranDistrict): string {
   const strate: string[] = [];
   if (g.quete) strate.push(ligne(ICO.quete, g.quete.finie ? 'Achevée' : `${g.quete.etape} / ${g.quete.total}`, `quête « ${echap(g.quete.nom)} »`, g.quete.finie ? 'nouvelle' : ''));
   if (ex?.vestiges.length) strate.push(ligne(ICO.vestige, `+${ex.vestiges.length}`, `Vestige${ex.vestiges.length > 1 ? 's' : ''} : ${echap(ex.vestiges.map((v) => vestigeDef(v)?.nom ?? '').join(', '))}`));
-  if (ex?.releve) strate.push(ligne(ICO.vestige, `−${ex.releve}`, 'Strate relevée', 'nouvelle'));
+  if (ex?.releve) strate.push(ligne(ICO.vestige, `−${ex.releve}`, 'Strate complète', 'nouvelle'));
   if (ex?.etoiles.length) strate.push(ligne(ICO.etoile, `+${ex.etoiles.length}`, `étoile${ex.etoiles.length > 1 ? 's' : ''} de Strate`, 'nouvelle'));
   if (ex?.rodeur) strate.push(ligne(ICO.griffes, ex.rodeur.part ? `${Math.round(ex.rodeur.part * 100)} %` : 'Abattu', `${echap(ennemiDef(ex.rodeur.id).nom)}${ex.rodeur.part ? ' s’est enfui' : ''}`));
   if (strate.length) h += `<h3 class="rx-titre">${ICO.strate}Dans la Strate</h3><ul class="rm-gains">${strate.join('')}</ul>`;
