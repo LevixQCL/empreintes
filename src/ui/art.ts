@@ -290,7 +290,7 @@ export const CUVETTE = true;
 export function sceneDistrict(niveauNoyau: number, maintenant = new Date()): { age: 1 | 2 | 3 | 4; url: string; mer: string; horizon: number; video: string | null; nuit: boolean; houle?: string } {
   const age = visuel(niveauNoyau);
   const h = maintenant.getHours();
-  if (CUVETTE) return { age, url: `${base}district/cuvette.webp`, mer: `${base}district/cuvette-large.webp`, horizon: 0, video: null, nuit: h < 7 || h >= 20, houle: `${base}district/cuvette-houle.webp` };
+  if (CUVETTE) return { age, url: `${base}district/cuvette.webp`, mer: `${base}district/cuvette-large.webp`, horizon: 0, video: null, nuit: h < 7 || h >= 20, houle: [1, 2, 3].map((i) => `${base}district/cuvette-anim-${i}.webp`).join(' ') };
   return {
     age,
     url: `${base}district/age-${Math.min(age, AGES_PEINTS)}.webp`,

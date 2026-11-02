@@ -207,18 +207,20 @@ export function brancherTableau(racine: HTMLElement) {
 
 
 /**
- * Les lueurs de la Cuvette (d'après docs/maquette-cuvette2.html) : les cristaux bleus respirent lentement, chacun à son rythme,
- * le feu de la Forge plus vite. Repère 400 × 600 : centre, largeur du halo, couleur.
+ * Les éclats des cristaux de la Cuvette : une étoile qui s'ouvre un instant sur une arête, puis se referme, chacune à son rythme
+ * (la lumière des cristaux eux-mêmes est peinte par houle.ts). Repère 400 × 600 : position, période en secondes, décalage.
  */
-const LUEURS: [number, number, number, 'b' | 'o'][] = [
-  [203, 148, 22, 'b'], // le cristal au sommet de la Tour du Noyau
-  [313, 237, 22, 'b'], // la cuve du Labo
-  [178, 354, 19, 'b'], // le tube du Générateur
-  [123, 334, 17, 'b'], // la verrière de la Clinique
-  [278, 373, 19, 'b'], // le bassin du Comptoir
-  [316, 523, 17, 'b'], // la lanterne du Port
-  [121, 289, 22, 'o'], // le feu de la Forge
+const ECLATS: [number, number, number, number][] = [
+  [204, 141, 3.7, 0], [199, 151, 5.3, 2.1], // le cristal au sommet de la Tour
+  [124, 327, 4.9, 1.2], // la lanterne de la Clinique
+  [179, 343, 4.1, .6], [175, 365, 6.2, 3.4], // le tube du Générateur
+  [268, 371, 4.5, 2.7], [288, 377, 5.8, .9], // le bassin du Comptoir
+  [316, 514, 4.3, 1.8], // la lanterne du Port
+  [313, 233, 6.6, 4.1], // la cuve du Labo
+  [127, 303, 5.1, 3.0], // les cristaux au pied de la Forge
 ];
+/** Les étincelles qui montent du fourneau de la Forge */
+const ETINCELLES: [number, number, number, number][] = [[121, 279, 2.4, 0], [125, 281, 2.9, .9], [118, 282, 2.2, 1.6], [123, 278, 3.3, 2.2], [127, 283, 2.6, .4]];
 
 function tableau(j: Jeu): string {
   const s = sceneDistrict(j.batiments.noyau);
@@ -226,8 +228,9 @@ function tableau(j: Jeu): string {
   ageAffiche = s.age;
   return `<img class="tableau${s.nuit ? ' nuit' : ''}${nouveau ? ' nouvel-age' : ''}" src="${s.url}" alt="" draggable="false"/>`
     + (s.video ? `<div class="anime" data-video="${s.video}"></div>` : '')
-    + (s.houle && !mouvementReduit() ? `<div class="houle" data-image="${s.url}" data-masque="${s.houle}"></div>` : '')
-    + (CUVETTE ? LUEURS.map(([x, y, l, c], i) => `<i class="lueur ${c}" style="left:${x / 4}%;top:${y / 6}%;width:${l / 4}%;--d:${(i * .6).toFixed(1)}s" aria-hidden="true"></i>`).join('') : '')
+    + (s.houle && !mouvementReduit() ? `<div class="houle" data-image="${s.url}" data-masques="${s.houle}"></div>` : '')
+    + (CUVETTE ? ECLATS.map(([x, y, p, d]) => `<i class="eclat" style="left:${x / 4}%;top:${y / 6}%;--p:${p}s;--d:${d}s" aria-hidden="true"></i>`).join('')
+      + ETINCELLES.map(([x, y, p, d]) => `<i class="etincelle" style="left:${x / 4}%;top:${y / 6}%;--p:${p}s;--d:${d}s" aria-hidden="true"></i>`).join('') : '')
     + `${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
 }
 

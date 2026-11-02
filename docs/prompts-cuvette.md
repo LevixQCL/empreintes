@@ -84,9 +84,14 @@ Pack des zooms et prompts : `scripts/cuvette2-pack.py`.
 - Téléphone : tableau sur toute la hauteur. PC : `art/district/cuvette-large.webp` (Midjourney a élargi la scène, district recollé en pleine
   résolution) derrière la toile, centre du tableau à 50,57 % de sa largeur (district.css, fin du fichier).
 - Reste : paliers bas/haut des 7 bâtiments (méthode du pack : scripts/cuvette2-pack.py, cuvette2-integrer.py).
-- Animations (2 nov. 2026, nuit) : la houle en WebGL (src/ui/houle.ts) sur la mer seule, masque `art/district/cuvette-houle.webp`
-  (blanc = mer, 400 × 600, tiré de la maquette) ; les lueurs des cristaux et de la Forge (`LUEURS` dans src/ui/district.ts).
+- Animations (2 nov. 2026, nuit, refaites après « hyper cheap ») : un seul programme WebGL (src/ui/houle.ts) repeint par-dessus le
+  tableau ce qui bouge, à partir de ses propres pixels : houle de la mer, chutes qui défilent vers le bas avec filets et écume (aussi
+  dans la mer au pied du déversoir), cristaux allumés de l'intérieur avec halo, fourneau qui vacille, fumée en bouffées cernées
+  d'encre (FUMEE = haut de la cheminée). Masques : `cuvette-anim-1/2/3.webp`, refaits par `scripts/cuvette-animation-masques.py`.
+  En CSS : éclats en étoile sur les cristaux et étincelles du fourneau (`ECLATS`, `ETINCELLES` dans src/ui/district.ts).
   Rien ne bouge si le joueur a réduit les animations.
+- Haut de la cheminée de la Forge à repeindre (il se perdait sous le balcon) : `docs/pack-cheminee/zoom-cheminee.png` (zone vidée),
+  intégration `python3 scripts/cuvette-cheminee-integrer.py sortie.png` (refait aussi les masques).
 - Plus de plaques (2 nov. 2026, nuit) : un cristal de niveau au pied de chaque bâtiment (`pied`), une bulle au-dessus du toit (`haut`)
   seulement quand il y a une action (carte prête, objectif, chantier ou forge en cours, poste vide avec un Porteur libre, étals du Comptoir,
   jetons de pillage au complet). Le nom sort du cristal au survol, au choix du bâtiment, et pour tous tant que la Tour est au niveau 1.
