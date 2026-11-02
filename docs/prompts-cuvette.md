@@ -50,3 +50,5 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 - Zoom du Générateur : `zoom-generateur.png`, coin haut gauche (10, 640), 756 px, zone vidée en transparence.
 - Générateur fait (dynamo de cuivre rapiécée, turbines, colonne de cristal) : `art/district/cuvette-essai-generateur.webp`
   contient Forge + Tour + Générateur. À ajouter plus tard : câbles vers les pompes de la digue, lueur du cristal animée.
+- Clinique faite (dôme de verre dépoli, capsules de soin, lanterne de cristal) : `art/district/cuvette-essai-clinique.webp`
+  contient Forge + Tour + Générateur + Clinique. Intégration : `python3 scripts/cuvette-integrer.py base.png sortie.png x0 y0 cx cy rx sommet sortie.png`.
