@@ -131,8 +131,9 @@ export interface Face {
 export function corpsFace(d: Face): string {
   const ill = d.carte ? illustrationModule(d.carte) : null;
   const art = ill
-    ? `<img src="${ill}" alt="" decoding="async"${d.fx ? ` data-src-fx="${ill}"` : ''}>`
-    : d.repli ? `<img class="nf-repli" src="${d.repli}" alt="" decoding="async">`
+    // loading="lazy" (2 novembre 2026) : l'écran Cartes ne télécharge plus d'un coup les 100 illustrations, seulement celles qu'on voit
+    ? `<img src="${ill}" alt="" decoding="async" loading="lazy"${d.fx ? ` data-src-fx="${ill}"` : ''}>`
+    : d.repli ? `<img class="nf-repli" src="${d.repli}" alt="" decoding="async" loading="lazy">`
       : `<span class="nf-sans-image"></span>`;
   // une Fréquence libre : ∗ pour l'Accord, = pour le Diapason
   const accord = frequenceLibre(d.effet);

@@ -5,3 +5,4 @@ dist
 .env.local
 .visuel
 .capture/
+vite.config.ts.timestamp-*.mjs
