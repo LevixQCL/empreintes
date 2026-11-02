@@ -277,7 +277,8 @@ function balises(e: EcranDistrict): string {
     // la Tour : l'entraînement reste un choix, pas un oubli)
     const vacant = j.chambre && !!niv && id !== 'noyau' && id !== 'comptoir' && !occupant && libres;
     h += `<button type="button" class="balise${choisie}${vise ? ' visee' : ''}" ${pos(b.pied)} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(d.nom)}${niv ? `, niveau ${niv}` : ', à construire'}${occupant ? `, ${echap(porteurDef(occupant).nom)} au poste` : ''}">`
-      + (niv ? `<b class="bal-cristal">${niv}</b>` : `<b class="bal-cristal a-construire" title="À construire">${ICO.marteau}</b>`)
+      + (niv && occupant ? cristalVisage(occupant, niv)
+        : niv ? `<b class="bal-cristal">${niv}</b>` : `<b class="bal-cristal a-construire" title="À construire">${ICO.marteau}</b>`)
       + `<span class="bal-nom">${echap(d.nom)}</span></button>`;
     // une seule bulle par bâtiment, la plus urgente
     if (prete) h += bulle('alerte', ICO.ok, 'Forge : la carte est prête');
@@ -291,6 +292,16 @@ function balises(e: EcranDistrict): string {
     }
   }
   return h;
+}
+
+/**
+ * Quelqu'un au poste (2 novembre 2026, Luc : « on ne voit plus les gars dedans » ; Bryan : la tête du Porteur dans le repère).
+ * Le cristal s'agrandit et montre son visage ; le niveau du bâtiment reste lisible sur un petit cristal d'or serti en bas à droite.
+ */
+function cristalVisage(occupant: string, niv: number): string {
+  const img = portrait(occupant);
+  const initiale = echap(porteurDef(occupant).nom.charAt(0));
+  return `<b class="bal-cristal visage"${img ? ` style="--visage:url(${img})"` : ''}>${img ? '' : `<span class="bal-initiale">${initiale}</span>`}<i class="bal-niv">${niv}</i></b>`;
 }
 
 /** La mission du moment, posée en haut du tableau */
