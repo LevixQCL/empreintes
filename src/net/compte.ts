@@ -6,10 +6,11 @@ import {
   EmailAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, linkWithCredential, linkWithPopup, onAuthStateChanged,
   sendPasswordResetEmail, signInAnonymously, signInWithCredential, signInWithEmailAndPassword, signInWithPopup, signOut, type User,
 } from 'firebase/auth';
-import { doc, getDoc, getFirestore, serverTimestamp, setDoc, Timestamp } from 'firebase/firestore';
+import { doc, getDoc, getFirestore, runTransaction, Timestamp } from 'firebase/firestore';
 import { firebaseConfig } from './firebase-config';
 import { estJeuValide, VERSION_JEU } from '../core/jeu';
 import type { Enveloppe } from '../save/local';
+import { decisionEcriture, prochainJeton, versionDe } from '../save/garde';
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -86,25 +87,55 @@ export async function deconnexion(): Promise<void> {
   await signOut(auth);
 }
 
-export async function lireDistante(uid: string): Promise<Enveloppe | null> {
+/** Ce que contient le compte : la partie (si elle est lisible par cette version), le jeton de la dernière écriture,
+ *  et si elle vient d'une version plus récente du jeu (alors on ne la touche pas) */
+export interface Distante {
+  env: Enveloppe | null;
+  jeton: number | null;
+  tropRecente: boolean;
+}
+
+const millis = (t: unknown): number | null => (t instanceof Timestamp ? t.toMillis() : null);
+
+export async function lireDistante(uid: string): Promise<Distante> {
   const snap = await getDoc(doc(db, 'saves', uid));
-  if (!snap.exists()) return null;
-  const d = snap.data() as { data: string; updatedAt: Timestamp | null };
+  if (!snap.exists()) return { env: null, jeton: null, tropRecente: false };
+  const d = snap.data() as { data: string; updatedAt: unknown; version?: number };
+  const jeton = millis(d.updatedAt);
+  if ((d.version ?? 0) > VERSION_JEU) return { env: null, jeton, tropRecente: true };
   try {
     const data = JSON.parse(d.data);
-    if (!estJeuValide(data)) return null;
-    return { data, updatedAt: d.updatedAt ? d.updatedAt.toMillis() : 0 };
+    if (versionDe(data) > VERSION_JEU) return { env: null, jeton, tropRecente: true };
+    if (!estJeuValide(data)) return { env: null, jeton, tropRecente: false };
+    return { env: { data, updatedAt: jeton ?? 0 }, jeton, tropRecente: false };
   } catch {
-    return null;
+    return { env: null, jeton, tropRecente: false };
   }
 }
 
-export async function ecrireDistante(uid: string, env: Enveloppe): Promise<void> {
-  // Sauvegarde stockée en texte JSON : un seul champ, facile à faire évoluer avec `version`.
-  await setDoc(doc(db, 'saves', uid), {
-    data: JSON.stringify(env.data),
-    updatedAt: serverTimestamp(),
-    version: VERSION_JEU,
+/** L'écriture est refusée : `code` dit pourquoi (une version plus récente du jeu, ou un autre appareil a écrit entre-temps) */
+export class RefusEcriture extends Error {
+  constructor(readonly code: 'trop-recente' | 'autre-appareil') { super(code); }
+}
+
+/**
+ * Écrit la partie sur le compte, seulement si personne d'autre n'a écrit depuis `attendu` (le jeton lu ou écrit en dernier).
+ * Une transaction : la lecture du jeton et l'écriture ne peuvent pas être séparées par l'écriture d'un autre appareil.
+ * Renvoie le nouveau jeton.
+ */
+export async function ecrireDistante(uid: string, env: Enveloppe, attendu: number | null | undefined): Promise<number> {
+  const ref = doc(db, 'saves', uid);
+  return runTransaction(db, async (t) => {
+    const snap = await t.get(ref);
+    const d = snap.exists() ? (snap.data() as { updatedAt?: unknown; version?: number }) : null;
+    const actuel = d ? millis(d.updatedAt) : null;
+    const decision = decisionEcriture({ existe: !!d, version: d?.version ?? 0, jeton: actuel }, attendu);
+    if (decision !== 'ecrire') throw new RefusEcriture(decision);
+    const jeton = prochainJeton(actuel, Date.now());
+    // Sauvegarde stockée en texte JSON : un seul champ, facile à faire évoluer avec `version`.
+    // updatedAt sert aussi de jeton d'écriture (heure de l'appareil, toujours croissante pour ce document).
+    t.set(ref, { data: JSON.stringify(env.data), updatedAt: Timestamp.fromMillis(jeton), version: VERSION_JEU });
+    return jeton;
   });
 }
 

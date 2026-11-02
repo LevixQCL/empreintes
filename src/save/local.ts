@@ -1,6 +1,7 @@
 // Sauvegarde sur l'appareil. Le jeu solo marche entièrement sans réseau.
 
 import { estJeuValide, type Jeu } from '../core/jeu';
+import { tropRecente } from './garde';
 
 const CLE = 'empreintes.jeu.v2';
 
@@ -21,8 +22,23 @@ export function charger(): Enveloppe | null {
   }
 }
 
+/** La partie de l'appareil a été faite par une version plus récente du jeu (cet onglet est resté ouvert sur une ancienne version) */
+export function stockeeTropRecente(): boolean {
+  try {
+    const brut = localStorage.getItem(CLE);
+    return !!brut && tropRecente((JSON.parse(brut) as Enveloppe).data);
+  } catch {
+    return false;
+  }
+}
+
+/** La clé de la partie : un autre onglet qui l'écrit est repéré par l'événement `storage` */
+export const CLE_PARTIE = CLE;
+
 export function enregistrer(data: Jeu, updatedAt = Date.now()): Enveloppe {
   const env = { data, updatedAt };
+  // jamais par-dessus une partie d'une version plus récente : elle serait perdue
+  if (stockeeTropRecente()) return env;
   try {
     localStorage.setItem(CLE, JSON.stringify(env));
   } catch {

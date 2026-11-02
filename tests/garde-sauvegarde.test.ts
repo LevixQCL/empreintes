@@ -1,0 +1,37 @@
+// La garde de la sauvegarde : une partie n'en écrase jamais une autre (version plus récente, autre appareil).
+import { describe, expect, it } from 'vitest';
+import { VERSION_JEU } from '../src/core/jeu';
+import { decisionEcriture, prochainJeton, tropRecente, versionDe } from '../src/save/garde';
+
+describe('Garde de la sauvegarde', () => {
+  it('reconnaît une sauvegarde faite par une version plus récente du jeu', () => {
+    expect(tropRecente({ version: VERSION_JEU })).toBe(false);
+    expect(tropRecente({ version: VERSION_JEU - 1 })).toBe(false);
+    expect(tropRecente({ version: VERSION_JEU + 1 })).toBe(true);
+    expect(tropRecente(null)).toBe(false);
+    expect(versionDe({ version: 'x' })).toBe(0);
+  });
+
+  it("n'écrit jamais par-dessus une version plus récente", () => {
+    expect(decisionEcriture({ existe: true, version: VERSION_JEU + 1, jeton: 5 }, 5)).toBe('trop-recente');
+  });
+
+  it("écrit quand personne n'a écrit depuis la dernière lecture", () => {
+    expect(decisionEcriture({ existe: true, version: VERSION_JEU, jeton: 1000 }, 1000)).toBe('ecrire');
+    expect(decisionEcriture({ existe: false, version: 0, jeton: null }, null)).toBe('ecrire');
+  });
+
+  it('refuse quand un autre appareil a écrit entre-temps', () => {
+    expect(decisionEcriture({ existe: true, version: VERSION_JEU, jeton: 2000 }, 1000)).toBe('autre-appareil');
+    // le compte était vide à la lecture, et une partie y est apparue
+    expect(decisionEcriture({ existe: true, version: VERSION_JEU, jeton: 2000 }, null)).toBe('autre-appareil');
+    // rien lu encore : on attend la réconciliation
+    expect(decisionEcriture({ existe: false, version: 0, jeton: null }, undefined)).toBe('autre-appareil');
+  });
+
+  it("le jeton grandit toujours, même si l'horloge de l'appareil retarde", () => {
+    expect(prochainJeton(null, 1000)).toBe(1000);
+    expect(prochainJeton(5000, 1000)).toBe(5001);
+    expect(prochainJeton(5000, 9000)).toBe(9000);
+  });
+});

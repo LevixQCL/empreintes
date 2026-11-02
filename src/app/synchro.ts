@@ -1,7 +1,8 @@
 // La sauvegarde : sur l'appareil, puis sur le compte quand on est connecté (la partie la plus avancée gagne, l'autre est gardée en secours).
 
 import * as J from '../core/jeu';
-import { charger, enregistrer, garderSecours, lireSecours, type Enveloppe } from '../save/local';
+import { CLE_PARTIE, charger, enregistrer, garderSecours, lireSecours, stockeeTropRecente, type Enveloppe } from '../save/local';
+import { bloquerSauvegarde, sauvegardeBloquee } from './garde';
 import { firebaseActif } from '../net/firebase-config';
 import { finPour } from './combat';
 import { app, compteEtat, compteProtege, D, G, K, racine } from './etat';
@@ -21,8 +22,24 @@ const ECRIRE_APRES = 60_000;
 
 /** la sauvegarde du compte a été lue et comparée : avant ça, on n'envoie rien (on écraserait une partie plus avancée) */
 let reconcilie = false;
+/** le jeton de la dernière écriture lue ou faite sur le compte par cet appareil (undefined : pas encore lu ; null : compte vide) */
+let jetonDistant: number | null | undefined;
+
+// une version plus récente du jeu a déjà sauvegardé sur cet appareil (onglet resté ouvert sur une ancienne version) : on n'écrit plus
+if (stockeeTropRecente()) bloquerSauvegarde('version');
+// un seul onglet écrit la partie : le dernier ouvert. En s'ouvrant, il prévient les autres, qui s'arrêtent
+// (sans ça, deux onglets s'écrasaient l'un l'autre à chaque seconde). Sans BroadcastChannel : l'écriture d'un autre onglet suffit.
+/** gardé au niveau du module : un canal sans référence peut être ramassé par le navigateur et ne plus rien entendre */
+let canal: BroadcastChannel | null = null;
+if (typeof BroadcastChannel !== 'undefined') {
+  canal = new BroadcastChannel('empreintes.partie');
+  canal.onmessage = (ev) => { if ((ev.data as { type?: string })?.type === 'ouvert') bloquerSauvegarde('onglet'); };
+  canal.postMessage({ type: 'ouvert' });
+} else addEventListener('storage', (ev) => { if (ev.key === CLE_PARTIE && ev.newValue !== null) bloquerSauvegarde('onglet'); });
 
 export function sauver() {
+  if (sauvegardeBloquee()) return;
+  if (stockeeTropRecente()) { bloquerSauvegarde('version'); return; }
   const env = enregistrer(app.jeu);
   // le joueur vient de commencer (intro vue) : le compte invisible est créé maintenant, pas à la simple visite
   if (app.compte && !compteEtat.utilisateur && compteEtat.pret && app.jeu.introVue) app.compte.creerInvisible();
@@ -42,6 +59,7 @@ export function majSecours() {
 
 /** Échange la partie en cours et la partie de secours : rien n'est perdu, on peut revenir en arrière */
 export function restaurerSecours() {
+  if (sauvegardeBloquee()) return;
   const s = lireSecours();
   if (!s) return;
   garderSecours({ data: app.jeu, updatedAt: Date.now() });
@@ -66,17 +84,30 @@ export async function envoyer() {
 }
 
 async function pousser(env: Enveloppe) {
-  if (!app.compte || !app.uid) return;
+  if (!app.compte || !app.uid || sauvegardeBloquee()) return;
+  const uid = app.uid;
   compteEtat.synchro = 'en-cours';
   derniereEcriture = Date.now();
   try {
-    await app.compte.ecrireDistante(app.uid, env);
+    const jeton = await app.compte.ecrireDistante(uid, env, jetonDistant);
+    if (app.uid === uid) jetonDistant = jeton;
     compteEtat.synchro = 'ok';
     compteEtat.codeErreur = '';
   } catch (e) {
+    if (e instanceof app.compte.RefusEcriture) {
+      // une version plus récente, ou un autre appareil a écrit entre-temps : on n'écrase rien, le joueur recharge
+      bloquerSauvegarde(e.code === 'trop-recente' ? 'version' : 'appareil');
+      compteEtat.synchro = 'aucune';
+      return;
+    }
     compteEtat.synchro = 'erreur';
     compteEtat.codeErreur = 'écriture : ' + ((e as { code?: string })?.code ?? String(e).slice(0, 60));
     console.warn('Synchronisation', e);
+    // hors ligne ou réseau lent : la partie repartira à la prochaine occasion (avant, elle attendait le geste suivant)
+    if (app.uid === uid && !enAttente) {
+      enAttente = env;
+      if (minuteur === undefined) minuteur = window.setTimeout(envoyer, ECRIRE_APRES);
+    }
   }
   if (compteEtat.ouvert && app.mode === 'district') afficher();
 }
@@ -84,7 +115,10 @@ async function pousser(env: Enveloppe) {
 async function reconcilier() {
   if (!app.compte || !app.uid) return;
   try {
-    const distante = await app.compte.lireDistante(app.uid);
+    const lue = await app.compte.lireDistante(app.uid);
+    if (lue.tropRecente) { bloquerSauvegarde('version'); return; }
+    jetonDistant = lue.jeton;
+    const distante = lue.env;
     const locale = charger();
     // garder la partie la plus AVANCÉE (pas la plus récente) : une partie neuve ouverte sur un autre appareil
     // ne doit jamais écraser celle du compte ; à avancement égal, la plus récente. L'autre est gardée en secours.
@@ -105,7 +139,7 @@ async function reconcilier() {
       if (distante && cmp < 0) { garderSecours(distante); majSecours(); }
       await pousser(locale);
     }
-    reconcilie = true;
+    reconcilie = !sauvegardeBloquee();
   } catch (e) {
     compteEtat.synchro = 'erreur';
     compteEtat.codeErreur = 'lecture : ' + ((e as { code?: string })?.code ?? String(e).slice(0, 60));
@@ -138,7 +172,7 @@ export async function demarrerCompte() {
     compteEtat.utilisateur = u;
     app.uid = u?.uid ?? null;
     compteEtat.synchro = 'aucune';
-    G.entrees = []; G.lu = 0; G.etat = 'repos'; app.monEntree = null; app.monEntreeLue = false; reconcilie = false;
+    G.entrees = []; G.lu = 0; G.etat = 'repos'; app.monEntree = null; app.monEntreeLue = false; reconcilie = false; jetonDistant = undefined;
     // une partie en attente pour l'ancien compte ne part pas sur le nouveau (la réconciliation s'en charge)
     clearTimeout(minuteur); minuteur = undefined; enAttente = null;
     if (app.uid) {

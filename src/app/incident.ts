@@ -30,8 +30,8 @@ const texteDe = (i: Incident) => `EMPREINTES · ${new Date(i.quand).toLocaleStri
 let ouvert = false;
 let dernier = '';
 
-/** Une erreur attrapée : notée, puis expliquée au joueur (une fenêtre à la fois) */
-export function signaler(e: unknown, ou: string, revenir: () => void): void {
+/** Une erreur attrapée : notée, puis expliquée au joueur (une fenêtre à la fois) ; discrète : seulement notée */
+export function signaler(e: unknown, ou: string, revenir: () => void, discret = false): void {
   const err = e instanceof Error ? e : new Error(String(e));
   const i: Incident = {
     quand: Date.now(), ou, message: err.message.slice(0, 300),
@@ -42,7 +42,7 @@ export function signaler(e: unknown, ou: string, revenir: () => void): void {
   const l = lire();
   l.push(i);
   try { localStorage.setItem(CLE, JSON.stringify(l.slice(-MAX))); } catch { /* stockage plein ou bloqué */ }
-  if (ouvert || typeof document === 'undefined') return;
+  if (discret || ouvert || typeof document === 'undefined') return;
   // la même erreur, encore et encore (l'horloge redessine chaque seconde) : une seule fenêtre
   const sig = `${ou}:${i.message}`;
   if (sig === dernier && document.querySelector('.incident')) return;

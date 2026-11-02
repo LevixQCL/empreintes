@@ -84,6 +84,8 @@ addEventListener('pagehide', () => void envoyer());
 // ---------- Le filet de sécurité ----------
 // une erreur ailleurs (horloge, minuteurs) : notée et expliquée au lieu de figer le jeu en silence
 addEventListener('error', (ev) => { if (ev.error) signaler(ev.error, 'horloge', afficher); });
+// une promesse rejetée sans personne pour l'attraper (réseau, synchronisation) : notée dans le détail pour Bryan, sans fenêtre
+addEventListener('unhandledrejection', (ev) => signaler(ev.reason, 'promesse', afficher, true));
 
 // ---------- Démarrage ----------
 
