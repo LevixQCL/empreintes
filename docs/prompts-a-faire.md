@@ -6,10 +6,14 @@ Lumière de lignée : Augmentés = bleu acier / cyan, Génés = vert émeraude, 
 
 À déposer dans Téléchargements : Claude convertit en webp, met à la taille et range sous le nom indiqué.
 
-## Déjà intégrées (2 novembre, 17 h)
+## Déjà intégrées (2 novembre, 19 h)
 
-N° 1, 2, 4, 5, 7, 9, 10 : contremaître, chantre, Lame de doute, Œil du Lecteur, Sentence muette, Boucle de mémoire, Miroir des Hauts.
-À relancer avec le prompt corrigé : n° 3, 6, 8 (Regard en biais, Verdict, Éclat), restés orange.
+21 sur 24 : tout sauf les trois ci-dessous.
+Les variantes de missions non retenues sont gardées dans `sources/missions-variantes/` (hors du jeu).
+
+À faire encore :
+- n° 21 Mèche d'or et n° 22 Souffle du wyrm : à relancer avec le prompt corrigé (rendus restés orange) ;
+- n° 24 Carapace des Fondations : pas encore générée.
 
 ## La liste (24 images)
 
@@ -213,17 +217,19 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 ```
 
 ### 21. Mèche d'or (Résonants) — `meche-or.webp`
+**2e essai (2 nov., soir)** : le 1er rendu restait orange (feu pour le wyrm, mèche terne) ; référence de style violette, plus d'atelier boisé.
 Change : on voyait un chignon violet sans or ; il faut une boucle de cheveux sombres traversée d'un fil d'or brillant, un ruban violet, dans un écrin.
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, a small open jewel case lined with dark violet velvet, inside it a single curled lock of dark brown hair with one bright shining metallic gold strand running clearly through its whole length, tied in the middle with a thin violet satin ribbon, the gold strand catching the light, the whole scene lit only by cold violet light, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock, orange, copper glow, brass glow, wig, hair bun, purple hair
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark slate table in a dim violet-lit study, a small open jewel case lined with dark violet velvet, inside it a single curled lock of glossy jet-black hair with one bright shining metallic gold strand running clearly through its whole length, tied in the middle with a thin violet satin ribbon, the gold strand catching the light, the whole scene lit only by cold violet light, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/modules/voix-basse.webp https://levixqcl.github.io/empreintes/art/modules/verdict.webp --sw 80 --no text, person, character, crystal, gemstone, amethyst rock, orange, copper glow, brass glow, warm light, candle, fire, flames, amber, sepia, brown, wig, hair bun, purple hair
 ```
 
 ### 22. Souffle du wyrm (Résonants) — `souffle-wyrm.webp`
+**2e essai (2 nov., soir)** : le 1er rendu restait orange (feu pour le wyrm, mèche terne) ; référence de style violette, plus d'atelier boisé.
 Change : encore un gros cristal ; il faut un crâne de dragon serpentin en os qui exhale un tourbillon violet et or.
 
 ```
-bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark worn wooden workbench in a dim workshop, the ancient elegant bone skull of a long serpentine dragon, smooth and pale, long jaw slightly open, a spiral torrent of violet and gold light swirling out of its jaws like a breath, majestic not frightening, the whole scene lit only by cold violet light, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/personnages/yse.webp --sw 60 --no text, person, character, crystal, gemstone, amethyst rock, orange, copper glow, brass glow, blood, gore, flesh
+bold graphic fantasy illustration, clean confident ink outlines, cel shading with painted textures, vibrant warm palette, stylized expressive proportions, simplified features, collectible card art. still life, a single object in close-up, centered and filling the frame, resting on a dark slate table in a dim violet-lit study, the ancient elegant bone skull of a long serpentine dragon, smooth and pale, long jaw slightly open, a spiral torrent of violet and gold light swirling out of its jaws like a breath, majestic not frightening, the whole scene lit only by cold violet light, dominant amethyst and violet lighting with rich gold accents, lavender rim light, deep indigo shadows, no people, no text, no letters, no numbers, family-friendly --ar 5:7 --sref https://levixqcl.github.io/empreintes/art/modules/voix-basse.webp https://levixqcl.github.io/empreintes/art/modules/verdict.webp --sw 80 --no text, person, character, crystal, gemstone, amethyst rock, orange, copper glow, brass glow, warm light, candle, fire, flames, amber, sepia, brown, blood, gore, flesh
 ```
 
 ## 9. Varier les coques des Génés
