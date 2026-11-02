@@ -8,7 +8,7 @@ import { porteurDef } from '../core/donnees';
 import { CONTRAT, MAREES, contratsDuMoment, equipeConseillee, forceSurEpreuve, libresPourContrat, mareesDe, raisonHorsContrat, tauxContrat, CONTRATS, porteursPresents, strateVaincue, type ContratOuvert, type Jeu, type RangMaree } from '../core/jeu';
 import { lieuDef, type Affinite } from '../core/lieux';
 import type { Lignee } from '../core/types';
-import { LIEUX_SLUGS, decorLieu, barque, BARQUE_PEINTE, reflets, sceneDistrict, vignetteArchipel } from './art';
+import { LIEUX_SLUGS, decorLieu, barque, BARQUE_PEINTE, reflets, sceneDistrict, vignetteDistrict } from './art';
 import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, avatar, decompte, etapeVoyage, prix, type EcranDistrict } from './coquille';
 import { ICO, type Icone } from './icones';
 import { echap } from './outils';
@@ -80,7 +80,7 @@ function gabare(j: Jeu, now: number): string {
     + `<div class="vg-tete"><span class="mr-equipe">${m.porteurs.map((p) => avatar(p, 34)).join('')}</span><span class="vg-qui"><strong>${MAREES[m.rang].nom} · ${echap(def.titre)}</strong><small>${echap(majuscule(lieu.nom))} · <b class="mr-taux-mini">${m.taux} %</b> de chances</small></span>`
     + `<span class="vg-etat"><b data-phase>${NOM_PHASE[phase]}</b><small>${now >= m.fin ? 'rentre au district' : decompte(m.fin, now, 'retour dans ')}</small></span></div>`
     + `<div class="vg-route" role="img" aria-label="${NOM_PHASE[phase]}, vers ${echap(lieu.nom)}">`
-    + `<span class="vg-port"><img src="${vignetteArchipel(age)}" alt="" decoding="async" loading="lazy"></span>`
+    + `<span class="vg-port"><img src="${vignetteDistrict(age)}" alt="" decoding="async" loading="lazy"></span>`
     + `<span class="vg-eau"><i class="vg-trace"></i><i class="vg-sillage"></i>`
     + `<span class="vg-barque">${BARQUE_PEINTE ? `<img src="${barque}" alt="" decoding="async">` : ''}<i class="vg-lampe"></i><i class="vg-reflet-lampe"></i></span></span>`
     + `<span class="vg-lieu"><i class="vg-onde"></i><i class="vg-onde"></i></span></div></div>`;

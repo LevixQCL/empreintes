@@ -5,7 +5,7 @@
 
 import { porteurDef } from '../core/donnees';
 import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadeActive, escouadeDefense, escouadePourDepart, escouadesDe, etatPillage, faitsDuJour, forceEscouade, majJetons, MISSIONS, barquesMax, strateVaincue, MAREES, contratsDuMoment, mareesDe, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
-import { ageArchipel, vignetteArchipel, visuel } from './art';
+import { ageArchipel, vignetteArchipel, vignetteDistrict, visuel } from './art';
 import { avatar, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO, icone } from './icones';
@@ -83,7 +83,7 @@ export function htmlPillages(e: EcranDistrict): string {
         + `<span class="pl-medaillon"><img src="${vignetteArchipel(ageArchipel(c.strate))}" alt="" decoding="async" loading="lazy">${fait ? `<span class="pl-fait">${ICO.ok}</span>` : ''}</span>`
         + `<span class="pl-nom">${echap(c.nom)}</span><span class="pl-diff">${fait ? 'Pillé' : d.nom}</span></button>`;
     }).join('')
-    + `<div class="pl-moi" style="--x:${MOI[0]}%;--y:${MOI[1]}%"><span class="pl-medaillon"><img src="${vignetteArchipel(age)}" alt="" decoding="async"></span><span class="pl-nom">${echap(j.directeur?.nom ?? 'Ton district')}</span></div>`
+    + `<div class="pl-moi" style="--x:${MOI[0]}%;--y:${MOI[1]}%"><span class="pl-medaillon"><img src="${vignetteDistrict(age)}" alt="" decoding="async"></span><span class="pl-nom">${echap(j.directeur?.nom ?? 'Ton district')}</span></div>`
     + `</section>`;
 
   if (choisie) h += ficheCible(j, choisie, force, faits.includes(choisie.id), etat.jetons);

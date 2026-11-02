@@ -31,7 +31,7 @@ import { frequenceLibre } from '../core/regles';
 import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
 import type { Affinite } from '../core/lieux';
-import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteArchipel, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, salleEntrainement } from './art';
+import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { avecMots } from './lexique';
@@ -501,7 +501,7 @@ const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${N
 function gainsNiveau(j: Jeu, b: BatimentId): string {
   const niv = j.batiments[b];
   const gains: (GainNiveau | { quoi: 'apparence'; texte: string; detail?: string; avant?: undefined; apres?: undefined; unite?: undefined })[] = gainsAmelioration(j, b);
-  const nouvelle = visuel(niv + 1) !== visuel(niv);
+  const nouvelle = prochainVisuel(niv) === niv + 1;
   if (nouvelle) gains.push(b === 'noyau' ? { quoi: 'apparence', texte: 'Le district change d’âge', detail: 'nouvelle vue d’ensemble' } : { quoi: 'apparence', texte: 'Nouvelle apparence', detail: 'le bâtiment se transforme' });
   if (!gains.length) return '';
   const dc = dureeChantier(j, b);
@@ -1884,7 +1884,7 @@ function voyage(e: EcranDistrict, m: Jeu['missions'][number]): string {
     + `<div class="vg-tete">${avatar(p.id, 40)}<span class="vg-qui"><strong>${echap(p.nom)}</strong><small>${m.butin ? `<span class="vg-butin">${ICO[ICONE_BUTIN[m.butin]]}</span>` : ''}Vers ${echap(lieu)}${bm && pct ? ` · <span class="vg-af af-${bm.affinite}">${pct >= 0 ? '+' : '−'}${Math.abs(pct)} %</span>` : ''}</small></span>`
     + `<span class="vg-etat"><b data-phase>${NOM_PHASE[phase]}</b><small>${e.now >= m.fin ? 'rentre au district' : decompte(m.fin, e.now, 'retour dans ')}</small></span></div>`
     + `<div class="vg-route" role="img" aria-label="${NOM_PHASE[phase]}, vers ${echap(lieu)}">`
-    + `<span class="vg-port"><img src="${vignetteArchipel(age)}" alt="" decoding="async" loading="lazy"></span>`
+    + `<span class="vg-port"><img src="${vignetteDistrict(age)}" alt="" decoding="async" loading="lazy"></span>`
     + `<span class="vg-eau"><i class="vg-trace"></i><i class="vg-sillage"></i>`
     + `<span class="vg-barque">${BARQUE_PEINTE ? `<img src="${barque}" alt="" decoding="async">` : ''}<i class="vg-lampe"></i><i class="vg-reflet-lampe"></i></span></span>`
     + `<span class="vg-lieu"><i class="vg-onde"></i><i class="vg-onde"></i></span>`

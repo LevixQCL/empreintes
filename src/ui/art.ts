@@ -236,10 +236,18 @@ export function visuel(niveau: number): 1 | 2 | 3 | 4 {
   return 1;
 }
 
-export const illustrationBatiment = (id: BatimentId, niveau: number) => `${base}batiments/${id}-${visuel(niveau)}.webp`;
+/**
+ * Les paliers des bâtiments de la Cuvette (niveaux 1-3, 4-7, 8-10) ne sont pas encore peints : en attendant, un seul visuel par bâtiment,
+ * détouré du tableau du district (scripts/cuvette-detourer-batiments.py), et aucune « nouvelle apparence » n'est promise.
+ */
+export const PALIERS_PEINTS = false;
+const unSeulVisuel = () => CUVETTE && !PALIERS_PEINTS;
+export const illustrationBatiment = (id: BatimentId, niveau: number) =>
+  unSeulVisuel() ? `${base}batiments/${id}.webp` : `${base}batiments/${id}-${visuel(niveau)}.webp`;
 
 /** Niveau où le bâtiment change d'apparence la prochaine fois (null au légendaire) */
 export function prochainVisuel(niveau: number): number | null {
+  if (unSeulVisuel()) return null;
   const seuils = [4, 8, 10];
   return seuils.find((s) => s > niveau) ?? null;
 }
@@ -281,6 +289,8 @@ const AGES_ANIMES = new Set<number>([1, 2, 3, 4]);
 /** Un archipel vu de loin (carte des pillages) : le tableau du district à cet âge */
 /** L'âge d'un archipel d'après sa profondeur : plus il a creusé, plus il a grandi */
 export const ageArchipel = (strate: number) => (strate <= 2 ? 1 : strate <= 5 ? 2 : strate <= 9 ? 3 : 4);
+/** Ton propre district vu de loin (pillages, missions en mer) : la Cuvette */
+export const vignetteDistrict = (age: number) => (CUVETTE ? `${base}district/cuvette-vignette.webp` : vignetteArchipel(age));
 export const vignetteArchipel = (age: number) => `${base}district/age-${Math.max(1, Math.min(age, AGES_PEINTS))}.webp`;
 /**
  * La Cuvette (2 novembre 2026) : un seul tableau peint pour tous les âges en attendant les paliers des bâtiments

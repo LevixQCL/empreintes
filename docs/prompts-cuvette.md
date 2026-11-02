@@ -96,3 +96,7 @@ Pack des zooms et prompts : `scripts/cuvette2-pack.py`.
   seulement quand il y a une action (carte prête, objectif, chantier ou forge en cours, poste vide avec un Porteur libre, étals du Comptoir,
   jetons de pillage au complet). Le nom sort du cristal au survol, au choix du bâtiment, et pour tous tant que la Tour est au niveau 1.
   Style : src/ui/balises.css. Un nouveau bâtiment = une zone + un `pied` + un `haut`.
+- Feuilles de bâtiment (2 nov. 2026, nuit) : l'illustration de chaque bâtiment est détourée du tableau (`public/art/batiments/<id>.webp`,
+  `scripts/cuvette-detourer-batiments.py`, à relancer après chaque bâtiment repeint) ; tant que `PALIERS_PEINTS` est faux (src/ui/art.ts),
+  aucune « nouvelle apparence » n'est promise. Ton district dans les Pillages et les missions : `district/cuvette-vignette.webp`.
+  Restent de l'ancien style : la coupe de la Tour (`district/coupe.webp`, écran « Entrer dans la tour ») et les archipels voisins des Pillages.
