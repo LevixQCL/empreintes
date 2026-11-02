@@ -29,7 +29,7 @@ def b64(im, q=82):
 
 B, M = b64(out), b64(Image.fromarray(mer))
 F = b64(Image.fromarray(fond).resize((512, 512), Image.BICUBIC), 80)
-cr = [(333, 880, 70), (813, 800, 45), (1181, 699, 55), (859, 1235, 40), (1150, 1330, 40), (1288, 1101, 50)]
+cr = [(425, 960, 55), (813, 800, 45), (1181, 699, 55), (768, 1335, 35), (1110, 1440, 40), (1288, 1101, 50)]
 glows = ''.join(
     f'<i class="g" style="left:{(x + o) * k / S * 100:.2f}%;top:{y * k / S * 100:.2f}%;'
     f'width:{r * 2 * k / S * 100:.2f}%;animation-delay:{i * 0.7:.1f}s"></i>' for i, (x, y, r) in enumerate(cr))

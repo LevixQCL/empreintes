@@ -66,3 +66,7 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
   (Cuvette plus basse que la mer). Détourage : `art/district/cuvette-detouree.webp` (Cuvette décalée de 304 px en x).
   Maquette animée : `docs/maquette-cuvette.html` (houle sur l'eau seule, reflets dorés, cristaux qui pulsent).
   Port repeint en zoom Edit directement dans la mer (zoom (1612, 1552) de la carte 2464) : net, une seule barque.
+- 2 nov. (après-midi) : Générateur, Clinique et Comptoir refaits avec de vraies silhouettes (plus de « conserves ») et la lumière
+  imposée dans le prompt (soleil à droite, ombre portée à gauche). Les anciens bâtiments ont d'abord été effacés en remettant le
+  dallage de `cuvette-nue.webp`. Clinique déplacée à gauche du chemin (690, 1462) pour aérer. Formes des zones : `scripts/cuvette-integrer-forme.py`.
+- Reste à faire avant les paliers : habitations dans la paroi de la digue et maisons de pompes sur le haut, cadrage plus serré et contraste en code.
