@@ -85,7 +85,7 @@ const estFutur = (id: string | null): id is LieuFutur => id === 'port' || id ===
 type Balise = { pied: { x: number; y: number }; haut: { x: number; y: number } };
 const BALISES_CUVETTE: Record<Lieu, Balise> = {
   noyau: { pied: { x: 207, y: 276 }, haut: { x: 207, y: 146 } },
-  forge: { pied: { x: 104, y: 314 }, haut: { x: 102, y: 244 } },
+  forge: { pied: { x: 104, y: 314 }, haut: { x: 147, y: 262 } },
   clinique: { pied: { x: 96, y: 392 }, haut: { x: 140, y: 350 } },
   generateur: { pied: { x: 176, y: 430 }, haut: { x: 176, y: 364 } },
   comptoir: { pied: { x: 278, y: 412 }, haut: { x: 278, y: 352 } },

@@ -54,7 +54,7 @@ cristal[labo] = np.maximum(cristal[labo], (np.clip(((b - r) - 25) / 50, 0, 1) * 
 
 # ---- le feu de la Forge : les pixels orangés de son fourneau
 orange = np.clip((r - 150) / 60, 0, 1) * np.clip((r - b - 90) / 60, 0, 1) * (g > 70)
-feu = np.where(boite(110, 270, 136, 298), orange, 0)
+feu = np.where(boite(110, 270, 136, 298) | boite(83, 193, 97, 207), orange, 0)   # le fourneau, et les braises dans la cage de la cheminée
 
 # la mer, sans la chute ni la nappe (elles coulent, elles n'ondulent pas)
 mer = np.asarray(Image.open(D + 'cuvette-houle.webp').convert('L').resize((W, H), Image.LANCZOS)).astype(float) / 255

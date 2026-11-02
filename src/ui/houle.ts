@@ -19,7 +19,7 @@ float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
 vec3 ecran(vec3 c,vec3 a){return 1.-(1.-c)*(1.-clamp(a,0.,1.));}
 float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<4;i++){s+=a*n(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return s;}
-const vec2 FUMEE=vec2(90.,197.);
+const vec2 FUMEE=vec2(90.,196.);
 // la fumée : des bouffées rondes, cernées d'encre comme le reste du tableau, qui naissent au haut de la cheminée,
 // montent, gonflent, partent avec le vent et se dissolvent ; la plus jeune passe devant les autres
 vec4 bouffees(vec2 p){
