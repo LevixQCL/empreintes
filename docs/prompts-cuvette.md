@@ -101,4 +101,4 @@ Pack des zooms et prompts : `scripts/cuvette2-pack.py`.
 - Feuilles de bâtiment (2 nov. 2026, nuit) : l'illustration de chaque bâtiment est détourée du tableau (`public/art/batiments/<id>.webp`,
   `scripts/cuvette-detourer-batiments.py`, à relancer après chaque bâtiment repeint) ; tant que `PALIERS_PEINTS` est faux (src/ui/art.ts),
   aucune « nouvelle apparence » n'est promise. Ton district dans les Pillages et les missions : `district/cuvette-vignette.webp`.
-  Restent de l'ancien style : la coupe de la Tour (`district/coupe.webp`, écran « Entrer dans la tour ») et les archipels voisins des Pillages.
+  La coupe de la Tour (`district/coupe.webp`, écran « Entrer dans la tour ») est repeinte en Cuvette (3 nov. 2026) : Tour sur la place à sec, digue et mer à droite, puits jusqu'aux cristaux.
