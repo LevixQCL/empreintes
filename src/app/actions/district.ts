@@ -230,7 +230,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       if (!c) break;
       // un vrai directeur : son bouclier se vérifie en ligne juste avant
       const bouclier = await sousBouclier(c);
-      if (bouclier !== false) { D.message = bouclier ? `${c.nom} est sous bouclier pour l’instant : choisis un autre archipel.` : `Impossible de joindre ${c.nom} pour l’instant : réessaie dans un moment.`; break; }
+      if (bouclier !== false) { D.message = bouclier ? `${c.nom} est sous bouclier pour l’instant : choisis un autre district.` : `Impossible de joindre ${c.nom} pour l’instant : réessaie dans un moment.`; break; }
       D.deck = null; D.fouille = null; D.epreuve = null; D.fleche = false; D.pillage = c; D.strateChoisie = c.strate;
       D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;

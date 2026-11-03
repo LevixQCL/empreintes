@@ -52,7 +52,7 @@ export function htmlPillages(e: EcranDistrict): string {
   if (volet === 'missions') return coquille(e, h + htmlMissions(e), 'pl');
   if (volet === 'marees') return coquille(e, h + htmlMarees(e), 'pl');
   // pas encore de pillages : la raison, tirée du district, plutôt qu'une carte grisée
-  if (!pillOk) return coquille(e, h + `<p class="fl-condition">${ICO.verrou}<span><strong>Les archipels voisins attendent · vaincs le gardien de la Strate −${PILLAGE.strateMin}</strong>`
+  if (!pillOk) return coquille(e, h + `<p class="fl-condition">${ICO.verrou}<span><strong>Les districts voisins attendent · vaincs le gardien de la Strate −${PILLAGE.strateMin}</strong>`
     + `<small>Le passeur ne mène pas de grappin chez les voisins pour un district qu’on ne connaît pas encore. Les missions en mer, elles, partent déjà.</small></span></p>`, 'pl');
 
   const prochain = majJetons(j, e.now);
@@ -72,7 +72,7 @@ export function htmlPillages(e: EcranDistrict): string {
 
   // la carte
   const age = visuel(j.batiments.noyau);
-  h += `<section class="pl-carte" aria-label="La carte des archipels"><svg class="pl-routes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">`
+  h += `<section class="pl-carte" aria-label="La carte des districts voisins"><svg class="pl-routes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">`
     + cibles.map((c, k) => { const [x, y] = PLACES[k % PLACES.length]!; return `<line x1="${MOI[0]}" y1="${MOI[1]}" x2="${x}" y2="${y}" class="${c === choisie ? 'vise' : ''}${faits.includes(c.id) ? ' faite' : ''}"/>`; }).join('')
     + `</svg>`
     + cibles.map((c, k) => {
@@ -125,7 +125,7 @@ function journal(h: EntreeHistorique[], now: number): string {
     + (lignes.length
       ? `<ul>${lignes.map((x) => `<li class="${x.sens}${x.gagne ? ' gagne' : ' perdu'}">`
         + `<span class="pl-j-ico" aria-label="${x.sens === 'attaque' ? 'Ton attaque' : 'Attaque subie'}">${x.sens === 'attaque' ? ICO.grappin : ICO.bouclier}</span>`
-        + `<span class="pl-j-txt"><span>${texte(x)}</span><small>${x.sens === 'attaque' ? (x.bot ? 'Archipel sans directeur · ' : 'Directeur · ') : 'En défense · '}${ilYa(x.le)}</small></span>`
+        + `<span class="pl-j-txt"><span>${texte(x)}</span><small>${x.sens === 'attaque' ? (x.bot ? 'District sans directeur · ' : 'Directeur · ') : 'En défense · '}${ilYa(x.le)}</small></span>`
         + `<b class="pl-j-val${x.composants > 0 ? ' plus' : x.composants < 0 ? ' moins' : ''}">${x.composants > 0 ? '+' : x.composants < 0 ? '−' : ''}${x.composants ? ent(Math.abs(x.composants)) : '—'}</b></li>`).join('')}</ul>`
       : `<p class="pl-j-vide">Aucun pillage pour l’instant. Tes attaques et celles que ta garnison subit s’inscriront ici.</p>`)
     + `</section>`;
@@ -140,7 +140,7 @@ function ficheCible(j: Jeu, c: Cible, force: number, fait: boolean, jetons: numb
   const perte = Math.floor(etatPillage(j).coffre * PILLAGE.perteDefaite);
   const raison = fait ? 'Déjà pillé aujourd’hui : il reviendra demain.' : jetons < 1 ? 'Plus de jeton : le prochain revient bientôt.' : j.expedition ? 'Une expédition est déjà en cours.' : '';
   return `<section class="pl-fiche d${d.niveau}" aria-label="${echap(c.nom)}">`
-    + `<header><div><span class="surtitre">${c.bot ? 'Archipel sans directeur · un intendant le tient' : 'Directeur'} · Strate −${c.strate}</span><h2>${echap(c.nom)}</h2></div>`
+    + `<header><div><span class="surtitre">${c.bot ? 'District sans directeur · un intendant le tient' : 'Directeur'} · Strate −${c.strate}</span><h2>${echap(c.nom)}</h2></div>`
     + `<span class="pl-badge">${d.nom}<small>${chance < 1 ? '< 1' : chance > 99 ? '> 99' : chance} % de chances</small></span></header>`
     + `<div class="pl-garnison"><span class="surtitre">La garnison</span><ul>${c.porteurs.map((id) => `<li style="--c:${COULEUR[porteurDef(id).lignee]}">${avatar(id, 40)}<span><strong>${echap(porteurDef(id).nom)}</strong><small>${NOM_LIGNEE[porteurDef(id).lignee]}</small></span></li>`).join('')}</ul>`
     + `<div class="pl-forces"><span>Garnison <b>${Math.round(c.force * 100)}</b></span><span class="pl-jauge" aria-hidden="true"><i style="width:${Math.min(100, Math.round((50 * c.force) / force))}%"></i></span><span>Escouade ${escouadeActive(j) + 1} <b>${Math.round(force * 100)}</b></span></div></div>`
@@ -164,7 +164,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
   const vole = `+${Math.round(PILLAGE.partVolee * 100)} %`, perte = `−${Math.round(PILLAGE.perteDefaite * 100)} %`;
   return `<section class="fl-intro pl-intro" style="--decor:url(${vignetteArchipel(2)})"><div class="fl-intro-texte">`
     + `<span class="surtitre">Le Port du district</span><h2>Le Port reprend du service</h2>`
-    + `<p>Devant le sas de la digue, sur ses pilotis, le Port voit partir les barques du passeur : vers les ruines noyées, et vers les archipels voisins.</p></div></section>`
+    + `<p>Devant le sas de la digue, sur ses pilotis, le Port voit partir les barques du passeur : vers les ruines noyées, et vers les cuvettes voisines.</p></div></section>`
     + (etat === 'fermee' ? `<p class="fl-condition">${ICO.verrou}<span><strong>Le bateau reste à quai · vaincs le gardien de la Strate −${PILLAGE.strateDuPort}</strong><small>Tant que le gardien tient le puits, personne ne quitte le district.</small></span></p>` : '')
 
     // allégé le 28 octobre 2026 : une phrase et trois chiffres par bloc, le détail se déplie
@@ -173,7 +173,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
       cle(ICO.porteurs, '1 à 4', 'barques à la fois, selon la Tour'),
       cle(ICO.coffre, 'Butin', 'composants, cartes, creuseurs'),
     ])
-    + bloc(ICO.grappin, 'Les pillages', 'Ton escouade attaque la garnison d’un archipel voisin de ta force.', [
+    + bloc(ICO.grappin, 'Les pillages', 'Ton escouade attaque la garnison d’un district voisin de ta force.', [
       cle(ICO.grappin, String(PILLAGE.jetonsMax), `jetons, un toutes les ${recharge}`),
       cle(ICO.composants, vole, 'du coffre adverse'),
       cle(ICO.descendre, perte, 'de ton coffre si tu perds'),
@@ -190,7 +190,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
       + etape(ICO.porteurs, 'Un Porteur libre prend la barque', `Vers un pilier abandonné ou une ruine noyée : ${MISSIONS.courte.heures} h ou ${MISSIONS.longue.heures} h, avec des vivres et des lampes payés en énergie. Le nombre de barques en mer en même temps grandit avec la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 6 et 4 au niveau 9.`)
       + etape(ICO.coffre, 'Il revient chargé', 'Des composants, des doublons de cartes de sa lignée, parfois une carte nouvelle, et des rescapés qui deviennent creuseurs. L’eau froide laisse un peu d’Usure.')
       + etape(ICO.grappin, `${PILLAGE.jetonsMax} jetons, un toutes les ${recharge}`, 'Chaque pillage en coûte un. Rien ne se perd pendant ton absence : ils t’attendent.')
-      + etape(ICO.atk, 'Un combat contre la garnison', 'Des archipels de ta force : de vrais directeurs, et des archipels sans directeur pour que la carte ne soit jamais vide. Un archipel par jour au plus.')
+      + etape(ICO.atk, 'Un combat contre la garnison', 'Des districts de ta force : de vrais directeurs, et des districts sans directeur pour que la carte ne soit jamais vide. Un district par jour au plus.')
       + etape(ICO.composants, 'Le butin', `Des composants, plus ${vole.slice(1)} du coffre adverse. Plus la garnison est forte, plus le butin est gros. Perdre te coûte ${perte.slice(1)} de ton coffre.`)
       + etape(ICO.coffre, 'Seul ton coffre est exposé', 'Le coffre, ce sont les composants gagnés en pillant. Ceux des descentes, des missions et du district sont à l’abri, comme tes cartes et tes Éclats.')
       + etape(ICO.porteurs, 'Ta garnison se défend seule', 'Choisis laquelle de tes trois escouades garde le port. Elle se bat même jeu fermé.')
