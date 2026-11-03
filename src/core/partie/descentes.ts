@@ -1437,6 +1437,7 @@ export function choisirHalte(j: Jeu, k: number): Resultat {
   else y.butin += butinCombat(x.strate, 0);
   if (c.drapeau && !(j.drapeaux ??= []).includes(c.drapeau)) j.drapeaux.push(c.drapeau);
   (j.haltes ??= {})[x.strate] = Math.max(j.haltes[x.strate] ?? 0, h.n);
+  (j.choixHaltes ??= {})[`${x.strate}-${h.n}`] = k;
   y.gains = gains;
   j.expedition = y;
   return { ok: true };

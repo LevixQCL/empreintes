@@ -82,3 +82,16 @@ trop facile (corde, pierre fêlée, fiole). Seule la lampe à algues reste. On l
   | Assidu | jour 20 | jour 20 | 33 % | 37 % |
 
   Les indices du brouillard dès −3 avaient été essayés. Ils faisaient tomber les victoires au front à 33 % : ils sont restés à −4.
+
+## Réécriture des Haltes (3 novembre 2026)
+Bryan : « il faut quelque chose de vraiment intéressant à lire, pas du blabla pour meubler ». Les 27 Haltes ont été réécrites
+d'après la Bible (« Les Strates zone par zone ») puis relues (auteur, éditeur) :
+- chaque Strate mène une petite enquête : Halte I = une question, II = un indice, III = une révélation ;
+- chaque zone fait tomber une certitude avec sa preuve : les Seuils, une mesure (l'escalier de 2,10 m sous les pompes) ;
+  les Salles closes, des objets et leurs traces d'usage (la table « 31 → 1 », le registre des gestes, la niche 5-1) ;
+  les Registres, des témoignages vrais mais incompatibles (deux relevés de la même ligne d'eau, tables sans noms) ;
+  la vérité sur ceux d'avant reste réservée à −10 ;
+- nouveau fil : le porte-bonheur du père de Doran, un cristal ramassé au niveau 7 en 2066, promis à −4, rendu (ou gardé) à −6 ;
+- chaque souvenir posé par un choix revient plus tard (une Halte, une scène de gardien, la lettre d'Isaure) : un test le vérifie ;
+- le carnet du directeur (Bibliothèque, onglet Campagne) garde ce qu'on a appris à chaque Halte (`fait`) et le choix fait
+  (`j.choixHaltes`).

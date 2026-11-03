@@ -304,6 +304,8 @@ export interface Jeu {
   haltes?: Record<number, number>;
   quetes?: Record<number, number>;
   drapeaux?: string[];
+  /** le choix fait à chaque Halte (« strate-n » → 0 ou 1), pour le carnet du directeur (3 novembre 2026) */
+  choixHaltes?: Record<string, number>;
   /** Explorer ou fouiller (31 octobre 2026, explorer.ts) : les Vestiges trouvés, les étoiles gagnées par Strate (★1 est aussi
    *  compté d'office pour toute Strate vaincue), les paliers d'étoiles déjà récompensés, et l'état de chaque Rôdeur */
   vestiges?: string[];

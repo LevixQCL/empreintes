@@ -37,279 +37,314 @@ export interface HalteDef {
   recit: string;
   details: DetailHalte[];
   choix: [ChoixHalte, ChoixHalte];
+  /** ce que le directeur en retient, écrit dans son carnet (Bibliothèque, onglet Campagne) */
+  fait: string;
 }
 
 /** Nombre de Haltes d'une Strate : il faut environ autant de descentes que la profondeur, d'où 1 à −1, 2 à −2, 3 ensuite */
 export const nombreHaltes = (strate: number) => (strate >= 1 && strate <= 10 ? Math.min(3, strate) : 0);
 
-const H = (strate: number, n: number, titre: string, recit: string, details: DetailHalte[], choix: [ChoixHalte, ChoixHalte]): HalteDef =>
-  ({ strate, n, titre, recit, details, choix });
+const H = (strate: number, n: number, titre: string, recit: string, details: DetailHalte[], choix: [ChoixHalte, ChoixHalte], fait: string): HalteDef =>
+  ({ strate, n, titre, recit, details, choix, fait });
 const d = (nom: string, ...voix: Voix[]): DetailHalte => ({ nom, voix });
 const v = (qui: string, texte: string, si?: string): Voix => (si ? { qui, texte, si } : { qui, texte });
 
+// Les Haltes, réécrites le 3 novembre 2026 (Bryan : « il faut quelque chose de vraiment intéressant à lire, pas du blabla »).
+// Chaque Strate mène une petite enquête : la Halte I pose une question, la II donne un indice, la III une révélation.
+// Chaque zone fait tomber une certitude, avec le type de preuve de la Bible (« Les Strates zone par zone ») :
+// les Seuils, une mesure qu'on peut refaire ; les Salles closes, des objets et leurs traces d'usage ; les Registres,
+// des témoignages vrais mais incompatibles ; le Fond, le document. La vérité sur ceux d'avant n'est dite qu'à −10.
+// Chaque souvenir posé par un choix revient plus tard (une Halte, une scène de gardien, la lettre d'Isaure).
 export const HALTES: HalteDef[] = [
   // ---------- −1 · Les Pompes noyées ----------
   H(1, 1, 'Le mur des fouilleurs',
-    'Un pilier couvert de noms grattés au couteau. Les fouilleurs de Vertiga y écrivent le leur avant de descendre, et le barrent quand ils remontent.', [
-      d('Les noms', v('doran', 'Le nom de mon père est là, daté de 2066. Il n’est jamais barré. Il est remonté, pourtant. Il n’a jamais voulu le barrer.'), v('', 'Des centaines de noms. Certains sont barrés, d’autres non. Les plus anciens datent de 2066.')),
-      d('Une traînée qui brille', v('vela', 'La Confluence s’est frottée ici. Elle a lu les noms, un par un, comme on cherche quelqu’un sur une liste.'), v('', 'Une traînée bleue, encore tiède, court le long du pilier, à hauteur de visage.')),
-      d('Des lignes d’eau', v('ilka', 'Comme à la Nuit des lignes. Sauf que celles-là sont bien trop bas. Ici, la mer est déjà passée.'), v('', 'Des traits horizontaux gravés dans la pierre, avec des dates. Le plus haut est au-dessus de ta tête.')),
+    'Un pilier des pompes, couvert de noms grattés au couteau. Les fouilleurs de Vertiga y écrivent le leur avant de descendre, et le barrent quand ils remontent.', [
+      d('Les noms', v('doran', 'Le nom de mon père est là, daté de 2066. Jamais barré. Il est remonté, pourtant. Il n’a jamais voulu le barrer.'), v('', 'Des centaines de noms, barrés ou non. Les plus anciens datent de 2066.')),
+      d('Le pied du pilier', v('sasha', 'Le plan dit : béton jusqu’au roc. Regarde : le pilier est posé sur une marche taillée, de niveau au millimètre. Personne chez nous ne taille comme ça.'), v('doran', 'Nos plans disent béton jusqu’au roc. Il n’y a pas de roc. Le pilier est posé sur une marche taillée. Une marche, directeur.'), v('', 'Le pilier ne repose pas sur la roche, mais sur une large marche de pierre taillée, parfaitement plane.')),
+      d('Sous la marche', v('vela', 'Usée au milieu, comme les marches de la Tour. Des milliers de pieds sont passés là. Et sous cette marche, il y en a une autre.'), v('ilka', 'Il y a une autre marche dessous. Et encore une. Un escalier. Sous nos pompes, il y a un escalier.'), v('', 'Sous la marche, une autre, puis une autre : un escalier qui s’enfonce dans l’eau noire.')),
     ], [
-      { texte: 'Graver ton nom', effet: 'composants', drapeau: 'nom-grave', recit: 'Tu graves ton nom sous celui des autres. En dessous, un fouilleur a laissé des pièces pour le suivant. Elles sont à toi.' },
-      { texte: 'Ne rien laisser', effet: 'composants', drapeau: 'sans-nom', recit: 'Tu passes sans graver ton nom. Au pied du pilier, un sac oublié : la Confluence ne saura pas qui l’a pris.' },
-    ]),
+      { texte: 'Graver ton nom', effet: 'composants', drapeau: 'nom-grave', recit: 'Tu graves ton nom sous celui des autres. Juste en dessous, un fouilleur a laissé quelques pièces pour le suivant. Elles sont à toi.' },
+      { texte: 'Mesurer la marche', effet: 'eclat', drapeau: 'mesure-marche', recit: 'Fil à plomb, mètre ruban : 2,10 m de large, de niveau parfait. Les Fondations de ton district reposent sur l’escalier de quelqu’un d’autre. Dans une fente de la marche, un Éclat.' },
+    ],
+    'Les piliers de mon district ne reposent pas sur la roche. Ils sont posés sur un escalier de pierre taillée, qui descend sous l’eau.'),
 
   // ---------- −2 · Les Abris murés ----------
   H(2, 1, 'Le registre des abris',
-    'Une porte d’abri de 2060, entrouverte. Sur le mur, un registre peint : les familles qui y ont dormi pendant les grandes crues.', [
-      d('Le registre peint', v('ilka', 'Quarante familles. Des noms du quartier. Ma grand-mère connaissait sûrement certains d’entre eux.'), v('', 'Quarante noms de familles, peints en blanc. Des noms du quartier, pour la plupart.')),
-      d('Des traces de bottes', v('doran', 'Des pilleurs, chargés : les traces s’enfoncent. Ils portaient lourd. Les cristaux de la chambre, sûrement.'), v('', 'Des traces de bottes, profondes, qui s’enfoncent vers le bas.')),
-      d('Un cristal tombé', v('vela', 'Un des nôtres, de la chambre. Il est tombé d’un sac. Il ne veut pas remonter. Il veut suivre les autres.'), v('', 'Un petit cristal, tombé d’un sac, qui luit faiblement.')),
+    'Un abri de 2060, entrouvert. Sur le mur, un registre peint : les quarante familles qui y ont dormi pendant les grandes crues.', [
+      d('Le registre peint', v('ilka', 'La moitié de ces familles, je leur livre encore le pain. Aucune ne m’a jamais parlé de cet abri.'), v('', 'Quarante noms de familles, peints en blanc. Presque tous du quartier.')),
+      d('Le plâtre fendu', v('sasha', 'Ça sonne creux. Derrière le plâtre, ce n’est pas de la brique : c’est un treillis de cristal. On a monté l’abri contre quelque chose qui était déjà là.'), v('doran', 'Derrière le plâtre, un treillis de cristal. Les maçons de 2060 l’ont couvert sans poser de questions. Pendant les crues, on n’en posait pas.'), v('', 'Par une fente du plâtre, on voit luire un treillis de cristal.')),
+      d('Un cristal tombé', v('vela', 'Tombé d’un sac de pilleur. Il ne veut pas remonter avec nous. Il veut rejoindre les autres, plus bas. On dirait qu’il a peur de rester en haut.'), v('', 'Un petit cristal tombé d’un sac luit faiblement sur les marches.')),
     ], [
-      { texte: 'Garder le cristal', effet: 'composants', recit: 'Tu le ranges dans le sac. Au district, il se revendra pour des composants : il n’a pas de voix assez nette pour une carte.' },
-      { texte: 'Le laisser descendre', effet: 'composants', drapeau: 'cristal-libre', recit: 'Tu poses le cristal au bas des marches. Il roule tout seul vers le bas. Doran ramasse ce que les pilleurs ont laissé tomber à côté.' },
-    ]),
-  H(2, 2, 'La pièce aux lits',
-    'Des lits de camp alignés, des couvertures pliées au carré. Les pilleurs ont dormi ici cette nuit. Ils ont laissé un mot sur un oreiller.', [
-      d('Le mot', v('ilka', '« Elles nous parlent toute la nuit. On les emmène plus bas, c’est ce qu’elles veulent. » Signé : B. Super. Des pilleurs poètes.'), v('', '« Elles nous parlent toute la nuit. On les emmène plus bas. » Signé : B.')),
-      d('Un dessin d’enfant', v('doran', 'Un dessin de 2066 : une maison sur l’eau, un soleil, et une grande porte tout en bas. Les enfants des abris dessinaient l’Écluse.'), v('', 'Un dessin d’enfant, punaisé au mur : une maison sur l’eau et une grande porte tout en bas.')),
-      d('Les couvertures', v('vela', 'Elles sentent la peur. Pas celle des pilleurs. Celle des cristaux qu’ils portaient.', ), v('', 'Les couvertures sont encore chaudes. Les pilleurs sont partis il y a peu.')),
+      { texte: 'Laisser descendre le cristal', effet: 'eclat', drapeau: 'cristal-libre', recit: 'Tu poses le cristal sur la dernière marche. Il roule vers le bas, plus vite que la pente ne le voudrait. Là où il était, un Éclat est resté.' },
+      { texte: 'Le garder pour le district', effet: 'composants', recit: 'Tu le ranges dans le sac. Le district en tirera un bon prix. Il pèse plus lourd qu’il ne devrait.' },
+    ],
+    'Les abris de 2060 ont été montés contre un treillis de cristal. Pendant les crues, quarante familles ont dormi dans un Berceau sans le savoir.'),
+  H(2, 2, 'La galerie des Chouettes',
+    'La galerie effondrée de 2104. Six enfants mués pour les fouilles de nuit y ont guidé vingt adultes dans le noir, trois jours durant. L’éboulis est dégagé depuis longtemps. Les mains peintes sont restées.', [
+      d('Les mains peintes', v('nuit', 'Six mains d’enfant, à hauteur de hanche. La promotion d’avant la mienne. On nous les montrait, petits, pour nous donner du courage.'), v('', 'Six petites mains peintes à hauteur de hanche, et une date : 2104.')),
+      d('La cause', v('sasha', 'Les infos ont dit « infiltration ». Regarde les bords de l’éboulis : c’est du cristal brisé, pas de la roche. Ils ont percé un treillis, comme celui de l’abri. C’est le treillis qui a cédé.'), v('ilka', 'Les infos ont dit « infiltration ». Les bords sont en cristal cassé. Ils ont percé un treillis et tout est tombé. Ça, personne ne l’a dit.'), v('', 'Les bords de l’éboulis sont de cristal brisé, pas de roche.')),
+      d('La gaine', v('doran', 'La gaine par où ils sont sortis. Elle n’était sur aucun plan. Ce n’est pas une gaine de chez nous : ronde, lisse, sans une trace d’outil. Et elle ne descend pas. Elle monte.'), v('', 'Une gaine ronde et lisse, qui n’était sur aucun plan, s’élève dans la roche.')),
     ], [
-      { texte: 'Fouiller leurs affaires', effet: 'composants', recit: 'Dans un sac, des outils de fouille et quelques pièces. Brac, ou qui que ce soit, n’en aura plus besoin.' },
-      { texte: 'Garder le dessin', effet: 'composants', drapeau: 'dessin-ecluse', recit: 'Tu plies le dessin dans ta poche. Ysé voudra le voir. Sous le lit, quelques composants roulés dans un chiffon.' },
-    ]),
+      { texte: 'Ajouter ta main', effet: 'eclat', drapeau: 'main-chouette', recit: 'Tu poses ta main dans la peinture, à côté des leurs, à ta hauteur à toi. Un jour, un enfant saura qu’un directeur est passé par là. Contre la plinthe, un Éclat.' },
+      { texte: 'Explorer la gaine', effet: 'composants', drapeau: 'gaine', recit: 'La gaine monte en spirale, lisse comme l’intérieur d’un coquillage, sur des dizaines de mètres, sans une marche ni une prise. Au premier coude, du matériel oublié par les secours de 2104.' },
+    ],
+    'L’éboulement des Chouettes, en 2104, n’est pas venu de l’eau : on avait percé un treillis de cristal. Et la gaine qui les a sauvés n’est sur aucun plan : ronde, lisse, sans une trace d’outil.'),
 
   // ---------- −3 · La Galerie aux lueurs ----------
   H(3, 1, 'La dernière lampe',
-    'Ici s’arrêtent les lampes humaines. Une lanterne de fouilleur pend à un clou, éteinte. Au-delà, la galerie ne brille que de ses propres cristaux.', [
+    'Ici s’arrêtent les lampes humaines. Une lanterne de fouilleur pend à un clou, éteinte. Plus loin, tous les puits de Vertiga débouchent dans la même nuit.', [
       d('La lanterne', v('ilka', 'Personne n’a jamais accroché de lampe plus loin. Les fouilleurs disaient : « Après le clou, c’est le noir qui décide. »'), v('', 'Une lanterne à algues pend à un clou. Personne n’en a jamais accroché plus loin.')),
-      d('Des lueurs au plafond', v('nuit', 'Ce ne sont pas des cristaux. Ce sont des yeux. Petits. Ils ont peur de nous plus que nous d’eux.'), v('vela', 'Des cristaux qui s’allument quand on passe. Ils suivent nos pas. Ils n’ont plus vu personne depuis longtemps.'), v('', 'Des lueurs s’allument au plafond quand l’escouade passe, puis s’éteignent derrière elle.')),
-      d('Un insigne des Brigades', v('doran', 'Un insigne du Serment de Veyr, arraché. Les patrouilles de Hald sont passées par là. En courant.'), v('', 'Un insigne des Brigades du Serment de Veyr, arraché, au milieu du couloir.')),
+      d('Les autres puits', v('doran', 'Là, le puits des Hauts-Ponts. Là, celui du marché. Chaque district croit avoir son trou à lui. En bas, c’est le même noir pour tout le monde.'), v('', 'Des bouches de puits s’ouvrent dans la voûte, une par district. Toutes donnent ici.')),
+      d('Une lueur au loin', v('nuit', 'La rampe en laiton du Puits Zéro. Les visiteurs y descendent depuis soixante ans, et ils regardent tous le plafond. Personne ne regarde le sol.'), v('vela', 'Le Puits Zéro, là-bas. On y vend des souvenirs en plastique. Tout le monde lève les yeux. Personne ne les baisse.'), v('', 'Au loin, la lueur de la rampe de visite du Puits Zéro.')),
     ], [
-      { texte: 'Prendre la lanterne', effet: 'lampe', recit: 'Doran rallume la lanterne avec une poignée d’algues. Sa lumière perce le brouillard des deux salles suivantes.' },
-      { texte: 'Laisser le clou au noir', effet: 'eclat', drapeau: 'clou-respecte', recit: 'Tu laisses la lanterne à son clou, comme les fouilleurs avant toi. Au pied du mur, un Éclat brille : quelqu’un d’autre l’y avait laissé, par respect.' },
-    ]),
+      { texte: 'Prendre la lanterne', effet: 'lampe', recit: 'Tu rallumes la lanterne avec une poignée d’algues. Sa lumière perce le brouillard des deux salles suivantes.' },
+      { texte: 'Laisser le clou au noir', effet: 'eclat', drapeau: 'clou-respecte', recit: 'Tu laisses la lanterne à son clou, comme les fouilleurs avant toi. Sous le clou, un Éclat brille : quelqu’un d’autre l’y avait laissé, par respect.' },
+    ],
+    'À −3, tous les puits de Vertiga débouchent dans la même nuit. Au loin brille le Puits Zéro, où l’on descend depuis soixante ans pour regarder le plafond.'),
   H(3, 2, 'Le message des patrouilles',
     'Sur un pilier, des flèches tracées à la craie, et des chiffres. Les Brigades se sont repérées comme elles ont pu dans le noir.', [
-      d('Les flèches', v('doran', 'Elles tournent en rond. Trois fois le même pilier. Ils étaient perdus, et ils le savaient.'), v('', 'Des flèches à la craie, qui reviennent trois fois au même pilier.')),
       d('Les chiffres', v('ilka', '« 12 », puis « 11 », puis « 9 ». Ils se comptaient. Il en manque trois.'), v('', 'Des chiffres à la craie : 12, puis 11, puis 9.')),
-      d('Une respiration', v('nuit', 'Ils sont vivants, plus bas. Serrés. Ils ont froid. Je les entends.'), v('vela', 'Neuf voix, très loin en dessous. Elles ont peur, mais elles sont là.'), v('', 'Un souffle, très loin dans le noir. Ou le vent dans les puits.')),
+      d('Une respiration', v('nuit', 'Neuf respirations, en bas, serrées les unes contre les autres. Ils ont peur du noir. Personne ne leur a appris à le traverser.', 'main-chouette'), v('nuit', 'Ils sont vivants, plus bas. Serrés. Ils ont froid. Je les entends.'), v('vela', 'Neuf voix, très loin en dessous. Elles ont peur, mais elles sont là.'), v('', 'Un souffle, très loin dans le noir. Ou le vent dans les puits.')),
+      d('Sous la poussière', v('sasha', 'Des marches, sous la poussière. 2,10 m de large. Exactement la marche de −1. C’est le même escalier, directeur. Il passe sous tout Vertiga, et il monte vers le Puits Zéro.', 'mesure-marche'), v('doran', 'Il y a des marches sous la poussière. Larges, usées au milieu. Toute la galerie est un escalier. Et il monte vers le Puits Zéro.'), v('', 'Sous la poussière, des marches usées : la galerie entière est un escalier qui monte vers le Puits Zéro.')),
     ], [
       { texte: 'Laisser une marque pour Hald', effet: 'eclat', drapeau: 'craie-hald', recit: 'Tu ajoutes une flèche, la bonne, et la date. Si une patrouille repasse, elle trouvera le chemin. Dans une fente, un Éclat oublié par un soldat.' },
-      { texte: 'Effacer les flèches fausses', effet: 'composants', recit: 'Tu effaces les cercles. Personne ne se perdra plus ici. Au pied du pilier, du matériel de patrouille abandonné.' },
-    ]),
+      { texte: 'Descendre quelques marches', effet: 'composants', recit: 'Vous descendez contre le sens de l’usure. À chaque palier, une niche vide, de la taille d’une couchette. Dans l’une, du matériel de patrouille abandonné.' },
+    ],
+    'La galerie de −3 est un escalier immense, usé par des milliers de pas, qui monte vers le Puits Zéro. C’est le même que sous mes pompes.'),
   H(3, 3, 'Le cœur qui compte',
-    'La galerie s’ouvre sur une salle ronde. Au centre, une flaque d’empreintes mêlées, immobile. La Confluence s’est reposée ici. Il reste sa forme.', [
-      d('La forme', v('vela', 'Elle s’est roulée en boule autour de quelque chose. Une voix plus petite que les autres. Elle la protège.'), v('', 'Une forme creusée dans les cristaux, comme si quelque chose de grand s’était roulé en boule.')),
+    'L’escalier finit ici, juste sous la salle de 2062. Au-dessus, on devine la rampe en laiton du Puits Zéro. En bas des dernières marches, une flaque d’empreintes mêlées, immobile : la Confluence s’est reposée là.', [
+      d('Le dernier palier', v('doran', 'La gaine des Chouettes débouche ici, dans la voûte. Ronde, lisse. Elle part de ce palier, et elle continue plus haut que la salle de 2062.', 'gaine'), v('sasha', 'Le palier du dessus, c’est le sol de la salle de 2062. Les visiteurs du Puits Zéro marchent sur la dernière marche de quelqu’un, et ils ne le savent pas.'), v('', 'Le dernier palier de l’escalier est le sol même de la salle de 2062, la Strate zéro.')),
+      d('La forme', v('vela', 'Elle s’est roulée en boule autour d’une voix plus petite que les autres. Elle la protège.'), v('', 'Une forme creusée dans les cristaux, comme si quelque chose de grand s’était roulé en boule.')),
       d('Un murmure', v('vela', '« Compte. » Encore et encore. Je ne sais pas ce qu’elle compte. Ses voix, peut-être.'), v('joss', 'Quelqu’un répète un mot, au milieu de tous les autres. « Compte. » Il a peur de l’oublier.'), v('', 'Un murmure, toujours le même mot, trop bas pour qu’on le comprenne.')),
-      d('Des bottes, du côté', v('doran', 'Les patrouilles sont en dessous, coincées sous un éboulement. Elle garde l’entrée. Elle ne les attaque pas. Elle attend.'), v('', 'Des traces de bottes s’arrêtent devant un éboulis.')),
     ], [
-      { texte: 'Écouter jusqu’au bout', effet: 'eclat', drapeau: 'compte-entendu', recit: 'Tu restes longtemps à écouter. Le mot finit par se détacher des autres, net. Un Éclat se forme dans la flaque, comme une goutte.' },
-      { texte: 'Dégager l’éboulis', effet: 'composants', recit: 'Tu fais dégager le haut de l’éboulis. Les patrouilles entendront qu’on vient. Parmi les gravats, des composants de 2060.' },
-    ]),
+      { texte: 'Écouter jusqu’au bout', effet: 'eclat', drapeau: 'compte-entendu', recit: 'Tu restes longtemps à écouter. Le mot finit par se détacher des autres, net : « Compte. » Un Éclat se forme dans la flaque, comme une goutte.' },
+      { texte: 'Dégager l’éboulis', effet: 'composants', drapeau: 'eboulis', recit: 'Tu fais dégager le haut d’un éboulis voisin, derrière lequel s’arrêtent des traces de bottes. Les patrouilles entendront qu’on vient. Parmi les gravats, du matériel de patrouille.' },
+    ],
+    'Le Puits Zéro n’est pas le fond d’un trou : c’est le dernier palier d’un escalier. Et au pied des marches, une voix répète « Compte ».'),
 
   // ---------- −4 · Les Portes rondes ----------
-  H(4, 1, 'La porte entrouverte',
-    'Des dizaines de portes rondes, toutes fermées de l’intérieur. Une seule est entrouverte, de la largeur d’une main.', [
-      d('La porte', v('sasha', 'Pas de serrure, pas de charnière visible. Elle tourne sur elle-même. Celui qui a fait ça n’avait pas besoin de vis.'), v('ilka', 'Une porte qu’on a oublié de fermer. Ou qu’on a laissée ouverte exprès.'), v('', 'Une porte ronde, entrouverte de la largeur d’une main. De la lumière bleue passe par la fente.')),
-      d('Le tampon de 2066', v('doran', 'Le tampon de l’équipe de mon père. Ils sont venus jusqu’ici. Ils ont regardé par cette fente.'), v('', 'Un tampon de chantier de 2066, sur le cadre de la porte.')),
-      d('Derrière la fente', v('vela', 'Des cristaux rangés en rond, avec soin. Comme une chambre qu’on range avant de partir pour de bon.'), v('', 'Derrière la fente, des cristaux rangés en cercle, avec soin.')),
+  H(4, 1, 'Le seuil usé',
+    'Des dizaines de portes rondes, toutes fermées. Une seule est entrouverte, de la largeur d’une main.', [
+      d('La porte', v('sasha', 'Pas de serrure dehors. Seulement un loquet, dedans. Celui qui a fait ça ne voulait pas qu’on l’enferme. Il voulait pouvoir s’enfermer.'), v('kessa', 'Aucune trace de coup, aucune griffure. Personne n’a essayé de sortir.'), v('', 'Pas de serrure côté couloir : seulement un loquet, de l’autre côté.')),
+      d('Le seuil', v('doran', 'Usé côté intérieur, intact côté couloir. Quelqu’un a fait les cent pas ici pendant des années, sans jamais repasser le seuil.'), v('', 'Le seuil est creusé côté intérieur, intact côté couloir.')),
+      d('Par la fente', v('vela', 'Des cristaux en cercle, et une couche au milieu. Quelqu’un dormait entouré de ses pierres, comme on dort au milieu des siens.'), v('', 'Par la fente, des cristaux rangés en cercle autour d’une couche de pierre.')),
     ], [
-      { texte: 'Refermer la porte', effet: 'eclat', drapeau: 'porte-refermee', recit: 'Tu refermes doucement. Un déclic, de l’autre côté : quelqu’un a tiré le loquet. Sur le seuil, un Éclat, comme un remerciement.' },
-      { texte: 'Glisser la main', effet: 'composants', recit: 'Ilka glisse la main par la fente et ramène ce qui traînait au pied de la porte : de vieux composants, rien de plus. La porte ne bouge pas.' },
-    ]),
-  H(4, 2, 'L’appel',
-    'Une voix de pierre lit une liste, quelque part derrière les portes. Elle s’arrête à chaque nom, comme si elle attendait une réponse.', [
-      d('La liste', v('doran', 'Des ouvriers de 2066. Elle lit leurs noms, un par un. Elle attend qu’ils répondent « présent ».'), v('', 'Une voix lit des noms. Elle s’arrête après chacun, et reprend.')),
-      d('Un silence', v('vela', 'Après un nom, elle attend plus longtemps. Celui-là, elle l’aimait bien.'), v('', 'Après un des noms, le silence dure plus longtemps.')),
-      d('Une réponse', v('ilka', 'Si quelqu’un répond « présent », elle s’arrête, tu crois ?'), v('', 'La voix semble attendre une réponse qui ne vient jamais.')),
+      { texte: 'Compter les cristaux', effet: 'eclat', drapeau: 'vingt-trois', recit: 'Vingt-trois cristaux, rangés avec soin, et une seule couche. Tu notes le chiffre. Sur le seuil, un Éclat, comme une pièce laissée pour le passage.' },
+      { texte: 'Prendre le bol du seuil', effet: 'composants', recit: 'Une main passée par la fente ramène un bol de pierre, poli par l’usage. Quelqu’un mangeait ici, seul, au milieu de ses voix. Odile en voudra.' },
+    ],
+    'Les portes rondes n’enferment rien. Quelqu’un s’est enfermé dedans, de son plein gré, au milieu de ses pierres.'),
+  H(4, 2, 'La table des voix',
+    'Une porte ronde s’est effondrée. Dedans, une table gravée en deux colonnes, et sous la table, des cristaux étiquetés.', [
+      d('Les colonnes', v('vela', 'Un nom, puis un chiffre : 12, 19, 27, 31. Ce ne sont pas des âges. C’est le nombre de voix que chacun portait.'), v('', 'Deux colonnes : des noms, et des chiffres qui montent. 12, 19, 27, 31.')),
+      d('La dernière ligne', v('ilka', 'Un nom, puis « 31 », barré. À côté, « 1 ». Il s’est ôté trente voix pour n’en garder qu’une. La sienne.'), v('', 'Sur la dernière ligne, « 31 » est barré. À côté, quelqu’un a gravé « 1 ».')),
+      d('Sous la table', v('sasha', 'Vingt-trois cristaux, une couche, à la porte d’à côté. Ici, trente. Ils se les retiraient un par un, et ils les gardaient près d’eux.', 'vingt-trois'), v('doran', 'Trente cristaux, avec chacun son étiquette. Il ne les a pas jetés. Il les a rangés, et il s’est enfermé avec eux.'), v('', 'Trente cristaux, chacun avec son étiquette, rangés sous la table.')),
     ], [
-      { texte: 'Répondre « présent »', effet: 'eclat', drapeau: 'present', recit: 'Ta voix porte loin. La liste s’arrête net, puis reprend, plus lentement. Une porte s’entrouvre juste assez pour laisser rouler un Éclat.' },
-      { texte: 'Se taire et passer', effet: 'composants', recit: 'Vous passez sans un mot. La voix continue sa liste. Dans le couloir, un coffre de chantier de 2066, pas tout à fait vide.' },
-    ]),
-  H(4, 3, 'Le registre ouvert',
-    'Sur un lutrin de pierre, un registre immense, ouvert. Les pages sont des plaques de cristal gravées. La dernière ligne est inachevée.', [
-      d('La dernière ligne', v('doran', 'Le nom de mon père. Écrit à moitié. Le Gardien ne l’a pas fini. Il attend de savoir s’il revient.'), v('', 'La dernière ligne est un nom, gravé à moitié.')),
-      d('Les pages', v('vela', 'Chaque page est une voix. Le Gardien ne garde pas des cristaux. Il garde les gens qui sont passés.'), v('sasha', 'Gravé au burin, au centième de millimètre. Aucune machine de Vertiga ne fait ça.'), v('', 'Des plaques de cristal gravées, des milliers de lignes.')),
-      d('Le lutrin', v('ilka', 'Il y a l’empreinte de deux mains, usée. Il lit ce registre depuis des siècles.'), v('', 'La pierre du lutrin est usée à l’endroit où l’on pose les mains.')),
+      { texte: 'Relever la table', effet: 'eclat', drapeau: 'table-relevee', recit: 'Tu fais relever la table, nom par nom, chiffre par chiffre. Les Veilleurs n’en ont aucune aussi complète. Un Éclat dormait sous la dernière ligne.' },
+      { texte: 'Prendre les étiquettes', effet: 'composants', recit: 'De fines plaques de métal, gravées d’un seul mot chacune. Personne ne sait les lire, mais le métal est bon. Le district en fera quelque chose.' },
+    ],
+    'Une table gravée compte les voix que chacun portait : 12, 19, 27, 31. Le dernier s’en est ôté trente pour n’en garder qu’une, la sienne.'),
+  H(4, 3, 'Ce que garde le Gardien',
+    'Le registre du Gardien, ouvert sur son lutrin de pierre. Des milliers de lignes. Les dernières pages sont gravées en marques que les Veilleurs savent lire : une date, un niveau, des noms.', [
+      d('Les pages anciennes', v('vela', 'Pas des noms : des gestes. « Taille la pierre en biais. » « Chante pour endormir. » Il garde ce qu’ils savaient faire. Eux, il les a laissés partir.'), v('', 'Chaque ligne ancienne décrit un geste : tailler une pierre, endormir un enfant, réparer un toit. Jamais un nom.')),
+      d('La page de 2066', v('doran', '« Niveau sept. Un cristal du cercle, sorti avant la fermeture. Ramassé par… » Et rien. Moi, je sais. Le porte-bonheur de mon père, qu’il gardait dans la poche gauche. Je l’ai sur moi depuis sa mort.'), v('', 'Une ligne récente : « 2066. Niveau sept. Un cristal du cercle, sorti avant la fermeture. Ramassé par… » La ligne s’arrête là.')),
+      d('La ligne inachevée', v('ilka', 'Il n’a pas fini la ligne parce que le cristal n’est jamais revenu. Il attend qu’on le lui rapporte.'), v('', 'La ligne de 2066 s’arrête au milieu, comme une phrase en attente.')),
     ], [
-      { texte: 'Finir la ligne', effet: 'eclat', drapeau: 'ligne-finie', recit: 'Doran grave la fin du nom de son père, lentement. Le registre se referme tout seul. Un Éclat glisse d’entre ses pages.' },
-      { texte: 'Ne pas y toucher', effet: 'composants', recit: 'Vous laissez le registre comme il est. Le Gardien saura que quelqu’un l’a lu, et l’a respecté. Au pied du lutrin, des outils de graveur.' },
-    ]),
+      { texte: 'Promettre de le rapporter', effet: 'eclat', drapeau: 'promesse-cristal', recit: 'Une main à plat sur la page : « On le rapportera là où il a été pris. » Le lutrin vibre doucement, comme une gorge qui se racle. Un Éclat glisse d’entre les pages.' },
+      { texte: 'Arracher la page', effet: 'composants', drapeau: 'page-arrachee', recit: 'La page se détache avec un bruit de verre. Les Veilleurs voudront la lire. Le Gardien, lui, saura qu’on l’a prise. Sur le lutrin, des outils de graveur.' },
+    ],
+    'Le Gardien ne garde pas des gens, il garde ce qu’ils savaient faire. En 2066, le père de Doran a ramassé un cristal du niveau 7 : le porte-bonheur que Doran porte encore.'),
 
   // ---------- −5 · Le Treillis ----------
   H(5, 1, 'Les niches vides',
     'Un treillis de cristal monte jusqu’au plafond, percé de niches. Presque toutes sont vides. Sur chacune, un sceau de cire blanche.', [
-      d('Un sceau', v('aurel', 'Les armes de ma famille. La Maison Orsève vide les Berceaux depuis des années. Je l’ai vu enfant sans comprendre.'), v('liane', 'Cire blanche. Les Hauts mettent ça sur tout ce qu’ils prennent. Même sur les gens.'), v('', 'Un sceau de cire blanche, marqué d’armoiries.')),
-      d('Une niche pleine', v('vela', 'Celle-là, ils l’ont oubliée. Elle dort. Elle ne sait pas que les autres sont parties.'), v('', 'Une seule niche est encore pleine. Un cristal y dort.')),
-      d('Un outil propre', v('sasha', 'Une pince de prélèvement. Neuve, stérile, chère. Rien à voir avec nos outils de fouille.'), v('', 'Une pince de prélèvement, neuve, oubliée sur une marche.')),
+      d('Un sceau', v('aurel', 'Ce sceau, je l’ai vu sur les caisses qui montaient chez nous, quand j’étais enfant. On me disait que c’étaient des fruits.'), v('liane', 'Cire blanche. Les Hauts mettent ça sur tout ce qu’ils prennent. Même sur les gens.'), v('', 'Un sceau de cire blanche, marqué d’armoiries.')),
+      d('Une niche pleine', v('vela', 'Celle-là, ils l’ont oubliée. Regarde le treillis autour : terni, fêlé, comme du verre trop chauffé. Ce n’est pas le cristal qui s’abîme. C’est son lit.'), v('', 'Une seule niche est encore pleine. Autour d’elle, le treillis est terni et fêlé.')),
+      d('Un outil propre', v('doran', 'Le sceau de la Compagnie des Fondations. J’ai signé chez eux en 2094. On nous disait qu’on montait des îles. On ne nous disait pas avec quoi.'), v('sasha', 'Une pince de prélèvement, neuve, frappée au sceau de la Compagnie des Fondations. Rien à voir avec nos outils de fouille.'), v('', 'Une pince de prélèvement neuve, frappée au sceau de la Compagnie des Fondations.')),
     ], [
-      { texte: 'Laisser dormir le cristal', effet: 'eclat', drapeau: 'berceau-laisse', recit: 'Tu ne touches pas à la dernière niche. En partant, Véla y glisse la main. « Elle dit merci. » Un Éclat s’en détache.' },
+      { texte: 'Laisser dormir le cristal', effet: 'eclat', drapeau: 'berceau-laisse', recit: 'Tu ne touches pas à la dernière niche. En partant, tu sens le treillis se détendre, comme un merci. Un Éclat luit au bord de la niche.' },
       { texte: 'Prendre la pince', effet: 'composants', recit: 'La pince des Hauts se revendra une fortune au district. Le cristal, lui, reste où il est.' },
-    ]),
+    ],
+    'Les Berceaux du Treillis ont été vidés sous les sceaux des Orsève, avec les pinces de la Compagnie des Fondations. Et ce qui s’use, ce n’est pas le cristal : c’est le lit qui le garde.'),
   H(5, 2, 'Le campement blanc',
     'Un campement propre : tentes blanches, caisses scellées, une table pliante. Les gens des Hauts sont venus, ont travaillé, et sont repartis.', [
       d('Les caisses', v('ilka', 'Vides. Mais regarde les étiquettes : un numéro par niche. Ils ont tout compté.'), v('', 'Des caisses vides, numérotées une à une.')),
-      d('Un carnet', v('aurel', 'L’écriture de ma tante. « Trente-deux prélevés. Aucun refus. » Les Berceaux ne refusent jamais, c’est pour ça qu’ils les prennent.'), v('', 'Un carnet : « Trente-deux prélevés. Aucun refus. » Signé : I. O.')),
-      d('La table', v('doran', 'Une nappe. Ils ont mis une nappe, ici, dans les Strates.'), v('', 'Une table pliante, couverte d’une nappe blanche.')),
+      d('Un carnet', v('liane', '« Trente-deux prélevés. Aucun refus. » L’écriture de ma mère. Elle a toujours aimé écrire ce mot-là.'), v('aurel', '« Trente-deux prélevés. Aucun refus. » L’écriture de ma tante. Les Berceaux ne refusent jamais.'), v('', 'Un carnet : « Trente-deux prélevés. Aucun refus. » Signé : I. O.')),
+      d('Un sismographe', v('sasha', 'Un sismographe de poche, abandonné en marche. La courbe monte depuis trois ans. Chaque bond tombe à une date du carnet : un prélèvement, une secousse.'), v('kessa', 'La courbe monte à chaque date du carnet. Ils savaient que le treillis tremblait un peu plus à chaque fois. Ils ont continué.'), v('', 'Un sismographe abandonné : la courbe bondit à chaque date notée dans le carnet.')),
     ], [
-      { texte: 'Garder le carnet', effet: 'eclat', drapeau: 'carnet-isaure', recit: 'Le carnet rejoindra les Veilleurs. Entre deux pages, un Éclat taillé, que quelqu’un avait mis de côté pour soi.' },
+      { texte: 'Garder le carnet', effet: 'eclat', drapeau: 'carnet-isaure', recit: 'Le carnet rejoindra les Veilleurs. Entre deux pages, un Éclat taillé que quelqu’un avait mis de côté pour soi.' },
       { texte: 'Récupérer le matériel', effet: 'composants', recit: 'Les Hauts ne reviendront pas pour des piquets de tente. Le district, si.' },
-    ]),
+    ],
+    'Les Hauts prélèvent les Berceaux en connaissant le prix : à chaque prélèvement, le treillis tremble un peu plus. Le carnet est signé « I. O. ».'),
   H(5, 3, 'Ce qu’il reste',
-    'Au fond du Treillis, les niches qui restent se sont serrées les unes contre les autres. Le Gardien des registres est en dessous.', [
-      d('Les niches serrées', v('vela', 'Elles ont froid. Elles se sont rapprochées. Le Gardien les protège parce que personne d’autre ne le fait.'), v('', 'Les dernières niches se sont rapprochées, comme pour se tenir chaud.')),
-      d('Un brigadier endormi', v('ilka', 'Un soldat du Serment, assis contre le mur. Il récite un serment qui n’est pas le sien, en dormant.'), v('', 'Un brigadier dort contre le mur et murmure dans son sommeil.')),
-      d('L’inventaire', v('aurel', 'Signé « I. Orsève ». Ma tante tient le Registre des Vierges. Elle ne descend jamais. Elle envoie les autres.'), v('', 'Un inventaire de Berceaux dépasse de la poche du soldat, signé « I. Orsève ».')),
+    'Au fond du Treillis, les dernières niches pleines se sont rapprochées autour d’une seule, scellée deux fois. Le Gardien des registres est en dessous.', [
+      d('Les niches serrées', v('vela', 'La niche qu’on a laissée dormir, là-haut, a rejoint les autres. Elles se sont écartées pour nous laisser passer.', 'berceau-laisse'), v('vela', 'Elles se sont rangées autour de 5-1, comme une garde. Le Gardien les protège parce que personne d’autre ne le fait.'), v('', 'Les dernières niches se sont rapprochées autour de la niche 5-1, comme une garde.')),
+      d('Le sceau de 5-1', v('aurel', 'Deux cires, l’une sur l’autre. Celle du dessus est datée de 2108, l’année où ma tante a pris la tête de la Maison.'), v('liane', '2108. L’année où ma mère a pris la Maison. Un an avant de m’effacer.'), v('', 'Deux sceaux de cire blanche, l’un sur l’autre. Le plus récent est daté de 2108.')),
+      d('L’étiquette', v('vela', '« Original du fondateur. Ne pas ouvrir. Ne pas comparer. » Ne pas comparer à quoi ? À ses copies, je suppose.'), v('', 'Une étiquette sous la cire : « Original du fondateur. Ne pas ouvrir. Ne pas comparer. »')),
     ], [
-      { texte: 'Réveiller le brigadier', effet: 'eclat', drapeau: 'brigadier-reveille', recit: 'Il se réveille en sursaut, ne sait plus où il est, et vous remercie. En partant, il vous laisse un Éclat de sa ration.' },
-      { texte: 'Prendre l’inventaire', effet: 'composants', recit: 'L’inventaire passe dans ta poche. Le soldat continue de réciter. Sur lui, quelques composants de solde.' },
-    ]),
+      { texte: 'Ouvrir la niche 5-1', effet: 'eclat', drapeau: 'niche-fondateur', recit: 'La niche s’ouvre sans un bruit. L’original du fondateur dort là, net, sans une fêlure. Même endormi, on sent ce qu’il veut : protéger les siens. Pas les enfermer. Un Éclat roule du sceau brisé.' },
+      { texte: 'Relever le sceau', effet: 'composants', recit: 'Tu relèves les deux cires, dates comprises. Les Veilleurs sauront quoi en faire. Au pied de la niche, du matériel de prélèvement abandonné.' },
+    ],
+    'Dans la niche 5-1 dort l’original de l’empreinte du fondateur des Orsève. Le sceau qui interdit de le comparer à ses copies date de 2108, l’année où Isaure a pris la Maison.'),
 
   // ---------- −6 · Le Mur de 2066 ----------
   H(6, 1, 'Le chantier',
-    'Un chantier de 2066, laissé en plan : bétonnière, étais, une radio. Tout a été abandonné en une nuit.', [
+    'Le chantier de 2066, laissé en plan : bétonnière, étais, une radio. Tout a été abandonné en une nuit.', [
       d('La radio', v('sasha', 'Encore réglée sur la fréquence du chantier. Si je la répare, on entendra leur dernière conversation.'), v('', 'Une radio de chantier, encore réglée sur sa fréquence.')),
-      d('Un casque', v('doran', 'Le numéro de mon père. Il l’a laissé ici. Il ne laissait jamais son casque.'), v('', 'Un casque de chantier, posé sur une caisse, avec un numéro.')),
-      d('Le béton', v('ilka', 'Coulé à la hâte, en pleine nuit. On voit les traces des mains dedans.'), v('', 'Du béton coulé à la hâte. Des empreintes de mains y sont restées.')),
+      d('Le casque', v('doran', 'Le numéro de mon père. Il ne laissait jamais son casque. Ce soir-là, il a laissé son casque, et il a ramassé un cristal.', 'promesse-cristal'), v('doran', 'Le numéro de mon père. Il l’a laissé ici. Il ne laissait jamais son casque.'), v('', 'Un casque de chantier posé sur une caisse, avec un numéro.')),
+      d('Le planning', v('ilka', 'Le mur devait faire dix centimètres. Ils en ont coulé quarante, en une nuit, sans ordre écrit. Ce n’est pas un éboulement qui leur faisait peur. C’est ce qui pleurait.'), v('', 'Sur le planning : un mur de dix centimètres. Celui qu’on a coulé en fait quarante.')),
     ], [
-      { texte: 'Réparer la radio', effet: 'eclat', drapeau: 'radio', recit: '« … on ferme, on ferme, elle pleure, on ferme quand même… » La voix grésille et se tait. Dans le boîtier, un Éclat servait de pile.' },
-      { texte: 'Prendre le casque', effet: 'composants', drapeau: 'casque', recit: 'Doran attache le casque à son sac. Il ne dit rien pendant longtemps. Le chantier abandonné rend quelques outils.' },
-    ]),
+      { texte: 'Réparer la radio', effet: 'eclat', drapeau: 'radio', recit: '« … on coule, on coule, il pleure… Attends. Tu entends ? Il ferme aussi. De son côté. » La voix se tait. Dans le boîtier, un Éclat servait de pile.' },
+      { texte: 'Prendre le casque', effet: 'composants', drapeau: 'casque', recit: 'Le casque rejoint le sac de l’escouade. Personne ne dit rien pendant longtemps. Le chantier abandonné rend quelques outils.' },
+    ],
+    'En 2066, les ouvriers ont coulé un mur quatre fois plus épais que prévu, en une seule nuit. Et de l’autre côté, quelqu’un fermait aussi.'),
   H(6, 2, 'Les pleurs',
-    'Plus près du mur, les pleurs. Il n’y a personne. Les pleurs viennent du béton lui-même.', [
-      d('Les pleurs', v('liane', 'Les Berceaux qu’on vide font ce bruit-là. Dans les Hauts, on met de la musique pour ne pas l’entendre.'), v('vela', 'Quelqu’un pleure parce qu’il ne sait plus qui il est. Ce n’est pas de la tristesse. C’est de la peur.'), v('', 'Des pleurs, étouffés, qui semblent venir du mur lui-même.')),
-      d('Une main peinte', v('joss', 'Une main, peinte de l’autre côté et qui a traversé le béton. Quelqu’un voulait dire au revoir.'), v('', 'Une main, dessinée en bleu, dépasse du béton comme si elle l’avait traversé.')),
-      d('La phrase', v('doran', '« On a fermé la porte, mais pas de notre côté. » C’est ce que disait mon père. Il l’a écrit ici.'), v('', 'Une phrase écrite au crayon : « On a fermé la porte, mais pas de notre côté. »')),
+    'Plus près du mur, les pleurs. Il n’y a personne. Ils viennent du béton lui-même. Et entre deux sanglots, un petit bruit sec.', [
+      d('Les pleurs', v('vela', 'Quelqu’un pleure parce qu’il ne sait plus qui il est. Ce n’est pas de la tristesse. C’est de la peur.'), v('', 'Des pleurs étouffés, qui semblent venir du mur lui-même.')),
+      d('Le bruit sec', v('doran', 'Un loquet. Il le tire encore, toutes les quelques minutes, comme on vérifie qu’on a bien fermé. Mon père n’a enfermé personne. Il a répondu à quelqu’un qui fermait sa porte.'), v('', 'Un loquet qu’on tire, de l’autre côté, toutes les quelques minutes. Comme on vérifie qu’on a bien fermé.')),
+      d('Ce qui a dérivé', v('aurel', 'L’original de 5-1 voulait protéger les siens. La copie de ma tante veut les enfermer. Trois copies ont suffi. Ce n’est pas le fondateur qui nous a rendus durs : ce sont ses copies.', 'niche-fondateur'), v('liane', 'Ma mère m’a effacée sans hésiter une seconde. Ici, au milieu de voix qui ne savent plus qui elles sont, je me demande pour la première fois si c’était seulement elle.'), v('aurel', 'Mon empreinte a été recopiée trois fois avant moi. Ici, j’entends ce que ça fait, une voix qui ne sait plus d’où elle vient.'), v('', 'Les pleurs changent de ton, sans cesse, comme plusieurs voix qui se disputent une seule gorge.')),
     ], [
-      { texte: 'Poser la main contre le mur', effet: 'eclat', drapeau: 'main-posee', recit: 'Les pleurs se calment, un instant. Quelque chose, de l’autre côté, a senti la main. Un Éclat suinte du béton.' },
-      { texte: 'Relever la phrase', effet: 'composants', recit: 'Tu recopies la phrase pour Ysé. En longeant le mur, l’escouade trouve le matériel du chantier.' },
-    ]),
+      { texte: 'Poser la main contre le mur', effet: 'eclat', drapeau: 'main-posee', recit: 'Les pleurs se calment, un instant. De l’autre côté, le loquet ne bouge plus. Un Éclat suinte du béton.' },
+      { texte: 'Relever le rythme du loquet', effet: 'composants', recit: 'Tu notes chaque bruit sec, montre en main : toutes les quatre minutes, sans faute, depuis cinquante-cinq ans. En longeant le mur, l’escouade trouve le matériel du chantier.' },
+    ],
+    'Derrière le mur, on tire encore un loquet : les ouvriers de 2066 n’ont enfermé personne, ils ont répondu à quelqu’un qui fermait. Et l’empreinte du fondateur des Orsève a dérivé de copie en copie.'),
   H(6, 3, 'La fissure',
-    'Le mur de 2066 a une fissure, de haut en bas. Elle est récente. Quelque chose pousse de l’autre côté.', [
-      d('La fissure', v('sasha', 'Ce n’est pas le béton qui cède. C’est quelque chose qui le travaille de l’intérieur, depuis des années.'), v('', 'Une fissure de haut en bas, récente.')),
-      d('Ce qu’on voit', v('vela', 'Des dizaines de cristaux, tous du même être. Il pleure parce que chaque cristal se souvient d’une autre vie.'), v('', 'Par la fissure, on devine des cristaux rangés en cercle.')),
-      d('Le Gardien', v('doran', 'Il est là, juste derrière. Il ne nous attend pas pour se battre. Il attend pour savoir si on va le casser, ce mur.'), v('', 'Une ombre immense se tient derrière la fissure, immobile.')),
+    'Le mur de 2066 est fendu de haut en bas. La fissure est récente. Quelque chose pousse de l’autre côté.', [
+      d('La fissure', v('sasha', 'La radio disait : « Il ferme aussi, de son côté. » Regarde d’où part la fissure : du loquet. Il essaie d’ouvrir ce qu’il a fermé.', 'radio'), v('sasha', 'Ce n’est pas le béton qui cède. C’est quelque chose qui le travaille de l’intérieur, depuis des années.'), v('', 'Une fissure de haut en bas, récente.')),
+      d('Le cercle', v('vela', 'Des dizaines de cristaux d’un même être, rangés en cercle. Chacun se souvient d’une autre vie. Et il y a une place vide dans le cercle.'), v('', 'Par la fissure, des cristaux rangés en cercle. Une place est vide.')),
+      d('La poche de Doran', v('doran', 'Le porte-bonheur de mon père chauffe dans ma poche. Sa place est là, dans le cercle. Je l’ai promis.', 'promesse-cristal'), v('doran', 'Le porte-bonheur de mon père chauffe dans ma poche. Il veut rentrer. Je ne sais pas si j’ai le droit de le rendre, ou celui de le garder.'), v('', 'Dans le cercle, la place vide a la taille d’un petit cristal.')),
     ], [
-      { texte: 'Parler au Gardien', effet: 'eclat', drapeau: 'parle-gardien', recit: 'Tu dis qui tu es, et pourquoi tu viens. L’ombre ne répond pas, mais elle recule d’un pas. Un Éclat tombe de la fissure.' },
-      { texte: 'Préparer la percée', effet: 'composants', recit: 'L’escouade dégage des étais du chantier pour la percée. Ils serviront, et le reste se revendra.' },
-    ]),
+      { texte: 'Rendre le cristal de 2066', effet: 'eclat', drapeau: 'cristal-rendu', recit: 'Le cristal roule par la fissure jusqu’à sa place. Les pleurs ne s’arrêtent pas. Mais l’une des voix se tait, comme quelqu’un qui retrouve enfin la fin de sa phrase. Un Éclat tombe de la fissure.' },
+      { texte: 'Le garder', effet: 'composants', drapeau: 'cristal-garde', recit: 'Le cristal reste dans la poche de Doran : « Mon père l’a gardé toute sa vie. Je le garde encore un peu. » La place reste vide. L’escouade dégage les étais pour la percée.' },
+    ],
+    'Derrière le mur, des dizaines de cristaux d’un même être, rangés en cercle. Une place était vide : celle du porte-bonheur du père de Doran.'),
 
   // ---------- −7 · Les Deux Rives ----------
   H(7, 1, 'Les deux passerelles',
     'Deux passerelles franchissent le même gouffre, côte à côte. L’une est neuve, l’autre a cédé. Les deux existent en même temps.', [
       d('La passerelle cassée', v('ilka', 'Celle des Hauts-Ponts. Celle qui a cédé sous moi. Elle n’a rien à faire ici.'), v('', 'Une passerelle cassée en son milieu, rouillée.')),
       d('La passerelle neuve', v('ilka', 'Et celle-là, c’est celle qui n’a jamais cédé. Celle où j’ai encore mes jambes. Je ne veux pas la regarder.'), v('', 'Une passerelle neuve, intacte, juste à côté de l’autre.')),
-      d('Les lignes d’eau', v('doran', 'Ils regravaient leur ligne plus haut, chaque fois. Ils ont tenu le compte longtemps.'), v('', 'Des dizaines de lignes d’eau gravées, l’une au-dessus de l’autre.')),
+      d('Deux cristaux', v('vela', 'Deux cristaux du même être, au bord du gouffre. L’un se souvient d’avoir bâti cette passerelle. L’autre, de l’avoir vue tomber. Les deux sont sincères.'), v('', 'Deux cristaux identiques, posés de part et d’autre du gouffre.')),
     ], [
-      { texte: 'Prendre la passerelle cassée', effet: 'eclat', drapeau: 'vraie-rive', recit: 'Vous traversez par la vraie, en sautant le trou. Ilka passe la première. De l’autre côté, un Éclat, là où la passerelle neuve aurait dû arriver.' },
+      { texte: 'Prendre la passerelle cassée', effet: 'eclat', drapeau: 'vraie-rive', recit: 'Vous traversez par la vraie, en sautant le trou. De l’autre côté, un Éclat, là où la passerelle neuve aurait dû arriver.' },
       { texte: 'Prendre la passerelle neuve', effet: 'lampe', recit: 'La passerelle neuve tient, bien sûr. Au bout, une lanterne qui n’existe que dans ce souvenir. Elle éclaire quand même.' },
-    ]),
+    ],
+    'À −7, deux souvenirs vrais peuvent se contredire. Un même être se souvient d’avoir bâti une passerelle, et de l’avoir vue tomber.'),
   H(7, 2, 'Ceux qui regravaient',
-    'Un mur entier couvert de lignes d’eau, et sous chaque ligne, une phrase. Ceux d’avant écrivaient ce qu’ils espéraient encore.', [
-      d('La première ligne', v('vela', '« L’eau s’arrêtera ici. » Tout en bas, la plus vieille. Ils y croyaient.'), v('', 'Sous la ligne la plus basse : « L’eau s’arrêtera ici. »')),
-      d('Une ligne au milieu', v('ilka', '« On montera plus haut. » Ils ne savaient pas la retenir. Ils savaient graver.'), v('', 'Plus haut : « On montera plus haut. »')),
-      d('La dernière ligne', v('doran', 'Il n’y a rien sous la dernière. Juste une empreinte de main.'), v('', 'Sous la ligne la plus haute, pas de phrase. Une empreinte de main.')),
+    'Un mur entier couvert de lignes d’eau, gravées l’une au-dessus de l’autre. Pas un mot sous aucune d’elles.', [
+      d('La plus basse', v('vela', 'Gravée profond, à coups lents. On grave comme ça ce qu’on croit définitif.'), v('', 'La ligne la plus basse est gravée profond, d’un trait appliqué.')),
+      d('Les écarts', v('sasha', 'Entre les lignes : une main, une main, deux, quatre. Ça accélère.'), v('doran', 'Une main d’écart, puis une main, puis deux, puis quatre. Ça ne monte pas. Ça accélère.'), v('', 'Les écarts entre les lignes grandissent : une main, une main, deux, quatre.')),
+      d('La plus haute', v('doran', 'La dernière n’est qu’une rayure, faite au bout du bras, sur la pointe des pieds.'), v('ilka', 'La dernière, c’est à peine une rayure. Faite à bout de bras, vite.'), v('', 'La ligne la plus haute n’est qu’une rayure, tracée à bout de bras.')),
     ], [
-      { texte: 'Graver une ligne', effet: 'eclat', drapeau: 'ligne-gravee', recit: 'Tu graves une ligne au-dessus de toutes les autres, et dessous : « On ne la laissera pas monter seule. » Un Éclat se détache du mur.' },
-      { texte: 'Recopier le mur', effet: 'composants', recit: 'Les Veilleurs paieront bien pour une copie de ce mur. Doran la fait au fusain, pierre par pierre.' },
-    ]),
-  H(7, 3, 'Le souvenir à venir',
-    'Une salle où l’eau monte et redescend sans bruit. Dans les reflets, on voit Vertiga. Puis ton district, sous l’eau.', [
-      d('Le reflet', v('ilka', 'C’est faux. Hein ? C’est faux.'), v('', 'Dans l’eau, ton district englouti. Personne ne s’en étonne.')),
-      d('Les fils', v('vela', 'Elle tisse avec ce qui pourrait arriver, pas seulement avec ce qui est arrivé. La Tisseuse est tout près.'), v('', 'Des fils fins comme des cheveux tendent l’eau comme un tissu.')),
-      d('Une main tendue', v('joss', 'Elle veut nous faire peur pour qu’on reste ici. Les gens qui veulent nous garder font toujours ça.'), v('', 'Dans le reflet, quelqu’un te tend la main pour te faire entrer dans l’eau.')),
+      { texte: 'Graver une ligne', effet: 'eclat', drapeau: 'ligne-gravee', recit: 'Tu graves une ligne au-dessus de toutes les autres, profond, à coups lents. Un Éclat se décroche du mur.' },
+      { texte: 'Recopier le mur', effet: 'composants', recit: 'Les Veilleurs paieront bien pour une copie de ce mur. L’escouade la fait au fusain, pierre par pierre.' },
+    ],
+    'Sur un mur de −7, des lignes d’eau gravées l’une au-dessus de l’autre. Les écarts grandissent : une main, une main, deux, quatre. La dernière n’est qu’une rayure.'),
+  H(7, 3, 'Le relevé impossible',
+    'Les deux passerelles se rejoignent sur une même pile. Une seule ligne d’eau en fait le tour, d’un seul trait.', [
+      d('Depuis la rive neuve', v('sasha', '1,40 m au-dessus du tablier. Mesurée trois fois.'), v('doran', 'D’ici, la ligne est à 1,40 m du tablier. J’ai mesuré trois fois.'), v('', 'Depuis la rive neuve, la ligne passe à 1,40 m du tablier.')),
+      d('Depuis la rive cassée', v('ilka', 'D’ici, la même ligne est à 2,60 m. Même trait, même pile. Ton mètre ne ment pas. Le mien non plus.'), v('', 'Depuis la rive cassée, la même ligne passe à 2,60 m.')),
+      d('Les fils', v('vela', 'Des fils dans la pierre. Quelqu’un a cousu deux murs en un. Les deux sont vrais. C’est la Tisseuse.'), v('', 'Des fils fins comme des cheveux courent dans la pierre, à l’endroit où les deux rives se rejoignent.')),
     ], [
-      { texte: 'Regarder jusqu’au bout', effet: 'eclat', drapeau: 'avenir-vu', recit: 'Tu regardes ton district sous l’eau jusqu’à ce que l’image se brouille. Tu sais ce que tu dois empêcher. Un Éclat remonte à la surface.' },
-      { texte: 'Troubler l’eau', effet: 'lampe', recit: 'Tu frappes l’eau. Le reflet se brise, et les fils se défont en lueurs qui éclairent le chemin.' },
-    ]),
+      { texte: 'Garder les deux relevés', effet: 'eclat', drapeau: 'deux-releves', recit: 'Tu notes les deux chiffres, sans en barrer aucun. Au pied de la pile, un Éclat t’attendait.' },
+      { texte: 'Couper un fil', effet: 'lampe', recit: 'Tu coupes un fil. Les deux murs se séparent un instant, et une lumière passe entre eux, jusqu’aux salles suivantes.' },
+    ],
+    'À −7, la même ligne d’eau mesure 1,40 m d’une rive et 2,60 m de l’autre. Les deux relevés sont justes. Un mur entier ne dit pas où l’eau s’est arrêtée.'),
 
   // ---------- −8 · La Ruche d'ambre ----------
   H(8, 1, 'Le campement des Veilleurs',
-    'Des lampes à algues éteintes, des carnets ouverts, des couvertures pliées. Les Veilleurs ne sont pas partis : ils sont encore là, quelque part dans un souvenir.', [
-      d('Les carnets', v('doran', 'Ils ont relevé les tables gravées. Des noms, puis de moins en moins de noms, puis seulement des empreintes.'), v('', 'Des carnets de relevés, ouverts sur des tables gravées.')),
-      d('Une ligne inachevée', v('vela', 'Ils ont arrêté d’écrire au milieu d’un mot. La Tisseuse les a pris là, en plein travail, dans un souvenir heureux.'), v('', 'Le dernier carnet s’arrête au milieu d’une ligne.')),
-      d('L’ambre', v('kessa', 'L’ambre suinte des murs. Elle sent le miel et la cire. Mes parents en parlaient, de cette odeur.'), v('', 'De l’ambre suinte des murs, épaisse, dorée.')),
+    'Le campement des Veilleurs perdus est monté sur un plus ancien : celui de l’équipe dont une seule fouilleuse est remontée, il y a des années.', [
+      d('Les piquets', v('nuit', 'Deux rangées de trous. Les neufs sont tombés pile dans les vieux. Personne ne leur avait donné le plan.'), v('kessa', 'Leurs piquets sont plantés dans les trous de l’ancien camp. Exactement dans les mêmes.'), v('', 'Les piquets neufs sont plantés pile dans les trous d’un campement plus ancien.')),
+      d('Deux relevés', v('sasha', 'La même table, relevée par les deux équipes. Les anciens comptent quatorze lignes, les nouveaux onze. Signé, contresigné.'), v('doran', 'Deux relevés de la même table. Quatorze lignes pour les anciens, onze pour les nouveaux. Il en manque trois.'), v('', 'Deux relevés de la même table, à des années d’écart : quatorze lignes, puis onze.')),
+      d('L’ambre', v('kessa', 'L’ambre suinte des murs. Il sent le miel et la cire. Mes parents parlaient de cette odeur, et de la glande qu’on leur a donnée pour le produire.'), v('', 'De l’ambre suinte des murs, épais, doré.')),
     ], [
       { texte: 'Rallumer leurs lampes', effet: 'lampe', drapeau: 'lampes-veilleurs', recit: 'Tu rallumes une à une les lampes des Veilleurs. Si l’un d’eux se réveille, il verra qu’on est venu. Tu en gardes une pour la route.' },
-      { texte: 'Emporter les carnets', effet: 'eclat', recit: 'Les carnets remonteront chez les Veilleurs. Entre deux pages, un Éclat qu’un fouilleur gardait comme marque-page.' },
-    ]),
+      { texte: 'Emporter les relevés', effet: 'eclat', recit: 'Les deux relevés remonteront chez les Veilleurs. Glissé dans une reliure, un Éclat qu’un Veilleur gardait pour lui.' },
+    ],
+    'Les Veilleurs perdus ont campé dans les trous d’un campement plus ancien. Les deux équipes ont relevé la même table : quatorze lignes pour l’une, onze pour l’autre.'),
   H(8, 2, 'La table de la Ruche',
-    'Une table gravée, à demi prise dans l’ambre. Il manque un morceau, cassé net. La fouilleuse qui est remontée autrefois tenait cet éclat.', [
-      d('La cassure', v('doran', 'Il manque un morceau. Celui que les Veilleurs gardent sous clé, au district. Elle l’a rapporté seule.'), v('', 'Il manque un morceau de la table, cassé net.')),
-      d('Ce qui est gravé', v('liane', 'Ce n’est pas une langue. C’est un schéma. Des implants, avant les implants. Quelqu’un les a dessinés ici, il y a très longtemps.'), v('sasha', 'Un schéma de câblage. Plus vieux que tout ce que je connais, et pourtant je le comprends.'), v('', 'Des lignes gravées, comme un schéma de câblage.')),
-      d('Une phrase', v('vela', '« Elle attend. » C’est tout ce qui reste au bord de la cassure. Je ne sais pas qui est « elle ».'), v('', 'Au bord de la cassure : « Elle attend. »')),
+    'Une table gravée, à demi prise dans l’ambre. Il manque un morceau, cassé net : celui que la fouilleuse remontée autrefois tenait dans la main.', [
+      d('La cassure', v('doran', 'Le morceau qui manque fait trois lignes. Les trois qui manquent au relevé des nouveaux. La fouilleuse les a emportées, et les Veilleurs les gardent sous clé.'), v('', 'Il manque un morceau de la table, cassé net : la place de trois lignes.')),
+      d('Les colonnes', v('sasha', 'À −4 : un nom, puis le nombre de voix. Ici, plus de nom. Juste l’empreinte, et combien de fois on l’a recopiée : 40, 112, 300. Ils recopiaient des copies.', 'table-relevee'), v('vela', 'Pas de colonne des noms. Juste des empreintes, et à côté de chacune, combien de fois elle a été recopiée. Trois cents, pour certaines.'), v('', 'La table n’a pas de colonne des noms : des empreintes, et un chiffre à côté de chacune, parfois trois cents.')),
+      d('L’écriture', v('liane', 'Regarde le trait. Les tables de −4 sont gravées d’une main sûre. Celle-ci tremble, recommence, rature. Quelqu’un qui ne savait plus bien graver a essayé quand même.'), v('ilka', 'Ça tremble, ça rature, ça recommence. On dirait mon frère qui recopie ses devoirs sur ceux d’un autre.'), v('', 'Le trait est maladroit, raturé, repris : rien à voir avec les tables de −4.')),
     ], [
-      { texte: 'Relever le schéma', effet: 'eclat', drapeau: 'schema', recit: 'Tu relèves le schéma au fusain. La Glacière, les implants, l’ambre : tout se tient. Un Éclat tombe de la table quand tu la touches.' },
-      { texte: 'Dégager la table', effet: 'composants', recit: 'Vous dégagez la table de l’ambre. L’ambre se revend bien au district, et il y en a beaucoup.' },
-    ]),
+      { texte: 'Relever la table', effet: 'eclat', drapeau: 'copistes', recit: 'Tu relèves la table au fusain, ratures comprises. Les Veilleurs la poseront à côté de celle de −4. Un Éclat reste dans ta paume quand tu touches la cassure.' },
+      { texte: 'Dégager l’ambre', effet: 'composants', recit: 'Vous dégagez la table de l’ambre. L’ambre se revend bien au district, et il y en a beaucoup.' },
+    ],
+    'À −8, les tables n’ont plus de colonne des noms : seulement des empreintes, recopiées des centaines de fois, d’une main qui ne savait plus graver.'),
   H(8, 3, 'Le souvenir heureux',
     'Au cœur de la Ruche, les Veilleurs perdus sont assis en cercle et sourient. Ils fêtent quelque chose qui n’a jamais eu lieu.', [
-      d('Le cercle', v('joss', 'On ne les sauve pas en criant. On leur rappelle un vrai détail. Laissez-moi faire.'), v('vela', 'Ils sont heureux. Ils ne veulent pas en sortir. Je les comprends un peu.'), v('', 'Six Veilleurs, assis en cercle, sourient à quelque chose que vous ne voyez pas.')),
-      d('La fête', v('ilka', 'Ils fêtent la fin de la montée des eaux. Un truc qui n’arrivera jamais. C’est cruel.'), v('', 'Ils lèvent leurs verres à une fête qui n’a jamais eu lieu.')),
+      d('Le cercle', v('joss', 'Six Veilleurs, sept verres. Le septième attend la fouilleuse qui est remontée, il y a des années.'), v('vela', 'Six Veilleurs, et sept verres. Il y en a un pour quelqu’un qui n’est pas là.'), v('', 'Six Veilleurs assis en cercle. Sept verres.')),
+      d('La fête', v('ilka', 'Ils fêtent la fin de la montée des eaux. Un truc qui n’est jamais arrivé. C’est cruel.'), v('', 'Ils lèvent leurs verres à une fête qui n’a jamais eu lieu.')),
       d('Un fil', v('doran', 'Un fil d’ambre les relie tous à quelque chose, plus bas. La Tisseuse. On coupe le fil, ou on la bat.'), v('', 'Un fil doré relie chacun d’eux à quelque chose, plus bas.')),
     ], [
       { texte: 'Leur rappeler un vrai détail', effet: 'eclat', drapeau: 'vrai-detail', recit: 'Tu dis le nom de Tobin, et le prix du pain au marché. Un Veilleur cligne des yeux. Le souvenir tremble. Un Éclat tombe de son verre.' },
       { texte: 'Les laisser rêver', effet: 'composants', recit: 'Vous ne les dérangez pas : la Tisseuse d’abord. Leur campement rend des vivres et du matériel.' },
-    ]),
+    ],
+    'Dans le souvenir heureux des Veilleurs, il y a sept verres pour six. Le septième attend la fouilleuse qui est remontée autrefois, avec trois lignes de la table.'),
 
   // ---------- −9 · Le Ciel d'en bas ----------
   H(9, 1, 'La lettre d’Ysé',
     'Aucun fouilleur n’a jamais dépassé cette salle. Avant de partir, tu as glissé dans ton sac la lettre d’Ysé. Tu la relis à la lueur des cristaux.', [
       d('La lettre', v('vela', '« Si la Tisseuse garde des noms, demande-lui le sien. » Ysé a toujours su ce qu’il fallait demander.'), v('', '« Si la Tisseuse garde des noms, demande-lui le sien. »')),
-      d('Le plafond', v('nuit', 'Le plafond est plein d’étoiles. Ce ne sont pas des étoiles. Ce sont des cristaux, très loin au-dessus. On dirait un ciel.'), v('', 'Le plafond est si haut qu’il ressemble à un ciel étoilé.')),
+      d('La côte gravée', v('vela', 'Cette côte, je la connais. Je la vois en rêve depuis ma greffe. Je n’y suis jamais allée. Personne n’y est jamais allé.'), v('nuit', 'Une côte. Personne ne l’a jamais vue.'), v('', 'Tout un mur gravé d’une côte inconnue : criques, courants, récifs.')),
       d('Un fil sur le sol', v('kessa', 'Ses fils traînent partout, ici. Ils sont usés. Elle les tient depuis trop longtemps.'), v('', 'Des fils usés traînent sur le sol.')),
     ], [
       { texte: 'Garder la lettre sur toi', effet: 'eclat', drapeau: 'lettre-yse', recit: 'Tu ranges la lettre contre toi. Plus loin, un Éclat brille dans un nid de fils : la Tisseuse l’avait gardé pour quelqu’un.' },
       { texte: 'Suivre les fils', effet: 'lampe', recit: 'Les fils luisent faiblement quand on les suit. Ils éclairent le chemin vers le bas.' },
-    ]),
-  H(9, 2, 'Les noms perdus',
-    'Des fils noués autour de petits cristaux, des milliers. Chacun garde un nom que les tables gravées ont perdu.', [
-      d('Un nœud', v('vela', 'Un nom, à l’intérieur. Personne ne s’en souvient, sauf elle. Si elle meurt, il meurt avec.'), v('', 'Un petit cristal, noué de fil, murmure un nom.')),
-      d('Un nom connu', v('doran', 'Celui-là, je le connais. C’est un des ouvriers de 2066. Elle l’a gardé, lui aussi.'), v('', 'Un des noms est gravé dans le registre de −4.')),
-      d('Un nœud défait', v('joss', 'Celui-ci, elle l’a dénoué. Elle a donné son nom à quelqu’un, il y a longtemps, pour qu’il se souvienne d’elle.'), v('', 'Un seul nœud est défait. Le fil est vide.')),
+    ],
+    'À −9, un mur entier montre une côte que personne n’a jamais vue. Véla la voit en rêve depuis sa greffe.'),
+  H(9, 2, 'Les visages',
+    'Des fils noués autour de petits cristaux, par milliers. Au mur, gravés dans la roche, des dragons, des esprits, des êtres sans nom.', [
+      d('Les dragons', v('vela', 'Le même dragon que le mien, gravé dix fois. Le premier est net. Les autres tremblent, de plus en plus. Et le mien… je crois qu’il tremble un peu, lui aussi.'), v('', 'Le même dragon gravé dix fois : net la première fois, puis de plus en plus tremblé.')),
+      d('Un nœud', v('vela', 'Un nom, à l’intérieur. Personne ne s’en souvient, sauf elle. Si elle meurt, il meurt avec.'), v('joss', 'Un nom, là-dedans. Elle est la seule à s’en souvenir. C’est lourd, d’être la seule.'), v('', 'Un petit cristal noué de fil murmure un nom.')),
+      d('Un nœud défait', v('aurel', 'Un nœud défait, le fil vide. On a donné ce nom à quelqu’un. Chez nous, on grave le nom sous celui du porteur d’avant. Ici, on le donnait.'), v('joss', 'Un fil vide. Le nom n’est pas perdu : il est parti.'), v('', 'Un seul nœud est défait. Le fil est vide.')),
     ], [
-      { texte: 'Renouer un nom', effet: 'eclat', drapeau: 'nom-renoue', recit: 'Tu refais le nœud d’un fil qui glissait. Le nom tient. Quelque part, plus bas, la Tisseuse a senti ta main. Un Éclat se détache.' },
+      { texte: 'Renouer un nom', effet: 'eclat', drapeau: 'nom-renoue', recit: 'Tu refais le nœud d’un fil qui glissait. Le nom tient. Quelque part, plus bas, la Tisseuse a senti ta main. Un Éclat attend au bout du fil.' },
       { texte: 'Prendre quelques cristaux', effet: 'composants', recit: 'Les cristaux sans nom se revendront. Ceux qui en ont un, tu les laisses.' },
-    ]),
+    ],
+    'Le même dragon est gravé dix fois : net d’abord, puis de plus en plus tremblé. Plus on le recopie, moins on sait à quoi il ressemblait.'),
   H(9, 3, 'Le nid',
     'La Tisseuse est là, au fond, dans un nid de fils. Elle ne vous attaque pas encore. Ses mains tremblent.', [
       d('Ses mains', v('vela', 'Elle tient tous ses fils, mais elle tremble. Elle est fatiguée. Elle a peur de lâcher.'), v('', 'Ses mains tremblent, et ses fils avec.')),
-      d('Ses yeux', v('kessa', 'Elle nous regarde comme on regarde quelqu’un qu’on attendait depuis très longtemps.'), v('', 'Elle vous regarde, sans colère.')),
-      d('La lettre', v('ilka', 'Une fois, on demande. Si elle répond par des coups, on répond pareil.'), v('', 'La lettre d’Ysé, dans ta poche, pèse lourd.'), v('vela', 'Tu as gardé la lettre. Demande-lui, maintenant.', 'lettre-yse')),
+      d('Ses yeux', v('kessa', 'Elle sait que tu as renoué un de ses fils. Elle te regarde comme on regarde quelqu’un qui a rendu service.', 'nom-renoue'), v('kessa', 'Elle nous regarde comme on regarde quelqu’un qu’on attendait depuis très longtemps.'), v('', 'Elle vous regarde, sans colère.')),
+      d('La lettre', v('vela', 'Tu as gardé la lettre. Demande-lui, maintenant.', 'lettre-yse'), v('ilka', 'Une fois, on demande. Si elle répond par des coups, on répond pareil.'), v('', 'La lettre d’Ysé, dans ta poche, pèse lourd.')),
     ], [
       { texte: 'Lui demander son nom', effet: 'eclat', drapeau: 'nom-demande', recit: 'Elle ne répond pas. Pas encore. Mais elle sourit, et un Éclat roule jusqu’à tes pieds.' },
       { texte: 'Se préparer au combat', effet: 'composants', recit: 'L’escouade dépose ses sacs et se prépare. Au pied du nid, des restes de fouilles anciennes.' },
-    ]),
+    ],
+    'La Tisseuse tient tous les noms que les tables gravées ont perdus. Elle est fatiguée, et elle a peur de lâcher.'),
 
   // ---------- −10 · Le Puits d'avant ----------
   H(10, 1, 'Les portes nettes',
     'Ici, tout est net : les salles, les cristaux, les portes, mieux scellées que partout ailleurs. Rien n’a vieilli.', [
-      d('Une porte', v('doran', 'Fermée de l’intérieur, comme toutes les autres. En 2066, mon père a entendu quelqu’un tirer un loquet. C’était ici.'), v('', 'Une porte scellée de l’intérieur.')),
+      d('Une porte', v('doran', 'Fermée de l’intérieur, comme à −4. J’ai le casque de mon père sur mon sac. Ici, il aurait compris ce qu’il a entendu.', 'casque'), v('doran', 'Fermée de l’intérieur, comme à −4. En 2066, mon père a entendu quelqu’un tirer un loquet. C’était ce geste-là.'), v('', 'Une porte scellée de l’intérieur, comme celles de −4.')),
       d('La poussière', v('sasha', 'Il n’y en a pas. Pas un grain. Quelqu’un entretient tout ça. Ou rien ne s’use, ici.'), v('', 'Pas un grain de poussière.')),
-      d('Une voix', v('vela', 'Une seule voix, la plus ancienne. Pas de mélange. Celui qui la porte sait exactement qui il est.'), v('', 'Un silence épais, comme si quelqu’un retenait son souffle.')),
+      d('Une voix', v('vela', 'Ici, les cristaux ne murmurent pas. Ils se taisent, tous, comme on se tait quand quelqu’un écoute.'), v('', 'Un silence épais, comme si quelqu’un retenait son souffle.')),
     ], [
       { texte: 'Frapper à une porte', effet: 'eclat', drapeau: 'frappe', recit: 'Tu frappes trois coups. Personne n’ouvre. Mais sous la porte, quelqu’un glisse un Éclat, comme on rend la monnaie.' },
       { texte: 'Passer sans bruit', effet: 'composants', recit: 'Vous passez sans bruit. Dans une alcôve, du matériel de ceux d’avant, intact.' },
-    ]),
+    ],
+    'Au fond, les portes sont fermées de l’intérieur, comme à −4. Mais ici, rien n’a vieilli : pas un grain de poussière.'),
   H(10, 2, 'La salle des tables',
     'Des tables gravées, alignées comme dans une école. Sur chacune, la même phrase, de plus en plus effacée.', [
-      d('La phrase', v('vela', '« Que celui qui lit ceci compte les voix qu’il porte. » Compte. Le mot de la Confluence.'), v('', '« Que celui qui lit ceci compte les voix qu’il porte. »')),
-      d('Les bancs', v('ilka', 'Ils apprenaient ça par cœur. Comme une leçon qu’on récite chaque semaine.'), v('', 'Des bancs de pierre, usés par des générations.')),
-      d('Une table neuve', v('doran', 'Celle-là est plus récente. Même écriture que les autres. Il a ajouté quelque chose dessous, puis il l’a effacé.'), v('', 'Une table plus récente, dont la dernière ligne a été effacée.')),
+      d('La phrase', v('vela', '« Que celui qui lit ceci compte les voix qu’il porte. » Compte. Le mot de la Confluence, à −3. Tu l’as écouté jusqu’au bout. Il venait d’ici.', 'compte-entendu'), v('vela', '« Que celui qui lit ceci compte les voix qu’il porte. » Compte. Le mot de la Confluence.'), v('', '« Que celui qui lit ceci compte les voix qu’il porte. »')),
+      d('Les bancs', v('ilka', 'Ils apprenaient ça par cœur, comme une leçon. Plus haut, ils la récitaient encore, au milieu de mille autres choses à réciter.'), v('', 'Des bancs de pierre, usés par des générations.')),
+      d('Une table à part', v('doran', 'Celle-là est plus récente, de la même écriture que les autres. Quelqu’un l’a portée au centre de la salle, et la garde près de lui.'), v('', 'Une table plus récente a été portée au centre de la salle.')),
     ], [
-      { texte: 'Compter tes voix', effet: 'eclat', drapeau: 'voix-comptees', recit: 'Tu fais compter à l’escouade les voix qu’elle porte. Véla s’arrête à un chiffre et sourit. Un Éclat se détache d’une table.' },
-      { texte: 'Relever la table effacée', effet: 'composants', recit: 'Tu relèves ce qui reste de la ligne effacée. Pour Ysé. Au fond de la salle, des outils de graveur.' },
-    ]),
+      { texte: 'Compter tes voix', effet: 'eclat', drapeau: 'voix-comptees', recit: 'Tu fais compter à l’escouade les voix qu’elle porte, cartes comprises. Chacun s’arrête à un chiffre, et personne ne dit le sien. Un Éclat luit sur une table.' },
+      { texte: 'Relever les tables', effet: 'composants', recit: 'Tu relèves la phrase sur chaque table, de la plus nette à la plus effacée. Pour Ysé. Au fond de la salle, des outils de graveur.' },
+    ],
+    'Au fond, la même phrase sur toutes les tables : « Que celui qui lit ceci compte les voix qu’il porte. » Le « Compte » de la Confluence venait d’ici.'),
   H(10, 3, 'Il vous attendait',
     'Au centre de la dernière salle, quelqu’un est assis. Il ne se lève pas. Il vous attendait.', [
-      d('Lui', v('vela', 'Le Premier Porteur. Il n’a jamais mélangé sa voix à une autre. C’est pour ça qu’il est si fort.'), v('', 'Un homme assis, très calme, qui vous regarde arriver.')),
-      d('Ses mains', v('doran', 'Il a les mains d’un graveur. Il a écrit toutes ces tables. Lui seul.'), v('', 'Des mains abîmées, de graveur.')),
+      d('Lui', v('vela', 'C’est lui qui a glissé l’Éclat sous la porte, tout à l’heure. Il nous a entendus frapper.', 'frappe'), v('vela', 'Le Premier Porteur. Il ne porte qu’une voix, et ce n’est pas la sienne. Il la porte si bien qu’on ne voit plus la différence.'), v('', 'Un homme assis, très calme, qui vous regarde arriver.')),
+      d('Ses mains', v('doran', 'Il a les mains d’un graveur. Il a regardé ma poche, puis il a souri. Il sait que le cercle de −6 est complet.', 'cristal-rendu'), v('doran', 'Il a les mains d’un graveur. Toutes ces tables ont son écriture.'), v('', 'Des mains abîmées, de graveur.')),
       d('Ton nom', v('ilka', 'Il connaît ton nom. Il l’a lu sur le mur des fouilleurs, tout en haut.', 'nom-grave'), v('ilka', 'On est venus jusqu’ici pour des réponses. Allons lui en demander.'), v('', 'Il te regarde comme s’il te connaissait déjà.')),
     ], [
       { texte: 'Lui dire qui tu es', effet: 'eclat', drapeau: 'presente', recit: 'Tu dis ton nom, ton district, et la mer qui monte. Il hoche la tête, lentement. Un Éclat tombe de la table devant lui.' },
       { texte: 'Préparer l’escouade', effet: 'composants', recit: 'L’escouade se met en place sans un mot. Au pied des marches, ce que ceux d’avant ont laissé.' },
-    ]),
+    ],
+    'Le Premier Porteur nous attendait au fond, assis. Il a des mains de graveur, et toutes les tables de la salle portent son écriture.'),
 ];
 
 export const halteDef = (strate: number, n: number) => HALTES.find((h) => h.strate === strate && h.n === n);

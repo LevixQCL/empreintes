@@ -2,7 +2,7 @@
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
 // chaque bâtiment y porte son cristal de niveau et, s'il y a quelque chose à faire, une bulle, le détail s'ouvre en feuille par le bas.
 
-import { nombreHaltes, queteDef } from '../core/strates';
+import { halteDef, nombreHaltes, queteDef } from '../core/strates';
 import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
 import { htmlBestiaire } from './bestiaire';
 import { visageGarde } from './fleche';
@@ -1594,6 +1594,31 @@ export function htmlRencontre(n = 0): string {
 /** Chapitres des Chroniques ouverts mais pas encore lus (pour la pastille « nouveau ») */
 const chapitresNouveaux = (j: Jeu) => CHAPITRES.filter((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)).length;
 
+/** Le carnet du directeur (3 novembre 2026) : ce qu'il a appris à chaque Halte, et ce qu'il y a choisi, Strate par Strate */
+function htmlCarnet(j: Jeu): string {
+  let pages = '';
+  let vues = 0;
+  let total = 0;
+  for (let s = 1; s <= 10; s++) {
+    const n = nombreHaltes(s);
+    total += n;
+    const lues = Math.min(n, j.haltes?.[s] ?? 0);
+    vues += lues;
+    for (let k = 1; k <= lues; k++) {
+      const h = halteDef(s, k);
+      if (!h) continue;
+      const c = j.choixHaltes?.[`${s}-${k}`];
+      const choix = c !== undefined ? h.choix[c]?.texte : undefined;
+      pages += `<article class="fragment carnet"><span class="surtitre">STRATE −${s} · HALTE ${['I', 'II', 'III'][k - 1]}</span><h2>${echap(h.titre)}</h2>`
+        + `<p>${echap(h.fait)}</p>${choix ? `<p class="carnet-choix">Ce que j’ai fait : ${echap(choix.charAt(0).toLowerCase() + choix.slice(1))}.</p>` : ''}</article>`;
+    }
+  }
+  const r = `<section class="livre"><header class="livre-tete"><span class="surtitre">CARNET DU DIRECTEUR · ${vues} / ${total} HALTES</span><h2>Ce que j’ai appris en bas</h2></header>`;
+  if (!vues) return r + `<p class="vide-ecran">${ICO.halte}Rien encore. Chaque Halte des Strates ajoute une page à ce carnet.</p></section>`;
+  if (vues < total) pages += `<div class="fragment enfoui">${ICO.verrou}<span>${total - vues} Halte${total - vues > 1 ? 's' : ''} encore à découvrir, une par descente</span></div>`;
+  return r + `<div class="carnet-pages">${pages}</div></section>`;
+}
+
 /** La Bibliothèque du district : les Chroniques d'Ysé et les Archives trouvées dans les Strates */
 export function htmlCodex(e: EcranDistrict): string {
   const j = e.j;
@@ -1610,7 +1635,7 @@ export function htmlCodex(e: EcranDistrict): string {
     + `<button type="button" role="tab" class="seg${e.onglet === 'archives' ? ' actif' : ''}" aria-selected="${e.onglet === 'archives'}" data-action="biblio-onglet" data-id="archives">Archives</button>`
     + `<button type="button" role="tab" class="seg${e.onglet === 'campagne' ? ' actif' : ''}" aria-selected="${e.onglet === 'campagne'}" data-action="biblio-onglet" data-id="campagne">Campagne</button>`
     + `<button type="button" role="tab" class="seg${e.onglet === 'bestiaire' ? ' actif' : ''}" aria-selected="${e.onglet === 'bestiaire'}" data-action="biblio-onglet" data-id="bestiaire">Bestiaire</button></div>`;
-  if (e.onglet === 'campagne') return coquille(e, h + htmlListeScenes(j.scenes ?? []), 'ecran-codex');
+  if (e.onglet === 'campagne') return coquille(e, h + htmlListeScenes(j.scenes ?? []) + htmlCarnet(j), 'ecran-codex');
   if (e.onglet === 'bestiaire') return coquille(e, h + htmlBestiaire(j), 'ecran-codex');
   if (e.onglet === 'archives') {
     h += `<p class="aide intro-ecran">Des papiers d’époque, trouvés un à un dans les Strates. Ysé y renvoie souvent dans ses Chroniques.</p>`;

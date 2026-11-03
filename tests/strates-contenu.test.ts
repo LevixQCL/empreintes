@@ -251,3 +251,28 @@ describe('Les premières rencontres de l’exploration (31 octobre 2026)', () =>
     }
   });
 });
+
+describe('Les Haltes du 3 novembre 2026', () => {
+  it('chaque souvenir posé par un choix revient plus tard (une Halte ou une scène)', async () => {
+    const { HALTES } = await import('../src/core/strates');
+    const { SCENES } = await import('../src/core/campagne');
+    const poses = new Set(HALTES.flatMap((h) => h.choix.map((c) => c.drapeau).filter((f): f is string => !!f)));
+    const lus = new Set(HALTES.flatMap((h) => h.details.flatMap((d) => d.voix.map((x) => x.si).filter((f): f is string => !!f))));
+    for (const f of poses) {
+      if (lus.has(f)) continue;
+      const ctx = { strate: 12, vaincue: 12, actes: {}, presents: ['aurel'], drapeaux: [f] };
+      const sans = { ...ctx, drapeaux: [] };
+      const dit = SCENES.some((s) => s.repliques.some((r) => r.si && r.si(ctx) && !r.si(sans)));
+      expect(dit, f).toBe(true);
+    }
+  });
+
+  it('27 Haltes, chacune avec ce que le directeur en retient', async () => {
+    const { HALTES, nombreHaltes } = await import('../src/core/strates');
+    expect(HALTES).toHaveLength(Array.from({ length: 10 }, (_, k) => nombreHaltes(k + 1)).reduce((a, b) => a + b, 0));
+    for (const h of HALTES) {
+      expect(h.fait.length, h.titre).toBeGreaterThan(40);
+      for (const d of h.details) expect(d.voix.some((x) => !x.qui && !x.si), `${h.titre} · ${d.nom}`).toBe(true);
+    }
+  });
+});
