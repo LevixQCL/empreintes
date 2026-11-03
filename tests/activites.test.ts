@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { FORCE, accessibles, genererCarte, salleCourante } from '../src/core/expedition';
 import { moduleDef, porteurDef } from '../src/core/donnees';
 import { DIFFICULTES_FOUILLE,
-  EPREUVES, MISSIONS, barquesMax, naufragesDeLaStrate, profondeurMission, secoursPossible, creuseursRequis, CREUSEURS, entrer, envoyerMission, destinationsDuJour, bonusMission, niveauPorteur, jourDe, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
+  EPREUVES, MISSIONS, barquesMax, naufragesDeLaStrate, profondeurMission, secoursPossible, creuseursRequis, CREUSEURS, entrer, envoyerMission, energieMission, destinationsDuJour, bonusMission, niveauPorteur, jourDe, lireRapport, rapportALire, epreuvesDeLaSemaine, fouiller, nouveauJeu, partir, partirEpreuve, poster,
   remonter, tick, disponibles, type Jeu, FELEE, forceEpreuve, epreuveReussie, epreuveDef,
 } from '../src/core/jeu';
 import { ajouter, creerCombat } from '../src/core/combat';
@@ -95,10 +95,10 @@ describe('Missions', () => {
     for (const id of ['coursier', 'docker', 'guetteur']) poster(j, id, null);
     j.batiments.noyau = 3; // deux barques au niveau 3 de la Tour
     const compo = j.composants;
-    j.energie = MISSIONS.courte.energie + MISSIONS.longue.energie;
+    j.energie = energieMission(j, 'courte') + energieMission(j, 'longue');
     expect(envoyerMission(j, 'docker', 'courte', T0).ok).toBe(true);
     // une mission s'équipe avec de l'énergie (23 octobre 2026)
-    expect(j.energie).toBe(MISSIONS.longue.energie);
+    expect(j.energie).toBe(energieMission(j, 'longue'));
     expect(partir(j, ['ilka', 'docker', 'vela'], 1, 3).ok).toBe(false);
     expect(envoyerMission(j, 'coursier', 'longue', T0).ok).toBe(true);
     expect(envoyerMission(j, 'guetteur', 'courte', T0).ok).toBe(false); // deux barques au plus à ce niveau
@@ -114,7 +114,7 @@ describe('Missions', () => {
     const j = avance();
     for (const id of ['coursier', 'docker']) poster(j, id, null);
     j.batiments.noyau = 3;
-    j.energie = 2 * MISSIONS.courte.energie;
+    j.energie = 2 * energieMission(j, 'courte');
     envoyerMission(j, 'docker', 'courte', T0);
     envoyerMission(j, 'coursier', 'courte', T0 + 1000);
     tick(j, T0 + 3 * H); // les deux rentrent pendant la même absence
@@ -134,7 +134,7 @@ describe('Missions', () => {
     expect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => { j.batiments.noyau = n; return barquesMax(j); })).toEqual([1, 1, 2, 2, 2, 3, 3, 3, 4, 4]);
     for (const id of ['coursier', 'docker']) poster(j, id, null);
     j.batiments.noyau = 1;
-    j.energie = 2 * MISSIONS.courte.energie;
+    j.energie = 2 * energieMission(j, 'courte');
     expect(envoyerMission(j, 'docker', 'courte', T0).ok).toBe(true);
     expect(envoyerMission(j, 'coursier', 'courte', T0).ok).toBe(false);
   });
@@ -399,10 +399,15 @@ describe('Le parcours d’un joueur', () => {
 });
 
 describe('L’énergie, ressource à part entière (23 octobre 2026)', () => {
+  it('le coût d’une mission suit la Strate comme ses gains (3 novembre 2026)', () => {
+    const j = avance();
+    expect([1, 5, 10].map((s) => [energieMission(j, 'courte', s), energieMission(j, 'longue', s)])).toEqual([[30, 100], [60, 200], [100, 325]]);
+  });
+
   it('une mission sans assez d’énergie ne part pas', () => {
     const j = avance();
     for (const id of ['coursier', 'docker', 'guetteur']) poster(j, id, null);
-    j.energie = MISSIONS.courte.energie - 1;
+    j.energie = energieMission(j, 'courte') - 1;
     expect(envoyerMission(j, 'docker', 'courte', T0).ok).toBe(false);
   });
 });

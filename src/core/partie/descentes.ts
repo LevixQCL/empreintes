@@ -369,6 +369,14 @@ export function bonusMission(j: Jeu, porteur: string, lieu: string): { affinite:
   return { affinite: a, mult: (1 + MISSIONS.parNiveau * (niveau - 1)) * MISSIONS.affinite[a], niveau };
 }
 
+/**
+ * L'énergie d'une mission (3 novembre 2026, Bryan) : elle suit la Strate comme les gains (+25 % par Strate),
+ * arrondie à 5 : 30 / 100 à −1, 60 / 200 à −5, 100 / 325 à −10. Avant, elle restait à 30 / 100 et devenait gratuite.
+ */
+export function energieMission(j: Jeu, duree: DureeMission, strate = strateMission(j)): number {
+  return Math.round((MISSIONS[duree].energie * (1 + 0.25 * (Math.max(1, strate) - 1))) / 5) * 5;
+}
+
 /** Les composants que rapporterait une mission (pour l'afficher avant le départ) */
 export function composantsMission(j: Jeu, porteur: string, lieu: string, duree: DureeMission, butin: Butin, strate = strateMission(j), rendement = 1, secours = !naufragesPleins(j)): number {
   const part = butin === 'naufrages' && !secours ? MISSIONS.butins.naufrages.compoPlafond : MISSIONS.butins[butin].compo;
@@ -459,8 +467,9 @@ export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: num
   if (enExpedition(j, id)) return non(`${porteurDef(id).nom} n’est pas au district.`);
   const nb = barquesMax(j);
   if (j.missions.length >= nb) return non(nb > 1 ? `${nb} barques au plus en mer en même temps : monte la Tour du Noyau pour en armer d’autres.` : 'Une seule barque en mer à la fois : monte la Tour du Noyau pour en armer d’autres.');
-  if (j.energie < m.energie) return non(`Il faut ${m.energie} énergie pour équiper la mission.`);
-  j.energie -= m.energie;
+  const cout = energieMission(j, duree);
+  if (j.energie < cout) return non(`Il faut ${cout} énergie pour équiper la mission.`);
+  j.energie -= cout;
   const prof = profondeurMission(j, dest.cle, now);
   const rendement = prof.mult;
   const secours = secoursPossible(j, dest, now);
