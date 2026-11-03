@@ -127,14 +127,29 @@ function presentation(e: EcranDistrict, ferme: boolean): string {
 
 // ---------- L'écran ----------
 
+/**
+ * Le bouton du bâtiment, en haut à droite (3 novembre 2026, Bryan : le marteau seul ne se comprenait pas) : il dit ce qu'il ouvre.
+ * « Construire » au niveau 0, sinon « Niv. n · Améliorer » ; il s'allume (flèche vers le haut) quand l'amélioration est possible,
+ * et montre le chantier quand il est en cours.
+ */
+function boutonBatiment(j: J.Jeu, niv: number): string {
+  const ch = J.chantierDe(j, 'cercle');
+  const cout = J.coutAmelioration(j, 'cercle');
+  const possible = !ch && !!cout && J.cercleOuvert(j) && (niv < j.batiments.noyau || !niv)
+    && j.energie >= cout.energie && j.composants >= cout.composants && j.eclats >= (cout.eclats ?? 0);
+  const texte = ch ? `${niv ? `Niv. ${niv} · ` : ''}Chantier` : !niv ? 'Construire' : cout ? `Niv. ${niv} · Améliorer` : `Niv. ${niv} · Max`;
+  return `<button type="button" class="cr-niveau${possible ? ' possible' : ''}" data-action="cercle-batiment" aria-label="${texte} : la fiche du bâtiment">`
+    + `${ch ? ICO.chrono : possible ? ICO.monter : ICO.marteau}<span>${texte}</span></button>`;
+}
+
 export function htmlCercle(e: EcranDistrict): string {
   const j = e.j;
   const c = e.cercle ?? cercleVide();
   const niv = j.batiments.cercle ?? 0;
   const droite = `<span class="cr-tete-boutons">`
     + (niv && J.etatCercle(j).vu && !c.aide ? `<button type="button" class="btn-icone" data-action="cercle-aide" aria-label="Comment marche le Cercle">${ICO.aide}</button>` : '')
-    + `<button type="button" class="cr-niveau" data-action="cercle-batiment" aria-label="Le bâtiment, niveau ${niv}">${icone('marteau')}<b>${niv || '—'}</b></button></span>`;
-  let h = entete(niv ? `CERCLE DES QUAIS · NIVEAU ${niv}` : 'CERCLE DES QUAIS', 'Le Cercle', droite);
+    + boutonBatiment(j, niv) + `</span>`;
+  let h = entete('CERCLE DES QUAIS', 'Le Cercle', droite);
   const ferme = !J.cercleOuvert(j);
   if (ferme || !niv || !J.etatCercle(j).vu || c.aide) return coquille(e, `<div class="cercle">${h}${presentation(e, ferme)}</div>`, 'cr cr-pres');
 

@@ -4,9 +4,11 @@
 .cercle{--cr-ambre:#F2B866;--cr-glace:#BFD9EC;display:flex;flex-direction:column;gap:14px;padding-bottom:12px}
 .cercle .entete{align-items:center}
 .cr-tete-boutons{display:flex;align-items:center;gap:8px}
-.cr-niveau{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px 0 8px;border:none;border-radius:999px;cursor:pointer;
+.cr-niveau{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px 0 10px;border:none;border-radius:999px;cursor:pointer;white-space:nowrap;font-size:13.5px !important;
   font:600 15px/1 var(--mono);color:#1C1406;background:var(--laiton);box-shadow:0 2px 10px rgba(216,180,101,.3)}
-.cr-niveau .ico{width:22px;height:22px}
+.cr-niveau .ico{width:18px;height:18px;flex:none}
+/* sans amélioration possible, le bouton reste discret (verre) ; il passe à l'or quand on peut améliorer */
+.cr-niveau:not(.possible){color:var(--ink);background:var(--verre-2);box-shadow:inset 0 0 0 1px rgba(159,216,255,.35)}
 
 /* ---------- l'ouverture ---------- */
 .cr-intro{position:relative;display:grid;align-items:end;min-height:300px;padding:18px 16px;overflow:hidden;isolation:isolate;border-radius:18px;
