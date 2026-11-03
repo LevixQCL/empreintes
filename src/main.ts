@@ -1,6 +1,7 @@
 // Relie tout : les gestes du joueur, l'horloge, le démarrage. La logique est dans src/app/, l'affichage dans src/ui/.
 
 import './ui/feuilles';
+import { appliquerGraphismes } from './ui/graphismes';
 import type { Entree } from './core/classements';
 import * as J from './core/jeu';
 import { montrer } from './ui/gains';
@@ -19,6 +20,9 @@ import { afficher } from './app/rendu';
 import { signaler } from './app/incident';
 import { demarrerCompte, envoyer, sauver } from './app/synchro';
 import { R, retenirLien } from './app/parrainage';
+
+// les graphismes (3 novembre 2026) : allégés sur un appareil qui peine, avant le premier dessin
+appliquerGraphismes();
 
 // l'empreinte des cartes vétéranes : chaque face lit le palier de son exemplaire dans la partie en cours
 brancherEmpreintes((cle) => (app.jeu ? J.palierCarte(app.jeu, cle) : 0));

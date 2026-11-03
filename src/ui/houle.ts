@@ -10,6 +10,8 @@
 // Tout se calcule sur la carte graphique, 30 images par seconde au plus ; la houle s'éteint vers les bords du tableau et ne
 // déborde jamais sur la digue. Rien ne tourne si le joueur a réduit les animations, si WebGL manque, ou hors du district.
 
+import { leger, signalerLenteur } from './graphismes';
+
 const SOMMETS = `attribute vec2 p;varying vec2 uv;void main(){uv=vec2(p.x*.5+.5,.5-p.y*.5);gl_Position=vec4(p,0.,1.);}`;
 const PIXELS = `#ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
@@ -146,6 +148,16 @@ type Etat = { gl: WebGLRenderingContext; t0: number; tLoc: WebGLUniformLocation 
 let toile: HTMLCanvasElement | null = null;
 let etat: Etat | null = null;
 let echec = false;
+/**
+ * La finesse du dessin (3 novembre 2026, « lourd pour certains portables ») : 1 = la pleine finesse ; si l'appareil n'arrive
+ * pas à suivre (les images arrivent à moins de ~18 par seconde), on dessine moins de pixels (étirés, la houle reste douce),
+ * et en dernier recours la Cuvette redevient le tableau peint, immobile, et le jeu passe en graphismes légers (graphismes.ts).
+ */
+let finesse = 1;
+const FINESSES = [1, 0.7, 0.5];
+/** la Cuvette visible à l'écran (elle peut sortir de l'écran en faisant défiler, sur PC comme sur téléphone) */
+let visible = true;
+let veille: IntersectionObserver | null = null;
 
 function charger(src: string): Promise<HTMLImageElement> {
   return new Promise((ok, ko) => { const i = new Image(); i.onload = () => ok(i); i.onerror = ko; i.src = src; });
@@ -164,7 +176,8 @@ function texture(gl: WebGLRenderingContext, unite: number, img: HTMLImageElement
 function creer(image: string, masques: string[]): Etat | null {
   toile = document.createElement('canvas');
   toile.setAttribute('aria-hidden', 'true');
-  const gl = toile.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false, powerPreference: 'low-power' });
+  // sans vraie carte graphique (WebGL dessiné par le processeur), la Cuvette reste peinte : sinon elle met le jeu à genoux
+  const gl = toile.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false, powerPreference: 'low-power', failIfMajorPerformanceCaveat: true });
   if (!gl) return null;
   const shader = (type: number, src: string) => {
     const s = gl.createShader(type)!;
@@ -195,14 +208,34 @@ function creer(image: string, masques: string[]): Etat | null {
 /** Une image toutes les ~33 ms ; la boucle s'arrête d'elle-même quand la toile quitte l'écran (autre onglet, combat…) */
 function boucle(tour: number) {
   let derniere = 0;
+  // les intervalles entre deux images dessinées (la mesure de la fluidité ne commence qu'une fois les textures prêtes)
+  const ecarts: number[] = [];
+  let depuis = 0;
   const pas = (now: number) => {
-    if (!etat || etat.tour !== tour || !toile?.isConnected || document.hidden) return;
+    if (!etat || etat.tour !== tour || !toile?.isConnected || document.hidden || echec) return;
+    // passé en graphismes légers en cours de route (Paramètres, ou la mesure des images) : le tableau peint reprend
+    if (leger()) { toile.remove(); return; }
     requestAnimationFrame(pas);
-    if (!etat.pret || now - derniere < 32) return;
+    if (!etat.pret || !visible || now - derniere < 32) return;
+    // une longue pause (onglet caché, appareil en veille) ne compte pas ; un redessin de l'écran pèse peu dans la médiane
+    if (derniere && now - derniere < 3000) ecarts.push(now - derniere);
     derniere = now;
+    depuis ||= now;
+    // toutes les 2 secondes : trop lent ? un cran de finesse en moins ; au dernier cran, la Cuvette s'arrête
+    if (now - depuis > 2000 && ecarts.length >= 4) {
+      const tri = [...ecarts].sort((a, b) => a - b);
+      const lent = tri[Math.floor(tri.length / 2)]! > 55;
+      ecarts.length = 0;
+      depuis = now;
+      if (lent) {
+        const k = FINESSES.indexOf(finesse);
+        if (k === FINESSES.length - 1) { arreter(); return; }
+        finesse = FINESSES[k + 1]!;
+      }
+    }
     const { gl } = etat;
     // la taille suit la toile (écran tourné, fenêtre redimensionnée), jamais plus fine que le tableau (800 px de large)
-    const r = Math.min(window.devicePixelRatio || 1, 800 / Math.max(1, toile.clientWidth));
+    const r = Math.min(window.devicePixelRatio || 1, 800 / Math.max(1, toile.clientWidth)) * finesse;
     const w = Math.round(toile.clientWidth * r), h = Math.round(toile.clientHeight * r);
     if (w && h && (toile.width !== w || toile.height !== h)) { toile.width = w; toile.height = h; }
     gl.viewport(0, 0, toile.width, toile.height);
@@ -217,16 +250,30 @@ function boucle(tour: number) {
   requestAnimationFrame(pas);
 }
 
+/** L'appareil ne suit pas : la Cuvette redevient le tableau peint, et le jeu s'allège pour la semaine */
+function arreter() {
+  echec = true;
+  toile?.remove();
+  veille?.disconnect();
+  signalerLenteur();
+}
+
 /** Après chaque rendu du district : la même toile WebGL revient à sa place (l'écran est reconstruit chaque seconde) */
 export function brancherHoule(racine: HTMLElement) {
   const place = racine.querySelector<HTMLElement>('.toile .houle');
-  if (!place || echec) return;
+  if (!place || echec || leger()) return;
   const image = place.dataset.image!, masques = place.dataset.masques!.split(' ');
   try {
     if (!etat || etat.image !== image) { etat = creer(image, masques); if (!etat) { echec = true; return; } }
   } catch { echec = true; return; }
   const enCours = toile!.isConnected;
   place.append(toile!);
+  // hors de l'écran (le joueur a fait défiler), rien n'est dessiné
+  if (typeof IntersectionObserver !== 'undefined') {
+    veille?.disconnect();
+    veille = new IntersectionObserver((e) => { visible = e.some((x) => x.isIntersecting); });
+    veille.observe(place);
+  }
   if (!enCours) { etat.tour++; boucle(etat.tour); }
 }
 

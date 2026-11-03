@@ -276,6 +276,9 @@
 /* Paramètres (31 octobre 2026) : un interrupteur de verre au bout de la ligne, or quand il est allumé */
 .ligne-menu.option{display:flex;align-items:center}
 .ligne-menu.option > span{flex:1;min-width:0}
+/* la valeur d'un réglage à plusieurs choix (les graphismes) : une capsule qu'on touche pour passer au suivant */
+.valeur-option{flex:0 0 auto;margin-left:10px;padding:4px 10px;border-radius:12px;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.04em;
+  color:#FFE3A6;background:rgba(255,206,110,.14);box-shadow:inset 0 0 0 1px rgba(255,206,110,.55)}
 .interrupteur{position:relative;flex:0 0 44px;width:44px;height:24px;margin-left:10px;border-radius:12px;
   background:rgba(205,239,255,.08);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3);transition:background .2s,box-shadow .2s}
 .interrupteur::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;

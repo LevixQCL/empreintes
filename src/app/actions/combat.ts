@@ -10,6 +10,7 @@ import { comparer, montrer, relever } from '../../ui/gains';
 import { basculerSon, debloquerSon } from '../../ui/impact';
 import { vibrer } from '../../ui/toucher';
 import { autoActif, basculerAuto } from '../../ui/options';
+import { basculerGraphismes } from '../../ui/graphismes';
 import { jouer, jouerFuite } from '../combat';
 import { app, D, K } from '../etat';
 import { afficher } from '../rendu';
@@ -64,6 +65,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     }
     case 'auto-stop': K.auto = false; break;
     case 'option-auto': basculerAuto(); vibrer(5); break;
+    case 'option-graphismes': basculerGraphismes(); vibrer(5); break;
     case 'regles': K.regles = !K.regles; K.fuite = false; K.guide = null; K.journal = null; break;
     case 'fuir': if (!K.verrou) { K.fuite = !K.fuite; K.regles = false; K.guide = null; K.journal = null; } break;
     // le journal du combat : les piles l'ouvrent sur la défausse, la dernière ligne du journal et la fin du combat sur les tours

@@ -2,6 +2,7 @@
 // Tout l'affichage du district passe par ici pour rester cohérent d'un écran à l'autre.
 
 import { autoActif } from './options';
+import { texteGraphismes } from './graphismes';
 import { ennemiDef, moduleDef, porteurDef } from '../core/donnees';
 import { COLLECTION, doublonsRequis, multNiveau } from '../core/collection';
 import { vestigeDef } from '../core/explorer';
@@ -566,6 +567,8 @@ export function menu(e: EcranDistrict): string {
   const auto = autoActif();
   h += `<section class="bloc parametres"><h3 class="titre-bloc">${ICO.cristal}Paramètres</h3><div class="liste-menu">`
     + `<button type="button" class="ligne-menu option" data-action="option-auto" role="switch" aria-checked="${auto}">${ICO.lancer}<span><strong>Combat automatique</strong><small>Un bouton « Auto » dans les combats ordinaires des Strates déjà vaincues : l’escouade joue seule, en accéléré</small></span><i class="interrupteur" aria-hidden="true"></i></button>`
+    // les graphismes (3 novembre 2026) : Auto, Complets ou Légers, pour les appareils qui peinent
+    + (() => { const g = texteGraphismes(); return `<button type="button" class="ligne-menu option" data-action="option-graphismes" aria-label="Graphismes : ${g.valeur}. Toucher pour changer">${ICO.lueur}<span><strong>Graphismes</strong><small>${g.detail}</small></span><b class="valeur-option">${g.valeur}</b></button>`; })()
     + `</div></section>`;
   h += panneauCompte(c);
   h += `<section class="bloc"><h3 class="titre-bloc">${icone('journal')}Journal du district</h3><ol class="journal-liste">${e.j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></section>`;

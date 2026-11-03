@@ -16,6 +16,7 @@ import type { Effet, ModuleDef, Rarete, TypeEffet } from '../core/types';
 import { filigrane, illustrationModule, portrait, textureMetal } from './art';
 import { COULEUR } from './vue';
 import { echap, mouvementReduit as reduit } from './outils';
+import { leger } from './graphismes';
 
 /** une couleur par Fréquence, du 1 (chaud) au 9 (froid) : des Fréquences qui se suivent ont des couleurs voisines */
 /** le signe d'une carte lourde (30 octobre 2026) : deux lames de lumière, deux places dans la chaîne, plutôt que « 2 PL. » */
@@ -204,14 +205,16 @@ function calculer(img: HTMLImageElement): Masques {
   const dc = cri.getContext('2d')!.createImageData(W, H), db = bri.getContext('2d')!.createImageData(W, H);
   const points: Masques['points'] = [];
   let graine = 4517; const alea = () => (graine = (graine * 16807) % 2147483647) / 2147483647;
-  for (let i = 0; i < W * H; i++) {
-    const r = px[i * 4]! / 255, g = px[i * 4 + 1]! / 255, b = px[i * 4 + 2]! / 255;
+  // (3 novembre 2026) écrit pixel par pixel dans les tampons, sans créer un tableau par pixel : ~10 fois plus rapide
+  const C = dc.data, B = db.data;
+  for (let i = 0, k = 0; i < W * H; i++, k += 4) {
+    const r = px[k]! / 255, g = px[k + 1]! / 255, b = px[k + 2]! / 255;
     const mx = Math.max(r, g, b), mn = Math.min(r, g, b), sat = mx ? (mx - mn) / mx : 0, lum = 0.3 * r + 0.59 * g + 0.11 * b;
     const bleu = b > r + 0.12 && b >= g - 0.02;
     const aC = bleu ? lisse(0.45, 0.8, mx) * lisse(0.25, 0.5, sat) : 0;   // cristaux : bleus, saturés, lumineux
     const aB = !bleu && r >= b ? lisse(0.5, 0.78, lum) : 0;                 // zones claires chaudes : métal, reflets, lampes
-    dc.data.set([200, 240, 255, aC * 255], i * 4);
-    db.data.set([255, 206, 92, aB * 255], i * 4);
+    C[k] = 200; C[k + 1] = 240; C[k + 2] = 255; C[k + 3] = aC * 255;
+    B[k] = 255; B[k + 1] = 206; B[k + 2] = 92; B[k + 3] = aB * 255;
     if (aB > 0.6 && alea() < 0.02) points.push([(i % W) / W, Math.floor(i / W) / H, alea() * 6.28, 0.6 + alea() * 0.8]);
   }
   cri.getContext('2d')!.putImageData(dc, 0, 0);
@@ -243,11 +246,19 @@ function preparer(cv: HTMLCanvasElement) {
 
 let paillettes: { cv: HTMLCanvasElement; m: Masques }[] = [];
 let boucle = 0;
+let dernierePaillette = 0;
+/** les toiles de paillettes à l'écran (3 novembre 2026) : une carte hors de l'écran ne scintille pas */
+const enVue = new WeakSet<HTMLCanvasElement>();
 function animer(ms: number) {
   paillettes = paillettes.filter((p) => p.cv.isConnected);
-  if (!paillettes.length) { boucle = 0; return; }
+  if (!paillettes.length || leger()) { boucle = 0; return; }
+  boucle = requestAnimationFrame(animer);
+  // 30 images par seconde suffisent à un scintillement
+  if (ms - dernierePaillette < 32) return;
+  dernierePaillette = ms;
   const t = ms / 1000;
   for (const { cv, m } of paillettes) {
+    if (!enVue.has(cv)) continue;
     const p = preparer(cv); if (!p) continue;
     const [x, y, w, h] = couvre(m.W, m.H, p.bw, p.bh);
     for (const [u, v, ph, sz] of m.points) {
@@ -259,24 +270,49 @@ function animer(ms: number) {
     }
     p.c.globalAlpha = 1;
   }
-  boucle = requestAnimationFrame(animer);
+}
+
+/** Peint les effets d'une carte (lecture de l'illustration, une fois par image, puis lueurs et paillettes) */
+function peindre(carte: HTMLElement) {
+  const img = carte.querySelector<HTMLImageElement>('img[data-src-fx]');
+  const toiles = carte.querySelectorAll<HTMLCanvasElement>('canvas[data-fx]');
+  if (!img || !toiles.length) return;
+  masques(img.dataset.srcFx!).then((m) => {
+    toiles.forEach((cv) => {
+      if (cv.dataset.fx === 'paillettes') { if (!reduit() && !leger()) { paillettes.push({ cv, m }); enVue.add(cv); } return; }
+      const p = preparer(cv); if (!p) return;
+      const [x, y, w, h] = couvre(m.W, m.H, p.bw, p.bh);
+      p.c.drawImage(cv.dataset.fx === 'or' ? m.or : m.cristal, x, y, w, h);
+    });
+    if (paillettes.length && !boucle) boucle = requestAnimationFrame(animer);
+  }).catch(() => { /* image absente : la carte reste sans effet */ });
+}
+
+/**
+ * Les cartes ne se peignent qu'en approchant de l'écran (3 novembre 2026) : la Collection en montre plus d'une centaine,
+ * et lire chaque illustration d'un coup bloquait l'écran plus d'une seconde sur un portable modeste.
+ * Une carte qui sort de l'écran arrête de scintiller ; elle reprend en revenant.
+ */
+let veille: IntersectionObserver | null = null;
+function veilleur(): IntersectionObserver | null {
+  if (typeof IntersectionObserver === 'undefined') return null;
+  return (veille ??= new IntersectionObserver((entrees) => {
+    for (const e of entrees) {
+      const carte = e.target as HTMLElement;
+      carte.querySelectorAll<HTMLCanvasElement>('canvas[data-fx="paillettes"]').forEach((cv) => { if (e.isIntersecting) enVue.add(cv); else enVue.delete(cv); });
+      if (e.isIntersecting && !carte.dataset.peinte) { carte.dataset.peinte = '1'; peindre(carte); }
+    }
+  }, { rootMargin: '300px' }));
 }
 
 /** À appeler après chaque rendu : peint les effets des cartes présentes dans `racine` */
 export function activerCartes(racine: ParentNode) {
+  const v = veilleur();
+  // l'écran vient d'être reconstruit : on lâche les cartes d'avant (sinon elles resteraient en mémoire)
+  v?.disconnect();
   racine.querySelectorAll<HTMLElement>('.fc-carte').forEach((carte) => {
-    const img = carte.querySelector<HTMLImageElement>('img[data-src-fx]');
-    const toiles = carte.querySelectorAll<HTMLCanvasElement>('canvas[data-fx]');
-    if (!img || !toiles.length) return;
-    masques(img.dataset.srcFx!).then((m) => {
-      toiles.forEach((cv) => {
-        if (cv.dataset.fx === 'paillettes') { if (!reduit()) paillettes.push({ cv, m }); return; }
-        const p = preparer(cv); if (!p) return;
-        const [x, y, w, h] = couvre(m.W, m.H, p.bw, p.bh);
-        p.c.drawImage(cv.dataset.fx === 'or' ? m.or : m.cristal, x, y, w, h);
-      });
-      if (paillettes.length && !boucle) boucle = requestAnimationFrame(animer);
-    }).catch(() => { /* image absente : la carte reste sans effet */ });
+    if (carte.dataset.peinte || !carte.querySelector('canvas[data-fx]')) return;
+    if (v) v.observe(carte); else { carte.dataset.peinte = '1'; peindre(carte); }
   });
 }
 

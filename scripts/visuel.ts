@@ -216,17 +216,19 @@ async function main() {
             p.on('pageerror', (e) => erreurs.push(`${port === 4401 ? 'avant' : 'après'} · ${scene.nom} ${w} px : ${e.message}`));
             await p.clock.setFixedTime(T);
             // Math.random figé : les étincelles et particules tombent au même endroit dans les deux versions
-            await p.addInitScript(([s]) => {
+            await p.addInitScript(([s, g]) => {
               let x = 42;
               Math.random = () => ((x = (x * 16807) % 2147483647) - 1) / 2147483646;
               try { localStorage.setItem('empreintes.jeu.v2', s!); } catch { /* stockage bloqué */ }
+              // les graphismes complets : sans carte graphique, Chromium passerait le jeu en graphismes légers (graphismes.ts)
+              try { localStorage.setItem('empreintes.graphismes', g!); } catch { /* stockage bloqué */ }
               // ni chargement ni décodage différés : une image serait peinte ou non selon le moment de la photo
               const html = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML')!;
               Object.defineProperty(Element.prototype, 'innerHTML', {
                 get() { return html.get!.call(this); },
                 set(v: string) { html.set!.call(this, typeof v === 'string' ? v.replaceAll('loading="lazy"', 'loading="eager"').replaceAll('decoding="async"', 'decoding="sync"') : v); },
               });
-            }, [JSON.stringify((saves as Record<string, unknown>)[scene.sauvegarde])]);
+            }, [JSON.stringify((saves as Record<string, unknown>)[scene.sauvegarde]), process.env.VISUEL_GRAPHISMES ?? 'complets']);
             await p.goto(`http://localhost:${port}/`);
             await p.waitForTimeout(300);
             try { await scene.faire(p); } catch (e) { console.log(`  ${scene.nom} ${w} px : geste impossible (${String(e).split('\n')[0]})`); }

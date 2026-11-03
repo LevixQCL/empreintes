@@ -1,6 +1,7 @@
 // Le rendu : redessine l'écran courant à partir de l'état (positions de défilement et champs de saisie gardés).
 
 import { autoActif } from '../ui/options';
+import { mesurerFluidite, suspendreHorsEcran } from '../ui/graphismes';
 import { htmlPillages } from '../ui/pillages';
 import { htmlFleche } from '../ui/fleche';
 import { repliqueGardien, sceneDef } from '../core/campagne';
@@ -174,6 +175,9 @@ function dessiner() {
   document.body.classList.toggle('fige', !!racine.querySelector('.feuille, .voile'));
   if (app.mode === 'district') { activerCartes(racine); brancherTableau(racine); }
   if (app.mode === 'combat') { entreeGardien(); centrerPlan(); }
+  // ce qui boucle sans fin s'arrête hors de l'écran (et, en graphismes légers, ne boucle plus du tout)
+  suspendreHorsEcran(racine);
+  if (app.mode === 'district' && D.vue === 'archipel') mesurerFluidite();
   if (app.mode === 'intro') { precharger(app.plan); precharger(app.plan + 1); animerCompteur(racine, app.lignesVues, reduit); }
   D.uid = app.uid;
   const ie = racine.querySelector('#email') as HTMLInputElement | null;

@@ -1,0 +1,14 @@
+/* Les graphismes (3 novembre 2026, graphismes.ts).
+   Partout : une lueur, un reflet ou une étincelle qui boucle sans fin s'arrête tant que sa boîte est hors de l'écran. */
+.hors-ecran,.hors-ecran::before,.hors-ecran::after,
+.hors-ecran *,.hors-ecran *::before,.hors-ecran *::after{animation-play-state:paused!important}
+
+/* Graphismes légers : plus de verre flouté (le plus coûteux à dessiner, surtout en grand sur un PC) ;
+   les fonds qu'il éclaircissait deviennent un peu plus sombres pour que le texte reste aussi lisible. */
+html.leger *,html.leger *::before,html.leger *::after{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+html.leger{--verre:rgba(12,15,22,.9);--verre-2:rgba(22,27,37,.94)}
+html.leger .voile{background:rgba(4,5,8,.86)}
+html.leger .nf-caps{background:rgba(8,10,18,.78)}
+html.leger .loupe,html.leger .titre-voile-feuille{background:rgba(4,6,14,.8)}
+html.leger :is(.titre,.intro,.scene-campagne,.scene-rencontre,.scene-briefing) .btn-sec{background:rgba(10,12,16,.68)}
+html.leger .combattant .tuile-choix,html.leger .ex-tete-remonter,html.leger #app .titre-retrouver{background:rgba(10,15,28,.86)}

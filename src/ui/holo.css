@@ -83,7 +83,8 @@ body{background:
   background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 45%),repeating-linear-gradient(90deg,rgba(90,60,10,.06) 0 1px,transparent 1px 3px),var(--laiton);
   box-shadow:inset 0 1px 0 rgba(255,250,220,.8),inset 0 -2px 0 rgba(90,60,10,.45),inset 0 0 0 1px rgba(120,80,20,.5),0 0 18px rgba(216,180,101,.25)}
 .btn.prim::after,button.prim::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:30%;pointer-events:none;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:skewX(-20deg);animation:reflet-btn 4.5s ease-in-out infinite}
-@keyframes reflet-btn{0%,70%{left:-40%}100%{left:130%}}
+/* le reflet glisse par transform (3 novembre 2026) : 170 % du bouton = 566,67 % de sa largeur ; sans recalcul de la mise en page à chaque image */
+@keyframes reflet-btn{0%,70%{transform:translateX(0) skewX(-20deg)}100%{transform:translateX(566.67%) skewX(-20deg)}}
 .btn.prim:disabled::after,button.prim:disabled::after{display:none}
 .btn.prim:disabled,button.prim:disabled{background:linear-gradient(180deg,#2A303B,#1F242D);box-shadow:inset 0 0 0 1px #3A4250}
 .btn.sec,.btn-sec,.btn-icone,.btn-flux{background:linear-gradient(180deg,rgba(190,225,255,.08),rgba(190,225,255,0) 50%),var(--trame),linear-gradient(180deg,#1A2230,#111620);

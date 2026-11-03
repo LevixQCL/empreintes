@@ -65,6 +65,7 @@ src/
     journal.ts     le journal du combat : cartes jouées tour par tour, calcul de chaque coup, défausse et pioche, lexique des « ? »
     icones.ts      le jeu d'icônes de l'interface (SVG, couleur du texte)
     feuilles.ts    l'ordre des feuilles de style (la cascade) : toutes les feuilles CSS sont importées là, et seulement là
+    graphismes.ts  les graphismes Auto / Complets / Légers (Paramètres) : allégés seuls sur un appareil qui peine ; les animations sans fin s'arrêtent hors de l'écran (leger.css)
     outils.ts      petits outils partagés (échapper un texte, animations réduites, virgule française)
     styles.css     le style « laiton et verre fumé » ; scenes.css (titre, intro) ; face-carte.css (cartes Module)
     bureau.css     la mise en page PC (à partir de 1100 px de large) : rail à gauche, tableaux en pleine hauteur ; le téléphone n’en dépend pas
