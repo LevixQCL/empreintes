@@ -31,7 +31,7 @@ import { frequenceLibre } from '../core/regles';
 import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
 import type { Affinite } from '../core/lieux';
-import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, salleEntrainement } from './art';
+import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, type PalierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { avecMots } from './lexique';
@@ -143,9 +143,11 @@ if (CUVETTE) for (const a of [1, 2, 3, 4] as const) ZONES[a] = ZONES_CUVETTE;
 const ZONE_HABITANTS = '318,40 356,0 400,0 400,200 372,214 330,192 300,150 304,90';
 const BALISE_HABITANTS = { x: 356, y: 200 };
 
-function zonesBatiments(age: 1 | 2 | 3 | 4, selection: string | null): string {
+function zonesBatiments(age: 1 | 2 | 3 | 4, selection: string | null, p: Record<string, PalierCuvette> | null = null): string {
+  // un bâtiment au palier haut a grandi : sa zone suit la silhouette peinte
+  const zone = (id: Lieu) => (p?.[id] === 'haut' ? CALQUES_CUVETTE.find((c) => c.lieu === id)?.zoneHaut : null) ?? ZONES[age][id];
   return '<svg class="zones-bat" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">'
-    + ORDRE.map((id) => `<polygon class="zone-bat${selection === id ? ' choisie' : ''}" points="${ZONES[age][id]}" data-action="batiment" data-id="${id}" data-lieu="${id}"/>`).join('')
+    + ORDRE.map((id) => `<polygon class="zone-bat${selection === id ? ' choisie' : ''}" points="${zone(id)}" data-action="batiment" data-id="${id}" data-lieu="${id}"/>`).join('')
     + (CUVETTE ? `<polygon class="zone-bat" points="${ZONE_HABITANTS}" data-action="ressource" data-id="confiance" data-lieu="habitants"/>` : '')
     + '</svg>';
 }
@@ -233,10 +235,19 @@ const ETINCELLES: [number, number, number, number][] = [[121, 279, 2.4, 0], [125
  * Le palier de chaque bâtiment sur la Cuvette (3 novembre 2026). Le Labo et le Port n'ont pas de niveau à eux : ils suivent l'âge du
  * district (la Tour du Noyau). Un Comptoir pas encore ouvert reste un simple étal.
  */
-function paliers(j: Jeu): Record<string, ReturnType<typeof palierCuvette>> {
-  const p: Record<string, ReturnType<typeof palierCuvette>> = {};
+function paliers(j: Jeu): Record<string, PalierCuvette> {
+  const p: Record<string, PalierCuvette> = {};
   for (const { lieu } of CALQUES_CUVETTE) p[lieu] = palierCuvette(estFutur(lieu) ? j.batiments.noyau : j.batiments[lieu as BatimentId] ?? 0);
   return p;
+}
+
+/** Les éclats des cristaux des bâtiments repeints (relevés sur les calques) */
+function eclatsPaliers(p: Record<string, PalierCuvette> | null): [number, number, number, number][] {
+  if (!p) return [];
+  return CALQUES_CUVETTE.flatMap((c) => {
+    const q = p[c.lieu];
+    return q && q !== 'milieu' ? c.eclats[q].map(([x, y], i): [number, number, number, number] => [x!, y!, 4.2 + ((x! + i * 3) % 5) / 2, ((y! + i * 7) % 9) / 2]) : [];
+  });
 }
 
 function tableau(j: Jeu): string {
@@ -254,9 +265,12 @@ function tableau(j: Jeu): string {
       const q = p[c.lieu]!;
       if (q === 'milieu') return '';
       const [x, y, w, h] = c[q];
-      return `<img class="palier" src="${calquePalier(c.lieu, q)}" style="left:${x! / 8}%;top:${y! / 12}%;width:${w! / 8}%;height:${h! / 12}%" alt="" draggable="false" decoding="async">`;
+      const boite = `left:${x! / 8}%;top:${y! / 12}%;width:${w! / 8}%;height:${h! / 12}%`;
+      // les cristaux du bâtiment repeint respirent : un calque de lumière par-dessus, qui s'allume et s'éteint doucement
+      return `<img class="palier" src="${calquePalier(c.lieu, q)}" style="${boite}" alt="" draggable="false" decoding="async">`
+        + `<img class="palier lueur" src="${calquePalier(c.lieu, q, true)}" style="${boite};--p:${3.6 + (x! % 7) / 3}s;--d:${(y! % 11) / 4}s" alt="" draggable="false" decoding="async">`;
     }).join('') : '')
-    + (CUVETTE ? ECLATS.filter((e) => garde(e[4])).map(([x, y, pe, d]) => `<i class="eclat" style="left:${x / 4}%;top:${y / 6}%;--p:${pe}s;--d:${d}s" aria-hidden="true"></i>`).join('')
+    + (CUVETTE ? [...ECLATS.filter((e) => garde(e[4])), ...eclatsPaliers(p)].map(([x, y, pe, d]) => `<i class="eclat" style="left:${x / 4}%;top:${y / 6}%;--p:${pe}s;--d:${d}s" aria-hidden="true"></i>`).join('')
       + (garde('forge') ? ETINCELLES.map(([x, y, pe, d]) => `<i class="etincelle" style="left:${x / 4}%;top:${y / 6}%;--p:${pe}s;--d:${d}s" aria-hidden="true"></i>`).join('') : '') : '')
     + `${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
 }
@@ -955,7 +969,7 @@ export function htmlArchipel(e: EcranDistrict): string {
   const scene = sceneDistrict(j.batiments.noyau);
   let h = `<section class="archipel${CUVETTE ? ' cuvette' : ''}" aria-label="Ton district"><img class="tableau-fond" src="${scene.url}" alt="" aria-hidden="true">`
     + `<span class="mer-fond${scene.nuit ? ' nuit' : ''}" style="--mer:url(${scene.mer});--reflets:url(${reflets});--horizon:${scene.horizon}%" aria-hidden="true"><i class="mer-reflets"></i></span>`
-    + `<div class="toile${j.batiments.noyau < 2 ? ' noms' : ''}">${tableau(j)}${zonesBatiments(visuel(j.batiments.noyau), e.selection)}${balises(e)}</div>`
+    + `<div class="toile${j.batiments.noyau < 2 ? ' noms' : ''}">${tableau(j)}${zonesBatiments(visuel(j.batiments.noyau), e.selection, CUVETTE ? paliers(j) : null)}${balises(e)}</div>`
     + bulles(e)
     + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="Replier"></button>` : '')
     + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}</div></section>`;

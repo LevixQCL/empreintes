@@ -1,21 +1,19 @@
 import numpy as np,cv2,json,shutil
+from formes import HAUT
 from rembg import new_session,remove
 SESS=new_session('isnet-general-use')
 from PIL import Image
 N=np.array(Image.open('nue.webp').convert('RGB')).astype(np.float32)
 B=np.array(Image.open('bat.webp').convert('RGB')).astype(np.float32)
-P=json.load(open('calques/positions.json'));S=800/1643
+P=json.load(open('calques/positions.json'));POSZ=json.load(open('zooms/positions.json'));S=800/1643
 ID={'tour':'noyau'};ZF=np.load('zones.npy',allow_pickle=True).item()
 R='/home/claude/empreintes/public/art/'
 for f,(gx,gy,w,h) in P.items():
   k,pal=f.split('-');gid=ID.get(k,k)
-  # calque remis à l'échelle du tableau complet
-  c=np.array(Image.open(f'calques/{f}.webp').convert('RGBA')).astype(np.float32)
-  fx0=int(round(gx/S+120));fy0=int(round(gy/S));fw=int(round(w/S));fh=int(round(h/S))
-  c=cv2.resize(c,(fw,fh),interpolation=cv2.INTER_CUBIC)
-  al=np.clip(c[...,3]/255,0,1);img=c[...,:3]
+  # la sortie Midjourney elle-même, à sa place dans le tableau complet (756 px)
+  fx0,fy0=POSZ[f];fw=fh=756
+  comp=np.array(Image.open(f'mj/{f}.png').convert('RGB').resize((756,756),Image.LANCZOS)).astype(np.float32)
   n=N[fy0:fy0+fh,fx0:fx0+fw]
-  comp=img*al[...,None]+B[fy0:fy0+fh,fx0:fx0+fw]*(1-al[...,None])
   zz=cv2.dilate(ZF[f][fy0:fy0+fh,fx0:fx0+fw].astype(np.uint8),cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(9,9)))>0
   seuil=45 if pal=='bas' else 110
   dd=cv2.GaussianBlur(np.abs(cv2.GaussianBlur(comp,(0,0),2)-cv2.GaussianBlur(n,(0,0),2)).sum(2),(0,0),2)
@@ -35,6 +33,12 @@ for f,(gx,gy,w,h) in P.items():
     bg=np.zeros((1,65));fg=np.zeros((1,65))
     cv2.grabCut(np.clip(comp,0,255).astype(np.uint8)[...,::-1].copy(),gm,None,bg,fg,6,cv2.GC_INIT_WITH_MASK)
     d=((gm==cv2.GC_FGD)|(gm==cv2.GC_PR_FGD)).astype(np.uint8)
+    if k in ('forge','labo'):
+      # la silhouette dessinée pour Midjourney colle au bâtiment : elle borne la découpe (sans le mur derrière)
+      sh=np.zeros((2464,1856),np.uint8);HAUT[k](sh);sh=sh[fy0:fy0+fh,fx0:fx0+fw]
+      if k=='forge': cv2.ellipse(sh,(505-fx0,735-fy0),(62,55),0,0,360,1,-1)
+      d=cv2.dilate(sh,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(13,13)))
+      d=d.astype(np.uint8)
   d=cv2.morphologyEx(d,cv2.MORPH_CLOSE,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(31,31)))
   ff=d.copy();m=np.zeros((fh+2,fw+2),np.uint8);cv2.floodFill(ff,m,(0,0),1);d=d|(1-ff)
   nl,lab,st,_=cv2.connectedComponentsWithStats(d);keep=np.zeros_like(d)

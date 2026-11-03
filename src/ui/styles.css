@@ -232,6 +232,9 @@ h1,h2,h3{font-weight:400}
 .toile .tableau.nouvel-age{animation:nouvelAge 1.6s ease-out}
 /* les paliers bas et haut des bâtiments de la Cuvette : un calque posé sur le tableau (et sur sa Cuvette animée) */
 .toile .palier{position:absolute;display:block;user-select:none;-webkit-user-drag:none;pointer-events:none}
+.toile .palier.lueur{mix-blend-mode:screen;opacity:.25;animation:lueurPalier var(--p,4s) ease-in-out var(--d,0s) infinite alternate}
+@keyframes lueurPalier{to{opacity:.85}}
+@media (prefers-reduced-motion:reduce){ .toile .palier.lueur{animation:none;opacity:.45} }
 @keyframes nouvelAge{from{opacity:0;filter:brightness(1.8) blur(6px)}to{opacity:1;filter:none}}
 /* la nuit (22 octobre 2026) : une teinte, pas un voile. Bryan trouvait le voile gris (multiply) terne : on assombrit un peu,
    on bleuit légèrement et on garde le contraste. Le même filtre sur le tableau, sa vidéo et la mer du PC : pas de colonne plus sombre. */

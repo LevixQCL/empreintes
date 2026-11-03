@@ -10,4 +10,5 @@ Les sorties et les zooms de ce lot sont gardés dans sources/art/district/palier
 4. `calques.py` : les calques posés dans le jeu (public/art/district/paliers, positions → CALQUES_CUVETTE dans src/ui/art.ts).
    Un calque ne garde de ses voisins que ce qui est derrière lui ; ils se posent du fond vers l'avant.
 5. `feuilles.py` : les illustrations des feuilles de bâtiment (public/art/batiments/<id>-1 à 4.webp ; 2 = l'actuel).
-6. `melange.py sortie.png forge=haut clinique=bas …` : un tableau pour vérifier un mélange de paliers.
+6. `extras.py` : la lueur des cristaux de chaque calque (<lieu>-<palier>-lueur.webp), leurs éclats et la zone cliquable du palier haut.
+7. `melange.py sortie.png forge=haut clinique=bas …` : un tableau pour vérifier un mélange de paliers.

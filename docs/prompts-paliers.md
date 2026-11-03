@@ -11,5 +11,5 @@ Le Labo et le Port n'ont pas de niveau : ils suivent la Tour du Noyau. Un Compto
   posés sur la Cuvette et sur son animation ; `CALQUES_CUVETTE` / `palierCuvette` (src/ui/art.ts), `tableau()` (src/ui/district.ts).
 - La fumée de la Forge suit le haut de sa cheminée (`FUMEE_FORGE`, uniforme FUMEE de houle.ts). Les éclats et étincelles d'un
   bâtiment repeint sont masqués (ils tombaient sur l'ancien).
-- Limites : les cristaux d'un bâtiment repeint ne s'animent pas encore (masques cuvette-anim faits sur le palier du milieu) ;
-  les zones cliquables restent celles du milieu.
+- Les cristaux d'un bâtiment repeint respirent (calque `-lueur`, CSS) et ont leurs éclats ; au palier haut, la zone cliquable
+  suit la silhouette agrandie (`zoneHaut`).
