@@ -1,0 +1,29 @@
+/* ================= Le style moderne, partout (3 novembre 2026) =================
+   Bryan, après la refonte du combat : « tu peux utiliser ce style plus moderne pour tous les écrans du jeu, pour une
+   cohérence graphique ». La matière reste « cristal et lumière » (verre fumé, glace, or pour la valeur), mais :
+   - plus de coins coupés : les panneaux, boutons et pastilles s'arrondissent (les cartes gardent leur cadre peint) ;
+   - plus d'équerres de glace aux coins des panneaux : un seul contour fin suffit ;
+   - les petites commandes (ressources, pastilles, boutons de verre) deviennent des gélules.
+   Cette feuille passe après toutes les autres (feuilles.ts), sauf leger.css. */
+
+/* les coins coupés tiennent tous à --cut : à zéro, le découpage devient un simple rectangle, que l'arrondi adoucit.
+   Les cartes (face peinte, dos) et ce qu'elles contiennent gardent leurs coins. */
+#app :not(.geste,.nf,.carte-dos):not(.geste *,.nf *,.carte-dos *){--cut:0px}
+
+/* les panneaux : un arrondi franc */
+html #app :is(.mission,.appel,.feuille-tete .vignette,.stat,.occupant,.liste-forge li,.ligne-menu,.panneau,.habitant,.puits,.emplacement,.replique,
+  .fragment,.segments-choix,.lecon,.toast,.en-cours,.chantier-cours,.carte-porteur,.tuile-porteur,.chapitre-ligne){
+  border-radius:16px;corner-shape:round;clip-path:none}
+html #app .fenetre{border-radius:22px;corner-shape:round;clip-path:none}
+/* ce qu'on touche : des gélules */
+html #app :is(.btn,button.prim,.btn-sec,.btn-flux,.res,.puce,.etat,.badge-reso,.tag,.trait){border-radius:999px;corner-shape:round;clip-path:none}
+html #app .btn-icone{border-radius:50%;corner-shape:round;clip-path:none}
+
+/* les équerres de glace aux coins disparaissent : sur un coin arrondi, elles faisaient « vieux cadre » */
+html #app:is([data-mode="combat"],[data-mode="district"]) :is(.zone-chaine,.lecon,.res,.mission,.panneau,.habitant,.carte-porteur,.emplacement,.replique,
+  .ligne-menu,.tuile-porteur,.occupant,.stat,.en-cours,.chantier-cours,.chapitre-ligne,.appel,.fenetre)::after{background:none}
+
+/* les jauges : des traits de lumière arrondis, au lieu des éclats pointus */
+html #app .jauge-vie:not(.vg-rainure .jauge-vie){clip-path:none;border-radius:999px}
+html #app .jauge-vie:not(.vg-rainure .jauge-vie) .j-rail{clip-path:none;border-radius:999px}
+html #app .jauge{clip-path:none;border-radius:999px;overflow:hidden}

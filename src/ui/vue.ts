@@ -636,6 +636,8 @@ function htmlEcranCombat(e: Ecran): string {
   const libres = placesLibres(s);
   const verrou = e.verrou || s.issue !== 'en-cours';
   const fs = frequencesEffectives(s.chaine);
+  // les aides aux suites : au combat guidé et dans les premières Strates seulement (REGLES.aideSuitesJusqua)
+  const aide = !!e.x.tutoriel || (!e.x.pillage && !e.x.fleche && !e.x.epreuve && e.x.strate <= REGLES.aideSuitesJusqua);
 
   let conseil: string;
   if (s.sansResonance) conseil = `<b>Épreuve · Fréquences brouillées</b> : aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.`;
@@ -653,7 +655,9 @@ function htmlEcranCombat(e: Ecran): string {
     // chaîne pleine : une place de plus ne s'achète qu'avec le Flux
     const flux = s.flux > 0 && capacite(s) < REGLES.capaciteMax;
     if (s.dissonance) conseil = '<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci';
-    else if (a.suite >= 3) conseil = `<b>Résonance</b> : suite de ${a.suite}, effets <b>+${Math.round((a.mult - 1) * 100)} %</b>` + (a.suite < 5 && fin === a.suite && (libres > 0 || flux) ? ` · un <b>${f + 1}</b> pour aller plus loin` : '');
+    else if (a.suite >= 3) conseil = `<b>Résonance</b> : suite de ${a.suite}, effets <b>+${Math.round((a.mult - 1) * 100)} %</b>` + (aide && a.suite < 5 && fin === a.suite && (libres > 0 || flux) ? ` · un <b>${f + 1}</b> pour aller plus loin` : '');
+    // passé les premières Strates, le conseil dit où en est la chaîne, sans souffler la carte suivante
+    else if (!aide) conseil = libres === 0 ? (flux ? 'Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus' : 'Chaîne pleine : tu peux la lancer') : fin === 2 ? 'Suite en cours' : '';
     else if (libres === 0 && fin === 2 && flux) conseil = `Suite ${f - 1} → ${f} : 1 Flux t’ouvre une place pour un <b>${f + 1}</b>`;
     else if (libres === 0) conseil = flux ? 'Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus' : 'Chaîne pleine : tu peux la lancer';
     // au sommet des Fréquences, seul l'Écho reste possible : on dit combien il manque de cartes, pas plus
@@ -807,7 +811,7 @@ function htmlEcranCombat(e: Ecran): string {
       h += `<span class="place-vide place-liee${etat ? ' ' + etat : ''}"${ill ? ` style="--art:url(${ill})"` : ''} aria-hidden="true"><small>2 pl.</small></span>`;
     }
   });
-  for (let i = 0; i < libres; i++) h += `<span class="place-vide" aria-hidden="true">${i === 0 && dernier && !a.echo && fs[fs.length - 1]! < FREQ_MAX ? (fs[fs.length - 1]! + 1) : ''}</span>`;
+  for (let i = 0; i < libres; i++) h += `<span class="place-vide" aria-hidden="true">${aide && i === 0 && dernier && !a.echo && fs[fs.length - 1]! < FREQ_MAX ? (fs[fs.length - 1]! + 1) : ''}</span>`;
   h += `</div><p class="conseil">${conseil}</p>`;
   if (!e.lecon) {
     // Coup d'éclat : Flux plein, un seul par combat. Un bouton doré dans la rangée du Flux déplie le choix (une lignée par
@@ -844,7 +848,7 @@ function htmlEcranCombat(e: Ecran): string {
         + `<span class="mv-texte" aria-hidden="true"><b>Place vide</b><small>${echap(nom)}</small></span></span>`;
       continue;
     }
-    const halo = !!dernier && prolonge(g, fs[fs.length - 1]) && places(g) <= libres;
+    const halo = aide && !!dernier && prolonge(g, fs[fs.length - 1]) && places(g) <= libres;
     h += geste(g, 'main', 'ajouter', { halo, off: verrou, serre: places(g) > libres || !!voixRefusee(s, g), vise: vise(g) && places(g) <= libres, felure: brise(g) });
   }
   h += '</div></section>';

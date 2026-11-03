@@ -13,6 +13,9 @@ export const REGLES = {
    *  −1 : chaîne, Résonance, Flux ; −2 : Fêlure ; −3 : groupes ; −4 : traits d'ennemis ; −5 : conditions de salle.
    *  Les phases des gardiens restent dès la −2. */
   apparition: { felure: 2, groupes: 3, traits: 4, conditions: 5, assimilation: 6, troisiemePhase: 7 },
+  /** Les aides aux suites (cartes qui s'éclairent, chiffre attendu dans la place vide, « ajoute un 6 ») : jusqu'à cette Strate,
+   *  puis seul le résultat s'affiche (3 novembre 2026, Bryan : « ça fait peut-être un peu trop d'assistanat ») */
+  aideSuitesJusqua: 2,
   /** Brouillard sur le plan des Strates (30 octobre 2026, idée de Bryan après une remarque de Luc) : on ne sait plus d'avance où mène un chemin.
    *  Les salles voisines sont claires jusqu'à la Strate `indices` − 1, puis elles ne montrent qu'un indice (bruits, lueur…).
    *  Au-delà des voisines, tout est dans la brume ; jusqu'à la Strate `loin`, on devine encore les indices de la rangée d'après.
