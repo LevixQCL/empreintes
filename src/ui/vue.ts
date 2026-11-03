@@ -26,6 +26,10 @@ interface Pop {
   /** taille du chiffre (1 = normale) : les coups de fin de chaîne s'affichent plus gros */
   echelle?: number;
   couleur: string;
+  /** quand le chiffre est apparu (ms) : l'écran se redessine à chaque étape, l'animation reprend là où elle en était */
+  ne?: number;
+  /** son inclinaison (degrés), tirée une fois pour toutes */
+  penche?: number;
 }
 
 const ICONE_SON = '<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
@@ -109,7 +113,7 @@ const pct = (v: number, max: number) => Math.max(0, Math.min(100, (100 * v) / ma
 
 function popsPour(e: Ecran, cible: string) {
   return e.pops.filter((p) => p.cible === cible)
-    .map((p) => `<span class="pop${(p.echelle ?? 1) >= 1.5 ? ' gros' : ''}" style="--pc:${p.couleur};--ps:${p.echelle ?? 1}" aria-hidden="true">${echap(p.texte)}</span>`).join('');
+    .map((p) => `<span class="pop${(p.echelle ?? 1) >= 1.5 ? ' gros' : ''}" style="--pc:${p.couleur};--ps:${p.echelle ?? 1};--pr:${p.penche ?? 0}deg${p.ne ? `;animation-delay:-${Math.max(0, Math.round(Date.now() - p.ne))}ms` : ''}" aria-hidden="true">${echap(p.texte)}</span>`).join('');
 }
 
 /**

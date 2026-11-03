@@ -94,11 +94,12 @@ export function finPour(): Fin | null {
 let idPop = 0;
 function pop(cible: string, texte: string, couleur: string, echelle = 1) {
   const id = ++idPop;
-  K.pops.push({ id, cible, texte, couleur, echelle });
+  // l'heure d'apparition suit le chiffre d'un rendu à l'autre : il tape une seule fois, au lieu de rejaillir à chaque étape
+  K.pops.push({ id, cible, texte, couleur, echelle, ne: Date.now(), penche: Math.round((Math.random() * 2 - 1) * 8) });
   setTimeout(() => {
     K.pops = K.pops.filter((p) => p.id !== id);
     if (app.mode === 'combat') afficher();
-  }, 900);
+  }, 1000);
 }
 
 function popsDe(ev: Evenement, etat?: CombatEtat) {
@@ -117,7 +118,7 @@ function popsDe(ev: Evenement, etat?: CombatEtat) {
 export async function jouer(pas: Pas[], rapide = false) {
   K.verrou = true;
   app.rapide = rapide;
-  initImpacts(reduit);
+  initImpacts(reduit, rapide);
   let bonus = 0;
   for (const p of pas) {
     const base = p.ev.kind === 'carte' ? 130 : p.ev.kind === 'resonance' ? 250 : p.ev.kind === 'degats' && p.ev.cible === 'ennemi' ? 300 : 380;

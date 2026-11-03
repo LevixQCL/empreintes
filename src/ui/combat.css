@@ -85,6 +85,11 @@
 
 /* ---------- Langage d'impact (22 octobre 2026) ---------- */
 .calque-impacts{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:35}
+/* La carte qui frappe (3 novembre 2026) : une copie vole par-dessus l'écran (le rail coupe ce qui dépasse), sous le calque des
+   effets ; la vraie carte s'efface de sa place le temps du geste. */
+.carte-volante{position:fixed;z-index:34;pointer-events:none;transform-origin:50% 50%;will-change:transform}
+.carte-volante > *{width:100% !important;height:100% !important;margin:0 !important;transform:none !important;opacity:1 !important;filter:drop-shadow(0 10px 14px rgba(0,0,0,.65))}
+body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 /* sous un quart de ses PV, l'ennemi se fend */
 .scene-ennemi.fele .ennemi-art{filter:drop-shadow(0 0 10px rgba(255,107,91,.35))}
 .fele-trait{position:absolute;z-index:1;inset:8% 18% 30%;pointer-events:none;opacity:.85;mix-blend-mode:screen;

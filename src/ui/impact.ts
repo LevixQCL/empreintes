@@ -32,10 +32,34 @@ let reduit = false;
 /** l'échelle des effets autour de l'ennemi (1 sur téléphone, plus sur PC : voir echelleScene) ; mise à jour à chaque événement */
 let ech = 1;
 /** la dernière carte jouée : son effet se déclenche à l'impact qui suit */
-let derniere: { lignee: LigneeGeste; rang: number; total: number; suite: number; type: string; effet?: string } | null = null;
+let derniere: { lignee: LigneeGeste; rang: number; total: number; suite: number; type: string; effet?: string; dir?: [number, number] } | null = null;
 
 const hasard = (a: number, b: number) => a + Math.random() * (b - a);
-const maintenant = () => performance.now();
+
+// ---------- L'horloge des effets et l'arrêt sur image (3 novembre 2026) ----------
+// Au contact d'un coup, tout se fige un instant (« hit stop », comme dans les jeux de combat) : les traits, les particules
+// et la carte qui bondit. L'horloge des effets ne compte pas ces instants figés.
+let gelDebut = 0, gelFin = 0, gelCumul = 0;
+const maintenant = () => {
+  const t = performance.now();
+  if (gelFin && t >= gelFin) { gelCumul += gelFin - gelDebut; gelFin = 0; }
+  return t - gelCumul - (gelFin ? t - gelDebut : 0);
+};
+/** les animations d'éléments qui se figent avec le reste (la carte qui bondit) */
+const animsGelables = new Set<Animation>();
+function geler(ms: number) {
+  if (reduit || ms <= 0) return;
+  const t = performance.now();
+  maintenant();
+  if (!gelFin) gelDebut = t;
+  const fin = Math.max(gelFin, t + ms);
+  gelFin = fin;
+  for (const a of animsGelables) if (a.playState === 'running') a.pause();
+  setTimeout(() => { if (gelFin && gelFin !== fin) return; for (const a of animsGelables) if (a.playState === 'paused') a.play(); }, ms);
+}
+/** le combat accéléré (combat automatique) : tous les gestes vont plus vite */
+let cadence = 1;
+const ms = (v: number) => v * cadence;
 
 // ---------- Les textures peintes (Midjourney, détourées) ----------
 // Chaque geste a sa texture ; tant qu'elle n'est pas chargée (ou si elle manque), le trait dessiné en code prend le relais.
@@ -48,21 +72,102 @@ function chargerSprites() {
     const im = new Image();
     im.decoding = 'async';
     im.src = `${base}${n}.webp`;
+    im.onload = () => cuireBientot(n);
     sprites[n] = im;
   }
 }
 const pret = (n: NomSprite) => { const im = sprites[n]; return im && im.complete && im.naturalWidth > 0 ? im : null; };
 
-/** Dessine une texture centrée en (x, y), tournée de `angle`, à la largeur `largeur` */
-function sprite(c: CanvasRenderingContext2D, im: HTMLImageElement, x: number, y: number, largeur: number, angle = 0, etirement = 1) {
-  const h = (largeur * im.naturalHeight) / im.naturalWidth;
-  c.translate(x, y); c.rotate(angle);
-  c.drawImage(im, (-largeur * etirement) / 2, -h / 2, largeur * etirement, h);
+// ---------- Les textures qui se consument (3 novembre 2026) ----------
+// Bryan trouvait les animations du combat « cheap » : les textures peintes s'effaçaient en fondu comme des autocollants.
+// Comme dans les jeux de Riot ou Supercell, une texture peinte se défait maintenant depuis ses bords, avec une lisière
+// lumineuse : un bruit fixe décide quels pixels partent les premiers. Les étapes sont calculées une fois au chargement
+// (8 images par texture, une sorte de planche animée tirée de la peinture), puis simplement recopiées.
+const ETAPES = 8;
+const consumes: Partial<Record<NomSprite, HTMLCanvasElement[]>> = {};
+function cuireBientot(n: NomSprite) {
+  const ric = (window as unknown as { requestIdleCallback?: (f: () => void) => void }).requestIdleCallback;
+  if (ric) ric(() => cuire(n)); else setTimeout(() => cuire(n), 60);
+}
+function cuire(n: NomSprite) {
+  const im = pret(n);
+  if (!im || consumes[n]) return;
+  const w = Math.min(420, im.naturalWidth), h = Math.max(1, Math.round((w * im.naturalHeight) / im.naturalWidth));
+  const toile = (): [HTMLCanvasElement, CanvasRenderingContext2D] => { const c = document.createElement('canvas'); c.width = w; c.height = h; return [c, c.getContext('2d', { willReadFrequently: true })!]; };
+  const [c0, g0] = toile();
+  g0.drawImage(im, 0, 0, w, h);
+  let src: ImageData;
+  try { src = g0.getImageData(0, 0, w, h); } catch { consumes[n] = [c0]; return; }
+  // le bruit : quelques octaves de bruit de valeur, la même graine pour toujours
+  const hach = (x: number, y: number) => { const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); };
+  const valeur = (x: number, y: number) => {
+    const ix = Math.floor(x), iy = Math.floor(y); let fx = x - ix, fy = y - iy;
+    fx = fx * fx * (3 - 2 * fx); fy = fy * fy * (3 - 2 * fy);
+    const a = hach(ix, iy), b = hach(ix + 1, iy), c = hach(ix, iy + 1), d = hach(ix + 1, iy + 1);
+    return a + (b - a) * fx + (c - a) * fy + (a - b - c + d) * fx * fy;
+  };
+  const bruit = new Float32Array(w * h);
+  const ex = 6 / w, ey = (6 * (h / w)) / h;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const u = x * ex, v = y * ey;
+    bruit[y * w + x] = 0.55 * valeur(u, v) + 0.3 * valeur(u * 2.1 + 3, v * 2.1 + 3) + 0.15 * valeur(u * 4.3 + 7, v * 4.3 + 7);
+  }
+  const lisse = (a: number, b: number, x: number) => { const t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const etapes = [c0];
+  for (let k = 1; k < ETAPES; k++) {
+    const seuil = k / ETAPES;
+    const [c, g] = toile();
+    const out = g.createImageData(w, h);
+    const s = src.data, o = out.data;
+    for (let i = 0, p = 0; i < w * h; i++, p += 4) {
+      const a = s[p + 3]! / 255;
+      if (a < 0.01) continue;
+      const e = a * (0.35 + 0.65 * bruit[i]!);
+      const vis = lisse(seuil, seuil + 0.05, e);
+      if (vis <= 0) continue;
+      const lis = vis - lisse(seuil + 0.05, seuil + 0.2, e);
+      o[p] = Math.min(255, s[p]! + 255 * lis * 1.4);
+      o[p + 1] = Math.min(255, s[p + 1]! + 235 * lis * 1.4);
+      o[p + 2] = Math.min(255, s[p + 2]! + 200 * lis * 1.4);
+      o[p + 3] = Math.round(255 * a * vis);
+    }
+    g.putImageData(out, 0, 0);
+    etapes.push(c);
+  }
+  consumes[n] = etapes;
 }
 
-export function initImpacts(mouvementReduit: boolean): void {
+/**
+ * Dessine une texture peinte centrée en (x, y), tournée de `angle`, à la largeur `largeur`, consumée à `seuil` (0 = entière,
+ * 1 = disparue). Tant que ses étapes ne sont pas prêtes, elle s'efface en fondu.
+ */
+function peinte(c: CanvasRenderingContext2D, n: NomSprite, x: number, y: number, largeur: number, angle: number, seuil: number, hauteur?: number) {
+  const im = pret(n);
+  if (!im || seuil >= 1) return;
+  const et = consumes[n];
+  const h = hauteur ?? (largeur * im.naturalHeight) / im.naturalWidth;
+  c.save();
+  c.translate(x, y); c.rotate(angle);
+  if (!et || et.length < ETAPES) {
+    c.globalAlpha *= 1 - seuil;
+    c.drawImage(im, -largeur / 2, -h / 2, largeur, h);
+  } else {
+    // entre deux étapes, un fondu de l'une à l'autre : la défaite est continue
+    const pos = Math.max(0, seuil) * ETAPES, i = Math.min(ETAPES - 1, Math.floor(pos)), f = pos - i;
+    const a0 = c.globalAlpha;
+    c.globalAlpha = a0 * (i + 1 < ETAPES ? 1 - f : 1 - f);
+    c.drawImage(et[i]!, -largeur / 2, -h / 2, largeur, h);
+    if (i + 1 < ETAPES && f > 0) { c.globalAlpha = a0 * f; c.drawImage(et[i + 1]!, -largeur / 2, -h / 2, largeur, h); }
+  }
+  c.restore();
+}
+/** la courbe de vie d'un geste peint : entier pendant `tient` (part de la durée), puis il se consume */
+const consume = (k: number, tient: number) => (k < tient ? 0 : (k - tient) / (1 - tient));
+
+export function initImpacts(mouvementReduit: boolean, rapide = false): void {
   chargerSprites();
   reduit = mouvementReduit;
+  cadence = rapide ? 0.35 : 1;
   if (canvas) return;
   canvas = document.createElement('canvas');
   canvas.className = 'calque-impacts';
@@ -209,20 +314,20 @@ function trait(dessiner: Trait['dessiner'], duree: number, delai = 0) {
 // ---------- Les gestes de chaque lignée ----------
 
 /** Augmentés : un arc électrique brisé qui file de la carte à l'ennemi, avec deux ramifications */
-function arc(de: DOMPoint, a: DOMPoint, couleur: string, force: number) {
+function arc(de: DOMPoint, a: DOMPoint, couleur: string, force: number, delai = 0) {
   const tex = pret('tech');
   if (tex) {
-    // l'éclair peint, étiré de la carte à l'ennemi, qui grésille (deux tirages légèrement décalés)
+    // l'éclair peint se déroule de la carte à l'ennemi en 70 ms, grésille, puis se consume depuis ses bords
     const dx = a.x - de.x, dy = a.y - de.y;
-    const long = Math.hypot(dx, dy), angle = Math.atan2(dy, dx);
+    const long = Math.hypot(dx, dy) * 1.08, angle = Math.atan2(dy, dx);
     const cx = (de.x + a.x) / 2, cy = (de.y + a.y) / 2;
+    const epais = (40 + force * 8) * Math.sqrt(ech);
     trait((c, k) => {
-      const ouvert = Math.min(1, k * 3.5);
-      c.globalAlpha = (1 - k) * (0.85 + Math.random() * 0.15);
+      const ouvert = Math.min(1, k * 5);
+      c.globalAlpha = k < 0.3 ? 0.85 + Math.random() * 0.15 : 1;
       c.save(); c.beginPath(); c.translate(de.x, de.y); c.rotate(angle); c.rect(-10, -200, long * ouvert + 20, 400); c.restore(); c.clip();
-      c.save(); sprite(c, tex, cx, cy, long, angle); c.restore();
-      c.globalAlpha *= 0.5; c.save(); sprite(c, tex, cx + hasard(-3, 3), cy + hasard(-4, 4), long * 1.02, angle + hasard(-0.03, 0.03), 1); c.restore();
-    }, 280);
+      peinte(c, 'tech', cx + hasard(-1.5, 1.5), cy + hasard(-1.5, 1.5), long, angle, consume(k, 0.28), epais * (1 - k * 0.4));
+    }, ms(380), delai);
     return;
   }
   const segments = 9;
@@ -241,26 +346,25 @@ function arc(de: DOMPoint, a: DOMPoint, couleur: string, force: number) {
     c.beginPath(); points.slice(0, n).forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y))); c.stroke();
     c.lineWidth = 1;
     for (const b of branches) { c.beginPath(); c.moveTo(...b[0]!); c.lineTo(...b[1]!); c.stroke(); }
-  }, 260);
+  }, 260, delai);
 }
 
 /** Génés : trois griffures d'ambre en travers de l'ennemi, puis des gouttes de résine */
 function griffes(p: DOMPoint, couleur: string, force: number) {
   const tex = pret('bio');
   if (tex) {
-    // la griffure peinte, révélée en un geste de haut en bas, un peu tournée au hasard
+    // la griffure peinte lacère en un geste de haut en bas (70 ms), tient un instant, puis se consume
     const angle = hasard(-0.35, 0.35) + (Math.random() < 0.3 ? Math.PI / 2 : 0);
-    const larg = (120 + force * 18) * ech;
+    const larg = (130 + force * 18) * ech;
     const miroir = Math.random() < 0.5 ? -1 : 1;
     trait((c, k) => {
-      const ouvert = Math.min(1, k * 3.2);
-      c.globalAlpha = k < 0.55 ? 1 : 1 - (k - 0.55) / 0.45;
+      const ouvert = Math.min(1, k * 5.5);
       c.translate(p.x, p.y); c.rotate(angle); c.scale(miroir, 1);
       const h = (larg * tex.naturalHeight) / tex.naturalWidth;
       c.beginPath(); c.rect(-larg / 2, -h / 2, larg, h * ouvert); c.clip();
-      c.drawImage(tex, -larg / 2, -h / 2, larg, h);
-    }, 420);
-    setTimeout(() => eclats(p.x, p.y, 6 + force * 3, couleur, { vitesse: 140, gravite: 520, taille: 3.5, vie: 0.9 }), 120);
+      peinte(c, 'bio', 0, 0, larg, 0, consume(k, 0.35));
+    }, ms(480));
+    setTimeout(() => eclats(p.x, p.y, 3 + force * 2, couleur, { vitesse: 140, gravite: 520, taille: 3.2, vie: 0.7 }), ms(60));
     return;
   }
   const angle = hasard(-0.9, -0.5) + (Math.random() < 0.5 ? 0 : Math.PI / 2.4);
@@ -285,14 +389,15 @@ function ondes(p: DOMPoint, couleur: string, force: number) {
   const tex = pret('reso');
   if (tex) {
     // l'anneau peint qui s'élargit, deux ou trois fois, en tournant doucement
+    // l'onde s'ouvre vite puis ralentit, et se consume en s'élargissant
     for (let i = 0; i < 2 + Math.min(1, Math.floor(force / 2)); i++) {
       const sens = Math.random() < 0.5 ? -1 : 1, depart = hasard(0, Math.PI * 2);
       trait((c, k) => {
-        c.globalAlpha = (1 - k) * 0.95;
-        c.save(); sprite(c, tex, p.x, p.y, (60 + force * 12) * ech * (0.5 + k * 1.6), depart + sens * k * 0.8); c.restore();
-      }, 560, i * 120);
+        const e = 1 - Math.pow(1 - k, 3);
+        peinte(c, 'reso', p.x, p.y, (70 + force * 14) * ech * (0.35 + e * (1.2 + i * 0.3)), depart + sens * k * 0.9, consume(k, 0.25));
+      }, ms(560), ms(i * 90));
     }
-    eclats(p.x, p.y, 8 + force * 3, couleur, { vitesse: 90, gravite: -60, taille: 2.6, vie: 1.1 });
+    eclats(p.x, p.y, 4 + force * 2, couleur, { vitesse: 90, gravite: -60, taille: 2.6, vie: 1 });
     return;
   }
   for (let i = 0; i < 2 + Math.min(2, force); i++) {
@@ -308,14 +413,85 @@ function ondes(p: DOMPoint, couleur: string, force: number) {
 }
 
 /** Le chemin de la carte vers l'ennemi, pour les Génés et les Résonants : une comète courte */
-function comete(de: DOMPoint, a: DOMPoint, couleur: string) {
+function comete(de: DOMPoint, a: DOMPoint, couleur: string, delai = 0, duree = 170) {
   trait((c, k) => {
-    const x = de.x + (a.x - de.x) * k, y = de.y + (a.y - de.y) * k;
+    const e = k * k;
+    const x = de.x + (a.x - de.x) * e, y = de.y + (a.y - de.y) * e;
     const r = 14 * Math.sqrt(ech);
     const g = c.createRadialGradient(x, y, 0, x, y, r);
     g.addColorStop(0, '#fff'); g.addColorStop(0.3, couleur); g.addColorStop(1, 'transparent');
     c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
-  }, 170);
+  }, duree, delai);
+}
+
+// ---------- La carte qui frappe (3 novembre 2026) ----------
+// Comme dans Hearthstone ou Balatro, c'est la carte elle-même qui frappe : elle se ramasse et se cabre (l'élan),
+// bondit vers l'ennemi (un tiers du chemin), puis revient en ressort. L'écran se redessine à chaque étape du combat et le
+// rail coupe tout ce qui dépasse : c'est donc une copie de la carte qui vole, par-dessus l'écran, le temps du geste.
+// La vraie carte, elle, s'efface de sa place pendant ce temps (classe « carte-partie » sur le corps de la page).
+const ELAN = 120, BOND = 90, GESTE = 520;
+let fantomes = 0;
+/** les copies encore en vol : quand la carte suivante part, la précédente se pose aussitôt (jamais deux copies à la fois) */
+const enVol = new Set<Animation>();
+function bondCarte(carte: Element, vers: DOMPoint): { sommet: DOMPoint; ux: number; uy: number; arrivee: number } | null {
+  const el = carte as HTMLElement;
+  const r = el.getBoundingClientRect();
+  if (!r.width) return null;
+  const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  const dx = vers.x - cx, dy = vers.y - cy, d = Math.hypot(dx, dy) || 1, ux = dx / d, uy = dy / d;
+  const part = Math.min(0.34, 140 / d);
+  // le bord avant de la carte au sommet du bond : c'est de là que part le geste
+  const sommet = new DOMPoint(cx + dx * part + ux * r.height * 0.55, cy + dy * part + uy * r.height * 0.55);
+  const arrivee = ms(ELAN + BOND);
+  if (reduit) return { sommet, ux, uy, arrivee: 0 };
+  for (const v of enVol) v.finish();
+  // la copie, à la taille de la carte (sans la mise à l'échelle de la carte « en jeu »), centrée sur elle
+  const w = el.offsetWidth || r.width, h = el.offsetHeight || r.height, base = r.width / w;
+  const copie = el.cloneNode(true) as HTMLElement;
+  copie.classList.remove('en-jeu', 'jouee');
+  copie.removeAttribute('data-action');
+  copie.removeAttribute('disabled');
+  copie.querySelectorAll('[data-action]').forEach((x) => x.removeAttribute('data-action'));
+  const cadre = document.createElement('div');
+  cadre.className = 'carte-volante';
+  cadre.setAttribute('aria-hidden', 'true');
+  cadre.style.cssText = `left:${cx - w / 2}px;top:${cy - h / 2}px;width:${w}px;height:${h}px;--c:${getComputedStyle(el).getPropertyValue('--c')}`;
+  cadre.appendChild(copie);
+  document.body.appendChild(cadre);
+  fantomes++;
+  document.body.classList.add('carte-partie');
+  const pen = Math.max(-9, Math.min(9, ux * 28));
+  const a = cadre.animate([
+    { transform: `scale(${base})`, easing: 'cubic-bezier(.3,0,.3,1)' },
+    { transform: `translate(${-ux * 5}px,9px) rotate(${-pen * 0.6}deg) scale(${base * 1.05})`, offset: ELAN / GESTE, easing: 'cubic-bezier(.6,0,1,.6)' },
+    { transform: `translate(${dx * part}px,${dy * part}px) rotate(${pen}deg) scale(${base * 1.2},${base * 1.28})`, offset: (ELAN + BOND) / GESTE, easing: 'cubic-bezier(.2,.7,.3,1)' },
+    { transform: `translate(${-ux * 3}px,4px) rotate(${-pen * 0.15}deg) scale(${base * 0.97})`, offset: 0.86 },
+    { transform: `scale(${base})` },
+  ], { duration: ms(GESTE) });
+  animsGelables.add(a);
+  enVol.add(a);
+  // la lueur de la lignée s'allume pendant le bond, et retombe au retour
+  cadre.animate([{ filter: 'brightness(1)' }, { filter: 'brightness(1.3) drop-shadow(0 0 14px var(--c))', offset: (ELAN + BOND) / GESTE }, { filter: 'brightness(1)' }], { duration: ms(GESTE) });
+  const fin = () => {
+    animsGelables.delete(a);
+    enVol.delete(a);
+    cadre.remove();
+    if (--fantomes <= 0) { fantomes = 0; document.body.classList.remove('carte-partie'); }
+  };
+  a.finished.then(fin, fin);
+  return { sommet, ux, uy, arrivee };
+}
+
+/** L'écran est poussé dans le sens du coup, puis revient en ressort (au lieu de trembler au hasard) */
+function pousser(el: Element | null, ux: number, uy: number, force: number) {
+  if (!el || reduit || force <= 0) return;
+  const a = 2 + force * 1.5;
+  const anim = (el as HTMLElement).animate([
+    { transform: 'none' }, { transform: `translate(${ux * a}px,${uy * a}px)`, offset: 0.12 },
+    { transform: `translate(${-ux * a * 0.3}px,${-uy * a * 0.3}px)`, offset: 0.45 }, { transform: 'none' },
+  ], { duration: 240 + force * 30, easing: 'ease-out' });
+  animsGelables.add(anim);
+  anim.finished.then(() => animsGelables.delete(anim), () => animsGelables.delete(anim));
 }
 
 function bouclierSur(p: DOMRect) {
@@ -351,7 +527,7 @@ function voileRouge(force: number) {
 // Chaque effet a son geste à lui, par-dessus celui de la lignée : on reconnaît un Perçant ou une Fissure sans lire le texte.
 
 /** Perçant : une lance de lumière qui traverse l'ennemi de part en part (le bouclier ne l'arrête pas) */
-function lance(de: DOMPoint, a: DOMPoint, couleur: string, force: number) {
+function lance(de: DOMPoint, a: DOMPoint, couleur: string, force: number, delai = 0) {
   const dx = a.x - de.x, dy = a.y - de.y;
   const long = Math.hypot(dx, dy) || 1;
   const ux = dx / long, uy = dy / long;
@@ -364,9 +540,9 @@ function lance(de: DOMPoint, a: DOMPoint, couleur: string, force: number) {
     c.strokeStyle = couleur; c.shadowColor = couleur; c.shadowBlur = 18; c.lineWidth = (5 + force) * Math.sqrt(ech);
     c.beginPath(); c.moveTo(de.x + (x - de.x) * 0.55, de.y + (y - de.y) * 0.55); c.lineTo(x, y); c.stroke();
     c.strokeStyle = '#fff'; c.lineWidth = 1.6; c.stroke();
-  }, 300);
+  }, 300, delai);
   // la sortie : une gerbe d'étincelles dans le prolongement
-  setTimeout(() => eclats(fin.x - ux * 60, fin.y - uy * 60, 12 + force * 3, couleur, { vitesse: 320, taille: 2, trainee: true, gravite: 80, angle: Math.atan2(uy, ux), ouverture: 0.35 }), 110);
+  setTimeout(() => eclats(fin.x - ux * 60, fin.y - uy * 60, 12 + force * 3, couleur, { vitesse: 320, taille: 2, trainee: true, gravite: 80, angle: Math.atan2(uy, ux), ouverture: 0.35 }), delai + 110);
 }
 
 /** Fissure : des lézardes dorées qui courent depuis l'impact et restent un instant */
@@ -574,16 +750,17 @@ function converger(p: DOMPoint): number {
     ondeDeChoc(ici.x, ici.y, OR, force);
     const etoile = pret('impact');
     const rayon = (60 + n * 18) * ech;
+    // le grand éclat doré de fin de chaîne : il jaillit, tient un instant, puis se consume lentement
     trait((c, k) => {
-      c.globalAlpha = k < 0.2 ? 1 : 1 - (k - 0.2) / 0.8;
-      if (etoile) { c.save(); sprite(c, etoile, ici.x, ici.y, rayon * 2.4 * (0.7 + k * 0.5), k * 0.4); c.restore(); }
-      halo(c, ici.x, ici.y, rayon * (0.7 + k * 0.8), '#FFFFFF', (1 - k) * 0.5);
-    }, 380);
+      if (etoile) peinte(c, 'impact', ici.x, ici.y, rayon * 2.6 * (0.75 + (1 - Math.pow(1 - k, 3)) * 0.4), k * 0.35, consume(k, 0.22));
+      halo(c, ici.x, ici.y, rayon * (0.7 + k * 0.8), '#FFFFFF', Math.max(0, 1 - k * 3) * 0.5);
+    }, ms(720));
+    geler(110 + n * 15);
     eclats(ici.x, ici.y, 24 + n * 8, OR, { vitesse: 520 + n * 40, taille: 2.4, trainee: true, gravite: 140 });
     verre(ici.x, ici.y, 4 + n * 2, '#FFF1CC', force);
     touche(ennemi, OR, Math.min(5, force));
     const ecran = document.querySelector('.ecran-combat');
-    secouer(ecran, Math.min(5, 1 + n));
+    pousser(ecran, 0, -1, Math.min(5, 1 + n));
     if (!reduit && n >= 3) ecran?.animate([{ filter: 'brightness(1.5)' }, { filter: 'none' }], { duration: 260, easing: 'ease-out' });
     S.sonConvergence(n);
     vibrer(n >= 3 ? [25, 30, 70] : 30);
@@ -610,48 +787,47 @@ function versFlux(de: DOMPoint | null, a: DOMPoint | null) {
 /** Le coup d'un ennemi, selon sa lignée : rayon (Augmentés), griffes (Génés), onde qui se referme (Résonants) */
 const TEINTE_ENNEMI: Record<LigneeGeste, string> = { tech: '#FF5A6E', bio: '#FF7A3A', reso: '#C46BFF', neutre: DANGER };
 
-/** L'ennemi qui frappe se jette un instant vers sa cible, puis revient : le coup part d'un corps, pas de nulle part */
+/** L'élan de l'ennemi avant son coup (ms) : on le voit se ramasser avant que le coup ne parte */
+const ELAN_ENNEMI = 240;
+/** L'ennemi qui frappe se ramasse et se redresse (on voit le coup venir), puis se jette vers sa cible et revient */
 function bond(src: Element | null, de: DOMPoint | null, p: DOMPoint) {
   if (!src || !de || reduit) return;
   const dx = p.x - de.x, dy = p.y - de.y, l = Math.hypot(dx, dy) || 1;
-  const amp = src.classList.contains('vignette-ennemi') ? 12 : 7;
+  const amp = src.classList.contains('vignette-ennemi') ? 12 : 8;
   const tx = (dx / l) * amp, ty = (dy / l) * amp;
-  (src as HTMLElement).animate([
-    { transform: 'none' },
-    { transform: `translate(${-tx * 0.35}px, ${-ty * 0.35}px) scale(.98)`, offset: 0.3 },
-    { transform: `translate(${tx}px, ${ty}px) scale(1.04)`, offset: 0.55 },
-    { transform: 'none' },
-  ], { duration: 360, easing: 'cubic-bezier(.3,.7,.3,1)' });
+  const T = ELAN_ENNEMI + 300;
+  const a = (src as HTMLElement).animate([
+    { transform: 'none', filter: 'none', easing: 'cubic-bezier(.3,0,.3,1)' },
+    { transform: `translate(${-tx * 0.6}px, ${-ty * 0.6}px) scale(1.05)`, filter: 'brightness(1.12) sepia(.3) hue-rotate(-25deg) saturate(1.5)', offset: (ELAN_ENNEMI - 40) / T, easing: 'cubic-bezier(.7,0,1,.5)' },
+    { transform: `translate(${tx}px, ${ty}px) scale(1.06)`, filter: 'brightness(1.12) sepia(.3) hue-rotate(-25deg) saturate(1.5)', offset: (ELAN_ENNEMI + 20) / T, easing: 'cubic-bezier(.2,.7,.3,1)' },
+    { transform: 'none', filter: 'none' },
+  ], { duration: ms(T) });
+  animsGelables.add(a);
+  a.finished.then(() => animsGelables.delete(a), () => animsGelables.delete(a));
 }
 
-/** Le point d'impact sur un Porteur : un éclair blanc, une onde nette, quelques fêlures et des éclats chassés dans le sens du coup */
+/** Les textures peintes de nos lignées, teintées pour les coups ennemis (en attendant des textures ennemies peintes) */
+const FILTRE_ENNEMI: Record<LigneeGeste, string> = { tech: 'hue-rotate(150deg) saturate(1.3)', bio: 'hue-rotate(-22deg) saturate(1.4)', reso: 'hue-rotate(25deg) saturate(1.2)', neutre: 'hue-rotate(-30deg) saturate(1.4)' };
+function teinte(c: CanvasRenderingContext2D, filtre: string, dessin: () => void) {
+  c.filter = filtre; dessin(); c.filter = 'none';
+}
+
+/** Le point d'impact sur un Porteur : l'éclat peint, teinté de rouge, qui jaillit puis se consume ; l'arrêt sur image ; quelques éclats */
 function impactPorteur(p: DOMPoint, coul: string, angle: number, delai: number) {
   const e = Math.sqrt(ech);
-  trait((c, k) => {
+  if (pret('impact')) {
+    const rot = hasard(0, 6.28);
+    trait((c, k) => {
+      const pop = k < 0.18 ? 0.5 + (k / 0.18) * 0.6 : 1.1 + (k - 0.18) * 0.1;
+      teinte(c, 'hue-rotate(-28deg) saturate(1.6)', () => peinte(c, 'impact', p.x, p.y, 92 * e * pop, rot + k * 0.3, consume(k, 0.2)));
+    }, ms(360), delai);
+  } else trait((c, k) => {
     const r = (12 + k * 30) * e;
     const g = c.createRadialGradient(p.x, p.y, 0, p.x, p.y, r);
     g.addColorStop(0, `rgba(255,255,255,${1 - k})`); g.addColorStop(0.35, coul); g.addColorStop(1, 'transparent');
     c.globalAlpha = 1 - k * k; c.fillStyle = g; c.beginPath(); c.arc(p.x, p.y, r, 0, Math.PI * 2); c.fill();
   }, 170, delai);
-  trait((c, k) => {
-    c.globalAlpha = (1 - k) * 0.9; c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 12; c.lineWidth = (3 - k * 2.4) * e;
-    c.beginPath(); c.arc(p.x, p.y, (10 + k * 42) * e, 0, Math.PI * 2); c.stroke();
-  }, 320, delai);
-  // les fêlures : de courtes lignes brisées, surtout vers l'avant du coup
-  const fels = Array.from({ length: 4 }, () => {
-    const a = angle + hasard(-1.1, 1.1), l = hasard(16, 30) * e, cassure = hasard(-0.5, 0.5);
-    return { a, l, cassure };
-  });
-  trait((c, k) => {
-    c.globalAlpha = 1 - k; c.strokeStyle = '#FFE8EA'; c.shadowColor = coul; c.shadowBlur = 8; c.lineWidth = 1.6 * e; c.lineCap = 'round';
-    const o = Math.min(1, k * 4);
-    for (const f of fels) {
-      const mx = p.x + Math.cos(f.a) * f.l * 0.5 * o, my = p.y + Math.sin(f.a) * f.l * 0.5 * o;
-      c.beginPath(); c.moveTo(p.x + Math.cos(f.a) * 6 * e, p.y + Math.sin(f.a) * 6 * e); c.lineTo(mx, my);
-      c.lineTo(mx + Math.cos(f.a + f.cassure) * f.l * 0.5 * o, my + Math.sin(f.a + f.cassure) * f.l * 0.5 * o); c.stroke();
-    }
-  }, 240, delai);
-  setTimeout(() => eclats(p.x, p.y, 14, coul, { vitesse: 320, taille: 2.2, trainee: true, angle, ouverture: 0.9, gravite: 120 }), delai);
+  setTimeout(() => { geler(70); eclats(p.x, p.y, 8, coul, { vitesse: 320, taille: 2.2, trainee: true, angle, ouverture: 0.8, gravite: 120 }); }, delai);
 }
 
 type Bloque = 'non' | 'tout' | 'partiel';
@@ -728,58 +904,73 @@ function parade(r: DOMRect, angle: number, delai: number, brise: boolean) {
  */
 function coupEnnemi(de: DOMPoint | null, p: DOMPoint, lignee: LigneeGeste, bloque: Bloque = 'non', r: DOMRect | null = null): number {
   const coul = TEINTE_ENNEMI[lignee];
+  const filtre = FILTRE_ENNEMI[lignee];
   const frappe = (angle: number, delai: number) => {
     if (bloque !== 'non' && r) parade(r, angle, delai, bloque === 'partiel');
     if (bloque !== 'tout') impactPorteur(p, coul, angle, delai);
   };
   const e = Math.sqrt(ech);
+  // le coup part quand l'ennemi se jette en avant, après son élan
+  const elan = ms(ELAN_ENNEMI);
   if (lignee === 'tech' && de) {
     const dx = p.x - de.x, dy = p.y - de.y, l = Math.hypot(dx, dy) || 1;
     const angle = Math.atan2(dy, dx);
-    const vol = Math.round(Math.min(230, 120 + l * 0.12));
-    // l'éclair de bouche
-    trait((c, k) => {
-      const r = (14 + k * 16) * e;
-      const g = c.createRadialGradient(de.x, de.y, 0, de.x, de.y, r);
-      g.addColorStop(0, `rgba(255,255,255,${1 - k})`); g.addColorStop(0.4, coul); g.addColorStop(1, 'transparent');
-      c.globalAlpha = 1 - k; c.fillStyle = g; c.beginPath(); c.arc(de.x, de.y, r, 0, Math.PI * 2); c.fill();
-    }, 160);
-    // l'obus : une tête brillante, une gaine colorée, une traînée qui s'amenuise derrière lui
-    trait((c, k) => {
+    const vol = ms(Math.round(Math.min(160, 80 + l * 0.1)));
+    if (pret('tech')) {
+      // l'éclair peint, teinté de rouge, se déroule de l'ennemi au Porteur, puis se consume
+      const cx = (de.x + p.x) / 2, cy = (de.y + p.y) / 2;
+      trait((c, k) => {
+        const ouvert = Math.min(1, k * 2.6);
+        c.save(); c.beginPath(); c.translate(de.x, de.y); c.rotate(angle); c.rect(-10, -200, l * 1.06 * ouvert + 20, 400); c.restore(); c.clip();
+        teinte(c, filtre, () => peinte(c, 'tech', cx, cy, l * 1.06, angle, consume(k, 0.45), 52 * e));
+      }, vol * 2.4, elan);
+    } else trait((c, k) => {
       const t = k, q = Math.max(0, t - 0.32);
       const hx = de.x + dx * t, hy = de.y + dy * t, qx = de.x + dx * q, qy = de.y + dy * q;
       const g = c.createLinearGradient(qx, qy, hx, hy);
       g.addColorStop(0, 'transparent'); g.addColorStop(0.7, coul); g.addColorStop(1, '#fff');
-      c.lineCap = 'round'; c.shadowColor = coul; c.shadowBlur = 18;
-      c.strokeStyle = g; c.lineWidth = 9 * e; c.beginPath(); c.moveTo(qx, qy); c.lineTo(hx, hy); c.stroke();
-      c.strokeStyle = '#fff'; c.lineWidth = 3 * e; c.beginPath();
-      c.moveTo(de.x + dx * Math.max(0, t - 0.1), de.y + dy * Math.max(0, t - 0.1)); c.lineTo(hx, hy); c.stroke();
-      c.fillStyle = '#fff'; c.beginPath(); c.arc(hx, hy, 5 * e, 0, Math.PI * 2); c.fill();
-    }, vol);
-    frappe(angle, vol);
-    return vol;
+      c.lineCap = 'round'; c.strokeStyle = g; c.lineWidth = 9 * e; c.beginPath(); c.moveTo(qx, qy); c.lineTo(hx, hy); c.stroke();
+    }, vol, elan);
+    frappe(angle, elan + vol);
+    return elan + vol;
   }
   if (lignee === 'bio') {
     const angle = hasard(-0.8, -0.4) + (Math.random() < 0.5 ? 0 : Math.PI / 2.5);
-    for (let i = 0; i < 3; i++) {
+    const tex = pret('bio');
+    if (tex) {
+      // la griffure peinte, teintée de rouge, lacère le Porteur en un geste
+      const larg = 110 * e, rot = hasard(-0.3, 0.3), miroir = Math.random() < 0.5 ? -1 : 1;
+      trait((c, k) => {
+        const ouvert = Math.min(1, k * 5);
+        c.translate(p.x, p.y); c.rotate(rot); c.scale(miroir, 1);
+        const h = (larg * tex.naturalHeight) / tex.naturalWidth;
+        c.beginPath(); c.rect(-larg / 2, -h / 2, larg, h * ouvert); c.clip();
+        teinte(c, filtre, () => peinte(c, 'bio', 0, 0, larg, 0, consume(k, 0.35)));
+      }, ms(440), elan);
+    } else for (let i = 0; i < 3; i++) {
       const ox = Math.cos(angle + Math.PI / 2) * (i - 1) * 10, oy = Math.sin(angle + Math.PI / 2) * (i - 1) * 10;
       trait((c, k) => {
         const o = Math.min(1, k * 3.2);
-        c.globalAlpha = 1 - k * k; c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 10; c.lineCap = 'round'; c.lineWidth = 3.5 * (1 - k * 0.5) * e;
+        c.globalAlpha = 1 - k * k; c.strokeStyle = coul; c.lineCap = 'round'; c.lineWidth = 3.5 * (1 - k * 0.5) * e;
         const x0 = p.x + ox - Math.cos(angle) * 30, y0 = p.y + oy - Math.sin(angle) * 30;
         c.beginPath(); c.moveTo(x0, y0); c.lineTo(x0 + Math.cos(angle) * 60 * o, y0 + Math.sin(angle) * 60 * o); c.stroke();
-      }, 300, 80 + i * 40);
+      }, 300, elan + i * 40);
     }
-    frappe(angle, 110);
-    return 110;
+    frappe(angle, elan + ms(40));
+    return elan + ms(40);
   }
-  trait((c, k) => {
-    c.globalAlpha = Math.sin(k * Math.PI) * 0.9;
-    c.strokeStyle = coul; c.shadowColor = coul; c.shadowBlur = 18; c.lineWidth = 3;
+  // Résonants : l'onde peinte se referme sur le Porteur (elle rétrécit au lieu de s'ouvrir)
+  const referme = ms(260);
+  if (pret('reso')) trait((c, k) => {
+    const e3 = k * k;
+    teinte(c, filtre, () => peinte(c, 'reso', p.x, p.y, 190 * e * (1.3 - e3 * 1.0), k * 1.2, k < 0.85 ? 0 : (k - 0.85) / 0.15));
+  }, referme, elan);
+  else trait((c, k) => {
+    c.globalAlpha = Math.sin(k * Math.PI) * 0.9; c.strokeStyle = coul; c.lineWidth = 3;
     c.beginPath(); c.arc(p.x, p.y, 70 * (1 - k) + 8, 0, Math.PI * 2); c.stroke();
-  }, 300);
-  frappe(hasard(-Math.PI * 0.75, -Math.PI * 0.25), 260);
-  return 260;
+  }, referme, elan);
+  frappe(hasard(-Math.PI * 0.75, -Math.PI * 0.25), elan + referme);
+  return elan + referme;
 }
 
 /** Un bouclier qui se pose sur l'ennemi : une coque hexagonale qui scintille */
@@ -888,13 +1079,20 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
       S.sonCarte(ev.lignee, ev.rang);
       // la carte qui part : celle de la chaîne à cette place (une carte lourde prend deux places, d'où l'élément réel)
       const carte = racine.querySelectorAll('.zone-chaine .rail > :not(.place-vide)')[ev.rang];
-      const de = centre(carte ?? racine.querySelector('.zone-chaine'), -0.1);
-      if (ev.type === 'atk' && de && pEnnemi) {
-        if (ev.effet === 'percant') lance(de, pEnnemi, TEINTE[ev.lignee], ev.rang);
-        else if (ev.lignee === 'tech') arc(de, pEnnemi, TEINTE.tech, ev.rang);
-        else comete(de, pEnnemi, TEINTE[ev.lignee]);
-      }
       const esc = racine.querySelector('.escouade-combat')?.getBoundingClientRect();
+      // la carte bondit : vers l'ennemi pour une attaque, vers l'escouade pour une protection ou un soin
+      const vers = ev.type === 'atk' ? pEnnemi : esc ? new DOMPoint(esc.left + esc.width / 2, esc.top + esc.height / 2) : null;
+      const geste = carte && vers ? bondCarte(carte, vers) : null;
+      if (geste && ev.type === 'atk') derniere.dir = [geste.ux, geste.uy];
+      const de = geste?.sommet ?? centre(carte ?? racine.querySelector('.zone-chaine'), -0.1);
+      const quand = geste?.arrivee ?? 0;
+      if (ev.type === 'atk' && de && pEnnemi) {
+        // le geste de la lignée part du bord de la carte au sommet de son bond
+        if (ev.effet === 'percant') lance(de, pEnnemi, TEINTE[ev.lignee], ev.rang, quand);
+        else if (ev.lignee === 'tech') arc(de, pEnnemi, TEINTE.tech, ev.rang, quand);
+        else if (ev.lignee === 'reso') comete(de, pEnnemi, TEINTE.reso, quand, ms(110));
+        // les Génés n'ont pas de projectile : la griffure lacère au contact
+      }
       if (ev.type === 'bouclier' && esc) { if (ev.effet === 'rempart') remparts(esc); else bouclierSur(esc); }
       if (ev.type === 'soin' && ev.effet === 'vague' && esc) vague(esc);
       if (ev.effet === 'flux') versFlux(de, centre(racine.querySelector('.flux .jf-tube')));
@@ -913,16 +1111,15 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         if (!ev.net) { if (pEnnemi) eclats(pEnnemi.x, pEnnemi.y, 6, '#9aa4b2', { vitesse: 200, taille: 2, trainee: true }); S.sonVain(); return finale; }
         if (pEnnemi && !dernierCoup && derniere?.type === 'atk') suspendre(pEnnemi, couleur);
         if (pEnnemi) {
-          // l'éclair blanc de l'impact, plus large à chaque carte de la chaîne
+          // l'éclat peint de l'impact : il jaillit en 60 ms, plus large à chaque carte de la chaîne, puis se consume depuis ses bords
           const rayon = (34 + force * 14) * ech;
           const etoile = pret('impact');
           if (etoile) {
             const angle = hasard(0, Math.PI * 2);
             trait((c, k) => {
-              const pop = k < 0.25 ? 0.55 + (k / 0.25) * 0.6 : 1.15 - (k - 0.25) * 0.25;
-              c.globalAlpha = k < 0.3 ? 1 : 1 - (k - 0.3) / 0.7;
-              c.save(); sprite(c, etoile, pEnnemi.x, pEnnemi.y, rayon * 2.2 * pop, angle + k * 0.3); c.restore();
-            }, 260);
+              const pop = k < 0.16 ? 0.55 + (k / 0.16) * 0.6 : 1.15 + (k - 0.16) * 0.12;
+              peinte(c, 'impact', pEnnemi.x, pEnnemi.y, rayon * 2.2 * pop, angle + k * 0.25, consume(k, 0.2));
+            }, ms(340 + force * 30));
           } else trait((c, k) => {
             const g = c.createRadialGradient(pEnnemi.x, pEnnemi.y, 0, pEnnemi.x, pEnnemi.y, rayon * (0.6 + k));
             g.addColorStop(0, `rgba(255,255,255,${0.9 * (1 - k)})`); g.addColorStop(0.35, couleur); g.addColorStop(1, 'transparent');
@@ -931,12 +1128,17 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
           if (derniere?.effet === 'crescendo') crescendo(pEnnemi, d.rang);
           if (d.lignee === 'bio') griffes(pEnnemi, couleur, force);
           else if (d.lignee === 'reso') ondes(pEnnemi, couleur, force);
-          eclats(pEnnemi.x, pEnnemi.y, 10 + force * 6, couleur, { vitesse: 420 + force * 60, taille: 2.2, trainee: true, gravite: 160 });
-          verre(pEnnemi.x, pEnnemi.y, 3 + force, '#DDEBFF', force);
+          // peu d'étincelles, courtes, chassées dans le sens du coup : la texture peinte porte l'effet, pas une nuée de points
+          const [ux, uy] = derniere?.dir ?? [0, -1];
+          eclats(pEnnemi.x, pEnnemi.y, 4 + force * 3, couleur, { vitesse: 420 + force * 60, taille: 2.2, trainee: true, gravite: 160, angle: Math.atan2(uy, ux), ouverture: 1 });
+          if (force >= 3) verre(pEnnemi.x, pEnnemi.y, 2 + Math.floor(force / 2), '#DDEBFF', force);
           if (!reduit) ondeDeChoc(pEnnemi.x, pEnnemi.y, couleur, force);
         }
+        // l'arrêt sur image au contact, plus long pour les gros coups ; puis l'écran est poussé dans le sens du coup
+        geler(50 + force * 18);
         touche(ennemi, couleur, force);
-        secouer(ecran, force - 1);
+        const [ux, uy] = derniere?.dir ?? [0, -1];
+        pousser(ecran, ux, uy, force);
         S.sonImpact(force);
         vibrer(8 + force * 6);
         // l'arrêt sur image retient aussi la suite de la chaîne : le coup suivant attend que celui-ci ait « porté »
