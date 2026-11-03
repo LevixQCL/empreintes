@@ -115,6 +115,8 @@ export interface EcranDistrict {
   vueEscouade?: number;
   /** onglet Escouade ouvert depuis le départ ou le Port (27 octobre 2026) : le bouton pour y revenir */
   retourModif?: 'escouade' | 'pillages' | null;
+  /** le bâtiment à ouvrir quand la feuille du pseudo se ferme (arrivée au district) */
+  apresPseudo?: 'generateur' | null;
   /** Tour du Noyau : le volet affiché sous la prochaine étape (par défaut, les Strates) */
   ongletTour?: 'strates' | 'epreuves' | 'missions';
   /** le mode d'emploi des cartes est ouvert, sur cet onglet (guide.ts) */
@@ -552,7 +554,7 @@ function feuilleExpedition(e: EcranDistrict): string {
     const nonLus = chapitresALire(e.j);
     h += `<h3 class="rx-titre">${ICO.soin}Et maintenant ?</h3><ul class="rx-conseils">`
       + `<li><b>Soigner l’escouade.</b> Elle se remet à la Clinique ; une recrue Géné postée là soigne deux fois plus vite.</li>`
-      + (nonLus ? `<li><b>Renforcer le deck.</b> Chaque chapitre des Chroniques lu pour la première fois glisse une carte entre les pages (${nonLus} à lire).</li>` : `<li><b>Revoir le deck.</b> Cherche des suites de Fréquences et quelques boucliers pour les grosses attaques annoncées.</li>`)
+      + (nonLus ? `<li><b>Renforcer le deck.</b> Chaque chapitre des Chroniques lu pour la première fois glisse une carte entre les pages (${nonLus} à lire) : confie-la ensuite à un Porteur, dans l’onglet Escouade.</li>` : `<li><b>Revoir le deck.</b> Cherche des suites de Fréquences et quelques boucliers pour les grosses attaques annoncées.</li>`)
       + `<li><b>Se protéger.</b> Les boucliers protègent toute l’escouade : garde-les pour les attaques fortes annoncées par l’ennemi.</li></ul>`
       + `<div class="rx-actions"><button type="button" class="btn sec" data-action="depart-clinique">${ICO.soin}Clinique</button>`
       + (nonLus ? `<button type="button" class="btn sec" data-action="rapport-chroniques">${ICO.journal}Chroniques</button>` : '') + `</div>`;

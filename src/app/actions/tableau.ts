@@ -22,7 +22,7 @@ export async function agirTableau(a: string, c: Clic): Promise<Suite> {
     case 'gt-actualiser': await lireTableau(true); return 'fin';
     case 'gt-connexion': D.menu = true; compteEtat.ouvert = true; break;
     case 'gt-nom': G.edition = true; G.accueil = false; G.erreur = ''; lireTableau(); break;
-    case 'gt-nom-fermer': G.edition = false; G.accueil = false; G.erreur = ''; break;
+    case 'gt-nom-fermer': G.edition = false; G.accueil = false; G.erreur = ''; if (D.apresPseudo) { D.selection = D.apresPseudo; D.apresPseudo = null; } break;
     case 'gt-nom-ok': {
       const nom = nettoyerNom((racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value ?? '');
       const avant = app.jeu.directeur?.nom ?? null;
@@ -51,6 +51,7 @@ export async function agirTableau(a: string, c: Clic): Promise<Suite> {
       }
       app.jeu.directeur = { nom, public: app.jeu.directeur ? app.jeu.directeur.public || D.vue === 'classements' : true, change: change || !avant ? Date.now() : depuis };
       G.edition = false; G.accueil = false; G.erreur = '';
+      if (D.apresPseudo) { D.selection = D.apresPseudo; D.apresPseudo = null; }
       D.message = `Bienvenue, ${nom} : c’est ce nom que verront les autres joueurs.`;
       sauver();
       planifierPublication(0);

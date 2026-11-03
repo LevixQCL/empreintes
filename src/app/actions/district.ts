@@ -290,9 +290,13 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'accueil-suite': D.etape = Math.min(D.etape + 1, nbEtapes('district') - 1); break;
     case 'accueil-retour': D.etape = Math.max(D.etape - 1, 0); break;
     case 'accueil-fin':
-      app.jeu.accueilVu = true; ouvrir('archipel'); if (id === 'generateur') D.selection = 'generateur'; window.scrollTo(0, 0);
-      // le pseudo, dès l'arrivée au district (3 novembre 2026 : une recrue restait « Sans pseudo »)
-      if (app.uid && !app.jeu.directeur?.nom && !app.jeu.pseudoPropose && !app.pseudoDemande) { app.pseudoDemande = true; app.jeu.pseudoPropose = true; G.edition = true; G.accueil = true; G.erreur = ''; }
+      app.jeu.accueilVu = true; ouvrir('archipel'); window.scrollTo(0, 0);
+      // le pseudo, dès l'arrivée au district (3 novembre 2026 : une recrue restait « Sans pseudo ») ;
+      // seul à l'écran : le Générateur s'ouvre quand on l'a choisi (ou remis à plus tard)
+      if (app.uid && !app.jeu.directeur?.nom && !app.jeu.pseudoPropose && !app.pseudoDemande) {
+        app.pseudoDemande = true; app.jeu.pseudoPropose = true; G.edition = true; G.accueil = true; G.erreur = '';
+        D.apresPseudo = id === 'generateur' ? 'generateur' : null;
+      } else if (id === 'generateur') D.selection = 'generateur';
       sauver();
       break;
     case 'codex':

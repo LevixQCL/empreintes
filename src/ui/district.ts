@@ -2073,7 +2073,9 @@ export function htmlMissions(e: EcranDistrict): string {
   else {
     // le meilleur choix d'abord : affinité, puis niveau
     const rang = { bon: 0, neutre: 1, mauvais: 2 } as const;
-    const tries = libres.map((id) => ({ id, b: bonusMission(j, id, choisie.lieu.id) })).sort((a, b) => rang[a.b.affinite] - rang[b.b.affinite] || b.b.niveau - a.b.niveau);
+    // les Porteurs de l'escouade en dernier (4 novembre 2026) : partis en mer, ils ne peuvent plus descendre
+    const dansEscouade = escouadeDe(j);
+    const tries = libres.map((id) => ({ id, b: bonusMission(j, id, choisie.lieu.id) })).sort((a, b) => Number(dansEscouade.includes(a.id)) - Number(dansEscouade.includes(b.id)) || rang[a.b.affinite] - rang[b.b.affinite] || b.b.niveau - a.b.niveau);
     h += `<ul class="missions-libres">`;
     for (const { id, b } of tries) {
       const p = porteurDef(id);

@@ -39,7 +39,7 @@ export const OBJECTIFS: Objectif[] = [
   // 3 novembre 2026 : une recrue partait à −1 sans savoir que chaque chapitre lu donne une carte
   {
     id: 'lire', titre: 'Écouter Ysé', pilier: null, onglet: 'codex',
-    consigne: 'Ouvre les Chroniques et lis le premier chapitre. À chaque première lecture, Ysé glisse une carte entre les pages : plus de cartes, plus de suites possibles pour ton deck.',
+    consigne: 'Ouvre les Chroniques et lis le premier chapitre. À chaque première lecture, Ysé glisse une carte entre les pages ; confie-la à un Porteur (onglet Escouade) pour qu’elle entre dans ton deck.',
     recompense: { composants: 10 },
     fait: (j) => j.luesRecompensees.length > 0,
   },
@@ -51,7 +51,7 @@ export const OBJECTIFS: Objectif[] = [
   },
   {
     id: 'creuseurs', titre: 'Trouver des creuseurs', pilier: null, onglet: 'pillages',
-    consigne: `Pour percer la Strate −2, il faut ${creuseursRequis(2)} creuseurs : le gardien t’en a amené un. Au Port (onglet Pillages), envoie une recrue en mission en mer : des rescapés des ruines noyées suivront.`,
+    consigne: `Pour percer la Strate −2, il faut ${creuseursRequis(2)} creuseurs : le gardien t’en a amené un. Au Port (onglet du bas), envoie une recrue en mission en mer : des rescapés des ruines noyées suivront.`,
     recompense: { composants: 10, creuseurs: 1 },
     fait: (j) => j.strate >= 2 || j.missions.length > 0,
   },
