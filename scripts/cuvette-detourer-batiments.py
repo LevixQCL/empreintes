@@ -6,7 +6,7 @@ import numpy as np, cv2, sys
 from PIL import Image
 D='public/art/district/'
 B=np.asarray(Image.open(D+'cuvette2-batiments.webp').convert('RGB'))
-N=np.asarray(Image.open(D+'cuvette2-nue.webp').convert('RGB'))
+N=np.asarray(Image.open('sources/art/district/cuvette2-nue.webp').convert('RGB'))
 d=(np.abs(N.astype(int)-B.astype(int)).sum(2)>45).astype(np.uint8)
 Z={
  'noyau':'182,146 232,146 236,250 232,282 182,282 178,250',

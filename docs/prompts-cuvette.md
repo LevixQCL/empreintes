@@ -1,5 +1,7 @@
 # Prompts Midjourney — la Cuvette (carte du district, 1er novembre 2026)
 
+> 3 novembre 2026 : les essais cités ici (`art/district/cuvette-*.webp`, sauf ceux affichés par le jeu) ont été sortis du site publié vers `sources/art/district/`. Leurs anciens liens GitHub Pages ne marchent plus : pour un --sref, utiliser une image encore publiée.
+
 Piste « Cuvette » : le district est une place à sec, plus basse que la mer, dans une digue en anneau. Les pompes la gardent au sec.
 La mer est faite en code, animée, autour de l'image : la Cuvette est donc peinte **sur fond uni** pour un détourage propre.
 Les lignes bleues de la paroi intérieure sont les nuits où l'eau est entrée (la Nuit des lignes).

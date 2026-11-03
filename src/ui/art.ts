@@ -240,6 +240,8 @@ export function visuel(niveau: number): 1 | 2 | 3 | 4 {
  * Les paliers des bâtiments de la Cuvette (niveaux 1-3, 4-7, 8-10) ne sont pas encore peints : en attendant, un seul visuel par bâtiment,
  * détouré du tableau du district (scripts/cuvette-detourer-batiments.py), et aucune « nouvelle apparence » n'est promise.
  */
+// les anciennes images <id>-1 à 4 (maisonnettes de l'archipel) sont rangées dans sources/art/batiments : avant de passer à true,
+// déposer les nouveaux paliers peints dans public/art/batiments/<id>-1 à 4.webp
 export const PALIERS_PEINTS = false;
 const unSeulVisuel = () => CUVETTE && !PALIERS_PEINTS;
 export const illustrationBatiment = (id: BatimentId, niveau: number) =>
