@@ -3,7 +3,7 @@
 // dans `garnisons/{défenseur}/subis`. Le défenseur lit les siens à l'ouverture du jeu et les applique (subirPillages).
 // Chargé avec compte.ts (import dynamique). Règles : firestore.rules (garnisonValide, subiValide).
 
-import { addDoc, collection, deleteDoc, doc, getDocs, getFirestore, limit, orderBy, query, setDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, getFirestore, limit, orderBy, query, setDoc, where } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
 import { cibleDe, type Cible, type Garnison, type PillageJoue, type PillageSubi } from '../core/jeu';
 
@@ -60,8 +60,11 @@ export async function lireSubis(uid: string, depuis: number): Promise<PillageSub
 
 /** Note un pillage joué dans les attaques subies du défenseur */
 export async function envoyerPillage(uid: string, nom: string, p: PillageJoue): Promise<void> {
-  await addDoc(collection(db(), 'garnisons', p.cible, 'subis'), { attaquant: uid, nom, victoire: p.victoire, vol: p.vol, perte: p.perte, le: Date.now() });
+  const le = Date.now();
+  // un identifiant par attaquant et par demi-journée (3 novembre 2026) : les règles refusent les rafales contre un même défenseur
+  await setDoc(doc(db(), 'garnisons', p.cible, 'subis', `${uid}_${Math.floor(le / DEMI_JOURNEE)}`), { attaquant: uid, nom, victoire: p.victoire, vol: p.vol, perte: p.perte, le });
 }
+const DEMI_JOURNEE = 12 * 3_600_000;
 
 /** Efface ses attaques subies trop anciennes (plus de deux jours) */
 export async function nettoyerSubis(uid: string, avant: number): Promise<void> {

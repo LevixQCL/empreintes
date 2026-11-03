@@ -8,7 +8,10 @@ service cloud.firestore {
       // l'outil d'analyse (analyse.html, 25 octobre 2026) : lecture seule de toutes les sauvegardes, pour un seul compte Google
       allow get, list: if estAdmin();
       allow create, update: if request.auth != null && request.auth.uid == uid
-        && request.resource.data.keys().hasOnly(['data', 'updatedAt', 'version']);
+        && request.resource.data.keys().hasOnly(['data', 'updatedAt', 'version'])
+        // 3 novembre 2026 : la partie est un texte de moins de 900 000 caractères, la version un nombre entier
+        && request.resource.data.data is string && request.resource.data.data.size() < 900000
+        && request.resource.data.version is int;
     }
 
     // Le Grand Tableau (23 octobre 2026) : tout directeur connecté lit les classements,
@@ -59,7 +62,10 @@ service cloud.firestore {
       match /subis/{id} {
         allow read: if request.auth != null;
         allow delete: if request.auth != null && request.auth.uid == uid;
-        allow create: if request.auth != null && request.auth.uid != uid && subiValide(request.resource.data, uid);
+        // 3 novembre 2026 : l'identifiant est « attaquant_demi-journée » (src/net/pillages.ts) : une attaque notée par attaquant,
+        // par défenseur et par demi-journée (la précédente ou la suivante tolérée pour une horloge un peu décalée) ; plus de rafales
+        allow create: if request.auth != null && request.auth.uid != uid && subiValide(request.resource.data, uid)
+          && id in [request.auth.uid + '_' + string(demiJournee() - 1), request.auth.uid + '_' + string(demiJournee()), request.auth.uid + '_' + string(demiJournee() + 1)];
       }
     }
 
@@ -200,6 +206,11 @@ service cloud.firestore {
         // le titre « Recruteur » du parrainage (29 octobre 2026) : absent, ou ce seul mot
         && d.get('insigne', 'recruteur') == 'recruteur'
         && d.maj is int && maintenant(d.maj);
+    }
+
+    // le numéro de la demi-journée en cours (heure du serveur)
+    function demiJournee() {
+      return math.floor(request.time.toMillis() / 43200000);
     }
 
     // une heure en millisecondes à cinq minutes près de l'heure du serveur

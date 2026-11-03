@@ -96,7 +96,8 @@ export async function envoyerPillages() {
       // le coffre du défenseur a fondu depuis (les règles refusent un vol de plus d'un dixième) : la victoire part sans vol ;
       // trop vieux (plus de deux jours hors ligne) : on l'abandonne
       if (refuse && p.vol > 0) p.vol = 0;
-      else if (Date.now() - p.le > 48 * 3_600_000) etat.aEnvoyer = etat.aEnvoyer.filter((x) => x !== p);
+      // refusé sans vol : déjà noté contre ce défenseur dans la demi-journée (une attaque par demi-journée et par défenseur)
+      else if (refuse || Date.now() - p.le > 48 * 3_600_000) etat.aEnvoyer = etat.aEnvoyer.filter((x) => x !== p);
     }
   }
 }
