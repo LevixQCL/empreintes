@@ -20,6 +20,8 @@ Rien dans le jeu n'importe ces fichiers. `duel.css` n'est pas dans `feuilles.ts`
 
 ## Les règles
 
+- **Une escouade de duel réunit les trois lignées** : un Augmenté, un Géné, un Résonant (3 novembre 2026, choix de Bryan parmi trois pistes :
+  c'est le seul moment où l'on garde le contrôle). Sans ça, une escouade d'une seule lignée gagnait 80 % du temps.
 - Chaque directeur vient avec **son escouade active** (3 Porteurs, leurs cartes à leur niveau, PV pleins sans l'Usure). Pas de cartes du district.
 - **Un tour = 30 s** (`DUEL.chrono`). Chacun compose sa chaîne en secret (mêmes places, Flux, Fréquences que dans les Strates), vise un Porteur adverse,
   choisit qui soigner, puis verrouille. Le chrono tombé verrouille la chaîne telle qu'elle est.
@@ -49,7 +51,7 @@ Rien dans le jeu n'importe ces fichiers. `duel.css` n'est pas dans `feuilles.ts`
   - **Génés et Résonants seuls** : leur avantage vient de leurs Fréquences groupées (zones 1-5 et 6-9), qui font des suites et des Échos
     bien plus souvent. Sans suites ni Échos, ils ne gagnent plus que 30 et 25 % contre une escouade mixte.
   - **Augmentés seuls** : ils gardent 90 % même sans suites ni Échos. En duel, tout se joue à qui frappe le plus, et ce sont eux qui frappent.
-  À décider avec Bryan avant de toucher aux règles.
+  **Décision du 3 novembre 2026 : les trois lignées sont obligatoires en duel** (`validerEscouade`). Les pistes écartées : Résonance croisée, Augmentés affaiblis en duel.
 - **Rapt et Brèche** agissent en même temps des deux côtés (avant le 3 novembre, le camp 0 passait d'abord).
 
 ## En ligne

@@ -1,5 +1,6 @@
 // L'équilibre du duel (npm run duel) : le robot de duel contre lui-même, avec des escouades réalistes à chaque étape du jeu,
 // par lignée, avec des écarts de progression, et l'effet de chaque effet de carte sur les victoires. Écrit docs/duel-rapport.md.
+// Partie 2 (lignées seules) seulement à la demande : le duel exige les trois lignées depuis le 3 novembre 2026.
 // DUELS=40 (duels par ligne), PARTIES=1,2 (parties à lancer) ; essais : SANS_SUITE=1, SANS_ECHO=1, SUITE_MONO=0.5 (sans toucher au jeu).
 
 import { writeFileSync } from 'node:fs';
@@ -74,7 +75,7 @@ const N = Number(process.env.DUELS ?? 40);
 const lignes: string[] = ['# Équilibre du duel (robot contre robot)', '', `Généré par \`npm run duel\` (${N} duels par ligne, côtés alternés). Voir docs/duel.md.`, ''];
 const rng = { rng: 20261103 };
 /** PARTIES=2,3 : ne lancer que certaines parties (réglage rapide) */
-const PARTIES = (process.env.PARTIES ?? '1,2,3,4').split(',');
+const PARTIES = (process.env.PARTIES ?? '1,3,4').split(',');
 
 /** a contre b, N duels en alternant les côtés ; renvoie les victoires de a, les égalités, la durée */
 function serie(fa: () => EscouadeDuel, fb: () => EscouadeDuel) {

@@ -39,6 +39,8 @@ describe('Duel : création', () => {
     expect(validerEscouade({ ...e, porteurs: e.porteurs.slice(0, 2) }).ok).toBe(false);
     expect(validerEscouade({ ...e, porteurs: [e.porteurs[0]!, e.porteurs[0]!, e.porteurs[1]!] }).ok).toBe(false);
     expect(validerEscouade({ ...e, porteurs: [{ ...e.porteurs[0]!, cartes: [{ id: 'inconnue@fer', niveau: 1 }] }, e.porteurs[1]!, e.porteurs[2]!] }).ok).toBe(false);
+    // les trois lignées sont obligatoires (Ilka est Augmentée, Coursier aussi)
+    expect(validerEscouade({ ...e, porteurs: [e.porteurs[0]!, { ...e.porteurs[1]!, id: 'coursier' }, e.porteurs[2]!] }).ok).toBe(false);
   });
 });
 

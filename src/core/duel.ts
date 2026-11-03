@@ -144,6 +144,11 @@ export function validerEscouade(e: EscouadeDuel): Resultat {
   if (e.porteurs.length !== 3 || new Set(e.porteurs.map((p) => p.id)).size !== 3) return non('Il faut trois Porteurs différents.');
   for (const p of e.porteurs) {
     try { porteurDef(p.id); } catch { return non(`Porteur inconnu : ${p.id}.`); }
+  }
+  // Une escouade de duel réunit les trois lignées (3 novembre 2026, choix de Bryan : « c'est le seul moment où on a le contrôle »).
+  // Mesuré avant (npm run duel) : une escouade d'une seule lignée battait une escouade mixte 80 % du temps (Augmentés, Génés).
+  if (new Set(e.porteurs.map((p) => porteurDef(p.id).lignee)).size !== 3) return non('Il faut un Porteur de chaque lignée : un Augmenté, un Géné et un Résonant.');
+  for (const p of e.porteurs) {
     if (!(p.pv > 0)) return non('Un Porteur sans PV ne peut pas combattre.');
     if (p.cartes.length > PLACES_PORTEUR) return non(`${porteurDef(p.id).nom} porte trop de cartes.`);
     for (const c of p.cartes) {

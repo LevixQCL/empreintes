@@ -20,7 +20,9 @@ function monEscouade(): { e: EscouadeDuel; source: string } {
   const env = charger();
   if (env) {
     const e = escouadeDuelDe(env.data);
-    if (validerEscouade(e).ok) return { e, source: 'ton escouade active' };
+    const v = validerEscouade(e);
+    if (v.ok) return { e, source: 'ton escouade active' };
+    return { e: escouadeDepart(e.nom), source: `escouade de départ : ton escouade active ne convient pas (${v.message})` };
   }
   return { e: escouadeDepart('Directeur'), source: 'escouade de départ (aucune partie sur cet appareil)' };
 }

@@ -129,7 +129,7 @@ function finDuel(s: SessionDuel) {
 export function htmlSalon(o: { nom: string; source: string; enLigne: boolean; code?: string; attente?: boolean; message?: string }): string {
   return `<section class="duel-salon" aria-label="Duel">`
     + `<header><span class="surtitre">EMPREINTES · aperçu, pas encore dans le jeu</span><h1>Duel en temps réel</h1>`
-    + `<p class="aide">Deux escouades, une chaîne chacun, ${DUEL.chrono} secondes par tour : les deux chaînes partent en même temps.</p></header>`
+    + `<p class="aide">Deux escouades d’un Augmenté, d’un Géné et d’un Résonant, une chaîne chacun, ${DUEL.chrono} secondes par tour : les deux chaînes partent en même temps.</p></header>`
     + `<p class="dl-qui"><b>${echap(o.nom)}</b> · ${echap(o.source)}</p>`
     + `<button type="button" class="prim" data-action="duel-robot">${ICO.lancer}S’entraîner contre le robot</button>`
     + (o.enLigne
