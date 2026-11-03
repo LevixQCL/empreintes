@@ -285,9 +285,9 @@ export const PILIERS_LARGE: readonly { x: number; y: number; miroir: boolean }[]
 ];
 /** Les reflets qui glissent sur la mer prolongée (PC) */
 export const reflets = `${base}district/mer-reflets.webp`;
-/** Âges dont l'animation (boucle Midjourney ralentie, raccord fondu) existe. Vide depuis les nouveaux tableaux à 7 bâtiments
- *  (23 octobre 2026) : les anciennes boucles montraient les anciens tableaux ; on rebranche les nouvelles dès qu'elles existent. */
-const AGES_ANIMES = new Set<number>([1, 2, 3, 4]);
+/** Âges dont l'animation existe. Vide depuis la Cuvette (3 novembre 2026) : les boucles et les mers prolongées de
+ *  l'archipel (age-N.mp4, mer-2 à 4.webp) sont rangées dans sources/art/district, hors du jeu publié. */
+const AGES_ANIMES = new Set<number>();
 /** Un archipel vu de loin (carte des pillages) : le tableau du district à cet âge */
 /** L'âge d'un archipel d'après sa profondeur : plus il a creusé, plus il a grandi */
 export const ageArchipel = (strate: number) => (strate <= 2 ? 1 : strate <= 5 ? 2 : strate <= 9 ? 3 : 4);
