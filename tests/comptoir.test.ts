@@ -207,7 +207,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
   it('ne fait jamais dépasser le meilleur Porteur de l’escouade (29 octobre 2026)', () => {
     const j = pret();
     j.batiments.noyau = 7;
-    let xp = 0; for (let n = 1; n < 5; n++) xp += Math.round(12 * n ** 1.6);
+    let xp = 0; for (let n = 1; n < 5; n++) xp += Math.round(12 * n ** 1.8);
     j.porteurs.vela!.xp = xp; // le meilleur titulaire est niveau 5
     expect(plafondSeance(j)).toEqual({ niveau: 5, par: 'escouade' });
     for (let k = 0; k < 10; k++) { poster(j, 'doran', 'noyau'); tick(j, j.dernierTick + 10 * JOUR); }
@@ -225,7 +225,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
       j.porteurs.doran!.xp = 0;
       const max = plafondEntrainement(j);
       // le Porteur juste sous le plafond : la séance la plus chère de cette Tour
-      let xp = 0; for (let n = 1; n < max - 1; n++) xp += Math.round(12 * n ** 1.6);
+      let xp = 0; for (let n = 1; n < max - 1; n++) xp += Math.round(12 * n ** 1.8);
       j.porteurs.doran!.xp = xp;
       expect(apercuSeance(j, 'doran')!.energie).toBeLessThan(DISTRICT.stockage[noyau]!);
     }

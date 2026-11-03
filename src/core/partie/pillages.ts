@@ -16,7 +16,7 @@ import { nouvelleExpedition } from '../expedition';
 const butinCombat = (strate: number, _index: 0) => Math.round(6 * (1 + 0.25 * (strate - 1)));
 import { graine, tireur } from '../rng';
 import type { Lignee } from '../types';
-import { CONFIANCE, XP, energieParHeure, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureAuRetour, type Jeu, type Resultat } from './etat';
+import { CONFIANCE, XP, facteurXp, energieParHeure, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, payerRatelier, remonter as remonterDescente, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 
@@ -377,7 +377,7 @@ export function remonterPillage(j: Jeu, now: number): RetourPillage | null {
   if (!pi.bot) etat.aEnvoyer.push({ cible: pi.cible, victoire, vol: victoire ? pi.vol : 0, perte, le: now });
   noterHistorique(j, { sens: 'attaque', nom: pi.nom, gagne: victoire, composants: victoire ? gain : -perte, le: now, ...(pi.bot ? { bot: true } : {}) });
   // l'Usure (les PV perdus) et l'expérience d'un combat, comme une fouille
-  const xp = victoire ? Math.round(XP.combat * (1 + 0.25 * (x.strate - 1)) * 0.75) : 0;
+  const xp = victoire ? Math.round(XP.combat * facteurXp(x.strate) * 0.75) : 0;
   for (const p of x.combat.porteurs) {
     const d = j.porteurs[p.id]!;
     usureAuRetour(j, p);

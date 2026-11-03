@@ -127,7 +127,7 @@ describe('Une carte, cinq métaux', () => {
     ajouterCarte(j, 'jambes-ressort@or');
     expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@fer');
     const avant = j.porteurs.ilka!.modules.length;
-    j.porteurs.ilka!.xp = 700; // l'or demande un Porteur de niveau 7
+    j.porteurs.ilka!.xp = 900; // l'or demande un Porteur de niveau 7
     expect(greffer(j, 'jambes-ressort@or', 'ilka').ok).toBe(true);
     expect(j.porteurs.ilka!.modules).toContain('jambes-ressort@or');
     expect(j.porteurs.ilka!.modules).not.toContain('jambes-ressort@fer');

@@ -80,8 +80,10 @@ export interface PorteurDistrict {
 // Les cartes montent avec les doublons ; les Porteurs, eux, montent en combattant : leurs PV suivent la force des cartes.
 // Un niveau = +4 % des PV de base. Le niveau ne touche pas aux cartes : la force vient toujours de la collection.
 export const XP = {
-  /** par combat gagné dans une Strate, ×(1 + 0,25 × (Strate − 1)) */
+  /** par combat gagné dans une Strate, ×(1 + parStrate × (Strate − 1)) */
   combat: 10,
+  /** l'XP gagnée monte de 15 % par Strate (25 % jusqu'au 3 nov. 2026 : niveau max atteint vers −7) */
+  parStrate: 0.15,
   /** en plus pour une salle scellée vaincue, et pour le gardien */
   elite: 10,
   gardien: 30,
@@ -92,8 +94,10 @@ export const XP = {
   niveauMax: 20,
   pvParNiveau: 0.04,
 };
-/** XP pour passer du niveau n au niveau n+1 */
-export const xpPourNiveau = (n: number) => Math.round(12 * n ** 1.6);
+/** XP pour passer du niveau n au niveau n+1 (courbe raidie le 3 nov. 2026 : n^1,6 → n^1,8, niveau ~19 vers −10) */
+export const xpPourNiveau = (n: number) => Math.round(12 * n ** 1.8);
+/** Multiplicateur d'XP d'une Strate (combats, missions, pillages) */
+export const facteurXp = (strate: number) => 1 + XP.parStrate * (Math.max(1, strate) - 1);
 /** Niveau d'un Porteur, et ce qu'il a déjà vers le suivant */
 export function niveauPorteur(j: Pick<Jeu, 'porteurs'>, id: string): { niveau: number; xp: number; requis: number | null } {
   let reste = Math.floor(j.porteurs[id]?.xp ?? 0);
@@ -292,6 +296,8 @@ export interface Jeu {
   confiance: number;
   /** 2 : la Confiance compte des habitants (30 octobre 2026) ; absent : une sauvegarde aux anciens points, convertie au chargement */
   confianceV?: 2;
+  /** 2 = XP convertie à la courbe du 3 nov. 2026 (niveaux conservés) */
+  xpV?: 2;
   /** paliers de Confiance déjà récompensés (un creuseur volontaire et une famille par palier) */
   confianceRecue?: number;
   /** la semaine des lignes : pompages faits, habitants gagnés par source, et le bilan de la dernière Nuit des lignes */

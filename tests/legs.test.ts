@@ -8,7 +8,7 @@ import type { Geste } from '../src/core/types';
 // L’Héritage du district (27 octobre 2026, docs/heritage-du-district.md)
 
 /** XP d'un Porteur pour un niveau donné (xpPourNiveau : 12 × n^1,6) */
-const xpPour = (niveau: number) => Array.from({ length: niveau - 1 }, (_, i) => Math.round(12 * (i + 1) ** 1.6)).reduce((a, b) => a + b, 0);
+const xpPour = (niveau: number) => Array.from({ length: niveau - 1 }, (_, i) => Math.round(12 * (i + 1) ** 1.8)).reduce((a, b) => a + b, 0);
 
 describe('L’Héritage du district', () => {
   it('dix vierges, toutes en nacre, à deux effets, et la lettre en propose chacune une fois', () => {

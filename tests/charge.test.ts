@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CHARGE, PLACES_PORTEUR, chargeNiveau, poidsCarte } from '../src/core/collection';
 import { ajouter, creerCombat, lancer } from '../src/core/combat';
 import { DEPART_PORTEURS, carteId, gesteDeCarte } from '../src/core/donnees';
-import { chargeMax, chargePortee, echanger, estJeuValide, greffer, nouveauJeu, partir } from '../src/core/jeu';
+import { chargeMax, chargePortee, echanger, estJeuValide, greffer, niveauPorteur, nouveauJeu, partir } from '../src/core/jeu';
 import { mesurer } from '../src/core/robot';
 
 describe('La Charge', () => {
@@ -30,7 +30,7 @@ describe('La Charge', () => {
     j.collection['coeur-reprise@or'] = { niveau: 7, doublons: 0 };
     for (const k of ['bras-grue@argent', 'dorsale@argent']) j.collection[k] = { niveau: 5, doublons: 0 };
     // niveau 7 : l'or lui est permis (NIVEAU_METAL), mais il porte déjà deux cartes en argent
-    j.porteurs.ilka!.xp = 700;
+    j.porteurs.ilka!.xp = 900;
     j.porteurs.ilka!.modules = ['bras-grue@argent', 'dorsale@argent', 'ruee@fer'];
     const avant = chargePortee(j, 'ilka');
     const r = greffer(j, 'coeur-reprise@or', 'ilka');
@@ -60,7 +60,7 @@ describe('La Charge', () => {
     const r = greffer(j, 'coeur-reprise@or', 'ilka');
     expect(r.ok).toBe(false);
     expect(r.message).toMatch(/niveau 7/);
-    j.porteurs.ilka!.xp = 700;
+    j.porteurs.ilka!.xp = 900;
     expect(greffer(j, 'coeur-reprise@or', 'ilka').ok).toBe(true);
   });
 });
@@ -95,5 +95,20 @@ describe('Les places vides', () => {
     const six = { ilka: fin(DEPART_PORTEURS.ilka!.map((id) => carteId(id, 'fer'))), doran: fin(DEPART_PORTEURS.doran!.map((id) => carteId(id, 'fer'))), vela: fin(DEPART_PORTEURS.vela!.map((id) => carteId(id, 'fer'))) };
     const trois = { ilka: fin(['oeil-relais@fer', 'gant-arc@fer', 'jambes-ressort@fer']), doran: fin(['crocs-fossiles@fer', 'yeux-nocturnes@fer', 'cuir-recif@fer']), vela: fin(['eclat-chant@fer', 'meche-or@fer', 'miroir-brume@fer']) };
     expect(mesurer(trois, 2, 40).progres).toBeLessThanOrEqual(mesurer(six, 2, 40).progres + 0.05);
+  });
+});
+
+describe('Courbe d’XP du 3 novembre 2026', () => {
+  it('une ancienne sauvegarde garde le niveau de ses Porteurs', () => {
+    const j = nouveauJeu(0);
+    // niveau 14 et un peu plus avec l'ancienne courbe (12·n^1,6)
+    let ancien = 0; for (let n = 1; n < 14; n++) ancien += Math.round(12 * n ** 1.6);
+    j.porteurs.ilka!.xp = ancien + 400;
+    delete j.xpV;
+    const k = JSON.parse(JSON.stringify(j));
+    expect(estJeuValide(k)).toBe(true);
+    const n = niveauPorteur(k, 'ilka');
+    expect(n.niveau).toBe(14);
+    expect(n.xp / n.requis!).toBeCloseTo(400 / Math.round(12 * 14 ** 1.6), 2);
   });
 });

@@ -4,7 +4,7 @@
 import { PORTEURS, CARTE_CHAMBRE, MODULES, estCarteConnue, moduleDe, moduleDef, porteurDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
 import { niveauRequis, poidsCarte } from '../collection';
 import { graine } from '../rng';
-import { CONFIANCE, DISTRICT, VERSION_JEU, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
+import { CONFIANCE, DISTRICT, VERSION_JEU, XP, xpPourNiveau, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
 import { SCENES, sceneEnAttente, type ContexteCampagne } from '../campagne';
 import { ESCOUADE_DEPART } from './descentes';
 import { accorderSeance, comptoirVide } from './district';
@@ -115,6 +115,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     actes: {},
     confiance: CONFIANCE.depart,
     confianceV: 2,
+    xpV: 2,
     decouvertes: [],
     scenes: [],
     objectif: 0,
@@ -163,6 +164,17 @@ function migrer(j: Jeu) {
   j.arrives ??= [];
   j.actes ??= {};
   j.confiance ??= 0;
+  if (j.xpV !== 2) {
+    // courbe d'XP raidie le 3 novembre 2026 : chaque Porteur garde son niveau et sa progression vers le suivant
+    const ancienne = (n: number) => Math.round(12 * n ** 1.6);
+    for (const d of Object.values(j.porteurs)) {
+      if (!d?.xp) continue;
+      let reste = Math.floor(d.xp), n = 1, xp = 0;
+      while (n < XP.niveauMax && reste >= ancienne(n)) { reste -= ancienne(n); xp += xpPourNiveau(n); n++; }
+      d.xp = n >= XP.niveauMax ? xp : xp + Math.floor((reste / ancienne(n)) * xpPourNiveau(n));
+    }
+    j.xpV = 2;
+  }
   if (j.confianceV !== 2) {
     // la Confiance devient les habitants qui te suivent (30 octobre 2026) : les anciens points sont convertis,
     // les paliers déjà atteints ne rapportent pas de creuseur d'un coup, mais les familles apportent leurs souvenirs

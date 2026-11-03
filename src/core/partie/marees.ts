@@ -13,7 +13,7 @@ import { COLLECTION, ajouterCarte, tirerChoix } from '../collection';
 import { tireur } from '../rng';
 import { LIEUX, affinite, lieuDef, type Affinite, type LieuDef } from '../lieux';
 import type { Lignee, Rarete } from '../types';
-import { XP, enExpedition, gagnerXp, jourDe, debutJour, log, niveauPorteur, non, porteursPresents, progresMarque, strateVaincue, tropBlesse, usureMax, type Jeu, type RapportMission, type Resultat } from './etat';
+import { XP, facteurXp, enExpedition, gagnerXp, jourDe, debutJour, log, niveauPorteur, non, porteursPresents, progresMarque, strateVaincue, tropBlesse, usureMax, type Jeu, type RapportMission, type Resultat } from './etat';
 import { MISSIONS, rangerRapport } from './descentes';
 
 export type RangMaree = 'montante' | 'vive' | 'grande';
@@ -290,7 +290,7 @@ export function retourDeContrat(j: Jeu): string {
     const q = j.porteurs[id];
     if (!q) continue;
     const mult = (1 + MISSIONS.parNiveau * (f.niveau - 1)) * MISSIONS.affinite[f.affinite];
-    const xp = Math.round(XP.missionHeure * r.heures * sf * mult);
+    const xp = Math.round(XP.missionHeure * r.heures * facteurXp(c.strate) * mult);
     xpTotal += xp;
     const monte = gagnerXp(j, id, xp);
     if (monte && k === 0) niveau = monte;

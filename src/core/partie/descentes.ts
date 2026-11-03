@@ -12,7 +12,7 @@ import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { REGLES } from '../regles';
-import { ACCORD_OUVERT, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
+import { ACCORD_OUVERT, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -541,7 +541,7 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   const marque = progresMarque(j, m.porteur);
   const nouvelleMarque = marque?.acquise && !avantMarque ? marque : null;
   if (nouvelleMarque) log(j, `${p.nom} gagne la Marque ${nouvelleMarque.nom} : ${nouvelleMarque.texte}`);
-  const gainXp = Math.round(XP.missionHeure * d.heures * sf * b.mult);
+  const gainXp = Math.round(XP.missionHeure * d.heures * facteurXp(m.strate) * b.mult);
   const monte = gagnerXp(j, m.porteur, gainXp);
   const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${familles ? `, +${familles} habitants` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? `, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
@@ -926,7 +926,7 @@ export function remonter(j: Jeu): Retour {
   for (const c of cartes) { ajouterCarte(j, c); if (!x.tutoriel) noterOrigine(j, c, x.strate); }
   j.eclats += eclats;
   // l'expérience : chaque combat gagné, les salles scellées et le gardien ; toute l'escouade la partage, debout ou à terre
-  const facteur = 1 + 0.25 * (x.strate - 1);
+  const facteur = facteurXp(x.strate);
   const gardien = victoire && !x.fouille && !x.epreuve ? XP.gardien : 0;
   // une Halte vue pour la première fois vaut une salle scellée ; la fin d'une quête, la moitié d'un gardien
   const contenu = (x.gains?.haltes ?? 0) * XP.elite + (quete?.finie ? XP.gardien / 2 : 0) + (explo?.xp ?? 0);
