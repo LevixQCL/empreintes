@@ -93,6 +93,8 @@ export interface Ecran {
   /** le combat automatique est permis ici (Strate déjà vaincue, combat ordinaire), et s'il tourne (31 octobre 2026) */
   autoPermis?: boolean;
   auto?: boolean;
+  /** le joueur a déjà visé un ennemi d'un groupe : la bulle d'aide ne revient plus (3 novembre 2026) */
+  viserAppris?: boolean;
 }
 
 export const COULEUR: Record<LigneeGeste, string> = {
@@ -466,11 +468,18 @@ function ligneFelure(s: CombatEtat, prevue: boolean, resonne: boolean): string {
  * Le Flux en fiole de cristal (26 octobre 2026), à la place des trois losanges : Bryan les trouvait « jeu des années 90 ».
  * Un tube de verre fumé en trois chambres ; chaque point de Flux est une chambre emplie de lumière.
  */
+/*
+ * 3 novembre 2026 (Bryan : « le Flux est encore trop mal intégré », « chaque niveau dans une autre couleur pour montrer
+ * immédiatement où on en est ») : trois cristaux, chacun de la couleur de son niveau (1 glace, 2 améthyste, 3 or, celui du
+ * Coup d'éclat). Le chiffre et le nom prennent la couleur du niveau atteint.
+ */
 function jaugeFlux(flux: number): string {
-  return `<div class="jauge-flux${flux ? '' : ' vide'}" role="img" aria-label="Flux : ${flux} sur ${REGLES.fluxMax}">`
+  return `<div class="jauge-flux nf-${flux}${flux ? '' : ' vide'}" role="img" aria-label="Flux : ${flux} sur ${REGLES.fluxMax}">`
     + `<span class="jf-nom">${ICO.flux}Flux<b>${flux}</b><small>/ ${REGLES.fluxMax}</small></span>`
-    + `<span class="jf-tube">${Array.from({ length: REGLES.fluxMax }, (_, i) => `<i${i < flux ? ' class="plein"' : ''}></i>`).join('')}</span></div>`;
+    + `<span class="jf-tube">${Array.from({ length: REGLES.fluxMax }, (_, i) => `<i class="n${i + 1}${i < flux ? ' plein' : ''}"></i>`).join('')}</span></div>`;
 }
+/** Le coût d'une action du Flux, sur son bouton : un petit cristal et le chiffre */
+const coutFlux = (n: number) => `<span class="cout-flux" aria-hidden="true"><i></i>${n}</span>`;
 
 /**
  * Le total de la chaîne, en tête de chaîne (26 octobre 2026) : tout compris (Résonance, lignées, Blindé, Fissure, bouclier
@@ -493,7 +502,21 @@ function bilanChaine(s: CombatEtat): string {
 }
 
 /** Le nom et le visage d'un ennemi : un garde d'archipel pillé prend ceux du Porteur de la garnison qu'il incarne */
-const nomEnnemi = (en: EnnemiEtat) => (en.porteur ? porteurDef(en.porteur).nom : ennemiDef(en.id).nom);
+const nomBrut = (en: EnnemiEtat) => (en.porteur ? porteurDef(en.porteur).nom : ennemiDef(en.id).nom);
+/**
+ * Deux ennemis du même nom dans un groupe (3 novembre 2026, Luc : « les deux Brigadiers portent le même nom tronqué,
+ * impossible de savoir lequel est en grand ») : ils prennent un numéro, I, II, III, dans l'ordre du groupe.
+ */
+const ROMAINS = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+function numeroEnnemi(en: EnnemiEtat): string {
+  if (!ETAT) return '';
+  const nom = nomBrut(en);
+  const memes = tousEnnemis(ETAT).filter((o) => nomBrut(o) === nom);
+  if (memes.length < 2) return '';
+  const i = memes.findIndex((o) => (o.rang ?? 0) === (en.rang ?? 0));
+  return i < 0 ? '' : ROMAINS[i] ?? String(i + 1);
+}
+const nomEnnemi = (en: EnnemiEtat) => { const n = numeroEnnemi(en); return n ? `${nomBrut(en)} ${n}` : nomBrut(en); };
 const visageEnnemi = (en: EnnemiEtat) => (en.porteur ? portrait(en.porteur) : illustrationEnnemi(en.id));
 
 /**
@@ -557,7 +580,9 @@ function vignettesGroupe(e: Ecran): string {
       + (ill ? `<img src="${ill}" alt="" decoding="async">` : '<span class="vg-sans"></span>')
       + (tombe ? '' : `<span class="vg-int ${cls}${cache ? ' brume' : ''}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)
       + (tombe || cache || !en.felure ? '' : !felureVisible(en) ? `<span class="vg-felure" aria-hidden="true">${ICO.fele}<b>?</b></span>` : `<span class="vg-felure${en.felureBrisee ? ' brisee' : feluresPrevues(s).has(en) ? ' prevue' : ''}" style="--fc:${couleurFrequence(en.felure)}" aria-hidden="true">${ICO.fele}<b>${en.felure}</b></span>`)
-      + (avecGardien ? `<span class="vg-nom">${echap(nom)}</span>` : '')
+      + (avecGardien ? `<span class="vg-nom"><span>${echap(nomBrut(en))}</span>${numeroEnnemi(en) ? `<b>${numeroEnnemi(en)}</b>` : ''}</span>` : !tombe && numeroEnnemi(en) ? `<span class="vg-num" aria-hidden="true">${numeroEnnemi(en)}</span>` : '')
+      // l'ennemi visé porte un bandeau « VISÉ » (3 novembre 2026) : le repère lumineux seul se perdait hors de l'écran
+      + (vise && !tombe ? '<span class="vg-vise" aria-hidden="true">Visé</span>' : '')
       + `<span class="vg-vie"><i style="width:${Math.max(0, Math.round((100 * en.pv) / en.pvMax))}%"></i></span>`
       + popsPour(e, `ennemi-${en.rang ?? 0}`)
       + '</button>';
@@ -618,8 +643,10 @@ function htmlEcranCombat(e: Ecran): string {
   else if (s.sansChute && !s.chaine.length) conseil = `<b>Épreuve · Nul ne reste au fond</b> : si un Porteur tombe, l’Épreuve est perdue. Protège le plus exposé.`;
   else if (s.dissonance && !s.chaine.length) conseil = `<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci. Mise sur la force brute ou la protection.`;
   // le gardien parle (campagne.ts) : à la place du conseil, tant que la chaîne est vide
+  // la bulle d'aide du groupe (3 novembre 2026, Luc : « rien ne dit qu'on peut toucher les vignettes ») : jusqu'au premier ennemi visé
+  else if (enGroupe(s) && !e.viserAppris && !s.chaine.length) conseil = `<span class="bulle-viser" role="note">Touche un ennemi en haut pour le viser : toute ta chaîne le frappe</span>`;
   else if (e.parole && !s.chaine.length) conseil = `<span class="parole-gardien" role="status"><b>${echap(e.parole.nom)}</b>« ${echap(e.parole.texte)} »</span>`;
-  else if (!s.chaine.length) conseil = `Choisis jusqu’à ${capacite(s)} cartes. Des Fréquences qui se suivent (3, 4, 5) déclenchent une <b>Résonance</b>.`;
+  else if (!s.chaine.length) conseil = `Pose jusqu’à ${capacite(s)} cartes : des Fréquences qui se suivent (3, 4, 5) font une <b>Résonance</b>.`;
   else {
     const fin = serieFinale(s.chaine);
     const f = fs[fs.length - 1]!;
@@ -792,12 +819,12 @@ function htmlEcranCombat(e: Ecran): string {
         + `<button type="button" class="btn-icone" data-action="eclats" aria-label="Garder mon Flux">${ICO.fermer}</button></div>`;
     } else {
       // Flux plein et Coup d'éclat disponible : le bouton doré prend la place des trois losanges (pleins, par définition)
-      h += `<div class="flux">`
+      h += `<div class="flux nf-${s.flux}">`
         + (eclats.length
           ? `<button type="button" class="btn-flux btn-eclat-ouvrir" data-action="eclats" aria-expanded="false"${verrou ? ' disabled' : ''} aria-label="Flux plein : Coup d’éclat, un seul par combat, il vide le Flux">${ICO.eclat}Éclat</button>`
           : jaugeFlux(s.flux))
-        + `<button type="button" class="btn-flux" data-action="allonger"${verrou || s.flux < 1 || capacite(s) >= REGLES.capaciteMax ? ' disabled' : ''}>${ICO.place}+1 place</button>`
-        + `<button type="button" class="btn-flux" data-action="repiocher"${verrou || s.flux < 1 ? ' disabled' : ''}>${ICO.repiocher}Repiocher</button>`
+        + `<button type="button" class="btn-flux" data-action="allonger" aria-label="Une place de plus dans la chaîne, pour 1 Flux"${verrou || s.flux < 1 || capacite(s) >= REGLES.capaciteMax ? ' disabled' : ''}>${ICO.place}+1 place${coutFlux(1)}</button>`
+        + `<button type="button" class="btn-flux" data-action="repiocher" aria-label="Repiocher, pour 1 Flux"${verrou || s.flux < 1 ? ' disabled' : ''}>${ICO.repiocher}Repiocher${coutFlux(1)}</button>`
         + '</div>';
     }
   }

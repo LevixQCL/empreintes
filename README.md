@@ -68,6 +68,8 @@ src/
     graphismes.ts  les graphismes Auto / Complets / Légers (Paramètres) : allégés seuls sur un appareil qui peine ; les animations sans fin s'arrêtent hors de l'écran (leger.css)
     outils.ts      petits outils partagés (échapper un texte, animations réduites, virgule française)
     styles.css     le style « laiton et verre fumé » ; scenes.css (titre, intro) ; face-carte.css (cartes Module)
+    combat-moderne.css  l'écran de combat modernisé (3 novembre 2026) : verre arrondi au lieu des coins coupés, scène sous la barre du haut,
+                   chaîne sans boîte sur un rail de lumière, Flux en trois cristaux (1 glace, 2 améthyste, 3 or), vignettes du groupe qui tiennent
     bureau.css     la mise en page PC (à partir de 1100 px de large) : rail à gauche, tableaux en pleine hauteur ; le téléphone n’en dépend pas
   save/          la sauvegarde sur l'appareil
   net/           Firebase : comptes et synchronisation (optionnel)

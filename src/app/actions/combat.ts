@@ -30,7 +30,12 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     // bouclier et soin à répartir : le toucher ouvre un petit choix sur la tuile (toucher à nouveau le referme)
     case 'tuile': if (s && !K.verrou) { const p = id || b.dataset.id || ''; K.tuile = K.tuile === p ? undefined : p; } break;
     case 'cibler': if (s && !K.verrou) { C.cibler(s, b.dataset.uid ?? ''); sauver(); } break;
-    case 'viser': if (s && !K.verrou) { C.viser(s, Number(b.dataset.id)); sauver(); } break;
+    case 'viser': if (s && !K.verrou) {
+      C.viser(s, Number(b.dataset.id));
+      // la bulle « Touche un ennemi pour le viser » ne revient plus une fois le geste appris
+      if (!(app.jeu.decouvertes ??= []).includes('viser')) app.jeu.decouvertes.push('viser');
+      sauver();
+    } break;
     case 'eclats': K.eclats = !K.eclats; break;
     case 'eclat': if (s && !K.verrou) {
       K.eclats = false; debloquerSon(); vibrer([20, 40, 30]);
