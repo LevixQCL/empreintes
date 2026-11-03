@@ -100,7 +100,16 @@ des Joutes, une Cloud Function rejoue les choix (le moteur n'utilise pas le navi
     }
 ```
 
-## Le jour du branchement
+## Branché au jeu (3 novembre 2026)
+
+Le duel se joue depuis le **Cercle des quais** (src/app/duel.ts, src/app/cercle.ts, src/ui/cercle.ts) :
+- on défie un ami (un salon est ouvert, le défi `defis/{id}` lui porte le code) ou on accepte son défi ; contre le robot pour s'échauffer ;
+- deux modes : vraies forces, ou **à armes égales** (`aArmesEgales` : cartes au niveau de départ de leur métal, Porteurs à leurs PV de base) ;
+- pas de butin par duel (on choisit son adversaire) : les 3 premières victoires de la semaine contre 3 amis différents rapportent
+  60 composants et 1 Éclat, et comptent aux **Joutes** du Grand Tableau ;
+- les règles `duels/{code}` ci-dessus sont maintenant dans firestore.rules, avec celles du Cercle (profils, amities, echanges, defis).
+
+## Ce qui reste (avant le branchement, notes d'origine)
 
 - Un onglet ou un bâtiment « Joutes » (classement `joutes` déjà prévu, grisé, dans `core/classements.ts`).
 - Ouvrir le salon depuis l'escouade active (`escouadeDuelDe`), et `duel.css` dans `feuilles.ts`.

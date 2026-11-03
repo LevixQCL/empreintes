@@ -59,7 +59,7 @@
 .toile:has(.zone-bat[data-lieu="forge"]:hover) .balise[data-lieu="forge"] .bal-nom,
 .toile:has(.zone-bat[data-lieu="clinique"]:hover) .balise[data-lieu="clinique"] .bal-nom,
 .toile:has(.zone-bat[data-lieu="comptoir"]:hover) .balise[data-lieu="comptoir"] .bal-nom,
-.toile:has(.zone-bat[data-lieu="labo"]:hover) .balise[data-lieu="labo"] .bal-nom,
+.toile:has(.zone-bat[data-lieu="cercle"]:hover) .balise[data-lieu="cercle"] .bal-nom,
 .toile:has(.zone-bat[data-lieu="port"]:hover) .balise[data-lieu="port"] .bal-nom,
 .toile:has(.zone-bat[data-lieu="habitants"]:hover) .balise[data-lieu="habitants"] .bal-nom{max-width:170px;opacity:1;padding:4px 10px 4px 14px}
 /* choisi ou survolé : le cristal s'illumine, la languette prend un liseré d'or */

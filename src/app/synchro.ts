@@ -186,10 +186,12 @@ export async function demarrerCompte() {
         if (reconcilie) recevoirPillages().then((change) => { if (change) sauver(); envoyerPillages(); planifierGarnison(); });
         // la Flèche : assauts subis sur son quai, assauts pas encore envoyés, garde à jour
         if (reconcilie) recevoirAssauts().then((change) => { if (change) sauver(); envoyerAssauts(); });
+        // le Cercle des quais : amis, propositions et défis en attente (la bulle du bâtiment), vitrine à jour
+        if (reconcilie) import('./cercle').then((m) => m.suivreCercle()).catch(() => {});
         if (app.uid && compteProtege() && !app.jeu.directeur?.nom && !app.pseudoDemande) { app.pseudoDemande = true; G.edition = true; G.accueil = true; G.erreur = ''; if (app.mode === 'district') afficher(); }
       });
       lireMonEntree();
-    } else comptePret();
+    } else { comptePret(); import('./cercle').then((m) => { m.arreterCercle(); m.C.reseau = 'hors-ligne'; }).catch(() => {}); }
     if (app.mode === 'district' || app.mode === 'titre') afficher();
   }, () => app.jeu.introVue);
 }

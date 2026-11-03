@@ -20,7 +20,7 @@ Autres commandes :
 | `npm run visuel` | Compare les écrans avant / après une modification (téléphone et PC) : voir `.visuel/` |
 | `npm run css` | Repère le CSS inutile (déclarations toujours écrasées, règles en double) ; `-- --ecrire` le nettoie |
 | `analyse.html` | L'outil d'analyse (page à part, jamais chargée par le jeu, réservée au compte de Bryan) : points d'attention, activité, rétention par cohorte, progression et rythme, combats, Porteurs, cartes, économie, campagne, usage des fonctions, joueurs ; filtres ; exports JSON et CSV anonymisés |
-| `duel.html` | L'essai du duel en temps réel (page à part, sans lien depuis le jeu, pas encore branché) : contre le robot ou un ami avec un code — voir `docs/duel.md` |
+| `duel.html` | L'essai du duel en temps réel (page à part) : contre le robot ou un ami avec un code — voir `docs/duel.md`. Dans le jeu, le duel passe par le Cercle des quais |
 | `npm run robot` | Lance le robot d'équilibrage (quelques minutes) et écrit `docs/robot-rapport.md` |
 | `npm run voies` | Compare chaque voie à un deck classique de même Charge et écrit `docs/voies-rapport.md` |
 
@@ -48,6 +48,7 @@ src/
       partie/descentes.ts    départs (expédition, fouille, Épreuve), escouade, missions, exploration des Strates
       partie/pillages.ts     les pillages : garnison, jetons, coffre, archipels voisins, attaques subies
       partie/fleche.ts       la Flèche : quais, gardiens des Hauts, montée et descente, quais gravés
+      partie/cercle.ts       le Cercle des quais : échanges entre amis (mise de côté, même métal, prix), souhaits, vitrine, duels de la semaine
       partie/temps.ts        le temps qui passe
       partie/nouvelle.ts     nouvelle partie, décisions de la campagne, mise à jour des anciennes sauvegardes
     expedition.ts  une suite de combats ; c'est ce qui est sauvegardé
@@ -62,6 +63,7 @@ src/
     fiche.ts       la fiche du directeur (29 octobre 2026) : ce qui l'attend (core/partie/attente.ts), ses records, ses cartes marquantes, son code ;
                    sur PC le cristal du rail l'ouvre et s'allume quand une récompense importante attend, sur téléphone elle est en tête du menu Plus
     fleche.ts      l'onglet Flèche : la flèche dessinée, le prochain quai, les quais gravés
+    cercle.ts      le Cercle des quais (3 novembre 2026, à la place du Labo génétique) : amis, vitrines, duels, échanges, souhaits
     journal.ts     le journal du combat : cartes jouées tour par tour, calcul de chaque coup, défausse et pioche, lexique des « ? »
     icones.ts      le jeu d'icônes de l'interface (SVG, couleur du texte)
     feuilles.ts    l'ordre des feuilles de style (la cascade) : toutes les feuilles CSS sont importées là, et seulement là

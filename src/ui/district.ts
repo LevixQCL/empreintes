@@ -21,7 +21,7 @@ import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/ty
 import type { CibleFouille } from '../core/expedition';
 import { DIFFICULTES_FOUILLE, type DifficulteFouille } from '../core/jeu';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
-import { CONFIANCE, niveauConfiance } from '../core/jeu';
+import { CONFIANCE, CERCLE, CERCLE_OUVERTURE, cercleOuvert, echangesParJour, metalMax, ouvertesMax, vitrineMax, niveauConfiance } from '../core/jeu';
 import { LECTURE_PROFONDE } from '../core/partie/etat';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
@@ -56,7 +56,7 @@ const gemme = (r: Rarete) => `<i class="gemme g-${r}" style="--r:${COULEUR_RARET
  * qui ouvriront plus tard (le Port et le Labo génétique). Bryan : pas de voile sur eux, le tableau reste beau partout ;
  * quand on les touche, une raison plausible, dans le lore, dit pourquoi ils ne sont pas encore ouverts.
  */
-type LieuFutur = 'port' | 'labo';
+type LieuFutur = 'port';
 type Lieu = BatimentId | LieuFutur;
 const LIEUX_FUTURS: Record<LieuFutur, { nom: string; raison: string; promesse: string }> = {
   port: {
@@ -64,18 +64,18 @@ const LIEUX_FUTURS: Record<LieuFutur, { nom: string; raison: string; promesse: s
     raison: 'Le bateau du passeur reste amarré sous les pilotis du Port, devant le sas de la digue : tant que le gardien de la Strate −1 tient le puits, personne ne laisse le district sans défense pour prendre la mer.',
     promesse: 'Le passage sûr, des équipages partiront d’ici vers les ruines au large, et piller les archipels voisins.',
   },
-  labo: {
-    nom: 'Labo génétique',
-    raison: 'Les cuves d’ambre sont vides. Pour les rallumer, il faudrait de l’ambre vivant, et on n’en trouve qu’au fond des Strates.',
-    promesse: 'Les Génés du quartier y prépareront un jour de nouvelles sèves.',
-  },
 };
 /**
  * Le Comptoir est déjà peint sur le tableau : tant qu'il n'est pas « construit » (niveau 0), on le dit fermé, avec une raison
  * tirée du lore, comme le port et le labo (23 octobre 2026, Bryan). Le construire, c'est le remettre en état.
  */
 const COMPTOIR_FERME = 'Ses volets sont cloués depuis que le dernier marchand a quitté le district, et la balance a rouillé sur le comptoir. Les fouilleurs remontent des Strates les poches pleines, mais personne n’est là pour leur racheter quoi que ce soit.';
-const estFutur = (id: string | null): id is LieuFutur => id === 'port' || id === 'labo';
+const estFutur = (id: string | null): id is LieuFutur => id === 'port';
+/**
+ * Le Cercle des quais avant la Strate −2 (3 novembre 2026) : il a pris la place du Labo génétique, mis en réserve.
+ * Sa raison d'être fermé, tirée du lore : aucun directeur ne traite avec un district qui n'a pas tenu son puits.
+ */
+const CERCLE_FERME = `Les bancs de l’estrade attendent sous la bâche. Les directeurs des autres districts ne traitent pas avec un district qui n’a pas encore tenu son puits : ils accosteront quand le gardien de la Strate −${CERCLE_OUVERTURE} sera tombé.`;
 
 /**
  * Les repères des bâtiments sur le tableau (2 novembre 2026, Bryan : « des plaques toutes rassemblées », comme les autres jeux,
@@ -89,16 +89,16 @@ const BALISES_CUVETTE: Record<Lieu, Balise> = {
   clinique: { pied: { x: 96, y: 392 }, haut: { x: 140, y: 350 } },
   generateur: { pied: { x: 176, y: 430 }, haut: { x: 176, y: 364 } },
   comptoir: { pied: { x: 278, y: 412 }, haut: { x: 278, y: 352 } },
-  labo: { pied: { x: 322, y: 308 }, haut: { x: 318, y: 232 } },
+  cercle: { pied: { x: 322, y: 308 }, haut: { x: 318, y: 232 } },
   port: { pied: { x: 318, y: 584 }, haut: { x: 318, y: 516 } },
 };
 /** Les anciens tableaux d'âge (avant la Cuvette) : le repère au milieu de l'ancienne plaque, la bulle un peu plus haut */
 const ANCIENS: Record<Lieu, { x: number; y: number }> = {
   noyau: { x: 200, y: 312 }, generateur: { x: 64, y: 184 }, forge: { x: 322, y: 228 }, clinique: { x: 62, y: 304 },
-  comptoir: { x: 322, y: 382 }, labo: { x: 112, y: 538 }, port: { x: 326, y: 556 },
+  comptoir: { x: 322, y: 382 }, cercle: { x: 112, y: 538 }, port: { x: 326, y: 556 },
 };
 const balise = (id: Lieu): Balise => CUVETTE ? BALISES_CUVETTE[id] : { pied: ANCIENS[id], haut: { x: ANCIENS[id].x, y: ANCIENS[id].y - 50 } };
-const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'comptoir', 'labo', 'port'];
+const ORDRE: Lieu[] = ['noyau', 'generateur', 'forge', 'clinique', 'comptoir', 'cercle', 'port'];
 /**
  * Les bâtiments eux-mêmes sont cliquables (22 octobre 2026, Bryan : sur téléphone, les plaques seules faisaient de petites cibles
  * qui se chevauchaient). Le contour de chaque lieu dans le tableau de chaque âge, repère 400 × 600 (relevé sur les tableaux).
@@ -110,7 +110,7 @@ const ZONES_234: Record<Lieu, string> = {
   forge: '255,90 345,80 400,150 400,240 300,245 235,215 240,160',
   clinique: '30,225 90,225 125,270 120,330 40,335 0,315 0,260',
   comptoir: '275,255 395,265 395,355 380,395 285,390 240,350 245,300',
-  labo: '20,345 160,340 240,410 225,520 160,555 50,550 5,480 10,400',
+  cercle: '20,345 160,340 240,410 225,520 160,555 50,550 5,480 10,400',
   port: '265,450 350,425 385,470 385,550 300,565 265,520',
 };
 const ZONES: Record<1 | 2 | 3 | 4, Record<Lieu, string>> = {
@@ -120,7 +120,7 @@ const ZONES: Record<1 | 2 | 3 | 4, Record<Lieu, string>> = {
     forge: '260,130 375,125 400,200 400,250 300,255 245,220 245,175',
     clinique: '30,230 90,235 125,280 115,330 40,335 0,315 0,260',
     comptoir: '280,270 375,295 395,350 380,395 280,390 240,350 245,310',
-    labo: '30,345 150,340 240,410 230,520 160,555 60,550 10,480 15,400',
+    cercle: '30,345 150,340 240,410 230,520 160,555 60,550 10,480 15,400',
     port: '270,480 340,460 370,500 375,545 300,560 270,520',
   },
   2: ZONES_234, 3: ZONES_234, 4: ZONES_234,
@@ -128,7 +128,7 @@ const ZONES: Record<1 | 2 | 3 | 4, Record<Lieu, string>> = {
 /** La Cuvette (2 novembre 2026) : un seul tableau pour tous les âges, mêmes repères 400 × 600 */
 const ZONES_CUVETTE: Record<Lieu, string> = {
   noyau: '182,146 232,146 236,250 232,282 182,282 178,250',
-  labo: '286,240 358,238 362,300 330,316 288,312',
+  cercle: '325,228 361,261 359,298 353,305 337,310 299,308 286,299 283,261 318,230',
   forge: '72,232 144,228 148,300 120,322 74,318',
   clinique: '60,326 134,326 138,380 104,398 62,392',
   generateur: '138,354 212,354 216,420 176,438 140,430',
@@ -225,14 +225,14 @@ const ECLATS: [number, number, number, number, Lieu][] = [
   [179, 343, 4.1, .6, 'generateur'], [175, 365, 6.2, 3.4, 'generateur'], // le tube du Générateur
   [268, 371, 4.5, 2.7, 'comptoir'], [288, 377, 5.8, .9, 'comptoir'], // le bassin du Comptoir
   [316, 514, 4.3, 1.8, 'port'], // la lanterne du Port
-  [313, 233, 6.6, 4.1, 'labo'], // la cuve du Labo
+  [313, 233, 6.6, 4.1, 'cercle'], // la lanterne du Cercle
   [127, 303, 5.1, 3.0, 'forge'], // les cristaux au pied de la Forge
 ];
 /** Les étincelles qui montent du fourneau de la Forge */
 const ETINCELLES: [number, number, number, number][] = [[121, 279, 2.4, 0], [125, 281, 2.9, .9], [118, 282, 2.2, 1.6], [123, 278, 3.3, 2.2], [127, 283, 2.6, .4]];
 
 /**
- * Le palier de chaque bâtiment sur la Cuvette (3 novembre 2026). Le Labo et le Port n'ont pas de niveau à eux : ils suivent l'âge du
+ * Le palier de chaque bâtiment sur la Cuvette (3 novembre 2026). Le Port n'a pas de niveau à lui : ils suivent l'âge du
  * district (la Tour du Noyau). Un Comptoir pas encore ouvert reste un simple étal.
  */
 function paliers(j: Jeu): Record<string, PalierCuvette> {
@@ -246,7 +246,8 @@ function eclatsPaliers(p: Record<string, PalierCuvette> | null): [number, number
   if (!p) return [];
   return CALQUES_CUVETTE.flatMap((c) => {
     const q = p[c.lieu];
-    return q && q !== 'milieu' ? c.eclats[q].map(([x, y], i): [number, number, number, number] => [x!, y!, 4.2 + ((x! + i * 3) % 5) / 2, ((y! + i * 7) % 9) / 2]) : [];
+    const l = q === 'milieu' ? c.eclats.milieu : q ? c.eclats[q] : undefined;
+    return l ? l.map(([x, y], i): [number, number, number, number] => [x!, y!, 4.2 + ((x! + i * 3) % 5) / 2, ((y! + i * 7) % 9) / 2]) : [];
   });
 }
 
@@ -256,15 +257,16 @@ function tableau(j: Jeu): string {
   ageAffiche = s.age;
   const p = CUVETTE ? paliers(j) : null;
   // les calques passent par-dessus la Cuvette animée : les éclats et les étincelles d'un bâtiment repeint ne tombent plus juste
-  const garde = (lieu: Lieu) => !p || p[lieu] === 'milieu';
+  const garde = (lieu: Lieu) => !p || (p[lieu] === 'milieu' && !CALQUES_CUVETTE.find((c) => c.lieu === lieu)?.milieu);
   const fumee = p ? FUMEE_FORGE[p.forge!] : null;
   return `<img class="tableau${s.nuit ? ' nuit' : ''}${nouveau ? ' nouvel-age' : ''}" src="${s.url}" alt="" draggable="false"/>`
     + (s.video ? `<div class="anime" data-video="${s.video}"></div>` : '')
     + (s.houle && !mouvementReduit() ? `<div class="houle" data-image="${s.url}" data-masques="${s.houle}"${fumee ? ` data-fumee="${fumee.join(' ')}"` : ''}></div>` : '')
     + (p ? CALQUES_CUVETTE.map((c) => {
       const q = p[c.lieu]!;
-      if (q === 'milieu') return '';
-      const [x, y, w, h] = c[q];
+      const b = q === 'milieu' ? c.milieu : c[q];
+      if (!b) return '';
+      const [x, y, w, h] = b;
       const boite = `left:${x! / 8}%;top:${y! / 12}%;width:${w! / 8}%;height:${h! / 12}%`;
       // les cristaux du bâtiment repeint respirent : un calque de lumière par-dessus, qui s'allume et s'éteint doucement
       return `<img class="palier" src="${calquePalier(c.lieu, q)}" style="${boite}" alt="" draggable="false" decoding="async">`
@@ -302,7 +304,7 @@ function balises(e: EcranDistrict): string {
       if (pill && n >= PILLAGE.jetonsMax) h += bulle('alerte', `${ICO.grappin}<em>${n}</em>`, `Jetons de pillage au complet : ${n}`, 'pillages');
       continue;
     }
-    const ferme = estFutur(id) || (id === 'comptoir' && !j.batiments.comptoir && !chantierDe(j, id));
+    const ferme = estFutur(id) || (id === 'comptoir' && !j.batiments.comptoir && !chantierDe(j, id)) || (id === 'cercle' && !cercleOuvert(j));
     if (ferme) {
       const nom = estFutur(id) ? LIEUX_FUTURS[id].nom : batimentDef(id).nom;
       h += `<button type="button" class="balise fermee${choisie}" ${pos(b.pied)} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(nom)}, pas encore ouvert">`
@@ -313,11 +315,11 @@ function balises(e: EcranDistrict): string {
     const niv = j.batiments[id];
     const ch = chantierDe(j, id);
     const vise = !!o && o.pilier === id && !o.fait(j);
-    const occupant = id !== 'comptoir' ? posteDe(j, id) : null;
+    const occupant = id !== 'comptoir' && id !== 'cercle' ? posteDe(j, id) : null;
     const prete = id === 'forge' && !!j.forge && e.now >= j.forge.fin;
     // un poste vide ne se signale que si quelqu'un peut le prendre, une fois la chambre ouverte (avant, le seul but est la porte ;
     // la Tour : l'entraînement reste un choix, pas un oubli)
-    const vacant = j.chambre && !!niv && id !== 'noyau' && id !== 'comptoir' && !occupant && libres;
+    const vacant = j.chambre && !!niv && id !== 'noyau' && id !== 'comptoir' && id !== 'cercle' && !occupant && libres;
     h += `<button type="button" class="balise${choisie}${vise ? ' visee' : ''}" ${pos(b.pied)} data-action="batiment" data-id="${id}" data-lieu="${id}" aria-label="${echap(d.nom)}${niv ? `, niveau ${niv}` : ', à construire'}${occupant ? `, ${echap(porteurDef(occupant).nom)} au poste` : ''}">`
       + (niv && occupant ? cristalVisage(occupant, niv)
         : niv ? `<b class="bal-cristal">${niv}</b>` : `<b class="bal-cristal a-construire" title="À construire">${ICO.marteau}</b>`)
@@ -331,6 +333,10 @@ function balises(e: EcranDistrict): string {
     else if (id === 'comptoir') {
       const reste = j.comptoir.offres.length - j.comptoir.achetes.length;
       if (reste > 0) h += bulle('info', `${ICO.cartes}<em>${reste}</em>`, `Comptoir : ${reste} carte${reste > 1 ? 's' : ''} en vente`);
+    } else if (id === 'cercle' && niv) {
+      // le Cercle : un défi ou une proposition d'échange qui attend une réponse, une amitié à accepter
+      const n = e.cercle?.aRepondre ?? 0;
+      if (n > 0) h += bulle('alerte', `${ICO.cercle}<em>${n}</em>`, `Cercle des quais : ${n} réponse${n > 1 ? 's' : ''} attendue${n > 1 ? 's' : ''}`, 'cercle');
     }
   }
   // les habitations : pas un bâtiment à monter, donc pas de niveau ni de poste, seulement le palier de Confiance et la population
@@ -527,7 +533,7 @@ function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: nu
 const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
   energie: 'energie', soin: 'soin', stockage: 'coffre', creuseurs: 'ouvrier', strate: 'descendre', forge: 'chrono',
   plafond: 'tour', chantiers: 'marteau', porteur: 'porteurs', apparence: 'district', entrainement: 'monter', offres: 'cartes', argent: 'cristal',
-  places: 'monter', barques: 'porteurs', commune: 'cartes',
+  places: 'monter', barques: 'porteurs', commune: 'cartes', cercle: 'cercle', echanges: 'echange', ouvertes: 'chrono', vitrine: 'cartes', or: 'cristal',
 };
 const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${Number.isInteger(v) ? ent(v) : (Math.round(v * 10) / 10).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')}${unite ? ` ${unite}` : ''}`);
 
@@ -689,6 +695,18 @@ function blocEntrainement(e: EcranDistrict): string {
  * Le Comptoir (23 octobre 2026) : les cartes du jour, à prix fixe. On voit la carte avant de payer ; chaque offre
  * ne s'achète qu'une fois, tout se renouvelle demain. L'or et la nacre restent à trouver dans les Strates.
  */
+/** Le Cercle des quais dans sa feuille (3 novembre 2026) : ce qu'il permet à ce niveau, et la porte de l'écran du Cercle */
+function blocCercle(e: EcranDistrict): string {
+  const j = e.j;
+  if (!cercleOuvert(j) || !j.batiments.cercle) return '';
+  const n = e.cercle?.aRepondre ?? 0;
+  return `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.echange}<b>${echangesParJour(j)}</b><small>échanges par jour</small></div>`
+    + `<div class="fb-chiffre">${ICO.chrono}<b>${ouvertesMax(j)}</b><small>propositions en attente</small></div>`
+    + `<div class="fb-chiffre">${ICO.cartes}<b>${vitrineMax(j)}</b><small>cartes en vitrine</small></div></div>`
+    + `<p class="fb-note">Échanges jusqu’à l’${NOMS_RARETE[metalMax(j)].toLowerCase()}${metalMax(j) === 'argent' ? ` (l’or au niveau ${CERCLE.orAuNiveau})` : ''} · jamais la nacre.</p>`
+    + `<button type="button" class="btn prim large fb-entrer" data-action="cercle">${ICO.cercle}Entrer au Cercle${n ? ` <span class="pastille-n">${n}</span>` : ''}</button>`;
+}
+
 function blocComptoir(e: EcranDistrict): string {
   const j = e.j;
   if (!j.batiments.comptoir) {
@@ -810,7 +828,7 @@ function feuilleBatiment(e: EcranDistrict): string {
   const niv = j.batiments[b];
   const pv = b === 'noyau' || !CUVETTE ? prochainVisuel(niv) : prochainPalier(niv);
   const crans = Array.from({ length: d.niveauMax }, (_, i) => `<i class="${i < niv ? 'plein' : ''}"></i>`).join('');
-  const surtitre = niv ? `Niveau ${niv} <span class="fb-max">/ ${d.niveauMax}</span>` : b === 'comptoir' ? 'Fermé' : 'À construire';
+  const surtitre = niv ? `Niveau ${niv} <span class="fb-max">/ ${d.niveauMax}</span>` : b === 'comptoir' || (b === 'cercle' && !cercleOuvert(j)) ? 'Fermé' : 'À construire';
   const ideal = d.affinite ? `<span class="fb-ideal" style="--c:${COULEUR[d.affinite]}">${ICO.porteurs}Idéal : ${NOM_LIGNEE[d.affinite]} <b>×${virgule(DISTRICT.bonusAffinite)}</b></span>` : '';
   let h = `<div class="voile-feuille" data-action="fermer" aria-hidden="true"></div><section class="feuille fiche-bat" role="dialog" aria-modal="true" aria-labelledby="feuille-titre">`
     + `<span class="poignee" aria-hidden="true"></span><button type="button" class="btn-icone fb-fermer" data-action="fermer" aria-label="Fermer">${ICO.fermer}</button>`
@@ -818,6 +836,7 @@ function feuilleBatiment(e: EcranDistrict): string {
     + `<div class="fb-titre"><span class="surtitre">${surtitre}</span><h2 id="feuille-titre">${echap(d.nom)}</h2>`
     + `<span class="fb-crans" aria-hidden="true">${crans}</span>${ideal}</div></header>`;
   if (b === 'comptoir' && !niv) h += `<p class="fb-role">${echap(COMPTOIR_FERME)}</p>`;
+  else if (b === 'cercle' && !cercleOuvert(j)) h += `<p class="fb-role">${echap(CERCLE_FERME)}</p>`;
   else h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
 
   // ce que le bâtiment rapporte
@@ -828,10 +847,11 @@ function feuilleBatiment(e: EcranDistrict): string {
       + blocEntrainement(e);
   }
   if (b === 'comptoir') h += blocComptoir(e);
+  if (b === 'cercle') h += blocCercle(e);
 
   // le Porteur au travail (allégé le 28 octobre 2026) : une ligne pour l'occupant ; la liste ne s'ouvre que pour en changer,
   // et ne montre alors que ceux qui feraient mieux
-  if (b !== 'noyau' && b !== 'comptoir') {
+  if (b !== 'noyau' && b !== 'comptoir' && b !== 'cercle') {
     const poste = b;
     const occupant = posteDe(j, poste);
     const actuel = rendement(j, poste, occupant);
@@ -897,9 +917,12 @@ function amelioration(j: Jeu, b: BatimentId) {
   const assez = !!cout && j.energie >= cout.energie && j.composants >= cout.composants && j.eclats >= (cout.eclats ?? 0);
   const plein = j.chantiers.length >= chantiersMax(j) || (b === 'noyau' && j.chantiers.length > 0);
   // les ressources manquantes se lisent déjà en rouge dans le coût : la phrase ne sert que pour les autres blocages
-  const raison = bloque ? `Il faut d’abord monter la Tour du Noyau au niveau ${niv + 1}.`
+  // le Cercle avant la Strate −2 (3 novembre 2026) : fermé, quelle que soit la Tour
+  const ferme = b === 'cercle' && !cercleOuvert(j);
+  const raison = ferme ? `Vaincs le gardien de la Strate −${CERCLE_OUVERTURE} pour le construire.`
+    : bloque ? `Il faut d’abord monter la Tour du Noyau au niveau ${niv + 1}.`
     : plein ? (b === 'noyau' && j.chantiers.length ? 'Attends la fin des chantiers en cours.' : chantiersMax(j) === 1 ? 'Un seul chantier à la fois (deux au Noyau niveau 4).' : 'Deux chantiers sont déjà en cours.') : '';
-  return { ch, cout, bloque, raison, pret: !ch && assez && !bloque && !plein };
+  return { ch, cout, bloque, raison, pret: !ch && assez && !bloque && !plein && !ferme };
 }
 
 /** Le coût et le bouton d'amélioration sur une ligne ; `pied` : la version du pied fixe (étiquette courte) */

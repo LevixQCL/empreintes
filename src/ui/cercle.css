@@ -1,0 +1,165 @@
+/* ---------- Le Cercle des quais (3 novembre 2026) ----------
+   Matière commune : verre fumé, arêtes de glace, or pour la valeur ; le style moderne (moderne.css) arrondit tout.
+   Le Cercle a sa note à lui : un ambre chaud de lanterne (les directeurs se retrouvent le soir sur l'estrade). */
+.cercle{--cr-ambre:#F2B866;--cr-glace:#BFD9EC;display:flex;flex-direction:column;gap:14px;padding-bottom:12px}
+.cercle .entete{align-items:center}
+.cr-tete-boutons{display:flex;align-items:center;gap:8px}
+.cr-niveau{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 12px 0 8px;border:none;border-radius:999px;cursor:pointer;
+  font:600 15px/1 var(--mono);color:#1C1406;background:var(--laiton);box-shadow:0 2px 10px rgba(216,180,101,.3)}
+.cr-niveau .ico{width:22px;height:22px}
+
+/* ---------- l'ouverture ---------- */
+.cr-intro{position:relative;display:grid;align-items:end;min-height:300px;padding:18px 16px;overflow:hidden;isolation:isolate;border-radius:18px;
+  background:var(--decor) center 38%/cover no-repeat,#0B0E15;box-shadow:inset 0 0 0 1px rgba(242,184,102,.35)}
+.cr-intro::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(8,10,16,.05) 20%,rgba(8,10,16,.82) 72%,rgba(8,10,16,.95))}
+.cr-intro-texte{display:grid;gap:6px}
+.cr-intro .surtitre{color:var(--cr-ambre)}
+.cr-intro h2{margin:0;font:400 25px/1.15 var(--display);color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.8)}
+.cr-intro p{margin:0;font-size:14px;line-height:1.5;color:#E8E2D4;text-shadow:0 1px 6px rgba(0,0,0,.9)}
+.cr-etapes{display:grid;gap:0;margin:0;padding:4px 14px;list-style:none;border-radius:16px;background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet)}
+.cr-etapes li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start;padding:12px 0;border-top:1px solid rgba(205,239,255,.08)}
+.cr-etapes li:first-child{border-top:none}
+.cr-etapes li>.ico{width:28px;height:28px;padding:5px;border-radius:50%;color:#1C1406;background:var(--laiton)}
+.cr-etapes strong{display:block;color:#fff;font-size:15px}
+.cr-etapes small{display:block;margin-top:2px;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+
+/* ---------- ce qu'il faut avant tout ---------- */
+.cr-garde{grid-template-columns:36px minmax(0,1fr);align-items:center;padding:14px;border-radius:16px;background:var(--verre-2);box-shadow:inset 0 0 0 1px rgba(159,216,255,.35)}
+.cr-garde>.ico{width:30px;height:30px;color:var(--cristal)}
+.cr-garde strong{display:block;color:#fff;font-size:15px}
+.cr-garde small{display:block;margin-top:2px;font-size:13px;color:var(--ink-2)}
+.cr-garde .btn{grid-column:1/-1}
+
+.cr-volets{grid-template-columns:repeat(3,1fr)}
+.cr-etat,.cr-message{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:0;padding:10px 12px;border-radius:14px;font-size:13.5px;line-height:1.4;color:var(--ink-2);background:var(--verre)}
+.cr-etat .ico{width:16px;height:16px;flex:none}
+.cr-etat.erreur{color:#FFD7CC;box-shadow:inset 0 0 0 1px rgba(226,115,90,.45)}
+.cr-message{color:#fff;box-shadow:inset 0 0 0 1px rgba(242,184,102,.4)}
+
+/* ---------- les blocs et les lignes ---------- */
+.cercle .bloc{padding:12px;border-radius:16px;background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet)}
+.cercle .titre-bloc{color:var(--cr-glace)}
+.cercle .titre-bloc .ico{width:16px;height:16px}
+.cr-compte{margin-left:auto;font:600 12px/1 var(--mono);letter-spacing:.04em;color:var(--quiet)}
+.cr-vide{margin:0;font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.cr-champ{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.cr-champ input{min-height:44px;padding:0 14px;border:none;border-radius:999px;font:500 15px var(--body);color:#fff;background:rgba(8,10,16,.7);box-shadow:inset 0 0 0 1px rgba(159,216,255,.3)}
+.cr-champ input:focus{outline:none;box-shadow:inset 0 0 0 2px var(--cristal)}
+.cr-ajout small b{color:var(--gold)}
+
+.cr-ligne{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;width:100%;min-height:58px;padding:7px 10px;border:none;border-radius:14px;
+  text-align:left;color:inherit;font:inherit;background:rgba(255,255,255,.03);box-shadow:inset 0 0 0 1px rgba(205,239,255,.08)}
+button.cr-ligne{cursor:pointer}
+button.cr-ligne:active{transform:scale(.99)}
+.cr-qui{display:grid;min-width:0}
+.cr-qui strong{color:#fff;font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cr-qui small{font-size:12.5px;color:var(--quiet)}
+.cr-actions{display:flex;align-items:center;gap:6px}
+.cr-actions .btn{min-height:38px;padding:0 14px}
+.cr-actions .btn-sec{min-height:38px;min-width:38px;padding:0 10px}
+.cr-actions .btn-sec .ico{width:16px;height:16px}
+.cr-indices{display:flex;align-items:center;gap:6px;color:var(--quiet)}
+.cr-indices>.ico{width:16px;height:16px}
+.cr-indice{display:inline-flex;align-items:center;gap:3px;min-height:24px;padding:0 8px;border-radius:999px;font:600 12px/1 var(--mono)}
+.cr-indice .ico{width:13px;height:13px}
+.cr-indice.souhait{color:#1C1406;background:var(--laiton)}
+.cr-indice.veut{color:#0B1424;background:linear-gradient(180deg,#CFEFFF,#7FD4FF)}
+.cr-attente{margin:0;font-size:12.5px;color:var(--quiet)}
+.cr-attente .ico{width:13px;height:13px;vertical-align:-2px;margin-right:4px}
+.cr-lien{padding:0;border:none;background:none;font:inherit;font-size:12.5px;color:var(--cristal);text-decoration:underline;cursor:pointer}
+
+.cr-avatar{--t:48px;display:grid;place-items:center;width:var(--t);height:var(--t);flex:none;border-radius:50%;
+  background:#141925 center 18%/cover no-repeat;box-shadow:0 0 0 2px var(--c,var(--line)),0 2px 8px rgba(0,0,0,.5)}
+.cr-avatar.vide{width:48px;height:48px;font:400 20px/1 var(--display);color:var(--cr-ambre);box-shadow:0 0 0 2px rgba(242,184,102,.4)}
+
+/* ---------- les cartes en petit ---------- */
+.cr-rangee{display:flex;gap:10px;overflow-x:auto;padding:4px 2px 6px;scrollbar-width:none}
+.cr-rangee::-webkit-scrollbar{display:none}
+.cr-rangee .cr-carte,.cr-rangee .cr-place{flex:0 0 96px}
+.cr-grille{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:12px 10px;padding:4px 2px}
+.cr-carte{position:relative;display:grid;justify-items:center;align-content:start;gap:4px;min-width:0;padding:0;border:none;background:none;color:inherit;font:inherit}
+button.cr-carte{cursor:pointer}
+button.cr-carte:active{transform:scale(.97)}
+.cr-face{display:block;width:100%;filter:drop-shadow(0 1px .5px rgba(0,0,0,.85)) drop-shadow(0 5px 7px rgba(0,0,0,.5));transition:filter .2s,transform .2s}
+.cr-carte.choisie .cr-face{filter:drop-shadow(0 0 0 2px #fff) drop-shadow(0 0 10px rgba(242,184,102,.8));transform:translateY(-2px)}
+.cr-carte.off{opacity:.45}
+.cr-marque{position:absolute;top:-6px;right:-6px;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;color:#1C1406;background:var(--laiton);box-shadow:0 2px 6px rgba(0,0,0,.6)}
+.cr-marque .ico{width:15px;height:15px}
+.cr-note{font-size:12.5px;line-height:1.2;text-align:center;color:#EBC992}
+.cr-place{display:grid;place-items:center;aspect-ratio:5/7;min-height:120px;border:1.5px dashed rgba(242,184,102,.5);border-radius:12px;background:rgba(242,184,102,.05);color:var(--cr-ambre);cursor:pointer}
+.cr-place .ico{width:26px;height:26px}
+.cr-place.vide{font:400 32px/1 var(--display);cursor:default}
+
+/* ---------- les feuilles ---------- */
+.cr-feuille .feuille-corps{display:flex;flex-direction:column;gap:12px}
+/* dans une feuille de hauteur bornée, une rangée qui défile se laisserait écraser : rien ne rétrécit */
+.cr-feuille .feuille-corps>*{flex-shrink:0}
+.cr-feuille-tete .cr-avatar{flex:none}
+.cr-feuille-tete .titres{min-width:0}
+.cr-feuille h2{margin:0;font:400 23px/1.15 var(--display);color:#fff;overflow:hidden;text-overflow:ellipsis}
+.cr-feuille .surtitre{color:var(--cr-ambre)}
+.cr-feuille .titre-bloc{margin-top:6px}
+.cr-boutons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cr-sans{display:block;font-size:12.5px;line-height:1.4;color:var(--alerte)}
+.cr-retirer{justify-self:center;margin:10px 0 4px;color:var(--quiet)}
+.cr-filtres{display:flex;flex-wrap:wrap;gap:6px}
+.cr-filtre{min-height:34px;padding:0 13px;border:none;border-radius:999px;cursor:pointer;font:600 13px/1 var(--body);color:var(--ink-2);
+  background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1px var(--m,rgba(205,239,255,.2))}
+.cr-filtre.actif{color:#0B0D12;background:var(--m,var(--cristal));box-shadow:none}
+
+/* ---------- les duels ---------- */
+.cr-semaine{grid-template-columns:auto minmax(0,1fr);align-items:center;gap:14px}
+.cr-semaine strong{display:block;color:#fff;font-size:14.5px}
+.cr-semaine small{display:block;margin-top:2px;font-size:12.5px;line-height:1.4;color:var(--ink-2)}
+.cr-crans{display:flex;gap:6px}
+.cr-crans i{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.04);box-shadow:inset 0 0 0 1.5px rgba(242,184,102,.4)}
+.cr-crans i.plein{color:#1C1406;background:var(--laiton);box-shadow:0 0 10px rgba(216,180,101,.45)}
+.cr-crans .ico{width:15px;height:15px}
+.cr-mode{position:static}
+.cr-robot{grid-template-columns:minmax(0,1fr) auto;align-items:center}
+.cr-robot strong{display:block;color:#fff;font-size:14.5px}
+.cr-robot small{display:block;font-size:12.5px;color:var(--ink-2)}
+
+/* ---------- les échanges ---------- */
+.cr-regles{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cr-chiffre{display:grid;justify-items:center;gap:2px;padding:8px 4px;text-align:center;border-radius:12px;background:rgba(255,255,255,.03)}
+.cr-chiffre b{font:600 22px/1.1 var(--mono);color:#fff}
+.cr-chiffre.metal b{font-size:17px;color:var(--m)}
+.cr-chiffre small{font-size:12px;line-height:1.25;color:var(--quiet)}
+.cr-prop{display:grid;gap:10px;padding:12px;border-radius:14px;background:rgba(255,255,255,.03);box-shadow:inset 0 0 0 1px rgba(242,184,102,.25)}
+.cr-prop.envoyee{box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+.cr-prop-qui strong{color:#fff;font-size:15px}
+.cr-prop-qui small{margin-left:6px;font-size:12.5px;color:var(--quiet)}
+.cr-paire{display:grid;grid-template-columns:minmax(0,108px) auto minmax(0,108px);justify-content:center;align-items:center;gap:12px}
+.cr-paire.grand{grid-template-columns:minmax(0,120px) auto minmax(0,120px)}
+.cr-fleche{display:grid;place-items:center;width:36px;height:36px;border-radius:50%;color:var(--cr-ambre);box-shadow:inset 0 0 0 1px rgba(242,184,102,.45)}
+.cr-fleche .ico{width:20px;height:20px}
+.cr-prop .cr-actions{justify-content:flex-end}
+.cr-prop .btn.prim .ico.peinte{width:18px;height:18px}
+.cr-pied{position:sticky;bottom:-1px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;padding:10px 0 4px;background:linear-gradient(180deg,transparent,var(--bg-2) 30%)}
+.cr-pied .cr-sans{grid-column:1/-1}
+.cr-pied .btn.prim .ico.peinte{width:18px;height:18px}
+
+/* ---------- le menu Plus ---------- */
+.cr-menu .pastille-n{margin-left:auto;align-self:center}
+
+/* ---------- le duel lancé depuis le Cercle ---------- */
+.dl-gain{display:flex;align-items:center;gap:8px;margin:0;padding:8px 12px;border-radius:12px;font-size:13.5px;color:#1C1406;background:var(--laiton)}
+.dl-gain .ico{width:18px;height:18px;flex:none}
+.dl-fin-boutons{display:flex;justify-content:center;gap:8px}
+.cr-attente-duel{text-align:center;justify-items:center}
+.cr-attente-anim{display:flex;gap:10px;padding:18px 0}
+.cr-attente-anim i{width:12px;height:12px;border-radius:50%;background:var(--cristal);box-shadow:0 0 12px var(--cristal);animation:cr-vague 1.4s ease-in-out infinite}
+.cr-attente-anim i:nth-child(2){animation-delay:.2s}
+.cr-attente-anim i:nth-child(3){animation-delay:.4s}
+@keyframes cr-vague{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-8px);opacity:1}}
+@media (prefers-reduced-motion:reduce){.cr-attente-anim i{animation:none;opacity:.8}}
+
+@media (min-width:1100px){
+  .cercle{max-width:760px}
+  .cr-grille{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
+  .cr-intro{min-height:320px}
+}
+
+/* le duel dans le jeu : la fenêtre de fin suit le style moderne (arrondie, sans coins coupés) */
+#app[data-mode="duel"] :is(.dl-fin-carte,.dl-code,.dl-chaine){border-radius:20px;clip-path:none}

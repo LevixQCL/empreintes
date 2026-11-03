@@ -1,5 +1,5 @@
 /* Le duel en temps réel (3 novembre 2026) : matière « cristal et lumière », comme l'écran de combat.
-   Chargée seulement par duel.html (pas encore dans feuilles.ts : le duel n'est pas branché au jeu). */
+   Chargée par duel.html et, depuis le Cercle des quais (3 novembre 2026), par le jeu (feuilles.ts). */
 
 #app[data-mode="duel"]{max-width:480px;padding:calc(8px + var(--sat)) 10px calc(12px + var(--sab));
   background:radial-gradient(120% 60% at 50% 0%,rgba(127,212,255,.10),transparent 60%),radial-gradient(90% 50% at 50% 100%,rgba(216,180,101,.08),transparent 70%),var(--bg)}

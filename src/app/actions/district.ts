@@ -2,6 +2,8 @@
 
 import { cartePillages, portOuvert } from '../../ui/pillages';
 import { lireCiblesEnLigne, sousBouclier } from '../pillages';
+import { relireVitrines, suivreCercle } from '../cercle';
+import { afficher } from '../rendu';
 import { cibleDefi, lireGardiensEnLigne, recevoirAssauts, synchroGarde } from '../fleche';
 import { moduleDe, moduleDef, porteurDef } from '../../core/donnees';
 import { estTri, poidsCarte } from '../../core/collection';
@@ -24,6 +26,8 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
   switch (a) {
     // le Port ouvert (plaque ou bateau peint) : le bateau part vers les archipels voisins
     case 'batiment': if (id === 'port' && portOuvert(app.jeu)) { ouvrir('pillages'); D.portAide = false; lireCiblesEnLigne(); break; }
+      // le Cercle des quais construit : son écran directement (le bâtiment s'ouvre de là, bouton du haut)
+      if (id === 'cercle' && J.cercleOuvert(app.jeu) && app.jeu.batiments.cercle && D.selection !== 'cercle') { ouvrir('cercle'); afficher(); await suivreCercle(); relireVitrines(); return 'fin'; }
       D.selection = D.selection === id ? null : (id as typeof D.selection); D.menu = false; D.posteChanger = false; D.tourChanger = false;
       if (b.dataset.amelio !== undefined) requestAnimationFrame(() => document.getElementById('fb-amelio')?.scrollIntoView({ block: 'start' }));
       break;

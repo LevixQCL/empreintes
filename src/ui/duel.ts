@@ -80,7 +80,7 @@ function recap(s: SessionDuel) {
 }
 
 /** L'écran du duel */
-export function htmlDuel(s: SessionDuel, maintenant = Date.now()): string {
+export function htmlDuel(s: SessionDuel, maintenant = Date.now(), cercle: { recompense?: string; revanche?: boolean } = {}): string {
   const moi = s.brouillon.cotes[s.camp];
   const lui = s.brouillon.cotes[autre(s.camp)];
   const cible = cibleEffective(s.brouillon, s.camp)?.id ?? null;
@@ -88,7 +88,7 @@ export function htmlDuel(s: SessionDuel, maintenant = Date.now()): string {
   const restant = s.restant(maintenant);
   const lu = lectureAdverse(s.commun, s.camp);
   const etatLui = s.fini ? '' : s.adversairePret ? '<span class="dl-etat pret">a verrouillé</span>' : '<span class="dl-etat">compose sa chaîne…</span>';
-  const fin = s.fini ? finDuel(s) : '';
+  const fin = s.fini ? finDuel(s, cercle) : '';
   return `<section class="duel${s.verrouille ? ' attend' : ''}" aria-label="Duel">`
     + `<header class="dl-tete"><div><span class="surtitre">Duel · tour ${s.tour}</span><h1>${echap(lui.nom)}</h1></div>${etatLui}`
     + (lui.bouclier ? `<span class="dl-bouclier" aria-label="Bouclier gardé ${lui.bouclier}">${ICO.bouclier}${lui.bouclier}</span>` : '') + '</header>'
@@ -114,7 +114,7 @@ export function htmlDuel(s: SessionDuel, maintenant = Date.now()): string {
     + fin + '</section>';
 }
 
-function finDuel(s: SessionDuel) {
+function finDuel(s: SessionDuel, cercle: { recompense?: string; revanche?: boolean }) {
   const c = s.commun;
   const titre = c.issue === 'egalite' ? 'Égalité' : s.gagne ? 'Victoire' : 'Défaite';
   const texte = c.abandon !== undefined
@@ -122,7 +122,9 @@ function finDuel(s: SessionDuel) {
     : `En ${c.tour - 1} tours.`;
   return `<div class="dl-fin ${c.issue === 'egalite' ? 'nul' : s.gagne ? 'gagne' : 'perdu'}" role="dialog" aria-label="${titre}"><div class="dl-fin-carte">`
     + `<span class="surtitre">Fin du duel</span><h2>${titre}</h2><p>${echap(texte)}</p>`
-    + `<button type="button" class="prim" data-action="duel-retour">Retour</button></div></div>`;
+    + (cercle.recompense ? `<p class="dl-gain">${ICO.coffre}${echap(cercle.recompense)}</p>` : '')
+    + `<div class="dl-fin-boutons">${cercle.revanche ? `<button type="button" class="btn-sec" data-action="duel-revanche">${ICO.atk}Revanche</button>` : ''}`
+    + `<button type="button" class="prim" data-action="duel-retour">Retour</button></div></div></div>`;
 }
 
 /** Le salon : contre le robot, créer un duel (un code à partager), rejoindre celui d'un ami */

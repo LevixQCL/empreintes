@@ -342,7 +342,7 @@ export const CLE_LEGS: GesteDef = special('cle-legs', 'Clé de l’Héritage', 1
 CLE_LEGS.effet2 = { type: 'rempart', part: 0.75 };
 
 /** D'où vient chaque carte du paquetage : le bâtiment qui la fournit et ce qu'elle est */
-const NOM_BATIMENT_COMMUNE: Record<BatimentId, string> = { noyau: 'Tour du Noyau', generateur: 'Générateur', forge: 'Forge', clinique: 'Clinique', comptoir: 'Comptoir' };
+const NOM_BATIMENT_COMMUNE: Record<BatimentId, string> = { noyau: 'Tour du Noyau', generateur: 'Générateur', forge: 'Forge', clinique: 'Clinique', comptoir: 'Comptoir', cercle: 'Cercle des quais' };
 export const ORIGINE_PAQUETAGE: Record<string, { batiment: string; texte: string }> = {
   ...Object.fromEntries(CARTES_COMMUNES.map((c) => [c.geste.id, { batiment: NOM_BATIMENT_COMMUNE[c.batiment], texte: c.texte }])),
   'cle-legs': { batiment: 'Héritage du district', texte: 'La dixième vierge de l’ancienne directrice : une clé de nacre qui ouvre toutes les portes, et les tient fermées derrière l’escouade.' },
@@ -381,6 +381,11 @@ export const BATIMENTS: BatimentDef[] = [
   { id: 'comptoir', nom: 'Comptoir', role: 'Les fouilleurs du quartier y revendent chaque jour quelques cartes trouvées dans les Strates. Prix fixes : tu vois toujours ce que tu achètes.', affinite: null,
     couts: [{ energie: 150, composants: 20 }, { energie: 220, composants: 30 }, { energie: 480, composants: 60, eclats: 2 }, { energie: 950, composants: 115, eclats: 5 }, { energie: 1500, composants: 180, eclats: 8 },
       { energie: 2400, composants: 290, eclats: 5 }, { energie: 3800, composants: 450, eclats: 6 }, { energie: 5900, composants: 690, eclats: 8 }, { energie: 9000, composants: 1030, eclats: 10 }], niveauMax: 10 },
+  // 3 novembre 2026 (Bryan) : le bâtiment social, à la place du Labo génétique (mis en réserve). Il commence au niveau 0
+  // et ne se construit qu'après la Strate −2 (CERCLE_OUVERTURE) : amis, vitrines, duels entre directeurs, échanges de cartes.
+  { id: 'cercle', nom: 'Cercle des quais', role: 'Les directeurs des autres districts y accostent : on s’y fait des amis, on s’y défie en duel et on y échange ses cartes en double.', affinite: null,
+    couts: [{ energie: 180, composants: 25 }, { energie: 260, composants: 35 }, { energie: 520, composants: 65, eclats: 2 }, { energie: 1000, composants: 120, eclats: 5 }, { energie: 1600, composants: 190, eclats: 8 },
+      { energie: 2500, composants: 300, eclats: 5 }, { energie: 3900, composants: 460, eclats: 6 }, { energie: 6000, composants: 700, eclats: 8 }, { energie: 9100, composants: 1040, eclats: 10 }, { energie: 13300, composants: 1500, eclats: 12 }], niveauMax: 10 },
 ];
 
 // ---------- Ennemis ----------

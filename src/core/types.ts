@@ -88,7 +88,7 @@ export interface PorteurDef {
   arrivee?: { strate?: number; forge?: number; accord?: boolean; replique: string };
 }
 
-export type BatimentId = 'noyau' | 'generateur' | 'forge' | 'clinique' | 'comptoir';
+export type BatimentId = 'noyau' | 'generateur' | 'forge' | 'clinique' | 'comptoir' | 'cercle';
 
 /** Rareté d'une carte : le métal de son exemplaire, du fer, commun, à la nacre, presque introuvable */
 export type Rarete = 'fer' | 'cuivre' | 'argent' | 'or' | 'nacre';

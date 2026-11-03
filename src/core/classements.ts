@@ -6,7 +6,7 @@
 // Quatre tableaux :
 //   - Profondeur : la Strate la plus profonde (gardien vaincu ou non), départagée par la date où on l'a atteinte ;
 //   - Registre   : la valeur de la collection (métal et niveau de chaque carte, plus chaque carte découverte) ;
-//   - Joutes     : les combats gagnés contre d'autres directeurs (grisé : arrive avec le multijoueur) ;
+//   - Joutes     : les duels gagnés au Cercle des quais contre des amis différents (3 novembre 2026 ; trois par semaine au plus) ;
 //   - La Flèche  : l'ascension de la flèche d'amarrage vers les Hauts, quai par quai (le plus haut quai atteint, puis le premier arrivé).
 // Deux périodes : depuis le début, et la semaine en cours (ce qu'on a gagné depuis lundi), pour qu'un nouveau venu
 // puisse finir premier d'une semaine même face à quelqu'un qui joue depuis un mois.
@@ -24,8 +24,8 @@ export const TABLEAUX: { id: TableauId; nom: string; court: string; ouvert: bool
     texte: 'L’étage le plus profond creusé sous le district. À profondeur égale, le premier arrivé passe devant.' },
   { id: 'registre', nom: 'Registre', court: 'Cartes', ouvert: true,
     texte: 'La valeur de ta collection : le métal et le niveau de chaque carte, et chaque carte découverte.' },
-  { id: 'joutes', nom: 'Joutes', court: 'Duels', ouvert: false,
-    texte: 'Les combats gagnés contre d’autres directeurs. Ouvre avec les combats entre joueurs.' },
+  { id: 'joutes', nom: 'Joutes', court: 'Duels', ouvert: true,
+    texte: 'Les duels gagnés au Cercle des quais contre des amis différents (trois par semaine au plus).' },
   { id: 'fleche', nom: 'La Flèche', court: 'Tour', ouvert: true,
     texte: 'Le plus haut quai atteint sur la Flèche d’amarrage, la seule route légale vers les Hauts. À quai égal, le premier arrivé passe devant.' },
 ];
@@ -94,6 +94,8 @@ export interface Palmares {
   registreDebut: number;
   /** le record de la Flèche au début de la semaine (28 octobre 2026 ; absent dans les anciennes parties : 0) */
   flecheDebut?: number;
+  /** les Joutes au début de la semaine (3 novembre 2026 ; absent : 0) */
+  joutesDebut?: number;
 }
 
 /**
@@ -101,18 +103,18 @@ export interface Palmares {
  * Le score ne redescend jamais : recycler un doublon n'efface pas un record.
  * @returns true si quelque chose a changé (à publier)
  */
-export function noterPalmares(j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares; fleche?: { record: number } }, now: number, semaine: number): boolean {
+export function noterPalmares(j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares; fleche?: { record: number }; cercle?: { joutes?: number } }, now: number, semaine: number): boolean {
   const p = profondeurDe(j);
   const r = valeurRegistre(j.collection).points;
   const avant = j.palmares;
   if (!avant) {
     // première fois (nouvelle partie ou ancienne sauvegarde) : la semaine part d'ici, la date d'arrivée est maintenant
-    j.palmares = { profondeur: p, profondeurLe: now, registre: r, semaine, profondeurDebut: p, registreDebut: r, flecheDebut: j.fleche?.record ?? 0 };
+    j.palmares = { profondeur: p, profondeurLe: now, registre: r, semaine, profondeurDebut: p, registreDebut: r, flecheDebut: j.fleche?.record ?? 0, joutesDebut: j.cercle?.joutes ?? 0 };
     return true;
   }
   let change = false;
   if (avant.semaine !== semaine) {
-    avant.semaine = semaine; avant.profondeurDebut = avant.profondeur; avant.registreDebut = avant.registre; avant.flecheDebut = j.fleche?.record ?? 0; change = true;
+    avant.semaine = semaine; avant.profondeurDebut = avant.profondeur; avant.registreDebut = avant.registre; avant.flecheDebut = j.fleche?.record ?? 0; avant.joutesDebut = j.cercle?.joutes ?? 0; change = true;
   }
   if (p > avant.profondeur) { avant.profondeur = p; avant.profondeurLe = now; change = true; }
   if (r > avant.registre) { avant.registre = r; change = true; }
@@ -140,6 +142,9 @@ export interface Entree {
   fleche: number;
   flecheLe: number;
   flecheSemaine: number;
+  /** les Joutes (3 novembre 2026) : duels gagnés contre des amis différents, et ceux de la semaine (absents des anciennes entrées) */
+  joutes?: number;
+  joutesSemaine?: number;
   /** la distinction affichée à côté du pseudo (parrainage, 29 octobre 2026) : « recruteur », ou absente */
   insigne?: 'recruteur';
   /** dernière publication (ms) */
@@ -198,6 +203,8 @@ export function valeur(e: Entree, t: TableauId, per: Periode, semaine: number): 
   if (t === 'registre') return per === 'total' ? e.registre : e.semaine === semaine ? e.registreSemaine : null;
   // la Flèche : seuls ceux qui y sont montés apparaissent
   if (t === 'fleche') return per === 'total' ? (e.fleche > 1 ? e.fleche : null) : e.semaine === semaine ? e.flecheSemaine : null;
+  // les Joutes : seuls ceux qui ont gagné au moins un duel apparaissent
+  if (t === 'joutes') return per === 'total' ? (e.joutes ? e.joutes : null) : e.semaine === semaine ? (e.joutesSemaine ?? 0) : null;
   return null;
 }
 
@@ -251,6 +258,7 @@ export const demiStrates = (v: number) => `${Math.floor(v / 2) || (v % 2 ? '' : 
 export function texteValeur(t: TableauId, per: Periode, v: number): string {
   if (t === 'profondeur') return per === 'total' ? `−${strateDe(v)}` : `+${demiStrates(v)}`;
   if (t === 'fleche') return per === 'total' ? `Quai ${v}` : `+${v}`;
+  if (t === 'joutes') return per === 'total' ? `${v}` : `+${v}`;
   return (per === 'semaine' ? '+' : '') + Math.round(v).toLocaleString('fr-BE');
 }
 
@@ -260,7 +268,7 @@ export function texteValeur(t: TableauId, per: Periode, v: number): string {
  * et la date d'arrivée n'est « maintenant » que si la profondeur monte, sinon elle reste celle déjà publiée.
  */
 export function entreeAPublier(
-  j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares; escouade?: string[]; fleche?: { record: number; recordLe: number }; parrainage?: { cosmetiques: string[] } },
+  j: { strate: number; frontVaincu: boolean; collection: Record<string, { niveau: number }>; palmares?: Palmares; escouade?: string[]; fleche?: { record: number; recordLe: number }; parrainage?: { cosmetiques: string[] }; cercle?: { joutes?: number } },
   uid: string, nom: string, enLigne: Entree | null, now: number, semaine: number,
 ): Entree | null {
   const pal = j.palmares;
@@ -282,6 +290,9 @@ export function entreeAPublier(
     fleche = Math.min(Math.max(fleche, enLigne.fleche), enLigne.fleche + FLECHE_PAS_MAX);
     flecheLe = fleche > enLigne.fleche ? now : enLigne.flecheLe;
   }
+  // les Joutes : comme la Flèche, jamais plus de JOUTES_PAS_MAX d'un coup (la même borne que firestore.rules)
+  let joutes = j.cercle?.joutes ?? 0;
+  if (enLigne) joutes = Math.min(Math.max(joutes, enLigne.joutes ?? 0), (enLigne.joutes ?? 0) + JOUTES_PAS_MAX);
   return {
     uid, nom: nettoyerNom(nom), cle: clePseudo(nom), porteur: j.escouade?.[0] ?? 'ilka',
     profondeur, profondeurLe, registre, decouvertes: r.decouvertes,
@@ -290,11 +301,14 @@ export function entreeAPublier(
     registreSemaine: memeSemaine ? Math.max(0, Math.min(registre, registre - pal.registreDebut)) : 0,
     fleche, flecheLe: Math.min(flecheLe, now),
     flecheSemaine: memeSemaine ? Math.max(0, Math.min(fleche, fleche - (pal.flecheDebut ?? 0))) : 0,
+    ...(joutes ? { joutes, joutesSemaine: memeSemaine ? Math.max(0, Math.min(joutes, joutes - (pal.joutesDebut ?? 0))) : 0 } : {}),
     ...(j.parrainage?.cosmetiques.includes('recruteur') ? { insigne: 'recruteur' as const } : {}),
     maj: now,
   };
 }
 
+/** Les Joutes qu'une publication peut ajouter : la même borne que firestore.rules */
+export const JOUTES_PAS_MAX = 3;
 /** Les quais de record qu'une publication peut ajouter (le reste suit à la suivante) : la même borne que firestore.rules */
 export const FLECHE_PAS_MAX = 12;
 
@@ -303,7 +317,7 @@ export function aChange(a: Entree, b: Entree | null): boolean {
   if (!b) return true;
   return a.nom !== b.nom || a.cle !== b.cle || a.porteur !== b.porteur || a.profondeur !== b.profondeur || a.registre !== b.registre || a.decouvertes !== b.decouvertes
     || a.semaine !== b.semaine || a.profondeurSemaine !== b.profondeurSemaine || a.registreSemaine !== b.registreSemaine
-    || a.fleche !== b.fleche || a.flecheSemaine !== b.flecheSemaine || (a.insigne ?? '') !== (b.insigne ?? '');
+    || a.fleche !== b.fleche || a.flecheSemaine !== b.flecheSemaine || (a.joutes ?? 0) !== (b.joutes ?? 0) || (a.joutesSemaine ?? 0) !== (b.joutesSemaine ?? 0) || (a.insigne ?? '') !== (b.insigne ?? '');
 }
 
 // ---------- La Flèche (à venir) ----------

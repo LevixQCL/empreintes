@@ -249,22 +249,28 @@ export const palierCuvette = (niveau: number): PalierCuvette => (niveau >= 8 ? '
  *  du fond vers l'avant : c'est l'ordre où ils se posent (un bâtiment plus proche passe devant). */
 /** Un calque de palier : sa boîte (gauche, haut, largeur, hauteur, en pixels du tableau 800 × 1200), les éclats de ses cristaux
  *  (repère 400 × 600) et, au palier haut, la zone cliquable du bâtiment agrandi (repère 400 × 600) */
-type CalqueCuvette = { lieu: string; bas: readonly number[]; haut: readonly number[]; eclats: Record<'bas' | 'haut', readonly (readonly number[])[]>; zoneHaut: string };
+type CalqueCuvette = { lieu: string; bas: readonly number[]; haut: readonly number[]; eclats: Record<'bas' | 'haut', readonly (readonly number[])[]> & { milieu?: readonly (readonly number[])[] }; zoneHaut: string;
+  /** un palier du milieu en calque, quand le tableau montre encore autre chose à cet endroit (le Cercle, à la place du Labo) */
+  milieu?: readonly number[] };
 export const CALQUES_CUVETTE: readonly CalqueCuvette[] = [
   { lieu: 'noyau', bas: [334, 285, 157, 296], haut: [278, 267, 278, 320], eclats: { bas: [[206, 251], [237, 251]], haut: [[215, 151], [202, 153]] }, zoneHaut: '210,136 240,146 270,172 275,258 232,286 202,291 182,287 167,277 141,209 173,146 191,138' },
-  { lieu: 'labo', bas: [567, 446, 156, 177], haut: [565, 408, 159, 225], eclats: { bas: [[316, 267], [317, 257]], haut: [[311, 224]] }, zoneHaut: '351,308 330,316 288,312 286,240 300,209 318,207 349,221 358,238 362,300' },
+  // le Cercle des quais (3 novembre 2026) : ses trois paliers sont des calques, le milieu compris (le tableau montre encore l'ancien Labo)
+  { lieu: 'cercle', bas: [567, 446, 156, 184], milieu: [562, 446, 166, 182], haut: [543, 405, 204, 226], eclats: { bas: [[341, 294], [301, 297]], milieu: [[318, 261], [327, 260]], haut: [[323, 212], [320, 291]] }, zoneHaut: '371,214 371,290 361,302 349,309 327,313 302,311 285,303 274,290 274,214 321,205' },
   { lieu: 'forge', bas: [134, 376, 158, 265], haut: [128, 350, 204, 302], eclats: { bas: [[98, 280], [92, 309]], haut: [[124, 296], [122, 304]] }, zoneHaut: '163,202 144,311 134,318 115,323 74,318 68,305 68,257 79,183 99,179' },
   { lieu: 'clinique', bas: [118, 634, 168, 145], haut: [111, 556, 187, 228], eclats: { bas: [[124, 367]], haut: [[78, 301], [83, 367]] }, zoneHaut: '148,386 104,398 62,392 60,326 73,282 85,281 141,315 146,330' },
   { lieu: 'comptoir', bas: [454, 611, 198, 226], haut: [455, 567, 213, 270], eclats: { bas: [[289, 399], [300, 393]], haut: [[280, 406], [280, 366]] }, zoneHaut: '329,287 331,314 316,402 280,420 240,410 231,309 263,287' },
   { lieu: 'generateur', bas: [244, 650, 199, 226], haut: [235, 587, 221, 289], eclats: { bas: [[176, 357], [201, 386]], haut: [[178, 318], [174, 347]] }, zoneHaut: '216,420 176,438 140,430 121,396 125,324 171,297 189,299 224,385 224,398' },
   { lieu: 'port', bas: [591, 1020, 245, 143], haut: [590, 953, 249, 210], eclats: { bas: [[335, 515], [311, 549]], haut: [[321, 494], [313, 554]] }, zoneHaut: '400,588 300,590 296,520 299,504 310,481 327,480 400,520' },
 ];
-export const calquePalier = (lieu: string, p: 'bas' | 'haut', lueur = false) => `${base}district/paliers/${lieu}-${p}${lueur ? '-lueur' : ''}.webp`;
+/** Le Cercle des quais a pris la place du Labo (3 novembre 2026) : tant que ses paliers ne sont pas peints, il garde ceux du Labo */
+export const CERCLE_PEINT = true;
+const fichierLieu = (lieu: string) => (lieu === 'cercle' && !CERCLE_PEINT ? 'labo' : lieu);
+export const calquePalier = (lieu: string, p: PalierCuvette, lueur = false) => `${base}district/paliers/${fichierLieu(lieu)}-${p}${lueur ? '-lueur' : ''}.webp`;
 /** Le haut de la cheminée de la Forge à chaque palier (repère 400 × 600) : la fumée en sort */
 export const FUMEE_FORGE: Record<PalierCuvette, [number, number]> = { bas: [96, 236], milieu: [90, 196], haut: [95, 187] };
 const unSeulVisuel = () => CUVETTE && !PALIERS_PEINTS;
 export const illustrationBatiment = (id: BatimentId, niveau: number) =>
-  unSeulVisuel() ? `${base}batiments/${id}.webp` : `${base}batiments/${id}-${visuel(niveau)}.webp`;
+  unSeulVisuel() ? `${base}batiments/${fichierLieu(id)}.webp` : `${base}batiments/${fichierLieu(id)}-${visuel(niveau)}.webp`;
 
 /** Niveau où le bâtiment change d'apparence la prochaine fois (null au légendaire). Pour la Tour, c'est aussi l'âge du district. */
 export function prochainVisuel(niveau: number): number | null {

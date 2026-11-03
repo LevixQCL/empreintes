@@ -204,6 +204,7 @@ function ligne(x: { e: Entree; v: number; rang: number }, uid: string | null, t:
   const e = x.e;
   const sous = t === 'profondeur'
     ? (per === 'total' ? `${echap(zoneProfondeur(e.profondeur).replace(/^(Les|Le|La) /, ''))}${gardienVaincu(e.profondeur) ? ' · gardien vaincu' : ''}` : `Strate −${strateDe(e.profondeur)} atteinte`)
+    : t === 'joutes' ? 'duels gagnés au Cercle des quais'
     : `${e.decouvertes} cartes découvertes`;
   const inactif = now - e.maj > 7 * 86_400_000;
   return `<li class="gt-ligne${e.uid === uid ? ' moi' : ''}${inactif ? ' inactif' : ''}"><span class="gt-num">${x.rang}</span>${avatar(connuPorteur(e.porteur), 40)}`
@@ -213,6 +214,10 @@ function ligne(x: { e: Entree; v: number; rang: number }, uid: string | null, t:
 
 /** Comment chaque tableau se calcule : les vrais chiffres du jeu */
 function regles(t: TableauId): string {
+  if (t === 'joutes') {
+    return `<div class="gt-regles"><p>Les duels gagnés au Cercle des quais contre tes amis. Chaque ami compte une fois par semaine, et trois amis différents au plus : on ne monte pas en jouant toujours contre le même.</p>`
+      + `<p>La semaine compte les Joutes gagnées depuis lundi.</p><button type="button" class="btn sec" data-action="cercle">${ICO.cercle}Aller au Cercle</button></div>`;
+  }
   if (t === 'fleche') {
     return `<div class="gt-regles"><p>Le plus haut quai que ton escouade a atteint sur la Flèche (${FLECHE.quais} quais). Une défaite te fait redescendre, mais ton record ne bouge pas.</p>`
       + `<p>À quai égal, le premier arrivé passe devant : la date est enregistrée au moment où tu atteins ton record.</p>`

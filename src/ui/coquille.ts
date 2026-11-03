@@ -8,7 +8,7 @@ import { COLLECTION, doublonsRequis, multNiveau } from '../core/collection';
 import { vestigeDef } from '../core/explorer';
 import { faceCarte } from './carte';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
-import { MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, coutPompe, nomConfiance, pompesRestantes, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
+import { CERCLE_OUVERTURE, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, coutPompe, nomConfiance, pompesRestantes, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { miniature, portrait } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
@@ -18,7 +18,7 @@ import { cristalAllume, cristalRail, entreeFiche, feuilleFiche } from './fiche';
 import { COULEUR, panneauCompte, type Compte } from './vue';
 import { echap, virgule } from './outils';
 
-export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages' | 'fleche' | 'recruter';
+export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages' | 'fleche' | 'recruter' | 'cercle';
 /** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */
 export type Filtre = 'tout' | Lignee | 'monter' | 'libres';
 
@@ -34,7 +34,9 @@ export interface EcranDistrict {
   /** la feuille « Protège ta partie », proposée aux paliers tant que la partie n'est reliée à aucun compte */
   rappel?: boolean;
   vue: Vue;
-  selection: import('../core/types').BatimentId | 'port' | 'labo' | null;
+  selection: import('../core/types').BatimentId | 'port' | null;
+  /** le Cercle des quais (3 novembre 2026) : ce qui vient du réseau et l'état de son écran (src/app/cercle.ts) */
+  cercle?: import('./cercle').CercleEcran;
   escouade: string[];
   strateChoisie: number;
   message: string;
@@ -556,7 +558,9 @@ export function menu(e: EcranDistrict): string {
     + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">EMPREINTES · ALPHA</span><h2>Menu</h2></div>`
     + `<button type="button" class="btn-icone" data-action="menu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   h += entreeFiche(e) + `<div class="liste-menu">`
-    + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>Le Grand Tableau</strong><small>Les classements des directeurs : profondeur, Registre, et bientôt les Joutes et la Flèche</small></span></button>`
+    + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>Le Grand Tableau</strong><small>Les classements des directeurs : profondeur, Registre, Joutes et Flèche</small></span></button>`
+    // le Cercle des quais (3 novembre 2026) : un raccourci, une fois la Strate −2 vaincue (le bâtiment reste sur la Cuvette)
+    + (c.actif && strateVaincue(e.j) >= CERCLE_OUVERTURE ? `<button type="button" class="ligne-menu cr-menu" data-action="${e.j.batiments.cercle ? 'cercle' : 'cercle-batiment'}">${ICO.cercle}<span><strong>Le Cercle des quais</strong><small>${e.j.batiments.cercle ? 'Tes amis, les duels entre directeurs et les échanges de cartes' : 'À construire : amis, duels et échanges de cartes'}</small></span>${e.cercle?.aRepondre ? `<span class="pastille-n">${e.cercle.aRepondre}</span>` : ''}</button>` : '')
     + (c.actif ? `<button type="button" class="ligne-menu rc-menu" data-action="recruter">${ICO.porteurs}<span><strong>Recruter des amis</strong><small>Ton code de parrainage : vous êtes récompensés tous les deux quand ton ami joue</small></span></button>` : '')
     + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur?.anonyme ? 'Protège ta partie : relie-la à Google ou à un e-mail' : c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : ' · choisis ton pseudo'}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
     + (e.j.chambre ? `<button type="button" class="ligne-menu" data-action="accueil">${icone('district')}<span><strong>Comment marche le district</strong><small>Les ressources, l’escouade et le but : creuser plus bas</small></span></button>` : '')

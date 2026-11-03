@@ -5,7 +5,7 @@ import { batimentDef, porteurDef, PORTEURS } from '../donnees';
 import { PLACES_PORTEUR, chargeNiveau, poidsCarte, type CarteCollection } from '../collection';
 import type { Expedition } from '../expedition';
 import type { Palmares } from '../classements';
-import type { BatimentId, GesteDef, BonusMarques } from '../types';
+import type { BatimentId, GesteDef, BonusMarques, Rarete } from '../types';
 
 export const VERSION_JEU = 7;
 
@@ -62,7 +62,7 @@ export const debutJour = (jour: number) => EPOQUE + jour * 86_400_000;
 export const lundiSuivant = (now: number) => EPOQUE + (semaineDe(now) + 1) * 7 * 86_400_000;
 
 /** Les postes du district : les trois bâtiments qui produisent (POSTES), et l'entraînement à la Tour du Noyau */
-export type Poste = Exclude<BatimentId, 'comptoir'>;
+export type Poste = Exclude<BatimentId, 'comptoir' | 'cercle'>;
 export const POSTES: Exclude<Poste, 'noyau'>[] = ['generateur', 'forge', 'clinique'];
 
 export interface PorteurDistrict {
@@ -406,6 +406,8 @@ export interface Jeu {
   palmares?: Palmares;
   /** le parrainage (29 octobre 2026, parrainage.ts) : son code, son parrain, les récompenses reçues ; absent avant le premier usage */
   parrainage?: import('./parrainage').EtatParrainage;
+  /** le Cercle des quais (3 novembre 2026, cercle.ts) : souhaits, vitrine, échanges du jour et en attente, duels de la semaine */
+  cercle?: import('./cercle').EtatCercle;
   /** le nom de directeur choisi pour le Grand Tableau, et si on y apparaît (jamais l'e-mail du compte) */
   directeur?: { nom: string; public: boolean; /** dernier changement de pseudo (ms) : un par semaine au plus */ change?: number };
 }
@@ -427,6 +429,35 @@ export interface Resultat {
 }
 
 export const non = (message: string): Resultat => ({ ok: false, message });
+
+/** Le Cercle des quais (3 novembre 2026) se construit une fois la Strate −2 vaincue (le reste : partie/cercle.ts) */
+export const CERCLE_OUVERTURE = 2;
+/**
+ * Les réglages du Cercle (index = niveau du bâtiment, 0 = pas encore construit). Leçons des autres jeux (3 novembre 2026) :
+ * échanges seulement entre amis, de même métal, sans monnaie à part (Pokémon TCG Pocket a dû retirer la sienne) ;
+ * duels entre amis sans butin par duel (Marvel Snap : on choisit son adversaire, donc on pourrait s'arranger).
+ */
+export const CERCLE = {
+  /** échanges conclus par jour */
+  echangesJour: [0, 2, 3, 3, 4, 4, 5, 6, 7, 7, 8],
+  /** propositions envoyées qui attendent une réponse en même temps */
+  ouvertes: [0, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4],
+  /** cartes exposées dans la vitrine */
+  vitrine: [0, 1, 1, 2, 2, 2, 3, 3, 3, 3, 3],
+  /** le métal le plus rare qu'on peut échanger : l'argent dès le niveau 1, l'or au niveau 5 ; la nacre, jamais */
+  orAuNiveau: 5,
+  /** ce que coûte un échange, à chacun des deux directeurs (en composants) */
+  cout: { fer: 0, cuivre: 0, argent: 40, or: 150, nacre: 0 } as Record<Rarete, number>,
+  /** une amitié doit avoir quelques jours avant le premier échange (contre les comptes créés pour se donner des cartes) */
+  amitieJours: 3,
+  /** une proposition sans réponse revient à son auteur au bout de 48 h */
+  propositionHeures: 48,
+  /** souhaits au plus */
+  souhaitsMax: 30,
+  /** chaque semaine, les premières victoires en duel contre des amis différents rapportent (jamais deux fois le même ami) */
+  duelsSemaine: 3,
+  recompenseDuel: { composants: 60, eclats: 1 },
+} as const;
 
 export const typeDuJour = (jour: number): TypeQuotidien => (['combats', 'expedition', 'chantier'] as const)[((jour % 3) + 3) % 3]!;
 

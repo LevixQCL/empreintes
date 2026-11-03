@@ -5,7 +5,7 @@ import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, mod
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
-import { CONFIANCE, coutPompe, confier, nuitDesLignes, pompesRestantes, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
+import { CERCLE, CERCLE_OUVERTURE, CONFIANCE, coutPompe, confier, nuitDesLignes, pompesRestantes, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
 import { ORDRE_FAMILLES, fragmentDef } from '../fragments';
 
@@ -82,7 +82,7 @@ export const chantiersMax = (j: Jeu) => (j.batiments.noyau >= DISTRICT.chantiers
 
 /** Une chose que le niveau suivant d'un bâtiment change : un chiffre qui monte (avant → après) ou un déblocage */
 export interface GainNiveau {
-  quoi: 'energie' | 'soin' | 'stockage' | 'creuseurs' | 'strate' | 'forge' | 'plafond' | 'chantiers' | 'porteur' | 'entrainement' | 'offres' | 'argent' | 'places' | 'barques' | 'commune';
+  quoi: 'energie' | 'soin' | 'stockage' | 'creuseurs' | 'strate' | 'forge' | 'plafond' | 'chantiers' | 'porteur' | 'entrainement' | 'offres' | 'argent' | 'places' | 'barques' | 'commune' | 'cercle' | 'echanges' | 'ouvertes' | 'vitrine' | 'or';
   texte: string;
   avant?: number;
   apres?: number;
@@ -126,6 +126,14 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
     g.push({ quoi: 'offres', texte: 'Cartes en vente chaque jour', avant: etalsDuComptoir(j).length, apres: etalsDuComptoir(apres).length });
     const argent = (x: Jeu) => (COMPTOIR.etals[x.batiments.comptoir] ?? []).includes('argent');
     if (argent(apres) && !argent(j)) g.push({ quoi: 'argent', texte: 'Des cartes en argent', ...(strateVaincue(j) < COMPTOIR.strateArgent ? { detail: `une fois la Strate −${COMPTOIR.strateArgent} vaincue` } : {}) });
+  }
+  if (b === 'cercle') {
+    const t = (k: 'echangesJour' | 'ouvertes' | 'vitrine', x: Jeu) => CERCLE[k][Math.min(10, x.batiments.cercle ?? 0)] ?? 0;
+    if (!niv) g.push({ quoi: 'cercle', texte: 'Ouvre les amis, les duels et les échanges', detail: 'les directeurs des autres districts accostent' });
+    if (t('echangesJour', apres) > t('echangesJour', j)) g.push({ quoi: 'echanges', texte: 'Échanges par jour', avant: t('echangesJour', j), apres: t('echangesJour', apres) });
+    if (t('ouvertes', apres) > t('ouvertes', j)) g.push({ quoi: 'ouvertes', texte: 'Propositions en attente', avant: t('ouvertes', j), apres: t('ouvertes', apres) });
+    if (t('vitrine', apres) > t('vitrine', j)) g.push({ quoi: 'vitrine', texte: 'Cartes en vitrine', avant: t('vitrine', j), apres: t('vitrine', apres) });
+    if (niv + 1 === CERCLE.orAuNiveau) g.push({ quoi: 'or', texte: 'Les cartes en or s’échangent', detail: 'la nacre, jamais' });
   }
   if (b === 'noyau') {
     g.push({ quoi: 'stockage', texte: 'Stockage d’énergie', avant: stockage(j), apres: stockage(apres) });
@@ -188,6 +196,7 @@ export function ameliorer(j: Jeu, b: BatimentId, now = j.dernierTick): Resultat 
   const cout = coutAmelioration(j, b);
   if (!cout) return non('Niveau maximum atteint.');
   if (chantierDe(j, b)) return non('Un chantier est déjà en cours sur ce bâtiment.');
+  if (b === 'cercle' && strateVaincue(j) < CERCLE_OUVERTURE) return non(`Aucun directeur n’accoste avant que la Strate −${CERCLE_OUVERTURE} soit vaincue.`);
   if (b !== 'noyau' && j.batiments[b] >= j.batiments.noyau) return non('Améliore d’abord la Tour du Noyau.');
   if (b === 'noyau' && j.chantiers.length) return non('Termine d’abord les chantiers en cours avant d’agrandir la Tour du Noyau.');
   if (j.chantiers.length >= chantiersMax(j)) return non(chantiersMax(j) === 1 ? 'Un seul chantier à la fois pour l’instant (deux au Noyau niveau 4).' : 'Deux chantiers sont déjà en cours.');

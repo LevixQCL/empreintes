@@ -17,6 +17,11 @@ export const ICO = {
   // la Flèche d'amarrage : une aiguille effilée, ses quais en traverses, le cristal du sommet (28 octobre 2026)
   fleche: svg('<path d="M12 2l1.4 3h-2.8z"/><path d="M10.6 5h2.8l1.6 16H9z"/><path d="M8 9h8M7 13.5h10M6 18h12"/><path d="M4 21h16"/>'),
   plus: svg('<circle cx="6" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18" cy="12" r="1.4"/>'),
+  // le Cercle des quais (3 novembre 2026) : un pavillon ouvert sur son estrade ronde ; un échange (deux flèches) ; ajouter un ami
+  cercle: svg('<ellipse cx="12" cy="18" rx="8.5" ry="2.6"/><path d="M3.5 10L12 4l8.5 6z"/><path d="M6.5 10.5v6.5M12 10.5v7M17.5 10.5v6.5"/>'),
+  ajouter: svg('<path d="M12 5v14M5 12h14"/>'),
+  echange: svg('<path d="M4 8.5h14l-3.5-3.5"/><path d="M20 15.5H6l3.5 3.5"/>'),
+  ami: svg('<circle cx="9" cy="8" r="3.3"/><path d="M3 20c.7-3.5 3-5.6 6-5.6s5.3 2.1 6 5.6"/><path d="M18.5 7.5v6M15.5 10.5h6"/>'),
   // ressources
   energie: svg('<path d="M13 2 5 13h6l-1 9 8-11h-6z"/>'),
   composants: svg('<path d="M12 3l7.8 4.5v9L12 21l-7.8-4.5v-9z"/><circle cx="12" cy="12" r="3"/>'),

@@ -101,7 +101,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     version: VERSION_JEU,
     energie: DISTRICT.depart.energie,
     composants: DISTRICT.depart.composants,
-    batiments: { noyau: 1, generateur: 1, forge: 1, clinique: 1, comptoir: 0 },
+    batiments: { noyau: 1, generateur: 1, forge: 1, clinique: 1, comptoir: 0, cercle: 0 },
     porteurs,
     forge: null,
     strate: 1,
@@ -212,6 +212,7 @@ function migrer(j: Jeu) {
   j.epreuves ??= { semaine: semaineDe(j.dernierTick), faites: [] };
   // sauvegarde d'avant le Comptoir (23 octobre 2026) : il reste à construire
   j.batiments.comptoir ??= 0;
+  j.batiments.cercle ??= 0;
   j.comptoir ??= comptoirVide(j.dernierTick, j.rng ?? graine());
   // sauvegarde d'avant les séances d'entraînement (28 octobre 2026) : le Porteur posté finit son niveau en cours, offert
   accorderSeance(j);
