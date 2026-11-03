@@ -1,16 +1,16 @@
 # Rapport du robot d'équilibrage
 
-2026-10-27 · 300 expéditions par mesure · 2468 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
+2026-11-03 · 300 expéditions par mesure · 10192 s de calcul. Le robot joue bien (il essaie toutes les chaînes possibles à chaque tour) : un vrai joueur gagne moins souvent, mais les écarts entre cartes restent parlants.
 
 ## Le deck de départ selon la profondeur
 
 | Strate | Victoire |
 |---|---|
 | −1 | 100 % |
-| −2 | 80 % |
-| −3 | 13 % |
+| −2 | 91 % |
+| −3 | 16 % |
 
-Mesure des cartes : une Strate −3 entière en exploration, ennemis ×0.88 (le deck de départ y gagne 48 % des descentes ; ancienne Strate de référence en mode linéaire : −2).
+Mesure des cartes : une Strate −3 entière en exploration, ennemis ×0.91 (le deck de départ y gagne 47 % des descentes ; ancienne Strate de référence en mode linéaire : −3).
 
 ## Ce que vaut chaque carte
 
@@ -19,80 +19,110 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Carte | Rareté | Effets | À la découverte | Au niveau 10 | Alerte |
 |---|---|---|---|---|---|
 | Jambes à ressort | Fer | Élan | +0 | +0 |  |
-| Gant à arc | Fer | Surcharge | +3 | −1 |  |
-| Œil-relais | Fer | Perçant | −1 | +1 |  |
-| Grappin à câble | Fer | Élan | −2 | −1 |  |
-| Cœur-turbine | Cuivre | Surcharge | +2 | +3 |  |
-| Œil-brouilleur | Cuivre | Désarmer | +3 | +5 |  |
-| Bras-grue | Argent | Perçant | +13 | +3 |  |
-| Dorsale renforcée | Argent | Élan | +9 | +5 |  |
-| Lames orbitales | Or | Crescendo | +2 | +2 | trop faible |
-| Cœur de reprise | Or | Perçant | +21 | +5 |  |
+| Gant à arc | Fer | Surcharge | +3 | +0 |  |
+| Œil-relais | Fer | Perçant | +10 | +0 | TROP FORTE |
+| Grappin à câble | Fer | Élan | −3 | +0 |  |
+| Cœur-turbine | Cuivre | Élan | +18 | −1 | TROP FORTE |
+| Œil-brouilleur | Cuivre | Troubler | +10 | +0 |  |
+| Bras-grue | Argent | Perçant | +7 | +0 | trop faible |
+| Dorsale renforcée | Argent | Élan | +17 | +0 |  |
+| Lames orbitales | Or | Crescendo | +13 | −1 | trop faible |
+| Cœur de reprise | Or | Perçant | +22 | +0 |  |
 | Glande d’ambre | Fer | Vague | +0 | +0 |  |
-| Crocs fossiles | Fer | Siphon | −7 | −2 |  |
-| Cuir de récif | Fer | Rempart | −5 | −1 |  |
-| Yeux nocturnes | Fer | Fissure | +4 | +3 |  |
-| Poumons d’abysse | Cuivre | Rempart | +3 | +3 |  |
-| Branchies des Fondations | Cuivre | Rempart | +5 | +3 |  |
-| Carapace-mère | Argent | Rempart | +11 | +4 |  |
-| Sang d’ambre | Argent | Vague | +5 | +5 |  |
-| Cœur de meute | Or | Siphon | +21 | +4 |  |
-| Mue totale | Or | Vague | +30 | +6 |  |
-| Éclat qui chante | Fer | Crescendo | +0 | +0 |  |
-| Miroir de brume | Fer | Désarmer | +3 | +2 |  |
-| Encre ancienne | Fer | Fissure | −1 | +3 |  |
-| Mèche d’or | Fer | Désarmer | +1 | +4 |  |
-| Plume de givre | Cuivre | Désarmer | +15 | +3 | TROP FORTE |
-| Ombre de serpent | Cuivre | Fissure | +11 | +4 |  |
-| Ombre ailée | Argent | Fissure | +9 | −1 |  |
-| Pressentiment | Argent | Désarmer | +13 | +5 |  |
-| Chant des abysses | Or | Accord | +33 | +6 | TROP FORTE |
-| Souffle du wyrm | Or | Crescendo | +29 | +5 |  |
-| Bobine de récupération | Fer | Surcharge | +5 | +1 |  |
-| Condensateur | Cuivre | Surcharge | +1 | +1 |  |
-| Décharge d’arc | Cuivre | Décharge | +1 | −1 |  |
-| Éclair captif | Argent | Décharge | +9 | +1 |  |
-| Noyau instable | Or | Décharge | +25 | +1 |  |
-| Coup d’épaule | Fer | Riposte | +0 | +3 |  |
-| Queue-massue | Cuivre | Riposte | +11 | −1 |  |
-| Bélier d’os | Argent | Riposte | +26 | +5 | TROP FORTE |
-| Retour de marée | Or | Riposte | +23 | +5 |  |
-| Diapason de cristal | Fer | Diapason | −4 | −1 |  |
-| Voix basse | Fer | Unisson | −2 | +1 |  |
-| Chorale des ombres | Cuivre | Unisson | +9 | +1 |  |
-| Cloche des abysses | Argent | Diapason | +7 | +4 |  |
-| Grand unisson | Or | Unisson | +21 | +3 |  |
-| Foulée de la directrice | Nacre | Élan | +23 | +5 | trop faible |
-| Bras de la Fonderie | Nacre | Perçant | +34 | +4 |  |
-| Cœur de la Glacière | Nacre | Décharge | +37 | +7 | TROP FORTE |
-| Carapace des Fondations | Nacre | Rempart | +38 | +6 | TROP FORTE |
-| Œil de la Grande Nuit | Nacre | Fissure | +43 | +5 | TROP FORTE |
-| Première mue | Nacre | Vague | +27 | +7 |  |
-| Lanterne de la première Lecture | Nacre | Accord | +37 | +6 | TROP FORTE |
-| Sceau volé aux Orsève | Nacre | Désarmer | +31 | +5 |  |
-| Voix du quartier | Nacre | Diapason | +27 | +2 |  |
+| Crocs fossiles | Fer | Siphon | −1 | +0 |  |
+| Cuir de récif | Fer | Riposte | +5 | −1 |  |
+| Yeux nocturnes | Fer | Fissure | −3 | +0 |  |
+| Poumons d’abysse | Cuivre | Rempart | +26 | +0 | TROP FORTE |
+| Branchies des Fondations | Cuivre | Vague | +9 | +0 |  |
+| Carapace-mère | Argent | Rempart | +19 | +0 |  |
+| Sang d’ambre | Argent | Vague | +17 | +0 |  |
+| Cœur de meute | Or | Siphon | +7 | +0 | trop faible |
+| Mue totale | Or | Vague | +27 | +0 |  |
+| Éclat qui chante | Fer | Diapason | +0 | +0 |  |
+| Miroir de brume | Fer | Amorce | −4 | +0 |  |
+| Encre ancienne | Fer | Fissure | +1 | +0 |  |
+| Mèche d’or | Fer | Lecture | +0 | +0 |  |
+| Plume de givre | Cuivre | Troubler | +11 | +0 |  |
+| Ombre de serpent | Cuivre | Fissure | +2 | +0 | trop faible |
+| Ombre ailée | Argent | Fissure | +8 | +0 |  |
+| Sablier inversé | Argent | Sourdine | +12 | +0 |  |
+| Chant des abysses | Or | Accord | +33 | +0 | TROP FORTE |
+| Souffle du wyrm | Or | Crescendo | +26 | +0 |  |
+| Bobine de récupération | Fer | Surcharge | −6 | +0 |  |
+| Condensateur | Cuivre | Surcharge | +12 | +0 |  |
+| Décharge d’arc | Cuivre | Décharge | +11 | −1 |  |
+| Éclair captif | Argent | Décharge | +19 | +0 |  |
+| Noyau instable | Or | Décharge | +29 | +0 |  |
+| Épaulière de roche | Fer | Riposte | +3 | −1 |  |
+| Queue-massue | Cuivre | Riposte | +14 | +0 |  |
+| Bélier d’os | Argent | Riposte | +28 | +0 | TROP FORTE |
+| Coquille de marée | Or | Riposte | +28 | +0 |  |
+| Diapason de cristal | Fer | Diapason | −5 | +0 |  |
+| Voix basse | Fer | Unisson | −1 | +0 |  |
+| Chorale des ombres | Cuivre | Unisson | +3 | +0 | trop faible |
+| Cloche des abysses | Argent | Diapason | −1 | −1 | trop faible |
+| Grand unisson | Or | Unisson | +23 | +0 |  |
+| Flair | Fer | Fissure | +11 | +0 | TROP FORTE |
+| Bond du prédateur | Fer | Curée | −1 | +0 |  |
+| Crocs de verre | Cuivre | Curée | +7 | −1 |  |
+| Chasse à l’aveugle | Argent | Curée | +18 | −1 |  |
+| Hallali | Or | Curée | +23 | +0 |  |
+| Regard en biais | Fer | Lecture | −1 | −1 |  |
+| Lame de doute | Fer | Faille | +3 | +0 |  |
+| Œil du Lecteur | Cuivre | Lecture | +0 | +0 | trop faible |
+| Verdict | Argent | Faille | +25 | +0 | TROP FORTE |
+| Sentence muette | Or | Faille | +31 | +0 | TROP FORTE |
+| Pollen d’ambre | Fer | Débord | +5 | +0 |  |
+| Sève des piliers | Cuivre | Débord | +16 | +0 |  |
+| Mue de verre | Argent | Débord | +27 | +0 | TROP FORTE |
+| Floraison des Fondations | Or | Débord | +29 | +0 |  |
+| Pas chassé | Fer | Élan | +0 | +0 |  |
+| Lames jumelles | Fer | Rafale | +3 | +0 |  |
+| Poings-pistons | Cuivre | Rafale | +10 | +0 |  |
+| Mitraille de clous | Argent | Rafale | +19 | +0 |  |
+| Cadence folle | Or | Rafale | +28 | +0 |  |
+| Gantelet-pillard | Argent | Rapt | +13 | +0 |  |
+| Mâchoire-miroir | Argent | Empreinte | +5 | −1 | trop faible |
+| Boucle de mémoire | Argent | Rappel | −11 | +0 | trop faible |
+| Cœur en surrégime | Or | Surtension | +21 | +0 |  |
+| Peau de l’Ancêtre | Or | Rapt | +17 | −1 |  |
+| Miroir des Hauts | Or | Empreinte | +23 | +0 |  |
+| Cœur d’étoile | Nacre | Surtension | +31 | −1 | TROP FORTE |
+| Seconde naissance | Nacre | Relève | +19 | +0 | trop faible |
+| Empreinte vive | Nacre | Empreinte | +33 | +0 | TROP FORTE |
+| Silence d’avant | Nacre | Rappel | +0 | −1 | trop faible |
+| Foulée de la directrice | Nacre | Élan | +38 | +0 | TROP FORTE |
+| Bras de la Fonderie | Nacre | Perçant | +24 | +0 |  |
+| Cœur de la Glacière | Nacre | Décharge | +24 | +0 |  |
+| Carapace des Fondations | Nacre | Rempart | +37 | +0 | TROP FORTE |
+| Œil de la Grande Nuit | Nacre | Fissure | +17 | −1 | trop faible |
+| Première mue | Nacre | Vague | +21 | +0 |  |
+| Lanterne de la première Lecture | Nacre | Accord | +34 | +0 | TROP FORTE |
+| Sceau volé aux Orsève | Nacre | Troubler | +32 | +0 | TROP FORTE |
+| Voix du quartier | Nacre | Diapason | +26 | +0 |  |
+| Empreinte jumelle | Cuivre | Accord | +23 | +0 | TROP FORTE |
 
-Moyenne par rareté, à la découverte : Fer −0 · Cuivre +6 · Argent +11 · Or +23 · Nacre +33. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
+Moyenne par rareté, à la découverte : Fer +1 · Cuivre +11 · Argent +14 · Or +24 · Nacre +26. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
 
 
 ## Une Strate entière avec le deck de départ
 
-La descente salle par salle jusqu'au gardien, avec les 20 cartes de départ, sans aucune progression. Le robot essaie toutes les chaînes ; le joueur moyen regarde seulement ce qui est affiché (force, suite, attaque annoncée). Force des ennemis : −1 ×1, −2 ×1.39, −3 ×1.818, −4 ×2.139, −5 ×2.46, −6 ×2.781, −7 ×2.888, −8 ×3.016, −9 ×3.102, −10 ×3.262, −11 ×3.475, −12 ×3.743, −13 ×3.936, −14 ×4.064, puis ×1.04 par Strate.
+La descente salle par salle jusqu'au gardien, avec les 20 cartes de départ, sans aucune progression. Le robot essaie toutes les chaînes ; le joueur moyen regarde seulement ce qui est affiché (force, suite, attaque annoncée). Force des ennemis : −1 ×0.85, −2 ×1.39, −3 ×1.818, −4 ×2.139, −5 ×2.46, −6 ×2.781, −7 ×2.9, −8 ×3.05, −9 ×3.2, −10 ×3.38, −11 ×3.6, −12 ×3.85, −13 ×4.05, −14 ×4.2, puis ×1.04 par Strate.
 
 | Strate | Force | Robot | Joueur moyen | Combats gagnés (moyen) |
 |---|---|---|---|---|
-| −1 | ×1.00 | 100 % | 100 % | 5.8 |
-| −2 | ×1.39 | 80 % | 70 % | 5.5 |
-| −3 | ×1.82 | 16 % | 2 % | 4.4 |
-| −4 | ×2.14 | 0 % | 0 % | 2.1 |
+| −1 | ×0.85 | 100 % | 100 % | 5.9 |
+| −2 | ×1.39 | 89 % | 65 % | 5.5 |
+| −3 | ×1.82 | 12 % | 2 % | 4.8 |
+| −4 | ×2.14 | 0 % | 0 % | 2.2 |
 | −5 | ×2.46 | 0 % | 0 % | 1.2 |
-| −6 | ×2.78 | 0 % | 0 % | 0.5 |
-| −7 | ×2.89 | 0 % | 0 % | 0.3 |
-| −8 | ×3.02 | 0 % | 0 % | 0.3 |
-| −9 | ×3.10 | 0 % | 0 % | 0.2 |
-| −10 | ×3.26 | 0 % | 0 % | 0.2 |
-| −11 | ×3.48 | 0 % | 0 % | 0.1 |
-| −12 | ×3.74 | 0 % | 0 % | 0.0 |
+| −6 | ×2.78 | 0 % | 0 % | 0.7 |
+| −7 | ×2.90 | 0 % | 0 % | 0.3 |
+| −8 | ×3.05 | 0 % | 0 % | 0.2 |
+| −9 | ×3.20 | 0 % | 0 % | 0.2 |
+| −10 | ×3.38 | 0 % | 0 % | 0.1 |
+| −11 | ×3.60 | 0 % | 0 % | 0.0 |
+| −12 | ×3.85 | 0 % | 0 % | 0.0 |
 
 ## Le parcours d'un joueur
 
@@ -101,16 +131,18 @@ Une partie entière, jouée par le joueur moyen pendant 45 jours sur 12 parties 
 | Strate | Occasionnel (2 expéditions par jour) | Assidu (5 expéditions par jour) |
 |---|---|---|
 | −2 | jour 1 (1 exp.) | jour 1 (1 exp.) |
-| −3 | jour 3 (4 exp.) | jour 2 (6 exp.) |
-| −4 | jour 4 (3 exp.) | jour 3 (3 exp.) |
-| −5 | jour 8 (6 exp.) | jour 5 (5 exp.) |
-| −6 | jour 12 (11 exp.) | jour 7 (12 exp.) |
-| −7 | jour 15 (8 exp.) | jour 10 (11 exp.) |
-| −8 | jour 20 (8 exp.) | jour 13 (15 exp.) |
-| −9 | jour 24 (10 exp.) | jour 17 (22 exp.) |
-| −10 | jour 32 (15 exp.) | jour 23 (25 exp.) |
-| −11 | jour 41 (16 exp.) | jour 29 (35 exp.) |
-| −12 | — | jour 36 (30 exp.) |
-| −13 | — | jour 43 (40 exp.) |
+| −3 | jour 3 (4 exp.) | jour 2 (4 exp.) |
+| −4 | jour 5 (3 exp.) | jour 3 (5 exp.) |
+| −5 | jour 7 (4 exp.) | jour 4 (8 exp.) |
+| −6 | jour 9 (6 exp.) | jour 7 (11 exp.) |
+| −7 | jour 14 (8 exp.) | jour 8 (6 exp.) |
+| −8 | jour 19 (12 exp.) | jour 10 (14 exp.) |
+| −9 | jour 26 (8 exp.) | jour 14 (15 exp.) |
+| −10 | jour 30 (11 exp.) | jour 18 (23 exp.) |
+| −11 | jour 38 (12 exp.) | jour 21 (15 exp.) |
+| −12 | jour 45 (22 exp.) | jour 26 (25 exp.) |
+| −13 | — | jour 30 (22 exp.) |
+| −14 | — | jour 35 (24 exp.) |
+| −15 | — | jour 41 (30 exp.) |
 
-Victoires au front : Occasionnel 30 % · Assidu 20 %.
+Victoires au front : Occasionnel 45 % · Assidu 35 %.
