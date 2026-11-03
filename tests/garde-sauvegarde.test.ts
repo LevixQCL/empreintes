@@ -35,3 +35,17 @@ describe('Garde de la sauvegarde', () => {
     expect(prochainJeton(5000, 9000)).toBe(9000);
   });
 });
+
+import { estJeuValide, nouveauJeu } from '../src/core/jeu';
+describe('versions de sauvegarde', () => {
+  it('une sauvegarde de chaque version précédente reste valide (3 novembre 2026 : la version 7 était refusée)', () => {
+    for (let v = 2; v <= VERSION_JEU; v++) {
+      const j = nouveauJeu(0) as unknown as { version: number };
+      j.version = v;
+      expect(estJeuValide(j)).toBe(true);
+    }
+    const futur = nouveauJeu(0) as unknown as { version: number };
+    futur.version = VERSION_JEU + 1;
+    expect(estJeuValide(futur)).toBe(false);
+  });
+});

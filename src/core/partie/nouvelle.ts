@@ -149,7 +149,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
 
 export function estJeuValide(x: unknown): x is Jeu {
   const j = x as Jeu | null;
-  if (!(!!j && (j.version === VERSION_JEU || (j.version >= 2 && j.version <= 6)) && typeof j.energie === 'number' && !!j.batiments && !!j.porteurs)) return false;
+  if (!(!!j && (j.version >= 2 && j.version <= VERSION_JEU) && typeof j.energie === 'number' && !!j.batiments && !!j.porteurs)) return false;
   migrer(j);
   return true;
 }
