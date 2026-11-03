@@ -47,7 +47,7 @@ export const LEXIQUE: Record<string, Terme> = {
   elan: { nom: 'Élan', motif: /Élan/, texte: 'La chaîne du tour suivant a une place de plus.', theme: 'effet' },
   rempart: { nom: 'Rempart', motif: /Rempart/, texte: 'Une part du bouclier d’escouade qui reste après le tour ennemi est gardée pour le tour suivant.', theme: 'effet' },
   quai: { nom: 'Bras de quai', motif: /Bras de quai/, texte: 'La Marque de Docker : une part du bouclier d’escouade restant est gardée à chaque tour.', theme: 'marque' },
-  dissonance: { nom: 'Dissonance', motif: /brouillé/, texte: 'L’ennemi brouille tes Fréquences : au tour suivant, aucune suite ne résonne. Les Échos comptent toujours.', theme: 'ennemi' },
+  dissonance: { nom: 'Dissonance', motif: /brouillé/, texte: 'L’ennemi brouille tes Fréquences : au tour suivant, aucune suite ne résonne. Les Échos comptent toujours.', theme: 'ennemi', mots: mot('Dissonances?') },
   siphon: { nom: 'Siphon', motif: /Siphon/, texte: 'Le Porteur qui joue la carte récupère une part des dégâts qu’elle inflige.', theme: 'effet' },
   epines: { nom: 'Épines', motif: /Épines/, texte: 'Cet ennemi renvoie une part des coups au Porteur qui frappe, sans jamais le mettre à terre.', theme: 'ennemi' },
   concentration: { nom: 'Concentration', motif: /se concentre|Concentration/, texte: 'L’ennemi a passé un tour à se concentrer : sa prochaine attaque fait le double de dégâts.', theme: 'ennemi' },

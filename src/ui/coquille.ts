@@ -3,12 +3,12 @@
 
 import { autoActif } from './options';
 import { texteGraphismes } from './graphismes';
-import { ennemiDef, moduleDef, porteurDef } from '../core/donnees';
+import { ennemiDef, moduleDef, porteurDef, deNom } from '../core/donnees';
 import { COLLECTION, doublonsRequis, multNiveau } from '../core/collection';
 import { vestigeDef } from '../core/explorer';
 import { faceCarte } from './carte';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
-import { CERCLE_OUVERTURE, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, coutPompe, nomConfiance, pompesRestantes, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
+import { CERCLE_OUVERTURE, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, coutPompe, nomConfiance, pompesRestantes, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { miniature, portrait } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
@@ -456,7 +456,7 @@ function feuilleRapport(e: EcranDistrict): string {
   const ct = r.contrat;
   const tete = ct
     ? `<span class="rm-equipe">${ct.porteurs.map((x) => avatar(x, 36)).join('')}</span><div class="titres"><span class="surtitre">${MAREES[ct.rang].nom} · ${ct.taux} % de chances</span><h2 id="rm-titre">${echap(ct.titre)} : ${ct.reussi ? 'réussi' : 'manqué'}</h2></div>`
-    : `${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">Mission en mer</span><h2 id="rm-titre">Retour de ${echap(p.nom)}</h2></div>`;
+    : `${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">Mission en mer</span><h2 id="rm-titre">Retour ${echap(deNom(p.nom))}</h2></div>`;
   return `<div class="voile-feuille" data-action="rapport-lu" aria-hidden="true"></div><section class="feuille rapport-mission${ct ? ` rm-contrat${ct.reussi ? ' reussi' : ' manque'}` : ''}" role="dialog" aria-modal="true" aria-labelledby="rm-titre" style="--c:${COULEUR[p.lignee]}">`
     + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete">${tete}`
     + `<button type="button" class="btn-icone" data-action="rapport-lu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
@@ -547,6 +547,16 @@ function feuilleExpedition(e: EcranDistrict): string {
   if (ex?.etoiles.length) strate.push(ligne(ICO.etoile, `+${ex.etoiles.length}`, `étoile${ex.etoiles.length > 1 ? 's' : ''} de Strate`, 'nouvelle'));
   if (ex?.rodeur) strate.push(ligne(ICO.griffes, ex.rodeur.part ? `${Math.round(ex.rodeur.part * 100)} %` : 'Abattu', `${echap(ennemiDef(ex.rodeur.id).nom)}${ex.rodeur.part ? ' s’est enfui' : ''}`));
   if (strate.length) h += `<h3 class="rx-titre">${ICO.strate}Dans la Strate</h3><ul class="rm-gains">${strate.join('')}</ul>`;
+  // après une défaite ou un repli (3 novembre 2026) : que faire maintenant, au lieu d'un simple « +0 composants »
+  if (r.issue === 'defaite' || r.issue === 'fuite') {
+    const nonLus = chapitresALire(e.j);
+    h += `<h3 class="rx-titre">${ICO.soin}Et maintenant ?</h3><ul class="rx-conseils">`
+      + `<li><b>Soigner l’escouade.</b> Elle se remet à la Clinique ; une recrue Géné postée là soigne deux fois plus vite.</li>`
+      + (nonLus ? `<li><b>Renforcer le deck.</b> Chaque chapitre des Chroniques lu pour la première fois glisse une carte entre les pages (${nonLus} à lire).</li>` : `<li><b>Revoir le deck.</b> Cherche des suites de Fréquences et quelques boucliers pour les grosses attaques annoncées.</li>`)
+      + `<li><b>Se protéger.</b> Les boucliers protègent toute l’escouade : garde-les pour les attaques fortes annoncées par l’ennemi.</li></ul>`
+      + `<div class="rx-actions"><button type="button" class="btn sec" data-action="depart-clinique">${ICO.soin}Clinique</button>`
+      + (nonLus ? `<button type="button" class="btn sec" data-action="rapport-chroniques">${ICO.journal}Chroniques</button>` : '') + `</div>`;
+  }
   return h + `<button type="button" class="btn prim large" data-action="expedition-lu">${r.choix ? 'Choisir ma carte' : 'Bien reçu'}</button></div></section>`;
 }
 

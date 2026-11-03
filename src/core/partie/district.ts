@@ -1,7 +1,7 @@
 // Couche 3 — la vie du district : chantiers et Forge, postes, cartes confiées, creuseurs, entraînement, Comptoir, quotidiens, objectif réclamé.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, moduleDef, carteId, CARTES_COMMUNES, forceCommune } from '../donnees';
+import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, moduleDef, carteId, CARTES_COMMUNES, forceCommune, deNom } from '../donnees';
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
@@ -279,7 +279,7 @@ export function recycler(j: Jeu, moduleId: string): Resultat {
   c.doublons--;
   const gain = COLLECTION.recyclage[moduleDef(moduleId).rarete];
   j.composants += gain;
-  log(j, `Un doublon de ${moduleDef(moduleId).nom} recyclé : +${gain} composants.`);
+  log(j, `Un doublon ${deNom(moduleDef(moduleId).nom)} recyclé : +${gain} composants.`);
   return { ok: true };
 }
 
@@ -654,7 +654,7 @@ export function acheter(j: Jeu, index: number, now = j.dernierTick): Resultat {
   j.eclats -= p.eclats;
   c.achetes.push(index);
   const neuve = ajouterCarte(j, id);
-  log(j, neuve ? `Comptoir : nouvelle carte, ${moduleDef(id).nom} (${NOMS_RARETE[moduleDef(id).rarete]}).` : `Comptoir : un doublon de ${moduleDef(id).nom}.`);
+  log(j, neuve ? `Comptoir : nouvelle carte, ${moduleDef(id).nom} (${NOMS_RARETE[moduleDef(id).rarete]}).` : `Comptoir : un doublon ${deNom(moduleDef(id).nom)}.`);
   return { ok: true };
 }
 

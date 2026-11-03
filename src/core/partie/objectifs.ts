@@ -9,13 +9,13 @@ import { creuseursRequis, escouadeDe, posteDe, type Jeu } from './etat';
 
 export interface Objectif {
   /** identifiant stable (l'interface s'en sert pour savoir quel onglet signaler) */
-  id: 'district' | 'deck' | 'descendre' | 'creuseurs';
+  id: 'district' | 'deck' | 'lire' | 'descendre' | 'creuseurs';
   titre: string;
   consigne: string;
   /** le bâtiment à signaler sur le district (null : l'objectif se fait ailleurs) */
   pilier: BatimentId | null;
   /** l'onglet du bas à signaler */
-  onglet: 'archipel' | 'cartes' | 'coupe' | 'porteurs' | 'pillages';
+  onglet: 'archipel' | 'cartes' | 'coupe' | 'porteurs' | 'pillages' | 'codex';
   recompense: { energie?: number; composants?: number; creuseurs?: number };
   fait: (j: Jeu) => boolean;
 }
@@ -35,6 +35,13 @@ export const OBJECTIFS: Objectif[] = [
     consigne: 'Dans l’onglet Escouade, touche « Gérer ses cartes » sous Ilka et confie-lui l’Œil-relais, trouvé dans la chambre. Elle porte déjà 6 cartes : reprends-en une d’abord. Les cartes de tes trois Porteurs forment ton deck.',
     recompense: { composants: 10 },
     fait: (j) => j.porteurs.ilka!.modules.some((k) => moduleDe(k) === 'oeil-relais'),
+  },
+  // 3 novembre 2026 : une recrue partait à −1 sans savoir que chaque chapitre lu donne une carte
+  {
+    id: 'lire', titre: 'Écouter Ysé', pilier: null, onglet: 'codex',
+    consigne: 'Ouvre les Chroniques et lis le premier chapitre. À chaque première lecture, Ysé glisse une carte entre les pages : plus de cartes, plus de suites possibles pour ton deck.',
+    recompense: { composants: 10 },
+    fait: (j) => j.luesRecompensees.length > 0,
   },
   {
     id: 'descendre', titre: 'Vaincre la Strate −1', pilier: 'noyau', onglet: 'coupe',

@@ -3,25 +3,30 @@ import type { BatimentId, Effet, EnnemiDef, GesteDef, Lignee, ModuleDef, Porteur
 
 // ---------- Porteurs ----------
 // Trois Porteurs nommés + trois recrues anonymes, une par lignée.
+/** « de Doran », « d’Ilka », « d’Œil-relais » : l’élision devant une voyelle */
+export const deNom = (nom: string) => (/^[aeiouyéèêëàâîïôöûüœh]/i.test(nom) && !/^h[aeo]/i.test(nom) ? `d’${nom}` : `de ${nom}`);
+/** « il » ou « elle » selon le Porteur */
+export const ilElle = (p: PorteurDef) => (p.feminin ? 'elle' : 'il');
+
 export const PORTEURS: PorteurDef[] = [
-  { id: 'ilka', nom: 'Ilka', lignee: 'tech', pvMax: 38, nomme: true },
+  { id: 'ilka', nom: 'Ilka', lignee: 'tech', pvMax: 38, nomme: true, feminin: true },
   { id: 'doran', nom: 'Doran', lignee: 'bio', pvMax: 46, nomme: true },
-  { id: 'vela', nom: 'Véla', lignee: 'reso', pvMax: 31, nomme: true },
+  { id: 'vela', nom: 'Véla', lignee: 'reso', pvMax: 31, nomme: true, feminin: true },
   { id: 'coursier', nom: 'Coursier', lignee: 'tech', pvMax: 32, nomme: false },
   { id: 'docker', nom: 'Docker', lignee: 'bio', pvMax: 42, nomme: false },
   { id: 'guetteur', nom: 'Guetteur', lignee: 'reso', pvMax: 30, nomme: false },
   // Les trois Porteurs recrutables de la Bible : ils arrivent au fil de l'acte I, Aurel avec l'acte II
   { id: 'sasha', nom: 'Sasha Ndiaro', lignee: 'tech', pvMax: 36, nomme: true,
     arrivee: { forge: 2, replique: 'Si ça a une vis, ça a une seconde chance.' } },
-  { id: 'nuit', nom: 'Nuit', lignee: 'bio', pvMax: 36, nomme: true,
+  { id: 'nuit', nom: 'Nuit', lignee: 'bio', pvMax: 36, nomme: true, feminin: true,
     arrivee: { strate: 3, replique: 'Le noir n’est pas vide. Il attend juste qu’on regarde mieux.' } },
   { id: 'aurel', nom: 'Aurel Orsève', lignee: 'reso', pvMax: 30, nomme: true,
     arrivee: { strate: 5, replique: 'Mon ombre a de meilleures manières que moi. C’est bien ça, le problème.' } },
   // Bible, 23 octobre 2026 (« Devenir Résonant, Géné ou Augmenté ») : une Née-de-mue, la cousine Refusée d'Aurel,
   // et le Résonant que la Clinique trouve lors d'un Accord ouvert, quand le district lui fait confiance
-  { id: 'kessa', nom: 'Kessa', lignee: 'bio', pvMax: 40, nomme: true,
+  { id: 'kessa', nom: 'Kessa', lignee: 'bio', pvMax: 40, nomme: true, feminin: true,
     arrivee: { strate: 4, replique: 'On n’a rien choisi. Mais on est les seuls à pouvoir dire ce que ça fait.' } },
-  { id: 'liane', nom: 'Liane Orsève', lignee: 'tech', pvMax: 34, nomme: true,
+  { id: 'liane', nom: 'Liane Orsève', lignee: 'tech', pvMax: 34, nomme: true, feminin: true,
     arrivee: { strate: 6, replique: 'Ils m’ont refusé la mèche d’or. J’ai fait pousser autre chose.' } },
   { id: 'joss', nom: 'Joss', lignee: 'reso', pvMax: 29, nomme: true,
     arrivee: { accord: true, replique: 'J’ai passé des années à cacher l’or des autres. Le mien, je le laisse briller.' } },

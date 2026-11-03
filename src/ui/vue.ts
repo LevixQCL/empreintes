@@ -9,7 +9,7 @@ import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
 import { DISTRICT, PILLAGE } from '../core/jeu';
-import { portraitProvisoire, ageArchipel, artGardien, fondFleche, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, cadragePortrait } from './art';
+import { portraitProvisoire, ageArchipel, artGardien, fondFleche, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, cadragePortrait, sceneDistrict } from './art';
 import { SIGNE_LOURD, corpsFace, couleurFrequence, styleFace, type Face } from './carte';
 import { sonActif } from './impact';
 import { ICO } from './icones';
@@ -150,7 +150,7 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
   const label = `${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${vReel}${tendance ? ` (${tendance === 'hausse' ? 'renforcée' : 'affaiblie'}, ${g.v} de base)` : ''}${g.lourd ? ', prend 2 places' : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? ', prolonge ta suite' : ''}${o.felure ? ', brise la Fêlure de l’ennemi' : ''}${eteinte ? ', éteinte : son Porteur est à terre' : ''}`;
   AFFICHES.set(g.uid, { g, d, nomP, eteinte, detail });
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]}" data-action="${action}" data-uid="${g.uid}" data-porteur="${g.porteur ?? ''}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
-    + `<span class="nf nf-${metal}${o.halo ? ' nf-suite' : ''}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d)}</span>`
+    + `<span class="nf nf-${metal}${o.halo ? ' nf-suite' : ''}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d).replace(/ loading="lazy"/g, '')}</span>`
     + `</button>`;
 }
 
@@ -625,8 +625,27 @@ export function htmlCombat(e: Ecran): string {
   return htmlLieu(e.x) + htmlEcranCombat(e);
 }
 
+/** les illustrations déjà demandées au navigateur (3 novembre 2026 : la main s'affichait noire une seconde au premier combat) */
+const PRECHARGEES = new Set<string>();
+function prechargerCartes(cartes: (string | undefined)[]) {
+  prechargerUrls(cartes.map((c) => (c ? illustrationModule(c) : null)));
+}
+function prechargerUrls(urls: (string | null)[]) {
+  for (const url of urls) {
+    if (!url || PRECHARGEES.has(url)) continue;
+    PRECHARGEES.add(url);
+    const img = new Image();
+    img.decoding = 'async';
+    img.src = url;
+  }
+}
+
 function htmlEcranCombat(e: Ecran): string {
   const s = e.etat;
+  // toute la pioche se télécharge d'avance : les cartes tirées ensuite s'affichent tout de suite
+  prechargerCartes([...s.main, ...s.pioche, ...s.defausse].map((g) => g.carte));
+  // le combat de la chambre : le district se télécharge pendant ce temps (il arrivait d'abord sur une mer vide)
+  if (e.x.tutoriel) { const sc = sceneDistrict(1); prechargerUrls([sc.url, sc.mer]); }
   ETEINTS = new Set(s.porteurs.filter((p) => p.pv <= 0).map((p) => p.id));
   ETAT = s;
   const def = ennemiDef(s.ennemi.id);
@@ -659,7 +678,7 @@ function htmlEcranCombat(e: Ecran): string {
     // chaîne pleine : une place de plus ne s'achète qu'avec le Flux
     const flux = s.flux > 0 && capacite(s) < REGLES.capaciteMax;
     if (s.dissonance) conseil = '<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci';
-    else if (a.suite >= 3) conseil = `<b>Résonance</b> : suite de ${a.suite}, effets <b>+${Math.round((a.mult - 1) * 100)} %</b>` + (aide && a.suite < 5 && fin === a.suite && (libres > 0 || flux) ? ` · un <b>${f + 1}</b> pour aller plus loin` : '');
+    else if (a.suite >= 3) conseil = `<b>Résonance</b> : suite de ${a.suite}, effets <b>+${Math.round((a.mult - 1) * 100)} %</b>` + (aide && a.suite < 5 && fin === a.suite && (libres > 0 || flux) ? (libres > 0 ? ` · un <b>${f + 1}</b> pour aller plus loin` : ` · chaîne pleine : un <b>${f + 1}</b> avec une place de Flux`) : '');
     // passé les premières Strates, le conseil dit où en est la chaîne, sans souffler la carte suivante
     else if (!aide) conseil = libres === 0 ? (flux ? 'Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus' : 'Chaîne pleine : tu peux la lancer') : fin === 2 ? 'Suite en cours' : '';
     else if (libres === 0 && fin === 2 && flux) conseil = `Suite ${f - 1} → ${f} : 1 Flux t’ouvre une place pour un <b>${f + 1}</b>`;

@@ -287,6 +287,11 @@ function migrer(j: Jeu) {
     j.version = 7;
     if (j.objectif >= 3) j.objectif = OBJECTIFS.length;
   }
+  if (j.version === 7) {
+    // version 8 (3 novembre 2026) : un objectif « Écouter Ysé » (les Chroniques) avant la descente ; les suivants reculent d'un cran
+    j.version = 8;
+    if (j.objectif >= 2) j.objectif = Math.min(OBJECTIFS.length, j.objectif + 1);
+  }
   allegerSelonCharge(j);
 }
 

@@ -1,7 +1,7 @@
 // Le moteur de combat. Fonctions pures sur un état sérialisable (JSON) :
 // l'interface appelle ces fonctions puis anime les « pas » qu'elles renvoient.
 
-import { CONDITIONS, DECK_DEPART, FAVEUR_CONDITION, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from './donnees';
+import { CONDITIONS, DECK_DEPART, FAVEUR_CONDITION, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, deNom } from './donnees';
 import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, nomEcho, pctEcho, places } from './regles';
 import { tireur } from './rng';
 import { NOMS_EFFET } from './effets';
@@ -1416,7 +1416,7 @@ export function eclater(s: CombatEtat, porteurId: string, opts: { silencieux?: b
     log(s, `Débridage : ${nom} pousse ses implants au-delà du raisonnable. La chaîne frappera ${REGLES.eclat.debride * 100 - 100} % plus fort.`, { sorte: 'effet' });
   } else if (choix.lignee === 'reso') {
     s.ombre = true;
-    log(s, `Ombre agissante : l’ombre de ${nom} se lève et retiendra les coups du prochain tour.`, { sorte: 'effet' });
+    log(s, `Ombre agissante : l’ombre ${deNom(nom)} se lève et retiendra les coups du prochain tour.`, { sorte: 'effet' });
   } else {
     const aTerre = s.porteurs.find((x) => x.pv <= 0);
     if (aTerre) {
@@ -1432,7 +1432,7 @@ export function eclater(s: CombatEtat, porteurId: string, opts: { silencieux?: b
       total += c.pv - avant;
       if (c.pv > avant) emettre({ kind: 'soin', cible: c.id, v: c.pv - avant });
     }
-    log(s, `Sursaut : le corps de ${nom} répond pour tous.${aTerre ? ` ${porteurDef(aTerre.id).nom} se relève.` : ''}`, { sorte: 'soin', v: total });
+    log(s, `Sursaut : le corps ${deNom(nom)} répond pour tous.${aTerre ? ` ${porteurDef(aTerre.id).nom} se relève.` : ''}`, { sorte: 'soin', v: total });
   }
   return pas;
 }

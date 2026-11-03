@@ -83,6 +83,8 @@ export interface PorteurDef {
   pvMax: number;
   /** Porteur nommé (illustré) ou recrue anonyme */
   nomme: boolean;
+  /** pour accorder les textes (« elle », « qu’elle apporte ») */
+  feminin?: boolean;
   /** Porteur qui rejoint le district plus tard dans l'histoire, et à quelle condition */
   /** accord : arrive par un Accord ouvert de la Clinique (Clinique et Confiance assez hautes : `ACCORD_OUVERT`) */
   arrivee?: { strate?: number; forge?: number; accord?: boolean; replique: string };

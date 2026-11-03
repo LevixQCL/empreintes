@@ -188,7 +188,8 @@ export async function demarrerCompte() {
         if (reconcilie) recevoirAssauts().then((change) => { if (change) sauver(); envoyerAssauts(); });
         // le Cercle des quais : amis, propositions et défis en attente (la bulle du bâtiment), vitrine à jour
         if (reconcilie) import('./cercle').then((m) => m.suivreCercle()).catch(() => {});
-        if (app.uid && compteProtege() && !app.jeu.directeur?.nom && !app.pseudoDemande) { app.pseudoDemande = true; G.edition = true; G.accueil = true; G.erreur = ''; if (app.mode === 'district') afficher(); }
+        // une recrue sans compte protégé se voit aussi proposer un pseudo, une fois, après l'accueil du district (3 novembre 2026)
+        if (app.uid && (compteProtege() || (app.jeu.accueilVu && !app.jeu.pseudoPropose)) && !app.jeu.directeur?.nom && !app.pseudoDemande) { app.pseudoDemande = true; app.jeu.pseudoPropose = true; G.edition = true; G.accueil = true; G.erreur = ''; if (app.mode === 'district') afficher(); }
       });
       lireMonEntree();
     } else { comptePret(); import('./cercle').then((m) => { m.arreterCercle(); m.C.reseau = 'hors-ligne'; }).catch(() => {}); }

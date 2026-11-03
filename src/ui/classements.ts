@@ -258,7 +258,7 @@ export function feuilleNom(j: Jeu, nomCompte: string, erreur: string, accueil = 
     + (erreur ? `<p class="erreur">${echap(erreur)}</p>` : '')
     + `<p class="aide">Ton Porteur de tête d’escouade, ${echap(porteurDef(connuPorteur(j.escouade?.[0] ?? 'ilka')).nom)}, sera ton portrait. Tu peux te retirer du Tableau quand tu veux.</p>`
     + `<button type="button" class="btn prim large" data-action="gt-nom-ok">${ICO.ok}${j.directeur?.nom ? 'Enregistrer' : 'Valider mon pseudo'}</button>`
-    + (accueil ? `<button type="button" class="lien" data-action="gt-nom-fermer">Plus tard (dans Plus › Compte)</button>` : '')
+    + (accueil ? `<button type="button" class="lien" data-action="gt-nom-fermer">Plus tard (dans Plus, en tête du menu)</button>` : '')
     + `</div></section>`;
 }
 

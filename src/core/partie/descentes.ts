@@ -820,8 +820,9 @@ export function remonter(j: Jeu): Retour {
   const finaux = x.carte && x.phase !== 'combat' ? x.porteurs : x.combat.porteurs;
   // « À mi-souffle » : la moitié des PV retirée au départ est rendue (seuls les PV perdus en combat comptent comme Usure)
   const rendus = (p: PorteurEtat) => (x.demiPv && p.pv > 0 ? { ...p, pv: Math.min(p.pvMax, p.pv + p.pvMax - Math.max(1, Math.round(p.pvMax * 0.5))) } : p);
-  // « Les recrues » est un exercice : pas d'Usure
-  if (!x.imposee) for (const p of finaux) usureAuRetour(j, rendus(p), x.fuite ? DISTRICT.usureFuite : 0);
+  // « Les recrues » est un exercice, et la chambre scellée un combat guidé : pas d'Usure
+  // (3 novembre 2026 : l'escouade d'une recrue partait à −1 avec Doran à la moitié de ses PV)
+  if (!x.imposee && !x.tutoriel) for (const p of finaux) usureAuRetour(j, rendus(p), x.fuite ? DISTRICT.usureFuite : 0);
   let nouvelleStrate = false;
   let butinFilon = 0;
   let fragment: string | null = null;

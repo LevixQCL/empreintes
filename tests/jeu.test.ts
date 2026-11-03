@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import * as C from '../src/core/combat';
-import { envoyerMission,
+import { lireChapitre, envoyerMission,
   DISTRICT, ameliorer, degreffer, echanger, disponibles, energieParHeure, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu, partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence, entrer, repondre, RENCONTRES,
 } from '../src/core/jeu';
 
@@ -137,6 +137,8 @@ describe('Premier lancement', () => {
       expect(disponibles(j)).toHaveLength(6);
       expect(j.fragments).toEqual(['mure']);
     }
+    // le combat guidé ne laisse aucune Usure : l'escouade part à −1 avec tous ses PV (3 novembre 2026)
+    for (const id of ['ilka', 'doran', 'vela']) expect(j.porteurs[id]!.usure).toBe(0);
   });
 
   it('les objectifs guidés se remplissent et se récupèrent dans l’ordre', () => {
@@ -153,6 +155,11 @@ describe('Premier lancement', () => {
     expect(reclamer(j).ok).toBe(false);
     degreffer(j, 'bond@fer');
     greffer(j, 'oeil-relais@fer', 'ilka');
+    expect(reclamer(j).ok).toBe(true);
+    // lire un chapitre des Chroniques (il donne une carte)
+    expect(objectifCourant(j)!.id).toBe('lire');
+    expect(reclamer(j).ok).toBe(false);
+    lireChapitre(j, 'lettre');
     expect(reclamer(j).ok).toBe(true);
     expect(objectifCourant(j)!.id).toBe('descendre');
     j.frontVaincu = true;

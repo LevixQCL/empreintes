@@ -743,6 +743,11 @@ button.res:focus-visible{outline:1.5px solid var(--glace,#CDEFFF);outline-offset
   background:rgba(216,180,101,.08);box-shadow:0 0 14px rgba(216,180,101,.18);font-size:13.5px;line-height:1.4;color:var(--ink-2)}
 .rx-choix svg{flex:none;width:20px;height:20px;color:var(--gold)}
 .rx-choix b{color:var(--gold)}
+.rx-conseils{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.rx-conseils li{padding:9px 12px;border-radius:10px;background:rgba(205,239,255,.05);border:1px solid rgba(205,239,255,.12);font-size:13.5px;line-height:1.45;color:var(--ink-2)}
+.rx-conseils b{color:var(--ink);font-weight:600}
+.rx-actions{display:flex;gap:8px;flex-wrap:wrap}
+.rx-actions .btn{flex:1;min-height:42px;justify-content:center}
 .rx-escouade{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
 .rx-escouade li{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;min-width:0;padding:8px 6px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(205,239,255,.1)}
 .rx-escouade li > span{display:grid;min-width:0;max-width:100%}

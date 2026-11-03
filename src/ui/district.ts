@@ -9,10 +9,10 @@ import { visageGarde } from './fleche';
 import { pillagesOuverts, portOuvert } from './pillages';
 import { epitheteAffiche, epithetesDe, journalCarte, NOMS_PALIER, palierDe, vecuDe, versPalierSuivant, PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
-import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe } from '../core/donnees';
+import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe, deNom, ilElle } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, EPREUVES_STRATE, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, energieMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  OBJECTIFS, EPREUVES_STRATE, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, energieMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
   COMPTOIR, prixComptoir, renouvelablesComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
@@ -480,7 +480,7 @@ function appel(e: EcranDistrict): string {
   if (colisDisponible(j)) {
     const reste = colisAvantChoix(j);
     return `<button type="button" class="appel colis" data-action="colis">${icone('coffre')}<span><strong>Ravitaillement du jour${j.ravitaillement.reserve > 1 ? ` · ${j.ravitaillement.reserve} colis` : ''}</strong>`
-      + `<small>Composants et un doublon · ${reste === 1 ? 'celui-ci contient une carte au choix' : `carte au choix dans ${reste} colis`}</small></span>`
+      + `<small><b class="colis-ouvrir">Touche pour l’ouvrir</b> · composants et un doublon · ${reste === 1 ? 'celui-ci contient une carte au choix' : `carte au choix dans ${reste} colis`}</small></span>`
       + `<span class="crans-colis" aria-hidden="true">${Array.from({ length: RAVITAILLEMENT.cycle }, (_, i) => `<i class="${i < j.ravitaillement.ouverts % RAVITAILLEMENT.cycle ? 'plein' : ''}"></i>`).join('')}</span></button>`;
   }
   return '';
@@ -647,7 +647,7 @@ function blocEntrainement(e: EcranDistrict): string {
     lignes.push(`<div class="te-occ" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(s.porteur, seances.length > 1 ? 48 : 64)}</span>`
       + `<div class="te-qui"><strong>${echap(o.nom)}</strong><span class="te-niv">Niv. ${niveau(s.porteur)} <i>→ ${s.cible}</i></span>`
       + `<div class="jauge or">${jaugeTemps(debut, fin, now)}</div><span class="te-temps">${decompte(fin, now)}</span></div>`
-      + `<button type="button" class="btn sec te-stop" data-action="liberer" data-id="${s.porteur}" aria-label="Arrêter la séance de ${echap(o.nom)}${rendu ? ` : ${rendu} énergie rendue` : ''}">Arrêter${rendu ? `<small>+${ent(rendu)}</small>` : ''}</button></div>`);
+      + `<button type="button" class="btn sec te-stop" data-action="liberer" data-id="${s.porteur}" aria-label="Arrêter la séance ${echap(deNom(o.nom))}${rendu ? ` : ${rendu} énergie rendue` : ''}">Arrêter${rendu ? `<small>+${ent(rendu)}</small>` : ''}</button></div>`);
   }
   if (relance) {
     const a = apercuSeance(j, relance.id)!;
@@ -869,9 +869,11 @@ function feuilleBatiment(e: EcranDistrict): string {
       h += `<p class="fb-vide">Personne au poste : ${poste === 'forge' ? 'la Forge ne peut pas fabriquer' : actuel.long}.</p>`;
     }
     if (ouvert) {
+      // les Porteurs de l'escouade en dernier (3 novembre 2026) : la recrue la mieux placée d'abord, comme le dit l'objectif
+      const esc = escouadeDe(j);
       const libres = PORTEURS.filter((p) => p.id !== occupant && !enExpedition(j, p.id) && porteursPresents(j).includes(p.id))
         .map((p) => ({ p, v: rendement(j, poste, p.id).v }))
-        .sort((x, y) => y.v - x.v || Number(!!j.porteurs[x.p.id]!.poste) - Number(!!j.porteurs[y.p.id]!.poste));
+        .sort((x, y) => Number(esc.includes(x.p.id)) - Number(esc.includes(y.p.id)) || y.v - x.v || Number(!!j.porteurs[x.p.id]!.poste) - Number(!!j.porteurs[y.p.id]!.poste));
       // en place, seuls ceux qui feraient mieux ; poste vide, tout le monde (le meilleur en premier)
       const utiles = occupant ? libres.filter((x) => x.v > actuel.v) : libres;
       if (utiles.length) {
@@ -1438,8 +1440,8 @@ export function feuilleDeck(e: EcranDistrict): string {
     .filter((k) => moduleDef(k).lignee === p.lignee && !porte.includes(k)), j.collection, tri, j.vus.cartes);
   /** la carte qu'il porte déjà dans un autre métal : la confier la remplace */
   const remplace = (k: string) => porte.find((x) => moduleDe(x) === moduleDe(k));
-  let h = `<div class="voile-feuille" data-action="deck-fermer" aria-hidden="true"></div><section class="feuille deck-porteur" role="dialog" aria-modal="true" aria-label="Les cartes de ${echap(p.nom)}"><span class="poignee" aria-hidden="true"></span>`
-    + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR[p.lignee]}">${NOM_LIGNEE[p.lignee].toUpperCase()} · ${porte.length} / ${DISTRICT.cartesMax} CARTES</span><h2>Les cartes de ${echap(p.nom)}</h2></div>`
+  let h = `<div class="voile-feuille" data-action="deck-fermer" aria-hidden="true"></div><section class="feuille deck-porteur" role="dialog" aria-modal="true" aria-label="Les cartes ${echap(deNom(p.nom))}"><span class="poignee" aria-hidden="true"></span>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre" style="color:${COULEUR[p.lignee]}">${NOM_LIGNEE[p.lignee].toUpperCase()} · ${porte.length} / ${DISTRICT.cartesMax} CARTES</span><h2>Les cartes ${echap(deNom(p.nom))}</h2></div>`
     + `<button type="button" class="btn-icone" data-action="guide" data-id="deck" aria-label="Comment construire son deck">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="deck-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   if (parti) h += `<p class="aide">${echap(p.nom)} est en expédition : ses cartes changeront à son retour.</p>`;
@@ -1448,7 +1450,7 @@ export function feuilleDeck(e: EcranDistrict): string {
   h += choixTri(tri);
   h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour l’échanger ou la reprendre.</p>`;
   const fs = [...new Set(gestesDe(j, id).flatMap((g) => g.fs ?? [g.f]))].sort((a, b) => a - b);
-  if (fs.length) h += `<p class="dk-freq">Fréquences qu’il apporte : ${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</p>`;
+  if (fs.length) h += `<p class="dk-freq">Fréquences qu’${ilElle(p)} apporte : ${fs.map((f) => `<i style="--fc:${couleurFrequence(f)}">${f}</i>`).join('')}</p>`;
   h += porte.length ? `<div class="grille-cartes">${trierCartes(porte, j.collection, tri, j.vus.cartes).map((k) => {
     // une carte à confier est choisie : celles qu'elle ne peut pas remplacer (trop légères pour lui faire de la place) se grisent
     const bloque = !!choisie && !choixPorte && !tient(choisie, k);
@@ -2256,9 +2258,10 @@ export function htmlEscouade(e: EcranDistrict): string {
     const nCartes = j.porteurs[id]!.modules.length;
     const m = progresMarque(j, id);
     const pv = pvMaxCombat(j, id);
-    return `<div class="es-place" style="--c:${COULEUR[p.lignee]}">`
-      + `<button type="button" class="es-portrait" data-action="porteur" data-id="${id}" aria-label="Fiche de ${echap(p.nom)}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 72)}`
-      + `<span class="es-nom"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · PV ${pv}</small></span></button>`
+    const blesse = !!tropBlesse(j, id);
+    return `<div class="es-place${blesse ? ' blesse' : ''}" style="--c:${COULEUR[p.lignee]}">`
+      + `<button type="button" class="es-portrait" data-action="porteur" data-id="${id}" aria-label="Fiche ${echap(deNom(p.nom))}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 72)}`
+      + `<span class="es-nom"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · ${blesse ? `<b class="es-pv-bas">PV ${pv} → ${pvMinDepart(j, id)}</b>` : `PV ${pv}`}</small></span></button>`
       + `<button type="button" class="es-cartes${nCartes ? '' : ' aucune'}${nCartes >= DISTRICT.cartesMax ? ' pleine' : ''}" data-action="deck" data-id="${id}">${ICO.cartes}<span>${nCartes} / ${DISTRICT.cartesMax} cartes</span></button>`
       + (m ? `<button type="button" class="es-marque${m.acquise ? ' acquise' : ''}" data-action="porteur" data-id="${id}" title="${echap(m.texte)}">${m.acquise ? ICO.ok : ICO.verrou}<span><b>${echap(m.nom)}</b> ${m.acquise ? echap(m.courtEffectif) : `${Math.min(m.n, m.seuil)} / ${m.seuil} ${echap(m.quoi)}`}</span></button>` : '')
       + (posteQuitte(j, id) ? `<span class="es-quitte">${ICO.ouvrier}<span>${echap(textePosteQuitte(j, id)!)}</span></span>` : '')
@@ -2295,13 +2298,24 @@ export function htmlEscouade(e: EcranDistrict): string {
     const pl = vacants.length > 1;
     h += `<p class="es-note es-note-poste">${ICO.ouvrier}<span>Au départ, ${et(vacants.map((id) => `<b>${echap(porteurDef(id).nom)}</b>`))} quitte${pl ? 'nt leur' : ' son'} poste : ${et(lieux)} ${lieux.length > 1 ? 'resteront' : 'restera'} sans Porteur jusqu’à ce que tu y remettes quelqu’un.</span></p>`;
   }
+  // trop blessés pour repartir (3 novembre 2026 : l'écran disait « prêt » et le refus n'arrivait qu'en touchant Partir)
+  const blesses = e.escouade.filter((id) => tropBlesse(j, id));
+  if (blesses.length) {
+    const soin = Math.max(0.1, soinParHeure(j));
+    const heures = Math.max(...blesses.map((id) => (pvMinDepart(j, id) - pvMaxCombat(j, id)) / soin));
+    const attente = heures < 1 ? `${Math.max(1, Math.ceil(heures * 60))} min` : `${Math.floor(heures)} h ${String(Math.ceil((heures % 1) * 60) % 60).padStart(2, '0')}`;
+    const noms = blesses.map((id) => `<b>${echap(porteurDef(id).nom)}</b>`);
+    h += `<div class="es-alerte es-blesses">${ICO.soin}<span><strong>${blesses.length > 1 ? `${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]} se remettent` : `${noms[0]} se remet`} à la Clinique</strong>`
+      + `Il faut au moins un quart de ${blesses.length > 1 ? 'leurs' : 'ses'} PV pour redescendre : encore ${attente} environ au rythme actuel. Poste une recrue Géné à la Clinique pour aller plus vite, ou paie des soins intensifs.</span>`
+      + `<button type="button" class="btn sec" data-action="depart-clinique">Clinique</button></div>`;
+  }
   h += `<p class="es-note">${ICO.soin}Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p></main>`;
 
-  const pret = e.escouade.length === 3 && !maigre;
+  const pret = e.escouade.length === 3 && !maigre && !blesses.length;
   // l'énergie des cartes du Râtelier, rappelée sur le bouton (31 octobre 2026, Luc)
   const coutDepart = e.escouade.length ? (ratelierPayable(j, indiceEscouade(j, e.escouade), sortie).length ? coutRatelier(j, sortie, indiceEscouade(j, e.escouade)) : 0) : 0;
   h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
-    + `<span><b>${e.escouade.length} / 3</b><small class="${maigre ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? `Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? `${deck} cartes · ${deckMin} au moins` : `${deck} cartes, prêt`}</small></span></div>`
+    + `<span><b>${e.escouade.length} / 3</b><small class="${maigre || blesses.length ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? `Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? `${deck} cartes · ${deckMin} au moins` : blesses.length ? `${blesses.length} blessé${blesses.length > 1 ? 's' : ''} · au repos` : `${deck} cartes, prêt`}</small></span></div>`
     + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${fl ? `${ICO.monter}Monter` : pi ? `${ICO.grappin}Piller` : ep ? `${ICO.boost}${e.felee ? 'Tenter la Fêlée' : 'Tenter l’Épreuve'}` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;
   h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : e.deck ? feuilleDeck(e) : e.carte ? feuilleCarte(e) : feuillePorteur(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';

@@ -1,13 +1,13 @@
 // Couche 1 — l'état d'une partie : réglages du district, types, expérience et Marques des Porteurs, Confiance, creuseurs, escouade.
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
-import { batimentDef, porteurDef, PORTEURS } from '../donnees';
+import { batimentDef, porteurDef, PORTEURS, deNom } from '../donnees';
 import { PLACES_PORTEUR, chargeNiveau, poidsCarte, type CarteCollection } from '../collection';
 import type { Expedition } from '../expedition';
 import type { Palmares } from '../classements';
 import type { BatimentId, GesteDef, BonusMarques, Rarete } from '../types';
 
-export const VERSION_JEU = 7;
+export const VERSION_JEU = 8;
 
 /** Réglages du district, au même endroit pour l'équilibrage */
 export const DISTRICT = {
@@ -124,7 +124,7 @@ export function gagnerXp(j: Jeu, id: string, xp: number): number | null {
     const pal = palierAuNiveau(apres);
     if (m && pal > palierAuNiveau(avant)) {
       log(j, progresMarque(j, id)?.acquise
-        ? `Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} : ${m.nom} de ${porteurDef(id).nom} — ${m.paliers[pal - 1]!.court}.`
+        ? `Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} : ${m.nom} ${deNom(porteurDef(id).nom)} — ${m.paliers[pal - 1]!.court}.`
         : `${porteurDef(id).nom} est prêt pour sa Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} : il lui reste à gagner ${m.nom}.`);
     }
     return apres;
@@ -409,6 +409,8 @@ export interface Jeu {
   /** le Cercle des quais (3 novembre 2026, cercle.ts) : souhaits, vitrine, échanges du jour et en attente, duels de la semaine */
   cercle?: import('./cercle').EtatCercle;
   /** le nom de directeur choisi pour le Grand Tableau, et si on y apparaît (jamais l'e-mail du compte) */
+  /** le pseudo a déjà été proposé à ce joueur sans compte protégé (une seule fois, 3 novembre 2026) */
+  pseudoPropose?: boolean;
   directeur?: { nom: string; public: boolean; /** dernier changement de pseudo (ms) : un par semaine au plus */ change?: number };
 }
 

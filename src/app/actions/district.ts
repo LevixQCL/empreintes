@@ -5,7 +5,7 @@ import { lireCiblesEnLigne, sousBouclier } from '../pillages';
 import { relireVitrines, suivreCercle } from '../cercle';
 import { afficher } from '../rendu';
 import { cibleDefi, lireGardiensEnLigne, recevoirAssauts, synchroGarde } from '../fleche';
-import { moduleDe, moduleDef, porteurDef } from '../../core/donnees';
+import { moduleDe, moduleDef, porteurDef, deNom } from '../../core/donnees';
 import { estTri, poidsCarte } from '../../core/collection';
 import * as J from '../../core/jeu';
 import type { BatimentId } from '../../core/types';
@@ -15,7 +15,7 @@ import { NB_REPLIQUES } from '../../ui/district';
 import { contratAffiche, equipeAffichee } from '../../ui/marees';
 import type { OngletGuide } from '../../ui/guide';
 import { finPour } from '../combat';
-import { app, compteEtat, D, K, reduit } from '../etat';
+import { app, compteEtat, D, G, K, reduit } from '../etat';
 import { sauver } from '../synchro';
 import { ouvrir, resultat, type Clic, type Suite } from './commun';
 
@@ -44,7 +44,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       else if (id === 'colis') {
         const r = J.ouvrirColis(app.jeu);
         resultat(r);
-        if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} composants${r.colis.doublon ? `, un doublon de ${moduleDef(r.colis.doublon).nom}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
+        if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} composants${r.colis.doublon ? `, un doublon ${deNom(moduleDef(r.colis.doublon).nom)}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
       }
       break;
     case 'menu': D.ressource = null; D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; D.guide = null; D.porteur = null; break;
@@ -142,7 +142,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'colis': {
       const r = J.ouvrirColis(app.jeu);
       resultat(r);
-      if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} composants${r.colis.doublon ? `, un doublon de ${moduleDef(r.colis.doublon).nom}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
+      if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} composants${r.colis.doublon ? `, un doublon ${deNom(moduleDef(r.colis.doublon).nom)}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
       break;
     }
     case 'ouvrir-archive': resultat(J.ouvrirArchive(app.jeu)); break;
@@ -254,6 +254,8 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'mission': resultat(J.envoyerMission(app.jeu, id, (b.dataset.duree as J.DureeMission) ?? 'courte', Date.now(), b.dataset.cle)); break;
     case 'mission-lieu': D.destination = id; break;
     // depuis l'écran de départ : on compose les escouades dans l'onglet Escouade, sur celle qui descend
+    // l'escouade est trop blessée pour partir : droit à la Clinique, sur le district
+    case 'depart-clinique': ouvrir('archipel'); D.expedition = null; D.selection = 'clinique'; break;
     case 'escouade-modifier': ouvrir('porteurs'); D.retourModif = 'escouade'; D.vueEscouade = J.escouadeActive(app.jeu); window.scrollTo(0, 0); break;
     // la garnison du port (27 octobre 2026) : choisir l'escouade qui défend, la composer, et revenir là d'où l'on vient
     case 'defense-escouade': resultat(J.choisirDefense(app.jeu, Number(b.dataset.index ?? 0))); break;
@@ -287,7 +289,12 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'accueil': ouvrir('accueil'); D.etape = 0; window.scrollTo(0, 0); break;
     case 'accueil-suite': D.etape = Math.min(D.etape + 1, nbEtapes('district') - 1); break;
     case 'accueil-retour': D.etape = Math.max(D.etape - 1, 0); break;
-    case 'accueil-fin': app.jeu.accueilVu = true; sauver(); ouvrir('archipel'); if (id === 'generateur') D.selection = 'generateur'; window.scrollTo(0, 0); break;
+    case 'accueil-fin':
+      app.jeu.accueilVu = true; ouvrir('archipel'); if (id === 'generateur') D.selection = 'generateur'; window.scrollTo(0, 0);
+      // le pseudo, dès l'arrivée au district (3 novembre 2026 : une recrue restait « Sans pseudo »)
+      if (app.uid && !app.jeu.directeur?.nom && !app.jeu.pseudoPropose && !app.pseudoDemande) { app.pseudoDemande = true; app.jeu.pseudoPropose = true; G.edition = true; G.accueil = true; G.erreur = ''; }
+      sauver();
+      break;
     case 'codex':
     case 'bibliotheque':
       D.retourBiblio = app.mode === 'titre' ? 'titre' : D.vue === 'coupe' ? 'coupe' : 'archipel';
@@ -335,6 +342,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'legs-ok': D.legsRevele = false; break;
     case 'retour-ok': D.retour = []; break;
     case 'expedition-lu': D.expedition = null; break;
+    case 'rapport-chroniques': D.expedition = null; D.retourBiblio = 'archipel'; ouvrir('codex'); D.onglet = 'chroniques'; D.chapitre = null; break;
     case 'rappel-plus-tard': D.rappel = false; break;
     case 'rapport-lu': if (J.lireRapport(app.jeu).ok) sauver(); break;
     case 'rappel-proteger': D.rappel = false; D.menu = true; compteEtat.ouvert = true; compteEtat.erreur = ''; compteEtat.info = ''; break;
@@ -352,6 +360,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       ouvrir(o.onglet);
       if (o.onglet === 'archipel' && o.pilier) D.selection = o.pilier;
       if (o.onglet === 'pillages') D.voletPort = 'missions';
+      if (o.onglet === 'codex') { D.retourBiblio = 'archipel'; D.onglet = 'chroniques'; D.chapitre = null; }
       // construire le deck : droit aux cartes d'Ilka, où attend l'Œil-relais
       if (o.id === 'deck') D.deck = 'ilka';
       break;

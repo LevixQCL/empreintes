@@ -195,3 +195,4 @@ body{background:
 .dk-consigne .ico{flex:none;width:16px;height:16px;margin-top:2px;color:var(--gold)}
 .dk-consigne strong{color:#F2D58C;font-weight:600}
 .dk-pied .ligne-btn{display:flex;gap:8px;justify-content:flex-end}
+.appel.colis .colis-ouvrir{color:#CDEFFF;font-weight:600}
