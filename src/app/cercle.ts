@@ -26,6 +26,20 @@ const profils = new Map<string, Profil>();
 const redessiner = () => { if (app.mode === 'district' || (app.mode === 'duel' && !document.querySelector('.duel'))) afficher(); };
 const nomPublic = () => app.jeu.directeur?.nom ?? '';
 
+/**
+ * Le petit message quand une demande arrive pendant qu'on joue (3 novembre 2026, Bryan) : une demande d'ami, un défi ou une
+ * proposition d'échange qu'on n'avait pas encore vus. Rien au premier chargement : ce qui attendait déjà se voit par la bulle.
+ */
+const vus = new Set<string>();
+const charges = new Set<string>();
+function annoncer(sorte: 'amis' | 'defis' | 'echanges', l: { id: string; texte: string }[]) {
+  const nouveaux = l.filter((x) => !vus.has(x.id));
+  for (const x of l) vus.add(x.id);
+  if (!charges.has(sorte)) { charges.add(sorte); return; }
+  if (!nouveaux.length) return;
+  D.message = nouveaux.length > 1 ? `${nouveaux.length} nouvelles demandes t’attendent au Cercle des quais.` : nouveaux[0]!.texte;
+}
+
 function compter() {
   C.aRepondre = C.demandes.filter((d) => d.recue).length
     + C.recues.filter((p) => p.etat === 'propose').length
@@ -56,7 +70,11 @@ export async function suivreCercle(force = false) {
     if (app.uid !== uid) return;
     const a = n.ecouterAmities(uid, (l) => { amities = l; majAmis(uid); }, erreur);
     const b = n.ecouterEchanges(uid, (env, rec) => { majEchanges(uid, env, rec); }, erreur);
-    const c = n.ecouterDefis(uid, (env, rec) => { C.defisEnvoyes = env; C.defisRecus = rec; compter(); redessiner(); }, erreur);
+    const c = n.ecouterDefis(uid, (env, rec) => {
+      C.defisEnvoyes = env; C.defisRecus = rec;
+      annoncer('defis', rec.filter((d) => d.etat === 'envoye').map((d) => ({ id: d.id, texte: `${d.nomDe} te défie en duel${d.mode === 'egal' ? ' à armes égales' : ''} : rendez-vous au Cercle.` })));
+      compter(); redessiner();
+    }, erreur);
     ecoute = { uid, arreter: () => { a(); b(); c(); } };
     publierVitrine(2000);
     n.nettoyer(uid, Date.now() - 3 * 86_400_000).catch(() => {});
@@ -64,6 +82,7 @@ export async function suivreCercle(force = false) {
 }
 
 export function arreterCercle() {
+  vus.clear(); charges.clear();
   ecoute?.arreter();
   ecoute = null;
 }
@@ -80,6 +99,7 @@ async function majAmis(uid: string) {
     return { amitie: a.id, uid: lui, nom: a.de === uid ? a.nomA : a.nomDe, depuis: a.depuis ?? a.le, ...(profils.get(lui) ? { profil: profils.get(lui)! } : {}) };
   });
   C.amis = amis;
+  annoncer('amis', C.demandes.filter((d) => d.recue).map((d) => ({ id: d.amitie, texte: `${d.nom} veut devenir ton ami au Cercle des quais.` })));
   compter();
   redessiner();
   // les vitrines des amis : relues à chaque changement de la liste (une lecture par ami)
@@ -111,6 +131,7 @@ export async function relireVitrines() {
 async function majEchanges(uid: string, envoyees: Proposition[], recues: Proposition[]) {
   C.recues = recues;
   C.envoyees = envoyees;
+  annoncer('echanges', recues.filter((p) => p.etat === 'propose').map((p) => ({ id: p.id, texte: `${p.nomDe} te propose un échange de cartes au Cercle.` })));
   compter();
   const j = app.jeu;
   const n = await reseau();
