@@ -2,7 +2,7 @@ import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 
 // base relative : le même build marche sur GitHub Pages (/empreintes/), en local et plus tard dans Electron/Capacitor.
-// Deux pages : le jeu (index.html) et l'outil d'analyse (analyse.html), que le jeu ne charge jamais.
+// Trois pages : le jeu (index.html), l'outil d'analyse (analyse.html) et l'essai du duel (duel.html), que le jeu ne charge jamais.
 export default defineConfig({
   base: './',
   build: {
@@ -11,6 +11,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         analyse: resolve(__dirname, 'analyse.html'),
+        // le duel en temps réel (3 novembre 2026) : une page d'essai, sans lien depuis le jeu
+        duel: resolve(__dirname, 'duel.html'),
       },
     },
   },

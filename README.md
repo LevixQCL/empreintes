@@ -20,6 +20,7 @@ Autres commandes :
 | `npm run visuel` | Compare les écrans avant / après une modification (téléphone et PC) : voir `.visuel/` |
 | `npm run css` | Repère le CSS inutile (déclarations toujours écrasées, règles en double) ; `-- --ecrire` le nettoie |
 | `analyse.html` | L'outil d'analyse (page à part, jamais chargée par le jeu, réservée au compte de Bryan) : points d'attention, activité, rétention par cohorte, progression et rythme, combats, Porteurs, cartes, économie, campagne, usage des fonctions, joueurs ; filtres ; exports JSON et CSV anonymisés |
+| `duel.html` | L'essai du duel en temps réel (page à part, sans lien depuis le jeu, pas encore branché) : contre le robot ou un ami avec un code — voir `docs/duel.md` |
 | `npm run robot` | Lance le robot d'équilibrage (quelques minutes) et écrit `docs/robot-rapport.md` |
 | `npm run voies` | Compare chaque voie à un deck classique de même Charge et écrit `docs/voies-rapport.md` |
 

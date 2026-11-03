@@ -1,0 +1,111 @@
+/* Le duel en temps réel (3 novembre 2026) : matière « cristal et lumière », comme l'écran de combat.
+   Chargée seulement par duel.html (pas encore dans feuilles.ts : le duel n'est pas branché au jeu). */
+
+#app[data-mode="duel"]{max-width:480px;padding:calc(8px + var(--sat)) 10px calc(12px + var(--sab));
+  background:radial-gradient(120% 60% at 50% 0%,rgba(127,212,255,.10),transparent 60%),radial-gradient(90% 50% at 50% 100%,rgba(216,180,101,.08),transparent 70%),var(--bg)}
+
+.duel{position:relative;display:grid;gap:8px}
+.dl-tete{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:end;gap:8px}
+.dl-tete .surtitre{color:var(--cristal)}
+.dl-tete h1{margin:2px 0 0;font-family:var(--display);font-size:20px;line-height:1.1;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dl-etat{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--quiet);padding-bottom:2px;animation:dl-pouls 1.6s ease-in-out infinite}
+.dl-etat.pret{color:var(--ok);animation:none}
+.dl-bouclier{display:inline-flex;align-items:center;gap:3px;font-family:var(--mono);font-size:13px;font-weight:600;color:#9BD3FF}
+.dl-bouclier .ico{width:14px;height:14px}
+@keyframes dl-pouls{50%{opacity:.45}}
+
+/* Les escouades : trois tuiles, le portrait en plein fond */
+.dl-escouade{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.dl-porteur{--cut:8px;position:relative;display:grid;align-content:end;height:86px;padding:0 5px 5px;border:none;overflow:hidden;isolation:isolate;background:#0B0E15;
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 45%,transparent);transition:box-shadow .2s ease,filter .2s ease}
+.dl-portrait{position:absolute;inset:0;z-index:-2;background-size:cover;background-position:50% 18%}
+.dl-portrait.vide{background:linear-gradient(160deg,color-mix(in srgb,var(--c) 30%,#0B0E15),#0B0E15)}
+.dl-porteur::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(6,7,10,0) 35%,rgba(6,7,10,.85) 100%)}
+.dl-pv{justify-self:end;margin-bottom:3px}
+.dl-pv b{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink);text-shadow:0 1px 4px #000}
+.dl-jauge .jauge-vie{--h:8px}
+.dl-porteur.cible{box-shadow:inset 0 0 0 2px #FF9D7A,0 0 14px rgba(255,120,84,.45)}
+.dl-marque{position:absolute;top:5px;left:5px;display:grid;place-items:center;width:22px;height:22px;color:#1B0B06;background:linear-gradient(180deg,#FFC2A6,#E2735A);
+  clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);animation:dl-pouls 1.2s ease-in-out infinite}
+.dl-marque .ico{width:12px;height:12px}
+.dl-porteur.soigne{box-shadow:inset 0 0 0 2px #7CE3A0,0 0 12px rgba(124,227,160,.4)}
+.dl-porteur.terre{filter:grayscale(1) brightness(.5)}
+.dl-porteur:not(:disabled):active{filter:brightness(1.15)}
+
+/* Le centre : le chrono en anneau de lumière, et ce qui vient de se passer */
+.dl-centre{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;padding:6px 2px}
+.dl-chrono{--p:100%;position:relative;display:grid;place-items:center;width:52px;height:52px;border-radius:50%;
+  background:conic-gradient(var(--cristal) var(--p),rgba(127,212,255,.12) 0);box-shadow:0 0 14px rgba(127,212,255,.25)}
+.dl-chrono::before{content:"";position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle at 50% 35%,#1A2230,#0B0E15)}
+.dl-chrono b{position:relative;font-family:var(--mono);font-size:20px;font-weight:600;color:var(--ink)}
+.dl-chrono b .ico{width:18px;height:18px;color:var(--cristal)}
+.dl-chrono.urgent{background:conic-gradient(#FF9D7A var(--p),rgba(255,157,122,.15) 0);box-shadow:0 0 16px rgba(255,120,84,.45)}
+.dl-recap{display:flex;flex-wrap:wrap;gap:4px 12px;margin:0;font-size:13px;color:var(--quiet)}
+.dl-recap>span:first-child{width:100%;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--cristal)}
+.dl-recap b{font-family:var(--mono);font-size:15px;color:var(--ink)}
+.dl-recap .atk .ico{width:13px;height:13px;color:#FF9D7A}
+.dl-recap .terre{width:100%;color:#FFB59E}
+.dl-lu{margin:0;font-size:13px;color:#CDB8FF}
+.dl-lu .ico{width:13px;height:13px}
+
+/* La chaîne */
+.dl-chaine{--cut:10px;position:relative;padding:8px;background:var(--verre);box-shadow:inset 0 0 0 1px rgba(127,212,255,.28);
+  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.dl-chaine.verrouille{box-shadow:inset 0 0 0 1px var(--filet-fort),inset 0 0 24px rgba(216,180,101,.12)}
+.dl-rangee{display:flex;justify-content:center;gap:5px;min-height:98px}
+.dl-chaine .place-vide{display:block;width:70px;height:98px;outline:1px dashed rgba(127,212,255,.3);outline-offset:-3px;background:rgba(127,212,255,.03)}
+.dl-bonus{position:absolute;top:6px;right:10px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);text-shadow:0 0 8px rgba(216,180,101,.6)}
+.dl-apercu{display:flex;justify-content:center;gap:16px;margin:0;font-family:var(--mono);font-size:13px;color:var(--quiet)}
+.dl-apercu span{display:inline-flex;align-items:center;gap:4px}
+.dl-apercu b{font-size:16px;color:var(--ink)}
+.dl-apercu small{font-size:12px}
+.dl-apercu .atk .ico{color:#FF9D7A} .dl-apercu .bouclier .ico{color:#9BD3FF} .dl-apercu .soin .ico{color:#7CE3A0}
+.dl-apercu .ico{width:15px;height:15px}
+
+.dl-moi{display:grid;gap:5px}
+.dl-moi .surtitre{color:var(--gold)}
+.dl-main{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;min-height:97px}
+.duel.attend .dl-main{opacity:.55}
+
+.dl-actions{display:grid;grid-template-columns:auto auto auto minmax(0,1fr);align-items:center;gap:6px}
+.dl-actions .btn-sec,.dl-actions .prim{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:0 10px;font-size:14px}
+.dl-actions .ico{width:15px;height:15px}
+.dl-flux{display:inline-flex;align-items:center;gap:3px;color:var(--cristal)}
+.dl-flux .ico{width:15px;height:15px}
+.dl-flux i{width:8px;height:12px;background:rgba(127,212,255,.15);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.dl-flux i.on{background:var(--cristal);box-shadow:0 0 6px var(--cristal)}
+.dl-quitter{justify-self:center;margin-top:2px;padding:8px 14px;border:none;background:none;font-size:13px;color:var(--mute);text-decoration:underline;text-underline-offset:3px}
+.dl-alerte{margin:0;font-size:13px;color:var(--alerte)}
+
+/* La fin du duel */
+.dl-fin{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(6,7,10,.72);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:dl-entree .35s ease}
+.dl-fin-carte{--cut:14px;display:grid;gap:10px;justify-items:center;width:min(320px,100%);padding:24px 20px;text-align:center;background:var(--verre-2);
+  box-shadow:inset 0 0 0 1px var(--filet-fort);clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
+.dl-fin h2{margin:0;font-family:var(--display);font-size:34px;color:var(--ink)}
+.dl-fin.gagne h2{color:var(--gold);text-shadow:0 0 18px rgba(216,180,101,.6)}
+.dl-fin.perdu h2{color:#C9B7B0}
+.dl-fin p{margin:0;color:var(--quiet)}
+.dl-fin .prim{min-height:44px;padding:0 24px}
+@keyframes dl-entree{from{opacity:0;transform:scale(.96)}}
+
+/* Le salon */
+.duel-salon{display:grid;gap:14px;padding-top:12px}
+.duel-salon h1{margin:4px 0 6px;font-family:var(--display);font-size:28px;color:var(--ink)}
+.duel-salon .surtitre{color:var(--cristal)}
+.duel-salon .prim,.duel-salon .btn-sec{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:48px;font-size:15px}
+.dl-qui{margin:0;font-size:14px;color:var(--quiet)} .dl-qui b{color:var(--ink)}
+.dl-rejoindre{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.dl-rejoindre input{min-height:48px;padding:0 12px;border:none;background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet);color:var(--ink);
+  font-family:var(--mono);font-size:18px;letter-spacing:.3em;text-transform:uppercase}
+.dl-code{display:grid;gap:4px;justify-items:center;padding:16px;background:var(--verre);box-shadow:inset 0 0 0 1px rgba(127,212,255,.35);text-align:center}
+.dl-code b{font-family:var(--mono);font-size:34px;letter-spacing:.3em;color:var(--cristal);text-shadow:0 0 12px rgba(127,212,255,.5)}
+
+@media (max-width:370px){
+  .dl-porteur{height:78px}
+  .dl-chaine .place-vide{width:64px;height:90px}
+  .dl-main{flex-wrap:nowrap;gap:3px}
+  .dl-main .geste.main{width:62px;height:87px}
+  .dl-actions{grid-template-columns:auto auto auto;}
+  .dl-actions .prim{grid-column:1 / -1}
+}
