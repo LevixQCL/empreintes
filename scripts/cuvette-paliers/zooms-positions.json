@@ -1,0 +1,58 @@
+{
+ "tour-bas": [
+  595,
+  587
+ ],
+ "forge-bas": [
+  182,
+  736
+ ],
+ "clinique-bas": [
+  167,
+  1080
+ ],
+ "labo-bas": [
+  1066,
+  750
+ ],
+ "generateur-bas": [
+  428,
+  1193
+ ],
+ "comptoir-bas": [
+  907,
+  1123
+ ],
+ "port-bas": [
+  1100,
+  1708
+ ],
+ "tour-haut": [
+  597,
+  477
+ ],
+ "forge-haut": [
+  217,
+  632
+ ],
+ "clinique-haut": [
+  170,
+  974
+ ],
+ "labo-haut": [
+  1066,
+  667
+ ],
+ "generateur-haut": [
+  449,
+  1101
+ ],
+ "comptoir-haut": [
+  894,
+  1043
+ ],
+ "port-haut": [
+  1100,
+  1708
+ ]
+}

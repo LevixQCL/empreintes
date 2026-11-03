@@ -85,7 +85,7 @@ Pack des zooms et prompts : `scripts/cuvette2-pack.py`.
   (`CUVETTE` dans src/ui/art.ts). Zones cliquables et repères : `ZONES_CUVETTE` / `BALISES_CUVETTE` dans src/ui/district.ts (repère 400 × 600).
 - Téléphone : tableau sur toute la hauteur. PC : `art/district/cuvette-large.webp` (Midjourney a élargi la scène, district recollé en pleine
   résolution) derrière la toile, centre du tableau à 50,57 % de sa largeur (district.css, fin du fichier).
-- Reste : paliers bas/haut des 7 bâtiments (méthode du pack : scripts/cuvette2-pack.py, cuvette2-integrer.py).
+- Paliers bas/haut des 7 bâtiments faits le 3 nov. 2026 : docs/prompts-paliers.md.
 - Animations (2 nov. 2026, nuit, refaites après « hyper cheap ») : un seul programme WebGL (src/ui/houle.ts) repeint par-dessus le
   tableau ce qui bouge, à partir de ses propres pixels : houle de la mer, chutes qui défilent vers le bas avec filets et écume (aussi
   dans la mer au pied du déversoir), cristaux allumés de l'intérieur avec halo, fourneau qui vacille, fumée en bouffées cernées

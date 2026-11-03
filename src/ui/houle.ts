@@ -18,12 +18,11 @@ precision highp float;
 #else
 precision mediump float;
 #endif
-uniform sampler2D img,m1,m2,m3;uniform float t;varying vec2 uv;
+uniform sampler2D img,m1,m2,m3;uniform float t;uniform vec2 FUMEE;varying vec2 uv;
 float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
 vec3 ecran(vec3 c,vec3 a){return 1.-(1.-c)*(1.-clamp(a,0.,1.));}
 float fbm(vec2 p){float s=0.,a=.5;for(int i=0;i<4;i++){s+=a*n(p);p=p*2.03+vec2(1.7,9.2);a*=.5;}return s;}
-const vec2 FUMEE=vec2(90.,196.);
 // la fumée : des bouffées rondes, cernées d'encre comme le reste du tableau, qui naissent au haut de la cheminée,
 // montent, gonflent, partent avec le vent et se dissolvent ; la plus jeune passe devant les autres
 vec4 bouffees(vec2 p){
@@ -144,7 +143,7 @@ void main(){
   gl_FragColor=vec4(c,1.);
 }`;
 
-type Etat = { gl: WebGLRenderingContext; t0: number; tLoc: WebGLUniformLocation | null; pret: boolean; image: string; tour: number };
+type Etat = { gl: WebGLRenderingContext; t0: number; tLoc: WebGLUniformLocation | null; fLoc: WebGLUniformLocation | null; fumee: [number, number]; pret: boolean; image: string; tour: number };
 let toile: HTMLCanvasElement | null = null;
 let etat: Etat | null = null;
 let echec = false;
@@ -197,7 +196,7 @@ function creer(image: string, masques: string[]): Etat | null {
   gl.enableVertexAttribArray(p);
   gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 0, 0);
   ['img', 'm1', 'm2', 'm3'].forEach((nom, i) => gl.uniform1i(gl.getUniformLocation(prog, nom), i));
-  const e: Etat = { gl, t0: performance.now(), tLoc: gl.getUniformLocation(prog, 't'), pret: false, image, tour: 0 };
+  const e: Etat = { gl, t0: performance.now(), tLoc: gl.getUniformLocation(prog, 't'), fLoc: gl.getUniformLocation(prog, 'FUMEE'), fumee: [90, 196], pret: false, image, tour: 0 };
   Promise.all([image, ...masques].map(charger)).then((imgs) => {
     imgs.forEach((im, i) => texture(gl, i, im));
     e.pret = true;
@@ -244,6 +243,7 @@ function boucle(tour: number) {
     // le temps repart de zéro toutes les heures : les calculs restent précis sur les téléphones
     const sec = ((now - etat.t0) / 1000) % 3600;
     gl.uniform1f(etat.tLoc, sec);
+    gl.uniform2f(etat.fLoc, etat.fumee[0], etat.fumee[1]);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     toile.classList.add('prete');
   };
@@ -266,6 +266,9 @@ export function brancherHoule(racine: HTMLElement) {
   try {
     if (!etat || etat.image !== image) { etat = creer(image, masques); if (!etat) { echec = true; return; } }
   } catch { echec = true; return; }
+  // la fumée sort du haut de la cheminée de la Forge, qui change avec son palier
+  const f = place.dataset.fumee?.split(' ').map(Number);
+  if (f?.length === 2 && f.every(Number.isFinite)) etat.fumee = [f[0]!, f[1]!];
   const enCours = toile!.isConnected;
   place.append(toile!);
   // hors de l'écran (le joueur a fait défiler), rien n'est dessiné

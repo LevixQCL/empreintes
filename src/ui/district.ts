@@ -31,7 +31,7 @@ import { frequenceLibre } from '../core/regles';
 import { htmlListeScenes } from './campagne';
 import { COULEUR } from './vue';
 import type { Affinite } from '../core/lieux';
-import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, salleEntrainement } from './art';
+import { LIEUX_SLUGS, BARQUE_PEINTE, PILIERS_LARGE, barque, decorLieu, merLarge, vignetteDistrict, decor, decorStrate, illustrationBatiment, portrait, prochainVisuel, prochainPalier, palierCuvette, CALQUES_CUVETTE, calquePalier, FUMEE_FORGE, reflets, sceneDistrict, CUVETTE, visuel, portraitYse, salleEntrainement } from './art';
 import { COULEUR_RARETE, faceCarte, couleurFrequence } from './carte';
 import { feuilleGuide, lienGuide, trouveesDe } from './guide';
 import { avecMots } from './lexique';
@@ -217,27 +217,47 @@ export function brancherTableau(racine: HTMLElement) {
  * Les éclats des cristaux de la Cuvette : une étoile qui s'ouvre un instant sur une arête, puis se referme, chacune à son rythme
  * (la lumière des cristaux eux-mêmes est peinte par houle.ts). Repère 400 × 600 : position, période en secondes, décalage.
  */
-const ECLATS: [number, number, number, number][] = [
-  [204, 141, 3.7, 0], [199, 151, 5.3, 2.1], // le cristal au sommet de la Tour
-  [124, 327, 4.9, 1.2], // la lanterne de la Clinique
-  [179, 343, 4.1, .6], [175, 365, 6.2, 3.4], // le tube du Générateur
-  [268, 371, 4.5, 2.7], [288, 377, 5.8, .9], // le bassin du Comptoir
-  [316, 514, 4.3, 1.8], // la lanterne du Port
-  [313, 233, 6.6, 4.1], // la cuve du Labo
-  [127, 303, 5.1, 3.0], // les cristaux au pied de la Forge
+const ECLATS: [number, number, number, number, Lieu][] = [
+  [204, 141, 3.7, 0, 'noyau'], [199, 151, 5.3, 2.1, 'noyau'], // le cristal au sommet de la Tour
+  [124, 327, 4.9, 1.2, 'clinique'], // la lanterne de la Clinique
+  [179, 343, 4.1, .6, 'generateur'], [175, 365, 6.2, 3.4, 'generateur'], // le tube du Générateur
+  [268, 371, 4.5, 2.7, 'comptoir'], [288, 377, 5.8, .9, 'comptoir'], // le bassin du Comptoir
+  [316, 514, 4.3, 1.8, 'port'], // la lanterne du Port
+  [313, 233, 6.6, 4.1, 'labo'], // la cuve du Labo
+  [127, 303, 5.1, 3.0, 'forge'], // les cristaux au pied de la Forge
 ];
 /** Les étincelles qui montent du fourneau de la Forge */
 const ETINCELLES: [number, number, number, number][] = [[121, 279, 2.4, 0], [125, 281, 2.9, .9], [118, 282, 2.2, 1.6], [123, 278, 3.3, 2.2], [127, 283, 2.6, .4]];
+
+/**
+ * Le palier de chaque bâtiment sur la Cuvette (3 novembre 2026). Le Labo et le Port n'ont pas de niveau à eux : ils suivent l'âge du
+ * district (la Tour du Noyau). Un Comptoir pas encore ouvert reste un simple étal.
+ */
+function paliers(j: Jeu): Record<string, ReturnType<typeof palierCuvette>> {
+  const p: Record<string, ReturnType<typeof palierCuvette>> = {};
+  for (const { lieu } of CALQUES_CUVETTE) p[lieu] = palierCuvette(estFutur(lieu) ? j.batiments.noyau : j.batiments[lieu as BatimentId] ?? 0);
+  return p;
+}
 
 function tableau(j: Jeu): string {
   const s = sceneDistrict(j.batiments.noyau);
   const nouveau = ageAffiche !== 0 && ageAffiche !== s.age;
   ageAffiche = s.age;
+  const p = CUVETTE ? paliers(j) : null;
+  // les calques passent par-dessus la Cuvette animée : les éclats et les étincelles d'un bâtiment repeint ne tombent plus juste
+  const garde = (lieu: Lieu) => !p || p[lieu] === 'milieu';
+  const fumee = p ? FUMEE_FORGE[p.forge!] : null;
   return `<img class="tableau${s.nuit ? ' nuit' : ''}${nouveau ? ' nouvel-age' : ''}" src="${s.url}" alt="" draggable="false"/>`
     + (s.video ? `<div class="anime" data-video="${s.video}"></div>` : '')
-    + (s.houle && !mouvementReduit() ? `<div class="houle" data-image="${s.url}" data-masques="${s.houle}"></div>` : '')
-    + (CUVETTE ? ECLATS.map(([x, y, p, d]) => `<i class="eclat" style="left:${x / 4}%;top:${y / 6}%;--p:${p}s;--d:${d}s" aria-hidden="true"></i>`).join('')
-      + ETINCELLES.map(([x, y, p, d]) => `<i class="etincelle" style="left:${x / 4}%;top:${y / 6}%;--p:${p}s;--d:${d}s" aria-hidden="true"></i>`).join('') : '')
+    + (s.houle && !mouvementReduit() ? `<div class="houle" data-image="${s.url}" data-masques="${s.houle}"${fumee ? ` data-fumee="${fumee.join(' ')}"` : ''}></div>` : '')
+    + (p ? CALQUES_CUVETTE.map((c) => {
+      const q = p[c.lieu]!;
+      if (q === 'milieu') return '';
+      const [x, y, w, h] = c[q];
+      return `<img class="palier" src="${calquePalier(c.lieu, q)}" style="left:${x! / 8}%;top:${y! / 12}%;width:${w! / 8}%;height:${h! / 12}%" alt="" draggable="false" decoding="async">`;
+    }).join('') : '')
+    + (CUVETTE ? ECLATS.filter((e) => garde(e[4])).map(([x, y, pe, d]) => `<i class="eclat" style="left:${x / 4}%;top:${y / 6}%;--p:${pe}s;--d:${d}s" aria-hidden="true"></i>`).join('')
+      + (garde('forge') ? ETINCELLES.map(([x, y, pe, d]) => `<i class="etincelle" style="left:${x / 4}%;top:${y / 6}%;--p:${pe}s;--d:${d}s" aria-hidden="true"></i>`).join('') : '') : '')
     + `${s.nuit ? '<i class="nuit-voile" aria-hidden="true"></i>' : ''}`;
 }
 
@@ -501,7 +521,7 @@ const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${N
 function gainsNiveau(j: Jeu, b: BatimentId): string {
   const niv = j.batiments[b];
   const gains: (GainNiveau | { quoi: 'apparence'; texte: string; detail?: string; avant?: undefined; apres?: undefined; unite?: undefined })[] = gainsAmelioration(j, b);
-  const nouvelle = prochainVisuel(niv) === niv + 1;
+  const nouvelle = (b === 'noyau' || !CUVETTE ? prochainVisuel(niv) : prochainPalier(niv)) === niv + 1;
   if (nouvelle) gains.push(b === 'noyau' ? { quoi: 'apparence', texte: 'Le district change d’âge', detail: 'nouvelle vue d’ensemble' } : { quoi: 'apparence', texte: 'Nouvelle apparence', detail: 'le bâtiment se transforme' });
   if (!gains.length) return '';
   const dc = dureeChantier(j, b);
@@ -774,7 +794,7 @@ function feuilleBatiment(e: EcranDistrict): string {
   const b = sel;
   const d = batimentDef(b);
   const niv = j.batiments[b];
-  const pv = prochainVisuel(niv);
+  const pv = b === 'noyau' || !CUVETTE ? prochainVisuel(niv) : prochainPalier(niv);
   const crans = Array.from({ length: d.niveauMax }, (_, i) => `<i class="${i < niv ? 'plein' : ''}"></i>`).join('');
   const surtitre = niv ? `Niveau ${niv} <span class="fb-max">/ ${d.niveauMax}</span>` : b === 'comptoir' ? 'Fermé' : 'À construire';
   const ideal = d.affinite ? `<span class="fb-ideal" style="--c:${COULEUR[d.affinite]}">${ICO.porteurs}Idéal : ${NOM_LIGNEE[d.affinite]} <b>×${virgule(DISTRICT.bonusAffinite)}</b></span>` : '';

@@ -237,21 +237,41 @@ export function visuel(niveau: number): 1 | 2 | 3 | 4 {
 }
 
 /**
- * Les paliers des bâtiments de la Cuvette (niveaux 1-3, 4-7, 8-10) ne sont pas encore peints : en attendant, un seul visuel par bâtiment,
- * détouré du tableau du district (scripts/cuvette-detourer-batiments.py), et aucune « nouvelle apparence » n'est promise.
+ * Les paliers des bâtiments de la Cuvette (3 novembre 2026) : trois apparences par bâtiment, peintes dans la Cuvette avec l'éditeur de
+ * Midjourney (zooms et prompts : docs/prompts-paliers.md). Bricolé aux niveaux 1 à 3, le tableau tel quel de 4 à 7, prestigieux dès 8.
+ * Le tableau (cuvette.webp) montre le palier du milieu ; un palier bas ou haut est un calque posé dessus (art/district/paliers),
+ * qui recouvre aussi le sol sous l'ancien bâtiment. Les feuilles des bâtiments : art/batiments/<id>-1 à 4.webp (3 et 4 identiques).
  */
-// les anciennes images <id>-1 à 4 (maisonnettes de l'archipel) sont rangées dans sources/art/batiments : avant de passer à true,
-// déposer les nouveaux paliers peints dans public/art/batiments/<id>-1 à 4.webp
-export const PALIERS_PEINTS = false;
+export const PALIERS_PEINTS = true;
+export type PalierCuvette = 'bas' | 'milieu' | 'haut';
+export const palierCuvette = (niveau: number): PalierCuvette => (niveau >= 8 ? 'haut' : niveau >= 4 ? 'milieu' : 'bas');
+/** Les calques des paliers bas et haut, en pixels du tableau (800 × 1200) : gauche, haut, largeur, hauteur. Les lieux sont listés
+ *  du fond vers l'avant : c'est l'ordre où ils se posent (un bâtiment plus proche passe devant). */
+export const CALQUES_CUVETTE: readonly { lieu: string; bas: readonly number[]; haut: readonly number[] }[] = [
+  { lieu: 'noyau', bas: [334, 285, 157, 296], haut: [278, 267, 278, 320] },
+  { lieu: 'labo', bas: [567, 446, 156, 177], haut: [565, 408, 159, 225] },
+  { lieu: 'forge', bas: [134, 376, 158, 265], haut: [128, 350, 204, 302] },
+  { lieu: 'clinique', bas: [118, 634, 168, 145], haut: [111, 556, 187, 228] },
+  { lieu: 'comptoir', bas: [454, 611, 198, 226], haut: [455, 567, 213, 270] },
+  { lieu: 'generateur', bas: [244, 650, 199, 226], haut: [235, 587, 221, 289] },
+  { lieu: 'port', bas: [591, 1020, 245, 143], haut: [590, 953, 249, 210] },
+];
+export const calquePalier = (lieu: string, p: 'bas' | 'haut') => `${base}district/paliers/${lieu}-${p}.webp`;
+/** Le haut de la cheminée de la Forge à chaque palier (repère 400 × 600) : la fumée en sort */
+export const FUMEE_FORGE: Record<PalierCuvette, [number, number]> = { bas: [96, 236], milieu: [90, 196], haut: [95, 187] };
 const unSeulVisuel = () => CUVETTE && !PALIERS_PEINTS;
 export const illustrationBatiment = (id: BatimentId, niveau: number) =>
   unSeulVisuel() ? `${base}batiments/${id}.webp` : `${base}batiments/${id}-${visuel(niveau)}.webp`;
 
-/** Niveau où le bâtiment change d'apparence la prochaine fois (null au légendaire) */
+/** Niveau où le bâtiment change d'apparence la prochaine fois (null au légendaire). Pour la Tour, c'est aussi l'âge du district. */
 export function prochainVisuel(niveau: number): number | null {
   if (unSeulVisuel()) return null;
-  const seuils = [4, 8, 10];
-  return seuils.find((s) => s > niveau) ?? null;
+  return [4, 8, 10].find((s) => s > niveau) ?? null;
+}
+/** Le prochain niveau où un bâtiment de la Cuvette change vraiment d'allure (trois paliers : le 10 garde l'allure du 8) */
+export function prochainPalier(niveau: number): number | null {
+  if (unSeulVisuel()) return null;
+  return [4, 8].find((s) => s > niveau) ?? null;
 }
 
 /**
