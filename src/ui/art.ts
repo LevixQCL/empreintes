@@ -316,7 +316,16 @@ const AGES_ANIMES = new Set<number>();
 export const ageArchipel = (strate: number) => (strate <= 2 ? 1 : strate <= 5 ? 2 : strate <= 9 ? 3 : 4);
 /** Ton propre district vu de loin (pillages, missions en mer) : la Cuvette */
 export const vignetteDistrict = (age: number) => (CUVETTE ? `${base}district/cuvette-vignette.webp` : vignetteArchipel(age));
-export const vignetteArchipel = (age: number) => `${base}district/age-${Math.max(1, Math.min(age, AGES_PEINTS))}.webp`;
+/**
+ * Un district voisin (pillages) : une cuvette peinte, 4 âges selon sa profondeur et 4 variantes par âge (3 novembre 2026,
+ * docs/prompts-voisins.md). La variante vient du nom du district : un même voisin garde toujours la même image.
+ * `mini` : le médaillon carré de la carte des pillages (240 px) ; sinon le tableau entier (800 × 1200, décor du combat).
+ */
+export const vignetteArchipel = (age: number, graine = '', mini = false) => {
+  let h = 0;
+  for (const c of graine) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return `${base}district/voisin-${Math.max(1, Math.min(age, AGES_PEINTS))}-${(h % 4) + 1}${mini ? '-mini' : ''}.webp`;
+};
 /**
  * La Cuvette (2 novembre 2026) : un seul tableau peint pour tous les âges en attendant les paliers des bâtiments
  * (art/district/cuvette.webp, 800 × 1200, recadré de cuvette2-batiments.webp).

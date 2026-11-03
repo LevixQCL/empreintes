@@ -80,7 +80,7 @@ export function htmlPillages(e: EcranDistrict): string {
       const d = difficulte(c.force / force);
       const fait = faits.includes(c.id);
       return `<button type="button" class="pl-ile d${d.niveau}${c === choisie ? ' choisie' : ''}${fait ? ' faite' : ''}" style="--x:${x}%;--y:${y}%" data-action="pillage-voir" data-id="${echap(c.id)}" aria-pressed="${c === choisie}" aria-label="${echap(`${c.nom} : ${fait ? 'déjà pillé aujourd’hui' : d.nom}`)}">`
-        + `<span class="pl-medaillon"><img src="${vignetteArchipel(ageArchipel(c.strate))}" alt="" decoding="async" loading="lazy">${fait ? `<span class="pl-fait">${ICO.ok}</span>` : ''}</span>`
+        + `<span class="pl-medaillon"><img src="${vignetteArchipel(ageArchipel(c.strate), c.id, true)}" alt="" decoding="async" loading="lazy">${fait ? `<span class="pl-fait">${ICO.ok}</span>` : ''}</span>`
         + `<span class="pl-nom">${echap(c.nom)}</span><span class="pl-diff">${fait ? 'Pillé' : d.nom}</span></button>`;
     }).join('')
     + `<div class="pl-moi" style="--x:${MOI[0]}%;--y:${MOI[1]}%"><span class="pl-medaillon"><img src="${vignetteDistrict(age)}" alt="" decoding="async"></span><span class="pl-nom">${echap(j.directeur?.nom ?? 'Ton district')}</span></div>`
@@ -162,7 +162,7 @@ export const pillagesOuverts = (j: Jeu) => j.chambre && strateVaincue(j) >= PILL
 function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
   const recharge = `${Math.floor(PILLAGE.rechargeMs / 3_600_000)} h ${Math.round((PILLAGE.rechargeMs % 3_600_000) / 60_000)}`;
   const vole = `+${Math.round(PILLAGE.partVolee * 100)} %`, perte = `−${Math.round(PILLAGE.perteDefaite * 100)} %`;
-  return `<section class="fl-intro pl-intro" style="--decor:url(${vignetteArchipel(2)})"><div class="fl-intro-texte">`
+  return `<section class="fl-intro pl-intro" style="--decor:url(${vignetteArchipel(2, 'intro')})"><div class="fl-intro-texte">`
     + `<span class="surtitre">Le Port du district</span><h2>Le Port reprend du service</h2>`
     + `<p>Devant le sas de la digue, sur ses pilotis, le Port voit partir les barques du passeur : vers les ruines noyées, et vers les cuvettes voisines.</p></div></section>`
     + (etat === 'fermee' ? `<p class="fl-condition">${ICO.verrou}<span><strong>Le bateau reste à quai · vaincs le gardien de la Strate −${PILLAGE.strateDuPort}</strong><small>Tant que le gardien tient le puits, personne ne quitte le district.</small></span></p>` : '')
