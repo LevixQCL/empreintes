@@ -171,7 +171,10 @@ export const FORCE = {
   // les mêmes repères (front 41 % / 37 %, Strate −10 au jour 29 / 22).
   //      −1   −2     −3     −4     −5     −6     −7     −8     −9     −10    −11    −12    −13    −14
   // −15 % dans la Strate −1 (27 octobre 2026, Bryan : trop dure pour un nouveau joueur) : Pilleur 70 → 60 PV, Vigie 95 → 81, Confluence 165 → 140.
-  table: [0.85, 1.39, 1.818, 2.139, 2.46, 2.781, 2.888, 3.016, 3.102, 3.262, 3.475, 3.743, 3.936, 4.064] as number[],
+  // −7 à −14 relevés le 3 novembre 2026 (validé par Bryan) : avant 2.888, 3.016, 3.102, 3.262, 3.475, 3.743, 3.936, 4.064 ; le joueur dépassait
+  // les ennemis en fin de parcours (combats normaux de 5 tours à −10, front gagné à 58 %). Avec moins de creuseurs demandés (CREUSEURS.requis) :
+  // −10 au jour 30 pour l'occasionnel, front ≈ 45 %, combats normaux 6 à 8 tours.
+  table: [0.85, 1.39, 1.818, 2.139, 2.46, 2.781, 2.9, 3.05, 3.2, 3.38, 3.6, 3.85, 4.05, 4.2] as number[],
   /** hausse par Strate au-delà de la table */
   ensuite: 1.04,
   /** hausse par Strate pour suivre les niveaux des Porteurs. À 0 depuis les traits, phases et conditions (22 octobre 2026), qui

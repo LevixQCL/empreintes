@@ -80,7 +80,7 @@ export const LEXIQUE: Record<string, Terme> = {
   blinde: { nom: 'Blindé', motif: /Blindé/, texte: 'Cet ennemi retire quelques points à chaque coup (un peu plus en profondeur). Perçant passe outre.', theme: 'ennemi' },
   percant: { nom: 'Perçant', motif: /Perçant|transpercé/, texte: 'Le coup ignore le bouclier et le blindage de l’ennemi.', theme: 'effet' },
   evanescent: { nom: 'Évanescent', motif: /Évanescent/, texte: 'Hors Résonance, cet ennemi ne prend qu’une part des coups : fais des suites.', theme: 'ennemi' },
-  eternise: { nom: 'Combat qui s’éternise', motif: /s’éternise/, texte: 'À partir du tour 25, les attaques ennemies grossissent de 10 % par tour (et dès le tour 10, les ennemis se soignent de moins en moins) : aucun combat ne tourne en rond.', theme: 'combat' },
+  eternise: { nom: 'Combat qui s’éternise', motif: /s’éternise/, texte: 'À partir du tour 13, les attaques ennemies grossissent de 15 % par tour (et dès le tour 11, les ennemis se soignent de moins en moins) : aucun combat ne tourne en rond, même avec une escouade qui ne fait que tenir.', theme: 'combat' },
   pleins: { nom: 'PV déjà pleins', motif: /PV déjà pleins/, texte: 'Un soin ne dépasse jamais les PV max : le surplus est perdu.', theme: 'combat' },
   nouvelleMain: { nom: 'Nouvelle main', motif: /nouvelle main/, texte: 'Pour 1 Flux, la main et les cartes déjà posées partent à la défausse, et l’on pioche une main neuve.', theme: 'combat' },
 

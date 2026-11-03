@@ -3,6 +3,12 @@ import type { Geste, Lignee, LigneeGeste } from './types';
 
 /** Les réglages chiffrés du combat, au même endroit pour l'équilibrage */
 export const REGLES = {
+  /** Combats qui s'éternisent (`usureCombat`, combat.ts) : les soins ennemis baissent dès le tour `soinsDes`, à zéro `soinsSur` tours plus tard ;
+   *  les attaques ennemies grossissent de `attaqueParTour` par tour à partir du tour `attaqueDes`.
+   *  3 novembre 2026, validé par Bryan après le diagnostic au robot : avant, +10 % dès le tour 25, et une escouade de Génés seuls
+   *  (boucliers et soins en cuivre) tenait indéfiniment et gagnait ~93 % (deck mélangé ~50 %). Dès le tour 12 à +15 % : Génés seuls ~25 %
+   *  pour le joueur moyen, combats normaux (≈ 7 tours) inchangés, les Génés restent ceux qui tiennent, mais tenir ne suffit plus seul. */
+  usure: { soinsDes: 10, soinsSur: 10, attaqueDes: 12, attaqueParTour: 0.15 },
   /** À quelle Strate chaque mécanique de combat apparaît (28 octobre 2026) : une nouveauté à la fois, rien n'est retiré.
    *  −1 : chaîne, Résonance, Flux ; −2 : Fêlure ; −3 : groupes ; −4 : traits d'ennemis ; −5 : conditions de salle.
    *  Les phases des gardiens restent dès la −2. */

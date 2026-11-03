@@ -706,6 +706,13 @@ function htmlEcranCombat(e: Ecran): string {
       // Épreuve « Avant l'extinction » : les tours qui restent pour abattre le gardien
       + (s.chrono && s.issue === 'en-cours' ? `<span class="fuyard chrono" title="Passé le tour ${s.chrono}, l’Épreuve est perdue.">${ICO.griffes}${s.tour >= s.chrono ? 'Dernier tour !' : `S’éteint dans ${s.chrono - s.tour + 1} tours`}</span>` : '')
       + (s.fuyard && s.issue === 'en-cours' ? `<span class="fuyard" title="Il s’enfuit à la fin de son tour ${s.fuyard}. Ses blessures resteront.">${ICO.griffes}${s.tour >= s.fuyard ? 'S’enfuit à la fin du tour' : `S’enfuit dans ${s.fuyard - s.tour + 1} tours`}</span>` : '')
+      // le combat qui s'éternise (3 novembre 2026, usure dès le tour 12) : on le voit venir, puis on voit de combien l'ennemi frappe plus fort
+      + (s.issue === 'en-cours' ? (() => {
+        const u = REGLES.usure, m = usureCombat(s).attaque, reste = u.attaqueDes - s.tour + 1;
+        const titre = `Combat qui s’éternise : à partir du tour ${u.attaqueDes + 1}, l’ennemi frappe ${Math.round(u.attaqueParTour * 100)} % plus fort à chaque tour.`;
+        return m > 1 ? `<span class="fuyard" title="${titre}">${ICO.griffes}Enragé +${Math.round((m - 1) * 100)} %</span>`
+          : reste <= 3 ? `<span class="fuyard" title="${titre}">${ICO.griffes}S’enrage dans ${reste} tour${reste > 1 ? 's' : ''}</span>` : '';
+      })() : '')
       + `</div>`
     + (gardien ? plaqueGardien(def.nom, nomPhase(s.ennemi))
       : `<h2 class="ennemi-nom">${echap(nomEnnemi(s.ennemi))}${nomPhase(s.ennemi) ? ` <small class="phase">· ${echap(nomPhase(s.ennemi))}</small>` : ''}</h2>`)

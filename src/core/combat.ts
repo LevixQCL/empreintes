@@ -237,13 +237,16 @@ function allieDe(s: CombatEtat, en: EnnemiEtat): EnnemiEtat | undefined {
 /** Ce qui multiplie les attaques d'un ennemi : sa concentration, et sa furie */
 export const puissance = (en: EnnemiEtat) => en.boost * (trait(en, 'furie') && en.pv > 0 && en.pv <= en.pvMax / 2 ? FURIE : 1) * (en.crescendo ?? 1);
 /**
- * Combats qui s'éternisent : à partir du tour 10, les ennemis se soignent de moins en moins (plus du tout au tour 20),
- * et à partir du tour 25 leurs attaques grossissent de 10 % par tour. Aucun combat ne peut tourner en rond.
+ * Combats qui s'éternisent (réglages dans REGLES.usure) : à partir du tour 10, les ennemis se soignent de moins en moins
+ * (plus du tout au tour 20), et à partir du tour 12 leurs attaques grossissent de 15 % par tour. Aucun combat ne peut tourner en rond.
  */
-export const usureCombat = (s: CombatEtat) => ({
-  soins: s.tour <= 10 ? 1 : Math.max(0, 1 - (s.tour - 10) / 10),
-  attaque: s.tour <= 25 ? 1 : 1 + 0.1 * (s.tour - 25),
-});
+export const usureCombat = (s: CombatEtat) => {
+  const u = REGLES.usure;
+  return {
+    soins: s.tour <= u.soinsDes ? 1 : Math.max(0, 1 - (s.tour - u.soinsDes) / u.soinsSur),
+    attaque: s.tour <= u.attaqueDes ? 1 : 1 + u.attaqueParTour * (s.tour - u.attaqueDes),
+  };
+};
 /** Éboulis : ce que les pierres retirent à chacun, à chaque tour ennemi */
 export const eboulis = (s: CombatEtat) => Math.max(1, Math.round(2 * (s.forceBase ?? s.ennemi.force)));
 
