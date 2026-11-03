@@ -34,12 +34,18 @@ Rien dans le jeu n'importe ces fichiers. `duel.css` n'est pas dans `feuilles.ts`
 - Usure du duel dès le tour 10 (+15 % de coups par tour, −10 % de soins) ; au tour 30, le duel se décide aux PV restants.
 - Le dernier Porteur debout encaisse un peu moins (×0,85).
 
-### Équilibre mesuré (robot contre robot, escouades de départ)
+### Équilibre mesuré (`npm run duel`, rapport complet dans `docs/duel-rapport.md`)
 
-| PV en duel | Tours (moyenne) | Égalités |
-|---|---|---|
-| ×1,6 les PV du district | 12 | 12 % |
-| **×1,3 (retenu)** | **10 (8 à 13)**, soit 3 à 5 min | 0 % avec le départage au dernier tour |
+- **Durée** : 8 à 10 tours à toutes les étapes du jeu (avant le 3 novembre : 10 tours au début, 4,8 en fin de jeu).
+  Les PV de duel suivent la force moyenne des cartes des deux escouades (`DUEL.pvForce`), le même facteur des deux côtés.
+- **Égalités** : 0 % (départage au dernier tour).
+- **Écarts de progression** : l'escouade d'une étape au-dessus gagne 77 à 100 %. Voulu ou non ? À décider (duel « à armes égales » possible).
+- **⚠ Lignées** : une escouade d'une seule lignée bat une escouade mixte (Augmentés 80 %, Génés 80 %, Résonants 53 %), et le triangle
+  ne tient pas entre Génés et Augmentés (les Génés devraient gagner, ils font 37 %). Essais sans effet suffisant : boucliers et soins ×1,4,
+  triangle ×1,3, bonus des trois lignées, Augmentés −25 %, suites d'une seule lignée à moitié. Sans aucune suite, Génés et Résonants
+  retombent à 45 et 40 % : les suites, plus faciles dans une seule zone de Fréquences, en sont une bonne part. Le robot joue sans doute
+  mal la défense (il ne devine pas la chaîne adverse) : à vérifier avant de toucher aux règles.
+- **Rapt et Brèche** agissent en même temps des deux côtés (avant le 3 novembre, le camp 0 passait d'abord).
 
 ## En ligne
 

@@ -12,13 +12,10 @@
 // Les deux joueurs (et plus tard un serveur) rejouent les mêmes choix sur le même état et obtiennent le même duel.
 
 import { carteId, moduleDef, porteurDef, DEPART_PORTEURS } from './donnees';
-import { cartesEnJeu, placesVides, PLACES_PORTEUR } from './collection';
+import { cartesEnJeu, placesVides, puissanceCarte, PLACES_PORTEUR } from './collection';
 import { effetsEnJeu } from './combat';
 import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, places } from './regles';
 import { graine, tireur } from './rng';
-
-/** Une graine de duel au hasard (l'hôte la tire et la partage) */
-export const graineDuel = graine;
 import type { Effet, Geste, GesteDef, Lignee, LigneeGeste, PorteurEtat } from './types';
 
 /** Les réglages chiffrés du duel (mesurés au robot : tests/duel.test.ts, « durée d'un duel ») */
@@ -33,8 +30,13 @@ export const DUEL = {
   usure: { des: 10, attaqueParTour: 0.15, soinParTour: 0.1 },
   /** PV des Porteurs en duel (× leurs PV au district) : les cartes d'un joueur frappent plus fort qu'un ennemi des Strates.
    *  Mesuré au robot (escouades de départ, 60 duels) : ×1,6 → 12 tours en moyenne ; ×1,3 → 10 tours (8 à 13), soit 3 à 5 minutes,
-   *  entre un combat des Strates (≈ 7 tours) et un combat qui traîne. */
-  pv: 1.3,
+   *  entre un combat des Strates (≈ 7 tours) et un combat qui traîne. Avec `pvForce` (3 novembre 2026) : ×1,15. */
+  pv: 1.15,
+  /** Les PV suivent aussi la force moyenne des cartes des DEUX escouades (puissance d'une place, comparée aux escouades de départ),
+   *  à la puissance `pvForce` : sans ça, un duel de fin de jeu durait 4 à 5 tours (les cartes grandissent bien plus vite que les PV).
+   *  Le même facteur pour les deux côtés : l'escouade la plus forte garde tout son avantage, seul le rythme reste le même.
+   *  Mesuré (npm run duel, 30 duels par étape) : avant, 10 tours au début et 4,8 en fin de jeu ; après, 8 à 10 tours à toutes les étapes. */
+  pvForce: 0.6,
   /** le dernier Porteur debout tient un peu mieux (il ne reste que lui) */
   dernierDebout: 0.85,
   /** part du soin en trop qui devient bouclier au tour suivant (Débord) */
@@ -42,6 +44,9 @@ export const DUEL = {
   /** place de la mise : une seule carte, d'un métal au plus égal à celui de l'adversaire (vérifié avant le duel) */
   miseMax: 1,
 } as const;
+
+/** Une graine de duel au hasard (l'hôte la tire et la partage) */
+export const graineDuel = graine;
 
 export type Camp = 0 | 1;
 export const autre = (c: Camp): Camp => (c === 0 ? 1 : 0);
@@ -157,11 +162,25 @@ export function escouadeDepart(nom: string): EscouadeDuel {
   };
 }
 
-function creerCote(e: EscouadeDuel, prefixe: string, rng: number): CoteDuel {
+/** La puissance moyenne d'une place de l'escouade (une place vide compte zéro) */
+export function puissanceEscouade(e: EscouadeDuel): number {
+  const total = e.porteurs.reduce((n, p) => n + p.cartes.reduce((m, c) => m + puissanceCarte(c.id, c.niveau), 0), 0);
+  return total / (PLACES_PORTEUR * Math.max(1, e.porteurs.length));
+}
+let REFERENCE = 0;
+const reference = () => (REFERENCE ||= puissanceEscouade(escouadeDepart('')));
+
+/** Le multiplicateur des PV d'un duel entre ces deux escouades (le même des deux côtés) */
+export function multPvDuel(a: EscouadeDuel, b: EscouadeDuel): number {
+  const f = (puissanceEscouade(a) + puissanceEscouade(b)) / 2 / reference();
+  return DUEL.pv * Math.max(1, f) ** DUEL.pvForce;
+}
+
+function creerCote(e: EscouadeDuel, prefixe: string, rng: number, multPv: number): CoteDuel {
   const deck: Geste[] = deckDuel(e).map((g, k) => ({ ...g, uid: `${prefixe}${k}` }));
   const c: CoteDuel = {
     nom: e.nom,
-    porteurs: e.porteurs.map((p) => { const pv = Math.round(p.pv * DUEL.pv); return { id: p.id, pv, pvMax: pv, aTerre: false }; }),
+    porteurs: e.porteurs.map((p) => { const pv = Math.round(p.pv * multPv); return { id: p.id, pv, pvMax: pv, aTerre: false }; }),
     pioche: [], main: [], defausse: [], chaine: [],
     cible: null, bouclier: 0, flux: 0, capaBonus: 0, elan: 0, piocheBonus: 0, desarme: 0, sourdine: 0, fissure: 0, fissureTours: 0,
     lit: false, repioches: 0, allonges: 0, pret: false, rng: rng >>> 0,
@@ -175,7 +194,7 @@ function creerCote(e: EscouadeDuel, prefixe: string, rng: number): CoteDuel {
 export function creerDuel(a: EscouadeDuel, b: EscouadeDuel, graine: number): DuelEtat {
   const s: DuelEtat = {
     // chaque côté a son propre hasard : ce que pioche l'un ne dépend pas de ce que fait l'autre
-    cotes: [creerCote(a, 'a', graine), creerCote(b, 'b', Math.imul(graine ^ 0x9e3779b9, 2654435761))],
+    cotes: [creerCote(a, 'a', graine, multPvDuel(a, b)), creerCote(b, 'b', Math.imul(graine ^ 0x9e3779b9, 2654435761), multPvDuel(a, b))],
     tour: 1,
     issue: 'en-cours',
     journal: [],
@@ -487,21 +506,25 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
       ev.push({ sorte: 'bouclier', camp: k, uid: g.uid, v });
     });
   }
-  // 2. Brèche (brise le bouclier adverse) et Rapt (le prend pour soi), avant les coups
+  // 2. Brèche (brise le bouclier adverse) et Rapt (le prend pour soi), avant les coups.
+  //    Les deux côtés agissent sur les boucliers posés à l'étape 1, en même temps : aucun n'est avantagé par son camp.
+  const bouclierPose = [s.cotes[0].bouclier, s.cotes[1].bouclier];
+  const brise = [false, false];
+  const vole = [0, 0];
   for (const k of camps) {
-    const c = s.cotes[k];
-    const adv = s.cotes[autre(k)];
-    c.chaine.forEach((g, rang) => {
+    const adv = autre(k);
+    s.cotes[k].chaine.forEach((g, rang) => {
       const ef = forces[k][rang]!.effets;
       const rapt = !!de(ef, 'rapt');
       if (!rapt && !de(ef, 'breche')) return;
-      const pris = adv.bouclier;
-      adv.bouclier = 0;
-      if (rapt) c.bouclier += pris;
+      const pris = brise[adv] ? 0 : bouclierPose[adv]!;
+      brise[adv] = true;
+      if (rapt) vole[k]! += pris;
       ev.push({ sorte: 'breche', camp: k, uid: g.uid, v: pris, rapt });
       if (pris) log(s, k, `${g.nom} ${rapt ? 'arrache' : 'brise'} ${pris} de bouclier.`);
     });
   }
+  for (const k of camps) s.cotes[k].bouclier = (brise[k] ? 0 : bouclierPose[k]!) + vole[k]!;
   // 3. Les coups : calculés sur l'état du début des coups, appliqués ensemble (un Porteur qui tombe frappe quand même ce tour-ci)
   const coups: Coup[] = [];
   const nouvellesFissures: [number, number] = [0, 0];

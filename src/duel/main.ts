@@ -4,7 +4,7 @@
 
 import '../ui/feuilles';
 import '../ui/duel.css';
-import { creerDuel, escouadeDepart, graineDuel, validerEscouade, type Camp, type EscouadeDuel } from '../core/duel';
+import { DUEL, creerDuel, escouadeDepart, graineDuel, validerEscouade, type Camp, type EscouadeDuel } from '../core/duel';
 import { escouadeDuelDe } from '../core/duel-escouade';
 import { charger } from '../save/local';
 import { firebaseActif } from '../net/firebase-config';
@@ -114,7 +114,25 @@ racine.addEventListener('pointerdown', (ev) => {
 for (const t of ['pointerup', 'pointercancel', 'pointerleave']) racine.addEventListener(t, () => clearTimeout(appui));
 
 // le chrono : une seconde à la fois
-setInterval(() => { if (session && !session.fini) { session.tick(); rendre(); } }, 1000);
+// (3 novembre 2026) seul le chrono change chaque seconde : redessiner tout l'écran faisait perdre un toucher tombé pile à ce moment-là
+let absentAffiche = false;
+setInterval(() => {
+  const s = session;
+  if (!s || s.fini) return;
+  const avant = s.verrouille;
+  s.tick();
+  // le chrono tombé a verrouillé (la session a déjà redessiné), ou le bouton « Réclamer la victoire » doit apparaître
+  if (s.verrouille !== avant) return;
+  if (s.absent() !== absentAffiche) { absentAffiche = s.absent(); rendre(); return; }
+  const c = racine.querySelector<HTMLElement>('.dl-chrono');
+  if (!c || s.verrouille) return;
+  const r = s.restant();
+  c.style.setProperty('--p', `${(r / DUEL.chrono) * 100}%`);
+  c.classList.toggle('urgent', r <= 5);
+  c.setAttribute('aria-label', `${r} secondes`);
+  const b = c.querySelector('b');
+  if (b) b.textContent = String(r);
+}, 1000);
 
 // ---------- En ligne ----------
 

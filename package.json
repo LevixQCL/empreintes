@@ -16,6 +16,7 @@
     "visuel": "tsx scripts/visuel.ts",
     "css": "node scripts/css-propre.cjs",
     "ratelier": "tsx scripts/ratelier.ts",
+    "duel": "tsx scripts/duel-equilibre.ts",
     "epreuves": "tsx scripts/epreuves.ts",
     "fouilles": "tsx scripts/fouilles.ts"
   },
