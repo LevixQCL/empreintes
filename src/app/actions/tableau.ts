@@ -64,7 +64,7 @@ export async function agirTableau(a: string, c: Clic): Promise<Suite> {
         await (await reseauTableau()).retirer(app.uid);
         if (app.jeu.directeur) app.jeu.directeur.public = false;
         G.entrees = G.entrees.filter((x) => x.uid !== app.uid);
-        app.monEntree = null;
+        app.monEntree = null; app.monEntreeLue = false;
         sauver();
       } catch { G.erreur = 'Impossible de te retirer pour l’instant. Réessaie dans un instant.'; G.etat = 'erreur'; }
       break;

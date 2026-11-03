@@ -14,14 +14,14 @@ service cloud.firestore {
         && request.resource.data.version is int;
     }
 
-    // Le Grand Tableau (23 octobre 2026) : tout directeur connecté lit les classements,
-    // chacun n'écrit que sa propre entrée, et peut la retirer.
+    // Le Grand Tableau (23 octobre 2026) : tout directeur connecté lit les classements, chacun n'écrit que sa propre entrée.
+    // Elle ne s'efface plus (3 novembre 2026) : effacer puis recréer contournait « la profondeur ne redescend jamais
+    // et monte de deux Strates au plus par publication ».
     // Les scores sont calculés sur l'appareil : ces règles bloquent les erreurs et la triche grossière
     // (champs inconnus, valeurs impossibles, profondeur qui redescend, publications en rafale).
     // Le jour du multijoueur, les Cloud Functions recalculeront les scores à partir de la sauvegarde.
     match /classement/{uid} {
       allow read: if request.auth != null;
-      allow delete: if request.auth != null && request.auth.uid == uid;
       allow create: if request.auth != null && request.auth.uid == uid && entreeValide(request.resource.data);
       allow update: if request.auth != null && request.auth.uid == uid && entreeValide(request.resource.data)
         // la profondeur ne redescend jamais, et ne gagne pas plus de deux Strates d'un coup
@@ -82,7 +82,10 @@ service cloud.firestore {
         allow read: if request.auth != null;
         allow delete: if request.auth != null && request.auth.uid == uid;
         allow create: if request.auth != null && request.auth.uid != uid && assautValide(request.resource.data, uid)
-          && (!request.resource.data.victoire || id == request.auth.uid + '_' + string(get(/databases/$(database)/documents/quais/$(uid)).data.depuis));
+          && (!request.resource.data.victoire || (id == request.auth.uid + '_' + string(get(/databases/$(database)/documents/quais/$(uid)).data.depuis)
+            // une victoire (qui déloge le gardien) n'est possible que sur un quai que l'attaquant a déjà atteint dans son
+            // classement (3 novembre 2026 : avant, n'importe quel compte pouvait déloger n'importe quel gardien)
+            && get(/databases/$(database)/documents/classement/$(request.auth.uid)).data.get('fleche', 0) >= request.resource.data.quai));
       }
     }
 
@@ -108,7 +111,20 @@ service cloud.firestore {
         && request.resource.data.parrain == resource.data.parrain && request.resource.data.code == resource.data.code
         && request.resource.data.le == resource.data.le
         && request.resource.data.paliers.hasAll(resource.data.paliers)
-        && maintenant(request.resource.data.maj);
+        && maintenant(request.resource.data.maj)
+        // chaque nouveau palier doit se voir dans le classement du filleul, et pas trop tôt après son arrivée
+        // (3 novembre 2026 : avant, le filleul déclarait ses paliers sans contrôle ; un second compte suffisait)
+        && palierPermis('strate1', uid, 3, 300000)
+        && palierPermis('strate3', uid, 6, 3600000)
+        && palierPermis('noyau3', uid, 2, 3600000);
+    }
+
+    // un palier déjà publié reste acquis ; un nouveau demande une profondeur (en demi-étages, voir profondeurDe dans
+    // src/core/classements.ts : −1 vaincue = 3, −3 ouverte = 6) et un délai minimal depuis l'arrivée du filleul (ms)
+    function palierPermis(p, uid, profondeur, delai) {
+      return !(p in request.resource.data.paliers) || (p in resource.data.paliers)
+        || (get(/databases/$(database)/documents/classement/$(uid)).data.profondeur >= profondeur
+          && request.time.toMillis() >= resource.data.le + delai);
     }
 
     function parrainValide(d) {
@@ -185,7 +201,7 @@ service cloud.firestore {
 
     function entreeValide(d) {
       return d.keys().hasOnly(['nom', 'cle', 'porteur', 'profondeur', 'profondeurLe', 'registre', 'decouvertes',
-          'semaine', 'profondeurSemaine', 'registreSemaine', 'fleche', 'flecheLe', 'flecheSemaine', 'insigne', 'maj'])
+          'semaine', 'profondeurSemaine', 'registreSemaine', 'fleche', 'flecheLe', 'flecheSemaine', 'insigne', 'masque', 'maj'])
         && d.nom is string && d.nom.size() >= 3 && d.nom.size() <= 18
         // le pseudo affiché est bien celui que ce joueur a réservé
         && d.cle is string && d.cle.size() <= 24
@@ -205,6 +221,8 @@ service cloud.firestore {
         && d.get('flecheSemaine', 0) is int && d.get('flecheSemaine', 0) >= 0 && d.get('flecheSemaine', 0) <= d.get('fleche', 0)
         // le titre « Recruteur » du parrainage (29 octobre 2026) : absent, ou ce seul mot
         && d.get('insigne', 'recruteur') == 'recruteur'
+        // « me retirer du Tableau » (3 novembre 2026) : l'entrée est masquée au lieu d'être effacée
+        && d.get('masque', false) is bool
         && d.maj is int && maintenant(d.maj);
     }
 

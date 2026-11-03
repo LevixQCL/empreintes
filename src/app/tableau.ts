@@ -50,8 +50,10 @@ export async function lireTableau(force = false) {
   try {
     const net = await reseauTableau();
     G.entrees = await net.lire();
-    app.monEntree = G.entrees.find((x) => x.uid === app.uid) ?? null;
-    app.monEntreeLue = true;
+    // une entrée masquée (« me retirer ») n'est pas dans la liste : on relira la sienne avant de publier,
+    // car ses valeurs en ligne décident de ce qu'on a le droit d'envoyer
+    const mienne = G.entrees.find((x) => x.uid === app.uid);
+    if (mienne) { app.monEntree = mienne; app.monEntreeLue = true; } else app.monEntreeLue = false;
     G.lu = Date.now(); G.etat = 'ok';
   } catch (e) {
     G.etat = 'erreur'; G.erreur = `Le Tableau ne répond pas pour l’instant (${(e as { code?: string })?.code ?? 'réseau'}).`;

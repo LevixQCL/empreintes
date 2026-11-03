@@ -2,9 +2,9 @@
 // Les pseudos sont réservés dans `pseudos/{clé}` (une fiche par pseudo, à un seul compte) : c'est ce qui les rend uniques,
 // même si deux joueurs valident le même nom à la même seconde. Chargé avec compte.ts (import dynamique).
 // Les règles (firestore.rules) n'acceptent que sa propre entrée, avec le pseudo qu'on a réservé, des bornes plausibles,
-// une profondeur qui ne redescend jamais et une publication toutes les 20 secondes au plus.
+// une profondeur qui ne redescend jamais et une publication toutes les 20 secondes au plus ; l'entrée ne s'efface pas.
 
-import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, limit, query, runTransaction, setDoc } from 'firebase/firestore';
+import { collection, doc, updateDoc, getDoc, getDocs, getFirestore, limit, query, runTransaction, setDoc } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
 import { clePseudo, type Entree } from '../core/classements';
 
@@ -19,8 +19,12 @@ export async function publier(e: Entree): Promise<void> {
   await setDoc(doc(db(), 'classement', uid), d);
 }
 
+/**
+ * Se retirer du Tableau : l'entrée est masquée, pas effacée (3 novembre 2026). Les règles refusent l'effacement, sinon on
+ * pourrait recréer une entrée neuve avec n'importe quelle profondeur. Republier plus tard la rend de nouveau visible.
+ */
 export async function retirer(uid: string): Promise<void> {
-  await deleteDoc(doc(db(), 'classement', uid));
+  await updateDoc(doc(db(), 'classement', uid), { masque: true, maj: Date.now() });
 }
 
 /** Le pseudo est déjà pris par un autre joueur */
@@ -69,6 +73,6 @@ export async function lireMienne(uid: string): Promise<Entree | null> {
 export async function lire(): Promise<Entree[]> {
   const snap = await getDocs(query(collection(db(), 'classement'), limit(500)));
   const l: Entree[] = [];
-  snap.forEach((s) => { const e = entreeDe(s.id, s.data() as Partial<Publie>); if (e) l.push(e); });
+  snap.forEach((s) => { if (s.data().masque === true) return; const e = entreeDe(s.id, s.data() as Partial<Publie>); if (e) l.push(e); });
   return l;
 }
