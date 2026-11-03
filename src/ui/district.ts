@@ -1383,9 +1383,28 @@ function blocEmpreinte(j: Jeu, cle: string): string {
 export const pastillePoids = (cle: string) => `<span class="poids-carte" title="Pèse ${poidsCarte(cle)} de Charge" aria-hidden="true">${poidsCarte(cle)}</span>`;
 
 /** La jauge de Charge d'un Porteur : ce que pèsent ses cartes sur ce qu'il peut porter */
-export function jaugeCharge(portee: number, max: number, aide?: string): string {
+/**
+ * La Charge (refaite le 3 novembre 2026) : une barre de glace où chaque carte portée est un éclat à sa taille,
+ * de la couleur de son action (attaque, bouclier, soin) ; la marge restante reste en verre vide.
+ * On voit d'un coup d'œil quelle carte pèse lourd, sans compter de petits crans.
+ */
+export function jaugeCharge(portee: number, max: number, aide?: string, cartes: string[] = []): string {
   const trop = portee > max;
-  return `<div class="charge${trop ? ' trop' : ''}"><span class="charge-nom">${ICO.cristal}Charge</span><span class="charge-rail" aria-hidden="true"><i style="width:${Math.min(100, (100 * portee) / Math.max(1, max))}%"></i></span><b class="charge-val">${portee} / ${max}</b>`
+  const base = Math.max(1, max, portee);
+  const reste = max - portee;
+  const eclats = cartes.length
+    ? cartes.map((k) => {
+      const m = moduleDef(k);
+      return `<i class="ch-eclat ch-${m.type}" style="flex-grow:${poidsCarte(k)}" title="${echap(m.nom)} : ${poidsCarte(k)}"></i>`;
+    }).join('')
+    : `<i class="ch-eclat ch-atk" style="flex-grow:${portee}"></i>`;
+  const marge = reste > 0 ? `<i class="ch-marge" style="flex-grow:${reste}"></i>` : '';
+  const seuil = trop ? `<b class="ch-seuil" style="left:${(100 * max) / base}%"></b>` : '';
+  const etat = trop ? `${portee - max} de trop` : reste === 0 ? 'Plein' : `${reste} libre${reste > 1 ? 's' : ''}`;
+  return `<div class="charge${trop ? ' trop' : reste === 0 ? ' plein' : ''}" role="group" aria-label="Charge : ${portee} sur ${max}, ${etat}">`
+    + `<span class="charge-nom">${ICO.cristal}Charge<small>${etat}</small></span>`
+    + `<b class="charge-val">${portee}<small> / ${max}</small></b>`
+    + `<span class="charge-rail" aria-hidden="true">${eclats}${marge}${seuil}</span>`
     + (aide ? `<p class="charge-aide">${trop ? `Trop lourd : reprends-lui une carte avant de descendre. ` : ''}${aide}</p>` : '') + `</div>`;
 }
 
@@ -1424,7 +1443,7 @@ export function feuilleDeck(e: EcranDistrict): string {
     + `<button type="button" class="btn-icone" data-action="guide" data-id="deck" aria-label="Comment construire son deck">${ICO.aide}</button>`
     + `<button type="button" class="btn-icone" data-action="deck-fermer" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   if (parti) h += `<p class="aide">${echap(p.nom)} est en expédition : ses cartes changeront à son retour.</p>`;
-  h += jaugeCharge(portee, max, `Chaque carte pèse selon sa force. ${echap(p.nom)} porte plus lourd en montant de niveau (+${CHARGE.parNiveau} par niveau). Une place laissée vide se pioche et ne se joue pas.`);
+  h += jaugeCharge(portee, max, `Chaque carte pèse selon sa force. ${echap(p.nom)} porte plus lourd en montant de niveau (+${CHARGE.parNiveau} par niveau). Une place laissée vide se pioche et ne se joue pas.`, porte);
   // le tri, en tête : il range les deux listes de la feuille
   h += choixTri(tri);
   h += `<section class="bloc"><h3 class="titre-bloc">${ICO.greffe}Ce que ${echap(p.nom)} porte</h3><p class="aide">Ces cartes entrent dans ton deck quand ${echap(p.nom)} descend. Touche une carte pour l’échanger ou la reprendre.</p>`;
