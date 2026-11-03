@@ -42,9 +42,14 @@ Rien dans le jeu n'importe ces fichiers. `duel.css` n'est pas dans `feuilles.ts`
 - **Écarts de progression** : l'escouade d'une étape au-dessus gagne 77 à 100 %. Voulu ou non ? À décider (duel « à armes égales » possible).
 - **⚠ Lignées** : une escouade d'une seule lignée bat une escouade mixte (Augmentés 80 %, Génés 80 %, Résonants 53 %), et le triangle
   ne tient pas entre Génés et Augmentés (les Génés devraient gagner, ils font 37 %). Essais sans effet suffisant : boucliers et soins ×1,4,
-  triangle ×1,3, bonus des trois lignées, Augmentés −25 %, suites d'une seule lignée à moitié. Sans aucune suite, Génés et Résonants
-  retombent à 45 et 40 % : les suites, plus faciles dans une seule zone de Fréquences, en sont une bonne part. Le robot joue sans doute
-  mal la défense (il ne devine pas la chaîne adverse) : à vérifier avant de toucher aux règles.
+  triangle ×1,3, bonus des trois lignées, Augmentés −25 %, suites d'une seule lignée à moitié.
+  Diagnostic (3 novembre 2026, 20 à 30 duels par ligne) :
+  - **Ce n'est pas le robot** : un robot qui compte la défense comme un joueur (menace estimée sans voir la main adverse) ne bat pas
+    l'ancien (14 duels sur 30) ; les chiffres ne bougent pas.
+  - **Génés et Résonants seuls** : leur avantage vient de leurs Fréquences groupées (zones 1-5 et 6-9), qui font des suites et des Échos
+    bien plus souvent. Sans suites ni Échos, ils ne gagnent plus que 30 et 25 % contre une escouade mixte.
+  - **Augmentés seuls** : ils gardent 90 % même sans suites ni Échos. En duel, tout se joue à qui frappe le plus, et ce sont eux qui frappent.
+  À décider avec Bryan avant de toucher aux règles.
 - **Rapt et Brèche** agissent en même temps des deux côtés (avant le 3 novembre, le camp 0 passait d'abord).
 
 ## En ligne

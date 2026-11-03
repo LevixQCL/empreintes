@@ -1,6 +1,6 @@
 // L'équilibre du duel (npm run duel) : le robot de duel contre lui-même, avec des escouades réalistes à chaque étape du jeu,
 // par lignée, avec des écarts de progression, et l'effet de chaque effet de carte sur les victoires. Écrit docs/duel-rapport.md.
-// DUELS=40 (duels par ligne), PARTIES=1,2 (parties à lancer) ; essais : SANS_SUITE=1, SUITE_MONO=0.5 (sans toucher au jeu).
+// DUELS=40 (duels par ligne), PARTIES=1,2 (parties à lancer) ; essais : SANS_SUITE=1, SANS_ECHO=1, SUITE_MONO=0.5 (sans toucher au jeu).
 
 import { writeFileSync } from 'node:fs';
 import { MODULES_TIRABLES, PORTEURS, porteurDef } from '../src/core/donnees';
@@ -67,6 +67,7 @@ function duel(a: EscouadeDuel, b: EscouadeDuel, graine: number): { issue: IssueD
 
 const MIXTE: Lignee[] = ['tech', 'bio', 'reso'];
 if (process.env.SUITE_MONO) (REGLES as { suiteMono: number }).suiteMono = Number(process.env.SUITE_MONO);
+if (process.env.SANS_ECHO) Object.assign(REGLES.echoPaliers, { 3: 1, 4: 1, 5: 1 });
 if (process.env.SANS_SUITE) Object.assign(REGLES.multSuite, { 3: 1, 4: 1, 5: 1 });
 const pct = (n: number, d: number) => `${Math.round((100 * n) / Math.max(1, d))} %`;
 const N = Number(process.env.DUELS ?? 40);
