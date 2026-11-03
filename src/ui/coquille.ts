@@ -16,7 +16,7 @@ import { ICO, icone, type Icone } from './icones';
 import { feuilleNom } from './classements';
 import { cristalAllume, cristalRail, entreeFiche, feuilleFiche } from './fiche';
 import { COULEUR, panneauCompte, type Compte } from './vue';
-import { echap, virgule } from './outils';
+import { echap, virgule, texteReplie } from './outils';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages' | 'fleche' | 'recruter' | 'cercle';
 /** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */
@@ -255,7 +255,7 @@ function blocNuit(j: Jeu): string {
   const lignes = n ? (Object.entries(n.sources) as [SourceHabitants, number][]).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1])
     .map(([k, v]) => `<li><span>${NOMS_SOURCE[k]}</span><b>+${v}</b></li>`).join('') + (n.bonus ? `<li class="nuit-bonus"><span>Ceux qui ont vu, cette nuit-là</span><b>+${n.bonus}</b></li>` : '') : '';
   return `<section class="fb-bloc nuit-lignes"><h3 class="titre-bloc">${ICO.district}La Nuit des lignes</h3>`
-    + `<p class="fb-vide">Chaque lundi, le district repeint sa ligne bleue un peu plus haut et fait le bilan. Ceux qui ont vu ce que tu as fait en entraînent d’autres : ${Math.round(CONFIANCE.nuit * 100)} % de plus que les habitants gagnés dans la semaine. Une semaine sans rien ne fait rien perdre.</p>`
+    + texteReplie(`Chaque lundi, le district repeint sa ligne bleue un peu plus haut et fait le bilan. Ceux qui ont vu ce que tu as fait en entraînent d’autres : ${Math.round(CONFIANCE.nuit * 100)} % de plus que les habitants gagnés dans la semaine. Une semaine sans rien ne fait rien perdre.`, 'nuit-lignes', 'fb-vide')
     + `<p class="nuit-semaine">Cette semaine : <b>+${cette}</b> habitant${cette > 1 ? 's' : ''} pour l’instant.</p>`
     + (n ? `<h4 class="nuit-titre">La dernière Nuit · +${n.gagnes + n.bonus} habitants</h4><ul class="nuit-liste">${lignes}</ul>` : '')
     + `</section>`;
@@ -349,7 +349,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
   }
   return `<div class="voile-feuille" data-action="ressource" data-id="" aria-hidden="true"></div><section class="feuille ressource-fiche res-${r}" role="dialog" aria-modal="true" aria-labelledby="res-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">${surtitre}</span><h2 id="res-titre">${titre}</h2></div><button type="button" class="btn-icone" data-action="ressource" data-id="" aria-label="Fermer">${ICO.fermer}</button></header>`
-    + `<div class="feuille-corps"><div class="res-etat">${icone(r === 'confiance' ? 'district' : r === 'butin' ? 'coffre' : r)}<span>${etat}</span></div><p class="res-resume">${resume}</p>`
+    + `<div class="feuille-corps"><div class="res-etat">${icone(r === 'confiance' ? 'district' : r === 'butin' ? 'coffre' : r)}<span>${etat}</span></div>${texteReplie(resume, `res-${r}`, 'res-resume')}`
     + (r === 'confiance' ? blocPompes(j) + blocNuit(j) : '')
     + `<h3 class="titre-bloc">${r === 'butin' ? 'Comment gagner des points' : 'Comment en obtenir'}</h3><ul class="res-liste">${gagner.join('')}</ul>`
     + `<h3 class="titre-bloc">${r === 'butin' ? 'Ce que contient le coffre' : r === 'confiance' ? 'Les paliers' : 'À quoi ça sert'}</h3>`

@@ -11,7 +11,7 @@ import type { Lignee } from '../core/types';
 import { LIEUX_SLUGS, decorLieu, barque, BARQUE_PEINTE, reflets, sceneDistrict, vignetteDistrict } from './art';
 import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, avatar, decompte, etapeVoyage, prix, type EcranDistrict } from './coquille';
 import { ICO, type Icone } from './icones';
-import { echap } from './outils';
+import { echap, texteReplie } from './outils';
 import { COULEUR } from './vue';
 
 /** Le rôle de chaque lignée dans une épreuve (frapper, tenir, orchestrer) */
@@ -93,7 +93,7 @@ export function htmlMarees(e: EcranDistrict): string {
   const m = mareesDe(j);
   const tous = contratsDuMoment(j, now);
   const c = contratAffiche(j, e.mareeRang, now);
-  let h = `<section class="bloc tr-volet pl-marees"><p class="aide">Aux fortes marées, la mer découvre des ruines qu’aucune barque n’atteint seule. Le passeur affrète sa gabare pour une équipe : un Porteur par épreuve, et le bon rôle au bon endroit (frapper, tenir, orchestrer). Plus la marée est haute, plus c’est dur, et plus ça rapporte. Un échec n’est jamais perdu : l’équipe rapporte de quoi faire mieux la fois suivante.</p>`;
+  let h = `<section class="bloc tr-volet pl-marees">${texteReplie('Aux fortes marées, la mer découvre des ruines qu’aucune barque n’atteint seule. Le passeur affrète sa gabare pour une équipe : un Porteur par épreuve, et le bon rôle au bon endroit (frapper, tenir, orchestrer). Plus la marée est haute, plus c’est dur, et plus ça rapporte. Un échec n’est jamais perdu : l’équipe rapporte de quoi faire mieux la fois suivante.', 'marees', 'aide')}`;
   if (m.contrat) h += gabare(j, now);
   h += `<div class="mr-tuiles" role="tablist" aria-label="Les trois marées">${tous.map((x) => tuile(j, x, x.rang === c.rang, now)).join('')}</div>`;
 

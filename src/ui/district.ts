@@ -40,7 +40,7 @@ import { bandeauTableau } from './classements';
 import { ICO, baseIcones, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
-import { echap, mouvementReduit, virgule } from './outils';
+import { echap, mouvementReduit, virgule, texteReplie } from './outils';
 import { brancherHoule } from './houle';
 
 export type { EcranDistrict, Vue } from './coquille';
@@ -1541,7 +1541,7 @@ export function htmlCartes(e: EcranDistrict): string {
   if (f === 'tout') {
     const ou = (id: string) => escouadesAvecCommune(j, id).map((k) => k + 1);
     h += `<h2 class="titre-section" style="--c:#CDEFFF">Cartes communes du district</h2>`
-      + `<p class="cl-intro">Préparées par tes bâtiments : sans lignée ni métal, elles ne s’éteignent jamais quand un Porteur tombe et gagnent de la force quand leur bâtiment monte. Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.</p>`
+      + `${texteReplie('Préparées par tes bâtiments, sans lignée ni métal. Elles ne s’éteignent jamais quand un Porteur tombe et gagnent de la force quand leur bâtiment monte. Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.', 'communes', 'cl-intro')}`
       + `<div class="grille-cartes">` + CARTES_COMMUNES.map((c) => {
         const g = gesteCommun(j, c);
         const o = ORIGINE_PAQUETAGE[g.id]!;

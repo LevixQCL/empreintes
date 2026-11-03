@@ -18,7 +18,7 @@ import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugeCharge, jaugePv,
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
 import { ICO } from './icones';
 import { COULEUR } from './vue';
-import { echap, virgule } from './outils';
+import { echap, virgule, texteReplie } from './outils';
 
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];
 /** pour accorder « Pourquoi il / elle est là » */
@@ -358,7 +358,7 @@ function voletRatelier(e: EcranDistrict): string {
     + `<section class="feuille me-volet" role="dialog" aria-modal="true" aria-labelledby="volet-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">Râtelier de l’escouade ${vue + 1} · ${choisies.length} / ${places}</span><h2 id="volet-titre">Cartes communes du district</h2></div>`
     + `<button type="button" class="btn-icone" data-action="ratelier-fermer" aria-label="Fermer">${ICO.fermer}</button></header>`
-    + `<div class="feuille-corps"><p class="me-aide">Chaque bâtiment prépare ses cartes : elles n’ont ni lignée ni métal, ne s’éteignent jamais quand un Porteur tombe, et gagnent de la force quand leur bâtiment monte. Le départ coûte de l’énergie pour toutes les cartes à la fois, quel que soit leur nombre : 30 min de production du Générateur pour explorer, 15 min pour fouiller (et pour une Épreuve, un Pillage ou la Flèche). Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.</p>`
+    + `<div class="feuille-corps">${texteReplie('Chaque bâtiment prépare ses cartes, sans lignée ni métal. Elles ne s’éteignent jamais quand un Porteur tombe, et gagnent de la force quand leur bâtiment monte. Le départ coûte de l’énergie pour toutes les cartes à la fois, quel que soit leur nombre : 30 min de production du Générateur pour explorer, 15 min pour fouiller (et pour une Épreuve, un Pillage ou la Flèche). Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.', 'communes-esc', 'me-aide')}`
     + `<div class="me-choix-liste">${CARTES_COMMUNES.map(ligne).join('')}</div>`
     + (prochaine ? `<p class="me-aide">Un emplacement de plus au niveau ${prochaine.noyau} de la Tour du Noyau.</p>` : '');
   return h + `</div></section>`;

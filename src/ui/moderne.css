@@ -78,3 +78,22 @@ html #app .gt-onglet{border-radius:14px;corner-shape:round;clip-path:none}
 /* un compteur dans un onglet segmenté se pose en exposant : l'onglet garde sa hauteur de gélule */
 html #app .segments-choix .seg{position:relative}
 html #app .segments-choix .seg > .pastille-n{position:absolute;top:-3px;right:4px;margin:0;height:18px;padding:0 5px}
+
+/* ================= Audit du 3 novembre 2026 : le second lot ================= */
+/* les textes d'aide repliés (outils.ts, texteReplie) : la première phrase, puis « Lire la suite » */
+html #app details.replie{margin:0}
+html #app details.replie > summary{display:block;cursor:pointer;list-style:none}
+html #app details.replie > summary::-webkit-details-marker{display:none}
+html #app details.replie > summary::marker{content:""}
+html #app details.replie .replie-plus{display:inline-flex;align-items:center;gap:3px;font-weight:600;font-size:12.5px;white-space:nowrap;color:#9fe2ff}
+html #app details.replie .replie-plus::after{content:"";width:6px;height:6px;margin-left:2px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg)}
+html #app details.replie[open] .replie-plus{display:none}
+html #app details.replie > p{margin:.4em 0 0}
+@media (prefers-reduced-motion:no-preference){ html #app details.replie[open] > p{animation:replie-ouvre .25s ease-out} }
+@keyframes replie-ouvre{from{opacity:0;transform:translateY(-4px)}}
+
+/* la barre du bas sur téléphone : l'onglet ouvert ressort, les autres s'effacent un peu, pour qu'on s'y retrouve d'un coup d'œil */
+@media not ((min-width:1100px) and (min-height:600px)){
+  html #app .nav .onglet:not(.actif) .onglet-ico{filter:saturate(.7) brightness(.82);transition:filter .2s ease}
+  html #app .nav .onglet:not(.actif):hover .onglet-ico{filter:none}
+}

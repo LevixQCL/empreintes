@@ -11,3 +11,14 @@ export const centreDe = (el: Element) => { const r = el.getBoundingClientRect();
 
 /** Un nombre à une décimale, avec la virgule française (2,5) */
 export const virgule = (n: number) => String(Math.round(n * 10) / 10).replace('.', ',');
+
+/**
+ * Un texte d'aide long, replié (audit du 3 novembre 2026 : trop de paragraphes avant l'action, comme dans un manuel) :
+ * la première phrase reste lisible, la suite se déplie d'un toucher sur « Lire la suite ». Le volet porte un id,
+ * pour rester déplié d'un rendu à l'autre (rendu.ts). Un texte déjà court reste un simple paragraphe.
+ */
+export function texteReplie(html: string, id: string, classe = ''): string {
+  const m = /^(.+?[.!?…])\s+([\s\S]+)$/.exec(html);
+  if (!m || m[2]!.length < 70) return `<p class="${classe}">${html}</p>`;
+  return `<details class="replie ${classe}" id="replie-${id}"><summary><span>${m[1]}</span> <b class="replie-plus">Lire la suite</b></summary><p>${m[2]}</p></details>`;
+}
