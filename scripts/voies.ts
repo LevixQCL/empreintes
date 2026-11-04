@@ -29,13 +29,16 @@ const VOIES: { nom: string; lignee: Lignee; porteur: string; cartes: string[] }[
   { nom: 'La Traque', lignee: 'bio', porteur: 'doran', cartes: ['flair', 'bond-predateur', 'crocs-verre', 'chasse-aveugle', 'hallali', 'yeux-nocturnes'] },
   { nom: 'La Sève', lignee: 'bio', porteur: 'doran', cartes: ['pollen-ambre', 'seve-piliers', 'mue-verre', 'floraison', 'glande-ambre', 'sang-ambre'] },
   { nom: 'La Lecture', lignee: 'reso', porteur: 'vela', cartes: ['regard-biais', 'lame-doute', 'oeil-lecteur', 'verdict', 'sentence-muette', 'miroir-brume'] },
+  // 4 novembre 2026 : les deux dernières voies
+  { nom: 'Les Machines', lignee: 'tech', porteur: 'ilka', cartes: ['servo-bras', 'marteau-piston', 'verin', 'exo-chantier', 'foreuse', 'bras-grue'] },
+  { nom: 'L’Harmonie', lignee: 'reso', porteur: 'vela', cartes: ['contre-chant', 'fil-accord', 'nuee-chorale', 'echo', 'eclat-chant', 'chant-abysses'] },
 ];
 /** --cartes a,b,c… : essayer un autre deck pour la voie mesurée (avec --seule) */
 if (process.argv.includes('--cartes')) {
   const v = VOIES.find((x) => x.nom === process.argv[process.argv.indexOf('--seule') + 1]);
   if (v) v.cartes = process.argv[process.argv.indexOf('--cartes') + 1]!.split(',');
 }
-const EFFETS_VOIES = ['riposte', 'decharge', 'diapason', 'unisson', 'curee', 'lecture', 'faille', 'rafale', 'debord'];
+const EFFETS_VOIES = ['riposte', 'decharge', 'diapason', 'unisson', 'curee', 'lecture', 'faille', 'rafale', 'debord', 'servo', 'contrepoint'];
 const CARTES_VOIES = new Set(VOIES.flatMap((v) => v.cartes.filter((id) => EFFETS_VOIES.includes(moduleDef(id).effet?.type ?? ''))));
 
 const niv = (cle: string) => ({ id: cle, niveau: COLLECTION.niveauDepart[moduleDef(cle).rarete] });

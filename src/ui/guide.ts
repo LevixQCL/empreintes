@@ -298,6 +298,10 @@ const REGLE: Record<TypeEffet, () => string> = {
   releve: () => 'Si un Porteur est à terre, il se relève avec tout le soin. Sinon, la carte soigne comme une autre.',
   sourdine: () => `L’ennemi visé perd ${fourchette('sourdine')} de ce qu’il prépare, quoi que ce soit : son attaque, son bouclier ou son soin.`,
   amorce: () => `La carte posée juste après elle dans la chaîne gagne +${fourchette('amorce')} de force.`,
+  servo: () => 'Une carte lourde de la chaîne ne prend qu’une place au lieu de deux. Un Servo par carte lourde, où qu’il soit dans la chaîne.',
+  contrepoint: () => `Si la carte est dans une suite qui résonne, elle gagne +${fourchette('contrepoint')} de force pour chaque autre lignée présente dans cette suite (deux au plus).`,
+  execution: () => `Après le coup, si l’ennemi visé n’a plus que ${fourchette('execution')} de ses PV ou moins, il tombe. Un gardien n’est jamais achevé ainsi.`,
+  tenacite: () => 'Pendant le tour ennemi qui suit, aucun Porteur ne peut tomber : un coup qui l’aurait mis à terre le laisse à 1 PV.',
 };
 
 function astuce(t: TypeEffet): string {
@@ -330,6 +334,10 @@ function astuce(t: TypeEffet): string {
     case 'secours': return 'Ta carte de dernier recours : plus l’escouade tombe, plus elle frappe.';
     case 'sourdine': return 'Moins forte que Troubler contre une attaque, mais elle sert aussi quand l’ennemi va se protéger ou se soigner.';
     case 'amorce': return 'Pose-la juste avant ta carte la plus forte : la suivante profite de tout le bonus.';
+    case 'servo': return 'Avec une carte lourde en main, elle rend sa place : un gros coup et une suite de 3 dans la même chaîne.';
+    case 'contrepoint': return 'Une suite qui passe par les trois lignées (Génés, Augmentés, Résonants) lui donne tout son bonus.';
+    case 'execution': return 'Termine la chaîne par elle : les cartes d’avant font descendre l’ennemi, elle l’achève.';
+    case 'tenacite': return 'Le tour où l’ennemi annonce un coup qui tuerait : tout le monde reste debout, puis on soigne.';
     case 'crescendo': {
       const parts = MODULES.map((m) => m.effet).filter((e): e is { type: 'crescendo'; part: number } => e?.type === 'crescendo').map((e) => e.part);
       const max = REGLES.capaciteMax - 1;

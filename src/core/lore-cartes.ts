@@ -119,6 +119,26 @@ export const LORE_CARTES: Record<string, string> = {
   'empreinte-vive': 'Une empreinte sans visage, qui prend celui de ce qu’elle touche. Les Veilleurs se demandent si elle n’imite pas, simplement, comme ceux d’avant imitaient les vivants.',
   'silence-avant': 'Le silence qui suit une catastrophe, conservé dans une vierge de nacre. Il protège, puis rend aux vivants ce qu’ils ont de meilleur, comme pour s’excuser d’être resté si longtemps seul.',
 
+  // ---------- Les nouvelles cartes (4 novembre 2026) ----------
+  // Les Machines (Sasha) : le chantier, ses outils trop lourds et ce qui les rend légers
+  'servo-bras': 'Un bras d’appoint vissé à l’épaule, qui porte la moitié de tout ce qu’on soulève. « Ce n’est pas toi qui deviens plus fort, dit Sasha. C’est la charge qui devient plus polie. »',
+  'marteau-piston': 'Le marteau des poseurs de pilotis, monté sur l’avant-bras. Un coup, et la poutre est enfoncée ; un coup, et ce qui se tenait en face ne se tient plus aussi droit.',
+  verin: 'Un vérin de grue démonté sur un chantier abandonné de la Cuvette. Il ne pousse pas plus fort qu’un autre : il pousse au bon moment, et le reste suit.',
+  'exo-chantier': 'L’armature que portaient les équipes de la digue, quand il fallait tenir un mur le temps qu’on coule le béton derrière. Elle encaisse, et elle garde en réserve tout ce qu’elle a encaissé.',
+  foreuse: 'La tête de forage qui a ouvert le premier puits du district. Elle n’a jamais été conçue pour combattre. Elle a seulement été conçue pour ne pas s’arrêter.',
+  // L’Harmonie (Véla) : la suite qui passe d’une lignée à l’autre
+  'contre-chant': 'Une note posée sous la mélodie des autres, jamais à l’unisson. Véla l’apprend aux recrues en premier : « Ne chante pas avec eux. Chante entre eux. »',
+  'fil-accord': 'Un fil d’or tendu entre trois pierres de lignées différentes. Seul, il ne vibre pas. Quand un Augmenté, un Géné et un Résonant le touchent en même temps, on l’entend jusqu’à la Tour.',
+  'nuee-chorale': 'Des oiseaux de papier pliés par les enfants du district, qui tournent ensemble comme des étourneaux dès qu’un Résonant chante. Chacun garde sa couleur, et c’est pour ça qu’ils ne se cognent jamais.',
+  // Des cartes qui comblent un trou de la collection
+  riveteuse: 'Un pistolet à rivets de la digue, réglé pour traverser deux tôles d’un coup. Sasha l’a recalibré pour une troisième : « Celle qu’on ne voit pas. »',
+  'suture-vive': 'Un fil de soie de Géné, qui se resserre tout seul dans la plaie. La Clinique le réserve à un seul blessé à la fois : il a besoin de toute l’attention de celui qui coud.',
+  lamproie: 'Une bouche ronde greffée à l’avant-bras, empruntée aux poissons qui s’accrochent aux piliers noyés. Elle ne lâche qu’une fois rassasiée.',
+  berceuse: 'Un air qu’on chantait aux enfants pendant les crues, pour couvrir le bruit de l’eau. Dans les Strates, il endort aussi ce qui se préparait à frapper.',
+  // Deux nacres de plus (une vierge pour les Augmentés, une pour les Génés)
+  'couperet-hauts': 'La lame qui tranchait les câbles des passerelles des Hauts, quand on décidait qu’un quartier ne serait plus relié. Elle ne frappe pas souvent. Elle n’a jamais eu besoin de frapper deux fois.',
+  'racines-meres': 'Les racines du premier jardin des Fondations, qui ont tenu le sol pendant que tout le reste glissait. Tant qu’elles tiennent, personne autour d’elles ne tombe tout à fait.',
+
   // ---------- L’Héritage du district (27 octobre 2026) : la directrice parle, dans sa lettre ----------
   'foulee-directrice': '« Je n’ai jamais été la plus forte. J’étais toujours la première arrivée. Ces jambes-là m’ont portée sur chaque passerelle de ce district, et jusqu’aux abris murés. Jamais plus bas. Cours devant, directeur : les autres suivront. »',
   'bras-fonderie': '« Ce bras a coulé la première digue du district, du temps où on creusait à sec autour du puits. Il ne sait rien faire de délicat. Il n’en a jamais eu besoin. »',

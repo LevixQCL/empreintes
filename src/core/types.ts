@@ -72,7 +72,16 @@ export type Effet =
   /** Résonants : l'ennemi visé perd une part de ce qu'il prépare, quoi que ce soit (attaque, bouclier ou soin) */
   | { type: 'sourdine'; part: number }
   /** Résonants : la carte posée juste après elle gagne une part de force */
-  | { type: 'amorce'; part: number };
+  | { type: 'amorce'; part: number }
+  // ---------- Les nouvelles cartes (4 novembre 2026, docs/nouvelles-cartes.md) ----------
+  /** Machines : une carte lourde de la chaîne ne prend qu'une place (un Servo par carte lourde) */
+  | { type: 'servo' }
+  /** Harmonie : dans une suite qui résonne, une part de force en plus pour chaque autre lignée de la suite */
+  | { type: 'contrepoint'; part: number }
+  /** exclusive : après le coup, l'ennemi visé tombe s'il lui reste moins d'une part de ses PV (jamais un gardien) */
+  | { type: 'execution'; part: number }
+  /** exclusive : au tour ennemi qui suit, aucun Porteur ne tombe (un coup qui l'achèverait le laisse à 1 PV) */
+  | { type: 'tenacite' };
 
 export type TypeEffet = Effet['type'];
 
@@ -382,6 +391,8 @@ export interface CombatEtat {
   eclat?: { porteur: string; lignee: Lignee };
   /** Débridage : la chaîne de ce tour frappe deux fois plus fort */
   debride?: boolean;
+  /** Ténacité (exclusive, 4 novembre 2026) : au tour ennemi qui suit la chaîne, aucun Porteur ne tombe */
+  tenace?: boolean;
   /** Ombre agissante : aucune attaque ennemie ne porte ce tour-ci */
   ombre?: boolean;
   /** l'ennemi a brouillé les Fréquences : la prochaine chaîne ne fait pas de Résonance */

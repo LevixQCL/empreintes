@@ -70,6 +70,12 @@ export const ICONES_EFFET: Record<TypeEffet, string> = {
   // la refonte des quasi-doublons (1er novembre 2026) : une onde coupée (Sourdine), une étincelle qui passe à la suivante (Amorce)
   sourdine: trait('<path d="M2 12c2-4 4-4 6 0"/><path d="M14 12c2 4 4 4 6 0" stroke-dasharray="2 2.5"/><path d="M11 5v14"/>'),
   amorce: trait('<path d="M4 18l6-6"/><path d="M10 6v4M8 8h4"/><path d="M14 12l6 0M17 9l3 3-3 3"/>'),
+  // les nouvelles cartes (4 novembre 2026) : un engrenage (Servo), trois lignes qui se croisent (Contrepoint),
+  // une lame qui tombe (Exécution), une racine ancrée (Ténacité)
+  servo: trait('<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>'),
+  contrepoint: trait('<path d="M3 16c4-8 8 0 12-6"/><path d="M3 8c4 8 8 0 12 6"/><path d="M15 10l3 2 3-6"/>'),
+  execution: trait('<path d="M5 3h14l-3 7H8z"/><path d="M12 10v6"/><path d="M6 21h12"/><path d="M9 18l3-2 3 2"/>'),
+  tenacite: trait('<path d="M12 3v10"/><path d="M12 13c-3 0-6 2-7 6M12 13c3 0 6 2 7 6M12 13v8"/><path d="M8 6h8"/>'),
 };
 /** la couleur de l'arête du cadre, de la barre et de la capsule de valeur */
 const COULEUR_ACTION: Record<Action, string> = { atk: '#ff6a4a', bouclier: '#5fb0ff', soin: '#7fe06a' };

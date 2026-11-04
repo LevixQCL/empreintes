@@ -4,7 +4,7 @@
 
 import { DUEL, apercuDuel, autre, capaciteDuel, cibleEffective, lectureAdverse, placesLibresDuel, type CoteDuel, type EvDuel } from '../core/duel';
 import { porteurDef, NOMS_LIGNEE } from '../core/donnees';
-import { REGLES, analyserChaine, frequencesEffectives, places, prolonge } from '../core/regles';
+import { REGLES, analyserChaine, frequencesEffectives, placesChaine, placesEnPlus, prolonge } from '../core/regles';
 import type { SessionDuel } from '../duel/session';
 import { portrait } from './art';
 import { ICO } from './icones';
@@ -43,8 +43,8 @@ function main(s: SessionDuel) {
         + (img ? `<span class="mv-ombre" style="background-image:url(${img})" aria-hidden="true"></span>` : '')
         + `<span class="mv-texte" aria-hidden="true"><b>Place vide</b><small>${echap(nom)}</small></span></span>`;
     }
-    const halo = !!c.chaine.length && prolonge(g, fs[fs.length - 1]) && places(g) <= libres;
-    return geste(g, 'main', 'duel-poser', { halo, off: s.verrouille, serre: places(g) > libres });
+    const halo = !!c.chaine.length && prolonge(g, fs[fs.length - 1]) && placesEnPlus(c.chaine, g) <= libres;
+    return geste(g, 'main', 'duel-poser', { halo, off: s.verrouille, serre: placesEnPlus(c.chaine, g) > libres });
   }).join('');
 }
 
@@ -52,7 +52,7 @@ function chaine(s: SessionDuel) {
   const c = s.brouillon.cotes[s.camp];
   const cap = capaciteDuel(c);
   let h = c.chaine.map((g) => geste(g, 'chaine', 'duel-reprendre', { off: s.verrouille })).join('');
-  for (let k = c.chaine.reduce((n, g) => n + places(g), 0); k < cap; k++) h += '<span class="place-vide" aria-hidden="true"></span>';
+  for (let k = placesChaine(c.chaine); k < cap; k++) h += '<span class="place-vide" aria-hidden="true"></span>';
   const a = analyserChaine(c.chaine);
   const bonus = a.suite >= 3 ? `<span class="dl-bonus">Résonance ${a.suite}</span>` : a.echo ? `<span class="dl-bonus">Écho ×${a.echoN ?? 3}</span>` : '';
   return `<div class="dl-chaine${s.verrouille ? ' verrouille' : ''}"><div class="dl-rangee">${h}</div>${bonus}</div>`;

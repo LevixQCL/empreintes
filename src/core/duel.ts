@@ -13,8 +13,8 @@
 
 import { carteId, moduleDef, porteurDef, DEPART_PORTEURS } from './donnees';
 import { cartesEnJeu, placesVides, puissanceCarte, PLACES_PORTEUR } from './collection';
-import { effetsEnJeu } from './combat';
-import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, places } from './regles';
+import { effetsEnJeu, ligneesDeSuite } from './combat';
+import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, placesChaine, placesEnPlus } from './regles';
 import { graine, tireur } from './rng';
 import type { Effet, Geste, GesteDef, Lignee, LigneeGeste, PorteurEtat } from './types';
 
@@ -217,7 +217,7 @@ export const debout = (c: CoteDuel) => c.porteurs.filter((p) => p.pv > 0);
 const aTerre = (c: CoteDuel, id: string | null) => !!id && (c.porteurs.find((p) => p.id === id)?.pv ?? 1) <= 0;
 export const ligneeDe = (g: Pick<GesteDef, 'porteur'>): LigneeGeste => (g.porteur ? porteurDef(g.porteur).lignee : 'neutre');
 export const capaciteDuel = (c: CoteDuel) => Math.min(REGLES.capaciteMax, REGLES.capaciteBase + c.capaBonus);
-export const placesPrisesDuel = (c: CoteDuel) => c.chaine.reduce((n, g) => n + places(g), 0);
+export const placesPrisesDuel = (c: CoteDuel) => placesChaine(c.chaine);
 export const placesLibresDuel = (c: CoteDuel) => capaciteDuel(c) - placesPrisesDuel(c);
 const nomP = (id: string) => porteurDef(id).nom;
 
@@ -258,7 +258,7 @@ export function poserDuel(s: DuelEtat, camp: Camp, uid: string, f?: number): Res
   if (i < 0) return non('Cette carte n’est pas dans ta main.');
   const g = c.main[i]!;
   if (g.vide) return non('Une place vide ne se joue pas.');
-  if (places(g) > placesLibresDuel(c)) return non('Plus de place dans la chaîne.');
+  if (placesEnPlus(c.chaine, g) > placesLibresDuel(c)) return non('Plus de place dans la chaîne.');
   const fs = g.fs ?? [g.f];
   if (f !== undefined && !frequenceLibre(g.effet) && !fs.includes(f)) return non('Cette carte ne prend pas cette Fréquence.');
   c.main.splice(i, 1);
@@ -431,6 +431,9 @@ function forceCarte(x: Contexte, g: Geste, rang: number): { v: number; effets: (
     const fs = frequencesEffectives(x.chaine);
     m *= 1 + un.part * fs.filter((f, k) => k !== rang && f === fs[rang]).length;
   }
+  // Contrepoint (4 novembre 2026) : comme en combat, une part de force par autre lignée de la suite qui résonne
+  const cpt = de(effets, 'contrepoint');
+  if (cpt && x.mult > 1) { const ls = ligneesDeSuite(x.chaine, rang); ls.delete(ligneeDe(g)); m *= 1 + cpt.part * ls.size; }
   if (!eteinte && g.effet?.type === 'empreinte' && !effets[0]) m *= REGLES.empreinteSeule;
   const st = de(effets, 'surtension');
   if (st) m *= 1 + st.part;
@@ -772,14 +775,16 @@ export function choixRobot(s: DuelEtat, camp: Camp): ChoixTour {
     }
   };
   const cap = capaciteDuel(c);
-  const visiter = (ordre: string[], restant: string[], placesPrises: number) => {
+  const visiter = (ordre: string[], restant: string[]) => {
     if (ordre.length) essayer(ordre);
     for (const uid of restant) {
       const g = c.main.find((x) => x.uid === uid)!;
-      if (placesPrises + places(g) > cap) continue;
-      visiter([...ordre, uid], restant.filter((x) => x !== uid), placesPrises + places(g));
+      const ch = ordre.map((u) => c.main.find((x) => x.uid === u)!);
+      const n = placesChaine([...ch, g]);
+      if (n > cap) continue;
+      visiter([...ordre, uid], restant.filter((x) => x !== uid));
     }
   };
-  visiter([], jouables, 0);
+  visiter([], jouables);
   return meilleur.choix;
 }

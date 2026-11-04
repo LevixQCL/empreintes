@@ -2,7 +2,7 @@
 // l'interface appelle ces fonctions puis anime les « pas » qu'elles renvoient.
 
 import { CONDITIONS, DECK_DEPART, FAVEUR_CONDITION, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, deNom } from './donnees';
-import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, nomEcho, pctEcho, places } from './regles';
+import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, nomEcho, pctEcho, placesChaine, placesEnPlus } from './regles';
 import { tireur } from './rng';
 import { NOMS_EFFET } from './effets';
 import type {
@@ -143,7 +143,9 @@ const porteurEtat = (s: CombatEtat, id: string) => s.porteurs.find((p) => p.id =
 export const vivants = (s: CombatEtat) => s.porteurs.filter((p) => p.pv > 0);
 const estATerre = (s: CombatEtat, id: string | null) => !!id && (porteurEtat(s, id)?.pv ?? 0) <= 0;
 export const capacite = (s: CombatEtat) => REGLES.capaciteBase + s.capaBonus;
-export const placesPrises = (s: CombatEtat) => s.chaine.reduce((n, g) => n + places(g), 0);
+export const placesPrises = (s: CombatEtat) => placesChaine(s.chaine, (g) => estATerre(s, g.porteur));
+/** Les places que prendrait cette carte si on la posait maintenant (le Servo rend sa place à une carte lourde) */
+export const placesCarte = (s: CombatEtat, g: Geste) => placesEnPlus(s.chaine, g, (x) => estATerre(s, x.porteur));
 export const placesLibres = (s: CombatEtat) => capacite(s) - placesPrises(s);
 export const ligneeGeste = (g: GesteDef): LigneeGeste => (g.porteur ? porteurDef(g.porteur).lignee : 'neutre');
 
@@ -305,7 +307,7 @@ export function ajouter(s: CombatEtat, uid: string): Resultat {
   if (!g) return { ok: false };
   if (g.vide) return { ok: false, message: 'Une place vide ne se joue pas : confie une carte de plus à ce Porteur.' };
   delete g.accorde;
-  if (places(g) > placesLibres(s)) {
+  if (placesCarte(s, g) > placesLibres(s)) {
     const debut = g.lourd ? `${g.nom} prend 2 places, il n’en reste ${placesLibres(s)}.` : 'La chaîne est pleine.';
     const fin = s.flux > 0 && capacite(s) < REGLES.capaciteMax ? ' Retire une carte ou dépense 1 Flux (+1 place).' : ' Retire une carte.';
     log(s, debut + fin, false);
@@ -635,6 +637,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     emettre({ kind: 'echo', n });
   }
   FLUX_FELURE = false;
+  delete s.tenace;
   for (const [i, g] of s.chaine.entries()) {
     RANG = i;
     FELURE_FAITE = false;
@@ -980,6 +983,15 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
       evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Rafale', rang: s.ennemi.rang ?? 0 });
       frapper(force, `${g.nom} (Rafale)`, { base: g.v, lignes: facteurs });
     }
+    // Exécution (exclusive) : sous le seuil, l'ennemi visé tombe ; un gardien n'est jamais achevé ainsi
+    const ex = de('execution');
+    if (ex && s.ennemi.pv > 0 && !estGardien(s.ennemi.id) && s.ennemi.pv <= s.ennemi.pvMax * ex.part) {
+      const reste = s.ennemi.pv;
+      s.ennemi.pv = 0;
+      log(s, `Exécution : ${ennemiDef(s.ennemi.id).nom} n’avait plus que ${reste} PV, il tombe.`, { sorte: 'coup', v: reste });
+      evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Exécution', rang: s.ennemi.rang ?? 0 });
+      evs.push({ kind: 'degats', cible: 'ennemi', net: reste, absorbe: 0, rang: s.ennemi.rang ?? 0 });
+    }
     const si = de('siphon');
     if (si && net > 0) {
       // le Siphon soigne le Porteur qui a joué la carte : c'est lui qui boit la vie (s'il est à terre, le plus blessé)
@@ -1074,6 +1086,10 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
       s.capaProchain = (s.capaProchain ?? 0) + 1;
       log(s, 'Élan : la prochaine chaîne aura une place de plus.', { sorte: 'effet' });
       evs.push({ kind: 'effet', cible: 'escouade', texte: 'Élan' });
+    } else if (ef?.type === 'tenacite') {
+      s.tenace = true;
+      log(s, 'Ténacité : au tour ennemi, personne ne tombera.', { sorte: 'effet' });
+      evs.push({ kind: 'effet', cible: 'escouade', texte: 'Ténacité' });
     } else if (ef?.type === 'rempart') {
       s.garde = Math.max(s.garde ?? 0, ef.part);
       log(s, `Rempart : ${Math.round(ef.part * 100)} % du bouclier restant sera gardé au tour suivant.`, { sorte: 'effet' });
@@ -1136,6 +1152,13 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
     const pareilles = fs.filter((x, k) => k !== rang && x === fs[rang]).length;
     mettre(`Unisson (${pareilles} même${pareilles > 1 ? 's' : ''} Fréquence${pareilles > 1 ? 's' : ''})`, 1 + un.part * pareilles);
   }
+  // Contrepoint (Harmonie) : dans une suite qui résonne, une part de force pour chaque autre lignée de la suite
+  const cp = de('contrepoint');
+  if (cp && mult > 1) {
+    const autres = ligneesDeSuite(chaine, rang);
+    autres.delete(ligneeGeste(g));
+    if (autres.size) mettre(`Contrepoint (${autres.size} autre${autres.size > 1 ? 's' : ''} lignée${autres.size > 1 ? 's' : ''} dans la suite)`, 1 + cp.part * autres.size);
+  }
   // Empreinte (exclusive) sans rien à copier (en tête de chaîne, ou après une carte sans effet) : elle imite la force à la place
   if (!eteinte && g.effet?.type === 'empreinte' && !effets[0]) mettre('Empreinte (rien à copier)', REGLES.empreinteSeule);
   // Surtension (exclusive) : le Porteur paie de ses PV une part de force en plus
@@ -1143,6 +1166,16 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   if (st) mettre('Surtension', 1 + st.part);
   if (eteinte) mettre('Porteur à terre', REGLES.eteinte);
   return f;
+}
+
+/** Les lignées de la suite (3 cartes au moins) qui passe par la carte de ce rang ; vide si elle n'est pas dans une suite */
+export function ligneesDeSuite(chaine: readonly Geste[], rang: number): Set<LigneeGeste> {
+  const fs = frequencesEffectives(chaine as Geste[]);
+  let a = rang, b = rang;
+  while (a > 0 && fs[a - 1] === fs[a]! - 1) a--;
+  while (b < fs.length - 1 && fs[b + 1] === fs[b]! + 1) b++;
+  if (b - a + 1 < 3) return new Set();
+  return new Set(chaine.slice(a, b + 1).filter((x) => x.porteur).map((x) => ligneeGeste(x)));
 }
 
 /**
@@ -1575,8 +1608,10 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
       const dmg = s.ombre ? 0 : Math.round(it.v * puissance(en) * usureCombat(s).attaque * av);
       const abs = Math.min(bouclierPour(s.bouclier, c.id, protegeDe(s), RESERVE), dmg);
       s.bouclier -= abs;
-      const net = dmg - abs;
+      // Ténacité (exclusive) : un coup qui mettrait le Porteur à terre le laisse à 1 PV
+      const net = s.tenace && c.pv > 0 && dmg - abs >= c.pv ? c.pv - 1 : dmg - abs;
       c.pv = Math.max(0, c.pv - net);
+      if (s.tenace && net < dmg - abs) log(s, `Ténacité : ${porteurDef(c.id).nom} tient debout à 1 PV.`, { sorte: 'effet' });
       total += net;
       morceaux.push(`${porteurDef(c.id).nom} ${net ? '−' + net : 'protégé'}`);
       calculs.push(calcul(porteurDef(c.id).nom, it.v, facteursEnnemi(s, en, av, c.id), dmg, abs, net));

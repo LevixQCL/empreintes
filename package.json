@@ -13,6 +13,7 @@
     "archetypes": "tsx scripts/archetypes.ts",
     "voies": "tsx scripts/voies.ts",
     "exclusives": "tsx scripts/exclusives.ts",
+    "nouvelles": "tsx scripts/nouvelles.ts",
     "visuel": "tsx scripts/visuel.ts",
     "css": "node scripts/css-propre.cjs",
     "ratelier": "tsx scripts/ratelier.ts",

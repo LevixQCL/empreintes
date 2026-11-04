@@ -189,6 +189,24 @@ export function serieFinale(chaine: Maillon[]): number {
 
 export const places = (g: Pick<Geste, 'lourd'>) => (g.lourd ? 2 : 1);
 
+type Place = Pick<Geste, 'lourd'> & { effet?: Geste['effet'] };
+/**
+ * Les places que prend une chaîne (Servo, 4 novembre 2026) : chaque Servo rend une place à une carte lourde de la chaîne,
+ * où qu'elle soit. `eteinte` : les cartes d'un Porteur à terre n'ont plus d'effet, leur Servo ne compte pas.
+ */
+export function placesChaine<T extends Place>(chaine: readonly T[], eteinte?: (g: T) => boolean): number {
+  let n = 0, lourdes = 0, servos = 0;
+  for (const g of chaine) {
+    n += places(g);
+    if (g.lourd) lourdes++;
+    if (g.effet?.type === 'servo' && !eteinte?.(g)) servos++;
+  }
+  return n - Math.min(lourdes, servos);
+}
+/** Les places qu'une carte de plus prendrait dans cette chaîne (0 pour un Servo posé après une carte lourde) */
+export const placesEnPlus = <T extends Place>(chaine: readonly T[], g: T, eteinte?: (g: T) => boolean) =>
+  placesChaine([...chaine, g], eteinte) - placesChaine(chaine, eteinte);
+
 /**
  * La Fréquence que prend une carte à plusieurs Fréquences quand on la pose (décision du 22 octobre 2026, sans tirage) :
  * celle qui fait tout de suite une Résonance (suite de 3 ou plus), sinon celle qui complète ou agrandit un Écho,

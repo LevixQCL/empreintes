@@ -3,11 +3,11 @@
 // Aucun DOM ici : il tourne dans les tests et dans `npm run robot`.
 
 import { allonger, ajouter, brumeActive, capacite, eclater, eclatsPossibles, ennemisDebout, felureVisible, intentionDe, placesLibres, tousEnnemis, viser, vivants } from './combat';
-import { lancer, voixAdmise } from './combat';
+import { lancer, placesCarte, voixAdmise } from './combat';
 import { cartesEnJeu, placesVides } from './collection';
 import { GESTES_SPECIAUX, porteurDef } from './donnees';
 import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExpedition, nouvelleExploration, salleCourante, typeApparent } from './expedition';
-import { REGLES, analyserChaine, frequenceLibre, places } from './regles';
+import { REGLES, analyserChaine, frequenceLibre, placesChaine } from './regles';
 import type { CombatEtat, Geste, GesteDef } from './types';
 
 /** Copie rapide d'un combat (les cartes à plusieurs Fréquences changent de Fréquence : on les copie aussi) */
@@ -100,7 +100,7 @@ export function jouerTour(s: CombatEtat): void {
     for (const rang of cibles) for (const allonge of essais) {
       const cap = capacite(base) + (allonge ? 1 : 0);
       for (const groupe of sousGroupes(base.main.filter((g) => !g.vide))) {
-        if (groupe.reduce((n, g) => n + places(g), 0) > cap || !voixAdmise(base, groupe)) continue;
+        if (placesChaine(groupe) > cap || !voixAdmise(base, groupe)) continue;
         for (const ordre of ordres(groupe)) {
           const t = clone(base);
           viser(t, rang);
@@ -118,7 +118,7 @@ export function jouerTour(s: CombatEtat): void {
   viser(s, meilleurRang);
   if (!meilleur) {
     // main injouable (ne devrait pas arriver) : on pose ce qui rentre
-    for (const g of s.main.slice()) if (placesLibres(s) >= places(g)) ajouter(s, g.uid);
+    for (const g of s.main.slice()) if (placesLibres(s) >= placesCarte(s, g)) ajouter(s, g.uid);
   } else {
     if (meilleur.allonge) allonger(s);
     for (const uid of meilleur.uids) ajouter(s, uid);
@@ -176,7 +176,7 @@ export function composerTourMoyen(s: CombatEtat): void {
   const gainFelure = fel === undefined ? 0 : (itVise.type === 'atk' ? itVise.v * 0.5 * (danger ? 1.5 : 1) : itVise.type === 'bouclier' || itVise.type === 'soin' ? itVise.v * 0.5 : 0);
   let meilleur: { score: number; ordre: Geste[] } | null = null;
   for (const groupe of sousGroupes(s.main.filter((g) => !g.vide))) {
-    if (groupe.reduce((n, g) => n + places(g), 0) > cap || !voixAdmise(s, groupe)) continue;
+    if (placesChaine(groupe) > cap || !voixAdmise(s, groupe)) continue;
     const ordre = groupe.slice().sort((a, b) => a.f - b.f);
     const mult = analyserChaine(ordre).mult;
     // une carte éteinte (son Porteur est à terre) se lit à sa force affichée : la moitié

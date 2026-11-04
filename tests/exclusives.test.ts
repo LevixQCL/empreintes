@@ -134,7 +134,7 @@ describe('Les effets exclusifs', () => {
 
 describe('Les cartes exclusives n’existent que dans leur métal', () => {
   it('chaque exclusive a un métal argent, or ou nacre, et un effet qu’aucune carte ordinaire ne porte', () => {
-    const effetsExclusifs = new Set(['rapt', 'rappel', 'surtension', 'empreinte', 'releve']);
+    const effetsExclusifs = new Set(['rapt', 'rappel', 'surtension', 'empreinte', 'releve', 'execution', 'tenacite']);
     expect(EXCLUSIVES.length).toBeGreaterThanOrEqual(9);
     for (const m of EXCLUSIVES) {
       expect(['argent', 'or', 'nacre'], m.id).toContain(m.rarete);

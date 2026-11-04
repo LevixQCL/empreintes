@@ -36,6 +36,10 @@ export const NOMS_EFFET: Record<TypeEffet, string> = {
   releve: 'Relève',
   sourdine: 'Sourdine',
   amorce: 'Amorce',
+  servo: 'Servo',
+  contrepoint: 'Contrepoint',
+  execution: 'Exécution',
+  tenacite: 'Ténacité',
 };
 
 /** Phrase courte qui explique l'effet au joueur */
@@ -72,6 +76,10 @@ export function texteEffet(e: Effet): string {
     case 'secours': return `+${pc(e.part)} de force pour chaque Porteur à terre.`;
     case 'sourdine': return `L’ennemi visé perd ${pc(e.part)} de ce qu’il prépare : attaque, bouclier ou soin.`;
     case 'amorce': return `La carte posée juste après elle gagne +${pc(e.part)} de force.`;
+    case 'servo': return 'Une carte lourde de la chaîne ne prend qu’une place.';
+    case 'contrepoint': return `Dans une suite qui résonne : +${pc(e.part)} de force pour chaque autre lignée de la suite.`;
+    case 'execution': return `Après le coup, l’ennemi visé tombe s’il lui reste moins de ${pc(e.part)} de ses PV (jamais un gardien).`;
+    case 'tenacite': return 'Au tour ennemi qui suit, aucun Porteur ne tombe : le coup fatal le laisse à 1 PV.';
   }
 }
 
@@ -107,6 +115,10 @@ export function formuleEffet(e: Effet): string {
     case 'secours': return `+${pc(e.part)} / Porteur à terre`;
     case 'sourdine': return `−${pc(e.part)} intention`;
     case 'amorce': return `+${pc(e.part)} suivante`;
+    case 'servo': return 'lourde = 1 place';
+    case 'contrepoint': return `+${pc(e.part)} / lignée`;
+    case 'execution': return `achève sous ${pc(e.part)}`;
+    case 'tenacite': return 'personne ne tombe';
   }
 }
 
