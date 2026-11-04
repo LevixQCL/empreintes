@@ -146,7 +146,7 @@ export const MODULES: ModuleDef[] = [
   c('diapason-cristal', 'Diapason de cristal', 'reso', 'fer', 'bouclier', 9, [9, 8, 7], { type: 'diapason' }),
   c('voix-basse', 'Voix basse', 'reso', 'fer', 'atk', 9, [9, 8, 7], { type: 'unisson', part: 1.2 }),
   c('chorale-ombres', 'Chorale des ombres', 'reso', 'cuivre', 'atk', 12, [8, 9, 7], { type: 'unisson', part: 1.3 }),
-  c('cloche-abysses', 'Cloche des abysses', 'reso', 'argent', 'bouclier', 24, [9, 7, 8], { type: 'diapason' }),
+  c('cloche-abysses', 'Cloche des abysses', 'reso', 'argent', 'atk', 17, [9, 7, 8], { type: 'diapason' }),
   c('grand-unisson', 'Grand unisson', 'reso', 'or', 'atk', 18, [9, 8, 6], { type: 'unisson', part: 1.4 }),
   // ---------- Les voies, étapes 2 et 3 (28 octobre 2026, docs/familles-de-decks.md) ----------
   // La Traque (Nuit) : fissurer, puis achever
@@ -199,7 +199,7 @@ export const MODULES: ModuleDef[] = [
   // Argent
   x('gantelet-pillard', 'Gantelet-pillard', 'tech', 'argent', 'atk', 17, [6, 2], { type: 'rapt' }),
   x('machoire-miroir', 'Mâchoire-miroir', 'bio', 'argent', 'atk', 18, [5, 1], { type: 'empreinte' }),
-  x('boucle-memoire', 'Boucle de mémoire', 'reso', 'argent', 'bouclier', 28, [6, 9], { type: 'rappel' }),
+  x('boucle-memoire', 'Boucle de mémoire', 'reso', 'argent', 'atk', 21, [6, 9], { type: 'rappel' }),
   // Or
   x('coeur-surregime', 'Cœur en surrégime', 'tech', 'or', 'atk', 20, [7, 2], { type: 'surtension', part: 0.6, cout: 0.12 }),
   x('peau-ancetre', 'Peau de l’Ancêtre', 'bio', 'or', 'bouclier', 26, [1, 4], { type: 'rapt' }),
@@ -208,7 +208,7 @@ export const MODULES: ModuleDef[] = [
   x('coeur-etoile', 'Cœur d’étoile', 'tech', 'nacre', 'atk', 46, [7, 4, 2], { type: 'surtension', part: 0.4, cout: 0.15 }, true),
   x('seconde-naissance', 'Seconde naissance', 'bio', 'nacre', 'soin', 30, [1, 3, 5], { type: 'releve' }),
   x('empreinte-vive', 'Empreinte vive', 'reso', 'nacre', 'atk', 20, [9, 6, 3], { type: 'empreinte' }),
-  x('silence-avant', 'Silence d’avant', 'reso', 'nacre', 'bouclier', 40, [7, 4, 9], { type: 'rappel' }),
+  x('silence-avant', 'Silence d’avant', 'reso', 'nacre', 'atk', 24, [7, 4, 9], { type: 'rappel' }),
   // 4 novembre 2026 : une nacre de plus pour les Augmentés et les Génés (deux par lignée)
   x('couperet-hauts', 'Couperet des Hauts', 'tech', 'nacre', 'atk', 30, [6, 3, 8], { type: 'execution', part: 0.15 }),
   x('racines-meres', 'Racines-mères', 'bio', 'nacre', 'bouclier', 22, [5, 2, 4], { type: 'tenacite' }),

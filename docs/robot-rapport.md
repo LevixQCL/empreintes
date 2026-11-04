@@ -14,7 +14,7 @@ Mesure des cartes : une Strate −3 entière en exploration, ennemis ×0.91 (le 
 
 ## Ce que vaut chaque carte
 
-**Rééquilibrage du 4 novembre 2026** : 28 cartes réglées puis remesurées une à une (même méthode, 150 descentes par carte, ±5 points de bruit). La colonne « Au niveau 10 » date de la mesure précédente.
+**Rééquilibrage du 4 novembre 2026** : 28 cartes réglées puis remesurées une à une (même méthode, 150 descentes par carte, ±5 points de bruit). Cloche des abysses, Boucle de mémoire et Silence d’avant passent de bouclier à attaque (rôle « orchestrer » des Résonants), effets inchangés. La colonne « Au niveau 10 » date de la mesure précédente.
 
 Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ressort, Glande d'ambre ou Éclat qui chante), dans son métal d'origine : 0 = aussi utile que la carte de départ. Les chiffres sont des points de victoire sur cette descente (+10 = une expédition gagnée de plus sur dix), à la découverte de la carte, puis avec toutes les cartes au niveau 10.
 
@@ -62,7 +62,7 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Diapason de cristal | Fer | Diapason | −5 | +0 |  |
 | Voix basse | Fer | Unisson | −1 | +0 |  |
 | Chorale des ombres | Cuivre | Unisson | +11 | +0 |  |
-| Cloche des abysses | Argent | Diapason | +4 | −1 | trop faible |
+| Cloche des abysses | Argent | Diapason | +12 | −1 |  |
 | Grand unisson | Or | Unisson | +23 | +0 |  |
 | Flair | Fer | Fissure | +1 | +0 |  |
 | Bond du prédateur | Fer | Curée | −1 | +0 |  |
@@ -85,14 +85,14 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Cadence folle | Or | Rafale | +28 | +0 |  |
 | Gantelet-pillard | Argent | Rapt | +13 | +0 |  |
 | Mâchoire-miroir | Argent | Empreinte | +10 | −1 |  |
-| Boucle de mémoire | Argent | Rappel | +1 | +0 | trop faible |
+| Boucle de mémoire | Argent | Rappel | +15 | +0 |  |
 | Cœur en surrégime | Or | Surtension | +21 | +0 |  |
 | Peau de l’Ancêtre | Or | Rapt | +17 | −1 |  |
 | Miroir des Hauts | Or | Empreinte | +23 | +0 |  |
 | Cœur d’étoile | Nacre | Surtension | +30 | −1 | TROP FORTE |
 | Seconde naissance | Nacre | Relève | +20 | +0 | trop faible |
 | Empreinte vive | Nacre | Empreinte | +31 | +0 | TROP FORTE |
-| Silence d’avant | Nacre | Rappel | +9 | −1 | trop faible |
+| Silence d’avant | Nacre | Rappel | +25 | −1 |  |
 | Foulée de la directrice | Nacre | Élan | +32 | +0 | TROP FORTE |
 | Bras de la Fonderie | Nacre | Perçant | +24 | +0 |  |
 | Cœur de la Glacière | Nacre | Décharge | +24 | +0 |  |

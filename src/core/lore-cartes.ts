@@ -117,7 +117,7 @@ export const LORE_CARTES: Record<string, string> = {
   'coeur-etoile': 'On ne sait pas d’où vient ce cœur, seulement qu’il brille dans le noir comme une étoile qui n’existe plus. C’est un original, que personne n’a jamais recopié. Il demande beaucoup à son porteur, et il rend davantage.',
   'seconde-naissance': 'Une vierge que ceux d’avant n’ont jamais utilisée, rangée seule dans un Berceau. Elle ne soigne pas : elle recommence. Kessa dit qu’en la touchant, on entend un premier cri.',
   'empreinte-vive': 'Une empreinte sans visage, qui prend celui de ce qu’elle touche. Les Veilleurs se demandent si elle n’imite pas, simplement, comme ceux d’avant imitaient les vivants.',
-  'silence-avant': 'Le silence qui suit une catastrophe, conservé dans une vierge de nacre. Il protège, puis rend aux vivants ce qu’ils ont de meilleur, comme pour s’excuser d’être resté si longtemps seul.',
+  'silence-avant': 'Le silence qui suit une catastrophe, conservé dans une vierge de nacre. Il étouffe tout ce qu’il touche, puis rend aux vivants ce qu’ils ont de meilleur, comme pour s’excuser d’être resté si longtemps seul.',
 
   // ---------- Les nouvelles cartes (4 novembre 2026) ----------
   // Les Machines (Sasha) : le chantier, ses outils trop lourds et ce qui les rend légers
