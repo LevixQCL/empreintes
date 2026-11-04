@@ -14,7 +14,7 @@ Mesure des cartes : une Strate −3 entière en exploration, ennemis ×0.91 (le 
 
 ## Ce que vaut chaque carte
 
-**Rééquilibrage du 4 novembre 2026** : 28 cartes réglées puis remesurées une à une (même méthode, 150 descentes par carte, ±5 points de bruit). Cloche des abysses, Boucle de mémoire et Silence d’avant passent de bouclier à attaque (rôle « orchestrer » des Résonants), effets inchangés. La colonne « Au niveau 10 » date de la mesure précédente.
+**Rééquilibrage du 4 novembre 2026** : 28 cartes réglées puis remesurées une à une (même méthode, 150 descentes par carte, ±5 points de bruit). Cloche des abysses, Boucle de mémoire et Silence d’avant passent de bouclier à attaque (rôle « orchestrer » des Résonants), effets inchangés. Les 14 nouvelles cartes du 4 novembre sont mesurées à la suite du tableau (5 réglées : Exo de chantier, Racines-mères, Suture vive, Contre-chant, Riveteuse). La colonne « Au niveau 10 » date de la mesure précédente.
 
 Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ressort, Glande d'ambre ou Éclat qui chante), dans son métal d'origine : 0 = aussi utile que la carte de départ. Les chiffres sont des points de victoire sur cette descente (+10 = une expédition gagnée de plus sur dix), à la découverte de la carte, puis avec toutes les cartes au niveau 10.
 
@@ -89,7 +89,7 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Cœur en surrégime | Or | Surtension | +21 | +0 |  |
 | Peau de l’Ancêtre | Or | Rapt | +17 | −1 |  |
 | Miroir des Hauts | Or | Empreinte | +23 | +0 |  |
-| Cœur d’étoile | Nacre | Surtension | +30 | −1 | TROP FORTE |
+| Cœur d’étoile | Nacre | Surtension | +30 | −1 |  |
 | Seconde naissance | Nacre | Relève | +20 | +0 | trop faible |
 | Empreinte vive | Nacre | Empreinte | +31 | +0 | TROP FORTE |
 | Silence d’avant | Nacre | Rappel | +25 | −1 |  |
@@ -103,8 +103,22 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Sceau volé aux Orsève | Nacre | Troubler | +29 | +0 |  |
 | Voix du quartier | Nacre | Diapason | +26 | +0 |  |
 | Empreinte jumelle | Cuivre | Accord | +9 | +0 |  |
+| Servo-bras | Fer | Servo | −3 | — |  |
+| Marteau-piston | Fer | Désarmer | −2 | — |  |
+| Riveteuse | Cuivre | Perçant | +15 | — |  |
+| Vérin hydraulique | Cuivre | Servo | +14 | — |  |
+| Contre-chant | Cuivre | Contrepoint | +12 | — |  |
+| Suture vive | Cuivre | Rempart | +11 | — |  |
+| Exo de chantier | Argent | Flux | +6 | — | trop faible |
+| Fil d’accord | Argent | Contrepoint | +16 | — |  |
+| Lamproie des piliers | Argent | Siphon | +18 | — |  |
+| Foreuse des Strates | Or | Élan | +21 | — |  |
+| Nuée chorale | Or | Contrepoint | +29 | — |  |
+| Berceuse des Strates | Or | Sourdine | +25 | — |  |
+| Couperet des Hauts | Nacre | Exécution | +29 | — |  |
+| Racines-mères | Nacre | Ténacité | +25 | — |  |
 
-Moyenne par rareté, à la découverte : Fer +0 · Cuivre +11 · Argent +13 · Or +24 · Nacre +25. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
+Moyenne par rareté, à la découverte : Fer −0 · Cuivre +12 · Argent +15 · Or +24 · Nacre +27. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
 
 
 ## Une Strate entière avec le deck de départ

@@ -180,15 +180,15 @@ export const MODULES: ModuleDef[] = [
   c('servo-bras', 'Servo-bras', 'tech', 'fer', 'bouclier', 8, [4, 5, 3], { type: 'servo' }),
   c('marteau-piston', 'Marteau-piston', 'tech', 'fer', 'atk', 21, [5, 6, 4], { type: 'desarmer', part: 0.3 }, true),
   c('verin', 'Vérin hydraulique', 'tech', 'cuivre', 'bouclier', 12, [3, 4, 2], { type: 'servo' }),
-  c('exo-chantier', 'Exo de chantier', 'tech', 'argent', 'bouclier', 33, [5, 7, 4], { type: 'flux', v: 1 }, true),
+  c('exo-chantier', 'Exo de chantier', 'tech', 'argent', 'bouclier', 38, [5, 7, 4], { type: 'flux', v: 2 }, true),
   c('foreuse', 'Foreuse des Strates', 'tech', 'or', 'atk', 36, [5, 4, 6], { type: 'elan' }, true),
   // L’Harmonie (Véla) : le Contrepoint récompense les suites qui passent par les trois lignées (plus dures à faire qu'une suite d'une seule)
-  c('contre-chant', 'Contre-chant', 'reso', 'cuivre', 'atk', 12, [7, 6, 8], { type: 'contrepoint', part: 0.25 }),
+  c('contre-chant', 'Contre-chant', 'reso', 'cuivre', 'atk', 14, [7, 6, 8], { type: 'contrepoint', part: 0.25 }),
   c('fil-accord', 'Fil d’accord', 'reso', 'argent', 'atk', 15, [8, 7, 6], { type: 'contrepoint', part: 0.3 }),
   c('nuee-chorale', 'Nuée chorale', 'reso', 'or', 'atk', 20, [6, 8, 7], { type: 'contrepoint', part: 0.3 }),
   // Des cartes qui comblent un trou (une Fréquence ou un effet absent d'un métal). Chiffres réglés au robot : docs/nouvelles-rapport.md
-  c('riveteuse', 'Riveteuse', 'tech', 'cuivre', 'atk', 13, [4, 3, 5], { type: 'percant' }),
-  c('suture-vive', 'Suture vive', 'bio', 'cuivre', 'soin', 13, [5, 1, 4], { type: 'rempart', part: 0.4 }),
+  c('riveteuse', 'Riveteuse', 'tech', 'cuivre', 'atk', 15, [4, 3, 5], { type: 'percant' }),
+  c('suture-vive', 'Suture vive', 'bio', 'cuivre', 'soin', 11, [5, 1, 4], { type: 'rempart', part: 0.4 }),
   c('lamproie', 'Lamproie des piliers', 'bio', 'argent', 'atk', 11, [2, 4, 1], { type: 'siphon', part: 0.6 }),
   c('berceuse', 'Berceuse des Strates', 'reso', 'or', 'atk', 19, [7, 9, 6], { type: 'sourdine', part: 0.35 }),
 
@@ -211,7 +211,7 @@ export const MODULES: ModuleDef[] = [
   x('silence-avant', 'Silence d’avant', 'reso', 'nacre', 'atk', 24, [7, 4, 9], { type: 'rappel' }),
   // 4 novembre 2026 : une nacre de plus pour les Augmentés et les Génés (deux par lignée)
   x('couperet-hauts', 'Couperet des Hauts', 'tech', 'nacre', 'atk', 30, [6, 3, 8], { type: 'execution', part: 0.15 }),
-  x('racines-meres', 'Racines-mères', 'bio', 'nacre', 'bouclier', 22, [5, 2, 4], { type: 'tenacite' }),
+  x('racines-meres', 'Racines-mères', 'bio', 'nacre', 'bouclier', 28, [5, 2, 4], { type: 'tenacite' }),
 
   // ---------- L’Héritage du district (27 octobre 2026, docs/heritage-du-district.md) ----------
   // Dix vierges cachées par l'ancienne directrice ; chaque joueur n'en reçoit qu'une (lettre de la directrice, LETTRE_LEGS).
