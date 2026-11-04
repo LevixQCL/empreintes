@@ -14,39 +14,41 @@ Mesure des cartes : une Strate −3 entière en exploration, ennemis ×0.91 (le 
 
 ## Ce que vaut chaque carte
 
+**Rééquilibrage du 4 novembre 2026** : 28 cartes réglées puis remesurées une à une (même méthode, 150 descentes par carte, ±5 points de bruit). La colonne « Au niveau 10 » date de la mesure précédente.
+
 Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ressort, Glande d'ambre ou Éclat qui chante), dans son métal d'origine : 0 = aussi utile que la carte de départ. Les chiffres sont des points de victoire sur cette descente (+10 = une expédition gagnée de plus sur dix), à la découverte de la carte, puis avec toutes les cartes au niveau 10.
 
 | Carte | Rareté | Effets | À la découverte | Au niveau 10 | Alerte |
 |---|---|---|---|---|---|
 | Jambes à ressort | Fer | Élan | +0 | +0 |  |
 | Gant à arc | Fer | Surcharge | +3 | +0 |  |
-| Œil-relais | Fer | Perçant | +10 | +0 | TROP FORTE |
+| Œil-relais | Fer | Perçant | +3 | +0 |  |
 | Grappin à câble | Fer | Élan | −3 | +0 |  |
-| Cœur-turbine | Cuivre | Élan | +18 | −1 | TROP FORTE |
+| Cœur-turbine | Cuivre | Élan | +15 | −1 |  |
 | Œil-brouilleur | Cuivre | Troubler | +10 | +0 |  |
-| Bras-grue | Argent | Perçant | +7 | +0 | trop faible |
+| Bras-grue | Argent | Perçant | +19 | +0 |  |
 | Dorsale renforcée | Argent | Élan | +17 | +0 |  |
-| Lames orbitales | Or | Crescendo | +13 | −1 | trop faible |
+| Lames orbitales | Or | Crescendo | +23 | −1 |  |
 | Cœur de reprise | Or | Perçant | +22 | +0 |  |
 | Glande d’ambre | Fer | Vague | +0 | +0 |  |
 | Crocs fossiles | Fer | Siphon | −1 | +0 |  |
 | Cuir de récif | Fer | Riposte | +5 | −1 |  |
 | Yeux nocturnes | Fer | Fissure | −3 | +0 |  |
-| Poumons d’abysse | Cuivre | Rempart | +26 | +0 | TROP FORTE |
+| Poumons d’abysse | Cuivre | Rempart | +15 | +0 |  |
 | Branchies des Fondations | Cuivre | Vague | +9 | +0 |  |
 | Carapace-mère | Argent | Rempart | +19 | +0 |  |
 | Sang d’ambre | Argent | Vague | +17 | +0 |  |
-| Cœur de meute | Or | Siphon | +7 | +0 | trop faible |
+| Cœur de meute | Or | Siphon | +20 | +0 |  |
 | Mue totale | Or | Vague | +27 | +0 |  |
 | Éclat qui chante | Fer | Diapason | +0 | +0 |  |
 | Miroir de brume | Fer | Amorce | −4 | +0 |  |
 | Encre ancienne | Fer | Fissure | +1 | +0 |  |
 | Mèche d’or | Fer | Lecture | +0 | +0 |  |
 | Plume de givre | Cuivre | Troubler | +11 | +0 |  |
-| Ombre de serpent | Cuivre | Fissure | +2 | +0 | trop faible |
+| Ombre de serpent | Cuivre | Fissure | +7 | +0 |  |
 | Ombre ailée | Argent | Fissure | +8 | +0 |  |
 | Sablier inversé | Argent | Sourdine | +12 | +0 |  |
-| Chant des abysses | Or | Accord | +33 | +0 | TROP FORTE |
+| Chant des abysses | Or | Accord | +23 | +0 |  |
 | Souffle du wyrm | Or | Crescendo | +26 | +0 |  |
 | Bobine de récupération | Fer | Surcharge | −6 | +0 |  |
 | Condensateur | Cuivre | Surcharge | +12 | +0 |  |
@@ -55,26 +57,26 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Noyau instable | Or | Décharge | +29 | +0 |  |
 | Épaulière de roche | Fer | Riposte | +3 | −1 |  |
 | Queue-massue | Cuivre | Riposte | +14 | +0 |  |
-| Bélier d’os | Argent | Riposte | +28 | +0 | TROP FORTE |
+| Bélier d’os | Argent | Riposte | +15 | +0 |  |
 | Coquille de marée | Or | Riposte | +28 | +0 |  |
 | Diapason de cristal | Fer | Diapason | −5 | +0 |  |
 | Voix basse | Fer | Unisson | −1 | +0 |  |
-| Chorale des ombres | Cuivre | Unisson | +3 | +0 | trop faible |
-| Cloche des abysses | Argent | Diapason | −1 | −1 | trop faible |
+| Chorale des ombres | Cuivre | Unisson | +11 | +0 |  |
+| Cloche des abysses | Argent | Diapason | +4 | −1 | trop faible |
 | Grand unisson | Or | Unisson | +23 | +0 |  |
-| Flair | Fer | Fissure | +11 | +0 | TROP FORTE |
+| Flair | Fer | Fissure | +1 | +0 |  |
 | Bond du prédateur | Fer | Curée | −1 | +0 |  |
 | Crocs de verre | Cuivre | Curée | +7 | −1 |  |
 | Chasse à l’aveugle | Argent | Curée | +18 | −1 |  |
 | Hallali | Or | Curée | +23 | +0 |  |
 | Regard en biais | Fer | Lecture | −1 | −1 |  |
 | Lame de doute | Fer | Faille | +3 | +0 |  |
-| Œil du Lecteur | Cuivre | Lecture | +0 | +0 | trop faible |
-| Verdict | Argent | Faille | +25 | +0 | TROP FORTE |
-| Sentence muette | Or | Faille | +31 | +0 | TROP FORTE |
+| Œil du Lecteur | Cuivre | Lecture | +11 | +0 |  |
+| Verdict | Argent | Faille | +11 | +0 |  |
+| Sentence muette | Or | Faille | +23 | +0 |  |
 | Pollen d’ambre | Fer | Débord | +5 | +0 |  |
 | Sève des piliers | Cuivre | Débord | +16 | +0 |  |
-| Mue de verre | Argent | Débord | +27 | +0 | TROP FORTE |
+| Mue de verre | Argent | Débord | +12 | +0 |  |
 | Floraison des Fondations | Or | Débord | +29 | +0 |  |
 | Pas chassé | Fer | Élan | +0 | +0 |  |
 | Lames jumelles | Fer | Rafale | +3 | +0 |  |
@@ -82,27 +84,27 @@ Chaque carte prend la place de la carte de départ de sa lignée (Jambes à ress
 | Mitraille de clous | Argent | Rafale | +19 | +0 |  |
 | Cadence folle | Or | Rafale | +28 | +0 |  |
 | Gantelet-pillard | Argent | Rapt | +13 | +0 |  |
-| Mâchoire-miroir | Argent | Empreinte | +5 | −1 | trop faible |
-| Boucle de mémoire | Argent | Rappel | −11 | +0 | trop faible |
+| Mâchoire-miroir | Argent | Empreinte | +10 | −1 |  |
+| Boucle de mémoire | Argent | Rappel | +1 | +0 | trop faible |
 | Cœur en surrégime | Or | Surtension | +21 | +0 |  |
 | Peau de l’Ancêtre | Or | Rapt | +17 | −1 |  |
 | Miroir des Hauts | Or | Empreinte | +23 | +0 |  |
-| Cœur d’étoile | Nacre | Surtension | +31 | −1 | TROP FORTE |
-| Seconde naissance | Nacre | Relève | +19 | +0 | trop faible |
-| Empreinte vive | Nacre | Empreinte | +33 | +0 | TROP FORTE |
-| Silence d’avant | Nacre | Rappel | +0 | −1 | trop faible |
-| Foulée de la directrice | Nacre | Élan | +38 | +0 | TROP FORTE |
+| Cœur d’étoile | Nacre | Surtension | +30 | −1 | TROP FORTE |
+| Seconde naissance | Nacre | Relève | +20 | +0 | trop faible |
+| Empreinte vive | Nacre | Empreinte | +31 | +0 | TROP FORTE |
+| Silence d’avant | Nacre | Rappel | +9 | −1 | trop faible |
+| Foulée de la directrice | Nacre | Élan | +32 | +0 | TROP FORTE |
 | Bras de la Fonderie | Nacre | Perçant | +24 | +0 |  |
 | Cœur de la Glacière | Nacre | Décharge | +24 | +0 |  |
-| Carapace des Fondations | Nacre | Rempart | +37 | +0 | TROP FORTE |
-| Œil de la Grande Nuit | Nacre | Fissure | +17 | −1 | trop faible |
+| Carapace des Fondations | Nacre | Rempart | +33 | +0 | TROP FORTE |
+| Œil de la Grande Nuit | Nacre | Fissure | +25 | −1 |  |
 | Première mue | Nacre | Vague | +21 | +0 |  |
-| Lanterne de la première Lecture | Nacre | Accord | +34 | +0 | TROP FORTE |
-| Sceau volé aux Orsève | Nacre | Troubler | +32 | +0 | TROP FORTE |
+| Lanterne de la première Lecture | Nacre | Accord | +27 | +0 |  |
+| Sceau volé aux Orsève | Nacre | Troubler | +29 | +0 |  |
 | Voix du quartier | Nacre | Diapason | +26 | +0 |  |
-| Empreinte jumelle | Cuivre | Accord | +23 | +0 | TROP FORTE |
+| Empreinte jumelle | Cuivre | Accord | +9 | +0 |  |
 
-Moyenne par rareté, à la découverte : Fer +1 · Cuivre +11 · Argent +14 · Or +24 · Nacre +26. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
+Moyenne par rareté, à la découverte : Fer +0 · Cuivre +11 · Argent +13 · Or +24 · Nacre +25. Une carte est signalée quand elle s'écarte de plus de 8 points de la moyenne de sa rareté, ou dépasse de plus de 4 points la moyenne de la rareté au-dessus.
 
 
 ## Une Strate entière avec le deck de départ
