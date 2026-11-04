@@ -8,6 +8,7 @@ Tout est en français : code, commentaires, textes du jeu, messages de commit. L
 - Tous les chiffres d'équilibrage sont dans `src/core/regles.ts`, `donnees.ts`, `collection.ts` et `jeu.ts` (rangé par thème dans `partie/`) : les tests et le robot (`npm run robot`) s'en servent.
 - Avant chaque push : `npx tsc --noEmit -p .` et `npm test` doivent passer, et `npm run visuel` ne doit montrer que les changements voulus (le déploiement GitHub Pages lance les tests ; s'ils échouent, rien n'est publié).
 - Pousser sur `main` publie le jeu (https://levixqcl.github.io/empreintes/). Commits courts, en français, qui disent ce qui change pour le joueur.
+- Sauvegardes : en changeant `VERSION_JEU`, ajouter la migration dans `partie/nouvelle.ts` ; `estJeuValide` doit accepter toutes les versions de 2 à `VERSION_JEU` (tests/garde-sauvegarde.test.ts le vérifie). Une partie présente mais illisible n'est jamais écrasée : le jeu s'arrête et prévient (`stockeeIllisible`, `illisible` du compte).
 - Toute modification de `firestore.rules` doit être recopiée et publiée dans la console Firebase (projet `empreintes-8e82d`) : demander à Bryan avant de publier.
 - Vérifier visuellement à la taille d'un téléphone (≈ 360 à 412 px de large) avec Playwright, puis sur PC (≥ 1100 px).
 

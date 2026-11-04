@@ -49,3 +49,17 @@ describe('versions de sauvegarde', () => {
     expect(estJeuValide(futur)).toBe(false);
   });
 });
+
+import { etatStocke } from '../src/save/garde';
+describe('une partie illisible n’est jamais écrasée', () => {
+  const env = (data: unknown) => JSON.stringify({ data, updatedAt: 1 });
+  it('reconnaît chaque cas', () => {
+    expect(etatStocke(null, estJeuValide)).toBe('vide');
+    expect(etatStocke('{pas du json', estJeuValide)).toBe('illisible');
+    expect(etatStocke(env(nouveauJeu(0)), estJeuValide)).toBe('lisible');
+    expect(etatStocke(env({ ...nouveauJeu(0), version: VERSION_JEU + 1 }), estJeuValide)).toBe('trop-recente');
+    // une version que le jeu ne sait pas lire (l'incident du 3 novembre 2026 : la version 7 refusée par la version 8)
+    expect(etatStocke(env({ ...nouveauJeu(0), version: 1 }), estJeuValide)).toBe('illisible');
+    expect(etatStocke(env(nouveauJeu(0)), () => false)).toBe('illisible');
+  });
+});

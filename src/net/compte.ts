@@ -93,6 +93,8 @@ export interface Distante {
   env: Enveloppe | null;
   jeton: number | null;
   tropRecente: boolean;
+  /** une partie est sur le compte mais cette version ne sait pas la lire : on ne l'écrase surtout pas */
+  illisible?: boolean;
 }
 
 const millis = (t: unknown): number | null => (t instanceof Timestamp ? t.toMillis() : null);
@@ -106,10 +108,10 @@ export async function lireDistante(uid: string): Promise<Distante> {
   try {
     const data = JSON.parse(d.data);
     if (versionDe(data) > VERSION_JEU) return { env: null, jeton, tropRecente: true };
-    if (!estJeuValide(data)) return { env: null, jeton, tropRecente: false };
+    if (!estJeuValide(data)) return { env: null, jeton, tropRecente: false, illisible: true };
     return { env: { data, updatedAt: jeton ?? 0 }, jeton, tropRecente: false };
   } catch {
-    return { env: null, jeton, tropRecente: false };
+    return { env: null, jeton, tropRecente: false, illisible: true };
   }
 }
 

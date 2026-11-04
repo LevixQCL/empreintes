@@ -1,7 +1,7 @@
 // La sauvegarde : sur l'appareil, puis sur le compte quand on est connecté (la partie la plus avancée gagne, l'autre est gardée en secours).
 
 import * as J from '../core/jeu';
-import { CLE_PARTIE, charger, enregistrer, garderSecours, lireSecours, stockeeTropRecente, type Enveloppe } from '../save/local';
+import { CLE_PARTIE, charger, enregistrer, garderSecours, lireSecours, stockeeIllisible, stockeeTropRecente, type Enveloppe } from '../save/local';
 import { bloquerSauvegarde, sauvegardeBloquee } from './garde';
 import { firebaseActif } from '../net/firebase-config';
 import { finPour } from './combat';
@@ -27,6 +27,8 @@ let jetonDistant: number | null | undefined;
 
 // une version plus récente du jeu a déjà sauvegardé sur cet appareil (onglet resté ouvert sur une ancienne version) : on n'écrit plus
 if (stockeeTropRecente()) bloquerSauvegarde('version');
+// une partie présente mais illisible par cette version : on n'écrit rien, ni ici ni sur le compte (4 novembre 2026)
+else if (stockeeIllisible()) bloquerSauvegarde('illisible');
 // un seul onglet écrit la partie : le dernier ouvert. En s'ouvrant, il prévient les autres, qui s'arrêtent
 // (sans ça, deux onglets s'écrasaient l'un l'autre à chaque seconde). Sans BroadcastChannel : l'écriture d'un autre onglet suffit.
 /** gardé au niveau du module : un canal sans référence peut être ramassé par le navigateur et ne plus rien entendre */
@@ -117,6 +119,7 @@ async function reconcilier() {
   try {
     const lue = await app.compte.lireDistante(app.uid);
     if (lue.tropRecente) { bloquerSauvegarde('version'); return; }
+    if (lue.illisible) { bloquerSauvegarde('illisible-compte'); return; }
     jetonDistant = lue.jeton;
     const distante = lue.env;
     const locale = charger();

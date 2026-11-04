@@ -17,6 +17,22 @@ export function versionDe(x: unknown): number {
 /** Une sauvegarde faite par une version du jeu plus récente que celle qui tourne */
 export const tropRecente = (x: unknown, version = VERSION_JEU): boolean => versionDe(x) > version;
 
+/**
+ * Ce que contient l'emplacement de la partie sur l'appareil (4 novembre 2026, après l'incident de la version 8 :
+ * une mise à jour qui ne savait plus lire les parties en cours proposait « Commencer », et une nouvelle partie les aurait écrasées).
+ * Une sauvegarde présente mais illisible n'est JAMAIS écrasée : on s'arrête et on prévient.
+ * `valide` reçoit une copie fraîche (estJeuValide complète la partie qu'on lui donne).
+ */
+export type EtatStocke = 'vide' | 'lisible' | 'trop-recente' | 'illisible';
+export function etatStocke(brut: string | null, valide: (x: unknown) => boolean, version = VERSION_JEU): EtatStocke {
+  if (!brut) return 'vide';
+  let env: { data?: unknown };
+  try { env = JSON.parse(brut) as { data?: unknown }; } catch { return 'illisible'; }
+  if (!env || typeof env !== 'object' || !env.data) return 'illisible';
+  if (tropRecente(env.data, version)) return 'trop-recente';
+  return valide(env.data) ? 'lisible' : 'illisible';
+}
+
 /** Ce qu'on sait du document du compte au moment d'écrire */
 export interface DocDistant {
   existe: boolean;

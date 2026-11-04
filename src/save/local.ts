@@ -1,7 +1,7 @@
 // Sauvegarde sur l'appareil. Le jeu solo marche entièrement sans réseau.
 
 import { estJeuValide, type Jeu } from '../core/jeu';
-import { tropRecente } from './garde';
+import { etatStocke, tropRecente } from './garde';
 
 const CLE = 'empreintes.jeu.v2';
 
@@ -32,15 +32,34 @@ export function stockeeTropRecente(): boolean {
   }
 }
 
+let ecriteIci = false;
+
+/** Une partie est là, mais cette version du jeu ne sait pas la lire : on n'écrit jamais par-dessus */
+export function stockeeIllisible(): boolean {
+  try { return etatStocke(localStorage.getItem(CLE), estJeuValide) === 'illisible'; } catch { return false; }
+}
+
+/** Dernier recours, choisi par le joueur : la partie illisible part à l'abri sous une autre clé (jamais effacée), l'emplacement se libère */
+export function mettreDeCoteIllisible(): void {
+  try {
+    const brut = localStorage.getItem(CLE);
+    if (!brut) return;
+    localStorage.setItem(`${CLE}.illisible.${Date.now()}`, brut);
+    localStorage.removeItem(CLE);
+  } catch { /* stockage bloqué : on ne touche à rien */ }
+}
+
 /** La clé de la partie : un autre onglet qui l'écrit est repéré par l'événement `storage` */
 export const CLE_PARTIE = CLE;
 
 export function enregistrer(data: Jeu, updatedAt = Date.now()): Enveloppe {
   const env = { data, updatedAt };
   // jamais par-dessus une partie d'une version plus récente : elle serait perdue
-  if (stockeeTropRecente()) return env;
+  // la vérification complète (relire la partie stockée) une seule fois : ensuite, c'est cette page qui l'a écrite
+  if (stockeeTropRecente() || (!ecriteIci && stockeeIllisible())) return env;
   try {
     localStorage.setItem(CLE, JSON.stringify(env));
+    ecriteIci = true;
   } catch {
     /* stockage plein ou bloqué : le jeu continue */
   }

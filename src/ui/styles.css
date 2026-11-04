@@ -816,3 +816,7 @@ button.res:focus-visible{outline:1.5px solid var(--glace,#CDEFFF);outline-offset
 .carnet-pages{display:grid;gap:10px}
 .fragment.carnet p{margin:0;font-family:var(--lecture);font-style:italic;line-height:1.5;color:var(--ivory)}
 .fragment.carnet .carnet-choix{font-style:normal;font-size:13px;color:var(--or)}
+.incident-recours{margin-top:12px;font-size:13px;color:var(--quiet)}
+.incident-recours summary{cursor:pointer;text-align:center;text-decoration:underline;text-underline-offset:3px}
+.incident-recours p{margin:8px 0;line-height:1.45}
+.incident-recours button{width:100%;min-height:42px;border:1px solid var(--filet-fort);background:rgba(255,255,255,.03);color:var(--ink-2);font-size:14px}

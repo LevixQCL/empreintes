@@ -2,7 +2,9 @@
 // le jeu arrête d'écrire et le dit au joueur, avec un seul bouton : recharger.
 // Après le rechargement, la partie la plus avancée est reprise et l'autre est gardée en secours : rien n'est perdu.
 
-export type Raison = 'version' | 'onglet' | 'appareil';
+export type Raison = 'version' | 'onglet' | 'appareil' | 'illisible' | 'illisible-compte';
+
+import { mettreDeCoteIllisible } from '../save/local';
 
 let raison: Raison | null = null;
 
@@ -17,6 +19,14 @@ const TEXTES: Record<Raison, { titre: string; texte: string }> = {
   onglet: {
     titre: 'Ta partie est ouverte ailleurs',
     texte: 'Tu joues dans un autre onglet ou une autre fenêtre. Pour ne rien écraser, cette page s’arrête là : recharge-la pour reprendre où tu en es.',
+  },
+  illisible: {
+    titre: 'Ta partie est à l’abri',
+    texte: 'Cette version du jeu n’arrive pas à lire la partie de cet appareil (souvent juste après une mise à jour). Pour ne rien effacer, le jeu s’arrête là. Recharge dans quelques minutes : une correction arrive en général très vite.',
+  },
+  'illisible-compte': {
+    titre: 'Ta partie est à l’abri',
+    texte: 'Cette version du jeu n’arrive pas à lire la partie de ton compte (souvent juste après une mise à jour). Pour ne rien écraser, le jeu s’arrête là. Recharge dans quelques minutes : une correction arrive en général très vite.',
   },
   appareil: {
     titre: 'Ta partie a avancé ailleurs',
@@ -35,7 +45,11 @@ export function bloquerSauvegarde(r: Raison): void {
   el.setAttribute('role', 'alertdialog');
   el.setAttribute('aria-modal', 'true');
   el.innerHTML = `<div class="incident-carte"><h2>${t.titre}</h2><p>${t.texte}</p>`
-    + `<div class="incident-btns"><button type="button" class="prim" data-i="recharger">Recharger</button></div></div>`;
-  el.querySelector('button')?.addEventListener('click', () => location.reload());
+    + `<div class="incident-btns"><button type="button" class="prim" data-i="recharger">Recharger</button></div>`
+    // la partie de l'appareil, illisible : en dernier recours, la mettre de côté (jamais effacée) et repartir, après confirmation
+    + (r === 'illisible' ? `<details class="incident-recours"><summary>Repartir de zéro</summary><p>La partie illisible reste gardée à part sur cet appareil : une prochaine version pourra la rendre.</p><button type="button" data-i="cote">Mettre ma partie de côté et recommencer</button></details>` : '')
+    + `</div>`;
+  el.querySelector('[data-i="recharger"]')?.addEventListener('click', () => location.reload());
+  el.querySelector('[data-i="cote"]')?.addEventListener('click', () => { mettreDeCoteIllisible(); location.reload(); });
   document.body.appendChild(el);
 }
