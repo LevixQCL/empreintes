@@ -334,6 +334,8 @@ export interface Jeu {
   pillage?: import('./pillages').EtatPillage;
   /** la présentation du Port a été lue (28 octobre 2026) : elle s'affiche à la première visite */
   portVu?: boolean;
+  /** les premiers soins intensifs ont été offerts par la Clinique (4 novembre 2026) */
+  soinOffert?: boolean;
   /** la Flèche : le quai atteint, le record, les quais gravés reçus (fleche.ts) ; absente avant la première montée */
   fleche?: import('./fleche').EtatFleche;
   eclats: number;

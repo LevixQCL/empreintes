@@ -602,14 +602,18 @@ function blocConvertisseur(j: Jeu): string {
 function blocSoinsIntensifs(j: Jeu): string {
   const blesses = PORTEURS.filter((p) => porteursPresents(j).includes(p.id) && !enExpedition(j, p.id) && j.porteurs[p.id]!.usure >= 1);
   let h = `<section class="fb-bloc fb-soins"><h3 class="titre-bloc">${ICO.soin}Soins intensifs</h3>`
-    + `<p class="fb-vide">Efface l’Usure tout de suite : <b>${SOINS_INTENSIFS.energieParUsure} énergie</b> par point.</p>`;
+    + (j.soinOffert ? `<p class="fb-vide">Efface l’Usure tout de suite : <b>${SOINS_INTENSIFS.energieParUsure} énergie</b> par point.</p>`
+      : `<p class="fb-vide">Efface l’Usure tout de suite. <b>La première fois, c’est offert</b> ; ensuite ${SOINS_INTENSIFS.energieParUsure} énergie par point.</p>`);
   if (!blesses.length) return h + `<p class="fb-note">Personne n’a d’Usure en ce moment.</p></section>`;
   h += `<div class="fb-rangee">` + blesses.map((p) => {
     const u = Math.ceil(j.porteurs[p.id]!.usure);
     const cout = u * SOINS_INTENSIFS.energieParUsure;
-    const peut = j.energie >= SOINS_INTENSIFS.energieParUsure;
-    return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="soigner-vite" data-id="${p.id}"${peut ? '' : ' disabled'} aria-label="Soigner ${echap(p.nom)} : −${u} Usure pour ${cout} énergie">`
-      + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">−${u} Usure</span><span class="te-prix${j.energie < cout ? ' manque' : ''}">${ICO.energie}${ent(Math.min(cout, Math.floor(j.energie / SOINS_INTENSIFS.energieParUsure) * SOINS_INTENSIFS.energieParUsure))}</span></button>`;
+    const offert = !j.soinOffert;
+    const peut = offert || j.energie >= SOINS_INTENSIFS.energieParUsure;
+    return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="soigner-vite" data-id="${p.id}"${peut ? '' : ' disabled'} aria-label="Soigner ${echap(p.nom)} : −${u} Usure ${offert ? 'offert' : `pour ${cout} énergie`}">`
+      + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">−${u} Usure</span>`
+      + (offert ? `<span class="te-prix offert">Offert</span></button>`
+        : `<span class="te-prix${j.energie < cout ? ' manque' : ''}">${ICO.energie}${ent(Math.min(cout, Math.floor(j.energie / SOINS_INTENSIFS.energieParUsure) * SOINS_INTENSIFS.energieParUsure))}</span></button>`);
   }).join('') + `</div>`;
   return h + `</section>`;
 }
@@ -1831,7 +1835,8 @@ export function htmlCoupe(e: EcranDistrict): string {
     etape = `<strong>Pour ouvrir la Strate −${cible}</strong><small>${morceaux.join(', puis ').replace(/^./, (c) => c.toUpperCase())}.</small>`
       + (manque.creuseurs ? `<ul class="tr-sources"><li>${ICO.cristal}<span>Fouille ciblée</span><b>${Math.round(CREUSEURS.fouille * 100)} %</b></li>`
         + `<li>${ICO.porteurs}<span>Mission</span><b>${Math.round(CREUSEURS.missionCourte * 100)} à ${Math.round(CREUSEURS.missionLongue * 100)} %</b></li>`
-        + `<li>${ICO.boost}<span>Épreuve <em>(1re victoire de la semaine)</em></span><b>assuré</b></li></ul>` : '')
+        // les Épreuves n'ouvrent qu'après la Strate −EPREUVES_STRATE : on ne les cite qu'à partir de là (test critique du 4 novembre 2026)
+        + (j.chambre && strateVaincue(j) >= EPREUVES_STRATE ? `<li>${ICO.boost}<span>Épreuve <em>(1re victoire de la semaine)</em></span><b>assuré</b></li>` : '') + `</ul>` : '')
       + `<div class="tr-boutons">${manque.creuseurs ? `<button type="button" class="btn prim" data-action="fouiller-choix" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.cristal}Fouiller la Strate −${j.strate}</button>` : ''}`
       + `${manque.noyau ? `<button type="button" class="btn ${manque.creuseurs ? 'sec' : 'prim'}" data-action="batiment" data-id="noyau" data-amelio>${ICO.tour}Améliorer la Tour</button>` : ''}</div>`;
   } else {
@@ -2327,7 +2332,7 @@ export function htmlEscouade(e: EcranDistrict): string {
     const attente = heures < 1 ? `${Math.max(1, Math.ceil(heures * 60))} min` : `${Math.floor(heures)} h ${String(Math.ceil((heures % 1) * 60) % 60).padStart(2, '0')}`;
     const noms = blesses.map((id) => `<b>${echap(porteurDef(id).nom)}</b>`);
     h += `<div class="es-alerte es-blesses">${ICO.soin}<span><strong>${blesses.length > 1 ? `${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]} se remettent` : `${noms[0]} se remet`} à la Clinique</strong>`
-      + `Il faut au moins un quart de ${blesses.length > 1 ? 'leurs' : 'ses'} PV pour redescendre : encore ${attente} environ au rythme actuel. Poste une recrue Géné à la Clinique pour aller plus vite, ou paie des soins intensifs.</span>`
+      + `Il faut au moins un quart de ${blesses.length > 1 ? 'leurs' : 'ses'} PV pour redescendre : encore ${attente} environ au rythme actuel. Poste une recrue Géné à la Clinique pour aller plus vite, ou ${j.soinOffert ? 'paie des soins intensifs' : '<b>profite des premiers soins intensifs, offerts</b>'}.</span>`
       + `<button type="button" class="btn sec" data-action="depart-clinique">Clinique</button></div>`;
   }
   h += `<p class="es-note">${ICO.soin}Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.</p></main>`;

@@ -690,6 +690,13 @@ export function soignerVite(j: Jeu, id: string): Resultat {
   if (enExpedition(j, id)) return non('Ce Porteur est en bas.');
   const usure = Math.ceil(p.usure);
   if (usure < 1) return non('Il n’a pas d’Usure.');
+  // la première fois, la Clinique les offre (4 novembre 2026, test critique : après la Strate −1, un Porteur à terre et
+  // l'énergie dépensée à la Tour bloquaient toute nouvelle descente ; la première session finissait sur une impasse)
+  if (!j.soinOffert) {
+    j.soinOffert = true;
+    p.usure = 0;
+    return { ok: true, message: `La Clinique offre ses premiers soins intensifs : ${porteurDef(id).nom} est remis sur pied (−${usure} Usure).` };
+  }
   const points = Math.min(usure, Math.floor(j.energie / SOINS_INTENSIFS.energieParUsure));
   if (points < 1) return non(`Il faut ${SOINS_INTENSIFS.energieParUsure} énergie par point d’Usure.`);
   j.energie -= points * SOINS_INTENSIFS.energieParUsure;

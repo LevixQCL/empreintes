@@ -29,6 +29,7 @@ describe('Le convertisseur du Générateur', () => {
 describe('Les soins intensifs de la Clinique', () => {
   it('effacent l’Usure contre de l’énergie, autant que la réserve le permet', () => {
     const j = pret();
+    j.soinOffert = true;
     j.porteurs.ilka!.usure = 9;
     j.energie = SOINS_INTENSIFS.energieParUsure * 4;
     expect(soignerVite(j, 'ilka').ok).toBe(true);
@@ -37,6 +38,20 @@ describe('Les soins intensifs de la Clinique', () => {
     j.energie = 1000;
     expect(soignerVite(j, 'ilka').ok).toBe(true);
     expect(j.porteurs.ilka!.usure).toBe(0);
+    expect(soignerVite(j, 'ilka').ok).toBe(false);
+  });
+});
+
+describe('Les premiers soins intensifs', () => {
+  it('sont offerts une seule fois, puis se paient', () => {
+    const j = pret();
+    j.porteurs.ilka!.usure = 30;
+    j.energie = 0;
+    expect(soignerVite(j, 'ilka').ok).toBe(true);
+    expect(j.porteurs.ilka!.usure).toBe(0);
+    expect(j.energie).toBe(0);
+    expect(j.soinOffert).toBe(true);
+    j.porteurs.ilka!.usure = 4;
     expect(soignerVite(j, 'ilka').ok).toBe(false);
   });
 });

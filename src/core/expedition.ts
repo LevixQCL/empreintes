@@ -438,6 +438,7 @@ export function genererCarte(strate: number, rng: number, garde?: string, fouill
   const halte = !fouille && !!contenu.halte;
   const RANGS = fouille ? (contenu.rangs ?? RANGS_FOUILLE) : RANGS_EXPEDITION + (halte ? 1 : 0);
   const poids = poidsDe(strate);
+  const vus = new Map<string, number>();
   for (let r = 0; r < RANGS; r++) {
     const seule = r === 0 || r === RANGS - 1 || (halte && r === RANG_HALTE);
     const n = seule ? 1 : 2 + t.entier(2);
@@ -456,7 +457,14 @@ export function genererCarte(strate: number, rng: number, garde?: string, fouill
         if (fouille && type === 'elite') type = 'combat';
       }
       const salle: Salle = { id: salles.length, rang: r, col: c, nCol: n, type, voisins: [], faite: r === 0 };
-      if (type === 'combat') salle.ennemi = pool[t.entier(pool.length)]!;
+      // la variété (4 novembre 2026, test critique : six combats de −1 contre trois ennemis seulement, deux fois chacun) :
+      // on tire parmi les ennemis les moins vus de cette carte, pour croiser tout le bestiaire de la zone (même nombre de tirages)
+      if (type === 'combat') {
+        const moins = Math.min(...pool.map((id) => vus.get(id) ?? 0));
+        const frais = pool.filter((id) => (vus.get(id) ?? 0) === moins);
+        salle.ennemi = frais[t.entier(frais.length)]!;
+        vus.set(salle.ennemi, moins + 1);
+      }
       if (type === 'elite') salle.ennemi = suivante.ennemis[t.entier(suivante.ennemis.length)]!;
       if (type === 'gardien') salle.ennemi = z.boss;
       if (type === 'rencontre') salle.rencontre = RENCONTRES_IDS[t.entier(RENCONTRES_IDS.length)]!;

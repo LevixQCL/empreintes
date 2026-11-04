@@ -270,6 +270,7 @@
 .te-prix .ico{width:12px;height:12px}
 .fb-cand .te-prix{color:var(--fb-doux)}
 .te-prix.manque,.fb-cand .te-prix.manque{color:var(--fb-rouge)}
+.fb-cand .te-prix.offert{color:var(--gold);font-weight:700}
 .te-choix{margin-top:8px}
 .te-pris{position:absolute;right:-4px;bottom:-2px;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;
   background:#2A2214;color:#E8B86A;box-shadow:0 0 0 1.5px #E8B86A}

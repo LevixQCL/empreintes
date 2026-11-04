@@ -39,6 +39,8 @@
   background:radial-gradient(120% 140% at 0% 50%,color-mix(in srgb,var(--accent) 22%,transparent),transparent 60%),linear-gradient(180deg,#1E222E,#0C0E14);isolation:isolate;
   box-shadow:0 0 0 1px rgba(0,0,0,.55),0 16px 40px rgba(0,0,0,.6),0 0 40px -10px var(--accent);
   overflow:hidden;--accent:var(--gold);font:inherit}
+/* une fiche ouverte : le reçu se pose en haut, sous la barre des ressources (4 novembre 2026) */
+.gain-revele.en-haut{top:calc(max(10px,var(--sat,0px)) + 64px)}
 .gain-revele.metal-fer{--accent:#A7B0BA}.gain-revele.metal-cuivre{--accent:#D88A55}.gain-revele.metal-argent{--accent:#DDE3EC}
 .gain-revele.metal-or{--accent:#E8BE5E}.gain-revele.metal-nacre{--accent:#D9C2F2}
 .gain-revele.doublons{--accent:var(--reso)}.gain-revele.porteur{--accent:var(--cristal)}.gain-revele.niveau{--accent:var(--ok)}

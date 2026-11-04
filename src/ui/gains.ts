@@ -145,8 +145,33 @@ function compteur(cible: string): HTMLElement | null {
 /** les reçus s'enchaînent : un dévoilement à la fois */
 let file: Promise<void> = Promise.resolve();
 
+/**
+ * Ce qu'un reçu ne recouvre jamais (4 novembre 2026, après le test critique : « Nouvelle carte » posée sur le choix
+ * du pseudo, « +8 composants » sur le bouton Valider, des cartes au milieu de la scène du gardien) :
+ * une scène d'histoire, le briefing, l'intro, une décision à prendre, une saisie de texte. Le reçu attend son tour.
+ */
+const NE_PAS_COUVRIR = [
+  '#app .scene-campagne', '#app .scene-rencontre', '#app .scene-briefing', '#app .intro-pas',
+  '#app .gt-feuille', '#app .options-decision', '#app .legs-carte',
+].join(', ');
+function calme(): boolean {
+  if (document.querySelector(NE_PAS_COUVRIR)) return false;
+  const a = document.activeElement;
+  return !(a instanceof HTMLInputElement || a instanceof HTMLTextAreaElement);
+}
+/** attend que l'écran soit libre (vérifié toutes les 0,4 s), puis encore un court instant pour laisser l'écran suivant s'installer */
+function attendreCalme(): Promise<void> {
+  if (calme()) return Promise.resolve();
+  return new Promise((fini) => {
+    const voir = () => (calme() ? setTimeout(fini, 450) : setTimeout(voir, 400));
+    setTimeout(voir, 400);
+  });
+}
+
 export function montrer(gains: Gain[], depart?: { x: number; y: number }) {
   if (!gains.length) return;
+  // écran occupé : tout le reçu attend, puis part du centre (le point de départ d'origine n'a plus de sens)
+  if (!calme()) { file = file.then(attendreCalme).then(() => montrer(gains)); return; }
   const d = depart && depart.x > 0 ? depart : { x: innerWidth / 2, y: innerHeight * 0.45 };
   let retard = 0;
   for (const g of gains) if (g.kind === 'res') { volerRessource(g, d, retard); retard += 160; }
@@ -164,7 +189,7 @@ export function montrer(gains: Gain[], depart?: { x: number; y: number }) {
   liste = liste.sort((a, b) => palier(a) - palier(b));
   for (const g of liste) {
     const p = palier(g);
-    file = file.then(() => ((g.kind === 'carte' || g.kind === 'porteur') && p >= 3 ? grandeRevelation(g, p) : devoiler(g)));
+    file = file.then(attendreCalme).then(() => ((g.kind === 'carte' || g.kind === 'porteur') && p >= 3 ? grandeRevelation(g, p) : devoiler(g)));
   }
 }
 
@@ -323,7 +348,8 @@ function devoiler(g: Exclude<Gain, { kind: 'res' }>): Promise<void> {
     const { html, onglet, classe } = contenu(g);
     const el = document.createElement('button');
     el.type = 'button';
-    el.className = `gain-revele ${classe} p${palier(g)}`;
+    // une fiche ouverte (bâtiment, Porteur…) : le reçu passe en haut, sous la barre des ressources, pour ne pas couvrir ce qu'on lit
+    el.className = `gain-revele ${classe} p${palier(g)}${document.querySelector('#app .feuille') ? ' en-haut' : ''}`;
     el.innerHTML = `<span class="gv-rayons" aria-hidden="true"></span>${html}`;
     c.appendChild(el);
     let parti = false;

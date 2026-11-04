@@ -671,7 +671,7 @@ function htmlEcranCombat(e: Ecran): string {
   // la bulle d'aide du groupe (3 novembre 2026, Luc : « rien ne dit qu'on peut toucher les vignettes ») : jusqu'au premier ennemi visé
   else if (enGroupe(s) && !e.viserAppris && !s.chaine.length) conseil = `<span class="bulle-viser" role="note">Touche un ennemi en haut pour le viser : toute ta chaîne le frappe</span>`;
   else if (e.parole && !s.chaine.length) conseil = `<span class="parole-gardien" role="status"><b>${echap(e.parole.nom)}</b>« ${echap(e.parole.texte)} »</span>`;
-  else if (!s.chaine.length) conseil = `Pose jusqu’à ${capacite(s)} cartes : des Fréquences qui se suivent (3, 4, 5) font une <b>Résonance</b>.`;
+  else if (!s.chaine.length) conseil = `Pose jusqu’à ${capacite(s)} cartes : <b>trois</b> Fréquences qui se suivent (3, 4, 5) font une <b>Résonance</b>.`;
   else {
     const fin = serieFinale(s.chaine);
     const f = fs[fs.length - 1]!;
@@ -680,8 +680,10 @@ function htmlEcranCombat(e: Ecran): string {
     if (s.dissonance) conseil = '<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci';
     else if (a.suite >= 3) conseil = `<b>Résonance</b> : suite de ${a.suite}, effets <b>+${Math.round((a.mult - 1) * 100)} %</b>` + (aide && a.suite < 5 && fin === a.suite && (libres > 0 || flux) ? (libres > 0 ? ` · un <b>${f + 1}</b> pour aller plus loin` : ` · chaîne pleine : un <b>${f + 1}</b> avec une place de Flux`) : '');
     // passé les premières Strates, le conseil dit où en est la chaîne, sans souffler la carte suivante
-    else if (!aide) conseil = libres === 0 ? (flux ? 'Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus' : 'Chaîne pleine : tu peux la lancer') : fin === 2 ? 'Suite en cours' : '';
+    else if (!aide) conseil = libres === 0 ? (fin === 2 ? 'Chaîne pleine : suite de 2, pas de Résonance' : flux ? 'Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus' : 'Chaîne pleine : tu peux la lancer') : fin === 2 ? 'Suite en cours' : '';
     else if (libres === 0 && fin === 2 && flux) conseil = `Suite ${f - 1} → ${f} : 1 Flux t’ouvre une place pour un <b>${f + 1}</b>`;
+    // une suite de 2 ne résonne pas (test critique du 4 novembre 2026 : 7 → 8 avec une carte de 2 places, chaîne pleine, aucun bonus, rien ne le disait)
+    else if (libres === 0 && fin === 2) conseil = 'Chaîne pleine : <b>suite de 2 seulement</b>, pas de Résonance (il en faut 3)';
     else if (libres === 0) conseil = flux ? 'Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus' : 'Chaîne pleine : tu peux la lancer';
     // au sommet des Fréquences, seul l'Écho reste possible : on dit combien il manque de cartes, pas plus
     else if (f >= FREQ_MAX) {

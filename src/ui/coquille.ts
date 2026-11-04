@@ -360,6 +360,9 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
     + `</div></section>`;
 }
 
+/** la Strate vaincue à partir de laquelle l'onglet de la Flèche se montre (fermé jusqu'à −6) */
+const FLECHE_VISIBLE = 3;
+
 const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
   { vue: 'archipel', nom: 'District', icone: 'district' },
   { vue: 'coupe', nom: 'Tour', icone: 'tour' },
@@ -389,7 +392,12 @@ export function navigation(e: EcranDistrict): string {
   const actif = e.menu || e.vue === 'classements' || e.vue === 'recruter' ? 'plus' : e.vue === 'escouade' ? (e.fleche ? 'fleche' : e.pillage ? 'pillages' : 'coupe') : e.vue === 'cartes' ? 'porteurs' : e.vue;
   // sur PC (rail.css) : le cristal en tête (il ouvre la fiche du directeur et s'allume quand une récompense attend : 29 octobre 2026), puis les sept onglets ; la jauge des Strates a cédé sa place aux Pillages
   // et à la Flèche (28 octobre 2026) : la Strate reste dans la barre du haut
-  return `<nav class="nav" aria-label="Navigation">${cristalRail(e)}` + ONGLETS.map((t) => {
+  // le premier jour désencombré (4 novembre 2026, après le test critique : sept onglets dont deux fermés dès la première minute) :
+  // le Port n'apparaît qu'une fois ouvert (après −1), la Flèche à partir de −3 (on la voit venir avant qu'elle ouvre à −6) ;
+  // tant qu'il y a 5 onglets ou moins, chacun garde son nom sous l'icône (classe « noms »)
+  const visibles = ONGLETS.filter((t) => (t.vue === 'pillages' ? (!!j.chambre && strateVaincue(j) >= PILLAGE.strateDuPort) || actif === 'pillages'
+    : t.vue === 'fleche' ? (!!j.chambre && strateVaincue(j) >= FLECHE_VISIBLE) || flecheOuverte(j) || actif === 'fleche' : true));
+  return `<nav class="nav${visibles.length <= 5 ? ' noms' : ''}" style="--onglets:${visibles.length}" aria-label="Navigation">${cristalRail(e)}` + visibles.map((t) => {
     const action = t.vue === 'plus' ? 'menu' : t.vue;
     return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${actif === t.vue ? ' aria-current="page"' : ''}>`
       + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>'

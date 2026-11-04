@@ -56,13 +56,17 @@
     background:linear-gradient(90deg,transparent,#BFE2FF 30%,#fff 50%,#BFE2FF 70%,transparent);box-shadow:0 0 12px rgba(140,200,255,.9)}
   /* sept onglets depuis les Pillages et la Flèche (28 octobre 2026) : seul l'onglet ouvert garde son nom, les autres
      ne gardent que leur icône (le nom reste lu par les lecteurs d'écran) ; la barre tient en une ligne dès 360 px */
-  .nav{grid-template-columns:repeat(7,minmax(0,1fr))}
+  .nav{grid-template-columns:repeat(var(--onglets,7),minmax(0,1fr))}
   .nav .onglet{min-width:0}
   .nav .onglet:not(.actif){justify-content:center}
   .nav .onglet-ico{width:46px;height:36px;--ico:33px;--serti:42px}
   .nav .onglet.actif .onglet-ico{--ico:46px;--serti:56px}
   .nav .onglet:not(.actif) .onglet-nom{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
   .nav .onglet.actif .onglet-nom{position:relative;z-index:1;white-space:nowrap}
+  /* cinq onglets ou moins (premier jour, 4 novembre 2026) : la place suffit, chaque onglet garde son nom */
+  .nav.noms .onglet:not(.actif){justify-content:flex-end}
+  .nav.noms .onglet:not(.actif) .onglet-nom{position:relative;width:auto;height:auto;overflow:visible;clip:auto;clip-path:none;white-space:nowrap;font-size:12px;letter-spacing:0;color:#8E9AB5}
+  .nav.noms .onglet .onglet-nom{letter-spacing:0}
 }
 
 /* ================= PC : le rail à gauche ================= */

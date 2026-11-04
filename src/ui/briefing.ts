@@ -60,7 +60,7 @@ export const ETAPES: Etape[] = [
   },
   {
     qui: 'ilka', titre: 'La chaîne',
-    texte: 'À chaque tour, tu as cinq cartes en main. Tu en poses jusqu’à trois : c’est la chaîne. Tu la lances, et elles agissent l’une après l’autre. Si leurs chiffres se suivent, la chaîne entre en Résonance : +30 % sur toute la chaîne.',
+    texte: 'À chaque tour, tu as cinq cartes en main. Tu en poses jusqu’à trois : c’est la chaîne. Tu la lances, et elles agissent l’une après l’autre. Si trois chiffres se suivent, la chaîne entre en Résonance : +30 % sur toute la chaîne. Deux ne suffisent pas.',
     demo: demoChaine,
   },
   {
