@@ -32,7 +32,7 @@ export function htmlPillages(e: EcranDistrict): string {
   const pres = !portOuvert(j) ? 'fermee' : !j.portVu ? 'premiere' : e.portAide ? 'aide' : null;
   const aide = pres ? '' : `<button type="button" class="btn-icone" data-action="port-aide" aria-label="Comment marche le Port">${ICO.aide}</button>`;
   let h = entete('La mer des piliers', 'Le Port', aide);
-  if (pres) return coquille(e, h + presentation(pres), 'pl pl-pres');
+  if (pres) return coquille(e, h + presentation(pres, pillagesOuverts(j)), 'pl pl-pres');
 
   // deux volets : les pillages et les missions en mer
   const pillOk = pillagesOuverts(j);
@@ -159,7 +159,7 @@ export const pillagesOuverts = (j: Jeu) => j.chambre && strateVaincue(j) >= PILL
  * La présentation du Port (28 octobre 2026, Bryan : « refais tout convenablement ») : son histoire, les missions en mer,
  * les pillages et la défense. Montrée tant que le Port est fermé, à la première visite, puis à la demande (« ? »).
  */
-function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
+function presentation(etat: 'fermee' | 'premiere' | 'aide', pillOk = true): string {
   const recharge = `${Math.floor(PILLAGE.rechargeMs / 3_600_000)} h ${Math.round((PILLAGE.rechargeMs % 3_600_000) / 60_000)}`;
   const vole = `+${Math.round(PILLAGE.partVolee * 100)} %`, perte = `−${Math.round(PILLAGE.perteDefaite * 100)} %`;
   return `<section class="fl-intro pl-intro" style="--decor:url(${vignetteArchipel(2, 'intro')})"><div class="fl-intro-texte">`
@@ -173,7 +173,9 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
       cle(ICO.porteurs, '1 à 4', 'barques à la fois, selon la Tour'),
       cle(ICO.coffre, 'Butin', 'composants, cartes, creuseurs'),
     ])
-    + bloc(ICO.grappin, 'Les pillages', 'Ton escouade attaque la garnison d’un district voisin de ta force.', [
+    // allégé le 4 novembre 2026 : tant que les pillages sont fermés, une ligne au lieu de deux blocs de règles
+    + (!pillOk ? `<p class="fl-condition">${ICO.grappin}<span><strong>Pillages et défense du port · après la Strate −${PILLAGE.strateMin}</strong><small>Les districts voisins ne te prennent pas encore au sérieux. Le détail est dans « Les règles en détail ».</small></span></p>` : '')
+    + (!pillOk ? '' : bloc(ICO.grappin, 'Les pillages', 'Ton escouade attaque la garnison d’un district voisin de ta force.', [
       cle(ICO.grappin, String(PILLAGE.jetonsMax), `jetons, un toutes les ${recharge}`),
       cle(ICO.composants, vole, 'du coffre adverse'),
       cle(ICO.descendre, perte, 'de ton coffre si tu perds'),
@@ -182,7 +184,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide'): string {
       cle(ICO.coffre, 'Coffre', 'gains de pillage seulement'),
       cle(ICO.bouclier, `${PILLAGE.bouclierMs / 3_600_000} h`, 'de bouclier après une défaite'),
       cle(ICO.atk, String(PILLAGE.subiesMax), 'attaques subies par jour au plus'),
-    ])
+    ]))
 
     + replie('L’histoire', `<p>Quand la mer est montée, chaque quartier s’est accroché à ses piliers ; le tien s’est retranché derrière sa digue. Entre eux, il ne reste que l’eau, les ruines de l’ancien monde, et les passeurs qui connaissent les courants.</p>`
       + `<p>Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : on pille, on se défend, et chacun garde un œil sur son coffre.</p>`)

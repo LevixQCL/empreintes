@@ -156,6 +156,7 @@
 
 /* ---------- Les deux jauges du Port : la cargaison du prochain départ, les naufragés de la Strate ---------- */
 .ds-jauges{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px}
+.ds-jauges.seule{grid-template-columns:1fr}
 .ds-jauge{--cut:8px;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:8px;padding:8px 10px;
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));
   background:linear-gradient(180deg,rgba(20,38,58,.72),rgba(8,16,26,.82));box-shadow:inset 0 0 0 1px rgba(242,213,140,.32),inset 0 1px 0 rgba(255,255,255,.14)}

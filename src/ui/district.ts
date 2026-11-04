@@ -1028,6 +1028,22 @@ function carteMini(id: string, j: Jeu, attrs = '', utile = false): string {
 }
 
 /**
+ * Une carte faite pour un Porteur pas encore arrivé (4 novembre 2026, Bryan : c'est voulu, mais il faut l'expliquer) :
+ * qui elle attend, quand il arrive, et qu'elle patiente dans la collection d'ici là.
+ */
+function aVenir(options: string[], j: Jeu): string {
+  const lignes = options.map((id) => {
+    const m = moduleDef(id);
+    const voie = VOIES.find((v) => v.cartes.includes(m.base ?? m.id));
+    if (!voie || porteursPresents(j).includes(voie.porteur)) return '';
+    const p = porteurDef(voie.porteur);
+    const quand = arrivee(p).replace(/^Arrive /, '').replace(/\.$/, '').replace(/est ouverte$/, 'sera ouverte').replace(/atteint/, 'atteindra');
+    return `<p class="choix-avenir">${ICO.cristal}<span><b>${echap(m.nom)}</b> est faite pour <b>${echap(p.nom.split(' ')[0]!)}</b>, qui rejoindra le district ${echap(quand)}. Prise maintenant, elle t’attend dans ta collection et sera prête le jour de son arrivée (voie « ${echap(voie.nom)} »).</span></p>`;
+  }).filter(Boolean);
+  return lignes.join('');
+}
+
+/**
  * Pour qui est une carte proposée (27 octobre 2026 : une récompense ne doit pas tomber à plat) : les Porteurs présents
  * qui peuvent la porter, le niveau qu'il manque, ou, pour une carte de voie, le Porteur qui arrivera.
  */
@@ -1037,7 +1053,7 @@ function pourQui(id: string, j: Jeu): string {
   const voie = VOIES.find((v) => v.cartes.includes(m.base ?? m.id));
   if (voie && !porteursPresents(j).includes(voie.porteur)) {
     const p = porteurDef(voie.porteur);
-    return `${echap(voie.nom)} · ${echap(p.nom.split(' ')[0]!)} ${echap(arrivee(p).replace(/^Arrive /, '').replace(/\.$/, '').replace(/ ou plus$/, ''))}`;
+    return `Pour ${echap(p.nom.split(' ')[0]!)} · à venir`;
   }
   const requis = niveauRequis(id);
   const prets = presents.filter((p) => niveauPorteur(j, p.id).niveau >= requis);
@@ -1101,7 +1117,7 @@ function fenetreChoix(j: Jeu): string {
   const titre = c.source === 'releve' ? 'La Strate est complète' : c.source === 'etoiles' ? 'Les étoiles des Strates' : c.source === 'rodeur' ? 'Le trophée du Rôdeur' : c.source === 'boss' ? 'Le boss laisse des empreintes' : c.source === 'quotidien' ? 'Objectif du jour' : c.source === 'ravitaillement' ? 'Le septième colis' : c.source === 'fouille' ? 'Le filon de la fouille' : c.source === 'epreuve' ? 'Épreuve réussie' : c.source === 'parrainage' ? 'Le parrainage' : c.source === 'maree' ? 'La prise de la marée' : 'Butin de la semaine';
   return `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="choix-titre"><div class="fenetre choix"><span class="surtitre">RÉCOMPENSE${j.choix.length > 1 ? ` · ENCORE ${j.choix.length - 1} APRÈS` : ''}</span><h2 id="choix-titre">${titre}</h2><p>Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.</p><small class="aide choix-loupe">Reste appuyé sur une carte pour lire son effet.</small><div class="cartes-choix">`
     + c.options.map((id, k) => carteMini(id, j, `data-action="prendre" data-index="${k}" data-carte="${id}"`, true)).join('')
-    + `</div>${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
+    + `</div>${aVenir(c.options, j)}${c.eclats ? `<button type="button" class="btn sec large" data-action="prendre" data-index="-1">Prendre ${prix('eclats', c.eclats)} à la place</button>` : ''}</div></div>`;
 }
 
 /**
@@ -2028,7 +2044,10 @@ function gainMission(j: Jeu, id: string, d: Destination, duree: DureeMission, mu
 /** Les missions en mer (au Port depuis le 28 octobre 2026) : qui est en mer, les destinations du jour, qui part, et les derniers rapports */
 export function htmlMissions(e: EcranDistrict): string {
   const j = e.j;
-  let h = `<section class="bloc tr-volet pl-missions"><p class="aide">Le passeur emmène un Porteur libre vers une ruine au large, avec des vivres et des lampes (de l’énergie). Chaque jour, il connaît de 2 à 5 destinations et ce qu’on y trouvera : une cargaison, une pierre oubliée, des naufragés ou des Éclats. Plus tu y retournes, plus tu descends : la Surface, puis les Cales (+25 %), puis le Cœur de la ruine (+60 % et une carte en plus). Ensuite, chaque barque rapporte toujours un butin plein. Le bon Porteur au bon endroit rapporte plus, et chaque niveau compte.</p>`;
+  // allégé le 4 novembre 2026 : une phrase, le reste se déplie ; la jauge de fouille attend le premier retour de barque
+  const debutant = !(j.rapports ?? []).length;
+  let h = `<section class="bloc tr-volet pl-missions">`
+    + texteReplie(`Choisis une destination, puis le Porteur libre qui y part : il revient chargé, même jeu fermé. Chaque jour, le passeur connaît de 2 à 5 ruines et ce qu’on y trouvera (une cargaison, une pierre oubliée, des naufragés ou des Éclats). Plus tu retournes au même endroit, plus tu descends : la Surface, puis les Cales (+25 %), puis le Cœur de la ruine (+60 % et une carte en plus). Le bon Porteur au bon endroit rapporte plus (sa lignée, son niveau), et chaque barque emporte des vivres et des lampes payés en énergie.`, 'missions', 'aide');
   if (j.missions.length) h += `<div class="voyages">${j.missions.map((m) => voyage(e, m)).join('')}</div>`;
 
   // les destinations du jour : de 2 à 5, chacune avec son butin annoncé ; on y retourne autant qu'on veut (28 octobre 2026)
@@ -2039,8 +2058,8 @@ export function htmlMissions(e: EcranDistrict): string {
   const pf = choisie ? profondeurMission(j, choisie.cle, e.now) : { niveau: 0, mult: 1 };
   const PF = MISSIONS.profondeurs;
   const crans = PF.map((x, k) => `<i class="${pf.niveau === null || k < pf.niveau ? 'fait' : k === pf.niveau ? 'ici' : ''}" title="${x.nom}"></i>`).join('');
-  h += `<div class="ds-jauges">`
-    + `<div class="ds-jauge ds-fouille${pf.niveau === COEUR ? ' coeur' : ''}" title="Chaque barque vers la même destination descend plus profond : Surface, Cales, puis le Cœur et sa trouvaille.">${ICO.composants}<span><small>Prochaine fouille ici</small><strong>${pf.niveau === null ? 'Ruine fouillée à fond' : `${PF[pf.niveau]!.nom}${pf.mult > 1 ? ` · +${Math.round((pf.mult - 1) * 100)} %` : ''}`}</strong><small class="ds-crans">${crans}${pf.niveau === null ? 'butin plein, jusqu’à demain 4 h' : pf.niveau === COEUR ? 'une carte en plus' : `Cœur dans ${COEUR - pf.niveau} barque${COEUR - pf.niveau > 1 ? 's' : ''}`}</small></span></div>`
+  h += `<div class="ds-jauges${debutant ? ' seule' : ''}">`
+    + (debutant ? '' : `<div class="ds-jauge ds-fouille${pf.niveau === COEUR ? ' coeur' : ''}" title="Chaque barque vers la même destination descend plus profond : Surface, Cales, puis le Cœur et sa trouvaille.">${ICO.composants}<span><small>Prochaine fouille ici</small><strong>${pf.niveau === null ? 'Ruine fouillée à fond' : `${PF[pf.niveau]!.nom}${pf.mult > 1 ? ` · +${Math.round((pf.mult - 1) * 100)} %` : ''}`}</strong><small class="ds-crans">${crans}${pf.niveau === null ? 'butin plein, jusqu’à demain 4 h' : pf.niveau === COEUR ? 'une carte en plus' : `Cœur dans ${COEUR - pf.niveau} barque${COEUR - pf.niveau > 1 ? 's' : ''}`}</small></span></div>`)
     + `<div class="ds-jauge${nf.restants ? '' : ' basse'}" title="Les naufragés ne fournissent qu’une partie des creuseurs de chaque Strate : le reste se gagne au front (gardien, fouilles, Épreuves).">${ICO.ouvrier}<span><small>Naufragés · Strate −${j.strate}</small><strong>${nf.ramenes} / ${nf.plafond} creuseur${nf.plafond > 1 ? 's' : ''}</strong><small>${nf.restants ? `encore ${nf.restants} en mer` : 'le reste se gagne au front'}</small></span></div>`
     + `</div>`;
   h += `<div class="ds-tete"><h3 class="titre-bloc">${icone('carte')}Destinations du jour</h3><small>${decompte(debutJour(jourDe(e.now) + 1), e.now, 'Nouvelles dans ')}</small></div>`
