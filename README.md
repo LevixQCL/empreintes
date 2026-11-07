@@ -88,6 +88,11 @@ src/
     clavier.ts, intro.ts
   main.ts        le démarrage et les gestes du joueur
 public/art/      les illustrations Midjourney (Porteurs, Modules, ennemis, bâtiments, décors, scènes des salles, icônes, textures des métaux) ; src/ui/art.ts dit laquelle va où
+public/fonts/    les polices (Saira, IBM Plex Sans Condensed, Marcellus SC, Literata), hébergées sur le site : rien ne part chez Google.
+                 Écrites par scripts/polices.py à partir des paquets Fontsource (voir l'en-tête du script)
+public/sw.js     le service worker : la page passe par le réseau d'abord, les fichiers du build et les images sont gardés sur l'appareil
+                 (le jeu démarre hors ligne, les images ne repartent plus au réseau). Changer VERSION dans sw.js vide les anciens caches
+sources/         les images de travail qui ne sont pas publiées (ex. sources/art/district/cuvette2-batiments.webp, d'où est tirée la Cuvette)
 scripts/mer-district.py  prolonge chaque tableau du district par sa mer et son ciel pour l'écran PC (public/art/district/mer-N.webp) : à relancer quand un âge change
 src/ui/carte.ts  la face des cartes Module (métal de la rareté, effets sur l'illustration)
 tests/           les tests automatiques
