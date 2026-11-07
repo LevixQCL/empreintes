@@ -148,6 +148,8 @@ export interface Salle {
   vestige?: string;
   /** la salle du Rôdeur de la zone (son ennemi est le Rôdeur) */
   rodeur?: string;
+  /** dévoilée par un choix de Halte (7 novembre 2026) : visible sur le plan, quelle que soit la distance */
+  revelee?: boolean;
 }
 interface CarteStrate {
   zone: number;
@@ -374,7 +376,7 @@ export function indiceSalle(s: Salle): Indice {
 export function visionSalle(x: Expedition, s: Salle): Vision {
   if (!x.carte) return 'claire';
   const ici = salleCourante(x);
-  if (s.faite || s.id === ici.id || s.type === 'gardien' || s.type === 'filon' || s.type === 'entree' || s.type === 'halte') return 'claire';
+  if (s.faite || s.revelee || s.id === ici.id || s.type === 'gardien' || s.type === 'filon' || s.type === 'entree' || s.type === 'halte') return 'claire';
   // une Strate relevée (ses 5 Vestiges) : ses fouilles voient tout le plan
   if (x.releve) return 'claire';
   // −7 : une salle à deux souvenirs se montre telle qu'elle est quand on arrive devant (le choix se fait en connaissance de cause)
@@ -415,6 +417,32 @@ function poidsDe(strate: number): [TypeSalle, number][] {
 }
 /** La rangée de la Halte (31 octobre 2026) : une seule salle, au milieu de la carte ; la carte a alors 10 rangées */
 export const RANG_HALTE = 5;
+
+/**
+ * Un choix de Halte change une salle juste après elle (7 novembre 2026, Bryan : les choix doivent avoir une incidence) :
+ * une salle de combat de la rangée suivante devient une cache, des archives ou une salle scellée, et se montre sur le plan.
+ * Une salle remplace une autre : la descente garde le même nombre de salles.
+ */
+export function devoilerApresHalte(x: Expedition, effet: 'cache' | 'archive' | 'scellee'): Expedition {
+  if (!x.carte) return x;
+  const halte = x.carte.salles.find((s) => s.type === 'halte');
+  if (!halte) return x;
+  const suivantes = halte.voisins.map((id) => x.carte!.salles[id]!).filter((s) => !s.faite);
+  const libre = (s: Salle) => s.type === 'combat' && !s.rodeur && !s.vestige && !s.quete && !s.secret && !s.double;
+  const cible = suivantes.find(libre) ?? x.carte.salles.find((s) => s.rang === halte.rang + 1 && libre(s));
+  if (!cible) return x;
+  const salles = x.carte.salles.map((s) => {
+    if (s.id !== cible.id) return s;
+    const n: Salle = { ...s, revelee: true, type: effet === 'scellee' ? 'elite' : effet };
+    delete n.escorte; delete n.condition;
+    if (effet === 'scellee') {
+      const suivante = ZONES[Math.min(x.carte!.zone + 1, ZONES.length - 1)]!;
+      n.ennemi = suivante.ennemis[(x.carte!.rng + s.id) % suivante.ennemis.length]!;
+    } else delete n.ennemi;
+    return n;
+  });
+  return { ...x, carte: { ...x.carte, salles } };
+}
 
 /** Rangées d'une carte de Strate : 9 pour une expédition (7 jusqu'au 22 octobre 2026), 10 avec une Halte, 4 pour une fouille ciblée */
 const RANGS_EXPEDITION = 9;

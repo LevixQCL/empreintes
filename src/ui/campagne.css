@@ -38,6 +38,7 @@
 .sc-portrait b{font-family:var(--display);font-weight:400;font-size:28px;color:var(--c)}
 .sc-paroles strong{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px;font-family:var(--display);font-weight:400;font-size:17px;letter-spacing:.03em;color:color-mix(in srgb,var(--c) 70%,#fff)}
 .sc-paroles small{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--quiet)}
+.sc-echo{display:block;margin-top:3px;font:600 12px/1.2 var(--mono);font-style:normal;letter-spacing:.06em;color:var(--or)}
 .sc-paroles p{margin:4px 0 0;font-size:16px;line-height:1.45;color:#F3EEE4}
 .sc-bas{display:grid;gap:10px;justify-items:center;min-height:52px;align-content:end}
 .sc-points{display:flex;gap:6px}

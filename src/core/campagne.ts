@@ -9,6 +9,8 @@
 // Les trois décisions (nouvelle.ts) arrivent au bout de ce qu'on a vu ; les scènes suivantes en tiennent compte.
 // Ce fichier ne contient que les textes et les conditions, sans DOM : l'écran affiche la scène que renvoie `sceneEnAttente`.
 
+import { pisteFinale, type Piste } from './strates';
+
 /** Ce qu'une condition peut lire de la partie, sans dépendre de jeu.ts */
 export interface ContexteCampagne {
   /** la Strate la plus profonde ouverte */
@@ -19,6 +21,8 @@ export interface ContexteCampagne {
   presents: readonly string[];
   /** les souvenirs des choix faits aux Haltes (strates.ts) */
   drapeaux?: readonly string[];
+  /** les choix faits aux Haltes (« strate-n » → rang du choix), pour la piste de l'enquête */
+  choixHaltes?: Readonly<Record<string, number>>;
 }
 
 /** Ceux qui parlent et ne sont pas des Porteurs (les Porteurs et les gardiens ont déjà leur nom et leur portrait) */
@@ -36,6 +40,8 @@ export interface Replique {
   texte: string;
   /** la réplique n'est dite que si la condition tient (une décision prise, un Porteur arrivé) */
   si?: (c: ContexteCampagne) => boolean;
+  /** la réplique reprend un choix de Halte (son souvenir) : l'écran le marque « ton choix à −X » */
+  souvenir?: string;
 }
 
 /** L'illustration d'une scène : le décor de la zone, le portrait d'un gardien, ou un tableau de l'intro */
@@ -67,6 +73,10 @@ const lecture = (l: string) => (c: ContexteCampagne) => c.actes.lecture === l;
 const fin = (f: string) => (c: ContexteCampagne) => c.actes.fin === f;
 /** un choix fait à une Halte (3 novembre 2026 : chaque souvenir revient plus tard) */
 const souvenir = (f: string) => (c: ContexteCampagne) => !!c.drapeaux?.includes(f);
+/** la condition et la marque d'un souvenir (7 novembre 2026 : on voit qu'un choix revient) */
+const souv = (f: string) => ({ si: souvenir(f), souvenir: f });
+/** la piste la plus suivie de l'enquête, sur toutes les Haltes (strates.ts) */
+const lentille = (p: Piste) => (c: ContexteCampagne) => pisteFinale(c.choixHaltes) === p;
 
 /** une scène d'ouverture de Strate (l'enjeu) ; les Strates −4, −7 attendent la décision de l'acte précédent */
 const entree = (strate: number, titre: string, recit: string, repliques: Replique[], apres?: (c: ContexteCampagne) => boolean): Scene => ({
@@ -90,7 +100,7 @@ export const SCENES: Scene[] = [
       { qui: 'doran', texte: 'Et regardez par terre : des traces de bottes, toutes fraîches. Quelqu’un est passé avant nous.' },
       { qui: 'ilka', texte: 'Au marché, ils disent que tu descends chercher l’Écluse : le truc de ceux d’avant pour retenir la mer. Dis-moi que tu y crois un peu.' },
       { qui: 'doran', texte: 'Les pompes ont tourné quatorze heures cette nuit. Écluse ou pas, la mer ne nous attendra pas.' },
-      { qui: 'doran', texte: 'Ta mesure de la marche est partie chez les Veilleurs. Si les Fondations l’apprennent, elles couperont des pompes pour inspecter. Les nôtres d’abord. Celles des Hauts, jamais.', si: souvenir('mesure-marche') },
+      { qui: 'doran', texte: 'Ta mesure de la marche est partie chez les Veilleurs. Si les Fondations l’apprennent, elles couperont des pompes pour inspecter. Les nôtres d’abord. Celles des Hauts, jamais.', ...souv('mesure-marche') },
     ]),
   entree(2, 'Les couloirs murés',
     'Au retour, la chambre aux empreintes était à moitié vide. Des traces de bottes s’enfoncent vers la Strate −2, les Abris murés. Tes creuseurs viennent d’en dégager l’accès.', [
@@ -103,7 +113,7 @@ export const SCENES: Scene[] = [
     'Au fond de la Strate, des sacs éventrés et des cristaux éteints. La Confluence les a trouvés avant vous, et elle a grossi. Dans un recoin, un pilleur tremble.', [
       { qui: 'brac', texte: 'Je m’appelle Brac. Je ne les ai pas volées, directeur. Elles me l’ont demandé. Toute la nuit, elles m’ont demandé de les emmener plus bas.' },
       { qui: 'vela', texte: 'Il dit vrai. Les empreintes de la chambre veulent descendre. Je ne sais pas pourquoi. Je sais qu’elles ont peur de rester en haut.' },
-      { qui: 'vela', texte: 'Le petit cristal qu’on a laissé rouler dans l’abri de 2060. Il est là, avec les autres. Il est arrivé avant nous.', si: souvenir('cristal-libre') },
+      { qui: 'vela', texte: 'Le petit cristal qu’on a laissé rouler dans l’abri de 2060. Il est là, avec les autres. Il est arrivé avant nous.', ...souv('cristal-libre') },
       { qui: 'hald', texte: 'Capitaine Hald, Brigades du Serment de Veyr. Au nom de la Maison Orsève, cette fouille est suspendue. Ce qui brille ici relève de la garde des Hauts.' },
       { qui: 'ilka', texte: 'On vient de se battre pour ça, capitaine. Vous, vous venez d’arriver.' },
       { qui: 'hald', texte: 'Votre directeur décidera. En attendant, mes Brigades suivent la Confluence. Avec ou sans vous.' },
@@ -120,9 +130,9 @@ export const SCENES: Scene[] = [
     'La Confluence s’effondre pour de bon. De son cœur roule un cristal minuscule, net comme une goutte d’eau. Une seule voix y parle, très calme.', [
       { qui: 'vela', texte: 'Elle répète un mot, toujours le même : « Compte. » Je crois que c’était la première, celle autour de qui les autres se sont collées.' },
       { qui: 'doran', texte: 'Les patrouilles de la capitaine sont sauves. Elles étaient coincées sous un éboulement. Elles nous doivent la vie.' },
-      { qui: 'doran', texte: 'Tu as laissé la lanterne à son clou, là-haut. Les fouilleurs l’apprendront. Chez nous, ça vaut plus qu’un Éclat.', si: souvenir('clou-respecte') },
-      { qui: 'hald', texte: 'Mes patrouilles ont trouvé une flèche à la craie, la bonne, avec une date. C’était vous. Je ne l’oublierai pas, directeur.', si: souvenir('craie-hald') },
-      { qui: 'hald', texte: 'Quelqu’un a dégagé le haut de notre éboulis. On a entendu qu’on venait. C’est ce qui a tenu mes hommes.', si: (c) => !!c.drapeaux?.includes('eboulis') && !c.drapeaux.includes('craie-hald') },
+      { qui: 'doran', texte: 'Tu as laissé la lanterne à son clou, là-haut. Les fouilleurs l’apprendront. Chez nous, ça vaut plus qu’un Éclat.', ...souv('clou-respecte') },
+      { qui: 'hald', texte: 'Mes patrouilles ont trouvé une flèche à la craie, la bonne, avec une date. C’était vous. Je ne l’oublierai pas, directeur.', ...souv('craie-hald') },
+      { qui: 'hald', texte: 'Quelqu’un a dégagé le haut de notre éboulis. On a entendu qu’on venait. C’est ce qui a tenu mes hommes.', si: (c) => !!c.drapeaux?.includes('eboulis') && !c.drapeaux.includes('craie-hald'), souvenir: 'eboulis' },
       { qui: 'hald', texte: 'La Maison Orsève vous remercie, directeur. Elle vous demande à présent de lui confier la chambre.' },
       { qui: 'tobin', texte: 'Tobin, des Veilleurs de Sédime. Directeur, ne la donnez à personne avant qu’on ait compris ce qu’elle contient. Je vous en prie.' },
       { qui: 'ilka', texte: 'Et le quartier attend que tu dises qu’elle est à nous. À toi de trancher, l’Élu.' },
@@ -143,7 +153,7 @@ export const SCENES: Scene[] = [
       { qui: 'doran', texte: 'Quatre noms. Des ouvriers de 2066. Le troisième, c’était celui de mon père.' },
       { qui: 'vela', texte: 'Il ne nous menaçait pas. Il faisait l’appel. Comme s’il attendait que ceux de la liste reviennent.' },
       { qui: 'ilka', texte: 'Des gens qui ont muré une porte il y a cinquante-cinq ans, et un gardien qui les attend encore. Je déteste cet étage.' },
-      { qui: 'doran', texte: 'Il m’a regardé en lisant le nom de mon père. Il sait que j’ai promis. Il attend de voir si je tiens parole.', si: souvenir('promesse-cristal') },
+      { qui: 'doran', texte: 'Il m’a regardé en lisant le nom de mon père. Il sait que j’ai promis. Il attend de voir si je tiens parole.', ...souv('promesse-cristal') },
     ]),
   entree(5, 'Les Berceaux vides',
     'Plus bas, des niches de cristal en treillis, toutes ouvertes. Quelqu’un est passé avant vous, avec des outils propres et des sceaux de cire blanche.', [
@@ -152,7 +162,7 @@ export const SCENES: Scene[] = [
       { qui: 'hald', texte: 'Ce que la Maison emporte ne vous regarde pas, directeur. Vous avez signé.', si: garde('orseve') },
       { qui: 'hald', texte: 'Vous ne resterez pas dans ces salles plus longtemps que nous. Mes ordres sont de tout sceller.', si: garde('district') },
       { qui: 'tobin', texte: 'J’ai compté les niches vides : trente-deux. Pas une seule de ces empreintes n’est arrivée chez les Veilleurs.', si: garde('commission') },
-      { qui: 'tobin', texte: 'La page du registre que vous avez arrachée, on l’a lue toute la nuit. Des gestes, ligne après ligne. Les noms n’arrivent qu’à la fin, en 2066. Le Gardien ne garde personne : il garde ce qu’on savait faire.', si: souvenir('page-arrachee') },
+      { qui: 'tobin', texte: 'La page du registre que vous avez arrachée, on l’a lue toute la nuit. Des gestes, ligne après ligne. Les noms n’arrivent qu’à la fin, en 2066. Le Gardien ne garde personne : il garde ce qu’on savait faire.', ...souv('page-arrachee') },
       { qui: 'vela', texte: 'Celles qui restent se sont serrées les unes contre les autres. Elles ont froid.' },
       { qui: 'doran', texte: 'Le Gardien est en dessous. Il garde ce qu’il reste. Je commence à le comprendre.' },
     ]),
@@ -162,7 +172,7 @@ export const SCENES: Scene[] = [
       { qui: 'aurel', texte: 'Dame Isaure. Ma tante. C’est elle qui tient le Registre des Vierges. Elle ne descend jamais : elle envoie les autres.', si: present('aurel') },
       { qui: 'vela', texte: 'Isaure Orsève. Une grande famille des Hauts. Elle ne descend jamais : elle envoie les autres.', si: absent('aurel') },
       { qui: 'vela', texte: 'Le brigadier ne savait plus pourquoi il se battait. Le Gardien lui avait prêté une voix. Il y en a beaucoup trop, ici, des voix.' },
-      { qui: 'aurel', texte: 'J’ai vu l’original du fondateur, dans la niche 5-1. Il ne ressemble pas à ma tante. Il ne me ressemble pas non plus.', si: (c) => c.presents.includes('aurel') && !!c.drapeaux?.includes('niche-fondateur') },
+      { qui: 'aurel', texte: 'J’ai vu l’original du fondateur, dans la niche 5-1. Il ne ressemble pas à ma tante. Il ne me ressemble pas non plus.', si: (c) => c.presents.includes('aurel') && !!c.drapeaux?.includes('niche-fondateur'), souvenir: 'niche-fondateur' },
       { qui: 'doran', texte: 'Plus qu’un étage avant le niveau 7. Celui que mon père a fermé.' },
     ]),
   entree(6, 'Le niveau 7',
@@ -179,9 +189,9 @@ export const SCENES: Scene[] = [
       { qui: 'vela', texte: 'C’est le même, partout. Mais chaque cristal se souvient d’une autre vie. Il pleure parce qu’il ne sait plus laquelle est la sienne.' },
       { qui: 'doran', texte: 'En 2066, les ouvriers l’ont entendu, et ils ont eu peur. Pas d’un monstre : d’une question.' },
       { qui: 'vela', texte: 'Je peux le lire jusqu’au bout et savoir ce qu’ils ont caché, tous. Mais je ne sais pas ce qui restera de moi après.' },
-      { qui: 'vela', texte: 'Quand tu as posé la main sur le mur, ils se sont calmés. Ils ont compris qu’on venait pour eux, pas contre eux.', si: souvenir('main-posee') },
-      { qui: 'doran', texte: 'Le cristal de mon père est à sa place, dans le cercle. Le Gardien l’a regardé avant de tomber. Il a fermé son livre comme on ferme une affaire.', si: souvenir('cristal-rendu') },
-      { qui: 'doran', texte: 'Le cristal de mon père est toujours dans ma poche. Il ne pleure pas. Il attend, comme mon père attendait.', si: souvenir('cristal-garde') },
+      { qui: 'vela', texte: 'Quand tu as posé la main sur le mur, ils se sont calmés. Ils ont compris qu’on venait pour eux, pas contre eux.', ...souv('main-posee') },
+      { qui: 'doran', texte: 'Le cristal de mon père est à sa place, dans le cercle. Le Gardien l’a regardé avant de tomber. Il a fermé son livre comme on ferme une affaire.', ...souv('cristal-rendu') },
+      { qui: 'doran', texte: 'Le cristal de mon père est toujours dans ma poche. Il ne pleure pas. Il attend, comme mon père attendait.', ...souv('cristal-garde') },
       { qui: 'ilka', texte: 'Directeur. C’est toi qui décides. Et c’est elle qui paie.' },
     ]),
   {
@@ -190,7 +200,7 @@ export const SCENES: Scene[] = [
     quand: (c) => !!c.actes.lecture,
     repliques: [
       { qui: 'isaure', texte: 'Directeur. Votre escouade est descendue plus bas que nos Brigades. Les Hauts savent reconnaître le talent, même quand il vient d’en bas.' },
-      { qui: 'isaure', texte: 'Vous avez quelque chose qui m’appartient, directeur. Un carnet. Je ne vous le réclame pas. Je vous le signale.', si: souvenir('carnet-isaure') },
+      { qui: 'isaure', texte: 'Vous avez quelque chose qui m’appartient, directeur. Un carnet. Je ne vous le réclame pas. Je vous le signale.', ...souv('carnet-isaure') },
       { qui: 'isaure', texte: 'La Flèche d’amarrage accueillera votre escouade. L’escouade qui tient son sommet quand une île passe est reçue là-haut. Ce sont nos usages depuis les Accords.' },
       { qui: 'vela', texte: 'Elle sait ce que j’ai lu. Je ne sais pas comment, mais elle le sait. C’est pour ça qu’elle nous veut près d’elle.', si: lecture('autoriser') },
       { qui: 'vela', texte: 'Elle croit que j’ai lu les cristaux. Elle préfère nous avoir sous les yeux.', si: lecture('refuser') },
@@ -212,9 +222,9 @@ export const SCENES: Scene[] = [
   apresGardien(7, 'tisseuse', 'Un avenir',
     'La Tisseuse de souvenirs se dénoue fil par fil et s’enfuit dans les fissures. Avant de partir, elle vous a montré un souvenir : ton district englouti, et personne pour s’en étonner.', [
       { qui: 'ilka', texte: 'C’était faux. Hein ? C’était faux.' },
-      { qui: 'vela', texte: 'Tes deux relevés de la ligne d’eau sont justes tous les deux. Elle coud les murs comme elle coud les souvenirs.', si: souvenir('deux-releves') },
-      { qui: 'doran', texte: 'Ta ligne est la plus haute du mur, maintenant, et la plus profonde. Pourvu qu’on n’ait jamais à en graver une autre.', si: souvenir('ligne-gravee') },
-      { qui: 'ilka', texte: 'Tout à l’heure, j’ai pris la passerelle cassée. La vraie. Je préfère mes souvenirs avec le trou dedans.', si: souvenir('vraie-rive') },
+      { qui: 'vela', texte: 'Tes deux relevés de la ligne d’eau sont justes tous les deux. Elle coud les murs comme elle coud les souvenirs.', ...souv('deux-releves') },
+      { qui: 'doran', texte: 'Ta ligne est la plus haute du mur, maintenant, et la plus profonde. Pourvu qu’on n’ait jamais à en graver une autre.', ...souv('ligne-gravee') },
+      { qui: 'ilka', texte: 'Tout à l’heure, j’ai pris la passerelle cassée. La vraie. Je préfère mes souvenirs avec le trou dedans.', ...souv('vraie-rive') },
       { qui: 'vela', texte: 'Ce n’était pas un souvenir. C’était un avenir. Elle tisse aussi avec ce qui pourrait arriver.' },
       { qui: 'doran', texte: 'Les lignes d’eau sur les vieux murs. Ysé en parle depuis des années. Personne ne l’écoute.' },
       { qui: 'tobin', texte: 'Directeur ! Une équipe des Veilleurs est descendue ici il y a un mois. Elle n’est jamais remontée.' },
@@ -232,9 +242,9 @@ export const SCENES: Scene[] = [
       { qui: 'tobin', texte: 'Ils sont tous là, tous les six. Merci. Les Veilleurs ne l’oublieront pas, et nous sommes très forts pour ne pas oublier.' },
       { qui: 'doran', texte: 'Elle ne tue personne. Elle garde. Comme le Gardien des registres. Tout, ici, garde quelque chose.' },
       { qui: 'vela', texte: 'Elle garde les noms, ceux que les tables gravées ont perdus. Elle est la dernière à s’en souvenir.' },
-      { qui: 'tobin', texte: 'En se réveillant, ils ont vu leurs lampes rallumées. Ils ont compris tout de suite que quelqu’un était venu.', si: souvenir('lampes-veilleurs') },
-      { qui: 'tobin', texte: 'Le prix du pain, au marché. C’est ça qui les a ramenés. Je n’y aurais jamais pensé.', si: souvenir('vrai-detail') },
-      { qui: 'tobin', texte: 'Votre relevé de la table de la Ruche, posé à côté de celui de −4… Les mêmes tables, et plus un seul nom. Notre Doyenne, Hessa, veut le mettre sous clé. Ysé veut le publier.', si: souvenir('copistes') },
+      { qui: 'tobin', texte: 'En se réveillant, ils ont vu leurs lampes rallumées. Ils ont compris tout de suite que quelqu’un était venu.', ...souv('lampes-veilleurs') },
+      { qui: 'tobin', texte: 'Le prix du pain, au marché. C’est ça qui les a ramenés. Je n’y aurais jamais pensé.', ...souv('vrai-detail') },
+      { qui: 'tobin', texte: 'Votre relevé de la table de la Ruche, posé à côté de celui de −4… Les mêmes tables, et plus un seul nom. Notre Doyenne, Hessa, veut le mettre sous clé. Ysé veut le publier.', ...souv('copistes') },
     ]),
   entree(9, 'Le Ciel d’en bas',
     'Aucun fouilleur n’a jamais dépassé la Strate −9. Avant le départ, Ysé t’a fait porter une lettre. Tu la lis à la lueur des cristaux.', [
@@ -246,7 +256,7 @@ export const SCENES: Scene[] = [
     'La Tisseuse ne se relève pas. Ses fils se défont autour d’elle comme une écharpe qu’on dénoue. Quand tu lui demandes son nom, elle sourit.', [
       { qui: 'tisseuse', texte: 'Personne ne me l’avait demandé. Je l’ai donné à quelqu’un d’autre, il y a très longtemps, pour qu’il se souvienne de moi. Il m’a oubliée quand même.' },
       { qui: 'tisseuse', texte: 'En dessous, c’est le fond. Le premier d’entre nous y attend. Lui sait encore qui il est. C’est bien ce qui fait peur.' },
-      { qui: 'vela', texte: 'Tu le lui avais déjà demandé, dans son nid. Elle a attendu la fin pour répondre.', si: souvenir('nom-demande') },
+      { qui: 'vela', texte: 'Tu le lui avais déjà demandé, dans son nid. Elle a attendu la fin pour répondre.', ...souv('nom-demande') },
       { qui: 'vela', texte: 'Elle s’est éteinte. Doucement. Je crois qu’elle était contente qu’on lui pose la question.' },
       { qui: 'doran', texte: 'Le fond. Ceux d’avant. On y est presque.' },
     ]),
@@ -260,9 +270,11 @@ export const SCENES: Scene[] = [
     'Avant de tomber, le Premier Porteur pose la main sur une table gravée, comme pour vous la confier. En haut, une phrase plus ancienne que tout ce que vous avez vu. Dessous, une ligne plus récente, de la même écriture.', [
       { qui: 'premier-porteur', texte: 'Que celui qui lit ceci compte les voix qu’il porte.' },
       { qui: 'vela', texte: '« Compte. » Le mot de la Confluence, tout en haut. Depuis le début, ils nous disaient la même chose.' },
-      { qui: 'vela', texte: 'Tu lui as dit qui tu étais. Il a répondu en posant la main sur la table. C’était sa façon de dire son nom.', si: souvenir('presente') },
-      { qui: 'vela', texte: 'Tu nous as fait compter nos voix, tout à l’heure. J’en porte deux. Je sais encore laquelle est la mienne.', si: souvenir('voix-comptees') },
+      { qui: 'vela', texte: 'Tu lui as dit qui tu étais. Il a répondu en posant la main sur la table. C’était sa façon de dire son nom.', ...souv('presente') },
+      { qui: 'vela', texte: 'Tu nous as fait compter nos voix, tout à l’heure. J’en porte deux. Je sais encore laquelle est la mienne.', ...souv('voix-comptees') },
       { qui: 'premier-porteur', texte: 'Les voix ne nous ont pas pris, elles nous ont gardés. Ne fermez rien.' },
+      { qui: 'ilka', texte: 'Ton enquête l’avait montré, Strate après Strate : en haut, chacun savait un morceau, et chacun s’est tu. Lui, au moins, a gravé ce qu’il savait, là où on finirait par le lire.', si: lentille('nous') },
+      { qui: 'vela', texte: 'Ton enquête l’avait montré, Strate après Strate : ils ne sont pas partis, ils sont dans les cristaux. « Elles nous ont gardés », dit-il. Je crois qu’il parle de nous aussi.', si: lentille('avant') },
       { qui: 'doran', texte: 'Il est descendu seul, il a écrit ça sous la mise en garde, et il a refermé derrière lui. De l’intérieur.' },
       { qui: 'ilka', texte: 'Et nous, on a pris leurs empreintes pour des cadeaux. Il faut le dire à tout Vertiga. Mais quoi, exactement ? Ça, c’est à toi.' },
       { qui: 'doran', texte: 'Et l’Écluse ? Pas une ligne dessus. Ils ont perdu contre leur eau, comme contre leurs voix.' },

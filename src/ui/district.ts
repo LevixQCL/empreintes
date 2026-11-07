@@ -2,7 +2,7 @@
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
 // chaque bâtiment y porte son cristal de niveau et, s'il y a quelque chose à faire, une bulle, le détail s'ouvre en feuille par le bas.
 
-import { halteDef, nombreHaltes, queteDef } from '../core/strates';
+import { PISTES, halteDef, nombreHaltes, queteDef, revelationDe } from '../core/strates';
 import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
 import { htmlBestiaire } from './bestiaire';
 import { visageGarde } from './fleche';
@@ -1673,8 +1673,10 @@ function htmlCarnet(j: Jeu): string {
       if (!h) continue;
       const c = j.choixHaltes?.[`${s}-${k}`];
       const choix = c !== undefined ? h.choix[c]?.texte : undefined;
+      const rev = revelationDe(j.choixHaltes, s, k);
       pages += `<article class="fragment carnet"><span class="surtitre">STRATE −${s} · HALTE ${['I', 'II', 'III'][k - 1]}</span><h2>${echap(h.titre)}</h2>`
-        + `<p>${echap(h.fait)}</p>${choix ? `<p class="carnet-choix">Ce que j’ai fait : ${echap(choix.charAt(0).toLowerCase() + choix.slice(1))}.</p>` : ''}</article>`;
+        + `<p>${echap(h.fait)}</p>${rev ? `<p class="carnet-enquete"><b>◆ ${echap(PISTES[rev.piste])} · ${echap(rev.r.nom)}</b>${echap(rev.r.fait)}</p>` : ''}`
+        + `${choix ? `<p class="carnet-choix">Ce que j’ai fait : ${echap(choix.charAt(0).toLowerCase() + choix.slice(1))}.</p>` : ''}</article>`;
     }
   }
   const r = `<section class="livre"><header class="livre-tete"><span class="surtitre">CARNET DU DIRECTEUR · ${vues} / ${total} HALTES</span><h2>Ce que j’ai appris en bas</h2></header>`;

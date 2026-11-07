@@ -12,14 +12,14 @@
 // 28 octobre 2026 : plus de liste « Où aller ? » ; on choisit sur le plan, la fiche s'ouvre en bas.
 
 import { INDICES, accessibles, butinArchive, butinCache, butinCombat, enAttente, forceStrate, indiceSalle, mainAccordable, peutRemonter, rangsDe, reperentPassage, salleCourante, suitePorte, visionSalle, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
-import { CONTENU, halteDef, nombreHaltes, particularite, queteDef, secretDef, voixDetail } from '../core/strates';
+import { CONTENU, PISTES, halteDef, nombreHaltes, particularite, queteDef, revelationDe, secretDef, strateDuSouvenir, voixDetail, type Voix } from '../core/strates';
 import { EXPLORER, rodeurDef, vestigesDe } from '../core/explorer';
 import { couleurFrequence } from './carte';
 import { paroleDescente } from '../core/campagne';
 import { PV_GROUPE, pvProfondeur } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef } from '../core/donnees';
 import { BATTU_PAR } from '../core/regles';
-import { CIBLES_FOUILLE, RENCONTRES, XP, etapeQueteTrouvee, gainChoixHalte, halteEnCours, type Jeu } from '../core/jeu';
+import { CIBLES_FOUILLE, RENCONTRES, XP, etapeQueteTrouvee, halteEnCours, type Jeu } from '../core/jeu';
 import { COLLECTION } from '../core/collection';
 import { REGLES } from '../core/regles';
 import { decorStrate, illustrationEnnemi, portrait, iconeCondition, portraitProvisoire } from './art';
@@ -411,16 +411,25 @@ function htmlHalte(j: Jeu, x: Expedition, vus: readonly number[]): string {
   const drapeaux = j.drapeaux ?? [];
   let r = `<div class="ex-halte"><div class="hx-scene" style="--decor:url(${decorStrate(x.strate)})"><span class="ex-sur">Halte ${ROMAIN[h.n - 1]} sur ${nombreHaltes(x.strate)} · Strate −${x.strate}</span><h2>${echap(h.titre)}</h2></div>`
     + `<p class="ex-recit hx-recit">${echap(h.recit)}</p><div class="hx-details">`;
+  // une voix qui reprend un choix d'avant porte sa marque : on voit que ce choix a compté (7 novembre 2026)
+  const voix = (nom: string, v: Voix, sur = '') => {
+    const s = v.si ? strateDuSouvenir(v.si) : undefined;
+    return `<div class="hx-voix${sur ? ' hx-revele' : ''}"${v.qui ? ` style="--c:${COULEUR[porteurDef(v.qui).lignee]}"` : ''}>${rond(v.qui)}<p>${sur ? `<em class="hx-piste">${echap(sur)}</em>` : ''}<small>${echap(nom)}</small>`
+      + `${s ? `<em class="hx-echo">◆ Ton choix à −${s}</em>` : ''}${v.qui ? `<strong>${echap(porteurDef(v.qui).nom)}</strong>` : ''}${echap(v.texte)}</p></div>`;
+  };
   h.details.forEach((dt, k) => {
-    if (vus.includes(k)) {
-      const v = voixDetail(dt, debout, drapeaux);
-      r += `<div class="hx-voix"${v.qui ? ` style="--c:${COULEUR[porteurDef(v.qui).lignee]}"` : ''}>${rond(v.qui)}<p><small>${echap(dt.nom)}</small>${v.qui ? `<strong>${echap(porteurDef(v.qui).nom)}</strong>` : ''}${echap(v.texte)}</p></div>`;
-    } else {
-      r += `<button type="button" class="hx-detail" data-action="halte-detail" data-id="${k}">${ICO.lueur}<span>${echap(dt.nom)}</span><small>Regarder</small></button>`;
-    }
+    if (vus.includes(k)) r += voix(dt.nom, voixDetail(dt, debout, drapeaux));
+    else r += `<button type="button" class="hx-detail" data-action="halte-detail" data-id="${k}">${ICO.lueur}<span>${echap(dt.nom)}</span><small>Regarder</small></button>`;
   });
+  // la dernière Halte de la Strate : ce que l'enquête a trouvé, selon la piste suivie
+  const rev = revelationDe(j.choixHaltes, x.strate, h.n);
+  if (rev) {
+    const k = h.details.length;
+    if (vus.includes(k)) r += voix(rev.r.nom, voixDetail({ nom: rev.r.nom, voix: rev.r.voix }, debout, drapeaux), `◆ Ton enquête · ${PISTES[rev.piste]}`);
+    else r += `<button type="button" class="hx-detail hx-enquete" data-action="halte-detail" data-id="${k}">${ICO.lueur}<span>Ce que ton enquête a trouvé</span><small>Découvrir</small></button>`;
+  }
   r += `</div><span class="ex-sur hx-choisir">Que fais-tu ?</span><div class="ex-choix">`
-    + h.choix.map((c, k) => `<button type="button" class="ex-choix-btn hx-choix" data-action="halte-choix" data-id="${k}"><span>${echap(c.texte)}<small class="hx-gain">${echap(gainChoixHalte(j, k))}</small></span>${CHEVRON}</button>`).join('')
+    + h.choix.map((c, k) => `<button type="button" class="ex-choix-btn hx-choix" data-action="halte-choix" data-id="${k}"><span>${echap(c.texte)}<small class="hx-gain">◆ ${echap(PISTES[c.piste])}</small></span>${CHEVRON}</button>`).join('')
     + `</div></div>`;
   return r;
 }

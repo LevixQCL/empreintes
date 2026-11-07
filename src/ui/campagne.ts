@@ -3,6 +3,7 @@
 // Elles se rejouent dans la Bibliothèque, onglet Campagne (même écran, avec « Retour »).
 
 import { PERSONNAGES, SCENES, nomActe, repliquesDe, type ContexteCampagne, type ImageScene, type Scene } from '../core/campagne';
+import { strateDuSouvenir } from '../core/strates';
 import { ENNEMIS, PORTEURS, ennemiDef, porteurDef } from '../core/donnees';
 import { decorStrate, illustrationEnnemi, illustrationScene, portrait, portraitPersonnage } from './art';
 import { NOM_LIGNEE } from './coquille';
@@ -42,6 +43,7 @@ export function htmlScene(s: Scene, c: ContexteCampagne, n: number, revoir = fal
   const fini = dites >= repliques.length;
   const r = dites ? repliques[dites - 1]! : null;
   const o = r ? orateur(r.qui) : null;
+  const echo = r?.souvenir ? strateDuSouvenir(r.souvenir) : undefined;
   const img = imageScene(s);
   let h = `<div class="voile scene-voile" role="dialog" aria-modal="true" aria-labelledby="scene-titre" style="--sc-img:url(${img})">`
     + `<section class="scene-campagne${fini ? ' finie' : ''}" data-action="scene-suite" aria-label="${echap(s.titre)}">`
@@ -56,7 +58,7 @@ export function htmlScene(s: Scene, c: ContexteCampagne, n: number, revoir = fal
   if (r && o) {
     h += `<div class="sc-replique" style="--c:${o.couleur}" aria-live="polite" data-k="${dites}">`
       + `<span class="sc-portrait" aria-hidden="true">${o.img ? `<img src="${o.img}" alt="" decoding="async">` : `<b>${echap(o.nom.replace(/^(Capitaine|Dame) /, '').charAt(0))}</b>`}</span>`
-      + `<div class="sc-paroles"><strong>${echap(o.nom)}${o.role ? `<small>${echap(o.role)}</small>` : ''}</strong><p>${echap(r.texte)}</p></div></div>`;
+      + `<div class="sc-paroles"><strong>${echap(o.nom)}${o.role ? `<small>${echap(o.role)}</small>` : ''}</strong>${echo ? `<em class="sc-echo">◆ Ton choix à −${echo}</em>` : ''}<p>${echap(r.texte)}</p></div></div>`;
   }
   h += `<footer class="sc-bas"><span class="sc-points" aria-label="Réplique ${dites} sur ${repliques.length}">`
     + repliques.map((_, i) => `<i${i < dites ? ' class="vu"' : ''}></i>`).join('') + `</span>`

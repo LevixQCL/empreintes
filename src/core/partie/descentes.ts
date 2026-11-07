@@ -2,8 +2,8 @@
 // Fonctions pures : le temps est toujours passé en paramètre (`now`, en ms).
 
 import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, CLE_LEGS, CARTES_COMMUNES, RATELIER_DEPART, communeDef, forceCommune, type CarteCommuneDef, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
-import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, salleCourante, forceStrate, nouvelleExploration, type CibleFouille, butinCombat, butinCache, halteSuivante, ouvrirPorte as ouvrirPorteX, relancerPorte as relancerPorteX, passerPorte as passerPorteX, suivrePassage as suivrePassageX, RANG_HALTE } from '../expedition';
-import { halteDef, queteDef, type HalteDef } from '../strates';
+import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, salleCourante, forceStrate, nouvelleExploration, type CibleFouille, butinCombat, butinCache, halteSuivante, ouvrirPorte as ouvrirPorteX, relancerPorte as relancerPorteX, passerPorte as passerPorteX, suivrePassage as suivrePassageX, RANG_HALTE, devoilerApresHalte } from '../expedition';
+import { RECIT_CARTE, halteDef, queteDef, type HalteDef } from '../strates';
 import { ETOILES, EXPLORER, PALIERS_ETOILES, RODEURS, metalEveille, rodeurDeZone, type EtoileId, vestigesDe } from '../explorer';
 import { ZONES, sequenceStrate, gesteDeCarte, GESTES_SPECIAUX, carteId } from '../donnees';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
@@ -1416,7 +1416,7 @@ export function halteEnCours(j: Jeu): HalteDef | null {
   return x?.enHalte && typeof x.halte === 'number' ? halteDef(x.strate, x.halte) ?? null : null;
 }
 
-/** Ce que rapporte chaque choix d'une Halte, en vrais chiffres (l'écran les affiche sur les boutons) */
+/** Ce que rapporte chaque choix d'une Halte, en vrais chiffres (plus affiché sur les boutons depuis le 7 novembre 2026 : le robot et les tests) */
 export function gainChoixHalte(j: Jeu, k: number): string {
   const h = halteEnCours(j);
   const c = h?.choix[k];
@@ -1432,10 +1432,13 @@ export function choisirHalte(j: Jeu, k: number): Resultat {
   const c = h.choix[k];
   if (!c) return non('Choix inconnu.');
   const gains = { ...x.gains!, haltes: (x.gains?.haltes ?? 0) + 1 };
-  let y: Expedition = { ...x, enHalte: false, gains, recit: c.recit };
+  // le gain n'est plus écrit sur le bouton (7 novembre 2026) : on le découvre dans le récit
+  const dit = c.effet === 'eclat' ? ' (+1 Éclat)' : c.effet === 'composants' ? ` (+${butinCombat(x.strate, 0)} composants)` : '';
+  let y: Expedition = { ...x, enHalte: false, gains, recit: `${c.recit}${dit}${c.carte ? ` ${RECIT_CARTE[c.carte]}` : ''}` };
   if (c.effet === 'eclat') gains.eclats++;
   else if (c.effet === 'lampe') y.lumiere = RANG_HALTE + 2;
   else y.butin += butinCombat(x.strate, 0);
+  if (c.carte) y = devoilerApresHalte(y, c.carte);
   if (c.drapeau && !(j.drapeaux ??= []).includes(c.drapeau)) j.drapeaux.push(c.drapeau);
   (j.haltes ??= {})[x.strate] = Math.max(j.haltes[x.strate] ?? 0, h.n);
   (j.choixHaltes ??= {})[`${x.strate}-${h.n}`] = k;

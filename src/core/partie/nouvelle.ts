@@ -68,7 +68,7 @@ export function decisionEnAttente(j: Jeu): Acte | null {
 
 // ---------- La campagne vécue (campagne.ts) ----------
 
-export const contexteCampagne = (j: Jeu): ContexteCampagne => ({ strate: j.strate, vaincue: strateVaincue(j), actes: j.actes, presents: porteursPresents(j), drapeaux: j.drapeaux ?? [] });
+export const contexteCampagne = (j: Jeu): ContexteCampagne => ({ strate: j.strate, vaincue: strateVaincue(j), actes: j.actes, presents: porteursPresents(j), drapeaux: j.drapeaux ?? [], choixHaltes: j.choixHaltes ?? {} });
 
 /** La scène de la campagne à jouer maintenant, au district (jamais pendant une descente, ni avant la chambre) */
 export const sceneCampagne = (j: Jeu) => (j.chambre && !j.expedition ? sceneEnAttente(contexteCampagne(j), j.scenes ?? []) : null);
