@@ -24,7 +24,11 @@ export const REGLES = {
   /** Ce que rapportent les salles (30 octobre 2026, Luc : « quel intérêt de faire le combat ? La cache donne plus et on ne perd pas de PV ») :
    *  le combat rapporte plus de composants que la cache, en plus de l'XP et de la chance de carte ; la cache devient la voie sûre et modeste,
    *  qui panse un peu l'escouade. Avant : combat 6, cache 8 (sans soin). Tout est multiplié par 1 + 0,25 × (Strate − 1). */
-  salles: { combat: 8, cache: 5, cacheSoin: 0.1, archive: 4 },
+  salles: { combat: 8, cache: 5, cacheSoin: 0.1, archive: 4, gardien: 14, elite: 1.7, parStrate: 0.25 },
+  /** Ce qu'Explorer rapporte de plus qu'une fouille (audit du 7 novembre 2026 : à −5, 25 de valeur par minute en exploration
+   *  contre 49 en fouille facile). Pour les combats d'une expédition salle par salle (pas les fouilles) : composants ×`composants`,
+   *  chance de carte par combat gagné +`carte`, et dès la Strate −`eclatsDes` une chance d'Éclat `eclats` (fouilles : `eclatsFouille`). */
+  exploration: { composants: 1.5, carte: 0.05, eclatsDes: 5, eclats: 0.2, eclatsFouille: 0.1 },
   /** 3ᵉ phase des gardiens (28 octobre 2026) : sous ce seuil de PV, une variante tirée au début du combat ; Déferlement : +X par tour, plafond */
   troisiemePhase: { seuil: 0.2, deferlement: 0.25, deferlementMax: 2, renfort: 0.2, renfortForce: 0.28 },
   tailleMain: 5,

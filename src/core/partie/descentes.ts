@@ -12,7 +12,7 @@ import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { REGLES } from '../regles';
-import { ACCORD_OUVERT, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
+import { ACCORD_OUVERT, chanceCreuseurFouille, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -295,6 +295,8 @@ export const MISSIONS = {
   longue: { heures: 8, composants: 45, doublons: 2, nouvelle: 0.35, usure: 8, energie: 100 },
   // le Porteur compte (28 octobre 2026, Bryan) : son niveau et son affinité avec le lieu multiplient le butin et l'XP (jamais les creuseurs)
   parNiveau: 0.03,
+  /** l'énergie de départ suit la Strate comme les gains : +25 % par Strate (3 novembre 2026) */
+  energieParStrate: 0.25,
   affinite: { bon: 1.3, neutre: 1, mauvais: 0.8 },
   /** le mauvais Porteur au mauvais endroit rentre plus usé */
   usureMauvais: 2,
@@ -374,7 +376,7 @@ export function bonusMission(j: Jeu, porteur: string, lieu: string): { affinite:
  * arrondie à 5 : 30 / 100 à −1, 60 / 200 à −5, 100 / 325 à −10. Avant, elle restait à 30 / 100 et devenait gratuite.
  */
 export function energieMission(j: Jeu, duree: DureeMission, strate = strateMission(j)): number {
-  return Math.round((MISSIONS[duree].energie * (1 + 0.25 * (Math.max(1, strate) - 1))) / 5) * 5;
+  return Math.round((MISSIONS[duree].energie * (1 + MISSIONS.energieParStrate * (Math.max(1, strate) - 1))) / 5) * 5;
 }
 
 /** Les composants que rapporterait une mission (pour l'afficher avant le départ) */
@@ -848,12 +850,13 @@ export function remonter(j: Jeu): Retour {
   const cartes: string[] = [];
   let eclats = 0;
   for (let k = 0; k < normales; k++) {
-    if (t.nombre() < COLLECTION.chanceCombat + (j.actes.chambre === 'commission' ? 0.05 : 0)) cartes.push(tirerTrouvaille(j, x.strate, 'fer', lignee));
-    if (x.strate >= 5 && t.nombre() < 0.1) eclats++;
+    const ex = REGLES.exploration, explore = !!x.carte && !x.fouille;
+    if (t.nombre() < COLLECTION.chanceCombat + (explore ? ex.carte : 0) + (j.actes.chambre === 'commission' ? 0.05 : 0)) cartes.push(tirerTrouvaille(j, x.strate, 'fer', lignee));
+    if (x.strate >= ex.eclatsDes && t.nombre() < (explore ? ex.eclats : ex.eclatsFouille)) eclats++;
   }
   progresser(j, 'combat', victoires);
   if (victoire && x.fouille) {
-    if (tireur(j).nombre() < CREUSEURS.fouille) gagnerCreuseurs(j, 1, 'un fouilleur perdu retrouvé pendant la fouille');
+    if (tireur(j).nombre() < chanceCreuseurFouille(x.strate)) gagnerCreuseurs(j, 1, 'un fouilleur perdu retrouvé pendant la fouille');
     // le filon : ce que la fouille visait
     // une Strate relevée (explorer.ts) : la première carte du filon est au moins en cuivre, +25 % de composants, Éclats plus fréquents
     // la difficulté (1er novembre 2026) : le filon d'une lignée offre 1, 2 ou 3 cartes au choix, et le difficile part du cuivre
@@ -1322,7 +1325,12 @@ export const strateEpreuve = (j: Jeu) => Math.max(1, strateVaincue(j));
 export const hausseFelee = (ep: EpreuveDef) => Math.round(((ep.imposee ? RECRUES.felee : FELEE.force) - 1) * 100);
 /** La puissance des ennemis d'une Épreuve */
 export const forceEpreuve = (ep: EpreuveDef, strate: number, felee?: boolean) =>
-  ep.imposee ? forceStrate(RECRUES.strate) * RECRUES.force * (felee ? RECRUES.felee : 1) : forceStrate(strate) * (strate >= REGLES.apparition.troisiemePhase && ep.forceBas ? ep.forceBas : ep.force) * (felee ? FELEE.force : 1);
+  ep.imposee ? forceStrate(RECRUES.strate) * RECRUES.force * (felee ? RECRUES.felee : 1) : forceStrate(strate) * (strate >= REGLES.apparition.troisiemePhase && ep.forceBas ? ep.forceBas : ep.force) * (strate >= EPREUVES_PROFONDES.des ? EPREUVES_PROFONDES.force : 1) * (felee ? FELEE.force : 1);
+/**
+ * Audit du 7 novembre 2026 : les Épreuves se gagnaient de 63 à 100 % à −2 et −3, puis de 0 à 6 % de −4 à −10
+ * (la force des Strates monte plus vite que le deck d'un joueur moyen). Elles s'allègent à partir de −4.
+ */
+export const EPREUVES_PROFONDES = { des: 4, force: 0.85 } as const;
 
 /** les Épreuves de la semaine s'ouvrent après le gardien de −2 (2 novembre 2026, Bryan : « par étapes douces » ; avant, dès −1) */
 export const EPREUVES_STRATE = 2;

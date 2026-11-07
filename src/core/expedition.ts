@@ -176,7 +176,9 @@ export const FORCE = {
   // −7 à −14 relevés le 3 novembre 2026 (validé par Bryan) : avant 2.888, 3.016, 3.102, 3.262, 3.475, 3.743, 3.936, 4.064 ; le joueur dépassait
   // les ennemis en fin de parcours (combats normaux de 5 tours à −10, front gagné à 58 %). Avec moins de creuseurs demandés (CREUSEURS.requis) :
   // −10 au jour 30 pour l'occasionnel, front ≈ 45 %, combats normaux 6 à 8 tours.
-  table: [0.85, 1.39, 1.818, 2.139, 2.46, 2.781, 2.9, 3.05, 3.2, 3.38, 3.6, 3.85, 4.05, 4.2] as number[],
+  // −7 à −10 relevés le 7 novembre 2026 (audit : −7 à −10 avant 2.9, 3.05, 3.2, 3.38) : les fouilles profondes ramènent plus de creuseurs et les
+  // Épreuves profondes s'allègent, la Strate −10 tombait au jour 22 ; c'est le front qui freine désormais, pas l'attente.
+  table: [0.85, 1.39, 1.818, 2.139, 2.46, 2.781, 2.98, 3.2, 3.42, 3.6, 3.7, 3.9, 4.05, 4.2] as number[],
   /** hausse par Strate au-delà de la table */
   ensuite: 1.04,
   /** hausse par Strate pour suivre les niveaux des Porteurs. À 0 depuis les traits, phases et conditions (22 octobre 2026), qui
@@ -189,10 +191,10 @@ export const forceStrate = (strate: number) => {
   return Math.round(base * (1 + FORCE.niveaux * Math.max(0, strate - 1)) * 1000) / 1000;
 };
 /** Composants gagnés par victoire */
-export const butinCombat = (strate: number, index: number) => Math.round((index === 2 ? 14 : REGLES.salles.combat) * (1 + 0.25 * (strate - 1)));
+export const butinCombat = (strate: number, index: number) => Math.round((index === 2 ? REGLES.salles.gardien : REGLES.salles.combat) * (1 + REGLES.salles.parStrate * (strate - 1)));
 /** Composants d'une cache, et d'une salle d'archives */
-export const butinCache = (strate: number) => Math.round(REGLES.salles.cache * (1 + 0.25 * (strate - 1)));
-export const butinArchive = (strate: number) => Math.round(REGLES.salles.archive * (1 + 0.25 * (strate - 1)));
+export const butinCache = (strate: number) => Math.round(REGLES.salles.cache * (1 + REGLES.salles.parStrate * (strate - 1)));
+export const butinArchive = (strate: number) => Math.round(REGLES.salles.archive * (1 + REGLES.salles.parStrate * (strate - 1)));
 
 export function nouvelleExpedition(opts: {
   porteurs: PorteurEtat[]; deck: GesteDef[]; strate: number; rng: number;
@@ -228,7 +230,9 @@ export function cloturerCombat(x: Expedition): Expedition {
     if (x.combat.issue === 'victoire') {
       const salle = salleCourante(x);
       const fin = salle.type === 'gardien';
-      const gain = fin ? butinCombat(x.strate, 2) : salle.type === 'elite' ? Math.round(butinCombat(x.strate, 0) * 1.7) : butinCombat(x.strate, 0);
+      const brut = fin ? butinCombat(x.strate, 2) : salle.type === 'elite' ? butinCombat(x.strate, 0) * REGLES.salles.elite : butinCombat(x.strate, 0);
+      // explorer rapporte plus que fouiller (audit du 7 novembre 2026)
+      const gain = Math.round(brut * (x.fouille ? 1 : REGLES.exploration.composants));
       let gains: Gains = { ...(x.gains ?? gainsVides()), elites: (x.gains?.elites ?? 0) + (salle.type === 'elite' ? 1 : 0), ...(salle.quete ? { etape: true } : {}) };
       if (salle.vestige) gains = ramasser(gains, salle.vestige);
       // le Rôdeur : enfui, il garde la part de vie qui lui reste ; abattu, il compte comme une salle scellée

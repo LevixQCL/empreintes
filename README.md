@@ -236,7 +236,7 @@ qu'il faille un peu plus d'expéditions pour chaque nouvelle Strate (environ aut
 **Le creusement** (22 octobre 2026) : battre le gardien de la Strate la plus profonde prépare l'étage suivant, qui ne
 s'ouvre qu'avec assez de **creuseurs** logés par la **Tour du Noyau** (`CREUSEURS` dans `jeu.ts`). Les creuseurs qui percent
 un étage y restent : pas de réserve pour plus tard. On en gagne en jouant (fouilles, missions, Épreuves, gardiens, Confiance).
-Il en faut dès la Strate −2 (Bryan, 22 octobre 2026 : ralentir dès le début). Réglé pour un joueur occasionnel : −2 vers le jour 3, −5 vers le jour 7, −7 vers le jour 14, −10 vers le jour 30 ; un assidu atteint −10 vers le jour 23.
+Il en faut dès la Strate −2 (Bryan, 22 octobre 2026 : ralentir dès le début). Réglé pour un joueur occasionnel (`npm run audit`, 7 novembre 2026) : −5 vers le jour 6, −7 vers le jour 12, −10 vers le jour 27 (test : entre 27 et 32). Le Noyau loge juste ce qu'il faut : niveau 5 pour −7, 7 pour −10.
 
 **Quand on bloque devant une Strate** : les *fouilles ciblées* (`fouiller`, une descente courte sans gardien dans une Strate
 vaincue, vers des cartes d'une lignée, des composants ou des Éclats), les *missions* (`envoyerMission`, un Porteur libre part
@@ -249,9 +249,8 @@ gardien de la dernière Strate vaincue, une carte au choix dont une en argent à
   on voit la carte avant de payer, aucun hasard payé. Fer et cuivre, de l'argent après la Strate −4, jamais d'or ni de nacre.
   Une offre sur deux est un doublon d'une carte possédée. Il a son propre hasard (`comptoir.rng`) : il ne touche pas aux trouvailles.
 - **L'entraînement à la Tour** (`ENTRAINEMENT`) : un Porteur posté à la Tour du Noyau gagne de l'XP avec le temps (3 à 8 XP/h),
-  jusqu'à 4 niveaux par niveau de la Tour. Il ne descend pas pendant ce temps.
-Le robot de parcours s'en sert aussi : la Strate −10 arrive vers le jour 29-30 (occasionnel), 23 (assidu), comme avant :
-ce sont les creuseurs et la Tour qui tiennent le rythme. Les images `public/art/batiments/comptoir-N.webp` sont provisoires
+  jusqu'à 3 niveaux par niveau de la Tour (`ENTRAINEMENT.niveauxParNoyau`), jamais au-delà du meilleur Porteur de l'escouade. Il ne descend pas pendant ce temps.
+Le robot de parcours s'en sert aussi : ce sont les creuseurs, la Tour et le front qui tiennent le rythme (Strate −10 : voir plus haut). Les images `public/art/batiments/comptoir-N.webp` sont provisoires
 (le plateau vide du tableau) en attendant celles de Midjourney.
 
 **Lignées et origines** (23 octobre 2026, Bible « Devenir Résonant, Géné ou Augmenté » et « D'où viennent leurs dons »).
@@ -326,7 +325,7 @@ date d'arrivée = maintenant quand la profondeur monte). Les pseudos sont unique
 **Les ouvertures par étapes** (2 novembre 2026, Bryan : « par étapes douces », sans ralentir la descente) : après le gardien
 de −1, le Port et ses missions en mer ; −2, les Épreuves de la semaine (`EPREUVES_STRATE`) ; −3, les pillages
 (`PILLAGE.strateMin`, le Port reste ouvert dès −1 avec `PILLAGE.strateDuPort`) et la première marée ; −4, les 2ᵉ et 3ᵉ escouades
-(`ESCOUADES_STRATE`, `escouadesOuvertes`). Avant, presque tout s'ouvrait après −1. Le parcours simulé ne change pas (−10 au jour 31).
+(`ESCOUADES_STRATE`, `escouadesOuvertes`). Avant, presque tout s'ouvrait après −1. Le parcours simulé ne change pas.
 
 **Les pillages** (26 octobre 2026, décidé avec Bryan ; `src/core/partie/pillages.ts`, `src/ui/pillages.ts`).
 Le Port du district (fermé jusque-là) s'ouvre après la Strate −1 sur les « Archipels voisins » (Bryan : « il faut un bateau pour aller piller ») : une carte marine, ton archipel en bas, six archipels
@@ -361,13 +360,27 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
 - *Récompenses* : chaque carte proposée dit qui peut la porter (ou la voie et le Porteur qui l’attend) et « Niv. N prêt » si le doublon fait monter.
 - *Porteur à terre* : ses cartes restent dans le deck, éteintes (`REGLES.eteinte` = 0,85 de force, sans effet, Fréquence intacte), la main reste à 5.
 - *Durée des combats* : les PV montent moins vite que les coups en profondeur (`pvProfondeur`) et un groupe a moins de PV (`PV_GROUPE`) ;
-  `npx tsx scripts/durees.ts` mesure au parcours : normaux ~8 tours, groupes ~10, gardiens ~15 (cible 6-9 / 9-13 / 12-18), Strate −10 au jour 29.
+  `npx tsx scripts/durees.ts` mesure au parcours : normaux ~8 tours, groupes ~10, gardiens ~15 (cible 6-9 / 9-13 / 12-18).
   Les pillages gardent leurs PV (`pvPleins`).
 - *La Confiance du quartier* (refaite) : elle ne fait que monter, par niveaux, et se lit dans une roue à côté de la Strate, en haut
   (`niveauConfiance`, `CONFIANCE` dans `etat.ts`) : +1 par combat gagné, +3 par descente réussie, +2 par chantier, +4 par pillage gagné.
   Chaque niveau amène un creuseur volontaire (`recompenserConfiance`) ; l’Accord ouvert de Joss demande le niveau 2.
 - *Énergie* : convertisseur du Générateur (`CONVERTISSEUR` : 100 énergie → 10, puis 6, puis 3 composants, 20 lots par jour) et soins intensifs
-  de la Clinique (`SOINS_INTENSIFS` : 20 énergie par point d’Usure).
+  de la Clinique (`SOINS_INTENSIFS` : 5 énergie par point d’Usure). La réserve tient au moins 24 h de production du Générateur (`DISTRICT.reserveHeures`).
+
+### Audit de l'économie (7 novembre 2026)
+
+`npm run audit` joue des parties d'un joueur occasionnel moyen et donne, Strate par Strate, le jour d'ouverture et les sessions
+passées à attendre des creuseurs, puis les composants, Éclats et niveau du Noyau au fil des jours, et l'énergie perdue.
+Corrigé ce jour-là (avant → après) :
+- *Creuseurs* : une fouille réussie à −6 et plus bas en ramène un une fois sur deux (`CREUSEURS.fouilleProfonde`) ; attente à −8 :
+  11 sessions sur 14 → 3 sur 8. Le logement est étalé (`CREUSEURS.logement`) : chaque niveau du Noyau ouvre un étage de plus.
+- *Front* : −7 à −10 un peu plus forts (`FORCE.table`) pour que ce soit le combat qui freine, pas l'attente. −10 : jour 36 → 27.
+- *Épreuves* : force ×0,85 à partir de −4 (`EPREUVES_PROFONDES`) : 0-6 % → 15-60 % de victoires au premier essai.
+- *Éclats* : le Comptoir en vend 1 à 2 par jour à 500 composants (`COMPTOIR.eclats`, `acheterEclat`).
+- *Réserves* : Butins de la semaine empilés (4 au plus, `ARCHIVE.empilesMax`), 7 colis de ravitaillement, caisse de la Flèche 7 jours.
+- *Clinique* : +2 % de PV max par niveau au-delà du 3e (`CLINIQUE_PV`).
+- *Explorer* : composants ×1,5, chance de carte +5 points, Éclats 20 % dès −5 (`REGLES.exploration`), contre les fouilles.
 
 ## Firebase
 

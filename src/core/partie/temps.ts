@@ -78,7 +78,7 @@ export function tick(j: Jeu, now: number): string[] {
     j.quotidien.jour = jour;
   }
 
-  // un colis de ravitaillement de plus chaque jour, 3 au plus (aucune série à perdre)
+  // un colis de ravitaillement de plus chaque jour, une semaine au plus (aucune série à perdre)
   if (jour > j.ravitaillement.jour) {
     j.ravitaillement.reserve = Math.min(RAVITAILLEMENT.reserveMax, j.ravitaillement.reserve + (jour - j.ravitaillement.jour));
     j.ravitaillement.jour = jour;
@@ -89,7 +89,9 @@ export function tick(j: Jeu, now: number): string[] {
   if (semaine > j.archive.semaine) {
     const paliers = ARCHIVE.paliers.filter((p) => j.archive.points >= p).length;
     if (paliers > 0) {
-      j.archive.aOuvrir = Math.max(j.archive.aOuvrir, paliers);
+      // un Butin pas encore ouvert n'est plus écrasé par le suivant (audit du 7 novembre 2026) : ils s'empilent
+      if (!j.archive.aOuvrir) j.archive.aOuvrir = paliers;
+      else j.archive.enAttente = [...(j.archive.enAttente ?? []), paliers].slice(-(ARCHIVE.empilesMax - 1));
       const t = 'Le Butin de la semaine est prêt à être ouvert.';
       log(j, t);
       nouvelles.push(t);

@@ -12,8 +12,8 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe, deNom, ilElle } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, EPREUVES_STRATE, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, energieMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
-  COMPTOIR, prixComptoir, renouvelablesComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
+  OBJECTIFS, EPREUVES_STRATE, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, energieMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  COMPTOIR, eclatsAuComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -533,7 +533,7 @@ function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: nu
 const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
   energie: 'energie', soin: 'soin', stockage: 'coffre', creuseurs: 'ouvrier', strate: 'descendre', forge: 'chrono',
   plafond: 'tour', chantiers: 'marteau', porteur: 'porteurs', apparence: 'district', entrainement: 'monter', offres: 'cartes', argent: 'cristal',
-  places: 'monter', barques: 'porteurs', commune: 'cartes', cercle: 'cercle', echanges: 'echange', ouvertes: 'chrono', vitrine: 'cartes', or: 'cristal',
+  places: 'monter', barques: 'porteurs', commune: 'cartes', cercle: 'cercle', echanges: 'echange', ouvertes: 'chrono', vitrine: 'cartes', or: 'cristal', eclats: 'eclats', pv: 'soin',
 };
 const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${Number.isInteger(v) ? ent(v) : (Math.round(v * 10) / 10).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')}${unite ? ` ${unite}` : ''}`);
 
@@ -741,6 +741,17 @@ function blocComptoir(e: EcranDistrict): string {
       : `<small class="aide">Une fois par jour, les fouilleurs ressortent d’autres cartes du même métal à la place de ${places > 1 ? `celles encore en vente (${places})` : 'celle encore en vente'}.</small>`
         + `<button type="button" class="btn sec petit" data-action="comptoir-renouveler"${assezR ? '' : ' disabled'} aria-label="Renouveler les étals pour ${COMPTOIR.renouveler} composants">${ICO.chrono}Renouveler les étals ${couts(j, { composants: COMPTOIR.renouveler, eclats: 0 })}</button>`)
     + `</div>`;
+  // des Éclats contre des composants (audit du 7 novembre 2026), en petite quantité chaque jour
+  const ec = eclatsAuComptoir(j);
+  if (ec.max) {
+    const assezE = j.composants >= COMPTOIR.eclats.composants;
+    h += `<div class="cp-renouveler cp-eclats">`
+      + (ec.restants
+        ? `<small class="aide">Les fouilleurs revendent aussi les Éclats qu’ils remontent : encore <b>${ec.restants} sur ${ec.max}</b> aujourd’hui.</small>`
+          + `<button type="button" class="btn sec petit" data-action="comptoir-eclat"${assezE ? '' : ' disabled'} aria-label="Acheter un Éclat pour ${COMPTOIR.eclats.composants} composants">${ICO.eclats}Acheter un Éclat ${couts(j, { composants: COMPTOIR.eclats.composants, eclats: 0 })}</button>`
+        : `<small class="aide">${ICO.ok}Plus d’Éclats à vendre aujourd’hui (${ec.max} par jour) : nouvel arrivage demain.</small>`)
+      + `</div>`;
+  }
   return h + `<small class="fb-absents">Un doublon fait monter une carte que tu as déjà. L’or et la nacre ne se vendent pas : ils se trouvent dans les Strates.</small></section>`;
 }
 
@@ -845,7 +856,8 @@ function feuilleBatiment(e: EcranDistrict): string {
 
   // ce que le bâtiment rapporte
   if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>+${ent(energieParHeure(j))}</b><small>énergie par heure</small></div></div>${reserve(j, b)}`;
-  if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure soignée par heure</small></div></div>`;
+  if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure soignée par heure</small></div>`
+    + (partPvClinique(j) ? `<div class="fb-chiffre">${ICO.porteurs}<b>+${Math.round(partPvClinique(j) * 100)} %</b><small>PV max. des Porteurs</small></div>` : '') + `</div>`;
   if (b === 'noyau') {
     h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.strate}<b>−${j.strate}</b><small>Strate ouverte</small></div><div class="fb-chiffre">${ICO.tour}<b>${niv}</b><small>niveau maximum des autres bâtiments</small></div></div>`
       + blocEntrainement(e);
@@ -1835,7 +1847,7 @@ export function htmlCoupe(e: EcranDistrict): string {
     if (manque.creuseurs) morceaux.push(`trouve <b>${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}</b>`);
     if (manque.noyau) morceaux.push(`monte la Tour du Noyau au <b>niveau ${noyauRequis(cible)}</b> pour les loger`);
     etape = `<strong>Pour ouvrir la Strate −${cible}</strong><small>${morceaux.join(', puis ').replace(/^./, (c) => c.toUpperCase())}.</small>`
-      + (manque.creuseurs ? `<ul class="tr-sources"><li>${ICO.cristal}<span>Fouille ciblée</span><b>${Math.round(CREUSEURS.fouille * 100)} %</b></li>`
+      + (manque.creuseurs ? `<ul class="tr-sources"><li>${ICO.cristal}<span>Fouille ciblée</span><b>${Math.round(chanceCreuseurFouille(j.strate) * 100)} %</b></li>`
         + `<li>${ICO.porteurs}<span>Mission</span><b>${Math.round(CREUSEURS.missionCourte * 100)} à ${Math.round(CREUSEURS.missionLongue * 100)} %</b></li>`
         // les Épreuves n'ouvrent qu'après la Strate −EPREUVES_STRATE : on ne les cite qu'à partir de là (test critique du 4 novembre 2026)
         + (j.chambre && strateVaincue(j) >= EPREUVES_STRATE ? `<li>${ICO.boost}<span>Épreuve <em>(1re victoire de la semaine)</em></span><b>assuré</b></li>` : '') + `</ul>` : '')

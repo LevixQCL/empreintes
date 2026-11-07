@@ -198,7 +198,7 @@ async function main() {
       preview({ root: racine, logLevel: 'error', build: { outDir: resolve(sortie, dist) }, preview: { port: 4401 + i, strictPort: true } })));
     // require : trouve aussi un Playwright installé pour toute la machine
     const { chromium } = createRequire(import.meta.url)('playwright') as typeof import('playwright');
-    const navigateur = await chromium.launch();
+    const navigateur = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
     const resultats: { nom: string; differents: number }[] = [];
     const erreurs: string[] = [];
     try {

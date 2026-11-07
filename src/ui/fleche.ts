@@ -167,7 +167,7 @@ function garde(f: EtatFleche, libre: number | null): string {
     + `<span class="fl-badge">${g.repousses}<small>défense${g.repousses > 1 ? 's' : ''} tenue${g.repousses > 1 ? 's' : ''}</small></span></header>`
     + visages(g.garnison.porteurs.map((p) => p.id))
     + `<dl class="fl-enjeu"><div class="gain"><dt>Gage par jour</dt><dd>${ICO.chrono}<b>${gage(g.quai)}</b><small>${jours ? `tenu depuis ${jours} jour${jours > 1 ? 's' : ''}` : 'tenu depuis aujourd’hui'}</small></dd></div>`
-    + `<div class="gain"><dt>Dans la caisse</dt><dd>${ICO.coffre}<b>${ent(caisse.composants)}${caisse.eclats ? ` ${ICO.eclats}${caisse.eclats}` : ''}</b><small>${pleine ? 'pleine : deux jours au plus' : `jusqu’à ${ASCENSION.caisseJours} jours de gage`}</small></dd></div></dl>`
+    + `<div class="gain"><dt>Dans la caisse</dt><dd>${ICO.coffre}<b>${ent(caisse.composants)}${caisse.eclats ? ` ${ICO.eclats}${caisse.eclats}` : ''}</b><small>${pleine ? `pleine : ${ASCENSION.caisseJours} jours au plus` : `jusqu’à ${ASCENSION.caisseJours} jours de gage`}</small></dd></div></dl>`
     + `<p class="fl-regle">${ICO.porteurs}<span>Une copie figée de ton escouade (force ${Math.round(forceGarnison(g.garnison) * 100)}) se défend seule. Chaque défense tenue rapporte un quart de jour de gage ; battue, elle perd le quai, jamais ta montée.</span></p>`
     + `<div class="fl-garde-actions"><button type="button" class="btn prim large" data-action="fleche-gage"${caisse.composants || caisse.eclats ? '' : ' disabled'}>${ICO.coffre}Recevoir le gage</button>`
     + (plusHaut ? `<button type="button" class="btn sec" data-action="fleche-tenir" data-quai="${plusHaut}">${ICO.monter}Monter ta garde au quai ${plusHaut}</button>` : '')

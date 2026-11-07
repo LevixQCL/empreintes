@@ -40,7 +40,8 @@ export function donnerKitRecrues(j: Jeu): void {
 // un doublon d'une carte qu'on possède déjà, pour faire monter le deck sans gonfler la découverte.
 
 export const RAVITAILLEMENT = {
-  reserveMax: 3,
+  /** colis gardés au plus : une semaine d'absence (audit du 7 novembre 2026 : avant 3, les suivants étaient perdus) */
+  reserveMax: 7,
   /** composants du colis : base + par Strate ouverte */
   composants: 20,
   composantsParStrate: 10,
@@ -126,10 +127,13 @@ export function prendre(j: Jeu, index: number): Resultat {
   return { ok: true };
 }
 
+/** les Éclats qu'on peut prendre à la place de la carte de l'objectif du jour */
+export const QUOTIDIEN_ECLATS = 2;
+
 /** Récupère l'objectif du jour : une carte au choix parmi 3, ou 2 Éclats */
 export function reclamerQuotidien(j: Jeu): Resultat {
   if (!quotidienFait(j)) return non('Objectif du jour pas encore rempli.');
-  j.choix.push({ source: 'quotidien', options: tirerChoix(j, j.strate), eclats: 2 });
+  j.choix.push({ source: 'quotidien', options: tirerChoix(j, j.strate), eclats: QUOTIDIEN_ECLATS });
   progresser(j, 'quotidien');
   const q = j.quotidien;
   q.reserve--;
@@ -143,12 +147,14 @@ export function reclamerQuotidien(j: Jeu): Resultat {
 export function ouvrirArchive(j: Jeu): Resultat {
   const n = j.archive.aOuvrir;
   if (!n) return non('Le Butin de la semaine n’est pas encore prêt.');
-  j.composants += 40;
+  j.composants += ARCHIVE.composants;
   j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate) });
-  if (n >= 2) j.eclats += 3;
+  if (n >= 2) j.eclats += ARCHIVE.eclatsPalier2;
   if (n >= 3) j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent') });
-  if (n >= 4) { j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent') }); j.eclats += 5; }
-  j.archive.aOuvrir = 0;
+  if (n >= 4) { j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent') }); j.eclats += ARCHIVE.eclatsPalier4; }
+  // le Butin suivant, s'il y en a un qui attend
+  j.archive.aOuvrir = j.archive.enAttente?.shift() ?? 0;
+  if (j.archive.enAttente && !j.archive.enAttente.length) delete j.archive.enAttente;
   log(j, `Butin de la semaine ouvert : palier ${n} sur ${ARCHIVE.paliers.length}.`);
   return { ok: true };
 }

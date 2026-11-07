@@ -5,7 +5,7 @@ import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, mod
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
-import { CERCLE, CERCLE_OUVERTURE, CONFIANCE, coutPompe, confier, nuitDesLignes, pompesRestantes, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
+import { partPvClinique, CERCLE, CERCLE_OUVERTURE, CONFIANCE, coutPompe, confier, nuitDesLignes, pompesRestantes, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
 import { ORDRE_FAMILLES, fragmentDef } from '../fragments';
 
@@ -61,7 +61,7 @@ export const soinParHeure = (j: Jeu) => (DISTRICT.soinParHeure[j.batiments.clini
 export const coutRefabrication = (moduleId: string) => COLLECTION.refabrication[moduleDef(moduleId).rarete];
 
 /** Vitesse de la Forge selon son niveau : +25 % par niveau */
-export const vitesseForge = (niveau: number) => 1 + 0.25 * (niveau - 1);
+export const vitesseForge = (niveau: number) => 1 + DISTRICT.forgeParNiveau * (niveau - 1);
 
 /** Durée de refabrication, en ms (plus rapide avec un forgeron de la bonne lignée et une Forge améliorée) */
 export function dureeFabrication(j: Jeu, moduleId: string): number {
@@ -82,7 +82,7 @@ export const chantiersMax = (j: Jeu) => (j.batiments.noyau >= DISTRICT.chantiers
 
 /** Une chose que le niveau suivant d'un bâtiment change : un chiffre qui monte (avant → après) ou un déblocage */
 export interface GainNiveau {
-  quoi: 'energie' | 'soin' | 'stockage' | 'creuseurs' | 'strate' | 'forge' | 'plafond' | 'chantiers' | 'porteur' | 'entrainement' | 'offres' | 'argent' | 'places' | 'barques' | 'commune' | 'cercle' | 'echanges' | 'ouvertes' | 'vitrine' | 'or';
+  quoi: 'energie' | 'soin' | 'stockage' | 'creuseurs' | 'strate' | 'forge' | 'plafond' | 'chantiers' | 'porteur' | 'entrainement' | 'offres' | 'argent' | 'places' | 'barques' | 'commune' | 'cercle' | 'echanges' | 'ouvertes' | 'vitrine' | 'or' | 'eclats' | 'pv';
   texte: string;
   avant?: number;
   apres?: number;
@@ -110,7 +110,9 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
   const apres: Jeu = { ...j, batiments: { ...j.batiments, [b]: niv + 1 } };
   const g: GainNiveau[] = [];
   if (b === 'generateur') g.push({ quoi: 'energie', texte: 'Énergie par heure', avant: energieParHeure(j), apres: energieParHeure(apres) });
+  if (b === 'generateur' && stockage(apres) > stockage(j)) g.push({ quoi: 'stockage', texte: 'Réserve d’énergie', avant: stockage(j), apres: stockage(apres), detail: `au moins ${DISTRICT.reserveHeures} h de production` });
   if (b === 'clinique') g.push({ quoi: 'soin', texte: 'Usure soignée par heure', avant: soinParHeure(j), apres: soinParHeure(apres), detail: 'pour chaque Porteur au repos' });
+  if (b === 'clinique' && partPvClinique(apres) > partPvClinique(j)) g.push({ quoi: 'pv', texte: 'PV max. des Porteurs', avant: Math.round(partPvClinique(j) * 100), apres: Math.round(partPvClinique(apres) * 100), unite: '%', detail: 'en plus, pour tous' });
   if (b === 'clinique' && niv + 1 === ACCORD_OUVERT.clinique) {
     const joss = PORTEURS.find((p) => p.arrivee?.accord && !j.arrives.includes(p.id));
     if (joss) g.push({ quoi: 'porteur', texte: 'La Clinique peut organiser un Accord ouvert', detail: `un nouveau Résonant, quand ${ACCORD_OUVERT.confiance * CONFIANCE.palier} habitants te suivent` });
@@ -125,6 +127,8 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
   if (b === 'comptoir') {
     g.push({ quoi: 'offres', texte: 'Cartes en vente chaque jour', avant: etalsDuComptoir(j).length, apres: etalsDuComptoir(apres).length });
     const argent = (x: Jeu) => (COMPTOIR.etals[x.batiments.comptoir] ?? []).includes('argent');
+    const ec = (x: Jeu) => COMPTOIR.eclats.parJour[x.batiments.comptoir] ?? 0;
+    if (ec(apres) > ec(j)) g.push({ quoi: 'eclats', texte: 'Éclats en vente par jour', avant: ec(j), apres: ec(apres), detail: `${COMPTOIR.eclats.composants} composants l’Éclat` });
     if (argent(apres) && !argent(j)) g.push({ quoi: 'argent', texte: 'Des cartes en argent', ...(strateVaincue(j) < COMPTOIR.strateArgent ? { detail: `une fois la Strate −${COMPTOIR.strateArgent} vaincue` } : {}) });
   }
   if (b === 'cercle') {
@@ -563,7 +567,32 @@ export const COMPTOIR = {
   partDoublons: 0.5,
   /** renouveler les étals encore en vente, une fois par jour (1er novembre 2026, Bryan) : la moitié d'une carte en cuivre */
   renouveler: 60,
+  /**
+   * Des Éclats contre des composants (audit du 7 novembre 2026 : 10 000 composants sans usage au jour 21, Éclats entre 0 et 4
+   * dès le jour 10, Noyau bloqué au niveau 8 du jour 25 au jour 40). Les fouilleurs revendent aussi les Éclats qu'ils remontent,
+   * à prix fixe et en petite quantité : par jour, 1 Éclat au Comptoir niveau 1 à 3, 2 du niveau 4 à 7, 3 du niveau 8 à 10.
+   */
+  eclats: { composants: 500, parJour: [0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2] as number[] },
 } as const;
+
+/** Les Éclats que le Comptoir vend encore aujourd'hui */
+export function eclatsAuComptoir(j: Jeu): { max: number; restants: number } {
+  const max = COMPTOIR.eclats.parJour[j.batiments.comptoir] ?? 0;
+  return { max, restants: Math.max(0, max - (j.comptoir.eclats ?? 0)) };
+}
+
+/** Achète un Éclat au Comptoir, contre des composants */
+export function acheterEclat(j: Jeu, now = j.dernierTick): Resultat {
+  if (!j.batiments.comptoir) return non('Le Comptoir est fermé : remets-le d’abord en état.');
+  garnirComptoir(j, now);
+  if (!eclatsAuComptoir(j).restants) return non('Les fouilleurs n’ont plus d’Éclats à vendre aujourd’hui : nouvel arrivage demain.');
+  if (j.composants < COMPTOIR.eclats.composants) return non(`Il faut ${COMPTOIR.eclats.composants} composants pour un Éclat.`);
+  j.composants -= COMPTOIR.eclats.composants;
+  j.eclats += 1;
+  j.comptoir.eclats = (j.comptoir.eclats ?? 0) + 1;
+  log(j, `Comptoir : un Éclat acheté (${COMPTOIR.eclats.composants} composants).`);
+  return { ok: true, message: `+1 Éclat pour ${COMPTOIR.eclats.composants} composants.` };
+}
 
 export function comptoirVide(now: number, rng: number): Comptoir {
   return { jour: jourDe(now), offres: [], achetes: [], rng: (rng ^ 0x9e3779b9) >>> 0 };
@@ -581,7 +610,7 @@ export const prixComptoir = (id: string) => COMPTOIR.prix[moduleDef(id).rarete] 
 export function garnirComptoir(j: Jeu, now: number): void {
   const c = j.comptoir;
   const jour = jourDe(now);
-  if (c.jour !== jour) { c.jour = jour; c.offres = []; c.achetes = []; c.renouvele = false; }
+  if (c.jour !== jour) { c.jour = jour; c.offres = []; c.achetes = []; c.renouvele = false; c.eclats = 0; }
   const etals = etalsDuComptoir(j);
   if (c.offres.length >= etals.length) return;
   const t = tireur(c);

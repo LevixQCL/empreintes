@@ -20,7 +20,8 @@
     "duel": "tsx scripts/duel-equilibre.ts",
     "epreuves": "tsx scripts/epreuves.ts",
     "fouilles": "tsx scripts/fouilles.ts",
-    "livre": "tsx scripts/livre.ts .livre && python3 scripts/livre-images.py .livre"
+    "livre": "tsx scripts/livre.ts .livre && python3 scripts/livre-images.py .livre",
+    "audit": "tsx scripts/audit-economie.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",

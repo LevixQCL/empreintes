@@ -18,8 +18,12 @@ export const DISTRICT = {
   energieParHeure: [0, 20, 35, 70, 125, 225, 320, 430, 550, 680, 820],
   /** stockage maximum selon le niveau du Noyau */
   stockage: [0, 300, 650, 1300, 2300, 4100, 6000, 9000, 13000, 19000, 27000],
+  /** la réserve tient au moins ces heures de production du Générateur */
+  reserveHeures: 24,
   /** points d'Usure soignés par heure selon le niveau de la Clinique */
   soinParHeure: [0, 6, 10, 16, 22, 30, 36, 42, 48, 55, 62],
+  /** la Forge refabrique 25 % plus vite par niveau */
+  forgeParNiveau: 0.25,
   /** durée du chantier pour atteindre un niveau, en minutes (index = niveau visé) */
   chantierMinutes: [0, 0, 0, 5, 30, 120, 240, 720, 1440, 2160, 2880],
   /** chantiers en même temps : 1, puis 2 à partir du Noyau niveau 4 */
@@ -50,6 +54,10 @@ export const ARCHIVE = {
   points: { combat: 2, expedition: 5, chantier: 3, quotidien: 5 },
   /** le 4e palier récompense les joueurs assidus : un choix d'argent de plus et des Éclats */
   paliers: [30, 80, 160, 300],
+  /** Butins de la semaine gardés au plus (audit du 7 novembre 2026 : avant, un Butin non ouvert était écrasé par le suivant) */
+  empilesMax: 4,
+  /** ce que contient le Butin : composants toujours, Éclats aux paliers 2 et 4 */
+  composants: 40, eclatsPalier2: 3, eclatsPalier4: 5,
 } as const;
 
 /** Lundi 5 janvier 2026, 4 h du matin à Bruxelles : point de départ des jours et des semaines du jeu */
@@ -352,7 +360,7 @@ export interface Jeu {
   /** objectif du jour : jours en réserve (3 au plus) et progression */
   quotidien: { jour: number; reserve: number; type: TypeQuotidien; progres: number };
   /** Archive de la semaine : points de la semaine en cours, paliers à ouvrir de la semaine passée */
-  archive: { semaine: number; points: number; aOuvrir: number };
+  archive: { semaine: number; points: number; aOuvrir: number; /** les Butins des semaines suivantes, pas encore ouverts */ enAttente?: number[] };
   /** les Porteurs partis en mission en mer, depuis le Port (le niveau de la mission est celui de la dernière Strate vaincue) */
   missions: Mission[];
   /** les contrats de marée (31 octobre 2026) : la gabare en mer, les contrats remplis, les Indices laissés par les échecs */
@@ -423,7 +431,14 @@ export type LectureVela = 'autoriser' | 'refuser';
 /** Acte III, la vérité : trois fins, aucune n'est « la bonne » (Bible) */
 export type FinCampagne = 'scellement' | 'pacte' | 'archives';
 /** Ce que la dernière lecture a changé chez Véla */
-export const bonusPv = (j: Jeu, id: string) => (id === 'vela' ? (j.actes.lecture === 'autoriser' ? -4 : j.actes.lecture === 'refuser' ? 4 : 0) : 0);
+export const bonusPv = (j: Jeu, id: string) => (id === 'vela' ? (j.actes.lecture === 'autoriser' ? -4 : j.actes.lecture === 'refuser' ? 4 : 0) : 0) + bonusClinique(j, id);
+/**
+ * La Clinique renforce les Porteurs (audit du 7 novembre 2026 : elle ne servait plus à rien après le niveau 3, les soins
+ * suffisant déjà) : +2 % de PV max par niveau au-delà du 3e, soit +14 % au niveau 10.
+ */
+export const CLINIQUE_PV = { des: 3, parNiveau: 0.02 } as const;
+export const partPvClinique = (j: Pick<Jeu, 'batiments'>) => CLINIQUE_PV.parNiveau * Math.max(0, (j.batiments?.clinique ?? 0) - CLINIQUE_PV.des);
+export const bonusClinique = (j: Jeu, id: string) => Math.round(pvNiveau(j, id) * partPvClinique(j));
 /** la carte que Véla gagne après la dernière lecture : la sienne, en plus de ses 6 cartes */
 export const LECTURE_PROFONDE: GesteDef = { id: 'lecture-profonde', porteur: 'vela', nom: 'Lecture profonde', f: 8, type: 'atk', v: 16, effet: { type: 'accord' } };
 
@@ -493,7 +508,11 @@ export const enExpedition = (j: Jeu, id: string) => (!!j.expedition && j.expedit
 /** en mer : sur une barque, ou sur la gabare d'un contrat de marée (31 octobre 2026) */
 export const enMission = (j: Jeu, id: string) => !!j.missions?.some((m) => m.porteur === id) || !!j.marees?.contrat?.porteurs.includes(id);
 export const posteDe = (j: Jeu, b: Poste) => Object.keys(j.porteurs).find((id) => j.porteurs[id]!.poste === b) ?? null;
-export const stockage = (j: Jeu) => DISTRICT.stockage[j.batiments.noyau] ?? 0;
+/**
+ * La réserve d'énergie : celle de la Tour, et au moins une journée de ce que produit le Générateur (audit du 7 novembre 2026 :
+ * réserve pleine dès le jour 18, 48 à 62 % de la production perdue entre deux sessions, Générateur inutile après le niveau 6).
+ */
+export const stockage = (j: Jeu) => Math.max(DISTRICT.stockage[j.batiments.noyau] ?? 0, Math.round(energieParHeure(j) * DISTRICT.reserveHeures / 100) * 100);
 export const pvMaxCombat = (j: Jeu, id: string) => pvNiveau(j, id) + bonusPv(j, id) - Math.floor(j.porteurs[id]!.usure);
 /** L'Usure ne peut pas dépasser tous les PV du Porteur */
 export const usureMax = (j: Jeu, id: string) => pvNiveau(j, id) + bonusPv(j, id);
@@ -622,15 +641,19 @@ export const ACCORD_OUVERT = { clinique: 3, confiance: CONFIANCE.accord } as con
 export interface NuitDesLignes { semaine: number; sources: Partial<Record<SourceHabitants, number>>; gagnes: number; bonus: number; total: number; lue?: boolean }
 
 export const CREUSEURS = {
-  /** creuseurs logés selon le niveau du Noyau (index = niveau) */
-  logement: [0, 4, 7, 10, 14, 24, 30, 36, 42, 50, 60],
+  /** creuseurs logés selon le niveau du Noyau (index = niveau). Audit du 7 novembre 2026 : avant 4, 7, 10, 14, 24… le Noyau 3
+   *  logeait déjà les creuseurs de −10 et ne freinait plus rien ; étalé, chaque niveau ouvre un étage de plus :
+   *  Noyau 5 pour −7, 6 pour −8 et −9, 7 pour −10. (Un Noyau 10 obligatoire pour −10 faisait 18 sessions d'attente : écarté.) */
+  logement: [0, 3, 4, 5, 6, 7, 8, 9, 10, 12, 60],
   /** creuseurs qu'il faut pour ouvrir la Strate −n, qui y restent (au-delà de la table : +1 par Strate, au plus le logement) */
-  // −8 à −10 : 8, 8, 9 au lieu de 9, 11, 13 (3 novembre 2026, validé par Bryan) : moins d'attente, plus de défi (FORCE.table relevée)
+  // −8 à −10 : 8, 8, 9 au lieu de 9, 11, 13 (3 novembre 2026, validé par Bryan) : moins d'attente, plus de défi (FORCE.table relevée).
   requis: [0, 0, 2, 3, 4, 5, 6, 7, 8, 8, 9] as number[],
   parStrateEnsuite: 1,
   gardien: 1,
   /** chances de ramener un fouilleur perdu : fouille ciblée, mission courte, mission longue */
   fouille: 0.25,
+  /** audit du 7 novembre 2026 (mur de −7 à −10 : 15 sessions sur 18 à attendre) : une chance sur deux à partir de −6 */
+  fouilleProfonde: { des: 6, chance: 0.5 },
   missionCourte: 0.1,
   missionLongue: 0.3,
   epreuve: 1,
@@ -643,6 +666,9 @@ export const CREUSEURS = {
   /** creuseurs volontaires par palier de Confiance atteint */
   confiance: 1,
 } as const;
+
+/** La chance qu'une fouille ciblée réussie dans cette Strate ramène un creuseur */
+export const chanceCreuseurFouille = (strate: number) => (strate >= CREUSEURS.fouilleProfonde.des ? CREUSEURS.fouilleProfonde.chance : CREUSEURS.fouille);
 
 /** Les creuseurs que les naufragés peuvent encore ramener pendant la Strate en cours (plafond et déjà ramenés) */
 export function naufragesDeLaStrate(j: Pick<Jeu, 'strate' | 'naufrages'>): { plafond: number; ramenes: number; restants: number } {
@@ -740,6 +766,6 @@ export interface ContratEnMer { id: string; rang: 'montante' | 'vive' | 'grande'
 export const RAPPORTS_LUS_MAX = 5;
 
 /** renouvele : les étals ont déjà été renouvelés aujourd'hui (1er novembre 2026) */
-export interface Comptoir { jour: number; offres: string[]; achetes: number[]; rng: number; renouvele?: boolean }
+export interface Comptoir { jour: number; offres: string[]; achetes: number[]; rng: number; renouvele?: boolean; /** Éclats achetés aujourd'hui */ eclats?: number }
 
 export type DureeMission = 'courte' | 'longue';

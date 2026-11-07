@@ -65,6 +65,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'soigner-vite': { const r = J.soignerVite(app.jeu, id); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     case 'acheter': resultat(J.acheter(app.jeu, Number(b.dataset.index ?? -1), Date.now())); break;
     case 'comptoir-renouveler': resultat(J.renouvelerComptoir(app.jeu, Date.now())); break;
+    case 'comptoir-eclat': { const r = J.acheterEclat(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     case 'poste-changer': D.posteChanger = !D.posteChanger; break;
     case 'tour-changer': D.tourChanger = !D.tourChanger; break;
     case 'forge-vue': D.forgeToutes = id === 'toutes'; break;

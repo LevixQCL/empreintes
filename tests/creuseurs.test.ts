@@ -36,7 +36,7 @@ describe('Les creuseurs', () => {
 
   it('plus bas, le gardien vaincu prépare l’étage, qui attend ses creuseurs puis consomme ceux qui le percent', () => {
     const j = pret(5);
-    j.batiments.noyau = 3;
+    j.batiments.noyau = noyauRequis(6);
     const r = vaincreGardien(j);
     expect(r.nouvelleStrate).toBe(false);
     expect(j.strate).toBe(5);

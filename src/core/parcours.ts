@@ -10,11 +10,11 @@ import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, MODULES, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, mainAccordable, reperentPassage, salleCourante, typeApparent } from './expedition';
 import { coutPompe, pomper,
-  choisirLegs, choisirHalte, ouvrirPorte, passerPorte, relancerPorte, suivrePassage, acheter, garnirComptoir, prixComptoir,
+  acheterEclat, COMPTOIR, choisirLegs, choisirHalte, ouvrirPorte, passerPorte, relancerPorte, suivrePassage, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
   enMission, envoyerMission, destinationsDuJour, secoursPossible, epreuvesDeLaSemaine, fouiller, partirEpreuve,
-  chargeMax, niveauPorteur, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick,
+  chargeMax, energieParHeure, niveauPorteur, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick as tickJeu,
   coutRefabrication, soignerVite, placesEntrainement, seancesDe, type Jeu, type Poste,
   contratsDuMoment, envoyerContrat, equipeConseillee, mareesDe, raisonHorsContrat, tauxContrat,
 } from './jeu';
@@ -153,6 +153,8 @@ function gerer(j: Jeu, now: number): void {
   const enDeck = new Set(Object.values(j.porteurs).flatMap((p) => p.modules));
   const ordre = Object.keys(j.collection).sort((a, b) => Number(enDeck.has(b)) - Number(enDeck.has(a)));
   for (const id of ordre) while (monter(j, id).ok);
+  // des Éclats au Comptoir (audit du 7 novembre 2026), s'il reste de quoi monter ses cartes (trois fois le prix)
+  while (j.batiments.comptoir && j.composants >= 3 * COMPTOIR.eclats.composants && acheterEclat(j, now).ok);
   for (const b of ['noyau', 'generateur', 'clinique', 'forge', 'comptoir'] as const) ameliorer(j, b, now);
   // les pompes (30 octobre 2026) : un pompage par passage au district, s'il reste deux fois de quoi le payer
   if (j.energie >= 2 * coutPompe(j)) pomper(j, now);
@@ -244,7 +246,11 @@ export function jouerExpedition(j: Jeu, depart: () => boolean, jouer: (s: Combat
  */
 export function simulerParcours(
   profil: Profil, jours: number, graine: number,
-  opts: { trace?: (j: Jeu, jour: number, escouade: string[]) => void; jusqua?: number; joueur?: 'robot' | 'moyen'; tours?: ToursCombat; duree?: 'courte' | 'longue'; fin?: (j: Jeu) => void } = {},
+  opts: { trace?: (j: Jeu, jour: number, escouade: string[]) => void; jusqua?: number;
+    /** appelé avant chaque expédition (attente : le gardien du front est vaincu, il manque des creuseurs) */
+    session?: (j: Jeu, jour: number, attente: boolean) => void;
+    /** l'énergie produite et celle perdue parce que la réserve était pleine */
+    energie?: { produite: number; perdue: number }; joueur?: 'robot' | 'moyen'; tours?: ToursCombat; duree?: 'courte' | 'longue'; fin?: (j: Jeu) => void } = {},
 ): Parcours {
   const debut = Date.UTC(2026, 9, 5, 6); // un lundi matin
   const j = nouveauJeu(debut, graine);
@@ -277,6 +283,11 @@ export function simulerParcours(
     return false;
   };
   let echecs = 0;
+  const tick = (jj: Jeu, now: number) => {
+    const prod = energieParHeure(jj) * Math.max(0, now - jj.dernierTick) / HEURE, avant = jj.energie;
+    tickJeu(jj, now);
+    if (opts.energie) { opts.energie.produite += prod; opts.energie.perdue += Math.max(0, avant + prod - jj.energie); }
+  };
   for (let d = 0; d < jours; d++) {
     for (const h of profil.sessions) {
       const now = debut + d * JOUR + h * HEURE;
@@ -294,6 +305,7 @@ export function simulerParcours(
       // bloqué au front (deux échecs d'affilée) : une fouille ciblée juste au-dessus, pour la lignée la plus faible du deck
       // le gardien du front est vaincu, mais il manque des creuseurs : on fouille le front pour en retrouver
       const attente = j.frontVaincu;
+      opts.session?.(j, d + 1, attente);
       const cible = attente ? front : echecs >= 2 && front > 1 ? front - 1 : front;
       const faible = LIGNEES.map((l) => ({ l, v: meilleures(j, l, Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => chargeMax(j, id)), chargeMax(j, NOMME[l])), Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => niveauPorteur(j, id).niveau), niveauPorteur(j, NOMME[l]).niveau)).reduce((n, id) => n + valeurCarte(id, j.collection[id]!.niveau), 0) / DEFENSES_POIDS[l] }))
         .sort((a, b) => a.v - b.v)[0]!.l;

@@ -328,17 +328,17 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined): string {
     const prochain = ARCHIVE.paliers.find((p) => pts < p);
     const atteints = ARCHIVE.paliers.filter((p) => pts >= p).length;
     surtitre = 'CHAQUE SEMAINE'; titre = 'Le Butin de la semaine';
-    resume = 'Tout ce que tu fais cette semaine remplit un coffre. Chaque cran atteint y ajoute des récompenses. Lundi, le coffre s’ouvre au district et une nouvelle semaine repart de zéro. Rien n’est jamais perdu : un cran atteint reste acquis.';
+    resume = `Tout ce que tu fais cette semaine remplit un coffre. Chaque cran atteint y ajoute des récompenses. Lundi, le coffre s’ouvre au district et une nouvelle semaine repart de zéro. Rien n’est jamais perdu : un cran atteint reste acquis, et un coffre pas encore ouvert attend le suivant (jusqu’à ${ARCHIVE.empilesMax}).`;
     etat = `<b>${pts}</b> / ${ARCHIVE.paliers[ARCHIVE.paliers.length - 1]}<small>${prochain ? `Encore ${prochain - pts} points pour le cran ${atteints + 1}` : 'Tous les crans sont atteints : bravo'} · s’ouvre lundi</small>`;
     gagner = [ligne('porte', 'Gagner un combat en bas', `+${ARCHIVE.points.combat} points.`),
       ligne('strate', 'Finir une descente', `+${ARCHIVE.points.expedition} points.`),
       ligne('marteau', 'Finir un chantier', `+${ARCHIVE.points.chantier} points.`),
       ligne('cartes', 'Remplir l’objectif du jour', `+${ARCHIVE.points.quotidien} points.`)];
     const d = ARCHIVE.paliers;
-    servir = [ligne('coffre', `Cran 1 · ${d[0]} points`, '40 composants et une carte au choix parmi trois.'),
-      ligne('cristal', `Cran 2 · ${d[1]} points`, '3 Éclats en plus.'),
+    servir = [ligne('coffre', `Cran 1 · ${d[0]} points`, `${ARCHIVE.composants} composants et une carte au choix parmi trois.`),
+      ligne('cristal', `Cran 2 · ${d[1]} points`, `${ARCHIVE.eclatsPalier2} Éclats en plus.`),
       ligne('cartes', `Cran 3 · ${d[2]} points`, 'Une deuxième carte au choix, dont au moins une en argent.'),
-      ligne('boost', `Cran 4 · ${d[3]} points`, 'Une troisième carte au choix avec de l’argent, et 5 Éclats de plus. Pour les plus assidus.')];
+      ligne('boost', `Cran 4 · ${d[3]} points`, `Une troisième carte au choix avec de l’argent, et ${ARCHIVE.eclatsPalier4} Éclats de plus. Pour les plus assidus.`)];
   } else {
     const manque = manquePourCreuser(j);
     surtitre = 'PROFONDEUR'; titre = `La Strate −${j.strate}`;

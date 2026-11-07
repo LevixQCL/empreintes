@@ -48,8 +48,8 @@ export const ASCENSION = {
   } as Record<number, { composants: number; eclats: number }>,
   /** tenir un quai : le gage par jour (composants = base + parQuai × quai ; Éclats à partir de certains quais) */
   gage: { base: 30, parQuai: 3, eclats: [{ des: 40, n: 1 }, { des: 80, n: 2 }] },
-  /** le gage s'accumule au plus deux jours dans la caisse du quai (rien n'est perdu de ce qui est reçu) */
-  caisseJours: 2,
+  /** le gage s'accumule au plus une semaine dans la caisse du quai (audit du 7 novembre 2026 : avant deux jours) */
+  caisseJours: 7,
   /** une défense tenue rapporte un quart de jour de gage */
   partDefense: 0.25,
 } as const;
@@ -327,7 +327,7 @@ export function tenirQuai(j: Jeu, escouade: string[], quai: number, now: number)
   return { ok: true };
 }
 
-/** Ce que la caisse du quai contient à cet instant (au plus deux jours) */
+/** Ce que la caisse du quai contient à cet instant (au plus ASCENSION.caisseJours) */
 export function gageEnCaisse(j: Pick<Jeu, 'fleche'>, now: number): { composants: number; eclats: number } {
   const g = j.fleche?.garde;
   if (!g) return { composants: 0, eclats: 0 };

@@ -103,3 +103,79 @@ describe('Audit du 7 novembre : Accord', () => {
     expect(frequencesEffectives([accord, { f: 1 }, { f: 2 }] as never)).toEqual([1, 1, 2]);
   });
 });
+
+// Audit de l'économie du 7 novembre 2026 (scripts/audit-economie.ts) : ce qui était perdu, inutile ou en mur
+import { nouveauJeu, tick, ouvrirArchive, acheterEclat, eclatsAuComptoir, COMPTOIR, ARCHIVE, CREUSEURS, chanceCreuseurFouille,
+  noyauRequis, stockage, energieParHeure, pvMaxCombat, partPvClinique } from '../src/core/jeu';
+import { EPREUVES, forceEpreuve } from '../src/core/partie/descentes';
+import { forceStrate } from '../src/core/expedition';
+import { PROFILS, mediane, simulerParcours } from '../src/core/parcours';
+
+const T0 = Date.UTC(2026, 10, 2, 9); // un lundi
+const JOUR = 86_400_000;
+const partie = () => { const j = nouveauJeu(T0, 3); j.chambre = true; j.recrues = true; return j; };
+
+describe('Audit du 7 novembre : économie', () => {
+  it('un Butin de la semaine pas ouvert n’est plus écrasé par le suivant', () => {
+    const j = partie();
+    j.archive.points = ARCHIVE.paliers[3]!;
+    tick(j, T0 + 7 * JOUR);
+    j.archive.points = ARCHIVE.paliers[0]!;
+    tick(j, T0 + 14 * JOUR);
+    expect(j.archive.aOuvrir).toBe(4);
+    expect(ouvrirArchive(j).ok).toBe(true);
+    expect(j.archive.aOuvrir).toBe(1);
+    expect(ouvrirArchive(j).ok).toBe(true);
+    expect(ouvrirArchive(j).ok).toBe(false);
+  });
+
+  it('le Comptoir vend quelques Éclats par jour contre des composants', () => {
+    const j = partie();
+    j.batiments.comptoir = 6;
+    j.composants = 10_000;
+    const max = eclatsAuComptoir(j).max;
+    expect(max).toBe(2);
+    const e0 = j.eclats;
+    for (let k = 0; k < max; k++) expect(acheterEclat(j, T0).ok).toBe(true);
+    expect(acheterEclat(j, T0).ok).toBe(false);
+    expect(j.eclats).toBe(e0 + max);
+    expect(j.composants).toBe(10_000 - max * COMPTOIR.eclats.composants);
+    expect(acheterEclat(j, T0 + JOUR).ok).toBe(true);
+  });
+
+  it('la réserve d’énergie tient au moins une journée de production', () => {
+    const j = partie();
+    j.batiments.generateur = 10;
+    j.batiments.noyau = 6;
+    expect(stockage(j)).toBeGreaterThanOrEqual(energieParHeure(j) * 24 - 100);
+  });
+
+  it('la Clinique donne des PV max à partir du niveau 4', () => {
+    const j = partie();
+    j.batiments.clinique = 3;
+    const avant = pvMaxCombat(j, 'doran');
+    expect(partPvClinique(j)).toBe(0);
+    j.batiments.clinique = 10;
+    expect(pvMaxCombat(j, 'doran')).toBeGreaterThan(avant * 1.1);
+  });
+
+  it('les fouilles profondes ramènent plus de creuseurs, et le Noyau freine encore à −10', () => {
+    expect(chanceCreuseurFouille(5)).toBe(CREUSEURS.fouille);
+    expect(chanceCreuseurFouille(6)).toBeGreaterThan(CREUSEURS.fouille);
+    expect(noyauRequis(10)).toBe(7);
+    for (let s = 3; s <= 10; s++) expect(noyauRequis(s)).toBeGreaterThanOrEqual(noyauRequis(s - 1));
+  });
+
+  it('les Épreuves s’allègent à partir de −4', () => {
+    const ep = EPREUVES.find((e) => !e.imposee && !e.forceBas)!;
+    expect(forceEpreuve(ep, 3) / forceStrate(3)).toBeCloseTo(ep.force, 5);
+    expect(forceEpreuve(ep, 4) / forceStrate(4)).toBeLessThan(ep.force);
+  });
+
+  it('un joueur occasionnel ouvre la Strate −10 entre le jour 27 et le jour 32', () => {
+    const jours = Array.from({ length: 16 }, (_, i) => simulerParcours(PROFILS.occasionnel, 40, 1000 + i * 7919, { joueur: 'moyen', jusqua: 10 }).ouverture[10] ?? Infinity);
+    const d = mediane(jours);
+    expect(d).toBeGreaterThanOrEqual(27);
+    expect(d).toBeLessThanOrEqual(32);
+  }, 120_000);
+});

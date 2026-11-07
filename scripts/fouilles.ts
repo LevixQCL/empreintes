@@ -58,7 +58,7 @@ const valeur = (m: Mesure) => m.compo + m.cartes * VAL.carte + m.choix * VAL.cho
 const ligne = (nom: string, m: Mesure) =>
   `| ${nom} | ${(m.sec / 60).toFixed(1)} | ${Math.round(m.victoire * 100)} % | ${Math.round(m.compo)} | ${m.cartes.toFixed(2)} | ${m.choix.toFixed(2)} | ${m.eclats.toFixed(2)} | ${Math.round(m.xp)} | ${Math.round(valeur(m))} | ${Math.round(valeur(m) / Math.max(0.5, m.sec / 60))} |`;
 
-for (const strate of [2, 5]) {
+for (const strate of (process.env.STRATES ?? "2,5").split(",").map(Number)) {
   const base = etats(strate);
   if (!base.length) { console.log(`Strate −${strate} : aucun état`); continue; }
   console.log(`\n## Strate −${strate} (${base.length} états, ${PARTIES} sorties par ligne)\n`);

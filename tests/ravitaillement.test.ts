@@ -29,13 +29,13 @@ describe('Récompenses de lecture', () => {
 });
 
 describe('Ravitaillement du jour', () => {
-  it('un colis par jour, 3 en réserve au plus, aucune série perdue', () => {
+  it('un colis par jour, une semaine en réserve au plus, aucune série perdue', () => {
     const j = pret();
     const t0 = j.dernierTick;
     expect(J.ouvrirColis(j).ok).toBe(true);
     expect(J.ouvrirColis(j).ok).toBe(false);
     J.tick(j, t0 + 10 * JOUR);
-    expect(j.ravitaillement.reserve).toBe(3);
+    expect(j.ravitaillement.reserve).toBe(7);
   });
   it('donne des composants, un doublon possédé, et une carte au choix tous les 7 colis', () => {
     const j = pret();
