@@ -1,16 +1,18 @@
-// Le livre d'EMPREINTES (7 novembre 2026, Bryan : « une sorte de livre, pour que sans jouer je puisse tout lire »).
-// Rassemble tous les textes du jeu, tirés directement du code (rien n'est recopié à la main, le livre suit le jeu) :
-// l'intro, les Chroniques d'Ysé, la descente (scènes, Haltes avec leurs deux pistes, quêtes, décisions), les Archives,
-// les Porteurs, le bestiaire et le lore des cartes, illustrés par les images Midjourney du jeu.
+// Le livre d'EMPREINTES (7 novembre 2026, Bryan : « une sorte de livre, pour que sans jouer je puisse tout lire »,
+// puis « cohérent, plaisant à lire, intrigant, et surtout une narration logique »).
+// Tous les textes viennent du code du jeu (rien n'est recopié à la main : le livre suit le jeu). L'assemblage suit
+// la relecture de trois éditeurs : un seul récit, raconté par le dossier qu'Ysé monte avec le carnet du directeur ;
+// les chapitres d'Ysé glissés entre les Strates, jamais plus haut que la profondeur où on peut les croire ;
+// un chemin principal (les choix les plus repris plus loin), les autres gestes « en marge » ; aucun chiffre de jeu.
 // usage : npx tsx scripts/livre.ts <dossier>  → <dossier>/index.html + <dossier>/images.txt (les images à joindre)
 // Les images sont ensuite réduites et copiées par scripts/livre-images.py.
 
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { PLANS } from '../src/ui/intro';
-import { CHAPITRES, LIVRES } from '../src/core/chroniques';
-import { PERSONNAGES, SCENES, nomActe, type Replique, type Scene } from '../src/core/campagne';
-import { HALTES, PISTES, QUETES, BESTIAIRE, nombreHaltes, strateDuSouvenir, type DetailHalte, type Voix } from '../src/core/strates';
+import { CHAPITRES, type Chapitre } from '../src/core/chroniques';
+import { PERSONNAGES, SCENES, repliquesDe, type ContexteCampagne, type Replique, type Scene } from '../src/core/campagne';
+import { HALTES, QUETES, BESTIAIRE, nombreHaltes, revelationDe, voixDetail, type ChoixHalte, type HalteDef, type Voix } from '../src/core/strates';
 import { FRAGMENTS, FAMILLES } from '../src/core/fragments';
 import { FILS } from '../src/core/fils';
 import { ORIGINES, PRESENTATIONS } from '../src/core/lore-porteurs';
@@ -25,7 +27,7 @@ const racine = resolve(import.meta.dirname, '..');
 const sortie = resolve(process.argv[2] ?? resolve(racine, '.livre'));
 mkdirSync(sortie, { recursive: true });
 
-// ---------- les images (celles du jeu, quand elles existent) ----------
+// ---------- les images du jeu (Midjourney), quand elles existent ----------
 const images = new Set<string>();
 const artTs = readFileSync(resolve(racine, 'src/ui/art.ts'), 'utf8');
 const carte = (nom: string) => {
@@ -34,7 +36,6 @@ const carte = (nom: string) => {
 };
 const MODULES_IMG = carte('MODULES_ILLUSTRES');
 const ENNEMIS_IMG = carte('ENNEMIS_ILLUSTRES');
-/** un chemin sous public/ s'il existe ; noté pour être joint au livre */
 function img(chemin: string): string | null {
   if (!existsSync(resolve(racine, 'public', chemin))) return null;
   images.add(chemin);
@@ -51,30 +52,47 @@ const imgIntro = (id: string) => img(`intro/${id}.webp`);
 // ---------- petits outils ----------
 const e = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const essai = <T>(f: () => T): T | undefined => { try { return f(); } catch { return undefined; } };
-const ROMAIN = ['I', 'II', 'III'];
-/** le nom et le portrait de celui qui parle (Porteur, personnage, gardien), ou le récit */
 function orateur(qui: string): { nom: string; img: string | null } {
   if (!qui) return { nom: '', img: null };
   const p = essai(() => porteurDef(qui));
-  if (p && p.nom && !p.nom.startsWith('?')) return { nom: p.nom, img: imgPorteur(qui) };
+  if (p?.nom) return { nom: p.nom, img: imgPorteur(qui) };
   if (PERSONNAGES[qui]) return { nom: PERSONNAGES[qui]!.nom, img: imgPersonnage(qui) };
   const en = essai(() => ennemiDef(qui));
   return { nom: en?.nom ?? qui, img: imgEnnemi(qui) };
 }
 const portraitRond = (src: string | null, nom: string) =>
   src ? `<img class="rond" src="${src}" alt="" loading="lazy">` : `<span class="rond vide">${e(nom.charAt(0) || '·')}</span>`;
-const figure = (src: string | null, legende = '', cls = '') =>
-  src ? `<figure class="ill ${cls}"><img src="${src}" alt="${e(legende)}" loading="lazy">${legende ? `<figcaption>${e(legende)}</figcaption>` : ''}</figure>` : '';
-
-/** les choix qui posent un souvenir : drapeau → « texte du choix » */
-const SOUVENIRS = new Map<string, { texte: string; strate: number }>();
-for (const h of HALTES) for (const c of h.choix) if (c.drapeau) SOUVENIRS.set(c.drapeau, { texte: c.texte, strate: h.strate });
-const etiquetteSouvenir = (f: string) => {
-  const s = SOUVENIRS.get(f);
-  return s ? `Si tu as choisi « ${s.texte} » à −${s.strate}` : 'Selon tes choix';
+const figure = (src: string | null, cls = '') => (src ? `<figure class="ill ${cls}"><img src="${src}" alt="" loading="lazy"></figure>` : '');
+const paragraphes = (t: string[]) => t.map((p) => `<p>${e(p)}</p>`).join('');
+/** le livre ne compte pas le butin : on retire des récits les phrases de trouvaille (Éclats, composants, matériel) */
+const sansButin = (t: string) => {
+  const phrases = t.match(/[^.!?…]+[.!?…]+(\s*»)?\s*/g) ?? [t];
+  const gardees = phrases.filter((p) => !/Éclat|composants|matériel|outils de graveur|se revend|vivres|du sac de/i.test(p));
+  return (gardees.length ? gardees.join('') : t).trim();
 };
 
-// ---------- le sommaire, construit au fil des parties ----------
+// ---------- le chemin principal ----------
+// Qui est là à chaque Strate : l'escouade de départ, puis les Porteurs à leur arrivée dans la campagne.
+const ARRIVEES: [string, number][] = [['ilka', 1], ['doran', 1], ['vela', 1], ['sasha', 2], ['nuit', 3], ['kessa', 4], ['aurel', 5], ['liane', 6], ['joss', 8]];
+const presents = (s: number) => ARRIVEES.filter(([, k]) => s >= k).map(([id]) => id);
+// Les deux premières décisions du chemin (relecture : la commission, cohérente avec Ysé narratrice ; la lecture refusée)
+const ACTES = { chambre: 'commission', lecture: 'refuser' } as const;
+// À chaque Halte, le geste dont le souvenir revient le plus souvent plus loin (à égalité : le premier)
+const rappels = (f: string | undefined) => !f ? 0
+  : HALTES.reduce((n, h) => n + h.details.reduce((m, d) => m + d.voix.filter((v) => v.si === f).length, 0), 0)
+  + SCENES.reduce((n, s) => n + s.repliques.filter((r) => r.souvenir === f).length, 0);
+const choixFaits: Record<string, number> = {};
+const drapeaux: string[] = [];
+for (const h of HALTES) {
+  const k = rappels(h.choix[1]!.drapeau) > rappels(h.choix[0]!.drapeau) ? 1 : 0;
+  choixFaits[`${h.strate}-${h.n}`] = k;
+}
+const ctx = (s: number, fin?: string): ContexteCampagne => ({
+  strate: s, vaincue: s, presents: presents(s), drapeaux: [...drapeaux], choixHaltes: choixFaits,
+  actes: { ...(s >= 4 ? { chambre: ACTES.chambre } : {}), ...(s >= 7 ? { lecture: ACTES.lecture } : {}), ...(fin ? { fin } : {}) },
+});
+
+// ---------- le sommaire ----------
 const sommaire: { id: string; titre: string; niveau: 1 | 2 }[] = [];
 const titrePartie = (id: string, sur: string, titre: string, chapeau = '', image: string | null = null) => {
   sommaire.push({ id, titre, niveau: 1 });
@@ -85,138 +103,183 @@ const titreChapitre = (id: string, sur: string, titre: string, court = titre) =>
   return `<header class="chap" id="${id}"><span class="sur">${e(sur)}</span><h2>${e(titre)}</h2></header>`;
 };
 
-let corps = '';
-
-// ---------- Prologue : l'intro ----------
-corps += titrePartie('prologue', 'Prologue', 'Ce qu’on a laissé monter', 'L’intro du jeu, dans sa version complète.', imgIntro('00-titre'));
-PLANS.forEach((p, k) => {
-  corps += `<article class="plan">${figure(p.fonds?.[0] ? imgIntro(p.fonds[0].id) : null)}<span class="sur">${e(p.epoque)} · ${p.annees[0] === p.annees[1] ? p.annees[0] : `${p.annees[0]}–${p.annees[1]}`}</span>`
-    + `<h3>${e(p.titre)}</h3>${p.lignes.map((l) => `<p>${e(l)}</p>`).join('')}</article>`;
-  if (k === 0) sommaire.push({ id: 'prologue', titre: 'Les douze plans de l’intro', niveau: 2 });
-});
-
-// ---------- Partie I : les Chroniques d'Ysé ----------
-corps += titrePartie('chroniques', 'Partie I', 'Les Chroniques d’Ysé', 'Une longue lettre d’Ysé, archiviste des Veilleurs de Sédime, au nouveau directeur. Dans le jeu, les chapitres les plus profonds s’ouvrent en descendant.', imgPersonnage('yse'));
-let livre = 0;
-for (const c of CHAPITRES) {
-  if (c.livre !== livre) { livre = c.livre; corps += `<div class="livre-titre">${e(LIVRES[c.livre as 1 | 2 | 3])}</div>`; }
-  corps += titreChapitre(`chr-${c.id}`, `${c.epoque}${c.strate ? ` · s’ouvre à −${c.strate}` : ''}`, c.titre);
-  corps += figure(c.image ? imgIntro(c.image) : null);
-  corps += `<div class="lettre">${c.paragraphes.map((p) => `<p>${e(p)}</p>`).join('')}</div>`;
-  for (const d of c.documents ?? []) corps += `<aside class="document"><span class="sur">${e(d.support)}</span><h4>${e(d.titre)}</h4>${d.lignes.map((l) => `<p>${e(l)}</p>`).join('')}</aside>`;
-}
-
-// ---------- Partie II : la descente ----------
-const replique = (r: Replique) => {
-  const o = orateur(r.qui);
-  const variante = r.souvenir ? etiquetteSouvenir(r.souvenir) : r.si ? 'Selon ta partie' : '';
-  return `<div class="voix${variante ? ' variante' : ''}">${portraitRond(o.img, o.nom)}<div>${variante ? `<em class="cond">◆ ${e(variante)}</em>` : ''}<strong>${e(o.nom)}</strong><p>${e(r.texte)}</p></div></div>`;
+// ---------- les textes de liaison (relecture éditoriale du 7 novembre 2026) ----------
+const NOTE_ARCHIVISTE = [
+  'Ce dossier n’a pas de cote. Je l’ai monté avec deux sortes de pages : les chapitres que je t’ai écrits la troisième nuit après ton élection, et celles de ton carnet, que tu m’as rapportées Strate après Strate, mouillées, raturées, parfois écrites dans le noir. Je les ai rangées les unes entre les autres. Je n’ouvre jamais un chapitre plus haut que la profondeur où tu pouvais le croire.',
+  'Tu as souvent hésité entre deux gestes. J’ai mis dans le texte celui que tu as fait, et dans la marge celui que tu as failli faire. Une archive qui ne garde qu’une version n’est pas une archive. C’est une plaque de bronze.',
+];
+const PORTE_RONDE = [
+  'Le puisard avait été creusé pour sauver les pompes. Au fond, la porte attendait : ronde, tiède sous la main, ses joints allumés comme une veilleuse qu’on aurait oubliée. Personne n’y avait touché avant toi. Tu as poussé. Elle a cédé sans un bruit.',
+  'Dedans, des cristaux par dizaines, posés n’importe comment, comme on range en tremblant. Par terre, un ordre de service de 2066, tamponné deux fois. Et dans l’air, des voix si mêlées qu’on ne savait plus où finissait l’une. Quelque chose s’est levé de ce mélange, a cherché la pente, et a coulé vers les pompes noyées.',
+  'Véla s’est adossée au mur. « Ce n’est pas ma peur, a-t-elle dit. C’est la leur. »',
+];
+const CHAPEAUX: Record<number, { titre: string; texte: string[] }> = {
+  1: { titre: 'Acte I · La chambre', texte: [] },
+  2: { titre: 'Acte II · Les salles closes', texte: [
+    'Trois Strates, et une certitude : nos piliers reposent sur l’escalier de quelqu’un d’autre. Plus bas, on ne descend plus de marches, on passe des seuils. Les portes y sont rondes et fermées de l’intérieur. Les fouilleurs disent « les salles closes » en baissant la voix, comme on parle des voisins.',
+    'C’est là qu’en 2066 le district a muré une paroi derrière laquelle quelqu’un pleurait. Le père de Doran était de l’équipe. Il n’a jamais barré son nom.'] },
+  3: { titre: 'Acte III · Ceux d’avant', texte: [
+    'Les Hauts t’ont écrit sur un papier qui sent la pluie propre ; on t’attend à la Flèche. Tu descends quand même.',
+    'Sous les salles closes commencent les Registres : des tables gravées, des lignes d’eau qui montent, des colonnes où les noms disparaissent. Jusqu’ici, on visitait des ruines. À partir d’ici, on lit des gens.'] },
 };
-const scene = (s: Scene) => {
-  const im = imgScene(s.id) ?? ('ennemi' in s.image ? imgEnnemi(s.image.ennemi) : 'strate' in s.image ? imgStrate(s.image.strate) : imgIntro(s.image.intro));
-  return `<article class="scene">${figure(im, '', 'large')}<span class="sur">${e(s.sur)}</span><h3>${e(s.titre)}</h3><p class="recit">${e(s.recit)}</p>${s.repliques.map(replique).join('')}</article>`;
-};
-/** un détail de Halte : la voix principale (un Porteur), le récit de secours, et les répliques qui dépendent d'un choix d'avant */
-const voixSimple = (v: Voix, nom: string) => {
-  const o = orateur(v.qui);
-  return `<div class="voix${v.si ? ' variante' : ''}">${portraitRond(o.img, o.nom || nom)}<div>${v.si ? `<em class="cond">◆ ${e(etiquetteSouvenir(v.si))}</em>` : ''}${o.nom ? `<strong>${e(o.nom)}</strong>` : ''}<p>${e(v.texte)}</p></div></div>`;
-};
-const detail = (d: DetailHalte) => {
-  const principale = d.voix.find((v) => v.qui && !v.si) ?? d.voix.find((v) => !v.si)!;
-  const souvenirs = d.voix.filter((v) => v.si);
-  return `<div class="detail"><span class="detail-nom">${e(d.nom)}</span>${voixSimple(principale, d.nom)}${souvenirs.map((v) => voixSimple(v, d.nom)).join('')}</div>`;
-};
-function haltes(s: number) {
-  let h = '';
-  for (let n = 1; n <= nombreHaltes(s); n++) {
-    const def = HALTES.find((x) => x.strate === s && x.n === n);
-    if (!def) continue;
-    h += `<article class="halte"><span class="sur">Halte ${ROMAIN[n - 1]} sur ${nombreHaltes(s)} · Strate −${s}</span><h3>${e(def.titre)}</h3><p class="recit">${e(def.recit)}</p>`
-      + def.details.map(detail).join('')
-      + `<div class="choix-titre">Que fais-tu ?</div><div class="choix">`
-      + def.choix.map((c) => `<div class="choix-carte ${c.piste}"><span class="piste">◆ ${e(PISTES[c.piste])}</span><strong>${e(c.texte)}</strong><p>${e(c.recit)}</p></div>`).join('')
-      + `</div>`;
-    if (def.revelation) {
-      h += `<div class="revelation"><div class="rev-titre">Ce que ton enquête a trouvé</div><p class="rev-aide">${s === 10 ? 'Selon la piste que tu as le plus suivie depuis −1.' : `Selon la piste choisie à la Halte ${ROMAIN[n - 2]}.`}</p><div class="rev-pistes">`
-        + (['nous', 'avant'] as const).map((p) => {
-          const r = def.revelation![p];
-          const v = r.voix.find((x) => x.qui) ?? r.voix[0]!;
-          return `<div class="rev ${p}"><span class="piste">◆ ${e(PISTES[p])}</span><h4>${e(r.nom)}</h4>${voixSimple(v, r.nom)}</div>`;
-        }).join('') + `</div></div>`;
-    }
-    h += `<p class="carnet"><span>Carnet du directeur</span>${e(def.fait)}</p></article>`;
-  }
-  const q = QUETES.find((x) => x.strate === s);
-  if (q) h += `<aside class="quete"><span class="sur">La quête de la Strate −${s}</span><h4>${e(q.nom)}</h4><p class="but">${e(q.but)}</p><ol>${q.etapes.map((x) => `<li>${e(x)}</li>`).join('')}</ol><p class="fin">${e(q.fin)}</p></aside>`;
-  return h;
-}
-const decision = (d: { titre: string; texte: string; options: { nom: string; phrase: string; effet: string }[] }, sur: string) =>
-  `<article class="decision"><span class="sur">${e(sur)}</span><h3>${e(d.titre)}</h3><p class="recit">${e(d.texte)}</p><div class="options">${d.options.map((o) => `<div class="option"><strong>${e(o.nom)}</strong><p class="phrase">« ${e(o.phrase)} »</p><p>${e(o.effet)}</p></div>`).join('')}</div></article>`;
-
-corps += titrePartie('descente', 'Partie II', 'La descente', 'L’histoire telle que le joueur la vit, Strate après Strate : les scènes, les trois Haltes de chaque Strate avec leurs deux pistes d’enquête, les quêtes et les grandes décisions. Les lignes marquées ◆ dépendent de tes choix.', imgIntro('10-dessous'));
-let acte = 0;
-let strateVue = 0;
-const ouvrirStrate = (s: number) => {
-  if (s <= strateVue) return '';
-  strateVue = s;
-  const z = essai(() => zoneDe(s));
-  return titreChapitre(`strate-${s}`, `Strate −${s}${z ? ` · ${z.nom}` : ''}`, NOMS_STRATES[s] ?? `Strate −${s}`, `−${s} · ${NOMS_STRATES[s] ?? ''}`) + figure(existsSync(resolve(racine, `public/art/scenes/entree-${s}.webp`)) ? null : imgStrate(s), '', 'large');
+const TROIS_MATINS = 'La Tisseuse coud aussi avec ce qui pourrait arriver. Je l’ai appris trop tard pour m’en servir, assez tôt pour l’écrire. Voici trois matins au sommet de la Tour du Noyau. Un seul aura lieu. C’est la seule page de ce dossier que je ne peux pas écrire à ta place.';
+// Les chapitres d'Ysé entre les Strates (0 = l'ouverture ; 'fin' = la dernière page)
+const INTERLUDES: Record<string, string[]> = {
+  0: ['lettre', 'oubli', 'toi'],
+  1: ['ligne-bleue', 'infos', 'caves'],
+  2: ['detroit', 'pieds-mouilles', 'noir', 'sans-glace'],
+  3: ['chouettes', 'fonte', 'fracture'],
+  4: ['portes', 'montee', 'puits-zero'],
+  5: ['graveur', 'sept', 'ascension'],
+  6: ['reponse', 'accords', 'vierges', 'theories'],
+  7: ['deux-fois'],
+  8: ['glaciere', 'avant'],
+  fin: ['post-scriptum', 'clause'],
 };
 const NOMS_STRATES: Record<number, string> = { 1: 'Les Pompes noyées', 2: 'Les Abris murés', 3: 'La Galerie aux lueurs', 4: 'Les Portes rondes', 5: 'Le Treillis', 6: 'Le Mur de 2066', 7: 'Les Deux Rives', 8: 'La Ruche d’ambre', 9: 'Le Ciel d’en bas', 10: 'Le Puits d’avant' };
-for (const s of SCENES) {
-  if (s.acte !== acte) { acte = s.acte; corps += `<div class="livre-titre">${e(nomActe(s.acte))}</div>`; }
-  const m = s.id.match(/^(entree|gardien)-(\d+)$/);
-  if (s.id === 'entree-4') corps += decision(DECISIONS.chambre, 'Décision de l’acte I');
-  if (s.id === 'entree-7') corps += decision(DECISIONS.lecture, 'Décision de l’acte II');
-  if (s.id === 'epilogue') corps += decision(DECISIONS.fin, 'Décision de l’acte III');
-  if (m) {
-    const n = Number(m[2]);
-    corps += ouvrirStrate(n);
-    if (m[1] === 'gardien') corps += haltes(n);
+
+// ---------- les morceaux du récit ----------
+const chapitre = (c: Chapitre) => titreChapitre(`chr-${c.id}`, `Lettre d’Ysé · ${c.epoque}`, c.titre)
+  + figure(c.image ? imgIntro(c.image) : null)
+  + `<div class="lettre">${paragraphes(c.paragraphes)}</div>`
+  + (c.documents ?? []).map((d) => `<aside class="document"><span class="sur">${e(d.support)}</span><h4>${e(d.titre)}</h4>${paragraphes(d.lignes)}</aside>`).join('');
+const interlude = (cle: string) => (INTERLUDES[cle] ?? []).map((id) => { const c = CHAPITRES.find((x) => x.id === id); return c ? chapitre(c) : ''; }).join('');
+const voix = (v: Voix | Replique) => {
+  const o = orateur(v.qui);
+  return `<div class="voix">${portraitRond(o.img, o.nom)}<div>${o.nom ? `<strong>${e(o.nom)}</strong>` : ''}<p>${e(v.texte)}</p></div></div>`;
+};
+const recitSeul = (t: string) => `<p class="recit">${e(t)}</p>`;
+const scene = (s: Scene, c: ContexteCampagne) => {
+  const im = imgScene(s.id) ?? ('ennemi' in s.image ? imgEnnemi(s.image.ennemi) : 'strate' in s.image ? imgStrate(s.image.strate) : imgIntro(s.image.intro));
+  return `<article class="scene">${figure(im, 'large')}<h3>${e(s.titre)}</h3>${recitSeul(s.recit)}${repliquesDe(s, c).map(voix).join('')}</article>`;
+};
+/** une Halte racontée : le lieu, ce qu'on y regarde (la voix d'un Porteur présent), le geste fait, ce que l'enquête trouve */
+function halte(h: HalteDef, marge: string[]): string {
+  const debout = presents(h.strate);
+  const k = choixFaits[`${h.strate}-${h.n}`]!;
+  const fait = h.choix[k]!;
+  const autre = h.choix[1 - k]!;
+  let r = `<article class="halte"><h3>${e(h.titre)}</h3>${recitSeul(h.recit)}`;
+  for (const d of h.details) r += `<div class="detail"><span class="detail-nom">${e(d.nom)}</span>${voix(voixDetail(d, debout, drapeaux))}</div>`;
+  r += `<p class="geste">${e(sansButin(fait.recit))}</p>`;
+  if (fait.drapeau) drapeaux.push(fait.drapeau);
+  const rev = revelationDe(choixFaits, h.strate, h.n);
+  if (rev) {
+    r += `<div class="revelation"><h4>${e(rev.r.nom)}</h4>${voix(voixDetail({ nom: rev.r.nom, voix: rev.r.voix }, debout, drapeaux))}</div>`;
+    const autreP = rev.piste === 'nous' ? 'avant' : 'nous';
+    const ar = h.revelation![autreP];
+    marge.push(`<p><b>Si l’enquête avait suivi l’autre piste · ${e(ar.nom)}.</b> ${e(ar.fait)}</p>`);
   }
-  corps += scene(s);
-  if (s.id === 'gardien-1') corps += `<article class="decision legs"><span class="sur">Après le gardien de −1</span><h3>${e(LETTRE_LEGS.titre)}</h3><p class="recit">${e(LETTRE_LEGS.texte)}</p><blockquote>${e(LETTRE_LEGS.lettre)}</blockquote></article>`;
+  marge.push(`<p><b>${e(h.titre)} · le geste que tu as failli faire : ${e(autre.texte.charAt(0).toLowerCase() + autre.texte.slice(1))}.</b> ${e(sansButin(autre.recit))}</p>`);
+  return r + `</article>`;
 }
-
-// ---------- Partie III : les Archives ----------
-corps += titrePartie('archives', 'Partie III', 'Les Archives', 'Les papiers d’époque trouvés dans les Strates, rangés dans la Bibliothèque du district.', imgIntro('chap-lettre'));
-sommaire.push({ id: 'archives', titre: `${FRAGMENTS.length + FAMILLES.length} papiers`, niveau: 2 });
-for (const f of [...FRAGMENTS, ...FAMILLES]) corps += `<aside class="document"><span class="sur">${e(f.support)}</span><h4>${e(f.titre)}</h4>${f.lignes.map((l) => `<p>${e(l)}</p>`).join('')}</aside>`;
-
-// ---------- Partie IV : les Porteurs ----------
-corps += titrePartie('porteurs', 'Partie IV', 'Les Porteurs', 'Qui ils sont, d’où vient leur don, et leur histoire personnelle.', imgScene('cercle'));
-for (const [id, p] of Object.entries(PRESENTATIONS)) {
+const quete = (s: number) => {
+  const q = QUETES.find((x) => x.strate === s);
+  return q ? `<aside class="quete"><span class="sur">À force de descendre</span><h4>${e(q.nom)}</h4><p>${e([...q.etapes, q.fin].join(' '))}</p></aside>` : '';
+};
+const portraitCourt = (id: string) => {
+  const p = PRESENTATIONS[id];
+  if (!p) return '';
   const nom = essai(() => porteurDef(id).nom) ?? id;
-  corps += titreChapitre(`porteur-${id}`, p.titre, nom);
-  corps += `<div class="porteur">${imgPorteur(id) ? `<img class="portrait" src="${imgPorteur(id)}" alt="" loading="lazy">` : ''}<div><p>${e(p.texte)}</p>${p.replique ? `<p class="replique">« ${e(p.replique)} »</p>` : ''}</div></div>`;
-  if (p.pourquoi) corps += `<p><strong class="mini">Pourquoi il est là · </strong>${e(p.pourquoi)}</p>`;
-  if (p.aParte) corps += `<aside class="document"><h4>${e(p.aParte.titre)}</h4><p>${e(p.aParte.texte)}</p></aside>`;
-  for (const o of ORIGINES[id] ?? []) corps += `<div class="palier"><span class="sur">Niveau ${o.niveau}</span><h4>${e(o.titre)}</h4><p>${e(o.texte)}</p></div>`;
-  const fil = FILS[id];
-  if (fil) corps += `<aside class="quete"><span class="sur">Son histoire</span><h4>${e(fil.titre)}</h4><ol>${fil.etapes.map((x) => `<li><strong>${e(x.titre)}.</strong> ${e(x.recit)}</li>`).join('')}</ol></aside>`;
-}
+  return `<aside class="arrivee">${imgPorteur(id) ? `<img src="${imgPorteur(id)}" alt="" loading="lazy">` : ''}<div><span class="sur">${e(p.titre)}</span><h4>${e(nom)}</h4><p>${e(p.texte)}</p>${p.replique ? `<p class="replique">« ${e(p.replique)} »</p>` : ''}</div></aside>`;
+};
+/** une décision racontée comme un débat : chaque voix défend une option, puis le choix retenu */
+const decision = (d: { titre: string; texte: string; options: { id: string; nom: string; phrase: string }[] }, qui: Record<string, string>, retenu: string, apres: string) =>
+  `<article class="decision"><h3>${e(d.titre)}</h3>${recitSeul(d.texte)}`
+  + d.options.map((o) => voix({ qui: qui[o.id] ?? '', texte: `${o.nom}. « ${o.phrase} »` })).join('')
+  + `<p class="geste">${e(apres.replace('{choix}', d.options.find((o) => o.id === retenu)!.nom.toLowerCase()))}</p></article>`;
 
-// ---------- Partie V : le bestiaire ----------
-corps += titrePartie('bestiaire', 'Partie V', 'Le bestiaire', 'Ce que les fiches de la Bibliothèque disent de chaque ennemi, secret compris.', imgEnnemi('confluence'));
-sommaire.push({ id: 'bestiaire', titre: 'Les fiches', niveau: 2 });
+// ---------- l'assemblage ----------
+let corps = '';
+const ysé = imgPersonnage('yse');
+corps += titrePartie('ouverture', 'Ouverture', 'Le dossier d’Ysé', '', ysé);
+corps += `<div class="lettre note">${paragraphes(NOTE_ARCHIVISTE)}<p class="signe">— Ysé, à la Tour du Noyau</p></div>`;
+corps += interlude('0');
+corps += titreChapitre('porte-ronde', 'Le matin de la découverte', 'La porte ronde') + figure(imgIntro('10-toi') ?? imgIntro('10-dessous')) + `<div class="lettre">${paragraphes(PORTE_RONDE)}</div>`;
+corps += ['ilka', 'doran', 'vela'].map(portraitCourt).join('');
+
+let acte = 0;
+let marge: string[] = [];
+let carnet: string[] = [];
+const finStrate = (s: number) => {
+  let r = quete(s);
+  if (carnet.length) r += `<aside class="carnet"><span class="sur">Carnet du directeur · −${s}</span>${carnet.map((t) => `<p>${e(t)}</p>`).join('')}</aside>`;
+  if (marge.length) r += `<aside class="marge"><span class="sur">En marge</span>${marge.join('')}</aside>`;
+  marge = []; carnet = [];
+  return r;
+};
+for (let s = 1; s <= 10; s++) {
+  const a = s <= 3 ? 1 : s <= 6 ? 2 : 3;
+  if (a !== acte) {
+    acte = a;
+    corps += titrePartie(`acte-${a}`, CHAPEAUX[a]!.titre.split(' · ')[0]!, CHAPEAUX[a]!.titre.split(' · ')[1]!, '', a === 1 ? imgStrate(1) : a === 2 ? imgStrate(4) : imgStrate(7));
+    if (CHAPEAUX[a]!.texte.length) corps += `<div class="lettre chapeau-acte">${paragraphes(CHAPEAUX[a]!.texte)}</div>`;
+    if (a === 3) { const cv = SCENES.find((x) => x.id === 'convocation'); if (cv) corps += scene(cv, ctx(7)); }
+  }
+  const z = essai(() => zoneDe(s));
+  corps += titreChapitre(`strate-${s}`, `Strate −${s}${z ? ` · ${z.nom}` : ''}`, NOMS_STRATES[s]!, `−${s} · ${NOMS_STRATES[s]}`);
+  const rumeur = RUMEURS.find((r) => r.strate === s);
+  if (rumeur) corps += `<p class="epigraphe">${e(rumeur.texte)}<span>Au marché</span></p>`;
+  for (const [id, k] of ARRIVEES) if (k === s && s > 1) corps += portraitCourt(id);
+  const entree = SCENES.find((x) => x.id === `entree-${s}`);
+  if (entree) corps += scene(entree, ctx(s));
+  else corps += figure(imgStrate(s), 'large');
+  for (let n = 1; n <= nombreHaltes(s); n++) {
+    const h = HALTES.find((x) => x.strate === s && x.n === n);
+    if (h) { corps += halte(h, marge); carnet.push(h.fait); const rv = revelationDe(choixFaits, s, n); if (rv) carnet.push(rv.r.fait); }
+  }
+  const gardien = SCENES.find((x) => x.id === `gardien-${s}`);
+  if (gardien) corps += scene(gardien, ctx(s));
+  if (s === 1) corps += `<article class="decision"><h3>${e(LETTRE_LEGS.titre)}</h3>${recitSeul(LETTRE_LEGS.texte)}<blockquote>${e(LETTRE_LEGS.lettre)}</blockquote></article>`;
+  corps += finStrate(s);
+  if (s === 3) corps += decision(DECISIONS.chambre, { orseve: 'hald', district: 'ilka', commission: 'tobin' }, ACTES.chambre, 'Tu as tranché : {choix}. La chambre ne serait ni aux Hauts ni au district seul. Tobin a remonté ses manches.');
+  if (s === 6) corps += decision(DECISIONS.lecture, { autoriser: 'vela', refuser: 'doran' }, ACTES.lecture, 'Tu as dit non. Véla a baissé les yeux, puis elle a souri. « On n’entre pas deux fois chez quelqu’un sans y être invité. Tu as raison. Pour cette fois. »');
+  corps += interlude(String(s));
+}
+// la fin : la décision ouverte, les trois matins, l'épilogue commun, puis les deux dernières lettres
+const epi = SCENES.find((x) => x.id === 'epilogue')!;
+const df = DECISIONS.fin;
+corps += titrePartie('fin', 'Épilogue', 'Trois matins', '', imgScene('epilogue'));
+corps += `<article class="decision"><h3>${e(df.titre)}</h3>${recitSeul(df.texte)}</article><div class="lettre">${paragraphes([TROIS_MATINS])}</div>`;
+const communes = repliquesDe(epi, ctx(10)).map((r) => r.texte);
+for (const o of df.options) {
+  const propres = repliquesDe(epi, ctx(10, o.id)).filter((r) => !communes.includes(r.texte));
+  corps += `<div class="matin"><span class="sur">${e(o.nom)}</span><p class="phrase">« ${e(o.phrase)} »</p>${propres.map(voix).join('')}</div>`;
+}
+corps += `<article class="scene">${recitSeul(epi.recit)}${repliquesDe(epi, ctx(10)).map(voix).join('')}</article>`;
+corps += interlude('fin');
+
+// ---------- les annexes ----------
+corps += titrePartie('annexes', 'Annexes', 'Pièces du dossier', 'Ce que le récit n’a pas pu porter : les papiers retrouvés, les Porteurs, le bestiaire, les cartes, et le film d’ouverture du jeu.');
+corps += titreChapitre('archives', 'Annexe A', 'Les papiers retrouvés');
+for (const f of [...FRAGMENTS, ...FAMILLES]) corps += `<aside class="document"><span class="sur">${e(f.support)}</span><h4>${e(f.titre)}</h4>${paragraphes(f.lignes)}</aside>`;
+corps += titreChapitre('porteurs', 'Annexe B', 'Les Porteurs, de plus près');
+for (const [id, p] of Object.entries(PRESENTATIONS)) {
+  if (['coursier', 'docker', 'guetteur'].includes(id)) continue;
+  const nom = essai(() => porteurDef(id).nom) ?? id;
+  corps += `<h3 class="annexe-nom">${e(nom)}</h3>`;
+  if (p.pourquoi) corps += `<p>${e(p.pourquoi)}</p>`;
+  if (p.aParte) corps += `<aside class="document"><h4>${e(p.aParte.titre)}</h4><p>${e(p.aParte.texte)}</p></aside>`;
+  for (const o of ORIGINES[id] ?? []) corps += `<div class="palier"><h4>${e(o.titre)}</h4><p>${e(o.texte)}</p></div>`;
+  const fil = FILS[id];
+  if (fil) corps += `<aside class="quete"><span class="sur">Son histoire</span><h4>${e(fil.titre)}</h4>${fil.etapes.map((x) => `<p><strong>${e(x.titre)}.</strong> ${e(x.recit)}</p>`).join('')}</aside>`;
+}
+corps += titreChapitre('bestiaire', 'Annexe C', 'Le bestiaire') + `<p class="avertissement">Les fiches contiennent les secrets des ennemis : à lire après le récit.</p>`;
+const GARDIENS = new Set(['confluence', 'gardien-registres', 'tisseuse', 'premier-porteur']);
 for (const [id, f] of Object.entries(BESTIAIRE)) {
+  if (GARDIENS.has(id)) continue;
   const nom = RODEURS.find((r) => r.id === id)?.dans ?? essai(() => ennemiDef(id).nom) ?? id;
   corps += `<div class="bete">${imgEnnemi(id) ? `<img src="${imgEnnemi(id)}" alt="" loading="lazy">` : ''}<div><h4>${e(nom)}</h4><p>${e(f.origine)}</p><p class="secret"><span>Secret</span>${e(f.secret)}</p></div></div>`;
 }
-
-// ---------- Partie VI : les cartes ----------
-corps += titrePartie('cartes', 'Partie VI', 'Les cartes', 'Le petit lore de chaque carte, visible en la touchant dans le jeu.');
-sommaire.push({ id: 'cartes', titre: `${Object.keys(LORE_CARTES).length} cartes`, niveau: 2 });
-corps += `<div class="cartes">`;
+corps += titreChapitre('cartes', 'Annexe D', 'Les cartes') + `<div class="cartes">`;
 for (const [id, t] of Object.entries(LORE_CARTES)) {
   const nom = essai(() => moduleDef(id).nom) ?? id;
   corps += `<div class="carte">${imgModule(id) ? `<img src="${imgModule(id)}" alt="" loading="lazy">` : ''}<div><h4>${e(nom)}</h4><p>${e(t)}</p></div></div>`;
 }
 corps += `</div>`;
-
-// ---------- Annexe : les rumeurs ----------
-corps += titrePartie('rumeurs', 'Annexe', 'Ce qu’on dit au marché', 'Les rumeurs du district, une par jour dans le jeu.');
-corps += `<ul class="rumeurs">${RUMEURS.map((r) => `<li>${e(r.texte)}${r.strate ? ` <small>dès −${r.strate}</small>` : ''}</li>`).join('')}</ul>`;
+corps += titreChapitre('marche', 'Annexe E', 'Ce qu’on dit au marché') + `<ul class="rumeurs">${RUMEURS.filter((r) => !r.strate).map((r) => `<li>${e(r.texte)}</li>`).join('')}</ul>`;
+corps += titreChapitre('film', 'Annexe F', 'Le film d’ouverture du jeu');
+for (const p of PLANS) corps += `<p><strong>${e(p.titre)}.</strong> ${e(p.lignes.join(' '))}</p>`;
 
 // ---------- la page ----------
 const toc = sommaire.map((s) => `<a class="n${s.niveau}" href="#${s.id}">${e(s.titre)}</a>`).join('');
@@ -232,9 +295,9 @@ const page = `<!DOCTYPE html>
 <header class="barre"><a href="#couverture" class="marque">EMPREINTES</a><button type="button" id="ouvrir" aria-controls="toc" aria-expanded="false">Sommaire</button></header>
 <nav id="toc" class="toc" aria-label="Sommaire" hidden><div class="toc-in"><div class="toc-tete"><span>Sommaire</span><button type="button" id="fermer" aria-label="Fermer le sommaire">✕</button></div>${toc}</div></nav>
 <main>
-<section class="couverture" id="couverture">${imgIntro('00-titre') ? `<img src="${imgIntro('00-titre')}" alt="">` : ''}<div class="couv-txt"><h1>EMPREINTES</h1><p class="accroche">2121 · Sous les eaux, d’autres se souviennent encore.</p><p class="auteur">Le livre du jeu · INPP Houben</p><p class="date">Tiré du jeu le ${e(date)}</p><button type="button" id="reprendre" hidden>Reprendre la lecture</button></div></section>
+<section class="couverture" id="couverture">${imgIntro('00-titre') ? `<img src="${imgIntro('00-titre')}" alt="">` : ''}<div class="couv-txt"><h1>EMPREINTES</h1><p class="accroche">2121 · Sous les eaux, d’autres se souviennent encore.</p><p class="auteur">Le livre · INPP Houben</p><button type="button" id="reprendre" hidden>Reprendre la lecture</button></div></section>
 ${corps}
-<footer class="fin-livre">Fin du livre. Il est tiré directement des textes du jeu : il change quand le jeu change.</footer>
+<footer class="fin-livre">Tiré des textes du jeu EMPREINTES le ${e(date)}.</footer>
 </main>
 <script>
 (function(){
@@ -254,4 +317,4 @@ ${corps}
 </body></html>`;
 writeFileSync(resolve(sortie, 'index.html'), page);
 writeFileSync(resolve(sortie, 'images.txt'), [...images].join('\n'));
-console.log(`livre : ${(page.length / 1024).toFixed(0)} Ko de texte, ${images.size} images, ${sommaire.length} entrées au sommaire`);
+console.log(`livre : ${(page.length / 1024).toFixed(0)} Ko, ${images.size} images, ${sommaire.length} entrées au sommaire`);

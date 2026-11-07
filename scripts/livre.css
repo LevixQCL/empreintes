@@ -103,3 +103,22 @@ blockquote{margin:12px 0;padding:12px 16px;border-left:2px solid var(--or);font-
 .rumeurs li{margin:10px 0}.rumeurs small{color:var(--doux);font:600 12px var(--mono)}
 .fin-livre{margin-top:70px;text-align:center;font-style:italic;color:var(--doux)}
 @media(max-width:420px){body{font-size:16.5px}.porteur{grid-template-columns:96px 1fr}.portrait{width:96px;height:124px}}
+
+/* le récit d'un seul tenant (relecture du 7 novembre 2026) */
+.note p:first-child::first-letter{color:var(--glace)}
+.signe{text-align:right;font-style:italic;color:var(--or)}
+.geste{margin:18px 0 6px;padding-left:14px;border-left:2px solid var(--or);color:#F3EBD6}
+.epigraphe{margin:6px 0 20px;padding:0 6%;text-align:center;font-style:italic;font-size:15px;color:var(--doux)}
+.epigraphe span{display:block;margin-top:4px;font:600 11.5px var(--mono);font-style:normal;letter-spacing:.14em;text-transform:uppercase;color:var(--or2)}
+.arrivee{display:grid;grid-template-columns:92px 1fr;gap:14px;margin:22px 0;padding:12px;border-radius:8px;background:var(--verre);box-shadow:inset 0 0 0 1px rgba(242,213,140,.25)}
+.arrivee img{width:92px;height:118px;object-fit:cover;object-position:50% 15%;border-radius:6px}
+.arrivee p{font-size:15.5px;margin:0 0 .4em}
+.revelation h4{margin-top:0}
+.carnet{margin:24px 0;padding:12px 16px;border-left:2px solid var(--or);background:rgba(242,213,140,.05);font-style:italic;font-size:15.5px}
+.carnet p{margin:0 0 .5em}
+.marge{margin:20px 0 34px;padding:12px 16px;border-radius:6px;background:rgba(159,198,232,.05);box-shadow:inset 0 0 0 1px rgba(159,198,232,.2);font-size:14.5px;color:#CFCBC0}
+.marge p{margin:0 0 .7em}.marge b{font-weight:600;color:var(--glace)}
+.matin{margin:16px 0;padding:12px 16px;border-radius:8px;background:var(--verre);box-shadow:inset 3px 0 0 var(--or)}
+.chapeau-acte{font-style:italic;color:#DAD4C6}
+.annexe-nom{margin-top:34px}
+.avertissement{font-style:italic;color:var(--doux)}
