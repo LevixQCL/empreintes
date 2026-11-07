@@ -33,12 +33,16 @@ Rien dans le jeu n'importe ces fichiers. `duel.css` n'est pas dans `feuilles.ts`
   Lecture montre, au tour suivant, le *genre* de la chaîne verrouillée par l'adversaire (attaques, boucliers, soins), jamais la force ni la cible ;
   Faille gagne sa force quand on lit l'adversaire. La Fêlure n'existe pas en duel.
 - Victoire : toute l'escouade adverse à terre. Si les deux tombent au même tour, gagne celui qui a frappé le plus fort ce tour-là.
-- Usure du duel dès le tour 10 (+15 % de coups par tour, −10 % de soins) ; au tour 30, le duel se décide aux PV restants.
+- Usure du duel dès le tour 8 (+15 % de coups par tour, −10 % de soins) ; au tour 30, le duel se décide aux PV restants.
 - Le dernier Porteur debout encaisse un peu moins (×0,85).
 
 ### Équilibre mesuré (`npm run duel`, rapport complet dans `docs/duel-rapport.md`)
 
-- **Durée** : 8 à 10 tours à toutes les étapes du jeu (avant le 3 novembre : 10 tours au début, 4,8 en fin de jeu).
+- **Coups énormes (7 novembre 2026, remarque de Bryan : des combos à 200 contre ~45 PV)** : les PV de duel passent de ×1,15 à ×1,5
+  (`pvForce` 0,6 → 0,75) et l'Usure démarre au tour 8. Porteurs tombés en un seul tour depuis ≥ 80 % de leurs PV : 17-24 % → 4-10 % ;
+  durée : 8-11 → 11-13 tours. Bryan ne voulait pas de nouvelle règle (une « Garde » plafonnant les dégâts a été écartée) ni de cartes modifiées ;
+  baisser Résonance et Écho en duel ne changeait presque rien (les gros coups viennent des effets qui s'additionnent).
+- **Durée** (avant le 7 novembre) : 8 à 10 tours à toutes les étapes du jeu (avant le 3 novembre : 10 tours au début, 4,8 en fin de jeu).
   Les PV de duel suivent la force moyenne des cartes des deux escouades (`DUEL.pvForce`), le même facteur des deux côtés.
 - **Égalités** : 0 % (départage au dernier tour).
 - **Écarts de progression** : l'escouade d'une étape au-dessus gagne 77 à 100 %. Voulu ou non ? À décider (duel « à armes égales » possible).

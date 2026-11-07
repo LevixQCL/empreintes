@@ -27,16 +27,19 @@ export const DUEL = {
   /** au-delà, le duel se décide aux PV restants (en part des PV max) */
   tourMax: 30,
   /** les duels qui s'éternisent : dès le tour `des`, les coups grossissent et les soins fondent (comme l'usure des Strates) */
-  usure: { des: 10, attaqueParTour: 0.15, soinParTour: 0.1 },
+  usure: { des: 8, attaqueParTour: 0.15, soinParTour: 0.1 },
   /** PV des Porteurs en duel (× leurs PV au district) : les cartes d'un joueur frappent plus fort qu'un ennemi des Strates.
    *  Mesuré au robot (escouades de départ, 60 duels) : ×1,6 → 12 tours en moyenne ; ×1,3 → 10 tours (8 à 13), soit 3 à 5 minutes,
-   *  entre un combat des Strates (≈ 7 tours) et un combat qui traîne. Avec `pvForce` (3 novembre 2026) : ×1,15. */
-  pv: 1.15,
+   *  entre un combat des Strates (≈ 7 tours) et un combat qui traîne. Avec `pvForce` (3 novembre 2026) : ×1,15.
+   *  7 novembre 2026 : ×1,5 (pvForce 0,75, Usure dès le tour 8). Les effets qui s'additionnent dans une chaîne (Écho + Unisson + Empreinte,
+   *  Rafale + Curée + Surtension) faisaient tomber 17 à 24 % des Porteurs en un seul tour depuis leurs PV pleins ; après : 4 à 10 %,
+   *  pour 11 à 13 tours de duel. Aucune carte ni règle changée. */
+  pv: 1.5,
   /** Les PV suivent aussi la force moyenne des cartes des DEUX escouades (puissance d'une place, comparée aux escouades de départ),
    *  à la puissance `pvForce` : sans ça, un duel de fin de jeu durait 4 à 5 tours (les cartes grandissent bien plus vite que les PV).
    *  Le même facteur pour les deux côtés : l'escouade la plus forte garde tout son avantage, seul le rythme reste le même.
    *  Mesuré (npm run duel, 30 duels par étape) : avant, 10 tours au début et 4,8 en fin de jeu ; après, 8 à 10 tours à toutes les étapes. */
-  pvForce: 0.6,
+  pvForce: 0.75,
   /** le dernier Porteur debout tient un peu mieux (il ne reste que lui) */
   dernierDebout: 0.85,
   /** part du soin en trop qui devient bouclier au tour suivant (Débord) */
