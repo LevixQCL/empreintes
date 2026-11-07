@@ -180,6 +180,17 @@
   .gt-tour{max-width:560px}
 }
 
+/* les deux colonnes du grand écran : effacées par défaut */
+.gt-cols,.gt-col-g,.gt-col-d{display:contents}
+@media (min-width:1400px) and (min-height:600px){
+  .ecran.gt > .contenu{max-width:1320px}
+  .gt-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);column-gap:40px;align-items:start}
+  .gt-col-g{display:grid;gap:16px;position:sticky;top:calc(var(--hud-h) + 16px)}
+  .gt-col-d{display:grid;gap:16px;align-content:start}
+  .gt-col-g .gt-tete{margin:0;padding:170px 28px 0;border-radius:18px;overflow:hidden}
+  .gt-col-d .gt-podium{max-width:none}
+}
+
 /* « Protège ta partie » : la même feuille que celle du pseudo */
 .rappel-compte .feuille-corps{display:grid;align-content:start;gap:14px}
 .rappel-compte .rc-texte{margin:0;font-size:14px;line-height:1.5;color:var(--ink-2)}

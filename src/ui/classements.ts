@@ -98,6 +98,10 @@ export function htmlClassements(e: EcranDistrict, g: GrandTableau, uid: string |
     + ` <button type="button" class="lien" data-action="gt-regles" aria-expanded="${g.regles}">${ICO.aide}Comment ça se calcule ?</button></p>`
     + (g.regles ? regles(def.id) : '') + `</div>`;
 
+  // grand écran (7 novembre 2026) : la vitrine, les onglets et la période à gauche, le classement à droite ;
+  // sur téléphone et petit PC, les deux colonnes s'effacent (display:contents) et tout reste empilé
+  h = `<div class="gt-cols"><div class="gt-col-g">${h}</div><div class="gt-col-d">`;
+
   // la liste
   if (!e.compte.actif) h += seul(j, def.id, g.periode, semaine, 'Le Tableau en ligne n’est pas branché sur cette version.', '');
   else if (!enLigne) h += seul(j, def.id, g.periode, semaine, e.compte.utilisateur?.anonyme ? 'Protège ta partie pour te mesurer aux autres directeurs.' : 'Connecte-toi pour te mesurer aux autres directeurs.',
@@ -116,6 +120,7 @@ export function htmlClassements(e: EcranDistrict, g: GrandTableau, uid: string |
         + `<button type="button" class="btn sec petit" data-action="gt-retirer-ok">Me retirer</button><button type="button" class="btn sec petit" data-action="gt-retirer">Annuler</button></div>` : '')
       + `</footer>`;
   }
+  h += `</div></div>`;
   return coquille(e, h, 'gt');
 }
 
