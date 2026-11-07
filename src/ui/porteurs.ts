@@ -39,7 +39,7 @@ function statut(j: Jeu, id: string): { texte: string; classe: string } {
 export function arrivee(p: PorteurDef): string {
   if (p.arrivee?.forge) return `Arrive quand la Forge atteint le niveau ${p.arrivee.forge}.`;
   if (p.arrivee?.strate) return `Arrive quand la Strate −${p.arrivee.strate} est ouverte.`;
-  if (p.arrivee?.accord) return `Arrive par un Accord ouvert : Clinique niveau ${ACCORD_OUVERT.clinique} et ${ACCORD_OUVERT.confiance * CONFIANCE.palier} habitants qui te suivent.`;
+  if (p.arrivee?.accord) return `Arrive par un Accord ouvert : Clinique niveau ${ACCORD_OUVERT.clinique} et ${ACCORD_OUVERT.confiance * CONFIANCE.palier} familles qui te suivent.`;
   return 'Arrive quand la chambre scellée est ouverte.';
 }
 

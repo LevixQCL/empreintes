@@ -209,7 +209,7 @@ export const FAMILLES: Fragment[] = [
     lignes: [
       'Trois générations ont tenu ce carnet. Une ligne par nuit : l’heure, le niveau, « tenu » ou « pas tenu ».',
       'Les premières pages disent presque toujours « tenu ». Les dernières, de moins en moins.',
-      'La dernière ligne est d’hier : « Le directeur a fait tourner les pompes. Tenu. »',
+      'La dernière ligne est d’hier : « Le directeur a dressé le batardeau des Basses. Tenu. »',
     ],
   },
   {
@@ -270,7 +270,7 @@ export const FAMILLES: Fragment[] = [
   },
 ];
 
-/** L'ordre dans lequel les familles arrivent, un souvenir par palier de Confiance (75, 150… 600 habitants) */
+/** L'ordre des souvenirs des familles, un par palier de Confiance (6, 12… 48 familles) */
 export const ORDRE_FAMILLES = FAMILLES.map((f) => f.id);
 
 /**

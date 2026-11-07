@@ -166,65 +166,73 @@ describe('Acte III : les trois fins', () => {
   });
 });
 
-import { CONFIANCE, CREUSEURS, confier, coutPompe, energieParHeure, niveauConfiance, nuitDesLignes, pomper, recompenserConfiance } from '../src/core/jeu';
+import { CONFIANCE, CREUSEURS, confier, nbFoyers, niveauConfiance, nuitDesLignes, recompenserConfiance, accueillirFamille } from '../src/core/jeu';
 import { ORDRE_FAMILLES } from '../src/core/fragments';
 import { estJeuValide } from '../src/core/jeu';
+import { FAMILLES_DISTRICT, FAMILLES_QUARTIER, familleDuFragment } from '../src/core/familles';
 
-describe('La Confiance du quartier (30 octobre 2026 : les habitants qui te suivent)', () => {
-  it('commence à 20 habitants, ne baisse jamais et plafonne à 600', () => {
+describe('La Confiance du quartier (7 novembre 2026 : 48 familles nommées)', () => {
+  it('48 familles, dont celles des souvenirs d’Archives ; les ouvriers du départ sont là dès le début', () => {
+    expect(FAMILLES_DISTRICT).toHaveLength(CONFIANCE.population);
+    expect(new Set(FAMILLES_DISTRICT.map((f) => f.id)).size).toBe(CONFIANCE.population);
+    for (const f of ORDRE_FAMILLES) expect(familleDuFragment(f), f).toBeTruthy();
     const j = nouveauJeu(0, 1);
-    expect(j.confiance).toBe(CONFIANCE.depart);
-    confier(j, -50);
-    expect(j.confiance).toBe(CONFIANCE.depart);
-    expect(niveauConfiance(CONFIANCE.palier - 1).niveau).toBe(0);
-    expect(niveauConfiance(CONFIANCE.palier).niveau).toBe(1);
-    expect(niveauConfiance(2 * CONFIANCE.palier + 10)).toEqual({ niveau: 2, dans: 10, requis: CONFIANCE.palier });
-    expect(confier(j, 10_000)).toBe(CONFIANCE.population - CONFIANCE.depart);
-    expect(j.confiance).toBe(CONFIANCE.population);
-    expect(niveauConfiance(j.confiance)).toEqual({ niveau: 8, dans: CONFIANCE.palier, requis: 0 });
+    expect(j.foyers).toEqual(['ruel', 'abady']);
+    expect(j.confiance).toBe(0);
   });
 
-  it('chaque palier amène un creuseur volontaire et un souvenir de famille, une seule fois', () => {
+  it('le bouche-à-oreille fait venir une famille du quartier tous les 15 points, sans jamais rien retirer', () => {
+    const j = nouveauJeu(0, 1);
+    expect(confier(j, -50)).toBe(0);
+    expect(confier(j, CONFIANCE.rumeur - 1)).toBe(0);
+    expect(confier(j, 1)).toBe(1);
+    expect(j.foyers!.at(-1)).toBe(FAMILLES_QUARTIER[0]!.id);
+    expect(confier(j, 10_000)).toBe(FAMILLES_QUARTIER.length - 1);
+    // tout le quartier est venu : le bouche-à-oreille ne s’accumule plus
+    expect(j.confiance).toBe(0);
+    expect(niveauConfiance(CONFIANCE.palier - 1).niveau).toBe(0);
+    expect(niveauConfiance(2 * CONFIANCE.palier + 1)).toEqual({ niveau: 2, dans: 1, requis: CONFIANCE.palier });
+    expect(niveauConfiance(48)).toEqual({ niveau: 8, dans: CONFIANCE.palier, requis: 0 });
+  });
+
+  it('chaque palier amène un creuseur et un souvenir, apporté par sa famille, une seule fois', () => {
     const j = nouveauJeu(0, 1); j.chambre = true;
     j.creuseurs = 0;
-    confier(j, 2 * CONFIANCE.palier);
+    confier(j, (2 * CONFIANCE.palier - nbFoyers(j)) * CONFIANCE.rumeur);
+    expect(nbFoyers(j)).toBe(2 * CONFIANCE.palier);
     expect(recompenserConfiance(j)).toHaveLength(2);
     expect(j.creuseurs).toBe(2 * CREUSEURS.confiance);
     expect(j.fragments.filter((f) => ORDRE_FAMILLES.includes(f))).toEqual(ORDRE_FAMILLES.slice(0, 2));
+    for (const f of ORDRE_FAMILLES.slice(0, 2)) expect(j.foyers).toContain(familleDuFragment(f)!.id);
     expect(recompenserConfiance(j)).toHaveLength(0);
   });
 
-  it('les pompes : 7 par semaine, six heures de production chacune, +3 habitants', () => {
-    const j = nouveauJeu(0, 1); j.chambre = true; j.batiments.generateur = 3;
-    j.energie = 1e6;
-    const cout = coutPompe(j);
-    expect(cout).toBe(Math.round(energieParHeure(j) * 6 / 10) * 10);
-    const avant = j.confiance;
-    for (let k = 0; k < CONFIANCE.pompesSemaine; k++) expect(pomper(j, 0).ok).toBe(true);
-    expect(pomper(j, 0).ok).toBe(false);
-    expect(j.confiance - avant).toBe(CONFIANCE.pompesSemaine * CONFIANCE.pompe);
-    expect(j.energie).toBe(1e6 - CONFIANCE.pompesSemaine * cout);
-    // la semaine suivante, les pompes repartent
-    expect(pomper(j, 8 * 86_400_000).ok).toBe(true);
+  it('une famille n’arrive qu’une fois', () => {
+    const j = nouveauJeu(0, 1);
+    expect(accueillirFamille(j, 'pellan')).toBe(true);
+    expect(accueillirFamille(j, 'pellan')).toBe(false);
+    expect(accueillirFamille(j, 'inconnue')).toBe(false);
   });
 
-  it('la Nuit des lignes ajoute 15 % des habitants gagnés de la semaine, et rien si on n’a pas joué', () => {
+  it('la Nuit des lignes ajoute 15 % des points de la semaine, et rien si on n’a pas joué', () => {
     const j = nouveauJeu(0, 1); j.chambre = true;
     confier(j, 40, 'naufrages', 0);
-    const avant = j.confiance;
+    expect(nbFoyers(j)).toBe(4);
+    expect(j.confiance).toBe(10);
     expect(nuitDesLignes(j, 7 * 86_400_000 * 2)).toContain('Nuit des lignes');
-    expect(j.confiance - avant).toBe(6);
-    expect(j.lignes?.derniere).toMatchObject({ gagnes: 40, bonus: 6, sources: { naufrages: 40 } });
+    // +6 points la nuit : 16, une famille de plus arrive cette nuit-là
+    expect(j.confiance).toBe(1);
+    expect(nbFoyers(j)).toBe(5);
+    expect(j.lignes?.derniere).toMatchObject({ gagnes: 2, bonus: 1, sources: { naufrages: 40 } });
     // une semaine sans rien : pas de bilan, rien de perdu
     expect(nuitDesLignes(j, 7 * 86_400_000 * 4)).toBeNull();
-    expect(j.confiance).toBe(avant + 6);
+    expect(j.confiance).toBe(1);
   });
-
 
   it('le choix de l’acte I la fait monter', () => {
     const j = nouveauJeu(0, 1); j.chambre = true; j.strate = 4;
     decider(j, 'chambre', 'district');
-    expect(j.confiance).toBe(CONFIANCE.depart + 10);
+    expect(j.confiance).toBe(10);
   });
 });
 
@@ -271,11 +279,24 @@ describe('Les habitants viennent de ce qui protège les gens (30 octobre 2026)',
     // une sauvegarde aux anciens points (385 au jour 30) : 20 + 80 % des points, paliers acquis sans creuseur d'un coup
     const vieille = JSON.parse(JSON.stringify(nouveauJeu(0, 2))) as typeof j;
     delete vieille.confianceV; vieille.confiance = 385; vieille.confianceRecue = 5; vieille.creuseurs = 3;
+    vieille.version = 8; delete vieille.foyers;
     expect(estJeuValide(vieille)).toBe(true);
-    expect(vieille.confiance).toBe(328);
+    // puis les 328 habitants deviennent 26 familles (12,5 par famille, 7 novembre 2026) ; le reste, du bouche-à-oreille
+    expect(vieille.foyers).toHaveLength(26);
+    expect(vieille.confiance).toBe(4);
     expect(vieille.confianceRecue).toBe(5);
+    for (const f of vieille.fragments.filter((x) => ORDRE_FAMILLES.includes(x))) expect(vieille.foyers).toContain(familleDuFragment(f)!.id);
     expect(vieille.fragments.filter((f) => ORDRE_FAMILLES.includes(f))).toHaveLength(5);
     expect(recompenserConfiance(vieille)).toHaveLength(0);
     expect(vieille.creuseurs).toBe(3);
+  });
+
+  it('une sauvegarde de 600 habitants a tout le district, les Basses comprises', () => {
+    const v = JSON.parse(JSON.stringify(nouveauJeu(0, 2))) as ReturnType<typeof nouveauJeu>;
+    v.version = 8; delete v.foyers; v.confiance = 600; v.confianceRecue = 8;
+    expect(estJeuValide(v)).toBe(true);
+    expect(v.foyers).toHaveLength(48);
+    expect(v.basses?.faits).toHaveLength(20);
+    expect(v.confiance).toBe(0);
   });
 });

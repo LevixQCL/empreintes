@@ -422,7 +422,7 @@ export function subirPillages(j: Jeu, subis: PillageSubi[]): string[] {
       j.composants += gagne;
       noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: true, composants: gagne, le: s.le });
       const venus = confier(j, CONFIANCE.defense, 'defense');
-      l.push(`Ta garnison a repoussé ${s.nom}${gagne ? ` : +${gagne} composants laissés dans ton coffre` : ''}.${venus ? ` Le quartier l’a vu : +${venus} habitants te suivent.` : ''}`);
+      l.push(`Ta garnison a repoussé ${s.nom}${gagne ? ` : +${gagne} composants laissés dans ton coffre` : ''}.${venus ? ` Le quartier l’a vu : ${venus > 1 ? `${venus} familles te rejoignent` : 'une famille te rejoint'}.` : ' Le quartier l’a vu.'}`);
     }
   }
   // on ne garde que deux jours d'attaques : assez pour le bouclier et pour ne rien compter deux fois

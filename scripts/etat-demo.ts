@@ -16,6 +16,9 @@ j.recrues = true;
 j.batiments = { noyau: 4, generateur: 4, forge: 3, clinique: 3 };
 j.energie = 1840; j.composants = 620; j.eclats = 7;
 j.strate = 5; j.objectif = 4; j.confiance = 64;
+// les familles (7 novembre 2026) : le départ, une partie du quartier, et deux familles ramenées des Basses
+j.foyers = ['ruel', 'abady', 'orlan', 'gaudet', 'hollen', 'marsac', 'trelan', 'meric', 'cazal', 'dumay', 'pellan', 'ardoin', 'esquer', 'sorne'];
+j.basses = { batardeau: 'lavoirs', semaine: -1, vu: -1, depots: 0, expedition: null, faits: ['bac-cordes', 'maison-eclusier'] };
 const metaux = ['fer', 'cuivre', 'argent', 'or', 'nacre'] as const;
 MODULES_TIRABLES.forEach((m, i) => {
   const r = metaux[Math.min(4, Math.floor(i / 9))]!;

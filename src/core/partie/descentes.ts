@@ -12,7 +12,7 @@ import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { REGLES } from '../regles';
-import { ACCORD_OUVERT, chanceCreuseurFouille, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
+import { nbFoyers, ACCORD_OUVERT, chanceCreuseurFouille, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -171,7 +171,7 @@ export function avancerFils(j: Jeu): string[] {
   return annonces;
 }
 
-const accordOuvertPret = (j: Jeu) => j.batiments.clinique >= ACCORD_OUVERT.clinique && niveauConfiance(j.confiance ?? 0).niveau >= ACCORD_OUVERT.confiance;
+const accordOuvertPret = (j: Jeu) => j.batiments.clinique >= ACCORD_OUVERT.clinique && niveauConfiance(nbFoyers(j)).niveau >= ACCORD_OUVERT.confiance;
 
 export function disponibles(j: Jeu): string[] {
   return porteursPresents(j).filter((id) => !j.porteurs[id]!.poste && !enExpedition(j, id));
@@ -545,7 +545,7 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   if (nouvelleMarque) log(j, `${p.nom} gagne la Marque ${nouvelleMarque.nom} : ${nouvelleMarque.texte}`);
   const gainXp = Math.round(XP.missionHeure * d.heures * facteurXp(m.strate) * b.mult);
   const monte = gagnerXp(j, m.porteur, gainXp);
-  const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${familles ? `, +${familles} habitants` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? `, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
+  const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${familles ? `, +${familles} famille${familles > 1 ? 's' : ''}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? `, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
   const rapport: RapportMission = {
     porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, lieu: lieuId, butin: m.butin, eclats, rendement: m.rendement ?? 1, ...(m.profondeur !== undefined ? { profondeur: m.profondeur } : {}), affinite: b.affinite, mult: Math.round(b.mult * 100) / 100, recit: [],
@@ -608,7 +608,7 @@ export function recitMission(r: RapportMission): string[] {
     `Deux barques avaient ouvert le chemin : ${nom} a pu atteindre le Cœur de la ruine, une salle restée au sec depuis la montée des eaux. Une pierre y attendait.`,
     `Au bout des Cales, une porte que les autres n’avaient pas pu forcer : ${nom} l’a passée, et le Cœur de la ruine lui a livré une pierre.`,
   ]));
-  if (r.habitants) recit.push(`Les familles recueillies ont choisi de rester au district : ${r.habitants} habitants de plus te suivent.`);
+  if (r.habitants) recit.push(`Le quartier a vu la barque rentrer : ${r.habitants > 1 ? `${r.habitants} familles ont` : 'une famille a'} décidé de te suivre.`);
   if (r.butin === 'naufrages' && !r.creuseurs && !r.habitants) recit.push('Plus personne à recueillir sur place : les naufragés étaient déjà partis. La barque est revenue chargée de matériel.');
   recit.push(choisir([
     `Sous l’eau dormait encore du matériel d’avant : ${r.composants} composants hissés à bord.`,

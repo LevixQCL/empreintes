@@ -1,0 +1,110 @@
+/* EMPREINTES — Les Basses et le Mur des empreintes (7 novembre 2026).
+   Même matière que le reste : verre fumé, arêtes de glace, or pour la valeur. Textes à 12 px minimum, cibles de 44 px.
+   Le flanc de la digue en coupe porte la ligne d'eau de la vraie marée (ambiance seulement). */
+
+/* ---------- La feuille de l'écluse ---------- */
+.bs-feuille .feuille-corps>*{flex-shrink:0}
+.bs-feuille .fb-bloc{display:grid;gap:10px;margin:4px 0 14px;padding:12px;background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14)}
+.bs-feuille .fb-bloc .titre-bloc{margin:0}
+.bs-feuille .fb-vide{margin:0;font-size:13px;line-height:1.45;color:#C9D6E6}
+.bs-feuille .fb-note{display:block;font-size:12px;line-height:1.4;color:#93A3B8}
+.bs-feuille .mur-compte,.mur-empreintes .mur-compte{margin-left:auto;font:600 13px/1 var(--mono);color:var(--gold,#F2D58C)}
+.bs-feuille>.feuille-corps>.titre-bloc,.mur-empreintes .titre-bloc{display:flex;align-items:center;gap:8px}
+
+/* le flanc et sa ligne d'eau */
+.bs-flanc{--eau:50%;position:relative;margin:0 0 12px;height:170px;overflow:hidden;border-radius:14px;isolation:isolate;box-shadow:inset 0 0 0 1px rgba(205,239,255,.18),0 6px 18px rgba(0,0,0,.35)}
+.bs-flanc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 40%;z-index:-2}
+.bs-eau{position:absolute;left:0;right:0;bottom:0;height:var(--eau);z-index:-1;
+  background:linear-gradient(180deg,rgba(80,170,210,.55),rgba(14,52,78,.88) 40%,rgba(6,22,36,.95));
+  box-shadow:0 -1px 0 rgba(220,245,255,.65);transition:height 1.2s ease}
+.bs-ecume{position:absolute;left:-10%;right:-10%;top:-5px;height:10px;opacity:.75;
+  background:radial-gradient(10px 4px at 50% 100%,rgba(235,250,255,.85),transparent 70%) 0 0/36px 10px repeat-x;
+  animation:bs-houle 7s ease-in-out infinite alternate}
+@keyframes bs-houle{from{transform:translateX(0)}to{transform:translateX(18px)}}
+.bs-flanc figcaption{position:absolute;left:10px;bottom:8px;right:10px;display:grid;gap:1px;text-shadow:0 1px 3px #000}
+.bs-flanc figcaption b{display:inline-flex;align-items:center;gap:5px;font-family:var(--display);font-size:16px;font-weight:400;color:#fff4dc}
+.bs-flanc figcaption b .ico{width:15px;height:15px;color:#FFD86B}
+.bs-flanc figcaption small{font:12px/1.3 var(--mono);color:#CDEFFF}
+
+/* l'expédition en cours */
+.bs-expe{display:grid !important;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px}
+.bs-expe>span{display:grid;gap:2px;min-width:0}
+.bs-expe strong{font-size:14px;font-weight:600;color:#fff}
+.bs-expe small{font-size:12px;color:#93A3B8}
+.bs-expe .jauge{display:block;height:4px;margin-top:4px;border-radius:2px;background:rgba(205,239,255,.12);overflow:hidden}
+.bs-expe .jauge i{display:block;height:100%;background:linear-gradient(90deg,#4C8FD0,#9FD8FF)}
+
+/* les secteurs, du haut vers le bas du flanc */
+.bs-secteurs{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:10px}
+.bs-secteur{display:grid;gap:8px;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(18,40,60,.7),rgba(8,16,26,.85));box-shadow:inset 0 0 0 1px rgba(205,239,255,.16)}
+.bs-secteur header{display:flex;align-items:center;gap:10px}
+.bs-secteur header>span{display:grid;gap:1px;min-width:0;flex:1}
+.bs-secteur strong{font-family:var(--display);font-size:16px;font-weight:400;color:#fff4dc}
+.bs-secteur header small{font-size:12px;color:#93A3B8}
+.bs-secteur header em{display:inline-flex;align-items:center;gap:4px;font:600 12px/1.2 var(--mono);font-style:normal;color:#9FD8FF;white-space:nowrap}
+.bs-secteur header em .ico{width:13px;height:13px}
+.bs-secteur.sec{box-shadow:inset 0 0 0 1px rgba(242,213,140,.55),0 0 16px rgba(242,213,140,.12)}
+.bs-secteur.sec header em{color:#F2D58C}
+.bs-secteur.ferme{opacity:.72}
+.bs-secteur.ferme header em{color:#9FB3C8}
+.bs-ambiance{margin:0;font-family:var(--lecture);font-style:italic;font-size:13px;line-height:1.45;color:#C9D6E6}
+.bs-secteur>.btn{justify-self:start;min-height:44px}
+.bs-secteur>.btn .prix{margin-left:6px}
+
+/* les lieux du secteur à sec */
+.bs-lieux{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.bs-lieu{display:grid;gap:6px}
+.bs-lieu.fait{grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px;padding:8px 10px;border-radius:10px;background:rgba(184,227,168,.06)}
+.bs-lieu.fait>.ico{width:18px;height:18px;color:#B8E3A8}
+.bs-lieu>span,.bs-lieu-btn>span{display:grid;gap:1px;min-width:0}
+.bs-lieu strong{font-family:inherit;font-size:14px;font-weight:600;color:#fff}
+.bs-lieu small{font-size:12px;line-height:1.3;color:#93A3B8}
+.bs-lieu-btn{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;min-height:48px;padding:6px 10px;border:none;border-radius:10px;text-align:left;cursor:pointer;color:#fff;
+  background:rgba(205,239,255,.06);box-shadow:inset 0 0 0 1px rgba(205,239,255,.18)}
+.bs-lieu.ouvert .bs-lieu-btn{box-shadow:inset 0 0 0 2px #F2D58C}
+.bs-lieu-btn em{display:inline-flex;align-items:center;gap:4px;font:600 12px/1 var(--mono);font-style:normal;color:#F2D58C}
+.bs-lieu-btn em .ico{width:14px;height:14px}
+.bs-lieu-btn>.ico{width:16px;height:16px;color:#9FD8FF}
+.bs-silhouette{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;font:600 15px/1 var(--display);color:#CDEFFF;background:radial-gradient(circle at 50% 35%,rgba(205,239,255,.22),rgba(205,239,255,.04));box-shadow:inset 0 0 0 1px rgba(205,239,255,.3)}
+.bs-choix{display:grid;gap:6px;padding:4px 0 2px 8px;border-left:2px solid rgba(242,213,140,.4)}
+.bs-choix ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.bs-choix .mr-cand{grid-template-columns:auto minmax(0,1fr) auto;min-height:44px;border-radius:10px;background:rgba(205,239,255,.05)}
+.bs-choix .mr-cand em{grid-row:span 2;font:600 12px/1 var(--mono);font-style:normal;color:#F2D58C}
+.bs-choix .mr-cand.indispo{opacity:.55;cursor:default}
+.bs-raison{margin:0}
+
+/* la balise de l'écluse, sur la Cuvette */
+.toile .balise.ecluse.fermee .bal-nom{opacity:.7}
+
+/* ---------- Le Mur des empreintes ---------- */
+.mur-rumeur{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;font-size:13px;color:#C9D6E6}
+.mur-rumeur i{grid-column:1/-1;order:2;position:relative;height:6px;border-radius:3px;background:rgba(205,239,255,.12);overflow:hidden}
+.mur-rumeur i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--p,0%);background:linear-gradient(90deg,#B98A3E,#F2D58C);box-shadow:0 0 8px rgba(242,213,140,.4)}
+.mur-rumeur small{order:3;grid-column:1/-1;font:12px/1.3 var(--mono);color:#93A3B8}
+.mur-grille{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px}
+.mur-tuile{display:grid;justify-items:center;align-content:center;gap:3px;width:100%;min-height:64px;padding:6px 3px;border:none;border-radius:12px;cursor:pointer;color:#fff;text-align:center;
+  background:linear-gradient(180deg,rgba(242,213,140,.12),rgba(242,213,140,.03));box-shadow:inset 0 0 0 1px rgba(242,213,140,.38)}
+.mur-tuile b{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;font:400 14px/1 var(--display);color:#2a1d05;background:linear-gradient(180deg,#f6dc96,#d8b465)}
+.mur-tuile span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;line-height:1.2;color:#F7EBCF}
+.mur-tuile.basses b{background:linear-gradient(180deg,#B9E4FF,#5FA3D8);color:#06202f}
+.mur-tuile.depart b{background:linear-gradient(180deg,#E9F6D8,#9CC98A);color:#132a0f}
+.mur-tuile.gravee{box-shadow:inset 0 0 0 1px rgba(242,213,140,.75),0 0 10px rgba(242,213,140,.25)}
+.mur-tuile.ouverte{box-shadow:inset 0 0 0 2px #F2D58C,0 0 14px rgba(242,213,140,.3)}
+.mur-tuile.vide{cursor:default;background:rgba(205,239,255,.03);box-shadow:inset 0 0 0 1px rgba(205,239,255,.1)}
+.mur-tuile.vide b{color:#93A3B8;background:rgba(205,239,255,.08)}
+.mur-tuile.vide span{color:#7F8EA2}
+.mur-fiche{display:grid;gap:8px;padding:12px;border-radius:12px;background:linear-gradient(180deg,rgba(30,26,16,.85),rgba(14,12,8,.92));box-shadow:inset 0 0 0 1px rgba(242,213,140,.4)}
+.mur-fiche header{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px}
+.mur-fiche header>span{display:grid;gap:1px}
+.mur-fiche header strong{font-family:var(--display);font-size:17px;font-weight:400;color:#fff4dc}
+.mur-fiche header small{font-size:12px;color:#C9B78F}
+.mur-mono{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;font:400 16px/1 var(--display);color:#2a1d05;background:linear-gradient(180deg,#f6dc96,#d8b465)}
+.mur-qui{margin:0;font-size:13px;line-height:1.45;color:#E4D9BE}
+.mur-souvenir{margin:0;padding:8px 12px;border-left:2px solid #F2D58C;font-family:var(--lecture);font-style:italic;font-size:14px;line-height:1.5;color:var(--ivory,#F7EBCF);background:rgba(242,213,140,.06)}
+.mur-porte{display:flex;align-items:center;gap:8px;margin:0;font-size:13px;color:#F2D58C}
+.mur-titre{margin:4px 0 0;font-size:13px;font-weight:600;color:#fff4dc}
+.mur-cartes{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.mur-cartes .btn{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;text-align:left}
+.mur-cartes .btn small{margin-left:auto;font:600 12px/1 var(--mono);color:#F2D58C}
+.mur-plus summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:13px;color:#CDEFFF;text-decoration:underline;text-underline-offset:3px}
+.mur-plus .mur-cartes{margin-top:6px}

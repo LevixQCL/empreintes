@@ -9,7 +9,7 @@ import { CHAPITRES, chapitreOuvert } from './chroniques';
 import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, MODULES, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, mainAccordable, reperentPassage, salleCourante, typeApparent } from './expedition';
-import { coutPompe, pomper,
+import { bassesOuvertes, dresserBatardeau, envoyerBasses, libresPourBasses, ramasserDepot, raisonLieu, restantsSecteur, secteurASec, secteursOuverts, escouadeDe,
   acheterEclat, COMPTOIR, choisirLegs, choisirHalte, ouvrirPorte, passerPorte, relancerPorte, suivrePassage, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
@@ -156,8 +156,19 @@ function gerer(j: Jeu, now: number): void {
   // des Éclats au Comptoir (audit du 7 novembre 2026), s'il reste de quoi monter ses cartes (trois fois le prix)
   while (j.batiments.comptoir && j.composants >= 3 * COMPTOIR.eclats.composants && acheterEclat(j, now).ok);
   for (const b of ['noyau', 'generateur', 'clinique', 'forge', 'comptoir'] as const) ameliorer(j, b, now);
-  // les pompes (30 octobre 2026) : un pompage par passage au district, s'il reste deux fois de quoi le payer
-  if (j.energie >= 2 * coutPompe(j)) pomper(j, now);
+  // les Basses (7 novembre 2026) : il ramasse les dépôts, garde à sec un secteur où des familles attendent, et y envoie un Porteur
+  if (bassesOuvertes(j)) {
+    while (ramasserDepot(j, now).ok);
+    const sec = secteurASec(j);
+    if (!sec || !restantsSecteur(j, sec)) {
+      const cible = secteursOuverts(j).find((x) => restantsSecteur(j, x) > 0);
+      if (cible) dresserBatardeau(j, cible.id, now);
+    }
+    const s2 = secteurASec(j);
+    const lieu = s2?.lieux.find((l) => !raisonLieu(j, l.id));
+    const qui = libresPourBasses(j).find((id) => !escouadeDe(j).includes(id));
+    if (lieu && qui) envoyerBasses(j, lieu.id, qui, now);
+  }
   // le Comptoir : il achète les doublons des cartes de son deck, et une carte neuve si elle vaut mieux que la plus faible,
   // en gardant de quoi monter ses niveaux (une réserve de 2 fois le prix)
   garnirComptoir(j, now);

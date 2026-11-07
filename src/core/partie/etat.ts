@@ -6,8 +6,9 @@ import { PLACES_PORTEUR, chargeNiveau, poidsCarte, type CarteCollection } from '
 import type { Expedition } from '../expedition';
 import type { Palmares } from '../classements';
 import type { BatimentId, GesteDef, BonusMarques, Rarete } from '../types';
+import { FAMILLES_QUARTIER, familleDef } from '../familles';
 
-export const VERSION_JEU = 8;
+export const VERSION_JEU = 9;
 
 /** Réglages du district, au même endroit pour l'équilibrage */
 export const DISTRICT = {
@@ -300,16 +301,22 @@ export interface Jeu {
   arrives: string[];
   /** les grands choix de la campagne (Bible : un choix important par acte) */
   actes: { chambre?: GardeChambre; lecture?: LectureVela; fin?: FinCampagne };
-  /** la Confiance du quartier : les habitants qui suivent le directeur, sur 600 (elle ne fait que monter ; le palier se lit avec `niveauConfiance`) */
+  /** le bouche-à-oreille (7 novembre 2026) : les points gagnés en protégeant des gens ; tous les `CONFIANCE.rumeur` points,
+   *  une famille du quartier rejoint le district (avant : les habitants qui suivaient le directeur, sur 600) */
   confiance: number;
+  /** les familles arrivées au district, dans l'ordre (familles.ts) : le palier se lit avec `niveauConfiance(nbFoyers(j))` */
+  foyers?: string[];
+  /** les Basses (partie/basses.ts) : le batardeau, les dépôts de la marée, l'expédition en cours, les lieux visités */
+  basses?: EtatBasses;
   /** 2 : la Confiance compte des habitants (30 octobre 2026) ; absent : une sauvegarde aux anciens points, convertie au chargement */
   confianceV?: 2;
   /** 2 = XP convertie à la courbe du 3 nov. 2026 (niveaux conservés) */
   xpV?: 2;
   /** paliers de Confiance déjà récompensés (un creuseur volontaire et une famille par palier) */
   confianceRecue?: number;
-  /** la semaine des lignes : pompages faits, habitants gagnés par source, et le bilan de la dernière Nuit des lignes */
-  lignes?: { semaine: number; pompes: number; sources: Partial<Record<SourceHabitants, number>>; derniere?: NuitDesLignes };
+  /** la semaine des lignes : familles arrivées, points de bouche-à-oreille par source, et le bilan de la dernière Nuit des lignes
+   *  (`pompes` : ancienne sauvegarde, plus utilisé) */
+  lignes?: { semaine: number; pompes?: number; familles?: string[]; sources: Partial<Record<SourceHabitants, number>>; derniere?: NuitDesLignes };
   /** les mécaniques de combat déjà expliquées la première fois qu'elles sont apparues (decouvertes.ts) */
   decouvertes?: string[];
   /** les scènes de la campagne déjà jouées, dans l'ordre (campagne.ts) */
@@ -506,7 +513,7 @@ export function log(j: Jeu, t: string) {
 
 export const enExpedition = (j: Jeu, id: string) => (!!j.expedition && j.expedition.porteurs.some((p) => p.id === id)) || enMission(j, id);
 /** en mer : sur une barque, ou sur la gabare d'un contrat de marée (31 octobre 2026) */
-export const enMission = (j: Jeu, id: string) => !!j.missions?.some((m) => m.porteur === id) || !!j.marees?.contrat?.porteurs.includes(id);
+export const enMission = (j: Jeu, id: string) => !!j.missions?.some((m) => m.porteur === id) || !!j.marees?.contrat?.porteurs.includes(id) || j.basses?.expedition?.porteur === id;
 export const posteDe = (j: Jeu, b: Poste) => Object.keys(j.porteurs).find((id) => j.porteurs[id]!.poste === b) ?? null;
 /**
  * La réserve d'énergie : celle de la Tour, et au moins une journée de ce que produit le Générateur (audit du 7 novembre 2026 :
@@ -539,19 +546,21 @@ export function multiplicateur(j: Jeu, b: Exclude<Poste, 'noyau'>): number {
 
 export const energieParHeure = (j: Jeu) => Math.round((DISTRICT.energieParHeure[j.batiments.generateur] ?? 0) * multiplicateur(j, 'generateur'));
 
-// ---------- La Confiance du quartier : les habitants qui te suivent ----------
+// ---------- La Confiance du quartier : les familles qui te suivent ----------
 // Refaite le 30 octobre 2026 (Bryan : la Confiance doit être liée à l'implication du joueur pour sauver les habitants
-// de la montée des eaux). Le district compte 600 habitants ; `j.confiance` est le nombre de ceux qui te suivent.
-// On les gagne en protégeant des gens (pompes, naufragés, gardiens vaincus, choix justes, défense du Port, quais de la Flèche),
-// jamais en combattant pour rien. Elle ne baisse jamais : ni défaite, ni absence, ni eau qui monte.
-// Chaque palier de 75 habitants amène un creuseur volontaire et une famille avec un souvenir pour les Archives.
+// de la montée des eaux), puis le 7 novembre 2026 (« toute la partie avec les habitants ne sert à rien ») : le district compte
+// 48 familles nommées (familles.ts), plus un compteur de 600 habitants. Elles arrivent de trois façons : au départ, par le
+// bouche-à-oreille (`j.confiance` : points gagnés en protégeant des gens, une famille du quartier tous les `rumeur` points),
+// ou parce qu'un Porteur est allé les chercher dans les Basses (partie/basses.ts). Rien ne baisse jamais.
+// Chaque palier de 6 familles amène un creuseur volontaire et un souvenir pour les Archives (mêmes paliers qu'avant :
+// 6 familles = 75 anciens habitants).
 export const CONFIANCE = {
-  /** le district entier : « tout le monde à la fois » */
-  population: 600,
-  /** les ouvriers qui ont envoyé Ilka chercher le directeur */
-  depart: 20,
-  /** un palier tous les 75 habitants (8 jusqu'à 600) */
-  palier: 75,
+  /** le district entier : 48 familles, « tout le monde à la fois » */
+  population: 48,
+  /** un palier toutes les 6 familles (8 jusqu'à 48) */
+  palier: 6,
+  /** points de bouche-à-oreille qu'il faut pour qu'une famille du quartier rejoigne (26 familles : 390 points en tout) */
+  rumeur: 15,
   /** gardien du front vaincu la première fois, de −1 à −10 (l'espoir de l'Écluse) ; plus bas, un peu moins */
   gardien: 10, gardienProfond: 5,
   /** naufragés recueillis en mer (seulement quand la barque en ramène vraiment) */
@@ -560,13 +569,11 @@ export const CONFIANCE = {
   defense: 5,
   /** un quai gravé de la Flèche atteint (de la place gagnée sur les îles) */
   quaiGrave: 25,
-  /** les pompes du Générateur : habitants rassurés par pompage, pompages par semaine, heures de production qu'un pompage coûte */
-  pompe: 3, pompesSemaine: 7, pompeHeures: 6,
-  /** la Nuit des lignes, chaque lundi : part des habitants gagnés pendant la semaine qui rejoignent en plus */
+  /** la Nuit des lignes, chaque lundi : part des points gagnés pendant la semaine qui s'ajoutent en plus */
   nuit: 0.15,
-  /** palier qu'il faut pour l'Accord ouvert (avec la Clinique) : 150 habitants */
+  /** palier qu'il faut pour l'Accord ouvert (avec la Clinique) : 12 familles */
   accord: 2,
-  /** palier qui ajoute un étal au Comptoir (225 habitants) */
+  /** palier qui ajoute un étal au Comptoir (18 familles) */
   comptoir: 3,
 } as const;
 
@@ -574,62 +581,118 @@ export const CONFIANCE = {
 export const NOMS_CONFIANCE: Record<number, string> = { 0: 'Ils t’observent', 1: 'Ils t’écoutent', 4: 'Ils t’aident', 8: 'Tout le district te suit' };
 export const nomConfiance = (palier: number) => NOMS_CONFIANCE[Object.keys(NOMS_CONFIANCE).map(Number).filter((n) => n <= palier).pop() ?? 0]!;
 
-/** Le palier atteint, les habitants dans ce palier et ceux qu'il faut pour le suivant (requis = 0 quand tout le district suit) */
-export function niveauConfiance(habitants: number): { niveau: number; dans: number; requis: number } {
-  const h = Math.min(CONFIANCE.population, Math.max(0, habitants));
+/** Les familles arrivées au district */
+export const nbFoyers = (j: Pick<Jeu, 'foyers'>) => j.foyers?.length ?? 0;
+
+/** Le palier atteint, les familles dans ce palier et celles qu'il faut pour le suivant (requis = 0 quand tout le district suit) */
+export function niveauConfiance(foyers: number): { niveau: number; dans: number; requis: number } {
+  const h = Math.min(CONFIANCE.population, Math.max(0, foyers));
   const max = Math.floor(CONFIANCE.population / CONFIANCE.palier);
   const niveau = Math.min(max, Math.floor(h / CONFIANCE.palier));
   return niveau >= max ? { niveau, dans: CONFIANCE.palier, requis: 0 } : { niveau, dans: h - niveau * CONFIANCE.palier, requis: CONFIANCE.palier };
 }
 
-/** D'où viennent les habitants de la semaine (pour le récit de la Nuit des lignes) */
-export type SourceHabitants = 'pompes' | 'naufrages' | 'gardiens' | 'rencontres' | 'defense' | 'fleche' | 'histoire';
+/** D'où viennent les familles de la semaine (pour le récit de la Nuit des lignes) ; `pompes` : anciennes sauvegardes */
+export type SourceHabitants = 'pompes' | 'basses' | 'naufrages' | 'gardiens' | 'rencontres' | 'defense' | 'fleche' | 'histoire';
 
-/** Des habitants qui rejoignent (jamais perdus : un nombre négatif ou nul ne fait rien) ; renvoie ceux qui sont vraiment venus */
-export function confier(j: Jeu, delta: number, source: SourceHabitants = 'histoire', now = j.dernierTick): number {
-  if (!(delta > 0)) return 0;
-  // une semaine passée se referme d'abord (son bonus est compté), puis la nouvelle s'ouvre
+/** La semaine des lignes en cours (une semaine passée se referme d'abord : son bonus est compté) */
+function semaineDesLignes(j: Jeu, now: number): NonNullable<Jeu['lignes']> {
   nuitDesLignes(j, now);
   const s = semaineDe(now);
-  if (!j.lignes || j.lignes.semaine < s) j.lignes = { semaine: s, pompes: 0, sources: {}, ...(j.lignes?.derniere ? { derniere: j.lignes.derniere } : {}) };
-  const avant = j.confiance ?? 0;
-  j.confiance = Math.min(CONFIANCE.population, Math.round(avant + delta));
-  const venus = j.confiance - avant;
-  if (venus > 0) j.lignes.sources[source] = (j.lignes.sources[source] ?? 0) + venus;
-  return venus;
+  if (!j.lignes || j.lignes.semaine < s) j.lignes = { semaine: s, familles: [], sources: {}, ...(j.lignes?.derniere ? { derniere: j.lignes.derniere } : {}) };
+  return j.lignes;
+}
+
+/** Une famille rejoint le district (une seule fois) ; renvoie vrai si elle vient d'arriver */
+export function accueillirFamille(j: Jeu, id: string, now = j.dernierTick): boolean {
+  const f = familleDef(id);
+  if (!f || (j.foyers ??= []).includes(id)) return false;
+  j.foyers.push(id);
+  const l = semaineDesLignes(j, now);
+  l.familles = [...(l.familles ?? []), id];
+  log(j, `${f.nom.charAt(0).toUpperCase()}${f.nom.slice(1)} rejoignent le district.`);
+  return true;
+}
+
+/** Le bouche-à-oreille fait venir les familles du quartier qui attendaient, dans l'ordre */
+function bouche(j: Jeu, now: number): string[] {
+  const venues: string[] = [];
+  for (const f of FAMILLES_QUARTIER) {
+    if (j.confiance < CONFIANCE.rumeur) break;
+    if (j.foyers?.includes(f.id)) continue;
+    j.confiance -= CONFIANCE.rumeur;
+    if (accueillirFamille(j, f.id, now)) venues.push(f.id);
+  }
+  return venues;
+}
+
+/** Les familles du quartier qui ne sont pas encore venues */
+export const quartierRestant = (j: Pick<Jeu, 'foyers'>) => FAMILLES_QUARTIER.filter((f) => !j.foyers?.includes(f.id)).length;
+
+/** Où en est le bouche-à-oreille avant la prochaine famille du quartier (null : elles sont toutes venues) */
+export const rumeurVersFamille = (j: Jeu): { points: number; seuil: number } | null =>
+  quartierRestant(j) ? { points: Math.min(CONFIANCE.rumeur, j.confiance ?? 0), seuil: CONFIANCE.rumeur } : null;
+
+/**
+ * Le quartier entend parler de ce que tu as fait : des points de bouche-à-oreille (jamais perdus : un nombre négatif ou nul
+ * ne fait rien). Renvoie le nombre de familles qui viennent de rejoindre le district.
+ */
+export function confier(j: Jeu, delta: number, source: SourceHabitants = 'histoire', now = j.dernierTick): number {
+  if (!(delta > 0)) return 0;
+  const l = semaineDesLignes(j, now);
+  l.sources[source] = (l.sources[source] ?? 0) + Math.round(delta);
+  // une fois tout le quartier venu, le bouche-à-oreille ne s'accumule plus pour rien
+  j.confiance = quartierRestant(j) ? (j.confiance ?? 0) + Math.round(delta) : 0;
+  const venues = bouche(j, now).length;
+  if (!quartierRestant(j)) j.confiance = 0;
+  return venues;
 }
 
 /**
  * La Nuit des lignes (chaque lundi) : le district repeint sa ligne bleue un peu plus haut et fait le bilan de la semaine.
- * Ceux qui ont vu ce que tu as fait en entraînent d'autres : +15 % des habitants gagnés. Une semaine sans rien ne coûte rien.
+ * Ceux qui ont vu ce que tu as fait en parlent : +15 % des points gagnés. Une semaine sans rien ne coûte rien.
  */
 export function nuitDesLignes(j: Jeu, now: number): string | null {
   const s = semaineDe(now);
   const l = j.lignes;
   if (!l || l.semaine >= s) return null;
-  const gagnes = Object.values(l.sources).reduce((n, v) => n + (v ?? 0), 0);
+  const points = Object.values(l.sources).reduce((n, v) => n + (v ?? 0), 0);
+  const venues = [...(l.familles ?? [])];
   const derniere = l.derniere;
-  j.lignes = { semaine: s, pompes: 0, sources: {}, ...(derniere ? { derniere } : {}) };
-  if (gagnes <= 0) return null;
+  j.lignes = { semaine: s, familles: [], sources: {}, ...(derniere ? { derniere } : {}) };
+  if (points <= 0 && !venues.length) return null;
   const sources = { ...l.sources };
-  const bonus = Math.min(CONFIANCE.population - (j.confiance ?? 0), Math.round(gagnes * CONFIANCE.nuit));
-  if (bonus > 0) j.confiance += bonus;
+  const bonus = quartierRestant(j) ? Math.round(points * CONFIANCE.nuit) : 0;
+  if (bonus > 0) j.confiance = (j.confiance ?? 0) + bonus;
+  const deLaNuit = bouche(j, now);
+  if (!quartierRestant(j)) j.confiance = 0;
   // le bonus de la nuit ne compte pas dans la semaine qui commence
-  j.lignes.derniere = { semaine: l.semaine, sources, gagnes, bonus, total: j.confiance };
-  const t = `La Nuit des lignes : la ligne bleue est repeinte plus haut. ${gagnes + bonus} habitants t’ont rejoint cette semaine${bonus ? `, dont ${bonus} cette nuit` : ''}.`;
+  j.lignes.familles = [];
+  j.lignes.derniere = { semaine: l.semaine, sources, gagnes: venues.length, bonus: deLaNuit.length, total: nbFoyers(j), familles: [...venues, ...deLaNuit] };
+  const n = venues.length + deLaNuit.length;
+  const t = `La Nuit des lignes : la ligne bleue est repeinte plus haut. ${n ? `${n} famille${n > 1 ? 's t’ont' : ' t’a'} rejoint cette semaine${deLaNuit.length ? `, dont ${deLaNuit.length} cette nuit` : ''}.` : 'Le quartier parle de toi.'}`;
   log(j, t);
   return t;
 }
 
+/** Ce que coûte un déplacement du batardeau des Basses : six heures de ce que produit le Générateur (les anciennes pompes) */
+export const coutBatardeau = (j: Jeu) => Math.max(100, Math.round(energieParHeure(j) * 6 / 10) * 10);
 
-
-/** Les pompages encore possibles cette semaine */
-export function pompesRestantes(j: Jeu, now = j.dernierTick): number {
-  const faits = j.lignes?.semaine === semaineDe(now) ? j.lignes.pompes : 0;
-  return Math.max(0, CONFIANCE.pompesSemaine - faits);
+/** Une expédition dans les Basses : un Porteur va chercher la famille d'un lieu */
+export interface ExpeditionBasses { lieu: string; porteur: string; debut: number; fin: number; strate: number }
+/** L'état des Basses dans la sauvegarde */
+export interface EtatBasses {
+  /** le secteur gardé à sec (null : pas encore dressé) */
+  batardeau: string | null;
+  /** la semaine du dernier déplacement (un par semaine) */
+  semaine: number;
+  /** la dernière marée basse comptée, et les dépôts qui attendent (deux au plus) */
+  vu: number;
+  depots: number;
+  expedition: ExpeditionBasses | null;
+  /** les lieux déjà visités (leur famille est au district) */
+  faits: string[];
 }
-/** Ce que coûte un pompage : six heures de ce que produit le Générateur */
-export const coutPompe = (j: Jeu) => Math.max(100, Math.round(energieParHeure(j) * CONFIANCE.pompeHeures / 10) * 10);
 
 /**
  * L'Accord ouvert (Bible, 23 octobre 2026) : quand le quartier fait confiance à son directeur et que la Clinique
@@ -638,7 +701,14 @@ export const coutPompe = (j: Jeu) => Math.max(100, Math.round(energieParHeure(j)
 export const ACCORD_OUVERT = { clinique: 3, confiance: CONFIANCE.accord } as const;
 
 /** Le bilan d'une Nuit des lignes : la semaine écoulée, ce qui a fait venir les habitants, et le bonus de la nuit */
-export interface NuitDesLignes { semaine: number; sources: Partial<Record<SourceHabitants, number>>; gagnes: number; bonus: number; total: number; lue?: boolean }
+export interface NuitDesLignes {
+  semaine: number; sources: Partial<Record<SourceHabitants, number>>;
+  /** familles arrivées dans la semaine, et celles que la nuit a amenées en plus ; total : familles au district */
+  gagnes: number; bonus: number; total: number;
+  /** les familles arrivées (absent : bilan d'une ancienne sauvegarde, compté en habitants) */
+  familles?: string[];
+  lue?: boolean;
+}
 
 export const CREUSEURS = {
   /** creuseurs logés selon le niveau du Noyau (index = niveau). Audit du 7 novembre 2026 : avant 4, 7, 10, 14, 24… le Noyau 3
@@ -753,8 +823,10 @@ export interface RapportMission {
   profondeur?: number;
   cartes: { id: string; nouvelle: boolean }[];
   creuseurs: number; usure: number; marque: string | null;
-  /** les habitants des familles recueillies qui restent au district (30 octobre 2026) */
+  /** les familles du quartier que le retour de la barque a convaincues (avant le 7 novembre 2026 : des habitants) */
   habitants?: number;
+  /** une expédition dans les Basses : le lieu et la famille ramenée (7 novembre 2026) */
+  basses?: { lieu: string; famille: string };
   /** un contrat de marée (31 octobre 2026) : toute l'équipe, réussi ou non, et l'épreuve qui a cédé */
   contrat?: { rang: 'montante' | 'vive' | 'grande'; titre: string; reussi: boolean; porteurs: string[]; taux: number; choix: boolean; cedee?: string };
   lu: boolean;

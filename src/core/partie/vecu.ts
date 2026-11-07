@@ -8,6 +8,7 @@
 import { ennemiDef, estCarteConnue, moduleDef, porteurDef } from '../donnees';
 import type { CombatEtat } from '../types';
 import { rodeurDef } from '../explorer';
+import { familleDef } from '../familles';
 import type { Jeu } from './etat';
 
 /** Ce qu'une carte (un exemplaire « carte@métal ») a vécu. Clés courtes : la sauvegarde reste légère. */
@@ -39,6 +40,8 @@ export interface VecuCarte {
   e?: string;
   /** les Rôdeurs qu'elle a achevés (explorer.ts) */
   ro?: string[];
+  /** le souvenir qu'une famille du district lui a confié (familles.ts, 7 novembre 2026) : une ligne de journal, aucun effet */
+  m?: string;
 }
 
 /**
@@ -155,7 +158,36 @@ export function journalCarte(x: VecuCarte | undefined): string[] {
   if (x.ga.length) l.push(`A fendu le Gardien de −${max(x.ga)}.`);
   else if (x.g.length) l.push(`Était là contre le Gardien de −${max(x.g)}.`);
   if (x.z) l.push(`Profondeur atteinte : −${x.z}.`);
+  const fam = x.m ? familleDef(x.m) : null;
+  if (fam) l.push(`Porte le souvenir ${fam.nom.startsWith('les ') ? `des ${fam.nom.slice(4)}` : `de ${fam.nom}`} : ${fam.souvenir}`);
   return l;
+}
+
+// ---------- Les souvenirs confiés (7 novembre 2026) ----------
+// Une famille du district peut confier son souvenir à une carte qui a fait ses preuves (palier Sillon ou plus).
+// Une seule famille par carte, une seule carte par famille, et c'est le joueur qui choisit : un trophée, pas un bonus.
+
+export const SOUVENIR = { palier: 2 as Palier } as const;
+
+/** La carte qui porte déjà le souvenir de cette famille */
+export const carteDuSouvenir = (j: Jeu, famille: string) => Object.keys(j.vecu ?? {}).find((k) => j.vecu![k]!.m === famille) ?? null;
+
+/** Les familles arrivées au district qui n'ont pas encore confié leur souvenir */
+export const souvenirsLibres = (j: Jeu) => (j.foyers ?? []).filter((f) => !carteDuSouvenir(j, f));
+
+/** Pourquoi cette carte ne peut pas recevoir de souvenir (null = elle peut) */
+export function raisonSouvenir(j: Jeu, cle: string): string | null {
+  const x = vecuDe(j, cle);
+  if (x?.m) return 'Elle porte déjà un souvenir.';
+  if (palierDe(x) < SOUVENIR.palier) return `Il faut que la carte ait atteint le palier ${NOMS_PALIER[SOUVENIR.palier]} de son empreinte.`;
+  return null;
+}
+
+/** Une famille confie son souvenir à une carte (pour toujours) */
+export function confierSouvenir(j: Jeu, cle: string, famille: string): boolean {
+  if (!estCarteConnue(cle) || !j.foyers?.includes(famille) || carteDuSouvenir(j, famille) || raisonSouvenir(j, cle)) return false;
+  vecuOuNeuf(j, cle).m = famille;
+  return true;
 }
 
 // ---------- Ce qui s'inscrit ----------

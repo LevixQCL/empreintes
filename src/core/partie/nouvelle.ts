@@ -4,12 +4,14 @@
 import { PORTEURS, CARTE_CHAMBRE, MODULES, estCarteConnue, moduleDe, moduleDef, porteurDef, CARTES_DE_BASE, COLLECTION_DEPART, DEPART_PORTEURS, carteId } from '../donnees';
 import { niveauRequis, poidsCarte } from '../collection';
 import { graine } from '../rng';
-import { CONFIANCE, DISTRICT, VERSION_JEU, XP, xpPourNiveau, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
+import { nbFoyers, DISTRICT, VERSION_JEU, XP, xpPourNiveau, chargeMax, chargePortee, enExpedition, confier, niveauConfiance, strateVaincue, jourDe, log, niveauPorteur, non, porteursPresents, semaineDe, type FinCampagne, type GardeChambre, type Jeu, type LectureVela, type PorteurDistrict, type Resultat, typeDuJour } from './etat';
 import { SCENES, sceneEnAttente, type ContexteCampagne } from '../campagne';
 import { ESCOUADE_DEPART } from './descentes';
 import { accorderSeance, comptoirVide } from './district';
 import { OBJECTIFS } from './objectifs';
 import { ORDRE_FAMILLES } from '../fragments';
+import { FAMILLES_DEPART, FAMILLES_DISTRICT, familleDuFragment } from '../familles';
+import { SECTEURS } from '../digue';
 import { donnerKitRecrues, recompenserLecture } from './recompenses';
 
 const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: GardeChambre; nom: string; phrase: string; effet: string }[] } = {
@@ -113,8 +115,10 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     recrues: false,
     arrives: [],
     actes: {},
-    confiance: CONFIANCE.depart,
+    confiance: 0,
     confianceV: 2,
+    // les ouvriers qui ont envoyé Ilka chercher le directeur (7 novembre 2026 : des familles nommées)
+    foyers: FAMILLES_DEPART.map((f) => f.id),
     xpV: 2,
     decouvertes: [],
     scenes: [],
@@ -178,13 +182,13 @@ function migrer(j: Jeu) {
   if (j.confianceV !== 2) {
     // la Confiance devient les habitants qui te suivent (30 octobre 2026) : les anciens points sont convertis,
     // les paliers déjà atteints ne rapportent pas de creuseur d'un coup, mais les familles apportent leurs souvenirs
-    j.confiance = Math.min(CONFIANCE.population, CONFIANCE.depart + Math.round(j.confiance * 0.8));
+    j.confiance = Math.min(600, 20 + Math.round(j.confiance * 0.8));
     // les creuseurs déjà reçus aux anciens niveaux restent comptés : pas de double récompense
-    j.confianceRecue = Math.max(j.confianceRecue ?? 0, niveauConfiance(j.confiance).niveau);
+    j.confianceRecue = Math.max(j.confianceRecue ?? 0, palierHabitants(j.confiance));
     for (const f of ORDRE_FAMILLES.slice(0, j.confianceRecue)) if (!j.fragments.includes(f)) j.fragments.push(f);
     j.confianceV = 2;
   }
-  j.confianceRecue ??= niveauConfiance(j.confiance).niveau;
+  j.confianceRecue ??= j.foyers ? niveauConfiance(nbFoyers(j)).niveau : palierHabitants(j.confiance);
   j.decouvertes ??= [];
   // l'empreinte des cartes (28 octobre 2026) notait par erreur les cartes du district (Stimulant, Pavois de cuivre) :
   // ces lignes bloquaient tous les boutons (29 octobre 2026, partie de Luc)
@@ -292,7 +296,36 @@ function migrer(j: Jeu) {
     j.version = 8;
     if (j.objectif >= 2) j.objectif = Math.min(OBJECTIFS.length, j.objectif + 1);
   }
+  if (j.version === 8) {
+    // version 9 (7 novembre 2026) : les 600 habitants deviennent 48 familles nommées, les pompes deviennent les Basses
+    j.version = 9;
+    familiesDesHabitants(j);
+  }
   allegerSelonCharge(j);
+}
+
+/** Le palier d'une ancienne sauvegarde, comptée en habitants (75 par palier, 600 au plus) */
+const palierHabitants = (h: number) => Math.min(8, Math.floor(Math.min(600, Math.max(0, h)) / 75));
+
+/**
+ * Les habitants d'une sauvegarde d'avant le 7 novembre 2026 deviennent des familles : 12,5 habitants par famille (600 pour 48),
+ * donc les mêmes paliers. D'abord les ouvriers du départ, puis les familles qui ont déjà apporté leur souvenir aux Archives,
+ * puis le quartier, enfin les familles des Basses (leur lieu compte alors comme visité). Le reste devient du bouche-à-oreille.
+ */
+function familiesDesHabitants(j: Jeu) {
+  if (j.foyers) return;
+  const h = Math.min(600, Math.max(0, j.confiance ?? 0));
+  const n = Math.min(FAMILLES_DISTRICT.length, Math.floor(h / 12.5));
+  const apportees = j.fragments.map((f) => familleDuFragment(f)?.id).filter((x): x is string => !!x);
+  const basses = SECTEURS.flatMap((s) => s.lieux.map((l) => l.famille));
+  const ordre = [...new Set([...FAMILLES_DEPART.map((f) => f.id), ...apportees,
+    ...FAMILLES_DISTRICT.filter((f) => f.arrivee === 'quartier').map((f) => f.id), ...basses])];
+  j.foyers = ordre.slice(0, Math.max(n, FAMILLES_DEPART.length + apportees.length));
+  const faits = SECTEURS.flatMap((s) => s.lieux).filter((l) => j.foyers!.includes(l.famille)).map((l) => l.id);
+  if (faits.length) j.basses = { batardeau: null, semaine: -1, vu: -1, depots: 0, expedition: null, faits };
+  j.confiance = n >= FAMILLES_DISTRICT.length ? 0 : Math.round((h - n * 12.5) * 1.2);
+  j.confianceRecue = Math.max(j.confianceRecue ?? 0, 0);
+  if (j.lignes) j.lignes = { semaine: j.lignes.semaine, familles: [], sources: {}, ...(j.lignes.derniere ? { derniere: j.lignes.derniere } : {}) };
 }
 
 /**

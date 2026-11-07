@@ -21,7 +21,9 @@ import type { BatimentId, GesteDef, Lignee, ModuleDef, Rarete } from '../core/ty
 import type { CibleFouille } from '../core/expedition';
 import { DIFFICULTES_FOUILLE, type DifficulteFouille } from '../core/jeu';
 import { FAMILLES, FRAGMENTS } from '../core/fragments';
-import { CONFIANCE, CERCLE, CERCLE_OUVERTURE, cercleOuvert, echangesParJour, metalMax, ouvertesMax, vitrineMax, niveauConfiance } from '../core/jeu';
+import { CONFIANCE, CERCLE, CERCLE_OUVERTURE, cercleOuvert, echangesParJour, metalMax, ouvertesMax, vitrineMax, niveauConfiance, nbFoyers, bassesOuvertes, bulleBasses } from '../core/jeu';
+import { feuilleBasses } from './basses';
+import { etatMaree } from '../core/digue';
 import { LECTURE_PROFONDE } from '../core/partie/etat';
 import { RANG_METAL, loreCarte } from '../core/lore-cartes';
 import { rumeurDuJour } from '../core/rumeurs';
@@ -142,13 +144,21 @@ if (CUVETTE) for (const a of [1, 2, 3, 4] as const) ZONES[a] = ZONES_CUVETTE;
  */
 const ZONE_HABITANTS = '318,40 356,0 400,0 400,200 372,214 330,192 300,150 304,90';
 const BALISE_HABITANTS = { x: 356, y: 200 };
+/**
+ * L'écluse (7 novembre 2026) : au pied de la digue, côté mer, sous le Générateur (le sas peint tout à gauche est coupé sur
+ * téléphone). Elle mène aux Basses, de l'autre côté de la digue. Pas un bâtiment à monter : une bulle quand la mer a laissé
+ * un dépôt ou qu'une famille attend.
+ */
+const ZONE_ECLUSE = '112,478 186,478 192,532 150,546 108,530';
+const BALISE_ECLUSE = { x: 150, y: 514 };
 
 function zonesBatiments(age: 1 | 2 | 3 | 4, selection: string | null, p: Record<string, PalierCuvette> | null = null): string {
   // un bâtiment au palier haut a grandi : sa zone suit la silhouette peinte
   const zone = (id: Lieu) => (p?.[id] === 'haut' ? CALQUES_CUVETTE.find((c) => c.lieu === id)?.zoneHaut : null) ?? ZONES[age][id];
   return '<svg class="zones-bat" viewBox="0 0 400 600" preserveAspectRatio="none" aria-hidden="true">'
     + ORDRE.map((id) => `<polygon class="zone-bat${selection === id ? ' choisie' : ''}" points="${zone(id)}" data-action="batiment" data-id="${id}" data-lieu="${id}"/>`).join('')
-    + (CUVETTE ? `<polygon class="zone-bat" points="${ZONE_HABITANTS}" data-action="ressource" data-id="confiance" data-lieu="habitants"/>` : '')
+    + (CUVETTE ? `<polygon class="zone-bat" points="${ZONE_HABITANTS}" data-action="ressource" data-id="confiance" data-lieu="habitants"/>`
+      + `<polygon class="zone-bat" points="${ZONE_ECLUSE}" data-action="basses" data-lieu="ecluse"/>` : '')
     + '</svg>';
 }
 
@@ -341,9 +351,27 @@ function balises(e: EcranDistrict): string {
   }
   // les habitations : pas un bâtiment à monter, donc pas de niveau ni de poste, seulement le palier de Confiance et la population
   if (CUVETTE) {
-    const n = niveauConfiance(j.confiance ?? 0);
-    h += `<button type="button" class="balise habitants" ${pos(BALISE_HABITANTS)} data-action="ressource" data-id="confiance" data-lieu="habitants" aria-label="Habitations : ${j.confiance ?? 0} habitants sur ${CONFIANCE.population} te suivent, palier ${n.niveau}">`
-      + `<b class="bal-cristal glace">${ICO.porteurs}</b><span class="bal-nom">Habitants · ${j.confiance ?? 0}</span></button>`;
+    const f = nbFoyers(j);
+    const n = niveauConfiance(f);
+    h += `<button type="button" class="balise habitants" ${pos(BALISE_HABITANTS)} data-action="ressource" data-id="confiance" data-lieu="habitants" aria-label="Habitations : ${f} familles sur ${CONFIANCE.population} te suivent, palier ${n.niveau}">`
+      + `<b class="bal-cristal glace">${ICO.porteurs}</b><span class="bal-nom">Familles · ${f}</span></button>`;
+    // l'écluse et les Basses (7 novembre 2026) : la bulle dit ce qui attend ; la marée réelle n'est que de l'ambiance
+    if (j.chambre) {
+      const ouverte = bassesOuvertes(j);
+      const m = etatMaree(e.now);
+      h += `<button type="button" class="balise ecluse${ouverte ? ' ouverte' : ' fermee'}${e.basses ? ' choisie' : ''}" ${pos(BALISE_ECLUSE)} data-action="basses" data-lieu="ecluse" aria-label="L’écluse : les Basses${ouverte ? `, ${m.montante ? 'marée montante' : 'marée descendante'}` : ', fermée'}">`
+        + `<b class="bal-cristal glace">${ouverte ? ICO.mur : ICO.verrou}</b><span class="bal-nom">Écluse</span></button>`;
+      if (ouverte) {
+        const bb = bulleBasses(j, e.now);
+        // la bulle à droite du repère, pas au-dessus : au-dessus, elle tomberait sur le nom de la Clinique
+        const pb = { x: BALISE_ECLUSE.x + 40, y: BALISE_ECLUSE.y - 14 };
+        const bulle = (classe: string, contenu: string, label: string) =>
+          `<button type="button" class="bulle-bat ${classe}" ${pos(pb)} data-action="basses" data-lieu="ecluse" aria-label="${label}">${contenu}</button>`;
+        if (bb.depots) h += bulle('info', `${ICO.coffre}<em>${bb.depots}</em>`, `La mer a laissé ${bb.depots > 1 ? `${bb.depots} dépôts` : 'un dépôt'} sur la grève`);
+        else if (bb.aFaire) h += bulle('alerte', `${ICO.porteurs}<em>?</em>`, 'Une famille attend dans les Basses');
+        else if (bb.expedition) h += bulle('info', `${ICO.chrono}<em>${decompte(j.basses!.expedition!.fin, e.now)}</em>`, 'Un Porteur est dans les Basses');
+      }
+    }
   }
   return h;
 }
@@ -1014,7 +1042,7 @@ export function htmlArchipel(e: EcranDistrict): string {
     + bulles(e)
     + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="Replier"></button>` : '')
     + `<div class="archipel-haut"${e.bulle ? ` data-bulle="${e.bulle}"` : ''}${!e.j.chambre ? ' data-porte' : ''}>${mission(e)}${appel(e)}</div></section>`;
-  h += feuilleBatiment(e);
+  h += feuilleBatiment(e) + feuilleBasses(e);
   const acte = decisionEnAttente(j);
   // le rapport d'expédition passe d'abord : la carte au choix s'ouvre une fois qu'il est lu
   if (e.expedition) { /* rien d'autre par-dessus */ }
@@ -1729,10 +1757,10 @@ export function htmlCodex(e: EcranDistrict): string {
     // les souvenirs des familles (30 octobre 2026) : un par palier de 75 habitants qui te suivent
     const souvenirs = FAMILLES.filter((f) => j.fragments.includes(f.id));
     h += `<h2 class="titre-bloc archives-familles">${ICO.district}Souvenirs des familles · ${souvenirs.length} / ${FAMILLES.length}</h2>`
-      + `<p class="aide">Chaque fois que ${CONFIANCE.palier} habitants de plus te suivent, une famille confie aux Archives ce qu’elle a gardé de plus précieux.</p>`;
+      + `<p class="aide">Chaque fois que ${CONFIANCE.palier} familles de plus te suivent, l’une d’elles confie aux Archives ce qu’elle a gardé de plus précieux.</p>`;
     for (const f of souvenirs) h += `<article class="fragment famille"><span class="surtitre">${echap(f.support.toUpperCase())}</span><h2>${echap(f.titre)}</h2>${f.lignes.map((l) => `<p>${echap(l)}</p>`).join('')}</article>`;
     const restent = FAMILLES.length - souvenirs.length;
-    if (restent > 0) h += `<div class="fragment enfoui">${ICO.verrou}<span>Prochaine famille à ${(souvenirs.length + 1) * CONFIANCE.palier} habitants qui te suivent</span></div>`;
+    if (restent > 0) h += `<div class="fragment enfoui">${ICO.verrou}<span>Prochain souvenir à ${(souvenirs.length + 1) * CONFIANCE.palier} familles qui te suivent</span></div>`;
     return coquille(e, h, 'ecran-codex');
   }
   h += `<p class="chroniques-intro"><img class="yse-medaillon" src="${portraitYse}" alt="Ysé" decoding="async">Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi la troisième nuit après ton élection.</p>`;
