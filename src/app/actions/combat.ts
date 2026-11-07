@@ -58,7 +58,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
         if (!cs || cs.issue !== 'en-cours' || K.fin || !J.combatAutoPermis(app.jeu)) break;
         C.viderChaine(cs);
         composerTourMoyen(cs);
-        if (!cs.chaine.length) break;
+        if (!cs.chaine.length && !C.mainBloquee(cs)) break;
         J.noterChaine(app.jeu, cs.chaine);
         await jouer(C.lancer(cs), true);
       }

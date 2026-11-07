@@ -606,10 +606,18 @@ export function coupsAttendus(s: CombatEtat): Map<string, CoupAttendu[]> {
   return r;
 }
 
-/** Lance la chaîne, puis joue le tour ennemi. Renvoie les pas à animer. */
+/**
+ * Aucune carte de la main ne peut entrer dans la chaîne (places vides, cartes trop lourdes, voix refusée) : sans rien d'autre,
+ * le combat restait bloqué. Le joueur peut alors passer son tour (audit du 7 novembre 2026) : lancer une chaîne vide.
+ */
+export const mainBloquee = (s: CombatEtat) =>
+  s.issue === 'en-cours' && !s.chaine.length && s.main.every((g) => g.vide || placesCarte(s, g) > placesLibres(s) || !!voixRefusee(s, g));
+
+/** Lance la chaîne, puis joue le tour ennemi. Renvoie les pas à animer. Une chaîne vide ne se lance que si la main est bloquée. */
 export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev: Evenement) => void; riposte?: boolean } = {}): Pas[] {
   const pas: Pas[] = [];
-  if (s.issue !== 'en-cours' || !s.chaine.length) return pas;
+  if (s.issue !== 'en-cours' || (!s.chaine.length && !mainBloquee(s))) return pas;
+  if (!s.chaine.length && !opts.apercu) log(s, 'Aucune carte ne peut entrer dans la chaîne : tu passes ton tour.', { sorte: 'info' });
   // en mode silencieux (robot d'équilibrage), on ne garde pas les étapes d'animation
   const emettre = opts.apercu ?? (opts.silencieux ? () => {} : (ev: Evenement) => { pas.push({ ev, etat: photo(s) }); });
   CAMP = 'joueur';
@@ -683,7 +691,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
   // Rappel (exclusive) : la carte la plus forte de la chaîne, hors celles qui rappellent, revient en tête de pioche
   const rappel = s.chaine.find((g, i) => effetsEnJeu(g, s.chaine, i, estATerre(s, g.porteur)).some((e) => e?.type === 'rappel'));
-  const rappelee = rappel ? s.chaine.filter((g) => g !== rappel && !g.vide && g.effet?.type !== 'rappel').sort((a, b) => b.v - a.v)[0] : undefined;
+  const rappelee = rappel ? s.chaine.filter((g) => g !== rappel && !g.vide && !g.epuise && g.effet?.type !== 'rappel').sort((a, b) => b.v - a.v)[0] : undefined;
   s.defausse.push(...s.chaine.filter((g) => g !== rappelee && !g.epuise));
   if (rappelee) {
     s.pioche.push(rappelee);
@@ -928,7 +936,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
   // Éclair captif ne prend qu'une partie du Flux (max) ; Noyau instable remplit le Flux s'il le trouve vide (recharge)
   const vide = dc ? Math.min(s.flux, dc.max ?? REGLES.fluxMax) : 0;
   // tous les multiplicateurs de la carte, ceux-là mêmes qu'affiche la loupe (detailForce)
-  const facteurs = facteursGeste(s, g, mult, rang, s.chaine, eteinte, suite);
+  const facteurs = facteursGeste(s, g, mult, rang, s.chaine, eteinte, suite, !!payeur);
   if (dc && vide) {
     s.flux -= vide;
     log(s, `Décharge : ${vide} Flux ${dc.max ? 'pris' : 'vidé'}${vide > 1 ? 's' : ''}, +${Math.round(dc.part * vide * 100)} % de force.`, { sorte: 'flux' });
@@ -1106,7 +1114,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
  */
 export interface Facteur { nom: string; m: number }
 
-function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chaine: Geste[], eteinte: boolean, suite: number): Facteur[] {
+function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chaine: Geste[], eteinte: boolean, suite: number, surtensionPayee?: boolean): Facteur[] {
   const effets = effetsEnJeu(g, chaine, rang, eteinte);
   const de = <T extends Effet['type']>(t: T) => effets.find((e): e is Extract<Effet, { type: T }> => e?.type === t);
   const f: Facteur[] = [];
@@ -1162,8 +1170,10 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   // Empreinte (exclusive) sans rien à copier (en tête de chaîne, ou après une carte sans effet) : elle imite la force à la place
   if (!eteinte && g.effet?.type === 'empreinte' && !effets[0]) mettre('Empreinte (rien à copier)', REGLES.empreinteSeule);
   // Surtension (exclusive) : le Porteur paie de ses PV une part de force en plus
+  // à 1 PV, le Porteur ne peut rien payer : pas de force en plus non plus (audit du 7 novembre 2026)
   const st = de('surtension');
-  if (st) mettre('Surtension', 1 + st.part);
+  const paye = surtensionPayee ?? s.porteurs.some((p) => p.id === g.porteur && p.pv > 1);
+  if (st && paye) mettre('Surtension', 1 + st.part);
   if (eteinte) mettre('Porteur à terre', REGLES.eteinte);
   return f;
 }
@@ -1332,6 +1342,8 @@ function tourEnnemi(s: CombatEtat, emettre: (ev: Evenement) => void) {
     agir(s, en, intentionDe(s, en), emettre);
   }
   RESERVE = 0;
+  // la Ténacité ne vaut que pour ce tour ennemi : sinon l'aperçu du tour suivant la croyait encore active (audit du 7 novembre 2026)
+  delete s.tenace;
   for (const p of s.porteurs) {
     if (p.pv <= 0 && !p.aTerre) {
       // Seconde chance (Sasha) : le premier qui tombe se relève, une fois par combat

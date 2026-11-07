@@ -685,7 +685,7 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
 function finirTour(c: CoteDuel, forces: { effets: (Effet | undefined)[] }[]) {
   // Rappel : la carte la plus forte de la chaîne (hors elle) revient en tête de pioche
   const rappel = c.chaine.findIndex((_g, k) => !!de(forces[k]?.effets ?? [], 'rappel'));
-  const rappelee = rappel >= 0 ? c.chaine.filter((g, k) => k !== rappel && !g.vide && g.effet?.type !== 'rappel').sort((a, b) => b.v - a.v)[0] : undefined;
+  const rappelee = rappel >= 0 ? c.chaine.filter((g, k) => k !== rappel && !g.vide && !g.epuise && g.effet?.type !== 'rappel').sort((a, b) => b.v - a.v)[0] : undefined;
   for (const g of c.chaine) {
     if (g.fs) g.f = g.fs[0]!;
     delete g.cible;

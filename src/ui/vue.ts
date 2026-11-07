@@ -2,7 +2,7 @@
 // Disposition, de haut en bas : la scène de l'ennemi (son intention en évidence), l'escouade, la chaîne et le Flux,
 // la main, puis le bouton Lancer toujours au même endroit, sous le pouce.
 
-import { ECLATS, placesCarte, estGardien, genreSuivant, feluresPrevues, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer, traitsEnJeu, avantageAnnonce, ligneeEnnemi, nomPhase, voixRefusee } from '../core/combat';
+import { ECLATS, placesCarte, estGardien, genreSuivant, feluresPrevues, apercuChaine, coupsAttendus, type CoupAttendu, detailForce, type DetailForce, protegeDe, protectionUtile, capacite, coupDeFuite, partFelure, eclatsPossibles, felureVisible, ligneeGeste, placesLibres, placesPrises, soigneUnSeul, texteIntention, tousEnnemis, intentionDe, enGroupe, brumeActive as C_brume, puissance, usureCombat, peutRelancer, traitsEnJeu, avantageAnnonce, ligneeEnnemi, nomPhase, voixRefusee, mainBloquee } from '../core/combat';
 import { CONDITIONS, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, texteTrait, zoneDe } from '../core/donnees';
 import { BATTU_PAR, REGLES, analyserChaine, frequenceLibre, frequencesEffectives, nomEcho, pctEcho, prolonge, serieFinale } from '../core/regles';
 import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
@@ -663,7 +663,8 @@ function htmlEcranCombat(e: Ecran): string {
   const aide = !!e.x.tutoriel || (!e.x.pillage && !e.x.fleche && !e.x.epreuve && e.x.strate <= REGLES.aideSuitesJusqua);
 
   let conseil: string;
-  if (s.sansResonance) conseil = `<b>Épreuve · Fréquences brouillées</b> : aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.`;
+  if (mainBloquee(s)) conseil = `Aucune carte ne peut entrer dans la chaîne : <b>passe ton tour</b>${s.flux >= 1 ? ', ou dépense 1 Flux pour <b>repiocher</b>' : ''}.`;
+  else if (s.sansResonance) conseil = `<b>Épreuve · Fréquences brouillées</b> : aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.`;
   else if (s.monoLignee && !s.chaine.length) conseil = `<b>Épreuve · Une seule voix</b> : chaque chaîne ne joue qu’une lignée. Les cartes du district vont avec toutes.`;
   else if (s.sansChute && !s.chaine.length) conseil = `<b>Épreuve · Nul ne reste au fond</b> : si un Porteur tombe, l’Épreuve est perdue. Protège le plus exposé.`;
   else if (s.dissonance && !s.chaine.length) conseil = `<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci. Mise sur la force brute ou la protection.`;
@@ -879,7 +880,10 @@ function htmlEcranCombat(e: Ecran): string {
   h += '</div></section>';
 
   h += `<footer class="actions-combat"><button type="button" class="btn sec" data-action="vider"${verrou || !s.chaine.length ? ' disabled' : ''}>${ICO.retirer}Retirer</button>`
-    + `<button type="button" class="btn prim lancer${mult ? ' fort' : ''}${lancerVise ? ' vise' : ''}" data-action="lancer"${verrou || !s.chaine.length ? ' disabled' : ''}>${ICO.lancer}Lancer la chaîne${mult ? ` <b>${mult}</b>` : ''}</button></footer>`;
+    + (mainBloquee(s)
+      // aucune carte ne rentre : le bouton principal propose de passer le tour (l'ennemi joue, puis nouvelle main)
+      ? `<button type="button" class="btn prim lancer" data-action="lancer"${verrou ? ' disabled' : ''} aria-label="Aucune carte ne peut entrer dans la chaîne : passer le tour">${ICO.lancer}Passer le tour</button></footer>`
+      : `<button type="button" class="btn prim lancer${mult ? ' fort' : ''}${lancerVise ? ' vise' : ''}" data-action="lancer"${verrou || !s.chaine.length ? ' disabled' : ''}>${ICO.lancer}Lancer la chaîne${mult ? ` <b>${mult}</b>` : ''}</button></footer>`);
 
   if (e.journal) h += feuilleJournal(s, e.journal);
   else if (e.guide) h += feuilleGuide(e.guide, e.trouvees ?? new Set());
