@@ -84,3 +84,13 @@ describe('Audit du 7 novembre : combat', () => {
     expect(s.main.some((g) => !g.vide)).toBe(true);
   });
 });
+
+describe('Audit du 7 novembre : Empreinte', () => {
+  it('l’Empreinte ne copie pas l’effet d’une carte éteinte (son Porteur est à terre)', async () => {
+    const { effetsEnJeu } = await import('../src/core/combat');
+    const fissure = { effet: { type: 'fissure' as const, part: 0.5 } };
+    const empreinte = { effet: { type: 'empreinte' as const } };
+    expect(effetsEnJeu(empreinte, [fissure, empreinte], 1)[0]?.type).toBe('fissure');
+    expect(effetsEnJeu(empreinte, [fissure, empreinte], 1, false, true)[0]).toBeUndefined();
+  });
+});

@@ -172,7 +172,7 @@ Un Porteur en retard de deux niveaux sur le plus avancé apprend 1,5 fois plus v
   la chaîne, l'ennemi prend la lignée de la dernière carte qui l'a frappé (`ligneeEnnemi`) ; sa puce de trait le dit dans la couleur de la lignée.
 - *3ᵉ phase des gardiens* (28 octobre 2026, idées de Luc ; à partir de −7, `REGLES.troisiemePhase`) : sous 20 % de ses PV (un second cran
   sur sa barre), le gardien prend une variante tirée au début du combat (`VARIANTES`, `PHASES3` dans `combat.ts`) : *Front commun* (un renfort,
-  et tous deux n'attaquent plus), *Garde rapprochée* (deux soutiens qui le soignent et le couvrent), *Déferlement* (ses coups +25 % par tour,
+  et tous deux ne font plus qu’attaquer), *Garde rapprochée* (deux soutiens qui le soignent et le couvrent), *Déferlement* (ses coups +25 % par tour,
   plafond ×2) ou *Appel des profondeurs* (il ne frappe plus, soigne ses renforts et les rappelle quand ils tombent ; une Fêlure brise l'appel).
 - *Conditions de salle* (`CONDITIONS`, `conditionDe`) : à partir de −5, une salle de combat sur trois (un gardien sur deux) ;
   visibles sur la carte avant d'entrer.

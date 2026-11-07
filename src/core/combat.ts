@@ -142,6 +142,8 @@ export function creerCombat(opts: {
 const porteurEtat = (s: CombatEtat, id: string) => s.porteurs.find((p) => p.id === id);
 export const vivants = (s: CombatEtat) => s.porteurs.filter((p) => p.pv > 0);
 const estATerre = (s: CombatEtat, id: string | null) => !!id && (porteurEtat(s, id)?.pv ?? 0) <= 0;
+/** La carte posée juste avant celle de ce rang est-elle éteinte (son Porteur à terre) ? L'Empreinte n'a alors rien à copier. */
+const avantEteinte = (s: CombatEtat, chaine: readonly Pick<Geste, 'porteur'>[], rang: number) => rang > 0 && estATerre(s, chaine[rang - 1]?.porteur ?? null);
 export const capacite = (s: CombatEtat) => REGLES.capaciteBase + s.capaBonus;
 export const placesPrises = (s: CombatEtat) => placesChaine(s.chaine, (g) => estATerre(s, g.porteur));
 /** Les places que prendrait cette carte si on la posait maintenant (le Servo rend sa place à une carte lourde) */
@@ -690,7 +692,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   s.debride = false;
   for (const g of s.chaine) if (g.fs) g.f = g.fs[0]!;
   // Rappel (exclusive) : la carte la plus forte de la chaîne, hors celles qui rappellent, revient en tête de pioche
-  const rappel = s.chaine.find((g, i) => effetsEnJeu(g, s.chaine, i, estATerre(s, g.porteur)).some((e) => e?.type === 'rappel'));
+  const rappel = s.chaine.find((g, i) => effetsEnJeu(g, s.chaine, i, estATerre(s, g.porteur), avantEteinte(s, s.chaine, i)).some((e) => e?.type === 'rappel'));
   const rappelee = rappel ? s.chaine.filter((g) => g !== rappel && !g.vide && !g.epuise && g.effet?.type !== 'rappel').sort((a, b) => b.v - a.v)[0] : undefined;
   s.defausse.push(...s.chaine.filter((g) => g !== rappelee && !g.epuise));
   if (rappelee) {
@@ -890,7 +892,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
   // une carte éteinte (son Porteur est à terre) frappe, protège ou soigne à moitié, sans son effet ; sa Fréquence compte toujours
   const eteinte = estATerre(s, g.porteur);
   // une carte de l’Héritage a deux effets : chacun se lit par son type ; l'Empreinte prend celui de la carte d'avant
-  const effets = effetsEnJeu(g, s.chaine, rang, eteinte);
+  const effets = effetsEnJeu(g, s.chaine, rang, eteinte, avantEteinte(s, s.chaine, rang));
   const de = <T extends Effet['type']>(t: T) => effets.find((e): e is Extract<Effet, { type: T }> => e?.type === t);
   const evs: Evenement[] = [];
   const copie = !eteinte && g.effet?.type === 'empreinte' ? effets[0] : undefined;
@@ -1115,7 +1117,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
 export interface Facteur { nom: string; m: number }
 
 function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chaine: Geste[], eteinte: boolean, suite: number, surtensionPayee?: boolean): Facteur[] {
-  const effets = effetsEnJeu(g, chaine, rang, eteinte);
+  const effets = effetsEnJeu(g, chaine, rang, eteinte, avantEteinte(s, chaine, rang));
   const de = <T extends Effet['type']>(t: T) => effets.find((e): e is Extract<Effet, { type: T }> => e?.type === t);
   const f: Facteur[] = [];
   const mettre = (nom: string, m: number) => { if (m !== 1) f.push({ nom, m }); };
@@ -1151,7 +1153,7 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   if (dc) mettre(`Décharge (${pris} Flux)`, 1 + dc.part * pris);
   // Amorce : la carte posée juste avant (si son Porteur est debout) donne de la force à celle-ci
   const prec = rang > 0 ? chaine[rang - 1] : undefined;
-  const am = prec ? effetsEnJeu(prec, chaine, rang - 1, estATerre(s, prec.porteur)).find((e): e is Extract<Effet, { type: 'amorce' }> => e?.type === 'amorce') : undefined;
+  const am = prec ? effetsEnJeu(prec, chaine, rang - 1, estATerre(s, prec.porteur), avantEteinte(s, chaine, rang - 1)).find((e): e is Extract<Effet, { type: 'amorce' }> => e?.type === 'amorce') : undefined;
   if (am) mettre(`Amorce (${prec!.nom})`, 1 + am.part);
   // Unisson (Chœur) : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne
   const un = de('unisson');
@@ -1190,13 +1192,14 @@ export function ligneesDeSuite(chaine: readonly Geste[], rang: number): Set<Lign
 
 /**
  * Les effets d'une carte à sa place dans la chaîne (aucun si son Porteur est à terre). L'Empreinte (exclusive) prend l'effet
- * de la carte posée juste avant elle, sauf une Fréquence libre (elle changerait la suite) ou une autre Empreinte.
+ * de la carte posée juste avant elle, sauf une Fréquence libre (elle changerait la suite), une autre Empreinte, ou une carte
+ * éteinte (`avantEteinte` : son Porteur est à terre, elle n'a plus d'effet à prêter ; audit du 7 novembre 2026).
  */
-export function effetsEnJeu(g: Pick<Geste, 'effet' | 'effet2'>, chaine: readonly Pick<Geste, 'effet'>[], rang: number, eteinte = false): (Effet | undefined)[] {
+export function effetsEnJeu(g: Pick<Geste, 'effet' | 'effet2'>, chaine: readonly Pick<Geste, 'effet'>[], rang: number, eteinte = false, avantEteinte = false): (Effet | undefined)[] {
   if (eteinte) return [];
   return [g.effet, g.effet2].map((e) => {
     if (e?.type !== 'empreinte') return e;
-    const copie = rang > 0 ? chaine[rang - 1]?.effet : undefined;
+    const copie = rang > 0 && !avantEteinte ? chaine[rang - 1]?.effet : undefined;
     return copie && !frequenceLibre(copie) && copie.type !== 'empreinte' ? copie : undefined;
   });
 }
@@ -1267,7 +1270,7 @@ export function detailForce(s: CombatEtat, uid: string): DetailForce | null {
   let total = Math.round(force);
   let bouclierEnnemi = 0;
   if (g.type === 'atk') {
-    const effets = effetsEnJeu(g, chaine, rang, eteinte);
+    const effets = effetsEnJeu(g, chaine, rang, eteinte, avantEteinte(s, chaine, rang));
     const percant = effets.some((e) => e?.type === 'percant');
     const coup = facteursCoup(s, g, a.mult, percant, effets);
     lignes.push(...coup.facteurs);

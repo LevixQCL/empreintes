@@ -409,7 +409,7 @@ const de = <T extends Effet['type']>(effets: (Effet | undefined)[], t: T) => eff
 function forceCarte(x: Contexte, g: Geste, rang: number): { v: number; effets: (Effet | undefined)[] } {
   const c = x.s.cotes[x.camp];
   const eteinte = aTerre(c, g.porteur);
-  const effets = effetsEnJeu(g, x.chaine, rang, eteinte);
+  const effets = effetsEnJeu(g, x.chaine, rang, eteinte, rang > 0 && aTerre(c, x.chaine[rang - 1]!.porteur));
   let m = x.mult * multEcho(x.chaine, rang);
   // Finisseur : la carte Augmentée qui termine une suite qui résonne
   if (REGLES.finisseur !== 1 && x.mult > 1 && g.type === 'atk' && ligneeDe(g) === 'tech') {
@@ -424,7 +424,7 @@ function forceCarte(x: Contexte, g: Geste, rang: number): { v: number; effets: (
   const dc = de(effets, 'decharge');
   if (dc) m *= 1 + dc.part * Math.min(x.flux, dc.max ?? REGLES.fluxMax);
   const prec = rang > 0 ? x.chaine[rang - 1] : undefined;
-  const am = prec ? de(effetsEnJeu(prec, x.chaine, rang - 1, aTerre(c, prec.porteur)), 'amorce') : undefined;
+  const am = prec ? de(effetsEnJeu(prec, x.chaine, rang - 1, aTerre(c, prec.porteur), rang > 1 && aTerre(c, x.chaine[rang - 2]!.porteur)), 'amorce') : undefined;
   if (am) m *= 1 + am.part;
   const un = de(effets, 'unisson');
   if (un) {
