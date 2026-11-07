@@ -68,8 +68,7 @@ export function htmlPillages(e: EcranDistrict): string {
     + `<div class="pl-coffre"><span class="surtitre">${icone('coffre')}Ton coffre</span><b>${ent(etat.coffre)}</b>`
     + `<small>composants gagnés en pillant : les seuls exposés</small></div></section>`;
 
-  h += garde(j);
-
+  // la carte d'abord (audit du 7 novembre 2026 : elle arrivait en bas de l'écran), la garnison dessous
   // la carte
   const age = visuel(j.batiments.noyau);
   h += `<section class="pl-carte" aria-label="La carte des districts voisins"><svg class="pl-routes" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">`
@@ -87,6 +86,7 @@ export function htmlPillages(e: EcranDistrict): string {
     + `</section>`;
 
   if (choisie) h += ficheCible(j, choisie, force, faits.includes(choisie.id), etat.jetons);
+  h += garde(j);
   h += journal(etat.historique ?? [], e.now);
   h += `<p class="pl-regle">${ICO.bouclier}<span>Ton district est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus ${Math.round(PILLAGE.partVolee * 100)} % de ton coffre, puis ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus. Tes autres composants, tes cartes et tes Éclats ne risquent rien.</span></p>`;
   return coquille(e, h, 'pl');

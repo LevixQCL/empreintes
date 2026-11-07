@@ -25,7 +25,7 @@ import { REGLES } from '../core/regles';
 import { decorStrate, illustrationEnnemi, portrait, iconeCondition, portraitProvisoire } from './art';
 import { COULEUR, htmlLieu } from './vue';
 import { ICO, baseIcones, icone, sigle } from './icones';
-import { echap } from './outils';
+import { echap, texteReplie } from './outils';
 
 const NOMS: Record<TypeSalle, string> = {
   entree: 'Entrée', combat: 'Combat', elite: 'Salle scellée', cache: 'Cache', rencontre: 'Rencontre', camp: 'Campement', archive: 'Archives', gardien: 'Gardien', filon: 'Filon', halte: 'Halte', porte: 'Porte ancienne',
@@ -313,6 +313,7 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
 
   // ---------- le panneau : la rencontre en cours, ou la suite du chemin ----------
   h += `<section class="ex-panneau" aria-live="polite">`;
+  let bas = '';
   const halte = halteEnCours(j);
   if (halte) h += htmlHalte(j, x, ui.details ?? []);
   else if (x.porte) h += htmlPorte(x, ui.porte ?? []);
@@ -330,8 +331,10 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
           + (manque ? `<small>Le butin de l’expédition n’a que ${x.butin} composants : il en manque ${manque}.</small>` : '') + `</span>${CHEVRON}</button>`;
       }).join('') + `</div>`;
   } else {
-    h += paroleEscouade(x);
-    if (x.recit) h += `<p class="ex-recit">${echap(x.recit)}</p>`;
+    // la parole de l'escouade et le récit du lieu passent sous le plan (audit du 7 novembre 2026 : le plan commençait à 620 px),
+    // le récit replié après sa première phrase
+    bas += paroleEscouade(x);
+    if (x.recit) bas += texteReplie(echap(x.recit), `recit-${x.strate}-${x.carte!.position}`, 'ex-recit');
     // juste après la victoire dans la salle marquée : ce que l'escouade a trouvé (31 octobre 2026)
     const qt = x.gains?.etape && x.carte!.salles[x.carte!.position]?.quete ? etapeQueteTrouvee(j, x.strate) : null;
     if (qt) h += `<div class="ex-quete-trouvee" role="status">${ICO.quete}<div><small>Marque de la quête relevée · étape ${qt.etape} sur ${qt.total}</small><b>${echap(qt.nom)}</b><p>${echap(qt.texte)}</p><small>Elle sera rangée dans la quête au retour au district.</small></div></div>`;
@@ -363,10 +366,11 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
   }
   if (x.terminee) h += `<button type="button" class="btn prim large ex-sortie" data-action="remonter">${ICO.cristal}Remonter avec le filon</button>`;
   else if (peutRemonter(x)) {
-    h += `<div class="ex-remonter"><p>${ici.type === 'camp' ? 'Le campement est une sortie' : 'L’entrée est une sortie'} : tu peux rentrer maintenant avec tout ce que tu as trouvé.</p>`
+    bas += `<div class="ex-remonter"><p>${ici.type === 'camp' ? 'Le campement est une sortie' : 'L’entrée est une sortie'} : tu peux rentrer maintenant avec tout ce que tu as trouvé.</p>`
       + `<button type="button" class="btn sec ex-retraite" data-action="retraite">${ICO.retour}${x.butin ? `Remonter avec ${x.butin} composant${x.butin > 1 ? 's' : ''}` : 'Remonter au district'}</button></div>`;
-  } else if (libre) h += `<p class="ex-note">Les PV remontent surtout aux campements (et parfois lors d’une rencontre). On ne peut remonter que depuis l’entrée ou un campement.</p>`;
+  } else if (libre) bas += `<p class="ex-note">Les PV remontent surtout aux campements (et parfois lors d’une rencontre). On ne peut remonter que depuis l’entrée ou un campement.</p>`;
   h += `</section>`;
+  if (bas) h += `<section class="ex-bas">${bas}</section>`;
 
   return h + `</div>`;
 }
