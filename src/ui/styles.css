@@ -830,3 +830,11 @@ button.res:focus-visible{outline:1.5px solid var(--glace,#CDEFFF);outline-offset
 .incident-recours summary{cursor:pointer;text-align:center;text-decoration:underline;text-underline-offset:3px}
 .incident-recours p{margin:8px 0;line-height:1.45}
 .incident-recours button{width:100%;min-height:42px;border:1px solid var(--filet-fort);background:rgba(255,255,255,.03);color:var(--ink-2);font-size:14px}
+
+/* le réglage « Animations réduites » du menu (audit du 7 novembre 2026) : comme la préférence du téléphone, presque rien ne bouge */
+.anim-reduites *,.anim-reduites *::before,.anim-reduites *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;animation-delay:0s!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+
+/* une rangée qui défile de côté : un fondu au bord où il reste quelque chose (outils.ts, marquerDebordements) */
+.deborde-d{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 48px),transparent)}
+.deborde-g{-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px);mask-image:linear-gradient(90deg,transparent,#000 48px)}
+.deborde-d.deborde-g{-webkit-mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent);mask-image:linear-gradient(90deg,transparent,#000 48px,#000 calc(100% - 48px),transparent)}

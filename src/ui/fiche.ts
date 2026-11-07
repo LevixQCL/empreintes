@@ -130,6 +130,12 @@ export function feuilleFiche(e: EcranDistrict): string {
       + `</div></section>`;
   }
 
+  // ---------- Le journal du district (sorti du menu Plus, 7 novembre 2026) : replié, les derniers événements d'abord ----------
+  if (j.journal.length) {
+    h += `<details class="bloc fj-journal"><summary class="titre-bloc">${icone('journal')}Journal du district <small>${j.journal.length} événement${j.journal.length > 1 ? 's' : ''}</small></summary>`
+      + `<ol class="journal-liste">${j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></details>`;
+  }
+
   // ---------- Le parrainage ----------
   if (e.compte.actif && j.parrainage?.code) {
     h += `<button type="button" class="ligne-menu fj-code" data-action="recruter">${ICO.porteurs}<span><strong>Ton code : <b>${codeAffiche(j.parrainage.code)}</b></strong><small>Recrute tes amis : vous êtes récompensés tous les deux</small></span></button>`;

@@ -277,3 +277,6 @@
 .te-pris .ico{width:12px;height:12px}
 .te-note{display:flex;align-items:center;gap:6px;margin:6px 0 0;font-size:12.5px;color:var(--fb-doux)}
 .te-note .ico{width:13px;height:13px;color:#E8B86A}
+/* la feuille défilée (audit du 7 novembre 2026) : un bandeau de verre en haut, derrière le bouton Fermer */
+#app .feuille.fiche-bat.defile::before{content:"";position:absolute;z-index:3;top:0;left:0;right:0;height:62px;pointer-events:none;
+  background:linear-gradient(180deg,rgba(8,11,24,.97) 0,rgba(8,11,24,.9) 70%,rgba(8,11,24,0));border-radius:inherit}

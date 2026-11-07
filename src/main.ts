@@ -2,6 +2,7 @@
 
 import './ui/feuilles';
 import { appliquerGraphismes } from './ui/graphismes';
+import { appliquerAnimations } from './ui/outils';
 import type { Entree } from './core/classements';
 import * as J from './core/jeu';
 import { montrer } from './ui/gains';
@@ -23,6 +24,8 @@ import { R, retenirLien } from './app/parrainage';
 
 // les graphismes (3 novembre 2026) : allégés sur un appareil qui peine, avant le premier dessin
 appliquerGraphismes();
+// les animations réduites (réglage du menu, 7 novembre 2026)
+appliquerAnimations();
 
 // l'empreinte des cartes vétéranes : chaque face lit le palier de son exemplaire dans la partie en cours
 brancherEmpreintes((cle) => (app.jeu ? J.palierCarte(app.jeu, cle) : 0));

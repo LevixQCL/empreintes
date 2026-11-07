@@ -3,6 +3,8 @@
 
 import { autoActif } from './options';
 import { texteGraphismes } from './graphismes';
+import { sonActif } from './son';
+import { animationsReduites } from './outils';
 import { ennemiDef, moduleDef, porteurDef, deNom } from '../core/donnees';
 import { COLLECTION, doublonsRequis, multNiveau } from '../core/collection';
 import { vestigeDef } from '../core/explorer';
@@ -15,7 +17,7 @@ import { feuilleGuide, trouveesDe } from './guide';
 import { ICO, icone, type Icone } from './icones';
 import { feuilleNom } from './classements';
 import { cristalAllume, cristalRail, entreeFiche, feuilleFiche } from './fiche';
-import { COULEUR, panneauCompte, type Compte } from './vue';
+import { COULEUR, ICONE_MUET, ICONE_SON, panneauCompte, type Compte } from './vue';
 import { echap, virgule, texteReplie } from './outils';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages' | 'fleche' | 'recruter' | 'cercle';
@@ -218,7 +220,8 @@ function roueConfiance(j: Jeu, b: (r: Ressource, extra: string, label: string) =
   const n = niveauConfiance(j.confiance ?? 0);
   const p = n.requis ? Math.round((100 * n.dans) / n.requis) : 100;
   return b('confiance', '', `${j.confiance} habitants sur ${CONFIANCE.population} te suivent, palier ${n.niveau}. Détails`)
-    + `<span class="roue-confiance" style="--p:${p}%" aria-hidden="true"><b>${n.niveau}</b></span><small>${j.confiance} hab.</small></button>`;
+    // la roue porte le nombre d'habitants (ce qu'on lit d'abord), le palier passe dessous (audit du 7 novembre 2026 : « 0 / 64 hab. » peu clair)
+    + `<span class="roue-confiance" style="--p:${p}%" aria-hidden="true"><b>${j.confiance}</b></span><small>palier ${n.niveau}</small></button>`;
 }
 
 /** D'où viennent les habitants, pour le bilan de la Nuit des lignes */
@@ -376,15 +379,32 @@ const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
   { vue: 'plus', nom: 'Plus', icone: 'plus' },
 ];
 
+/**
+ * Une pastille « nouveau » ne reste pas allumée tant qu'on n'a pas tout lu ou tout regardé (audit du 7 novembre 2026 :
+ * presque tous les onglets en portaient une) : elle s'éteint dès qu'on ouvre l'onglet, et ne revient que si quelque chose
+ * de nouveau arrive depuis (un nouveau chapitre, une nouvelle carte). Retenu sur l'appareil.
+ */
+function nouveau(onglet: 'porteurs' | 'codex', signature: string, e: EcranDistrict): boolean {
+  if (!signature) return false;
+  const cle = `empreintes.vu.${onglet}`;
+  const ouvert = onglet === 'porteurs' ? e.vue === 'porteurs' || e.vue === 'cartes' : e.vue === 'codex';
+  try {
+    const vus = new Set((localStorage.getItem(cle) ?? '').split(',').filter(Boolean));
+    if (ouvert) { for (const x of signature.split(',')) vus.add(x); localStorage.setItem(cle, [...vus].slice(-300).join(',')); return false; }
+    return signature.split(',').some((x) => !vus.has(x));
+  } catch { return !ouvert; }
+}
+
 /** La navigation du bas */
 export function navigation(e: EcranDistrict): string {
   const j = e.j;
   const o = objectifCourant(j);
   const alerte: Partial<Record<Vue | 'plus', boolean>> = {
     archipel: !!(j.forge && e.now >= j.forge.fin) || !!(o && (o.fait(j) || o.onglet === 'archipel')),
-    porteurs: !!(o && (o.onglet === 'porteurs' || o.onglet === 'cartes') && !o.fait(j)) || porteursNouveaux(j).length > 0 || (j.chambre && cartesNouvelles(j).length > 0),
+    porteurs: !!(o && (o.onglet === 'porteurs' || o.onglet === 'cartes') && !o.fait(j))
+      || nouveau('porteurs', [...porteursNouveaux(j), ...(j.chambre ? cartesNouvelles(j) : [])].join(','), e),
     coupe: !!j.expedition || !!(o && o.onglet === 'coupe' && !o.fait(j)),
-    codex: CHAPITRES.some((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)),
+    codex: nouveau('codex', CHAPITRES.filter((c) => chapitreOuvert(c, j.strate) && !j.lus.includes(c.id)).map((c) => c.id).join(','), e),
     // une pastille quand l'onglet vient de s'ouvrir et qu'on n'y est jamais allé
     pillages: (!!j.chambre && strateVaincue(j) >= PILLAGE.strateDuPort && !j.portVu) || !!(o && o.onglet === 'pillages' && !o.fait(j)),
     fleche: flecheOuverte(j) && !j.fleche,
@@ -593,9 +613,12 @@ export function menu(e: EcranDistrict): string {
     + `<button type="button" class="ligne-menu option" data-action="option-auto" role="switch" aria-checked="${auto}">${ICO.lancer}<span><strong>Combat automatique</strong><small>Un bouton « Auto » dans les combats ordinaires des Strates déjà vaincues : l’escouade joue seule, en accéléré</small></span><i class="interrupteur" aria-hidden="true"></i></button>`
     // les graphismes (3 novembre 2026) : Auto, Complets ou Légers, pour les appareils qui peinent
     + (() => { const g = texteGraphismes(); return `<button type="button" class="ligne-menu option" data-action="option-graphismes" aria-label="Graphismes : ${g.valeur}. Toucher pour changer">${ICO.lueur}<span><strong>Graphismes</strong><small>${g.detail}</small></span><b class="valeur-option">${g.valeur}</b></button>`; })()
+    // le son et les animations (audit du 7 novembre 2026) : réglables hors combat
+    + `<button type="button" class="ligne-menu option" data-action="option-son" role="switch" aria-checked="${sonActif()}">${sonActif() ? ICONE_SON : ICONE_MUET}<span><strong>Son</strong><small>Les sons du combat et de l’interface</small></span><b class="valeur-option">${sonActif() ? 'Activé' : 'Coupé'}</b></button>`
+    + `<button type="button" class="ligne-menu option" data-action="option-animations" role="switch" aria-checked="${!animationsReduites()}">${ICO.lueur}<span><strong>Animations</strong><small>${animationsReduites() ? 'Réduites : presque rien ne bouge, les combats vont droit au résultat' : 'Complètes : la houle, les lueurs, les coups animés'}</small></span><b class="valeur-option">${animationsReduites() ? 'Réduites' : 'Complètes'}</b></button>`
     + `</div></section>`;
   h += panneauCompte(c);
-  h += `<section class="bloc"><h3 class="titre-bloc">${icone('journal')}Journal du district</h3><ol class="journal-liste">${e.j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></section>`;
+  // le journal du district est passé dans la fiche du directeur (audit du 7 novembre 2026) : le menu ne garde que les réglages et les raccourcis
   return h + `</div></section>`;
 }
 

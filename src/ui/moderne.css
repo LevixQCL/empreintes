@@ -96,3 +96,16 @@ html #app details.replie > p{margin:.4em 0 0}
   html #app .nav .onglet:not(.actif) .onglet-ico{filter:saturate(.7) brightness(.82);transition:filter .2s ease}
   html #app .nav .onglet:not(.actif):hover .onglet-ico{filter:none}
 }
+
+/* ================= La suite (audit du 7 novembre 2026) : les écrans restés à angles droits ou découpés =================
+   Port et Pillages, Flèche, Marées, missions en mer, Grand Tableau, Duel, Campagne, bloc « Acte » de la Tour, Recruter :
+   leurs panneaux prennent le même arrondi que le reste ; leurs petites commandes deviennent des gélules. */
+html #app :is(.lecture-planche,.lecture-suite,.sc-replique,.sc-tuile,.gt-bandeau,.gt-ligne,.gt-moi,.gt-socle,.bilan,.dl-chaine,.dl-fin-carte,.dl-porteur,
+  .fl-assaut,.fl-defi,.fl-intro,.fl-paliers,.fl-pr,.fl-sommet,.fl-tenir,.fl-tete,.fl-top,.mr-contrat,.mr-ep,.mr-tuile,.ds-jauge,.ds-lieu,.voyage,
+  .rc-code,.es-pillage,.pl-etat > div,.pl-fiche,.pl-garde,.pl-journal,.chapitre-tuile,.epreuve,.incident-carte,.strate,.puits,.emplacement,.zone-chaine,.fj-rec){
+  border-radius:16px;corner-shape:round;clip-path:none}
+html #app :is(.gt-onglet,.btn-eclat,.btn-relance,.btn-fuir,.lien-guide){border-radius:999px;corner-shape:round;clip-path:none}
+/* les feuilles qui montent du bas : coins hauts arrondis */
+html #app .feuille{border-radius:22px 22px 0 0;corner-shape:round;clip-path:none}
+/* les petites étiquettes en trapèze (« laiton » découpé) : des pastilles rondes */
+html #app :is(.chap-don,.pastille-n,.insigne-recruteur){border-radius:999px;clip-path:none}

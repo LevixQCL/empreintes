@@ -35,6 +35,13 @@
 .fl-plaque.d{left:calc(50% + 14px)}
 .fl-plaque em{padding-left:6px;font-family:var(--mono);font-style:normal;font-weight:700;font-size:12px;line-height:1;color:#2A1606;font-variant-numeric:tabular-nums}
 .fl-plaque.atteint{filter:drop-shadow(0 0 6px rgba(242,213,140,.55)) drop-shadow(0 2px 3px rgba(0,0,0,.7))}
+/* les quais en verre fumé, comme le reste de l'interface (audit du 7 novembre 2026 : les plaques de bois peint faisaient « ancien style ») ;
+   un quai atteint passe à l'or */
+.fl-plaque{width:46px;height:22px;border-radius:999px;background:rgba(10,14,28,.8);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3),0 2px 4px rgba(0,0,0,.6);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);filter:none}
+.fl-plaque em{padding:0;color:#dcecfb}
+.fl-plaque.atteint{box-shadow:inset 0 0 0 1.5px rgba(242,213,140,.85),0 0 10px rgba(242,213,140,.45),0 2px 4px rgba(0,0,0,.6);filter:none}
+.fl-plaque.atteint em{color:#f6d98e}
 /* les quais tenus : un fanion peint (doré : le tien ; bleuté : les autres directeurs) */
 .fl-fanion{position:absolute;top:var(--y);width:40px;height:40px;transform:translateY(-82%);z-index:3;
   background:var(--fanion) center bottom/contain no-repeat;filter:drop-shadow(0 2px 3px rgba(0,0,0,.7))}

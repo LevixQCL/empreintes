@@ -1,5 +1,6 @@
 // Le rendu : redessine l'écran courant à partir de l'état (positions de défilement et champs de saisie gardés).
 
+import { marquerDebordements } from '../ui/outils';
 import { autoActif } from '../ui/options';
 import { mesurerFluidite, suspendreHorsEcran } from '../ui/graphismes';
 import { htmlPillages } from '../ui/pillages';
@@ -180,6 +181,7 @@ function dessiner() {
   if (app.mode === 'combat') { entreeGardien(); centrerPlan(); }
   // ce qui boucle sans fin s'arrête hors de l'écran (et, en graphismes légers, ne boucle plus du tout)
   suspendreHorsEcran(racine);
+  marquerDebordements(racine);
   if (app.mode === 'district' && D.vue === 'archipel') mesurerFluidite();
   if (app.mode === 'intro') { precharger(app.plan); precharger(app.plan + 1); animerCompteur(racine, app.lignesVues, reduit); }
   D.uid = app.uid;

@@ -221,3 +221,9 @@
 .loupe-qui{margin:0;font-family:var(--mono);font-size:13px;letter-spacing:.02em;color:rgba(238,242,248,.8)}
 @keyframes loupe-ouvre{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){ .loupe{animation:none} }
+
+/* un nom long passe sur deux lignes au lieu d'être coupé (« Grand uniss… », audit du 7 novembre 2026) : le voile grandit vers le haut */
+@container (min-width:91px){
+.nf-voile{height:auto;min-height:calc(25% - var(--bord));padding-bottom:2.4cqw}
+.nf-nom{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.05;overflow-wrap:anywhere}
+}

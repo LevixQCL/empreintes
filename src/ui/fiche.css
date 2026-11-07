@@ -80,3 +80,11 @@ button.fj-rec:hover{box-shadow:inset 0 0 0 1px rgba(159,216,255,.45);background:
   .fj-gemme,.ecran > .nav .nav-embleme.appelle img{animation:none}
 }
 
+
+/* le journal du district, replié au bas de la fiche (7 novembre 2026) */
+.fj-journal summary{display:flex;align-items:center;gap:8px;cursor:pointer;list-style:none}
+.fj-journal summary::-webkit-details-marker{display:none}
+.fj-journal summary small{margin-left:auto;font-family:var(--mono);font-size:var(--t-min);letter-spacing:.04em;color:var(--quiet);text-transform:none}
+.fj-journal summary::after{content:"";width:8px;height:8px;border:solid currentColor;border-width:0 1.5px 1.5px 0;transform:rotate(45deg);transition:transform .2s ease;opacity:.7}
+.fj-journal[open] summary::after{transform:rotate(-135deg)}
+.fj-journal .journal-liste{margin-top:10px}

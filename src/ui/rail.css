@@ -51,19 +51,13 @@
   /* une encoche de lumière sur l'arête haute de la barre, au-dessus de l'onglet ouvert */
   .nav .onglet.actif::after{content:"";position:absolute;z-index:0;left:50%;top:-1px;width:64px;height:2px;transform:translateX(-50%);
     background:linear-gradient(90deg,transparent,#BFE2FF 30%,#fff 50%,#BFE2FF 70%,transparent);box-shadow:0 0 12px rgba(140,200,255,.9)}
-  /* sept onglets depuis les Pillages et la Flèche (28 octobre 2026) : seul l'onglet ouvert garde son nom, les autres
-     ne gardent que leur icône (le nom reste lu par les lecteurs d'écran) ; la barre tient en une ligne dès 360 px */
+  /* chaque onglet garde son nom sous l'icône, même à sept (audit du 7 novembre 2026) : la barre tient en une ligne dès 360 px */
   .nav{overflow:visible;grid-template-columns:repeat(var(--onglets,7),minmax(0,1fr))}
   .nav .onglet{min-height:58px;gap:1px;padding:2px 0 3px;justify-content:flex-end;min-width:0}
-  .nav .onglet:not(.actif){justify-content:center}
-  .nav .onglet-ico{width:46px;height:36px;--ico:33px;--serti:42px}
+  .nav .onglet-ico{width:46px;height:34px;--ico:31px;--serti:40px}
   .nav .onglet.actif .onglet-ico{--ico:46px;--serti:56px}
-  .nav .onglet:not(.actif) .onglet-nom{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
-  .nav .onglet.actif .onglet-nom{position:relative;z-index:1;white-space:nowrap}
-  /* cinq onglets ou moins (premier jour, 4 novembre 2026) : la place suffit, chaque onglet garde son nom */
-  .nav.noms .onglet:not(.actif){justify-content:flex-end}
-  .nav.noms .onglet:not(.actif) .onglet-nom{position:relative;width:auto;height:auto;overflow:visible;clip:auto;clip-path:none;white-space:nowrap;font-size:12px;letter-spacing:0;color:#8E9AB5}
-  .nav.noms .onglet .onglet-nom{letter-spacing:0}
+  .nav .onglet-nom{position:relative;z-index:1;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:clip;font-size:var(--t-min);letter-spacing:0}
+  .nav .onglet:not(.actif) .onglet-nom{color:#8E9AB5}
 }
 
 /* ================= PC : le rail à gauche ================= */
