@@ -903,7 +903,7 @@ function htmlEcranCombat(e: Ecran): string {
   if (e.decouverte && !e.fin) h += htmlDecouverte(e.decouverte, e.decouvertePage);
   if (e.fin && !e.journal) {
     const victoire = !/Défaite|Repoussés/.test(e.fin.titre);
-    h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="fin-titre"><div class="fenetre fin ${victoire ? 'victoire' : 'defaite'}"><span class="surtitre">${victoire ? 'VICTOIRE' : 'L’ESCOUADE RECULE'}</span><h2 id="fin-titre">${echap(e.fin.titre)}</h2><p>${echap(e.fin.texte)}</p>`
+    h += `<div class="voile" role="dialog" aria-modal="true" aria-labelledby="fin-titre"><div class="fenetre fin ${victoire ? 'victoire' : 'defaite'}">${/Victoire|Défaite|Repoussés/.test(e.fin.titre) ? '' : `<span class="surtitre">${victoire ? 'VICTOIRE' : 'L’ESCOUADE RECULE'}</span>`}<h2 id="fin-titre">${echap(e.fin.titre)}</h2><p>${echap(e.fin.texte)}</p>`
       + `<button type="button" class="btn prim large" data-action="${e.fin.action}">${echap(e.fin.bouton)}</button>${e.fin.bouton2 ? `<button type="button" class="btn sec large" data-action="${e.fin.action2}">${echap(e.fin.bouton2)}</button>` : ''}`
       + (s.historique?.some((t) => t.chaine.length) ? `<button type="button" class="lien fin-journal" data-action="journal" data-id="tours">${ICO.journal}Revoir le combat</button>` : '') + `</div></div>`;
   }

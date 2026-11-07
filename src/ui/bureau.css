@@ -131,7 +131,7 @@
   .ecran-combat .int-txt{font-size:19px;line-height:1.2}
   .ecran-combat .int-txt small{font-size:var(--t-min)}
   .ecran-combat .plaque-int{gap:14px;padding:9px}
-  .ecran-combat .int-nom{font-size:var(--t-min)}
+  .ecran-combat .int-nom{font-size:var(--t-min);letter-spacing:.06em}
   .ecran-combat .int-quoi{gap:8px;font-size:19px}
   .ecran-combat .int-fleche{width:17px;height:10px}
   .ecran-combat .int-qui img{width:32px;height:32px}
@@ -229,16 +229,14 @@
 /* Les cartes du combat grandissent avec la hauteur de l'écran (la chaîne et la main doivent tenir sans défiler).
    Depuis la refonte des cartes (27 octobre 2026), elles prennent une vraie taille plutôt qu'un zoom : au-delà de 90 px de large,
    la carte s'affiche en entier (nom, effet en clair), comme dans la collection. */
-@media (min-width:1100px) and (min-height:720px){ .ecran-combat{row-gap:12px;padding:20px 36px 24px}
-  .geste.main,.geste.chaine,.place-vide{width:92px;height:129px} .rail{min-height:131px} }
-@media (min-width:1100px) and (min-height:860px){ .geste.main,.geste.chaine,.place-vide{width:116px;height:162px} .rail{min-height:164px} }
+@media (min-width:1100px) and (min-height:720px){ .ecran-combat{row-gap:12px;padding:20px 36px 24px} }
+/* la taille des cartes du combat sur PC est dans combat.css (fin de la partie 1), pour passer après la taille du téléphone */
 
 /* Très grands écrans : un peu plus d'air */
 @media (min-width:1700px) and (min-height:900px){
   .archipel{--panneau:460px}
   .ecran > .contenu{max-width:1400px}
 }
-@media (min-width:1700px) and (min-height:1000px){ .geste.main,.geste.chaine,.place-vide{width:130px;height:182px} .rail{min-height:184px} }
 /* grand écran : la scène de l'ennemi fait près de 1000 px de haut, l'intention et le nom suivent */
 @media (min-width:1700px) and (min-height:900px){
   .ecran-combat .intention{top:26px;left:26px;gap:15px;padding:11px 22px 11px 11px}

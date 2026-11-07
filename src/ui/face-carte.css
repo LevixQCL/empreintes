@@ -20,6 +20,10 @@
 .nf::before{content:"";position:absolute;inset:var(--bord);z-index:5;pointer-events:none;
   box-shadow:inset 0 0 0 .7cqw var(--ac),inset 0 0 6cqw color-mix(in srgb,var(--ac) 55%,transparent);
   clip-path:polygon(0 0,calc(100% - var(--cut) + 2cqw) 0,100% calc(var(--cut) - 2cqw),100% 100%,calc(var(--cut) - 2cqw) 100%,0 calc(100% - var(--cut) + 2cqw))}
+/* les coins arrondis (audit du 7 novembre 2026) : la carte suit le style moderne de tous les écrans, sans coins entaillés */
+.nf{clip-path:none;border-radius:var(--rayon-carte,7cqw)}
+.nf::after{border-radius:inherit}
+.nf::before{clip-path:none;border-radius:calc(var(--rayon-carte,7cqw) - var(--bord))}
 .nf-nacre{--bord:0px}
 .nf-nacre::after,.nf-nacre::before{display:none}
 
