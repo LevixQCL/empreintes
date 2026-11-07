@@ -51,8 +51,8 @@ describe('L’enquête des Haltes', () => {
     const fin = SCENES.find((s) => s.repliques.some((r) => r.qui === 'premier-porteur' && /gardés/.test(r.texte)))!;
     const ctx = (p: 'nous' | 'avant') => ({ strate: 11, vaincue: 10, actes: {}, presents: ESC, drapeaux: [], choixHaltes: tout(p) });
     const a = repliquesDe(fin, ctx('nous')).map((r) => r.texte), b = repliquesDe(fin, ctx('avant')).map((r) => r.texte);
-    expect(a.some((t) => /chacun savait/.test(t))).toBe(true);
-    expect(b.some((t) => /dans les cristaux/.test(t))).toBe(true);
+    expect(a.some((t) => /moitié/.test(t))).toBe(true);
+    expect(b.some((t) => /remonter/.test(t))).toBe(true);
     expect(a).not.toEqual(b);
   });
 
