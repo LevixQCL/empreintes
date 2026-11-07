@@ -244,10 +244,10 @@ export const FAMILLES: Fragment[] = [
     ],
   },
   {
-    id: 'famille-semis', titre: 'Les graines du toit', support: 'Apporté par les Halde : une boîte en fer de semences',
+    id: 'famille-semis', titre: 'Les graines du toit', support: 'Apporté par les Marbel : une boîte en fer de semences',
     lignes: [
       'Des sachets cousus main, chacun avec une date et un nom de plante qui ne pousse plus au bord de l’eau.',
-      'Le sel a gagné les potagers bas un par un. Les Halde ont remonté leurs bacs d’un étage à chaque fois.',
+      'Le sel a gagné les potagers bas un par un. Les Marbel ont remonté leurs bacs d’un étage à chaque fois.',
       'Sur le couvercle, gravé à la pointe : « Là-haut, il y aura de la terre. On plantera tout. »',
     ],
   },

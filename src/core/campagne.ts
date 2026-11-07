@@ -234,7 +234,7 @@ export const SCENES: Scene[] = [
       { qui: 'vela', texte: 'Elle garde les noms, ceux que les tables gravées ont perdus. Elle est la dernière à s’en souvenir.' },
       { qui: 'tobin', texte: 'En se réveillant, ils ont vu leurs lampes rallumées. Ils ont compris tout de suite que quelqu’un était venu.', si: souvenir('lampes-veilleurs') },
       { qui: 'tobin', texte: 'Le prix du pain, au marché. C’est ça qui les a ramenés. Je n’y aurais jamais pensé.', si: souvenir('vrai-detail') },
-      { qui: 'tobin', texte: 'Votre relevé de la table de la Ruche, posé à côté de celui de −4… Les mêmes tables, et plus un seul nom. Hessa veut le mettre sous clé. Ysé veut le publier.', si: souvenir('copistes') },
+      { qui: 'tobin', texte: 'Votre relevé de la table de la Ruche, posé à côté de celui de −4… Les mêmes tables, et plus un seul nom. Notre Doyenne, Hessa, veut le mettre sous clé. Ysé veut le publier.', si: souvenir('copistes') },
     ]),
   entree(9, 'Le Ciel d’en bas',
     'Aucun fouilleur n’a jamais dépassé la Strate −9. Avant le départ, Ysé t’a fait porter une lettre. Tu la lis à la lueur des cristaux.', [
@@ -279,7 +279,7 @@ export const SCENES: Scene[] = [
       { qui: 'yse', texte: 'Tout le monde sait, maintenant. Ce que chacun en fera, je n’en sais rien. C’est ça, la liberté : on ne sait pas.', si: fin('archives') },
       { qui: 'vela', texte: 'Les voix se sont calmées. Pas toutes. Assez pour que j’entende la mienne.' },
       { qui: 'ilka', texte: 'Et maintenant ? Il reste des Berceaux, des pilleurs, et une île qui passe. Les Strates continuent.' },
-      { qui: 'yse', texte: 'Le Noyé est passé me voir, avec un vieux papier plié en huit. Il dit que la Clause de la Flèche parle de ton district, pas seulement de ton escouade. Je t’ai recopié tout ça dans les Chroniques.' },
+      { qui: 'yse', texte: 'Le Noyé est passé me voir, ce vieux saboteur rescapé de la Grève des pompes, avec un papier plié en huit. Il dit que la Clause de la Flèche parle de ton district, pas seulement de ton escouade. Je t’ai recopié tout ça dans les Chroniques.' },
       { qui: 'yse', texte: 'Regarde la mer, directeur. Elle n’a pas oublié de monter. Mais toi, tu as regardé. Je ferme mon cahier : la suite est à toi.' },
     ],
   },

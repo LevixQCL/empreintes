@@ -41,7 +41,7 @@ export const ORIGINES: Record<string, PalierOrigine[]> = {
   ],
   sasha: [
     { niveau: 1, titre: 'L’atelier de presses', texte: 'À seize ans, apprenti dans un atelier de presses, Sasha a perdu le bras droit dans un accident de machine.' },
-    { niveau: 4, titre: 'Le bras dessiné', texte: 'Sur son lit de Clinique, il a dessiné son propre bras au dos des feuilles de soin. Odile la Brocante a vu les dessins et l’a fabriqué avec lui, en pièces de récupération, sans abonnement. C’est le premier bras « libre » du district.' },
+    { niveau: 4, titre: 'Le bras dessiné', texte: 'Sur son lit de Clinique, il a dessiné son propre bras au dos des feuilles de soin. Odile la Brocante, la ferrailleuse du marché, a vu les dessins et l’a fabriqué avec lui, en pièces de récupération, sans abonnement. C’est le premier bras « libre » du district.' },
     { niveau: 8, titre: 'La minute grise', texte: 'Sasha n’a jamais payé de mise à jour de sa vie. Son bras ne s’arrête pas pendant la minute grise, quand les implants loués du district se figent tous ensemble : chaque mardi à quatre heures, il est l’homme le plus demandé du quartier.' },
   ],
   nuit: [

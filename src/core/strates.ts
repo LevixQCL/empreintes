@@ -130,7 +130,7 @@ export const HALTES: HalteDef[] = [
       d('Par la fente', v('vela', 'Des cristaux en cercle, et une couche au milieu. Quelqu’un dormait entouré de ses pierres, comme on dort au milieu des siens.'), v('', 'Par la fente, des cristaux rangés en cercle autour d’une couche de pierre.')),
     ], [
       { texte: 'Compter les cristaux', effet: 'eclat', drapeau: 'vingt-trois', recit: 'Vingt-trois cristaux, rangés avec soin, et une seule couche. Tu notes le chiffre. Sur le seuil, un Éclat, comme une pièce laissée pour le passage.' },
-      { texte: 'Prendre le bol du seuil', effet: 'composants', recit: 'Une main passée par la fente ramène un bol de pierre, poli par l’usage. Quelqu’un mangeait ici, seul, au milieu de ses voix. Odile en voudra.' },
+      { texte: 'Prendre le bol du seuil', effet: 'composants', recit: 'Une main passée par la fente ramène un bol de pierre, poli par l’usage. Quelqu’un mangeait ici, seul, au milieu de ses voix. Odile la Brocante, au marché, en voudra.' },
     ],
     'Les portes rondes n’enferment rien. Quelqu’un s’est enfermé dedans, de son plein gré, au milieu de ses pierres.'),
   H(4, 2, 'La table des voix',
@@ -283,9 +283,9 @@ export const HALTES: HalteDef[] = [
     'Dans le souvenir heureux des Veilleurs, il y a sept verres pour six. Le septième attend la fouilleuse qui est remontée autrefois, avec trois lignes de la table.'),
 
   // ---------- −9 · Le Ciel d'en bas ----------
-  H(9, 1, 'La lettre d’Ysé',
-    'Aucun fouilleur n’a jamais dépassé cette salle. Avant de partir, tu as glissé dans ton sac la lettre d’Ysé. Tu la relis à la lueur des cristaux.', [
-      d('La lettre', v('vela', '« Si la Tisseuse garde des noms, demande-lui le sien. » Ysé a toujours su ce qu’il fallait demander.'), v('', '« Si la Tisseuse garde des noms, demande-lui le sien. »')),
+  H(9, 1, 'Au dos de la lettre',
+    'Aucun fouilleur n’a jamais dépassé cette salle. Tu ressors la lettre d’Ysé pour la ranger, et tu vois ce que tu n’avais pas vu : au dos, d’une écriture plus tremblée, un post-scriptum.', [
+      d('Le post-scriptum', v('vela', '« Celle qui garde les noms des autres a souvent perdu le sien. Écoute-la avant de la combattre. » Elle savait déjà, pour la Tisseuse.'), v('', 'Au dos, un post-scriptum : « Celle qui garde les noms des autres a souvent perdu le sien. Écoute-la avant de la combattre. »')),
       d('La côte gravée', v('vela', 'Cette côte, je la connais. Je la vois en rêve depuis ma greffe. Je n’y suis jamais allée. Personne n’y est jamais allé.'), v('nuit', 'Une côte. Personne ne l’a jamais vue.'), v('', 'Tout un mur gravé d’une côte inconnue : criques, courants, récifs.')),
       d('Un fil sur le sol', v('kessa', 'Ses fils traînent partout, ici. Ils sont usés. Elle les tient depuis trop longtemps.'), v('', 'Des fils usés traînent sur le sol.')),
     ], [
@@ -361,15 +361,15 @@ export function voixDetail(dt: DetailHalte, debout: readonly string[], drapeaux:
 
 export interface Particularite { strate: number; nom: string; texte: string }
 export const PARTICULARITES: Particularite[] = [
-  { strate: 2, nom: 'Murs de 2066', texte: 'Des caches murées : un Augmenté les force, et y trouve le double.' },
+  { strate: 2, nom: 'Caches murées', texte: 'Des caches murées : un Augmenté les force, et y trouve le double.' },
   { strate: 3, nom: 'Le noir complet', texte: 'Même un Résonant ne sent rien au-delà des salles voisines. Une lanterne attend à la Halte.' },
-  { strate: 4, nom: 'Portes rondes', texte: 'Fermé de l’intérieur : deux fois plus de salles scellées.' },
+  { strate: 4, nom: 'Portes rondes', texte: 'Toutes closes : deux fois plus de salles scellées.' },
   { strate: 5, nom: 'Les niches', texte: 'Les caches sont des niches : parfois une carte y dort.' },
   { strate: 6, nom: 'Les pleurs', texte: 'Les archives sont plus nombreuses derrière le mur.' },
   { strate: 7, nom: 'Souvenirs doubles', texte: 'Certains combats ont deux occupants : choisis lequel affronter.' },
   { strate: 8, nom: 'Les Veilleurs perdus', texte: 'Un Veilleur égaré attend toujours quelque part sur le plan.' },
   { strate: 9, nom: 'Les fils', texte: 'Un fil relie deux salles côte à côte : on peut le suivre une fois.' },
-  { strate: 10, nom: 'Fermé de l’intérieur', texte: 'Les portes à Fréquence demandent une suite de 4.' },
+  { strate: 10, nom: 'Le dernier verrou', texte: 'Les portes à Fréquence demandent une suite de 4.' },
 ];
 export const particularite = (strate: number) => PARTICULARITES.find((p) => p.strate === strate);
 

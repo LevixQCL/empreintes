@@ -125,7 +125,7 @@ export const PLANS: Plan[] = [
     'Quand l’eau monte pour la première fois, on peint une ligne bleue sur le mur, là où elle s’est arrêtée. On la montre aux invités.'] },
   { epoque: 'Aujourd’hui', titre: 'On a regardé ailleurs', annees: [2020, 2026], ambiance: 'colere', camera: 'recule', texte: 'haut', foyer: [47, 84], fonds: [f('02-ailleurs')], scene: ecrans, court: ["Les prix montent, la colère cherche des visages, des guerres remplissent les écrans. Le climat glisse en fin de journal, vingt secondes entre la météo et le sport."], lignes: [
     'Les prix montent : le pain, le loyer, le chauffage. Quand on compte ses pièces, un glacier qu’on ne verra jamais pèse peu.',
-    'La colère cherche des visages. D’un bord comme de l’autre, chacun crie plus fort que l’autre.',
+    'La colère cherche des visages. Aux deux extrêmes, chaque camp crie plus fort que l’autre.',
     'Des guerres reviennent remplir les écrans. Le climat glisse en fin de journal, vingt secondes entre la météo et le sport.',
     'Entre les deux foules, un enfant. Personne ne le regarde : c’est lui qui vivra la suite.'] },
   { epoque: 'Un quart de siècle', titre: 'La Fonte', annees: [2030, 2055], ambiance: 'maree', camera: 'gauche', fonds: [f('03-tempetes')], scene: (k) => nature(Math.min(k, 2)), court: ["Puis la mer monte pour de bon. Les côtes se vident, des centaines de millions de gens prennent la route. Les querelles d’avant paraissent soudain minuscules."], lignes: [
