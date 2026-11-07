@@ -19,7 +19,8 @@
     "ratelier": "tsx scripts/ratelier.ts",
     "duel": "tsx scripts/duel-equilibre.ts",
     "epreuves": "tsx scripts/epreuves.ts",
-    "fouilles": "tsx scripts/fouilles.ts"
+    "fouilles": "tsx scripts/fouilles.ts",
+    "livre": "tsx scripts/livre.ts .livre && python3 scripts/livre-images.py .livre"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
