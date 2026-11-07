@@ -89,7 +89,7 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
    au lieu de déborder du panneau ; le chiffre et son mot à droite, la lueur de l'écrin dans la couleur de la ressource */
 .res{padding:5px 5px 5px 6px}
 .res .ico.peinte{width:28px;height:28px;margin:-3px -3px -3px -4px}
-.res small{font-size:9px;letter-spacing:0}
+.res small{font-size:var(--t-min);letter-spacing:0}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud{grid-template-columns:minmax(0,1.12fr) minmax(0,1.02fr) minmax(0,.95fr) minmax(0,.95fr) auto;gap:6px;padding:max(8px,var(--sat)) 8px 8px}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res{grid-template-columns:32px minmax(0,1fr);column-gap:6px;row-gap:0;min-height:48px;padding:4px 7px 6px 5px}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .ico.peinte{grid-row:1 / span 2;align-self:end;width:32px;height:38px;margin:-4px 0 -2px;padding:0 1px 6px;object-fit:contain;object-position:50% 100%;
@@ -102,7 +102,7 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 /* le bloc de la Strate est plus large que les autres icônes : un peu plus petit dans son écrin, pour que l'hexagone reste visible */
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.abysse .ico.peinte{padding:4px 4px 8px}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .v{align-self:end;font-size:16px;line-height:1.05}
-#app:is([data-mode="combat"],[data-mode="district"]) .hud .res small{align-self:start;font-family:var(--body);font-size:10.5px;line-height:1.35;letter-spacing:.01em;color:#A9BEDF}
+#app:is([data-mode="combat"],[data-mode="district"]) .hud .res small{align-self:start;font-family:var(--body);font-size:var(--t-min);line-height:1.35;letter-spacing:.01em;color:#A9BEDF}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.energie.plein small{color:#FFC768}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .jauge-res{left:43px;right:8px;bottom:4px;height:2px;background:rgba(205,239,255,.12)}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .jauge-res i{background:linear-gradient(90deg,#c98a35,#ffd98a);box-shadow:0 0 6px rgba(255,200,110,.8)}
@@ -114,7 +114,7 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
   #app:is([data-mode="combat"],[data-mode="district"]) .hud .res{grid-template-columns:28px minmax(0,1fr);column-gap:5px;padding:4px 5px 6px 4px}
   #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .ico.peinte{width:28px;height:34px;background-size:25px 29px}
   #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .v{font-size:15px}
-  #app:is([data-mode="combat"],[data-mode="district"]) .hud .res small{font-size:10px;letter-spacing:0}
+  #app:is([data-mode="combat"],[data-mode="district"]) .hud .res small{font-size:var(--t-min);letter-spacing:0}
   #app:is([data-mode="combat"],[data-mode="district"]) .hud .jauge-res{left:37px;right:6px}
   #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.confiance{padding:3px 7px 7px !important;min-width:42px}
 }

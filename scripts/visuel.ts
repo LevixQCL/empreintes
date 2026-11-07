@@ -102,6 +102,53 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
 ];
 const TAILLES = [[390, 844], [1280, 800]] as const;
 
+/** Ce que l'on compte sur chaque écran (seulement ce qui est visible dans la fenêtre) */
+type Mesure = { petits: string[]; coupes: string[]; cibles: string[]; plex: number };
+// textes sous 12 px, éléments à coins coupés (clip-path), cibles tactiles sous 40 px, textes encore en IBM Plex
+const MESURER = (): Mesure => {
+  const nom = (e: Element) => e.tagName.toLowerCase() + (e.classList.length ? '.' + [...e.classList].slice(0, 2).join('.') : '');
+  const visible = (e: Element) => {
+    const r = e.getBoundingClientRect();
+    if (r.width < 1 || r.height < 1 || r.bottom < 0 || r.right < 0 || r.top > innerHeight || r.left > innerWidth) return false;
+    const c = getComputedStyle(e);
+    return c.visibility !== 'hidden' && Number(c.opacity) > 0.05;
+  };
+  const m: Mesure = { petits: [], coupes: [], cibles: [], plex: 0 };
+  for (const e of document.querySelectorAll('#app *')) {
+    if (!visible(e)) continue;
+    const c = getComputedStyle(e);
+    const texte = [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent!.trim());
+    if (texte) {
+      const t = parseFloat(c.fontSize);
+      if (t < 11.95) m.petits.push(`${nom(e)} ${t}px`);
+      if (/plex/i.test(c.fontFamily.split(',')[0]!)) m.plex++;
+    }
+    if (c.clipPath && c.clipPath !== 'none' && !e.closest('svg')) m.coupes.push(nom(e));
+    if (e.matches('button, a[href], [data-action], input, select')) {
+      const r = e.getBoundingClientRect();
+      if (Math.min(r.width, r.height) < 39.5 && !e.parentElement?.closest('button, [data-action]')) m.cibles.push(`${nom(e)} ${Math.round(r.width)}×${Math.round(r.height)}`);
+    }
+  }
+  return m;
+};
+
+function bilanLisibilite(mesures: ({ version: string; ecran: string } & Mesure)[]) {
+  writeFileSync(resolve(sortie, 'lisibilite.json'), JSON.stringify(mesures, null, 1));
+  const total = (v: string, k: 'petits' | 'coupes' | 'cibles') => mesures.filter((x) => x.version === v).reduce((a, x) => a + x[k].length, 0);
+  const plex = (v: string) => mesures.filter((x) => x.version === v).reduce((a, x) => a + x.plex, 0);
+  console.log('\nLisibilité (éléments visibles, tous écrans) :       avant → après');
+  console.log(`  textes sous 12 px                           ${total('avant', 'petits')} → ${total('apres', 'petits')}`);
+  console.log(`  textes en IBM Plex                          ${plex('avant')} → ${plex('apres')}`);
+  console.log(`  coins coupés (clip-path)                    ${total('avant', 'coupes')} → ${total('apres', 'coupes')}`);
+  console.log(`  cibles tactiles sous 40 px                  ${total('avant', 'cibles')} → ${total('apres', 'cibles')}`);
+  // les dix premiers coupables, après
+  const compte = new Map<string, number>();
+  for (const x of mesures.filter((y) => y.version === 'apres')) for (const t of x.petits) { const k = t.replace(/ [\d.]+px$/, '') + ' (' + t.split(' ').pop() + ')'; compte.set(k, (compte.get(k) ?? 0) + 1); }
+  const pires = [...compte].sort((a, b) => b[1] - a[1]).slice(0, 10);
+  if (pires.length) console.log('  petits textes restants : ' + pires.map(([k, n]) => `${k} ×${n}`).join(', '));
+  console.log('  détail : .visuel/lisibilite.json');
+}
+
 function git(...args: string[]) {
   return execFileSync('git', args, { cwd: racine, encoding: 'utf8' }).trim();
 }
@@ -200,6 +247,7 @@ async function main() {
     const { chromium } = createRequire(import.meta.url)('playwright') as typeof import('playwright');
     const navigateur = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {});
     const resultats: { nom: string; differents: number }[] = [];
+    const mesures: ({ version: string; ecran: string } & Mesure)[] = [];
     const erreurs: string[] = [];
     try {
       for (const [w, h] of TAILLES) {
@@ -246,6 +294,8 @@ async function main() {
               photo = encore;
             }
             photos.push(photo);
+            // la lisibilité (audit du 7 novembre 2026) : petits textes, coins coupés, petites cibles, ancienne police
+            mesures.push({ version: port === 4401 ? 'avant' : 'apres', ecran: `${scene.nom}-${w}`, ...(await p.evaluate(MESURER)) });
             await ctx.close();
           }
           const nom = `${scene.nom}-${w}`;
@@ -279,6 +329,7 @@ async function main() {
       await navigateur.close();
       await Promise.all(serveurs.map((s) => s.close()));
     }
+    bilanLisibilite(mesures);
     // quelques pixels isolés = lissage des polices ; au-delà, regarder les images dans .visuel/
     const changes = resultats.filter((r) => r.differents > 20 || r.differents < 0);
     const etat = (n: number) => (n < 0 ? '  TAILLE ≠  ' : n === 0 ? '  identique ' : n <= 20 ? '  ≈ identique' : '  CHANGÉ    ');

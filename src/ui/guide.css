@@ -26,7 +26,7 @@
 .g-cases{display:grid;grid-template-columns:repeat(2,13px);gap:3px}
 .g-cases i{width:13px;height:18px;border-radius:2px;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 45%,#141821),color-mix(in srgb,var(--c) 18%,#0c0f15));
   box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 70%,transparent)}
-.g-col small{font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.g-col small{font-family:var(--mono);font-size:var(--t-min);letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
 .g-col.district{--c:var(--ivory)}
 .g-blason{display:grid;place-items:center;width:38px;height:38px;color:var(--ivory);background:radial-gradient(circle,#2a2f3a,#141821);
   clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
@@ -61,7 +61,7 @@
 .g-echelle{display:grid;grid-template-columns:66px repeat(9,1fr);gap:3px;align-items:center;margin-top:12px}
 .g-echelle b{display:grid;place-items:center;height:22px;font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;background:var(--fc);border-radius:3px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
-.g-echelle small{font-family:var(--mono);font-size:9px;letter-spacing:.04em;text-transform:uppercase;color:var(--c)}
+.g-echelle small{font-family:var(--mono);font-size:var(--t-min);letter-spacing:.04em;text-transform:uppercase;color:var(--c)}
 .g-echelle i{position:relative;height:12px;border-radius:2px;background:rgba(255,255,255,.035)}
 .g-echelle i::after{content:"";position:absolute;inset:0;border-radius:2px;background:var(--c);opacity:var(--a)}
 
@@ -77,14 +77,14 @@
 
 /* le triangle des lignées */
 .g-triangle{display:block;width:100%;max-width:230px;margin:10px auto 0;overflow:visible}
-.g-triangle text{font-family:var(--mono);font-size:8px;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+.g-triangle text{font-family:var(--mono);font-size:var(--t-min);font-weight:600;letter-spacing:.03em;text-transform:uppercase}
 .g-triangle .g-fleches line{stroke:var(--gold);stroke-width:1.3;stroke-dasharray:4 3}
 .g-triangle .g-bonus{fill:var(--gold);font-size:13px;letter-spacing:0}
 
 /* ---------- Onglet « Lire une carte » ---------- */
 .g-anatomie{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start}
 .g-anat-carte{position:relative;width:140px;margin:6px 22px 0;pointer-events:none}
-.g-num{position:absolute;z-index:5;display:grid;place-items:center;width:17px;height:17px;border-radius:50%;font:700 10px/1 var(--mono);font-style:normal;color:#1C1406;
+.g-num{position:absolute;z-index:5;display:grid;place-items:center;width:17px;height:17px;border-radius:50%;font:700 var(--t-min)/1 var(--mono);font-style:normal;color:#1C1406;
   background:linear-gradient(180deg,#f3d896,#c99d48);box-shadow:0 0 0 2px #0B0D12,0 1px 3px rgba(0,0,0,.6)}
 .g-num::before{content:"";position:absolute;top:50%;height:1.5px;background:rgba(240,211,140,.75)}
 /* chaque numéro est posé au bord de la carte, un petit trait le relie à ce qu'il désigne (hauteurs en % de la carte) */
@@ -96,7 +96,7 @@
 .g-legende{list-style:none;margin:0;padding:6px 0 0;display:grid;gap:10px;counter-reset:legende;font-size:13px;line-height:1.4;color:var(--quiet)}
 .g-legende li{counter-increment:legende;position:relative;padding-left:25px}
 .g-legende li::before{content:counter(legende);position:absolute;left:0;top:0;display:grid;place-items:center;width:17px;height:17px;border-radius:50%;
-  font:700 10px/1 var(--mono);color:#1C1406;background:linear-gradient(180deg,#f3d896,#c99d48)}
+  font:700 var(--t-min)/1 var(--mono);color:#1C1406;background:linear-gradient(180deg,#f3d896,#c99d48)}
 .g-legende b{color:var(--ink)}
 
 .g-collection{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center}
@@ -115,7 +115,7 @@
 .g-metaux > div{display:grid;grid-template-columns:minmax(72px,1.2fr) repeat(5,1fr);gap:2px;align-items:center}
 .g-metaux span{display:grid;place-items:center;min-height:30px;padding:0 2px;font-family:var(--mono);font-size:12px;color:var(--ink);background:rgba(255,255,255,.03);text-align:center}
 .g-metaux span[role="rowheader"]{justify-items:start;padding-left:8px;font-family:inherit;font-size:12px;color:var(--quiet);background:none;text-align:left}
-.g-metal-tete span[role="columnheader"]{gap:4px;min-height:52px;padding-top:6px;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--r);background:none}
+.g-metal-tete span[role="columnheader"]{gap:4px;min-height:52px;padding-top:6px;font-size:var(--t-min);letter-spacing:.04em;text-transform:uppercase;color:var(--r);background:none}
 .g-metal-tete span[role="columnheader"]:first-child{min-height:0}
 .g-metal-tete i{width:24px;height:24px;border-radius:50%;background:var(--tex) center/cover;box-shadow:0 0 0 1.5px color-mix(in srgb,var(--r) 70%,transparent),0 2px 4px rgba(0,0,0,.6)}
 
@@ -125,8 +125,8 @@
   box-shadow:inset 0 2px 0 var(--c),inset 0 0 0 1px var(--line)}
 .g-lignees b{font-size:13.5px;color:var(--c)}
 .g-lignees span{display:grid;font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink)}
-.g-lignees em{font-style:normal;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--quiet)}
-.g-lignees small{font-size:11.5px;line-height:1.35;color:var(--quiet)}
+.g-lignees em{font-style:normal;font-size:var(--t-min);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--quiet)}
+.g-lignees small{font-size:var(--t-min);line-height:1.35;color:var(--quiet)}
 
 /* ---------- Onglet « Les effets » ---------- */
 .g-chapeau{margin:0;padding:10px 12px;font-size:13.5px;line-height:1.5;color:var(--ink-2);background:rgba(216,180,101,.06);box-shadow:inset 0 22px 22px -18px color-mix(in srgb,var(--gold) 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,var(--gold) 28%,color-mix(in srgb,var(--gold) 60%,white) 50%,var(--gold) 72%,transparent 98%) 1}
@@ -139,8 +139,8 @@
 .g-effets .g-astuce{display:flex;gap:7px;align-items:flex-start;font-size:12.5px;color:var(--quiet)}
 .g-astuce .ico{width:13px;height:13px;flex-shrink:0;margin-top:2px;color:#9FD8FF}
 .g-sur{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
-.g-sur span{padding:2px 7px;font-size:11.5px;color:var(--ink-2);background:color-mix(in srgb,var(--c) 14%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent)}
-.g-sur .a-trouver{color:var(--mute);background:none;box-shadow:inset 0 0 0 1px var(--line);font-family:var(--mono);font-size:10.5px;letter-spacing:.03em}
+.g-sur span{padding:2px 7px;font-size:var(--t-min);color:var(--ink-2);background:color-mix(in srgb,var(--c) 14%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--c) 40%,transparent)}
+.g-sur .a-trouver{color:var(--mute);background:none;box-shadow:inset 0 0 0 1px var(--line);font-family:var(--mono);font-size:var(--t-min);letter-spacing:.03em}
 
 .g-district{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .g-carte-district{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center}

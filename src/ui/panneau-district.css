@@ -28,7 +28,7 @@
   #app[data-mode="district"] .mission.jour>.archive{--arete:#B9A2F2;display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:6px 12px;box-shadow:inset 0 0 0 1px rgba(185,162,242,.18),inset 0 1px 0 rgba(255,255,255,.06),0 10px 26px rgba(0,0,0,.45)}
 
   /* les sur-titres : petits, espacés, de la couleur de leur carte */
-  #app[data-mode="district"] .mission.jour .surtitre{font-size:11.5px;letter-spacing:.14em;font-weight:600}
+  #app[data-mode="district"] .mission.jour .surtitre{font-size:var(--t-min);letter-spacing:.14em;font-weight:600}
   #app[data-mode="district"] .mission.jour .mj-obj .surtitre{color:var(--d-or)}
   #app[data-mode="district"] .mission.jour .confiance .surtitre{color:#BFE9CF}
   #app[data-mode="district"] .mission.jour .archive .surtitre{color:#D3C4F7}
@@ -80,7 +80,7 @@
   #app[data-mode="district"] .mission.jour .archive .jauge .cran:last-child,
   #app[data-mode="district"] .mission.jour .archive .jauge .cran[style*="left:100%"]{transform:translate(-90%,-50%) rotate(45deg)}
   #app[data-mode="district"] .mission.jour .archive .jauge .cran.atteint{background:linear-gradient(135deg,#fff,#C8B4FF);box-shadow:0 0 10px rgba(200,180,255,.9)}
-  .mj-reperes{display:block !important;position:relative;grid-column:1 / -1;grid-row:4;height:16px;margin-top:2px;font-family:var(--mono);font-size:11px;color:rgba(211,196,247,.5)}
+  .mj-reperes{display:block !important;position:relative;grid-column:1 / -1;grid-row:4;height:16px;margin-top:2px;font-family:var(--mono);font-size:var(--t-min);color:rgba(211,196,247,.5)}
   .mj-reperes span{position:absolute;top:0;transform:translateX(-50%)}
   .mj-reperes span.atteint{color:#D3C4F7}
 }

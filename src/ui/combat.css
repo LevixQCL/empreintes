@@ -1,3 +1,7 @@
+/* L'écran de combat, en une seule feuille (7 novembre 2026, audit) : la matière du 22 octobre, puis la modernisation du 3 novembre,
+   puis la table du 7 novembre. L'ordre des trois parties est celui de la cascade : une partie plus bas l'emporte. */
+
+/* ===== 1. La matière (22 octobre 2026) ===== */
 /* L'écran de combat, matière (22 octobre 2026) : Bryan trouvait les jauges plates (« juste une barre rouge »)
    et les Fréquences mal posées sur les cartes. Ce fichier passe après styles.css et holo.css.
    - Jauges de vie : un rail serti dans du métal, une vie à reflet et à bord lumineux, des graduations,
@@ -36,7 +40,7 @@
 .je-valeur{display:flex;align-items:baseline;justify-content:center;gap:3px;min-width:66px;padding:3px 8px;font-family:var(--mono);color:#fff;
   background:linear-gradient(180deg,#30281c,#120f0a);clip-path:polygon(5px 0,100% 0,calc(100% - 5px) 100%,0 100%);box-shadow:inset 0 1px 0 rgba(255,236,190,.35)}
 .je-valeur b{font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums;text-shadow:0 0 8px rgba(255,140,100,.6)}
-.je-valeur small{font-size:10px;color:var(--quiet)}
+.je-valeur small{font-size:var(--t-min);color:var(--quiet)}
 
 /* l'escouade : une vie verte, plus fine, rouge quand elle baisse */
 .jauge-vie.jp{--h:10px;--lueur:rgba(170,236,140,.85);
@@ -109,7 +113,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 .scene-ennemi .pop.gros{color:#FFE2A8;text-shadow:0 2px 6px #000,0 0 18px rgba(255,140,60,.75)}
 /* la cible d'une carte de soin : sous la carte dans la chaîne, et une marque verte sur le Porteur */
 .cibler{display:inline-flex;align-items:center;gap:3px;max-width:100%;padding:2px 6px;border:none;border-radius:3px;cursor:pointer;
-  font-size:10.5px;font-weight:600;color:#DFFBE8;background:linear-gradient(165deg,rgba(26,60,40,.92),rgba(9,24,16,.95));box-shadow:inset 0 0 0 1px rgba(124,227,160,.55)}
+  font-size:var(--t-min);font-weight:600;color:#DFFBE8;background:linear-gradient(165deg,rgba(26,60,40,.92),rgba(9,24,16,.95));box-shadow:inset 0 0 0 1px rgba(124,227,160,.55)}
 .cibler .ico{width:11px;height:11px;color:#7CE3A0;flex-shrink:0}
 .cibler span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .cibler:disabled{opacity:.6;cursor:default}
@@ -132,7 +136,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
   #app .ecran-combat .zone-chaine .rail > .jouee{transform:none}
 }
 /* sous la chaîne, pendant qu'elle se joue : quelle carte agit, et qui la joue */
-.conseil .pas-chaine{display:inline-block;margin-right:8px;padding:1px 6px;font-family:var(--mono);font-size:11px;font-weight:600;color:var(--quiet);
+.conseil .pas-chaine{display:inline-block;margin-right:8px;padding:1px 6px;font-family:var(--mono);font-size:var(--t-min);font-weight:600;color:var(--quiet);
   background:rgba(0,0,0,.35);box-shadow:inset 0 0 0 1px rgba(205,239,255,.18);vertical-align:1px}
 .conseil .carte-agit{font-weight:700;color:#fff;text-shadow:0 0 10px color-mix(in srgb,var(--c) 80%,transparent)}
 
@@ -158,7 +162,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 .vignette-ennemi.tombe img,.vignette-ennemi.tombe .vg-sans{filter:grayscale(1) brightness(.35);box-shadow:0 0 0 1px rgba(255,255,255,.15)}
 .vignette-ennemi:disabled{cursor:default}
 .vg-int{position:absolute;top:26px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1px;padding:1px 4px 1px 2px;border-radius:8px;
-  background:rgba(8,10,18,.92);box-shadow:inset 0 0 0 1px rgba(205,239,255,.4);font:600 10px/1 var(--mono);color:var(--ink);white-space:nowrap}
+  background:rgba(8,10,18,.92);box-shadow:inset 0 0 0 1px rgba(205,239,255,.4);font:600 var(--t-min)/1 var(--mono);color:var(--ink);white-space:nowrap}
 .vg-int .ico{width:10px;height:10px}
 .vg-int.danger{box-shadow:inset 0 0 0 1px rgba(255,140,120,.9);color:#ffd2c8}
 .vg-int.garde{color:#cfe6ff}
@@ -172,7 +176,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
   .groupe-ennemis{top:16px;right:16px;gap:10px}
   .vignette-ennemi{width:64px}
   .vignette-ennemi img,.vignette-ennemi .vg-sans{width:58px;height:58px}
-  .vg-int{top:40px;font-size:11.5px;padding:2px 5px 2px 3px}
+  .vg-int{top:40px;font-size:var(--t-min);padding:2px 5px 2px 3px}
   .vg-int .ico{width:12px;height:12px}
   .vg-vie{width:54px;height:5px;margin-top:8px}
   .scene-ennemi.en-groupe .intention{max-width:calc(100% - 32px - var(--ng,3) * 74px)}
@@ -180,14 +184,14 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 
 /* ---------- Traits, phases et conditions (22 octobre 2026) ---------- */
 .traits{display:flex;flex-wrap:wrap;gap:5px;margin-top:-1px}
-.trait{padding:2px 7px;font:600 10px/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#ffe4c8;cursor:help;
+.trait{padding:2px 7px;font:600 var(--t-min)/1.4 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#ffe4c8;cursor:help;
   background:linear-gradient(180deg,rgba(120,40,30,.75),rgba(50,14,10,.85));box-shadow:inset 0 0 0 1px rgba(255,170,140,.55);border-radius:2px}
 /* Assimilation : la puce prend la couleur de la lignée assimilée (28 octobre 2026) */
 .trait.assimile{color:#fff;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 55%,transparent),rgba(20,16,30,.88));box-shadow:inset 0 0 0 1px var(--c),0 0 10px color-mix(in srgb,var(--c) 45%,transparent)}
-.ennemi-nom .phase{font-size:.55em;color:#ffb3a3;letter-spacing:.02em;text-shadow:0 0 12px rgba(255,90,70,.7)}
+.ennemi-nom .phase{font-size:max(var(--t-min),.55em);color:#ffb3a3;letter-spacing:.02em;text-shadow:0 0 12px rgba(255,90,70,.7)}
 .puce.condition{color:#f3dca6;box-shadow:inset 0 0 0 1px rgba(243,198,106,.6);cursor:help}
 .puce.condition .ico{color:#f3c66a}
-@media (max-width:899px){.scene-ennemi.en-groupe{min-height:175px}.scene-ennemi .traits .trait{font-size:9px;padding:1px 5px}}
+@media (max-width:899px){.scene-ennemi.en-groupe{min-height:175px}.scene-ennemi .traits .trait{font-size:var(--t-min);padding:1px 5px}}
 @media (max-width:899px){.scene-ennemi.en-groupe .tags .tag{display:none}}
 
 /* ---------- Premières rencontres (22 octobre 2026) ---------- */
@@ -199,14 +203,14 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 .decouverte-ico .ico{width:28px;height:28px}
 .conseil-decouverte{margin:4px 0 14px;padding:9px 12px;text-align:left;font-size:14px;line-height:1.45;color:var(--ink);
   background:rgba(243,198,106,.08);box-shadow:inset 0 22px 22px -18px color-mix(in srgb,#f3c66a 30%,transparent);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,#f3c66a 28%,color-mix(in srgb,#f3c66a 60%,white) 50%,#f3c66a 72%,transparent 98%) 1}
-.conseil-decouverte b{display:block;font:600 10px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#f3c66a}
+.conseil-decouverte b{display:block;font:600 var(--t-min)/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#f3c66a}
 
 /* ---------- Cartes lourdes (23 octobre 2026) : plus d'illustration étirée ----------
    Une carte « 2 PL. » a la même forme que les autres ; dans la chaîne, sa deuxième place est un emplacement relié à elle. */
 #app .ecran-combat .place-vide.place-liee{position:relative;display:grid;place-items:end center;padding-bottom:10px;overflow:visible;
   background:linear-gradient(rgba(8,12,24,.35),rgba(8,12,24,.75)),var(--art,none) 30% 40%/cover,repeating-linear-gradient(135deg,rgba(127,212,255,.14) 0 6px,rgba(127,212,255,.04) 6px 12px);
   box-shadow:inset 0 0 0 1px rgba(127,212,255,.5);filter:saturate(.6)}
-.place-vide.place-liee small{padding:1px 6px;font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(8,10,14,.85);box-shadow:inset 0 0 0 1px rgba(205,239,255,.35)}
+.place-vide.place-liee small{padding:1px 6px;font-family:var(--mono);font-size:var(--t-min);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(8,10,14,.85);box-shadow:inset 0 0 0 1px rgba(205,239,255,.35)}
 .place-vide.place-liee::before{content:"";position:absolute;left:-10px;top:50%;width:12px;height:2px;margin-top:-1px;background:rgba(127,212,255,.7);box-shadow:0 0 6px rgba(127,212,255,.7)}
 .place-vide.place-liee.jouee{opacity:.4}
 /* l'Écho (trois Fréquences identiques) se voit aussi en tête de chaîne, comme la Résonance */
@@ -218,7 +222,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 .j-rail>.j-usure{position:absolute;right:0;top:0;bottom:0;z-index:2;background:repeating-linear-gradient(135deg,rgba(226,115,90,.85) 0 3px,rgba(226,115,90,.3) 3px 6px)}
 .ex-barre{position:relative}
 .ex-barre>i.ex-usure{position:absolute;right:0;top:0;bottom:0;border-radius:0;background:repeating-linear-gradient(135deg,rgba(226,115,90,.9) 0 3px,rgba(226,115,90,.35) 3px 6px)}
-.ex-p-usure{margin-left:4px;font-size:.8em;color:#FF9C8A}
+.ex-p-usure{margin-left:4px;font-size:max(var(--t-min),.8em);color:#FF9C8A}
 
 /* réordonner la chaîne : un glissé horizontal sur une carte posée la déplace (le défilement vertical de la page reste libre) */
 .zone-chaine .rail .geste{touch-action:pan-y}
@@ -226,7 +230,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 
 /* ---------- La Fêlure (25 octobre 2026) : la gemme fêlée de l'ennemi, teintée de sa Fréquence ---------- */
 @keyframes felure-prevue{from{filter:brightness(1)}to{filter:brightness(1.35)}}
-.vg-felure{position:absolute;bottom:9px;right:2px;display:flex;align-items:center;gap:1px;padding:0 3px;border-radius:6px;font:700 11px/14px var(--display);color:#fff;
+.vg-felure{position:absolute;bottom:9px;right:2px;display:flex;align-items:center;gap:1px;padding:0 3px;border-radius:6px;font:700 var(--t-min)/14px var(--display);color:#fff;
   background:color-mix(in srgb,var(--fc,#fff) 30%,rgba(8,11,17,.9));box-shadow:inset 0 0 0 1px var(--fc,#fff)}
 .vg-felure .ico{width:9px;height:9px;color:var(--fc,#fff)}
 .vg-felure.brisee{opacity:.45}
@@ -256,7 +260,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 /* ---------- L'intention en plaque (26 octobre 2026) : ce qu'il prépare, sur qui, et combien ---------- */
 .plaque-int{gap:10px;padding:6px 6px 6px 6px}
 .int-corps{display:grid;gap:2px;min-width:0}
-.int-nom{font:600 9.5px/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--quiet);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.int-nom{font:600 var(--t-min)/1.2 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--quiet);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .plaque-int.danger .int-nom{color:#ffb3a3}
 .plaque-int.garde .int-nom{color:#cfe6ff}
 .plaque-int.boost .int-nom{color:var(--laiton)}
@@ -268,7 +272,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 .int-qui img + img{margin-left:-7px}
 .int-val{display:grid;justify-items:center;align-content:center;gap:1px;align-self:stretch;min-width:44px;padding:0 4px 0 11px;border-left:1px solid var(--glace-3,rgba(205,239,255,.25))}
 .int-val b{font:700 24px/1 var(--display);color:#fff;font-variant-numeric:tabular-nums}
-.int-val small{font:600 8.5px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--quiet)}
+.int-val small{font:600 var(--t-min)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--quiet)}
 .plaque-int.danger .int-val b{color:#ffe1d9;text-shadow:0 0 12px rgba(255,90,70,.85),0 2px 4px #000}
 .plaque-int.garde .int-val b{text-shadow:0 0 12px rgba(150,200,255,.8),0 2px 4px #000}
 .plaque-int .int-val.alourdi small{color:#ffb4a4}
@@ -320,10 +324,10 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 
 /* ---------- Le Flux en fiole de cristal ---------- */
 .flux .jauge-flux{flex:1;min-width:0;display:grid;gap:4px}
-.jf-nom{display:flex;align-items:baseline;gap:5px;font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#bfe3ff}
+.jf-nom{display:flex;align-items:baseline;gap:5px;font:600 var(--t-min)/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#bfe3ff}
 .jf-nom .ico{width:13px;height:13px;align-self:center;color:#7fd4ff}
 .jf-nom b{margin-left:2px;font:700 15px/1 var(--display);letter-spacing:0;color:#fff;text-shadow:0 0 8px rgba(127,212,255,.9)}
-.jf-nom small{font-size:11px;letter-spacing:0;color:var(--quiet)}
+.jf-nom small{font-size:var(--t-min);letter-spacing:0;color:var(--quiet)}
 .jauge-flux.vide .jf-nom b{color:var(--ink-2);text-shadow:none}
 .jf-tube{position:relative;display:flex;gap:3px;height:12px;padding:2px;border-radius:7px;
   background:linear-gradient(180deg,rgba(4,8,16,.95),rgba(20,30,48,.9));
@@ -380,7 +384,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
   background:linear-gradient(180deg,rgba(255,236,190,.1),rgba(255,236,190,0) 60%),rgba(8,11,17,.75);
   box-shadow:inset 0 0 0 1px rgba(242,213,140,.55),0 0 12px rgba(242,213,140,.18);
   clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)))}
-.bilan small{font:600 10px/1 var(--mono);letter-spacing:.14em;color:#f2d58c}
+.bilan small{font:600 var(--t-min)/1 var(--mono);letter-spacing:.14em;color:#f2d58c}
 .bilan > span{display:inline-flex;align-items:center;gap:3px}
 .bilan .ico{width:13px;height:13px}
 .bilan b{font:700 17px/1 var(--display);color:#fff;font-variant-numeric:tabular-nums}
@@ -390,7 +394,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 .bilan .bl-soin .ico{color:#7CE3A0}
 .bilan.fatal{box-shadow:inset 0 0 0 1.5px #ffcf7a,0 0 16px rgba(255,190,90,.5)}
 .bilan.fatal small{color:#ffcf7a}
-@media (min-width:900px){ .bilan b{font-size:20px} .bilan small{font-size:11px} .bilan .ico{width:15px;height:15px} }
+@media (min-width:900px){ .bilan b{font-size:20px} .bilan small{font-size:var(--t-min)} .bilan .ico{width:15px;height:15px} }
 /* La place vide (26 octobre 2026) : une place que le Porteur n'a pas remplie, piochée comme une carte. Verre fumé, arête de glace
    en pointillés, l'ombre du Porteur au fond : on voit tout de suite qu'elle ne se joue pas, et chez qui il manque une carte. */
 .geste.main-vide{position:relative;display:grid;place-items:end center;padding:0 4px 10px;overflow:hidden;
@@ -398,7 +402,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
   outline:1px dashed rgba(127,212,255,.35);outline-offset:-4px;opacity:.9}
 .main-vide .mv-ombre{position:absolute;inset:0;background-size:cover;background-position:50% 20%;opacity:.16;filter:grayscale(1) blur(.5px)}
 .main-vide .mv-texte{position:relative;display:grid;gap:2px;text-align:center}
-.main-vide .mv-texte b{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#CDEFFF;line-height:1.15}
+.main-vide .mv-texte b{font-family:var(--mono);font-size:var(--t-min);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#CDEFFF;line-height:1.15}
 .main-vide .mv-texte small{font-size:12px;color:var(--c,var(--quiet))}
 
 /* Brouillard permanent : le genre de l'intention se voit, le chiffre est un « ? » voilé */
@@ -494,7 +498,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
   background:rgba(8,10,18,.88);border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--c),0 16px 30px rgba(0,0,0,.6)}
 .loupe-porteur img{width:96px;height:96px;object-fit:cover;border-radius:10px;box-shadow:0 0 0 1.5px var(--c)}
 .loupe-porteur h3{margin:4px 0 0;font:400 24px/1.1 var(--display);color:#fff}
-.loupe-porteur .lp-lignee{font:600 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 70%,white)}
+.loupe-porteur .lp-lignee{font:600 var(--t-min)/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:color-mix(in srgb,var(--c) 70%,white)}
 .loupe-porteur .lp-pv{font:700 16px/1.3 var(--mono);color:#fff}
 .loupe-porteur .lp-pv small{color:var(--quiet);font-weight:500}
 .loupe-porteur p{margin:2px 0 0;font-size:13px;line-height:1.35;color:#d3d9e4}
@@ -546,8 +550,294 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 
 /* Guet affirmé (Guetteur, 1er novembre 2026) : ce que l'ennemi prépare ensuite, en petite pastille de verre */
 .int-ensuite{display:grid;justify-items:center;align-content:center;gap:1px;align-self:stretch;min-width:34px;padding:0 2px 0 9px;border-left:1px solid var(--glace-3,rgba(205,239,255,.25));opacity:.82}
-.int-ensuite small{font:600 8.5px/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--quiet)}
+.int-ensuite small{font:600 var(--t-min)/1.2 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--quiet)}
 .int-ensuite .ico{width:16px;height:16px}
 .int-ensuite.danger .ico{color:#ffb3a3}
 .int-ensuite.garde .ico{color:#cfe6ff}
 .int-ensuite.boost .ico{color:var(--laiton)}
+
+/* ===== 2. La modernisation (3 novembre 2026) ===== */
+/* ================= L'écran de combat modernisé (3 novembre 2026) =================
+   Bryan : « ça fait encore un peu vieux jeu des années 2010 ». Moins de cadres, plus de scène :
+   - la scène de l'ennemi passe sous la barre du haut et se fond dans le fond de l'écran (téléphone) ;
+   - les coins coupés et les doubles bords laissent place à du verre arrondi, sans contour lourd ;
+   - la chaîne n'est plus une boîte : ses places reposent sur un rail de lumière ;
+   - le Flux devient trois cristaux, un par niveau, chacun de sa couleur (1 glace, 2 améthyste, 3 or) ;
+   - en groupe, toutes les vignettes tiennent dans la scène et le visé porte un bandeau (retours de Luc).
+   Cette feuille passe après toutes les autres du combat (feuilles.ts) ; les cartes gardent leur face peinte. */
+
+#app[data-mode="combat"] .ecran-combat{
+  --fx1:#7fd8ff; --fx2:#b993ff; --fx3:#f2c96e;
+  --verre-m:rgba(12,18,36,.62);
+  --bord-m:inset 0 0 0 1px rgba(205,239,255,.14);
+}
+
+/* ---------- Des arrondis à la place des coins coupés ---------- */
+#app[data-mode="combat"] .ecran-combat :is(.puce,.intention,.etat,.btn.sec,.btn.prim,.btn-icone,.btn-flux,.btn-fuir,.btn-relance,.zone-chaine,.lecon,.bilan,.je-valeur,.combattant,.scene-ennemi,.badge-reso,.trait,.tag){
+  clip-path:none;corner-shape:round}
+#app[data-mode="combat"] .ecran-combat :is(.puce,.etat,.btn-flux,.btn-relance,.bilan,.badge-reso,.trait,.tag,.btn-icone,.btn-fuir){border-radius:999px}
+
+/* ---------- La barre du haut : des pastilles discrètes, des boutons ronds ---------- */
+#app[data-mode="combat"] .ecran-combat .combat-barre .puce{padding:5px 10px;background:rgba(8,12,26,.5);box-shadow:var(--bord-m);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-size:12px;color:#dbe6f5}
+#app[data-mode="combat"] .ecran-combat .combat-barre :is(.btn-icone,.btn-fuir){min-height:40px;background:rgba(8,12,26,.5);box-shadow:var(--bord-m);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#app[data-mode="combat"] .ecran-combat .combat-barre .btn-icone{width:40px;padding:0}
+
+/* ---------- La scène : l'ennemi en grand, sans cadre ---------- */
+#app[data-mode="combat"] .ecran-combat .scene-ennemi{border-radius:20px;box-shadow:none}
+#app[data-mode="combat"] .ecran-combat .scene-voile{background:linear-gradient(180deg,rgba(7,9,21,.5) 0%,rgba(7,9,21,0) 24%,rgba(7,9,21,0) 44%,rgba(7,9,21,.82) 80%,#070915 100%)}
+/* l'intention : une bulle de verre fumé */
+#app[data-mode="combat"] .ecran-combat .intention{border-radius:16px;overflow:hidden;background:var(--verre-m);box-shadow:var(--bord-m);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);animation:none}
+#app[data-mode="combat"] .ecran-combat .intention.danger{box-shadow:inset 0 0 0 1px rgba(255,140,120,.55),0 0 22px rgba(255,90,70,.18)}
+#app[data-mode="combat"] .ecran-combat .intention .int-ico{width:34px;height:34px;border-radius:50%;clip-path:none}
+#app[data-mode="combat"] .ecran-combat .int-felure{margin-bottom:-6px;border-radius:0}
+#app[data-mode="combat"] .ecran-combat .int-felure .gemme{border-radius:0}
+/* la vie de l'ennemi : un trait de lumière arrondi, le chiffre posé à côté */
+#app[data-mode="combat"] .ecran-combat .vie-ennemi:not(.vie-gardien) .jauge-vie.je{--h:12px;padding:0;border-radius:999px;clip-path:none;background:rgba(255,255,255,.1);box-shadow:0 0 0 1px rgba(255,255,255,.06)}
+#app[data-mode="combat"] .ecran-combat .vie-ennemi:not(.vie-gardien) .j-rail{border-radius:999px;clip-path:none;background:rgba(4,6,16,.75)}
+#app[data-mode="combat"] .ecran-combat .vie-ennemi:not(.vie-gardien) .j-grad{opacity:.35}
+#app[data-mode="combat"] .ecran-combat .je-valeur{min-width:0;padding:0 2px;background:none;box-shadow:none}
+#app[data-mode="combat"] .ecran-combat .je-valeur b{font-size:16px}
+#app[data-mode="combat"] .ecran-combat .je-valeur small{font-size:12px}
+#app[data-mode="combat"] .ecran-combat .trait{border-radius:999px;padding:2px 9px}
+
+/* ---------- L'escouade : des portraits arrondis ---------- */
+#app[data-mode="combat"] .ecran-combat .combattant{border-radius:14px}
+#app[data-mode="combat"] .ecran-combat .combattant::after{clip-path:none;border-radius:inherit}
+#app[data-mode="combat"] .ecran-combat .cb-vie .jauge-vie.jp{padding:0;border-radius:999px;clip-path:none;background:rgba(255,255,255,.12)}
+#app[data-mode="combat"] .ecran-combat .cb-vie .j-rail{border-radius:999px;clip-path:none}
+#app[data-mode="combat"] .ecran-combat .ligne-escouade .etat{padding:3px 10px;font-size:12px;background:rgba(8,12,26,.5);box-shadow:var(--bord-m)}
+#app[data-mode="combat"] .ecran-combat .ligne-escouade .etat.garde.actif{box-shadow:inset 0 0 0 1px rgba(159,208,255,.6),0 0 12px rgba(127,190,255,.25)}
+
+/* ---------- La chaîne : plus de boîte, un rail de lumière ---------- */
+#app[data-mode="combat"] .ecran-combat .zone-chaine{padding:4px 0 0;background:none;box-shadow:none;overflow:visible}
+#app[data-mode="combat"] .ecran-combat .zone-chaine::before,
+#app[data-mode="combat"] .ecran-combat .zone-chaine::after{content:none}
+#app[data-mode="combat"] .ecran-combat .zone-chaine.resonne{box-shadow:none}
+#app[data-mode="combat"] .ecran-combat .zone-chaine .rail{
+  background:linear-gradient(90deg,transparent 2%,rgba(127,212,255,.5) 22%,rgba(127,212,255,.5) 78%,transparent 98%) 50% 58%/100% 2px no-repeat}
+#app[data-mode="combat"] .ecran-combat .zone-chaine.resonne .rail{
+  background:linear-gradient(90deg,transparent 2%,#9fe2ff 22%,#e6f8ff 50%,#9fe2ff 78%,transparent 98%) 50% 58%/100% 2px no-repeat;
+  filter:drop-shadow(0 0 6px rgba(127,212,255,.6))}
+#app[data-mode="combat"] .ecran-combat .place-vide{border-radius:10px;background:rgba(10,14,30,.82);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14);
+  color:rgba(205,239,255,.5)}
+#app[data-mode="combat"] .ecran-combat .chaine-tete{padding:0 2px}
+#app[data-mode="combat"] .ecran-combat .chaine-tete .surtitre{font-size:var(--t-min);letter-spacing:.16em;color:#9fb3cc}
+#app[data-mode="combat"] .ecran-combat .badge-reso{padding:3px 10px}
+#app[data-mode="combat"] .ecran-combat .bilan{padding:4px 12px 4px 11px;background:rgba(8,12,26,.72);box-shadow:inset 0 0 0 1px rgba(242,213,140,.45),0 0 14px rgba(242,213,140,.15)}
+#app[data-mode="combat"] .ecran-combat .bilan.fatal{box-shadow:inset 0 0 0 1.5px #ffcf7a,0 0 18px rgba(255,190,90,.45)}
+#app[data-mode="combat"] .ecran-combat .zone-chaine .conseil{font-size:13px;line-height:1.35;color:#b9c6d8}
+
+/* ---------- Le Flux : trois cristaux, un par niveau, chacun de sa couleur ---------- */
+#app[data-mode="combat"] .ecran-combat .flux{gap:6px;padding:5px 5px 5px 12px;margin-top:2px;border-radius:999px;background:var(--verre-m);box-shadow:var(--bord-m)}
+#app[data-mode="combat"] .ecran-combat .flux.nf-1{--fx:var(--fx1)}
+#app[data-mode="combat"] .ecran-combat .flux.nf-2{--fx:var(--fx2)}
+#app[data-mode="combat"] .ecran-combat .flux.nf-3{--fx:var(--fx3)}
+#app[data-mode="combat"] .ecran-combat .flux:not(.nf-0){box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fx) 38%,transparent),0 0 16px color-mix(in srgb,var(--fx) 14%,transparent)}
+#app[data-mode="combat"] .ecran-combat .flux .jauge-flux{flex:1 1 auto;display:flex;align-items:center;gap:10px;max-width:none;margin:0}
+#app[data-mode="combat"] .ecran-combat .jf-nom{gap:4px;white-space:nowrap;font-size:var(--t-min);letter-spacing:.12em;color:#b9c6d8}
+#app[data-mode="combat"] .ecran-combat .jf-nom .ico{color:var(--fx,#9fb3cc)}
+#app[data-mode="combat"] .ecran-combat .jf-nom b{font-size:17px;color:var(--fx,#9fb3cc);text-shadow:0 0 10px color-mix(in srgb,var(--fx,#000) 70%,transparent)}
+#app[data-mode="combat"] .ecran-combat .jauge-flux.vide .jf-nom b{color:#8b97ad;text-shadow:none}
+#app[data-mode="combat"] .ecran-combat .jf-tube{height:auto;padding:0;gap:5px;background:none;box-shadow:none;border-radius:0}
+#app[data-mode="combat"] .ecran-combat .jf-tube::after{content:none}
+#app[data-mode="combat"] .ecran-combat .jf-tube i{--c:var(--fx1);flex:none;width:14px;height:19px;border-radius:0;
+  clip-path:polygon(50% 0,100% 28%,100% 72%,50% 100%,0 72%,0 28%);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--c) 22%,transparent),color-mix(in srgb,var(--c) 8%,rgba(8,12,26,.9)));box-shadow:none;animation:none}
+#app[data-mode="combat"] .ecran-combat .jf-tube i.n2{--c:var(--fx2)}
+#app[data-mode="combat"] .ecran-combat .jf-tube i.n3{--c:var(--fx3)}
+#app[data-mode="combat"] .ecran-combat .jf-tube i.plein{background:linear-gradient(160deg,#fff 0%,color-mix(in srgb,var(--c) 45%,white) 30%,var(--c) 62%,color-mix(in srgb,var(--c) 55%,black) 100%);
+  filter:drop-shadow(0 0 5px var(--c))}
+@media (prefers-reduced-motion:no-preference){
+  #app[data-mode="combat"] .ecran-combat .jf-tube i.plein{animation:flux-vit 2.4s ease-in-out infinite alternate}
+}
+/* les actions du Flux : des pastilles qui disent leur prix, dans la couleur du Flux atteint */
+#app[data-mode="combat"] .ecran-combat .flux .btn-flux{min-height:36px;padding:0 10px;gap:5px;font-size:12.5px;background:rgba(255,255,255,.05);box-shadow:var(--bord-m)}
+#app[data-mode="combat"] .ecran-combat .flux .btn-flux:not(:disabled){color:#fff;background:color-mix(in srgb,var(--fx,#7fd8ff) 14%,rgba(8,12,26,.6));
+  box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fx,#7fd8ff) 55%,transparent)}
+#app[data-mode="combat"] .ecran-combat .flux .btn-flux:not(:disabled) .ico{color:var(--fx,#7fd8ff)}
+#app[data-mode="combat"] .ecran-combat .flux .btn-flux:disabled{opacity:.42}
+.cout-flux{display:inline-flex;align-items:center;gap:2px;margin-left:2px;font:700 var(--t-min)/1 var(--mono);color:inherit;opacity:.85}
+.cout-flux i{width:7px;height:10px;background:var(--fx,#7fd8ff);clip-path:polygon(50% 0,100% 28%,100% 72%,50% 100%,0 72%,0 28%)}
+/* Flux plein : le bouton du Coup d'éclat garde son or, arrondi comme le reste */
+#app[data-mode="combat"] .ecran-combat .flux .btn-flux.btn-eclat-ouvrir{border-radius:999px}
+#app[data-mode="combat"] .ecran-combat .btn-eclat{clip-path:none;border-radius:12px}
+@media (max-width:400px){
+  #app[data-mode="combat"] .ecran-combat .flux .btn-flux:not(.btn-eclat-ouvrir) > .ico{display:none}
+  #app[data-mode="combat"] .ecran-combat .jf-nom{letter-spacing:.06em}
+}
+
+/* ---------- La main et les boutons du bas ---------- */
+#app[data-mode="combat"] .ecran-combat .btn-relance{padding:0 11px;animation:none;background:rgba(159,216,255,.08);box-shadow:inset 0 0 0 1px rgba(159,216,255,.35)}
+#app[data-mode="combat"] .ecran-combat .main-tete .surtitre{font-size:var(--t-min);letter-spacing:.16em;color:#9fb3cc}
+#app[data-mode="combat"] .ecran-combat .actions-combat .btn{border-radius:999px}
+#app[data-mode="combat"] .ecran-combat .actions-combat .btn.sec{background:var(--verre-m);box-shadow:var(--bord-m);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+#app[data-mode="combat"] .ecran-combat .actions-combat .btn.prim:not(:disabled){
+  box-shadow:inset 0 1px 0 rgba(255,250,225,.9),inset 0 -2px 0 rgba(138,90,28,.55),0 10px 26px -6px rgba(240,190,100,.45)}
+#app[data-mode="combat"] .ecran-combat .actions-combat .btn.prim:disabled{background:rgba(255,255,255,.06);box-shadow:var(--bord-m)}
+#app[data-mode="combat"] .ecran-combat .lancer b{border-radius:8px}
+#app[data-mode="combat"] .ecran-combat .lecon{border-radius:16px}
+
+/* ---------- Téléphone : la scène passe sous la barre du haut ---------- */
+@media (max-width:899px){
+  #app[data-mode="combat"] .ecran-combat{position:relative;gap:6px}
+  #app[data-mode="combat"] .ecran-combat > .combat-barre{position:absolute;z-index:8;top:max(8px,var(--sat));left:12px;right:12px}
+  #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi{min-height:200px;padding-top:calc(max(8px,var(--sat)) + 46px);border-radius:0;max-height:none}
+  #app[data-mode="combat"] .ecran-combat .zone-chaine{gap:6px}
+  #app[data-mode="combat"] .ecran-combat .bulle-viser{margin-top:2px;padding:6px 12px;font-size:12.5px}
+  #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi.en-groupe{min-height:232px;padding-right:72px}
+  #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi.en-groupe:has(.avec-gardien){padding-right:84px}
+  #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi .ennemi-infos{padding-inline:2px}
+  #app[data-mode="combat"] .ecran-combat .scene-ennemi.en-groupe .groupe-ennemis{top:calc(max(8px,var(--sat)) + 48px);right:10px;bottom:10px}
+}
+
+/* ---------- Le groupe : tout le monde tient, le visé se voit, les autres invitent au toucher ---------- */
+/* les vignettes non visées ne ressemblent plus à des ennemis vaincus : à peine adoucies, cerclées d'une glace qui respire */
+#app[data-mode="combat"] .vignette-ennemi:not(.visee):not(.tombe) img,
+#app[data-mode="combat"] .vignette-ennemi:not(.visee):not(.tombe) .vg-sans{filter:saturate(.92) brightness(.95);
+  box-shadow:0 0 0 1.5px rgba(127,212,255,.7),0 0 0 3px rgba(8,10,20,.85),0 3px 8px rgba(0,0,0,.7)}
+@media (prefers-reduced-motion:no-preference){
+  #app[data-mode="combat"] .ecran-combat:not(.verrouille) .vignette-ennemi:not(.visee):not(.tombe) img{animation:vg-invite 2.2s ease-in-out infinite}
+}
+@keyframes vg-invite{50%{box-shadow:0 0 0 1.5px rgba(160,225,255,1),0 0 0 3px rgba(8,10,20,.85),0 0 12px 2px rgba(127,212,255,.55)}}
+/* le visé : l'ancienne petite flèche laisse la place au bandeau */
+#app[data-mode="combat"] .vignette-ennemi.visee::after{content:none}
+.vg-vise{position:absolute;z-index:2;top:-5px;left:50%;transform:translateX(-50%);padding:1px 6px;border-radius:6px;
+  font:700 var(--t-min)/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:#2a1a05;white-space:nowrap;
+  background:linear-gradient(180deg,#fff3d0,#f2c96e);box-shadow:0 0 10px rgba(255,200,110,.7),0 1px 2px rgba(0,0,0,.6)}
+.avec-gardien .vg-vise{top:3px}
+/* le numéro des ennemis du même nom (Brigadier I, II) */
+.vg-num{position:absolute;z-index:2;left:-3px;top:-3px;min-width:16px;padding:0 3px;border-radius:8px;text-align:center;
+  font:700 var(--t-min)/16px var(--display);color:#fff;background:rgba(8,12,26,.92);box-shadow:inset 0 0 0 1px rgba(205,239,255,.5)}
+#app .avec-gardien .vg-nom{display:flex;align-items:baseline;justify-content:center;gap:3px;width:100%}
+#app .avec-gardien .vg-nom > span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#app .avec-gardien .vg-nom > b{flex:none;font-weight:700;color:#fff}
+
+/* téléphone : la colonne se partage la hauteur de la scène, quel que soit le nombre d'ennemis */
+@media (max-width:899px){
+  #app[data-mode="combat"] .scene-ennemi.en-groupe .groupe-ennemis.avec-gardien{display:grid;grid-template-rows:repeat(var(--ng,3),minmax(0,1fr));gap:8px;justify-content:stretch}
+  #app[data-mode="combat"] .avec-gardien .vignette-ennemi{width:66px;height:100%;min-height:0;grid-template-rows:minmax(0,1fr) auto auto;align-content:stretch}
+  #app[data-mode="combat"] .avec-gardien .vignette-ennemi img,
+  #app[data-mode="combat"] .avec-gardien .vignette-ennemi .vg-sans{width:66px;height:100%;min-height:0}
+  #app[data-mode="combat"] .avec-gardien .vg-int{bottom:22px}
+  #app[data-mode="combat"] .avec-gardien .vg-vie{width:62px}
+  #app[data-mode="combat"] .avec-gardien .vg-nom{font-size:var(--t-min)}
+}
+
+/* la bulle d'aide du groupe, à la place du conseil, jusqu'au premier ennemi visé : sa pointe montre les vignettes */
+.bulle-viser{position:relative;display:inline-block;margin-top:4px;padding:8px 14px;border-radius:12px;font-size:13px;font-weight:600;line-height:1.3;color:#fff;
+  background:rgba(10,16,32,.9);box-shadow:inset 0 0 0 1px rgba(127,212,255,.6),0 8px 22px rgba(0,0,0,.45),0 0 18px rgba(127,212,255,.22)}
+.bulle-viser::after{content:"";position:absolute;right:22px;top:-6px;width:10px;height:10px;transform:rotate(45deg);
+  background:rgba(10,16,32,.95);box-shadow:-1px -1px 0 rgba(127,212,255,.6)}
+@media (prefers-reduced-motion:no-preference){ .bulle-viser{animation:bulle-viser 1.8s ease-in-out infinite} }
+@keyframes bulle-viser{50%{translate:0 -3px}}
+
+/* ---------- Téléphones étroits ou bas (360 × 760 et moins) : tout tient sans défiler, même un gardien et son groupe ---------- */
+@media (max-width:420px){
+  #app[data-mode="combat"] .ecran-combat .combat-barre .puces{flex-wrap:nowrap;gap:4px;min-width:0}
+  #app[data-mode="combat"] .ecran-combat .combat-barre .puce{padding:5px 8px;font-size:var(--t-min);white-space:nowrap}
+  #app[data-mode="combat"] .ecran-combat .combat-barre .boutons-barre{gap:5px}
+  #app[data-mode="combat"] .ecran-combat .combat-barre :is(.btn-icone,.btn-fuir){min-height:36px}
+  #app[data-mode="combat"] .ecran-combat .combat-barre .btn-icone{width:36px}
+  #app[data-mode="combat"] .ecran-combat .flux{padding-left:10px}
+  #app[data-mode="combat"] .ecran-combat .flux .jauge-flux{gap:7px}
+  #app[data-mode="combat"] .ecran-combat .jf-nom > .ico{display:none}
+  #app[data-mode="combat"] .ecran-combat .jf-tube{gap:3px}
+  #app[data-mode="combat"] .ecran-combat .jf-tube i{width:12px;height:17px}
+  #app[data-mode="combat"] .ecran-combat .flux .btn-flux{padding:0 9px}
+}
+@media (max-width:370px){
+  #app[data-mode="combat"] .ecran-combat .jf-nom{font-size:0;letter-spacing:0}
+  #app[data-mode="combat"] .ecran-combat .jf-nom b{font-size:16px}
+  #app[data-mode="combat"] .ecran-combat .jf-nom small{font-size:var(--t-min)}
+}
+@media (max-width:899px) and (max-height:790px){
+  #app[data-mode="combat"] .ecran-combat{gap:5px}
+  #app[data-mode="combat"] .ecran-combat .combattant{height:44px}
+  #app[data-mode="combat"] .ecran-combat .geste.chaine,
+  #app[data-mode="combat"] .ecran-combat .place-vide{width:58px;height:81px}
+  #app[data-mode="combat"] .ecran-combat .rail{min-height:83px}
+  #app[data-mode="combat"] .ecran-combat .flux{padding-block:3px}
+  #app[data-mode="combat"] .ecran-combat .flux .btn-flux{min-height:34px}
+  #app[data-mode="combat"] .ecran-combat .intention .int-quoi{font-size:13.5px}
+  #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi.en-groupe{min-height:220px}
+}
+
+/* ===== 3. La table (7 novembre 2026) ===== */
+/*
+ * L'écran de combat en « table » (7 novembre 2026, avec Bryan, maquette v34 notée 8/10 par l'audit) :
+ *  - l'ennemi en fond, du haut de l'écran jusqu'à la ligne de l'escouade ;
+ *  - la chaîne posée au milieu, comme une table, sur l'illustration assombrie ;
+ *  - dessous : l'escouade (le bouclier sur le portrait de celui qu'il couvre), le Flux en un seul bloc, la main et ses piles, les boutons.
+ * Rien n'est retiré de l'écran d'origine : seulement déplacé. Sur PC, l'arène s'efface (display:contents) et la grille de bureau.css range tout.
+ */
+.arene{display:contents}
+
+/* le bouclier de l'escouade : sur le portrait du Porteur qu'il couvre en premier, plus de pastille à part */
+.ecran-combat .ligne-escouade .etat.garde{display:none}
+.ecran-combat .ligne-escouade.vide:not(:has(.pop)){display:none}
+.ecu-tuile{position:absolute;z-index:3;right:5px;top:4px;display:flex;align-items:center;gap:3px;height:20px;padding:0 6px 0 4px;border-radius:999px;pointer-events:none;
+  background:rgba(6,20,34,.82);box-shadow:inset 0 0 0 1px rgba(143,211,255,.55),0 0 8px rgba(143,211,255,.3)}
+.ecu-tuile svg{width:12px;height:14px;fill:#8fd3ff}
+.ecu-tuile b{font-weight:800;font-size:12.5px;line-height:1;color:#e6f5ff;font-variant-numeric:tabular-nums}
+.ecu-tuile small{font-weight:800;font-size:12px;line-height:1;color:#8fd3ff}
+@media (prefers-reduced-motion:no-preference){ .ecu-tuile.ajout small{animation:ecu-ajout 1.6s ease-in-out infinite} }
+@keyframes ecu-ajout{50%{text-shadow:0 0 8px rgba(124,199,255,.95)}}
+
+/* les piles (pioche, défausse, journal) en tête de la main, à la place de la phrase du journal */
+.ecran-combat .main-tete .piles{margin:0 0 0 auto}
+
+/* ---------- Téléphone ---------- */
+@media (max-width:899px){
+  #app[data-mode="combat"] .ecran-combat > .arene{position:relative;isolation:isolate;display:flex;flex-direction:column;flex:1 1 auto;min-height:0;overflow:hidden;
+    margin:calc(-1 * max(8px,var(--sat))) -12px 0;background:#070915}
+  /* la scène garde ses repères (intention, groupe, éclats), mais son illustration déborde sous la table : l'arène la coupe */
+  #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi{flex:1 1 auto;margin:0;overflow:visible;z-index:auto;background:transparent;box-shadow:none;clip-path:none;-webkit-mask:none;mask:none;contain:none}
+  /* l'illustration couvre toute l'arène, du haut de l'écran à l'escouade : les illustrations (600 × 797) y tiennent presque en entier,
+     l'ennemi reste visible où qu'il ait été peint ; la table l'assombrit sans le cacher. La même image floutée comble le bas si besoin. */
+  #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi > .ennemi-art{bottom:auto;height:calc(100% + 200px);object-position:50% 0;z-index:-2}
+  #app[data-mode="combat"] .ecran-combat > .arene::before{content:"";position:absolute;z-index:-3;inset:-20px;background:var(--art,none) 50% 100%/cover no-repeat;
+    filter:blur(16px) brightness(.5) saturate(1.1)}
+  #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi > .scene-voile{z-index:-1;
+    background:linear-gradient(180deg,rgba(7,9,21,.5) 0%,rgba(7,9,21,0) 22%,rgba(7,9,21,0) 52%,rgba(7,9,21,.42) 86%,rgba(7,9,21,.55) 100%)}
+  /* la table : l'illustration continue dessous, assombrie pour que les cartes et les chiffres se lisent */
+  #app[data-mode="combat"] .ecran-combat .arene > .zone-chaine{position:relative;padding:6px 12px 8px;-webkit-backdrop-filter:none;backdrop-filter:none;
+    background:linear-gradient(180deg,rgba(7,9,21,.45) 0%,rgba(7,9,21,.62) 45%,rgba(7,9,21,.8) 100%)}
+  #app[data-mode="combat"] .ecran-combat .arene > .zone-chaine .conseil{margin-bottom:0}
+  /* l'escouade : un autre fond, froid, qui marque le camp du joueur */
+  #app[data-mode="combat"] .ecran-combat > .escouade-combat{position:relative;margin:0 -12px;padding:10px 12px 2px;
+    background:linear-gradient(180deg,#0c1a1f,#0b151b);box-shadow:inset 0 1px 0 rgba(127,212,200,.22)}
+  #app[data-mode="combat"] .ecran-combat > .ligne-escouade{margin:0 -12px;padding:0 12px;background:#0b151b}
+  #app[data-mode="combat"] .ecran-combat > .zone-flux,
+  #app[data-mode="combat"] .ecran-combat > .lecon{margin-top:0}
+  /* l'intention : plus petite et sous la vie de l'ennemi, son visage reste entièrement visible
+     (Bryan : « ça ne doit pas être si grand », « c'est vraiment ennuyant de ne pas voir du tout l'ennemi ») */
+  #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi{justify-content:flex-end}
+  #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi > .ennemi-infos{order:1}
+  #app[data-mode="combat"] .ecran-combat .arene > .scene-ennemi > .plaque-int{order:2;position:relative;top:auto;left:auto;align-self:flex-end;
+    width:auto;max-width:100%;margin:4px 0 0;flex-wrap:nowrap;gap:6px;padding:3px 10px 3px 3px;border-radius:999px}
+  /* une seule ligne : icône, nom de l'attaque, cible, dégâts, et la Fêlure en petit (« ◆9 18 → 9 ») */
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-ico{width:24px;height:24px;flex:none}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-ico .ico{width:13px;height:13px}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-corps{flex:0 1 auto;display:flex;align-items:center;gap:5px;min-width:0}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-nom{font-size:var(--t-min);letter-spacing:.08em}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-quoi{font-size:12.5px;gap:4px}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-fleche{display:none}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-qui img{width:20px;height:20px}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-val{min-width:0;padding:0 0 0 7px;display:flex;align-items:baseline;gap:3px;align-self:center}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-val b{font-size:16px}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-val small{font-size:0}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-felure{flex:none;flex-basis:auto;display:flex;align-items:center;gap:4px;margin:0 0 0 2px;padding:0 0 0 7px;
+    font-size:12px;background:none;border:0;border-left:1px solid rgba(205,239,255,.18);white-space:nowrap}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-felure .gemme{width:20px;height:22px;transform:none}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-felure :is(.fl-mot,.fl-u){display:none}
+}
+
+/* ---------- PC : le Flux a sa rangée, entre l'escouade et la main ---------- */
+@media (min-width:1100px) and (min-height:600px){
+  .ecran-combat{grid-template-areas:"barre barre" "ennemi chaine" "ennemi lecon" "ennemi escouade" "ennemi ligne" "ennemi flux" "ennemi main" "ennemi actions"}
+  .ecran-combat > .zone-flux{grid-area:flux}
+}

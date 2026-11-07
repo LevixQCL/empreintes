@@ -93,7 +93,7 @@
 .nf-lg{flex:none;width:3.6cqw;height:3.6cqw;min-width:6px;min-height:6px;margin:0 1.4cqw 0 1cqw;transform:rotate(45deg);background:var(--lc);box-shadow:0 0 2cqw var(--lc)}
 .nf-nom{min-width:0;font-family:var(--display);font-size:max(12px,7cqw);line-height:1.1;color:#f7efdc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.9)}
-.nf-regle{display:flex;align-items:center;gap:1.6cqw;margin-top:1.2cqw;min-width:0;font-size:max(11px,6.4cqw);line-height:1.15;white-space:nowrap;
+.nf-regle{display:flex;align-items:center;gap:1.6cqw;margin-top:1.2cqw;min-width:0;font-size:max(var(--t-min),6.4cqw);line-height:1.15;white-space:nowrap;
   text-shadow:0 1px 2px #000,0 0 6px rgba(0,0,0,.9)}
 .nf-regle strong{color:#f3dca4;font-weight:600}
 .nf-regle > span{min-width:0;overflow:hidden;text-overflow:ellipsis;color:#d3d9e4}
@@ -187,7 +187,7 @@
 
 /* Une carte de l’Héritage (27 octobre 2026) : la seule à deux effets ; un halo d'or et de nacre autour de la carte, et son sceau en haut */
 .fo-legs{--halo:rgba(240,214,160,.8);--halo-t:9px}
-.nf-heritage{position:absolute;z-index:6;top:calc(var(--bord) + 1.2cqw);left:50%;transform:translateX(-50%);padding:.7cqw 2.8cqw;font-family:var(--mono);font-size:max(9px,4cqw);font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+.nf-heritage{position:absolute;z-index:6;top:calc(var(--bord) + 1.2cqw);left:50%;transform:translateX(-50%);padding:.7cqw 2.8cqw;font-family:var(--mono);font-size:max(var(--t-min),4cqw);font-weight:700;letter-spacing:.06em;text-transform:uppercase;
   color:#2A1C05;background:linear-gradient(135deg,#F7E7B8,#D8B465 45%,#F2E6FF);clip-path:polygon(6% 0,94% 0,100% 50%,94% 100%,6% 100%,0 50%);pointer-events:none;white-space:nowrap}
 .geste .nf-heritage{display:none}
 /* Une carte exclusive (28 octobre 2026) : elle n'existe que dans son métal ; le même sceau que l’Héritage, dans la couleur de son métal */

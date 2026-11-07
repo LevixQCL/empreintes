@@ -71,7 +71,7 @@
 .gv-pile .gv-porteur + .gv-porteur{margin-left:-14px}
 
 .gv-texte{position:relative;display:flex;flex-direction:column;gap:3px;min-width:0}
-.gv-texte small{font:600 10.5px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.gv-texte small{font:600 var(--t-min)/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
 .gv-texte strong{font:400 19px/1.1 var(--display);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .gv-texte em{font:500 12px/1.2 var(--body);font-style:normal;color:var(--quiet)}
 

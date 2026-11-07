@@ -7,10 +7,10 @@
 .plaque-gardien{position:relative;display:grid;place-content:center;justify-items:center;gap:0;width:min(100%,400px);aspect-ratio:1100/262;
   padding:4% 16% 2%;margin-inline:auto;text-align:center;background:var(--plaque) center/100% 100% no-repeat;
   filter:drop-shadow(0 4px 10px rgba(0,0,0,.65)) drop-shadow(0 0 16px rgba(160,90,255,.35))}
-.plaque-gardien .pg-sur{font:600 9.5px/1.2 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:#e3d2ff;text-shadow:0 1px 2px #000,0 0 8px rgba(170,110,255,.9)}
+.plaque-gardien .pg-sur{font:600 var(--t-min)/1.2 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:#e3d2ff;text-shadow:0 1px 2px #000,0 0 8px rgba(170,110,255,.9)}
 .scene-ennemi .plaque-gardien .ennemi-nom{margin:1px 0 0;font-size:clamp(19px,6.2vw,26px);line-height:1.05;color:#fff1d6;letter-spacing:.01em;
   text-shadow:0 0 14px rgba(190,120,255,.85),0 2px 3px #12061f,0 0 2px #12061f;order:0}
-.plaque-gardien .pg-phase{margin-top:2px;padding:1px 8px;font:700 9.5px/1.3 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#ffe2d8;
+.plaque-gardien .pg-phase{margin-top:2px;padding:1px 8px;font:700 var(--t-min)/1.3 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#ffe2d8;
   background:linear-gradient(90deg,transparent,rgba(150,30,40,.75),transparent);text-shadow:0 0 8px rgba(255,90,70,.9)}
 /* sur téléphone, le nom n'a plus besoin de partager sa ligne : la plaque prend la largeur, « Faible contre » passe dessous */
 @media (max-width:899px){
@@ -21,7 +21,7 @@
   .scene-ennemi.gardien .ennemi-infos > .plaque-gardien{grid-row:2;width:min(100%,224px);margin:-7px auto -9px}
   .scene-ennemi.gardien .ennemi-infos > .vie-gardien{grid-row:3;margin-bottom:-3px}
   .scene-ennemi.gardien .plaque-gardien .ennemi-nom{font-size:20px}
-  .scene-ennemi.gardien .plaque-gardien .pg-phase{font-size:8.5px;margin-top:0}
+  .scene-ennemi.gardien .plaque-gardien .pg-phase{font-size:var(--t-min);margin-top:0}
 }
 
 /* la barre de vie peinte : la jauge coule dans la rainure, le cadre passe par-dessus (ses griffes d'or recouvrent les bouts) */
@@ -51,7 +51,7 @@
 .avec-gardien .vignette-ennemi.gardien.visee img{box-shadow:0 0 0 2px #fff4d6,0 0 0 4px #3a1f10,0 0 0 5px #c89650,0 0 16px 3px rgba(200,140,255,.8)}
 .avec-gardien .vg-int{top:auto;bottom:24px}
 .avec-gardien .vg-felure{top:4px;right:4px;bottom:auto}
-.avec-gardien .vg-nom{max-width:100%;overflow:hidden;font:600 10px/1.25 var(--mono);color:#eadcff;white-space:nowrap;text-overflow:ellipsis;text-shadow:0 1px 2px #000}
+.avec-gardien .vg-nom{max-width:100%;overflow:hidden;font:600 var(--t-min)/1.25 var(--mono);color:#eadcff;white-space:nowrap;text-overflow:ellipsis;text-shadow:0 1px 2px #000}
 .avec-gardien .vg-vie{width:70px;margin-top:2px}
 .avec-gardien .vignette-ennemi.gardien .vg-vie i{background:linear-gradient(90deg,#8a2fe0,#d9a8ff)}
 @media (max-width:899px){
@@ -59,20 +59,20 @@
   .avec-gardien .vignette-ennemi{width:64px}
   .avec-gardien .vignette-ennemi img,.avec-gardien .vignette-ennemi .vg-sans{width:64px;height:62px}
   .avec-gardien .vg-vie{width:60px}
-  .avec-gardien .vg-nom{font-size:9.5px}
+  .avec-gardien .vg-nom{font-size:var(--t-min)}
   .scene-ennemi.en-groupe .groupe-ennemis.avec-gardien{justify-content:flex-start;gap:10px}
 }
 @media (min-width:900px){
   .avec-gardien .vignette-ennemi{width:108px}
   .avec-gardien .vignette-ennemi img,.avec-gardien .vignette-ennemi .vg-sans{width:108px;height:136px;border-radius:6px}
   .avec-gardien .vg-vie{width:100px;height:6px}
-  .avec-gardien .vg-nom{font-size:11.5px}
+  .avec-gardien .vg-nom{font-size:var(--t-min)}
   .avec-gardien .vg-int{bottom:30px}
   .scene-ennemi.en-groupe:has(.avec-gardien) .intention{max-width:calc(100% - 40px - var(--ng,3) * 118px)}
   .plaque-gardien{width:min(100%,460px)}
-  .plaque-gardien .pg-sur{font-size:11px}
+  .plaque-gardien .pg-sur{font-size:var(--t-min)}
   .scene-ennemi .plaque-gardien .ennemi-nom{font-size:30px}
-  .plaque-gardien .pg-phase{font-size:11px}
+  .plaque-gardien .pg-phase{font-size:var(--t-min)}
 }
 
 /* ---------- Le bandeau d'annonce : l'entrée du gardien, puis sa seconde phase ---------- */
@@ -81,12 +81,12 @@
   background:var(--bandeau) center/100% 100% no-repeat;mix-blend-mode:screen}
 .bandeau-gardien .bg-voile{position:fixed;inset:0;background:radial-gradient(ellipse at 50% 40%,rgba(30,8,50,.35),rgba(6,2,12,.82));z-index:-1}
 .bandeau-gardien .bg-texte{position:relative;display:grid;justify-items:center;gap:4px;padding:0 20px;text-align:center}
-.bandeau-gardien .bg-sur{font:600 11px/1.2 var(--mono);letter-spacing:.3em;text-transform:uppercase;color:#e3d2ff;text-shadow:0 0 10px rgba(170,110,255,1),0 1px 2px #000}
+.bandeau-gardien .bg-sur{font:600 var(--t-min)/1.2 var(--mono);letter-spacing:.3em;text-transform:uppercase;color:#e3d2ff;text-shadow:0 0 10px rgba(170,110,255,1),0 1px 2px #000}
 .bandeau-gardien .bg-titre{font:700 clamp(30px,9vw,58px)/1 var(--display);color:#fff1d6;letter-spacing:.02em;
   text-shadow:0 0 22px rgba(200,120,255,.95),0 0 4px #1a0730,0 3px 4px #000}
 .bandeau-gardien .bg-sous{max-width:520px;padding:5px 14px;border-radius:4px;font-size:13.5px;line-height:1.35;color:#f3eaff;text-shadow:0 1px 2px #000;
   background:radial-gradient(ellipse at 50% 50%,rgba(10,3,20,.92),rgba(10,3,20,.7) 70%,rgba(10,3,20,0));box-shadow:0 0 18px 8px rgba(10,3,20,.55)}
-.bandeau-gardien .bg-nom{margin-top:-2px;padding:2px 10px;font:600 11px/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#ffe2d8;background:rgba(10,3,20,.85);border-radius:3px}
+.bandeau-gardien .bg-nom{margin-top:-2px;padding:2px 10px;font:600 var(--t-min)/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#ffe2d8;background:rgba(10,3,20,.85);border-radius:3px}
 .bandeau-gardien .bg-renfort{width:96px;height:120px;margin-top:8px;border-radius:6px;object-fit:cover;object-position:50% 25%;
   box-shadow:0 0 0 2px #ffd9c8,0 0 0 4px #2a0f0f,0 0 26px 6px rgba(255,90,80,.7)}
 .bandeau-gardien.phase .bg-titre{text-shadow:0 0 22px rgba(255,90,90,.95),0 0 4px #300707,0 3px 4px #000}

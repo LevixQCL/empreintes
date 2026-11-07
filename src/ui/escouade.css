@@ -121,14 +121,14 @@
 .es-note-poste b{color:var(--es-txt)}
 
 /* ---------- Que cherches-tu ? (24 octobre 2026) : des tuiles, les cartes d'abord ---------- */
-.es-cibles-titre{margin:4px 0 0;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--or-pale,#CDB98E)}
+.es-cibles-titre{margin:4px 0 0;font-family:var(--mono);font-size:var(--t-min);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--or-pale,#CDB98E)}
 .es-cibles-grille{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
 .es-tuile{position:relative;grid-column:span 2;display:grid;justify-items:center;align-content:center;gap:3px;min-height:84px;padding:8px 4px;border:0;border-radius:8px;cursor:pointer;font:inherit;text-align:center;
   color:var(--es-doux);background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12);transition:background .15s,box-shadow .15s,color .15s}
 .es-tuile:nth-child(n+4){grid-column:span 3;min-height:64px}
 .es-tuile .ico{width:22px;height:22px;color:color-mix(in srgb,var(--c) 75%,white)}
 .es-tuile strong{font-size:13.5px;line-height:1.15;color:#E5EEF8}
-.es-tuile small{font-size:11.5px;line-height:1.2}
+.es-tuile small{font-size:var(--t-min);line-height:1.2}
 .es-niveaux .es-tuile,.es-niveaux .es-tuile:nth-child(n+4){grid-column:span 2;min-height:76px}
 .es-tuile .es-tuile-filon{color:color-mix(in srgb,var(--c) 70%,white);font-weight:600}
 .es-tuile:hover{background:rgba(205,239,255,.08)}
@@ -169,7 +169,7 @@ button.es-place.vide{width:100%;border:0;font:inherit;cursor:pointer;color:inher
 .es-rt-prix{display:inline-flex;align-items:center;gap:3px;font-style:normal;font-family:var(--mono);font-size:12px;color:var(--es-doux);white-space:nowrap}
 .es-rt-prix svg{width:12px;height:12px}
 .es-rt-prix.cout{padding:2px 7px;border-radius:999px;color:#FFD9CF;background:rgba(226,115,90,.18);box-shadow:inset 0 0 0 1px rgba(226,115,90,.6)}
-.es-rt-prix.reste{font-size:11px;color:#9AA3B2}
+.es-rt-prix.reste{font-size:var(--t-min);color:#9AA3B2}
 .es-rt-total{display:inline-flex;align-items:center;gap:3px;color:var(--danger)!important}
 .es-rt-total svg{width:13px;height:13px}
 .es-btn-cout{display:inline-flex;align-items:center;gap:2px;margin-left:8px;padding:2px 7px;border-radius:999px;font-family:var(--mono);font-size:12.5px;color:#FFE3DA;background:rgba(160,40,20,.45);box-shadow:inset 0 0 0 1px rgba(255,160,140,.55)}

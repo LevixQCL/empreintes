@@ -465,7 +465,7 @@ function ligneFelure(s: CombatEtat, prevue: boolean, resonne: boolean): string {
   // le Flux en plus ne s'annonce que quand la chaîne posée fait une suite (3, 4, 5) : avant, la ligne dit juste ce que la carte brise
   const flux = prevue && resonne && s.flux < REGLES.fluxMax ? `, <b class="gain-flux">+${REGLES.felure.flux} Flux</b>` : '';
   return `<span class="int-felure${prevue ? ' prevue' : ''}" style="--fc:${couleurFrequence(f)}"><span class="gemme">${ICO.fele}<b>${f}</b></span>`
-    // la phrase entière sur PC ; sur téléphone, seulement le chiffre (la gemme dit déjà quelle Fréquence) : combat-table.css
+    // la phrase entière sur PC ; sur téléphone, seulement le chiffre (la gemme dit déjà quelle Fréquence) : combat.css, partie « la table »
     + `<span class="fl-txt"><span class="fl-mot">${prevue ? '<b>Ta chaîne la brise</b>' : `Pose un <b class="freq">${f}</b>`} : </span>${effet}${flux}</span></span>`;
 }
 

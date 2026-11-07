@@ -20,12 +20,12 @@
 /* téléphones (28 octobre 2026) : la Confiance a pris sa case, les chiffres et les mots se serrent d'un cran pour tenir en entier */
 @media (max-width:440px){
   #app[data-mode="district"] .hud .res .v{font-size:15px}
-  #app[data-mode="district"] .hud .res small{font-size:11px}
+  #app[data-mode="district"] .hud .res small{font-size:var(--t-min)}
   #app[data-mode="district"] .hud .res.abysse{grid-template-columns:28px minmax(0,1fr)}
 }
 @media (max-width:380px){
   #app[data-mode="district"] .hud .res .v{font-size:14px}
-  #app[data-mode="district"] .hud .res small{font-size:10.5px}
+  #app[data-mode="district"] .hud .res small{font-size:var(--t-min)}
   #app[data-mode="district"] .hud .res.abysse{grid-template-columns:24px minmax(0,1fr)}
 }
 
@@ -121,14 +121,14 @@
 
 /* La rumeur du jour, sous la Confiance (23 octobre 2026) */
 .rumeur{margin:8px 0 0;font-size:13px;line-height:1.5;color:#B8C4D4;font-style:italic}
-.rumeur b{font-style:normal;font-weight:600;letter-spacing:.06em;font-size:11px;text-transform:uppercase;color:var(--gold,#E8C25A);margin-right:6px}
+.rumeur b{font-style:normal;font-weight:600;letter-spacing:.06em;font-size:var(--t-min);text-transform:uppercase;color:var(--gold,#E8C25A);margin-right:6px}
 
 /* ---------- Le panneau du district se replie sur téléphone (23 octobre 2026) ---------- */
 .mission.jour{position:relative}
 .mission.jour>.rumeur{grid-column:1 / -1}
 .mj-plier{position:absolute;z-index:3;top:6px;right:8px;display:inline-flex;align-items:center;gap:5px;min-height:32px;padding:0 10px;border:0;border-radius:999px;
   font:600 12px var(--body);letter-spacing:.02em;color:var(--glace,#CDEFFF);background:rgba(8,12,26,.85);box-shadow:inset 0 0 0 1px rgba(205,239,255,.3)}
-.mj-plier i{font-style:normal;font-size:11px}
+.mj-plier i{font-style:normal;font-size:var(--t-min)}
 #app .mission.jour.replie{grid-template-columns:1fr}
 #app .mission.jour.replie .mission-tete{padding-right:96px}
 .mission.jour.replie>:is(.confiance,.archive,.rumeur){display:none}
@@ -143,7 +143,7 @@
 /* ---------- Replié : une barre fine qui emmène vers l'objectif (23 octobre 2026) ---------- */
 #app .mission.jour.barre{display:flex;align-items:center;gap:6px;padding:4px 4px 4px 0;row-gap:0}
 .mj-aller{flex:1;min-width:0;display:grid;grid-template-columns:auto minmax(0,1fr) auto auto;align-items:center;gap:8px;min-height:40px;padding:0 4px 0 12px;border:0;background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
-.mj-aller .surtitre{font-size:9.5px}
+.mj-aller .surtitre{font-size:var(--t-min)}
 .mj-aller strong{font-family:var(--body);font-size:13.5px;font-weight:600;line-height:1.2;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mj-aller .chiffre{font-size:12px;color:var(--gold,#E8C25A)}
 .mj-aller>.ico{width:16px;height:16px;color:var(--glace,#CDEFFF)}
@@ -261,7 +261,7 @@
 /* Détail d'une carte commune (31 octobre 2026) : l'échelle de force selon le niveau du bâtiment, le prix de sa place en rouge */
 .cm-echelle{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 2px;padding:0;list-style:none}
 .cm-echelle li{display:grid;justify-items:center;min-width:44px;padding:5px 6px 6px;border-radius:9px;background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.1)}
-.cm-echelle small{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;color:#93A3B8}
+.cm-echelle small{font-family:var(--mono);font-size:var(--t-min);letter-spacing:.04em;color:#93A3B8}
 .cm-echelle b{font-family:var(--mono);font-size:16px;font-weight:600;color:#C9D6E6}
 .cm-echelle li.fait b{color:#93A3B8}
 .cm-echelle li.ici{background:rgba(242,213,140,.12);box-shadow:inset 0 0 0 1px rgba(242,213,140,.55),0 0 12px rgba(242,213,140,.18)}

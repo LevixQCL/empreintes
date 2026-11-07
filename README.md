@@ -17,7 +17,7 @@ Autres commandes :
 | `npm test` | Lance les tests des règles (Résonance, Écho, combat complet) |
 | `npm run check` | Vérifie le TypeScript sans rien construire |
 | `npm run build` | Construit le site dans `dist/` |
-| `npm run visuel` | Compare les écrans avant / après une modification (téléphone et PC) : voir `.visuel/` |
+| `npm run visuel` | Compare les écrans avant / après une modification (téléphone et PC) : voir `.visuel/` ; compte aussi les textes sous 12 px, les coins coupés, les cibles sous 40 px et l’ancienne police (`.visuel/lisibilite.json`) |
 | `npm run css` | Repère le CSS inutile (déclarations toujours écrasées, règles en double) ; `-- --ecrire` le nettoie |
 | `analyse.html` | L'outil d'analyse (page à part, jamais chargée par le jeu, réservée au compte de Bryan) : points d'attention, activité, rétention par cohorte, progression et rythme, combats, Porteurs, cartes, économie, campagne, usage des fonctions, joueurs ; filtres ; exports JSON et CSV anonymisés |
 | `duel.html` | L'essai du duel en temps réel (page à part) : contre le robot ou un ami avec un code — voir `docs/duel.md`. Dans le jeu, le duel passe par le Cercle des quais |
@@ -69,10 +69,11 @@ src/
     feuilles.ts    l'ordre des feuilles de style (la cascade) : toutes les feuilles CSS sont importées là, et seulement là
     graphismes.ts  les graphismes Auto / Complets / Légers (Paramètres) : allégés seuls sur un appareil qui peine ; les animations sans fin s'arrêtent hors de l'écran (leger.css)
     outils.ts      petits outils partagés (échapper un texte, animations réduites, virgule française)
-    styles.css     le style « laiton et verre fumé » ; scenes.css (titre, intro) ; face-carte.css (cartes Module)
+    styles.css     le style de base (--t-min : aucun texte sous 12 px ; polices Saira, Marcellus et Literata) ; scenes.css (titre, intro) ; face-carte.css (cartes Module)
     moderne.css    le style moderne partout (3 novembre 2026) : arrondis au lieu des coins coupés (les cartes gardent leur cadre), gélules pour ce qu'on touche, plus d'équerres de glace
-    combat-moderne.css  l'écran de combat modernisé (3 novembre 2026) : verre arrondi au lieu des coins coupés, scène sous la barre du haut,
-                   chaîne sans boîte sur un rail de lumière, Flux en trois cristaux (1 glace, 2 améthyste, 3 or), vignettes du groupe qui tiennent
+    combat.css     l'écran de combat en une seule feuille (7 novembre 2026) : la matière (22 octobre), la modernisation (3 novembre),
+                   puis la table (7 novembre : l'ennemi en fond, la chaîne au milieu, l'escouade, le Flux et la main dessous)
+    exploration.css  la carte d'une Strate salle par salle, et les routes de la feuille Fuir
     bureau.css     la mise en page PC (à partir de 1100 px de large) : rail à gauche, tableaux en pleine hauteur ; le téléphone n’en dépend pas
   save/          la sauvegarde sur l'appareil
   net/           Firebase : comptes et synchronisation (optionnel)
@@ -88,7 +89,7 @@ src/
     clavier.ts, intro.ts
   main.ts        le démarrage et les gestes du joueur
 public/art/      les illustrations Midjourney (Porteurs, Modules, ennemis, bâtiments, décors, scènes des salles, icônes, textures des métaux) ; src/ui/art.ts dit laquelle va où
-public/fonts/    les polices (Saira, IBM Plex Sans Condensed, Marcellus SC, Literata), hébergées sur le site : rien ne part chez Google.
+public/fonts/    les polices (Saira, Marcellus SC, Literata), hébergées sur le site : rien ne part chez Google.
                  Écrites par scripts/polices.py à partir des paquets Fontsource (voir l'en-tête du script)
 public/sw.js     le service worker : la page passe par le réseau d'abord, les fichiers du build et les images sont gardés sur l'appareil
                  (le jeu démarre hors ligne, les images ne repartent plus au réseau). Changer VERSION dans sw.js vide les anciens caches

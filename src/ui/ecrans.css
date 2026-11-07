@@ -166,7 +166,7 @@
 /* ---------- Trier les cartes (24 octobre 2026) : un seul contrôle, le même dans l'écran Cartes et la feuille d'un Porteur ----------
    Une barre segmentée de verre, comme les onglets du Grand Tableau : l'ordre choisi s'allume en glace. */
 .tri-cartes{display:flex;align-items:center;gap:4px;padding:3px;border-radius:999px;background:rgba(9,12,24,.72);box-shadow:inset 0 0 0 1px rgba(205,239,255,.16);align-self:flex-start;max-width:100%}
-.tri-label{display:inline-flex;align-items:center;gap:5px;padding:0 8px 0 10px;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--or-pale,#CDB98E)}
+.tri-label{display:inline-flex;align-items:center;gap:5px;padding:0 8px 0 10px;font-family:var(--mono);font-size:var(--t-min);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--or-pale,#CDB98E)}
 .tri-label .ico{width:13px;height:13px}
 .tri-choix{min-height:34px;padding:0 12px;border:0;border-radius:999px;background:none;font:inherit;font-size:13.5px;font-weight:600;color:#93A3B8;white-space:nowrap;cursor:pointer;transition:background .15s,color .15s}
 .tri-choix:hover{color:#E5EEF8}

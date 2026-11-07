@@ -1,6 +1,6 @@
 /* EMPREINTES — le contenu des Strates (31 octobre 2026, src/core/strates.ts) : la particularité et la quête sous le nom de la Strate,
    les badges du plan (marque de quête, mur, souvenirs doubles, passage, fil), la Halte, les portes à Fréquence et les passages secrets.
-   Même matière que la carte de Strate (exploration-refonte.css) : verre fumé, glace pour ce qui se touche, or pour la valeur. */
+   Même matière que la carte de Strate (exploration.css) : verre fumé, glace pour ce qui se touche, or pour la valeur. */
 
 /* ---------- sous le nom de la Strate ---------- */
 .ex-partic,.ex-quete{display:flex;align-items:center;gap:7px;margin-top:3px;font-size:13px;line-height:1.3;color:var(--ex-txt);text-shadow:0 1px 4px #000;white-space:nowrap}
@@ -64,9 +64,8 @@
 .hx-pp b{font-family:var(--display);font-weight:400;font-size:18px;color:var(--c)}
 .hx-pp.recit .ico{width:20px;height:20px;color:var(--ex-or)}
 .hx-choisir{margin-top:2px;color:var(--ex-or)}
-.hx-choix .hx-gain{color:var(--ex-or)!important;font:600 13px/1.2 var(--mono)!important}
 /* l'enquête (7 novembre 2026) : la piste de chaque choix, la marque d'un choix qui revient, la révélation */
-.hx-choix .hx-gain{font:600 12px/1.2 var(--mono)!important;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
+.hx-choix .hx-gain{color:var(--ex-or)!important;font:600 12px/1.2 var(--mono)!important;letter-spacing:.06em;text-transform:uppercase;opacity:.9}
 .hx-echo{display:inline-block;margin:2px 0 3px;font:600 12px/1.2 var(--mono);font-style:normal;letter-spacing:.06em;color:var(--ex-or)}
 .hx-enquete{background:linear-gradient(90deg,rgba(242,213,140,.16),rgba(242,213,140,.04)),rgba(8,11,22,.7);box-shadow:inset 0 0 0 1px rgba(242,213,140,.55),0 0 18px rgba(242,213,140,.12)}
 .hx-revele{background:linear-gradient(90deg,rgba(242,213,140,.1),rgba(8,11,22,.6) 60%);box-shadow:inset 3px 0 0 var(--ex-or),inset 0 0 0 1px rgba(242,213,140,.3)}
@@ -167,6 +166,6 @@
 .ex-quete-trouvee>.ico{width:26px;height:26px;flex-shrink:0;color:var(--ex-or,#f2d58c);filter:drop-shadow(0 0 8px rgba(242,213,140,.9))}
 .ex-quete-trouvee b{display:block;color:var(--ex-or,#f2d58c);font-size:15px;margin:2px 0 4px}
 .ex-quete-trouvee p{margin:0 0 6px;font-style:italic;line-height:1.4}
-.ex-quete-trouvee small{display:block;opacity:.75;font-size:11.5px}
+.ex-quete-trouvee small{display:block;opacity:.75;font-size:var(--t-min)}
 @keyframes ex-qt-in{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.ex-quete-trouvee{animation:none}}

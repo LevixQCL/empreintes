@@ -29,7 +29,7 @@
 .ex-c-vestige b{color:var(--ex-vestige)}
 
 /* ---------- le combat : le compte à rebours du Rôdeur ---------- */
-.fuyard{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:10px;font-size:11.5px;font-weight:600;letter-spacing:.02em;
+.fuyard{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:10px;font-size:var(--t-min);font-weight:600;letter-spacing:.02em;
   color:#2A0905;background:linear-gradient(180deg,#FFC2B0,#E0563A);box-shadow:0 0 10px rgba(255,138,110,.45)}
 .fuyard .ico{width:12px;height:12px}
 .ennemi-art.provisoire{filter:hue-rotate(150deg) saturate(1.3) brightness(.85)}

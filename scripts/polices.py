@@ -5,8 +5,9 @@ au RGPD en 2022) et le jeu ne démarrait pas proprement hors ligne. On copie les
 (mêmes polices, même licence OFL) dans public/fonts/ et on écrit public/fonts/polices.css.
 
 usage : python3 scripts/polices.py <dossier où les paquets ont été décompressés>
-   les paquets : npm pack @fontsource/saira-semi-condensed @fontsource/ibm-plex-sans-condensed
+   les paquets : npm pack @fontsource/saira-semi-condensed
                  @fontsource/marcellus-sc @fontsource-variable/literata, puis tar xzf chacun dans son dossier.
+IBM Plex Sans a été retiré le 7 novembre 2026 : le texte courant est en Saira, avec Marcellus pour les titres et Literata pour la lecture.
 Seuls l'alphabet latin et le latin étendu sont gardés (le navigateur ne charge le second que s'il en a besoin).
 """
 import re
@@ -22,7 +23,6 @@ SOUS_ENSEMBLES = ('latin', 'latin-ext')
 # (paquet, feuilles CSS du paquet, nom de famille voulu dans le jeu)
 POLICES = [
     ('saira-semi-condensed', ['400.css', '500.css', '600.css', '700.css'], 'Saira Semi Condensed'),
-    ('ibm-plex-sans-condensed', ['400.css', '500.css', '600.css'], 'IBM Plex Sans Condensed'),
     ('marcellus-sc', ['400.css'], 'Marcellus SC'),
     # Literata : la version variable (graisse et taille optique), droite et italique
     ('literata', ['opsz.css', 'opsz-italic.css'], 'Literata'),

@@ -4,7 +4,7 @@
 
 /* ---------- Les déclencheurs, sur l'écran de combat ---------- */
 .ecran-combat button.piles{--cut:5px;align-items:center;gap:10px;min-height:28px;margin:-3px -6px -3px 0;padding:0 6px 0 8px;border:none;background:none;
-  font-family:var(--mono);font-size:11px;color:var(--quiet);border-radius:6px;transition:background .15s ease,color .15s ease}
+  font-family:var(--mono);font-size:var(--t-min);color:var(--quiet);border-radius:6px;transition:background .15s ease,color .15s ease}
 .ecran-combat button.piles:not(:disabled):active{background:rgba(159,216,255,.12);color:var(--ink)}
 .piles-journal{display:inline-grid;place-items:center;width:20px;height:20px;margin-left:-2px;color:#9FD8FF;
   background:rgba(159,216,255,.08);box-shadow:inset 0 0 0 1px rgba(159,216,255,.28);clip-path:polygon(0 0,calc(100% - 4px) 0,100% 4px,100% 100%,4px 100%,0 calc(100% - 4px))}
@@ -49,7 +49,7 @@ button.journal-ligne:not(:disabled):active{color:var(--ink-2)}
 .j-tour > summary{display:flex;align-items:center;gap:10px;min-height:46px;padding:6px 12px;cursor:pointer;list-style:none}
 .j-tour > summary::-webkit-details-marker{display:none}
 .jt-titre{display:inline-flex;align-items:baseline;gap:7px;flex-shrink:0;font-family:var(--display);font-size:17px;color:var(--ink)}
-.jt-titre small{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#9FD8FF}
+.jt-titre small{font-family:var(--mono);font-size:var(--t-min);letter-spacing:.08em;text-transform:uppercase;color:#9FD8FF}
 .j-tour > summary .jt-puces{flex:1;justify-content:flex-end}
 .jt-chevron{flex-shrink:0;width:8px;height:8px;margin-left:2px;border-right:1.5px solid var(--quiet);border-bottom:1.5px solid var(--quiet);transform:rotate(45deg) translate(-2px,-2px);transition:transform .2s ease}
 .j-tour[open] .jt-chevron{transform:rotate(-135deg) translate(-1px,-1px)}
@@ -63,17 +63,17 @@ button.journal-ligne:not(:disabled):active{color:var(--ink-2)}
 .jm .nf{aspect-ratio:5/7;border-radius:6px}
 .jm.eteinte .nf{filter:grayscale(.9) brightness(.62)}
 .jm-rang{position:absolute;z-index:6;left:50%;bottom:-7px;transform:translateX(-50%);display:grid;place-items:center;min-width:17px;height:17px;padding:0 4px;
-  font-family:var(--mono);font-size:11px;font-weight:700;color:#0B0D12;background:var(--c);border-radius:9px;box-shadow:0 0 0 2px #0B0F16}
+  font-family:var(--mono);font-size:var(--t-min);font-weight:700;color:#0B0D12;background:var(--c);border-radius:9px;box-shadow:0 0 0 2px #0B0F16}
 .jt-cartes{padding-bottom:6px}
 .jt-badges{display:flex;flex-wrap:wrap;gap:6px}
-.jb{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.04em;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
+.jb{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;font-family:var(--mono);font-size:var(--t-min);font-weight:600;letter-spacing:.04em;clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%)}
 .jb .ico{width:12px;height:12px}
 .jb.reso{color:#1C1406;background:var(--laiton)}
 .jb.echo{color:var(--ivory);background:rgba(232,223,200,.14)}
 .jb.brouille{color:#FF9B8C;background:rgba(226,115,90,.14)}
 
 /* les moments du tour */
-.jt-moment{display:flex;align-items:center;gap:8px;margin:4px 0 0;font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9FD8FF}
+.jt-moment{display:flex;align-items:center;gap:8px;margin:4px 0 0;font-family:var(--mono);font-size:var(--t-min);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9FD8FF}
 .jt-moment::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(159,216,255,.3),transparent)}
 .jt-moment.ennemi{color:#FF9B8C}
 .jt-moment.ennemi::after{background:linear-gradient(90deg,rgba(255,155,140,.3),transparent)}
@@ -82,7 +82,7 @@ button.journal-ligne:not(:disabled):active{color:var(--ink-2)}
 .jl-liste{list-style:none;margin:0;padding:0;display:grid;gap:2px}
 .jl{display:grid;grid-template-columns:22px minmax(0,1fr) auto;align-items:start;gap:8px;padding:6px 0}
 .jl + .jl{box-shadow:0 -1px 0 rgba(205,239,255,.06)}
-.jl-rang{display:grid;place-items:center;width:20px;height:20px;margin-top:1px;font-family:var(--mono);font-size:11.5px;font-weight:700;color:#0B0D12;background:var(--c);border-radius:50%}
+.jl-rang{display:grid;place-items:center;width:20px;height:20px;margin-top:1px;font-family:var(--mono);font-size:var(--t-min);font-weight:700;color:#0B0D12;background:var(--c);border-radius:50%}
 .jl-ico{display:grid;place-items:center;width:20px;height:20px;margin-top:1px;color:var(--quiet)}
 .jl-ico .ico{width:14px;height:14px}
 .jl.ennemi .jl-ico{color:#FF9B8C}
@@ -106,7 +106,7 @@ button.journal-ligne:not(:disabled):active{color:var(--ink-2)}
 .jq > summary,.jl-calc > summary{display:inline-flex;align-items:center;gap:5px;min-height:24px;padding:0 8px 0 3px;cursor:pointer;list-style:none;
   font-size:12px;color:#B9D6EA;background:rgba(159,216,255,.07);box-shadow:inset 0 0 0 1px rgba(159,216,255,.2);border-radius:12px}
 .jq > summary::-webkit-details-marker,.jl-calc > summary::-webkit-details-marker{display:none}
-.jq > summary i,.jl-calc > summary i{display:grid;place-items:center;width:17px;height:17px;font-family:var(--mono);font-style:normal;font-size:11px;font-weight:700;
+.jq > summary i,.jl-calc > summary i{display:grid;place-items:center;width:17px;height:17px;font-family:var(--mono);font-style:normal;font-size:var(--t-min);font-weight:700;
   color:#0B0D12;background:#9FD8FF;border-radius:50%}
 .jq[open] > summary,.jl-calc[open] > summary{background:rgba(159,216,255,.16);color:#E6F3FC}
 .jq p{margin:6px 0 2px;padding:8px 10px;font-size:12.5px;line-height:1.45;color:#D3DBE6;background:rgba(159,216,255,.06);box-shadow:inset 0 22px 22px -18px rgba(159,216,255,.2);border-top:2px solid transparent;border-image:linear-gradient(90deg,transparent 2%,rgba(159,216,255,.6) 28%,#CDEFFF 50%,rgba(159,216,255,.6) 72%,transparent 98%) 1}
@@ -116,12 +116,12 @@ button.journal-ligne:not(:disabled):active{color:var(--ink-2)}
 /* le calcul (même lecture que la loupe : vert = bonus, rouge = malus, or = total) */
 .jc{list-style:none;margin:0;padding:8px 10px;display:grid;gap:3px;background:rgba(8,10,18,.6);box-shadow:inset 0 0 0 1px rgba(205,239,255,.14);border-radius:8px}
 .jc + .jc{margin-top:6px}
-.jc-cible{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--quiet);padding-bottom:2px}
+.jc-cible{font-family:var(--mono);font-size:var(--t-min);letter-spacing:.1em;text-transform:uppercase;color:var(--quiet);padding-bottom:2px}
 .jc-ligne,.jc summary{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;line-height:1.35;color:#D3D9E4}
 .jc summary{cursor:pointer;list-style:none}
 .jc summary::-webkit-details-marker{display:none}
 .jc-nom{display:inline-flex;align-items:baseline;gap:5px;min-width:0}
-.jc-q{display:inline-grid;place-items:center;width:15px;height:15px;font-family:var(--mono);font-style:normal;font-size:10px;font-weight:700;color:#9FD8FF;
+.jc-q{display:inline-grid;place-items:center;width:15px;height:15px;font-family:var(--mono);font-style:normal;font-size:var(--t-min);font-weight:700;color:#9FD8FF;
   box-shadow:inset 0 0 0 1px rgba(159,216,255,.5);border-radius:50%;transform:translateY(-1px)}
 .jc details[open] .jc-q{color:#0B0D12;background:#9FD8FF}
 .jc b{font-family:var(--mono);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}

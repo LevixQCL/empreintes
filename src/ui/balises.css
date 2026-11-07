@@ -41,7 +41,7 @@
 /* le niveau : un petit cristal d'or posé à cheval sur la pointe basse, au-dessus de la languette du nom */
 .bal-niv{position:absolute;z-index:3;left:50%;bottom:calc(var(--h) * -.34);transform:translateX(-50%);display:grid;place-items:center;
   min-width:calc(var(--h) * .74);height:calc(var(--h) * .62);padding:0 3px;border-radius:5px;
-  font:700 11.5px/1 var(--mono);font-style:normal;color:#2a1a06;font-variant-numeric:tabular-nums;
+  font:700 var(--t-min)/1 var(--mono);font-style:normal;color:#2a1a06;font-variant-numeric:tabular-nums;
   background:linear-gradient(118deg,transparent 0 46%,rgba(255,255,255,.5) 47%,transparent 60%),linear-gradient(170deg,#fff2c8,#ecc574 42%,#b98a38 78%,#8a6224);
   box-shadow:0 0 0 1.5px #3a2a10,0 1px 3px rgba(0,0,0,.7)}
 .balise:has(.visage) .bal-nom{margin-left:-6px}

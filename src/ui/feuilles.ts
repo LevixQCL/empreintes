@@ -7,10 +7,8 @@ import './scenes.css';
 import './face-carte.css';
 import './holo.css';
 import './empreinte.css';
-import './combat.css';
 import './cristal.css';
 import './bureau.css';
-import './exploration.css';
 import './guide.css';
 import './porteurs.css';
 import './batiment.css';
@@ -22,7 +20,7 @@ import './mon-escouade.css';
 import './equipe.css';
 import './district.css';
 import './balises.css';
-import './exploration-refonte.css';
+import './exploration.css';
 import './strates-contenu.css';
 import './toucher.css';
 import './matieres.css';
@@ -44,9 +42,8 @@ import './duel.css';
 import './cercle.css';
 // en dernier : les gardiens reprennent la main sur les réglages du téléphone et du PC
 import './gardien.css';
-import './combat-moderne.css';
-// la table (7 novembre 2026) : l'ennemi en fond, la chaîne au milieu, l'escouade, le Flux et la main dessous
-import './combat-table.css';
+// le combat en une seule feuille (7 novembre 2026) : la matière, la modernisation, puis la table
+import './combat.css';
 import './moderne.css';
 // tout à la fin : les graphismes légers et les animations suspendues hors de l'écran (3 novembre 2026, graphismes.ts)
 import './leger.css';

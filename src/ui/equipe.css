@@ -33,7 +33,7 @@
 .eq-cristal::after{content:"";position:absolute;inset:0;clip-path:polygon(50% 0,100% 20%,50% 42%,0 20%);background:linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,.05))}
 .eq-perles{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;min-height:9px;max-width:32px}
 .eq-perles i{display:block;width:7px;height:7px;transform:rotate(45deg);background:var(--c);box-shadow:0 0 0 1px #0A0E1A,0 0 5px color-mix(in srgb,var(--c) 70%,transparent)}
-.eq-perles em{font-style:normal;font-family:var(--mono);font-size:10px;line-height:6px;color:var(--x-doux)}
+.eq-perles em{font-style:normal;font-family:var(--mono);font-size:var(--t-min);line-height:6px;color:var(--x-doux)}
 .eq-col small{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--x-doux)}
 /* la suite : un rayon d'or traverse les cristaux qui se suivent */
 .eq-col.suite::before{content:"";position:absolute;z-index:0;top:18px;left:-3px;right:-3px;height:2px;background:linear-gradient(90deg,#c98a35,#ffe2a0,#c98a35);box-shadow:0 0 8px rgba(255,205,120,.85)}
