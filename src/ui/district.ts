@@ -293,7 +293,7 @@ function balises(e: EcranDistrict): string {
     const b = balise(id);
     const choisie = e.selection === id ? ' choisie' : '';
     const bulle = (classe: string, contenu: string, label: string, action = 'batiment') =>
-      `<button type="button" class="bulle-bat ${classe}" ${pos(b.haut)} data-action="${action}" data-id="${id}" data-lieu="${id}" aria-label="${label}">${contenu}</button>`;
+      `<button type="button" class="bulle-bat ${classe}" ${pos(b.pied)} data-action="${action}" data-id="${id}" data-lieu="${id}" aria-label="${label}">${contenu}</button>`;
     // le Port ouvert mène aux archipels voisins (26 octobre 2026, Bryan : « il faut un bateau pour aller piller des gens »)
     if (id === 'port' && portOuvert(j)) {
       majJetons(j, e.now);

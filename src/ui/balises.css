@@ -1,74 +1,53 @@
-/* ---------- Les repères des bâtiments sur le tableau (2 novembre 2026) ----------
-   Bryan : « des plaques toutes rassemblées », comme dans les autres jeux de gestion, le bâtiment se reconnaît à son dessin.
-   Au pied de chaque bâtiment, un petit cristal serti de laiton porte son niveau ; au-dessus du toit, une bulle n'apparaît
-   que s'il y a quelque chose à faire. Le nom sort du cristal au survol (PC), quand le bâtiment est choisi, et pour tous
-   tant que le district est neuf (.toile.noms). */
+/* ---------- Les repères des bâtiments sur le tableau (7 novembre 2026, variante B choisie par Bryan sur la vraie carte) ----------
+   Le nom est écrit sur la carte comme sur un plan, sans cadre, sous une pastille ronde qui porte le niveau (ou le visage du
+   Porteur au poste). Toujours visible : on n'a plus à deviner où toucher. Chaque bâtiment porte un voile d'or très léger qui
+   respire (styles.css, .zone-bat) ; au toucher, il s'allume franchement. Plus de cristaux hexagonaux : le style est arrondi. */
 
-/* le repère : le cristal reste ancré sur son point, le nom se déplie vers la droite */
-.toile .balise{--h:25px;position:absolute;z-index:2;display:inline-flex;align-items:center;padding:0;border:0;background:none;color:inherit;font:inherit;
-  transform:translate(calc(var(--h) * -.44),-50%);cursor:pointer;-webkit-tap-highlight-color:transparent;
-  filter:drop-shadow(0 2px 2px rgba(0,0,0,.75)) drop-shadow(0 0 6px rgba(255,206,120,.28));transition:filter .2s ease}
-/* une cible au doigt plus grande que le cristal */
-.toile .balise::before{content:"";position:absolute;left:calc(var(--h) * -.4);top:50%;width:calc(var(--h) * 1.8);height:calc(var(--h) * 1.8);transform:translateY(-50%)}
+/* le repère : la pastille sur son point, le nom dessous ; la cible au doigt fait 64 × 48 px */
+.toile .balise{--h:24px;position:absolute;z-index:2;display:inline-flex;flex-direction:column;align-items:center;padding:0;border:0;background:none;color:inherit;font:inherit;
+  transform:translate(-50%,calc(var(--h) * -.5));cursor:pointer;-webkit-tap-highlight-color:transparent}
+.toile .balise::before{content:"";position:absolute;left:50%;top:calc(var(--h) * .5);width:64px;height:48px;transform:translate(-50%,-50%)}
 .toile .balise:active .bal-cristal{transform:scale(.92)}
 
-/* le cristal : une monture de bronze sombre, une taille de laiton clair, une facette de lumière */
-.bal-cristal{--hex:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);position:relative;z-index:1;display:grid;place-items:center;flex-shrink:0;
-  width:calc(var(--h) * .88);height:var(--h);clip-path:var(--hex);background:linear-gradient(180deg,#5a4118,#2a1c08);
-  font:700 12px/1 var(--mono);color:#2a1a06;font-variant-numeric:tabular-nums;transition:transform .12s ease}
-.bal-cristal::before{content:"";position:absolute;z-index:-1;inset:1.6px;clip-path:var(--hex);
+/* la pastille : un anneau de bronze sombre, une face d'or clair, un reflet */
+.bal-cristal{position:relative;z-index:1;display:grid;place-items:center;flex-shrink:0;width:var(--h);height:var(--h);border-radius:50%;
+  background:linear-gradient(180deg,#5a4118,#2a1c08);box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 10px rgba(255,214,140,.45),0 2px 3px rgba(0,0,0,.6);
+  font:700 12px/1 var(--mono);color:#2a1a06;font-variant-numeric:tabular-nums;transition:transform .12s ease;text-shadow:0 1px 0 rgba(255,240,200,.45)}
+.bal-cristal::before{content:"";position:absolute;z-index:-1;inset:1.5px;border-radius:50%;
   background:linear-gradient(118deg,transparent 0 46%,rgba(255,255,255,.5) 47%,transparent 60%),linear-gradient(170deg,#fff2c8,#ecc574 42%,#b98a38 78%,#8a6224)}
-.bal-cristal > *,.bal-cristal{text-shadow:0 1px 0 rgba(255,240,200,.45)}
 .bal-cristal .ico{position:relative;width:11px;height:11px}
 /* lieux fermés et Port : du verre fumé serti de glace, sans chiffre */
-.bal-cristal.glace{background:linear-gradient(180deg,rgba(214,240,255,.85),rgba(120,160,200,.6))}
+.bal-cristal.glace{background:linear-gradient(180deg,rgba(214,240,255,.85),rgba(120,160,200,.6));box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 8px rgba(160,215,255,.35),0 2px 3px rgba(0,0,0,.6);text-shadow:none}
 .bal-cristal.glace::before{background:linear-gradient(118deg,transparent 0 46%,rgba(220,245,255,.22) 47%,transparent 60%),linear-gradient(170deg,#24344e,#0d1426)}
 .bal-cristal.glace .ico{color:#d7efff}
-.balise.fermee{filter:drop-shadow(0 2px 2px rgba(0,0,0,.75))}
 .balise.fermee .bal-cristal.glace .ico{color:#a9c0d6}
-/* à construire : la monture de laiton, un marteau à la place du chiffre */
+/* à construire : l'anneau d'or, un marteau à la place du chiffre */
 .bal-cristal.a-construire::before{background:linear-gradient(118deg,transparent 0 46%,rgba(255,230,170,.25) 47%,transparent 60%),linear-gradient(170deg,#3a2a12,#1a1206)}
 .bal-cristal.a-construire .ico{color:#f2d58c}
 
-/* quelqu'un au poste : le cristal grandit et montre le visage du Porteur, le niveau passe sur un petit cristal d'or en bas à droite */
-.bal-cristal.visage{width:calc(var(--h) * 1.3);height:calc(var(--h) * 1.48);clip-path:none;background:none;margin-bottom:calc(var(--h) * .2);
-  --hex-v:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
-.bal-cristal.visage::before{inset:0;clip-path:var(--hex-v);
-  background:linear-gradient(118deg,transparent 0 46%,rgba(255,255,255,.4) 47%,transparent 60%),linear-gradient(170deg,#fff2c8,#ecc574 42%,#b98a38 78%,#8a6224)}
-.bal-cristal.visage::after{content:"";position:absolute;z-index:-1;inset:2px;clip-path:var(--hex-v);
+/* quelqu'un au poste : la pastille grandit et montre le visage du Porteur, le niveau passe sur une petite plaque d'or en bas */
+.bal-cristal.visage{width:calc(var(--h) * 1.34);height:calc(var(--h) * 1.34);background:none}
+.bal-cristal.visage::before{inset:0}
+.bal-cristal.visage::after{content:"";position:absolute;z-index:-1;inset:2px;border-radius:50%;
   background:var(--visage,none) 50% 14%/160% auto no-repeat,linear-gradient(170deg,#24344e,#0d1426)}
 .bal-initiale{font:700 14px/1 var(--display);color:#f4ecd8;text-shadow:0 1px 2px rgba(0,0,0,.8)}
-/* le niveau : un petit cristal d'or posé à cheval sur la pointe basse, au-dessus de la languette du nom */
-.bal-niv{position:absolute;z-index:3;left:50%;bottom:calc(var(--h) * -.34);transform:translateX(-50%);display:grid;place-items:center;
-  min-width:calc(var(--h) * .74);height:calc(var(--h) * .62);padding:0 3px;border-radius:5px;
+.bal-niv{position:absolute;z-index:3;left:50%;bottom:-5px;transform:translateX(-50%);display:grid;place-items:center;
+  min-width:17px;height:15px;padding:0 3px;border-radius:5px;
   font:700 var(--t-min)/1 var(--mono);font-style:normal;color:#2a1a06;font-variant-numeric:tabular-nums;
   background:linear-gradient(118deg,transparent 0 46%,rgba(255,255,255,.5) 47%,transparent 60%),linear-gradient(170deg,#fff2c8,#ecc574 42%,#b98a38 78%,#8a6224);
   box-shadow:0 0 0 1.5px #3a2a10,0 1px 3px rgba(0,0,0,.7)}
-.balise:has(.visage) .bal-nom{margin-left:-6px}
 
-/* le nom : une languette de verre fumé qui sort de derrière le cristal */
-.bal-nom{position:relative;display:block;max-width:0;margin-left:-8px;padding:4px 0 4px 8px;overflow:hidden;opacity:0;white-space:nowrap;
-  font-family:var(--display);font-size:12.5px;line-height:1.1;color:#f4ecd8;letter-spacing:.02em;border-radius:0 6px 6px 0;
-  background:linear-gradient(118deg,transparent 0 58%,rgba(220,245,255,.07) 58.5%,transparent 72%),linear-gradient(165deg,rgba(22,30,54,.92),rgba(8,11,24,.94));
-  box-shadow:inset 0 0 0 1px rgba(205,239,255,.26),inset 0 1px 0 rgba(205,239,255,.18);
-  transition:max-width .28s ease,opacity .2s ease,padding .28s ease}
-.balise.fermee .bal-nom{color:#cfdcea;font-size:12px}
-.toile.noms .bal-nom,.toile .balise.choisie .bal-nom,.toile .balise:hover .bal-nom,
-.toile:has(.zone-bat[data-lieu="noyau"]:hover) .balise[data-lieu="noyau"] .bal-nom,
-.toile:has(.zone-bat[data-lieu="generateur"]:hover) .balise[data-lieu="generateur"] .bal-nom,
-.toile:has(.zone-bat[data-lieu="forge"]:hover) .balise[data-lieu="forge"] .bal-nom,
-.toile:has(.zone-bat[data-lieu="clinique"]:hover) .balise[data-lieu="clinique"] .bal-nom,
-.toile:has(.zone-bat[data-lieu="comptoir"]:hover) .balise[data-lieu="comptoir"] .bal-nom,
-.toile:has(.zone-bat[data-lieu="cercle"]:hover) .balise[data-lieu="cercle"] .bal-nom,
-.toile:has(.zone-bat[data-lieu="port"]:hover) .balise[data-lieu="port"] .bal-nom,
-.toile:has(.zone-bat[data-lieu="habitants"]:hover) .balise[data-lieu="habitants"] .bal-nom{max-width:170px;opacity:1;padding:4px 10px 4px 14px}
-/* choisi ou survolé : le cristal s'illumine, la languette prend un liseré d'or */
-.toile .balise.choisie,.toile .balise:hover{filter:drop-shadow(0 2px 2px rgba(0,0,0,.75)) drop-shadow(0 0 10px rgba(255,214,140,.7))}
-.toile .balise.choisie .bal-nom{box-shadow:inset 0 0 0 1.5px rgba(242,213,140,.75),inset 0 1px 0 rgba(255,240,200,.25)}
+/* le nom : écrit sur la carte, sans cadre, détaché du décor par une ombre */
+.bal-nom{display:block;margin-top:3px;white-space:nowrap;font-family:var(--display);font-size:13px;line-height:1.1;letter-spacing:.04em;color:#fff4dc;
+  text-shadow:0 0 3px #000,0 0 6px #000,0 1px 2px #000;transition:color .2s ease}
+.balise.fermee .bal-nom{color:#c9d6e4;opacity:.8}
+/* choisi ou survolé : la pastille s'illumine, le nom passe à l'or */
+.toile .balise.choisie .bal-cristal,.toile .balise:hover .bal-cristal{box-shadow:0 0 0 1px rgba(0,0,0,.6),0 0 16px rgba(255,214,140,.85),0 2px 3px rgba(0,0,0,.6)}
+.toile .balise.choisie .bal-nom,.toile .balise:hover .bal-nom{color:#f6d98e}
 
 /* ---------- La bulle : seulement quand il y a quelque chose à faire ---------- */
 .toile .bulle-bat{position:absolute;z-index:3;display:inline-flex;align-items:center;justify-content:center;gap:4px;min-width:30px;height:30px;padding:0 9px;
-  border:0;border-radius:15px;transform:translate(-50%,calc(-100% - 7px));cursor:pointer;-webkit-tap-highlight-color:transparent;
+  border:0;border-radius:15px;transform:translate(-50%,calc(-100% - 20px));cursor:pointer;-webkit-tap-highlight-color:transparent;
   font:600 12.5px/1 var(--mono);color:#dff3ff;font-variant-numeric:tabular-nums;
   background:linear-gradient(180deg,rgba(205,239,255,.14),rgba(205,239,255,0) 50%),linear-gradient(165deg,rgba(22,32,58,.94),rgba(8,12,26,.96));
   box-shadow:inset 0 0 0 1px rgba(205,239,255,.42),inset 0 1px 0 rgba(255,255,255,.2),0 4px 10px rgba(0,0,0,.55)}
@@ -78,7 +57,7 @@
 .toile .bulle-bat::before{content:"";position:absolute;inset:-7px}
 .toile .bulle-bat .ico{width:15px;height:15px;flex-shrink:0}
 .toile .bulle-bat em{font-style:normal}
-.toile .bulle-bat:active{transform:translate(-50%,calc(-100% - 7px)) scale(.93)}
+.toile .bulle-bat:active{transform:translate(-50%,calc(-100% - 20px)) scale(.93)}
 .toile .bulle-bat:only-child,.toile .bulle-bat:not(:has(em)){padding:0}
 /* une action qui attend : de l'or, qui flotte doucement */
 .toile .bulle-bat.alerte{color:#2a1a06;
@@ -87,22 +66,22 @@
   animation:bulleFlotte 2.4s ease-in-out infinite}
 .toile .bulle-bat.alerte::after{background:#b98a38;box-shadow:inset -1px -1px 0 rgba(90,60,20,.7)}
 .toile .bulle-bat.alerte .ico{stroke-width:2.4}
-@keyframes bulleFlotte{50%{transform:translate(-50%,calc(-100% - 11px))}}
+@keyframes bulleFlotte{50%{transform:translate(-50%,calc(-100% - 24px))}}
 /* un poste vide, quand quelqu'un pourrait le prendre : discret, un liseré corail */
 .toile .bulle-bat.vacant{color:#ffb7a8;box-shadow:inset 0 0 0 1.5px rgba(255,140,120,.7),inset 0 1px 0 rgba(255,255,255,.14),0 4px 10px rgba(0,0,0,.55)}
 .toile .bulle-bat.vacant::after{box-shadow:inset -1.5px -1.5px 0 rgba(255,140,120,.7)}
 /* une attente (chantier, fabrication) ou une info (étals du Comptoir) : du verre, sans mouvement */
 .toile .bulle-bat.info .ico{color:#f2d58c}
 
-@media (prefers-reduced-motion:reduce){ .toile .bulle-bat.alerte{animation:none} .bal-nom{transition:none} }
+@media (prefers-reduced-motion:reduce){ .toile .bulle-bat.alerte{animation:none} }
 
 /* PC : un peu plus grand, on a la place */
 @media (min-width:1100px) and (min-height:600px){
-  .toile .balise{--h:29px}
+  .toile .balise{--h:28px}
   .bal-cristal{font-size:14px}
   .bal-cristal .ico{width:13px;height:13px}
   .bal-niv{font-size:13px}
-  .bal-nom{font-size:15px;margin-left:-9px}
+  .bal-nom{font-size:15px}
   .toile .bulle-bat{min-width:34px;height:34px;border-radius:17px;font-size:14px}
   .toile .bulle-bat .ico{width:17px;height:17px}
 }

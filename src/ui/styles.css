@@ -643,10 +643,15 @@ h1,h2,h3{font-weight:400}
    Une zone invisible épouse chaque bâtiment du tableau. Au survol (PC) ou au toucher, elle s'éclaire
    d'un halo de lumière, et son nom apparaît (balises.css) ; le bâtiment choisi garde son halo doré. */
 .zones-bat{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible}
-.zone-bat{fill:rgba(255,220,150,0);stroke:none;cursor:pointer;filter:blur(10px);transition:fill .25s ease;-webkit-tap-highlight-color:transparent}
-.zone-bat:hover,.zone-bat:active{fill:rgba(255,220,150,.2)}
-.zone-bat.choisie{fill:rgba(255,214,140,.14)}
-@media (hover:none){ .zone-bat:hover{fill:rgba(255,220,150,0)} .zone-bat:active,.zone-bat.choisie{fill:rgba(255,220,150,.18)} }
+/* chaque bâtiment porte un voile d'or très léger qui respire (7 novembre 2026, variante B) : on devine ce qui se touche
+   sans que ce soit criard ; au toucher ou une fois choisi, le voile s'allume franchement */
+.zone-bat{fill:rgba(255,214,140,.07);stroke:none;cursor:pointer;filter:blur(10px);transition:fill .25s ease;-webkit-tap-highlight-color:transparent;animation:zone-respire 4.5s ease-in-out infinite}
+.zone-bat:nth-child(2n){animation-delay:-1.5s}
+.zone-bat:nth-child(3n){animation-delay:-3s}
+@keyframes zone-respire{50%{fill:rgba(255,214,140,.13)}}
+.zone-bat:hover,.zone-bat:active,.zone-bat.choisie{fill:rgba(255,214,140,.26);animation:none}
+@media (hover:none){ .zone-bat:hover:not(:active,.choisie){fill:rgba(255,214,140,.07);animation:zone-respire 4.5s ease-in-out infinite} }
+@media (prefers-reduced-motion:reduce){ .zone-bat{animation:none} }
 
 /* ---------- Les ressources du haut sont des boutons (22 octobre 2026) : elles ouvrent leur fiche ---------- */
 button.res{font:inherit;color:inherit;text-align:left;border:none;cursor:pointer;transition:filter .15s ease,transform .12s ease}
