@@ -14,7 +14,8 @@ const mobile = () => estIOS() || /android/i.test(navigator.userAgent);
 
 export function initInstallation(rafraichir: () => void) {
   surChangement = rafraichir;
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+  // pas en développement : le cache garderait d'anciens fichiers pendant qu'on code
+  if ('serviceWorker' in navigator && import.meta.env.PROD) navigator.serviceWorker.register('./sw.js').catch(() => {});
   window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); invitation = e as InvitationInstall; surChangement(); });
   window.addEventListener('appinstalled', () => { installe = true; invitation = null; surChangement(); });
 }
