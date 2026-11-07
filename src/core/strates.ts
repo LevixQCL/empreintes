@@ -98,7 +98,7 @@ export const HALTES: HalteDef[] = [
   // ---------- −2 · Les Abris murés ----------
   H(2, 1, 'Le registre des abris',
     'Un abri de 2060, entrouvert. Sur le mur, un registre peint : les quarante familles qui y ont dormi pendant les grandes crues.', [
-      d('Le registre peint', v('ilka', 'La moitié de ces familles, je leur livre encore le pain. Aucune ne m’a jamais parlé de cet abri.'), v('', 'Quarante noms de familles, peints en blanc. Presque tous du quartier.')),
+      d('Le registre peint', v('doran', 'Les familles du chantier. Quand on l’a fermé, la ville leur a donné l’anneau à la place de la paie. La mienne en est. C’est comme ça que le quartier est né.'), v('ilka', 'La moitié de ces familles, je leur livre encore le pain. Aucune ne m’a jamais parlé de cet abri.'), v('', 'Quarante noms de familles, peints en blanc. Presque tous du quartier.')),
       d('Le plâtre fendu', v('sasha', 'Ça sonne creux. Derrière le plâtre, ce n’est pas de la brique : c’est un treillis de cristal. On a monté l’abri contre quelque chose qui était déjà là.'), v('doran', 'Derrière le plâtre, un treillis de cristal. Les maçons de 2060 l’ont couvert sans poser de questions. Pendant les crues, on n’en posait pas.'), v('', 'Par une fente du plâtre, on voit luire un treillis de cristal.')),
       d('Un cristal tombé', v('vela', 'Tombé d’un sac de pilleur. Il ne veut pas remonter avec nous. Il veut rejoindre les autres, plus bas. On dirait qu’il a peur de rester en haut.'), v('', 'Un petit cristal tombé d’un sac luit faiblement sur les marches.')),
     ], [

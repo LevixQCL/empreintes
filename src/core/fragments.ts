@@ -16,6 +16,7 @@ export const FRAGMENTS: Fragment[] = [
     lignes: [
       'Chantier d’abris, niveau 7. Suite à l’incident du 14, l’accès est condamné jusqu’à nouvel ordre.',
       'Le personnel ne mentionne pas l’incident à l’extérieur. Les familles seront indemnisées.',
+      'Tampon du 2 novembre : « Faute de fonds, l’indemnité est versée en nature. L’anneau du chantier et ses pompes sont cédés aux familles du personnel. »',
       'Note au crayon, en marge : « Ils ont entendu quelqu’un pleurer derrière la paroi. Il n’y avait personne. »',
     ],
   },
