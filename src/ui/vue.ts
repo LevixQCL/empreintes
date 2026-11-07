@@ -751,6 +751,9 @@ function htmlEcranCombat(e: Ecran): string {
   // la scène de l'ennemi
   // un gardien (27 octobre 2026) : son nom dans une plaque peinte, sa vie dans une barre ornée avec le cran de sa seconde phase
   const gardien = estGardien(def.id) && !s.ennemi.porteur;
+  // l'arène (7 novembre 2026, Bryan) : l'illustration de l'ennemi descend en fond jusqu'à la ligne de l'escouade, la chaîne
+  // se pose au milieu comme une table ; l'escouade, le Flux et la main viennent dessous (sur PC, l'arène s'efface : display:contents)
+  h += `<div class="arene">`;
   h += `<section class="scene-ennemi l-${lig}${gardien ? ' gardien' : ''}${enGroupe(s) ? ' en-groupe' : ''}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'};--ng:${tousEnnemis(s).length}" aria-label="Ennemi">`
     + (ill ? `<img class="ennemi-art${portraitProvisoire(def.id) ? ' provisoire' : ''}${s.issue === 'victoire' && !s.enfui ? ' dissous' : ''}${s.ennemi.porteur ? ' garde' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
     + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
@@ -779,7 +782,8 @@ function htmlEcranCombat(e: Ecran): string {
       : `<div class="vie-ennemi">${jauge('je', s.ennemi.pv, s.ennemi.pvMax, { trace: e.traces?.ennemi, pas: 10, bouclier: s.ennemi.bouclier })}<span class="je-valeur"><b>${s.ennemi.pv}</b><small>/ ${s.ennemi.pvMax}</small></span></div>`)
     + `</div></section>`;
 
-  // l'escouade
+  // l'escouade : construite à part, elle vient sous la table
+  const avantEscouade = h.length;
   h += '<section class="escouade-combat" aria-label="Escouade">';
   const coups = coupsAttendus(s);
   // Protégé : quand les attaques annoncées touchent plusieurs Porteurs, le bouclier couvre d'abord celui-ci ; un toucher sur une tuile le change
@@ -788,6 +792,9 @@ function htmlEcranCombat(e: Ecran): string {
   const protege = zone ? protegeDe(s) : undefined;
   // un soin à un seul Porteur dans la chaîne : toucher une tuile y envoie les soins
   const soins = !verrou && s.chaine.some(soigneUnSeul);
+  // le bouclier de l'escouade, sur le portrait de celui qu'il couvre en premier (7 novembre 2026) : posé, et ce que la chaîne ajoute
+  const ajoutBouclier = s.chaine.length && !verrou ? apercuChaine(s).bouclier : 0;
+  const porteBouclier = s.bouclier + ajoutBouclier > 0 ? protegeDe(s) : undefined;
   for (const p of s.porteurs) {
     const d = porteurDef(p.id);
     const ko = p.pv <= 0;
@@ -807,16 +814,20 @@ function htmlEcranCombat(e: Ecran): string {
       + popsPour(e, p.id)
       + `<div class="cb-vie" aria-hidden="true"><span class="chiffre">${ko ? '0' : p.pv}<small>/ ${p.pvMax}</small></span>${jauge('jp', p.pv, p.pvMax, { trace: e.traces?.[p.id], pas: 5, ...(p.usure ? { usure: p.usure } : {}), ...(perte && !verrou ? { perte } : {}) })}</div>`
       + (cible && !verrou ? marqueCoups(s, recus, p.pv) : '') + (soigne ? `<span class="marque-soin" aria-label="Sera soigné">${ICO.soin}</span>` : '')
-      + (couvert ? `<span class="marque-protege" aria-hidden="true">${ICO.bouclier}</span>` : '')
+      + (!ko && p.id === porteBouclier ? `<span class="ecu-tuile${ajoutBouclier ? ' ajout' : ''}" aria-label="${echap(`Bouclier ${s.bouclier}${ajoutBouclier ? `, ${s.bouclier + ajoutBouclier} après la chaîne` : ''}`)}"><svg viewBox="0 0 24 28" aria-hidden="true"><path d="M12 1 L22 5 V13 C22 20 17 25 12 27 C7 25 2 20 2 13 V5 Z"/></svg><b>${s.bouclier}</b>${ajoutBouclier ? `<small>+${ajoutBouclier}</small>` : ''}</span>` : couvert ? `<span class="marque-protege" aria-hidden="true">${ICO.bouclier}</span>` : '')
       // le petit choix, quand il y a à la fois du bouclier et des soins à répartir
       + (!ko && zone && soins && e.tuile === p.id ? `<div class="tuile-choix" role="group" aria-label="${echap(d.nom)}">`
         + `<button type="button" data-action="proteger" data-id="${p.id}" aria-pressed="${couvert}"${couvert ? ' class="pris"' : ''}>${ICO.bouclier}<span>Protéger</span></button>`
         + `<button type="button" data-action="soigner" data-id="${p.id}" aria-pressed="${soigne}"${soigne ? ' class="pris"' : ''}>${ICO.soin}<span>Soigner</span></button></div>` : '')
       + `</div>`;
   }
-  h += `</section><div class="ligne-escouade">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>${s.ombre ? `<span class="etat ombre actif">${ICO.eclat}Ombre agissante</span>` : ''}`
-    // les piles ouvrent le journal du combat (27 octobre 2026) : les cartes jouées tour par tour, la défausse et la pioche
-    + `<button type="button" class="piles" data-action="journal" data-id="cartes" aria-label="${echap(`Pioche ${s.pioche.length}, défausse ${s.defausse.length} : ouvrir le journal du combat`)}"${e.verrou ? ' disabled' : ''}><span>${ICO.cartes}<em>Pioche</em>${s.pioche.length}</span><span>${ICO.recycler}<em>Défausse</em>${s.defausse.length}</span><i class="piles-journal" aria-hidden="true">${ICO.journal}</i></button></div>`;
+  // le bouclier se lit sur le portrait du Porteur qu'il couvre (7 novembre 2026) : la ligne ne garde que ce qui n'a pas d'autre place
+  h += `</section><div class="ligne-escouade${s.ombre ? '' : ' vide'}">${popsPour(e, 'escouade')}<span class="etat garde${s.bouclier ? ' actif' : ''}">${ICO.bouclier}Bouclier ${s.bouclier}</span>${s.ombre ? `<span class="etat ombre actif">${ICO.eclat}Ombre agissante</span>` : ''}</div>`;
+  const escouade = h.slice(avantEscouade);
+  h = h.slice(0, avantEscouade);
+  // les piles ouvrent le journal du combat (27 octobre 2026) : les cartes jouées tour par tour, la défausse et la pioche ;
+  // elles prennent la place de la phrase du journal, en tête de la main (7 novembre 2026, Bryan : « la phrase ne sert à rien »)
+  const piles = `<button type="button" class="piles" data-action="journal" data-id="cartes" aria-label="${echap(`Pioche ${s.pioche.length}, défausse ${s.defausse.length} : ouvrir le journal du combat`)}"${e.verrou ? ' disabled' : ''}><span>${ICO.cartes}<em>Pioche</em>${s.pioche.length}</span><span>${ICO.recycler}<em>Défausse</em>${s.defausse.length}</span><i class="piles-journal" aria-hidden="true">${ICO.journal}</i></button>`;
 
   // la chaîne
   const mult = a.suite >= 3 ? `×${a.mult.toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')}` : '';
@@ -838,18 +849,20 @@ function htmlEcranCombat(e: Ecran): string {
     }
   });
   for (let i = 0; i < libres; i++) h += `<span class="place-vide" aria-hidden="true">${aide && i === 0 && dernier && !a.echo && fs[fs.length - 1]! < FREQ_MAX ? (fs[fs.length - 1]! + 1) : ''}</span>`;
-  h += `</div><p class="conseil">${conseil}</p>`;
+  h += `</div><p class="conseil">${conseil}</p></section></div>`;
+  if (e.lecon) h += `<section class="lecon" aria-live="polite"><span class="surtitre">${ICO.cristal}COMBAT GUIDÉ</span><p>${echap(e.lecon)}</p></section>`;
+  h += escouade;
   if (!e.lecon) {
     // Coup d'éclat : Flux plein, un seul par combat. Un bouton doré dans la rangée du Flux déplie le choix (une lignée par
     // Porteur debout) à la même place : la rangée ne grandit pas, la main garde sa taille sur téléphone.
     const eclats = eclatsPossibles(s);
     if (eclats.length && e.eclats) {
-      h += `<div class="flux coups-eclat" role="group" aria-label="Coup d’éclat : un seul par combat, il vide le Flux">`
+      h += `<div class="flux zone-flux coups-eclat" role="group" aria-label="Coup d’éclat : un seul par combat, il vide le Flux">`
         + eclats.map((c) => `<button type="button" class="btn-eclat l-${c.lignee}" style="--c:${COULEUR[c.lignee]}" data-action="eclat" data-id="${c.porteur}"${verrou ? ' disabled' : ''} aria-label="${echap(`${ECLATS[c.lignee].nom}, par ${porteurDef(c.porteur).nom} : ${ECLATS[c.lignee].texte}`)}"><strong>${echap(ECLATS[c.lignee].nom)}</strong><small>${echap(porteurDef(c.porteur).nom)}</small></button>`).join('')
         + `<button type="button" class="btn-icone" data-action="eclats" aria-label="Garder mon Flux">${ICO.fermer}</button></div>`;
     } else {
       // Flux plein et Coup d'éclat disponible : le bouton doré prend la place des trois losanges (pleins, par définition)
-      h += `<div class="flux nf-${s.flux}">`
+      h += `<div class="flux zone-flux nf-${s.flux}">`
         + (eclats.length
           ? `<button type="button" class="btn-flux btn-eclat-ouvrir" data-action="eclats" aria-expanded="false"${verrou ? ' disabled' : ''} aria-label="Flux plein : Coup d’éclat, un seul par combat, il vide le Flux">${ICO.eclat}Éclat</button>`
           : jaugeFlux(s.flux))
@@ -858,12 +871,9 @@ function htmlEcranCombat(e: Ecran): string {
         + '</div>';
     }
   }
-  h += `</section>`;
-
-  if (e.lecon) h += `<section class="lecon" aria-live="polite"><span class="surtitre">${ICO.cristal}COMBAT GUIDÉ</span><p>${echap(e.lecon)}</p></section>`;
 
   // la main
-  h += `<section class="zone-main" aria-label="Main"><div class="main-tete"><span class="surtitre">MAIN · ${s.main.length}</span>${!e.lecon && peutRelancer(s) ? `<button type="button" class="btn-relance" data-action="relancer"${verrou ? ' disabled' : ''} aria-label="Relancer la première main : gratuit, une seule fois, avant de lancer la première chaîne">${ICO.repiocher}Relancer</button>` : ''}${e.auto ? `<button type="button" class="btn-relance btn-auto en-cours" data-action="auto-stop" aria-label="Reprendre la main : arrêter le combat automatique après la chaîne en cours">${ICO.ok}Reprendre</button>` : e.autoPermis && !e.lecon && s.tour >= 1 ? `<button type="button" class="btn-relance btn-auto" data-action="auto"${verrou ? ' disabled' : ''} aria-label="Combat automatique : l’escouade joue seule, en accéléré (Strate déjà vaincue)">${ICO.lancer}Auto</button>` : ''}${s.journal[0] ? `<button type="button" class="journal-ligne" data-action="journal" data-id="tours"${e.verrou ? ' disabled' : ''} aria-label="${echap(`${s.journal[0]} Ouvrir le journal du combat`)}"><span>${echap(s.journal[0])}</span>${ICO.journal}</button>` : ''}</div><div class="main${guide && s.tour >= 2 && s.main.some((g) => vise(g) && placesCarte(s, g) <= libres) ? ' tri' : ''}">`;
+  h += `<section class="zone-main" aria-label="Main"><div class="main-tete"><span class="surtitre">MAIN · ${s.main.length}</span>${!e.lecon && peutRelancer(s) ? `<button type="button" class="btn-relance" data-action="relancer"${verrou ? ' disabled' : ''} aria-label="Relancer la première main : gratuit, une seule fois, avant de lancer la première chaîne">${ICO.repiocher}Relancer</button>` : ''}${e.auto ? `<button type="button" class="btn-relance btn-auto en-cours" data-action="auto-stop" aria-label="Reprendre la main : arrêter le combat automatique après la chaîne en cours">${ICO.ok}Reprendre</button>` : e.autoPermis && !e.lecon && s.tour >= 1 ? `<button type="button" class="btn-relance btn-auto" data-action="auto"${verrou ? ' disabled' : ''} aria-label="Combat automatique : l’escouade joue seule, en accéléré (Strate déjà vaincue)">${ICO.lancer}Auto</button>` : ''}${piles}</div><div class="main${guide && s.tour >= 2 && s.main.some((g) => vise(g) && placesCarte(s, g) <= libres) ? ' tri' : ''}">`;
   for (const g of s.main) {
     // une place qu'on n'a pas remplie chez ce Porteur : elle prend sa place dans la main ce tour-ci, sans se jouer
     if (g.vide) {

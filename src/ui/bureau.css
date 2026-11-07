@@ -116,10 +116,10 @@
     grid-template-areas:"barre barre" "ennemi chaine" "ennemi lecon" "ennemi escouade" "ennemi ligne" "ennemi main" "ennemi actions";
     column-gap:32px;row-gap:8px;padding:14px 32px 16px}
   .ecran-combat > .combat-barre{grid-area:barre}
-  .ecran-combat > .scene-ennemi{grid-area:ennemi;max-height:none;min-height:0}
+  .ecran-combat .arene > .scene-ennemi{grid-area:ennemi;max-height:none;min-height:0}
   .ecran-combat > .escouade-combat{grid-area:escouade}
   .ecran-combat > .ligne-escouade{grid-area:ligne;margin:0}
-  .ecran-combat > .zone-chaine{grid-area:chaine}
+  .ecran-combat .arene > .zone-chaine{grid-area:chaine}
   .ecran-combat > .lecon{grid-area:lecon}
   .ecran-combat > .zone-main{grid-area:main}
   .ecran-combat > .actions-combat{grid-area:actions;margin:0;padding:0;background:none}

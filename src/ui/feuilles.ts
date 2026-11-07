@@ -45,6 +45,8 @@ import './cercle.css';
 // en dernier : les gardiens reprennent la main sur les réglages du téléphone et du PC
 import './gardien.css';
 import './combat-moderne.css';
+// la table (7 novembre 2026) : l'ennemi en fond, la chaîne au milieu, l'escouade, le Flux et la main dessous
+import './combat-table.css';
 import './moderne.css';
 // tout à la fin : les graphismes légers et les animations suspendues hors de l'écran (3 novembre 2026, graphismes.ts)
 import './leger.css';
