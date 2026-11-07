@@ -43,11 +43,8 @@
 
 /* ================= Téléphone : la barre du bas ================= */
 @media not ((min-width:1100px) and (min-height:600px)){
-  .nav{overflow:visible}
-  .nav .onglet{min-height:58px;gap:1px;padding:2px 0 3px;justify-content:flex-end}
-  .nav .onglet-ico{width:54px;height:38px;--ico:36px;--serti:46px}
   /* l'onglet ouvert sort de la barre : plus grand, soulevé, posé sur son serti */
-  .nav .onglet.actif .onglet-ico{--ico:50px;--serti:60px;transform:translateY(-13px)}
+  .nav .onglet.actif .onglet-ico{transform:translateY(-13px)}
   .nav .onglet.actif:not(:disabled):active .onglet-ico{transform:translateY(-13px) scale(.94)}
   .nav .onglet.actif .onglet-nom{transform:translateY(-3px)}
   .nav .onglet-nom{transition:transform .25s ease}
@@ -56,8 +53,8 @@
     background:linear-gradient(90deg,transparent,#BFE2FF 30%,#fff 50%,#BFE2FF 70%,transparent);box-shadow:0 0 12px rgba(140,200,255,.9)}
   /* sept onglets depuis les Pillages et la Flèche (28 octobre 2026) : seul l'onglet ouvert garde son nom, les autres
      ne gardent que leur icône (le nom reste lu par les lecteurs d'écran) ; la barre tient en une ligne dès 360 px */
-  .nav{grid-template-columns:repeat(var(--onglets,7),minmax(0,1fr))}
-  .nav .onglet{min-width:0}
+  .nav{overflow:visible;grid-template-columns:repeat(var(--onglets,7),minmax(0,1fr))}
+  .nav .onglet{min-height:58px;gap:1px;padding:2px 0 3px;justify-content:flex-end;min-width:0}
   .nav .onglet:not(.actif){justify-content:center}
   .nav .onglet-ico{width:46px;height:36px;--ico:33px;--serti:42px}
   .nav .onglet.actif .onglet-ico{--ico:46px;--serti:56px}
@@ -81,11 +78,10 @@
 
   /* le cristal en tête */
   .ecran > .nav .nav-embleme{position:relative;height:84px;margin:0 0 10px;width:100%;padding:0;border:0;background:none;cursor:pointer;border-radius:12px}
-  .ecran > .nav .nav-embleme img{transition:transform .25s ease}
   .ecran > .nav .nav-embleme:hover img{transform:translateY(-2px) scale(1.06)}
   .ecran > .nav .nav-embleme:active img{transform:scale(.96)}
   .ecran > .nav .nav-embleme:focus-visible{outline:2px solid rgba(127,212,255,.7);outline-offset:-2px}
-  .ecran > .nav .nav-embleme img{width:auto;height:70px;
+  .ecran > .nav .nav-embleme img{transition:transform .25s ease;width:auto;height:70px;
     filter:drop-shadow(0 0 16px rgba(95,168,255,.55)) drop-shadow(0 4px 6px rgba(0,0,0,.6));animation:rail-cristal 6s ease-in-out infinite alternate}
   @keyframes rail-cristal{from{filter:drop-shadow(0 0 12px rgba(95,168,255,.4)) drop-shadow(0 4px 6px rgba(0,0,0,.6))}
     to{filter:drop-shadow(0 0 20px rgba(120,190,255,.7)) drop-shadow(0 4px 6px rgba(0,0,0,.6))}}

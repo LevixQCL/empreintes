@@ -146,7 +146,7 @@
   -webkit-mask-image:linear-gradient(#000 60%,transparent 100%);mask-image:linear-gradient(#000 60%,transparent 100%)}
 .ex-visuel.scene img{object-position:50% 50%}
 .ex-visuel.icone img{width:72%;height:auto;-webkit-mask-image:none;mask-image:none;filter:drop-shadow(0 3px 6px rgba(0,0,0,.7))}
-.ex-visuel.icone .ico{width:40%;height:40%;color:var(--ex-glace)}
+.ex-visuel.icone .ico{width:40%;height:40%}
 .ex-route.t-camp .ex-visuel{background:radial-gradient(circle at 50% 62%,rgba(255,170,70,.35),#0B0F1C 80%)}
 
 .ex-route-txt{display:grid;gap:4px;min-width:0}

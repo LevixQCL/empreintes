@@ -425,8 +425,7 @@ h1,h2,h3{font-weight:400}
 @keyframes lancer-fort{50%{filter:brightness(1.15)}}
 
 /* Un Geste : petite carte à coins coupés, bande de lignée en haut, Fréquence dans sa gemme */
-.geste{--cut:9px;position:relative;flex:none;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:2px;border:none;color:var(--ink);text-align:left;
-  clip-path:polygon(0 0,calc(100% - var(--cut)) 0,100% var(--cut),100% 100%,var(--cut) 100%,0 calc(100% - var(--cut)));transition:transform .15s ease,opacity .15s ease}
+.geste{--cut:9px;position:relative;flex:none;flex-direction:column;justify-content:space-between;align-items:flex-start;gap:2px;border:none;color:var(--ink);text-align:left;transition:transform .15s ease,opacity .15s ease}
 .g-lourd{letter-spacing:.04em}
 .g-val{display:flex;align-items:center;gap:4px;font-family:var(--mono);font-size:17px;font-weight:600}
 .g-val .ico{width:14px;height:14px}

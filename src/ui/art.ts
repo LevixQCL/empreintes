@@ -349,7 +349,7 @@ export const vignetteArchipel = (age: number, graine = '', mini = false) => {
 };
 /**
  * La Cuvette (2 novembre 2026) : un seul tableau peint pour tous les âges en attendant les paliers des bâtiments
- * (art/district/cuvette.webp, 800 × 1200, recadré de cuvette2-batiments.webp).
+ * (art/district/cuvette.webp, 800 × 1200, recadré de sources/art/district/cuvette2-batiments.webp).
  */
 export const CUVETTE = true;
 export function sceneDistrict(niveauNoyau: number, maintenant = new Date()): { age: 1 | 2 | 3 | 4; url: string; mer: string; horizon: number; video: string | null; nuit: boolean; houle?: string } {

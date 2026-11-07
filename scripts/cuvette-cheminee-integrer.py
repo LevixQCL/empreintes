@@ -14,9 +14,9 @@ z = (np.asarray(Image.open('docs/pack-cheminee/zone.png').convert('L')) > 0).ast
 z = cv2.dilate(z, cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (21, 21)))
 a = np.clip((cv2.GaussianBlur(z.astype(np.float32), (0, 0), 4) - .1) / .8, 0, 1)[..., None]
 
-B = np.asarray(Image.open(D + 'cuvette2-batiments.webp').convert('RGB')).astype(np.float32).copy()
+B = np.asarray(Image.open('sources/art/district/cuvette2-batiments.webp').convert('RGB')).astype(np.float32).copy()
 B[Y0:Y0 + T, X0:X0 + T] = A * a + B[Y0:Y0 + T, X0:X0 + T] * (1 - a)
-Image.fromarray(B.astype(np.uint8)).save(D + 'cuvette2-batiments.webp', quality=92)
+Image.fromarray(B.astype(np.uint8)).save('sources/art/district/cuvette2-batiments.webp', quality=92)
 
 # le tableau du jeu : même zone, à l'échelle 800 / 1644
 k = 800 / 1644

@@ -504,7 +504,6 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
 
 /* PC : la tuile prend la hauteur que lui laisse l'écran (50 à 150 px), les chiffres grandissent */
 @media (min-width:1100px) and (min-height:600px){
-  .ecran-combat > .escouade-combat{gap:10px}
   .ecran-jeu .combattant{--cut:12px;height:100%;min-height:0}
   .ecran-jeu .cb-vie{gap:5px;padding:0 12px 10px}
   .ecran-jeu .cb-vie .chiffre{font-size:clamp(20px,1.6vw,26px)}

@@ -59,9 +59,8 @@ button.journal-ligne:not(:disabled):active{color:var(--ink-2)}
 .jt-chaine{display:grid;gap:6px}
 .jt-cartes,.jp-cartes{display:flex;flex-wrap:wrap;gap:8px 6px}
 .jm{position:relative;flex:none;width:54px;container-type:inline-size}
-.jm .nf{aspect-ratio:5/7}
 .jm .nf-ligne,.jm .nf-art::after{display:none}
-.jm .nf{border-radius:6px}
+.jm .nf{aspect-ratio:5/7;border-radius:6px}
 .jm.eteinte .nf{filter:grayscale(.9) brightness(.62)}
 .jm-rang{position:absolute;z-index:6;left:50%;bottom:-7px;transform:translateX(-50%);display:grid;place-items:center;min-width:17px;height:17px;padding:0 4px;
   font-family:var(--mono);font-size:11px;font-weight:700;color:#0B0D12;background:var(--c);border-radius:9px;box-shadow:0 0 0 2px #0B0F16}

@@ -22,11 +22,12 @@
     "fouilles": "tsx scripts/fouilles.ts"
   },
   "devDependencies": {
+    "@types/node": "^22.20.5",
     "postcss": "^8.5.31",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
-    "vite": "^5.4.21",
-    "vitest": "^2.1.9"
+    "vite": "^8.3.6",
+    "vitest": "^5.1.0"
   },
   "dependencies": {
     "firebase": "^11.10.0"

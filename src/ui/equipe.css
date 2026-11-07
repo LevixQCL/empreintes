@@ -243,8 +243,7 @@
 .eq-tuile.libre:active .eq-t-vide{background:rgba(205,239,255,.08)}
 .eq-district .eq-grille{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (min-width:1100px){.eq-district .eq-grille{grid-template-columns:repeat(6,minmax(0,1fr))}}
-.eq-charge-ligne{flex-wrap:nowrap}
-.eq-charge-ligne{align-items:stretch}
+.eq-charge-ligne{flex-wrap:nowrap;align-items:stretch}
 .eq-charge-ligne .charge{flex:1;min-width:0;margin:0}
 .eq-charge-ligne .eq-gerer{min-height:0;padding:0 14px;border-radius:12px}
 

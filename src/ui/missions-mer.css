@@ -124,10 +124,9 @@
 .af-bon .ds-affinite,.vg-af.af-bon{color:#F2D58C}
 .af-mauvais .ds-affinite,.vg-af.af-mauvais{color:#C9A7D9}
 .missions-libres li.af-mauvais{opacity:.85}
-.ds-gain{display:inline-flex;align-items:center;gap:2px;font-family:var(--mono);font-size:12px;color:#E4ECF5}
 .ds-gain .ico{width:12px;height:12px}
 /* tout le butin sur le bouton (3 novembre 2026) : plusieurs gains empilés, la carte à la couleur de son métal */
-.ds-gain{flex-direction:column;align-items:center;gap:1px}
+.ds-gain{display:inline-flex;font-family:var(--mono);font-size:12px;color:#E4ECF5;flex-direction:column;align-items:center;gap:1px}
 .ds-gain>i{display:inline-flex;align-items:center;gap:2px;font-style:normal;white-space:nowrap}
 .ds-gain .ds-g-carte.m-fer{color:#C4C9D0}
 .ds-gain .ds-g-carte.m-cuivre{color:#E7A57A}

@@ -66,11 +66,10 @@ html #app .titre-bloc{letter-spacing:.08em;font-size:12px}
 html #app .titre-bloc::after{height:1px;background:linear-gradient(90deg,rgba(205,239,255,.28),transparent 70%)}
 
 /* 6. Plus rien sous 12 px là où on lit des chiffres */
-html #app .pastille-n{min-width:18px;font-size:12px}
 
 /* 7. Les cases d'escouade : des cartes de verre arrondies */
 html #app .es-equipe{border-radius:16px;corner-shape:round;clip-path:none}
-html #app .pastille-n{border-radius:999px}
+html #app .pastille-n{min-width:18px;font-size:12px;border-radius:999px}
 /* les tuiles qu'on choisit (escouades, Porteurs des marées, lieux, difficultés, paliers) : le même arrondi que les panneaux */
 html #app :is(.eq-esc,.es-equipe,.mr-cand,.mr-tuile,.ds-lieu,.es-tuile,.cm-esc,.rt-choix,.fb-paliers li){border-radius:14px;corner-shape:round;clip-path:none}
 /* les onglets du Grand Tableau : des tuiles arrondies, l'actif en glace */

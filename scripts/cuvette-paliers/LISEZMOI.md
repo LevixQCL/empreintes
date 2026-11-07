@@ -1,6 +1,6 @@
 # Paliers des bâtiments de la Cuvette (3 novembre 2026)
 
-À lancer depuis un dossier de travail qui contient `bat.webp` (= public/art/district/cuvette2-batiments.webp),
+À lancer depuis un dossier de travail qui contient `bat.webp` (= sources/art/district/cuvette2-batiments.webp),
 `nue.webp` (= sources/art/district/cuvette2-nue.webp), `zooms/` et `mj/` (sorties Midjourney, `<lieu>-<bas|haut>.png`).
 Les sorties et les zooms de ce lot sont gardés dans sources/art/district/paliers (mj-*.webp, zoom-*.webp).
 

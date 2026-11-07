@@ -127,10 +127,9 @@
   #app[data-mode="combat"] .ecran-combat{position:relative;gap:6px}
   #app[data-mode="combat"] .ecran-combat > .combat-barre{position:absolute;z-index:8;top:max(8px,var(--sat));left:12px;right:12px}
   #app[data-mode="combat"] .ecran-combat > .scene-ennemi{flex:1 1 auto;min-height:200px;margin:calc(-1 * max(8px,var(--sat))) -12px 0;padding-top:calc(max(8px,var(--sat)) + 46px);border-radius:0;max-height:none}
-  #app[data-mode="combat"] .ecran-combat > .scene-ennemi.en-groupe{min-height:232px}
   #app[data-mode="combat"] .ecran-combat .zone-chaine{gap:6px}
   #app[data-mode="combat"] .ecran-combat .bulle-viser{margin-top:2px;padding:6px 12px;font-size:12.5px}
-  #app[data-mode="combat"] .ecran-combat > .scene-ennemi.en-groupe{padding-right:72px}
+  #app[data-mode="combat"] .ecran-combat > .scene-ennemi.en-groupe{min-height:232px;padding-right:72px}
   #app[data-mode="combat"] .ecran-combat > .scene-ennemi.en-groupe:has(.avec-gardien){padding-right:84px}
   #app[data-mode="combat"] .ecran-combat > .scene-ennemi .ennemi-infos{padding-inline:2px}
   #app[data-mode="combat"] .ecran-combat .scene-ennemi.en-groupe .groupe-ennemis{top:calc(max(8px,var(--sat)) + 48px);right:10px;bottom:10px}
