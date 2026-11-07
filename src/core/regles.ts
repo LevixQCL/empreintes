@@ -131,9 +131,11 @@ export function frequencesEffectives(chaine: Maillon[]): number[] {
   chaine.forEach((g, i) => {
     if (!frequenceLibre(g.effet)) { r.push(g.f); return; }
     const pas = g.effet?.type === 'accord' ? 1 : 0;
-    if (i > 0) { r.push(r[i - 1]! + pas); return; }
+    // les Fréquences vont de 1 à 9 : après un 9, l'Accord reste à 9 (il ne joue jamais un 10 ; audit du 7 novembre 2026)
+    const borne = (f: number) => Math.min(9, Math.max(1, f));
+    if (i > 0) { r.push(borne(r[i - 1]! + pas)); return; }
     const suivant = chaine[1];
-    r.push(suivant && !frequenceLibre(suivant.effet) ? suivant.f - pas : g.f);
+    r.push(suivant && !frequenceLibre(suivant.effet) ? borne(suivant.f - pas) : g.f);
   });
   return r;
 }

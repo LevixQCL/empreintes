@@ -94,3 +94,12 @@ describe('Audit du 7 novembre : Empreinte', () => {
     expect(effetsEnJeu(empreinte, [fissure, empreinte], 1, false, true)[0]).toBeUndefined();
   });
 });
+
+describe('Audit du 7 novembre : Accord', () => {
+  it('après un 9, l’Accord reste à 9 (pas de Fréquence 10) ; en tête devant un 1, il reste à 1', async () => {
+    const { frequencesEffectives } = await import('../src/core/regles');
+    const accord = { f: 5, effet: { type: 'accord' as const } };
+    expect(frequencesEffectives([{ f: 7 }, { f: 8 }, { f: 9 }, accord] as never)).toEqual([7, 8, 9, 9]);
+    expect(frequencesEffectives([accord, { f: 1 }, { f: 2 }] as never)).toEqual([1, 1, 2]);
+  });
+});
