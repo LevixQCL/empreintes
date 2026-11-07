@@ -179,3 +179,31 @@ describe('Audit du 7 novembre : économie', () => {
     expect(d).toBeLessThanOrEqual(32);
   }, 120_000);
 });
+
+// Les Strates du Fond (audit du 7 novembre 2026) : après −10, une particularité empruntée qui change chaque semaine
+import { FOND, modeleStrate, particularite } from '../src/core/strates';
+import { nouvelleExploration } from '../src/core/expedition';
+import { gageJour } from '../src/core/partie/fleche';
+
+describe('Audit du 7 novembre : le Fond', () => {
+  it('au-dessus de −11 rien ne change ; dessous, la particularité tourne chaque semaine', () => {
+    for (let s = 1; s <= 10; s++) expect(modeleStrate(s, 5)).toBe(s);
+    const vues = new Set(Array.from({ length: FOND.ordre.length }, (_, w) => modeleStrate(11, w)));
+    expect(vues.size).toBe(FOND.ordre.length);
+    expect(modeleStrate(11, 0)).not.toBe(modeleStrate(11, 1));
+    for (const m of FOND.ordre) expect(particularite(m)).toBeDefined();
+  });
+
+  it('une exploration du Fond garde la particularité empruntée et la pose sur son plan', () => {
+    const p = { id: 'ilka', pv: 30, pvMax: 30, aTerre: false };
+    const w = FOND.ordre.indexOf(7) - (12 - FOND.des);
+    const x = nouvelleExploration({ porteurs: [p], deck: [], strate: 12, rng: 42, semaine: (w + 70) % FOND.ordre.length });
+    expect(x.modele).toBe(7);
+    expect(x.carte!.salles.some((s) => s.double)).toBe(true);
+  });
+
+  it('la garde d’un quai rapporte un Éclat par jour dès le quai 10', () => {
+    expect(gageJour(9).eclats).toBe(0);
+    expect(gageJour(10).eclats).toBe(1);
+  });
+});

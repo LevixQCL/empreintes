@@ -519,6 +519,24 @@ export const PARTICULARITES: Particularite[] = [
 ];
 export const particularite = (strate: number) => PARTICULARITES.find((p) => p.strate === strate);
 
+/**
+ * Les Strates du Fond (audit du 7 novembre 2026 : après −10, plus rien de neuf). À partir de −11, chaque Strate emprunte
+ * chaque semaine la particularité d'une Strate d'au-dessus, et elle change le lundi : le Fond ne se ressemble jamais deux
+ * semaines de suite. Le noir complet (sa lanterne attend à une Halte, et le Fond n'en a pas) et le dernier verrou (déjà la règle
+ * à −10 et plus bas) n'y tournent pas. Son gardien paie en Éclats et en cartes plutôt qu'en composants.
+ */
+export const FOND = {
+  des: 11,
+  /** l'ordre de rotation des particularités empruntées */
+  ordre: [7, 2, 9, 4, 8, 6, 5] as readonly number[],
+  /** à chaque victoire contre le gardien d'une Strate du Fond : des Éclats en plus, et un choix de cartes en argent */
+  eclatsGardien: 3,
+  /** la première fois (le front) : une carte en or de plus */
+} as const;
+export const estFond = (strate: number) => strate >= FOND.des;
+/** La Strate dont une Strate emprunte la particularité (elle-même au-dessus de −11) */
+export const modeleStrate = (strate: number, semaine = 0) => (estFond(strate) ? FOND.ordre[(((strate - FOND.des) + semaine) % FOND.ordre.length + FOND.ordre.length) % FOND.ordre.length]! : strate);
+
 // ---------- La quête longue de chaque Strate ----------
 
 export interface QueteDef {

@@ -47,7 +47,8 @@ export const ASCENSION = {
     101: { composants: 1500, eclats: 20 },
   } as Record<number, { composants: number; eclats: number }>,
   /** tenir un quai : le gage par jour (composants = base + parQuai × quai ; Éclats à partir de certains quais) */
-  gage: { base: 30, parQuai: 3, eclats: [{ des: 40, n: 1 }, { des: 80, n: 2 }] },
+  // un Éclat par jour dès le quai 10 (audit du 7 novembre 2026 : avant le quai 40, la garde ne payait qu'en composants, sans valeur)
+  gage: { base: 30, parQuai: 3, eclats: [{ des: 10, n: 1 }, { des: 40, n: 2 }, { des: 80, n: 3 }] },
   /** le gage s'accumule au plus une semaine dans la caisse du quai (audit du 7 novembre 2026 : avant deux jours) */
   caisseJours: 7,
   /** une défense tenue rapporte un quart de jour de gage */

@@ -11,7 +11,7 @@
 //   PV rendus au campement), la sortie possible est chiffrée, le butin ne s'affiche qu'une fois.
 // 28 octobre 2026 : plus de liste « Où aller ? » ; on choisit sur le plan, la fiche s'ouvre en bas.
 
-import { INDICES, accessibles, butinArchive, butinCache, butinCombat, enAttente, forceStrate, indiceSalle, mainAccordable, peutRemonter, rangsDe, reperentPassage, salleCourante, suitePorte, visionSalle, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
+import { INDICES, accessibles, modeleDe, butinArchive, butinCache, butinCombat, enAttente, forceStrate, indiceSalle, mainAccordable, peutRemonter, rangsDe, reperentPassage, salleCourante, suitePorte, visionSalle, type Expedition, type Salle, type TypeSalle } from '../core/expedition';
 import { CONTENU, PISTES, halteDef, nombreHaltes, particularite, queteDef, revelationDe, secretDef, strateDuSouvenir, voixDetail, type Voix } from '../core/strates';
 import { EXPLORER, rodeurDef, vestigesDe } from '../core/explorer';
 import { couleurFrequence } from './carte';
@@ -376,9 +376,10 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
 /** Sous le nom de la Strate : sa particularité, et la quête en cours (●●○) */
 function teteContenu(j: Jeu, x: Expedition): string {
   let h = '';
-  const p = particularite(x.strate);
+  const m = modeleDe(x), p = particularite(m);
   // une ligne chacune, sans phrase (28 octobre 2026, Bryan : écrans « surchargés pour rien ») ; la phrase est dans le récit d'entrée
-  if (p) h += `<span class="ex-partic" title="${echap(p.texte)}">${ICO.strate}<b>${echap(p.nom)}</b></span>`;
+  // (le Fond emprunte sa particularité chaque semaine à une Strate d'au-dessus : on le dit d'un mot)
+  if (p) h += `<span class="ex-partic" title="${echap(p.texte)}">${ICO.strate}<b>${echap(p.nom)}</b>${m !== x.strate ? `<small> · cette semaine</small>` : ''}</span>`;
   const q = queteDef(x.strate);
   const faites = j.quetes?.[x.strate] ?? 0;
   if (q && faites < q.etapes.length && x.carte!.salles.some((s) => s.quete)) {

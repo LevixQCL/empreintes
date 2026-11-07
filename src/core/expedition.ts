@@ -6,12 +6,14 @@ import { coupDeFuite, creerCombat } from './combat';
 import { CONDITIONS, ZONES, ennemiDef, porteurDef, sequenceStrate, zoneDe } from './donnees';
 import { tireur } from './rng';
 import { REGLES, analyserChaine } from './regles';
-import { CONTENU, SECRETS, nombreHaltes, particularite } from './strates';
+import { CONTENU, SECRETS, modeleStrate, nombreHaltes, particularite } from './strates';
 import { EXPLORER, STRATE_RODEUR, rodeurDef } from './explorer';
 import type { BonusMarques, CombatEtat, GesteDef, PorteurEtat } from './types';
 
 export interface Expedition {
   strate: number;
+  /** une Strate du Fond (−11 et plus bas) : la Strate dont elle emprunte cette semaine la particularité (strates.ts, FOND) */
+  modele?: number;
   sequence: string[];
   index: number;
   porteurs: PorteurEtat[];
@@ -392,7 +394,7 @@ export function visionSalle(x: Expedition, s: Salle): Vision {
   if (s.rang <= ici.rang) return x.carte.salles.some((v) => v.faite && v.voisins.includes(s.id)) ? proche : 'brume';
   if (ici.voisins.includes(s.id)) return proche;
   // −3, le noir complet (strates.ts) : même un Résonant n'y sent rien au-delà des salles voisines
-  const resonant = x.strate !== 3 && x.porteurs.some((p) => p.pv > 0 && porteurDef(p.id).lignee === 'reso');
+  const resonant = modeleDe(x) !== 3 && x.porteurs.some((p) => p.pv > 0 && porteurDef(p.id).lignee === 'reso');
   const portee = 1 + (x.strate <= REGLES.brouillard.loin ? 1 : 0) + (resonant ? 1 : 0);
   return s.rang - ici.rang <= portee ? 'indice' : 'brume';
 }
@@ -413,6 +415,9 @@ export const peutRemonter = (x: Expedition) => !!x.carte && x.phase === 'carte' 
 
 // plus de combats par descente (22 octobre 2026, Bryan voulait l'esprit Baten Kaitos) : ~6 au lieu de ~4, avec les 9 rangées
 const POIDS: [TypeSalle, number][] = [['combat', 58], ['cache', 10], ['rencontre', 13], ['elite', 9], ['camp', 5], ['archive', 5]];
+/** La Strate dont l'expédition suit la particularité (elle-même, ou celle qu'une Strate du Fond emprunte cette semaine) */
+export const modeleDe = (x: Pick<Expedition, 'strate' | 'modele'>) => x.modele ?? x.strate;
+
 /** La particularité d'une Strate change ses poids (strates.ts) : −4 deux fois plus de salles scellées, −6 plus d'archives */
 function poidsDe(strate: number): [TypeSalle, number][] {
   if (strate === 4) return POIDS.map(([t, p]) => [t, t === 'elite' ? 18 : t === 'combat' ? 49 : p]);
@@ -458,7 +463,8 @@ export const rangsDe = (c: CarteStrate) => Math.max(...c.salles.map((s) => s.ran
  * Une carte de Strate : l'entrée en haut, 2 ou 3 salles par rangée, et tout en bas le gardien
  * (ou, pour une fouille ciblée, le filon : une carte plus courte, sans gardien ni salle scellée).
  */
-export function genererCarte(strate: number, rng: number, garde?: string, fouille = false, contenu: { halte?: boolean; quete?: boolean; vestiges?: string[]; rodeur?: string; rangs?: number } = {}): CarteStrate {
+export function genererCarte(strate: number, rng: number, garde?: string, fouille = false, contenu: { halte?: boolean; quete?: boolean; vestiges?: string[]; rodeur?: string; rangs?: number; modele?: number } = {}): CarteStrate {
+  const modele = contenu.modele ?? strate;
   const etat = { rng: (rng ^ 0x27d4eb2f) >>> 0 };
   const t = tireur(etat);
   const z = zoneDe(strate);
@@ -469,7 +475,7 @@ export function genererCarte(strate: number, rng: number, garde?: string, fouill
   const rangs: number[][] = [];
   const halte = !fouille && !!contenu.halte;
   const RANGS = fouille ? (contenu.rangs ?? RANGS_FOUILLE) : RANGS_EXPEDITION + (halte ? 1 : 0);
-  const poids = poidsDe(strate);
+  const poids = poidsDe(modele);
   const vus = new Map<string, number>();
   for (let r = 0; r < RANGS; r++) {
     const seule = r === 0 || r === RANGS - 1 || (halte && r === RANG_HALTE);
@@ -531,7 +537,7 @@ export function genererCarte(strate: number, rng: number, garde?: string, fouill
     }
   }
   distinguerChemins(salles, pool, t);
-  particularites(salles, strate, rng, pool, fouille, !!contenu.quete);
+  particularites(salles, strate, modele, rng, pool, fouille, !!contenu.quete);
   if (!fouille) explorer(salles, rng, contenu.vestiges ?? [], contenu.rodeur);
   return { zone, salles, position: 0, rng: etat.rng };
 }
@@ -577,27 +583,27 @@ function explorer(salles: Salle[], rng: number, vestiges: readonly string[], rod
  * Le contenu des Strates (31 octobre 2026, strates.ts), posé après le reste avec un tirage à part : la particularité de la Strate,
  * la marque de sa quête, son passage secret et ses portes à Fréquence. Aucune salle n'est ajoutée : on change celles qui existent.
  */
-function particularites(salles: Salle[], strate: number, rng: number, pool: string[], fouille: boolean, quete: boolean) {
+function particularites(salles: Salle[], strate: number, modele: number, rng: number, pool: string[], fouille: boolean, quete: boolean) {
   const t = tireur({ rng: (rng ^ 0x1b873593) >>> 0 });
   const fond = Math.max(...salles.map((s) => s.rang));
   /** les salles du milieu, qu'on peut changer : ni l'entrée, ni le fond, ni la Halte, ni le campement garanti */
   const milieu = salles.filter((s) => s.rang > 0 && s.rang < fond && s.type !== 'halte' && !(s.type === 'camp' && s.rang === fond - 1 && s.col === 0));
   const prendre = (l: Salle[]) => (l.length ? l[t.entier(l.length)]! : undefined);
   const caches = () => milieu.filter((s) => s.type === 'cache' && !s.mur);
-  if (strate === 2) for (let k = 0; k < CONTENU.murs; k++) { const c = prendre(caches()); if (c) c.mur = true; }
-  if (strate === 7) {
+  if (modele === 2) for (let k = 0; k < CONTENU.murs; k++) { const c = prendre(caches()); if (c) c.mur = true; }
+  if (modele === 7) {
     for (let k = 0; k < CONTENU.doubles; k++) {
       const c = prendre(milieu.filter((s) => s.type === 'combat' && !s.escorte?.length && !s.double));
       const autres = pool.filter((e) => e !== c?.ennemi);
       if (c && autres.length) c.double = autres[t.entier(autres.length)]!;
     }
   }
-  if (strate === 8 && !fouille && !milieu.some((s) => s.rencontre === 'veilleur')) {
+  if (modele === 8 && !fouille && !milieu.some((s) => s.rencontre === 'veilleur')) {
     // un Veilleur égaré attend toujours sur le plan : une rencontre ou une cache, sinon un combat des premières rangées
     const c = prendre(milieu.filter((s) => s.type === 'rencontre')) ?? prendre(caches()) ?? prendre(milieu.filter((s) => s.type === 'combat' && s.rang <= 4));
     if (c) { c.type = 'rencontre'; c.rencontre = 'veilleur'; delete c.ennemi; delete c.escorte; delete c.condition; delete c.double; }
   }
-  if (strate === 9) {
+  if (modele === 9) {
     const rangees = [...new Set(milieu.map((s) => s.rang))].filter((r) => milieu.filter((s) => s.rang === r).length >= 2);
     const r = rangees.length ? rangees[t.entier(rangees.length)]! : -1;
     const ligne = milieu.filter((s) => s.rang === r).sort((a, b) => a.col - b.col);
@@ -667,12 +673,15 @@ export function nouvelleExploration(opts: {
   halte?: number | 'connu'; quete?: boolean;
   /** Explorer (explorer.ts) : les Vestiges encore à trouver dans la Strate, son Rôdeur, le gardien éveillé, la Strate relevée */
   vestiges?: string[]; rodeur?: { id: string; part: number }; eveille?: boolean; releve?: boolean;
+  /** la semaine en cours : la particularité qu'emprunte une Strate du Fond */
+  semaine?: number;
 }): Expedition {
+  const modele = modeleStrate(opts.strate, opts.semaine ?? 0);
   // les Vestiges de la carte : 2 jusqu'à −5, 3 plus bas, tirés parmi ceux qui manquent ; le suivant attend derrière le passage secret
   const manque = opts.fouille ? [] : tireur({ rng: (opts.rng ^ 0x2545f491) >>> 0 }).melanger([...(opts.vestiges ?? [])]);
   const n = opts.strate <= 5 ? EXPLORER.vestiges.haut : EXPLORER.vestiges.bas;
   const rodeur = opts.fouille ? undefined : opts.rodeur;
-  const carte = genererCarte(opts.strate, opts.rng, opts.garde, !!opts.fouille, { halte: !opts.fouille && opts.halte !== undefined, quete: !!opts.quete, vestiges: manque.slice(0, n), ...(rodeur ? { rodeur: rodeur.id } : {}), ...(opts.fouille && opts.rangs ? { rangs: opts.rangs } : {}) });
+  const carte = genererCarte(opts.strate, opts.rng, opts.garde, !!opts.fouille, { halte: !opts.fouille && opts.halte !== undefined, quete: !!opts.quete, vestiges: manque.slice(0, n), ...(rodeur ? { rodeur: rodeur.id } : {}), ...(opts.fouille && opts.rangs ? { rangs: opts.rangs } : {}), modele });
   const places = new Set(carte.salles.map((s) => s.vestige).filter(Boolean));
   const secret = manque.find((v) => !places.has(v));
   const traque = rodeur && carte.salles.some((s) => s.rodeur) ? rodeur : undefined;
@@ -681,11 +690,11 @@ export function nouvelleExploration(opts: {
   const attente = creerCombat({ porteurs: opts.porteurs, ennemiId: premier, rng: opts.rng, deck: opts.deck });
   attente.issue = 'victoire';
   return {
-    strate: opts.strate, sequence: [], index: -1, porteurs: opts.porteurs, deck: opts.deck, combat: attente,
+    strate: opts.strate, ...(modele !== opts.strate ? { modele } : {}), sequence: [], index: -1, porteurs: opts.porteurs, deck: opts.deck, combat: attente,
     butin: 0, terminee: false, cloture: true, carte, phase: 'carte', gagnes: 0, gains: gainsVides(),
     recit: opts.fouille
       ? `L’escouade descend fouiller ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Pas de gardien cette fois : le filon est au fond.`
-      : `L’escouade entre dans ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Choisis ton chemin : le gardien attend tout au fond.${particularite(opts.strate) ? ` ${particularite(opts.strate)!.nom}. ${particularite(opts.strate)!.texte}` : ''}${carte.salles.some((s) => s.quete) ? ` Une marque de quête ✦ brille quelque part sur le plan.` : ''}${places.size ? ` ${places.size > 1 ? `${places.size} Vestiges dorment` : 'Un Vestige dort'} sur le plan.` : ''}${traque ? ` ${rodeurDef(traque.id)!.traces}` : ''}`,
+      : `L’escouade entre dans ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Choisis ton chemin : le gardien attend tout au fond.${particularite(modele) ? ` ${modele !== opts.strate ? `Cette semaine, le Fond emprunte à la Strate −${modele} ${particularite(modele)!.nom.charAt(0).toLowerCase()}${particularite(modele)!.nom.slice(1)}.` : `${particularite(modele)!.nom}.`} ${particularite(modele)!.texte}` : ''}${carte.salles.some((s) => s.quete) ? ` Une marque de quête ✦ brille quelque part sur le plan.` : ''}${places.size ? ` ${places.size > 1 ? `${places.size} Vestiges dorment` : 'Un Vestige dort'} sur le plan.` : ''}${traque ? ` ${rodeurDef(traque.id)!.traces}` : ''}`,
     ...(opts.fouille ? { fouille: opts.fouille } : {}),
     ...(opts.fouille && opts.difficulte ? { difficulte: opts.difficulte } : {}),
     ...(opts.facteur && opts.facteur !== 1 ? { facteur: opts.facteur } : {}),
@@ -805,7 +814,7 @@ export function entrerSalle(x: Expedition, id: number, second = false): { x: Exp
       // −2 : une cache murée, qu'un Augmenté debout force (le double) ; −5 : une niche, où dort parfois une carte (strates.ts)
       const force = salle.mur && y.porteurs.some((p) => p.pv > 0 && porteurDef(p.id).lignee === 'tech');
       const n = butinCache(x.strate) * (force ? 2 : 1);
-      const niche = x.strate === 5;
+      const niche = modeleDe(x) === 5;
       const carte = niche && t.nombre() < CONTENU.niche;
       const eclat = !niche && x.strate >= 3 && t.nombre() < 0.3;
       const gains = { ...(y.gains ?? gainsVides()), eclats: (y.gains?.eclats ?? 0) + (eclat ? 1 : 0), cartes: (y.gains?.cartes ?? 0) + (carte ? 1 : 0) };

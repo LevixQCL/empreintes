@@ -3,7 +3,7 @@
 
 import { batimentDef, porteurDef, PORTEURS, BATIMENTS, CARTE_CHAMBRE, CLE_LEGS, CARTES_COMMUNES, RATELIER_DEPART, communeDef, forceCommune, type CarteCommuneDef, MODULES, moduleDe, moduleDef, ennemiDef, zoneDe } from '../donnees';
 import { type Expedition, cloturerCombat, combatSuivant, entrerSalle, fuirAuDistrict, lancerCombat, nouvelleExpedition, peutRemonter, reculer, salleCourante, forceStrate, nouvelleExploration, type CibleFouille, butinCombat, butinCache, halteSuivante, ouvrirPorte as ouvrirPorteX, relancerPorte as relancerPorteX, passerPorte as passerPorteX, suivrePassage as suivrePassageX, RANG_HALTE, devoilerApresHalte } from '../expedition';
-import { RECIT_CARTE, halteDef, queteDef, type HalteDef } from '../strates';
+import { FOND, RECIT_CARTE, estFond, halteDef, queteDef, type HalteDef } from '../strates';
 import { ETOILES, EXPLORER, PALIERS_ETOILES, RODEURS, metalEveille, rodeurDeZone, type EtoileId, vestigesDe } from '../explorer';
 import { ZONES, sequenceStrate, gesteDeCarte, GESTES_SPECIAUX, carteId } from '../donnees';
 import type { GesteDef, BonusMarques, PorteurEtat, Rarete, Lignee } from '../types';
@@ -893,8 +893,10 @@ export function remonter(j: Jeu): Retour {
     // le gardien est généreux (24 octobre 2026, Bryan : « toujours des cartes fer, on est un peu radin ») :
     // à partir de la Strate −3, la première des trois cartes est au moins en cuivre
     // le gardien éveillé d'une Strate déjà vaincue (explorer.ts) monte d'un cran : cuivre, argent dès −3, or à −9
-    j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, x.eveille ? metalEveille(x.strate) : x.strate >= 3 ? 'cuivre' : 'fer') });
-    eclats += (x.strate >= 5 ? 2 : 1) + (j.actes.chambre === 'orseve' ? 1 : 0) + (x.eveille ? EXPLORER.eveille.eclats : 0);
+    // le gardien d'une Strate du Fond (strates.ts, FOND) paie en Éclats et en cartes : un choix en argent au moins, et des Éclats
+    const fond = estFond(x.strate);
+    j.choix.push({ source: 'boss', options: tirerChoix(j, x.strate, x.eveille ? metalEveille(x.strate) : fond ? 'argent' : x.strate >= 3 ? 'cuivre' : 'fer') });
+    eclats += (x.strate >= 5 ? 2 : 1) + (j.actes.chambre === 'orseve' ? 1 : 0) + (x.eveille ? EXPLORER.eveille.eclats : 0) + (fond ? FOND.eclatsGardien : 0);
     progresser(j, 'expedition');
   }
   if (victoire && x.strate === j.strate && !j.frontVaincu) {
@@ -908,7 +910,8 @@ export function remonter(j: Jeu): Retour {
     // dans les Seuils, les abris des années 2060 rendent deux papiers par Strate
     if (x.strate <= 3) ajouterFragment(j);
     j.composants += 20;
-    cartes.push(tirerTrouvaille(j, x.strate));
+    // le premier gardien vaincu d'une Strate du Fond laisse une carte en or (strates.ts, FOND)
+    cartes.push(tirerTrouvaille(j, x.strate, estFond(x.strate) ? 'or' : 'fer'));
     eclats += 2;
   }
   // 31 octobre 2026 (Luc : « 6 / 6 creuseurs, tout est prêt » mais la Strate −6 ne s'ouvrait pas) : les creuseurs gagnés
@@ -1143,7 +1146,7 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   // le Rôdeur ne rôde que dans les Strates déjà vaincues : le front garde sa difficulté
   const rodeur = gardienEveille(j, strate) ? rodeurDispo(j, strate) : undefined;
   j.expedition = nouvelleExploration({
-    porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1,
+    porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: j.actes.fin === 'scellement' ? 0.9 : 1, semaine: semaineDe(j.dernierTick),
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}),
     ...(halte !== undefined ? { halte } : {}), quete: queteOuverte(j, strate),
     vestiges: vestigesManquants(j, strate), eveille: gardienEveille(j, strate),
@@ -1191,7 +1194,7 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
   if (strate < 1 || strate > strateVaincue(j)) return non('On ne fouille que les Strates déjà vaincues.');
   quitterPostes(j, escouade);
   j.expedition = nouvelleExploration({
-    porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: (j.actes.fin === 'scellement' ? 0.9 : 1) * d.force, fouille: cible,
+    porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: (j.actes.fin === 'scellement' ? 0.9 : 1) * d.force, fouille: cible, semaine: semaineDe(j.dernierTick),
     difficulte, rangs: d.rangs,
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}), quete: queteOuverte(j, strate), releve: strateRelevee(j, strate),
   });

@@ -6,8 +6,8 @@
 import { ECLATS, PHASES3, eclatsPossibles, enGroupe, felureVisible, tousEnnemis, traitsEnJeu } from './combat';
 import { CONDITIONS, ennemiDef, texteTrait } from './donnees';
 import type { CombatEtat, Trait } from './types';
-import { reperentPassage, suitePorte, type Expedition } from './expedition';
-import { PALIERS_BESTIAIRE, particularite, queteDef } from './strates';
+import { modeleDe, reperentPassage, suitePorte, type Expedition } from './expedition';
+import { FOND, PALIERS_BESTIAIRE, estFond, particularite, queteDef } from './strates';
 
 export interface Decouverte {
   id: string;
@@ -135,8 +135,13 @@ const CONSEILS_PARTICULARITE: Record<number, string> = {
 export function decouvertesExploration(x: Expedition, quetes: Record<number, number> = {}): Decouverte[] {
   const r: Decouverte[] = [];
   if (!x.carte || x.tutoriel || x.epreuve || x.pillage || x.fleche) return r;
-  const p = particularite(x.strate);
-  if (p) {
+  const m = modeleDe(x), p = particularite(m);
+  if (estFond(x.strate)) {
+    // le Fond (strates.ts, FOND) : expliqué une fois, à la première descente sous −10
+    r.push({ id: 'fond', sur: `STRATE −${x.strate} · LE FOND`, titre: 'Le Fond change chaque semaine', ico: 'strate',
+      texte: `Sous −10, les Strates n’ont plus de façon d’être à elles. Chaque semaine, chacune emprunte celle d’une Strate d’au-dessus, et en change le lundi.${p ? ` Ici, cette semaine : ${p.nom.charAt(0).toLowerCase()}${p.nom.slice(1)} (Strate −${m}).` : ''}`,
+      conseil: `Le gardien du Fond paie mieux : un choix de cartes en argent et ${FOND.eclatsGardien} Éclats de plus à chaque victoire, une carte en or la première fois.` });
+  } else if (p) {
     r.push({ id: `strate-${x.strate}`, sur: `STRATE −${x.strate} · SA PARTICULARITÉ`, titre: p.nom, ico: 'strate',
       texte: `Chaque Strate a sa façon d’être. Ici : ${p.texte.charAt(0).toLowerCase()}${p.texte.slice(1)} Elle reste rappelée sous le nom de la Strate.`,
       conseil: CONSEILS_PARTICULARITE[x.strate] ?? '' });

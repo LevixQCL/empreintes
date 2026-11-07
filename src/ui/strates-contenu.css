@@ -169,3 +169,4 @@
 .ex-quete-trouvee small{display:block;opacity:.75;font-size:var(--t-min)}
 @keyframes ex-qt-in{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.ex-quete-trouvee{animation:none}}
+.ex-partic small{font-size:12px;opacity:.75;font-weight:400}

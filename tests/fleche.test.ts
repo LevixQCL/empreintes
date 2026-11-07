@@ -105,7 +105,7 @@ describe('Tenir un quai et défier les gardiens', () => {
   it('le gage court, plafonné à une semaine ; changer de quai verse le précédent', () => {
     const j = surQuai(20);
     tenirQuai(j, ESC, 20, 0);
-    expect(gageJour(20)).toEqual({ composants: 90, eclats: 0 });
+    expect(gageJour(20)).toEqual({ composants: 90, eclats: 1 });
     expect(gageEnCaisse(j, 12 * H).composants).toBe(45);
     expect(gageEnCaisse(j, 10 * 24 * H).composants).toBe(90 * 7);
     const avant = j.composants;
