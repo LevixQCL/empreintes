@@ -16,7 +16,7 @@ import type { Geste, GesteDef, Lignee, TypeEffet, TypeGeste } from '../core/type
 import { textureMetal } from './art';
 import { COULEUR_RARETE, ICONES_ACTION, SIGNE_LOURD, couleurFrequence, faceCarte } from './carte';
 import { NOM_LIGNEES, avatar } from './coquille';
-import { ICO } from './icones';
+import { ICO, baseIcones } from './icones';
 import { COULEUR, geste } from './vue';
 import { echap } from './outils';
 import { avecMots, ongletGlossaire } from './lexique';
@@ -133,13 +133,13 @@ function echelleFrequences(): string {
 function triangle(): string {
   const bonus = Math.round((REGLES.bonusLignee - 1) * 100);
   const noeud = (x: number, y: number, l: Lignee) =>
-    `<g transform="translate(${x} ${y})"><circle r="25" fill="var(--bg-2)" stroke="${COULEUR[l]}" stroke-width="1.5"/><text y="4" text-anchor="middle" fill="${COULEUR[l]}">${NOM_LIGNEES[l].slice(0, -1)}</text></g>`;
+    `<g transform="translate(${x} ${y})"><circle r="25" fill="var(--bg-2)" stroke="${COULEUR[l]}" stroke-width="1.5"/><image href="${baseIcones}lignee-${l}.webp" x="-17" y="-17" width="34" height="34"/><text y="40" text-anchor="middle" fill="${COULEUR[l]}">${NOM_LIGNEES[l].slice(0, -1)}</text></g>`;
   // une flèche de a vers b, raccourcie pour ne pas entrer dans les cercles
   const fleche = (ax: number, ay: number, bx: number, by: number) => {
     const d = Math.hypot(bx - ax, by - ay), ux = (bx - ax) / d, uy = (by - ay) / d;
     return `<line x1="${ax + ux * 31}" y1="${ay + uy * 31}" x2="${bx - ux * 33}" y2="${by - uy * 33}" marker-end="url(#g-pointe)"/>`;
   };
-  return `<svg class="g-triangle" viewBox="0 0 240 172" role="img" aria-label="Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : plus ${bonus} % de dégâts">`
+  return `<svg class="g-triangle" viewBox="0 0 240 190" role="img" aria-label="Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : plus ${bonus} % de dégâts">`
     + `<defs><marker id="g-pointe" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--gold)"/></marker></defs>`
     + `<g class="g-fleches">${fleche(120, 30, 205, 142)}${fleche(205, 142, 35, 142)}${fleche(35, 142, 120, 30)}</g>`
     + `<text class="g-bonus" x="120" y="104" text-anchor="middle">+${bonus} %</text>`

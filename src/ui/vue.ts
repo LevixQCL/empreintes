@@ -12,7 +12,8 @@ import { DISTRICT, PILLAGE } from '../core/jeu';
 import { portraitProvisoire, ageArchipel, artGardien, fondFleche, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, cadragePortrait, sceneDistrict } from './art';
 import { SIGNE_LOURD, corpsFace, couleurFrequence, styleFace, type Face } from './carte';
 import { sonActif } from './impact';
-import { ICO } from './icones';
+import { ICO, sigle } from './icones';
+import { NOM_LIGNEES } from './coquille';
 import type { Decouverte } from '../core/decouvertes';
 import { feuilleGuide, lienGuide, type OngletGuide } from './guide';
 import { echap } from './outils';
@@ -349,7 +350,7 @@ function regles(): string {
     + `<li><span class="signe-lourd">${SIGNE_LOURD}</span> <b>Deux places</b> : cette carte est puissante mais occupe deux places.</li>`
     + '<li><b>La force</b> écrite sur la carte est celle qui tombera, tous bonus et malus compris : <b style="color:#f2c870">dorée</b> si la carte est renforcée, <b style="color:#a99bc4;text-decoration:underline dotted">gris-violet en pointillés</b> si elle est affaiblie ; la couleur de l’action ne change pas. Garde le doigt dessus pour voir le détail.</li>'
     + '<li><b>Les effets</b> (Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.</li>'
-    + '<li><b>Le triangle des lignées :</b> les Augmentés battent les Résonants, les Résonants battent les Génés, les Génés battent les Augmentés (+15 %).</li>'
+    + `<li><b>Le triangle des lignées :</b> les Augmentés ${sigle('tech')} battent les Résonants ${sigle('reso')}, les Résonants battent les Génés ${sigle('bio')}, les Génés battent les Augmentés (+${Math.round((REGLES.bonusLignee - 1) * 100)} %). Sous le nom de l’ennemi, « Faible » et un symbole : la lignée qui le bat.</li>`
     + '<li><b>L’ennemi annonce son attaque</b> en haut de l’écran : protège-toi ou finis-le avant.</li>'
     + '<li><b>Les traits</b> des ennemis sont écrits sous leur nom (Blindé, Évanescent, Épines…) : touche-les pour lire ce qu’ils font. Les gardiens changent de gestes à mi-vie et appellent de l’aide.</li>'
     + '<li><b>Les conditions de salle</b> (inondée, éboulis, brouillard…) s’affichent en haut, et sur la carte avant d’entrer.</li>'
@@ -762,7 +763,7 @@ function htmlEcranCombat(e: Ecran): string {
 
     + vignettesGroupe(e)
     + plaqueIntention(s, classeIntention, iconeIntention, felureHtml)
-    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[lig]}">${echap(e.x.fleche ? `GARDIENS · QUAI ${e.x.fleche.quai}` : e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}">Faible contre <b>${NOMS_LIGNEE[faible].court}</b></span>`
+    + `<div class="ennemi-infos"><div class="tags"><span class="tag" style="--c:${COULEUR[lig]}">${echap(e.x.fleche ? `GARDIENS · QUAI ${e.x.fleche.quai}` : e.x.pillage ? `GARNISON · ${e.x.pillage.nom}` : def.tag)}</span><span class="faible" style="--c:${COULEUR[faible]}" tabindex="0" role="img" title="Point faible : les cartes ${NOM_LIGNEES[faible]} lui font +${Math.round((REGLES.bonusLignee - 1) * 100)} %" aria-label="Faible contre les ${NOM_LIGNEES[faible]}"><span class="faible-mot" aria-hidden="true">Faible</span>${sigle(faible)}</span>`
       // le Rôdeur (explorer.ts) : il s'enfuit à la fin de son dernier tour ; le compte à rebours reste sous les yeux
       // Épreuve « Avant l'extinction » : les tours qui restent pour abattre le gardien
       + (s.chrono && s.issue === 'en-cours' ? `<span class="fuyard chrono" title="Passé le tour ${s.chrono}, l’Épreuve est perdue.">${ICO.griffes}${s.tour >= s.chrono ? 'Dernier tour !' : `S’éteint dans ${s.chrono - s.tour + 1} tours`}</span>` : '')

@@ -141,7 +141,7 @@
   .ecran-combat .int-val small{font-size:var(--t-min)}
   .ecran-combat .ennemi-infos{left:20px;right:20px;bottom:18px;gap:8px}
   .ecran-combat .ennemi-infos .tag{padding:4px 9px;font-size:12px}
-  .ecran-combat .ennemi-infos .faible{font-size:15px}
+  .ecran-combat .ennemi-infos .faible{font-size:13px}.ecran-combat .ennemi-infos .faible .sigle{width:28px;height:28px}
   .ecran-combat .traits .trait{padding:3px 9px;font-size:12px}
   .ecran-combat .vie-ennemi .jauge-vie.je{--h:24px}
   .ecran-combat .je-valeur{min-width:84px;padding:4px 10px}
@@ -252,7 +252,7 @@
   .ecran-combat .int-val small{font-size:var(--t-min)}
   .ecran-combat .ennemi-infos{left:26px;right:26px;bottom:24px}
   .ecran-combat .ennemi-nom{font-size:42px}
-  .ecran-combat .ennemi-infos .faible{font-size:17px}
+  .ecran-combat .ennemi-infos .faible{font-size:14px}.ecran-combat .ennemi-infos .faible .sigle{width:32px;height:32px}
   .ecran-combat .je-valeur b{font-size:21px}
 }
 

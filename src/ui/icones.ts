@@ -1,3 +1,4 @@
+import type { Lignee } from '../core/types';
 // Icônes de l'interface (refaites le 3 novembre 2026, matière « cristal et lumière ») : grille de 24, trait de 1,7, arrondis.
 // Chaque icône a un corps en verre teinté (classe v), un reflet de lumière (r), parfois une touche d'or (o) ou un plein (p).
 // Elles prennent la couleur du texte (currentColor) : la couleur se règle en CSS (styles.css, « .ico »).
@@ -111,6 +112,14 @@ const PEINTES = new Set<Icone>(['energie', 'composants', 'eclats', 'strate', 'di
   // le contenu des Strates et Explorer (31 octobre 2026)
   'halte', 'porte', 'quete', 'fissure', 'mur', 'fil', 'bestiaire', 'vestige', 'griffes']);
 export const baseIcones = new URL('art/icones/', document.baseURI).href;
+
+// ---------- Les symboles des trois lignées (7 novembre 2026, Bryan) ----------
+// Hexagone d'implant (Augmentés), feuille de chitine (Génés), flamme d'améthyste à mèche d'or (Résonants) :
+// trois silhouettes différentes, lisibles même à 16 px et sans compter sur la couleur. Ils remplacent « Faible contre… ».
+/** Le symbole d'une lignée ; `nom` le rend lisible aux lecteurs d'écran (sinon purement décoratif) */
+export function sigle(l: Lignee, nom = false): string {
+  return `<img class="sigle" src="${baseIcones}lignee-${l}.webp" alt="${nom ? { tech: 'Augmentés', bio: 'Génés', reso: 'Résonants' }[l] : ''}"${nom ? '' : ' aria-hidden="true"'} decoding="async">`;
+}
 
 /** L'icône peinte si elle existe, sinon le trait SVG */
 export function icone(nom: Icone): string {

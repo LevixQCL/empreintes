@@ -24,7 +24,7 @@ import { COLLECTION } from '../core/collection';
 import { REGLES } from '../core/regles';
 import { decorStrate, illustrationEnnemi, portrait, iconeCondition, portraitProvisoire } from './art';
 import { COULEUR, htmlLieu } from './vue';
-import { ICO, baseIcones, icone } from './icones';
+import { ICO, baseIcones, icone, sigle } from './icones';
 import { echap } from './outils';
 
 const NOMS: Record<TypeSalle, string> = {
@@ -116,14 +116,14 @@ function annonce(s: Salle, x: Expedition): { sur: string; titre: string; texte: 
     const d = ennemiDef(s.ennemi);
     const reste = Math.round((x.rodeur?.part ?? 1) * 100);
     return { sur: 'Rôdeur', titre: d.nom, texte: rodeurDef(s.rodeur)?.traces ?? d.tag,
-      faits: [`il s’enfuit au bout de <b>${EXPLORER.rodeur.tours} tours</b>`, `il lui reste <b>${reste} %</b> de sa vie`, `faible contre <b class="ex-lignee" style="--c:${COULEUR[BATTU_PAR[d.lignee]]}">${NOMS_LIGNEE[BATTU_PAR[d.lignee]].nom}</b>`, `abattu : ${or('1 trophée')}`] };
+      faits: [`il s’enfuit au bout de <b>${EXPLORER.rodeur.tours} tours</b>`, `il lui reste <b>${reste} %</b> de sa vie`, `faible contre <b class="ex-lignee" style="--c:${COULEUR[BATTU_PAR[d.lignee]]}">${sigle(BATTU_PAR[d.lignee])}${NOMS_LIGNEE[BATTU_PAR[d.lignee]].nom}</b>`, `abattu : ${or('1 trophée')}`] };
   }
   if (s.ennemi) {
     const d = ennemiDef(s.ennemi);
     const faible = BATTU_PAR[d.lignee];
     const pv = pvEnnemis(s, x);
     const faits = [`<span class="ex-pv"><b>${pv.join(' + ')}</b> PV</span>`];
-    if (!s.escorte?.length) faits.push(`faible contre <b class="ex-lignee" style="--c:${COULEUR[faible]}">${NOMS_LIGNEE[faible].nom}</b>`);
+    if (!s.escorte?.length) faits.push(`faible contre <b class="ex-lignee" style="--c:${COULEUR[faible]}">${sigle(faible)}${NOMS_LIGNEE[faible].nom}</b>`);
     if (s.type === 'gardien') return { sur: 'Gardien de la zone', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 2)}`)} composants · fin de la Strate`] };
     if (s.type === 'elite') return { sur: 'Salle scellée', titre: d.nom, texte: 'Plus coriace, mais une carte dort derrière.', faits: [...faits, `${or(`+${Math.round(butinCombat(x.strate, 0) * 1.7)}`)} composants · ${or('1 carte')}`] };
     if (s.escorte?.length) return { sur: `Combat · ${s.escorte.length + 1} ennemis`, titre: titreGroupe(s), texte: 'Ils viennent ensemble : choisis qui frapper.', faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`, enPlus] };

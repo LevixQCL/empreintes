@@ -16,7 +16,7 @@ import { ICONES_ACTION, couleurFrequence, faceCarte } from './carte';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, voletsEscouade, type EcranDistrict } from './coquille';
 import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugeCharge, jaugePv, plusLongueSuite } from './district';
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
-import { ICO } from './icones';
+import { ICO, sigle } from './icones';
 import { COULEUR } from './vue';
 import { echap, virgule, texteReplie } from './outils';
 
@@ -248,7 +248,7 @@ function blocPorteur(j: Jeu, id: string | undefined, i: number, verrou: string |
     + `<button type="button" class="eq-portrait" data-action="porteur" data-id="${id}" aria-label="Fiche ${echap(deNom(p.nom))}">${img ? `<img src="${img}" alt="" decoding="async">` : avatar(id, 64)}<span class="eq-rang" aria-hidden="true">${i + 1}</span></button>`
     + `<div class="eq-id"><button type="button" class="eq-nom" data-action="porteur" data-id="${id}"><strong>${echap(p.nom)}</strong><small>${NOM_LIGNEE[p.lignee]} · Niv. ${n.niveau}</small></button>`
     + `<span class="eq-pv">${jaugePv(pv, pvM, d.usure, usureMax(j, id))}<small><b>${pv}</b> / ${pvM} PV</small></span>`
-    + `<small class="eq-fort" style="--l:${COULEUR[bat]}">Fort contre les <b>${NOM_LIGNEES[bat]}</b></small></div>`
+    + `<small class="eq-fort" style="--l:${COULEUR[bat]}">Fort contre les ${sigle(bat)}<b>${NOM_LIGNEES[bat]}</b></small></div>`
     + (verrou ? '' : `<button type="button" class="eq-changer" data-action="escouade-place" data-index="${i}" aria-label="Changer ${echap(p.nom)}">${ICO.recycler}<span>Changer</span></button>`)
     + `</header>`
     + blocMarque(j, id) + alerte
@@ -567,8 +567,8 @@ export function feuillePorteur(e: EcranDistrict): string {
   h += `<section class="fp-bloc"><h3 class="fp-h3">${ICO.porteurs}Sa lignée · ${NOM_LIGNEE[p.lignee]}</h3>`
     + `<p class="fp-texte">${echap(p.nom)} porte les cartes <b style="color:color-mix(in srgb,${c} 55%,white)">${CARTES_DE[p.lignee]}</b> : Fréquences <b class="mono">${plageFrequences(p.lignee).replace(' à ', '</b> à <b class="mono">')}</b>${effets.length ? `, surtout ${effets.join(', ')}` : ''}.</p>`
     + `<div class="fp-duel">`
-    + `<div class="fp-duel-l bat" style="--l:${COULEUR[bat]}"><span>Fort contre les</span><strong>${NOM_LIGNEES[bat]}</strong><b>+${bonus}<i>%</i></b><small>de dégâts pour ses cartes</small></div>`
-    + `<div class="fp-duel-l craint" style="--l:${COULEUR[craint]}"><span>Faible contre les</span><strong>${NOM_LIGNEES[craint]}</strong><b>+${bonus}<i>%</i></b><small>de dégâts reçus</small></div>`
+    + `<div class="fp-duel-l bat" style="--l:${COULEUR[bat]}"><span>Fort contre les</span><strong>${sigle(bat)}${NOM_LIGNEES[bat]}</strong><b>+${bonus}<i>%</i></b><small>de dégâts pour ses cartes</small></div>`
+    + `<div class="fp-duel-l craint" style="--l:${COULEUR[craint]}"><span>Faible contre les</span><strong>${sigle(craint)}${NOM_LIGNEES[craint]}</strong><b>+${bonus}<i>%</i></b><small>de dégâts reçus</small></div>`
     + `</div></section>`;
 
   // ---------- au district : son poste ----------
