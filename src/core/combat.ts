@@ -1550,7 +1550,10 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
   const rang = en.rang ?? 0;
   en.bouclier = 0;
   const allie = (it.type === 'soin' || it.type === 'bouclier') && it.allie ? allieDe(s, en) : undefined;
-  if (it.type === 'appel' && it.rompu) {
+  if ((it.type === 'soin' || it.type === 'bouclier') && it.allie && !allie) {
+    // l'allié visé est tombé pendant la chaîne : l'intention se perd (le joueur ne doit pas être puni d'avoir bien joué)
+    log(s, `${e.nom} : plus personne à ${it.type === 'soin' ? 'soigner' : 'couvrir'}, son geste se perd.`, { sorte: 'info' });
+  } else if (it.type === 'appel' && it.rompu) {
     log(s, `${e.nom} · ${it.nom} : personne ne répond, la Fêlure a rompu l’appel.`, { sorte: 'info' });
   } else if (it.type === 'appel') {
     const r = ennemiDef(en.id).phase?.renforts?.[0] ?? 'remanent';
@@ -1669,7 +1672,9 @@ function invoquer(s: CombatEtat, id: string, part: number, emettre: (ev: Eveneme
   const pv = Math.max(1, Math.round(ennemiDef(id).pvMax * base * part));
   // un renfort à rôle (3ᵉ phase) frappe ou soigne moins fort qu'un ennemi seul (REGLES.troisiemePhase.renfortForce)
   const force = role ? base * REGLES.troisiemePhase.renfortForce : base * part;
-  const en: EnnemiEtat = { id, pv, pvMax: pv, force, bouclier: 0, etape: 0, boost: 1, rang, rejeton: true, ...(role ? { role } : {}) };
+  const en: EnnemiEtat = { id, pv, pvMax: pv, force, bouclier: 0, etape: 0, boost: 1, rang, rejeton: true, ...(role ? { role } : {}),
+    // un renfort suit les réglages de la Strate, comme le gardien qui l'appelle (pas de traits avant −4, etc.)
+    ...(s.ennemi.simple ? { simple: true } : {}), ...(s.ennemi.sansTraits ? { sansTraits: true } : {}), ...(s.ennemi.sansAssimilation ? { sansAssimilation: true } : {}) };
   s.autres.push(en);
   choisirIntention(s, en);
   log(s, `${ennemiDef(id).nom} surgit.`, { camp: 'ennemi', sorte: 'info' });

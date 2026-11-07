@@ -412,7 +412,7 @@ export const BATIMENTS: BatimentDef[] = [
   // 23 octobre 2026 : le « acheter » de « forger, acheter ou combattre ». Il commence au niveau 0 : on le construit.
   { id: 'comptoir', nom: 'Comptoir', role: 'Les fouilleurs du quartier y revendent chaque jour quelques cartes trouvées dans les Strates. Prix fixes : tu vois toujours ce que tu achètes.', affinite: null,
     couts: [{ energie: 150, composants: 20 }, { energie: 220, composants: 30 }, { energie: 480, composants: 60, eclats: 2 }, { energie: 950, composants: 115, eclats: 5 }, { energie: 1500, composants: 180, eclats: 8 },
-      { energie: 2400, composants: 290, eclats: 5 }, { energie: 3800, composants: 450, eclats: 6 }, { energie: 5900, composants: 690, eclats: 8 }, { energie: 9000, composants: 1030, eclats: 10 }], niveauMax: 10 },
+      { energie: 2400, composants: 290, eclats: 5 }, { energie: 3800, composants: 450, eclats: 6 }, { energie: 5900, composants: 690, eclats: 8 }, { energie: 9000, composants: 1030, eclats: 10 }, { energie: 13100, composants: 1480, eclats: 12 }], niveauMax: 10 },
   // 3 novembre 2026 (Bryan) : le bâtiment social, à la place du Labo génétique (mis en réserve). Il commence au niveau 0
   // et ne se construit qu'après la Strate −2 (CERCLE_OUVERTURE) : amis, vitrines, duels entre directeurs, échanges de cartes.
   { id: 'cercle', nom: 'Cercle des quais', role: 'Les directeurs des autres districts y accostent : on s’y fait des amis, on s’y défie en duel et on y échange ses cartes en double.', affinite: null,
