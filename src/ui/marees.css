@@ -139,3 +139,14 @@
 .rm-equipe>*+*{margin-left:-10px}
 .rm-contrat.reussi h2{color:#F2D58C}
 .rm-contrat.manque h2{color:#CDEFFF}
+
+/* ---------- PC (7 novembre 2026) : le volet prend toute la largeur ; le contrat en deux colonnes,
+   la ruine peinte à gauche, les épreuves et le départ à droite (avant : une colonne étroite et la moitié droite vide) ---------- */
+@media (min-width:1100px) and (min-height:600px){
+  .pl-marees{grid-column:1 / -1}
+  .mr-contrat{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);column-gap:24px;align-items:start;padding:14px 16px 16px 0}
+  .mr-contrat > .mr-tete{grid-column:1;grid-row:1 / span 8;align-self:stretch;align-content:end;min-height:360px;margin:-14px 0 -16px;padding:28px 22px 22px;border-bottom:0}
+  .mr-contrat > :not(.mr-tete){grid-column:2}
+  .mr-tete h3{font-size:26px}
+  .mr-ambiance{font-size:15px;max-width:42ch}
+}

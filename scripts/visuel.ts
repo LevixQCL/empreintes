@@ -100,7 +100,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'combat', sauvegarde: 'combat', faire: async (p) => { await ENTRER(p); await p.click('[data-action="salle"]'); await p.waitForTimeout(600); } },
   { nom: 'debut', sauvegarde: 'debut', faire: ENTRER },
 ];
-const TAILLES = [[390, 844], [1280, 800]] as const;
+// VISUEL_TAILLES=1280x800,1920x1080 : d'autres tailles d'écran (par défaut, un téléphone et un PC)
+const TAILLES = (process.env.VISUEL_TAILLES?.split(',').map((t) => t.split('x').map(Number) as [number, number]) ?? [[390, 844], [1280, 800]]) as readonly (readonly [number, number])[];
 
 /** Ce que l'on compte sur chaque écran (seulement ce qui est visible dans la fenêtre) */
 type Mesure = { petits: string[]; coupes: string[]; cibles: string[]; plex: number };
