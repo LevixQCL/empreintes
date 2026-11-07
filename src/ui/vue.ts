@@ -458,14 +458,15 @@ function ligneFelure(s: CombatEtat, prevue: boolean, resonne: boolean): string {
   const reduit = (v: number) => Math.round(v * (1 - partFelure(en)));
   const force = it.type === 'atk' ? puissance(en) * usureCombat(s).attaque * avantageAnnonce(s) : 1;
   const chiffre = (v: number) => Math.round(v * force);
-  const effet = it.type === 'atk' ? `${chiffre(it.v)} → <b>${chiffre(reduit(it.v))}</b> dégâts`
+  const effet = it.type === 'atk' ? `${chiffre(it.v)} → <b>${chiffre(reduit(it.v))}</b><span class="fl-u"> dégâts</span>`
     : it.type === 'bouclier' ? `bouclier +${it.v} → <b>+${reduit(it.v)}</b>`
     : it.type === 'soin' ? `soin +${it.v} → <b>+${reduit(it.v)}</b>`
     : 'sans effet sur ce qu’il prépare';
   // le Flux en plus ne s'annonce que quand la chaîne posée fait une suite (3, 4, 5) : avant, la ligne dit juste ce que la carte brise
   const flux = prevue && resonne && s.flux < REGLES.fluxMax ? `, <b class="gain-flux">+${REGLES.felure.flux} Flux</b>` : '';
   return `<span class="int-felure${prevue ? ' prevue' : ''}" style="--fc:${couleurFrequence(f)}"><span class="gemme">${ICO.fele}<b>${f}</b></span>`
-    + `<span>${prevue ? '<b>Ta chaîne la brise</b>' : `Pose un <b class="freq">${f}</b>`} : ${effet}${flux}</span></span>`;
+    // la phrase entière sur PC ; sur téléphone, seulement le chiffre (la gemme dit déjà quelle Fréquence) : combat-table.css
+    + `<span class="fl-txt"><span class="fl-mot">${prevue ? '<b>Ta chaîne la brise</b>' : `Pose un <b class="freq">${f}</b>`} : </span>${effet}${flux}</span></span>`;
 }
 
 /**
@@ -753,7 +754,7 @@ function htmlEcranCombat(e: Ecran): string {
   const gardien = estGardien(def.id) && !s.ennemi.porteur;
   // l'arène (7 novembre 2026, Bryan) : l'illustration de l'ennemi descend en fond jusqu'à la ligne de l'escouade, la chaîne
   // se pose au milieu comme une table ; l'escouade, le Flux et la main viennent dessous (sur PC, l'arène s'efface : display:contents)
-  h += `<div class="arene">`;
+  h += `<div class="arene"${ill ? ` style="--art:url(${ill})"` : ''}>`;
   h += `<section class="scene-ennemi l-${lig}${gardien ? ' gardien' : ''}${enGroupe(s) ? ' en-groupe' : ''}${s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? ' fele' : ''}" style="--fond:${FONDS[def.id] ?? '#2A2438'};--ng:${tousEnnemis(s).length}" aria-label="Ennemi">`
     + (ill ? `<img class="ennemi-art${portraitProvisoire(def.id) ? ' provisoire' : ''}${s.issue === 'victoire' && !s.enfui ? ' dissous' : ''}${s.ennemi.porteur ? ' garde' : ''}" src="${ill}" alt="" decoding="async">` : `<span class="ennemi-art sans" aria-hidden="true"></span>`)
     + (s.ennemi.pv > 0 && s.ennemi.pv / s.ennemi.pvMax <= 0.25 ? '<span class="fele-trait" aria-hidden="true"></span>' : '')
