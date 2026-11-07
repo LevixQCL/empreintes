@@ -2,14 +2,14 @@
 // En haut, le flanc de la digue en coupe et la ligne d'eau de la vraie marée (ambiance : rien ne dépend de l'heure) ;
 // puis ce que la mer a laissé, l'expédition en cours, et les secteurs du flanc, du haut vers le bas, avec le batardeau.
 // Le secteur à sec montre ses lieux : chaque famille qui attend, et le Porteur qu'on envoie la chercher.
-// Le décor est provisoire (la coupe de la Tour) en attendant le panorama Midjourney du flanc de la digue.
+// Le flanc est peint d'un seul tenant (Midjourney, 7 novembre 2026) ; chaque secteur y a son repère, à sa hauteur.
 // Les règles sont dans src/core/partie/basses.ts, le contenu dans src/core/digue.ts.
 
 import { porteurDef } from '../core/donnees';
 import { SECTEURS, etatMaree, type SecteurBasses } from '../core/digue';
 import { familleDef } from '../core/familles';
 import { BASSES, bassesDe, bassesOuvertes, energieBasses, famillesDesBasses, libresPourBasses, lieuFait, peutDresser, porteursPresents, raisonHorsContrat, raisonLieu, restantsSecteur, secteurOuvert, valeurDepot, type Jeu } from '../core/jeu';
-import { decor } from './art';
+import { flancBasses } from './art';
 import { NOM_LIGNEE, avatar, decompte, jaugeTemps, prix, type EcranDistrict } from './coquille';
 import { ICO } from './icones';
 import { echap, texteReplie } from './outils';
@@ -17,15 +17,27 @@ import { echap, texteReplie } from './outils';
 const majuscule = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
 const heure = (t: number) => new Date(t).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
 
-/** Le flanc de la digue et sa ligne d'eau (la vraie marée) */
-function flanc(now: number): string {
-  const m = etatMaree(now);
-  // la ligne d'eau monte de 35 % à 75 % de la hauteur de l'image
-  const haut = Math.round(35 + 40 * m.niveau);
+/** La hauteur de chaque secteur sur le tableau du flanc (en % du haut), relevée sur l'image */
+const HAUTEUR: Record<string, number> = { lavoirs: 8, treuils: 30, ecole: 50, citernes: 69, palier: 84 };
+
+/** Le flanc de la digue : le tableau, la ligne d'eau de la vraie marée, et un repère par secteur */
+function flanc(e: EcranDistrict): string {
+  const j = e.j;
+  const m = etatMaree(e.now);
+  // la ligne d'eau monte de 4 % (marée basse : le bas de l'escalier) à 34 % de la hauteur (marée haute : le Palier est noyé)
+  const haut = Math.round(4 + 30 * m.niveau);
   const texte = `${m.montante ? 'Marée montante' : 'Marée descendante'} · coef. ${m.coef}`;
-  return `<figure class="bs-flanc" style="--eau:${haut}%" aria-label="${texte}">`
-    + `<img src="${decor('coupe')}" alt="" decoding="async" draggable="false">`
-    + `<span class="bs-eau" aria-hidden="true"><i class="bs-ecume"></i></span>`
+  const b = bassesOuvertes(j) ? bassesDe(j) : null;
+  const reperes = SECTEURS.map((s) => {
+    const ouvert = !!b && secteurOuvert(j, s);
+    const sec = b?.batardeau === s.id;
+    const etat = !ouvert ? `${ICO.verrou}−${s.strate}` : sec ? `${ICO.ok}À sec` : `${s.lieux.length - restantsSecteur(j, s)}/${s.lieux.length}`;
+    return `<button type="button" class="bs-repere${sec ? ' sec' : ''}${ouvert ? '' : ' ferme'}" style="top:${HAUTEUR[s.id]}%" data-action="basses-voir" data-id="${s.id}" aria-label="${echap(s.nom)}${sec ? ', à sec' : ouvert ? '' : `, Strate −${s.strate}`}">`
+      + `<b>${echap(s.nom)}</b><em>${etat}</em></button>`;
+  }).join('');
+  return `<figure class="bs-flanc" style="--eau:${haut}%" aria-label="Le flanc de la digue : ${texte}">`
+    + `<img src="${flancBasses}" alt="" decoding="async" draggable="false">`
+    + `<span class="bs-eau" aria-hidden="true"><i class="bs-ecume"></i></span>${reperes}`
     + `<figcaption><b>${m.grande ? `${ICO.etoile}Grande marée` : m.montante ? 'La mer monte' : 'La mer descend'}</b>`
     + `<small>${texte} · basse à ${heure(m.prochaineBasse)}</small></figcaption></figure>`;
 }
@@ -60,7 +72,7 @@ function secteur(e: EcranDistrict, s: SecteurBasses): string {
   const sec = b.batardeau === s.id;
   const reste = restantsSecteur(j, s);
   const etat = !ouvert ? `${ICO.verrou}Strate −${s.strate}` : sec ? `${ICO.ok}À sec` : 'Sous l’eau';
-  let h = `<li class="bs-secteur${sec ? ' sec' : ''}${ouvert ? '' : ' ferme'}"><header><span><strong>${echap(s.nom)}</strong>`
+  let h = `<li class="bs-secteur${sec ? ' sec' : ''}${ouvert ? '' : ' ferme'}" id="bs-s-${s.id}"><header><span><strong>${echap(s.nom)}</strong>`
     + `<small>${ouvert ? `${s.lieux.length - reste} / ${s.lieux.length} familles ramenées` : 'Trop bas sur le flanc pour l’instant'}</small></span><em>${etat}</em></header>`;
   if (!ouvert) return h + `</li>`;
   h += texteReplie(s.ambiance, `bs-${s.id}`, 'bs-ambiance');
@@ -114,12 +126,12 @@ export function feuilleBasses(e: EcranDistrict): string {
   const tete = `<div class="voile-feuille" data-action="basses" aria-hidden="true"></div><section class="feuille bs-feuille" role="dialog" aria-modal="true" aria-labelledby="bs-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">L’ÉCLUSE</span><h2 id="bs-titre">Les Basses</h2></div>${fermer}</header><div class="feuille-corps">`;
   if (!bassesOuvertes(j)) {
-    return tete + flanc(e.now) + `<p class="fb-vide">L’écluse reste fermée tant que le gardien de la Strate −${BASSES.ouverture} tient le puits : personne ne laisse le district sans défense pour descendre le flanc de la digue.</p></div></section>`;
+    return tete + flanc(e) + `<p class="fb-vide">L’écluse reste fermée tant que le gardien de la Strate −${BASSES.ouverture} tient le puits : personne ne laisse le district sans défense pour descendre le flanc de la digue.</p></div></section>`;
   }
   const { faites, total } = famillesDesBasses(j);
-  return tete + flanc(e.now)
+  return tete
     + texteReplie('De l’autre côté de la digue, les quartiers d’avant dorment sous l’eau, et des familles y vivent encore, sur ce qui dépasse. Le batardeau garde un secteur à sec : tes Porteurs peuvent y descendre et les ramener. Plus bas sur le flanc, c’est plus ancien.', 'basses', 'res-resume')
-    + blocDepots(j, e.now) + blocExpedition(j, e.now)
+    + blocDepots(j, e.now) + blocExpedition(j, e.now) + flanc(e)
     + `<h3 class="titre-bloc">${ICO.strate}Le flanc de la digue<b class="mur-compte">${faites} / ${total}</b></h3>`
     + `<ol class="bs-secteurs">${SECTEURS.map((s) => secteur(e, s)).join('')}</ol>`
     + `</div></section>`;

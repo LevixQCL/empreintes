@@ -237,6 +237,8 @@ export const illustrationScene = (id: string): string | null => (SCENES_ILLUSTRE
 /** La salle d'entraînement de la Tour du Noyau (23 octobre 2026) */
 export const salleEntrainement = `${base}salles/entrainement.webp`;
 export const decor = (nom: 'archipel' | 'archipel-nuit' | 'coupe') => `${base}district/${nom}.webp`;
+/** Le flanc de la digue, vu en coupe (les Basses, 7 novembre 2026) : 720 × 1285, du haut (Lavoirs) au bas (Palier) */
+export const flancBasses = `${base}district/basses.webp`;
 /** Le Grand Tableau : les écrans de cristal du marché de nuit (Midjourney, 23 octobre 2026) */
 export const fondTableau = `${base}classements/tableau.webp`;
 

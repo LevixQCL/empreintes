@@ -1,6 +1,6 @@
 # Les Basses : le flanc de la digue (7 novembre 2026)
 
-La feuille de l'écluse montre pour l'instant la coupe de la Tour en décor provisoire. Il faut un seul grand tableau vertical
+Fait le 7 novembre 2026 : `public/art/district/basses.webp` (720 × 1285), un repère par secteur (ui/basses.ts, HAUTEUR). Il fallait un seul grand tableau vertical
 du flanc extérieur de la digue, vu en coupe, peint d'un seul tenant (pas de bandes séparées : les raccords seraient visibles).
 L'eau est posée par-dessus en code, avec sa ligne qui monte et descend : le tableau doit donc être peint à marée très basse,
 presque à sec, avec juste un peu d'eau tout en bas.

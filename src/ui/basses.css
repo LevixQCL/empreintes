@@ -11,20 +11,29 @@
 .bs-feuille .mur-compte,.mur-empreintes .mur-compte{margin-left:auto;font:600 13px/1 var(--mono);color:var(--gold,#F2D58C)}
 .bs-feuille>.feuille-corps>.titre-bloc,.mur-empreintes .titre-bloc{display:flex;align-items:center;gap:8px}
 
-/* le flanc et sa ligne d'eau */
-.bs-flanc{--eau:50%;position:relative;margin:0 0 12px;height:170px;overflow:hidden;border-radius:14px;isolation:isolate;box-shadow:inset 0 0 0 1px rgba(205,239,255,.18),0 6px 18px rgba(0,0,0,.35)}
-.bs-flanc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 40%;z-index:-2}
+/* le flanc et sa ligne d'eau : le tableau entier, un repère par secteur à sa hauteur */
+.bs-flanc{--eau:20%;position:relative;margin:0 0 12px;aspect-ratio:720/1285;overflow:hidden;border-radius:14px;isolation:isolate;box-shadow:inset 0 0 0 1px rgba(205,239,255,.18),0 6px 18px rgba(0,0,0,.35)}
+.bs-flanc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 100%;z-index:-2}
 .bs-eau{position:absolute;left:0;right:0;bottom:0;height:var(--eau);z-index:-1;
-  background:linear-gradient(180deg,rgba(80,170,210,.55),rgba(14,52,78,.88) 40%,rgba(6,22,36,.95));
+  background:linear-gradient(180deg,rgba(90,180,220,.38),rgba(20,70,100,.55) 35%,rgba(6,22,36,.78));
   box-shadow:0 -1px 0 rgba(220,245,255,.65);transition:height 1.2s ease}
 .bs-ecume{position:absolute;left:-10%;right:-10%;top:-5px;height:10px;opacity:.75;
   background:radial-gradient(10px 4px at 50% 100%,rgba(235,250,255,.85),transparent 70%) 0 0/36px 10px repeat-x;
   animation:bs-houle 7s ease-in-out infinite alternate}
 @keyframes bs-houle{from{transform:translateX(0)}to{transform:translateX(18px)}}
-.bs-flanc figcaption{position:absolute;left:10px;bottom:8px;right:10px;display:grid;gap:1px;text-shadow:0 1px 3px #000}
+.bs-flanc figcaption{position:absolute;left:10px;bottom:8px;right:10px;display:grid;gap:1px;padding:6px 10px;border-radius:10px;background:rgba(6,14,22,.62);text-shadow:0 1px 3px #000}
 .bs-flanc figcaption b{display:inline-flex;align-items:center;gap:5px;font-family:var(--display);font-size:16px;font-weight:400;color:#fff4dc}
 .bs-flanc figcaption b .ico{width:15px;height:15px;color:#FFD86B}
 .bs-flanc figcaption small{font:12px/1.3 var(--mono);color:#CDEFFF}
+.bs-repere{position:absolute;left:8px;transform:translateY(-50%);display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:5px 10px 5px 12px;border:none;border-radius:999px;cursor:pointer;color:#fff;
+  background:rgba(6,14,22,.72);box-shadow:inset 0 0 0 1px rgba(205,239,255,.35),0 2px 8px rgba(0,0,0,.5);backdrop-filter:blur(3px)}
+.bs-repere b{font-family:var(--display);font-size:14px;font-weight:400;color:#fff4dc}
+.bs-repere em{display:inline-flex;align-items:center;gap:3px;font:600 12px/1 var(--mono);font-style:normal;color:#9FD8FF}
+.bs-repere em .ico{width:12px;height:12px}
+.bs-repere.sec{box-shadow:inset 0 0 0 1.5px #F2D58C,0 0 14px rgba(242,213,140,.35)}
+.bs-repere.sec em{color:#F2D58C}
+.bs-repere.ferme{background:rgba(6,14,22,.6)}
+.bs-repere.ferme b,.bs-repere.ferme em{color:#9FB3C8}
 
 /* l'expédition en cours */
 .bs-expe{display:grid !important;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:10px}
