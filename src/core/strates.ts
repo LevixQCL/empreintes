@@ -128,7 +128,7 @@ export const HALTES: HalteDef[] = [
   H(3, 1, 'La dernière lampe',
     'Ici s’arrêtent les lampes humaines. Une lanterne de fouilleur pend à un clou, éteinte. Plus loin, tous les puits de Vertiga débouchent dans la même nuit.', [
       d('La lanterne', v('ilka', 'Personne n’a jamais accroché de lampe plus loin. Les fouilleurs disaient : « Après le clou, c’est le noir qui décide. »'), v('', 'Une lanterne à algues pend à un clou. Personne n’en a jamais accroché plus loin.')),
-      d('Les autres puits', v('doran', 'Là, le puits des Hauts-Ponts. Là, celui du marché. Chaque district croit avoir son trou à lui. En bas, c’est le même noir pour tout le monde.'), v('', 'Des bouches de puits s’ouvrent dans la voûte, une par district. Toutes donnent ici.')),
+      d('Les autres puits', v('doran', 'Là, le puits des Hauts-Ponts. Là, celui du marché. Chaque district croit avoir son trou à lui. En bas, c’est le même noir pour tout le monde. Et regarde : chaque bouche tombe pile au-dessus d’un palier de pierre.'), v('', 'Des bouches de puits s’ouvrent dans la voûte, une par district. Toutes donnent ici, chacune au-dessus d’un palier de pierre taillée.')),
       d('Une lueur au loin', v('nuit', 'La rampe en laiton du Puits Zéro. Les visiteurs y descendent depuis soixante ans, et ils regardent tous le plafond. Personne ne regarde le sol.'), v('vela', 'Le Puits Zéro, là-bas. On y vend des souvenirs en plastique. Tout le monde lève les yeux. Personne ne les baisse.'), v('', 'Au loin, la lueur de la rampe de visite du Puits Zéro.')),
     ], [
       { texte: 'Prendre la lanterne', effet: 'lampe', piste: 'avant', recit: 'Tu rallumes la lanterne avec une poignée d’algues. Sa lumière perce le brouillard des deux salles suivantes.' },
