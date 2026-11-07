@@ -105,7 +105,7 @@ const titreChapitre = (id: string, sur: string, titre: string, court = titre) =>
 
 // ---------- les textes de liaison (relecture éditoriale du 7 novembre 2026) ----------
 const NOTE_ARCHIVISTE = [
-  'Ce dossier n’a pas de cote. Je l’ai monté avec deux sortes de pages : les chapitres que je t’ai écrits la troisième nuit après ton élection, et celles de ton carnet, que tu m’as rapportées Strate après Strate, mouillées, raturées, parfois écrites dans le noir. Je les ai rangées les unes entre les autres. Je n’ouvre jamais un chapitre plus haut que la profondeur où tu pouvais le croire.',
+  'Ce dossier n’a pas de cote. Je l’ai monté avec deux sortes de pages : les chapitres que je t’ai écrits la troisième nuit après ton élection, et celles de ton carnet, que tu m’as rapportées Strate après Strate, mouillées, raturées, parfois écrites dans le noir. Je les ai rangées les unes entre les autres. Chaque chapitre arrive au moment où tu étais descendu assez bas pour le croire, pas avant.',
   'Tu as souvent hésité entre deux gestes. J’ai mis dans le texte celui que tu as fait, et dans la marge celui que tu as failli faire. Une archive qui ne garde qu’une version n’est pas une archive. C’est une plaque de bronze.',
 ];
 const PORTE_RONDE = [
