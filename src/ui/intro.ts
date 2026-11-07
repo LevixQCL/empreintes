@@ -125,7 +125,7 @@ export const PLANS: Plan[] = [
     'Quand l’eau monte pour la première fois, on peint une ligne bleue sur le mur, là où elle s’est arrêtée. On la montre aux invités.'] },
   { epoque: 'Aujourd’hui', titre: 'On a regardé ailleurs', annees: [2020, 2026], ambiance: 'colere', camera: 'recule', texte: 'haut', foyer: [47, 84], fonds: [f('02-ailleurs')], scene: ecrans, court: ["Les prix montent, la colère cherche des visages, des guerres remplissent les écrans. Le climat glisse en fin de journal, vingt secondes entre la météo et le sport."], lignes: [
     'Les prix montent : le pain, le loyer, le chauffage. Quand on compte ses pièces, un glacier qu’on ne verra jamais pèse peu.',
-    'La colère cherche des visages. À l’extrême gauche comme à l’extrême droite, chacun crie plus fort que l’autre.',
+    'La colère cherche des visages. D’un bord comme de l’autre, chacun crie plus fort que l’autre.',
     'Des guerres reviennent remplir les écrans. Le climat glisse en fin de journal, vingt secondes entre la météo et le sport.',
     'Entre les deux foules, un enfant. Personne ne le regarde : c’est lui qui vivra la suite.'] },
   { epoque: 'Un quart de siècle', titre: 'La Fonte', annees: [2030, 2055], ambiance: 'maree', camera: 'gauche', fonds: [f('03-tempetes')], scene: (k) => nature(Math.min(k, 2)), court: ["Puis la mer monte pour de bon. Les côtes se vident, des centaines de millions de gens prennent la route. Les querelles d’avant paraissent soudain minuscules."], lignes: [
@@ -165,9 +165,9 @@ export const PLANS: Plan[] = [
     'Sous chaque district, un puits descend : d’abord ses pompes noyées, puis ses abris murés des années 2060. Plus bas, tous les puits débouchent dans les mêmes Strates, toujours plus anciennes.',
     'On en remonte des cristaux d’empreinte. Greffés, ils font les Résonants. Tenus contre la peau, dans un harnais de fouille, ils prêtent leur geste le temps d’un combat.',
     'Plus on descend, plus les trouvailles sont puissantes, et plus il est difficile d’en remonter.'] },
-  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-cuvette', 1, 'recule'), f('10-toi', 2)], scene: toi, court: ["Cette année, la ligne bleue de ton district est passée sous la marée. Hier, il t’a élu à sa tête.", "Ce matin, en creusant pour sauver les pompes, on a ouvert sous sa tour une porte scellée depuis cinquante-cinq ans. Une coursière est venue te chercher. Descends. Regarde tout."], lignes: [
+  { epoque: 'Ce matin', titre: 'Toi', annees: [2121, 2121], ambiance: 'foyer', camera: 'porte', texte: 'haut', fonds: [f('10-cuvette', 1, 'recule'), f('10-toi', 2)], scene: toi, court: ["Cette année, la ligne bleue de ton district est passée sous la marée. Hier, il t’a élu à sa tête.", "Ce matin, en creusant pour sauver les pompes, on a mis au jour sous sa tour une porte scellée depuis cinquante-cinq ans. Une coursière est venue te chercher. Descends. Regarde tout."], lignes: [
     'Hier, ton district t’a élu à sa tête : une cuvette cernée d’une digue, une Forge au ralenti, une vieille tour. Et une ligne bleue qui, cette année, est passée sous la marée.',
-    'Ce matin, en creusant plus bas pour sauver les pompes, on a ouvert sous la tour une porte scellée depuis cinquante-cinq ans. Derrière, des dizaines d’empreintes, mêlées.',
+    'Ce matin, en creusant plus bas pour sauver les pompes, on a mis au jour sous la tour une porte scellée depuis cinquante-cinq ans. Derrière, Véla en sent des dizaines, mêlées.',
     'Au même moment, dans les Hauts, des Résonants se réveillent sans savoir qui ils sont. Tout Vertiga va vouloir cette porte.',
     'Une coursière est venue te chercher ; un ancien des Fondations et une lectrice t’attendent en bas. Descends. Regarde tout.'] },
 ];

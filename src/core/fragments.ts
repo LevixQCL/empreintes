@@ -190,7 +190,7 @@ export const FRAGMENTS: Fragment[] = [
   {
     id: 'pas-notre-cote', titre: 'Pas de notre côté', support: 'Un rapport de chantier de 2066, signé de quatre ouvriers',
     lignes: [
-      'Chantier d’abris, niveau 7. Pose du mur de condamnation terminée à 4 h 10. Quatre hommes, deux tonnes de béton.',
+      'Chantier d’abris, niveau 7. Pose du mur de condamnation terminée à 4 h 10. Quatre ouvriers, deux tonnes de béton.',
       'Pendant la prise, des pleurs de l’autre côté. Puis un autre bruit. Pas un éboulement : un loquet qu’on tire, lentement, comme on ferme chez soi pour la nuit.',
       'Le contremaître a dit qu’on avait rêvé. On a signé quand même, tous les quatre. On a fermé la porte, mais pas de notre côté.',
       'Note des Veilleurs, en marge : « Le chantier comptait le pied de la Tour comme niveau 1. »',

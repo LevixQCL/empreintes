@@ -61,7 +61,7 @@ export const HALTES: HalteDef[] = [
     'Un pilier des pompes, couvert de noms grattés au couteau. Les fouilleurs de Vertiga y écrivent le leur avant de descendre, et le barrent quand ils remontent.', [
       d('Les noms', v('doran', 'Le nom de mon père est là, daté de 2066. Jamais barré. Il est remonté, pourtant. Il n’a jamais voulu le barrer.'), v('', 'Des centaines de noms, barrés ou non. Les plus anciens datent de 2066.')),
       d('Le pied du pilier', v('sasha', 'Le plan dit : béton jusqu’au roc. Regarde : le pilier est posé sur une marche taillée, de niveau au millimètre. Personne chez nous ne taille comme ça.'), v('doran', 'Nos plans disent béton jusqu’au roc. Il n’y a pas de roc. Le pilier est posé sur une marche taillée. Une marche, directeur.'), v('', 'Le pilier ne repose pas sur la roche, mais sur une large marche de pierre taillée, parfaitement plane.')),
-      d('Sous la marche', v('vela', 'Usée au milieu, comme les marches de la Tour. Des milliers de pieds sont passés là. Et sous cette marche, il y en a une autre.'), v('ilka', 'Il y a une autre marche dessous. Et encore une. Un escalier. Sous nos pompes, il y a un escalier.'), v('', 'Sous la marche, une autre, puis une autre : un escalier qui s’enfonce dans l’eau noire.')),
+      d('Sous la marche', v('vela', 'Usée au milieu, comme les marches de la Tour, mais trop haute pour nos jambes. Des milliers de pieds sont passés là, et pas des nôtres. Et sous cette marche, il y en a une autre.'), v('ilka', 'Il y a une autre marche dessous. Et encore une. Un escalier. Sous nos pompes, il y a un escalier.'), v('', 'Sous la marche, une autre, puis une autre : un escalier aux marches trop hautes, qui s’enfonce dans l’eau noire.')),
     ], [
       { texte: 'Graver ton nom', effet: 'composants', drapeau: 'nom-grave', recit: 'Tu graves ton nom sous celui des autres. Juste en dessous, un fouilleur a laissé quelques pièces pour le suivant. Elles sont à toi.' },
       { texte: 'Mesurer la marche', effet: 'eclat', drapeau: 'mesure-marche', recit: 'Fil à plomb, mètre ruban : 2,10 m de large, de niveau parfait. Les Fondations de ton district reposent sur l’escalier de quelqu’un d’autre. Dans une fente de la marche, un Éclat.' },
@@ -191,7 +191,7 @@ export const HALTES: HalteDef[] = [
     'Le chantier de 2066, laissé en plan : bétonnière, étais, une radio. Tout a été abandonné en une nuit.', [
       d('La radio', v('sasha', 'Encore réglée sur la fréquence du chantier. Si je la répare, on entendra leur dernière conversation.'), v('', 'Une radio de chantier, encore réglée sur sa fréquence.')),
       d('Le casque', v('doran', 'Le numéro de mon père. Il ne laissait jamais son casque. Ce soir-là, il a laissé son casque, et il a ramassé un cristal.', 'promesse-cristal'), v('doran', 'Le numéro de mon père. Il l’a laissé ici. Il ne laissait jamais son casque.'), v('', 'Un casque de chantier posé sur une caisse, avec un numéro.')),
-      d('Le planning', v('ilka', 'Le mur devait faire dix centimètres. Ils en ont coulé quarante, en une nuit, sans ordre écrit. Ce n’est pas un éboulement qui leur faisait peur. C’est ce qui pleurait.'), v('', 'Sur le planning : un mur de dix centimètres. Celui qu’on a coulé en fait quarante.')),
+      d('Le planning', v('ilka', 'L’ordre disait dix centimètres. Ils en ont coulé quarante, en une nuit, sans que personne le leur demande. Ce n’est pas un éboulement qui leur faisait peur. C’est ce qui pleurait.'), v('', 'Sur l’ordre de service : un mur de dix centimètres. Celui qu’on a coulé en fait quarante.')),
     ], [
       { texte: 'Réparer la radio', effet: 'eclat', drapeau: 'radio', recit: '« … on coule, on coule, il pleure… Attends. Tu entends ? Il ferme aussi. De son côté. » La voix se tait. Dans le boîtier, un Éclat servait de pile.' },
       { texte: 'Prendre le casque', effet: 'composants', drapeau: 'casque', recit: 'Le casque rejoint le sac de l’escouade. Personne ne dit rien pendant longtemps. Le chantier abandonné rend quelques outils.' },
@@ -337,7 +337,7 @@ export const HALTES: HalteDef[] = [
     'Au fond, la même phrase sur toutes les tables : « Que celui qui lit ceci compte les voix qu’il porte. » Le « Compte » de la Confluence venait d’ici.'),
   H(10, 3, 'Il vous attendait',
     'Au centre de la dernière salle, quelqu’un est assis. Il ne se lève pas. Il vous attendait.', [
-      d('Lui', v('vela', 'C’est lui qui a glissé l’Éclat sous la porte, tout à l’heure. Il nous a entendus frapper.', 'frappe'), v('vela', 'Le Premier Porteur. Il ne porte qu’une voix, et ce n’est pas la sienne. Il la porte si bien qu’on ne voit plus la différence.'), v('', 'Un homme assis, très calme, qui vous regarde arriver.')),
+      d('Lui', v('vela', 'C’est lui qui a glissé l’Éclat sous la porte, tout à l’heure. Il nous a entendus frapper.', 'frappe'), v('vela', 'Le Premier Porteur. Il ne porte qu’une voix, et ce n’est pas la sienne. Il la porte si bien qu’on ne voit plus la différence.'), v('', 'Quelqu’un d’assis, plus grand que nous, très calme, qui vous regarde arriver.')),
       d('Ses mains', v('doran', 'Il a les mains d’un graveur. Il a regardé ma poche, puis il a souri. Il sait que le cercle de −6 est complet.', 'cristal-rendu'), v('doran', 'Il a les mains d’un graveur. Toutes ces tables ont son écriture.'), v('', 'Des mains abîmées, de graveur.')),
       d('Ton nom', v('ilka', 'Il connaît ton nom. Il l’a lu sur le mur des fouilleurs, tout en haut.', 'nom-grave'), v('ilka', 'On est venus jusqu’ici pour des réponses. Allons lui en demander.'), v('', 'Il te regarde comme s’il te connaissait déjà.')),
     ], [
@@ -388,9 +388,9 @@ export interface QueteDef {
 export const QUETES: QueteDef[] = [
   { strate: 1, nom: 'Les noms du mur', but: 'Relever les noms des fouilleurs jamais barrés.', etapes: [
     'Un nom gravé sur un étai : « Mar. Ivens, 2066 ». Jamais barré.',
-    'Un deuxième, sur une pompe noyée : « T. Daro ». Lui non plus n’est jamais remonté.',
+    'Un deuxième, sur une pompe noyée : « T. Daro ». Pas barré non plus.',
     'Le dernier, à moitié effacé : le nom du père de Doran. Les trois noms du registre de 2066.',
-  ], fin: 'Trois ouvriers de 2066 sont descendus et ne sont jamais revenus barrer leur nom. Le père de Doran, lui, est remonté. Seul.' },
+  ], fin: 'Trois noms de 2066 ne sont jamais barrés. Deux de ces ouvriers ne sont jamais remontés. Le père de Doran, lui, est remonté, seul, et n’a jamais voulu barrer le sien.' },
   { strate: 2, nom: 'Les sacs volés', but: 'Retrouver les sacs de cristaux tombés des pilleurs.', etapes: [
     'Un sac éventré, trois cristaux encore dedans. Ils tremblent.',
     'Un deuxième sac, posé avec soin contre un mur. Quelqu’un l’a laissé exprès.',
@@ -428,7 +428,7 @@ export const QUETES: QueteDef[] = [
     'Deux Veilleurs, qui se tenaient la main dans le même rêve.',
     'Un Veilleur qui comptait les tables. Il en était à mille deux cents.',
     'Le dernier, le chef d’équipe. Il tient un éclat de table, le même que celui de la fouilleuse d’autrefois.',
-  ], fin: 'Les six Veilleurs sont rentrés. Leur chef a remis à Ysé un éclat de table : la pièce qui manquait, gravée « Elle attend ».' },
+  ], fin: 'Les six Veilleurs sont rentrés. Leur chef a remis à Ysé un second éclat de table, gravé de la même main pressée : « Que celui qui lit ceci compte les voix qu’il porte. »' },
   { strate: 9, nom: 'Les fils dénoués', but: 'Renouer les fils qui gardent des noms oubliés.', etapes: [
     'Un fil renoué : le nom d’une enfant de 2060, de la pièce aux lits.',
     'Un fil renoué : le nom d’un brigadier du Serment, perdu à −5.',

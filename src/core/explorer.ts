@@ -80,9 +80,9 @@ export const VESTIGES: VestigeDef[] = [
 
 /** L'histoire d'une Strate complète (ses 5 Vestiges) : son titre, et la ligne qui la conclut */
 export const RELEVES: ReleveDef[] = [
-  { strate: 1, titre: 'Le quai 4', fin: 'Une équipe de six est descendue le 14 octobre 2066, entre la soupe et le pain. Elle a marqué le chemin du retour à la craie bleue.' },
+  { strate: 1, titre: 'Le quai 4', fin: 'Une équipe de six est descendue le 14 octobre 2066, entre la soupe et le pain. Quatre d’entre eux couleraient le mur, plus bas. Elle a marqué le chemin du retour à la craie bleue.' },
   { strate: 2, titre: 'Les cailloux de Brac', fin: 'Brac comptait ses cristaux comme ses cailloux : un par un, rangés. Il a su lesquels il ne fallait pas vendre.' },
-  { strate: 3, titre: 'Ce qui s’habitue', fin: 'Les patrouilles de −3 n’ont pas eu peur du noir. Elles ont coupé leur propre fil, et sont restées.' },
+  { strate: 3, titre: 'Ce qui s’habitue', fin: 'Les patrouilles de −3 n’ont pas eu peur du noir. Coincées sous l’éboulis, elles ont coupé leur propre fil pour que rien ne le suive, et elles ont attendu qu’on vienne.' },
   { strate: 4, titre: 'Le veilleur et l’enfant', fin: 'Derrière les portes rondes, quelqu’un a compté les semaines, tissé, bu son thé. Et il n’était pas seul : il y avait une petite lampe.' },
   { strate: 5, titre: 'L’arrivée', fin: 'La Maison Orsève emporte les cristaux des Berceaux « avant l’arrivée ». Elle ne dit pas l’arrivée de qui, ni d’où.' },
   { strate: 6, titre: 'La berceuse du niveau 7', fin: 'En 2066, on a coulé le mur sur des voix. Une ouvrière leur chantait une berceuse pour qu’elles se taisent. Elles se sont tues.' },
