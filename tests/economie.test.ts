@@ -114,12 +114,13 @@ describe('Une carte, cinq métaux', () => {
   });
 
   it('l’or et la nacre renforcent l’effet', () => {
-    expect(moduleDef('crocs-fossiles@cuivre').effet).toEqual({ type: 'siphon', part: 0.6 });
-    expect(moduleDef('crocs-fossiles@argent').effet).toEqual({ type: 'siphon', part: 0.6 });
-    expect(moduleDef('crocs-fossiles@or').effet).toEqual({ type: 'siphon', part: 0.75 });
-    expect(moduleDef('crocs-fossiles@nacre').effet).toEqual({ type: 'siphon', part: 0.9 });
-    expect(moduleDef('gant-arc@or').effet).toEqual({ type: 'flux', v: 1 });
-    expect(moduleDef('gant-arc@nacre').effet).toEqual({ type: 'flux', v: 2 });
+    // Crocs fossiles et Gant à arc refondus le 8 novembre 2026 (Désarmer, Crescendo)
+    expect(moduleDef('crocs-fossiles@cuivre').effet).toEqual({ type: 'desarmer', part: 0.3 });
+    expect(moduleDef('crocs-fossiles@argent').effet).toEqual({ type: 'desarmer', part: 0.3 });
+    expect(moduleDef('crocs-fossiles@or').effet).toEqual({ type: 'desarmer', part: 0.38 });
+    expect(moduleDef('crocs-fossiles@nacre').effet).toEqual({ type: 'desarmer', part: 0.45 });
+    expect(moduleDef('bobine-recuperation@or').effet).toEqual({ type: 'flux', v: 1 });
+    expect(moduleDef('bobine-recuperation@nacre').effet).toEqual({ type: 'flux', v: 2 });
   });
 
   it('un Porteur ne porte pas deux fois la même carte : un meilleur métal remplace l’ancien (24 octobre 2026)', () => {

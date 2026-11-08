@@ -65,3 +65,18 @@ restait sans effet mesurable (+0, +3) : elle va mieux à une carte de fer, le Mi
   `tests/doublons.test.ts` en tient la liste : chaque refonte la raccourcit, et aucune nouvelle paire ne peut apparaître sans faire échouer le test.
 - **Lot 3 : les familles des voies.** Riposte, Curée, Faille, Débord, Rafale et Unisson ont chacune 4 ou 5 cartes du même effet, de plus en plus fort.
   Règle proposée : la carte de fer garde l’effet simple, celle d’argent y ajoute une variante, celle d’or une condition qui lui est propre. Une famille à la fois, mesurée au robot.
+
+## Lot 2 (8 novembre 2026, audit du soir, arbitré par le game designer)
+
+Une seule carte change par paire, avec un effet qui existe déjà ; force, Fréquences et action inchangées. Mesuré en cuivre (les cartes de fer n'ont pas d'effet en fer), à la place d'une carte de départ de leur lignée, 100 à 150 descentes (±7 points).
+
+| Carte | Avant | Après | La décision qu’elle apporte | Robot |
+|---|---|---|---|---|
+| Cuir de récif (fer, bouclier) | Riposte 40 % (comme Queue-massue) | **Secours 50 %** | se poser quand un camarade est tombé | +23 → +21 |
+| Grappin à câble (fer, bouclier) | Élan (comme Bracelet de déviation) | **Amorce 40 %** | protéger tout en préparant la carte d’après | +0 → −1 |
+| Gant à arc (fer, attaque) | Surcharge (comme Pistolet à faisceau) | **Crescendo 25 %** | se garder pour la fin de la chaîne | +19 → +15 |
+| Verdict (argent, attaque) | Faille 45 % (comme Lame de doute) | **Amorce 50 %** | préparer la Sentence de la voie Lecture | +7 → +12 |
+| Crocs fossiles (fer, attaque) | Siphon 60 % (comme la Lamproie, et au-dessus du lot) | **Désarmer 30 %** | mordre l’arme avant le coup | +31 → +15 |
+| Œil-relais (fer, attaque) | Perçant (le troisième Perçant de fer) | **Curée 50 %** | achever ce qui saigne déjà | +16 → +18 |
+
+Restent comme elles sont : Queue-massue (Riposte de la voie Carapace), Bracelet de déviation (Élan, carte de départ), Pistolet à faisceau (Surcharge de fer), Lame de doute (Faille de la Lecture), la Lamproie (Siphon d’argent), Plastron de choc et Canon à cristal (Perçant, cartes de départ aux Fréquences 3 et 6). On garde les 112 cartes.

@@ -26,9 +26,9 @@ export const LORE_CARTES: Record<string, string> = {
 
   // ---------- Augmentés ----------
   'jambes-ressort': 'Le premier modèle sorti des ateliers des districts, bien avant les implants de luxe des Hauts. Bruyant, increvable, réparable avec une clé de 12. Ilka refuse de changer les siennes.',
-  'gant-arc': 'Un gant d’électricien dont on a oublié de retirer le cristal. L’arc qui en jaillit recharge le gant à chaque décharge, et brûle volontiers les sourcils de son porteur.',
-  'oeil-relais': 'L’œil gravé ne voit pas mieux : il voit ailleurs. Il relaie ce que voit un autre œil, à trois couloirs de là. Trouvé dans la chambre scellée, encore réglé sur un porteur disparu.',
-  'grappin-cable': 'Entre deux tours de Vertiga, il y a toujours un câble. Le grappin des coursiers en trouve un dans le noir, s’y accroche, et tire l’escouade hors de portée.',
+  'gant-arc': 'Un gant d’électricien dont on a oublié de retirer le cristal. L’arc qui en jaillit grossit à chaque coup de la chaîne, et brûle volontiers les sourcils de son porteur.',
+  'oeil-relais': 'L’œil gravé ne voit pas mieux : il voit ailleurs. Il relaie ce que voit un autre œil, à trois couloirs de là, et repère toujours celui qui saigne déjà. Trouvé dans la chambre scellée, encore réglé sur un porteur disparu.',
+  'grappin-cable': 'Entre deux tours de Vertiga, il y a toujours un câble. Le grappin des coursiers en trouve un dans le noir, s’y accroche, et lance celui qui suit droit sur sa cible.',
   'coeur-turbine': 'Un cœur de cristal monté sur une petite turbine qui ne s’arrête jamais. Son porteur ne dort plus que quatre heures par nuit, et se plaint du bruit quand tout est calme.',
   'oeil-brouilleur': 'Les tout premiers implants des Augmentés servaient à cela : rendre une pensée illisible pour les Résonants. L’œil-brouilleur trouble aussi la visée de tout ce qui regarde trop fixement.',
   'bras-grue': 'Gravé d’après le geste d’un grutier des Fondations qui n’a jamais raté une charge en quarante ans. Le bras soulève une poutre d’une main ; il sait aussi la lancer.',
@@ -38,8 +38,8 @@ export const LORE_CARTES: Record<string, string> = {
 
   // ---------- Génés ----------
   'glande-ambre': 'Le cristal garde le geste d’une soigneuse des bas-fonds, qui étalait de l’ambre tiède sur les plaies. Doran le tient au harnais, contre la poitrine : il n’a jamais voulu d’une troisième souche. « Deux, c’est assez pour un seul corps. »',
-  'crocs-fossiles': 'Des dents retrouvées dans la roche des premières Strates, plus vieilles que la mer. Le Graveur en a tiré une forme ; les Génés en ont fait des mâchoires.',
-  'cuir-recif': 'Une peau épaisse et rugueuse, née des coraux que la mer a engloutis. Elle aime l’eau froide et déteste le soleil. Les Génés qui en portent vivent la nuit. Qui la frappe s’y écorche.',
+  'crocs-fossiles': 'Des dents retrouvées dans la roche des premières Strates, plus vieilles que la mer. Le Graveur en a tiré une forme ; les Génés en ont fait des mâchoires qui happent l’arme avant le coup.',
+  'cuir-recif': 'Une peau épaisse et rugueuse, née des coraux que la mer a engloutis. Elle aime l’eau froide et déteste le soleil. Les Génés qui en portent vivent la nuit. Elle se referme plus dure autour des camarades tombés.',
   'yeux-nocturnes': 'Des yeux de chouette dorés, qui boivent la moindre lueur. Ils repèrent la fissure dans l’armure d’un ennemi comme ils repèrent la fissure dans un mur des Fondations.',
   'poumons-abysse': 'Des poumons qui tiennent vingt minutes sous l’eau trouble des Fondations. Les plongeurs des égouts les ont demandés les premiers ; les sauveteurs ont suivi.',
   branchies: 'Deux fentes discrètes sous les côtes, héritées des poissons des bassins de pilotis. Ceux qui en portent ne craignent plus la mer. Ils craignent la sécheresse. Quand l’un d’eux reprend son souffle, toute l’escouade respire mieux.',

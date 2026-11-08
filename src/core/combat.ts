@@ -59,13 +59,17 @@ export function creerCombat(opts: {
   fuyard?: { tours: number; part: number };
   /** les règles d'une Épreuve de la semaine (descentes.ts) */
   epreuve?: { sansResonance?: boolean; chrono?: number; sansChute?: boolean; monoLignee?: boolean };
+  /** les premières Strates (FORCE.debut, expedition.ts) : PV et coups d'un ennemi seul qui n'est pas un gardien */
+  pvMult?: number;
+  coupsMult?: number;
 }): CombatEtat {
   const e = ennemiDef(opts.ennemiId);
   const groupe = [opts.ennemiId, ...(opts.escorte ?? [])];
   // un groupe se partage la puissance d'un ennemi seul (un peu plus au total : il faut choisir qui frapper)
-  const force = (opts.force ?? 1) * (PART_GROUPE[groupe.length] ?? PART_GROUPE[3]!);
+  const seulOrdinaire = groupe.length === 1 && !estGardien(opts.ennemiId);
+  const force = (opts.force ?? 1) * (PART_GROUPE[groupe.length] ?? PART_GROUPE[3]!) * (seulOrdinaire ? opts.coupsMult ?? 1 : 1);
   // les PV seuls suivent un peu moins la profondeur que les coups (27 octobre 2026 : des combats moins longs en profondeur)
-  const pvForce = opts.pvPleins ? force : (opts.force ?? 1) * (PV_GROUPE[groupe.length] ?? PV_GROUPE[3]!) * pvProfondeur(opts.force ?? 1);
+  const pvForce = (opts.pvPleins ? force : (opts.force ?? 1) * (PV_GROUPE[groupe.length] ?? PV_GROUPE[3]!) * pvProfondeur(opts.force ?? 1)) * (seulOrdinaire ? opts.pvMult ?? 1 : 1);
   const etat = (id: string, rang: number): EnnemiEtat => {
     const d = ennemiDef(id);
     const pv = Math.round(d.pvMax * pvForce);

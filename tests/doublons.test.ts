@@ -78,8 +78,8 @@ describe('Refonte des quasi-doublons', () => {
       else vues.set(cle, m.nom);
     }
     // restent pour le lot 2 : une carte de départ et une carte de fer trouvée qui font la même chose (docs/refonte-doublons.md)
-    const connus = ['Plastron de choc / Canon à cristal', 'Talon de cristal / Jambes à ressort', 'Pistolet à faisceau / Gant à arc',
-      'Plastron de choc / Œil-relais', 'Bracelet de déviation / Grappin à câble', 'Bol de sève / Glande d’ambre',
+    // lot 2 (8 novembre 2026) : Gant à arc, Œil-relais et Grappin à câble ne sont plus des doublons
+    const connus = ['Plastron de choc / Canon à cristal', 'Talon de cristal / Jambes à ressort', 'Bol de sève / Glande d’ambre',
       'Front de roche / Yeux nocturnes', 'Cor de brume / Encre ancienne', 'Talon de cristal / Pas chassé'];
     expect(doubles.filter((d) => !connus.includes(d))).toEqual([]);
   });

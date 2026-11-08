@@ -96,9 +96,9 @@ export const MODULES: ModuleDef[] = [
 
   // ---------- Augmentés : Fréquences moyennes (zone 3 à 7, ZONES_FREQUENCES) ----------
   c('jambes-ressort', 'Jambes à ressort', 'tech', 'fer', 'atk', 11, [7, 8, 6], { type: 'elan' }),
-  c('gant-arc', 'Gant à arc', 'tech', 'fer', 'atk', 13, [7, 6, 8], { type: 'flux', v: 1 }),
-  c('oeil-relais', 'Œil-relais', 'tech', 'fer', 'atk', 12, [5, 3, 6], { type: 'percant' }),
-  c('grappin-cable', 'Grappin à câble', 'tech', 'fer', 'bouclier', 8, [4, 5, 3], { type: 'elan' }),
+  c('gant-arc', 'Gant à arc', 'tech', 'fer', 'atk', 13, [7, 6, 8], { type: 'crescendo', part: 0.25 }),
+  c('oeil-relais', 'Œil-relais', 'tech', 'fer', 'atk', 12, [5, 3, 6], { type: 'curee', part: 0.5 }),
+  c('grappin-cable', 'Grappin à câble', 'tech', 'fer', 'bouclier', 8, [4, 5, 3], { type: 'amorce', part: 0.4 }),
   c('coeur-turbine', 'Cœur-turbine', 'tech', 'cuivre', 'atk', 13, [6, 8, 7], { type: 'elan' }),
   c('oeil-brouilleur', 'Œil-brouilleur', 'tech', 'cuivre', 'atk', 11, [6, 7, 5], { type: 'desarmer', part: 0.3 }),
   c('bras-grue', 'Bras-grue', 'tech', 'argent', 'atk', 40, [6, 8, 4], { type: 'percant' }, true),
@@ -108,8 +108,8 @@ export const MODULES: ModuleDef[] = [
 
   // ---------- Génés : Fréquences basses ----------
   c('glande-ambre', 'Glande d’ambre', 'bio', 'fer', 'soin', 7, [3, 2, 4], { type: 'vague' }),
-  c('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', 'atk', 10, [1, 3, 2], { type: 'siphon', part: 0.6 }),
-  c('cuir-recif', 'Cuir de récif', 'bio', 'fer', 'bouclier', 11, [4, 5, 3], { type: 'riposte', part: 0.4 }),
+  c('crocs-fossiles', 'Crocs fossiles', 'bio', 'fer', 'atk', 10, [1, 3, 2], { type: 'desarmer', part: 0.3 }),
+  c('cuir-recif', 'Cuir de récif', 'bio', 'fer', 'bouclier', 11, [4, 5, 3], { type: 'secours', part: 0.5 }),
   c('yeux-nocturnes', 'Yeux nocturnes', 'bio', 'fer', 'atk', 9, [3, 4, 2], { type: 'fissure', part: 0.25 }),
   c('poumons-abysse', 'Poumons d’abysse', 'bio', 'cuivre', 'bouclier', 12, [2, 4, 3], { type: 'rempart', part: 0.4 }),
   c('branchies', 'Branchies des Fondations', 'bio', 'cuivre', 'soin', 7, [2, 1, 3], { type: 'vague' }),
@@ -125,7 +125,7 @@ export const MODULES: ModuleDef[] = [
   c('meche-or', 'Mèche d’or', 'reso', 'fer', 'atk', 9, [7, 8, 6], { type: 'lecture' }),
   c('plume-givre', 'Plume de givre', 'reso', 'cuivre', 'atk', 11, [9, 8, 7], { type: 'desarmer', part: 0.4 }),
   c('ombre-serpent', 'Ombre de serpent', 'reso', 'cuivre', 'atk', 17, [9, 6, 8], { type: 'fissure', part: 0.3 }),
-  c('ombre-ailee', 'Ombre ailée', 'reso', 'argent', 'atk', 26, [9, 7, 8], { type: 'fissure', part: 0.4 }, true),
+  c('ombre-ailee', 'Ombre ailée', 'reso', 'argent', 'atk', 32, [9, 7, 8], { type: 'fissure', part: 0.4 }, true),
   c('pressentiment', 'Sablier inversé', 'reso', 'argent', 'atk', 8, [6, 8, 7], { type: 'sourdine', part: 0.4 }),
   c('chant-abysses', 'Chant des abysses', 'reso', 'or', 'atk', 14, [7, 8, 9], { type: 'accord' }),
   c('souffle-wyrm', 'Souffle du wyrm', 'reso', 'or', 'atk', 22, [9, 8, 7], { type: 'crescendo', part: 0.3 }),
@@ -159,12 +159,12 @@ export const MODULES: ModuleDef[] = [
   c('regard-biais', 'Regard en biais', 'reso', 'fer', 'bouclier', 11, [6, 7, 9], { type: 'lecture' }),
   c('lame-doute', 'Lame de doute', 'reso', 'fer', 'atk', 13, [7, 8, 6], { type: 'faille', part: 0.5 }),
   c('oeil-lecteur', 'Œil du Lecteur', 'reso', 'cuivre', 'atk', 15, [8, 7, 9], { type: 'lecture' }),
-  c('verdict', 'Verdict', 'reso', 'argent', 'atk', 15, [6, 8, 7], { type: 'faille', part: 0.45 }),
+  c('verdict', 'Verdict', 'reso', 'argent', 'atk', 15, [6, 8, 7], { type: 'amorce', part: 0.5 }),
   c('sentence-muette', 'Sentence muette', 'reso', 'or', 'atk', 20, [8, 6, 9], { type: 'faille', part: 0.55 }),
   // La Sève (Kessa) : soigner en continu, le surplus devient bouclier
   c('pollen-ambre', 'Pollen d’ambre', 'bio', 'fer', 'soin', 6, [2, 1, 3], { type: 'debord' }),
   c('seve-piliers', 'Sève des piliers', 'bio', 'cuivre', 'soin', 7, [4, 3, 5], { type: 'debord' }),
-  c('mue-verre', 'Mue de verre', 'bio', 'argent', 'soin', 5, [3, 4, 1], { type: 'debord' }),
+  c('mue-verre', 'Mue de verre', 'bio', 'argent', 'soin', 8, [3, 4, 1], { type: 'debord' }),
   c('floraison', 'Floraison des Fondations', 'bio', 'or', 'soin', 13, [5, 4, 2], { type: 'debord' }),
   // La Cadence (Ilka) : les longues chaînes, chaque coup doublé
   c('pas-chasse', 'Pas chassé', 'tech', 'fer', 'atk', 10, [3, 2, 4], { type: 'elan' }),
@@ -207,7 +207,7 @@ export const MODULES: ModuleDef[] = [
   // Nacre
   x('coeur-etoile', 'Cœur d’étoile', 'tech', 'nacre', 'atk', 46, [7, 4, 2], { type: 'surtension', part: 0.4, cout: 0.15 }, true),
   x('seconde-naissance', 'Seconde naissance', 'bio', 'nacre', 'soin', 30, [1, 3, 5], { type: 'releve' }),
-  x('empreinte-vive', 'Empreinte vive', 'reso', 'nacre', 'atk', 20, [9, 6, 3], { type: 'empreinte' }),
+  x('empreinte-vive', 'Empreinte vive', 'reso', 'nacre', 'atk', 18, [9, 6, 3], { type: 'empreinte' }),
   x('silence-avant', 'Silence d’avant', 'reso', 'nacre', 'atk', 24, [7, 4, 9], { type: 'rappel' }),
   // 4 novembre 2026 : une nacre de plus pour les Augmentés et les Génés (deux par lignée)
   x('couperet-hauts', 'Couperet des Hauts', 'tech', 'nacre', 'atk', 30, [6, 3, 8], { type: 'execution', part: 0.15 }),
@@ -220,7 +220,7 @@ export const MODULES: ModuleDef[] = [
   legs('foulee-directrice', 'Foulée de la directrice', 'tech', 'atk', 19, [4, 3, 5], { type: 'elan' }, { type: 'crescendo', part: 0.2 }),
   legs('bras-fonderie', 'Bras de la Fonderie', 'tech', 'atk', 40, [5, 6, 4], { type: 'percant' }, { type: 'elan' }, true),
   legs('coeur-glaciere', 'Cœur de la Glacière', 'tech', 'atk', 17, [6, 5, 7], { type: 'decharge', part: 0.5 }, { type: 'flux', v: 1 }),
-  legs('carapace-fondations', 'Carapace des Fondations', 'bio', 'bouclier', 15, [2, 3, 1], { type: 'rempart', part: 0.35 }, { type: 'riposte', part: 0.35 }),
+  legs('carapace-fondations', 'Carapace des Fondations', 'bio', 'bouclier', 13, [2, 3, 1], { type: 'rempart', part: 0.35 }, { type: 'riposte', part: 0.35 }),
   legs('oeil-grande-nuit', 'Œil de la Grande Nuit', 'bio', 'atk', 12, [3, 2, 4], { type: 'fissure', part: 0.2 }, { type: 'siphon', part: 0.6 }),
   legs('premiere-mue', 'Première mue', 'bio', 'soin', 18, [1, 2, 3], { type: 'vague' }, { type: 'rempart', part: 0.35 }),
   legs('lanterne-lecture', 'Lanterne de la première Lecture', 'reso', 'atk', 12, [8, 7, 9], { type: 'accord' }, { type: 'desarmer', part: 0.2 }),

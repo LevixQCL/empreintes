@@ -61,7 +61,9 @@ export const REGLES = {
   /** multiplicateur selon la longueur de la meilleure suite.
    *  8 novembre 2026 (audit du soir, validé par Bryan) : à 3 places de chaîne, l'Écho (+50 %) payait plus que la suite (+30 %).
    *  Écho 1,5 / 1,65 / 1,8 → 1,3 / 1,45 / 1,6 et suite de 3 : 1,3 → 1,4. Robot (archétypes, joueur moyen, −3) :
-   *  force 83 → 78 %, suites 60 → 63 %, échos 75 → 71 % (bruit ±9 points). */
+   *  force 83 → 78 %, suites 60 → 63 %, échos 75 → 71 % (bruit ±9 points).
+   *  Le même soir, le game designer a trouvé la mesure faussée : le deck « force » piochait des exclusives et l'Héritage, qui n'existent pas
+   *  en fer (sans effet mais très forts). Pool corrigé (scripts/archetypes.ts) : voir docs/robot-archetypes.md. Aucun chiffre changé ici. */
   multSuite: { 3: 1.4, 4: 1.6, 5: 2 } as Record<number, number>,
   /** part du bonus de suite gardée quand toute la suite vient d'une seule lignée (1 = bonus entier) */
   suiteMono: 1,

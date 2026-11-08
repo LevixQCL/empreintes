@@ -10,7 +10,7 @@
 
 import { writeFileSync } from 'node:fs';
 import { cartesEnJeu, chargeNiveau, placesVides, poidsCarte, puissanceCarte } from '../src/core/collection';
-import { GESTES_SPECIAUX, MODULES, MODULES_TIRABLES, NOMS_LIGNEE, carteId, moduleDef } from '../src/core/donnees';
+import { GESTES_SPECIAUX, MODULES, MODULES_TIRABLES, NOMS_LIGNEE, carteId, existeEn, moduleDef } from '../src/core/donnees';
 import { accessibles, cloturerCombat, combatSuivant, entrerSalle, nouvelleExploration, salleCourante } from '../src/core/expedition';
 import { REGLES, frequenceLibre } from '../src/core/regles';
 import { jouerTour, jouerTourMoyen, type Escouade } from '../src/core/robot';
@@ -77,7 +77,8 @@ const MIXTE = ['ilka', 'doran', 'vela'];
 
 // ---------- Les cartes ----------
 const cle = (id: string) => carteId(id, METAL);
-const pool = (l: Lignee) => MODULES_TIRABLES.filter((m) => m.lignee === l).map((m) => cle(m.id));
+// 8 novembre 2026 : seulement les cartes qui existent dans ce métal (avant, les exclusives et l'Héritage, sans effet en fer mais très fortes, gonflaient le deck « force »)
+const pool = (l: Lignee) => MODULES_TIRABLES.filter((m) => m.lignee === l && existeEn(m, METAL)).map((m) => cle(m.id));
 const lign = (c: string) => moduleDef(c).lignee;
 const defense = (c: string) => moduleDef(c).type !== 'atk';
 const force = (c: string) => puissanceCarte(c, NIVEAU_CARTES);

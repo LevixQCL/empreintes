@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import * as C from '../src/core/combat';
-import { lireChapitre, envoyerMission,
+import { choisirHalte, lireChapitre, envoyerMission,
   DISTRICT, ameliorer, degreffer, echanger, disponibles, energieParHeure, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu, partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence, entrer, repondre, RENCONTRES,
 } from '../src/core/jeu';
 
@@ -86,6 +86,7 @@ describe('Expédition depuis le district', () => {
     const j = ouvert();
     poster(j, 'ilka', 'generateur');
     expect(disponibles(j)).not.toContain('ilka');
+    const pvAvant = { doran: pvMaxCombat(j, 'doran'), vela: pvMaxCombat(j, 'vela'), guetteur: pvMaxCombat(j, 'guetteur') };
     expect(partir(j, ['doran', 'vela', 'guetteur'], 1, 7).ok).toBe(true);
 
     // joue jusqu'à la fin de l'expédition
@@ -95,6 +96,7 @@ describe('Expédition depuis le district', () => {
       if (x.phase === 'carte') {
         // sur la carte : répondre aux rencontres (dernier choix), sinon descendre vers la première salle accessible
         if (x.rencontre) repondre(j, RENCONTRES[x.rencontre]!(j).options.length - 1);
+        else if (x.enHalte) choisirHalte(j, 0);
         else entrer(j, x.carte!.salles[x.carte!.position]!.voisins[0]!);
         continue;
       }
@@ -105,13 +107,15 @@ describe('Expédition depuis le district', () => {
     }
     const r = remonter(j);
     expect(j.expedition).toBeNull();
-    expect(j.porteurs.doran!.usure).toBeGreaterThan(0);
-    expect(pvMaxCombat(j, 'doran')).toBeLessThan(46);
+    // le Porteur le plus éprouvé de la descente (8 novembre 2026 : à −1, les ennemis frappent moins fort, Doran peut rentrer indemne)
+    const use = (['doran', 'vela', 'guetteur'] as const).slice().sort((a, b) => j.porteurs[b]!.usure - j.porteurs[a]!.usure)[0]!;
+    expect(j.porteurs[use]!.usure).toBeGreaterThan(0);
+    expect(pvMaxCombat(j, use)).toBeLessThan(pvAvant[use]);
     if (r.victoire) { expect(j.frontVaincu || j.strate === 2).toBe(true); expect(j.fragments.length).toBeGreaterThanOrEqual(2); } // deux papiers par Strate dans les Fondations
 
-    const u = j.porteurs.doran!.usure;
+    const u = j.porteurs[use]!.usure;
     tick(j, j.dernierTick + H);
-    expect(j.porteurs.doran!.usure).toBeLessThan(u);
+    expect(j.porteurs[use]!.usure).toBeLessThan(u);
   });
 });
 

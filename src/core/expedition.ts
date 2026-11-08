@@ -190,6 +190,10 @@ export const FORCE = {
   /** hausse par Strate pour suivre les niveaux des Porteurs. À 0 depuis les traits, phases et conditions (22 octobre 2026), qui
    *  durcissent autant : au front, le joueur moyen gagne ~3 fois sur 10, un joueur qui calcule tout ~5 fois sur 10 */
   niveaux: 0.0,
+  /** Les premières Strates (8 novembre 2026, audit, arbitré par le game designer) : les combats normaux duraient 3 tours à −1, 5 à −2, 6 à −3,
+   *  sous les « 4 à 6 tours » refusés par Bryan. Les ennemis seuls (ni groupes ni gardiens) y ont plus de PV ; à −1, ils frappent un peu moins fort
+   *  pour que la Strate d'accueil reste un peu plus facile. Robot (parcours d'un joueur moyen) : 3 / 5 / 6 tours → 5 / 6 / 6-7. */
+  debut: { pv: [1.6, 1.35, 1.2], coups: [0.8, 1, 1] } as { pv: number[]; coups: number[] },
 };
 export const forceStrate = (strate: number) => {
   const t = FORCE.table;
@@ -739,9 +743,10 @@ export function conditionDe(strate: number, rng: number, salleId: number, type: 
  * Les mécaniques de combat présentes à cette Strate (REGLES.apparition, 28 octobre 2026) : à la −1 les bases seules,
  * puis la Fêlure (et les phases des gardiens), puis les traits des ennemis, l'Assimilation (−6) et la 3ᵉ phase des gardiens (−7). Groupes et conditions se règlent au tirage de la salle.
  */
-function mecaniques(strate: number): { traits?: false; traitsEnnemis?: false; assimilation?: false; troisiemePhase?: true } {
-  if (strate < REGLES.apparition.felure) return { traits: false };
-  if (strate < REGLES.apparition.traits) return { traitsEnnemis: false };
+function mecaniques(strate: number): { traits?: false; traitsEnnemis?: false; assimilation?: false; troisiemePhase?: true; pvMult?: number; coupsMult?: number } {
+  const debut = strate >= 1 && strate <= FORCE.debut.pv.length ? { pvMult: FORCE.debut.pv[strate - 1]!, coupsMult: FORCE.debut.coups[strate - 1] ?? 1 } : {};
+  if (strate < REGLES.apparition.felure) return { traits: false, ...debut };
+  if (strate < REGLES.apparition.traits) return { traitsEnnemis: false, ...debut };
   // puis l'Assimilation, puis la 3ᵉ phase des gardiens (28 octobre 2026)
   return {
     ...(strate < REGLES.apparition.assimilation ? { assimilation: false as const } : {}),
