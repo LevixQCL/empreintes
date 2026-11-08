@@ -6,7 +6,14 @@ import { ennemiDef } from '../core/donnees';
 import { nomEcho } from '../core/regles';
 import * as J from '../core/jeu';
 import type { CombatEtat, Evenement, Pas } from '../core/types';
-import { impact, initImpacts } from '../ui/impact';
+// les animations du combat (ui/impact, ≈ 25 Ko compressés) ne partent pas au démarrage : elles arrivent
+// dès qu'une descente commence (prechargerImpacts) et, au pire, au premier coup joué
+let fx: typeof import('../ui/impact') | null = null;
+let fxCharge: Promise<typeof import('../ui/impact')> | null = null;
+export function prechargerImpacts(): Promise<typeof import('../ui/impact')> {
+  fxCharge ??= import('../ui/impact').then((m) => (fx = m)).catch((e) => { fxCharge = null; throw e; });
+  return fxCharge;
+}
 import type { Fin } from '../ui/vue';
 import { app, K, pause, racine, reduit } from './etat';
 import { afficher } from './rendu';
@@ -118,7 +125,9 @@ function popsDe(ev: Evenement, etat?: CombatEtat) {
 export async function jouer(pas: Pas[], rapide = false) {
   K.verrou = true;
   app.rapide = rapide;
-  initImpacts(reduit, rapide);
+  // sans réseau et sans le module en cache, le combat se joue quand même, sans les animations
+  const f = fx ?? await prechargerImpacts().catch(() => null);
+  f?.initImpacts(reduit, rapide);
   let bonus = 0;
   for (const p of pas) {
     const base = p.ev.kind === 'carte' ? 130 : p.ev.kind === 'resonance' ? 250 : p.ev.kind === 'degats' && p.ev.cible === 'ennemi' ? 300 : 380;
@@ -139,7 +148,7 @@ export async function jouer(pas: Pas[], rapide = false) {
     else if (p.ev.kind === 'fin' || (p.ev.kind === 'degats' && p.ev.cible !== 'ennemi' && !p.ev.source)) K.actif = undefined;
     popsDe(p.ev, p.etat);
     afficher();
-    bonus = impact(p.ev, racine);
+    bonus = f ? f.impact(p.ev, racine) : 0;
   }
   await pause(300 + bonus * (app.rapide ? 0.35 : 1));
   K.actif = undefined;

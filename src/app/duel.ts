@@ -9,8 +9,7 @@ import { DUEL, creerDuel, graineDuel, validerEscouade, type Camp, type DuelEtat,
 import { escouadeDuelDe } from '../core/duel-escouade';
 import { SessionDuel, transportRobot, type Transport } from '../duel/session';
 import { transportEnLigne } from '../duel/en-ligne';
-import { htmlDuel } from '../ui/duel';
-import { htmlAttenteDuel } from '../ui/cercle-duel';
+import { ecransDifferes } from './differes';
 import { C, envoyerDefi, marquerDefi, publierVitrine } from './cercle';
 import { app, D, racine } from './etat';
 import { afficher } from './rendu';
@@ -41,6 +40,9 @@ export const DL: {
 
 /** L'écran du mode duel */
 export function htmlModeDuel(): string {
+  const E = ecransDifferes();
+  if (!E) return '<div class="ecran chargement"><p class="chargement-ecran" role="status">Chargement du duel…</p></div>';
+  const { htmlDuel, htmlAttenteDuel } = E;
   if (DL.session) return htmlDuel(DL.session, Date.now(), finCercle());
   const refuse = C.defisEnvoyes.find((d) => d.id === DL.defi)?.etat === 'refuse';
   return htmlAttenteDuel({ nom: DL.nomAmi ?? 'ton ami', code: DL.code ?? '', mode: DL.mode, message: refuse ? `${DL.nomAmi ?? 'Ton ami'} a décliné le défi.` : DL.message });

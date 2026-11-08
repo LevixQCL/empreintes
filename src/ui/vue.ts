@@ -11,7 +11,7 @@ import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle
 import { DISTRICT, PILLAGE } from '../core/jeu';
 import { portraitProvisoire, ageArchipel, artGardien, fondFleche, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, cadragePortrait, sceneDistrict } from './art';
 import { SIGNE_LOURD, corpsFace, couleurFrequence, styleFace, type Face } from './carte';
-import { sonActif } from './impact';
+import { sonActif } from './son';
 import { ICO, sigle } from './icones';
 import { NOM_LIGNEES } from './coquille';
 import type { Decouverte } from '../core/decouvertes';

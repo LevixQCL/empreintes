@@ -11,6 +11,7 @@ import { afficher } from './rendu';
 import { lireMonEntree, planifierPublication } from './tableau';
 import { envoyerPillages, planifierGarnison, recevoirPillages } from './pillages';
 import { envoyerAssauts, recevoirAssauts } from './fleche';
+import { arreterCercle, C, suivreCercle } from './cercle';
 
 let minuteur: number | undefined;
 /** la partie à envoyer au compte (la plus récente), et quand on l'a envoyée la dernière fois */
@@ -192,12 +193,12 @@ export async function demarrerCompte() {
         // la Flèche : assauts subis sur son quai, assauts pas encore envoyés, garde à jour
         if (reconcilie) recevoirAssauts().then((change) => { if (change) sauver(); envoyerAssauts(); });
         // le Cercle des quais : amis, propositions et défis en attente (la bulle du bâtiment), vitrine à jour
-        if (reconcilie) import('./cercle').then((m) => m.suivreCercle()).catch(() => {});
+        if (reconcilie) suivreCercle();
         // une recrue sans compte protégé se voit aussi proposer un pseudo, une fois, après l'accueil du district (3 novembre 2026)
         if (app.uid && (compteProtege() || (app.jeu.accueilVu && !app.jeu.pseudoPropose)) && !app.jeu.directeur?.nom && !app.pseudoDemande) { app.pseudoDemande = true; app.jeu.pseudoPropose = true; G.edition = true; G.accueil = true; G.erreur = ''; if (app.mode === 'district') afficher(); }
       });
       lireMonEntree();
-    } else { comptePret(); import('./cercle').then((m) => { m.arreterCercle(); m.C.reseau = 'hors-ligne'; }).catch(() => {}); }
+    } else { comptePret(); arreterCercle(); C.reseau = 'hors-ligne'; }
     if (app.mode === 'district' || app.mode === 'titre') afficher();
   }, () => app.jeu.introVue);
 }

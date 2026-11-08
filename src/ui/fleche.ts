@@ -7,11 +7,12 @@ import { ASCENSION, chanceQuai, chanceVictoire, cibleDefiDe, etatFleche, FLECHE,
 import { avatar, coquille, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
 import { ICO } from './icones';
-import { artFleche, fondFleche, illustrationEnnemi, miniature } from './art';
+import { artFleche, fondFleche, miniature } from './art';
 
 /** Les chefs de quai : ils mènent le trio au combat qui passe un quai gravé */
 const CHEFS = new Set(GARDES_FLC.filter((g) => g.hauteur === 'chef').map((g) => g.id));
 import { echap } from './outils';
+import { visageGarde } from './acces';
 import { COULEUR } from './vue';
 
 /**
@@ -77,12 +78,6 @@ function fleche(j: Jeu, f: EtatFleche, top: GardienQuai[]): string {
     + fanions.join('')
     + `<b class="fl-esc" style="--y:${hauteur(f.quai)}%">${mini ? `<img src="${mini}" alt="" decoding="async">` : ''}</b>`
     + `</div></div>`;
-}
-
-/** Le visage rond d'un garde de la Flèche (même gabarit que l'avatar d'un Porteur) */
-export function visageGarde(id: string, taille = 40): string {
-  const img = illustrationEnnemi(id);
-  return `<span class="avatar garde-fleche" style="--c:${COULEUR[ennemiDef(id).lignee]};--t:${taille}px" aria-hidden="true">${img ? `<img src="${img}" alt="" decoding="async" loading="lazy">` : ''}</span>`;
 }
 
 const recompense = (q: number) => {

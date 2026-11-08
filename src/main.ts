@@ -21,6 +21,8 @@ import { afficher } from './app/rendu';
 import { signaler } from './app/incident';
 import { demarrerCompte, envoyer, sauver } from './app/synchro';
 import { R, retenirLien } from './app/parrainage';
+import { prechargerDifferes } from './app/differes';
+import { prechargerImpacts } from './app/combat';
 
 // les graphismes (3 novembre 2026) : allégés sur un appareil qui peine, avant le premier dessin
 appliquerGraphismes();
@@ -100,6 +102,8 @@ K.fin = null;
 retenirLien();
 afficher();
 demarrerCompte();
+// Pillages, Flèche, Cercle, duel et animations du combat : chargés après le premier écran (app/differes.ts)
+prechargerDifferes(prechargerImpacts);
 initInstallation(() => { if (app.mode === 'titre') afficher(); });
 // pour essayer les gains à la main pendant le développement (absent du site publié)
 if (import.meta.env.DEV) Object.assign(window, {

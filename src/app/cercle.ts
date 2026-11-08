@@ -5,7 +5,8 @@
 import * as J from '../core/jeu';
 import { clePseudo } from '../core/classements';
 import { moduleDef } from '../core/donnees';
-import { cercleVide, type AmiCercle, type CercleEcran } from '../ui/cercle';
+import { cercleVide } from '../ui/acces';
+import type { AmiCercle, CercleEcran } from '../ui/cercle';
 import type { Amitie, Defi, Profil, Proposition } from '../net/cercle';
 import { app, D } from './etat';
 import { afficher } from './rendu';

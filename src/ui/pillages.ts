@@ -4,7 +4,7 @@
 // Les règles sont dans src/core/partie/pillages.ts.
 
 import { porteurDef } from '../core/donnees';
-import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, ciblesDuJour, difficulte, escouadeActive, escouadeDefense, escouadePourDepart, escouadesDe, etatPillage, faitsDuJour, forceEscouade, majJetons, MISSIONS, barquesMax, strateVaincue, MAREES, contratsDuMoment, mareesDe, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
+import { PILLAGE, achatsRestants, coutJeton, butinPillage, chanceVictoire, difficulte, escouadeActive, escouadeDefense, escouadesDe, etatPillage, forceEscouade, majJetons, MISSIONS, barquesMax, MAREES, contratsDuMoment, mareesDe, type Cible, type EntreeHistorique, type Jeu } from '../core/jeu';
 import { ageArchipel, vignetteArchipel, vignetteDistrict, visuel } from './art';
 import { avatar, coquille, decompte, ent, entete, NOM_LIGNEE, type EcranDistrict } from './coquille';
 import { bloc, cle, etape, replie } from './presentation';
@@ -12,19 +12,13 @@ import { ICO, icone } from './icones';
 import { htmlMissions } from './district';
 import { htmlMarees } from './marees';
 import { echap } from './outils';
+import { cartePillages, pillagesOuverts, portOuvert } from './acces';
 import { COULEUR } from './vue';
 
 /** Les places des archipels sur la carte (en % de la carte), autour du tien, en bas au centre */
 const PLACES: [number, number][] = [[16, 13], [50, 13], [84, 13], [14, 45], [50, 45], [86, 45]];
 const MOI: [number, number] = [50, 80];
 
-
-/** Les archipels de la carte et ce qu'il faut pour les afficher */
-export function cartePillages(j: Jeu, now: number, enLigne: Cible[] = []) {
-  const escouade = escouadePourDepart(j);
-  const cibles = ciblesDuJour(j, escouade, now, enLigne);
-  return { escouade, cibles, force: forceEscouade(j, escouade), faits: faitsDuJour(j, now) };
-}
 
 export function htmlPillages(e: EcranDistrict): string {
   const j = e.j;
@@ -150,10 +144,6 @@ function ficheCible(j: Jeu, c: Cible, force: number, fait: boolean, jetons: numb
     + `<button type="button" class="btn prim large" data-action="pillage-preparer" data-id="${echap(c.id)}"${raison ? ' disabled' : ''}>${ICO.grappin}Préparer le pillage</button></section>`;
 }
 
-/** Le Port est ouvert : la Strate −1 est vaincue, le bateau peut quitter le ponton */
-export const portOuvert = (j: Jeu) => j.chambre && strateVaincue(j) >= PILLAGE.strateDuPort;
-/** Les pillages (2 novembre 2026) : après le gardien de −3 ; avant, le Port ne sert qu'aux missions et aux marées */
-export const pillagesOuverts = (j: Jeu) => j.chambre && strateVaincue(j) >= PILLAGE.strateMin;
 
 /**
  * La présentation du Port (28 octobre 2026, Bryan : « refais tout convenablement ») : son histoire, les missions en mer,

@@ -212,3 +212,7 @@
   .tr-strates .tr-actions{grid-column:2;grid-row:1 / span 2;margin:0}
   .tr-strates .roche .tr-infos>*{grid-column:1 / -1}
 }
+
+/* un écran chargé à la demande (app/differes.ts), le temps qu'il arrive */
+.chargement-ecran { margin: 48px auto; max-width: 30ch; text-align: center; font-size: 14px; color: var(--ivory, #e9e4d8); opacity: .75; }
+.ecran.chargement > .chargement-ecran { padding-top: 30vh; }

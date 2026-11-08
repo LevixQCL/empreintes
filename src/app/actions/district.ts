@@ -1,6 +1,6 @@
 // Actions du district : bâtiments, Porteurs, cartes, escouade, départs, Chroniques.
 
-import { cartePillages, portOuvert } from '../../ui/pillages';
+import { cartePillages, portOuvert } from '../../ui/acces';
 import { lireCiblesEnLigne, sousBouclier } from '../pillages';
 import { relireVitrines, suivreCercle } from '../cercle';
 import { afficher } from '../rendu';

@@ -5,8 +5,8 @@
 import { HALTES_FOND, PISTES, halteDef, nombreHaltes, queteDef, revelationDe } from '../core/strates';
 import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
 import { htmlBestiaire } from './bestiaire';
-import { visageGarde } from './fleche';
-import { pillagesOuverts, portOuvert } from './pillages';
+import { visageGarde } from './acces';
+import { pillagesOuverts, portOuvert } from './acces';
 import { epitheteAffiche, epithetesDe, journalCarte, NOMS_PALIER, palierDe, vecuDe, versPalierSuivant, PILLAGE, butinPillage, chanceVictoire, difficulte, etatPillage, forceEscouade, majJetons, chanceQuai, etatFleche, FLECHE, gardiensQuai, pas } from '../core/jeu';
 import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe, deNom, ilElle } from '../core/donnees';

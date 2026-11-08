@@ -13,6 +13,8 @@ const ART = `empreintes-art-${VERSION}`;
 const GARDES = [PAGE, BUILD, ART];
 // au-delà, les plus anciens fichiers du build partent (ceux des versions précédentes du jeu)
 const MAX_BUILD = 80;
+// les images aussi : au fil des remplacements, les anciennes versions partent (≈ 545 fichiers dans public/ aujourd'hui)
+const MAX_ART = 600;
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(PAGE).then((c) => c.add('./')).catch(() => {}).then(() => self.skipWaiting()));
@@ -60,7 +62,10 @@ async function buildGarde(req) {
 async function artPuisRafraichi(req, e) {
   const c = await caches.open(ART);
   const garde = await c.match(req);
-  const frais = fetch(req).then((r) => { if (reussie(r)) c.put(req, r.clone()); return r; });
+  const frais = fetch(req).then((r) => {
+    if (reussie(r)) c.put(req, r.clone()).then(() => elaguer(ART, MAX_ART)).catch(() => {});
+    return r;
+  });
   if (garde) { e.waitUntil(frais.catch(() => {})); return garde; }
   return frais;
 }

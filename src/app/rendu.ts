@@ -3,9 +3,7 @@
 import { marquerDebordements } from '../ui/outils';
 import { autoActif } from '../ui/options';
 import { mesurerFluidite, suspendreHorsEcran } from '../ui/graphismes';
-import { htmlPillages } from '../ui/pillages';
-import { htmlFleche } from '../ui/fleche';
-import { htmlCercle } from '../ui/cercle';
+import { brancherDifferes, ecransDifferes, htmlChargement } from './differes';
 import { htmlModeDuel } from './duel';
 import { repliqueGardien, sceneDef } from '../core/campagne';
 import { tousEnnemis } from '../core/combat';
@@ -32,6 +30,7 @@ import { htmlCombat, htmlDecouverte, panneauAge, panneauCompte } from '../ui/vue
 import { annoncerGardien } from '../ui/bandeau';
 import { app, compteEtat, D, G, K, racine, reduit } from './etat';
 import { sauver } from './synchro';
+import { prechargerImpacts } from './combat';
 import { signaler } from './incident';
 
 // ---------- Rendu ----------
@@ -98,6 +97,8 @@ function compteTitre(): TitreCompte | null {
 }
 
 /** Redessine l'écran. Une erreur d'affichage ouvre la fenêtre du filet de sécurité au lieu de figer le jeu */
+brancherDifferes(() => afficher());
+
 export function afficher() {
   try { dessiner(); } catch (e) { signaler(e, 'affichage', afficher); }
 }
@@ -128,6 +129,8 @@ function dessiner() {
     } else K.decouvertesExpl = undefined;
   }
   else if (app.mode === 'combat' && app.jeu.expedition) {
+    // les animations du combat arrivent dès l'entrée en descente (au plus tard au premier coup)
+    prechargerImpacts().catch(() => {});
     const etat = K.etat ?? app.jeu.expedition.combat;
     const lecon = app.jeu.expedition.tutoriel && etat.issue === 'en-cours' ? J.leconTutoriel(etat.tour) : undefined;
     // une mécanique rencontrée pour la première fois : expliquée avant d'en avoir besoin (jamais pendant le combat guidé).
@@ -153,7 +156,7 @@ function dessiner() {
     voirNouveautes();
     proposerProtection();
     h = D.vue === 'coupe' ? htmlCoupe(D) : D.vue === 'escouade' ? htmlEscouade(D) : D.vue === 'rencontre' ? htmlRencontre(D.bulles) : D.vue === 'briefing' ? htmlBriefing(D.etape) : D.vue === 'accueil' ? htmlBriefing(D.etape, 'district')
-      : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : D.vue === 'classements' ? htmlClassements(D, G, app.uid) : D.vue === 'pillages' ? htmlPillages(D) : D.vue === 'fleche' ? htmlFleche(D) : D.vue === 'recruter' ? htmlRecruter(D, R, !!app.uid) : D.vue === 'cercle' ? htmlCercle(D) : htmlArchipel(D);
+      : D.vue === 'codex' ? htmlCodex(D) : D.vue === 'cartes' ? htmlCartes(D) : D.vue === 'porteurs' ? htmlPorteurs(D) : D.vue === 'classements' ? htmlClassements(D, G, app.uid) : D.vue === 'pillages' ? (ecransDifferes()?.htmlPillages(D) ?? htmlChargement(D, 'La mer des piliers', 'Le Port')) : D.vue === 'fleche' ? (ecransDifferes()?.htmlFleche(D) ?? htmlChargement(D, 'Les Hauts · Flèche d’amarrage', 'La Flèche')) : D.vue === 'recruter' ? htmlRecruter(D, R, !!app.uid) : D.vue === 'cercle' ? (ecransDifferes()?.htmlCercle(D) ?? htmlChargement(D, 'CERCLE DES QUAIS', 'Le Cercle')) : htmlArchipel(D);
     // une scène de la campagne : au retour sur l'archipel ou dans la Tour, par-dessus tout (ou rejouée depuis la Bibliothèque)
     const revoir = D.revoir ? sceneDef(D.revoir) : undefined;
     const scene = revoir ?? (!D.menu && (D.vue === 'archipel' || D.vue === 'coupe') ? J.sceneCampagne(app.jeu) : null);

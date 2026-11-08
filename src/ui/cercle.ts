@@ -13,6 +13,7 @@ import { COULEUR_RARETE, faceCarte } from './carte';
 import { coquille, entete, type EcranDistrict } from './coquille';
 import { ICO, icone } from './icones';
 import { echap } from './outils';
+import { cercleVide } from './acces';
 
 // ---------- Ce que l'application garde du Cercle ----------
 
@@ -62,10 +63,6 @@ export interface CercleEcran {
   aide: boolean;
 }
 
-export const cercleVide = (): CercleEcran => ({
-  reseau: 'hors-ligne', amis: [], demandes: [], recues: [], envoyees: [], defisRecus: [], defisEnvoyes: [], aRepondre: 0,
-  onglet: 'amis', ami: null, choix: null, filtreMetal: 'argent', filtreLignee: 'tout', echange: null, mode: 'libre', occupe: false, message: '', aide: false,
-});
 
 /** Le décor de l'écran d'ouverture : la scène peinte quand elle sera là, la Cuvette en attendant */
 const SCENE_PEINTE = true;

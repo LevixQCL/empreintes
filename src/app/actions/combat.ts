@@ -7,7 +7,7 @@ import * as J from '../../core/jeu';
 import { composerTourMoyen } from '../../core/robot';
 import { suitePorte } from '../../core/expedition';
 import { comparer, montrer, relever } from '../../ui/gains';
-import { basculerSon, debloquerSon } from '../../ui/impact';
+import { basculerSon, debloquerSon } from '../../ui/son';
 import { vibrer } from '../../ui/toucher';
 import { autoActif, basculerAuto } from '../../ui/options';
 import { basculerGraphismes } from '../../ui/graphismes';
