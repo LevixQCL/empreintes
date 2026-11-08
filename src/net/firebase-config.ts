@@ -14,8 +14,8 @@ export const firebaseConfig = {
 export const firebaseActif = () => firebaseConfig.apiKey !== '';
 
 /**
- * App Check (8 novembre 2026, audit de sécurité) : la clé de site reCAPTCHA v3 du jeu. Tant qu'elle est vide, App Check est éteint.
- * Une fois remplie, Firebase vérifie que les requêtes viennent bien du jeu publié (pas d'un script) ; on active ensuite
- * l'application stricte dans la console (App Check › Firestore et Authentication › Appliquer).
+ * App Check (8 novembre 2026, audit de sécurité) : la clé de site Fraud Defense / reCAPTCHA du jeu (publique, domaine levixqcl.github.io).
+ * Vide = App Check éteint. Firebase vérifie que les requêtes viennent bien du jeu publié (pas d'un script) ; après quelques jours
+ * de statistiques propres, on active l'application stricte dans la console (App Check › API › Firestore et Authentication › Appliquer).
  */
-export const appCheckCle = '';
+export const appCheckCle = '6LfnoRYuAAAAAOZasBB-zleSWp3h_52W-18qj9Of';

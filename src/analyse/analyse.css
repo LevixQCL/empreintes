@@ -90,3 +90,6 @@ th.txt,td.txt{text-align:left}
 /* étiquettes des colonnes : la première collée à gauche, une sur deux masquée sur téléphone */
 .an-col:first-child span{left:0;transform:none}
 @media (max-width:600px){.an-col span.sec{display:none}}
+
+/* App Check : badge reCAPTCHA caché (outil réservé à Bryan, la mention de Google est dans le jeu et sur la page Confidentialité) */
+.grecaptcha-badge{visibility:hidden!important}

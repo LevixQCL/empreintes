@@ -7,6 +7,7 @@ import { initializeApp } from 'firebase/app';
 import { GoogleAuthProvider, getAuth, onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth';
 import { collection, getDocs, getFirestore, type Timestamp } from 'firebase/firestore';
 import { debutJour, estJeuValide } from '../core/jeu';
+import { activerAppCheck } from '../net/app-check';
 import { firebaseConfig } from '../net/firebase-config';
 import { echap } from '../ui/outils';
 import {
@@ -24,6 +25,7 @@ async function empreinte(t: string): Promise<string> {
 }
 // une application Firebase à part : se connecter ici ne change pas le compte avec lequel on joue dans ce navigateur
 const fb = initializeApp(firebaseConfig, 'analyse');
+activerAppCheck(fb); // sans lui, l'outil serait refusé une fois App Check appliqué
 const auth = getAuth(fb);
 auth.languageCode = 'fr';
 const db = getFirestore(fb);

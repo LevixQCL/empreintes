@@ -304,13 +304,19 @@ export function panneauCompte(c: Compte, retrouver = false): string {
  */
 function blocDonnees(c: Compte): string {
   const page = `<a class="lien" href="./confidentialite.html" target="_blank" rel="noopener">Confidentialité et données</a>`;
-  if (!c.utilisateur) return `<p class="discret donnees">${page} · Réservé aux 13 ans et plus</p>`;
+  if (!c.utilisateur) return `<p class="discret donnees">${page} · Réservé aux 13 ans et plus</p>` + mentionRecaptcha;
   if (c.supprimer) return `<div class="donnees confirmer" role="group" aria-label="Supprimer mon compte">`
     + `<p><strong>Tout supprimer, pour de bon ?</strong> Ta partie (en ligne et sur cet appareil), ton pseudo, ta place au Grand Tableau, ta garde de la Flèche, ta garnison, ta vitrine et tes amis du Cercle seront effacés. Rien ne pourra être récupéré.</p>`
     + `<div class="ligne"><button type="button" class="btn sec" data-action="supprimer-annuler"${c.occupe ? ' disabled' : ''}>Garder mon compte</button>`
     + `<button type="button" class="btn danger" data-action="supprimer-confirmer"${c.occupe ? ' disabled' : ''}>Oui, tout supprimer</button></div></div>`;
-  return `<p class="discret donnees">${page} · <button type="button" class="lien" data-action="supprimer">Supprimer mon compte et mes données</button></p>`;
+  return `<p class="discret donnees">${page} · <button type="button" class="lien" data-action="supprimer">Supprimer mon compte et mes données</button></p>` + mentionRecaptcha;
 }
+
+/**
+ * App Check (8 novembre 2026) : le badge reCAPTCHA est caché (styles.css), donc la mention exigée par Google figure ici,
+ * sous le lien Confidentialité du panneau Compte.
+ */
+const mentionRecaptcha = `<p class="discret recaptcha">Protégé par reCAPTCHA : les <a class="lien" href="https://policies.google.com/privacy" target="_blank" rel="noopener">règles de confidentialité</a> et les <a class="lien" href="https://policies.google.com/terms" target="_blank" rel="noopener">conditions d’utilisation</a> de Google s’appliquent.</p>`;
 
 // ---------- Fuir (décision du 22 octobre 2026) ----------
 // Deux sorties, au choix : reculer d'une salle sur la carte, ou remonter au district. Dans les deux cas l'attaque annoncée

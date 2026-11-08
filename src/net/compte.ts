@@ -7,17 +7,15 @@ import {
   deleteUser, sendPasswordResetEmail, signInAnonymously, signInWithCredential, signInWithEmailAndPassword, signInWithPopup, signOut, type User,
 } from 'firebase/auth';
 import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, runTransaction, Timestamp, where, type DocumentReference, type Query } from 'firebase/firestore';
-import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
-import { appCheckCle, firebaseConfig } from './firebase-config';
+import { activerAppCheck } from './app-check';
+import { firebaseConfig } from './firebase-config';
 import { estJeuValide, VERSION_JEU } from '../core/jeu';
 import type { Enveloppe } from '../save/local';
 import { decisionEcriture, prochainJeton, versionDe } from '../save/garde';
 
 const app = initializeApp(firebaseConfig);
-// App Check : seulement sur le site publié (en local, le jeton reCAPTCHA échouerait), avant toute requête
-if (appCheckCle && location.hostname.endsWith('github.io')) {
-  try { initializeAppCheck(app, { provider: new ReCaptchaV3Provider(appCheckCle), isTokenAutoRefreshEnabled: true }); } catch { /* le jeu tourne quand même */ }
-}
+// App Check avant toute requête (net/app-check.ts)
+activerAppCheck(app);
 const auth = getAuth(app);
 auth.languageCode = 'fr';
 const db = getFirestore(app);
