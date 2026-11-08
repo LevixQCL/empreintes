@@ -109,7 +109,7 @@ export const CONTRATS: readonly ContratDef[] = [
     epreuves: [E('Démêler les échos du pilier', 'reso'), E('Dégager l’escalier effondré', 'tech'), E('Tenir la voûte le temps de passer', 'bio')] },
   { rang: 'vive', lieu: 'transbordeur', titre: 'La soute du Héron', ambiance: 'Le Héron a gardé sa dernière cargaison, scellée sous la ligne d’eau.',
     epreuves: [E('Relancer le treuil de la soute', 'tech'), E('Retenir l’eau qui s’engouffre', 'bio'), E('Écouter la coque qui craque', 'reso')] },
-  { rang: 'vive', lieu: 'marche', titre: 'La réserve des Basses-Eaux', ambiance: 'Les anciens du marché disent qu’une réserve entière dort sous les étals.',
+  { rang: 'vive', lieu: 'marche', titre: 'La réserve des Salines', ambiance: 'Les anciens du marché disent qu’une réserve entière dort sous les étals.',
     epreuves: [E('Tenir les étals qui flottent', 'bio'), E('Forcer la grille de la réserve', 'tech'), E('Retrouver le passage dans le noir', 'reso')] },
   { rang: 'vive', lieu: 'phare', titre: 'La lentille du phare couché', ambiance: 'La lumière bat plus vite à l’approche.',
     epreuves: [E('Accorder la lampe qui pulse', 'reso'), E('Tenir la coque contre la houle', 'bio'), E('Démonter la lentille', 'tech')] },

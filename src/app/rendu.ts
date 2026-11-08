@@ -1,6 +1,7 @@
 // Le rendu : redessine l'écran courant à partir de l'état (positions de défilement et champs de saisie gardés).
 
 import { marquerDebordements } from '../ui/outils';
+import { typoHtml } from '../ui/typo';
 import { autoActif } from '../ui/options';
 import { mesurerFluidite, suspendreHorsEcran } from '../ui/graphismes';
 import { brancherDifferes, ecransDifferes, htmlChargement } from './differes';
@@ -163,6 +164,7 @@ function dessiner() {
     if (scene) h = htmlScene(scene, J.contexteCampagne(app.jeu), D.scene ?? 0, !!revoir);
     else D.scene = 0;
   }
+  h = typoHtml(h);
   racine.dataset.mode = app.mode;
   // chaque sorte de zone garde ses positions à part : une liste qui apparaît ou disparaît ne décale pas les autres
   const defile = DEFILANTS.map((sel) => [...racine.querySelectorAll<HTMLElement>(sel)].map((el) => [el.scrollTop, el.scrollLeft] as const));

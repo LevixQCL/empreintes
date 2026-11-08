@@ -114,8 +114,8 @@ export const FAMILLES_DISTRICT: readonly FamilleDef[] = [
     'La cloche des Bérot sonne seule les nuits de houle. Ils ont compté : jamais deux fois le même nombre de coups.'),
   F('tessier', 'les Tessier', 'basses', 'Des puisatiers, installés dans la citerne sèche.',
     'Les Tessier montent les marches trop hautes de la citerne chaque jour. Les enfants ont appris à marcher dessus avant de marcher droit.'),
-  F('okane', 'les Okane', 'basses', 'Un tailleur de pierre et sa fille, sous la galerie des voûtes.',
-    'Le père Okane cherche le joint des voûtes depuis vingt ans. Il n’y en a pas. Il dit que c’est la plus belle pierre qu’il ait jamais touchée.'),
+  F('okane', 'les Tavel', 'basses', 'Un tailleur de pierre et sa fille, sous la galerie des voûtes.',
+    'Le père Tavel cherche le joint des voûtes depuis vingt ans. Il n’y en a pas. Il dit que c’est la plus belle pierre qu’il ait jamais touchée.'),
   F('varenne', 'les Varenne', 'basses', 'Des mécaniciens, qui font tourner les vannes des Citernes.',
     'Les Varenne règlent des vannes qui suivent une marée d’un autre temps. Ils ne savent pas pour qui. Ils les règlent quand même.'),
   F('aumont', 'les Aumont', 'basses', 'Une famille au fond du puisard, la plus discrète des Basses.',
@@ -126,8 +126,8 @@ export const FAMILLES_DISTRICT: readonly FamilleDef[] = [
     'Les lampes de pierre s’allument quand un Falgue approche. Pour les autres, il faut attendre. Personne ne sait pourquoi.'),
   F('demare', 'les Démare', 'basses', 'Des copistes, qui recopient les empreintes du palier gravé.',
     'Les Démare ont recopié neuf mille empreintes du palier gravé. Ils disent qu’aucune ne se ressemble, et qu’aucune ne leur est étrangère.'),
-  F('veilleurs', 'les Veilleurs du seuil', 'basses', 'Trois générations assises devant une porte sans poignée.',
-    'Les Veilleurs du seuil écoutent l’eau du puits derrière la porte. Ils disent qu’elle a le bruit d’une respiration. Celle de tout le district.'),
+  F('veilleurs', 'les Huisset', 'basses', 'Trois générations assises devant une porte sans poignée.',
+    'Les Huisset écoutent l’eau du puits derrière la porte. Ils disent qu’elle a le bruit d’une respiration. Celle de tout le district.'),
 ];
 
 export const familleDef = (id: string) => FAMILLES_DISTRICT.find((f) => f.id === id);

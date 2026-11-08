@@ -434,8 +434,8 @@ export const secoursPossible = (j: Jeu, d: Destination, now: number): boolean =>
  * il est tiré de l'heure de retour et du Porteur, toujours le même pour une mission donnée.
  */
 export const LIEUX_MISSION = [
-  'le phare couché de Basse-Lune', 'les serres noyées du Jardin d’Hiver', 'le pilier effondré de Sombreverse',
-  'la station de pompage engloutie', 'les toits du vieux marché des Basses-Eaux', 'l’épave du transbordeur Héron',
+  'le phare couché de Pâle-Lune', 'les serres noyées du Jardin d’Hiver', 'le pilier effondré de Sombreverse',
+  'la station de pompage engloutie', 'les toits du vieux marché des Salines', 'l’épave du transbordeur Héron',
   'la gare suspendue à demi noyée', 'les silos de la digue rompue', 'le pilier sans nom au large de Brume-Haute',
   'l’usine de dessalement abandonnée', 'les quais morts de l’ancienne criée', 'le clocher de verre sous la marée',
 ] as const;

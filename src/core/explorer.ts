@@ -39,7 +39,7 @@ export const VESTIGES: VestigeDef[] = [
   V(4, 2, 'Une tasse', 'Une tasse en grès, posée sur une marche. Le fond est encore taché. Quelqu’un prenait le temps de boire, ici.'),
   V(4, 3, 'Un calendrier gratté', 'Des bâtons gravés dans la pierre, par groupes de sept. Il y en a des milliers.'),
   V(4, 4, 'Une couverture tissée', 'Une couverture tissée main, aux motifs de vagues. Personne ne tisse plus comme ça, là-haut.'),
-  V(4, 5, 'Une lampe éteinte', 'La même lampe que dans la pièce à la chaise, en plus petit. Comme si on en avait fabriqué une pour un enfant.'),
+  V(4, 5, 'Une lampe éteinte', 'Une lampe à huile minuscule, posée au pied d’une porte ronde. Comme si on en avait fabriqué une pour un enfant.'),
   // −5 : les Berceaux, la cire blanche de la Maison Orsève
   V(5, 1, 'Un bâton de cire blanche', 'Un bâton de cire blanche, à moitié fondu. La cire des sceaux de la Maison Orsève.'),
   V(5, 2, 'Un gant de préleveur', 'Un gant fin, doublé de soie. Taille enfant. Les préleveurs des Hauts descendent avec leurs apprentis.'),

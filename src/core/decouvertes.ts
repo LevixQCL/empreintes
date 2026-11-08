@@ -62,7 +62,7 @@ export function decouvertesDuCombat(s: CombatEtat): Decouverte[] {
   if (tousEnnemis(s).some((en) => en.pv > 0 && felureVisible(en) && !en.felureBrisee)) {
     r.push({
       id: 'felure', sur: 'PREMIÈRE RENCONTRE', titre: 'La Fêlure',
-      texte: 'À côté de son intention, l’ennemi montre une gemme fêlée et une Fréquence. Pose une carte de cette Fréquence dans ta chaîne : son attaque, son bouclier ou son soin se brise (moitié moins fort, un quart chez un gardien ou un blindé ; sans effet sur une Concentration ou une Dissonance). Si ta chaîne fait aussi une suite, ton Flux monte d’un cran. Les cartes de ta main qui la brisent portent la gemme.',
+      texte: 'L’ennemi montre une gemme fêlée et une Fréquence. Pose une carte de cette Fréquence dans ta chaîne : son prochain coup est brisé, moitié moins fort (un quart chez un gardien ou un blindé). Les cartes de ta main qui la brisent portent la gemme.',
       conseil: 'Une Fêlure brisée vaut souvent mieux qu’une suite de plus : elle protège l’escouade. Glisse-la dans une suite : elle remplit aussi le Flux pour ton Coup d’éclat.',
     });
   }

@@ -163,7 +163,7 @@ function ongletDeck(): string {
 
   // le schéma : trois Porteurs, leurs cartes, et les cartes du district
   const colonne = (id: string, l: Lignee) => `<div class="g-col" style="--c:${COULEUR[l]}">${avatar(id, 38)}<span class="g-cases">${'<i></i>'.repeat(DISTRICT.cartesMax)}</span><small>${NOM_LIGNEES[l].slice(0, -1)}</small></div>`;
-  h += `<section class="g-schema" aria-label="Le deck : ${ESCOUADE} Porteurs de ${DISTRICT.cartesMax} cartes, plus ${GESTES_SPECIAUX.length} cartes du Râtelier du district (jusqu’à 4), soit ${total} cartes">`
+  h += `<section class="g-schema" aria-label="Le deck : ${ESCOUADE} Porteurs de ${DISTRICT.cartesMax} cartes, plus ${GESTES_SPECIAUX.length} cartes du Râtelier de l’escouade (jusqu’à 4), soit ${total} cartes">`
     + `<div class="g-cols">${colonne('ilka', 'tech')}<b class="g-op">+</b>${colonne('doran', 'bio')}<b class="g-op">+</b>${colonne('vela', 'reso')}<b class="g-op">+</b>`
     + `<div class="g-col district"><span class="g-blason" aria-hidden="true">${ICO.district}</span><span class="g-cases">${'<i></i>'.repeat(GESTES_SPECIAUX.length)}</span><small>District</small></div></div>`
     + `<p class="g-egal"><b>${total}</b> cartes au plus · main de <b>${REGLES.tailleMain}</b> · chaîne de <b>${REGLES.capaciteBase}</b> places</p></section>`;
@@ -364,7 +364,7 @@ function ongletEffets(trouvees: ReadonlySet<string>): string {
     h += `</ul></section>`;
   }
   // le paquetage du district
-  h += `<section class="bloc">${titre(ICO.district, 'Le Râtelier du district')}<div class="g-district">`
+  h += `<section class="bloc">${titre(ICO.district, 'Le Râtelier de l’escouade')}<div class="g-district">`
     + GESTES_SPECIAUX.map((g) => `<div class="g-carte-district">${carteExemple(g, 'main')}<p><b>${echap(g.nom)}</b>${NOM_ACTION[g.type]} ${g.v}, Fréquence ${g.f}${g.effet ? `, ${NOMS_EFFET[g.effet.type]}` : ''}.</p></div>`).join('')
     + `</div><p class="aide">Au départ, le district fournit ces deux cartes communes : le Stimulant vient de la Clinique, le Pavois de cuivre de la Tour du Noyau. En montant, tes bâtiments en préparent d’autres (Lame d’atelier, Plan des galeries, Brèche, Groupe de secours, Ampoule de relève), et leur force grandit avec eux : chaque niveau du bâtiment leur ajoute de la force (touche une carte pour voir son échelle). Tu choisis celles qui descendent dans le Râtelier de l’escouade : 2 emplacements, 3 au niveau 5 de la Tour du Noyau, 4 au niveau 9. Chaque départ coûte un peu d’énergie pour tout le Râtelier à la fois (une demi-heure de Générateur pour explorer, un quart d’heure pour une sortie courte) ; sans assez d’énergie, l’escouade part sans elles. Jouées par personne, elles ne s’éteignent jamais quand un Porteur tombe.</p></section>`;
   return h;

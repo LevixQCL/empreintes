@@ -120,7 +120,7 @@ export const HALTES: HalteDef[] = [
     ],
     'L’éboulement des Chouettes, en 2104, n’est pas venu de l’eau : on avait percé un treillis de cristal. Et la gaine qui les a sauvés n’est sur aucun plan : ronde, lisse, sans une trace d’outil.', {
       nous: rv('Ce que savaient les familles', 'Quatre des six Chouettes venaient des familles de l’abri de 2060. Leurs grands-parents avaient vu le cristal derrière le plâtre et s’étaient tus ; quarante ans plus tard, les petits-enfants ont percé le même treillis sans savoir ce que c’était.',
-        v('ilka', 'Quatre des six Chouettes portent un nom du registre de l’abri. En 2060, leurs grands-parents ont vu le plâtre fendu, et ils se sont tus, comme on se tait ici : on ne demande pas. Quarante ans plus tard, les petits-enfants ont percé le même treillis sans savoir ce que c’était. Le silence des uns a fait l’éboulement. Le courage des autres a sauvé vingt personnes.'),
+        v('ilka', 'Quatre des six Chouettes portent un nom du registre de l’abri. Leurs grands-parents avaient vu le plâtre fendu, et s’étaient tus. Leurs petits-enfants ont percé le même treillis. Le silence des uns a fait l’éboulement ; le courage des autres a sauvé vingt personnes.'),
         v('', 'Quatre des six noms peints sous les mains figurent aussi au registre de l’abri de 2060. Ces familles avaient vu le cristal derrière le plâtre, et n’en avaient jamais rien dit.')),
       avant: rv('Une gaine qui monte', 'La gaine des Chouettes a été percée par en dessous : quelqu’un montait. Le cristal de l’abri a pris ce chemin sans hésiter.',
         v('sasha', 'Regarde les éclats au bord de la gaine : ils sont tous tombés vers le bas. Ce trou a été creusé par en dessous. Celui qui l’a percé ne descendait pas vers nous, directeur. Il montait.'),
@@ -388,7 +388,7 @@ export const HALTES: HalteDef[] = [
       d('Un nœud défait', v('aurel', 'Un nœud défait, le fil vide. On a donné ce nom à quelqu’un. Chez nous, on grave le nom sous celui du porteur d’avant. Ici, on le donnait.'), v('joss', 'Un fil vide. Le nom n’est pas perdu : il est parti.'), v('', 'Un seul nœud est défait. Le fil est vide.')),
     ], [
       { texte: 'Renouer un nom', effet: 'eclat', piste: 'avant', carte: 'archive', drapeau: 'nom-renoue', recit: 'Tu refais le nœud d’un fil qui glissait. Le nom tient. Quelque part, plus bas, la Tisseuse a senti ta main. Un Éclat attend au bout du fil.' },
-      { texte: 'Chercher un nom de chez nous', effet: 'composants', piste: 'nous', carte: 'cache', recit: 'Tu cherches dans les nœuds un nom de Vertiga. Il y en a : des fouilleurs disparus, des Muets sans famille, noués avec les autres. Au pied du mur, le sac de l’un d’eux.' },
+      { texte: 'Chercher un nom de chez nous', effet: 'composants', piste: 'nous', carte: 'cache', recit: 'Tu cherches dans les nœuds un nom de Vertiga. Il y en a : des fouilleurs disparus, des Résonants des bas-fonds sans famille, noués avec les autres. Au pied du mur, le sac de l’un d’eux.' },
     ],
     'Le même dragon est gravé dix fois : net d’abord, puis de plus en plus tremblé. Plus on le recopie, moins on sait à quoi il ressemblait.'),
   H(9, 3, 'Le nid',

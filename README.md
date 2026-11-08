@@ -56,7 +56,7 @@ src/
     rng.ts         hasard déterministe (même graine = même partie)
   ui/            l'affichage
     coquille.ts    ressources en haut, navigation en bas, menu, notifications (commun au district)
-    district.ts    archipel, Tour du Noyau, escouade, cartes, Bibliothèque ; les détails s'ouvrent en feuille par le bas
+    district.ts    carte du district (la Cuvette), Tour du Noyau, escouade, cartes, Bibliothèque ; les détails s'ouvrent en feuille par le bas
     vue.ts         l'écran de combat
     pillages.ts    l'onglet Pillages : la carte des cuvettes voisines, la garnison, le journal du port
     parrainage.ts  l'écran « Recruter » (menu Plus) : le code, ce que chacun gagne, les recrues, les distinctions, la saisie d'un code
@@ -276,7 +276,7 @@ a survécu et a dessiné les premiers implants (« La Réponse », et « Elle at
 
 **La campagne vécue** (25 octobre 2026, `src/core/campagne.ts`, `src/ui/campagne.ts`, `campagne.css`). Les Chroniques racontent
 le passé du monde ; la campagne raconte l'histoire du joueur, là où il joue. Chaque Strate de −1 à −10 est un chapitre :
-une scène à son ouverture (l'enjeu) et une après son gardien (ce qu'on a trouvé), jouées au retour sur l'archipel ou dans la Tour
+une scène à son ouverture (l'enjeu) et une après son gardien (ce qu'on a trouvé), jouées au retour sur la carte du district ou dans la Tour
 (`sceneCampagne`, une seule fois, dans l'ordre : `Jeu.scenes`), puis la convocation des Hauts (après « La dernière lecture »,
 elle annonce la Flèche) et l'épilogue. Les gardiens reviennent et parlent en combat (`repliqueGardien`, à l'entrée et au passage
 de phase) : la Confluence fuit jusqu'à −3, le Gardien des registres jusqu'à −6, la Tisseuse jusqu'à −9, le Premier Porteur

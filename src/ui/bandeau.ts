@@ -6,6 +6,7 @@
 import { ennemiDef } from '../core/donnees';
 import { artGardien, illustrationEnnemi } from './art';
 import { echap } from './outils';
+import { typoHtml } from './typo';
 
 let courant: HTMLElement | null = null;
 
@@ -15,7 +16,7 @@ function montrer(cls: string, html: string, duree: number, reduit: boolean) {
   el.className = `bandeau-gardien ${cls}`;
   el.setAttribute('role', 'status');
   el.style.setProperty('--bandeau', `url(${artGardien('bandeau')})`);
-  el.innerHTML = `<span class="bg-voile"></span><span class="bg-fond"></span><div class="bg-texte">${html}</div>`;
+  el.innerHTML = `<span class="bg-voile"></span><span class="bg-fond"></span><div class="bg-texte">${typoHtml(html)}</div>`;
   document.body.appendChild(el);
   courant = el;
   const fin = () => { if (courant === el) courant = null; el.remove(); };
