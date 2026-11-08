@@ -14,9 +14,9 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
   switch (a) {
     // intro
     // l'âge, demandé une fois avant la toute première partie (8 novembre 2026)
-    case 'age-ok': case 'age-jeune':
-      noterAge(a === 'age-ok' ? 'majeur' : 'jeune');
-      compteEtat.age = a === 'age-ok' ? 'majeur' : 'jeune';
+    case 'age-debut-majeur': case 'age-jeune':
+      noterAge(a === 'age-debut-majeur' ? 'majeur' : 'jeune');
+      compteEtat.age = a === 'age-debut-majeur' ? 'majeur' : 'jeune';
       compteEtat.ageDemande = false;
       return agirIntro('titre-jouer', c);
     case 'titre-jouer':
