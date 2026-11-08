@@ -15,7 +15,13 @@ import {
 } from './calculs';
 import { barres, bloc, chaleur, chapitre, colonnes, fr, pct, table, tuile, vide, type Tri } from './vue';
 
-const ADMIN = 'houben.bryan@gmail.com';
+// l'empreinte (SHA-256) de l'adresse du compte admin : l'adresse n'apparaît plus en clair dans le code publié (8 novembre 2026).
+// La vraie garde reste firestore.rules (estAdmin).
+const ADMIN = '1f844d89dfde78aa9740d9368a477833bf3954975d622b52a1b531672fca2ba9';
+async function empreinte(t: string): Promise<string> {
+  const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t.trim().toLowerCase()));
+  return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, '0')).join('');
+}
 // une application Firebase à part : se connecter ici ne change pas le compte avec lequel on joue dans ce navigateur
 const fb = initializeApp(firebaseConfig, 'analyse');
 const auth = getAuth(fb);
@@ -59,7 +65,7 @@ function calculer(toutes: Partie[], tests: number, visites: number, lu: number, 
 }
 
 async function charger(u: User) {
-  if (u.email !== ADMIN) { etat = { quoi: 'refus', email: u.email ?? '' }; afficher(); return; }
+  if (!u.email || (await empreinte(u.email)) !== ADMIN) { etat = { quoi: 'refus', email: u.email ?? '' }; afficher(); return; }
   const avant = etat.quoi === 'ok' ? etat : null;
   etat = { quoi: 'chargement' }; afficher();
   try {
@@ -269,7 +275,7 @@ function afficher() {
       + `<button type="button" class="an-btn prim" data-action="exporter">Exporter tout (JSON)</button></div>`;
   }
   h += `</header>`;
-  if (etat.quoi === 'connexion') h += `<div class="an-centre"><p>Réservé au compte ${ADMIN}.</p><button type="button" class="an-btn prim" data-action="connexion">Se connecter avec Google</button></div>`;
+  if (etat.quoi === 'connexion') h += `<div class="an-centre"><p>Réservé au compte du créateur du jeu.</p><button type="button" class="an-btn prim" data-action="connexion">Se connecter avec Google</button></div>`;
   else if (etat.quoi === 'chargement') h += `<div class="an-centre"><p>Lecture des sauvegardes…</p></div>`;
   else if (etat.quoi === 'refus') h += `<div class="an-centre"><p>${echap(etat.email)} n’a pas accès à l’outil d’analyse.</p><button type="button" class="an-btn" data-action="deconnexion">Changer de compte</button></div>`;
   else if (etat.quoi === 'erreur') h += `<div class="an-centre"><p>${echap(etat.message)}</p><button type="button" class="an-btn" data-action="actualiser">Réessayer</button></div>`;

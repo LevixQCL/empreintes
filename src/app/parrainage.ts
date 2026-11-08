@@ -3,7 +3,7 @@
 
 import * as J from '../core/jeu';
 import { recruterVide } from '../ui/parrainage';
-import { app, D } from './etat';
+import { app, compteEtat, D } from './etat';
 import { afficher } from './rendu';
 import { sauver } from './synchro';
 
@@ -104,6 +104,8 @@ let derniereTentative = 0;
 /** Publie les paliers atteints par ce filleul (une écriture par palier, au plus une tentative par minute) */
 export async function publierPaliers(): Promise<void> {
   if (publication || !app.compte || !app.uid) return;
+  // 8 novembre 2026 : les paliers ne rapportent au parrain qu'une fois le compte relié à Google ou à un e-mail vérifié
+  if (!compteEtat.utilisateur?.verifie) return;
   const a = J.paliersAPublier(app.jeu);
   if (!a.length || Date.now() - derniereTentative < 60_000) return;
   publication = true; derniereTentative = Date.now();
@@ -121,6 +123,7 @@ let lancement = false;
  * les paliers partent pour le parrain, et une fois par lancement le parrain relit ses recrues.
  */
 export function battreParrainage(): void {
+  R.verifie = !!compteEtat.utilisateur?.verifie;
   if (!app.compte || !app.uid || app.mode !== 'district' || !app.jeu.chambre) return;
   const ref = lienEnAttente();
   if (ref && !R.occupe) {

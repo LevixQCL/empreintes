@@ -7,20 +7,27 @@ import {
   deleteUser, sendPasswordResetEmail, signInAnonymously, signInWithCredential, signInWithEmailAndPassword, signInWithPopup, signOut, type User,
 } from 'firebase/auth';
 import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, runTransaction, Timestamp, where, type DocumentReference, type Query } from 'firebase/firestore';
-import { firebaseConfig } from './firebase-config';
+import { initializeAppCheck, ReCaptchaV3Provider } from 'firebase/app-check';
+import { appCheckCle, firebaseConfig } from './firebase-config';
 import { estJeuValide, VERSION_JEU } from '../core/jeu';
 import type { Enveloppe } from '../save/local';
 import { decisionEcriture, prochainJeton, versionDe } from '../save/garde';
 
 const app = initializeApp(firebaseConfig);
+// App Check : seulement sur le site publié (en local, le jeton reCAPTCHA échouerait), avant toute requête
+if (appCheckCle && location.hostname.endsWith('github.io')) {
+  try { initializeAppCheck(app, { provider: new ReCaptchaV3Provider(appCheckCle), isTokenAutoRefreshEnabled: true }); } catch { /* le jeu tourne quand même */ }
+}
 const auth = getAuth(app);
 auth.languageCode = 'fr';
 const db = getFirestore(app);
 
 /** anonyme : le compte invisible créé au premier lancement, pas encore relié à Google ou à un e-mail */
-type Utilisateur = { uid: string; nom: string; anonyme: boolean };
+/** verifie : relié à Google, ou à un e-mail vérifié (le parrainage ne rapporte qu'à partir de là, firestore.rules) */
+type Utilisateur = { uid: string; nom: string; anonyme: boolean; verifie: boolean };
 
-const versUtilisateur = (u: User): Utilisateur => ({ uid: u.uid, nom: u.displayName || u.email || 'Joueur', anonyme: u.isAnonymous });
+const versUtilisateur = (u: User): Utilisateur => ({ uid: u.uid, nom: u.displayName || u.email || 'Joueur', anonyme: u.isAnonymous,
+  verifie: !u.isAnonymous && (u.emailVerified || u.providerData.some((p) => p.providerId === 'google.com')) });
 
 let prevenir: ((u: Utilisateur | null) => void) | null = null;
 

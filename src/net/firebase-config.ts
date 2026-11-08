@@ -12,3 +12,10 @@ export const firebaseConfig = {
 };
 
 export const firebaseActif = () => firebaseConfig.apiKey !== '';
+
+/**
+ * App Check (8 novembre 2026, audit de sécurité) : la clé de site reCAPTCHA v3 du jeu. Tant qu'elle est vide, App Check est éteint.
+ * Une fois remplie, Firebase vérifie que les requêtes viennent bien du jeu publié (pas d'un script) ; on active ensuite
+ * l'application stricte dans la console (App Check › Firestore et Authentication › Appliquer).
+ */
+export const appCheckCle = '';

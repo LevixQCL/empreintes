@@ -73,7 +73,8 @@ service cloud.firestore {
       allow delete: if request.auth != null && request.auth.uid == uid;
       allow create, update: if request.auth != null && request.auth.uid == uid && garnisonValide(request.resource.data);
       match /subis/{id} {
-        allow read: if request.auth != null;
+        // 8 novembre 2026 : seuls le défenseur et l'attaquant lisent une attaque (avant : tout directeur connecté)
+        allow read: if request.auth != null && (request.auth.uid == uid || resource.data.attaquant == request.auth.uid);
         allow delete: if request.auth != null && request.auth.uid == uid;
         // 3 novembre 2026 : l'identifiant est « attaquant_demi-journée » (src/net/pillages.ts) : une attaque notée par attaquant,
         // par défenseur et par demi-journée (la précédente ou la suivante tolérée pour une horloge un peu décalée) ; plus de rafales
@@ -134,6 +135,9 @@ service cloud.firestore {
         && request.resource.data.parrain == resource.data.parrain && request.resource.data.code == resource.data.code
         && request.resource.data.le == resource.data.le
         && request.resource.data.paliers.hasAll(resource.data.paliers)
+        // 8 novembre 2026 : un compte invisible (anonyme) se fait parrainer, mais ses paliers ne rapportent à son parrain qu'une fois
+        // son compte relié à Google ou à un e-mail vérifié (avant, des comptes anonymes illimités faisaient de faux filleuls)
+        && (request.resource.data.paliers.size() == resource.data.paliers.size() || compteVerifie())
         && maintenant(request.resource.data.maj)
         // chaque nouveau palier doit se voir dans le classement du filleul, et pas trop tôt après son arrivée
         // (3 novembre 2026 : avant, le filleul déclarait ses paliers sans contrôle ; un second compte suffisait)
@@ -186,7 +190,8 @@ service cloud.firestore {
       allow create: if request.auth != null && defiValide(request.resource.data, id) && request.resource.data.de == request.auth.uid
         && request.resource.data.etat == 'envoye' && maintenant(request.resource.data.le)
         && amisDepuis(request.auth.uid, request.resource.data.a, 0);
-      allow update: if request.auth != null && resource.data.a == request.auth.uid
+      // une seule réponse (8 novembre 2026 : avant, on pouvait la changer après coup)
+      allow update: if request.auth != null && resource.data.a == request.auth.uid && resource.data.etat == 'envoye'
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['etat']) && request.resource.data.etat in ['accepte', 'refuse'];
       allow delete: if request.auth != null && (resource.data.de == request.auth.uid || resource.data.a == request.auth.uid);
     }
@@ -262,11 +267,25 @@ service cloud.firestore {
         && d.strate is int && d.strate >= 1 && d.strate <= 200
         && d.porteur is string && d.porteur.size() <= 24
         && d.vitrine is list && d.vitrine.size() <= 3
-        && d.doubles is list && d.doubles.size() <= 400
-        && d.souhaits is list && d.souhaits.size() <= 30
+        && (d.vitrine.size() < 1 || vitrineOk(d.vitrine[0])) && (d.vitrine.size() < 2 || vitrineOk(d.vitrine[1]))
+        && (d.vitrine.size() < 3 || vitrineOk(d.vitrine[2]))
+        // 8 novembre 2026 : doubles et souhaits publiés en un seul texte (« id@métal,… ») borné, au lieu d'une liste de textes
+        // de taille libre (jusqu'à 1 Mo par fiche, lue par chaque ami)
+        && d.doubles is string && d.doubles.size() <= 12000
+        && d.souhaits is string && d.souhaits.size() <= 1200
         && d.cercle is int && d.cercle >= 0 && d.cercle <= 10
         && d.victoires is int && d.victoires >= 0
         && maintenant(d.maj);
+    }
+
+    function vitrineOk(v) {
+      return v is map && v.keys().hasOnly(['id', 'niveau']) && v.id is string && v.id.size() <= 48 && v.niveau is int;
+    }
+
+    // le pseudo réservé par ce compte : on ne s'annonce pas sous le nom d'un autre (8 novembre 2026)
+    function pseudoDe(nom, uid) {
+      return nom is string && nom.size() >= 3 && nom.size() <= 18
+        && get(/databases/$(database)/documents/pseudos/$(clePseudo(nom))).data.uid == uid;
     }
 
     function amitieValide(d, id) {
@@ -274,7 +293,7 @@ service cloud.firestore {
         && d.id == id && d.membres is list && d.membres.size() == 2 && d.membres[0] < d.membres[1]
         && id == d.membres[0] + '_' + d.membres[1]
         && d.de in d.membres && d.a in d.membres && d.de != d.a
-        && d.nomDe is string && d.nomDe.size() <= 24 && d.nomA is string && d.nomA.size() <= 24;
+        && pseudoDe(d.nomDe, d.de) && pseudoDe(d.nomA, d.a);
     }
 
     // deux directeurs amis depuis au moins `delai` ms
@@ -297,7 +316,7 @@ service cloud.firestore {
     function defiValide(d, id) {
       return d.keys().hasOnly(['id', 'de', 'a', 'nomDe', 'code', 'mode', 'etat', 'le'])
         && d.id == id && d.a is string && d.a != d.de
-        && d.nomDe is string && d.nomDe.size() <= 24
+        && pseudoDe(d.nomDe, d.de)
         && d.code is string && d.code.size() == 6
         && d.mode in ['libre', 'egal'];
     }
@@ -376,7 +395,17 @@ service cloud.firestore {
         && d.perte is int && d.perte >= 0 && d.perte <= 100000
         // une victoire ne laisse rien, une défaite ne prend rien
         && (d.victoire || d.vol == 0) && (!d.victoire || d.perte == 0)
+        // 8 novembre 2026 : une victoire demande un attaquant exposé à son tour (sa garnison publiée, au moins la moitié de la
+        // force du défenseur) et arrivé aux pillages (−3 vaincue). Le vrai contrôle (rejouer le combat) attend les Cloud Functions.
+        && (!d.victoire || (exists(/databases/$(database)/documents/garnisons/$(request.auth.uid))
+          && get(/databases/$(database)/documents/garnisons/$(request.auth.uid)).data.force * 2 >= get(/databases/$(database)/documents/garnisons/$(defenseur)).data.force
+          && get(/databases/$(database)/documents/classement/$(request.auth.uid)).data.profondeur >= 7))
         && maintenant(d.le);
+    }
+
+    // un compte relié à Google, ou à un e-mail vérifié (pas un compte invisible ni un e-mail inventé)
+    function compteVerifie() {
+      return request.auth.token.firebase.sign_in_provider == 'google.com' || request.auth.token.get('email_verified', false) == true;
     }
 
     function estAdmin() {

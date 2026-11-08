@@ -18,6 +18,8 @@ export interface EtatRecruter {
   saisie: { ok: boolean; texte: string } | null;
   recrues: Recrue[] | null;
   occupe: boolean;
+  /** le compte est relié à Google ou à un e-mail vérifié : ses paliers peuvent rapporter à son parrain */
+  verifie?: boolean;
 }
 
 export const recruterVide = (): EtatRecruter => ({ etat: 'repos', erreur: '', saisie: null, recrues: null, occupe: false });
@@ -106,6 +108,7 @@ export function htmlRecruter(e: EcranDistrict, r: EtatRecruter, enLigne: boolean
   if (p?.parrain) {
     h += `<section class="bloc rc-parrain"><h3 class="titre-bloc">${ICO.ok}Recommandé par ${echap(p.parrain.nom)}</h3>`
       + `<p class="aide">Chaque palier que tu atteins lui rapporte quelque chose : à la Strate −3 et à la Tour du Noyau niveau 3, tu reçois aussi ta part.</p>`
+      + (r.verifie ? '' : `<p class="aide rc-relier">${ICO.aide}Pour que ${echap(p.parrain.nom)} reçoive ses récompenses, relie ta partie à Google (Menu › Compte). Tes paliers partiront à ce moment-là, rien n’est perdu.</p>`)
       + `<span class="rc-puces">${PARRAINAGE.paliers.map((pa) => `<span class="rc-puce${p.recus.includes(pa.id) || p.publies.includes(pa.id) ? ' faite' : ''}">${p.recus.includes(pa.id) || p.publies.includes(pa.id) ? ICO.ok : ''}${echap(pa.titre)}</span>`).join('')}</span></section>`;
   }
   return coquille(e, `<div class="recruter">${h}</div>`, 'rc');

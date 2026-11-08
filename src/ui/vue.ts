@@ -50,7 +50,7 @@ export interface Compte {
   actif: boolean;
   ouvert: boolean;
   /** anonyme : le compte invisible du premier lancement, pas encore relié à Google ou à un e-mail */
-  utilisateur: { nom: string; anonyme?: boolean } | null;
+  utilisateur: { nom: string; anonyme?: boolean; verifie?: boolean } | null;
   occupe: boolean;
   erreur: string;
   info: string;

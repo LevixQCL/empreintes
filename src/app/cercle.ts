@@ -209,6 +209,8 @@ export async function ajouterAmi(nom: string) {
   const moi = nomPublic();
   const cle = clePseudo(nom);
   if (!uid || !moi) return;
+  // 8 novembre 2026 : une demande porte ton pseudo réservé (firestore.rules), pas un nom libre
+  if (!app.jeu.directeur?.public) { C.message = 'Choisis d’abord ton pseudo de directeur (Grand Tableau) : c’est sous ce nom que tes amis te verront.'; return; }
   if (!/^[a-z0-9]{3,24}$/.test(cle)) { C.message = 'Ce nom de directeur n’est pas valide.'; return; }
   if (cle === clePseudo(moi)) { C.message = 'C’est ton propre nom.'; return; }
   await occuper(async () => {

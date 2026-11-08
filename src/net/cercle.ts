@@ -75,13 +75,20 @@ export const idAmitie = (x: string, y: string) => [x, y].sort().join('_');
 
 // ---------- Les vitrines ----------
 
+// 8 novembre 2026 : doubles et souhaits sont publiés en un seul texte borné (firestore.rules) ; on relit aussi les anciennes listes
+const enTexte = (l: string[], max: number) => { let t = ''; for (const x of l) { const n = t ? `${t},${x}` : x; if (n.length > max) break; t = n; } return t; };
+const enListe = (v: unknown): string[] => (Array.isArray(v) ? v.map(String) : typeof v === 'string' && v ? v.split(',') : []);
+
 export async function publierProfil(p: Profil): Promise<void> {
-  await setDoc(doc(db(), 'profils', p.uid), p);
+  await setDoc(doc(db(), 'profils', p.uid), { ...p, doubles: enTexte(p.doubles, 12000), souhaits: enTexte(p.souhaits, 1200) });
 }
 
 export async function lireProfils(uids: string[]): Promise<Profil[]> {
   const l = await Promise.all(uids.map((u) => getDoc(doc(db(), 'profils', u)).catch(() => null)));
-  return l.filter((d) => d?.exists()).map((d) => d!.data() as Profil);
+  return l.filter((d) => d?.exists()).map((d) => {
+    const p = d!.data() as Profil;
+    return { ...p, doubles: enListe(p.doubles), souhaits: enListe(p.souhaits) };
+  });
 }
 
 /** Retrouve un directeur par son pseudo (la fiche `pseudos/{cle}`) */
