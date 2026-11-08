@@ -155,12 +155,12 @@ export function corpsFace(d: Face): string {
     // sans niveau (en combat, carte du paquetage) : un losange de la couleur de la lignée
     : '<i class="nf-lg"></i>';
   // une carte de l'Héritage a deux effets : une ligne et une icône chacun
-  const effet = effetsDe(d).map((e) => `<span class="nf-regle"><i class="nf-ico">${ICONES_EFFET[e.type]}</i><strong>${NOMS_EFFET[e.type]}</strong><span>${formuleEffet(e)}</span></span>`).join('');
+  const effet = effetsDe(d).map((e) => `<span class="nf-regle"><i class="nf-ico">${ICONES_EFFET[e.type]}</i><strong>${NOMS_EFFET[e.type]}</strong><span>${formuleEffet(e).replace(/ (%|PV)/g, '\u202f$1')}</span></span>`).join('');
   return `<span class="nf-art">${art}${ill && d.fx ? FX[d.metal] : ''}${d.carte ? filigraneFace(palierDeCarte(d.carte)) : ''}</span>`
     // une carte de l'Héritage (la seule à deux effets) porte son sceau en haut
-    + (d.effet2 ? '<span class="nf-heritage">Héritage</span>' : d.seul ? '<span class="nf-heritage nf-exclusive">Exclusive</span>' : '')
     + `<span class="nf-freqs"><span class="nf-caps">${segs}${fele}</span>${d.lourd ? SIGNE_LOURD : ''}</span>`
-    + `<span class="nf-voile"><span class="nf-barre"></span>`
+    // le sceau de l’Héritage ou de l’exclusive : posé au bas de l'illustration, à gauche (8 novembre 2026 : en haut, il cachait les Fréquences)
+    + `<span class="nf-voile">${d.effet2 ? '<span class="nf-heritage">Héritage</span>' : d.seul ? '<span class="nf-heritage nf-exclusive">Exclusive</span>' : ''}<span class="nf-barre"></span>`
     + `<span class="nf-val ${d.type}${d.tendance ? ' ' + d.tendance : ''}">${ICONES_ACTION[d.type]}<b>${d.v}</b></span>`
     // en main : une capsule en bas à gauche, la lignée (losange) et l'icône de l'effet, en face de celle de la force
     + `<span class="nf-eff${d.effet ? ' a-effet' : ''}"><i class="nf-eff-lg"></i>${d.effet ? effetsDe(d).map((e) => ICONES_EFFET[e.type]).join('') : ''}</span>`

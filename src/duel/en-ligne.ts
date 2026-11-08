@@ -10,6 +10,8 @@ export function transportEnLigne(net: Net, code: string, uid: string, camp: Camp
   let recevoir: ((tour: number, choix: ChoixTour) => void) | null = null;
   const miens = new Map<number, { choix: ChoixTour; sel: string; revele: boolean }>();
   const recus = new Set<number>();
+  /** le dernier tour où j'ai posé mon sceau (pour constater l'absence de l'autre) */
+  let dernierTour = -1;
   const arreter = net.ecouterChoix(code, async (liste: ChoixEnLigne[]) => {
     const parTour = new Map<number, ChoixEnLigne[]>();
     for (const c of liste) parTour.set(c.tour, [...(parTour.get(c.tour) ?? []), c]);
@@ -36,12 +38,18 @@ export function transportEnLigne(net: Net, code: string, uid: string, camp: Camp
     envoyer(tour, choix) {
       const sel = net.nouveauSel();
       miens.set(tour, { choix, sel, revele: false });
+      dernierTour = tour;
       net.sceller(choix, sel)
         .then((sceau) => net.poserSceau(code, uid, tour, camp, sceau))
         .catch(() => signaler('Connexion perdue : ton choix n’a pas pu être envoyé.'));
     },
-    quitter(qui) { net.abandonnerSalon(code, qui).catch(() => {}); },
-    finir(s) { if (s.abandon === undefined) net.finirSalon(code, gagnant(s)).catch(() => {}); },
+    // j'abandonne pour moi ; ou je constate que l'autre n'a rien posé au tour que j'ai verrouillé (firestore.rules le vérifie)
+    quitter(qui) {
+      if (qui === camp) net.abandonnerSalon(code, camp).catch(() => {});
+      else if (dernierTour >= 0) net.constaterAbsence(code, camp, dernierTour).catch(() => {});
+    },
+    // mon verdict : le salon ne se dit « fini » que si celui de l'autre concorde
+    finir(s) { if (s.abandon === undefined) net.finirSalon(code, camp, gagnant(s)).catch(() => {}); },
     fermer() { arreter(); },
   };
 }

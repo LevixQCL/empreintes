@@ -32,7 +32,7 @@
 .nf-nacre .nf-freqs{top:3.5cqw;left:3.5cqw}
 .nf-caps{display:inline-flex;align-items:stretch;height:15.5cqw;border-radius:8cqw;overflow:hidden;background:rgba(8,10,18,.62);
   -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);box-shadow:inset 0 0 0 .3cqw rgba(220,240,255,.22),0 1cqw 3cqw rgba(0,0,0,.4)}
-.nf-seg{position:relative;display:grid;place-items:center;min-width:10cqw;padding:0 2cqw;font-family:var(--mono);font-weight:700;font-size:8cqw;line-height:1;
+.nf-seg{position:relative;display:grid;place-items:center;min-width:10cqw;padding:0 2cqw;font-family:var(--mono);font-weight:700;font-size:max(var(--t-min),8cqw);line-height:1;
   color:color-mix(in srgb,var(--fc) 35%,#fff);opacity:.75;text-shadow:0 1px 2px rgba(0,0,0,.6)}
 .nf-seg + .nf-seg{border-left:.3cqw solid rgba(220,240,255,.18)}
 .nf-seg::after{content:"";position:absolute;left:22%;right:22%;bottom:1.3cqw;height:.7cqw;border-radius:1cqw;background:color-mix(in srgb,var(--fc) 55%,#fff);opacity:.8}
@@ -226,4 +226,17 @@
 @container (min-width:91px){
 .nf-voile{height:auto;min-height:calc(25% - var(--bord));padding-bottom:2.4cqw}
 .nf-nom{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.05;overflow-wrap:anywhere}
+}
+
+/*
+ * 8 novembre 2026 (audit du 7) : le sceau « Exclusive » (et celui de l’Héritage) cachait les Fréquences quand la carte en a
+ * plusieurs (fiche de la carte, fiche du directeur). Il descend au bas de l'illustration, à gauche, en face de la force ; sur une
+ * toute petite face, où il ne se lirait plus, il s'efface (le texte de la fiche et l'étiquette d'accessibilité le disent).
+ * Et l'effet n'est plus tronqué (« achève sous 22… ») dès que la face est assez grande : il passe sur deux lignes.
+ */
+.nf-voile > .nf-heritage{top:auto;bottom:calc(100% + 2cqw);left:3cqw;transform:none;padding:.6cqw 2.6cqw}
+@container (max-width:120px){ .nf-heritage{display:none} }
+@container (min-width:150px){
+  .nf-regle{white-space:normal;align-items:flex-start}
+  .nf-regle > span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-clamp:2;white-space:normal}
 }

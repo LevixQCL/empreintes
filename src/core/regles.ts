@@ -49,15 +49,18 @@ export const REGLES = {
    *  que la première, mais un deck qui empile une Fréquence peut le rendre fréquent (23 % des mains). Mesuré au robot
    *  (archétypes, 80 descentes) : de ×1,25 à ×1,6, le deck « tout en échos » ne bat jamais le deck normal chez le joueur moyen
    *  (−4 à −7 points) et reste loin derrière le deck « tout en suites » (voir docs/robot-archetypes.md). */
-  echo: 1.5,
+  echo: 1.3,
   /** Écho à 4 et à 5 cartes (1er novembre 2026, demande de Bryan) : chaque carte de plus est 4 à 5 fois plus rare, mais elle
    *  ajoute déjà une carte entière renforcée ; le palier reste donc modéré pour ne pas pousser au deck « une seule Fréquence ».
    *  Avant : +50 % quel que soit le nombre de cartes. La quintuplette (qui demande une place de Flux) rend en plus 1 Flux. */
-  echoPaliers: { 3: 1.5, 4: 1.65, 5: 1.8 } as Record<number, number>,
+  echoPaliers: { 3: 1.3, 4: 1.45, 5: 1.6 } as Record<number, number>,
   /** Flux en plus rendu par une quintuplette (cinq Fréquences identiques) */
   fluxEcho5: 1,
-  /** multiplicateur selon la longueur de la meilleure suite */
-  multSuite: { 3: 1.3, 4: 1.6, 5: 2 } as Record<number, number>,
+  /** multiplicateur selon la longueur de la meilleure suite.
+   *  8 novembre 2026 (audit du soir, validé par Bryan) : à 3 places de chaîne, l'Écho (+50 %) payait plus que la suite (+30 %).
+   *  Écho 1,5 / 1,65 / 1,8 → 1,3 / 1,45 / 1,6 et suite de 3 : 1,3 → 1,4. Robot (archétypes, joueur moyen, −3) :
+   *  force 83 → 78 %, suites 60 → 63 %, échos 75 → 71 % (bruit ±9 points). */
+  multSuite: { 3: 1.4, 4: 1.6, 5: 2 } as Record<number, number>,
   /** part du bonus de suite gardée quand toute la suite vient d'une seule lignée (1 = bonus entier) */
   suiteMono: 1,
   /** force en plus de toutes les cartes quand l'escouade réunit les trois lignées (1 = aucun bonus) */
@@ -144,6 +147,20 @@ export function frequencesEffectives(chaine: Maillon[]): number[] {
   return r;
 }
 
+/**
+ * Les Accords bloqués au bout de l'échelle (8 novembre 2026, audit) : un Accord après un 9 reste à 9 (ou à 1 s'il ouvre devant
+ * un 1). Il ne prolonge alors aucune suite, et il ne compte pas non plus dans un Écho : sinon 9-9-Accord faisait un Écho gratuit.
+ */
+export function accordsBloques(chaine: Maillon[]): boolean[] {
+  const fs = frequencesEffectives(chaine);
+  return chaine.map((g, i) => {
+    if (g.effet?.type !== 'accord') return false;
+    if (i > 0) return fs[i] === fs[i - 1];
+    const suivant = chaine[1];
+    return !!suivant && !frequenceLibre(suivant.effet) && fs[0] === suivant.f;
+  });
+}
+
 /** Résonance (suite 3-4-5…) et Écho (trois Fréquences identiques) */
 export function analyserChaine(chaine: Maillon[]): Analyse {
   const fs = frequencesEffectives(chaine);
@@ -157,7 +174,8 @@ export function analyserChaine(chaine: Maillon[]): Analyse {
     } else serie = 1;
   }
   const compte = new Map<number, number>();
-  for (const f of fs) compte.set(f, (compte.get(f) ?? 0) + 1);
+  const bloques = accordsBloques(chaine);
+  fs.forEach((f, i) => { if (!bloques[i]) compte.set(f, (compte.get(f) ?? 0) + 1); });
   const echoE = [...compte.entries()].filter(([, n]) => n >= 3).sort((x, y) => y[1] - x[1])[0];
   const echoF = echoE?.[0];
   let mult = REGLES.multSuite[Math.min(meilleur, 5)] ?? 1;
@@ -172,7 +190,7 @@ export function analyserChaine(chaine: Maillon[]): Analyse {
 /** Multiplicateur d'Écho de la carte au rang donné : seules les cartes de la Fréquence répétée sont renforcées */
 export function multEcho(chaine: Maillon[], rang: number): number {
   const a = analyserChaine(chaine);
-  return a.echoF !== undefined && frequencesEffectives(chaine)[rang] === a.echoF ? multEchoN(a.echoN ?? 3) : 1;
+  return a.echoF !== undefined && frequencesEffectives(chaine)[rang] === a.echoF && !accordsBloques(chaine)[rang] ? multEchoN(a.echoN ?? 3) : 1;
 }
 
 /** Multiplicateur d'un Écho de n cartes (3, 4 ou 5) */

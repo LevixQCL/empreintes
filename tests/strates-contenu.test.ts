@@ -34,8 +34,13 @@ describe('Les Haltes', () => {
         for (const d of h.details) expect(d.voix.some((v) => !v.qui && v.texte)).toBe(true);
       }
     }
-    expect(HALTES).toHaveLength(27);
-    expect(nombreHaltes(11)).toBe(0);
+    // 27 Haltes de −1 à −10, puis deux par Strate du Fond de −11 à −15 (8 novembre 2026), aucune plus bas
+    expect(HALTES).toHaveLength(37);
+    for (let s = 11; s <= 15; s++) {
+      expect(nombreHaltes(s)).toBe(2);
+      for (let n = 1; n <= 2; n++) expect(halteDef(s, n), `Halte ${n} de −${s}`).toBeTruthy();
+    }
+    expect(nombreHaltes(16)).toBe(0);
   });
 
   it('un passage obligatoire : la rangée de la Halte n’a qu’une salle, et tous les chemins y mènent', () => {
@@ -267,9 +272,9 @@ describe('Les Haltes du 3 novembre 2026', () => {
     }
   });
 
-  it('27 Haltes, chacune avec ce que le directeur en retient', async () => {
+  it('37 Haltes (27 jusqu’à −10, 10 dans le Fond), chacune avec ce que le directeur en retient', async () => {
     const { HALTES, nombreHaltes } = await import('../src/core/strates');
-    expect(HALTES).toHaveLength(Array.from({ length: 10 }, (_, k) => nombreHaltes(k + 1)).reduce((a, b) => a + b, 0));
+    expect(HALTES).toHaveLength(Array.from({ length: 15 }, (_, k) => nombreHaltes(k + 1)).reduce((a, b) => a + b, 0));
     for (const h of HALTES) {
       expect(h.fait.length, h.titre).toBeGreaterThan(40);
       for (const d of h.details) expect(d.voix.some((x) => !x.qui && !x.si), `${h.titre} · ${d.nom}`).toBe(true);

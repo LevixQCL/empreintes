@@ -12,8 +12,8 @@ describe('Résonance et Écho', () => {
   it('pas de bonus sans suite', () => {
     expect(analyserChaine(f(3, 7, 1))).toMatchObject({ suite: 1, mult: 1, echo: false });
   });
-  it('suite de 3 = +30 %', () => {
-    expect(analyserChaine(f(3, 4, 5))).toMatchObject({ suite: 3, mult: 1.3 });
+  it('suite de 3 = +40 % (8 novembre 2026)', () => {
+    expect(analyserChaine(f(3, 4, 5))).toMatchObject({ suite: 3, mult: 1.4 });
   });
   it('suite de 4 = +60 %, de 5 = +100 %', () => {
     expect(analyserChaine(f(2, 3, 4, 5)).mult).toBe(1.6);

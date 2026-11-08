@@ -6,7 +6,7 @@ import { FAMILLES_DISTRICT, familleDef } from '../src/core/familles';
 const H = 3_600_000;
 const JOUR = 24 * H;
 
-function partie(strate = 1) {
+function partie(strate = 2) {
   const j = nouveauJeu(0, 1);
   j.chambre = true; j.recrues = true;
   j.strate = strate + 1;
@@ -42,9 +42,9 @@ describe('Les Basses (7 novembre 2026)', () => {
     expect(FAMILLES_DISTRICT.filter((f) => f.arrivee === 'basses')).toHaveLength(20);
   });
 
-  it('l’écluse s’ouvre après la Strate −1, un secteur tous les deux Strates', () => {
-    expect(ramasserDepot(partie(0), 0).ok).toBe(false);
-    expect(secteursOuverts(partie(1)).map((s) => s.id)).toEqual(['lavoirs']);
+  it('l’écluse s’ouvre après la Strate −2 (8 novembre 2026), un secteur tous les deux Strates', () => {
+    expect(ramasserDepot(partie(1), 0).ok).toBe(false);
+    expect(secteursOuverts(partie(2)).map((s) => s.id)).toEqual(['lavoirs']);
     expect(secteursOuverts(partie(5))).toHaveLength(3);
   });
 
@@ -108,5 +108,13 @@ describe('Les souvenirs confiés aux cartes (fusion avec le vécu)', () => {
     expect(confierSouvenir(j, b!, 'ruel')).toBe(false);
     expect(souvenirsLibres(j)).toEqual(['abady']);
     expect(journalCarte(j.vecu[a!]).at(-1)).toContain('Porte le souvenir des Ruel');
+  });
+});
+
+describe('La suite des Basses (8 novembre 2026)', () => {
+  it('après −10, chaque dépôt laisse aussi des Éclats de colonne', async () => {
+    const { eclatsDepot } = await import('../src/core/jeu');
+    expect(eclatsDepot(partie(9), 0)).toBe(0);
+    expect(eclatsDepot(partie(10), 0)).toBeGreaterThanOrEqual(1);
   });
 });

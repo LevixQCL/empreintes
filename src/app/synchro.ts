@@ -2,8 +2,9 @@
 
 import * as J from '../core/jeu';
 import { CLE_PARTIE, charger, enregistrer, garderSecours, lireSecours, stockeeIllisible, stockeeTropRecente, type Enveloppe } from '../save/local';
-import { bloquerSauvegarde, sauvegardeBloquee } from './garde';
+import { bloquerSauvegarde, reprendreSauvegarde, sauvegardeBloquee, suspendreSauvegarde } from './garde';
 import { firebaseActif } from '../net/firebase-config';
+import { effacerAppareil, enLignePermis } from '../save/age';
 import { finPour } from './combat';
 import { app, compteEtat, compteProtege, D, G, K, racine } from './etat';
 import { afficher } from './rendu';
@@ -44,7 +45,8 @@ export function sauver() {
   if (stockeeTropRecente()) { bloquerSauvegarde('version'); return; }
   const env = enregistrer(app.jeu);
   // le joueur vient de commencer (intro vue) : le compte invisible est créé maintenant, pas à la simple visite
-  if (app.compte && !compteEtat.utilisateur && compteEtat.pret && app.jeu.introVue) app.compte.creerInvisible();
+  // (pas si le joueur a dit avoir moins de 13 ans : sa partie reste sur l'appareil)
+  if (app.compte && !compteEtat.utilisateur && compteEtat.pret && app.jeu.introVue && enLignePermis()) app.compte.creerInvisible();
   if (app.compte && app.uid && reconcilie) {
     enAttente = env;
     if (minuteur === undefined) minuteur = window.setTimeout(envoyer, Math.max(1500, derniereEcriture + ECRIRE_APRES - Date.now()));
@@ -203,6 +205,34 @@ export async function demarrerCompte() {
 // ---------- Actions ----------
 
 export const champ = (id: string) => ((racine.querySelector('#' + id) as HTMLInputElement | null)?.value ?? '').trim();
+
+/**
+ * Supprimer son compte (8 novembre 2026) : tout ce qu'il a publié en ligne, puis le compte, puis la partie de cet appareil.
+ * La sauvegarde est bloquée pendant ce temps (rien ne doit repartir en ligne), et le jeu se recharge à zéro.
+ */
+export async function supprimerCompte() {
+  const n = app.compte;
+  if (!n) return;
+  compteEtat.occupe = true; compteEtat.erreur = '';
+  afficher();
+  try {
+    const nom = app.jeu.directeur?.nom;
+    const { clePseudo } = await import('../core/classements');
+    suspendreSauvegarde();
+    await n.supprimerCompte(nom ? clePseudo(nom) : null, app.jeu.parrainage?.code ?? null);
+    effacerAppareil();
+    location.reload();
+    return;
+  } catch (e) {
+    reprendreSauvegarde();
+    compteEtat.erreur = e instanceof n.ReconnexionRequise
+      ? 'Par sécurité, Google demande une connexion récente : touche « Se déconnecter », reconnecte-toi, puis supprime ton compte tout de suite après.'
+      : n.messageErreur(e);
+  }
+  compteEtat.occupe = false;
+  compteEtat.supprimer = 0;
+  afficher();
+}
 
 export async function actionCompte(f: () => Promise<void>) {
   if (!app.compte) return;

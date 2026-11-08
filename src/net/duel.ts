@@ -104,12 +104,36 @@ export async function reveler(code: string, tour: number, camp: Camp, choix: Cho
   await updateDoc(refChoix(code, tour, camp), { choix, sel });
 }
 
-/** Le duel est fini : on le note (chacun l'écrit, le même résultat) */
-export async function finirSalon(code: string, gagnant: Camp | null): Promise<void> {
-  await updateDoc(doc(db(), 'duels', code), { etat: 'fini', gagnant, maj: Date.now() });
+/**
+ * Le duel est fini : chacun note son verdict (fin0 pour l'hôte, fin1 pour l'invité : le camp gagnant, −1 pour l'égalité).
+ * Le salon ne passe « fini » que si les deux verdicts concordent (firestore.rules, 8 novembre 2026) : personne ne s'écrit
+ * vainqueur tout seul.
+ */
+export async function finirSalon(code: string, camp: Camp, gagnant: Camp | null): Promise<void> {
+  const ref = doc(db(), 'duels', code);
+  const mien = gagnant ?? -1;
+  await runTransaction(db(), async (t) => {
+    const d = await t.get(ref);
+    if (!d.exists()) return;
+    const s = d.data() as Salon & { fin0?: number; fin1?: number };
+    if (s.etat !== 'en-cours') return;
+    const sien = camp === 0 ? s.fin1 : s.fin0;
+    const champ = camp === 0 ? 'fin0' : 'fin1';
+    if (sien === mien) t.update(ref, { [champ]: mien, etat: 'fini', gagnant, maj: Date.now() });
+    else t.update(ref, { [champ]: mien, maj: Date.now() });
+  });
 }
 
-/** Abandonner (ou constater l'absence de l'adversaire au-delà de la grâce : `camp` est alors celui de l'absent) */
+/** Abandonner : on ne le fait que pour son propre camp */
 export async function abandonnerSalon(code: string, camp: Camp): Promise<void> {
   await updateDoc(doc(db(), 'duels', code), { etat: 'fini', abandon: camp, gagnant: camp === 0 ? 1 : 0, maj: Date.now() });
+}
+
+/**
+ * Constater l'absence de l'adversaire au-delà de la grâce : `tour` est le tour que j'ai verrouillé et où il n'a rien posé
+ * (les règles vérifient que mon choix existe depuis plus de 45 secondes et que le sien manque)
+ */
+export async function constaterAbsence(code: string, monCamp: Camp, tour: number): Promise<void> {
+  const absent: Camp = monCamp === 0 ? 1 : 0;
+  await updateDoc(doc(db(), 'duels', code), { etat: 'fini', abandon: absent, gagnant: monCamp, absenceTour: tour, maj: Date.now() });
 }

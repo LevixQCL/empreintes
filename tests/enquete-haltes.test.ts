@@ -29,7 +29,7 @@ describe('L’enquête des Haltes', () => {
   });
 
   it('la dernière Halte de chaque Strate (dès −2) a une révélation par piste, qui dépend du choix d’avant', () => {
-    for (let s = 2; s <= 10; s++) {
+    for (let s = 2; s <= 15; s++) {
       const n = nombreHaltes(s);
       const h = HALTES.find((x) => x.strate === s && x.n === n)!;
       expect(h.revelation, `−${s}`).toBeTruthy();
@@ -37,7 +37,7 @@ describe('L’enquête des Haltes', () => {
         expect(h.revelation![p].fait.length).toBeGreaterThan(60);
         expect(h.revelation![p].voix.some((v) => !v.qui)).toBe(true);
       }
-      if (s < 10) {
+      if (s !== 10) {
         const prec = HALTES.find((x) => x.strate === s && x.n === n - 1)!;
         for (const k of [0, 1]) expect(revelationDe({ [`${s}-${n - 1}`]: k }, s, n)!.piste).toBe(prec.choix[k]!.piste);
       }
@@ -54,6 +54,14 @@ describe('L’enquête des Haltes', () => {
     expect(a.some((t) => /moitié/.test(t))).toBe(true);
     expect(b.some((t) => /remonter/.test(t))).toBe(true);
     expect(a).not.toEqual(b);
+  });
+
+  it('les Haltes du Fond (−11 à −15) ne changent plus la fin de l’enquête jouée à −10', () => {
+    const tout = (p: 'nous' | 'avant') => Object.fromEntries(HALTES.map((h) => [`${h.strate}-${h.n}`, h.choix.findIndex((c) => c.piste === p)]));
+    const fond = Object.fromEntries(HALTES.filter((h) => h.strate > 10).map((h) => [`${h.strate}-${h.n}`, h.choix.findIndex((c) => c.piste === 'nous')]));
+    // toute la descente côté « avant », tout le Fond côté « nous » : la fin reste « avant »
+    const avantPuisFond = { ...Object.fromEntries(Object.entries(tout('avant')).filter(([k]) => Number(k.split('-')[0]) <= 10)), ...fond };
+    expect(pisteFinale(avantPuisFond)).toBe('avant');
   });
 
   it('le choix dévoile une salle après la Halte, sans rien dire du gain sur le bouton', () => {

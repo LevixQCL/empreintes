@@ -134,12 +134,15 @@ describe('Audit du 7 novembre : économie', () => {
     j.batiments.comptoir = 6;
     j.composants = 10_000;
     const max = eclatsAuComptoir(j).max;
-    expect(max).toBe(2);
+    // 8 novembre 2026 : de 1 à 6 par jour selon le niveau (4 au niveau 6), à 500, 700 puis 1 000 composants
+    expect(max).toBe(4);
     const e0 = j.eclats;
     for (let k = 0; k < max; k++) expect(acheterEclat(j, T0).ok).toBe(true);
     expect(acheterEclat(j, T0).ok).toBe(false);
     expect(j.eclats).toBe(e0 + max);
-    expect(j.composants).toBe(10_000 - max * COMPTOIR.eclats.composants);
+    expect(j.composants).toBe(10_000 - (500 + 700 + 1000 + 1000));
+    expect(COMPTOIR.eclats.parJour[1]).toBe(1);
+    expect(COMPTOIR.eclats.parJour[10]).toBe(6);
     expect(acheterEclat(j, T0 + JOUR).ok).toBe(true);
   });
 
@@ -162,7 +165,9 @@ describe('Audit du 7 novembre : économie', () => {
   it('les fouilles profondes ramènent plus de creuseurs, et le Noyau freine encore à −10', () => {
     expect(chanceCreuseurFouille(5)).toBe(CREUSEURS.fouille);
     expect(chanceCreuseurFouille(6)).toBeGreaterThan(CREUSEURS.fouille);
-    expect(noyauRequis(10)).toBe(7);
+    // 8 novembre 2026 : Noyau 8 pour −9, 9 pour −10 (avant 7 : atteint au jour 10, il ne freinait plus rien)
+    expect(noyauRequis(9)).toBe(8);
+    expect(noyauRequis(10)).toBe(9);
     for (let s = 3; s <= 10; s++) expect(noyauRequis(s)).toBeGreaterThanOrEqual(noyauRequis(s - 1));
   });
 
@@ -172,10 +177,11 @@ describe('Audit du 7 novembre : économie', () => {
     expect(forceEpreuve(ep, 4) / forceStrate(4)).toBeLessThan(ep.force);
   });
 
-  it('un joueur occasionnel ouvre la Strate −10 entre le jour 27 et le jour 32', () => {
+  // 8 novembre 2026 : les Éclats du Comptoir et du Générateur accélèrent la Tour ; mesuré j25 (médiane de 16), voir le rapport du jour
+  it('un joueur occasionnel ouvre la Strate −10 entre le jour 24 et le jour 32', () => {
     const jours = Array.from({ length: 16 }, (_, i) => simulerParcours(PROFILS.occasionnel, 40, 1000 + i * 7919, { joueur: 'moyen', jusqua: 10 }).ouverture[10] ?? Infinity);
     const d = mediane(jours);
-    expect(d).toBeGreaterThanOrEqual(27);
+    expect(d).toBeGreaterThanOrEqual(24);
     expect(d).toBeLessThanOrEqual(32);
   }, 120_000);
 });
@@ -205,5 +211,22 @@ describe('Audit du 7 novembre : le Fond', () => {
   it('la garde d’un quai rapporte un Éclat par jour dès le quai 10', () => {
     expect(gageJour(9).eclats).toBe(0);
     expect(gageJour(10).eclats).toBe(1);
+  });
+});
+
+describe('Audit du 8 novembre : l’énergie en trop', () => {
+  it('le Générateur condense des Éclats à partir du niveau 5, de 1 à 3 par jour', async () => {
+    const { nouveauJeu, cristalliser, cristallisationsMax, CRISTALLISEUR } = await import('../src/core/jeu');
+    const j = nouveauJeu(0, 1);
+    j.batiments.generateur = 4;
+    j.energie = 10_000;
+    expect(cristalliser(j, 0).ok).toBe(false);
+    j.batiments.generateur = 9;
+    expect(cristallisationsMax(j)).toBe(3);
+    const e0 = j.eclats;
+    for (let k = 0; k < 3; k++) expect(cristalliser(j, 0).ok).toBe(true);
+    expect(cristalliser(j, 0).ok).toBe(false);
+    expect(j.eclats).toBe(e0 + 3);
+    expect(j.energie).toBe(10_000 - 3 * CRISTALLISEUR.energie);
   });
 });

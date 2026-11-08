@@ -107,7 +107,7 @@ export const SECTEURS: readonly SecteurBasses[] = [
     ambiance: 'L’école du quartier bas. Le préau s’est effondré, la cloche est restée accrochée, et sonne seule les nuits de houle.',
     lieux: [
       L('preau', 'Le préau', 0.48, 'haudry', 'Une marelle peinte au sol, intacte sous un doigt de sable, la case du ciel juste à la ligne d’eau.'),
-      L('classe-haute', 'La classe du haut', 0.52, 'prevel', 'Au tableau, une leçon jamais effacée : « La mer monte de trois millimètres par an. Calcule dans cent ans. »'),
+      L('classe-haute', 'La classe du haut', 0.52, 'prevel', 'Au tableau, une leçon jamais effacée : « La mer monte de trois centimètres par an. Calcule dans cent ans. »'),
       L('bibliotheque-ecole', 'La bibliothèque de l’école', 0.56, 'casset', 'Des livres séchés un à un, pages raides, rangés par ordre de ceux qui les avaient empruntés.'),
       L('cour-cloche', 'La cour de la cloche', 0.6, 'berot', 'La corde de la cloche descend dans un trou du sol, plus profond qu’une cave, d’où monte un air tiède.'),
     ],
@@ -124,7 +124,7 @@ export const SECTEURS: readonly SecteurBasses[] = [
   },
   {
     id: 'palier', nom: 'Le Palier', strate: 9,
-    ambiance: 'Tout en bas du flanc, sous l’anneau de la digue : un escalier. Il était là avant la digue, avant la Cuvette, avant tout.',
+    ambiance: 'Tout en bas du flanc, sous l’anneau de la digue : l’escalier de ta première Halte, pris par son autre bout. Il passe sous la Cuvette et ressort ici, dehors, à la mer.',
     lieux: [
       L('premieres-marches', 'Les premières marches', 0.86, 'roustan', 'Les marches descendent sous la Cuvette. La digue a été posée dessus comme un couvercle, sans que personne le sache.'),
       L('niche-lampes', 'La niche aux lampes', 0.9, 'falgue', 'Des lampes de pierre qui s’allument quand on approche, de la même lueur que le pouls de la lampe du phare couché.'),

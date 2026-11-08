@@ -28,7 +28,7 @@ import { htmlPorteurs } from '../ui/porteurs';
 import { visuel as ageDistrict } from '../ui/art';
 import { htmlTitre, type TitreCompte } from '../ui/titre';
 import { glisser, horloge, noter } from '../ui/toucher';
-import { htmlCombat, htmlDecouverte, panneauCompte } from '../ui/vue';
+import { htmlCombat, htmlDecouverte, panneauAge, panneauCompte } from '../ui/vue';
 import { annoncerGardien } from '../ui/bandeau';
 import { app, compteEtat, D, G, K, racine, reduit } from './etat';
 import { sauver } from './synchro';
@@ -93,7 +93,7 @@ function compteTitre(): TitreCompte | null {
     etat: !compteEtat.pret ? 'attente' : u?.anonyme ? 'invisible' : u ? 'connecte' : 'invite',
     nom: app.jeu.directeur?.nom ?? u?.nom ?? '',
     strate: app.jeu.strate,
-    panneau: compteEtat.ouvert ? panneauCompte(compteEtat, !app.jeu.introVue) : null,
+    panneau: compteEtat.ageDemande ? panneauAge() : compteEtat.ouvert ? panneauCompte(compteEtat, !app.jeu.introVue) : null,
   };
 }
 

@@ -209,7 +209,7 @@ export const FAMILLES: Fragment[] = [
     lignes: [
       'Trois générations ont tenu ce carnet. Une ligne par nuit : l’heure, le niveau, « tenu » ou « pas tenu ».',
       'Les premières pages disent presque toujours « tenu ». Les dernières, de moins en moins.',
-      'La dernière ligne est d’hier : « Le directeur a dressé le batardeau des Basses. Tenu. »',
+      'La dernière ligne est d’hier, d’une autre main : « Le directeur est remonté des Strates. Il a demandé le niveau. Tenu. »',
     ],
   },
   {

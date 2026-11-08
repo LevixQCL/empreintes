@@ -93,7 +93,7 @@ export function htmlMarees(e: EcranDistrict): string {
   const m = mareesDe(j);
   const tous = contratsDuMoment(j, now);
   const c = contratAffiche(j, e.mareeRang, now);
-  let h = `<section class="bloc tr-volet pl-marees">${texteReplie('Aux fortes marées, la mer découvre des ruines qu’aucune barque n’atteint seule. Le passeur affrète sa gabare pour une équipe : un Porteur par épreuve, et le bon rôle au bon endroit (frapper, tenir, orchestrer). Plus la marée est haute, plus c’est dur, et plus ça rapporte. Un échec n’est jamais perdu : l’équipe rapporte de quoi faire mieux la fois suivante.', 'marees', 'aide')}`;
+  let h = `<section class="bloc tr-volet pl-marees">${texteReplie('Aux fortes marées, la mer découvre des ruines qu’aucune barque n’atteint seule. Le passeur affrète sa gabare pour une équipe : un Porteur par tâche, et le bon rôle au bon endroit (frapper, tenir, orchestrer). Plus la marée est haute, plus c’est dur, et plus ça rapporte. Un échec n’est jamais perdu : l’équipe rapporte de quoi faire mieux la fois suivante.', 'marees', 'aide')}`;
   if (m.contrat) h += gabare(j, now);
   h += `<div class="mr-tuiles" role="tablist" aria-label="Les trois marées">${tous.map((x) => tuile(j, x, x.rang === c.rang, now)).join('')}</div>`;
 
@@ -123,7 +123,7 @@ export function htmlMarees(e: EcranDistrict): string {
     h += `<li class="mr-ep${place === k ? ' ouverte' : ''}${f ? ` af-${f.affinite}` : ' vide'}" style="--c:${COULEUR[ep.lignee]}">`
       + `<span class="mr-role" title="${NOM_LIGNEES[ep.lignee]} : ${ROLE[ep.lignee].verbe}">${ICO[ROLE[ep.lignee].icone]}</span>`
       + `<span class="mr-ep-nom"><strong>${echap(ep.nom)}</strong><small>Pour un ${NOM_LIGNEE[ep.lignee]} : ${ROLE[ep.lignee].verbe}</small></span>`
-      + `<button type="button" class="mr-poste" data-action="maree-place" data-index="${k}" aria-expanded="${place === k}" aria-label="${id ? `${echap(porteurDef(id).nom)} sur cette épreuve : changer` : 'Choisir un Porteur pour cette épreuve'}">`
+      + `<button type="button" class="mr-poste" data-action="maree-place" data-index="${k}" aria-expanded="${place === k}" aria-label="${id ? `${echap(porteurDef(id).nom)} sur cette tâche : changer` : 'Choisir un Porteur pour cette tâche'}">`
       + (id ? `${avatar(id, 36)}<span><b>${echap(porteurDef(id).nom)}</b><small class="af">${NOM_AF[f!.affinite]} · niv. ${f!.niveau}</small></span>` : `<span class="mr-vide">+</span><span><b>Personne</b><small>Choisir</small></span>`)
       + `</button></li>`;
     if (place === k) {

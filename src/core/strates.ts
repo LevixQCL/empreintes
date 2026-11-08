@@ -68,7 +68,10 @@ export interface HalteDef {
 }
 
 /** Nombre de Haltes d'une Strate : il faut environ autant de descentes que la profondeur, d'où 1 à −1, 2 à −2, 3 ensuite */
-export const nombreHaltes = (strate: number) => (strate >= 1 && strate <= 10 ? Math.min(3, strate) : 0);
+/** Les Strates du Fond qui ont leurs Haltes (8 novembre 2026) : deux chacune, une question puis une révélation */
+export const HALTES_FOND = { de: 11, a: 15, par: 2 } as const;
+export const nombreHaltes = (strate: number) => (strate >= 1 && strate <= 10 ? Math.min(3, strate)
+  : strate >= HALTES_FOND.de && strate <= HALTES_FOND.a ? HALTES_FOND.par : 0);
 
 const H = (strate: number, n: number, titre: string, recit: string, details: DetailHalte[], choix: [ChoixHalte, ChoixHalte], fait: string, revelation?: Record<Piste, Revelation>): HalteDef =>
   ({ strate, n, titre, recit, details, choix, fait, ...(revelation ? { revelation } : {}) });
@@ -446,6 +449,149 @@ export const HALTES: HalteDef[] = [
         v('vela', 'Ysé l’avait deviné. Maintenant, je l’ai vu : la gaine qui monte, l’escalier qui monte, leurs marches trop hautes pour nos jambes… Ils ne fuyaient pas vers le bas, directeur. Ils sont partis d’ici, et chaque génération a bâti un étage plus haut. Le Puits Zéro était leur dernier palier. Ils y étaient presque.'),
         v('', 'Ici, tout commence : le premier puits, les premières tables. Tout ce que tu as vu au-dessus a été bâti ensuite, étage après étage, en remontant. Le Puits Zéro était leur dernier palier.')),
     }),
+  // ---------- Les Strates du Fond (8 novembre 2026, direction « Ce qui tient », validée par Bryan) ----------
+  // Après −10, l'enquête continue : l'eau d'en bas, les colonnes qui la retiennent, et ce que les Hauts en ont emporté.
+  // Deux Haltes par Strate, de −11 à −15 : une question, puis une révélation selon la piste suivie. La fin de −10 ne bouge pas.
+
+  // ---------- −11 · L'eau d'en bas ----------
+  H(11, 1, 'Le bord de l’eau',
+    'Sous la salle du Premier Porteur, l’escalier continue. Trente marches plus bas, il entre dans une eau immobile, si claire qu’on voit les marches poursuivre leur descente dessous.', [
+      d('L’eau', v('sasha', 'Douce. Pas un grain de sel. Ce n’est pas la mer, directeur. Et elle est tiède, comme une main.'), v('kessa', 'Elle est tiède. Une eau qui dort au fond depuis toujours devrait être froide.'), v('', 'Une eau douce, tiède, parfaitement immobile.')),
+      d('La ligne', v('doran', 'Un trait gravé dans le mur, avec des signes à côté. Une ligne d’eau, comme la nôtre sur la digue. Sauf que celle-ci est déjà noyée de trois marches.'), v('', 'Une ligne gravée par ceux d’avant, trois marches sous la surface.')),
+      d('Le silence', v('vela', 'Les empreintes d’ici ne dorment pas. Elles écoutent l’eau, comme quelqu’un qui garde une porte et n’ose pas se retourner.'), v('', 'Les cristaux de la voûte se reflètent dans l’eau sans un frisson.')),
+    ], [
+      { texte: 'Planter une jauge', effet: 'composants', piste: 'nous', carte: 'cache', recit: 'Sasha plante une tige graduée sur la dernière marche sèche et fait une encoche au ras de l’eau. À la prochaine descente, vous saurez. Derrière la jauge, une caisse de fouilleur restée scellée.' },
+      { texte: 'Toucher l’eau', effet: 'eclat', piste: 'avant', carte: 'archive', recit: 'Tu poses la main à plat sur l’eau. Elle ne se ride pas : elle pousse, doucement, vers le haut, comme une paume sous la tienne. Un Éclat remonte de lui-même jusqu’à tes doigts.' },
+    ],
+    'Sous la salle du Premier Porteur, l’escalier entre dans une eau douce et tiède, qui n’est pas la mer. La ligne d’eau que ceux d’avant ont gravée là est déjà noyée de trois marches.'),
+  H(11, 2, 'Une marche de plus',
+    'L’eau a gagné une marche depuis ta dernière venue. Au-dessus d’elle, la voûte est fendue en étoile.', [
+      d('La marche', v('sasha', 'Un centimètre et demi en une semaine. La mer, là-haut, en prend trois par an. Ce n’est pas la même eau, et pas le même pas.'), v('ilka', 'Elle a monté. Une marche entière, en quelques jours. Là-haut, il faut un an à la mer pour en faire autant.'), v('', 'L’eau a recouvert une marche de plus.')),
+      d('La voûte', v('doran', 'La même fissure que sur nos Fondations, celles qu’on rebouche la nuit. Même forme, même départ. On dirait qu’elle descend de chez nous.'), v('', 'Une fissure en étoile court sur la voûte, au-dessus de l’eau.')),
+    ], [
+      { texte: 'Suivre la fissure', effet: 'composants', piste: 'nous', carte: 'cache', recit: 'Vous suivez la fissure à la lampe, de pierre en pierre. Elle file droit vers le haut, vers Vertiga. À son pied, un sac de mortier de chantier : quelqu’un est déjà venu la reboucher, il y a longtemps.' },
+      { texte: 'Lire la ligne noyée', effet: 'eclat', piste: 'avant', carte: 'archive', recit: 'Véla plonge le bras jusqu’à la ligne et suit les signes du doigt. Il y en a d’autres dessous, beaucoup d’autres. Un Éclat est pris dans la gravure.' },
+    ],
+    'L’eau d’en bas monte bien plus vite que la mer, et la voûte au-dessus d’elle se fend comme nos Fondations.', {
+      nous: rv('Les deux nuits', 'La jauge l’a dit : l’eau d’en bas a gagné ses deux crans les deux nuits où une île des Hauts est passée au-dessus de Vertiga. Elle ne monte pas toute seule : elle monte quand on lève.',
+        v('sasha', 'Deux crans sur ma jauge. J’ai les heures. Les deux nuits où une île est passée au-dessus de la ville. Ce n’est pas une coïncidence, directeur, c’est une mesure.'),
+        v('', 'Deux crans sur la jauge, et deux dates : les deux nuits où une île des Hauts est passée au-dessus de Vertiga.')),
+      avant: rv('Mille lignes', 'Sous la ligne noyée, ceux d’avant en ont gravé des centaines, de plus en plus bas : pendant des millénaires, leur eau a baissé. Elle ne remonte que depuis peu, et c’est la première fois qu’elle passe au-dessus de leur dernière ligne.',
+        v('vela', 'Des centaines de lignes, de plus en plus bas. Leur eau descendait, directeur, siècle après siècle. Ils la regardaient partir. Elle ne remonte que depuis nous.'),
+        v('', 'Sous la ligne noyée, des centaines d’autres, de plus en plus basses. Pendant des millénaires, l’eau d’en bas a baissé.')),
+    }),
+
+  // ---------- −12 · Les colonnes ----------
+  H(12, 1, 'La forêt de cristal',
+    'Au-delà de l’eau, une salle si grande que les lampes n’en trouvent pas le bout. Des colonnes de cristal, par milliers, montent du sol à la voûte. Certaines sont éteintes.', [
+      d('Une colonne allumée', v('vela', 'Elle ne garde pas un souvenir, celle-là. Elle garde un poids. Comme une épaule sous une poutre.'), v('', 'Une colonne de cristal, chaude au toucher, qui luit d’un bleu très doux.')),
+      d('Une colonne éteinte', v('liane', 'Coupée net, à la pince. Les pinces du carnet de ma mère. On a emporté le cœur, et la colonne s’est vidée de sa lumière.'), v('doran', 'Coupée net. Ça, ce n’est pas le temps. Ce sont des outils.'), v('', 'Une colonne creuse, éteinte, la tranche marquée de coups de pince.')),
+      d('Le sol', v('ilka', 'Il penche. Un rien. Un ballon roulerait. Tout penche vers les colonnes éteintes.'), v('', 'Le sol penche, très légèrement, vers les colonnes vides.')),
+    ], [
+      { texte: 'Compter les colonnes vides', effet: 'composants', piste: 'nous', carte: 'cache', recit: 'Vous comptez, rangée par rangée, comme on fait l’inventaire d’une récolte. Cent douze colonnes éteintes. Au pied de la dernière, des pinces abandonnées, au sigle de la Compagnie des Fondations.' },
+      { texte: 'Écouter une colonne allumée', effet: 'eclat', piste: 'avant', carte: 'archive', recit: 'Tu poses l’oreille contre le cristal. Pas de voix : un souffle long, régulier, comme quelqu’un qui fait un effort et ne veut pas que ça s’entende. Un Éclat se détache de la base.' },
+    ],
+    'Sous l’eau d’en bas, une forêt de colonnes de cristal porte la voûte. Cent douze ont été vidées à la pince, et le sol penche vers elles.'),
+  H(12, 2, 'Le sigle',
+    'Près des colonnes éteintes, un campement de chantier abandonné : des caisses, une lampe à huile, des pinces rangées par taille.', [
+      d('Une pince', v('sasha', 'Numéro de série, et une date : 2091. Trente ans, directeur. Le temps qu’il faut à une voûte pour descendre d’une marche.'), v('', 'Une pince gravée d’un numéro et d’une date : 2091.')),
+      d('La lampe', v('kessa', 'Ils ont dormi ici. Plusieurs nuits. Ceux-là savaient où ils étaient.'), v('', 'Une lampe à huile, vidée jusqu’à la mèche.')),
+    ], [
+      { texte: 'Fouiller les caisses', effet: 'composants', piste: 'nous', carte: 'cache', recit: 'Les caisses sont presque vides. Dans la dernière, sous la paille, des papiers de chantier, et assez de matériel pour remonter sans manquer de rien.' },
+      { texte: 'Examiner la gravure d’une colonne', effet: 'eclat', piste: 'avant', carte: 'archive', recit: 'Sur une colonne allumée, à hauteur d’yeux, une gravure que tu n’avais pas vue. Un Éclat est serti dans le trait, comme une signature.' },
+    ],
+    'En 2091, une équipe de la Compagnie des Fondations a dormi ici, le temps de vider cent douze colonnes.', {
+      nous: rv('Le bon de commande', 'Dans une caisse, un bon de la Compagnie des Fondations, daté de 2091 : « Cœurs porteurs, 112, pour le Levage. » Ils ont écrit « porteurs ». Ils savaient que ces cristaux portaient quelque chose. Ils n’ont pas demandé quoi.',
+        v('liane', '« Cœurs porteurs, cent douze, pour le Levage. » Le tampon de la Compagnie, et la signature d’une Orsève. Ils savaient que ça portait. Ils ont seulement voulu que ça porte autre chose.'),
+        v('', 'Un bon de chantier de 2091 : « Cœurs porteurs, 112, pour le Levage. » Avec le tampon de la Compagnie des Fondations.')),
+      avant: rv('Les bras levés', 'Sur la colonne, un personnage gravé, les bras levés, qui soutient la voûte. Pas un roi : un graveur, ses outils à la ceinture. Ceux d’avant n’ont pas taillé ces colonnes. Ils s’y sont gravés, pour tenir.',
+        v('vela', 'Ce n’est pas une décoration, directeur. C’est un portrait. Chaque colonne est quelqu’un. Ils se sont gravés dedans, et depuis, ils tiennent la voûte au-dessus de l’eau.'),
+        v('', 'Un graveur aux bras levés, qui soutient la voûte. Le même trait sur chaque colonne allumée, et un visage différent.')),
+    }),
+
+  // ---------- −13 · Ceux qui portent ----------
+  H(13, 1, 'Le registre des colonnes',
+    'Le long du mur, une table immense, couverte de signes en colonnes. Véla ne la lit pas : elle la reconnaît.', [
+      d('Les signes', v('vela', '« Ceux qui portent. » Le mot des tables de −7, celui qu’ils employaient pour dire « nous ». Il ne voulait pas dire qu’ils portaient des voix. Il voulait dire ça.'), v('', 'Une table couverte de signes, rangés comme un registre.')),
+      d('Une colonne fendue', v('kessa', 'Celle-là souffre. Je ne sais pas comment je le sais. Comme un dos qu’on a trop chargé, et qui ne dit rien.'), v('', 'Une colonne allumée, fendue sur toute sa hauteur, qui luit par saccades.')),
+      d('Les cases vides', v('doran', 'Cent douze cases barrées d’un trait neuf. Pas leur écriture : la nôtre. Quelqu’un les a rayées en partant, comme on raye une ligne d’inventaire.'), v('', 'Dans le registre, des cases rayées d’un trait récent, d’une écriture humaine.')),
+    ], [
+      { texte: 'Recopier le registre', effet: 'composants', piste: 'nous', carte: 'archive', recit: 'Tu fais recopier le registre, case par case, rayures comprises. Pour Ysé, et pour ceux qui voudront savoir. Sous la table, une réserve de fouilleur, intacte.' },
+      { texte: 'Poser la main sur la fendue', effet: 'eclat', piste: 'avant', carte: 'scellee', recit: 'Tu poses la main sur la colonne fendue. Elle cesse de clignoter, une seconde, comme quelqu’un qui reprend son souffle quand on l’aide à porter. Un Éclat glisse le long de la fente.' },
+    ],
+    'Les colonnes du Fond sont inscrites dans un registre : « ceux qui portent », le mot de −7 pour dire « nous ». Cent douze cases y sont rayées d’une écriture humaine.'),
+  H(13, 2, 'Ce qui tient',
+    'Au bout du registre, une dernière table, plus grande que les autres, posée face aux colonnes comme une stèle de chantier.', [
+      d('La table', v('vela', 'C’est un compte. Ce que chaque colonne porte, et ce qu’il en reste. Ils ont tout mesuré, jusqu’au dernier grain.'), v('sasha', 'Des chiffres. Des charges, en face de chaque nom. Ce sont des calculs de structure, directeur. Les mêmes que les miens, en mieux.'), v('', 'Une table de comptes, une ligne par colonne.')),
+      d('La dernière ligne', v('ilka', 'La dernière ligne est vide. Ils l’ont laissée pour quelqu’un.'), v('', 'La dernière ligne du compte est restée vide.')),
+    ], [
+      { texte: 'Refaire le compte', effet: 'composants', piste: 'nous', carte: 'cache', recit: 'Sasha refait le compte avec les colonnes qui restent. Il le refait deux fois, puis il range son carnet sans rien dire. Derrière la table, du matériel de mesure, oublié en 2091.' },
+      { texte: 'Lire la stèle jusqu’au bout', effet: 'eclat', piste: 'avant', carte: 'archive', recit: 'Véla lit à voix haute, lentement, jusqu’à la ligne vide. À la dernière phrase, elle s’arrête, et recommence au début. Un Éclat attend au pied de la stèle.' },
+    ],
+    'Ceux d’avant ont tenu le compte de ce que porte chaque colonne. La dernière ligne de leur registre est restée vide.', {
+      nous: rv('Une île de plus', 'Le compte de Sasha est simple. Il reste assez de colonnes pour porter Vertiga. Pas assez pour porter Vertiga et une île de plus. Chaque île qu’on lève là-haut se paie ici, d’une colonne qu’on vide.',
+        v('sasha', 'J’ai refait le compte deux fois. Il reste de quoi porter la ville. Pas la ville et une île de plus. Chaque île qu’on lève, directeur, c’est une colonne qu’on vide ici.'),
+        v('', 'Le compte, refait avec les colonnes qui restent : assez pour porter Vertiga, pas assez pour une île de plus.')),
+      avant: rv('Ils ont choisi', 'Ceux d’avant ne se sont pas tous perdus dans leurs voix. Les derniers sont descendus se graver ici, dans les colonnes, pour retenir l’eau pendant que leurs enfants remontaient. L’Écluse, ce n’était pas une machine : c’était eux.',
+        v('vela', '« Ici se sont rendus ceux qui portent, pour que l’eau reste en bas. » L’Écluse, directeur. On la cherchait comme une machine. C’étaient des gens. Ils ont choisi de tenir.'),
+        v('', 'Sur la stèle : « Ici se sont rendus ceux qui portent, pour que l’eau reste en bas. » L’Écluse, c’étaient eux.')),
+    }),
+
+  // ---------- −14 · Sous ta Tour ----------
+  H(14, 1, 'Sous ta Tour',
+    'Une colonne seule, au bout d’une galerie, plus fine que les autres. Sasha sort son plomb, son compas et les plans de la Cuvette.', [
+      d('Le compas', v('sasha', 'J’ai refait trois fois le relevé. La colonne devant nous est exactement sous ta Tour du Noyau. Ton pilier ne bouge jamais parce qu’il est posé sur elle.'), v('', 'D’après les plans, la colonne se dresse juste sous la Tour du Noyau.')),
+      d('La colonne', v('vela', 'Elle est plus jeune que les autres. Quelqu’un s’y est gravé tard, bien après les premiers. Et seul.'), v('', 'Une colonne plus fine, plus claire, au cristal plus récent.')),
+      d('Un bruit', v('doran', 'Le casque de mon père résonne contre elle. En 2066, ce n’est pas un loquet qu’il a entendu. C’était quelqu’un qui changeait d’épaule.', 'casque'), v('doran', 'Écoute. Un craquement, de temps en temps, comme une poutre. Mon père parlait d’un loquet. Je crois que c’était ça.'), v('', 'De temps en temps, un craquement sourd, comme une poutre qui travaille.')),
+    ], [
+      { texte: 'Mesurer la charge', effet: 'composants', piste: 'nous', carte: 'cache', recit: 'Sasha pose ses jauges sur la colonne, de bas en haut. Il note, il efface, il note encore. Contre la paroi, une caisse de chantier marquée au nom de ton district.' },
+      { texte: 'Lui demander son nom', effet: 'eclat', piste: 'avant', carte: 'archive', recit: 'Tu demandes son nom à la colonne, à voix basse, comme à −2. La lumière bouge, très lentement, vers le pied du cristal. Un Éclat y attend.' },
+    ],
+    'Une colonne seule se dresse exactement sous la Tour du Noyau. C’est pour elle que le pilier de mon district ne bouge jamais.'),
+  H(14, 2, 'Le nom de la colonne',
+    'Tu reviens sous ta Tour. La colonne n’a pas changé. Toi, si : tu sais maintenant ce qu’elle porte.', [
+      d('Le pied', v('vela', 'Il y a une inscription au pied, presque effacée par les mains. Des gens sont venus la toucher, souvent. Pas nous.'), v('', 'Au pied de la colonne, une inscription usée par les mains.')),
+      d('La fente', v('kessa', 'Elle est fendue sur un tiers. Elle tient. Mais elle tient comme on tient quand on n’a plus le choix.'), v('', 'Une fente monte sur un tiers de la colonne.')),
+    ], [
+      { texte: 'Relever la fente', effet: 'composants', piste: 'nous', carte: 'cache', recit: 'Tu fais marquer la fente à la craie, avec la date. Si elle grandit, la prochaine escouade le verra. Derrière la colonne, du mortier de chantier, encore sec.' },
+      { texte: 'Déchiffrer l’inscription', effet: 'eclat', piste: 'avant', carte: 'archive', recit: 'Véla suit l’inscription du doigt, signe par signe, et pâlit à la moitié. Elle te regarde. Elle a reconnu le nom. Un Éclat est posé dans le dernier signe.' },
+    ],
+    'La colonne sous ma Tour porte un nom, usé par les mains de ceux d’avant qui venaient la toucher.', {
+      nous: rv('Le poids d’un district', 'La colonne sous ta Tour porte seule tout ton district, digue comprise. Elle est fendue sur un tiers. Les fissures qu’on rebouche la nuit dans les Fondations, ce n’est pas la mer qui les fait : c’est elle qui cède.',
+        v('sasha', 'Elle porte tout. La Tour, la place, la digue, les pompes. Les fissures qu’on rebouche la nuit, directeur, ce n’est pas la mer. C’est elle qui plie.'),
+        v('', 'La colonne porte tout le district, digue comprise. Elle est fendue sur un tiers de sa hauteur.')),
+      avant: rv('Le nom donné', 'Au pied de la colonne, le nom que la Tisseuse de −2 avait donné à quelqu’un qui descendait vers le fond. Il l’a porté jusqu’ici, et s’est gravé sous ton district avec lui, pour qu’elle ne disparaisse pas.',
+        v('vela', 'C’est le nom de la Tisseuse, directeur. Celui qu’elle a donné à quelqu’un qui descendait. Il l’a porté jusqu’en bas, et il s’est gravé avec lui. Ton district tient sur un nom qu’on a refusé d’oublier.'),
+        v('', 'L’inscription porte le nom que la Tisseuse de −2 avait donné à quelqu’un qui descendait vers le fond.')),
+    }),
+
+  // ---------- −15 · Le fond du Fond ----------
+  H(15, 1, 'Les vannes',
+    'Tout en bas, là où l’eau d’en bas entre dans la pierre, une rangée de vannes, d’un métal qui ne rouille pas.', [
+      d('Les vannes', v('sasha', 'Le même métal que les vannes des Citernes, sous les Basses. Les mêmes réglages, sur une marée qui n’existe plus. Ce sont les deux bouts d’une seule machine.'), v('', 'Des vannes d’un métal sans rouille, réglées sur une marée inconnue.')),
+      d('L’eau', v('vela', 'Elle ne vient pas d’en dessous. Elle vient d’en haut. C’est la mer, filtrée par la pierre, qui descend ici depuis toujours, au lieu de monter chez nous.'), v('', 'L’eau entre par les vannes, venue d’en haut, filtrée par la pierre.')),
+      d('Une table', v('doran', 'Une seule ligne, gravée large : « Ce qui tient ne se reprend pas. Il se rend. »'), v('', 'Une table gravée d’une seule ligne : « Ce qui tient ne se reprend pas. Il se rend. »')),
+    ], [
+      { texte: 'Tourner une vanne', effet: 'composants', piste: 'nous', carte: 'cache', recit: 'Ilka et Doran pèsent sur un volant. Il tourne d’un cran, puis se bloque. Très loin au-dessus, quelque chose répond, comme une pompe qui tousse. Au pied du volant, des outils trop grands pour nos mains.' },
+      { texte: 'Lire la table', effet: 'eclat', piste: 'avant', carte: 'archive', recit: 'Tu lis la ligne à voix haute. L’eau, derrière les vannes, se calme d’un coup, comme si elle avait entendu. Un Éclat brille dans le creux du dernier mot.' },
+    ],
+    'Au fond du Fond, des vannes laissent la mer descendre dans la pierre au lieu de monter. Sur une table : « Ce qui tient ne se reprend pas. Il se rend. »'),
+  H(15, 2, 'Se rendre',
+    'Tu redescends aux vannes. L’escouade se tait. Chacun a compris quelque chose, et personne n’ose dire quoi.', [
+      d('Les vannes', v('ilka', 'Elles sont prêtes. Elles ont toujours été prêtes. Ce qui manque, ce n’est pas la machine.'), v('', 'Les vannes attendent, réglées, intactes.')),
+      d('L’escouade', v('vela', 'Mes peurs se taisent, ici. Pour la première fois depuis la chambre. Comme si quelqu’un les portait un peu à ma place.'), v('', 'L’escouade se tient près des vannes, sans un mot.')),
+    ], [
+      { texte: 'Noter le réglage des vannes', effet: 'composants', piste: 'nous', carte: 'cache', recit: 'Sasha recopie chaque réglage, chaque cran, pour les Citernes. Si un jour on veut ouvrir les deux bouts ensemble, il faudra savoir comment. Derrière la dernière vanne, une réserve de chantier.' },
+      { texte: 'Rester un moment', effet: 'eclat', piste: 'avant', carte: 'archive', recit: 'Tu restes un moment près des vannes, sans rien faire, à écouter l’eau descendre. Quand tu te lèves, un Éclat est posé à l’endroit où tu étais assis.' },
+    ],
+    'Au fond du Fond, l’escouade se tait. Les vannes sont prêtes ; ce qui leur manque, ce n’est pas une machine.', {
+      nous: rv('Les deux bouts', 'Les vannes du Fond et celles des Citernes sont une seule machine, toujours réglée : elle laisse la mer descendre ici au lieu de monter là-haut. Il ne lui manque qu’une chose, ce qui tient, pour que la voûte supporte l’eau qu’on lui confierait.',
+        v('sasha', 'Les Citernes et le Fond, c’est une seule machine. On ouvre en haut, ça descend en bas, et la mer baisse chez nous. Il ne manque que de quoi tenir la voûte. Il ne manque que ce qu’on a emporté.'),
+        v('', 'Les vannes du Fond et celles des Citernes sont les deux bouts d’une même machine. Il ne lui manque que ce qui tient.')),
+      avant: rv('Se rendre', 'Ce qui tient ne se reprend pas de force : une empreinte se rend. Pour rendre sa voûte au Fond, il faudrait que les cœurs montés aux Hauts acceptent de redescendre, ou que d’autres viennent prendre leur place.',
+        v('vela', '« Il se rend. » On ne pourra pas arracher les cœurs aux îles comme on les a arrachés d’ici. Il faudrait qu’ils acceptent de redescendre. Ou que d’autres viennent porter à leur place.'),
+        v('', 'Ce qui tient ne se reprend pas : il se rend. Il faudrait que les cœurs montés aux Hauts acceptent de redescendre, ou que d’autres prennent leur place.')),
+    }),
 ];
 
 export const halteDef = (strate: number, n: number) => HALTES.find((h) => h.strate === strate && h.n === n);
@@ -462,7 +608,8 @@ export function pisteChoisie(choix: ChoixFaits, strate: number, n: number): Pist
 /** Combien de fois chaque piste a été suivie, sur toutes les Haltes passées */
 export function comptePistes(choix: ChoixFaits): Record<Piste, number> {
   const c: Record<Piste, number> = { nous: 0, avant: 0 };
-  for (const h of HALTES) { const p = pisteChoisie(choix, h.strate, h.n); if (p) c[p]++; }
+  // la fin de l'enquête se joue à −10 : les Haltes du Fond, plus bas, ne la changent plus
+  for (const h of HALTES) { if (h.strate > 10) continue; const p = pisteChoisie(choix, h.strate, h.n); if (p) c[p]++; }
   return c;
 }
 

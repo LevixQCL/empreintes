@@ -4,9 +4,9 @@
 import { initializeApp } from 'firebase/app';
 import {
   EmailAuthProvider, GoogleAuthProvider, createUserWithEmailAndPassword, getAuth, linkWithCredential, linkWithPopup, onAuthStateChanged,
-  sendPasswordResetEmail, signInAnonymously, signInWithCredential, signInWithEmailAndPassword, signInWithPopup, signOut, type User,
+  deleteUser, sendPasswordResetEmail, signInAnonymously, signInWithCredential, signInWithEmailAndPassword, signInWithPopup, signOut, type User,
 } from 'firebase/auth';
-import { doc, getDoc, getFirestore, runTransaction, Timestamp } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, query, runTransaction, Timestamp, where, type DocumentReference, type Query } from 'firebase/firestore';
 import { firebaseConfig } from './firebase-config';
 import { estJeuValide, VERSION_JEU } from '../core/jeu';
 import type { Enveloppe } from '../save/local';
@@ -85,6 +85,49 @@ export async function motDePasseOublie(email: string): Promise<void> {
 
 export async function deconnexion(): Promise<void> {
   await signOut(auth);
+}
+
+/** La suppression demande une connexion récente (règle de sécurité de Google) : il faut se reconnecter puis recommencer */
+export class ReconnexionRequise extends Error {}
+
+/**
+ * Supprimer son compte et toutes ses données en ligne (RGPD, 8 novembre 2026) : la sauvegarde, l'entrée du Grand Tableau,
+ * le pseudo, la garnison et la garde de la Flèche (avec ce qu'on y a subi), la vitrine, les amitiés, les échanges et défis,
+ * le code de parrainage et sa fiche de filleul, les salons de duel ouverts ; puis le compte lui-même.
+ * pseudo : la clé du pseudo réservé ; code : son code de parrainage.
+ */
+export async function supprimerCompte(pseudo: string | null, code: string | null): Promise<void> {
+  const u = auth.currentUser;
+  if (!u) return;
+  const uid = u.uid;
+  // vérifier d'abord que Google accepte la suppression maintenant : sinon on garderait un compte vide
+  const derniere = Date.parse(u.metadata.lastSignInTime ?? '') || 0;
+  if (!u.isAnonymous && Date.now() - derniere > 4 * 60_000) throw new ReconnexionRequise();
+  const effacer = (ref: DocumentReference) => deleteDoc(ref).catch(() => {});
+  const effacerTous = async (q: Query) => {
+    const snap = await getDocs(q).catch(() => null);
+    await Promise.all((snap?.docs ?? []).map((d) => effacer(d.ref)));
+  };
+  await Promise.all([
+    effacerTous(query(collection(db, 'garnisons', uid, 'subis'))),
+    effacerTous(query(collection(db, 'quais', uid, 'assauts'))),
+    effacerTous(query(collection(db, 'amities'), where('membres', 'array-contains', uid))),
+    effacerTous(query(collection(db, 'echanges'), where('de', '==', uid))),
+    effacerTous(query(collection(db, 'defis'), where('de', '==', uid))),
+    effacerTous(query(collection(db, 'defis'), where('a', '==', uid))),
+    effacerTous(query(collection(db, 'duels'), where('hote.uid', '==', uid))),
+  ]);
+  await Promise.all([
+    effacer(doc(db, 'classement', uid)), effacer(doc(db, 'garnisons', uid)), effacer(doc(db, 'quais', uid)),
+    effacer(doc(db, 'profils', uid)), effacer(doc(db, 'recrues', uid)),
+    pseudo ? effacer(doc(db, 'pseudos', pseudo)) : null,
+    code ? effacer(doc(db, 'parrains', code)) : null,
+  ]);
+  await deleteDoc(doc(db, 'saves', uid));
+  try { await deleteUser(u); } catch (e) {
+    if ((e as { code?: string })?.code === 'auth/requires-recent-login') throw new ReconnexionRequise();
+    throw e;
+  }
 }
 
 /** Ce que contient le compte : la partie (si elle est lisible par cette version), le jeton de la dernière écriture,

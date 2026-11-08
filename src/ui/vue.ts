@@ -61,6 +61,12 @@ export interface Compte {
   pseudo?: string;
   /** la partie gardée en secours quand une autre l'a remplacée ; confirmer : le joueur a touché « Restaurer » une première fois */
   secours?: { strate: number; le: number; actuelle: number; confirmer: boolean } | null;
+  /** l'âge dit au premier lancement : « jeune » (moins de 13 ans) joue sans rien en ligne */
+  age?: 'majeur' | 'jeune' | null;
+  /** on demande l'âge avant de commencer une nouvelle partie (premier lancement) */
+  ageDemande?: boolean;
+  /** la suppression du compte : 1 = le joueur a touché « Supprimer », on lui demande de confirmer */
+  supprimer?: number;
   /** on sait si le joueur est connecté, et la partie du compte est récupérée (ou il n'y a pas de compte, ou on est hors ligne) */
   pret?: boolean;
 }
@@ -244,6 +250,18 @@ function ligneSecours(c: Compte): string {
     + `<div class="ligne"><button type="button" class="btn sec" data-action="${s.confirmer ? 'secours-confirmer' : 'secours'}">${s.confirmer ? 'Confirmer l’échange' : 'Restaurer cette partie'}</button></div>`;
 }
 
+/**
+ * Avant une nouvelle partie (8 novembre 2026) : l'âge. À 13 ans et plus, la partie est sauvegardée en ligne (compte invisible) ;
+ * en dessous, on joue pareil, mais tout reste sur l'appareil. Deux boutons de même poids, sans jugement.
+ */
+export function panneauAge(): string {
+  return `<section class="panneau age" aria-label="Avant de commencer"><strong>Avant de commencer</strong>`
+    + `<p class="discret">EMPREINTES garde ta partie en ligne pour que tu ne la perdes jamais, et te permet d’apparaître au Grand Tableau sous un pseudo. Pour cela, il faut avoir au moins 13 ans.</p>`
+    + `<div class="ligne"><button type="button" class="btn prim" data-action="age-ok">J’ai 13 ans ou plus</button></div>`
+    + `<div class="ligne"><button type="button" class="btn sec" data-action="age-jeune">J’ai moins de 13 ans</button></div>`
+    + `<p class="discret">Moins de 13 ans : tu joues au jeu entier, mais ta partie reste sur cet appareil, sans rien en ligne. <a class="lien" href="./confidentialite.html" target="_blank" rel="noopener">Confidentialité et données</a></p></section>`;
+}
+
 /** retrouver : ouvert depuis le premier écran d'un appareil neuf, pour reprendre une partie jouée ailleurs */
 export function panneauCompte(c: Compte, retrouver = false): string {
   if (!c.ouvert) return '';
@@ -254,8 +272,13 @@ export function panneauCompte(c: Compte, retrouver = false): string {
       + `<div class="ligne"><button type="button" class="btn ${c.pseudo ? 'sec' : 'prim'}" data-action="gt-nom">${c.pseudo ? 'Changer de pseudo' : 'Choisir mon pseudo'}</button></div>`
       + (etat ? `<p class="discret">${etat}</p>` : '')
       + ligneSecours(c)
-      + `<div class="ligne"><button type="button" class="btn sec" data-action="deconnexion"${c.occupe ? ' disabled' : ''}>Se déconnecter</button></div></section>`;
+      + `<div class="ligne"><button type="button" class="btn sec" data-action="deconnexion"${c.occupe ? ' disabled' : ''}>Se déconnecter</button></div>`
+      + blocDonnees(c) + `</section>`;
   }
+  if (c.age === 'jeune' && !c.utilisateur) return `<section class="panneau" aria-label="Compte"><strong>Partie de cet appareil</strong>`
+    + `<p class="discret">Les comptes en ligne (sauvegarde, Grand Tableau, Cercle des quais) sont réservés aux 13 ans et plus. Ta partie est gardée sur cet appareil.</p>`
+    + `<div class="ligne"><button type="button" class="btn sec" data-action="age-majeur">J’ai 13 ans ou plus</button></div>`
+    + `<p class="discret"><a class="lien" href="./confidentialite.html" target="_blank" rel="noopener">Confidentialité et données</a></p></section>`;
   const invisible = !!c.utilisateur?.anonyme;
   return `<section class="panneau" aria-label="Compte"><strong>${invisible ? 'Protège ta partie' : retrouver ? 'Retrouve ta partie' : 'Compte'}</strong>`
     + `<p class="discret">${retrouver && !invisible
@@ -271,7 +294,22 @@ export function panneauCompte(c: Compte, retrouver = false): string {
     + (c.erreur ? `<p class="erreur">${echap(c.erreur)}</p>` : '')
     + (c.info ? `<p class="discret">${echap(c.info)}</p>` : '')
     + ligneSecours(c)
+    + blocDonnees(c)
     + `</section>`;
+}
+
+/**
+ * Tes données (8 novembre 2026, RGPD et Play Store) : la page de confidentialité, et supprimer son compte et tout ce qu'il a
+ * publié, en deux touches. Sans compte, il n'y a rien en ligne : seulement le lien vers la page.
+ */
+function blocDonnees(c: Compte): string {
+  const page = `<a class="lien" href="./confidentialite.html" target="_blank" rel="noopener">Confidentialité et données</a>`;
+  if (!c.utilisateur) return `<p class="discret donnees">${page} · Réservé aux 13 ans et plus</p>`;
+  if (c.supprimer) return `<div class="donnees confirmer" role="group" aria-label="Supprimer mon compte">`
+    + `<p><strong>Tout supprimer, pour de bon ?</strong> Ta partie (en ligne et sur cet appareil), ton pseudo, ta place au Grand Tableau, ta garde de la Flèche, ta garnison, ta vitrine et tes amis du Cercle seront effacés. Rien ne pourra être récupéré.</p>`
+    + `<div class="ligne"><button type="button" class="btn sec" data-action="supprimer-annuler"${c.occupe ? ' disabled' : ''}>Garder mon compte</button>`
+    + `<button type="button" class="btn danger" data-action="supprimer-confirmer"${c.occupe ? ' disabled' : ''}>Oui, tout supprimer</button></div></div>`;
+  return `<p class="discret donnees">${page} · <button type="button" class="lien" data-action="supprimer">Supprimer mon compte et mes données</button></p>`;
 }
 
 // ---------- Fuir (décision du 22 octobre 2026) ----------
@@ -669,7 +707,7 @@ function htmlEcranCombat(e: Ecran): string {
   else if (s.sansResonance) conseil = `<b>Épreuve · Fréquences brouillées</b> : aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.`;
   else if (s.monoLignee && !s.chaine.length) conseil = `<b>Épreuve · Une seule voix</b> : chaque chaîne ne joue qu’une lignée. Les cartes du district vont avec toutes.`;
   else if (s.sansChute && !s.chaine.length) conseil = `<b>Épreuve · Nul ne reste au fond</b> : si un Porteur tombe, l’Épreuve est perdue. Protège le plus exposé.`;
-  else if (s.dissonance && !s.chaine.length) conseil = `<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci. Mise sur la force brute ou la protection.`;
+  else if (s.dissonance && !s.chaine.length) conseil = `<b>Fréquences brouillées</b> : ni Résonance ni Écho ce tour-ci. Mise sur la force brute ou la protection.`;
   // le gardien parle (campagne.ts) : à la place du conseil, tant que la chaîne est vide
   // la bulle d'aide du groupe (3 novembre 2026, Luc : « rien ne dit qu'on peut toucher les vignettes ») : jusqu'au premier ennemi visé
   else if (enGroupe(s) && !e.viserAppris && !s.chaine.length) conseil = `<span class="bulle-viser" role="note">Touche un ennemi en haut pour le viser : toute ta chaîne le frappe</span>`;
@@ -680,7 +718,7 @@ function htmlEcranCombat(e: Ecran): string {
     const f = fs[fs.length - 1]!;
     // chaîne pleine : une place de plus ne s'achète qu'avec le Flux
     const flux = s.flux > 0 && capacite(s) < REGLES.capaciteMax;
-    if (s.dissonance) conseil = '<b>Fréquences brouillées</b> : pas de Résonance ce tour-ci';
+    if (s.dissonance) conseil = '<b>Fréquences brouillées</b> : ni Résonance ni Écho ce tour-ci';
     else if (a.suite >= 3) conseil = `<b>Résonance</b> : suite de ${a.suite}, effets <b>+${Math.round((a.mult - 1) * 100)} %</b>` + (aide && a.suite < 5 && fin === a.suite && (libres > 0 || flux) ? (libres > 0 ? ` · un <b>${f + 1}</b> pour aller plus loin` : ` · chaîne pleine : un <b>${f + 1}</b> avec une place de Flux`) : '');
     // passé les premières Strates, le conseil dit où en est la chaîne, sans souffler la carte suivante
     else if (!aide) conseil = libres === 0 ? (fin === 2 ? 'Chaîne pleine : suite de 2, pas de Résonance' : flux ? 'Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus' : 'Chaîne pleine : tu peux la lancer') : fin === 2 ? 'Suite en cours' : '';

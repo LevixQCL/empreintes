@@ -349,6 +349,8 @@ export interface Jeu {
   pillage?: import('./pillages').EtatPillage;
   /** la présentation du Port a été lue (28 octobre 2026) : elle s'affiche à la première visite */
   portVu?: boolean;
+  /** la présentation des Basses a été vue (8 novembre 2026, audit : un paragraphe ne suffisait pas) */
+  bassesVu?: boolean;
   /** les premiers soins intensifs ont été offerts par la Clinique (4 novembre 2026) */
   soinOffert?: boolean;
   /** la Flèche : le quai atteint, le record, les quais gravés reçus (fleche.ts) ; absente avant la première montée */
@@ -390,6 +392,8 @@ export interface Jeu {
   comptoir: Comptoir;
   /** le convertisseur du Générateur : le jour du jeu et les lots déjà convertis ce jour-là */
   conversion?: { jour: number; lots: number };
+  /** la cristallisation du Générateur (8 novembre 2026) : le jour du jeu et les Éclats déjà condensés ce jour-là */
+  cristallisation?: { jour: number; n: number };
   /** « Mon escouade » (décision du 23 octobre 2026) : les trois Porteurs qui descendent. Elle ne change qu'au district,
    *  jamais pendant une descente (sinon c'est trop facile). Ancienne sauvegarde : complétée par `migrer`. */
   escouade: string[];

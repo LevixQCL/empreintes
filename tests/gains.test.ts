@@ -43,7 +43,9 @@ describe('Ce que rapporte le niveau suivant (22 octobre 2026)', () => {
   });
 
   it('la profondeur permise par le logement des creuseurs augmente avec la Tour, puis n’a plus de limite', () => {
-    for (let n = 2; n <= 10; n++) expect(profondeurNoyau(n)).toBeGreaterThan(profondeurNoyau(n - 1));
+    // 8 novembre 2026 : la Tour 7 n'ouvre plus rien de neuf (−9 demande la Tour 8), mais la profondeur ne recule jamais
+    for (let n = 2; n <= 10; n++) expect(profondeurNoyau(n)).toBeGreaterThanOrEqual(profondeurNoyau(n - 1));
+    expect(profondeurNoyau(8)).toBeGreaterThan(profondeurNoyau(6));
     expect(profondeurNoyau(10)).toBe(Infinity);
   });
 });

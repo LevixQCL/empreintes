@@ -8,11 +8,12 @@
 import { porteurDef } from '../core/donnees';
 import { SECTEURS, etatMaree, type SecteurBasses } from '../core/digue';
 import { familleDef } from '../core/familles';
-import { BASSES, bassesDe, bassesOuvertes, energieBasses, famillesDesBasses, libresPourBasses, lieuFait, peutDresser, porteursPresents, raisonHorsContrat, raisonLieu, restantsSecteur, secteurOuvert, valeurDepot, type Jeu } from '../core/jeu';
+import { BASSES, eclatsDepot, bassesDe, bassesOuvertes, energieBasses, famillesDesBasses, libresPourBasses, lieuFait, peutDresser, porteursPresents, raisonHorsContrat, raisonLieu, restantsSecteur, secteurOuvert, valeurDepot, type Jeu } from '../core/jeu';
 import { flancBasses } from './art';
 import { NOM_LIGNEE, avatar, decompte, jaugeTemps, prix, type EcranDistrict } from './coquille';
 import { ICO } from './icones';
 import { echap, texteReplie } from './outils';
+import { bloc, cle, etape, replie } from './presentation';
 
 const majuscule = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
 const heure = (t: number) => new Date(t).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
@@ -49,8 +50,8 @@ function blocDepots(j: Jeu, now: number): string {
   const prochaine = heure(etatMaree(now).prochaineBasse);
   return `<section class="fb-bloc bs-depots"><h3 class="titre-bloc">${ICO.coffre}Ce que la mer a laissé</h3>`
     + (b.depots
-      ? `<button type="button" class="btn prim large" data-action="basses-depot">${ICO.composants}Ramasser${b.depots > 1 ? ` (${b.depots})` : ''} · +${v} composants</button>`
-        + `<small class="fb-note">Chaque marée basse dépose quelque chose sur la grève, et ça t’attend : ${BASSES.depotsMax} dépôts au plus.</small>`
+      ? `<button type="button" class="btn prim large" data-action="basses-depot">${ICO.composants}Ramasser${b.depots > 1 ? ` (${b.depots})` : ''} · +${v} composants${eclatsDepot(j, now) ? ` · +${eclatsDepot(j, now)} ${ICO.eclats}` : ''}</button>`
+        + `<small class="fb-note">${eclatsDepot(j, now) ? 'Depuis que tu as touché le Fond, l’eau d’en bas remonte jusqu’à la grève, chargée d’éclats de colonne. ' : ''}Chaque marée basse dépose quelque chose sur la grève, et ça t’attend : ${BASSES.depotsMax} dépôts au plus.</small>`
       : `<p class="fb-vide">La grève est vide. La prochaine marée basse, vers ${prochaine}, laissera quelque chose : rien ne presse, ça t’attendra.</p>`)
     + `</section>`;
 }
@@ -118,6 +119,36 @@ function choixPorteur(j: Jeu, lieu: string): string {
     + `</ul></div>`;
 }
 
+/**
+ * La présentation des Basses (8 novembre 2026, audit : un paragraphe dans la feuille, ni fenêtre ni objectif) :
+ * à la première ouverture de l'écluse, puis à la demande (« ? »). Une phrase et trois chiffres par bloc, le détail se déplie.
+ */
+function presentationBasses(j: Jeu, premiere: boolean, now: number): string {
+  const { total } = famillesDesBasses(j);
+  return `<div class="pl-pres bs-pres"><p class="pr-phrase">De l’autre côté de la digue, les quartiers d’avant dorment sous la mer. Des familles y vivent encore, sur ce qui dépasse : va les chercher.</p>`
+    + bloc(ICO.mur, 'Le batardeau', 'Il garde un secteur du flanc à sec. Un seul à la fois.', [
+      cle(ICO.strate, '5', 'secteurs, du haut vers le bas'),
+      cle(ICO.chrono, '1', 'déplacement par semaine'),
+      cle(ICO.descendre, `−${BASSES.ouverture} à −9`, 'chaque secteur s’ouvre avec une Strate'),
+    ])
+    + bloc(ICO.porteurs, 'Les familles', 'Un Porteur libre descend au secteur à sec et en ramène une.', [
+      cle(ICO.chrono, `${BASSES.heures} h`, 'par expédition'),
+      cle(ICO.energie, String(energieBasses(j)), 'énergie (lampes, cordes)'),
+      cle(ICO.ok, String(total), 'familles à retrouver'),
+    ])
+    + bloc(ICO.coffre, 'Ce que la mer laisse', 'Chaque marée basse dépose des composants au pied de l’écluse.', [
+      cle(ICO.composants, `+${etatMaree(now).grande ? valeurDepot(j, now) / 2 : valeurDepot(j, now)}`, 'par dépôt'),
+      cle(ICO.coffre, String(BASSES.depotsMax), 'dépôts attendent au plus'),
+      cle(ICO.eclat, '×2', 'à grande marée'),
+    ])
+    + replie('Pourquoi les ramener', `<ul class="fl-pr-etapes">`
+      + etape(ICO.mur, 'Le Mur des empreintes', 'Chaque famille ramenée pose sa main au Mur du district. Elle te suit désormais.')
+      + etape(ICO.monter, 'Les familles te suivent', 'Plus elles sont nombreuses, plus le district s’anime : de nouveaux étals au Comptoir, des souvenirs confiés, des bonus au fil des paliers.')
+      + etape(ICO.porteurs, 'Le Porteur revient', `Il gagne de l’XP et un peu d’Usure (${BASSES.usure}). Il ne peut pas être en bas en même temps.`)
+      + `</ul>`, ICO.aide)
+    + (premiere ? `<button type="button" class="btn prim large" data-action="basses-entrer">${ICO.descendre}Descendre le flanc</button>` : '') + `</div>`;
+}
+
 /** La feuille de l'écluse */
 export function feuilleBasses(e: EcranDistrict): string {
   if (!e.basses) return '';
@@ -128,8 +159,11 @@ export function feuilleBasses(e: EcranDistrict): string {
   if (!bassesOuvertes(j)) {
     return tete + flanc(e) + `<p class="fb-vide">L’écluse reste fermée tant que le gardien de la Strate −${BASSES.ouverture} tient le puits : personne ne laisse le district sans défense pour descendre le flanc de la digue.</p></div></section>`;
   }
+  if (!j.bassesVu || e.bassesAide) return tete + presentationBasses(j, !j.bassesVu, e.now)
+    + (e.bassesAide && j.bassesVu ? `<button type="button" class="btn sec large" data-action="basses-aide">${ICO.retour}Retour à l’écluse</button>` : '') + `</div></section>`;
   const { faites, total } = famillesDesBasses(j);
   return tete
+    + `<button type="button" class="lien bs-aide" data-action="basses-aide">${ICO.aide}Comment marchent les Basses</button>`
     + texteReplie('De l’autre côté de la digue, les quartiers d’avant dorment sous l’eau, et des familles y vivent encore, sur ce qui dépasse. Le batardeau garde un secteur à sec : tes Porteurs peuvent y descendre et les ramener. Plus bas sur le flanc, c’est plus ancien.', 'basses', 'res-resume')
     + blocDepots(j, e.now) + blocExpedition(j, e.now) + flanc(e)
     + `<h3 class="titre-bloc">${ICO.strate}Le flanc de la digue<b class="mur-compte">${faites} / ${total}</b></h3>`

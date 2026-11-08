@@ -1,6 +1,8 @@
 // Les contrats de marée (31 octobre 2026, Bryan : « des rangs de mission où il faut envoyer plusieurs agents, avec un taux
 // de réussite, et plus c'est haut, meilleures sont les récompenses »). Réglé avec un game designer :
-// - trois rangs nommés d'après les marées (pas d'après les métaux : un « contrat d'or » qui rapporte de l'argent tromperait) ;
+// - trois rangs nommés d'après les marées (8 novembre 2026 : coefficients dans l'échelle réelle des Basses, 25 à 115,
+//   « grande marée » à partir de 100 comme dans digue.ts ; on parle de « tâches », pas d'« épreuves », pour ne pas confondre)
+// - (avant :) trois rangs nommés d'après les marées (pas d'après les métaux : un « contrat d'or » qui rapporte de l'argent tromperait) ;
 // - un contrat part sur la gabare du passeur, à côté des barques : il ne prend aucune barque aux missions ordinaires ;
 // - chaque contrat a deux ou trois épreuves, une par Porteur, liées aux rôles des lignées (frapper, tenir, orchestrer) ;
 // - le taux de réussite est affiché avant le départ (15 à 95 %) : ce sont les choix d'équipe qui le font monter ;
@@ -21,9 +23,9 @@ export const RANGS_MAREE: readonly RangMaree[] = ['montante', 'vive', 'grande'];
 
 /** Les chiffres de chaque rang (tous les réglages des contrats sont ici) */
 export const MAREES = {
-  montante: { nom: 'Marée montante', coef: 70, strate: 3, porteurs: 2, difficulte: 6, heures: 4, energie: 150, usure: 5, composants: 90 },
+  montante: { nom: 'Petite vive-eau', coef: 80, strate: 3, porteurs: 2, difficulte: 6, heures: 4, energie: 150, usure: 5, composants: 90 },
   vive: { nom: 'Vive-eau', coef: 95, strate: 6, porteurs: 3, difficulte: 11, heures: 8, energie: 300, usure: 8, composants: 158 },
-  grande: { nom: 'Grande marée', coef: 120, strate: 9, porteurs: 3, difficulte: 16, heures: 16, energie: 600, usure: 12, composants: 270 },
+  grande: { nom: 'Grande marée', coef: 110, strate: 9, porteurs: 3, difficulte: 16, heures: 16, energie: 600, usure: 12, composants: 270 },
 } as const satisfies Record<RangMaree, { nom: string; coef: number; strate: number; porteurs: number; difficulte: number; heures: number; energie: number; usure: number; composants: number }>;
 
 export const CONTRAT = {

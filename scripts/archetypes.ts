@@ -25,6 +25,13 @@ const METAL = arg('metal', 'fer') as Rarete;
 const NIVEAU_CARTES = Number(arg('niveau', '10'));
 /** --echo 1.6 : essaie un autre bonus d'Écho sans toucher aux règles */
 if (process.argv.includes('--echo')) (REGLES as { echo: number }).echo = Number(arg('echo', String(REGLES.echo)));
+/** --echo-paliers 1.3,1.45,1.6 : essaie d'autres paliers d'Écho (3, 4 et 5 cartes ; 8 novembre 2026 : --echo ne réglait plus rien) */
+if (process.argv.includes('--echo-paliers')) {
+  const [a3, a4, a5] = arg('echo-paliers', '').split(',').map(Number);
+  Object.assign(REGLES.echoPaliers, { 3: a3, 4: a4, 5: a5 });
+}
+/** --suite3 1.4 : essaie un autre bonus pour la suite de 3 */
+if (process.argv.includes('--suite3')) REGLES.multSuite[3] = Number(arg('suite3', '1.3'));
 /** --mono 0.5 : essaie un bonus de suite réduit quand la suite vient d'une seule lignée */
 if (process.argv.includes('--suite-mono')) (REGLES as { suiteMono: number }).suiteMono = Number(arg('suite-mono', '1'));
 /** --reso-large : essai (29 octobre 2026) d'une échelle Résonante élargie à 5-9, les six cartes en 9 les moins fortes passent en 5 */

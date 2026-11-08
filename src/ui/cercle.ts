@@ -113,7 +113,7 @@ function presentation(e: EcranDistrict, ferme: boolean): string {
   return `<section class="cr-intro" style="--decor:url(${decor})"><div class="cr-intro-texte">`
     + `<span class="surtitre">Le Cercle des quais · la place des directeurs</span>`
     + `<h2>Ici, on se mesure sans se battre pour de vrai</h2>`
-    + `<p>Depuis les Accords, les directeurs n’ont plus le droit de piller leurs voisins quand ils veulent. Alors ils accostent au Cercle : on s’y salue, on y montre ses plus belles cartes, on s’y défie sur l’estrade, et on y échange ce qu’on a en double.</p></div></section>`
+    + `<p>Piller coûte cher : une escouade, une journée, et la rancune d’un voisin. Alors on accoste au Cercle : on s’y salue, on y montre ses plus belles cartes, on s’y défie sur l’estrade, et on y échange ce qu’on a en double.</p></div></section>`
     + (ferme ? `<p class="fl-condition">${ICO.verrou}<span><strong>Le Cercle est fermé · vaincs le gardien de la Strate −${J.CERCLE_OUVERTURE}</strong><small>Aucun directeur ne traite avec un district qui n’a pas encore tenu son puits.</small></span></p>` : '')
     + `<ul class="cr-etapes">`
     + `<li>${ICO.ami}<div><strong>Des amis</strong><small>Ajoute un directeur par son nom. Tu vois sa vitrine : ses plus belles cartes, ses doubles, ce qu’il cherche.</small></div></li>`

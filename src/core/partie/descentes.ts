@@ -1279,7 +1279,8 @@ export const ESCOUADE_RECRUES: Record<string, string[]> = {
 };
 /** La force du gardien des Seuils dans « Les recrues » : celle de la Strate −2, × force (× felee en Fêlée : la pente est raide,
  *  réglée au robot le 31 octobre 2026 : ~70 % pour un joueur qui calcule tout, ~30 % pour un joueur moyen ; en Fêlée ~35 % et ~5 %) */
-export const RECRUES = { strate: 2, force: 1.25, felee: 1.1 };
+/** 8 novembre 2026 : « Les recrues » se gagnait 7 à 13 % partout (force 1,25), 86 % à 1 : réglée à 1,15 */
+export const RECRUES = { strate: 2, force: 1.15, felee: 1.1 };
 const deckRecrues = (): GesteDef[] => [
   ...Object.entries(ESCOUADE_RECRUES).flatMap(([p, cartes]) => cartes.map((c) => gesteDeCarte(carteId(c, 'fer'), p))),
   ...GESTES_SPECIAUX,
@@ -1328,12 +1329,16 @@ export const strateEpreuve = (j: Jeu) => Math.max(1, strateVaincue(j));
 export const hausseFelee = (ep: EpreuveDef) => Math.round(((ep.imposee ? RECRUES.felee : FELEE.force) - 1) * 100);
 /** La puissance des ennemis d'une Épreuve */
 export const forceEpreuve = (ep: EpreuveDef, strate: number, felee?: boolean) =>
-  ep.imposee ? forceStrate(RECRUES.strate) * RECRUES.force * (felee ? RECRUES.felee : 1) : forceStrate(strate) * (strate >= REGLES.apparition.troisiemePhase && ep.forceBas ? ep.forceBas : ep.force) * (strate >= EPREUVES_PROFONDES.des ? EPREUVES_PROFONDES.force : 1) * (felee ? FELEE.force : 1);
+  ep.imposee ? forceStrate(RECRUES.strate) * RECRUES.force * (felee ? RECRUES.felee : 1) : forceStrate(strate) * (strate >= REGLES.apparition.troisiemePhase && ep.forceBas ? ep.forceBas : ep.force) * coefProfond(strate) * (felee ? FELEE.force : 1);
 /**
  * Audit du 7 novembre 2026 : les Épreuves se gagnaient de 63 à 100 % à −2 et −3, puis de 0 à 6 % de −4 à −10
  * (la force des Strates monte plus vite que le deck d'un joueur moyen). Elles s'allègent à partir de −4.
  */
-export const EPREUVES_PROFONDES = { des: 4, force: 0.85 } as const;
+export const EPREUVES_PROFONDES = { des: 4, force: 0.85, tresProfond: 8, forceTres: 0.75, fond: 10, forceFond: 0.7 } as const;
+/** 8 novembre 2026 (audit du soir : à −10, 8 Épreuves sur 10 à 0 % au premier essai, alors qu'elles donnent un creuseur) :
+ *  ×0,85 de −4 à −7, ×0,75 à −8 et −9, ×0,7 dès −10 (mesuré : à ×0,75, encore 0 à 33 % à −10 ; à ×0,65, 70 à 100 %) */
+const coefProfond = (strate: number) => strate >= EPREUVES_PROFONDES.fond ? EPREUVES_PROFONDES.forceFond
+  : strate >= EPREUVES_PROFONDES.tresProfond ? EPREUVES_PROFONDES.forceTres : strate >= EPREUVES_PROFONDES.des ? EPREUVES_PROFONDES.force : 1;
 
 /** les Épreuves de la semaine s'ouvrent après le gardien de −2 (2 novembre 2026, Bryan : « par étapes douces » ; avant, dès −1) */
 export const EPREUVES_STRATE = 2;

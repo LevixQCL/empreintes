@@ -6,6 +6,7 @@ import { estTri } from '../core/collection';
 import * as J from '../core/jeu';
 import type { CombatEtat } from '../core/types';
 import { charger } from '../save/local';
+import { lireAge } from '../save/age';
 import { firebaseActif } from '../net/firebase-config';
 import { tableauVide, type GrandTableau } from '../ui/classements';
 import type { EcranDistrict } from '../ui/district';
@@ -77,7 +78,7 @@ const retourInitial = sauvegarde && absence > 10 * 60_000 && app.jeu.introVue ? 
 
 export const apresTitre = (): Mode => !app.jeu.introVue ? 'intro' : app.jeu.expedition ? 'combat' : 'district';
 
-export const compteEtat: Compte = { actif: firebaseActif(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune', pret: false };
+export const compteEtat: Compte = { actif: firebaseActif(), age: lireAge(), ouvert: false, utilisateur: null, occupe: false, erreur: '', info: '', synchro: 'aucune', pret: false };
 /** connecté avec Google ou un e-mail (pas le compte invisible) : c'est ce compte-là qui apparaît sur le Grand Tableau */
 export const compteProtege = () => !!compteEtat.utilisateur && !compteEtat.utilisateur.anonyme;
 /** l'écran titre n'ouvre la partie qu'une fois celle du compte récupérée : sinon, on ouvrirait celle de l'appareil */

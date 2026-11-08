@@ -277,8 +277,14 @@ export function entreeAPublier(
   const registre = Math.round(Math.max(pal.registre, r.points));
   let profondeur = Math.max(2, pal.profondeur);
   let profondeurLe = Math.round(pal.profondeurLe);
-  if (enLigne) {
-    profondeur = Math.min(Math.max(profondeur, enLigne.profondeur), enLigne.profondeur + 4);
+  if (!enLigne) {
+    // une entrée neuve part du bas (firestore.rules, 8 novembre 2026) : la vraie profondeur suit aux publications suivantes
+    profondeur = 2;
+    profondeurLe = now;
+  } else {
+    // la profondeur ne monte qu'une fois toutes les PROFONDEUR_DELAI (la même borne que firestore.rules)
+    const peutMonter = now >= enLigne.profondeurLe + PROFONDEUR_DELAI;
+    profondeur = Math.min(Math.max(profondeur, enLigne.profondeur), peutMonter ? enLigne.profondeur + 4 : enLigne.profondeur);
     profondeurLe = profondeur > enLigne.profondeur ? now : enLigne.profondeurLe;
   }
   const memeSemaine = pal.semaine === semaine;
@@ -286,18 +292,20 @@ export function entreeAPublier(
   // et sa date n'est « maintenant » que s'il monte (sinon celle déjà publiée)
   let fleche = Math.min(FLECHE.quais, j.fleche?.record ?? 0);
   let flecheLe = Math.round(j.fleche?.recordLe || now);
-  if (enLigne) {
+  if (!enLigne) { fleche = 0; flecheLe = now; }
+  else {
     fleche = Math.min(Math.max(fleche, enLigne.fleche), enLigne.fleche + FLECHE_PAS_MAX);
     flecheLe = fleche > enLigne.fleche ? now : enLigne.flecheLe;
   }
   // les Joutes : comme la Flèche, jamais plus de JOUTES_PAS_MAX d'un coup (la même borne que firestore.rules)
   let joutes = j.cercle?.joutes ?? 0;
-  if (enLigne) joutes = Math.min(Math.max(joutes, enLigne.joutes ?? 0), (enLigne.joutes ?? 0) + JOUTES_PAS_MAX);
+  if (!enLigne) joutes = 0;
+  else joutes = Math.min(Math.max(joutes, enLigne.joutes ?? 0), (enLigne.joutes ?? 0) + JOUTES_PAS_MAX);
   return {
     uid, nom: nettoyerNom(nom), cle: clePseudo(nom), porteur: j.escouade?.[0] ?? 'ilka',
     profondeur, profondeurLe, registre, decouvertes: r.decouvertes,
     semaine,
-    profondeurSemaine: memeSemaine ? Math.max(0, Math.min(profondeur, profondeur - pal.profondeurDebut)) : 0,
+    profondeurSemaine: memeSemaine && enLigne ? Math.max(0, Math.min(profondeur, profondeur - pal.profondeurDebut)) : 0,
     registreSemaine: memeSemaine ? Math.max(0, Math.min(registre, registre - pal.registreDebut)) : 0,
     fleche, flecheLe: Math.min(flecheLe, now),
     flecheSemaine: memeSemaine ? Math.max(0, Math.min(fleche, fleche - (pal.flecheDebut ?? 0))) : 0,
@@ -307,6 +315,8 @@ export function entreeAPublier(
   };
 }
 
+/** Le temps minimal entre deux montées de profondeur publiées (ms) : la même borne que firestore.rules */
+export const PROFONDEUR_DELAI = 5 * 60_000;
 /** Les Joutes qu'une publication peut ajouter : la même borne que firestore.rules */
 export const JOUTES_PAS_MAX = 3;
 /** Les quais de record qu'une publication peut ajouter (le reste suit à la suivante) : la même borne que firestore.rules */

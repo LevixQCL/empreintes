@@ -108,19 +108,22 @@ describe('L’entrée publiée suit les règles Firestore', () => {
     return j;
   };
 
-  it('première publication : records de la partie, entiers, sans e-mail', () => {
+  it('première publication : une entrée qui part du bas (firestore.rules), entière, sans e-mail', () => {
     const j = partie();
     const e = entreeAPublier(j, 'u', '  Bryan  ', null, 5000, semaineDe(5000))!;
     expect(e.nom).toBe('Bryan');
-    expect(e.profondeur).toBe(16);
+    expect([e.profondeur, e.profondeurLe, e.profondeurSemaine, e.fleche, e.joutes ?? 0]).toEqual([2, 5000, 0, 0, 0]);
     for (const v of [e.profondeur, e.profondeurLe, e.registre, e.decouvertes, e.semaine, e.profondeurSemaine, e.registreSemaine, e.maj]) expect(Number.isInteger(v)).toBe(true);
   });
 
   it('la profondeur ne monte que de deux Strates par publication, et la date devient « maintenant »', () => {
     const j = partie();
-    const e = entreeAPublier(j, 'u', 'Bryan', entree('u', { profondeur: 6, profondeurLe: 42 }), 9999, semaineDe(9999))!;
+    const e = entreeAPublier(j, 'u', 'Bryan', entree('u', { profondeur: 6, profondeurLe: 42 }), 400_000, semaineDe(400_000))!;
     expect(e.profondeur).toBe(10);
-    expect(e.profondeurLe).toBe(9999);
+    expect(e.profondeurLe).toBe(400_000);
+    // moins de 5 minutes après la dernière montée : elle attend
+    const f = entreeAPublier(j, 'u', 'Bryan', entree('u', { profondeur: 10, profondeurLe: 400_000 }), 500_000, semaineDe(500_000))!;
+    expect([f.profondeur, f.profondeurLe]).toEqual([10, 400_000]);
   });
 
   it('sans progrès de profondeur, la date publiée ne bouge pas', () => {
@@ -171,8 +174,11 @@ describe('Le tableau de la Flèche', () => {
     tick(j, 1000);
     j.palmares!.flecheDebut = 12;
     j.fleche = { quai: 20, record: 27, recordLe: 900, recus: [20], victoires: 6, defaites: 1 };
-    const e = entreeAPublier(j, 'u', 'Bryan', null, 1000, j.palmares!.semaine)!;
-    expect([e.fleche, e.flecheLe, e.flecheSemaine]).toEqual([27, 900, 15]);
+    // la première publication part de 0 ; la suivante monte de 12 quais au plus
+    const e0 = entreeAPublier(j, 'u', 'Bryan', null, 1000, j.palmares!.semaine)!;
+    expect([e0.fleche, e0.flecheSemaine]).toEqual([0, 0]);
+    const e = entreeAPublier(j, 'u', 'Bryan', { ...e0, fleche: 20, flecheLe: 500 }, 1000, j.palmares!.semaine)!;
+    expect([e.fleche, e.flecheLe, e.flecheSemaine]).toEqual([27, 1000, 15]);
     // le record en ligne ne redescend pas
     const e2 = entreeAPublier(j, 'u', 'Bryan', { ...e, fleche: 31, flecheLe: 500 }, 2000, j.palmares!.semaine)!;
     expect([e2.fleche, e2.flecheLe]).toEqual([31, 500]);

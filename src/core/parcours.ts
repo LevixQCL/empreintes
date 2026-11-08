@@ -10,7 +10,7 @@ import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, MODULES, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, mainAccordable, reperentPassage, salleCourante, typeApparent } from './expedition';
 import { bassesOuvertes, dresserBatardeau, envoyerBasses, libresPourBasses, ramasserDepot, raisonLieu, restantsSecteur, secteurASec, secteursOuverts, escouadeDe,
-  acheterEclat, COMPTOIR, choisirLegs, choisirHalte, ouvrirPorte, passerPorte, relancerPorte, suivrePassage, acheter, garnirComptoir, prixComptoir,
+  acheterEclat, prixEclatComptoir, cristalliser, CRISTALLISEUR, choisirLegs, choisirHalte, ouvrirPorte, passerPorte, relancerPorte, suivrePassage, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
   enMission, envoyerMission, destinationsDuJour, secoursPossible, epreuvesDeLaSemaine, fouiller, partirEpreuve,
@@ -154,7 +154,8 @@ function gerer(j: Jeu, now: number): void {
   const ordre = Object.keys(j.collection).sort((a, b) => Number(enDeck.has(b)) - Number(enDeck.has(a)));
   for (const id of ordre) while (monter(j, id).ok);
   // des Éclats au Comptoir (audit du 7 novembre 2026), s'il reste de quoi monter ses cartes (trois fois le prix)
-  while (j.batiments.comptoir && j.composants >= 3 * COMPTOIR.eclats.composants && acheterEclat(j, now).ok);
+  while (j.batiments.comptoir && j.composants >= 3 * prixEclatComptoir(j) && acheterEclat(j, now).ok);
+  while (j.energie >= 2 * CRISTALLISEUR.energie && cristalliser(j, now).ok);
   for (const b of ['noyau', 'generateur', 'clinique', 'forge', 'comptoir'] as const) ameliorer(j, b, now);
   // les Basses (7 novembre 2026) : il ramasse les dépôts, garde à sec un secteur où des familles attendent, et y envoie un Porteur
   if (bassesOuvertes(j)) {

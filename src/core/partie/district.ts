@@ -121,7 +121,7 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
     g.push({ quoi: 'offres', texte: 'Cartes en vente chaque jour', avant: etalsDuComptoir(j).length, apres: etalsDuComptoir(apres).length });
     const argent = (x: Jeu) => (COMPTOIR.etals[x.batiments.comptoir] ?? []).includes('argent');
     const ec = (x: Jeu) => COMPTOIR.eclats.parJour[x.batiments.comptoir] ?? 0;
-    if (ec(apres) > ec(j)) g.push({ quoi: 'eclats', texte: 'Éclats en vente par jour', avant: ec(j), apres: ec(apres), detail: `${COMPTOIR.eclats.composants} composants l’Éclat` });
+    if (ec(apres) > ec(j)) g.push({ quoi: 'eclats', texte: 'Éclats en vente par jour', avant: ec(j), apres: ec(apres), detail: `de ${COMPTOIR.eclats.prix[0]} à ${COMPTOIR.eclats.prix.at(-1)} composants l’Éclat` });
     if (argent(apres) && !argent(j)) g.push({ quoi: 'argent', texte: 'Des cartes en argent', ...(strateVaincue(j) < COMPTOIR.strateArgent ? { detail: `une fois la Strate −${COMPTOIR.strateArgent} vaincue` } : {}) });
   }
   if (b === 'cercle') {
@@ -380,7 +380,14 @@ export function degreffer(j: Jeu, moduleId: string): Resultat {
 
 export const logementCreuseurs = (j: Pick<Jeu, 'batiments'>) => CREUSEURS.logement[j.batiments.noyau] ?? CREUSEURS.logement[CREUSEURS.logement.length - 1]!;
 /** Le niveau du Noyau qu'il faut pour loger les creuseurs d'une Strate */
-export const noyauRequis = (strate: number) => Math.max(1, CREUSEURS.logement.findIndex((n) => n >= creuseursRequis(strate)));
+/**
+ * Le Noyau qu'il faut, en plus de loger les creuseurs (8 novembre 2026, audit du soir : le Noyau 7 suffisait pour −10 et
+ * s'atteignait au jour 10, à −6 ; avec les Éclats du Comptoir et du Générateur, −10 tombait au jour 24) :
+ * Noyau 8 pour −9, 9 pour −10 et le Fond. Les Éclats en trop ont enfin un but : monter la Tour.
+ */
+export const NOYAU_MIN: Record<number, number> = { 9: 8, 10: 9 };
+export const noyauRequis = (strate: number) => Math.max(1, CREUSEURS.logement.findIndex((n) => n >= creuseursRequis(strate)),
+  NOYAU_MIN[Math.min(10, strate)] ?? 0);
 
 /** Ajoute des creuseurs (dans la limite du logement) ; renvoie le nombre réellement arrivé */
 export function gagnerCreuseurs(j: Jeu, n: number, raison: string): number {
@@ -563,9 +570,11 @@ export const COMPTOIR = {
   /**
    * Des Éclats contre des composants (audit du 7 novembre 2026 : 10 000 composants sans usage au jour 21, Éclats entre 0 et 4
    * dès le jour 10, Noyau bloqué au niveau 8 du jour 25 au jour 40). Les fouilleurs revendent aussi les Éclats qu'ils remontent,
-   * à prix fixe et en petite quantité : par jour, 1 Éclat au Comptoir niveau 1 à 3, 2 du niveau 4 à 7, 3 du niveau 8 à 10.
+   * en petite quantité. 8 novembre 2026 (audit du soir : 11 000 composants au jour 40, le Comptoir bloqué au niveau 4 faute d'Éclats) :
+   * de 1 à 6 Éclats par jour selon le niveau du Comptoir (avant : 1 ou 2), à prix croissant dans la journée (500, 700, puis 1 000).
+   * Au plus 5 200 composants par jour au niveau 10 : de quoi absorber le surplus sans que les Éclats deviennent gratuits.
    */
-  eclats: { composants: 500, parJour: [0, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2] as number[] },
+  eclats: { composants: 500, prix: [500, 700, 1000] as number[], parJour: [0, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6] as number[] },
 } as const;
 
 /** Les Éclats que le Comptoir vend encore aujourd'hui */
@@ -574,17 +583,21 @@ export function eclatsAuComptoir(j: Jeu): { max: number; restants: number } {
   return { max, restants: Math.max(0, max - (j.comptoir.eclats ?? 0)) };
 }
 
+/** Le prix du prochain Éclat au Comptoir aujourd'hui : 500, puis 700, puis 1 000 composants */
+export const prixEclatComptoir = (j: Jeu) => COMPTOIR.eclats.prix[Math.min(COMPTOIR.eclats.prix.length - 1, j.comptoir.eclats ?? 0)]!;
+
 /** Achète un Éclat au Comptoir, contre des composants */
 export function acheterEclat(j: Jeu, now = j.dernierTick): Resultat {
   if (!j.batiments.comptoir) return non('Le Comptoir est fermé : remets-le d’abord en état.');
   garnirComptoir(j, now);
   if (!eclatsAuComptoir(j).restants) return non('Les fouilleurs n’ont plus d’Éclats à vendre aujourd’hui : nouvel arrivage demain.');
-  if (j.composants < COMPTOIR.eclats.composants) return non(`Il faut ${COMPTOIR.eclats.composants} composants pour un Éclat.`);
-  j.composants -= COMPTOIR.eclats.composants;
+  const prix = prixEclatComptoir(j);
+  if (j.composants < prix) return non(`Il faut ${prix} composants pour cet Éclat.`);
+  j.composants -= prix;
   j.eclats += 1;
   j.comptoir.eclats = (j.comptoir.eclats ?? 0) + 1;
-  log(j, `Comptoir : un Éclat acheté (${COMPTOIR.eclats.composants} composants).`);
-  return { ok: true, message: `+1 Éclat pour ${COMPTOIR.eclats.composants} composants.` };
+  log(j, `Comptoir : un Éclat acheté (${prix} composants).`);
+  return { ok: true, message: `+1 Éclat pour ${prix} composants.` };
 }
 
 export function comptoirVide(now: number, rng: number): Comptoir {
@@ -700,6 +713,27 @@ export function convertir(j: Jeu, now = j.dernierTick): Resultat {
   j.composants += gain;
   j.conversion = { jour: jourDe(now), lots: conversionsDuJour(j, now) + 1 };
   return { ok: true, message: `Convertisseur : ${CONVERTISSEUR.lot} énergie → +${gain} composants.` };
+}
+
+/**
+ * La cristallisation du Générateur (8 novembre 2026, audit du soir : 67 % de l'énergie perdue, le Générateur 6 à 10 sans effet) :
+ * le courant des grands paliers condense des Éclats. 2 000 énergie l'Éclat ; 1 par jour au niveau 5-6, 2 au 7-8, 3 au 9-10.
+ * Les Éclats restent la ressource rare : au mieux 3 par jour, contre ~54 pour monter un bâtiment au niveau 10.
+ */
+export const CRISTALLISEUR = { energie: 2000, parJour: [0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3] as number[], niveauMin: 5 };
+export const cristallisationsDuJour = (j: Jeu, now = j.dernierTick) => (j.cristallisation?.jour === jourDe(now) ? j.cristallisation.n : 0);
+export const cristallisationsMax = (j: Jeu) => CRISTALLISEUR.parJour[j.batiments.generateur] ?? 0;
+
+export function cristalliser(j: Jeu, now = j.dernierTick): Resultat {
+  const max = cristallisationsMax(j);
+  if (!max) return non(`Il faut un Générateur niveau ${CRISTALLISEUR.niveauMin} pour condenser des Éclats.`);
+  if (cristallisationsDuJour(j, now) >= max) return non('Les condenseurs refroidissent : ils repartent demain.');
+  if (j.energie < CRISTALLISEUR.energie) return non(`Il faut ${CRISTALLISEUR.energie} énergie pour un Éclat.`);
+  j.energie -= CRISTALLISEUR.energie;
+  j.eclats += 1;
+  j.cristallisation = { jour: jourDe(now), n: cristallisationsDuJour(j, now) + 1 };
+  log(j, `Générateur : un Éclat condensé (${CRISTALLISEUR.energie} énergie).`);
+  return { ok: true, message: `Générateur : ${CRISTALLISEUR.energie} énergie → +1 Éclat.` };
 }
 
 /** Les soins intensifs de la Clinique : de l'énergie pour effacer l'Usure d'un Porteur tout de suite (sans attendre le repos) */

@@ -2,7 +2,7 @@
 // Le district est un tableau Midjourney par âge (public/art/district/age-N), l'âge suit la Tour du Noyau ;
 // chaque bâtiment y porte son cristal de niveau et, s'il y a quelque chose à faire, une bulle, le détail s'ouvre en feuille par le bas.
 
-import { PISTES, halteDef, nombreHaltes, queteDef, revelationDe } from '../core/strates';
+import { HALTES_FOND, PISTES, halteDef, nombreHaltes, queteDef, revelationDe } from '../core/strates';
 import { ETOILES, releveDef, vestigesDe } from '../core/explorer';
 import { htmlBestiaire } from './bestiaire';
 import { visageGarde } from './fleche';
@@ -13,7 +13,7 @@ import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
   OBJECTIFS, EPREUVES_STRATE, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, energieMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
-  COMPTOIR, eclatsAuComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
+  COMPTOIR, eclatsAuComptoir, prixEclatComptoir, CRISTALLISEUR, cristallisationsDuJour, cristallisationsMax, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -64,7 +64,7 @@ const LIEUX_FUTURS: Record<LieuFutur, { nom: string; raison: string; promesse: s
   port: {
     nom: 'Port',
     raison: 'Le bateau du passeur reste amarré sous les pilotis du Port, devant le sas de la digue : tant que le gardien de la Strate −1 tient le puits, personne ne laisse le district sans défense pour prendre la mer.',
-    promesse: 'Le passage sûr, des équipages partiront d’ici vers les ruines au large, et piller les archipels voisins.',
+    promesse: 'Le passage sûr : des équipages partiront d’ici vers les ruines au large et les cuvettes voisines.',
   },
 };
 /**
@@ -87,7 +87,8 @@ const CERCLE_FERME = `Les bancs de l’estrade attendent sous la bâche. Les dir
 type Balise = { pied: { x: number; y: number }; haut: { x: number; y: number } };
 const BALISES_CUVETTE: Record<Lieu, Balise> = {
   noyau: { pied: { x: 207, y: 276 }, haut: { x: 207, y: 146 } },
-  forge: { pied: { x: 104, y: 314 }, haut: { x: 147, y: 262 } },
+  // 8 novembre 2026 (audit du 7) : un peu plus haut, pour que sa bulle, son niveau et son nom ne touchent plus la bulle de la Clinique
+  forge: { pied: { x: 108, y: 300 }, haut: { x: 147, y: 262 } },
   clinique: { pied: { x: 96, y: 392 }, haut: { x: 140, y: 350 } },
   generateur: { pied: { x: 176, y: 430 }, haut: { x: 176, y: 364 } },
   comptoir: { pied: { x: 278, y: 412 }, haut: { x: 278, y: 352 } },
@@ -309,7 +310,7 @@ function balises(e: EcranDistrict): string {
       majJetons(j, e.now);
       const pill = pillagesOuverts(j);
       const n = pill ? etatPillage(j).jetons : 0;
-      h += `<button type="button" class="balise ouverte" ${pos(b.pied)} data-action="pillages" data-lieu="port" aria-label="${pill ? `Port : archipels voisins, ${n} jeton${n > 1 ? 's' : ''} de pillage sur ${PILLAGE.jetonsMax}` : 'Port : missions en mer'}">`
+      h += `<button type="button" class="balise ouverte" ${pos(b.pied)} data-action="pillages" data-lieu="port" aria-label="${pill ? `Port : cuvettes voisines, ${n} jeton${n > 1 ? 's' : ''} de pillage sur ${PILLAGE.jetonsMax}` : 'Port : missions en mer'}">`
         + `<b class="bal-cristal glace">${pill ? ICO.grappin : ICO.porteurs}</b><span class="bal-nom">Port</span></button>`;
       if (pill && n >= PILLAGE.jetonsMax) h += bulle('alerte', `${ICO.grappin}<em>${n}</em>`, `Jetons de pillage au complet : ${n}`, 'pillages');
       continue;
@@ -626,6 +627,21 @@ function blocConvertisseur(j: Jeu): string {
     + (fini ? `<small class="fb-note">Assez tourné pour aujourd’hui : il repart demain.</small>` : faits ? `<small class="fb-note">${faits} lot${faits > 1 ? 's' : ''} sur ${CONVERTISSEUR.lotsParJour} aujourd’hui.</small>` : '') + `</section>`;
 }
 
+/** La cristallisation (8 novembre 2026) : aux grands paliers du Générateur, l'énergie en trop condense des Éclats */
+function blocCristalliseur(j: Jeu): string {
+  const now = Date.now();
+  const max = cristallisationsMax(j);
+  const faits = cristallisationsDuJour(j, now);
+  if (!max) return `<section class="fb-bloc fb-convertir"><h3 class="titre-bloc">${ICO.eclats}Condenseurs</h3>`
+    + `<p class="fb-vide">Au niveau ${CRISTALLISEUR.niveauMin}, le Générateur aura assez de courant pour condenser des Éclats avec l’énergie en trop.</p></section>`;
+  const reste = Math.max(0, max - faits);
+  const peut = reste > 0 && j.energie >= CRISTALLISEUR.energie;
+  return `<section class="fb-bloc fb-convertir"><h3 class="titre-bloc">${ICO.eclats}Condenseurs</h3>`
+    + `<p class="fb-vide">Le courant des grands paliers condense des Éclats : ${max} par jour à ce niveau${j.batiments.generateur < 9 ? ', davantage plus haut' : ''}.</p>`
+    + `<button type="button" class="btn prim large" data-action="cristalliser"${peut ? '' : ' disabled'}>${ICO.energie}Condenser ${CRISTALLISEUR.energie.toLocaleString('fr-BE')} → +1 ${icone('eclats')}</button>`
+    + `<small class="fb-note">${reste ? `Encore ${reste} sur ${max} aujourd’hui.` : 'Les condenseurs refroidissent : ils repartent demain.'}</small></section>`;
+}
+
 /** Les soins intensifs de la Clinique (27 octobre 2026) : de l'énergie pour effacer l'Usure d'un Porteur tout de suite */
 function blocSoinsIntensifs(j: Jeu): string {
   const blesses = PORTEURS.filter((p) => porteursPresents(j).includes(p.id) && !enExpedition(j, p.id) && j.porteurs[p.id]!.usure >= 1);
@@ -772,11 +788,13 @@ function blocComptoir(e: EcranDistrict): string {
   // des Éclats contre des composants (audit du 7 novembre 2026), en petite quantité chaque jour
   const ec = eclatsAuComptoir(j);
   if (ec.max) {
-    const assezE = j.composants >= COMPTOIR.eclats.composants;
+    const prixE = prixEclatComptoir(j);
+    const assezE = j.composants >= prixE;
     h += `<div class="cp-renouveler cp-eclats">`
       + (ec.restants
         ? `<small class="aide">Les fouilleurs revendent aussi les Éclats qu’ils remontent : encore <b>${ec.restants} sur ${ec.max}</b> aujourd’hui.</small>`
-          + `<button type="button" class="btn sec petit" data-action="comptoir-eclat"${assezE ? '' : ' disabled'} aria-label="Acheter un Éclat pour ${COMPTOIR.eclats.composants} composants">${ICO.eclats}Acheter un Éclat ${couts(j, { composants: COMPTOIR.eclats.composants, eclats: 0 })}</button>`
+          + `<button type="button" class="btn sec petit" data-action="comptoir-eclat"${assezE ? '' : ' disabled'} aria-label="Acheter un Éclat pour ${prixE} composants">${ICO.eclats}Acheter un Éclat ${couts(j, { composants: prixE, eclats: 0 })}</button>`
+          + (ec.max > 1 ? `<small class="aide">Le prix monte avec les Éclats du jour : ${COMPTOIR.eclats.prix.join(', ')} composants.</small>` : '')
         : `<small class="aide">${ICO.ok}Plus d’Éclats à vendre aujourd’hui (${ec.max} par jour) : nouvel arrivage demain.</small>`)
       + `</div>`;
   }
@@ -931,7 +949,7 @@ function feuilleBatiment(e: EcranDistrict): string {
     h += `</section>`;
   }
   // les gestes en plus du bâtiment, sous le Porteur au travail (qui, lui, change ce que le bâtiment rapporte)
-  if (niv && b === 'generateur') h += blocConvertisseur(j);
+  if (niv && b === 'generateur') h += blocCristalliseur(j) + blocConvertisseur(j);
   if (niv && b === 'clinique') h += blocSoinsIntensifs(j);
 
   if (b === 'forge') h += blocForge(e);
@@ -1703,7 +1721,9 @@ function htmlCarnet(j: Jeu): string {
   let pages = '';
   let vues = 0;
   let total = 0;
-  for (let s = 1; s <= 10; s++) {
+  // les Haltes du Fond (−11 à −15) n'entrent au carnet qu'une fois la Strate atteinte
+  for (let s = 1; s <= HALTES_FOND.a; s++) {
+    if (s > 10 && j.strate < s) break;
     const n = nombreHaltes(s);
     total += n;
     const lues = Math.min(n, j.haltes?.[s] ?? 0);
@@ -1763,8 +1783,8 @@ export function htmlCodex(e: EcranDistrict): string {
     if (restent > 0) h += `<div class="fragment enfoui">${ICO.verrou}<span>Prochain souvenir à ${(souvenirs.length + 1) * CONFIANCE.palier} familles qui te suivent</span></div>`;
     return coquille(e, h, 'ecran-codex');
   }
-  h += `<p class="chroniques-intro"><img class="yse-medaillon" src="${portraitYse}" alt="Ysé" decoding="async">Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi la troisième nuit après ton élection.</p>`;
-  for (const livre of [1, 2, 3] as const) {
+  h += `<p class="chroniques-intro"><img class="yse-medaillon" src="${portraitYse}" alt="Ysé" decoding="async">Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi le matin de ta première descente, à lire en remontant.</p>`;
+  for (const livre of [1, 2, 3, 4] as const) {
     const chapitres = CHAPITRES.filter((x) => x.livre === livre);
     const lus = chapitres.filter((c) => chapitreOuvert(c, j.strate) && j.lus.includes(c.id)).length;
     const [numLivre, nomLivre] = LIVRES[livre].split(' · ');
@@ -1855,7 +1875,7 @@ export function htmlCoupe(e: EcranDistrict): string {
   const presents = PORTEURS.filter((p) => porteursPresents(j).includes(p.id));
   const libres = presents.filter((p) => disponibles(j).includes(p.id)).length;
   h += `<section class="tr-heros"><img class="tr-coupe" src="${decor('coupe')}" alt="" decoding="async">`
-    + `<button type="button" class="tr-habitants" data-action="porteurs" aria-label="Habitants : ${presents.length} Porteurs, ${libres} disponibles. Voir les Porteurs">`
+    + `<button type="button" class="tr-habitants" data-action="porteurs" aria-label="Porteurs : ${presents.length} au district, ${libres} disponibles. Voir les Porteurs">`
     + `<span class="tr-hab-avatars">${presents.map((p) => {
       const d = j.porteurs[p.id]!;
       const etat = enExpedition(j, p.id) ? 'parti' : d.poste ? 'travail' : 'libre';

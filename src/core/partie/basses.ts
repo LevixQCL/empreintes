@@ -14,8 +14,9 @@ import { rangerRapport } from './descentes';
 import { raisonHorsContrat } from './marees';
 
 export const BASSES = {
-  /** la Strate qu'il faut avoir vaincue pour ouvrir l'écluse (comme le Port) */
-  ouverture: 1,
+  /** la Strate qu'il faut avoir vaincue pour ouvrir l'écluse (8 novembre 2026, audit du soir : à −1, Port, missions, Basses,
+   *  batardeau et familles arrivaient le même jour ; les Basses passent à −2, un jour après le Port) */
+  ouverture: 2,
   /** les dépôts de la marée qui attendent, au plus */
   depotsMax: 2,
   /** composants d'un dépôt (×2 à grande marée), +25 % par Strate vaincue */
@@ -25,7 +26,16 @@ export const BASSES = {
   energie: 40,
   usure: 4,
   composants: 30,
+  /**
+   * La suite des Basses (8 novembre 2026, audit du soir : les 48 familles rentrées vers le jour 35, il ne restait qu'un dépôt
+   * de ~110 composants). Une fois −10 vaincue, l'eau du Fond remonte jusqu'à la grève : chaque dépôt laisse aussi des éclats
+   * de colonne (1 Éclat, 2 à grande marée). Au plus 2 dépôts en attente : 2 à 4 Éclats par jour pour qui passe à l'écluse.
+   */
+  eclatsDes: 10,
 } as const;
+
+/** Les Éclats d'un dépôt (0 avant −10) */
+export const eclatsDepot = (j: Jeu, now: number) => (strateVaincue(j) >= BASSES.eclatsDes ? (etatMaree(now).grande ? 2 : 1) : 0);
 
 /** Les gains suivent la Strate, comme les missions en mer (+25 % par Strate vaincue) */
 const parStrate = (j: Jeu) => 1 + 0.25 * (Math.max(1, strateVaincue(j)) - 1);
@@ -35,7 +45,9 @@ export function bassesDe(j: Jeu): EtatBasses {
   return (j.basses ??= { batardeau: null, semaine: -1, vu: -1, depots: 0, expedition: null, faits: [] });
 }
 
-export const bassesOuvertes = (j: Jeu) => strateVaincue(j) >= BASSES.ouverture;
+export const bassesOuvertes = (j: Jeu) => strateVaincue(j) >= BASSES.ouverture
+  // une partie qui les avait déjà commencées (ouverture à −1, avant le 8 novembre 2026) les garde
+  || !!(j.basses && (j.basses.batardeau || j.basses.faits.length || j.basses.expedition));
 export const secteurOuvert = (j: Jeu, s: SecteurBasses) => strateVaincue(j) >= s.strate;
 export const secteursOuverts = (j: Jeu) => SECTEURS.filter((s) => secteurOuvert(j, s));
 export const lieuFait = (j: Jeu, id: string) => !!j.basses?.faits.includes(id);
@@ -61,14 +73,17 @@ export function compterDepots(j: Jeu, now: number) {
 
 /** Ramasse un dépôt laissé par la marée */
 export function ramasserDepot(j: Jeu, now: number): Resultat {
-  if (!bassesOuvertes(j)) return non('L’écluse reste fermée tant que le gardien de la Strate −1 tient le puits.');
+  if (!bassesOuvertes(j)) return non(`L’écluse reste fermée tant que le gardien de la Strate −${BASSES.ouverture} tient le puits.`);
   compterDepots(j, now);
   const b = bassesDe(j);
   if (b.depots < 1) return non(`Rien sur la grève pour l’instant : la mer laissera quelque chose à la prochaine marée basse.`);
   const n = valeurDepot(j, now);
+  const e = eclatsDepot(j, now);
   b.depots--;
   j.composants += n;
+  j.eclats += e;
   const grande = etatMaree(now).grande;
+  if (e) return { ok: true, message: `${grande ? 'La grande marée a tout découvert' : 'L’eau du Fond est remontée jusqu’à la grève'} : +${n} composants et ${e} Éclat${e > 1 ? 's' : ''} de colonne.` };
   return { ok: true, message: `${grande ? 'La grande marée a tout découvert' : 'La mer a laissé de quoi faire'} : +${n} composants.` };
 }
 

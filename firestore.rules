@@ -22,11 +22,21 @@ service cloud.firestore {
     // Le jour du multijoueur, les Cloud Functions recalculeront les scores à partir de la sauvegarde.
     match /classement/{uid} {
       allow read: if request.auth != null;
-      allow create: if request.auth != null && request.auth.uid == uid && entreeValide(request.resource.data);
+      // 8 novembre 2026 : une entrée neuve part du bas (profondeur 2, Flèche 0, Joutes 0, arrivée « maintenant ») ;
+      // avant, un compte neuf pouvait se créer directement à −100 et au quai 101, avec une date « premier arrivé » à 0
+      allow create: if request.auth != null && request.auth.uid == uid && entreeValide(request.resource.data)
+        && request.resource.data.profondeur == 2 && maintenant(request.resource.data.profondeurLe)
+        && request.resource.data.profondeurSemaine == 0
+        && request.resource.data.get('fleche', 0) == 0 && request.resource.data.get('flecheSemaine', 0) == 0
+        && request.resource.data.get('joutes', 0) == 0 && request.resource.data.get('joutesSemaine', 0) == 0;
+      // se retirer pour de bon (suppression du compte, 8 novembre 2026) : sans danger depuis que la création part du bas
+      allow delete: if request.auth != null && request.auth.uid == uid;
       allow update: if request.auth != null && request.auth.uid == uid && entreeValide(request.resource.data)
         // la profondeur ne redescend jamais, et ne gagne pas plus de deux Strates d'un coup
         && request.resource.data.profondeur >= resource.data.profondeur
         && request.resource.data.profondeur <= resource.data.profondeur + 4
+        // et elle ne monte qu'une fois toutes les 5 minutes (8 novembre 2026) : −100 demande des heures, plus quelques minutes
+        && (request.resource.data.profondeur == resource.data.profondeur || request.time.toMillis() >= resource.data.profondeurLe + 300000)
         // la date d'arrivée ne bouge que si la profondeur monte, et c'est alors maintenant : « premier arrivé » ne se falsifie pas
         && ((request.resource.data.profondeur > resource.data.profondeur && maintenant(request.resource.data.profondeurLe))
             || (request.resource.data.profondeur == resource.data.profondeur && request.resource.data.profondeurLe == resource.data.profondeurLe))
@@ -80,7 +90,13 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow delete: if request.auth != null && (request.auth.uid == uid
         || get(/databases/$(database)/documents/quais/$(uid)/assauts/$(request.auth.uid + '_' + string(resource.data.depuis))).data.victoire == true);
-      allow create, update: if request.auth != null && request.auth.uid == uid && quaiValide(request.resource.data);
+      // 8 novembre 2026 : on ne tient qu'un quai qu'on a atteint dans son classement, et l'installation est datée par le serveur
+      // (avant, tout compte pouvait se poser au quai 100 avec depuis = 0 et passer pour le premier installé)
+      allow create: if request.auth != null && request.auth.uid == uid && quaiValide(request.resource.data)
+        && quaiAtteint(request.resource.data.quai) && maintenant(request.resource.data.depuis);
+      allow update: if request.auth != null && request.auth.uid == uid && quaiValide(request.resource.data)
+        && quaiAtteint(request.resource.data.quai)
+        && (request.resource.data.depuis == resource.data.depuis || maintenant(request.resource.data.depuis));
       match /assauts/{id} {
         allow read: if request.auth != null;
         allow delete: if request.auth != null && request.auth.uid == uid;
@@ -101,9 +117,13 @@ service cloud.firestore {
         && request.resource.data.uid == request.auth.uid && maintenant(request.resource.data.le);
       allow update: if request.auth != null && resource.data.uid == request.auth.uid && parrainValide(request.resource.data)
         && request.resource.data.uid == resource.data.uid && request.resource.data.le == resource.data.le;
+      // suppression du compte (8 novembre 2026)
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
     }
     match /recrues/{uid} {
       allow get: if request.auth != null && (request.auth.uid == uid || resource.data.parrain == request.auth.uid);
+      // suppression du compte (8 novembre 2026) : le filleul efface sa fiche (le parrain garde ses récompenses déjà reçues)
+      allow delete: if request.auth != null && request.auth.uid == uid;
       allow list: if request.auth != null && resource.data.parrain == request.auth.uid;
       allow create: if request.auth != null && request.auth.uid == uid && recrueValide(request.resource.data)
         && request.resource.data.parrain != uid
@@ -154,8 +174,11 @@ service cloud.firestore {
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['etat', 'maj']) && maintenant(request.resource.data.maj)
         && ((resource.data.a == request.auth.uid && request.resource.data.etat in ['accepte', 'refuse'])
           || (resource.data.de == request.auth.uid && request.resource.data.etat == 'annule'));
+      // 8 novembre 2026 : seul l'auteur efface une proposition à laquelle on a répondu (il l'applique d'abord à sa partie).
+      // Avant, le destinataire pouvait effacer un échange accepté : l'auteur croyait alors à une proposition perdue et
+      // récupérait sa carte (deux comptes à soi suffisaient pour dupliquer une carte). Le destinataire n'efface qu'un refus.
       allow delete: if request.auth != null && (resource.data.de == request.auth.uid
-        || (resource.data.a == request.auth.uid && resource.data.etat != 'propose'));
+        || (resource.data.a == request.auth.uid && resource.data.etat == 'refuse'));
     }
     // Un défi en duel envoyé à un ami : le code du salon (duels/{code}) et le mode (libre, ou à armes égales).
     match /defis/{id} {
@@ -171,29 +194,64 @@ service cloud.firestore {
     // Le duel en temps réel (docs/duel.md) : le code du salon fait office de secret
     match /duels/{code} {
       allow get: if request.auth != null;
+      // l'hôte peut lister et effacer ses salons (suppression du compte, 8 novembre 2026)
+      allow list: if request.auth != null && resource.data.hote.uid == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.hote.uid == request.auth.uid;
       allow create: if request.auth != null
         && request.resource.data.hote.uid == request.auth.uid
         && request.resource.data.etat == 'attente'
         && code.size() == 6;
-      // rejoindre (une seule fois), puis finir ou abandonner : seulement les deux joueurs
+      // rejoindre (une seule fois), puis finir ou abandonner : seulement les deux joueurs, chacun pour son camp (8 novembre 2026).
+      // Chaque joueur écrit son verdict (fin0 pour l'hôte, fin1 pour l'invité : le camp gagnant, −1 pour l'égalité) ;
+      // le duel n'est « fini » que si les deux verdicts concordent. On n'abandonne que pour soi ; on ne réclame l'absence de
+      // l'autre que s'il n'a rien posé pour un tour que soi-même on a verrouillé il y a plus de 45 secondes.
       allow update: if request.auth != null && (
         (resource.data.etat == 'attente' && !('invite' in resource.data)
           && request.resource.data.invite.uid == request.auth.uid
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['invite', 'etat', 'debut', 'maj']))
-        || ((resource.data.hote.uid == request.auth.uid || resource.data.invite.uid == request.auth.uid)
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['etat', 'gagnant', 'abandon', 'maj'])));
+        || (resource.data.etat == 'en-cours' && campDe(resource.data) >= 0 && (
+          // son verdict, et la fin si celui de l'autre est déjà là et dit la même chose
+          (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fin' + string(campDe(resource.data)), 'maj'])
+            && request.resource.data.get('fin' + string(campDe(resource.data)), -2) in [-1, 0, 1])
+          || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['fin' + string(campDe(resource.data)), 'etat', 'gagnant', 'maj'])
+            && request.resource.data.etat == 'fini'
+            && request.resource.data.get('fin0', -2) == request.resource.data.get('fin1', -3)
+            && request.resource.data.get('fin0', -2) in [-1, 0, 1]
+            && request.resource.data.gagnant == (request.resource.data.fin0 == -1 ? null : request.resource.data.fin0))
+          // abandonner pour soi
+          || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['etat', 'gagnant', 'abandon', 'maj'])
+            && request.resource.data.etat == 'fini' && request.resource.data.abandon == campDe(resource.data)
+            && request.resource.data.gagnant == 1 - campDe(resource.data))
+          // constater l'absence de l'autre
+          || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['etat', 'gagnant', 'abandon', 'absenceTour', 'maj'])
+            && request.resource.data.etat == 'fini' && request.resource.data.abandon == 1 - campDe(resource.data)
+            && request.resource.data.gagnant == campDe(resource.data)
+            && request.resource.data.absenceTour is int
+            && exists(/databases/$(database)/documents/duels/$(code)/choix/$(string(request.resource.data.absenceTour) + '-' + string(campDe(resource.data))))
+            && !exists(/databases/$(database)/documents/duels/$(code)/choix/$(string(request.resource.data.absenceTour) + '-' + string(1 - campDe(resource.data))))
+            && get(/databases/$(database)/documents/duels/$(code)/choix/$(string(request.resource.data.absenceTour) + '-' + string(campDe(resource.data)))).data.le + 45000 <= request.time.toMillis()))));
       match /choix/{id} {
         allow read: if request.auth != null
           && request.auth.uid in [get(/databases/$(database)/documents/duels/$(code)).data.hote.uid,
                                   get(/databases/$(database)/documents/duels/$(code)).data.invite.uid];
+        // 8 novembre 2026 : on ne pose un choix que pour son propre camp (avant, un tiers qui connaissait le code pouvait jouer à la place d'un joueur)
         allow create: if request.auth != null && request.resource.data.uid == request.auth.uid
           && request.resource.data.keys().hasOnly(['uid', 'tour', 'camp', 'sceau', 'le'])
+          && request.resource.data.camp == campDe(get(/databases/$(database)/documents/duels/$(code)).data)
+          && request.resource.data.tour is int && request.resource.data.tour >= 0 && request.resource.data.tour <= 200
+          && request.resource.data.sceau is string && request.resource.data.sceau.size() == 64
+          && maintenant(request.resource.data.le)
           && id == string(request.resource.data.tour) + '-' + string(request.resource.data.camp);
         // révéler : seulement son choix, une seule fois, sans toucher au sceau
         allow update: if request.auth != null && resource.data.uid == request.auth.uid
           && !('choix' in resource.data)
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['choix', 'sel']);
       }
+    }
+
+    // le camp de ce directeur dans un salon de duel : 0 pour l'hôte, 1 pour l'invité, −1 s'il n'y joue pas
+    function campDe(salon) {
+      return salon.hote.uid == request.auth.uid ? 0 : (('invite' in salon) && salon.invite.uid == request.auth.uid ? 1 : -1);
     }
 
     function profilValide(d, uid) {
@@ -269,10 +327,18 @@ service cloud.firestore {
       return d.keys().hasOnly(['nom', 'porteurs', 'strate', 'coffre', 'force', 'maj'])
         && d.nom is string && d.nom.size() >= 1 && d.nom.size() <= 24
         && d.porteurs is list && d.porteurs.size() >= 1 && d.porteurs.size() <= 3
+        && porteurBorne(d.porteurs[0]) && (d.porteurs.size() < 2 || porteurBorne(d.porteurs[1])) && (d.porteurs.size() < 3 || porteurBorne(d.porteurs[2]))
         && d.strate is int && d.strate >= 1 && d.strate <= 200
         && d.coffre is int && d.coffre >= 0 && d.coffre <= 1000000
         && d.force is number && d.force > 0 && d.force < 1000
         && maintenant(d.maj);
+    }
+
+    // un Porteur publié (garnison, quai) : son identifiant, ses PV et au plus 12 cartes (8 novembre 2026 : avant, rien ne bornait
+    // la taille de ce qui est lu par 12 à 25 joueurs à chaque recherche)
+    function porteurBorne(p) {
+      return p is map && p.keys().hasOnly(['id', 'pv', 'cartes']) && p.id is string && p.id.size() <= 24
+        && p.pv is number && p.pv >= 0 && p.pv <= 100000 && p.cartes is list && p.cartes.size() <= 12;
     }
 
     function quaiValide(d) {
@@ -281,8 +347,14 @@ service cloud.firestore {
         && d.quai is int && d.quai >= 2 && d.quai <= 100
         && d.force is number && d.force > 0 && d.force < 1000
         && d.porteurs is list && d.porteurs.size() == 3
+        && porteurBorne(d.porteurs[0]) && porteurBorne(d.porteurs[1]) && porteurBorne(d.porteurs[2])
         && d.depuis is int && d.depuis <= request.time.toMillis() + 300000
         && maintenant(d.maj);
+    }
+
+    // le record de Flèche publié dans le classement de ce directeur atteint ce quai
+    function quaiAtteint(q) {
+      return get(/databases/$(database)/documents/classement/$(request.auth.uid)).data.get('fleche', 0) >= q;
     }
 
     function assautValide(d, gardien) {

@@ -208,9 +208,9 @@ export function quitterPostes(j: Jeu, escouade: string[]): void {
 /** La lettre de la directrice : la première question choisit la lignée (ou la Clé), la seconde la voie */
 export const LETTRE_LEGS = {
   titre: 'La lettre de la directrice',
-  texte: 'Sous la Tour du Noyau, derrière une plaque, les ouvriers avaient trouvé un coffre de nacre, gravé à la main : « Pour celui qui remontera de la première Strate. Pas avant. » Ce soir, Ilka te le tend. Dedans, une lettre.',
+  texte: 'Sous la Tour du Noyau, derrière une plaque, les ouvriers avaient trouvé un coffre de nacre, gravé à la main : « Pour celui qui remontera de la deuxième Strate. Pas avant. » Ce soir, Ilka te le tend. Dedans, une lettre.',
   /** la lettre elle-même, mise à part (31 octobre 2026) */
-  lettre: 'Directeur, tu as fait tomber ce qui tenait le puits, ce que je n’ai jamais osé affronter, et tu es revenu avec les tiens. Alors tu es digne de ce que je n’ai confié à personne. Les Hauts vident les Berceaux ; j’ai sauvé dix originaux, jamais recopiés. Un seul est pour toi : dis-moi qui tu es, et je te dirai lequel.',
+  lettre: 'Directeur, une Strate, n’importe qui peut la descendre une fois, par chance ou par orgueil. Deux, et revenir avec les siens, c’est autre chose : tu iras plus bas que moi. Ce qui dort sous la Tour, je n’ai jamais osé le regarder en face. Avant de partir, j’ai mis de côté dix originaux, jamais recopiés, que les Hauts n’auront pas. Un seul est pour toi : dis-moi qui tu es, et je te dirai lequel.',
   question: 'Qu’est-ce qui tient un district debout ?',
   lignees: [
     { id: 'tech', nom: 'La machine', phrase: 'Des mains qui réparent ce que les autres jettent.' },
@@ -238,11 +238,12 @@ export const LETTRE_LEGS = {
 } as const;
 
 /**
- * La lettre attend le joueur au district, tant qu'il n'a pas reçu son Héritage, une fois le gardien de la Strate −1 vaincu
- * (31 octobre 2026, Bryan : à l'arrivée au district, le joueur ne savait pas encore ce que sont les lignées ; la directrice
- * réserve son coffre à celui qui remonte de la première Strate). Aussi pendant une descente en cours (29 octobre 2026).
+ * La lettre attend le joueur au district, tant qu'il n'a pas reçu son Héritage, une fois le gardien de la Strate −2 vaincu
+ * (31 octobre 2026, Bryan : à l'arrivée au district, le joueur ne savait pas encore ce que sont les lignées ; 8 novembre 2026,
+ * audit du soir : à −1, une trentaine de notions arrivaient d'un coup, la lettre passe après −2). Aussi pendant une descente.
  */
-export const legsEnAttente = (j: Jeu) => !!j.chambre && !j.legs && strateVaincue(j) >= 1;
+export const LEGS_STRATE = 2;
+export const legsEnAttente = (j: Jeu) => !!j.chambre && !j.legs && strateVaincue(j) >= LEGS_STRATE;
 
 /** Le joueur répond à la lettre : sa carte de l’Héritage (ou la Clé) lui revient, scellée jusqu'à un Porteur de niveau 10 */
 export function choisirLegs(j: Jeu, id: string): Resultat {

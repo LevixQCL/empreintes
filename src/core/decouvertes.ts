@@ -170,8 +170,8 @@ export function decouvertesExploration(x: Expedition, quetes: Record<number, num
   }
   if (x.enHalte) {
     r.push({ id: 'halte', sur: 'PREMIÈRE RENCONTRE', titre: 'Une Halte', ico: 'halte',
-      texte: 'Tous les chemins passent par ici. Pas de combat : un lieu de l’histoire. Touche les détails pour entendre ton escouade, puis fais un choix. Il rapporte un Éclat, des composants ou une lampe, et l’histoire s’en souviendra plus loin. Chaque descente mène à la Halte suivante.',
-      conseil: 'Ce que l’on entend dépend de qui est là : avec une autre escouade, les mêmes détails racontent autre chose.' });
+      texte: 'Tous les chemins passent par ici. Pas de combat : un lieu de l’enquête. Chaque Strate pose une question. À chaque Halte, ton choix suit une piste : celle des nôtres (ce que les vivants ont su, caché, payé) ou celle de ceux d’avant (ce que sont les cristaux). La dernière Halte de la Strate te montre ce que ta piste a trouvé, et à −10, la piste que tu as le plus suivie décide de la fin.',
+      conseil: 'Il n’y a pas de mauvais choix : chaque piste rapporte un peu (Éclat, composants ou lampe) et dévoile une salle plus loin. Touche d’abord les détails : avec une autre escouade, ils racontent autre chose. Ton carnet, dans la Bibliothèque, garde tout.' });
   }
   if (x.carte.salles.some((s) => !s.faite && reperentPassage(x, s).length)) {
     r.push({ id: 'passage', sur: 'PREMIÈRE RENCONTRE', titre: 'Un passage secret', ico: 'fissure',

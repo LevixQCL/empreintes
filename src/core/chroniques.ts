@@ -6,7 +6,7 @@
 
 export interface Chapitre {
   id: string;
-  livre: 1 | 2 | 3;
+  livre: 1 | 2 | 3 | 4;
   titre: string;
   epoque: string;
   /** illustration de l'intro réutilisée en tête de chapitre (public/intro/<id>.webp) */
@@ -20,10 +20,11 @@ export interface Chapitre {
   documents?: { titre: string; support: string; lignes: string[] }[];
 }
 
-export const LIVRES: Record<1 | 2 | 3, string> = {
+export const LIVRES: Record<1 | 2 | 3 | 4, string> = {
   1: 'Livre I · Ce que nous savions',
   2: 'Livre II · Ce que nous avons trouvé',
   3: 'Livre III · Ce qui dort en dessous',
+  4: 'Livre IV · Ce qui tient',
 };
 
 export const CHAPITRES: Chapitre[] = [
@@ -35,7 +36,7 @@ export const CHAPITRES: Chapitre[] = [
       'Ce que tu vas lire n’est pas l’histoire officielle. L’histoire officielle tient sur une plaque de bronze, dans les Hauts, et elle est très belle. Celle-ci est plus longue, plus sale, et je crois qu’elle est plus vraie. Je l’ai faite avec ce qu’il me restait : les récits de ma grand-mère, les miens, et les papiers que les Strates nous rendent, morceau par morceau. Tu en trouveras certains dans tes Archives, à côté de ces pages ; d’autres se sont perdus dans les abris, et tu les retrouveras en descendant. Lis-les aussi. Ils parlent mieux que moi.',
       'Certains chapitres, je ne les écrirai qu’à ton retour. Ce n’est pas de la coquetterie. Il y a des choses que je ne dirai qu’à quelqu’un qui est descendu assez bas pour les voir de ses propres yeux. Sinon, tu ne me croirais pas, et tu aurais raison.',
       'Une dernière chose avant de commencer. Tout ce qui nous est arrivé tient en une phrase, et j’aimerais que tu la gardes en tête jusqu’au bout : nous nous sommes disputé ce que nous avions sous la main, et nous avons oublié ce qui montait. Nous l’avons fait une fois. Je crois que nous sommes en train de recommencer.',
-      'Ysé, à la Tour du Noyau, la troisième nuit après ton élection.',
+      'Ysé, à la Tour du Noyau, le matin de ta première descente.',
     ],
   },
   {
@@ -243,7 +244,7 @@ export const CHAPITRES: Chapitre[] = [
       'Un soir de 2062, à 23 h 40, sous les tours qui deviendront Vertiga, sa foreuse a débouché dans le vide. Ils ont cru à une grotte, une poche naturelle dans la roche sous les Fondations. Ce n’était pas une grotte. Les murs étaient lisses et courbes, sans une seule arête, comme si quelqu’un avait coulé la pièce entière dans un moule. Et dans ces murs, des pierres brillaient toutes seules, d’une lumière violette qui ne chauffait pas.',
       'Il m’a raconté la suite vingt fois, jamais pareille. Personne ne voulait descendre en premier. Alors ils y sont allés tous ensemble, onze hommes et femmes en combinaison de chantier, épaule contre épaule, comme des enfants dans le noir. À l’intérieur, l’air sentait la pierre mouillée, et autre chose que mon père n’a jamais réussi à nommer. Il disait seulement : « Ça sentait comme une pièce d’où quelqu’un vient de sortir. »',
       'La salle n’était pas humaine. Tout le monde l’a compris en une minute. Les proportions étaient fausses, les ouvertures trop hautes, les seuils trop étroits. Rien n’avait été bâti pour nos corps. Et elle était vieille. Les géologues ont d’abord parlé de dizaines de milliers d’années, puis de beaucoup plus, puis ils ont cessé de donner des chiffres.',
-      'Il faut que je t’explique comment on creusait, parce que c’est de là que vient ton district. On ne creuse pas sous une ville plantée dans l’eau. Alors on choisissait un pilier dont le pied ne bougeait jamais, et ils étaient rares : personne ne s’est demandé pourquoi ceux-là tenaient. À son pied, on coulait d’abord une digue en anneau, on pompait l’intérieur jusqu’à toucher le sol, et on creusait le puits au milieu, à sec. Mon père appelait ça « mettre la mer dehors ». À la fin des années 2060, vu des tours, le milieu de Vertiga était semé de ces anneaux gris, chacun avec sa grue et ses pompes.',
+      'Il faut que je t’explique comment on creusait, parce que c’est de là que vient ton district. On ne creuse pas sous une ville plantée dans l’eau. Alors on choisissait un pilier dont le pied ne bougeait jamais, posé sur un haut-fond, et ils étaient rares : personne ne s’est demandé pourquoi ceux-là tenaient. À son pied, on coulait d’abord une digue en anneau, on pompait les quelques pieds d’eau de l’intérieur jusqu’à toucher le sol, et on creusait le puits au milieu, à sec. Mon père appelait ça « mettre la mer dehors ». À la fin des années 2060, vu des tours, le milieu de Vertiga était semé de ces anneaux gris, chacun avec sa grue et ses pompes.',
       'On l’a appelée la Strate zéro, parce qu’on se doutait déjà qu’il y en aurait d’autres en dessous. On avait raison. On dit encore Strate zéro, par habitude : sur les plans des Veilleurs, c’est une salle de −3. Aujourd’hui, le Puits Zéro est un lieu de visite, avec un guichet, une rampe en laiton et des souvenirs en plastique. Mon père n’y est jamais retourné. Quand je lui demandais pourquoi, il haussait ses grandes épaules : « On n’entre pas deux fois chez quelqu’un sans y être invité. »',
     ],
   },
@@ -330,9 +331,9 @@ export const CHAPITRES: Chapitre[] = [
   {
     id: 'toi', livre: 2, titre: 'Toi', epoque: '2121', image: '00-titre',
     paragraphes: [
-      'Il y a trois jours, ton district t’a élu. Pas par enthousiasme, ne te vexe pas : l’ancienne directrice est partie après une saison de pannes et de raids, la Forge tourne au ralenti, la Clinique manque de tout, et la palissade du Bastion ne retiendrait pas un chien. Les gens ont voté pour le changement sans trop y croire. Ça leur laisse une chance d’être surpris.',
-      'Ton district est une cuvette, comme tous ceux du milieu. Dans les années 2060, chacun était un chantier d’abris : une digue coulée en anneau autour de son puits, pour creuser à sec. Après le mur de 2066, la ville a fermé les chantiers et n’avait pas de quoi payer ceux qui s’y étaient tus. Elle a payé avec ce qu’elle avait en trop : les anneaux eux-mêmes. Les familles d’ouvriers s’y sont installées, sur le dernier vrai sol de Vertiga, avec les pompes pour seule fortune, et vu des tours le milieu de la ville ressemble depuis à un semis d’anneaux de pierre posés sur la mer. Le tien est l’un des plus bas. La place n’était pas sous la mer : c’est la mer qui l’a dépassée, dans les décennies d’après la Fracture, et on a rehaussé la digue plutôt que de partir. Au centre, la Tour du Noyau est bâtie au-dessus du puits. Doran te montrera les accès qu’on a murés après « un accident » dont personne ne parle. Il les connaît. Il connaît tout ce qu’on a voulu oublier sous ce district.',
-      'Le lendemain matin, des ouvriers qui creusaient un puisard plus profond, parce que les pompes ne suivaient plus la mer, ont mis au jour sous la Tour, sous les pompes, une chambre scellée depuis cinquante-cinq ans. Une porte ronde, gravée de motifs qu’aucune main humaine n’a dessinés, et qui luit faiblement par ses joints. Personne ne l’a encore ouverte. Derrière, Véla en est sûre, il y a des empreintes. Pas une : beaucoup, mêlées, comme si quelqu’un les avait remises en place n’importe comment, à la hâte.',
+      'Hier, ton district t’a élu. Pas par enthousiasme, ne te vexe pas : l’ancienne directrice est partie après une saison de pannes et de raids, la Forge tourne au ralenti, la Clinique manque de tout, et la digue suinte par trois joints qu’on rebouche à la main. Les gens ont voté pour le changement sans trop y croire. Ça leur laisse une chance d’être surpris.',
+      'Ton district est une cuvette, comme tous ceux du milieu. Dans les années 2060, chacun était un chantier d’abris : une digue coulée en anneau autour de son puits, pour creuser à sec. Après le mur de 2066, la ville a fermé les chantiers et n’avait pas de quoi payer ceux qui s’y étaient tus. Elle a payé avec ce qu’elle avait en trop : les anneaux eux-mêmes. Les familles d’ouvriers s’y sont installées, sur le dernier vrai sol de Vertiga, avec les pompes pour seule fortune, et vu des tours le milieu de la ville ressemble depuis à un semis d’anneaux de pierre posés sur la mer. Le tien est l’un des plus bas. Au départ, la place n’était qu’un haut-fond, sous quelques pieds d’eau : c’est la mer, montée depuis la Fracture, qui l’a mise loin sous son niveau, et on a rehaussé la digue plutôt que de partir. Les premiers quartiers ont poussé dehors, sur le remblai des déblais du puits, au pied de l’anneau : ce sont les Basses. Au centre, la Tour du Noyau est bâtie au-dessus du puits. Doran te montrera les accès qu’on a murés après « un accident » dont personne ne parle. Il les connaît. Il connaît tout ce qu’on a voulu oublier sous ce district.',
+      'Ce matin, des ouvriers qui creusaient un puisard plus profond, parce que les pompes ne suivaient plus la mer, ont mis au jour sous la Tour, sous les pompes, une chambre scellée depuis cinquante-cinq ans. Une porte ronde, gravée de motifs qu’aucune main humaine n’a dessinés, et qui luit faiblement par ses joints. À l’heure où j’écris, personne ne l’a encore ouverte ; quand tu liras ceci, tu l’auras franchie. Derrière, Véla en est sûre, il y a des empreintes. Pas une : beaucoup, mêlées, comme si quelqu’un les avait remises en place n’importe comment, à la hâte.',
       'Véla est venue me voir juste après. Elle lit les empreintes pour les fouilleurs depuis vingt ans, et je ne l’avais jamais vue comme ça. Elle m’a dit qu’elle avait peur, et que cette peur n’était pas la sienne. Et qu’on racontait que dans les Hauts, cette même nuit, des Résonants s’étaient réveillés sans savoir qui ils étaient.',
       'Je ne sais pas encore ce qu’il y a dans cette chambre. Mais je sais que tout Vertiga va vouloir le savoir, et que tu es la personne la plus proche de la porte. Doran a fait étayer le puisard avant qu’on y touche : ils n’attendent plus que toi. Descends. Prends Ilka, Doran et Véla. Regarde tout. Et quand tu remonteras, viens me raconter. Je garde la suite ouverte pour toi.',
       'Au marché, on dit déjà que tu descends chercher l’Écluse : le moyen qu’auraient laissé ceux d’en dessous pour retenir la mer. Je ne crois pas aux Écluses. Mais je crois aux gens qui descendent voir. Et demande à Doran pourquoi son père n’a jamais barré son nom.',
@@ -466,6 +467,68 @@ export const CHAPITRES: Chapitre[] = [
           'En marge, une autre main : « Pas les nôtres. Tout le monde. »',
         ],
       },
+    ],
+  },
+  // ---------- Livre IV · Ce qui tient (8 novembre 2026) ----------
+  // L'histoire des Strates du Fond, sous −10 (direction validée par Bryan : « Ce qui tient », l'eau d'en bas et la part de
+  // l'Écluse qui retient l'eau). Ysé rouvre son cahier : un chapitre à chaque Strate du Fond, de −11 à −15, qui suit l'enquête
+  // des Haltes du Fond (strates.ts) sans jamais la devancer. Rien n'y est tranché : le vrai choix viendra plus tard.
+  {
+    id: 'rouvrir', livre: 4, titre: 'J’avais fermé mon cahier', epoque: '2121', image: 'chap-lettre', strate: 11,
+    teaser: 'Ysé rouvre son cahier, quand tu remontes de −11.',
+    paragraphes: [
+      'J’avais fermé mon cahier, directeur. Je te l’avais dit, et je le pensais : la suite était à toi. Puis Sasha est entré dans les Archives sans frapper, trempé jusqu’aux genoux, et il a posé sur ma table une fiole d’eau tiède. « Goûtez. » Je l’ai rouvert le soir même.',
+      'Il n’y a pas de sel dans cette eau. Il n’y en a jamais eu. Ce n’est pas la mer qui s’est infiltrée par une fissure, comme l’ont aussitôt dit les Veilleurs, soulagés d’avoir une explication. C’est une eau qui dort sous le Puits d’avant depuis bien avant eux, et qui ne devrait pas monter.',
+      'Elle monte. Sasha a planté une jauge, Doran a compté les marches, Véla a mis la main dedans et n’a pas voulu me dire ce qu’elle avait senti. Moi, j’ai fait ce que je sais faire : j’ai cherché dans les papiers qui, avant nous, avait vu cette eau. Personne. Les rapports de 2066 s’arrêtent à −4, ceux des Brigades à −8, et ceux du Premier Porteur, s’il en a écrit, ne sont pas dans nos armoires.',
+      'Je crois que nous nous sommes trompés de question pendant soixante ans. Nous demandions ce que ceux d’avant avaient laissé. Il aurait fallu demander ce qu’ils avaient retenu. On ne bâtit pas une ville entière en remontant, étage après étage, sans laisser quelque chose en bas pour tenir l’eau loin de ses enfants.',
+      'Redescends, directeur. Et cette fois, regarde moins les murs. Regarde ce qui les porte.',
+      '— Ysé',
+    ],
+  },
+  {
+    id: 'foret', livre: 4, titre: 'La forêt sous l’eau', epoque: 'Les Strates du Fond', image: '10-dessous', strate: 12,
+    teaser: 'Ce qu’Ysé a lu dans le carnet de chantier que tu as remonté de −12.',
+    paragraphes: [
+      'Tu m’as rapporté une pince. Je l’ai posée sur mon bureau, à côté de la fiole de Sasha, et je les regarde toutes les deux depuis trois jours. Une eau qui monte, et l’outil qui l’a fait monter.',
+      'En 2091, la Compagnie des Fondations a envoyé une équipe très bas, plus bas que tout ce que nos registres admettent. Je n’en trouve aucune trace aux Veilleurs, ce qui veut dire qu’on les a retirées, et je sais qui retire nos papiers. Cette équipe est revenue avec cent douze cristaux. L’année suivante, les Hauts commençaient le Levage. Trois ans plus tard, la première île flottait.',
+      'J’ai toujours cru, comme tout le monde, que les îles volaient grâce aux cœurs des Berceaux. C’est vrai. Mais on oublie de se demander ce que faisaient ces cœurs avant qu’on les monte au-dessus des nuages. On les croyait endormis. Ils travaillaient.',
+      'Ilka m’a demandé si une colonne éteinte pouvait se rallumer. Je lui ai répondu que je n’en savais rien, ce qui est vrai. Elle a hoché la tête, et elle a dit une chose étrange : que ses jambes ne disent plus bonjour le matin, depuis la forêt. Qu’elles écoutent. Je l’ai notée ici pour ne pas l’oublier, et parce que je n’ai pas aimé la façon dont elle l’a dite.',
+      '— Ysé',
+    ],
+  },
+  {
+    id: 'ceux-qui-portent', livre: 4, titre: 'Ceux qui portent', epoque: 'Bien avant nous', image: 'chap-avant', strate: 13,
+    teaser: 'Ce que voulait vraiment dire le mot de −7.',
+    paragraphes: [
+      'Je t’avais écrit qu’un mot revenait sur les tables de −7 pour dire « nous » : « ceux qui portent ». J’avais cru qu’ils parlaient des voix qu’ils portaient en eux. Je me suis trompée, et je suis contente de m’être trompée, pour une fois.',
+      'Ils parlaient d’un poids. Leurs derniers, ceux qui ne savaient plus quel visage prendre, ne se sont pas tous perdus dans leurs voix. Une partie d’entre eux est redescendue jusqu’au fond, là où personne n’allait plus, et ils se sont gravés dans le cristal pour tenir la voûte au-dessus de l’eau, pendant que leurs enfants remontaient vers une surface qu’ils ne verraient pas.',
+      'L’Écluse, directeur. On la cherchait comme une machine, une pompe géante, un levier oublié. Le marché en vend des dessins. C’étaient des gens, qui ont choisi de rester en bas pour que les autres puissent monter. Les vannes, les colonnes, les lignes d’eau : c’est leur ouvrage, et c’est eux.',
+      'Je me demande ce qu’ils ont pensé de nous, en 2091, quand des inconnus en combinaison de chantier sont venus les découper à la pince, un par un, pour faire flotter des palais. Je me demande s’ils ont compris. Et je me demande, ce qui est pire, s’ils nous en veulent, ou s’ils continuent simplement de porter, avec cent douze épaules en moins.',
+      'Véla dit qu’ils ne nous en veulent pas. Je voudrais la croire. Je remarque qu’elle ne dort plus beaucoup.',
+      '— Ysé',
+    ],
+  },
+  {
+    id: 'cent-douze', livre: 4, titre: 'Ton pilier', epoque: '2091 – 2121', image: '07-ascension', strate: 14,
+    teaser: 'Ce qui se trouve exactement sous la Tour du Noyau.',
+    paragraphes: [
+      'Tu te souviens de la première chose que je t’ai apprise sur ton district : qu’on choisissait, pour les chantiers d’abris, un pilier dont le pied ne bougeait jamais, et que personne ne s’était demandé pourquoi ceux-là tenaient. Tu as la réponse, maintenant. Tu l’as vue de tes yeux, sous ta Tour.',
+      'Chaque cuvette du milieu est posée, sans le savoir, au-dessus d’une colonne. La tienne en porte une seule, jeune, fendue sur un tiers. Les fissures que les équipes rebouchent la nuit dans les Fondations, celles dont je te parlais comme d’un détail, ne viennent pas de la mer. Elles viennent d’en dessous. Vertiga ne fait pas que voir la mer monter. Vertiga descend.',
+      'Sasha a refait ses calculs devant moi, sur le dos d’une fiche de prêt. Il reste assez de colonnes pour porter la ville. Il n’en reste pas assez pour porter la ville et une île de plus. Chaque île que les Hauts lèvent se paie ici. Dame Isaure le dit à sa façon depuis des années, quand elle répète qu’une île porte tant de vies et pas une de plus. Elle ne disait pas tout.',
+      'Je sais ce que tu vas me demander, parce que le district te le demande déjà : et la Flèche ? Les îles pour tout le monde, pas seulement pour cinq familles ? Je n’ai pas de réponse. Je sais seulement qu’une porte ouverte là-haut et une voûte qui tient en bas tirent sur la même corde, et qu’il faudra bien que quelqu’un le dise tout haut.',
+      '— Ysé',
+    ],
+  },
+  {
+    id: 'se-rendre', livre: 4, titre: 'Ce qui tient ne se reprend pas', epoque: '2121', image: 'chap-glaciere', strate: 15,
+    teaser: 'La dernière ligne gravée au fond du Fond.',
+    paragraphes: [
+      '« Ce qui tient ne se reprend pas. Il se rend. » J’ai écrit la phrase en haut d’une page blanche, et je n’arrive pas à écrire la suite.',
+      'Sasha est formel : les vannes du Fond et celles des Citernes, sous les Basses, sont une seule machine, toujours réglée. Ouverte aux deux bouts, elle laisserait la mer descendre dans la pierre au lieu de monter chez nous. Pas toute la mer, bien sûr. Assez pour que la ligne bleue de ton district repasse au-dessus de la marée. Il ne manque à cette machine que de quoi porter la voûte, et nous savons où c’est parti.',
+      'Mais on ne reprend pas un cœur comme on l’a pris. Une empreinte se rend, ou elle ne vient pas. Il faudrait que ceux qu’on a montés au-dessus des nuages acceptent de redescendre. Ou que d’autres viennent porter à leur place. Je relis ces deux phrases, et je n’aime aucune des deux.',
+      'Je pense à la Glacière, qui se souvient de tout et ne peut rien porter. Aux colonnes, qui portent tout et ne disent rien. Et aux jambes d’Ilka, qui écoutent. Ilka est venue me voir hier soir. Elle m’a demandé, très calmement, combien de temps une copie peut porter, à la place d’un original. Je lui ai dit que je ne savais pas. Elle a dit : « Moi, je crois que quelqu’un le sait. » Puis elle est repartie vers le port, vers l’ouest, là où les ingénieurs creusaient en 2085.',
+      'Je ne sais pas ce que tu feras, directeur. Je sais que tu ne le feras pas seul. Et pour une fois, je ne fermerai pas mon cahier.',
+      '— Ysé',
     ],
   },
 ];

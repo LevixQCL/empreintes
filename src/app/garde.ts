@@ -9,7 +9,12 @@ import { mettreDeCoteIllisible } from '../save/local';
 let raison: Raison | null = null;
 
 /** Le jeu n'écrit plus rien (ni sur l'appareil, ni sur le compte) tant que la fenêtre est ouverte */
-export const sauvegardeBloquee = (): boolean => raison !== null;
+export const sauvegardeBloquee = (): boolean => raison !== null || suspendue;
+
+/** Une suppression du compte en cours (8 novembre 2026) : on n'écrit plus rien, sans fenêtre */
+let suspendue = false;
+export function suspendreSauvegarde(): void { suspendue = true; }
+export function reprendreSauvegarde(): void { suspendue = false; }
 
 const TEXTES: Record<Raison, { titre: string; texte: string }> = {
   version: {

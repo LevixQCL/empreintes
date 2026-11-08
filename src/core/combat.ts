@@ -294,7 +294,7 @@ export function texteIntention(s: CombatEtat, en: EnnemiEtat = s.ennemi): string
   if (it.type === 'soin' && it.allie) return `${it.nom} : va soigner un allié, +${it.v} PV`;
   if (it.type === 'boost') return 'Se concentre : sa prochaine attaque fera double dégâts';
   if (it.type === 'soin') return `Va se réparer : ${it.nom} +${it.v} PV`;
-  if (it.type === 'dissonance') return `${it.nom} : va brouiller tes Fréquences, pas de Résonance au tour suivant`;
+  if (it.type === 'dissonance') return `${it.nom} : va brouiller tes Fréquences, ni Résonance ni Écho au tour suivant`;
   const v = Math.round(it.v * puissance(en) * usureCombat(s).attaque);
   if (it.zone) return `Va frapper toute l’escouade : ${it.nom} ${v}`;
   const cible = it.cibleId ? porteurDef(it.cibleId).nom : '?';
@@ -627,13 +627,16 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   const analyse = analyserChaine(s.chaine);
   // Écho ancien : une suite de 4 résonne comme une suite de 5
   const brut = s.condition === 'echo' && analyse.suite === 4 ? { ...analyse, mult: REGLES.multSuite[5]! } : analyse;
-  // Dissonance : l'ennemi a brouillé les Fréquences, la suite ne compte pas ce tour-ci
-  const brouille = s.dissonance || s.sansResonance;
-  const a = brouille ? { ...brut, suite: 0, mult: 1 } : brut;
+  // Dissonance : l'ennemi a brouillé les Fréquences, ni la suite ni l'Écho ne comptent ce tour-ci (8 novembre 2026, audit :
+  // avant, l'Écho et son Flux passaient au travers, alors que le texte dit « brouille tes Fréquences »).
+  // L'Épreuve « Fréquences brouillées » (sansResonance) ne coupe que la suite : son texte garde les Échos.
+  const brouille = !!(s.dissonance || s.sansResonance);
+  const a = brouille ? sansResonance(brut, !!s.dissonance) : brut;
   const freqs = frequencesEffectives(s.chaine);
-  noterChaine(s, freqs, a.suite >= 3 ? a : undefined, !!brouille && brut.suite >= 3, analyse.echo, analyse.echoN);
-  if (brouille && brut.suite >= 3) {
-    log(s, 'Fréquences brouillées : pas de Résonance ce tour-ci.', { sorte: 'effet' });
+  noterChaine(s, freqs, a.suite >= 3 ? a : undefined, brouille && (brut.suite >= 3 || (brut.echo && !a.echo)), a.echo, a.echoN);
+  BROUILLE = !!s.dissonance;
+  if (brouille && (brut.suite >= 3 || (brut.echo && !a.echo))) {
+    log(s, s.dissonance ? 'Fréquences brouillées : ni Résonance ni Écho ce tour-ci.' : 'Fréquences brouillées : pas de Résonance ce tour-ci.', { sorte: 'effet' });
     emettre({ kind: 'effet', cible: 'escouade', texte: 'Brouillé' });
   }
   s.dissonance = false;
@@ -668,6 +671,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     }
   }
   RANG = undefined;
+  BROUILLE = false;
   // Assimilation (28 octobre 2026) : à la fin de la chaîne, il prend la lignée de la dernière carte qui l'a frappé
   for (const en of tousEnnemis(s)) {
     const l = en.frappe;
@@ -1116,13 +1120,22 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
  */
 export interface Facteur { nom: string; m: number }
 
+/** Les Fréquences brouillées pendant la chaîne en cours (Dissonance, épreuve « Fréquences brouillées ») : pas d'Écho */
+let BROUILLE = false;
+/** Une chaîne brouillée : pas de suite, et pas d'Écho non plus si c'est une Dissonance */
+function sansResonance<T extends { suite: number; mult: number; echo: boolean; echoF?: number; echoN?: number }>(a: T, sansEcho: boolean): T {
+  if (!sansEcho) return { ...a, suite: 0, mult: 1 };
+  const { echoF: _f, echoN: _n, ...r } = a;
+  return { ...r, suite: 0, mult: 1, echo: false } as T;
+}
+
 function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chaine: Geste[], eteinte: boolean, suite: number, surtensionPayee?: boolean): Facteur[] {
   const effets = effetsEnJeu(g, chaine, rang, eteinte, avantEteinte(s, chaine, rang));
   const de = <T extends Effet['type']>(t: T) => effets.find((e): e is Extract<Effet, { type: T }> => e?.type === t);
   const f: Facteur[] = [];
   const mettre = (nom: string, m: number) => { if (m !== 1) f.push({ nom, m }); };
   mettre(`Résonance (suite de ${suite})`, mult);
-  { const n = analyserChaine(chaine).echoN ?? 3; mettre(`${nomEcho(n)} (${n} Fréquences identiques)`, multEcho(chaine, rang)); }
+  if (!BROUILLE) { const n = analyserChaine(chaine).echoN ?? 3; mettre(`${nomEcho(n)} (${n} Fréquences identiques)`, multEcho(chaine, rang)); }
   // Empilement : chaque bouclier (ou soin) déjà posé dans la chaîne réduit le suivant (une carte seule garde toute sa force)
   const emp = g.type === 'bouclier' ? REGLES.empilement.bouclier : g.type === 'soin' ? REGLES.empilement.soin : 1;
   if (emp !== 1) {
@@ -1262,9 +1275,12 @@ export function detailForce(s: CombatEtat, uid: string): DetailForce | null {
   if (siPosee) rang = chaine.length - 1;
   const analyse = analyserChaine(chaine);
   const brut = s.condition === 'echo' && analyse.suite === 4 ? { ...analyse, mult: REGLES.multSuite[5]! } : analyse;
-  const a = s.dissonance || s.sansResonance ? { ...brut, suite: 0, mult: 1 } : brut;
+  const brouille = !!(s.dissonance || s.sansResonance);
+  const a = brouille ? sansResonance(brut, !!s.dissonance) : brut;
   const eteinte = estATerre(s, g.porteur);
-  const facteurs = facteursGeste(s, g, a.mult, rang, chaine, eteinte, a.suite);
+  BROUILLE = !!s.dissonance;
+  let facteurs: Facteur[];
+  try { facteurs = facteursGeste(s, g, a.mult, rang, chaine, eteinte, a.suite); } finally { BROUILLE = false; }
   const force = facteurs.reduce((f, x) => f * x.m, g.v);
   const lignes: DetailForce['lignes'] = [...facteurs];
   let total = Math.round(force);
@@ -1606,7 +1622,7 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
     }
   } else if (it.type === 'dissonance') {
     s.dissonance = true;
-    log(s, `${e.nom} · ${it.nom} : tes Fréquences sont brouillées, pas de Résonance au prochain tour.`, { sorte: 'effet' });
+    log(s, `${e.nom} · ${it.nom} : tes Fréquences sont brouillées, ni Résonance ni Écho au prochain tour.`, { sorte: 'effet' });
     emettre({ kind: 'effet', cible: 'escouade', texte: 'Dissonance' });
   } else {
     let cibles: PorteurEtat[];

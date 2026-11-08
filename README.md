@@ -46,7 +46,7 @@ src/
       partie/recompenses.ts  kit des recrues, lectures et Ravitaillement, nouveautés
       partie/parrainage.ts   le parrainage : code, départ du filleul, paliers (−1, −3, Noyau 3), récompenses du parrain (5 recrues), distinctions
       partie/descentes.ts    départs (expédition, fouille, Épreuve), escouade, missions, exploration des Strates
-      partie/pillages.ts     les pillages : garnison, jetons, coffre, archipels voisins, attaques subies
+      partie/pillages.ts     les pillages : garnison, jetons, coffre, cuvettes voisines, attaques subies
       partie/fleche.ts       la Flèche : quais, gardiens des Hauts, montée et descente, quais gravés
       partie/cercle.ts       le Cercle des quais : échanges entre amis (mise de côté, même métal, prix), souhaits, vitrine, duels de la semaine
       partie/temps.ts        le temps qui passe
@@ -58,7 +58,7 @@ src/
     coquille.ts    ressources en haut, navigation en bas, menu, notifications (commun au district)
     district.ts    archipel, Tour du Noyau, escouade, cartes, Bibliothèque ; les détails s'ouvrent en feuille par le bas
     vue.ts         l'écran de combat
-    pillages.ts    l'onglet Pillages : la carte des archipels voisins, la garnison, le journal du port
+    pillages.ts    l'onglet Pillages : la carte des cuvettes voisines, la garnison, le journal du port
     parrainage.ts  l'écran « Recruter » (menu Plus) : le code, ce que chacun gagne, les recrues, les distinctions, la saisie d'un code
     fiche.ts       la fiche du directeur (29 octobre 2026) : ce qui l'attend (core/partie/attente.ts), ses records, ses cartes marquantes, son code ;
                    sur PC le cristal du rail l'ouvre et s'allume quand une récompense importante attend, sur téléphone elle est en tête du menu Plus
@@ -237,7 +237,11 @@ qu'il faille un peu plus d'expéditions pour chaque nouvelle Strate (environ aut
 **Le creusement** (22 octobre 2026) : battre le gardien de la Strate la plus profonde prépare l'étage suivant, qui ne
 s'ouvre qu'avec assez de **creuseurs** logés par la **Tour du Noyau** (`CREUSEURS` dans `jeu.ts`). Les creuseurs qui percent
 un étage y restent : pas de réserve pour plus tard. On en gagne en jouant (fouilles, missions, Épreuves, gardiens, Confiance).
-Il en faut dès la Strate −2 (Bryan, 22 octobre 2026 : ralentir dès le début). Réglé pour un joueur occasionnel (`npm run audit`, 7 novembre 2026) : −5 vers le jour 6, −7 vers le jour 12, −10 vers le jour 27 (test : entre 27 et 32). Le Noyau loge juste ce qu'il faut : niveau 5 pour −7, 7 pour −10.
+Il en faut dès la Strate −2 (Bryan, 22 octobre 2026 : ralentir dès le début). Réglé pour un joueur occasionnel (`npm run audit`, 8 novembre 2026) : −5 vers le jour 7, −7 vers le jour 11, −10 vers le jour 25 (test : entre 24 et 32). Le Noyau loge les creuseurs (niveau 5 pour −7, 6 pour −8) et il en faut plus pour descendre (`NOYAU_MIN`) : niveau 8 pour −9, 9 pour −10 et le Fond.
+
+Les Éclats (8 novembre 2026) : le Comptoir en vend de 1 à 6 par jour selon son niveau (500, 700 puis 1 000 composants), le Générateur en condense de 1 à 3 par jour à partir du niveau 5 (2 000 énergie l'Éclat, `CRISTALLISEUR`), et après −10 chaque dépôt des Basses en laisse 1 ou 2. Les Basses ouvrent après −2, la lettre de la directrice aussi (`BASSES.ouverture`, `LEGS_STRATE`).
+
+Confidentialité (8 novembre 2026) : `public/confidentialite.html`, l'âge demandé avant la première partie (`src/save/age.ts` : moins de 13 ans, rien en ligne), et « Supprimer mon compte et mes données » dans le panneau Compte (`supprimerCompte`, `src/net/compte.ts`).
 
 **Quand on bloque devant une Strate** : les *fouilles ciblées* (`fouiller`, une descente courte sans gardien dans une Strate
 vaincue, vers des cartes d'une lignée, des composants ou des Éclats), les *missions* (`envoyerMission`, un Porteur libre part
@@ -329,8 +333,8 @@ de −1, le Port et ses missions en mer ; −2, les Épreuves de la semaine (`EP
 (`ESCOUADES_STRATE`, `escouadesOuvertes`). Avant, presque tout s'ouvrait après −1. Le parcours simulé ne change pas.
 
 **Les pillages** (26 octobre 2026, décidé avec Bryan ; `src/core/partie/pillages.ts`, `src/ui/pillages.ts`).
-Le Port du district (fermé jusque-là) s'ouvre après la Strate −1 sur les « Archipels voisins » (Bryan : « il faut un bateau pour aller piller ») : une carte marine, ton archipel en bas, six archipels
-autour, rangés du plus facile au plus dur. Un pillage = un seul combat contre la garnison de l'archipel (ses trois Porteurs,
+Le Port du district (fermé jusque-là) s'ouvre après la Strate −1 sur les « Cuvettes voisines » (Bryan : « il faut un bateau pour aller piller ») : une carte marine, ta cuvette en bas, six cuvettes
+autour, rangés du plus facile au plus dur. Un pillage = un seul combat contre la garnison de la cuvette (ses trois Porteurs,
 joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `garde-bio`, `garde-reso` dans `donnees.ts`).
 - *Force* : `K × √(puissance des cartes × PV)` des deux côtés (`forceGarnison`, K = 0,0245). Réglé au robot : le joueur moyen
   qui attaque sa propre garnison gagne une fois sur deux, du deck de départ aux cartes en or niveau 10. Les chances sont très
@@ -340,9 +344,9 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
 - *Le coffre* : les composants gagnés en pillant ou en défendant, les seuls qu'un pillage peut prendre (les composants des
   descentes, missions et du district sont à l'abri : aucune punition si on ne joue pas). On le dépense en premier.
   L'attaquant qui perd (ou abandonne) laisse 5 % de son coffre au défenseur.
-- *Limites* : 5 jetons (un revient toutes les 4 h 48, rien ne se perd), un pillage par archipel et par jour ; le défenseur a
+- *Limites* : 5 jetons (un revient toutes les 4 h 48, rien ne se perd), un pillage par cuvette et par jour ; le défenseur a
   8 h de bouclier après une attaque perdue et subit 3 attaques par jour au plus (`protege`).
-- *Archipels sans directeur* (`ciblesBots`) : tant qu'il y a peu de vrais directeurs à portée, des archipels tenus par un
+- *Cuvettes sans directeur* (`ciblesBots`) : tant qu'il y a peu de vrais directeurs à portée, des cuvettes tenus par un
   intendant complètent la carte (dits comme tels sur la fiche), les mêmes toute la journée.
 - *En ligne* (`src/net/pillages.ts`, `src/app/pillages.ts`) : chaque directeur connecté publie sa garnison `garnisons/{uid}`
   (nom du Grand Tableau s'il est public, sinon « Directeur anonyme » ; au plus toutes les 5 minutes). La carte lit une
@@ -350,7 +354,7 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
   d'un vrai directeur avant le départ. Chaque pillage joué est noté dans `garnisons/{défenseur}/subis` ; le défenseur les lit
   à l'ouverture, les applique lui-même (`subirPillages` : chacun une fois, 3 par jour, bouclier de 8 h, montants plafonnés)
   et les ajoute au résumé « Pendant ton absence ». Tant que les règles Firestore des garnisons ne sont pas publiées,
-  tout échoue sans bruit et la carte n'a que des archipels sans directeur.
+  tout échoue sans bruit et la carte n'a que des cuvettes sans directeur.
 - *À venir* : les Joutes en temps réel (elles demanderont d'autres règles Firestore).
 
 **Le passage du 27 octobre 2026** (relecture « nouveau joueur, joueur expérimenté, game designer », décidé avec Bryan).
@@ -363,9 +367,9 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
 - *Durée des combats* : les PV montent moins vite que les coups en profondeur (`pvProfondeur`) et un groupe a moins de PV (`PV_GROUPE`) ;
   `npx tsx scripts/durees.ts` mesure au parcours : normaux ~8 tours, groupes ~10, gardiens ~15 (cible 6-9 / 9-13 / 12-18).
   Les pillages gardent leurs PV (`pvPleins`).
-- *La Confiance du quartier* (refaite) : elle ne fait que monter, par niveaux, et se lit dans une roue à côté de la Strate, en haut
-  (`niveauConfiance`, `CONFIANCE` dans `etat.ts`) : +1 par combat gagné, +3 par descente réussie, +2 par chantier, +4 par pillage gagné.
-  Chaque niveau amène un creuseur volontaire (`recompenserConfiance`) ; l’Accord ouvert de Joss demande le niveau 2.
+- *La Confiance du quartier* (30 octobre puis 7 novembre 2026) : ce sont les familles qui te suivent (48 familles, paliers de 6)
+  (`niveauConfiance`, `CONFIANCE` dans `etat.ts`). On les ramène des Basses et du Mur des empreintes (`familles.ts`, `fragments.ts`) ;
+  chaque palier amène un creuseur volontaire et un souvenir pour les Archives ; l’Accord ouvert de Joss demande le palier 2.
 - *Énergie* : convertisseur du Générateur (`CONVERTISSEUR` : 100 énergie → 10, puis 6, puis 3 composants, 20 lots par jour) et soins intensifs
   de la Clinique (`SOINS_INTENSIFS` : 5 énergie par point d’Usure). La réserve tient au moins 24 h de production du Générateur (`DISTRICT.reserveHeures`).
 

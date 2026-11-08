@@ -75,14 +75,22 @@ describe('Les voies : étape 1', () => {
     expect(degats(s)).toBe(Math.round(22 * REGLES.echo));
   });
 
-  it('La Dissonance brouille les suites, pas l’Unisson ni l’Écho', () => {
+  it('La Dissonance brouille les suites et l’Écho (8 novembre 2026), pas l’Unisson', () => {
     const s = combat([geste(9, 'atk', 10, { type: 'unisson', part: 0.3 }), geste(9, 'bouclier', 5), geste(9, 'bouclier', 5)]);
     s.dissonance = true;
     s.intention = { type: 'bouclier', v: 0 };
     const flux = s.flux;
     jouer(s);
-    expect(degats(s)).toBe(Math.round(16 * REGLES.echo));
-    expect(s.flux).toBe(flux + 1);
+    expect(degats(s)).toBe(16);
+    expect(s.flux).toBe(flux);
+  });
+
+  it('Un Accord bloqué au bout de l’échelle ne fait pas d’Écho (9-9-Accord)', () => {
+    const accord = { type: 'accord' } as const;
+    expect(analyserChaine([{ f: 9 }, { f: 9 }, { f: 5, effet: accord }]).echo).toBe(false);
+    expect(analyserChaine([{ f: 1, effet: accord }, { f: 1 }, { f: 1 }]).echo).toBe(false);
+    // un vrai trio de 9 reste un Écho
+    expect(analyserChaine([{ f: 9 }, { f: 9 }, { f: 9 }]).echo).toBe(true);
   });
 
   it('L’Écho renforce seulement les trois cartes de même Fréquence, quelle que soit leur action', () => {

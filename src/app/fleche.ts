@@ -7,6 +7,7 @@ import { porteurDef } from '../core/donnees';
 import { app, D } from './etat';
 import { afficher } from './rendu';
 import { nomPublic } from './pillages';
+import { sauver } from './synchro';
 
 let net: typeof import('../net/fleche') | null = null;
 const reseau = async () => (net ??= await import('../net/fleche'));
@@ -24,10 +25,23 @@ export async function synchroGarde() {
   if (cle === publiee) return;
   try {
     const n = await reseau();
-    if (g) await n.publierGarde(uid, { nom: nomPublic(), quai: g.quai, force: J.forceGarnison(g.garnison), depuis: g.depuis, garnison: g.garnison });
-    else await n.retirerGarde(uid);
+    if (g) {
+      const garde = (depuis: number) => n.publierGarde(uid, { nom: nomPublic(), quai: g.quai, force: J.forceGarnison(g.garnison), depuis, garnison: g.garnison });
+      try { await garde(g.depuis); } catch (e) {
+        // l'installation est datée par le serveur (firestore.rules, 8 novembre 2026) : une garde prise hors ligne
+        // il y a plus de quelques minutes se publie datée de maintenant
+        if (Date.now() - g.depuis < 240_000) throw e;
+        const maintenant = Date.now();
+        await garde(maintenant);
+        g.depuis = maintenant;
+        sauver();
+      }
+      publiee = JSON.stringify([nomPublic(), g.quai, g.depuis, g.garnison]);
+      return;
+    }
+    await n.retirerGarde(uid);
     publiee = cle;
-  } catch { /* on réessaiera au prochain passage */ }
+  } catch { /* on réessaiera au prochain passage (par exemple quand le record de Flèche aura été publié) */ }
 }
 
 // ---------- Les gardiens de la Flèche ----------

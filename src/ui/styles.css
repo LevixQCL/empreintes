@@ -236,6 +236,13 @@ h1,h2,h3{font-weight:400}
 .panneau .ligne .btn{flex:1}
 .panneau .erreur{color:var(--danger);margin:0}
 .panneau .discret,.discret{color:var(--quiet);margin:0}
+/* tes données (8 novembre 2026) : la page de confidentialité et la suppression du compte, en bas du panneau, discrètes */
+.panneau .donnees{font-size:13px;padding-top:6px;border-top:1px solid var(--line)}
+.panneau .donnees .lien{display:inline;font-size:13px;color:var(--quiet);font-weight:500;text-decoration:underline;text-underline-offset:2px}
+.panneau .donnees.confirmer{display:grid;gap:8px;padding:12px;border-radius:12px;background:rgba(224,92,92,.08);box-shadow:inset 0 0 0 1px rgba(224,92,92,.35)}
+.panneau .donnees.confirmer p{margin:0;color:var(--ink);line-height:1.45}
+.btn.danger{background:linear-gradient(180deg,#C9504F,#9E3434);color:#FFF4F2;box-shadow:inset 0 0 0 1px rgba(255,190,180,.35)}
+.panneau.age{max-width:420px}
 
 /* ---------- Le district ---------- */
 .ecran-archipel .contenu{padding:0;gap:0}

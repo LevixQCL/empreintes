@@ -1,6 +1,6 @@
 // Le Grand Tableau en ligne : lecture des classements et publication de son entrée.
 
-import { aChange, entreeAPublier } from '../core/classements';
+import { aChange, entreeAPublier, PROFONDEUR_DELAI } from '../core/classements';
 import * as J from '../core/jeu';
 import { app, compteProtege, D, G } from './etat';
 import { afficher } from './rendu';
@@ -105,7 +105,10 @@ async function publierTableau() {
     G.entrees = [...G.entrees.filter((x) => x.uid !== app.uid), e];
     if (app.mode === 'district' && D.vue === 'classements') afficher();
     // la profondeur ne monte que de deux Strates par publication : le reste suit à la prochaine
-    if (app.jeu.palmares && e.profondeur < app.jeu.palmares.profondeur) planifierPublication(25_000);
+    // (et au plus une fois toutes les 5 minutes) : le reste suit à la prochaine
+    if (app.jeu.palmares && (e.profondeur < Math.max(2, app.jeu.palmares.profondeur) || e.fleche < (app.jeu.fleche?.record ?? 0))) {
+      planifierPublication(e.profondeur < app.jeu.palmares.profondeur ? Math.max(25_000, e.profondeurLe + PROFONDEUR_DELAI - Date.now() + 2000) : 25_000);
+    }
   } catch {
     // refusée (trop tôt, ou l'entrée a changé ailleurs) : on relit, puis on réessaie plus tard
     app.monEntreeLue = false;

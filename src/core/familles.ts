@@ -107,7 +107,7 @@ export const FAMILLES_DISTRICT: readonly FamilleDef[] = [
   F('haudry', 'les Haudry', 'basses', 'L’ancien concierge de l’école et ses petits-enfants.',
     'Le vieux Haudry repeint la marelle du préau chaque été, sous un doigt d’eau. La case du ciel touche la ligne de la mer.'),
   F('prevel', 'les Prével', 'basses', 'L’institutrice de l’École noyée et sa famille.',
-    'Madame Prével n’a jamais effacé sa dernière leçon. Ses élèves ont calculé : dans cent ans, la mer sera plus haute que l’école. Ils avaient raison.'),
+    'Madame Prével n’a jamais effacé sa dernière leçon. Ses élèves ont calculé : trois mètres en cent ans, plus haut que le préau. Ils avaient raison, et en avance.'),
   F('casset', 'les Casset', 'basses', 'Des lecteurs, qui ont sauvé la bibliothèque de l’école livre par livre.',
     'Les Casset ont séché trois mille livres, une page à la fois. Ils ont rangé chacun par le nom du dernier enfant qui l’avait emprunté.'),
   F('berot', 'les Bérot', 'basses', 'Une famille de sonneurs, qui veille sur la cloche de la cour.',

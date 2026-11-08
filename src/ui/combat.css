@@ -758,10 +758,21 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
   #app[data-mode="combat"] .ecran-combat .jf-tube i{width:12px;height:17px}
   #app[data-mode="combat"] .ecran-combat .flux .btn-flux{padding:0 9px}
 }
+/* 8 novembre 2026 (audit du 7, « FLUX écrasé à 0 px en 360 px ») : le mot « Flux » reste lisible à côté des cristaux,
+   seules les marges se resserrent */
 @media (max-width:370px){
-  #app[data-mode="combat"] .ecran-combat .jf-nom{font-size:0;letter-spacing:0}
+  #app[data-mode="combat"] .ecran-combat .jf-nom{gap:3px;letter-spacing:.02em}
   #app[data-mode="combat"] .ecran-combat .jf-nom b{font-size:16px}
-  #app[data-mode="combat"] .ecran-combat .jf-nom small{font-size:var(--t-min)}
+  #app[data-mode="combat"] .ecran-combat .flux .jauge-flux{gap:5px}
+  #app[data-mode="combat"] .ecran-combat .flux .btn-flux{padding:0 7px}
+}
+/* la vie de l'ennemi : le chiffre garde toute sa largeur (« 124 / 124 » était coupé au bord droit en 360-390 px),
+   c'est la barre qui raccourcit */
+#app[data-mode="combat"] .ecran-combat .je-valeur{flex:none;white-space:nowrap;text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6)}
+#app[data-mode="combat"] .ecran-combat .je-valeur small{color:#c3ccdb}
+/* la main sur téléphone : cinq cartes tiennent toujours dans la largeur, à plat ; elles rétrécissent un peu au lieu d'être rognées */
+@media (max-width:899px){
+  #app[data-mode="combat"] .ecran-combat .zone-main > .main .geste.main{flex:0 1 auto;width:calc((100% - 20px) / 5);max-width:70px;min-width:56px;height:auto;aspect-ratio:69 / 97}
 }
 @media (max-width:899px) and (max-height:790px){
   #app[data-mode="combat"] .ecran-combat{gap:5px}

@@ -113,6 +113,8 @@ export interface EcranDistrict {
   /** les Basses : la feuille de l'écluse est ouverte, et le lieu dont on choisit le Porteur */
   basses?: boolean;
   bassesLieu?: string | null;
+  /** la présentation des Basses rouverte à la demande (« ? ») */
+  bassesAide?: boolean;
   /** onglet Escouade : le volet « Porteurs » (tous les Porteurs) est affiché au lieu de l’escouade */
   reserve?: boolean;
   /** onglet Escouade : la place de l'escouade (0 à 2) dont on choisit le Porteur, volet ouvert */
@@ -316,7 +318,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined, famille: stri
     servir = Array.from({ length: CONFIANCE.population / CONFIANCE.palier }, (_, k) => {
       const p = k + 1;
       const fait = n.niveau >= p;
-      return `<li class="${fait ? 'fait' : ''}">${ICO[fait ? 'ouvrier' : 'verrou'] ?? ''}<span><strong>${p * CONFIANCE.palier} familles${NOMS_CONFIANCE[p] ? ` · ${NOMS_CONFIANCE[p]}` : ''}</strong><small>${PALIERS_CONFIANCE[p] ? `${PALIERS_CONFIANCE[p]} Avec` : 'Un'} creuseur volontaire et un souvenir pour les Archives.</small></span></li>`;
+      return `<li class="${fait ? 'fait' : ''}">${ICO[fait ? 'ouvrier' : 'verrou'] ?? ''}<span><strong>${p * CONFIANCE.palier} familles${NOMS_CONFIANCE[p] ? ` · ${NOMS_CONFIANCE[p]}` : ''}</strong><small>${PALIERS_CONFIANCE[p] ? `${PALIERS_CONFIANCE[p]} Avec un` : 'Un'} creuseur volontaire et un souvenir pour les Archives.</small></span></li>`;
     });
   } else if (r === 'butin') {
     // 28 octobre 2026 (Bryan : « c'est quoi en fait l'Archive de la semaine ») : la fiche explique tout, sans rien à deviner
