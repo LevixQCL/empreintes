@@ -211,6 +211,12 @@ export function serieFinale(chaine: Maillon[]): number {
   return s;
 }
 
+/**
+ * La Surtension se paie en PV, jamais jusqu'à tomber : un Porteur à 1 PV ne peut plus la payer, et sa carte n'a alors pas le bonus.
+ * Une seule règle pour les Strates et le duel (8 novembre 2026, audit : le duel donnait encore le bonus à 1 PV).
+ */
+export const peutPayerSurtension = (p?: { pv: number }) => !!p && p.pv > 1;
+
 export const places = (g: Pick<Geste, 'lourd'>) => (g.lourd ? 2 : 1);
 
 type Place = Pick<Geste, 'lourd'> & { effet?: Geste['effet'] };

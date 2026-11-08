@@ -2,7 +2,7 @@
 // l'interface appelle ces fonctions puis anime les « pas » qu'elles renvoient.
 
 import { CONDITIONS, DECK_DEPART, FAVEUR_CONDITION, NOMS_LIGNEE, ZONES, ennemiDef, porteurDef, deNom } from './donnees';
-import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, nomEcho, pctEcho, placesChaine, placesEnPlus } from './regles';
+import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, nomEcho, pctEcho, placesChaine, placesEnPlus, peutPayerSurtension } from './regles';
 import { tireur } from './rng';
 import { NOMS_EFFET } from './effets';
 import type {
@@ -242,13 +242,14 @@ function allieDe(s: CombatEtat, en: EnnemiEtat): EnnemiEtat | undefined {
 export const puissance = (en: EnnemiEtat) => en.boost * (trait(en, 'furie') && en.pv > 0 && en.pv <= en.pvMax / 2 ? FURIE : 1) * (en.crescendo ?? 1);
 /**
  * Combats qui s'éternisent (réglages dans REGLES.usure) : à partir du tour 10, les ennemis se soignent de moins en moins
- * (plus du tout au tour 20), et à partir du tour 12 leurs attaques grossissent de 15 % par tour. Aucun combat ne peut tourner en rond.
+ * (plus du tout au tour 19), et dès le tour 12 leurs attaques grossissent de 15 % par tour. Aucun combat ne peut tourner en rond.
  */
 export const usureCombat = (s: CombatEtat) => {
   const u = REGLES.usure;
   return {
-    soins: s.tour <= u.soinsDes ? 1 : Math.max(0, 1 - (s.tour - u.soinsDes) / u.soinsSur),
-    attaque: s.tour <= u.attaqueDes ? 1 : 1 + u.attaqueParTour * (s.tour - u.attaqueDes),
+    // 8 novembre 2026 (audit) : avant, `<=` faisait partir l'usure un tour trop tard (attaques au tour 13 au lieu du 12 décidé)
+    soins: s.tour < u.soinsDes ? 1 : Math.max(0, 1 - (s.tour - u.soinsDes + 1) / u.soinsSur),
+    attaque: s.tour < u.attaqueDes ? 1 : 1 + u.attaqueParTour * (s.tour - u.attaqueDes + 1),
   };
 };
 /** Éboulis : ce que les pierres retirent à chacun, à chaque tour ennemi */
@@ -906,7 +907,7 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
   }
   // Surtension : le Porteur paie de ses PV la force en plus (jamais jusqu'à tomber)
   const st = de('surtension');
-  const payeur = st ? s.porteurs.find((p) => p.id === g.porteur && p.pv > 1) : undefined;
+  const payeur = st ? s.porteurs.find((p) => p.id === g.porteur && peutPayerSurtension(p)) : undefined;
   if (st && payeur) {
     const prix = Math.min(payeur.pv - 1, Math.max(1, Math.round(payeur.pvMax * st.cout)));
     payeur.pv -= prix;
@@ -1187,7 +1188,7 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   // Surtension (exclusive) : le Porteur paie de ses PV une part de force en plus
   // à 1 PV, le Porteur ne peut rien payer : pas de force en plus non plus (audit du 7 novembre 2026)
   const st = de('surtension');
-  const paye = surtensionPayee ?? s.porteurs.some((p) => p.id === g.porteur && p.pv > 1);
+  const paye = surtensionPayee ?? s.porteurs.some((p) => p.id === g.porteur && peutPayerSurtension(p));
   if (st && paye) mettre('Surtension', 1 + st.part);
   if (eteinte) mettre('Porteur à terre', REGLES.eteinte);
   return f;

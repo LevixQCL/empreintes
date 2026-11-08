@@ -14,7 +14,7 @@
 import { carteId, moduleDef, porteurDef, DEPART_PORTEURS } from './donnees';
 import { cartesEnJeu, placesVides, puissanceCarte, PLACES_PORTEUR } from './collection';
 import { effetsEnJeu, ligneesDeSuite } from './combat';
-import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, placesChaine, placesEnPlus } from './regles';
+import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, placesChaine, placesEnPlus, peutPayerSurtension } from './regles';
 import { graine, tireur } from './rng';
 import type { Effet, Geste, GesteDef, Lignee, LigneeGeste, PorteurEtat } from './types';
 
@@ -439,7 +439,7 @@ function forceCarte(x: Contexte, g: Geste, rang: number): { v: number; effets: (
   if (cpt && x.mult > 1) { const ls = ligneesDeSuite(x.chaine, rang); ls.delete(ligneeDe(g)); m *= 1 + cpt.part * ls.size; }
   if (!eteinte && g.effet?.type === 'empreinte' && !effets[0]) m *= REGLES.empreinteSeule;
   const st = de(effets, 'surtension');
-  if (st) m *= 1 + st.part;
+  if (st && peutPayerSurtension(c.porteurs.find((p) => p.id === g.porteur))) m *= 1 + st.part;
   if (eteinte) m *= REGLES.eteinte;
   if (c.sourdine) m *= 1 - c.sourdine;
   if (g.type === 'atk') {
@@ -558,7 +558,8 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
           if (de(effets, 'rafale') && c.chaine.length >= 4) tirer(v);
         }
         const rp = g.type === 'bouclier' ? de(effets, 'riposte') : undefined;
-        if (rp) tirer(Math.round(c.bouclier * rp.part));
+        // la Riposte frappe : elle grossit avec l'usure comme les autres coups (8 novembre 2026, audit)
+        if (rp) tirer(Math.round(c.bouclier * rp.part * usureDuel(s.tour).attaque));
       }
       const fi = de(effets, 'fissure');
       if (fi) { fissure = Math.max(fissure, fi.part); nouvellesFissures[k] = Math.max(nouvellesFissures[k], fi.part); }
@@ -575,14 +576,14 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
     co.cible.pv = Math.max(0, co.cible.pv - net);
     ev.push({ sorte: 'coup', camp: co.camp, uid: co.uid, cible: co.cible.id, v: net, absorbe, avantage: co.avantage });
     infliges[co.camp] += avant - co.cible.pv;
-    if (co.siphon && avant > co.cible.pv) soinsSiphon.push({ camp: co.camp, porteur: co.porteur, v: Math.round((avant - co.cible.pv) * co.siphon), uid: co.uid });
+    if (co.siphon && avant > co.cible.pv) soinsSiphon.push({ camp: co.camp, porteur: co.porteur, v: Math.round((avant - co.cible.pv) * co.siphon * usureDuel(s.tour).soin), uid: co.uid }); // le Siphon soigne : il fond avec l'usure
   }
   // la Surtension se paie en PV (jamais jusqu'à tomber)
   for (const k of camps) {
     s.cotes[k].chaine.forEach((g, rang) => {
       const st = de(forces[k][rang]!.effets, 'surtension');
       const p = s.cotes[k].porteurs.find((q) => q.id === g.porteur);
-      if (st && p && p.pv > 1) p.pv = Math.max(1, p.pv - Math.round(p.pvMax * st.cout));
+      if (st && p && peutPayerSurtension(p)) p.pv = Math.max(1, p.pv - Math.round(p.pvMax * st.cout));
     });
   }
 
