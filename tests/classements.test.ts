@@ -177,14 +177,17 @@ describe('Le tableau de la Flèche', () => {
     // la première publication part de 0 ; la suivante monte de 12 quais au plus
     const e0 = entreeAPublier(j, 'u', 'Bryan', null, 1000, j.palmares!.semaine)!;
     expect([e0.fleche, e0.flecheSemaine]).toEqual([0, 0]);
-    const e = entreeAPublier(j, 'u', 'Bryan', { ...e0, fleche: 20, flecheLe: 500 }, 1000, j.palmares!.semaine)!;
-    expect([e.fleche, e.flecheLe, e.flecheSemaine]).toEqual([27, 1000, 15]);
+    const e = entreeAPublier(j, 'u', 'Bryan', { ...e0, fleche: 20, flecheLe: 500 }, 400_000, j.palmares!.semaine)!;
+    expect([e.fleche, e.flecheLe, e.flecheSemaine]).toEqual([27, 400_000, 15]);
+    // moins de 5 minutes après la dernière montée : le record attend la publication suivante (firestore.rules)
+    const tot = entreeAPublier(j, 'u', 'Bryan', { ...e0, fleche: 20, flecheLe: 500 }, 200_000, j.palmares!.semaine)!;
+    expect([tot.fleche, tot.flecheLe]).toEqual([20, 500]);
     // le record en ligne ne redescend pas
     const e2 = entreeAPublier(j, 'u', 'Bryan', { ...e, fleche: 31, flecheLe: 500 }, 2000, j.palmares!.semaine)!;
     expect([e2.fleche, e2.flecheLe]).toEqual([31, 500]);
     // un record plus haut : daté de maintenant, et au plus 12 quais d'un coup
     j.fleche.record = 60;
-    const e3 = entreeAPublier(j, 'u', 'Bryan', { ...e, fleche: 31, flecheLe: 500 }, 3000, j.palmares!.semaine)!;
-    expect([e3.fleche, e3.flecheLe]).toEqual([43, 3000]);
+    const e3 = entreeAPublier(j, 'u', 'Bryan', { ...e, fleche: 31, flecheLe: 500 }, 500_000, j.palmares!.semaine)!;
+    expect([e3.fleche, e3.flecheLe]).toEqual([43, 500_000]);
   });
 });

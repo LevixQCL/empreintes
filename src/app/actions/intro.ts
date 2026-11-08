@@ -18,10 +18,14 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
       noterAge(a === 'age-debut-majeur' ? 'majeur' : 'jeune');
       compteEtat.age = a === 'age-debut-majeur' ? 'majeur' : 'jeune';
       compteEtat.ageDemande = false;
+      // moins de 13 ans avec une session déjà ouverte (8 novembre 2026, après-midi) : on la ferme, plus rien ne part en ligne ;
+      // la partie reste sur l'appareil
+      if (a === 'age-jeune' && compteEtat.utilisateur && app.compte) await app.compte.deconnexion().catch(() => {});
       return agirIntro('titre-jouer', c);
     case 'titre-jouer':
       if (!titrePret()) return 'fin';
-      if (!app.jeu.introVue && compteEtat.actif && !compteEtat.age && !compteEtat.utilisateur) { compteEtat.ageDemande = true; compteEtat.ouvert = false; break; }
+      // l'âge, demandé une fois à tous (8 novembre 2026, après-midi : aussi aux joueurs déjà en route, compte ouvert ou non)
+      if (compteEtat.actif && !compteEtat.age) { compteEtat.ageDemande = true; compteEtat.ouvert = false; break; }
       app.mode = apresTitre();
       if (app.mode === 'combat') K.fin = finPour();
       if (app.mode === 'intro') { app.introLongue = false; app.plan = 0; app.lignesVues = 1; app.texteCache = false; }

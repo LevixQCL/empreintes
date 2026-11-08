@@ -131,3 +131,5 @@
 /* la présentation des Basses (8 novembre 2026) : à la première ouverture, puis à la demande */
 .bs-pres{display:grid;gap:12px;margin-top:12px}
 .bs-aide{margin:0 0 4px}
+/* 8 novembre 2026 (après-midi) : « Descendre le flanc » reste au bas de l'écran pendant qu'on lit (avant : deux écrans de défilement en 360 px) */
+.bs-pres>[data-action="basses-entrer"]{position:sticky;bottom:10px;z-index:3;box-shadow:0 0 0 8px var(--bg-2,#0d1118),0 -14px 28px 6px var(--bg-2,#0d1118)}

@@ -116,6 +116,9 @@
   .pl .contenu>.entete,.pl-etat,.pl-volets,.pl-missions{grid-column:1 / -1}
   /* 8 novembre 2026 (audit du 7, PC 1280 × 800) : la carte ne dépasse plus la hauteur de l'écran, et la fiche de la cible
      reste fixée en haut quand on défile : « Préparer le pillage » et « Ton district » ne sont plus coupés en bas */
+  /* 8 novembre 2026 (après-midi) : « +1 jeton » à droite des gemmes, sans ajouter de hauteur (il poussait le bouton sous le pli) */
+  .pl-jetons:has(.pl-achat){grid-template-columns:minmax(0,1fr) auto;column-gap:14px}
+  .pl-jetons>.pl-achat{grid-column:2;grid-row:1 / span 3;align-self:center;justify-self:end}
   .pl-carte{grid-column:1;grid-row:4 / span 2;aspect-ratio:5/4;margin:0;justify-self:center;width:min(100%,calc((100dvh - 330px) * 1.25));min-width:min(100%,420px)}
   .pl-fiche{grid-column:2;grid-row:4;position:sticky;top:12px;z-index:2}
   .pl-regle{grid-column:2;grid-row:5}

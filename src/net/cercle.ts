@@ -190,5 +190,5 @@ export async function nettoyer(uid: string, avant: number): Promise<void> {
   const q1 = await getDocs(query(collection(db(), 'defis'), where('de', '==', uid)));
   for (const d of q1.docs) if ((d.data() as Defi).le < avant) await deleteDoc(d.ref).catch(() => {});
   const q2 = await getDocs(query(collection(db(), 'echanges'), where('de', '==', uid)));
-  for (const d of q2.docs) { const p = d.data() as Proposition; if (p.etat !== 'propose' && p.maj < avant) await deleteDoc(d.ref).catch(() => {}); }
+  for (const d of q2.docs) { const p = d.data() as Proposition; if (p.etat !== 'propose' && p.maj < avant && (p.etat !== 'accepte' || p.maj < Date.now() - 7 * 86_400_000)) await deleteDoc(d.ref).catch(() => {}); }
 }

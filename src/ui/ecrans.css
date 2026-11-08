@@ -214,5 +214,9 @@
 }
 
 /* un écran chargé à la demande (app/differes.ts), le temps qu'il arrive */
-.chargement-ecran { margin: 48px auto; max-width: 30ch; text-align: center; font-size: 14px; color: var(--ivory, #e9e4d8); opacity: .75; }
-.ecran.chargement > .chargement-ecran { padding-top: 30vh; }
+/* 8 novembre 2026 (après-midi) : un anneau de lumière qui tourne, comme le reste de la matière ; sans réseau, le texte seul */
+.chargement-ecran{display:grid;justify-items:center;gap:14px;margin:14vh auto 0;max-width:32ch;text-align:center;font:500 14px/1.45 var(--display);color:var(--ivory,#e9e4d8)}
+.chargement-ecran::before{content:"";width:34px;height:34px;border-radius:50%;border:2px solid rgba(205,239,255,.16);border-top-color:#cdefff;box-shadow:0 0 18px rgba(127,212,255,.3);animation:chargement-tourne .9s linear infinite}
+.chargement-ecran.hors::before{content:none}
+@keyframes chargement-tourne{to{transform:rotate(1turn)}}
+@media (prefers-reduced-motion: reduce){ .chargement-ecran::before{animation-duration:2.4s} }

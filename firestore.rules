@@ -38,12 +38,18 @@ service cloud.firestore {
         // et elle ne monte qu'une fois toutes les 5 minutes (8 novembre 2026) : −100 demande des heures, plus quelques minutes
         && (request.resource.data.profondeur == resource.data.profondeur || request.time.toMillis() >= resource.data.profondeurLe + 300000)
         // la date d'arrivée ne bouge que si la profondeur monte, et c'est alors maintenant : « premier arrivé » ne se falsifie pas
-        && ((request.resource.data.profondeur > resource.data.profondeur && maintenant(request.resource.data.profondeurLe))
+        // 8 novembre 2026 (après-midi) : et chaque nouvelle date est au moins 5 minutes après la précédente. « maintenant » tolère
+        // 5 minutes d'écart d'horloge : sans cette chaîne, une date antidatée de 5 minutes rendait la montée suivante permise aussitôt
+        && ((request.resource.data.profondeur > resource.data.profondeur && maintenant(request.resource.data.profondeurLe)
+              && request.resource.data.profondeurLe >= resource.data.profondeurLe + 300000)
             || (request.resource.data.profondeur == resource.data.profondeur && request.resource.data.profondeurLe == resource.data.profondeurLe))
         // la Flèche, pareil : le record ne redescend jamais, gagne au plus 12 quais d'un coup, et sa date n'est « maintenant » que s'il monte
         && request.resource.data.get('fleche', 0) >= resource.data.get('fleche', 0)
         && request.resource.data.get('fleche', 0) <= resource.data.get('fleche', 0) + 12
-        && ((request.resource.data.get('fleche', 0) > resource.data.get('fleche', 0) && maintenant(request.resource.data.get('flecheLe', 0)))
+        // 8 novembre 2026 (après-midi) : la Flèche aussi ne monte qu'une fois toutes les 5 minutes (avant : sans délai, quai 101 en quelques secondes)
+        && ((request.resource.data.get('fleche', 0) > resource.data.get('fleche', 0) && maintenant(request.resource.data.get('flecheLe', 0))
+              && request.time.toMillis() >= resource.data.get('flecheLe', 0) + 300000
+              && request.resource.data.get('flecheLe', 0) >= resource.data.get('flecheLe', 0) + 300000)
             || (request.resource.data.get('fleche', 0) == resource.data.get('fleche', 0) && request.resource.data.get('flecheLe', 0) == resource.data.get('flecheLe', 0)))
         // les Joutes ne redescendent jamais et gagnent au plus 3 d'un coup
         && request.resource.data.get('joutes', 0) >= resource.data.get('joutes', 0)
@@ -97,7 +103,9 @@ service cloud.firestore {
         && quaiAtteint(request.resource.data.quai) && maintenant(request.resource.data.depuis);
       allow update: if request.auth != null && request.auth.uid == uid && quaiValide(request.resource.data)
         && quaiAtteint(request.resource.data.quai)
-        && (request.resource.data.depuis == resource.data.depuis || maintenant(request.resource.data.depuis));
+        // 8 novembre 2026 (après-midi) : changer de quai, c'est s'y installer maintenant (avant, on gardait l'ancienneté de son ancien quai)
+        && ((request.resource.data.quai == resource.data.quai && request.resource.data.depuis == resource.data.depuis)
+          || (maintenant(request.resource.data.depuis) && request.resource.data.depuis > resource.data.depuis));
       match /assauts/{id} {
         allow read: if request.auth != null;
         allow delete: if request.auth != null && request.auth.uid == uid;
@@ -124,7 +132,10 @@ service cloud.firestore {
     match /recrues/{uid} {
       allow get: if request.auth != null && (request.auth.uid == uid || resource.data.parrain == request.auth.uid);
       // suppression du compte (8 novembre 2026) : le filleul efface sa fiche (le parrain garde ses récompenses déjà reçues)
-      allow delete: if request.auth != null && request.auth.uid == uid;
+      // 8 novembre 2026 (après-midi) : seulement une fois son classement effacé (suppression du compte, qui l'efface d'abord).
+      // Avant, un filleul effaçait sa fiche et se réinscrivait chez un autre parrain avec le même classement.
+      allow delete: if request.auth != null && request.auth.uid == uid
+        && !exists(/databases/$(database)/documents/classement/$(uid));
       allow list: if request.auth != null && resource.data.parrain == request.auth.uid;
       allow create: if request.auth != null && request.auth.uid == uid && recrueValide(request.resource.data)
         && request.resource.data.parrain != uid
@@ -181,8 +192,11 @@ service cloud.firestore {
       // 8 novembre 2026 : seul l'auteur efface une proposition à laquelle on a répondu (il l'applique d'abord à sa partie).
       // Avant, le destinataire pouvait effacer un échange accepté : l'auteur croyait alors à une proposition perdue et
       // récupérait sa carte (deux comptes à soi suffisaient pour dupliquer une carte). Le destinataire n'efface qu'un refus.
-      allow delete: if request.auth != null && (resource.data.de == request.auth.uid
-        || (resource.data.a == request.auth.uid && resource.data.etat == 'refuse'));
+      // 8 novembre 2026 (après-midi) : un échange accepté ne s'efface plus pendant 7 jours, ni par l'un ni par l'autre.
+      // L'auteur pouvait l'effacer lui-même (par l'API) : son jeu croyait la proposition perdue et lui rendait sa carte.
+      // Une proposition disparue n'est rendue que pendant ces 7 jours (src/app/cercle.ts) ; après, l'effacer ne rend plus rien.
+      allow delete: if request.auth != null && (resource.data.de == request.auth.uid || resource.data.a == request.auth.uid)
+        && (resource.data.etat != 'accepte' || resource.data.maj + 604800000 <= request.time.toMillis());
     }
     // Un défi en duel envoyé à un ami : le code du salon (duels/{code}) et le mode (libre, ou à armes égales).
     match /defis/{id} {
@@ -232,6 +246,10 @@ service cloud.firestore {
             && request.resource.data.etat == 'fini' && request.resource.data.abandon == 1 - campDe(resource.data)
             && request.resource.data.gagnant == campDe(resource.data)
             && request.resource.data.absenceTour is int
+            // 8 novembre 2026 (après-midi) : le tour réclamé est le tour en cours, celui que l'autre a atteint en jouant le précédent
+            // (avant, on posait un choix pour un tour lointain, on attendait 45 s et on gagnait sans jouer)
+            && (request.resource.data.absenceTour == 0
+              || exists(/databases/$(database)/documents/duels/$(code)/choix/$(string(request.resource.data.absenceTour - 1) + '-' + string(1 - campDe(resource.data)))))
             && exists(/databases/$(database)/documents/duels/$(code)/choix/$(string(request.resource.data.absenceTour) + '-' + string(campDe(resource.data))))
             && !exists(/databases/$(database)/documents/duels/$(code)/choix/$(string(request.resource.data.absenceTour) + '-' + string(1 - campDe(resource.data))))
             && get(/databases/$(database)/documents/duels/$(code)/choix/$(string(request.resource.data.absenceTour) + '-' + string(campDe(resource.data)))).data.le + 45000 <= request.time.toMillis()))));
@@ -409,7 +427,9 @@ service cloud.firestore {
     }
 
     function estAdmin() {
-      return request.auth != null && request.auth.token.email == 'houben.bryan@gmail.com' && request.auth.token.email_verified == true;
+      // 8 novembre 2026 (après-midi) : l'empreinte SHA-256 de l'adresse, comme dans src/analyse/main.ts (le dépôt est public)
+      return request.auth != null && request.auth.token.email_verified == true
+        && hashing.sha256(request.auth.token.email.lower()).toHexString().lower() == '1f844d89dfde78aa9740d9368a477833bf3954975d622b52a1b531672fca2ba9';
     }
 
     function pseudoValide(cle, d) {

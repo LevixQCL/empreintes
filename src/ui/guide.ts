@@ -318,7 +318,7 @@ function astuce(t: TypeEffet): string {
     case 'riposte': return 'Pose-la en dernier : elle profite de tout le bouclier déjà monté dans la chaîne, et de celui gardé par un Rempart ou la Marque de Doran.';
     case 'decharge': return `Remplis le Flux (Surcharge, Résonance, Écho), puis vide-le d’un coup : à ${REGLES.fluxMax} Flux, la force fait plus que doubler. Mais ce Flux ne servira ni au Coup d’éclat ni à une place de plus.`;
     case 'diapason': return `Elle complète un Écho : deux cartes de même Fréquence et un Diapason, et ces trois cartes sont renforcées de +${Math.round((REGLES.echo - 1) * 100)} %, avec 1 Flux.`;
-    case 'unisson': return 'Trois cartes de même Fréquence : chacune compte les deux autres. La Dissonance ne brouille que les suites, pas l’Unisson ni l’Écho.';
+    case 'unisson': return 'Trois cartes de même Fréquence : chacune compte les deux autres. La Dissonance coupe les suites et l’Écho, mais pas l’Unisson.';
     case 'curee': return 'Fissure d’abord, Curée ensuite : la Fissure dure deux tours. Et quand l’ennemi passe sous la moitié de ses PV, toutes tes Curées mordent.';
     case 'lecture': return 'Contre un Évanescent, elle trouve la Fêlure cachée ; contre un gros coup annoncé, elle le casse sans chercher la bonne Fréquence.';
     case 'faille': return 'Pose-la après une Lecture, ou après la carte qui a la Fréquence fêlée.';

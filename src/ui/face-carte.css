@@ -36,7 +36,7 @@
   color:color-mix(in srgb,var(--fc) 35%,#fff);opacity:.75;text-shadow:0 1px 2px rgba(0,0,0,.6)}
 .nf-seg + .nf-seg{border-left:.3cqw solid rgba(220,240,255,.18)}
 .nf-seg::after{content:"";position:absolute;left:22%;right:22%;bottom:1.3cqw;height:.7cqw;border-radius:1cqw;background:color-mix(in srgb,var(--fc) 55%,#fff);opacity:.8}
-.nf-seg.p{min-width:16.5cqw;font-size:12.2cqw;opacity:1;background:color-mix(in srgb,var(--fc) 22%,rgba(8,10,18,.7));color:color-mix(in srgb,var(--fc) 30%,#fff)}
+.nf-seg.p{min-width:16.5cqw;font-size:max(var(--t-min),12.2cqw);opacity:1;background:color-mix(in srgb,var(--fc) 22%,rgba(8,10,18,.7));color:color-mix(in srgb,var(--fc) 30%,#fff)}
 .nf-seg.p::after{left:18%;right:18%;height:.9cqw;opacity:1;background:color-mix(in srgb,var(--fc) 70%,#fff)}
 /* la carte brise la Fêlure de l'ennemi : un segment blanc dans la capsule, l'icône de la gemme fêlée, et « Brise » */
 .nf-seg.fele{gap:1cqw;grid-auto-flow:column;min-width:0;padding:0 2.4cqw;opacity:1;color:#fff;

@@ -179,12 +179,13 @@ describe('Audit du 7 novembre : économie', () => {
 
   // 8 novembre 2026 : les Éclats du Comptoir et du Générateur accélèrent la Tour ; mesuré j25 (médiane de 16), voir le rapport du jour.
   // 8 novembre, midi : chantiers 6-10 en énergie, fouilleurs du jour, pillages simulés : j29 (cible de Bryan : le jour 30)
+  // 8 novembre, après-midi : 32 parties au lieu de 16 (avec 16, la médiane bougeait de 4 jours selon les parties tirées)
   it('un joueur occasionnel ouvre la Strate −10 entre le jour 27 et le jour 32', () => {
-    const jours = Array.from({ length: 16 }, (_, i) => simulerParcours(PROFILS.occasionnel, 40, 1000 + i * 7919, { joueur: 'moyen', jusqua: 10 }).ouverture[10] ?? Infinity);
+    const jours = Array.from({ length: 32 }, (_, i) => simulerParcours(PROFILS.occasionnel, 40, 1000 + i * 7919, { joueur: 'moyen', jusqua: 10 }).ouverture[10] ?? Infinity);
     const d = mediane(jours);
     expect(d).toBeGreaterThanOrEqual(27);
     expect(d).toBeLessThanOrEqual(32);
-  }, 120_000);
+  }, 300_000);
 });
 
 // Les Strates du Fond (audit du 7 novembre 2026) : après −10, une particularité empruntée qui change chaque semaine

@@ -139,7 +139,7 @@ function presentationBasses(j: Jeu, premiere: boolean, now: number): string {
     + bloc(ICO.coffre, 'Ce que la mer laisse', 'Chaque marée basse dépose des composants au pied de l’écluse.', [
       cle(ICO.composants, `+${etatMaree(now).grande ? valeurDepot(j, now) / 2 : valeurDepot(j, now)}`, 'par dépôt'),
       cle(ICO.coffre, String(BASSES.depotsMax), 'dépôts attendent au plus'),
-      cle(ICO.eclat, '×2', 'à grande marée'),
+      cle(ICO.composants, '×2', 'à grande marée'),
     ])
     + replie('Pourquoi les ramener', `<ul class="fl-pr-etapes">`
       + etape(ICO.mur, 'Le Mur des empreintes', 'Chaque famille ramenée pose sa main au Mur du district. Elle te suit désormais.')

@@ -843,7 +843,7 @@ body.carte-partie .zone-chaine .rail > .en-jeu{visibility:hidden}
   #app[data-mode="combat"] .ecran-combat .plaque-int .int-ico{width:24px;height:24px;flex:none}
   #app[data-mode="combat"] .ecran-combat .plaque-int .int-ico .ico{width:13px;height:13px}
   #app[data-mode="combat"] .ecran-combat .plaque-int .int-corps{flex:0 1 auto;display:flex;align-items:center;gap:5px;min-width:0}
-  #app[data-mode="combat"] .ecran-combat .plaque-int .int-nom{font-size:var(--t-min);letter-spacing:.08em}
+  #app[data-mode="combat"] .ecran-combat .plaque-int .int-nom{flex:none;font-size:var(--t-min);letter-spacing:.08em}
   #app[data-mode="combat"] .ecran-combat .plaque-int .int-quoi{font-size:12.5px;gap:4px}
   #app[data-mode="combat"] .ecran-combat .plaque-int .int-fleche{display:none}
   #app[data-mode="combat"] .ecran-combat .plaque-int .int-qui img{width:20px;height:20px}

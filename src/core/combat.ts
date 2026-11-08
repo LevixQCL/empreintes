@@ -1165,7 +1165,7 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   if (s.debride && g.type === 'atk') mettre('Débridage', REGLES.eclat.debride);
   const sc = de('secours');
   const tombes = s.porteurs.filter((p) => p.pv <= 0).length;
-  if (sc && tombes) mettre(`Groupe de secours (${tombes} à terre)`, 1 + sc.part * tombes);
+  if (sc && tombes) mettre(`Secours (${tombes} à terre)`, 1 + sc.part * tombes);
   const dc = de('decharge');
   const pris = dc ? Math.min(s.flux, dc.max ?? REGLES.fluxMax) : 0;
   if (dc) mettre(`Décharge (${pris} Flux)`, 1 + dc.part * pris);

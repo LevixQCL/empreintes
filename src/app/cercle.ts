@@ -147,16 +147,19 @@ async function majEchanges(uid: string, envoyees: Proposition[], recues: Proposi
       const r = J.rendreEchange(j, p.id, Date.now());
       if (r) { change = true; D.message = p.etat === 'refuse' ? `${r.nomAmi} a refusé : ta carte et tes composants te reviennent.` : 'Ta proposition est reprise : ta carte te revient.'; }
     }
-    if (p.de === uid) n.effacerProposition(p.id).catch(() => {});
+    if (p.de === uid && p.etat !== 'accepte') n.effacerProposition(p.id).catch(() => {});
   }
   // les propositions restées sans réponse
   for (const e of J.propositionsExpirees(j, Date.now())) {
     const fait = await n.repondre(e.id, 'annule').catch(() => false);
     if (fait && J.rendreEchange(j, e.id, Date.now())) change = true;
   }
-  // une proposition gardée dans la partie mais disparue en ligne (effacée ailleurs) : on la rend
+  // une proposition gardée dans la partie mais disparue en ligne (effacée ailleurs) : on la rend, seulement pendant 7 jours :
+  // un échange accepté ne peut pas être effacé avant (firestore.rules, 8 novembre 2026 après-midi), donc une proposition
+  // disparue plus tôt n'a pas été acceptée ; plus tard, elle a pu l'être, et la rendre dupliquerait la carte
   for (const e of J.etatCercle(j).enAttente) {
-    if (!envoyees.some((p) => p.id === e.id) && Date.now() - e.le > 60_000 && J.rendreEchange(j, e.id, Date.now())) change = true;
+    const age = Date.now() - e.le;
+    if (!envoyees.some((p) => p.id === e.id) && age > 60_000 && age < 7 * 86_400_000 && J.rendreEchange(j, e.id, Date.now())) change = true;
   }
   if (change) { sauver(); publierVitrine(); }
   redessiner();

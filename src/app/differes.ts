@@ -14,7 +14,11 @@ let rate = false;
 let attendu = false;
 let redessiner: () => void = () => {};
 
-export function brancherDifferes(afficher: () => void): void { redessiner = afficher; }
+export function brancherDifferes(afficher: () => void): void {
+  redessiner = afficher;
+  // le réseau revient (8 novembre 2026, après-midi) : on réessaie tout de suite, sans attendre un toucher du joueur
+  addEventListener('online', () => { if (rate && !ecrans) { attendu = true; chargerEcrans().catch(() => {}); } });
+}
 
 export function chargerEcrans(): Promise<Ecrans> {
   charge ??= import('./ecrans-differes').then((m) => {
@@ -41,7 +45,7 @@ export function ecransDifferes(): Ecrans | null {
 /** Ce qui s'affiche le temps que l'écran arrive (souvent moins d'une seconde, et une seule fois) */
 export function htmlChargement(e: EcranDistrict, surtitre: string, titre: string): string {
   const texte = rate ? 'Pas de réseau : cet écran s’ouvrira dès que la connexion revient.' : 'Chargement…';
-  return coquille(e, entete(surtitre, titre) + `<p class="chargement-ecran" role="status">${texte}</p>`, 'chargement');
+  return coquille(e, entete(surtitre, titre) + `<p class="chargement-ecran${rate ? ' hors' : ''}" role="status">${texte}</p>`, 'chargement');
 }
 
 /** Après le premier écran : les écrans différés et les animations du combat, sans gêner le démarrage */

@@ -294,7 +294,9 @@ export function entreeAPublier(
   let flecheLe = Math.round(j.fleche?.recordLe || now);
   if (!enLigne) { fleche = 0; flecheLe = now; }
   else {
-    fleche = Math.min(Math.max(fleche, enLigne.fleche), enLigne.fleche + FLECHE_PAS_MAX);
+    // et pas plus d'une fois toutes les FLECHE_DELAI (firestore.rules, 8 novembre 2026 après-midi) : le reste suivra
+    const flechePeutMonter = now >= enLigne.flecheLe + FLECHE_DELAI;
+    fleche = Math.min(Math.max(fleche, enLigne.fleche), flechePeutMonter ? enLigne.fleche + FLECHE_PAS_MAX : enLigne.fleche);
     flecheLe = fleche > enLigne.fleche ? now : enLigne.flecheLe;
   }
   // les Joutes : comme la Flèche, jamais plus de JOUTES_PAS_MAX d'un coup (la même borne que firestore.rules)
@@ -321,6 +323,8 @@ export const PROFONDEUR_DELAI = 5 * 60_000;
 export const JOUTES_PAS_MAX = 3;
 /** Les quais de record qu'une publication peut ajouter (le reste suit à la suivante) : la même borne que firestore.rules */
 export const FLECHE_PAS_MAX = 12;
+/** la Flèche ne monte qu'une fois toutes les 5 minutes, comme la profondeur (même borne que firestore.rules) */
+export const FLECHE_DELAI = 5 * 60_000;
 
 /** Faut-il republier ? (un score, le nom ou le Porteur de tête a changé) */
 export function aChange(a: Entree, b: Entree | null): boolean {

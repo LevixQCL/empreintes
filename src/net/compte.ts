@@ -120,12 +120,17 @@ export async function supprimerCompte(pseudo: string | null, code: string | null
     effacerTous(query(collection(db, 'quais', uid, 'assauts'))),
     effacerTous(query(collection(db, 'amities'), where('membres', 'array-contains', uid))),
     effacerTous(query(collection(db, 'echanges'), where('de', '==', uid))),
+    // les propositions reçues portent aussi son pseudo (8 novembre 2026, après-midi) ; un échange accepté depuis moins
+    // de 7 jours reste (firestore.rules : l'effacer rendrait la carte à son auteur)
+    effacerTous(query(collection(db, 'echanges'), where('a', '==', uid))),
     effacerTous(query(collection(db, 'defis'), where('de', '==', uid))),
     effacerTous(query(collection(db, 'defis'), where('a', '==', uid))),
     effacerTous(query(collection(db, 'duels'), where('hote.uid', '==', uid))),
   ]);
+  // le classement d'abord : la fiche de recrue ne s'efface qu'une fois le classement parti (firestore.rules)
+  await effacer(doc(db, 'classement', uid));
   await Promise.all([
-    effacer(doc(db, 'classement', uid)), effacer(doc(db, 'garnisons', uid)), effacer(doc(db, 'quais', uid)),
+    effacer(doc(db, 'garnisons', uid)), effacer(doc(db, 'quais', uid)),
     effacer(doc(db, 'profils', uid)), effacer(doc(db, 'recrues', uid)),
     pseudo ? effacer(doc(db, 'pseudos', pseudo)) : null,
     code ? effacer(doc(db, 'parrains', code)) : null,

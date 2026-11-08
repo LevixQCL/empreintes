@@ -395,7 +395,7 @@ function regles(): string {
     + '<li><b>Contre un groupe</b>, chaque ennemi annonce son geste sur sa vignette, en haut à droite. Touche une vignette pour viser cet ennemi : toute la chaîne le frappe, et s’il tombe, le reste de la chaîne passe au suivant.</li>'
     + `<li><b>Fuir :</b> le bouton en haut à droite. L’attaque annoncée touche pendant la fuite (personne ne meurt), puis tu recules d’une salle sur la carte, ou tu remontes au district avec ${Math.round(DISTRICT.butinFuite * 100)} % des composants et un peu plus de fatigue.</li>`
     + `<li><b>Le journal du combat</b> (${ICO.journal} à côté de la pioche et de la défausse, ou la dernière ligne au-dessus de ta main) : les cartes jouées à chaque tour, le calcul de chaque dégât subi ou infligé, ta défausse et ta pioche. Les « ? » expliquent chaque terme.</li>`
-    + '<li><b>La Dissonance :</b> certains ennemis brouillent tes Fréquences. Au tour suivant, aucune suite ne résonne : mise sur la force brute ou la protection.</li></ol></div></section>';
+    + '<li><b>La Dissonance :</b> certains ennemis brouillent tes Fréquences. Au tour suivant, ni suite ni Écho ne résonne : mise sur la force brute ou la protection.</li></ol></div></section>';
 }
 
 // ---------- Le lieu du combat : la salle de la Strate derrière l'interface (22 octobre 2026) ----------
@@ -453,7 +453,7 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
   // Brouillard : on sait ce que l'ennemi prépare, pas combien ni sur qui
   if (C_brume(s)) {
     nom = 'Dans le brouillard';
-    quoi = it.type === 'atk' ? 'Cible inconnue' : it.type === 'dissonance' ? 'Pas de Résonance au tour suivant' : GENRE_INTENTION[it.type] ?? '';
+    quoi = it.type === 'atk' ? 'Cible inconnue' : it.type === 'dissonance' ? 'Ni suite ni Écho au tour suivant' : GENRE_INTENTION[it.type] ?? '';
     if (it.type !== 'dissonance') { val = '?'; unite = it.type === 'atk' || it.type === 'boost' ? 'dégâts' : it.type === 'soin' ? 'PV' : 'bouclier'; }
     return `<div class="intention plaque-int ${classe} brume" aria-live="polite" aria-label="${echap(`Brouillard : ${GENRE_INTENTION[it.type]}, force et cible cachées.`)}">`
       + `<span class="int-ico">${icone}</span>`
@@ -476,7 +476,7 @@ function plaqueIntention(s: CombatEtat, classe: string, icone: string, felureHtm
   else if (it.type === 'soin') { nom = it.nom; quoi = it.allie ? 'Soigne un allié' : 'Se répare'; val = `+${it.v}`; unite = 'PV'; }
   else if (it.type === 'appel') { nom = it.nom; quoi = it.rompu ? 'Appel rompu' : 'Un renfort va surgir'; }
   else if (it.type === 'boost') { nom = 'Se concentre'; quoi = 'Prochaine attaque'; val = '×2'; unite = 'dégâts'; }
-  else { nom = it.nom; quoi = 'Pas de Résonance au tour suivant'; }
+  else { nom = it.nom; quoi = 'Ni suite ni Écho au tour suivant'; }
   return `<div class="intention plaque-int ${classe}" aria-live="polite" aria-label="${echap(texteIntention(s))}">`
     + `<span class="int-ico">${icone}</span>`
     + `<span class="int-corps" aria-hidden="true"><small class="int-nom">${echap(nom)}</small><span class="int-quoi">${it.type === 'atk' ? '<i class="int-fleche"></i>' : ''}${quoi}</span></span>`
@@ -500,7 +500,8 @@ function ligneFelure(s: CombatEtat, prevue: boolean, resonne: boolean): string {
   const effet = it.type === 'atk' ? `${chiffre(it.v)} → <b>${chiffre(reduit(it.v))}</b><span class="fl-u"> dégâts</span>`
     : it.type === 'bouclier' ? `bouclier +${it.v} → <b>+${reduit(it.v)}</b>`
     : it.type === 'soin' ? `soin +${it.v} → <b>+${reduit(it.v)}</b>`
-    : 'sans effet sur ce qu’il prépare';
+    // en une ligne (combat sur téléphone), la phrase se cache : la gemme seule suffit (8 novembre 2026, après-midi)
+    : '<span class="fl-mot">sans effet sur ce qu’il prépare</span>';
   // le Flux en plus ne s'annonce que quand la chaîne posée fait une suite (3, 4, 5) : avant, la ligne dit juste ce que la carte brise
   const flux = prevue && resonne && s.flux < REGLES.fluxMax ? `, <b class="gain-flux">+${REGLES.felure.flux} Flux</b>` : '';
   return `<span class="int-felure${prevue ? ' prevue' : ''}" style="--fc:${couleurFrequence(f)}"><span class="gemme">${ICO.fele}<b>${f}</b></span>`

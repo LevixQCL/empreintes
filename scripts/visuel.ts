@@ -269,6 +269,8 @@ async function main() {
               let x = 42;
               Math.random = () => ((x = (x * 16807) % 2147483647) - 1) / 2147483646;
               try { localStorage.setItem('empreintes.jeu.v2', s!); } catch { /* stockage bloqué */ }
+              // l'âge déjà donné (8 novembre 2026, après-midi : le jeu le demande une fois à tous, même aux parties en route)
+              try { localStorage.setItem('empreintes.age', 'majeur'); } catch { /* stockage bloqué */ }
               // les graphismes complets : sans carte graphique, Chromium passerait le jeu en graphismes légers (graphismes.ts)
               try { localStorage.setItem('empreintes.graphismes', g!); } catch { /* stockage bloqué */ }
               // ni chargement ni décodage différés : une image serait peinte ou non selon le moment de la photo

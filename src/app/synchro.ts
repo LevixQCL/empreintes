@@ -48,7 +48,8 @@ export function sauver() {
   // le joueur vient de commencer (intro vue) : le compte invisible est créé maintenant, pas à la simple visite
   // (pas si le joueur a dit avoir moins de 13 ans : sa partie reste sur l'appareil)
   if (app.compte && !compteEtat.utilisateur && compteEtat.pret && app.jeu.introVue && enLignePermis()) app.compte.creerInvisible();
-  if (app.compte && app.uid && reconcilie) {
+  // rien ne part en ligne pour un joueur de moins de 13 ans, même si une session était restée ouverte
+  if (app.compte && app.uid && reconcilie && enLignePermis()) {
     enAttente = env;
     if (minuteur === undefined) minuteur = window.setTimeout(envoyer, Math.max(1500, derniereEcriture + ECRIRE_APRES - Date.now()));
     planifierPublication();

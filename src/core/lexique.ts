@@ -47,7 +47,7 @@ export const LEXIQUE: Record<string, Terme> = {
   elan: { nom: 'Élan', motif: /Élan/, texte: 'La chaîne du tour suivant a une place de plus.', theme: 'effet' },
   rempart: { nom: 'Rempart', motif: /Rempart/, texte: 'Une part du bouclier d’escouade qui reste après le tour ennemi est gardée pour le tour suivant.', theme: 'effet' },
   quai: { nom: 'Bras de quai', motif: /Bras de quai/, texte: 'La Marque de Docker : une part du bouclier d’escouade restant est gardée à chaque tour.', theme: 'marque' },
-  dissonance: { nom: 'Dissonance', motif: /brouillé/, texte: 'L’ennemi brouille tes Fréquences : au tour suivant, aucune suite ne résonne. Les Échos comptent toujours.', theme: 'ennemi', mots: mot('Dissonances?') },
+  dissonance: { nom: 'Dissonance', motif: /brouillé/, texte: 'L’ennemi brouille tes Fréquences : au tour suivant, ni suite ni Écho ne résonne.', theme: 'ennemi', mots: mot('Dissonances?') },
   siphon: { nom: 'Siphon', motif: /Siphon/, texte: 'Le Porteur qui joue la carte récupère une part des dégâts qu’elle inflige.', theme: 'effet' },
   epines: { nom: 'Épines', motif: /Épines/, texte: 'Cet ennemi renvoie une part des coups au Porteur qui frappe, sans jamais le mettre à terre.', theme: 'ennemi' },
   concentration: { nom: 'Concentration', motif: /se concentre|Concentration/, texte: 'L’ennemi a passé un tour à se concentrer : sa prochaine attaque fait le double de dégâts.', theme: 'ennemi' },
@@ -80,7 +80,7 @@ export const LEXIQUE: Record<string, Terme> = {
   blinde: { nom: 'Blindé', motif: /Blindé/, texte: 'Cet ennemi retire quelques points à chaque coup (un peu plus en profondeur). Perçant passe outre.', theme: 'ennemi' },
   percant: { nom: 'Perçant', motif: /Perçant|transpercé/, texte: 'Le coup ignore le bouclier et le blindage de l’ennemi.', theme: 'effet' },
   evanescent: { nom: 'Évanescent', motif: /Évanescent/, texte: 'Hors Résonance, cet ennemi ne prend qu’une part des coups : fais des suites.', theme: 'ennemi' },
-  eternise: { nom: 'Combat qui s’éternise', motif: /s’éternise/, texte: 'À partir du tour 13, les attaques ennemies grossissent de 15 % par tour (et dès le tour 11, les ennemis se soignent de moins en moins) : aucun combat ne tourne en rond, même avec une escouade qui ne fait que tenir.', theme: 'combat' },
+  eternise: { nom: 'Combat qui s’éternise', motif: /s’éternise/, texte: 'À partir du tour 12, les attaques ennemies grossissent de 15 % par tour (et dès le tour 10, les ennemis se soignent de moins en moins) : aucun combat ne tourne en rond, même avec une escouade qui ne fait que tenir.', theme: 'combat' },
   pleins: { nom: 'PV déjà pleins', motif: /PV déjà pleins/, texte: 'Un soin ne dépasse jamais les PV max : le surplus est perdu.', theme: 'combat' },
   nouvelleMain: { nom: 'Nouvelle main', motif: /nouvelle main/, texte: 'Pour 1 Flux, la main et les cartes déjà posées partent à la défausse, et l’on pioche une main neuve.', theme: 'combat' },
 
