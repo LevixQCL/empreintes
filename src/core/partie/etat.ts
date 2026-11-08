@@ -378,6 +378,10 @@ export interface Jeu {
   missionsJour?: { jour: number; cles: string[] };
   /** les creuseurs ramenés par les naufragés pendant la Strate en cours (plafonnés par Strate, idée de Luc du 28 octobre 2026) */
   naufrages?: { strate: number; n: number };
+  /** le jour de la dernière exploration du front (la première de la journée rapporte double, 8 novembre 2026) */
+  premiereExploration?: number;
+  /** les creuseurs ramenés des fouilles aujourd'hui (fouilleurs du jour, 8 novembre 2026) */
+  fouilleurs?: { jour: number; n: number };
   /** les barques parties aujourd'hui (les premières reviennent pleines, les suivantes moins : les ruines proches s'épuisent) */
   departsJour?: { jour: number; n: number };
   /** les barques parties aujourd'hui vers chaque destination (fouille en profondeur, 2 novembre 2026) */
@@ -728,6 +732,13 @@ export const CREUSEURS = {
   fouille: 0.25,
   /** audit du 7 novembre 2026 (mur de −7 à −10 : 15 sessions sur 18 à attendre) : une chance sur deux à partir de −6 */
   fouilleProfonde: { des: 6, chance: 0.5 },
+  /**
+   * Les fouilleurs du jour (8 novembre 2026, audit : −10 au jour 16 à cinq sessions par jour, au jour 40 à une seule) :
+   * à partir de −6, la première fouille réussie de la journée ramène un creuseur à coup sûr ; une fois `parJour` creuseurs
+   * ramenés des fouilles dans la journée, les suivantes n'en ramènent plus qu'avec `chanceEnsuite`.
+   * Celui qui passe une fois par jour avance plus sûrement ; celui qui enchaîne garde l'avance, en moins grand.
+   */
+  fouilleursDuJour: { garantis: 1, parJour: 2, chanceEnsuite: 0.2 },
   missionCourte: 0.1,
   missionLongue: 0.3,
   epreuve: 1,
@@ -743,6 +754,17 @@ export const CREUSEURS = {
 
 /** La chance qu'une fouille ciblée réussie dans cette Strate ramène un creuseur */
 export const chanceCreuseurFouille = (strate: number) => (strate >= CREUSEURS.fouilleProfonde.des ? CREUSEURS.fouilleProfonde.chance : CREUSEURS.fouille);
+
+/** Les creuseurs déjà ramenés des fouilles aujourd'hui */
+export const fouilleursDuJour = (j: Pick<Jeu, 'fouilleurs'>, now: number) => (j.fouilleurs?.jour === jourDe(now) ? j.fouilleurs.n : 0);
+
+/** La chance qu'une fouille réussie ramène un creuseur, compte tenu de ceux déjà ramenés aujourd'hui (1 = à coup sûr) */
+export function chanceCreuseurDuJour(j: Pick<Jeu, 'fouilleurs'>, strate: number, now: number): number {
+  const base = chanceCreuseurFouille(strate);
+  if (strate < CREUSEURS.fouilleProfonde.des) return base;
+  const n = fouilleursDuJour(j, now), r = CREUSEURS.fouilleursDuJour;
+  return n < r.garantis ? 1 : n < r.parJour ? base : r.chanceEnsuite;
+}
 
 /** Les creuseurs que les naufragés peuvent encore ramener pendant la Strate en cours (plafond et déjà ramenés) */
 export function naufragesDeLaStrate(j: Pick<Jeu, 'strate' | 'naufrages'>): { plafond: number; ramenes: number; restants: number } {

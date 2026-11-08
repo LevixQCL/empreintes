@@ -237,9 +237,9 @@ qu'il faille un peu plus d'expéditions pour chaque nouvelle Strate (environ aut
 **Le creusement** (22 octobre 2026) : battre le gardien de la Strate la plus profonde prépare l'étage suivant, qui ne
 s'ouvre qu'avec assez de **creuseurs** logés par la **Tour du Noyau** (`CREUSEURS` dans `jeu.ts`). Les creuseurs qui percent
 un étage y restent : pas de réserve pour plus tard. On en gagne en jouant (fouilles, missions, Épreuves, gardiens, Confiance).
-Il en faut dès la Strate −2 (Bryan, 22 octobre 2026 : ralentir dès le début). Réglé pour un joueur occasionnel (`npm run audit`, 8 novembre 2026) : −5 vers le jour 7, −7 vers le jour 11, −10 vers le jour 25 (test : entre 24 et 32). Le Noyau loge les creuseurs (niveau 5 pour −7, 6 pour −8) et il en faut plus pour descendre (`NOYAU_MIN`) : niveau 8 pour −9, 9 pour −10 et le Fond.
+Il en faut dès la Strate −2 (Bryan, 22 octobre 2026 : ralentir dès le début). Réglé pour un joueur occasionnel (`npm run audit`, 8 novembre 2026) : −10 vers le jour 29 (test : entre 27 et 32 ; cible de Bryan : le jour 30). Mesuré le 8 novembre à midi, pillages compris : −10 au jour 19 à cinq sessions par jour, 31 à deux, 39 à une (celui-là bloque surtout sur les gardiens, pas sur les creuseurs). **Les fouilleurs du jour** (`CREUSEURS.fouilleursDuJour`) : à partir de −6, la première fouille réussie de la journée ramène un creuseur à coup sûr, la suivante une chance sur deux, puis une sur cinq. Le Noyau loge les creuseurs (niveau 5 pour −7, 6 pour −8) et il en faut plus pour descendre (`NOYAU_MIN`) : niveau 8 pour −9, 9 pour −10 et le Fond.
 
-Les Éclats (8 novembre 2026) : le Comptoir en vend de 1 à 6 par jour selon son niveau (500, 700 puis 1 000 composants), le Générateur en condense de 1 à 3 par jour à partir du niveau 5 (2 000 énergie l'Éclat, `CRISTALLISEUR`), et après −10 chaque dépôt des Basses en laisse 1 ou 2. Les Basses ouvrent après −2, la lettre de la directrice aussi (`BASSES.ouverture`, `LEGS_STRATE`).
+Les Éclats (8 novembre 2026) : le Comptoir en vend de 1 à 6 par jour selon son niveau (500, 700 puis 1 000 composants), le Générateur en condense de 1 à 3 par jour à partir du niveau 4 (2 000 énergie l'Éclat, `CRISTALLISEUR`). Les bâtiments des niveaux 6 à 10 coûtent surtout de l'énergie (×1,6 par rapport au 7 novembre, composants ×0,8, jamais plus de 85 % de la réserve du Noyau), et après −10 chaque dépôt des Basses en laisse 1 ou 2. Les Basses ouvrent après −2, la lettre de la directrice aussi (`BASSES.ouverture`, `LEGS_STRATE`).
 
 Confidentialité (8 novembre 2026) : `public/confidentialite.html`, l'âge demandé avant la première partie (`src/save/age.ts` : moins de 13 ans, rien en ligne), et « Supprimer mon compte et mes données » dans le panneau Compte (`supprimerCompte`, `src/net/compte.ts`).
 
@@ -385,7 +385,7 @@ Corrigé ce jour-là (avant → après) :
 - *Éclats* : le Comptoir en vend 1 à 2 par jour à 500 composants (`COMPTOIR.eclats`, `acheterEclat`).
 - *Réserves* : Butins de la semaine empilés (4 au plus, `ARCHIVE.empilesMax`), 7 colis de ravitaillement, caisse de la Flèche 7 jours.
 - *Clinique* : +2 % de PV max par niveau au-delà du 3e (`CLINIQUE_PV`).
-- *Explorer* : composants ×1,5, chance de carte +5 points, Éclats 20 % dès −5 (`REGLES.exploration`), contre les fouilles.
+- *Explorer* : composants ×1,5 (×2 pour la première exploration du front de la journée, `REGLES.exploration.premiere`), chance de carte +5 points, Éclats 20 % dès −5 (`REGLES.exploration`), contre les fouilles.
 
 ## Firebase
 

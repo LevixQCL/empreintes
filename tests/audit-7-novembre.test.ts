@@ -177,11 +177,12 @@ describe('Audit du 7 novembre : économie', () => {
     expect(forceEpreuve(ep, 4) / forceStrate(4)).toBeLessThan(ep.force);
   });
 
-  // 8 novembre 2026 : les Éclats du Comptoir et du Générateur accélèrent la Tour ; mesuré j25 (médiane de 16), voir le rapport du jour
-  it('un joueur occasionnel ouvre la Strate −10 entre le jour 24 et le jour 32', () => {
+  // 8 novembre 2026 : les Éclats du Comptoir et du Générateur accélèrent la Tour ; mesuré j25 (médiane de 16), voir le rapport du jour.
+  // 8 novembre, midi : chantiers 6-10 en énergie, fouilleurs du jour, pillages simulés : j29 (cible de Bryan : le jour 30)
+  it('un joueur occasionnel ouvre la Strate −10 entre le jour 27 et le jour 32', () => {
     const jours = Array.from({ length: 16 }, (_, i) => simulerParcours(PROFILS.occasionnel, 40, 1000 + i * 7919, { joueur: 'moyen', jusqua: 10 }).ouverture[10] ?? Infinity);
     const d = mediane(jours);
-    expect(d).toBeGreaterThanOrEqual(24);
+    expect(d).toBeGreaterThanOrEqual(27);
     expect(d).toBeLessThanOrEqual(32);
   }, 120_000);
 });
@@ -215,12 +216,14 @@ describe('Audit du 7 novembre : le Fond', () => {
 });
 
 describe('Audit du 8 novembre : l’énergie en trop', () => {
-  it('le Générateur condense des Éclats à partir du niveau 5, de 1 à 3 par jour', async () => {
+  it('le Générateur condense des Éclats à partir du niveau 4, de 1 à 3 par jour', async () => {
     const { nouveauJeu, cristalliser, cristallisationsMax, CRISTALLISEUR } = await import('../src/core/jeu');
     const j = nouveauJeu(0, 1);
-    j.batiments.generateur = 4;
+    j.batiments.generateur = 3;
     j.energie = 10_000;
     expect(cristalliser(j, 0).ok).toBe(false);
+    j.batiments.generateur = 4;
+    expect(cristallisationsMax(j)).toBe(1);
     j.batiments.generateur = 9;
     expect(cristallisationsMax(j)).toBe(3);
     const e0 = j.eclats;

@@ -28,7 +28,9 @@ export const REGLES = {
   /** Ce qu'Explorer rapporte de plus qu'une fouille (audit du 7 novembre 2026 : à −5, 25 de valeur par minute en exploration
    *  contre 49 en fouille facile). Pour les combats d'une expédition salle par salle (pas les fouilles) : composants ×`composants`,
    *  chance de carte par combat gagné +`carte`, et dès la Strate −`eclatsDes` une chance d'Éclat `eclats` (fouilles : `eclatsFouille`). */
-  exploration: { composants: 1.5, carte: 0.05, eclatsDes: 5, eclats: 0.2, eclatsFouille: 0.1 },
+  /** 8 novembre 2026 (audit : explorer le front rapportait 38 composants la minute contre 55 pour une fouille facile) :
+   *  la première exploration du front de la journée compte ses composants double (`premiere`), les suivantes ×1,5 */
+  exploration: { composants: 1.5, premiere: 2, carte: 0.05, eclatsDes: 5, eclats: 0.2, eclatsFouille: 0.1 },
   /** 3ᵉ phase des gardiens (28 octobre 2026) : sous ce seuil de PV, une variante tirée au début du combat ; Déferlement : +X par tour, plafond */
   troisiemePhase: { seuil: 0.2, deferlement: 0.25, deferlementMax: 2, renfort: 0.2, renfortForce: 0.28 },
   tailleMain: 5,

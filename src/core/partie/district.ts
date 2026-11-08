@@ -719,8 +719,9 @@ export function convertir(j: Jeu, now = j.dernierTick): Resultat {
  * La cristallisation du Générateur (8 novembre 2026, audit du soir : 67 % de l'énergie perdue, le Générateur 6 à 10 sans effet) :
  * le courant des grands paliers condense des Éclats. 2 000 énergie l'Éclat ; 1 par jour au niveau 5-6, 2 au 7-8, 3 au 9-10.
  * Les Éclats restent la ressource rare : au mieux 3 par jour, contre ~54 pour monter un bâtiment au niveau 10.
+ * 8 novembre 2026, midi (audit : encore ~50 % de l'énergie perdue, 2 à 3 Éclats en main au jour 30) : dès le niveau 4, 1 par jour.
  */
-export const CRISTALLISEUR = { energie: 2000, parJour: [0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3] as number[], niveauMin: 5 };
+export const CRISTALLISEUR = { energie: 2000, parJour: [0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 3] as number[], niveauMin: 4 };
 export const cristallisationsDuJour = (j: Jeu, now = j.dernierTick) => (j.cristallisation?.jour === jourDe(now) ? j.cristallisation.n : 0);
 export const cristallisationsMax = (j: Jeu) => CRISTALLISEUR.parJour[j.batiments.generateur] ?? 0;
 

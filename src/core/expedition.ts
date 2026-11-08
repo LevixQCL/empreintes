@@ -87,6 +87,8 @@ export interface Expedition {
   eveille?: boolean;
   /** la Strate est relevée (ses 5 Vestiges) : une fouille y voit tout le plan */
   releve?: boolean;
+  /** la première exploration du front de la journée (8 novembre 2026) : ses combats rapportent double */
+  premiere?: boolean;
   /** un Porteur est tombé pendant la descente (étoile 2), l'escouade est entrée dans un campement (étoile 3) */
   chute?: boolean;
   campe?: boolean;
@@ -236,7 +238,7 @@ export function cloturerCombat(x: Expedition): Expedition {
       const fin = salle.type === 'gardien';
       const brut = fin ? butinCombat(x.strate, 2) : salle.type === 'elite' ? butinCombat(x.strate, 0) * REGLES.salles.elite : butinCombat(x.strate, 0);
       // explorer rapporte plus que fouiller (audit du 7 novembre 2026)
-      const gain = Math.round(brut * (x.fouille ? 1 : REGLES.exploration.composants));
+      const gain = Math.round(brut * (x.fouille ? 1 : x.premiere ? REGLES.exploration.premiere : REGLES.exploration.composants));
       let gains: Gains = { ...(x.gains ?? gainsVides()), elites: (x.gains?.elites ?? 0) + (salle.type === 'elite' ? 1 : 0), ...(salle.quete ? { etape: true } : {}) };
       if (salle.vestige) gains = ramasser(gains, salle.vestige);
       // le Rôdeur : enfui, il garde la part de vie qui lui reste ; abattu, il compte comme une salle scellée

@@ -498,7 +498,7 @@ function bulles(e: EcranDistrict): string {
 function appel(e: EcranDistrict): string {
   const j = e.j;
   if (j.expedition) {
-    return `<button type="button" class="appel" data-action="reprendre">${ICO.descendre}<span><strong>${j.expedition.tutoriel ? 'La chambre scellée' : `Expédition · Strate −${j.expedition.strate}`}</strong><small>Le combat t’attend : reprendre</small></span></button>`;
+    return `<button type="button" class="appel" data-action="reprendre">${ICO.descendre}<span><strong>${j.expedition.tutoriel ? 'La chambre scellée' : `Expédition · Strate −${j.expedition.strate}`}</strong><small>${j.expedition.carte && j.expedition.phase === 'carte' ? `Ta descente t’attend là où tu l’as laissée : reprendre` : 'Le combat t’attend : reprendre'}</small></span></button>`;
   }
   if (!j.chambre) {
     return `<button type="button" class="appel reso" data-action="rencontre">${ICO.porte}<span><strong>La porte scellée</strong><small>Sous la Tour du Noyau, trois personnes t’attendent</small></span></button>`;
@@ -1905,7 +1905,7 @@ export function htmlCoupe(e: EcranDistrict): string {
     etape = `<strong>La roche cède : la Strate −${cible} va s’ouvrir</strong><small>Tout est prêt. Descends pour découvrir le nouvel étage.</small>`
       + `<div class="tr-boutons"><button type="button" class="btn prim" data-action="descendre" data-strate="${j.strate}"${off ? ' disabled' : ''}>${ICO.descendre}Descendre</button></div>`;
   }
-  if (j.expedition) h += `<button type="button" class="appel tr-reprendre" data-action="reprendre">${ICO.descendre}<span><strong>Expédition en cours</strong><small>Strate −${j.expedition.strate} : reprendre le combat</small></span></button>`;
+  if (j.expedition) h += `<button type="button" class="appel tr-reprendre" data-action="reprendre">${ICO.descendre}<span><strong>Expédition en cours</strong><small>Strate −${j.expedition.strate} : ${j.expedition.carte && j.expedition.phase === 'carte' ? 'reprendre là où tu t’es arrêté' : 'reprendre le combat'}</small></span></button>`;
   // une seule carte en tête (refonte du 25 octobre 2026) : le chapitre en cours (pourquoi on descend), puis ce qu'il faut faire
   const chap = j.chambre ? chapitreCampagne(contexteCampagne(j)) : null;
   const derniere = j.scenes?.at(-1);

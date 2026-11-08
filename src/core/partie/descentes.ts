@@ -12,7 +12,7 @@ import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { REGLES } from '../regles';
-import { nbFoyers, ACCORD_OUVERT, chanceCreuseurFouille, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
+import { nbFoyers, ACCORD_OUVERT, chanceCreuseurDuJour, fouilleursDuJour, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -856,7 +856,8 @@ export function remonter(j: Jeu): Retour {
   }
   progresser(j, 'combat', victoires);
   if (victoire && x.fouille) {
-    if (tireur(j).nombre() < chanceCreuseurFouille(x.strate)) gagnerCreuseurs(j, 1, 'un fouilleur perdu retrouvé pendant la fouille');
+    if (tireur(j).nombre() < chanceCreuseurDuJour(j, x.strate, j.dernierTick) && gagnerCreuseurs(j, 1, 'un fouilleur perdu retrouvé pendant la fouille'))
+      j.fouilleurs = { jour: jourDe(j.dernierTick), n: fouilleursDuJour(j, j.dernierTick) + 1 };
     // le filon : ce que la fouille visait
     // une Strate relevée (explorer.ts) : la première carte du filon est au moins en cuivre, +25 % de composants, Éclats plus fréquents
     // la difficulté (1er novembre 2026) : le filon d'une lignée offre 1, 2 ou 3 cartes au choix, et le difficile part du cuivre
@@ -1152,6 +1153,11 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
     vestiges: vestigesManquants(j, strate), eveille: gardienEveille(j, strate),
     ...(rodeur && tireur({ rng: (rng ^ 0x68e31da4) >>> 0 }).nombre() < EXPLORER.rodeur.chance ? { rodeur } : {}),
   });
+  // la première exploration du front de la journée (8 novembre 2026) : ses combats rapportent double
+  if (strate === j.strate && !j.expedition.tutoriel && j.premiereExploration !== jourDe(j.dernierTick)) {
+    j.premiereExploration = jourDe(j.dernierTick);
+    j.expedition = { ...j.expedition, premiere: true, recit: `${j.expedition.recit} Première descente du jour au front : les composants y comptent double.` };
+  }
   retenirDepart(j, escouade);
   log(j, `L’escouade descend dans la Strate −${strate}.`);
   return { ok: true };
@@ -1244,7 +1250,7 @@ export interface EpreuveDef {
 export const EPREUVES: EpreuveDef[] = [
   { id: 'couloir', nom: 'Le couloir sans halte', famille: 'endurance', strateMin: 1, force: 1.3, enchainement: { soin: 0 },
     regle: 'Trois combats d’affilée, puis le gardien : aucun PV rendu entre eux.' },
-  { id: 'nul-ne-tombe', nom: 'Nul ne reste au fond', famille: 'endurance', strateMin: 1, force: 1.05, regles: { sansChute: true },
+  { id: 'nul-ne-tombe', nom: 'Nul ne reste au fond', famille: 'endurance', strateMin: 1, force: 0.95, regles: { sansChute: true },
     regle: 'Le premier Porteur à terre fait perdre l’Épreuve.' },
   { id: 'mi-souffle', nom: 'À mi-souffle', famille: 'endurance', strateMin: 1, force: 1.2, pvDepart: 0.5,
     regle: 'L’escouade part avec la moitié de ses PV (rendus au retour).' },
@@ -1254,7 +1260,7 @@ export const EPREUVES: EpreuveDef[] = [
     regle: 'Le gardien vient avec deux bêtes de la Strate : choisis qui tomber d’abord.' },
   { id: 'derniere-frequence', nom: 'La dernière Fréquence', famille: 'tactique', strateMin: 2, strateMax: 6, force: 1.28, troisiemePhase: true,
     regle: 'Le gardien garde une 3ᵉ phase cachée sous ses derniers PV.' },
-  { id: 'brouillard', nom: 'Brouillard total', famille: 'lecture', strateMin: 5, force: 1.3, condition: 'brouillard',
+  { id: 'brouillard', nom: 'Brouillard total', famille: 'lecture', strateMin: 5, force: 1.2, condition: 'brouillard',
     regle: 'On voit ce que prépare le gardien, jamais combien ni sur qui ; sa Fêlure est cachée.' },
   { id: 'brouillage', nom: 'Fréquences brouillées', famille: 'lecture', strateMin: 1, force: 1.12, regles: { sansResonance: true },
     regle: 'Aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.' },
@@ -1336,7 +1342,8 @@ export const forceEpreuve = (ep: EpreuveDef, strate: number, felee?: boolean) =>
  */
 export const EPREUVES_PROFONDES = { des: 4, force: 0.85, tresProfond: 8, forceTres: 0.75, fond: 10, forceFond: 0.7 } as const;
 /** 8 novembre 2026 (audit du soir : à −10, 8 Épreuves sur 10 à 0 % au premier essai, alors qu'elles donnent un creuseur) :
- *  ×0,85 de −4 à −7, ×0,75 à −8 et −9, ×0,7 dès −10 (mesuré : à ×0,75, encore 0 à 33 % à −10 ; à ×0,65, 70 à 100 %) */
+ *  ×0,85 de −4 à −7, ×0,75 à −8 et −9, ×0,7 dès −10 (mesuré : à ×0,75, encore 0 à 33 % à −10 ; à ×0,65, 70 à 100 %).
+ *  8 novembre, midi : « Nul ne reste au fond » (×1,05 → ×0,95) et « Brouillard total » (×1,3 → ×1,2), sous 15 % de −7 à −10. */
 const coefProfond = (strate: number) => strate >= EPREUVES_PROFONDES.fond ? EPREUVES_PROFONDES.forceFond
   : strate >= EPREUVES_PROFONDES.tresProfond ? EPREUVES_PROFONDES.forceTres : strate >= EPREUVES_PROFONDES.des ? EPREUVES_PROFONDES.force : 1;
 

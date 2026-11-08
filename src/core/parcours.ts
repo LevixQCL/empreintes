@@ -19,6 +19,8 @@ import { bassesOuvertes, dresserBatardeau, envoyerBasses, libresPourBasses, rama
   contratsDuMoment, envoyerContrat, equipeConseillee, mareesDe, raisonHorsContrat, tauxContrat,
 } from './jeu';
 import { jouerTour, jouerTourMoyen } from './robot';
+import { PILLAGE, achatsRestants, acheterJeton, ciblesDuJour, coutJeton, difficulte, forceEscouade, peutPiller, piller } from './partie/pillages';
+import { strateVaincue } from './partie/etat';
 // (les creuseurs se gagnent par les fouilles, missions et Épreuves que joue déjà ce joueur simulé)
 import type { CombatEtat, Lignee } from './types';
 
@@ -155,7 +157,7 @@ function gerer(j: Jeu, now: number): void {
   for (const id of ordre) while (monter(j, id).ok);
   // des Éclats au Comptoir (audit du 7 novembre 2026), s'il reste de quoi monter ses cartes (trois fois le prix)
   while (j.batiments.comptoir && j.composants >= 3 * prixEclatComptoir(j) && acheterEclat(j, now).ok);
-  while (j.energie >= 2 * CRISTALLISEUR.energie && cristalliser(j, now).ok);
+  while (j.energie >= CRISTALLISEUR.energie + 1000 && cristalliser(j, now).ok);
   for (const b of ['noyau', 'generateur', 'clinique', 'forge', 'comptoir'] as const) ameliorer(j, b, now);
   // les Basses (7 novembre 2026) : il ramasse les dépôts, garde à sec un secteur où des familles attendent, et y envoie un Porteur
   if (bassesOuvertes(j)) {
@@ -313,6 +315,17 @@ export function simulerParcours(
       if (h === profil.sessions[0] && front >= 2) {
         const ep = epreuvesDeLaSemaine(now, j).find((e) => !j.epreuves.faites.includes(e.id));
         if (ep) { jouerExpedition(j, () => partirEpreuve(j, escouade, ep.id, now, suivant()).ok, jouer, opts.tours); gerer(j, now); }
+      }
+      // les pillages (8 novembre 2026 : jusque-là absents de la simulation) : à chaque session, un archipel
+      // à sa portée (« facile » ou « équilibré »), et deux jetons achetés par jour s'il reste de l'énergie aux chantiers
+      if (strateVaincue(j) >= PILLAGE.strateMin) {
+        while (achatsRestants(j, now) && j.energie >= coutJeton(j) + 2000 && acheterJeton(j, now).ok);
+        for (let k = 0; k < 1; k++) {
+          const c = ciblesDuJour(j, escouade, now).find((x) => difficulte(x.force / Math.max(0.01, forceEscouade(j, escouade))).niveau <= 2);
+          if (!c || !peutPiller(j, now).ok) break;
+          jouerExpedition(j, () => piller(j, escouade, c, now, suivant()).ok, jouer);
+          gerer(j, now);
+        }
       }
       // bloqué au front (deux échecs d'affilée) : une fouille ciblée juste au-dessus, pour la lignée la plus faible du deck
       // le gardien du front est vaincu, mais il manque des creuseurs : on fouille le front pour en retrouver
