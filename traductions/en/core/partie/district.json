@@ -450,11 +450,11 @@
    "en": "This Bearer is down below."
   },
   {
-   "fr": "Il n’a pas d’Usure.",
+   "fr": "Pas d’Usure à soigner.",
    "en": "They have no Strain."
   },
   {
-   "fr": "La Clinique offre ses premiers soins intensifs : {0} est remis sur pied (−{1} Usure).",
+   "fr": "La Clinique offre ses premiers soins intensifs : {0} est de nouveau sur pied (−{1} Usure).",
    "en": "The Clinic offers its first intensive care: {0} is back on their feet (−{1} Strain)."
   },
   {

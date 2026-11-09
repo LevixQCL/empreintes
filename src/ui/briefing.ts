@@ -108,7 +108,7 @@ const demoRepere = () => `<ul class="demo-liste">`
 export const ETAPES_DISTRICT: Etape[] = [
   {
     qui: 'vela', titre: tr('Ton district'),
-    texte: tr('Ici, tout tourne avec trois ressources. Tu les vois en haut de l’écran : touche-en une pour tout savoir sur elle.'),
+    texte: tr('Ici, tout tourne avec trois ressources. Tu les vois en haut de l’écran : touches-en une pour tout savoir sur elle.'),
     demo: demoRessources,
   },
   {

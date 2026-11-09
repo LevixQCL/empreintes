@@ -233,7 +233,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', recit = false): stri
     + replie(t('L’histoire'), `<p>${t`Les îles des Hauts ne se posent jamais : elles dérivent au-dessus de la mer et ne s’arrêtent qu’aux flèches d’amarrage. Il n’en reste qu’une debout, et ce sont les Hauts qui la tiennent.`}</p>`
       + `<p>${t`Avant 2101, les districts d’en bas montaient à l’abordage. Les Accords y ont mis fin et n’ont laissé qu’une route légale vers le haut : la Flèche, quai par quai. Tout district invité peut y envoyer une escouade.`}</p>`
       + `<p>${t`Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. « S’il tient le sommet au passage d’une île, il y est reçu », dit la Clause. Les Hauts ont toujours lu « l’escouade ».`}</p>`)
-    + (recit ? replie(t('Les Îles ouvertes'), `<p>${t`Le Noyé, vieux saboteur rescapé de la Grève, garde un brouillon de la Clause, écrit à la main pendant la Grève des pompes : « le district dont l’escouade tient le sommet au passage d’une île y est reçu ». Pas l’escouade : le district.`}</p>`
+    + (recit ? replie(t('Les Îles ouvertes'), `<p>${t`Le Noyé, vieux saboteur rescapé du Levage, garde un brouillon de la Clause, écrit à la main pendant la Grève des pompes : « le district dont l’escouade tient le sommet au passage d’une île y est reçu ». Pas l’escouade : le district.`}</p>`
       + `<p>${t`Ceux qui sont montés ont tous accepté le palais qu’on leur offrait. Le Noyé attend un directeur qui tiendra le sommet, puis refusera, pour réclamer l’île au nom de tous. Le sommet et ses Sièges arrivent bientôt ; l’histoire complète t’attend dans les Chroniques (« Il y est reçu »).`}</p>`, ICO.porte) : '')
     + replie(t('Les règles en détail'), `<ul class="fl-pr-etapes">`
       + etape(ICO.atk, t('Un combat par quai'), t('Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.'))
@@ -242,7 +242,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', recit = false): stri
       + etape(ICO.cristal, t('Les quais gravés'), t`${FLECHE.paliers.join(', ')} : chacun donne des cristaux et des Éclats, une seule fois. Ton record compte au Grand Tableau.`)
       + `</ul>`, ICO.aide)
 
-    + replie(t('La garde des quais · compétition'), `<p>${t`Les Hauts préfèrent payer un directeur qui tient bon qu’un gardien de location. Les meilleurs directeurs se disputent les quais : le but, tenir le plus haut.`}</p><ul class="fl-pr-etapes">`
+    + replie(t('La garde des quais · compétition'), `<p>${t`Les Hauts préfèrent payer un directeur qui tient bon plutôt qu’un gardien de location. Les meilleurs directeurs se disputent les quais : le but, tenir le plus haut.`}</p><ul class="fl-pr-etapes">`
       + etape(ICO.monter, t('Ta montée ne dépend que de toi'), t('L’histoire se joue toujours contre les gardiens payés : aucun directeur ne peut te barrer la route.'))
       + etape(ICO.porteurs, t('Tiens un quai déjà atteint'), t('Une copie figée de ton escouade y monte la garde, pendant que tu continues de grimper avec la vraie.'))
       + etape(ICO.coffre, t('Les Hauts te versent un gage'), t`Plus le quai est haut, plus il rapporte (${gage(20)} par jour au quai 20, ${gage(80)} au quai 80). La caisse garde jusqu’à ${ASCENSION.caisseJours} jours.`)

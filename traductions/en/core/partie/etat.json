@@ -10,8 +10,8 @@
    "en": "Mark {0}: {1} {2} — {3}."
   },
   {
-   "fr": "{0} est prêt pour sa Marque {1} : il lui reste à gagner {2}.",
-   "en": "{0} is ready for their {1} Mark: they still have to earn {2}."
+   "fr": "Marque {0} en vue pour {1} : il lui reste à gagner {2}.",
+   "en": "{1} is close to their {0} Mark: they still have to earn {2}."
   },
   {
    "fr": "Gagnée",

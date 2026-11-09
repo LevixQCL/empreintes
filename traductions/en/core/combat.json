@@ -102,7 +102,7 @@
    "en": "{0}: will heal an ally, +{1} HP"
   },
   {
-   "fr": "Se concentre : sa prochaine attaque fera double dégâts",
+   "fr": "Se concentre : sa prochaine attaque fera des dégâts doubles",
    "en": "Focusing: its next attack will deal double damage"
   },
   {
@@ -194,8 +194,8 @@
    "en": "Three"
   },
   {
-   "fr": "{0} est visé à son tour.",
-   "en": "{0} is targeted in turn."
+   "fr": "La chaîne passe à {0}.",
+   "en": "The chain moves on to {0}."
   },
   {
    "fr": "{0} assimile ton dernier coup : le voilà {1}.",
@@ -218,11 +218,11 @@
    "en": "Recall"
   },
   {
-   "fr": "{0} s’éteint dans le noir avant d’être abattu : l’Épreuve est manquée.",
+   "fr": "{0} s’éteint dans le noir avant de tomber : l’Épreuve est manquée.",
    "en": "{0} fades into the dark before it can be brought down: the Trial is failed."
   },
   {
-   "fr": "{0} s’enfuit dans le noir, blessé. Ses blessures resteront.",
+   "fr": "{0} s’enfuit dans le noir. Ses blessures resteront.",
    "en": "{0} flees into the dark, wounded. Its wounds will remain."
   },
   {
@@ -230,7 +230,7 @@
    "en": "The group is defeated."
   },
   {
-   "fr": "{0} est vaincu.",
+   "fr": "{0} tombe.",
    "en": "{0} is defeated."
   },
   {
@@ -642,7 +642,7 @@
    "en": "{0} shields up: shield {1}."
   },
   {
-   "fr": "{0} se concentre. Sa prochaine attaque fera double dégâts.",
+   "fr": "{0} se concentre. Sa prochaine attaque fera des dégâts doubles.",
    "en": "{0} focuses. Its next attack will deal double damage."
   },
   {

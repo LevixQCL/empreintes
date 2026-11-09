@@ -78,11 +78,11 @@ export const NOM_SPECIALITE: Record<SpecialiteLieu, string> = { composants: t('M
 export const RECIT_BON: Record<Lignee, string> = {
   tech: t('{nom} a posé la main sur une console morte : ses greffes ont parlé aux machines, et les portes se sont ouvertes une à une.'),
   bio: t('Les plantes se sont écartées devant {nom} : un Géné sent les sèves, et sait où le vivant cache ce qu’il garde.'),
-  reso: t('Les échos du lieu ont reconnu la pierre de {nom}, et les voix l’ont guidé jusqu’aux cachettes.'),
+  reso: t('Les échos du lieu ont reconnu la pierre de {nom}, et les voix lui ont montré le chemin des cachettes.'),
 };
 export const RECIT_MAUVAIS: Record<Lignee, string> = {
   tech: t('Les machines n’ont rien voulu entendre de la pierre de {nom} : les vannes sont restées grippées, il a fallu tout forcer.'),
   bio: t('Les ronces se sont refermées sur les greffes de {nom}, et l’humidité a grippé ses articulations : une fouille lente et pénible.'),
   reso: t('Les échos ont égaré {nom}, qui a tourné des heures dans des couloirs qui changeaient de forme.'),
 };
-export const RECIT_NEUTRE = t('Rien ne l’a aidé, rien ne l’a gêné : une fouille honnête, à la lampe.');
+export const RECIT_NEUTRE = t('Ni aide ni gêne sur place : une fouille honnête, à la lampe.');

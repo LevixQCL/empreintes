@@ -74,7 +74,7 @@ export async function rejoindreSalon(code: string, uid: string, escouade: Escoua
     const d = await t.get(ref);
     if (!d.exists()) throw new Error(tr('Aucun duel ne porte ce code.'));
     const s = d.data() as Salon;
-    if (s.hote.uid === uid) throw new Error(tr('C’est ton propre duel : partage le code à un ami.'));
+    if (s.hote.uid === uid) throw new Error(tr('C’est ton propre duel : partage le code avec un ami.'));
     if (s.etat !== 'attente' || s.invite) throw new Error(tr('Ce duel a déjà commencé.'));
     const maj = { invite: { uid, escouade, mise }, etat: 'en-cours' as const, debut: Date.now(), maj: Date.now() };
     t.update(ref, maj);

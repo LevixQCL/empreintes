@@ -189,7 +189,7 @@ function bilanDeck(j: Jeu, esc: string[]): string {
     return `<span class="eq-action ${t}${k ? '' : ' zero'}"><span class="eq-nb">${ICONES_ACTION[t]}<b>${k}</b></span><small>${t === 'atk' ? (k > 1 ? tr('attaques') : tr('attaque')) : t === 'bouclier' ? (k > 1 ? tr('protections') : tr('protection')) : k > 1 ? tr('soins') : tr('soin')}</small></span>`;
   }).join('');
   // une seule phrase de conseil, la plus utile
-  const conseil = manque ? `<b class="rouge">${tr`Il manque ${manque} carte${manque > 1 ? 's' : ''}`}</b> ${tr`pour descendre (${DISTRICT.deckMin} au moins) : confie-en à un Porteur plus bas.`}`
+  const conseil = manque ? `<b class="rouge">${tr`Il manque ${manque} carte${manque > 1 ? 's' : ''}`}</b> ${tr`pour descendre (${DISTRICT.deckMin} au moins) : confies-en à un Porteur plus bas.`}`
     : !cartes.some((g) => g.type === 'soin' && g.porteur) ? `<b class="rouge">${tr`Aucun soin`}</b> ${tr`dans les cartes de tes Porteurs : seul le Stimulant du paquetage soigne.`}`
     : suite.length >= 2 ? `${tr`Ta plus longue suite va de`} <b>${tr`${suite[0]} à ${suite[suite.length - 1]}`}</b>${trous.length ? `${tr`. Rien en`} <b>${trous.join(', ')}</b> ${tr`: ${trous.length > 1 ? tr('ces chiffres coupent') : tr('ce chiffre coupe')} tes Résonances`}` : tr(' : toute l’échelle est couverte')}${jokers ? tr` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} un trou` : ''}.`
     : tr('Des Fréquences qui se suivent font des Résonances : ajoute des chiffres voisins.');

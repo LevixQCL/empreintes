@@ -123,7 +123,7 @@ export function decouverteEnAttente(vues: readonly string[], s: CombatEtat): Dec
 const CONSEILS_PARTICULARITE: Record<number, string> = {
   2: tr('Garde un Augmenté debout dans l’escouade : sans lui, les murs restent fermés.'),
   3: tr('Avance salle par salle jusqu’à la Halte : la lanterne qui t’y attend rallume le plan.'),
-  4: tr('Une salle scellée est plus dure, mais rend une carte de cuivre : entre-y quand l’escouade est en forme.'),
+  4: tr('Une salle scellée est plus dure, mais rend une carte de cuivre : entres-y quand l’escouade est en forme.'),
   5: tr('Ne néglige pas les caches : une niche peut rendre une carte au lieu de minerai.'),
   6: tr('Passe par les archives quand tu peux : elles complètent les Chroniques.'),
   7: tr('Regarde les deux occupants avant d’entrer, et choisis celui que ton escouade bat le mieux.'),

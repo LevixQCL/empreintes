@@ -586,11 +586,11 @@ export function recitMission(r: RapportMission): string[] {
     tr`Le passeur a déposé ${nom} devant ${lieu}, à marée basse.`,
     tr`${heures} heures de mer : ${nom} a gagné ${lieu} sur la barque du passeur.`,
     tr`Lampe à algues au poing, ${nom} a plongé dans ${lieu}, salle après salle.`,
-    tr`Au lever du brouillard, la barque a touché ${lieu}. ${nom} est monté seul.`,
+    tr`Au lever du brouillard, la barque a touché ${lieu}. ${nom} a débarqué sans escorte.`,
   ]));
   if ((r.rendement ?? 1) < 1) recit.push(tr`D’autres barques étaient passées avant aujourd’hui : ${nom} a dû chercher plus loin, dans des salles à moitié vidées.`);
   if (r.profondeur === 1) recit.push(choisir([
-    tr`Les barques du matin avaient balisé l’entrée : ${nom} est descendu droit vers les Cales, là où personne n’était encore allé.`,
+    tr`Les barques du matin avaient balisé l’entrée : ${nom} a filé droit vers les Cales, là où personne n’était encore allé.`,
     tr`Grâce aux marques laissées par la première barque, ${nom} a trouvé l’escalier des Cales sous la vase.`,
   ]));
   if (r.profondeur === COEUR) recit.push(choisir([
@@ -625,7 +625,7 @@ export function recitMission(r: RapportMission): string[] {
   if (r.marque) recit.push(tr`Un exploit qui ne s’oublie pas : ${nom} gagne la Marque ${r.marque}.`);
   if (r.niveau) recit.push(tr`L’expérience paie : ${nom} passe au niveau ${r.niveau}.`);
   recit.push(r.usure > 0
-    ? choisir([tr`Le retour s’est fait sans encombre, mais l’eau froide laisse des traces : la Clinique s’en chargera.`, tr`${nom} rentre trempé et fourbu : un peu de repos à la Clinique ne sera pas de trop.`])
+    ? choisir([tr`Le retour s’est fait sans encombre, mais l’eau froide laisse des traces : la Clinique s’en chargera.`, tr`${nom} rentre en claquant des dents : un peu de repos à la Clinique ne sera pas de trop.`])
     : tr`${nom} rentre sans une égratignure.`);
   return recit;
 }
@@ -1025,7 +1025,7 @@ function remonterExplorer(j: Jeu, x: Expedition, victoire: boolean, avant: Etoil
       etat.abattu = true;
       const def = RODEURS.find((d) => d.id === r.id)!;
       j.choix.push({ source: 'rodeur', options: tirerChoix(j, x.strate, def.trophee) });
-      log(j, tr`${ennemiDef(r.id).nom} est abattu. ${def.chute}`);
+      log(j, tr`${ennemiDef(r.id).nom} tombe. ${def.chute}`);
     }
   }
   return { retour: { vestiges: nouveaux, ...(releve ? { releve: x.strate } : {}), etoiles, paliers, ...(r ? { rodeur: r } : {}), ...(x.eveille && victoire ? { eveille: true } : {}) }, eclats, composants, xp };
@@ -1082,7 +1082,7 @@ export function resumeAbsence(avant: Jeu, apres: Jeu, nouvelles: string[]): stri
   if (de > 0) l.push(tr`+${de} cristaux taillés par le Générateur`);
   l.push(...nouvelles);
   const remis = Object.keys(apres.porteurs).filter((id) => avant.porteurs[id]!.usure >= 1 && apres.porteurs[id]!.usure < 1);
-  for (const id of remis) l.push(tr`${porteurDef(id).nom} est remis de son Usure`);
+  for (const id of remis) l.push(tr`${porteurDef(id).nom} n’a plus d’Usure`);
   const soignes = Object.keys(apres.porteurs).filter((id) => !remis.includes(id) && avant.porteurs[id]!.usure - apres.porteurs[id]!.usure >= 1);
   if (soignes.length) l.push(tr`La Clinique a soigné ${soignes.map((id) => porteurDef(id).nom).join(', ')}`);
   if (!l.length) return l;
@@ -1172,7 +1172,7 @@ export type DifficulteFouille = keyof typeof DIFFICULTES_FOUILLE;
 
 export const CIBLES_FOUILLE: Record<CibleFouille, { nom: string; texte: string }> = {
   tech: { nom: tr('Cartes augmentées'), texte: tr('Les cartes trouvées sont des cartes d’Augmentés, et le filon en garde une (trois au choix en difficile).') },
-  bio: { nom: tr('Cartes génés'), texte: tr('Les cartes trouvées sont des cartes de Génés, et le filon en garde une (trois au choix en difficile).') },
+  bio: { nom: tr('Cartes génées'), texte: tr('Les cartes trouvées sont des cartes de Génés, et le filon en garde une (trois au choix en difficile).') },
   reso: { nom: tr('Cartes résonantes'), texte: tr('Les cartes trouvées sont des cartes de Résonants, et le filon en garde une (trois au choix en difficile).') },
   composants: { nom: tr('Minerai'), texte: tr('Le filon rapporte du minerai pour chaque combat gagné en route : plus le chemin est long, plus il donne.') },
   eclats: { nom: tr('Éclats'), texte: tr('Chaque combat gagné en route peut laisser un Éclat au filon : plus le chemin est long, plus tu as de chances.') },
@@ -1246,7 +1246,7 @@ export const EPREUVES: EpreuveDef[] = [
   { id: 'extinction', nom: tr('Avant l’extinction'), famille: 'tempo', strateMin: 1, force: 1, regles: { chrono: 13 },
     regle: tr('Abats le gardien en 13 tours, sinon il s’éteint dans le noir.') },
   { id: 'meute', nom: tr('La meute'), famille: 'tactique', strateMin: 3, force: 1.9, forceBas: 1.45, meute: true,
-    regle: tr('Le gardien vient avec deux bêtes de la Strate : choisis qui tomber d’abord.') },
+    regle: tr('Le gardien vient avec deux bêtes de la Strate : choisis qui abattre d’abord.') },
   { id: 'derniere-frequence', nom: tr('La dernière Fréquence'), famille: 'tactique', strateMin: 2, strateMax: 6, force: 1.28, troisiemePhase: true,
     regle: tr('Le gardien garde une 3ᵉ phase cachée sous ses derniers PV.') },
   { id: 'brouillard', nom: tr('Brouillard total'), famille: 'lecture', strateMin: 5, force: 1.2, condition: 'brouillard',

@@ -138,7 +138,7 @@ export function gagnerXp(j: Jeu, id: string, xp: number): number | null {
     if (m && pal > palierAuNiveau(avant)) {
       log(j, progresMarque(j, id)?.acquise
         ? tr`Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} : ${m.nom} ${deNom(porteurDef(id).nom)} — ${m.paliers[pal - 1]!.court}.`
-        : tr`${porteurDef(id).nom} est prêt pour sa Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} : il lui reste à gagner ${m.nom}.`);
+        : tr`Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} en vue pour ${porteurDef(id).nom} : il lui reste à gagner ${m.nom}.`);
     }
     return apres;
   }

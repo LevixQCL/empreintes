@@ -548,7 +548,7 @@ function feuilleExpedition(e: EcranDistrict): string {
     }
     h += `</div>`;
   }
-  if (r.choix) h += `<p class="rx-choix">${ICO.cartes}<span><b>${r.choix > 1 ? tr`${r.choix} cartes au choix` : tr('Une carte au choix')}</b> ${tr`t’attend${r.choix > 1 ? 'ent' : ''} au district : tu la choisis juste après.`}</span></p>`;
+  if (r.choix) h += `<p class="rx-choix">${ICO.cartes}<span><b>${r.choix > 1 ? tr`${r.choix} cartes au choix` : tr('Une carte au choix')}</b> ${tr`t’attend${r.choix > 1 ? 'ent' : ''} au district : le choix se fait juste après.`}</span></p>`;
   // l'escouade : l'XP de chacun, et les niveaux pris
   if (g.xp?.length) {
     h += `<h3 class="rx-titre">${ICO.monter}${tr`L’escouade · +${g.xp[0]!.xp} XP`}</h3><ul class="rx-escouade">`

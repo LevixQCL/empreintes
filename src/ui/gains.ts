@@ -330,7 +330,7 @@ function contenu(g: Exclude<Gain, { kind: 'res' }>): { html: string; onglet: str
     return {
       classe: 'empreinte', onglet: 'porteurs',
       html: `<span class="gv-carte" style="--metal:${COULEUR_METAL[m.rarete]};--fil:url(${filigrane(p)})">${illustrationModule(g.cle) ? `<img src="${illustrationModule(g.cle)}" alt="" decoding="async">` : `<i>${echap(m.nom.charAt(0))}</i>`}</span>`
-        + `<span class="gv-texte"><small>${g.epithete ? tr('Nouvel épithète') : tr('La carte se souvient')}</small><strong>${echap(m.nom)}</strong><em>${g.epithete ? tr('à choisir dans sa fiche') : `palier ${NOMS_PALIER[p]}`}</em></span>`,
+        + `<span class="gv-texte"><small>${g.epithete ? tr('Nouvelle épithète') : tr('La carte se souvient')}</small><strong>${echap(m.nom)}</strong><em>${g.epithete ? tr('à choisir dans sa fiche') : `palier ${NOMS_PALIER[p]}`}</em></span>`,
     };
   }
   if (g.kind === 'marque') {

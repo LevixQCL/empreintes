@@ -152,7 +152,7 @@ export function htmlMarees(e: EcranDistrict): string {
     + (escouade.length ? `<small class="mr-alerte">${escouade.length > 1 ? tr`${enumerer(escouade.map((p) => echap(porteurDef(p).nom)))} ne pourront pas descendre avant le retour de la gabare.` : tr`${echap(porteurDef(escouade[0]!).nom)} ne pourra pas descendre avant le retour de la gabare.`}</small>` : '')
     + `<div class="mr-boutons"><button type="button" class="btn sec" data-action="maree-conseil">${tr`Meilleure équipe`}</button>`
     + `<button type="button" class="btn prim" data-action="maree-partir" data-id="${c.id}"${complet && !occupe ? '' : ' disabled'}>${tr`Embarquer`}</button></div>`
-    + (occupe ? `<small class="aide">${tr`La gabare est en mer : un contrat à la fois.`}</small>` : !complet ? `<small class="aide">${tr`Il manque un Porteur libre : libère-en un d’un bâtiment.`}</small>` : '')
+    + (occupe ? `<small class="aide">${tr`La gabare est en mer : un contrat à la fois.`}</small>` : !complet ? `<small class="aide">${tr`Il manque un Porteur libre : libères-en un d’un bâtiment.`}</small>` : '')
     + `</div></div></article>`;
   return h + `</section>`;
 }

@@ -338,7 +338,7 @@ function balises(e: EcranDistrict): string {
       + `<span class="bal-nom">${echap(d.nom)}</span></button>`;
     // une seule bulle par bâtiment, la plus urgente
     if (prete) h += bulle('alerte', ICO.ok, tr('Forge : la carte est prête'));
-    else if (vise) h += bulle('alerte objectif', ICO.objectif, tr`${echap(d.nom)} : l'objectif se fait ici`);
+    else if (vise) h += bulle('alerte objectif', ICO.objectif, tr`${echap(d.nom)} : l’objectif se fait ici`);
     else if (ch) h += bulle('info', `${ICO.marteau}<em>${decompte(ch.fin, e.now)}</em>`, tr`${echap(d.nom)} : amélioration en cours`);
     else if (j.forge && id === 'forge') h += bulle('info', `${ICO.chrono}<em>${decompte(j.forge.fin, e.now)}</em>`, tr('Forge : fabrication en cours'));
     else if (vacant) h += bulle('vacant', ICO.posteLibre, tr`${echap(d.nom)} : personne au poste`);
@@ -1424,7 +1424,7 @@ function blocEmpreinte(j: Jeu, cle: string): string {
       + `<ul class="emp-exploits" aria-label="${tr`Exploits demandés pour ${NOMS_PALIER[suite.palier]}`}">${suite.exploits.map((e) => `<li class="${e.fait ? 'fait' : ''}" aria-label="${echap(e.texte)}${e.fait ? tr(', fait') : tr(', à faire')}"><i aria-hidden="true"></i>${echap(e.texte)}</li>`).join('')}</ul>`;
   }
   h += `<p class="emp-aide">${tr`${p ? tr('Un trophée gagné au fil des descentes : ') : tr('Un trophée, pas un dû : il faut des semaines de combats avec la même carte, et des exploits qu’elle seule a vécus. ')}chaque palier allume son filigrane. Pur souvenir : aucun effet en combat.`}</p>`;
-  if (ep.length > 1) h += `<div class="emp-epithetes" role="group" aria-label="${tr`Épithète affiché`}">${ep.map((e) => `<button type="button" class="emp-choix" data-action="epithete" data-module="${cle}" data-id="${e.id}" aria-pressed="${e.texte === affiche}">${echap(e.texte)}</button>`).join('')}</div>`;
+  if (ep.length > 1) h += `<div class="emp-epithetes" role="group" aria-label="${tr`Épithète affichée`}">${ep.map((e) => `<button type="button" class="emp-choix" data-action="epithete" data-module="${cle}" data-id="${e.id}" aria-pressed="${e.texte === affiche}">${echap(e.texte)}</button>`).join('')}</div>`;
   else if (!ep.length) h += `<p class="emp-aide">${tr`Épithètes : des exploits rares, comme porter le dernier coup à un Gardien.`}</p>`;
   if (journal.length) h += `<ul class="emp-journal">${journal.map((l) => `<li>${echap(l)}</li>`).join('')}</ul>`;
   return h + `</section>`;
@@ -1577,7 +1577,7 @@ export function htmlCartes(e: EcranDistrict): string {
     `<button type="button" role="tab" class="es-cible${f === x.id ? ' actif' : ''}${x.classe ? ` ${x.classe}` : ''}"${x.c ? ` style="--c:${x.c}"` : ''} data-action="filtre" data-id="${x.id}" aria-selected="${f === x.id}">${x.nom}${x.n !== undefined ? ` <b>${x.n}</b>` : ''}</button>`).join('') + `</div>`;
   const tri = e.tri ?? 'puissance';
   h += choixTri(tri);
-  h += `<p class="cl-intro">${tr`Toutes tes cartes. Touche-en une pour la confier à un Porteur ou la faire monter ; ton deck est dans le volet Escouade.`}</p>`;
+  h += `<p class="cl-intro">${tr`Toutes tes cartes. Touches-en une pour la confier à un Porteur ou la faire monter ; ton deck est dans le volet Escouade.`}</p>`;
 
   const tuileCarte = (cle: string) => {
     const m = moduleDef(cle);
@@ -1976,7 +1976,7 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
   h += `<li class="tr-strate roche${j.frontVaincu && !manque ? ' prete' : ''}"><span class="tr-vignette"><b>−${cible}</b></span><div class="tr-infos"><strong>${tr`Roche à creuser`}</strong>`
     + (requis ? `<span class="tr-creuseurs"><b>${Math.min(j.creuseurs, requis)} / ${requis}</b> ${tr`creuseurs`}</span><div class="tr-jauge"><i style="width:${Math.min(100, (100 * j.creuseurs) / requis)}%"></i></div>` : '')
     + `<small${!j.frontVaincu ? ' class="tr-ferme"' : ''}>${!j.frontVaincu ? tr`${ICO.verrou}S’ouvre après le gardien de la Strate −${j.strate}.` : manque ? tr('Il manque encore de quoi la percer : voir « Prochaine étape ».') : tr('Tout est prêt.')}</small>`
-    + (logementBloque ? `<small class="tr-loge">${tr`La Tour loge ${loge} creuseurs au niveau ${j.batiments.noyau} : il en faut la place pour ${requis}.`}</small>` : '')
+    + (logementBloque ? `<small class="tr-loge">${tr`La Tour loge ${loge} creuseurs au niveau ${j.batiments.noyau} : il faut de la place pour ${requis}.`}</small>` : '')
     + `</div></li></ol></section>`;
   return h;
 }
@@ -2127,7 +2127,7 @@ export function htmlMissions(e: EcranDistrict): string {
   const libres = disponibles(j);
   if (!choisie) h += `<small class="aide">${tr`Aucune destination aujourd’hui : de nouvelles s’ouvrent demain à 4 h.`}</small>`;
   else if (j.missions.length >= barquesMax(j)) h += `<small class="aide">${tr`${barquesMax(j) > 1 ? tr`Tes ${barquesMax(j)} barques sont en mer` : tr('Ta barque est en mer')} : attends son retour${barquesMax(j) < BARQUES[BARQUES.length - 1]! ? tr(', ou monte la Tour du Noyau pour en armer une de plus') : ''}.`}</small>`;
-  else if (!libres.length) h += `<small class="aide">${tr`Tous les Porteurs travaillent ou sont partis : libère-en un d’un bâtiment pour l’envoyer.`}</small>`;
+  else if (!libres.length) h += `<small class="aide">${tr`Tous les Porteurs travaillent ou sont partis : libères-en un d’un bâtiment pour l’envoyer.`}</small>`;
   else {
     // le meilleur choix d'abord : affinité, puis niveau
     const rang = { bon: 0, neutre: 1, mauvais: 2 } as const;

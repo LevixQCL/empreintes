@@ -74,7 +74,7 @@ export function finPour(): Fin | null {
       return { titre: x.felee ? t('Épreuve Fêlée réussie') : t('Épreuve réussie'), texte: t`${ep?.nom ?? t('L’Épreuve')} : ${nom} se dissipe.${gain}`, bouton: t('Remonter au district'), action: 'remonter' };
     }
     if (s.issue === 'defaite') {
-      const pourquoi = s.chrono && s.tour > s.chrono ? t`${ennemiDef(s.ennemi.id).nom} s’est éteint dans le noir avant de tomber : il fallait frapper plus vite.`
+      const pourquoi = s.chrono && s.tour > s.chrono ? t`${ennemiDef(s.ennemi.id).nom} s’éteint dans le noir avant de tomber : il fallait frapper plus vite.`
         : s.sansChute && C.vivants(s).length ? t('Un Porteur est tombé : l’Épreuve demandait que personne ne reste au fond.')
         : t('L’escouade a été repoussée.');
       return { titre: t('Épreuve manquée'), texte: t`${pourquoi} Tu peux la retenter quand tu veux cette semaine.`, bouton: t('Remonter au district'), action: 'remonter' };
@@ -91,7 +91,7 @@ export function finPour(): Fin | null {
     }
     // le Rôdeur (explorer.ts) : enfui, il garde ses blessures ; abattu, son trophée attend au district
     if (x.carte && s.enfui) return { titre: t`${nom} s’enfuit`, texte: t`${rodeurDef(s.ennemi.id)?.fuite ?? ''} Il ne lui reste que ${Math.round((s.ennemi.pv / s.ennemi.pvMax) * 100)} % de sa vie : ses blessures resteront jusqu’à la prochaine rencontre. Butin : ${x.butin} minerai.`, bouton: t('Retour à la carte'), action: 'suivant' };
-    if (x.carte && rodeurDef(s.ennemi.id)) return { titre: t`${nom} est abattu`, texte: t`${rodeurDef(s.ennemi.id)!.chute} Son trophée t’attend au district : une carte au choix. Butin : ${x.butin} minerai.`, bouton: t('Retour à la carte'), action: 'suivant' };
+    if (x.carte && rodeurDef(s.ennemi.id)) return { titre: t`${nom} tombe`, texte: t`${rodeurDef(s.ennemi.id)!.chute} Son trophée t’attend au district : une carte au choix. Butin : ${x.butin} minerai.`, bouton: t('Retour à la carte'), action: 'suivant' };
     if (x.carte) {
       // la marque de la quête relevée se dit tout de suite, avec ce qu'on a trouvé (31 octobre 2026)
       const q = x.carte.salles[x.carte.position]?.quete ? J.etapeQueteTrouvee(app.jeu, x.strate) : null;

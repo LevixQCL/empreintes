@@ -54,7 +54,7 @@
    "en": "Forge: the card is ready"
   },
   {
-   "fr": "{0} : l'objectif se fait ici",
+   "fr": "{0} : l’objectif se fait ici",
    "en": "{0}: the objective is done here"
   },
   {
@@ -1510,7 +1510,7 @@
    "en": "A trophy, not a given: it takes weeks of fighting with the same card, and feats that only it has lived through. "
   },
   {
-   "fr": "Épithète affiché",
+   "fr": "Épithète affichée",
    "en": "Epithet shown"
   },
   {
@@ -1670,7 +1670,7 @@
    "en": "Filter the collection"
   },
   {
-   "fr": "Toutes tes cartes. Touche-en une pour la confier à un Porteur ou la faire monter ; ton deck est dans le volet Escouade.",
+   "fr": "Toutes tes cartes. Touches-en une pour la confier à un Porteur ou la faire monter ; ton deck est dans le volet Escouade.",
    "en": "All your cards. Tap one to give it to a Bearer or level it up; your deck is in the Squad panel."
   },
   {
@@ -2194,7 +2194,7 @@
    "en": "Everything is ready."
   },
   {
-   "fr": "La Tour loge {0} creuseurs au niveau {1} : il en faut la place pour {2}.",
+   "fr": "La Tour loge {0} creuseurs au niveau {1} : il faut de la place pour {2}.",
    "en": "At level {1}, the Tower houses {0} diggers: it needs room for {2}."
   },
   {
@@ -2430,7 +2430,7 @@
    "en": ", or upgrade the Core Tower to fit out one more"
   },
   {
-   "fr": "Tous les Porteurs travaillent ou sont partis : libère-en un d’un bâtiment pour l’envoyer.",
+   "fr": "Tous les Porteurs travaillent ou sont partis : libères-en un d’un bâtiment pour l’envoyer.",
    "en": "All the Bearers are working or away: release one from a building to send them."
   },
   {

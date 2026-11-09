@@ -156,8 +156,8 @@ export function geste(g: Geste, taille: 'chaine' | 'main', action: string, o: { 
     felure: o.felure ? ICO.fele : undefined,
   };
   const cls = ['geste', taille, eteinte ? 'eteinte' : '', g.lourd ? 'lourd' : '', o.halo ? 'halo' : '', o.vise ? 'vise' : '', o.serre ? 'serre' : '', o.felure ? 'brise-felure' : ''].filter(Boolean).join(' ');
-  const freqs = g.fs && g.fs.length > 1 && !accord ? tr`, fréquences possibles ${g.fs.join(' ou ')}` : '';
-  const label = tr`${g.nom} (${nomP}), fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${vReel}${tendance ? tr` (${tendance === 'hausse' ? tr('renforcée') : 'affaiblie'}, ${g.v} de base)` : ''}${g.lourd ? tr(', prend 2 places') : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? tr(', prolonge ta suite') : ''}${o.felure ? tr(', brise la Fêlure de l’ennemi') : ''}${eteinte ? tr(', éteinte : son Porteur est à terre') : ''}`;
+  const freqs = g.fs && g.fs.length > 1 && !accord ? tr`, Fréquences possibles ${g.fs.join(' ou ')}` : '';
+  const label = tr`${g.nom} (${nomP}), Fréquence ${accord ? 'libre' : g.f}${freqs}, ${LIBELLE[g.type]} ${vReel}${tendance ? tr` (${tendance === 'hausse' ? tr('renforcée') : 'affaiblie'}, ${g.v} de base)` : ''}${g.lourd ? tr(', prend 2 places') : ''}${effetsDe(g).map((x) => ', ' + libelleEffet(x)).join('')}${o.halo ? tr(', prolonge ta suite') : ''}${o.felure ? tr(', brise la Fêlure de l’ennemi') : ''}${eteinte ? tr(', éteinte : son Porteur est à terre') : ''}`;
   AFFICHES.set(g.uid, { g, d, nomP, eteinte, detail });
   return `<button type="button" class="${cls}" style="--c:${COULEUR[lign]}" data-action="${action}" data-uid="${g.uid}" data-porteur="${g.porteur ?? ''}" aria-label="${echap(label)}"${o.off ? ' disabled' : ''}>`
     + `<span class="nf nf-${metal}${o.halo ? ' nf-suite' : ''}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d).replace(/ loading="lazy"/g, '')}</span>`
@@ -641,7 +641,7 @@ function vignettesGroupe(e: Ecran): string {
     const ico = it.type === 'atk' ? ICO.atk : it.type === 'bouclier' ? ICO.bouclier : it.type === 'soin' ? ICO.soin : it.type === 'dissonance' ? ICO.flux : ICO.boost;
     const traits = traitsEnJeu(en).map((t) => texteTrait(t).nom);
     const nom = nomEnnemi(en);
-    const label = tombe ? tr`${nom}, vaincu` : tr`${vise ? 'Visé : ' : tr('Viser ')}${nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? tr`${GENRE_INTENTION[it.type]}, force et cible cachées par le brouillard.` : texteIntention(s, en)}`;
+    const label = tombe ? tr`${nom}, hors de combat` : tr`${vise ? 'Visé : ' : tr('Viser ')}${nom}${traits.length ? ` (${traits.join(', ')})` : ''}, ${en.pv} PV sur ${en.pvMax}. ${cache ? tr`${GENRE_INTENTION[it.type]}, force et cible cachées par le brouillard.` : texteIntention(s, en)}`;
     return `<button type="button" class="vignette-ennemi l-${ligneeEnnemi(en)}${estGardien(en.id) ? ' gardien' : ''}${vise ? ' visee' : ''}${tombe ? ' tombe' : ''}" data-action="viser" data-id="${en.rang ?? 0}" aria-label="${echap(label)}" title="${echap(label)}" aria-pressed="${vise}"${verrou || tombe || vise ? ' disabled' : ''}>`
       + (ill ? `<img src="${ill}" alt="" decoding="async">` : '<span class="vg-sans"></span>')
       + (tombe ? '' : `<span class="vg-int ${cls}${cache ? ' brume' : ''}">${ico}${val ? `<b>${val}</b>` : ''}</span>`)

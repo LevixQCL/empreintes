@@ -241,10 +241,10 @@ export const HALTES: HalteDef[] = [
       { texte: t('Relever le sceau'), effet: 'composants', piste: 'nous', carte: 'cache', recit: t('Tu relèves les deux cires, dates comprises. Les Veilleurs sauront quoi en faire. Au pied de la niche, du matériel de prélèvement abandonné.') },
     ],
     t('Dans la niche 5-1 dort le premier relevé de l’empreinte du fondateur des Orsève, à une seule copie de l’original. Le sceau qui interdit de le comparer aux copies suivantes date de 2108, l’année où Isaure a pris la Maison.'), {
-      nous: rv(t('La colonne « équipe »'), t('Le carnet d’Isaure a une colonne « équipe » : des Génés muées sous contrat avec la Compagnie des Fondations, renouvelées chaque mois. Ce qu’on croyait fini avec la Grève des pompes ne s’est jamais arrêté.'),
-        v('kessa', t('Il y a une colonne « équipe ». Six muées sous contrat, Compagnie des Fondations, renouvelées tous les mois. Mes parents ont signé ce genre de contrat en 2090. Au district, on croit que ça s’est arrêté avec la Grève.')),
-        v('doran', t('La colonne « équipe » : des Génés muées sous contrat, comme moi en 2094. Des noms qui changent chaque mois. On ne garde pas longtemps une équipe qui travaille sous l’eau.')),
-        v('', t('Une colonne du carnet : « équipe : six muées sous contrat, Compagnie des Fondations ». Les noms changent chaque mois.'))),
+      nous: rv(t('La colonne « équipe »'), t('Le carnet d’Isaure a une colonne « équipe » : des Génés mués sous contrat avec la Compagnie des Fondations, renouvelées chaque mois. Ce qu’on croyait fini avec la Grève des pompes ne s’est jamais arrêté.'),
+        v('kessa', t('Il y a une colonne « équipe ». Six mués sous contrat, Compagnie des Fondations, renouvelées tous les mois. Mes parents ont signé ce genre de contrat en 2090. Au district, on croit que ça s’est arrêté avec la Grève.')),
+        v('doran', t('La colonne « équipe » : des Génés mués sous contrat, comme moi en 2094. Des noms qui changent chaque mois. On ne garde pas longtemps une équipe qui travaille sous l’eau.')),
+        v('', t('Une colonne du carnet : « équipe : six mués sous contrat, Compagnie des Fondations ». Les noms changent chaque mois.'))),
       avant: rv(t('La hâte'), t('Les niches du Treillis sont scellées d’une main sûre en bas, d’une main qui tremble en haut. Ceux qui l’ont rempli ont fini dans la hâte.'),
         v('sasha', t('Les sceaux du bas sont posés au millimètre. Ceux du haut débordent, tremblent, se chevauchent. On a rempli le haut vite, à la fin, comme on boucle ses sacs quand il est trop tard.')),
         v('vela', t('Les voix du haut ont été rangées dans la hâte. Ceux qui les ont scellées avaient peur de ne pas finir.')),
@@ -445,7 +445,7 @@ export const HALTES: HalteDef[] = [
     t('Le Premier Porteur nous attendait au fond, assis. Il a des mains de graveur, et toutes les tables de la salle portent son écriture.'), {
       nous: rv(t('La moitié du message'), t('Au fond, la table d’origine porte une seconde ligne sous la mise en garde. La copie que les Veilleurs gardent sous clé s’arrête avant : toute leur prudence repose sur une moitié de phrase.'),
         v('doran', t('Sous la phrase, une autre ligne, plus récente. La copie des Veilleurs s’arrête juste avant. Ils ont tout gardé fermé en n’en lisant que la moitié.')),
-        v('ilka', t('La table du centre. Dessous la phrase, une autre ligne. La copie de Hessa s’arrête juste avant. Toute leur prudence tient sur une phrase pas finie.')),
+        v('ilka', t('La table du centre. Sous la phrase, une autre ligne. La copie de Hessa s’arrête juste avant. Toute leur prudence tient sur une phrase pas finie.')),
         v('', t('Sur la table du centre, sous la mise en garde, une seconde ligne, plus récente. La copie que les Veilleurs gardent sous clé s’arrête juste avant.'))),
       avant: rv(t('Ils montaient'), t('Ceux d’avant ne sont pas descendus s’enterrer : partis du fond, ils ont bâti en remontant, chaque génération rangée sous la suivante. En 2062, nous sommes tombés sur leur dernier étage. Ils y étaient presque.'),
         v('vela', t('Ysé l’avait deviné. Maintenant, je l’ai vu : la gaine qui monte, l’escalier qui monte, leurs marches trop hautes pour nos jambes… Ils ne fuyaient pas vers le bas, directeur. Ils sont partis d’ici, et chaque génération a bâti un étage plus haut. Le Puits Zéro était leur dernier palier. Ils y étaient presque.')),
@@ -547,7 +547,7 @@ export const HALTES: HalteDef[] = [
       d(t('Un bruit'), v('doran', t('Le casque de mon père résonne contre elle. En 2066, ce n’est pas un loquet qu’il a entendu. C’était quelqu’un qui changeait d’épaule.'), 'casque'), v('doran', t('Écoute. Un craquement, de temps en temps, comme une poutre. Mon père parlait d’un loquet. Je crois que c’était ça.')), v('', t('De temps en temps, un craquement sourd, comme une poutre qui travaille.'))),
     ], [
       { texte: t('Mesurer la charge'), effet: 'composants', piste: 'nous', carte: 'cache', recit: t('Sasha pose ses jauges sur la colonne, de bas en haut. Il note, il efface, il note encore. Contre la paroi, une caisse de chantier marquée au nom de ton district.') },
-      { texte: t('Lui demander son nom'), effet: 'eclat', piste: 'avant', carte: 'archive', recit: t('Tu demandes son nom à la colonne, à voix basse, comme à −2. La lumière bouge, très lentement, vers le pied du cristal. Un Éclat y attend.') },
+      { texte: t('Lui demander son nom'), effet: 'eclat', piste: 'avant', carte: 'archive', recit: t('Tu demandes son nom à la colonne, à voix basse, comme à −9. La lumière bouge, très lentement, vers le pied du cristal. Un Éclat y attend.') },
     ],
     t('Une colonne seule se dresse exactement sous la Tour du Noyau. C’est pour elle que le pilier de mon district ne bouge jamais.')),
   H(14, 2, t('Le nom de la colonne'),
@@ -562,9 +562,9 @@ export const HALTES: HalteDef[] = [
       nous: rv(t('Le poids d’un district'), t('La colonne sous ta Tour porte seule tout ton district, digue comprise. Elle est fendue sur un tiers. Les fissures qu’on rebouche la nuit dans les Fondations, ce n’est pas la mer qui les fait : c’est elle qui cède.'),
         v('sasha', t('Elle porte tout. La Tour, la place, la digue, les pompes. Les fissures qu’on rebouche la nuit, directeur, ce n’est pas la mer. C’est elle qui plie.')),
         v('', t('La colonne porte tout le district, digue comprise. Elle est fendue sur un tiers de sa hauteur.'))),
-      avant: rv(t('Le nom donné'), t('Au pied de la colonne, le nom que la Tisseuse de −2 avait donné à quelqu’un qui descendait vers le fond. Il l’a porté jusqu’ici, et s’est gravé sous ton district avec lui, pour qu’elle ne disparaisse pas.'),
+      avant: rv(t('Le nom donné'), t('Au pied de la colonne, le nom que la Tisseuse de −9 avait donné à quelqu’un qui descendait vers le fond. Il l’a porté jusqu’ici, et s’est gravé sous ton district avec lui, pour qu’elle ne disparaisse pas.'),
         v('vela', t('C’est le nom de la Tisseuse, directeur. Celui qu’elle a donné à quelqu’un qui descendait. Il l’a porté jusqu’en bas, et il s’est gravé avec lui. Ton district tient sur un nom qu’on a refusé d’oublier.')),
-        v('', t('L’inscription porte le nom que la Tisseuse de −2 avait donné à quelqu’un qui descendait vers le fond.'))),
+        v('', t('L’inscription porte le nom que la Tisseuse de −9 avait donné à quelqu’un qui descendait vers le fond.'))),
     }),
 
   // ---------- −15 · Le fond du Fond ----------
@@ -820,12 +820,12 @@ export const BESTIAIRE: Record<string, FicheBestiaire> = {
   // les Rôdeurs (31 octobre 2026, explorer.ts) : un par zone, croisé seulement en Explorer
   'maree-basse': {
     origine: t('Un Rampeur qui n’a jamais cessé de grandir, né dans les eaux chaudes des pompes de 2066. Les fouilleurs l’entendent respirer sous les piliers.'),
-    conseil: t('Elle s’enfuit au bout de quatre tours : frappe fort dès le premier. Ses Ressacs touchent toute l’escouade, garde du bouclier.'),
+    conseil: t('Elle s’enfuit au bout de quatre tours : frappe fort dès le premier. Ses Ressacs touchent toute l’escouade : garde du bouclier.'),
     secret: t('Marée-Basse ne s’approche jamais des piliers qui tiennent. Elle suit l’eau qui monte, comme tout le monde.'),
   },
   'sentinelle-orpheline': {
     origine: t('Une Sentinelle de verre dont la porte a été murée en 2066. Elle cherche depuis une porte à garder.'),
-    conseil: t('Blindée : mise sur des cartes fortes ou sur Perçant. Elle fuit au bout de quatre tours, ne garde rien pour la fin.'),
+    conseil: t('Blindée : mise sur des cartes fortes ou sur Perçant. Elle fuit au bout de quatre tours : ne garde rien pour la fin.'),
     secret: t('Elle ne frappe jamais quelqu’un qui se tient dans l’encadrement d’une porte. Personne ne sait pourquoi.'),
   },
   liseur: {

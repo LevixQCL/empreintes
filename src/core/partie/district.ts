@@ -707,13 +707,13 @@ export function soignerVite(j: Jeu, id: string): Resultat {
   if (j.batiments.clinique < 1) return non(tr('La Clinique est fermée.'));
   if (enExpedition(j, id)) return non(tr('Ce Porteur est en bas.'));
   const usure = Math.ceil(p.usure);
-  if (usure < 1) return non(tr('Il n’a pas d’Usure.'));
+  if (usure < 1) return non(tr('Pas d’Usure à soigner.'));
   // la première fois, la Clinique les offre (4 novembre 2026, test critique : après la Strate −1, un Porteur à terre et
   // l'énergie dépensée à la Tour bloquaient toute nouvelle descente ; la première session finissait sur une impasse)
   if (!j.soinOffert) {
     j.soinOffert = true;
     p.usure = 0;
-    return { ok: true, message: tr`La Clinique offre ses premiers soins intensifs : ${porteurDef(id).nom} est remis sur pied (−${usure} Usure).` };
+    return { ok: true, message: tr`La Clinique offre ses premiers soins intensifs : ${porteurDef(id).nom} est de nouveau sur pied (−${usure} Usure).` };
   }
   const points = Math.min(usure, Math.floor(j.energie) * SOINS_INTENSIFS.usureParCristal);
   if (points < 1) return non(tr`Il faut 1 cristal pour ${SOINS_INTENSIFS.usureParCristal} points d’Usure.`);

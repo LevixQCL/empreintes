@@ -186,7 +186,7 @@
    "en": "Algae lamp in hand, {0} dove into {1}, room after room."
   },
   {
-   "fr": "Au lever du brouillard, la barque a touché {0}. {1} est monté seul.",
+   "fr": "Au lever du brouillard, la barque a touché {0}. {1} a débarqué sans escorte.",
    "en": "As the fog lifted, the boat touched {0}. {1} went up alone."
   },
   {
@@ -194,7 +194,7 @@
    "en": "Other boats had come by before today: {0} had to search further, in half-emptied rooms."
   },
   {
-   "fr": "Les barques du matin avaient balisé l’entrée : {0} est descendu droit vers les Cales, là où personne n’était encore allé.",
+   "fr": "Les barques du matin avaient balisé l’entrée : {0} a filé droit vers les Cales, là où personne n’était encore allé.",
    "en": "The morning boats had marked the entrance: {0} went straight down to the Holds, where no one had been yet."
   },
   {
@@ -270,7 +270,7 @@
    "en": "The trip back went smoothly, but cold water leaves its mark: the Clinic will see to it."
   },
   {
-   "fr": "{0} rentre trempé et fourbu : un peu de repos à la Clinique ne sera pas de trop.",
+   "fr": "{0} rentre en claquant des dents : un peu de repos à la Clinique ne sera pas de trop.",
    "en": "{0} comes back soaked and worn out: a little rest at the Clinic won’t hurt."
   },
   {
@@ -610,7 +610,7 @@
    "en": "Stratum −{0} is complete: its five Relics are in the district. Your digs there will see the whole map."
   },
   {
-   "fr": "{0} est abattu. {1}",
+   "fr": "{0} tombe. {1}",
    "en": "{0} is down. {1}"
   },
   {
@@ -650,7 +650,7 @@
    "en": "+{0} crystals cut by the Generator"
   },
   {
-   "fr": "{0} est remis de son Usure",
+   "fr": "{0} n’a plus d’Usure",
    "en": "{0} has recovered from their Strain"
   },
   {
@@ -730,7 +730,7 @@
    "en": "The cards found are Augmented cards, and the seam keeps one (three to choose from on hard)."
   },
   {
-   "fr": "Cartes génés",
+   "fr": "Cartes génées",
    "en": "Spliced cards"
   },
   {
@@ -822,7 +822,7 @@
    "en": "The pack"
   },
   {
-   "fr": "Le gardien vient avec deux bêtes de la Strate : choisis qui tomber d’abord.",
+   "fr": "Le gardien vient avec deux bêtes de la Strate : choisis qui abattre d’abord.",
    "en": "The guardian comes with two beasts from the Stratum: choose who falls first."
   },
   {

@@ -162,7 +162,7 @@
    "en": "The plants drew back before {nom}: a Spliced can smell sap, and knows where living things hide what they keep."
   },
   {
-   "fr": "Les échos du lieu ont reconnu la pierre de {nom}, et les voix l’ont guidé jusqu’aux cachettes.",
+   "fr": "Les échos du lieu ont reconnu la pierre de {nom}, et les voix lui ont montré le chemin des cachettes.",
    "en": "The echoes of the place knew {nom}’s stone, and the voices led them to every hiding place."
   },
   {
@@ -178,7 +178,7 @@
    "en": "The echoes led {nom} astray, round and round for hours through corridors that kept changing shape."
   },
   {
-   "fr": "Rien ne l’a aidé, rien ne l’a gêné : une fouille honnête, à la lampe.",
+   "fr": "Ni aide ni gêne sur place : une fouille honnête, à la lampe.",
    "en": "Nothing helped, nothing hindered: an honest search, by lamplight."
   }
  ]

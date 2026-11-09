@@ -298,7 +298,7 @@ export function texteIntention(s: CombatEtat, en: EnnemiEtat = s.ennemi): string
   if (it.type === 'bouclier') return it.allie ? tr`Va couvrir un allié : bouclier ${it.v}` : tr`Va se protéger : bouclier ${it.v}`;
   if (it.type === 'appel') return tr`${it.nom} : va appeler un renfort`;
   if (it.type === 'soin' && it.allie) return tr`${it.nom} : va soigner un allié, +${it.v} PV`;
-  if (it.type === 'boost') return tr('Se concentre : sa prochaine attaque fera double dégâts');
+  if (it.type === 'boost') return tr('Se concentre : sa prochaine attaque fera des dégâts doubles');
   if (it.type === 'soin') return tr`Va se réparer : ${it.nom} +${it.v} PV`;
   if (it.type === 'dissonance') return tr`${it.nom} : va brouiller tes Fréquences, ni Résonance ni Écho au tour suivant`;
   const v = Math.round(it.v * puissance(en) * usureCombat(s).attaque);
@@ -671,7 +671,7 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
     if (s.ennemi.pv <= 0) {
       // dans un groupe, le reste de la chaîne passe à l'ennemi suivant
       if (i < s.chaine.length - 1 && viserSuivant(s)) {
-        log(s, tr`${ennemiDef(s.ennemi.id).nom} est visé à son tour.`);
+        log(s, tr`La chaîne passe à ${ennemiDef(s.ennemi.id).nom}.`);
         emettre({ kind: 'cible', rang: s.ennemi.rang ?? 0 });
       } else break;
     }
@@ -737,14 +737,14 @@ export function lancer(s: CombatEtat, opts: { silencieux?: boolean; apercu?: (ev
   // Épreuve « Avant l'extinction » : le dernier tour est passé et l'ennemi tient encore
   if (s.chrono && s.issue === 'en-cours' && s.tour > s.chrono) {
     s.issue = 'defaite';
-    log(s, tr`${ennemiDef(s.ennemi.id).nom} s’éteint dans le noir avant d’être abattu : l’Épreuve est manquée.`, { camp: 'neutre', sorte: 'info' });
+    log(s, tr`${ennemiDef(s.ennemi.id).nom} s’éteint dans le noir avant de tomber : l’Épreuve est manquée.`, { camp: 'neutre', sorte: 'info' });
     emettre({ kind: 'fin', issue: 'defaite' });
   }
   // le Rôdeur (explorer.ts) : passé son dernier tour, il s'enfuit avec ses blessures ; le combat compte comme gagné
   if (s.fuyard && s.issue === 'en-cours' && s.tour > s.fuyard) {
     s.issue = 'victoire';
     s.enfui = true;
-    log(s, tr`${ennemiDef(s.ennemi.id).nom} s’enfuit dans le noir, blessé. Ses blessures resteront.`, { camp: 'neutre', sorte: 'info' });
+    log(s, tr`${ennemiDef(s.ennemi.id).nom} s’enfuit dans le noir. Ses blessures resteront.`, { camp: 'neutre', sorte: 'info' });
     emettre({ kind: 'fin', issue: 'victoire' });
   }
   CAMP = 'joueur';
@@ -809,7 +809,7 @@ function noterChaine(s: CombatEtat, freqs: number[], reso: { suite: number; mult
   if (brouille) t.brouille = true;
 }
 
-const ennemisVaincus = (s: CombatEtat) => (enGroupe(s) ? tr('Le groupe est vaincu.') : tr`${ennemiDef(s.ennemi.id).nom} est vaincu.`);
+const ennemisVaincus = (s: CombatEtat) => (enGroupe(s) ? tr('Le groupe est vaincu.') : tr`${ennemiDef(s.ennemi.id).nom} tombe.`);
 const arrondi = (x: number) => Math.round(x * 100) / 100;
 /** Un calcul pour le journal (les multiplicateurs arrondis : le journal reste léger) */
 const calcul = (cible: string, base: number, lignes: CalculHisto['lignes'], brut: number, absorbe: number, net: number): CalculHisto =>
@@ -1611,7 +1611,7 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
     emettre({ kind: 'bouclier', cible: 'ennemi', v: it.v, rang });
   } else if (it.type === 'boost') {
     en.boost = 2;
-    log(s, tr`${e.nom} se concentre. Sa prochaine attaque fera double dégâts.`, { sorte: 'effet' });
+    log(s, tr`${e.nom} se concentre. Sa prochaine attaque fera des dégâts doubles.`, { sorte: 'effet' });
     emettre({ kind: 'boost', rang });
   } else if (it.type === 'soin') {
     const avant = en.pv;

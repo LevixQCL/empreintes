@@ -6,7 +6,7 @@ import { t } from './i18n';
 
 export const LORE_CARTES: Record<string, string> = {
   // ---------- Augmentés : cartes de base ----------
-  ruee: t('Les coursiers de Vertiga ne courent pas autour des obstacles : ils passent au travers. « Le plus court chemin, c’est celui que personne n’a encore osé », dit Ilka, qui en a cassé trois rambardes.'),
+  ruee: t('Les coursiers de Vertiga ne courent pas autour des obstacles : ils passent au travers. « Le plus court chemin, c’est celui que personne n’a encore osé », dit Ilka, qui a cassé trois rambardes.'),
   bond: t('Une passerelle s’effondre, un toit s’arrête net au-dessus du vide : les jambes gravées trouvent toujours un appui de plus. Le saut d’après est déjà calculé avant l’atterrissage.'),
   esquive: t('Le cœur de cristal voit le coup partir une fraction de seconde avant l’œil. Il ne reste au corps qu’à suivre. Les Augmentés appellent ça « laisser passer le facteur ».'),
   tir: t('Un clou de chantier, un rail aimanté, et un poignet qui ne tremble jamais. Les premiers tireurs des districts étaient des soudeurs qui en avaient assez qu’on leur prenne leurs outils.'),
@@ -113,7 +113,7 @@ export const LORE_CARTES: Record<string, string> = {
   'gantelet-pillard': t('Le gantelet d’un pilleur des Strates, connu pour revenir de chaque descente avec ce que les autres avaient laissé. Toute copie qu’on en tire tombe en poussière : l’empreinte n’aime pas qu’on lui prenne quoi que ce soit.'),
   'machoire-miroir': t('Une mâchoire de Géné qui mord comme mordait ce qui vient de mordre. Les Veilleurs n’ont jamais réussi à la recopier : la copie mord comme l’original, et se dévore elle-même.'),
   'boucle-memoire': t('Un anneau de cristal qui rejoue sans cesse la même seconde, celle du meilleur coup de son porteur. Recopié, il ne rejoue que du silence.'),
-  'coeur-surregime': t('Un cœur de machine monté sans frein, par un mécanicien qui voulait sauver sa sœur coincée sous un éboulis. Elle est sortie ; lui, non. Le cœur refuse depuis toute autre poitrine que celles qui acceptent d’en payer le prix.'),
+  'coeur-surregime': t('Un cœur de machine monté sans frein, par un mécanicien qui voulait sauver sa sœur coincée sous un éboulis. Elle est sortie ; lui, non. Depuis, le cœur refuse toute poitrine qui n’accepte pas d’en payer le prix.'),
   'peau-ancetre': t('La peau d’un des tout premiers Génés des Fondations, relevée une seule fois, à sa mort. Toutes les copies suivantes se sont effacées. Elle n’a jamais servi à protéger : elle sert à prendre. Ce qui la frappe y laisse son armure.'),
   'miroir-hauts': t('Un miroir des grandes salles des Hauts, de ceux qui renvoient les gestes avant les visages. Les Orsève en ont fait fondre toutes les copies. Celui-ci a été volé à temps.'),
   'coeur-etoile': t('On ne sait pas d’où vient ce cœur, seulement qu’il brille dans le noir comme une étoile qui n’existe plus. C’est un original, que personne n’a jamais recopié. Il demande beaucoup à son porteur, et il rend davantage.'),
