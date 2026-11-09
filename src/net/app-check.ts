@@ -7,7 +7,10 @@ import type { FirebaseApp } from 'firebase/app';
 import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { appCheckCle } from './firebase-config';
 
+/** les adresses du jeu publié : GitHub Pages, puis ossyra.app (9 novembre 2026) */
+const SITE_PUBLIE = (h: string) => h.endsWith('github.io') || h === 'ossyra.app' || h === 'www.ossyra.app';
+
 export function activerAppCheck(app: FirebaseApp): void {
-  if (!appCheckCle || !location.hostname.endsWith('github.io')) return;
+  if (!appCheckCle || !SITE_PUBLIE(location.hostname)) return;
   try { initializeAppCheck(app, { provider: new ReCaptchaEnterpriseProvider(appCheckCle), isTokenAutoRefreshEnabled: true }); } catch { /* le jeu tourne quand même */ }
 }
