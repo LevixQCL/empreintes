@@ -6,6 +6,8 @@
 //   npm run i18n -- verifier              valeurs {n}, balises HTML, glossaire (code de sortie 1 si erreur grave)
 //   npm run i18n -- envelopper <fichiers> entoure de t(…) les phrases d'un fichier (relire le rapport et le diff !)
 //   npm run i18n -- a-traduire <catalogue> [max]   liste numérotée des entrées vides (ou changées)
+//   npm run i18n -- paires <catalogue> [début] [n]  montre français et traduction côte à côte, numérotés
+//   npm run i18n -- reviser <catalogue> <lot.json>  remplace les traductions citées ({ "numéro": "texte" })
 //   npm run i18n -- remplir <catalogue> <lot.json> remplit les entrées vides dans l'ordre avec un tableau JSON de traductions
 //
 // Le principe : le texte français EST la clé. Si on change une phrase française, l'extraction ne retrouve plus sa traduction :
@@ -207,6 +209,27 @@ function remplir(chemin: string, lot: string): void {
   console.log(`${traductions.length} entrée(s) remplie(s) ; ${vides.length - traductions.length} encore vide(s).`);
 }
 
+// ---------- paires / reviser (relecture d'une traduction déjà faite) ----------
+
+function paires(chemin: string, debut = 1, n = Infinity): void {
+  const f = lireCatalogue(chemin);
+  f.entrees.slice(debut - 1, debut - 1 + n).forEach((e, i) => console.log(`#${debut + i}\nFR ${e.fr}\nEN ${e.en ?? ''}`));
+  console.log(`\n${f.entrees.length} entrée(s) dans ${relative(RACINE, chemin)}`);
+}
+
+/** lot : { "numéro": "nouvelle traduction" } (numéros de `paires`), seules les entrées citées changent */
+function reviser(chemin: string, lot: string): void {
+  const f = lireCatalogue(chemin);
+  const nouvelles = JSON.parse(readFileSync(lot, 'utf8')) as Record<string, string>;
+  for (const [n, tr] of Object.entries(nouvelles)) {
+    const e = f.entrees[Number(n) - 1];
+    if (!e) throw new Error(`pas d'entrée n° ${n}`);
+    e.en = tr; delete e.ancien;
+  }
+  writeFileSync(chemin, `${JSON.stringify(f, null, 1)}\n`);
+  console.log(`${Object.keys(nouvelles).length} entrée(s) revue(s).`);
+}
+
 // ---------- envelopper ----------
 
 /** Une phrase à traduire : au moins deux mots d'au moins deux lettres, hors balises, et pas du code ou du CSS */
@@ -290,6 +313,8 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) switch (comma
   case 'verifier': verifier(); break;
   case 'envelopper': envelopper(args); break;
   case 'a-traduire': aTraduire(resolve(RACINE, args[0]!), args[1] ? Number(args[1]) : Infinity); break;
+  case 'paires': paires(resolve(RACINE, args[0]!), args[1] ? Number(args[1]) : 1, args[2] ? Number(args[2]) : Infinity); break;
+  case 'reviser': reviser(resolve(RACINE, args[0]!), resolve(RACINE, args[1]!)); break;
   case 'remplir': remplir(resolve(RACINE, args[0]!), resolve(RACINE, args[1]!)); break;
   default: console.log('Commandes : extraire, couverture, verifier, envelopper <fichiers>, a-traduire <catalogue> [max], remplir <catalogue> <lot.json>');
 }
