@@ -45,6 +45,8 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'panneau', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.objectif:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'bulle-appel', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); const d = p.locator('.bulle-d.appel-bulle:visible').first(); if (await d.count()) await d.click(); } },
   { nom: 'tour', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); } },
+  // la liste des Strates (9 novembre 2026) : front mis en avant, boutons près du nom sur PC
+  { nom: 'tour-strates', sauvegarde: 'tour', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="coupe"]'); await p.waitForTimeout(300); await p.$eval('.tr-strates ol', (e) => e.scrollIntoView({ block: 'center' })); } },
   { nom: 'porteurs', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); } },
   { nom: 'deck-echange', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.eq-gerer'); await p.click('.deck-porteur [data-action="dk-porte"]'); } },
   { nom: 'cartes', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="porteurs"]'); await p.click('.seg[data-action="cartes"]'); } },

@@ -170,3 +170,14 @@
 @keyframes ex-qt-in{from{opacity:0;transform:translateY(6px) scale(.98)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.ex-quete-trouvee{animation:none}}
 .ex-partic small{font-size:12px;opacity:.75;font-weight:400}
+
+/* Liste des Strates (9 novembre 2026) : boutons près du nom sur PC, front mis en avant, compteurs nommés */
+.tr-strates ol{max-width:760px}
+.tr-strates .tr-actions .btn{min-height:44px}
+.tr-quete b{font-weight:500;color:var(--x-txt)}
+.tr-strates .tr-strate.front{margin:6px -10px;padding:12px 10px;border-radius:6px;
+  background:linear-gradient(90deg,rgba(242,200,110,.11),rgba(242,200,110,.02) 70%);box-shadow:inset 0 0 0 1px rgba(242,200,110,.38)}
+.tr-strates .tr-strate.front .tr-vignette{box-shadow:0 0 0 1.5px var(--x-or),0 0 16px rgba(242,200,110,.35)}
+.tr-strates .tr-strate.front .tr-infos>small em{color:var(--x-or)}
+.tr-strates .tr-ferme{display:flex;align-items:center;gap:6px}
+.tr-strates .tr-infos>small.tr-ferme .ico{width:14px;height:14px;flex-shrink:0;color:var(--x-doux)}

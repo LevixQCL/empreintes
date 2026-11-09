@@ -1967,12 +1967,12 @@ function contenuStrate(j: EcranDistrict['j'], n: number): string {
   const et = etoilesDe(j, n);
   const nv = vestigesTrouves(j, n).length;
   const explo = `<span class="tr-etoiles" title="${[1, 2, 3].map((k) => `${et.includes(k as 1) ? '★' : '☆'} ${ETOILES[k as 1].texte}`).join('\n')}" aria-label="${et.length} étoile${et.length > 1 ? 's' : ''} sur 3">${[1, 2, 3].map((k) => (et.includes(k as 1) ? ICO.etoile : ICO.etoileVide)).join('')}</span>`
-    + (vestigesDe(n).length ? `<button type="button" class="tr-vestiges${nv >= 5 ? ' complet' : ''}" data-action="vestiges-voir" data-strate="${n}" aria-label="Vestiges : ${nv} sur 5">${ICO.vestige}${nv} / 5</button>` : '');
+    + (vestigesDe(n).length ? `<button type="button" class="tr-vestiges${nv >= 5 ? ' complet' : ''}" data-action="vestiges-voir" data-strate="${n}" aria-label="Vestiges : ${nv} sur 5">${ICO.vestige}Vestiges ${nv} / 5</button>` : '');
   const faites = j.quetes?.[n] ?? 0;
   const vues = Math.min(nh, j.haltes?.[n] ?? 0);
   return `<span class="tr-contenu">${explo}`
     + (q ? `<span class="tr-quete${faites >= q.etapes.length ? ' finie' : ''}" title="${echap(q.but)}">${ICO.quete}<b>${echap(q.nom)}</b><i class="tr-points">${q.etapes.map((_, k) => `<i${k < faites ? ' class="ok"' : ''}></i>`).join('')}</i></span>` : '')
-    + (nh ? `<span class="tr-haltes" title="Haltes vues">${ICO.halte}${vues} / ${nh}</span>` : '')
+    + (nh ? `<span class="tr-haltes" title="Haltes vues">${ICO.halte}Haltes ${vues} / ${nh}</span>` : '')
     + `</span>`;
 }
 
@@ -2003,7 +2003,7 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
   const logementBloque = !!manque?.noyau;
   h += `<li class="tr-strate roche${j.frontVaincu && !manque ? ' prete' : ''}"><span class="tr-vignette"><b>−${cible}</b></span><div class="tr-infos"><strong>Roche à creuser</strong>`
     + (requis ? `<span class="tr-creuseurs"><b>${Math.min(j.creuseurs, requis)} / ${requis}</b> creuseurs</span><div class="tr-jauge"><i style="width:${Math.min(100, (100 * j.creuseurs) / requis)}%"></i></div>` : '')
-    + `<small>${!j.frontVaincu ? `S’ouvre après le gardien de la Strate −${j.strate}.` : manque ? 'Il manque encore de quoi la percer : voir « Prochaine étape ».' : 'Tout est prêt.'}</small>`
+    + `<small${!j.frontVaincu ? ' class="tr-ferme"' : ''}>${!j.frontVaincu ? `${ICO.verrou}S’ouvre après le gardien de la Strate −${j.strate}.` : manque ? 'Il manque encore de quoi la percer : voir « Prochaine étape ».' : 'Tout est prêt.'}</small>`
     + (logementBloque ? `<small class="tr-loge">La Tour loge ${loge} creuseurs au niveau ${j.batiments.noyau} : il en faut la place pour ${requis}.</small>` : '')
     + `</div></li></ol></section>`;
   return h;
