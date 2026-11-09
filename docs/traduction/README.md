@@ -58,7 +58,8 @@ L'anglais n'est **pas proposé aux joueurs** tant qu'il n'est pas complet : il e
 ## Ce qui reste à faire (état au 9 novembre 2026)
 
 1. **Le lore** (`src/core` : Chroniques, Strates, campagne, lore des cartes et des Porteurs, fragments, familles, explorer,
-   découvertes, lieux, rumeurs, fils, digue) : entouré de `t()`, ≈ 47 500 mots, traduction en cours.
+   découvertes, lieux, rumeurs, fils, digue) : ≈ 47 500 mots, **traduit en anglais le 9 novembre 2026** (relecture
+   par un anglophone conseillée avant la sortie). Seul `core/lexique.ts` attend l'étape 2.
 2. **L'interface** (`src/ui`, `src/app`, le reste de `src/core`, ≈ 30 000 mots) : à entourer **à la main**, morceau de texte
    par morceau de texte, sans jamais englober le HTML autour (une classe CSS changée ne doit pas invalider une traduction).
    Le passage automatique ne convient pas ici. Points à traiter au même moment :
