@@ -236,6 +236,8 @@ h1,h2,h3{font-weight:400}
 .panneau .ligne .btn{flex:1}
 .panneau .erreur{color:var(--danger);margin:0}
 .panneau .discret,.discret{color:var(--quiet);margin:0}
+.panneau .connecte{margin:0;padding-right:44px;font:600 13px/1.35 var(--chiffres,inherit);color:var(--ok);overflow-wrap:anywhere}
+.panneau .connecte span{display:block;color:var(--quiet);font-weight:400}
 /* tes données (8 novembre 2026) : la page de confidentialité et la suppression du compte, en bas du panneau, discrètes */
 .panneau .donnees{font-size:13px;padding-top:6px;border-top:1px solid var(--line)}
 .panneau .donnees .lien{display:inline;font-size:13px;color:var(--quiet);font-weight:500;text-decoration:underline;text-underline-offset:2px}

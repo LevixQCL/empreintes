@@ -50,7 +50,7 @@ export interface Compte {
   actif: boolean;
   ouvert: boolean;
   /** anonyme : le compte invisible du premier lancement, pas encore relié à Google ou à un e-mail */
-  utilisateur: { nom: string; anonyme?: boolean; verifie?: boolean } | null;
+  utilisateur: { nom: string; anonyme?: boolean; verifie?: boolean; via?: 'google' | 'email'; email?: string } | null;
   occupe: boolean;
   erreur: string;
   info: string;
@@ -267,7 +267,11 @@ export function panneauCompte(c: Compte, retrouver = false): string {
   if (!c.ouvert) return '';
   if (c.utilisateur && !c.utilisateur.anonyme) {
     const etat = { aucune: '', 'en-cours': 'Synchronisation…', ok: 'Progression enregistrée dans ton compte.', erreur: `Synchronisation impossible pour l’instant, la sauvegarde reste sur l’appareil.${c.codeErreur ? ` (${c.codeErreur})` : ''}` }[c.synchro];
-    return `<section class="panneau" aria-label="Compte"><strong>${c.pseudo ? `Pseudo : ${echap(c.pseudo)}` : 'Pas encore de pseudo'}</strong>`
+    // dire clairement qu'on est déjà connecté, et avec quoi : sinon on croit devoir se connecter (9 novembre 2026)
+    const u = c.utilisateur;
+    const avec = u.via === 'google' ? 'avec Google' : u.via === 'email' ? 'par e-mail' : '';
+    return `<section class="panneau" aria-label="Compte"><p class="connecte">✓ Connecté ${avec}${u.email ? `<span>${echap(u.email)}</span>` : ''}</p>`
+      + `<strong>${c.pseudo ? `Pseudo : ${echap(c.pseudo)}` : 'Pas encore de pseudo'}</strong>`
       + `<p class="discret">${c.pseudo ? 'C’est ce nom que voient les autres joueurs.' : 'Choisis le nom que verront les autres joueurs : ton nom de compte n’est jamais affiché.'}</p>`
       + `<div class="ligne"><button type="button" class="btn ${c.pseudo ? 'sec' : 'prim'}" data-action="gt-nom">${c.pseudo ? 'Changer de pseudo' : 'Choisir mon pseudo'}</button></div>`
       + (etat ? `<p class="discret">${etat}</p>` : '')

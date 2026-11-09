@@ -22,10 +22,13 @@ const db = getFirestore(app);
 
 /** anonyme : le compte invisible créé au premier lancement, pas encore relié à Google ou à un e-mail */
 /** verifie : relié à Google, ou à un e-mail vérifié (le parrainage ne rapporte qu'à partir de là, firestore.rules) */
-type Utilisateur = { uid: string; nom: string; anonyme: boolean; verifie: boolean };
+/** via et email : avec quoi le joueur est connecté, rappelé dans le panneau Compte (9 novembre 2026) */
+type Utilisateur = { uid: string; nom: string; anonyme: boolean; verifie: boolean; via?: 'google' | 'email'; email?: string };
 
 const versUtilisateur = (u: User): Utilisateur => ({ uid: u.uid, nom: u.displayName || u.email || 'Joueur', anonyme: u.isAnonymous,
-  verifie: !u.isAnonymous && (u.emailVerified || u.providerData.some((p) => p.providerId === 'google.com')) });
+  verifie: !u.isAnonymous && (u.emailVerified || u.providerData.some((p) => p.providerId === 'google.com')),
+  via: u.providerData.some((p) => p.providerId === 'google.com') ? 'google' : u.providerData.some((p) => p.providerId === 'password') ? 'email' : undefined,
+  email: u.email ?? u.providerData.find((p) => p.email)?.email ?? undefined });
 
 let prevenir: ((u: Utilisateur | null) => void) | null = null;
 
