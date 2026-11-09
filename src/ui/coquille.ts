@@ -590,7 +590,7 @@ export function menu(e: EcranDistrict): string {
   if (!e.menu) return '';
   const c = e.compte;
   let h = `<div class="voile-feuille" data-action="menu" aria-hidden="true"></div><section class="feuille menu" role="dialog" aria-modal="true" aria-label="Menu">`
-    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">EMPREINTES · ALPHA</span><h2>Menu</h2></div>`
+    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">OSSYRA · ALPHA</span><h2>Menu</h2></div>`
     + `<button type="button" class="btn-icone" data-action="menu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
   h += entreeFiche(e) + `<div class="liste-menu">`
     + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>Le Grand Tableau</strong><small>Les classements des directeurs : profondeur, Registre, Joutes et Flèche</small></span></button>`

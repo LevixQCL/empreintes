@@ -65,7 +65,7 @@ export function htmlTitre(introVue: boolean, mouvement: boolean, c: TitreCompte 
   // toucher l'écran ouvre la partie, sauf pendant qu'on récupère celle du compte,
   // et au premier lancement : un toucher à côté ne doit pas lancer une nouvelle partie à la place de « J'ai déjà une partie »
   const toucher = c?.etat !== 'attente' && !premierLancement(introVue, c);
-  return `<section class="titre"${toucher ? ' data-action="titre-jouer"' : ''} style="--image:url(./intro/00-titre.webp)" aria-label="EMPREINTES, écran titre">`
+  return `<section class="titre"${toucher ? ' data-action="titre-jouer"' : ''} style="--image:url(./intro/00-titre.webp)" aria-label="Ossyra, écran titre">`
     + `<div class="titre-fond" aria-hidden="true">${imageAnimee()}</div>`
     + (mouvement ? particules('cristal') : '')
     + `<div class="titre-voile" aria-hidden="true"></div>`

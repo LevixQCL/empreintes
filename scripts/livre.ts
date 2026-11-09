@@ -286,18 +286,18 @@ const toc = sommaire.map((s) => `<a class="n${s.niveau}" href="#${s.id}">${e(s.t
 const date = new Date().toLocaleDateString('fr-BE', { day: 'numeric', month: 'long', year: 'numeric' });
 const page = `<!DOCTYPE html>
 <html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EMPREINTES — Le livre</title>
+<title>Ossyra — Le livre</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Marcellus&family=Saira:wght@500;600&display=swap" rel="stylesheet">
 <style>${readFileSync(resolve(racine, 'scripts/livre.css'), 'utf8')}</style></head>
 <body>
 <div class="progres" aria-hidden="true"><i></i></div>
-<header class="barre"><a href="#couverture" class="marque">EMPREINTES</a><button type="button" id="ouvrir" aria-controls="toc" aria-expanded="false">Sommaire</button></header>
+<header class="barre"><a href="#couverture" class="marque">Ossyra</a><button type="button" id="ouvrir" aria-controls="toc" aria-expanded="false">Sommaire</button></header>
 <nav id="toc" class="toc" aria-label="Sommaire" hidden><div class="toc-in"><div class="toc-tete"><span>Sommaire</span><button type="button" id="fermer" aria-label="Fermer le sommaire">✕</button></div>${toc}</div></nav>
 <main>
-<section class="couverture" id="couverture">${imgIntro('00-titre') ? `<img src="${imgIntro('00-titre')}" alt="">` : ''}<div class="couv-txt"><h1>EMPREINTES</h1><p class="accroche">2121 · Sous les eaux, d’autres se souviennent encore.</p><p class="auteur">Le livre · INPP Houben</p><button type="button" id="reprendre" hidden>Reprendre la lecture</button></div></section>
+<section class="couverture" id="couverture">${imgIntro('00-titre') ? `<img src="${imgIntro('00-titre')}" alt="">` : ''}<div class="couv-txt"><h1>Ossyra</h1><p class="accroche">2121 · Sous les eaux, d’autres se souviennent encore.</p><p class="auteur">Le livre · INPP Houben</p><button type="button" id="reprendre" hidden>Reprendre la lecture</button></div></section>
 ${corps}
-<footer class="fin-livre">Tiré des textes du jeu EMPREINTES le ${e(date)}.</footer>
+<footer class="fin-livre">Tiré des textes du jeu Ossyra le ${e(date)}.</footer>
 </main>
 <script>
 (function(){

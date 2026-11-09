@@ -26,7 +26,7 @@
     d.setAttribute('aria-modal', 'true');
     d.innerHTML = '<div class="sa-boite">'
       + '<img src="./apple-touch-icon.png" alt="" width="72" height="72">'
-      + '<h1>EMPREINTES</h1>'
+      + '<h1>Ossyra</h1>'
       + '<p class="sa-intro">Le navigateur de ' + appli + ' ne fait pas bien tourner le jeu : ta partie pourrait ne pas être sauvegardée.</p>'
       + '<p class="sa-geste">' + geste + '</p>'
       + (ios ? '<a class="sa-btn sa-prim" href="x-safari-' + url + '">Ouvrir dans Safari</a>' : '<a class="sa-btn sa-prim" href="' + url + '" target="_blank" rel="noopener">Ouvrir dans le navigateur</a>')

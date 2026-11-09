@@ -1,7 +1,7 @@
 {
-  "name": "EMPREINTES",
-  "short_name": "Empreintes",
-  "description": "EMPREINTES — jeu de cartes et de gestion.",
+  "name": "Ossyra",
+  "short_name": "Ossyra",
+  "description": "Ossyra — jeu de cartes et de gestion.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

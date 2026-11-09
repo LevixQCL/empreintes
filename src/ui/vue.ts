@@ -256,7 +256,7 @@ function ligneSecours(c: Compte): string {
  */
 export function panneauAge(): string {
   return `<section class="panneau age" aria-label="Avant de commencer"><strong>Avant de commencer</strong>`
-    + `<p class="discret">EMPREINTES garde ta partie en ligne pour que tu ne la perdes jamais, et te permet d’apparaître au Grand Tableau sous un pseudo. Pour cela, il faut avoir au moins 13 ans.</p>`
+    + `<p class="discret">Ossyra garde ta partie en ligne pour que tu ne la perdes jamais, et te permet d’apparaître au Grand Tableau sous un pseudo. Pour cela, il faut avoir au moins 13 ans.</p>`
     + `<div class="ligne"><button type="button" class="btn prim" data-action="age-debut-majeur">J’ai 13 ans ou plus</button></div>`
     + `<div class="ligne"><button type="button" class="btn sec" data-action="age-jeune">J’ai moins de 13 ans</button></div>`
     + `<p class="discret">Moins de 13 ans : tu joues au jeu entier, mais ta partie reste sur cet appareil, sans rien en ligne. <a class="lien" href="./confidentialite.html" target="_blank" rel="noopener">Confidentialité et données</a></p></section>`;

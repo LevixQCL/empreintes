@@ -42,9 +42,9 @@ function montrerConsignes() {
   const el = document.createElement('div');
   el.id = 'consignes-install';
   el.setAttribute('role', 'dialog');
-  el.setAttribute('aria-label', 'Installer EMPREINTES');
+  el.setAttribute('aria-label', 'Installer Ossyra');
   const partager = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11v9h12v-9"/></svg>';
-  el.innerHTML = `<div class="ci-carte"><img src="./icon-192.png" alt="" width="64" height="64"><h2>Installer EMPREINTES</h2>`
+  el.innerHTML = `<div class="ci-carte"><img src="./icon-192.png" alt="" width="64" height="64"><h2>Installer Ossyra</h2>`
     + `<p>Le jeu s'ouvrira depuis ton écran d'accueil, en plein écran, comme une application.</p><ol>`
     + (ios
       ? `<li>Touche ${partager} <b>Partager</b>, en bas de Safari.</li><li>Choisis <b>« Sur l'écran d'accueil »</b>, puis <b>Ajouter</b>.</li>`

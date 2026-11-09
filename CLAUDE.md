@@ -1,4 +1,4 @@
-# EMPREINTES — consignes pour Claude
+# OSSYRA (anciennement EMPREINTES) — consignes pour Claude
 
 Jeu de cartes à collectionner + gestion, SF/fantasy, web mobile d'abord (Vite + TypeScript + Vitest, Firebase).
 Tout est en français : code, commentaires, textes du jeu, messages de commit. Lire le README avant de coder.

@@ -270,7 +270,7 @@ function tableauDeBord(e: Donnees): string {
 
 function afficher() {
   const y = window.scrollY;
-  let h = `<header class="an-tete"><div><span class="an-sur">EMPREINTES · OUTIL D’ANALYSE</span><h1>Le jeu en chiffres</h1></div>`;
+  let h = `<header class="an-tete"><div><span class="an-sur">OSSYRA · OUTIL D’ANALYSE</span><h1>Le jeu en chiffres</h1></div>`;
   if (etat.quoi === 'ok') {
     h += `<div class="an-actions"><button type="button" class="an-btn" data-action="actualiser">Actualiser</button>`
       + `<button type="button" class="an-btn" data-action="csv">Joueurs (CSV)</button>`

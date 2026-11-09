@@ -1,4 +1,4 @@
-# EMPREINTES
+# OSSYRA (anciennement EMPREINTES)
 
 Jeu de cartes à collectionner et de gestion, science-fiction avec une touche de fantasy.
 Version actuelle : **tranche verticale** — district, combat, Strates explorées salle par salle, Chroniques.

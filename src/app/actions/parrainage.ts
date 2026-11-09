@@ -27,9 +27,9 @@ export async function agirParrainage(a: string, _c: Clic): Promise<Suite> {
       const code = app.jeu.parrainage?.code;
       if (!code) break;
       const lien = lienDe(code);
-      const texte = `Rejoins-moi sur EMPREINTES : 2121, sous les eaux, d’autres se souviennent encore. Mon code de recrutement : ${codeAffiche(code)}`;
+      const texte = `Rejoins-moi sur Ossyra : 2121, sous les eaux, d’autres se souviennent encore. Mon code de recrutement : ${codeAffiche(code)}`;
       if (navigator.share) {
-        try { await navigator.share({ title: 'EMPREINTES', text: texte, url: lien }); } catch { /* partage annulé */ }
+        try { await navigator.share({ title: 'Ossyra', text: texte, url: lien }); } catch { /* partage annulé */ }
         return 'fin';
       }
       D.message = (await copier(`${texte}\n${lien}`)) ? 'Lien copié : colle-le dans un message à ton ami.' : `Ton lien : ${lien}`;
