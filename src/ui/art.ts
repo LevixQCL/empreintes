@@ -11,7 +11,7 @@ const base = new URL('art/', document.baseURI).href;
 /** à changer quand les portraits sont repeints sous le même nom : le navigateur recharge alors les nouveaux au lieu de garder les anciens en cache */
 const VERSION_PORTRAITS = 2;
 /** idem pour les illustrations des cartes */
-const VERSION_CARTES = 17;
+const VERSION_CARTES = 18;
 const PORTEURS_ILLUSTRES = new Set(['ilka', 'doran', 'vela', 'sasha', 'nuit', 'aurel', 'coursier', 'docker', 'guetteur', 'kessa', 'liane', 'joss']);
 
 /** Modules illustrés : id du Module dans donnees.ts → fichier */
@@ -201,6 +201,17 @@ function illustrationGarde(id: string): string {
 }
 export const illustrationEnnemi = (id: string): string | null =>
   (id.startsWith('flc-') ? illustrationGarde(id) : ENNEMIS_ILLUSTRES[id] ? t`${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
+/**
+ * Visage d'un garde de garnison (pillages) ou d'un garde posté par un autre directeur (Flèche) : 9 novembre 2026,
+ * recensement des images, on se battait contre « sa » propre Ilka. Le garde garde le nom du Porteur qu'il sert,
+ * mais prend un visage de garde de sa lignée, en deux variantes pour que deux gardes d'une même lignée diffèrent.
+ * Prompts : docs/prompts-recensement.md. Tant qu'un visage n'est pas peint, le garde reprend le portrait du Porteur.
+ */
+const GARNISONS_PEINTES = new Set<string>([]);
+export function visageGarnison(lignee: string, variante: number, porteur: string): string | null {
+  const id = `garnison-${lignee}-${(variante % 2) + 1}`;
+  return GARNISONS_PEINTES.has(id) ? `${base}ennemis/${id}.webp` : portrait(porteur);
+}
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
 export const textureMetal = (r: Rarete) => t`${base}metaux/${r}.webp`;
 /** Le filigrane d'empreinte d'une carte vétérane (28 octobre 2026) : Trace (bleu), Sillon (or), Empreinte (irisée) */
@@ -237,7 +248,7 @@ export const artFleche = (n: 'fleche-entiere' | 'medaillon' | 'plaque' | 'fanion
 export const illustrationScene = (id: string): string | null => (SCENES_ILLUSTREES.has(id) ? t`${base}scenes/${id}.webp` : null);
 /** La salle d'entraînement de la Tour du Noyau (23 octobre 2026) */
 export const salleEntrainement = `${base}salles/entrainement.webp`;
-export const decor = (nom: 'archipel' | 'archipel-nuit' | 'coupe') => t`${base}district/${nom}.webp`;
+export const decor = (nom: 'coupe') => t`${base}district/${nom}.webp`;
 /** Le Mur des empreintes (7 novembre 2026) : les 48 mains peintes, découpées en une planche de 8 × 6 (dans l'ordre des familles) */
 export const planchEmpreintes = `${base}district/mur-empreintes.webp`;
 /** Le flanc de la digue, vu en coupe (les Basses, 7 novembre 2026) : 720 × 1285, du haut (Lavoirs) au bas (Palier) */

@@ -33,7 +33,7 @@ Chaque `git push` sur `main` lance les tests, construit le site et le publie sur
 src/
   core/          les règles du jeu, sans affichage (pourront tourner sur un serveur)
     types.ts       les types : Porteurs, cartes, ennemis, état du combat
-    donnees.ts     le contenu : Porteurs, les cartes (98, dont 10 exclusives), deck de départ, ennemis
+    donnees.ts     le contenu : Porteurs, les cartes (112, plus 7 cartes communes du district et la Clé de l’Héritage : 120), deck de départ, ennemis
     regles.ts      les réglages chiffrés (équilibrage) + Résonance, Écho, triangle
     combat.ts      le moteur de combat
     effets.ts      les noms et textes des effets spéciaux (Perçant, Siphon, Accord…)

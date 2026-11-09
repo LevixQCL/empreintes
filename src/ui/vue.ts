@@ -9,7 +9,7 @@ import { NOMS_EFFET, effetsDe, libelleEffet, texteEffet } from '../core/effets';
 import type { CombatEtat, EnnemiEtat, Geste, LigneeGeste, Rarete } from '../core/types';
 import { peutFuir, peutReculer, sallePrecedente, type Expedition, type TypeSalle } from '../core/expedition';
 import { DISTRICT, PILLAGE } from '../core/jeu';
-import { portraitProvisoire, ageArchipel, artGardien, fondFleche, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, cadragePortrait, sceneDistrict } from './art';
+import { portraitProvisoire, ageArchipel, artGardien, fondFleche, vignetteArchipel, fondCombat, illustrationEnnemi, illustrationModule, portrait, visageGarnison, cadragePortrait, sceneDistrict } from './art';
 import { SIGNE_LOURD, corpsFace, couleurFrequence, styleFace, type Face } from './carte';
 import { sonActif } from './son';
 import { ICO, sigle } from './icones';
@@ -575,7 +575,14 @@ function numeroEnnemi(en: EnnemiEtat): string {
   return i < 0 ? '' : ROMAINS[i] ?? String(i + 1);
 }
 const nomEnnemi = (en: EnnemiEtat) => { const n = numeroEnnemi(en); return n ? `${nomBrut(en)} ${n}` : nomBrut(en); };
-const visageEnnemi = (en: EnnemiEtat) => (en.porteur ? portrait(en.porteur) : illustrationEnnemi(en.id));
+/** un garde de garnison prend un visage de garde de sa lignée (art.ts, visageGarnison), plus celui du Porteur qu'il sert */
+function visageEnnemi(en: EnnemiEtat): string | null {
+  if (!en.porteur) return illustrationEnnemi(en.id);
+  const lignee = porteurDef(en.porteur).lignee;
+  const memes = ETAT ? tousEnnemis(ETAT).filter((o) => o.porteur && porteurDef(o.porteur).lignee === lignee) : [];
+  const variante = Math.max(0, memes.findIndex((o) => (o.rang ?? 0) === (en.rang ?? 0)));
+  return visageGarnison(lignee, variante, en.porteur);
+}
 
 /**
  * La marque d'un Porteur visé (27 octobre 2026). Bryan : « si Ilka avait une marque visuelle, on verrait tout de suite

@@ -1,0 +1,2 @@
+Images retirées du jeu publié le 9 novembre 2026 (recensement) : plus aucun chemin du code ne les charge.
+Si un jour PALIERS_PEINTS repasse à false (art.ts), remettre batiments/<id>.webp dans public/art/batiments.
