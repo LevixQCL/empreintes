@@ -55,12 +55,12 @@ export const LORE_CARTES: Record<string, string> = {
   'miroir-brume': t('Un miroir dont le tain est fait de brume figée. L’ennemi qui s’y regarde y voit quelqu’un d’autre que lui, et retient son geste, le temps de comprendre qui. Le coup suivant passe avant qu’il ait compris.'),
   'encre-ancienne': t('Une encre qui ne sèche pas, tirée des parois des salles closes. Les signes qu’on trace avec ne veulent rien dire pour nous, mais ils fendent la pierre en séchant enfin.'),
   'meche-or': t('Chez les Sept, la mèche d’or est apparue en une nuit. Chez ceux qui sont venus après, elle met un mois. Certains la teignent pour qu’on les laisse tranquilles. L’empreinte, elle, ne se teint pas, et elle reconnaît d’instinct la faille de celle d’en face.'),
-  'plume-givre': t('Une plume tombée d’une ombre ailée, glacée au toucher même en plein été. Elle ralentit tout ce qu’elle effleure, à commencer par les mauvaises intentions.'),
-  'ombre-serpent': t('L’ombre d’un Résonant qui s’allonge au sol, bien plus loin que la lumière ne le permet, et s’enroule autour des chevilles de l’ennemi. Elle bouge toujours une seconde trop tôt.'),
+  'plume-givre': t('Une plume tombée d’une ombre ailée, glacée au toucher même en plein été. Elle fige tout ce qu’elle effleure, à commencer par les mauvaises intentions, sans jamais faire couler une goutte de sang.'),
+  'ombre-serpent': t('L’ombre d’un Résonant qui s’allonge au sol, bien plus loin que la lumière ne le permet, et s’enroule autour des chevilles de tous ceux qui lui font face. Elle bouge toujours une seconde trop tôt.'),
   'ombre-ailee': t('Quand ce Résonant se tient dans la lumière, des ailes immenses se déploient sur le mur derrière lui. Les Hauts y voient une noblesse. Les districts, un orage qui attend son heure.'),
   pressentiment: t('Une lourdeur derrière les yeux, une envie soudaine de reculer d’un pas. C’est le don des Sept, celui qui a sauvé des villes entières : savoir avant les machines. Celui qui frappe juste après sait déjà où.'),
   'chant-abysses': t('Une voix venue d’une mer dont personne ici n’a jamais entendu parler. Elle s’accorde à n’importe quelle Fréquence, comme si elle connaissait déjà la suite.'),
-  'souffle-wyrm': t('Le souffle d’un être ancien, immense, dont les Veilleurs n’ont retrouvé que l’ombre gravée dans un cristal de la Strate −9. Il grandit à chaque note, et ne s’arrête que lorsque la chaîne se tait.'),
+  'souffle-wyrm': t('Le souffle d’un être ancien, immense, dont les Veilleurs n’ont retrouvé que l’ombre gravée dans un cristal de la Strate −9. Il grandit à chaque note, n’épargne rien de ce qui se tient devant lui, et ne s’arrête que lorsque la chaîne se tait.'),
 
   // ---------- Les voies, étape 1 (27 octobre 2026) ----------
   // Le Moteur
@@ -73,7 +73,7 @@ export const LORE_CARTES: Record<string, string> = {
   'coup-epaule': t('Doran ne frappe pas souvent. Il avance, il encaisse, et quand l’autre s’est épuisé contre lui, il donne un seul coup d’épaule. Celui-là compte.'),
   'queue-massue': t('Une queue d’os et de chitine qui pousse aux Génés des quais après des années de travail dans l’eau froide. Plus on la frappe, plus elle durcit.'),
   'belier-os': t('Le front s’épaissit, la nuque se soude, et tout le corps devient une porte qui avance. Les piliers des Fondations portent encore la marque de ceux qui ont appris à s’en servir.'),
-  'retour-maree': t('La mer recule, recule encore, et tout le monde croit qu’elle a renoncé. Puis elle revient avec tout ce qu’elle a retenu. Les Génés des quais se battent comme elle.'),
+  'retour-maree': t('La mer recule, recule encore, et tout le monde croit qu’elle a renoncé. Puis elle revient avec tout ce qu’elle a retenu, et repart en laissant la grève nue. Les Génés des quais se battent comme elle.'),
   // Le Chœur
   'diapason-cristal': t('Un diapason de verre clair qu’on frappe une fois, et qui oblige toutes les empreintes autour de lui à chanter la même note. Les Résonants l’appellent « mettre la salle d’accord ».'),
   'voix-basse': t('Une seule note, tenue très longtemps, si grave qu’on la sent dans les os avant de l’entendre. Seule, elle intrigue. Reprise par d’autres, elle fait céder les murs.'),
@@ -92,7 +92,7 @@ export const LORE_CARTES: Record<string, string> = {
   // La Lecture
   'regard-biais': t('Ne jamais regarder une empreinte en face : elle se cache. Aurel la regarde de côté, comme on regarde une étoile pâle, et la voit trembler à l’endroit exact où elle cédera.'),
   'lame-doute': t('Une lame fine, sans tranchant visible. Elle ne coupe rien de solide. Elle s’enfonce là où l’ennemi hésite déjà, et l’hésitation fait le reste.'),
-  'oeil-lecteur': t('L’œil des Lecteurs des salles closes, voilé de nacre. Il lit une créature comme on lit un registre : son nom, sa faute, et la page où elle se déchire.'),
+  'oeil-lecteur': t('L’œil des Lecteurs des salles closes, voilé de nacre. Il lit une meute entière comme on lit un registre : chaque nom, chaque faute, et la page où tout se déchire.'),
   verdict: t('Une seule phrase, prononcée sans colère. Ce que la Lecture a mis à nu ne se recouvre plus : le coup suivant tombe exactement là.'),
   'sentence-muette': t('Les Orsève jugeaient sans un mot, d’un geste de la main. Aurel a gardé le geste et oublié le reste. « Je n’ai pas besoin de parler. Ils savent déjà ce qu’ils ont fait. »'),
   // La Sève
@@ -118,7 +118,7 @@ export const LORE_CARTES: Record<string, string> = {
   'miroir-hauts': t('Un miroir des grandes salles des Hauts, de ceux qui renvoient les gestes avant les visages. Les Orsève en ont fait fondre toutes les copies. Celui-ci a été volé à temps.'),
   'coeur-etoile': t('On ne sait pas d’où vient ce cœur, seulement qu’il brille dans le noir comme une étoile qui n’existe plus. C’est un original, que personne n’a jamais recopié. Il demande beaucoup à son porteur, et il rend davantage.'),
   'seconde-naissance': t('Une vierge que ceux d’avant n’ont jamais utilisée, rangée seule dans un Berceau. Elle ne soigne pas : elle recommence. Kessa dit qu’en la touchant, on entend un premier cri.'),
-  'empreinte-vive': t('Une empreinte sans visage, qui prend celui de ce qu’elle touche. Les Veilleurs se demandent si elle n’imite pas, simplement, comme ceux d’avant imitaient les vivants.'),
+  'empreinte-vive': t('Une empreinte sans visage, qui prend celui du plus fort de ceux qu’elle touche. Les Veilleurs se demandent si elle n’imite pas, simplement, comme ceux d’avant imitaient les vivants.'),
   'silence-avant': t('Le silence qui suit une catastrophe, conservé dans une vierge de nacre. Il étouffe tout ce qu’il touche, puis rend aux vivants ce qu’ils ont de meilleur, comme pour s’excuser d’être resté si longtemps seul.'),
 
   // ---------- Les nouvelles cartes (4 novembre 2026) ----------
@@ -131,7 +131,7 @@ export const LORE_CARTES: Record<string, string> = {
   // L’Harmonie (Véla) : la suite qui passe d’une lignée à l’autre
   'contre-chant': t('Une note posée sous la mélodie des autres, jamais à l’unisson. Véla l’apprend aux recrues en premier : « Ne chante pas avec eux. Chante entre eux. »'),
   'fil-accord': t('Un fil d’or tendu entre trois pierres de lignées différentes. Seul, il ne vibre pas. Quand un Augmenté, un Géné et un Résonant le touchent en même temps, on l’entend jusqu’à la Tour.'),
-  'nuee-chorale': t('Des oiseaux de papier pliés par les enfants du district, qui tournent ensemble comme des étourneaux dès qu’un Résonant chante. Chacun garde sa couleur, et c’est pour ça qu’ils ne se cognent jamais.'),
+  'nuee-chorale': t('Des oiseaux de papier pliés par les enfants du district, qui tournent ensemble comme des étourneaux dès qu’un Résonant chante. Chacun garde sa couleur, et c’est pour ça qu’ils ne se cognent jamais ; s’il en manque une, ils restent posés.'),
   // Des cartes qui comblent un trou de la collection
   riveteuse: t('Un pistolet à rivets de la digue, réglé pour traverser deux tôles d’un coup. Sasha l’a recalibré pour une troisième : « Celle qu’on ne voit pas. »'),
   'suture-vive': t('Un fil de soie de Géné, qui se resserre tout seul dans la plaie. La Clinique le réserve à un seul blessé à la fois : il a besoin de toute l’attention de celui qui coud.'),

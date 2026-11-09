@@ -218,6 +218,22 @@
    "en": "On the next enemy turn, no Bearer falls: the fatal blow leaves them at 1 HP."
   },
   {
+   "fr": "+50 % en ouverture",
+   "en": "+50% as opener"
+  },
+  {
+   "fr": "+50 % en final",
+   "en": "+50% as finale"
+  },
+  {
+   "fr": "×2 en ouverture",
+   "en": "×2 as opener"
+  },
+  {
+   "fr": "×2 en final",
+   "en": "×2 as finale"
+  },
+  {
    "fr": "ignore bouclier",
    "en": "ignores shield"
   },
@@ -356,6 +372,182 @@
   {
    "fr": "personne ne tombe",
    "en": "no one falls"
+  },
+  {
+   "fr": "Ouverture : +50 % de soin si elle ouvre la chaîne.",
+   "en": "Opener: +50% healing if it opens the chain."
+  },
+  {
+   "fr": "Final : +50 % de soin si elle ferme la chaîne.",
+   "en": "Finale: +50% healing if it closes the chain."
+  },
+  {
+   "fr": "Ouverture : effet doublé si elle ouvre la chaîne.",
+   "en": "Opener: effect doubled if it opens the chain."
+  },
+  {
+   "fr": "Final : effet doublé si elle ferme la chaîne.",
+   "en": "Finale: effect doubled if it closes the chain."
+  },
+  {
+   "fr": "Rend {0} des dégâts infligés, partagés entre toute l’escouade.",
+   "en": "Returns {0} of the damage dealt, shared across the whole squad."
+  },
+  {
+   "fr": "Le Porteur qui la joue récupère {0} des dégâts infligés ; ce qu’il ne peut pas boire va au plus blessé.",
+   "en": "The Bearer who plays it recovers {0} of the damage dealt; whatever they can’t absorb goes to the most wounded."
+  },
+  {
+   "fr": "Annule toute l’attaque annoncée par l’ennemi visé, mais ne frappe qu’à moitié.",
+   "en": "Cancels the targeted enemy’s whole announced attack, but strikes at half power."
+  },
+  {
+   "fr": "Chaque attaque annoncée du groupe perd {0} de sa force.",
+   "en": "Every announced attack in the group loses {0} of its power."
+  },
+  {
+   "fr": "Tout le groupe subit {0} de dégâts en plus, ce tour-ci et le suivant.",
+   "en": "The whole group takes {0} extra damage, this turn and the next."
+  },
+  {
+   "fr": "L’ennemi subit {0} de dégâts en plus pendant {1} tours.",
+   "en": "The enemy takes {0} extra damage for {1} turns."
+  },
+  {
+   "fr": "+{0} places dans la chaîne au tour suivant.",
+   "en": "+{0} chain slots next turn."
+  },
+  {
+   "fr": "+{0} de force pour chaque carte posée avant elle ; frappe aussi tous les autres ennemis, à moitié.",
+   "en": "+{0} power for each card placed before it; also strikes every other enemy at half power."
+  },
+  {
+   "fr": "Après son bouclier, frappe de tout le bouclier d’escouade, puis le vide.",
+   "en": "After its shield, strikes for the whole squad shield, then empties it."
+  },
+  {
+   "fr": "Fréquence libre : reprend celle de la première carte de la chaîne.",
+   "en": "Free Frequency: copies the one of the first card in the chain."
+  },
+  {
+   "fr": "+{0} de force pour chaque autre carte de la même Fréquence, seulement si toute la chaîne a la même.",
+   "en": "+{0} power for each other card of the same Frequency, only if the whole chain shares it."
+  },
+  {
+   "fr": "+{0} de force si l’ennemi visé est fissuré ET à moins de la moitié de ses PV.",
+   "en": "+{0} power if the targeted enemy is fissured AND below half its HP."
+  },
+  {
+   "fr": "+{0} de force si l’ennemi visé est fissuré ou à moins de la moitié de ses PV ; sinon +{1}.",
+   "en": "+{0} power if the targeted enemy is fissured or below half its HP; otherwise +{1}."
+  },
+  {
+   "fr": "Brise la Fêlure de tous les ennemis, quelle que soit leur Fréquence.",
+   "en": "Breaks every enemy’s Flaw, whatever its Frequency."
+  },
+  {
+   "fr": "Frappe une fois de plus par carte au-delà de 3 dans la chaîne ; sous 4 cartes, frappe à moitié.",
+   "en": "Strikes once more for each card beyond 3 in the chain; under 4 cards, it strikes at half power."
+  },
+  {
+   "fr": "Dans une chaîne d’au moins 4 cartes, frappe une seconde fois tous les ennemis.",
+   "en": "In a chain of at least 4 cards, strikes every enemy a second time."
+  },
+  {
+   "fr": "Frappe une seconde fois si la chaîne compte au moins {0} cartes.",
+   "en": "Strikes a second time if the chain holds at least {0} cards."
+  },
+  {
+   "fr": "Soigne toute l’escouade ; le soin en trop devient le double en bouclier d’escouade.",
+   "en": "Heals the whole squad; excess healing becomes twice as much squad shield."
+  },
+  {
+   "fr": "Copie l’effet de la carte la plus forte de la chaîne ; s’il n’y en a pas, +{0} de force.",
+   "en": "Copies the effect of the strongest card in the chain; if there is none, +{0} power."
+  },
+  {
+   "fr": "Dans une suite qui passe par les trois lignées : +{0} de force par autre lignée. Sinon, frappe à moitié.",
+   "en": "In a chain spanning all three lineages: +{0} power per other lineage. Otherwise, it strikes at half power."
+  },
+  {
+   "fr": "{0} à tous",
+   "en": "{0} to all"
+  },
+  {
+   "fr": "rend {0}, partage",
+   "en": "returns {0}, shares"
+  },
+  {
+   "fr": "annule l’attaque",
+   "en": "cancels attack"
+  },
+  {
+   "fr": "−{0} à tous",
+   "en": "−{0} to all"
+  },
+  {
+   "fr": "+{0} à tous",
+   "en": "+{0} to all"
+  },
+  {
+   "fr": "+{0}, {1} tours",
+   "en": "+{0}, {1} turns"
+  },
+  {
+   "fr": "+{0} places",
+   "en": "+{0} slots"
+  },
+  {
+   "fr": "+{0} / carte, tous",
+   "en": "+{0} / card, all"
+  },
+  {
+   "fr": "tout le bouclier",
+   "en": "whole shield"
+  },
+  {
+   "fr": "Fréq. de tête",
+   "en": "First Freq."
+  },
+  {
+   "fr": "+{0}, tout pareil",
+   "en": "+{0}, all same"
+  },
+  {
+   "fr": "+{0} fissuré+blessé",
+   "en": "+{0} fissured+hurt"
+  },
+  {
+   "fr": "+{0}, sinon +{1}",
+   "en": "+{0}, else +{1}"
+  },
+  {
+   "fr": "brise toutes",
+   "en": "breaks all"
+  },
+  {
+   "fr": "+1 coup / carte",
+   "en": "+1 hit / card"
+  },
+  {
+   "fr": "×2 sur tous",
+   "en": "×2 on all"
+  },
+  {
+   "fr": "×2 dès {0} cartes",
+   "en": "×2 from {0} cards"
+  },
+  {
+   "fr": "trop ×2 → bouclier",
+   "en": "excess ×2 → shield"
+  },
+  {
+   "fr": "copie la + forte",
+   "en": "copies strongest"
+  },
+  {
+   "fr": "+{0} / lignée, 3",
+   "en": "+{0} / lineage, 3"
   }
  ]
 }

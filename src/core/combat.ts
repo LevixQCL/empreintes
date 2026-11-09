@@ -943,6 +943,11 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
     FELURE_FAITE = true;
     FLUX_FELURE = true;
   }
+  // Œil du Lecteur (lot 3) : la Fêlure de tout le groupe se brise (le Flux ne se gagne toujours qu'une fois)
+  if (de('lecture')?.zone) {
+    for (const en of ennemisDebout(s)) if (en !== s.ennemi && en.felure !== undefined && !en.felureBrisee) briser(s, en, (ev) => evs.push(ev), false);
+    FELURE_FAITE = true;
+  }
   // Décharge (Moteur) : elle vide le Flux et gagne une part de force par Flux vidé (le facteur est lu avant de vider)
   const dc = de('decharge');
   // Éclair captif ne prend qu'une partie du Flux (max) ; Noyau instable remplit le Flux s'il le trouve vide (recharge)
@@ -995,14 +1000,33 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
     }
     return net;
   };
+  /** Un coup sur chaque ennemi debout du groupe (sauf le visé si `autres`) : le visé reste le même ensuite */
+  const frapperGroupe = (force: number, quoi: string, autres = false) => {
+    const vise = s.ennemi;
+    for (const en of ennemisDebout(s)) {
+      if (autres && en === vise) continue;
+      s.ennemi = en;
+      evs.push({ kind: 'effet', cible: 'ennemi', texte: quoi.includes('Rafale') ? tr('Rafale') : tr('Souffle'), rang: en.rang ?? 0 });
+      frapper(force, quoi, { base: g.v, lignes: facteurs });
+      if (en !== vise) { phaseGardien(s, en, (ev) => evs.push(ev)); if (en.pv <= 0) tombe(s, en, (ev) => evs.push(ev)); }
+    }
+    s.ennemi = vise;
+  };
 
   if (g.type === 'atk') {
     const net = frapper(force, g.nom, { base: g.v, lignes: facteurs });
     // Rafale (Cadence) : dans une chaîne d'au moins 4 cartes, elle frappe une seconde fois
-    if (de('rafale') && s.chaine.length >= 4 && s.ennemi.pv > 0) {
+    // lot 3 : Poings-pistons dès 3 cartes ; Mitraille, la seconde salve sur tout le groupe ; Cadence folle, un coup par carte au-delà de 3
+    const rf = de('rafale');
+    const salves = !rf ? 0 : rf.cadence ? Math.max(0, s.chaine.length - 3) : s.chaine.length >= (rf.min ?? 4) ? 1 : 0;
+    for (let k = 0; k < salves; k++) {
+      if (rf?.zone) { frapperGroupe(force, `${g.nom} (Rafale)`); continue; }
+      if (s.ennemi.pv <= 0) break;
       evs.push({ kind: 'effet', cible: 'ennemi', texte: tr('Rafale'), rang: s.ennemi.rang ?? 0 });
       frapper(force, `${g.nom} (Rafale)`, { base: g.v, lignes: facteurs });
     }
+    // Souffle du wyrm (lot 3) : le Crescendo frappe aussi tous les autres ennemis du groupe, à moitié
+    if (de('crescendo')?.zone) frapperGroupe(force / 2, `${g.nom} (souffle)`, true);
     // Exécution (exclusive) : sous le seuil, l'ennemi visé tombe ; un gardien n'est jamais achevé ainsi
     const ex = de('execution');
     if (ex && s.ennemi.pv > 0 && !estGardien(s.ennemi.id) && s.ennemi.pv <= s.ennemi.pvMax * ex.part) {
@@ -1016,14 +1040,26 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
     if (si && net > 0) {
       // le Siphon soigne le Porteur qui a joué la carte : c'est lui qui boit la vie (s'il est à terre, le plus blessé)
       const lui = s.porteurs.find((p) => p.id === g.porteur && p.pv > 0);
-      const c = lui ?? plusBlesse(s);
-      if (c) {
+      const rendre = (c: PorteurEtat, v: number): number => {
         const avant = c.pv;
-        c.pv = Math.min(c.pvMax, c.pv + Math.round(net * si.part));
+        c.pv = Math.min(c.pvMax, c.pv + v);
         if (c.pv > avant) {
           log(s, tr`Siphon : ${porteurDef(c.id).nom} récupère ${c.pv - avant} PV.`, { sorte: 'soin', v: c.pv - avant });
           evs.push({ kind: 'soin', cible: c.id, v: c.pv - avant });
         }
+        return v - (c.pv - avant);
+      };
+      const total = Math.round(net * si.part);
+      if (si.mode === 'meute') {
+        // Cœur de meute (lot 3) : les PV rendus sont partagés entre toute l'escouade debout
+        const tous = vivants(s);
+        for (const c of tous) rendre(c, Math.round(total / tous.length));
+      } else {
+        const c = lui ?? plusBlesse(s);
+        const reste = c ? rendre(c, total) : 0;
+        // Lamproie des piliers (lot 3) : ce que le Porteur ne peut pas boire passe au plus blessé
+        const autre = si.mode === 'trop' && reste > 0 ? plusBlesse(s) : undefined;
+        if (autre && autre !== c) rendre(autre, reste);
       }
     }
   } else if (g.type === 'bouclier') {
@@ -1038,6 +1074,11 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
       if (faveur !== 1) lignes.push({ nom: CONDITIONS[s.condition!]?.nom ?? tr('Salle favorable'), m: faveur });
       if (s.debride) lignes.push({ nom: tr('Débridage'), m: REGLES.eclat.debride });
       frapper(s.bouclier * rp.part * faveur * (s.debride ? REGLES.eclat.debride : 1), `${g.nom} (Riposte)`, { base: s.bouclier, lignes });
+      // Coquille de marée (lot 3) : elle frappe de tout le bouclier, et le vide
+      if (rp.vide && s.bouclier > 0) {
+        log(s, tr`Riposte : tout le bouclier d’escouade part dans le coup (${s.bouclier}).`, { sorte: 'effet' });
+        s.bouclier = 0;
+      }
     }
   } else {
     // Relève : le premier Porteur à terre se relève avec tout le soin (sinon, la carte soigne normalement)
@@ -1070,6 +1111,8 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
     else if (cibles.length) log(s, `${nomP} · ${g.nom} : ${morceaux.join(', ')} PV.`, { sorte: 'soin', v: total, calculs });
     // Débord (Sève) : le soin en trop devient du bouclier d'escouade
     if (de('debord') && trop > 0) {
+      // Floraison (lot 3) et le mot-clé : le soin en trop compte double
+      trop = Math.round(trop * (de('debord')!.x ?? 1));
       s.bouclier += trop;
       log(s, tr`Débord : le soin en trop devient ${trop} de bouclier d’escouade.`, { sorte: 'protection', v: trop });
       evs.push({ kind: 'bouclier', cible: 'escouade', v: trop });
@@ -1085,9 +1128,20 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
         log(s, tr`Surcharge : Flux +${s.flux - avant}.`, { sorte: 'flux' });
         evs.push({ kind: 'flux', gain: s.flux - avant });
       }
+    } else if (ef?.type === 'desarmer' && ef.zone) {
+      // Œil-brouilleur (lot 3) : toutes les attaques annoncées du groupe perdent la moitié de la part
+      for (const en of ennemisDebout(s)) {
+        const it = en === s.ennemi ? s.intention : en.intention;
+        if (it?.type !== 'atk') continue;
+        const avant = it.v;
+        it.v = Math.round(avant * (1 - ef.part / 2));
+        log(s, tr`Troublé : l’attaque annoncée ${deNom(ennemiDef(en.id).nom)} passe de ${avant} à ${it.v}.`, { sorte: 'effet' });
+        evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Troublé', rang: en.rang ?? 0 });
+      }
     } else if (ef?.type === 'desarmer' && s.intention.type === 'atk') {
       const avant = s.intention.v;
-      s.intention.v = Math.round(avant * (1 - ef.part));
+      // Plume de givre (lot 3) : toute l'attaque annoncée tombe, mais la carte ne frappe qu'à moitié (facteursGeste)
+      s.intention.v = ef.total ? 0 : Math.round(avant * (1 - ef.part));
       log(s, tr`Troublé : l’attaque annoncée passe de ${avant} à ${s.intention.v}.`, { sorte: 'effet' });
       evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Troublé', rang: s.ennemi.rang ?? 0 });
     } else if (ef?.type === 'sourdine' && s.ennemi.pv > 0 && (s.intention.type === 'atk' || s.intention.type === 'bouclier' || s.intention.type === 'soin')) {
@@ -1098,13 +1152,20 @@ function appliquer(s: CombatEtat, g: Geste, mult: number, rang: number, suite = 
       log(s, tr`Sourdine : ${quoi} passe de ${avant} à ${s.intention.v}.`, { sorte: 'effet' });
       evs.push({ kind: 'effet', cible: 'ennemi', texte: tr('Sourdine'), rang: s.ennemi.rang ?? 0 });
     } else if (ef?.type === 'fissure' && s.ennemi.pv > 0) {
-      s.ennemi.fissure = Math.max(s.ennemi.fissure ?? 0, ef.part);
-      s.ennemi.fissureTours = 2;
-      log(s, tr`Fissure : l’ennemi subit +${Math.round(ef.part * 100)} % de dégâts jusqu’au tour prochain.`, { sorte: 'effet' });
-      evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Fissure', rang: s.ennemi.rang ?? 0 });
+      // Ombre de serpent (lot 3) : tout le groupe ; Ombre ailée : trois tours au lieu de deux
+      const tours = ef.tours ?? 2;
+      for (const en of ef.zone ? ennemisDebout(s) : [s.ennemi]) {
+        en.fissure = Math.max(en.fissure ?? 0, ef.part);
+        en.fissureTours = Math.max(en.fissureTours ?? 0, tours);
+        evs.push({ kind: 'effet', cible: 'ennemi', texte: 'Fissure', rang: en.rang ?? 0 });
+      }
+      log(s, ef.zone ? tr`Fissure : tout le groupe subit +${Math.round(ef.part * 100)} % de dégâts jusqu’au tour prochain.`
+        : tours > 2 ? tr`Fissure : l’ennemi subit +${Math.round(ef.part * 100)} % de dégâts pendant ${tours} tours.`
+        : tr`Fissure : l’ennemi subit +${Math.round(ef.part * 100)} % de dégâts jusqu’au tour prochain.`, { sorte: 'effet' });
     } else if (ef?.type === 'elan') {
-      s.capaProchain = (s.capaProchain ?? 0) + 1;
-      log(s, tr('Élan : la prochaine chaîne aura une place de plus.'), { sorte: 'effet' });
+      const n = ef.n ?? 1;
+      s.capaProchain = (s.capaProchain ?? 0) + n;
+      log(s, n > 1 ? tr`Élan : la prochaine chaîne aura ${n} places de plus.` : tr('Élan : la prochaine chaîne aura une place de plus.'), { sorte: 'effet' });
       evs.push({ kind: 'effet', cible: 'escouade', texte: 'Élan' });
     } else if (ef?.type === 'tenacite') {
       s.tenace = true;
@@ -1179,7 +1240,9 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
   if (un) {
     const fs = frequencesEffectives(chaine);
     const pareilles = fs.filter((x, k) => k !== rang && x === fs[rang]).length;
-    mettre(tr`Unisson (${pareilles} même${pareilles > 1 ? 's' : ''} Fréquence${pareilles > 1 ? 's' : ''})`, 1 + un.part * pareilles);
+    // Grand unisson (lot 3) : seulement si toute la chaîne a la même Fréquence
+    const toute = !un.toute || fs.every((x) => x === fs[rang]);
+    if (toute) mettre(tr`Unisson (${pareilles} même${pareilles > 1 ? 's' : ''} Fréquence${pareilles > 1 ? 's' : ''})`, 1 + un.part * pareilles);
   }
   // Contrepoint (Harmonie) : dans une suite qui résonne, une part de force pour chaque autre lignée de la suite
   const cp = de('contrepoint');
@@ -1188,6 +1251,18 @@ function facteursGeste(s: CombatEtat, g: Geste, mult: number, rang: number, chai
     autres.delete(ligneeGeste(g));
     if (autres.size) mettre(tr`Contrepoint (${autres.size} autre${autres.size > 1 ? 's' : ''} lignée${autres.size > 1 ? 's' : ''} dans la suite)`, 1 + cp.part * autres.size);
   }
+  // Nuée chorale (lot 3) : sans une suite qui passe par les trois lignées, elle frappe à moitié
+  if (cp?.exige) {
+    const l = mult > 1 ? ligneesDeSuite(chaine, rang) : new Set();
+    l.delete('neutre');
+    if (l.size < 3) mettre(tr('Contrepoint : pas les trois lignées'), 0.5);
+  }
+  // Cadence folle (lot 3) : sous 4 cartes, elle frappe à moitié
+  if (de('rafale')?.cadence && chaine.length < 4) mettre(tr('Cadence : moins de 4 cartes'), 0.5);
+  // Plume de givre (lot 3) : elle annule l'attaque annoncée, mais ne frappe qu'à moitié
+  if (de('desarmer')?.total) mettre(tr('Givre : demi-force'), 0.5);
+  // une Vague à mot-clé : +50 % de soin quand elle est à sa place (un Débord, lui, double son soin en trop)
+  if (g.effet?.type === 'vague' && !eteinte && motActif(g.effet, chaine.length, rang)) mettre(g.effet!.mot === 'ouverture' ? tr('Ouverture') : tr('Final'), 1.5);
   // Empreinte (exclusive) sans rien à copier (en tête de chaîne, ou après une carte sans effet) : elle imite la force à la place
   if (!eteinte && g.effet?.type === 'empreinte' && !effets[0]) mettre(tr('Empreinte (rien à copier)'), REGLES.empreinteSeule);
   // Surtension (exclusive) : le Porteur paie de ses PV une part de force en plus
@@ -1214,13 +1289,33 @@ export function ligneesDeSuite(chaine: readonly Geste[], rang: number): Set<Lign
  * de la carte posée juste avant elle, sauf une Fréquence libre (elle changerait la suite), une autre Empreinte, ou une carte
  * éteinte (`avantEteinte` : son Porteur est à terre, elle n'a plus d'effet à prêter ; audit du 7 novembre 2026).
  */
-export function effetsEnJeu(g: Pick<Geste, 'effet' | 'effet2'>, chaine: readonly Pick<Geste, 'effet'>[], rang: number, eteinte = false, avantEteinte = false): (Effet | undefined)[] {
+export function effetsEnJeu(g: Pick<Geste, 'effet' | 'effet2'>, chaine: readonly (Pick<Geste, 'effet'> & { v?: number })[], rang: number, eteinte = false, avantEteinte = false): (Effet | undefined)[] {
   if (eteinte) return [];
+  const copiable = (e?: Effet) => !!e && !frequenceLibre(e) && e.type !== 'empreinte';
   return [g.effet, g.effet2].map((e) => {
-    if (e?.type !== 'empreinte') return e;
+    if (e?.type !== 'empreinte') return motEnJeu(e, chaine.length, rang);
+    // Empreinte vive (lot 3, 9 novembre 2026) : l'effet de la carte la plus forte de la chaîne, où qu'elle soit
+    if (e.forte) {
+      const forte = chaine.filter((x, k) => k !== rang && copiable(x.effet)).sort((a, b) => (b.v ?? 0) - (a.v ?? 0))[0];
+      return forte ? motEnJeu(forte.effet, chaine.length, rang) : undefined;
+    }
     const copie = rang > 0 && !avantEteinte ? chaine[rang - 1]?.effet : undefined;
-    return copie && !frequenceLibre(copie) && copie.type !== 'empreinte' ? copie : undefined;
+    return copiable(copie) ? motEnJeu(copie, chaine.length, rang) : undefined;
   });
+}
+
+/** Le mot-clé de la carte joue-t-il à cette place ? Ouverture : elle ouvre la chaîne ; Final : elle la ferme (lot 3, 9 novembre 2026) */
+export const motActif = (e: Effet | undefined, longueur: number, rang: number) =>
+  e?.mot === 'ouverture' ? rang === 0 : e?.mot === 'final' ? rang === longueur - 1 : false;
+
+/** L'effet tel qu'il joue à sa place : doublé quand son mot-clé est actif (un soin, lui, gagne +50 % de force : facteursGeste) */
+function motEnJeu(e: Effet | undefined, longueur: number, rang: number): Effet | undefined {
+  if (!e || !motActif(e, longueur, rang)) return e;
+  if (e.type === 'flux') return { ...e, v: e.v * 2 };
+  if (e.type === 'elan') return { ...e, n: (e.n ?? 1) * 2 };
+  if (e.type === 'debord') return { ...e, x: (e.x ?? 1) * 2 };
+  if ('part' in e) return { ...e, part: Math.round(e.part * 2 * 100) / 100 };
+  return e;
 }
 
 /** Ce que l'ennemi visé change à un coup : triangle des lignées, Fissure, Évanescent (en facteurs), Blindé (en points retirés) */
@@ -1232,7 +1327,10 @@ function facteursCoup(s: CombatEtat, g: Geste, mult: number, percant: boolean, e
   // Curée (Traque) : l'ennemi fissuré est achevé plus fort ; Faille (Lecture) : de même quand sa Fêlure est brisée
   // la Curée vise une proie affaiblie : fissurée, ou sous la moitié de ses PV
   const curee = effets.find((x): x is Extract<Effet, { type: 'curee' }> => x?.type === 'curee');
-  if (curee && (s.ennemi.fissure || s.ennemi.pv <= s.ennemi.pvMax / 2)) facteurs.push({ nom: s.ennemi.fissure ? tr('Curée (ennemi fissuré)') : tr('Curée (ennemi à moins de la moitié de ses PV)'), m: 1 + curee.part });
+  // lot 3 : Hallali exige les deux à la fois ; Chasse à l'aveugle frappe quand même plus fort sans proie blessée
+  const fis = !!s.ennemi.fissure, moitie = s.ennemi.pv <= s.ennemi.pvMax / 2;
+  if (curee && (curee.deux ? fis && moitie : fis || moitie)) facteurs.push({ nom: curee.deux ? tr('Curée (ennemi fissuré et affaibli)') : fis ? tr('Curée (ennemi fissuré)') : tr('Curée (ennemi à moins de la moitié de ses PV)'), m: 1 + curee.part });
+  else if (curee?.aveugle) facteurs.push({ nom: tr('Curée à l’aveugle'), m: 1 + curee.aveugle });
   const faille = effets.find((x): x is Extract<Effet, { type: 'faille' }> => x?.type === 'faille');
   if (faille && s.ennemi.felureBrisee) facteurs.push({ nom: tr('Faille (Fêlure brisée)'), m: 1 + faille.part });
   // Évanescent : hors Résonance, l'ennemi ne prend qu'une part des coups

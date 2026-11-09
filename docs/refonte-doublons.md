@@ -80,3 +80,73 @@ Une seule carte change par paire, avec un effet qui existe déjà ; force, Fréq
 | Œil-relais (fer, attaque) | Perçant (le troisième Perçant de fer) | **Curée 50 %** | achever ce qui saigne déjà | +16 → +18 |
 
 Restent comme elles sont : Queue-massue (Riposte de la voie Carapace), Bracelet de déviation (Élan, carte de départ), Pistolet à faisceau (Surcharge de fer), Lame de doute (Faille de la Lecture), la Lamproie (Siphon d’argent), Plastron de choc et Canon à cristal (Perçant, cartes de départ aux Fréquences 3 et 6). On garde les 112 cartes.
+
+## Lot 3 (9-10 novembre 2026, remarque de Luc : « beaucoup de cartes mais beaucoup de ressemblance, c'est du remplissage »)
+
+Audit complet des 112 cartes (Claude Docs : « Ossyra — Audit des cartes : quasi-doublons et niveaux »). Constat : 33 effets, et des
+« escaliers » — le même effet de métal en métal avec un pourcentage un peu plus haut, ce que le métal fait déjà. Quatre principes :
+
+1. **Préparer, puis profiter** : chaque voie a des cartes qui créent un état et des cartes qui le dépensent (la Traque gagne un
+   deuxième préparateur : Crocs de verre fissure).
+2. **Un pourcentage par effet** : Fissure 25 %, Troubler 30 %, Siphon 50 %, Rempart 50 %, Riposte 50 %, Curée 60 %, Unisson 120 %,
+   Contrepoint 25 %, Crescendo 30 %, Amorce 50 %, Sourdine 35 %, Faille 50 %. Le métal fait le reste. `tests/doublons.test.ts` le vérifie
+   (hors Héritage, Décharge, Surtension, cartes lourdes et cartes à prix).
+3. **Deux mots-clés sur l'ordre de pose** : Ouverture (effet doublé si la carte ouvre la chaîne) et Final (si elle la ferme) ; un soin
+   à mot-clé gagne +50 %. Le robot essaie désormais aussi l'ordre « Ouverture en tête, Final au bout ».
+4. **Les grandes cartes ont un prix** : très fortes dans le bon deck, moins ailleurs. Leur « Puissance » (tri des cartes, deck du
+   joueur simulé) compte ×0,7 : sans ça, le joueur simulé les prenait partout et n'ouvrait plus la Strate −10 (7 parcours sur 32
+   bloqués, contre 0 après).
+
+Mesure : `npm run refonte` (scripts/refonte.ts), chaque carte à la place de la carte de départ de sa lignée, dans son métal d'origine
+(cuivre pour une carte de fer), Strate −3 entière, 120 descentes (bruit d'environ ±8 points). Deck de départ : 54 % de victoires.
+
+| Carte | Avant | Après | Robot |
+|---|---|---|---|
+| Queue-massue (cuivre) | Riposte 60 % | Riposte 50 % | +23 → +18 |
+| Bélier d’os (argent, lourde) | Riposte 60 %, force 16 | Riposte 50 %, **force 20** | +14 → +25 |
+| Coquille de marée (or) | Riposte 65 % | **Riposte 130 %, puis vide le bouclier** | +35 → +24 |
+| Œil-relais (fer) | Curée 50 % | Curée 60 % | +14 → +18 |
+| Crocs de verre (cuivre) | Curée 60 % | **Fissure Final** (prépare la Curée du tour suivant) | +13 → +15 |
+| Chasse à l’aveugle (argent) | Curée 70 % | **Curée 60 %, sinon +30 % quand même** | +22 → +27 |
+| Hallali (or) | Curée 80 % | **Curée 200 %, seulement si fissuré ET sous la moitié** | +26 → +17 |
+| Poings-pistons (cuivre) | Rafale | **Rafale dès 3 cartes** | +13 → +17 |
+| Mitraille de clous (argent) | Rafale | **seconde salve sur tout le groupe** | +17 → +18 |
+| Cadence folle (or) | Rafale | **un coup de plus par carte au-delà de 3 ; sous 4 cartes, demi-force** | +24 → +23 |
+| Pas chassé (fer) | Élan | **Élan Final** (+2 places) | +15 → +18 |
+| Sève des piliers (cuivre) | Débord | **Débord Ouverture** | +18 → +15 |
+| Mue de verre (argent) | Débord | **Débord Final** | +17 → +13 |
+| Floraison des Fondations (or) | Débord | **le soin en trop compte double en bouclier** | +23 → +21 |
+| Chorale des ombres (cuivre) | Unisson 130 % | **Unisson Final** (120 %) | +13 → +19 |
+| Grand unisson (or) | Unisson 140 % | **Unisson 250 %, seulement si toute la chaîne a la même Fréquence** | +28 → +28 |
+| Cloche des abysses (argent) | Diapason | **reprend la Fréquence de la première carte** | +19 → +18 |
+| Condensateur (cuivre) | Surcharge +1 | **Surcharge Ouverture** | +14 → +21 |
+| Fil d’accord (argent) | Contrepoint 30 % | **Contrepoint Final** (25 %) | +12 → +15 |
+| Nuée chorale (or) | Contrepoint 30 % | **Contrepoint 50 % ; sans les trois lignées, demi-force** | +18 → +18 |
+| Œil du Lecteur (cuivre) | Lecture | **brise la Fêlure de tous les ennemis** | +13 → +13 |
+| Flair (fer, bouclier) | Fissure 30 % | Fissure 25 % | +16 → +17 |
+| Yeux nocturnes (fer) | Fissure 25 % | **Fissure Ouverture** | +16 → +10 |
+| Ombre de serpent (cuivre) | Fissure 30 % | **Fissure 25 % sur tout le groupe** | +11 → +12 |
+| Ombre ailée (argent, lourde) | Fissure 40 % | **Fissure 25 % pendant 3 tours** | +23 → +15 |
+| Œil-brouilleur (cuivre) | Troubler 30 % | **chaque attaque du groupe −15 %** | +18 → +13 |
+| Plume de givre (cuivre) | Troubler 40 % | **annule toute l’attaque annoncée, frappe à moitié** | +8 → +10 |
+| Glande d’ambre (fer) | Vague | **Vague Ouverture** | +14 → +23 |
+| Sang d’ambre (argent) | Vague | **Vague Final** | +18 → +24 |
+| Cœur de reprise (or) | Perçant | **Secours 50 %** | +31 → +30 |
+| Lamproie des piliers (argent) | Siphon 60 % | **Siphon 50 % ; le trop va au plus blessé** | +13 → +25 |
+| Cœur de meute (or) | Siphon 50 % | **Siphon partagé entre toute l’escouade** | +24 → +26 |
+| Poumons d’abysse (cuivre) | Rempart 40 % | **Rempart Final** (50 %) | +16 → +19 |
+| Suture vive (cuivre, soin) | Rempart 40 % | Rempart 50 % | +13 → +13 |
+| Carapace-mère (argent) | Rempart 75 % | **Rempart Ouverture** (50 %) | +16 → +17 |
+| Souffle du wyrm (or) | Crescendo | **frappe aussi les autres ennemis, à moitié** | +19 → +26 |
+| Gant à arc (fer) / Lames orbitales (or) | Crescendo 25 % | Crescendo 30 % | +8 → +13 / +23 → +26 |
+| Grappin à câble (fer) | Amorce 40 % | Amorce 50 % | +1 → +2 |
+| Sentence muette (or) | Faille 55 % | Faille 50 % | +22 → +18 |
+| Sablier inversé (argent) | Sourdine 40 % | Sourdine 35 % | — |
+| Empreinte vive (nacre) | Empreinte | **copie l’effet de la carte la plus forte de la chaîne** | +21 → +20 |
+
+Essais écartés au robot : Glande d’ambre en Secours (+3), Mue totale, Floraison et Carapace-mère en cartes lourdes (le joueur simulé
+n'ouvrait plus −10 avant le jour 35), Cadence folle et Nuée chorale à force nulle hors condition (−12 et +5), Plume de givre sans dégâts.
+
+Restent assumées (listées dans le test) : cartes de départ aux Fréquences différentes, Riveteuse et Vérin (trous de métal), Mue totale
+(la grande Vague d'or), les exclusives Rappel, et les paires tranchées aux lots 1 et 2. Le mode duel (`duel.ts`, pas encore branché)
+lit les effets de base : il ignore pour l'instant mots-clés et variantes.

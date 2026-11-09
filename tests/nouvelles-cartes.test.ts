@@ -99,6 +99,6 @@ describe('Les nouvelles cartes', () => {
   it('les nouvelles cartes ont leur effet dès le cuivre, et rien en fer', () => {
     expect(moduleDef('servo-bras@fer').effet).toBeUndefined();
     expect(moduleDef('servo-bras@cuivre').effet).toEqual({ type: 'servo' });
-    expect(moduleDef('nuee-chorale@nacre').effet).toEqual({ type: 'contrepoint', part: 0.45 });
+    expect(moduleDef('nuee-chorale@nacre').effet).toEqual({ type: 'contrepoint', part: 0.75, exige: true });
   });
 });

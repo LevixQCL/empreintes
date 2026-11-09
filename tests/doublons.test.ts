@@ -1,7 +1,7 @@
 // La refonte des quasi-doublons (1er novembre 2026, remarque de Luc : « c'est quasiment des doublons »).
 // Aucune carte supprimée : celles qui faisaient la même chose en plus gros changent d'effet.
 import { describe, expect, it } from 'vitest';
-import { ajouter, creerCombat, detailForce, lancer } from '../src/core/combat';
+import { ajouter, creerCombat, detailForce, effetsEnJeu, lancer } from '../src/core/combat';
 import { MODULES, PORTEURS, moduleDef } from '../src/core/donnees';
 import type { CombatEtat, Effet, Geste, TypeGeste } from '../src/core/types';
 
@@ -82,6 +82,67 @@ describe('Refonte des quasi-doublons', () => {
     const connus = ['Plastron de choc / Canon à cristal', 'Talon de cristal / Jambes à ressort', 'Bol de sève / Glande d’ambre',
       'Front de roche / Yeux nocturnes', 'Cor de brume / Encre ancienne', 'Talon de cristal / Pas chassé'];
     expect(doubles.filter((d) => !connus.includes(d))).toEqual([]);
+  });
+
+  // Lot 3 (9 novembre 2026, remarque de Luc : « beaucoup de cartes mais beaucoup de ressemblance ») : on ne compare plus seulement
+  // les cartes d'un même métal. Deux cartes de la même lignée, de la même action, avec le même effet (variante et mot-clé compris)
+  // et le même poids font doublon, quel que soit leur métal : le métal monte déjà la force, un pourcentage plus haut ne suffit pas.
+  it('lot 3 : plus d’escaliers, même d’un métal à l’autre', () => {
+    const sig = (m: (typeof MODULES)[number]) => {
+      const { part: _p, v: _v, ...reste } = (m.effet ?? {}) as Record<string, unknown>;
+      return `${m.lignee}|${m.type}|${JSON.stringify(reste)}|${m.lourd ? 'lourde' : ''}`;
+    };
+    const vues = new Map<string, string>();
+    const doubles: string[] = [];
+    for (const m of MODULES) {
+      if (m.legs || m.lien) continue;
+      const k = sig(m);
+      if (vues.has(k)) doubles.push(`${vues.get(k)} / ${m.id}`);
+      else vues.set(k, m.id);
+    }
+    // restent assumées (docs/refonte-doublons.md, lot 3) : des cartes de départ aux Fréquences différentes, des cartes qui comblent
+    // un trou de métal, des exclusives, et les paires tranchées aux lots 1 et 2
+    const assumees = ['ruee / tir', 'ruee / riveteuse', 'bond / jambes-ressort', 'bond / coeur-turbine', 'esquive / dorsale',
+      'regenerer / branchies', 'echo / chant-abysses', 'miroir-brume / verdict', 'pressentiment / berceuse', 'coup-epaule / queue-massue',
+      'lame-doute / sentence-muette', 'servo-bras / verin', 'boucle-memoire / silence-avant',
+      // la grande Vague d'or : une Vague lourde ralentissait toute la descente (parcours simulé, 9 novembre 2026)
+      'regenerer / mue-totale'];
+    expect(doubles.filter((d) => !assumees.includes(d))).toEqual([]);
+  });
+
+  it('lot 3 : un seul pourcentage par effet (le métal fait le reste)', () => {
+    const parts = new Map<string, Set<number>>();
+    for (const m of MODULES) {
+      const e = m.effet as Record<string, unknown> | undefined;
+      // l'Héritage (deux effets, parts plus basses), les variantes à prix et les effets réglés carte par carte (Décharge, Surtension) à part
+      if (m.legs || m.lien || !e || typeof e.part !== 'number' || e.total || e.deux || e.exige || e.toute || e.vide || m.lourd) continue;
+      if (e.type === 'decharge' || e.type === 'surtension') continue;
+      parts.set(e.type as string, new Set([...(parts.get(e.type as string) ?? []), e.part]));
+    }
+    for (const [type, p] of parts) expect([type, p.size]).toEqual([type, 1]);
+  });
+
+  it('lot 3 : les mots-clés doublent l’effet à leur place, et seulement là', () => {
+    const s = combat([geste(5, 'atk', 10, { type: 'fissure', part: 0.25, mot: 'ouverture' }, 'vela'), geste(6, 'atk', 10, undefined, 'vela')]);
+    poser(s);
+    expect(effetsEnJeu(s.chaine[0]!, s.chaine, 0)[0]).toMatchObject({ part: 0.5 });
+    expect(effetsEnJeu(s.chaine[0]!, s.chaine, 1)[0]).toMatchObject({ part: 0.25 });
+    const f = { type: 'flux', v: 1, mot: 'final' } as const;
+    expect(effetsEnJeu({ effet: f }, [{}, { effet: f }], 1)[0]).toMatchObject({ v: 2 });
+    expect(effetsEnJeu({ effet: f }, [{ effet: f }, {}], 0)[0]).toMatchObject({ v: 1 });
+  });
+
+  it('lot 3 : Plume de givre annule l’attaque annoncée sans frapper ; Coquille de marée vide le bouclier', () => {
+    const p = combat([geste(5, 'atk', 10, { type: 'desarmer', part: 1, total: true }, 'vela')]);
+    p.intention = { type: 'atk', nom: 'Coup', v: 20 };
+    poser(p); lancer(p, { silencieux: true, apercu: () => {} });
+    expect(degats(p)).toBeGreaterThan(0);
+    expect(p.intention.v).toBe(0);
+    const c = combat([geste(5, 'bouclier', 10, { type: 'riposte', part: 1, vide: true }, 'doran')]);
+    c.intention = { type: 'bouclier', v: 0 };
+    poser(c); lancer(c, { silencieux: true, apercu: () => {} });
+    expect(degats(c)).toBeGreaterThan(0);
+    expect(c.bouclier).toBe(0);
   });
 
   it('les cartes de la capture de Luc ont chacune leur effet', () => {

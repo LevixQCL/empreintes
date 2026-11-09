@@ -215,6 +215,10 @@ export function puissanceCarte(cle: string, niveau: number): number {
   let v = m.v * multNiveau(cle, niveau);
   if (m.lourd) v *= 0.6;
   if (m.effet) v *= 1.25;
+  // lot 3 (9 novembre 2026) : les cartes « à prix » (Cadence folle, Nuée chorale, Plume de givre, Hallali, Grand unisson,
+  // Coquille de marée) ne donnent toute leur force que dans le bon deck : hors de lui, elles valent moins que leur force affichée
+  const e = m.effet;
+  if (e && (('total' in e && e.total) || ('cadence' in e && e.cadence) || ('exige' in e && e.exige) || ('deux' in e && e.deux) || ('toute' in e && e.toute) || ('vide' in e && e.vide))) v *= 0.7;
   if (m.type !== 'atk') v *= 1.1;
   return v * (1 + 0.15 * (m.f.length - 1));
 }

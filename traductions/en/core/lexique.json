@@ -206,6 +206,14 @@
    "en": "The card hits harder against an enemy whose Flaw is already broken."
   },
   {
+   "fr": "Mot-clé : l’effet de la carte compte double si elle est la première de la chaîne (un soin, lui, gagne +50 %).",
+   "en": "Keyword: the card’s effect counts double if it is the first in the chain (a heal gains +50% instead)."
+  },
+  {
+   "fr": "Mot-clé : l’effet de la carte compte double si elle est la dernière de la chaîne (un soin, lui, gagne +50 %).",
+   "en": "Keyword: the card’s effect counts double if it is the last in the chain (a heal gains +50% instead)."
+  },
+  {
    "fr": "Dans une chaîne d’au moins 4 cartes, la carte frappe une seconde fois.",
    "en": "In a chain of at least 4 cards, the card strikes a second time."
   },

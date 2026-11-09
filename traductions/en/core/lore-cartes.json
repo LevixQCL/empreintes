@@ -158,12 +158,12 @@
    "en": "The Seven got their streak of gold overnight. For everyone since, it takes a month. Some dye it so they’ll be left alone. You can’t dye the imprint, and it always knows the flaw in the one it faces."
   },
   {
-   "fr": "Une plume tombée d’une ombre ailée, glacée au toucher même en plein été. Elle ralentit tout ce qu’elle effleure, à commencer par les mauvaises intentions.",
-   "en": "A feather shed by a winged shadow, cold to the touch in midsummer. It slows whatever it brushes, starting with bad intentions."
+   "fr": "Une plume tombée d’une ombre ailée, glacée au toucher même en plein été. Elle fige tout ce qu’elle effleure, à commencer par les mauvaises intentions, sans jamais faire couler une goutte de sang.",
+   "en": "A feather shed by a winged shadow, cold to the touch in midsummer. It freezes whatever it brushes, starting with bad intentions, without ever drawing a drop of blood."
   },
   {
-   "fr": "L’ombre d’un Résonant qui s’allonge au sol, bien plus loin que la lumière ne le permet, et s’enroule autour des chevilles de l’ennemi. Elle bouge toujours une seconde trop tôt.",
-   "en": "A Resonant’s shadow stretched across the floor, far longer than the light allows, coiling around the enemy’s ankles. It always moves a moment too soon."
+   "fr": "L’ombre d’un Résonant qui s’allonge au sol, bien plus loin que la lumière ne le permet, et s’enroule autour des chevilles de tous ceux qui lui font face. Elle bouge toujours une seconde trop tôt.",
+   "en": "A Resonant’s shadow stretched across the floor, far longer than the light allows, coiling around the ankles of everyone facing it. It always moves a moment too soon."
   },
   {
    "fr": "Quand ce Résonant se tient dans la lumière, des ailes immenses se déploient sur le mur derrière lui. Les Hauts y voient une noblesse. Les districts, un orage qui attend son heure.",
@@ -178,8 +178,8 @@
    "en": "A voice from a sea nobody here has heard of. It tunes itself to any Frequency, as if it already knew what comes next."
   },
   {
-   "fr": "Le souffle d’un être ancien, immense, dont les Veilleurs n’ont retrouvé que l’ombre gravée dans un cristal de la Strate −9. Il grandit à chaque note, et ne s’arrête que lorsque la chaîne se tait.",
-   "en": "The breath of an ancient, enormous being, of which the Watchers found only a shadow, engraved in a crystal on Stratum −9. It swells with every note, and only stops when the chain falls silent."
+   "fr": "Le souffle d’un être ancien, immense, dont les Veilleurs n’ont retrouvé que l’ombre gravée dans un cristal de la Strate −9. Il grandit à chaque note, n’épargne rien de ce qui se tient devant lui, et ne s’arrête que lorsque la chaîne se tait.",
+   "en": "The breath of an ancient, enormous being, of which the Watchers found only a shadow, engraved in a crystal on Stratum −9. It swells with every note, spares nothing that stands before it, and only stops when the chain falls silent."
   },
   {
    "fr": "Une bobine de cuivre cousue sous l’avant-bras. Chaque coup paré lui rend un peu de courant. « Rien ne se perd chez nous, dit Liane. Surtout pas la colère des autres. »",
@@ -214,8 +214,8 @@
    "en": "The brow thickens, the neck fuses, and the whole body becomes a door on the move. The pillars of the Foundations still carry the dents of those who learned to use it."
   },
   {
-   "fr": "La mer recule, recule encore, et tout le monde croit qu’elle a renoncé. Puis elle revient avec tout ce qu’elle a retenu. Les Génés des quais se battent comme elle.",
-   "en": "The sea draws back, and back, and everyone thinks it has given up. Then it returns with everything it was holding. The quay Spliced fight the same way."
+   "fr": "La mer recule, recule encore, et tout le monde croit qu’elle a renoncé. Puis elle revient avec tout ce qu’elle a retenu, et repart en laissant la grève nue. Les Génés des quais se battent comme elle.",
+   "en": "The sea draws back, and back, and everyone thinks it has given up. Then it returns with everything it was holding, and leaves the shore bare as it goes. The quay Spliced fight the same way."
   },
   {
    "fr": "Un diapason de verre clair qu’on frappe une fois, et qui oblige toutes les empreintes autour de lui à chanter la même note. Les Résonants l’appellent « mettre la salle d’accord ».",
@@ -270,8 +270,8 @@
    "en": "A slim blade with no visible edge. It cuts nothing solid. It slides in wherever the enemy is already wavering, and the wavering does the rest."
   },
   {
-   "fr": "L’œil des Lecteurs des salles closes, voilé de nacre. Il lit une créature comme on lit un registre : son nom, sa faute, et la page où elle se déchire.",
-   "en": "The eye of the Readers of the closed chambers, filmed with nacre. It reads a creature like a register: its name, its fault, and the page where it tears."
+   "fr": "L’œil des Lecteurs des salles closes, voilé de nacre. Il lit une meute entière comme on lit un registre : chaque nom, chaque faute, et la page où tout se déchire.",
+   "en": "The eye of the Readers of the closed chambers, filmed with nacre. It reads a whole pack like a register: every name, every fault, and the page where it all tears."
   },
   {
    "fr": "Une seule phrase, prononcée sans colère. Ce que la Lecture a mis à nu ne se recouvre plus : le coup suivant tombe exactement là.",
@@ -350,8 +350,8 @@
    "en": "A pristine imprint those who came before never used, laid alone in a Cradle. It doesn’t heal: it starts over. Kessa says that when you touch it, you hear a first cry."
   },
   {
-   "fr": "Une empreinte sans visage, qui prend celui de ce qu’elle touche. Les Veilleurs se demandent si elle n’imite pas, simplement, comme ceux d’avant imitaient les vivants.",
-   "en": "A faceless imprint that takes the face of whatever it touches. The Watchers wonder whether it is only imitating, the way those who came before imitated the living."
+   "fr": "Une empreinte sans visage, qui prend celui du plus fort de ceux qu’elle touche. Les Veilleurs se demandent si elle n’imite pas, simplement, comme ceux d’avant imitaient les vivants.",
+   "en": "A faceless imprint that takes the face of the strongest thing it touches. The Watchers wonder whether it is only imitating, the way those who came before imitated the living."
   },
   {
    "fr": "Le silence qui suit une catastrophe, conservé dans une vierge de nacre. Il étouffe tout ce qu’il touche, puis rend aux vivants ce qu’ils ont de meilleur, comme pour s’excuser d’être resté si longtemps seul.",
@@ -386,8 +386,8 @@
    "en": "A golden wire strung between three stones of three lineages. Alone, it won’t hum. When an Augmented, a Spliced and a Resonant touch it at once, they hear it all the way to the Tower."
   },
   {
-   "fr": "Des oiseaux de papier pliés par les enfants du district, qui tournent ensemble comme des étourneaux dès qu’un Résonant chante. Chacun garde sa couleur, et c’est pour ça qu’ils ne se cognent jamais.",
-   "en": "Paper birds folded by the district’s children, which wheel together like starlings the moment a Resonant sings. Each keeps its own color, and that’s why they never collide."
+   "fr": "Des oiseaux de papier pliés par les enfants du district, qui tournent ensemble comme des étourneaux dès qu’un Résonant chante. Chacun garde sa couleur, et c’est pour ça qu’ils ne se cognent jamais ; s’il en manque une, ils restent posés.",
+   "en": "Paper birds folded by the district’s children, which wheel together like starlings the moment a Resonant sings. Each keeps its own color, and that’s why they never collide; if one color is missing, they stay grounded."
   },
   {
    "fr": "Un pistolet à rivets de la digue, réglé pour traverser deux tôles d’un coup. Sasha l’a recalibré pour une troisième : « Celle qu’on ne voit pas. »",

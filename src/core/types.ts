@@ -8,21 +8,21 @@ export type TypeGeste = 'atk' | 'bouclier' | 'soin';
  * Effet spécial d'un Geste. Les cartes rares apportent des effets, pas de plus gros chiffres.
  * `part` est une fraction (0.25 = 25 %).
  */
-export type Effet =
+export type Effet = (
   /** ignore le bouclier et le blindage de l'ennemi */
   | { type: 'percant' }
   /** le Porteur qui joue la carte récupère une part des dégâts infligés (le plus blessé s'il est à terre) */
-  | { type: 'siphon'; part: number }
+  | { type: 'siphon'; part: number; mode?: 'trop' | 'meute' }
   /** remplit le Flux */
   | { type: 'flux'; v: number }
   /** la prochaine attaque ennemie perd une part de sa force */
-  | { type: 'desarmer'; part: number }
+  | { type: 'desarmer'; part: number; zone?: true; total?: true }
   /** l'ennemi subit une part de dégâts en plus, ce tour-ci et le suivant */
-  | { type: 'fissure'; part: number }
+  | { type: 'fissure'; part: number; zone?: true; tours?: number }
   /** +1 place dans la chaîne au tour suivant */
-  | { type: 'elan' }
+  | { type: 'elan'; n?: number }
   /** une part de force en plus pour chaque Geste posé avant lui dans la chaîne */
-  | { type: 'crescendo'; part: number }
+  | { type: 'crescendo'; part: number; zone?: true }
   /** Fréquence libre : prolonge toujours la suite */
   | { type: 'accord' }
   /** le soin touche toute l'escouade */
@@ -31,25 +31,25 @@ export type Effet =
   | { type: 'rempart'; part: number }
   // ---------- Les voies (27 octobre 2026, docs/familles-de-decks.md) ----------
   /** Carapace (sur une carte de bouclier) : après son bouclier, frappe d'une part du bouclier d'escouade (sans le dépenser) */
-  | { type: 'riposte'; part: number }
+  | { type: 'riposte'; part: number; vide?: true }
   /** Moteur : vide le Flux, une part de force en plus par Flux vidé.
    *  max : ne vide qu'autant de Flux (Éclair captif, 1er novembre 2026) ; recharge : si le Flux est déjà vide, le remplit d'autant (Noyau instable) */
   | { type: 'decharge'; part: number; max?: number; recharge?: number }
   /** Chœur : Fréquence libre, prend celle de la carte posée juste avant (le pendant de l'Accord) */
-  | { type: 'diapason' }
+  | { type: 'diapason'; premiere?: true }
   /** Chœur : une part de force en plus pour chaque autre carte de la même Fréquence dans la chaîne */
-  | { type: 'unisson'; part: number }
+  | { type: 'unisson'; part: number; toute?: true }
   // ---------- Les voies, étapes 2 et 3 (28 octobre 2026) ----------
   /** Traque : une part de force en plus si l'ennemi visé est fissuré, ou sous la moitié de ses PV */
-  | { type: 'curee'; part: number }
+  | { type: 'curee'; part: number; aveugle?: number; deux?: true }
   /** Lecture : brise la Fêlure de l'ennemi visé, quelle que soit sa Fréquence (même cachée) */
-  | { type: 'lecture' }
+  | { type: 'lecture'; zone?: true }
   /** Lecture : une part de force en plus si la Fêlure de l'ennemi visé est brisée */
   | { type: 'faille'; part: number }
   /** Cadence : frappe une seconde fois si la chaîne compte au moins 4 cartes */
-  | { type: 'rafale' }
+  | { type: 'rafale'; min?: number; zone?: true; cadence?: true }
   /** Sève : soigne toute l'escouade, et le soin en trop (PV déjà pleins) devient du bouclier d'escouade */
-  | { type: 'debord' }
+  | { type: 'debord'; x?: number }
   // ---------- Les exclusives (28 octobre 2026) : des effets qu'on ne trouve que sur une carte d'un seul métal ----------
   /** arrache tout le bouclier de l'ennemi visé et l'ajoute au bouclier d'escouade (avant de frapper) */
   | { type: 'rapt' }
@@ -58,7 +58,7 @@ export type Effet =
   /** le Porteur paie une part de ses PV max (jamais jusqu'à tomber) ; la carte gagne une part de force */
   | { type: 'surtension'; part: number; cout: number }
   /** copie l'effet de la carte posée juste avant (sauf une Fréquence libre ou une autre Empreinte) */
-  | { type: 'empreinte' }
+  | { type: 'empreinte'; forte?: true }
   /** relève le premier Porteur à terre avec tout le soin ; sinon, soigne normalement */
   | { type: 'releve' }
   // ---------- Les cartes communes du district (30 octobre 2026) : la logistique, pas la puissance ----------
@@ -77,11 +77,18 @@ export type Effet =
   /** Machines : une carte lourde de la chaîne ne prend qu'une place (un Servo par carte lourde) */
   | { type: 'servo' }
   /** Harmonie : dans une suite qui résonne, une part de force en plus pour chaque autre lignée de la suite */
-  | { type: 'contrepoint'; part: number }
+  | { type: 'contrepoint'; part: number; exige?: true }
   /** exclusive : après le coup, l'ennemi visé tombe s'il lui reste moins d'une part de ses PV (jamais un gardien) */
   | { type: 'execution'; part: number }
   /** exclusive : au tour ennemi qui suit, aucun Porteur ne tombe (un coup qui l'achèverait le laisse à 1 PV) */
-  | { type: 'tenacite' };
+  | { type: 'tenacite' }
+) & {
+  /**
+   * Lot 3 de la refonte des quasi-doublons (9 novembre 2026, docs/refonte-doublons.md) : deux mots-clés sur l'ordre de pose.
+   * Ouverture : l'effet compte double si la carte ouvre la chaîne ; Final : s'il la ferme (un soin : +50 %).
+   */
+  mot?: 'ouverture' | 'final';
+};
 
 export type TypeEffet = Effet['type'];
 

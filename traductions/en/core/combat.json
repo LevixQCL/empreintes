@@ -318,6 +318,10 @@
    "en": "Flurry"
   },
   {
+   "fr": "Souffle",
+   "en": "Breath"
+  },
+  {
    "fr": "Exécution : {0} n’avait plus que {1} PV, il tombe.",
    "en": "Finisher: {0} had only {1} HP left, and falls."
   },
@@ -350,6 +354,10 @@
    "en": "Unleashed"
   },
   {
+   "fr": "Riposte : tout le bouclier d’escouade part dans le coup ({0}).",
+   "en": "Riposte: the whole squad shield goes into the blow ({0})."
+  },
+  {
    "fr": "Relève : {0} se relève avec {1} PV.",
    "en": "Second Wind: {0} gets back up with {1} HP."
   },
@@ -364,6 +372,10 @@
   {
    "fr": "Surcharge : Flux +{0}.",
    "en": "Overcharge: Flux +{0}."
+  },
+  {
+   "fr": "Troublé : l’attaque annoncée {0} passe de {1} à {2}.",
+   "en": "Unsettled: the announced attack {0} drops from {1} to {2}."
   },
   {
    "fr": "Troublé : l’attaque annoncée passe de {0} à {1}.",
@@ -390,8 +402,20 @@
    "en": "Dampen"
   },
   {
+   "fr": "Fissure : tout le groupe subit +{0} % de dégâts jusqu’au tour prochain.",
+   "en": "Fissure: the whole group takes +{0}% damage until next turn."
+  },
+  {
+   "fr": "Fissure : l’ennemi subit +{0} % de dégâts pendant {1} tours.",
+   "en": "Fissure: the enemy takes +{0}% damage for {1} turns."
+  },
+  {
    "fr": "Fissure : l’ennemi subit +{0} % de dégâts jusqu’au tour prochain.",
    "en": "Fissure: the enemy takes +{0}% damage until next turn."
+  },
+  {
+   "fr": "Élan : la prochaine chaîne aura {0} places de plus.",
+   "en": "Momentum: the next chain will have {0} more slots."
   },
   {
    "fr": "Élan : la prochaine chaîne aura une place de plus.",
@@ -466,6 +490,26 @@
    "en": "Counterpoint ({0} other lineage{2|s}{1|} in the chain)"
   },
   {
+   "fr": "Contrepoint : pas les trois lignées",
+   "en": "Counterpoint: not all three lineages"
+  },
+  {
+   "fr": "Cadence : moins de 4 cartes",
+   "en": "Cadence: fewer than 4 cards"
+  },
+  {
+   "fr": "Givre : demi-force",
+   "en": "Frost: half power"
+  },
+  {
+   "fr": "Ouverture",
+   "en": "Opener"
+  },
+  {
+   "fr": "Final",
+   "en": "Finale"
+  },
+  {
    "fr": "Empreinte (rien à copier)",
    "en": "Imprint (nothing to copy)"
   },
@@ -482,12 +526,20 @@
    "en": "Lineage: {0} beats {1}"
   },
   {
+   "fr": "Curée (ennemi fissuré et affaibli)",
+   "en": "Quarry (enemy fissured and weakened)"
+  },
+  {
    "fr": "Curée (ennemi fissuré)",
    "en": "Pounce (enemy fissured)"
   },
   {
    "fr": "Curée (ennemi à moins de la moitié de ses PV)",
    "en": "Pounce (enemy below half its HP)"
+  },
+  {
+   "fr": "Curée à l’aveugle",
+   "en": "Blind Quarry"
   },
   {
    "fr": "Faille (Fêlure brisée)",

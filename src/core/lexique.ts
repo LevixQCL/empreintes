@@ -71,6 +71,9 @@ export const LEXIQUE: Record<string, Terme> = {
   unisson: { nom: t('Unisson'), motif: /Unisson/, texte: t('La carte gagne de la force pour chaque autre carte de la même Fréquence dans la chaîne.'), theme: 'effet' },
   curee: { nom: t('Curée'), motif: /Curée/, texte: t('La carte frappe plus fort un ennemi fissuré, ou à moins de la moitié de ses PV.'), theme: 'effet' },
   faille: { nom: t('Faille'), motif: /Faille/, texte: t('La carte frappe plus fort un ennemi dont la Fêlure est déjà brisée.'), theme: 'effet' },
+  // lot 3 de la refonte des quasi-doublons (9 novembre 2026) : deux mots-clés sur l'ordre de pose
+  ouverture: { nom: t('Ouverture'), motif: /Ouverture/, texte: t('Mot-clé : l’effet de la carte compte double si elle est la première de la chaîne (un soin, lui, gagne +50 %).'), theme: 'cartes' },
+  final: { nom: t('Final'), motif: /Final(?!e)/, texte: t('Mot-clé : l’effet de la carte compte double si elle est la dernière de la chaîne (un soin, lui, gagne +50 %).'), theme: 'cartes' },
   rafale: { nom: t('Rafale'), motif: /Rafale/, texte: t('Dans une chaîne d’au moins 4 cartes, la carte frappe une seconde fois.'), theme: 'effet' },
   debord: { nom: t('Débord'), motif: /Débord/, texte: t('La carte soigne toute l’escouade ; le soin qui dépasse les PV max devient du bouclier d’escouade.'), theme: 'effet' },
   rapt: { nom: t('Rapt'), motif: /Rapt/, texte: t('Une carte exclusive : elle arrache tout le bouclier de l’ennemi visé et le donne à l’escouade.'), theme: 'effet' },
@@ -152,6 +155,8 @@ const MOTIFS_EN: Record<string, Pick<Terme, 'motif' | 'mots'>> = {
   unisson: { motif: /Unison/ },
   curee: { motif: /Pounce/ },
   faille: { motif: /Rift/ },
+  ouverture: { motif: /Opener/ },
+  final: { motif: /Finale/ },
   rafale: { motif: /Flurry/ },
   debord: { motif: /Overflow/ },
   rapt: { motif: /Seize/ },

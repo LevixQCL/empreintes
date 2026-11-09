@@ -145,6 +145,8 @@ export function frequencesEffectives(chaine: Maillon[]): number[] {
     const pas = g.effet?.type === 'accord' ? 1 : 0;
     // les Fréquences vont de 1 à 9 : après un 9, l'Accord reste à 9 (il ne joue jamais un 10 ; audit du 7 novembre 2026)
     const borne = (f: number) => Math.min(9, Math.max(1, f));
+    // Cloche des abysses (lot 3, 9 novembre 2026) : elle reprend la Fréquence de la première carte de la chaîne
+    if (i > 0 && g.effet?.type === 'diapason' && g.effet.premiere) { r.push(r[0]!); return; }
     if (i > 0) { r.push(borne(r[i - 1]! + pas)); return; }
     const suivant = chaine[1];
     r.push(suivant && !frequenceLibre(suivant.effet) ? borne(suivant.f - pas) : g.f);

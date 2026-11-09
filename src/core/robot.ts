@@ -38,6 +38,10 @@ function ordres(groupe: Geste[]): Geste[][] {
     const fin = croissant.filter((g) => g.effet?.type === t);
     if (fin.length) r.push([...croissant.filter((g) => !fin.includes(g)), ...fin]);
   }
+  // les mots-clés (lot 3) : Ouverture en tête, Final au bout
+  const ouv = croissant.filter((g) => g.effet?.mot === 'ouverture');
+  const fin = croissant.filter((g) => g.effet?.mot === 'final');
+  if (ouv.length || fin.length) r.push([...ouv, ...croissant.filter((g) => !ouv.includes(g) && !fin.includes(g)), ...fin]);
   // Amorce : juste avant la carte la plus forte (elle lui donne sa force en plus)
   for (const am of croissant.filter((g) => g.effet?.type === 'amorce')) {
     const reste = croissant.filter((g) => g !== am);
