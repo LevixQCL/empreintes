@@ -55,15 +55,17 @@ void main(){
   vec2 e=p-FUMEE;float hf=-e.y;
   bool fumee=hf>-4.&&hf<104.&&e.x>-20.&&e.x<62.;
   if(mer+eau+cr+feu+hc+fh<.015&&!fumee)discard;
-  vec2 q=uv;float w=0.,bord=0.,ress=0.,prox=0.;
+  vec2 q=uv;float w=0.,bord=0.,ress=0.,prox=0.,pb=1.;
   if(mer>.02){
     // la houle de fond, plus le ressac : des vagues qui montent vers la digue, poussent l'écume peinte contre elle puis la ramènent
     float d=texture2D(m3,uv).g;
     vec2 ex=vec2(2./400.,0.),ey=vec2(0.,2./600.);
     vec2 gr=vec2(texture2D(m3,uv+ex).g-texture2D(m3,uv-ex).g,texture2D(m3,uv+ey).g-texture2D(m3,uv-ey).g);
     vec2 vers=-gr/max(length(gr),.0005);
-    prox=1.-smoothstep(.05,1.,d);
-    ress=sin(d*11.-t*1.15+(n(p*.025+vec2(0.,t*.05))-.5)*2.4);
+    // avec la mer prolongée (PC), le ressac s'efface en approchant des côtés du tableau : elle n'en a pas, la jonction ne se voit pas
+    pb=mix(smoothstep(0.,.06,uv.x)*smoothstep(0.,.06,1.-uv.x),1.,cote);
+    prox=(1.-smoothstep(.05,1.,d))*pb;
+    ress=sin(d*11.-t*1.15+(n(p*.025+vec2(0.,t*.05))-.5)*2.4)*pb;
     w=sin(p.x*.045+p.y*.11-t*1.1)*.6+sin(-p.x*.07+p.y*.05-t*.7)*.4+sin(p.y*.31+p.x*.02-t*2.3)*.15;
     // sur PC, la mer prolongée ondule avec le tableau (MER_LARGE) : la houle ne s'éteint plus sur ses côtés
     bord=mix(1.,smoothstep(0.,.07,uv.x)*smoothstep(0.,.07,1.-uv.x),cote)*smoothstep(0.,.05,uv.y)*smoothstep(0.,.03,1.-uv.y);
@@ -81,7 +83,7 @@ void main(){
     c*=1.+bord*mer*prox*.06*ress;
     // une frange d'écume vivante contre la digue : elle monte quand la vague touche et se déchire en dentelle
     float d=texture2D(m3,uv).g;
-    float frange=1.-smoothstep(0.,.05+.07*(ress*.5+.5),d);
+    float frange=(1.-smoothstep(0.,.05+.07*(ress*.5+.5),d))*pb;
     float dentelle=smoothstep(.48,.78,fbm(p*vec2(.22,.3)+vec2(t*.35,-t*.25)));
     c=mix(c,vec3(.99,.97,.72),frange*dentelle*.75*bord*mer);
     // et des éclats qui scintillent sur les plaques d'écume crème du tableau

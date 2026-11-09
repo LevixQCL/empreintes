@@ -15,7 +15,6 @@ lum = (r + g + b) / 3
 Y, X = np.mgrid[0:H, 0:W]
 
 terre = np.zeros((H, W), bool)
-terre[:, 560:1372] = True                                   # sous le tableau (il a sa propre houle)
 # la digue et les maisons qui dépassent du tableau à droite, puis le ponton du Port
 poly = Image.new('L', (W, H), 0)
 ImageDraw.Draw(poly).polygon([(1366, 0), (1515, 0), (1520, 120), (1560, 230), (1555, 330), (1585, 380), (1590, 560),
@@ -41,7 +40,8 @@ terre |= np.asarray(formes) > 0
 # une petite marge, puis un fondu : la houle s'éteint doucement contre ce qui ne bouge pas
 terre = nd.binary_dilation(terre, iterations=3)
 mer = np.asarray(Image.fromarray((~terre * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(4))).astype(float)
-mer[:, 566:1366] = 0
+# sous le tableau, rien à dessiner ; la mer va 20 px dessous (cachée) : pas de bande immobile contre son bord
+mer[:, 586:1346] = 0
 out = np.zeros((H, W, 3), np.uint8)
 out[..., 0] = mer.astype(np.uint8)
 Image.fromarray(out).save(D + 'cuvette-large-mer.webp', lossless=True)
