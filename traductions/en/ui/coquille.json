@@ -3,947 +3,947 @@
  "entrees": [
   {
    "fr": "En route",
-   "en": ""
+   "en": "Under way"
   },
   {
    "fr": "Fouille sur place",
-   "en": ""
+   "en": "Searching on site"
   },
   {
    "fr": "Sur le retour",
-   "en": ""
+   "en": "On the way back"
   },
   {
    "fr": "À quai",
-   "en": ""
+   "en": "Docked"
   },
   {
    "fr": "Augmentés",
-   "en": ""
+   "en": "Augmented"
   },
   {
    "fr": "Génés",
-   "en": ""
+   "en": "Spliced"
   },
   {
    "fr": "Résonants",
-   "en": ""
+   "en": "Resonants"
   },
   {
    "fr": "Ressources",
-   "en": ""
+   "en": "Resources"
   },
   {
    "fr": "Cristaux : {0}{1}. Détails",
-   "en": ""
+   "en": "Crystals: {0}{1}. Details"
   },
   {
    "fr": ", et {0} de minerai en taille au Générateur",
-   "en": ""
+   "en": ", and {0} ore being cut at the Generator"
   },
   {
    "fr": "Éclats : {0}. Détails",
-   "en": ""
+   "en": "Shards: {0}. Details"
   },
   {
    "fr": "Strate −{0}. Détails",
-   "en": ""
+   "en": "Stratum −{0}. Details"
   },
   {
    "fr": "Strate",
-   "en": ""
+   "en": "Stratum"
   },
   {
    "fr": "{0} familles sur {1} te suivent, palier {2}. Détails",
-   "en": ""
+   "en": "{0} of {1} families follow you, tier {2}. Details"
   },
   {
    "fr": "palier {0}",
-   "en": ""
+   "en": "tier {0}"
   },
   {
    "fr": "Les pompes ont tenu",
-   "en": ""
+   "en": "The pumps held"
   },
   {
    "fr": "Des familles ramenées des Basses",
-   "en": ""
+   "en": "Families brought back from the Lows"
   },
   {
    "fr": "Des naufragés recueillis",
-   "en": ""
+   "en": "Castaways taken in"
   },
   {
    "fr": "Des gardiens vaincus",
-   "en": ""
+   "en": "Guardians defeated"
   },
   {
    "fr": "Des choix justes en bas",
-   "en": ""
+   "en": "Fair choices down below"
   },
   {
    "fr": "Des pillages repoussés",
-   "en": ""
+   "en": "Raids repelled"
   },
   {
    "fr": "Des quais gagnés sur la Flèche",
-   "en": ""
+   "en": "Quays won on the Spire"
   },
   {
    "fr": "L’histoire du district",
-   "en": ""
+   "en": "The district’s story"
   },
   {
    "fr": "L’Accord ouvert : avec la Clinique au niveau {0}, un nouveau Résonant rejoint le district.",
-   "en": ""
+   "en": "The open Accord: with the Clinic at level {0}, a new Resonant joins the district."
   },
   {
    "fr": "Un marchand du quartier rouvre son étal : une carte de plus chaque jour au Comptoir.",
-   "en": ""
+   "en": "A local merchant reopens his stall: one more card each day at the Trading Post."
   },
   {
    "fr": "Tout le district te suit. Le jour où tu réclameras l’île, personne ne restera en bas.",
-   "en": ""
+   "en": "The whole district follows you. The day you claim the island, no one will be left below."
   },
   {
    "fr": "La Nuit des lignes",
-   "en": ""
+   "en": "The Night of Lines"
   },
   {
    "fr": "Chaque lundi, le district repeint sa ligne bleue un peu plus haut et fait le bilan. Ceux qui ont vu ce que tu as fait en parlent : {0} % de bouche-à-oreille en plus. Une semaine sans rien ne fait rien perdre.",
-   "en": ""
+   "en": "Every Monday, the district repaints its blue line a little higher and takes stock. Those who saw what you did talk about it: {0} % more word of mouth. A week with nothing loses nothing."
   },
   {
    "fr": "Cette semaine :",
-   "en": ""
+   "en": "This week:"
   },
   {
    "fr": "famille{0} arrivée{1} pour l’instant.",
-   "en": ""
+   "en": "famil{0|ies|y}{1|} so far."
   },
   {
    "fr": "La dernière Nuit{0}",
-   "en": ""
+   "en": "The last Night{0}"
   },
   {
    "fr": " · {0} famille{1}",
-   "en": ""
+   "en": " · {0} famil{1|ies|y}"
   },
   {
    "fr": "Ceux qui ont vu, cette nuit-là",
-   "en": ""
+   "en": "Those who saw, that night"
   },
   {
    "fr": "LA MONNAIE DU DISTRICT",
-   "en": ""
+   "en": "THE DISTRICT’S CURRENCY"
   },
   {
    "fr": "La pierre bleue des profondeurs, taillée par le Générateur. Tout ce que tu rapportes en jouant arrive en minerai ; le Générateur le taille en cristaux, même quand tu ne joues pas. Rien ne se perd. Les cristaux paient tout.",
-   "en": ""
+   "en": "The blue stone of the depths, cut by the Generator. Everything you bring back by playing arrives as ore; the Generator cuts it into crystals, even when you’re not playing. Nothing is lost. Crystals pay for everything."
   },
   {
    "fr": "cristaux",
-   "en": ""
+   "en": "crystals"
   },
   {
    "fr": "+{0} de minerai en taille · tout taillé dans {1} h",
-   "en": ""
+   "en": "+{0} ore being cut · all cut in {1} h"
   },
   {
    "fr": "Aucun minerai en attente : descends ou envoie une barque pour en rapporter",
-   "en": ""
+   "en": "No ore waiting: go down or send a boat to bring some back"
   },
   {
    "fr": "Les expéditions",
-   "en": ""
+   "en": "Expeditions"
   },
   {
    "fr": "Chaque combat gagné, chaque cache et chaque salle d’archives rapportent du minerai. Fuir en garde les trois quarts, une défaite la moitié.",
-   "en": ""
+   "en": "Every fight won, every cache and every archive room yields ore. Fleeing keeps three quarters of it, a defeat half."
   },
   {
    "fr": "Les missions en mer et les marées",
-   "en": ""
+   "en": "Missions at sea and tides"
   },
   {
    "fr": "Les barques reviennent chargées des ruines noyées.",
-   "en": ""
+   "en": "The boats come back loaded from the drowned ruins."
   },
   {
    "fr": "Les fouilles ciblées",
-   "en": ""
+   "en": "Targeted digs"
   },
   {
    "fr": "Une descente courte qui peut viser le minerai.",
-   "en": ""
+   "en": "A short descent that can go after ore."
   },
   {
    "fr": "Recycler des doublons",
-   "en": ""
+   "en": "Recycling duplicates"
   },
   {
    "fr": "Chaque doublon recyclé rend un peu de minerai.",
-   "en": ""
+   "en": "Each recycled duplicate gives back a little ore."
   },
   {
    "fr": "Le Générateur taille le minerai",
-   "en": ""
+   "en": "The Generator cuts the ore"
   },
   {
    "fr": "Plus il est haut, plus il taille vite. Un Augmenté posté dessus taille deux fois plus vite. Dès le niveau 4, il y recueille aussi quelques Éclats.",
-   "en": ""
+   "en": "The higher its level, the faster it cuts. An Augmented assigned there cuts twice as fast. From level 4, it also gathers a few Shards."
   },
   {
    "fr": "Les récompenses arrivent taillées",
-   "en": ""
+   "en": "Rewards arrive ready-cut"
   },
   {
    "fr": "Ravitaillement du jour, Butin de la semaine, objectifs, gardiens, Flèche : des cristaux tout prêts.",
-   "en": ""
+   "en": "Daily supplies, weekly loot, objectives, guardians, the Spire: crystals ready to spend."
   },
   {
    "fr": "Améliorer les bâtiments",
-   "en": ""
+   "en": "Upgrading buildings"
   },
   {
    "fr": "La plus grosse dépense ; les derniers niveaux demandent aussi des Éclats.",
-   "en": ""
+   "en": "The biggest expense; the last levels also need Shards."
   },
   {
    "fr": "Monter les cartes de niveau",
-   "en": ""
+   "en": "Levelling up cards"
   },
   {
    "fr": "Avec leurs doublons.",
-   "en": ""
+   "en": "With their duplicates."
   },
   {
    "fr": "Acheter au Comptoir",
-   "en": ""
+   "en": "Buying at the Trading Post"
   },
   {
    "fr": "Des cartes précises à prix fixe, et quelques Éclats chaque jour.",
-   "en": ""
+   "en": "Specific cards at a fixed price, and a few Shards each day."
   },
   {
    "fr": "Refabriquer une carte à la Forge",
-   "en": ""
+   "en": "Recrafting a card at the Forge"
   },
   {
    "fr": "De 27 cristaux (fer) à 1 330 (nacre).",
-   "en": ""
+   "en": "From 27 crystals (iron) to 1,330 (nacre)."
   },
   {
    "fr": "Entraîner un Porteur",
-   "en": ""
+   "en": "Training a Bearer"
   },
   {
    "fr": "À la Tour du Noyau : une séance = un niveau, payée au lancement.",
-   "en": ""
+   "en": "At the Core Tower: one session = one level, paid when it starts."
   },
   {
    "fr": "Les soins intensifs",
-   "en": ""
+   "en": "Intensive care"
   },
   {
    "fr": "À la Clinique : 1 cristal par point d’Usure effacé tout de suite.",
-   "en": ""
+   "en": "At the Clinic: 1 crystal per point of Strain wiped away at once."
   },
   {
    "fr": "Un jeton de pillage de plus",
-   "en": ""
+   "en": "One more raid token"
   },
   {
    "fr": "Deux fois par jour au plus.",
-   "en": ""
+   "en": "Twice a day at most."
   },
   {
    "fr": "RESSOURCE RARE",
-   "en": ""
+   "en": "RARE RESOURCE"
   },
   {
    "fr": "Des fragments de cristal chargés d’empreintes. Rares, ils ne se trouvent qu’en profondeur ou en récompense.",
-   "en": ""
+   "en": "Crystal fragments charged with imprints. Rare, they’re only found deep down or as rewards."
   },
   {
    "fr": "Éclats en réserve",
-   "en": ""
+   "en": "Shards in reserve"
   },
   {
    "fr": "Les gardiens",
-   "en": ""
+   "en": "Guardians"
   },
   {
    "fr": "Chaque gardien vaincu en donne, davantage à partir de la Strate −5.",
-   "en": ""
+   "en": "Every guardian defeated gives some, more from Stratum −5."
   },
   {
    "fr": "Les caches et les rencontres",
-   "en": ""
+   "en": "Caches and encounters"
   },
   {
    "fr": "À partir de la Strate −3, une cache en cache parfois un.",
-   "en": ""
+   "en": "From Stratum −3, a cache sometimes hides one."
   },
   {
    "fr": "Les fouilles « Éclats » et le Butin de la semaine",
-   "en": ""
+   "en": "“Shards” digs and the weekly loot"
   },
   {
    "fr": "Pour en gagner quand on bloque.",
-   "en": ""
+   "en": "To earn some when you’re stuck."
   },
   {
    "fr": "Refabriquer les cartes rares",
-   "en": ""
+   "en": "Recrafting rare cards"
   },
   {
    "fr": "Argent, or et nacre en demandent à la Forge.",
-   "en": ""
+   "en": "Silver, gold and nacre need them at the Forge."
   },
   {
    "fr": "Les cartes en argent du Comptoir",
-   "en": ""
+   "en": "Silver cards at the Trading Post"
   },
   {
    "fr": "Elles coûtent aussi des Éclats.",
-   "en": ""
+   "en": "They cost Shards too."
   },
   {
    "fr": "Les grands chantiers",
-   "en": ""
+   "en": "Major works"
   },
   {
    "fr": "Les derniers niveaux des bâtiments.",
-   "en": ""
+   "en": "The last levels of the buildings."
   },
   {
    "fr": "LE DISTRICT",
-   "en": ""
+   "en": "THE DISTRICT"
   },
   {
    "fr": "Ceux qui te suivent",
-   "en": ""
+   "en": "Those who follow you"
   },
   {
    "fr": "L’eau monte, et tout le district le sait. Chaque famille que tu protèges décide de te suivre, et ne te quitte plus. Le jour où tu réclameras l’île, elles monteront avec toi.",
-   "en": ""
+   "en": "The water is rising, and the whole district knows it. Every family you protect decides to follow you, and never leaves. The day you claim the island, they’ll go up with you."
   },
   {
    "fr": "/ {0} familles",
-   "en": ""
+   "en": "/ {0} families"
   },
   {
    "fr": " · encore {0} pour le palier {1}",
-   "en": ""
+   "en": " · {0} more for tier {1}"
   },
   {
    "fr": "Aller les chercher dans les Basses",
-   "en": ""
+   "en": "Go and find them in the Lows"
   },
   {
    "fr": "À l’écluse, garde un secteur à sec avec le batardeau et envoie un Porteur : chaque lieu cache une famille restée en bas.",
-   "en": ""
+   "en": "At the Sluice, keep a sector dry with the cofferdam and send a Bearer: each place hides a family left below."
   },
   {
    "fr": "Recueillir des naufragés",
-   "en": ""
+   "en": "Take in castaways"
   },
   {
    "fr": "Une mission « Naufragés » depuis le Port : le quartier voit la barque rentrer.",
-   "en": ""
+   "en": "A “Castaways” mission from the Port: the quarter sees the boat come home."
   },
   {
    "fr": "Vaincre les gardiens",
-   "en": ""
+   "en": "Defeat the guardians"
   },
   {
    "fr": "Chaque gardien vaincu de −1 à −10 : l’espoir de l’Écluse grandit.",
-   "en": ""
+   "en": "Every guardian defeated from −1 to −10: hope grows at the Sluice."
   },
   {
    "fr": "Les choix justes en bas",
-   "en": ""
+   "en": "Fair choices down below"
   },
   {
    "fr": "Aider ceux qu’on croise se sait au quartier.",
-   "en": ""
+   "en": "Word gets around the quarter when you help the people you meet."
   },
   {
    "fr": "Repousser un pillage",
-   "en": ""
+   "en": "Repel a raid"
   },
   {
    "fr": "Quand la garnison du Port tient.",
-   "en": ""
+   "en": "When the Port’s garrison holds."
   },
   {
    "fr": "Gagner des quais sur la Flèche",
-   "en": ""
+   "en": "Win quays on the Spire"
   },
   {
    "fr": "De la place sur les îles.",
-   "en": ""
+   "en": "Room on the islands."
   },
   {
    "fr": "{0} familles{1}",
-   "en": ""
+   "en": "{0} families{1}"
   },
   {
    "fr": "{0} creuseur volontaire et un souvenir pour les Archives.",
-   "en": ""
+   "en": "{0} volunteer digger and a keepsake for the Archives."
   },
   {
    "fr": "{0} Avec un",
-   "en": ""
+   "en": "{0} With a"
   },
   {
    "fr": "CHAQUE SEMAINE",
-   "en": ""
+   "en": "EVERY WEEK"
   },
   {
    "fr": "Le Butin de la semaine",
-   "en": ""
+   "en": "Weekly loot"
   },
   {
    "fr": "Tout ce que tu fais cette semaine remplit un coffre. Chaque cran atteint y ajoute des récompenses. Lundi, le coffre s’ouvre au district et une nouvelle semaine repart de zéro. Rien n’est jamais perdu : un cran atteint reste acquis, et un coffre pas encore ouvert attend le suivant (jusqu’à {0}).",
-   "en": ""
+   "en": "Everything you do this week fills a chest. Each notch reached adds rewards to it. On Monday, the chest opens in the district and a new week starts from zero. Nothing is ever lost: a notch reached stays yours, and an unopened chest waits for the next one (up to {0})."
   },
   {
    "fr": "{0} · s’ouvre lundi",
-   "en": ""
+   "en": "{0} · opens Monday"
   },
   {
    "fr": "Encore {0} points pour le cran {1}",
-   "en": ""
+   "en": "{0} more points for notch {1}"
   },
   {
    "fr": "Tous les crans sont atteints : bravo",
-   "en": ""
+   "en": "All notches reached: well done"
   },
   {
    "fr": "Gagner un combat en bas",
-   "en": ""
+   "en": "Win a fight down below"
   },
   {
    "fr": "+{0} points.",
-   "en": ""
+   "en": "+{0} points."
   },
   {
    "fr": "Finir une descente",
-   "en": ""
+   "en": "Finish a descent"
   },
   {
    "fr": "Finir un chantier",
-   "en": ""
+   "en": "Finish a project"
   },
   {
    "fr": "Remplir l’objectif du jour",
-   "en": ""
+   "en": "Complete the daily objective"
   },
   {
    "fr": "Cran 1 · {0} points",
-   "en": ""
+   "en": "Notch 1 · {0} points"
   },
   {
    "fr": "{0} cristaux et une carte au choix parmi trois.",
-   "en": ""
+   "en": "{0} crystals and a card of your choice out of three."
   },
   {
    "fr": "Cran 2 · {0} points",
-   "en": ""
+   "en": "Notch 2 · {0} points"
   },
   {
    "fr": "{0} Éclats en plus.",
-   "en": ""
+   "en": "{0} more Shards."
   },
   {
    "fr": "Cran 3 · {0} points",
-   "en": ""
+   "en": "Notch 3 · {0} points"
   },
   {
    "fr": "Une deuxième carte au choix, dont au moins une en argent.",
-   "en": ""
+   "en": "A second card of your choice, at least one of them silver."
   },
   {
    "fr": "Cran 4 · {0} points",
-   "en": ""
+   "en": "Notch 4 · {0} points"
   },
   {
    "fr": "Une troisième carte au choix avec de l’argent, et {0} Éclats de plus. Pour les plus assidus.",
-   "en": ""
+   "en": "A third card of your choice with silver, and {0} more Shards. For the most dedicated."
   },
   {
    "fr": "La Strate −{0}",
-   "en": ""
+   "en": "Stratum −{0}"
   },
   {
    "fr": "L’étage le plus profond que ton district a creusé sous la ville. Plus on descend, plus c’est ancien, dangereux et précieux.",
-   "en": ""
+   "en": "The deepest level your district has dug beneath the city. The deeper you go, the older, more dangerous and more precious it gets."
   },
   {
    "fr": "Gardien vaincu : il manque {0} pour creuser plus bas",
-   "en": ""
+   "en": "Guardian defeated: {0} missing to dig deeper"
   },
   {
    "fr": "{0} niveau{1} de Tour du Noyau",
-   "en": ""
+   "en": "{0} Core Tower level{1}"
   },
   {
    "fr": "Prête à être creusée plus bas",
-   "en": ""
+   "en": "Ready to be dug deeper"
   },
   {
    "fr": "Bats son gardien pour pouvoir creuser l’étage suivant",
-   "en": ""
+   "en": "Beat its guardian to dig the next level"
   },
   {
    "fr": "Le gardien de la Strate −{0} garde l’accès à l’étage suivant.",
-   "en": ""
+   "en": "The guardian of Stratum −{0} guards the way to the next level."
   },
   {
    "fr": "Assez de creuseurs ({0} / {1})",
-   "en": ""
+   "en": "Enough diggers ({0} / {1})"
   },
   {
    "fr": "La Tour du Noyau en loge {0}. On en gagne avec les fouilles, les missions, les Épreuves et les gardiens.",
-   "en": ""
+   "en": "The Core Tower houses {0}. You get more from digs, missions, Trials and guardians."
   },
   {
    "fr": "Des cartes de meilleur métal",
-   "en": ""
+   "en": "Cards of better metal"
   },
   {
    "fr": "Plus la Strate est profonde, plus les trouvailles sont rares.",
-   "en": ""
+   "en": "The deeper the Stratum, the rarer the finds."
   },
   {
    "fr": "Les Chroniques",
-   "en": ""
+   "en": "The Chronicles"
   },
   {
    "fr": "Les chapitres profonds se débloquent en descendant.",
-   "en": ""
+   "en": "The deep chapters unlock as you go down."
   },
   {
    "fr": "Comment gagner des points",
-   "en": ""
+   "en": "How to earn points"
   },
   {
    "fr": "Comment en obtenir",
-   "en": ""
+   "en": "How to get them"
   },
   {
    "fr": "Ce que contient le coffre",
-   "en": ""
+   "en": "What the chest holds"
   },
   {
    "fr": "Les paliers",
-   "en": ""
+   "en": "Tiers"
   },
   {
    "fr": "À quoi ça sert",
-   "en": ""
+   "en": "What it’s for"
   },
   {
    "fr": "Toutes les 6 familles, un palier : un creuseur volontaire, et une famille confie un souvenir aux Archives.",
-   "en": ""
+   "en": "Every 6 families, a tier: a volunteer digger, and a family entrusts a keepsake to the Archives."
   },
   {
    "fr": "Voir le classement des profondeurs",
-   "en": ""
+   "en": "See the depth rankings"
   },
   {
    "fr": "District",
-   "en": ""
+   "en": "District"
   },
   {
    "fr": "Port",
-   "en": ""
+   "en": "Port"
   },
   {
    "fr": "Flèche",
-   "en": ""
+   "en": "Spire"
   },
   {
    "fr": "Chroniques",
-   "en": ""
+   "en": "Chronicles"
   },
   {
    "fr": "Plus",
-   "en": ""
+   "en": "More"
   },
   {
    "fr": "Navigation",
-   "en": ""
+   "en": "Navigation"
   },
   {
    "fr": "Escouade, Porteurs ou cartes",
-   "en": ""
+   "en": "Squad, Bearers or cards"
   },
   {
    "fr": "Porteurs",
-   "en": ""
+   "en": "Bearers"
   },
   {
    "fr": "{0} nouveau{1}",
-   "en": ""
+   "en": "{0} new{1|}"
   },
   {
    "fr": "Collection",
-   "en": ""
+   "en": "Collection"
   },
   {
    "fr": "{0} nouvelle{1}",
-   "en": ""
+   "en": "{0} new{1|}"
   },
   {
    "fr": "Protège ta partie",
-   "en": ""
+   "en": "Protect your game"
   },
   {
    "fr": "Strate −{0} · ta partie grandit",
-   "en": ""
+   "en": "Stratum −{0} · your game is growing"
   },
   {
    "fr": "Elle n’est sauvegardée que pour ce téléphone : s’il est perdu ou réinitialisé, elle disparaît. Relie-la à Google ou à un e-mail, en quelques secondes, et tu la retrouveras partout.",
-   "en": ""
+   "en": "It’s only saved on this phone: if the phone is lost or reset, it’s gone. Link it to Google or an email in a few seconds, and you’ll find it everywhere."
   },
   {
    "fr": "Plus tard",
-   "en": ""
+   "en": "Later"
   },
   {
    "fr": "minerai",
-   "en": ""
+   "en": "ore"
   },
   {
    "fr": "XP{0}",
-   "en": ""
+   "en": "XP{0}"
   },
   {
    "fr": " · niveau {0}",
-   "en": ""
+   "en": " · level {0}"
   },
   {
    "fr": "creuseur{0}",
-   "en": ""
+   "en": "digger{0}"
   },
   {
    "fr": "3 cartes",
-   "en": ""
+   "en": "3 cards"
   },
   {
    "fr": "au choix, au district",
-   "en": ""
+   "en": "of your choice, in the district"
   },
   {
    "fr": "+1 Indice",
-   "en": ""
+   "en": "+1 Clue"
   },
   {
    "fr": "pour la prochaine tentative",
-   "en": ""
+   "en": "for the next attempt"
   },
   {
    "fr": "Usure",
-   "en": ""
+   "en": "Strain"
   },
   {
    "fr": "{0} · {1} % de chances",
-   "en": ""
+   "en": "{0} · {1} % chance"
   },
   {
    "fr": "réussi",
-   "en": ""
+   "en": "success"
   },
   {
    "fr": "manqué",
-   "en": ""
+   "en": "failed"
   },
   {
    "fr": "Mission en mer",
-   "en": ""
+   "en": "Mission at sea"
   },
   {
    "fr": "Retour {0}",
-   "en": ""
+   "en": "Return {0}"
   },
   {
    "fr": "Rapport suivant ({0})",
-   "en": ""
+   "en": "Next report ({0})"
   },
   {
    "fr": "Bien reçu",
-   "en": ""
+   "en": "Got it"
   },
   {
    "fr": "Mission accomplie",
-   "en": ""
+   "en": "Mission accomplished"
   },
   {
    "fr": "Retour au district",
-   "en": ""
+   "en": "Back to the district"
   },
   {
    "fr": "Repli précipité",
-   "en": ""
+   "en": "Hasty retreat"
   },
   {
    "fr": "L’escouade a été repoussée",
-   "en": ""
+   "en": "The squad was driven back"
   },
   {
    "fr": "Rapport · {0}",
-   "en": ""
+   "en": "Report · {0}"
   },
   {
    "fr": "Éclat{0}",
-   "en": ""
+   "en": "Shard{0}"
   },
   {
    "fr": "fragment d’archives",
-   "en": ""
+   "en": "archive fragment"
   },
   {
    "fr": "nouvelle Strate ouverte",
-   "en": ""
+   "en": "new Stratum opened"
   },
   {
    "fr": "{0} cartes trouvées",
-   "en": ""
+   "en": "{0} cards found"
   },
   {
    "fr": "Une carte trouvée",
-   "en": ""
+   "en": "A card found"
   },
   {
    "fr": "Nouvelle",
-   "en": ""
+   "en": "New"
   },
   {
    "fr": "Niv. {0} prêt",
-   "en": ""
+   "en": "Lvl {0} ready"
   },
   {
    "fr": "Doublon",
-   "en": ""
+   "en": "Duplicate"
   },
   {
    "fr": "{0} cartes au choix",
-   "en": ""
+   "en": "{0} cards to choose from"
   },
   {
    "fr": "Une carte au choix",
-   "en": ""
+   "en": "A card of your choice"
   },
   {
    "fr": "t’attend{0} au district : tu la choisis juste après.",
-   "en": ""
+   "en": "{0|wait|waits} for you in the district: you pick right after."
   },
   {
    "fr": "L’escouade · +{0} XP",
-   "en": ""
+   "en": "The squad · +{0} XP"
   },
   {
    "fr": "Niveau {0} !",
-   "en": ""
+   "en": "Level {0}!"
   },
   {
    "fr": "Achevée",
-   "en": ""
+   "en": "Complete"
   },
   {
    "fr": "quête « {0} »",
-   "en": ""
+   "en": "quest “{0}”"
   },
   {
    "fr": "Vestige{0} : {1}",
-   "en": ""
+   "en": "Relic{0}: {1}"
   },
   {
    "fr": "Strate complète",
-   "en": ""
+   "en": "Stratum complete"
   },
   {
    "fr": "étoile{0} de Strate",
-   "en": ""
+   "en": "Stratum star{0}"
   },
   {
    "fr": " s’est enfui",
-   "en": ""
+   "en": " fled"
   },
   {
    "fr": "Dans la Strate",
-   "en": ""
+   "en": "In the Stratum"
   },
   {
    "fr": "Et maintenant ?",
-   "en": ""
+   "en": "What now?"
   },
   {
    "fr": "Soigner l’escouade.",
-   "en": ""
+   "en": "Heal the squad."
   },
   {
    "fr": "Elle se remet à la Clinique ; une recrue Géné postée là soigne deux fois plus vite.",
-   "en": ""
+   "en": "It recovers at the Clinic; a Spliced recruit assigned there heals twice as fast."
   },
   {
    "fr": "Renforcer le deck.",
-   "en": ""
+   "en": "Strengthen the deck."
   },
   {
    "fr": "Chaque chapitre des Chroniques lu pour la première fois glisse une carte entre les pages ({0} à lire) : confie-la ensuite à un Porteur, dans l’onglet Escouade.",
-   "en": ""
+   "en": "Each Chronicles chapter you read for the first time slips a card between the pages ({0} to read): then give it to a Bearer, in the Squad tab."
   },
   {
    "fr": "Revoir le deck.",
-   "en": ""
+   "en": "Review the deck."
   },
   {
    "fr": "Cherche des suites de Fréquences et quelques boucliers pour les grosses attaques annoncées.",
-   "en": ""
+   "en": "Look for Frequency chains and a few shields for the big announced attacks."
   },
   {
    "fr": "Se protéger.",
-   "en": ""
+   "en": "Protect yourself."
   },
   {
    "fr": "Les boucliers protègent toute l’escouade : garde-les pour les attaques fortes annoncées par l’ennemi.",
-   "en": ""
+   "en": "Shields protect the whole squad: save them for the heavy attacks the enemy announces."
   },
   {
    "fr": "Choisir ma carte",
-   "en": ""
+   "en": "Pick my card"
   },
   {
    "fr": "Menu",
-   "en": ""
+   "en": "Menu"
   },
   {
    "fr": "OSSYRA · ALPHA",
-   "en": ""
+   "en": "OSSYRA · ALPHA"
   },
   {
    "fr": "Les classements des directeurs : profondeur, Registre, Joutes et Flèche",
-   "en": ""
+   "en": "Director rankings: depth, Register, Jousts and Spire"
   },
   {
    "fr": "Le Cercle des quais",
-   "en": ""
+   "en": "The Quayside Circle"
   },
   {
    "fr": "Tes amis, les duels entre directeurs et les échanges de cartes",
-   "en": ""
+   "en": "Your friends, duels between directors and card trades"
   },
   {
    "fr": "À construire : amis, duels et échanges de cartes",
-   "en": ""
+   "en": "To build: friends, duels and card trades"
   },
   {
    "fr": "Recruter des amis",
-   "en": ""
+   "en": "Recruit friends"
   },
   {
    "fr": "Ton code de parrainage : vous êtes récompensés tous les deux quand ton ami joue",
-   "en": ""
+   "en": "Your referral code: you’re both rewarded when your friend plays"
   },
   {
    "fr": "Compte",
-   "en": ""
+   "en": "Account"
   },
   {
    "fr": "Protège ta partie : relie-la à Google ou à un e-mail",
-   "en": ""
+   "en": "Protect your game: link it to Google or an email"
   },
   {
    "fr": " · choisis ton pseudo",
-   "en": ""
+   "en": " · pick your username"
   },
   {
    "fr": "Retrouver ta progression sur un autre appareil",
-   "en": ""
+   "en": "Pick up your progress on another device"
   },
   {
    "fr": "Comment marche le district",
-   "en": ""
+   "en": "How the district works"
   },
   {
    "fr": "Les ressources, l’escouade et le but : creuser plus bas",
-   "en": ""
+   "en": "Resources, the squad and the goal: dig deeper"
   },
   {
    "fr": "Glossaire",
-   "en": ""
+   "en": "Glossary"
   },
   {
    "fr": "Tous les mots du jeu expliqués : Fissure, Flux, Résonance, Charge…",
-   "en": ""
+   "en": "Every word in the game explained: Fissure, Flux, Resonance, Load…"
   },
   {
    "fr": "Revoir l’intro complète",
-   "en": ""
+   "en": "Watch the full intro again"
   },
   {
    "fr": "L’histoire de 2121, en entier",
-   "en": ""
+   "en": "The story of 2121, from start to finish"
   },
   {
    "fr": "Paramètres",
-   "en": ""
+   "en": "Settings"
   },
   {
    "fr": "Combat automatique",
-   "en": ""
+   "en": "Auto-fight"
   },
   {
    "fr": "Un bouton « Auto » dans les combats ordinaires des Strates déjà vaincues : l’escouade joue seule, en accéléré",
-   "en": ""
+   "en": "An “Auto” button in ordinary fights in Strata you’ve already beaten: the squad plays on its own, sped up"
   },
   {
    "fr": "Graphismes : {0}. Toucher pour changer",
-   "en": ""
+   "en": "Graphics: {0}. Tap to change"
   },
   {
    "fr": "Graphismes",
-   "en": ""
+   "en": "Graphics"
   },
   {
    "fr": "Son",
-   "en": ""
+   "en": "Sound"
   },
   {
    "fr": "Les sons du combat et de l’interface",
-   "en": ""
+   "en": "Combat and interface sounds"
   },
   {
    "fr": "Activé",
-   "en": ""
+   "en": "On"
   },
   {
    "fr": "Coupé",
-   "en": ""
+   "en": "Off"
   },
   {
    "fr": "Animations",
-   "en": ""
+   "en": "Animations"
   },
   {
    "fr": "Réduites : presque rien ne bouge, les combats vont droit au résultat",
-   "en": ""
+   "en": "Reduced: almost nothing moves, fights go straight to the result"
   },
   {
    "fr": "Complètes : la houle, les lueurs, les coups animés",
-   "en": ""
+   "en": "Full: the swell, the glows, the animated blows"
   },
   {
    "fr": "Réduites",
-   "en": ""
+   "en": "Reduced"
   },
   {
    "fr": "Complètes",
-   "en": ""
+   "en": "Full"
   }
  ]
 }

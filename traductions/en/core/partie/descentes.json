@@ -3,923 +3,927 @@
  "entrees": [
   {
    "fr": "L’escouade est en descente : le Râtelier se change au district.",
-   "en": ""
+   "en": "The squad is on a descent: the Rack is changed in the district."
   },
   {
    "fr": "Escouade inconnue.",
-   "en": ""
+   "en": "Unknown squad."
   },
   {
    "fr": "Carte commune inconnue.",
-   "en": ""
+   "en": "Unknown common card."
   },
   {
    "fr": "{0} s’ouvre au niveau {1} du bâtiment.",
-   "en": ""
+   "en": "{0} unlocks at building level {1}."
   },
   {
    "fr": "Le Râtelier n’a que {0} emplacements.",
-   "en": ""
+   "en": "The Rack only has {0} slots."
   },
   {
    "fr": "Le Râtelier de l’escouade {0} est plein ({1} emplacements) : retire d’abord une carte.",
-   "en": ""
+   "en": "Squad {0}’s Rack is full ({1} slots): remove a card first."
   },
   {
    "fr": "La Clinique a organisé un Accord ouvert : quarante volontaires, une seule pierre. Elle a pris sur {0}, et tout le quartier a veillé sa Nuit blanche. « {1} »",
-   "en": ""
+   "en": "The Clinic held an open Accord: forty volunteers, a single stone. It took to {0}, and the whole quarter sat up through their White Night. “{1}”"
   },
   {
    "fr": "{0} rejoint le district. « {1} »",
-   "en": ""
+   "en": "{0} joins the district. “{1}”"
   },
   {
    "fr": "{0} · {1} : « {2} » (+{3} XP). À lire dans sa fiche.",
-   "en": ""
+   "en": "{0} · {1}: “{2}” (+{3} XP). Read it on their profile."
   },
   {
    "fr": "L’escouade est en descente : elle ne change qu’au district.",
-   "en": ""
+   "en": "The squad is on a descent: it only changes in the district."
   },
   {
    "fr": "Pas encore arrivé au district.",
-   "en": ""
+   "en": "Not in the district yet."
   },
   {
    "fr": "En mission.",
-   "en": ""
+   "en": "On a mission."
   },
   {
    "fr": "Au travail · Forge (fabrication en cours).",
-   "en": ""
+   "en": "At work · Forge (crafting in progress)."
   },
   {
    "fr": "quitte l’entraînement à la Tour du Noyau",
-   "en": ""
+   "en": "leaves training at the Core Tower"
   },
   {
    "fr": "quitte son poste : {0} restera vacant",
-   "en": ""
+   "en": "leaves their post: {0} will be left empty"
   },
   {
    "fr": "Place inconnue.",
-   "en": ""
+   "en": "Unknown slot."
   },
   {
    "fr": "Les autres escouades se forment quand le gardien de la Strate −{0} est vaincu.",
-   "en": ""
+   "en": "The other squads form once the guardian of Stratum −{0} is defeated."
   },
   {
    "fr": "{0} ne peut pas rejoindre l’escouade : {1}{2}",
-   "en": ""
+   "en": "{0} can’t join the squad: {1}{2}"
   },
   {
    "fr": "{0} remplace {1} dans l’escouade {2}.",
-   "en": ""
+   "en": "{0} replaces {1} in squad {2}."
   },
   {
    "fr": "{0} rejoint l’escouade {1}.",
-   "en": ""
+   "en": "{0} joins squad {1}."
   },
   {
    "fr": "Cette escouade est vide : choisis-lui d’abord des Porteurs.",
-   "en": ""
+   "en": "This squad is empty: pick some Bearers for it first."
   },
   {
    "fr": "L’escouade {0} descendra la prochaine fois.",
-   "en": ""
+   "en": "Squad {0} will go down next time."
   },
   {
    "fr": "Surface",
-   "en": ""
+   "en": "Surface"
   },
   {
    "fr": "Cales",
-   "en": ""
+   "en": "Holds"
   },
   {
    "fr": "Cœur",
-   "en": ""
+   "en": "Heart"
   },
   {
    "fr": "Cargaison",
-   "en": ""
+   "en": "Cargo"
   },
   {
    "fr": "Pierre oubliée",
-   "en": ""
+   "en": "Forgotten stone"
   },
   {
    "fr": "Naufragés",
-   "en": ""
+   "en": "Castaways"
   },
   {
    "fr": "Éclats",
-   "en": ""
+   "en": "Shards"
   },
   {
    "fr": "Durée inconnue.",
-   "en": ""
+   "en": "Unknown duration."
   },
   {
    "fr": "Cette destination n’est plus au programme du passeur : de nouvelles s’ouvrent chaque jour à 4 h.",
-   "en": ""
+   "en": "The ferryman no longer sails to this destination: new ones open every day at 4 am."
   },
   {
    "fr": "Aucune destination aujourd’hui.",
-   "en": ""
+   "en": "No destinations today."
   },
   {
    "fr": "Il faut avoir vaincu une Strate pour y envoyer quelqu’un.",
-   "en": ""
+   "en": "You must have beaten a Stratum to send someone there."
   },
   {
    "fr": "Porteur inconnu.",
-   "en": ""
+   "en": "Unknown Bearer."
   },
   {
    "fr": "{0} travaille au district.",
-   "en": ""
+   "en": "{0} is working in the district."
   },
   {
    "fr": "{0} n’est pas au district.",
-   "en": ""
+   "en": "{0} isn’t in the district."
   },
   {
    "fr": "{0} barques au plus en mer en même temps : monte la Tour du Noyau pour en armer d’autres.",
-   "en": ""
+   "en": "{0} boats at sea at most: upgrade the Core Tower to fit out more."
   },
   {
    "fr": "Une seule barque en mer à la fois : monte la Tour du Noyau pour en armer d’autres.",
-   "en": ""
+   "en": "Only one boat at sea at a time: upgrade the Core Tower to fit out more."
   },
   {
    "fr": "{0} prend le bateau vers {1} ({2} h).",
-   "en": ""
+   "en": "{0} takes the boat to {1} ({2} h)."
   },
   {
    "fr": "{0} ramène des naufragés",
-   "en": ""
+   "en": "{0} brings back castaways"
   },
   {
    "fr": "{0} rentre de mission : +{1} minerai, +{2} XP{3}{4}{5}{6}{7}.",
-   "en": ""
+   "en": "{0} is back from a mission: +{1} ore, +{2} XP{3}{4}{5}{6}{7}."
   },
   {
    "fr": ", +{0} famille{1}",
-   "en": ""
+   "en": ", +{0} famil{1|ies|y}"
   },
   {
    "fr": ", +{0} creuseur{1}",
-   "en": ""
+   "en": ", +{0} digger{1}"
   },
   {
    "fr": "Aucun rapport à lire.",
-   "en": ""
+   "en": "No reports to read."
   },
   {
    "fr": "Le passeur a déposé {0} devant {1}, à marée basse.",
-   "en": ""
+   "en": "At low tide, the ferryman dropped {0} off at {1}."
   },
   {
    "fr": "{0} heures de mer : {1} a gagné {2} sur la barque du passeur.",
-   "en": ""
+   "en": "{0} hours at sea: {1} reached {2} aboard the ferryman’s boat."
   },
   {
    "fr": "Lampe à algues au poing, {0} a plongé dans {1}, salle après salle.",
-   "en": ""
+   "en": "Algae lamp in hand, {0} dove into {1}, room after room."
   },
   {
    "fr": "Au lever du brouillard, la barque a touché {0}. {1} est monté seul.",
-   "en": ""
+   "en": "As the fog lifted, the boat touched {0}. {1} went up alone."
   },
   {
    "fr": "D’autres barques étaient passées avant aujourd’hui : {0} a dû chercher plus loin, dans des salles à moitié vidées.",
-   "en": ""
+   "en": "Other boats had come by before today: {0} had to search further, in half-emptied rooms."
   },
   {
    "fr": "Les barques du matin avaient balisé l’entrée : {0} est descendu droit vers les Cales, là où personne n’était encore allé.",
-   "en": ""
+   "en": "The morning boats had marked the entrance: {0} went straight down to the Holds, where no one had been yet."
   },
   {
    "fr": "Grâce aux marques laissées par la première barque, {0} a trouvé l’escalier des Cales sous la vase.",
-   "en": ""
+   "en": "Thanks to the marks left by the first boat, {0} found the stairs to the Holds under the silt."
   },
   {
    "fr": "Deux barques avaient ouvert le chemin : {0} a pu atteindre le Cœur de la ruine, une salle restée au sec depuis la montée des eaux. Une pierre y attendait.",
-   "en": ""
+   "en": "Two boats had cleared the way: {0} reached the Heart of the ruin, a room kept dry since the waters rose. A stone was waiting there."
   },
   {
    "fr": "Au bout des Cales, une porte que les autres n’avaient pas pu forcer : {0} l’a passée, et le Cœur de la ruine lui a livré une pierre.",
-   "en": ""
+   "en": "At the end of the Holds, a door the others couldn’t force: {0} got through, and the Heart of the ruin gave up a stone."
   },
   {
-   "fr": "Le quartier a vu la barque rentrer : {0} décidé de te suivre.",
-   "en": ""
+   "fr": "Le quartier a vu la barque rentrer : {0} familles ont décidé de te suivre.",
+   "en": "The quarter watched the boat come in: {0} families have decided to follow you."
+  },
+  {
+   "fr": "Le quartier a vu la barque rentrer : une famille a décidé de te suivre.",
+   "en": "The quarter watched the boat come in: a family has decided to follow you."
   },
   {
    "fr": "Plus personne à recueillir sur place : les naufragés étaient déjà partis. La barque est revenue chargée de matériel.",
-   "en": ""
+   "en": "No one left to pick up: the castaways were already gone. The boat came back loaded with salvage."
   },
   {
    "fr": "Sous l’eau dormait encore du matériel d’avant : {0} minerai hissé à bord.",
-   "en": ""
+   "en": "Old-world equipment still slept under the water: {0} ore hauled aboard."
   },
   {
    "fr": "Une réserve oubliée, au sec sous un toit effondré : {0} minerai rapporté au district.",
-   "en": ""
+   "en": "A forgotten store, dry beneath a caved-in roof: {0} ore brought back to the district."
   },
   {
    "fr": "Des machines noyées, démontées pièce par pièce : {0} minerai.",
-   "en": ""
+   "en": "Drowned machines, taken apart piece by piece: {0} ore."
   },
   {
    "fr": "Dans un coffre scellé par le sel, une pierre jamais vue : {0}. Elle rejoint tes cartes.",
-   "en": ""
+   "en": "In a chest sealed shut by salt, a stone never seen before: {0}. It joins your cards."
   },
   {
    "fr": "Au fond d’une salle noyée, {0} a trouvé ce que personne n’avait encore rapporté : {1}.",
-   "en": ""
+   "en": "At the bottom of a flooded room, {0} found what no one had brought back yet: {1}."
   },
   {
    "fr": "{0} a reconnu des pierres familières : {1}. De quoi faire monter des cartes.",
-   "en": ""
+   "en": "{0} recognised familiar stones: {1}. Enough to level up some cards."
   },
   {
    "fr": "Des éclats de sa propre lignée attendaient dans les ruines : {0}.",
-   "en": ""
+   "en": "Shards of their own lineage were waiting in the ruins: {0}."
   },
   {
    "fr": "Aucune pierre à rapporter cette fois : les ruines étaient muettes.",
-   "en": ""
+   "en": "No stones to bring back this time: the ruins were silent."
   },
   {
    "fr": "Des rescapés vivaient sur place : ils sont montés dans la barque et creuseront pour toi (+{0} creuseur{1}).",
-   "en": ""
+   "en": "Survivors were living there: they climbed into the boat and will dig for you (+{0} digger{1})."
   },
   {
    "fr": "Un exploit qui ne s’oublie pas : {0} gagne la Marque {1}.",
-   "en": ""
+   "en": "A feat no one will forget: {0} earns the {1} Mark."
   },
   {
    "fr": "L’expérience paie : {0} passe au niveau {1}.",
-   "en": ""
+   "en": "Experience pays: {0} reaches level {1}."
   },
   {
    "fr": "Le retour s’est fait sans encombre, mais l’eau froide laisse des traces : la Clinique s’en chargera.",
-   "en": ""
+   "en": "The trip back went smoothly, but cold water leaves its mark: the Clinic will see to it."
   },
   {
    "fr": "{0} rentre trempé et fourbu : un peu de repos à la Clinique ne sera pas de trop.",
-   "en": ""
+   "en": "{0} comes back soaked and worn out: a little rest at the Clinic won’t hurt."
   },
   {
    "fr": "{0} rentre sans une égratignure.",
-   "en": ""
+   "en": "{0} comes back without a scratch."
   },
   {
    "fr": "Un Veilleur sous les gravats",
-   "en": ""
+   "en": "A Watcher under the rubble"
   },
   {
    "fr": "Un fouilleur des Veilleurs de Sédime est coincé sous un éboulis. Il tient serré contre lui un carnet couvert de croquis.",
-   "en": ""
+   "en": "A digger from the Watchers of Sédime is pinned under a rockfall. He clutches a notebook full of sketches."
   },
   {
    "fr": "Le dégager et le soigner (−4 PV chacun)",
-   "en": ""
+   "en": "Free him and tend to him (−4 HP each)"
   },
   {
    "fr": "Prendre son carnet et repartir",
-   "en": ""
+   "en": "Take his notebook and move on"
   },
   {
    "fr": "Passer ton chemin",
-   "en": ""
+   "en": "Walk on by"
   },
   {
    "fr": "Un pilleur acculé",
-   "en": ""
+   "en": "A cornered scavenger"
   },
   {
    "fr": "Un pilleur de Strates, dos au mur, serre un sac plein de cristaux. Il ne cherche pas la bagarre.",
-   "en": ""
+   "en": "A Strata scavenger, back to the wall, clutches a bag full of crystals. He isn’t looking for a fight."
   },
   {
    "fr": "Le laisser filer",
-   "en": ""
+   "en": "Let him slip away"
   },
   {
    "fr": "Lui prendre son sac",
-   "en": ""
+   "en": "Take his bag"
   },
   {
    "fr": "L’affronter pour tout récupérer",
-   "en": ""
+   "en": "Fight him for all of it"
   },
   {
    "fr": "Une patrouille alliée",
-   "en": ""
+   "en": "A friendly patrol"
   },
   {
    "fr": "Une patrouille des Brigades du Serment de Veyr vous salue : depuis l’accord avec la Maison Orsève, vous êtes du même côté.",
-   "en": ""
+   "en": "A patrol of the Brigades of the Oath of Veyr salutes you: since the deal with House Orsève, you’re on the same side."
   },
   {
    "fr": "Accepter leurs soins (+25 % de PV)",
-   "en": ""
+   "en": "Accept their care (+25 % HP)"
   },
   {
    "fr": "Les saluer et continuer",
-   "en": ""
+   "en": "Salute them and move on"
   },
   {
    "fr": "Les Brigades barrent la route",
-   "en": ""
+   "en": "The Brigades block the way"
   },
   {
    "fr": "Une patrouille du Serment de Veyr bloque le couloir. Leur sergent réclame un « droit de passage ».",
-   "en": ""
+   "en": "A patrol of the Oath of Veyr blocks the corridor. Their sergeant demands a “right of passage”."
   },
   {
    "fr": "Payer le passage (20 minerai)",
-   "en": ""
+   "en": "Pay the toll (20 ore)"
   },
   {
    "fr": "Les contourner par les gaines (−5 PV chacun)",
-   "en": ""
+   "en": "Go around through the ducts (−5 HP each)"
   },
   {
    "fr": "Forcer le passage",
-   "en": ""
+   "en": "Force your way through"
   },
   {
    "fr": "Un cristal qui murmure",
-   "en": ""
+   "en": "A whispering crystal"
   },
   {
    "fr": "Dans une niche, un cristal ancien murmure. Le son ressemble à une voix, sans les mots.",
-   "en": ""
+   "en": "In an alcove, an ancient crystal whispers. It sounds like a voice, without the words."
   },
   {
    "fr": "L’écouter",
-   "en": ""
+   "en": "Listen to it"
   },
   {
    "fr": "Le rapporter au district",
-   "en": ""
+   "en": "Bring it back to the district"
   },
   {
    "fr": "Le laisser où il est",
-   "en": ""
+   "en": "Leave it where it is"
   },
   {
    "fr": "Un marchand des bas-fonds",
-   "en": ""
+   "en": "A backstreet trader"
   },
   {
    "fr": "Un marchand a installé son étal dans une ancienne salle, entre deux lampes à algues. Il a « de tout, pour qui sait payer ».",
-   "en": ""
+   "en": "A trader has set up his stall in an old room, between two algae lamps. He has “a bit of everything, for those who can pay”."
   },
   {
    "fr": "Échanger 30 minerai contre une carte",
-   "en": ""
+   "en": "Trade 30 ore for a card"
   },
   {
    "fr": "Acheter des soins (15 minerai, +30 % de PV)",
-   "en": ""
+   "en": "Buy care (15 ore, +30 % HP)"
   },
   {
    "fr": "Passer",
-   "en": ""
+   "en": "Pass"
   },
   {
    "fr": "Un Sauvage",
-   "en": ""
+   "en": "A Wildling"
   },
   {
    "fr": "Un homme recroquevillé contre un pilier, une mèche à peine dorée collée au front. Il s’est greffé une brisure achetée au marché noir, sans Lecture. Il gronde des mots qui ne sont pas les siens.",
-   "en": ""
+   "en": "A man curled up against a pillar, a barely golden streak stuck to his brow. He grafted himself a shard bought on the black market, with no Reading. He growls words that aren’t his own."
   },
   {
    "fr": "Laisser Véla lire sa pierre",
-   "en": ""
+   "en": "Let Véla read his stone"
   },
   {
    "fr": "Lui parler doucement (−3 PV chacun)",
-   "en": ""
+   "en": "Talk to him gently (−3 HP each)"
   },
   {
    "fr": "Un vendeur de pierres",
-   "en": ""
+   "en": "A stone seller"
   },
   {
    "fr": "Sur une couverture, une rangée de cristaux tous identiques. « Des pierres d’Accord, directeur. Jamais portées. Une vierge pour vingt-cinq de minerai. » Elles sont ternes. Toutes.",
-   "en": ""
+   "en": "On a blanket, a row of crystals, all alike. “Accord stones, director. Never worn. A pristine for twenty-five ore.” They’re dull. Every one of them."
   },
   {
    "fr": "Lui acheter une « vierge » (25 minerai)",
-   "en": ""
+   "en": "Buy a “pristine” (25 ore)"
   },
   {
    "fr": "Lui faire rendre ses pierres",
-   "en": ""
+   "en": "Make him return his stones"
   },
   {
    "fr": "Une source chaude",
-   "en": ""
+   "en": "A hot spring"
   },
   {
    "fr": "Entre deux piliers, une source chaude jaillit de la roche. L’eau sent le fer et le sel.",
-   "en": ""
+   "en": "Between two pillars, a hot spring gushes from the rock. The water smells of iron and salt."
   },
   {
    "fr": "S’y reposer (+25 % de PV)",
-   "en": ""
+   "en": "Rest there (+25 % HP)"
   },
   {
    "fr": "Continuer sans s’arrêter",
-   "en": ""
+   "en": "Keep going without stopping"
   },
   {
    "fr": "Aucune expédition en cours.",
-   "en": ""
+   "en": "No expedition under way."
   },
   {
    "fr": "Impossible d’aller par là.",
-   "en": ""
+   "en": "Can’t go that way."
   },
   {
    "fr": "Personne à qui répondre.",
-   "en": ""
+   "en": "No one to answer."
   },
   {
    "fr": "Choix inconnu.",
-   "en": ""
+   "en": "Unknown choice."
   },
   {
    "fr": "L’escouade reprend sa route.",
-   "en": ""
+   "en": "The squad sets off again."
   },
   {
    "fr": "Le Veilleur, reconnaissant, te confie un Éclat trouvé plus bas. Le quartier en entendra parler.",
-   "en": ""
+   "en": "Grateful, the Watcher gives you a Shard he found further down. The quarter will hear about this."
   },
   {
    "fr": "Le carnet se revend bien : +{0} minerai. Le Veilleur, lui, s’en souviendra.",
-   "en": ""
+   "en": "The notebook sells well: +{0} ore. The Watcher, for his part, won’t forget."
   },
   {
    "fr": "Le pilleur file sans demander son reste. Il racontera que le directeur sait être juste.",
-   "en": ""
+   "en": "The scavenger bolts without a word. He’ll tell everyone the director knows how to be fair."
   },
   {
    "fr": "Il lâche son sac et s’enfuit : +{0} minerai.",
-   "en": ""
+   "en": "He drops his bag and runs: +{0} ore."
   },
   {
    "fr": "Le pilleur sort un pied-de-biche. Son sac contient une carte : elle sera à toi.",
-   "en": ""
+   "en": "The scavenger pulls out a crowbar. His bag holds a card: it will be yours."
   },
   {
    "fr": "Les Brigades pansent l’escouade (+25 % de PV).",
-   "en": ""
+   "en": "The Brigades patch up the squad (+25 % HP)."
   },
   {
    "fr": "Le sergent empoche le minerai et s’écarte.",
-   "en": ""
+   "en": "The sergeant pockets the ore and steps aside."
   },
   {
    "fr": "Les gaines sont étroites et brûlantes, mais vous passez (−5 PV chacun).",
-   "en": ""
+   "en": "The ducts are tight and scalding, but you get through (−5 HP each)."
   },
   {
    "fr": "Le district ne paie pas pour passer chez lui.",
-   "en": ""
+   "en": "The district doesn’t pay to walk through its own home."
   },
   {
    "fr": "Véla écoute longtemps. « Il a peur d’être oublié », dit-elle. Le cristal se fend et laisse un Éclat.",
-   "en": ""
+   "en": "Véla listens for a long time. “It’s afraid of being forgotten,” she says. The crystal splits and leaves a Shard."
   },
   {
    "fr": "Le murmure s’accroche aux pensées de l’escouade. Personne ne dort bien ce soir-là (−3 PV chacun).",
-   "en": ""
+   "en": "The whisper clings to the squad’s thoughts. Nobody sleeps well that night (−3 HP each)."
   },
   {
    "fr": "Le cristal pèse lourd dans le sac, et il chuchote encore. Au district, il deviendra une carte (−2 PV chacun).",
-   "en": ""
+   "en": "The crystal sits heavy in the bag, and it’s still whispering. Back in the district, it will become a card (−2 HP each)."
   },
   {
    "fr": "Il te faut 30 minerai dans le butin de l’expédition.",
-   "en": ""
+   "en": "You need 30 ore in the expedition’s loot."
   },
   {
    "fr": "Le marchand glisse un cristal gravé dans ta main. Au district, il deviendra une carte.",
-   "en": ""
+   "en": "The trader slips an engraved crystal into your hand. Back in the district, it will become a card."
   },
   {
    "fr": "Il te faut 15 minerai dans le butin de l’expédition.",
-   "en": ""
+   "en": "You need 15 ore in the expedition’s loot."
   },
   {
    "fr": "Onguents d’algues et bandages propres : +30 % de PV.",
-   "en": ""
+   "en": "Algae salves and clean bandages: +30 % HP."
   },
   {
    "fr": "L’eau chaude délie les muscles (+25 % de PV).",
-   "en": ""
+   "en": "The hot water loosens the muscles (+25 % HP)."
   },
   {
    "fr": "Véla pose la main sur sa nuque. « C’est une brisure de créature des hauteurs. Elle a peur d’être enfermée. » Il se calme, et vous laisse un Éclat en remerciement. La Clinique le retirera.",
-   "en": ""
+   "en": "Véla lays a hand on the back of his neck. “It’s a shard from a creature of the heights. It’s afraid of being shut in.” He calms down, and leaves you a Shard in thanks. The Clinic will remove it."
   },
   {
    "fr": "Il finit par se calmer et accepte qu’on le conduise à la Clinique. Ses accès ont laissé des bleus à tout le monde (−3 PV chacun).",
-   "en": ""
+   "en": "He finally calms down and lets himself be taken to the Clinic. His fits have left everyone bruised (−3 HP each)."
   },
   {
    "fr": "Le penchant l’emporte : il se jette sur l’escouade.",
-   "en": ""
+   "en": "The pull wins out: he throws himself at the squad."
   },
   {
    "fr": "Il te faut 25 minerai dans le butin de l’expédition.",
-   "en": ""
+   "en": "You need 25 ore in the expedition’s loot."
   },
   {
    "fr": "Au district, la Clinique tranche : une pierre morte. Elle a refusé un Accord, et ne prendra plus jamais chez personne. Le quartier en rit encore.",
-   "en": ""
+   "en": "The Clinic’s verdict in the district: a dead stone. It refused an Accord, and will never take to anyone again. The quarter is still laughing about it."
   },
   {
    "fr": "Il remballe en grommelant et rend ce qu’il a pris aux fouilleurs : +{0} minerai. Les familles volées sauront qui remercier.",
-   "en": ""
+   "en": "He packs up, grumbling, and returns what he took from the diggers: +{0} ore. The families he robbed will know whom to thank."
   },
   {
    "fr": "On ne remonte qu’à l’entrée ou depuis un campement.",
-   "en": ""
+   "en": "You can only go back up from the entrance or from a camp."
   },
   {
    "fr": "Impossible de reculer.",
-   "en": ""
+   "en": "Can’t fall back."
   },
   {
    "fr": "Impossible de fuir.",
-   "en": ""
+   "en": "Can’t flee."
   },
   {
    "fr": "La chambre scellée est ouverte. Trois recrues rejoignent le district : un Coursier, un Docker et un Guetteur.",
-   "en": ""
+   "en": "The sealed chamber is open. Three recruits join the district: a Courier, a Docker and a Lookout."
   },
   {
    "fr": "Le gardien de la chambre a repoussé l’escouade. Elle se repose, puis réessaie.",
-   "en": ""
+   "en": "The chamber’s guardian drove the squad back. It rests, then tries again."
   },
   {
    "fr": "un fouilleur perdu retrouvé pendant la fouille",
-   "en": ""
+   "en": "a lost digger found during the dig"
   },
   {
    "fr": "l’Épreuve réussie fait des émules",
-   "en": ""
+   "en": "the passed Trial inspires others"
   },
   {
    "fr": "le gardien vaincu, des fouilleurs se joignent au chantier",
-   "en": ""
+   "en": "with the guardian beaten, diggers join the works"
   },
   {
    "fr": "L’escouade remonte victorieuse avec {0} minerai.{1}",
-   "en": ""
+   "en": "The squad comes back up victorious with {0} ore.{1}"
   },
   {
    "fr": " Un nouvel étage est creusé : la Strate −{0} est ouverte.",
-   "en": ""
+   "en": " A new level is dug: Stratum −{0} is open."
   },
   {
    "fr": "L’escouade a fui et remonte avec {0} minerai. Elle rentre épuisée.",
-   "en": ""
+   "en": "The squad fled and comes back up with {0} ore. It comes home exhausted."
   },
   {
    "fr": "L’escouade remonte avec {0} minerai. Elle a besoin de repos.",
-   "en": ""
+   "en": "The squad comes back up with {0} ore. It needs rest."
   },
   {
    "fr": "La Strate −{0} est complète : ses cinq Vestiges sont au district. Tes fouilles y verront tout le plan.",
-   "en": ""
+   "en": "Stratum −{0} is complete: its five Relics are in the district. Your digs there will see the whole map."
   },
   {
    "fr": "{0} est abattu. {1}",
-   "en": ""
+   "en": "{0} is down. {1}"
   },
   {
    "fr": "Fragment d’archives trouvé : « {0} ». Il est rangé dans le Codex.",
-   "en": ""
+   "en": "Archive fragment found: “{0}”. It’s filed in the Codex."
   },
   {
    "fr": "La chambre est déjà ouverte.",
-   "en": ""
+   "en": "The chamber is already open."
   },
   {
    "fr": "Une expédition est déjà en cours.",
-   "en": ""
+   "en": "An expedition is already under way."
   },
   {
    "fr": "Ilka, Doran et Véla descendent vers la porte scellée.",
-   "en": ""
+   "en": "Ilka, Doran and Véla go down toward the sealed door."
   },
   {
    "fr": "Leçon 1 : touche 3 cartes de ta main, puis « Lancer la chaîne ».",
-   "en": ""
+   "en": "Lesson 1: tap 3 cards in your hand, then “Cast the chain”."
   },
   {
    "fr": "Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +30 % sur toute la chaîne.",
-   "en": ""
+   "en": "Lesson 2: place a 3, then a 4, then a 5, in that order. Consecutive numbers make a Resonance: +30 % on the whole chain."
   },
   {
    "fr": "Leçon 3 : le Rémanent annonce une Entaille sur Doran. Pose des cartes à bouclier : elles protègent toute l’escouade pendant son attaque.",
-   "en": ""
+   "en": "Lesson 3: the Remnant announces a Slash on Doran. Play shield cards: they protect the whole squad during its attack."
   },
   {
    "fr": "Tu as l’essentiel : vise les suites, protège-toi des grosses attaques annoncées. Achève-le !",
-   "en": ""
+   "en": "You’ve got the essentials: go for chains, protect yourself from big announced attacks. Finish it!"
   },
   {
    "fr": "+{0} cristaux taillés par le Générateur",
-   "en": ""
+   "en": "+{0} crystals cut by the Generator"
   },
   {
    "fr": "{0} est remis de son Usure",
-   "en": ""
+   "en": "{0} has recovered from their Strain"
   },
   {
    "fr": "La Clinique a soigné {0}",
-   "en": ""
+   "en": "The Clinic healed {0}"
   },
   {
    "fr": "Tu peux améliorer : {0}",
-   "en": ""
+   "en": "You can upgrade: {0}"
   },
   {
    "fr": "La Strate −{0} t’attend",
-   "en": ""
+   "en": "Stratum −{0} awaits"
   },
   {
    "fr": "Choisis 3 Porteurs.",
-   "en": ""
+   "en": "Pick 3 Bearers."
   },
   {
    "fr": "Ce Porteur n’est pas encore arrivé au district.",
-   "en": ""
+   "en": "This Bearer hasn’t arrived in the district yet."
   },
   {
    "fr": "{0} est en mission.",
-   "en": ""
+   "en": "{0} is on a mission."
   },
   {
    "fr": "{0} ne peut pas quitter la Forge pendant une fabrication.",
-   "en": ""
+   "en": "{0} can’t leave the Forge while crafting."
   },
   {
    "fr": "Ouvre d’abord la chambre scellée.",
-   "en": ""
+   "en": "Open the sealed chamber first."
   },
   {
    "fr": "{0} porte trop lourd ({1} de Charge sur {2}) : reprends-lui une carte.",
-   "en": ""
+   "en": "{0} is carrying too much ({1} of {2} Load): take a card back."
   },
   {
    "fr": "{0} demande un Porteur de niveau {1} : reprends-la à {2}.",
-   "en": ""
+   "en": "{0} requires a level {1} Bearer: take it back from {2}."
   },
   {
    "fr": "Ton deck n’a que {0} cartes : confie des cartes à ton escouade ({1} au moins).",
-   "en": ""
+   "en": "Your deck only has {0} cards: give your squad more ({1} at least)."
   },
   {
    "fr": "Cette Strate n’est pas encore creusée.",
-   "en": ""
+   "en": "This Stratum hasn’t been dug yet."
   },
   {
    "fr": "{0} Première descente du jour au front : le minerai y compte double.",
-   "en": ""
+   "en": "{0} First descent of the day at the front: ore counts double there."
   },
   {
    "fr": "L’escouade descend dans la Strate −{0}.",
-   "en": ""
+   "en": "The squad goes down into Stratum −{0}."
   },
   {
    "fr": "Facile",
-   "en": ""
+   "en": "Easy"
   },
   {
    "fr": "Normale",
-   "en": ""
+   "en": "Normal"
   },
   {
    "fr": "Difficile",
-   "en": ""
+   "en": "Hard"
   },
   {
    "fr": "Cartes augmentées",
-   "en": ""
+   "en": "Augmented cards"
   },
   {
    "fr": "Les cartes trouvées sont des cartes d’Augmentés, et le filon en garde une (trois au choix en difficile).",
-   "en": ""
+   "en": "The cards found are Augmented cards, and the seam keeps one (three to choose from on hard)."
   },
   {
    "fr": "Cartes génés",
-   "en": ""
+   "en": "Spliced cards"
   },
   {
    "fr": "Les cartes trouvées sont des cartes de Génés, et le filon en garde une (trois au choix en difficile).",
-   "en": ""
+   "en": "The cards found are Spliced cards, and the seam keeps one (three to choose from on hard)."
   },
   {
    "fr": "Cartes résonantes",
-   "en": ""
+   "en": "Resonant cards"
   },
   {
    "fr": "Les cartes trouvées sont des cartes de Résonants, et le filon en garde une (trois au choix en difficile).",
-   "en": ""
+   "en": "The cards found are Resonant cards, and the seam keeps one (three to choose from on hard)."
   },
   {
    "fr": "Le filon rapporte du minerai pour chaque combat gagné en route : plus le chemin est long, plus il donne.",
-   "en": ""
+   "en": "The seam yields ore for each fight won along the way: the longer the path, the more it gives."
   },
   {
    "fr": "Chaque combat gagné en route peut laisser un Éclat au filon : plus le chemin est long, plus tu as de chances.",
-   "en": ""
+   "en": "Each fight won along the way can leave a Shard at the seam: the longer the path, the better your odds."
   },
   {
    "fr": "Difficulté inconnue.",
-   "en": ""
+   "en": "Unknown difficulty."
   },
   {
    "fr": "Cible inconnue.",
-   "en": ""
+   "en": "Unknown target."
   },
   {
    "fr": "On ne fouille que les Strates déjà vaincues.",
-   "en": ""
+   "en": "You can only dig Strata you’ve already beaten."
   },
   {
    "fr": "L’escouade part fouiller la Strate −{0} ({1}, {2}).",
-   "en": ""
+   "en": "The squad sets off to dig Stratum −{0} ({1}, {2})."
   },
   {
    "fr": "Endurance",
-   "en": ""
+   "en": "Endurance"
   },
   {
    "fr": "Tempo",
-   "en": ""
+   "en": "Tempo"
   },
   {
    "fr": "Tactique",
-   "en": ""
+   "en": "Tactics"
   },
   {
    "fr": "Deck",
-   "en": ""
+   "en": "Deck"
   },
   {
    "fr": "Le couloir sans halte",
-   "en": ""
+   "en": "The corridor without rest"
   },
   {
    "fr": "Trois combats d’affilée, puis le gardien : aucun PV rendu entre eux.",
-   "en": ""
+   "en": "Three fights in a row, then the guardian: no HP restored in between."
   },
   {
    "fr": "Nul ne reste au fond",
-   "en": ""
+   "en": "No one stays below"
   },
   {
    "fr": "Le premier Porteur à terre fait perdre l’Épreuve.",
-   "en": ""
+   "en": "The first Bearer to go down loses the Trial."
   },
   {
    "fr": "À mi-souffle",
-   "en": ""
+   "en": "Half a breath"
   },
   {
    "fr": "L’escouade part avec la moitié de ses PV (rendus au retour).",
-   "en": ""
+   "en": "The squad sets off with half its HP (restored on return)."
   },
   {
    "fr": "Avant l’extinction",
-   "en": ""
+   "en": "Before the lights go out"
   },
   {
    "fr": "Abats le gardien en 13 tours, sinon il s’éteint dans le noir.",
-   "en": ""
+   "en": "Bring the guardian down in 13 turns, or it fades into the dark."
   },
   {
    "fr": "La meute",
-   "en": ""
+   "en": "The pack"
   },
   {
    "fr": "Le gardien vient avec deux bêtes de la Strate : choisis qui tomber d’abord.",
-   "en": ""
+   "en": "The guardian comes with two beasts from the Stratum: choose who falls first."
   },
   {
    "fr": "La dernière Fréquence",
-   "en": ""
+   "en": "The last Frequency"
   },
   {
    "fr": "Le gardien garde une 3ᵉ phase cachée sous ses derniers PV.",
-   "en": ""
+   "en": "The guardian keeps a hidden 3rd phase beneath its last HP."
   },
   {
    "fr": "Brouillard total",
-   "en": ""
+   "en": "Total fog"
   },
   {
    "fr": "On voit ce que prépare le gardien, jamais combien ni sur qui ; sa Fêlure est cachée.",
-   "en": ""
+   "en": "You see what the guardian is preparing, never how much or on whom; its Flaw is hidden."
   },
   {
    "fr": "Fréquences brouillées",
-   "en": ""
+   "en": "Scrambled Frequencies"
   },
   {
    "fr": "Aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.",
-   "en": ""
+   "en": "No Resonance for the whole fight. Echoes (three identical Frequencies) still count."
   },
   {
    "fr": "Les recrues",
-   "en": ""
+   "en": "The recruits"
   },
   {
    "fr": "Le Coursier, le Docker et le Guetteur, avec leurs cartes de départ : ta collection ne compte pas.",
-   "en": ""
+   "en": "The Courier, the Docker and the Lookout, with their starting cards: your collection doesn’t count."
   },
   {
    "fr": "Chaque chaîne ne joue qu’une lignée (les cartes du district vont avec toutes).",
-   "en": ""
+   "en": "Each chain plays only one lineage (district cards go with all of them)."
   },
   {
    "fr": "Cette Épreuve n’est pas au programme cette semaine.",
-   "en": ""
+   "en": "This Trial isn’t on this week."
   },
   {
    "fr": "Les Épreuves s’ouvrent quand le gardien de la Strate −{0} est vaincu.",
-   "en": ""
+   "en": "Trials open once the guardian of Stratum −{0} is defeated."
   },
   {
    "fr": "Épreuve de la semaine : {0}{1}.",
-   "en": ""
+   "en": "Trial of the week: {0}{1}."
   },
   {
    "fr": "{0} n’est pas encore au district.",
-   "en": ""
+   "en": "{0} isn’t in the district yet."
   },
   {
    "fr": "{0} est en mission : attends son retour.",
-   "en": ""
+   "en": "{0} is on a mission: wait for their return."
   },
   {
    "fr": "Quête de la Strate −{0} achevée : « {1} ». {2}",
-   "en": ""
+   "en": "Stratum −{0} quest complete: “{1}”. {2}"
   },
   {
    "fr": "« {0} » : étape {1} sur {2}.",
-   "en": ""
+   "en": "“{0}”: step {1} of {2}."
   },
   {
    "fr": "+1 Éclat",
-   "en": ""
+   "en": "+1 Shard"
   },
   {
    "fr": "Lampe : 2 salles éclairées",
-   "en": ""
+   "en": "Lamp: 2 rooms lit"
   },
   {
    "fr": "+{0} minerai",
-   "en": ""
+   "en": "+{0} ore"
   },
   {
    "fr": "Aucune Halte en cours.",
-   "en": ""
+   "en": "No Waystation under way."
   },
   {
    "fr": " (+1 Éclat)",
-   "en": ""
+   "en": " (+1 Shard)"
   },
   {
    "fr": " (+{0} minerai)",
-   "en": ""
+   "en": " (+{0} ore)"
   },
   {
    "fr": "La porte ne s’ouvre pas.",
-   "en": ""
+   "en": "The door won’t open."
   },
   {
    "fr": "Aucune porte.",
-   "en": ""
+   "en": "No door."
   },
   {
    "fr": "Pas de passage.",
-   "en": ""
+   "en": "No way through."
   }
  ]
 }

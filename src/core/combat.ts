@@ -1589,7 +1589,7 @@ function agir(s: CombatEtat, en: EnnemiEtat, it: Intention, emettre: (ev: Evenem
   const allie = (it.type === 'soin' || it.type === 'bouclier') && it.allie ? allieDe(s, en) : undefined;
   if ((it.type === 'soin' || it.type === 'bouclier') && it.allie && !allie) {
     // l'allié visé est tombé pendant la chaîne : l'intention se perd (le joueur ne doit pas être puni d'avoir bien joué)
-    log(s, tr`${e.nom} : plus personne à ${it.type === 'soin' ? 'soigner' : 'couvrir'}, son geste se perd.`, { sorte: 'info' });
+    log(s, (it.type === 'soin' ? tr`${e.nom} : plus personne à soigner, son geste se perd.` : tr`${e.nom} : plus personne à couvrir, son geste se perd.`), { sorte: 'info' });
   } else if (it.type === 'appel' && it.rompu) {
     log(s, tr`${e.nom} · ${it.nom} : personne ne répond, la Fêlure a rompu l’appel.`, { sorte: 'info' });
   } else if (it.type === 'appel') {

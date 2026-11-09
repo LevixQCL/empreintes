@@ -35,12 +35,15 @@ export const cleGabarit = (morceaux: readonly string[]): string =>
 /**
  * Remplit {0}, {1}… ; « {1|s} » écrit « s » quand la valeur n’est pas vide, rien sinon : pour une traduction
  * qui remplace un accord français (« cristal${n > 1 ? 'x' : ''} ») par le sien (« crystal{1|s} »).
+ * « {1|ies|y} » : « ies » quand la valeur n’est pas vide, « y » sinon (« famil{1|ies|y} »).
  */
 const remplir = (modele: string, valeurs: readonly unknown[]): string =>
   modele.replace(/\{(\d+)(?:\|([^}]*))?\}/g, (tout, n: string, autre: string | undefined) => {
     if (Number(n) >= valeurs.length) return tout;
     const v = String(valeurs[Number(n)]);
-    return autre === undefined ? v : v ? autre : '';
+    if (autre === undefined) return v;
+    const [si, sinon = ''] = autre.split('|');
+    return v ? si! : sinon;
   });
 
 /**

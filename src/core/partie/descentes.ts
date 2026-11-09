@@ -597,7 +597,7 @@ export function recitMission(r: RapportMission): string[] {
     tr`Deux barques avaient ouvert le chemin : ${nom} a pu atteindre le Cœur de la ruine, une salle restée au sec depuis la montée des eaux. Une pierre y attendait.`,
     tr`Au bout des Cales, une porte que les autres n’avaient pas pu forcer : ${nom} l’a passée, et le Cœur de la ruine lui a livré une pierre.`,
   ]));
-  if (r.habitants) recit.push(tr`Le quartier a vu la barque rentrer : ${r.habitants > 1 ? `${r.habitants} familles ont` : 'une famille a'} décidé de te suivre.`);
+  if (r.habitants) recit.push((r.habitants > 1 ? tr`Le quartier a vu la barque rentrer : ${r.habitants} familles ont décidé de te suivre.` : tr('Le quartier a vu la barque rentrer : une famille a décidé de te suivre.')));
   if (r.butin === 'naufrages' && !r.creuseurs && !r.habitants) recit.push(tr('Plus personne à recueillir sur place : les naufragés étaient déjà partis. La barque est revenue chargée de matériel.'));
   recit.push(choisir([
     tr`Sous l’eau dormait encore du matériel d’avant : ${r.composants} minerai hissé à bord.`,

@@ -3,699 +3,703 @@
  "entrees": [
   {
    "fr": "{0} : un groupe surgit dans la Strate.",
-   "en": ""
+   "en": "{0}: a group bursts out of the Stratum."
   },
   {
    "fr": "Un {0} surgit dans la Strate.",
-   "en": ""
+   "en": "{0} bursts out of the Stratum."
   },
   {
    "fr": "Front commun",
-   "en": ""
+   "en": "United front"
   },
   {
    "fr": "{0} appelle {1} à ses côtés : à deux, ils ne font plus qu’attaquer.",
-   "en": ""
+   "en": "{0} calls {1} to its side: together, they do nothing but attack."
   },
   {
    "fr": "Plus de bouclier ni de soin en face : protège l’escouade et abats le plus faible des deux avant qu’ils ne te débordent.",
-   "en": ""
+   "en": "No more shields or heals on their side: protect the squad and bring down the weaker of the two before they overwhelm you."
   },
   {
    "fr": "Garde rapprochée",
-   "en": ""
+   "en": "Close guard"
   },
   {
    "fr": "Deux {0} accourent : ils ne frappent pas, ils soignent {1} et le couvrent de leur bouclier.",
-   "en": ""
+   "en": "Two {0} rush in: they don’t strike, they heal {1} and cover it with their shields."
   },
   {
    "fr": "Tant que sa garde tient, le gardien remonte : abats d’abord ceux qui le soignent.",
-   "en": ""
+   "en": "As long as its guard holds, the guardian recovers: take down the healers first."
   },
   {
    "fr": "Déferlement",
-   "en": ""
+   "en": "Onslaught"
   },
   {
    "fr": "{0} ne retient plus rien : ses coups enflent à chaque tour.",
-   "en": ""
+   "en": "{0} holds nothing back now: its blows swell every turn."
   },
   {
    "fr": "Chaque tour qui passe le rend plus dangereux : mise tout sur les dégâts pour le finir vite.",
-   "en": ""
+   "en": "Every turn that passes makes it more dangerous: go all in on damage to finish it fast."
   },
   {
    "fr": "Appel des profondeurs",
-   "en": ""
+   "en": "Call of the deep"
   },
   {
    "fr": "{0} cesse de frapper : il appelle {1} et soigne les siens. Eux ne font qu’attaquer.",
-   "en": ""
+   "en": "{0} stops striking: it calls {1} and heals its own. They do nothing but attack."
   },
   {
    "fr": "Le gardien ne frappe plus mais ses renforts reviennent sans cesse : frappe-le, lui, dès que tu peux.",
-   "en": ""
+   "en": "The guardian no longer strikes, but its reinforcements keep coming back: hit the guardian itself whenever you can."
   },
   {
    "fr": "Assaut commun",
-   "en": ""
+   "en": "Joint assault"
   },
   {
    "fr": "Coup concerté",
-   "en": ""
+   "en": "Concerted blow"
   },
   {
    "fr": "Panser le gardien",
-   "en": ""
+   "en": "Patch up the guardian"
   },
   {
    "fr": "Soigner les siens",
-   "en": ""
+   "en": "Heal its own"
   },
   {
    "fr": "Assaut",
-   "en": ""
+   "en": "Assault"
   },
   {
    "fr": "Curée",
-   "en": ""
+   "en": "Pounce"
   },
   {
    "fr": "Ruée",
-   "en": ""
+   "en": "Rush"
   },
   {
    "fr": "Va couvrir un allié : bouclier {0}",
-   "en": ""
+   "en": "Will cover an ally: shield {0}"
   },
   {
    "fr": "Va se protéger : bouclier {0}",
-   "en": ""
+   "en": "Will shield up: shield {0}"
   },
   {
    "fr": "{0} : va appeler un renfort",
-   "en": ""
+   "en": "{0}: will call for backup"
   },
   {
    "fr": "{0} : va soigner un allié, +{1} PV",
-   "en": ""
+   "en": "{0}: will heal an ally, +{1} HP"
   },
   {
    "fr": "Se concentre : sa prochaine attaque fera double dégâts",
-   "en": ""
+   "en": "Focusing: its next attack will deal double damage"
   },
   {
    "fr": "Va se réparer : {0} +{1} PV",
-   "en": ""
+   "en": "Will repair: {0} +{1} HP"
   },
   {
    "fr": "{0} : va brouiller tes Fréquences, ni Résonance ni Écho au tour suivant",
-   "en": ""
+   "en": "{0}: will scramble your Frequencies, no Resonance or Echo next turn"
   },
   {
    "fr": "Va frapper toute l’escouade : {0} {1}",
-   "en": ""
+   "en": "Will strike the whole squad: {0} {1}"
   },
   {
    "fr": "Va frapper {0} : {1} {2}",
-   "en": ""
+   "en": "Will strike {0}: {1} {2}"
   },
   {
    "fr": "Une place vide ne se joue pas : confie une carte de plus à ce Porteur.",
-   "en": ""
+   "en": "An empty slot can’t be played: give this Bearer one more card."
   },
   {
    "fr": "{0} prend 2 places, il n’en reste {1}.",
-   "en": ""
+   "en": "{0} takes 2 slots, only {1} left."
   },
   {
    "fr": "La chaîne est pleine.",
-   "en": ""
+   "en": "The chain is full."
   },
   {
    "fr": " Retire une carte ou dépense 1 Flux (+1 place).",
-   "en": ""
+   "en": " Remove a card or spend 1 Flux (+1 slot)."
   },
   {
    "fr": " Retire une carte.",
-   "en": ""
+   "en": " Remove a card."
   },
   {
    "fr": "Une seule voix : cette chaîne joue déjà les {0}.",
-   "en": ""
+   "en": "A single voice: this chain is already playing the {0}."
   },
   {
    "fr": "Flux dépensé : la chaîne gagne une place ce tour-ci.",
-   "en": ""
+   "en": "Flux spent: the chain gains a slot this turn."
   },
   {
    "fr": "Flux dépensé : nouvelle main (la main et la chaîne posée partent à la défausse).",
-   "en": ""
+   "en": "Flux spent: new hand (the hand and the placed chain go to the discard)."
   },
   {
    "fr": "Première main relancée.",
-   "en": ""
+   "en": "Opening hand redrawn."
   },
   {
    "fr": "Aucune carte ne peut entrer dans la chaîne : tu passes ton tour.",
-   "en": ""
+   "en": "No card can enter the chain: you pass your turn."
   },
   {
    "fr": "Fréquences brouillées : ni Résonance ni Écho ce tour-ci.",
-   "en": ""
+   "en": "Frequencies scrambled: no Resonance or Echo this turn."
   },
   {
    "fr": "Fréquences brouillées : pas de Résonance ce tour-ci.",
-   "en": ""
+   "en": "Frequencies scrambled: no Resonance this turn."
   },
   {
    "fr": "Brouillé",
-   "en": ""
+   "en": "Scrambled"
   },
   {
    "fr": "Résonance ! Suite de {0} : effets +{1} %.",
-   "en": ""
+   "en": "Resonance! Chain of {0}: effects +{1} %."
   },
   {
    "fr": "{0} ! {1} Fréquences identiques : ces cartes {2}.",
-   "en": ""
+   "en": "{0}! {1} identical Frequencies: these cards {2}."
   },
   {
    "fr": "Cinq",
-   "en": ""
+   "en": "Five"
   },
   {
    "fr": "Quatre",
-   "en": ""
+   "en": "Four"
   },
   {
    "fr": "Trois",
-   "en": ""
+   "en": "Three"
   },
   {
    "fr": "{0} est visé à son tour.",
-   "en": ""
+   "en": "{0} is targeted in turn."
   },
   {
    "fr": "{0} assimile ton dernier coup : le voilà {1}.",
-   "en": ""
+   "en": "{0} absorbs your last blow: it’s now {1}."
   },
   {
    "fr": "Assimilation",
-   "en": ""
+   "en": "Assimilation"
   },
   {
    "fr": "La Résonance remplit le Flux (+{0}).",
-   "en": ""
+   "en": "Resonance fills the Flux (+{0})."
   },
   {
    "fr": "Rappel : {0} revient en tête de pioche.",
-   "en": ""
+   "en": "Recall: {0} goes back on top of the draw pile."
   },
   {
    "fr": "Rappel",
-   "en": ""
+   "en": "Recall"
   },
   {
    "fr": "{0} s’éteint dans le noir avant d’être abattu : l’Épreuve est manquée.",
-   "en": ""
+   "en": "{0} fades into the dark before it can be brought down: the Trial is failed."
   },
   {
    "fr": "{0} s’enfuit dans le noir, blessé. Ses blessures resteront.",
-   "en": ""
+   "en": "{0} flees into the dark, wounded. Its wounds will remain."
   },
   {
    "fr": "Le groupe est vaincu.",
-   "en": ""
+   "en": "The group is defeated."
   },
   {
    "fr": "{0} est vaincu.",
-   "en": ""
+   "en": "{0} is defeated."
   },
   {
    "fr": "Appel",
-   "en": ""
+   "en": "Call"
   },
   {
    "fr": "Bras de quai : le bouclier restant soigne {0} (+{1}).",
-   "en": ""
+   "en": "Dock arm: the leftover shield heals {0} (+{1})."
   },
   {
    "fr": "Spécial",
-   "en": ""
+   "en": "Special"
   },
   {
    "fr": "Empreinte : {0} reprend l’effet de la carte d’avant ({1}).",
-   "en": ""
+   "en": "Imprint: {0} takes on the previous card’s effect ({1})."
   },
   {
    "fr": "Empreinte",
-   "en": ""
+   "en": "Imprint"
   },
   {
    "fr": "Surtension : {0} brûle {1} PV, +{2} % de force.",
-   "en": ""
+   "en": "Overvolt: {0} burns {1} HP, +{2} % power."
   },
   {
    "fr": "Rapt : {0} de bouclier arrachés à l’ennemi, pour l’escouade.",
-   "en": ""
+   "en": "Seize: {0} shield ripped from the enemy, for the squad."
   },
   {
    "fr": "Brèche : {0} de bouclier ennemi brisés.",
-   "en": ""
+   "en": "Breach: {0} enemy shield shattered."
   },
   {
    "fr": "Brèche",
-   "en": ""
+   "en": "Breach"
   },
   {
    "fr": "Décharge : {0} Flux {1}{2}, +{3} % de force.",
-   "en": ""
+   "en": "Discharge: {0} Flux {1}{2}, +{3} % power."
   },
   {
    "fr": "vidé",
-   "en": ""
+   "en": "emptied"
   },
   {
    "fr": "Décharge",
-   "en": ""
+   "en": "Discharge"
   },
   {
    "fr": "Décharge : le Flux était vide, {0} le remplit (+{1}).",
-   "en": ""
+   "en": "Discharge: the Flux was empty, {0} fills it (+{1})."
   },
   {
    "fr": "Blindé",
-   "en": ""
+   "en": "Armored"
   },
   {
    "fr": "Perçant",
-   "en": ""
+   "en": "Piercing"
   },
   {
    "fr": "{0} · {1} : {2} dégâts{3}{4}{5}.",
-   "en": ""
+   "en": "{0} · {1}: {2} damage{3}{4}{5}."
   },
   {
    "fr": " (avantage de lignée)",
-   "en": ""
+   "en": " (lineage advantage)"
   },
   {
    "fr": ", {0} absorbés",
-   "en": ""
+   "en": ", {0} absorbed"
   },
   {
    "fr": ", bouclier transpercé",
-   "en": ""
+   "en": ", shield pierced"
   },
   {
    "fr": "Épines : {0} se blesse (−{1}).",
-   "en": ""
+   "en": "Thorns: {0} gets hurt (−{1})."
   },
   {
    "fr": "Rafale",
-   "en": ""
+   "en": "Flurry"
   },
   {
    "fr": "Exécution : {0} n’avait plus que {1} PV, il tombe.",
-   "en": ""
+   "en": "Finisher: {0} had only {1} HP left, and falls."
   },
   {
    "fr": "Exécution",
-   "en": ""
+   "en": "Finisher"
   },
   {
    "fr": "Siphon : {0} récupère {1} PV.",
-   "en": ""
+   "en": "Siphon: {0} recovers {1} HP."
   },
   {
    "fr": "{0} · {1} : bouclier d’escouade +{2}.",
-   "en": ""
+   "en": "{0} · {1}: squad shield +{2}."
   },
   {
    "fr": "Escouade",
-   "en": ""
+   "en": "Squad"
   },
   {
    "fr": "Riposte ({0} % du bouclier)",
-   "en": ""
+   "en": "Riposte ({0} % of the shield)"
   },
   {
    "fr": "Salle favorable",
-   "en": ""
+   "en": "Favourable room"
   },
   {
    "fr": "Débridage",
-   "en": ""
+   "en": "Unleashed"
   },
   {
    "fr": "Relève : {0} se relève avec {1} PV.",
-   "en": ""
+   "en": "Second Wind: {0} gets back up with {1} HP."
   },
   {
    "fr": "PV déjà pleins",
-   "en": ""
+   "en": "HP already full"
   },
   {
    "fr": "Débord : le soin en trop devient {0} de bouclier d’escouade.",
-   "en": ""
+   "en": "Overflow: the excess healing becomes {0} squad shield."
   },
   {
    "fr": "Surcharge : Flux +{0}.",
-   "en": ""
+   "en": "Overcharge: Flux +{0}."
   },
   {
    "fr": "Troublé : l’attaque annoncée passe de {0} à {1}.",
-   "en": ""
+   "en": "Unsettled: the announced attack drops from {0} to {1}."
   },
   {
    "fr": "sa prochaine attaque",
-   "en": ""
+   "en": "its next attack"
   },
   {
    "fr": "son bouclier",
-   "en": ""
+   "en": "its shield"
   },
   {
    "fr": "son soin",
-   "en": ""
+   "en": "its heal"
   },
   {
    "fr": "Sourdine : {0} passe de {1} à {2}.",
-   "en": ""
+   "en": "Dampen: {0} drops from {1} to {2}."
   },
   {
    "fr": "Sourdine",
-   "en": ""
+   "en": "Dampen"
   },
   {
    "fr": "Fissure : l’ennemi subit +{0} % de dégâts jusqu’au tour prochain.",
-   "en": ""
+   "en": "Fissure: the enemy takes +{0} % damage until next turn."
   },
   {
    "fr": "Élan : la prochaine chaîne aura une place de plus.",
-   "en": ""
+   "en": "Momentum: the next chain will have one more slot."
   },
   {
    "fr": "Ténacité : au tour ennemi, personne ne tombera.",
-   "en": ""
+   "en": "Tenacity: on the enemy turn, no one will fall."
   },
   {
    "fr": "Ténacité",
-   "en": ""
+   "en": "Tenacity"
   },
   {
    "fr": "Rempart : {0} % du bouclier restant sera gardé au tour suivant.",
-   "en": ""
+   "en": "Rampart: {0} % of the leftover shield will be kept next turn."
   },
   {
    "fr": "Rempart",
-   "en": ""
+   "en": "Rampart"
   },
   {
    "fr": "Résonance (suite de {0})",
-   "en": ""
+   "en": "Resonance (chain of {0})"
   },
   {
    "fr": "{0} ({1} Fréquences identiques)",
-   "en": ""
+   "en": "{0} ({1} identical Frequencies)"
   },
   {
    "fr": "{0} empilés ({1}e)",
-   "en": ""
+   "en": "{0} stacked (no. {1})"
   },
   {
    "fr": "Boucliers",
-   "en": ""
+   "en": "Shields"
   },
   {
    "fr": "Soins",
-   "en": ""
+   "en": "Heals"
   },
   {
    "fr": "Finisseur (termine la suite)",
-   "en": ""
+   "en": "Finisher (ends the chain)"
   },
   {
    "fr": "Trois lignées",
-   "en": ""
+   "en": "Three lineages"
   },
   {
    "fr": "Crescendo ({0}e de la chaîne)",
-   "en": ""
+   "en": "Crescendo (card {0} in the chain)"
   },
   {
    "fr": "Secours ({0} à terre)",
-   "en": ""
+   "en": "Rescue ({0} down)"
   },
   {
    "fr": "Décharge ({0} Flux)",
-   "en": ""
+   "en": "Discharge ({0} Flux)"
   },
   {
    "fr": "Amorce ({0})",
-   "en": ""
+   "en": "Primer ({0})"
   },
   {
    "fr": "Unisson ({0} même{1} Fréquence{2})",
-   "en": ""
+   "en": "Unison ({0} with the same Frequency{1|}{2|})"
   },
   {
    "fr": "Contrepoint ({0} autre{1} lignée{2} dans la suite)",
-   "en": ""
+   "en": "Counterpoint ({0} other lineage{2|s}{1|} in the chain)"
   },
   {
    "fr": "Empreinte (rien à copier)",
-   "en": ""
+   "en": "Imprint (nothing to copy)"
   },
   {
    "fr": "Surtension",
-   "en": ""
+   "en": "Overvolt"
   },
   {
    "fr": "Porteur à terre",
-   "en": ""
+   "en": "Bearer down"
   },
   {
    "fr": "Lignée : {0} bat {1}",
-   "en": ""
+   "en": "Lineage: {0} beats {1}"
   },
   {
    "fr": "Curée (ennemi fissuré)",
-   "en": ""
+   "en": "Pounce (enemy fissured)"
   },
   {
    "fr": "Curée (ennemi à moins de la moitié de ses PV)",
-   "en": ""
+   "en": "Pounce (enemy below half its HP)"
   },
   {
    "fr": "Faille (Fêlure brisée)",
-   "en": ""
+   "en": "Rift (Flaw broken)"
   },
   {
    "fr": "Évanescent (hors Résonance)",
-   "en": ""
+   "en": "Evanescent (outside Resonance)"
   },
   {
    "fr": "Concentration",
-   "en": ""
+   "en": "Focus"
   },
   {
    "fr": "Furie",
-   "en": ""
+   "en": "Fury"
   },
   {
    "fr": "Combat qui s’éternise (tour {0})",
-   "en": ""
+   "en": "Drawn-out fight (turn {0})"
   },
   {
    "fr": "Ombre agissante",
-   "en": ""
+   "en": "Active Shadow"
   },
   {
    "fr": "Éboulis : des pierres tombent (−{0} chacun).",
-   "en": ""
+   "en": "Rockfall: stones fall (−{0} each)."
   },
   {
    "fr": "Les pierres frappent aussi {0} (−{1}).",
-   "en": ""
+   "en": "The stones also hit {0} (−{1})."
   },
   {
    "fr": "le groupe",
-   "en": ""
+   "en": "the group"
   },
   {
    "fr": "Seconde chance : {0} se relève ({1} PV).",
-   "en": ""
+   "en": "Second chance: {0} gets back up ({1} HP)."
   },
   {
    "fr": "{0} est à terre : ses cartes s’éteignent (−15 % de force, sans effet).",
-   "en": ""
+   "en": "{0} is down: their cards go dark (−15 % power, no effect)."
   },
   {
    "fr": "Un Porteur est à terre : l’Épreuve « Nul ne reste au fond » est manquée.",
-   "en": ""
+   "en": "A Bearer is down: the “No one stays below” Trial is failed."
   },
   {
    "fr": "Fondations : Doran relève le mur, +{0} de bouclier.",
-   "en": ""
+   "en": "Foundations: Doran raises the wall again, +{0} shield."
   },
   {
    "fr": "Nuit blanche : Joss veille sur {0} (+{1}).",
-   "en": ""
+   "en": "White Night: Joss watches over {0} (+{1})."
   },
   {
    "fr": "{0} : {1} de bouclier gardés.",
-   "en": ""
+   "en": "{0}: {1} shield kept."
   },
   {
    "fr": "Bras de quai",
-   "en": ""
+   "en": "Dock arm"
   },
   {
    "fr": "Les coups de ta chaîne frappent {0} % plus fort ce tour-ci.",
-   "en": ""
+   "en": "Your chain’s blows hit {0} % harder this turn."
   },
   {
    "fr": "Sursaut",
-   "en": ""
+   "en": "Rally"
   },
   {
    "fr": "Toute l’escouade récupère 40 % de ses PV, et un Porteur à terre se relève.",
-   "en": ""
+   "en": "The whole squad recovers 40 % of its HP, and a downed Bearer gets back up."
   },
   {
    "fr": "Aucune attaque ennemie ne porte au prochain tour ennemi.",
-   "en": ""
+   "en": "No enemy attack lands on the next enemy turn."
   },
   {
    "fr": "Débridage : {0} pousse ses implants au-delà du raisonnable. La chaîne frappera {1} % plus fort.",
-   "en": ""
+   "en": "Unleashed: {0} pushes their implants past all reason. The chain will hit {1} % harder."
   },
   {
    "fr": "Ombre agissante : l’ombre {0} se lève et retiendra les coups du prochain tour.",
-   "en": ""
+   "en": "Active Shadow: the shadow {0} rises and will hold back next turn’s blows."
   },
   {
    "fr": "Sursaut : le corps {0} répond pour tous.{1}",
-   "en": ""
+   "en": "Rally: the body {0} answers for everyone.{1}"
   },
   {
    "fr": " {0} se relève.",
-   "en": ""
+   "en": " {0} gets back up."
   },
   {
    "fr": "Fêlure trouvée",
-   "en": ""
+   "en": "Flaw found"
   },
   {
    "fr": "Fêlure",
-   "en": ""
+   "en": "Flaw"
   },
   {
    "fr": "{0} : {1} vacille, {2} passe de {3} à {4}.",
-   "en": ""
+   "en": "{0}: {1} staggers, {2} drops from {3} to {4}."
   },
   {
    "fr": "son attaque",
-   "en": ""
+   "en": "its attack"
   },
   {
    "fr": "{0} : {1} vacille, son appel se perd dans les profondeurs.",
-   "en": ""
+   "en": "{0}: {1} staggers, its call is lost in the depths."
   },
   {
    "fr": "{0} : {1} vacille, mais ce qu’il prépare ne change pas.",
-   "en": ""
+   "en": "{0}: {1} staggers, but what it’s preparing doesn’t change."
   },
   {
    "fr": "Galons blancs : +{0} carte en main.",
-   "en": ""
+   "en": "White stripes: +{0} card in hand."
   },
   {
    "fr": "Fêlure brisée en Résonance : Flux +{0}.",
-   "en": ""
+   "en": "Flaw broken in Resonance: Flux +{0}."
   },
   {
-   "fr": "{0} : plus personne à {1}, son geste se perd.",
-   "en": ""
+   "fr": "{0} : plus personne à soigner, son geste se perd.",
+   "en": "{0}: no one left to heal, its move fizzles."
+  },
+  {
+   "fr": "{0} : plus personne à couvrir, son geste se perd.",
+   "en": "{0}: no one left to cover, its move fizzles."
   },
   {
    "fr": "{0} · {1} : personne ne répond, la Fêlure a rompu l’appel.",
-   "en": ""
+   "en": "{0} · {1}: no one answers, the Flaw has broken the call."
   },
   {
    "fr": "{0} · {1} : un renfort surgit des profondeurs.",
-   "en": ""
+   "en": "{0} · {1}: reinforcements burst out of the depths."
   },
   {
    "fr": "{0} couvre {1} : bouclier {2}.",
-   "en": ""
+   "en": "{0} covers {1}: shield {2}."
   },
   {
    "fr": "{0} se protège : bouclier {1}.",
-   "en": ""
+   "en": "{0} shields up: shield {1}."
   },
   {
    "fr": "{0} se concentre. Sa prochaine attaque fera double dégâts.",
-   "en": ""
+   "en": "{0} focuses. Its next attack will deal double damage."
   },
   {
    "fr": "{0} · {1} : Véla lit le brouillage, tes Fréquences restent nettes.",
-   "en": ""
+   "en": "{0} · {1}: Véla reads the jamming, your Frequencies stay clear."
   },
   {
    "fr": "Lucide",
-   "en": ""
+   "en": "Lucid"
   },
   {
    "fr": "Lectrice : Véla lui renvoie son brouillage, sa prochaine attaque perd {0} %.",
-   "en": ""
+   "en": "Reader: Véla throws its jamming back, its next attack loses {0} %."
   },
   {
    "fr": "{0} · {1} : tes Fréquences sont brouillées, ni Résonance ni Écho au prochain tour.",
-   "en": ""
+   "en": "{0} · {1}: your Frequencies are scrambled, no Resonance or Echo next turn."
   },
   {
    "fr": "Ténacité : {0} tient debout à 1 PV.",
-   "en": ""
+   "en": "Tenacity: {0} stays on their feet at 1 HP."
   },
   {
    "fr": "protégé",
-   "en": ""
+   "en": "protected"
   },
   {
    "fr": "Née-de-mue : la chitine renvoie {0} à {1}.",
-   "en": ""
+   "en": "Moltborn: the chitin reflects {0} to {1}."
   },
   {
    "fr": "Ombre courtoise : le coup retenu donne {0} Flux.",
-   "en": ""
+   "en": "Courteous shadow: the held blow gives {0} Flux."
   },
   {
    "fr": "{0} aspire {1} Flux.",
-   "en": ""
+   "en": "{0} drains {1} Flux."
   },
   {
    "fr": "Flux aspiré",
-   "en": ""
+   "en": "Flux drained"
   },
   {
    "fr": "{0} · {1} : l’ombre retient le coup.",
-   "en": ""
+   "en": "{0} · {1}: the shadow holds back the blow."
   },
   {
    "fr": "{0} se régénère (+{1}).",
-   "en": ""
+   "en": "{0} regenerates (+{1})."
   },
   {
    "fr": "{0} venge son allié : sa prochaine attaque est doublée.",
-   "en": ""
+   "en": "{0} avenges its ally: its next attack is doubled."
   },
   {
    "fr": "Guet : le Guetteur l’a vu venir, +{0} carte{1} en main.",
-   "en": ""
+   "en": "Lookout: the Lookout saw it coming, +{0} card{1} in hand."
   }
  ]
 }

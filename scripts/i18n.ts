@@ -188,15 +188,29 @@ function aTraduire(chemin: string, max = Infinity): void {
   f.entrees.forEach((e) => {
     if (e.en || n >= max) return;
     n++;
-    console.log(`#${n}${e.ancien ? ` (modifié — ancien fr : ${JSON.stringify(e.ancien.fr)} — ancien en : ${JSON.stringify(e.ancien.en)})` : ''}\n${JSON.stringify(e.fr)}`);
+    console.log(`#${n}${e.ancien ? ` (modifié — ancien en : ${JSON.stringify(e.ancien.en)})` : ''} ${JSON.stringify(e.fr)}`);
   });
   console.log(`\n${f.entrees.filter((e) => !e.en).length} entrée(s) vide(s) dans ${relative(RACINE, chemin)}`);
 }
 
 function remplir(chemin: string, lot: string): void {
   const f = lireCatalogue(chemin);
-  const traductions = JSON.parse(readFileSync(lot, 'utf8')) as string[];
   const vides = f.entrees.filter((e) => !e.en);
+  // un lot est une liste (dans l'ordre des entrées vides) ou un objet { "n": "traduction" } numéroté comme a-traduire
+  const brut = JSON.parse(readFileSync(lot, 'utf8')) as string[] | Record<string, string>;
+  if (!Array.isArray(brut)) {
+    let n = 0;
+    for (const [k, tr] of Object.entries(brut)) {
+      const e = vides[Number(k) - 1];
+      if (!e) throw new Error(`#${k} : pas d’entrée vide à ce numéro`);
+      if (!tr) continue;
+      e.en = tr; delete e.ancien; n++;
+    }
+    writeFileSync(chemin, `${JSON.stringify(f, null, 1)}\n`);
+    console.log(`${n} entrée(s) remplie(s) ; ${vides.length - n} encore vide(s).`);
+    return;
+  }
+  const traductions = brut;
   if (traductions.length > vides.length) throw new Error(`${traductions.length} traductions pour ${vides.length} entrées vides`);
   // garde-fou contre un décalage (une traduction de trop ou de moins au milieu du lot) : longueurs très différentes
   const suspects = traductions.map((tr, i) => [i, vides[i]!.fr, tr] as const)
@@ -208,6 +222,20 @@ function remplir(chemin: string, lot: string): void {
   traductions.forEach((tr, i) => { const e = vides[i]!; e.en = tr; delete e.ancien; });
   writeFileSync(chemin, `${JSON.stringify(f, null, 1)}\n`);
   console.log(`${traductions.length} entrée(s) remplie(s) ; ${vides.length - traductions.length} encore vide(s).`);
+}
+
+/** Un texte déjà traduit ailleurs (« Fermer », « Retour »…) est recopié dans les entrées vides identiques */
+function propager(): void {
+  const connus = new Map<string, string>();
+  const tous = fichiersCatalogue('en').map((c) => [c, lireCatalogue(c)] as const);
+  for (const [, f] of tous) for (const e of f.entrees) if (e.en && !connus.has(e.fr)) connus.set(e.fr, e.en);
+  let n = 0;
+  for (const [c, f] of tous) {
+    let change = false;
+    for (const e of f.entrees) if (!e.en && connus.has(e.fr)) { e.en = connus.get(e.fr)!; delete e.ancien; change = true; n++; }
+    if (change) writeFileSync(c, `${JSON.stringify(f, null, 1)}\n`);
+  }
+  console.log(`${n} entrée(s) recopiée(s) d’une traduction identique`);
 }
 
 // ---------- paires / reviser (relecture d'une traduction déjà faite) ----------
@@ -355,6 +383,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) switch (comma
   case 'a-traduire': aTraduire(resolve(RACINE, args[0]!), args[1] ? Number(args[1]) : Infinity); break;
   case 'paires': paires(resolve(RACINE, args[0]!), args[1] ? Number(args[1]) : 1, args[2] ? Number(args[2]) : Infinity); break;
   case 'reviser': reviser(resolve(RACINE, args[0]!), resolve(RACINE, args[1]!)); break;
+  case 'propager': propager(); break;
   case 'remplir': remplir(resolve(RACINE, args[0]!), resolve(RACINE, args[1]!)); break;
   default: console.log('Commandes : extraire, couverture, verifier, envelopper <fichiers>, a-traduire <catalogue> [max], remplir <catalogue> <lot.json>');
 }

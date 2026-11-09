@@ -3,431 +3,431 @@
  "entrees": [
   {
    "fr": "{0} passe au niveau {1} : {2} PV.",
-   "en": ""
+   "en": "{0} reaches level {1}: {2} HP."
   },
   {
    "fr": "Marque {0} : {1} {2} — {3}.",
-   "en": ""
+   "en": "Mark {0}: {1} {2} — {3}."
   },
   {
    "fr": "{0} est prêt pour sa Marque {1} : il lui reste à gagner {2}.",
-   "en": ""
+   "en": "{0} is ready for their {1} Mark: they still have to earn {2}."
   },
   {
    "fr": "Gagnée",
-   "en": ""
+   "en": "Earned"
   },
   {
    "fr": "Affirmée",
-   "en": ""
+   "en": "Affirmed"
   },
   {
    "fr": "Gravée",
-   "en": ""
+   "en": "Engraved"
   },
   {
    "fr": "Raccourci",
-   "en": ""
+   "en": "Shortcut"
   },
   {
    "fr": "expéditions réussies",
-   "en": ""
+   "en": "successful expeditions"
   },
   {
    "fr": "+1 place au premier tour",
-   "en": ""
+   "en": "+1 slot on the first turn"
   },
   {
    "fr": "Elle connaît tous les raccourcis : +1 place dans la chaîne au premier tour de chaque combat.",
-   "en": ""
+   "en": "She knows every shortcut: +1 chain slot on the first turn of every fight."
   },
   {
    "fr": "+1 place aussi au 2ᵉ tour",
-   "en": ""
+   "en": "+1 slot on turn 2 as well"
   },
   {
    "fr": "Elle a ses repères : la place en plus revient au deuxième tour.",
-   "en": ""
+   "en": "She has her bearings: the extra slot comes back on the second turn."
   },
   {
    "fr": "+2 places au 1er tour, +1 au 2ᵉ",
-   "en": ""
+   "en": "+2 slots on turn 1, +1 on turn 2"
   },
   {
    "fr": "Elle ouvre la voie : 2 places de plus au premier tour, et 1 au deuxième.",
-   "en": ""
+   "en": "She clears the way: 2 more slots on the first turn, and 1 on the second."
   },
   {
    "fr": "Fondations",
-   "en": ""
+   "en": "Foundations"
   },
   {
    "fr": "combats dans les Seuils",
-   "en": ""
+   "en": "fights in the Thresholds"
   },
   {
    "fr": "8 de bouclier au départ",
-   "en": ""
+   "en": "8 shield at the start"
   },
   {
    "fr": "Il couvre les siens : chaque combat commence avec 8 de bouclier d’escouade.",
-   "en": ""
+   "en": "He covers his own: every fight starts with 8 squad shield."
   },
   {
    "fr": "12 de bouclier au départ",
-   "en": ""
+   "en": "12 shield at the start"
   },
   {
    "fr": "Il tient plus large : chaque combat commence avec 12 de bouclier d’escouade.",
-   "en": ""
+   "en": "He stands broader: every fight starts with 12 squad shield."
   },
   {
    "fr": "le bouclier se reforme une fois",
-   "en": ""
+   "en": "the shield re-forms once"
   },
   {
    "fr": "Il relève le mur : une fois par combat, quand l’escouade passe sous la moitié de ses PV, 12 de bouclier se reforment.",
-   "en": ""
+   "en": "He raises the wall again: once per fight, when the squad drops below half its HP, 12 shield re-forms."
   },
   {
    "fr": "Lectrice",
-   "en": ""
+   "en": "Reader"
   },
   {
    "fr": "insensible à la Dissonance",
-   "en": ""
+   "en": "immune to Dissonance"
   },
   {
    "fr": "Elle lit les Échos : la Dissonance n’a plus de prise sur l’escouade.",
-   "en": ""
+   "en": "She reads the Echoes: Dissonance no longer has any hold on the squad."
   },
   {
    "fr": "lit la 1re intention dans le brouillard",
-   "en": ""
+   "en": "reads the 1st intent through the fog"
   },
   {
    "fr": "Elle lit à travers la brume : sous le brouillard, ce que prépare chaque ennemi au premier tour se voit en entier.",
-   "en": ""
+   "en": "She reads through the mist: in fog, what each enemy is preparing on the first turn is shown in full."
   },
   {
    "fr": "renvoie la Dissonance",
-   "en": ""
+   "en": "turns Dissonance back"
   },
   {
    "fr": "Elle retourne le brouillage : un ennemi qui tente une Dissonance perd 30 % de sa prochaine attaque.",
-   "en": ""
+   "en": "She turns the jamming around: an enemy that attempts a Dissonance loses 30 % of its next attack."
   },
   {
    "fr": "Seconde chance",
-   "en": ""
+   "en": "Second chance"
   },
   {
    "fr": "salles scellées ouvertes",
-   "en": ""
+   "en": "sealed rooms opened"
   },
   {
    "fr": "relève le premier qui tombe",
-   "en": ""
+   "en": "revives the first to fall"
   },
   {
    "fr": "Il remet tout le monde d’aplomb : une fois par combat, le premier Porteur qui tombe se relève avec 25 % de ses PV.",
-   "en": ""
+   "en": "She gets everyone back on their feet: once per fight, the first Bearer to fall gets back up with 25 % of their HP."
   },
   {
    "fr": "relève à 35 % des PV",
-   "en": ""
+   "en": "revives at 35 % HP"
   },
   {
    "fr": "Il remet d’aplomb plus solidement : le premier qui tombe se relève avec 35 % de ses PV.",
-   "en": ""
+   "en": "She patches people up more solidly: the first to fall gets back up with 35 % of their HP."
   },
   {
    "fr": "relève deux fois par combat",
-   "en": ""
+   "en": "revives twice per fight"
   },
   {
    "fr": "Personne ne reste au sol : la Seconde chance sert deux fois par combat.",
-   "en": ""
+   "en": "No one stays on the ground: Second chance works twice per fight."
   },
   {
    "fr": "Œil de nuit",
-   "en": ""
+   "en": "Night eye"
   },
   {
    "fr": "combats gagnés sous la Strate −3",
-   "en": ""
+   "en": "fights won below Stratum −3"
   },
   {
    "fr": "l’ennemi commence fissuré",
-   "en": ""
+   "en": "the enemy starts fissured"
   },
   {
    "fr": "Elle voit la faille dans le noir : l’ennemi visé commence chaque combat fissuré (+25 % de dégâts pendant deux tours).",
-   "en": ""
+   "en": "She sees the crack in the dark: the targeted enemy starts every fight fissured (+25 % damage for two turns)."
   },
   {
    "fr": "fissure de 3 tours",
-   "en": ""
+   "en": "3-turn fissure"
   },
   {
    "fr": "La faille reste ouverte : la Fissure du départ dure trois tours.",
-   "en": ""
+   "en": "The crack stays open: the opening Fissure lasts three turns."
   },
   {
    "fr": "tout le groupe commence fissuré",
-   "en": ""
+   "en": "the whole group starts fissured"
   },
   {
    "fr": "Elle voit toutes les failles : chaque ennemi du groupe commence le combat fissuré.",
-   "en": ""
+   "en": "She sees every crack: every enemy in the group starts the fight fissured."
   },
   {
    "fr": "Ombre courtoise",
-   "en": ""
+   "en": "Courteous shadow"
   },
   {
    "fr": "1re attaque ennemie −40 %",
-   "en": ""
+   "en": "1st enemy attack −40 %"
   },
   {
    "fr": "Son ombre retient le premier coup : la première attaque de chaque ennemi perd 40 % de sa force, quel que soit le tour où elle tombe.",
-   "en": ""
+   "en": "His shadow holds back the first blow: each enemy’s first attack loses 40 % of its power, whatever turn it lands on."
   },
   {
    "fr": "1re attaque ennemie −50 %",
-   "en": ""
+   "en": "1st enemy attack −50 %"
   },
   {
    "fr": "Son ombre pèse plus : la première attaque de chaque ennemi perd 50 % de sa force.",
-   "en": ""
+   "en": "His shadow weighs more: each enemy’s first attack loses 50 % of its power."
   },
   {
    "fr": "le coup retenu donne 1 Flux",
-   "en": ""
+   "en": "the held blow gives 1 Flux"
   },
   {
    "fr": "Il retourne la politesse : chaque coup retenu par son ombre donne 1 Flux à l’escouade.",
-   "en": ""
+   "en": "He returns the courtesy: each blow his shadow holds back gives the squad 1 Flux."
   },
   {
    "fr": "Foulée",
-   "en": ""
+   "en": "Stride"
   },
   {
    "fr": "combats gagnés",
-   "en": ""
+   "en": "fights won"
   },
   {
    "fr": "1 Flux au départ",
-   "en": ""
+   "en": "1 Flux at the start"
   },
   {
    "fr": "Il court devant l’escouade : chaque combat commence avec 1 Flux.",
-   "en": ""
+   "en": "He runs ahead of the squad: every fight starts with 1 Flux."
   },
   {
    "fr": "2 Flux au départ contre un gardien",
-   "en": ""
+   "en": "2 Flux at the start against a guardian"
   },
   {
    "fr": "Il a repéré l’antre : contre un gardien, le combat commence avec 2 Flux.",
-   "en": ""
+   "en": "He has scouted the lair: against a guardian, the fight starts with 2 Flux."
   },
   {
    "fr": "fuir ne coûte plus de butin",
-   "en": ""
+   "en": "fleeing no longer costs loot"
   },
   {
    "fr": "Il connaît la route du retour : remonter en fuyant ne fait plus perdre de minerai.",
-   "en": ""
+   "en": "He knows the way home: heading back up while fleeing no longer loses any ore."
   },
   {
    "fr": "garde 25 % du bouclier",
-   "en": ""
+   "en": "keeps 25 % of the shield"
   },
   {
    "fr": "Il ne lâche rien : à chaque tour, l’escouade garde 25 % de son bouclier pour le tour suivant.",
-   "en": ""
+   "en": "He won’t let go: each turn, the squad keeps 25 % of its shield for the next turn."
   },
   {
    "fr": "garde 35 % du bouclier",
-   "en": ""
+   "en": "keeps 35 % of the shield"
   },
   {
    "fr": "Il serre plus fort : l’escouade garde 35 % de son bouclier d’un tour à l’autre.",
-   "en": ""
+   "en": "He holds tighter: the squad keeps 35 % of its shield from one turn to the next."
   },
   {
    "fr": "le bouclier restant soigne",
-   "en": ""
+   "en": "leftover shield heals"
   },
   {
    "fr": "Rien ne se perd au quai : à la victoire, la moitié du bouclier restant soigne le Porteur le plus blessé.",
-   "en": ""
+   "en": "Nothing goes to waste on the docks: on victory, half the leftover shield heals the most wounded Bearer."
   },
   {
    "fr": "Guet",
-   "en": ""
+   "en": "Lookout"
   },
   {
    "fr": "+1 carte au premier tour",
-   "en": ""
+   "en": "+1 card on the first turn"
   },
   {
    "fr": "Il voit venir de loin : au premier tour de chaque combat, ta main compte une carte de plus.",
-   "en": ""
+   "en": "He sees it coming: on the first turn of every fight, your hand holds one more card."
   },
   {
    "fr": "voit l’intention d’après",
-   "en": ""
+   "en": "sees the next intent"
   },
   {
    "fr": "Il voit plus loin : à côté de l’intention, une petite pastille montre ce que l’ennemi visé prépare au tour d’après.",
-   "en": ""
+   "en": "He sees further: next to the intent, a small badge shows what the targeted enemy is preparing for the turn after."
   },
   {
    "fr": "+1 carte à chaque phase de gardien",
-   "en": ""
+   "en": "+1 card at each guardian phase"
   },
   {
    "fr": "Rien ne le surprend : quand un gardien change de phase, ta main prend une carte de plus.",
-   "en": ""
+   "en": "Nothing catches him off guard: when a guardian changes phase, your hand takes one more card."
   },
   {
    "fr": "le bouclier renvoie 30 % des coups",
-   "en": ""
+   "en": "the shield reflects 30 % of blows"
   },
   {
    "fr": "Sa chitine pique qui la frappe : quand le bouclier d’escouade encaisse un coup, 30 % de ce qu’il absorbe revient à l’ennemi.",
-   "en": ""
+   "en": "Her chitin stings whoever strikes it: when the squad shield takes a blow, 30 % of what it absorbs goes back to the enemy."
   },
   {
    "fr": "le bouclier renvoie 40 %",
-   "en": ""
+   "en": "the shield reflects 40 %"
   },
   {
    "fr": "Sa chitine durcit : 40 % de ce que le bouclier d’escouade absorbe revient à l’ennemi.",
-   "en": ""
+   "en": "Her chitin hardens: 40 % of what the squad shield absorbs goes back to the enemy."
   },
   {
    "fr": "le renvoi peut achever",
-   "en": ""
+   "en": "the reflection can finish them off"
   },
   {
    "fr": "Sa mue est complète : le renvoi de la chitine peut achever l’ennemi qui frappe.",
-   "en": ""
+   "en": "Her molt is complete: the chitin’s reflection can finish off the enemy that strikes."
   },
   {
    "fr": "Galons blancs",
-   "en": ""
+   "en": "White stripes"
   },
   {
    "fr": "+1 Flux par Fêlure résonnante",
-   "en": ""
+   "en": "+1 Flux per resonating Flaw"
   },
   {
    "fr": "Chaque implant est un galon : une Fêlure brisée par une chaîne qui résonne donne 1 Flux de plus.",
-   "en": ""
+   "en": "Every implant is a stripe: a Flaw broken by a resonating chain gives 1 more Flux."
   },
   {
    "fr": "+2 Flux par Fêlure contre un gardien",
-   "en": ""
+   "en": "+2 Flux per Flaw against a guardian"
   },
   {
    "fr": "Ses galons pèsent face aux grands : contre un gardien, chaque Fêlure brisée en résonance donne 2 Flux de plus.",
-   "en": ""
+   "en": "His stripes carry weight against the great ones: against a guardian, each Flaw broken in resonance gives 2 more Flux."
   },
   {
    "fr": "Fêlure résonnante : +1 carte",
-   "en": ""
+   "en": "Resonating Flaw: +1 card"
   },
   {
    "fr": "Chaque galon ouvre une porte : une Fêlure brisée en résonance fait aussi piocher une carte.",
-   "en": ""
+   "en": "Every stripe opens a door: a Flaw broken in resonance also draws a card."
   },
   {
    "fr": "Nuit blanche",
-   "en": ""
+   "en": "White Night"
   },
   {
    "fr": "soigne le plus blessé chaque tour",
-   "en": ""
+   "en": "heals the most wounded each turn"
   },
   {
    "fr": "Le quartier entier l’a veillé, il veille à son tour : à la fin de chaque tour ennemi, le Porteur le plus blessé récupère 6 % de ses PV.",
-   "en": ""
+   "en": "The whole quarter sat up with him, now he keeps watch in turn: at the end of every enemy turn, the most wounded Bearer recovers 6 % of their HP."
   },
   {
    "fr": "soigne le plus blessé de 8 %",
-   "en": ""
+   "en": "heals the most wounded for 8 %"
   },
   {
    "fr": "Il veille plus fort : à la fin de chaque tour ennemi, le plus blessé récupère 8 % de ses PV.",
-   "en": ""
+   "en": "He watches harder: at the end of every enemy turn, the most wounded recovers 8 % of their HP."
   },
   {
    "fr": "veille sur les deux plus blessés",
-   "en": ""
+   "en": "watches over the two most wounded"
   },
   {
    "fr": "Il ne dort plus : à la fin de chaque tour ennemi, les deux Porteurs les plus blessés récupèrent chacun 8 % de leurs PV.",
-   "en": ""
+   "en": "He no longer sleeps: at the end of every enemy turn, the two most wounded Bearers each recover 8 % of their HP."
   },
   {
    "fr": "Gagner 4 combats",
-   "en": ""
+   "en": "Win 4 fights"
   },
   {
    "fr": "Vaincre un gardien, réussir une fouille ou une Épreuve",
-   "en": ""
+   "en": "Defeat a guardian, complete a dig or a Trial"
   },
   {
    "fr": "Lancer une amélioration de bâtiment",
-   "en": ""
+   "en": "Start a building upgrade"
   },
   {
    "fr": "Lecture profonde",
-   "en": ""
+   "en": "Deep Reading"
   },
   {
    "fr": "{0} se remet à la Clinique : il lui faut {1} PV pour redescendre (encore {2}).",
-   "en": ""
+   "en": "{0} is recovering at the Clinic: they need {1} HP to go back down ({2} to go)."
   },
   {
    "fr": "Ils t’observent",
-   "en": ""
+   "en": "They’re watching you"
   },
   {
    "fr": "Ils t’écoutent",
-   "en": ""
+   "en": "They’re listening to you"
   },
   {
    "fr": "Ils t’aident",
-   "en": ""
+   "en": "They’re helping you"
   },
   {
    "fr": "Tout le district te suit",
-   "en": ""
+   "en": "The whole district follows you"
   },
   {
    "fr": "{0}{1} rejoignent le district.",
-   "en": ""
+   "en": "{0}{1} join the district."
   },
   {
    "fr": "La Nuit des lignes : la ligne bleue est repeinte plus haut. {0}",
-   "en": ""
+   "en": "The Night of Lines: the blue line is repainted higher. {0}"
   },
   {
    "fr": "{0} famille{1} rejoint cette semaine{2}.",
-   "en": ""
+   "en": "{0} famil{1|ies have|y has} joined you this week{2}."
   },
   {
    "fr": ", dont {0} cette nuit",
-   "en": ""
+   "en": ", {0} of them tonight"
   },
   {
    "fr": "Le quartier parle de toi.",
-   "en": ""
+   "en": "The quarter is talking about you."
   }
  ]
 }

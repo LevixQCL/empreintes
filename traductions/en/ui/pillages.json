@@ -3,387 +3,387 @@
  "entrees": [
   {
    "fr": "Comment marche le Port",
-   "en": ""
+   "en": "How the Port works"
   },
   {
    "fr": "Pillages, missions en mer ou contrats de marée",
-   "en": ""
+   "en": "Raids, missions at sea or tide contracts"
   },
   {
    "fr": "Pillages",
-   "en": ""
+   "en": "Raids"
   },
   {
    "fr": "{0} / {1} jetons",
-   "en": ""
+   "en": "{0} / {1} tokens"
   },
   {
    "fr": "dès la Strate −{0}",
-   "en": ""
+   "en": "from Stratum −{0}"
   },
   {
    "fr": "Missions",
-   "en": ""
+   "en": "Missions"
   },
   {
    "fr": "{0} / {1} en mer",
-   "en": ""
+   "en": "{0} / {1} at sea"
   },
   {
    "fr": "Marées",
-   "en": ""
+   "en": "Tides"
   },
   {
    "fr": "gabare en mer",
-   "en": ""
+   "en": "barge at sea"
   },
   {
    "fr": "{0} à remplir",
-   "en": ""
+   "en": "{0} to fill"
   },
   {
    "fr": "Les districts voisins attendent · vaincs le gardien de la Strate −{0}",
-   "en": ""
+   "en": "The neighbouring districts are waiting · defeat the guardian of Stratum −{0}"
   },
   {
    "fr": "Le passeur ne mène pas de grappin chez les voisins pour un district qu’on ne connaît pas encore. Les missions en mer, elles, partent déjà.",
-   "en": ""
+   "en": "The ferryman won’t ferry a grappling crew to the neighbours for a district nobody knows yet. Missions at sea, though, already sail."
   },
   {
    "fr": "Jetons et coffre",
-   "en": ""
+   "en": "Tokens and chest"
   },
   {
    "fr": "Jetons",
-   "en": ""
+   "en": "Tokens"
   },
   {
    "fr": "{0} jetons sur {1}",
-   "en": ""
+   "en": "{0} of {1} tokens"
   },
   {
    "fr": "Un de plus dans ",
-   "en": ""
+   "en": "One more in "
   },
   {
    "fr": "Tous là : rien ne se perd.",
-   "en": ""
+   "en": "All here: nothing goes to waste."
   },
   {
    "fr": "Ton coffre",
-   "en": ""
+   "en": "Your chest"
   },
   {
    "fr": "minerai gagné en pillant : le seul exposé",
-   "en": ""
+   "en": "ore earned by raiding: the only thing at risk"
   },
   {
    "fr": "La carte des districts voisins",
-   "en": ""
+   "en": "Map of the neighbouring districts"
   },
   {
    "fr": "déjà pillé aujourd’hui",
-   "en": ""
+   "en": "already raided today"
   },
   {
    "fr": "Pillé",
-   "en": ""
+   "en": "Raided"
   },
   {
    "fr": "Ton district est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus {0} % de ton coffre, puis {1} h de bouclier ; {2} attaques par jour au plus. Le reste de ton minerai, tes cristaux, tes cartes et tes Éclats ne risquent rien.",
-   "en": ""
+   "en": "Your district is defended by your garrison, even with the game closed. A successful attack on you takes at most {0} % of your chest, then {1} h of shield; {2} attacks per day at most. The rest of your ore, your crystals, your cards and your Shards are never at risk."
   },
   {
    "fr": "Ta garnison",
-   "en": ""
+   "en": "Your garrison"
   },
   {
    "fr": "Ta garnison · en défense",
-   "en": ""
+   "en": "Your garrison · defending"
   },
   {
    "fr": "Composer",
-   "en": ""
+   "en": "Assemble"
   },
   {
    "fr": "Escouade qui défend le port",
-   "en": ""
+   "en": "Squad defending the port"
   },
   {
    "fr": "Elle se défend seule quand d’autres directeurs t’attaquent. L’escouade qui attaque se choisit au départ du pillage{0}.",
-   "en": ""
+   "en": "It defends on its own when other directors attack you. The attacking squad is chosen when the raid sets off{0}."
   },
   {
    "fr": " : la même peut faire les deux",
-   "en": ""
+   "en": ": the same one can do both"
   },
   {
    "fr": "il y a {0} min",
-   "en": ""
+   "en": "{0} min ago"
   },
   {
    "fr": "Tu as pillé {0}",
-   "en": ""
+   "en": "You raided {0}"
   },
   {
    "fr": "{0} a repoussé ton escouade",
-   "en": ""
+   "en": "{0} drove your squad back"
   },
   {
    "fr": "{0} s’est heurté à ton bouclier",
-   "en": ""
+   "en": "{0} ran into your shield"
   },
   {
    "fr": "Ta garnison a repoussé {0}",
-   "en": ""
+   "en": "Your garrison drove off {0}"
   },
   {
    "fr": "{0} a pillé ton district",
-   "en": ""
+   "en": "{0} raided your district"
   },
   {
    "fr": "Journal du port",
-   "en": ""
+   "en": "Port log"
   },
   {
    "fr": "Ton attaque",
-   "en": ""
+   "en": "Your attack"
   },
   {
    "fr": "Attaque subie",
-   "en": ""
+   "en": "Attack suffered"
   },
   {
    "fr": "District sans directeur · ",
-   "en": ""
+   "en": "District without a director · "
   },
   {
    "fr": "En défense · ",
-   "en": ""
+   "en": "Defending · "
   },
   {
    "fr": "Aucun pillage pour l’instant. Tes attaques et celles que ta garnison subit s’inscriront ici.",
-   "en": ""
+   "en": "No raids yet. Your attacks and the ones your garrison suffers will be logged here."
   },
   {
    "fr": "Déjà pillé aujourd’hui : il reviendra demain.",
-   "en": ""
+   "en": "Already raided today: it’ll be back tomorrow."
   },
   {
    "fr": "Plus de jeton : le prochain revient bientôt.",
-   "en": ""
+   "en": "No tokens left: the next one is coming soon."
   },
   {
    "fr": "District sans directeur · un intendant le tient",
-   "en": ""
+   "en": "District without a director · a steward runs it"
   },
   {
    "fr": "La garnison",
-   "en": ""
+   "en": "The garrison"
   },
   {
    "fr": "Garnison",
-   "en": ""
+   "en": "Garrison"
   },
   {
    "fr": "dont {0} pris à son coffre",
-   "en": ""
+   "en": "{0} of it from their chest"
   },
   {
    "fr": "{0} % de ton coffre",
-   "en": ""
+   "en": "{0} % of your chest"
   },
   {
    "fr": "Tu choisis l’escouade qui attaque à l’étape suivante.",
-   "en": ""
+   "en": "You pick the attacking squad at the next step."
   },
   {
    "fr": "Préparer le pillage",
-   "en": ""
+   "en": "Prepare the raid"
   },
   {
    "fr": "Le Port du district",
-   "en": ""
+   "en": "The district’s Port"
   },
   {
    "fr": "Le Port reprend du service",
-   "en": ""
+   "en": "The Port is back in service"
   },
   {
    "fr": "Devant le sas de la digue, sur ses pilotis, le Port voit partir les barques du passeur : vers les ruines noyées, et vers les cuvettes voisines.",
-   "en": ""
+   "en": "By the Dike airlock, up on its stilts, the Port watches the ferryman’s boats set out: toward the drowned ruins, and toward the neighbouring Basins."
   },
   {
    "fr": "Le bateau reste à quai · vaincs le gardien de la Strate −{0}",
-   "en": ""
+   "en": "The boat stays docked · defeat the guardian of Stratum −{0}"
   },
   {
    "fr": "Tant que le gardien tient le puits, personne ne quitte le district.",
-   "en": ""
+   "en": "As long as the guardian holds the shaft, no one leaves the district."
   },
   {
    "fr": "Les missions en mer",
-   "en": ""
+   "en": "Missions at sea"
   },
   {
    "fr": "Un Porteur libre part en barque et revient chargé, même jeu fermé.",
-   "en": ""
+   "en": "A free Bearer sets off by boat and comes back loaded, even with the game closed."
   },
   {
    "fr": "courte ou longue",
-   "en": ""
+   "en": "short or long"
   },
   {
    "fr": "barques à la fois, selon la Tour",
-   "en": ""
+   "en": "boats at a time, depending on the Tower"
   },
   {
    "fr": "Butin",
-   "en": ""
+   "en": "Loot"
   },
   {
    "fr": "minerai, cartes, creuseurs",
-   "en": ""
+   "en": "ore, cards, diggers"
   },
   {
    "fr": "Pillages et défense du port · après la Strate −{0}",
-   "en": ""
+   "en": "Raids and port defence · after Stratum −{0}"
   },
   {
    "fr": "Les districts voisins ne te prennent pas encore au sérieux. Le détail est dans « Les règles en détail ».",
-   "en": ""
+   "en": "The neighbouring districts don’t take you seriously yet. The details are in “The rules in detail”."
   },
   {
    "fr": "Les pillages",
-   "en": ""
+   "en": "Raids"
   },
   {
    "fr": "Ton escouade attaque la garnison d’un district voisin de ta force.",
-   "en": ""
+   "en": "Your squad attacks the garrison of a neighbouring district of your strength."
   },
   {
    "fr": "jetons, un toutes les {0}",
-   "en": ""
+   "en": "tokens, one every {0}"
   },
   {
    "fr": "du coffre adverse",
-   "en": ""
+   "en": "of the enemy chest"
   },
   {
    "fr": "de ton coffre si tu perds",
-   "en": ""
+   "en": "of your chest if you lose"
   },
   {
    "fr": "Ta défense",
-   "en": ""
+   "en": "Your defence"
   },
   {
    "fr": "Seul ton coffre est exposé, et ta garnison se défend seule.",
-   "en": ""
+   "en": "Only your chest is exposed, and your garrison defends on its own."
   },
   {
    "fr": "Coffre",
-   "en": ""
+   "en": "Chest"
   },
   {
    "fr": "gains de pillage seulement",
-   "en": ""
+   "en": "raid winnings only"
   },
   {
    "fr": "de bouclier après une défaite",
-   "en": ""
+   "en": "of shield after a defeat"
   },
   {
    "fr": "attaques subies par jour au plus",
-   "en": ""
+   "en": "attacks suffered per day at most"
   },
   {
    "fr": "Quand la mer est montée, chaque quartier s’est accroché à ses piliers ; le tien s’est retranché derrière sa digue. Entre eux, il ne reste que l’eau, les ruines de l’ancien monde, et les passeurs qui connaissent les courants.",
-   "en": ""
+   "en": "When the sea rose, each quarter clung to its pillars; yours dug in behind its Dike. Between them there’s nothing left but water, the ruins of the old world, and the ferrymen who know the currents."
   },
   {
    "fr": "Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : on pille, on se défend, et chacun garde un œil sur son coffre.",
-   "en": ""
+   "en": "The Accords of 2101 forbid boarding the Heights. But between districts down below, nobody ever signed anything: you raid, you defend, and everyone keeps an eye on their chest."
   },
   {
    "fr": "Un Porteur libre prend la barque",
-   "en": ""
+   "en": "A free Bearer takes the boat"
   },
   {
    "fr": "Vers un pilier abandonné ou une ruine noyée : {0} h ou {1} h, sans rien payer : seulement le temps du Porteur. Le nombre de barques en mer en même temps grandit avec la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 6 et 4 au niveau 9.",
-   "en": ""
+   "en": "To an abandoned pillar or a drowned ruin: {0} h or {1} h, at no cost but the Bearer’s time. The number of boats at sea at once grows with the Core Tower: 1, then 2 at level 3, 3 at level 6 and 4 at level 9."
   },
   {
    "fr": "Il revient chargé",
-   "en": ""
+   "en": "They come back loaded"
   },
   {
    "fr": "Du minerai, des doublons de cartes de sa lignée, parfois une carte nouvelle, et des rescapés qui deviennent creuseurs. L’eau froide laisse un peu d’Usure.",
-   "en": ""
+   "en": "Ore, duplicates of cards from their lineage, sometimes a new card, and survivors who become diggers. The cold water leaves a little Strain."
   },
   {
    "fr": "{0} jetons, un toutes les {1}",
-   "en": ""
+   "en": "{0} tokens, one every {1}"
   },
   {
    "fr": "Chaque pillage en coûte un. Rien ne se perd pendant ton absence : ils t’attendent.",
-   "en": ""
+   "en": "Each raid costs one. Nothing is lost while you’re away: they wait for you."
   },
   {
    "fr": "Un combat contre la garnison",
-   "en": ""
+   "en": "A fight against the garrison"
   },
   {
    "fr": "Des districts de ta force : de vrais directeurs, et des districts sans directeur pour que la carte ne soit jamais vide. Un district par jour au plus.",
-   "en": ""
+   "en": "Districts of your strength: real directors, and districts without one so the map is never empty. One district per day at most."
   },
   {
    "fr": "Le butin",
-   "en": ""
+   "en": "The loot"
   },
   {
    "fr": "Du minerai, plus {0} du coffre adverse. Plus la garnison est forte, plus le butin est gros. Perdre te coûte {1} de ton coffre.",
-   "en": ""
+   "en": "Ore, plus {0} of the enemy chest. The stronger the garrison, the bigger the loot. Losing costs you {1} of your chest."
   },
   {
    "fr": "Seul ton coffre est exposé",
-   "en": ""
+   "en": "Only your chest is exposed"
   },
   {
    "fr": "Le coffre, c’est le minerai gagné en pillant, tant que le Générateur ne l’a pas taillé. Celui des descentes, des missions, et tous tes cristaux sont à l’abri, comme tes cartes et tes Éclats.",
-   "en": ""
+   "en": "The chest is the ore earned by raiding, until the Generator cuts it. Ore from descents and missions, and all your crystals, are safe, as are your cards and Shards."
   },
   {
    "fr": "Ta garnison se défend seule",
-   "en": ""
+   "en": "Your garrison defends on its own"
   },
   {
    "fr": "Choisis laquelle de tes trois escouades garde le port. Elle se bat même jeu fermé.",
-   "en": ""
+   "en": "Choose which of your three squads guards the port. It fights even with the game closed."
   },
   {
    "fr": "Bouclier et limite",
-   "en": ""
+   "en": "Shield and limit"
   },
   {
    "fr": "Après une attaque perdue, {0} h de bouclier ; {1} attaques par jour au plus. Le journal du port garde tout.",
-   "en": ""
+   "en": "After a lost attack, {0} h of shield; {1} attacks per day at most. The port log keeps track of everything."
   },
   {
    "fr": "Larguer les amarres",
-   "en": ""
+   "en": "Cast off"
   },
   {
    "fr": "Retour au Port",
-   "en": ""
+   "en": "Back to the Port"
   },
   {
    "fr": "Acheter un jeton pour {0} cristaux, encore {1} aujourd’hui",
-   "en": ""
+   "en": "Buy a token for {0} crystals, {1} more today"
   },
   {
    "fr": "+1 jeton · {0}",
-   "en": ""
+   "en": "+1 token · {0}"
   }
  ]
 }

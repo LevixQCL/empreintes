@@ -3,479 +3,479 @@
  "entrees": [
   {
    "fr": "{0} familles sur {1} te suivent : encore {2} pour le prochain palier.",
-   "en": ""
+   "en": "{0} of {1} families follow you: {2} more for the next tier."
   },
   {
    "fr": "Tout le district te suit.",
-   "en": ""
+   "en": "The whole district follows you."
   },
   {
    "fr": "{0} les creuseurs",
-   "en": ""
+   "en": "{0} the diggers"
   },
   {
    "fr": "un volontaire rejoint",
-   "en": ""
+   "en": "a volunteer joins"
   },
   {
    "fr": "{0} apporte{1} « {2} » aux Archives",
-   "en": ""
-  },
-  {
-   "fr": "un étal de plus rouvre au Comptoir",
-   "en": ""
-  },
-  {
-   "fr": "{0} familles te suivent{1} !{2}",
-   "en": ""
-  },
-  {
-   "fr": " : tout le district",
-   "en": ""
+   "en": "{0} bring{1||s} “{2}” to the Archives"
   },
   {
    "fr": "une famille",
-   "en": ""
+   "en": "a family"
+  },
+  {
+   "fr": "un étal de plus rouvre au Comptoir",
+   "en": "one more stall reopens at the Trading Post"
+  },
+  {
+   "fr": "{0} familles te suivent{1} !{2}",
+   "en": "{0} families follow you{1}!{2}"
+  },
+  {
+   "fr": " : tout le district",
+   "en": ": the whole district"
   },
   {
    "fr": "Heures pour tailler le minerai",
-   "en": ""
+   "en": "Hours to cut the ore"
   },
   {
    "fr": "chaque heure, il en taille une part",
-   "en": ""
+   "en": "each hour, it cuts a share of it"
   },
   {
    "fr": "Éclats recueillis par jour en taillant",
-   "en": ""
+   "en": "Shards gathered per day while cutting"
   },
   {
    "fr": "Usure soignée par heure",
-   "en": ""
+   "en": "Strain healed per hour"
   },
   {
    "fr": "pour chaque Porteur au repos",
-   "en": ""
+   "en": "for each resting Bearer"
   },
   {
    "fr": "PV max. des Porteurs",
-   "en": ""
+   "en": "Bearers’ max HP"
   },
   {
    "fr": "en plus, pour tous",
-   "en": ""
+   "en": "extra, for everyone"
   },
   {
    "fr": "La Clinique peut organiser un Accord ouvert",
-   "en": ""
+   "en": "The Clinic can hold an open Accord"
   },
   {
    "fr": "un nouveau Résonant, quand {0} familles te suivent",
-   "en": ""
+   "en": "a new Resonant, once {0} families follow you"
   },
   {
    "fr": "Vitesse de refabrication",
-   "en": ""
+   "en": "Recrafting speed"
   },
   {
    "fr": "{0} rejoint le district",
-   "en": ""
+   "en": "{0} joins the district"
   },
   {
    "fr": "une fois la chambre scellée",
-   "en": ""
+   "en": "once the sealed chamber is open"
   },
   {
    "fr": "Cartes en vente chaque jour",
-   "en": ""
+   "en": "Cards for sale each day"
   },
   {
    "fr": "Éclats en vente par jour",
-   "en": ""
+   "en": "Shards for sale per day"
   },
   {
    "fr": "de {0} à {1} cristaux l’Éclat",
-   "en": ""
+   "en": "from {0} to {1} crystals per Shard"
   },
   {
    "fr": "Des cartes en argent",
-   "en": ""
+   "en": "Silver cards"
   },
   {
    "fr": "une fois la Strate −{0} vaincue",
-   "en": ""
+   "en": "once Stratum −{0} is beaten"
   },
   {
    "fr": "Ouvre les amis, les duels et les échanges",
-   "en": ""
+   "en": "Unlocks friends, duels and trades"
   },
   {
    "fr": "les directeurs des autres districts accostent",
-   "en": ""
+   "en": "directors from other districts dock here"
   },
   {
    "fr": "Échanges par jour",
-   "en": ""
+   "en": "Trades per day"
   },
   {
    "fr": "Propositions en attente",
-   "en": ""
+   "en": "Pending offers"
   },
   {
    "fr": "Cartes en vitrine",
-   "en": ""
+   "en": "Cards on display"
   },
   {
    "fr": "Les cartes en or s’échangent",
-   "en": ""
+   "en": "Gold cards can be traded"
   },
   {
    "fr": "la nacre, jamais",
-   "en": ""
+   "en": "nacre, never"
   },
   {
    "fr": "Creuseurs logés",
-   "en": ""
+   "en": "Diggers housed"
   },
   {
    "fr": "plus aucune limite de profondeur",
-   "en": ""
+   "en": "no more depth limit"
   },
   {
    "fr": "de quoi creuser jusqu’à la Strate −{0}",
-   "en": ""
+   "en": "enough to dig down to Stratum −{0}"
   },
   {
    "fr": "Ouvre la Strate −{0}",
-   "en": ""
+   "en": "Opens Stratum −{0}"
   },
   {
    "fr": "les creuseurs attendent déjà la place",
-   "en": ""
+   "en": "the diggers are already waiting for room"
   },
   {
    "fr": "Niveau max. des autres bâtiments",
-   "en": ""
+   "en": "Max level of the other buildings"
   },
   {
    "fr": "Places d’entraînement",
-   "en": ""
+   "en": "Training slots"
   },
   {
    "fr": "des Porteurs en même temps à la Tour",
-   "en": ""
+   "en": "Bearers at the Tower at the same time"
   },
   {
    "fr": "Barques en mer",
-   "en": ""
+   "en": "Boats at sea"
   },
   {
    "fr": "des missions en même temps",
-   "en": ""
+   "en": "missions at the same time"
   },
   {
    "fr": "Entraînement à la Tour jusqu’au niveau",
-   "en": ""
+   "en": "Tower training up to level"
   },
   {
    "fr": "séances {0} % plus courtes",
-   "en": ""
+   "en": "sessions {0} % shorter"
   },
   {
    "fr": "Deux chantiers en même temps",
-   "en": ""
+   "en": "Two projects at once"
   },
   {
    "fr": "Nouvelle carte commune : {0}",
-   "en": ""
+   "en": "New common card: {0}"
   },
   {
    "fr": "à prendre au Râtelier de l’escouade",
-   "en": ""
+   "en": "to take from the squad’s Rack"
   },
   {
    "fr": "Force de la carte {0}",
-   "en": ""
+   "en": "{0} card power"
   },
   {
    "fr": "Niveau maximum atteint.",
-   "en": ""
+   "en": "Max level reached."
   },
   {
    "fr": "Un chantier est déjà en cours sur ce bâtiment.",
-   "en": ""
+   "en": "A project is already under way on this building."
   },
   {
    "fr": "Aucun directeur n’accoste avant que la Strate −{0} soit vaincue.",
-   "en": ""
+   "en": "No director docks before Stratum −{0} is beaten."
   },
   {
    "fr": "Améliore d’abord la Tour du Noyau.",
-   "en": ""
+   "en": "Upgrade the Core Tower first."
   },
   {
    "fr": "Termine d’abord les chantiers en cours avant d’agrandir la Tour du Noyau.",
-   "en": ""
+   "en": "Finish the current projects before expanding the Core Tower."
   },
   {
    "fr": "Un seul chantier à la fois pour l’instant (deux au Noyau niveau 4).",
-   "en": ""
+   "en": "Only one project at a time for now (two at Core level 4)."
   },
   {
    "fr": "Deux chantiers sont déjà en cours.",
-   "en": ""
+   "en": "Two projects are already under way."
   },
   {
    "fr": "Pas assez de ressources.",
-   "en": ""
+   "en": "Not enough resources."
   },
   {
    "fr": "{0} passe au niveau {1}.",
-   "en": ""
+   "en": "{0} reaches level {1}."
   },
   {
    "fr": "Chantier lancé : {0} vers le niveau {1}.",
-   "en": ""
+   "en": "Project started: {0} toward level {1}."
   },
   {
    "fr": "Ce Porteur est en expédition.",
-   "en": ""
+   "en": "This Bearer is on an expedition."
   },
   {
    "fr": "La Forge travaille : attends la fin de la fabrication.",
-   "en": ""
+   "en": "The Forge is working: wait for the crafting to finish."
   },
   {
    "fr": "{0} a rattrapé ton meilleur Porteur d’escouade : la suite se gagne dans les Strates.",
-   "en": ""
+   "en": "{0} has caught up with your best squad Bearer: the rest is earned in the Strata."
   },
   {
    "fr": "{0} a atteint le plafond de la Tour : monte-la pour aller plus loin.",
-   "en": ""
+   "en": "{0} has hit the Tower’s ceiling: upgrade it to go further."
   },
   {
    "fr": "Les {0} places de la Tour sont prises : arrête une séance ou attends qu’une se termine.",
-   "en": ""
+   "en": "All {0} Tower slots are taken: stop a session or wait for one to end."
   },
   {
    "fr": "La place de la Tour est prise : arrête la séance ou attends qu’elle se termine.",
-   "en": ""
+   "en": "The Tower slot is taken: stop the session or wait for it to end."
   },
   {
    "fr": "Il manque {0} cristaux pour cette séance.",
-   "en": ""
+   "en": "You’re {0} crystals short for this session."
   },
   {
    "fr": "{0} commence une séance à la Tour du Noyau : niveau {1} ({2} cristaux).",
-   "en": ""
+   "en": "{0} starts a session at the Core Tower: level {1} ({2} crystals)."
   },
   {
    "fr": "{0} travaille maintenant : {1}.",
-   "en": ""
+   "en": "{0} is now working: {1}."
   },
   {
    "fr": "{0} se repose.",
-   "en": ""
+   "en": "{0} is resting."
   },
   {
    "fr": "On ne refabrique qu’une carte déjà trouvée.",
-   "en": ""
+   "en": "You can only recraft a card you’ve already found."
   },
   {
    "fr": "Une carte de l’Héritage est unique : la Forge ne sait pas la refaire.",
-   "en": ""
+   "en": "A Legacy card is unique: the Forge can’t remake it."
   },
   {
    "fr": "La Forge est déjà occupée.",
-   "en": ""
+   "en": "The Forge is already busy."
   },
   {
    "fr": "Il faut un Porteur au travail à la Forge.",
-   "en": ""
+   "en": "You need a Bearer at work in the Forge."
   },
   {
    "fr": "{0} Éclat{1}",
-   "en": ""
+   "en": "{0} Shard{1}"
   },
   {
    "fr": "Pour refabriquer {0}, il manque {1}.",
-   "en": ""
+   "en": "To recraft {0}, you’re missing {1}."
   },
   {
    "fr": "La Forge refabrique {0}.",
-   "en": ""
+   "en": "The Forge is recrafting {0}."
   },
   {
    "fr": "Aucun doublon à recycler.",
-   "en": ""
+   "en": "No duplicates to recycle."
   },
   {
    "fr": "Un doublon {0} recyclé : +{1} minerai.",
-   "en": ""
+   "en": "A duplicate {0} recycled: +{1} ore."
   },
   {
    "fr": "Il faut {0} doublon{1}.",
-   "en": ""
+   "en": "You need {0} duplicate{1}."
   },
   {
    "fr": "Il faut {0} cristaux.",
-   "en": ""
+   "en": "You need {0} crystals."
   },
   {
    "fr": "Trop lourd : {0} pèse {1}, il ne reste que {2} de Charge à {3}.",
-   "en": ""
+   "en": "Too heavy: {0} weighs {1}, {3} only has {2} Load left."
   },
   {
    "fr": "{0} en {1} demande un Porteur de niveau {2} : {3} est niveau {4}.",
-   "en": ""
+   "en": "{0} in {1} needs a level {2} Bearer: {3} is level {4}."
   },
   {
    "fr": "Cette carte ne convient qu’à sa lignée.",
-   "en": ""
+   "en": "This card only suits its own lineage."
   },
   {
    "fr": "Cette carte est en expédition.",
-   "en": ""
+   "en": "This card is on an expedition."
   },
   {
    "fr": "{0} porte déjà {1} cartes : retires-en une.",
-   "en": ""
+   "en": "{0} already carries {1} cards: take one away."
   },
   {
    "fr": "{0} ({1}) remplace celle en {2} chez {3}.",
-   "en": ""
+   "en": "{0} ({1}) replaces the {2} one with {3}."
   },
   {
    "fr": "{0} confiée à {1}.",
-   "en": ""
+   "en": "{0} given to {1}."
   },
   {
    "fr": "Ce Porteur ne porte pas cette carte.",
-   "en": ""
+   "en": "This Bearer doesn’t carry this card."
   },
   {
    "fr": "{0} porte déjà cette carte.",
-   "en": ""
+   "en": "{0} already carries this card."
   },
   {
    "fr": "{0} porte déjà {1} en {2} : échange plutôt celle-là.",
-   "en": ""
+   "en": "{0} already carries {1} in {2}: swap that one instead."
   },
   {
    "fr": "{0} remplace {1} chez {2}.",
-   "en": ""
+   "en": "{0} replaces {1} with {2}."
   },
   {
    "fr": "+{0} creuseur{1} : {2}.",
-   "en": ""
+   "en": "+{0} digger{1}: {2}."
   },
   {
    "fr": "Les creuseurs percent la roche : la Strate −{0} est ouverte.",
-   "en": ""
+   "en": "The diggers break through the rock: Stratum −{0} is open."
   },
   {
    "fr": "Séance interrompue : {0} quitte la Tour{1}.",
-   "en": ""
+   "en": "Session interrupted: {0} leaves the Tower{1}."
   },
   {
    "fr": " ({0} cristaux rendus)",
-   "en": ""
+   "en": " ({0} crystals refunded)"
   },
   {
    "fr": "{0} a fini sa séance à la Tour : niveau {1}, {2} PV. Une place se libère.",
-   "en": ""
+   "en": "{0} has finished their session at the Tower: level {1}, {2} HP. A slot opens up."
   },
   {
    "fr": "Le Comptoir est fermé : remets-le d’abord en état.",
-   "en": ""
+   "en": "The Trading Post is closed: restore it first."
   },
   {
    "fr": "Les fouilleurs n’ont plus d’Éclats à vendre aujourd’hui : nouvel arrivage demain.",
-   "en": ""
+   "en": "The diggers have no more Shards to sell today: fresh stock tomorrow."
   },
   {
    "fr": "Il faut {0} cristaux pour cet Éclat.",
-   "en": ""
+   "en": "You need {0} crystals for this Shard."
   },
   {
    "fr": "Comptoir : un Éclat acheté ({0} cristaux).",
-   "en": ""
+   "en": "Trading Post: a Shard bought ({0} crystals)."
   },
   {
    "fr": "+1 Éclat pour {0} cristaux.",
-   "en": ""
+   "en": "+1 Shard for {0} crystals."
   },
   {
    "fr": "Les étals ont déjà été renouvelés aujourd’hui : nouvel arrivage demain.",
-   "en": ""
+   "en": "The stalls have already been restocked today: fresh stock tomorrow."
   },
   {
    "fr": "Tout est vendu : nouvel arrivage demain.",
-   "en": ""
+   "en": "Sold out: fresh stock tomorrow."
   },
   {
    "fr": "Pas assez de cristaux.",
-   "en": ""
+   "en": "Not enough crystals."
   },
   {
    "fr": "Comptoir : les étals ont été renouvelés.",
-   "en": ""
+   "en": "Trading Post: the stalls have been restocked."
   },
   {
    "fr": "Cette offre n’existe pas.",
-   "en": ""
+   "en": "This offer doesn’t exist."
   },
   {
    "fr": "Déjà acheté aujourd’hui : le Comptoir se renouvelle demain.",
-   "en": ""
+   "en": "Already bought today: the Trading Post restocks tomorrow."
   },
   {
    "fr": "Comptoir : nouvelle carte, {0} ({1}).",
-   "en": ""
+   "en": "Trading Post: new card, {0} ({1})."
   },
   {
    "fr": "Comptoir : un doublon {0}.",
-   "en": ""
+   "en": "Trading Post: a duplicate {0}."
   },
   {
    "fr": "Ce Porteur n’est pas au district.",
-   "en": ""
+   "en": "This Bearer isn’t in the district."
   },
   {
    "fr": "La Clinique est fermée.",
-   "en": ""
+   "en": "The Clinic is closed."
   },
   {
    "fr": "Ce Porteur est en bas.",
-   "en": ""
+   "en": "This Bearer is down below."
   },
   {
    "fr": "Il n’a pas d’Usure.",
-   "en": ""
+   "en": "They have no Strain."
   },
   {
    "fr": "La Clinique offre ses premiers soins intensifs : {0} est remis sur pied (−{1} Usure).",
-   "en": ""
+   "en": "The Clinic offers its first intensive care: {0} is back on their feet (−{1} Strain)."
   },
   {
    "fr": "Il faut 1 cristal pour {0} points d’Usure.",
-   "en": ""
+   "en": "You need 1 crystal per {0} Strain points."
   },
   {
    "fr": "Soins intensifs : −{0} Usure pour {1} ({2} cristal{3}).",
-   "en": ""
+   "en": "Intensive care: −{0} Strain for {1} ({2} crystal{3|s})."
   },
   {
    "fr": "Objectif pas encore rempli.",
-   "en": ""
+   "en": "Objective not completed yet."
   },
   {
    "fr": "des volontaires rejoignent le chantier",
-   "en": ""
+   "en": "volunteers join the works"
   },
   {
    "fr": "Objectif rempli : {0}.",
-   "en": ""
+   "en": "Objective complete: {0}."
   }
  ]
 }

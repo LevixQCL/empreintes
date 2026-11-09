@@ -3,31 +3,31 @@
  "entrees": [
   {
    "fr": "Ilka",
-   "en": ""
+   "en": "Ilka"
   },
   {
    "fr": "Doran",
-   "en": ""
+   "en": "Doran"
   },
   {
    "fr": "Véla",
-   "en": ""
+   "en": "Véla"
   },
   {
    "fr": "Coursier",
-   "en": ""
+   "en": "Courier"
   },
   {
    "fr": "Docker",
-   "en": ""
+   "en": "Docker"
   },
   {
    "fr": "Guetteur",
-   "en": ""
+   "en": "Lookout"
   },
   {
    "fr": "Sasha Ndiaro",
-   "en": ""
+   "en": "Sasha Ndiaro"
   },
   {
    "fr": "Si ça a une vis, ça a une seconde chance.",
@@ -35,7 +35,7 @@
   },
   {
    "fr": "Nuit",
-   "en": ""
+   "en": "Nuit"
   },
   {
    "fr": "Le noir n’est pas vide. Il attend juste qu’on regarde mieux.",
@@ -43,7 +43,7 @@
   },
   {
    "fr": "Aurel Orsève",
-   "en": ""
+   "en": "Aurel Orsève"
   },
   {
    "fr": "Mon ombre a de meilleures manières que moi. C’est bien ça, le problème.",
@@ -51,7 +51,7 @@
   },
   {
    "fr": "Kessa",
-   "en": ""
+   "en": "Kessa"
   },
   {
    "fr": "On n’a rien choisi. Mais on est les seuls à pouvoir dire ce que ça fait.",
@@ -59,7 +59,7 @@
   },
   {
    "fr": "Liane Orsève",
-   "en": ""
+   "en": "Liane Orsève"
   },
   {
    "fr": "Ils m’ont refusé la mèche d’or. J’ai fait pousser autre chose.",
@@ -67,7 +67,7 @@
   },
   {
    "fr": "Joss",
-   "en": ""
+   "en": "Joss"
   },
   {
    "fr": "J’ai passé des années à cacher l’or des autres. Le mien, je le laisse briller.",
@@ -75,1271 +75,1271 @@
   },
   {
    "fr": "Augmenté",
-   "en": ""
+   "en": "Augmented"
   },
   {
    "fr": "AUGMENTÉ",
-   "en": ""
+   "en": "AUGMENTED"
   },
   {
    "fr": "Géné",
-   "en": ""
+   "en": "Spliced"
   },
   {
    "fr": "GÉNÉ",
-   "en": ""
+   "en": "SPLICED"
   },
   {
    "fr": "Résonant",
-   "en": ""
+   "en": "Resonant"
   },
   {
    "fr": "RÉSONANT",
-   "en": ""
+   "en": "RESONANT"
   },
   {
    "fr": "SPÉCIAL",
-   "en": ""
+   "en": "SPECIAL"
   },
   {
    "fr": "Plastron de choc",
-   "en": ""
+   "en": "Shock Plate"
   },
   {
    "fr": "Talon de cristal",
-   "en": ""
+   "en": "Crystal Heel"
   },
   {
    "fr": "Bracelet de déviation",
-   "en": ""
+   "en": "Deflector Bracer"
   },
   {
    "fr": "Canon à cristal",
-   "en": ""
+   "en": "Crystal Cannon"
   },
   {
    "fr": "Pistolet à faisceau",
-   "en": ""
+   "en": "Beam Pistol"
   },
   {
    "fr": "Pince de récif",
-   "en": ""
+   "en": "Reef Pincer"
   },
   {
    "fr": "Carapace",
-   "en": ""
+   "en": "Carapace"
   },
   {
    "fr": "Bol de sève",
-   "en": ""
+   "en": "Sap Bowl"
   },
   {
    "fr": "Front de roche",
-   "en": ""
+   "en": "Rock Brow"
   },
   {
    "fr": "Conque de garde",
-   "en": ""
+   "en": "Guard Conch"
   },
   {
    "fr": "Voile du murmure",
-   "en": ""
+   "en": "Whisper Veil"
   },
   {
    "fr": "Cristal d’écho",
-   "en": ""
+   "en": "Echo Crystal"
   },
   {
    "fr": "Cor de brume",
-   "en": ""
+   "en": "Fog Horn"
   },
   {
    "fr": "Cœur d’améthyste",
-   "en": ""
+   "en": "Amethyst Heart"
   },
   {
    "fr": "Éclat",
-   "en": ""
+   "en": "Shard"
   },
   {
    "fr": "Jambes à ressort",
-   "en": ""
+   "en": "Spring Legs"
   },
   {
    "fr": "Gant à arc",
-   "en": ""
+   "en": "Arc Glove"
   },
   {
    "fr": "Œil-relais",
-   "en": ""
+   "en": "Relay Eye"
   },
   {
    "fr": "Grappin à câble",
-   "en": ""
+   "en": "Cable Grapple"
   },
   {
    "fr": "Cœur-turbine",
-   "en": ""
+   "en": "Turbine Heart"
   },
   {
    "fr": "Œil-brouilleur",
-   "en": ""
+   "en": "Jammer Eye"
   },
   {
    "fr": "Dorsale renforcée",
-   "en": ""
+   "en": "Reinforced Spine"
   },
   {
    "fr": "Lames orbitales",
-   "en": ""
+   "en": "Orbital Blades"
   },
   {
    "fr": "Cœur de reprise",
-   "en": ""
+   "en": "Restart Heart"
   },
   {
    "fr": "Glande d’ambre",
-   "en": ""
+   "en": "Amber Gland"
   },
   {
    "fr": "Crocs fossiles",
-   "en": ""
+   "en": "Fossil Fangs"
   },
   {
    "fr": "Cuir de récif",
-   "en": ""
+   "en": "Reef Hide"
   },
   {
    "fr": "Yeux nocturnes",
-   "en": ""
+   "en": "Night Eyes"
   },
   {
    "fr": "Poumons d’abysse",
-   "en": ""
+   "en": "Abyssal Lungs"
   },
   {
    "fr": "Branchies des Fondations",
-   "en": ""
+   "en": "Foundation Gills"
   },
   {
    "fr": "Carapace-mère",
-   "en": ""
+   "en": "Mother Shell"
   },
   {
    "fr": "Sang d’ambre",
-   "en": ""
+   "en": "Amber Blood"
   },
   {
    "fr": "Cœur de meute",
-   "en": ""
+   "en": "Pack Heart"
   },
   {
    "fr": "Mue totale",
-   "en": ""
+   "en": "Full Molt"
   },
   {
    "fr": "Éclat qui chante",
-   "en": ""
+   "en": "Singing Shard"
   },
   {
    "fr": "Miroir de brume",
-   "en": ""
+   "en": "Fog Mirror"
   },
   {
    "fr": "Encre ancienne",
-   "en": ""
+   "en": "Ancient Ink"
   },
   {
    "fr": "Mèche d’or",
-   "en": ""
+   "en": "Golden Streak"
   },
   {
    "fr": "Plume de givre",
-   "en": ""
+   "en": "Frost Feather"
   },
   {
    "fr": "Ombre de serpent",
-   "en": ""
+   "en": "Serpent Shadow"
   },
   {
    "fr": "Ombre ailée",
-   "en": ""
+   "en": "Winged Shadow"
   },
   {
    "fr": "Sablier inversé",
-   "en": ""
+   "en": "Reversed Hourglass"
   },
   {
    "fr": "Chant des abysses",
-   "en": ""
+   "en": "Song of the Deep"
   },
   {
    "fr": "Souffle du wyrm",
-   "en": ""
+   "en": "Wyrm’s Breath"
   },
   {
    "fr": "Bobine de récupération",
-   "en": ""
+   "en": "Salvage Coil"
   },
   {
    "fr": "Condensateur",
-   "en": ""
+   "en": "Capacitor"
   },
   {
    "fr": "Décharge d’arc",
-   "en": ""
+   "en": "Arc Discharge"
   },
   {
    "fr": "Éclair captif",
-   "en": ""
+   "en": "Captive Lightning"
   },
   {
    "fr": "Noyau instable",
-   "en": ""
+   "en": "Unstable Core"
   },
   {
    "fr": "Épaulière de roche",
-   "en": ""
+   "en": "Rock Pauldron"
   },
   {
    "fr": "Bélier d’os",
-   "en": ""
+   "en": "Bone Ram"
   },
   {
    "fr": "Coquille de marée",
-   "en": ""
+   "en": "Tide Shell"
   },
   {
    "fr": "Diapason de cristal",
-   "en": ""
+   "en": "Crystal Tuning Fork"
   },
   {
    "fr": "Voix basse",
-   "en": ""
+   "en": "Low Voice"
   },
   {
    "fr": "Chorale des ombres",
-   "en": ""
+   "en": "Choir of Shadows"
   },
   {
    "fr": "Cloche des abysses",
-   "en": ""
+   "en": "Bell of the Deep"
   },
   {
    "fr": "Grand unisson",
-   "en": ""
+   "en": "Great Unison"
   },
   {
    "fr": "Flair",
-   "en": ""
+   "en": "Scent"
   },
   {
    "fr": "Bond du prédateur",
-   "en": ""
+   "en": "Predator’s Leap"
   },
   {
    "fr": "Crocs de verre",
-   "en": ""
+   "en": "Glass Fangs"
   },
   {
    "fr": "Chasse à l’aveugle",
-   "en": ""
+   "en": "Blind Hunt"
   },
   {
    "fr": "Hallali",
-   "en": ""
+   "en": "The Kill Call"
   },
   {
    "fr": "Regard en biais",
-   "en": ""
+   "en": "Sidelong Glance"
   },
   {
    "fr": "Lame de doute",
-   "en": ""
+   "en": "Blade of Doubt"
   },
   {
    "fr": "Œil du Lecteur",
-   "en": ""
+   "en": "Reader’s Eye"
   },
   {
    "fr": "Verdict",
-   "en": ""
+   "en": "Verdict"
   },
   {
    "fr": "Sentence muette",
-   "en": ""
+   "en": "Silent Sentence"
   },
   {
    "fr": "Pollen d’ambre",
-   "en": ""
+   "en": "Amber Pollen"
   },
   {
    "fr": "Sève des piliers",
-   "en": ""
+   "en": "Pillar Sap"
   },
   {
    "fr": "Mue de verre",
-   "en": ""
+   "en": "Glass Molt"
   },
   {
    "fr": "Floraison des Fondations",
-   "en": ""
+   "en": "Foundation Bloom"
   },
   {
    "fr": "Pas chassé",
-   "en": ""
+   "en": "Side Step"
   },
   {
    "fr": "Lames jumelles",
-   "en": ""
+   "en": "Twin Blades"
   },
   {
    "fr": "Mitraille de clous",
-   "en": ""
+   "en": "Nail Spray"
   },
   {
    "fr": "Cadence folle",
-   "en": ""
+   "en": "Mad Cadence"
   },
   {
    "fr": "Vérin hydraulique",
-   "en": ""
+   "en": "Hydraulic Ram"
   },
   {
    "fr": "Exo de chantier",
-   "en": ""
+   "en": "Site Exo"
   },
   {
    "fr": "Foreuse des Strates",
-   "en": ""
+   "en": "Strata Drill"
   },
   {
    "fr": "Fil d’accord",
-   "en": ""
+   "en": "Accord Thread"
   },
   {
    "fr": "Nuée chorale",
-   "en": ""
+   "en": "Choral Swarm"
   },
   {
    "fr": "Riveteuse",
-   "en": ""
+   "en": "Riveter"
   },
   {
    "fr": "Suture vive",
-   "en": ""
+   "en": "Living Suture"
   },
   {
    "fr": "Lamproie des piliers",
-   "en": ""
+   "en": "Pillar Lamprey"
   },
   {
    "fr": "Berceuse des Strates",
-   "en": ""
+   "en": "Strata Lullaby"
   },
   {
    "fr": "Mâchoire-miroir",
-   "en": ""
+   "en": "Mirror Jaw"
   },
   {
    "fr": "Boucle de mémoire",
-   "en": ""
+   "en": "Memory Loop"
   },
   {
    "fr": "Cœur en surrégime",
-   "en": ""
+   "en": "Overdriven Heart"
   },
   {
    "fr": "Peau de l’Ancêtre",
-   "en": ""
+   "en": "Skin of the Ancestor"
   },
   {
    "fr": "Miroir des Hauts",
-   "en": ""
+   "en": "Mirror of the Heights"
   },
   {
    "fr": "Cœur d’étoile",
-   "en": ""
+   "en": "Star Heart"
   },
   {
    "fr": "Seconde naissance",
-   "en": ""
+   "en": "Second Birth"
   },
   {
    "fr": "Empreinte vive",
-   "en": ""
+   "en": "Living Imprint"
   },
   {
    "fr": "Silence d’avant",
-   "en": ""
+   "en": "Silence of Before"
   },
   {
    "fr": "Couperet des Hauts",
-   "en": ""
+   "en": "Cleaver of the Heights"
   },
   {
    "fr": "Racines-mères",
-   "en": ""
+   "en": "Mother Roots"
   },
   {
    "fr": "Foulée de la directrice",
-   "en": ""
+   "en": "The Director’s Stride"
   },
   {
    "fr": "Bras de la Fonderie",
-   "en": ""
+   "en": "Arm of the Foundry"
   },
   {
    "fr": "Cœur de la Glacière",
-   "en": ""
+   "en": "Heart of the Icehouse"
   },
   {
    "fr": "Carapace des Fondations",
-   "en": ""
+   "en": "Shell of the Foundations"
   },
   {
    "fr": "Œil de la Grande Nuit",
-   "en": ""
+   "en": "Eye of the Great Night"
   },
   {
    "fr": "Première mue",
-   "en": ""
+   "en": "First Molt"
   },
   {
    "fr": "Lanterne de la première Lecture",
-   "en": ""
+   "en": "Lantern of the First Reading"
   },
   {
    "fr": "Sceau volé aux Orsève",
-   "en": ""
+   "en": "Seal Stolen from the Orsèves"
   },
   {
    "fr": "Voix du quartier",
-   "en": ""
+   "en": "Voice of the Quarter"
   },
   {
    "fr": "Empreinte jumelle",
-   "en": ""
+   "en": "Twin Imprint"
   },
   {
    "fr": "Le Moteur",
-   "en": ""
+   "en": "The Engine"
   },
   {
    "fr": "La Carapace",
-   "en": ""
+   "en": "The Carapace"
   },
   {
    "fr": "Le Chœur",
-   "en": ""
+   "en": "The Choir"
   },
   {
    "fr": "La Traque",
-   "en": ""
+   "en": "The Hunt"
   },
   {
    "fr": "La Lecture",
-   "en": ""
+   "en": "The Reading"
   },
   {
    "fr": "La Sève",
-   "en": ""
+   "en": "The Sap"
   },
   {
    "fr": "La Cadence",
-   "en": ""
+   "en": "The Cadence"
   },
   {
    "fr": "Les Machines",
-   "en": ""
+   "en": "The Machines"
   },
   {
    "fr": "Stimulant",
-   "en": ""
+   "en": "Stimulant"
   },
   {
    "fr": "Pavois de cuivre",
-   "en": ""
+   "en": "Copper Pavise"
   },
   {
    "fr": "Ampoule de relève",
-   "en": ""
+   "en": "Relief Vial"
   },
   {
    "fr": "Une seringue de lumière verte, préparée par la Clinique pour chaque escouade.",
-   "en": ""
+   "en": "A syringe of green light, prepared by the Clinic for every squad."
   },
   {
    "fr": "Une balise de la Tour du Noyau : une porte blindée s’ouvre, l’escouade s’y abrite.",
-   "en": ""
+   "en": "A beacon from the Core Tower: an armoured door swings open, and the squad takes cover behind it."
   },
   {
    "fr": "Lame d’atelier",
-   "en": ""
+   "en": "Workshop Blade"
   },
   {
    "fr": "Une lame de récupération, affûtée à la Forge entre deux commandes. Rien de rare : elle ne lâche jamais.",
-   "en": ""
+   "en": "A salvaged blade, sharpened at the Forge between two orders. Nothing rare: it just never lets go."
   },
   {
    "fr": "Plan des galeries",
-   "en": ""
+   "en": "Tunnel Map"
   },
   {
    "fr": "Les creuseurs de la Tour tiennent le plan des galeries à jour : on sait où se mettre à l’abri, et ce qui vient ensuite.",
-   "en": ""
+   "en": "The Tower’s diggers keep the tunnel map up to date: you know where to take cover, and what’s coming next."
   },
   {
    "fr": "Groupe de secours",
-   "en": ""
+   "en": "Rescue Team"
   },
   {
    "fr": "Une équipe du Générateur, prête à descendre au premier signal : plus l’escouade tombe, plus elle frappe fort.",
-   "en": ""
+   "en": "A crew from the Generator, ready to go down at the first signal: the more the squad falls, the harder it hits."
   },
   {
    "fr": "Une charge de forge, posée contre la carapace de l’ennemi : elle ne fait pas mal, elle ouvre.",
-   "en": ""
+   "en": "A forge charge, set against the enemy’s shell: it doesn’t hurt, it opens."
   },
   {
    "fr": "La dernière trouvaille de la Clinique : une ampoule qui remet un Porteur debout. Une seule par combat.",
-   "en": ""
+   "en": "The Clinic’s latest find: a vial that puts a Bearer back on their feet. Only one per fight."
   },
   {
    "fr": "Clé de l’Héritage",
-   "en": ""
+   "en": "Legacy Key"
   },
   {
    "fr": "Tour du Noyau",
-   "en": ""
+   "en": "Core Tower"
   },
   {
    "fr": "Générateur",
-   "en": ""
+   "en": "Generator"
   },
   {
    "fr": "Forge",
-   "en": ""
+   "en": "Forge"
   },
   {
    "fr": "Clinique",
-   "en": ""
+   "en": "Clinic"
   },
   {
    "fr": "Comptoir",
-   "en": ""
+   "en": "Trading Post"
   },
   {
    "fr": "Cercle des quais",
-   "en": ""
+   "en": "Quayside Circle"
   },
   {
    "fr": "Héritage du district",
-   "en": ""
+   "en": "District Legacy"
   },
   {
    "fr": "La dixième vierge de l’ancienne directrice : une clé de nacre qui ouvre toutes les portes, et les tient fermées derrière l’escouade.",
-   "en": ""
+   "en": "The former director’s tenth pristine: a nacre key that opens every door, and keeps them shut behind the squad."
   },
   {
    "fr": "Le cœur du district : il fixe le niveau des autres bâtiments et loge les creuseurs qui percent les Strates.",
-   "en": ""
+   "en": "The heart of the district: it sets the level of the other buildings and houses the diggers who break through the Strata."
   },
   {
    "fr": "Taille en cristaux le minerai rapporté d’en bas et de la mer, même quand tu ne joues pas.",
-   "en": ""
+   "en": "Cuts the ore brought up from below and from the sea into crystals, even when you’re not playing."
   },
   {
    "fr": "Refabrique une carte déjà trouvée : un doublon de plus. Il faut un Porteur au travail.",
-   "en": ""
+   "en": "Recrafts a card you’ve already found: one more duplicate. It needs a Bearer at work."
   },
   {
    "fr": "Soigne l’Usure des Porteurs présents au district, même au travail.",
-   "en": ""
+   "en": "Heals the Strain of Bearers in the district, even while they work."
   },
   {
    "fr": "Les fouilleurs du quartier y revendent chaque jour quelques cartes trouvées dans les Strates. Prix fixes : tu vois toujours ce que tu achètes.",
-   "en": ""
+   "en": "The quarter’s diggers sell a few cards from the Strata here every day. Fixed prices: you always see what you’re buying."
   },
   {
    "fr": "Les directeurs des autres districts y accostent : on s’y fait des amis, on s’y défie en duel et on y échange ses cartes en double.",
-   "en": ""
+   "en": "Directors from other districts dock here: you make friends, challenge each other to duels and trade your spare cards."
   },
   {
    "fr": "Rémanent affaibli",
-   "en": ""
+   "en": "Weakened Remnant"
   },
   {
    "fr": "GARDIEN DE LA CHAMBRE",
-   "en": ""
+   "en": "GUARDIAN OF THE CHAMBER"
   },
   {
    "fr": "Griffe",
-   "en": ""
+   "en": "Claw"
   },
   {
    "fr": "Entaille",
-   "en": ""
+   "en": "Slash"
   },
   {
    "fr": "Rémanent",
-   "en": ""
+   "en": "Remnant"
   },
   {
    "fr": "Vigie de dépôt",
-   "en": ""
+   "en": "Depot Sentry"
   },
   {
    "fr": "ANCIENNE MACHINE",
-   "en": ""
+   "en": "ANCIENT MACHINE"
   },
   {
    "fr": "Rayon",
-   "en": ""
+   "en": "Ray"
   },
   {
    "fr": "Balayage",
-   "en": ""
+   "en": "Sweep"
   },
   {
    "fr": "Confluence",
-   "en": ""
+   "en": "Confluence"
   },
   {
    "fr": "BOSS · EMPREINTES MÊLÉES",
-   "en": ""
+   "en": "BOSS · TANGLED IMPRINTS"
   },
   {
    "fr": "Crue",
-   "en": ""
+   "en": "Flood"
   },
   {
    "fr": "Les empreintes mêlées débordent : la Confluence appelle ce qui rampe dans les piliers.",
-   "en": ""
+   "en": "The tangled imprints spill over: the Confluence calls whatever crawls in the pillars."
   },
   {
    "fr": "Ressac",
-   "en": ""
+   "en": "Backwash"
   },
   {
    "fr": "Refluer",
-   "en": ""
+   "en": "Ebb"
   },
   {
    "fr": "Fracture",
-   "en": ""
+   "en": "Fracture"
   },
   {
    "fr": "Débordement",
-   "en": ""
+   "en": "Overflow"
   },
   {
    "fr": "Brigadier du Serment",
-   "en": ""
+   "en": "Oath Brigadier"
   },
   {
    "fr": "BRIGADES DU SERMENT DE VEYR",
-   "en": ""
+   "en": "BRIGADES OF THE OATH OF VEYR"
   },
   {
    "fr": "Sommation",
-   "en": ""
+   "en": "Summons"
   },
   {
    "fr": "Matraque",
-   "en": ""
+   "en": "Baton"
   },
   {
    "fr": "Charge",
-   "en": ""
+   "en": "Charge"
   },
   {
    "fr": "Rémanent de veilleur",
-   "en": ""
+   "en": "Watcher Remnant"
   },
   {
    "fr": "RÉMANENT",
-   "en": ""
+   "en": "REMNANT"
   },
   {
    "fr": "Griffe d’ombre",
-   "en": ""
+   "en": "Shadow Claw"
   },
   {
    "fr": "Murmure",
-   "en": ""
+   "en": "Whisper"
   },
   {
    "fr": "Hurlement",
-   "en": ""
+   "en": "Howl"
   },
   {
    "fr": "Reflux",
-   "en": ""
+   "en": "Undertow"
   },
   {
    "fr": "Sentinelle de verre",
-   "en": ""
+   "en": "Glass Sentinel"
   },
   {
    "fr": "Réfraction",
-   "en": ""
+   "en": "Refraction"
   },
   {
    "fr": "Rayon brisé",
-   "en": ""
+   "en": "Broken Ray"
   },
   {
    "fr": "Gardien des registres",
-   "en": ""
+   "en": "Keeper of the Registers"
   },
   {
    "fr": "BOSS · LES SALLES CLOSES",
-   "en": ""
+   "en": "BOSS · THE CLOSED HALLS"
   },
   {
    "fr": "Registre ouvert",
-   "en": ""
+   "en": "Open Register"
   },
   {
    "fr": "Le Gardien ouvre son registre et appelle un brigadier à la barre.",
-   "en": ""
+   "en": "The Keeper opens its register and calls a brigadier to the stand."
   },
   {
    "fr": "Rature",
-   "en": ""
+   "en": "Erasure"
   },
   {
    "fr": "Sceau",
-   "en": ""
+   "en": "Seal"
   },
   {
    "fr": "Liste des noms",
-   "en": ""
+   "en": "List of Names"
   },
   {
    "fr": "Effacement",
-   "en": ""
+   "en": "Effacement"
   },
   {
    "fr": "Double",
-   "en": ""
+   "en": "Double"
   },
   {
    "fr": "ÉCHO DÉDOUBLÉ",
-   "en": ""
+   "en": "SPLIT ECHO"
   },
   {
    "fr": "Premier souvenir",
-   "en": ""
+   "en": "First Memory"
   },
   {
    "fr": "Second souvenir",
-   "en": ""
+   "en": "Second Memory"
   },
   {
    "fr": "Contradiction",
-   "en": ""
+   "en": "Contradiction"
   },
   {
    "fr": "Se rassembler",
-   "en": ""
+   "en": "Regroup"
   },
   {
    "fr": "Essaim d’ambre",
-   "en": ""
+   "en": "Amber Swarm"
   },
   {
    "fr": "FAUNE DES STRATES",
-   "en": ""
+   "en": "STRATA FAUNA"
   },
   {
    "fr": "Piqûres",
-   "en": ""
+   "en": "Stings"
   },
   {
    "fr": "Automate graveur",
-   "en": ""
+   "en": "Engraver Automaton"
   },
   {
    "fr": "Burin",
-   "en": ""
+   "en": "Chisel"
   },
   {
    "fr": "Polissage",
-   "en": ""
+   "en": "Polish"
   },
   {
    "fr": "Tisseuse de souvenirs",
-   "en": ""
+   "en": "Weaver of Memories"
   },
   {
    "fr": "BOSS · MÉMOIRES MÊLÉES",
-   "en": ""
+   "en": "BOSS · TANGLED MEMORIES"
   },
   {
    "fr": "Trame rompue",
-   "en": ""
+   "en": "Torn Weft"
   },
   {
    "fr": "La Tisseuse déchire sa trame : un essaim d’ambre s’en échappe.",
-   "en": ""
+   "en": "The Weaver tears her weft: an amber swarm escapes from it."
   },
   {
    "fr": "Fil tranchant",
-   "en": ""
+   "en": "Cutting Thread"
   },
   {
    "fr": "Trame",
-   "en": ""
+   "en": "Weft"
   },
   {
    "fr": "Retisser",
-   "en": ""
+   "en": "Reweave"
   },
   {
    "fr": "Fil",
-   "en": ""
+   "en": "Thread"
   },
   {
    "fr": "Nœud",
-   "en": ""
+   "en": "Knot"
   },
   {
    "fr": "Le Premier Porteur",
-   "en": ""
+   "en": "The First Bearer"
   },
   {
    "fr": "BOSS · CEUX D’AVANT",
-   "en": ""
+   "en": "BOSS · THOSE BEFORE"
   },
   {
    "fr": "Le Premier Porteur rappelle son double : ceux d’avant ne se battent jamais seuls.",
-   "en": ""
+   "en": "The First Bearer calls back its double: those before never fight alone."
   },
   {
    "fr": "Marée ancienne",
-   "en": ""
+   "en": "Ancient Tide"
   },
   {
    "fr": "Dernière mise en garde",
-   "en": ""
+   "en": "Final Warning"
   },
   {
    "fr": "Souvenir de feu",
-   "en": ""
+   "en": "Memory of Fire"
   },
   {
    "fr": "Dernier mot",
-   "en": ""
+   "en": "Last Word"
   },
   {
    "fr": "Mise en garde",
-   "en": ""
+   "en": "Warning"
   },
   {
    "fr": "Se souvenir",
-   "en": ""
+   "en": "Remember"
   },
   {
    "fr": "Rampeur des piliers",
-   "en": ""
+   "en": "Pillar Crawler"
   },
   {
    "fr": "FAUNE DES SEUILS",
-   "en": ""
+   "en": "THRESHOLD FAUNA"
   },
   {
    "fr": "Morsure",
-   "en": ""
+   "en": "Bite"
   },
   {
    "fr": "Constriction",
-   "en": ""
+   "en": "Constriction"
   },
   {
    "fr": "Sauvage",
-   "en": ""
+   "en": "Wildling"
   },
   {
    "fr": "GREFFÉ SANS CLINIQUE",
-   "en": ""
+   "en": "GRAFTED WITHOUT A CLINIC"
   },
   {
    "fr": "Penchant mal lu",
-   "en": ""
+   "en": "Misread Pull"
   },
   {
    "fr": "Accès",
-   "en": ""
+   "en": "Fit"
   },
   {
    "fr": "Ombre qui tremble",
-   "en": ""
+   "en": "Trembling Shadow"
   },
   {
    "fr": "FOUILLEUR SANS LICENCE",
-   "en": ""
+   "en": "UNLICENSED DIGGER"
   },
   {
    "fr": "Coup bas",
-   "en": ""
+   "en": "Low Blow"
   },
   {
    "fr": "Garde augmenté",
-   "en": ""
+   "en": "Augmented Guard"
   },
   {
    "fr": "Salve",
-   "en": ""
+   "en": "Volley"
   },
   {
    "fr": "Frappe ciblée",
-   "en": ""
+   "en": "Targeted Strike"
   },
   {
    "fr": "Garde géné",
-   "en": ""
+   "en": "Spliced Guard"
   },
   {
    "fr": "Sève",
-   "en": ""
+   "en": "Sap"
   },
   {
    "fr": "Garde résonant",
-   "en": ""
+   "en": "Resonant Guard"
   },
   {
    "fr": "Onde",
-   "en": ""
+   "en": "Wave"
   },
   {
    "fr": "Réverbération",
-   "en": ""
+   "en": "Reverberation"
   },
   {
    "fr": "Marée-Basse",
-   "en": ""
+   "en": "Low-Tide"
   },
   {
    "fr": "RÔDEUR DES SEUILS",
-   "en": ""
+   "en": "PROWLER OF THE THRESHOLDS"
   },
   {
    "fr": "Étreinte",
-   "en": ""
+   "en": "Embrace"
   },
   {
    "fr": "Sentinelle orpheline",
-   "en": ""
+   "en": "Orphaned Sentinel"
   },
   {
    "fr": "RÔDEUR DES SALLES CLOSES",
-   "en": ""
+   "en": "PROWLER OF THE CLOSED HALLS"
   },
   {
    "fr": "Éclat perdu",
-   "en": ""
+   "en": "Lost Shard"
   },
   {
    "fr": "Seuil de verre",
-   "en": ""
+   "en": "Glass Threshold"
   },
   {
    "fr": "Le Liseur",
-   "en": ""
+   "en": "The Recitant"
   },
   {
    "fr": "RÔDEUR DES REGISTRES",
-   "en": ""
+   "en": "PROWLER OF THE REGISTERS"
   },
   {
    "fr": "Nom prononcé",
-   "en": ""
+   "en": "Name Spoken"
   },
   {
    "fr": "Lecture à voix haute",
-   "en": ""
+   "en": "Reading Aloud"
   },
   {
    "fr": "Page tournée",
-   "en": ""
+   "en": "Page Turned"
   },
   {
    "fr": "Relire",
-   "en": ""
+   "en": "Reread"
   },
   {
    "fr": "Le Plongeur",
-   "en": ""
+   "en": "The Diver"
   },
   {
    "fr": "RÔDEUR DU FOND",
-   "en": ""
+   "en": "PROWLER OF THE DEEP"
   },
   {
    "fr": "Poids mort",
-   "en": ""
+   "en": "Dead Weight"
   },
   {
    "fr": "Pression",
-   "en": ""
+   "en": "Pressure"
   },
   {
    "fr": "Arrimeur des quais",
-   "en": ""
+   "en": "Quay Lasher"
   },
   {
    "fr": "GARDE DE LA FLÈCHE · QUAIS DU BAS",
-   "en": ""
+   "en": "SPIRE GUARD · LOWER QUAYS"
   },
   {
    "fr": "Treuilliste",
-   "en": ""
+   "en": "Winchman"
   },
   {
    "fr": "Gaffeur des Hauts",
-   "en": ""
+   "en": "Heights Boathook"
   },
   {
    "fr": "Débardeuse à carapace",
-   "en": ""
+   "en": "Shell-Backed Stevedore"
   },
   {
    "fr": "Brigadier de la Flèche",
-   "en": ""
+   "en": "Spire Brigadier"
   },
   {
    "fr": "Vigie des fanions",
-   "en": ""
+   "en": "Pennant Lookout"
   },
   {
    "fr": "Canonnier des nuages",
-   "en": ""
+   "en": "Cloud Gunner"
   },
   {
    "fr": "GARDE DE LA FLÈCHE · QUAIS DES NUAGES",
-   "en": ""
+   "en": "SPIRE GUARD · CLOUD QUAYS"
   },
   {
    "fr": "Mécanicienne d’amarrage",
-   "en": ""
+   "en": "Mooring Mechanic"
   },
   {
    "fr": "Sentinelle aux ailes de verre",
-   "en": ""
+   "en": "Glass-Winged Sentinel"
   },
   {
    "fr": "Gardienne des cordages",
-   "en": ""
+   "en": "Keeper of the Ropes"
   },
   {
    "fr": "Écouteuse des vents",
-   "en": ""
+   "en": "Wind Listener"
   },
   {
    "fr": "Brigadière du Serment",
-   "en": ""
+   "en": "Oath Brigadier"
   },
   {
    "fr": "Lancier de la Garde blanche",
-   "en": ""
+   "en": "White Guard Lancer"
   },
   {
    "fr": "GARDE DE LA FLÈCHE · QUAIS DES ÎLES",
-   "en": ""
+   "en": "SPIRE GUARD · ISLAND QUAYS"
   },
   {
    "fr": "Duelliste de la Garde blanche",
-   "en": ""
+   "en": "White Guard Duellist"
   },
   {
    "fr": "Garde de la Maison Orsève",
-   "en": ""
+   "en": "House Orsève Guard"
   },
   {
    "fr": "Intendante des Hauts",
-   "en": ""
+   "en": "Steward of the Heights"
   },
   {
    "fr": "Héraut de la Clause",
-   "en": ""
+   "en": "Herald of the Clause"
   },
   {
    "fr": "Chantre des Sièges",
-   "en": ""
+   "en": "Cantor of the Seats"
   },
   {
    "fr": "Contremaître des quais",
-   "en": ""
+   "en": "Quay Foreman"
   },
   {
    "fr": "CHEF DE QUAI · QUAIS GRAVÉS 20 ET 40",
-   "en": ""
+   "en": "QUAY CHIEF · ENGRAVED QUAYS 20 AND 40"
   },
   {
    "fr": "CHEF DE QUAI · BRIGADES DU SERMENT",
-   "en": ""
+   "en": "QUAY CHIEF · BRIGADES OF THE OATH"
   },
   {
    "fr": "Commandeur de la Garde blanche",
-   "en": ""
+   "en": "Commander of the White Guard"
   },
   {
    "fr": "CHEF DE QUAI · QUAIS GRAVÉS 80 ET 90",
-   "en": ""
+   "en": "QUAY CHIEF · ENGRAVED QUAYS 80 AND 90"
   },
   {
    "fr": "Champion des Hauts",
-   "en": ""
+   "en": "Champion of the Heights"
   },
   {
    "fr": "CHEF DE QUAI · LE DERNIER QUAI",
-   "en": ""
+   "en": "QUAY CHIEF · THE LAST QUAY"
   },
   {
    "fr": "Chaque carte qui le frappe perd {0} dégâts, un peu plus quand il est plus fort (plus bas dans les Strates). Perçant passe outre. Sa Fêlure ne retire qu’un quart de son intention.",
-   "en": ""
+   "en": "Every card that hits it loses {0} damage, a little more when it’s stronger (deeper in the Strata). Piercing ignores this. Its Flaw only takes a quarter off its intent."
   },
   {
    "fr": "Régénération",
-   "en": ""
+   "en": "Regeneration"
   },
   {
    "fr": "Regagne {0} % de ses PV max à la fin de son tour.",
-   "en": ""
+   "en": "Regains {0} % of its max HP at the end of its turn."
   },
   {
    "fr": "Épines",
-   "en": ""
+   "en": "Thorns"
   },
   {
    "fr": "Renvoie {0} % des dégâts au Porteur qui frappe (sans le mettre à terre).",
-   "en": ""
+   "en": "Reflects {0} % of the damage back to the Bearer who strikes (without downing them)."
   },
   {
    "fr": "Évanescent",
-   "en": ""
+   "en": "Evanescent"
   },
   {
    "fr": "Hors Résonance, tes coups ne lui font que {0} % de leurs dégâts : fais des suites. Sa Fêlure reste cachée.",
-   "en": ""
+   "en": "Outside a Resonance, your blows deal only {0} % of their damage to it: build chains. Its Flaw stays hidden."
   },
   {
    "fr": "Essaim",
-   "en": ""
+   "en": "Swarm"
   },
   {
    "fr": "Quand il tombe, un rejeton plus petit surgit (une fois).",
-   "en": ""
+   "en": "When it falls, a smaller spawn bursts out (once)."
   },
   {
    "fr": "Vengeur",
-   "en": ""
+   "en": "Avenger"
   },
   {
    "fr": "Quand un allié tombe, sa prochaine attaque est doublée.",
-   "en": ""
+   "en": "When an ally falls, its next attack is doubled."
   },
   {
    "fr": "Sous la moitié de ses PV, ses attaques font +30 %.",
-   "en": ""
+   "en": "Below half its HP, its attacks deal +30 %."
   },
   {
    "fr": "À la fin de ta chaîne, il prend la lignée de la dernière carte qui l’a frappé : ses forces et ses faiblesses changent avec elle.",
-   "en": ""
+   "en": "At the end of your chain, it takes the lineage of the last card that hit it: its strengths and weaknesses change with it."
   },
   {
    "fr": "Aspiration",
-   "en": ""
+   "en": "Siphoning"
   },
   {
    "fr": "Si son coup passe ton bouclier, il aspire {0} Flux à l’escouade. Bloque-le, ou dépense ton Flux avant.",
-   "en": ""
+   "en": "If its blow gets past your shield, it drains {0} Flux from the squad. Block it, or spend your Flux first."
   },
   {
    "fr": "Salle inondée",
-   "en": ""
+   "en": "Flooded room"
   },
   {
    "fr": "L’eau porte les Génés : leurs cartes font +20 %.",
-   "en": ""
+   "en": "The water carries the Spliced: their cards deal +20 %."
   },
   {
    "fr": "Câbles à nu",
-   "en": ""
+   "en": "Bare cables"
   },
   {
    "fr": "Le courant court partout : les cartes des Augmentés font +20 %.",
-   "en": ""
+   "en": "Current runs everywhere: Augmented cards deal +20 %."
   },
   {
    "fr": "Pierre qui chante",
-   "en": ""
+   "en": "Singing stone"
   },
   {
    "fr": "La roche résonne : les cartes des Résonants font +20 %.",
-   "en": ""
+   "en": "The rock resonates: Resonant cards deal +20 %."
   },
   {
    "fr": "Écho ancien",
-   "en": ""
+   "en": "Ancient echo"
   },
   {
    "fr": "Une suite de 4 résonne comme une suite de 5.",
-   "en": ""
+   "en": "A chain of 4 resonates like a chain of 5."
   },
   {
    "fr": "Source tiède",
-   "en": ""
+   "en": "Warm spring"
   },
   {
    "fr": "Les soins de l’escouade font +30 %.",
-   "en": ""
+   "en": "The squad’s heals are +30 %."
   },
   {
    "fr": "Éboulis",
-   "en": ""
+   "en": "Rockfall"
   },
   {
    "fr": "À chaque tour ennemi, des pierres tombent sur tout le monde (escouade et ennemis), sans jamais mettre personne à terre.",
-   "en": ""
+   "en": "Every enemy turn, stones fall on everyone (squad and enemies), without ever downing anyone."
   },
   {
    "fr": "Brouillard",
-   "en": ""
+   "en": "Fog"
   },
   {
    "fr": "Tout le combat, on voit ce que prépare l’ennemi, mais jamais combien ni sur qui. Sa Fêlure reste cachée.",
-   "en": ""
+   "en": "For the whole fight, you see what the enemy is preparing, but never how much or on whom. Its Flaw stays hidden."
   },
   {
    "fr": "Les Seuils",
-   "en": ""
+   "en": "The Thresholds"
   },
   {
    "fr": "Les Salles closes",
-   "en": ""
+   "en": "The Closed Halls"
   },
   {
    "fr": "Les Registres",
-   "en": ""
+   "en": "The Registers"
   },
   {
    "fr": "Le Fond",
-   "en": ""
+   "en": "The Deep"
   },
   {
    "fr": "Porteur inconnu : ",
-   "en": ""
+   "en": "Unknown Bearer: "
   },
   {
    "fr": "Ennemi inconnu : ",
-   "en": ""
+   "en": "Unknown enemy: "
   },
   {
    "fr": "Carte inconnue : ",
-   "en": ""
+   "en": "Unknown card: "
   }
  ]
 }

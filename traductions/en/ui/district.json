@@ -3,2699 +3,2719 @@
  "entrees": [
   {
    "fr": "Le bateau du passeur reste amarré sous les pilotis du Port, devant le sas de la digue : tant que le gardien de la Strate −1 tient le puits, personne ne laisse le district sans défense pour prendre la mer.",
-   "en": ""
+   "en": "The ferryman’s boat stays moored under the Port’s stilts, by the Dike airlock: as long as the guardian of Stratum −1 holds the shaft, no one leaves the district undefended to put out to sea."
   },
   {
    "fr": "Le passage sûr : des équipages partiront d’ici vers les ruines au large et les cuvettes voisines.",
-   "en": ""
+   "en": "The safe passage: crews will sail from here to the ruins offshore and the neighbouring Basins."
   },
   {
    "fr": "Ses volets sont cloués depuis que le dernier marchand a quitté le district, et la balance a rouillé sur le comptoir. Les fouilleurs remontent des Strates les poches pleines, mais personne n’est là pour leur racheter quoi que ce soit.",
-   "en": ""
+   "en": "Its shutters have been nailed shut since the last merchant left the district, and the scales have rusted on the counter. Diggers come up from the Strata with full pockets, but no one is here to buy anything from them."
   },
   {
    "fr": "Les bancs de l’estrade attendent sous la bâche. Les directeurs des autres districts ne traitent pas avec un district qui n’a pas encore tenu son puits : ils accosteront quand le gardien de la Strate −{0} sera tombé.",
-   "en": ""
+   "en": "The benches on the stand wait under the tarp. Directors of other districts don’t deal with a district that hasn’t held its shaft yet: they’ll dock once the guardian of Stratum −{0} has fallen."
   },
   {
    "fr": "Port : cuvettes voisines, {0} jeton{1} de pillage sur {2}",
-   "en": ""
+   "en": "Port: neighbouring Basins, {0} raid token{1} of {2}"
   },
   {
    "fr": "Port : missions en mer",
-   "en": ""
+   "en": "Port: missions at sea"
   },
   {
    "fr": "Jetons de pillage au complet : {0}",
-   "en": ""
+   "en": "Raid tokens full: {0}"
   },
   {
    "fr": "{0}, pas encore ouvert",
-   "en": ""
+   "en": "{0}, not open yet"
   },
   {
    "fr": ", niveau {0}",
-   "en": ""
+   "en": ", level {0}"
   },
   {
    "fr": ", à construire",
-   "en": ""
+   "en": ", to be built"
   },
   {
    "fr": ", {0} au poste",
-   "en": ""
+   "en": ", {0} on duty"
   },
   {
    "fr": "À construire",
-   "en": ""
+   "en": "To build"
   },
   {
    "fr": "Forge : la carte est prête",
-   "en": ""
+   "en": "Forge: the card is ready"
   },
   {
    "fr": "{0} : l'objectif se fait ici",
-   "en": ""
+   "en": "{0}: the objective is done here"
   },
   {
    "fr": "{0} : amélioration en cours",
-   "en": ""
+   "en": "{0}: upgrade in progress"
   },
   {
    "fr": "Forge : fabrication en cours",
-   "en": ""
+   "en": "Forge: crafting in progress"
   },
   {
    "fr": "{0} : personne au poste",
-   "en": ""
+   "en": "{0}: nobody on duty"
   },
   {
    "fr": "Comptoir : {0} carte{1} en vente",
-   "en": ""
+   "en": "Trading Post: {0} card{1} for sale"
   },
   {
    "fr": "Cercle des quais : {0} réponse{1} attendue{2}",
-   "en": ""
+   "en": "Quayside Circle: {0} pending response{1}{2|}"
   },
   {
    "fr": "Habitations : {0} familles sur {1} te suivent, palier {2}",
-   "en": ""
+   "en": "Homes: {0} of {1} families follow you, tier {2}"
   },
   {
    "fr": "Familles · {0}",
-   "en": ""
+   "en": "Families · {0}"
   },
   {
    "fr": "L’écluse : les Basses{0}",
-   "en": ""
+   "en": "The Sluice: the Lows{0}"
   },
   {
    "fr": "marée montante",
-   "en": ""
+   "en": "rising tide"
   },
   {
    "fr": "marée descendante",
-   "en": ""
+   "en": "falling tide"
   },
   {
    "fr": "Écluse",
-   "en": ""
+   "en": "Sluice"
   },
   {
    "fr": "La mer a laissé {0} sur la grève",
-   "en": ""
+   "en": "The sea has left {0} on the shore"
   },
   {
    "fr": "un dépôt",
-   "en": ""
+   "en": "a deposit"
   },
   {
    "fr": "Une famille attend dans les Basses",
-   "en": ""
+   "en": "A family is waiting in the Lows"
   },
   {
    "fr": "Un Porteur est dans les Basses",
-   "en": ""
+   "en": "A Bearer is in the Lows"
   },
   {
    "fr": "Objectif",
-   "en": ""
+   "en": "Objective"
   },
   {
    "fr": "Objectif {0} sur {1} : {2}. Y aller",
-   "en": ""
+   "en": "Objective {0} of {1}: {2}. Go"
   },
   {
    "fr": "Lire la consigne",
-   "en": ""
+   "en": "Read the brief"
   },
   {
    "fr": "OBJECTIF {0} / {1}",
-   "en": ""
+   "en": "OBJECTIVE {0} / {1}"
   },
   {
    "fr": "Récupérer la récompense",
-   "en": ""
+   "en": "Claim the reward"
   },
   {
    "fr": "Y aller",
-   "en": ""
+   "en": "Go"
   },
   {
    "fr": "Objectif du jour",
-   "en": ""
+   "en": "Daily objective"
   },
   {
    "fr": "Objectif du jour : {0}, {1} sur {2}. Y aller",
-   "en": ""
+   "en": "Daily objective: {0}, {1} of {2}. Go"
   },
   {
    "fr": "Voir le butin et le marché",
-   "en": ""
+   "en": "See the loot and the market"
   },
   {
    "fr": "{0} objectifs en réserve : ils s’accumulent jusqu’à 3 si tu ne joues pas",
-   "en": ""
+   "en": "{0} objectives banked: they stack up to 3 while you’re away"
   },
   {
    "fr": "{0} en réserve",
-   "en": ""
+   "en": "{0} banked"
   },
   {
    "fr": "OBJECTIF DU JOUR{0}",
-   "en": ""
+   "en": "DAILY OBJECTIVE{0}"
   },
   {
    "fr": " · {0} EN RÉSERVE",
-   "en": ""
+   "en": " · {0} BANKED"
   },
   {
    "fr": "OBJECTIF DU JOUR",
-   "en": ""
+   "en": "DAILY OBJECTIVE"
   },
   {
    "fr": "Récupérer : une carte ou 2 Éclats",
-   "en": ""
+   "en": "Claim: a card or 2 Shards"
   },
   {
    "fr": "Récompense :",
-   "en": ""
+   "en": "Reward:"
   },
   {
    "fr": "une carte",
-   "en": ""
+   "en": "a card"
   },
   {
    "fr": "ou",
-   "en": ""
+   "en": "or"
   },
   {
    "fr": "2 Éclats",
-   "en": ""
+   "en": "2 Shards"
   },
   {
    "fr": ", au choix",
-   "en": ""
+   "en": ", your choice"
   },
   {
    "fr": "Tous faits : le prochain arrive demain.",
-   "en": ""
+   "en": "All done: the next one comes tomorrow."
   },
   {
    "fr": "Au marché",
-   "en": ""
+   "en": "To the market"
   },
   {
    "fr": "Butin de la semaine : {0} sur {1} points. Comment ça marche",
-   "en": ""
+   "en": "Weekly loot: {0} of {1} points. How it works"
   },
   {
    "fr": "BUTIN",
-   "en": ""
+   "en": "LOOT"
   },
   {
    "fr": "BUTIN DE LA SEMAINE",
-   "en": ""
+   "en": "WEEKLY LOOT"
   },
   {
    "fr": "S’ouvre",
-   "en": ""
+   "en": "Opens"
   },
   {
    "fr": "lundi, dans ",
-   "en": ""
+   "en": "Monday, in "
   },
   {
    "fr": "Objectif {0} sur {1} : {2}",
-   "en": ""
+   "en": "Objective {0} of {1}: {2}"
   },
   {
    "fr": "Objectif du jour : {0}, {1} sur {2}",
-   "en": ""
+   "en": "Daily objective: {0}, {1} of {2}"
   },
   {
    "fr": "Objectifs du jour faits, butin de la semaine",
-   "en": ""
+   "en": "Daily objectives done, weekly loot"
   },
   {
    "fr": " : récompense prête",
-   "en": ""
+   "en": ": reward ready"
   },
   {
    "fr": "Expédition en cours, Strate −{0}",
-   "en": ""
+   "en": "Expedition under way, Stratum −{0}"
   },
   {
    "fr": "Le Butin de la semaine est prêt",
-   "en": ""
+   "en": "The weekly loot is ready"
   },
   {
    "fr": "Ravitaillement du jour{0}",
-   "en": ""
+   "en": "Today’s supplies{0}"
   },
   {
    "fr": ", {0} colis",
-   "en": ""
+   "en": ", {0} parcels"
   },
   {
    "fr": "Objectif et ravitaillement",
-   "en": ""
+   "en": "Objective and supplies"
   },
   {
    "fr": "La chambre scellée",
-   "en": ""
+   "en": "The sealed chamber"
   },
   {
    "fr": "Expédition · Strate −{0}",
-   "en": ""
+   "en": "Expedition · Stratum −{0}"
   },
   {
    "fr": "Ta descente t’attend là où tu l’as laissée : reprendre",
-   "en": ""
+   "en": "Your descent is waiting where you left it: resume"
   },
   {
    "fr": "Le combat t’attend : reprendre",
-   "en": ""
+   "en": "The fight is waiting: resume"
   },
   {
    "fr": "La porte scellée",
-   "en": ""
+   "en": "The sealed door"
   },
   {
    "fr": "Sous la Tour du Noyau, trois personnes t’attendent",
-   "en": ""
+   "en": "Beneath the Core Tower, three people are waiting for you"
   },
   {
    "fr": "Palier {0} sur {1} atteint : ouvre-le",
-   "en": ""
+   "en": "Tier {0} of {1} reached: open it"
   },
   {
    "fr": " · {0} colis",
-   "en": ""
+   "en": " · {0} parcels"
   },
   {
    "fr": "Touche pour l’ouvrir",
-   "en": ""
+   "en": "Tap to open"
   },
   {
    "fr": "· cristaux et un doublon · {0}",
-   "en": ""
+   "en": "· crystals and a duplicate · {0}"
   },
   {
    "fr": "celui-ci contient une carte au choix",
-   "en": ""
+   "en": "this one holds a card of your choice"
   },
   {
    "fr": "carte au choix dans {0} colis",
-   "en": ""
+   "en": "card of your choice in {0} parcels"
   },
   {
    "fr": "tout taillé en {0} h",
-   "en": ""
+   "en": "all cut in {0} h"
   },
   {
    "fr": "{0} Usure soignée/h",
-   "en": ""
+   "en": "{0} Strain healed/h"
   },
   {
    "fr": "vitesse ×{0}",
-   "en": ""
+   "en": "speed ×{0}"
   },
   {
    "fr": "Lignée idéale pour ce bâtiment",
-   "en": ""
+   "en": "Ideal lineage for this building"
   },
   {
    "fr": "Autre lignée",
-   "en": ""
+   "en": "Other lineage"
   },
   {
    "fr": "Au travail : {0}",
-   "en": ""
+   "en": "At work: {0}"
   },
   {
    "fr": "Poster {0} : {1}{2}",
-   "en": ""
+   "en": "Assign {0}: {1}{2}"
   },
   {
    "fr": ", quitte {0}",
-   "en": ""
+   "en": ", leaves {0}"
   },
   {
    "fr": "Le district change d’âge",
-   "en": ""
+   "en": "The district enters a new age"
   },
   {
    "fr": "nouvelle vue d’ensemble",
-   "en": ""
+   "en": "new overview"
   },
   {
    "fr": "Nouvelle apparence",
-   "en": ""
+   "en": "New look"
   },
   {
    "fr": "le bâtiment se transforme",
-   "en": ""
+   "en": "the building transforms"
   },
   {
    "fr": "Au niveau {0}",
-   "en": ""
+   "en": "At level {0}"
   },
   {
    "fr": "immédiat",
-   "en": ""
+   "en": "instant"
   },
   {
    "fr": "{0} : {1} sur {2}",
-   "en": ""
+   "en": "{0}: {1} of {2}"
   },
   {
    "fr": "Au niveau 4, il recueillera des Éclats dans le minerai qu’il taille.",
-   "en": ""
+   "en": "At level 4, it will gather Shards from the ore it cuts."
   },
   {
    "fr": "En taillant, il recueille un Éclat tous les {0} cristaux :",
-   "en": ""
+   "en": "While cutting, it gathers a Shard every {0} crystals:"
   },
   {
    "fr": "aujourd’hui.",
-   "en": ""
+   "en": "today."
   },
   {
    "fr": "Tout taillé dans ",
-   "en": ""
+   "en": "All cut in "
   },
   {
    "fr": " · continue même jeu fermé.",
-   "en": ""
+   "en": " · keeps going while the game is closed."
   },
   {
    "fr": "Rien à tailler : descends ou envoie une barque, il taillera tout ce que tu rapportes.",
-   "en": ""
+   "en": "Nothing to cut: go down or send a boat, and it will cut everything you bring back."
   },
   {
    "fr": "Minerai en taille",
-   "en": ""
+   "en": "Ore being cut"
   },
   {
    "fr": "Chaque heure, il taille {0} de ce qui attend, au moins {1} : plus il monte, plus il va vite.",
-   "en": ""
+   "en": "Every hour it cuts {0} of what’s waiting, at least {1}: the higher it goes, the faster it works."
   },
   {
    "fr": "1 cristal pour {0} points",
-   "en": ""
+   "en": "1 crystal per {0} points"
   },
   {
    "fr": "1 cristal par point",
-   "en": ""
+   "en": "1 crystal per point"
   },
   {
    "fr": "Soins intensifs",
-   "en": ""
+   "en": "Intensive care"
   },
   {
    "fr": "Efface l’Usure tout de suite :",
-   "en": ""
+   "en": "Wipes Strain away at once:"
   },
   {
    "fr": "Efface l’Usure tout de suite.",
-   "en": ""
+   "en": "Wipes Strain away at once."
   },
   {
    "fr": "La première fois, c’est offert",
-   "en": ""
+   "en": "The first time is on the house"
   },
   {
    "fr": "; ensuite {0}.",
-   "en": ""
+   "en": "; after that, {0}."
   },
   {
    "fr": "Personne n’a d’Usure en ce moment.",
-   "en": ""
+   "en": "Nobody has any Strain right now."
   },
   {
    "fr": "Soigner {0} : −{1} Usure {2}",
-   "en": ""
+   "en": "Heal {0}: −{1} Strain {2}"
   },
   {
    "fr": "pour {0} cristaux",
-   "en": ""
+   "en": "for {0} crystals"
   },
   {
    "fr": "−{0} Usure",
-   "en": ""
+   "en": "−{0} Strain"
   },
   {
    "fr": "Offert",
-   "en": ""
+   "en": "Free"
   },
   {
    "fr": "Entraînement",
-   "en": ""
+   "en": "Training"
   },
   {
    "fr": "{0}/{1} places · niv. {2} max{3}",
-   "en": ""
+   "en": "{0}/{1} slots · lvl {2} max{3}"
   },
   {
    "fr": "1 séance = 1 niveau · jusqu’au niv. {0}{1}",
-   "en": ""
+   "en": "1 session = 1 level · up to lvl {0}{1}"
   },
   {
    "fr": " (ton meilleur titulaire)",
-   "en": ""
+   "en": " (your best regular)"
   },
   {
    "fr": "Niv. {0}",
-   "en": ""
+   "en": "Lvl {0}"
   },
   {
    "fr": "Arrêter la séance {0}{1}",
-   "en": ""
+   "en": "Stop the session {0}{1}"
   },
   {
    "fr": " : {0} cristaux rendus",
-   "en": ""
+   "en": ": {0} crystals refunded"
   },
   {
    "fr": "Arrêter{0}",
-   "en": ""
+   "en": "Stop{0}"
   },
   {
    "fr": "Séance terminée",
-   "en": ""
+   "en": "Session over"
   },
   {
    "fr": "Relancer {0} vers le niveau {1} : {2} cristaux",
-   "en": ""
+   "en": "Train {0} again toward level {1}: {2} crystals"
   },
   {
    "fr": "Relancer{0}",
-   "en": ""
+   "en": "Go again{0}"
   },
   {
    "fr": "Salle libre",
-   "en": ""
+   "en": "Room free"
   },
   {
    "fr": "Choisis un Porteur",
-   "en": ""
+   "en": "Pick a Bearer"
   },
   {
    "fr": "{0}les cristaux se paient au lancement",
-   "en": ""
+   "en": "{0}crystals are paid when you start"
   },
   {
    "fr": "{0} places · ",
-   "en": ""
+   "en": "{0} slots · "
   },
   {
    "fr": "Une place libre",
-   "en": ""
+   "en": "One free slot"
   },
   {
    "fr": "Un autre Porteur",
-   "en": ""
+   "en": "Another Bearer"
   },
   {
    "fr": "Entraîner {0}, niveau {1} vers {2}, {3}, {4} cristaux{5}",
-   "en": ""
+   "en": "Train {0}, level {1} to {2}, {3}, {4} crystals{5}"
   },
   {
    "fr": "quitte son poste au district",
-   "en": ""
+   "en": "leaves their post in the district"
   },
   {
    "fr": "{0} Porteur{1} au niveau {2} : {3}.",
-   "en": ""
+   "en": "{0} Bearer{1} at level {2}: {3}."
   },
   {
    "fr": "la Tour ne fait pas dépasser ton meilleur Porteur d’escouade, il monte en combattant",
-   "en": ""
+   "en": "the Tower won’t take anyone past your best squad Bearer; they level up by fighting"
   },
   {
    "fr": "monte la Tour pour aller plus loin",
-   "en": ""
+   "en": "upgrade the Tower to go further"
   },
   {
    "fr": "le reste se gagne dans les Strates",
-   "en": ""
+   "en": "the rest is earned in the Strata"
   },
   {
    "fr": "Une place de plus au niveau {0} de la Tour.",
-   "en": ""
+   "en": "One more slot at Tower level {0}."
   },
   {
    "fr": "échanges par jour",
-   "en": ""
+   "en": "trades per day"
   },
   {
    "fr": "cartes en vitrine",
-   "en": ""
+   "en": "cards on display"
   },
   {
    "fr": "Échanges jusqu’à l’{0}{1} · jamais la nacre.",
-   "en": ""
+   "en": "Trades up to {0}{1} · never nacre."
   },
   {
    "fr": " (l’or au niveau {0})",
-   "en": ""
+   "en": " (gold at level {0})"
   },
   {
    "fr": "Une fois rouvert",
-   "en": ""
+   "en": "Once reopened"
   },
   {
    "fr": "{0} cartes",
-   "en": ""
+   "en": "{0} cards"
   },
   {
    "fr": "en vente chaque jour (fer et cuivre), jusqu’à {0} avec les niveaux. L’or et la nacre ne se vendent pas.",
-   "en": ""
+   "en": "for sale each day (iron and copper), up to {0} as it levels. Gold and nacre are never sold."
   },
   {
    "fr": "En vente aujourd’hui",
-   "en": ""
+   "en": "On sale today"
   },
   {
    "fr": "Reste appuyé sur une carte pour lire son effet.",
-   "en": ""
+   "en": "Press and hold a card to read its effect."
   },
   {
    "fr": "Doublon · niv. {0}",
-   "en": ""
+   "en": "Duplicate · lvl {0}"
   },
   {
    "fr": "Achetée",
-   "en": ""
+   "en": "Bought"
   },
   {
    "fr": "Acheter {0} ({1})",
-   "en": ""
+   "en": "Buy {0} ({1})"
   },
   {
    "fr": "Étals déjà renouvelés aujourd’hui : nouvel arrivage demain.",
-   "en": ""
+   "en": "Stalls already restocked today: fresh stock tomorrow."
   },
   {
    "fr": "Une fois par jour, les fouilleurs ressortent d’autres cartes du même métal à la place de {0}.",
-   "en": ""
+   "en": "Once a day, the diggers bring out other cards of the same metal in place of {0}."
   },
   {
    "fr": "celles encore en vente ({0})",
-   "en": ""
+   "en": "the ones still for sale ({0})"
   },
   {
    "fr": "Renouveler les étals pour {0} cristaux",
-   "en": ""
+   "en": "Restock the stalls for {0} crystals"
   },
   {
    "fr": "Renouveler les étals {0}",
-   "en": ""
+   "en": "Restock the stalls {0}"
   },
   {
    "fr": "Les fouilleurs revendent aussi les Éclats qu’ils remontent : encore",
-   "en": ""
+   "en": "The diggers also sell the Shards they bring up: still"
   },
   {
    "fr": "{0} sur {1}",
-   "en": ""
+   "en": "{0} of {1}"
   },
   {
    "fr": "Acheter un Éclat pour {0} cristaux",
-   "en": ""
+   "en": "Buy a Shard for {0} crystals"
   },
   {
    "fr": "Acheter un Éclat {0}",
-   "en": ""
+   "en": "Buy a Shard {0}"
   },
   {
    "fr": "Le prix monte avec les Éclats du jour : {0} cristaux.",
-   "en": ""
+   "en": "The price rises with each Shard bought today: {0} crystals."
   },
   {
    "fr": "Plus d’Éclats à vendre aujourd’hui ({0} par jour) : nouvel arrivage demain.",
-   "en": ""
+   "en": "No Shards left for sale today ({0} a day): fresh stock tomorrow."
   },
   {
    "fr": "Un doublon fait monter une carte que tu as déjà. L’or et la nacre ne se vendent pas : ils se trouvent dans les Strates.",
-   "en": ""
+   "en": "A duplicate levels up a card you already own. Gold and nacre are never sold: they are found in the Strata."
   },
   {
    "fr": "Pas encore ouvert",
-   "en": ""
+   "en": "Not open yet"
   },
   {
    "fr": "L’établi",
-   "en": ""
+   "en": "The workbench"
   },
   {
    "fr": "Prête",
-   "en": ""
+   "en": "Ready"
   },
   {
    "fr": "Sur l’établi",
-   "en": ""
+   "en": "On the workbench"
   },
   {
    "fr": "Elle rejoint tes cartes : un doublon de plus.",
-   "en": ""
+   "en": "It joins your cards: one more duplicate."
   },
   {
    "fr": "Prête dans ",
-   "en": ""
+   "en": "Ready in "
   },
   {
    "fr": "L’établi est libre",
-   "en": ""
+   "en": "The workbench is free"
   },
   {
    "fr": "Personne à la Forge",
-   "en": ""
+   "en": "Nobody at the Forge"
   },
   {
    "fr": "Choisis une carte : elle revient en doublon, pour la faire monter.",
-   "en": ""
+   "en": "Pick a card: it comes back as a duplicate, to level it up."
   },
   {
    "fr": "Poste d’abord un Porteur pour refabriquer une carte.",
-   "en": ""
+   "en": "Assign a Bearer first to recraft a card."
   },
   {
    "fr": "Cartes à refabriquer",
-   "en": ""
+   "en": "Cards to recraft"
   },
   {
    "fr": "Proches de monter",
-   "en": ""
+   "en": "Close to levelling up"
   },
   {
    "fr": "Toutes tes cartes sont au niveau maximum.",
-   "en": ""
+   "en": "All your cards are at max level."
   },
   {
    "fr": "Niveau max",
-   "en": ""
+   "en": "Max level"
   },
   {
    "fr": "Peut monter",
-   "en": ""
+   "en": "Can level up"
   },
   {
    "fr": "Refabriquer {0}{1}",
-   "en": ""
+   "en": "Recraft {0}{1}"
   },
   {
    "fr": ", niveau maximum",
-   "en": ""
+   "en": ", max level"
   },
   {
    "fr": ", {0} doublons sur {1}",
-   "en": ""
+   "en": ", {0} of {1} duplicates"
   },
   {
    "fr": "Voir les {0} cartes",
-   "en": ""
+   "en": "See all {0} cards"
   },
   {
    "fr": "Niveau {0}",
-   "en": ""
+   "en": "Level {0}"
   },
   {
    "fr": "Fermé",
-   "en": ""
+   "en": "Closed"
   },
   {
    "fr": "Idéal : {0}",
-   "en": ""
+   "en": "Ideal: {0}"
   },
   {
    "fr": "Nouvelle apparence au niveau {0}.",
-   "en": ""
+   "en": "New look at level {0}."
   },
   {
    "fr": "pour tailler ce qui attend",
-   "en": ""
+   "en": "to cut what’s waiting"
   },
   {
    "fr": "Strate ouverte",
-   "en": ""
+   "en": "Stratum opened"
   },
   {
    "fr": "niveau maximum des autres bâtiments",
-   "en": ""
+   "en": "max level of the other buildings"
   },
   {
    "fr": "Au travail",
-   "en": ""
+   "en": "At work"
   },
   {
    "fr": "fabrique {0} fois plus vite",
-   "en": ""
+   "en": "crafts {0} times faster"
   },
   {
    "fr": "+{0} Usure soignée/h",
-   "en": ""
+   "en": "+{0} Strain healed/h"
   },
   {
    "fr": "tout taillé en {0} au lieu de {1}",
-   "en": ""
+   "en": "all cut in {0} instead of {1}"
   },
   {
    "fr": "Libérer {0} ({1})",
-   "en": ""
+   "en": "Release {0} ({1})"
   },
   {
    "fr": "Libérer",
-   "en": ""
+   "en": "Release"
   },
   {
    "fr": "Personne au poste : {0}.",
-   "en": ""
+   "en": "Nobody on duty: {0}."
   },
   {
    "fr": "la Forge ne peut pas fabriquer",
-   "en": ""
+   "en": "the Forge can’t craft"
   },
   {
    "fr": "Personne de disponible ne ferait mieux que {0}.",
-   "en": ""
+   "en": "No one available would do better than {0}."
   },
   {
    "fr": "Voir le chantier en cours",
-   "en": ""
+   "en": "See the work in progress"
   },
   {
    "fr": "Améliorer au niveau {0}{1}",
-   "en": ""
+   "en": "Upgrade to level {0}{1}"
   },
   {
    "fr": "Entrer dans la tour",
-   "en": ""
+   "en": "Enter the tower"
   },
   {
    "fr": "Vaincs le gardien de la Strate −{0} pour le construire.",
-   "en": ""
+   "en": "Defeat the guardian of Stratum −{0} to build it."
   },
   {
    "fr": "Il faut d’abord monter la Tour du Noyau au niveau {0}.",
-   "en": ""
+   "en": "The Core Tower must reach level {0} first."
   },
   {
    "fr": "Attends la fin des chantiers en cours.",
-   "en": ""
+   "en": "Wait for the current works to finish."
   },
   {
    "fr": "Un seul chantier à la fois (deux au Noyau niveau 4).",
-   "en": ""
+   "en": "One project at a time (two at Core level 4)."
   },
   {
    "fr": "Remise en état",
-   "en": ""
+   "en": "Restoration"
   },
   {
    "fr": "Chantier vers le niveau {0}",
-   "en": ""
+   "en": "Works toward level {0}"
   },
   {
    "fr": "Reste ",
-   "en": ""
+   "en": "Left: "
   },
   {
    "fr": " · avance même jeu fermé",
-   "en": ""
+   "en": " · keeps going while the game is closed"
   },
   {
    "fr": "Niveau maximum pour cette version.",
-   "en": ""
+   "en": "Max level for this version."
   },
   {
    "fr": "Rouvrir",
-   "en": ""
+   "en": "Reopen"
   },
   {
    "fr": "{0}Passer au niveau {1}",
-   "en": ""
+   "en": "{0}Go to level {1}"
   },
   {
    "fr": "Voir la Tour",
-   "en": ""
+   "en": "See the Tower"
   },
   {
    "fr": "Coût",
-   "en": ""
+   "en": "Cost"
   },
   {
    "fr": "Cristaux",
-   "en": ""
+   "en": "Crystals"
   },
   {
    "fr": "Passer au niveau {0}",
-   "en": ""
+   "en": "Go to level {0}"
   },
   {
    "fr": "Remettre le Comptoir en état",
-   "en": ""
+   "en": "Restore the Trading Post"
   },
   {
    "fr": "Construire le {0}",
-   "en": ""
+   "en": "Build the {0}"
   },
   {
    "fr": "ACTE I · LA CHAMBRE",
-   "en": ""
+   "en": "ACT I · THE CHAMBER"
   },
   {
    "fr": "ACTE II · LE CRIME ANCIEN",
-   "en": ""
+   "en": "ACT II · THE OLD CRIME"
   },
   {
    "fr": "ACTE III · LA VÉRITÉ",
-   "en": ""
+   "en": "ACT III · THE TRUTH"
   },
   {
    "fr": "Ce choix est définitif. Aucun n’est « le bon » : chacun règle une partie du problème et en aggrave une autre.",
-   "en": ""
+   "en": "This choice is final. None of them is “the right one”: each solves part of the problem and makes another part worse."
   },
   {
    "fr": "Le campement",
-   "en": ""
+   "en": "The camp"
   },
   {
    "fr": "Quelques cabanes au fond de la cuvette, et une Tour qui tient debout.",
-   "en": ""
+   "en": "A few shacks at the bottom of the Basin, and a Tower still standing."
   },
   {
    "fr": "Le quartier s’éveille",
-   "en": ""
+   "en": "The quarter wakes"
   },
   {
    "fr": "La Tour du Noyau tient bon : les habitants consolident la digue, réparent les toits et rouvrent les ateliers. Le district ressemble enfin à un quartier.",
-   "en": ""
+   "en": "The Core Tower holds: people shore up the Dike, mend the roofs and reopen the workshops. At last, the district looks like a neighbourhood."
   },
   {
    "fr": "Le district prospère",
-   "en": ""
+   "en": "The district thrives"
   },
   {
    "fr": "Le courant circule, les marchands reviennent, et des maisons neuves montent contre la digue. On parle de ton district jusque dans les autres quartiers.",
-   "en": ""
+   "en": "The power is flowing, the merchants are back, and new houses rise against the Dike. Your district is the talk of other quarters."
   },
   {
    "fr": "Le phare de Vertiga",
-   "en": ""
+   "en": "The lighthouse of Vertiga"
   },
   {
    "fr": "La Tour du Noyau illumine la mer. Ton district est devenu un repère, et même les Hauts le regardent.",
-   "en": ""
+   "en": "The Core Tower lights up the sea. Your district has become a landmark, and even the Heights look its way."
   },
   {
    "fr": "Ton district à l’âge {0}",
-   "en": ""
+   "en": "Your district in age {0}"
   },
   {
    "fr": "TOUR DU NOYAU NIVEAU {0} · ÂGE {1}",
-   "en": ""
+   "en": "CORE TOWER LEVEL {0} · AGE {1}"
   },
   {
    "fr": "Prochain âge : Tour du Noyau au niveau {0}.",
-   "en": ""
+   "en": "Next age: Core Tower at level {0}."
   },
   {
    "fr": "Admirer le district",
-   "en": ""
+   "en": "Admire the district"
   },
   {
    "fr": "Replier",
-   "en": ""
+   "en": "Fold away"
   },
   {
    "fr": "BON RETOUR, DIRECTEUR",
-   "en": ""
+   "en": "WELCOME BACK, DIRECTOR"
   },
   {
    "fr": "Pendant ton absence",
-   "en": ""
+   "en": "While you were away"
   },
   {
    "fr": "est faite pour",
-   "en": ""
+   "en": "is made for"
   },
   {
    "fr": ", qui rejoindra le district {0}. Prise maintenant, elle t’attend dans ta collection et sera prête le jour de son arrivée (voie « {1} »).",
-   "en": ""
+   "en": ", who will join the district {0}. Take it now and it will wait in your collection, ready the day they arrive (path “{1}”)."
   },
   {
    "fr": "Pour {0} · à venir",
-   "en": ""
+   "en": "For {0} · coming soon"
   },
   {
    "fr": "Porteur {0} niv. {1} requis",
-   "en": ""
+   "en": "Requires Bearer {0} lvl {1}"
   },
   {
    "fr": "Pour {0}",
-   "en": ""
+   "en": "For {0}"
   },
   {
    "fr": "En fer, pas d’effet. À partir du cuivre :",
-   "en": ""
+   "en": "In iron, no effect. From copper up:"
   },
   {
    "fr": ": cette empreinte refuse la copie. Elle n’existe qu’en {0}, et son effet ne se trouve sur aucune autre carte.",
-   "en": ""
+   "en": ": this imprint refuses to be copied. It exists only in {0}, and its effect is found on no other card."
   },
   {
    "fr": "Fréquences au choix",
-   "en": ""
+   "en": "Frequencies of your choice"
   },
   {
    "fr": "Posée, elle prend celle qui prolonge ta suite.",
-   "en": ""
+   "en": "When played, it takes the one that extends your chain."
   },
   {
    "fr": "Son métal ne lui ouvre qu’une Fréquence ; en argent et en or, elle en a 2, en nacre 3.",
-   "en": ""
+   "en": "Its metal opens only one Frequency; in silver and gold it has 2, in nacre 3."
   },
   {
    "fr": "un Porteur de ton escouade",
-   "en": ""
+   "en": "a Bearer from your squad"
   },
   {
    "fr": "un Porteur {0}",
-   "en": ""
+   "en": "a {0} Bearer"
   },
   {
    "fr": "L’HÉRITAGE DU DISTRICT",
-   "en": ""
+   "en": "THE DISTRICT’S LEGACY"
   },
   {
    "fr": "Scellée : elle se portera avec {0} de",
-   "en": ""
+   "en": "Sealed: it will be carried by {0} from"
   },
   {
    "fr": "niveau {0}",
-   "en": ""
+   "en": "level {0}"
   },
   {
    "fr": "{0}. Elle s’éveillera ensuite avec lui, aux niveaux {1}.",
-   "en": ""
+   "en": "{0}. It will then awaken with them, at levels {1}."
   },
   {
    "fr": ", et rejoindra alors le paquetage de chaque escouade",
-   "en": ""
+   "en": ", and will then join every squad’s kit"
   },
   {
    "fr": "Je la garde",
-   "en": ""
+   "en": "I’ll keep it"
   },
   {
    "fr": "L’HÉRITAGE DU DISTRICT · 2 / 2",
-   "en": ""
+   "en": "THE DISTRICT’S LEGACY · 2 / 2"
   },
   {
    "fr": "Revenir à la première question",
-   "en": ""
+   "en": "Back to the first question"
   },
   {
    "fr": "L’HÉRITAGE DU DISTRICT · 1 / 2",
-   "en": ""
+   "en": "THE DISTRICT’S LEGACY · 1 / 2"
   },
   {
    "fr": "Une seule vierge par directeur, et ce choix est définitif : aucune n’est meilleure que les autres, chacune ouvre une façon de jouer.",
-   "en": ""
+   "en": "One pristine per director, and the choice is final: none is better than the others, each opens a way to play."
   },
   {
    "fr": "La Strate est complète",
-   "en": ""
+   "en": "The Stratum is complete"
   },
   {
    "fr": "Les étoiles des Strates",
-   "en": ""
+   "en": "The stars of the Strata"
   },
   {
    "fr": "Le trophée du Rôdeur",
-   "en": ""
+   "en": "The Prowler’s trophy"
   },
   {
    "fr": "Le boss laisse des empreintes",
-   "en": ""
+   "en": "The boss leaves imprints"
   },
   {
    "fr": "Le septième colis",
-   "en": ""
+   "en": "The seventh parcel"
   },
   {
    "fr": "Le filon de la fouille",
-   "en": ""
+   "en": "The dig’s seam"
   },
   {
    "fr": "Le parrainage",
-   "en": ""
+   "en": "Sponsorship"
   },
   {
    "fr": "La prise de la marée",
-   "en": ""
+   "en": "The tide’s catch"
   },
   {
    "fr": "Butin de la semaine",
-   "en": ""
+   "en": "Weekly loot"
   },
   {
    "fr": "RÉCOMPENSE{0}",
-   "en": ""
+   "en": "REWARD{0}"
   },
   {
    "fr": " · ENCORE {0} APRÈS",
-   "en": ""
+   "en": " · {0} MORE AFTER"
   },
   {
    "fr": "Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.",
-   "en": ""
+   "en": "Pick a card. If you already have it, it becomes a duplicate to level it up."
   },
   {
    "fr": "Prendre {0} à la place",
-   "en": ""
+   "en": "Take {0} instead"
   },
   {
    "fr": "Pas d’effet : sa force seule.",
-   "en": ""
+   "en": "No effect: raw power only."
   },
   {
    "fr": "· paquetage",
-   "en": ""
+   "en": "· kit"
   },
   {
    "fr": "Fréquences au choix :",
-   "en": ""
+   "en": "Frequencies of your choice:"
   },
   {
    "fr": "{0} · {1} · NIVEAU {2}",
-   "en": ""
+   "en": "{0} · {1} · LEVEL {2}"
   },
   {
    "fr": "Les cartes et leurs effets",
-   "en": ""
+   "en": "Cards and their effects"
   },
   {
    "fr": "Portée par {0}",
-   "en": ""
+   "en": "Carried by {0}"
   },
   {
    "fr": "Confier à",
-   "en": ""
+   "en": "Give to"
   },
   {
    "fr": "Elle pèse",
-   "en": ""
+   "en": "It weighs"
   },
   {
    "fr": "de Charge{0}.",
-   "en": ""
+   "en": "Load{0}."
   },
   {
    "fr": "et demande un Porteur de",
-   "en": ""
+   "en": "and needs a Bearer of"
   },
   {
    "fr": "Touche son portrait pour la reprendre, ou un autre Porteur pour la lui passer.",
-   "en": ""
+   "en": "Tap their portrait to take it back, or another Bearer to hand it over."
   },
   {
    "fr": "Elle entrera dans ton deck quand ce Porteur descendra ({0} cartes au plus, de sa lignée).",
-   "en": ""
+   "en": "It will enter your deck when this Bearer goes down ({0} cards at most, from their lineage)."
   },
   {
    "fr": "la porte · reprendre",
-   "en": ""
+   "en": "carries it · take back"
   },
   {
    "fr": "niveau {0} / {1}",
-   "en": ""
+   "en": "level {0} / {1}"
   },
   {
    "fr": "trop lourde · {0} libre{1}",
-   "en": ""
+   "en": "too heavy · {0} free{1|}"
   },
   {
    "fr": "{0} / {1} · échanger",
-   "en": ""
+   "en": "{0} / {1} · swap"
   },
   {
    "fr": "Charge {0} libre{1}",
-   "en": ""
+   "en": "Load {0} free{1|}"
   },
   {
    "fr": "Progression",
-   "en": ""
+   "en": "Progress"
   },
   {
    "fr": "Une vierge de l’Héritage du district : unique, elle ne monte pas avec des doublons. Elle s’éveille avec le Porteur qui la porte : {0}.",
-   "en": ""
+   "en": "A pristine from the district’s Legacy: unique, it doesn’t level up with duplicates. It awakens with the Bearer who carries it: {0}."
   },
   {
    "fr": "niveau {0} avec un Porteur de niveau {1}",
-   "en": ""
+   "en": "level {0} with a level {1} Bearer"
   },
   {
    "fr": "Niveau maximum : la carte est maîtrisée, un liseré de lumière parcourt son cadre.",
-   "en": ""
+   "en": "Max level: the card is mastered, and a thread of light runs around its frame."
   },
   {
    "fr": "{0} doublon{1}",
-   "en": ""
+   "en": "{0} duplicate{1}"
   },
   {
    "fr": "pour le niveau {0}. On en trouve en expédition, en mission, dans les colis du ravitaillement, au Comptoir et à la Forge.",
-   "en": ""
+   "en": "for level {0}. Found on expeditions, on missions, in supply parcels, at the Trading Post and at the Forge."
   },
   {
    "fr": "Doublons réunis. Il manque",
-   "en": ""
+   "en": "Duplicates gathered. Still missing"
   },
   {
    "fr": "{0} cristal{1}",
-   "en": ""
+   "en": "{0} crystal{1|s}"
   },
   {
    "fr": "Prête : elle peut passer au niveau {0}.",
-   "en": ""
+   "en": "Ready: it can go to level {0}."
   },
   {
    "fr": "{0} / {1} doublons",
-   "en": ""
+   "en": "{0} / {1} duplicates"
   },
   {
    "fr": "Niveau {0} : force {1} →",
-   "en": ""
+   "en": "Level {0}: power {1} →"
   },
   {
    "fr": ", et la carte est maîtrisée",
-   "en": ""
+   "en": ", and the card is mastered"
   },
   {
    "fr": "Passer au niveau {0} · {1}",
-   "en": ""
+   "en": "Go to level {0} · {1}"
   },
   {
    "fr": "Recycler 1 · +{0}",
-   "en": ""
+   "en": "Recycle 1 · +{0}"
   },
   {
    "fr": "CARTE COMMUNE · {0}{1}",
-   "en": ""
+   "en": "COMMON CARD · {0}{1}"
   },
   {
    "fr": " · NIVEAU {0}",
-   "en": ""
+   "en": " · LEVEL {0}"
   },
   {
    "fr": "Sans lignée ni métal, portée par personne : elle ne s’éteint jamais quand un Porteur tombe.{0}",
-   "en": ""
+   "en": "No lineage, no metal, carried by no one: it never goes dark when a Bearer falls.{0}"
   },
   {
    "fr": " Une fois par combat.",
-   "en": ""
+   "en": " Once per fight."
   },
   {
    "fr": "L’améliorer",
-   "en": ""
+   "en": "Upgrade it"
   },
   {
    "fr": "{0} niveau {1} (aujourd’hui {2}) : {3}",
-   "en": ""
+   "en": "{0} level {1} (now {2}): {3}"
   },
   {
    "fr": "niv. {0}",
-   "en": ""
+   "en": "lvl {0}"
   },
   {
    "fr": "Elle grandit avec",
-   "en": ""
+   "en": "It grows with"
   },
   {
    "fr": ": améliore le bâtiment, et sa force monte.",
-   "en": ""
+   "en": ": upgrade the building and its power rises."
   },
   {
    "fr": "Force selon le niveau de {0}",
-   "en": ""
+   "en": "Power by {0} level"
   },
   {
    "fr": "Prochain gain : au niveau {0} de {1}, force {2} →",
-   "en": ""
+   "en": "Next gain: at {1} level {0}, power {2} →"
   },
   {
    "fr": "{0} au niveau maximum : la carte a toute sa force.",
-   "en": ""
+   "en": "{0} at max level: the card has its full power."
   },
   {
    "fr": "Voir {0}",
-   "en": ""
+   "en": "See {0}"
   },
   {
    "fr": "Râtelier des escouades{0}",
-   "en": ""
+   "en": "Squad Racks{0}"
   },
   {
    "fr": " · dans {0}",
-   "en": ""
+   "en": " · in {0}"
   },
   {
    "fr": "Elle pourra rejoindre un Râtelier quand {0} aura le niveau {1}.",
-   "en": ""
+   "en": "It can join a Rack once {0} reaches level {1}."
   },
   {
    "fr": "Chaque escouade a son Râtelier : mets-la dans toutes celles qui en ont besoin, elle y reste d’une descente à l’autre.",
-   "en": ""
+   "en": "Each squad has its own Rack: put it in every squad that needs it, and it stays there from one descent to the next."
   },
   {
    "fr": "Dans le Râtelier",
-   "en": ""
+   "en": "In the Rack"
   },
   {
    "fr": "Cristaux insuffisants",
-   "en": ""
+   "en": "Not enough crystals"
   },
   {
    "fr": "Plein ({0} / {1})",
-   "en": ""
+   "en": "Full ({0} / {1})"
   },
   {
    "fr": "Escouade {0}",
-   "en": ""
+   "en": "Squad {0}"
   },
   {
    "fr": "Retirer",
-   "en": ""
+   "en": "Remove"
   },
   {
    "fr": "Ajouter",
-   "en": ""
+   "en": "Add"
   },
   {
    "fr": "Un emplacement de plus au niveau {0} de la Tour du Noyau.",
-   "en": ""
+   "en": "One more slot at Core Tower level {0}."
   },
   {
    "fr": "L’escouade est en descente : les Râteliers se changent au district.",
-   "en": ""
+   "en": "The squad is on a descent: Racks are changed in the district."
   },
   {
    "fr": "CARTE UNIQUE · {0}",
-   "en": ""
+   "en": "UNIQUE CARD · {0}"
   },
   {
    "fr": "Attaque {0}",
-   "en": ""
+   "en": "Attack {0}"
   },
   {
    "fr": "Une des plus fortes attaques du jeu, fixe (elle ne monte pas de niveau).",
-   "en": ""
+   "en": "One of the strongest attacks in the game, fixed (it doesn’t level up)."
   },
   {
    "fr": "{0} Elle prend toujours le chiffre qui manque : un vrai joker pour finir une Résonance.",
-   "en": ""
+   "en": "{0} It always takes the missing number: a true wildcard to finish a Resonance."
   },
   {
    "fr": "Elle n’appartient qu’à {0} : on ne peut pas la confier à un autre Porteur. Elle entre dans le deck dès que {1} est dans l’escouade, en plus de ses cartes.",
-   "en": ""
+   "en": "It belongs to {0} alone: it can’t be given to another Bearer. It joins the deck whenever {1} is in the squad, on top of their cards."
   },
   {
    "fr": "Sous les salles closes, {0} a lu jusqu’au bout ce que cachaient les cristaux. Elle en est revenue plus fragile, mais elle sait désormais entendre n’importe quelle suite et s’y glisser.",
-   "en": ""
+   "en": "Beneath the closed halls, {0} read to the very end what the crystals were hiding. She came back more fragile, but now she can hear any chain and slip into it."
   },
   {
    "fr": "NACRE · HÉRITAGE DU DISTRICT",
-   "en": ""
+   "en": "NACRE · THE DISTRICT’S LEGACY"
   },
   {
    "fr": "Portée par personne : elle descend avec chaque escouade qui compte un Porteur de niveau {0}, et ne s’éteint jamais quand un Porteur tombe.",
-   "en": ""
+   "en": "Carried by no one: it goes down with every squad that has a level {0} Bearer, and never goes dark when a Bearer falls."
   },
   {
    "fr": "Son éveil",
-   "en": ""
+   "en": "Its awakening"
   },
   {
    "fr": "La desceller",
-   "en": ""
+   "en": "Unseal it"
   },
   {
    "fr": "Elle grandit avec le Porteur le plus avancé de l’escouade.",
-   "en": ""
+   "en": "It grows with the squad’s most advanced Bearer."
   },
   {
    "fr": "Scellée",
-   "en": ""
+   "en": "Sealed"
   },
   {
    "fr": ": elle s’ouvre quand un Porteur de l’escouade atteint le",
-   "en": ""
+   "en": ": it opens when a Bearer in the squad reaches"
   },
   {
    "fr": "(aujourd’hui, ton plus avancé est niveau {0}).",
-   "en": ""
+   "en": "(right now, your most advanced is level {0})."
   },
   {
    "fr": "Niveau de la carte selon le niveau du Porteur",
-   "en": ""
+   "en": "Card level by Bearer level"
   },
   {
    "fr": "Porteur {0}",
-   "en": ""
+   "en": "Bearer {0}"
   },
   {
    "fr": "Dans tes escouades",
-   "en": ""
+   "en": "In your squads"
   },
   {
    "fr": "Escouade vide",
-   "en": ""
+   "en": "Empty squad"
   },
   {
    "fr": "Descend avec elle · force {0}",
-   "en": ""
+   "en": "Goes down with it · power {0}"
   },
   {
    "fr": "Scellée : aucun Porteur niv. {0}",
-   "en": ""
+   "en": "Sealed: no lvl {0} Bearer"
   },
   {
    "fr": "Elle s’ajoute au deck en plus des cartes des Porteurs et du Râtelier : un deck peut donc compter une carte de plus que d’habitude.",
-   "en": ""
+   "en": "It joins the deck on top of the Bearers’ and Rack cards: a deck can hold one card more than usual."
   },
   {
    "fr": "Reste au district",
-   "en": ""
+   "en": "Stays in the district"
   },
   {
    "fr": "{0}{1}. Voir la carte",
-   "en": ""
+   "en": "{0}{1}. See the card"
   },
   {
    "fr": ", reste au district faute de cristaux",
-   "en": ""
+   "en": ", stays in the district for lack of crystals"
   },
   {
    "fr": "Toutes ensemble, elles coûtent",
-   "en": ""
+   "en": "All together, they cost"
   },
   {
    "fr": "{0} cristaux",
-   "en": ""
+   "en": "{0} crystals"
   },
   {
    "fr": "à ce départ{0} (tu en as {1}).",
-   "en": ""
+   "en": "for this departure{0} (you have {1})."
   },
   {
    "fr": "Cartes du district · {0}",
-   "en": ""
+   "en": "District cards · {0}"
   },
   {
    "fr": "{0}{1} Elles restent au Râtelier de l’escouade {2} d’une descente à l’autre ; tu les changes dans l’onglet Escouade.",
-   "en": ""
+   "en": "{0}{1} They stay in squad {2}’s Rack from one descent to the next; change them in the Squad tab."
   },
   {
    "fr": " Il manque des cristaux : elles restent au district, l’escouade part sans elles.",
-   "en": ""
+   "en": " Not enough crystals: they stay in the district and the squad leaves without them."
   },
   {
    "fr": "les creuseurs n’ont pas encore relevé ces galeries.",
-   "en": ""
+   "en": "the diggers haven’t shored up these tunnels yet."
   },
   {
    "fr": "le courant ne suffit pas encore pour équiper une équipe.",
-   "en": ""
+   "en": "there isn’t enough power yet to equip a team."
   },
   {
    "fr": "le forgeron n’a pas encore l’outillage pour ça.",
-   "en": ""
+   "en": "the smith doesn’t have the tools for that yet."
   },
   {
    "fr": "la Clinique n’a pas encore le matériel.",
-   "en": ""
+   "en": "the Clinic doesn’t have the equipment yet."
   },
   {
    "fr": "les fouilleurs n’en ont pas encore rapporté.",
-   "en": ""
+   "en": "the diggers haven’t brought any back yet."
   },
   {
    "fr": "Palier {0} / 3",
-   "en": ""
+   "en": "Tier {0} / 3"
   },
   {
    "fr": "Aucun palier",
-   "en": ""
+   "en": "No tier"
   },
   {
    "fr": "Exploits demandés pour {0}",
-   "en": ""
+   "en": "Feats required for {0}"
   },
   {
    "fr": ", fait",
-   "en": ""
+   "en": ", done"
   },
   {
    "fr": ", à faire",
-   "en": ""
+   "en": ", to do"
   },
   {
    "fr": "{0}chaque palier allume son filigrane. Pur souvenir : aucun effet en combat.",
-   "en": ""
+   "en": "{0}each tier lights up its filigree. A keepsake only: no effect in combat."
   },
   {
    "fr": "Un trophée gagné au fil des descentes : ",
-   "en": ""
+   "en": "A trophy earned over many descents: "
   },
   {
    "fr": "Un trophée, pas un dû : il faut des semaines de combats avec la même carte, et des exploits qu’elle seule a vécus. ",
-   "en": ""
+   "en": "A trophy, not a given: it takes weeks of fighting with the same card, and feats that only it has lived through. "
   },
   {
    "fr": "Épithète affiché",
-   "en": ""
+   "en": "Epithet shown"
   },
   {
    "fr": "Épithètes : des exploits rares, comme porter le dernier coup à un Gardien.",
-   "en": ""
+   "en": "Epithets: rare feats, like landing the final blow on a Guardian."
   },
   {
    "fr": "Pèse {0} de Charge",
-   "en": ""
+   "en": "Weighs {0} Load"
   },
   {
    "fr": "{0} de trop",
-   "en": ""
+   "en": "{0} too many"
   },
   {
    "fr": "Plein",
-   "en": ""
+   "en": "Full"
   },
   {
    "fr": "Charge : {0} sur {1}, {2}",
-   "en": ""
+   "en": "Load: {0} of {1}, {2}"
   },
   {
    "fr": "Trop lourd : reprends-lui une carte avant de descendre. ",
-   "en": ""
+   "en": "Too heavy: take a card back before going down. "
   },
   {
    "fr": "{0}, {1}, niveau {2}, pèse {3}",
-   "en": ""
+   "en": "{0}, {1}, level {2}, weighs {3}"
   },
   {
    "fr": "Les cartes {0}",
-   "en": ""
+   "en": "{0}’s cards"
   },
   {
    "fr": "{0} · {1} / {2} CARTES",
-   "en": ""
+   "en": "{0} · {1} / {2} CARDS"
   },
   {
    "fr": "Comment construire son deck",
-   "en": ""
+   "en": "How to build your deck"
   },
   {
    "fr": "{0} est en expédition : ses cartes changeront à son retour.",
-   "en": ""
+   "en": "{0} is on an expedition: their cards will change when they’re back."
   },
   {
    "fr": "Chaque carte pèse selon sa force. {0} porte plus lourd en montant de niveau (+{1} par niveau). Une place laissée vide se pioche et ne se joue pas.",
-   "en": ""
+   "en": "Each card weighs according to its power. {0} carries more as they level up (+{1} per level). An empty slot is drawn but can’t be played."
   },
   {
    "fr": "Ce que {0} porte",
-   "en": ""
+   "en": "What {0} carries"
   },
   {
    "fr": "Ces cartes entrent dans ton deck quand {0} descend. Touche une carte pour l’échanger ou la reprendre.",
-   "en": ""
+   "en": "These cards join your deck when {0} goes down. Tap a card to swap it or take it back."
   },
   {
    "fr": "Fréquences qu’{0} apporte : {1}",
-   "en": ""
+   "en": "Frequencies {0} brings: {1}"
   },
   {
    "fr": "Choisie",
-   "en": ""
+   "en": "Chosen"
   },
   {
    "fr": "Trop lourd",
-   "en": ""
+   "en": "Too heavy"
   },
   {
    "fr": "Aucune carte pour l’instant.",
-   "en": ""
+   "en": "No cards yet."
   },
   {
    "fr": "À lui confier",
-   "en": ""
+   "en": "To give them"
   },
   {
    "fr": "{0} porte déjà {1} cartes : touche une carte ici puis celle qu’elle remplace (ou l’inverse) pour les échanger.",
-   "en": ""
+   "en": "{0} already carries {1} cards: tap a card here, then the one it replaces (or the other way round) to swap them."
   },
   {
    "fr": "Les cartes de sa lignée ({0}) dans ta collection. Une carte portée par un autre Porteur passe à {1}.",
-   "en": ""
+   "en": "Cards of their lineage ({0}) in your collection. A card carried by another Bearer goes to {1}."
   },
   {
    "fr": "Niveau {0} requis",
-   "en": ""
+   "en": "Level {0} required"
   },
   {
    "fr": "Trop lourde",
-   "en": ""
+   "en": "Too heavy"
   },
   {
    "fr": "Remplace",
-   "en": ""
+   "en": "Replaces"
   },
   {
    "fr": "celle en {0}",
-   "en": ""
+   "en": "the {0} one"
   },
   {
    "fr": "chez {0}",
-   "en": ""
+   "en": "with {0}"
   },
   {
    "fr": "Confier",
-   "en": ""
+   "en": "Give"
   },
   {
    "fr": "Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.",
-   "en": ""
+   "en": "No other cards of their lineage yet: the Strata hide more."
   },
   {
    "fr": ": touche une carte de « À lui confier » pour l’échanger.",
-   "en": ""
+   "en": ": tap a card under “To give them” to swap it."
   },
   {
    "fr": ": touche la carte que {0} porte et qu’elle remplacera.",
-   "en": ""
+   "en": ": tap the card {0} carries that it will replace."
   },
   {
    "fr": "Reprendre",
-   "en": ""
+   "en": "Take back"
   },
   {
    "fr": "Trier les cartes",
-   "en": ""
+   "en": "Sort cards"
   },
   {
    "fr": "Trier",
-   "en": ""
+   "en": "Sort"
   },
   {
    "fr": "{0} / {1} TROUVÉES",
-   "en": ""
+   "en": "{0} / {1} FOUND"
   },
   {
    "fr": "Construire son deck",
-   "en": ""
+   "en": "Building your deck"
   },
   {
    "fr": "Les effets",
-   "en": ""
+   "en": "Effects"
   },
   {
    "fr": "Peuvent monter",
-   "en": ""
+   "en": "Can level up"
   },
   {
    "fr": "Libres",
-   "en": ""
+   "en": "Free"
   },
   {
    "fr": "Filtrer la collection",
-   "en": ""
+   "en": "Filter the collection"
   },
   {
    "fr": "Toutes tes cartes. Touche-en une pour la confier à un Porteur ou la faire monter ; ton deck est dans le volet Escouade.",
-   "en": ""
+   "en": "All your cards. Tap one to give it to a Bearer or level it up; your deck is in the Squad panel."
   },
   {
    "fr": "{0}, {1}, niveau {2}{3}{4}",
-   "en": ""
+   "en": "{0}, {1}, level {2}{3}{4}"
   },
   {
    "fr": ", portée par {0}",
-   "en": ""
+   "en": ", carried by {0}"
   },
   {
    "fr": ", peut monter",
-   "en": ""
+   "en": ", can level up"
   },
   {
    "fr": "Libre",
-   "en": ""
+   "en": "Free"
   },
   {
    "fr": "Max",
-   "en": ""
+   "en": "Max"
   },
   {
    "fr": "Doublons pour le niveau {0}",
-   "en": ""
+   "en": "Duplicates for level {0}"
   },
   {
    "fr": "Libres : personne ne les porte",
-   "en": ""
+   "en": "Free: nobody carries them"
   },
   {
    "fr": "Aucune carte n’a encore assez de doublons et de cristaux pour monter.",
-   "en": ""
+   "en": "No card has enough duplicates and crystals to level up yet."
   },
   {
    "fr": "Toutes tes cartes sont confiées à un Porteur.",
-   "en": ""
+   "en": "All your cards are with a Bearer."
   },
   {
    "fr": "Carte pas encore trouvée",
-   "en": ""
+   "en": "Card not found yet"
   },
   {
    "fr": "À trouver",
-   "en": ""
+   "en": "To find"
   },
   {
    "fr": "Fouille « {0} »",
-   "en": ""
+   "en": "Dig “{0}”"
   },
   {
    "fr": "Cartes communes du district",
-   "en": ""
+   "en": "District common cards"
   },
   {
    "fr": "Préparées par tes bâtiments, sans lignée ni métal. Elles ne s’éteignent jamais quand un Porteur tombe et gagnent de la force quand leur bâtiment monte. Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.",
-   "en": ""
+   "en": "Prepared by your buildings, with no lineage or metal. They never go dark when a Bearer falls, and grow stronger as their building levels up. Each squad has its own Rack: the same card can go down with several."
   },
   {
    "fr": "{0} niveau {1}",
-   "en": ""
+   "en": "{0} level {1}"
   },
   {
    "fr": "Escouade{0} {1}",
-   "en": ""
+   "en": "Squad{0} {1}"
   },
   {
    "fr": "{0}, carte commune{1}. Voir la carte",
-   "en": ""
+   "en": "{0}, common card{1}. See the card"
   },
   {
    "fr": ", au Râtelier de l’escouade {0}",
-   "en": ""
+   "en": ", in squad {0}’s Rack"
   },
   {
    "fr": "Ton Héritage : dans chaque escouade qui compte un Porteur de niveau {0}.",
-   "en": ""
+   "en": "Your Legacy: in every squad that has a level {0} Bearer."
   },
   {
    "fr": ": elle rejoindra le paquetage quand un Porteur de l’escouade aura le niveau {0}.",
-   "en": ""
+   "en": ": it will join the kit once a Bearer in the squad reaches level {0}."
   },
   {
    "fr": "{0}, ton Héritage{1}. Voir la carte",
-   "en": ""
+   "en": "{0}, your Legacy{1}. See the card"
   },
   {
    "fr": "« On attend quoi, l’Élu ? Qu’elle s’ouvre toute seule ? »",
-   "en": ""
+   "en": "“What are we waiting for, Chosen One? For it to open itself?”"
   },
   {
    "fr": "« Mon père a travaillé dans ce puits, avant qu’on le mure. Il n’a jamais aimé son silence. »",
-   "en": ""
+   "en": "“My father worked this shaft, before they walled it up. He never liked how quiet it was.”"
   },
   {
    "fr": "« Quelque chose a peur, derrière cette porte. Et ce n’est pas moi. »",
-   "en": ""
+   "en": "“Something’s afraid behind that door. And it isn’t me.”"
   },
   {
    "fr": "« Les ouvriers m’ont envoyée te chercher à l’aube. Quand ça presse, c’est moi qu’on envoie. Et là, ça presse. »",
-   "en": ""
+   "en": "“The workers sent me to fetch you at dawn. When it’s urgent, they send me. And this is urgent.”"
   },
   {
    "fr": "« En dessous, il y a les couloirs qu’on a murés en 2066. Je suis le dernier à savoir où ils passent. »",
-   "en": ""
+   "en": "“Down there are the corridors we walled up in 2066. I’m the last one who knows where they run.”"
   },
   {
    "fr": "« Oui, j’ai une mèche d’or. Mais je suis d’ici, pas des Hauts. Ce qui dort derrière, je l’entends : vous ne descendrez pas sans moi. »",
-   "en": ""
+   "en": "“Yes, I’ve got a streak of gold. But I’m from here, not the Heights. I can hear what’s sleeping behind it: you won’t get down there without me.”"
   },
   {
    "fr": "SOUS LA TOUR DU NOYAU",
-   "en": ""
+   "en": "BENEATH THE CORE TOWER"
   },
   {
    "fr": "Une porte ronde, scellée depuis les années 2060, luit faiblement. Trois personnes t’attendent devant.",
-   "en": ""
+   "en": "A round door, sealed since the 2060s, glows faintly. Three people are waiting in front of it."
   },
   {
    "fr": "STRATE −{0} · HALTE {1}",
-   "en": ""
+   "en": "STRATUM −{0} · WAYSTATION {1}"
   },
   {
    "fr": "Ce que j’ai fait : {0}.",
-   "en": ""
+   "en": "What I did: {0}."
   },
   {
    "fr": "CARNET DU DIRECTEUR · {0} / {1} HALTES",
-   "en": ""
+   "en": "DIRECTOR’S NOTEBOOK · {0} / {1} WAYSTATIONS"
   },
   {
    "fr": "Ce que j’ai appris en bas",
-   "en": ""
+   "en": "What I learned down below"
   },
   {
    "fr": "Rien encore. Chaque Halte des Strates ajoute une page à ce carnet.",
-   "en": ""
+   "en": "Nothing yet. Each Waystation in the Strata adds a page to this notebook."
   },
   {
    "fr": "{0} Halte{1} encore à découvrir, une par descente",
-   "en": ""
+   "en": "{0} Waystation{1} still to discover, one per descent"
   },
   {
    "fr": "Retour à l’écran titre",
-   "en": ""
+   "en": "Back to the title screen"
   },
   {
    "fr": "{0} / {1} CHAPITRES · {2} / {3} ARCHIVES",
-   "en": ""
+   "en": "{0} / {1} CHAPTERS · {2} / {3} ARCHIVES"
   },
   {
    "fr": "Bibliothèque",
-   "en": ""
+   "en": "Library"
   },
   {
    "fr": "Archives",
-   "en": ""
+   "en": "Archives"
   },
   {
    "fr": "Campagne",
-   "en": ""
+   "en": "Campaign"
   },
   {
    "fr": "Bestiaire",
-   "en": ""
+   "en": "Bestiary"
   },
   {
    "fr": "Des papiers d’époque, trouvés un à un dans les Strates. Ysé y renvoie souvent dans ses Chroniques.",
-   "en": ""
+   "en": "Papers from the old days, found one by one in the Strata. Ysé often points back to them in her Chronicles."
   },
   {
    "fr": "Aucun fragment pour l’instant. On les trouve en ouvrant de nouvelles Strates.",
-   "en": ""
+   "en": "No fragments yet. They turn up as you open new Strata."
   },
   {
    "fr": "{0} fragment{1} encore enfoui{2} dans les Strates",
-   "en": ""
+   "en": "{0} fragment{1} still buried{2|} in the Strata"
   },
   {
    "fr": "Souvenirs des familles · {0} / {1}",
-   "en": ""
+   "en": "Family keepsakes · {0} / {1}"
   },
   {
    "fr": "Chaque fois que {0} familles de plus te suivent, l’une d’elles confie aux Archives ce qu’elle a gardé de plus précieux.",
-   "en": ""
+   "en": "Each time {0} more families follow you, one of them entrusts the Archives with the most precious thing it kept."
   },
   {
    "fr": "Prochain souvenir à {0} familles qui te suivent",
-   "en": ""
+   "en": "Next keepsake at {0} families following you"
   },
   {
    "fr": "Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi le matin de ta première descente, à lire en remontant.",
-   "en": ""
+   "en": "The Chronicles of Ysé, archivist of the Watchers of Sédime, written for you on the morning of your first descent, to be read on the way back up."
   },
   {
    "fr": "{0} / {1} lus",
-   "en": ""
+   "en": "{0} / {1} read"
   },
   {
    "fr": "CH. {0}",
-   "en": ""
+   "en": "CH. {0}"
   },
   {
    "fr": "+1 carte",
-   "en": ""
+   "en": "+1 card"
   },
   {
    "fr": "Lu",
-   "en": ""
+   "en": "Read"
   },
   {
    "fr": "Chapitre précédent",
-   "en": ""
+   "en": "Previous chapter"
   },
   {
    "fr": "Chapitre suivant",
-   "en": ""
+   "en": "Next chapter"
   },
   {
    "fr": "Sommaire",
-   "en": ""
+   "en": "Contents"
   },
   {
    "fr": "{0} · CHAPITRE {1}",
-   "en": ""
+   "en": "{0} · CHAPTER {1}"
   },
   {
    "fr": "RECOPIÉ PAR YSÉ",
-   "en": ""
+   "en": "COPIED OUT BY YSÉ"
   },
   {
    "fr": "La suite s’ouvrira à la Strate −{0}.",
-   "en": ""
+   "en": "The next part opens at Stratum −{0}."
   },
   {
    "fr": "Fin des Chroniques. Pour l’instant.",
-   "en": ""
+   "en": "End of the Chronicles. For now."
   },
   {
    "fr": "Les Pompes noyées",
-   "en": ""
+   "en": "The Drowned Pumps"
   },
   {
    "fr": "Les Abris murés",
-   "en": ""
+   "en": "The Walled Shelters"
   },
   {
    "fr": "La Galerie aux lueurs",
-   "en": ""
+   "en": "The Glimmer Gallery"
   },
   {
    "fr": "Les Portes rondes",
-   "en": ""
+   "en": "The Round Doors"
   },
   {
    "fr": "Le Treillis",
-   "en": ""
+   "en": "The Lattice"
   },
   {
    "fr": "Le Mur de 2066",
-   "en": ""
+   "en": "The Wall of 2066"
   },
   {
    "fr": "Les Deux Rives",
-   "en": ""
+   "en": "The Two Shores"
   },
   {
    "fr": "La Ruche d’ambre",
-   "en": ""
+   "en": "The Amber Hive"
   },
   {
    "fr": "Le Puits d’avant",
-   "en": ""
+   "en": "The Shaft of Before"
   },
   {
    "fr": "Sous le Puits d’avant",
-   "en": ""
+   "en": "Beneath the Shaft of Before"
   },
   {
    "fr": "{0} / {1} XP vers le niveau {2}",
-   "en": ""
+   "en": "{0} / {1} XP to level {2}"
   },
   {
    "fr": "Niveau maximum",
-   "en": ""
+   "en": "Max level"
   },
   {
    "fr": "EN COUPE · {0} ÉTAGE{1} CREUSÉ{2}",
-   "en": ""
+   "en": "CROSS-SECTION · {0} LEVEL{1|S} DUG{2|}"
   },
   {
    "fr": "Porteurs : {0} au district, {1} disponibles. Voir les Porteurs",
-   "en": ""
+   "en": "Bearers: {0} in the district, {1} available. See the Bearers"
   },
   {
    "fr": "{0} disponible{1}",
-   "en": ""
+   "en": "{0} available{1|}"
   },
   {
    "fr": "sur {0} · Voir les Porteurs",
-   "en": ""
+   "en": "of {0} · See the Bearers"
   },
   {
    "fr": "Vaincs le gardien de la Strate −{0}",
-   "en": ""
+   "en": "Defeat the guardian of Stratum −{0}"
   },
   {
    "fr": "C’est lui qui garde le passage : une fois vaincu, tes creuseurs pourront attaquer la roche.",
-   "en": ""
+   "en": "It guards the passage: once it’s beaten, your diggers can attack the rock."
   },
   {
    "fr": "Descendre à −{0}",
-   "en": ""
+   "en": "Go down to −{0}"
   },
   {
    "fr": "trouve",
-   "en": ""
+   "en": "find"
   },
   {
    "fr": "{0} creuseur{1}",
-   "en": ""
+   "en": "{0} digger{1}"
   },
   {
    "fr": "monte la Tour du Noyau au",
-   "en": ""
+   "en": "upgrade the Core Tower to"
   },
   {
    "fr": "pour les loger",
-   "en": ""
+   "en": "to house them"
   },
   {
    "fr": "Pour ouvrir la Strate −{0}",
-   "en": ""
+   "en": "To open Stratum −{0}"
   },
   {
    "fr": "Fouille ciblée",
-   "en": ""
+   "en": "Targeted dig"
   },
   {
    "fr": "Mission",
-   "en": ""
+   "en": "Mission"
   },
   {
    "fr": "Épreuve",
-   "en": ""
+   "en": "Trial"
   },
   {
    "fr": "(1re victoire de la semaine)",
-   "en": ""
+   "en": "(1st win of the week)"
   },
   {
    "fr": "assuré",
-   "en": ""
+   "en": "guaranteed"
   },
   {
    "fr": "Fouiller la Strate −{0}",
-   "en": ""
+   "en": "Dig Stratum −{0}"
   },
   {
    "fr": "Améliorer la Tour",
-   "en": ""
+   "en": "Upgrade the Tower"
   },
   {
    "fr": "La roche cède : la Strate −{0} va s’ouvrir",
-   "en": ""
+   "en": "The rock gives way: Stratum −{0} is about to open"
   },
   {
    "fr": "Tout est prêt. Descends pour découvrir le nouvel étage.",
-   "en": ""
+   "en": "Everything is ready. Go down and discover the new level."
   },
   {
    "fr": "Descendre",
-   "en": ""
+   "en": "Go down"
   },
   {
    "fr": "Expédition en cours",
-   "en": ""
+   "en": "Expedition under way"
   },
   {
    "fr": "Strate −{0} : {1}",
-   "en": ""
+   "en": "Stratum −{0}: {1}"
   },
   {
    "fr": "reprendre là où tu t’es arrêté",
-   "en": ""
+   "en": "pick up where you left off"
   },
   {
    "fr": "Revoir la dernière scène",
-   "en": ""
+   "en": "Replay the last scene"
   },
   {
    "fr": "Revoir",
-   "en": ""
+   "en": "Replay"
   },
   {
    "fr": "Prochaine étape",
-   "en": ""
+   "en": "Next step"
   },
   {
    "fr": "Strates ou Épreuves",
-   "en": ""
+   "en": "Strata or Trials"
   },
   {
    "fr": "{0} creusée{1}",
-   "en": ""
+   "en": "{0} dug{1|}"
   },
   {
    "fr": "Épreuves",
-   "en": ""
+   "en": "Trials"
   },
   {
    "fr": "{0} / {1} cette semaine",
-   "en": ""
+   "en": "{0} / {1} this week"
   },
   {
    "fr": "Les Épreuves de la semaine s’ouvrent quand le gardien de la Strate −{0} est vaincu : les Veilleurs ne mettent à l’épreuve que ceux qui ont passé le couloir muré.",
-   "en": ""
+   "en": "The week’s Trials open once the guardian of Stratum −{0} is defeated: the Watchers only test those who have passed the walled corridor."
   },
   {
    "fr": "Strate −{0} · Vestiges {1} / {2}",
-   "en": ""
+   "en": "Stratum −{0} · Relics {1} / {2}"
   },
   {
    "fr": "Ce que la Strate garde",
-   "en": ""
+   "en": "What the Stratum keeps"
   },
   {
    "fr": "Les Vestiges ne se trouvent qu’en",
-   "en": ""
+   "en": "Relics are only found by"
   },
   {
    "fr": "explorant",
-   "en": ""
+   "en": "exploring"
   },
   {
    "fr": "la Strate : {0} par descente, marqués {1} sur le plan, même dans le brouillard. Les cinq réunis, la Strate est complète : une carte au choix, et tes fouilles y verront tout le plan, avec un filon plus riche.",
-   "en": ""
+   "en": "the Stratum: {0} per descent, marked {1} on the map, even in the fog. Gather all five and the Stratum is complete: a card of your choice, and your digs there will see the whole map, with a richer seam."
   },
   {
    "fr": "Un Vestige à trouver",
-   "en": ""
+   "en": "A Relic to find"
   },
   {
    "fr": "Quelque part dans la Strate −{0}.",
-   "en": ""
+   "en": "Somewhere in Stratum −{0}."
   },
   {
    "fr": "{0} étoile{1} sur 3",
-   "en": ""
+   "en": "{0} star{1} of 3"
   },
   {
    "fr": "Vestiges : {0} sur 5",
-   "en": ""
+   "en": "Relics: {0} of 5"
   },
   {
    "fr": "Vestiges {0} / 5",
-   "en": ""
+   "en": "Relics {0} / 5"
   },
   {
    "fr": "Haltes vues",
-   "en": ""
+   "en": "Waystations seen"
   },
   {
    "fr": "Haltes {0} / {1}",
-   "en": ""
+   "en": "Waystations {0} / {1}"
   },
   {
    "fr": "Fouiller",
-   "en": ""
+   "en": "Dig"
   },
   {
    "fr": ": une descente courte, sans gardien, vers un filon (cartes, minerai ou Éclats).",
-   "en": ""
+   "en": ": a short descent with no guardian, toward a seam (cards, ore or Shards)."
   },
   {
    "fr": "Explorer",
-   "en": ""
+   "en": "Explore"
   },
   {
    "fr": ": toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.",
-   "en": ""
+   "en": ": the whole Stratum up to its guardian, awakened if already beaten (better cards). The only place to find Relics, stars and Prowlers."
   },
   {
    "fr": "étoile{0}{1}",
-   "en": ""
+   "en": "star{0}{1}"
   },
   {
    "fr": " · prochaine récompense à {0} (une carte au choix, dont une en {1})",
-   "en": ""
+   "en": " · next reward at {0} (a card of your choice, one of them {1})"
   },
   {
    "fr": " · toutes les récompenses sont prises",
-   "en": ""
+   "en": " · all rewards claimed"
   },
   {
    "fr": " · {0}vaincue",
-   "en": ""
+   "en": " · {0}defeated"
   },
   {
    "fr": "front : son gardien t’attend",
-   "en": ""
+   "en": "front line: its guardian awaits you"
   },
   {
    "fr": "Roche à creuser",
-   "en": ""
+   "en": "Rock to dig"
   },
   {
    "fr": "creuseurs",
-   "en": ""
+   "en": "diggers"
   },
   {
    "fr": "{0}S’ouvre après le gardien de la Strate −{1}.",
-   "en": ""
+   "en": "{0}Opens after the guardian of Stratum −{1}."
   },
   {
    "fr": "Il manque encore de quoi la percer : voir « Prochaine étape ».",
-   "en": ""
+   "en": "Something’s still missing to break through: see “Next step”."
   },
   {
    "fr": "Tout est prêt.",
-   "en": ""
+   "en": "Everything is ready."
   },
   {
    "fr": "La Tour loge {0} creuseurs au niveau {1} : il en faut la place pour {2}.",
-   "en": ""
+   "en": "At level {1}, the Tower houses {0} diggers: it needs room for {2}."
   },
   {
    "fr": "Trois défis contre {0} (Strate −{1}), chacun avec sa règle. Plus dur encore : la",
-   "en": ""
+   "en": "Three challenges against {0} (Stratum −{1}), each with its own rule. Harder still: the"
   },
   {
    "fr": "Fêlée",
-   "en": ""
+   "en": "Flawed"
   },
   {
    "fr": ", ennemis +{0} %, une carte de plus et {1} Éclats. {2}",
-   "en": ""
+   "en": " one, enemies +{0} %, one more card and {1} Shards. {2}"
   },
   {
    "fr": "Nouvelles Épreuves lundi, dans ",
-   "en": ""
+   "en": "New Trials on Monday, in "
   },
   {
    "fr": "{0}Réussie, et en Fêlée",
-   "en": ""
+   "en": "{0}Passed, Flawed too"
   },
   {
    "fr": "{0}Réussie · la Fêlée t’attend",
-   "en": ""
+   "en": "{0}Passed · the Flawed one awaits"
   },
   {
    "fr": "{0}1 carte au choix, argent au moins",
-   "en": ""
+   "en": "{0}1 card of your choice, silver or better"
   },
   {
    "fr": "Rejouer",
-   "en": ""
+   "en": "Play again"
   },
   {
    "fr": "Tenter",
-   "en": ""
+   "en": "Attempt"
   },
   {
    "fr": "Un combat contre {0}, à la même force pour tous : seule ton adresse compte.",
-   "en": ""
+   "en": "One fight against {0}, at the same strength for everyone: only your skill counts."
   },
   {
    "fr": "Trois combats d’affilée dans {0}, le dernier contre {1}.",
-   "en": ""
+   "en": "Three fights in a row in {0}, the last against {1}."
   },
   {
    "fr": "Un combat contre {0} et deux bêtes de {1}.",
-   "en": ""
+   "en": "One fight against {0} and two beasts from {1}."
   },
   {
    "fr": "Un seul combat, contre {0}.",
-   "en": ""
+   "en": "A single fight, against {0}."
   },
   {
    "fr": "déjà réussie cette semaine",
-   "en": ""
+   "en": "already passed this week"
   },
   {
    "fr": "+{0} % de force · 1 carte{1} et {2} Éclats",
-   "en": ""
+   "en": "+{0} % strength · 1 card{1} and {2} Shards"
   },
   {
    "fr": "1 carte au choix, argent au moins",
-   "en": ""
+   "en": "1 card of your choice, silver or better"
   },
   {
    "fr": "{0}Vers {1}{2}",
-   "en": ""
+   "en": "{0}To {1}{2}"
   },
   {
    "fr": "rentre au district",
-   "en": ""
+   "en": "heading back to the district"
   },
   {
    "fr": "{0}, vers {1}",
-   "en": ""
+   "en": "{0}, to {1}"
   },
   {
    "fr": "Bon type",
-   "en": ""
+   "en": "Good type"
   },
   {
    "fr": "Neutre",
-   "en": ""
+   "en": "Neutral"
   },
   {
    "fr": "Mauvais type",
-   "en": ""
+   "en": "Bad type"
   },
   {
    "fr": "Une cargaison oubliée : beaucoup de minerai, mais aucune pierre.",
-   "en": ""
+   "en": "A forgotten cargo: plenty of ore, but no stones."
   },
   {
    "fr": "Une pierre attend quelqu’un : une carte à coup sûr, nouvelle ou en doublon (du cuivre possible en 8 h), mais peu de minerai.",
-   "en": ""
+   "en": "A stone is waiting for someone: a card for sure, new or a duplicate (copper possible in 8 h), but little ore."
   },
   {
    "fr": "Des naufragés guettent une barque : la première du jour les ramène, et ils deviennent creuseurs (un à coup sûr, parfois deux en 8 h).",
-   "en": ""
+   "en": "Castaways are watching for a boat: the day’s first brings them back, and they become diggers (one for sure, sometimes two in 8 h)."
   },
   {
    "fr": "Des Éclats affleurent dans la ruine : un en 2 h, un ou deux en 8 h.",
-   "en": ""
+   "en": "Shards are showing in the ruin: one in 2 h, one or two in 8 h."
   },
   {
    "fr": "{0} ({1} % de chances qu’elle soit nouvelle, sinon un doublon)",
-   "en": ""
+   "en": "{0} ({1} % chance it’s new, otherwise a duplicate)"
   },
   {
    "fr": "un creuseur, parfois deux",
-   "en": ""
+   "en": "a digger, sometimes two"
   },
   {
    "fr": "un creuseur",
-   "en": ""
+   "en": "a digger"
   },
   {
    "fr": "environ {0} Éclats",
-   "en": ""
+   "en": "about {0} Shards"
   },
   {
    "fr": "Choisis une destination, puis le Porteur libre qui y part : il revient chargé, même jeu fermé. Chaque jour, le passeur connaît de 2 à 5 ruines et ce qu’on y trouvera (une cargaison, une pierre oubliée, des naufragés ou des Éclats). Plus tu retournes au même endroit, plus tu descends : la Surface, puis les Cales (+25 %), puis le Cœur de la ruine (+60 % et une carte en plus). Le bon Porteur au bon endroit rapporte plus (sa lignée, son niveau). Une barque ne coûte rien : seulement le temps du Porteur.",
-   "en": ""
+   "en": "Pick a destination, then a free Bearer to send there: they come back loaded, even with the game closed. Each day, the ferryman knows 2 to 5 ruins and what they hold (a cargo, a forgotten stone, castaways or Shards). The more you return to the same place, the deeper you go: the Surface, then the Holds (+25 %), then the Heart of the ruin (+60 % and an extra card). The right Bearer in the right place brings back more (their lineage, their level). A boat costs nothing: only the Bearer’s time."
   },
   {
    "fr": "Chaque barque vers la même destination descend plus profond : Surface, Cales, puis le Cœur et sa trouvaille.",
-   "en": ""
+   "en": "Each boat to the same destination goes deeper: Surface, Holds, then the Heart and its find."
   },
   {
    "fr": "Prochaine fouille ici",
-   "en": ""
+   "en": "Next dig here"
   },
   {
    "fr": "Ruine fouillée à fond",
-   "en": ""
+   "en": "Ruin picked clean"
   },
   {
    "fr": "butin plein, jusqu’à demain 4 h",
-   "en": ""
+   "en": "full haul, until 4 am tomorrow"
   },
   {
    "fr": "une carte en plus",
-   "en": ""
+   "en": "an extra card"
   },
   {
    "fr": "Cœur dans {0} barque{1}",
-   "en": ""
+   "en": "Heart in {0} boat{1}"
   },
   {
    "fr": "Les naufragés ne fournissent qu’une partie des creuseurs de chaque Strate : le reste se gagne au front (gardien, fouilles, Épreuves).",
-   "en": ""
+   "en": "Castaways only provide part of each Stratum’s diggers: the rest are won at the front (guardian, digs, Trials)."
   },
   {
    "fr": "Naufragés · Strate −{0}",
-   "en": ""
+   "en": "Castaways · Stratum −{0}"
   },
   {
    "fr": "{0} / {1} creuseur{2}",
-   "en": ""
+   "en": "{0} / {1} digger{2}"
   },
   {
    "fr": "encore {0} en mer",
-   "en": ""
+   "en": "{0} still at sea"
   },
   {
    "fr": "le reste se gagne au front",
-   "en": ""
+   "en": "the rest are won at the front"
   },
   {
    "fr": "Destinations du jour",
-   "en": ""
+   "en": "Today’s destinations"
   },
   {
    "fr": "Nouvelles dans ",
-   "en": ""
+   "en": "New ones in "
   },
   {
    "fr": "{0}{1} en route",
-   "en": ""
+   "en": "{0}{1} on the way"
   },
   {
    "fr": "Barque",
-   "en": ""
+   "en": "Boat"
   },
   {
    "fr": "Plus de naufragés",
-   "en": ""
+   "en": "No more castaways"
   },
   {
    "fr": "Fouillée à fond",
-   "en": ""
+   "en": "Picked clean"
   },
   {
    "fr": " du minerai, et la trouvaille du Cœur : une carte en plus",
-   "en": ""
+   "en": " ore, and the Heart’s find: an extra card"
   },
   {
    "fr": " seulement du minerai",
-   "en": ""
+   "en": " only ore"
   },
   {
    "fr": "Les naufragés d’ici ont déjà été recueillis aujourd’hui : une barque y trouvera{0}.",
-   "en": ""
+   "en": "The castaways here have already been picked up today: a boat will find{0}."
   },
   {
    "fr": "Les naufragés ont fourni leur part de creuseurs pour la Strate −{0} : le reste se gagne au front. Une barque y trouvera{1}.",
-   "en": ""
+   "en": "The castaways have supplied their share of diggers for Stratum −{0}: the rest are won at the front. A boat will find{1}."
   },
   {
    "fr": " Au Cœur, une carte en plus.",
-   "en": ""
+   "en": " In the Heart, an extra card."
   },
   {
    "fr": "Aucune destination aujourd’hui : de nouvelles s’ouvrent demain à 4 h.",
-   "en": ""
+   "en": "No destinations today: new ones open tomorrow at 4 am."
   },
   {
    "fr": "{0} : attends son retour{1}.",
-   "en": ""
+   "en": "{0}: wait for their return{1}."
   },
   {
    "fr": "Tes {0} barques sont en mer",
-   "en": ""
+   "en": "Your {0} boats are at sea"
   },
   {
    "fr": "Ta barque est en mer",
-   "en": ""
+   "en": "Your boat is at sea"
   },
   {
    "fr": ", ou monte la Tour du Noyau pour en armer une de plus",
-   "en": ""
+   "en": ", or upgrade the Core Tower to fit out one more"
   },
   {
    "fr": "Tous les Porteurs travaillent ou sont partis : libère-en un d’un bâtiment pour l’envoyer.",
-   "en": ""
+   "en": "All the Bearers are working or away: release one from a building to send them."
   },
   {
    "fr": "{0} · niv. {1}",
-   "en": ""
+   "en": "{0} · lvl {1}"
   },
   {
    "fr": "Mission de {0} heures vers {1} : {2}",
-   "en": ""
+   "en": "{0}-hour mission to {1}: {2}"
   },
   {
    "fr": "Derniers rapports",
-   "en": ""
+   "en": "Latest reports"
   },
   {
    "fr": "+{0} minerai{1}{2}",
-   "en": ""
+   "en": "+{0} ore{1}{2}"
   },
   {
    "fr": " · {0} carte{1}",
-   "en": ""
+   "en": " · {0} card{1}"
   },
   {
    "fr": " · +{0} creuseur{1}",
-   "en": ""
+   "en": " · +{0} digger{1}"
   },
   {
    "fr": "une carte de lignée au filon",
-   "en": ""
+   "en": "a lineage card at the seam"
   },
   {
    "fr": "selon les combats gagnés",
-   "en": ""
+   "en": "depending on fights won"
   },
   {
    "fr": "ennemis {0}{1} %",
-   "en": ""
+   "en": "enemies {0}{1} %"
   },
   {
    "fr": "{0} % de chances d’une carte",
-   "en": ""
+   "en": "{0} % chance of a card"
   },
   {
    "fr": "{0} cartes au choix, {1} au moins",
-   "en": ""
+   "en": "{0} cards to choose from, {1} or better"
   },
   {
    "fr": "1 carte assurée",
-   "en": ""
+   "en": "1 card guaranteed"
   },
   {
    "fr": "filon ×{0}",
-   "en": ""
+   "en": "seam ×{0}"
   },
   {
    "fr": "{0} rangée{1} · {2}",
-   "en": ""
+   "en": "{0} row{1} · {2}"
   },
   {
    "fr": "FLÈCHE · DÉFI DU QUAI {0}",
-   "en": ""
+   "en": "SPIRE · QUAY {0} CHALLENGE"
   },
   {
    "fr": "FLÈCHE · QUAI {0}",
-   "en": ""
+   "en": "SPIRE · QUAY {0}"
   },
   {
    "fr": "PILLAGE · {0}",
-   "en": ""
+   "en": "RAID · {0}"
   },
   {
    "fr": "ÉPREUVE · {0}",
-   "en": ""
+   "en": "TRIAL · {0}"
   },
   {
    "fr": "{0}STRATE −{1} · {2}",
-   "en": ""
+   "en": "{0}STRATUM −{1} · {2}"
   },
   {
    "fr": "Défi · quai {0}",
-   "en": ""
+   "en": "Challenge · quay {0}"
   },
   {
    "fr": "Un seul combat contre l’escouade de {0}. Gagné, le quai est à toi ; perdu, ta montée ne bouge pas.",
-   "en": ""
+   "en": "A single fight against {0}’s squad. Win, and the quay is yours; lose, and your climb stays where it is."
   },
   {
    "fr": "{0} % de chances avec cette escouade",
-   "en": ""
+   "en": "{0} % chance with this squad"
   },
   {
    "fr": "Choisis 3 Porteurs",
-   "en": ""
+   "en": "Pick 3 Bearers"
   },
   {
    "fr": "La Flèche · quai {0}",
-   "en": ""
+   "en": "The Spire · quay {0}"
   },
   {
    "fr": "Un seul combat contre les gardiens des Hauts : {0}.",
-   "en": ""
+   "en": "A single fight against the guardians of the Heights: {0}."
   },
   {
    "fr": "Pillage · {0}",
-   "en": ""
+   "en": "Raid · {0}"
   },
   {
    "fr": "Un seul combat contre sa garnison : {0}.",
-   "en": ""
+   "en": "A single fight against its garrison: {0}."
   },
   {
    "fr": "Palier de l’Épreuve",
-   "en": ""
+   "en": "Trial tier"
   },
   {
    "fr": "Fouille ciblée · {0}",
-   "en": ""
+   "en": "Targeted dig · {0}"
   },
   {
    "fr": "Une descente courte, sans gardien : quelques salles, puis le filon.",
-   "en": ""
+   "en": "A short descent with no guardian: a few rooms, then the seam."
   },
   {
    "fr": "Que cherches-tu ?",
-   "en": ""
+   "en": "What are you looking for?"
   },
   {
    "fr": "Ce que tu cherches",
-   "en": ""
+   "en": "What you’re looking for"
   },
   {
    "fr": "Difficulté",
-   "en": ""
+   "en": "Difficulty"
   },
   {
    "fr": "Difficulté de la fouille",
-   "en": ""
+   "en": "Dig difficulty"
   },
   {
    "fr": "Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien : {0}.",
-   "en": ""
+   "en": "A map to explore room by room: fights, caches, encounters, a camp, then the guardian: {0}."
   },
   {
    "fr": "Escouade imposée",
-   "en": ""
+   "en": "Set squad"
   },
   {
    "fr": "{0} · PV {1}",
-   "en": ""
+   "en": "{0} · HP {1}"
   },
   {
    "fr": "{0} cartes de départ",
-   "en": ""
+   "en": "{0} starting cards"
   },
   {
    "fr": "Un exercice : niveau 1, cartes en fer, ni Usure ni poste quitté.",
-   "en": ""
+   "en": "A drill: level 1, iron cards, no Strain, no post left empty."
   },
   {
    "fr": "Imposée",
-   "en": ""
+   "en": "Set"
   },
   {
    "fr": "prête",
-   "en": ""
+   "en": "ready"
   },
   {
    "fr": "Tenter la Fêlée",
-   "en": ""
+   "en": "Attempt the Flawed one"
   },
   {
    "fr": "Tenter l’Épreuve",
-   "en": ""
+   "en": "Attempt the Trial"
   },
   {
    "fr": "Escouade qui part",
-   "en": ""
+   "en": "Departing squad"
   },
   {
    "fr": "Quelle escouade part ?",
-   "en": ""
+   "en": "Which squad is going?"
   },
   {
    "fr": "L’escouade qui part",
-   "en": ""
+   "en": "The departing squad"
   },
   {
    "fr": "Modifier",
-   "en": ""
+   "en": "Edit"
   },
   {
    "fr": "À former",
-   "en": ""
+   "en": "To form"
   },
   {
    "fr": "Porteurs qui partent",
-   "en": ""
+   "en": "Departing Bearers"
   },
   {
    "fr": "Place libre · compléter l’escouade",
-   "en": ""
+   "en": "Free slot · complete the squad"
   },
   {
    "fr": "Fiche {0}",
-   "en": ""
+   "en": "{0}’s profile"
   },
   {
    "fr": "PV {0} → {1}",
-   "en": ""
+   "en": "HP {0} → {1}"
   },
   {
    "fr": "{0} / {1} cartes",
-   "en": ""
+   "en": "{0} / {1} cards"
   },
   {
    "fr": "Le deck de l’escouade",
-   "en": ""
+   "en": "The squad’s deck"
   },
   {
    "fr": "Le deck · {0} cartes",
-   "en": ""
+   "en": "The deck · {0} cards"
   },
   {
    "fr": "Bien construire son deck",
-   "en": ""
+   "en": "Building a good deck"
   },
   {
    "fr": "Fréquences du deck : {0}",
-   "en": ""
+   "en": "Deck Frequencies: {0}"
   },
   {
    "fr": "Des chiffres qui se suivent font des Résonances{0}. Un chiffre absent coupe la suite{1}.",
-   "en": ""
+   "en": "Consecutive numbers make Resonances{0}. A missing number breaks the chain{1}."
   },
   {
    "fr": ": ta plus longue suite va de",
-   "en": ""
+   "en": ": your longest chain runs from"
+  },
+  {
+   "fr": "{0} à {1}",
+   "en": "{0} to {1}"
   },
   {
    "fr": " · {0} carte{1} ∗ comble{2} n’importe quel trou",
-   "en": ""
+   "en": " · {0} ∗ card{1} can fill any gap{2|}"
   },
   {
    "fr": "Il manque {0} carte{1}",
-   "en": ""
+   "en": "{0} card{1} missing"
   },
   {
    "fr": "({0} au moins).",
-   "en": ""
+   "en": "({0} at least)."
   },
   {
    "fr": "Confie des cartes à {0}.",
-   "en": ""
+   "en": "Give some cards to {0}."
   },
   {
    "fr": "Choisis des Porteurs qui portent plus de cartes.",
-   "en": ""
+   "en": "Pick Bearers who carry more cards."
+  },
+  {
+   "fr": "{0} et {1}",
+   "en": "{0} and {1}"
   },
   {
    "fr": "l’entraînement à la Tour",
-   "en": ""
+   "en": "training at the Tower"
   },
   {
-   "fr": "Au départ, {0} quitte{1} poste : {2} {3} sans Porteur jusqu’à ce que tu y remettes quelqu’un.",
-   "en": ""
+   "fr": "Au départ, {0} quittent leur poste : {1} resteront sans Porteur jusqu’à ce que tu y remettes quelqu’un.",
+   "en": "On departure, {0} leave their posts: {1} will be left without a Bearer until you put someone back."
+  },
+  {
+   "fr": "Au départ, {0} quittent leur poste : {1} restera sans Porteur jusqu’à ce que tu y remettes quelqu’un.",
+   "en": "On departure, {0} leave their posts: {1} will be left without a Bearer until you put someone back."
+  },
+  {
+   "fr": "Au départ, {0} quitte son poste : {1} resteront sans Porteur jusqu’à ce que tu y remettes quelqu’un.",
+   "en": "On departure, {0} leaves their post: {1} will be left without a Bearer until you put someone back."
+  },
+  {
+   "fr": "Au départ, {0} quitte son poste : {1} restera sans Porteur jusqu’à ce que tu y remettes quelqu’un.",
+   "en": "On departure, {0} leaves their post: {1} will be left without a Bearer until you put someone back."
   },
   {
    "fr": "{0} à la Clinique",
-   "en": ""
+   "en": "{0} at the Clinic"
   },
   {
    "fr": "{0} et {1} se remettent",
-   "en": ""
+   "en": "{0} and {1} are recovering"
   },
   {
    "fr": "Il faut au moins un quart de {0} PV pour redescendre : encore {1} environ au rythme actuel. Poste une recrue Géné à la Clinique pour aller plus vite, ou {2}.",
-   "en": ""
+   "en": "It takes at least a quarter of {0}’s HP to go back down: about {1} more at the current pace. Assign a Spliced recruit to the Clinic to speed it up, or {2}."
   },
   {
    "fr": "profite des premiers soins intensifs, offerts",
-   "en": ""
+   "en": "use the first intensive care, on the house"
   },
   {
    "fr": "Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.",
-   "en": ""
+   "en": "After the expedition, everyone picks up Strain: the Clinic heals it while they rest."
   },
   {
    "fr": "Encore {0} Porteur{1}",
-   "en": ""
+   "en": "{0} more Bearer{1}"
   },
   {
    "fr": "{0} cartes · {1} au moins",
-   "en": ""
+   "en": "{0} cards · {1} at least"
   },
   {
    "fr": "{0} blessé{1} · au repos",
-   "en": ""
+   "en": "{0} injured{1|} · resting"
   },
   {
    "fr": "{0} cartes, prêt",
-   "en": ""
+   "en": "{0} cards, ready"
   }
  ]
 }

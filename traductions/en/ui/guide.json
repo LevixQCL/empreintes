@@ -3,783 +3,783 @@
  "entrees": [
   {
    "fr": "Le deck",
-   "en": ""
+   "en": "The deck"
   },
   {
    "fr": "MODE D’EMPLOI",
-   "en": ""
+   "en": "HOW IT WORKS"
   },
   {
    "fr": "Les cartes et le deck",
-   "en": ""
+   "en": "Cards and the deck"
   },
   {
    "fr": "Protection",
-   "en": ""
+   "en": "Protection"
   },
   {
    "fr": "Les Fréquences de chaque lignée : Génés en bas, Augmentés au milieu, Résonants en haut",
-   "en": ""
+   "en": "Each lineage’s Frequencies: Spliced at the bottom, Augmented in the middle, Resonants at the top"
   },
   {
    "fr": "Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : plus {0} % de dégâts",
-   "en": ""
+   "en": "Augmented beats Resonant, Resonant beats Spliced, Spliced beats Augmented: {0} % more damage"
   },
   {
    "fr": "Le deck : {0} Porteurs de {1} cartes, plus {2} cartes du Râtelier de l’escouade (jusqu’à 4), soit {3} cartes",
-   "en": ""
+   "en": "The deck: {0} Bearers with {1} cards, plus {2} cards from the squad’s Rack (up to 4), for {3} cards"
   },
   {
    "fr": "cartes au plus · main de",
-   "en": ""
+   "en": "cards at most · hand of"
   },
   {
    "fr": "· chaîne de",
-   "en": ""
+   "en": "· chain of"
   },
   {
    "fr": "places",
-   "en": ""
+   "en": "slots"
   },
   {
    "fr": "En trois gestes",
-   "en": ""
+   "en": "In three moves"
   },
   {
    "fr": "Choisis ton escouade.",
-   "en": ""
+   "en": "Pick your squad."
   },
   {
    "fr": "Onglet",
-   "en": ""
+   "en": "Tab"
   },
   {
    "fr": ": tes {0} Porteurs, leur Marque et toutes leurs cartes. « Changer » à côté de l’un d’eux en fait entrer un autre. Elle ne change qu’au district, jamais pendant une descente.",
-   "en": ""
+   "en": ": your {0} Bearers, their Mark and all their cards. “Change” next to one of them brings in someone else. The squad only changes in the district, never during a descent."
   },
   {
    "fr": "Confie-leur des cartes.",
-   "en": ""
+   "en": "Give them cards."
   },
   {
    "fr": "« Gérer ses cartes » au-dessus de la liste d’un Porteur. Ou, dans le volet",
-   "en": ""
+   "en": "“Manage cards” above a Bearer’s list. Or, in the"
   },
   {
    "fr": ", touche une carte puis un Porteur sous « Confier à » (le filtre « Libres » montre celles que personne ne porte).",
-   "en": ""
+   "en": " panel, tap a card then a Bearer under “Give to” (the “Free” filter shows the ones nobody carries)."
   },
   {
    "fr": "Vérifie le deck.",
-   "en": ""
+   "en": "Check the deck."
   },
   {
    "fr": "En haut de l’onglet",
-   "en": ""
+   "en": "At the top of the"
   },
   {
    "fr": ", l’échelle des Fréquences montre ce que donnent les cartes de ton escouade, et où ta suite se coupe.",
-   "en": ""
+   "en": " tab, the Frequency ladder shows what your squad’s cards give you, and where your chain breaks."
   },
   {
    "fr": "Les règles du deck",
-   "en": ""
+   "en": "Deck rules"
   },
   {
    "fr": "Une carte va à un Porteur",
-   "en": ""
+   "en": "A card goes to a Bearer"
   },
   {
    "fr": "de sa lignée",
-   "en": ""
+   "en": "of its lineage"
   },
   {
    "fr": ": Augmenté, Géné ou Résonant.",
-   "en": ""
+   "en": ": Augmented, Spliced or Resonant."
   },
   {
    "fr": "au plus par Porteur, et",
-   "en": ""
+   "en": "at most per Bearer, and"
   },
   {
    "fr": "au moins dans le deck pour descendre ({0} pour une Épreuve).",
-   "en": ""
+   "en": "at least in the deck to go down ({0} for a Trial)."
   },
   {
    "fr": "Chaque carte",
-   "en": ""
+   "en": "Each card"
   },
   {
    "fr": "pèse",
-   "en": ""
+   "en": "weighs"
   },
   {
    "fr": "selon sa force (le chiffre de glace sur sa tuile). Un Porteur porte une",
-   "en": ""
+   "en": "according to its power (the ice number on its tile). A Bearer carries a"
   },
   {
    "fr": "de {0} au niveau 1, +{1} par niveau : une très grosse carte laisse moins de place aux autres.",
-   "en": ""
+   "en": "of {0} at level 1, +{1} per level: one very big card leaves less room for the rest."
   },
   {
    "fr": "Un Porteur combat toujours avec ses",
-   "en": ""
+   "en": "A Bearer always fights with their"
   },
   {
    "fr": "{0} places",
-   "en": ""
+   "en": "{0} slots"
   },
   {
    "fr": ": une place laissée vide se pioche comme une carte et",
-   "en": ""
+   "en": ": an empty slot is drawn like a card and"
   },
   {
    "fr": "ne se joue pas",
-   "en": ""
+   "en": "can’t be played"
   },
   {
    "fr": "(sauf dans les Épreuves).",
-   "en": ""
+   "en": "(except in Trials)."
   },
   {
    "fr": "Une carte n’a qu’",
-   "en": ""
+   "en": "A card has only"
   },
   {
    "fr": "un Porteur à la fois",
-   "en": ""
+   "en": "one Bearer at a time"
   },
   {
    "fr": ". Un Porteur ne porte pas deux fois la même carte, même dans deux métaux.",
-   "en": ""
+   "en": ". A Bearer can’t carry the same card twice, even in two metals."
   },
   {
    "fr": "Les cartes communes du",
-   "en": ""
+   "en": "The common cards from the squad’s"
   },
   {
    "fr": "Râtelier",
-   "en": ""
+   "en": "Rack"
   },
   {
    "fr": "de l’escouade (2 à 4, choisies au district) s’ajoutent au deck, si les cristaux du départ sont payés.",
-   "en": ""
+   "en": " (2 to 4, chosen in the district) are added to the deck, if the departure crystals are paid."
   },
   {
    "fr": "Changer d’escouade change le deck. Un Porteur au travail (ou à l’entraînement) peut descendre : il quitte son poste, qui reste vacant.",
-   "en": ""
+   "en": "Changing the squad changes the deck. A Bearer at work (or in training) can go down: they leave their post, which stays empty."
   },
   {
    "fr": "Un Porteur en expédition ou en mission garde ses cartes jusqu’à son retour.",
-   "en": ""
+   "en": "A Bearer on an expedition or a mission keeps their cards until they return."
   },
   {
    "fr": "En combat, les cartes d’un Porteur",
-   "en": ""
+   "en": "In combat, a downed Bearer’s cards"
   },
   {
    "fr": "s’éteignent : elles restent dans le deck un peu moins fortes (−15 %) et sans effet, et leur Fréquence compte toujours pour les suites. Il se relève à un campement.",
-   "en": ""
+   "en": "go dark: they stay in the deck a little weaker (−15 %) and without effects, and their Frequency still counts for chains. The Bearer gets back up at a camp."
   },
   {
    "fr": "Bien construire",
-   "en": ""
+   "en": "Building well"
   },
   {
    "fr": "Couvre les Fréquences de 1 à 9",
-   "en": ""
+   "en": "Cover Frequencies 1 to 9"
   },
   {
    "fr": "Des Fréquences qui se suivent font une Résonance (suite de {0}). Chaque lignée a sa zone : une escouade des trois lignées couvre l’échelle, et un chiffre absent coupe tes suites.",
-   "en": ""
+   "en": "Consecutive Frequencies make a Resonance (a chain of {0}). Each lineage has its range: a squad of all three lineages covers the ladder, and a missing number breaks your chains."
   },
   {
    "fr": "Double les Fréquences utiles",
-   "en": ""
+   "en": "Double up useful Frequencies"
   },
   {
    "fr": "Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : ces cartes +{0} % et +1 Flux (quatre : {1}, cinq : {2}). Mais une Fréquence empilée, ce sont moins de suites.",
-   "en": ""
+   "en": "Two or three cards on the same Frequency and you’ll hold it more often. Three of a kind in a chain make an Echo: those cards +{0} % and +1 Flux (four: {1}, five: {2}). But a stacked Frequency means fewer chains."
   },
   {
    "fr": "Mélange les actions",
-   "en": ""
+   "en": "Mix your actions"
   },
   {
    "fr": "Attaque, protection et soin. Le deck de départ en compte {0}, {1} et {2} sur {3} : un bon repère.",
-   "en": ""
+   "en": "Attack, protection and healing. The starting deck has {0}, {1} and {2} out of {3}: a good benchmark."
   },
   {
    "fr": "{0} attaques, {1} protections, {2} soins",
-   "en": ""
+   "en": "{0} attacks, {1} protections, {2} heals"
   },
   {
    "fr": "Choisis aussi pour les Marques",
-   "en": ""
+   "en": "Pick for the Marks too"
   },
   {
    "fr": "Chaque Porteur gagne une Marque par ses exploits, presque toujours en combattant. Elle ne joue que s’il est dans l’escouade : l’onglet Escouade dit ce qu’elle fait et combien il en reste à accomplir.",
-   "en": ""
+   "en": "Each Bearer earns a Mark through their feats, almost always in combat. It only works if they’re in the squad: the Squad tab says what it does and how much is left to accomplish."
   },
   {
    "fr": "Répartis les soins",
-   "en": ""
+   "en": "Spread out your heals"
   },
   {
    "fr": "Les cartes d’un Porteur à terre s’éteignent. Si tous tes soins sont chez lui, ils perdent leur effet au pire moment.",
-   "en": ""
+   "en": "A downed Bearer’s cards go dark. If all your heals are with them, they lose their effect at the worst possible moment."
   },
   {
    "fr": "Peu de cartes lourdes",
-   "en": ""
+   "en": "Few heavy cards"
   },
   {
    "fr": "Deux lames (deux places) : la carte est forte mais prend deux places. Avec une autre carte, elle remplit une chaîne de {0} places : pas de suite de 3 sans Flux ni Élan.",
-   "en": ""
+   "en": "Two blades (two slots): the card is strong but takes two slots. With one other card, it fills a chain of {0} slots: no chain of 3 without Flux or Momentum."
   },
   {
    "fr": "Des jokers pour les suites",
-   "en": ""
+   "en": "Wildcards for chains"
   },
   {
    "fr": "Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.",
-   "en": ""
+   "en": "A ∗ card (Accord) always takes the Frequency that extends your chain. In silver and gold a card carries 2 Frequencies, in nacre 3."
   },
   {
    "fr": "Pense au triangle",
-   "en": ""
+   "en": "Mind the triangle"
   },
   {
    "fr": "Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : +{0} % de dégâts. Les ennemis en profitent aussi contre tes Porteurs. Le dessin est dans « Lire une carte ».",
-   "en": ""
+   "en": "Augmented beats Resonant, Resonant beats Spliced, Spliced beats Augmented: +{0} % damage. Enemies use it against your Bearers too. The diagram is in “Reading a card”."
   },
   {
    "fr": "Un deck court tourne plus vite",
-   "en": ""
+   "en": "A short deck cycles faster"
   },
   {
    "fr": "Un Porteur peut porter moins de {0} cartes : tes meilleures reviennent plus souvent en main, mais tu couvres moins de Fréquences.",
-   "en": ""
+   "en": "A Bearer can carry fewer than {0} cards: your best ones come back to hand more often, but you cover fewer Frequencies."
   },
   {
    "fr": "Fais monter tes favorites",
-   "en": ""
+   "en": "Level up your favourites"
   },
   {
    "fr": "Doublons et cristaux : chaque niveau ajoute au moins +1 de force (une carte de 10 passe à 19 au niveau 10). Confie-les aux Porteurs que tu emmènes le plus souvent.",
-   "en": ""
+   "en": "Duplicates and crystals: each level adds at least +1 power (a 10 card reaches 19 at level 10). Give them to the Bearers you take down most often."
   },
   {
    "fr": "La carte",
-   "en": ""
+   "en": "The card"
   },
   {
    "fr": "Fréquences",
-   "en": ""
+   "en": "Frequencies"
   },
   {
    "fr": ", en haut à gauche : la principale d’abord ; leur couleur suit la Fréquence.",
-   "en": ""
+   "en": ", top left: the main one first; their colour follows the Frequency."
   },
   {
    "fr": "Action et force",
-   "en": ""
+   "en": "Action and power"
   },
   {
    "fr": ": l’icône dit ce qu’elle fait (épée = attaque, écu = protection, + = soin), le chiffre combien. La barre et le bord de l’image prennent sa couleur.",
-   "en": ""
+   "en": ": the icon says what it does (sword = attack, shield = protection, + = heal), the number how much. The bar and the edge of the art take its colour."
   },
   {
    "fr": "Niveau et nom",
-   "en": ""
+   "en": "Level and name"
   },
   {
    "fr": ": la roue compte les niveaux ({0} crans, dorée au maximum), dans la couleur de la lignée.",
-   "en": ""
+   "en": ": the wheel counts the levels ({0} notches, golden at max), in the lineage’s colour."
   },
   {
    "fr": "Effet",
-   "en": ""
+   "en": "Effect"
   },
   {
    "fr": ": son icône, son nom et ce qu’il fait, en bref.",
-   "en": ""
+   "en": ": its icon, its name and what it does, in short."
   },
   {
    "fr": "Cadre",
-   "en": ""
+   "en": "Frame"
   },
   {
    "fr": ": le métal de la carte, jusque sous le nom. La nacre n’en a pas.",
-   "en": ""
+   "en": ": the card’s metal, all the way under the name. Nacre has none."
   },
   {
    "fr": "Des Fréquences qui se suivent font une",
-   "en": ""
+   "en": "Consecutive Frequencies make a"
   },
   {
    "fr": "Résonance",
-   "en": ""
+   "en": "Resonance"
   },
   {
    "fr": ". Une carte à plusieurs Fréquences (argent et plus) prend seule celle qui prolonge ta suite ; en combat, le bouton sous la carte permet d’en changer.",
-   "en": ""
+   "en": ". A card with several Frequencies (silver and up) picks the one that extends your chain by itself; in combat, the button under the card lets you switch."
   },
   {
    "fr": "Dans la Collection (onglet Escouade), la jauge sous la carte compte les",
-   "en": ""
+   "en": "In the Collection (Squad tab), the gauge under the card counts the"
   },
   {
    "fr": "doublons",
-   "en": ""
+   "en": "duplicates"
   },
   {
    "fr": "qu’il faut pour monter. Touche la carte pour lire son effet en entier et sa petite histoire.",
-   "en": ""
+   "en": "it needs to level up. Tap the card to read its full effect and its little story."
   },
   {
    "fr": "En combat",
-   "en": ""
+   "en": "In combat"
   },
   {
    "fr": "En main, la carte garde l’essentiel : la",
-   "en": ""
+   "en": "In hand, the card keeps the essentials: the"
   },
   {
    "fr": "Fréquence",
-   "en": ""
+   "en": "Frequency"
   },
   {
    "fr": ", la",
-   "en": ""
+   "en": ", the"
   },
   {
    "fr": "force",
-   "en": ""
+   "en": "power"
   },
   {
    "fr": "en bas à droite et, en bas à gauche, le",
-   "en": ""
+   "en": "bottom right and, bottom left, the"
   },
   {
    "fr": "losange de la lignée",
-   "en": ""
+   "en": "lineage diamond"
   },
   {
    "fr": "avec l’",
-   "en": ""
+   "en": "with the"
   },
   {
    "fr": "icône de l’effet",
-   "en": ""
+   "en": "effect icon"
   },
   {
    "fr": "(liseré d’or quand la carte en a un). Posée dans la chaîne, elle montre aussi son",
-   "en": ""
+   "en": "(gold-rimmed when the card has one). Placed in the chain, it also shows its"
   },
   {
    "fr": "nom",
-   "en": ""
+   "en": "name"
   },
   {
    "fr": "Garde le doigt",
-   "en": ""
+   "en": "Hold your finger"
   },
   {
    "fr": "sur une carte (ou le bouton de la souris) : elle s’affiche en grand avec ses effets en entier. Lâche : elle revient à sa place, sans être jouée.",
-   "en": ""
+   "en": "on a card (or the mouse button): it shows up large with its full effects. Let go and it returns to its place without being played."
   },
   {
    "fr": "La carte qui prolonge ta suite se soulève et sa capsule de Fréquence s’allume en or.",
-   "en": ""
+   "en": "The card that extends your chain lifts up and its Frequency capsule lights up gold."
   },
   {
    "fr": "Trois actions",
-   "en": ""
+   "en": "Three actions"
   },
   {
    "fr": "Des dégâts à l’ennemi visé. Son bouclier encaisse d’abord.",
-   "en": ""
+   "en": "Damage to the targeted enemy. Its shield takes the hit first."
   },
   {
    "fr": "Un bouclier pour toute l’escouade. Il encaisse les coups de l’ennemi, puis disparaît (sauf Rempart).",
-   "en": ""
+   "en": "A shield for the whole squad. It soaks up enemy blows, then disappears (except with Rampart)."
   },
   {
    "fr": "Des PV à un Porteur : touche son nom sous la carte, dans la chaîne, pour choisir qui. Avec Vague, toute l’escouade.",
-   "en": ""
+   "en": "HP for one Bearer: tap their name under the card, in the chain, to choose who. With Wave, the whole squad."
   },
   {
    "fr": "Carte lourde",
-   "en": ""
+   "en": "Heavy card"
   },
   {
    "fr": "Plus forte, mais elle prend deux places dans la chaîne.",
-   "en": ""
+   "en": "Stronger, but it takes two slots in the chain."
   },
   {
    "fr": "Force",
-   "en": ""
+   "en": "Power"
   },
   {
    "fr": "Niveau de départ",
-   "en": ""
+   "en": "Starting level"
   },
   {
    "fr": "Porteur requis",
-   "en": ""
+   "en": "Bearer required"
   },
   {
    "fr": "Cinq métaux",
-   "en": ""
+   "en": "Five metals"
   },
   {
    "fr": "Ce que change le métal",
-   "en": ""
+   "en": "What metal changes"
   },
   {
    "fr": "Une même carte existe dans les cinq métaux. Le métal est fixé quand tu la trouves : il ne change jamais.",
-   "en": ""
+   "en": "The same card exists in all five metals. The metal is set when you find it: it never changes."
   },
   {
    "fr": "En fer, une carte n’a pas d’effet. Il s’ouvre en cuivre ; en or et en nacre, ses chiffres montent.",
-   "en": ""
+   "en": "In iron, a card has no effect. It unlocks in copper; in gold and nacre, its numbers go up."
   },
   {
    "fr": "Un métal rare demande un Porteur expérimenté : argent au niveau {0}, or au niveau {1}, nacre au niveau {2}. Trouvée plus tôt, la carte t’attend dans ta collection.",
-   "en": ""
+   "en": "A rare metal needs an experienced Bearer: silver at level {0}, gold at level {1}, nacre at level {2}. Found earlier, the card waits in your collection."
   },
   {
    "fr": "Deux métaux d’une carte sont deux cartes à part, chacune avec ses doublons et son niveau.",
-   "en": ""
+   "en": "Two metals of one card are two separate cards, each with its own duplicates and level."
   },
   {
    "fr": "Doublons et cristaux font monter une carte : chaque niveau ajoute environ un dixième de sa force de départ, jamais moins de +1, jusqu’au niveau {0}. Au maximum, la carte est",
-   "en": ""
+   "en": "Duplicates and crystals level a card up: each level adds about a tenth of its starting power, never less than +1, up to level {0}. At max, the card is"
   },
   {
    "fr": "maîtrisée",
-   "en": ""
+   "en": "mastered"
   },
   {
    "fr": ": un liseré de lumière parcourt son cadre.",
-   "en": ""
+   "en": ": a thread of light runs around its frame."
   },
   {
    "fr": "Chaque flèche donne +{0} % de dégâts à la lignée qui bat l’autre, dans les deux sens : tes cartes contre les ennemis, et les ennemis contre tes Porteurs.",
-   "en": ""
+   "en": "Each arrow gives +{0} % damage to the lineage that beats the other, both ways: your cards against enemies, and enemies against your Bearers."
   },
   {
    "fr": "Passe à travers le bouclier et le blindage de l’ennemi.",
-   "en": ""
+   "en": "Goes straight through the enemy’s shield and armour."
   },
   {
    "fr": "Remplit le Flux : +1 (+2 en nacre). Le Flux achète une place de plus dans la chaîne, ou une nouvelle main.",
-   "en": ""
+   "en": "Fills Flux: +1 (+2 in nacre). Flux buys an extra slot in the chain, or a fresh hand."
   },
   {
    "fr": "Ta prochaine chaîne a une place de plus ({0} au plus).",
-   "en": ""
+   "en": "Your next chain has one more slot ({0} at most)."
   },
   {
    "fr": "Le Porteur qui la joue récupère {0} des dégâts infligés (sans effet si son Porteur est à terre).",
-   "en": ""
+   "en": "The Bearer who plays it recovers {0} of the damage dealt (no effect if their Bearer is down)."
   },
   {
    "fr": "Le soin touche toute l’escouade au lieu d’un seul Porteur.",
-   "en": ""
+   "en": "The heal reaches the whole squad instead of a single Bearer."
   },
   {
    "fr": "{0} du bouclier d’escouade qui reste après l’attaque ennemie passe au tour suivant.",
-   "en": ""
+   "en": "{0} of the squad shield left after the enemy’s attack carries over to the next turn."
   },
   {
    "fr": "La prochaine attaque de l’ennemi visé perd {0} de sa force.",
-   "en": ""
+   "en": "The targeted enemy’s next attack loses {0} of its power."
   },
   {
    "fr": "L’ennemi visé subit {0} de dégâts en plus, ce tour-ci et le suivant.",
-   "en": ""
+   "en": "The targeted enemy takes {0} extra damage, this turn and the next."
   },
   {
    "fr": "Fréquence libre, notée ∗ : la carte prend toujours celle qui prolonge ta suite.",
-   "en": ""
+   "en": "Free Frequency, marked ∗: the card always takes the one that extends your chain."
   },
   {
    "fr": "+{0} de force pour chaque carte posée avant elle dans la chaîne.",
-   "en": ""
+   "en": "+{0} power for each card placed before it in the chain."
   },
   {
    "fr": "Une carte de bouclier qui riposte : après avoir donné son bouclier, elle frappe l’ennemi de {0} du bouclier d’escouade. Le bouclier n’est pas dépensé.",
-   "en": ""
+   "en": "A shield card that strikes back: after giving its shield, it hits the enemy for {0} of the squad shield. The shield isn’t spent."
   },
   {
    "fr": "Vide tout le Flux : +{0} de force par Flux vidé. Sans Flux, elle frappe normalement. Deux variantes : l’Éclair captif ne prend qu’un Flux et garde le reste ; le Noyau instable, s’il trouve le Flux vide, le remplit.",
-   "en": ""
+   "en": "Empties all Flux: +{0} power per Flux spent. With no Flux, it strikes normally. Two variants: the Captive Lightning takes only one Flux and keeps the rest; the Unstable Core, if it finds Flux empty, fills it."
   },
   {
    "fr": "Fréquence libre, notée = : la carte reprend la Fréquence de celle posée juste avant (en tête de chaîne, celle d’après).",
-   "en": ""
+   "en": "Free Frequency, marked =: the card copies the Frequency of the one placed just before it (at the head of the chain, the one after)."
   },
   {
    "fr": "+{0} de force si l’ennemi visé est fissuré (une Fissure posée plus tôt, ce tour-ci ou le précédent), ou s’il lui reste moins de la moitié de ses PV.",
-   "en": ""
+   "en": "+{0} power if the targeted enemy is fissured (a Fissure placed earlier, this turn or the last), or if it’s below half its HP."
   },
   {
    "fr": "Brise la Fêlure de l’ennemi visé, quelle que soit sa Fréquence, même cachée. Brisée en Résonance, elle rapporte du Flux comme d’habitude.",
-   "en": ""
+   "en": "Breaks the targeted enemy’s Flaw, whatever its Frequency, even hidden. Broken in a Resonance, it yields Flux as usual."
   },
   {
    "fr": "+{0} de force si la Fêlure de l’ennemi visé est déjà brisée ce tour-ci.",
-   "en": ""
+   "en": "+{0} power if the targeted enemy’s Flaw has already been broken this turn."
   },
   {
    "fr": "Si la chaîne compte au moins 4 cartes, elle frappe une seconde fois, avec la même force.",
-   "en": ""
+   "en": "If the chain holds at least 4 cards, it strikes a second time, with the same power."
   },
   {
    "fr": "Soigne toute l’escouade, et le soin qui dépasse les PV max n’est pas perdu : il devient du bouclier d’escouade.",
-   "en": ""
+   "en": "Heals the whole squad, and healing beyond max HP isn’t wasted: it becomes squad shield."
   },
   {
    "fr": "Avant d’agir, la carte arrache tout le bouclier de l’ennemi visé et l’ajoute au bouclier d’escouade.",
-   "en": ""
+   "en": "Before acting, the card rips away the targeted enemy’s whole shield and adds it to the squad shield."
   },
   {
    "fr": "Après le lancer, la carte la plus forte de la chaîne ne va pas à la défausse : elle revient en tête de pioche, tu la retrouves dans ta prochaine main.",
-   "en": ""
+   "en": "After the cast, the strongest card in the chain doesn’t go to the discard: it goes back on top of the draw pile, and you’ll find it in your next hand."
   },
   {
    "fr": "Le Porteur qui la joue brûle une part de ses PV max (jamais au point de tomber), et la carte frappe beaucoup plus fort.",
-   "en": ""
+   "en": "The Bearer who plays it burns part of their max HP (never enough to fall), and the card hits much harder."
   },
   {
    "fr": "La carte copie l’effet de celle posée juste avant elle (pas une Fréquence libre). S’il n’y a rien à copier (en tête de chaîne, après une carte sans effet), elle frappe +{0} % plus fort.",
-   "en": ""
+   "en": "The card copies the effect of the one placed just before it (not a free Frequency). If there’s nothing to copy (head of the chain, after a card with no effect), it strikes +{0} % harder."
   },
   {
    "fr": "Au tour suivant, tu pioches une carte de plus : plus de choix pour trouver ta suite.",
-   "en": ""
+   "en": "Next turn, you draw one more card: more choice to find your chain."
   },
   {
    "fr": "Avant d’agir, la carte brise tout le bouclier de l’ennemi visé.",
-   "en": ""
+   "en": "Before acting, the card shatters the targeted enemy’s whole shield."
   },
   {
    "fr": "La carte gagne de la force pour chaque Porteur à terre : le district tient quand l’escouade s’effondre.",
-   "en": ""
+   "en": "The card gains power for each downed Bearer: the district holds when the squad crumbles."
   },
   {
    "fr": "Si un Porteur est à terre, il se relève avec tout le soin. Sinon, la carte soigne comme une autre.",
-   "en": ""
+   "en": "If a Bearer is down, they get back up with all the healing. Otherwise, the card heals like any other."
   },
   {
    "fr": "L’ennemi visé perd {0} de ce qu’il prépare, quoi que ce soit : son attaque, son bouclier ou son soin.",
-   "en": ""
+   "en": "The targeted enemy loses {0} of whatever it’s preparing: its attack, its shield or its heal."
   },
   {
    "fr": "La carte posée juste après elle dans la chaîne gagne +{0} de force.",
-   "en": ""
+   "en": "The card placed right after it in the chain gains +{0} power."
   },
   {
    "fr": "Une carte lourde de la chaîne ne prend qu’une place au lieu de deux. Un Servo par carte lourde, où qu’il soit dans la chaîne.",
-   "en": ""
+   "en": "A heavy card in the chain takes only one slot instead of two. One Servo per heavy card, wherever it sits in the chain."
   },
   {
    "fr": "Si la carte est dans une suite qui résonne, elle gagne +{0} de force pour chaque autre lignée présente dans cette suite (deux au plus).",
-   "en": ""
+   "en": "If the card is in a resonating chain, it gains +{0} power for each other lineage in that chain (two at most)."
   },
   {
    "fr": "Après le coup, si l’ennemi visé n’a plus que {0} de ses PV ou moins, il tombe. Un gardien n’est jamais achevé ainsi.",
-   "en": ""
+   "en": "After the blow, if the targeted enemy has {0} of its HP or less left, it falls. A guardian is never finished off this way."
   },
   {
    "fr": "Pendant le tour ennemi qui suit, aucun Porteur ne peut tomber : un coup qui l’aurait mis à terre le laisse à 1 PV.",
-   "en": ""
+   "en": "During the next enemy turn, no Bearer can fall: a blow that would have downed them leaves them at 1 HP."
   },
   {
    "fr": "Garde-la pour un ennemi qui vient de se protéger, ou contre un Blindé.",
-   "en": ""
+   "en": "Save it for an enemy that just shielded up, or against an Armored one."
   },
   {
    "fr": "Une chaîne n’a que {0} places : le Flux ouvre les suites de 4 et de 5.",
-   "en": ""
+   "en": "A chain has only {0} slots: Flux opens chains of 4 and 5."
   },
   {
    "fr": "Joue-la quand ta main n’a pas de belle suite : au tour suivant, vise une suite de 4.",
-   "en": ""
+   "en": "Play it when your hand has no good chain: next turn, aim for a chain of 4."
   },
   {
    "fr": "Plus elle frappe fort, plus elle soigne : place-la dans une Résonance, chez un Porteur blessé.",
-   "en": ""
+   "en": "The harder it hits, the more it heals: put it in a Resonance, with a wounded Bearer."
   },
   {
    "fr": "Contre les attaques de zone et les groupes, quand tout le monde a pris des coups.",
-   "en": ""
+   "en": "Against area attacks and groups, when everyone has taken hits."
   },
   {
    "fr": "Quand l’ennemi se protège au lieu de frapper : une partie de ton bouclier sert encore au tour suivant.",
-   "en": ""
+   "en": "When the enemy shields up instead of striking: part of your shield still works next turn."
   },
   {
    "fr": "Quand l’ennemi annonce un gros coup. S’il n’annonce pas d’attaque, l’effet ne fait rien.",
-   "en": ""
+   "en": "When the enemy announces a big hit. If it isn’t announcing an attack, the effect does nothing."
   },
   {
    "fr": "Pose-la tôt : seules les cartes jouées après elle en profitent, et encore au tour suivant.",
-   "en": ""
+   "en": "Play it early: only the cards played after it benefit, and again next turn."
   },
   {
    "fr": "Elle bouche le trou d’une suite. En tête de chaîne, elle se cale juste avant la carte qui la suit.",
-   "en": ""
+   "en": "It plugs the gap in a chain. At the head of the chain, it slots in right before the card that follows."
   },
   {
    "fr": "Pose-la en dernier : elle profite de tout le bouclier déjà monté dans la chaîne, et de celui gardé par un Rempart ou la Marque de Doran.",
-   "en": ""
+   "en": "Play it last: it gets all the shield already built up in the chain, plus whatever a Rampart or Doran’s Mark has kept."
   },
   {
    "fr": "Remplis le Flux (Surcharge, Résonance, Écho), puis vide-le d’un coup : à {0} Flux, la force fait plus que doubler. Mais ce Flux ne servira ni au Coup d’éclat ni à une place de plus.",
-   "en": ""
+   "en": "Fill Flux (Overcharge, Resonance, Echo), then empty it all at once: at {0} Flux, power more than doubles. But that Flux won’t go to a Masterstroke or an extra slot."
   },
   {
    "fr": "Elle complète un Écho : deux cartes de même Fréquence et un Diapason, et ces trois cartes sont renforcées de +{0} %, avec 1 Flux.",
-   "en": ""
+   "en": "It completes an Echo: two cards of the same Frequency plus a Tuning Fork, and all three get +{0} %, with 1 Flux."
   },
   {
    "fr": "Trois cartes de même Fréquence : chacune compte les deux autres. La Dissonance coupe les suites et l’Écho, mais pas l’Unisson.",
-   "en": ""
+   "en": "Three cards of the same Frequency: each one counts the other two. Dissonance breaks chains and Echo, but not Unison."
   },
   {
    "fr": "Fissure d’abord, Curée ensuite : la Fissure dure deux tours. Et quand l’ennemi passe sous la moitié de ses PV, toutes tes Curées mordent.",
-   "en": ""
+   "en": "Fissure first, Pounce second: Fissure lasts two turns. And once the enemy drops below half its HP, all your Pounces bite."
   },
   {
    "fr": "Contre un Évanescent, elle trouve la Fêlure cachée ; contre un gros coup annoncé, elle le casse sans chercher la bonne Fréquence.",
-   "en": ""
+   "en": "Against an Evanescent, it finds the hidden Flaw; against a big announced hit, it breaks it without hunting for the right Frequency."
   },
   {
    "fr": "Pose-la après une Lecture, ou après la carte qui a la Fréquence fêlée.",
-   "en": ""
+   "en": "Play it after a Reading, or after the card with the flawed Frequency."
   },
   {
    "fr": "Une chaîne de 4 demande de la place : Élan et Flux la préparent.",
-   "en": ""
+   "en": "A chain of 4 needs room: Momentum and Flux make it."
   },
   {
    "fr": "Même quand personne n’est blessé, elle protège : joue-la avant un gros coup annoncé.",
-   "en": ""
+   "en": "Even when nobody’s hurt, it protects: play it before a big announced hit."
   },
   {
    "fr": "Garde-la pour le tour où l’ennemi vient de se protéger : son bouclier devient le tien.",
-   "en": ""
+   "en": "Save it for the turn the enemy just shielded up: its shield becomes yours."
   },
   {
    "fr": "Monte une chaîne autour de ta meilleure carte : elle revient tout de suite au tour d’après.",
-   "en": ""
+   "en": "Build a chain around your best card: it comes right back the next turn."
   },
   {
    "fr": "Quand le Porteur a de la marge, et qu’un soin suit : chaque PV brûlé se rachète.",
-   "en": ""
+   "en": "When the Bearer has HP to spare and a heal is coming: every HP burned is bought back."
   },
   {
    "fr": "Pose-la juste après ta meilleure carte d’effet : un Perçant, un Siphon, une Fissure…",
-   "en": ""
+   "en": "Play it right after your best effect card: a Piercing, a Siphon, a Fissure…"
   },
   {
    "fr": "Garde-la en main quand un Porteur faiblit : elle annule la chute au lieu de la prévenir.",
-   "en": ""
+   "en": "Keep it in hand when a Bearer is flagging: it cancels the fall instead of preventing it."
   },
   {
    "fr": "Pose-la quand ta main ne fait pas de suite : la prochaine aura plus de chances.",
-   "en": ""
+   "en": "Play it when your hand won’t make a chain: the next one will have better odds."
   },
   {
    "fr": "Garde-la pour le tour où l’ennemi vient de se protéger.",
-   "en": ""
+   "en": "Save it for the turn the enemy just shielded up."
   },
   {
    "fr": "Ta carte de dernier recours : plus l’escouade tombe, plus elle frappe.",
-   "en": ""
+   "en": "Your last-resort card: the more the squad falls, the harder it hits."
   },
   {
    "fr": "Moins forte que Troubler contre une attaque, mais elle sert aussi quand l’ennemi va se protéger ou se soigner.",
-   "en": ""
+   "en": "Weaker than Unsettle against an attack, but it also works when the enemy is about to shield or heal."
   },
   {
    "fr": "Pose-la juste avant ta carte la plus forte : la suivante profite de tout le bonus.",
-   "en": ""
+   "en": "Play it right before your strongest card: the next one gets the whole bonus."
   },
   {
    "fr": "Avec une carte lourde en main, elle rend sa place : un gros coup et une suite de 3 dans la même chaîne.",
-   "en": ""
+   "en": "With a heavy card in hand, it gives back its slot: a big hit and a chain of 3 in the same chain."
   },
   {
    "fr": "Une suite qui passe par les trois lignées (Génés, Augmentés, Résonants) lui donne tout son bonus.",
-   "en": ""
+   "en": "A chain running through all three lineages (Spliced, Augmented, Resonants) gives it the full bonus."
   },
   {
    "fr": "Termine la chaîne par elle : les cartes d’avant font descendre l’ennemi, elle l’achève.",
-   "en": ""
+   "en": "End the chain with it: the cards before wear the enemy down, and it finishes the job."
   },
   {
    "fr": "Le tour où l’ennemi annonce un coup qui tuerait : tout le monde reste debout, puis on soigne.",
-   "en": ""
+   "en": "The turn the enemy announces a killing blow: everyone stays standing, then you heal."
   },
   {
    "fr": "En dernière place d’une longue chaîne : cinquième, elle gagne +{0} à {1} %.",
-   "en": ""
+   "en": "In the last slot of a long chain: fifth, it gains +{0} to {1} %."
   },
   {
    "fr": "En",
-   "en": ""
+   "en": "In"
   },
   {
    "fr": "fer",
-   "en": ""
+   "en": "iron"
   },
   {
    "fr": ", une carte n’a pas d’effet. Il s’ouvre en",
-   "en": ""
+   "en": ", a card has no effect. It unlocks in"
   },
   {
    "fr": "cuivre",
-   "en": ""
+   "en": "copper"
   },
   {
    "fr": ". En",
-   "en": ""
+   "en": ". In"
   },
   {
    "fr": "or",
-   "en": ""
+   "en": "gold"
   },
   {
    "fr": ", les effets en pourcentage sont {0} % plus forts, en",
-   "en": ""
+   "en": ", percentage effects are {0} % stronger, in"
   },
   {
    "fr": "nacre",
-   "en": ""
+   "en": "nacre"
   },
   {
    "fr": "Surtout chez les {0}",
-   "en": ""
+   "en": "Mostly among the {0}"
   },
   {
    "fr": "{0}{1} à trouver",
-   "en": ""
+   "en": "{0}{1} to find"
   },
   {
    "fr": "Le Râtelier de l’escouade",
-   "en": ""
+   "en": "The squad’s Rack"
   },
   {
    "fr": "{0} {1}, Fréquence {2}{3}.",
-   "en": ""
+   "en": "{0} {1}, Frequency {2}{3}."
   },
   {
    "fr": "Au départ, le district fournit ces deux cartes communes : le Stimulant vient de la Clinique, le Pavois de cuivre de la Tour du Noyau. En montant, tes bâtiments en préparent d’autres (Lame d’atelier, Plan des galeries, Brèche, Groupe de secours, Ampoule de relève), et leur force grandit avec eux : chaque niveau du bâtiment leur ajoute de la force (touche une carte pour voir son échelle). Tu choisis celles qui descendent dans le Râtelier de l’escouade : 2 emplacements, 3 au niveau 5 de la Tour du Noyau, 4 au niveau 9. Chaque départ coûte quelques cristaux pour tout le Râtelier à la fois (10 pour explorer, 5 pour une sortie courte) ; sans assez de cristaux, l’escouade part sans elles. Jouées par personne, elles ne s’éteignent jamais quand un Porteur tombe.",
-   "en": ""
+   "en": "At the start, the district provides these two common cards: the Stimulant comes from the Clinic, the Copper Pavise from the Core Tower. As they level up, your buildings prepare others (Workshop Blade, Tunnel Map, Breach, Rescue Team, Relief Vial), and their power grows with them: each building level adds power (tap a card to see its scale). You choose which ones go down in the squad’s Rack: 2 slots, 3 at Core Tower level 5, 4 at level 9. Each departure costs a few crystals for the whole Rack at once (10 to explore, 5 for a short trip); without enough crystals, the squad leaves without them. Played by no one, they never go dark when a Bearer falls."
   }
  ]
 }

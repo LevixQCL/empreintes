@@ -3,527 +3,527 @@
  "entrees": [
   {
    "fr": "Le Cercle des quais · la place des directeurs",
-   "en": ""
+   "en": "The Quayside Circle · where directors meet"
   },
   {
    "fr": "Ici, on se mesure sans se battre pour de vrai",
-   "en": ""
+   "en": "Here, you test each other without really fighting"
   },
   {
    "fr": "Piller coûte cher : une escouade, une journée, et la rancune d’un voisin. Alors on accoste au Cercle : on s’y salue, on y montre ses plus belles cartes, on s’y défie sur l’estrade, et on y échange ce qu’on a en double.",
-   "en": ""
+   "en": "Raiding is costly: a squad, a whole day, and a neighbour’s grudge. So people dock at the Circle instead: they greet each other, show off their finest cards, challenge each other on the stand, and trade their spares."
   },
   {
    "fr": "Le Cercle est fermé · vaincs le gardien de la Strate −{0}",
-   "en": ""
+   "en": "The Circle is closed · defeat the guardian of Stratum −{0}"
   },
   {
    "fr": "Aucun directeur ne traite avec un district qui n’a pas encore tenu son puits.",
-   "en": ""
+   "en": "No director deals with a district that hasn’t held its shaft yet."
   },
   {
    "fr": "Des amis",
-   "en": ""
+   "en": "Friends"
   },
   {
    "fr": "Ajoute un directeur par son nom. Tu vois sa vitrine : ses plus belles cartes, ses doubles, ce qu’il cherche.",
-   "en": ""
+   "en": "Add a director by name. You see their display: their finest cards, their spares, what they’re looking for."
   },
   {
    "fr": "Des duels",
-   "en": ""
+   "en": "Duels"
   },
   {
    "fr": "Défie un ami en temps réel, avec tes vraies forces ou à armes égales. Tes {0} premières victoires de la semaine contre des amis différents rapportent {1} cristaux et {2}.",
-   "en": ""
+   "en": "Challenge a friend in real time, with your true strength or on equal terms. Your first {0} wins of the week against different friends earn {1} crystals and {2}."
   },
   {
    "fr": "Des échanges",
-   "en": ""
+   "en": "Trades"
   },
   {
    "fr": "Une carte en double contre une carte du même métal. Ta carte ne part jamais, seulement un exemplaire en double. Fer et cuivre gratuits ; argent et or contre des cristaux ; jamais la nacre.",
-   "en": ""
+   "en": "A spare card for a card of the same metal. Your own card never leaves, only a spare copy. Iron and copper are free; silver and gold cost crystals; never nacre."
   },
   {
    "fr": "Construire le Cercle",
-   "en": ""
+   "en": "Build the Circle"
   },
   {
    "fr": "Retour au Cercle",
-   "en": ""
+   "en": "Back to the Circle"
   },
   {
    "fr": "Entrer au Cercle",
-   "en": ""
+   "en": "Enter the Circle"
   },
   {
    "fr": "Niv. {0} · ",
-   "en": ""
+   "en": "Lvl {0} · "
   },
   {
    "fr": "Construire",
-   "en": ""
+   "en": "Build"
   },
   {
    "fr": "Niv. {0} · Améliorer",
-   "en": ""
+   "en": "Lvl {0} · Upgrade"
   },
   {
    "fr": "Niv. {0} · Max",
-   "en": ""
+   "en": "Lvl {0} · Max"
   },
   {
    "fr": "{0} : la fiche du bâtiment",
-   "en": ""
+   "en": "{0}: building details"
   },
   {
    "fr": "Comment marche le Cercle",
-   "en": ""
+   "en": "How the Circle works"
   },
   {
    "fr": "Le Cercle passe par ton compte",
-   "en": ""
+   "en": "The Circle goes through your account"
   },
   {
    "fr": "Les amis, les duels et les échanges ont besoin du jeu connecté. Ta partie, elle, ne change pas.",
-   "en": ""
+   "en": "Friends, duels and trades need the game to be online. Your game itself doesn’t change."
   },
   {
    "fr": "Se connecter",
-   "en": ""
+   "en": "Sign in"
   },
   {
    "fr": "Choisis ton nom de directeur",
-   "en": ""
+   "en": "Choose your director name"
   },
   {
    "fr": "C’est par lui que tes amis te trouvent. Jamais ton adresse e-mail.",
-   "en": ""
+   "en": "It’s how your friends find you. Never your email address."
   },
   {
    "fr": "Choisir mon nom",
-   "en": ""
+   "en": "Choose my name"
   },
   {
    "fr": "Amis, duels ou échanges",
-   "en": ""
+   "en": "Friends, duels or trades"
   },
   {
    "fr": "Amis",
-   "en": ""
+   "en": "Friends"
   },
   {
    "fr": "Échanges",
-   "en": ""
+   "en": "Trades"
   },
   {
    "fr": "Les quais se remplissent…",
-   "en": ""
+   "en": "The quays are filling up…"
   },
   {
    "fr": "Le Cercle ne répond pas.",
-   "en": ""
+   "en": "The Circle isn’t answering."
   },
   {
    "fr": "Réessayer",
-   "en": ""
+   "en": "Try again"
   },
   {
    "fr": "Ajouter un directeur",
-   "en": ""
+   "en": "Add a director"
   },
   {
    "fr": "Son nom de directeur",
-   "en": ""
+   "en": "Their director name"
   },
   {
    "fr": "Nom de directeur de ton ami",
-   "en": ""
+   "en": "Your friend’s director name"
   },
   {
    "fr": "Recherche…",
-   "en": ""
+   "en": "Searching…"
   },
   {
    "fr": "Inviter",
-   "en": ""
+   "en": "Invite"
   },
   {
    "fr": "Ton nom :",
-   "en": ""
+   "en": "Your name:"
   },
   {
    "fr": ". Donne-le à tes amis pour qu’ils t’ajoutent.",
-   "en": ""
+   "en": ". Give it to your friends so they can add you."
   },
   {
    "fr": "Ils veulent être tes amis",
-   "en": ""
+   "en": "They want to be your friends"
   },
   {
    "fr": "veut rejoindre ton Cercle",
-   "en": ""
+   "en": "wants to join your Circle"
   },
   {
    "fr": "Accepter",
-   "en": ""
+   "en": "Accept"
   },
   {
    "fr": "Refuser {0}",
-   "en": ""
+   "en": "Decline {0}"
   },
   {
    "fr": "Tes amis",
-   "en": ""
+   "en": "Your friends"
   },
   {
    "fr": "Personne pour l’instant. Invite un directeur par son nom, ou envoie ton lien de recrutement : tes recrues deviennent tes amis.",
-   "en": ""
+   "en": "Nobody yet. Invite a director by name, or send your recruitment link: your recruits become your friends."
   },
   {
    "fr": "La vitrine de {0}",
-   "en": ""
+   "en": "{0}’s display"
   },
   {
    "fr": "Strate −{0} · Cercle {1}",
-   "en": ""
+   "en": "Stratum −{0} · Circle {1}"
   },
   {
    "fr": "vitrine pas encore ouverte",
-   "en": ""
+   "en": "display not open yet"
   },
   {
    "fr": "Il a {0} carte(s) que tu cherches",
-   "en": ""
+   "en": "They have {0} card(s) you’re looking for"
   },
   {
    "fr": "Il cherche {0} de tes doubles",
-   "en": ""
+   "en": "They’re looking for {0} of your spares"
   },
   {
    "fr": "En attente : {0}",
-   "en": ""
+   "en": "Pending: {0}"
   },
   {
    "fr": "annuler",
-   "en": ""
+   "en": "cancel"
   },
   {
    "fr": "Ta vitrine",
-   "en": ""
+   "en": "Your display"
   },
   {
    "fr": "Choisir une carte à montrer",
-   "en": ""
+   "en": "Pick a card to show"
   },
   {
    "fr": "Ce que tes amis voient de toi{0}.",
-   "en": ""
+   "en": "What your friends see of you{0}."
   },
   {
    "fr": " · {0} place{1} de plus avec le Cercle",
-   "en": ""
+   "en": " · {0} more slot{1} with the Circle"
   },
   {
    "fr": "Strate −{0} · {1} en duel",
-   "en": ""
+   "en": "Stratum −{0} · {1} in duels"
   },
   {
    "fr": "Sa vitrine n’est pas encore ouverte : elle apparaîtra quand il aura construit son Cercle.",
-   "en": ""
+   "en": "Their display isn’t open yet: it’ll appear once they’ve built their Circle."
   },
   {
    "fr": "Défier",
-   "en": ""
+   "en": "Challenge"
   },
   {
    "fr": "Échanger",
-   "en": ""
+   "en": "Trade"
   },
   {
    "fr": "Sa vitrine",
-   "en": ""
+   "en": "Their display"
   },
   {
    "fr": "Ses doubles",
-   "en": ""
+   "en": "Their spares"
   },
   {
    "fr": "nouvelle pour toi",
-   "en": ""
+   "en": "new to you"
   },
   {
    "fr": "Rien en double pour l’instant.",
-   "en": ""
+   "en": "No spares for now."
   },
   {
    "fr": "Ce qu’il cherche",
-   "en": ""
+   "en": "What they’re looking for"
   },
   {
    "fr": "tu l’as en double",
-   "en": ""
+   "en": "you have a spare"
   },
   {
    "fr": "Il n’a encore rien noté.",
-   "en": ""
+   "en": "They haven’t noted anything yet."
   },
   {
    "fr": "Retirer {0} de tes amis",
-   "en": ""
+   "en": "Remove {0} from your friends"
   },
   {
    "fr": "{0} victoire(s) récompensée(s) sur {1} cette semaine",
-   "en": ""
+   "en": "{0} rewarded win(s) out of {1} this week"
   },
   {
    "fr": "Encore {0} récompensée{1} cette semaine",
-   "en": ""
+   "en": "{0} more rewarded{1|} this week"
   },
   {
    "fr": "Toutes les victoires de la semaine sont gagnées",
-   "en": ""
+   "en": "All this week’s wins are earned"
   },
   {
    "fr": "{0} cristaux et {1} par ami différent battu. Bilan : {2}, {3}.",
-   "en": ""
+   "en": "{0} crystals and {1} per different friend beaten. Record: {2}, {3}."
   },
   {
    "fr": "défaite",
-   "en": ""
+   "en": "defeat"
   },
   {
    "fr": "On te défie",
-   "en": ""
+   "en": "You’ve been challenged"
   },
   {
    "fr": "avec vos vraies forces",
-   "en": ""
+   "en": "with your true strength"
   },
   {
    "fr": "Jouer",
-   "en": ""
+   "en": "Play"
   },
   {
    "fr": "Refuser le défi de {0}",
-   "en": ""
+   "en": "Decline {0}’s challenge"
   },
   {
    "fr": "Défier un ami",
-   "en": ""
+   "en": "Challenge a friend"
   },
   {
    "fr": "Mode du duel",
-   "en": ""
+   "en": "Duel mode"
   },
   {
    "fr": "Vraies forces",
-   "en": ""
+   "en": "True strength"
   },
   {
    "fr": "À armes égales",
-   "en": ""
+   "en": "Equal terms"
   },
   {
    "fr": "{0} Il faut un Augmenté, un Géné et un Résonant dans l’escouade.",
-   "en": ""
+   "en": "{0} You need an Augmented, a Spliced and a Resonant in the squad."
   },
   {
    "fr": "Chaque carte revient au niveau de départ de son métal, chaque Porteur à ses PV de base : seule ta façon de jouer compte.",
-   "en": ""
+   "en": "Every card returns to its metal’s starting level, every Bearer to their base HP: only the way you play counts."
   },
   {
    "fr": "Chacun vient avec son escouade active, ses cartes et ses niveaux.",
-   "en": ""
+   "en": "Each player brings their active squad, cards and levels."
   },
   {
    "fr": "Ajoute d’abord un ami dans le volet Amis.",
-   "en": ""
+   "en": "Add a friend in the Friends panel first."
   },
   {
    "fr": "défi envoyé, il doit l’accepter",
-   "en": ""
+   "en": "challenge sent, they have to accept it"
   },
   {
    "fr": "déjà battu cette semaine",
-   "en": ""
+   "en": "already beaten this week"
   },
   {
    "fr": "prêt à jouer",
-   "en": ""
+   "en": "ready to play"
   },
   {
    "fr": "Annuler",
-   "en": ""
+   "en": "Cancel"
   },
   {
    "fr": "S’échauffer",
-   "en": ""
+   "en": "Warm up"
   },
   {
    "fr": "Un duel contre le robot d’entraînement, sans rien à gagner ni à perdre.",
-   "en": ""
+   "en": "A duel against the training robot, with nothing to win or lose."
   },
   {
    "fr": "S’entraîner",
-   "en": ""
+   "en": "Practise"
   },
   {
    "fr": "échange{0} possible{1} aujourd’hui",
-   "en": ""
+   "en": "trade{0} possible{1|} today"
   },
   {
    "fr": "propositions en attente",
-   "en": ""
+   "en": "pending offers"
   },
   {
    "fr": "métal le plus rare échangeable",
-   "en": ""
+   "en": "rarest tradable metal"
   },
   {
    "fr": "On te propose",
-   "en": ""
+   "en": "You’ve been offered"
   },
   {
    "fr": "te propose",
-   "en": ""
+   "en": "offers you"
   },
   {
    "fr": "tu la reçois",
-   "en": ""
+   "en": "you receive it"
   },
   {
    "fr": "contre",
-   "en": ""
+   "en": "for"
   },
   {
    "fr": "ton double",
-   "en": ""
+   "en": "your spare"
   },
   {
    "fr": "Refuser",
-   "en": ""
+   "en": "Decline"
   },
   {
    "fr": "Tes propositions",
-   "en": ""
+   "en": "Your offers"
   },
   {
    "fr": "sans réponse · revient d’elle-même au bout de {0} h",
-   "en": ""
+   "en": "no answer · comes back on its own after {0} h"
   },
   {
    "fr": "tu donnes",
-   "en": ""
+   "en": "you give"
   },
   {
    "fr": "tu reçois",
-   "en": ""
+   "en": "you receive"
   },
   {
    "fr": "Reprendre ma carte",
-   "en": ""
+   "en": "Take my card back"
   },
   {
    "fr": "Proposer un échange",
-   "en": ""
+   "en": "Offer a trade"
   },
   {
    "fr": "Tes amis n’ont pas encore ouvert leur vitrine.",
-   "en": ""
+   "en": "Your friends haven’t opened their display yet."
   },
   {
    "fr": " · {0} que tu cherches",
-   "en": ""
+   "en": " · {0} you’re looking for"
   },
   {
    "fr": "Tes souhaits",
-   "en": ""
+   "en": "Your wishes"
   },
   {
    "fr": "Tes amis voient ce que tu cherches : leurs doubles qui te manquent ressortent en premier.",
-   "en": ""
+   "en": "Your friends see what you’re looking for: their spares that you lack show up first."
   },
   {
    "fr": "Ajouter un souhait",
-   "en": ""
+   "en": "Add a wish"
   },
   {
    "fr": "{0} / {1} souhaits",
-   "en": ""
+   "en": "{0} / {1} wishes"
   },
   {
    "fr": "{0} / {1} en vitrine",
-   "en": ""
+   "en": "{0} / {1} on display"
   },
   {
    "fr": "Les cartes que tu cherches",
-   "en": ""
+   "en": "Cards you’re looking for"
   },
   {
    "fr": "Touche une carte pour l’ajouter ou la retirer. Celles qui te manquent passent en premier.",
-   "en": ""
+   "en": "Tap a card to add or remove it. The ones you lack come first."
   },
   {
    "fr": "Touche une carte pour la montrer à tes amis, ou la retirer.",
-   "en": ""
+   "en": "Tap a card to show it to your friends, or take it down."
   },
   {
    "fr": "Lignée",
-   "en": ""
+   "en": "Lineage"
   },
   {
    "fr": "Toutes",
-   "en": ""
+   "en": "All"
   },
   {
    "fr": "L’or s’échange à partir du niveau {0} du Cercle : tu peux déjà le noter.",
-   "en": ""
+   "en": "Gold can be traded from Circle level {0}: you can already note it."
   },
   {
    "fr": "Aucune carte ici.",
-   "en": ""
+   "en": "No cards here."
   },
   {
    "fr": "Échange avec {0} · étape {1} sur 2",
-   "en": ""
+   "en": "Trade with {0} · step {1} of 2"
   },
   {
    "fr": "Que donnes-tu en échange ?",
-   "en": ""
+   "en": "What do you give in exchange?"
   },
   {
    "fr": "Que veux-tu recevoir ?",
-   "en": ""
+   "en": "What do you want to receive?"
   },
   {
    "fr": "Ses doubles. Tes souhaits {0} et les cartes qui te manquent passent en premier.",
-   "en": ""
+   "en": "Their spares. Your wishes {0} and the cards you lack come first."
   },
   {
    "fr": "{0} n’a rien en double que tu puisses recevoir pour l’instant.",
-   "en": ""
+   "en": "{0} has no spares you could receive right now."
   },
   {
    "fr": "Un de tes doubles en {0}. Ce qu’il cherche {1} passe en premier : il acceptera plus volontiers.",
-   "en": ""
+   "en": "One of your {0} spares. What they’re looking for {1} comes first: they’ll be more willing to accept."
   },
   {
    "fr": "{0} en double",
-   "en": ""
+   "en": "{0} spare"
   },
   {
    "fr": "Tu n’as aucun double en {0} à donner.",
-   "en": ""
+   "en": "You have no {0} spares to give."
   },
   {
    "fr": "Changer",
-   "en": ""
+   "en": "Change"
   },
   {
    "fr": "Proposer",
-   "en": ""
+   "en": "Offer"
   }
  ]
 }

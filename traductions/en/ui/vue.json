@@ -3,1223 +3,1227 @@
  "entrees": [
   {
    "fr": ", fréquences possibles {0}",
-   "en": ""
+   "en": ", possible Frequencies {0}"
   },
   {
    "fr": "{0} ({1}), fréquence {2}{3}, {4} {5}{6}{7}{8}{9}{10}{11}",
-   "en": ""
+   "en": "{0} ({1}), Frequency {2}{3}, {4} {5}{6}{7}{8}{9}{10}{11}"
   },
   {
    "fr": " ({0}, {1} de base)",
-   "en": ""
+   "en": " ({0}, {1} base)"
   },
   {
    "fr": "renforcée",
-   "en": ""
+   "en": "boosted"
   },
   {
    "fr": ", prolonge ta suite",
-   "en": ""
+   "en": ", extends your chain"
   },
   {
    "fr": ", brise la Fêlure de l’ennemi",
-   "en": ""
+   "en": ", breaks the enemy’s Flaw"
   },
   {
    "fr": ", éteinte : son Porteur est à terre",
-   "en": ""
+   "en": ", dark: its Bearer is down"
   },
   {
    "fr": "Éteinte : {0} est à terre",
-   "en": ""
+   "en": "Dark: {0} is down"
   },
   {
    "fr": "Jouée par {0}",
-   "en": ""
+   "en": "Played by {0}"
   },
   {
    "fr": " · prend 2 places",
-   "en": ""
+   "en": " · takes 2 slots"
   },
   {
    "fr": "Posée maintenant",
-   "en": ""
+   "en": "Placed now"
   },
   {
    "fr": "Au lancer",
-   "en": ""
+   "en": "On cast"
   },
   {
    "fr": "Son bouclier ({0}) absorbe d’abord le coup.",
-   "en": ""
+   "en": "Its shield ({0}) soaks up the blow first."
   },
   {
    "fr": "Soigne {0}{1} : toucher pour changer",
-   "en": ""
+   "en": "Heals {0}{1}: tap to change"
   },
   {
    "fr": ", qui a déjà tous ses PV",
-   "en": ""
+   "en": ", who is already at full HP"
   },
   {
    "fr": " · PV pleins",
-   "en": ""
+   "en": " · full HP"
   },
   {
    "fr": "Passer {0} en Fréquence {1}",
-   "en": ""
+   "en": "Switch {0} to Frequency {1}"
   },
   {
    "fr": "Partie de secours : Strate −{0}, du {1}.{2}",
-   "en": ""
+   "en": "Backup save: Stratum −{0}, from {1}.{2}"
   },
   {
    "fr": " Ta partie actuelle (Strate −{0}) deviendra la partie de secours : tu pourras revenir en arrière.",
-   "en": ""
+   "en": " Your current game (Stratum −{0}) will become the backup: you’ll be able to go back."
   },
   {
    "fr": "Confirmer l’échange",
-   "en": ""
+   "en": "Confirm the swap"
   },
   {
    "fr": "Restaurer cette partie",
-   "en": ""
+   "en": "Restore this game"
   },
   {
    "fr": "Avant de commencer",
-   "en": ""
+   "en": "Before you start"
   },
   {
    "fr": "Ossyra garde ta partie en ligne pour que tu ne la perdes jamais, et te permet d’apparaître au Grand Tableau sous un pseudo. Pour cela, il faut avoir au moins 13 ans.",
-   "en": ""
+   "en": "Ossyra keeps your game online so you never lose it, and lets you appear on the Great Board under a username. For that, you need to be at least 13."
   },
   {
    "fr": "J’ai 13 ans ou plus",
-   "en": ""
+   "en": "I’m 13 or older"
   },
   {
    "fr": "J’ai moins de 13 ans",
-   "en": ""
+   "en": "I’m under 13"
   },
   {
    "fr": "Moins de 13 ans : tu joues au jeu entier, mais ta partie reste sur cet appareil, sans rien en ligne.",
-   "en": ""
+   "en": "Under 13: you play the whole game, but your save stays on this device, with nothing online."
   },
   {
    "fr": "Confidentialité et données",
-   "en": ""
+   "en": "Privacy and data"
   },
   {
    "fr": "Synchronisation…",
-   "en": ""
+   "en": "Syncing…"
   },
   {
    "fr": "Progression enregistrée dans ton compte.",
-   "en": ""
+   "en": "Progress saved to your account."
   },
   {
    "fr": "Synchronisation impossible pour l’instant, la sauvegarde reste sur l’appareil.{0}",
-   "en": ""
+   "en": "Can’t sync right now, the save stays on this device.{0}"
   },
   {
    "fr": "avec Google",
-   "en": ""
+   "en": "with Google"
   },
   {
    "fr": "par e-mail",
-   "en": ""
+   "en": "by email"
   },
   {
    "fr": "✓ Connecté {0}{1}",
-   "en": ""
+   "en": "✓ Signed in {0}{1}"
   },
   {
    "fr": "Pseudo : {0}",
-   "en": ""
+   "en": "Username: {0}"
   },
   {
    "fr": "Pas encore de pseudo",
-   "en": ""
+   "en": "No username yet"
   },
   {
    "fr": "C’est ce nom que voient les autres joueurs.",
-   "en": ""
+   "en": "This is the name other players see."
   },
   {
    "fr": "Choisis le nom que verront les autres joueurs : ton nom de compte n’est jamais affiché.",
-   "en": ""
+   "en": "Choose the name other players will see: your account name is never shown."
   },
   {
    "fr": "Se déconnecter",
-   "en": ""
+   "en": "Sign out"
   },
   {
    "fr": "Partie de cet appareil",
-   "en": ""
+   "en": "Game on this device"
   },
   {
    "fr": "Les comptes en ligne (sauvegarde, Grand Tableau, Cercle des quais) sont réservés aux 13 ans et plus. Ta partie est gardée sur cet appareil.",
-   "en": ""
+   "en": "Online accounts (save, Great Board, Quayside Circle) are for ages 13 and up. Your game is kept on this device."
   },
   {
    "fr": "Retrouve ta partie",
-   "en": ""
+   "en": "Find your game"
   },
   {
    "fr": "Connecte-toi avec le compte utilisé sur ton autre appareil : ta partie s’ouvrira ici, là où tu l’as laissée.",
-   "en": ""
+   "en": "Sign in with the account you used on your other device: your game will open here, right where you left it."
   },
   {
    "fr": "Ta partie est sauvegardée, mais seulement pour ce téléphone. Relie-la à Google ou à un e-mail : elle ne sera jamais perdue, et tu la retrouveras sur un autre appareil.",
-   "en": ""
+   "en": "Your game is saved, but only on this phone. Link it to Google or an email: it will never be lost, and you can pick it up on another device."
   },
   {
    "fr": "Optionnel : retrouve ta progression sur un autre appareil.",
-   "en": ""
+   "en": "Optional: pick up your progress on another device."
   },
   {
    "fr": "Continuer avec Google",
-   "en": ""
+   "en": "Continue with Google"
   },
   {
    "fr": "E-mail",
-   "en": ""
+   "en": "Email"
   },
   {
    "fr": "Mot de passe",
-   "en": ""
+   "en": "Password"
   },
   {
    "fr": "Créer un compte",
-   "en": ""
+   "en": "Create an account"
   },
   {
    "fr": "Mot de passe oublié",
-   "en": ""
+   "en": "Forgot password"
   },
   {
    "fr": "{0} · Réservé aux 13 ans et plus",
-   "en": ""
+   "en": "{0} · Ages 13 and up only"
   },
   {
    "fr": "Supprimer mon compte",
-   "en": ""
+   "en": "Delete my account"
   },
   {
    "fr": "Tout supprimer, pour de bon ?",
-   "en": ""
+   "en": "Delete everything, for good?"
   },
   {
    "fr": "Ta partie (en ligne et sur cet appareil), ton pseudo, ta place au Grand Tableau, ta garde de la Flèche, ta garnison, ta vitrine et tes amis du Cercle seront effacés. Rien ne pourra être récupéré.",
-   "en": ""
+   "en": "Your game (online and on this device), your username, your place on the Great Board, your Spire guard, your garrison, your display and your Circle friends will be erased. Nothing can be recovered."
   },
   {
    "fr": "Garder mon compte",
-   "en": ""
+   "en": "Keep my account"
   },
   {
    "fr": "Oui, tout supprimer",
-   "en": ""
+   "en": "Yes, delete everything"
   },
   {
    "fr": "Supprimer mon compte et mes données",
-   "en": ""
+   "en": "Delete my account and my data"
   },
   {
    "fr": "Protégé par reCAPTCHA : les",
-   "en": ""
+   "en": "Protected by reCAPTCHA: Google’s"
   },
   {
    "fr": "règles de confidentialité",
-   "en": ""
+   "en": "Privacy Policy"
   },
   {
    "fr": "et les",
-   "en": ""
+   "en": "and"
   },
   {
    "fr": "conditions d’utilisation",
-   "en": ""
+   "en": "Terms of Service"
   },
   {
    "fr": "de Google s’appliquent.",
-   "en": ""
+   "en": "apply."
   },
   {
    "fr": "l’entrée",
-   "en": ""
+   "en": "the entrance"
   },
   {
    "fr": "la salle de combat",
-   "en": ""
+   "en": "the combat room"
   },
   {
    "fr": "la salle scellée",
-   "en": ""
+   "en": "the sealed room"
   },
   {
    "fr": "la cache",
-   "en": ""
+   "en": "the cache"
   },
   {
    "fr": "la salle de la rencontre",
-   "en": ""
+   "en": "the encounter room"
   },
   {
    "fr": "le campement",
-   "en": ""
+   "en": "the camp"
   },
   {
    "fr": "les archives",
-   "en": ""
+   "en": "the archives"
   },
   {
    "fr": "la salle du gardien",
-   "en": ""
+   "en": "the guardian’s room"
   },
   {
    "fr": "la Halte",
-   "en": ""
+   "en": "the Waystation"
   },
   {
    "fr": "la porte ancienne",
-   "en": ""
+   "en": "the ancient door"
   },
   {
    "fr": "Guet : au tour suivant, {0}",
-   "en": ""
+   "en": "Lookout: next turn, {0}"
   },
   {
    "fr": "Guet : ce qu’il prépare ensuite",
-   "en": ""
+   "en": "Lookout: what it’s preparing next"
   },
   {
    "fr": "puis",
-   "en": ""
+   "en": "then"
   },
   {
    "fr": "Va attaquer",
-   "en": ""
+   "en": "Will attack"
   },
   {
    "fr": "Va se protéger",
-   "en": ""
+   "en": "Will shield up"
   },
   {
    "fr": "Va se réparer",
-   "en": ""
+   "en": "Will repair"
   },
   {
    "fr": "Se concentre",
-   "en": ""
+   "en": "Focusing"
   },
   {
    "fr": "Va brouiller tes Fréquences",
-   "en": ""
+   "en": "Will scramble your Frequencies"
   },
   {
    "fr": "Va appeler un renfort",
-   "en": ""
+   "en": "Will call for backup"
   },
   {
    "fr": "En fuyant, l’escouade encaisse l’attaque cachée dans le brouillard : impossible de savoir qui elle touchera, ni combien.",
-   "en": ""
+   "en": "While fleeing, the squad takes the attack hidden in the fog: no way to know who it will hit, or how hard."
   },
   {
    "fr": "{0} ne semble pas préparer d’attaque : l’escouade devrait s’échapper sans un coup.",
-   "en": ""
+   "en": "{0} doesn’t seem to be preparing an attack: the squad should get away without a scratch."
   },
   {
    "fr": "{0} ne prépare pas d’attaque : l’escouade s’échappe sans un coup.",
-   "en": ""
+   "en": "{0} isn’t preparing an attack: the squad gets away without a scratch."
   },
   {
    "fr": "s’écrasera sur le bouclier : l’escouade s’échappe sans une égratignure.",
-   "en": ""
+   "en": "will smash into the shield: the squad gets away without a scratch."
   },
   {
    "fr": "En fuyant, l’escouade encaisse l’attaque annoncée :",
-   "en": ""
+   "en": "While fleeing, the squad takes the announced attack:"
   },
   {
    "fr": "sur {0}.",
-   "en": ""
+   "en": "on {0}."
   },
   {
-   "fr": "{0} {1} à terre.",
-   "en": ""
+   "fr": "{0} et {1} tomberont à terre.",
+   "en": "{0} and {1} will go down."
+  },
+  {
+   "fr": "{0} tombera à terre.",
+   "en": "{0} will go down."
   },
   {
    "fr": "FUIR",
-   "en": ""
+   "en": "FLEE"
   },
   {
    "fr": "Quitter le combat ?",
-   "en": ""
+   "en": "Leave the fight?"
   },
   {
    "fr": "RECULER D’UNE SALLE",
-   "en": ""
+   "en": "FALL BACK ONE ROOM"
   },
   {
    "fr": "Retour à {0}",
-   "en": ""
+   "en": "Back to {0}"
   },
   {
    "fr": "la salle d’avant",
-   "en": ""
+   "en": "the previous room"
   },
   {
    "fr": "{0} garde sa salle : prends un autre chemin, ou reviens l’affronter (un combat neuf). Les PV perdus restent perdus.{1}",
-   "en": ""
+   "en": "{0} holds its room: take another path, or come back to face it (a fresh fight). Lost HP stays lost.{1}"
   },
   {
    "fr": " De là, tu pourras remonter avec tout ton butin.",
-   "en": ""
+   "en": " From there, you can head back up with all your loot."
   },
   {
    "fr": "Personne ne tiendrait debout après ce coup : il faut remonter.",
-   "en": ""
+   "en": "No one would be left standing after that blow: you have to go back up."
   },
   {
    "fr": "ABANDONNER L’ASSAUT",
-   "en": ""
+   "en": "ABANDON THE ASSAULT"
   },
   {
    "fr": "ABANDONNER LE PILLAGE",
-   "en": ""
+   "en": "ABANDON THE RAID"
   },
   {
    "fr": "ABANDONNER L’ÉPREUVE",
-   "en": ""
+   "en": "ABANDON THE TRIAL"
   },
   {
    "fr": "REMONTER AU DISTRICT",
-   "en": ""
+   "en": "BACK TO THE DISTRICT"
   },
   {
    "fr": "Rentrer avec {0} minerai",
-   "en": ""
+   "en": "Go home with {0} ore"
   },
   {
    "fr": "Rentrer avec {0} minerai sur {1}",
-   "en": ""
+   "en": "Go home with {0} of {1} ore"
   },
   {
    "fr": "{0} L’escouade rentre épuisée : +{1} d’Usure chacun, en plus de l’expédition.",
-   "en": ""
+   "en": "{0} The squad comes home exhausted: +{1} Strain each, on top of the expedition."
   },
   {
    "fr": "Le défi compte comme perdu : ta montée, elle, ne bouge pas.",
-   "en": ""
+   "en": "The challenge counts as lost: your climb doesn’t move."
   },
   {
    "fr": "L’assaut compte comme perdu : l’escouade redescend comme après une défaite.",
-   "en": ""
+   "en": "The assault counts as lost: the squad drops back as after a defeat."
   },
   {
    "fr": "Le pillage compte comme perdu : tu laisses {0} % de ton coffre à {1}.",
-   "en": ""
+   "en": "The raid counts as lost: you leave {0} % of your chest to {1}."
   },
   {
    "fr": "Tu pourras la retenter cette semaine.",
-   "en": ""
+   "en": "You can try it again this week."
   },
   {
    "fr": "Foulée : le Coursier a ouvert la route du retour, tu gardes tout le butin.",
-   "en": ""
+   "en": "Stride: the Courier has cleared the way home, you keep all the loot."
   },
   {
    "fr": "Tu gardes {0} % du minerai et toutes les cartes trouvées.",
-   "en": ""
+   "en": "You keep {0} % of the ore and all the cards found."
   },
   {
    "fr": "Continuer le combat",
-   "en": ""
+   "en": "Keep fighting"
   },
   {
    "fr": "AIDE",
-   "en": ""
+   "en": "HELP"
   },
   {
    "fr": "Comment on joue",
-   "en": ""
+   "en": "How to play"
   },
   {
    "fr": "Tous les effets",
-   "en": ""
+   "en": "All effects"
   },
   {
    "fr": "Ton deck, ce sont tes cartes.",
-   "en": ""
+   "en": "Your deck is your cards."
   },
   {
    "fr": "Chaque Porteur de l’escouade apporte celles que tu lui as confiées au district (6 au plus), plus les cartes communes de son Râtelier. L’illustration est celle de la carte ; à défaut, le portrait du Porteur qui la joue.",
-   "en": ""
+   "en": "Each Bearer in the squad brings the cards you gave them in the district (6 at most), plus the common cards from the Rack. The art is the card’s own; failing that, the portrait of the Bearer who plays it."
   },
   {
    "fr": "Compose une chaîne.",
-   "en": ""
+   "en": "Build a chain."
   },
   {
    "fr": "Touche les cartes de ta main ({0} places au départ), puis lance-la. Une carte posée se retire d’un toucher, ou se glisse de côté pour changer de place.",
-   "en": ""
+   "en": "Tap cards in your hand ({0} slots to start), then cast it. Tap a placed card to remove it, or slide it sideways to move it."
   },
   {
    "fr": "est au milieu : {0} dégâts, {1} protection de l’escouade, {2} soin (dans la chaîne, touche le nom sous la carte pour choisir qui).",
-   "en": ""
+   "en": "is in the middle: {0} damage, {1} squad protection, {2} healing (in the chain, tap the name under the card to choose who)."
   },
   {
    "fr": "est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.",
-   "en": ""
+   "en": "is the number in the gem. Frequencies that follow in order make a Resonance: chain of 3 = +30 %, of 4 = +60 %, of 5 = +100 %. A golden arrow marks the card that extends your chain."
   },
   {
    "fr": "Plusieurs Fréquences :",
-   "en": ""
+   "en": "Several Frequencies:"
   },
   {
    "fr": "une carte en argent, en or ou en nacre en porte 2 ou 3. Posée, elle prend celle qui prolonge ta suite ; touche les chiffres sous elle pour en changer. Rien n’est tiré au sort.",
-   "en": ""
+   "en": "a silver, gold or nacre card carries 2 or 3. Once placed, it takes the one that extends your chain; tap the numbers under it to switch. Nothing is left to chance."
   },
   {
    "fr": "L’Écho :",
-   "en": ""
+   "en": "Echo:"
   },
   {
    "fr": "trois Fréquences identiques dans la chaîne renforcent ces cartes de +{0} %, quelle que soit leur action (dégâts, protection ou soin), et donnent 1 Flux. Plus rare qu’une suite, il paie davantage. Quatre identiques : {1} ; cinq : {2} et 1 Flux de plus.",
-   "en": ""
+   "en": "three identical Frequencies in the chain boost those cards by +{0} %, whatever their action (damage, protection or healing), and give 1 Flux. Rarer than a chain, it pays more. Four of a kind: {1}; five: {2} and 1 more Flux."
   },
   {
    "fr": "Le Finisseur :",
-   "en": ""
+   "en": "The Finisher:"
   },
   {
    "fr": "une carte d’attaque Augmentée qui termine une suite de 3 ou plus frappe +{0} %.",
-   "en": ""
+   "en": "an Augmented attack card that ends a chain of 3 or more hits +{0} %."
   },
   {
    "fr": "Le Flux",
-   "en": ""
+   "en": "Flux"
   },
   {
    "fr": "se remplit à chaque Résonance, et encore plus si la suite brise aussi une Fêlure. Dépense-le pour ajouter une place à ta chaîne ou repiocher ta main, ou garde-le pour un Coup d’éclat.",
-   "en": ""
+   "en": "fills with each Resonance, and more if the chain also breaks a Flaw. Spend it to add a slot to your chain or redraw your hand, or save it for a Masterstroke."
   },
   {
    "fr": ": chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne brise son intention (moitié moins forte, un quart chez un gardien ou un blindé) ; dans un groupe, elle brise aussi la Fêlure d’un ennemi non visé, deux fois moins fort. Une carte ne brise qu’une Fêlure, celle de l’ennemi visé d’abord : en main, ces cartes portent l’icône de la Fêlure dans leur capsule de Fréquence (« Brise » sur grand écran). Dans une suite (3, 4, 5), elle donne aussi 1 Flux. Les évanescents la cachent.",
-   "en": ""
+   "en": ": each enemy shows a flawed Frequency. A card of that Frequency in the chain breaks its intent (half as strong, a quarter for a guardian or an armored foe); in a group, it also breaks the Flaw of an untargeted enemy, at half strength. A card breaks only one Flaw, the targeted enemy’s first: in hand, those cards carry the Flaw icon in their Frequency capsule (“Breaks” on large screens). In a chain (3, 4, 5), it also gives 1 Flux. Evanescent enemies hide it."
   },
   {
    "fr": ": Flux plein, un seul par combat, au choix selon les lignées de l’escouade. {0} Le Porteur qui le déclenche prend {1} d’Usure.",
-   "en": ""
+   "en": ": full Flux, only one per fight, chosen by your squad’s lineages. {0} The Bearer who triggers it takes {1} Strain."
   },
   {
    "fr": "Deux places",
-   "en": ""
+   "en": "Two slots"
   },
   {
    "fr": ": cette carte est puissante mais occupe deux places.",
-   "en": ""
+   "en": ": this card is powerful but takes two slots."
   },
   {
    "fr": "écrite sur la carte est celle qui tombera, tous bonus et malus compris :",
-   "en": ""
+   "en": "written on the card is what will land, all bonuses and penalties included:"
   },
   {
    "fr": "dorée",
-   "en": ""
+   "en": "gold"
   },
   {
    "fr": "si la carte est renforcée,",
-   "en": ""
+   "en": "if the card is boosted,"
   },
   {
    "fr": "gris-violet en pointillés",
-   "en": ""
+   "en": "dotted grey-violet"
   },
   {
    "fr": "si elle est affaiblie ; la couleur de l’action ne change pas. Garde le doigt dessus pour voir le détail.",
-   "en": ""
+   "en": "if it is weakened; the action’s colour doesn’t change. Hold your finger on it to see the breakdown."
   },
   {
    "fr": "(Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.",
-   "en": ""
+   "en": "(Piercing, Siphon, Accord…) are written in gold. Place the card in the chain to read what it does. “∗”: free Frequency, it always extends the chain."
   },
   {
    "fr": "Le triangle des lignées :",
-   "en": ""
+   "en": "The lineage triangle:"
   },
   {
    "fr": "les Augmentés {0} battent les Résonants {1}, les Résonants battent les Génés {2}, les Génés battent les Augmentés (+{3} %). Sous le nom de l’ennemi, « Faible » et un symbole : la lignée qui le bat.",
-   "en": ""
+   "en": "the Augmented {0} beat the Resonants {1}, the Resonants beat the Spliced {2}, the Spliced beat the Augmented (+{3} %). Under the enemy’s name, “Weak” and a symbol: the lineage that beats it."
   },
   {
    "fr": "L’ennemi annonce son attaque",
-   "en": ""
+   "en": "The enemy announces its attack"
   },
   {
    "fr": "en haut de l’écran : protège-toi ou finis-le avant.",
-   "en": ""
+   "en": "at the top of the screen: protect yourself or finish it first."
   },
   {
    "fr": "Les traits",
-   "en": ""
+   "en": "Traits"
   },
   {
    "fr": "des ennemis sont écrits sous leur nom (Blindé, Évanescent, Épines…) : touche-les pour lire ce qu’ils font. Les gardiens changent de gestes à mi-vie et appellent de l’aide.",
-   "en": ""
+   "en": "of enemies are written under their name (Armored, Evanescent, Thorns…): tap them to read what they do. Guardians change moves at half health and call for help."
   },
   {
    "fr": "Les conditions de salle",
-   "en": ""
+   "en": "Room conditions"
   },
   {
    "fr": "(inondée, éboulis, brouillard…) s’affichent en haut, et sur la carte avant d’entrer.",
-   "en": ""
+   "en": "(flooded, rockfall, fog…) show at the top, and on the map before you enter."
   },
   {
    "fr": "Contre un groupe",
-   "en": ""
+   "en": "Against a group"
   },
   {
    "fr": ", chaque ennemi annonce son geste sur sa vignette, en haut à droite. Touche une vignette pour viser cet ennemi : toute la chaîne le frappe, et s’il tombe, le reste de la chaîne passe au suivant.",
-   "en": ""
+   "en": ", each enemy announces its move on its thumbnail, top right. Tap a thumbnail to target that enemy: the whole chain hits it, and if it falls, the rest of the chain moves on to the next."
   },
   {
    "fr": "Fuir :",
-   "en": ""
+   "en": "Flee:"
   },
   {
    "fr": "le bouton en haut à droite. L’attaque annoncée touche pendant la fuite (personne ne meurt), puis tu recules d’une salle sur la carte, ou tu remontes au district avec {0} % du minerai et un peu plus de fatigue.",
-   "en": ""
+   "en": "the button at the top right. The announced attack lands during the escape (no one dies), then you fall back one room on the map, or head back to the district with {0} % of the ore and a bit more fatigue."
   },
   {
    "fr": "Le journal du combat",
-   "en": ""
+   "en": "The combat log"
   },
   {
    "fr": "({0} à côté de la pioche et de la défausse, ou la dernière ligne au-dessus de ta main) : les cartes jouées à chaque tour, le calcul de chaque dégât subi ou infligé, ta défausse et ta pioche. Les « ? » expliquent chaque terme.",
-   "en": ""
+   "en": "({0} next to the draw and discard piles, or the last line above your hand): the cards played each turn, the breakdown of every hit taken or dealt, your discard and your draw pile. The “?” explain each term."
   },
   {
    "fr": "La Dissonance :",
-   "en": ""
+   "en": "Dissonance:"
   },
   {
    "fr": "certains ennemis brouillent tes Fréquences. Au tour suivant, ni suite ni Écho ne résonne : mise sur la force brute ou la protection.",
-   "en": ""
+   "en": "some enemies scramble your Frequencies. Next turn, neither chain nor Echo resonates: rely on raw power or protection."
   },
   {
    "fr": "Cible inconnue",
-   "en": ""
+   "en": "Unknown target"
   },
   {
    "fr": "Ni suite ni Écho au tour suivant",
-   "en": ""
+   "en": "No chain or Echo next turn"
   },
   {
    "fr": "Brouillard : {0}, force et cible cachées.",
-   "en": ""
+   "en": "Fog: {0}, power and target hidden."
   },
   {
    "fr": "dégâts · lignée",
-   "en": ""
+   "en": "damage · lineage"
   },
   {
    "fr": "Tous",
-   "en": ""
+   "en": "All"
   },
   {
    "fr": "Couvre un allié",
-   "en": ""
+   "en": "Covers an ally"
   },
   {
    "fr": "Se protège",
-   "en": ""
+   "en": "Shields up"
   },
   {
    "fr": "Soigne un allié",
-   "en": ""
+   "en": "Heals an ally"
   },
   {
    "fr": "Se répare",
-   "en": ""
+   "en": "Repairs"
   },
   {
    "fr": "Appel rompu",
-   "en": ""
+   "en": "Call broken"
   },
   {
    "fr": "Un renfort va surgir",
-   "en": ""
+   "en": "Backup incoming"
   },
   {
    "fr": "Prochaine attaque",
-   "en": ""
+   "en": "Next attack"
   },
   {
    "fr": "Fêlure brisée",
-   "en": ""
+   "en": "Flaw broken"
   },
   {
    "fr": "son attaque est affaiblie",
-   "en": ""
+   "en": "its attack is weakened"
   },
   {
    "fr": "son bouclier est affaibli",
-   "en": ""
+   "en": "its shield is weakened"
   },
   {
    "fr": "son soin est affaibli",
-   "en": ""
+   "en": "its heal is weakened"
   },
   {
    "fr": "sans effet sur ce qu’il prépare",
-   "en": ""
+   "en": "no effect on what it’s preparing"
   },
   {
    "fr": "Fêlure cachée",
-   "en": ""
+   "en": "Hidden Flaw"
   },
   {
    "fr": ": un évanescent ne montre pas la carte qui le brise",
-   "en": ""
+   "en": ": an evanescent enemy doesn’t show the card that breaks it"
   },
   {
    "fr": "bouclier +{0} →",
-   "en": ""
+   "en": "shield +{0} →"
   },
   {
    "fr": "soin +{0} →",
-   "en": ""
+   "en": "heal +{0} →"
   },
   {
    "fr": "Ta chaîne la brise",
-   "en": ""
+   "en": "Your chain breaks it"
   },
   {
    "fr": "Pose un",
-   "en": ""
+   "en": "Place a"
   },
   {
    "fr": "Flux : {0} sur {1}",
-   "en": ""
+   "en": "Flux: {0} of {1}"
   },
   {
    "fr": "Flux",
-   "en": ""
+   "en": "Flux"
   },
   {
    "fr": "{0} dégâts",
-   "en": ""
+   "en": "{0} damage"
   },
   {
    "fr": " ({0} absorbés par son bouclier en plus)",
-   "en": ""
+   "en": " ({0} more soaked up by its shield)"
   },
   {
    "fr": "bouclier +{0}",
-   "en": ""
+   "en": "shield +{0}"
   },
   {
    "fr": "soin +{0} PV",
-   "en": ""
+   "en": "heal +{0} HP"
   },
   {
    "fr": "Si tu lances : {0}",
-   "en": ""
+   "en": "If you cast: {0}"
   },
   {
    "fr": "{0} va frapper : le bouclier prend tout le coup.",
-   "en": ""
+   "en": "{0} will strike: the shield takes the whole blow."
   },
   {
    "fr": "{0} va frapper : −{1} PV{2}{3}.",
-   "en": ""
+   "en": "{0} will strike: −{1} HP{2}{3}."
   },
   {
    "fr": " ({0} pris par le bouclier)",
-   "en": ""
+   "en": " ({0} taken by the shield)"
   },
   {
    "fr": "/ {0} PV{1}",
-   "en": ""
+   "en": "/ {0} HP{1}"
   },
   {
    "fr": " · Usure {0}",
-   "en": ""
+   "en": " · Strain {0}"
   },
   {
    "fr": "Le groupe : touche un ennemi pour le viser",
-   "en": ""
+   "en": "The group: tap an enemy to target it"
   },
   {
    "fr": "{0}, vaincu",
-   "en": ""
+   "en": "{0}, defeated"
   },
   {
    "fr": "{0}{1}{2}, {3} PV sur {4}. {5}",
-   "en": ""
+   "en": "{0}{1}{2}, {3} of {4} HP. {5}"
   },
   {
    "fr": "Viser ",
-   "en": ""
+   "en": "Target "
   },
   {
    "fr": "{0}, force et cible cachées par le brouillard.",
-   "en": ""
+   "en": "{0}, power and target hidden by the fog."
   },
   {
    "fr": "Visé",
-   "en": ""
+   "en": "Targeted"
   },
   {
    "fr": "Seconde phase en cours",
-   "en": ""
+   "en": "Second phase under way"
   },
   {
    "fr": "Seuil de la seconde phase",
-   "en": ""
+   "en": "Second phase threshold"
   },
   {
    "fr": "Dernière phase en cours",
-   "en": ""
+   "en": "Final phase under way"
   },
   {
    "fr": "Seuil de la dernière phase",
-   "en": ""
+   "en": "Final phase threshold"
   },
   {
    "fr": "Aucune carte ne peut entrer dans la chaîne :",
-   "en": ""
+   "en": "No card can enter the chain:"
   },
   {
    "fr": "passe ton tour",
-   "en": ""
+   "en": "pass your turn"
   },
   {
    "fr": ", ou dépense 1 Flux pour",
-   "en": ""
+   "en": ", or spend 1 Flux to"
   },
   {
    "fr": "repiocher",
-   "en": ""
+   "en": "redraw"
   },
   {
    "fr": "Épreuve · Fréquences brouillées",
-   "en": ""
+   "en": "Trial · Scrambled Frequencies"
   },
   {
    "fr": ": aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.",
-   "en": ""
+   "en": ": no Resonance for the whole fight. Echoes (three identical Frequencies) still count."
   },
   {
    "fr": "Épreuve · Une seule voix",
-   "en": ""
+   "en": "Trial · A single voice"
   },
   {
    "fr": ": chaque chaîne ne joue qu’une lignée. Les cartes du district vont avec toutes.",
-   "en": ""
+   "en": ": each chain plays only one lineage. District cards go with all of them."
   },
   {
    "fr": "Épreuve · Nul ne reste au fond",
-   "en": ""
+   "en": "Trial · No one stays below"
   },
   {
    "fr": ": si un Porteur tombe, l’Épreuve est perdue. Protège le plus exposé.",
-   "en": ""
+   "en": ": if a Bearer falls, the Trial is lost. Protect the most exposed."
   },
   {
    "fr": ": ni Résonance ni Écho ce tour-ci. Mise sur la force brute ou la protection.",
-   "en": ""
+   "en": ": no Resonance or Echo this turn. Rely on raw power or protection."
   },
   {
    "fr": "Touche un ennemi en haut pour le viser : toute ta chaîne le frappe",
-   "en": ""
+   "en": "Tap an enemy at the top to target it: your whole chain hits it"
   },
   {
    "fr": "Pose jusqu’à {0} cartes :",
-   "en": ""
+   "en": "Place up to {0} cards:"
   },
   {
    "fr": "trois",
-   "en": ""
+   "en": "three"
   },
   {
    "fr": "Fréquences qui se suivent (3, 4, 5) font une",
-   "en": ""
+   "en": "Frequencies in a row (3, 4, 5) make a"
   },
   {
    "fr": ": ni Résonance ni Écho ce tour-ci",
-   "en": ""
+   "en": ": no Resonance or Echo this turn"
   },
   {
    "fr": ": suite de {0}, effets",
-   "en": ""
+   "en": ": chain of {0}, effects"
   },
   {
    "fr": "· un",
-   "en": ""
+   "en": "· a"
   },
   {
    "fr": "pour aller plus loin",
-   "en": ""
+   "en": "to go further"
   },
   {
    "fr": "· chaîne pleine : un",
-   "en": ""
+   "en": "· chain full: a"
   },
   {
    "fr": "avec une place de Flux",
-   "en": ""
+   "en": "with a Flux slot"
   },
   {
    "fr": "Chaîne pleine : suite de 2, pas de Résonance",
-   "en": ""
+   "en": "Chain full: chain of 2, no Resonance"
   },
   {
    "fr": "Chaîne pleine : lance-la, ou dépense 1 Flux pour une place de plus",
-   "en": ""
+   "en": "Chain full: cast it, or spend 1 Flux for one more slot"
   },
   {
    "fr": "Chaîne pleine : tu peux la lancer",
-   "en": ""
+   "en": "Chain full: you can cast it"
   },
   {
    "fr": "Suite en cours",
-   "en": ""
+   "en": "Chain in progress"
   },
   {
    "fr": "Suite {0} → {1} : 1 Flux t’ouvre une place pour un",
-   "en": ""
+   "en": "Chain {0} → {1}: 1 Flux opens a slot for a"
   },
   {
    "fr": "Chaîne pleine :",
-   "en": ""
+   "en": "Chain full:"
   },
   {
    "fr": "suite de 2 seulement",
-   "en": ""
+   "en": "chain of 2 only"
   },
   {
    "fr": ", pas de Résonance (il en faut 3)",
-   "en": ""
+   "en": ", no Resonance (it takes 3)"
   },
   {
    "fr": "Encore un",
-   "en": ""
+   "en": "One more"
   },
   {
    "fr": "pour un",
-   "en": ""
+   "en": "for a"
   },
   {
    "fr": "{0} : pas de suite au-delà · deux autres {1} pour un",
-   "en": ""
+   "en": "{0}: no chain beyond · two more {1} for an"
   },
   {
    "fr": "Suite {0} → {1} : ajoute un",
-   "en": ""
+   "en": "Chain {0} → {1}: add a"
   },
   {
    "fr": "pour +30 %",
-   "en": ""
+   "en": "for +30 %"
   },
   {
    "fr": "Ajoute un",
-   "en": ""
+   "en": "Add a"
   },
   {
    "fr": "pour commencer une suite",
-   "en": ""
+   "en": "to start a chain"
   },
   {
    "fr": ": les {0} {1}",
-   "en": ""
+   "en": ": the {0} {1}"
   },
   {
    "fr": " et +1 Flux",
-   "en": ""
+   "en": " and +1 Flux"
   },
   {
    "fr": "· Résonance",
-   "en": ""
+   "en": "· Resonance"
   },
   {
    "fr": "Le groupe riposte…",
-   "en": ""
+   "en": "The group strikes back…"
   },
   {
    "fr": "Chambre scellée",
-   "en": ""
+   "en": "Sealed chamber"
   },
   {
    "fr": "La Flèche · {0}quai {1}",
-   "en": ""
+   "en": "The Spire · {0}quay {1}"
   },
   {
    "fr": "défi du ",
-   "en": ""
+   "en": "challenge of "
   },
   {
    "fr": "Flèche · quai",
-   "en": ""
+   "en": "Spire · quay"
   },
   {
    "fr": "Pillage ·",
-   "en": ""
+   "en": "Raid ·"
   },
   {
    "fr": "Combat {0}/{1}",
-   "en": ""
+   "en": "Fight {0}/{1}"
   },
   {
    "fr": "{0} : gagne ce combat pour relever la marque de la quête.",
-   "en": ""
+   "en": "{0}: win this fight to pick up the quest’s mark."
   },
   {
    "fr": "Marque de la quête {0} : gagne ce combat pour la relever",
-   "en": ""
+   "en": "Quest mark {0}: win this fight to pick it up"
   },
   {
    "fr": "Quête",
-   "en": ""
+   "en": "Quest"
   },
   {
    "fr": "Fuir le combat",
-   "en": ""
+   "en": "Flee the fight"
   },
   {
    "fr": "Fuir",
-   "en": ""
+   "en": "Flee"
   },
   {
    "fr": "Couper le son",
-   "en": ""
+   "en": "Mute sound"
   },
   {
    "fr": "Activer le son",
-   "en": ""
+   "en": "Unmute sound"
   },
   {
    "fr": "Règles",
-   "en": ""
+   "en": "Rules"
   },
   {
    "fr": "Fissure : il subit {0} % de dégâts en plus",
-   "en": ""
+   "en": "Fissure: it takes {0} % more damage"
   },
   {
    "fr": "Fissure +{0} % dégâts",
-   "en": ""
+   "en": "Fissure +{0} % damage"
   },
   {
    "fr": "Ennemi",
-   "en": ""
+   "en": "Enemy"
   },
   {
    "fr": "GARDIENS · QUAI {0}",
-   "en": ""
+   "en": "GUARDIANS · QUAY {0}"
   },
   {
    "fr": "GARNISON · {0}",
-   "en": ""
+   "en": "GARRISON · {0}"
   },
   {
    "fr": "Point faible : les cartes {0} lui font +{1} %",
-   "en": ""
+   "en": "Weak spot: {0} cards deal +{1} % to it"
   },
   {
    "fr": "Faible contre les {0}",
-   "en": ""
+   "en": "Weak against the {0}"
   },
   {
    "fr": "Faible",
-   "en": ""
+   "en": "Weak"
   },
   {
    "fr": "Passé le tour {0}, l’Épreuve est perdue.",
-   "en": ""
+   "en": "After turn {0}, the Trial is lost."
   },
   {
    "fr": "Dernier tour !",
-   "en": ""
+   "en": "Last turn!"
   },
   {
    "fr": "S’éteint dans {0} tours",
-   "en": ""
+   "en": "Fades in {0} turns"
   },
   {
    "fr": "Il s’enfuit à la fin de son tour {0}. Ses blessures resteront.",
-   "en": ""
+   "en": "It flees at the end of its turn {0}. Its wounds will remain."
   },
   {
    "fr": "S’enfuit à la fin du tour",
-   "en": ""
+   "en": "Flees at the end of the turn"
   },
   {
    "fr": "S’enfuit dans {0} tours",
-   "en": ""
+   "en": "Flees in {0} turns"
   },
   {
    "fr": "Combat qui s’éternise : à partir du tour {0}, l’ennemi frappe {1} % plus fort à chaque tour.",
-   "en": ""
+   "en": "Drawn-out fight: from turn {0}, the enemy hits {1} % harder each turn."
   },
   {
    "fr": "Enragé +{0} %",
-   "en": ""
+   "en": "Enraged +{0} %"
   },
   {
    "fr": "S’enrage dans {0} tour{1}",
-   "en": ""
+   "en": "Enrages in {0} turn{1}"
   },
   {
    "fr": ", le bouclier le couvre en premier",
-   "en": ""
+   "en": ", the shield covers them first"
   },
   {
    "fr": ", toucher pour le protéger ou le soigner",
-   "en": ""
+   "en": ", tap to protect or heal them"
   },
   {
    "fr": ", toucher pour que le bouclier le couvre en premier",
-   "en": ""
+   "en": ", tap so the shield covers them first"
   },
   {
    "fr": ", toucher pour lui envoyer les soins",
-   "en": ""
+   "en": ", tap to send them the heals"
   },
   {
    "fr": "Sera soigné",
-   "en": ""
+   "en": "Will be healed"
   },
   {
    "fr": ", {0} après la chaîne",
-   "en": ""
+   "en": ", {0} after the chain"
   },
   {
    "fr": "Protéger",
-   "en": ""
+   "en": "Protect"
   },
   {
    "fr": "Soigner",
-   "en": ""
+   "en": "Heal"
   },
   {
    "fr": "Bouclier {0}",
-   "en": ""
+   "en": "Shield {0}"
   },
   {
    "fr": "Pioche {0}, défausse {1} : ouvrir le journal du combat",
-   "en": ""
+   "en": "Draw {0}, discard {1}: open the combat log"
   },
   {
    "fr": "Chaîne",
-   "en": ""
+   "en": "Chain"
   },
   {
    "fr": "CHAÎNE · {0} / {1}",
-   "en": ""
+   "en": "CHAIN · {0} / {1}"
   },
   {
    "fr": "RÉSONANCE {0}",
-   "en": ""
+   "en": "RESONANCE {0}"
   },
   {
    "fr": "SUITE EN COURS",
-   "en": ""
+   "en": "CHAIN IN PROGRESS"
   },
   {
    "fr": "DÉBRIDAGE ×{0}",
-   "en": ""
+   "en": "UNLEASHED ×{0}"
   },
   {
    "fr": "2 pl.",
-   "en": ""
+   "en": "2 sl."
   },
   {
    "fr": "COMBAT GUIDÉ",
-   "en": ""
+   "en": "GUIDED FIGHT"
   },
   {
    "fr": "Coup d’éclat : un seul par combat, il vide le Flux",
-   "en": ""
+   "en": "Masterstroke: only one per fight, it empties the Flux"
   },
   {
    "fr": "{0}, par {1} : {2}",
-   "en": ""
+   "en": "{0}, by {1}: {2}"
   },
   {
    "fr": "Garder mon Flux",
-   "en": ""
+   "en": "Keep my Flux"
   },
   {
    "fr": "Flux plein : Coup d’éclat, un seul par combat, il vide le Flux",
-   "en": ""
+   "en": "Flux full: Masterstroke, only one per fight, it empties the Flux"
   },
   {
    "fr": "Une place de plus dans la chaîne, pour 1 Flux",
-   "en": ""
+   "en": "One more slot in the chain, for 1 Flux"
   },
   {
    "fr": "+1 place{0}",
-   "en": ""
+   "en": "+1 slot{0}"
   },
   {
    "fr": "Repiocher, pour 1 Flux",
-   "en": ""
+   "en": "Redraw, for 1 Flux"
   },
   {
    "fr": "Repiocher{0}",
-   "en": ""
+   "en": "Redraw{0}"
   },
   {
    "fr": "MAIN · {0}",
-   "en": ""
+   "en": "HAND · {0}"
   },
   {
    "fr": "Relancer la première main : gratuit, une seule fois, avant de lancer la première chaîne",
-   "en": ""
+   "en": "Redraw the opening hand: free, only once, before casting your first chain"
   },
   {
    "fr": "Relancer",
-   "en": ""
+   "en": "Redraw"
   },
   {
    "fr": "Reprendre la main : arrêter le combat automatique après la chaîne en cours",
-   "en": ""
+   "en": "Take back control: stop the auto-fight after the current chain"
   },
   {
    "fr": "Combat automatique : l’escouade joue seule, en accéléré (Strate déjà vaincue)",
-   "en": ""
+   "en": "Auto-fight: the squad plays on its own, sped up (Stratum already beaten)"
   },
   {
    "fr": "Aucune carte ne peut entrer dans la chaîne : passer le tour",
-   "en": ""
+   "en": "No card can enter the chain: pass the turn"
   },
   {
    "fr": "Passer le tour",
-   "en": ""
+   "en": "Pass the turn"
   },
   {
    "fr": "Lancer la chaîne{0}",
-   "en": ""
+   "en": "Cast the chain{0}"
   },
   {
    "fr": "L’ESCOUADE RECULE",
-   "en": ""
+   "en": "THE SQUAD FALLS BACK"
   },
   {
    "fr": "Revoir le combat",
-   "en": ""
+   "en": "Replay the fight"
   },
   {
    "fr": "Conseil",
-   "en": ""
+   "en": "Tip"
   },
   {
    "fr": "Suivant",
-   "en": ""
+   "en": "Next"
   }
  ]
 }

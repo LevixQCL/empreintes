@@ -359,7 +359,7 @@ function feuilleFuite(e: Ecran): string {
   else if (!attaque) coup = tr`${echap(nom)} ne prépare pas d’attaque : l’escouade s’échappe sans un coup.`;
   else if (!touches.length) coup = `<b>${echap(attaque)}</b> ${tr`s’écrasera sur le bouclier : l’escouade s’échappe sans une égratignure.`}`;
   else coup = `${tr`En fuyant, l’escouade encaisse l’attaque annoncée :`} <b>${echap(attaque)}</b> ${tr`sur ${touches.map((c) => `${echap(porteurDef(c.id).nom)} (−${c.net})`).join(', ')}.`}`
-    + (tombent.length ? ` <b class="tombe">${tr`${tombent.map((p) => echap(porteurDef(p.id).nom)).join(' et ')} ${tombent.length > 1 ? 'tomberont' : 'tombera'} à terre.`}</b>` : '');
+    + (tombent.length ? ` <b class="tombe">${tombent.length > 1 ? tr`${tombent.slice(0, -1).map((p) => echap(porteurDef(p.id).nom)).join(', ')} et ${echap(porteurDef(tombent[tombent.length - 1]!.id).nom)} tomberont à terre.` : tr`${echap(porteurDef(tombent[0]!.id).nom)} tombera à terre.`}</b>` : '');
 
   let h = `<div class="voile-feuille" data-action="fuir" aria-hidden="true"></div><section class="feuille fuite" role="dialog" aria-modal="true" aria-labelledby="fuite-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">${tr`FUIR`}</span><h2 id="fuite-titre">${tr`Quitter le combat ?`}</h2></div><button type="button" class="btn-icone" data-action="fuir" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header>`

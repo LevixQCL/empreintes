@@ -37,7 +37,7 @@ export function recompenserConfiance(j: Jeu): string[] {
       if (fam) { accueillirFamille(j, fam.id); porteuse = fam.nom; }
     }
     const plus = [venus ? tr`${venus > 1 ? `${venus} volontaires rejoignent` : tr('un volontaire rejoint')} les creuseurs` : '',
-      fragment ? tr`${porteuse || 'une famille'} apporte${porteuse ? 'nt' : ''} « ${fragmentDef(fragment)!.titre} » aux Archives` : '',
+      fragment ? tr`${porteuse || tr('une famille')} apporte${porteuse ? 'nt' : ''} « ${fragmentDef(fragment)!.titre} » aux Archives` : '',
       palier === CONFIANCE.comptoir && j.batiments.comptoir > 0 ? tr('un étal de plus rouvre au Comptoir') : ''].filter(Boolean);
     const t = tr`${palier * CONFIANCE.palier} familles te suivent${palier === 8 ? tr(' : tout le district') : ''} !${plus.length ? ` ${plus.join(', ').replace(/^./, (c) => c.toUpperCase())}.` : ''}`;
     log(j, t);

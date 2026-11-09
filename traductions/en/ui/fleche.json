@@ -3,411 +3,411 @@
  "entrees": [
   {
    "fr": "Comment marche la Flèche",
-   "en": ""
+   "en": "How the Spire works"
   },
   {
    "fr": "Ton escouade tient",
-   "en": ""
+   "en": "Your squad holds"
   },
   {
    "fr": "Quai",
-   "en": ""
+   "en": "Quay"
   },
   {
    "fr": "Gagnés",
-   "en": ""
+   "en": "Won"
   },
   {
    "fr": "Perdus",
-   "en": ""
+   "en": "Lost"
   },
   {
    "fr": "Prochain quai gravé :",
-   "en": ""
+   "en": "Next engraved quay:"
   },
   {
    "fr": "Le récit des îles s’ouvrira quand le fond aura parlé : vaincs le gardien de la Strate −10.",
-   "en": ""
+   "en": "The story of the islands will open once the deep has spoken: defeat the guardian of Stratum −10."
   },
   {
    "fr": "Pas de jeton : monte autant que tu veux. La Clinique soigne l’Usure entre deux assauts.",
-   "en": ""
+   "en": "No tokens: climb as much as you like. The Clinic heals Strain between assaults."
   },
   {
    "fr": "{0} · quai {1}",
-   "en": ""
+   "en": "{0} · quay {1}"
   },
   {
    "fr": "Ton quai : {0}",
-   "en": ""
+   "en": "Your quay: {0}"
   },
   {
    "fr": "La Flèche : ton escouade au quai {0} sur {1}, record {2}{3}",
-   "en": ""
+   "en": "The Spire: your squad at quay {0} of {1}, record {2}{3}"
   },
   {
    "fr": ", tu tiens le quai {0}",
-   "en": ""
+   "en": ", you hold quay {0}"
   },
   {
    "fr": "Le quai {0}",
-   "en": ""
+   "en": "Quay {0}"
   },
   {
    "fr": "La montée · gardiens payés par les Hauts",
-   "en": ""
+   "en": "The climb · guardians paid by the Heights"
   },
   {
    "fr": "Quai {0}",
-   "en": ""
+   "en": "Quay {0}"
   },
   {
    "fr": "{0} % de chances",
-   "en": ""
+   "en": "{0} % chance"
   },
   {
    "fr": "Gardiens",
-   "en": ""
+   "en": "Guardians"
   },
   {
    "fr": "Si tu gagnes",
-   "en": ""
+   "en": "If you win"
   },
   {
    "fr": "+{0} quai{1}",
-   "en": ""
+   "en": "+{0} quay{1}"
   },
   {
    "fr": "Si tu perds",
-   "en": ""
+   "en": "If you lose"
   },
   {
    "fr": "tu restes sur ton quai gravé",
-   "en": ""
+   "en": "you stay on your engraved quay"
   },
   {
    "fr": "−{0} quai{1}",
-   "en": ""
+   "en": "−{0} quay{1}"
   },
   {
    "fr": "Monter à l’assaut",
-   "en": ""
+   "en": "Launch the assault"
   },
   {
    "fr": "La garde des quais",
-   "en": ""
+   "en": "Quay guard"
   },
   {
    "fr": "La garde · compétition",
-   "en": ""
+   "en": "The guard · competition"
   },
   {
    "fr": "Tiens le quai le plus haut possible. Ta montée, elle, ne dépend jamais des autres directeurs.",
-   "en": ""
+   "en": "Hold the highest quay you can. Your climb, on the other hand, never depends on other directors."
   },
   {
    "fr": "Relie ta partie à un compte pour tenir un quai et défier les autres directeurs.",
-   "en": ""
+   "en": "Link your game to an account to hold a quay and challenge other directors."
   },
   {
    "fr": "Monte d’abord au-dessus du pied de la Flèche : on ne tient qu’un quai déjà atteint.",
-   "en": ""
+   "en": "Climb above the foot of the Spire first: you can only hold a quay you’ve already reached."
   },
   {
    "fr": "Tenir le quai {0}",
-   "en": ""
+   "en": "Hold quay {0}"
   },
   {
    "fr": "Le plus haut quai libre que tu as atteint. Une copie de ton escouade y monte la garde pendant que tu continues de grimper ; les Hauts te versent",
-   "en": ""
+   "en": "The highest free quay you’ve reached. A copy of your squad stands guard there while you keep climbing; the Heights pay you"
   },
   {
    "fr": "par jour.",
-   "en": ""
+   "en": "per day."
   },
   {
    "fr": "S’installer sur le quai {0}",
-   "en": ""
+   "en": "Settle on quay {0}"
   },
   {
    "fr": "Le quai {0}, tenu par ton escouade",
-   "en": ""
+   "en": "Quay {0}, held by your squad"
   },
   {
    "fr": "Gardien du quai",
-   "en": ""
+   "en": "Quay guardian"
   },
   {
    "fr": "Tu tiens le quai {0}",
-   "en": ""
+   "en": "You hold quay {0}"
   },
   {
    "fr": "défense{0} tenue{1}",
-   "en": ""
+   "en": "defen{0|ces|ce} held{1|}"
   },
   {
    "fr": "Gage par jour",
-   "en": ""
+   "en": "Stipend per day"
   },
   {
    "fr": "tenu depuis {0} jour{1}",
-   "en": ""
+   "en": "held for {0} day{1}"
   },
   {
    "fr": "tenu depuis aujourd’hui",
-   "en": ""
+   "en": "held since today"
   },
   {
    "fr": "Dans la caisse",
-   "en": ""
+   "en": "In the till"
   },
   {
    "fr": "pleine : {0} jours au plus",
-   "en": ""
+   "en": "full: {0} days at most"
   },
   {
    "fr": "jusqu’à {0} jours de gage",
-   "en": ""
+   "en": "up to {0} days of stipend"
   },
   {
    "fr": "Une copie figée de ton escouade (force {0}) se défend seule. Chaque défense tenue rapporte un quart de jour de gage ; battue, elle perd le quai, jamais ta montée.",
-   "en": ""
+   "en": "A frozen copy of your squad (power {0}) defends on its own. Each defence held earns a quarter of a day’s stipend; beaten, it loses the quay, never your climb."
   },
   {
    "fr": "Recevoir le gage",
-   "en": ""
+   "en": "Collect the stipend"
   },
   {
    "fr": "Monter ta garde au quai {0}",
-   "en": ""
+   "en": "Post your guard at quay {0}"
   },
   {
    "fr": "Quitter le quai",
-   "en": ""
+   "en": "Leave the quay"
   },
   {
    "fr": "Le plus haut gardien à ta portée",
-   "en": ""
+   "en": "The highest guardian within reach"
   },
   {
    "fr": "Gagné : le quai {0} est à toi. Perdu : seulement l’Usure.",
-   "en": ""
+   "en": "Win: quay {0} is yours. Lose: only Strain."
   },
   {
    "fr": "Défier {0}",
-   "en": ""
+   "en": "Challenge {0}"
   },
   {
    "fr": "Les gardiens les plus hauts",
-   "en": ""
+   "en": "The highest guardians"
   },
   {
    "fr": "Les quais se chargent…",
-   "en": ""
+   "en": "Loading quays…"
   },
   {
    "fr": "Aucun directeur ne tient encore de quai : le plus haut est à prendre.",
-   "en": ""
+   "en": "No director holds a quay yet: the highest is up for grabs."
   },
   {
    "fr": "Les quais gravés",
-   "en": ""
+   "en": "Engraved quays"
   },
   {
    "fr": "Les {0} quais gravés · {1} reçu{2}",
-   "en": ""
+   "en": "The {0} engraved quays · {1} received{2|}"
   },
   {
    "fr": "Le dernier quai : l’amarrage",
-   "en": ""
+   "en": "The last quay: the mooring"
   },
   {
    "fr": "Quai gravé",
-   "en": ""
+   "en": "Engraved quay"
   },
   {
    "fr": "on y monte de 4 en 4",
-   "en": ""
+   "en": "you climb 4 at a time"
   },
   {
    "fr": "on y monte de 2 en 2",
-   "en": ""
+   "en": "you climb 2 at a time"
   },
   {
    "fr": "on y monte quai par quai",
-   "en": ""
+   "en": "you climb one quay at a time"
   },
   {
    "fr": "Ton escouade tient le dernier quai",
-   "en": ""
+   "en": "Your squad holds the last quay"
   },
   {
    "fr": "Au sommet : les {0} Sièges",
-   "en": ""
+   "en": "At the top: the {0} Seats"
   },
   {
    "fr": "Tenus par des directeurs, ils s’ouvriront avec les combats entre directeurs.",
-   "en": ""
+   "en": "Held by directors, they’ll open with director-versus-director fights."
   },
   {
    "fr": "Clause de la Flèche · Accords de 2101",
-   "en": ""
+   "en": "Spire Clause · Accords of 2101"
   },
   {
    "fr": "La dernière route vers les Hauts",
-   "en": ""
+   "en": "The last road to the Heights"
   },
   {
    "fr": "Une aiguille de laiton et de verre, si haute qu’elle traverse les nuages. Les îles des Hauts viennent s’y amarrer.",
-   "en": ""
+   "en": "A needle of brass and glass, so tall it pierces the clouds. The islands of the Heights come here to moor."
   },
   {
    "fr": "Les quais sont fermés · vaincs le gardien de la Strate −6",
-   "en": ""
+   "en": "The quays are closed · defeat the guardian of Stratum −6"
   },
   {
    "fr": "Une lettre scellée de cire blanche t’ouvrira les quais.",
-   "en": ""
+   "en": "A letter sealed with white wax will open the quays to you."
   },
   {
    "fr": "Comment on monte",
-   "en": ""
+   "en": "How you climb"
   },
   {
    "fr": "Un combat par quai, autant que tu veux : seule l’Usure te freine.",
-   "en": ""
+   "en": "One fight per quay, as many as you like: only Strain slows you down."
   },
   {
    "fr": "quais par victoire, de moins en moins vite",
-   "en": ""
+   "en": "quays per win, slower and slower"
   },
   {
    "fr": "Plancher",
-   "en": ""
+   "en": "Floor"
   },
   {
    "fr": "jamais sous ton dernier quai gravé",
-   "en": ""
+   "en": "never below your last engraved quay"
   },
   {
    "fr": "quais gravés à récompense",
-   "en": ""
+   "en": "engraved quays with rewards"
   },
   {
    "fr": "Les îles des Hauts ne se posent jamais : elles dérivent au-dessus de la mer et ne s’arrêtent qu’aux flèches d’amarrage. Il n’en reste qu’une debout, et ce sont les Hauts qui la tiennent.",
-   "en": ""
+   "en": "The islands of the Heights never land: they drift above the sea and stop only at mooring spires. Only one still stands, and the Heights hold it."
   },
   {
    "fr": "Avant 2101, les districts d’en bas montaient à l’abordage. Les Accords y ont mis fin et n’ont laissé qu’une route légale vers le haut : la Flèche, quai par quai. Tout district invité peut y envoyer une escouade.",
-   "en": ""
+   "en": "Before 2101, the districts below went up to board them. The Accords put an end to that and left only one legal road upward: the Spire, quay by quay. Any invited district may send a squad."
   },
   {
    "fr": "Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. « S’il tient le sommet au passage d’une île, il y est reçu », dit la Clause. Les Hauts ont toujours lu « l’escouade ».",
-   "en": ""
+   "en": "The Heights pay guardians on every quay, stronger the higher you go: it’s their way of sorting those from below. “Whoever holds the summit as an island passes is received there,” says the Clause. The Heights have always read it as “the squad”."
   },
   {
    "fr": "Les Îles ouvertes",
-   "en": ""
+   "en": "The Open Islands"
   },
   {
    "fr": "Le Noyé, vieux saboteur rescapé de la Grève, garde un brouillon de la Clause, écrit à la main pendant la Grève des pompes : « le district dont l’escouade tient le sommet au passage d’une île y est reçu ». Pas l’escouade : le district.",
-   "en": ""
+   "en": "The Drowned Man, an old saboteur who survived the Strike, keeps a draft of the Clause, handwritten during the Pump Strike: “the district whose squad holds the summit as an island passes is received there.” Not the squad: the district."
   },
   {
    "fr": "Ceux qui sont montés ont tous accepté le palais qu’on leur offrait. Le Noyé attend un directeur qui tiendra le sommet, puis refusera, pour réclamer l’île au nom de tous. Le sommet et ses Sièges arrivent bientôt ; l’histoire complète t’attend dans les Chroniques (« Il y est reçu »).",
-   "en": ""
+   "en": "Everyone who made it up accepted the palace they were offered. The Drowned Man is waiting for a director who will hold the summit, then refuse, and claim the island in everyone’s name. The summit and its Seats are coming soon; the full story awaits in the Chronicles (“Received There”)."
   },
   {
    "fr": "Les règles en détail",
-   "en": ""
+   "en": "The rules in detail"
   },
   {
    "fr": "Un combat par quai",
-   "en": ""
+   "en": "One fight per quay"
   },
   {
    "fr": "Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.",
-   "en": ""
+   "en": "Your squad faces the quay’s three guardians. No tokens: climb as much as you like, only Strain slows you down."
   },
   {
    "fr": "Vite en bas, lentement en haut",
-   "en": ""
+   "en": "Fast at the bottom, slow at the top"
   },
   {
    "fr": "Une victoire fait monter de {0} quais jusqu’au {1}, de {2} jusqu’au {3}, puis d’un seul.",
-   "en": ""
+   "en": "A win takes you up {0} quays until quay {1}, {2} until quay {3}, then one at a time."
   },
   {
    "fr": "Une défaite fait redescendre",
-   "en": ""
+   "en": "A defeat sends you back down"
   },
   {
    "fr": "D’autant de quais, mais jamais sous le dernier quai gravé que tu as atteint.",
-   "en": ""
+   "en": "By as many quays, but never below the last engraved quay you reached."
   },
   {
    "fr": "{0} : chacun donne des cristaux et des Éclats, une seule fois. Ton record compte au Grand Tableau.",
-   "en": ""
+   "en": "{0}: each gives crystals and Shards, once only. Your record counts on the Great Board."
   },
   {
    "fr": "La garde des quais · compétition",
-   "en": ""
+   "en": "Quay guard · competition"
   },
   {
    "fr": "Les Hauts préfèrent payer un directeur qui tient bon qu’un gardien de location. Les meilleurs directeurs se disputent les quais : le but, tenir le plus haut.",
-   "en": ""
+   "en": "The Heights would rather pay a director who stands firm than a hired guardian. The best directors fight over the quays: the goal is to hold the highest."
   },
   {
    "fr": "Ta montée ne dépend que de toi",
-   "en": ""
+   "en": "Your climb depends on you alone"
   },
   {
    "fr": "L’histoire se joue toujours contre les gardiens payés : aucun directeur ne peut te barrer la route.",
-   "en": ""
+   "en": "The story is always played against the paid guardians: no director can block your way."
   },
   {
    "fr": "Tiens un quai déjà atteint",
-   "en": ""
+   "en": "Hold a quay you’ve reached"
   },
   {
    "fr": "Une copie figée de ton escouade y monte la garde, pendant que tu continues de grimper avec la vraie.",
-   "en": ""
+   "en": "A frozen copy of your squad stands guard there, while you keep climbing with the real one."
   },
   {
    "fr": "Les Hauts te versent un gage",
-   "en": ""
+   "en": "The Heights pay you a stipend"
   },
   {
    "fr": "Plus le quai est haut, plus il rapporte ({0} par jour au quai 20, {1} au quai 80). La caisse garde jusqu’à {2} jours.",
-   "en": ""
+   "en": "The higher the quay, the more it pays ({0} per day at quay 20, {1} at quay 80). The till holds up to {2} days."
   },
   {
    "fr": "Un quai tenu se prend par un défi",
-   "en": ""
+   "en": "A held quay is taken by challenge"
   },
   {
    "fr": "Bats son gardien et le quai est à toi. Perdre ne coûte que l’Usure ; un gardien battu perd son quai, jamais sa montée.",
-   "en": ""
+   "en": "Beat its guardian and the quay is yours. Losing only costs Strain; a beaten guardian loses its quay, never its climb."
   },
   {
    "fr": "Bientôt · les {0} Sièges",
-   "en": ""
+   "en": "Coming soon · the {0} Seats"
   },
   {
    "fr": "à venir",
-   "en": ""
+   "en": "coming soon"
   },
   {
    "fr": "Au sommet, les Sièges sont tenus par des directeurs. Le temps du passage d’une île, {0} défaites t’éliminent et {1} victoires t’ouvrent le défi d’un Siège.",
-   "en": ""
+   "en": "At the top, the Seats are held by directors. While an island passes, {0} defeats knock you out and {1} wins open a challenge for a Seat."
   },
   {
    "fr": "Entrer sur les quais",
-   "en": ""
+   "en": "Enter the quays"
   },
   {
    "fr": "Retour aux quais",
-   "en": ""
+   "en": "Back to the quays"
   }
  ]
 }

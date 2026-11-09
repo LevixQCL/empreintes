@@ -42,6 +42,9 @@ describe('t()', () => {
     expect(t`${un} cristal${un > 1 ? 'x' : ''}`).toBe('1 crystal');
     expect(t`${deux} cristal${deux > 1 ? 'x' : ''}`).toBe('2 crystals');
     expect(valeursDe('{0} crystal{1|s}')).toEqual(valeursDe('{0} cristal{1}'));
+    definirLangue('en', new Map([['{0} famille{1}', '{0} famil{1|ies|y}']]));
+    expect(t`${un} famille${un > 1 ? 's' : ''}`).toBe('1 family');
+    expect(t`${deux} famille${deux > 1 ? 's' : ''}`).toBe('2 families');
   });
 
   it('construit la clé d’un gabarit avec {0}, {1}…', () => {

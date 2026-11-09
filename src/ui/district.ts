@@ -2337,7 +2337,7 @@ export function htmlEscouade(e: EcranDistrict): string {
       // la même échelle de cristaux que l'onglet Escouade (30 octobre 2026)
       + `<div class="eq-freqs es-freq" role="img" aria-label="${tr`Fréquences du deck : ${n.map((k, i) => `${i + 1} : ${k}`).join(', ')}`}">`
       + n.map((k, i) => `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}" style="--fc:${couleurFrequence(i + 1)};--n:${Math.min(1, k / Math.max(1, ...n))}"><b class="eq-cristal">${i + 1}</b><small>${k ? `×${k}` : '—'}</small></span>`).join('')
-      + `</div><p class="es-freq-aide">${tr`Des chiffres qui se suivent font des Résonances${suite.length >= 2 ? ` ${tr`: ta plus longue suite va de`} <b>${suite[0]} à ${suite[suite.length - 1]}</b>` : ''}. Un chiffre absent coupe la suite${jokers ? tr` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} n’importe quel trou` : ''}.`}</p>`;
+      + `</div><p class="es-freq-aide">${tr`Des chiffres qui se suivent font des Résonances${suite.length >= 2 ? ` ${tr`: ta plus longue suite va de`} <b>${tr`${suite[0]} à ${suite[suite.length - 1]}`}</b>` : ''}. Un chiffre absent coupe la suite${jokers ? tr` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} n’importe quel trou` : ''}.`}</p>`;
     h += departRatelier(j, indiceEscouade(j, e.escouade), sortie);
     if (maigre) {
       const aRemplir = e.escouade.filter((id) => j.porteurs[id]!.modules.length < DISTRICT.cartesMax);
@@ -2351,10 +2351,14 @@ export function htmlEscouade(e: EcranDistrict): string {
 
   const vacants = e.escouade.filter((id) => posteQuitte(j, id));
   if (vacants.length) {
-    const et = (l: string[]) => l.length > 1 ? `${l.slice(0, -1).join(', ')} et ${l[l.length - 1]}` : l[0]!;
+    const et = (l: string[]) => l.length > 1 ? tr`${l.slice(0, -1).join(', ')} et ${l[l.length - 1]}` : l[0]!;
     const lieux = vacants.map((id) => posteQuitte(j, id) === 'noyau' ? tr('l’entraînement à la Tour') : batimentDef(posteQuitte(j, id)!).nom);
     const pl = vacants.length > 1;
-    h += `<p class="es-note es-note-poste">${ICO.ouvrier}<span>${tr`Au départ, ${et(vacants.map((id) => `<b>${echap(porteurDef(id).nom)}</b>`))} quitte${pl ? 'nt leur' : ' son'} poste : ${et(lieux)} ${lieux.length > 1 ? 'resteront' : 'restera'} sans Porteur jusqu’à ce que tu y remettes quelqu’un.`}</span></p>`;
+    h += `<p class="es-note es-note-poste">${ICO.ouvrier}<span>${(() => {
+      const qui = et(vacants.map((id) => `<b>${echap(porteurDef(id).nom)}</b>`)), ou = et(lieux);
+      if (pl) return lieux.length > 1 ? tr`Au départ, ${qui} quittent leur poste : ${ou} resteront sans Porteur jusqu’à ce que tu y remettes quelqu’un.` : tr`Au départ, ${qui} quittent leur poste : ${ou} restera sans Porteur jusqu’à ce que tu y remettes quelqu’un.`;
+      return lieux.length > 1 ? tr`Au départ, ${qui} quitte son poste : ${ou} resteront sans Porteur jusqu’à ce que tu y remettes quelqu’un.` : tr`Au départ, ${qui} quitte son poste : ${ou} restera sans Porteur jusqu’à ce que tu y remettes quelqu’un.`;
+    })()}</span></p>`;
   }
   // trop blessés pour repartir (3 novembre 2026 : l'écran disait « prêt » et le refus n'arrivait qu'en touchant Partir)
   const blesses = e.escouade.filter((id) => tropBlesse(j, id));

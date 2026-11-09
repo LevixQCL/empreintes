@@ -3,627 +3,627 @@
  "entrees": [
   {
    "fr": "En mission",
-   "en": ""
+   "en": "On a mission"
   },
   {
    "fr": "En expédition",
-   "en": ""
+   "en": "On an expedition"
   },
   {
    "fr": "À l’entraînement · Tour du Noyau",
-   "en": ""
+   "en": "In training · Core Tower"
   },
   {
    "fr": "Au travail · {0}",
-   "en": ""
+   "en": "At work · {0}"
   },
   {
    "fr": "Disponible",
-   "en": ""
+   "en": "Available"
   },
   {
    "fr": "Arrive quand la Forge atteint le niveau {0}.",
-   "en": ""
+   "en": "Arrives when the Forge reaches level {0}."
   },
   {
    "fr": "Arrive quand la Strate −{0} est ouverte.",
-   "en": ""
+   "en": "Arrives when Stratum −{0} is opened."
   },
   {
    "fr": "Arrive par un Accord ouvert : Clinique niveau {0} et {1} familles qui te suivent.",
-   "en": ""
+   "en": "Arrives through an open Accord: Clinic level {0} and {1} families following you."
   },
   {
    "fr": "Arrive quand la chambre scellée est ouverte.",
-   "en": ""
+   "en": "Arrives when the sealed chamber is opened."
   },
   {
    "fr": "quand la Forge atteindra le niveau {0}",
-   "en": ""
+   "en": "when the Forge reaches level {0}"
   },
   {
    "fr": "quand la Strate −{0} sera ouverte",
-   "en": ""
+   "en": "when Stratum −{0} is opened"
   },
   {
    "fr": "par un Accord ouvert : Clinique niveau {0} et {1} familles qui te suivent",
-   "en": ""
+   "en": "through an open Accord: Clinic level {0} and {1} families following you"
   },
   {
    "fr": "quand la chambre scellée sera ouverte",
-   "en": ""
+   "en": "when the sealed chamber is opened"
   },
   {
    "fr": "{0}, {1}, niveau {2}, {3}",
-   "en": ""
+   "en": "{0}, {1}, level {2}, {3}"
   },
   {
    "fr": "Dans ton escouade",
-   "en": ""
+   "en": "In your squad"
   },
   {
    "fr": "Nouveau",
-   "en": ""
+   "en": "New"
   },
   {
    "fr": "{0}/{1} PV",
-   "en": ""
+   "en": "{0}/{1} HP"
   },
   {
    "fr": "{0}/{1} cartes",
-   "en": ""
+   "en": "{0}/{1} cards"
   },
   {
    "fr": "PV et expérience{0}",
-   "en": ""
+   "en": "HP and experience{0}"
   },
   {
    "fr": " ({0} / {1} XP vers le niveau {2})",
-   "en": ""
+   "en": " ({0} / {1} XP to level {2})"
   },
   {
    "fr": "Peut porter {0} carte{1} de plus",
-   "en": ""
+   "en": "Can carry {0} more card{1}"
   },
   {
    "fr": "Usure élevée : repos à la Clinique",
-   "en": ""
+   "en": "High Strain: rest at the Clinic"
   },
   {
    "fr": "Un Porteur {0} arrivera",
-   "en": ""
+   "en": "A {0} Bearer will arrive"
   },
   {
    "fr": "· un Porteur niv. {0}",
-   "en": ""
+   "en": "· a lvl {0} Bearer"
   },
   {
    "fr": "{0}, {1} {2}{3}{4}. Voir la carte",
-   "en": ""
+   "en": "{0}, {1} {2}{3}{4}. See the card"
   },
   {
    "fr": "{0}, {1} {2}, carte commune. Voir la carte",
-   "en": ""
+   "en": "{0}, {1} {2}, common card. See the card"
   },
   {
    "fr": "{0}, carte unique de Véla, {1} {2}, Accord. Voir la carte",
-   "en": ""
+   "en": "{0}, Véla’s unique card, {1} {2}, Accord. See the card"
   },
   {
    "fr": "pour descendre ({0} au moins) : confie-en à un Porteur plus bas.",
-   "en": ""
+   "en": "to go down ({0} at least): give some to a Bearer below."
   },
   {
    "fr": "Aucun soin",
-   "en": ""
+   "en": "No healing"
   },
   {
    "fr": "dans les cartes de tes Porteurs : seul le Stimulant du paquetage soigne.",
-   "en": ""
+   "en": "in your Bearers’ cards: only the kit’s Stimulant heals."
   },
   {
    "fr": "Ta plus longue suite va de",
-   "en": ""
+   "en": "Your longest chain runs from"
   },
   {
    "fr": ". Rien en",
-   "en": ""
+   "en": ". Nothing on"
   },
   {
    "fr": ": {0} tes Résonances",
-   "en": ""
+   "en": ": {0} your Resonances"
   },
   {
    "fr": " : toute l’échelle est couverte",
-   "en": ""
+   "en": ": the whole ladder is covered"
   },
   {
    "fr": " · {0} carte{1} ∗ comble{2} un trou",
-   "en": ""
+   "en": " · {0} ∗ card{1} can fill a gap{2|}"
   },
   {
    "fr": "Des Fréquences qui se suivent font des Résonances : ajoute des chiffres voisins.",
-   "en": ""
+   "en": "Consecutive Frequencies make Resonances: add neighbouring numbers."
   },
   {
    "fr": "cartes",
-   "en": ""
+   "en": "cards"
   },
   {
    "fr": "dans le deck",
-   "en": ""
+   "en": "in the deck"
   },
   {
    "fr": "Marque {0} : {1} Voir la fiche {2}",
-   "en": ""
+   "en": "{0} Mark: {1} See {2}’s profile"
   },
   {
    "fr": "Place libre",
-   "en": ""
+   "en": "Free slot"
   },
   {
    "fr": "L’escouade est en descente",
-   "en": ""
+   "en": "The squad is on a descent"
   },
   {
    "fr": "Choisir un Porteur : il apporte ses cartes au deck",
-   "en": ""
+   "en": "Pick a Bearer: they bring their cards to the deck"
   },
   {
    "fr": "Trop lourd : {0} de Charge sur {1}. Reprends-lui une carte pour qu’il descende.",
-   "en": ""
+   "en": "Too heavy: {0} of {1} Load. Take a card back so they can go down."
   },
   {
    "fr": "{0} : {1} ne pourra pas descendre.",
-   "en": ""
+   "en": "{0}: {1} won’t be able to go down."
   },
   {
    "fr": "Au départ, {0}",
-   "en": ""
+   "en": "On departure, {0}"
   },
   {
    "fr": "{0} : soins intensifs possibles à la Clinique.",
-   "en": ""
+   "en": "{0}: intensive care available at the Clinic."
   },
   {
    "fr": "Usure élevée : −{0} PV en combat. La Clinique la soigne au district.",
-   "en": ""
+   "en": "High Strain: −{0} HP in combat. The Clinic heals it in the district."
   },
   {
    "fr": "{0} · Niv. {1}",
-   "en": ""
+   "en": "{0} · Lvl {1}"
   },
   {
    "fr": "/ {0} PV",
-   "en": ""
+   "en": "/ {0} HP"
   },
   {
    "fr": "Fort contre les {0}",
-   "en": ""
+   "en": "Strong against the {0}"
   },
   {
    "fr": "Changer {0}",
-   "en": ""
+   "en": "Change {0}"
   },
   {
    "fr": "Ses cartes changeront à son retour",
-   "en": ""
+   "en": "Their cards will change when they’re back"
   },
   {
    "fr": "Gérer ses cartes ({0} sur {1})",
-   "en": ""
+   "en": "Manage their cards ({0} of {1})"
   },
   {
    "fr": "À son retour",
-   "en": ""
+   "en": "When they’re back"
   },
   {
    "fr": "Gérer",
-   "en": ""
+   "en": "Manage"
   },
   {
    "fr": "Place libre : confier une carte{0}",
-   "en": ""
+   "en": "Free slot: give a card{0}"
   },
   {
    "fr": " ({0} de sa lignée attendent)",
-   "en": ""
+   "en": " ({0} of their lineage waiting)"
   },
   {
    "fr": "{0} en attente",
-   "en": ""
+   "en": "{0} waiting"
   },
   {
    "fr": "Mes escouades",
-   "en": ""
+   "en": "My squads"
   },
   {
    "fr": "Former",
-   "en": ""
+   "en": "Form"
   },
   {
    "fr": "Garde le port",
-   "en": ""
+   "en": "Guards the port"
   },
   {
    "fr": "ESCOUADE {0} · {1} / 3 ·",
-   "en": ""
+   "en": "SQUAD {0} · {1} / 3 ·"
   },
   {
    "fr": "{0} CARTES",
-   "en": ""
+   "en": "{0} CARDS"
   },
   {
    "fr": "Revenir aux Pillages",
-   "en": ""
+   "en": "Back to the Raids"
   },
   {
    "fr": "Revenir au pillage",
-   "en": ""
+   "en": "Back to the raid"
   },
   {
    "fr": "Revenir au départ",
-   "en": ""
+   "en": "Back to departure"
   },
   {
    "fr": "Ta garnison est prise en compte tout de suite.",
-   "en": ""
+   "en": "Your garrison takes effect right away."
   },
   {
    "fr": "Avec l’escouade choisie ici.",
-   "en": ""
+   "en": "With the squad chosen here."
   },
   {
    "fr": "Une seule escouade pour l’instant : tant que le gardien de la Strate −{0} tient, le puits n’a d’étais que pour une équipe à la fois.",
-   "en": ""
+   "en": "Only one squad for now: as long as the guardian of Stratum −{0} holds, the shaft only has props for one team at a time."
   },
   {
    "fr": "En descente",
-   "en": ""
+   "en": "On a descent"
   },
   {
    "fr": "Faire descendre l’escouade {0}",
-   "en": ""
+   "en": "Send squad {0} down"
   },
   {
    "fr": "Elle partira à la place de l’escouade {0} à la prochaine descente.",
-   "en": ""
+   "en": "It will go instead of squad {0} on the next descent."
   },
   {
    "fr": "Une équipe de réserve",
-   "en": ""
+   "en": "A reserve team"
   },
   {
    "fr": "Compose-la pour un autre ennemi, une autre lignée ou une Épreuve : un Porteur n’est que dans une seule escouade, et ses cartes le suivent.",
-   "en": ""
+   "en": "Build it for another enemy, another lineage or a Trial: a Bearer belongs to only one squad, and their cards go with them."
   },
   {
    "fr": "· Fouiller",
-   "en": ""
+   "en": "· Dig"
   },
   {
    "fr": "cristaux par départ{0}",
-   "en": ""
+   "en": "crystals per departure{0}"
   },
   {
    "fr": "pas assez : elles restent au district",
-   "en": ""
+   "en": "not enough: they stay in the district"
   },
   {
    "fr": "Elles restent même si un Porteur tombe",
-   "en": ""
+   "en": "They stay even if a Bearer falls"
   },
   {
    "fr": "Râtelier de l’escouade {0}",
-   "en": ""
+   "en": "Squad {0}’s Rack"
   },
   {
    "fr": "Changer les cartes du Râtelier de l’escouade {0}",
-   "en": ""
+   "en": "Change the cards in squad {0}’s Rack"
   },
   {
    "fr": "Emplacement libre : choisir une carte commune",
-   "en": ""
+   "en": "Free slot: pick a common card"
   },
   {
    "fr": "Emplacement libre",
-   "en": ""
+   "en": "Free slot"
   },
   {
    "fr": "{0} niveau {1} : {2}",
-   "en": ""
+   "en": "{0} level {1}: {2}"
   },
   {
    "fr": " · aussi dans l’escouade {0}",
-   "en": ""
+   "en": " · also in squad {0}"
   },
   {
    "fr": "Prendre",
-   "en": ""
+   "en": "Take"
   },
   {
    "fr": "{0} {1} · Fréquence {2}{3}",
-   "en": ""
+   "en": "{0} {1} · Frequency {2}{3}"
   },
   {
    "fr": "{0} · grandit avec le bâtiment{1}",
-   "en": ""
+   "en": "{0} · grows with the building{1}"
   },
   {
    "fr": "Râtelier de l’escouade {0} · {1} / {2}",
-   "en": ""
+   "en": "Squad {0}’s Rack · {1} / {2}"
   },
   {
    "fr": "Chaque bâtiment prépare ses cartes, sans lignée ni métal. Elles ne s’éteignent jamais quand un Porteur tombe, et gagnent de la force quand leur bâtiment monte. Le départ coûte quelques cristaux pour toutes les cartes à la fois, quel que soit leur nombre : 10 pour explorer, 5 pour fouiller (et pour une Épreuve, un Pillage ou la Flèche). Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.",
-   "en": ""
+   "en": "Each building prepares its own cards, with no lineage or metal. They never go dark when a Bearer falls, and grow stronger as their building levels up. Departure costs a few crystals for all the cards at once, however many there are: 10 to explore, 5 to dig (and for a Trial, a Raid or the Spire). Each squad has its own Rack: the same card can go down with several."
   },
   {
    "fr": "Dans l’escouade {0}{1}",
-   "en": ""
+   "en": "In squad {0}{1}"
   },
   {
    "fr": " : {0} y prendra sa place",
-   "en": ""
+   "en": ": {0} will take their place"
   },
   {
    "fr": " : il la quittera",
-   "en": ""
+   "en": ": they will leave it"
   },
   {
    "fr": "{0} · son poste restera vacant",
-   "en": ""
+   "en": "{0} · their post will be left empty"
   },
   {
    "fr": "À l’entraînement",
-   "en": ""
+   "en": "In training"
   },
   {
    "fr": "{0}/{1} PV ·",
-   "en": ""
+   "en": "{0}/{1} HP ·"
   },
   {
    "fr": "{0} carte{1}",
-   "en": ""
+   "en": "{0} card{1}"
   },
   {
    "fr": "Escouade {0} · place {1}",
-   "en": ""
+   "en": "Squad {0} · slot {1}"
   },
   {
    "fr": "Choisir un Porteur",
-   "en": ""
+   "en": "Pick a Bearer"
   },
   {
    "fr": "Le Porteur choisi apporte ses cartes au deck. {0}",
-   "en": ""
+   "en": "The chosen Bearer brings their cards to the deck. {0}"
   },
   {
    "fr": "{0} reste au district, avec les siennes.",
-   "en": ""
+   "en": "{0} stays in the district, with their own."
   },
   {
    "fr": "Tous tes Porteurs sont déjà dans cette escouade. D’autres arriveront en descendant les Strates et en agrandissant la Forge.",
-   "en": ""
+   "en": "All your Bearers are already in this squad. Others will arrive as you go down the Strata and expand the Forge."
   },
   {
    "fr": "{0} PORTEUR{1} ·",
-   "en": ""
+   "en": "{0} BEARER{1|S} ·"
   },
   {
    "fr": "{0} DISPONIBLE{1}",
-   "en": ""
+   "en": "{0} AVAILABLE{1|}"
   },
   {
    "fr": "Une Augmentée, un Géné, une Résonante : depuis un siècle, les trois lignées se méfient les unes des autres. Sous la Tour, elles descendent ensemble, chacune avec ce que les deux autres n’ont pas. Touche un portrait pour savoir pourquoi chacun est là.",
-   "en": ""
+   "en": "An Augmented, a Spliced, a Resonant: for a century, the three lineages have distrusted one another. Under the Tower, they go down together, each with what the other two lack. Tap a portrait to find out why each of them is here."
   },
   {
    "fr": "augmentées",
-   "en": ""
+   "en": "augmented"
   },
   {
    "fr": "génées",
-   "en": ""
+   "en": "spliced"
   },
   {
    "fr": "résonantes",
-   "en": ""
+   "en": "resonant"
   },
   {
    "fr": "{0} · Niveau {1}",
-   "en": ""
+   "en": "{0} · Level {1}"
   },
   {
    "fr": "Pourquoi {0} est là",
-   "en": ""
+   "en": "Why {0} is here"
   },
   {
    "fr": "Son histoire",
-   "en": ""
+   "en": "Their story"
   },
   {
    "fr": "{0} n’en parle pas encore.",
-   "en": ""
+   "en": "{0} doesn’t talk about it yet."
   },
   {
    "fr": "La suite",
-   "en": ""
+   "en": "What comes next"
   },
   {
    "fr": "Aucune Usure : tous ses PV en combat.",
-   "en": ""
+   "en": "No Strain: full HP in combat."
   },
   {
    "fr": "/ {0} : −{1} PV en combat.",
-   "en": ""
+   "en": "/ {0}: −{1} HP in combat."
   },
   {
    "fr": "Elle se soignera à son retour.",
-   "en": ""
+   "en": "It will heal when they’re back."
   },
   {
    "fr": "La Clinique en soigne {0} par heure : effacée dans {1} h environ.",
-   "en": ""
+   "en": "The Clinic heals {0} per hour: gone in about {1} h."
   },
   {
    "fr": "La Clinique la soignera.",
-   "en": ""
+   "en": "The Clinic will heal it."
   },
   {
    "fr": "{0} XP",
-   "en": ""
+   "en": "{0} XP"
   },
   {
    "fr": "pour le niveau {0} :",
-   "en": ""
+   "en": "for level {0}:"
   },
   {
    "fr": "{0} PV",
-   "en": ""
+   "en": "{0} HP"
   },
   {
    "fr": "au lieu de {0}. XP gagnée en combat (plus en profondeur, et davantage contre les salles scellées et les gardiens), en mission et à l’entraînement à la Tour du Noyau.",
-   "en": ""
+   "en": "instead of {0}. XP is earned in combat (more when deeper, and more against sealed rooms and guardians), on missions and when training at the Core Tower."
   },
   {
    "fr": "Son état",
-   "en": ""
+   "en": "Condition"
   },
   {
    "fr": "Ses cartes",
-   "en": ""
+   "en": "Their cards"
   },
   {
    "fr": "Ce que pèsent ses cartes sur ce qu’{0} peut porter : +{1} à chaque niveau.",
-   "en": ""
+   "en": "How much their cards weigh against what {0} can carry: +{1} per level."
   },
   {
    "fr": "{0}, niveau {1}. Changer ses cartes",
-   "en": ""
+   "en": "{0}, level {1}. Change their cards"
   },
   {
    "fr": "Place libre : lui confier une carte",
-   "en": ""
+   "en": "Free slot: give them a card"
   },
   {
    "fr": "{0} est en route : ses cartes changeront à son retour.",
-   "en": ""
+   "en": "{0} is on the way: their cards will change when they’re back."
   },
   {
    "fr": "{0} carte{1} {2} libre{3} dans ta collection : encore {4} place{5} à remplir.",
-   "en": ""
+   "en": "{0} card{1} {2} free{3|} in your collection: {4} slot{5} still to fill."
   },
   {
    "fr": "Aucune carte : rien à jouer en combat.",
-   "en": ""
+   "en": "No cards: nothing to play in combat."
   },
   {
    "fr": "Ces cartes entrent dans ton deck quand {0} descend.",
-   "en": ""
+   "en": "These cards join your deck when {0} goes down."
   },
   {
    "fr": "Sa Marque",
-   "en": ""
+   "en": "Their Mark"
   },
   {
    "fr": "Acquise",
-   "en": ""
+   "en": "Acquired"
   },
   {
    "fr": "Comment la gagner :",
-   "en": ""
+   "en": "How to earn it:"
   },
   {
    "fr": "{0}. Encore",
-   "en": ""
+   "en": "{0}. Still"
   },
   {
    "fr": "envoie {0} en mission en mer depuis le Port",
-   "en": ""
+   "en": "send {0} on a mission at sea from the Port"
   },
   {
    "fr": "emmène {0} dans l’escouade",
-   "en": ""
+   "en": "take {0} in the squad"
   },
   {
    "fr": "et elle lui est acquise pour toujours.",
-   "en": ""
+   "en": "and it’s theirs forever."
   },
   {
    "fr": "par l’exploit",
-   "en": ""
+   "en": "through the feat"
   },
   {
    "fr": "Niveau atteint · Marque à gagner",
-   "en": ""
+   "en": "Level reached · Mark to earn"
   },
   {
    "fr": "Active dans chaque combat où {0} fait partie de l’escouade{1}.",
-   "en": ""
+   "en": "Active in every fight where {0} is in the squad{1}."
   },
   {
    "fr": " : elle s’affirme au niveau {0} et se grave au niveau {1}",
-   "en": ""
+   "en": ": it is affirmed at level {0} and engraved at level {1}"
   },
   {
    "fr": "Sa lignée · {0}",
-   "en": ""
+   "en": "Their lineage · {0}"
   },
   {
    "fr": "{0} porte les cartes",
-   "en": ""
+   "en": "{0} carries"
   },
   {
    "fr": ": Fréquences",
-   "en": ""
+   "en": " cards: Frequencies"
   },
   {
    "fr": ", surtout {0}",
-   "en": ""
+   "en": ", mostly {0}"
   },
   {
    "fr": "Fort contre les",
-   "en": ""
+   "en": "Strong against the"
   },
   {
    "fr": "de dégâts pour ses cartes",
-   "en": ""
+   "en": "damage for their cards"
   },
   {
    "fr": "Faible contre les",
-   "en": ""
+   "en": "Weak against the"
   },
   {
    "fr": "de dégâts reçus",
-   "en": ""
+   "en": "damage taken"
   },
   {
    "fr": "Au travail ici",
-   "en": ""
+   "en": "At work here"
   },
   {
    "fr": "Lignée idéale",
-   "en": ""
+   "en": "Ideal lineage"
   },
   {
    "fr": "{0} Pour le poster, touche un bâtiment au District. S’il descend, il quitte son poste, qui reste vacant.",
-   "en": ""
+   "en": "{0} To assign them, tap a building in the District. If they go down, they leave their post, which stays empty."
   },
   {
    "fr": "Ailleurs : ×{0}.",
-   "en": ""
+   "en": "Elsewhere: ×{0}."
   },
   {
    "fr": "Aucun bâtiment n’est fait pour sa lignée : ×{0} partout.",
-   "en": ""
+   "en": "No building suits their lineage: ×{0} everywhere."
   },
   {
    "fr": "Lui confier des cartes · {0} / {1}",
-   "en": ""
+   "en": "Give them cards · {0} / {1}"
   },
   {
    "fr": "Changer ses cartes",
-   "en": ""
+   "en": "Change their cards"
   }
  ]
 }
