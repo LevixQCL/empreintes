@@ -9,7 +9,7 @@
 export type Langue = 'fr' | 'en';
 
 /** Les langues proposées aux joueurs. L'anglais n'y entre que lorsqu'il est complet (npm run i18n -- couverture). */
-export const LANGUES_PUBLIEES: readonly Langue[] = ['fr'];
+export const LANGUES_PUBLIEES: readonly Langue[] = ['fr', 'en'];
 /** Toutes les langues qui ont un catalogue (traductions/<langue>/) */
 export const LANGUES: readonly Langue[] = ['fr', 'en'];
 

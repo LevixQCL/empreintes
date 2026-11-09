@@ -2,7 +2,7 @@
 // parce que les Chroniques, les Strates et les autres textes sont traduits au moment où leurs modules se chargent.
 // Ensuite seulement, main.ts démarre le jeu.
 //   ?langue=en dans l'adresse : passe en anglais (et s'en souvient) ; ?langue=fr : revient au français.
-//   Sans choix enregistré : la langue de l'appareil, si elle fait partie des langues publiées ; sinon le français.
+//   Sans choix enregistré : la première langue de l'appareil que le jeu parle ; sinon l'anglais.
 
 import { definirLangue, LANGUES, LANGUES_PUBLIEES, type Langue } from './core/i18n';
 import { chargerCatalogue } from './traduction';
@@ -17,8 +17,10 @@ function choisirLangue(): Langue {
   if (estLangue(demandee)) { retenir(demandee); return demandee; }
   const gardee = lire();
   if (estLangue(gardee)) return gardee;
-  const appareil = (navigator.language || 'fr').slice(0, 2);
-  return estLangue(appareil) && LANGUES_PUBLIEES.includes(appareil) ? appareil : 'fr';
+  // la première langue de l'appareil que le jeu parle (un téléphone « nl, fr » s'ouvre en français) ;
+  // aucune (allemand, néerlandais seul…) : l'anglais, plus largement compris que le français
+  const appareil = (navigator.languages?.length ? navigator.languages : [navigator.language || 'fr']).map((x) => x.slice(0, 2).toLowerCase());
+  return appareil.find((x): x is Langue => estLangue(x) && LANGUES_PUBLIEES.includes(x)) ?? 'en';
 }
 
 async function demarrer(): Promise<void> {

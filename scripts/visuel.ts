@@ -258,7 +258,7 @@ async function main() {
         for (const scene of SCENES.filter((s) => !process.env.VISUEL_SEULEMENT || process.env.VISUEL_SEULEMENT.split(',').includes(s.nom))) {
           const photos: Buffer[] = [];
           for (const port of [4401, 4402]) {
-            const ctx = await navigateur.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1, reducedMotion: 'reduce' });
+            const ctx = await navigateur.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 1, reducedMotion: 'reduce', locale: 'fr-BE' }); // un téléphone réglé en français : le jeu s'ouvre en français
             // aucun accès à Firebase : les tests ne créent pas de comptes et n'écrivent rien dans les vraies données (les polices restent)
             await ctx.route(/identitytoolkit\.googleapis|securetoken\.googleapis|firestore\.googleapis|firebaseinstallations\.googleapis|firebaseapp\.com/, (r) => r.abort());
             // tsx ajoute un petit outil (__name) dans les fonctions envoyées à la page : on le fournit

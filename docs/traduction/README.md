@@ -89,7 +89,7 @@ L'anglais n'est **pas proposé aux joueurs** tant qu'il n'est pas complet : il e
 
 - **Tout le jeu est traduit en anglais** (≈ 77 000 mots : lore, interface, combat, glossaire), écrans vérifiés à 390 px.
   Le français n'a pas bougé (`npm run visuel` : aucun changement visible).
-- Avant de publier l'anglais (`LANGUES_PUBLIEES`, demander à Bryan) : une relecture par un anglophone, surtout le lore ;
+- Anglais publié le 9 novembre 2026 : la langue suit celle de l’appareil (sinon l’anglais), réglable dans les Paramètres.
   `index.html` (titre « Ossyra » commun aux deux langues) et le manifeste de l'appli restent en français.
 - Les textes déjà enregistrés dans une sauvegarde (journaux, récits d'expédition en cours, messages) restent dans la langue
   où ils ont été écrits : seuls les nouveaux suivent la langue choisie.
