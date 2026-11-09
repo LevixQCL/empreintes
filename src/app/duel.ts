@@ -54,7 +54,7 @@ function finCercle(): { recompense?: string; revanche?: boolean } {
   if (!s?.fini) return {};
   const g = DL.gain;
   return {
-    ...(g ? { recompense: `+${g.composants} composants · +${g.eclats} Éclat${g.eclats > 1 ? 's' : ''} : première victoire de la semaine contre ${DL.nomAmi}` } : {}),
+    ...(g ? { recompense: `+${g.composants} cristaux · +${g.eclats} Éclat${g.eclats > 1 ? 's' : ''} : première victoire de la semaine contre ${DL.nomAmi}` } : {}),
     ...(DL.ami ? { revanche: true } : {}),
   };
 }

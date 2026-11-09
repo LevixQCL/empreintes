@@ -91,7 +91,7 @@ export async function entrerCode(saisie: string): Promise<{ ok: boolean; texte: 
     if (!r.ok) return { ok: false, texte: r.message ?? 'Refusé.' };
     sauver();
     publierPaliers();
-    return { ok: true, texte: `Recommandé par ${parrain.nom} : ta carte au choix et tes composants t’attendent.` };
+    return { ok: true, texte: `Recommandé par ${parrain.nom} : ta carte au choix et tes cristaux t’attendent.` };
   } catch (err) {
     if (err instanceof n.CodeRefuse) return { ok: false, texte: err.message };
     return { ok: false, texte: `La vérification a échoué (${(err as { code?: string })?.code ?? 'réseau'}). Réessaie dans un instant.` };

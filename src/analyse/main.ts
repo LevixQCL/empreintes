@@ -203,8 +203,8 @@ function economie(e: Donnees): string {
     table<LigneEconomie>('economie', [
       { cle: 'tranche', nom: 'Avancée', val: (x) => x.tranche, texte: true },
       { cle: 'joueurs', nom: 'Joueurs', val: (x) => x.joueurs, aff: (x) => fr(x.joueurs) },
-      { cle: 'energie', nom: 'Énergie', val: (x) => x.energie, aff: (x) => fr(x.energie) },
-      { cle: 'composants', nom: 'Composants', val: (x) => x.composants, aff: (x) => fr(x.composants) },
+      { cle: 'energie', nom: 'Cristaux', val: (x) => x.energie, aff: (x) => fr(x.energie) },
+      { cle: 'composants', nom: 'Minerai', val: (x) => x.composants, aff: (x) => fr(x.composants) },
       { cle: 'eclats', nom: 'Éclats', val: (x) => x.eclats, aff: (x) => fr(x.eclats) },
       { cle: 'creuseurs', nom: 'Creuseurs', val: (x) => x.creuseurs, aff: (x) => fr(x.creuseurs) },
       { cle: 'confiance', nom: 'Confiance', val: (x) => x.confiance, aff: (x) => fr(x.confiance) },

@@ -286,7 +286,7 @@ function monEscouade(e: EcranDistrict): string {
   const verrou = escouadeVerrouillee(j);
   const prete = (cle: string) => {
     const c = j.collection[cle]; const r = c ? doublonsRequis(moduleDef(cle).id, c.niveau) : null;
-    return !!c && r !== null && c.doublons >= r && j.composants >= composantsNiveau(c.niveau + 1);
+    return !!c && r !== null && c.doublons >= r && j.energie >= composantsNiveau(c.niveau + 1);
   };
   const deck = deckEscouade(j, esc).length;
   let h = entete(`ESCOUADE ${vue + 1} · ${esc.length} / 3 · <span class="pt-dispo">${deck} CARTES</span>`, 'Escouade');
@@ -321,7 +321,7 @@ function ratelierSection(j: Jeu, k: number, prete: (cle: string) => boolean, ver
   const explorer = coutRatelier(j, 'explorer', k), courte = coutRatelier(j, 'courte', k);
   const manque = payees < choisies.length;
   const vides = Math.max(0, places - choisies.length);
-  const sous = choisies.length ? `${ICO.energie}Explorer <b>${explorer}</b> · Fouiller <b>${courte}</b> énergie par départ${manque ? ' · <em>pas assez : elles restent au district</em>' : ''}` : 'Elles restent même si un Porteur tombe';
+  const sous = choisies.length ? `${ICO.energie}Explorer <b>${explorer}</b> · Fouiller <b>${courte}</b> cristaux par départ${manque ? ' · <em>pas assez : elles restent au district</em>' : ''}` : 'Elles restent même si un Porteur tombe';
   let h = `<section class="eq-district"><div class="eq-cartes-tete"><h3>${ICO.district}Râtelier de l’escouade ${k + 1} <span>${choisies.length} / ${places}</span></h3>`
     + (verrou ? '' : `<button type="button" class="eq-gerer" data-action="ratelier" aria-label="Changer les cartes du Râtelier de l’escouade ${k + 1}">${ICO.recycler}<span>Changer</span></button>`) + `<small>${sous}</small></div>`;
   h += `<ul class="eq-grille">${choisies.map((id) => tuileCarte(j, gesteCommun(j, CARTES_COMMUNES.find((c) => c.geste.id === id)!), prete)).join('')}`
@@ -358,7 +358,7 @@ function voletRatelier(e: EcranDistrict): string {
     + `<section class="feuille me-volet" role="dialog" aria-modal="true" aria-labelledby="volet-titre"><span class="poignee" aria-hidden="true"></span>`
     + `<header class="feuille-tete"><div class="titres"><span class="surtitre">Râtelier de l’escouade ${vue + 1} · ${choisies.length} / ${places}</span><h2 id="volet-titre">Cartes communes du district</h2></div>`
     + `<button type="button" class="btn-icone" data-action="ratelier-fermer" aria-label="Fermer">${ICO.fermer}</button></header>`
-    + `<div class="feuille-corps">${texteReplie('Chaque bâtiment prépare ses cartes, sans lignée ni métal. Elles ne s’éteignent jamais quand un Porteur tombe, et gagnent de la force quand leur bâtiment monte. Le départ coûte de l’énergie pour toutes les cartes à la fois, quel que soit leur nombre : 30 min de production du Générateur pour explorer, 15 min pour fouiller (et pour une Épreuve, un Pillage ou la Flèche). Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.', 'communes-esc', 'me-aide')}`
+    + `<div class="feuille-corps">${texteReplie('Chaque bâtiment prépare ses cartes, sans lignée ni métal. Elles ne s’éteignent jamais quand un Porteur tombe, et gagnent de la force quand leur bâtiment monte. Le départ coûte quelques cristaux pour toutes les cartes à la fois, quel que soit leur nombre : 10 pour explorer, 5 pour fouiller (et pour une Épreuve, un Pillage ou la Flèche). Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.', 'communes-esc', 'me-aide')}`
     + `<div class="me-choix-liste">${CARTES_COMMUNES.map(ligne).join('')}</div>`
     + (prochaine ? `<p class="me-aide">Un emplacement de plus au niveau ${prochaine.noyau} de la Tour du Noyau.</p>` : '');
   return h + `</div></section>`;

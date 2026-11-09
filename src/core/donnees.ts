@@ -392,32 +392,34 @@ interface BatimentDef {
   niveauMax: number;
 }
 
+// 9 novembre 2026 (économie à cristal unique) : un seul prix en cristaux (`energie`) = composants d'avant + énergie ÷ 40 : l'énergie débordait, elle ne freinait pas
+// vraiment les chantiers ; ce sont les composants qui les payaient. Réglé au robot pour garder −10 vers le jour 30.
 // 28 octobre 2026 (Bryan : « tout est censé monter ») : dix niveaux par bâtiment, comme les quatre âges du district
 // (âge 2 au niveau 4 de la Tour, âge 3 au 8, âge 4 au 10). Les niveaux 1 à 5 sont inchangés ; 6 à 10 les prolongent.
 export const BATIMENTS: BatimentDef[] = [
-  { id: 'noyau', nom: 'Tour du Noyau', role: 'Le cœur du district : il fixe le niveau des autres bâtiments, le stockage d’énergie et les creuseurs qui percent les Strates.', affinite: null,
-    couts: [{ energie: 0, composants: 0 }, { energie: 120, composants: 15 }, { energie: 300, composants: 40 }, { energie: 650, composants: 80, eclats: 3 }, { energie: 1300, composants: 160, eclats: 8 },
-      { energie: 3400, composants: 220, eclats: 6 }, { energie: 5100, composants: 360, eclats: 7 }, { energie: 7600, composants: 560, eclats: 8 }, { energie: 11000, composants: 840, eclats: 10 }, { energie: 16100, composants: 1200, eclats: 12 }], niveauMax: 10 },
-  { id: 'generateur', nom: 'Générateur', role: 'Produit de l’énergie en continu, même quand tu ne joues pas.', affinite: 'tech',
-    couts: [{ energie: 0, composants: 0 }, { energie: 80, composants: 10 }, { energie: 200, composants: 25 }, { energie: 450, composants: 55, eclats: 2 }, { energie: 900, composants: 110, eclats: 5 },
-      { energie: 2600, composants: 150, eclats: 4 }, { energie: 4200, composants: 250, eclats: 5 }, { energie: 6600, composants: 380, eclats: 7 }, { energie: 10100, composants: 580, eclats: 9 }, { energie: 14900, composants: 840, eclats: 11 }], niveauMax: 10 },
+  { id: 'noyau', nom: 'Tour du Noyau', role: 'Le cœur du district : il fixe le niveau des autres bâtiments et loge les creuseurs qui percent les Strates.', affinite: null,
+    couts: [{ energie: 0, composants: 0 }, { energie: 18, composants: 0 }, { energie: 50, composants: 0 }, { energie: 95, composants: 0, eclats: 3 }, { energie: 190, composants: 0, eclats: 8 },
+      { energie: 305, composants: 0, eclats: 6 }, { energie: 490, composants: 0, eclats: 7 }, { energie: 750, composants: 0, eclats: 8 }, { energie: 1115, composants: 0, eclats: 10 }, { energie: 1600, composants: 0, eclats: 12 }], niveauMax: 10 },
+  { id: 'generateur', nom: 'Générateur', role: 'Taille en cristaux le minerai rapporté d’en bas et de la mer, même quand tu ne joues pas.', affinite: 'tech',
+    couts: [{ energie: 0, composants: 0 }, { energie: 12, composants: 0 }, { energie: 30, composants: 0 }, { energie: 65, composants: 0, eclats: 2 }, { energie: 130, composants: 0, eclats: 5 },
+      { energie: 215, composants: 0, eclats: 4 }, { energie: 355, composants: 0, eclats: 5 }, { energie: 545, composants: 0, eclats: 7 }, { energie: 830, composants: 0, eclats: 9 }, { energie: 1210, composants: 0, eclats: 11 }], niveauMax: 10 },
   // 27 octobre 2026 (Bryan) : la Forge passe aux Résonants, pour que chaque lignée ait son poste idéal
   // (Générateur : Augmentés, Clinique : Génés, Forge : Résonants).
   { id: 'forge', nom: 'Forge', role: 'Refabrique une carte déjà trouvée : un doublon de plus. Il faut un Porteur au travail.', affinite: 'reso',
-    couts: [{ energie: 0, composants: 0 }, { energie: 100, composants: 12 }, { energie: 240, composants: 30 }, { energie: 500, composants: 60, eclats: 2 }, { energie: 1000, composants: 120, eclats: 5 },
-      { energie: 2800, composants: 170, eclats: 4 }, { energie: 4600, composants: 270, eclats: 5 }, { energie: 7200, composants: 420, eclats: 7 }, { energie: 11000, composants: 630, eclats: 9 }, { energie: 16100, composants: 920, eclats: 11 }], niveauMax: 10 },
+    couts: [{ energie: 0, composants: 0 }, { energie: 14, composants: 0 }, { energie: 35, composants: 0 }, { energie: 70, composants: 0, eclats: 2 }, { energie: 145, composants: 0, eclats: 5 },
+      { energie: 240, composants: 0, eclats: 4 }, { energie: 385, composants: 0, eclats: 5 }, { energie: 600, composants: 0, eclats: 7 }, { energie: 905, composants: 0, eclats: 9 }, { energie: 1320, composants: 0, eclats: 11 }], niveauMax: 10 },
   { id: 'clinique', nom: 'Clinique', role: 'Soigne l’Usure des Porteurs présents au district, même au travail.', affinite: 'bio',
-    couts: [{ energie: 0, composants: 0 }, { energie: 90, composants: 10 }, { energie: 220, composants: 28 }, { energie: 480, composants: 58, eclats: 2 }, { energie: 950, composants: 115, eclats: 5 },
-      { energie: 2700, composants: 160, eclats: 4 }, { energie: 4400, composants: 260, eclats: 5 }, { energie: 6900, composants: 400, eclats: 7 }, { energie: 10600, composants: 610, eclats: 9 }, { energie: 15500, composants: 880, eclats: 11 }], niveauMax: 10 },
+    couts: [{ energie: 0, composants: 0 }, { energie: 12, composants: 0 }, { energie: 35, composants: 0 }, { energie: 70, composants: 0, eclats: 2 }, { energie: 140, composants: 0, eclats: 5 },
+      { energie: 230, composants: 0, eclats: 4 }, { energie: 370, composants: 0, eclats: 5 }, { energie: 570, composants: 0, eclats: 7 }, { energie: 875, composants: 0, eclats: 9 }, { energie: 1270, composants: 0, eclats: 11 }], niveauMax: 10 },
   // 23 octobre 2026 : le « acheter » de « forger, acheter ou combattre ». Il commence au niveau 0 : on le construit.
   { id: 'comptoir', nom: 'Comptoir', role: 'Les fouilleurs du quartier y revendent chaque jour quelques cartes trouvées dans les Strates. Prix fixes : tu vois toujours ce que tu achètes.', affinite: null,
-    couts: [{ energie: 150, composants: 20 }, { energie: 220, composants: 30 }, { energie: 480, composants: 60, eclats: 2 }, { energie: 950, composants: 115, eclats: 5 }, { energie: 1500, composants: 180, eclats: 8 },
-      { energie: 3400, composants: 230, eclats: 5 }, { energie: 5100, composants: 360, eclats: 6 }, { energie: 7600, composants: 550, eclats: 8 }, { energie: 11000, composants: 820, eclats: 10 }, { energie: 16100, composants: 1180, eclats: 12 }], niveauMax: 10 },
+    couts: [{ energie: 25, composants: 0 }, { energie: 35, composants: 0 }, { energie: 70, composants: 0, eclats: 2 }, { energie: 140, composants: 0, eclats: 5 }, { energie: 220, composants: 0, eclats: 8 },
+      { energie: 315, composants: 0, eclats: 5 }, { energie: 490, composants: 0, eclats: 6 }, { energie: 740, composants: 0, eclats: 8 }, { energie: 1095, composants: 0, eclats: 10 }, { energie: 1580, composants: 0, eclats: 12 }], niveauMax: 10 },
   // 3 novembre 2026 (Bryan) : le bâtiment social, à la place du Labo génétique (mis en réserve). Il commence au niveau 0
   // et ne se construit qu'après la Strate −2 (CERCLE_OUVERTURE) : amis, vitrines, duels entre directeurs, échanges de cartes.
   { id: 'cercle', nom: 'Cercle des quais', role: 'Les directeurs des autres districts y accostent : on s’y fait des amis, on s’y défie en duel et on y échange ses cartes en double.', affinite: null,
-    couts: [{ energie: 180, composants: 25 }, { energie: 260, composants: 35 }, { energie: 520, composants: 65, eclats: 2 }, { energie: 1000, composants: 120, eclats: 5 }, { energie: 1600, composants: 190, eclats: 8 },
-      { energie: 3400, composants: 240, eclats: 5 }, { energie: 5100, composants: 370, eclats: 6 }, { energie: 7600, composants: 560, eclats: 8 }, { energie: 11000, composants: 830, eclats: 10 }, { energie: 16100, composants: 1200, eclats: 12 }], niveauMax: 10 },
+    couts: [{ energie: 30, composants: 0 }, { energie: 40, composants: 0 }, { energie: 80, composants: 0, eclats: 2 }, { energie: 145, composants: 0, eclats: 5 }, { energie: 230, composants: 0, eclats: 8 },
+      { energie: 325, composants: 0, eclats: 5 }, { energie: 500, composants: 0, eclats: 6 }, { energie: 750, composants: 0, eclats: 8 }, { energie: 1105, composants: 0, eclats: 10 }, { energie: 1600, composants: 0, eclats: 12 }], niveauMax: 10 },
 ];
 
 // ---------- Ennemis ----------

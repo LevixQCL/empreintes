@@ -60,7 +60,7 @@ export function htmlRecruter(e: EcranDistrict, r: EtatRecruter, enLigne: boolean
   // ---------- Ce que vous gagnez ----------
   h += `<section class="bloc rc-gains"><h3 class="titre-bloc">${ICO.coffre}Ce que vous gagnez</h3>`
     + `<div class="rc-palier depart"><span class="rc-marque">${ICO.ok}</span><div><strong>Dès son arrivée</strong>`
-    + `<p><b>Lui</b> : ${PARRAINAGE.depart.composants} composants, une carte au choix (au moins du cuivre) et ses colis de Ravitaillement doublés pendant ${PARRAINAGE.depart.joursColisDoubles} jours.</p></div></div>`
+    + `<p><b>Lui</b> : ${PARRAINAGE.depart.composants} cristaux, une carte au choix (au moins du cuivre) et ses colis de Ravitaillement doublés pendant ${PARRAINAGE.depart.joursColisDoubles} jours.</p></div></div>`
     + PARRAINAGE.paliers.map((x) => `<div class="rc-palier"><span class="rc-marque rc-num">${NOM_PALIER[x.id]}</span><div><strong>${echap(x.titre)}</strong>`
       + `<p><b>Toi</b> : ${echap(x.parrain)}.</p>${x.filleul ? `<p><b>Lui</b> : ${echap(x.filleul)}.</p>` : ''}</div></div>`).join('')
     + `<small class="aide">Tes ${PARRAINAGE.recruesRecompensees} premières recrues te rapportent ces récompenses. Au-delà, elles comptent toujours pour les distinctions.</small>`

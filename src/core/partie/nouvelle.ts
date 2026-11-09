@@ -21,7 +21,7 @@ const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: GardeCham
     { id: 'orseve', nom: 'La Maison Orsève', phrase: 'Nous n’héritons pas du pouvoir. Nous héritons de la responsabilité de le contenir.',
       effet: 'Les Brigades sécurisent la chambre et ne te barrent plus la route dans les Strates. Les Hauts paient : +1 Éclat sur chaque gardien vaincu.' },
     { id: 'district', nom: 'Le district seul', phrase: 'Ce qui est sous notre digue est à nous.',
-      effet: 'Le quartier se mobilise : +20 % de composants à chaque expédition. Mais les Brigades contestent, et tu les croiseras dans les salles closes.' },
+      effet: 'Le quartier se mobilise : +20 % de minerai à chaque expédition. Mais les Brigades contestent, et tu les croiseras dans les salles closes.' },
     { id: 'commission', nom: 'Une commission avec les Veilleurs', phrase: 'Nous ne sommes pas les propriétaires du passé. Nous sommes les prochains à pouvoir le perdre.',
       effet: 'Les Veilleurs partagent leurs fouilles : 25 % de chances de carte par combat au lieu de 20 %.' },
   ],
@@ -45,7 +45,7 @@ const DECISION_FIN: { titre: string; texte: string; options: { id: FinCampagne; 
     { id: 'scellement', nom: 'Le Grand Scellement', phrase: 'Certaines vérités doivent rester enfouies.',
       effet: 'Les empreintes anciennes sont scellées à nouveau. Moins de risques : les ennemis perdent 10 % de leur force. Du savoir perdu : plus aucune carte en nacre ne tombe.' },
     { id: 'pacte', nom: 'Le Pacte des empreintes', phrase: 'Nous héritons de la responsabilité de les contenir, ensemble.',
-      effet: 'Leur contrôle est partagé entre les Hauts et les districts. Une paix fragile : +10 % de composants. Une nouvelle bureaucratie : les chantiers durent 25 % plus longtemps.' },
+      effet: 'Leur contrôle est partagé entre les Hauts et les districts. Une paix fragile : +10 % de minerai. Une nouvelle bureaucratie : les chantiers durent 25 % plus longtemps.' },
     { id: 'archives', nom: 'Les Archives ouvertes', phrase: 'Une empreinte n’est qu’une donnée. Elle n’a rien de sacré.',
       effet: 'Tout est révélé et accessible à tous. Plus de liberté : deux fois plus de cartes en nacre. Des accidents de greffe : l’Usure en plus d’un Porteur à terre ou d’une fuite augmente de moitié.' },
   ],
@@ -300,6 +300,18 @@ function migrer(j: Jeu) {
     // version 9 (7 novembre 2026) : les 600 habitants deviennent 48 familles nommées, les pompes deviennent les Basses
     j.version = 9;
     familiesDesHabitants(j);
+  }
+  if (j.version === 9) {
+    // version 10 (9 novembre 2026) : l'économie à cristal unique (docs/economie-cristal.md), relue par un game designer.
+    // Les composants deviennent du minerai 1 pour 1 (le Générateur les taille en une nuit) ; l'énergie devient des cristaux
+    // au taux de tous les nouveaux prix (÷ 20), comme le remboursement des séances déjà payées.
+    j.version = 10;
+    j.energie = Math.floor(j.energie / 20);
+    for (const s of j.seances ?? []) s.energie = Math.round(s.energie / 20);
+    if (j.seance) j.seance.energie = Math.round(j.seance.energie / 20);
+    const ancien = j as Jeu & { conversion?: unknown; cristallisation?: unknown };
+    delete ancien.conversion;
+    delete ancien.cristallisation;
   }
   allegerSelonCharge(j);
 }

@@ -37,11 +37,11 @@ describe('Ravitaillement du jour', () => {
     J.tick(j, t0 + 10 * JOUR);
     expect(j.ravitaillement.reserve).toBe(7);
   });
-  it('donne des composants, un doublon possédé, et une carte au choix tous les 7 colis', () => {
+  it('donne des cristaux déjà taillés, un doublon possédé, et une carte au choix tous les 7 colis', () => {
     const j = pret();
-    const comp = j.composants;
+    const avant = j.energie;
     const r = J.ouvrirColis(j);
-    expect(j.composants).toBe(comp + J.RAVITAILLEMENT.composants + J.RAVITAILLEMENT.composantsParStrate * j.strate);
+    expect(j.energie).toBe(avant + J.RAVITAILLEMENT.composants + J.RAVITAILLEMENT.composantsParStrate * j.strate);
     expect(j.collection[r.colis!.doublon!]!.doublons).toBeGreaterThan(0);
     for (let k = 1; k < 7; k++) { j.ravitaillement.reserve = 1; J.ouvrirColis(j); }
     expect(j.choix.some((c) => c.source === 'ravitaillement')).toBe(true);

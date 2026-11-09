@@ -21,9 +21,8 @@ export const BASSES = {
   depotsMax: 2,
   /** composants d'un dépôt (×2 à grande marée), +25 % par Strate vaincue */
   depot: 20,
-  /** une expédition : sa durée, l'énergie (lampes, cordes), l'Usure, les composants trouvés en plus de la famille */
+  /** une expédition : sa durée, l'Usure, les composants trouvés en plus de la famille (gratuite depuis le 9 novembre 2026) */
   heures: 3,
-  energie: 40,
   usure: 4,
   composants: 30,
   /**
@@ -58,7 +57,6 @@ export const secteurASec = (j: Jeu) => (j.basses?.batardeau ? secteurDef(j.basse
 
 /** Ce qu'un dépôt rapporte maintenant */
 export const valeurDepot = (j: Jeu, now: number) => Math.round(BASSES.depot * parStrate(j) * (etatMaree(now).grande ? 2 : 1));
-export const energieBasses = (j: Jeu) => Math.round(BASSES.energie * parStrate(j) / 5) * 5;
 
 /** Compte les marées basses passées depuis la dernière visite : chacune laisse un dépôt (deux au plus). Appelé par tick. */
 export function compterDepots(j: Jeu, now: number) {
@@ -83,11 +81,11 @@ export function ramasserDepot(j: Jeu, now: number): Resultat {
   j.composants += n;
   j.eclats += e;
   const grande = etatMaree(now).grande;
-  if (e) return { ok: true, message: `${grande ? 'La grande marée a tout découvert' : 'L’eau du Fond est remontée jusqu’à la grève'} : +${n} composants et ${e} Éclat${e > 1 ? 's' : ''} de colonne.` };
-  return { ok: true, message: `${grande ? 'La grande marée a tout découvert' : 'La mer a laissé de quoi faire'} : +${n} composants.` };
+  if (e) return { ok: true, message: `${grande ? 'La grande marée a tout découvert' : 'L’eau du Fond est remontée jusqu’à la grève'} : +${n} minerai et ${e} Éclat${e > 1 ? 's' : ''} de colonne.` };
+  return { ok: true, message: `${grande ? 'La grande marée a tout découvert' : 'La mer a laissé de quoi faire'} : +${n} minerai.` };
 }
 
-/** Pourquoi on ne peut pas dresser le batardeau sur ce secteur (null = on peut) ; le coût en énergie (0 : gratuit) */
+/** Pourquoi on ne peut pas dresser le batardeau sur ce secteur (null = on peut) ; le coût en cristaux (0 : gratuit) */
 export function peutDresser(j: Jeu, id: string, now: number): { raison: string | null; cout: number } {
   const s = secteurDef(id);
   if (!s) return { raison: 'Secteur inconnu.', cout: 0 };
@@ -98,7 +96,7 @@ export function peutDresser(j: Jeu, id: string, now: number): { raison: string |
   if (b.expedition && secteurDuLieu(b.expedition.lieu)?.id === b.batardeau) return { raison: 'Un Porteur est encore dans le secteur à sec : on attend son retour.', cout: 0 };
   if (b.semaine === semaineDe(now)) return { raison: 'Le batardeau a déjà été déplacé cette semaine : il pourra bouger lundi.', cout: 0 };
   const cout = coutBatardeau(j);
-  return { raison: j.energie < cout ? `Il faut ${cout} énergie pour pomper un nouveau secteur.` : null, cout };
+  return { raison: j.energie < cout ? `Il faut ${cout} cristaux pour pomper un nouveau secteur.` : null, cout };
 }
 
 /** Dresse le batardeau : ce secteur reste à sec, l'ancien se remplit (ses familles attendent, rien n'est perdu) */
@@ -134,9 +132,6 @@ export function envoyerBasses(j: Jeu, lieu: string, porteur: string, now: number
   if (r) return non(r);
   const pourquoi = raisonHorsContrat(j, porteur);
   if (pourquoi) return non(`${porteurDef(porteur)?.nom ?? 'Ce Porteur'} : ${pourquoi.toLowerCase()}`);
-  const e = energieBasses(j);
-  if (j.energie < e) return non(`Il faut ${e} énergie pour les lampes et les cordes.`);
-  j.energie -= e;
   bassesDe(j).expedition = { lieu, porteur, debut: now, fin: now + BASSES.heures * 3_600_000, strate: strateVaincue(j) };
   log(j, `${porteurDef(porteur).nom} descend le flanc de la digue : ${lieuBassesDef(lieu)!.nom}.`);
   return { ok: true };
@@ -178,7 +173,7 @@ export function retourDesBasses(j: Jeu): string {
     usure: Math.round((q.usure - usureAvant) * 10) / 10, marque, lu: false, basses: { lieu: lieu.id, famille: fam.id },
   };
   rangerRapport(j, rapport);
-  const texte = `${p.nom} remonte des Basses avec ${fam.nom} : +${composants} composants, +${xp} XP.`;
+  const texte = `${p.nom} remonte des Basses avec ${fam.nom} : +${composants} minerai, +${xp} XP.`;
   log(j, texte);
   return texte;
 }

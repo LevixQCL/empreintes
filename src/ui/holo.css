@@ -61,7 +61,6 @@ body{background:
 .hud::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--holo-2) 30%,var(--holo-2) 70%,transparent);opacity:.7}
 .res .ico{filter:drop-shadow(0 0 6px currentColor)}
 .res .v{text-shadow:0 0 12px rgba(255,255,255,.18)}
-.jauge-res i{box-shadow:0 0 8px var(--gold)}
 .res .ico.peinte{filter:drop-shadow(0 2px 4px rgba(0,0,0,.7)) drop-shadow(0 0 6px rgba(159,216,255,.18))}
 
 /* ---------- Navigation ---------- */

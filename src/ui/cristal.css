@@ -95,18 +95,16 @@ body:has(#app:is([data-mode="combat"],[data-mode="district"])){background:
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .ico.peinte{grid-row:1 / span 2;align-self:end;width:32px;height:38px;margin:-4px 0 -2px;padding:0 1px 6px;object-fit:contain;object-position:50% 100%;
   background:var(--ecrin-hex) 50% 100% / 28px 32px no-repeat;
   filter:drop-shadow(0 0 5px var(--lueur,rgba(160,210,255,.4))) drop-shadow(0 2px 3px rgba(0,0,0,.6))}
-#app:is([data-mode="combat"],[data-mode="district"]) .hud .res.energie{--lueur:rgba(255,190,90,.45)}
-#app:is([data-mode="combat"],[data-mode="district"]) .hud .res.composants{--lueur:rgba(150,200,255,.4)}
+#app:is([data-mode="combat"],[data-mode="district"]) .hud .res.energie{--lueur:rgba(120,200,255,.45)}
+#app:is([data-mode="combat"],[data-mode="district"]) .hud .res.composants{--lueur:rgba(180,170,200,.35)}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.eclats{--lueur:rgba(200,150,255,.5)}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.abysse{--lueur:rgba(120,210,255,.5)}
 /* le bloc de la Strate est plus large que les autres icônes : un peu plus petit dans son écrin, pour que l'hexagone reste visible */
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res.abysse .ico.peinte{padding:4px 4px 8px}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res .v{align-self:end;font-size:16px;line-height:1.05}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .res small{align-self:start;font-family:var(--body);font-size:var(--t-min);line-height:1.35;letter-spacing:.01em;color:#A9BEDF}
-#app:is([data-mode="combat"],[data-mode="district"]) .hud .res.energie.plein small{color:#FFC768}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .jauge-res{left:43px;right:8px;bottom:4px;height:2px;background:rgba(205,239,255,.12)}
 #app:is([data-mode="combat"],[data-mode="district"]) .hud .jauge-res i{background:linear-gradient(90deg,#c98a35,#ffd98a);box-shadow:0 0 6px rgba(255,200,110,.8)}
-#app:is([data-mode="combat"],[data-mode="district"]) .hud .res.energie.plein .jauge-res i{background:linear-gradient(90deg,#e8902c,#ffc768)}
 /* téléphones (jusqu'à 440 px, 28 octobre 2026 : la Confiance prend sa place dans la barre) : écrin un peu plus petit
    pour que l'Énergie, « Éclats » et « Strate » tiennent en entier */
 @media (max-width:440px){

@@ -80,8 +80,8 @@ export const ETAPES: Etape[] = [
 // pas le district : à quoi servent les ressources, qui travaille et qui descend, et le but (creuser plus bas).
 
 const demoRessources = () => `<ul class="demo-liste">`
-  + `<li>${icone('energie')}<span><b>L’énergie</b>Le Générateur la produit chaque heure, même quand tu ne joues pas. Elle paie les chantiers et l’entraînement ; en trop, le Générateur la convertit en composants.</span></li>`
-  + `<li>${icone('composants')}<span><b>Les composants</b>Ce que l’escouade rapporte d’en bas. Avec l’énergie, ils améliorent les bâtiments.</span></li>`
+  + `<li>${icone('composants')}<span><b>Le minerai</b>Ce que l’escouade rapporte d’en bas : de la pierre bleue encore prise dans sa gangue.</span></li>`
+  + `<li>${icone('energie')}<span><b>Les cristaux</b>Le Générateur taille le minerai en cristaux, même quand tu ne joues pas. Ils paient tout : bâtiments, cartes, entraînement.</span></li>`
   + `<li>${icone('eclats')}<span><b>Les Éclats</b>Rares, trouvés en profondeur. Pour les cartes précieuses.</span></li>`
   + `</ul>`;
 
@@ -102,7 +102,7 @@ const demoBoucle = () => `<ol class="demo-boucle">`
 const demoRepere = () => `<ul class="demo-liste">`
   + `<li>${ICO.ok}<span><b>L’objectif, en haut</b>Il dit quoi faire ensuite, et donne une récompense.</span></li>`
   + `<li><span class="demo-pastille" aria-hidden="true"><i class="pastille-alerte"></i></span><span><b>Les pastilles orange</b>Quelque chose t’attend dans cet onglet ou ce bâtiment.</span></li>`
-  + `<li>${icone('coffre')}<span><b>Le ravitaillement du jour</b>Un colis chaque jour : composants et cartes.</span></li></ul>`;
+  + `<li>${icone('coffre')}<span><b>Le ravitaillement du jour</b>Un colis chaque jour : des cristaux et des cartes.</span></li></ul>`;
 
 export const ETAPES_DISTRICT: Etape[] = [
   {

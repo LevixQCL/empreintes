@@ -10,11 +10,11 @@ import { niveauRequis, poidsCarte, puissanceCarte } from './collection';
 import { DEPART_PORTEURS, MODULES, moduleDe, moduleDef, porteurDef } from './donnees';
 import { accessibles, mainAccordable, reperentPassage, salleCourante, typeApparent } from './expedition';
 import { bassesOuvertes, dresserBatardeau, envoyerBasses, libresPourBasses, ramasserDepot, raisonLieu, restantsSecteur, secteurASec, secteursOuverts, escouadeDe,
-  acheterEclat, prixEclatComptoir, cristalliser, CRISTALLISEUR, choisirLegs, choisirHalte, ouvrirPorte, passerPorte, relancerPorte, suivrePassage, acheter, garnirComptoir, prixComptoir,
+  acheterEclat, prixEclatComptoir, choisirLegs, choisirHalte, ouvrirPorte, passerPorte, relancerPorte, suivrePassage, acheter, garnirComptoir, prixComptoir,
   DECISIONS, OBJECTIFS, RENCONTRES, ameliorer, colisDisponible, decider, decisionEnAttente, degreffer, entrer, fabriquer,
   finDeCombat, continuer, greffer, lireChapitre, monter, nouveauJeu, ouvrirArchive, ouvrirChambre, ouvrirColis, partir,
   enMission, envoyerMission, destinationsDuJour, secoursPossible, epreuvesDeLaSemaine, fouiller, partirEpreuve,
-  chargeMax, energieParHeure, niveauPorteur, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick as tickJeu,
+  chargeMax, brutEnAttente, coutAmelioration, niveauPorteur, porteursPresents, posteDe, poster, prendre, pvMaxCombat, quotidienFait, reclamerQuotidien, remonter, repondre, retraite, tick as tickJeu,
   coutRefabrication, soignerVite, placesEntrainement, seancesDe, type Jeu, type Poste,
   contratsDuMoment, envoyerContrat, equipeConseillee, mareesDe, raisonHorsContrat, tauxContrat,
 } from './jeu';
@@ -151,14 +151,21 @@ function gerer(j: Jeu, now: number): void {
     const k = c.options.reduce((best, id, i) => (note(id) > note(c.options[best]!) ? i : best), 0);
     prendre(j, k);
   }
-  // les niveaux d'abord pour les cartes du deck, puis les bâtiments
+  // 9 novembre 2026 (cristal unique) : tout se paie en cristaux. Un joueur moyen monte d'abord les cartes de son deck
+  // (peu chères, c'est sa force en bas), lance ses chantiers, puis garde de côté de quoi payer le prochain (60 %)
+  // avant d'acheter au Comptoir ou de refabriquer.
   const enDeck = new Set(Object.values(j.porteurs).flatMap((p) => p.modules));
-  const ordre = Object.keys(j.collection).sort((a, b) => Number(enDeck.has(b)) - Number(enDeck.has(a)));
-  for (const id of ordre) while (monter(j, id).ok);
-  // des Éclats au Comptoir (audit du 7 novembre 2026), s'il reste de quoi monter ses cartes (trois fois le prix)
-  while (j.batiments.comptoir && j.composants >= 3 * prixEclatComptoir(j) && acheterEclat(j, now).ok);
-  while (j.energie >= CRISTALLISEUR.energie + 1000 && cristalliser(j, now).ok);
+  for (const id of Object.keys(j.collection).filter((x) => enDeck.has(x))) while (monter(j, id).ok);
+  // un chantier de la Tour bloqué faute d'Éclats : il en achète au Comptoir
+  const tour = coutAmelioration(j, 'noyau');
+  if (tour && j.eclats < (tour.eclats ?? 0) && j.energie >= tour.energie) while (j.batiments.comptoir && j.eclats < (tour.eclats ?? 0) && j.energie - prixEclatComptoir(j) >= tour.energie && acheterEclat(j, now).ok);
   for (const b of ['noyau', 'generateur', 'clinique', 'forge', 'comptoir'] as const) ameliorer(j, b, now);
+  const prochain = (['noyau', 'generateur', 'clinique', 'forge', 'comptoir'] as const).map((b) => coutAmelioration(j, b))
+    .filter((c): c is NonNullable<typeof c> => !!c && j.eclats >= (c.eclats ?? 0)).reduce((m, c) => Math.min(m, c.energie), Infinity);
+  const reserve = Number.isFinite(prochain) ? 0.6 * prochain : 0;
+  const libre = () => j.energie - reserve;
+  // des Éclats au Comptoir (audit du 7 novembre 2026), s'il reste de quoi faire le reste (trois fois le prix)
+  while (j.batiments.comptoir && libre() >= 3 * prixEclatComptoir(j) && acheterEclat(j, now).ok);
   // les Basses (7 novembre 2026) : il ramasse les dépôts, garde à sec un secteur où des familles attendent, et y envoie un Porteur
   if (bassesOuvertes(j)) {
     while (ramasserDepot(j, now).ok);
@@ -178,13 +185,13 @@ function gerer(j: Jeu, now: number): void {
   const plusFaible = Math.min(...[...enDeck].map((id) => valeurCarte(id, j.collection[id]?.niveau ?? 1)));
   j.comptoir.offres.forEach((id, i) => {
     const utile = enDeck.has(id) || (!j.collection[id] && valeurCarte(id, 1) > plusFaible);
-    if (utile && j.composants >= 2 * prixComptoir(id).composants) acheter(j, i, now);
+    if (utile && libre() >= 2 * prixComptoir(id).composants) acheter(j, i, now);
   });
-  // la Forge refabrique la carte du deck la plus proche de son prochain niveau, si les composants le permettent
+  // la Forge refabrique la carte du deck la plus proche de son prochain niveau, si les cristaux le permettent
   if (!j.forge && posteDe(j, 'forge')) {
     const cible = [...enDeck].filter((id) => j.collection[id] && coutRefabrication(id).eclats === 0)
       .sort((a, b) => j.collection[b]!.doublons - j.collection[a]!.doublons)[0];
-    if (cible && j.composants >= 3 * coutRefabrication(cible).composants) fabriquer(j, cible, now);
+    if (cible && libre() >= 2 * coutRefabrication(cible).energie) fabriquer(j, cible, now);
   }
 }
 
@@ -263,8 +270,8 @@ export function simulerParcours(
   opts: { trace?: (j: Jeu, jour: number, escouade: string[]) => void; jusqua?: number;
     /** appelé avant chaque expédition (attente : le gardien du front est vaincu, il manque des creuseurs) */
     session?: (j: Jeu, jour: number, attente: boolean) => void;
-    /** l'énergie produite et celle perdue parce que la réserve était pleine */
-    energie?: { produite: number; perdue: number }; joueur?: 'robot' | 'moyen'; tours?: ToursCombat; duree?: 'courte' | 'longue'; fin?: (j: Jeu) => void } = {},
+    /** les cristaux taillés, et le brut qui attendait à chaque session (en heures de taille) */
+    energie?: { produite: number; attente: number[] }; joueur?: 'robot' | 'moyen'; tours?: ToursCombat; duree?: 'courte' | 'longue'; fin?: (j: Jeu) => void } = {},
 ): Parcours {
   const debut = Date.UTC(2026, 9, 5, 6); // un lundi matin
   const j = nouveauJeu(debut, graine);
@@ -278,7 +285,7 @@ export function simulerParcours(
   // l’Héritage du district : chaque partie simulée reçoit une vierge différente (les neuf cartes et la Clé, tour à tour)
   const legs = [...MODULES.filter((m) => m.legs).map((m) => m.id), 'cle'];
   choisirLegs(j, legs[graine % legs.length]!);
-  for (const o of OBJECTIFS) { j.energie += o.recompense.energie ?? 0; j.composants += o.recompense.composants ?? 0; j.creuseurs += o.recompense.creuseurs ?? 0; }
+  for (const o of OBJECTIFS) { j.energie += (o.recompense.energie ?? 0) + (o.recompense.composants ?? 0); j.creuseurs += o.recompense.creuseurs ?? 0; }
   j.objectif = OBJECTIFS.length;
 
   const r: Parcours = { ouverture: { 1: 1 }, expeditions: {}, front: { tentatives: 0, victoires: 0 }, strate: 1 };
@@ -298,9 +305,10 @@ export function simulerParcours(
   };
   let echecs = 0;
   const tick = (jj: Jeu, now: number) => {
-    const prod = energieParHeure(jj) * Math.max(0, now - jj.dernierTick) / HEURE, avant = jj.energie;
+    const avant = jj.energie;
     tickJeu(jj, now);
-    if (opts.energie) { opts.energie.produite += prod; opts.energie.perdue += Math.max(0, avant + prod - jj.energie); }
+    // 9 novembre 2026 : plus rien ne se perd ; on note les cristaux taillés et le brut qui attend encore (en heures de taille)
+    if (opts.energie) { opts.energie.produite += Math.max(0, jj.energie - avant); opts.energie.attente.push(Math.min(240, brutEnAttente(jj).heures)); }
   };
   for (let d = 0; d < jours; d++) {
     for (const h of profil.sessions) {
@@ -319,7 +327,7 @@ export function simulerParcours(
       // les pillages (8 novembre 2026 : jusque-là absents de la simulation) : à chaque session, un archipel
       // à sa portée (« facile » ou « équilibré »), et deux jetons achetés par jour s'il reste de l'énergie aux chantiers
       if (strateVaincue(j) >= PILLAGE.strateMin) {
-        while (achatsRestants(j, now) && j.energie >= coutJeton(j) + 2000 && acheterJeton(j, now).ok);
+        while (achatsRestants(j, now) && j.energie >= coutJeton(j) + 400 && acheterJeton(j, now).ok);
         for (let k = 0; k < 1; k++) {
           const c = ciblesDuJour(j, escouade, now).find((x) => difficulte(x.force / Math.max(0.01, forceEscouade(j, escouade))).niveau <= 2);
           if (!c || !peutPiller(j, now).ok) break;
@@ -335,7 +343,7 @@ export function simulerParcours(
       const faible = LIGNEES.map((l) => ({ l, v: meilleures(j, l, Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => chargeMax(j, id)), chargeMax(j, NOMME[l])), Math.max(...escouade.filter((id) => porteurDef(id).lignee === l).map((id) => niveauPorteur(j, id).niveau), niveauPorteur(j, NOMME[l]).niveau)).reduce((n, id) => n + valeurCarte(id, j.collection[id]!.niveau), 0) / DEFENSES_POIDS[l] }))
         .sort((a, b) => a.v - b.v)[0]!.l;
       // un joueur moyen paie les soins intensifs avant de retenter le front, si l'énergie ne manque pas aux chantiers
-      if (cible === front && !attente) for (const id of escouade) if (j.energie >= 300) soignerVite(j, id);
+      if (cible === front && !attente) for (const id of escouade) if (j.energie >= 150) soignerVite(j, id);
       const g = suivant();
       const victoire = jouerExpedition(j, () => (cible === front && !attente ? partir(j, escouade, cible, g) : fouiller(j, escouade, cible, faible, g)).ok, jouer, opts.tours);
       depuis++;

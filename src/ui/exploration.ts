@@ -124,26 +124,26 @@ function annonce(s: Salle, x: Expedition): { sur: string; titre: string; texte: 
     const pv = pvEnnemis(s, x);
     const faits = [`<span class="ex-pv"><b>${pv.join(' + ')}</b> PV</span>`];
     if (!s.escorte?.length) faits.push(`faible contre <b class="ex-lignee" style="--c:${COULEUR[faible]}">${sigle(faible)}${NOMS_LIGNEE[faible].nom}</b>`);
-    if (s.type === 'gardien') return { sur: 'Gardien de la zone', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 2)}`)} composants · fin de la Strate`] };
-    if (s.type === 'elite') return { sur: 'Salle scellée', titre: d.nom, texte: 'Plus coriace, mais une carte dort derrière.', faits: [...faits, `${or(`+${Math.round(butinCombat(x.strate, 0) * 1.7)}`)} composants · ${or('1 carte')}`] };
-    if (s.escorte?.length) return { sur: `Combat · ${s.escorte.length + 1} ennemis`, titre: titreGroupe(s), texte: 'Ils viennent ensemble : choisis qui frapper.', faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`, enPlus] };
+    if (s.type === 'gardien') return { sur: 'Gardien de la zone', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 2)}`)} minerai · fin de la Strate`] };
+    if (s.type === 'elite') return { sur: 'Salle scellée', titre: d.nom, texte: 'Plus coriace, mais une carte dort derrière.', faits: [...faits, `${or(`+${Math.round(butinCombat(x.strate, 0) * 1.7)}`)} minerai · ${or('1 carte')}`] };
+    if (s.escorte?.length) return { sur: `Combat · ${s.escorte.length + 1} ennemis`, titre: titreGroupe(s), texte: 'Ils viennent ensemble : choisis qui frapper.', faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} minerai`, enPlus] };
     // −7 : deux souvenirs se disputent la salle ; on choisit lequel affronter en entrant
-    if (s.double) return { sur: 'Souvenirs doubles', titre: `${d.nom} ou ${ennemiDef(s.double).nom}`, texte: 'Deux souvenirs de la même salle. Choisis celui que l’escouade traverse.', faits: [`${or(`+${butinCombat(x.strate, 0)}`)} composants`, enPlus] };
-    return { sur: 'Combat', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} composants`, enPlus] };
+    if (s.double) return { sur: 'Souvenirs doubles', titre: `${d.nom} ou ${ennemiDef(s.double).nom}`, texte: 'Deux souvenirs de la même salle. Choisis celui que l’escouade traverse.', faits: [`${or(`+${butinCombat(x.strate, 0)}`)} minerai`, enPlus] };
+    return { sur: 'Combat', titre: d.nom, texte: d.tag, faits: [...faits, `${or(`+${butinCombat(x.strate, 0)}`)} minerai`, enPlus] };
   }
   switch (s.type) {
     case 'cache':
       if (s.mur) {
         const force = x.porteurs.some((p) => p.pv > 0 && porteurDef(p.id).lignee === 'tech');
-        return { sur: 'Cache murée', titre: 'Un abri muré en 2066', texte: force ? 'Ton Augmenté peut forcer le mur : derrière, une réserve intacte.' : 'Il faudrait un Augmenté debout pour forcer le mur.', faits: [`${or(`+${butinCache(x.strate) * (force ? 2 : 1)}`)} composants${force ? ' (le double)' : ''}`, `<span class="ex-vert">+${Math.round(REGLES.salles.cacheSoin * 100)} % de PV</span> pour l’escouade debout`] };
+        return { sur: 'Cache murée', titre: 'Un abri muré en 2066', texte: force ? 'Ton Augmenté peut forcer le mur : derrière, une réserve intacte.' : 'Il faudrait un Augmenté debout pour forcer le mur.', faits: [`${or(`+${butinCache(x.strate) * (force ? 2 : 1)}`)} minerai${force ? ' (le double)' : ''}`, `<span class="ex-vert">+${Math.round(REGLES.salles.cacheSoin * 100)} % de PV</span> pour l’escouade debout`] };
       }
-      if (x.strate === 5) return { sur: 'Niche', titre: 'Une niche du Treillis', texte: 'Vidée par les Hauts, presque toujours. Parfois, un cristal y dort encore.', faits: [`${or(`+${butinCache(x.strate)}`)} composants · ${or(`${Math.round(CONTENU.niche * 100)} %`)} de chance de carte`, `<span class="ex-vert">+${Math.round(REGLES.salles.cacheSoin * 100)} % de PV</span>`] };
-      return { sur: 'Cache', titre: 'Une cache de fouilleur', texte: 'La voie sûre : quelques composants et de quoi panser l’escouade, sans combat.', faits: [`${or(`+${butinCache(x.strate)}`)} composants${x.strate >= 3 ? ' · parfois un Éclat' : ''}`, `<span class="ex-vert">+${Math.round(REGLES.salles.cacheSoin * 100)} % de PV</span> pour l’escouade debout`] };
+      if (x.strate === 5) return { sur: 'Niche', titre: 'Une niche du Treillis', texte: 'Vidée par les Hauts, presque toujours. Parfois, un cristal y dort encore.', faits: [`${or(`+${butinCache(x.strate)}`)} minerai · ${or(`${Math.round(CONTENU.niche * 100)} %`)} de chance de carte`, `<span class="ex-vert">+${Math.round(REGLES.salles.cacheSoin * 100)} % de PV</span>`] };
+      return { sur: 'Cache', titre: 'Une cache de fouilleur', texte: 'La voie sûre : un peu de minerai et de quoi panser l’escouade, sans combat.', faits: [`${or(`+${butinCache(x.strate)}`)} minerai${x.strate >= 3 ? ' · parfois un Éclat' : ''}`, `<span class="ex-vert">+${Math.round(REGLES.salles.cacheSoin * 100)} % de PV</span> pour l’escouade debout`] };
     case 'camp': {
       const rendus = x.porteurs.reduce((t, p) => t + Math.min(p.pvMax, Math.max(0, p.pv) + Math.round(p.pvMax * 0.35)) - Math.max(0, p.pv), 0);
       return { sur: 'Campement', titre: 'Un campement', texte: 'L’escouade souffle. On peut remonter d’ici avec tout le butin.', faits: [rendus ? `<span class="ex-vert">+${rendus} PV</span> pour l’escouade (+35 %)` : 'L’escouade est déjà en pleine forme'] };
     }
-    case 'archive': return { sur: 'Archives', titre: 'Une salle d’archives', texte: 'Un fragment de l’histoire, à rapporter au district.', faits: [`${or(`+${butinArchive(x.strate)}`)} composants · ${or('1 archive')}`] };
+    case 'archive': return { sur: 'Archives', titre: 'Une salle d’archives', texte: 'Un fragment de l’histoire, à rapporter au district.', faits: [`${or(`+${butinArchive(x.strate)}`)} minerai · ${or('1 archive')}`] };
     case 'rencontre': return { sur: 'Rencontre', titre: 'Quelqu’un, dans le noir', texte: 'Un choix à faire. On ne sait pas encore qui.', faits: [] };
     case 'halte': {
       const h = typeof x.halte === 'number' ? halteDef(x.strate, x.halte) : undefined;
@@ -154,7 +154,7 @@ function annonce(s: Salle, x: Expedition): { sur: string; titre: string; texte: 
     case 'porte': {
       const n = suitePorte(x.strate);
       const ecl = x.strate >= 10 ? CONTENU.porte.eclatsFond : CONTENU.porte.eclats;
-      return { sur: 'Porte ancienne', titre: 'Une porte à Fréquence', texte: `Elle s’ouvre à qui accorde ${n} cartes dont les Fréquences se suivent. Rien à perdre si on échoue.`, faits: [`${or(`+${ecl}`)} Éclat${ecl > 1 ? 's' : ''} · ${or(`+${Math.round(butinCache(x.strate) * CONTENU.porte.composants)}`)} composants`] };
+      return { sur: 'Porte ancienne', titre: 'Une porte à Fréquence', texte: `Elle s’ouvre à qui accorde ${n} cartes dont les Fréquences se suivent. Rien à perdre si on échoue.`, faits: [`${or(`+${ecl}`)} Éclat${ecl > 1 ? 's' : ''} · ${or(`+${Math.round(butinCache(x.strate) * CONTENU.porte.composants)}`)} minerai`] };
     }
     case 'filon': return { sur: 'Filon', titre: 'Le filon', texte: 'Ce que tu cherchais : la fouille s’achève ici.', faits: x.fouille ? [echap(CIBLES_FOUILLE[x.fouille].texte)] : [] };
     default: return { sur: NOMS[s.type], titre: NOMS[s.type], texte: '', faits: [] };
@@ -215,13 +215,13 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
     + `<h1>${echap(zone.nom)}</h1>`
     + `<span class="ex-profondeur">${reste > 0 ? `Salle <b>${ici.rang + 1}</b> sur ${rangs} · ${fin} dans <b>${reste}</b> salle${reste > 1 ? 's' : ''}` : `Tu es devant ${fin}`}</span>`
     + teteContenu(j, x) + `</div>`
-    + `<div class="ex-butin" aria-label="Butin de l’expédition"><span data-gain="x-composants">${icone('composants')}<b>${x.butin}</b><small>compos.</small></span>`
+    + `<div class="ex-butin" aria-label="Butin de l’expédition"><span data-gain="x-composants">${icone('composants')}<b>${x.butin}</b><small>minerai</small></span>`
     + (cartes ? `<span data-gain="x-cartes">${icone('cartes')}<b>${cartes}</b><small>carte${cartes > 1 ? 's' : ''}</small></span>` : '')
     + (g?.eclats ? `<span data-gain="x-eclats">${icone('eclats')}<b>${g.eclats}</b><small>Éclat${g.eclats > 1 ? 's' : ''}</small></span>` : '')
     + (g?.fragment ? `<span>${icone('codex')}<b>1</b><small>archive</small></span>` : '')
     + (g?.vestiges?.length ? `<span class="ex-butin-vestige">${ICO.vestige}<b>${g.vestiges.length}</b><small>Vestige${g.vestiges.length > 1 ? 's' : ''}</small></span>` : '')
     // 27 octobre 2026 : le bouton du bas restait sous les chemins, hors de l'écran sur téléphone → toujours visible en tête
-    + (!x.terminee && peutRemonter(x) ? `<button type="button" class="ex-tete-remonter" data-action="retraite" aria-label="Remonter au district${x.butin ? ` avec ${x.butin} composants` : ''}">${ICO.retour}<span>Remonter</span></button>` : '')
+    + (!x.terminee && peutRemonter(x) ? `<button type="button" class="ex-tete-remonter" data-action="retraite" aria-label="Remonter au district${x.butin ? ` avec ${x.butin} minerai` : ''}">${ICO.retour}<span>Remonter</span></button>` : '')
     + `</div></header>`;
 
   // ---------- l'escouade : trois portraits, les vrais PV ----------
@@ -325,10 +325,10 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
       + r.options.map((o, k) => {
         // une option qui coûte des composants du butin : grisée, avec ce qui manque, si le butin ne suffit pas
         // (24 octobre 2026 : le bouton « ne fonctionnait pas », le refus ne s'affichait nulle part)
-        const cout = Number(/\((\d+) composants\)/.exec(o)?.[1] ?? 0);
+        const cout = Number(/\((\d+) minerai\)/.exec(o)?.[1] ?? 0);
         const manque = cout > x.butin ? cout - x.butin : 0;
         return `<button type="button" class="ex-choix-btn${manque ? ' manque' : ''}" data-action="repondre" data-id="${k}"${manque ? ' disabled' : ''}><span>${echap(o)}`
-          + (manque ? `<small>Le butin de l’expédition n’a que ${x.butin} composants : il en manque ${manque}.</small>` : '') + `</span>${CHEVRON}</button>`;
+          + (manque ? `<small>Le butin de l’expédition n’a que ${x.butin} minerai : il en manque ${manque}.</small>` : '') + `</span>${CHEVRON}</button>`;
       }).join('') + `</div>`;
   } else {
     // la parole de l'escouade et le récit du lieu passent sous le plan (audit du 7 novembre 2026 : le plan commençait à 620 px),
@@ -367,7 +367,7 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
   if (x.terminee) h += `<button type="button" class="btn prim large ex-sortie" data-action="remonter">${ICO.cristal}Remonter avec le filon</button>`;
   else if (peutRemonter(x)) {
     bas += `<div class="ex-remonter"><p>${ici.type === 'camp' ? 'Le campement est une sortie' : 'L’entrée est une sortie'} : tu peux rentrer maintenant avec tout ce que tu as trouvé.</p>`
-      + `<button type="button" class="btn sec ex-retraite" data-action="retraite">${ICO.retour}${x.butin ? `Remonter avec ${x.butin} composant${x.butin > 1 ? 's' : ''}` : 'Remonter au district'}</button></div>`;
+      + `<button type="button" class="btn sec ex-retraite" data-action="retraite">${ICO.retour}${x.butin ? `Remonter avec ${x.butin} minerai` : 'Remonter au district'}</button></div>`;
   } else if (libre) bas += `<p class="ex-note">Les PV remontent surtout aux campements (et parfois lors d’une rencontre). On ne peut remonter que depuis l’entrée ou un campement.</p>`;
   h += `</section>`;
   if (bas) h += `<section class="ex-bas">${bas}</section>`;

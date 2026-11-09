@@ -12,7 +12,7 @@ import { ORDRE_FRAGMENTS, fragmentDef } from '../fragments';
 import { FILS } from '../fils';
 import { graine, tireur } from '../rng';
 import { REGLES } from '../regles';
-import { nbFoyers, ACCORD_OUVERT, chanceCreuseurDuJour, fouilleursDuJour, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, energieParHeure, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, stockage, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
+import { nbFoyers, ACCORD_OUVERT, chanceCreuseurDuJour, fouilleursDuJour, facteurXp, ESCOUADES_STRATE, escouadesOuvertes, CONFIANCE, naufragesDeLaStrate, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, LECTURE_PROFONDE, RAPPORTS_LUS_MAX, XP, bonusEscouade, confier, enExpedition, enMission, escouadeActive, escouadeDe, escouadesDe, gagnerXp, jourDe, NB_ESCOUADES, log, niveauPorteur, non, porteursPresents, progresMarque, pvMaxCombat, semaineDe, strateVaincue, type DureeMission, type Jeu, type Mission, type Poste, type RapportMission, type Resultat, tropBlesse, usureAuRetour, usureMax } from './etat';
 import { barquesMax, chantierDe, chantiersMax, coutAmelioration, creuser, gagnerCreuseurs, progresser } from './district';
 import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } from './recompenses';
 import { noterCombat, noterExpedition } from './stats';
@@ -56,10 +56,11 @@ export const RATELIER = {
    *  des heures de production du Générateur, pour toutes les cartes du Râtelier à la fois ; le prix suit les revenus.
    *  Explorer (≈ 6 combats) : 30 min ; Fouiller et les sorties d'un ou deux combats (Épreuve, Pillage, Flèche) : 15 min.
    *  (1er novembre 2026, Bryan : 2 h et 40 min, c'était trop cher, ≈ 900 pour descendre : puis encore un peu trop à 1 h et 20 min : 30 min et 15 min) */
-  heures: { explorer: 0.5, courte: 0.25 },
+  /** 9 novembre 2026 (cristal unique) : un prix fixe en cristaux, qui ne suit plus le Générateur */
+  cristaux: { explorer: 10, courte: 5 },
 };
 /** Une sortie longue (explorer une Strate) ou courte (fouiller, Épreuve, Pillage, Flèche) */
-export type Sortie = keyof typeof RATELIER.heures;
+export type Sortie = keyof typeof RATELIER.cristaux;
 export const placesRatelier = (j: Jeu) => RATELIER.places.filter((p) => j.batiments.noyau >= p.noyau).reduce((n, p) => Math.max(n, p.n), 0);
 /** La carte commune est ouverte : son bâtiment a le niveau */
 export const communeOuverte = (j: Jeu, c: CarteCommuneDef) => (j.batiments[c.batiment] ?? 0) >= c.niveau;
@@ -80,9 +81,9 @@ export function ratelierDe(j: Jeu, k = escouadeActive(j)): string[] {
 /** Les escouades (numéros) dont le Râtelier compte cette carte commune */
 export const escouadesAvecCommune = (j: Jeu, id: string): number[] =>
   Array.from({ length: NB_ESCOUADES }, (_, k) => k).filter((k) => ratelierDe(j, k).includes(id));
-/** Le prix d'un départ avec les cartes du Râtelier : toutes ensemble, en heures de Générateur, arrondi à 5 ; rien si le Râtelier est vide */
+/** Le prix d'un départ avec les cartes du Râtelier : toutes ensemble, en cristaux ; rien si le Râtelier est vide */
 export const coutRatelier = (j: Jeu, sortie: Sortie = 'explorer', k = escouadeActive(j)) =>
-  ratelierDe(j, k).length ? Math.max(5, Math.round(energieParHeure(j) * RATELIER.heures[sortie] / 5) * 5) : 0;
+  ratelierDe(j, k).length ? RATELIER.cristaux[sortie] : 0;
 /** Les cartes du Râtelier qui partent : toutes si l'énergie suffit, sinon aucune (l'escouade part quand même, sans elles) */
 export function ratelierPayable(j: Jeu, k = escouadeActive(j), sortie: Sortie = 'explorer'): string[] {
   return j.energie >= coutRatelier(j, sortie, k) ? ratelierDe(j, k) : [];
@@ -290,13 +291,11 @@ export function escouadePourDepart(j: Jeu, interdits: readonly string[] = []): s
 // La mission tourne même jeu fermé ; au retour, il rapporte des composants et des doublons de cartes de sa lignée.
 
 export const MISSIONS = {
-  // l'énergie au départ (23 octobre 2026) : vivres, lampes et piles pour l'expédition
-  courte: { heures: 2, composants: 14, doublons: 1, nouvelle: 0, usure: 4, energie: 30 },
-  longue: { heures: 8, composants: 45, doublons: 2, nouvelle: 0.35, usure: 8, energie: 100 },
+  // 9 novembre 2026 (cristal unique) : les missions ne coûtent plus rien ; leur prix, c'est le temps et le Porteur immobilisé
+  courte: { heures: 2, composants: 14, doublons: 1, nouvelle: 0, usure: 4 },
+  longue: { heures: 8, composants: 45, doublons: 2, nouvelle: 0.35, usure: 8 },
   // le Porteur compte (28 octobre 2026, Bryan) : son niveau et son affinité avec le lieu multiplient le butin et l'XP (jamais les creuseurs)
   parNiveau: 0.03,
-  /** l'énergie de départ suit la Strate comme les gains : +25 % par Strate (3 novembre 2026) */
-  energieParStrate: 0.25,
   affinite: { bon: 1.3, neutre: 1, mauvais: 0.8 },
   /** le mauvais Porteur au mauvais endroit rentre plus usé */
   usureMauvais: 2,
@@ -369,14 +368,6 @@ export function bonusMission(j: Jeu, porteur: string, lieu: string): { affinite:
   const a = l ? affinite(l.lignee, porteurDef(porteur).lignee) : 'neutre';
   const niveau = j.porteurs[porteur] ? niveauPorteur(j, porteur).niveau : 1;
   return { affinite: a, mult: (1 + MISSIONS.parNiveau * (niveau - 1)) * MISSIONS.affinite[a], niveau };
-}
-
-/**
- * L'énergie d'une mission (3 novembre 2026, Bryan) : elle suit la Strate comme les gains (+25 % par Strate),
- * arrondie à 5 : 30 / 100 à −1, 60 / 200 à −5, 100 / 325 à −10. Avant, elle restait à 30 / 100 et devenait gratuite.
- */
-export function energieMission(j: Jeu, duree: DureeMission, strate = strateMission(j)): number {
-  return Math.round((MISSIONS[duree].energie * (1 + MISSIONS.energieParStrate * (Math.max(1, strate) - 1))) / 5) * 5;
 }
 
 /** Les composants que rapporterait une mission (pour l'afficher avant le départ) */
@@ -469,9 +460,6 @@ export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: num
   if (enExpedition(j, id)) return non(`${porteurDef(id).nom} n’est pas au district.`);
   const nb = barquesMax(j);
   if (j.missions.length >= nb) return non(nb > 1 ? `${nb} barques au plus en mer en même temps : monte la Tour du Noyau pour en armer d’autres.` : 'Une seule barque en mer à la fois : monte la Tour du Noyau pour en armer d’autres.');
-  const cout = energieMission(j, duree);
-  if (j.energie < cout) return non(`Il faut ${cout} énergie pour équiper la mission.`);
-  j.energie -= cout;
   const prof = profondeurMission(j, dest.cle, now);
   const rendement = prof.mult;
   const secours = secoursPossible(j, dest, now);
@@ -545,7 +533,7 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   if (nouvelleMarque) log(j, `${p.nom} gagne la Marque ${nouvelleMarque.nom} : ${nouvelleMarque.texte}`);
   const gainXp = Math.round(XP.missionHeure * d.heures * facteurXp(m.strate) * b.mult);
   const monte = gagnerXp(j, m.porteur, gainXp);
-  const texte = `${p.nom} rentre de mission : +${composants} composants, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${familles ? `, +${familles} famille${familles > 1 ? 's' : ''}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? `, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
+  const texte = `${p.nom} rentre de mission : +${composants} minerai, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${familles ? `, +${familles} famille${familles > 1 ? 's' : ''}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? `, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
   const rapport: RapportMission = {
     porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, lieu: lieuId, butin: m.butin, eclats, rendement: m.rendement ?? 1, ...(m.profondeur !== undefined ? { profondeur: m.profondeur } : {}), affinite: b.affinite, mult: Math.round(b.mult * 100) / 100, recit: [],
@@ -611,9 +599,9 @@ export function recitMission(r: RapportMission): string[] {
   if (r.habitants) recit.push(`Le quartier a vu la barque rentrer : ${r.habitants > 1 ? `${r.habitants} familles ont` : 'une famille a'} décidé de te suivre.`);
   if (r.butin === 'naufrages' && !r.creuseurs && !r.habitants) recit.push('Plus personne à recueillir sur place : les naufragés étaient déjà partis. La barque est revenue chargée de matériel.');
   recit.push(choisir([
-    `Sous l’eau dormait encore du matériel d’avant : ${r.composants} composants hissés à bord.`,
-    `Une réserve oubliée, au sec sous un toit effondré : ${r.composants} composants rapportés au district.`,
-    `Des machines noyées, démontées pièce par pièce : ${r.composants} composants.`,
+    `Sous l’eau dormait encore du matériel d’avant : ${r.composants} minerai hissé à bord.`,
+    `Une réserve oubliée, au sec sous un toit effondré : ${r.composants} minerai rapporté au district.`,
+    `Des machines noyées, démontées pièce par pièce : ${r.composants} minerai.`,
   ]));
   const nouvelles = r.cartes.filter((c) => c.nouvelle);
   const doublons = r.cartes.filter((c) => !c.nouvelle);
@@ -653,16 +641,16 @@ export const RENCONTRES: Record<string, (j: Jeu) => { titre: string; texte: stri
     ? { titre: 'Une patrouille alliée', texte: 'Une patrouille des Brigades du Serment de Veyr vous salue : depuis l’accord avec la Maison Orsève, vous êtes du même côté.',
       options: ['Accepter leurs soins (+25 % de PV)', 'Les saluer et continuer'] }
     : { titre: 'Les Brigades barrent la route', texte: 'Une patrouille du Serment de Veyr bloque le couloir. Leur sergent réclame un « droit de passage ».',
-      options: ['Payer le passage (20 composants)', 'Les contourner par les gaines (−5 PV chacun)', 'Forcer le passage'] }),
+      options: ['Payer le passage (20 minerai)', 'Les contourner par les gaines (−5 PV chacun)', 'Forcer le passage'] }),
   cristal: () => ({ titre: 'Un cristal qui murmure', texte: 'Dans une niche, un cristal ancien murmure. Le son ressemble à une voix, sans les mots.',
     options: ['L’écouter', 'Le rapporter au district', 'Le laisser où il est'] }),
   marchand: () => ({ titre: 'Un marchand des bas-fonds', texte: 'Un marchand a installé son étal dans une ancienne salle, entre deux lampes à algues. Il a « de tout, pour qui sait payer ».',
-    options: ['Échanger 30 composants contre une carte', 'Acheter des soins (15 composants, +30 % de PV)', 'Passer'] }),
+    options: ['Échanger 30 minerai contre une carte', 'Acheter des soins (15 minerai, +30 % de PV)', 'Passer'] }),
   // Bible, 23 octobre 2026 : un Sauvage (greffé sans Clinique, sans Lecture) et un vendeur de pierres mortes
   sauvage: (j) => ({ titre: 'Un Sauvage', texte: 'Un homme recroquevillé contre un pilier, une mèche à peine dorée collée au front. Il s’est greffé une brisure achetée au marché noir, sans Lecture. Il gronde des mots qui ne sont pas les siens.',
     options: [j.expedition?.porteurs.some((p) => p.id === 'vela' && p.pv > 0) ? 'Laisser Véla lire sa pierre' : 'Lui parler doucement (−3 PV chacun)', 'L’affronter', 'Passer ton chemin'] }),
   faussaire: () => ({ titre: 'Un vendeur de pierres', texte: 'Sur une couverture, une rangée de cristaux tous identiques. « Des pierres d’Accord, directeur. Jamais portées. Une vierge pour vingt-cinq composants. » Elles sont ternes. Toutes.',
-    options: ['Lui acheter une « vierge » (25 composants)', 'Lui faire rendre ses pierres', 'Passer'] }),
+    options: ['Lui acheter une « vierge » (25 minerai)', 'Lui faire rendre ses pierres', 'Passer'] }),
   source: () => ({ titre: 'Une source chaude', texte: 'Entre deux piliers, une source chaude jaillit de la roche. L’eau sent le fer et le sel.',
     options: ['S’y reposer (+25 % de PV)', 'Continuer sans s’arrêter'] }),
 };
@@ -691,14 +679,14 @@ export function repondre(j: Jeu, choix: number): Resultat {
   const allie = j.actes.chambre === 'orseve';
   if (id === 'veilleur') {
     if (choix === 0) { y.porteurs = blesser(x, 4); gains.eclats++; confier(j, 6, 'rencontres'); recit = 'Le Veilleur, reconnaissant, te confie un Éclat trouvé plus bas. Le quartier en entendra parler.'; }
-    else if (choix === 1) { y.butin += n * 2; recit = `Le carnet se revend bien : +${n * 2} composants. Le Veilleur, lui, s’en souviendra.`; }
+    else if (choix === 1) { y.butin += n * 2; recit = `Le carnet se revend bien : +${n * 2} minerai. Le Veilleur, lui, s’en souviendra.`; }
   } else if (id === 'pilleur') {
     if (choix === 0) { confier(j, 4, 'rencontres'); recit = 'Le pilleur file sans demander son reste. Il racontera que le directeur sait être juste.'; }
-    else if (choix === 1) { y.butin += n * 2; recit = `Il lâche son sac et s’enfuit : +${n * 2} composants.`; }
+    else if (choix === 1) { y.butin += n * 2; recit = `Il lâche son sac et s’enfuit : +${n * 2} minerai.`; }
     else { gains.cartes++; y = lancerCombat({ ...y, recit: 'Le pilleur sort un pied-de-biche. Son sac contient une carte : elle sera à toi.' }, 'pilleur'); }
   } else if (id === 'brigade') {
     if (allie) { if (choix === 0) { y.porteurs = soigner(x, 0.25); recit = 'Les Brigades pansent l’escouade (+25 % de PV).'; } }
-    else if (choix === 0) { y.butin = Math.max(0, y.butin - 20); recit = 'Le sergent empoche les composants et s’écarte.'; }
+    else if (choix === 0) { y.butin = Math.max(0, y.butin - 20); recit = 'Le sergent empoche le minerai et s’écarte.'; }
     else if (choix === 1) { y.porteurs = blesser(x, 5); recit = 'Les gaines sont étroites et brûlantes, mais vous passez (−5 PV chacun).'; }
     else { confier(j, 4, 'rencontres'); y = lancerCombat({ ...y, recit: 'Le district ne paie pas pour passer chez lui.' }, 'brigadier'); }
   } else if (id === 'cristal') {
@@ -709,10 +697,10 @@ export function repondre(j: Jeu, choix: number): Resultat {
     } else if (choix === 1) { gains.cartes++; y.porteurs = blesser(x, 2); recit = 'Le cristal pèse lourd dans le sac, et il chuchote encore. Au district, il deviendra une carte (−2 PV chacun).'; }
   } else if (id === 'marchand') {
     if (choix === 0) {
-      if (y.butin < 30) return non('Il te faut 30 composants dans le butin de l’expédition.');
+      if (y.butin < 30) return non('Il te faut 30 minerai dans le butin de l’expédition.');
       y.butin -= 30; gains.cartes++; recit = 'Le marchand glisse un cristal gravé dans ta main. Au district, il deviendra une carte.';
     } else if (choix === 1) {
-      if (y.butin < 15) return non('Il te faut 15 composants dans le butin de l’expédition.');
+      if (y.butin < 15) return non('Il te faut 15 minerai dans le butin de l’expédition.');
       y.butin -= 15; y.porteurs = soigner(x, 0.3); recit = 'Onguents d’algues et bandages propres : +30 % de PV.';
     }
   } else if (id === 'source') {
@@ -725,9 +713,9 @@ export function repondre(j: Jeu, choix: number): Resultat {
     } else if (choix === 1) { y = lancerCombat({ ...y, recit: 'Le penchant l’emporte : il se jette sur l’escouade.' }, 'sauvage'); }
   } else if (id === 'faussaire') {
     if (choix === 0) {
-      if (y.butin < 25) return non('Il te faut 25 composants dans le butin de l’expédition.');
+      if (y.butin < 25) return non('Il te faut 25 minerai dans le butin de l’expédition.');
       y.butin -= 25; recit = 'Au district, la Clinique tranche : une pierre morte. Elle a refusé un Accord, et ne prendra plus jamais chez personne. Le quartier en rit encore.';
-    } else if (choix === 1) { y.butin += n; confier(j, 4, 'rencontres'); recit = `Il remballe en grommelant et rend ce qu’il a pris aux fouilleurs : +${n} composants. Les familles volées sauront qui remercier.`; }
+    } else if (choix === 1) { y.butin += n; confier(j, 4, 'rencontres'); recit = `Il remballe en grommelant et rend ce qu’il a pris aux fouilleurs : +${n} minerai. Les familles volées sauront qui remercier.`; }
   }
   if (y.phase !== 'combat') y = { ...y, recit };
   y.gains = gains;
@@ -910,7 +898,7 @@ export function remonter(j: Jeu): Retour {
     fragment = ajouterFragment(j);
     // dans les Seuils, les abris des années 2060 rendent deux papiers par Strate
     if (x.strate <= 3) ajouterFragment(j);
-    j.composants += 20;
+    j.energie += 20; // déjà taillés : une récompense, pas du brut (9 novembre 2026)
     // le premier gardien vaincu d'une Strate du Fond laisse une carte en or (strates.ts, FOND)
     cartes.push(tirerTrouvaille(j, x.strate, estFond(x.strate) ? 'or' : 'fer'));
     eclats += 2;
@@ -958,9 +946,9 @@ export function remonter(j: Jeu): Retour {
   }
   j.expedition = null;
   log(j, victoire
-    ? `L’escouade remonte victorieuse avec ${butin} composants.${nouvelleStrate ? ` Un nouvel étage est creusé : la Strate −${j.strate} est ouverte.` : ''}`
-    : x.fuite ? `L’escouade a fui et remonte avec ${butin} composants. Elle rentre épuisée.`
-    : `L’escouade remonte avec ${butin} composants. Elle a besoin de repos.`);
+    ? `L’escouade remonte victorieuse avec ${butin} minerai.${nouvelleStrate ? ` Un nouvel étage est creusé : la Strate −${j.strate} est ouverte.` : ''}`
+    : x.fuite ? `L’escouade a fui et remonte avec ${butin} minerai. Elle rentre épuisée.`
+    : `L’escouade remonte avec ${butin} minerai. Elle a besoin de repos.`);
   return { butin: butin + butinFilon + (quete?.composants ?? 0) + (explo?.composants ?? 0), nouvelleStrate, victoire, fragment, cartes, eclats, ...(x.fuite ? { fuite: true } : {}), ...(brutXp ? { xp } : {}), ...(quete ? { quete } : {}), ...(explo ? { explorer: explo.retour } : {}) };
 }
 
@@ -1090,7 +1078,7 @@ export function leconTutoriel(tour: number): string {
 export function resumeAbsence(avant: Jeu, apres: Jeu, nouvelles: string[]): string[] {
   const l: string[] = [];
   const de = Math.floor(apres.energie) - Math.floor(avant.energie);
-  if (de > 0) l.push(`+${de} énergie${apres.energie >= stockage(apres) ? ' (stockage plein : pense à améliorer la Tour du Noyau)' : ''}`);
+  if (de > 0) l.push(`+${de} cristaux taillés par le Générateur`);
   l.push(...nouvelles);
   const remis = Object.keys(apres.porteurs).filter((id) => avant.porteurs[id]!.usure >= 1 && apres.porteurs[id]!.usure < 1);
   for (const id of remis) l.push(`${porteurDef(id).nom} est remis de son Usure`);
@@ -1156,7 +1144,7 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   // la première exploration du front de la journée (8 novembre 2026) : ses combats rapportent double
   if (strate === j.strate && !j.expedition.tutoriel && j.premiereExploration !== jourDe(j.dernierTick)) {
     j.premiereExploration = jourDe(j.dernierTick);
-    j.expedition = { ...j.expedition, premiere: true, recit: `${j.expedition.recit} Première descente du jour au front : les composants y comptent double.` };
+    j.expedition = { ...j.expedition, premiere: true, recit: `${j.expedition.recit} Première descente du jour au front : le minerai y compte double.` };
   }
   retenirDepart(j, escouade);
   log(j, `L’escouade descend dans la Strate −${strate}.`);
@@ -1185,7 +1173,7 @@ export const CIBLES_FOUILLE: Record<CibleFouille, { nom: string; texte: string }
   tech: { nom: 'Cartes augmentées', texte: 'Les cartes trouvées sont des cartes d’Augmentés, et le filon en garde une (trois au choix en difficile).' },
   bio: { nom: 'Cartes génés', texte: 'Les cartes trouvées sont des cartes de Génés, et le filon en garde une (trois au choix en difficile).' },
   reso: { nom: 'Cartes résonantes', texte: 'Les cartes trouvées sont des cartes de Résonants, et le filon en garde une (trois au choix en difficile).' },
-  composants: { nom: 'Composants', texte: 'Le filon rapporte des composants pour chaque combat gagné en route : plus le chemin est long, plus il donne.' },
+  composants: { nom: 'Minerai', texte: 'Le filon rapporte du minerai pour chaque combat gagné en route : plus le chemin est long, plus il donne.' },
   eclats: { nom: 'Éclats', texte: 'Chaque combat gagné en route peut laisser un Éclat au filon : plus le chemin est long, plus tu as de chances.' },
 };
 
@@ -1444,7 +1432,7 @@ export function gainChoixHalte(j: Jeu, k: number): string {
   const h = halteEnCours(j);
   const c = h?.choix[k];
   if (!c || !j.expedition) return '';
-  return c.effet === 'eclat' ? '+1 Éclat' : c.effet === 'lampe' ? 'Lampe : 2 salles éclairées' : `+${butinCombat(j.expedition.strate, 0)} composants`;
+  return c.effet === 'eclat' ? '+1 Éclat' : c.effet === 'lampe' ? 'Lampe : 2 salles éclairées' : `+${butinCombat(j.expedition.strate, 0)} minerai`;
 }
 
 /** Choisir à la Halte : le souvenir du choix est gardé, la Halte est vue (la suivante attendra la prochaine descente) */
@@ -1456,7 +1444,7 @@ export function choisirHalte(j: Jeu, k: number): Resultat {
   if (!c) return non('Choix inconnu.');
   const gains = { ...x.gains!, haltes: (x.gains?.haltes ?? 0) + 1 };
   // le gain n'est plus écrit sur le bouton (7 novembre 2026) : on le découvre dans le récit
-  const dit = c.effet === 'eclat' ? ' (+1 Éclat)' : c.effet === 'composants' ? ` (+${butinCombat(x.strate, 0)} composants)` : '';
+  const dit = c.effet === 'eclat' ? ' (+1 Éclat)' : c.effet === 'composants' ? ` (+${butinCombat(x.strate, 0)} minerai)` : '';
   let y: Expedition = { ...x, enHalte: false, gains, recit: `${c.recit}${dit}${c.carte ? ` ${RECIT_CARTE[c.carte]}` : ''}` };
   if (c.effet === 'eclat') gains.eclats++;
   else if (c.effet === 'lampe') y.lumiere = RANG_HALTE + 2;

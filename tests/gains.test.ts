@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BATIMENTS } from '../src/core/donnees';
-import { DISTRICT, gainsAmelioration, logementCreuseurs, nouveauJeu, profondeurNoyau, stockage, vitesseForge, type Jeu } from '../src/core/jeu';
+import { DISTRICT, gainsAmelioration, logementCreuseurs, nouveauJeu, profondeurNoyau, vitesseForge, type Jeu } from '../src/core/jeu';
 
 const T0 = Date.UTC(2026, 9, 22, 12);
 const jeu = (): Jeu => { const j = nouveauJeu(T0, 1); j.chambre = true; j.recrues = true; return j; };
@@ -22,12 +22,15 @@ describe('Ce que rapporte le niveau suivant (22 octobre 2026)', () => {
   it('les chiffres annoncés sont ceux que le jeu appliquera vraiment', () => {
     const j = jeu();
     const g = gainsAmelioration(j, 'generateur').find((x) => x.quoi === 'energie')!;
-    expect(g.avant).toBe(DISTRICT.energieParHeure[1]);
-    expect(g.apres).toBe(DISTRICT.energieParHeure[2]);
+    for (const id of Object.keys(j.porteurs)) j.porteurs[id]!.poste = null;
+    const t = gainsAmelioration(j, 'generateur').find((x) => x.quoi === 'energie')!;
+    expect(t.avant).toBe(DISTRICT.tailleHeures[1]);
+    expect(t.apres).toBe(DISTRICT.tailleHeures[2]);
+    void g;
     const f = gainsAmelioration(j, 'forge').find((x) => x.quoi === 'forge')!;
     expect([f.avant, f.apres]).toEqual([Math.round(vitesseForge(1) * 100), Math.round(vitesseForge(2) * 100)]);
     const n = gainsAmelioration(j, 'noyau');
-    expect(n.find((x) => x.quoi === 'stockage')).toMatchObject({ avant: stockage(j), apres: DISTRICT.stockage[2] });
+    expect(n.find((x) => x.quoi === 'stockage')).toBeUndefined();
     expect(n.find((x) => x.quoi === 'creuseurs')).toMatchObject({ avant: logementCreuseurs(j) });
   });
 

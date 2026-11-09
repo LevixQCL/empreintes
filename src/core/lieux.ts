@@ -71,7 +71,7 @@ export function affinite(lieu: Lignee, porteur: Lignee): Affinite {
   return BATTU_PAR[porteur] === lieu ? 'mauvais' : 'neutre';
 }
 
-export const NOM_SPECIALITE: Record<SpecialiteLieu, string> = { composants: 'Composants', cartes: 'Pierres', rescapes: 'Rescapés' };
+export const NOM_SPECIALITE: Record<SpecialiteLieu, string> = { composants: 'Minerai', cartes: 'Pierres', rescapes: 'Rescapés' };
 
 /** Ce que le Porteur vit sur place selon son affinité avec le lieu (lignée du lieu → phrase) */
 export const RECIT_BON: Record<Lignee, string> = {

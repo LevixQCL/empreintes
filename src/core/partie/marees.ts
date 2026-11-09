@@ -23,10 +23,10 @@ export const RANGS_MAREE: readonly RangMaree[] = ['montante', 'vive', 'grande'];
 
 /** Les chiffres de chaque rang (tous les réglages des contrats sont ici) */
 export const MAREES = {
-  montante: { nom: 'Petite vive-eau', coef: 80, strate: 3, porteurs: 2, difficulte: 6, heures: 4, energie: 150, usure: 5, composants: 90 },
-  vive: { nom: 'Vive-eau', coef: 95, strate: 6, porteurs: 3, difficulte: 11, heures: 8, energie: 300, usure: 8, composants: 158 },
-  grande: { nom: 'Grande marée', coef: 110, strate: 9, porteurs: 3, difficulte: 16, heures: 16, energie: 600, usure: 12, composants: 270 },
-} as const satisfies Record<RangMaree, { nom: string; coef: number; strate: number; porteurs: number; difficulte: number; heures: number; energie: number; usure: number; composants: number }>;
+  montante: { nom: 'Petite vive-eau', coef: 80, strate: 3, porteurs: 2, difficulte: 6, heures: 4, usure: 5, composants: 90 },
+  vive: { nom: 'Vive-eau', coef: 95, strate: 6, porteurs: 3, difficulte: 11, heures: 8, usure: 8, composants: 158 },
+  grande: { nom: 'Grande marée', coef: 110, strate: 9, porteurs: 3, difficulte: 16, heures: 16, usure: 12, composants: 270 },
+} as const satisfies Record<RangMaree, { nom: string; coef: number; strate: number; porteurs: number; difficulte: number; heures: number; usure: number; composants: number }>;
 
 export const CONTRAT = {
   /** la force d'un Porteur sur son épreuve selon sa lignée */
@@ -220,8 +220,6 @@ export function envoyerContrat(j: Jeu, id: string, equipe: string[], now: number
   const r = MAREES[c.rang];
   if (equipe.length !== c.def.epreuves.length || new Set(equipe).size !== equipe.length) return non(`Il faut ${c.def.epreuves.length} Porteurs différents, un par épreuve.`);
   for (const p of equipe) { const pourquoi = raisonHorsContrat(j, p); if (pourquoi) return non(`${porteurDef(p)?.nom ?? 'Ce Porteur'} : ${pourquoi.toLowerCase()}`); }
-  if (j.energie < r.energie) return non(`Il faut ${r.energie} énergie pour affréter la gabare.`);
-  j.energie -= r.energie;
   const taux = tauxContrat(j, c.def, equipe, c.indices);
   m.contrat = { id, rang: c.rang, porteurs: [...equipe], debut: now, fin: now + r.heures * 3_600_000, taux, strate: strateVaincue(j) };
   log(j, `${equipe.map((p) => porteurDef(p).nom).join(', ')} embarquent sur la gabare : ${r.nom}, ${c.def.titre} (${taux} % de chances).`);
@@ -310,11 +308,11 @@ export function retourDeContrat(j: Jeu): string {
   if (reussi) {
     recit.push(`${forces.map(({ ep, k }) => `${porteurDef(c.porteurs[k]!).nom} : ${ep.nom.charAt(0).toLowerCase()}${ep.nom.slice(1)}`).join(' ; ')}. Tout a tenu.`);
     recit.push(choix ? 'Au cœur de la ruine, trois pierres attendaient côte à côte : à toi de choisir celle qui rentre au district.'
-      : prise === 'cargaison' ? `La gabare est rentrée à ras bord : ${composants} composants arrachés à la ruine.`
-      : `La gabare est rentrée chargée : ${composants} composants, et une pierre de plus pour tes cartes.`);
+      : prise === 'cargaison' ? `La gabare est rentrée à ras bord : ${composants} minerai arraché à la ruine.`
+      : `La gabare est rentrée chargée : ${composants} minerai, et une pierre de plus pour tes cartes.`);
   } else {
     recit.push(`${porteurDef(c.porteurs[faible.k]!).nom} n’a pas pu ${faible.ep.nom.charAt(0).toLowerCase()}${faible.ep.nom.slice(1)} : l’équipe a dû faire demi-tour avant la marée descendante.`);
-    recit.push(`Ils rapportent ${composants} composants, et surtout un Indice : la prochaine tentative sur ce contrat aura +${CONTRAT.indice} % de chances.`);
+    recit.push(`Ils rapportent ${composants} minerai, et surtout un Indice : la prochaine tentative sur ce contrat aura +${CONTRAT.indice} % de chances.`);
   }
   const rapport: RapportMission = {
     porteur: c.porteurs[0]!, strate: c.strate, duree: 'longue', fin: c.fin, lieu: lieu.id, recit, composants, xp: xpTotal, niveau, cartes, creuseurs: 0,
@@ -323,8 +321,8 @@ export function retourDeContrat(j: Jeu): string {
   };
   rangerRapport(j, rapport);
   const texte = reussi
-    ? `${r.nom} réussie (${def.titre}) : +${composants} composants${cartes.length ? `, ${cartes.map((x) => moduleDef(x.id).nom).join(', ')}` : ''}${choix ? ', une carte au choix' : ''}.`
-    : `${r.nom} manquée (${def.titre}) : +${composants} composants et un Indice pour la prochaine tentative.`;
+    ? `${r.nom} réussie (${def.titre}) : +${composants} minerai${cartes.length ? `, ${cartes.map((x) => moduleDef(x.id).nom).join(', ')}` : ''}${choix ? ', une carte au choix' : ''}.`
+    : `${r.nom} manquée (${def.titre}) : +${composants} minerai et un Indice pour la prochaine tentative.`;
   log(j, texte);
   return texte;
 }

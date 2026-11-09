@@ -8,19 +8,21 @@ import type { Palmares } from '../classements';
 import type { BatimentId, GesteDef, BonusMarques, Rarete } from '../types';
 import { FAMILLES_QUARTIER, familleDef } from '../familles';
 
-export const VERSION_JEU = 9;
+export const VERSION_JEU = 10;
 
 /** Réglages du district, au même endroit pour l'équilibrage */
 export const DISTRICT = {
-  /** énergie par heure selon le niveau du Générateur (index = niveau). 28 octobre 2026, Bryan : « elle est au max tout le temps ».
-   *  Production divisée par ~3 (avant 60/110/180/260/350…950) : la Tour met ~15 à 18 h à se remplir au lieu de 5 à 7 h
-   *  (un peu plus aux derniers niveaux, où les chantiers coûtent des milliers),
-   *  et le robot ouvre toujours la Strate −10 vers le jour 30 (l'énergie ne freine pas la progression). */
-  energieParHeure: [0, 20, 35, 70, 125, 225, 320, 430, 550, 680, 820],
-  /** stockage maximum selon le niveau du Noyau */
-  stockage: [0, 300, 650, 1300, 2300, 4100, 6000, 9000, 13000, 19000, 27000],
-  /** la réserve tient au moins ces heures de production du Générateur */
-  reserveHeures: 24,
+  /** Économie à cristal unique (9 novembre 2026, docs/economie-cristal.md) : le Générateur ne produit plus d'énergie,
+   *  il taille le minerai rapporté en jouant (`Jeu.composants`) en cristaux (`Jeu.energie`), 1 pour 1.
+   *  Relu par un game designer : il ne doit jamais freiner celui qui joue beaucoup. Son niveau fixe donc le temps qu'il met
+   *  à tailler ce qui attend (chaque heure, une part `1/heures` du minerai, au moins `taillePlancher` cristaux) : 16 h au niveau 1,
+   *  4 h au niveau 10. Rien ne se perd, il n'y a plus de réserve. Le lot d'une session est taillé en une nuit. */
+  tailleHeures: [0, 16, 14, 12, 10, 9, 8, 7, 6, 5, 4],
+  /** en taillant, le Générateur recueille des Éclats dans le minerai (9 novembre 2026, à la place de la cristallisation) :
+   *  un tous les `eclatTous` cristaux taillés, au plus `eclatsParJour[niveau]` par jour (rien avant le niveau 4) */
+  eclatTous: 300,
+  eclatsParJour: [0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 3],
+  taillePlancher: [0, 10, 14, 20, 26, 32, 40, 48, 58, 68, 80],
   /** points d'Usure soignés par heure selon le niveau de la Clinique */
   soinParHeure: [0, 6, 10, 16, 22, 30, 36, 42, 48, 55, 62],
   /** la Forge refabrique 25 % plus vite par niveau */
@@ -47,7 +49,8 @@ export const DISTRICT = {
   /** fuir un combat jusqu'au district (22 octobre 2026) : part des composants gardée, et Usure en plus pour chaque Porteur */
   butinFuite: 0.75,
   usureFuite: 3,
-  depart: { energie: 120, composants: 20 },
+  /** au départ : des cristaux (`energie`) et pas de brut (`composants`) (9 novembre 2026) */
+  depart: { energie: 50, composants: 0 },
 } as const;
 
 /** Points d'Archive gagnés, et paliers de la semaine */
@@ -186,7 +189,7 @@ export const MARQUES: Record<string, MarqueDef> = {
   coursier: { nom: 'Foulée', fait: 'combats', seuil: 40, quoi: 'combats gagnés', court: '1 Flux au départ', bonus: { flux: 1 },
     texte: 'Il court devant l’escouade : chaque combat commence avec 1 Flux.',
     paliers: [{ court: '2 Flux au départ contre un gardien', texte: 'Il a repéré l’antre : contre un gardien, le combat commence avec 2 Flux.', bonus: { fluxGardien: 2 } },
-      { court: 'fuir ne coûte plus de butin', texte: 'Il connaît la route du retour : remonter en fuyant ne fait plus perdre de composants.', bonus: { fuiteSure: true } }] },
+      { court: 'fuir ne coûte plus de butin', texte: 'Il connaît la route du retour : remonter en fuyant ne fait plus perdre de minerai.', bonus: { fuiteSure: true } }] },
   docker: { nom: 'Bras de quai', fait: 'missions', seuil: 8, quoi: 'missions accomplies', court: 'garde 25 % du bouclier', bonus: { garde: 0.25 },
     texte: 'Il ne lâche rien : à chaque tour, l’escouade garde 25 % de son bouclier pour le tour suivant.',
     paliers: [{ court: 'garde 35 % du bouclier', texte: 'Il serre plus fort : l’escouade garde 35 % de son bouclier d’un tour à l’autre.', bonus: { garde: 0.35 } },
@@ -370,6 +373,8 @@ export interface Jeu {
   quotidien: { jour: number; reserve: number; type: TypeQuotidien; progres: number };
   /** Archive de la semaine : points de la semaine en cours, paliers à ouvrir de la semaine passée */
   archive: { semaine: number; points: number; aOuvrir: number; /** les Butins des semaines suivantes, pas encore ouverts */ enAttente?: number[] };
+  /** les Éclats recueillis en taillant (9 novembre 2026) : le jour du jeu, ceux trouvés ce jour-là, et les cristaux taillés vers le prochain */
+  eclatsTaille?: { jour: number; n: number; reste: number };
   /** les Porteurs partis en mission en mer, depuis le Port (le niveau de la mission est celui de la dernière Strate vaincue) */
   missions: Mission[];
   /** les contrats de marée (31 octobre 2026) : la gabare en mer, les contrats remplis, les Indices laissés par les échecs */
@@ -394,10 +399,6 @@ export interface Jeu {
   epreuves: { semaine: number; faites: string[] };
   /** le Comptoir du jour : ses offres, celles déjà achetées, et son propre hasard (il ne touche pas aux trouvailles) */
   comptoir: Comptoir;
-  /** le convertisseur du Générateur : le jour du jeu et les lots déjà convertis ce jour-là */
-  conversion?: { jour: number; lots: number };
-  /** la cristallisation du Générateur (8 novembre 2026) : le jour du jeu et les Éclats déjà condensés ce jour-là */
-  cristallisation?: { jour: number; n: number };
   /** « Mon escouade » (décision du 23 octobre 2026) : les trois Porteurs qui descendent. Elle ne change qu'au district,
    *  jamais pendant une descente (sinon c'est trop facile). Ancienne sauvegarde : complétée par `migrer`. */
   escouade: string[];
@@ -523,11 +524,6 @@ export const enExpedition = (j: Jeu, id: string) => (!!j.expedition && j.expedit
 /** en mer : sur une barque, ou sur la gabare d'un contrat de marée (31 octobre 2026) */
 export const enMission = (j: Jeu, id: string) => !!j.missions?.some((m) => m.porteur === id) || !!j.marees?.contrat?.porteurs.includes(id) || j.basses?.expedition?.porteur === id;
 export const posteDe = (j: Jeu, b: Poste) => Object.keys(j.porteurs).find((id) => j.porteurs[id]!.poste === b) ?? null;
-/**
- * La réserve d'énergie : celle de la Tour, et au moins une journée de ce que produit le Générateur (audit du 7 novembre 2026 :
- * réserve pleine dès le jour 18, 48 à 62 % de la production perdue entre deux sessions, Générateur inutile après le niveau 6).
- */
-export const stockage = (j: Jeu) => Math.max(DISTRICT.stockage[j.batiments.noyau] ?? 0, Math.round(energieParHeure(j) * DISTRICT.reserveHeures / 100) * 100);
 export const pvMaxCombat = (j: Jeu, id: string) => pvNiveau(j, id) + bonusPv(j, id) - Math.floor(j.porteurs[id]!.usure);
 /** L'Usure ne peut pas dépasser tous les PV du Porteur */
 export const usureMax = (j: Jeu, id: string) => pvNiveau(j, id) + bonusPv(j, id);
@@ -552,7 +548,44 @@ export function multiplicateur(j: Jeu, b: Exclude<Poste, 'noyau'>): number {
   return porteurDef(id).lignee === batimentDef(b).affinite ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste;
 }
 
-export const energieParHeure = (j: Jeu) => Math.round((DISTRICT.energieParHeure[j.batiments.generateur] ?? 0) * multiplicateur(j, 'generateur'));
+/** Les cristaux que le Générateur taille par heure (9 novembre 2026 : il raffine le brut, il ne produit plus rien de lui-même) */
+/** Les heures que met le Générateur à tailler le minerai qui attend (un Porteur posté l'accélère) */
+export const heuresDeTaille = (j: Jeu) => (DISTRICT.tailleHeures[j.batiments.generateur] ?? 0) / multiplicateur(j, 'generateur');
+/** Ce que le Générateur taille dans l'heure qui vient, avec ce minerai en attente */
+/** Le moins que taille le Générateur en une heure, tant qu'il reste du minerai */
+export const plancherTaille = (j: Jeu) => Math.round((DISTRICT.taillePlancher[j.batiments.generateur] ?? 0) * multiplicateur(j, 'generateur'));
+const debit = (j: Jeu, reste: number) => Math.min(reste, Math.max(plancherTaille(j), reste / Math.max(1, heuresDeTaille(j))));
+/** Les cristaux taillés par heure en ce moment (0 si rien n'attend) */
+export const raffinageParHeure = (j: Jeu) => (j.batiments.generateur > 0 ? Math.round(debit(j, j.composants)) : 0);
+/** Le minerai qui attend d'être taillé, et le temps qu'il faudra pour tout tailler (en heures ; 0 si rien n'attend) */
+export function brutEnAttente(j: Jeu): { brut: number; heures: number } {
+  if (j.batiments.generateur < 1) return { brut: Math.floor(j.composants), heures: Infinity };
+  let reste = j.composants, h = 0;
+  while (reste >= 1 && h < 200) { reste -= debit(j, reste); h++; }
+  return { brut: Math.floor(j.composants), heures: h };
+}
+/** Les Éclats recueillis par la taille : `n` cristaux viennent d'être taillés (appelé par tick) ; renvoie les Éclats trouvés */
+export function eclatsDeTaille(j: Jeu, n: number, now: number): number {
+  const max = DISTRICT.eclatsParJour[j.batiments.generateur] ?? 0;
+  if (!max || n <= 0) return 0;
+  const e = j.eclatsTaille?.jour === jourDe(now) ? j.eclatsTaille : { jour: jourDe(now), n: 0, reste: j.eclatsTaille?.reste ?? 0 };
+  e.reste += n;
+  let trouves = 0;
+  while (e.reste >= DISTRICT.eclatTous && e.n < max) { e.reste -= DISTRICT.eclatTous; e.n++; trouves++; }
+  if (e.n >= max) e.reste = Math.min(e.reste, DISTRICT.eclatTous);
+  j.eclatsTaille = e;
+  j.eclats += trouves;
+  return trouves;
+}
+/** Taille le minerai pendant `heures`, heure par heure : renvoie les cristaux taillés */
+export function raffiner(j: Jeu, heures: number): number {
+  if (j.batiments.generateur < 1) return 0;
+  let n = 0;
+  for (let h = Math.max(0, heures); h > 0 && j.composants - n > 0; h -= 1) n += debit(j, j.composants - n) * Math.min(1, h);
+  j.composants -= n;
+  j.energie += n;
+  return n;
+}
 
 // ---------- La Confiance du quartier : les familles qui te suivent ----------
 // Refaite le 30 octobre 2026 (Bryan : la Confiance doit être liée à l'implication du joueur pour sauver les habitants
@@ -684,7 +717,8 @@ export function nuitDesLignes(j: Jeu, now: number): string | null {
 }
 
 /** Ce que coûte un déplacement du batardeau des Basses : six heures de ce que produit le Générateur (les anciennes pompes) */
-export const coutBatardeau = (j: Jeu) => Math.max(100, Math.round(energieParHeure(j) * 6 / 10) * 10);
+/** Déplacer le batardeau : un prix fixe en cristaux (9 novembre 2026 : plus aucun prix ne suit le Générateur) */
+export const coutBatardeau = (j: Jeu) => 20 * Math.max(1, strateVaincue(j));
 
 /** Une expédition dans les Basses : un Porteur va chercher la famille d'un lieu */
 export interface ExpeditionBasses { lieu: string; porteur: string; debut: number; fin: number; strate: number }

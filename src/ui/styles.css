@@ -82,11 +82,10 @@ h1,h2,h3{font-weight:400}
 .res .ico{grid-row:1 / span 2;width:18px;height:18px}
 .res .v{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .res small{font-family:var(--mono);color:var(--quiet);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1}
-.res.energie .ico{color:var(--gold)} .res.composants .ico{color:#8FB8DA} .res.eclats .ico{color:var(--reso)} .res.abysse .ico{color:var(--ivory)}
-.jauge-res{position:absolute;left:8px;right:8px;bottom:3px;height:2px;background:rgba(255,255,255,.08)}
-.jauge-res i{display:block;height:100%;background:var(--gold);transition:width .4s ease}
-.res.energie.plein small{color:var(--alerte)}
-.res.energie.plein .jauge-res i{background:var(--alerte)}
+.res.energie .ico{color:#7FD0FF} .res.composants .ico{color:#A9A0B8} .res.eclats .ico{color:var(--reso)} .res.abysse .ico{color:var(--ivory)}
+/* le minerai en taille, sous les cristaux (9 novembre 2026) */
+.res.energie .taille{color:#9FD8FF;display:inline-flex;align-items:center;gap:2px}
+.res.energie .taille .ico{width:12px;height:12px;color:#A9A0B8}
 .contenu{flex:1;display:flex;flex-direction:column;gap:16px;padding:16px 16px calc(var(--nav-h) + 28px + var(--sab))}
 .nav{position:fixed;z-index:15;bottom:0;left:50%;transform:translateX(-50%);width:min(480px,100%);display:grid;grid-template-columns:repeat(5,1fr);padding:4px 4px calc(4px + var(--sab));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
 .onglet{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:58px;border:none;background:none;font-size:var(--t-min);font-weight:500;letter-spacing:.02em}
@@ -121,7 +120,7 @@ h1,h2,h3{font-weight:400}
 .jauge-pv .usure{position:absolute;right:0;top:0;bottom:0;background:repeating-linear-gradient(135deg,rgba(226,115,90,.85) 0 3px,rgba(226,115,90,.35) 3px 6px)}
 .prix{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:13px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
 .prix .ico{width:14px;height:14px}
-.prix.energie .ico{color:var(--gold)} .prix.composants .ico{color:#8FB8DA} .prix.eclats .ico{color:var(--reso)} .prix.duree{color:var(--quiet)} .prix.duree .ico{color:var(--quiet)}
+.prix.energie .ico{color:#7FD0FF} .prix.composants .ico{color:#A9A0B8} .prix.eclats .ico{color:var(--reso)} .prix.duree{color:var(--quiet)} .prix.duree .ico{color:var(--quiet)}
 .prix.manque,.prix.manque .ico{color:var(--danger)}
 .btn.prim .prix,.btn.prim .prix .ico{color:inherit}
 

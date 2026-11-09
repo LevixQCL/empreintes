@@ -834,7 +834,7 @@ export function entrerSalle(x: Expedition, id: number, second = false): { x: Exp
           : 'Un abri muré en 2066. Sans Augmenté pour forcer le mur, l’escouade ne fouille que les gravats devant'
         : niche ? (carte ? 'Une niche du Treillis, oubliée par les Hauts : un cristal y dort encore. Il deviendra une carte au district' : 'Une niche du Treillis, vidée et scellée de cire blanche. Il reste ce que les préleveurs ont laissé tomber')
         : 'Une cache de fouilleur, oubliée sous des gravats';
-      y = { ...y, porteurs, butin: y.butin + n, gains, recit: `${avant}${debut} : +${n} composants${eclat ? ', un Éclat' : ''} et de quoi panser l’escouade.` };
+      y = { ...y, porteurs, butin: y.butin + n, gains, recit: `${avant}${debut} : +${n} minerai${eclat ? ', un Éclat' : ''} et de quoi panser l’escouade.` };
       break;
     }
     case 'camp': {
@@ -845,7 +845,7 @@ export function entrerSalle(x: Expedition, id: number, second = false): { x: Exp
     case 'archive': {
       const gains = { ...(y.gains ?? gainsVides()), fragment: true };
       const n = butinArchive(x.strate);
-      y = { ...y, gains, butin: y.butin + n, recit: `Une salle d’archives : des papiers d’époque, rangés avec soin. Tu les rapporteras au district (+${n} composants).` };
+      y = { ...y, gains, butin: y.butin + n, recit: `Une salle d’archives : des papiers d’époque, rangés avec soin. Tu les rapporteras au district (+${n} minerai).` };
       break;
     }
     case 'rencontre':
@@ -907,7 +907,7 @@ export function ouvrirPorte(x: Expedition, rangs: number[]): { x: Expedition; ok
   const vestige = x.carte ? salleCourante(x).vestige : undefined;
   if (vestige) gains = ramasser(gains, vestige);
   return { ok: true, x: { ...x, porte: undefined, gains, butin: x.butin + plus,
-    recit: `Les Fréquences s’accordent. La porte tourne sur elle-même sans un bruit : derrière, ${eclats > 1 ? `${eclats} Éclats` : 'un Éclat'} et ${plus} composants, rangés là depuis toujours.` } };
+    recit: `Les Fréquences s’accordent. La porte tourne sur elle-même sans un bruit : derrière, ${eclats > 1 ? `${eclats} Éclats` : 'un Éclat'} et ${plus} minerai, rangés là depuis toujours.` } };
 }
 
 /** Une seule relance par porte : une nouvelle main */
@@ -945,7 +945,7 @@ export function suivrePassage(x: Expedition): { x: Expedition; ok: boolean; mess
   // derrière le passage, un Vestige de plus quand il en manque encore (explorer.ts)
   if (x.vestigeSecret) gains = ramasser(gains, x.vestigeSecret);
   return { ok: true, qui, x: { ...x, secretVu: true, gains, butin: x.butin + plus,
-    recit: `${def.derriere[Math.min(3, x.carte.zone)]} L’escouade en rapporte ${plus} composants et des papiers d’époque${x.vestigeSecret ? ', et un Vestige posé là, comme pour vous' : ''}.` } };
+    recit: `${def.derriere[Math.min(3, x.carte.zone)]} L’escouade en rapporte ${plus} minerai et des papiers d’époque${x.vestigeSecret ? ', et un Vestige posé là, comme pour vous' : ''}.` } };
 }
 
 /** Les Haltes encore à voir dans une Strate (strates.ts) : la prochaine, ou « connu » */

@@ -9,7 +9,7 @@ import { CONTRAT, MAREES, contratsDuMoment, equipeConseillee, forceSurEpreuve, l
 import { lieuDef, type Affinite } from '../core/lieux';
 import type { Lignee } from '../core/types';
 import { LIEUX_SLUGS, decorLieu, barque, BARQUE_PEINTE, reflets, sceneDistrict, vignetteDistrict } from './art';
-import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, avatar, decompte, etapeVoyage, prix, type EcranDistrict } from './coquille';
+import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, avatar, decompte, etapeVoyage, type EcranDistrict } from './coquille';
 import { ICO, type Icone } from './icones';
 import { echap, texteReplie } from './outils';
 import { COULEUR } from './vue';
@@ -43,11 +43,11 @@ function recompense(j: Jeu, c: ContratOuvert): string {
   const compo = Math.round(r.composants * (1 + 0.25 * (Math.max(1, strateVaincue(j)) - 1)) * (c.prise === 'cargaison' ? CONTRAT.cargaison : 1));
   const lg = `<b style="color:${COULEUR[c.lieu.lignee]}">${NOM_LIGNEES[c.lieu.lignee]}</b>`;
   const metal = c.rang === 'montante' ? '<b class="m-cuivre">cuivre</b>' : '<b class="m-argent">argent</b>';
-  if (c.prise === 'cargaison') return `<li>${ICO.composants}<span>Cargaison : <b>${compo}</b> composants, pas de carte</span></li><li>${ICO.lueur}<span>De l’XP pour toute l’équipe</span></li>`;
+  if (c.prise === 'cargaison') return `<li>${ICO.composants}<span>Cargaison : <b>${compo}</b> minerai, pas de carte</span></li><li>${ICO.lueur}<span>De l’XP pour toute l’équipe</span></li>`;
   const carte = c.rang === 'grande'
     ? (c.prise === 'or' ? `Prise d’or : 3 cartes des ${lg} au choix, la première en <b class="m-or">or</b>` : `3 cartes des ${lg} au choix, la première ${'<b class="m-argent">argent</b>'} au moins`)
     : c.prise === 'choix' ? `1 carte ${metal} au choix parmi 3, une par lignée` : `1 carte ${metal} des ${lg}`;
-  return `<li>${ICO.cartes}<span>${carte}</span></li><li>${ICO.composants}<span><b>${compo}</b> composants, et de l’XP pour toute l’équipe</span></li>`;
+  return `<li>${ICO.cartes}<span>${carte}</span></li><li>${ICO.composants}<span><b>${compo}</b> minerai, et de l’XP pour toute l’équipe</span></li>`;
 }
 
 /** L'étiquette de la prise sur la tuile (la prise « lignée » montre le nom de la lignée, dans sa couleur) */
@@ -142,16 +142,15 @@ export function htmlMarees(e: EcranDistrict): string {
   const complet = equipe.every(Boolean);
   const taux = tauxContrat(j, c.def, equipe, c.indices);
   const occupe = !!m.contrat;
-  const assez = j.energie >= r.energie;
   const escouade = (j.escouade ?? []).filter((p) => equipe.includes(p));
   h += `<div class="mr-depart">`
     + `<div class="mr-taux" style="--t:${taux / 100}" role="img" aria-label="${taux} % de chances de réussir"><span class="mr-anneau"></span><b>${taux}<small>%</small></b><span>de chances</span></div>`
     + `<div class="mr-infos">`
     + (c.indices ? `<span class="mr-indice">${ICO.lueur}${c.indices} Indice${c.indices > 1 ? 's' : ''} · +${c.indices * CONTRAT.indice} %</span>` : '')
-    + `<small>${ICO.chrono}${r.heures} h en mer · un échec rapporte ${Math.round(CONTRAT.partEchec * 100)} % des composants, toute l’XP et un Indice (+${CONTRAT.indice} %)</small>`
+    + `<small>${ICO.chrono}${r.heures} h en mer · un échec rapporte ${Math.round(CONTRAT.partEchec * 100)} % du minerai, toute l’XP et un Indice (+${CONTRAT.indice} %)</small>`
     + (escouade.length ? `<small class="mr-alerte">${escouade.map((p) => echap(porteurDef(p).nom)).join(' et ')} ne pourr${escouade.length > 1 ? 'ont' : 'a'} pas descendre avant le retour de la gabare.</small>` : '')
     + `<div class="mr-boutons"><button type="button" class="btn sec" data-action="maree-conseil">Meilleure équipe</button>`
-    + `<button type="button" class="btn prim" data-action="maree-partir" data-id="${c.id}"${complet && !occupe && assez ? '' : ' disabled'}>Embarquer${prix('energie', r.energie, assez)}</button></div>`
+    + `<button type="button" class="btn prim" data-action="maree-partir" data-id="${c.id}"${complet && !occupe ? '' : ' disabled'}>Embarquer</button></div>`
     + (occupe ? `<small class="aide">La gabare est en mer : un contrat à la fois.</small>` : !complet ? `<small class="aide">Il manque un Porteur libre : libère-en un d’un bâtiment.</small>` : '')
     + `</div></div></article>`;
   return h + `</section>`;

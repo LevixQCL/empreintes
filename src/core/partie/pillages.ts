@@ -16,7 +16,7 @@ import { nouvelleExpedition } from '../expedition';
 const butinCombat = (strate: number, _index: 0) => Math.round(6 * (1 + 0.25 * (strate - 1)));
 import { graine, tireur } from '../rng';
 import type { Lignee } from '../types';
-import { CONFIANCE, XP, facteurXp, energieParHeure, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureAuRetour, type Jeu, type Resultat } from './etat';
+import { CONFIANCE, XP, facteurXp, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, payerRatelier, remonter as remonterDescente, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 
@@ -24,8 +24,8 @@ export const PILLAGE = {
   /** jetons de pillage : 5 au plus, un revient toutes les 4 h 48 (5 par jour) ; rien ne se perd pendant l'absence */
   jetonsMax: 5,
   rechargeMs: (24 * 3_600_000) / 5,
-  /** un jeton de plus contre de l'énergie (idée de Luc, 31 octobre 2026) : 4 h de production du Générateur, 2 fois par jour au plus */
-  achatHeures: 4,
+  /** un jeton de plus contre des cristaux (idée de Luc, 31 octobre 2026 ; prix fixe depuis le 9 novembre 2026), 2 fois par jour au plus */
+  jetonCristaux: 30,
   achatsJour: 2,
   /** les pillages s'ouvrent après le gardien de −3 (2 novembre 2026, Bryan : « par étapes douces » ; avant, dès −1) ;
    *  le Port et ses missions en mer, eux, ouvrent toujours après −1 (`strateDuPort`) */
@@ -288,7 +288,8 @@ export interface PillageEnCours {
 }
 
 /** Ce que coûte un jeton de pillage en énergie : quelques heures de production du Générateur, arrondi à la dizaine */
-export const coutJeton = (j: Jeu) => Math.max(60, Math.round((energieParHeure(j) * PILLAGE.achatHeures) / 10) * 10);
+/** Un jeton de plus : un prix fixe en cristaux (9 novembre 2026) */
+export const coutJeton = (_j: Jeu) => PILLAGE.jetonCristaux;
 
 /** Les jetons qu'on peut encore acheter aujourd'hui */
 export function achatsRestants(j: Jeu, now: number): number {
@@ -304,7 +305,7 @@ export function acheterJeton(j: Jeu, now: number): Resultat {
   if (e.jetons >= PILLAGE.jetonsMax) return non('Tous tes jetons sont déjà là.');
   if (achatsRestants(j, now) < 1) return non(`Déjà ${PILLAGE.achatsJour} jetons achetés aujourd’hui : reviens demain.`);
   const cout = coutJeton(j);
-  if (j.energie < cout) return non(`Il faut ${cout} énergie pour armer une barque de plus.`);
+  if (j.energie < cout) return non(`Il faut ${cout} cristaux pour armer une barque de plus.`);
   j.energie -= cout;
   const jour = jourDe(now);
   e.achats = { jour, n: (e.achats?.jour === jour ? e.achats.n : 0) + 1 };
@@ -386,8 +387,8 @@ export function remonterPillage(j: Jeu, now: number): RetourPillage | null {
   }
   j.expedition = null;
   log(j, victoire
-    ? `Pillage réussi à ${pi.nom} : +${gain} composants${pi.vol ? `, dont ${pi.vol} pris à son coffre` : ''}.`
-    : `Pillage repoussé à ${pi.nom}.${perte ? ` L’escouade laisse ${perte} composants de son coffre.` : ''}`);
+    ? `Pillage réussi à ${pi.nom} : +${gain} minerai${pi.vol ? `, dont ${pi.vol} pris à son coffre` : ''}.`
+    : `Pillage repoussé à ${pi.nom}.${perte ? ` L’escouade laisse ${perte} minerai de son coffre.` : ''}`);
   return { nom: pi.nom, victoire, gain, perte };
 }
 
@@ -415,14 +416,14 @@ export function subirPillages(j: Jeu, subis: PillageSubi[]): string[] {
       etat.coffre -= pris;
       j.composants -= pris;
       noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: false, composants: -pris, le: s.le });
-      l.push(`${s.nom} a pillé ton district${pris ? ` et pris ${pris} composants de ton coffre` : ''}.`);
+      l.push(`${s.nom} a pillé ton district${pris ? ` et pris ${pris} minerai de ton coffre` : ''}.`);
     } else {
       const gagne = Math.min(Math.max(0, Math.floor(s.perte)), plafond);
       etat.coffre += gagne;
       j.composants += gagne;
       noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: true, composants: gagne, le: s.le });
       const venus = confier(j, CONFIANCE.defense, 'defense');
-      l.push(`Ta garnison a repoussé ${s.nom}${gagne ? ` : +${gagne} composants laissés dans ton coffre` : ''}.${venus ? ` Le quartier l’a vu : ${venus > 1 ? `${venus} familles te rejoignent` : 'une famille te rejoint'}.` : ' Le quartier l’a vu.'}`);
+      l.push(`Ta garnison a repoussé ${s.nom}${gagne ? ` : +${gagne} minerai laissé dans ton coffre` : ''}.${venus ? ` Le quartier l’a vu : ${venus > 1 ? `${venus} familles te rejoignent` : 'une famille te rejoint'}.` : ' Le quartier l’a vu.'}`);
     }
   }
   // on ne garde que deux jours d'attaques : assez pour le bouclier et pour ne rien compter deux fois

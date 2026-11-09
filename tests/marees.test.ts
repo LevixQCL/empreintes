@@ -83,7 +83,7 @@ describe('Contrats de marée (31 octobre 2026)', () => {
     const eq = equipeConseillee(j, c.def) as string[];
     const energie = j.energie;
     expect(envoyerContrat(j, c.id, eq, T0).ok).toBe(true);
-    expect(j.energie).toBe(energie - MAREES.montante.energie);
+    expect(j.energie).toBe(energie); // gratuit depuis le 9 novembre 2026
     expect(j.missions).toHaveLength(0);
     for (const id of eq) { expect(enMission(j, id)).toBe(true); expect(raisonHorsContrat(j, id)).toBeTruthy(); }
     // un seul contrat à la fois, et l'équipe ne peut pas descendre

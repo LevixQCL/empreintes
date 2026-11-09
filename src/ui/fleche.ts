@@ -82,7 +82,7 @@ function fleche(j: Jeu, f: EtatFleche, top: GardienQuai[]): string {
 
 const recompense = (q: number) => {
   const r = ASCENSION.recompenses[q];
-  return r ? `${ICO.composants}${ent(r.composants)} ${ICO.eclats}${r.eclats}` : '';
+  return r ? `${ICO.energie}${ent(r.composants)} ${ICO.eclats}${r.eclats}` : '';
 };
 
 /** Les gardiens du prochain quai, les chances, et l'enjeu */
@@ -111,7 +111,7 @@ function assaut(j: Jeu, quai: number, record: number): string {
 
 const gage = (q: number) => {
   const g = gageJour(q);
-  return `${ICO.composants}${ent(g.composants)}${g.eclats ? ` ${ICO.eclats}${g.eclats}` : ''}`;
+  return `${ICO.energie}${ent(g.composants)}${g.eclats ? ` ${ICO.eclats}${g.eclats}` : ''}`;
 };
 
 const visages = (ids: string[]) => `<ul class="fl-gardiens">${ids.map((id) => `<li style="--c:${COULEUR[porteurDef(id).lignee]}">${avatar(id, 40)}<span><strong>${echap(porteurDef(id).nom)}</strong><small>${NOM_LIGNEE[porteurDef(id).lignee]}</small></span></li>`).join('')}</ul>`;
@@ -238,7 +238,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', recit = false): stri
       + etape(ICO.atk, 'Un combat par quai', 'Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.')
       + etape(ICO.monter, 'Vite en bas, lentement en haut', `Une victoire fait monter de ${FLECHE.montee[0]!.quais} quais jusqu’au ${FLECHE.montee[0]!.jusqua}, de ${FLECHE.montee[1]!.quais} jusqu’au ${FLECHE.montee[1]!.jusqua}, puis d’un seul.`)
       + etape(ICO.descendre, 'Une défaite fait redescendre', 'D’autant de quais, mais jamais sous le dernier quai gravé que tu as atteint.')
-      + etape(ICO.cristal, 'Les quais gravés', `${FLECHE.paliers.join(', ')} : chacun donne des composants et des Éclats, une seule fois. Ton record compte au Grand Tableau.`)
+      + etape(ICO.cristal, 'Les quais gravés', `${FLECHE.paliers.join(', ')} : chacun donne des cristaux et des Éclats, une seule fois. Ton record compte au Grand Tableau.`)
       + `</ul>`, ICO.aide)
 
     + replie('La garde des quais · compétition', `<p>Les Hauts préfèrent payer un directeur qui tient bon qu’un gardien de location. Les meilleurs directeurs se disputent les quais : le but, tenir le plus haut.</p><ul class="fl-pr-etapes">`

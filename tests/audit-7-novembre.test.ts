@@ -106,7 +106,7 @@ describe('Audit du 7 novembre : Accord', () => {
 
 // Audit de l'économie du 7 novembre 2026 (scripts/audit-economie.ts) : ce qui était perdu, inutile ou en mur
 import { nouveauJeu, tick, ouvrirArchive, acheterEclat, eclatsAuComptoir, COMPTOIR, ARCHIVE, CREUSEURS, chanceCreuseurFouille,
-  noyauRequis, stockage, energieParHeure, pvMaxCombat, partPvClinique } from '../src/core/jeu';
+  noyauRequis, pvMaxCombat, partPvClinique } from '../src/core/jeu';
 import { EPREUVES, forceEpreuve } from '../src/core/partie/descentes';
 import { forceStrate } from '../src/core/expedition';
 import { PROFILS, mediane, simulerParcours } from '../src/core/parcours';
@@ -129,28 +129,21 @@ describe('Audit du 7 novembre : économie', () => {
     expect(ouvrirArchive(j).ok).toBe(false);
   });
 
-  it('le Comptoir vend quelques Éclats par jour contre des composants', () => {
+  it('le Comptoir vend quelques Éclats par jour contre des cristaux', () => {
     const j = partie();
     j.batiments.comptoir = 6;
-    j.composants = 10_000;
+    j.energie = 10_000;
     const max = eclatsAuComptoir(j).max;
-    // 8 novembre 2026 : de 1 à 6 par jour selon le niveau (4 au niveau 6), à 500, 700 puis 1 000 composants
+    // 8 novembre 2026 : de 1 à 6 par jour selon le niveau (4 au niveau 6) ; 9 novembre 2026 : 300, 450 puis 650 cristaux
     expect(max).toBe(4);
     const e0 = j.eclats;
     for (let k = 0; k < max; k++) expect(acheterEclat(j, T0).ok).toBe(true);
     expect(acheterEclat(j, T0).ok).toBe(false);
     expect(j.eclats).toBe(e0 + max);
-    expect(j.composants).toBe(10_000 - (500 + 700 + 1000 + 1000));
+    expect(j.energie).toBe(10_000 - (300 + 450 + 650 + 650));
     expect(COMPTOIR.eclats.parJour[1]).toBe(1);
     expect(COMPTOIR.eclats.parJour[10]).toBe(6);
     expect(acheterEclat(j, T0 + JOUR).ok).toBe(true);
-  });
-
-  it('la réserve d’énergie tient au moins une journée de production', () => {
-    const j = partie();
-    j.batiments.generateur = 10;
-    j.batiments.noyau = 6;
-    expect(stockage(j)).toBeGreaterThanOrEqual(energieParHeure(j) * 24 - 100);
   });
 
   it('la Clinique donne des PV max à partir du niveau 4', () => {
@@ -216,21 +209,13 @@ describe('Audit du 7 novembre : le Fond', () => {
   });
 });
 
-describe('Audit du 8 novembre : l’énergie en trop', () => {
-  it('le Générateur condense des Éclats à partir du niveau 4, de 1 à 3 par jour', async () => {
-    const { nouveauJeu, cristalliser, cristallisationsMax, CRISTALLISEUR } = await import('../src/core/jeu');
+describe('Économie à cristal unique (9 novembre 2026)', () => {
+  it('plus rien ne se perd : tout le minerai finit en cristaux, même après des jours d’absence', async () => {
+    const { nouveauJeu, tick } = await import('../src/core/jeu');
     const j = nouveauJeu(0, 1);
-    j.batiments.generateur = 3;
-    j.energie = 10_000;
-    expect(cristalliser(j, 0).ok).toBe(false);
-    j.batiments.generateur = 4;
-    expect(cristallisationsMax(j)).toBe(1);
-    j.batiments.generateur = 9;
-    expect(cristallisationsMax(j)).toBe(3);
-    const e0 = j.eclats;
-    for (let k = 0; k < 3; k++) expect(cristalliser(j, 0).ok).toBe(true);
-    expect(cristalliser(j, 0).ok).toBe(false);
-    expect(j.eclats).toBe(e0 + 3);
-    expect(j.energie).toBe(10_000 - 3 * CRISTALLISEUR.energie);
+    j.batiments.generateur = 6; j.energie = 0; j.composants = 3000;
+    tick(j, j.dernierTick + 7 * 86_400_000);
+    expect(j.composants).toBeLessThan(1);
+    expect(Math.round(j.energie)).toBe(3000);
   });
 });

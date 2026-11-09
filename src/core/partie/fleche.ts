@@ -243,7 +243,7 @@ export function remonterFleche(j: Jeu, now: number): RetourFleche | null {
       if (q > f.quai || f.recus.includes(q)) continue;
       const r = ASCENSION.recompenses[q] ?? { composants: 0, eclats: 0 };
       f.recus.push(q);
-      j.composants += r.composants;
+      j.energie += r.composants; // récompense : déjà taillée (9 novembre 2026)
       j.eclats += r.eclats;
       // un quai gravé, c'est de la place gagnée sur les îles (30 octobre 2026)
       confier(j, CONFIANCE.quaiGrave, 'fleche', now);
@@ -346,7 +346,7 @@ export function recevoirGage(j: Jeu, now: number): { composants: number; eclats:
   if (!r.composants && !r.eclats) return r;
   const plein = now - g.gageLe >= ASCENSION.caisseJours * 86_400_000;
   g.gageLe = plein ? now : g.gageLe + Math.floor((r.composants / d.composants) * 86_400_000);
-  j.composants += r.composants;
+  j.energie += r.composants; // versé par les Hauts : déjà taillé
   j.eclats += r.eclats;
   return r;
 }
@@ -379,12 +379,12 @@ export function subirAssauts(j: Jeu, assauts: AssautSubi[]): string[] {
     if (!a.victoire) {
       g.repousses++;
       const bonus = Math.round(gageJour(g.quai).composants * ASCENSION.partDefense);
-      j.composants += bonus;
-      l.push(`Ton escouade a tenu le quai ${g.quai} face à ${a.nom} : les Hauts versent +${bonus} composants.`);
+      j.energie += bonus;
+      l.push(`Ton escouade a tenu le quai ${g.quai} face à ${a.nom} : les Hauts versent +${bonus} cristaux.`);
     } else {
       const r = recevoirGage(j, Math.max(g.gageLe, a.le));
       delete f.garde;
-      l.push(`${a.nom} t’a pris le quai ${g.quai}.${r.composants ? ` Gage versé : +${r.composants} composants${r.eclats ? `, +${r.eclats} Éclats` : ''}.` : ''} Ta montée, elle, ne bouge pas.`);
+      l.push(`${a.nom} t’a pris le quai ${g.quai}.${r.composants ? ` Gage versé : +${r.composants} cristaux${r.eclats ? `, +${r.eclats} Éclats` : ''}.` : ''} Ta montée, elle, ne bouge pas.`);
     }
   }
   const dernier = recus.reduce((m, r) => Math.max(m, r.le), 0);

@@ -114,8 +114,8 @@ function presentation(e: EcranDistrict, ferme: boolean): string {
     + (ferme ? `<p class="fl-condition">${ICO.verrou}<span><strong>Le Cercle est fermé · vaincs le gardien de la Strate −${J.CERCLE_OUVERTURE}</strong><small>Aucun directeur ne traite avec un district qui n’a pas encore tenu son puits.</small></span></p>` : '')
     + `<ul class="cr-etapes">`
     + `<li>${ICO.ami}<div><strong>Des amis</strong><small>Ajoute un directeur par son nom. Tu vois sa vitrine : ses plus belles cartes, ses doubles, ce qu’il cherche.</small></div></li>`
-    + `<li>${ICO.atk}<div><strong>Des duels</strong><small>Défie un ami en temps réel, avec tes vraies forces ou à armes égales. Tes ${J.CERCLE.duelsSemaine} premières victoires de la semaine contre des amis différents rapportent ${J.CERCLE.recompenseDuel.composants} composants et ${pluriel(J.CERCLE.recompenseDuel.eclats, 'Éclat')}.</small></div></li>`
-    + `<li>${ICO.echange}<div><strong>Des échanges</strong><small>Une carte en double contre une carte du même métal. Ta carte ne part jamais, seulement un exemplaire en double. Fer et cuivre gratuits ; argent et or contre des composants ; jamais la nacre.</small></div></li>`
+    + `<li>${ICO.atk}<div><strong>Des duels</strong><small>Défie un ami en temps réel, avec tes vraies forces ou à armes égales. Tes ${J.CERCLE.duelsSemaine} premières victoires de la semaine contre des amis différents rapportent ${J.CERCLE.recompenseDuel.composants} cristaux et ${pluriel(J.CERCLE.recompenseDuel.eclats, 'Éclat')}.</small></div></li>`
+    + `<li>${ICO.echange}<div><strong>Des échanges</strong><small>Une carte en double contre une carte du même métal. Ta carte ne part jamais, seulement un exemplaire en double. Fer et cuivre gratuits ; argent et or contre des cristaux ; jamais la nacre.</small></div></li>`
     + `</ul>`
     + (ferme ? ''
       : !J.cercleConstruit(j) ? `<button type="button" class="btn prim large" data-action="cercle-batiment">${ICO.marteau}Construire le Cercle</button>`
@@ -256,7 +256,7 @@ function voletDuels(e: EcranDistrict, c: CercleEcran): string {
   let h = `<section class="bloc cr-semaine"><div class="cr-crans" aria-label="${faits} victoire(s) récompensée(s) sur ${J.CERCLE.duelsSemaine} cette semaine">`
     + Array.from({ length: J.CERCLE.duelsSemaine }, (_, i) => `<i class="${i < faits ? 'plein' : ''}">${i < faits ? ICO.ok : ''}</i>`).join('') + `</div>`
     + `<div><strong>${reste ? `Encore ${pluriel(reste, 'victoire')} récompensée${reste > 1 ? 's' : ''} cette semaine` : 'Toutes les victoires de la semaine sont gagnées'}</strong>`
-    + `<small>${J.CERCLE.recompenseDuel.composants} composants et ${pluriel(J.CERCLE.recompenseDuel.eclats, 'Éclat')} par ami différent battu. Bilan : ${pluriel(s.victoires, 'victoire')}, ${pluriel(s.defaites, 'défaite')}.</small></div></section>`;
+    + `<small>${J.CERCLE.recompenseDuel.composants} cristaux et ${pluriel(J.CERCLE.recompenseDuel.eclats, 'Éclat')} par ami différent battu. Bilan : ${pluriel(s.victoires, 'victoire')}, ${pluriel(s.defaites, 'défaite')}.</small></div></section>`;
 
   const recus = c.defisRecus.filter((d) => d.etat === 'envoye');
   if (recus.length) {
@@ -305,7 +305,7 @@ function voletEchanges(e: EcranDistrict, c: CercleEcran): string {
       h += `<div class="cr-prop"><span class="cr-prop-qui"><strong>${echap(p.nomDe)}</strong><small>te propose</small></span>`
         + `<div class="cr-paire">${petiteCarte(j, p.donne, { note: j.collection[p.donne] ? 'tu la reçois' : 'nouvelle pour toi', marque: s.souhaits.includes(p.donne) ? ICO.etoile : '' })}<span class="cr-fleche" aria-label="contre">${ICO.echange}</span>${petiteCarte(j, p.demande, { note: 'ton double' })}</div>`
         + (v.ok ? '' : `<small class="cr-sans">${echap(v.message ?? '')}</small>`)
-        + `<div class="cr-actions"><button type="button" class="btn prim" data-action="cercle-prop-accepter" data-id="${p.id}"${v.ok && !c.occupe ? '' : ' disabled'}>${ICO.ok}Accepter${cout ? ` · ${cout} ${icone('composants')}` : ''}</button>`
+        + `<div class="cr-actions"><button type="button" class="btn prim" data-action="cercle-prop-accepter" data-id="${p.id}"${v.ok && !c.occupe ? '' : ' disabled'}>${ICO.ok}Accepter${cout ? ` · ${cout} ${icone('energie')}` : ''}</button>`
         + `<button type="button" class="btn-sec" data-action="cercle-prop-refuser" data-id="${p.id}">Refuser</button></div></div>`;
     }
     h += `</section>`;
@@ -394,7 +394,7 @@ function feuilleEchange(e: EcranDistrict, c: CercleEcran): string {
   const cout = J.coutEchange(x.recoit);
   h += `<div class="cr-pied">${v && !v.ok ? `<small class="cr-sans">${echap(v.message ?? '')}</small>` : ''}`
     + `<button type="button" class="btn-sec" data-action="cercle-recoit" data-id="">${ICO.retour}Changer</button>`
-    + `<button type="button" class="btn prim" data-action="cercle-proposer"${v?.ok && !c.occupe ? '' : ' disabled'}>${ICO.lancer}Proposer${cout ? ` · ${cout} ${icone('composants')}` : ''}</button></div>`;
+    + `<button type="button" class="btn prim" data-action="cercle-proposer"${v?.ok && !c.occupe ? '' : ' disabled'}>${ICO.lancer}Proposer${cout ? ` · ${cout} ${icone('energie')}` : ''}</button></div>`;
   return h + `</div></section>`;
 }
 

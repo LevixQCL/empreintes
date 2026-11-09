@@ -44,7 +44,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       else if (id === 'colis') {
         const r = J.ouvrirColis(app.jeu);
         resultat(r);
-        if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} composants${r.colis.doublon ? `, un doublon ${deNom(moduleDef(r.colis.doublon).nom)}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
+        if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} cristaux${r.colis.doublon ? `, un doublon ${deNom(moduleDef(r.colis.doublon).nom)}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
       }
       break;
     case 'menu': D.ressource = null; D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; D.guide = null; D.porteur = null; break;
@@ -72,8 +72,6 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     // le Mur des empreintes : ouvrir une famille, confier son souvenir à une carte
     case 'famille': D.famille = D.famille === id ? null : id; break;
     case 'souvenir-confier': if (D.famille && J.confierSouvenir(app.jeu, id, D.famille)) { D.message = 'Le souvenir est gravé dans le journal de la carte.'; sauver(); } break;
-    case 'cristalliser': { const r = J.cristalliser(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
-    case 'convertir': { const r = J.convertir(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     case 'soigner-vite': { const r = J.soignerVite(app.jeu, id); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     case 'acheter': resultat(J.acheter(app.jeu, Number(b.dataset.index ?? -1), Date.now())); break;
     case 'comptoir-renouveler': resultat(J.renouvelerComptoir(app.jeu, Date.now())); break;
@@ -155,7 +153,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'colis': {
       const r = J.ouvrirColis(app.jeu);
       resultat(r);
-      if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} composants${r.colis.doublon ? `, un doublon ${deNom(moduleDef(r.colis.doublon).nom)}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
+      if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} cristaux${r.colis.doublon ? `, un doublon ${deNom(moduleDef(r.colis.doublon).nom)}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
       break;
     }
     case 'ouvrir-archive': resultat(J.ouvrirArchive(app.jeu)); break;
@@ -222,13 +220,13 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     }
     case 'fleche-gage': {
       const g = J.recevoirGage(app.jeu, Date.now());
-      if (g.composants || g.eclats) { D.message = `Gage du quai : +${g.composants} composants${g.eclats ? `, +${g.eclats} Éclat${g.eclats > 1 ? 's' : ''}` : ''}.`; sauver(); }
+      if (g.composants || g.eclats) { D.message = `Gage du quai : +${g.composants} cristaux${g.eclats ? `, +${g.eclats} Éclat${g.eclats > 1 ? 's' : ''}` : ''}.`; sauver(); }
       break;
     }
     case 'fleche-quitter': {
       const q = app.jeu.fleche?.garde?.quai;
       const g = J.quitterQuai(app.jeu, Date.now());
-      if (g) { D.message = `L’escouade quitte le quai ${q}.${g.composants ? ` Gage versé : +${g.composants} composants${g.eclats ? `, +${g.eclats} Éclats` : ''}.` : ''}`; sauver(); await synchroGarde(); lireGardiensEnLigne(true); }
+      if (g) { D.message = `L’escouade quitte le quai ${q}.${g.composants ? ` Gage versé : +${g.composants} cristaux${g.eclats ? `, +${g.eclats} Éclats` : ''}.` : ''}`; sauver(); await synchroGarde(); lireGardiensEnLigne(true); }
       break;
     }
     case 'fleche-aide': D.flecheAide = true; window.scrollTo(0, 0); break;

@@ -11,7 +11,7 @@ import { vestigeDef } from '../core/explorer';
 import { faceCarte } from './carte';
 import { CHAPITRES, chapitreOuvert } from '../core/chroniques';
 import { blocMur } from './mur';
-import { CERCLE_OUVERTURE, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, nbFoyers, nomConfiance, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, creuseursRequis, energieParHeure, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, stockage, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
+import { CERCLE_OUVERTURE, MAREES, ACCORD_OUVERT, ARCHIVE, CONFIANCE, NOMS_CONFIANCE, nbFoyers, nomConfiance, semaineDe, type SourceHabitants, niveauConfiance, cartesNouvelles, chapitresALire, porteursNouveaux, creuseursRequis, brutEnAttente, logementCreuseurs, manquePourCreuser, objectifCourant, rapportALire, strateVaincue, PILLAGE, flecheOuverte, type Jeu, type RapportMission } from '../core/jeu';
 import type { Lignee } from '../core/types';
 import { miniature, portrait } from './art';
 import { feuilleGuide, trouveesDe } from './guide';
@@ -195,9 +195,10 @@ export function prix(icone: Icone, v: number, assez = true, titre = ''): string 
   return `<span class="prix ${icone}${assez ? '' : ' manque'}"${titre ? ` title="${titre}"` : ''}>${ICO[icone]}${ent(v)}</span>`;
 }
 
+/** Un prix en cristaux (et Éclats) : depuis le 9 novembre 2026, `energie` et `composants` d'un coût se paient tous deux en cristaux */
 export function couts(j: Jeu, c: { energie?: number; composants?: number; eclats?: number }): string {
-  return (c.energie ? prix('energie', c.energie, j.energie >= c.energie, 'énergie') : '')
-    + (c.composants ? prix('composants', c.composants, j.composants >= c.composants, 'composants') : '')
+  const cr = (c.energie ?? 0) + (c.composants ?? 0);
+  return (cr ? prix('energie', cr, j.energie >= cr, 'cristaux') : '')
     + (c.eclats ? prix('eclats', c.eclats, j.eclats >= c.eclats, 'Éclats') : '');
 }
 
@@ -205,14 +206,12 @@ export function couts(j: Jeu, c: { energie?: number; composants?: number; eclats
 type Ressource = 'energie' | 'composants' | 'eclats' | 'strate' | 'confiance' | 'butin';
 
 function hud(j: Jeu, ouverte: Ressource | null = null): string {
-  const max = stockage(j);
-  const plein = j.energie >= max;
+  const taille = Math.floor(j.composants);
   const b = (r: Ressource, extra: string, label: string) =>
     `<button type="button" class="res ${r}${extra}" data-action="ressource" data-id="${r}" data-gain="${r}" aria-expanded="${ouverte === r}" aria-label="${label}">`;
   return `<header class="hud" aria-label="Ressources">`
-    + b('energie', plein ? ' plein' : '', `Énergie : ${ent(j.energie)} sur ${ent(max)}. Détails`) + `${icone('energie')}<span class="v">${ent(j.energie)}</span>`
-    + `<span class="jauge-res"><i style="width:${Math.min(100, (100 * j.energie) / Math.max(1, max))}%"></i></span><small>${plein ? 'plein' : `+${energieParHeure(j)}/h`}</small></button>`
-    + b('composants', '', `Composants : ${ent(j.composants)}. Détails`) + `${icone('composants')}<span class="v">${ent(j.composants)}</span><small>comp.</small></button>`
+    + b('energie', '', `Cristaux : ${ent(j.energie)}${taille ? `, et ${ent(taille)} de minerai en taille au Générateur` : ''}. Détails`) + `${icone('energie')}<span class="v">${ent(j.energie)}</span>`
+    + `<small${taille ? ' class="taille"' : ''}>${taille ? `${ICO.composants}+${ent(taille)}` : 'cristaux'}</small></button>`
     + b('eclats', '', `Éclats : ${ent(j.eclats)}. Détails`) + `${icone('eclats')}<span class="v">${ent(j.eclats)}</span><small>Éclats</small></button>`
     + b('strate', ' abysse', `Strate −${j.strate}. Détails`) + `${icone('strate')}<span class="v">−${j.strate}</span><small>Strate</small></button>`
     + roueConfiance(j, b)
@@ -263,36 +262,27 @@ function blocNuit(j: Jeu): string {
 /** La fiche d'une ressource : ce que c'est, ce qu'on a, comment en gagner, à quoi elle sert */
 function feuilleRessource(j: Jeu, r: Ressource | null | undefined, famille: string | null = null): string {
   if (!r) return '';
-  const max = stockage(j);
   const ligne = (ico: Icone, titre: string, texte: string) => `<li>${ICO[ico] ?? ''}<span><strong>${titre}</strong><small>${texte}</small></span></li>`;
   let surtitre = '', titre = '', resume = '', gagner: string[] = [], servir: string[] = [], etat = '';
-  if (r === 'energie') {
-    surtitre = 'RESSOURCE'; titre = 'L’énergie';
-    resume = 'Le courant du district. Elle se produit toute seule, même quand tu ne joues pas, jusqu’à ce que le stockage soit plein.';
-    etat = `<b>${ent(j.energie)}</b> / ${ent(max)}<small>${j.energie >= max ? 'Stockage plein : la production est perdue. Le convertisseur du Générateur en fait des composants' : `+${energieParHeure(j)} par heure`}</small>`;
-    gagner = [ligne('boost', 'Le Générateur', 'Produit l’énergie chaque heure. Un Porteur posté dessus produit davantage.'),
-      ligne('tour', 'La Tour du Noyau', 'Chaque niveau agrandit le stockage.'),
-      ligne('cartes', 'Les premiers objectifs', 'Le premier en rapporte.')];
-    servir = [ligne('marteau', 'Améliorer les bâtiments', 'C’est la dépense principale de chaque chantier.'),
-      ligne('marteau', 'Faire tourner la Forge', 'Chaque carte refabriquée consomme de l’énergie, plus pour les métaux rares.'),
-      ligne('monter', 'Entraîner un Porteur', 'À la Tour du Noyau : une séance = un niveau, payée en énergie au lancement, à relancer ensuite.'),
-      ligne('porteurs', 'Équiper les missions', 'Vivres et lampes : un peu d’énergie au départ.'),
-      ligne('boost', 'Le convertisseur du Générateur', 'L’énergie en trop devient des composants : 10 par lot de 100, puis moins, 20 lots par jour au plus.'),
-      ligne('soin', 'Les soins intensifs', 'À la Clinique, effacer l’Usure d’un Porteur tout de suite.')];
-  } else if (r === 'composants') {
-    surtitre = 'RESSOURCE'; titre = 'Les composants';
-    resume = 'Les pièces récupérées dans les Strates : métal, mécanismes, cristaux brisés. On les rapporte des expéditions.';
-    etat = `<b>${ent(j.composants)}</b><small>composants en réserve</small>`;
-    gagner = [ligne('strate', 'Les expéditions', 'Chaque combat gagné, chaque cache et chaque salle d’archives en rapporte. Fuir en garde les trois quarts, une défaite la moitié.'),
-      ligne('cristal', 'Les fouilles ciblées', 'Une descente courte qui peut viser les composants.'),
-      ligne('cartes', 'Le ravitaillement du jour', 'Quelques composants chaque jour.'),
-      ligne('porteurs', 'Les missions en mer', 'Un Porteur envoyé depuis le Port vers les ruines noyées en rapporte à son retour.'),
-      ligne('recycler', 'Recycler des doublons', 'Chaque doublon recyclé rapporte quelques composants.'),
-      ligne('coffre', 'Le Butin de la semaine', 'Chaque lundi, selon les paliers atteints.')];
-    servir = [ligne('marteau', 'Améliorer les bâtiments', 'Avec l’énergie.'),
-      ligne('cartes', 'Acheter au Comptoir', 'Des cartes précises, à prix fixe, renouvelées chaque jour (et une fois de plus contre des composants).'),
-      ligne('cartes', 'Monter une carte de niveau', 'Avec ses doublons.'),
-      ligne('marteau', 'Refabriquer une carte à la Forge', 'De 25 composants (fer) à 1 250 (nacre).')];
+  // 9 novembre 2026 : l'économie à cristal unique. Une seule fiche : les cristaux, et le minerai qui attend d'être taillé
+  if (r === 'energie' || r === 'composants') {
+    const t = brutEnAttente(j);
+    surtitre = 'LA MONNAIE DU DISTRICT'; titre = 'Les cristaux';
+    resume = 'La pierre bleue des profondeurs, taillée par le Générateur. Tout ce que tu rapportes en jouant arrive en minerai ; le Générateur le taille en cristaux, même quand tu ne joues pas. Rien ne se perd. Les cristaux paient tout.';
+    etat = `<b>${ent(j.energie)}</b> cristaux<small>${t.brut ? `+${ent(t.brut)} de minerai en taille · tout taillé dans ${t.heures} h` : 'Aucun minerai en attente : descends ou envoie une barque pour en rapporter'}</small>`;
+    gagner = [ligne('strate', 'Les expéditions', 'Chaque combat gagné, chaque cache et chaque salle d’archives rapportent du minerai. Fuir en garde les trois quarts, une défaite la moitié.'),
+      ligne('porteurs', 'Les missions en mer et les marées', 'Les barques reviennent chargées des ruines noyées.'),
+      ligne('cristal', 'Les fouilles ciblées', 'Une descente courte qui peut viser le minerai.'),
+      ligne('recycler', 'Recycler des doublons', 'Chaque doublon recyclé rend un peu de minerai.'),
+      ligne('boost', 'Le Générateur taille le minerai', 'Plus il est haut, plus il taille vite. Un Augmenté posté dessus taille deux fois plus vite. Dès le niveau 4, il y recueille aussi quelques Éclats.'),
+      ligne('coffre', 'Les récompenses arrivent taillées', 'Ravitaillement du jour, Butin de la semaine, objectifs, gardiens, Flèche : des cristaux tout prêts.')];
+    servir = [ligne('marteau', 'Améliorer les bâtiments', 'La plus grosse dépense ; les derniers niveaux demandent aussi des Éclats.'),
+      ligne('cartes', 'Monter les cartes de niveau', 'Avec leurs doublons.'),
+      ligne('cartes', 'Acheter au Comptoir', 'Des cartes précises à prix fixe, et quelques Éclats chaque jour.'),
+      ligne('marteau', 'Refabriquer une carte à la Forge', 'De 27 cristaux (fer) à 1 330 (nacre).'),
+      ligne('monter', 'Entraîner un Porteur', 'À la Tour du Noyau : une séance = un niveau, payée au lancement.'),
+      ligne('soin', 'Les soins intensifs', 'À la Clinique : 1 cristal par point d’Usure effacé tout de suite.'),
+      ligne('grappin', 'Un jeton de pillage de plus', 'Deux fois par jour au plus.')];
   } else if (r === 'eclats') {
     surtitre = 'RESSOURCE RARE'; titre = 'Les Éclats';
     resume = 'Des fragments de cristal chargés d’empreintes. Rares, ils ne se trouvent qu’en profondeur ou en récompense.';
@@ -333,7 +323,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined, famille: stri
       ligne('marteau', 'Finir un chantier', `+${ARCHIVE.points.chantier} points.`),
       ligne('cartes', 'Remplir l’objectif du jour', `+${ARCHIVE.points.quotidien} points.`)];
     const d = ARCHIVE.paliers;
-    servir = [ligne('coffre', `Cran 1 · ${d[0]} points`, `${ARCHIVE.composants} composants et une carte au choix parmi trois.`),
+    servir = [ligne('coffre', `Cran 1 · ${d[0]} points`, `${ARCHIVE.composants} cristaux et une carte au choix parmi trois.`),
       ligne('cristal', `Cran 2 · ${d[1]} points`, `${ARCHIVE.eclatsPalier2} Éclats en plus.`),
       ligne('cartes', `Cran 3 · ${d[2]} points`, 'Une deuxième carte au choix, dont au moins une en argent.'),
       ligne('boost', `Cran 4 · ${d[3]} points`, `Une troisième carte au choix avec de l’argent, et ${ARCHIVE.eclatsPalier4} Éclats de plus. Pour les plus assidus.`)];
@@ -461,7 +451,7 @@ const METAL = (r: string) => r.charAt(0).toUpperCase() + r.slice(1);
 /** Ce qu'une mission a rapporté, en pastilles (fenêtre du rapport et historique de la Tour) */
 export function gainsRapport(r: RapportMission): string {
   return `<ul class="rm-gains">`
-    + `<li>${ICO.composants}<b>+${r.composants}</b><small>composants</small></li>`
+    + `<li>${ICO.composants}<b>+${r.composants}</b><small>minerai</small></li>`
     + `<li>${ICO.monter}<b>+${r.xp}</b><small>XP${r.niveau ? ` · niveau ${r.niveau}` : ''}</small></li>`
     + r.cartes.map((c) => `<li class="rm-carte${c.nouvelle ? ' nouvelle' : ''}">${ICO.cartes}<b>${echap(moduleDef(c.id).nom)}</b><small>${METAL(moduleDef(c.id).rarete)}${c.nouvelle ? ' · nouvelle' : ' · doublon'}</small></li>`).join('')
     + (r.creuseurs ? `<li>${ICO.ouvrier}<b>+${r.creuseurs}</b><small>creuseur${r.creuseurs > 1 ? 's' : ''}</small></li>` : '')

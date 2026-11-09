@@ -182,7 +182,7 @@ function ongletDeck(): string {
     + `<li>Chaque carte <b>pèse</b> selon sa force (le chiffre de glace sur sa tuile). Un Porteur porte une <b>Charge</b> de ${chargeNiveau(1)} au niveau 1, +${CHARGE.parNiveau} par niveau : une très grosse carte laisse moins de place aux autres.</li>`
     + `<li>Un Porteur combat toujours avec ses <b>${DISTRICT.cartesMax} places</b> : une place laissée vide se pioche comme une carte et <b>ne se joue pas</b> (sauf dans les Épreuves).</li>`
     + `<li>Une carte n’a qu’<b>un Porteur à la fois</b>. Un Porteur ne porte pas deux fois la même carte, même dans deux métaux.</li>`
-    + `<li>Les cartes communes du <b>Râtelier</b> de l’escouade (2 à 4, choisies au district) s’ajoutent au deck, si l’énergie du départ est payée.</li>`
+    + `<li>Les cartes communes du <b>Râtelier</b> de l’escouade (2 à 4, choisies au district) s’ajoutent au deck, si les cristaux du départ sont payés.</li>`
     + `<li>Changer d’escouade change le deck. Un Porteur au travail (ou à l’entraînement) peut descendre : il quitte son poste, qui reste vacant.</li>`
     + `<li>Un Porteur en expédition ou en mission garde ses cartes jusqu’à son retour.</li>`
     + `<li>En combat, les cartes d’un Porteur <b>à terre</b> s’éteignent : elles restent dans le deck un peu moins fortes (−15 %) et sans effet, et leur Fréquence compte toujours pour les suites. Il se relève à un campement.</li>`
@@ -202,7 +202,7 @@ function ongletDeck(): string {
     + idee('<b class="g-etoile">∗</b>', 'Des jokers pour les suites', 'Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.')
     + idee(ICO_TRIANGLE, 'Pense au triangle', `Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : +${Math.round((REGLES.bonusLignee - 1) * 100)} % de dégâts. Les ennemis en profitent aussi contre tes Porteurs. Le dessin est dans « Lire une carte ».`)
     + idee(ICO.repiocher, 'Un deck court tourne plus vite', `Un Porteur peut porter moins de ${DISTRICT.cartesMax} cartes : tes meilleures reviennent plus souvent en main, mais tu couvres moins de Fréquences.`)
-    + idee(ICO.monter, 'Fais monter tes favorites', `Doublons et composants : chaque niveau ajoute au moins +1 de force (une carte de 10 passe à 19 au niveau 10). Confie-les aux Porteurs que tu emmènes le plus souvent.`)
+    + idee(ICO.monter, 'Fais monter tes favorites', `Doublons et cristaux : chaque niveau ajoute au moins +1 de force (une carte de 10 passe à 19 au niveau 10). Confie-les aux Porteurs que tu emmènes le plus souvent.`)
     + `</ul></section>`;
   return h;
 }
@@ -256,7 +256,7 @@ function ongletCarte(): string {
     + `<li>En fer, une carte n’a pas d’effet. Il s’ouvre en cuivre ; en or et en nacre, ses chiffres montent.</li>`
     + `<li>Un métal rare demande un Porteur expérimenté : argent au niveau ${NIVEAU_METAL.argent}, or au niveau ${NIVEAU_METAL.or}, nacre au niveau ${NIVEAU_METAL.nacre}. Trouvée plus tôt, la carte t’attend dans ta collection.</li>`
     + `<li>Deux métaux d’une carte sont deux cartes à part, chacune avec ses doublons et son niveau.</li>`
-    + `<li>Doublons et composants font monter une carte : chaque niveau ajoute environ un dixième de sa force de départ, jamais moins de +1, jusqu’au niveau ${COLLECTION.niveauMax}. Au maximum, la carte est <b>maîtrisée</b> : un liseré de lumière parcourt son cadre.</li></ul></section>`;
+    + `<li>Doublons et cristaux font monter une carte : chaque niveau ajoute environ un dixième de sa force de départ, jamais moins de +1, jusqu’au niveau ${COLLECTION.niveauMax}. Au maximum, la carte est <b>maîtrisée</b> : un liseré de lumière parcourt son cadre.</li></ul></section>`;
 
   // les lignées
   const plages = plageFrequences;
@@ -366,6 +366,6 @@ function ongletEffets(trouvees: ReadonlySet<string>): string {
   // le paquetage du district
   h += `<section class="bloc">${titre(ICO.district, 'Le Râtelier de l’escouade')}<div class="g-district">`
     + GESTES_SPECIAUX.map((g) => `<div class="g-carte-district">${carteExemple(g, 'main')}<p><b>${echap(g.nom)}</b>${NOM_ACTION[g.type]} ${g.v}, Fréquence ${g.f}${g.effet ? `, ${NOMS_EFFET[g.effet.type]}` : ''}.</p></div>`).join('')
-    + `</div><p class="aide">Au départ, le district fournit ces deux cartes communes : le Stimulant vient de la Clinique, le Pavois de cuivre de la Tour du Noyau. En montant, tes bâtiments en préparent d’autres (Lame d’atelier, Plan des galeries, Brèche, Groupe de secours, Ampoule de relève), et leur force grandit avec eux : chaque niveau du bâtiment leur ajoute de la force (touche une carte pour voir son échelle). Tu choisis celles qui descendent dans le Râtelier de l’escouade : 2 emplacements, 3 au niveau 5 de la Tour du Noyau, 4 au niveau 9. Chaque départ coûte un peu d’énergie pour tout le Râtelier à la fois (une demi-heure de Générateur pour explorer, un quart d’heure pour une sortie courte) ; sans assez d’énergie, l’escouade part sans elles. Jouées par personne, elles ne s’éteignent jamais quand un Porteur tombe.</p></section>`;
+    + `</div><p class="aide">Au départ, le district fournit ces deux cartes communes : le Stimulant vient de la Clinique, le Pavois de cuivre de la Tour du Noyau. En montant, tes bâtiments en préparent d’autres (Lame d’atelier, Plan des galeries, Brèche, Groupe de secours, Ampoule de relève), et leur force grandit avec eux : chaque niveau du bâtiment leur ajoute de la force (touche une carte pour voir son échelle). Tu choisis celles qui descendent dans le Râtelier de l’escouade : 2 emplacements, 3 au niveau 5 de la Tour du Noyau, 4 au niveau 9. Chaque départ coûte quelques cristaux pour tout le Râtelier à la fois (10 pour explorer, 5 pour une sortie courte) ; sans assez de cristaux, l’escouade part sans elles. Jouées par personne, elles ne s’éteignent jamais quand un Porteur tombe.</p></section>`;
   return h;
 }

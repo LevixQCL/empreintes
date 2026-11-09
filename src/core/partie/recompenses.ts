@@ -100,13 +100,14 @@ export function ouvrirColis(j: Jeu): Resultat & { colis?: Colis } {
   const p = j.parrainage?.parrain;
   const double = !!p && r.jour < p.jour + COLIS_DOUBLES_JOURS;
   const composants = (RAVITAILLEMENT.composants + RAVITAILLEMENT.composantsParStrate * j.strate) * (double ? 2 : 1);
-  j.composants += composants;
+  // les récompenses arrivent déjà taillées (9 novembre 2026) : des cristaux, pas du brut
+  j.energie += composants;
   const enFer = Object.keys(j.collection).filter((id) => moduleDef(id).rarete === 'fer');
   const doublon = enFer.length ? enFer[tireur(j).entier(enFer.length)]! : null;
   if (doublon) ajouterCarte(j, doublon);
   const choix = r.ouverts % RAVITAILLEMENT.cycle === 0;
   if (choix) j.choix.push({ source: 'ravitaillement', options: tirerChoix(j, j.strate, RAVITAILLEMENT.minimumCycle) });
-  log(j, `Ravitaillement : +${composants} composants${doublon ? `, un doublon ${deNom(moduleDef(doublon).nom)}` : ''}${choix ? ', et une carte au choix' : ''}.`);
+  log(j, `Ravitaillement : +${composants} cristaux${doublon ? `, un doublon ${deNom(moduleDef(doublon).nom)}` : ''}${choix ? ', et une carte au choix' : ''}.`);
   return { ok: true, colis: { composants, doublon, choix } };
 }
 
@@ -147,7 +148,7 @@ export function reclamerQuotidien(j: Jeu): Resultat {
 export function ouvrirArchive(j: Jeu): Resultat {
   const n = j.archive.aOuvrir;
   if (!n) return non('Le Butin de la semaine n’est pas encore prêt.');
-  j.composants += ARCHIVE.composants;
+  j.energie += ARCHIVE.composants;
   j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate) });
   if (n >= 2) j.eclats += ARCHIVE.eclatsPalier2;
   if (n >= 3) j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate, 'argent') });

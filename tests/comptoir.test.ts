@@ -1,9 +1,9 @@
 // Devenir plus fort sans descendre (23 octobre 2026) : le Comptoir (acheter) et l'entraînement à la Tour du Noyau.
 import { describe, expect, it } from 'vitest';
-import { moduleDe, moduleDef } from '../src/core/donnees';
+import { batimentDef, moduleDe, moduleDef } from '../src/core/donnees';
 import {
   COMPTOIR, ENTRAINEMENT, XP, acheter, renouvelerComptoir, renouvelablesComptoir, ameliorer, estJeuValide, etalsDuComptoir, gainsAmelioration, garnirComptoir, niveauPorteur,
-  nouveauJeu, partir, plafondEntrainement, poster, prixComptoir, tick, apercuSeance, accorderSeance, DISTRICT, placesEntrainement, plafondSeance,
+  nouveauJeu, partir, plafondEntrainement, poster, prixComptoir, tick, apercuSeance, accorderSeance, placesEntrainement, plafondSeance,
 } from '../src/core/jeu';
 
 const HEURE = 3_600_000;
@@ -14,13 +14,13 @@ const pretT = () => { const j = pret(); j.porteurs.vela!.xp = 1e6; return j; };
 const construit = (niveau = 1) => { const j = pret(); j.batiments.comptoir = niveau; j.batiments.noyau = Math.max(j.batiments.noyau, niveau); garnirComptoir(j, 0); return j; };
 
 describe('Le Comptoir', () => {
-  it('se renouvelle une fois par jour contre des composants, sans toucher aux cartes achetées', () => {
+  it('se renouvelle une fois par jour contre des cristaux, sans toucher aux cartes achetées', () => {
     const j = construit(2);
     const avant = [...j.comptoir.offres];
     expect(acheter(j, 0, 0).ok).toBe(true);
-    const composants = j.composants;
+    const cristaux = j.energie;
     expect(renouvelerComptoir(j, 0).ok).toBe(true);
-    expect(j.composants).toBe(composants - COMPTOIR.renouveler);
+    expect(j.energie).toBe(cristaux - COMPTOIR.renouveler);
     expect(j.comptoir.offres[0]).toBe(avant[0]);
     j.comptoir.offres.forEach((id, i) => { expect(moduleDef(id).rarete).toBe(moduleDef(avant[i]!).rarete); if (i > 0) expect(avant.map(moduleDe)).not.toContain(moduleDe(id)); });
     expect(new Set(j.comptoir.offres.map(moduleDe)).size).toBe(j.comptoir.offres.length);
@@ -29,9 +29,9 @@ describe('Le Comptoir', () => {
     // le lendemain, on peut de nouveau
     garnirComptoir(j, JOUR + HEURE);
     expect(renouvelerComptoir(j, JOUR + HEURE).ok).toBe(true);
-    // sans assez de composants : rien ne bouge
+    // sans assez de cristaux : rien ne bouge
     garnirComptoir(j, 2 * JOUR + HEURE);
-    j.composants = COMPTOIR.renouveler - 1;
+    j.energie = COMPTOIR.renouveler - 1;
     const offres = [...j.comptoir.offres];
     expect(renouvelerComptoir(j, 2 * JOUR + HEURE).ok).toBe(false);
     expect(j.comptoir.offres).toEqual(offres);
@@ -73,10 +73,10 @@ describe('Le Comptoir', () => {
   it('un achat : la carte rejoint la collection, une seule fois par offre et par jour', () => {
     const j = construit(1);
     const id = j.comptoir.offres[0]!;
-    const avant = j.composants;
+    const avant = j.energie;
     const doublons = j.collection[id]?.doublons;
     expect(acheter(j, 0).ok).toBe(true);
-    expect(j.composants).toBe(avant - prixComptoir(id).composants);
+    expect(j.energie).toBe(avant - prixComptoir(id).composants);
     if (doublons === undefined) expect(j.collection[id]).toBeDefined();
     else expect(j.collection[id]!.doublons).toBe(doublons + 1);
     expect(acheter(j, 0).ok).toBe(false);
@@ -86,7 +86,7 @@ describe('Le Comptoir', () => {
 
   it('refuse un achat trop cher', () => {
     const j = construit(1);
-    j.composants = 0;
+    j.energie = 0;
     expect(acheter(j, 0).ok).toBe(false);
     expect(j.comptoir.achetes).toEqual([]);
   });
@@ -159,7 +159,7 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
     expect(j.porteurs.doran!.xp).toBeCloseTo((a.xp / a.heures) / 6, 5);
   });
 
-  it('sans assez d’énergie, la séance ne se lance pas', () => {
+  it('sans assez de cristaux, la séance ne se lance pas', () => {
     const j = pretT();
     j.energie = 0;
     expect(poster(j, 'doran', 'noyau').ok).toBe(false);
@@ -218,16 +218,17 @@ describe('L’entraînement à la Tour : des séances d’un niveau (28 octobre 
     expect(poster(j, 'doran', 'noyau').ok).toBe(true);
   });
 
-  it('chaque séance coûte moins que le stockage de la Tour qui l’autorise', () => {
+  it('une séance coûte toujours quelque chose, et moins qu’un chantier de la Tour qui l’autorise (9 novembre 2026)', () => {
     const j = pretT();
     for (let noyau = 1; noyau <= 10; noyau++) {
       j.batiments.noyau = noyau;
       j.porteurs.doran!.xp = 0;
+      expect(apercuSeance(j, 'doran')!.energie).toBeGreaterThanOrEqual(5);
       const max = plafondEntrainement(j);
       // le Porteur juste sous le plafond : la séance la plus chère de cette Tour
       let xp = 0; for (let n = 1; n < max - 1; n++) xp += Math.round(12 * n ** 1.8);
       j.porteurs.doran!.xp = xp;
-      expect(apercuSeance(j, 'doran')!.energie).toBeLessThan(DISTRICT.stockage[noyau]!);
+      expect(apercuSeance(j, 'doran')!.energie).toBeLessThan(batimentDef('noyau').couts[Math.min(9, noyau)]!.energie);
     }
   });
 

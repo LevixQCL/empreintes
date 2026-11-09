@@ -112,7 +112,7 @@ Tous les chiffres sont dans deux fichiers :
 
 **La carte qu'on collectionne est celle qu'on joue** (décision du 22 octobre 2026). Une carte = une place dans le deck.
 On la confie à un Porteur de sa lignée (`greffer` dans `jeu.ts`, 6 cartes au plus par Porteur, `DISTRICT.cartesMax`) ;
-le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les cartes communes du Râtelier de l'escouade (2 à 4, `ratelierDe` dans `partie/descentes.ts`, payées en énergie à chaque départ).
+le deck de combat réunit les cartes des 3 Porteurs de l'escouade, plus les cartes communes du Râtelier de l'escouade (2 à 4, `ratelierDe` dans `partie/descentes.ts`, payées en cristaux à chaque départ, prix fixe).
 Au départ, Ilka, Doran et Véla portent chacun 6 cartes en fer : leurs 5 cartes de base et leur carte de départ (`DEPART_PORTEURS`).
 **La Charge** (26 octobre 2026) : chaque carte pèse selon sa puissance (`poidsCarte`, dans son métal, à son niveau de départ) et chaque
 Porteur porte une Charge qui grandit avec son niveau (`CHARGE` dans `collection.ts`, `chargeMax` / `chargePortee`). Un Porteur combat toujours
@@ -239,7 +239,7 @@ s'ouvre qu'avec assez de **creuseurs** logés par la **Tour du Noyau** (`CREUSEU
 un étage y restent : pas de réserve pour plus tard. On en gagne en jouant (fouilles, missions, Épreuves, gardiens, Confiance).
 Il en faut dès la Strate −2 (Bryan, 22 octobre 2026 : ralentir dès le début). Réglé pour un joueur occasionnel (`npm run audit`, 8 novembre 2026) : −10 vers le jour 30 (test : médiane de 32 parties entre 27 et 32 ; cible de Bryan : le jour 30). Mesuré le 8 novembre après-midi, après les combats plus longs de −1 à −3 : −10 au jour 16 à cinq sessions par jour, 30-31 à deux, 47 à une (celui-là bloque sur les gardiens du front, pas sur les creuseurs ni le Noyau). **Les fouilleurs du jour** (`CREUSEURS.fouilleursDuJour`) : à partir de −6, la première fouille réussie de la journée ramène un creuseur à coup sûr, la suivante une chance sur deux, puis une sur cinq. Le Noyau loge les creuseurs (niveau 5 pour −7, 6 pour −8) et il en faut plus pour descendre (`NOYAU_MIN`) : niveau 8 pour −9, 9 pour −10 et le Fond.
 
-Les Éclats (8 novembre 2026) : le Comptoir en vend de 1 à 6 par jour selon son niveau (500, 700 puis 1 000 composants), le Générateur en condense de 1 à 3 par jour à partir du niveau 4 (2 000 énergie l'Éclat, `CRISTALLISEUR`). Les bâtiments des niveaux 6 à 10 coûtent surtout de l'énergie (×1,6 par rapport au 7 novembre, composants ×0,8, jamais plus de 85 % de la réserve du Noyau), et après −10 chaque dépôt des Basses en laisse 1 ou 2. Les Basses ouvrent après −2, la lettre de la directrice aussi (`BASSES.ouverture`, `LEGS_STRATE`).
+Les Éclats : le Comptoir en vend de 1 à 6 par jour selon son niveau (300, 450 puis 650 cristaux), le Générateur en recueille de 1 à 3 par jour en taillant le minerai à partir du niveau 4 (un tous les 300 cristaux taillés, `DISTRICT.eclatsParJour`), et après −10 chaque dépôt des Basses en laisse 1 ou 2. Les Basses ouvrent après −2, la lettre de la directrice aussi (`BASSES.ouverture`, `LEGS_STRATE`).
 
 Confidentialité (8 novembre 2026) : `public/confidentialite.html`, l'âge demandé avant la première partie (`src/save/age.ts` : moins de 13 ans, rien en ligne), et « Supprimer mon compte et mes données » dans le panneau Compte (`supprimerCompte`, `src/net/compte.ts`).
 
@@ -307,9 +307,9 @@ que la solution pour l'eau est en bas (`voixDuQuartier`) : la Flèche reste ouve
 
 **Le parrainage** (29 octobre 2026, `src/core/partie/parrainage.ts`, `src/net/parrainage.ts`, `src/app/parrainage.ts`, `src/ui/parrainage.ts`, `docs/prompts-parrainage.md`).
 Chaque directeur a un code (`EMP-` + 6 caractères tirés de son uid, réservé dans `parrains/{code}`) et un lien `?ref=CODE`, retenu sur l'appareil
-jusqu'à ce que la partie commence. Le filleul ne peut entrer un code qu'avant d'avoir vaincu la Strate −2 : il reçoit 100 composants, une carte au choix
+jusqu'à ce que la partie commence. Le filleul ne peut entrer un code qu'avant d'avoir vaincu la Strate −2 : il reçoit 100 cristaux, une carte au choix
 (au moins du cuivre) et 3 jours de colis doublés, puis publie ses paliers dans `recrues/{uid}` (Strate −1 vaincue, Strate −3, Tour du Noyau 3).
-Le parrain relit ses recrues (au lancement et sur l'écran Recruter) : 150 composants et 2 Éclats à −1, une carte au choix dont une d'argent à −3
+Le parrain relit ses recrues (au lancement et sur l'écran Recruter) : 150 cristaux et 2 Éclats à −1, une carte au choix dont une d'argent à −3
 (le filleul aussi), la carte exclusive *Empreinte jumelle* (cuivre, jamais tirée : `lien` dans `donnees.ts`) au Noyau 3 pour les deux, son journal
 retenant le nom de l'autre. Récompenses pour 5 recrues au plus ; les distinctions comptent toutes les recrues actives : dos « Empreinte partagée »
 à 3, titre « Recruteur » sur le Grand Tableau à 5. Sans Cloud Functions, les paliers sont déclarés par l'appareil du filleul : les règles
@@ -341,7 +341,7 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
   tranchées (98 % à 0,85 fois sa force, 50 % à égalité, 18 % à 1,08, presque rien à 1,2) : la carte ne propose que de 0,85 à 1,15.
 - *Butin* : 2 combats de la Strate du défenseur (`butinCombat`) × l'écart (×0,4 contre bien plus faible, ×2 contre plus fort :
   le meilleur gain moyen est à force égale), plus 10 % de son coffre (plafond : 5 combats de sa Strate).
-- *Le coffre* : les composants gagnés en pillant ou en défendant, les seuls qu'un pillage peut prendre (les composants des
+- *Le coffre* : le minerai gagné en pillant ou en défendant, pas encore taillé : le seul qu'un pillage peut prendre (le minerai des
   descentes, missions et du district sont à l'abri : aucune punition si on ne joue pas). On le dépense en premier.
   L'attaquant qui perd (ou abandonne) laisse 5 % de son coffre au défenseur.
 - *Limites* : 5 jetons (un revient toutes les 4 h 48, rien ne se perd), un pillage par cuvette et par jour ; le défenseur a
@@ -370,22 +370,23 @@ joués par le jeu en « gardes » qui prennent leur visage : `garde-tech`, `gard
 - *La Confiance du quartier* (30 octobre puis 7 novembre 2026) : ce sont les familles qui te suivent (48 familles, paliers de 6)
   (`niveauConfiance`, `CONFIANCE` dans `etat.ts`). On les ramène des Basses et du Mur des empreintes (`familles.ts`, `fragments.ts`) ;
   chaque palier amène un creuseur volontaire et un souvenir pour les Archives ; l’Accord ouvert de Joss demande le palier 2.
-- *Énergie* : convertisseur du Générateur (`CONVERTISSEUR` : 100 énergie → 10, puis 6, puis 3 composants, 20 lots par jour) et soins intensifs
-  de la Clinique (`SOINS_INTENSIFS` : 5 énergie par point d’Usure). La réserve tient au moins 24 h de production du Générateur (`DISTRICT.reserveHeures`).
+- *Cristal unique* (9 novembre 2026, `docs/economie-cristal.md`) : plus d'énergie. Tout ce qu'on rapporte en jouant arrive en minerai
+  (`Jeu.composants`), le Générateur le taille en cristaux (`Jeu.energie`, `raffiner` dans `partie/etat.ts`), et les cristaux paient tout.
+  Soins intensifs : 1 cristal par point d’Usure (`SOINS_INTENSIFS`).
 
 ### Audit de l'économie (7 novembre 2026)
 
 `npm run audit` joue des parties d'un joueur occasionnel moyen et donne, Strate par Strate, le jour d'ouverture et les sessions
-passées à attendre des creuseurs, puis les composants, Éclats et niveau du Noyau au fil des jours, et l'énergie perdue.
+passées à attendre des creuseurs, puis les cristaux, Éclats et niveau du Noyau au fil des jours, et le minerai qui attend d'être taillé.
 Corrigé ce jour-là (avant → après) :
 - *Creuseurs* : une fouille réussie à −6 et plus bas en ramène un une fois sur deux (`CREUSEURS.fouilleProfonde`) ; attente à −8 :
   11 sessions sur 14 → 3 sur 8. Le logement est étalé (`CREUSEURS.logement`) : chaque niveau du Noyau ouvre un étage de plus.
 - *Front* : −7 à −10 un peu plus forts (`FORCE.table`) pour que ce soit le combat qui freine, pas l'attente. −10 : jour 36 → 27.
 - *Épreuves* : force ×0,85 à partir de −4 (`EPREUVES_PROFONDES`) : 0-6 % → 15-60 % de victoires au premier essai.
-- *Éclats* : le Comptoir en vend 1 à 2 par jour à 500 composants (`COMPTOIR.eclats`, `acheterEclat`).
+- *Éclats* : le Comptoir en vend 1 à 6 par jour à 300, 450 puis 650 cristaux (`COMPTOIR.eclats`, `acheterEclat`).
 - *Réserves* : Butins de la semaine empilés (4 au plus, `ARCHIVE.empilesMax`), 7 colis de ravitaillement, caisse de la Flèche 7 jours.
 - *Clinique* : +2 % de PV max par niveau au-delà du 3e (`CLINIQUE_PV`).
-- *Explorer* : composants ×1,5 (×2 pour la première exploration du front de la journée, `REGLES.exploration.premiere`), chance de carte +5 points, Éclats 20 % dès −5 (`REGLES.exploration`), contre les fouilles.
+- *Explorer* : minerai ×1,5 (×2 pour la première exploration du front de la journée, `REGLES.exploration.premiere`), chance de carte +5 points, Éclats 20 % dès −5 (`REGLES.exploration`), contre les fouilles.
 
 ## Firebase
 

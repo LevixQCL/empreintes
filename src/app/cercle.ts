@@ -145,7 +145,7 @@ async function majEchanges(uid: string, envoyees: Proposition[], recues: Proposi
       if (r) { change = true; D.message = `${r.nomAmi} a accepté : ${moduleDef(r.recue).nom} rejoint ta collection${r.nouvelle ? ' (nouvelle carte !)' : ''}.`; }
     } else if (attend) {
       const r = J.rendreEchange(j, p.id, Date.now());
-      if (r) { change = true; D.message = p.etat === 'refuse' ? `${r.nomAmi} a refusé : ta carte et tes composants te reviennent.` : 'Ta proposition est reprise : ta carte te revient.'; }
+      if (r) { change = true; D.message = p.etat === 'refuse' ? `${r.nomAmi} a refusé : ta carte et tes cristaux te reviennent.` : 'Ta proposition est reprise : ta carte te revient.'; }
     }
     if (p.de === uid && p.etat !== 'accepte') n.effacerProposition(p.id).catch(() => {});
   }

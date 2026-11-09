@@ -1,5 +1,5 @@
 // Les gains visibles (23 octobre 2026) : chaque fois que le joueur reçoit quelque chose, il le voit arriver.
-// - les ressources (énergie, composants, Éclats, butin d'expédition) jaillissent de l'endroit touché en petites icônes peintes
+// - les ressources (cristaux, minerai, Éclats, butin d'expédition) jaillissent de l'endroit touché en petites icônes peintes
 //   et volent jusqu'à leur compteur, qui s'illumine et compte jusqu'à sa nouvelle valeur ;
 // - les cartes, les Porteurs et les niveaux se dévoilent l'un après l'autre en bas de l'écran (nouvelle carte, doublons,
 //   nouveau Porteur, niveau supérieur), puis filent vers leur onglet.
@@ -7,7 +7,7 @@
 // Tout vit dans un calque posé sur <body>, hors de #app : le rendu du jeu (innerHTML) ne l'interrompt pas.
 
 import type { Jeu } from '../core/jeu';
-import { energieParHeure, epithetesDe, NOMS_PALIER, NOMS_PALIER_MARQUE, niveauPorteur, palierDe, progresMarque } from '../core/jeu';
+import { raffinageParHeure, epithetesDe, NOMS_PALIER, NOMS_PALIER_MARQUE, niveauPorteur, palierDe, progresMarque } from '../core/jeu';
 import { moduleDef, porteurDef } from '../core/donnees';
 import { NOMS_RARETE } from '../core/collection';
 import type { Rarete } from '../core/types';
@@ -20,8 +20,8 @@ type Res = 'energie' | 'composants' | 'eclats';
 
 interface Releve {
   energie: number;
-  /** l'énergie exacte, l'heure du dernier tick et la production horaire : pour retirer ce que le Générateur a produit tout seul entre deux relevés */
-  e?: { brute: number; tick: number; parHeure: number };
+  /** cristaux et minerai exacts, l'heure du dernier tick et le débit du Générateur : pour retirer ce qu'il a taillé tout seul entre deux relevés */
+  e?: { brute: number; tick: number; parHeure: number; minerai?: number };
   composants: number;
   eclats: number;
   /** ce que porte l'expédition en cours (versé au district au retour) */
@@ -41,7 +41,7 @@ export function relever(j: Jeu): Releve {
   for (const id of Object.keys(j.porteurs)) niveaux[id] = niveauPorteur(j, id).niveau;
   return {
     energie: Math.floor(j.energie),
-    e: { brute: j.energie, tick: j.dernierTick, parHeure: energieParHeure(j) },
+    e: { brute: j.energie, tick: j.dernierTick, parHeure: raffinageParHeure(j), minerai: j.composants },
     composants: Math.floor(j.composants),
     eclats: j.eclats,
     x: x ? { butin: x.butin, cartes: (x.gains?.elites ?? 0) + (x.gains?.cartes ?? 0), eclats: x.gains?.eclats ?? 0 } : null,
@@ -66,21 +66,26 @@ type Gain =
 
 /**
  * Ce qui a été reçu entre deux relevés. Les dépenses ne s'affichent pas.
- * `energie: false` pour le temps qui passe : la production du Générateur coule toute seule, ce n'est pas un cadeau.
+ * `energie: false` pour le temps qui passe : la taille du Générateur coule toute seule, ce n'est pas un cadeau.
+ * 9 novembre 2026 (cristal unique) : le Générateur change du minerai en cristaux ; ce qu'il a taillé n'est ni un gain de
+ * cristaux ni une perte de minerai. Le minerai gagné vole vers le compteur des cristaux (« +N en taille »).
  */
 export function comparer(a: Releve, b: Releve, o: { energie?: boolean } = {}): Gain[] {
   const g: Gain[] = [];
   const res = (r: Res) => { const n = b[r] - a[r]; if (n >= 1) g.push({ kind: 'res', r, n, avant: a[r], cible: r }); };
   // l'énergie (1er novembre 2026, remarque de Luc) : la production du Générateur pendant l'action (les secondes d'une chaîne
   // en combat) s'affichait comme un « +1 énergie » gagné. On ne montre que ce qui vient vraiment de l'action.
+  const taillee = a.e && b.e ? Math.min(a.e.minerai ?? 0, a.e.parHeure * Math.max(0, b.e.tick - a.e.tick) / 3_600_000) : 0;
   if (o.energie !== false) {
     if (a.e && b.e) {
-      const produite = a.e.parHeure * Math.max(0, b.e.tick - a.e.tick) / 3_600_000;
-      const n = Math.round(b.e.brute - a.e.brute - produite);
+      const n = Math.round(b.e.brute - a.e.brute - taillee);
       if (n >= 1) g.push({ kind: 'res', r: 'energie', n, avant: a.energie, cible: 'energie' });
     } else res('energie');
   }
-  res('composants');
+  {
+    const n = a.e && b.e ? Math.round((b.e.minerai ?? b.composants) - (a.e.minerai ?? a.composants) + taillee) : b.composants - a.composants;
+    if (n >= 1) g.push({ kind: 'res', r: 'composants', n, avant: a.composants, cible: 'energie' });
+  }
   res('eclats');
   // le butin de l'expédition, tant qu'on est en bas
   if (a.x && b.x) {
@@ -120,7 +125,7 @@ export function comparer(a: Releve, b: Releve, o: { energie?: boolean } = {}): G
 const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
 const COULEUR_METAL: Record<Rarete, string> = { fer: '#A7B0BA', cuivre: '#D88A55', argent: '#DDE3EC', or: '#E8BE5E', nacre: '#E6D6F5' };
 const NOMS: Record<Res | 'cartes', [string, string]> = {
-  energie: ['énergie', 'énergie'], composants: ['composant', 'composants'], eclats: ['Éclat', 'Éclats'], cartes: ['carte', 'cartes'],
+  energie: ['cristal', 'cristaux'], composants: ['minerai', 'minerai'], eclats: ['Éclat', 'Éclats'], cartes: ['carte', 'cartes'],
 };
 
 function calque(): HTMLElement {
@@ -275,6 +280,8 @@ function recevoir(cible: HTMLElement, g: Extract<Gain, { kind: 'res' }>) {
   void cible.offsetWidth;
   cible.classList.add('gain-recu');
   setTimeout(() => cible.classList.remove('gain-recu'), 900);
+  // le minerai rejoint le compteur des cristaux sans changer son chiffre : il s'affiche « en taille » dessous
+  if (g.r === 'composants' && cible.dataset.gain === 'energie') return;
   const v = cible.querySelector<HTMLElement>('.v, b');
   if (!v || reduit()) return;
   const de = g.avant, a = g.avant + g.n, t0 = performance.now(), duree = Math.min(900, 380 + g.n * 6);

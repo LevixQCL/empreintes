@@ -28,8 +28,10 @@ export const ICO = {
   echange: svg('<path d="M4 8.5h14l-3.5-3.5"/><path class="o" d="M20 15.5H6l3.5 3.5"/>'),
   ami: svg('<circle class="v" cx="9" cy="8" r="3.4"/><path class="v" d="M3 20c.7-3.5 3-5.6 6-5.6s5.3 2.1 6 5.6z"/><path class="o" d="M18.5 7.5v6M15.5 10.5h6"/>'),
   // ressources
-  energie: svg('<path class="v" d="M13.5 2 5 13h6.5l-1 9L19 11h-6.5z"/><path class="r" d="M11.6 5.4 8.2 10.2"/>'),
-  composants: svg('<path class="v" d="M12 3l7.8 4.5v9L12 21l-7.8-4.5v-9z"/><circle class="o" cx="12" cy="12" r="2.8"/><path class="r" d="M7.1 8.2 11 6"/>'),
+  // 9 novembre 2026 (cristal unique) : la clé « energie » est la monnaie, les cristaux (une pierre bleue taillée en trois facettes) ;
+  // « composants » est le minerai, la pierre encore prise dans sa gangue (en attendant les icônes peintes)
+  energie: svg('<path class="v" d="M12 2.5 18 8.5 12 21.5 6 8.5z"/><path d="M6 8.5h12M12 2.5 9.6 8.5 12 21.5 14.4 8.5z" opacity=".6"/><path class="r" d="M9 7.2 10.8 4.6"/>'),
+  composants: svg('<path d="M4 15.5 6.5 9l5-3 6 1.5 3 6-2.5 5.5-7.5 1z" opacity=".85"/><path class="v" d="M10 9.5 13 7.8 14.5 12 12 15.5 9.5 13z"/><path class="r" d="M11 10.2 12.6 9.2"/>'),
   eclats: svg('<path class="v" d="M12 2.2 17.5 8.5 12 21.8 6.5 8.5z"/><path d="M6.5 8.5h11M12 2.2v6.3" opacity=".6"/><path class="r" d="M9.4 6.6l1.5-1.9"/>'),
   strate: svg('<path class="v" d="M3 8l9-4 9 4-9 4z"/><path d="M3 12.5l9 4 9-4"/><path d="M3 17l9 4 9-4" opacity=".6"/><path class="r" d="M8 7.3l3.6-1.6"/>'),
   // combat
@@ -100,7 +102,8 @@ export type Icone = keyof typeof ICO;
 // ---------- Icônes peintes (Midjourney, public/art/icones/<nom>.webp) ----------
 // Aux grandes tailles (ressources du haut, onglets du bas, gros boutons), une icône peinte remplace le trait SVG.
 // Tant que le fichier n'est pas déposé, le SVG reste. Ajouter le nom ici dès que l'image est dans public/art/icones/.
-const PEINTES = new Set<Icone>(['energie', 'composants', 'eclats', 'strate', 'district', 'tour', 'porteurs', 'cartes', 'codex', 'plus',
+// 9 novembre 2026 : « energie » (les cristaux) et « composants » (le minerai) attendent leurs nouvelles icônes peintes
+const PEINTES = new Set<Icone>(['eclats', 'strate', 'district', 'tour', 'porteurs', 'cartes', 'codex', 'plus',
   // le lot du 23 octobre 2026
   'marteau', 'coffre', 'chrono', 'verrou', 'journal', 'ouvrier',
   // les onglets Pillages et Flèche (28 octobre 2026)

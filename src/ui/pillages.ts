@@ -179,12 +179,12 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', pillOk = true): stri
     + replie('L’histoire', `<p>Quand la mer est montée, chaque quartier s’est accroché à ses piliers ; le tien s’est retranché derrière sa digue. Entre eux, il ne reste que l’eau, les ruines de l’ancien monde, et les passeurs qui connaissent les courants.</p>`
       + `<p>Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : on pille, on se défend, et chacun garde un œil sur son coffre.</p>`)
     + replie('Les règles en détail', `<ul class="fl-pr-etapes">`
-      + etape(ICO.porteurs, 'Un Porteur libre prend la barque', `Vers un pilier abandonné ou une ruine noyée : ${MISSIONS.courte.heures} h ou ${MISSIONS.longue.heures} h, avec des vivres et des lampes payés en énergie. Le nombre de barques en mer en même temps grandit avec la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 6 et 4 au niveau 9.`)
-      + etape(ICO.coffre, 'Il revient chargé', 'Des composants, des doublons de cartes de sa lignée, parfois une carte nouvelle, et des rescapés qui deviennent creuseurs. L’eau froide laisse un peu d’Usure.')
+      + etape(ICO.porteurs, 'Un Porteur libre prend la barque', `Vers un pilier abandonné ou une ruine noyée : ${MISSIONS.courte.heures} h ou ${MISSIONS.longue.heures} h, sans rien payer : seulement le temps du Porteur. Le nombre de barques en mer en même temps grandit avec la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 6 et 4 au niveau 9.`)
+      + etape(ICO.coffre, 'Il revient chargé', 'Du minerai, des doublons de cartes de sa lignée, parfois une carte nouvelle, et des rescapés qui deviennent creuseurs. L’eau froide laisse un peu d’Usure.')
       + etape(ICO.grappin, `${PILLAGE.jetonsMax} jetons, un toutes les ${recharge}`, 'Chaque pillage en coûte un. Rien ne se perd pendant ton absence : ils t’attendent.')
       + etape(ICO.atk, 'Un combat contre la garnison', 'Des districts de ta force : de vrais directeurs, et des districts sans directeur pour que la carte ne soit jamais vide. Un district par jour au plus.')
-      + etape(ICO.composants, 'Le butin', `Des composants, plus ${vole.slice(1)} du coffre adverse. Plus la garnison est forte, plus le butin est gros. Perdre te coûte ${perte.slice(1)} de ton coffre.`)
-      + etape(ICO.coffre, 'Seul ton coffre est exposé', 'Le coffre, ce sont les composants gagnés en pillant. Ceux des descentes, des missions et du district sont à l’abri, comme tes cartes et tes Éclats.')
+      + etape(ICO.composants, 'Le butin', `Du minerai, plus ${vole.slice(1)} du coffre adverse. Plus la garnison est forte, plus le butin est gros. Perdre te coûte ${perte.slice(1)} de ton coffre.`)
+      + etape(ICO.coffre, 'Seul ton coffre est exposé', 'Le coffre, c’est le minerai gagné en pillant, tant que le Générateur ne l’a pas taillé. Celui des descentes, des missions, et tous tes cristaux sont à l’abri, comme tes cartes et tes Éclats.')
       + etape(ICO.porteurs, 'Ta garnison se défend seule', 'Choisis laquelle de tes trois escouades garde le port. Elle se bat même jeu fermé.')
       + etape(ICO.bouclier, 'Bouclier et limite', `Après une attaque perdue, ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus. Le journal du port garde tout.`)
       + `</ul>`, ICO.aide)
@@ -193,12 +193,12 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', pillOk = true): stri
       : `<button type="button" class="btn prim large" data-action="port-entrer">${ICO.carte}${etat === 'premiere' ? 'Larguer les amarres' : 'Retour au Port'}</button>`);
 }
 
-/** Un jeton de plus contre de l'énergie (31 octobre 2026) : visible seulement quand il en manque */
+/** Un jeton de plus contre des cristaux (31 octobre 2026) : visible seulement quand il en manque */
 function boutonAchat(j: Jeu, now: number, jetons: number): string {
   if (jetons >= PILLAGE.jetonsMax || j.batiments.generateur < 1) return '';
   const reste = achatsRestants(j, now);
   const cout = coutJeton(j);
   const peut = reste > 0 && j.energie >= cout;
-  return `<button type="button" class="btn sec pl-achat" data-action="pillage-jeton"${peut ? '' : ' disabled'} aria-label="Acheter un jeton pour ${cout} énergie, encore ${reste} aujourd’hui">`
+  return `<button type="button" class="btn sec pl-achat" data-action="pillage-jeton"${peut ? '' : ' disabled'} aria-label="Acheter un jeton pour ${cout} cristaux, encore ${reste} aujourd’hui">`
     + `<span class="pl-achat-l">+1 jeton · ${ent(cout)} ${icone('energie')}</span><small>${reste ? `${reste} / ${PILLAGE.achatsJour} aujourd’hui` : 'demain'}</small></button>`;
 }

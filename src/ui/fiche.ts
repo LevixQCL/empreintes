@@ -62,7 +62,7 @@ function ligneAttente(j: Jeu, a: Attente): string {
     const n = j.ravitaillement.reserve;
     const reste = colisAvantChoix(j);
     titre = `Ravitaillement du jour${n > 1 ? ` · ${n} colis` : ''}`;
-    detail = reste === 1 ? 'Celui-ci contient une carte au choix' : `Composants et un doublon · carte au choix dans ${reste} colis`;
+    detail = reste === 1 ? 'Celui-ci contient une carte au choix' : `Cristaux et un doublon · carte au choix dans ${reste} colis`;
     bouton = 'Ouvrir';
   }
   return `<li class="fj-att${a.important ? ' important' : ''}"><span class="fj-att-ico">${icone(ico)}</span>`

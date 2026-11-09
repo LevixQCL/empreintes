@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as C from '../src/core/combat';
 import { choisirHalte, lireChapitre, envoyerMission,
-  DISTRICT, ameliorer, degreffer, echanger, disponibles, energieParHeure, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu, partir, poster, pvMaxCombat, remonter, stockage, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence, entrer, repondre, RENCONTRES,
+  DISTRICT, ameliorer, degreffer, echanger, disponibles, heuresDeTaille, fabriquer, greffer, finDeCombat, continuer, gestesDe, nouveauJeu, partir, poster, pvMaxCombat, remonter, tick, ouvrirChambre, objectifCourant, reclamer, resumeAbsence, entrer, repondre, RENCONTRES,
 } from '../src/core/jeu';
 
 const H = 3_600_000;
@@ -9,20 +9,21 @@ const H = 3_600_000;
 const ouvert = () => { const j = nouveauJeu(0); j.chambre = true; j.recrues = true; return j; };
 
 describe('District', () => {
-  it('le Générateur produit pendant l’absence, plafonné par le stockage', () => {
+  it('le Générateur taille le minerai pendant l’absence, sans plafond et sans rien créer (9 novembre 2026)', () => {
     const j = nouveauJeu(0);
     tick(j, 1 * H);
-    expect(j.energie).toBeCloseTo(DISTRICT.depart.energie + DISTRICT.energieParHeure[1]!, 5);
-    tick(j, 100 * H);
-    expect(j.energie).toBe(stockage(j));
+    expect(j.energie).toBe(DISTRICT.depart.energie);
+    j.composants = 500;
+    tick(j, 200 * H);
+    expect(Math.round(j.energie)).toBe(DISTRICT.depart.energie + 500);
   });
 
-  it('un Porteur de la bonne lignée double la production', () => {
+  it('un Porteur de la bonne lignée taille deux fois plus vite', () => {
     const j = nouveauJeu(0);
     poster(j, 'ilka', 'generateur');
-    expect(energieParHeure(j)).toBe(DISTRICT.energieParHeure[1]! * DISTRICT.bonusAffinite);
+    expect(heuresDeTaille(j)).toBe(DISTRICT.tailleHeures[1]! / DISTRICT.bonusAffinite);
     poster(j, 'doran', 'generateur');
-    expect(energieParHeure(j)).toBe(DISTRICT.energieParHeure[1]! * DISTRICT.bonusPoste);
+    expect(heuresDeTaille(j)).toBe(DISTRICT.tailleHeures[1]! / DISTRICT.bonusPoste);
     expect(j.porteurs.ilka!.poste).toBeNull();
   });
 
@@ -181,10 +182,11 @@ describe('Premier lancement', () => {
   it('le résumé du retour ne liste que ce qui a avancé', () => {
     const j = ouvert();
     j.porteurs.doran!.usure = 6;
+    j.composants = 200;
     const avant = structuredClone(j);
     const nouvelles = tick(j, 2 * H);
     const r = resumeAbsence(avant, j, nouvelles);
-    expect(r[0]).toMatch(/énergie/);
+    expect(r[0]).toMatch(/cristaux taillés/);
     expect(r.some((l) => l.includes('Doran'))).toBe(true);
   });
 });

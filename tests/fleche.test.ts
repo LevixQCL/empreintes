@@ -45,11 +45,11 @@ describe('La Flèche', () => {
     f.quai = 17; f.record = 17;
     expect(monterFleche(j, ESC).ok).toBe(true);
     j.expedition!.combat.issue = 'victoire';
-    const avant = { c: j.composants, e: j.eclats };
+    const avant = { c: j.energie, e: j.eclats };
     const r = remonterFleche(j, 1000)!;
     expect(r).toMatchObject({ victoire: true, de: 17, a: 21, record: true });
     expect(r.paliers).toEqual([{ quai: 20, ...ASCENSION.recompenses[20] }]);
-    expect(j.composants - avant.c).toBe(ASCENSION.recompenses[20]!.composants);
+    expect(j.energie - avant.c).toBe(ASCENSION.recompenses[20]!.composants);
     expect(j.eclats - avant.e).toBe(ASCENSION.recompenses[20]!.eclats);
     // redescendre puis remonter ne redonne rien
     f.quai = 18;
@@ -108,11 +108,11 @@ describe('Tenir un quai et défier les gardiens', () => {
     expect(gageJour(20)).toEqual({ composants: 90, eclats: 1 });
     expect(gageEnCaisse(j, 12 * H).composants).toBe(45);
     expect(gageEnCaisse(j, 10 * 24 * H).composants).toBe(90 * 7);
-    const avant = j.composants;
+    const avant = j.energie;
     expect(recevoirGage(j, 12 * H).composants).toBe(45);
-    expect(j.composants).toBe(avant + 45);
+    expect(j.energie).toBe(avant + 45);
     tenirQuai(j, ESC, 12, 24 * H);
-    expect(j.composants).toBe(avant + 90);
+    expect(j.energie).toBe(avant + 90);
     expect(etatFleche(j).garde!.quai).toBe(12);
     expect(quitterQuai(j, 24 * H)!.composants).toBe(0);
     expect(etatFleche(j).garde).toBeUndefined();
@@ -121,11 +121,11 @@ describe('Tenir un quai et défier les gardiens', () => {
   it('une défense tenue rapporte ; une défense perdue fait perdre le quai, jamais la montée', () => {
     const j = surQuai(64);
     tenirQuai(j, ESC, 64, 0);
-    const avant = j.composants;
+    const avant = j.energie;
     subirAssauts(j, [{ id: 'a', nom: 'Verrelune', quai: 64, victoire: false, le: H }]);
     subirAssauts(j, [{ id: 'a', nom: 'Verrelune', quai: 64, victoire: false, le: H }]);
     expect(etatFleche(j).garde!.repousses).toBe(1);
-    expect(j.composants).toBe(avant + Math.round(gageJour(64).composants * ASCENSION.partDefense));
+    expect(j.energie).toBe(avant + Math.round(gageJour(64).composants * ASCENSION.partDefense));
     subirAssauts(j, [{ id: 'b', nom: 'X', quai: 30, victoire: true, le: 2 * H }]);
     expect(etatFleche(j).garde).toBeDefined();
     subirAssauts(j, [{ id: 'c', nom: 'Brisecôte', quai: 64, victoire: true, le: 12 * H }]);

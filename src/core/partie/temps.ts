@@ -4,7 +4,7 @@
 import { batimentDef, moduleDef } from '../donnees';
 import { ajouterCarte } from '../collection';
 import { noterPalmares } from '../classements';
-import { ARCHIVE, enExpedition, nuitDesLignes, energieParHeure, jourDe, log, semaineDe, stockage, type Jeu, typeDuJour } from './etat';
+import { ARCHIVE, enExpedition, nuitDesLignes, raffiner, eclatsDeTaille, jourDe, log, semaineDe, type Jeu, typeDuJour } from './etat';
 import { avancerFils, retourDeMission, verifierArrivees } from './descentes';
 import { creuser, recompenserConfiance, entrainer, garnirComptoir, soinParHeure } from './district';
 import { RAVITAILLEMENT, eveillerLegs } from './recompenses';
@@ -23,8 +23,9 @@ export function tick(j: Jeu, now: number): string[] {
   const heures = dt / 3_600_000;
   j.dernierTick = now;
 
-  // l'énergie produite (l'entraînement, lui, se paie au lancement de chaque séance : 28 octobre 2026)
-  j.energie = Math.min(stockage(j), j.energie + energieParHeure(j) * heures);
+  // le Générateur taille le cristal brut en cristaux (9 novembre 2026) : rien ne se perd, il finit ce qui reste pendant l'absence
+  const ec = eclatsDeTaille(j, raffiner(j, heures), now);
+  if (ec) nouvelles.push(`Le Générateur a recueilli ${ec > 1 ? `${ec} Éclats` : 'un Éclat'} en taillant le minerai.`);
 
   const soin = soinParHeure(j) * heures;
   for (const id of Object.keys(j.porteurs)) {

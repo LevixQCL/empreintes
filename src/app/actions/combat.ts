@@ -169,14 +169,14 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
         if (f.defi) synchroGarde();
         D.message = f.defi ? (f.victoire ? `${f.defi.nom} est battu : ton escouade tient désormais le quai ${f.defi.quai}.` : `${f.defi.nom} garde le quai ${f.defi.quai}. Ta montée ne bouge pas.`)
           : f.victoire
-          ? `Quai ${f.a} atteint${f.record ? ' : nouveau record' : ''}.${f.paliers.map((p) => ` Quai gravé ${p.quai} : +${p.composants} composants, +${p.eclats} Éclats.`).join('')}`
+          ? `Quai ${f.a} atteint${f.record ? ' : nouveau record' : ''}.${f.paliers.map((p) => ` Quai gravé ${p.quai} : +${p.composants} cristaux, +${p.eclats} Éclats.`).join('')}`
           : f.a < f.de ? `Repoussés au quai ${f.de} : l’escouade redescend au quai ${f.a}.` : `Repoussés au quai ${f.de} : l’escouade garde son quai.`;
       } else if (r.pillage) {
         const p = r.pillage;
         D.vue = 'pillages';
         envoyerPillages();
-        D.message = p.victoire ? `Pillage réussi à ${p.nom} : +${p.gain} composants, rangés dans ton coffre.`
-          : `Repoussés à ${p.nom}.${p.perte ? ` L’escouade a laissé ${p.perte} composants de son coffre.` : ''}`;
+        D.message = p.victoire ? `Pillage réussi à ${p.nom} : +${p.gain} minerai, rangé dans ton coffre.`
+          : `Repoussés à ${p.nom}.${p.perte ? ` L’escouade a laissé ${p.perte} minerai de son coffre.` : ''}`;
       } else {
         D.vue = app.jeu.choix.length ? 'archipel' : 'coupe';
         const manque = J.manquePourCreuser(app.jeu);

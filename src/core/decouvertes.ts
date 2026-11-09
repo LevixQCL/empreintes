@@ -123,7 +123,7 @@ const CONSEILS_PARTICULARITE: Record<number, string> = {
   2: 'Garde un Augmenté debout dans l’escouade : sans lui, les murs restent fermés.',
   3: 'Avance salle par salle jusqu’à la Halte : la lanterne qui t’y attend rallume le plan.',
   4: 'Une salle scellée est plus dure, mais rend une carte de cuivre : entre-y quand l’escouade est en forme.',
-  5: 'Ne néglige pas les caches : une niche peut rendre une carte au lieu de composants.',
+  5: 'Ne néglige pas les caches : une niche peut rendre une carte au lieu de minerai.',
   6: 'Passe par les archives quand tu peux : elles complètent les Chroniques.',
   7: 'Regarde les deux occupants avant d’entrer, et choisis celui que ton escouade bat le mieux.',
   8: 'Ouvre l’œil sur le plan : le Veilleur égaré vaut le détour.',
@@ -171,17 +171,17 @@ export function decouvertesExploration(x: Expedition, quetes: Record<number, num
   if (x.enHalte) {
     r.push({ id: 'halte', sur: 'PREMIÈRE RENCONTRE', titre: 'Une Halte', ico: 'halte',
       texte: 'Tous les chemins passent par ici. Pas de combat : un lieu de l’enquête. Chaque Strate pose une question. À chaque Halte, ton choix suit une piste : celle des nôtres (ce que les vivants ont su, caché, payé) ou celle de ceux d’avant (ce que sont les cristaux). La dernière Halte de la Strate te montre ce que ta piste a trouvé, et à −10, la piste que tu as le plus suivie décide de la fin.',
-      conseil: 'Il n’y a pas de mauvais choix : chaque piste rapporte un peu (Éclat, composants ou lampe) et dévoile une salle plus loin. Touche d’abord les détails : avec une autre escouade, ils racontent autre chose. Ton carnet, dans la Bibliothèque, garde tout.' });
+      conseil: 'Il n’y a pas de mauvais choix : chaque piste rapporte un peu (Éclat, minerai ou lampe) et dévoile une salle plus loin. Touche d’abord les détails : avec une autre escouade, ils racontent autre chose. Ton carnet, dans la Bibliothèque, garde tout.' });
   }
   if (x.carte.salles.some((s) => !s.faite && reperentPassage(x, s).length)) {
     r.push({ id: 'passage', sur: 'PREMIÈRE RENCONTRE', titre: 'Un passage secret', ico: 'fissure',
-      texte: 'Un de tes Porteurs repère une fissure que les autres ne voient pas (marque sur le plan). Entre dans cette salle et suis-le : une salle cachée hors du chemin, quelques mots de lui, des composants et une archive.',
+      texte: 'Un de tes Porteurs repère une fissure que les autres ne voient pas (marque sur le plan). Entre dans cette salle et suis-le : une salle cachée hors du chemin, quelques mots de lui, du minerai et une archive.',
       conseil: 'Chaque passage n’est repéré que par certains Porteurs : change d’escouade de temps en temps pour en découvrir d’autres.' });
   }
   if (x.porte) {
     const n = suitePorte(x.strate);
     r.push({ id: 'porte', sur: 'PREMIÈRE RENCONTRE', titre: 'Une porte à Fréquence', ico: 'porte',
-      texte: `Une porte ancienne, gravée de Fréquences. Cinq cartes de ton deck sont tirées : choisis-en ${n} dont les Fréquences se suivent, comme une suite en combat (l’Accord ∗ prolonge toute suite). Derrière : un Éclat et des composants.`,
+      texte: `Une porte ancienne, gravée de Fréquences. Cinq cartes de ton deck sont tirées : choisis-en ${n} dont les Fréquences se suivent, comme une suite en combat (l’Accord ∗ prolonge toute suite). Derrière : un Éclat et du minerai.`,
       conseil: 'Aucun risque : tu peux retirer la main une fois, ou passer ton chemin si la suite n’y est pas.' });
   }
   if ((x.gagnes ?? 0) >= 1) {

@@ -5,7 +5,7 @@ import { batimentDef, porteurDef, PORTEURS, BATIMENTS, tirablesEn, moduleDe, mod
 import type { BatimentId, Rarete } from '../types';
 import { COLLECTION, ajouterCarte, NOMS_RARETE, composantsNiveau, doublonsRequis, niveauRequis, poidsCarte } from '../collection';
 import { tireur } from '../rng';
-import { partPvClinique, CERCLE, CERCLE_OUVERTURE, CONFIANCE, accueillirFamille, nbFoyers, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, energieParHeure, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, stockage, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
+import { partPvClinique, CERCLE, CERCLE_OUVERTURE, CONFIANCE, accueillirFamille, nbFoyers, ACCORD_OUVERT, escouadeDe, ARCHIVE, niveauConfiance, chargeMax, chargePortee, CREUSEURS, DISTRICT, QUOTIDIENS, XP, creuseursRequis, enExpedition, heuresDeTaille, jourDe, log, multiplicateur, niveauPorteur, non, porteursPresents, posteDe, pvNiveau, strateVaincue, type Comptoir, type Jeu, type Poste, type Seance, type Resultat, xpPourNiveau } from './etat';
 import { OBJECTIFS, objectifCourant } from './objectifs';
 import { ORDRE_FAMILLES, fragmentDef } from '../fragments';
 import { familleDef, familleDuFragment } from '../familles';
@@ -102,8 +102,8 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
   if (niv >= batimentDef(b).niveauMax) return [];
   const apres: Jeu = { ...j, batiments: { ...j.batiments, [b]: niv + 1 } };
   const g: GainNiveau[] = [];
-  if (b === 'generateur') g.push({ quoi: 'energie', texte: 'Énergie par heure', avant: energieParHeure(j), apres: energieParHeure(apres) });
-  if (b === 'generateur' && stockage(apres) > stockage(j)) g.push({ quoi: 'stockage', texte: 'Réserve d’énergie', avant: stockage(j), apres: stockage(apres), detail: `au moins ${DISTRICT.reserveHeures} h de production` });
+  if (b === 'generateur') g.push({ quoi: 'energie', texte: 'Heures pour tailler le minerai', avant: heuresDeTaille(j), apres: heuresDeTaille(apres), detail: 'chaque heure, il en taille une part' });
+  if (b === 'generateur' && (DISTRICT.eclatsParJour[niv + 1] ?? 0) > (DISTRICT.eclatsParJour[niv] ?? 0)) g.push({ quoi: 'eclats', texte: 'Éclats recueillis par jour en taillant', avant: DISTRICT.eclatsParJour[niv] ?? 0, apres: DISTRICT.eclatsParJour[niv + 1] ?? 0 });
   if (b === 'clinique') g.push({ quoi: 'soin', texte: 'Usure soignée par heure', avant: soinParHeure(j), apres: soinParHeure(apres), detail: 'pour chaque Porteur au repos' });
   if (b === 'clinique' && partPvClinique(apres) > partPvClinique(j)) g.push({ quoi: 'pv', texte: 'PV max. des Porteurs', avant: Math.round(partPvClinique(j) * 100), apres: Math.round(partPvClinique(apres) * 100), unite: '%', detail: 'en plus, pour tous' });
   if (b === 'clinique' && niv + 1 === ACCORD_OUVERT.clinique) {
@@ -121,7 +121,7 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
     g.push({ quoi: 'offres', texte: 'Cartes en vente chaque jour', avant: etalsDuComptoir(j).length, apres: etalsDuComptoir(apres).length });
     const argent = (x: Jeu) => (COMPTOIR.etals[x.batiments.comptoir] ?? []).includes('argent');
     const ec = (x: Jeu) => COMPTOIR.eclats.parJour[x.batiments.comptoir] ?? 0;
-    if (ec(apres) > ec(j)) g.push({ quoi: 'eclats', texte: 'Éclats en vente par jour', avant: ec(j), apres: ec(apres), detail: `de ${COMPTOIR.eclats.prix[0]} à ${COMPTOIR.eclats.prix.at(-1)} composants l’Éclat` });
+    if (ec(apres) > ec(j)) g.push({ quoi: 'eclats', texte: 'Éclats en vente par jour', avant: ec(j), apres: ec(apres), detail: `de ${COMPTOIR.eclats.prix[0]} à ${COMPTOIR.eclats.prix.at(-1)} cristaux l’Éclat` });
     if (argent(apres) && !argent(j)) g.push({ quoi: 'argent', texte: 'Des cartes en argent', ...(strateVaincue(j) < COMPTOIR.strateArgent ? { detail: `une fois la Strate −${COMPTOIR.strateArgent} vaincue` } : {}) });
   }
   if (b === 'cercle') {
@@ -133,7 +133,6 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
     if (niv + 1 === CERCLE.orAuNiveau) g.push({ quoi: 'or', texte: 'Les cartes en or s’échangent', detail: 'la nacre, jamais' });
   }
   if (b === 'noyau') {
-    g.push({ quoi: 'stockage', texte: 'Stockage d’énergie', avant: stockage(j), apres: stockage(apres) });
     const prof = profondeurNoyau(niv + 1);
     g.push({ quoi: 'creuseurs', texte: 'Creuseurs logés', avant: logementCreuseurs(j), apres: logementCreuseurs(apres),
       detail: prof === Infinity ? 'plus aucune limite de profondeur' : `de quoi creuser jusqu’à la Strate −${prof}` });
@@ -226,7 +225,7 @@ export function poster(j: Jeu, id: string, b: Poste | null): Resultat {
     if (!a) return non(plafondSeance(j).par === 'escouade' ? `${porteurDef(id).nom} a rattrapé ton meilleur Porteur d’escouade : la suite se gagne dans les Strates.` : `${porteurDef(id).nom} a atteint le plafond de la Tour : monte-la pour aller plus loin.`);
     const n = placesEntrainement(j);
     if (seancesDe(j).length >= n) return non(n > 1 ? `Les ${n} places de la Tour sont prises : arrête une séance ou attends qu’une se termine.` : 'La place de la Tour est prise : arrête la séance ou attends qu’elle se termine.');
-    if (j.energie < a.energie) return non(`Il manque ${a.energie - Math.floor(j.energie)} énergie pour cette séance.`);
+    if (j.energie < a.energie) return non(`Il manque ${a.energie - Math.floor(j.energie)} cristaux pour cette séance.`);
   }
   if (b && b !== 'noyau') {
     const occupant = posteDe(j, b);
@@ -240,7 +239,7 @@ export function poster(j: Jeu, id: string, b: Poste | null): Resultat {
     const a = apercuSeance(j, id)!;
     j.energie -= a.energie;
     ouvrirSeance(j, id, a.energie);
-    log(j, `${porteurDef(id).nom} commence une séance à la Tour du Noyau : niveau ${a.cible} (${a.energie} énergie).`);
+    log(j, `${porteurDef(id).nom} commence une séance à la Tour du Noyau : niveau ${a.cible} (${a.energie} cristaux).`);
     return { ok: true };
   }
   p.poste = b;
@@ -256,8 +255,8 @@ export function fabriquer(j: Jeu, moduleId: string, now: number): Resultat {
   if (!posteDe(j, 'forge')) return non('Il faut un Porteur au travail à la Forge.');
   const c = coutRefabrication(moduleId);
   const manque = [
-    j.energie < c.energie ? `${c.energie - j.energie} d’énergie` : '',
-    j.composants < c.composants ? `${c.composants - j.composants} composants` : '',
+    j.energie < c.energie ? `${c.energie - Math.floor(j.energie)} cristaux` : '',
+    j.composants < c.composants ? `${c.composants - j.composants} minerai` : '',
     j.eclats < c.eclats ? `${c.eclats - j.eclats} Éclat${c.eclats - j.eclats > 1 ? 's' : ''}` : '',
   ].filter(Boolean);
   if (manque.length) return non(`Pour refabriquer ${moduleDef(moduleId).nom}, il manque ${manque.join(' et ').replace(/ et (?=[^]* et )/, ', ')}.`);
@@ -269,14 +268,14 @@ export function fabriquer(j: Jeu, moduleId: string, now: number): Resultat {
   return { ok: true };
 }
 
-/** Recycle un doublon en Composants */
+/** Recycle un doublon en minerai (`composants`) */
 export function recycler(j: Jeu, moduleId: string): Resultat {
   const c = j.collection[moduleId];
   if (!c || c.doublons < 1) return non('Aucun doublon à recycler.');
   c.doublons--;
   const gain = COLLECTION.recyclage[moduleDef(moduleId).rarete];
   j.composants += gain;
-  log(j, `Un doublon ${deNom(moduleDef(moduleId).nom)} recyclé : +${gain} composants.`);
+  log(j, `Un doublon ${deNom(moduleDef(moduleId).nom)} recyclé : +${gain} minerai.`);
   return { ok: true };
 }
 
@@ -288,9 +287,9 @@ export function monter(j: Jeu, moduleId: string): Resultat {
   if (requis === null) return non('Niveau maximum atteint.');
   if (c.doublons < requis) return non(`Il faut ${requis} doublon${requis > 1 ? 's' : ''}.`);
   const cout = composantsNiveau(c.niveau + 1);
-  if (j.composants < cout) return non('Pas assez de composants.');
+  if (j.energie < cout) return non(`Il faut ${cout} cristaux.`);
   c.doublons -= requis;
-  j.composants -= cout;
+  j.energie -= cout;
   c.niveau++;
   log(j, `${moduleDef(moduleId).nom} passe au niveau ${c.niveau}.`);
   return { ok: true };
@@ -439,8 +438,8 @@ export const ENTRAINEMENT = {
   heuresParNiveau: 1.15,
   /** chaque niveau de la Tour au-delà du premier raccourcit les séances de 6 % */
   vitesseParNoyau: 0.06,
-  /** énergie d'une séance complète : 12 × (niveau visé)^1,8, arrondi à 10 (toujours sous le stockage de la Tour qui l'autorise) */
-  coutBase: 12,
+  /** cristaux d'une séance complète : 0,6 × (niveau visé)^1,8, arrondi à 5 (9 novembre 2026 : l'ancien prix en énergie ÷ 20) */
+  coutBase: 0.6,
   coutExposant: 1.8,
 } as const;
 /**
@@ -481,7 +480,7 @@ export function apercuSeance(j: Jeu, id: string): { cible: number; heures: numbe
   const tete = Math.max(...Object.keys(j.porteurs).map((k) => niveauPorteur(j, k).niveau));
   const heuresCompletes = (ENTRAINEMENT.heuresBase + ENTRAINEMENT.heuresParNiveau * (cible - 2)) * vitesseEntrainement(j.batiments.noyau)
     / (tete - n.niveau >= 2 ? XP.rattrapage : 1);
-  const coutComplet = Math.round((ENTRAINEMENT.coutBase * cible ** ENTRAINEMENT.coutExposant) / 10) * 10;
+  const coutComplet = Math.max(5, Math.round((ENTRAINEMENT.coutBase * cible ** ENTRAINEMENT.coutExposant) / 5) * 5);
   return { cible, heures: Math.max(1 / 60, heuresCompletes * part), energie: Math.ceil(coutComplet * part), xp };
 }
 
@@ -501,11 +500,10 @@ export function interrompreSeance(j: Jeu, id: string): number {
   if (p?.poste === 'noyau') p.poste = null;
   if (!s) return 0;
   const reste = s.xpTotale > 0 ? Math.max(0, 1 - s.xpGagnee / s.xpTotale) : 0;
-  // rendue dans la limite du stockage, comme toute énergie
-  const rendu = Math.max(0, Math.min(Math.floor(s.energie * reste), stockage(j) - j.energie));
+  const rendu = Math.max(0, Math.floor(s.energie * reste));
   j.energie += rendu;
   j.seances = seancesDe(j).filter((x) => x !== s);
-  log(j, `Séance interrompue : ${porteurDef(id).nom} quitte la Tour${rendu ? ` (${rendu} énergie rendue)` : ''}.`);
+  log(j, `Séance interrompue : ${porteurDef(id).nom} quitte la Tour${rendu ? ` (${rendu} cristaux rendus)` : ''}.`);
   return rendu;
 }
 
@@ -536,7 +534,7 @@ export function entrainer(j: Jeu, heures: number): string[] {
     // déjà monté par une autre voie (récompense, rapport…) : la séance s'achève, l'énergie des heures non faites revient
     const atteint = niveauPorteur(j, s.porteur).niveau >= s.cible;
     if (s.xpGagnee < s.xpTotale - 1e-6 && !atteint) continue;
-    if (atteint && s.xpTotale > 0) j.energie = Math.min(stockage(j), j.energie + Math.floor(s.energie * Math.max(0, 1 - s.xpGagnee / s.xpTotale)));
+    if (atteint && s.xpTotale > 0) j.energie += Math.floor(s.energie * Math.max(0, 1 - s.xpGagnee / s.xpTotale));
     d.xp = Math.max(d.xp ?? 0, xpPourAtteindre(s.cible));
     d.poste = null;
     j.seances = seancesDe(j).filter((x) => x !== s);
@@ -574,7 +572,8 @@ export const COMPTOIR = {
    * de 1 à 6 Éclats par jour selon le niveau du Comptoir (avant : 1 ou 2), à prix croissant dans la journée (500, 700, puis 1 000).
    * Au plus 5 200 composants par jour au niveau 10 : de quoi absorber le surplus sans que les Éclats deviennent gratuits.
    */
-  eclats: { composants: 500, prix: [500, 700, 1000] as number[], parJour: [0, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6] as number[] },
+  /** 9 novembre 2026 : 300 / 450 / 650 cristaux (la cristallisation du Générateur a disparu, le Comptoir prend le relais) */
+  eclats: { composants: 300, prix: [300, 450, 650] as number[], parJour: [0, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6] as number[] },
 } as const;
 
 /** Les Éclats que le Comptoir vend encore aujourd'hui */
@@ -592,12 +591,12 @@ export function acheterEclat(j: Jeu, now = j.dernierTick): Resultat {
   garnirComptoir(j, now);
   if (!eclatsAuComptoir(j).restants) return non('Les fouilleurs n’ont plus d’Éclats à vendre aujourd’hui : nouvel arrivage demain.');
   const prix = prixEclatComptoir(j);
-  if (j.composants < prix) return non(`Il faut ${prix} composants pour cet Éclat.`);
-  j.composants -= prix;
+  if (j.energie < prix) return non(`Il faut ${prix} cristaux pour cet Éclat.`);
+  j.energie -= prix;
   j.eclats += 1;
   j.comptoir.eclats = (j.comptoir.eclats ?? 0) + 1;
-  log(j, `Comptoir : un Éclat acheté (${prix} composants).`);
-  return { ok: true, message: `+1 Éclat pour ${prix} composants.` };
+  log(j, `Comptoir : un Éclat acheté (${prix} cristaux).`);
+  return { ok: true, message: `+1 Éclat pour ${prix} cristaux.` };
 }
 
 export function comptoirVide(now: number, rng: number): Comptoir {
@@ -660,7 +659,7 @@ export function renouvelerComptoir(j: Jeu, now = j.dernierTick): Resultat {
   if (c.renouvele) return non('Les étals ont déjà été renouvelés aujourd’hui : nouvel arrivage demain.');
   const places = renouvelablesComptoir(j);
   if (!places.length) return non('Tout est vendu : nouvel arrivage demain.');
-  if (j.composants < COMPTOIR.renouveler) return non('Pas assez de composants.');
+  if (j.energie < COMPTOIR.renouveler) return non('Pas assez de cristaux.');
   const t = tireur(c);
   const metaux = places.map((i) => moduleDef(c.offres[i]!).rarete);
   // jamais une carte déjà proposée aujourd'hui ; si le métal n'en a plus assez, on garde l'ancienne
@@ -669,7 +668,7 @@ export function renouvelerComptoir(j: Jeu, now = j.dernierTick): Resultat {
     const id = tirerOffre(j, t, metaux[n]!, bases);
     if (id) { bases.add(moduleDe(id)); c.offres[i] = id; }
   });
-  j.composants -= COMPTOIR.renouveler;
+  j.energie -= COMPTOIR.renouveler;
   c.renouvele = true;
   log(j, 'Comptoir : les étals ont été renouvelés.');
   return { ok: true };
@@ -684,8 +683,8 @@ export function acheter(j: Jeu, index: number, now = j.dernierTick): Resultat {
   if (!id) return non('Cette offre n’existe pas.');
   if (c.achetes.includes(index)) return non('Déjà acheté aujourd’hui : le Comptoir se renouvelle demain.');
   const p = prixComptoir(id);
-  if (j.composants < p.composants || j.eclats < p.eclats) return non('Pas assez de ressources.');
-  j.composants -= p.composants;
+  if (j.energie < p.composants || j.eclats < p.eclats) return non('Pas assez de ressources.');
+  j.energie -= p.composants;
   j.eclats -= p.eclats;
   c.achetes.push(index);
   const neuve = ajouterCarte(j, id);
@@ -693,52 +692,13 @@ export function acheter(j: Jeu, index: number, now = j.dernierTick): Resultat {
   return { ok: true };
 }
 
-// ---------- Dépenser l'énergie (27 octobre 2026, Bryan : « après quelques jours, on en a un stock et il ne se passe plus rien ») ----------
-
-/**
- * Le convertisseur du Générateur : un lot d'énergie devient des composants. Le taux baisse avec les lots convertis dans
- * la journée (10, puis 6, puis 3 composants par lot), 20 lots au plus, et repart chaque jour : au plus 110 composants par jour,
- * à peu près une expédition (un Générateur au niveau 5 produit bien plus : le plafond garde les descentes indispensables).
- */
-export const CONVERTISSEUR = { lot: 100, taux: [10, 10, 10, 10, 10, 6, 6, 6, 6, 6] as number[], ensuite: 3, lotsParJour: 20 };
-export const conversionsDuJour = (j: Jeu, now = j.dernierTick) => (j.conversion?.jour === jourDe(now) ? j.conversion.lots : 0);
-export const tauxConversion = (j: Jeu, now = j.dernierTick) => CONVERTISSEUR.taux[conversionsDuJour(j, now)] ?? CONVERTISSEUR.ensuite;
-
-export function convertir(j: Jeu, now = j.dernierTick): Resultat {
-  if (j.batiments.generateur < 1) return non('Le Générateur est à l’arrêt.');
-  if (conversionsDuJour(j, now) >= CONVERTISSEUR.lotsParJour) return non('Le convertisseur a assez tourné pour aujourd’hui : il repart demain.');
-  if (j.energie < CONVERTISSEUR.lot) return non(`Il faut ${CONVERTISSEUR.lot} énergie pour un lot.`);
-  const gain = tauxConversion(j, now);
-  j.energie -= CONVERTISSEUR.lot;
-  j.composants += gain;
-  j.conversion = { jour: jourDe(now), lots: conversionsDuJour(j, now) + 1 };
-  return { ok: true, message: `Convertisseur : ${CONVERTISSEUR.lot} énergie → +${gain} composants.` };
-}
-
-/**
- * La cristallisation du Générateur (8 novembre 2026, audit du soir : 67 % de l'énergie perdue, le Générateur 6 à 10 sans effet) :
- * le courant des grands paliers condense des Éclats. 2 000 énergie l'Éclat ; 1 par jour au niveau 5-6, 2 au 7-8, 3 au 9-10.
- * Les Éclats restent la ressource rare : au mieux 3 par jour, contre ~54 pour monter un bâtiment au niveau 10.
- * 8 novembre 2026, midi (audit : encore ~50 % de l'énergie perdue, 2 à 3 Éclats en main au jour 30) : dès le niveau 4, 1 par jour.
- */
-export const CRISTALLISEUR = { energie: 2000, parJour: [0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 3] as number[], niveauMin: 4 };
-export const cristallisationsDuJour = (j: Jeu, now = j.dernierTick) => (j.cristallisation?.jour === jourDe(now) ? j.cristallisation.n : 0);
-export const cristallisationsMax = (j: Jeu) => CRISTALLISEUR.parJour[j.batiments.generateur] ?? 0;
-
-export function cristalliser(j: Jeu, now = j.dernierTick): Resultat {
-  const max = cristallisationsMax(j);
-  if (!max) return non(`Il faut un Générateur niveau ${CRISTALLISEUR.niveauMin} pour condenser des Éclats.`);
-  if (cristallisationsDuJour(j, now) >= max) return non('Les condenseurs refroidissent : ils repartent demain.');
-  if (j.energie < CRISTALLISEUR.energie) return non(`Il faut ${CRISTALLISEUR.energie} énergie pour un Éclat.`);
-  j.energie -= CRISTALLISEUR.energie;
-  j.eclats += 1;
-  j.cristallisation = { jour: jourDe(now), n: cristallisationsDuJour(j, now) + 1 };
-  log(j, `Générateur : un Éclat condensé (${CRISTALLISEUR.energie} énergie).`);
-  return { ok: true, message: `Générateur : ${CRISTALLISEUR.energie} énergie → +1 Éclat.` };
-}
+// ---------- Les soins intensifs ----------
 
 /** Les soins intensifs de la Clinique : de l'énergie pour effacer l'Usure d'un Porteur tout de suite (sans attendre le repos) */
-export const SOINS_INTENSIFS = { energieParUsure: 5 };
+/** 9 novembre 2026 (cristal unique) : 1 cristal par point d'Usure (relu par un game designer : moins cher, l'Usure ne voudrait plus rien dire) */
+export const SOINS_INTENSIFS = { usureParCristal: 1 };
+/** Le prix en cristaux pour effacer `points` d'Usure */
+export const prixSoins = (points: number) => Math.ceil(points / SOINS_INTENSIFS.usureParCristal);
 
 export function soignerVite(j: Jeu, id: string): Resultat {
   const p = j.porteurs[id];
@@ -754,19 +714,19 @@ export function soignerVite(j: Jeu, id: string): Resultat {
     p.usure = 0;
     return { ok: true, message: `La Clinique offre ses premiers soins intensifs : ${porteurDef(id).nom} est remis sur pied (−${usure} Usure).` };
   }
-  const points = Math.min(usure, Math.floor(j.energie / SOINS_INTENSIFS.energieParUsure));
-  if (points < 1) return non(`Il faut ${SOINS_INTENSIFS.energieParUsure} énergie par point d’Usure.`);
-  j.energie -= points * SOINS_INTENSIFS.energieParUsure;
+  const points = Math.min(usure, Math.floor(j.energie) * SOINS_INTENSIFS.usureParCristal);
+  if (points < 1) return non(`Il faut 1 cristal pour ${SOINS_INTENSIFS.usureParCristal} points d’Usure.`);
+  j.energie -= prixSoins(points);
   p.usure = Math.max(0, p.usure - points);
-  return { ok: true, message: `Soins intensifs : −${points} Usure pour ${porteurDef(id).nom} (${points * SOINS_INTENSIFS.energieParUsure} énergie).` };
+  return { ok: true, message: `Soins intensifs : −${points} Usure pour ${porteurDef(id).nom} (${prixSoins(points)} cristal${prixSoins(points) > 1 ? 'x' : ''}).` };
 }
 
 /** Récupère la récompense de l'objectif en cours s'il est rempli */
 export function reclamer(j: Jeu): Resultat {
   const o = objectifCourant(j);
   if (!o || !o.fait(j)) return non('Objectif pas encore rempli.');
-  j.energie = Math.min(stockage(j), j.energie + (o.recompense.energie ?? 0));
-  j.composants += o.recompense.composants ?? 0;
+  // les récompenses arrivent déjà taillées (9 novembre 2026)
+  j.energie += (o.recompense.energie ?? 0) + (o.recompense.composants ?? 0);
   if (o.recompense.creuseurs && gagnerCreuseurs(j, o.recompense.creuseurs, 'des volontaires rejoignent le chantier')) creuser(j);
   j.objectif++;
   log(j, `Objectif rempli : ${o.titre}.`);

@@ -22,7 +22,7 @@ function partie(niveau = 1) {
   j.strate = 3; j.frontVaincu = false; // −2 vaincue
   j.batiments.noyau = 10;
   j.batiments.cercle = niveau;
-  j.composants = 1000;
+  j.energie = 1000;
   j.collection[A] = { niveau: 5, doublons: 2 };
   j.collection[Cu] = { niveau: 3, doublons: 1 };
   return j;
@@ -69,7 +69,7 @@ describe('Les échanges', () => {
     const r = proposerEchange(j, { id: 'p1', ami: 'u2', nomAmi: 'Luc', donne: A, recoit: B }, ami, T);
     expect(r.ok).toBe(true);
     expect(j.collection[A]!.doublons).toBe(1);
-    expect(j.composants).toBe(1000 - CERCLE.cout.argent);
+    expect(j.energie).toBe(1000 - CERCLE.cout.argent);
     expect(conclureEchange(j, 'p1')?.recue).toBe(B);
     expect(j.collection[B]).toBeDefined();
     expect(conclureEchange(j, 'p1')).toBeNull();
@@ -81,14 +81,14 @@ describe('Les échanges', () => {
     const avant = echangesRestants(j, T);
     rendreEchange(j, 'p1', T);
     expect(j.collection[A]!.doublons).toBe(2);
-    expect(j.composants).toBe(1000);
+    expect(j.energie).toBe(1000);
     expect(echangesRestants(j, T)).toBe(avant + 1);
   });
   it('fer et cuivre sont gratuits', () => {
     const j = partie();
     const D = carteId(a!.id, 'cuivre');
     proposerEchange(j, { id: 'p2', ami: 'u2', nomAmi: 'Luc', donne: Cu, recoit: D }, ami, T);
-    expect(j.composants).toBe(1000);
+    expect(j.energie).toBe(1000);
   });
   it('se limitent par jour et par propositions ouvertes', () => {
     const j = partie(1);

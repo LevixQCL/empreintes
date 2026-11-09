@@ -26,7 +26,7 @@ export const PARRAINAGE = {
   /** les recrues qui rapportent au parrain (au-delà, seules les distinctions continuent de compter) */
   recruesRecompensees: 5,
   paliers: [
-    { id: 'strate1', titre: 'Strate −1 vaincue', parrain: 'Un paquet de composants (≈ une journée de jeu)', filleul: '' },
+    { id: 'strate1', titre: 'Strate −1 vaincue', parrain: 'Un paquet de cristaux (≈ une journée de jeu)', filleul: '' },
     { id: 'strate3', titre: 'Strate −3 atteinte', parrain: 'Une carte au choix, dont une d’argent', filleul: 'Une carte au choix, dont une d’argent' },
     { id: 'noyau3', titre: 'Tour du Noyau niveau 3', parrain: 'La carte « Empreinte jumelle », à son nom', filleul: 'La carte « Empreinte jumelle », au nom du parrain' },
   ] as { id: PalierId; titre: string; parrain: string; filleul: string }[],
@@ -97,9 +97,9 @@ export function devenirFilleul(j: Jeu, parrain: { uid: string; code: string; nom
   const e = etatParrainage(j);
   if (e.code && e.code === parrain.code) return non('C’est ton propre code.');
   e.parrain = { ...parrain, jour: jourDe(now) };
-  j.composants += PARRAINAGE.depart.composants;
+  j.energie += PARRAINAGE.depart.composants;
   j.choix.push({ source: 'parrainage', options: choixDeCartes(j, 'cuivre') });
-  log(j, `Recommandé par ${parrain.nom} : +${PARRAINAGE.depart.composants} composants, une carte au choix, et des colis doublés pendant ${PARRAINAGE.depart.joursColisDoubles} jours.`);
+  log(j, `Recommandé par ${parrain.nom} : +${PARRAINAGE.depart.composants} cristaux, une carte au choix, et des colis doublés pendant ${PARRAINAGE.depart.joursColisDoubles} jours.`);
   return { ok: true };
 }
 
@@ -198,9 +198,9 @@ export function reclamerRecrues(j: Jeu, recrues: Recrue[]): string[] {
     if (!neufs.length || !recruePayee(j, r.uid)) continue;
     for (const id of neufs) {
       if (id === 'strate1') {
-        j.composants += PARRAINAGE.strate1.composants;
+        j.energie += PARRAINAGE.strate1.composants;
         j.eclats += PARRAINAGE.strate1.eclats;
-        nouvelles.push(`${r.nom} a vaincu la Strate −1 : +${PARRAINAGE.strate1.composants} composants et +${PARRAINAGE.strate1.eclats} Éclats.`);
+        nouvelles.push(`${r.nom} a vaincu la Strate −1 : +${PARRAINAGE.strate1.composants} cristaux et +${PARRAINAGE.strate1.eclats} Éclats.`);
       } else if (id === 'strate3') {
         j.choix.push({ source: 'parrainage', options: choixDeCartes(j, 'argent') });
         nouvelles.push(`${r.nom} a atteint la Strate −3 : une carte au choix t’attend.`);

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ajouter, creerCombat, lancer } from '../src/core/combat';
 import { CARTES_COMMUNES, PORTEURS, communeDef, forceCommune } from '../src/core/donnees';
-import { basculerRatelier, choisirRatelier, coutRatelier, energieParHeure, deckEscouade, escouadesAvecCommune, gestesCommuns, nouveauJeu, placesRatelier, ratelierDe, ratelierPayable } from '../src/core/jeu';
+import { basculerRatelier, choisirRatelier, coutRatelier, deckEscouade, escouadesAvecCommune, gestesCommuns, nouveauJeu, placesRatelier, ratelierDe, ratelierPayable } from '../src/core/jeu';
 import type { CombatEtat, Effet, Geste, TypeGeste } from '../src/core/types';
 
 // Le Râtelier du district (30 octobre 2026) : les cartes communes, leur bâtiment, leurs emplacements, leur énergie
@@ -45,22 +45,21 @@ describe('Le Râtelier du district', () => {
     expect(basculerRatelier(j, 'lame-atelier').ok).toBe(true);
   });
 
-  it('un seul prix par départ pour toutes les cartes du district : 30 min de Générateur pour explorer, 15 min pour une sortie courte', () => {
+  it('un seul prix fixe par départ pour toutes les cartes du district : 10 cristaux pour explorer, 5 pour une sortie courte', () => {
     const j = nouveauJeu(0);
     j.batiments.noyau = 9;
     j.batiments.forge = 2;
     j.batiments.clinique = 7;
     j.batiments.generateur = 5;
     for (const id of Object.keys(j.porteurs)) j.porteurs[id]!.poste = null;
-    expect(energieParHeure(j)).toBe(225);
     expect(choisirRatelier(j, ['stimulant', 'repli', 'lame-atelier', 'ampoule-releve']).ok).toBe(true);
-    expect(coutRatelier(j, 'explorer')).toBe(115);
-    expect(coutRatelier(j, 'courte')).toBe(55);
+    expect(coutRatelier(j, 'explorer')).toBe(10);
+    expect(coutRatelier(j, 'courte')).toBe(5);
     // le nombre de cartes ne change pas le prix
     expect(choisirRatelier(j, ['stimulant']).ok).toBe(true);
-    expect(coutRatelier(j, 'explorer')).toBe(115);
+    expect(coutRatelier(j, 'explorer')).toBe(10);
     expect(choisirRatelier(j, ['stimulant', 'repli', 'lame-atelier', 'ampoule-releve']).ok).toBe(true);
-    j.energie = 100;
+    j.energie = 7;
     expect(ratelierPayable(j, 0, 'courte')).toHaveLength(4);
     // pas assez pour explorer : toutes restent au district, l'escouade part sans elles
     expect(ratelierPayable(j, 0, 'explorer')).toEqual([]);

@@ -12,8 +12,8 @@ import { NOMS_EFFET, effetsDe, texteEffet } from '../core/effets';
 import { CLE_LEGS, VOIES, MODULES, MODULES_TIRABLES, ORIGINE_PAQUETAGE, PORTEURS, communeDef, forceCommune, type CarteCommuneDef, batimentDef, carteId, ennemiDef, moduleDe, moduleDef, porteurDef, zoneDe, deNom, ilElle } from '../core/donnees';
 import {
   contexteCampagne, EVEIL_LEGS, LETTRE_LEGS, legsEnAttente,
-  OBJECTIFS, EPREUVES_STRATE, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, energieMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, energieParHeure, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, stockage, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
-  COMPTOIR, eclatsAuComptoir, prixEclatComptoir, CRISTALLISEUR, cristallisationsDuJour, cristallisationsMax, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, CONVERTISSEUR, SOINS_INTENSIFS, conversionsDuJour, tauxConversion, apercuSeance, debutJour,
+  OBJECTIFS, EPREUVES_STRATE, CARTES_COMMUNES, RATELIER, placesRatelier, communeOuverte, coutRatelier, type Sortie, gesteCommun, ratelierDe, ratelierPayable, escouadesAvecCommune, indiceEscouade, cleDuLegs, chargeMax, chargePortee, escouadeActive, escouadeDe, escouadesDe, strateVaincue, ARCHIVE, CIBLES_FOUILLE, CREUSEURS, chanceCreuseurFouille, creuseursRequis, logementCreuseurs, manquePourCreuser, noyauRequis, DISTRICT, EPREUVE_DECK_MIN, MISSIONS, barquesMax, BARQUES, placesEntrainement, seancesDe, seanceDe, ENTRAINEMENT, POSTES, QUOTIDIENS, epreuveDef, epreuvesDeLaSemaine, strateEpreuve, FELEE, hausseFelee, ESCOUADE_RECRUES, epreuveReussie, NOMS_FAMILLE, type EpreuveDef, lieuMission, bonusMission, composantsMission, destinationsDuJour, barquesVers, secoursPossible, profondeurMission, COEUR, naufragesDeLaStrate, chanceNouvelleMission, NOM_BUTIN, type Butin, type Destination, type DureeMission, lieuIdMission, chantierDe, chantiersMax, coutAmelioration, coutRefabrication, disponibles, dureeChantier, dureeFabrication, enExpedition, deckEscouade, gestesDe, greffesDe, lundiSuivant, objectifCourant, porteursPresents, posteDe, posteQuitte, textePosteQuitte, colisDisponible, colisAvantChoix, RAVITAILLEMENT, pvMaxCombat, tropBlesse, pvMinDepart, quotidienActif, quotidienFait, soinParHeure, type Jeu, type Poste, DECISIONS, decisionEnAttente, jourDe, progresMarque, type Acte, niveauPorteur, XP, gainsAmelioration, type GainNiveau,
+  COMPTOIR, eclatsAuComptoir, prixEclatComptoir, partPvClinique, prixComptoir, renouvelablesComptoir, plafondSeance, SOINS_INTENSIFS, prixSoins, plancherTaille, brutEnAttente, heuresDeTaille, raffinageParHeure, apercuSeance, debutJour,
   etoilesDe, vestigesTrouves, totalEtoiles, prochainPalierEtoiles
 } from '../core/jeu';
 import { CHARGE, COLLECTION, NIVEAU_METAL, NOMS_RARETE, RARETES, TRIS, composantsNiveau, doublonsRequis, forceNiveau, multNiveau, niveauRequis, poidsCarte, trierCartes, type TriCartes } from '../core/collection';
@@ -393,7 +393,7 @@ function mission(e: EcranDistrict): string {
   const o = objectifCourant(j);
   if (o) {
     const fait = o.fait(j);
-    const gain = `${o.recompense.energie ? prix('energie', o.recompense.energie) : ''}${o.recompense.composants ? prix('composants', o.recompense.composants) : ''}`
+    const gain = (o.recompense.energie ?? 0) + (o.recompense.composants ?? 0) ? prix('energie', (o.recompense.energie ?? 0) + (o.recompense.composants ?? 0)) : ''
       + (o.recompense.creuseurs ? prix('ouvrier', o.recompense.creuseurs, true, 'creuseurs') : '');
     // sur téléphone, l'objectif guidé se replie en une barre comme celui du jour (25 octobre 2026, Bryan : « beaucoup trop de place ») :
     // la toucher emmène là où il se fait, la flèche déplie la consigne. Sur PC, il reste toujours ouvert.
@@ -509,7 +509,7 @@ function appel(e: EcranDistrict): string {
   if (colisDisponible(j)) {
     const reste = colisAvantChoix(j);
     return `<button type="button" class="appel colis" data-action="colis">${icone('coffre')}<span><strong>Ravitaillement du jour${j.ravitaillement.reserve > 1 ? ` · ${j.ravitaillement.reserve} colis` : ''}</strong>`
-      + `<small><b class="colis-ouvrir">Touche pour l’ouvrir</b> · composants et un doublon · ${reste === 1 ? 'celui-ci contient une carte au choix' : `carte au choix dans ${reste} colis`}</small></span>`
+      + `<small><b class="colis-ouvrir">Touche pour l’ouvrir</b> · cristaux et un doublon · ${reste === 1 ? 'celui-ci contient une carte au choix' : `carte au choix dans ${reste} colis`}</small></span>`
       + `<span class="crans-colis" aria-hidden="true">${Array.from({ length: RAVITAILLEMENT.cycle }, (_, i) => `<i class="${i < j.ravitaillement.ouverts % RAVITAILLEMENT.cycle ? 'plein' : ''}"></i>`).join('')}</span></button>`;
   }
   return '';
@@ -531,7 +531,8 @@ function avecPorteur(j: Jeu, b: Poste, id: string | null): Jeu {
 
 /** Ce que rend le poste avec ce Porteur : une valeur comparable et sa forme lisible */
 function rendement(j: Jeu, b: Exclude<Poste, 'noyau'>, id: string | null): { v: number; court: string; long: string } {
-  if (b === 'generateur') { const v = energieParHeure(avecPorteur(j, b, id)); return { v, court: `${ent(v)}/h`, long: `${ent(v)} énergie/h` }; }
+  // le Générateur : plus il taille vite, moins il lui faut d'heures (on compare des vitesses : 1 / heures)
+  if (b === 'generateur') { const h = heuresDeTaille(avecPorteur(j, b, id)); const v = h ? Math.round(100 / h) / 100 : 0; return { v, court: `${virgule(Math.round(h * 10) / 10)} h`, long: `tout taillé en ${virgule(Math.round(h * 10) / 10)} h` }; }
   if (b === 'clinique') { const v = Math.round(soinParHeure(avecPorteur(j, b, id)) * 10) / 10; return { v, court: `${virgule(v)}/h`, long: `${virgule(v)} Usure soignée/h` }; }
   const d = batimentDef(b);
   const v = !id ? 1 : porteurDef(id).lignee === d.affinite ? DISTRICT.bonusAffinite : DISTRICT.bonusPoste;
@@ -553,7 +554,7 @@ function candidat(j: Jeu, id: string, poste: Exclude<Poste, 'noyau'>, actuel: nu
   const r = rendement(j, poste, id);
   const ecart = Math.round((r.v - actuel) * 10) / 10;
   const signe = ecart > 0 ? 'plus' : ecart < 0 ? 'moins' : 'egal';
-  const delta = poste === 'forge' || ecart === 0 ? '' : `<i>${ecart > 0 ? '+' : '−'}${virgule(Math.abs(ecart))}</i>`;
+  const delta = poste === 'forge' || poste === 'generateur' || ecart === 0 ? '' : `<i>${ecart > 0 ? '+' : '−'}${virgule(Math.abs(ecart))}</i>`;
   return `<button type="button" class="fb-cand ${signe}" style="--c:${COULEUR[d.lignee]}" data-action="poster" data-id="${id}" data-poste="${poste}" aria-label="Poster ${echap(d.nom)} : ${r.long}${ailleurs ? `, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}">`
     + `<span class="fb-cand-portrait">${avatar(id, 52)}${badgePris(j, id)}</span>`
     + `<strong>${echap(d.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">${r.court}${delta}</span></button>`;
@@ -590,74 +591,46 @@ function coutDetail(icone: Icone, besoin: number, possede: number, nom: string):
   return `<span class="fb-prix${court ? ' court' : ''}" title="${nom} : ${ent(possede)} / ${ent(besoin)}" aria-label="${nom} : ${ent(possede)} sur ${ent(besoin)}">${ICO[icone]}<b>${ent(Math.min(possede, besoin))}</b><small>/ ${ent(besoin)}</small></span>`;
 }
 
-/** Une réserve : jauge remplie / maximum et ce qu'elle dit */
-function reserve(j: Jeu, _b: BatimentId): string {
-  const max = stockage(j);
-  const v = Math.min(j.energie, max);
-  const eph = energieParHeure(j);
-  const plein = v >= max;
-  const note = plein ? (eph > 0 ? 'Pleine : ce que produit le Générateur est perdu.' : 'Pleine.')
-    : eph > 0 ? decompte(Date.now() + ((max - v) / eph) * 3_600_000, Date.now(), 'Pleine dans ', '.') : '';
-  return `<div class="fb-reserve${plein ? ' pleine' : ''}"><div class="fb-reserve-tete">${ICO.coffre}<span>Réserve d’énergie</span><b>${ent(v)}<small> / ${ent(max)}</small></b></div>`
-    + `<div class="fb-jauge" role="meter" aria-valuemin="0" aria-valuemax="${max}" aria-valuenow="${v}" aria-label="Réserve d’énergie"><i style="width:${max ? (v / max) * 100 : 0}%"></i></div>`
-    + (note ? `<small>${note}</small>` : '') + `</div>`;
+/** Les Éclats que la taille recueille chaque jour (9 novembre 2026), dès le niveau 4 */
+function eclatsTailleTexte(j: Jeu): string {
+  const max = DISTRICT.eclatsParJour[j.batiments.generateur] ?? 0;
+  if (!max) return `<small>${ICO.eclats}Au niveau 4, il recueillera des Éclats dans le minerai qu’il taille.</small>`;
+  const n = j.eclatsTaille?.jour === jourDe(Date.now()) ? j.eclatsTaille.n : 0;
+  return `<small>${ICO.eclats}En taillant, il recueille un Éclat tous les ${DISTRICT.eclatTous} cristaux : <b>${n} / ${max}</b> aujourd’hui.</small>`;
 }
 
 /**
- * L'entraînement à la Tour du Noyau (23 octobre 2026) : un Porteur qui ne descend pas gagne de l'XP avec le temps,
- * jusqu'à un plafond fixé par le niveau de la Tour. Même présentation que les postes des autres bâtiments.
+ * La taille du minerai (9 novembre 2026, économie à cristal unique) : ce qui attend au Générateur, le temps qu'il faudra,
+ * et une jauge qui se vide à mesure. Rien ne se perd : sans minerai, il attend.
  */
-/** Le convertisseur du Générateur (27 octobre 2026) : l'énergie en trop devient des composants, à un taux qui baisse dans la journée */
-function blocConvertisseur(j: Jeu): string {
-  const now = Date.now();
-  const taux = tauxConversion(j, now);
-  const faits = conversionsDuJour(j, now);
-  const fini = faits >= CONVERTISSEUR.lotsParJour;
-  const peut = j.energie >= CONVERTISSEUR.lot && !fini;
-  // les paliers du jour : 10, puis 6, puis 3 composants par lot
-  const paliers = [...new Set(CONVERTISSEUR.taux), CONVERTISSEUR.ensuite].map((t) => {
-    const debut = CONVERTISSEUR.taux.indexOf(t) < 0 ? CONVERTISSEUR.taux.length : CONVERTISSEUR.taux.indexOf(t);
-    const nb = CONVERTISSEUR.taux.filter((x) => x === t).length;
-    return `<li class="${!fini && t === taux ? 'actif' : faits > debut ? 'passe' : ''}"><b>+${t}</b><small>${nb ? `lots ${debut + 1} à ${debut + nb}` : `lots ${debut + 1} à ${CONVERTISSEUR.lotsParJour}`}</small></li>`;
-  }).join('');
-  return `<section class="fb-bloc fb-convertir"><h3 class="titre-bloc">${ICO.energie}Convertisseur</h3>`
-    + `<p class="fb-vide">L’énergie en trop devient des composants. Le taux baisse au fil des lots du jour et repart demain.</p>`
-    + `<ol class="fb-paliers" aria-label="Composants par lot selon les lots déjà convertis aujourd’hui">${paliers}</ol>`
-    + `<button type="button" class="btn prim large" data-action="convertir"${peut ? '' : ' disabled'}>${ICO.energie}Convertir ${CONVERTISSEUR.lot} → +${taux} ${icone('composants')}</button>`
-    + (fini ? `<small class="fb-note">Assez tourné pour aujourd’hui : il repart demain.</small>` : faits ? `<small class="fb-note">${faits} lot${faits > 1 ? 's' : ''} sur ${CONVERTISSEUR.lotsParJour} aujourd’hui.</small>` : '') + `</section>`;
+function taille(j: Jeu): string {
+  const t = brutEnAttente(j);
+  const h = heuresDeTaille(j);
+  const note = t.brut
+    ? decompte(Date.now() + t.heures * 3_600_000, Date.now(), 'Tout taillé dans ', ' · continue même jeu fermé.')
+    : 'Rien à tailler : descends ou envoie une barque, il taillera tout ce que tu rapportes.';
+  return `<div class="fb-reserve"><div class="fb-reserve-tete">${ICO.composants}<span>Minerai en taille</span><b>${ent(t.brut)}</b></div>`
+    + `<div class="fb-jauge" role="meter" aria-valuemin="0" aria-valuemax="${Math.max(1, t.brut + j.energie)}" aria-valuenow="${t.brut}" aria-label="Minerai en taille"><i style="width:${t.brut ? Math.min(100, Math.max(6, (100 * t.brut) / (t.brut + 20 * Math.max(1, raffinageParHeure(j))))) : 0}%"></i></div>`
+    + `<small>${note}</small>${eclatsTailleTexte(j)}<small>Chaque heure, il taille ${h ? `environ un ${h === 4 ? 'quart' : `${virgule(Math.round(h * 10) / 10)}ᵉ`}` : 'une part'} de ce qui attend, au moins ${ent(plancherTaille(j))} : plus il monte, plus il va vite.</small></div>`;
 }
 
-/** La cristallisation (8 novembre 2026) : aux grands paliers du Générateur, l'énergie en trop condense des Éclats */
-function blocCristalliseur(j: Jeu): string {
-  const now = Date.now();
-  const max = cristallisationsMax(j);
-  const faits = cristallisationsDuJour(j, now);
-  if (!max) return `<section class="fb-bloc fb-convertir"><h3 class="titre-bloc">${ICO.eclats}Condenseurs</h3>`
-    + `<p class="fb-vide">Au niveau ${CRISTALLISEUR.niveauMin}, le Générateur aura assez de courant pour condenser des Éclats avec l’énergie en trop.</p></section>`;
-  const reste = Math.max(0, max - faits);
-  const peut = reste > 0 && j.energie >= CRISTALLISEUR.energie;
-  return `<section class="fb-bloc fb-convertir"><h3 class="titre-bloc">${ICO.eclats}Condenseurs</h3>`
-    + `<p class="fb-vide">Le courant des grands paliers condense des Éclats : ${max} par jour à ce niveau${j.batiments.generateur < 9 ? ', davantage plus haut' : ''}.</p>`
-    + `<button type="button" class="btn prim large" data-action="cristalliser"${peut ? '' : ' disabled'}>${ICO.energie}Condenser ${CRISTALLISEUR.energie.toLocaleString('fr-BE')} → +1 ${icone('eclats')}</button>`
-    + `<small class="fb-note">${reste ? `Encore ${reste} sur ${max} aujourd’hui.` : 'Les condenseurs refroidissent : ils repartent demain.'}</small></section>`;
-}
-
-/** Les soins intensifs de la Clinique (27 octobre 2026) : de l'énergie pour effacer l'Usure d'un Porteur tout de suite */
+/** Les soins intensifs de la Clinique (27 octobre 2026) : des cristaux pour effacer l'Usure d'un Porteur tout de suite */
 function blocSoinsIntensifs(j: Jeu): string {
   const blesses = PORTEURS.filter((p) => porteursPresents(j).includes(p.id) && !enExpedition(j, p.id) && j.porteurs[p.id]!.usure >= 1);
+  const tarif = SOINS_INTENSIFS.usureParCristal > 1 ? `1 cristal pour ${SOINS_INTENSIFS.usureParCristal} points` : '1 cristal par point';
   let h = `<section class="fb-bloc fb-soins"><h3 class="titre-bloc">${ICO.soin}Soins intensifs</h3>`
-    + (j.soinOffert ? `<p class="fb-vide">Efface l’Usure tout de suite : <b>${SOINS_INTENSIFS.energieParUsure} énergie</b> par point.</p>`
-      : `<p class="fb-vide">Efface l’Usure tout de suite. <b>La première fois, c’est offert</b> ; ensuite ${SOINS_INTENSIFS.energieParUsure} énergie par point.</p>`);
+    + (j.soinOffert ? `<p class="fb-vide">Efface l’Usure tout de suite : <b>${tarif}</b>.</p>`
+      : `<p class="fb-vide">Efface l’Usure tout de suite. <b>La première fois, c’est offert</b> ; ensuite ${tarif}.</p>`);
   if (!blesses.length) return h + `<p class="fb-note">Personne n’a d’Usure en ce moment.</p></section>`;
   h += `<div class="fb-rangee">` + blesses.map((p) => {
     const u = Math.ceil(j.porteurs[p.id]!.usure);
-    const cout = u * SOINS_INTENSIFS.energieParUsure;
+    const cout = prixSoins(u);
     const offert = !j.soinOffert;
-    const peut = offert || j.energie >= SOINS_INTENSIFS.energieParUsure;
-    return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="soigner-vite" data-id="${p.id}"${peut ? '' : ' disabled'} aria-label="Soigner ${echap(p.nom)} : −${u} Usure ${offert ? 'offert' : `pour ${cout} énergie`}">`
+    const peut = offert || j.energie >= 1;
+    return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="soigner-vite" data-id="${p.id}"${peut ? '' : ' disabled'} aria-label="Soigner ${echap(p.nom)} : −${u} Usure ${offert ? 'offert' : `pour ${cout} cristaux`}">`
       + `<span class="fb-cand-portrait">${avatar(p.id, 56)}</span><strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">−${u} Usure</span>`
       + (offert ? `<span class="te-prix offert">Offert</span></button>`
-        : `<span class="te-prix${j.energie < cout ? ' manque' : ''}">${ICO.energie}${ent(Math.min(cout, Math.floor(j.energie / SOINS_INTENSIFS.energieParUsure) * SOINS_INTENSIFS.energieParUsure))}</span></button>`);
+        : `<span class="te-prix${j.energie < cout ? ' manque' : ''}">${ICO.energie}${ent(Math.min(cout, Math.floor(j.energie)))}</span></button>`);
   }).join('') + `</div>`;
   return h + `</section>`;
 }
@@ -691,22 +664,22 @@ function blocEntrainement(e: EcranDistrict): string {
     const o = porteurDef(s.porteur);
     const debut = now - (s.xpGagnee / s.xpHeure) * 3_600_000;
     const fin = now + ((s.xpTotale - s.xpGagnee) / s.xpHeure) * 3_600_000;
-    const rendu = Math.min(Math.floor(s.energie * Math.max(0, 1 - s.xpGagnee / s.xpTotale)), Math.max(0, stockage(j) - j.energie));
+    const rendu = Math.floor(s.energie * Math.max(0, 1 - s.xpGagnee / s.xpTotale));
     lignes.push(`<div class="te-occ" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(s.porteur, seances.length > 1 ? 48 : 64)}</span>`
       + `<div class="te-qui"><strong>${echap(o.nom)}</strong><span class="te-niv">Niv. ${niveau(s.porteur)} <i>→ ${s.cible}</i></span>`
       + `<div class="jauge or">${jaugeTemps(debut, fin, now)}</div><span class="te-temps">${decompte(fin, now)}</span></div>`
-      + `<button type="button" class="btn sec te-stop" data-action="liberer" data-id="${s.porteur}" aria-label="Arrêter la séance ${echap(deNom(o.nom))}${rendu ? ` : ${rendu} énergie rendue` : ''}">Arrêter${rendu ? `<small>+${ent(rendu)}</small>` : ''}</button></div>`);
+      + `<button type="button" class="btn sec te-stop" data-action="liberer" data-id="${s.porteur}" aria-label="Arrêter la séance ${echap(deNom(o.nom))}${rendu ? ` : ${rendu} cristaux rendus` : ''}">Arrêter${rendu ? `<small>+${ent(rendu)}</small>` : ''}</button></div>`);
   }
   if (relance) {
     const a = apercuSeance(j, relance.id)!;
     const peut = j.energie >= a.energie;
     lignes.push(`<div class="te-occ libre" style="--c:${COULEUR[relance.lignee]}"><span class="fb-cand-portrait">${avatar(relance.id, seances.length ? 48 : 64)}</span>`
       + `<div class="te-qui"><span class="te-etat">Séance terminée</span><strong>${echap(relance.nom)}</strong><span class="te-niv">Niv. ${niveau(relance.id)} <i>→ ${a.cible}</i></span><span class="te-temps">${duree(a.heures * 3_600_000)}</span></div>`
-      + `<button type="button" class="btn prim te-stop" data-action="poster" data-id="${relance.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="Relancer ${echap(relance.nom)} vers le niveau ${a.cible} : ${a.energie} énergie">Relancer${prix(a.energie, !peut)}</button></div>`);
+      + `<button type="button" class="btn prim te-stop" data-action="poster" data-id="${relance.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="Relancer ${echap(relance.nom)} vers le niveau ${a.cible} : ${a.energie} cristaux">Relancer${prix(a.energie, !peut)}</button></div>`);
   }
   const videsN = libresN - (relance ? 1 : 0);
   if (!lignes.length) {
-    lignes.push(`<div class="te-qui"><span class="te-etat">Salle libre</span><strong>Choisis un Porteur</strong><span class="te-niv">${places > 1 ? `${places} places · ` : ''}l’énergie se paie au lancement</span></div>`);
+    lignes.push(`<div class="te-qui"><span class="te-etat">Salle libre</span><strong>Choisis un Porteur</strong><span class="te-niv">${places > 1 ? `${places} places · ` : ''}les cristaux se paient au lancement</span></div>`);
   } else if (videsN > 0) {
     lignes.push(`<p class="te-place">${ICO.porteurs}${videsN > 1 ? `${videsN} places libres` : 'Une place libre'}</p>`);
   }
@@ -723,7 +696,7 @@ function blocEntrainement(e: EcranDistrict): string {
         const a = apercuSeance(j, p.id)!;
         const peut = j.energie >= a.energie;
         const ailleurs = j.porteurs[p.id]!.poste;
-        return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="poster" data-id="${p.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="Entraîner ${echap(p.nom)}, niveau ${niveau(p.id)} vers ${a.cible}, ${duree(a.heures * 3_600_000)}, ${a.energie} énergie${ailleurs ? `, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}">`
+        return `<button type="button" class="fb-cand plus" style="--c:${COULEUR[p.lignee]}" data-action="poster" data-id="${p.id}" data-poste="noyau"${peut ? '' : ' disabled'} aria-label="Entraîner ${echap(p.nom)}, niveau ${niveau(p.id)} vers ${a.cible}, ${duree(a.heures * 3_600_000)}, ${a.energie} cristaux${ailleurs ? `, quitte ${echap(batimentDef(ailleurs).nom)}` : ''}">`
           + `<span class="fb-cand-portrait">${avatar(p.id, 52)}${badgePris(j, p.id)}</span>`
           + `<strong>${echap(p.nom.split(' ')[0]!)}</strong><span class="fb-cand-eff">${niveau(p.id)} <i>→ ${a.cible}</i></span>${prix(a.energie, !peut)}</button>`;
       }).join('') + `</div>`;
@@ -768,7 +741,7 @@ function blocComptoir(e: EcranDistrict): string {
     const possede = j.collection[id];
     const vendu = c.achetes.includes(i);
     const p = prixComptoir(id);
-    const assez = j.composants >= p.composants && j.eclats >= p.eclats;
+    const assez = j.energie >= p.composants && j.eclats >= p.eclats;
     const niveau = possede?.niveau ?? COLLECTION.niveauDepart[m.rarete];
     const ruban = possede ? `Doublon · niv. ${possede.niveau}` : 'Nouvelle';
     h += `<div class="cp-offre${vendu ? ' vendue' : ''}" data-carte="${id}"><div class="cp-face">${faceCarte(m, niveau, multNiveau(id, niveau))}${vendu ? `<span class="cp-vendu">${ICO.ok}Achetée</span>` : ''}</div>`
@@ -778,23 +751,23 @@ function blocComptoir(e: EcranDistrict): string {
   });
   // renouveler les étals encore en vente, une fois par jour (1er novembre 2026)
   const places = renouvelablesComptoir(j).length;
-  const assezR = j.composants >= COMPTOIR.renouveler;
+  const assezR = j.energie >= COMPTOIR.renouveler;
   h += `</div><div class="cp-renouveler">`
     + (c.renouvele ? `<small class="aide">${ICO.ok}Étals déjà renouvelés aujourd’hui : nouvel arrivage demain.</small>`
       : !places ? `<small class="aide">Tout est vendu : nouvel arrivage demain.</small>`
       : `<small class="aide">Une fois par jour, les fouilleurs ressortent d’autres cartes du même métal à la place de ${places > 1 ? `celles encore en vente (${places})` : 'celle encore en vente'}.</small>`
-        + `<button type="button" class="btn sec petit" data-action="comptoir-renouveler"${assezR ? '' : ' disabled'} aria-label="Renouveler les étals pour ${COMPTOIR.renouveler} composants">${ICO.chrono}Renouveler les étals ${couts(j, { composants: COMPTOIR.renouveler, eclats: 0 })}</button>`)
+        + `<button type="button" class="btn sec petit" data-action="comptoir-renouveler"${assezR ? '' : ' disabled'} aria-label="Renouveler les étals pour ${COMPTOIR.renouveler} cristaux">${ICO.chrono}Renouveler les étals ${couts(j, { composants: COMPTOIR.renouveler, eclats: 0 })}</button>`)
     + `</div>`;
-  // des Éclats contre des composants (audit du 7 novembre 2026), en petite quantité chaque jour
+  // des Éclats contre des cristaux (audit du 7 novembre 2026), en petite quantité chaque jour
   const ec = eclatsAuComptoir(j);
   if (ec.max) {
     const prixE = prixEclatComptoir(j);
-    const assezE = j.composants >= prixE;
+    const assezE = j.energie >= prixE;
     h += `<div class="cp-renouveler cp-eclats">`
       + (ec.restants
         ? `<small class="aide">Les fouilleurs revendent aussi les Éclats qu’ils remontent : encore <b>${ec.restants} sur ${ec.max}</b> aujourd’hui.</small>`
-          + `<button type="button" class="btn sec petit" data-action="comptoir-eclat"${assezE ? '' : ' disabled'} aria-label="Acheter un Éclat pour ${prixE} composants">${ICO.eclats}Acheter un Éclat ${couts(j, { composants: prixE, eclats: 0 })}</button>`
-          + (ec.max > 1 ? `<small class="aide">Le prix monte avec les Éclats du jour : ${COMPTOIR.eclats.prix.join(', ')} composants.</small>` : '')
+          + `<button type="button" class="btn sec petit" data-action="comptoir-eclat"${assezE ? '' : ' disabled'} aria-label="Acheter un Éclat pour ${prixE} cristaux">${ICO.eclats}Acheter un Éclat ${couts(j, { composants: prixE, eclats: 0 })}</button>`
+          + (ec.max > 1 ? `<small class="aide">Le prix monte avec les Éclats du jour : ${COMPTOIR.eclats.prix.join(', ')} cristaux.</small>` : '')
         : `<small class="aide">${ICO.ok}Plus d’Éclats à vendre aujourd’hui (${ec.max} par jour) : nouvel arrivage demain.</small>`)
       + `</div>`;
   }
@@ -901,7 +874,7 @@ function feuilleBatiment(e: EcranDistrict): string {
   else h += `<p class="fb-role">${echap(d.role)}${pv !== null && pv <= d.niveauMax && pv > niv + 1 ? ` <span>Nouvelle apparence au niveau ${pv}.</span>` : ''}</p>`;
 
   // ce que le bâtiment rapporte
-  if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>+${ent(energieParHeure(j))}</b><small>énergie par heure</small></div></div>${reserve(j, b)}`;
+  if (b === 'generateur') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.energie}<b>${ent(j.energie)}</b><small>cristaux</small></div><div class="fb-chiffre">${ICO.chrono}<b>${virgule(Math.round(heuresDeTaille(j) * 10) / 10)} h</b><small>pour tailler ce qui attend</small></div></div>${taille(j)}`;
   if (b === 'clinique') h += `<div class="fb-chiffres"><div class="fb-chiffre">${ICO.soin}<b>−${virgule(soinParHeure(j))}</b><small>Usure soignée par heure</small></div>`
     + (partPvClinique(j) ? `<div class="fb-chiffre">${ICO.porteurs}<b>+${Math.round(partPvClinique(j) * 100)} %</b><small>PV max. des Porteurs</small></div>` : '') + `</div>`;
   if (b === 'noyau') {
@@ -923,7 +896,7 @@ function feuilleBatiment(e: EcranDistrict): string {
     if (occupant) {
       const o = porteurDef(occupant);
       const apport = poste === 'forge' ? (actuel.v === 1 ? 'vitesse normale' : `fabrique ${virgule(actuel.v)} fois plus vite`)
-        : poste === 'clinique' ? `+${virgule(actuel.v - vide.v)} Usure soignée/h` : `+${ent(actuel.v - vide.v)} énergie/h`;
+        : poste === 'clinique' ? `+${virgule(actuel.v - vide.v)} Usure soignée/h` : `tout taillé en ${actuel.court} au lieu de ${vide.court}`;
       h += `<div class="fb-occupant fg-forgeron" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 44)}${multPoste(poste, occupant)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-apport">${apport}</span></div>`
         + (ouvert ? `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="Libérer ${echap(o.nom)} (${vide.long})">Libérer</button>`
           : `<button type="button" class="btn sec fb-liberer" data-action="poste-changer" aria-expanded="false">Changer</button>`) + `</div>`;
@@ -949,7 +922,6 @@ function feuilleBatiment(e: EcranDistrict): string {
     h += `</section>`;
   }
   // les gestes en plus du bâtiment, sous le Porteur au travail (qui, lui, change ce que le bâtiment rapporte)
-  if (niv && b === 'generateur') h += blocCristalliseur(j) + blocConvertisseur(j);
   if (niv && b === 'clinique') h += blocSoinsIntensifs(j);
 
   if (b === 'forge') h += blocForge(e);
@@ -1001,8 +973,7 @@ function barreAmelioration(e: EcranDistrict, b: BatimentId, a: ReturnType<typeof
   const etiquette = !niv ? `${ICO.marteau}${b === 'comptoir' ? 'Rouvrir' : 'Construire'}` : pied ? `${ICO.monter}Niveau ${niv + 1}` : `${ICO.monter}Passer au niveau ${niv + 1}`;
   return (a.raison ? `<p class="fb-raison">${ICO.verrou}<span>${a.raison}</span>${a.bloque ? `<button type="button" class="fb-lien" data-action="batiment" data-id="noyau" data-amelio>Voir la Tour</button>` : ''}</p>` : '')
     + `<div class="fb-barre"><div class="fb-cout" aria-label="Coût">`
-    + (c.energie ? coutDetail('energie', c.energie, j.energie, 'Énergie') : '')
-    + (c.composants ? coutDetail('composants', c.composants, j.composants, 'Composants') : '')
+    + (c.energie ? coutDetail('energie', c.energie, j.energie, 'Cristaux') : '')
     + (c.eclats ? coutDetail('eclats', c.eclats, j.eclats, 'Éclats') : '') + `</div>`
     + `<button type="button" class="btn ${a.pret ? 'prim' : 'sec'} fb-ameliorer" data-action="ameliorer" data-id="${b}"${a.pret ? '' : ' disabled'} aria-label="${niv ? `Passer au niveau ${niv + 1}` : b === 'comptoir' ? 'Remettre le Comptoir en état' : `Construire le ${echap(batimentDef(b).nom)}`}">${etiquette}</button></div>`;
 }
@@ -1024,7 +995,7 @@ function iconeRetour(l: string): Icone {
   if (t.includes('chantier')) return 'marteau';
   if (t.includes('creuseur')) return 'ouvrier';
   if (t.includes('forge') || t.includes('carte')) return 'cartes';
-  if (t.includes('énergie') || t.includes('stockage')) return 'energie';
+  if (t.includes('cristaux') || t.includes('minerai') || t.includes('taill')) return 'energie';
   if (t.includes('mission') || t.includes('expédition')) return 'descendre';
   return 'cristal';
 }
@@ -1033,7 +1004,7 @@ function iconeRetour(l: string): Icone {
 const AGES: Record<1 | 2 | 3 | 4, { nom: string; texte: string }> = {
   1: { nom: 'Le campement', texte: 'Quelques cabanes au fond de la cuvette, et une Tour qui tient debout.' },
   2: { nom: 'Le quartier s’éveille', texte: 'La Tour du Noyau tient bon : les habitants consolident la digue, réparent les toits et rouvrent les ateliers. Le district ressemble enfin à un quartier.' },
-  3: { nom: 'Le district prospère', texte: 'L’énergie circule, les marchands reviennent, et des maisons neuves montent contre la digue. On parle de ton district jusque dans les autres quartiers.' },
+  3: { nom: 'Le district prospère', texte: 'Le courant circule, les marchands reviennent, et des maisons neuves montent contre la digue. On parle de ton district jusque dans les autres quartiers.' },
   4: { nom: 'Le phare de Vertiga', texte: 'La Tour du Noyau illumine la mer. Ton district est devenu un repère, et même les Hauts le regardent.' },
 };
 
@@ -1254,12 +1225,12 @@ export function feuilleCarte(e: EcranDistrict): string {
   else {
     const pret = c.doublons >= requis;
     const manqueD = Math.max(0, requis - c.doublons);
-    const manqueC = Math.max(0, cout - j.composants);
+    const manqueC = Math.max(0, cout - j.energie);
     const etat = !pret ? `Encore <b>${manqueD} doublon${manqueD > 1 ? 's' : ''}</b> pour le niveau ${c.niveau + 1}. On en trouve en expédition, en mission, dans les colis du ravitaillement, au Comptoir et à la Forge.`
-      : manqueC ? `Doublons réunis. Il manque <b>${manqueC} composant${manqueC > 1 ? 's' : ''}</b>.` : `Prête : elle peut passer au niveau ${c.niveau + 1}.`;
+      : manqueC ? `Doublons réunis. Il manque <b>${manqueC} cristal${manqueC > 1 ? 'x' : ''}</b>.` : `Prête : elle peut passer au niveau ${c.niveau + 1}.`;
     h += `<div class="progression"><div class="jauge" style="--jc:${COULEUR_RARETE[m.rarete]}"><i style="width:${Math.min(100, (100 * c.doublons) / requis)}%"></i></div><span class="chiffre">${c.doublons} / ${requis} doublons</span></div>`
       + `<p class="fc-etat${pret && !manqueC ? ' or' : ''}">${etat} <span>Niveau ${c.niveau + 1} : force ${forceNiveau(cle, c.niveau)} → <b>${forceNiveau(cle, c.niveau + 1)}</b>${c.niveau + 1 >= COLLECTION.niveauMax ? ', et la carte est maîtrisée' : ''}.</span></p>`
-      + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="monter" data-module="${cle}"${pret && j.composants >= cout ? '' : ' disabled'}>${ICO.monter}Passer au niveau ${c.niveau + 1} · ${prix('composants', cout, j.composants >= cout)}</button>`;
+      + `<div class="ligne-btn"><button type="button" class="btn prim" data-action="monter" data-module="${cle}"${pret && j.energie >= cout ? '' : ' disabled'}>${ICO.monter}Passer au niveau ${c.niveau + 1} · ${prix('energie', cout, j.energie >= cout)}</button>`;
     if (c.doublons > 0) h += `<button type="button" class="btn sec" data-action="recycler" data-module="${cle}">${ICO.recycler}Recycler 1 · +${COLLECTION.recyclage[m.rarete]}</button>`;
     h += `</div>`;
   }
@@ -1319,7 +1290,7 @@ function feuilleCommune(e: EcranDistrict, c: CarteCommuneDef): string {
       const plein = !pris && choisies.length >= places;
       const payee = ratelierPayable(j, k).includes(g.id);
       // le prix du départ ne dépend pas du nombre de cartes : on rappelle seulement si l'énergie manque
-      const etat = pris ? (payee ? 'Dans le Râtelier' : '<b class="cm-cout">Énergie insuffisante</b>')
+      const etat = pris ? (payee ? 'Dans le Râtelier' : '<b class="cm-cout">Cristaux insuffisants</b>')
         : plein ? `Plein (${choisies.length} / ${places})` : `${choisies.length} / ${places}`;
       const visages = l.length ? `<span class="cm-esc-visages">${l.map((id) => avatar(id, 22)).join('')}</span>` : '';
       return `<button type="button" class="cm-esc${pris ? ' pris' : ''}" data-action="ratelier-basculer" data-id="${g.id}" data-index="${k}"${j.expedition || plein ? ' disabled' : ''} aria-pressed="${pris}">`
@@ -1407,13 +1378,12 @@ function departRatelier(j: Jeu, k: number, sortie: Sortie = 'explorer'): string 
     const g = gesteCommun(j, communeDef(id)!);
     const paye = payees.includes(id);
     const etiquette = paye ? '' : `<em class="es-rt-prix reste">Reste au district</em>`;
-    return `<li class="${paye ? '' : 'reste'}"><button type="button" class="es-rt-carte" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}${!paye ? ', reste au district faute d’énergie' : ''}. Voir la carte">${tuileFace(g)}</button>${etiquette}</li>`;
+    return `<li class="${paye ? '' : 'reste'}"><button type="button" class="es-rt-carte" data-action="carte" data-id="${g.id}" aria-label="${echap(g.nom)}${!paye ? ', reste au district faute de cristaux' : ''}. Voir la carte">${tuileFace(g)}</button>${etiquette}</li>`;
   }).join('');
   const manque = prevues.length - payees.length;
-  const duree = sortie === 'explorer' ? '30 min' : '15 min';
-  const phrase = `Toutes ensemble, elles coûtent <b class="es-rt-total">${ICO.energie}${ent(total)} énergie</b> à ce départ : ${duree} de production du Générateur${sortie === 'explorer' ? ' pour une exploration' : ' pour une sortie courte'} (tu en as ${ent(Math.floor(j.energie))}).`;
+  const phrase = `Toutes ensemble, elles coûtent <b class="es-rt-total">${ICO.energie}${ent(total)} cristaux</b> à ce départ${sortie === 'explorer' ? ' pour une exploration' : ' pour une sortie courte'} (tu en as ${ent(Math.floor(j.energie))}).`;
   return `<div class="es-ratelier"><span class="surtitre">${ICO.district}Cartes du district · ${payees.length}</span><ul class="es-rt">${cartes}</ul>`
-    + `<p class="es-freq-aide">${phrase}${manque ? ` Il manque de l’énergie : elles restent au district, l’escouade part sans elles.` : ''} Elles restent au Râtelier de l’escouade ${k + 1} d’une descente à l’autre ; tu les changes dans l’onglet Escouade.</p></div>`;
+    + `<p class="es-freq-aide">${phrase}${manque ? ` Il manque des cristaux : elles restent au district, l’escouade part sans elles.` : ''} Elles restent au Râtelier de l’escouade ${k + 1} d’une descente à l’autre ; tu les changes dans l’onglet Escouade.</p></div>`;
 }
 
 /** La face d'une carte commune, en petit */
@@ -1588,7 +1558,7 @@ export function htmlCartes(e: EcranDistrict): string {
   const toutes = MODULES.flatMap((m) => exemplaires(j, m.id));
   const peutMonter = (cle: string) => {
     const m = moduleDef(cle); const c = j.collection[cle]!; const requis = doublonsRequis(m.id, c.niveau);
-    return requis !== null && c.doublons >= requis && j.composants >= composantsNiveau(c.niveau + 1);
+    return requis !== null && c.doublons >= requis && j.energie >= composantsNiveau(c.niveau + 1);
   };
   const portees = new Set(Object.values(j.porteurs).flatMap((p) => p.modules));
   const estLibre = (cle: string) => !portees.has(cle);
@@ -1624,7 +1594,7 @@ export function htmlCartes(e: EcranDistrict): string {
     const liste = trierCartes(toutes.filter(f === 'monter' ? peutMonter : estLibre), j.collection, tri, j.vus.cartes);
     h += `<h2 class="titre-section">${f === 'monter' ? 'Peuvent monter' : 'Libres : personne ne les porte'}</h2>`
       + (liste.length ? `<div class="grille-cartes">${liste.map(tuileCarte).join('')}</div>`
-        : `<p class="cl-vide">${f === 'monter' ? 'Aucune carte n’a encore assez de doublons et de composants pour monter.' : 'Toutes tes cartes sont confiées à un Porteur.'}</p>`);
+        : `<p class="cl-vide">${f === 'monter' ? 'Aucune carte n’a encore assez de doublons et de cristaux pour monter.' : 'Toutes tes cartes sont confiées à un Porteur.'}</p>`);
   } else {
     const lignees: Lignee[] = f === 'tout' ? ['tech', 'bio', 'reso'] : [f];
     for (const lignee of lignees) {
@@ -2081,8 +2051,8 @@ const majuscule = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
 const NOM_AFFINITE: Record<Affinite, string> = { bon: 'Bon type', neutre: 'Neutre', mauvais: 'Mauvais type' };
 const ICONE_BUTIN: Record<Butin, Icone> = { cargaison: 'composants', pierre: 'cartes', naufrages: 'ouvrier', eclats: 'eclats' };
 const TEXTE_BUTIN: Record<Butin, string> = {
-  cargaison: 'Une cargaison oubliée : beaucoup de composants, mais aucune pierre.',
-  pierre: 'Une pierre attend quelqu’un : une carte à coup sûr, nouvelle ou en doublon (du cuivre possible en 8 h), mais peu de composants.',
+  cargaison: 'Une cargaison oubliée : beaucoup de minerai, mais aucune pierre.',
+  pierre: 'Une pierre attend quelqu’un : une carte à coup sûr, nouvelle ou en doublon (du cuivre possible en 8 h), mais peu de minerai.',
   naufrages: 'Des naufragés guettent une barque : la première du jour les ramène, et ils deviennent creuseurs (un à coup sûr, parfois deux en 8 h).',
   eclats: 'Des Éclats affleurent dans la ruine : un en 2 h, un ou deux en 8 h.',
 };
@@ -2104,7 +2074,7 @@ function gainMission(j: Jeu, id: string, d: Destination, duree: DureeMission, mu
   let tExtra = '';
   if (d.butin === 'naufrages' && secours) { const k = MISSIONS.butins.naufrages.creuseurs[duree]; extra = `<i>${ICO.ouvrier}${k > 1 ? '1+' : '1'}</i>`; tExtra = k > 1 ? 'un creuseur, parfois deux' : 'un creuseur'; }
   if (d.butin === 'eclats') { const k = virgule(Math.round(MISSIONS.butins.eclats.eclats[duree] * mult * rd * 10) / 10); extra = `<i>${ICO.eclats}${k}</i>`; tExtra = `environ ${k} Éclats`; }
-  const texte = [tExtra, tCartes, `${c} composants`].filter(Boolean).join(', ');
+  const texte = [tExtra, tCartes, `${c} minerai`].filter(Boolean).join(', ');
   return { html: extra + carte + compo, texte };
 }
 
@@ -2114,7 +2084,7 @@ export function htmlMissions(e: EcranDistrict): string {
   // allégé le 4 novembre 2026 : une phrase, le reste se déplie ; la jauge de fouille attend le premier retour de barque
   const debutant = !(j.rapports ?? []).length;
   let h = `<section class="bloc tr-volet pl-missions">`
-    + texteReplie(`Choisis une destination, puis le Porteur libre qui y part : il revient chargé, même jeu fermé. Chaque jour, le passeur connaît de 2 à 5 ruines et ce qu’on y trouvera (une cargaison, une pierre oubliée, des naufragés ou des Éclats). Plus tu retournes au même endroit, plus tu descends : la Surface, puis les Cales (+25 %), puis le Cœur de la ruine (+60 % et une carte en plus). Le bon Porteur au bon endroit rapporte plus (sa lignée, son niveau), et chaque barque emporte des vivres et des lampes payés en énergie.`, 'missions', 'aide');
+    + texteReplie(`Choisis une destination, puis le Porteur libre qui y part : il revient chargé, même jeu fermé. Chaque jour, le passeur connaît de 2 à 5 ruines et ce qu’on y trouvera (une cargaison, une pierre oubliée, des naufragés ou des Éclats). Plus tu retournes au même endroit, plus tu descends : la Surface, puis les Cales (+25 %), puis le Cœur de la ruine (+60 % et une carte en plus). Le bon Porteur au bon endroit rapporte plus (sa lignée, son niveau). Une barque ne coûte rien : seulement le temps du Porteur.`, 'missions', 'aide');
   if (j.missions.length) h += `<div class="voyages">${j.missions.map((m) => voyage(e, m)).join('')}</div>`;
 
   // les destinations du jour : de 2 à 5, chacune avec son butin annoncé ; on y retourne autant qu'on veut (28 octobre 2026)
@@ -2147,7 +2117,7 @@ export function htmlMissions(e: EcranDistrict): string {
     }).join('') + `</div>`;
   if (choisie) {
     const vide = choisie.butin === 'naufrages' && !secoursPossible(j, choisie, e.now);
-    const coeurIci = pf.niveau === COEUR ? ' des composants, et la trouvaille du Cœur : une carte en plus' : ' seulement des composants';
+    const coeurIci = pf.niveau === COEUR ? ' du minerai, et la trouvaille du Cœur : une carte en plus' : ' seulement du minerai';
     const texte = vide ? (nf.restants ? `Les naufragés d’ici ont déjà été recueillis aujourd’hui : une barque y trouvera${coeurIci}.` : `Les naufragés ont fourni leur part de creuseurs pour la Strate −${j.strate} : le reste se gagne au front. Une barque y trouvera${coeurIci}.`) : TEXTE_BUTIN[choisie.butin] + (pf.niveau === COEUR ? ' Au Cœur, une carte en plus.' : '');
     h += `<p class="ds-lore" style="--c:${COULEUR[choisie.lieu.lignee]}"><b>${echap(majuscule(choisie.lieu.nom))}.</b> ${echap(choisie.lieu.lore)} <em>${ICO[vide ? 'composants' : ICONE_BUTIN[choisie.butin]]}${texte}</em></p>`;
   }
@@ -2170,8 +2140,7 @@ export function htmlMissions(e: EcranDistrict): string {
         + `<span class="ds-affinite">${NOM_AFFINITE[b.affinite]}${pct ? `<b>${pct > 0 ? '+' : '−'}${Math.abs(pct)} %</b>` : ''}</span></span>`
         + (['courte', 'longue'] as const).map((d) => {
           const g = gainMission(j, id, choisie, d, b.mult, e.now);
-          const cout = energieMission(j, d);
-          return `<button type="button" class="btn sec mission-duree" data-action="mission" data-id="${id}" data-cle="${choisie.cle}" data-duree="${d}"${j.energie >= cout ? '' : ' disabled'} aria-label="Mission de ${MISSIONS[d].heures} heures vers ${echap(choisie.lieu.nom)}, ${cout} énergie : ${g.texte}"><span>${MISSIONS[d].heures} h</span><span class="ds-gain">${g.html}</span>${prix('energie', cout, j.energie >= cout)}</button>`;
+          return `<button type="button" class="btn sec mission-duree" data-action="mission" data-id="${id}" data-cle="${choisie.cle}" data-duree="${d}" aria-label="Mission de ${MISSIONS[d].heures} heures vers ${echap(choisie.lieu.nom)} : ${g.texte}"><span>${MISSIONS[d].heures} h</span><span class="ds-gain">${g.html}</span></button>`;
         }).join('') + `</li>`;
     }
     h += `</ul>`;
@@ -2182,7 +2151,7 @@ export function htmlMissions(e: EcranDistrict): string {
     h += `<h3 class="titre-bloc rm-histo-titre">${icone('journal')}Derniers rapports</h3><div class="rm-histo">`;
     for (const r of lus) {
       const p = porteurDef(r.porteur);
-      h += `<details class="rm-ligne" style="--c:${COULEUR[p.lignee]}"><summary>${avatar(r.porteur, 32)}<span><strong>${echap(p.nom)} · ${echap(lieuMission(r))}</strong><small>+${r.composants} composants${r.cartes.length ? ` · ${r.cartes.length} carte${r.cartes.length > 1 ? 's' : ''}` : ''}${r.creuseurs ? ` · +${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}` : ''}</small></span></summary>`
+      h += `<details class="rm-ligne" style="--c:${COULEUR[p.lignee]}"><summary>${avatar(r.porteur, 32)}<span><strong>${echap(p.nom)} · ${echap(lieuMission(r))}</strong><small>+${r.composants} minerai${r.cartes.length ? ` · ${r.cartes.length} carte${r.cartes.length > 1 ? 's' : ''}` : ''}${r.creuseurs ? ` · +${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}` : ''}</small></span></summary>`
         + `<div class="rm-recit">${r.recit.map((l) => `<p>${echap(l)}</p>`).join('')}</div>${gainsRapport(r)}</details>`;
     }
     h += `</div>`;

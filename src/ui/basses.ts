@@ -8,7 +8,7 @@
 import { porteurDef } from '../core/donnees';
 import { SECTEURS, etatMaree, type SecteurBasses } from '../core/digue';
 import { familleDef } from '../core/familles';
-import { BASSES, eclatsDepot, bassesDe, bassesOuvertes, energieBasses, famillesDesBasses, libresPourBasses, lieuFait, peutDresser, porteursPresents, raisonHorsContrat, raisonLieu, restantsSecteur, secteurOuvert, valeurDepot, type Jeu } from '../core/jeu';
+import { BASSES, eclatsDepot, bassesDe, bassesOuvertes, famillesDesBasses, libresPourBasses, lieuFait, peutDresser, porteursPresents, raisonHorsContrat, raisonLieu, restantsSecteur, secteurOuvert, valeurDepot, type Jeu } from '../core/jeu';
 import { flancBasses } from './art';
 import { NOM_LIGNEE, avatar, decompte, jaugeTemps, prix, type EcranDistrict } from './coquille';
 import { ICO } from './icones';
@@ -50,7 +50,7 @@ function blocDepots(j: Jeu, now: number): string {
   const prochaine = heure(etatMaree(now).prochaineBasse);
   return `<section class="fb-bloc bs-depots"><h3 class="titre-bloc">${ICO.coffre}Ce que la mer a laissé</h3>`
     + (b.depots
-      ? `<button type="button" class="btn prim large" data-action="basses-depot">${ICO.composants}Ramasser${b.depots > 1 ? ` (${b.depots})` : ''} · +${v} composants${eclatsDepot(j, now) ? ` · +${eclatsDepot(j, now)} ${ICO.eclats}` : ''}</button>`
+      ? `<button type="button" class="btn prim large" data-action="basses-depot">${ICO.composants}Ramasser${b.depots > 1 ? ` (${b.depots})` : ''} · +${v} minerai${eclatsDepot(j, now) ? ` · +${eclatsDepot(j, now)} ${ICO.eclats}` : ''}</button>`
         + `<small class="fb-note">${eclatsDepot(j, now) ? 'Depuis que tu as touché le Fond, l’eau d’en bas remonte jusqu’à la grève, chargée d’éclats de colonne. ' : ''}Chaque marée basse dépose quelque chose sur la grève, et ça t’attend : ${BASSES.depotsMax} dépôts au plus.</small>`
       : `<p class="fb-vide">La grève est vide. La prochaine marée basse, vers ${prochaine}, laissera quelque chose : rien ne presse, ça t’attendra.</p>`)
     + `</section>`;
@@ -108,13 +108,11 @@ function secteur(e: EcranDistrict, s: SecteurBasses): string {
 function choixPorteur(j: Jeu, lieu: string): string {
   const raison = raisonLieu(j, lieu);
   if (raison) return `<p class="fb-note bs-raison">${echap(raison)}</p>`;
-  const e = energieBasses(j);
-  const assez = j.energie >= e;
   const libres = libresPourBasses(j);
   const autres = porteursPresents(j).filter((p) => raisonHorsContrat(j, p));
   const escouade = new Set(j.escouade ?? []);
-  return `<div class="bs-choix"><p class="fb-note">${ICO.chrono}${BASSES.heures} h dans les Basses · ${prix('energie', e, assez)} pour les lampes et les cordes · de l’XP et quelques composants en plus de la famille.</p><ul>`
-    + libres.map((p) => `<li><button type="button" class="mr-cand" data-action="basses-envoyer" data-id="${p}"${assez ? '' : ' disabled'}>${avatar(p, 32)}<span><b>${echap(porteurDef(p).nom)}</b><small>${NOM_LIGNEE[porteurDef(p).lignee]}${escouade.has(p) ? ' · dans ton escouade' : ''}</small></span><em>Envoyer</em></button></li>`).join('')
+  return `<div class="bs-choix"><p class="fb-note">${ICO.chrono}${BASSES.heures} h dans les Basses · de l’XP et un peu de minerai en plus de la famille.</p><ul>`
+    + libres.map((p) => `<li><button type="button" class="mr-cand" data-action="basses-envoyer" data-id="${p}">${avatar(p, 32)}<span><b>${echap(porteurDef(p).nom)}</b><small>${NOM_LIGNEE[porteurDef(p).lignee]}${escouade.has(p) ? ' · dans ton escouade' : ''}</small></span><em>Envoyer</em></button></li>`).join('')
     + autres.map((p) => `<li><span class="mr-cand indispo">${avatar(p, 32)}<span><b>${echap(porteurDef(p).nom)}</b><small>${echap(raisonHorsContrat(j, p)!)}</small></span></span></li>`).join('')
     + `</ul></div>`;
 }
@@ -133,10 +131,9 @@ function presentationBasses(j: Jeu, premiere: boolean, now: number): string {
     ])
     + bloc(ICO.porteurs, 'Les familles', 'Un Porteur libre descend au secteur à sec et en ramène une.', [
       cle(ICO.chrono, `${BASSES.heures} h`, 'par expédition'),
-      cle(ICO.energie, String(energieBasses(j)), 'énergie (lampes, cordes)'),
       cle(ICO.ok, String(total), 'familles à retrouver'),
     ])
-    + bloc(ICO.coffre, 'Ce que la mer laisse', 'Chaque marée basse dépose des composants au pied de l’écluse.', [
+    + bloc(ICO.coffre, 'Ce que la mer laisse', 'Chaque marée basse dépose du minerai au pied de l’écluse.', [
       cle(ICO.composants, `+${etatMaree(now).grande ? valeurDepot(j, now) / 2 : valeurDepot(j, now)}`, 'par dépôt'),
       cle(ICO.coffre, String(BASSES.depotsMax), 'dépôts attendent au plus'),
       cle(ICO.composants, '×2', 'à grande marée'),

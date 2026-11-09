@@ -154,7 +154,7 @@ export function verifierProposition(j: Jeu, donne: string, recoit: string, amiti
   if (echangesRestants(j, now) < 1) return non('Plus d’échange possible aujourd’hui : le Cercle rouvre demain.');
   if (etatCercle(j).enAttente.length >= ouvertesMax(j)) return non(`Tu as déjà ${ouvertesMax(j)} proposition${ouvertesMax(j) > 1 ? 's' : ''} en attente.`);
   const cout = coutEchange(donne);
-  if (j.composants < cout) return non(`Il faut ${cout} composants pour échanger une carte en ${NOMS_RARETE[metalDe(donne)].toLowerCase()}.`);
+  if (j.energie < cout) return non(`Il faut ${cout} cristaux pour échanger une carte en ${NOMS_RARETE[metalDe(donne)].toLowerCase()}.`);
   return { ok: true };
 }
 
@@ -164,7 +164,7 @@ export function proposerEchange(j: Jeu, p: { id: string; ami: string; nomAmi: st
   if (!v.ok) return v;
   const cout = coutEchange(p.donne);
   j.collection[p.donne]!.doublons--;
-  j.composants -= cout;
+  j.energie -= cout;
   compter(j, now, 1);
   etatCercle(j).enAttente.push({ ...p, cout, le: now });
   return { ok: true, message: `Proposition envoyée à ${p.nomAmi}.` };
@@ -180,7 +180,7 @@ export function verifierAcceptation(j: Jeu, donne: string, recoit: string, amiti
   if ((j.collection[donne]?.doublons ?? 0) < 1) return non('Tu n’as plus d’exemplaire en double de cette carte.');
   if (echangesRestants(j, now) < 1) return non('Plus d’échange possible aujourd’hui : le Cercle rouvre demain.');
   const cout = coutEchange(donne);
-  if (j.composants < cout) return non(`Il faut ${cout} composants pour cet échange.`);
+  if (j.energie < cout) return non(`Il faut ${cout} cristaux pour cet échange.`);
   return { ok: true };
 }
 
@@ -191,7 +191,7 @@ export function accepterEchange(j: Jeu, id: string, donne: string, recoit: strin
   const v = verifierAcceptation(j, donne, recoit, amitieDepuis, now);
   if (!v.ok) return v;
   j.collection[donne]!.doublons--;
-  j.composants -= coutEchange(donne);
+  j.energie -= coutEchange(donne);
   const nouvelle = ajouterCarte(j, recoit);
   compter(j, now, 1);
   noterConclu(c, id);
@@ -221,7 +221,7 @@ export function rendreEchange(j: Jeu, id: string, now: number): EchangeEnAttente
   c.enAttente = c.enAttente.filter((x) => x !== e);
   j.collection[e.donne] ??= { niveau: COLLECTION.niveauDepart[metalDe(e.donne)], doublons: 0 };
   j.collection[e.donne]!.doublons++;
-  j.composants += e.cout;
+  j.energie += e.cout;
   if (c.jour === jourDe(now) && jourDe(e.le) === c.jour) compter(j, now, -1);
   return e;
 }
@@ -250,7 +250,7 @@ export function finirDuelAmi(j: Jeu, ami: string, victoire: boolean, now: number
   c.battus.push(ami);
   c.joutes = (c.joutes ?? 0) + 1;
   const { composants, eclats } = CERCLE.recompenseDuel;
-  j.composants += composants;
+  j.energie += composants; // récompense : déjà taillée (9 novembre 2026)
   j.eclats += eclats;
   return { composants, eclats };
 }

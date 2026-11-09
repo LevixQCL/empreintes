@@ -50,10 +50,10 @@ export function finPour(): Fin | null {
   }
   if (x.pillage) {
     const p = x.pillage;
-    if (s.issue === 'victoire') return { titre: `${p.nom} est pillé`, texte: `La garnison se replie. L’escouade rapporte ${p.base + p.vol} composants${p.vol ? `, dont ${p.vol} pris à son coffre` : ''}.`, bouton: 'Rentrer avec le butin', action: 'remonter' };
+    if (s.issue === 'victoire') return { titre: `${p.nom} est pillé`, texte: `La garnison se replie. L’escouade rapporte ${p.base + p.vol} minerai${p.vol ? `, dont ${p.vol} pris à son coffre` : ''}.`, bouton: 'Rentrer avec le butin', action: 'remonter' };
     if (s.issue === 'defaite') {
       const perte = Math.floor(J.etatPillage(app.jeu).coffre * J.PILLAGE.perteDefaite);
-      return { titre: 'Repoussés par la garnison', texte: `${p.nom} tient bon.${perte ? ` L’escouade laisse ${perte} composants de son coffre en repartant.` : ''} Une garnison plus faible, ou une escouade mieux montée, passera.`, bouton: 'Rentrer au district', action: 'remonter' };
+      return { titre: 'Repoussés par la garnison', texte: `${p.nom} tient bon.${perte ? ` L’escouade laisse ${perte} minerai de son coffre en repartant.` : ''} Une garnison plus faible, ou une escouade mieux montée, passera.`, bouton: 'Rentrer au district', action: 'remonter' };
     }
     return null;
   }
@@ -78,22 +78,22 @@ export function finPour(): Fin | null {
     return null;
   }
   if (s.issue === 'defaite') {
-    return { titre: 'Défaite', texte: `Toute l’escouade est à terre. Elle remonte avec la moitié du butin (${Math.floor(x.butin * J.DISTRICT.butinDefaite)} composants) et devra se reposer à la Clinique.`, bouton: 'Remonter au district', action: 'remonter' };
+    return { titre: 'Défaite', texte: `Toute l’escouade est à terre. Elle remonte avec la moitié du butin (${Math.floor(x.butin * J.DISTRICT.butinDefaite)} minerai) et devra se reposer à la Clinique.`, bouton: 'Remonter au district', action: 'remonter' };
   }
   if (s.issue === 'victoire') {
     const nom = s.autres?.length ? 'Le groupe' : ennemiDef(s.ennemi.id).nom;
     if (x.terminee) {
-      return { titre: `Strate −${x.strate} vaincue`, texte: `${nom} se disperse. L’escouade remonte avec ${x.butin} composants.${x.strate === app.jeu.strate ? ' Le passage est libre : avec assez de creuseurs, l’étage suivant pourra être percé (voir la Tour du Noyau).' : ''}`, bouton: 'Remonter au district', action: 'remonter' };
+      return { titre: `Strate −${x.strate} vaincue`, texte: `${nom} se disperse. L’escouade remonte avec ${x.butin} minerai.${x.strate === app.jeu.strate ? ' Le passage est libre : avec assez de creuseurs, l’étage suivant pourra être percé (voir la Tour du Noyau).' : ''}`, bouton: 'Remonter au district', action: 'remonter' };
     }
     // le Rôdeur (explorer.ts) : enfui, il garde ses blessures ; abattu, son trophée attend au district
-    if (x.carte && s.enfui) return { titre: `${nom} s’enfuit`, texte: `${rodeurDef(s.ennemi.id)?.fuite ?? ''} Il ne lui reste que ${Math.round((s.ennemi.pv / s.ennemi.pvMax) * 100)} % de sa vie : ses blessures resteront jusqu’à la prochaine rencontre. Butin : ${x.butin} composants.`, bouton: 'Retour à la carte', action: 'suivant' };
-    if (x.carte && rodeurDef(s.ennemi.id)) return { titre: `${nom} est abattu`, texte: `${rodeurDef(s.ennemi.id)!.chute} Son trophée t’attend au district : une carte au choix. Butin : ${x.butin} composants.`, bouton: 'Retour à la carte', action: 'suivant' };
+    if (x.carte && s.enfui) return { titre: `${nom} s’enfuit`, texte: `${rodeurDef(s.ennemi.id)?.fuite ?? ''} Il ne lui reste que ${Math.round((s.ennemi.pv / s.ennemi.pvMax) * 100)} % de sa vie : ses blessures resteront jusqu’à la prochaine rencontre. Butin : ${x.butin} minerai.`, bouton: 'Retour à la carte', action: 'suivant' };
+    if (x.carte && rodeurDef(s.ennemi.id)) return { titre: `${nom} est abattu`, texte: `${rodeurDef(s.ennemi.id)!.chute} Son trophée t’attend au district : une carte au choix. Butin : ${x.butin} minerai.`, bouton: 'Retour à la carte', action: 'suivant' };
     if (x.carte) {
       // la marque de la quête relevée se dit tout de suite, avec ce qu'on a trouvé (31 octobre 2026)
       const q = x.carte.salles[x.carte.position]?.quete ? J.etapeQueteTrouvee(app.jeu, x.strate) : null;
-      return { titre: q ? 'Victoire · marque de la quête relevée' : 'Victoire', texte: (q ? `✦ ${q.nom}, étape ${q.etape} sur ${q.total} : ${q.texte} ` : '') + `${nom} se dissipe. Butin : ${x.butin} composants. L’escouade reprend sa route : les PV remontent surtout aux campements.`, bouton: 'Retour à la carte', action: 'suivant' };
+      return { titre: q ? 'Victoire · marque de la quête relevée' : 'Victoire', texte: (q ? `✦ ${q.nom}, étape ${q.etape} sur ${q.total} : ${q.texte} ` : '') + `${nom} se dissipe. Butin : ${x.butin} minerai. L’escouade reprend sa route : les PV remontent surtout aux campements.`, bouton: 'Retour à la carte', action: 'suivant' };
     }
-    return { titre: 'Victoire', texte: `${nom} se dissipe. Butin : ${x.butin} composants. L’escouade souffle un peu (+50 % de PV) : tu continues, ou tu remontes avec ce que tu as ?`, bouton: 'Combat suivant', action: 'suivant', bouton2: 'Remonter avec le butin', action2: 'remonter' };
+    return { titre: 'Victoire', texte: `${nom} se dissipe. Butin : ${x.butin} minerai. L’escouade souffle un peu (+50 % de PV) : tu continues, ou tu remontes avec ce que tu as ?`, bouton: 'Combat suivant', action: 'suivant', bouton2: 'Remonter avec le butin', action2: 'remonter' };
   }
   return null;
 }

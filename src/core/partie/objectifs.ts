@@ -27,7 +27,7 @@ export const OBJECTIFS: Objectif[] = [
   {
     id: 'district', titre: 'Allumer le district', pilier: 'generateur', onglet: 'archipel',
     consigne: 'Touche le Générateur et postes-y le Coursier, une recrue augmentée : il y produit deux fois plus. Garde Ilka, Doran et Véla pour l’escouade : en descendant, ils quitteraient leur poste.',
-    recompense: { energie: 60 },
+    recompense: { energie: 15 },
     fait: (j) => { const p = posteDe(j, 'generateur'); return !!p && !escouadeDe(j).includes(p); },
   },
   {

@@ -76,7 +76,7 @@ describe('L’enquête des Haltes', () => {
     expect(dev[0]!.type).toBe('cache');
     expect(dev[0]!.rang).toBe(RANG_HALTE + 1);
     expect(visionSalle(x, dev[0]!)).toBe('claire');
-    expect(x.recit).toMatch(/composants/);
+    expect(x.recit).toMatch(/minerai/);
     expect(j.choixHaltes!['2-1']).toBe(1);
   });
 });
