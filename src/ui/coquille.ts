@@ -526,7 +526,7 @@ function feuilleExpedition(e: EcranDistrict): string {
   if (r.note) h += `<p class="rx-note">${echap(r.note)}</p>`;
   // les ressources
   h += `<ul class="rm-gains rx-res">`
-    + ligne(ICO.composants, `+${virgule(g.butin)}`, 'composants')
+    + ligne(ICO.composants, `+${virgule(g.butin)}`, 'minerai')
     + (g.eclats ? ligne(ICO.eclats, `+${g.eclats}`, `Éclat${g.eclats > 1 ? 's' : ''}`) : '')
     + (r.creuseurs ? ligne(ICO.ouvrier, `+${r.creuseurs}`, `creuseur${r.creuseurs > 1 ? 's' : ''}`) : '')
     + (g.fragment ? ligne(ICO.journal, '+1', 'fragment d’archives') : '')

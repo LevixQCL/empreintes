@@ -1951,7 +1951,7 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
   const j = e.j;
   const cible = j.strate + 1;
   let h = `<section class="tr-strates" aria-label="Les Strates">`
-    + `<ul class="tr-legende"><li>${ICO.cristal}<span><b>Fouiller</b> : une descente courte, sans gardien, vers un filon (cartes, composants ou Éclats).</span></li>`
+    + `<ul class="tr-legende"><li>${ICO.cristal}<span><b>Fouiller</b> : une descente courte, sans gardien, vers un filon (cartes, minerai ou Éclats).</span></li>`
     + `<li>${ICO.descendre}<span><b>Explorer</b> : toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.</span></li></ul>`
     + `<p class="tr-etoiles-total">${ICO.etoile}<b>${totalEtoiles(j)}</b> étoile${totalEtoiles(j) > 1 ? 's' : ''}${prochainPalierEtoiles(j) ? ` · prochaine récompense à ${prochainPalierEtoiles(j)!.etoiles} (une carte au choix, dont une en ${NOMS_RARETE[prochainPalierEtoiles(j)!.metal]})` : ' · toutes les récompenses sont prises'}</p><ol>`;
   for (let n = 1; n <= j.strate; n++) {

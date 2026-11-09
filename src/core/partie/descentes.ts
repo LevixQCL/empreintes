@@ -649,7 +649,7 @@ export const RENCONTRES: Record<string, (j: Jeu) => { titre: string; texte: stri
   // Bible, 23 octobre 2026 : un Sauvage (greffé sans Clinique, sans Lecture) et un vendeur de pierres mortes
   sauvage: (j) => ({ titre: 'Un Sauvage', texte: 'Un homme recroquevillé contre un pilier, une mèche à peine dorée collée au front. Il s’est greffé une brisure achetée au marché noir, sans Lecture. Il gronde des mots qui ne sont pas les siens.',
     options: [j.expedition?.porteurs.some((p) => p.id === 'vela' && p.pv > 0) ? 'Laisser Véla lire sa pierre' : 'Lui parler doucement (−3 PV chacun)', 'L’affronter', 'Passer ton chemin'] }),
-  faussaire: () => ({ titre: 'Un vendeur de pierres', texte: 'Sur une couverture, une rangée de cristaux tous identiques. « Des pierres d’Accord, directeur. Jamais portées. Une vierge pour vingt-cinq composants. » Elles sont ternes. Toutes.',
+  faussaire: () => ({ titre: 'Un vendeur de pierres', texte: 'Sur une couverture, une rangée de cristaux tous identiques. « Des pierres d’Accord, directeur. Jamais portées. Une vierge pour vingt-cinq de minerai. » Elles sont ternes. Toutes.',
     options: ['Lui acheter une « vierge » (25 minerai)', 'Lui faire rendre ses pierres', 'Passer'] }),
   source: () => ({ titre: 'Une source chaude', texte: 'Entre deux piliers, une source chaude jaillit de la roche. L’eau sent le fer et le sel.',
     options: ['S’y reposer (+25 % de PV)', 'Continuer sans s’arrêter'] }),

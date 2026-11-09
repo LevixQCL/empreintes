@@ -60,7 +60,7 @@ export function htmlPillages(e: EcranDistrict): string {
     + `<span class="pl-gemmes" role="img" aria-label="${etat.jetons} jetons sur ${PILLAGE.jetonsMax}">${Array.from({ length: PILLAGE.jetonsMax }, (_, k) => `<i class="${k < etat.jetons ? 'plein' : ''}"></i>`).join('')}</span>`
     + `<small>${prochain ? decompte(prochain, e.now, 'Un de plus dans ') : 'Tous là : rien ne se perd.'}</small>${boutonAchat(j, e.now, etat.jetons)}</div>`
     + `<div class="pl-coffre"><span class="surtitre">${icone('coffre')}Ton coffre</span><b>${ent(etat.coffre)}</b>`
-    + `<small>composants gagnés en pillant : les seuls exposés</small></div></section>`;
+    + `<small>minerai gagné en pillant : le seul exposé</small></div></section>`;
 
   // la carte d'abord (audit du 7 novembre 2026 : elle arrivait en bas de l'écran), la garnison dessous
   // la carte
@@ -82,7 +82,7 @@ export function htmlPillages(e: EcranDistrict): string {
   if (choisie) h += ficheCible(j, choisie, force, faits.includes(choisie.id), etat.jetons);
   h += garde(j);
   h += journal(etat.historique ?? [], e.now);
-  h += `<p class="pl-regle">${ICO.bouclier}<span>Ton district est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus ${Math.round(PILLAGE.partVolee * 100)} % de ton coffre, puis ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus. Tes autres composants, tes cartes et tes Éclats ne risquent rien.</span></p>`;
+  h += `<p class="pl-regle">${ICO.bouclier}<span>Ton district est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus ${Math.round(PILLAGE.partVolee * 100)} % de ton coffre, puis ${PILLAGE.bouclierMs / 3_600_000} h de bouclier ; ${PILLAGE.subiesMax} attaques par jour au plus. Le reste de ton minerai, tes cristaux, tes cartes et tes Éclats ne risquent rien.</span></p>`;
   return coquille(e, h, 'pl');
 }
 
@@ -161,7 +161,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', pillOk = true): stri
     + bloc(ICO.porteurs, 'Les missions en mer', 'Un Porteur libre part en barque et revient chargé, même jeu fermé.', [
       cle(ICO.chrono, `${MISSIONS.courte.heures} · ${MISSIONS.longue.heures} h`, 'courte ou longue'),
       cle(ICO.porteurs, '1 à 4', 'barques à la fois, selon la Tour'),
-      cle(ICO.coffre, 'Butin', 'composants, cartes, creuseurs'),
+      cle(ICO.coffre, 'Butin', 'minerai, cartes, creuseurs'),
     ])
     // allégé le 4 novembre 2026 : tant que les pillages sont fermés, une ligne au lieu de deux blocs de règles
     + (!pillOk ? `<p class="fl-condition">${ICO.grappin}<span><strong>Pillages et défense du port · après la Strate −${PILLAGE.strateMin}</strong><small>Les districts voisins ne te prennent pas encore au sérieux. Le détail est dans « Les règles en détail ».</small></span></p>` : '')
