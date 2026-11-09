@@ -8,7 +8,7 @@ import { valeursDe } from '../src/core/i18n';
 
 export interface Entree { fr: string; en?: string; ancien?: { fr: string; en: string } }
 export interface FichierTraduction { source: string; entrees: Entree[] }
-export interface Terme { fr: string; en: string; /** formes françaises (regex, insensible à la casse de la 1re lettre) */ formesFr?: string; formesEn?: string; note?: string }
+export interface Terme { fr: string; en: string; /** formes françaises (regex, insensible à la casse de la 1re lettre) */ formesFr?: string; formesEn?: string; /** emplois français qui n'appellent pas ce terme */ sauf?: string; note?: string }
 
 export const RACINE = join(import.meta.dirname, '..');
 export const DOSSIER_TRADUCTIONS = join(RACINE, 'traductions');
@@ -56,6 +56,7 @@ export function controlerEntree(fichier: string, e: Entree, glossaire: Terme[]):
   if (!memes(valeursDe(e.fr), valeursDe(e.en))) pb.push({ fichier, fr: court, grave: true, message: `valeurs {n} différentes : ${valeursDe(e.fr).join(' ')} → ${valeursDe(e.en).join(' ')}` });
   if (!memes(balisesDe(e.fr), balisesDe(e.en))) pb.push({ fichier, fr: court, grave: true, message: 'balises HTML différentes' });
   for (const g of glossaire) {
+    if (g.sauf && new RegExp(g.sauf, 'u').test(e.fr)) continue;
     if (regexTerme(g.formesFr ?? formesParDefaut(g.fr)).test(e.fr) && !regexTerme(g.formesEn ?? formesParDefaut(g.en)).test(e.en)) {
       pb.push({ fichier, fr: court, grave: false, message: `glossaire : « ${g.fr} » devrait donner « ${g.en} »` });
     }

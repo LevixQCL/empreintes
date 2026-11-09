@@ -1,5 +1,5 @@
 {
- "note": "Les termes du jeu et leur traduction fixe. `npm run i18n -- verifier` signale toute traduction qui s'en écarte. formesFr / formesEn : variantes acceptées (expressions régulières). Changer un terme ici = le changer partout dans traductions/en (chercher-remplacer), puis relancer verifier.",
+ "note": "Les termes du jeu et leur traduction fixe. `npm run i18n -- verifier` signale toute traduction qui s'en écarte. formesFr / formesEn : variantes acceptées (expressions régulières). Changer un terme ici = le changer partout dans traductions/en (chercher-remplacer), puis relancer verifier. sauf : expression régulière des emplois français qui n'appellent pas ce terme (ex. une empreinte de doigt).",
  "termes": [
   {
    "fr": "Ossyra",
@@ -89,7 +89,8 @@
    "fr": "Éclat",
    "en": "Shard",
    "formesFr": "Éclats?",
-   "formesEn": "Shards?"
+   "formesEn": "Shards?",
+   "sauf": "bouton doré « Éclat »"
   },
   {
    "fr": "Usure",
@@ -191,7 +192,9 @@
    "fr": "empreinte",
    "en": "imprint",
    "formesFr": "[eE]mpreintes?",
-   "formesEn": "[iI]mprints?"
+   "formesEn": "[iI]mprints?",
+   "sauf": "empreintes? (?:de (?:doigt|main|bottes?)|digitales?)|empreintes de mains|empreintes du puisard|la même empreinte|L’empreinte d’une main",
+   "note": "la donnée gravée dans un cristal ; une trace de doigt, de main ou de botte reste « print »"
   },
   {
    "fr": "ceux d’avant",
@@ -412,7 +415,8 @@
   },
   {
    "fr": "Graveur",
-   "en": "Engraver"
+   "en": "Engraver",
+   "formesFr": "Graveur"
   },
   {
    "fr": "Premier Porteur",
@@ -425,6 +429,100 @@
   {
    "fr": "Dame Isaure",
    "en": "Lady Isaure"
+  },
+  {
+   "fr": "Perçant",
+   "en": "Piercing"
+  },
+  {
+   "fr": "Vengeur",
+   "en": "Avenger"
+  },
+  {
+   "fr": "Furie",
+   "en": "Fury"
+  },
+  {
+   "fr": "Épines",
+   "en": "Thorns"
+  },
+  {
+   "fr": "Blindé",
+   "en": "Armored",
+   "formesFr": "Blindée?s?",
+   "formesEn": "Armored"
+  },
+  {
+   "fr": "Rampeur",
+   "en": "Crawler",
+   "formesFr": "Rampeurs?",
+   "formesEn": "Crawlers?"
+  },
+  {
+   "fr": "Sauvages",
+   "en": "Wildlings",
+   "formesFr": "Sauvages",
+   "formesEn": "Wildlings"
+  },
+  {
+   "fr": "Lecture",
+   "en": "Reading",
+   "formesFr": "Lectures?",
+   "formesEn": "Readings?"
+  },
+  {
+   "fr": "Lecteur",
+   "en": "Reader",
+   "formesFr": "Lect(?:eur|rice)s?",
+   "formesEn": "Readers?"
+  },
+  {
+   "fr": "Seuils",
+   "en": "Thresholds",
+   "formesFr": "Seuils",
+   "formesEn": "Thresholds"
+  },
+  {
+   "fr": "Nuit blanche",
+   "en": "White Night",
+   "formesFr": "Nuits? [bB]lanches?",
+   "formesEn": "White Nights?"
+  },
+  {
+   "fr": "prêt-de-vie",
+   "en": "life-loan"
+  },
+  {
+   "fr": "Délavés",
+   "en": "Faded",
+   "formesFr": "Délavée?s?",
+   "formesEn": "Faded"
+  },
+  {
+   "fr": "Nés-de-mue",
+   "en": "Moltborn",
+   "formesFr": "Nés?-de-mue|Née-de-mue",
+   "formesEn": "Moltborn"
+  },
+  {
+   "fr": "Remise",
+   "en": "Bestowal",
+   "formesFr": "Remise",
+   "formesEn": "Bestowal"
+  },
+  {
+   "fr": "Nuit des lignes",
+   "en": "Night of Lines"
+  },
+  {
+   "fr": "doré pâle",
+   "en": "pale-gold",
+   "formesFr": "dorés? pâles?",
+   "formesEn": "pale-golds?"
+  },
+  {
+   "fr": "Flux",
+   "en": "Flux"
   }
  ]
 }

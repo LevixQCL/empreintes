@@ -3,299 +3,299 @@
  "entrees": [
   {
    "fr": "Les petits coups s’écrasent sur son armure : mise sur des cartes fortes, ou sur Perçant qui passe au travers.",
-   "en": ""
+   "en": "Small blows shatter on its armor: rely on strong cards, or on Piercing, which goes right through."
   },
   {
    "fr": "Ne le laisse pas souffler : frappe fort et vite, sinon il remonte à chaque tour.",
-   "en": ""
+   "en": "Don’t give it room to breathe: hit hard and fast, or it recovers every turn."
   },
   {
    "fr": "Chaque coup te coûte un peu : préfère quelques gros coups à beaucoup de petits, et garde un soin sous la main.",
-   "en": ""
+   "en": "Every blow costs you a little: prefer a few big hits to lots of small ones, and keep a heal at hand."
   },
   {
    "fr": "Sans suite, tes coups glissent sur lui : enchaîne des Fréquences qui se suivent (3, 4, 5) pour le toucher pleinement.",
-   "en": ""
+   "en": "Without a run, your blows glance off it: chain consecutive Frequencies (3, 4, 5) to hit it fully."
   },
   {
    "fr": "Il revient plus petit quand il tombe : garde de quoi finir le rejeton.",
-   "en": ""
+   "en": "It comes back smaller when it falls: keep enough to finish the offspring."
   },
   {
    "fr": "Si tu abats son allié, il frappera double au tour suivant : protège-toi, ou abats-le en premier.",
-   "en": ""
+   "en": "If you bring down its ally, it will strike double on the next turn: protect yourself, or bring it down first."
   },
   {
    "fr": "Plus il est blessé, plus il frappe fort : une fois sous la moitié de ses PV, achève-le vite.",
-   "en": ""
+   "en": "The more it’s hurt, the harder it hits: once it’s below half health, finish it fast."
   },
   {
    "fr": "Il prend la lignée de la dernière carte qui le frappe : finis ta chaîne par la lignée qu’il craint le plus pour le tour suivant, et varie tes coups.",
-   "en": ""
+   "en": "It takes the lineage of the last card that hits it: end your chain with the lineage it fears most for the next turn, and vary your blows."
   },
   {
    "fr": "Chaque coup qui passe ton bouclier te prend 1 Flux : bloque-le entièrement, ou dépense ton Flux avant qu’il ne frappe.",
-   "en": ""
+   "en": "Every blow that gets past your shield takes 1 Flux from you: block it completely, or spend your Flux before it strikes."
   },
   {
    "fr": "Les cartes des Génés pèsent plus lourd ici : c’est le moment de les mettre en avant.",
-   "en": ""
+   "en": "Spliced cards weigh heavier here: this is the time to put them forward."
   },
   {
    "fr": "Les cartes des Augmentés pèsent plus lourd ici : c’est le moment de les mettre en avant.",
-   "en": ""
+   "en": "Augmented cards weigh heavier here: this is the time to put them forward."
   },
   {
    "fr": "Les cartes des Résonants pèsent plus lourd ici : c’est le moment de les mettre en avant.",
-   "en": ""
+   "en": "Resonant cards weigh heavier here: this is the time to put them forward."
   },
   {
    "fr": "Une suite de 4 suffit pour le bonus maximal : vise 3-4-5-6.",
-   "en": ""
+   "en": "A run of 4 is enough for the maximum bonus: aim for 3-4-5-6."
   },
   {
    "fr": "Les soins rendent plus : un bon endroit pour remettre l’escouade sur pied.",
-   "en": ""
+   "en": "Heals give more: a good place to get the squad back on its feet."
   },
   {
    "fr": "Tout le monde s’use à chaque tour, ennemis compris : un combat long coûte cher, finis-le vite.",
-   "en": ""
+   "en": "Everyone wears down every turn, enemies included: a long fight costs a lot, finish it fast."
   },
   {
    "fr": "Tu vois si l’ennemi va attaquer, se protéger ou se réparer, mais pas sur qui ni avec quelle force. Garde du bouclier et des soins pour toute l’escouade.",
-   "en": ""
+   "en": "You can see whether the enemy is going to attack, protect itself or repair itself, but not on whom or how hard. Keep shield and heals for the whole squad."
   },
   {
    "fr": "CONDITION DE SALLE",
-   "en": ""
+   "en": "ROOM CONDITION"
   },
   {
    "fr": "PREMIÈRE RENCONTRE",
-   "en": ""
+   "en": "FIRST ENCOUNTER"
   },
   {
    "fr": "Un groupe d’ennemis",
-   "en": ""
+   "en": "A group of enemies"
   },
   {
    "fr": "Chaque ennemi a sa vignette en haut à droite : ses PV, et ce qu’il prépare. Touche une vignette pour le viser : toute ta chaîne le frappe, et s’il tombe en route, le reste passe au suivant.",
-   "en": ""
+   "en": "Each enemy has its tile at the top right: its HP, and what it’s preparing. Tap a tile to target it: your whole chain hits it, and if it falls along the way, the rest moves on to the next."
   },
   {
    "fr": "Abats d’abord celui qui fait le plus mal, ou celui qui est presque à terre : un ennemi de moins, c’est une attaque de moins.",
-   "en": ""
+   "en": "Take down the one that hurts most first, or the one that’s nearly down: one enemy fewer is one attack fewer."
   },
   {
    "fr": "La Fêlure",
-   "en": ""
+   "en": "The Flaw"
   },
   {
    "fr": "L’ennemi montre une gemme fêlée et une Fréquence. Pose une carte de cette Fréquence dans ta chaîne : son prochain coup est brisé, moitié moins fort (un quart chez un gardien ou un blindé). Les cartes de ta main qui la brisent portent la gemme.",
-   "en": ""
+   "en": "The enemy shows a cracked gem and a Frequency. Play a card of that Frequency in your chain: its next blow is broken, half as strong (a quarter for a guardian or an armored enemy). The cards in your hand that break it carry the gem."
   },
   {
    "fr": "Une Fêlure brisée vaut souvent mieux qu’une suite de plus : elle protège l’escouade. Glisse-la dans une suite : elle remplit aussi le Flux pour ton Coup d’éclat.",
-   "en": ""
+   "en": "A broken Flaw is often worth more than one more run: it protects the squad. Slip it into a run: it also fills the Flux for your Masterstroke."
   },
   {
    "fr": "FLUX PLEIN",
-   "en": ""
+   "en": "FLUX FULL"
   },
   {
    "fr": "Le Coup d’éclat",
-   "en": ""
+   "en": "The Masterstroke"
   },
   {
    "fr": "Ton Flux est plein : le bouton doré « Éclat » remplace ses losanges. Un seul Coup d’éclat par combat, au choix selon les lignées de ton escouade. {0} Il vide le Flux, et le Porteur qui le déclenche prend de l’Usure.",
-   "en": ""
+   "en": "Your Flux is full: the gold “Masterstroke” button replaces its diamonds. Only one Masterstroke per fight, chosen according to your squad’s lineages. {0} It empties the Flux, and the Bearer who triggers it takes Strain."
   },
   {
    "fr": "Garder son Flux pour le Coup d’éclat, ou le dépenser tout de suite pour une place ou une nouvelle main : c’est à toi de voir. Méfie-toi des ennemis qui l’aspirent.",
-   "en": ""
+   "en": "Save your Flux for the Masterstroke, or spend it right away on an extra slot or a new hand: it’s up to you. Watch out for enemies that drain it."
   },
   {
    "fr": "TRAIT D’ENNEMI",
-   "en": ""
+   "en": "ENEMY TRAIT"
   },
   {
    "fr": "GARDIEN · DERNIÈRE PHASE",
-   "en": ""
+   "en": "GUARDIAN · FINAL PHASE"
   },
   {
    "fr": "{0} Au dernier quart de ses PV, un gardien des Strates profondes change encore : sa dernière phase n’est pas toujours la même.",
-   "en": ""
+   "en": "{0} At the last quarter of its HP, a guardian of the deep Strata changes again: its final phase isn’t always the same."
   },
   {
    "fr": "{0} À mi-vie, un gardien change de gestes et appelle de l’aide.",
-   "en": ""
+   "en": "{0} At half health, a guardian changes its moves and calls for help."
   },
   {
    "fr": "Regarde sa nouvelle intention avant de lancer, et décide vite : le gardien, ou son renfort ?",
-   "en": ""
+   "en": "Check its new intent before you play, and decide fast: the guardian, or its reinforcement?"
   },
   {
    "fr": "Garde un Augmenté debout dans l’escouade : sans lui, les murs restent fermés.",
-   "en": ""
+   "en": "Keep an Augmented standing in the squad: without one, the walls stay closed."
   },
   {
    "fr": "Avance salle par salle jusqu’à la Halte : la lanterne qui t’y attend rallume le plan.",
-   "en": ""
+   "en": "Move chamber by chamber to the Waystation: the lantern waiting there relights the map."
   },
   {
    "fr": "Une salle scellée est plus dure, mais rend une carte de cuivre : entre-y quand l’escouade est en forme.",
-   "en": ""
+   "en": "A sealed chamber is harder, but gives a copper card: go in when the squad is in good shape."
   },
   {
    "fr": "Ne néglige pas les caches : une niche peut rendre une carte au lieu de minerai.",
-   "en": ""
+   "en": "Don’t overlook the caches: a niche can give a card instead of ore."
   },
   {
    "fr": "Passe par les archives quand tu peux : elles complètent les Chroniques.",
-   "en": ""
+   "en": "Go through the archives when you can: they fill in the Chronicles."
   },
   {
    "fr": "Regarde les deux occupants avant d’entrer, et choisis celui que ton escouade bat le mieux.",
-   "en": ""
+   "en": "Look at both occupants before going in, and choose the one your squad beats best."
   },
   {
    "fr": "Ouvre l’œil sur le plan : le Veilleur égaré vaut le détour.",
-   "en": ""
+   "en": "Keep an eye on the map: the lost Watcher is worth the detour."
   },
   {
    "fr": "Le fil ne sert qu’une fois : garde-le pour éviter une salle trop dure ou rejoindre un meilleur chemin.",
-   "en": ""
+   "en": "The thread only works once: keep it to avoid a chamber that’s too hard or to reach a better path."
   },
   {
    "fr": "Garde dans le deck des cartes aux Fréquences variées : il faudra quatre Fréquences qui se suivent.",
-   "en": ""
+   "en": "Keep cards with varied Frequencies in the deck: you’ll need four consecutive Frequencies."
   },
   {
    "fr": "STRATE −{0} · LE FOND",
-   "en": ""
+   "en": "STRATUM −{0} · THE DEEP"
   },
   {
    "fr": "Le Fond change chaque semaine",
-   "en": ""
+   "en": "The Deep changes every week"
   },
   {
    "fr": "Sous −10, les Strates n’ont plus de façon d’être à elles. Chaque semaine, chacune emprunte celle d’une Strate d’au-dessus, et en change le lundi.{0}",
-   "en": ""
+   "en": "Below −10, the Strata no longer have a nature of their own. Each week, each one borrows that of a Stratum above, and changes on Monday.{0}"
   },
   {
    "fr": " Ici, cette semaine : {0}{1} (Strate −{2}).",
-   "en": ""
+   "en": " Here, this week: {0}{1} (Stratum −{2})."
   },
   {
    "fr": "Le gardien du Fond paie mieux : un choix de cartes en argent et {0} Éclats de plus à chaque victoire, une carte en or la première fois.",
-   "en": ""
+   "en": "The guardian of the Deep pays better: a choice of silver cards and {0} more Shards with every victory, a gold card the first time."
   },
   {
    "fr": "STRATE −{0} · SA PARTICULARITÉ",
-   "en": ""
+   "en": "STRATUM −{0} · ITS PECULIARITY"
   },
   {
    "fr": "Chaque Strate a sa façon d’être. Ici : {0}{1} Elle reste rappelée sous le nom de la Strate.",
-   "en": ""
+   "en": "Each Stratum has its own nature. Here: {0}{1} It stays listed under the Stratum’s name."
   },
   {
    "fr": "La quête de la Strate",
-   "en": ""
+   "en": "The Stratum Quest"
   },
   {
    "fr": "Chaque Strate cache une quête en plusieurs étapes. Ici : « {0} ». À chaque descente, une salle porte la marque ✦, visible même dans le brouillard. Passes-y, et gagne le combat s’il y en a un : l’étape est relevée. Elle compte au retour au district, même si la descente finit mal.",
-   "en": ""
+   "en": "Each Stratum hides a quest in several steps. Here: “{0}”. On each descent, one chamber bears the ✦ mark, visible even in the fog. Go through it, and win the fight if there is one: the step is recorded. It counts when you return to the district, even if the descent ends badly."
   },
   {
    "fr": "Les points sous le nom de la Strate (●○○) montrent où tu en es. Au bout de la quête : une carte, de l’XP et un morceau de l’histoire.",
-   "en": ""
+   "en": "The dots under the Stratum’s name (●○○) show where you are. At the end of the quest: a card, XP and a piece of the story."
   },
   {
    "fr": "Les Vestiges",
-   "en": ""
+   "en": "The Relics"
   },
   {
    "fr": "Chaque Strate cache 5 Vestiges, des objets d’autrefois. Ils ne se trouvent qu’en explorant, jamais en fouille : quelques-uns par descente, marqués d’un losange turquoise sur le plan, même dans le brouillard. Entre dans la salle (et gagne son combat s’il y en a un) pour le ramasser.",
-   "en": ""
+   "en": "Each Stratum hides 5 Relics, objects from long ago. They can only be found by exploring, never by searching: a few per descent, marked with a turquoise diamond on the map, even in the fog. Enter the chamber (and win its fight if there is one) to pick it up."
   },
   {
    "fr": "Les cinq réunis, la Strate est complète : une carte au choix, et tes fouilles y verront tout le plan. La Tour montre où tu en es.",
-   "en": ""
+   "en": "With all five gathered, the Stratum is complete: a card of your choice, and your searches there will see the whole map. The Tower shows where you are."
   },
   {
    "fr": "Le gardien éveillé",
-   "en": ""
+   "en": "The Awakened Guardian"
   },
   {
    "fr": "Tu explores une Strate déjà vaincue : son gardien s’est éveillé. Il est un peu plus fort (+10 %), mais il laisse de meilleures cartes et un Éclat de plus. Le vaincre peut aussi rapporter les étoiles de la Strate.",
-   "en": ""
+   "en": "You’re exploring a Stratum already defeated: its guardian has awakened. It’s a little stronger (+10%), but it drops better cards and one more Shard. Defeating it can also earn the Stratum’s stars."
   },
   {
    "fr": "Trois étoiles par Strate : vaincre le gardien, sans qu’aucun Porteur ne tombe, et sans entrer dans un campement.",
-   "en": ""
+   "en": "Three stars per Stratum: defeat the guardian, without any Bearer falling, and without entering a camp."
   },
   {
    "fr": "Un Rôdeur",
-   "en": ""
+   "en": "A Prowler"
   },
   {
    "fr": "Des griffures corail sur le plan : un Rôdeur rôde dans cette zone. Il se bat 4 tours, puis s’enfuit. Ses blessures restent d’une descente à l’autre : il faut le croiser plusieurs fois pour l’abattre.",
-   "en": ""
+   "en": "Coral claw marks on the map: a Prowler is prowling this area. It fights for 4 turns, then flees. Its wounds carry over from one descent to the next: you have to cross paths with it several times to bring it down."
   },
   {
    "fr": "Frappe fort dès le premier tour. Abattu, il laisse un trophée : une carte au choix, et une épithète pour la carte qui l’achève.",
-   "en": ""
+   "en": "Hit hard from the first turn. Once brought down, it leaves a trophy: a card of your choice, and an epithet for the card that finishes it."
   },
   {
    "fr": "Une Halte",
-   "en": ""
+   "en": "A Waystation"
   },
   {
    "fr": "Tous les chemins passent par ici. Pas de combat : un lieu de l’enquête. Chaque Strate pose une question. À chaque Halte, ton choix suit une piste : celle des nôtres (ce que les vivants ont su, caché, payé) ou celle de ceux d’avant (ce que sont les cristaux). La dernière Halte de la Strate te montre ce que ta piste a trouvé, et à −10, la piste que tu as le plus suivie décide de la fin.",
-   "en": ""
+   "en": "All paths go through here. No fight: a place in the investigation. Each Stratum asks a question. At each Waystation, your choice follows a trail: our people’s (what the living knew, hid, paid for) or that of those before (what the crystals are). The Stratum’s last Waystation shows you what your trail found, and at −10, the trail you followed most decides the ending."
   },
   {
    "fr": "Il n’y a pas de mauvais choix : chaque piste rapporte un peu (Éclat, minerai ou lampe) et dévoile une salle plus loin. Touche d’abord les détails : avec une autre escouade, ils racontent autre chose. Ton carnet, dans la Bibliothèque, garde tout.",
-   "en": ""
+   "en": "There are no wrong choices: each trail gives a little (Shard, ore or lamp) and reveals a chamber further on. Touch the details first: with a different squad, they tell something else. Your notebook, in the Library, keeps everything."
   },
   {
    "fr": "Un passage secret",
-   "en": ""
+   "en": "A Secret Passage"
   },
   {
    "fr": "Un de tes Porteurs repère une fissure que les autres ne voient pas (marque sur le plan). Entre dans cette salle et suis-le : une salle cachée hors du chemin, quelques mots de lui, du minerai et une archive.",
-   "en": ""
+   "en": "One of your Bearers spots a crack the others can’t see (marked on the map). Enter that chamber and follow them: a hidden chamber off the path, a few words from them, ore and an archive."
   },
   {
    "fr": "Chaque passage n’est repéré que par certains Porteurs : change d’escouade de temps en temps pour en découvrir d’autres.",
-   "en": ""
+   "en": "Each passage is only spotted by certain Bearers: change your squad now and then to discover others."
   },
   {
    "fr": "Une porte à Fréquence",
-   "en": ""
+   "en": "A Frequency Door"
   },
   {
    "fr": "Une porte ancienne, gravée de Fréquences. Cinq cartes de ton deck sont tirées : choisis-en {0} dont les Fréquences se suivent, comme une suite en combat (l’Accord ∗ prolonge toute suite). Derrière : un Éclat et du minerai.",
-   "en": ""
+   "en": "An ancient door, engraved with Frequencies. Five cards from your deck are drawn: choose {0} whose Frequencies follow one another, like a run in combat (the Accord ∗ extends any run). Behind it: a Shard and ore."
   },
   {
    "fr": "Aucun risque : tu peux retirer la main une fois, ou passer ton chemin si la suite n’y est pas.",
-   "en": ""
+   "en": "No risk: you can redraw the hand once, or move on if the run isn’t there."
   },
   {
    "fr": "PREMIÈRE VICTOIRE",
-   "en": ""
+   "en": "FIRST VICTORY"
   },
   {
    "fr": "Le bestiaire",
-   "en": ""
+   "en": "The Bestiary"
   },
   {
    "fr": "Chaque ennemi vaincu ouvre sa fiche dans la Bibliothèque, onglet Bestiaire. Elle se complète à force de le battre : d’où il vient ({0} victoire), comment le battre ({1}), puis son secret ({2}).",
-   "en": ""
+   "en": "Every enemy defeated opens its entry in the Library, Bestiary tab. It fills in as you keep beating it: where it comes from ({0} victory), how to beat it ({1}), then its secret ({2})."
   },
   {
    "fr": "Bloqué contre un ennemi ? Sa fiche donne un conseil concret pour le battre.",
-   "en": ""
+   "en": "Stuck against an enemy? Its entry gives concrete advice on how to beat it."
   }
  ]
 }

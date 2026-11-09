@@ -50,5 +50,5 @@ export function t(texte: string | TemplateStringsArray, ...valeurs: unknown[]): 
   return remplir(catalogue.get(cle) || cle, valeurs);
 }
 
-/** Les {0}, {1}… d'un texte (pour vérifier qu'une traduction garde toutes les valeurs) */
-export const valeursDe = (texte: string): string[] => (texte.match(/\{\d+\}/g) ?? []).sort();
+/** Les {0}, {1}… (et les {nom} remplacés ailleurs) d’un texte : une traduction doit tous les garder */
+export const valeursDe = (texte: string): string[] => (texte.match(/\{\w+\}/g) ?? []).sort();
