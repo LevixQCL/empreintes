@@ -9,7 +9,7 @@
    "fr": "directeur",
    "en": "director",
    "formesFr": "[dD]irect(?:eur|rice)s?",
-   "formesEn": "[dD]irectors?"
+   "formesEn": "[dD]irectors?|predecessor"
   },
   {
    "fr": "Cuvette",
@@ -200,7 +200,7 @@
    "fr": "ceux d’avant",
    "en": "those before",
    "formesFr": "(?:[cC]eux|[cC]elles) d’avant",
-   "formesEn": "(?:[tT]hose|[tT]hem|[tT]he [oO]nes|[pP]eople) (?:[wW]ho [cC]ame )?[bB]efore",
+   "formesEn": "(?:[tT]hose|[tT]hem|[tT]he [oO]nes|[pP]eople) (?:[wW]ho [cC]ame )?[bB]efore|the old ones",
    "note": "le peuple disparu : « those who came before », « those before »"
   },
   {
@@ -523,6 +523,13 @@
   {
    "fr": "Flux",
    "en": "Flux"
+  },
+  {
+   "fr": "pilleur",
+   "en": "scavenger",
+   "formesFr": "[pP]illeu(?:r|se)s?",
+   "formesEn": "[sS]cavengers?",
+   "note": "celui qui vide les Strates ; les pillages entre districts (raids) sont une autre mécanique"
   }
  ]
 }
