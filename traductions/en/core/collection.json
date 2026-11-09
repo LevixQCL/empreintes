@@ -1,0 +1,57 @@
+{
+ "source": "src/core/collection.ts",
+ "entrees": [
+  {
+   "fr": "Fer",
+   "en": ""
+  },
+  {
+   "fr": "Cuivre",
+   "en": ""
+  },
+  {
+   "fr": "Argent",
+   "en": ""
+  },
+  {
+   "fr": "Nacre",
+   "en": ""
+  },
+  {
+   "fr": "Place vide",
+   "en": ""
+  },
+  {
+   "fr": "Puissance",
+   "en": ""
+  },
+  {
+   "fr": "La force de la carte à son niveau, ajustée de ses effets, de ses Fréquences et des places qu’elle prend",
+   "en": ""
+  },
+  {
+   "fr": "Métal",
+   "en": ""
+  },
+  {
+   "fr": "De la nacre au fer",
+   "en": ""
+  },
+  {
+   "fr": "Niveau",
+   "en": ""
+  },
+  {
+   "fr": "Du plus haut au plus bas",
+   "en": ""
+  },
+  {
+   "fr": "Nouvelles",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes pas encore vues d’abord, puis par puissance",
+   "en": ""
+  }
+ ]
+}

@@ -4,6 +4,7 @@
 // Le service worker les garde ensuite sur l'appareil : hors ligne, ils s'ouvrent comme avant.
 
 import { coquille, entete, type EcranDistrict } from '../ui/coquille';
+import { t } from '../core/i18n';
 
 type Ecrans = typeof import('./ecrans-differes');
 
@@ -44,7 +45,7 @@ export function ecransDifferes(): Ecrans | null {
 
 /** Ce qui s'affiche le temps que l'écran arrive (souvent moins d'une seconde, et une seule fois) */
 export function htmlChargement(e: EcranDistrict, surtitre: string, titre: string): string {
-  const texte = rate ? 'Pas de réseau : cet écran s’ouvrira dès que la connexion revient.' : 'Chargement…';
+  const texte = rate ? t('Pas de réseau : cet écran s’ouvrira dès que la connexion revient.') : t('Chargement…');
   return coquille(e, entete(surtitre, titre) + `<p class="chargement-ecran${rate ? ' hors' : ''}" role="status">${texte}</p>`, 'chargement');
 }
 

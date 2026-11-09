@@ -11,6 +11,7 @@ import { RAVITAILLEMENT, eveillerLegs } from './recompenses';
 import { recompenserFilleul } from './parrainage';
 import { retourDeContrat } from './marees';
 import { avancerBasses } from './basses';
+import { t as tr } from '../i18n';
 
 /** Rattrape le temps écoulé : énergie, soins, Forge. Rien n'est perdu ni puni pendant l'absence. */
 export function tick(j: Jeu, now: number): string[] {
@@ -25,7 +26,7 @@ export function tick(j: Jeu, now: number): string[] {
 
   // le Générateur taille le cristal brut en cristaux (9 novembre 2026) : rien ne se perd, il finit ce qui reste pendant l'absence
   const ec = eclatsDeTaille(j, raffiner(j, heures), now);
-  if (ec) nouvelles.push(`Le Générateur a recueilli ${ec > 1 ? `${ec} Éclats` : 'un Éclat'} en taillant le minerai.`);
+  if (ec) nouvelles.push(tr`Le Générateur a recueilli ${ec > 1 ? `${ec} Éclats` : tr('un Éclat')} en taillant le minerai.`);
 
   const soin = soinParHeure(j) * heures;
   for (const id of Object.keys(j.porteurs)) {
@@ -38,15 +39,15 @@ export function tick(j: Jeu, now: number): string[] {
     const f = j.forge;
     ajouterCarte(j, f.moduleId);
     j.forge = null;
-    const t = `La Forge a refabriqué ${moduleDef(f.moduleId).nom} : un doublon de plus.`;
+    const t = tr`La Forge a refabriqué ${moduleDef(f.moduleId).nom} : un doublon de plus.`;
     log(j, t);
     nouvelles.push(t);
   }
 
   for (const c of j.chantiers.filter((x) => now >= x.fin)) {
     j.batiments[c.batiment]++;
-    if (c.batiment === 'noyau' && creuser(j)) nouvelles.push(`La Tour du Noyau loge assez de creuseurs : la Strate −${j.strate} est ouverte.`);
-    const t = `Chantier terminé : ${batimentDef(c.batiment).nom} passe au niveau ${j.batiments[c.batiment]}.`;
+    if (c.batiment === 'noyau' && creuser(j)) nouvelles.push(tr`La Tour du Noyau loge assez de creuseurs : la Strate −${j.strate} est ouverte.`);
+    const t = tr`Chantier terminé : ${batimentDef(c.batiment).nom} passe au niveau ${j.batiments[c.batiment]}.`;
     log(j, t);
     nouvelles.push(t);
   }
@@ -58,13 +59,13 @@ export function tick(j: Jeu, now: number): string[] {
   const confiance = recompenserConfiance(j);
   if (confiance.length) {
     nouvelles.push(...confiance);
-    if (creuser(j)) nouvelles.push(`Les volontaires suffisent : la Strate −${j.strate} est ouverte.`);
+    if (creuser(j)) nouvelles.push(tr`Les volontaires suffisent : la Strate −${j.strate} est ouverte.`);
   }
 
   nouvelles.push(...entrainer(j, heures));
   // filet de sécurité (31 octobre 2026) : une sauvegarde où tout est prêt (gardien vaincu, assez de creuseurs, Tour assez haute)
   // perce la roche au lieu d'attendre un événement qui ne viendra plus
-  if (creuser(j)) nouvelles.push(`Tes creuseurs percent la roche : la Strate −${j.strate} est ouverte.`);
+  if (creuser(j)) nouvelles.push(tr`Tes creuseurs percent la roche : la Strate −${j.strate} est ouverte.`);
 
   for (const m of j.missions.filter((x) => now >= x.fin)) nouvelles.push(retourDeMission(j, m));
   j.missions = j.missions.filter((x) => now < x.fin);
@@ -95,7 +96,7 @@ export function tick(j: Jeu, now: number): string[] {
       // un Butin pas encore ouvert n'est plus écrasé par le suivant (audit du 7 novembre 2026) : ils s'empilent
       if (!j.archive.aOuvrir) j.archive.aOuvrir = paliers;
       else j.archive.enAttente = [...(j.archive.enAttente ?? []), paliers].slice(-(ARCHIVE.empilesMax - 1));
-      const t = 'Le Butin de la semaine est prêt à être ouvert.';
+      const t = tr('Le Butin de la semaine est prêt à être ouvert.');
       log(j, t);
       nouvelles.push(t);
     }

@@ -5,6 +5,7 @@
 // - la même erreur répétée n'ouvre pas dix fenêtres.
 
 import { app, D, K } from './etat';
+import { t } from '../core/i18n';
 
 const CLE = 'empreintes.incidents';
 const MAX = 10;
@@ -25,7 +26,7 @@ function lire(): Incident[] {
 /** Les incidents gardés sur cet appareil (le plus récent en dernier) */
 export const incidents = (): Incident[] => lire();
 
-const texteDe = (i: Incident) => `OSSYRA · ${new Date(i.quand).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')} · ${i.ou} · écran ${i.mode}/${i.vue}\n${i.message}\n${i.pile}`;
+const texteDe = (i: Incident) => t`OSSYRA · ${new Date(i.quand).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')} · ${i.ou} · écran ${i.mode}/${i.vue}\n${i.message}\n${i.pile}`;
 
 let ouvert = false;
 let dernier = '';
@@ -52,17 +53,17 @@ export function signaler(e: unknown, ou: string, revenir: () => void, discret = 
   el.className = 'incident';
   el.setAttribute('role', 'alertdialog');
   el.setAttribute('aria-modal', 'true');
-  el.innerHTML = `<div class="incident-carte"><h2>Un grain de sable</h2>`
-    + `<p>Quelque chose s’est mal passé à l’écran. Ta partie est sauvegardée : rien n’est perdu.</p>`
-    + `<p class="incident-aide">Si ça recommence, copie le détail et envoie-le à Bryan.</p>`
+  el.innerHTML = `<div class="incident-carte"><h2>${t`Un grain de sable`}</h2>`
+    + `<p>${t`Quelque chose s’est mal passé à l’écran. Ta partie est sauvegardée : rien n’est perdu.`}</p>`
+    + `<p class="incident-aide">${t`Si ça recommence, copie le détail et envoie-le à Bryan.`}</p>`
     + `<pre>${i.message.replace(/[<&]/g, (c) => (c === '<' ? '&lt;' : '&amp;'))}</pre>`
-    + `<div class="incident-btns"><button type="button" class="prim" data-i="district">Revenir au district</button>`
-    + `<button type="button" class="sec" data-i="copier">Copier le détail</button></div></div>`;
+    + `<div class="incident-btns"><button type="button" class="prim" data-i="district">${t`Revenir au district`}</button>`
+    + `<button type="button" class="sec" data-i="copier">${t`Copier le détail`}</button></div></div>`;
   el.addEventListener('click', async (ev) => {
     const b = (ev.target as HTMLElement).closest<HTMLElement>('[data-i]');
     if (!b) return;
     if (b.dataset.i === 'copier') {
-      try { await navigator.clipboard.writeText(lire().slice(-3).map(texteDe).join('\n\n')); b.textContent = 'Copié'; } catch { b.textContent = 'Copie impossible'; }
+      try { await navigator.clipboard.writeText(lire().slice(-3).map(texteDe).join('\n\n')); b.textContent = t('Copié'); } catch { b.textContent = t('Copie impossible'); }
       return;
     }
     el.remove();

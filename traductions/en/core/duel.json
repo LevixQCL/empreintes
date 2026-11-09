@@ -1,0 +1,129 @@
+{
+ "source": "src/core/duel.ts",
+ "entrees": [
+  {
+   "fr": "Il faut un pseudo.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut trois Porteurs différents.",
+   "en": ""
+  },
+  {
+   "fr": "Porteur inconnu : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut un Porteur de chaque lignée : un Augmenté, un Géné et un Résonant.",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur sans PV ne peut pas combattre.",
+   "en": ""
+  },
+  {
+   "fr": "{0} porte trop de cartes.",
+   "en": ""
+  },
+  {
+   "fr": "Carte inconnue : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Niveau de carte invalide.",
+   "en": ""
+  },
+  {
+   "fr": "{0} affronte {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Le duel est terminé.",
+   "en": ""
+  },
+  {
+   "fr": "Ta chaîne est déjà verrouillée.",
+   "en": ""
+  },
+  {
+   "fr": "Cette carte n’est pas dans ta main.",
+   "en": ""
+  },
+  {
+   "fr": "Une place vide ne se joue pas.",
+   "en": ""
+  },
+  {
+   "fr": "Plus de place dans la chaîne.",
+   "en": ""
+  },
+  {
+   "fr": "Cette carte ne prend pas cette Fréquence.",
+   "en": ""
+  },
+  {
+   "fr": "Cette carte n’est pas dans la chaîne.",
+   "en": ""
+  },
+  {
+   "fr": "Ce Porteur est déjà à terre.",
+   "en": ""
+  },
+  {
+   "fr": "Ce n’est pas une carte de soin posée.",
+   "en": ""
+  },
+  {
+   "fr": "On ne soigne pas un Porteur à terre (sauf une Relève).",
+   "en": ""
+  },
+  {
+   "fr": "Pas assez de Flux, ou chaîne déjà au plus long.",
+   "en": ""
+  },
+  {
+   "fr": "Pas assez de Flux.",
+   "en": ""
+  },
+  {
+   "fr": "Choix invalide.",
+   "en": ""
+  },
+  {
+   "fr": "{0} : Résonance, suite de {1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} : Écho ×{1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} {1} {2} de bouclier.",
+   "en": ""
+  },
+  {
+   "fr": "{0} relève {1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} ({1}) est à terre.",
+   "en": ""
+  },
+  {
+   "fr": "Le duel s’éternise : il se décide aux PV restants.",
+   "en": ""
+  },
+  {
+   "fr": "Égalité.",
+   "en": ""
+  },
+  {
+   "fr": "{0} remporte le duel.",
+   "en": ""
+  },
+  {
+   "fr": "{0} quitte le duel.",
+   "en": ""
+  }
+ ]
+}

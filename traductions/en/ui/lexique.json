@@ -1,0 +1,41 @@
+{
+ "source": "src/ui/lexique.ts",
+ "entrees": [
+  {
+   "fr": "{0} : qu’est-ce que c’est ?",
+   "en": ""
+  },
+  {
+   "fr": "Tout le glossaire",
+   "en": ""
+  },
+  {
+   "fr": " Seules les cartes posées après elle en profitent. On dit alors que l’ennemi est « fissuré ».",
+   "en": ""
+  },
+  {
+   "fr": "Tous les mots du jeu. Dans le texte des cartes, un mot",
+   "en": ""
+  },
+  {
+   "fr": "souligné ainsi",
+   "en": ""
+  },
+  {
+   "fr": "s’explique d’un toucher.",
+   "en": ""
+  },
+  {
+   "fr": "Chercher un mot (Fissure, Flux…)",
+   "en": ""
+  },
+  {
+   "fr": "Chercher dans le glossaire",
+   "en": ""
+  },
+  {
+   "fr": "Aucun mot ne correspond.",
+   "en": ""
+  }
+ ]
+}

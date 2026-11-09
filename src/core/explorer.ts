@@ -85,7 +85,7 @@ export const RELEVES: ReleveDef[] = [
   { strate: 2, titre: t('Les cailloux de Brac'), fin: t('Brac comptait ses cristaux comme ses cailloux : un par un, rangés. Il a su lesquels il ne fallait pas vendre.') },
   { strate: 3, titre: t('Ce qui s’habitue'), fin: t('Les patrouilles de −3 n’ont pas eu peur du noir. Coincées sous l’éboulis, elles ont coupé leur propre fil pour que rien ne le suive, et elles ont attendu qu’on vienne.') },
   { strate: 4, titre: t('Le veilleur et l’enfant'), fin: t('Derrière les portes rondes, quelqu’un a compté les semaines, tissé, bu son thé. Et il n’était pas seul : il y avait une petite lampe.') },
-  { strate: 5, titre: 'L’arrivée', fin: t('La Maison Orsève emporte les cristaux des Berceaux « avant l’arrivée ». Elle ne dit pas l’arrivée de qui, ni d’où.') },
+  { strate: 5, titre: t('L’arrivée'), fin: t('La Maison Orsève emporte les cristaux des Berceaux « avant l’arrivée ». Elle ne dit pas l’arrivée de qui, ni d’où.') },
   { strate: 6, titre: t('La berceuse du niveau 7'), fin: t('En 2066, on a coulé le mur sur des voix. Une ouvrière leur chantait une berceuse pour qu’elles se taisent. Elles se sont tues.') },
   { strate: 7, titre: t('Les enfants de ceux d’avant'), fin: t('Ceux d’avant avaient des enfants qui jouaient à la mer. Ils ont gravé leur ligne plus haut, et laissé les jouets en bas.') },
   { strate: 8, titre: t('Mille deux cents tables'), fin: t('Chaque table de la Ruche garde un rêve. Les Veilleurs les comptaient pour ne pas s’y perdre, jusqu’à ce qu’ils s’y perdent.') },
@@ -116,7 +116,7 @@ export interface RodeurDef {
 }
 
 export const RODEURS: RodeurDef[] = [
-  { id: 'maree-basse', zone: 0, dans: 'Marée-Basse', trophee: 'argent',
+  { id: 'maree-basse', zone: 0, dans: t('Marée-Basse'), trophee: 'argent',
     traces: t('De longues traînées humides sur la roche, larges comme un couloir. Marée-Basse est passée par ici.'),
     fuite: t('Marée-Basse se laisse glisser dans une fissure noyée. Elle reviendra : les fouilleurs disent qu’elle revient toujours.'),
     chute: t('Marée-Basse s’affaisse dans l’eau tiède des pompes. Elle ne remontera plus jamais vers les piliers.') },

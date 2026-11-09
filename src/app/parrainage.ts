@@ -6,6 +6,7 @@ import { recruterVide } from '../ui/parrainage';
 import { app, compteEtat, D } from './etat';
 import { afficher } from './rendu';
 import { sauver } from './synchro';
+import { t } from '../core/i18n';
 
 /** L'état de l'écran « Recruter » */
 export const R = recruterVide();
@@ -32,7 +33,7 @@ const oublierLien = () => { try { localStorage.removeItem(CLE_REF); } catch { /*
 /** Le lien à partager */
 export const lienDe = (code: string) => `${location.origin}${location.pathname}?ref=${code}`;
 
-const nomDuJoueur = () => app.jeu.directeur?.nom || 'Un directeur';
+const nomDuJoueur = () => app.jeu.directeur?.nom || t('Un directeur');
 
 /** Réserve (ou retrouve) le code du joueur : à l'ouverture de l'écran */
 export async function preparerCode(): Promise<void> {
@@ -44,7 +45,7 @@ export async function preparerCode(): Promise<void> {
     if (app.uid !== uid) return;
     if (e.code !== code) { e.code = code; sauver(); }
   } catch (err) {
-    R.etat = 'erreur'; R.erreur = `Ton code ne peut pas être gravé pour l’instant (${(err as { code?: string })?.code ?? 'réseau'}).`;
+    R.etat = 'erreur'; R.erreur = t`Ton code ne peut pas être gravé pour l’instant (${(err as { code?: string })?.code ?? t('réseau')}).`;
   }
 }
 
@@ -60,7 +61,7 @@ export async function lireRecrues(): Promise<void> {
     const nouvelles = J.reclamerRecrues(app.jeu, l);
     if (nouvelles.length) { D.message = nouvelles.join(' '); sauver(); }
   } catch (err) {
-    R.etat = 'erreur'; R.erreur = `Tes recrues ne répondent pas pour l’instant (${(err as { code?: string })?.code ?? 'réseau'}).`;
+    R.etat = 'erreur'; R.erreur = t`Tes recrues ne répondent pas pour l’instant (${(err as { code?: string })?.code ?? t('réseau')}).`;
   }
 }
 
@@ -75,26 +76,26 @@ export async function ouvrirRecruter(): Promise<void> {
 }
 
 /** Entre le code d'un parrain (saisi, ou venu d'un lien) ; renvoie le message à montrer */
-export async function entrerCode(saisie: string): Promise<{ ok: boolean; texte: string }> {
+export async function entrerCode(saisie: string): Promise<{ ok: boolean; texte: string; reessayer?: boolean }> {
   const code = J.lireCode(saisie);
-  if (!code) return { ok: false, texte: 'Ce code n’a pas la bonne forme : 6 lettres et chiffres, par exemple EMP-7KQ2X9.' };
-  if (!app.compte || !app.uid) return { ok: false, texte: 'Le jeu n’est pas connecté : réessaie dans un instant.' };
-  if (!J.peutEtreParraine(app.jeu)) return { ok: false, texte: app.jeu.parrainage?.parrain ? 'Tu as déjà un parrain.' : 'Le parrainage, c’est pour les débuts : ton district est déjà trop avancé.' };
-  if (app.jeu.parrainage?.code === code) return { ok: false, texte: 'C’est ton propre code : envoie-le plutôt à un ami.' };
+  if (!code) return { ok: false, texte: t('Ce code n’a pas la bonne forme : 6 lettres et chiffres, par exemple EMP-7KQ2X9.') };
+  if (!app.compte || !app.uid) return { ok: false, texte: t('Le jeu n’est pas connecté : réessaie dans un instant.') };
+  if (!J.peutEtreParraine(app.jeu)) return { ok: false, texte: app.jeu.parrainage?.parrain ? t('Tu as déjà un parrain.') : t('Le parrainage, c’est pour les débuts : ton district est déjà trop avancé.') };
+  if (app.jeu.parrainage?.code === code) return { ok: false, texte: t('C’est ton propre code : envoie-le plutôt à un ami.') };
   const n = await reseau();
   try {
     const parrain = await n.lireParrain(code);
-    if (!parrain) return { ok: false, texte: 'Aucun directeur n’a ce code. Vérifie-le avec ton ami.' };
-    if (parrain.uid === app.uid) return { ok: false, texte: 'C’est ton propre code : envoie-le plutôt à un ami.' };
+    if (!parrain) return { ok: false, texte: t('Aucun directeur n’a ce code. Vérifie-le avec ton ami.') };
+    if (parrain.uid === app.uid) return { ok: false, texte: t('C’est ton propre code : envoie-le plutôt à un ami.') };
     await n.rejoindre(app.uid, code, parrain.uid, nomDuJoueur());
     const r = J.devenirFilleul(app.jeu, { uid: parrain.uid, code, nom: parrain.nom }, Date.now());
-    if (!r.ok) return { ok: false, texte: r.message ?? 'Refusé.' };
+    if (!r.ok) return { ok: false, texte: r.message ?? t('Refusé.') };
     sauver();
     publierPaliers();
-    return { ok: true, texte: `Recommandé par ${parrain.nom} : ta carte au choix et tes cristaux t’attendent.` };
+    return { ok: true, texte: t`Recommandé par ${parrain.nom} : ta carte au choix et tes cristaux t’attendent.` };
   } catch (err) {
     if (err instanceof n.CodeRefuse) return { ok: false, texte: err.message };
-    return { ok: false, texte: `La vérification a échoué (${(err as { code?: string })?.code ?? 'réseau'}). Réessaie dans un instant.` };
+    return { ok: false, reessayer: true, texte: t`La vérification a échoué (${(err as { code?: string })?.code ?? t('réseau')}). Réessaie dans un instant.` };
   }
 }
 
@@ -133,7 +134,7 @@ export function battreParrainage(): void {
       entrerCode(ref).then((r) => {
         R.occupe = false;
         // un refus définitif (code inconnu, déjà un parrain) oublie le lien ; une panne réseau le garde pour plus tard
-        if (r.ok || !r.texte.includes('Réessaie')) oublierLien();
+        if (r.ok || !r.reessayer) oublierLien();
         if (r.ok) { D.message = r.texte; afficher(); }
       });
     }

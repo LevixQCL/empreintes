@@ -1,0 +1,153 @@
+{
+ "source": "src/core/partie/vecu.ts",
+ "entrees": [
+  {
+   "fr": "Trace",
+   "en": ""
+  },
+  {
+   "fr": "Sillon",
+   "en": ""
+  },
+  {
+   "fr": "Vaincre un Gardien avec elle dans la chaîne",
+   "en": ""
+  },
+  {
+   "fr": "Porter le dernier coup à un Gardien",
+   "en": ""
+  },
+  {
+   "fr": "Gagner un combat à −5 ou plus bas",
+   "en": ""
+  },
+  {
+   "fr": "Vaincre un Gardien à −8 ou plus bas",
+   "en": ""
+  },
+  {
+   "fr": "Porter 25 derniers coups",
+   "en": ""
+  },
+  {
+   "fr": "qui achève",
+   "en": ""
+  },
+  {
+   "fr": "Porter 10 derniers coups.",
+   "en": ""
+  },
+  {
+   "fr": "qui a vu −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Gagner un combat à la Strate −5 ou plus bas.",
+   "en": ""
+  },
+  {
+   "fr": "qui a fendu le Gardien de −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Porter le dernier coup à un Gardien.",
+   "en": ""
+  },
+  {
+   "fr": "qui fend les Fêlures",
+   "en": ""
+  },
+  {
+   "fr": "Briser 60 Fêlures.",
+   "en": ""
+  },
+  {
+   "fr": "qui a tenu à −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Une carte de bouclier : donner 1 500 de bouclier et gagner à −4 ou plus bas.",
+   "en": ""
+  },
+  {
+   "fr": "qui n’a laissé tomber personne",
+   "en": ""
+  },
+  {
+   "fr": "Une carte de soin : soigner 1 500 PV.",
+   "en": ""
+  },
+  {
+   "fr": "aux mille coups",
+   "en": ""
+  },
+  {
+   "fr": "Une carte d’attaque : infliger 6 000 dégâts.",
+   "en": ""
+  },
+  {
+   "fr": "de toutes les descentes",
+   "en": ""
+  },
+  {
+   "fr": "Gagner 300 combats.",
+   "en": ""
+  },
+  {
+   "fr": "Porter le dernier coup à un Rôdeur.",
+   "en": ""
+  },
+  {
+   "fr": "Liée à {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Mise au jour à −{0}.",
+   "en": ""
+  },
+  {
+   "fr": "Premier Porteur : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} lancer{1} · {2} combat{3} gagné{4}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} dernier{1} coup{2}",
+   "en": ""
+  },
+  {
+   "fr": "{0} Fêlure{1} brisée{2}",
+   "en": ""
+  },
+  {
+   "fr": "A abattu {0}.",
+   "en": ""
+  },
+  {
+   "fr": "A fendu le Gardien de −{0}.",
+   "en": ""
+  },
+  {
+   "fr": "Était là contre le Gardien de −{0}.",
+   "en": ""
+  },
+  {
+   "fr": "Profondeur atteinte : −{0}.",
+   "en": ""
+  },
+  {
+   "fr": "Porte le souvenir {0} : {1}",
+   "en": ""
+  },
+  {
+   "fr": "Elle porte déjà un souvenir.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut que la carte ait atteint le palier {0} de son empreinte.",
+   "en": ""
+  }
+ ]
+}

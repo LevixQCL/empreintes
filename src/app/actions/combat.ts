@@ -17,6 +17,7 @@ import { app, D, K } from '../etat';
 import { afficher } from '../rendu';
 import { sauver } from '../synchro';
 import type { Clic, Suite } from './commun';
+import { t } from '../../core/i18n';
 
 export async function agirCombat(a: string, c: Clic): Promise<Suite> {
   const { b, id, x, s, avantGains } = c;
@@ -150,7 +151,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
       const avant = { cartes: new Set(Object.keys(app.jeu.collection)), choix: app.jeu.choix.length, creuseurs: app.jeu.creuseurs ?? 0 };
       const xr = app.jeu.expedition;
       const issue = !xr ? 'retraite' : xr.fuite ? 'fuite' : xr.retraite ? 'retraite' : xr.combat.issue === 'defaite' ? 'defaite' : xr.terminee && xr.combat.issue === 'victoire' ? 'victoire' : 'retraite';
-      const type = !xr ? 'Descente' : xr.fouille ? `Fouille · ${J.CIBLES_FOUILLE[xr.fouille].nom.toLowerCase()}` : xr.epreuve ? `Épreuve · ${J.epreuveDef(xr.epreuve)?.nom ?? ''}` : 'Descente';
+      const type = !xr ? t('Descente') : xr.fouille ? t`Fouille · ${J.CIBLES_FOUILLE[xr.fouille].nom.toLowerCase()}` : xr.epreuve ? t`Épreuve · ${J.epreuveDef(xr.epreuve)?.nom ?? ''}` : t('Descente');
       const strate = xr?.strate ?? 1;
       const r = J.remonter(app.jeu);
       K.fin = null;
@@ -159,31 +160,31 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
         D.vue = r.victoire ? 'accueil' : 'archipel';
         D.etape = 0;
         D.message = r.victoire
-          ? 'La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans les Chroniques (onglet Archives).'
-          : 'L’escouade se repose. La porte scellée t’attend toujours.';
+          ? t('La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans les Chroniques (onglet Archives).')
+          : t('L’escouade se repose. La porte scellée t’attend toujours.');
       } else if (r.fleche) {
         const f = r.fleche;
         D.vue = 'fleche'; D.fleche = false;
         D.defi = null;
         envoyerAssauts();
         if (f.defi) synchroGarde();
-        D.message = f.defi ? (f.victoire ? `${f.defi.nom} est battu : ton escouade tient désormais le quai ${f.defi.quai}.` : `${f.defi.nom} garde le quai ${f.defi.quai}. Ta montée ne bouge pas.`)
+        D.message = f.defi ? (f.victoire ? t`${f.defi.nom} est battu : ton escouade tient désormais le quai ${f.defi.quai}.` : t`${f.defi.nom} garde le quai ${f.defi.quai}. Ta montée ne bouge pas.`)
           : f.victoire
-          ? `Quai ${f.a} atteint${f.record ? ' : nouveau record' : ''}.${f.paliers.map((p) => ` Quai gravé ${p.quai} : +${p.composants} cristaux, +${p.eclats} Éclats.`).join('')}`
-          : f.a < f.de ? `Repoussés au quai ${f.de} : l’escouade redescend au quai ${f.a}.` : `Repoussés au quai ${f.de} : l’escouade garde son quai.`;
+          ? t`Quai ${f.a} atteint${f.record ? t(' : nouveau record') : ''}.${f.paliers.map((p) => t` Quai gravé ${p.quai} : +${p.composants} cristaux, +${p.eclats} Éclats.`).join('')}`
+          : f.a < f.de ? t`Repoussés au quai ${f.de} : l’escouade redescend au quai ${f.a}.` : t`Repoussés au quai ${f.de} : l’escouade garde son quai.`;
       } else if (r.pillage) {
         const p = r.pillage;
         D.vue = 'pillages';
         envoyerPillages();
-        D.message = p.victoire ? `Pillage réussi à ${p.nom} : +${p.gain} minerai, rangé dans ton coffre.`
-          : `Repoussés à ${p.nom}.${p.perte ? ` L’escouade a laissé ${p.perte} minerai de son coffre.` : ''}`;
+        D.message = p.victoire ? t`Pillage réussi à ${p.nom} : +${p.gain} minerai, rangé dans ton coffre.`
+          : t`Repoussés à ${p.nom}.${p.perte ? t` L’escouade a laissé ${p.perte} minerai de son coffre.` : ''}`;
       } else {
         D.vue = app.jeu.choix.length ? 'archipel' : 'coupe';
         const manque = J.manquePourCreuser(app.jeu);
-        const note = (r.fuite ? `L’escouade a fui : elle rentre épuisée (+${J.DISTRICT.usureFuite} d’Usure chacun). ` : '')
-          + (r.nouvelleStrate ? `Un nouvel étage est creusé : la Strate −${app.jeu.strate} est ouverte.`
+        const note = (r.fuite ? t`L’escouade a fui : elle rentre épuisée (+${J.DISTRICT.usureFuite} d’Usure chacun). ` : '')
+          + (r.nouvelleStrate ? t`Un nouvel étage est creusé : la Strate −${app.jeu.strate} est ouverte.`
           : r.victoire && manque && app.jeu.frontVaincu && J.strateVaincue(app.jeu) === app.jeu.strate
-            ? `Le gardien est vaincu, mais l’étage suivant attend : ${manque.creuseurs ? `il manque ${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : ''}${manque.creuseurs && manque.noyau ? ' et ' : ''}${manque.noyau ? `la Tour du Noyau doit passer au niveau ${J.noyauRequis(app.jeu.strate + 1)}` : ''}.`
+            ? t`Le gardien est vaincu, mais l’étage suivant attend : ${manque.creuseurs ? t`il manque ${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : ''}${manque.creuseurs && manque.noyau ? ' et ' : ''}${manque.noyau ? t`la Tour du Noyau doit passer au niveau ${J.noyauRequis(app.jeu.strate + 1)}` : ''}.`
             : '')
           + (r.quete?.finie && r.quete.fin ? ` ${r.quete.fin}` : '');
         // le rapport d'expédition (31 octobre 2026) remplace la longue phrase du bandeau

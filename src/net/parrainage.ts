@@ -9,6 +9,7 @@
 import { collection, doc, getDoc, getDocs, getFirestore, limit, query, runTransaction, setDoc, updateDoc, where } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
 import { codeDe, PARRAINAGE, type PalierId, type Recrue } from '../core/jeu';
+import { t as tr } from '../core/i18n';
 
 const db = () => getFirestore(getApp());
 const PALIERS = PARRAINAGE.paliers.map((p) => p.id) as string[];
@@ -45,15 +46,15 @@ export async function lireParrain(code: string): Promise<{ uid: string; nom: str
   const d = await getDoc(doc(db(), 'parrains', code));
   if (!d.exists()) return null;
   const x = d.data() as { uid?: unknown; nom?: unknown };
-  return typeof x.uid === 'string' ? { uid: x.uid, nom: typeof x.nom === 'string' ? x.nom : 'Un directeur' } : null;
+  return typeof x.uid === 'string' ? { uid: x.uid, nom: typeof x.nom === 'string' ? x.nom : tr('Un directeur') } : null;
 }
 
 /** Devient la recrue de ce parrain (une seule fois : les règles refusent un second parrain) */
 export async function rejoindre(uid: string, code: string, parrain: string, nom: string): Promise<void> {
-  if (parrain === uid) throw new CodeRefuse('C’est ton propre code.');
+  if (parrain === uid) throw new CodeRefuse(tr('C’est ton propre code.'));
   const ref = doc(db(), 'recrues', uid);
   const deja = await getDoc(ref);
-  if (deja.exists()) throw new CodeRefuse('Ce compte a déjà un parrain.');
+  if (deja.exists()) throw new CodeRefuse(tr('Ce compte a déjà un parrain.'));
   const le = Date.now();
   await setDoc(ref, { parrain, code, nom, paliers: [], le, maj: le });
 }
@@ -75,7 +76,7 @@ export async function lireRecrues(uid: string): Promise<(Recrue & { le: number }
   snap.forEach((s) => {
     const d = s.data() as { nom?: unknown; paliers?: unknown; le?: unknown };
     const paliers = (Array.isArray(d.paliers) ? d.paliers : []).filter((p): p is PalierId => PALIERS.includes(p as string));
-    l.push({ uid: s.id, nom: typeof d.nom === 'string' ? d.nom : 'Une recrue', paliers, le: typeof d.le === 'number' ? d.le : 0 });
+    l.push({ uid: s.id, nom: typeof d.nom === 'string' ? d.nom : tr('Une recrue'), paliers, le: typeof d.le === 'number' ? d.le : 0 });
   });
   return l.sort((a, b) => a.le - b.le);
 }

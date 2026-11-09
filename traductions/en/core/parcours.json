@@ -1,0 +1,13 @@
+{
+ "source": "src/core/parcours.ts",
+ "entrees": [
+  {
+   "fr": "Occasionnel (2 expéditions par jour)",
+   "en": ""
+  },
+  {
+   "fr": "Assidu (5 expéditions par jour)",
+   "en": ""
+  }
+ ]
+}

@@ -1,0 +1,33 @@
+{
+ "source": "src/core/partie/temps.ts",
+ "entrees": [
+  {
+   "fr": "Le Générateur a recueilli {0} en taillant le minerai.",
+   "en": ""
+  },
+  {
+   "fr": "La Forge a refabriqué {0} : un doublon de plus.",
+   "en": ""
+  },
+  {
+   "fr": "La Tour du Noyau loge assez de creuseurs : la Strate −{0} est ouverte.",
+   "en": ""
+  },
+  {
+   "fr": "Chantier terminé : {0} passe au niveau {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Les volontaires suffisent : la Strate −{0} est ouverte.",
+   "en": ""
+  },
+  {
+   "fr": "Tes creuseurs percent la roche : la Strate −{0} est ouverte.",
+   "en": ""
+  },
+  {
+   "fr": "Le Butin de la semaine est prêt à être ouvert.",
+   "en": ""
+  }
+ ]
+}

@@ -1,0 +1,153 @@
+{
+ "source": "src/core/partie/nouvelle.ts",
+ "entrees": [
+  {
+   "fr": "Qui garde la chambre ?",
+   "en": ""
+  },
+  {
+   "fr": "La Confluence est tombée, et tout Vertiga parle de la chambre aux empreintes mêlées. Les Brigades du Serment de Veyr sont au pied de la Tour, les Veilleurs de Sédime demandent à l’étudier, et le quartier attend ta décision.",
+   "en": ""
+  },
+  {
+   "fr": "La Maison Orsève",
+   "en": ""
+  },
+  {
+   "fr": "Nous n’héritons pas du pouvoir. Nous héritons de la responsabilité de le contenir.",
+   "en": ""
+  },
+  {
+   "fr": "Les Brigades sécurisent la chambre et ne te barrent plus la route dans les Strates. Les Hauts paient : +1 Éclat sur chaque gardien vaincu.",
+   "en": ""
+  },
+  {
+   "fr": "Le district seul",
+   "en": ""
+  },
+  {
+   "fr": "Ce qui est sous notre digue est à nous.",
+   "en": ""
+  },
+  {
+   "fr": "Le quartier se mobilise : +20 % de minerai à chaque expédition. Mais les Brigades contestent, et tu les croiseras dans les salles closes.",
+   "en": ""
+  },
+  {
+   "fr": "Une commission avec les Veilleurs",
+   "en": ""
+  },
+  {
+   "fr": "Nous ne sommes pas les propriétaires du passé. Nous sommes les prochains à pouvoir le perdre.",
+   "en": ""
+  },
+  {
+   "fr": "Les Veilleurs partagent leurs fouilles : 25 % de chances de carte par combat au lieu de 20 %.",
+   "en": ""
+  },
+  {
+   "fr": "La dernière lecture",
+   "en": ""
+  },
+  {
+   "fr": "Sous les salles closes, les cristaux d’un même individu portent des souvenirs qui se contredisent. Véla pense pouvoir lire jusqu’au bout ce qu’ils cachent. Elle sait que son lien avec son empreinte pourrait ne pas y survivre. Elle attend ton accord.",
+   "en": ""
+  },
+  {
+   "fr": "Autoriser la lecture",
+   "en": ""
+  },
+  {
+   "fr": "Véla gagne une carte unique, Lecture profonde (Fréquence libre, forte attaque), en plus de ses 6 cartes. Son lien s’effiloche : −4 PV pour de bon.",
+   "en": ""
+  },
+  {
+   "fr": "Refuser, la protéger",
+   "en": ""
+  },
+  {
+   "fr": "On n’entre pas deux fois chez quelqu’un sans y être invité.",
+   "en": ""
+  },
+  {
+   "fr": "Véla garde son empreinte intacte et reprend des forces : +4 PV pour de bon. Ce que cachent les cristaux attendra.",
+   "en": ""
+  },
+  {
+   "fr": "La vérité",
+   "en": ""
+  },
+  {
+   "fr": "Le Premier Porteur est tombé, et son registre parle enfin : une autre civilisation s’est perdue en se gravant des empreintes, et ses premiers porteurs l’avaient écrit dès le début. Ces mêmes empreintes ont pourtant sauvé l’humanité après la Fonte. Le système qui les tient stables s’use. Il faut décider de ce qu’on en fait.",
+   "en": ""
+  },
+  {
+   "fr": "Le Grand Scellement",
+   "en": ""
+  },
+  {
+   "fr": "Certaines vérités doivent rester enfouies.",
+   "en": ""
+  },
+  {
+   "fr": "Les empreintes anciennes sont scellées à nouveau. Moins de risques : les ennemis perdent 10 % de leur force. Du savoir perdu : plus aucune carte en nacre ne tombe.",
+   "en": ""
+  },
+  {
+   "fr": "Le Pacte des empreintes",
+   "en": ""
+  },
+  {
+   "fr": "Nous héritons de la responsabilité de les contenir, ensemble.",
+   "en": ""
+  },
+  {
+   "fr": "Leur contrôle est partagé entre les Hauts et les districts. Une paix fragile : +10 % de minerai. Une nouvelle bureaucratie : les chantiers durent 25 % plus longtemps.",
+   "en": ""
+  },
+  {
+   "fr": "Les Archives ouvertes",
+   "en": ""
+  },
+  {
+   "fr": "Une empreinte n’est qu’une donnée. Elle n’a rien de sacré.",
+   "en": ""
+  },
+  {
+   "fr": "Tout est révélé et accessible à tous. Plus de liberté : deux fois plus de cartes en nacre. Des accidents de greffe : l’Usure en plus d’un Porteur à terre ou d’une fuite augmente de moitié.",
+   "en": ""
+  },
+  {
+   "fr": "Décision inconnue.",
+   "en": ""
+  },
+  {
+   "fr": "La décision est déjà prise.",
+   "en": ""
+  },
+  {
+   "fr": "La chambre est confiée à : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Véla : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Fin de la campagne : {0}. Les Strates continuent.",
+   "en": ""
+  },
+  {
+   "fr": "Décision prise : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Tu viens d’être élu à la tête du district. La digue t’attend.",
+   "en": ""
+  },
+  {
+   "fr": "{0} portait des cartes trop lourdes ou d’un métal trop haut pour son niveau, et rend {1} à la collection.",
+   "en": ""
+  }
+ ]
+}

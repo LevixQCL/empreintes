@@ -13,41 +13,42 @@ import { ORDRE_FAMILLES } from '../fragments';
 import { FAMILLES_DEPART, FAMILLES_DISTRICT, familleDuFragment } from '../familles';
 import { SECTEURS } from '../digue';
 import { donnerKitRecrues, recompenserLecture } from './recompenses';
+import { t } from '../i18n';
 
 const DECISION_CHAMBRE: { titre: string; texte: string; options: { id: GardeChambre; nom: string; phrase: string; effet: string }[] } = {
-  titre: 'Qui garde la chambre ?',
-  texte: 'La Confluence est tombée, et tout Vertiga parle de la chambre aux empreintes mêlées. Les Brigades du Serment de Veyr sont au pied de la Tour, les Veilleurs de Sédime demandent à l’étudier, et le quartier attend ta décision.',
+  titre: t('Qui garde la chambre ?'),
+  texte: t('La Confluence est tombée, et tout Vertiga parle de la chambre aux empreintes mêlées. Les Brigades du Serment de Veyr sont au pied de la Tour, les Veilleurs de Sédime demandent à l’étudier, et le quartier attend ta décision.'),
   options: [
-    { id: 'orseve', nom: 'La Maison Orsève', phrase: 'Nous n’héritons pas du pouvoir. Nous héritons de la responsabilité de le contenir.',
-      effet: 'Les Brigades sécurisent la chambre et ne te barrent plus la route dans les Strates. Les Hauts paient : +1 Éclat sur chaque gardien vaincu.' },
-    { id: 'district', nom: 'Le district seul', phrase: 'Ce qui est sous notre digue est à nous.',
-      effet: 'Le quartier se mobilise : +20 % de minerai à chaque expédition. Mais les Brigades contestent, et tu les croiseras dans les salles closes.' },
-    { id: 'commission', nom: 'Une commission avec les Veilleurs', phrase: 'Nous ne sommes pas les propriétaires du passé. Nous sommes les prochains à pouvoir le perdre.',
-      effet: 'Les Veilleurs partagent leurs fouilles : 25 % de chances de carte par combat au lieu de 20 %.' },
+    { id: 'orseve', nom: t('La Maison Orsève'), phrase: t('Nous n’héritons pas du pouvoir. Nous héritons de la responsabilité de le contenir.'),
+      effet: t('Les Brigades sécurisent la chambre et ne te barrent plus la route dans les Strates. Les Hauts paient : +1 Éclat sur chaque gardien vaincu.') },
+    { id: 'district', nom: t('Le district seul'), phrase: t('Ce qui est sous notre digue est à nous.'),
+      effet: t('Le quartier se mobilise : +20 % de minerai à chaque expédition. Mais les Brigades contestent, et tu les croiseras dans les salles closes.') },
+    { id: 'commission', nom: t('Une commission avec les Veilleurs'), phrase: t('Nous ne sommes pas les propriétaires du passé. Nous sommes les prochains à pouvoir le perdre.'),
+      effet: t('Les Veilleurs partagent leurs fouilles : 25 % de chances de carte par combat au lieu de 20 %.') },
   ],
 };
 
 const DECISION_LECTURE: { titre: string; texte: string; options: { id: LectureVela; nom: string; phrase: string; effet: string }[] } = {
-  titre: 'La dernière lecture',
-  texte: 'Sous les salles closes, les cristaux d’un même individu portent des souvenirs qui se contredisent. Véla pense pouvoir lire jusqu’au bout ce qu’ils cachent. Elle sait que son lien avec son empreinte pourrait ne pas y survivre. Elle attend ton accord.',
+  titre: t('La dernière lecture'),
+  texte: t('Sous les salles closes, les cristaux d’un même individu portent des souvenirs qui se contredisent. Véla pense pouvoir lire jusqu’au bout ce qu’ils cachent. Elle sait que son lien avec son empreinte pourrait ne pas y survivre. Elle attend ton accord.'),
   options: [
-    { id: 'autoriser', nom: 'Autoriser la lecture', phrase: 'Une empreinte ne ment jamais. C’est nous qui la lisons mal.',
-      effet: 'Véla gagne une carte unique, Lecture profonde (Fréquence libre, forte attaque), en plus de ses 6 cartes. Son lien s’effiloche : −4 PV pour de bon.' },
-    { id: 'refuser', nom: 'Refuser, la protéger', phrase: 'On n’entre pas deux fois chez quelqu’un sans y être invité.',
-      effet: 'Véla garde son empreinte intacte et reprend des forces : +4 PV pour de bon. Ce que cachent les cristaux attendra.' },
+    { id: 'autoriser', nom: t('Autoriser la lecture'), phrase: t('Une empreinte ne ment jamais. C’est nous qui la lisons mal.'),
+      effet: t('Véla gagne une carte unique, Lecture profonde (Fréquence libre, forte attaque), en plus de ses 6 cartes. Son lien s’effiloche : −4 PV pour de bon.') },
+    { id: 'refuser', nom: t('Refuser, la protéger'), phrase: t('On n’entre pas deux fois chez quelqu’un sans y être invité.'),
+      effet: t('Véla garde son empreinte intacte et reprend des forces : +4 PV pour de bon. Ce que cachent les cristaux attendra.') },
   ],
 };
 
 const DECISION_FIN: { titre: string; texte: string; options: { id: FinCampagne; nom: string; phrase: string; effet: string }[] } = {
-  titre: 'La vérité',
-  texte: 'Le Premier Porteur est tombé, et son registre parle enfin : une autre civilisation s’est perdue en se gravant des empreintes, et ses premiers porteurs l’avaient écrit dès le début. Ces mêmes empreintes ont pourtant sauvé l’humanité après la Fonte. Le système qui les tient stables s’use. Il faut décider de ce qu’on en fait.',
+  titre: t('La vérité'),
+  texte: t('Le Premier Porteur est tombé, et son registre parle enfin : une autre civilisation s’est perdue en se gravant des empreintes, et ses premiers porteurs l’avaient écrit dès le début. Ces mêmes empreintes ont pourtant sauvé l’humanité après la Fonte. Le système qui les tient stables s’use. Il faut décider de ce qu’on en fait.'),
   options: [
-    { id: 'scellement', nom: 'Le Grand Scellement', phrase: 'Certaines vérités doivent rester enfouies.',
-      effet: 'Les empreintes anciennes sont scellées à nouveau. Moins de risques : les ennemis perdent 10 % de leur force. Du savoir perdu : plus aucune carte en nacre ne tombe.' },
-    { id: 'pacte', nom: 'Le Pacte des empreintes', phrase: 'Nous héritons de la responsabilité de les contenir, ensemble.',
-      effet: 'Leur contrôle est partagé entre les Hauts et les districts. Une paix fragile : +10 % de minerai. Une nouvelle bureaucratie : les chantiers durent 25 % plus longtemps.' },
-    { id: 'archives', nom: 'Les Archives ouvertes', phrase: 'Une empreinte n’est qu’une donnée. Elle n’a rien de sacré.',
-      effet: 'Tout est révélé et accessible à tous. Plus de liberté : deux fois plus de cartes en nacre. Des accidents de greffe : l’Usure en plus d’un Porteur à terre ou d’une fuite augmente de moitié.' },
+    { id: 'scellement', nom: t('Le Grand Scellement'), phrase: t('Certaines vérités doivent rester enfouies.'),
+      effet: t('Les empreintes anciennes sont scellées à nouveau. Moins de risques : les ennemis perdent 10 % de leur force. Du savoir perdu : plus aucune carte en nacre ne tombe.') },
+    { id: 'pacte', nom: t('Le Pacte des empreintes'), phrase: t('Nous héritons de la responsabilité de les contenir, ensemble.'),
+      effet: t('Leur contrôle est partagé entre les Hauts et les districts. Une paix fragile : +10 % de minerai. Une nouvelle bureaucratie : les chantiers durent 25 % plus longtemps.') },
+    { id: 'archives', nom: t('Les Archives ouvertes'), phrase: t('Une empreinte n’est qu’une donnée. Elle n’a rien de sacré.'),
+      effet: t('Tout est révélé et accessible à tous. Plus de liberté : deux fois plus de cartes en nacre. Des accidents de greffe : l’Usure en plus d’un Porteur à terre ou d’une fuite augmente de moitié.') },
   ],
 };
 
@@ -84,14 +85,14 @@ export function voirScene(j: Jeu, id: string): boolean {
 
 export function decider(j: Jeu, acte: string, choix: string): Resultat {
   const d = DECISIONS[acte as Acte];
-  if (!d) return non('Décision inconnue.');
+  if (!d) return non(t('Décision inconnue.'));
   const o = (d.options as readonly { id: string; nom: string }[]).find((x) => x.id === choix);
-  if (!o) return non('Choix inconnu.');
-  if (j.actes[acte as Acte]) return non('La décision est déjà prise.');
+  if (!o) return non(t('Choix inconnu.'));
+  if (j.actes[acte as Acte]) return non(t('La décision est déjà prise.'));
   (j.actes as Record<string, string>)[acte] = o.id;
   if (acte === 'chambre') confier(j, o.id === 'district' ? 10 : o.id === 'commission' ? 5 : 0);
-  log(j, acte === 'chambre' ? `La chambre est confiée à : ${o.nom}.` : acte === 'lecture' ? `Véla : ${o.nom.toLowerCase()}.` : `Fin de la campagne : ${o.nom}. Les Strates continuent.`);
-  return { ok: true, message: `Décision prise : ${o.nom}.` };
+  log(j, acte === 'chambre' ? t`La chambre est confiée à : ${o.nom}.` : acte === 'lecture' ? t`Véla : ${o.nom.toLowerCase()}.` : t`Fin de la campagne : ${o.nom}. Les Strates continuent.`);
+  return { ok: true, message: t`Décision prise : ${o.nom}.` };
 }
 
 export const deciderChambre = (j: Jeu, choix: string) => decider(j, 'chambre', choix);
@@ -109,7 +110,7 @@ export function nouveauJeu(now: number, rng = graine()): Jeu {
     strate: 1,
     dernierTick: now,
     expedition: null,
-    journal: ['Tu viens d’être élu à la tête du district. La digue t’attend.'],
+    journal: [t('Tu viens d’être élu à la tête du district. La digue t’attend.')],
     introVue: false,
     chambre: false,
     recrues: false,
@@ -360,6 +361,6 @@ function allegerSelonCharge(j: Jeu) {
       d.modules = d.modules.filter((k) => k !== lourde);
       rendues.push(moduleDef(lourde).nom);
     }
-    if (rendues.length) log(j, `${porteurDef(id).nom} portait des cartes trop lourdes ou d’un métal trop haut pour son niveau, et rend ${rendues.join(', ')} à la collection.`);
+    if (rendues.length) log(j, t`${porteurDef(id).nom} portait des cartes trop lourdes ou d’un métal trop haut pour son niveau, et rend ${rendues.join(', ')} à la collection.`);
   }
 }

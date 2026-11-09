@@ -6,6 +6,7 @@ import { LOGOTYPE } from './logotype';
 import { ICO } from './icones';
 import { peutInstaller } from './installer';
 import { echap } from './outils';
+import { t } from '../core/i18n';
 
 /**
  * L'illustration (9 novembre 2026) : l'escalier englouti, sous la digue, qui plonge vers les Strates.
@@ -32,10 +33,10 @@ export interface TitreCompte {
 function ligneCompte(c: TitreCompte): string {
   // pendant l'attente, la place de la ligne est gardée : les boutons ne sautent pas quand elle arrive
   if (c.etat === 'attente') return `<span class="titre-compte fantome" aria-hidden="true">${ICO.compte}<span>&nbsp;</span></span>`;
-  if (c.etat === 'connecte') return `<button type="button" class="titre-compte connecte" data-action="titre-compte" aria-label="Compte : ${echap(c.nom)}, Strate −${c.strate}">`
-    + `${ICO.ok}<span>${echap(c.nom)}</span><small>Strate −${c.strate}</small></button>`;
-  if (c.etat === 'invisible') return `<button type="button" class="titre-compte" data-action="titre-compte">${ICO.compte}<span>Partie de ce téléphone · <b>La protéger</b></span></button>`;
-  return `<button type="button" class="titre-compte" data-action="titre-compte">${ICO.compte}<span>Déjà un compte ? <b>Se connecter</b></span></button>`;
+  if (c.etat === 'connecte') return `<button type="button" class="titre-compte connecte" data-action="titre-compte" aria-label="${t`Compte : ${echap(c.nom)}, Strate −${c.strate}`}">`
+    + `${ICO.ok}<span>${echap(c.nom)}</span><small>${t`Strate −${c.strate}`}</small></button>`;
+  if (c.etat === 'invisible') return `<button type="button" class="titre-compte" data-action="titre-compte">${ICO.compte}<span>${t`Partie de ce téléphone ·`} <b>${t`La protéger`}</b></span></button>`;
+  return `<button type="button" class="titre-compte" data-action="titre-compte">${ICO.compte}<span>${t`Déjà un compte ?`} <b>${t`Se connecter`}</b></span></button>`;
 }
 
 /**
@@ -47,33 +48,33 @@ export const premierLancement = (introVue: boolean, c: TitreCompte | null) => !i
 /** Les boutons du bas */
 function basTitre(introVue: boolean, c: TitreCompte | null): string {
   if (premierLancement(introVue, c)) return `<div class="titre-bas titre-accueil">`
-    + `<button type="button" class="prim titre-go" data-action="titre-jouer">Nouvelle partie</button>`
-    + `<button type="button" class="titre-retrouver" data-action="titre-compte">${ICO.compte}<span><b>J’ai déjà une partie</b><small>Je me connecte pour la retrouver</small></span></button>`
-    + `<div class="titre-sec"><button type="button" class="btn-sec" data-action="bibliotheque">Chroniques</button></div>`
-    + (peutInstaller() ? `<button type="button" class="titre-installer" data-action="installer"><img src="./favicon-32.png" alt="" width="16" height="16">Installer le jeu sur l’écran d’accueil</button>` : '')
-    + `<small class="titre-version">Alpha</small></div>`;
+    + `<button type="button" class="prim titre-go" data-action="titre-jouer">${t`Nouvelle partie`}</button>`
+    + `<button type="button" class="titre-retrouver" data-action="titre-compte">${ICO.compte}<span><b>${t`J’ai déjà une partie`}</b><small>${t`Je me connecte pour la retrouver`}</small></span></button>`
+    + `<div class="titre-sec"><button type="button" class="btn-sec" data-action="bibliotheque">${t`Chroniques`}</button></div>`
+    + (peutInstaller() ? `<button type="button" class="titre-installer" data-action="installer"><img src="./favicon-32.png" alt="" width="16" height="16">${t`Installer le jeu sur l’écran d’accueil`}</button>` : '')
+    + `<small class="titre-version">${t`Alpha`}</small></div>`;
   const go = c?.etat === 'attente'
-    ? `<button type="button" class="prim titre-go attente" disabled aria-busy="true"><span class="titre-anneau" aria-hidden="true"></span>Récupération de ta partie…</button>`
-    : `<button type="button" class="prim titre-go" data-action="titre-jouer">${introVue ? 'Reprendre' : 'Commencer'}</button>`;
+    ? `<button type="button" class="prim titre-go attente" disabled aria-busy="true"><span class="titre-anneau" aria-hidden="true"></span>${t`Récupération de ta partie…`}</button>`
+    : `<button type="button" class="prim titre-go" data-action="titre-jouer">${introVue ? t('Reprendre') : t('Commencer')}</button>`;
   return `<div class="titre-bas">${go}`
-    + `<div class="titre-sec">${introVue ? `<button type="button" class="btn-sec" data-action="intro">Revoir l’intro complète</button>` : ''}<button type="button" class="btn-sec" data-action="bibliotheque">Chroniques</button></div>`
+    + `<div class="titre-sec">${introVue ? `<button type="button" class="btn-sec" data-action="intro">${t`Revoir l’intro complète`}</button>` : ''}<button type="button" class="btn-sec" data-action="bibliotheque">${t`Chroniques`}</button></div>`
     + (c ? ligneCompte(c) : '')
-    + (peutInstaller() ? `<button type="button" class="titre-installer" data-action="installer"><img src="./favicon-32.png" alt="" width="16" height="16">Installer le jeu sur l’écran d’accueil</button>` : '')
-    + `<small class="titre-version">Alpha</small></div>`;
+    + (peutInstaller() ? `<button type="button" class="titre-installer" data-action="installer"><img src="./favicon-32.png" alt="" width="16" height="16">${t`Installer le jeu sur l’écran d’accueil`}</button>` : '')
+    + `<small class="titre-version">${t`Alpha`}</small></div>`;
 }
 
 export function htmlTitre(introVue: boolean, mouvement: boolean, c: TitreCompte | null = null): string {
   // toucher l'écran ouvre la partie, sauf pendant qu'on récupère celle du compte,
   // et au premier lancement : un toucher à côté ne doit pas lancer une nouvelle partie à la place de « J'ai déjà une partie »
   const toucher = c?.etat !== 'attente' && !premierLancement(introVue, c);
-  return `<section class="titre"${toucher ? ' data-action="titre-jouer"' : ''} style="--image:url(./intro/titre-mobile-1600.webp)" aria-label="Ossyra, écran titre">`
+  return `<section class="titre"${toucher ? ' data-action="titre-jouer"' : ''} style="--image:url(./intro/titre-mobile-1600.webp)" aria-label="${t`Ossyra, écran titre`}">`
     + `<div class="titre-fond" aria-hidden="true">${imageAnimee()}</div>`
     + (mouvement ? particules('cristal') : '')
     + `<div class="titre-voile" aria-hidden="true"></div>`
     + `<header class="titre-haut"><img class="titre-logo" src="./art/logo.webp" alt="" width="640" height="854" decoding="async"><h1 class="titre-nom">${LOGOTYPE}</h1>`
-    + `<p class="titre-sous">2121 · Sous les eaux, d’autres se souviennent encore.</p></header>`
+    + `<p class="titre-sous">${t`2121 · Sous les eaux, d’autres se souviennent encore.`}</p></header>`
     + basTitre(introVue, c) + `</section>`
     + (c?.panneau ? `<div class="titre-voile-feuille" data-action="titre-compte" aria-hidden="true"></div>`
-      + `<section class="titre-feuille" role="dialog" aria-modal="true" aria-label="Compte">`
-      + `<button type="button" class="titre-fermer" data-action="titre-compte" aria-label="Fermer">${ICO.fermer}</button>${c.panneau}</section>` : '');
+      + `<section class="titre-feuille" role="dialog" aria-modal="true" aria-label="${t`Compte`}">`
+      + `<button type="button" class="titre-fermer" data-action="titre-compte" aria-label="${t`Fermer`}">${ICO.fermer}</button>${c.panneau}</section>` : '');
 }

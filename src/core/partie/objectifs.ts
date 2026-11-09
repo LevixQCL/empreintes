@@ -4,6 +4,7 @@
 import type { BatimentId } from '../types';
 import { moduleDe } from '../donnees';
 import { creuseursRequis, escouadeDe, posteDe, type Jeu } from './etat';
+import { t } from '../i18n';
 
 // ---------- Objectifs guidés ----------
 
@@ -25,33 +26,33 @@ export interface Objectif {
 // produire sans bloquer l'escouade, construire le deck, descendre, puis comprendre ce qui ouvre l'étage suivant.
 export const OBJECTIFS: Objectif[] = [
   {
-    id: 'district', titre: 'Allumer le district', pilier: 'generateur', onglet: 'archipel',
-    consigne: 'Touche le Générateur et postes-y le Coursier, une recrue augmentée : il y produit deux fois plus. Garde Ilka, Doran et Véla pour l’escouade : en descendant, ils quitteraient leur poste.',
+    id: 'district', titre: t('Allumer le district'), pilier: 'generateur', onglet: 'archipel',
+    consigne: t('Touche le Générateur et postes-y le Coursier, une recrue augmentée : il y produit deux fois plus. Garde Ilka, Doran et Véla pour l’escouade : en descendant, ils quitteraient leur poste.'),
     recompense: { energie: 15 },
     fait: (j) => { const p = posteDe(j, 'generateur'); return !!p && !escouadeDe(j).includes(p); },
   },
   {
-    id: 'deck', titre: 'Construire ton deck', pilier: null, onglet: 'porteurs',
-    consigne: 'Dans l’onglet Escouade, touche « Gérer ses cartes » sous Ilka et confie-lui l’Œil-relais, trouvé dans la chambre. Elle porte déjà 6 cartes : reprends-en une d’abord. Les cartes de tes trois Porteurs forment ton deck.',
+    id: 'deck', titre: t('Construire ton deck'), pilier: null, onglet: 'porteurs',
+    consigne: t('Dans l’onglet Escouade, touche « Gérer ses cartes » sous Ilka et confie-lui l’Œil-relais, trouvé dans la chambre. Elle porte déjà 6 cartes : reprends-en une d’abord. Les cartes de tes trois Porteurs forment ton deck.'),
     recompense: { composants: 10 },
     fait: (j) => j.porteurs.ilka!.modules.some((k) => moduleDe(k) === 'oeil-relais'),
   },
   // 3 novembre 2026 : une recrue partait à −1 sans savoir que chaque chapitre lu donne une carte
   {
-    id: 'lire', titre: 'Écouter Ysé', pilier: null, onglet: 'codex',
-    consigne: 'Ouvre les Chroniques et lis le premier chapitre. À chaque première lecture, Ysé glisse une carte entre les pages ; confie-la à un Porteur (onglet Escouade) pour qu’elle entre dans ton deck.',
+    id: 'lire', titre: t('Écouter Ysé'), pilier: null, onglet: 'codex',
+    consigne: t('Ouvre les Chroniques et lis le premier chapitre. À chaque première lecture, Ysé glisse une carte entre les pages ; confie-la à un Porteur (onglet Escouade) pour qu’elle entre dans ton deck.'),
     recompense: { composants: 10 },
     fait: (j) => j.luesRecompensees.length > 0,
   },
   {
-    id: 'descendre', titre: 'Vaincre la Strate −1', pilier: 'noyau', onglet: 'coupe',
-    consigne: 'Ton escouade est prête (onglet Escouade). Entre dans la Tour du Noyau et explore la Strate −1 salle par salle, jusqu’à son gardien.',
+    id: 'descendre', titre: t('Vaincre la Strate −1'), pilier: 'noyau', onglet: 'coupe',
+    consigne: t('Ton escouade est prête (onglet Escouade). Entre dans la Tour du Noyau et explore la Strate −1 salle par salle, jusqu’à son gardien.'),
     recompense: { composants: 20 },
     fait: (j) => j.strate >= 2 || j.frontVaincu,
   },
   {
-    id: 'creuseurs', titre: 'Trouver des creuseurs', pilier: null, onglet: 'pillages',
-    consigne: `Pour percer la Strate −2, il faut ${creuseursRequis(2)} creuseurs : le gardien t’en a amené un. Au Port (onglet du bas), envoie une recrue en mission en mer : des rescapés des ruines noyées suivront.`,
+    id: 'creuseurs', titre: t('Trouver des creuseurs'), pilier: null, onglet: 'pillages',
+    consigne: t`Pour percer la Strate −2, il faut ${creuseursRequis(2)} creuseurs : le gardien t’en a amené un. Au Port (onglet du bas), envoie une recrue en mission en mer : des rescapés des ruines noyées suivront.`,
     recompense: { composants: 10, creuseurs: 1 },
     fait: (j) => j.strate >= 2 || j.missions.length > 0,
   },

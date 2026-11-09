@@ -1,0 +1,549 @@
+{
+ "source": "src/ui/exploration.ts",
+ "entrees": [
+  {
+   "fr": "Entrée",
+   "en": ""
+  },
+  {
+   "fr": "Combat",
+   "en": ""
+  },
+  {
+   "fr": "Salle scellée",
+   "en": ""
+  },
+  {
+   "fr": "Cache",
+   "en": ""
+  },
+  {
+   "fr": "Rencontre",
+   "en": ""
+  },
+  {
+   "fr": "Campement",
+   "en": ""
+  },
+  {
+   "fr": "Filon",
+   "en": ""
+  },
+  {
+   "fr": "Halte",
+   "en": ""
+  },
+  {
+   "fr": "Porte ancienne",
+   "en": ""
+  },
+  {
+   "fr": "Dans le brouillard",
+   "en": ""
+  },
+  {
+   "fr": "On ne sait pas ce qui attend l’escouade avant d’entrer.",
+   "en": ""
+  },
+  {
+   "fr": "{0} chacun · {1} de chance de carte",
+   "en": ""
+  },
+  {
+   "fr": "Rôdeur",
+   "en": ""
+  },
+  {
+   "fr": "il s’enfuit au bout de",
+   "en": ""
+  },
+  {
+   "fr": "{0} tours",
+   "en": ""
+  },
+  {
+   "fr": "faible contre",
+   "en": ""
+  },
+  {
+   "fr": "abattu : {0}",
+   "en": ""
+  },
+  {
+   "fr": "PV",
+   "en": ""
+  },
+  {
+   "fr": "Gardien de la zone",
+   "en": ""
+  },
+  {
+   "fr": "{0} minerai · fin de la Strate",
+   "en": ""
+  },
+  {
+   "fr": "Plus coriace, mais une carte dort derrière.",
+   "en": ""
+  },
+  {
+   "fr": "{0} minerai · {1}",
+   "en": ""
+  },
+  {
+   "fr": "Combat · {0} ennemis",
+   "en": ""
+  },
+  {
+   "fr": "Ils viennent ensemble : choisis qui frapper.",
+   "en": ""
+  },
+  {
+   "fr": "Deux souvenirs de la même salle. Choisis celui que l’escouade traverse.",
+   "en": ""
+  },
+  {
+   "fr": "Cache murée",
+   "en": ""
+  },
+  {
+   "fr": "Un abri muré en 2066",
+   "en": ""
+  },
+  {
+   "fr": "Ton Augmenté peut forcer le mur : derrière, une réserve intacte.",
+   "en": ""
+  },
+  {
+   "fr": "Il faudrait un Augmenté debout pour forcer le mur.",
+   "en": ""
+  },
+  {
+   "fr": " (le double)",
+   "en": ""
+  },
+  {
+   "fr": "+{0} % de PV",
+   "en": ""
+  },
+  {
+   "fr": "pour l’escouade debout",
+   "en": ""
+  },
+  {
+   "fr": "Niche",
+   "en": ""
+  },
+  {
+   "fr": "Une niche du Treillis",
+   "en": ""
+  },
+  {
+   "fr": "Vidée par les Hauts, presque toujours. Parfois, un cristal y dort encore.",
+   "en": ""
+  },
+  {
+   "fr": "{0} minerai · {1} de chance de carte",
+   "en": ""
+  },
+  {
+   "fr": "Une cache de fouilleur",
+   "en": ""
+  },
+  {
+   "fr": "La voie sûre : un peu de minerai et de quoi panser l’escouade, sans combat.",
+   "en": ""
+  },
+  {
+   "fr": " · parfois un Éclat",
+   "en": ""
+  },
+  {
+   "fr": "Un campement",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade souffle. On peut remonter d’ici avec tout le butin.",
+   "en": ""
+  },
+  {
+   "fr": "+{0} PV",
+   "en": ""
+  },
+  {
+   "fr": "pour l’escouade (+35 %)",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade est déjà en pleine forme",
+   "en": ""
+  },
+  {
+   "fr": "Une salle d’archives",
+   "en": ""
+  },
+  {
+   "fr": "Un fragment de l’histoire, à rapporter au district.",
+   "en": ""
+  },
+  {
+   "fr": "Quelqu’un, dans le noir",
+   "en": ""
+  },
+  {
+   "fr": "Un choix à faire. On ne sait pas encore qui.",
+   "en": ""
+  },
+  {
+   "fr": "Halte {0} sur {1} · passage obligatoire",
+   "en": ""
+  },
+  {
+   "fr": "Tous les chemins passent par ici. Un lieu à regarder de près, et un choix à faire.",
+   "en": ""
+  },
+  {
+   "fr": "{0} chacun · un choix",
+   "en": ""
+  },
+  {
+   "fr": "Halte · lieu connu",
+   "en": ""
+  },
+  {
+   "fr": "Un lieu connu",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade connaît cet endroit, maintenant. Elle y passe sans s’arrêter.",
+   "en": ""
+  },
+  {
+   "fr": "Elle s’ouvre à qui accorde {0} cartes dont les Fréquences se suivent. Rien à perdre si on échoue.",
+   "en": ""
+  },
+  {
+   "fr": "{0} Éclat{1} · {2} minerai",
+   "en": ""
+  },
+  {
+   "fr": "Le filon",
+   "en": ""
+  },
+  {
+   "fr": "Ce que tu cherchais : la fouille s’achève ici.",
+   "en": ""
+  },
+  {
+   "fr": "le filon",
+   "en": ""
+  },
+  {
+   "fr": "Fouille · {0}{1}",
+   "en": ""
+  },
+  {
+   "fr": "Salle",
+   "en": ""
+  },
+  {
+   "fr": "sur {0} · {1} dans",
+   "en": ""
+  },
+  {
+   "fr": "salle{0}",
+   "en": ""
+  },
+  {
+   "fr": "Tu es devant {0}",
+   "en": ""
+  },
+  {
+   "fr": "Butin de l’expédition",
+   "en": ""
+  },
+  {
+   "fr": "carte{0}",
+   "en": ""
+  },
+  {
+   "fr": "archive",
+   "en": ""
+  },
+  {
+   "fr": "Vestige{0}",
+   "en": ""
+  },
+  {
+   "fr": "Remonter au district{0}",
+   "en": ""
+  },
+  {
+   "fr": " avec {0} minerai",
+   "en": ""
+  },
+  {
+   "fr": "Remonter",
+   "en": ""
+  },
+  {
+   "fr": "À terre",
+   "en": ""
+  },
+  {
+   "fr": "{0} PV sur {1}{2}",
+   "en": ""
+  },
+  {
+   "fr": ", l’Usure en retire {0}",
+   "en": ""
+  },
+  {
+   "fr": "PV retirés par l’Usure",
+   "en": ""
+  },
+  {
+   "fr": "Carte de la Strate",
+   "en": ""
+  },
+  {
+   "fr": "Plan de la Strate",
+   "en": ""
+  },
+  {
+   "fr": " : un groupe ({0})",
+   "en": ""
+  },
+  {
+   "fr": " (tu es ici)",
+   "en": ""
+  },
+  {
+   "fr": "Vous êtes ici",
+   "en": ""
+  },
+  {
+   "fr": "{0} : on ne sait pas ce qui attend",
+   "en": ""
+  },
+  {
+   "fr": "Une salle dans la brume",
+   "en": ""
+  },
+  {
+   "fr": " · un passage repéré",
+   "en": ""
+  },
+  {
+   "fr": " · la marque de la quête",
+   "en": ""
+  },
+  {
+   "fr": " · un Vestige",
+   "en": ""
+  },
+  {
+   "fr": " · les traces de {0}",
+   "en": ""
+  },
+  {
+   "fr": "un Rôdeur",
+   "en": ""
+  },
+  {
+   "fr": "Voir : {0}",
+   "en": ""
+  },
+  {
+   "fr": "Le butin de l’expédition n’a que {0} minerai : il en manque {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Marque de la quête relevée · étape {0} sur {1}",
+   "en": ""
+  },
+  {
+   "fr": "Elle sera rangée dans la quête au retour au district.",
+   "en": ""
+  },
+  {
+   "fr": "Avancer dans le brouillard",
+   "en": ""
+  },
+  {
+   "fr": "Affronter le gardien",
+   "en": ""
+  },
+  {
+   "fr": "Combattre",
+   "en": ""
+  },
+  {
+   "fr": "S’arrêter au campement",
+   "en": ""
+  },
+  {
+   "fr": "Entrer",
+   "en": ""
+  },
+  {
+   "fr": "Salle choisie",
+   "en": ""
+  },
+  {
+   "fr": "Fermer la fiche",
+   "en": ""
+  },
+  {
+   "fr": ": la marque de la quête est ici{0}.",
+   "en": ""
+  },
+  {
+   "fr": " (gagne le combat pour la relever)",
+   "en": ""
+  },
+  {
+   "fr": "Un Vestige",
+   "en": ""
+  },
+  {
+   "fr": "dort ici{0}.",
+   "en": ""
+  },
+  {
+   "fr": " (gagne le combat pour le ramasser)",
+   "en": ""
+  },
+  {
+   "fr": " (ouvre la porte pour le ramasser)",
+   "en": ""
+  },
+  {
+   "fr": "y repère un passage caché.",
+   "en": ""
+  },
+  {
+   "fr": "Touche une salle qui brille sur le plan : tu verras ce qui t’y attend avant d’entrer{0}.{1}",
+   "en": ""
+  },
+  {
+   "fr": ", ou du moins ce que le brouillard en laisse deviner",
+   "en": ""
+  },
+  {
+   "fr": "{0} chemins",
+   "en": ""
+  },
+  {
+   "fr": "Remonter avec le filon",
+   "en": ""
+  },
+  {
+   "fr": "{0} : tu peux rentrer maintenant avec tout ce que tu as trouvé.",
+   "en": ""
+  },
+  {
+   "fr": "Le campement est une sortie",
+   "en": ""
+  },
+  {
+   "fr": "L’entrée est une sortie",
+   "en": ""
+  },
+  {
+   "fr": "Remonter avec {0} minerai",
+   "en": ""
+  },
+  {
+   "fr": "Les PV remontent surtout aux campements (et parfois lors d’une rencontre). On ne peut remonter que depuis l’entrée ou un campement.",
+   "en": ""
+  },
+  {
+   "fr": "· cette semaine",
+   "en": ""
+  },
+  {
+   "fr": "{0} étape{1} sur {2}",
+   "en": ""
+  },
+  {
+   "fr": "Vestiges de la Strate",
+   "en": ""
+  },
+  {
+   "fr": "+{0} cette descente",
+   "en": ""
+  },
+  {
+   "fr": "Gardien éveillé",
+   "en": ""
+  },
+  {
+   "fr": "plus fort, plus généreux",
+   "en": ""
+  },
+  {
+   "fr": "tout le plan est visible",
+   "en": ""
+  },
+  {
+   "fr": "Halte {0} sur {1} · Strate −{2}",
+   "en": ""
+  },
+  {
+   "fr": "Regarder",
+   "en": ""
+  },
+  {
+   "fr": "◆ Ton enquête · {0}",
+   "en": ""
+  },
+  {
+   "fr": "Ce que ton enquête a trouvé",
+   "en": ""
+  },
+  {
+   "fr": "Découvrir",
+   "en": ""
+  },
+  {
+   "fr": "Que fais-tu ?",
+   "en": ""
+  },
+  {
+   "fr": "Accorde {0} Fréquences",
+   "en": ""
+  },
+  {
+   "fr": "Choisis {0} cartes dont les Fréquences se suivent, comme une suite en combat (par exemple {1}). Une carte à Accord ∗ prolonge toute suite.",
+   "en": ""
+  },
+  {
+   "fr": "{0} carte{1} choisie{2} sur {3}",
+   "en": ""
+  },
+  {
+   "fr": "Aucune suite de {0} dans cette main.{1}",
+   "en": ""
+  },
+  {
+   "fr": " La porte reste fermée pour cette fois.",
+   "en": ""
+  },
+  {
+   "fr": " Tu peux tirer une autre main.",
+   "en": ""
+  },
+  {
+   "fr": "Autre main",
+   "en": ""
+  },
+  {
+   "fr": "Laisser la porte",
+   "en": ""
+  },
+  {
+   "fr": "Suivre le passage{0}",
+   "en": ""
+  }
+ ]
+}

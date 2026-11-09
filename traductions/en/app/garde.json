@@ -1,0 +1,57 @@
+{
+ "source": "src/app/garde.ts",
+ "entrees": [
+  {
+   "fr": "Une nouvelle version t’attend",
+   "en": ""
+  },
+  {
+   "fr": "Ta partie a été jouée avec une version plus récente du jeu. Recharge la page pour la retrouver : rien n’est perdu.",
+   "en": ""
+  },
+  {
+   "fr": "Ta partie est ouverte ailleurs",
+   "en": ""
+  },
+  {
+   "fr": "Tu joues dans un autre onglet ou une autre fenêtre. Pour ne rien écraser, cette page s’arrête là : recharge-la pour reprendre où tu en es.",
+   "en": ""
+  },
+  {
+   "fr": "Ta partie est à l’abri",
+   "en": ""
+  },
+  {
+   "fr": "Cette version du jeu n’arrive pas à lire la partie de cet appareil (souvent juste après une mise à jour). Pour ne rien effacer, le jeu s’arrête là. Recharge dans quelques minutes : une correction arrive en général très vite.",
+   "en": ""
+  },
+  {
+   "fr": "Cette version du jeu n’arrive pas à lire la partie de ton compte (souvent juste après une mise à jour). Pour ne rien écraser, le jeu s’arrête là. Recharge dans quelques minutes : une correction arrive en général très vite.",
+   "en": ""
+  },
+  {
+   "fr": "Ta partie a avancé ailleurs",
+   "en": ""
+  },
+  {
+   "fr": "Ton compte a été utilisé sur un autre appareil. Recharge pour reprendre la partie la plus avancée : l’autre sera gardée en secours.",
+   "en": ""
+  },
+  {
+   "fr": "Recharger",
+   "en": ""
+  },
+  {
+   "fr": "Repartir de zéro",
+   "en": ""
+  },
+  {
+   "fr": "La partie illisible reste gardée à part sur cet appareil : une prochaine version pourra la rendre.",
+   "en": ""
+  },
+  {
+   "fr": "Mettre ma partie de côté et recommencer",
+   "en": ""
+  }
+ ]
+}

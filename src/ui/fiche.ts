@@ -12,9 +12,10 @@ import { faceCarte } from './carte';
 import { ICO, baseIcones, icone, type Icone } from './icones';
 import { echap } from './outils';
 import type { EcranDistrict } from './coquille';
+import { t as tr } from '../core/i18n';
 
 /** Le titre du joueur, écrit à un seul endroit (un renommage est en réflexion) */
-export const TITRE_JOUEUR = 'Directeur';
+export const TITRE_JOUEUR = tr('Directeur');
 
 const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
 const GEMME = `<img class="fj-gemme" src="${baseIcones}pastille.webp" alt="" aria-hidden="true">`;
@@ -25,7 +26,7 @@ const LOGO_RAIL = './art/logo-rail.webp';
 /** Le cristal s'allume ailleurs qu'au district : là, les panneaux et les bulles montrent déjà ce qui attend */
 export const cristalAllume = (e: EcranDistrict): boolean => e.vue !== 'archipel' && appelDuCristal(e.j);
 
-const libelle = (e: EcranDistrict) => `Ta fiche de ${TITRE_JOUEUR.toLowerCase()}${cristalAllume(e) ? ' : une récompense t’attend' : ''}`;
+const libelle = (e: EcranDistrict) => tr`Ta fiche de ${TITRE_JOUEUR.toLowerCase()}${cristalAllume(e) ? tr(' : une récompense t’attend') : ''}`;
 
 /** Le cristal en tête du rail, sur PC */
 export function cristalRail(e: EcranDistrict): string {
@@ -44,26 +45,26 @@ export function entreeFiche(e: EcranDistrict): string {
   const nom = e.j.directeur?.nom;
   return `<button type="button" class="fj-entree${cristalAllume(e) ? ' appelle' : ''}" data-action="fiche">`
     + `<span class="fj-sceau" aria-hidden="true"><img src="${CRISTAL}" alt="">${cristalAllume(e) ? GEMME : ''}</span>`
-    + `<span class="fj-entree-txt"><span class="surtitre">TA FICHE DE ${echap(TITRE_JOUEUR.toUpperCase())}</span><strong>${nom ? echap(nom) : 'Sans pseudo'}</strong>`
-    + `<small>${n ? `${n === 1 ? 'Une récompense t’attend' : `${n} récompenses t’attendent`}` : 'Tes records et tes cartes marquantes'}</small></span>${ICO.lancer}</button>`;
+    + `<span class="fj-entree-txt"><span class="surtitre">${tr`TA FICHE DE ${echap(TITRE_JOUEUR.toUpperCase())}`}</span><strong>${nom ? echap(nom) : tr('Sans pseudo')}</strong>`
+    + `<small>${n ? `${n === 1 ? tr('Une récompense t’attend') : tr`${n} récompenses t’attendent`}` : tr('Tes records et tes cartes marquantes')}</small></span>${ICO.lancer}</button>`;
 }
 
 /** Une ligne de ce qui attend : ce que c'est, ce que ça donne, et le bouton qui le récupère */
 function ligneAttente(j: Jeu, a: Attente): string {
-  let ico: Icone = 'coffre', titre = '', detail = '', bouton = 'Récupérer';
+  let ico: Icone = 'coffre', titre = '', detail = '', bouton = tr('Récupérer');
   if (a.id === 'guide') {
     const o = objectifCourant(j)!;
-    ico = 'objectif'; titre = `Objectif ${j.objectif + 1} sur ${OBJECTIFS.length} rempli`; detail = o.titre;
+    ico = 'objectif'; titre = tr`Objectif ${j.objectif + 1} sur ${OBJECTIFS.length} rempli`; detail = o.titre;
   } else if (a.id === 'jour') {
-    ico = 'objectif'; titre = 'Objectif du jour rempli'; detail = `${QUOTIDIENS[j.quotidien.type].titre} · une carte ou 2 Éclats, au choix`;
+    ico = 'objectif'; titre = tr('Objectif du jour rempli'); detail = tr`${QUOTIDIENS[j.quotidien.type].titre} · une carte ou 2 Éclats, au choix`;
   } else if (a.id === 'butin') {
-    titre = 'Le Butin de la semaine est prêt'; detail = `Palier ${j.archive.aOuvrir} sur ${ARCHIVE.paliers.length} atteint`; bouton = 'Ouvrir';
+    titre = tr('Le Butin de la semaine est prêt'); detail = tr`Palier ${j.archive.aOuvrir} sur ${ARCHIVE.paliers.length} atteint`; bouton = tr('Ouvrir');
   } else {
     const n = j.ravitaillement.reserve;
     const reste = colisAvantChoix(j);
-    titre = `Ravitaillement du jour${n > 1 ? ` · ${n} colis` : ''}`;
-    detail = reste === 1 ? 'Celui-ci contient une carte au choix' : `Cristaux et un doublon · carte au choix dans ${reste} colis`;
-    bouton = 'Ouvrir';
+    titre = tr`Ravitaillement du jour${n > 1 ? tr` · ${n} colis` : ''}`;
+    detail = reste === 1 ? tr('Celui-ci contient une carte au choix') : tr`Cristaux et un doublon · carte au choix dans ${reste} colis`;
+    bouton = tr('Ouvrir');
   }
   return `<li class="fj-att${a.important ? ' important' : ''}"><span class="fj-att-ico">${icone(ico)}</span>`
     + `<span class="fj-att-txt"><strong>${echap(titre)}</strong><small>${echap(detail)}</small></span>`
@@ -80,7 +81,7 @@ function cartesMarquantes(j: Jeu): string[] {
 
 /** Un record : sa valeur, ce qu'elle veut dire, et où le comparer */
 const record = (ico: Icone, valeur: string, nom: string, sous: string, tableau: string | null) =>
-  (tableau ? `<button type="button" class="fj-rec" data-action="classements" data-id="${tableau}" title="${echap(sous)}" aria-label="${echap(`${nom} : ${valeur}. ${sous}. Voir le classement`)}">` : `<div class="fj-rec" title="${echap(sous)}">`)
+  (tableau ? `<button type="button" class="fj-rec" data-action="classements" data-id="${tableau}" title="${echap(sous)}" aria-label="${echap(tr`${nom} : ${valeur}. ${sous}. Voir le classement`)}">` : `<div class="fj-rec" title="${echap(sous)}">`)
   + `${icone(ico)}<b>${valeur}</b><span>${echap(nom)}</span>`
   + (tableau ? `</button>` : `</div>`);
 
@@ -94,15 +95,15 @@ export function feuilleFiche(e: EcranDistrict): string {
   let h = `<div class="voile-feuille" data-action="fiche" aria-hidden="true"></div><section class="feuille fiche-joueur" role="dialog" aria-modal="true" aria-labelledby="fj-titre">`
     + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete fj-tete">`
     + `<span class="fj-sceau" aria-hidden="true"><img src="${CRISTAL}" alt=""></span>`
-    + `<div class="titres"><span class="surtitre">${echap(TITRE_JOUEUR.toUpperCase())} DU DISTRICT</span>`
-    + `<h2 id="fj-titre">${nom ? echap(nom) : 'Sans pseudo'}</h2>`
-    + (recruteur ? `<em class="insigne-recruteur">Recruteur</em>` : '')
-    + (!nom && e.compte.actif ? `<button type="button" class="lien fj-pseudo" data-action="gt-nom">Choisir mon pseudo</button>` : '')
-    + `</div><button type="button" class="btn-icone" data-action="fiche" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
+    + `<div class="titres"><span class="surtitre">${tr`${echap(TITRE_JOUEUR.toUpperCase())} DU DISTRICT`}</span>`
+    + `<h2 id="fj-titre">${nom ? echap(nom) : tr('Sans pseudo')}</h2>`
+    + (recruteur ? `<em class="insigne-recruteur">${tr`Recruteur`}</em>` : '')
+    + (!nom && e.compte.actif ? `<button type="button" class="lien fj-pseudo" data-action="gt-nom">${tr`Choisir mon pseudo`}</button>` : '')
+    + `</div><button type="button" class="btn-icone" data-action="fiche" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`;
 
   // ---------- Ce qui attend ----------
   if (attentes.length) {
-    h += `<section class="bloc fj-attentes" aria-label="Ce qui t’attend"><h3 class="titre-bloc">${icone('coffre')}Ce qui t’attend</h3><ul>${attentes.map((a) => ligneAttente(j, a)).join('')}</ul></section>`;
+    h += `<section class="bloc fj-attentes" aria-label="${tr`Ce qui t’attend`}"><h3 class="titre-bloc">${icone('coffre')}${tr`Ce qui t’attend`}</h3><ul>${attentes.map((a) => ligneAttente(j, a)).join('')}</ul></section>`;
   }
 
   // ---------- Les records ----------
@@ -110,23 +111,23 @@ export function feuilleFiche(e: EcranDistrict): string {
   const s = strateDe(p);
   const reg = Math.max(j.palmares?.registre ?? 0, valeurRegistre(j.collection).points);
   const jours = j.stats?.jours.length ?? 0;
-  h += `<section class="bloc" aria-label="Tes records"><div class="fj-recs-tete"><h3 class="titre-bloc">${ICO.monter}Tes records</h3>`
-    + `<button type="button" class="lien" data-action="classements" data-id="profondeur">Grand Tableau →</button></div><div class="fj-recs">`
-    + record('strate', s ? `−${s}` : '—', 'Strate record', s ? `${zoneProfondeur(p)}${gardienVaincu(p) ? ' · gardien vaincu' : ''}` : 'Pas encore descendu', 'profondeur')
-    + record('cartes', ent(reg), 'Registre', `${Object.keys(j.collection).length} cartes · ${porteursPresents(j).length} Porteurs`, 'registre')
-    + (flecheOuverte(j) ? record('fleche', `${j.fleche?.record ?? 1}`, 'Étage Flèche', 'Ton meilleur étage', 'fleche') : '')
-    + record('chrono', `${jours}`, jours > 1 ? 'Jours de jeu' : 'Jour de jeu', 'Depuis ton arrivée', null)
+  h += `<section class="bloc" aria-label="${tr`Tes records`}"><div class="fj-recs-tete"><h3 class="titre-bloc">${ICO.monter}${tr`Tes records`}</h3>`
+    + `<button type="button" class="lien" data-action="classements" data-id="profondeur">${tr`Grand Tableau →`}</button></div><div class="fj-recs">`
+    + record('strate', s ? `−${s}` : '—', tr('Strate record'), s ? `${zoneProfondeur(p)}${gardienVaincu(p) ? tr(' · gardien vaincu') : ''}` : tr('Pas encore descendu'), 'profondeur')
+    + record('cartes', ent(reg), tr('Registre'), tr`${Object.keys(j.collection).length} cartes · ${porteursPresents(j).length} Porteurs`, 'registre')
+    + (flecheOuverte(j) ? record('fleche', `${j.fleche?.record ?? 1}`, tr('Étage Flèche'), tr('Ton meilleur étage'), 'fleche') : '')
+    + record('chrono', `${jours}`, jours > 1 ? tr('Jours de jeu') : tr('Jour de jeu'), tr('Depuis ton arrivée'), null)
     + `</div></section>`;
 
   // ---------- Les cartes marquantes ----------
   const marquantes = cartesMarquantes(j);
   if (marquantes.length) {
-    h += `<section class="bloc" aria-label="Tes cartes marquantes"><h3 class="titre-bloc">${icone('cartes')}Tes cartes marquantes</h3><div class="fj-cartes">`
+    h += `<section class="bloc" aria-label="${tr`Tes cartes marquantes`}"><h3 class="titre-bloc">${icone('cartes')}${tr`Tes cartes marquantes`}</h3><div class="fj-cartes">`
       + marquantes.map((cle) => {
         const m = moduleDef(cle);
         const c = j.collection[cle]!;
         const pal = palierCarte(j, cle);
-        return `<button type="button" class="fj-carte" data-action="cartes" data-carte="${cle}" aria-label="${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, voir la collection">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
+        return `<button type="button" class="fj-carte" data-action="cartes" data-carte="${cle}" aria-label="${tr`${echap(m.nom)}, ${NOMS_RARETE[m.rarete]}, voir la collection`}">${faceCarte(m, c.niveau, multNiveau(m.id, c.niveau))}`
           + `<small>${pal ? `<b>${NOMS_PALIER[pal]}</b>` : NOMS_RARETE[m.rarete]}</small></button>`;
       }).join('')
       + `</div></section>`;
@@ -134,13 +135,13 @@ export function feuilleFiche(e: EcranDistrict): string {
 
   // ---------- Le journal du district (sorti du menu Plus, 7 novembre 2026) : replié, les derniers événements d'abord ----------
   if (j.journal.length) {
-    h += `<details class="bloc fj-journal"><summary class="titre-bloc">${icone('journal')}Journal du district <small>${j.journal.length} événement${j.journal.length > 1 ? 's' : ''}</small></summary>`
+    h += `<details class="bloc fj-journal"><summary class="titre-bloc">${icone('journal')}${tr`Journal du district`} <small>${tr`${j.journal.length} événement${j.journal.length > 1 ? 's' : ''}`}</small></summary>`
       + `<ol class="journal-liste">${j.journal.map((t) => `<li>${echap(t)}</li>`).join('')}</ol></details>`;
   }
 
   // ---------- Le parrainage ----------
   if (e.compte.actif && j.parrainage?.code) {
-    h += `<button type="button" class="ligne-menu fj-code" data-action="recruter">${ICO.porteurs}<span><strong>Ton code : <b>${codeAffiche(j.parrainage.code)}</b></strong><small>Recrute tes amis : vous êtes récompensés tous les deux</small></span></button>`;
+    h += `<button type="button" class="ligne-menu fj-code" data-action="recruter">${ICO.porteurs}<span><strong>${tr`Ton code :`} <b>${codeAffiche(j.parrainage.code)}</b></strong><small>${tr`Recrute tes amis : vous êtes récompensés tous les deux`}</small></span></button>`;
   }
   return h + `</div></section>`;
 }

@@ -166,5 +166,5 @@ export const RANG_METAL: Record<import('./types').Rarete, { rang: string; texte:
   cuivre: { rang: t('Copie de copie'), texte: t('Recopiée trois à cinq fois. Chaque pierre neuve en a perdu un peu, et inventé un peu.') },
   argent: { rang: t('Deuxième copie'), texte: t('Recopiée deux fois : relevée à la mort d’un porteur, gravée sur une pierre neuve, puis encore une fois.') },
   or: { rang: t('Première copie'), texte: t('Recopiée une seule fois : un seul passage la sépare de l’original. Les Hauts en gardent beaucoup, et les districts presque aucune.') },
-  nacre: { rang: 'Vierge', texte: t('Jamais recopiée : c’est l’original. Une vierge de Berceau pour une empreinte ancienne, la gravure faite sur le Donneur lui-même pour un geste humain.') },
+  nacre: { rang: t('Vierge'), texte: t('Jamais recopiée : c’est l’original. Une vierge de Berceau pour une empreinte ancienne, la gravure faite sur le Donneur lui-même pour un geste humain.') },
 };

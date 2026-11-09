@@ -1,0 +1,49 @@
+{
+ "source": "src/core/classements.ts",
+ "entrees": [
+  {
+   "fr": "Profondeur",
+   "en": ""
+  },
+  {
+   "fr": "Strates",
+   "en": ""
+  },
+  {
+   "fr": "L’étage le plus profond creusé sous le district. À profondeur égale, le premier arrivé passe devant.",
+   "en": ""
+  },
+  {
+   "fr": "Registre",
+   "en": ""
+  },
+  {
+   "fr": "Cartes",
+   "en": ""
+  },
+  {
+   "fr": "La valeur de ta collection : le métal et le niveau de chaque carte, et chaque carte découverte.",
+   "en": ""
+  },
+  {
+   "fr": "Joutes",
+   "en": ""
+  },
+  {
+   "fr": "Duels",
+   "en": ""
+  },
+  {
+   "fr": "Les duels gagnés au Cercle des quais contre des amis différents (trois par semaine au plus).",
+   "en": ""
+  },
+  {
+   "fr": "Tour",
+   "en": ""
+  },
+  {
+   "fr": "Le plus haut quai atteint sur la Flèche d’amarrage, la seule route légale vers les Hauts. À quai égal, le premier arrivé passe devant.",
+   "en": ""
+  }
+ ]
+}

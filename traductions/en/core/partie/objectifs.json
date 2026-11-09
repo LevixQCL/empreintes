@@ -1,0 +1,45 @@
+{
+ "source": "src/core/partie/objectifs.ts",
+ "entrees": [
+  {
+   "fr": "Allumer le district",
+   "en": ""
+  },
+  {
+   "fr": "Touche le Générateur et postes-y le Coursier, une recrue augmentée : il y produit deux fois plus. Garde Ilka, Doran et Véla pour l’escouade : en descendant, ils quitteraient leur poste.",
+   "en": ""
+  },
+  {
+   "fr": "Construire ton deck",
+   "en": ""
+  },
+  {
+   "fr": "Dans l’onglet Escouade, touche « Gérer ses cartes » sous Ilka et confie-lui l’Œil-relais, trouvé dans la chambre. Elle porte déjà 6 cartes : reprends-en une d’abord. Les cartes de tes trois Porteurs forment ton deck.",
+   "en": ""
+  },
+  {
+   "fr": "Écouter Ysé",
+   "en": ""
+  },
+  {
+   "fr": "Ouvre les Chroniques et lis le premier chapitre. À chaque première lecture, Ysé glisse une carte entre les pages ; confie-la à un Porteur (onglet Escouade) pour qu’elle entre dans ton deck.",
+   "en": ""
+  },
+  {
+   "fr": "Vaincre la Strate −1",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade est prête (onglet Escouade). Entre dans la Tour du Noyau et explore la Strate −1 salle par salle, jusqu’à son gardien.",
+   "en": ""
+  },
+  {
+   "fr": "Trouver des creuseurs",
+   "en": ""
+  },
+  {
+   "fr": "Pour percer la Strate −2, il faut {0} creuseurs : le gardien t’en a amené un. Au Port (onglet du bas), envoie une recrue en mission en mer : des rescapés des ruines noyées suivront.",
+   "en": ""
+  }
+ ]
+}

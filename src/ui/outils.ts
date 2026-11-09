@@ -1,6 +1,8 @@
 // Petits outils d'affichage partagés par les écrans.
 
 /** Échappe un texte avant de le poser dans du HTML */
+import { t as tr } from '../core/i18n';
+
 export const echap = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
 /** Le joueur a demandé moins d'animations (réglage du téléphone) */
@@ -12,7 +14,7 @@ export function basculerAnimations(): void {
   try { localStorage.setItem('empreintes.animations', animationsReduites() ? 'completes' : 'reduites'); } catch { /* stockage indisponible */ }
   appliquerAnimations();
 }
-export const mouvementReduit = () => animationsReduites() || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+export const mouvementReduit = () => animationsReduites() || window.matchMedia(tr('(prefers-reduced-motion: reduce)')).matches;
 
 /** Le centre d'un élément à l'écran */
 export const centreDe = (el: Element) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
@@ -28,7 +30,7 @@ export const virgule = (n: number) => String(Math.round(n * 10) / 10).replace('.
 export function texteReplie(html: string, id: string, classe = ''): string {
   const m = /^(.+?[.!?…])\s+([\s\S]+)$/.exec(html);
   if (!m || m[2]!.length < 70) return `<p class="${classe}">${html}</p>`;
-  return `<details class="replie ${classe}" id="replie-${id}"><summary><span>${m[1]}</span> <b class="replie-plus">Lire la suite</b></summary><p>${m[2]}</p></details>`;
+  return `<details class="replie ${classe}" id="replie-${id}"><summary><span>${m[1]}</span> <b class="replie-plus">${tr`Lire la suite`}</b></summary><p>${m[2]}</p></details>`;
 }
 
 /**

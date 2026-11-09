@@ -1,0 +1,265 @@
+{
+ "source": "src/app/combat.ts",
+ "entrees": [
+  {
+   "fr": "Fissure",
+   "en": ""
+  },
+  {
+   "fr": "Troublé",
+   "en": ""
+  },
+  {
+   "fr": "Élan",
+   "en": ""
+  },
+  {
+   "fr": "Dissonance",
+   "en": ""
+  },
+  {
+   "fr": "La porte cède",
+   "en": ""
+  },
+  {
+   "fr": "Le gardien se dissipe en poussière lumineuse. Derrière lui, des cristaux aux souvenirs mélangés, et un vieux papier tamponné.",
+   "en": ""
+  },
+  {
+   "fr": "Remonter avec ce qu’on a trouvé",
+   "en": ""
+  },
+  {
+   "fr": "Repoussés",
+   "en": ""
+  },
+  {
+   "fr": "Le gardien a eu le dessus, cette fois. Vise les suites et protège-toi quand il annonce une grosse attaque.",
+   "en": ""
+  },
+  {
+   "fr": "Remonter et réessayer",
+   "en": ""
+  },
+  {
+   "fr": "le gardien",
+   "en": ""
+  },
+  {
+   "fr": "Le quai {0} est à toi",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade de {0} cède la passerelle. Une copie de ton escouade y monte la garde ; les Hauts te versent le gage du quai.",
+   "en": ""
+  },
+  {
+   "fr": "Prendre le quai",
+   "en": ""
+  },
+  {
+   "fr": "{0} tient bon",
+   "en": ""
+  },
+  {
+   "fr": "Le quai {0} reste à {1}. Ta montée, elle, ne bouge pas : seule l’Usure compte.",
+   "en": ""
+  },
+  {
+   "fr": "Rentrer au district",
+   "en": ""
+  },
+  {
+   "fr": "Les gardiens des Hauts s’écartent de la passerelle. L’escouade monte au quai {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Repoussés sur la passerelle",
+   "en": ""
+  },
+  {
+   "fr": "Les gardiens du quai {0} tiennent bon.{1} Une escouade mieux montée, ou mieux reposée, passera.",
+   "en": ""
+  },
+  {
+   "fr": " L’escouade redescend au quai {0}.",
+   "en": ""
+  },
+  {
+   "fr": " L’escouade garde son quai gravé.",
+   "en": ""
+  },
+  {
+   "fr": "{0} est pillé",
+   "en": ""
+  },
+  {
+   "fr": "La garnison se replie. L’escouade rapporte {0} minerai{1}.",
+   "en": ""
+  },
+  {
+   "fr": ", dont {0} pris à son coffre",
+   "en": ""
+  },
+  {
+   "fr": "Rentrer avec le butin",
+   "en": ""
+  },
+  {
+   "fr": "Repoussés par la garnison",
+   "en": ""
+  },
+  {
+   "fr": "{0} tient bon.{1} Une garnison plus faible, ou une escouade mieux montée, passera.",
+   "en": ""
+  },
+  {
+   "fr": " L’escouade laisse {0} minerai de son coffre en repartant.",
+   "en": ""
+  },
+  {
+   "fr": "Le groupe",
+   "en": ""
+  },
+  {
+   "fr": "Combat {0} sur {1}",
+   "en": ""
+  },
+  {
+   "fr": "{0} se dissipe. Pas de halte : l’escouade garde ses blessures et avance vers le combat suivant.",
+   "en": ""
+  },
+  {
+   "fr": "Combat suivant",
+   "en": ""
+  },
+  {
+   "fr": " Tu l’avais déjà réussie cette semaine : pas de nouvelle récompense.",
+   "en": ""
+  },
+  {
+   "fr": " Fêlée du premier coup : deux cartes au choix et {0} Éclats t’attendent au district.",
+   "en": ""
+  },
+  {
+   "fr": " Une carte au choix et {0} Éclats t’attendent au district.",
+   "en": ""
+  },
+  {
+   "fr": " Une carte au choix t’attend au district. La Fêlée est ouverte.",
+   "en": ""
+  },
+  {
+   "fr": "Épreuve Fêlée réussie",
+   "en": ""
+  },
+  {
+   "fr": "Épreuve réussie",
+   "en": ""
+  },
+  {
+   "fr": "{0} : {1} se dissipe.{2}",
+   "en": ""
+  },
+  {
+   "fr": "L’Épreuve",
+   "en": ""
+  },
+  {
+   "fr": "Remonter au district",
+   "en": ""
+  },
+  {
+   "fr": "{0} s’est éteint dans le noir avant de tomber : il fallait frapper plus vite.",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur est tombé : l’Épreuve demandait que personne ne reste au fond.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade a été repoussée.",
+   "en": ""
+  },
+  {
+   "fr": "Épreuve manquée",
+   "en": ""
+  },
+  {
+   "fr": "{0} Tu peux la retenter quand tu veux cette semaine.",
+   "en": ""
+  },
+  {
+   "fr": "Défaite",
+   "en": ""
+  },
+  {
+   "fr": "Toute l’escouade est à terre. Elle remonte avec la moitié du butin ({0} minerai) et devra se reposer à la Clinique.",
+   "en": ""
+  },
+  {
+   "fr": "Strate −{0} vaincue",
+   "en": ""
+  },
+  {
+   "fr": "{0} se disperse. L’escouade remonte avec {1} minerai.{2}",
+   "en": ""
+  },
+  {
+   "fr": " Le passage est libre : avec assez de creuseurs, l’étage suivant pourra être percé (voir la Tour du Noyau).",
+   "en": ""
+  },
+  {
+   "fr": "{0} s’enfuit",
+   "en": ""
+  },
+  {
+   "fr": "{0} Il ne lui reste que {1} % de sa vie : ses blessures resteront jusqu’à la prochaine rencontre. Butin : {2} minerai.",
+   "en": ""
+  },
+  {
+   "fr": "Retour à la carte",
+   "en": ""
+  },
+  {
+   "fr": "{0} est abattu",
+   "en": ""
+  },
+  {
+   "fr": "{0} Son trophée t’attend au district : une carte au choix. Butin : {1} minerai.",
+   "en": ""
+  },
+  {
+   "fr": "Victoire · marque de la quête relevée",
+   "en": ""
+  },
+  {
+   "fr": "Victoire",
+   "en": ""
+  },
+  {
+   "fr": "✦ {0}, étape {1} sur {2} : {3} ",
+   "en": ""
+  },
+  {
+   "fr": "{0} se dissipe. Butin : {1} minerai. L’escouade reprend sa route : les PV remontent surtout aux campements.",
+   "en": ""
+  },
+  {
+   "fr": "{0} se dissipe. Butin : {1} minerai. L’escouade souffle un peu (+50 % de PV) : tu continues, ou tu remontes avec ce que tu as ?",
+   "en": ""
+  },
+  {
+   "fr": "Remonter avec le butin",
+   "en": ""
+  },
+  {
+   "fr": "bloqué",
+   "en": ""
+  },
+  {
+   "fr": "+{0} Flux",
+   "en": ""
+  }
+ ]
+}

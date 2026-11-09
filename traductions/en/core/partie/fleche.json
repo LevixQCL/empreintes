@@ -1,0 +1,145 @@
+{
+ "source": "src/core/partie/fleche.ts",
+ "entrees": [
+  {
+   "fr": "La Flèche s’ouvrira quand les Hauts t’y auront convié.",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade tient le dernier quai : les Sièges s’ouvriront au passage de la prochaine île.",
+   "en": ""
+  },
+  {
+   "fr": "Quai {0} de la Flèche : les gardiens des Hauts barrent la passerelle ({1}).",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade monte à l’assaut du quai {0} de la Flèche.",
+   "en": ""
+  },
+  {
+   "fr": "Aucun gardien à défier.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut avoir atteint le quai {0} pour en défier le gardien.",
+   "en": ""
+  },
+  {
+   "fr": "Tu tiens déjà un quai plus haut que le {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Quai {0} de la Flèche : l’escouade de {1}, qui tient le quai, accepte le défi.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade défie {0}, gardien du quai {1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} passe au niveau {1} !",
+   "en": ""
+  },
+  {
+   "fr": "Flèche : {0} est battu, ton escouade tient désormais le quai {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Flèche : {0} garde le quai {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Flèche : le quai {0} tombe, l’escouade monte au quai {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Flèche : repoussés au quai {0}{1}.",
+   "en": ""
+  },
+  {
+   "fr": ", l’escouade redescend au quai {0}",
+   "en": ""
+  },
+  {
+   "fr": "Le pied de la Flèche n’a pas de gardien : monte d’abord d’un quai.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut avoir atteint le quai {0} pour le tenir.",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade tient déjà le quai {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut trois Porteurs pour tenir un quai.",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade s’installe sur le quai {0} de la Flèche : elle en devient le gardien.",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade quitte le quai {0} de la Flèche.",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade a tenu le quai {0} face à {1} : les Hauts versent +{2} cristaux.",
+   "en": ""
+  },
+  {
+   "fr": "{0} t’a pris le quai {1}.{2} Ta montée, elle, ne bouge pas.",
+   "en": ""
+  },
+  {
+   "fr": "Une pompière de la Nuit des lignes",
+   "en": ""
+  },
+  {
+   "fr": "Monter, c’est bien, directeur. Mais l’eau, elle, vient d’en bas. L’Écluse, c’est en dessous qu’on la cherche.",
+   "en": ""
+  },
+  {
+   "fr": "Le vieux Marek, au marché",
+   "en": ""
+  },
+  {
+   "fr": "Les Hauts t’ont ouvert leurs quais ? Méfie-toi des cadeaux qui viennent d’en haut. Les réponses, on les a toujours creusées.",
+   "en": ""
+  },
+  {
+   "fr": "Une mère de la rue des pompes",
+   "en": ""
+  },
+  {
+   "fr": "Mes enfants dorment au premier étage maintenant. Si tu trouves l’Écluse, dis-le-nous avant d’aller saluer les îles.",
+   "en": ""
+  },
+  {
+   "fr": "Un creuseur du chantier",
+   "en": ""
+  },
+  {
+   "fr": "On a percé la roche pour toi. Ne laisse pas nos galeries à moitié faites pour aller faire le beau sur la Flèche.",
+   "en": ""
+  },
+  {
+   "fr": "Ysé, dans un mot glissé sous ta porte",
+   "en": ""
+  },
+  {
+   "fr": "La Flèche ne partira pas. Le fond non plus. Mais c’est lui qui sait ce que ceux d’avant ont fait de leur eau.",
+   "en": ""
+  },
+  {
+   "fr": "Un gamin du quai",
+   "en": ""
+  },
+  {
+   "fr": "Tu nous emmèneras là-haut, dis ? Mais d’abord tu arrêtes la mer. Promis ?",
+   "en": ""
+  }
+ ]
+}

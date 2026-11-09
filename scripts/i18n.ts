@@ -18,6 +18,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, unlinkSync,
 import { dirname, join, relative, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { cleGabarit } from '../src/core/i18n';
+import { envelopperUi, textesIdentifiants } from './i18n-envelopper';
 import { compterMots, controlerTout, fichiersCatalogue, lireCatalogue, RACINE, type Entree, type FichierTraduction } from './i18n-controle';
 
 const LANGUES_CIBLES = ['en'] as const;
@@ -303,6 +304,44 @@ function envelopper(chemins: string[]): void {
   }
 }
 
+// ---------- envelopper-ui ----------
+
+function nomEtImport(p: string): { nom: string; ajouterImport: (code: string) => string } {
+  const sf = lireSource(p);
+  let tPris = false;
+  const chercherT = (n: ts.Node) => {
+    if ((ts.isParameter(n) || ts.isVariableDeclaration(n) || ts.isFunctionDeclaration(n) || ts.isBindingElement(n)) && n.name && ts.isIdentifier(n.name) && n.name.text === 't') tPris = true;
+    ts.forEachChild(n, chercherT);
+  };
+  chercherT(sf);
+  const existants = nomsDeT(sf);
+  const nom = existants.size ? [...existants][0]! : tPris ? 'tr' : 't';
+  const ajouterImport = (code: string) => {
+    if (existants.size) return code;
+    const sf2 = ts.createSourceFile(p, code, ts.ScriptTarget.Latest, true);
+    const versI18n = posix(relative(dirname(p), join(SRC, 'core', 'i18n')));
+    const chemin18 = versI18n.startsWith('.') ? versI18n : `./${versI18n}`;
+    const imp = `import { ${nom === 't' ? 't' : `t as ${nom}`} } from '${chemin18}';\n`;
+    const imports = sf2.statements.filter(ts.isImportDeclaration);
+    if (imports.length) { const pos = imports[imports.length - 1]!.getEnd() + 1; return code.slice(0, pos) + imp + code.slice(pos); }
+    const pos = sf2.statements[0]?.getStart() ?? 0;
+    return `${code.slice(0, pos)}${imp}\n${code.slice(pos)}`;
+  };
+  return { nom, ajouterImport };
+}
+
+function envelopperInterface(chemins: string[]): void {
+  const ids = textesIdentifiants(fichiersSource());
+  for (const chemin of chemins) {
+    const p = join(RACINE, chemin);
+    const avant = readFileSync(p, 'utf8');
+    const { nom, ajouterImport } = nomEtImport(p);
+    const r = envelopperUi(p, nom, ids);
+    if (r.code !== avant) writeFileSync(p, ajouterImport(r.code));
+    console.log(`${chemin} : ${r.n} texte(s) entouré(s)`);
+  }
+}
+
 // ---------- commande ----------
 
 const [commande = 'tout', ...args] = process.argv.slice(2);
@@ -312,6 +351,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) switch (comma
   case 'couverture': couverture(); break;
   case 'verifier': verifier(); break;
   case 'envelopper': envelopper(args); break;
+  case 'envelopper-ui': envelopperInterface(args); break;
   case 'a-traduire': aTraduire(resolve(RACINE, args[0]!), args[1] ? Number(args[1]) : Infinity); break;
   case 'paires': paires(resolve(RACINE, args[0]!), args[1] ? Number(args[1]) : 1, args[2] ? Number(args[2]) : Infinity); break;
   case 'reviser': reviser(resolve(RACINE, args[0]!), resolve(RACINE, args[1]!)); break;

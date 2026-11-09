@@ -39,7 +39,7 @@ export const FRAGMENTS: Fragment[] = [
     ],
   },
   {
-    id: 'colonne', titre: 'Colonne', support: t('Une lettre jamais postée'),
+    id: 'colonne', titre: t('Colonne'), support: t('Une lettre jamais postée'),
     lignes: [
       t('On marche depuis onze jours. La route est pleine jusqu’à l’horizon, dans les deux sens.'),
       t('Hier, un homme que je ne connaissais pas a porté ma fille sur ses épaules pendant des heures.'),
@@ -47,7 +47,7 @@ export const FRAGMENTS: Fragment[] = [
     ],
   },
   {
-    id: 'fracture', titre: 'Fracture', support: t('Le carnet d’un marin d’un navire scientifique'),
+    id: 'fracture', titre: t('Fracture'), support: t('Le carnet d’un marin d’un navire scientifique'),
     lignes: [
       t('Six heures du matin. Le bruit est arrivé avant la vague : un craquement grand comme le monde.'),
       t('Toute la falaise s’est mise à glisser, lentement, comme si elle avait décidé de partir.'),
@@ -91,7 +91,7 @@ export const FRAGMENTS: Fragment[] = [
     lignes: [
       t('[grésillement] … ce n’est pas un souvenir à moi. Je me rappelle une mer que je n’ai jamais vue.'),
       t('[grésillement] … ils ne sont pas morts, là-dessous. Ils attendent qu’on se souvienne d’eux.'),
-      '[fin de l’enregistrement]',
+      t('[fin de l’enregistrement]'),
     ],
   },
   {

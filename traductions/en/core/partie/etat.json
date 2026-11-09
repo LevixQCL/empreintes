@@ -1,0 +1,433 @@
+{
+ "source": "src/core/partie/etat.ts",
+ "entrees": [
+  {
+   "fr": "{0} passe au niveau {1} : {2} PV.",
+   "en": ""
+  },
+  {
+   "fr": "Marque {0} : {1} {2} — {3}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} est prêt pour sa Marque {1} : il lui reste à gagner {2}.",
+   "en": ""
+  },
+  {
+   "fr": "Gagnée",
+   "en": ""
+  },
+  {
+   "fr": "Affirmée",
+   "en": ""
+  },
+  {
+   "fr": "Gravée",
+   "en": ""
+  },
+  {
+   "fr": "Raccourci",
+   "en": ""
+  },
+  {
+   "fr": "expéditions réussies",
+   "en": ""
+  },
+  {
+   "fr": "+1 place au premier tour",
+   "en": ""
+  },
+  {
+   "fr": "Elle connaît tous les raccourcis : +1 place dans la chaîne au premier tour de chaque combat.",
+   "en": ""
+  },
+  {
+   "fr": "+1 place aussi au 2ᵉ tour",
+   "en": ""
+  },
+  {
+   "fr": "Elle a ses repères : la place en plus revient au deuxième tour.",
+   "en": ""
+  },
+  {
+   "fr": "+2 places au 1er tour, +1 au 2ᵉ",
+   "en": ""
+  },
+  {
+   "fr": "Elle ouvre la voie : 2 places de plus au premier tour, et 1 au deuxième.",
+   "en": ""
+  },
+  {
+   "fr": "Fondations",
+   "en": ""
+  },
+  {
+   "fr": "combats dans les Seuils",
+   "en": ""
+  },
+  {
+   "fr": "8 de bouclier au départ",
+   "en": ""
+  },
+  {
+   "fr": "Il couvre les siens : chaque combat commence avec 8 de bouclier d’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "12 de bouclier au départ",
+   "en": ""
+  },
+  {
+   "fr": "Il tient plus large : chaque combat commence avec 12 de bouclier d’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "le bouclier se reforme une fois",
+   "en": ""
+  },
+  {
+   "fr": "Il relève le mur : une fois par combat, quand l’escouade passe sous la moitié de ses PV, 12 de bouclier se reforment.",
+   "en": ""
+  },
+  {
+   "fr": "Lectrice",
+   "en": ""
+  },
+  {
+   "fr": "insensible à la Dissonance",
+   "en": ""
+  },
+  {
+   "fr": "Elle lit les Échos : la Dissonance n’a plus de prise sur l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "lit la 1re intention dans le brouillard",
+   "en": ""
+  },
+  {
+   "fr": "Elle lit à travers la brume : sous le brouillard, ce que prépare chaque ennemi au premier tour se voit en entier.",
+   "en": ""
+  },
+  {
+   "fr": "renvoie la Dissonance",
+   "en": ""
+  },
+  {
+   "fr": "Elle retourne le brouillage : un ennemi qui tente une Dissonance perd 30 % de sa prochaine attaque.",
+   "en": ""
+  },
+  {
+   "fr": "Seconde chance",
+   "en": ""
+  },
+  {
+   "fr": "salles scellées ouvertes",
+   "en": ""
+  },
+  {
+   "fr": "relève le premier qui tombe",
+   "en": ""
+  },
+  {
+   "fr": "Il remet tout le monde d’aplomb : une fois par combat, le premier Porteur qui tombe se relève avec 25 % de ses PV.",
+   "en": ""
+  },
+  {
+   "fr": "relève à 35 % des PV",
+   "en": ""
+  },
+  {
+   "fr": "Il remet d’aplomb plus solidement : le premier qui tombe se relève avec 35 % de ses PV.",
+   "en": ""
+  },
+  {
+   "fr": "relève deux fois par combat",
+   "en": ""
+  },
+  {
+   "fr": "Personne ne reste au sol : la Seconde chance sert deux fois par combat.",
+   "en": ""
+  },
+  {
+   "fr": "Œil de nuit",
+   "en": ""
+  },
+  {
+   "fr": "combats gagnés sous la Strate −3",
+   "en": ""
+  },
+  {
+   "fr": "l’ennemi commence fissuré",
+   "en": ""
+  },
+  {
+   "fr": "Elle voit la faille dans le noir : l’ennemi visé commence chaque combat fissuré (+25 % de dégâts pendant deux tours).",
+   "en": ""
+  },
+  {
+   "fr": "fissure de 3 tours",
+   "en": ""
+  },
+  {
+   "fr": "La faille reste ouverte : la Fissure du départ dure trois tours.",
+   "en": ""
+  },
+  {
+   "fr": "tout le groupe commence fissuré",
+   "en": ""
+  },
+  {
+   "fr": "Elle voit toutes les failles : chaque ennemi du groupe commence le combat fissuré.",
+   "en": ""
+  },
+  {
+   "fr": "Ombre courtoise",
+   "en": ""
+  },
+  {
+   "fr": "1re attaque ennemie −40 %",
+   "en": ""
+  },
+  {
+   "fr": "Son ombre retient le premier coup : la première attaque de chaque ennemi perd 40 % de sa force, quel que soit le tour où elle tombe.",
+   "en": ""
+  },
+  {
+   "fr": "1re attaque ennemie −50 %",
+   "en": ""
+  },
+  {
+   "fr": "Son ombre pèse plus : la première attaque de chaque ennemi perd 50 % de sa force.",
+   "en": ""
+  },
+  {
+   "fr": "le coup retenu donne 1 Flux",
+   "en": ""
+  },
+  {
+   "fr": "Il retourne la politesse : chaque coup retenu par son ombre donne 1 Flux à l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Foulée",
+   "en": ""
+  },
+  {
+   "fr": "combats gagnés",
+   "en": ""
+  },
+  {
+   "fr": "1 Flux au départ",
+   "en": ""
+  },
+  {
+   "fr": "Il court devant l’escouade : chaque combat commence avec 1 Flux.",
+   "en": ""
+  },
+  {
+   "fr": "2 Flux au départ contre un gardien",
+   "en": ""
+  },
+  {
+   "fr": "Il a repéré l’antre : contre un gardien, le combat commence avec 2 Flux.",
+   "en": ""
+  },
+  {
+   "fr": "fuir ne coûte plus de butin",
+   "en": ""
+  },
+  {
+   "fr": "Il connaît la route du retour : remonter en fuyant ne fait plus perdre de minerai.",
+   "en": ""
+  },
+  {
+   "fr": "garde 25 % du bouclier",
+   "en": ""
+  },
+  {
+   "fr": "Il ne lâche rien : à chaque tour, l’escouade garde 25 % de son bouclier pour le tour suivant.",
+   "en": ""
+  },
+  {
+   "fr": "garde 35 % du bouclier",
+   "en": ""
+  },
+  {
+   "fr": "Il serre plus fort : l’escouade garde 35 % de son bouclier d’un tour à l’autre.",
+   "en": ""
+  },
+  {
+   "fr": "le bouclier restant soigne",
+   "en": ""
+  },
+  {
+   "fr": "Rien ne se perd au quai : à la victoire, la moitié du bouclier restant soigne le Porteur le plus blessé.",
+   "en": ""
+  },
+  {
+   "fr": "Guet",
+   "en": ""
+  },
+  {
+   "fr": "+1 carte au premier tour",
+   "en": ""
+  },
+  {
+   "fr": "Il voit venir de loin : au premier tour de chaque combat, ta main compte une carte de plus.",
+   "en": ""
+  },
+  {
+   "fr": "voit l’intention d’après",
+   "en": ""
+  },
+  {
+   "fr": "Il voit plus loin : à côté de l’intention, une petite pastille montre ce que l’ennemi visé prépare au tour d’après.",
+   "en": ""
+  },
+  {
+   "fr": "+1 carte à chaque phase de gardien",
+   "en": ""
+  },
+  {
+   "fr": "Rien ne le surprend : quand un gardien change de phase, ta main prend une carte de plus.",
+   "en": ""
+  },
+  {
+   "fr": "le bouclier renvoie 30 % des coups",
+   "en": ""
+  },
+  {
+   "fr": "Sa chitine pique qui la frappe : quand le bouclier d’escouade encaisse un coup, 30 % de ce qu’il absorbe revient à l’ennemi.",
+   "en": ""
+  },
+  {
+   "fr": "le bouclier renvoie 40 %",
+   "en": ""
+  },
+  {
+   "fr": "Sa chitine durcit : 40 % de ce que le bouclier d’escouade absorbe revient à l’ennemi.",
+   "en": ""
+  },
+  {
+   "fr": "le renvoi peut achever",
+   "en": ""
+  },
+  {
+   "fr": "Sa mue est complète : le renvoi de la chitine peut achever l’ennemi qui frappe.",
+   "en": ""
+  },
+  {
+   "fr": "Galons blancs",
+   "en": ""
+  },
+  {
+   "fr": "+1 Flux par Fêlure résonnante",
+   "en": ""
+  },
+  {
+   "fr": "Chaque implant est un galon : une Fêlure brisée par une chaîne qui résonne donne 1 Flux de plus.",
+   "en": ""
+  },
+  {
+   "fr": "+2 Flux par Fêlure contre un gardien",
+   "en": ""
+  },
+  {
+   "fr": "Ses galons pèsent face aux grands : contre un gardien, chaque Fêlure brisée en résonance donne 2 Flux de plus.",
+   "en": ""
+  },
+  {
+   "fr": "Fêlure résonnante : +1 carte",
+   "en": ""
+  },
+  {
+   "fr": "Chaque galon ouvre une porte : une Fêlure brisée en résonance fait aussi piocher une carte.",
+   "en": ""
+  },
+  {
+   "fr": "Nuit blanche",
+   "en": ""
+  },
+  {
+   "fr": "soigne le plus blessé chaque tour",
+   "en": ""
+  },
+  {
+   "fr": "Le quartier entier l’a veillé, il veille à son tour : à la fin de chaque tour ennemi, le Porteur le plus blessé récupère 6 % de ses PV.",
+   "en": ""
+  },
+  {
+   "fr": "soigne le plus blessé de 8 %",
+   "en": ""
+  },
+  {
+   "fr": "Il veille plus fort : à la fin de chaque tour ennemi, le plus blessé récupère 8 % de ses PV.",
+   "en": ""
+  },
+  {
+   "fr": "veille sur les deux plus blessés",
+   "en": ""
+  },
+  {
+   "fr": "Il ne dort plus : à la fin de chaque tour ennemi, les deux Porteurs les plus blessés récupèrent chacun 8 % de leurs PV.",
+   "en": ""
+  },
+  {
+   "fr": "Gagner 4 combats",
+   "en": ""
+  },
+  {
+   "fr": "Vaincre un gardien, réussir une fouille ou une Épreuve",
+   "en": ""
+  },
+  {
+   "fr": "Lancer une amélioration de bâtiment",
+   "en": ""
+  },
+  {
+   "fr": "Lecture profonde",
+   "en": ""
+  },
+  {
+   "fr": "{0} se remet à la Clinique : il lui faut {1} PV pour redescendre (encore {2}).",
+   "en": ""
+  },
+  {
+   "fr": "Ils t’observent",
+   "en": ""
+  },
+  {
+   "fr": "Ils t’écoutent",
+   "en": ""
+  },
+  {
+   "fr": "Ils t’aident",
+   "en": ""
+  },
+  {
+   "fr": "Tout le district te suit",
+   "en": ""
+  },
+  {
+   "fr": "{0}{1} rejoignent le district.",
+   "en": ""
+  },
+  {
+   "fr": "La Nuit des lignes : la ligne bleue est repeinte plus haut. {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0} famille{1} rejoint cette semaine{2}.",
+   "en": ""
+  },
+  {
+   "fr": ", dont {0} cette nuit",
+   "en": ""
+  },
+  {
+   "fr": "Le quartier parle de toi.",
+   "en": ""
+  }
+ ]
+}

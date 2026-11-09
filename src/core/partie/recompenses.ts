@@ -8,6 +8,7 @@ import { tireur } from '../rng';
 import { CHAPITRES, chapitreOuvert } from '../chroniques';
 import { ARCHIVE, DISTRICT, log, niveauPorteur, non, porteursPresents, strateVaincue, type Jeu, type Resultat, typeDuJour } from './etat';
 import { interrompreSeance, progresser, quotidienFait } from './district';
+import { t } from '../i18n';
 
 // ---------- Kit de départ des recrues ----------
 
@@ -68,7 +69,7 @@ export function recompenserLecture(j: Jeu, chapitreId: string): string | null {
   const liste = neuves.length ? neuves : pool;
   const id = carteId(liste[tireur(j).entier(liste.length)]!.id, 'fer');
   const neuve = ajouterCarte(j, id);
-  log(j, `Lecture des Chroniques : ${moduleDef(id).nom} (Fer)${neuve ? '' : ', un doublon'}.`);
+  log(j, t`Lecture des Chroniques : ${moduleDef(id).nom} (Fer)${neuve ? '' : t(', un doublon')}.`);
   return id;
 }
 
@@ -92,7 +93,7 @@ interface Colis { composants: number; doublon: string | null; choix: boolean }
 
 /** Ouvre un colis : des composants, un doublon d'une carte possédée en fer, et tous les 7 colis une carte au choix */
 export function ouvrirColis(j: Jeu): Resultat & { colis?: Colis } {
-  if (!colisDisponible(j)) return non('Pas de colis pour l’instant : le prochain arrive demain.');
+  if (!colisDisponible(j)) return non(t('Pas de colis pour l’instant : le prochain arrive demain.'));
   const r = j.ravitaillement;
   r.reserve--;
   r.ouverts++;
@@ -107,22 +108,22 @@ export function ouvrirColis(j: Jeu): Resultat & { colis?: Colis } {
   if (doublon) ajouterCarte(j, doublon);
   const choix = r.ouverts % RAVITAILLEMENT.cycle === 0;
   if (choix) j.choix.push({ source: 'ravitaillement', options: tirerChoix(j, j.strate, RAVITAILLEMENT.minimumCycle) });
-  log(j, `Ravitaillement : +${composants} cristaux${doublon ? `, un doublon ${deNom(moduleDef(doublon).nom)}` : ''}${choix ? ', et une carte au choix' : ''}.`);
+  log(j, t`Ravitaillement : +${composants} cristaux${doublon ? t`, un doublon ${deNom(moduleDef(doublon).nom)}` : ''}${choix ? t(', et une carte au choix') : ''}.`);
   return { ok: true, colis: { composants, doublon, choix } };
 }
 
 export function prendre(j: Jeu, index: number): Resultat {
   const c = j.choix[0];
-  if (!c) return non('Rien à choisir.');
+  if (!c) return non(t('Rien à choisir.'));
   if (index === -1) {
-    if (!c.eclats) return non('Pas d’Éclats proposés ici.');
+    if (!c.eclats) return non(t('Pas d’Éclats proposés ici.'));
     j.eclats += c.eclats;
-    log(j, `+${c.eclats} Éclats.`);
+    log(j, t`+${c.eclats} Éclats.`);
   } else {
     const id = c.options[index];
-    if (!id) return non('Choix inconnu.');
+    if (!id) return non(t('Choix inconnu.'));
     const neuve = ajouterCarte(j, id);
-    log(j, neuve ? `Nouvelle carte : ${moduleDef(id).nom} (${NOMS_RARETE[moduleDef(id).rarete]}).` : `Doublon : ${moduleDef(id).nom}.`);
+    log(j, neuve ? t`Nouvelle carte : ${moduleDef(id).nom} (${NOMS_RARETE[moduleDef(id).rarete]}).` : t`Doublon : ${moduleDef(id).nom}.`);
   }
   j.choix.shift();
   return { ok: true };
@@ -133,21 +134,21 @@ export const QUOTIDIEN_ECLATS = 2;
 
 /** Récupère l'objectif du jour : une carte au choix parmi 3, ou 2 Éclats */
 export function reclamerQuotidien(j: Jeu): Resultat {
-  if (!quotidienFait(j)) return non('Objectif du jour pas encore rempli.');
+  if (!quotidienFait(j)) return non(t('Objectif du jour pas encore rempli.'));
   j.choix.push({ source: 'quotidien', options: tirerChoix(j, j.strate), eclats: QUOTIDIEN_ECLATS });
   progresser(j, 'quotidien');
   const q = j.quotidien;
   q.reserve--;
   q.progres = 0;
   q.type = typeDuJour(q.jour + (3 - q.reserve));
-  log(j, 'Objectif du jour rempli.');
+  log(j, t('Objectif du jour rempli.'));
   return { ok: true };
 }
 
 /** Ouvre l'Archive de la semaine passée */
 export function ouvrirArchive(j: Jeu): Resultat {
   const n = j.archive.aOuvrir;
-  if (!n) return non('Le Butin de la semaine n’est pas encore prêt.');
+  if (!n) return non(t('Le Butin de la semaine n’est pas encore prêt.'));
   j.energie += ARCHIVE.composants;
   j.choix.push({ source: 'archive', options: tirerChoix(j, j.strate) });
   if (n >= 2) j.eclats += ARCHIVE.eclatsPalier2;
@@ -156,7 +157,7 @@ export function ouvrirArchive(j: Jeu): Resultat {
   // le Butin suivant, s'il y en a un qui attend
   j.archive.aOuvrir = j.archive.enAttente?.shift() ?? 0;
   if (j.archive.enAttente && !j.archive.enAttente.length) delete j.archive.enAttente;
-  log(j, `Butin de la semaine ouvert : palier ${n} sur ${ARCHIVE.paliers.length}.`);
+  log(j, t`Butin de la semaine ouvert : palier ${n} sur ${ARCHIVE.paliers.length}.`);
   return { ok: true };
 }
 
@@ -187,7 +188,7 @@ export function quitterPostes(j: Jeu, escouade: string[]): void {
     if (!b) continue;
     if (b === 'noyau') interrompreSeance(j, id);
     j.porteurs[id]!.poste = null;
-    log(j, b === 'noyau' ? `${porteurDef(id).nom} quitte l’entraînement pour descendre.` : `${porteurDef(id).nom} quitte son poste (${batimentDef(b).nom}) pour descendre.`);
+    log(j, b === 'noyau' ? t`${porteurDef(id).nom} quitte l’entraînement pour descendre.` : t`${porteurDef(id).nom} quitte son poste (${batimentDef(b).nom}) pour descendre.`);
   }
 }
 
@@ -208,32 +209,32 @@ export function quitterPostes(j: Jeu, escouade: string[]): void {
 
 /** La lettre de la directrice : la première question choisit la lignée (ou la Clé), la seconde la voie */
 export const LETTRE_LEGS = {
-  titre: 'La lettre de la directrice',
-  texte: 'Sous la Tour du Noyau, derrière une plaque, les ouvriers avaient trouvé un coffre de nacre, gravé à la main : « Pour celui qui remontera de la deuxième Strate. Pas avant. » Ce soir, Ilka te le tend. Dedans, une lettre.',
+  titre: t('La lettre de la directrice'),
+  texte: t('Sous la Tour du Noyau, derrière une plaque, les ouvriers avaient trouvé un coffre de nacre, gravé à la main : « Pour celui qui remontera de la deuxième Strate. Pas avant. » Ce soir, Ilka te le tend. Dedans, une lettre.'),
   /** la lettre elle-même, mise à part (31 octobre 2026) */
-  lettre: 'Directeur, une Strate, n’importe qui peut la descendre une fois, par chance ou par orgueil. Deux, et revenir avec les siens, c’est autre chose : tu iras plus bas que moi. Ce qui dort sous la Tour, je n’ai jamais osé le regarder en face. Avant de partir, j’ai mis de côté dix originaux, jamais recopiés, que les Hauts n’auront pas. Un seul est pour toi : dis-moi qui tu es, et je te dirai lequel.',
-  question: 'Qu’est-ce qui tient un district debout ?',
+  lettre: t('Directeur, une Strate, n’importe qui peut la descendre une fois, par chance ou par orgueil. Deux, et revenir avec les siens, c’est autre chose : tu iras plus bas que moi. Ce qui dort sous la Tour, je n’ai jamais osé le regarder en face. Avant de partir, j’ai mis de côté dix originaux, jamais recopiés, que les Hauts n’auront pas. Un seul est pour toi : dis-moi qui tu es, et je te dirai lequel.'),
+  question: t('Qu’est-ce qui tient un district debout ?'),
   lignees: [
-    { id: 'tech', nom: 'La machine', phrase: 'Des mains qui réparent ce que les autres jettent.' },
-    { id: 'bio', nom: 'Le corps', phrase: 'Des épaules qui encaissent pour ceux qui ne peuvent pas.' },
-    { id: 'reso', nom: 'L’empreinte', phrase: 'Des yeux qui voient ce que les autres ont oublié.' },
-    { id: 'cle', nom: 'Tout le monde à la fois', phrase: 'Personne ne tient seul. Le district non plus.' },
+    { id: 'tech', nom: t('La machine'), phrase: t('Des mains qui réparent ce que les autres jettent.') },
+    { id: 'bio', nom: t('Le corps'), phrase: t('Des épaules qui encaissent pour ceux qui ne peuvent pas.') },
+    { id: 'reso', nom: 'L’empreinte', phrase: t('Des yeux qui voient ce que les autres ont oublié.') },
+    { id: 'cle', nom: t('Tout le monde à la fois'), phrase: t('Personne ne tient seul. Le district non plus.') },
   ],
   voies: {
-    tech: { question: 'Et quand la machine s’emballe ?', options: [
-      { id: 'foulee-directrice', phrase: 'On court devant elle, plus vite qu’elle.' },
-      { id: 'bras-fonderie', phrase: 'On frappe plus fort qu’elle, une bonne fois.' },
-      { id: 'coeur-glaciere', phrase: 'On garde son énergie, et on la relâche au bon moment.' },
+    tech: { question: t('Et quand la machine s’emballe ?'), options: [
+      { id: 'foulee-directrice', phrase: t('On court devant elle, plus vite qu’elle.') },
+      { id: 'bras-fonderie', phrase: t('On frappe plus fort qu’elle, une bonne fois.') },
+      { id: 'coeur-glaciere', phrase: t('On garde son énergie, et on la relâche au bon moment.') },
     ] },
-    bio: { question: 'Et quand les coups pleuvent ?', options: [
-      { id: 'carapace-fondations', phrase: 'On encaisse ensemble, et on rend chaque coup.' },
-      { id: 'oeil-grande-nuit', phrase: 'On ne lâche jamais une proie.' },
-      { id: 'premiere-mue', phrase: 'On se relève toujours, tous ensemble.' },
+    bio: { question: t('Et quand les coups pleuvent ?'), options: [
+      { id: 'carapace-fondations', phrase: t('On encaisse ensemble, et on rend chaque coup.') },
+      { id: 'oeil-grande-nuit', phrase: t('On ne lâche jamais une proie.') },
+      { id: 'premiere-mue', phrase: t('On se relève toujours, tous ensemble.') },
     ] },
-    reso: { question: 'Et quand personne ne veut entendre ?', options: [
-      { id: 'lanterne-lecture', phrase: 'On éclaire la suite, pas à pas.' },
-      { id: 'sceau-orseve', phrase: 'On lit la faute de l’autre, et on la lui rend.' },
-      { id: 'voix-quartier', phrase: 'On chante plus fort, tous sur la même note.' },
+    reso: { question: t('Et quand personne ne veut entendre ?'), options: [
+      { id: 'lanterne-lecture', phrase: t('On éclaire la suite, pas à pas.') },
+      { id: 'sceau-orseve', phrase: t('On lit la faute de l’autre, et on la lui rend.') },
+      { id: 'voix-quartier', phrase: t('On chante plus fort, tous sur la même note.') },
     ] },
   },
 } as const;
@@ -248,18 +249,18 @@ export const legsEnAttente = (j: Jeu) => !!j.chambre && !j.legs && strateVaincue
 
 /** Le joueur répond à la lettre : sa carte de l’Héritage (ou la Clé) lui revient, scellée jusqu'à un Porteur de niveau 10 */
 export function choisirLegs(j: Jeu, id: string): Resultat {
-  if (!j.chambre) return non('Ouvre d’abord la chambre scellée.');
-  if (j.legs) return non('Tu as déjà reçu ton Héritage.');
+  if (!j.chambre) return non(t('Ouvre d’abord la chambre scellée.'));
+  if (j.legs) return non(t('Tu as déjà reçu ton Héritage.'));
   if (id === 'cle') {
     j.legs = 'cle';
-    log(j, `L’Héritage du district : la Clé de l’Héritage rejoint le paquetage de tes escouades (avec un Porteur de niveau ${NIVEAU_METAL.nacre}).`);
+    log(j, t`L’Héritage du district : la Clé de l’Héritage rejoint le paquetage de tes escouades (avec un Porteur de niveau ${NIVEAU_METAL.nacre}).`);
     return { ok: true };
   }
   const m = MODULES.find((x) => x.id === id && x.legs);
-  if (!m) return non('Cette carte ne fait pas partie de l’Héritage.');
+  if (!m) return non(t('Cette carte ne fait pas partie de l’Héritage.'));
   j.legs = id;
   ajouterCarte(j, carteId(id, 'nacre'));
-  log(j, `L’Héritage du district : ${m.nom} est à toi. Elle se portera avec un Porteur ${NOMS_LIGNEE[m.lignee].nom.toLowerCase()} de niveau ${NIVEAU_METAL.nacre}.`);
+  log(j, t`L’Héritage du district : ${m.nom} est à toi. Elle se portera avec un Porteur ${NOMS_LIGNEE[m.lignee].nom.toLowerCase()} de niveau ${NIVEAU_METAL.nacre}.`);
   return { ok: true };
 }
 
@@ -278,6 +279,6 @@ export function eveillerLegs(j: Jeu) {
   const n = niveauLegsPour(niveauPorteur(j, porteur).niveau);
   if (n > c.niveau) {
     c.niveau = n;
-    log(j, `${moduleDef(cle).nom} s’éveille avec ${porteurDef(porteur).nom} : niveau ${n}.`);
+    log(j, t`${moduleDef(cle).nom} s’éveille avec ${porteurDef(porteur).nom} : niveau ${n}.`);
   }
 }

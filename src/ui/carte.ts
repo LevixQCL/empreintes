@@ -17,6 +17,7 @@ import { filigrane, illustrationModule, portrait, textureMetal } from './art';
 import { COULEUR } from './vue';
 import { echap, mouvementReduit as reduit } from './outils';
 import { leger } from './graphismes';
+import { t as tr } from '../core/i18n';
 
 /** une couleur par Fréquence, du 1 (chaud) au 9 (froid) : des Fréquences qui se suivent ont des couleurs voisines */
 /** le signe d'une carte lourde (30 octobre 2026) : deux lames de lumière, deux places dans la chaîne, plutôt que « 2 PL. » */
@@ -79,7 +80,7 @@ export const ICONES_EFFET: Record<TypeEffet, string> = {
 };
 /** la couleur de l'arête du cadre, de la barre et de la capsule de valeur */
 const COULEUR_ACTION: Record<Action, string> = { atk: '#ff6a4a', bouclier: '#5fb0ff', soin: '#7fe06a' };
-const ACTION = { atk: 'Attaque', bouclier: 'Bouclier', soin: 'Soin' } as const;
+const ACTION = { atk: tr('Attaque'), bouclier: tr('Bouclier'), soin: tr('Soin') } as const;
 
 /** les effets sur l'illustration, du Fer à la Nacre */
 const FX: Record<Rarete, string> = {
@@ -149,7 +150,7 @@ export function corpsFace(d: Face): string {
     : d.fs.map((f, i) => `<span class="nf-seg${i ? '' : ' p'}" style="--fc:${couleurFrequence(f)}">${f}</span>`).join('');
   // la Fêlure : un segment de plus dans la capsule, la même icône que la gemme fêlée de l'ennemi, et « Brise » quand la carte est assez grande
   const fele = d.felure
-    ? `<span class="nf-seg fele" style="--fc:${accord ? '#5d5470' : couleurFrequence(d.fs[0]!)}">${d.felure}<em>Brise</em></span>` : '';
+    ? `<span class="nf-seg fele" style="--fc:${accord ? '#5d5470' : couleurFrequence(d.fs[0]!)}">${d.felure}<em>${tr`Brise`}</em></span>` : '';
   const roue = d.niveau !== undefined
     ? `<i class="nf-roue${d.niveau >= COLLECTION.niveauMax ? ' max' : ''}" style="--n:${d.niveau};--max:${COLLECTION.niveauMax}"></i>`
     // sans niveau (en combat, carte du paquetage) : un losange de la couleur de la lignée
@@ -160,7 +161,7 @@ export function corpsFace(d: Face): string {
     // une carte de l'Héritage (la seule à deux effets) porte son sceau en haut
     + `<span class="nf-freqs"><span class="nf-caps">${segs}${fele}</span>${d.lourd ? SIGNE_LOURD : ''}</span>`
     // le sceau de l’Héritage ou de l’exclusive : posé au bas de l'illustration, à gauche (8 novembre 2026 : en haut, il cachait les Fréquences)
-    + `<span class="nf-voile">${d.effet2 ? '<span class="nf-heritage">Héritage</span>' : d.seul ? '<span class="nf-heritage nf-exclusive">Exclusive</span>' : ''}<span class="nf-barre"></span>`
+    + `<span class="nf-voile">${d.effet2 ? `<span class="nf-heritage">${tr`Héritage`}</span>` : d.seul ? `<span class="nf-heritage nf-exclusive">${tr`Exclusive`}</span>` : ''}<span class="nf-barre"></span>`
     + `<span class="nf-val ${d.type}${d.tendance ? ' ' + d.tendance : ''}">${ICONES_ACTION[d.type]}<b>${d.v}</b></span>`
     // en main : une capsule en bas à gauche, la lignée (losange) et l'icône de l'effet, en face de celle de la force
     + `<span class="nf-eff${d.effet ? ' a-effet' : ''}"><i class="nf-eff-lg"></i>${d.effet ? effetsDe(d).map((e) => ICONES_EFFET[e.type]).join('') : ''}</span>`
@@ -188,10 +189,10 @@ export function faceCarte(m: ModuleDef, niveau: number, mult = 1, o: { origine?:
     // une carte du paquetage n'a ni niveau ni lignée : le bâtiment qui la fournit est écrit sous elle
     niveau: o.origine ? undefined : niveau, lignee: o.origine ? '#CDEFFF' : COULEUR[m.lignee], fx: true,
   };
-  const label = `${m.nom}, ${o.origine ? `fournie par le district (${o.origine})` : `${NOMS_RARETE[m.rarete]}, niveau ${niveau} sur ${COLLECTION.niveauMax}, ${NOMS_LIGNEE[m.lignee].nom}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + nomsEffets(m) : ''}${m.lourd ? ', prend 2 places' : ''}${m.seul ? `, exclusive : n’existe qu’en ${NOMS_RARETE[m.rarete].toLowerCase()}` : ''}`;
+  const label = tr`${m.nom}, ${o.origine ? tr`fournie par le district (${o.origine})` : tr`${NOMS_RARETE[m.rarete]}, niveau ${niveau} sur ${COLLECTION.niveauMax}, ${NOMS_LIGNEE[m.lignee].nom}`}, ${ACTION[m.type]} ${v}, Fréquence ${accord ? 'libre' : m.f.join(' ou ')}${m.effet ? ', ' + nomsEffets(m) : ''}${m.lourd ? tr(', prend 2 places') : ''}${m.seul ? tr`, exclusive : n’existe qu’en ${NOMS_RARETE[m.rarete].toLowerCase()}` : ''}`;
   // au niveau maximum, un fin liseré de lumière parcourt le cadre : la maîtrise, sans force en plus (29 octobre 2026)
   const maitre = !o.origine && !m.legs && niveau >= COLLECTION.niveauMax;
-  return `<div class="fc-ombre fo-${m.rarete}${m.legs ? ' fo-legs' : ''}${maitre ? ' fo-maitre' : ''}"><div class="fc-carte nf nf-${m.rarete}" style="${styleFace(d)}" role="img" aria-label="${echap(label + (maitre ? ', maîtrisée' : ''))}">`
+  return `<div class="fc-ombre fo-${m.rarete}${m.legs ? ' fo-legs' : ''}${maitre ? ' fo-maitre' : ''}"><div class="fc-carte nf nf-${m.rarete}" style="${styleFace(d)}" role="img" aria-label="${echap(label + (maitre ? tr(', maîtrisée') : ''))}">`
     + corpsFace(d) + (maitre ? `<i class="nf-maitre" aria-hidden="true"></i>` : '') + `</div></div>`;
 }
 

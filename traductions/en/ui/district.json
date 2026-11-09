@@ -1,0 +1,2701 @@
+{
+ "source": "src/ui/district.ts",
+ "entrees": [
+  {
+   "fr": "Le bateau du passeur reste amarré sous les pilotis du Port, devant le sas de la digue : tant que le gardien de la Strate −1 tient le puits, personne ne laisse le district sans défense pour prendre la mer.",
+   "en": ""
+  },
+  {
+   "fr": "Le passage sûr : des équipages partiront d’ici vers les ruines au large et les cuvettes voisines.",
+   "en": ""
+  },
+  {
+   "fr": "Ses volets sont cloués depuis que le dernier marchand a quitté le district, et la balance a rouillé sur le comptoir. Les fouilleurs remontent des Strates les poches pleines, mais personne n’est là pour leur racheter quoi que ce soit.",
+   "en": ""
+  },
+  {
+   "fr": "Les bancs de l’estrade attendent sous la bâche. Les directeurs des autres districts ne traitent pas avec un district qui n’a pas encore tenu son puits : ils accosteront quand le gardien de la Strate −{0} sera tombé.",
+   "en": ""
+  },
+  {
+   "fr": "Port : cuvettes voisines, {0} jeton{1} de pillage sur {2}",
+   "en": ""
+  },
+  {
+   "fr": "Port : missions en mer",
+   "en": ""
+  },
+  {
+   "fr": "Jetons de pillage au complet : {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0}, pas encore ouvert",
+   "en": ""
+  },
+  {
+   "fr": ", niveau {0}",
+   "en": ""
+  },
+  {
+   "fr": ", à construire",
+   "en": ""
+  },
+  {
+   "fr": ", {0} au poste",
+   "en": ""
+  },
+  {
+   "fr": "À construire",
+   "en": ""
+  },
+  {
+   "fr": "Forge : la carte est prête",
+   "en": ""
+  },
+  {
+   "fr": "{0} : l'objectif se fait ici",
+   "en": ""
+  },
+  {
+   "fr": "{0} : amélioration en cours",
+   "en": ""
+  },
+  {
+   "fr": "Forge : fabrication en cours",
+   "en": ""
+  },
+  {
+   "fr": "{0} : personne au poste",
+   "en": ""
+  },
+  {
+   "fr": "Comptoir : {0} carte{1} en vente",
+   "en": ""
+  },
+  {
+   "fr": "Cercle des quais : {0} réponse{1} attendue{2}",
+   "en": ""
+  },
+  {
+   "fr": "Habitations : {0} familles sur {1} te suivent, palier {2}",
+   "en": ""
+  },
+  {
+   "fr": "Familles · {0}",
+   "en": ""
+  },
+  {
+   "fr": "L’écluse : les Basses{0}",
+   "en": ""
+  },
+  {
+   "fr": "marée montante",
+   "en": ""
+  },
+  {
+   "fr": "marée descendante",
+   "en": ""
+  },
+  {
+   "fr": "Écluse",
+   "en": ""
+  },
+  {
+   "fr": "La mer a laissé {0} sur la grève",
+   "en": ""
+  },
+  {
+   "fr": "un dépôt",
+   "en": ""
+  },
+  {
+   "fr": "Une famille attend dans les Basses",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur est dans les Basses",
+   "en": ""
+  },
+  {
+   "fr": "Objectif",
+   "en": ""
+  },
+  {
+   "fr": "Objectif {0} sur {1} : {2}. Y aller",
+   "en": ""
+  },
+  {
+   "fr": "Lire la consigne",
+   "en": ""
+  },
+  {
+   "fr": "OBJECTIF {0} / {1}",
+   "en": ""
+  },
+  {
+   "fr": "Récupérer la récompense",
+   "en": ""
+  },
+  {
+   "fr": "Y aller",
+   "en": ""
+  },
+  {
+   "fr": "Objectif du jour",
+   "en": ""
+  },
+  {
+   "fr": "Objectif du jour : {0}, {1} sur {2}. Y aller",
+   "en": ""
+  },
+  {
+   "fr": "Voir le butin et le marché",
+   "en": ""
+  },
+  {
+   "fr": "{0} objectifs en réserve : ils s’accumulent jusqu’à 3 si tu ne joues pas",
+   "en": ""
+  },
+  {
+   "fr": "{0} en réserve",
+   "en": ""
+  },
+  {
+   "fr": "OBJECTIF DU JOUR{0}",
+   "en": ""
+  },
+  {
+   "fr": " · {0} EN RÉSERVE",
+   "en": ""
+  },
+  {
+   "fr": "OBJECTIF DU JOUR",
+   "en": ""
+  },
+  {
+   "fr": "Récupérer : une carte ou 2 Éclats",
+   "en": ""
+  },
+  {
+   "fr": "Récompense :",
+   "en": ""
+  },
+  {
+   "fr": "une carte",
+   "en": ""
+  },
+  {
+   "fr": "ou",
+   "en": ""
+  },
+  {
+   "fr": "2 Éclats",
+   "en": ""
+  },
+  {
+   "fr": ", au choix",
+   "en": ""
+  },
+  {
+   "fr": "Tous faits : le prochain arrive demain.",
+   "en": ""
+  },
+  {
+   "fr": "Au marché",
+   "en": ""
+  },
+  {
+   "fr": "Butin de la semaine : {0} sur {1} points. Comment ça marche",
+   "en": ""
+  },
+  {
+   "fr": "BUTIN",
+   "en": ""
+  },
+  {
+   "fr": "BUTIN DE LA SEMAINE",
+   "en": ""
+  },
+  {
+   "fr": "S’ouvre",
+   "en": ""
+  },
+  {
+   "fr": "lundi, dans ",
+   "en": ""
+  },
+  {
+   "fr": "Objectif {0} sur {1} : {2}",
+   "en": ""
+  },
+  {
+   "fr": "Objectif du jour : {0}, {1} sur {2}",
+   "en": ""
+  },
+  {
+   "fr": "Objectifs du jour faits, butin de la semaine",
+   "en": ""
+  },
+  {
+   "fr": " : récompense prête",
+   "en": ""
+  },
+  {
+   "fr": "Expédition en cours, Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Le Butin de la semaine est prêt",
+   "en": ""
+  },
+  {
+   "fr": "Ravitaillement du jour{0}",
+   "en": ""
+  },
+  {
+   "fr": ", {0} colis",
+   "en": ""
+  },
+  {
+   "fr": "Objectif et ravitaillement",
+   "en": ""
+  },
+  {
+   "fr": "La chambre scellée",
+   "en": ""
+  },
+  {
+   "fr": "Expédition · Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Ta descente t’attend là où tu l’as laissée : reprendre",
+   "en": ""
+  },
+  {
+   "fr": "Le combat t’attend : reprendre",
+   "en": ""
+  },
+  {
+   "fr": "La porte scellée",
+   "en": ""
+  },
+  {
+   "fr": "Sous la Tour du Noyau, trois personnes t’attendent",
+   "en": ""
+  },
+  {
+   "fr": "Palier {0} sur {1} atteint : ouvre-le",
+   "en": ""
+  },
+  {
+   "fr": " · {0} colis",
+   "en": ""
+  },
+  {
+   "fr": "Touche pour l’ouvrir",
+   "en": ""
+  },
+  {
+   "fr": "· cristaux et un doublon · {0}",
+   "en": ""
+  },
+  {
+   "fr": "celui-ci contient une carte au choix",
+   "en": ""
+  },
+  {
+   "fr": "carte au choix dans {0} colis",
+   "en": ""
+  },
+  {
+   "fr": "tout taillé en {0} h",
+   "en": ""
+  },
+  {
+   "fr": "{0} Usure soignée/h",
+   "en": ""
+  },
+  {
+   "fr": "vitesse ×{0}",
+   "en": ""
+  },
+  {
+   "fr": "Lignée idéale pour ce bâtiment",
+   "en": ""
+  },
+  {
+   "fr": "Autre lignée",
+   "en": ""
+  },
+  {
+   "fr": "Au travail : {0}",
+   "en": ""
+  },
+  {
+   "fr": "Poster {0} : {1}{2}",
+   "en": ""
+  },
+  {
+   "fr": ", quitte {0}",
+   "en": ""
+  },
+  {
+   "fr": "Le district change d’âge",
+   "en": ""
+  },
+  {
+   "fr": "nouvelle vue d’ensemble",
+   "en": ""
+  },
+  {
+   "fr": "Nouvelle apparence",
+   "en": ""
+  },
+  {
+   "fr": "le bâtiment se transforme",
+   "en": ""
+  },
+  {
+   "fr": "Au niveau {0}",
+   "en": ""
+  },
+  {
+   "fr": "immédiat",
+   "en": ""
+  },
+  {
+   "fr": "{0} : {1} sur {2}",
+   "en": ""
+  },
+  {
+   "fr": "Au niveau 4, il recueillera des Éclats dans le minerai qu’il taille.",
+   "en": ""
+  },
+  {
+   "fr": "En taillant, il recueille un Éclat tous les {0} cristaux :",
+   "en": ""
+  },
+  {
+   "fr": "aujourd’hui.",
+   "en": ""
+  },
+  {
+   "fr": "Tout taillé dans ",
+   "en": ""
+  },
+  {
+   "fr": " · continue même jeu fermé.",
+   "en": ""
+  },
+  {
+   "fr": "Rien à tailler : descends ou envoie une barque, il taillera tout ce que tu rapportes.",
+   "en": ""
+  },
+  {
+   "fr": "Minerai en taille",
+   "en": ""
+  },
+  {
+   "fr": "Chaque heure, il taille {0} de ce qui attend, au moins {1} : plus il monte, plus il va vite.",
+   "en": ""
+  },
+  {
+   "fr": "1 cristal pour {0} points",
+   "en": ""
+  },
+  {
+   "fr": "1 cristal par point",
+   "en": ""
+  },
+  {
+   "fr": "Soins intensifs",
+   "en": ""
+  },
+  {
+   "fr": "Efface l’Usure tout de suite :",
+   "en": ""
+  },
+  {
+   "fr": "Efface l’Usure tout de suite.",
+   "en": ""
+  },
+  {
+   "fr": "La première fois, c’est offert",
+   "en": ""
+  },
+  {
+   "fr": "; ensuite {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Personne n’a d’Usure en ce moment.",
+   "en": ""
+  },
+  {
+   "fr": "Soigner {0} : −{1} Usure {2}",
+   "en": ""
+  },
+  {
+   "fr": "pour {0} cristaux",
+   "en": ""
+  },
+  {
+   "fr": "−{0} Usure",
+   "en": ""
+  },
+  {
+   "fr": "Offert",
+   "en": ""
+  },
+  {
+   "fr": "Entraînement",
+   "en": ""
+  },
+  {
+   "fr": "{0}/{1} places · niv. {2} max{3}",
+   "en": ""
+  },
+  {
+   "fr": "1 séance = 1 niveau · jusqu’au niv. {0}{1}",
+   "en": ""
+  },
+  {
+   "fr": " (ton meilleur titulaire)",
+   "en": ""
+  },
+  {
+   "fr": "Niv. {0}",
+   "en": ""
+  },
+  {
+   "fr": "Arrêter la séance {0}{1}",
+   "en": ""
+  },
+  {
+   "fr": " : {0} cristaux rendus",
+   "en": ""
+  },
+  {
+   "fr": "Arrêter{0}",
+   "en": ""
+  },
+  {
+   "fr": "Séance terminée",
+   "en": ""
+  },
+  {
+   "fr": "Relancer {0} vers le niveau {1} : {2} cristaux",
+   "en": ""
+  },
+  {
+   "fr": "Relancer{0}",
+   "en": ""
+  },
+  {
+   "fr": "Salle libre",
+   "en": ""
+  },
+  {
+   "fr": "Choisis un Porteur",
+   "en": ""
+  },
+  {
+   "fr": "{0}les cristaux se paient au lancement",
+   "en": ""
+  },
+  {
+   "fr": "{0} places · ",
+   "en": ""
+  },
+  {
+   "fr": "Une place libre",
+   "en": ""
+  },
+  {
+   "fr": "Un autre Porteur",
+   "en": ""
+  },
+  {
+   "fr": "Entraîner {0}, niveau {1} vers {2}, {3}, {4} cristaux{5}",
+   "en": ""
+  },
+  {
+   "fr": "quitte son poste au district",
+   "en": ""
+  },
+  {
+   "fr": "{0} Porteur{1} au niveau {2} : {3}.",
+   "en": ""
+  },
+  {
+   "fr": "la Tour ne fait pas dépasser ton meilleur Porteur d’escouade, il monte en combattant",
+   "en": ""
+  },
+  {
+   "fr": "monte la Tour pour aller plus loin",
+   "en": ""
+  },
+  {
+   "fr": "le reste se gagne dans les Strates",
+   "en": ""
+  },
+  {
+   "fr": "Une place de plus au niveau {0} de la Tour.",
+   "en": ""
+  },
+  {
+   "fr": "échanges par jour",
+   "en": ""
+  },
+  {
+   "fr": "cartes en vitrine",
+   "en": ""
+  },
+  {
+   "fr": "Échanges jusqu’à l’{0}{1} · jamais la nacre.",
+   "en": ""
+  },
+  {
+   "fr": " (l’or au niveau {0})",
+   "en": ""
+  },
+  {
+   "fr": "Une fois rouvert",
+   "en": ""
+  },
+  {
+   "fr": "{0} cartes",
+   "en": ""
+  },
+  {
+   "fr": "en vente chaque jour (fer et cuivre), jusqu’à {0} avec les niveaux. L’or et la nacre ne se vendent pas.",
+   "en": ""
+  },
+  {
+   "fr": "En vente aujourd’hui",
+   "en": ""
+  },
+  {
+   "fr": "Reste appuyé sur une carte pour lire son effet.",
+   "en": ""
+  },
+  {
+   "fr": "Doublon · niv. {0}",
+   "en": ""
+  },
+  {
+   "fr": "Achetée",
+   "en": ""
+  },
+  {
+   "fr": "Acheter {0} ({1})",
+   "en": ""
+  },
+  {
+   "fr": "Étals déjà renouvelés aujourd’hui : nouvel arrivage demain.",
+   "en": ""
+  },
+  {
+   "fr": "Une fois par jour, les fouilleurs ressortent d’autres cartes du même métal à la place de {0}.",
+   "en": ""
+  },
+  {
+   "fr": "celles encore en vente ({0})",
+   "en": ""
+  },
+  {
+   "fr": "Renouveler les étals pour {0} cristaux",
+   "en": ""
+  },
+  {
+   "fr": "Renouveler les étals {0}",
+   "en": ""
+  },
+  {
+   "fr": "Les fouilleurs revendent aussi les Éclats qu’ils remontent : encore",
+   "en": ""
+  },
+  {
+   "fr": "{0} sur {1}",
+   "en": ""
+  },
+  {
+   "fr": "Acheter un Éclat pour {0} cristaux",
+   "en": ""
+  },
+  {
+   "fr": "Acheter un Éclat {0}",
+   "en": ""
+  },
+  {
+   "fr": "Le prix monte avec les Éclats du jour : {0} cristaux.",
+   "en": ""
+  },
+  {
+   "fr": "Plus d’Éclats à vendre aujourd’hui ({0} par jour) : nouvel arrivage demain.",
+   "en": ""
+  },
+  {
+   "fr": "Un doublon fait monter une carte que tu as déjà. L’or et la nacre ne se vendent pas : ils se trouvent dans les Strates.",
+   "en": ""
+  },
+  {
+   "fr": "Pas encore ouvert",
+   "en": ""
+  },
+  {
+   "fr": "L’établi",
+   "en": ""
+  },
+  {
+   "fr": "Prête",
+   "en": ""
+  },
+  {
+   "fr": "Sur l’établi",
+   "en": ""
+  },
+  {
+   "fr": "Elle rejoint tes cartes : un doublon de plus.",
+   "en": ""
+  },
+  {
+   "fr": "Prête dans ",
+   "en": ""
+  },
+  {
+   "fr": "L’établi est libre",
+   "en": ""
+  },
+  {
+   "fr": "Personne à la Forge",
+   "en": ""
+  },
+  {
+   "fr": "Choisis une carte : elle revient en doublon, pour la faire monter.",
+   "en": ""
+  },
+  {
+   "fr": "Poste d’abord un Porteur pour refabriquer une carte.",
+   "en": ""
+  },
+  {
+   "fr": "Cartes à refabriquer",
+   "en": ""
+  },
+  {
+   "fr": "Proches de monter",
+   "en": ""
+  },
+  {
+   "fr": "Toutes tes cartes sont au niveau maximum.",
+   "en": ""
+  },
+  {
+   "fr": "Niveau max",
+   "en": ""
+  },
+  {
+   "fr": "Peut monter",
+   "en": ""
+  },
+  {
+   "fr": "Refabriquer {0}{1}",
+   "en": ""
+  },
+  {
+   "fr": ", niveau maximum",
+   "en": ""
+  },
+  {
+   "fr": ", {0} doublons sur {1}",
+   "en": ""
+  },
+  {
+   "fr": "Voir les {0} cartes",
+   "en": ""
+  },
+  {
+   "fr": "Niveau {0}",
+   "en": ""
+  },
+  {
+   "fr": "Fermé",
+   "en": ""
+  },
+  {
+   "fr": "Idéal : {0}",
+   "en": ""
+  },
+  {
+   "fr": "Nouvelle apparence au niveau {0}.",
+   "en": ""
+  },
+  {
+   "fr": "pour tailler ce qui attend",
+   "en": ""
+  },
+  {
+   "fr": "Strate ouverte",
+   "en": ""
+  },
+  {
+   "fr": "niveau maximum des autres bâtiments",
+   "en": ""
+  },
+  {
+   "fr": "Au travail",
+   "en": ""
+  },
+  {
+   "fr": "fabrique {0} fois plus vite",
+   "en": ""
+  },
+  {
+   "fr": "+{0} Usure soignée/h",
+   "en": ""
+  },
+  {
+   "fr": "tout taillé en {0} au lieu de {1}",
+   "en": ""
+  },
+  {
+   "fr": "Libérer {0} ({1})",
+   "en": ""
+  },
+  {
+   "fr": "Libérer",
+   "en": ""
+  },
+  {
+   "fr": "Personne au poste : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "la Forge ne peut pas fabriquer",
+   "en": ""
+  },
+  {
+   "fr": "Personne de disponible ne ferait mieux que {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Voir le chantier en cours",
+   "en": ""
+  },
+  {
+   "fr": "Améliorer au niveau {0}{1}",
+   "en": ""
+  },
+  {
+   "fr": "Entrer dans la tour",
+   "en": ""
+  },
+  {
+   "fr": "Vaincs le gardien de la Strate −{0} pour le construire.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut d’abord monter la Tour du Noyau au niveau {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Attends la fin des chantiers en cours.",
+   "en": ""
+  },
+  {
+   "fr": "Un seul chantier à la fois (deux au Noyau niveau 4).",
+   "en": ""
+  },
+  {
+   "fr": "Remise en état",
+   "en": ""
+  },
+  {
+   "fr": "Chantier vers le niveau {0}",
+   "en": ""
+  },
+  {
+   "fr": "Reste ",
+   "en": ""
+  },
+  {
+   "fr": " · avance même jeu fermé",
+   "en": ""
+  },
+  {
+   "fr": "Niveau maximum pour cette version.",
+   "en": ""
+  },
+  {
+   "fr": "Rouvrir",
+   "en": ""
+  },
+  {
+   "fr": "{0}Passer au niveau {1}",
+   "en": ""
+  },
+  {
+   "fr": "Voir la Tour",
+   "en": ""
+  },
+  {
+   "fr": "Coût",
+   "en": ""
+  },
+  {
+   "fr": "Cristaux",
+   "en": ""
+  },
+  {
+   "fr": "Passer au niveau {0}",
+   "en": ""
+  },
+  {
+   "fr": "Remettre le Comptoir en état",
+   "en": ""
+  },
+  {
+   "fr": "Construire le {0}",
+   "en": ""
+  },
+  {
+   "fr": "ACTE I · LA CHAMBRE",
+   "en": ""
+  },
+  {
+   "fr": "ACTE II · LE CRIME ANCIEN",
+   "en": ""
+  },
+  {
+   "fr": "ACTE III · LA VÉRITÉ",
+   "en": ""
+  },
+  {
+   "fr": "Ce choix est définitif. Aucun n’est « le bon » : chacun règle une partie du problème et en aggrave une autre.",
+   "en": ""
+  },
+  {
+   "fr": "Le campement",
+   "en": ""
+  },
+  {
+   "fr": "Quelques cabanes au fond de la cuvette, et une Tour qui tient debout.",
+   "en": ""
+  },
+  {
+   "fr": "Le quartier s’éveille",
+   "en": ""
+  },
+  {
+   "fr": "La Tour du Noyau tient bon : les habitants consolident la digue, réparent les toits et rouvrent les ateliers. Le district ressemble enfin à un quartier.",
+   "en": ""
+  },
+  {
+   "fr": "Le district prospère",
+   "en": ""
+  },
+  {
+   "fr": "Le courant circule, les marchands reviennent, et des maisons neuves montent contre la digue. On parle de ton district jusque dans les autres quartiers.",
+   "en": ""
+  },
+  {
+   "fr": "Le phare de Vertiga",
+   "en": ""
+  },
+  {
+   "fr": "La Tour du Noyau illumine la mer. Ton district est devenu un repère, et même les Hauts le regardent.",
+   "en": ""
+  },
+  {
+   "fr": "Ton district à l’âge {0}",
+   "en": ""
+  },
+  {
+   "fr": "TOUR DU NOYAU NIVEAU {0} · ÂGE {1}",
+   "en": ""
+  },
+  {
+   "fr": "Prochain âge : Tour du Noyau au niveau {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Admirer le district",
+   "en": ""
+  },
+  {
+   "fr": "Replier",
+   "en": ""
+  },
+  {
+   "fr": "BON RETOUR, DIRECTEUR",
+   "en": ""
+  },
+  {
+   "fr": "Pendant ton absence",
+   "en": ""
+  },
+  {
+   "fr": "est faite pour",
+   "en": ""
+  },
+  {
+   "fr": ", qui rejoindra le district {0}. Prise maintenant, elle t’attend dans ta collection et sera prête le jour de son arrivée (voie « {1} »).",
+   "en": ""
+  },
+  {
+   "fr": "Pour {0} · à venir",
+   "en": ""
+  },
+  {
+   "fr": "Porteur {0} niv. {1} requis",
+   "en": ""
+  },
+  {
+   "fr": "Pour {0}",
+   "en": ""
+  },
+  {
+   "fr": "En fer, pas d’effet. À partir du cuivre :",
+   "en": ""
+  },
+  {
+   "fr": ": cette empreinte refuse la copie. Elle n’existe qu’en {0}, et son effet ne se trouve sur aucune autre carte.",
+   "en": ""
+  },
+  {
+   "fr": "Fréquences au choix",
+   "en": ""
+  },
+  {
+   "fr": "Posée, elle prend celle qui prolonge ta suite.",
+   "en": ""
+  },
+  {
+   "fr": "Son métal ne lui ouvre qu’une Fréquence ; en argent et en or, elle en a 2, en nacre 3.",
+   "en": ""
+  },
+  {
+   "fr": "un Porteur de ton escouade",
+   "en": ""
+  },
+  {
+   "fr": "un Porteur {0}",
+   "en": ""
+  },
+  {
+   "fr": "L’HÉRITAGE DU DISTRICT",
+   "en": ""
+  },
+  {
+   "fr": "Scellée : elle se portera avec {0} de",
+   "en": ""
+  },
+  {
+   "fr": "niveau {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0}. Elle s’éveillera ensuite avec lui, aux niveaux {1}.",
+   "en": ""
+  },
+  {
+   "fr": ", et rejoindra alors le paquetage de chaque escouade",
+   "en": ""
+  },
+  {
+   "fr": "Je la garde",
+   "en": ""
+  },
+  {
+   "fr": "L’HÉRITAGE DU DISTRICT · 2 / 2",
+   "en": ""
+  },
+  {
+   "fr": "Revenir à la première question",
+   "en": ""
+  },
+  {
+   "fr": "L’HÉRITAGE DU DISTRICT · 1 / 2",
+   "en": ""
+  },
+  {
+   "fr": "Une seule vierge par directeur, et ce choix est définitif : aucune n’est meilleure que les autres, chacune ouvre une façon de jouer.",
+   "en": ""
+  },
+  {
+   "fr": "La Strate est complète",
+   "en": ""
+  },
+  {
+   "fr": "Les étoiles des Strates",
+   "en": ""
+  },
+  {
+   "fr": "Le trophée du Rôdeur",
+   "en": ""
+  },
+  {
+   "fr": "Le boss laisse des empreintes",
+   "en": ""
+  },
+  {
+   "fr": "Le septième colis",
+   "en": ""
+  },
+  {
+   "fr": "Le filon de la fouille",
+   "en": ""
+  },
+  {
+   "fr": "Le parrainage",
+   "en": ""
+  },
+  {
+   "fr": "La prise de la marée",
+   "en": ""
+  },
+  {
+   "fr": "Butin de la semaine",
+   "en": ""
+  },
+  {
+   "fr": "RÉCOMPENSE{0}",
+   "en": ""
+  },
+  {
+   "fr": " · ENCORE {0} APRÈS",
+   "en": ""
+  },
+  {
+   "fr": "Choisis une carte. Si tu l’as déjà, elle devient un doublon pour la faire monter.",
+   "en": ""
+  },
+  {
+   "fr": "Prendre {0} à la place",
+   "en": ""
+  },
+  {
+   "fr": "Pas d’effet : sa force seule.",
+   "en": ""
+  },
+  {
+   "fr": "· paquetage",
+   "en": ""
+  },
+  {
+   "fr": "Fréquences au choix :",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} · NIVEAU {2}",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes et leurs effets",
+   "en": ""
+  },
+  {
+   "fr": "Portée par {0}",
+   "en": ""
+  },
+  {
+   "fr": "Confier à",
+   "en": ""
+  },
+  {
+   "fr": "Elle pèse",
+   "en": ""
+  },
+  {
+   "fr": "de Charge{0}.",
+   "en": ""
+  },
+  {
+   "fr": "et demande un Porteur de",
+   "en": ""
+  },
+  {
+   "fr": "Touche son portrait pour la reprendre, ou un autre Porteur pour la lui passer.",
+   "en": ""
+  },
+  {
+   "fr": "Elle entrera dans ton deck quand ce Porteur descendra ({0} cartes au plus, de sa lignée).",
+   "en": ""
+  },
+  {
+   "fr": "la porte · reprendre",
+   "en": ""
+  },
+  {
+   "fr": "niveau {0} / {1}",
+   "en": ""
+  },
+  {
+   "fr": "trop lourde · {0} libre{1}",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} · échanger",
+   "en": ""
+  },
+  {
+   "fr": "Charge {0} libre{1}",
+   "en": ""
+  },
+  {
+   "fr": "Progression",
+   "en": ""
+  },
+  {
+   "fr": "Une vierge de l’Héritage du district : unique, elle ne monte pas avec des doublons. Elle s’éveille avec le Porteur qui la porte : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "niveau {0} avec un Porteur de niveau {1}",
+   "en": ""
+  },
+  {
+   "fr": "Niveau maximum : la carte est maîtrisée, un liseré de lumière parcourt son cadre.",
+   "en": ""
+  },
+  {
+   "fr": "{0} doublon{1}",
+   "en": ""
+  },
+  {
+   "fr": "pour le niveau {0}. On en trouve en expédition, en mission, dans les colis du ravitaillement, au Comptoir et à la Forge.",
+   "en": ""
+  },
+  {
+   "fr": "Doublons réunis. Il manque",
+   "en": ""
+  },
+  {
+   "fr": "{0} cristal{1}",
+   "en": ""
+  },
+  {
+   "fr": "Prête : elle peut passer au niveau {0}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} doublons",
+   "en": ""
+  },
+  {
+   "fr": "Niveau {0} : force {1} →",
+   "en": ""
+  },
+  {
+   "fr": ", et la carte est maîtrisée",
+   "en": ""
+  },
+  {
+   "fr": "Passer au niveau {0} · {1}",
+   "en": ""
+  },
+  {
+   "fr": "Recycler 1 · +{0}",
+   "en": ""
+  },
+  {
+   "fr": "CARTE COMMUNE · {0}{1}",
+   "en": ""
+  },
+  {
+   "fr": " · NIVEAU {0}",
+   "en": ""
+  },
+  {
+   "fr": "Sans lignée ni métal, portée par personne : elle ne s’éteint jamais quand un Porteur tombe.{0}",
+   "en": ""
+  },
+  {
+   "fr": " Une fois par combat.",
+   "en": ""
+  },
+  {
+   "fr": "L’améliorer",
+   "en": ""
+  },
+  {
+   "fr": "{0} niveau {1} (aujourd’hui {2}) : {3}",
+   "en": ""
+  },
+  {
+   "fr": "niv. {0}",
+   "en": ""
+  },
+  {
+   "fr": "Elle grandit avec",
+   "en": ""
+  },
+  {
+   "fr": ": améliore le bâtiment, et sa force monte.",
+   "en": ""
+  },
+  {
+   "fr": "Force selon le niveau de {0}",
+   "en": ""
+  },
+  {
+   "fr": "Prochain gain : au niveau {0} de {1}, force {2} →",
+   "en": ""
+  },
+  {
+   "fr": "{0} au niveau maximum : la carte a toute sa force.",
+   "en": ""
+  },
+  {
+   "fr": "Voir {0}",
+   "en": ""
+  },
+  {
+   "fr": "Râtelier des escouades{0}",
+   "en": ""
+  },
+  {
+   "fr": " · dans {0}",
+   "en": ""
+  },
+  {
+   "fr": "Elle pourra rejoindre un Râtelier quand {0} aura le niveau {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Chaque escouade a son Râtelier : mets-la dans toutes celles qui en ont besoin, elle y reste d’une descente à l’autre.",
+   "en": ""
+  },
+  {
+   "fr": "Dans le Râtelier",
+   "en": ""
+  },
+  {
+   "fr": "Cristaux insuffisants",
+   "en": ""
+  },
+  {
+   "fr": "Plein ({0} / {1})",
+   "en": ""
+  },
+  {
+   "fr": "Escouade {0}",
+   "en": ""
+  },
+  {
+   "fr": "Retirer",
+   "en": ""
+  },
+  {
+   "fr": "Ajouter",
+   "en": ""
+  },
+  {
+   "fr": "Un emplacement de plus au niveau {0} de la Tour du Noyau.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade est en descente : les Râteliers se changent au district.",
+   "en": ""
+  },
+  {
+   "fr": "CARTE UNIQUE · {0}",
+   "en": ""
+  },
+  {
+   "fr": "Attaque {0}",
+   "en": ""
+  },
+  {
+   "fr": "Une des plus fortes attaques du jeu, fixe (elle ne monte pas de niveau).",
+   "en": ""
+  },
+  {
+   "fr": "{0} Elle prend toujours le chiffre qui manque : un vrai joker pour finir une Résonance.",
+   "en": ""
+  },
+  {
+   "fr": "Elle n’appartient qu’à {0} : on ne peut pas la confier à un autre Porteur. Elle entre dans le deck dès que {1} est dans l’escouade, en plus de ses cartes.",
+   "en": ""
+  },
+  {
+   "fr": "Sous les salles closes, {0} a lu jusqu’au bout ce que cachaient les cristaux. Elle en est revenue plus fragile, mais elle sait désormais entendre n’importe quelle suite et s’y glisser.",
+   "en": ""
+  },
+  {
+   "fr": "NACRE · HÉRITAGE DU DISTRICT",
+   "en": ""
+  },
+  {
+   "fr": "Portée par personne : elle descend avec chaque escouade qui compte un Porteur de niveau {0}, et ne s’éteint jamais quand un Porteur tombe.",
+   "en": ""
+  },
+  {
+   "fr": "Son éveil",
+   "en": ""
+  },
+  {
+   "fr": "La desceller",
+   "en": ""
+  },
+  {
+   "fr": "Elle grandit avec le Porteur le plus avancé de l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Scellée",
+   "en": ""
+  },
+  {
+   "fr": ": elle s’ouvre quand un Porteur de l’escouade atteint le",
+   "en": ""
+  },
+  {
+   "fr": "(aujourd’hui, ton plus avancé est niveau {0}).",
+   "en": ""
+  },
+  {
+   "fr": "Niveau de la carte selon le niveau du Porteur",
+   "en": ""
+  },
+  {
+   "fr": "Porteur {0}",
+   "en": ""
+  },
+  {
+   "fr": "Dans tes escouades",
+   "en": ""
+  },
+  {
+   "fr": "Escouade vide",
+   "en": ""
+  },
+  {
+   "fr": "Descend avec elle · force {0}",
+   "en": ""
+  },
+  {
+   "fr": "Scellée : aucun Porteur niv. {0}",
+   "en": ""
+  },
+  {
+   "fr": "Elle s’ajoute au deck en plus des cartes des Porteurs et du Râtelier : un deck peut donc compter une carte de plus que d’habitude.",
+   "en": ""
+  },
+  {
+   "fr": "Reste au district",
+   "en": ""
+  },
+  {
+   "fr": "{0}{1}. Voir la carte",
+   "en": ""
+  },
+  {
+   "fr": ", reste au district faute de cristaux",
+   "en": ""
+  },
+  {
+   "fr": "Toutes ensemble, elles coûtent",
+   "en": ""
+  },
+  {
+   "fr": "{0} cristaux",
+   "en": ""
+  },
+  {
+   "fr": "à ce départ{0} (tu en as {1}).",
+   "en": ""
+  },
+  {
+   "fr": "Cartes du district · {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0}{1} Elles restent au Râtelier de l’escouade {2} d’une descente à l’autre ; tu les changes dans l’onglet Escouade.",
+   "en": ""
+  },
+  {
+   "fr": " Il manque des cristaux : elles restent au district, l’escouade part sans elles.",
+   "en": ""
+  },
+  {
+   "fr": "les creuseurs n’ont pas encore relevé ces galeries.",
+   "en": ""
+  },
+  {
+   "fr": "le courant ne suffit pas encore pour équiper une équipe.",
+   "en": ""
+  },
+  {
+   "fr": "le forgeron n’a pas encore l’outillage pour ça.",
+   "en": ""
+  },
+  {
+   "fr": "la Clinique n’a pas encore le matériel.",
+   "en": ""
+  },
+  {
+   "fr": "les fouilleurs n’en ont pas encore rapporté.",
+   "en": ""
+  },
+  {
+   "fr": "Palier {0} / 3",
+   "en": ""
+  },
+  {
+   "fr": "Aucun palier",
+   "en": ""
+  },
+  {
+   "fr": "Exploits demandés pour {0}",
+   "en": ""
+  },
+  {
+   "fr": ", fait",
+   "en": ""
+  },
+  {
+   "fr": ", à faire",
+   "en": ""
+  },
+  {
+   "fr": "{0}chaque palier allume son filigrane. Pur souvenir : aucun effet en combat.",
+   "en": ""
+  },
+  {
+   "fr": "Un trophée gagné au fil des descentes : ",
+   "en": ""
+  },
+  {
+   "fr": "Un trophée, pas un dû : il faut des semaines de combats avec la même carte, et des exploits qu’elle seule a vécus. ",
+   "en": ""
+  },
+  {
+   "fr": "Épithète affiché",
+   "en": ""
+  },
+  {
+   "fr": "Épithètes : des exploits rares, comme porter le dernier coup à un Gardien.",
+   "en": ""
+  },
+  {
+   "fr": "Pèse {0} de Charge",
+   "en": ""
+  },
+  {
+   "fr": "{0} de trop",
+   "en": ""
+  },
+  {
+   "fr": "Plein",
+   "en": ""
+  },
+  {
+   "fr": "Charge : {0} sur {1}, {2}",
+   "en": ""
+  },
+  {
+   "fr": "Trop lourd : reprends-lui une carte avant de descendre. ",
+   "en": ""
+  },
+  {
+   "fr": "{0}, {1}, niveau {2}, pèse {3}",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} / {2} CARTES",
+   "en": ""
+  },
+  {
+   "fr": "Comment construire son deck",
+   "en": ""
+  },
+  {
+   "fr": "{0} est en expédition : ses cartes changeront à son retour.",
+   "en": ""
+  },
+  {
+   "fr": "Chaque carte pèse selon sa force. {0} porte plus lourd en montant de niveau (+{1} par niveau). Une place laissée vide se pioche et ne se joue pas.",
+   "en": ""
+  },
+  {
+   "fr": "Ce que {0} porte",
+   "en": ""
+  },
+  {
+   "fr": "Ces cartes entrent dans ton deck quand {0} descend. Touche une carte pour l’échanger ou la reprendre.",
+   "en": ""
+  },
+  {
+   "fr": "Fréquences qu’{0} apporte : {1}",
+   "en": ""
+  },
+  {
+   "fr": "Choisie",
+   "en": ""
+  },
+  {
+   "fr": "Trop lourd",
+   "en": ""
+  },
+  {
+   "fr": "Aucune carte pour l’instant.",
+   "en": ""
+  },
+  {
+   "fr": "À lui confier",
+   "en": ""
+  },
+  {
+   "fr": "{0} porte déjà {1} cartes : touche une carte ici puis celle qu’elle remplace (ou l’inverse) pour les échanger.",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes de sa lignée ({0}) dans ta collection. Une carte portée par un autre Porteur passe à {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Niveau {0} requis",
+   "en": ""
+  },
+  {
+   "fr": "Trop lourde",
+   "en": ""
+  },
+  {
+   "fr": "Remplace",
+   "en": ""
+  },
+  {
+   "fr": "celle en {0}",
+   "en": ""
+  },
+  {
+   "fr": "chez {0}",
+   "en": ""
+  },
+  {
+   "fr": "Confier",
+   "en": ""
+  },
+  {
+   "fr": "Aucune autre carte de sa lignée pour l’instant : les Strates en cachent d’autres.",
+   "en": ""
+  },
+  {
+   "fr": ": touche une carte de « À lui confier » pour l’échanger.",
+   "en": ""
+  },
+  {
+   "fr": ": touche la carte que {0} porte et qu’elle remplacera.",
+   "en": ""
+  },
+  {
+   "fr": "Reprendre",
+   "en": ""
+  },
+  {
+   "fr": "Trier les cartes",
+   "en": ""
+  },
+  {
+   "fr": "Trier",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} TROUVÉES",
+   "en": ""
+  },
+  {
+   "fr": "Construire son deck",
+   "en": ""
+  },
+  {
+   "fr": "Les effets",
+   "en": ""
+  },
+  {
+   "fr": "Peuvent monter",
+   "en": ""
+  },
+  {
+   "fr": "Libres",
+   "en": ""
+  },
+  {
+   "fr": "Filtrer la collection",
+   "en": ""
+  },
+  {
+   "fr": "Toutes tes cartes. Touche-en une pour la confier à un Porteur ou la faire monter ; ton deck est dans le volet Escouade.",
+   "en": ""
+  },
+  {
+   "fr": "{0}, {1}, niveau {2}{3}{4}",
+   "en": ""
+  },
+  {
+   "fr": ", portée par {0}",
+   "en": ""
+  },
+  {
+   "fr": ", peut monter",
+   "en": ""
+  },
+  {
+   "fr": "Libre",
+   "en": ""
+  },
+  {
+   "fr": "Max",
+   "en": ""
+  },
+  {
+   "fr": "Doublons pour le niveau {0}",
+   "en": ""
+  },
+  {
+   "fr": "Libres : personne ne les porte",
+   "en": ""
+  },
+  {
+   "fr": "Aucune carte n’a encore assez de doublons et de cristaux pour monter.",
+   "en": ""
+  },
+  {
+   "fr": "Toutes tes cartes sont confiées à un Porteur.",
+   "en": ""
+  },
+  {
+   "fr": "Carte pas encore trouvée",
+   "en": ""
+  },
+  {
+   "fr": "À trouver",
+   "en": ""
+  },
+  {
+   "fr": "Fouille « {0} »",
+   "en": ""
+  },
+  {
+   "fr": "Cartes communes du district",
+   "en": ""
+  },
+  {
+   "fr": "Préparées par tes bâtiments, sans lignée ni métal. Elles ne s’éteignent jamais quand un Porteur tombe et gagnent de la force quand leur bâtiment monte. Chaque escouade a son Râtelier : une même carte peut descendre avec plusieurs.",
+   "en": ""
+  },
+  {
+   "fr": "{0} niveau {1}",
+   "en": ""
+  },
+  {
+   "fr": "Escouade{0} {1}",
+   "en": ""
+  },
+  {
+   "fr": "{0}, carte commune{1}. Voir la carte",
+   "en": ""
+  },
+  {
+   "fr": ", au Râtelier de l’escouade {0}",
+   "en": ""
+  },
+  {
+   "fr": "Ton Héritage : dans chaque escouade qui compte un Porteur de niveau {0}.",
+   "en": ""
+  },
+  {
+   "fr": ": elle rejoindra le paquetage quand un Porteur de l’escouade aura le niveau {0}.",
+   "en": ""
+  },
+  {
+   "fr": "{0}, ton Héritage{1}. Voir la carte",
+   "en": ""
+  },
+  {
+   "fr": "« On attend quoi, l’Élu ? Qu’elle s’ouvre toute seule ? »",
+   "en": ""
+  },
+  {
+   "fr": "« Mon père a travaillé dans ce puits, avant qu’on le mure. Il n’a jamais aimé son silence. »",
+   "en": ""
+  },
+  {
+   "fr": "« Quelque chose a peur, derrière cette porte. Et ce n’est pas moi. »",
+   "en": ""
+  },
+  {
+   "fr": "« Les ouvriers m’ont envoyée te chercher à l’aube. Quand ça presse, c’est moi qu’on envoie. Et là, ça presse. »",
+   "en": ""
+  },
+  {
+   "fr": "« En dessous, il y a les couloirs qu’on a murés en 2066. Je suis le dernier à savoir où ils passent. »",
+   "en": ""
+  },
+  {
+   "fr": "« Oui, j’ai une mèche d’or. Mais je suis d’ici, pas des Hauts. Ce qui dort derrière, je l’entends : vous ne descendrez pas sans moi. »",
+   "en": ""
+  },
+  {
+   "fr": "SOUS LA TOUR DU NOYAU",
+   "en": ""
+  },
+  {
+   "fr": "Une porte ronde, scellée depuis les années 2060, luit faiblement. Trois personnes t’attendent devant.",
+   "en": ""
+  },
+  {
+   "fr": "STRATE −{0} · HALTE {1}",
+   "en": ""
+  },
+  {
+   "fr": "Ce que j’ai fait : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "CARNET DU DIRECTEUR · {0} / {1} HALTES",
+   "en": ""
+  },
+  {
+   "fr": "Ce que j’ai appris en bas",
+   "en": ""
+  },
+  {
+   "fr": "Rien encore. Chaque Halte des Strates ajoute une page à ce carnet.",
+   "en": ""
+  },
+  {
+   "fr": "{0} Halte{1} encore à découvrir, une par descente",
+   "en": ""
+  },
+  {
+   "fr": "Retour à l’écran titre",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} CHAPITRES · {2} / {3} ARCHIVES",
+   "en": ""
+  },
+  {
+   "fr": "Bibliothèque",
+   "en": ""
+  },
+  {
+   "fr": "Archives",
+   "en": ""
+  },
+  {
+   "fr": "Campagne",
+   "en": ""
+  },
+  {
+   "fr": "Bestiaire",
+   "en": ""
+  },
+  {
+   "fr": "Des papiers d’époque, trouvés un à un dans les Strates. Ysé y renvoie souvent dans ses Chroniques.",
+   "en": ""
+  },
+  {
+   "fr": "Aucun fragment pour l’instant. On les trouve en ouvrant de nouvelles Strates.",
+   "en": ""
+  },
+  {
+   "fr": "{0} fragment{1} encore enfoui{2} dans les Strates",
+   "en": ""
+  },
+  {
+   "fr": "Souvenirs des familles · {0} / {1}",
+   "en": ""
+  },
+  {
+   "fr": "Chaque fois que {0} familles de plus te suivent, l’une d’elles confie aux Archives ce qu’elle a gardé de plus précieux.",
+   "en": ""
+  },
+  {
+   "fr": "Prochain souvenir à {0} familles qui te suivent",
+   "en": ""
+  },
+  {
+   "fr": "Les Chroniques d’Ysé, archiviste des Veilleurs de Sédime, écrites pour toi le matin de ta première descente, à lire en remontant.",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} lus",
+   "en": ""
+  },
+  {
+   "fr": "CH. {0}",
+   "en": ""
+  },
+  {
+   "fr": "+1 carte",
+   "en": ""
+  },
+  {
+   "fr": "Lu",
+   "en": ""
+  },
+  {
+   "fr": "Chapitre précédent",
+   "en": ""
+  },
+  {
+   "fr": "Chapitre suivant",
+   "en": ""
+  },
+  {
+   "fr": "Sommaire",
+   "en": ""
+  },
+  {
+   "fr": "{0} · CHAPITRE {1}",
+   "en": ""
+  },
+  {
+   "fr": "RECOPIÉ PAR YSÉ",
+   "en": ""
+  },
+  {
+   "fr": "La suite s’ouvrira à la Strate −{0}.",
+   "en": ""
+  },
+  {
+   "fr": "Fin des Chroniques. Pour l’instant.",
+   "en": ""
+  },
+  {
+   "fr": "Les Pompes noyées",
+   "en": ""
+  },
+  {
+   "fr": "Les Abris murés",
+   "en": ""
+  },
+  {
+   "fr": "La Galerie aux lueurs",
+   "en": ""
+  },
+  {
+   "fr": "Les Portes rondes",
+   "en": ""
+  },
+  {
+   "fr": "Le Treillis",
+   "en": ""
+  },
+  {
+   "fr": "Le Mur de 2066",
+   "en": ""
+  },
+  {
+   "fr": "Les Deux Rives",
+   "en": ""
+  },
+  {
+   "fr": "La Ruche d’ambre",
+   "en": ""
+  },
+  {
+   "fr": "Le Puits d’avant",
+   "en": ""
+  },
+  {
+   "fr": "Sous le Puits d’avant",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} XP vers le niveau {2}",
+   "en": ""
+  },
+  {
+   "fr": "Niveau maximum",
+   "en": ""
+  },
+  {
+   "fr": "EN COUPE · {0} ÉTAGE{1} CREUSÉ{2}",
+   "en": ""
+  },
+  {
+   "fr": "Porteurs : {0} au district, {1} disponibles. Voir les Porteurs",
+   "en": ""
+  },
+  {
+   "fr": "{0} disponible{1}",
+   "en": ""
+  },
+  {
+   "fr": "sur {0} · Voir les Porteurs",
+   "en": ""
+  },
+  {
+   "fr": "Vaincs le gardien de la Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "C’est lui qui garde le passage : une fois vaincu, tes creuseurs pourront attaquer la roche.",
+   "en": ""
+  },
+  {
+   "fr": "Descendre à −{0}",
+   "en": ""
+  },
+  {
+   "fr": "trouve",
+   "en": ""
+  },
+  {
+   "fr": "{0} creuseur{1}",
+   "en": ""
+  },
+  {
+   "fr": "monte la Tour du Noyau au",
+   "en": ""
+  },
+  {
+   "fr": "pour les loger",
+   "en": ""
+  },
+  {
+   "fr": "Pour ouvrir la Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Fouille ciblée",
+   "en": ""
+  },
+  {
+   "fr": "Mission",
+   "en": ""
+  },
+  {
+   "fr": "Épreuve",
+   "en": ""
+  },
+  {
+   "fr": "(1re victoire de la semaine)",
+   "en": ""
+  },
+  {
+   "fr": "assuré",
+   "en": ""
+  },
+  {
+   "fr": "Fouiller la Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Améliorer la Tour",
+   "en": ""
+  },
+  {
+   "fr": "La roche cède : la Strate −{0} va s’ouvrir",
+   "en": ""
+  },
+  {
+   "fr": "Tout est prêt. Descends pour découvrir le nouvel étage.",
+   "en": ""
+  },
+  {
+   "fr": "Descendre",
+   "en": ""
+  },
+  {
+   "fr": "Expédition en cours",
+   "en": ""
+  },
+  {
+   "fr": "Strate −{0} : {1}",
+   "en": ""
+  },
+  {
+   "fr": "reprendre là où tu t’es arrêté",
+   "en": ""
+  },
+  {
+   "fr": "Revoir la dernière scène",
+   "en": ""
+  },
+  {
+   "fr": "Revoir",
+   "en": ""
+  },
+  {
+   "fr": "Prochaine étape",
+   "en": ""
+  },
+  {
+   "fr": "Strates ou Épreuves",
+   "en": ""
+  },
+  {
+   "fr": "{0} creusée{1}",
+   "en": ""
+  },
+  {
+   "fr": "Épreuves",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} cette semaine",
+   "en": ""
+  },
+  {
+   "fr": "Les Épreuves de la semaine s’ouvrent quand le gardien de la Strate −{0} est vaincu : les Veilleurs ne mettent à l’épreuve que ceux qui ont passé le couloir muré.",
+   "en": ""
+  },
+  {
+   "fr": "Strate −{0} · Vestiges {1} / {2}",
+   "en": ""
+  },
+  {
+   "fr": "Ce que la Strate garde",
+   "en": ""
+  },
+  {
+   "fr": "Les Vestiges ne se trouvent qu’en",
+   "en": ""
+  },
+  {
+   "fr": "explorant",
+   "en": ""
+  },
+  {
+   "fr": "la Strate : {0} par descente, marqués {1} sur le plan, même dans le brouillard. Les cinq réunis, la Strate est complète : une carte au choix, et tes fouilles y verront tout le plan, avec un filon plus riche.",
+   "en": ""
+  },
+  {
+   "fr": "Un Vestige à trouver",
+   "en": ""
+  },
+  {
+   "fr": "Quelque part dans la Strate −{0}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} étoile{1} sur 3",
+   "en": ""
+  },
+  {
+   "fr": "Vestiges : {0} sur 5",
+   "en": ""
+  },
+  {
+   "fr": "Vestiges {0} / 5",
+   "en": ""
+  },
+  {
+   "fr": "Haltes vues",
+   "en": ""
+  },
+  {
+   "fr": "Haltes {0} / {1}",
+   "en": ""
+  },
+  {
+   "fr": "Fouiller",
+   "en": ""
+  },
+  {
+   "fr": ": une descente courte, sans gardien, vers un filon (cartes, minerai ou Éclats).",
+   "en": ""
+  },
+  {
+   "fr": "Explorer",
+   "en": ""
+  },
+  {
+   "fr": ": toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.",
+   "en": ""
+  },
+  {
+   "fr": "étoile{0}{1}",
+   "en": ""
+  },
+  {
+   "fr": " · prochaine récompense à {0} (une carte au choix, dont une en {1})",
+   "en": ""
+  },
+  {
+   "fr": " · toutes les récompenses sont prises",
+   "en": ""
+  },
+  {
+   "fr": " · {0}vaincue",
+   "en": ""
+  },
+  {
+   "fr": "front : son gardien t’attend",
+   "en": ""
+  },
+  {
+   "fr": "Roche à creuser",
+   "en": ""
+  },
+  {
+   "fr": "creuseurs",
+   "en": ""
+  },
+  {
+   "fr": "{0}S’ouvre après le gardien de la Strate −{1}.",
+   "en": ""
+  },
+  {
+   "fr": "Il manque encore de quoi la percer : voir « Prochaine étape ».",
+   "en": ""
+  },
+  {
+   "fr": "Tout est prêt.",
+   "en": ""
+  },
+  {
+   "fr": "La Tour loge {0} creuseurs au niveau {1} : il en faut la place pour {2}.",
+   "en": ""
+  },
+  {
+   "fr": "Trois défis contre {0} (Strate −{1}), chacun avec sa règle. Plus dur encore : la",
+   "en": ""
+  },
+  {
+   "fr": "Fêlée",
+   "en": ""
+  },
+  {
+   "fr": ", ennemis +{0} %, une carte de plus et {1} Éclats. {2}",
+   "en": ""
+  },
+  {
+   "fr": "Nouvelles Épreuves lundi, dans ",
+   "en": ""
+  },
+  {
+   "fr": "{0}Réussie, et en Fêlée",
+   "en": ""
+  },
+  {
+   "fr": "{0}Réussie · la Fêlée t’attend",
+   "en": ""
+  },
+  {
+   "fr": "{0}1 carte au choix, argent au moins",
+   "en": ""
+  },
+  {
+   "fr": "Rejouer",
+   "en": ""
+  },
+  {
+   "fr": "Tenter",
+   "en": ""
+  },
+  {
+   "fr": "Un combat contre {0}, à la même force pour tous : seule ton adresse compte.",
+   "en": ""
+  },
+  {
+   "fr": "Trois combats d’affilée dans {0}, le dernier contre {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Un combat contre {0} et deux bêtes de {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Un seul combat, contre {0}.",
+   "en": ""
+  },
+  {
+   "fr": "déjà réussie cette semaine",
+   "en": ""
+  },
+  {
+   "fr": "+{0} % de force · 1 carte{1} et {2} Éclats",
+   "en": ""
+  },
+  {
+   "fr": "1 carte au choix, argent au moins",
+   "en": ""
+  },
+  {
+   "fr": "{0}Vers {1}{2}",
+   "en": ""
+  },
+  {
+   "fr": "rentre au district",
+   "en": ""
+  },
+  {
+   "fr": "{0}, vers {1}",
+   "en": ""
+  },
+  {
+   "fr": "Bon type",
+   "en": ""
+  },
+  {
+   "fr": "Neutre",
+   "en": ""
+  },
+  {
+   "fr": "Mauvais type",
+   "en": ""
+  },
+  {
+   "fr": "Une cargaison oubliée : beaucoup de minerai, mais aucune pierre.",
+   "en": ""
+  },
+  {
+   "fr": "Une pierre attend quelqu’un : une carte à coup sûr, nouvelle ou en doublon (du cuivre possible en 8 h), mais peu de minerai.",
+   "en": ""
+  },
+  {
+   "fr": "Des naufragés guettent une barque : la première du jour les ramène, et ils deviennent creuseurs (un à coup sûr, parfois deux en 8 h).",
+   "en": ""
+  },
+  {
+   "fr": "Des Éclats affleurent dans la ruine : un en 2 h, un ou deux en 8 h.",
+   "en": ""
+  },
+  {
+   "fr": "{0} ({1} % de chances qu’elle soit nouvelle, sinon un doublon)",
+   "en": ""
+  },
+  {
+   "fr": "un creuseur, parfois deux",
+   "en": ""
+  },
+  {
+   "fr": "un creuseur",
+   "en": ""
+  },
+  {
+   "fr": "environ {0} Éclats",
+   "en": ""
+  },
+  {
+   "fr": "Choisis une destination, puis le Porteur libre qui y part : il revient chargé, même jeu fermé. Chaque jour, le passeur connaît de 2 à 5 ruines et ce qu’on y trouvera (une cargaison, une pierre oubliée, des naufragés ou des Éclats). Plus tu retournes au même endroit, plus tu descends : la Surface, puis les Cales (+25 %), puis le Cœur de la ruine (+60 % et une carte en plus). Le bon Porteur au bon endroit rapporte plus (sa lignée, son niveau). Une barque ne coûte rien : seulement le temps du Porteur.",
+   "en": ""
+  },
+  {
+   "fr": "Chaque barque vers la même destination descend plus profond : Surface, Cales, puis le Cœur et sa trouvaille.",
+   "en": ""
+  },
+  {
+   "fr": "Prochaine fouille ici",
+   "en": ""
+  },
+  {
+   "fr": "Ruine fouillée à fond",
+   "en": ""
+  },
+  {
+   "fr": "butin plein, jusqu’à demain 4 h",
+   "en": ""
+  },
+  {
+   "fr": "une carte en plus",
+   "en": ""
+  },
+  {
+   "fr": "Cœur dans {0} barque{1}",
+   "en": ""
+  },
+  {
+   "fr": "Les naufragés ne fournissent qu’une partie des creuseurs de chaque Strate : le reste se gagne au front (gardien, fouilles, Épreuves).",
+   "en": ""
+  },
+  {
+   "fr": "Naufragés · Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} creuseur{2}",
+   "en": ""
+  },
+  {
+   "fr": "encore {0} en mer",
+   "en": ""
+  },
+  {
+   "fr": "le reste se gagne au front",
+   "en": ""
+  },
+  {
+   "fr": "Destinations du jour",
+   "en": ""
+  },
+  {
+   "fr": "Nouvelles dans ",
+   "en": ""
+  },
+  {
+   "fr": "{0}{1} en route",
+   "en": ""
+  },
+  {
+   "fr": "Barque",
+   "en": ""
+  },
+  {
+   "fr": "Plus de naufragés",
+   "en": ""
+  },
+  {
+   "fr": "Fouillée à fond",
+   "en": ""
+  },
+  {
+   "fr": " du minerai, et la trouvaille du Cœur : une carte en plus",
+   "en": ""
+  },
+  {
+   "fr": " seulement du minerai",
+   "en": ""
+  },
+  {
+   "fr": "Les naufragés d’ici ont déjà été recueillis aujourd’hui : une barque y trouvera{0}.",
+   "en": ""
+  },
+  {
+   "fr": "Les naufragés ont fourni leur part de creuseurs pour la Strate −{0} : le reste se gagne au front. Une barque y trouvera{1}.",
+   "en": ""
+  },
+  {
+   "fr": " Au Cœur, une carte en plus.",
+   "en": ""
+  },
+  {
+   "fr": "Aucune destination aujourd’hui : de nouvelles s’ouvrent demain à 4 h.",
+   "en": ""
+  },
+  {
+   "fr": "{0} : attends son retour{1}.",
+   "en": ""
+  },
+  {
+   "fr": "Tes {0} barques sont en mer",
+   "en": ""
+  },
+  {
+   "fr": "Ta barque est en mer",
+   "en": ""
+  },
+  {
+   "fr": ", ou monte la Tour du Noyau pour en armer une de plus",
+   "en": ""
+  },
+  {
+   "fr": "Tous les Porteurs travaillent ou sont partis : libère-en un d’un bâtiment pour l’envoyer.",
+   "en": ""
+  },
+  {
+   "fr": "{0} · niv. {1}",
+   "en": ""
+  },
+  {
+   "fr": "Mission de {0} heures vers {1} : {2}",
+   "en": ""
+  },
+  {
+   "fr": "Derniers rapports",
+   "en": ""
+  },
+  {
+   "fr": "+{0} minerai{1}{2}",
+   "en": ""
+  },
+  {
+   "fr": " · {0} carte{1}",
+   "en": ""
+  },
+  {
+   "fr": " · +{0} creuseur{1}",
+   "en": ""
+  },
+  {
+   "fr": "une carte de lignée au filon",
+   "en": ""
+  },
+  {
+   "fr": "selon les combats gagnés",
+   "en": ""
+  },
+  {
+   "fr": "ennemis {0}{1} %",
+   "en": ""
+  },
+  {
+   "fr": "{0} % de chances d’une carte",
+   "en": ""
+  },
+  {
+   "fr": "{0} cartes au choix, {1} au moins",
+   "en": ""
+  },
+  {
+   "fr": "1 carte assurée",
+   "en": ""
+  },
+  {
+   "fr": "filon ×{0}",
+   "en": ""
+  },
+  {
+   "fr": "{0} rangée{1} · {2}",
+   "en": ""
+  },
+  {
+   "fr": "FLÈCHE · DÉFI DU QUAI {0}",
+   "en": ""
+  },
+  {
+   "fr": "FLÈCHE · QUAI {0}",
+   "en": ""
+  },
+  {
+   "fr": "PILLAGE · {0}",
+   "en": ""
+  },
+  {
+   "fr": "ÉPREUVE · {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0}STRATE −{1} · {2}",
+   "en": ""
+  },
+  {
+   "fr": "Défi · quai {0}",
+   "en": ""
+  },
+  {
+   "fr": "Un seul combat contre l’escouade de {0}. Gagné, le quai est à toi ; perdu, ta montée ne bouge pas.",
+   "en": ""
+  },
+  {
+   "fr": "{0} % de chances avec cette escouade",
+   "en": ""
+  },
+  {
+   "fr": "Choisis 3 Porteurs",
+   "en": ""
+  },
+  {
+   "fr": "La Flèche · quai {0}",
+   "en": ""
+  },
+  {
+   "fr": "Un seul combat contre les gardiens des Hauts : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Pillage · {0}",
+   "en": ""
+  },
+  {
+   "fr": "Un seul combat contre sa garnison : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Palier de l’Épreuve",
+   "en": ""
+  },
+  {
+   "fr": "Fouille ciblée · {0}",
+   "en": ""
+  },
+  {
+   "fr": "Une descente courte, sans gardien : quelques salles, puis le filon.",
+   "en": ""
+  },
+  {
+   "fr": "Que cherches-tu ?",
+   "en": ""
+  },
+  {
+   "fr": "Ce que tu cherches",
+   "en": ""
+  },
+  {
+   "fr": "Difficulté",
+   "en": ""
+  },
+  {
+   "fr": "Difficulté de la fouille",
+   "en": ""
+  },
+  {
+   "fr": "Une carte à explorer salle par salle : combats, caches, rencontres, campement, puis le gardien : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Escouade imposée",
+   "en": ""
+  },
+  {
+   "fr": "{0} · PV {1}",
+   "en": ""
+  },
+  {
+   "fr": "{0} cartes de départ",
+   "en": ""
+  },
+  {
+   "fr": "Un exercice : niveau 1, cartes en fer, ni Usure ni poste quitté.",
+   "en": ""
+  },
+  {
+   "fr": "Imposée",
+   "en": ""
+  },
+  {
+   "fr": "prête",
+   "en": ""
+  },
+  {
+   "fr": "Tenter la Fêlée",
+   "en": ""
+  },
+  {
+   "fr": "Tenter l’Épreuve",
+   "en": ""
+  },
+  {
+   "fr": "Escouade qui part",
+   "en": ""
+  },
+  {
+   "fr": "Quelle escouade part ?",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade qui part",
+   "en": ""
+  },
+  {
+   "fr": "Modifier",
+   "en": ""
+  },
+  {
+   "fr": "À former",
+   "en": ""
+  },
+  {
+   "fr": "Porteurs qui partent",
+   "en": ""
+  },
+  {
+   "fr": "Place libre · compléter l’escouade",
+   "en": ""
+  },
+  {
+   "fr": "Fiche {0}",
+   "en": ""
+  },
+  {
+   "fr": "PV {0} → {1}",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} cartes",
+   "en": ""
+  },
+  {
+   "fr": "Le deck de l’escouade",
+   "en": ""
+  },
+  {
+   "fr": "Le deck · {0} cartes",
+   "en": ""
+  },
+  {
+   "fr": "Bien construire son deck",
+   "en": ""
+  },
+  {
+   "fr": "Fréquences du deck : {0}",
+   "en": ""
+  },
+  {
+   "fr": "Des chiffres qui se suivent font des Résonances{0}. Un chiffre absent coupe la suite{1}.",
+   "en": ""
+  },
+  {
+   "fr": ": ta plus longue suite va de",
+   "en": ""
+  },
+  {
+   "fr": " · {0} carte{1} ∗ comble{2} n’importe quel trou",
+   "en": ""
+  },
+  {
+   "fr": "Il manque {0} carte{1}",
+   "en": ""
+  },
+  {
+   "fr": "({0} au moins).",
+   "en": ""
+  },
+  {
+   "fr": "Confie des cartes à {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Choisis des Porteurs qui portent plus de cartes.",
+   "en": ""
+  },
+  {
+   "fr": "l’entraînement à la Tour",
+   "en": ""
+  },
+  {
+   "fr": "Au départ, {0} quitte{1} poste : {2} {3} sans Porteur jusqu’à ce que tu y remettes quelqu’un.",
+   "en": ""
+  },
+  {
+   "fr": "{0} à la Clinique",
+   "en": ""
+  },
+  {
+   "fr": "{0} et {1} se remettent",
+   "en": ""
+  },
+  {
+   "fr": "Il faut au moins un quart de {0} PV pour redescendre : encore {1} environ au rythme actuel. Poste une recrue Géné à la Clinique pour aller plus vite, ou {2}.",
+   "en": ""
+  },
+  {
+   "fr": "profite des premiers soins intensifs, offerts",
+   "en": ""
+  },
+  {
+   "fr": "Après l’expédition, chacun gagne de l’Usure : la Clinique la soigne pendant qu’il se repose.",
+   "en": ""
+  },
+  {
+   "fr": "Encore {0} Porteur{1}",
+   "en": ""
+  },
+  {
+   "fr": "{0} cartes · {1} au moins",
+   "en": ""
+  },
+  {
+   "fr": "{0} blessé{1} · au repos",
+   "en": ""
+  },
+  {
+   "fr": "{0} cartes, prêt",
+   "en": ""
+  }
+ ]
+}

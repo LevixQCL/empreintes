@@ -1,0 +1,17 @@
+{
+ "source": "src/net/duel.ts",
+ "entrees": [
+  {
+   "fr": "Aucun duel ne porte ce code.",
+   "en": ""
+  },
+  {
+   "fr": "C’est ton propre duel : partage le code à un ami.",
+   "en": ""
+  },
+  {
+   "fr": "Ce duel a déjà commencé.",
+   "en": ""
+  }
+ ]
+}

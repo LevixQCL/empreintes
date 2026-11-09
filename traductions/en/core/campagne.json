@@ -2,6 +2,10 @@
  "source": "src/core/campagne.ts",
  "entrees": [
   {
+   "fr": "Ysé",
+   "en": ""
+  },
+  {
    "fr": "Archiviste des Veilleurs",
    "en": "Archivist of the Watchers"
   },
@@ -14,8 +18,16 @@
    "en": "Brigades of the Oath of Veyr"
   },
   {
+   "fr": "Tobin",
+   "en": ""
+  },
+  {
    "fr": "Fouilleur des Veilleurs",
    "en": "Watchers’ Digger"
+  },
+  {
+   "fr": "Brac",
+   "en": ""
   },
   {
    "fr": "Pilleur de Strates",
@@ -40,6 +52,10 @@
   {
    "fr": "Acte III · Ceux d’avant",
    "en": "Act III · Those Who Came Before"
+  },
+  {
+   "fr": "Épilogue",
+   "en": ""
   },
   {
    "fr": "{0} · STRATE −{1}",

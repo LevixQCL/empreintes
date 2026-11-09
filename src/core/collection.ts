@@ -4,9 +4,10 @@
 import { carteId, gesteDeCarte, moduleDef, tirablesEn } from './donnees';
 import { tireur } from './rng';
 import type { GesteDef, Lignee, Rarete } from './types';
+import { t as tr } from './i18n';
 
 export const RARETES: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
-export const NOMS_RARETE: Record<Rarete, string> = { fer: 'Fer', cuivre: 'Cuivre', argent: 'Argent', or: 'Or', nacre: 'Nacre' };
+export const NOMS_RARETE: Record<Rarete, string> = { fer: tr('Fer'), cuivre: tr('Cuivre'), argent: tr('Argent'), or: 'Or', nacre: tr('Nacre') };
 
 export const COLLECTION = {
   /** chance qu'un combat normal fasse tomber une carte */
@@ -199,7 +200,7 @@ export function cartesEnJeu(porteurId: string, cartes: { id: string; niveau: num
  */
 export const PLACES_PORTEUR = 6;
 export function placesVides(porteurId: string, nb: number): GesteDef[] {
-  return Array.from({ length: Math.max(0, PLACES_PORTEUR - nb) }, () => ({ id: 'vide', porteur: porteurId, nom: 'Place vide', f: 0, type: 'atk', v: 0, vide: true }));
+  return Array.from({ length: Math.max(0, PLACES_PORTEUR - nb) }, () => ({ id: 'vide', porteur: porteurId, nom: tr('Place vide'), f: 0, type: 'atk', v: 0, vide: true }));
 }
 
 // ---------- Trier la collection (24 octobre 2026) ----------
@@ -220,10 +221,10 @@ export function puissanceCarte(cle: string, niveau: number): number {
 
 export type TriCartes = 'puissance' | 'metal' | 'niveau' | 'nouvelles';
 export const TRIS: { id: TriCartes; nom: string; texte: string }[] = [
-  { id: 'puissance', nom: 'Puissance', texte: 'La force de la carte à son niveau, ajustée de ses effets, de ses Fréquences et des places qu’elle prend' },
-  { id: 'metal', nom: 'Métal', texte: 'De la nacre au fer' },
-  { id: 'niveau', nom: 'Niveau', texte: 'Du plus haut au plus bas' },
-  { id: 'nouvelles', nom: 'Nouvelles', texte: 'Les cartes pas encore vues d’abord, puis par puissance' },
+  { id: 'puissance', nom: tr('Puissance'), texte: tr('La force de la carte à son niveau, ajustée de ses effets, de ses Fréquences et des places qu’elle prend') },
+  { id: 'metal', nom: tr('Métal'), texte: tr('De la nacre au fer') },
+  { id: 'niveau', nom: tr('Niveau'), texte: tr('Du plus haut au plus bas') },
+  { id: 'nouvelles', nom: tr('Nouvelles'), texte: tr('Les cartes pas encore vues d’abord, puis par puissance') },
 ];
 export const estTri = (t: unknown): t is TriCartes => TRIS.some((x) => x.id === t);
 

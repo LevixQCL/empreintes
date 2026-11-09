@@ -1,0 +1,69 @@
+{
+ "source": "src/app/actions/district.ts",
+ "entrees": [
+  {
+   "fr": "Ravitaillement : +{0} cristaux{1}.{2}",
+   "en": ""
+  },
+  {
+   "fr": ", un doublon {0}",
+   "en": ""
+  },
+  {
+   "fr": " Et une carte au choix !",
+   "en": ""
+  },
+  {
+   "fr": "{0} descend dans les Basses.",
+   "en": ""
+  },
+  {
+   "fr": "Le souvenir est gravé dans le journal de la carte.",
+   "en": ""
+  },
+  {
+   "fr": "{0} porte déjà {1} cartes : touche celle que {2} remplacera.",
+   "en": ""
+  },
+  {
+   "fr": "Le quai {0} vient d’être pris : défie son gardien, ou tiens un autre quai.",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade tient le quai {0}. Les Hauts te versent un gage tant qu’elle y reste ; toi, tu peux continuer de monter.",
+   "en": ""
+  },
+  {
+   "fr": "Gage du quai : +{0} cristaux{1}.",
+   "en": ""
+  },
+  {
+   "fr": ", +{0} Éclat{1}",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade quitte le quai {0}.{1}",
+   "en": ""
+  },
+  {
+   "fr": " Gage versé : +{0} cristaux{1}.",
+   "en": ""
+  },
+  {
+   "fr": ", +{0} Éclats",
+   "en": ""
+  },
+  {
+   "fr": "{0} est sous bouclier pour l’instant : choisis un autre district.",
+   "en": ""
+  },
+  {
+   "fr": "Impossible de joindre {0} pour l’instant : réessaie dans un moment.",
+   "en": ""
+  },
+  {
+   "fr": "Ysé glisse une carte entre les pages : {0} (Fer) rejoint tes Cartes.",
+   "en": ""
+  }
+ ]
+}

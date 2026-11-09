@@ -10,6 +10,7 @@ import { ajouterCarte, tirerCarte } from '../collection';
 import { jourDe, log, non, strateVaincue, type Jeu, type Resultat } from './etat';
 import { noterLien } from './vecu';
 import { COLIS_DOUBLES_JOURS } from './recompenses';
+import { t as tr } from '../i18n';
 
 /** Les paliers d'un filleul : ce qu'il a atteint en jouant, publié en ligne pour son parrain */
 export type PalierId = 'strate1' | 'strate3' | 'noyau3';
@@ -26,16 +27,16 @@ export const PARRAINAGE = {
   /** les recrues qui rapportent au parrain (au-delà, seules les distinctions continuent de compter) */
   recruesRecompensees: 5,
   paliers: [
-    { id: 'strate1', titre: 'Strate −1 vaincue', parrain: 'Un paquet de cristaux (≈ une journée de jeu)', filleul: '' },
-    { id: 'strate3', titre: 'Strate −3 atteinte', parrain: 'Une carte au choix, dont une d’argent', filleul: 'Une carte au choix, dont une d’argent' },
-    { id: 'noyau3', titre: 'Tour du Noyau niveau 3', parrain: 'La carte « Empreinte jumelle », à son nom', filleul: 'La carte « Empreinte jumelle », au nom du parrain' },
+    { id: 'strate1', titre: tr('Strate −1 vaincue'), parrain: tr('Un paquet de cristaux (≈ une journée de jeu)'), filleul: '' },
+    { id: 'strate3', titre: tr('Strate −3 atteinte'), parrain: tr('Une carte au choix, dont une d’argent'), filleul: tr('Une carte au choix, dont une d’argent') },
+    { id: 'noyau3', titre: tr('Tour du Noyau niveau 3'), parrain: tr('La carte « Empreinte jumelle », à son nom'), filleul: tr('La carte « Empreinte jumelle », au nom du parrain') },
   ] as { id: PalierId; titre: string; parrain: string; filleul: string }[],
   /** le palier « Strate −1 » : des composants et des Éclats */
   strate1: { composants: 150, eclats: 2 },
   /** une recrue est « active » quand elle a vaincu la Strate −1 : c'est ce qui compte pour les distinctions */
   distinctions: [
-    { id: 'dos-partage', recrues: 3, nom: 'Dos « Empreinte partagée »', gain: 'le dos de carte « Empreinte partagée »', texte: 'Le dos de tes cartes, quand elles se révèlent : deux empreintes qui se répondent, dans l’or.' },
-    { id: 'recruteur', recrues: 5, nom: 'Titre « Recruteur »', gain: 'le titre « Recruteur »', texte: 'À côté de ton pseudo, sur le Grand Tableau.' },
+    { id: 'dos-partage', recrues: 3, nom: tr('Dos « Empreinte partagée »'), gain: tr('le dos de carte « Empreinte partagée »'), texte: tr('Le dos de tes cartes, quand elles se révèlent : deux empreintes qui se répondent, dans l’or.') },
+    { id: 'recruteur', recrues: 5, nom: tr('Titre « Recruteur »'), gain: tr('le titre « Recruteur »'), texte: tr('À côté de ton pseudo, sur le Grand Tableau.') },
   ] as { id: Cosmetique; recrues: number; nom: string; gain: string; texte: string }[],
 } as const;
 
@@ -93,13 +94,13 @@ export function peutEtreParraine(j: Jeu): boolean {
  * Une carte au choix (au moins du cuivre), des composants, et ses colis de Ravitaillement doublés pendant 3 jours.
  */
 export function devenirFilleul(j: Jeu, parrain: { uid: string; code: string; nom: string }, now: number): Resultat {
-  if (!peutEtreParraine(j)) return non(j.parrainage?.parrain ? 'Tu as déjà un parrain.' : 'Le parrainage, c’est pour les débuts : ton district est déjà trop avancé.');
+  if (!peutEtreParraine(j)) return non(j.parrainage?.parrain ? tr('Tu as déjà un parrain.') : tr('Le parrainage, c’est pour les débuts : ton district est déjà trop avancé.'));
   const e = etatParrainage(j);
-  if (e.code && e.code === parrain.code) return non('C’est ton propre code.');
+  if (e.code && e.code === parrain.code) return non(tr('C’est ton propre code.'));
   e.parrain = { ...parrain, jour: jourDe(now) };
   j.energie += PARRAINAGE.depart.composants;
   j.choix.push({ source: 'parrainage', options: choixDeCartes(j, 'cuivre') });
-  log(j, `Recommandé par ${parrain.nom} : +${PARRAINAGE.depart.composants} cristaux, une carte au choix, et des colis doublés pendant ${PARRAINAGE.depart.joursColisDoubles} jours.`);
+  log(j, tr`Recommandé par ${parrain.nom} : +${PARRAINAGE.depart.composants} cristaux, une carte au choix, et des colis doublés pendant ${PARRAINAGE.depart.joursColisDoubles} jours.`);
   return { ok: true };
 }
 
@@ -162,10 +163,10 @@ export function recompenserFilleul(j: Jeu): string[] {
     e.recus.push(id);
     if (id === 'strate3') {
       j.choix.push({ source: 'parrainage', options: choixDeCartes(j, 'argent') });
-      nouvelles.push(`Parrainage : la Strate −3 est atteinte, une carte au choix t’attend. ${p.nom} reçoit la sienne.`);
+      nouvelles.push(tr`Parrainage : la Strate −3 est atteinte, une carte au choix t’attend. ${p.nom} reçoit la sienne.`);
     } else if (id === 'noyau3') {
       donnerCarteLiee(j, p.nom);
-      nouvelles.push(`Parrainage : la carte « ${moduleDef(PARRAINAGE_CARTE).nom} » rejoint ta collection, liée à ${p.nom}.`);
+      nouvelles.push(tr`Parrainage : la carte « ${moduleDef(PARRAINAGE_CARTE).nom} » rejoint ta collection, liée à ${p.nom}.`);
     }
   }
   for (const t of nouvelles) log(j, t);
@@ -200,13 +201,13 @@ export function reclamerRecrues(j: Jeu, recrues: Recrue[]): string[] {
       if (id === 'strate1') {
         j.energie += PARRAINAGE.strate1.composants;
         j.eclats += PARRAINAGE.strate1.eclats;
-        nouvelles.push(`${r.nom} a vaincu la Strate −1 : +${PARRAINAGE.strate1.composants} cristaux et +${PARRAINAGE.strate1.eclats} Éclats.`);
+        nouvelles.push(tr`${r.nom} a vaincu la Strate −1 : +${PARRAINAGE.strate1.composants} cristaux et +${PARRAINAGE.strate1.eclats} Éclats.`);
       } else if (id === 'strate3') {
         j.choix.push({ source: 'parrainage', options: choixDeCartes(j, 'argent') });
-        nouvelles.push(`${r.nom} a atteint la Strate −3 : une carte au choix t’attend.`);
+        nouvelles.push(tr`${r.nom} a atteint la Strate −3 : une carte au choix t’attend.`);
       } else {
         donnerCarteLiee(j, r.nom);
-        nouvelles.push(`${r.nom} a monté sa Tour du Noyau au niveau 3 : la carte « ${moduleDef(PARRAINAGE_CARTE).nom} » rejoint ta collection.`);
+        nouvelles.push(tr`${r.nom} a monté sa Tour du Noyau au niveau 3 : la carte « ${moduleDef(PARRAINAGE_CARTE).nom} » rejoint ta collection.`);
       }
     }
     e.reclames[r.uid] = [...faits, ...neufs];
@@ -215,7 +216,7 @@ export function reclamerRecrues(j: Jeu, recrues: Recrue[]): string[] {
   for (const d of PARRAINAGE.distinctions) {
     if (actives >= d.recrues && !e.cosmetiques.includes(d.id)) {
       e.cosmetiques.push(d.id);
-      nouvelles.push(`${actives} recrues actives : tu gagnes ${d.gain}.`);
+      nouvelles.push(tr`${actives} recrues actives : tu gagnes ${d.gain}.`);
     }
   }
   for (const t of nouvelles) log(j, t);

@@ -150,6 +150,10 @@
    "en": "Among the Orsève, an heir’s graft is called the Bestowal. On their sixteenth birthday they receive an ancestor’s recorded imprint, and their name is engraved beneath the previous bearer’s on the crystal’s case. Aurel received his great-grandmother’s: the copy of a winged being, already carried three times."
   },
   {
+   "fr": "Liane",
+   "en": ""
+  },
+  {
    "fr": "Sa cousine Liane avait tenté l’Accord avant lui. La pierre était morte dans la nuit. Liane a été envoyée « étudier ailleurs », et son nom ne figure plus dans aucun registre. Aurel avait dix ans. Il ne l’a jamais revue.",
    "en": "His cousin Liane had tried the Accord before him. The stone died in the night. Liane was sent away “to study elsewhere,” and her name no longer appears in any register. Aurel was ten. He never saw her again."
   },
@@ -318,20 +322,12 @@
    "en": "Thirty-five, a mechanical genius of the Mending Network. He jailbreaks the implants of half the neighborhood in a workshop where nothing is tidy and everything is exactly where it should be."
   },
   {
-   "fr": "Si ça a une vis, ça a une seconde chance.",
-   "en": "If it’s got a screw, it’s got a second chance."
-  },
-  {
    "fr": "Éclaireuse génée",
    "en": "Spliced Scout"
   },
   {
    "fr": "Vingt ans, modifiée dès l’enfance pour les fouilles de nuit : elle voit dans le noir comme en plein jour et déteste les lumières fortes. Elle parle peu, observe tout, et travaille pour les Veilleurs de Sédime.",
    "en": "Twenty, modified as a child for night digs: she sees in the dark as if it were noon, and can’t stand bright light. She says little, watches everything, and works for the Watchers of Sédime."
-  },
-  {
-   "fr": "Le noir n’est pas vide. Il attend juste qu’on regarde mieux.",
-   "en": "The dark isn’t empty. It’s waiting for you to look properly."
   },
   {
    "fr": "L’héritier en fuite",
@@ -342,10 +338,6 @@
    "en": "Twenty-two, a young heir of House Orsève. He dyes his golden streak and lives incognito in the district, convinced his imprint makes him harder than he wants to be. His family is searching for him."
   },
   {
-   "fr": "Mon ombre a de meilleures manières que moi. C’est bien ça, le problème.",
-   "en": "My shadow has better manners than I do. That is precisely the problem."
-  },
-  {
    "fr": "La Refusée des Hauts",
    "en": "The Refused of the Heights"
   },
@@ -354,16 +346,12 @@
    "en": "Twenty-eight, Aurel’s cousin, struck from the registers of House Orsève the day her stone died. The golden streak never came; she chose implants instead, one by one, and her hair is nearly white. She knows the Heights from the inside, and the districts better than the Heights ever will."
   },
   {
-   "fr": "Ils m’ont refusé la mèche d’or. J’ai fait pousser autre chose.",
-   "en": "They refused me the golden streak. So I grew something else."
+   "fr": "Née-de-mue",
+   "en": ""
   },
   {
    "fr": "Vingt-quatre ans, née avec une plaque de chitine à l’épaule et des yeux qui brillent la nuit, héritage de la Mue de ses parents. Plongeuse aux pompes, porte-parole discrète des Nés-de-mue du district.",
    "en": "Twenty-four, born with a plate of chitin on her shoulder and eyes that shine in the dark, her parents’ Molt passed down. Pump diver, and the quiet voice of the district’s Moltborn."
-  },
-  {
-   "fr": "On n’a rien choisi. Mais on est les seuls à pouvoir dire ce que ça fait.",
-   "en": "We didn’t choose any of it. But we’re the only ones who can tell you what it’s like."
   },
   {
    "fr": "Le Résonant de l’Accord ouvert",
@@ -372,10 +360,6 @@
   {
    "fr": "Dix-neuf ans, ancien apprenti teinturier de mèches. La Clinique du district lui a donné sa pierre lors d’un Accord ouvert, et le quartier entier a veillé sa Nuit blanche. Il porte sa mèche d’or sans la teindre, et il en est fier.",
    "en": "Nineteen, a former apprentice streak-dyer. The district Clinic gave him his stone at an open Accord, and the whole neighborhood sat up with him through his White Night. He wears his golden streak undyed, and proudly."
-  },
-  {
-   "fr": "J’ai passé des années à cacher l’or des autres. Le mien, je le laisse briller.",
-   "en": "Spent years hiding other people’s gold. Mine, I let shine."
   },
   {
    "fr": "Recrue augmentée",

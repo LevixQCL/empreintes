@@ -1,0 +1,37 @@
+{
+ "source": "src/ui/cercle-duel.ts",
+ "entrees": [
+  {
+   "fr": "Duel",
+   "en": ""
+  },
+  {
+   "fr": "Cercle des quais · {0}",
+   "en": ""
+  },
+  {
+   "fr": "à armes égales",
+   "en": ""
+  },
+  {
+   "fr": "Défi envoyé",
+   "en": ""
+  },
+  {
+   "fr": "{0} le reçoit sur son Cercle. Le duel commence dès qu’il l’accepte : {1} secondes par tour, les deux chaînes partent en même temps.",
+   "en": ""
+  },
+  {
+   "fr": "Code du duel",
+   "en": ""
+  },
+  {
+   "fr": "Il peut aussi le rejoindre avec ce code.",
+   "en": ""
+  },
+  {
+   "fr": "Annuler le défi",
+   "en": ""
+  }
+ ]
+}

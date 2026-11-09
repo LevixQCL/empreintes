@@ -1,0 +1,61 @@
+{
+ "source": "src/ui/installer.ts",
+ "entrees": [
+  {
+   "fr": "(display-mode: standalone)",
+   "en": ""
+  },
+  {
+   "fr": "Installer Ossyra",
+   "en": ""
+  },
+  {
+   "fr": "Le jeu s'ouvrira depuis ton écran d'accueil, en plein écran, comme une application.",
+   "en": ""
+  },
+  {
+   "fr": "Touche {0}",
+   "en": ""
+  },
+  {
+   "fr": "Partager",
+   "en": ""
+  },
+  {
+   "fr": ", en bas de Safari.",
+   "en": ""
+  },
+  {
+   "fr": "Choisis",
+   "en": ""
+  },
+  {
+   "fr": "« Sur l'écran d'accueil »",
+   "en": ""
+  },
+  {
+   "fr": ", puis",
+   "en": ""
+  },
+  {
+   "fr": "Touche",
+   "en": ""
+  },
+  {
+   "fr": ", en haut à droite du navigateur.",
+   "en": ""
+  },
+  {
+   "fr": "« Ajouter à l'écran d'accueil »",
+   "en": ""
+  },
+  {
+   "fr": "« Installer l'application »",
+   "en": ""
+  },
+  {
+   "fr": "Compris",
+   "en": ""
+  }
+ ]
+}

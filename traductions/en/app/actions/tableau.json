@@ -1,0 +1,37 @@
+{
+ "source": "src/app/actions/tableau.ts",
+ "entrees": [
+  {
+   "fr": "De 3 à 18 caractères : lettres (alphabet latin), chiffres, espaces, points, tirets.",
+   "en": ""
+  },
+  {
+   "fr": "Ce pseudo n’est pas accepté. Choisis-en un autre.",
+   "en": ""
+  },
+  {
+   "fr": "Un changement de pseudo par semaine : le prochain est possible le {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Ce pseudo est déjà pris par un autre directeur.",
+   "en": ""
+  },
+  {
+   "fr": "Impossible de réserver ce pseudo pour l’instant ({0}).",
+   "en": ""
+  },
+  {
+   "fr": "réseau",
+   "en": ""
+  },
+  {
+   "fr": "Bienvenue, {0} : c’est ce nom que verront les autres joueurs.",
+   "en": ""
+  },
+  {
+   "fr": "Impossible de te retirer pour l’instant. Réessaie dans un instant.",
+   "en": ""
+  }
+ ]
+}

@@ -11,6 +11,7 @@ import type { Amitie, Defi, Profil, Proposition } from '../net/cercle';
 import { app, D } from './etat';
 import { afficher } from './rendu';
 import { sauver } from './synchro';
+import { t } from '../core/i18n';
 
 /** L'état du Cercle, partagé avec l'écran (D.cercle) */
 export const C: CercleEcran = cercleVide();
@@ -38,7 +39,7 @@ function annoncer(sorte: 'amis' | 'defis' | 'echanges', l: { id: string; texte: 
   for (const x of l) vus.add(x.id);
   if (!charges.has(sorte)) { charges.add(sorte); return; }
   if (!nouveaux.length) return;
-  D.message = nouveaux.length > 1 ? `${nouveaux.length} nouvelles demandes t’attendent au Cercle des quais.` : nouveaux[0]!.texte;
+  D.message = nouveaux.length > 1 ? t`${nouveaux.length} nouvelles demandes t’attendent au Cercle des quais.` : nouveaux[0]!.texte;
 }
 
 function compter() {
@@ -50,7 +51,7 @@ function compter() {
 function erreur(e: unknown) {
   const code = (e as { code?: string })?.code;
   C.reseau = 'erreur';
-  C.erreur = code === 'permission-denied' ? 'Le Cercle n’est pas encore ouvert en ligne (les règles du serveur attendent leur mise à jour).' : 'Le Cercle ne répond pas pour l’instant.';
+  C.erreur = code === 'permission-denied' ? t('Le Cercle n’est pas encore ouvert en ligne (les règles du serveur attendent leur mise à jour).') : t('Le Cercle ne répond pas pour l’instant.');
   redessiner();
 }
 
@@ -73,7 +74,7 @@ export async function suivreCercle(force = false) {
     const b = n.ecouterEchanges(uid, (env, rec) => { majEchanges(uid, env, rec); }, erreur);
     const c = n.ecouterDefis(uid, (env, rec) => {
       C.defisEnvoyes = env; C.defisRecus = rec;
-      annoncer('defis', rec.filter((d) => d.etat === 'envoye').map((d) => ({ id: d.id, texte: `${d.nomDe} te défie en duel${d.mode === 'egal' ? ' à armes égales' : ''} : rendez-vous au Cercle.` })));
+      annoncer('defis', rec.filter((d) => d.etat === 'envoye').map((d) => ({ id: d.id, texte: t`${d.nomDe} te défie en duel${d.mode === 'egal' ? t(' à armes égales') : ''} : rendez-vous au Cercle.` })));
       compter(); redessiner();
     }, erreur);
     ecoute = { uid, arreter: () => { a(); b(); c(); } };
@@ -100,7 +101,7 @@ async function majAmis(uid: string) {
     return { amitie: a.id, uid: lui, nom: a.de === uid ? a.nomA : a.nomDe, depuis: a.depuis ?? a.le, ...(profils.get(lui) ? { profil: profils.get(lui)! } : {}) };
   });
   C.amis = amis;
-  annoncer('amis', C.demandes.filter((d) => d.recue).map((d) => ({ id: d.amitie, texte: `${d.nom} veut devenir ton ami au Cercle des quais.` })));
+  annoncer('amis', C.demandes.filter((d) => d.recue).map((d) => ({ id: d.amitie, texte: t`${d.nom} veut devenir ton ami au Cercle des quais.` })));
   compter();
   redessiner();
   // les vitrines des amis : relues à chaque changement de la liste (une lecture par ami)
@@ -132,7 +133,7 @@ export async function relireVitrines() {
 async function majEchanges(uid: string, envoyees: Proposition[], recues: Proposition[]) {
   C.recues = recues;
   C.envoyees = envoyees;
-  annoncer('echanges', recues.filter((p) => p.etat === 'propose').map((p) => ({ id: p.id, texte: `${p.nomDe} te propose un échange de cartes au Cercle.` })));
+  annoncer('echanges', recues.filter((p) => p.etat === 'propose').map((p) => ({ id: p.id, texte: t`${p.nomDe} te propose un échange de cartes au Cercle.` })));
   compter();
   const j = app.jeu;
   const n = await reseau();
@@ -142,10 +143,10 @@ async function majEchanges(uid: string, envoyees: Proposition[], recues: Proposi
     const attend = J.etatCercle(j).enAttente.some((e) => e.id === p.id);
     if (attend && p.etat === 'accepte') {
       const r = J.conclureEchange(j, p.id);
-      if (r) { change = true; D.message = `${r.nomAmi} a accepté : ${moduleDef(r.recue).nom} rejoint ta collection${r.nouvelle ? ' (nouvelle carte !)' : ''}.`; }
+      if (r) { change = true; D.message = t`${r.nomAmi} a accepté : ${moduleDef(r.recue).nom} rejoint ta collection${r.nouvelle ? t(' (nouvelle carte !)') : ''}.`; }
     } else if (attend) {
       const r = J.rendreEchange(j, p.id, Date.now());
-      if (r) { change = true; D.message = p.etat === 'refuse' ? `${r.nomAmi} a refusé : ta carte et tes cristaux te reviennent.` : 'Ta proposition est reprise : ta carte te revient.'; }
+      if (r) { change = true; D.message = p.etat === 'refuse' ? t`${r.nomAmi} a refusé : ta carte et tes cristaux te reviennent.` : t('Ta proposition est reprise : ta carte te revient.'); }
     }
     if (p.de === uid && p.etat !== 'accepte') n.effacerProposition(p.id).catch(() => {});
   }
@@ -202,7 +203,7 @@ const occuper = async <T>(f: () => Promise<T>): Promise<T | null> => {
   C.occupe = true; C.message = ''; afficher();
   try { return await f(); } catch (e) {
     const code = (e as { code?: string })?.code;
-    C.message = code === 'permission-denied' ? 'Le serveur a refusé : les règles du Cercle ne sont peut-être pas encore publiées.' : 'Le Cercle ne répond pas. Réessaie dans un instant.';
+    C.message = code === 'permission-denied' ? t('Le serveur a refusé : les règles du Cercle ne sont peut-être pas encore publiées.') : t('Le Cercle ne répond pas. Réessaie dans un instant.');
     return null;
   } finally { C.occupe = false; }
 };
@@ -214,20 +215,20 @@ export async function ajouterAmi(nom: string) {
   const cle = clePseudo(nom);
   if (!uid || !moi) return;
   // 8 novembre 2026 : une demande porte ton pseudo réservé (firestore.rules), pas un nom libre
-  if (!app.jeu.directeur?.public) { C.message = 'Choisis d’abord ton pseudo de directeur (Grand Tableau) : c’est sous ce nom que tes amis te verront.'; return; }
-  if (!/^[a-z0-9]{3,24}$/.test(cle)) { C.message = 'Ce nom de directeur n’est pas valide.'; return; }
-  if (cle === clePseudo(moi)) { C.message = 'C’est ton propre nom.'; return; }
+  if (!app.jeu.directeur?.public) { C.message = t('Choisis d’abord ton pseudo de directeur (Grand Tableau) : c’est sous ce nom que tes amis te verront.'); return; }
+  if (!/^[a-z0-9]{3,24}$/.test(cle)) { C.message = t('Ce nom de directeur n’est pas valide.'); return; }
+  if (cle === clePseudo(moi)) { C.message = t('C’est ton propre nom.'); return; }
   await occuper(async () => {
     const n = await reseau();
     const lui = await n.trouverParPseudo(cle);
-    if (!lui) { C.message = `Aucun directeur ne s’appelle « ${nom} ».`; return; }
+    if (!lui) { C.message = t`Aucun directeur ne s’appelle « ${nom} ».`; return; }
     const r = await n.demanderAmi(uid, moi, lui.uid, lui.nom);
-    C.message = r === 'acceptee' ? `${lui.nom} et toi êtes maintenant amis.` : r === 'deja' ? `Une demande est déjà en cours avec ${lui.nom}, ou vous êtes déjà amis.` : `Invitation envoyée à ${lui.nom}.`;
+    C.message = r === 'acceptee' ? t`${lui.nom} et toi êtes maintenant amis.` : r === 'deja' ? t`Une demande est déjà en cours avec ${lui.nom}, ou vous êtes déjà amis.` : t`Invitation envoyée à ${lui.nom}.`;
   });
 }
 
 export async function accepterAmi(id: string) {
-  await occuper(async () => { await (await reseau()).accepterAmi(id); C.message = 'Nouvel ami au Cercle.'; });
+  await occuper(async () => { await (await reseau()).accepterAmi(id); C.message = t('Nouvel ami au Cercle.'); });
 }
 
 export async function retirerAmi(id: string) {
@@ -258,15 +259,15 @@ export async function proposerEchange() {
 export async function accepterProposition(id: string) {
   const p = C.recues.find((x) => x.id === id);
   const a = C.amis.find((y) => y.uid === p?.de);
-  if (!p || !a) { C.message = 'Cette proposition vient d’un directeur qui n’est plus ton ami.'; return; }
+  if (!p || !a) { C.message = t('Cette proposition vient d’un directeur qui n’est plus ton ami.'); return; }
   const j = app.jeu;
   const v = J.verifierAcceptation(j, p.demande, p.donne, a.depuis, Date.now());
   if (!v.ok) { C.message = v.message ?? ''; return; }
   await occuper(async () => {
     const fait = await (await reseau()).repondre(id, 'accepte');
-    if (!fait) { C.message = 'Cette proposition n’est plus valable.'; return; }
+    if (!fait) { C.message = t('Cette proposition n’est plus valable.'); return; }
     const r = J.accepterEchange(j, id, p.demande, p.donne, a.depuis, Date.now());
-    C.message = r.ok ? `Échange conclu avec ${p.nomDe} : ${moduleDef(p.donne).nom} rejoint ta collection${r.nouvelle ? ' (nouvelle carte !)' : ''}.` : r.message ?? '';
+    C.message = r.ok ? t`Échange conclu avec ${p.nomDe} : ${moduleDef(p.donne).nom} rejoint ta collection${r.nouvelle ? t(' (nouvelle carte !)') : ''}.` : r.message ?? '';
     sauver();
     publierVitrine();
   });
@@ -282,7 +283,7 @@ export async function annulerProposition(id: string) {
     const n = await reseau();
     const fait = await n.repondre(id, 'annule');
     // déjà acceptée entre-temps : l'écoute la conclura ; sinon la carte revient tout de suite
-    if (fait && J.rendreEchange(app.jeu, id, Date.now())) { C.message = 'Ta carte te revient.'; sauver(); publierVitrine(); n.effacerProposition(id).catch(() => {}); }
+    if (fait && J.rendreEchange(app.jeu, id, Date.now())) { C.message = t('Ta carte te revient.'); sauver(); publierVitrine(); n.effacerProposition(id).catch(() => {}); }
   });
 }
 

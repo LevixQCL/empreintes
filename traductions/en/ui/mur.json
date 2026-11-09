@@ -1,0 +1,73 @@
+{
+ "source": "src/ui/mur.ts",
+ "entrees": [
+  {
+   "fr": "Là depuis ton arrivée",
+   "en": ""
+  },
+  {
+   "fr": "Venue par le bouche-à-oreille",
+   "en": ""
+  },
+  {
+   "fr": "Ramenée des Basses · {0}",
+   "en": ""
+  },
+  {
+   "fr": "Ramenée des Basses",
+   "en": ""
+  },
+  {
+   "fr": "Chaque famille qui te suit pose sa main sur le mur des habitations. Touche une famille pour lire son souvenir.",
+   "en": ""
+  },
+  {
+   "fr": "Bouche-à-oreille : {0} sur {1}",
+   "en": ""
+  },
+  {
+   "fr": "On parle de toi au quartier",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} : une famille de plus",
+   "en": ""
+  },
+  {
+   "fr": ", souvenir confié",
+   "en": ""
+  },
+  {
+   "fr": "Une famille qui ne te suit pas encore",
+   "en": ""
+  },
+  {
+   "fr": "Basses",
+   "en": ""
+  },
+  {
+   "fr": "Quartier",
+   "en": ""
+  },
+  {
+   "fr": "Ce souvenir est gravé dans",
+   "en": ""
+  },
+  {
+   "fr": "Confier ce souvenir à une carte",
+   "en": ""
+  },
+  {
+   "fr": "Une seule carte, pour toujours : une ligne de plus dans son journal, rien de plus en combat. Seules les cartes au palier {0} de leur empreinte ou plus en sont dignes.",
+   "en": ""
+  },
+  {
+   "fr": "{0} autre{1} carte{2} digne{3}",
+   "en": ""
+  },
+  {
+   "fr": "Aucune de tes cartes n’a encore atteint le palier {0}. Descends avec elles : le souvenir attendra.",
+   "en": ""
+  }
+ ]
+}

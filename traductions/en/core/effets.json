@@ -1,0 +1,329 @@
+{
+ "source": "src/core/effets.ts",
+ "entrees": [
+  {
+   "fr": "Siphon",
+   "en": ""
+  },
+  {
+   "fr": "Surcharge",
+   "en": ""
+  },
+  {
+   "fr": "Troubler",
+   "en": ""
+  },
+  {
+   "fr": "Crescendo",
+   "en": ""
+  },
+  {
+   "fr": "Accord",
+   "en": ""
+  },
+  {
+   "fr": "Vague",
+   "en": ""
+  },
+  {
+   "fr": "Riposte",
+   "en": ""
+  },
+  {
+   "fr": "Diapason",
+   "en": ""
+  },
+  {
+   "fr": "Unisson",
+   "en": ""
+  },
+  {
+   "fr": "Lecture",
+   "en": ""
+  },
+  {
+   "fr": "Faille",
+   "en": ""
+  },
+  {
+   "fr": "Débord",
+   "en": ""
+  },
+  {
+   "fr": "Rapt",
+   "en": ""
+  },
+  {
+   "fr": "Plan",
+   "en": ""
+  },
+  {
+   "fr": "Secours",
+   "en": ""
+  },
+  {
+   "fr": "Relève",
+   "en": ""
+  },
+  {
+   "fr": "Amorce",
+   "en": ""
+  },
+  {
+   "fr": "Servo",
+   "en": ""
+  },
+  {
+   "fr": "Contrepoint",
+   "en": ""
+  },
+  {
+   "fr": "Ignore le bouclier et le blindage de l’ennemi.",
+   "en": ""
+  },
+  {
+   "fr": "Le Porteur qui la joue récupère {0} des dégâts infligés.",
+   "en": ""
+  },
+  {
+   "fr": "Remplit le Flux (+{0}).",
+   "en": ""
+  },
+  {
+   "fr": "L’attaque annoncée par l’ennemi visé perd {0} de sa force.",
+   "en": ""
+  },
+  {
+   "fr": "L’ennemi subit {0} de dégâts en plus, ce tour-ci et le suivant.",
+   "en": ""
+  },
+  {
+   "fr": "+1 place dans la chaîne au tour suivant.",
+   "en": ""
+  },
+  {
+   "fr": "+{0} de force pour chaque carte posée avant elle.",
+   "en": ""
+  },
+  {
+   "fr": "Fréquence libre : prolonge toujours la suite.",
+   "en": ""
+  },
+  {
+   "fr": "Soigne toute l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Garde {0} du bouclier d’escouade restant pour le tour suivant.",
+   "en": ""
+  },
+  {
+   "fr": "Après son bouclier, frappe de {0} du bouclier d’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Prend {0} Flux au plus : +{1} de force par Flux pris ; le reste est gardé.",
+   "en": ""
+  },
+  {
+   "fr": "Vide le Flux : +{0} de force par Flux vidé.{1}",
+   "en": ""
+  },
+  {
+   "fr": " S’il était déjà vide, le remplit (+{0}).",
+   "en": ""
+  },
+  {
+   "fr": "Fréquence libre : reprend celle de la carte posée juste avant.",
+   "en": ""
+  },
+  {
+   "fr": "+{0} de force pour chaque autre carte de la même Fréquence dans la chaîne.",
+   "en": ""
+  },
+  {
+   "fr": "+{0} de force si l’ennemi visé est fissuré ou à moins de la moitié de ses PV.",
+   "en": ""
+  },
+  {
+   "fr": "Brise la Fêlure de l’ennemi visé, quelle que soit sa Fréquence.",
+   "en": ""
+  },
+  {
+   "fr": "+{0} de force si la Fêlure de l’ennemi visé est brisée.",
+   "en": ""
+  },
+  {
+   "fr": "Frappe une seconde fois si la chaîne compte au moins 4 cartes.",
+   "en": ""
+  },
+  {
+   "fr": "Soigne toute l’escouade ; le soin en trop devient du bouclier d’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Arrache tout le bouclier de l’ennemi visé et le donne à l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "La carte la plus forte de la chaîne revient en tête de pioche.",
+   "en": ""
+  },
+  {
+   "fr": "Le Porteur brûle {0} de ses PV max (sans tomber) : +{1} de force.",
+   "en": ""
+  },
+  {
+   "fr": "Copie l’effet de la carte posée juste avant ; s’il n’y en a pas, +{0} de force.",
+   "en": ""
+  },
+  {
+   "fr": "Relève un Porteur à terre avec tout le soin ; sinon, soigne normalement.",
+   "en": ""
+  },
+  {
+   "fr": "Au tour suivant, ta main compte une carte de plus.",
+   "en": ""
+  },
+  {
+   "fr": "Brise tout le bouclier de l’ennemi visé avant de frapper.",
+   "en": ""
+  },
+  {
+   "fr": "+{0} de force pour chaque Porteur à terre.",
+   "en": ""
+  },
+  {
+   "fr": "L’ennemi visé perd {0} de ce qu’il prépare : attaque, bouclier ou soin.",
+   "en": ""
+  },
+  {
+   "fr": "La carte posée juste après elle gagne +{0} de force.",
+   "en": ""
+  },
+  {
+   "fr": "Une carte lourde de la chaîne ne prend qu’une place.",
+   "en": ""
+  },
+  {
+   "fr": "Dans une suite qui résonne : +{0} de force pour chaque autre lignée de la suite.",
+   "en": ""
+  },
+  {
+   "fr": "Après le coup, l’ennemi visé tombe s’il lui reste moins de {0} de ses PV (jamais un gardien).",
+   "en": ""
+  },
+  {
+   "fr": "Au tour ennemi qui suit, aucun Porteur ne tombe : le coup fatal le laisse à 1 PV.",
+   "en": ""
+  },
+  {
+   "fr": "Flux +{0}",
+   "en": ""
+  },
+  {
+   "fr": "−{0} ennemi",
+   "en": ""
+  },
+  {
+   "fr": "+{0} dégâts",
+   "en": ""
+  },
+  {
+   "fr": "+{0} / carte",
+   "en": ""
+  },
+  {
+   "fr": "Fréquence libre",
+   "en": ""
+  },
+  {
+   "fr": "frappe {0} du bouclier",
+   "en": ""
+  },
+  {
+   "fr": "+{0}, {1} Flux",
+   "en": ""
+  },
+  {
+   "fr": "+{0} / Flux, recharge",
+   "en": ""
+  },
+  {
+   "fr": "+{0} / Flux vidé",
+   "en": ""
+  },
+  {
+   "fr": "Fréq. d’avant",
+   "en": ""
+  },
+  {
+   "fr": "+{0} / pareille",
+   "en": ""
+  },
+  {
+   "fr": "+{0} proie blessée",
+   "en": ""
+  },
+  {
+   "fr": "brise la Fêlure",
+   "en": ""
+  },
+  {
+   "fr": "+{0} si Fêlure",
+   "en": ""
+  },
+  {
+   "fr": "×2 dès 4 cartes",
+   "en": ""
+  },
+  {
+   "fr": "tous, trop → bouclier",
+   "en": ""
+  },
+  {
+   "fr": "vole le bouclier",
+   "en": ""
+  },
+  {
+   "fr": "repioche la + forte",
+   "en": ""
+  },
+  {
+   "fr": "copie l’effet",
+   "en": ""
+  },
+  {
+   "fr": "+1 carte au tour suivant",
+   "en": ""
+  },
+  {
+   "fr": "brise le bouclier",
+   "en": ""
+  },
+  {
+   "fr": "+{0} / Porteur à terre",
+   "en": ""
+  },
+  {
+   "fr": "−{0} intention",
+   "en": ""
+  },
+  {
+   "fr": "+{0} suivante",
+   "en": ""
+  },
+  {
+   "fr": "lourde = 1 place",
+   "en": ""
+  },
+  {
+   "fr": "+{0} / lignée",
+   "en": ""
+  },
+  {
+   "fr": "achève sous {0}",
+   "en": ""
+  }
+ ]
+}

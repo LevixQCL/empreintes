@@ -1,0 +1,105 @@
+{
+ "source": "src/app/cercle.ts",
+ "entrees": [
+  {
+   "fr": "{0} nouvelles demandes t’attendent au Cercle des quais.",
+   "en": ""
+  },
+  {
+   "fr": "Le Cercle n’est pas encore ouvert en ligne (les règles du serveur attendent leur mise à jour).",
+   "en": ""
+  },
+  {
+   "fr": "Le Cercle ne répond pas pour l’instant.",
+   "en": ""
+  },
+  {
+   "fr": "{0} te défie en duel{1} : rendez-vous au Cercle.",
+   "en": ""
+  },
+  {
+   "fr": " à armes égales",
+   "en": ""
+  },
+  {
+   "fr": "{0} veut devenir ton ami au Cercle des quais.",
+   "en": ""
+  },
+  {
+   "fr": "{0} te propose un échange de cartes au Cercle.",
+   "en": ""
+  },
+  {
+   "fr": "{0} a accepté : {1} rejoint ta collection{2}.",
+   "en": ""
+  },
+  {
+   "fr": " (nouvelle carte !)",
+   "en": ""
+  },
+  {
+   "fr": "{0} a refusé : ta carte et tes cristaux te reviennent.",
+   "en": ""
+  },
+  {
+   "fr": "Ta proposition est reprise : ta carte te revient.",
+   "en": ""
+  },
+  {
+   "fr": "Le serveur a refusé : les règles du Cercle ne sont peut-être pas encore publiées.",
+   "en": ""
+  },
+  {
+   "fr": "Le Cercle ne répond pas. Réessaie dans un instant.",
+   "en": ""
+  },
+  {
+   "fr": "Choisis d’abord ton pseudo de directeur (Grand Tableau) : c’est sous ce nom que tes amis te verront.",
+   "en": ""
+  },
+  {
+   "fr": "Ce nom de directeur n’est pas valide.",
+   "en": ""
+  },
+  {
+   "fr": "C’est ton propre nom.",
+   "en": ""
+  },
+  {
+   "fr": "Aucun directeur ne s’appelle « {0} ».",
+   "en": ""
+  },
+  {
+   "fr": "{0} et toi êtes maintenant amis.",
+   "en": ""
+  },
+  {
+   "fr": "Une demande est déjà en cours avec {0}, ou vous êtes déjà amis.",
+   "en": ""
+  },
+  {
+   "fr": "Invitation envoyée à {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Nouvel ami au Cercle.",
+   "en": ""
+  },
+  {
+   "fr": "Cette proposition vient d’un directeur qui n’est plus ton ami.",
+   "en": ""
+  },
+  {
+   "fr": "Cette proposition n’est plus valable.",
+   "en": ""
+  },
+  {
+   "fr": "Échange conclu avec {0} : {1} rejoint ta collection{2}.",
+   "en": ""
+  },
+  {
+   "fr": "Ta carte te revient.",
+   "en": ""
+  }
+ ]
+}

@@ -4,7 +4,7 @@
 
 import { afterEach, describe, expect, it } from 'vitest';
 import { existsSync } from 'node:fs';
-import { cleGabarit, definirLangue, langue, t } from '../src/core/i18n';
+import { cleGabarit, definirLangue, langue, t, valeursDe } from '../src/core/i18n';
 import { controlerTout, fichiersCatalogue, lireCatalogue } from '../scripts/i18n-controle';
 import { cheminCatalogue, textesDuCode } from '../scripts/i18n';
 
@@ -34,6 +34,14 @@ describe('t()', () => {
     const n = 2;
     expect(t('Pas encore traduit.')).toBe('Pas encore traduit.');
     expect(t`Encore ${n} à faire.`).toBe('Encore 2 à faire.');
+  });
+
+  it('« {1|s} » remplace un accord français par celui de la langue (et compte comme {1} au contrôle)', () => {
+    definirLangue('en', new Map([['{0} cristal{1}', '{0} crystal{1|s}']]));
+    const un = 1; const deux = 2;
+    expect(t`${un} cristal${un > 1 ? 'x' : ''}`).toBe('1 crystal');
+    expect(t`${deux} cristal${deux > 1 ? 'x' : ''}`).toBe('2 crystals');
+    expect(valeursDe('{0} crystal{1|s}')).toEqual(valeursDe('{0} cristal{1}'));
   });
 
   it('construit la clé d’un gabarit avec {0}, {1}…', () => {

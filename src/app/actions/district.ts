@@ -18,6 +18,7 @@ import { finPour } from '../combat';
 import { app, compteEtat, D, G, K, reduit } from '../etat';
 import { sauver } from '../synchro';
 import { ouvrir, resultat, type Clic, type Suite } from './commun';
+import { t } from '../../core/i18n';
 
 export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
   // une bulle dépliée se replie dès qu'on fait autre chose (sauf la toucher elle-même)
@@ -44,7 +45,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       else if (id === 'colis') {
         const r = J.ouvrirColis(app.jeu);
         resultat(r);
-        if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} cristaux${r.colis.doublon ? `, un doublon ${deNom(moduleDef(r.colis.doublon).nom)}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
+        if (r.colis) D.message = t`Ravitaillement : +${r.colis.composants} cristaux${r.colis.doublon ? t`, un doublon ${deNom(moduleDef(r.colis.doublon).nom)}` : ''}.${r.colis.choix ? t(' Et une carte au choix !') : ''}`;
       }
       break;
     case 'menu': D.ressource = null; D.menu = !D.menu; D.selection = null; D.carte = null; D.deck = null; D.guide = null; D.porteur = null; break;
@@ -68,10 +69,10 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'basses-batardeau': { const r = J.dresserBatardeau(app.jeu, id, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; D.bassesLieu = null; break; }
     case 'basses-voir': requestAnimationFrame(() => document.getElementById(`bs-s-${id}`)?.scrollIntoView({ block: 'start', behavior: reduit ? 'auto' : 'smooth' })); break;
     case 'basses-lieu': D.bassesLieu = D.bassesLieu === id ? null : id; break;
-    case 'basses-envoyer': if (D.bassesLieu) { const r = J.envoyerBasses(app.jeu, D.bassesLieu, id, Date.now()); resultat(r); if (r.ok) { D.bassesLieu = null; D.message = `${porteurDef(id).nom} descend dans les Basses.`; } } break;
+    case 'basses-envoyer': if (D.bassesLieu) { const r = J.envoyerBasses(app.jeu, D.bassesLieu, id, Date.now()); resultat(r); if (r.ok) { D.bassesLieu = null; D.message = t`${porteurDef(id).nom} descend dans les Basses.`; } } break;
     // le Mur des empreintes : ouvrir une famille, confier son souvenir à une carte
     case 'famille': D.famille = D.famille === id ? null : id; break;
-    case 'souvenir-confier': if (D.famille && J.confierSouvenir(app.jeu, id, D.famille)) { D.message = 'Le souvenir est gravé dans le journal de la carte.'; sauver(); } break;
+    case 'souvenir-confier': if (D.famille && J.confierSouvenir(app.jeu, id, D.famille)) { D.message = t('Le souvenir est gravé dans le journal de la carte.'); sauver(); } break;
     case 'soigner-vite': { const r = J.soignerVite(app.jeu, id); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     case 'acheter': resultat(J.acheter(app.jeu, Number(b.dataset.index ?? -1), Date.now())); break;
     case 'comptoir-renouveler': resultat(J.renouvelerComptoir(app.jeu, Date.now())); break;
@@ -115,7 +116,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       const r = J.greffer(app.jeu, b.dataset.module ?? '', id);
       resultat(r);
       const plein = !r.ok && !!r.message?.includes(`${J.DISTRICT.cartesMax} cartes`);
-      if (plein) { D.carte = null; D.deck = id; D.echange = b.dataset.module ?? null; D.message = `${porteurDef(id).nom} porte déjà ${J.DISTRICT.cartesMax} cartes : touche celle que ${moduleDef(b.dataset.module ?? '').nom} remplacera.`; }
+      if (plein) { D.carte = null; D.deck = id; D.echange = b.dataset.module ?? null; D.message = t`${porteurDef(id).nom} porte déjà ${J.DISTRICT.cartesMax} cartes : touche celle que ${moduleDef(b.dataset.module ?? '').nom} remplacera.`; }
       break;
     }
     case 'deck': D.deck = id; D.carte = null; D.echange = null; break;
@@ -153,7 +154,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'colis': {
       const r = J.ouvrirColis(app.jeu);
       resultat(r);
-      if (r.colis) D.message = `Ravitaillement : +${r.colis.composants} cristaux${r.colis.doublon ? `, un doublon ${deNom(moduleDef(r.colis.doublon).nom)}` : ''}.${r.colis.choix ? ' Et une carte au choix !' : ''}`;
+      if (r.colis) D.message = t`Ravitaillement : +${r.colis.composants} cristaux${r.colis.doublon ? t`, un doublon ${deNom(moduleDef(r.colis.doublon).nom)}` : ''}.${r.colis.choix ? t(' Et une carte au choix !') : ''}`;
       break;
     }
     case 'ouvrir-archive': resultat(J.ouvrirArchive(app.jeu)); break;
@@ -204,10 +205,10 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       // la compétition (29 octobre 2026) : un quai libre déjà atteint ; sa liberté se revérifie en ligne juste avant
       const quai = Number(b.dataset.quai ?? 0);
       await lireGardiensEnLigne(true);
-      if (D.gardiens?.portee.some((g) => g.quai === quai)) { D.message = `Le quai ${quai} vient d’être pris : défie son gardien, ou tiens un autre quai.`; break; }
+      if (D.gardiens?.portee.some((g) => g.quai === quai)) { D.message = t`Le quai ${quai} vient d’être pris : défie son gardien, ou tiens un autre quai.`; break; }
       const r = J.tenirQuai(app.jeu, J.escouadePourDepart(app.jeu), quai, Date.now());
       resultat(r);
-      if (r.ok) { D.message = `Ton escouade tient le quai ${quai}. Les Hauts te versent un gage tant qu’elle y reste ; toi, tu peux continuer de monter.`; await synchroGarde(); lireGardiensEnLigne(true); }
+      if (r.ok) { D.message = t`Ton escouade tient le quai ${quai}. Les Hauts te versent un gage tant qu’elle y reste ; toi, tu peux continuer de monter.`; await synchroGarde(); lireGardiensEnLigne(true); }
       break;
     }
     case 'fleche-defier': {
@@ -220,13 +221,13 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     }
     case 'fleche-gage': {
       const g = J.recevoirGage(app.jeu, Date.now());
-      if (g.composants || g.eclats) { D.message = `Gage du quai : +${g.composants} cristaux${g.eclats ? `, +${g.eclats} Éclat${g.eclats > 1 ? 's' : ''}` : ''}.`; sauver(); }
+      if (g.composants || g.eclats) { D.message = t`Gage du quai : +${g.composants} cristaux${g.eclats ? t`, +${g.eclats} Éclat${g.eclats > 1 ? 's' : ''}` : ''}.`; sauver(); }
       break;
     }
     case 'fleche-quitter': {
       const q = app.jeu.fleche?.garde?.quai;
       const g = J.quitterQuai(app.jeu, Date.now());
-      if (g) { D.message = `L’escouade quitte le quai ${q}.${g.composants ? ` Gage versé : +${g.composants} cristaux${g.eclats ? `, +${g.eclats} Éclats` : ''}.` : ''}`; sauver(); await synchroGarde(); lireGardiensEnLigne(true); }
+      if (g) { D.message = t`L’escouade quitte le quai ${q}.${g.composants ? t` Gage versé : +${g.composants} cristaux${g.eclats ? t`, +${g.eclats} Éclats` : ''}.` : ''}`; sauver(); await synchroGarde(); lireGardiensEnLigne(true); }
       break;
     }
     case 'fleche-aide': D.flecheAide = true; window.scrollTo(0, 0); break;
@@ -245,7 +246,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       if (!c) break;
       // un vrai directeur : son bouclier se vérifie en ligne juste avant
       const bouclier = await sousBouclier(c);
-      if (bouclier !== false) { D.message = bouclier ? `${c.nom} est sous bouclier pour l’instant : choisis un autre district.` : `Impossible de joindre ${c.nom} pour l’instant : réessaie dans un moment.`; break; }
+      if (bouclier !== false) { D.message = bouclier ? t`${c.nom} est sous bouclier pour l’instant : choisis un autre district.` : t`Impossible de joindre ${c.nom} pour l’instant : réessaie dans un moment.`; break; }
       D.deck = null; D.fouille = null; D.epreuve = null; D.fleche = false; D.pillage = c; D.strateChoisie = c.strate;
       D.escouade = J.escouadePourDepart(app.jeu); D.vue = 'escouade'; D.porteur = null; window.scrollTo(0, 0);
       break;
@@ -330,7 +331,7 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
       D.onglet = 'chroniques'; D.chapitre = id;
       if (!app.jeu.lus.includes(id) || !app.jeu.luesRecompensees.includes(id)) {
         const carte = J.lireChapitre(app.jeu, id);
-        if (carte) D.message = `Ysé glisse une carte entre les pages : ${moduleDef(carte).nom} (Fer) rejoint tes Cartes.`;
+        if (carte) D.message = t`Ysé glisse une carte entre les pages : ${moduleDef(carte).nom} (Fer) rejoint tes Cartes.`;
         sauver();
       }
       window.scrollTo(0, 0);

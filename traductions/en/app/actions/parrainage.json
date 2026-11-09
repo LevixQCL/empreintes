@@ -1,0 +1,29 @@
+{
+ "source": "src/app/actions/parrainage.ts",
+ "entrees": [
+  {
+   "fr": "Rejoins-moi sur Ossyra : 2121, sous les eaux, d’autres se souviennent encore. Mon code de recrutement : {0}",
+   "en": ""
+  },
+  {
+   "fr": "Ossyra",
+   "en": ""
+  },
+  {
+   "fr": "Lien copié : colle-le dans un message à ton ami.",
+   "en": ""
+  },
+  {
+   "fr": "Ton lien : {0}",
+   "en": ""
+  },
+  {
+   "fr": "Code {0} copié.",
+   "en": ""
+  },
+  {
+   "fr": "Ton code : {0}",
+   "en": ""
+  }
+ ]
+}

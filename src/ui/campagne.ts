@@ -10,9 +10,10 @@ import { NOM_LIGNEE } from './coquille';
 import { ICO } from './icones';
 import { echap } from './outils';
 import { COULEUR } from './vue';
+import { t } from '../core/i18n';
 
 // URL absolue : elle sert aussi dans une variable CSS (le fond flouté sur PC), qui se résoudrait depuis la feuille de style
-const intro = (id: string) => new URL(`intro/${id}.webp`, document.baseURI).href;
+const intro = (id: string) => new URL(t`intro/${id}.webp`, document.baseURI).href;
 const imageDecor = (i: ImageScene): string =>
   'strate' in i ? decorStrate(i.strate) : 'ennemi' in i ? illustrationEnnemi(i.ennemi) ?? intro('10-dessous') : intro(i.intro);
 
@@ -27,7 +28,7 @@ function orateur(qui: string): { nom: string; role: string; couleur: string; img
   }
   if (ENNEMIS.some((e) => e.id === qui)) {
     const d = ennemiDef(qui);
-    return { nom: d.nom, role: 'Gardien', couleur: COULEUR[d.lignee], img: illustrationEnnemi(qui) };
+    return { nom: d.nom, role: t('Gardien'), couleur: COULEUR[d.lignee], img: illustrationEnnemi(qui) };
   }
   const p = PERSONNAGES[qui];
   return { nom: p?.nom ?? qui, role: p?.role ?? '', couleur: p?.couleur ?? 'var(--ivory)', img: portraitPersonnage(qui) };
@@ -50,21 +51,21 @@ export function htmlScene(s: Scene, c: ContexteCampagne, n: number, revoir = fal
     + `<div class="sc-fond" aria-hidden="true"><img src="${img}" alt="" decoding="async"></div>`
     + `<header class="sc-haut"><div><span class="surtitre">${echap(s.sur)}</span><h1 id="scene-titre">${echap(s.titre)}</h1></div>`
     + (revoir
-      ? `<button type="button" class="btn-sec sc-passer" data-action="scene-fin">${ICO.retour}Retour</button>`
-      : fini ? '' : `<button type="button" class="btn-sec sc-passer" data-action="scene-fin">Passer</button>`)
+      ? `<button type="button" class="btn-sec sc-passer" data-action="scene-fin">${ICO.retour}${t`Retour`}</button>`
+      : fini ? '' : `<button type="button" class="btn-sec sc-passer" data-action="scene-fin">${t`Passer`}</button>`)
     + `</header>`
     + `<p class="sc-recit${dites ? ' replie' : ''}">${echap(s.recit)}</p>`
     + `<div class="sc-espace"></div>`;
   if (r && o) {
     h += `<div class="sc-replique" style="--c:${o.couleur}" aria-live="polite" data-k="${dites}">`
       + `<span class="sc-portrait" aria-hidden="true">${o.img ? `<img src="${o.img}" alt="" decoding="async">` : `<b>${echap(o.nom.replace(/^(Capitaine|Dame) /, '').charAt(0))}</b>`}</span>`
-      + `<div class="sc-paroles"><strong>${echap(o.nom)}${o.role ? `<small>${echap(o.role)}</small>` : ''}</strong>${echo ? `<em class="sc-echo">◆ Ton choix à −${echo}</em>` : ''}<p>${echap(r.texte)}</p></div></div>`;
+      + `<div class="sc-paroles"><strong>${echap(o.nom)}${o.role ? `<small>${echap(o.role)}</small>` : ''}</strong>${echo ? `<em class="sc-echo">${t`◆ Ton choix à −${echo}`}</em>` : ''}<p>${echap(r.texte)}</p></div></div>`;
   }
-  h += `<footer class="sc-bas"><span class="sc-points" aria-label="Réplique ${dites} sur ${repliques.length}">`
+  h += `<footer class="sc-bas"><span class="sc-points" aria-label="${t`Réplique ${dites} sur ${repliques.length}`}">`
     + repliques.map((_, i) => `<i${i < dites ? ' class="vu"' : ''}></i>`).join('') + `</span>`
     + (fini
-      ? `<button type="button" class="btn prim large sc-continuer" data-action="scene-fin">${ICO.ok}${revoir ? 'Fermer' : 'Continuer'}</button>`
-      : `<span class="indice-bulle">${dites ? 'Touche l’écran pour la suite' : 'Touche l’écran pour les écouter'}</span>`)
+      ? `<button type="button" class="btn prim large sc-continuer" data-action="scene-fin">${ICO.ok}${revoir ? t('Fermer') : t('Continuer')}</button>`
+      : `<span class="indice-bulle">${dites ? t('Touche l’écran pour la suite') : t('Touche l’écran pour les écouter')}</span>`)
     + `</footer></section></div>`;
   return h;
 }
@@ -74,7 +75,7 @@ const sansActe = (sur: string) => sur.replace(/^[IV]+ · /, '');
 
 /** L'onglet Campagne de la Bibliothèque : les scènes déjà jouées, à revoir ; les suivantes restent cachées */
 export function htmlListeScenes(vues: readonly string[]): string {
-  let h = `<p class="aide intro-ecran">Ton histoire, scène après scène. Touche une scène pour la revoir.</p>`;
+  let h = `<p class="aide intro-ecran">${t`Ton histoire, scène après scène. Touche une scène pour la revoir.`}</p>`;
   let acte = 0;
   for (const s of SCENES) {
     if (s.acte !== acte) {
@@ -86,7 +87,7 @@ export function htmlListeScenes(vues: readonly string[]): string {
     const img = `<img src="${imageScene(s)}" alt="" loading="lazy" decoding="async">`;
     h += vue
       ? `<button type="button" class="sc-tuile" data-action="scene-revoir" data-id="${s.id}">${img}<span><small>${echap(sansActe(s.sur))}</small><strong>${echap(s.titre)}</strong></span>${ICO.film}</button>`
-      : `<div class="sc-tuile fermee" aria-disabled="true"><span class="sc-verrou" aria-hidden="true">${ICO.verrou}</span><span><small>${echap(sansActe(s.sur))}</small><strong>À vivre</strong></span></div>`;
+      : `<div class="sc-tuile fermee" aria-disabled="true"><span class="sc-verrou" aria-hidden="true">${ICO.verrou}</span><span><small>${echap(sansActe(s.sur))}</small><strong>${t`À vivre`}</strong></span></div>`;
   }
   return h + `</div></section>`;
 }

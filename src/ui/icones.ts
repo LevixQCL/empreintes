@@ -1,4 +1,5 @@
 import type { Lignee } from '../core/types';
+import { t } from '../core/i18n';
 // Icônes de l'interface (refaites le 3 novembre 2026, matière « cristal et lumière ») : grille de 24, trait de 1,7, arrondis.
 // Chaque icône a un corps en verre teinté (classe v), un reflet de lumière (r), parfois une touche d'or (o) ou un plein (p).
 // Elles prennent la couleur du texte (currentColor) : la couleur se règle en CSS (styles.css, « .ico »).
@@ -121,7 +122,7 @@ export const baseIcones = new URL('art/icones/', document.baseURI).href;
 // trois silhouettes différentes, lisibles même à 16 px et sans compter sur la couleur. Ils remplacent « Faible contre… ».
 /** Le symbole d'une lignée ; `nom` le rend lisible aux lecteurs d'écran (sinon purement décoratif) */
 export function sigle(l: Lignee, nom = false): string {
-  return `<img class="sigle" src="${baseIcones}lignee-${l}.webp" alt="${nom ? { tech: 'Augmentés', bio: 'Génés', reso: 'Résonants' }[l] : ''}"${nom ? '' : ' aria-hidden="true"'} decoding="async">`;
+  return `<img class="sigle" src="${baseIcones}lignee-${l}.webp" alt="${nom ? { tech: t('Augmentés'), bio: t('Génés'), reso: t('Résonants') }[l] : ''}"${nom ? '' : ' aria-hidden="true"'} decoding="async">`;
 }
 
 /** L'icône peinte si elle existe, sinon le trait SVG */

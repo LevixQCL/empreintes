@@ -3,7 +3,8 @@
 
 import { escouadeActive, escouadesDe, garnisonFleche, type Jeu } from './jeu';
 import type { EscouadeDuel } from './duel';
+import { t } from './i18n';
 
 export function escouadeDuelDe(j: Jeu, escouade: string[] = escouadesDe(j)[escouadeActive(j)] ?? []): EscouadeDuel {
-  return { nom: j.directeur?.nom || 'Directeur', porteurs: garnisonFleche(j, escouade).porteurs };
+  return { nom: j.directeur?.nom || t('Directeur'), porteurs: garnisonFleche(j, escouade).porteurs };
 }

@@ -1,0 +1,21 @@
+{
+ "source": "src/ui/bandeau.ts",
+ "entrees": [
+  {
+   "fr": "Gardien · Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Gardien",
+   "en": ""
+  },
+  {
+   "fr": "{0} · seconde phase",
+   "en": ""
+  },
+  {
+   "fr": "{0} entre dans le combat",
+   "en": ""
+  }
+ ]
+}

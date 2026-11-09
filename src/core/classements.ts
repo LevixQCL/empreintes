@@ -14,20 +14,21 @@
 import { MODULES, moduleDe, moduleDef, zoneDe } from './donnees';
 import type { Rarete } from './types';
 import { COLLECTION, RARETES } from './collection';
+import { t as tr } from './i18n';
 
 export type TableauId = 'profondeur' | 'registre' | 'joutes' | 'fleche';
 export type Periode = 'total' | 'semaine';
 
 /** Les tableaux dans l'ordre d'affichage ; `ouvert: false` = grisé, avec ce qui arrive */
 export const TABLEAUX: { id: TableauId; nom: string; court: string; ouvert: boolean; texte: string }[] = [
-  { id: 'profondeur', nom: 'Profondeur', court: 'Strates', ouvert: true,
-    texte: 'L’étage le plus profond creusé sous le district. À profondeur égale, le premier arrivé passe devant.' },
-  { id: 'registre', nom: 'Registre', court: 'Cartes', ouvert: true,
-    texte: 'La valeur de ta collection : le métal et le niveau de chaque carte, et chaque carte découverte.' },
-  { id: 'joutes', nom: 'Joutes', court: 'Duels', ouvert: true,
-    texte: 'Les duels gagnés au Cercle des quais contre des amis différents (trois par semaine au plus).' },
-  { id: 'fleche', nom: 'La Flèche', court: 'Tour', ouvert: true,
-    texte: 'Le plus haut quai atteint sur la Flèche d’amarrage, la seule route légale vers les Hauts. À quai égal, le premier arrivé passe devant.' },
+  { id: 'profondeur', nom: tr('Profondeur'), court: tr('Strates'), ouvert: true,
+    texte: tr('L’étage le plus profond creusé sous le district. À profondeur égale, le premier arrivé passe devant.') },
+  { id: 'registre', nom: tr('Registre'), court: tr('Cartes'), ouvert: true,
+    texte: tr('La valeur de ta collection : le métal et le niveau de chaque carte, et chaque carte découverte.') },
+  { id: 'joutes', nom: tr('Joutes'), court: tr('Duels'), ouvert: true,
+    texte: tr('Les duels gagnés au Cercle des quais contre des amis différents (trois par semaine au plus).') },
+  { id: 'fleche', nom: tr('La Flèche'), court: tr('Tour'), ouvert: true,
+    texte: tr('Le plus haut quai atteint sur la Flèche d’amarrage, la seule route légale vers les Hauts. À quai égal, le premier arrivé passe devant.') },
 ];
 
 // ---------- Le Registre : la valeur d'une collection ----------

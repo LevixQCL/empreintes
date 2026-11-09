@@ -4,6 +4,7 @@ import { app, compteEtat } from '../etat';
 import { actionCompte, champ, envoyer, majSecours, restaurerSecours, supprimerCompte } from '../synchro';
 import { noterAge } from '../../save/age';
 import type { Clic, Suite } from './commun';
+import { t } from '../../core/i18n';
 
 export async function agirCompte(a: string, _c: Clic): Promise<Suite> {
   switch (a) {
@@ -13,7 +14,7 @@ export async function agirCompte(a: string, _c: Clic): Promise<Suite> {
     case 'google': noterAge('majeur'); compteEtat.age = 'majeur'; await actionCompte(() => app.compte!.connexionGoogle()); return 'fin';
     case 'connexion': noterAge('majeur'); compteEtat.age = 'majeur'; await actionCompte(() => app.compte!.connexionEmail(champ('email'), champ('mdp'), false)); return 'fin';
     case 'inscription': noterAge('majeur'); compteEtat.age = 'majeur'; await actionCompte(() => app.compte!.connexionEmail(champ('email'), champ('mdp'), true)); return 'fin';
-    case 'oubli': await actionCompte(async () => { await app.compte!.motDePasseOublie(champ('email')); compteEtat.info = 'E-mail de réinitialisation envoyé.'; }); return 'fin';
+    case 'oubli': await actionCompte(async () => { await app.compte!.motDePasseOublie(champ('email')); compteEtat.info = t('E-mail de réinitialisation envoyé.'); }); return 'fin';
     case 'deconnexion': await actionCompte(() => app.compte!.deconnexion()); return 'fin';
     // supprimer son compte et ses données (8 novembre 2026) : deux touches, puis tout est effacé et le jeu repart de zéro
     case 'supprimer': compteEtat.supprimer = 1; break;

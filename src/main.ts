@@ -23,6 +23,7 @@ import { demarrerCompte, envoyer, sauver } from './app/synchro';
 import { R, retenirLien } from './app/parrainage';
 import { prechargerDifferes } from './app/differes';
 import { prechargerImpacts } from './app/combat';
+import { t as tr } from './core/i18n';
 
 // les graphismes (3 novembre 2026) : allégés sur un appareil qui peine, avant le premier dessin
 appliquerGraphismes();
@@ -74,7 +75,7 @@ racine.addEventListener('pointerdown', (ev) => {
 });
 racine.addEventListener('pointermove', (ev) => { if (appui && Math.hypot(ev.clientX - appui.x, ev.clientY - appui.y) > 10) { clearTimeout(appui.t); appui = null; } });
 for (const t of ['pointerup', 'pointercancel', 'pointerleave'] as const) racine.addEventListener(t, finAppui);
-racine.addEventListener('contextmenu', (ev) => { if ((ev.target as HTMLElement).closest(app.mode === 'combat' ? '.geste, .combattant' : '[data-carte]')) ev.preventDefault(); });
+racine.addEventListener('contextmenu', (ev) => { if ((ev.target as HTMLElement).closest(app.mode === 'combat' ? tr('.geste, .combattant') : '[data-carte]')) ev.preventDefault(); });
 racine.addEventListener('click', (ev) => { if (annulerClic) { annulerClic = false; ev.stopImmediatePropagation(); ev.preventDefault(); } }, true);
 
 /* glisser une carte posée le long de la chaîne la change de place */
@@ -115,6 +116,6 @@ if (import.meta.env.DEV) Object.assign(window, {
   // l'écran Recruter sans réseau (captures) : __recrues([{ uid, nom, paliers }], 'CODE6X')
   __recrues: (l: J.Recrue[], code: string) => { J.etatParrainage(app.jeu).code = code; R.recrues = l; R.etat = 'ok'; J.reclamerRecrues(app.jeu, l); app.uid ??= 'essai'; afficher(); },
   // la garde de la Flèche sans réseau (captures) : __gardiens(les plus hauts, ceux à portée)
-  __gardiens: (top: J.GardienQuai[], portee: J.GardienQuai[]) => { D.gardiens = { top, portee, max: J.quaiMaxTenable(app.jeu), lu: Date.now() }; app.uid ??= 'essai'; compteEtat.utilisateur = { nom: 'Essai' }; afficher(); },
-  __tableau: (l: Entree[], moi: string) => { G.entrees = l; G.etat = 'ok'; G.lu = Date.now(); app.uid = moi; compteEtat.utilisateur = { nom: 'Essai' }; afficher(); },
+  __gardiens: (top: J.GardienQuai[], portee: J.GardienQuai[]) => { D.gardiens = { top, portee, max: J.quaiMaxTenable(app.jeu), lu: Date.now() }; app.uid ??= 'essai'; compteEtat.utilisateur = { nom: tr('Essai') }; afficher(); },
+  __tableau: (l: Entree[], moi: string) => { G.entrees = l; G.etat = 'ok'; G.lu = Date.now(); app.uid = moi; compteEtat.utilisateur = { nom: tr('Essai') }; afficher(); },
 });

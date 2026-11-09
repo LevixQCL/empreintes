@@ -1,0 +1,925 @@
+{
+ "source": "src/core/partie/descentes.ts",
+ "entrees": [
+  {
+   "fr": "L’escouade est en descente : le Râtelier se change au district.",
+   "en": ""
+  },
+  {
+   "fr": "Escouade inconnue.",
+   "en": ""
+  },
+  {
+   "fr": "Carte commune inconnue.",
+   "en": ""
+  },
+  {
+   "fr": "{0} s’ouvre au niveau {1} du bâtiment.",
+   "en": ""
+  },
+  {
+   "fr": "Le Râtelier n’a que {0} emplacements.",
+   "en": ""
+  },
+  {
+   "fr": "Le Râtelier de l’escouade {0} est plein ({1} emplacements) : retire d’abord une carte.",
+   "en": ""
+  },
+  {
+   "fr": "La Clinique a organisé un Accord ouvert : quarante volontaires, une seule pierre. Elle a pris sur {0}, et tout le quartier a veillé sa Nuit blanche. « {1} »",
+   "en": ""
+  },
+  {
+   "fr": "{0} rejoint le district. « {1} »",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} : « {2} » (+{3} XP). À lire dans sa fiche.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade est en descente : elle ne change qu’au district.",
+   "en": ""
+  },
+  {
+   "fr": "Pas encore arrivé au district.",
+   "en": ""
+  },
+  {
+   "fr": "En mission.",
+   "en": ""
+  },
+  {
+   "fr": "Au travail · Forge (fabrication en cours).",
+   "en": ""
+  },
+  {
+   "fr": "quitte l’entraînement à la Tour du Noyau",
+   "en": ""
+  },
+  {
+   "fr": "quitte son poste : {0} restera vacant",
+   "en": ""
+  },
+  {
+   "fr": "Place inconnue.",
+   "en": ""
+  },
+  {
+   "fr": "Les autres escouades se forment quand le gardien de la Strate −{0} est vaincu.",
+   "en": ""
+  },
+  {
+   "fr": "{0} ne peut pas rejoindre l’escouade : {1}{2}",
+   "en": ""
+  },
+  {
+   "fr": "{0} remplace {1} dans l’escouade {2}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} rejoint l’escouade {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Cette escouade est vide : choisis-lui d’abord des Porteurs.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade {0} descendra la prochaine fois.",
+   "en": ""
+  },
+  {
+   "fr": "Surface",
+   "en": ""
+  },
+  {
+   "fr": "Cales",
+   "en": ""
+  },
+  {
+   "fr": "Cœur",
+   "en": ""
+  },
+  {
+   "fr": "Cargaison",
+   "en": ""
+  },
+  {
+   "fr": "Pierre oubliée",
+   "en": ""
+  },
+  {
+   "fr": "Naufragés",
+   "en": ""
+  },
+  {
+   "fr": "Éclats",
+   "en": ""
+  },
+  {
+   "fr": "Durée inconnue.",
+   "en": ""
+  },
+  {
+   "fr": "Cette destination n’est plus au programme du passeur : de nouvelles s’ouvrent chaque jour à 4 h.",
+   "en": ""
+  },
+  {
+   "fr": "Aucune destination aujourd’hui.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut avoir vaincu une Strate pour y envoyer quelqu’un.",
+   "en": ""
+  },
+  {
+   "fr": "Porteur inconnu.",
+   "en": ""
+  },
+  {
+   "fr": "{0} travaille au district.",
+   "en": ""
+  },
+  {
+   "fr": "{0} n’est pas au district.",
+   "en": ""
+  },
+  {
+   "fr": "{0} barques au plus en mer en même temps : monte la Tour du Noyau pour en armer d’autres.",
+   "en": ""
+  },
+  {
+   "fr": "Une seule barque en mer à la fois : monte la Tour du Noyau pour en armer d’autres.",
+   "en": ""
+  },
+  {
+   "fr": "{0} prend le bateau vers {1} ({2} h).",
+   "en": ""
+  },
+  {
+   "fr": "{0} ramène des naufragés",
+   "en": ""
+  },
+  {
+   "fr": "{0} rentre de mission : +{1} minerai, +{2} XP{3}{4}{5}{6}{7}.",
+   "en": ""
+  },
+  {
+   "fr": ", +{0} famille{1}",
+   "en": ""
+  },
+  {
+   "fr": ", +{0} creuseur{1}",
+   "en": ""
+  },
+  {
+   "fr": "Aucun rapport à lire.",
+   "en": ""
+  },
+  {
+   "fr": "Le passeur a déposé {0} devant {1}, à marée basse.",
+   "en": ""
+  },
+  {
+   "fr": "{0} heures de mer : {1} a gagné {2} sur la barque du passeur.",
+   "en": ""
+  },
+  {
+   "fr": "Lampe à algues au poing, {0} a plongé dans {1}, salle après salle.",
+   "en": ""
+  },
+  {
+   "fr": "Au lever du brouillard, la barque a touché {0}. {1} est monté seul.",
+   "en": ""
+  },
+  {
+   "fr": "D’autres barques étaient passées avant aujourd’hui : {0} a dû chercher plus loin, dans des salles à moitié vidées.",
+   "en": ""
+  },
+  {
+   "fr": "Les barques du matin avaient balisé l’entrée : {0} est descendu droit vers les Cales, là où personne n’était encore allé.",
+   "en": ""
+  },
+  {
+   "fr": "Grâce aux marques laissées par la première barque, {0} a trouvé l’escalier des Cales sous la vase.",
+   "en": ""
+  },
+  {
+   "fr": "Deux barques avaient ouvert le chemin : {0} a pu atteindre le Cœur de la ruine, une salle restée au sec depuis la montée des eaux. Une pierre y attendait.",
+   "en": ""
+  },
+  {
+   "fr": "Au bout des Cales, une porte que les autres n’avaient pas pu forcer : {0} l’a passée, et le Cœur de la ruine lui a livré une pierre.",
+   "en": ""
+  },
+  {
+   "fr": "Le quartier a vu la barque rentrer : {0} décidé de te suivre.",
+   "en": ""
+  },
+  {
+   "fr": "Plus personne à recueillir sur place : les naufragés étaient déjà partis. La barque est revenue chargée de matériel.",
+   "en": ""
+  },
+  {
+   "fr": "Sous l’eau dormait encore du matériel d’avant : {0} minerai hissé à bord.",
+   "en": ""
+  },
+  {
+   "fr": "Une réserve oubliée, au sec sous un toit effondré : {0} minerai rapporté au district.",
+   "en": ""
+  },
+  {
+   "fr": "Des machines noyées, démontées pièce par pièce : {0} minerai.",
+   "en": ""
+  },
+  {
+   "fr": "Dans un coffre scellé par le sel, une pierre jamais vue : {0}. Elle rejoint tes cartes.",
+   "en": ""
+  },
+  {
+   "fr": "Au fond d’une salle noyée, {0} a trouvé ce que personne n’avait encore rapporté : {1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} a reconnu des pierres familières : {1}. De quoi faire monter des cartes.",
+   "en": ""
+  },
+  {
+   "fr": "Des éclats de sa propre lignée attendaient dans les ruines : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Aucune pierre à rapporter cette fois : les ruines étaient muettes.",
+   "en": ""
+  },
+  {
+   "fr": "Des rescapés vivaient sur place : ils sont montés dans la barque et creuseront pour toi (+{0} creuseur{1}).",
+   "en": ""
+  },
+  {
+   "fr": "Un exploit qui ne s’oublie pas : {0} gagne la Marque {1}.",
+   "en": ""
+  },
+  {
+   "fr": "L’expérience paie : {0} passe au niveau {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Le retour s’est fait sans encombre, mais l’eau froide laisse des traces : la Clinique s’en chargera.",
+   "en": ""
+  },
+  {
+   "fr": "{0} rentre trempé et fourbu : un peu de repos à la Clinique ne sera pas de trop.",
+   "en": ""
+  },
+  {
+   "fr": "{0} rentre sans une égratignure.",
+   "en": ""
+  },
+  {
+   "fr": "Un Veilleur sous les gravats",
+   "en": ""
+  },
+  {
+   "fr": "Un fouilleur des Veilleurs de Sédime est coincé sous un éboulis. Il tient serré contre lui un carnet couvert de croquis.",
+   "en": ""
+  },
+  {
+   "fr": "Le dégager et le soigner (−4 PV chacun)",
+   "en": ""
+  },
+  {
+   "fr": "Prendre son carnet et repartir",
+   "en": ""
+  },
+  {
+   "fr": "Passer ton chemin",
+   "en": ""
+  },
+  {
+   "fr": "Un pilleur acculé",
+   "en": ""
+  },
+  {
+   "fr": "Un pilleur de Strates, dos au mur, serre un sac plein de cristaux. Il ne cherche pas la bagarre.",
+   "en": ""
+  },
+  {
+   "fr": "Le laisser filer",
+   "en": ""
+  },
+  {
+   "fr": "Lui prendre son sac",
+   "en": ""
+  },
+  {
+   "fr": "L’affronter pour tout récupérer",
+   "en": ""
+  },
+  {
+   "fr": "Une patrouille alliée",
+   "en": ""
+  },
+  {
+   "fr": "Une patrouille des Brigades du Serment de Veyr vous salue : depuis l’accord avec la Maison Orsève, vous êtes du même côté.",
+   "en": ""
+  },
+  {
+   "fr": "Accepter leurs soins (+25 % de PV)",
+   "en": ""
+  },
+  {
+   "fr": "Les saluer et continuer",
+   "en": ""
+  },
+  {
+   "fr": "Les Brigades barrent la route",
+   "en": ""
+  },
+  {
+   "fr": "Une patrouille du Serment de Veyr bloque le couloir. Leur sergent réclame un « droit de passage ».",
+   "en": ""
+  },
+  {
+   "fr": "Payer le passage (20 minerai)",
+   "en": ""
+  },
+  {
+   "fr": "Les contourner par les gaines (−5 PV chacun)",
+   "en": ""
+  },
+  {
+   "fr": "Forcer le passage",
+   "en": ""
+  },
+  {
+   "fr": "Un cristal qui murmure",
+   "en": ""
+  },
+  {
+   "fr": "Dans une niche, un cristal ancien murmure. Le son ressemble à une voix, sans les mots.",
+   "en": ""
+  },
+  {
+   "fr": "L’écouter",
+   "en": ""
+  },
+  {
+   "fr": "Le rapporter au district",
+   "en": ""
+  },
+  {
+   "fr": "Le laisser où il est",
+   "en": ""
+  },
+  {
+   "fr": "Un marchand des bas-fonds",
+   "en": ""
+  },
+  {
+   "fr": "Un marchand a installé son étal dans une ancienne salle, entre deux lampes à algues. Il a « de tout, pour qui sait payer ».",
+   "en": ""
+  },
+  {
+   "fr": "Échanger 30 minerai contre une carte",
+   "en": ""
+  },
+  {
+   "fr": "Acheter des soins (15 minerai, +30 % de PV)",
+   "en": ""
+  },
+  {
+   "fr": "Passer",
+   "en": ""
+  },
+  {
+   "fr": "Un Sauvage",
+   "en": ""
+  },
+  {
+   "fr": "Un homme recroquevillé contre un pilier, une mèche à peine dorée collée au front. Il s’est greffé une brisure achetée au marché noir, sans Lecture. Il gronde des mots qui ne sont pas les siens.",
+   "en": ""
+  },
+  {
+   "fr": "Laisser Véla lire sa pierre",
+   "en": ""
+  },
+  {
+   "fr": "Lui parler doucement (−3 PV chacun)",
+   "en": ""
+  },
+  {
+   "fr": "Un vendeur de pierres",
+   "en": ""
+  },
+  {
+   "fr": "Sur une couverture, une rangée de cristaux tous identiques. « Des pierres d’Accord, directeur. Jamais portées. Une vierge pour vingt-cinq de minerai. » Elles sont ternes. Toutes.",
+   "en": ""
+  },
+  {
+   "fr": "Lui acheter une « vierge » (25 minerai)",
+   "en": ""
+  },
+  {
+   "fr": "Lui faire rendre ses pierres",
+   "en": ""
+  },
+  {
+   "fr": "Une source chaude",
+   "en": ""
+  },
+  {
+   "fr": "Entre deux piliers, une source chaude jaillit de la roche. L’eau sent le fer et le sel.",
+   "en": ""
+  },
+  {
+   "fr": "S’y reposer (+25 % de PV)",
+   "en": ""
+  },
+  {
+   "fr": "Continuer sans s’arrêter",
+   "en": ""
+  },
+  {
+   "fr": "Aucune expédition en cours.",
+   "en": ""
+  },
+  {
+   "fr": "Impossible d’aller par là.",
+   "en": ""
+  },
+  {
+   "fr": "Personne à qui répondre.",
+   "en": ""
+  },
+  {
+   "fr": "Choix inconnu.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade reprend sa route.",
+   "en": ""
+  },
+  {
+   "fr": "Le Veilleur, reconnaissant, te confie un Éclat trouvé plus bas. Le quartier en entendra parler.",
+   "en": ""
+  },
+  {
+   "fr": "Le carnet se revend bien : +{0} minerai. Le Veilleur, lui, s’en souviendra.",
+   "en": ""
+  },
+  {
+   "fr": "Le pilleur file sans demander son reste. Il racontera que le directeur sait être juste.",
+   "en": ""
+  },
+  {
+   "fr": "Il lâche son sac et s’enfuit : +{0} minerai.",
+   "en": ""
+  },
+  {
+   "fr": "Le pilleur sort un pied-de-biche. Son sac contient une carte : elle sera à toi.",
+   "en": ""
+  },
+  {
+   "fr": "Les Brigades pansent l’escouade (+25 % de PV).",
+   "en": ""
+  },
+  {
+   "fr": "Le sergent empoche le minerai et s’écarte.",
+   "en": ""
+  },
+  {
+   "fr": "Les gaines sont étroites et brûlantes, mais vous passez (−5 PV chacun).",
+   "en": ""
+  },
+  {
+   "fr": "Le district ne paie pas pour passer chez lui.",
+   "en": ""
+  },
+  {
+   "fr": "Véla écoute longtemps. « Il a peur d’être oublié », dit-elle. Le cristal se fend et laisse un Éclat.",
+   "en": ""
+  },
+  {
+   "fr": "Le murmure s’accroche aux pensées de l’escouade. Personne ne dort bien ce soir-là (−3 PV chacun).",
+   "en": ""
+  },
+  {
+   "fr": "Le cristal pèse lourd dans le sac, et il chuchote encore. Au district, il deviendra une carte (−2 PV chacun).",
+   "en": ""
+  },
+  {
+   "fr": "Il te faut 30 minerai dans le butin de l’expédition.",
+   "en": ""
+  },
+  {
+   "fr": "Le marchand glisse un cristal gravé dans ta main. Au district, il deviendra une carte.",
+   "en": ""
+  },
+  {
+   "fr": "Il te faut 15 minerai dans le butin de l’expédition.",
+   "en": ""
+  },
+  {
+   "fr": "Onguents d’algues et bandages propres : +30 % de PV.",
+   "en": ""
+  },
+  {
+   "fr": "L’eau chaude délie les muscles (+25 % de PV).",
+   "en": ""
+  },
+  {
+   "fr": "Véla pose la main sur sa nuque. « C’est une brisure de créature des hauteurs. Elle a peur d’être enfermée. » Il se calme, et vous laisse un Éclat en remerciement. La Clinique le retirera.",
+   "en": ""
+  },
+  {
+   "fr": "Il finit par se calmer et accepte qu’on le conduise à la Clinique. Ses accès ont laissé des bleus à tout le monde (−3 PV chacun).",
+   "en": ""
+  },
+  {
+   "fr": "Le penchant l’emporte : il se jette sur l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Il te faut 25 minerai dans le butin de l’expédition.",
+   "en": ""
+  },
+  {
+   "fr": "Au district, la Clinique tranche : une pierre morte. Elle a refusé un Accord, et ne prendra plus jamais chez personne. Le quartier en rit encore.",
+   "en": ""
+  },
+  {
+   "fr": "Il remballe en grommelant et rend ce qu’il a pris aux fouilleurs : +{0} minerai. Les familles volées sauront qui remercier.",
+   "en": ""
+  },
+  {
+   "fr": "On ne remonte qu’à l’entrée ou depuis un campement.",
+   "en": ""
+  },
+  {
+   "fr": "Impossible de reculer.",
+   "en": ""
+  },
+  {
+   "fr": "Impossible de fuir.",
+   "en": ""
+  },
+  {
+   "fr": "La chambre scellée est ouverte. Trois recrues rejoignent le district : un Coursier, un Docker et un Guetteur.",
+   "en": ""
+  },
+  {
+   "fr": "Le gardien de la chambre a repoussé l’escouade. Elle se repose, puis réessaie.",
+   "en": ""
+  },
+  {
+   "fr": "un fouilleur perdu retrouvé pendant la fouille",
+   "en": ""
+  },
+  {
+   "fr": "l’Épreuve réussie fait des émules",
+   "en": ""
+  },
+  {
+   "fr": "le gardien vaincu, des fouilleurs se joignent au chantier",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade remonte victorieuse avec {0} minerai.{1}",
+   "en": ""
+  },
+  {
+   "fr": " Un nouvel étage est creusé : la Strate −{0} est ouverte.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade a fui et remonte avec {0} minerai. Elle rentre épuisée.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade remonte avec {0} minerai. Elle a besoin de repos.",
+   "en": ""
+  },
+  {
+   "fr": "La Strate −{0} est complète : ses cinq Vestiges sont au district. Tes fouilles y verront tout le plan.",
+   "en": ""
+  },
+  {
+   "fr": "{0} est abattu. {1}",
+   "en": ""
+  },
+  {
+   "fr": "Fragment d’archives trouvé : « {0} ». Il est rangé dans le Codex.",
+   "en": ""
+  },
+  {
+   "fr": "La chambre est déjà ouverte.",
+   "en": ""
+  },
+  {
+   "fr": "Une expédition est déjà en cours.",
+   "en": ""
+  },
+  {
+   "fr": "Ilka, Doran et Véla descendent vers la porte scellée.",
+   "en": ""
+  },
+  {
+   "fr": "Leçon 1 : touche 3 cartes de ta main, puis « Lancer la chaîne ».",
+   "en": ""
+  },
+  {
+   "fr": "Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +30 % sur toute la chaîne.",
+   "en": ""
+  },
+  {
+   "fr": "Leçon 3 : le Rémanent annonce une Entaille sur Doran. Pose des cartes à bouclier : elles protègent toute l’escouade pendant son attaque.",
+   "en": ""
+  },
+  {
+   "fr": "Tu as l’essentiel : vise les suites, protège-toi des grosses attaques annoncées. Achève-le !",
+   "en": ""
+  },
+  {
+   "fr": "+{0} cristaux taillés par le Générateur",
+   "en": ""
+  },
+  {
+   "fr": "{0} est remis de son Usure",
+   "en": ""
+  },
+  {
+   "fr": "La Clinique a soigné {0}",
+   "en": ""
+  },
+  {
+   "fr": "Tu peux améliorer : {0}",
+   "en": ""
+  },
+  {
+   "fr": "La Strate −{0} t’attend",
+   "en": ""
+  },
+  {
+   "fr": "Choisis 3 Porteurs.",
+   "en": ""
+  },
+  {
+   "fr": "Ce Porteur n’est pas encore arrivé au district.",
+   "en": ""
+  },
+  {
+   "fr": "{0} est en mission.",
+   "en": ""
+  },
+  {
+   "fr": "{0} ne peut pas quitter la Forge pendant une fabrication.",
+   "en": ""
+  },
+  {
+   "fr": "Ouvre d’abord la chambre scellée.",
+   "en": ""
+  },
+  {
+   "fr": "{0} porte trop lourd ({1} de Charge sur {2}) : reprends-lui une carte.",
+   "en": ""
+  },
+  {
+   "fr": "{0} demande un Porteur de niveau {1} : reprends-la à {2}.",
+   "en": ""
+  },
+  {
+   "fr": "Ton deck n’a que {0} cartes : confie des cartes à ton escouade ({1} au moins).",
+   "en": ""
+  },
+  {
+   "fr": "Cette Strate n’est pas encore creusée.",
+   "en": ""
+  },
+  {
+   "fr": "{0} Première descente du jour au front : le minerai y compte double.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade descend dans la Strate −{0}.",
+   "en": ""
+  },
+  {
+   "fr": "Facile",
+   "en": ""
+  },
+  {
+   "fr": "Normale",
+   "en": ""
+  },
+  {
+   "fr": "Difficile",
+   "en": ""
+  },
+  {
+   "fr": "Cartes augmentées",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes trouvées sont des cartes d’Augmentés, et le filon en garde une (trois au choix en difficile).",
+   "en": ""
+  },
+  {
+   "fr": "Cartes génés",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes trouvées sont des cartes de Génés, et le filon en garde une (trois au choix en difficile).",
+   "en": ""
+  },
+  {
+   "fr": "Cartes résonantes",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes trouvées sont des cartes de Résonants, et le filon en garde une (trois au choix en difficile).",
+   "en": ""
+  },
+  {
+   "fr": "Le filon rapporte du minerai pour chaque combat gagné en route : plus le chemin est long, plus il donne.",
+   "en": ""
+  },
+  {
+   "fr": "Chaque combat gagné en route peut laisser un Éclat au filon : plus le chemin est long, plus tu as de chances.",
+   "en": ""
+  },
+  {
+   "fr": "Difficulté inconnue.",
+   "en": ""
+  },
+  {
+   "fr": "Cible inconnue.",
+   "en": ""
+  },
+  {
+   "fr": "On ne fouille que les Strates déjà vaincues.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade part fouiller la Strate −{0} ({1}, {2}).",
+   "en": ""
+  },
+  {
+   "fr": "Endurance",
+   "en": ""
+  },
+  {
+   "fr": "Tempo",
+   "en": ""
+  },
+  {
+   "fr": "Tactique",
+   "en": ""
+  },
+  {
+   "fr": "Deck",
+   "en": ""
+  },
+  {
+   "fr": "Le couloir sans halte",
+   "en": ""
+  },
+  {
+   "fr": "Trois combats d’affilée, puis le gardien : aucun PV rendu entre eux.",
+   "en": ""
+  },
+  {
+   "fr": "Nul ne reste au fond",
+   "en": ""
+  },
+  {
+   "fr": "Le premier Porteur à terre fait perdre l’Épreuve.",
+   "en": ""
+  },
+  {
+   "fr": "À mi-souffle",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade part avec la moitié de ses PV (rendus au retour).",
+   "en": ""
+  },
+  {
+   "fr": "Avant l’extinction",
+   "en": ""
+  },
+  {
+   "fr": "Abats le gardien en 13 tours, sinon il s’éteint dans le noir.",
+   "en": ""
+  },
+  {
+   "fr": "La meute",
+   "en": ""
+  },
+  {
+   "fr": "Le gardien vient avec deux bêtes de la Strate : choisis qui tomber d’abord.",
+   "en": ""
+  },
+  {
+   "fr": "La dernière Fréquence",
+   "en": ""
+  },
+  {
+   "fr": "Le gardien garde une 3ᵉ phase cachée sous ses derniers PV.",
+   "en": ""
+  },
+  {
+   "fr": "Brouillard total",
+   "en": ""
+  },
+  {
+   "fr": "On voit ce que prépare le gardien, jamais combien ni sur qui ; sa Fêlure est cachée.",
+   "en": ""
+  },
+  {
+   "fr": "Fréquences brouillées",
+   "en": ""
+  },
+  {
+   "fr": "Aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.",
+   "en": ""
+  },
+  {
+   "fr": "Les recrues",
+   "en": ""
+  },
+  {
+   "fr": "Le Coursier, le Docker et le Guetteur, avec leurs cartes de départ : ta collection ne compte pas.",
+   "en": ""
+  },
+  {
+   "fr": "Chaque chaîne ne joue qu’une lignée (les cartes du district vont avec toutes).",
+   "en": ""
+  },
+  {
+   "fr": "Cette Épreuve n’est pas au programme cette semaine.",
+   "en": ""
+  },
+  {
+   "fr": "Les Épreuves s’ouvrent quand le gardien de la Strate −{0} est vaincu.",
+   "en": ""
+  },
+  {
+   "fr": "Épreuve de la semaine : {0}{1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} n’est pas encore au district.",
+   "en": ""
+  },
+  {
+   "fr": "{0} est en mission : attends son retour.",
+   "en": ""
+  },
+  {
+   "fr": "Quête de la Strate −{0} achevée : « {1} ». {2}",
+   "en": ""
+  },
+  {
+   "fr": "« {0} » : étape {1} sur {2}.",
+   "en": ""
+  },
+  {
+   "fr": "+1 Éclat",
+   "en": ""
+  },
+  {
+   "fr": "Lampe : 2 salles éclairées",
+   "en": ""
+  },
+  {
+   "fr": "+{0} minerai",
+   "en": ""
+  },
+  {
+   "fr": "Aucune Halte en cours.",
+   "en": ""
+  },
+  {
+   "fr": " (+1 Éclat)",
+   "en": ""
+  },
+  {
+   "fr": " (+{0} minerai)",
+   "en": ""
+  },
+  {
+   "fr": "La porte ne s’ouvre pas.",
+   "en": ""
+  },
+  {
+   "fr": "Aucune porte.",
+   "en": ""
+  },
+  {
+   "fr": "Pas de passage.",
+   "en": ""
+  }
+ ]
+}

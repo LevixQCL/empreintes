@@ -1,0 +1,37 @@
+{
+ "source": "src/ui/campagne.ts",
+ "entrees": [
+  {
+   "fr": "intro/{0}.webp",
+   "en": ""
+  },
+  {
+   "fr": "◆ Ton choix à −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Réplique {0} sur {1}",
+   "en": ""
+  },
+  {
+   "fr": "Continuer",
+   "en": ""
+  },
+  {
+   "fr": "Touche l’écran pour la suite",
+   "en": ""
+  },
+  {
+   "fr": "Touche l’écran pour les écouter",
+   "en": ""
+  },
+  {
+   "fr": "Ton histoire, scène après scène. Touche une scène pour la revoir.",
+   "en": ""
+  },
+  {
+   "fr": "À vivre",
+   "en": ""
+  }
+ ]
+}

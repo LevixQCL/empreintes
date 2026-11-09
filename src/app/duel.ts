@@ -14,6 +14,7 @@ import { C, envoyerDefi, marquerDefi, publierVitrine } from './cercle';
 import { app, D, racine } from './etat';
 import { afficher } from './rendu';
 import { sauver } from './synchro';
+import { t as tr } from '../core/i18n';
 
 type Net = typeof import('../net/duel');
 let net: Net | null = null;
@@ -41,11 +42,11 @@ export const DL: {
 /** L'écran du mode duel */
 export function htmlModeDuel(): string {
   const E = ecransDifferes();
-  if (!E) return '<div class="ecran chargement"><p class="chargement-ecran" role="status">Chargement du duel…</p></div>';
+  if (!E) return `<div class="ecran chargement"><p class="chargement-ecran" role="status">${tr`Chargement du duel…`}</p></div>`;
   const { htmlDuel, htmlAttenteDuel } = E;
   if (DL.session) return htmlDuel(DL.session, Date.now(), finCercle());
   const refuse = C.defisEnvoyes.find((d) => d.id === DL.defi)?.etat === 'refuse';
-  return htmlAttenteDuel({ nom: DL.nomAmi ?? 'ton ami', code: DL.code ?? '', mode: DL.mode, message: refuse ? `${DL.nomAmi ?? 'Ton ami'} a décliné le défi.` : DL.message });
+  return htmlAttenteDuel({ nom: DL.nomAmi ?? tr('ton ami'), code: DL.code ?? '', mode: DL.mode, message: refuse ? tr`${DL.nomAmi ?? tr('Ton ami')} a décliné le défi.` : DL.message });
 }
 
 /** Ce que la fenêtre de fin ajoute au Cercle : le gain de la semaine, la revanche */
@@ -54,7 +55,7 @@ function finCercle(): { recompense?: string; revanche?: boolean } {
   if (!s?.fini) return {};
   const g = DL.gain;
   return {
-    ...(g ? { recompense: `+${g.composants} cristaux · +${g.eclats} Éclat${g.eclats > 1 ? 's' : ''} : première victoire de la semaine contre ${DL.nomAmi}` } : {}),
+    ...(g ? { recompense: tr`+${g.composants} cristaux · +${g.eclats} Éclat${g.eclats > 1 ? 's' : ''} : première victoire de la semaine contre ${DL.nomAmi}` } : {}),
     ...(DL.ami ? { revanche: true } : {}),
   };
 }
@@ -66,7 +67,7 @@ function monEscouade(mode: 'libre' | 'egal'): EscouadeDuel | null {
   if (mode === 'egal') e = J.aArmesEgales(e);
   const v = validerEscouade(e);
   if (!v.ok) {
-    C.message = `Ton escouade active ne peut pas jouer en duel : ${v.message} Change-la dans l’onglet Escouade.`;
+    C.message = tr`Ton escouade active ne peut pas jouer en duel : ${v.message} Change-la dans l’onglet Escouade.`;
     return null;
   }
   return e;
@@ -120,7 +121,7 @@ export async function defierAmi(ami: string, mode: 'libre' | 'egal') {
     });
     afficher();
   } catch (err) {
-    C.message = (err as Error).message || 'Le duel n’a pas pu s’ouvrir.';
+    C.message = (err as Error).message || tr('Le duel n’a pas pu s’ouvrir.');
     afficher();
   }
 }
@@ -141,7 +142,7 @@ export async function accepterDefi(id: string) {
     DL.arreterSalon?.();
     DL.arreterSalon = n.ecouterSalon(s.code, (x) => { if (x?.etat === 'fini' && DL.session && !DL.session.fini && x.abandon === 0) DL.session.adversaireParti(); });
   } catch (err) {
-    C.message = (err as Error).message || 'Ce défi n’est plus valable.';
+    C.message = (err as Error).message || tr('Ce défi n’est plus valable.');
     marquerDefi(id, 'refuse');
     afficher();
   }
@@ -152,7 +153,7 @@ export function duelRobot() {
   const e = monEscouade('libre');
   if (!e) { afficher(); return; }
   Object.assign(DL, { ami: undefined, nomAmi: undefined, defi: undefined, code: undefined, mode: 'libre', message: '' });
-  lancer(creerDuel(e, { ...e, nom: 'Robot d’entraînement' }, graineDuel()), 0, transportRobot(1));
+  lancer(creerDuel(e, { ...e, nom: tr('Robot d’entraînement') }, graineDuel()), 0, transportRobot(1));
 }
 
 /** La revanche : le même ami, le même mode */
@@ -187,7 +188,7 @@ export function confirmerAbandon(): boolean {
   if (Date.now() - quitterArme < 3000) return true;
   quitterArme = Date.now();
   const b = racine.querySelector('.dl-quitter');
-  if (b) b.textContent = 'Toucher encore pour abandonner';
+  if (b) b.textContent = tr('Toucher encore pour abandonner');
   return false;
 }
 

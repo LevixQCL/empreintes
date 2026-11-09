@@ -1,0 +1,13 @@
+{
+ "source": "src/app/differes.ts",
+ "entrees": [
+  {
+   "fr": "Pas de réseau : cet écran s’ouvrira dès que la connexion revient.",
+   "en": ""
+  },
+  {
+   "fr": "Chargement…",
+   "en": ""
+  }
+ ]
+}

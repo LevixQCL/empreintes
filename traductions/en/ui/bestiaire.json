@@ -1,0 +1,85 @@
+{
+ "source": "src/ui/bestiaire.ts",
+ "entrees": [
+  {
+   "fr": "Les Seuils · −1 à −3",
+   "en": ""
+  },
+  {
+   "fr": "Les Salles closes · −4 à −6",
+   "en": ""
+  },
+  {
+   "fr": "Les Registres · −7 à −9",
+   "en": ""
+  },
+  {
+   "fr": "Le Fond · −10",
+   "en": ""
+  },
+  {
+   "fr": "Ce que les Veilleurs savent des habitants des Strates. Une fiche s’écrit à force de les vaincre : d’où ils viennent, comment ils se battent, puis leur secret.",
+   "en": ""
+  },
+  {
+   "fr": "rencontrés.",
+   "en": ""
+  },
+  {
+   "fr": "Pas encore vaincu",
+   "en": ""
+  },
+  {
+   "fr": "{0} : à {1} victoires",
+   "en": ""
+  },
+  {
+   "fr": "victoire{0}",
+   "en": ""
+  },
+  {
+   "fr": "Origine",
+   "en": ""
+  },
+  {
+   "fr": "Au combat",
+   "en": ""
+  },
+  {
+   "fr": "Secret",
+   "en": ""
+  },
+  {
+   "fr": "Les Rôdeurs · un par zone, en Explorer",
+   "en": ""
+  },
+  {
+   "fr": "Des traces, quelque part",
+   "en": ""
+  },
+  {
+   "fr": "{0} · se croise en explorant une Strate déjà vaincue",
+   "en": ""
+  },
+  {
+   "fr": "Abattu",
+   "en": ""
+  },
+  {
+   "fr": "il lui reste",
+   "en": ""
+  },
+  {
+   "fr": "de sa vie",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} · {2} rencontre{3} · {4}",
+   "en": ""
+  },
+  {
+   "fr": "Secret : quand il tombera",
+   "en": ""
+  }
+ ]
+}

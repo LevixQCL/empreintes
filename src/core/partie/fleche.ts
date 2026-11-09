@@ -24,6 +24,7 @@ import { CONFIANCE, XP, bonusPv, strateVaincue, confier, gagnerXp, log, niveauPo
 import { escouadePrete, payerRatelier, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
 import { PILLAGE, remonter as remonterPillage, type Garnison } from './pillages';
+import { t as tr } from '../i18n';
 
 export { FLECHE };
 
@@ -159,9 +160,9 @@ export const chefDeQuai = (grave: number) => (grave <= 40 ? 'flc-contremaitre' :
 export const estGardeFleche = (id: string) => id.startsWith('flc-');
 
 export function peutMonter(j: Jeu): Resultat {
-  if (!flecheOuverte(j)) return non('La Flèche s’ouvrira quand les Hauts t’y auront convié.');
-  if (j.expedition) return non('Une expédition est déjà en cours.');
-  if (etatFleche(j).quai >= FLECHE.quais) return non('Ton escouade tient le dernier quai : les Sièges s’ouvriront au passage de la prochaine île.');
+  if (!flecheOuverte(j)) return non(tr('La Flèche s’ouvrira quand les Hauts t’y auront convié.'));
+  if (j.expedition) return non(tr('Une expédition est déjà en cours.'));
+  if (etatFleche(j).quai >= FLECHE.quais) return non(tr('Ton escouade tient le dernier quai : les Sièges s’ouvriront au passage de la prochaine île.'));
   return { ok: true };
 }
 
@@ -192,18 +193,18 @@ export function monterFleche(j: Jeu, escouade: string[], rng = graine()): Result
   const quai = etatFleche(j).quai;
   const porteurs = gardiensQuai(quai);
   const r = combatFleche(j, escouade, quai, forceQuai(quai), porteurs,
-    `Quai ${quai} de la Flèche : les gardiens des Hauts barrent la passerelle (${porteurs.map((id) => ennemiDef(id).nom).join(', ')}).`, rng);
-  if (r.ok) log(j, `L’escouade monte à l’assaut du quai ${quai} de la Flèche.`);
+    tr`Quai ${quai} de la Flèche : les gardiens des Hauts barrent la passerelle (${porteurs.map((id) => ennemiDef(id).nom).join(', ')}).`, rng);
+  if (r.ok) log(j, tr`L’escouade monte à l’assaut du quai ${quai} de la Flèche.`);
   return r;
 }
 
 export function peutDefier(j: Jeu, gardien: GardienQuai | null | undefined): Resultat {
-  if (!flecheOuverte(j)) return non('La Flèche s’ouvrira quand les Hauts t’y auront convié.');
-  if (j.expedition) return non('Une expédition est déjà en cours.');
-  if (!gardien || gardien.porteurs.length < 1) return non('Aucun gardien à défier.');
+  if (!flecheOuverte(j)) return non(tr('La Flèche s’ouvrira quand les Hauts t’y auront convié.'));
+  if (j.expedition) return non(tr('Une expédition est déjà en cours.'));
+  if (!gardien || gardien.porteurs.length < 1) return non(tr('Aucun gardien à défier.'));
   const f = etatFleche(j);
-  if (gardien.quai > f.record) return non(`Il faut avoir atteint le quai ${gardien.quai} pour en défier le gardien.`);
-  if (f.garde && f.garde.quai >= gardien.quai) return non(`Tu tiens déjà un quai plus haut que le ${gardien.quai}.`);
+  if (gardien.quai > f.record) return non(tr`Il faut avoir atteint le quai ${gardien.quai} pour en défier le gardien.`);
+  if (f.garde && f.garde.quai >= gardien.quai) return non(tr`Tu tiens déjà un quai plus haut que le ${gardien.quai}.`);
   return { ok: true };
 }
 
@@ -213,8 +214,8 @@ export function defierGardien(j: Jeu, escouade: string[], gardien: GardienQuai, 
   if (!p.ok) return p;
   const porteurs = [...gardien.porteurs, ...gardiensQuai(gardien.quai)].slice(0, 3);
   const r = combatFleche(j, escouade, gardien.quai, gardien.force, porteurs,
-    `Quai ${gardien.quai} de la Flèche : l’escouade de ${gardien.nom}, qui tient le quai, accepte le défi.`, rng, gardien);
-  if (r.ok) log(j, `L’escouade défie ${gardien.nom}, gardien du quai ${gardien.quai}.`);
+    tr`Quai ${gardien.quai} de la Flèche : l’escouade de ${gardien.nom}, qui tient le quai, accepte le défi.`, rng, gardien);
+  if (r.ok) log(j, tr`L’escouade défie ${gardien.nom}, gardien du quai ${gardien.quai}.`);
   return r;
 }
 
@@ -259,13 +260,13 @@ export function remonterFleche(j: Jeu, now: number): RetourFleche | null {
   for (const p of x.combat.porteurs) {
     const d = j.porteurs[p.id]!;
     usureAuRetour(j, p);
-    if (xp) { const avant = niveauPorteur(j, p.id).niveau; const n = gagnerXp(j, p.id, xp); if (n && n > avant) log(j, `${porteurDef(p.id).nom} passe au niveau ${n} !`); }
+    if (xp) { const avant = niveauPorteur(j, p.id).niveau; const n = gagnerXp(j, p.id, xp); if (n && n > avant) log(j, tr`${porteurDef(p.id).nom} passe au niveau ${n} !`); }
     if (victoire) { const fa = (d.faits ??= {}); fa.combats = (fa.combats ?? 0) + 1; }
   }
   j.expedition = null;
-  log(j, defi ? (victoire ? `Flèche : ${defi.nom} est battu, ton escouade tient désormais le quai ${defi.quai}.` : `Flèche : ${defi.nom} garde le quai ${defi.quai}.`)
-    : victoire ? `Flèche : le quai ${de} tombe, l’escouade monte au quai ${f.quai}.`
-    : `Flèche : repoussés au quai ${de}${f.quai < de ? `, l’escouade redescend au quai ${f.quai}` : ''}.`);
+  log(j, defi ? (victoire ? tr`Flèche : ${defi.nom} est battu, ton escouade tient désormais le quai ${defi.quai}.` : tr`Flèche : ${defi.nom} garde le quai ${defi.quai}.`)
+    : victoire ? tr`Flèche : le quai ${de} tombe, l’escouade monte au quai ${f.quai}.`
+    : tr`Flèche : repoussés au quai ${de}${f.quai < de ? tr`, l’escouade redescend au quai ${f.quai}` : ''}.`);
   return { victoire, de, a: f.quai, paliers, record, ...(defi ? { defi: { nom: defi.nom, quai: defi.quai } } : {}) };
 }
 
@@ -309,12 +310,12 @@ export function quaiLibreDe(j: Jeu, portee: GardienQuai[]): number | null {
  * du précédent. L'escouade reste libre : c'est une copie figée qui garde le quai.
  */
 export function peutTenir(j: Jeu, escouade: string[], quai: number): Resultat {
-  if (!flecheOuverte(j)) return non('La Flèche s’ouvrira quand les Hauts t’y auront convié.');
+  if (!flecheOuverte(j)) return non(tr('La Flèche s’ouvrira quand les Hauts t’y auront convié.'));
   const f = etatFleche(j);
-  if (quai < 2) return non('Le pied de la Flèche n’a pas de gardien : monte d’abord d’un quai.');
-  if (quai > quaiMaxTenable(j)) return non(`Il faut avoir atteint le quai ${quai} pour le tenir.`);
-  if (f.garde?.quai === quai) return non(`Ton escouade tient déjà le quai ${quai}.`);
-  if (escouade.length < 3) return non('Il faut trois Porteurs pour tenir un quai.');
+  if (quai < 2) return non(tr('Le pied de la Flèche n’a pas de gardien : monte d’abord d’un quai.'));
+  if (quai > quaiMaxTenable(j)) return non(tr`Il faut avoir atteint le quai ${quai} pour le tenir.`);
+  if (f.garde?.quai === quai) return non(tr`Ton escouade tient déjà le quai ${quai}.`);
+  if (escouade.length < 3) return non(tr('Il faut trois Porteurs pour tenir un quai.'));
   return { ok: true };
 }
 
@@ -324,7 +325,7 @@ export function tenirQuai(j: Jeu, escouade: string[], quai: number, now: number)
   const f = etatFleche(j);
   if (f.garde) recevoirGage(j, now);
   f.garde = { quai, depuis: now, gageLe: now, garnison: garnisonFleche(j, escouade), repousses: 0 };
-  log(j, `Ton escouade s’installe sur le quai ${quai} de la Flèche : elle en devient le gardien.`);
+  log(j, tr`Ton escouade s’installe sur le quai ${quai} de la Flèche : elle en devient le gardien.`);
   return { ok: true };
 }
 
@@ -356,7 +357,7 @@ export function quitterQuai(j: Jeu, now: number): { composants: number; eclats: 
   const f = j.fleche;
   if (!f?.garde) return null;
   const r = recevoirGage(j, now);
-  log(j, `Ton escouade quitte le quai ${f.garde.quai} de la Flèche.`);
+  log(j, tr`Ton escouade quitte le quai ${f.garde.quai} de la Flèche.`);
   delete f.garde;
   return r;
 }
@@ -380,11 +381,11 @@ export function subirAssauts(j: Jeu, assauts: AssautSubi[]): string[] {
       g.repousses++;
       const bonus = Math.round(gageJour(g.quai).composants * ASCENSION.partDefense);
       j.energie += bonus;
-      l.push(`Ton escouade a tenu le quai ${g.quai} face à ${a.nom} : les Hauts versent +${bonus} cristaux.`);
+      l.push(tr`Ton escouade a tenu le quai ${g.quai} face à ${a.nom} : les Hauts versent +${bonus} cristaux.`);
     } else {
       const r = recevoirGage(j, Math.max(g.gageLe, a.le));
       delete f.garde;
-      l.push(`${a.nom} t’a pris le quai ${g.quai}.${r.composants ? ` Gage versé : +${r.composants} cristaux${r.eclats ? `, +${r.eclats} Éclats` : ''}.` : ''} Ta montée, elle, ne bouge pas.`);
+      l.push(tr`${a.nom} t’a pris le quai ${g.quai}.${r.composants ? tr` Gage versé : +${r.composants} cristaux${r.eclats ? tr`, +${r.eclats} Éclats` : ''}.` : ''} Ta montée, elle, ne bouge pas.`);
     }
   }
   const dernier = recus.reduce((m, r) => Math.max(m, r.le), 0);
@@ -408,12 +409,12 @@ export const chanceQuai = (forceEscouade: number, quai: number) => 1 / (1 + Math
 // emportée là-haut. Avant ça, le quartier qui te suit te rappelle, quand tu montes, que la solution pour l'eau devrait être en bas.
 // Rien n'est retiré ni bloqué : ce sont des voix, pas une règle.
 export const VOIX_DU_QUARTIER: { qui: string; texte: string }[] = [
-  { qui: 'Une pompière de la Nuit des lignes', texte: 'Monter, c’est bien, directeur. Mais l’eau, elle, vient d’en bas. L’Écluse, c’est en dessous qu’on la cherche.' },
-  { qui: 'Le vieux Marek, au marché', texte: 'Les Hauts t’ont ouvert leurs quais ? Méfie-toi des cadeaux qui viennent d’en haut. Les réponses, on les a toujours creusées.' },
-  { qui: 'Une mère de la rue des pompes', texte: 'Mes enfants dorment au premier étage maintenant. Si tu trouves l’Écluse, dis-le-nous avant d’aller saluer les îles.' },
-  { qui: 'Un creuseur du chantier', texte: 'On a percé la roche pour toi. Ne laisse pas nos galeries à moitié faites pour aller faire le beau sur la Flèche.' },
-  { qui: 'Ysé, dans un mot glissé sous ta porte', texte: 'La Flèche ne partira pas. Le fond non plus. Mais c’est lui qui sait ce que ceux d’avant ont fait de leur eau.' },
-  { qui: 'Un gamin du quai', texte: 'Tu nous emmèneras là-haut, dis ? Mais d’abord tu arrêtes la mer. Promis ?' },
+  { qui: tr('Une pompière de la Nuit des lignes'), texte: tr('Monter, c’est bien, directeur. Mais l’eau, elle, vient d’en bas. L’Écluse, c’est en dessous qu’on la cherche.') },
+  { qui: tr('Le vieux Marek, au marché'), texte: tr('Les Hauts t’ont ouvert leurs quais ? Méfie-toi des cadeaux qui viennent d’en haut. Les réponses, on les a toujours creusées.') },
+  { qui: tr('Une mère de la rue des pompes'), texte: tr('Mes enfants dorment au premier étage maintenant. Si tu trouves l’Écluse, dis-le-nous avant d’aller saluer les îles.') },
+  { qui: tr('Un creuseur du chantier'), texte: tr('On a percé la roche pour toi. Ne laisse pas nos galeries à moitié faites pour aller faire le beau sur la Flèche.') },
+  { qui: tr('Ysé, dans un mot glissé sous ta porte'), texte: tr('La Flèche ne partira pas. Le fond non plus. Mais c’est lui qui sait ce que ceux d’avant ont fait de leur eau.') },
+  { qui: tr('Un gamin du quai'), texte: tr('Tu nous emmèneras là-haut, dis ? Mais d’abord tu arrêtes la mer. Promis ?') },
 ];
 /** La voix du jour (toujours la même pour un même jour), seulement tant que le gardien de −10 n'est pas vaincu */
 export function voixDuQuartier(j: Jeu, jour: number): { qui: string; texte: string } | null {

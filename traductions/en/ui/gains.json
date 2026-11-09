@@ -1,0 +1,97 @@
+{
+ "source": "src/ui/gains.ts",
+ "entrees": [
+  {
+   "fr": "#app .scene-campagne",
+   "en": ""
+  },
+  {
+   "fr": "#app .scene-rencontre",
+   "en": ""
+  },
+  {
+   "fr": "#app .scene-briefing",
+   "en": ""
+  },
+  {
+   "fr": "#app .intro-pas",
+   "en": ""
+  },
+  {
+   "fr": "#app .gt-feuille",
+   "en": ""
+  },
+  {
+   "fr": "#app .options-decision",
+   "en": ""
+  },
+  {
+   "fr": "#app .legs-carte",
+   "en": ""
+  },
+  {
+   "fr": "Nouvelle carte",
+   "en": ""
+  },
+  {
+   "fr": "+{0} doublon{1}",
+   "en": ""
+  },
+  {
+   "fr": "vers le niveau suivant",
+   "en": ""
+  },
+  {
+   "fr": "Nouvel épithète",
+   "en": ""
+  },
+  {
+   "fr": "La carte se souvient",
+   "en": ""
+  },
+  {
+   "fr": "à choisir dans sa fiche",
+   "en": ""
+  },
+  {
+   "fr": "Marque gagnée",
+   "en": ""
+  },
+  {
+   "fr": "Nouveau Porteur",
+   "en": ""
+  },
+  {
+   "fr": "rejoint le district",
+   "en": ""
+  },
+  {
+   "fr": "Niveau supérieur",
+   "en": ""
+  },
+  {
+   "fr": "plus de PV en combat",
+   "en": ""
+  },
+  {
+   "fr": "Rare",
+   "en": ""
+  },
+  {
+   "fr": "Très rare",
+   "en": ""
+  },
+  {
+   "fr": "Légendaire",
+   "en": ""
+  },
+  {
+   "fr": "Carte {0} · {1}",
+   "en": ""
+  },
+  {
+   "fr": "Touche pour continuer",
+   "en": ""
+  }
+ ]
+}

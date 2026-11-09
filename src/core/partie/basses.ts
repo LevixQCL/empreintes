@@ -12,6 +12,7 @@ import { familleDef } from '../familles';
 import { XP, accueillirFamille, coutBatardeau, facteurXp, gagnerXp, log, nbFoyers, niveauConfiance, non, progresMarque, semaineDe, strateVaincue, usureMax, type EtatBasses, type Jeu, type RapportMission, type Resultat } from './etat';
 import { rangerRapport } from './descentes';
 import { raisonHorsContrat } from './marees';
+import { t as tr } from '../i18n';
 
 export const BASSES = {
   /** la Strate qu'il faut avoir vaincue pour ouvrir l'écluse (8 novembre 2026, audit du soir : à −1, Port, missions, Basses,
@@ -71,32 +72,32 @@ export function compterDepots(j: Jeu, now: number) {
 
 /** Ramasse un dépôt laissé par la marée */
 export function ramasserDepot(j: Jeu, now: number): Resultat {
-  if (!bassesOuvertes(j)) return non(`L’écluse reste fermée tant que le gardien de la Strate −${BASSES.ouverture} tient le puits.`);
+  if (!bassesOuvertes(j)) return non(tr`L’écluse reste fermée tant que le gardien de la Strate −${BASSES.ouverture} tient le puits.`);
   compterDepots(j, now);
   const b = bassesDe(j);
-  if (b.depots < 1) return non(`Rien sur la grève pour l’instant : la mer laissera quelque chose à la prochaine marée basse.`);
+  if (b.depots < 1) return non(tr`Rien sur la grève pour l’instant : la mer laissera quelque chose à la prochaine marée basse.`);
   const n = valeurDepot(j, now);
   const e = eclatsDepot(j, now);
   b.depots--;
   j.composants += n;
   j.eclats += e;
   const grande = etatMaree(now).grande;
-  if (e) return { ok: true, message: `${grande ? 'La grande marée a tout découvert' : 'L’eau du Fond est remontée jusqu’à la grève'} : +${n} minerai et ${e} Éclat${e > 1 ? 's' : ''} de colonne.` };
-  return { ok: true, message: `${grande ? 'La grande marée a tout découvert' : 'La mer a laissé de quoi faire'} : +${n} minerai.` };
+  if (e) return { ok: true, message: tr`${grande ? tr('La grande marée a tout découvert') : tr('L’eau du Fond est remontée jusqu’à la grève')} : +${n} minerai et ${e} Éclat${e > 1 ? 's' : ''} de colonne.` };
+  return { ok: true, message: tr`${grande ? tr('La grande marée a tout découvert') : tr('La mer a laissé de quoi faire')} : +${n} minerai.` };
 }
 
 /** Pourquoi on ne peut pas dresser le batardeau sur ce secteur (null = on peut) ; le coût en cristaux (0 : gratuit) */
 export function peutDresser(j: Jeu, id: string, now: number): { raison: string | null; cout: number } {
   const s = secteurDef(id);
-  if (!s) return { raison: 'Secteur inconnu.', cout: 0 };
-  if (!secteurOuvert(j, s)) return { raison: `Trop bas sur le flanc : il faut avoir vaincu la Strate −${s.strate}.`, cout: 0 };
+  if (!s) return { raison: tr('Secteur inconnu.'), cout: 0 };
+  if (!secteurOuvert(j, s)) return { raison: tr`Trop bas sur le flanc : il faut avoir vaincu la Strate −${s.strate}.`, cout: 0 };
   const b = bassesDe(j);
-  if (b.batardeau === id) return { raison: 'Le batardeau garde déjà ce secteur à sec.', cout: 0 };
+  if (b.batardeau === id) return { raison: tr('Le batardeau garde déjà ce secteur à sec.'), cout: 0 };
   if (!b.batardeau) return { raison: null, cout: 0 };
-  if (b.expedition && secteurDuLieu(b.expedition.lieu)?.id === b.batardeau) return { raison: 'Un Porteur est encore dans le secteur à sec : on attend son retour.', cout: 0 };
-  if (b.semaine === semaineDe(now)) return { raison: 'Le batardeau a déjà été déplacé cette semaine : il pourra bouger lundi.', cout: 0 };
+  if (b.expedition && secteurDuLieu(b.expedition.lieu)?.id === b.batardeau) return { raison: tr('Un Porteur est encore dans le secteur à sec : on attend son retour.'), cout: 0 };
+  if (b.semaine === semaineDe(now)) return { raison: tr('Le batardeau a déjà été déplacé cette semaine : il pourra bouger lundi.'), cout: 0 };
   const cout = coutBatardeau(j);
-  return { raison: j.energie < cout ? `Il faut ${cout} cristaux pour pomper un nouveau secteur.` : null, cout };
+  return { raison: j.energie < cout ? tr`Il faut ${cout} cristaux pour pomper un nouveau secteur.` : null, cout };
 }
 
 /** Dresse le batardeau : ce secteur reste à sec, l'ancien se remplit (ses familles attendent, rien n'est perdu) */
@@ -109,17 +110,17 @@ export function dresserBatardeau(j: Jeu, id: string, now: number): Resultat {
   b.batardeau = id;
   if (!premier) b.semaine = semaineDe(now);
   const s = secteurDef(id)!;
-  log(j, `Le batardeau est dressé : ${s.nom} restent à sec.`);
-  return { ok: true, message: `${s.nom} : les pompes vident le secteur. ${restantsSecteur(j, s) ? 'Des familles y attendent encore.' : 'Plus personne n’y attend.'}` };
+  log(j, tr`Le batardeau est dressé : ${s.nom} restent à sec.`);
+  return { ok: true, message: tr`${s.nom} : les pompes vident le secteur. ${restantsSecteur(j, s) ? tr('Des familles y attendent encore.') : tr('Plus personne n’y attend.')}` };
 }
 
 /** Pourquoi on ne peut pas envoyer quelqu'un dans ce lieu (null = on peut) */
 export function raisonLieu(j: Jeu, lieu: string): string | null {
   const s = secteurDuLieu(lieu);
-  if (!s || !bassesOuvertes(j)) return 'L’écluse est fermée.';
-  if (lieuFait(j, lieu)) return 'Sa famille vit déjà au district.';
-  if (j.basses?.batardeau !== s.id) return 'Ce secteur est sous l’eau : il faut y dresser le batardeau.';
-  if (j.basses?.expedition) return 'Un Porteur est déjà dans les Basses.';
+  if (!s || !bassesOuvertes(j)) return tr('L’écluse est fermée.');
+  if (lieuFait(j, lieu)) return tr('Sa famille vit déjà au district.');
+  if (j.basses?.batardeau !== s.id) return tr('Ce secteur est sous l’eau : il faut y dresser le batardeau.');
+  if (j.basses?.expedition) return tr('Un Porteur est déjà dans les Basses.');
   return null;
 }
 
@@ -131,9 +132,9 @@ export function envoyerBasses(j: Jeu, lieu: string, porteur: string, now: number
   const r = raisonLieu(j, lieu);
   if (r) return non(r);
   const pourquoi = raisonHorsContrat(j, porteur);
-  if (pourquoi) return non(`${porteurDef(porteur)?.nom ?? 'Ce Porteur'} : ${pourquoi.toLowerCase()}`);
+  if (pourquoi) return non(`${porteurDef(porteur)?.nom ?? tr('Ce Porteur')} : ${pourquoi.toLowerCase()}`);
   bassesDe(j).expedition = { lieu, porteur, debut: now, fin: now + BASSES.heures * 3_600_000, strate: strateVaincue(j) };
-  log(j, `${porteurDef(porteur).nom} descend le flanc de la digue : ${lieuBassesDef(lieu)!.nom}.`);
+  log(j, tr`${porteurDef(porteur).nom} descend le flanc de la digue : ${lieuBassesDef(lieu)!.nom}.`);
   return { ok: true };
 }
 
@@ -159,21 +160,21 @@ export function retourDesBasses(j: Jeu): string {
   q.faits = { ...q.faits, missions: (q.faits?.missions ?? 0) + 1 };
   const mq = progresMarque(j, x.porteur);
   const marque = mq?.acquise && !avantMarque ? mq.nom : null;
-  if (marque) log(j, `${p.nom} gagne la Marque ${mq!.nom} : ${mq!.texte}`);
+  if (marque) log(j, tr`${p.nom} gagne la Marque ${mq!.nom} : ${mq!.texte}`);
   const Nom = `${fam.nom.charAt(0).toUpperCase()}${fam.nom.slice(1)}`;
   const palier = niveauConfiance(nbFoyers(j)).niveau > avantPalier;
   const recit = [
-    `${p.nom} descend jusqu’à ${lieu.nom.charAt(0).toLowerCase()}${lieu.nom.slice(1)}, à la lampe, pendant que les pompes tiennent l’eau.`,
+    tr`${p.nom} descend jusqu’à ${lieu.nom.charAt(0).toLowerCase()}${lieu.nom.slice(1)}, à la lampe, pendant que les pompes tiennent l’eau.`,
     lieu.trace,
-    `${Nom} attendaient là. ${fam.qui} Ils remontent avec ${p.nom} : ils vivent désormais au district.`,
-    ...(palier ? [`${nbFoyers(j)} familles te suivent : un nouveau palier.`] : []),
+    tr`${Nom} attendaient là. ${fam.qui} Ils remontent avec ${p.nom} : ils vivent désormais au district.`,
+    ...(palier ? [tr`${nbFoyers(j)} familles te suivent : un nouveau palier.`] : []),
   ];
   const rapport: RapportMission = {
     porteur: x.porteur, strate: x.strate, duree: 'courte', fin: x.fin, recit, composants, xp, niveau: monte, cartes: [], creuseurs: 0,
     usure: Math.round((q.usure - usureAvant) * 10) / 10, marque, lu: false, basses: { lieu: lieu.id, famille: fam.id },
   };
   rangerRapport(j, rapport);
-  const texte = `${p.nom} remonte des Basses avec ${fam.nom} : +${composants} minerai, +${xp} XP.`;
+  const texte = tr`${p.nom} remonte des Basses avec ${fam.nom} : +${composants} minerai, +${xp} XP.`;
   log(j, texte);
   return texte;
 }
@@ -183,7 +184,7 @@ export function avancerBasses(j: Jeu, now: number): string[] {
   const n: string[] = [];
   // la première fois : on explique (Bryan, 31 octobre 2026 : chaque nouveauté doit être expliquée aux nouveaux joueurs)
   if (!j.basses && bassesOuvertes(j)) {
-    const t = 'L’écluse s’ouvre : de l’autre côté de la digue, des familles vivent encore dans les quartiers noyés. Touche l’écluse, au pied de la digue, pour dresser le batardeau et aller les chercher.';
+    const t = tr('L’écluse s’ouvre : de l’autre côté de la digue, des familles vivent encore dans les quartiers noyés. Touche l’écluse, au pied de la digue, pour dresser le batardeau et aller les chercher.');
     log(j, t);
     n.push(t);
   }

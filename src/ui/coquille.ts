@@ -20,6 +20,7 @@ import { feuilleNom } from './classements';
 import { cristalAllume, cristalRail, entreeFiche, feuilleFiche } from './fiche';
 import { COULEUR, ICONE_MUET, ICONE_SON, panneauCompte, type Compte } from './vue';
 import { echap, virgule, texteReplie } from './outils';
+import { t as tr } from '../core/i18n';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages' | 'fleche' | 'recruter' | 'cercle';
 /** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */
@@ -173,10 +174,10 @@ export function etapeVoyage(debut: number, fin: number, now: number): { x: numbe
   if (p < 0.55) return { x: 1, phase: 'fouille' };
   return { x: 1 - (p - 0.55) / 0.45, phase: 'retour' };
 }
-export const NOM_PHASE: Record<PhaseVoyage, string> = { aller: 'En route', fouille: 'Fouille sur place', retour: 'Sur le retour', quai: 'À quai' };
+export const NOM_PHASE: Record<PhaseVoyage, string> = { aller: tr('En route'), fouille: tr('Fouille sur place'), retour: tr('Sur le retour'), quai: tr('À quai') };
 
-export const NOM_LIGNEE: Record<Lignee, string> = { tech: 'Augmenté', bio: 'Géné', reso: 'Résonant' };
-export const NOM_LIGNEES: Record<Lignee, string> = { tech: 'Augmentés', bio: 'Génés', reso: 'Résonants' };
+export const NOM_LIGNEE: Record<Lignee, string> = { tech: tr('Augmenté'), bio: tr('Géné'), reso: tr('Résonant') };
+export const NOM_LIGNEES: Record<Lignee, string> = { tech: tr('Augmentés'), bio: tr('Génés'), reso: tr('Résonants') };
 
 /**
  * Le portrait d'un Porteur : son illustration si elle existe, sinon son initiale sur un hexagone de sa lignée.
@@ -199,7 +200,7 @@ export function prix(icone: Icone, v: number, assez = true, titre = ''): string 
 export function couts(j: Jeu, c: { energie?: number; composants?: number; eclats?: number }): string {
   const cr = (c.energie ?? 0) + (c.composants ?? 0);
   return (cr ? prix('energie', cr, j.energie >= cr, 'cristaux') : '')
-    + (c.eclats ? prix('eclats', c.eclats, j.eclats >= c.eclats, 'Éclats') : '');
+    + (c.eclats ? prix('eclats', c.eclats, j.eclats >= c.eclats, tr('Éclats')) : '');
 }
 
 /** La barre des ressources, toujours en haut */
@@ -209,11 +210,11 @@ function hud(j: Jeu, ouverte: Ressource | null = null): string {
   const taille = Math.floor(j.composants);
   const b = (r: Ressource, extra: string, label: string) =>
     `<button type="button" class="res ${r}${extra}" data-action="ressource" data-id="${r}" data-gain="${r}" aria-expanded="${ouverte === r}" aria-label="${label}">`;
-  return `<header class="hud" aria-label="Ressources">`
-    + b('energie', '', `Cristaux : ${ent(j.energie)}${taille ? `, et ${ent(taille)} de minerai en taille au Générateur` : ''}. Détails`) + `${icone('energie')}<span class="v">${ent(j.energie)}</span>`
+  return `<header class="hud" aria-label="${tr`Ressources`}">`
+    + b('energie', '', tr`Cristaux : ${ent(j.energie)}${taille ? tr`, et ${ent(taille)} de minerai en taille au Générateur` : ''}. Détails`) + `${icone('energie')}<span class="v">${ent(j.energie)}</span>`
     + `<small${taille ? ' class="taille"' : ''}>${taille ? `${ICO.composants}+${ent(taille)}` : 'cristaux'}</small></button>`
-    + b('eclats', '', `Éclats : ${ent(j.eclats)}. Détails`) + `${icone('eclats')}<span class="v">${ent(j.eclats)}</span><small>Éclats</small></button>`
-    + b('strate', ' abysse', `Strate −${j.strate}. Détails`) + `${icone('strate')}<span class="v">−${j.strate}</span><small>Strate</small></button>`
+    + b('eclats', '', tr`Éclats : ${ent(j.eclats)}. Détails`) + `${icone('eclats')}<span class="v">${ent(j.eclats)}</span><small>${tr`Éclats`}</small></button>`
+    + b('strate', ' abysse', tr`Strate −${j.strate}. Détails`) + `${icone('strate')}<span class="v">−${j.strate}</span><small>${tr`Strate`}</small></button>`
     + roueConfiance(j, b)
     + `</header>`;
 }
@@ -227,21 +228,21 @@ function roueConfiance(j: Jeu, b: (r: Ressource, extra: string, label: string) =
   const f = nbFoyers(j);
   const n = niveauConfiance(f);
   const p = n.requis ? Math.round((100 * n.dans) / n.requis) : 100;
-  return b('confiance', '', `${f} familles sur ${CONFIANCE.population} te suivent, palier ${n.niveau}. Détails`)
-    + `<span class="roue-confiance" style="--p:${p}%" aria-hidden="true"><b>${f}</b></span><small>palier ${n.niveau}</small></button>`;
+  return b('confiance', '', tr`${f} familles sur ${CONFIANCE.population} te suivent, palier ${n.niveau}. Détails`)
+    + `<span class="roue-confiance" style="--p:${p}%" aria-hidden="true"><b>${f}</b></span><small>${tr`palier ${n.niveau}`}</small></button>`;
 }
 
 /** D'où viennent les familles, pour le bilan de la Nuit des lignes (points de bouche-à-oreille) */
 const NOMS_SOURCE: Record<SourceHabitants, string> = {
-  pompes: 'Les pompes ont tenu', basses: 'Des familles ramenées des Basses', naufrages: 'Des naufragés recueillis', gardiens: 'Des gardiens vaincus', rencontres: 'Des choix justes en bas',
-  defense: 'Des pillages repoussés', fleche: 'Des quais gagnés sur la Flèche', histoire: 'L’histoire du district',
+  pompes: tr('Les pompes ont tenu'), basses: tr('Des familles ramenées des Basses'), naufrages: tr('Des naufragés recueillis'), gardiens: tr('Des gardiens vaincus'), rencontres: tr('Des choix justes en bas'),
+  defense: tr('Des pillages repoussés'), fleche: tr('Des quais gagnés sur la Flèche'), histoire: tr('L’histoire du district'),
 };
 
 /** Ce que chaque palier apporte en plus du creuseur volontaire et du souvenir de famille */
 const PALIERS_CONFIANCE: Record<number, string> = {
-  [ACCORD_OUVERT.confiance]: `L’Accord ouvert : avec la Clinique au niveau ${ACCORD_OUVERT.clinique}, un nouveau Résonant rejoint le district.`,
-  [CONFIANCE.comptoir]: 'Un marchand du quartier rouvre son étal : une carte de plus chaque jour au Comptoir.',
-  8: 'Tout le district te suit. Le jour où tu réclameras l’île, personne ne restera en bas.',
+  [ACCORD_OUVERT.confiance]: tr`L’Accord ouvert : avec la Clinique au niveau ${ACCORD_OUVERT.clinique}, un nouveau Résonant rejoint le district.`,
+  [CONFIANCE.comptoir]: tr('Un marchand du quartier rouvre son étal : une carte de plus chaque jour au Comptoir.'),
+  8: tr('Tout le district te suit. Le jour où tu réclameras l’île, personne ne restera en bas.'),
 };
 
 /** Le bilan de la dernière Nuit des lignes */
@@ -252,10 +253,10 @@ function blocNuit(j: Jeu): string {
     .map(([k]) => `<li><span>${NOMS_SOURCE[k]}</span></li>`).join('') : '';
   // un bilan d'avant le 7 novembre 2026 comptait des habitants : on n'en garde que la liste des raisons
   const venues = n?.familles ? n.gagnes + n.bonus : null;
-  return `<section class="fb-bloc nuit-lignes"><h3 class="titre-bloc">${ICO.district}La Nuit des lignes</h3>`
-    + texteReplie(`Chaque lundi, le district repeint sa ligne bleue un peu plus haut et fait le bilan. Ceux qui ont vu ce que tu as fait en parlent : ${Math.round(CONFIANCE.nuit * 100)} % de bouche-à-oreille en plus. Une semaine sans rien ne fait rien perdre.`, 'nuit-lignes', 'fb-vide')
-    + `<p class="nuit-semaine">Cette semaine : <b>${cette}</b> famille${cette > 1 ? 's' : ''} arrivée${cette > 1 ? 's' : ''} pour l’instant.</p>`
-    + (n ? `<h4 class="nuit-titre">La dernière Nuit${venues !== null ? ` · ${venues} famille${venues > 1 ? 's' : ''}` : ''}</h4><ul class="nuit-liste">${lignes}${n.bonus && n.familles ? `<li class="nuit-bonus"><span>Ceux qui ont vu, cette nuit-là</span><b>+${n.bonus}</b></li>` : ''}</ul>` : '')
+  return `<section class="fb-bloc nuit-lignes"><h3 class="titre-bloc">${ICO.district}${tr`La Nuit des lignes`}</h3>`
+    + texteReplie(tr`Chaque lundi, le district repeint sa ligne bleue un peu plus haut et fait le bilan. Ceux qui ont vu ce que tu as fait en parlent : ${Math.round(CONFIANCE.nuit * 100)} % de bouche-à-oreille en plus. Une semaine sans rien ne fait rien perdre.`, 'nuit-lignes', 'fb-vide')
+    + `<p class="nuit-semaine">${tr`Cette semaine :`} <b>${cette}</b> ${tr`famille${cette > 1 ? 's' : ''} arrivée${cette > 1 ? 's' : ''} pour l’instant.`}</p>`
+    + (n ? `<h4 class="nuit-titre">${tr`La dernière Nuit${venues !== null ? tr` · ${venues} famille${venues > 1 ? 's' : ''}` : ''}`}</h4><ul class="nuit-liste">${lignes}${n.bonus && n.familles ? `<li class="nuit-bonus"><span>${tr`Ceux qui ont vu, cette nuit-là`}</span><b>+${n.bonus}</b></li>` : ''}</ul>` : '')
     + `</section>`;
 }
 
@@ -267,84 +268,84 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined, famille: stri
   // 9 novembre 2026 : l'économie à cristal unique. Une seule fiche : les cristaux, et le minerai qui attend d'être taillé
   if (r === 'energie' || r === 'composants') {
     const t = brutEnAttente(j);
-    surtitre = 'LA MONNAIE DU DISTRICT'; titre = 'Les cristaux';
-    resume = 'La pierre bleue des profondeurs, taillée par le Générateur. Tout ce que tu rapportes en jouant arrive en minerai ; le Générateur le taille en cristaux, même quand tu ne joues pas. Rien ne se perd. Les cristaux paient tout.';
-    etat = `<b>${ent(j.energie)}</b> cristaux<small>${t.brut ? `+${ent(t.brut)} de minerai en taille · tout taillé dans ${t.heures} h` : 'Aucun minerai en attente : descends ou envoie une barque pour en rapporter'}</small>`;
-    gagner = [ligne('strate', 'Les expéditions', 'Chaque combat gagné, chaque cache et chaque salle d’archives rapportent du minerai. Fuir en garde les trois quarts, une défaite la moitié.'),
-      ligne('porteurs', 'Les missions en mer et les marées', 'Les barques reviennent chargées des ruines noyées.'),
-      ligne('cristal', 'Les fouilles ciblées', 'Une descente courte qui peut viser le minerai.'),
-      ligne('recycler', 'Recycler des doublons', 'Chaque doublon recyclé rend un peu de minerai.'),
-      ligne('boost', 'Le Générateur taille le minerai', 'Plus il est haut, plus il taille vite. Un Augmenté posté dessus taille deux fois plus vite. Dès le niveau 4, il y recueille aussi quelques Éclats.'),
-      ligne('coffre', 'Les récompenses arrivent taillées', 'Ravitaillement du jour, Butin de la semaine, objectifs, gardiens, Flèche : des cristaux tout prêts.')];
-    servir = [ligne('marteau', 'Améliorer les bâtiments', 'La plus grosse dépense ; les derniers niveaux demandent aussi des Éclats.'),
-      ligne('cartes', 'Monter les cartes de niveau', 'Avec leurs doublons.'),
-      ligne('cartes', 'Acheter au Comptoir', 'Des cartes précises à prix fixe, et quelques Éclats chaque jour.'),
-      ligne('marteau', 'Refabriquer une carte à la Forge', 'De 27 cristaux (fer) à 1 330 (nacre).'),
-      ligne('monter', 'Entraîner un Porteur', 'À la Tour du Noyau : une séance = un niveau, payée au lancement.'),
-      ligne('soin', 'Les soins intensifs', 'À la Clinique : 1 cristal par point d’Usure effacé tout de suite.'),
-      ligne('grappin', 'Un jeton de pillage de plus', 'Deux fois par jour au plus.')];
+    surtitre = tr('LA MONNAIE DU DISTRICT'); titre = tr('Les cristaux');
+    resume = tr('La pierre bleue des profondeurs, taillée par le Générateur. Tout ce que tu rapportes en jouant arrive en minerai ; le Générateur le taille en cristaux, même quand tu ne joues pas. Rien ne se perd. Les cristaux paient tout.');
+    etat = `<b>${ent(j.energie)}</b> ${tr`cristaux`}<small>${t.brut ? tr`+${ent(t.brut)} de minerai en taille · tout taillé dans ${t.heures} h` : tr('Aucun minerai en attente : descends ou envoie une barque pour en rapporter')}</small>`;
+    gagner = [ligne('strate', tr('Les expéditions'), tr('Chaque combat gagné, chaque cache et chaque salle d’archives rapportent du minerai. Fuir en garde les trois quarts, une défaite la moitié.')),
+      ligne('porteurs', tr('Les missions en mer et les marées'), tr('Les barques reviennent chargées des ruines noyées.')),
+      ligne('cristal', tr('Les fouilles ciblées'), tr('Une descente courte qui peut viser le minerai.')),
+      ligne('recycler', tr('Recycler des doublons'), tr('Chaque doublon recyclé rend un peu de minerai.')),
+      ligne('boost', tr('Le Générateur taille le minerai'), tr('Plus il est haut, plus il taille vite. Un Augmenté posté dessus taille deux fois plus vite. Dès le niveau 4, il y recueille aussi quelques Éclats.')),
+      ligne('coffre', tr('Les récompenses arrivent taillées'), tr('Ravitaillement du jour, Butin de la semaine, objectifs, gardiens, Flèche : des cristaux tout prêts.'))];
+    servir = [ligne('marteau', tr('Améliorer les bâtiments'), tr('La plus grosse dépense ; les derniers niveaux demandent aussi des Éclats.')),
+      ligne('cartes', tr('Monter les cartes de niveau'), tr('Avec leurs doublons.')),
+      ligne('cartes', tr('Acheter au Comptoir'), tr('Des cartes précises à prix fixe, et quelques Éclats chaque jour.')),
+      ligne('marteau', tr('Refabriquer une carte à la Forge'), tr('De 27 cristaux (fer) à 1 330 (nacre).')),
+      ligne('monter', tr('Entraîner un Porteur'), tr('À la Tour du Noyau : une séance = un niveau, payée au lancement.')),
+      ligne('soin', tr('Les soins intensifs'), tr('À la Clinique : 1 cristal par point d’Usure effacé tout de suite.')),
+      ligne('grappin', tr('Un jeton de pillage de plus'), tr('Deux fois par jour au plus.'))];
   } else if (r === 'eclats') {
-    surtitre = 'RESSOURCE RARE'; titre = 'Les Éclats';
-    resume = 'Des fragments de cristal chargés d’empreintes. Rares, ils ne se trouvent qu’en profondeur ou en récompense.';
-    etat = `<b>${ent(j.eclats)}</b><small>Éclats en réserve</small>`;
-    gagner = [ligne('strate', 'Les gardiens', 'Chaque gardien vaincu en donne, davantage à partir de la Strate −5.'),
-      ligne('coffre', 'Les caches et les rencontres', 'À partir de la Strate −3, une cache en cache parfois un.'),
-      ligne('cristal', 'Les fouilles « Éclats » et le Butin de la semaine', 'Pour en gagner quand on bloque.')];
-    servir = [ligne('marteau', 'Refabriquer les cartes rares', 'Argent, or et nacre en demandent à la Forge.'),
-      ligne('cartes', 'Les cartes en argent du Comptoir', 'Elles coûtent aussi des Éclats.'),
-      ligne('marteau', 'Les grands chantiers', 'Les derniers niveaux des bâtiments.')];
+    surtitre = tr('RESSOURCE RARE'); titre = tr('Les Éclats');
+    resume = tr('Des fragments de cristal chargés d’empreintes. Rares, ils ne se trouvent qu’en profondeur ou en récompense.');
+    etat = `<b>${ent(j.eclats)}</b><small>${tr`Éclats en réserve`}</small>`;
+    gagner = [ligne('strate', tr('Les gardiens'), tr('Chaque gardien vaincu en donne, davantage à partir de la Strate −5.')),
+      ligne('coffre', tr('Les caches et les rencontres'), tr('À partir de la Strate −3, une cache en cache parfois un.')),
+      ligne('cristal', tr('Les fouilles « Éclats » et le Butin de la semaine'), tr('Pour en gagner quand on bloque.'))];
+    servir = [ligne('marteau', tr('Refabriquer les cartes rares'), tr('Argent, or et nacre en demandent à la Forge.')),
+      ligne('cartes', tr('Les cartes en argent du Comptoir'), tr('Elles coûtent aussi des Éclats.')),
+      ligne('marteau', tr('Les grands chantiers'), tr('Les derniers niveaux des bâtiments.'))];
   } else if (r === 'confiance') {
     const f = nbFoyers(j);
     const n = niveauConfiance(f);
-    surtitre = 'LE DISTRICT'; titre = 'Ceux qui te suivent';
-    resume = 'L’eau monte, et tout le district le sait. Chaque famille que tu protèges décide de te suivre, et ne te quitte plus. Le jour où tu réclameras l’île, elles monteront avec toi.';
-    etat = `<b>${f}</b> / ${CONFIANCE.population} familles<small>${nomConfiance(n.niveau)}${n.requis ? ` · encore ${n.requis - n.dans} pour le palier ${n.niveau + 1}` : ''}</small>`;
-    gagner = [ligne('district', 'Aller les chercher dans les Basses', 'À l’écluse, garde un secteur à sec avec le batardeau et envoie un Porteur : chaque lieu cache une famille restée en bas.'),
-      ligne('porteurs', 'Recueillir des naufragés', 'Une mission « Naufragés » depuis le Port : le quartier voit la barque rentrer.'),
-      ligne('porte', 'Vaincre les gardiens', 'Chaque gardien vaincu de −1 à −10 : l’espoir de l’Écluse grandit.'),
-      ligne('cristal', 'Les choix justes en bas', 'Aider ceux qu’on croise se sait au quartier.'),
-      ligne('boost', 'Repousser un pillage', 'Quand la garnison du Port tient.'),
-      ligne('monter', 'Gagner des quais sur la Flèche', 'De la place sur les îles.')];
+    surtitre = tr('LE DISTRICT'); titre = tr('Ceux qui te suivent');
+    resume = tr('L’eau monte, et tout le district le sait. Chaque famille que tu protèges décide de te suivre, et ne te quitte plus. Le jour où tu réclameras l’île, elles monteront avec toi.');
+    etat = `<b>${f}</b> ${tr`/ ${CONFIANCE.population} familles`}<small>${nomConfiance(n.niveau)}${n.requis ? tr` · encore ${n.requis - n.dans} pour le palier ${n.niveau + 1}` : ''}</small>`;
+    gagner = [ligne('district', tr('Aller les chercher dans les Basses'), tr('À l’écluse, garde un secteur à sec avec le batardeau et envoie un Porteur : chaque lieu cache une famille restée en bas.')),
+      ligne('porteurs', tr('Recueillir des naufragés'), tr('Une mission « Naufragés » depuis le Port : le quartier voit la barque rentrer.')),
+      ligne('porte', tr('Vaincre les gardiens'), tr('Chaque gardien vaincu de −1 à −10 : l’espoir de l’Écluse grandit.')),
+      ligne('cristal', tr('Les choix justes en bas'), tr('Aider ceux qu’on croise se sait au quartier.')),
+      ligne('boost', tr('Repousser un pillage'), tr('Quand la garnison du Port tient.')),
+      ligne('monter', tr('Gagner des quais sur la Flèche'), tr('De la place sur les îles.'))];
     servir = Array.from({ length: CONFIANCE.population / CONFIANCE.palier }, (_, k) => {
       const p = k + 1;
       const fait = n.niveau >= p;
-      return `<li class="${fait ? 'fait' : ''}">${ICO[fait ? 'ouvrier' : 'verrou'] ?? ''}<span><strong>${p * CONFIANCE.palier} familles${NOMS_CONFIANCE[p] ? ` · ${NOMS_CONFIANCE[p]}` : ''}</strong><small>${PALIERS_CONFIANCE[p] ? `${PALIERS_CONFIANCE[p]} Avec un` : 'Un'} creuseur volontaire et un souvenir pour les Archives.</small></span></li>`;
+      return `<li class="${fait ? 'fait' : ''}">${ICO[fait ? 'ouvrier' : 'verrou'] ?? ''}<span><strong>${tr`${p * CONFIANCE.palier} familles${NOMS_CONFIANCE[p] ? ` · ${NOMS_CONFIANCE[p]}` : ''}`}</strong><small>${tr`${PALIERS_CONFIANCE[p] ? tr`${PALIERS_CONFIANCE[p]} Avec un` : 'Un'} creuseur volontaire et un souvenir pour les Archives.`}</small></span></li>`;
     });
   } else if (r === 'butin') {
     // 28 octobre 2026 (Bryan : « c'est quoi en fait l'Archive de la semaine ») : la fiche explique tout, sans rien à deviner
     const pts = j.archive.points;
     const prochain = ARCHIVE.paliers.find((p) => pts < p);
     const atteints = ARCHIVE.paliers.filter((p) => pts >= p).length;
-    surtitre = 'CHAQUE SEMAINE'; titre = 'Le Butin de la semaine';
-    resume = `Tout ce que tu fais cette semaine remplit un coffre. Chaque cran atteint y ajoute des récompenses. Lundi, le coffre s’ouvre au district et une nouvelle semaine repart de zéro. Rien n’est jamais perdu : un cran atteint reste acquis, et un coffre pas encore ouvert attend le suivant (jusqu’à ${ARCHIVE.empilesMax}).`;
-    etat = `<b>${pts}</b> / ${ARCHIVE.paliers[ARCHIVE.paliers.length - 1]}<small>${prochain ? `Encore ${prochain - pts} points pour le cran ${atteints + 1}` : 'Tous les crans sont atteints : bravo'} · s’ouvre lundi</small>`;
-    gagner = [ligne('porte', 'Gagner un combat en bas', `+${ARCHIVE.points.combat} points.`),
-      ligne('strate', 'Finir une descente', `+${ARCHIVE.points.expedition} points.`),
-      ligne('marteau', 'Finir un chantier', `+${ARCHIVE.points.chantier} points.`),
-      ligne('cartes', 'Remplir l’objectif du jour', `+${ARCHIVE.points.quotidien} points.`)];
+    surtitre = tr('CHAQUE SEMAINE'); titre = tr('Le Butin de la semaine');
+    resume = tr`Tout ce que tu fais cette semaine remplit un coffre. Chaque cran atteint y ajoute des récompenses. Lundi, le coffre s’ouvre au district et une nouvelle semaine repart de zéro. Rien n’est jamais perdu : un cran atteint reste acquis, et un coffre pas encore ouvert attend le suivant (jusqu’à ${ARCHIVE.empilesMax}).`;
+    etat = `<b>${pts}</b> / ${ARCHIVE.paliers[ARCHIVE.paliers.length - 1]}<small>${tr`${prochain ? tr`Encore ${prochain - pts} points pour le cran ${atteints + 1}` : tr('Tous les crans sont atteints : bravo')} · s’ouvre lundi`}</small>`;
+    gagner = [ligne('porte', tr('Gagner un combat en bas'), tr`+${ARCHIVE.points.combat} points.`),
+      ligne('strate', tr('Finir une descente'), tr`+${ARCHIVE.points.expedition} points.`),
+      ligne('marteau', tr('Finir un chantier'), tr`+${ARCHIVE.points.chantier} points.`),
+      ligne('cartes', tr('Remplir l’objectif du jour'), tr`+${ARCHIVE.points.quotidien} points.`)];
     const d = ARCHIVE.paliers;
-    servir = [ligne('coffre', `Cran 1 · ${d[0]} points`, `${ARCHIVE.composants} cristaux et une carte au choix parmi trois.`),
-      ligne('cristal', `Cran 2 · ${d[1]} points`, `${ARCHIVE.eclatsPalier2} Éclats en plus.`),
-      ligne('cartes', `Cran 3 · ${d[2]} points`, 'Une deuxième carte au choix, dont au moins une en argent.'),
-      ligne('boost', `Cran 4 · ${d[3]} points`, `Une troisième carte au choix avec de l’argent, et ${ARCHIVE.eclatsPalier4} Éclats de plus. Pour les plus assidus.`)];
+    servir = [ligne('coffre', tr`Cran 1 · ${d[0]} points`, tr`${ARCHIVE.composants} cristaux et une carte au choix parmi trois.`),
+      ligne('cristal', tr`Cran 2 · ${d[1]} points`, tr`${ARCHIVE.eclatsPalier2} Éclats en plus.`),
+      ligne('cartes', tr`Cran 3 · ${d[2]} points`, tr('Une deuxième carte au choix, dont au moins une en argent.')),
+      ligne('boost', tr`Cran 4 · ${d[3]} points`, tr`Une troisième carte au choix avec de l’argent, et ${ARCHIVE.eclatsPalier4} Éclats de plus. Pour les plus assidus.`)];
   } else {
     const manque = manquePourCreuser(j);
-    surtitre = 'PROFONDEUR'; titre = `La Strate −${j.strate}`;
-    resume = 'L’étage le plus profond que ton district a creusé sous la ville. Plus on descend, plus c’est ancien, dangereux et précieux.';
-    etat = `<b>−${j.strate}</b><small>${j.frontVaincu ? (manque ? `Gardien vaincu : il manque ${[manque.creuseurs ? `${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : '', manque.noyau ? `${manque.noyau} niveau${manque.noyau > 1 ? 'x' : ''} de Tour du Noyau` : ''].filter(Boolean).join(' et ')} pour creuser plus bas` : 'Prête à être creusée plus bas') : `Bats son gardien pour pouvoir creuser l’étage suivant`}</small>`;
-    gagner = [ligne('porte', 'Vaincre le gardien', `Le gardien de la Strate −${j.strate} garde l’accès à l’étage suivant.`),
-      ligne('ouvrier', `Assez de creuseurs (${j.creuseurs ?? 0} / ${creuseursRequis(j.strate + 1)})`, `La Tour du Noyau en loge ${logementCreuseurs(j)}. On en gagne avec les fouilles, les missions, les Épreuves et les gardiens.`)];
-    servir = [ligne('cartes', 'Des cartes de meilleur métal', 'Plus la Strate est profonde, plus les trouvailles sont rares.'),
-      ligne('codex', 'Les Chroniques', 'Les chapitres profonds se débloquent en descendant.')];
+    surtitre = 'PROFONDEUR'; titre = tr`La Strate −${j.strate}`;
+    resume = tr('L’étage le plus profond que ton district a creusé sous la ville. Plus on descend, plus c’est ancien, dangereux et précieux.');
+    etat = `<b>−${j.strate}</b><small>${j.frontVaincu ? (manque ? tr`Gardien vaincu : il manque ${[manque.creuseurs ? `${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : '', manque.noyau ? tr`${manque.noyau} niveau${manque.noyau > 1 ? 'x' : ''} de Tour du Noyau` : ''].filter(Boolean).join(' et ')} pour creuser plus bas` : tr('Prête à être creusée plus bas')) : tr`Bats son gardien pour pouvoir creuser l’étage suivant`}</small>`;
+    gagner = [ligne('porte', tr('Vaincre le gardien'), tr`Le gardien de la Strate −${j.strate} garde l’accès à l’étage suivant.`),
+      ligne('ouvrier', tr`Assez de creuseurs (${j.creuseurs ?? 0} / ${creuseursRequis(j.strate + 1)})`, tr`La Tour du Noyau en loge ${logementCreuseurs(j)}. On en gagne avec les fouilles, les missions, les Épreuves et les gardiens.`)];
+    servir = [ligne('cartes', tr('Des cartes de meilleur métal'), tr('Plus la Strate est profonde, plus les trouvailles sont rares.')),
+      ligne('codex', tr('Les Chroniques'), tr('Les chapitres profonds se débloquent en descendant.'))];
   }
   return `<div class="voile-feuille" data-action="ressource" data-id="" aria-hidden="true"></div><section class="feuille ressource-fiche res-${r}" role="dialog" aria-modal="true" aria-labelledby="res-titre"><span class="poignee" aria-hidden="true"></span>`
-    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">${surtitre}</span><h2 id="res-titre">${titre}</h2></div><button type="button" class="btn-icone" data-action="ressource" data-id="" aria-label="Fermer">${ICO.fermer}</button></header>`
+    + `<header class="feuille-tete"><div class="titres"><span class="surtitre">${surtitre}</span><h2 id="res-titre">${titre}</h2></div><button type="button" class="btn-icone" data-action="ressource" data-id="" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header>`
     + `<div class="feuille-corps"><div class="res-etat">${icone(r === 'confiance' ? 'district' : r === 'butin' ? 'coffre' : r)}<span>${etat}</span></div>${texteReplie(resume, `res-${r}`, 'res-resume')}`
     + (r === 'confiance' ? blocMur(j, famille) + blocNuit(j) : '')
-    + `<h3 class="titre-bloc">${r === 'butin' ? 'Comment gagner des points' : 'Comment en obtenir'}</h3><ul class="res-liste">${gagner.join('')}</ul>`
-    + `<h3 class="titre-bloc">${r === 'butin' ? 'Ce que contient le coffre' : r === 'confiance' ? 'Les paliers' : 'À quoi ça sert'}</h3>`
-    + (r === 'confiance' ? `<p class="res-resume">Toutes les 6 familles, un palier : un creuseur volontaire, et une famille confie un souvenir aux Archives.</p>` : '') + `<ul class="res-liste">${servir.join('')}</ul>`
-    + (r === 'strate' ? `<button type="button" class="btn sec large" data-action="classements" data-id="profondeur">${ICO.monter}Voir le classement des profondeurs</button>` : '')
+    + `<h3 class="titre-bloc">${r === 'butin' ? tr('Comment gagner des points') : tr('Comment en obtenir')}</h3><ul class="res-liste">${gagner.join('')}</ul>`
+    + `<h3 class="titre-bloc">${r === 'butin' ? tr('Ce que contient le coffre') : r === 'confiance' ? tr('Les paliers') : tr('À quoi ça sert')}</h3>`
+    + (r === 'confiance' ? `<p class="res-resume">${tr`Toutes les 6 familles, un palier : un creuseur volontaire, et une famille confie un souvenir aux Archives.`}</p>` : '') + `<ul class="res-liste">${servir.join('')}</ul>`
+    + (r === 'strate' ? `<button type="button" class="btn sec large" data-action="classements" data-id="profondeur">${ICO.monter}${tr`Voir le classement des profondeurs`}</button>` : '')
     + `</div></section>`;
 }
 
@@ -352,16 +353,16 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined, famille: stri
 const FLECHE_VISIBLE = 3;
 
 const ONGLETS: { vue: Vue | 'plus'; nom: string; icone: Icone }[] = [
-  { vue: 'archipel', nom: 'District', icone: 'district' },
-  { vue: 'coupe', nom: 'Tour', icone: 'tour' },
+  { vue: 'archipel', nom: tr('District'), icone: 'district' },
+  { vue: 'coupe', nom: tr('Tour'), icone: 'tour' },
   // Porteurs et Cartes ne font plus qu'un onglet (25 octobre 2026) : l'escouade, ses Porteurs et leurs cartes au même endroit
-  { vue: 'porteurs', nom: 'Escouade', icone: 'porteurs' },
+  { vue: 'porteurs', nom: tr('Escouade'), icone: 'porteurs' },
   // les Pillages et la Flèche ont leur onglet (28 octobre 2026, Bryan) : la carte des archipels voisins ne passe plus par le Port
-  { vue: 'pillages', nom: 'Port', icone: 'carte' },
-  { vue: 'fleche', nom: 'Flèche', icone: 'fleche' },
+  { vue: 'pillages', nom: tr('Port'), icone: 'carte' },
+  { vue: 'fleche', nom: tr('Flèche'), icone: 'fleche' },
   // les Chroniques juste avant Plus (28 octobre 2026, Bryan) : on y va moins souvent qu'au reste
-  { vue: 'codex', nom: 'Chroniques', icone: 'codex' },
-  { vue: 'plus', nom: 'Plus', icone: 'plus' },
+  { vue: 'codex', nom: tr('Chroniques'), icone: 'codex' },
+  { vue: 'plus', nom: tr('Plus'), icone: 'plus' },
 ];
 
 /**
@@ -402,7 +403,7 @@ export function navigation(e: EcranDistrict): string {
   // tant qu'il y a 5 onglets ou moins, chacun garde son nom sous l'icône (classe « noms »)
   const visibles = ONGLETS.filter((t) => (t.vue === 'pillages' ? (!!j.chambre && strateVaincue(j) >= PILLAGE.strateDuPort) || actif === 'pillages'
     : t.vue === 'fleche' ? (!!j.chambre && strateVaincue(j) >= FLECHE_VISIBLE) || flecheOuverte(j) || actif === 'fleche' : true));
-  return `<nav class="nav${visibles.length <= 5 ? ' noms' : ''}" style="--onglets:${visibles.length}" aria-label="Navigation">${cristalRail(e)}` + visibles.map((t) => {
+  return `<nav class="nav${visibles.length <= 5 ? ' noms' : ''}" style="--onglets:${visibles.length}" aria-label="${tr`Navigation`}">${cristalRail(e)}` + visibles.map((t) => {
     const action = t.vue === 'plus' ? 'menu' : t.vue;
     return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${actif === t.vue ? ' aria-current="page"' : ''}>`
       + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>'
@@ -422,10 +423,10 @@ export function voletsEscouade(e: EcranDistrict): string {
   const neufsC = j.chambre ? cartesNouvelles(j).length : 0;
   const seg = (id: string, action: string, nom: string, plus = '', ferme = false) =>
     `<button type="button" role="tab" class="seg${ici === id ? ' actif' : ''}" data-action="${action}" aria-selected="${ici === id}"${ferme ? ' disabled' : ''}>${ferme ? ICO.verrou : ''}${nom}${plus}</button>`;
-  return `<div class="segments-choix trois volets-escouade" role="tablist" aria-label="Escouade, Porteurs ou cartes">`
-    + seg('escouade', 'porteurs', 'Escouade')
-    + seg('tous', 'porteurs-tous', 'Porteurs', neufsP ? ` <span class="pastille-n" aria-label="${neufsP} nouveau${neufsP > 1 ? 'x' : ''}">${neufsP}</span>` : '')
-    + seg('cartes', 'cartes', 'Collection', neufsC ? ` <span class="pastille-n" aria-label="${neufsC} nouvelle${neufsC > 1 ? 's' : ''}">${neufsC}</span>` : '', !j.chambre)
+  return `<div class="segments-choix trois volets-escouade" role="tablist" aria-label="${tr`Escouade, Porteurs ou cartes`}">`
+    + seg('escouade', 'porteurs', tr('Escouade'))
+    + seg('tous', 'porteurs-tous', tr('Porteurs'), neufsP ? ` <span class="pastille-n" aria-label="${tr`${neufsP} nouveau${neufsP > 1 ? 'x' : ''}`}">${neufsP}</span>` : '')
+    + seg('cartes', 'cartes', tr('Collection'), neufsC ? ` <span class="pastille-n" aria-label="${tr`${neufsC} nouvelle${neufsC > 1 ? 's' : ''}`}">${neufsC}</span>` : '', !j.chambre)
     + `</div>`;
 }
 
@@ -438,12 +439,12 @@ export function toast(message: string): string {
 /** « Protège ta partie » (25 octobre 2026) : aux paliers, tant que la partie n'est reliée à aucun compte. Jamais bloquant. */
 function feuilleRappel(e: EcranDistrict): string {
   if (!e.rappel) return '';
-  return `<div class="voile-feuille" data-action="rappel-plus-tard" aria-hidden="true"></div><section class="feuille rappel-compte" role="dialog" aria-modal="true" aria-label="Protège ta partie">`
-    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">Strate −${e.j.strate} · ta partie grandit</span><h2>Protège ta partie</h2></div>`
-    + `<button type="button" class="btn-icone" data-action="rappel-plus-tard" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
-    + `<p class="rc-texte">Elle n’est sauvegardée que pour ce téléphone : s’il est perdu ou réinitialisé, elle disparaît. Relie-la à Google ou à un e-mail, en quelques secondes, et tu la retrouveras partout.</p>`
-    + `<div class="rc-boutons"><button type="button" class="btn prim" data-action="rappel-proteger">${ICO.compte}Protéger ma partie</button>`
-    + `<button type="button" class="btn sec" data-action="rappel-plus-tard">Plus tard</button></div></div></section>`;
+  return `<div class="voile-feuille" data-action="rappel-plus-tard" aria-hidden="true"></div><section class="feuille rappel-compte" role="dialog" aria-modal="true" aria-label="${tr`Protège ta partie`}">`
+    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">${tr`Strate −${e.j.strate} · ta partie grandit`}</span><h2>${tr`Protège ta partie`}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="rappel-plus-tard" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`
+    + `<p class="rc-texte">${tr`Elle n’est sauvegardée que pour ce téléphone : s’il est perdu ou réinitialisé, elle disparaît. Relie-la à Google ou à un e-mail, en quelques secondes, et tu la retrouveras partout.`}</p>`
+    + `<div class="rc-boutons"><button type="button" class="btn prim" data-action="rappel-proteger">${ICO.compte}${tr`Protéger ma partie`}</button>`
+    + `<button type="button" class="btn sec" data-action="rappel-plus-tard">${tr`Plus tard`}</button></div></div></section>`;
 }
 
 const METAL = (r: string) => r.charAt(0).toUpperCase() + r.slice(1);
@@ -451,13 +452,13 @@ const METAL = (r: string) => r.charAt(0).toUpperCase() + r.slice(1);
 /** Ce qu'une mission a rapporté, en pastilles (fenêtre du rapport et historique de la Tour) */
 export function gainsRapport(r: RapportMission): string {
   return `<ul class="rm-gains">`
-    + `<li>${ICO.composants}<b>+${r.composants}</b><small>minerai</small></li>`
-    + `<li>${ICO.monter}<b>+${r.xp}</b><small>XP${r.niveau ? ` · niveau ${r.niveau}` : ''}</small></li>`
+    + `<li>${ICO.composants}<b>+${r.composants}</b><small>${tr`minerai`}</small></li>`
+    + `<li>${ICO.monter}<b>+${r.xp}</b><small>${tr`XP${r.niveau ? tr` · niveau ${r.niveau}` : ''}`}</small></li>`
     + r.cartes.map((c) => `<li class="rm-carte${c.nouvelle ? ' nouvelle' : ''}">${ICO.cartes}<b>${echap(moduleDef(c.id).nom)}</b><small>${METAL(moduleDef(c.id).rarete)}${c.nouvelle ? ' · nouvelle' : ' · doublon'}</small></li>`).join('')
-    + (r.creuseurs ? `<li>${ICO.ouvrier}<b>+${r.creuseurs}</b><small>creuseur${r.creuseurs > 1 ? 's' : ''}</small></li>` : '')
-    + (r.contrat?.choix ? `<li class="rm-carte nouvelle">${ICO.cartes}<b>3 cartes</b><small>au choix, au district</small></li>` : '')
-    + (r.contrat && !r.contrat.reussi ? `<li>${ICO.lueur}<b>+1 Indice</b><small>pour la prochaine tentative</small></li>` : '')
-    + (r.usure ? `<li class="rm-usure">${ICO.soin}<b>+${virgule(r.usure)}</b><small>Usure</small></li>` : '')
+    + (r.creuseurs ? `<li>${ICO.ouvrier}<b>+${r.creuseurs}</b><small>${tr`creuseur${r.creuseurs > 1 ? 's' : ''}`}</small></li>` : '')
+    + (r.contrat?.choix ? `<li class="rm-carte nouvelle">${ICO.cartes}<b>${tr`3 cartes`}</b><small>${tr`au choix, au district`}</small></li>` : '')
+    + (r.contrat && !r.contrat.reussi ? `<li>${ICO.lueur}<b>${tr`+1 Indice`}</b><small>${tr`pour la prochaine tentative`}</small></li>` : '')
+    + (r.usure ? `<li class="rm-usure">${ICO.soin}<b>+${virgule(r.usure)}</b><small>${tr`Usure`}</small></li>` : '')
     + `</ul>`;
 }
 
@@ -470,14 +471,14 @@ function feuilleRapport(e: EcranDistrict): string {
   const reste = (e.j.rapports ?? []).filter((x) => !x.lu).length - 1;
   const ct = r.contrat;
   const tete = ct
-    ? `<span class="rm-equipe">${ct.porteurs.map((x) => avatar(x, 36)).join('')}</span><div class="titres"><span class="surtitre">${MAREES[ct.rang].nom} · ${ct.taux} % de chances</span><h2 id="rm-titre">${echap(ct.titre)} : ${ct.reussi ? 'réussi' : 'manqué'}</h2></div>`
-    : `${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">${r.basses ? 'Les Basses' : 'Mission en mer'}</span><h2 id="rm-titre">Retour ${echap(deNom(p.nom))}</h2></div>`;
+    ? `<span class="rm-equipe">${ct.porteurs.map((x) => avatar(x, 36)).join('')}</span><div class="titres"><span class="surtitre">${tr`${MAREES[ct.rang].nom} · ${ct.taux} % de chances`}</span><h2 id="rm-titre">${echap(ct.titre)} : ${ct.reussi ? tr('réussi') : tr('manqué')}</h2></div>`
+    : `${avatar(r.porteur, 48)}<div class="titres"><span class="surtitre">${r.basses ? tr('Les Basses') : tr('Mission en mer')}</span><h2 id="rm-titre">${tr`Retour ${echap(deNom(p.nom))}`}</h2></div>`;
   return `<div class="voile-feuille" data-action="rapport-lu" aria-hidden="true"></div><section class="feuille rapport-mission${ct ? ` rm-contrat${ct.reussi ? ' reussi' : ' manque'}` : ''}" role="dialog" aria-modal="true" aria-labelledby="rm-titre" style="--c:${COULEUR[p.lignee]}">`
     + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete">${tete}`
-    + `<button type="button" class="btn-icone" data-action="rapport-lu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`
+    + `<button type="button" class="btn-icone" data-action="rapport-lu" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`
     + `<div class="rm-recit">${r.recit.map((l) => `<p>${echap(l)}</p>`).join('')}</div>`
     + gainsRapport(r)
-    + `<button type="button" class="btn prim large" data-action="rapport-lu">${reste > 0 ? `Rapport suivant (${reste})` : 'Bien reçu'}</button>`
+    + `<button type="button" class="btn prim large" data-action="rapport-lu">${reste > 0 ? tr`Rapport suivant (${reste})` : tr('Bien reçu')}</button>`
     + `</div></section>`;
 }
 
@@ -506,10 +507,10 @@ function faceRapport(j: Jeu, id: string): string {
 }
 
 const ISSUE_EXPEDITION: Record<RapportExpedition['issue'], [string, string]> = {
-  victoire: ['Mission accomplie', 'victoire'],
-  retraite: ['Retour au district', 'retraite'],
-  fuite: ['Repli précipité', 'fuite'],
-  defaite: ['L’escouade a été repoussée', 'defaite'],
+  victoire: [tr('Mission accomplie'), 'victoire'],
+  retraite: [tr('Retour au district'), 'retraite'],
+  fuite: [tr('Repli précipité'), 'fuite'],
+  defaite: [tr('L’escouade a été repoussée'), 'defaite'],
 };
 
 function feuilleExpedition(e: EcranDistrict): string {
@@ -521,20 +522,20 @@ function feuilleExpedition(e: EcranDistrict): string {
   const ex = g.explorer;
   let h = `<div class="voile-feuille" data-action="expedition-lu" aria-hidden="true"></div><section class="feuille rapport-expedition rx-${cls}" role="dialog" aria-modal="true" aria-labelledby="rx-titre">`
     + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><span class="rx-sceau" aria-hidden="true">${ICO.descendre}<b>−${r.strate}</b></span>`
-    + `<div class="titres"><span class="surtitre">Rapport · ${echap(r.type)}</span><h2 id="rx-titre">${titre}</h2></div>`
-    + `<button type="button" class="btn-icone" data-action="expedition-lu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
+    + `<div class="titres"><span class="surtitre">${tr`Rapport · ${echap(r.type)}`}</span><h2 id="rx-titre">${titre}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="expedition-lu" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`;
   if (r.note) h += `<p class="rx-note">${echap(r.note)}</p>`;
   // les ressources
   h += `<ul class="rm-gains rx-res">`
     + ligne(ICO.composants, `+${virgule(g.butin)}`, 'minerai')
-    + (g.eclats ? ligne(ICO.eclats, `+${g.eclats}`, `Éclat${g.eclats > 1 ? 's' : ''}`) : '')
+    + (g.eclats ? ligne(ICO.eclats, `+${g.eclats}`, tr`Éclat${g.eclats > 1 ? 's' : ''}`) : '')
     + (r.creuseurs ? ligne(ICO.ouvrier, `+${r.creuseurs}`, `creuseur${r.creuseurs > 1 ? 's' : ''}`) : '')
-    + (g.fragment ? ligne(ICO.journal, '+1', 'fragment d’archives') : '')
-    + (g.nouvelleStrate ? ligne(ICO.descendre, `−${e.j.strate}`, 'nouvelle Strate ouverte', 'nouvelle') : '')
+    + (g.fragment ? ligne(ICO.journal, '+1', tr('fragment d’archives')) : '')
+    + (g.nouvelleStrate ? ligne(ICO.descendre, `−${e.j.strate}`, tr('nouvelle Strate ouverte'), 'nouvelle') : '')
     + `</ul>`;
   // les cartes trouvées, avec leur face : nouvelle, doublon, ou niveau suivant prêt
   if (g.cartes.length) {
-    h += `<h3 class="rx-titre">${ICO.cartes}${g.cartes.length > 1 ? `${g.cartes.length} cartes trouvées` : 'Une carte trouvée'}</h3><div class="rx-cartes">`;
+    h += `<h3 class="rx-titre">${ICO.cartes}${g.cartes.length > 1 ? tr`${g.cartes.length} cartes trouvées` : tr('Une carte trouvée')}</h3><div class="rx-cartes">`;
     const vues = new Set<string>();
     for (const id of g.cartes) {
       const c = e.j.collection[id];
@@ -543,64 +544,64 @@ function feuilleExpedition(e: EcranDistrict): string {
       const requis = c ? doublonsRequis(id, c.niveau) : null;
       const pret = !neuve && c && requis !== null && c.doublons >= requis;
       h += `<div class="rx-carte${neuve ? ' neuve' : ''}">`
-        + faceRapport(e.j, id) + `<span class="ruban">${neuve ? 'Nouvelle' : pret ? `Niv. ${c!.niveau + 1} prêt` : 'Doublon'}</span></div>`;
+        + faceRapport(e.j, id) + `<span class="ruban">${neuve ? tr('Nouvelle') : pret ? tr`Niv. ${c!.niveau + 1} prêt` : tr('Doublon')}</span></div>`;
     }
     h += `</div>`;
   }
-  if (r.choix) h += `<p class="rx-choix">${ICO.cartes}<span><b>${r.choix > 1 ? `${r.choix} cartes au choix` : 'Une carte au choix'}</b> t’attend${r.choix > 1 ? 'ent' : ''} au district : tu la choisis juste après.</span></p>`;
+  if (r.choix) h += `<p class="rx-choix">${ICO.cartes}<span><b>${r.choix > 1 ? tr`${r.choix} cartes au choix` : tr('Une carte au choix')}</b> ${tr`t’attend${r.choix > 1 ? 'ent' : ''} au district : tu la choisis juste après.`}</span></p>`;
   // l'escouade : l'XP de chacun, et les niveaux pris
   if (g.xp?.length) {
-    h += `<h3 class="rx-titre">${ICO.monter}L’escouade · +${g.xp[0]!.xp} XP</h3><ul class="rx-escouade">`
-      + g.xp.map((x) => `<li class="${x.niveau ? 'monte' : ''}">${avatar(x.id, 40)}<span><b>${echap(porteurDef(x.id).nom)}</b><small>${x.niveau ? `Niveau ${x.niveau} !` : `+${x.xp} XP`}</small></span></li>`).join('')
+    h += `<h3 class="rx-titre">${ICO.monter}${tr`L’escouade · +${g.xp[0]!.xp} XP`}</h3><ul class="rx-escouade">`
+      + g.xp.map((x) => `<li class="${x.niveau ? 'monte' : ''}">${avatar(x.id, 40)}<span><b>${echap(porteurDef(x.id).nom)}</b><small>${x.niveau ? tr`Niveau ${x.niveau} !` : `+${x.xp} XP`}</small></span></li>`).join('')
       + `</ul>`;
   }
   // la Strate : quête, Vestiges, étoiles, Rôdeur
   const strate: string[] = [];
-  if (g.quete) strate.push(ligne(ICO.quete, g.quete.finie ? 'Achevée' : `${g.quete.etape} / ${g.quete.total}`, `quête « ${echap(g.quete.nom)} »`, g.quete.finie ? 'nouvelle' : ''));
-  if (ex?.vestiges.length) strate.push(ligne(ICO.vestige, `+${ex.vestiges.length}`, `Vestige${ex.vestiges.length > 1 ? 's' : ''} : ${echap(ex.vestiges.map((v) => vestigeDef(v)?.nom ?? '').join(', '))}`));
-  if (ex?.releve) strate.push(ligne(ICO.vestige, `−${ex.releve}`, 'Strate complète', 'nouvelle'));
-  if (ex?.etoiles.length) strate.push(ligne(ICO.etoile, `+${ex.etoiles.length}`, `étoile${ex.etoiles.length > 1 ? 's' : ''} de Strate`, 'nouvelle'));
-  if (ex?.rodeur) strate.push(ligne(ICO.griffes, ex.rodeur.part ? `${Math.round(ex.rodeur.part * 100)} %` : 'Abattu', `${echap(ennemiDef(ex.rodeur.id).nom)}${ex.rodeur.part ? ' s’est enfui' : ''}`));
-  if (strate.length) h += `<h3 class="rx-titre">${ICO.strate}Dans la Strate</h3><ul class="rm-gains">${strate.join('')}</ul>`;
+  if (g.quete) strate.push(ligne(ICO.quete, g.quete.finie ? tr('Achevée') : `${g.quete.etape} / ${g.quete.total}`, tr`quête « ${echap(g.quete.nom)} »`, g.quete.finie ? 'nouvelle' : ''));
+  if (ex?.vestiges.length) strate.push(ligne(ICO.vestige, `+${ex.vestiges.length}`, tr`Vestige${ex.vestiges.length > 1 ? 's' : ''} : ${echap(ex.vestiges.map((v) => vestigeDef(v)?.nom ?? '').join(', '))}`));
+  if (ex?.releve) strate.push(ligne(ICO.vestige, `−${ex.releve}`, tr('Strate complète'), 'nouvelle'));
+  if (ex?.etoiles.length) strate.push(ligne(ICO.etoile, `+${ex.etoiles.length}`, tr`étoile${ex.etoiles.length > 1 ? 's' : ''} de Strate`, 'nouvelle'));
+  if (ex?.rodeur) strate.push(ligne(ICO.griffes, ex.rodeur.part ? `${Math.round(ex.rodeur.part * 100)} %` : tr('Abattu'), `${echap(ennemiDef(ex.rodeur.id).nom)}${ex.rodeur.part ? tr(' s’est enfui') : ''}`));
+  if (strate.length) h += `<h3 class="rx-titre">${ICO.strate}${tr`Dans la Strate`}</h3><ul class="rm-gains">${strate.join('')}</ul>`;
   // après une défaite ou un repli (3 novembre 2026) : que faire maintenant, au lieu d'un simple « +0 composants »
   if (r.issue === 'defaite' || r.issue === 'fuite') {
     const nonLus = chapitresALire(e.j);
-    h += `<h3 class="rx-titre">${ICO.soin}Et maintenant ?</h3><ul class="rx-conseils">`
-      + `<li><b>Soigner l’escouade.</b> Elle se remet à la Clinique ; une recrue Géné postée là soigne deux fois plus vite.</li>`
-      + (nonLus ? `<li><b>Renforcer le deck.</b> Chaque chapitre des Chroniques lu pour la première fois glisse une carte entre les pages (${nonLus} à lire) : confie-la ensuite à un Porteur, dans l’onglet Escouade.</li>` : `<li><b>Revoir le deck.</b> Cherche des suites de Fréquences et quelques boucliers pour les grosses attaques annoncées.</li>`)
-      + `<li><b>Se protéger.</b> Les boucliers protègent toute l’escouade : garde-les pour les attaques fortes annoncées par l’ennemi.</li></ul>`
-      + `<div class="rx-actions"><button type="button" class="btn sec" data-action="depart-clinique">${ICO.soin}Clinique</button>`
-      + (nonLus ? `<button type="button" class="btn sec" data-action="rapport-chroniques">${ICO.journal}Chroniques</button>` : '') + `</div>`;
+    h += `<h3 class="rx-titre">${ICO.soin}${tr`Et maintenant ?`}</h3><ul class="rx-conseils">`
+      + `<li><b>${tr`Soigner l’escouade.`}</b> ${tr`Elle se remet à la Clinique ; une recrue Géné postée là soigne deux fois plus vite.`}</li>`
+      + (nonLus ? `<li><b>${tr`Renforcer le deck.`}</b> ${tr`Chaque chapitre des Chroniques lu pour la première fois glisse une carte entre les pages (${nonLus} à lire) : confie-la ensuite à un Porteur, dans l’onglet Escouade.`}</li>` : `<li><b>${tr`Revoir le deck.`}</b> ${tr`Cherche des suites de Fréquences et quelques boucliers pour les grosses attaques annoncées.`}</li>`)
+      + `<li><b>${tr`Se protéger.`}</b> ${tr`Les boucliers protègent toute l’escouade : garde-les pour les attaques fortes annoncées par l’ennemi.`}</li></ul>`
+      + `<div class="rx-actions"><button type="button" class="btn sec" data-action="depart-clinique">${ICO.soin}${tr`Clinique`}</button>`
+      + (nonLus ? `<button type="button" class="btn sec" data-action="rapport-chroniques">${ICO.journal}${tr`Chroniques`}</button>` : '') + `</div>`;
   }
-  return h + `<button type="button" class="btn prim large" data-action="expedition-lu">${r.choix ? 'Choisir ma carte' : 'Bien reçu'}</button></div></section>`;
+  return h + `<button type="button" class="btn prim large" data-action="expedition-lu">${r.choix ? tr('Choisir ma carte') : tr('Bien reçu')}</button></div></section>`;
 }
 
 /** Le menu « Plus » : compte, intro, journal */
 export function menu(e: EcranDistrict): string {
   if (!e.menu) return '';
   const c = e.compte;
-  let h = `<div class="voile-feuille" data-action="menu" aria-hidden="true"></div><section class="feuille menu" role="dialog" aria-modal="true" aria-label="Menu">`
-    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">OSSYRA · ALPHA</span><h2>Menu</h2></div>`
-    + `<button type="button" class="btn-icone" data-action="menu" aria-label="Fermer">${ICO.fermer}</button></header><div class="feuille-corps">`;
+  let h = `<div class="voile-feuille" data-action="menu" aria-hidden="true"></div><section class="feuille menu" role="dialog" aria-modal="true" aria-label="${tr`Menu`}">`
+    + `<span class="poignee" aria-hidden="true"></span><header class="feuille-tete"><div class="titres"><span class="surtitre">${tr`OSSYRA · ALPHA`}</span><h2>${tr`Menu`}</h2></div>`
+    + `<button type="button" class="btn-icone" data-action="menu" aria-label="${tr`Fermer`}">${ICO.fermer}</button></header><div class="feuille-corps">`;
   h += entreeFiche(e) + `<div class="liste-menu">`
-    + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>Le Grand Tableau</strong><small>Les classements des directeurs : profondeur, Registre, Joutes et Flèche</small></span></button>`
+    + `<button type="button" class="ligne-menu gt-menu" data-action="classements">${ICO.monter}<span><strong>${tr`Le Grand Tableau`}</strong><small>${tr`Les classements des directeurs : profondeur, Registre, Joutes et Flèche`}</small></span></button>`
     // le Cercle des quais (3 novembre 2026) : un raccourci, une fois la Strate −2 vaincue (le bâtiment reste sur la Cuvette)
-    + (c.actif && strateVaincue(e.j) >= CERCLE_OUVERTURE ? `<button type="button" class="ligne-menu cr-menu" data-action="${e.j.batiments.cercle ? 'cercle' : 'cercle-batiment'}">${ICO.cercle}<span><strong>Le Cercle des quais</strong><small>${e.j.batiments.cercle ? 'Tes amis, les duels entre directeurs et les échanges de cartes' : 'À construire : amis, duels et échanges de cartes'}</small></span>${e.cercle?.aRepondre ? `<span class="pastille-n">${e.cercle.aRepondre}</span>` : ''}</button>` : '')
-    + (c.actif ? `<button type="button" class="ligne-menu rc-menu" data-action="recruter">${ICO.porteurs}<span><strong>Recruter des amis</strong><small>Ton code de parrainage : vous êtes récompensés tous les deux quand ton ami joue</small></span></button>` : '')
-    + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>Compte</strong><small>${c.utilisateur?.anonyme ? 'Protège ta partie : relie-la à Google ou à un e-mail' : c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : ' · choisis ton pseudo'}` : 'Retrouver ta progression sur un autre appareil'}</small></span></button>` : '')
-    + (e.j.chambre ? `<button type="button" class="ligne-menu" data-action="accueil">${icone('district')}<span><strong>Comment marche le district</strong><small>Les ressources, l’escouade et le but : creuser plus bas</small></span></button>` : '')
+    + (c.actif && strateVaincue(e.j) >= CERCLE_OUVERTURE ? `<button type="button" class="ligne-menu cr-menu" data-action="${e.j.batiments.cercle ? 'cercle' : 'cercle-batiment'}">${ICO.cercle}<span><strong>${tr`Le Cercle des quais`}</strong><small>${e.j.batiments.cercle ? tr('Tes amis, les duels entre directeurs et les échanges de cartes') : tr('À construire : amis, duels et échanges de cartes')}</small></span>${e.cercle?.aRepondre ? `<span class="pastille-n">${e.cercle.aRepondre}</span>` : ''}</button>` : '')
+    + (c.actif ? `<button type="button" class="ligne-menu rc-menu" data-action="recruter">${ICO.porteurs}<span><strong>${tr`Recruter des amis`}</strong><small>${tr`Ton code de parrainage : vous êtes récompensés tous les deux quand ton ami joue`}</small></span></button>` : '')
+    + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>${tr`Compte`}</strong><small>${c.utilisateur?.anonyme ? tr('Protège ta partie : relie-la à Google ou à un e-mail') : c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : tr(' · choisis ton pseudo')}` : tr('Retrouver ta progression sur un autre appareil')}</small></span></button>` : '')
+    + (e.j.chambre ? `<button type="button" class="ligne-menu" data-action="accueil">${icone('district')}<span><strong>${tr`Comment marche le district`}</strong><small>${tr`Les ressources, l’escouade et le but : creuser plus bas`}</small></span></button>` : '')
     // le glossaire (31 octobre 2026, Luc) : tous les mots du jeu, avec une recherche
-    + `<button type="button" class="ligne-menu" data-action="guide" data-id="glossaire">${ICO.aide}<span><strong>Glossaire</strong><small>Tous les mots du jeu expliqués : Fissure, Flux, Résonance, Charge…</small></span></button>`
-    + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>Revoir l’intro complète</strong><small>L’histoire de 2121, en entier</small></span></button></div>`;
+    + `<button type="button" class="ligne-menu" data-action="guide" data-id="glossaire">${ICO.aide}<span><strong>${tr`Glossaire`}</strong><small>${tr`Tous les mots du jeu expliqués : Fissure, Flux, Résonance, Charge…`}</small></span></button>`
+    + `<button type="button" class="ligne-menu" data-action="intro">${ICO.film}<span><strong>${tr`Revoir l’intro complète`}</strong><small>${tr`L’histoire de 2121, en entier`}</small></span></button></div>`;
   // les paramètres (31 octobre 2026) : le combat automatique est une option, éteinte au départ
   const auto = autoActif();
-  h += `<section class="bloc parametres"><h3 class="titre-bloc">${ICO.cristal}Paramètres</h3><div class="liste-menu">`
-    + `<button type="button" class="ligne-menu option" data-action="option-auto" role="switch" aria-checked="${auto}">${ICO.lancer}<span><strong>Combat automatique</strong><small>Un bouton « Auto » dans les combats ordinaires des Strates déjà vaincues : l’escouade joue seule, en accéléré</small></span><i class="interrupteur" aria-hidden="true"></i></button>`
+  h += `<section class="bloc parametres"><h3 class="titre-bloc">${ICO.cristal}${tr`Paramètres`}</h3><div class="liste-menu">`
+    + `<button type="button" class="ligne-menu option" data-action="option-auto" role="switch" aria-checked="${auto}">${ICO.lancer}<span><strong>${tr`Combat automatique`}</strong><small>${tr`Un bouton « Auto » dans les combats ordinaires des Strates déjà vaincues : l’escouade joue seule, en accéléré`}</small></span><i class="interrupteur" aria-hidden="true"></i></button>`
     // les graphismes (3 novembre 2026) : Auto, Complets ou Légers, pour les appareils qui peinent
-    + (() => { const g = texteGraphismes(); return `<button type="button" class="ligne-menu option" data-action="option-graphismes" aria-label="Graphismes : ${g.valeur}. Toucher pour changer">${ICO.lueur}<span><strong>Graphismes</strong><small>${g.detail}</small></span><b class="valeur-option">${g.valeur}</b></button>`; })()
+    + (() => { const g = texteGraphismes(); return `<button type="button" class="ligne-menu option" data-action="option-graphismes" aria-label="${tr`Graphismes : ${g.valeur}. Toucher pour changer`}">${ICO.lueur}<span><strong>${tr`Graphismes`}</strong><small>${g.detail}</small></span><b class="valeur-option">${g.valeur}</b></button>`; })()
     // le son et les animations (audit du 7 novembre 2026) : réglables hors combat
-    + `<button type="button" class="ligne-menu option" data-action="option-son" role="switch" aria-checked="${sonActif()}">${sonActif() ? ICONE_SON : ICONE_MUET}<span><strong>Son</strong><small>Les sons du combat et de l’interface</small></span><b class="valeur-option">${sonActif() ? 'Activé' : 'Coupé'}</b></button>`
-    + `<button type="button" class="ligne-menu option" data-action="option-animations" role="switch" aria-checked="${!animationsReduites()}">${ICO.lueur}<span><strong>Animations</strong><small>${animationsReduites() ? 'Réduites : presque rien ne bouge, les combats vont droit au résultat' : 'Complètes : la houle, les lueurs, les coups animés'}</small></span><b class="valeur-option">${animationsReduites() ? 'Réduites' : 'Complètes'}</b></button>`
+    + `<button type="button" class="ligne-menu option" data-action="option-son" role="switch" aria-checked="${sonActif()}">${sonActif() ? ICONE_SON : ICONE_MUET}<span><strong>${tr`Son`}</strong><small>${tr`Les sons du combat et de l’interface`}</small></span><b class="valeur-option">${sonActif() ? tr('Activé') : tr('Coupé')}</b></button>`
+    + `<button type="button" class="ligne-menu option" data-action="option-animations" role="switch" aria-checked="${!animationsReduites()}">${ICO.lueur}<span><strong>${tr`Animations`}</strong><small>${animationsReduites() ? tr('Réduites : presque rien ne bouge, les combats vont droit au résultat') : tr('Complètes : la houle, les lueurs, les coups animés')}</small></span><b class="valeur-option">${animationsReduites() ? tr('Réduites') : tr('Complètes')}</b></button>`
     + `</div></section>`;
   h += panneauCompte(c);
   // le journal du district est passé dans la fiche du directeur (audit du 7 novembre 2026) : le menu ne garde que les réglages et les raccourcis

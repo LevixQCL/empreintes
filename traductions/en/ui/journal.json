@@ -1,0 +1,197 @@
+{
+ "source": "src/ui/journal.ts",
+ "entrees": [
+  {
+   "fr": "Qu’est-ce que : {0} ?",
+   "en": ""
+  },
+  {
+   "fr": "{0}{1} ({2}), Fréquence {3}, force {4}{5}",
+   "en": ""
+  },
+  {
+   "fr": "annulé",
+   "en": ""
+  },
+  {
+   "fr": "{0} : {1}. Toucher pour l’explication",
+   "en": ""
+  },
+  {
+   "fr": "PV soignés",
+   "en": ""
+  },
+  {
+   "fr": "On part de la force, puis chaque bonus et malus s’applique l’un après l’autre (en pourcentage), on arrondit, on retire le blindage ; enfin, le bouclier de la cible absorbe ce qu’il peut. Le reste touche les PV.",
+   "en": ""
+  },
+  {
+   "fr": "Attaque de l’ennemi",
+   "en": ""
+  },
+  {
+   "fr": "Bouclier d’escouade",
+   "en": ""
+  },
+  {
+   "fr": "Force de la carte",
+   "en": ""
+  },
+  {
+   "fr": "Sur {0}",
+   "en": ""
+  },
+  {
+   "fr": "Avant le bouclier",
+   "en": ""
+  },
+  {
+   "fr": "Absorbé par le bouclier d’escouade",
+   "en": ""
+  },
+  {
+   "fr": "Absorbé par son bouclier",
+   "en": ""
+  },
+  {
+   "fr": "Total : {0}. Toucher pour savoir comment on calcule",
+   "en": ""
+  },
+  {
+   "fr": "Total",
+   "en": ""
+  },
+  {
+   "fr": "Carte {0}",
+   "en": ""
+  },
+  {
+   "fr": "Pourquoi ce chiffre",
+   "en": ""
+  },
+  {
+   "fr": "Détail du calcul",
+   "en": ""
+  },
+  {
+   "fr": "Dégâts infligés",
+   "en": ""
+  },
+  {
+   "fr": "Infligés",
+   "en": ""
+  },
+  {
+   "fr": "Dégâts reçus",
+   "en": ""
+  },
+  {
+   "fr": "Reçus",
+   "en": ""
+  },
+  {
+   "fr": "Soignés",
+   "en": ""
+  },
+  {
+   "fr": "Bouclier gagné",
+   "en": ""
+  },
+  {
+   "fr": "Résonance ×{0}",
+   "en": ""
+  },
+  {
+   "fr": "Écho{0}",
+   "en": ""
+  },
+  {
+   "fr": "Brouillée",
+   "en": ""
+  },
+  {
+   "fr": "Tour ennemi",
+   "en": ""
+  },
+  {
+   "fr": "Ton tour",
+   "en": ""
+  },
+  {
+   "fr": "Aucune chaîne lancée pour l’instant. Chaque tour joué s’ajoutera ici, avec le calcul de chaque coup.",
+   "en": ""
+  },
+  {
+   "fr": "Depuis le début du combat",
+   "en": ""
+  },
+  {
+   "fr": "Depuis le début",
+   "en": ""
+  },
+  {
+   "fr": "Les tours avant le {0}e ne sont plus gardés.",
+   "en": ""
+  },
+  {
+   "fr": "Tour {0}{1}",
+   "en": ""
+  },
+  {
+   "fr": "en cours",
+   "en": ""
+  },
+  {
+   "fr": "Et {0} place{1} vide{2} (des Porteurs qui n’ont pas leurs 6 cartes).",
+   "en": ""
+  },
+  {
+   "fr": "La défausse",
+   "en": ""
+  },
+  {
+   "fr": "La pioche",
+   "en": ""
+  },
+  {
+   "fr": "Défausse",
+   "en": ""
+  },
+  {
+   "fr": "Vide : elle vient d’être mélangée dans la pioche.",
+   "en": ""
+  },
+  {
+   "fr": "La plus récente d’abord.",
+   "en": ""
+  },
+  {
+   "fr": "Pioche",
+   "en": ""
+  },
+  {
+   "fr": "Vide : la défausse sera mélangée au prochain tirage.",
+   "en": ""
+  },
+  {
+   "fr": "Rangée par Porteur : l’ordre du tirage reste secret.",
+   "en": ""
+  },
+  {
+   "fr": "Tours joués{0}",
+   "en": ""
+  },
+  {
+   "fr": "Défausse et pioche",
+   "en": ""
+  },
+  {
+   "fr": "JOURNAL",
+   "en": ""
+  },
+  {
+   "fr": "Le combat, coup par coup",
+   "en": ""
+  }
+ ]
+}

@@ -10,6 +10,7 @@ import type { CombatEtat } from '../types';
 import { rodeurDef } from '../explorer';
 import { familleDef } from '../familles';
 import type { Jeu } from './etat';
+import { t as tr } from '../i18n';
 
 /** Ce qu'une carte (un exemplaire « carte@métal ») a vécu. Clés courtes : la sauvegarde reste légère. */
 export interface VecuCarte {
@@ -58,7 +59,7 @@ export const VECU = {
   paliers: [250, 1000, 3000] as number[],
 } as const;
 
-export const NOMS_PALIER = ['', 'Trace', 'Sillon', 'Empreinte'] as const;
+export const NOMS_PALIER = ['', tr('Trace'), tr('Sillon'), tr('Empreinte')] as const;
 export type Palier = 0 | 1 | 2 | 3;
 
 export const vecuDe = (j: Jeu, cle: string): VecuCarte | undefined => j.vecu?.[cle];
@@ -76,14 +77,14 @@ export function pointsVecu(x: VecuCarte | undefined): number {
 const plusProfond = (t: number[]) => (t.length ? Math.max(...t) : 0);
 /** L'exploit demandé par chaque palier, en plus des points (index = palier − 1) */
 export const EXPLOITS: { texte: string; ok: (x: VecuCarte) => boolean }[][] = [
-  [{ texte: 'Vaincre un Gardien avec elle dans la chaîne', ok: (x) => x.g.length > 0 }],
+  [{ texte: tr('Vaincre un Gardien avec elle dans la chaîne'), ok: (x) => x.g.length > 0 }],
   [
-    { texte: 'Porter le dernier coup à un Gardien', ok: (x) => x.ga.length > 0 },
-    { texte: 'Gagner un combat à −5 ou plus bas', ok: (x) => x.z >= 5 },
+    { texte: tr('Porter le dernier coup à un Gardien'), ok: (x) => x.ga.length > 0 },
+    { texte: tr('Gagner un combat à −5 ou plus bas'), ok: (x) => x.z >= 5 },
   ],
   [
-    { texte: 'Vaincre un Gardien à −8 ou plus bas', ok: (x) => plusProfond(x.g) >= 8 },
-    { texte: 'Porter 25 derniers coups', ok: (x) => x.a >= 25 },
+    { texte: tr('Vaincre un Gardien à −8 ou plus bas'), ok: (x) => plusProfond(x.g) >= 8 },
+    { texte: tr('Porter 25 derniers coups'), ok: (x) => x.a >= 25 },
   ],
 ];
 
@@ -114,16 +115,16 @@ const max = (t: number[]) => (t.length ? Math.max(...t) : 0);
 
 export const EPITHETES: EpitheteDef[] = [
   // les seuils suivent l'étude au robot : chacun demande plusieurs semaines avec la même carte, ou un exploit rare
-  { id: 'premier', texte: () => 'qui achève', ok: (x) => x.a >= 10, aide: 'Porter 10 derniers coups.' },
-  { id: 'profond', texte: (x) => `qui a vu −${x.z}`, ok: (x) => x.z >= 5, aide: 'Gagner un combat à la Strate −5 ou plus bas.' },
-  { id: 'gardien', texte: (x) => `qui a fendu le Gardien de −${max(x.ga)}`, ok: (x) => x.ga.length > 0, aide: 'Porter le dernier coup à un Gardien.' },
-  { id: 'felures', texte: () => 'qui fend les Fêlures', ok: (x) => x.f >= 60, aide: 'Briser 60 Fêlures.' },
-  { id: 'tenu', texte: (x) => `qui a tenu à −${x.z}`, ok: (x, t) => t === 'bouclier' && x.b >= 1500 && x.z >= 4, aide: 'Une carte de bouclier : donner 1 500 de bouclier et gagner à −4 ou plus bas.' },
-  { id: 'veille', texte: () => 'qui n’a laissé tomber personne', ok: (x, t) => t === 'soin' && x.s >= 1500, aide: 'Une carte de soin : soigner 1 500 PV.' },
-  { id: 'mille', texte: () => 'aux mille coups', ok: (x, t) => t === 'atk' && x.d >= 6000, aide: 'Une carte d’attaque : infliger 6 000 dégâts.' },
-  { id: 'veteran', texte: () => 'de toutes les descentes', ok: (x) => x.v >= 300, aide: 'Gagner 300 combats.' },
+  { id: 'premier', texte: () => tr('qui achève'), ok: (x) => x.a >= 10, aide: tr('Porter 10 derniers coups.') },
+  { id: 'profond', texte: (x) => tr`qui a vu −${x.z}`, ok: (x) => x.z >= 5, aide: tr('Gagner un combat à la Strate −5 ou plus bas.') },
+  { id: 'gardien', texte: (x) => tr`qui a fendu le Gardien de −${max(x.ga)}`, ok: (x) => x.ga.length > 0, aide: tr('Porter le dernier coup à un Gardien.') },
+  { id: 'felures', texte: () => tr('qui fend les Fêlures'), ok: (x) => x.f >= 60, aide: tr('Briser 60 Fêlures.') },
+  { id: 'tenu', texte: (x) => tr`qui a tenu à −${x.z}`, ok: (x, t) => t === 'bouclier' && x.b >= 1500 && x.z >= 4, aide: tr('Une carte de bouclier : donner 1 500 de bouclier et gagner à −4 ou plus bas.') },
+  { id: 'veille', texte: () => tr('qui n’a laissé tomber personne'), ok: (x, t) => t === 'soin' && x.s >= 1500, aide: tr('Une carte de soin : soigner 1 500 PV.') },
+  { id: 'mille', texte: () => tr('aux mille coups'), ok: (x, t) => t === 'atk' && x.d >= 6000, aide: tr('Une carte d’attaque : infliger 6 000 dégâts.') },
+  { id: 'veteran', texte: () => tr('de toutes les descentes'), ok: (x) => x.v >= 300, aide: tr('Gagner 300 combats.') },
   // les Rôdeurs (31 octobre 2026) : un exploit rare, une seule carte par Rôdeur
-  { id: 'rodeur', texte: (x) => `qui a abattu ${rodeurDef(x.ro![x.ro!.length - 1]!)?.dans ?? ennemiDef(x.ro![x.ro!.length - 1]!).nom}`, ok: (x) => !!x.ro?.length, aide: 'Porter le dernier coup à un Rôdeur.' },
+  { id: 'rodeur', texte: (x) => `qui a abattu ${rodeurDef(x.ro![x.ro!.length - 1]!)?.dans ?? ennemiDef(x.ro![x.ro!.length - 1]!).nom}`, ok: (x) => !!x.ro?.length, aide: tr('Porter le dernier coup à un Rôdeur.') },
 ];
 
 /** Les épithètes débloqués, dans l'ordre de la liste */
@@ -149,17 +150,17 @@ export function choisirEpithete(j: Jeu, cle: string, id: string): boolean {
 export function journalCarte(x: VecuCarte | undefined): string[] {
   if (!x) return [];
   const l: string[] = [];
-  if (x.li?.length) l.push(`Liée à ${x.li.join(', ')}.`);
-  if (x.o) l.push(`Mise au jour à −${x.o}.`);
-  if (x.p) l.push(`Premier Porteur : ${porteurDef(x.p).nom}.`);
-  if (x.l) l.push(`${x.l} lancer${x.l > 1 ? 's' : ''} · ${x.v} combat${x.v > 1 ? 's' : ''} gagné${x.v > 1 ? 's' : ''}.`);
-  if (x.a || x.f) l.push([x.a ? `${x.a} dernier${x.a > 1 ? 's' : ''} coup${x.a > 1 ? 's' : ''}` : '', x.f ? `${x.f} Fêlure${x.f > 1 ? 's' : ''} brisée${x.f > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ') + '.');
-  if (x.ro?.length) l.push(`A abattu ${x.ro.map((id) => ennemiDef(id).nom).join(', ')}.`);
-  if (x.ga.length) l.push(`A fendu le Gardien de −${max(x.ga)}.`);
-  else if (x.g.length) l.push(`Était là contre le Gardien de −${max(x.g)}.`);
-  if (x.z) l.push(`Profondeur atteinte : −${x.z}.`);
+  if (x.li?.length) l.push(tr`Liée à ${x.li.join(', ')}.`);
+  if (x.o) l.push(tr`Mise au jour à −${x.o}.`);
+  if (x.p) l.push(tr`Premier Porteur : ${porteurDef(x.p).nom}.`);
+  if (x.l) l.push(tr`${x.l} lancer${x.l > 1 ? 's' : ''} · ${x.v} combat${x.v > 1 ? 's' : ''} gagné${x.v > 1 ? 's' : ''}.`);
+  if (x.a || x.f) l.push([x.a ? tr`${x.a} dernier${x.a > 1 ? 's' : ''} coup${x.a > 1 ? 's' : ''}` : '', x.f ? tr`${x.f} Fêlure${x.f > 1 ? 's' : ''} brisée${x.f > 1 ? 's' : ''}` : ''].filter(Boolean).join(' · ') + '.');
+  if (x.ro?.length) l.push(tr`A abattu ${x.ro.map((id) => ennemiDef(id).nom).join(', ')}.`);
+  if (x.ga.length) l.push(tr`A fendu le Gardien de −${max(x.ga)}.`);
+  else if (x.g.length) l.push(tr`Était là contre le Gardien de −${max(x.g)}.`);
+  if (x.z) l.push(tr`Profondeur atteinte : −${x.z}.`);
   const fam = x.m ? familleDef(x.m) : null;
-  if (fam) l.push(`Porte le souvenir ${fam.nom.startsWith('les ') ? `des ${fam.nom.slice(4)}` : `de ${fam.nom}`} : ${fam.souvenir}`);
+  if (fam) l.push(tr`Porte le souvenir ${fam.nom.startsWith('les ') ? `des ${fam.nom.slice(4)}` : `de ${fam.nom}`} : ${fam.souvenir}`);
   return l;
 }
 
@@ -178,8 +179,8 @@ export const souvenirsLibres = (j: Jeu) => (j.foyers ?? []).filter((f) => !carte
 /** Pourquoi cette carte ne peut pas recevoir de souvenir (null = elle peut) */
 export function raisonSouvenir(j: Jeu, cle: string): string | null {
   const x = vecuDe(j, cle);
-  if (x?.m) return 'Elle porte déjà un souvenir.';
-  if (palierDe(x) < SOUVENIR.palier) return `Il faut que la carte ait atteint le palier ${NOMS_PALIER[SOUVENIR.palier]} de son empreinte.`;
+  if (x?.m) return tr('Elle porte déjà un souvenir.');
+  if (palierDe(x) < SOUVENIR.palier) return tr`Il faut que la carte ait atteint le palier ${NOMS_PALIER[SOUVENIR.palier]} de son empreinte.`;
   return null;
 }
 
@@ -233,7 +234,7 @@ export function noterVecu(j: Jeu, c: CombatEtat, o: { strate: number; gardien: b
       if (ligne.sorte === 'coup') { x.d += v; dernier = cle; }
       else if (ligne.sorte === 'protection') x.b += v;
       else if (ligne.sorte === 'soin') x.s += v;
-      else if (ligne.sorte === 'effet' && ligne.texte.startsWith('Fêlure')) x.f++;
+      else if (ligne.sorte === 'effet' && (ligne.felure || ligne.texte.startsWith('Fêlure'))) x.f++;
     }
   }
   if (!victoire) return;

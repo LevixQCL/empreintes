@@ -1,0 +1,177 @@
+{
+ "source": "src/core/partie/recompenses.ts",
+ "entrees": [
+  {
+   "fr": "Lecture des Chroniques : {0} (Fer){1}.",
+   "en": ""
+  },
+  {
+   "fr": ", un doublon",
+   "en": ""
+  },
+  {
+   "fr": "Pas de colis pour l’instant : le prochain arrive demain.",
+   "en": ""
+  },
+  {
+   "fr": "Ravitaillement : +{0} cristaux{1}{2}.",
+   "en": ""
+  },
+  {
+   "fr": ", et une carte au choix",
+   "en": ""
+  },
+  {
+   "fr": "Rien à choisir.",
+   "en": ""
+  },
+  {
+   "fr": "Pas d’Éclats proposés ici.",
+   "en": ""
+  },
+  {
+   "fr": "+{0} Éclats.",
+   "en": ""
+  },
+  {
+   "fr": "Nouvelle carte : {0} ({1}).",
+   "en": ""
+  },
+  {
+   "fr": "Doublon : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Objectif du jour pas encore rempli.",
+   "en": ""
+  },
+  {
+   "fr": "Objectif du jour rempli.",
+   "en": ""
+  },
+  {
+   "fr": "Le Butin de la semaine n’est pas encore prêt.",
+   "en": ""
+  },
+  {
+   "fr": "Butin de la semaine ouvert : palier {0} sur {1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} quitte l’entraînement pour descendre.",
+   "en": ""
+  },
+  {
+   "fr": "{0} quitte son poste ({1}) pour descendre.",
+   "en": ""
+  },
+  {
+   "fr": "La lettre de la directrice",
+   "en": ""
+  },
+  {
+   "fr": "Sous la Tour du Noyau, derrière une plaque, les ouvriers avaient trouvé un coffre de nacre, gravé à la main : « Pour celui qui remontera de la deuxième Strate. Pas avant. » Ce soir, Ilka te le tend. Dedans, une lettre.",
+   "en": ""
+  },
+  {
+   "fr": "Directeur, une Strate, n’importe qui peut la descendre une fois, par chance ou par orgueil. Deux, et revenir avec les siens, c’est autre chose : tu iras plus bas que moi. Ce qui dort sous la Tour, je n’ai jamais osé le regarder en face. Avant de partir, j’ai mis de côté dix originaux, jamais recopiés, que les Hauts n’auront pas. Un seul est pour toi : dis-moi qui tu es, et je te dirai lequel.",
+   "en": ""
+  },
+  {
+   "fr": "Qu’est-ce qui tient un district debout ?",
+   "en": ""
+  },
+  {
+   "fr": "La machine",
+   "en": ""
+  },
+  {
+   "fr": "Des mains qui réparent ce que les autres jettent.",
+   "en": ""
+  },
+  {
+   "fr": "Le corps",
+   "en": ""
+  },
+  {
+   "fr": "Des épaules qui encaissent pour ceux qui ne peuvent pas.",
+   "en": ""
+  },
+  {
+   "fr": "Des yeux qui voient ce que les autres ont oublié.",
+   "en": ""
+  },
+  {
+   "fr": "Personne ne tient seul. Le district non plus.",
+   "en": ""
+  },
+  {
+   "fr": "Et quand la machine s’emballe ?",
+   "en": ""
+  },
+  {
+   "fr": "On court devant elle, plus vite qu’elle.",
+   "en": ""
+  },
+  {
+   "fr": "On frappe plus fort qu’elle, une bonne fois.",
+   "en": ""
+  },
+  {
+   "fr": "On garde son énergie, et on la relâche au bon moment.",
+   "en": ""
+  },
+  {
+   "fr": "Et quand les coups pleuvent ?",
+   "en": ""
+  },
+  {
+   "fr": "On encaisse ensemble, et on rend chaque coup.",
+   "en": ""
+  },
+  {
+   "fr": "On ne lâche jamais une proie.",
+   "en": ""
+  },
+  {
+   "fr": "On se relève toujours, tous ensemble.",
+   "en": ""
+  },
+  {
+   "fr": "Et quand personne ne veut entendre ?",
+   "en": ""
+  },
+  {
+   "fr": "On éclaire la suite, pas à pas.",
+   "en": ""
+  },
+  {
+   "fr": "On lit la faute de l’autre, et on la lui rend.",
+   "en": ""
+  },
+  {
+   "fr": "On chante plus fort, tous sur la même note.",
+   "en": ""
+  },
+  {
+   "fr": "Tu as déjà reçu ton Héritage.",
+   "en": ""
+  },
+  {
+   "fr": "L’Héritage du district : la Clé de l’Héritage rejoint le paquetage de tes escouades (avec un Porteur de niveau {0}).",
+   "en": ""
+  },
+  {
+   "fr": "Cette carte ne fait pas partie de l’Héritage.",
+   "en": ""
+  },
+  {
+   "fr": "L’Héritage du district : {0} est à toi. Elle se portera avec un Porteur {1} de niveau {2}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} s’éveille avec {1} : niveau {2}.",
+   "en": ""
+  }
+ ]
+}

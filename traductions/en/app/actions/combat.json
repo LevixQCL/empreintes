@@ -1,0 +1,85 @@
+{
+ "source": "src/app/actions/combat.ts",
+ "entrees": [
+  {
+   "fr": "Descente",
+   "en": ""
+  },
+  {
+   "fr": "Fouille · {0}",
+   "en": ""
+  },
+  {
+   "fr": "Épreuve · {0}",
+   "en": ""
+  },
+  {
+   "fr": "La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans les Chroniques (onglet Archives).",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade se repose. La porte scellée t’attend toujours.",
+   "en": ""
+  },
+  {
+   "fr": "{0} est battu : ton escouade tient désormais le quai {1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} garde le quai {1}. Ta montée ne bouge pas.",
+   "en": ""
+  },
+  {
+   "fr": "Quai {0} atteint{1}.{2}",
+   "en": ""
+  },
+  {
+   "fr": " : nouveau record",
+   "en": ""
+  },
+  {
+   "fr": " Quai gravé {0} : +{1} cristaux, +{2} Éclats.",
+   "en": ""
+  },
+  {
+   "fr": "Repoussés au quai {0} : l’escouade redescend au quai {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Repoussés au quai {0} : l’escouade garde son quai.",
+   "en": ""
+  },
+  {
+   "fr": "Pillage réussi à {0} : +{1} minerai, rangé dans ton coffre.",
+   "en": ""
+  },
+  {
+   "fr": "Repoussés à {0}.{1}",
+   "en": ""
+  },
+  {
+   "fr": " L’escouade a laissé {0} minerai de son coffre.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade a fui : elle rentre épuisée (+{0} d’Usure chacun). ",
+   "en": ""
+  },
+  {
+   "fr": "Un nouvel étage est creusé : la Strate −{0} est ouverte.",
+   "en": ""
+  },
+  {
+   "fr": "Le gardien est vaincu, mais l’étage suivant attend : {0}{1}{2}.",
+   "en": ""
+  },
+  {
+   "fr": "il manque {0} creuseur{1}",
+   "en": ""
+  },
+  {
+   "fr": "la Tour du Noyau doit passer au niveau {0}",
+   "en": ""
+  }
+ ]
+}

@@ -18,6 +18,7 @@ import { KIT_RECRUES, donnerKitRecrues, niveauLegsPour, quitterPostes, refus } f
 import { noterCombat, noterExpedition } from './stats';
 import { noterOrigine, noterVecu } from './vecu';
 import { LIEUX, RECIT_BON, RECIT_MAUVAIS, RECIT_NEUTRE, affinite, lieuDef, type Affinite, type LieuDef, type SpecialiteLieu } from '../lieux';
+import { t as tr } from '../i18n';
 
 // ---------- Expéditions ----------
 
@@ -97,15 +98,15 @@ export function payerRatelier(j: Jeu, escouade?: readonly string[], sortie: Sort
 
 /** Change les cartes communes du Râtelier d'une escouade ; jamais pendant une descente */
 export function choisirRatelier(j: Jeu, ids: string[], k = escouadeActive(j)): Resultat {
-  if (j.expedition) return non('L’escouade est en descente : le Râtelier se change au district.');
-  if (!Number.isInteger(k) || k < 0 || k >= NB_ESCOUADES) return non('Escouade inconnue.');
+  if (j.expedition) return non(tr('L’escouade est en descente : le Râtelier se change au district.'));
+  if (!Number.isInteger(k) || k < 0 || k >= NB_ESCOUADES) return non(tr('Escouade inconnue.'));
   const propres = [...new Set(ids)];
   for (const id of propres) {
     const c = communeDef(id);
-    if (!c) return non('Carte commune inconnue.');
-    if (!communeOuverte(j, c)) return non(`${c.geste.nom} s’ouvre au niveau ${c.niveau} du bâtiment.`);
+    if (!c) return non(tr('Carte commune inconnue.'));
+    if (!communeOuverte(j, c)) return non(tr`${c.geste.nom} s’ouvre au niveau ${c.niveau} du bâtiment.`);
   }
-  if (propres.length > placesRatelier(j)) return non(`Le Râtelier n’a que ${placesRatelier(j)} emplacements.`);
+  if (propres.length > placesRatelier(j)) return non(tr`Le Râtelier n’a que ${placesRatelier(j)} emplacements.`);
   // la première fois, chaque escouade part de l'ancien Râtelier commun : rien ne bouge pour les autres
   const avant = Array.from({ length: NB_ESCOUADES }, (_, n) => [...(j.rateliers?.[n] ?? j.ratelier ?? RATELIER_DEPART)]);
   avant[k] = propres;
@@ -116,7 +117,7 @@ export function choisirRatelier(j: Jeu, ids: string[], k = escouadeActive(j)): R
 export function basculerRatelier(j: Jeu, id: string, k = escouadeActive(j)): Resultat {
   const l = ratelierDe(j, k);
   if (l.includes(id)) return choisirRatelier(j, l.filter((x) => x !== id), k);
-  if (l.length >= placesRatelier(j)) return non(`Le Râtelier de l’escouade ${k + 1} est plein (${placesRatelier(j)} emplacements) : retire d’abord une carte.`);
+  if (l.length >= placesRatelier(j)) return non(tr`Le Râtelier de l’escouade ${k + 1} est plein (${placesRatelier(j)} emplacements) : retire d’abord une carte.`);
   return choisirRatelier(j, [...l, id], k);
 }
 export { CARTES_COMMUNES };
@@ -140,8 +141,8 @@ export function verifierArrivees(j: Jeu): string[] {
     if (a.accord && !accordOuvertPret(j)) continue;
     j.arrives.push(p.id);
     const t = a.accord
-      ? `La Clinique a organisé un Accord ouvert : quarante volontaires, une seule pierre. Elle a pris sur ${p.nom}, et tout le quartier a veillé sa Nuit blanche. « ${a.replique} »`
-      : `${p.nom} rejoint le district. « ${a.replique} »`;
+      ? tr`La Clinique a organisé un Accord ouvert : quarante volontaires, une seule pierre. Elle a pris sur ${p.nom}, et tout le quartier a veillé sa Nuit blanche. « ${a.replique} »`
+      : tr`${p.nom} rejoint le district. « ${a.replique} »`;
     log(j, t);
     annonces.push(t);
   }
@@ -164,7 +165,7 @@ export function avancerFils(j: Jeu): string[] {
       j.fils[id] = ++n;
       gagnerXp(j, id, e.xp);
       if (e.confiance) confier(j, e.confiance, 'histoire');
-      const t = `${porteurDef(id).nom} · ${fil.titre} : « ${e.titre} » (+${e.xp} XP). À lire dans sa fiche.`;
+      const t = tr`${porteurDef(id).nom} · ${fil.titre} : « ${e.titre} » (+${e.xp} XP). À lire dans sa fiche.`;
       log(j, t);
       annonces.push(t);
     }
@@ -187,16 +188,16 @@ export const ESCOUADE_DEPART = ['ilka', 'doran', 'vela'] as const;
 
 /** Pourquoi l'escouade ne peut pas changer maintenant (null = elle peut) */
 export function escouadeVerrouillee(j: Jeu): string | null {
-  return j.expedition ? 'L’escouade est en descente : elle ne change qu’au district.' : null;
+  return j.expedition ? tr('L’escouade est en descente : elle ne change qu’au district.') : null;
 }
 
 /** Pourquoi un Porteur ne peut pas entrer dans l'escouade (null = il peut).
  * Un Porteur au travail peut entrer (demande du 23 octobre 2026) : il quitte son poste au départ, qui reste vacant
  * (voir posteQuitte). Seuls bloquent : pas encore arrivé, en mission, ou forgeron d'une fabrication en cours. */
 export function raisonHorsEscouade(j: Jeu, id: string): string | null {
-  if (!porteursPresents(j).includes(id)) return 'Pas encore arrivé au district.';
-  if (enMission(j, id)) return 'En mission.';
-  if (j.porteurs[id]?.poste === 'forge' && j.forge) return 'Au travail · Forge (fabrication en cours).';
+  if (!porteursPresents(j).includes(id)) return tr('Pas encore arrivé au district.');
+  if (enMission(j, id)) return tr('En mission.');
+  if (j.porteurs[id]?.poste === 'forge' && j.forge) return tr('Au travail · Forge (fabrication en cours).');
   return null;
 }
 
@@ -209,7 +210,7 @@ export function posteQuitte(j: Jeu, id: string): Poste | null {
 export function textePosteQuitte(j: Jeu, id: string): string | null {
   const b = posteQuitte(j, id);
   if (!b) return null;
-  return b === 'noyau' ? 'quitte l’entraînement à la Tour du Noyau' : `quitte son poste : ${batimentDef(b).nom} restera vacant`;
+  return b === 'noyau' ? tr('quitte l’entraînement à la Tour du Noyau') : tr`quitte son poste : ${batimentDef(b).nom} restera vacant`;
 }
 
 /** Enregistre les trois escouades ; celle qui descend est recopiée dans `j.escouade` */
@@ -234,15 +235,15 @@ function retenirDepart(j: Jeu, escouade: string[], sortie: Sortie = 'explorer'):
 export function placerDansEscouade(j: Jeu, place: number, id: string, n = escouadeActive(j)): Resultat {
   const verrou = escouadeVerrouillee(j);
   if (verrou) return non(verrou);
-  if (!Number.isInteger(place) || place < 0 || place > 2) return non('Place inconnue.');
-  if (!Number.isInteger(n) || n < 0 || n >= escouadesOuvertes(j)) return non(n >= 0 && n < NB_ESCOUADES ? `Les autres escouades se forment quand le gardien de la Strate −${ESCOUADES_STRATE} est vaincu.` : 'Escouade inconnue.');
+  if (!Number.isInteger(place) || place < 0 || place > 2) return non(tr('Place inconnue.'));
+  if (!Number.isInteger(n) || n < 0 || n >= escouadesOuvertes(j)) return non(n >= 0 && n < NB_ESCOUADES ? tr`Les autres escouades se forment quand le gardien de la Strate −${ESCOUADES_STRATE} est vaincu.` : tr('Escouade inconnue.'));
   const toutes = escouadesDe(j).map((l) => [...l]);
   const suite = toutes[n]!;
   const ancienne = suite.indexOf(id);
   const ailleurs = toutes.findIndex((l, k) => k !== n && l.includes(id));
   if (ancienne < 0) {
     const raison = raisonHorsEscouade(j, id);
-    if (raison) return non(`${porteurDef(id).nom} ne peut pas rejoindre l’escouade : ${raison.charAt(0).toLowerCase()}${raison.slice(1)}`);
+    if (raison) return non(tr`${porteurDef(id).nom} ne peut pas rejoindre l’escouade : ${raison.charAt(0).toLowerCase()}${raison.slice(1)}`);
   }
   if (ancienne >= 0) {
     if (ancienne === place) return { ok: true };
@@ -258,7 +259,7 @@ export function placerDansEscouade(j: Jeu, place: number, id: string, n = escoua
       const q = la.indexOf(id);
       if (sortant) la[q] = sortant; else la.splice(q, 1);
     }
-    log(j, sortant ? `${porteurDef(id).nom} remplace ${porteurDef(sortant).nom} dans l’escouade ${n + 1}.` : `${porteurDef(id).nom} rejoint l’escouade ${n + 1}.`);
+    log(j, sortant ? tr`${porteurDef(id).nom} remplace ${porteurDef(sortant).nom} dans l’escouade ${n + 1}.` : tr`${porteurDef(id).nom} rejoint l’escouade ${n + 1}.`);
   }
   ranger(j, toutes);
   return { ok: true };
@@ -268,12 +269,12 @@ export function placerDansEscouade(j: Jeu, place: number, id: string, n = escoua
 export function choisirEscouade(j: Jeu, n: number): Resultat {
   const verrou = escouadeVerrouillee(j);
   if (verrou) return non(verrou);
-  if (!Number.isInteger(n) || n < 0 || n >= escouadesOuvertes(j)) return non(n >= 0 && n < NB_ESCOUADES ? `Les autres escouades se forment quand le gardien de la Strate −${ESCOUADES_STRATE} est vaincu.` : 'Escouade inconnue.');
+  if (!Number.isInteger(n) || n < 0 || n >= escouadesOuvertes(j)) return non(n >= 0 && n < NB_ESCOUADES ? tr`Les autres escouades se forment quand le gardien de la Strate −${ESCOUADES_STRATE} est vaincu.` : tr('Escouade inconnue.'));
   const toutes = escouadesDe(j);
-  if (!toutes[n]!.length) return non('Cette escouade est vide : choisis-lui d’abord des Porteurs.');
+  if (!toutes[n]!.length) return non(tr('Cette escouade est vide : choisis-lui d’abord des Porteurs.'));
   j.escouadeActive = n;
   ranger(j, toutes);
-  log(j, `L’escouade ${n + 1} descendra la prochaine fois.`);
+  log(j, tr`L’escouade ${n + 1} descendra la prochaine fois.`);
   return { ok: true };
 }
 
@@ -326,9 +327,9 @@ export const MISSIONS = {
    * suivantes rapportent un butin plein de Surface, jamais moins. L'XP et les creuseurs ne changent pas (plafond par Strate).
    */
   profondeurs: [
-    { nom: 'Surface', mult: 1 },
-    { nom: 'Cales', mult: 1.25 },
-    { nom: 'Cœur', mult: 1.6 },
+    { nom: tr('Surface'), mult: 1 },
+    { nom: tr('Cales'), mult: 1.25 },
+    { nom: tr('Cœur'), mult: 1.6 },
   ],
 } as const;
 
@@ -358,7 +359,7 @@ export const COEUR = MISSIONS.profondeurs.length - 1;
 export const strateMission = (j: Jeu) => strateVaincue(j);
 
 export type Butin = keyof typeof MISSIONS.butins;
-export const NOM_BUTIN: Record<Butin, string> = { cargaison: 'Cargaison', pierre: 'Pierre oubliée', naufrages: 'Naufragés', eclats: 'Éclats' };
+export const NOM_BUTIN: Record<Butin, string> = { cargaison: tr('Cargaison'), pierre: tr('Pierre oubliée'), naufrages: tr('Naufragés'), eclats: tr('Éclats') };
 /** Une destination du jour : un lieu, son butin annoncé, et sa clé (une seule barque par destination) */
 export interface Destination { cle: string; lieu: LieuDef; butin: Butin }
 
@@ -425,10 +426,10 @@ export const secoursPossible = (j: Jeu, d: Destination, now: number): boolean =>
  * il est tiré de l'heure de retour et du Porteur, toujours le même pour une mission donnée.
  */
 export const LIEUX_MISSION = [
-  'le phare couché de Pâle-Lune', 'les serres noyées du Jardin d’Hiver', 'le pilier effondré de Sombreverse',
-  'la station de pompage engloutie', 'les toits du vieux marché des Salines', 'l’épave du transbordeur Héron',
-  'la gare suspendue à demi noyée', 'les silos de la digue rompue', 'le pilier sans nom au large de Brume-Haute',
-  'l’usine de dessalement abandonnée', 'les quais morts de l’ancienne criée', 'le clocher de verre sous la marée',
+  tr('le phare couché de Pâle-Lune'), tr('les serres noyées du Jardin d’Hiver'), tr('le pilier effondré de Sombreverse'),
+  tr('la station de pompage engloutie'), tr('les toits du vieux marché des Salines'), tr('l’épave du transbordeur Héron'),
+  tr('la gare suspendue à demi noyée'), tr('les silos de la digue rompue'), tr('le pilier sans nom au large de Brume-Haute'),
+  tr('l’usine de dessalement abandonnée'), tr('les quais morts de l’ancienne criée'), tr('le clocher de verre sous la marée'),
 ] as const;
 export function lieuMission(m: { porteur: string; fin: number; lieu?: string }): string {
   const l = m.lieu ? lieuDef(m.lieu) : undefined;
@@ -447,19 +448,19 @@ export const lieuIdMission = (m: { porteur: string; fin: number; lieu?: string }
  */
 export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: number, cle?: string): Resultat {
   const m = MISSIONS[duree];
-  if (!m) return non('Durée inconnue.');
+  if (!m) return non(tr('Durée inconnue.'));
   const libres = destinationsDuJour(now);
   const lg = porteurDef(id)?.lignee;
   const rang = { bon: 0, neutre: 1, mauvais: 2 } as const;
   const dest = cle ? libres.find((d) => d.cle === cle)
     : libres.slice().sort((a, b) => (lg ? rang[affinite(a.lieu.lignee, lg)] - rang[affinite(b.lieu.lignee, lg)] : 0))[0];
-  if (!dest) return non(cle ? 'Cette destination n’est plus au programme du passeur : de nouvelles s’ouvrent chaque jour à 4 h.' : 'Aucune destination aujourd’hui.');
-  if (!j.chambre || strateMission(j) < 1) return non('Il faut avoir vaincu une Strate pour y envoyer quelqu’un.');
-  if (!porteursPresents(j).includes(id)) return non('Porteur inconnu.');
-  if (j.porteurs[id]!.poste) return non(`${porteurDef(id).nom} travaille au district.`);
-  if (enExpedition(j, id)) return non(`${porteurDef(id).nom} n’est pas au district.`);
+  if (!dest) return non(cle ? tr('Cette destination n’est plus au programme du passeur : de nouvelles s’ouvrent chaque jour à 4 h.') : tr('Aucune destination aujourd’hui.'));
+  if (!j.chambre || strateMission(j) < 1) return non(tr('Il faut avoir vaincu une Strate pour y envoyer quelqu’un.'));
+  if (!porteursPresents(j).includes(id)) return non(tr('Porteur inconnu.'));
+  if (j.porteurs[id]!.poste) return non(tr`${porteurDef(id).nom} travaille au district.`);
+  if (enExpedition(j, id)) return non(tr`${porteurDef(id).nom} n’est pas au district.`);
   const nb = barquesMax(j);
-  if (j.missions.length >= nb) return non(nb > 1 ? `${nb} barques au plus en mer en même temps : monte la Tour du Noyau pour en armer d’autres.` : 'Une seule barque en mer à la fois : monte la Tour du Noyau pour en armer d’autres.');
+  if (j.missions.length >= nb) return non(nb > 1 ? tr`${nb} barques au plus en mer en même temps : monte la Tour du Noyau pour en armer d’autres.` : tr('Une seule barque en mer à la fois : monte la Tour du Noyau pour en armer d’autres.'));
   const prof = profondeurMission(j, dest.cle, now);
   const rendement = prof.mult;
   const secours = secoursPossible(j, dest, now);
@@ -467,7 +468,7 @@ export function envoyerMission(j: Jeu, id: string, duree: DureeMission, now: num
   j.missions.push({ porteur: id, strate: strateMission(j), duree, debut: now, fin: now + m.heures * 3_600_000, lieu: dest.lieu.id, butin: dest.butin, rendement, ...(prof.niveau !== null ? { profondeur: prof.niveau } : {}), ...(dest.butin === 'naufrages' ? { secours } : {}) });
   const fj = j.fouillesJour?.jour === jourDe(now) ? j.fouillesJour.cles : {};
   j.fouillesJour = { jour: jourDe(now), cles: { ...fj, [dest.cle]: (fj[dest.cle] ?? 0) + 1 } };
-  log(j, `${porteurDef(id).nom} prend le bateau vers ${lieuMission(j.missions[j.missions.length - 1]!)} (${m.heures} h).`);
+  log(j, tr`${porteurDef(id).nom} prend le bateau vers ${lieuMission(j.missions[j.missions.length - 1]!)} (${m.heures} h).`);
   return { ok: true };
 }
 
@@ -519,7 +520,7 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   recrues = Math.min(recrues, nf.restants);
   j.composants += composants;
   const trouvees = cartes.map((c) => ({ id: c, nouvelle: ajouterCarte(j, c) }));
-  const arrives = recrues ? gagnerCreuseurs(j, recrues, `${p.nom} ramène des naufragés`) : 0;
+  const arrives = recrues ? gagnerCreuseurs(j, recrues, tr`${p.nom} ramène des naufragés`) : 0;
   if (arrives) { j.naufrages = { strate: j.strate, n: nf.ramenes + arrives }; creuser(j); }
   // les familles des naufragés restent au district (30 octobre 2026) : seulement quand la barque en ramène vraiment
   const familles = m.butin === 'naufrages' && secoursFait ? confier(j, CONFIANCE.naufrages[m.duree], 'naufrages') : 0;
@@ -530,10 +531,10 @@ export function retourDeMission(j: Jeu, m: Mission): string {
   q.faits = { ...q.faits, missions: (q.faits?.missions ?? 0) + 1 };
   const marque = progresMarque(j, m.porteur);
   const nouvelleMarque = marque?.acquise && !avantMarque ? marque : null;
-  if (nouvelleMarque) log(j, `${p.nom} gagne la Marque ${nouvelleMarque.nom} : ${nouvelleMarque.texte}`);
+  if (nouvelleMarque) log(j, tr`${p.nom} gagne la Marque ${nouvelleMarque.nom} : ${nouvelleMarque.texte}`);
   const gainXp = Math.round(XP.missionHeure * d.heures * facteurXp(m.strate) * b.mult);
   const monte = gagnerXp(j, m.porteur, gainXp);
-  const texte = `${p.nom} rentre de mission : +${composants} minerai, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${familles ? `, +${familles} famille${familles > 1 ? 's' : ''}` : ''}${arrives ? `, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? `, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
+  const texte = tr`${p.nom} rentre de mission : +${composants} minerai, +${gainXp} XP${monte ? ` (niveau ${monte})` : ''}${cartes.length ? `, ${cartes.map((c) => moduleDef(c).nom).join(', ')}` : ''}${familles ? tr`, +${familles} famille${familles > 1 ? 's' : ''}` : ''}${arrives ? tr`, +${arrives} creuseur${arrives > 1 ? 's' : ''}` : ''}${eclats ? tr`, +${eclats} Éclat${eclats > 1 ? 's' : ''}` : ''}.`;
   log(j, texte);
   const rapport: RapportMission = {
     porteur: m.porteur, strate: m.strate, duree: m.duree, fin: m.fin, lieu: lieuId, butin: m.butin, eclats, rendement: m.rendement ?? 1, ...(m.profondeur !== undefined ? { profondeur: m.profondeur } : {}), affinite: b.affinite, mult: Math.round(b.mult * 100) / 100, recit: [],
@@ -558,7 +559,7 @@ export const rapportALire = (j: Jeu) => (j.rapports ?? []).find((x) => !x.lu) ??
 /** Marque comme lu le plus ancien rapport pas encore lu */
 export function lireRapport(j: Jeu): Resultat {
   const r = rapportALire(j);
-  if (!r) return non('Aucun rapport à lire.');
+  if (!r) return non(tr('Aucun rapport à lire.'));
   r.lu = true;
   rangerRapport(j);
   return { ok: true };
@@ -582,50 +583,50 @@ export function recitMission(r: RapportMission): string[] {
     const a = r.affinite ?? 'neutre';
     recit.push(a === 'bon' ? avec(RECIT_BON[l.lignee]) : a === 'mauvais' ? avec(RECIT_MAUVAIS[l.lignee]) : RECIT_NEUTRE);
   } else recit.push(choisir([
-    `Le passeur a déposé ${nom} devant ${lieu}, à marée basse.`,
-    `${heures} heures de mer : ${nom} a gagné ${lieu} sur la barque du passeur.`,
-    `Lampe à algues au poing, ${nom} a plongé dans ${lieu}, salle après salle.`,
-    `Au lever du brouillard, la barque a touché ${lieu}. ${nom} est monté seul.`,
+    tr`Le passeur a déposé ${nom} devant ${lieu}, à marée basse.`,
+    tr`${heures} heures de mer : ${nom} a gagné ${lieu} sur la barque du passeur.`,
+    tr`Lampe à algues au poing, ${nom} a plongé dans ${lieu}, salle après salle.`,
+    tr`Au lever du brouillard, la barque a touché ${lieu}. ${nom} est monté seul.`,
   ]));
-  if ((r.rendement ?? 1) < 1) recit.push(`D’autres barques étaient passées avant aujourd’hui : ${nom} a dû chercher plus loin, dans des salles à moitié vidées.`);
+  if ((r.rendement ?? 1) < 1) recit.push(tr`D’autres barques étaient passées avant aujourd’hui : ${nom} a dû chercher plus loin, dans des salles à moitié vidées.`);
   if (r.profondeur === 1) recit.push(choisir([
-    `Les barques du matin avaient balisé l’entrée : ${nom} est descendu droit vers les Cales, là où personne n’était encore allé.`,
-    `Grâce aux marques laissées par la première barque, ${nom} a trouvé l’escalier des Cales sous la vase.`,
+    tr`Les barques du matin avaient balisé l’entrée : ${nom} est descendu droit vers les Cales, là où personne n’était encore allé.`,
+    tr`Grâce aux marques laissées par la première barque, ${nom} a trouvé l’escalier des Cales sous la vase.`,
   ]));
   if (r.profondeur === COEUR) recit.push(choisir([
-    `Deux barques avaient ouvert le chemin : ${nom} a pu atteindre le Cœur de la ruine, une salle restée au sec depuis la montée des eaux. Une pierre y attendait.`,
-    `Au bout des Cales, une porte que les autres n’avaient pas pu forcer : ${nom} l’a passée, et le Cœur de la ruine lui a livré une pierre.`,
+    tr`Deux barques avaient ouvert le chemin : ${nom} a pu atteindre le Cœur de la ruine, une salle restée au sec depuis la montée des eaux. Une pierre y attendait.`,
+    tr`Au bout des Cales, une porte que les autres n’avaient pas pu forcer : ${nom} l’a passée, et le Cœur de la ruine lui a livré une pierre.`,
   ]));
-  if (r.habitants) recit.push(`Le quartier a vu la barque rentrer : ${r.habitants > 1 ? `${r.habitants} familles ont` : 'une famille a'} décidé de te suivre.`);
-  if (r.butin === 'naufrages' && !r.creuseurs && !r.habitants) recit.push('Plus personne à recueillir sur place : les naufragés étaient déjà partis. La barque est revenue chargée de matériel.');
+  if (r.habitants) recit.push(tr`Le quartier a vu la barque rentrer : ${r.habitants > 1 ? `${r.habitants} familles ont` : 'une famille a'} décidé de te suivre.`);
+  if (r.butin === 'naufrages' && !r.creuseurs && !r.habitants) recit.push(tr('Plus personne à recueillir sur place : les naufragés étaient déjà partis. La barque est revenue chargée de matériel.'));
   recit.push(choisir([
-    `Sous l’eau dormait encore du matériel d’avant : ${r.composants} minerai hissé à bord.`,
-    `Une réserve oubliée, au sec sous un toit effondré : ${r.composants} minerai rapporté au district.`,
-    `Des machines noyées, démontées pièce par pièce : ${r.composants} minerai.`,
+    tr`Sous l’eau dormait encore du matériel d’avant : ${r.composants} minerai hissé à bord.`,
+    tr`Une réserve oubliée, au sec sous un toit effondré : ${r.composants} minerai rapporté au district.`,
+    tr`Des machines noyées, démontées pièce par pièce : ${r.composants} minerai.`,
   ]));
   const nouvelles = r.cartes.filter((c) => c.nouvelle);
   const doublons = r.cartes.filter((c) => !c.nouvelle);
   for (const c of nouvelles) {
     const md = moduleDef(c.id);
     recit.push(choisir([
-      `Dans un coffre scellé par le sel, une pierre jamais vue : ${md.nom}. Elle rejoint tes cartes.`,
-      `Au fond d’une salle noyée, ${nom} a trouvé ce que personne n’avait encore rapporté : ${md.nom}.`,
+      tr`Dans un coffre scellé par le sel, une pierre jamais vue : ${md.nom}. Elle rejoint tes cartes.`,
+      tr`Au fond d’une salle noyée, ${nom} a trouvé ce que personne n’avait encore rapporté : ${md.nom}.`,
     ]));
   }
   if (doublons.length) {
     const noms = [...new Set(doublons.map((c) => moduleDef(c.id).nom))];
     recit.push(choisir([
-      `${nom} a reconnu des pierres familières : ${noms.join(', ')}. De quoi faire monter des cartes.`,
-      `Des éclats de sa propre lignée attendaient dans les ruines : ${noms.join(', ')}.`,
+      tr`${nom} a reconnu des pierres familières : ${noms.join(', ')}. De quoi faire monter des cartes.`,
+      tr`Des éclats de sa propre lignée attendaient dans les ruines : ${noms.join(', ')}.`,
     ]));
   }
-  if (!r.cartes.length) recit.push('Aucune pierre à rapporter cette fois : les ruines étaient muettes.');
-  if (r.creuseurs) recit.push(`Des rescapés vivaient sur place : ils sont montés dans la barque et creuseront pour toi (+${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}).`);
-  if (r.marque) recit.push(`Un exploit qui ne s’oublie pas : ${nom} gagne la Marque ${r.marque}.`);
-  if (r.niveau) recit.push(`L’expérience paie : ${nom} passe au niveau ${r.niveau}.`);
+  if (!r.cartes.length) recit.push(tr('Aucune pierre à rapporter cette fois : les ruines étaient muettes.'));
+  if (r.creuseurs) recit.push(tr`Des rescapés vivaient sur place : ils sont montés dans la barque et creuseront pour toi (+${r.creuseurs} creuseur${r.creuseurs > 1 ? 's' : ''}).`);
+  if (r.marque) recit.push(tr`Un exploit qui ne s’oublie pas : ${nom} gagne la Marque ${r.marque}.`);
+  if (r.niveau) recit.push(tr`L’expérience paie : ${nom} passe au niveau ${r.niveau}.`);
   recit.push(r.usure > 0
-    ? choisir([`Le retour s’est fait sans encombre, mais l’eau froide laisse des traces : la Clinique s’en chargera.`, `${nom} rentre trempé et fourbu : un peu de repos à la Clinique ne sera pas de trop.`])
-    : `${nom} rentre sans une égratignure.`);
+    ? choisir([tr`Le retour s’est fait sans encombre, mais l’eau froide laisse des traces : la Clinique s’en chargera.`, tr`${nom} rentre trempé et fourbu : un peu de repos à la Clinique ne sera pas de trop.`])
+    : tr`${nom} rentre sans une égratignure.`);
   return recit;
 }
 
@@ -633,89 +634,89 @@ export function recitMission(r: RapportMission): string[] {
 
 /** Les rencontres en route : chacune propose un petit choix qui touche au butin, aux PV ou au district */
 export const RENCONTRES: Record<string, (j: Jeu) => { titre: string; texte: string; options: string[] }> = {
-  veilleur: () => ({ titre: 'Un Veilleur sous les gravats', texte: 'Un fouilleur des Veilleurs de Sédime est coincé sous un éboulis. Il tient serré contre lui un carnet couvert de croquis.',
-    options: ['Le dégager et le soigner (−4 PV chacun)', 'Prendre son carnet et repartir', 'Passer ton chemin'] }),
-  pilleur: () => ({ titre: 'Un pilleur acculé', texte: 'Un pilleur de Strates, dos au mur, serre un sac plein de cristaux. Il ne cherche pas la bagarre.',
-    options: ['Le laisser filer', 'Lui prendre son sac', 'L’affronter pour tout récupérer'] }),
+  veilleur: () => ({ titre: tr('Un Veilleur sous les gravats'), texte: tr('Un fouilleur des Veilleurs de Sédime est coincé sous un éboulis. Il tient serré contre lui un carnet couvert de croquis.'),
+    options: [tr('Le dégager et le soigner (−4 PV chacun)'), tr('Prendre son carnet et repartir'), tr('Passer ton chemin')] }),
+  pilleur: () => ({ titre: tr('Un pilleur acculé'), texte: tr('Un pilleur de Strates, dos au mur, serre un sac plein de cristaux. Il ne cherche pas la bagarre.'),
+    options: [tr('Le laisser filer'), tr('Lui prendre son sac'), tr('L’affronter pour tout récupérer')] }),
   brigade: (j) => (j.actes.chambre === 'orseve'
-    ? { titre: 'Une patrouille alliée', texte: 'Une patrouille des Brigades du Serment de Veyr vous salue : depuis l’accord avec la Maison Orsève, vous êtes du même côté.',
-      options: ['Accepter leurs soins (+25 % de PV)', 'Les saluer et continuer'] }
-    : { titre: 'Les Brigades barrent la route', texte: 'Une patrouille du Serment de Veyr bloque le couloir. Leur sergent réclame un « droit de passage ».',
-      options: ['Payer le passage (20 minerai)', 'Les contourner par les gaines (−5 PV chacun)', 'Forcer le passage'] }),
-  cristal: () => ({ titre: 'Un cristal qui murmure', texte: 'Dans une niche, un cristal ancien murmure. Le son ressemble à une voix, sans les mots.',
-    options: ['L’écouter', 'Le rapporter au district', 'Le laisser où il est'] }),
-  marchand: () => ({ titre: 'Un marchand des bas-fonds', texte: 'Un marchand a installé son étal dans une ancienne salle, entre deux lampes à algues. Il a « de tout, pour qui sait payer ».',
-    options: ['Échanger 30 minerai contre une carte', 'Acheter des soins (15 minerai, +30 % de PV)', 'Passer'] }),
+    ? { titre: tr('Une patrouille alliée'), texte: tr('Une patrouille des Brigades du Serment de Veyr vous salue : depuis l’accord avec la Maison Orsève, vous êtes du même côté.'),
+      options: [tr('Accepter leurs soins (+25 % de PV)'), tr('Les saluer et continuer')] }
+    : { titre: tr('Les Brigades barrent la route'), texte: tr('Une patrouille du Serment de Veyr bloque le couloir. Leur sergent réclame un « droit de passage ».'),
+      options: [tr('Payer le passage (20 minerai)'), tr('Les contourner par les gaines (−5 PV chacun)'), tr('Forcer le passage')] }),
+  cristal: () => ({ titre: tr('Un cristal qui murmure'), texte: tr('Dans une niche, un cristal ancien murmure. Le son ressemble à une voix, sans les mots.'),
+    options: [tr('L’écouter'), tr('Le rapporter au district'), tr('Le laisser où il est')] }),
+  marchand: () => ({ titre: tr('Un marchand des bas-fonds'), texte: tr('Un marchand a installé son étal dans une ancienne salle, entre deux lampes à algues. Il a « de tout, pour qui sait payer ».'),
+    options: [tr('Échanger 30 minerai contre une carte'), tr('Acheter des soins (15 minerai, +30 % de PV)'), tr('Passer')] }),
   // Bible, 23 octobre 2026 : un Sauvage (greffé sans Clinique, sans Lecture) et un vendeur de pierres mortes
-  sauvage: (j) => ({ titre: 'Un Sauvage', texte: 'Un homme recroquevillé contre un pilier, une mèche à peine dorée collée au front. Il s’est greffé une brisure achetée au marché noir, sans Lecture. Il gronde des mots qui ne sont pas les siens.',
-    options: [j.expedition?.porteurs.some((p) => p.id === 'vela' && p.pv > 0) ? 'Laisser Véla lire sa pierre' : 'Lui parler doucement (−3 PV chacun)', 'L’affronter', 'Passer ton chemin'] }),
-  faussaire: () => ({ titre: 'Un vendeur de pierres', texte: 'Sur une couverture, une rangée de cristaux tous identiques. « Des pierres d’Accord, directeur. Jamais portées. Une vierge pour vingt-cinq de minerai. » Elles sont ternes. Toutes.',
-    options: ['Lui acheter une « vierge » (25 minerai)', 'Lui faire rendre ses pierres', 'Passer'] }),
-  source: () => ({ titre: 'Une source chaude', texte: 'Entre deux piliers, une source chaude jaillit de la roche. L’eau sent le fer et le sel.',
-    options: ['S’y reposer (+25 % de PV)', 'Continuer sans s’arrêter'] }),
+  sauvage: (j) => ({ titre: tr('Un Sauvage'), texte: tr('Un homme recroquevillé contre un pilier, une mèche à peine dorée collée au front. Il s’est greffé une brisure achetée au marché noir, sans Lecture. Il gronde des mots qui ne sont pas les siens.'),
+    options: [j.expedition?.porteurs.some((p) => p.id === 'vela' && p.pv > 0) ? tr('Laisser Véla lire sa pierre') : tr('Lui parler doucement (−3 PV chacun)'), 'L’affronter', tr('Passer ton chemin')] }),
+  faussaire: () => ({ titre: tr('Un vendeur de pierres'), texte: tr('Sur une couverture, une rangée de cristaux tous identiques. « Des pierres d’Accord, directeur. Jamais portées. Une vierge pour vingt-cinq de minerai. » Elles sont ternes. Toutes.'),
+    options: [tr('Lui acheter une « vierge » (25 minerai)'), tr('Lui faire rendre ses pierres'), tr('Passer')] }),
+  source: () => ({ titre: tr('Une source chaude'), texte: tr('Entre deux piliers, une source chaude jaillit de la roche. L’eau sent le fer et le sel.'),
+    options: [tr('S’y reposer (+25 % de PV)'), tr('Continuer sans s’arrêter')] }),
 };
 
 const soigner = (x: Expedition, part: number) => x.porteurs.map((p) => ({ ...p, pv: Math.min(p.pvMax, Math.max(0, p.pv) + Math.round(p.pvMax * part)) }));
 const blesser = (x: Expedition, v: number) => x.porteurs.map((p) => ({ ...p, pv: p.pv > 0 ? Math.max(1, p.pv - v) : p.pv }));
 
 export function entrer(j: Jeu, salle: number, second = false): Resultat {
-  if (!j.expedition) return non('Aucune expédition en cours.');
+  if (!j.expedition) return non(tr('Aucune expédition en cours.'));
   const r = entrerSalle(j.expedition, salle, second);
   j.expedition = r.x;
-  return r.ok ? { ok: true } : non(r.message ?? 'Impossible d’aller par là.');
+  return r.ok ? { ok: true } : non(r.message ?? tr('Impossible d’aller par là.'));
 }
 
 /** Répond à la rencontre en cours */
 export function repondre(j: Jeu, choix: number): Resultat {
   const x = j.expedition;
-  if (!x?.rencontre) return non('Personne à qui répondre.');
+  if (!x?.rencontre) return non(tr('Personne à qui répondre.'));
   const id = x.rencontre;
   const opts = RENCONTRES[id]!(j).options;
-  if (choix < 0 || choix >= opts.length) return non('Choix inconnu.');
+  if (choix < 0 || choix >= opts.length) return non(tr('Choix inconnu.'));
   const n = Math.round(8 * (1 + 0.25 * (x.strate - 1)));
   const gains = { ...x.gains! };
   let y: Expedition = { ...x, rencontre: undefined };
-  let recit = 'L’escouade reprend sa route.';
+  let recit = tr('L’escouade reprend sa route.');
   const allie = j.actes.chambre === 'orseve';
   if (id === 'veilleur') {
-    if (choix === 0) { y.porteurs = blesser(x, 4); gains.eclats++; confier(j, 6, 'rencontres'); recit = 'Le Veilleur, reconnaissant, te confie un Éclat trouvé plus bas. Le quartier en entendra parler.'; }
-    else if (choix === 1) { y.butin += n * 2; recit = `Le carnet se revend bien : +${n * 2} minerai. Le Veilleur, lui, s’en souviendra.`; }
+    if (choix === 0) { y.porteurs = blesser(x, 4); gains.eclats++; confier(j, 6, 'rencontres'); recit = tr('Le Veilleur, reconnaissant, te confie un Éclat trouvé plus bas. Le quartier en entendra parler.'); }
+    else if (choix === 1) { y.butin += n * 2; recit = tr`Le carnet se revend bien : +${n * 2} minerai. Le Veilleur, lui, s’en souviendra.`; }
   } else if (id === 'pilleur') {
-    if (choix === 0) { confier(j, 4, 'rencontres'); recit = 'Le pilleur file sans demander son reste. Il racontera que le directeur sait être juste.'; }
-    else if (choix === 1) { y.butin += n * 2; recit = `Il lâche son sac et s’enfuit : +${n * 2} minerai.`; }
-    else { gains.cartes++; y = lancerCombat({ ...y, recit: 'Le pilleur sort un pied-de-biche. Son sac contient une carte : elle sera à toi.' }, 'pilleur'); }
+    if (choix === 0) { confier(j, 4, 'rencontres'); recit = tr('Le pilleur file sans demander son reste. Il racontera que le directeur sait être juste.'); }
+    else if (choix === 1) { y.butin += n * 2; recit = tr`Il lâche son sac et s’enfuit : +${n * 2} minerai.`; }
+    else { gains.cartes++; y = lancerCombat({ ...y, recit: tr('Le pilleur sort un pied-de-biche. Son sac contient une carte : elle sera à toi.') }, 'pilleur'); }
   } else if (id === 'brigade') {
-    if (allie) { if (choix === 0) { y.porteurs = soigner(x, 0.25); recit = 'Les Brigades pansent l’escouade (+25 % de PV).'; } }
-    else if (choix === 0) { y.butin = Math.max(0, y.butin - 20); recit = 'Le sergent empoche le minerai et s’écarte.'; }
-    else if (choix === 1) { y.porteurs = blesser(x, 5); recit = 'Les gaines sont étroites et brûlantes, mais vous passez (−5 PV chacun).'; }
-    else { confier(j, 4, 'rencontres'); y = lancerCombat({ ...y, recit: 'Le district ne paie pas pour passer chez lui.' }, 'brigadier'); }
+    if (allie) { if (choix === 0) { y.porteurs = soigner(x, 0.25); recit = tr('Les Brigades pansent l’escouade (+25 % de PV).'); } }
+    else if (choix === 0) { y.butin = Math.max(0, y.butin - 20); recit = tr('Le sergent empoche le minerai et s’écarte.'); }
+    else if (choix === 1) { y.porteurs = blesser(x, 5); recit = tr('Les gaines sont étroites et brûlantes, mais vous passez (−5 PV chacun).'); }
+    else { confier(j, 4, 'rencontres'); y = lancerCombat({ ...y, recit: tr('Le district ne paie pas pour passer chez lui.') }, 'brigadier'); }
   } else if (id === 'cristal') {
     const vela = x.porteurs.some((p) => p.id === 'vela' && p.pv > 0);
     if (choix === 0) {
-      if (vela) { gains.eclats++; recit = 'Véla écoute longtemps. « Il a peur d’être oublié », dit-elle. Le cristal se fend et laisse un Éclat.'; }
-      else { y.porteurs = blesser(x, 3); recit = 'Le murmure s’accroche aux pensées de l’escouade. Personne ne dort bien ce soir-là (−3 PV chacun).'; }
-    } else if (choix === 1) { gains.cartes++; y.porteurs = blesser(x, 2); recit = 'Le cristal pèse lourd dans le sac, et il chuchote encore. Au district, il deviendra une carte (−2 PV chacun).'; }
+      if (vela) { gains.eclats++; recit = tr('Véla écoute longtemps. « Il a peur d’être oublié », dit-elle. Le cristal se fend et laisse un Éclat.'); }
+      else { y.porteurs = blesser(x, 3); recit = tr('Le murmure s’accroche aux pensées de l’escouade. Personne ne dort bien ce soir-là (−3 PV chacun).'); }
+    } else if (choix === 1) { gains.cartes++; y.porteurs = blesser(x, 2); recit = tr('Le cristal pèse lourd dans le sac, et il chuchote encore. Au district, il deviendra une carte (−2 PV chacun).'); }
   } else if (id === 'marchand') {
     if (choix === 0) {
-      if (y.butin < 30) return non('Il te faut 30 minerai dans le butin de l’expédition.');
-      y.butin -= 30; gains.cartes++; recit = 'Le marchand glisse un cristal gravé dans ta main. Au district, il deviendra une carte.';
+      if (y.butin < 30) return non(tr('Il te faut 30 minerai dans le butin de l’expédition.'));
+      y.butin -= 30; gains.cartes++; recit = tr('Le marchand glisse un cristal gravé dans ta main. Au district, il deviendra une carte.');
     } else if (choix === 1) {
-      if (y.butin < 15) return non('Il te faut 15 minerai dans le butin de l’expédition.');
-      y.butin -= 15; y.porteurs = soigner(x, 0.3); recit = 'Onguents d’algues et bandages propres : +30 % de PV.';
+      if (y.butin < 15) return non(tr('Il te faut 15 minerai dans le butin de l’expédition.'));
+      y.butin -= 15; y.porteurs = soigner(x, 0.3); recit = tr('Onguents d’algues et bandages propres : +30 % de PV.');
     }
   } else if (id === 'source') {
-    if (choix === 0) { y.porteurs = soigner(x, 0.25); recit = 'L’eau chaude délie les muscles (+25 % de PV).'; }
+    if (choix === 0) { y.porteurs = soigner(x, 0.25); recit = tr('L’eau chaude délie les muscles (+25 % de PV).'); }
   } else if (id === 'sauvage') {
     const vela = x.porteurs.some((p) => p.id === 'vela' && p.pv > 0);
     if (choix === 0) {
-      if (vela) { confier(j, 6, 'rencontres'); gains.eclats++; recit = 'Véla pose la main sur sa nuque. « C’est une brisure de créature des hauteurs. Elle a peur d’être enfermée. » Il se calme, et vous laisse un Éclat en remerciement. La Clinique le retirera.'; }
-      else { y.porteurs = blesser(x, 3); confier(j, 4, 'rencontres'); recit = 'Il finit par se calmer et accepte qu’on le conduise à la Clinique. Ses accès ont laissé des bleus à tout le monde (−3 PV chacun).'; }
-    } else if (choix === 1) { y = lancerCombat({ ...y, recit: 'Le penchant l’emporte : il se jette sur l’escouade.' }, 'sauvage'); }
+      if (vela) { confier(j, 6, 'rencontres'); gains.eclats++; recit = tr('Véla pose la main sur sa nuque. « C’est une brisure de créature des hauteurs. Elle a peur d’être enfermée. » Il se calme, et vous laisse un Éclat en remerciement. La Clinique le retirera.'); }
+      else { y.porteurs = blesser(x, 3); confier(j, 4, 'rencontres'); recit = tr('Il finit par se calmer et accepte qu’on le conduise à la Clinique. Ses accès ont laissé des bleus à tout le monde (−3 PV chacun).'); }
+    } else if (choix === 1) { y = lancerCombat({ ...y, recit: tr('Le penchant l’emporte : il se jette sur l’escouade.') }, 'sauvage'); }
   } else if (id === 'faussaire') {
     if (choix === 0) {
-      if (y.butin < 25) return non('Il te faut 25 minerai dans le butin de l’expédition.');
-      y.butin -= 25; recit = 'Au district, la Clinique tranche : une pierre morte. Elle a refusé un Accord, et ne prendra plus jamais chez personne. Le quartier en rit encore.';
-    } else if (choix === 1) { y.butin += n; confier(j, 4, 'rencontres'); recit = `Il remballe en grommelant et rend ce qu’il a pris aux fouilleurs : +${n} minerai. Les familles volées sauront qui remercier.`; }
+      if (y.butin < 25) return non(tr('Il te faut 25 minerai dans le butin de l’expédition.'));
+      y.butin -= 25; recit = tr('Au district, la Clinique tranche : une pierre morte. Elle a refusé un Accord, et ne prendra plus jamais chez personne. Le quartier en rit encore.');
+    } else if (choix === 1) { y.butin += n; confier(j, 4, 'rencontres'); recit = tr`Il remballe en grommelant et rend ce qu’il a pris aux fouilleurs : +${n} minerai. Les familles volées sauront qui remercier.`; }
   }
   if (y.phase !== 'combat') y = { ...y, recit };
   y.gains = gains;
@@ -726,16 +727,16 @@ export function repondre(j: Jeu, choix: number): Resultat {
 /** Remonte au district depuis l'entrée ou un campement, avec tout ce qui a été trouvé */
 export function retraite(j: Jeu): Resultat {
   const x = j.expedition;
-  if (!x || !peutRemonter(x)) return non('On ne remonte qu’à l’entrée ou depuis un campement.');
+  if (!x || !peutRemonter(x)) return non(tr('On ne remonte qu’à l’entrée ou depuis un campement.'));
   j.expedition = { ...x, retraite: true, terminee: true };
   return { ok: true };
 }
 
 /** Fuir le combat en reculant d'une salle sur la carte (l'ennemi frappe une dernière fois) */
 export function fuirSalle(j: Jeu): Resultat {
-  if (!j.expedition) return non('Aucune expédition en cours.');
+  if (!j.expedition) return non(tr('Aucune expédition en cours.'));
   const r = reculer(j.expedition);
-  if (!r.ok) return non(r.message ?? 'Impossible de reculer.');
+  if (!r.ok) return non(r.message ?? tr('Impossible de reculer.'));
   noterCombat(j, j.expedition.combat, 'fuite');
   j.expedition = r.x;
   return { ok: true };
@@ -743,9 +744,9 @@ export function fuirSalle(j: Jeu): Resultat {
 
 /** Fuir le combat jusqu'au district : à faire suivre de remonter(), qui garde 75 % des composants et ajoute de l'Usure */
 export function fuir(j: Jeu): Resultat {
-  if (!j.expedition) return non('Aucune expédition en cours.');
+  if (!j.expedition) return non(tr('Aucune expédition en cours.'));
   const r = fuirAuDistrict(j.expedition);
-  if (!r.ok) return non(r.message ?? 'Impossible de fuir.');
+  if (!r.ok) return non(r.message ?? tr('Impossible de fuir.'));
   noterCombat(j, j.expedition.combat, 'fuite');
   j.expedition = r.x;
   return { ok: true };
@@ -824,8 +825,8 @@ export function remonter(j: Jeu): Retour {
       donnerKitRecrues(j);
       fragment = ajouterFragment(j);
       ajouterCarte(j, CARTE_CHAMBRE);
-      log(j, 'La chambre scellée est ouverte. Trois recrues rejoignent le district : un Coursier, un Docker et un Guetteur.');
-    } else log(j, 'Le gardien de la chambre a repoussé l’escouade. Elle se repose, puis réessaie.');
+      log(j, tr('La chambre scellée est ouverte. Trois recrues rejoignent le district : un Coursier, un Docker et un Guetteur.'));
+    } else log(j, tr('Le gardien de la chambre a repoussé l’escouade. Elle se repose, puis réessaie.'));
     return { butin, nouvelleStrate, victoire, fragment, tutoriel: true, cartes: victoire ? [CARTE_CHAMBRE] : [], eclats: 0 };
   }
 
@@ -844,7 +845,7 @@ export function remonter(j: Jeu): Retour {
   }
   progresser(j, 'combat', victoires);
   if (victoire && x.fouille) {
-    if (tireur(j).nombre() < chanceCreuseurDuJour(j, x.strate, j.dernierTick) && gagnerCreuseurs(j, 1, 'un fouilleur perdu retrouvé pendant la fouille'))
+    if (tireur(j).nombre() < chanceCreuseurDuJour(j, x.strate, j.dernierTick) && gagnerCreuseurs(j, 1, tr('un fouilleur perdu retrouvé pendant la fouille')))
       j.fouilleurs = { jour: jourDe(j.dernierTick), n: fouilleursDuJour(j, j.dernierTick) + 1 };
     // le filon : ce que la fouille visait
     // une Strate relevée (explorer.ts) : la première carte du filon est au moins en cuivre, +25 % de composants, Éclats plus fréquents
@@ -867,7 +868,7 @@ export function remonter(j: Jeu): Retour {
     // la première victoire de la semaine dans cette Épreuve : une carte au choix, dont une en argent au moins (et des creuseurs)
     if (!j.epreuves.faites.includes(x.epreuve)) {
       j.epreuves.faites.push(x.epreuve);
-      gagnerCreuseurs(j, CREUSEURS.epreuve, 'l’Épreuve réussie fait des émules');
+      gagnerCreuseurs(j, CREUSEURS.epreuve, tr('l’Épreuve réussie fait des émules'));
       j.choix.push({ source: 'epreuve', options: tirerChoix(j, x.strate, 'argent') });
     }
     // le palier Fêlé, une fois par semaine : un second choix (en or à partir de FELEE.orDes) et des Éclats
@@ -891,7 +892,7 @@ export function remonter(j: Jeu): Retour {
   if (victoire && x.strate === j.strate && !j.frontVaincu) {
     // le gardien du front est vaincu : l'étage suivant est prêt à être creusé, s'il y a assez de creuseurs
     j.frontVaincu = true;
-    gagnerCreuseurs(j, CREUSEURS.gardien, 'le gardien vaincu, des fouilleurs se joignent au chantier');
+    gagnerCreuseurs(j, CREUSEURS.gardien, tr('le gardien vaincu, des fouilleurs se joignent au chantier'));
     // l'espoir de l'Écluse grandit au quartier (30 octobre 2026)
     confier(j, x.strate <= 10 ? CONFIANCE.gardien : CONFIANCE.gardienProfond, 'gardiens');
     nouvelleStrate = creuser(j);
@@ -942,13 +943,13 @@ export function remonter(j: Jeu): Retour {
     f.scellees = (f.scellees ?? 0) + (x.gains?.elites ?? 0);
     if (victoire && !x.fouille && !x.epreuve) f.gardiens = (f.gardiens ?? 0) + 1;
     const m = progresMarque(j, p.id);
-    if (m?.acquise && !avant) log(j, `${porteurDef(p.id).nom} gagne la Marque ${m.nom} : ${m.texte}`);
+    if (m?.acquise && !avant) log(j, tr`${porteurDef(p.id).nom} gagne la Marque ${m.nom} : ${m.texte}`);
   }
   j.expedition = null;
   log(j, victoire
-    ? `L’escouade remonte victorieuse avec ${butin} minerai.${nouvelleStrate ? ` Un nouvel étage est creusé : la Strate −${j.strate} est ouverte.` : ''}`
-    : x.fuite ? `L’escouade a fui et remonte avec ${butin} minerai. Elle rentre épuisée.`
-    : `L’escouade remonte avec ${butin} minerai. Elle a besoin de repos.`);
+    ? tr`L’escouade remonte victorieuse avec ${butin} minerai.${nouvelleStrate ? tr` Un nouvel étage est creusé : la Strate −${j.strate} est ouverte.` : ''}`
+    : x.fuite ? tr`L’escouade a fui et remonte avec ${butin} minerai. Elle rentre épuisée.`
+    : tr`L’escouade remonte avec ${butin} minerai. Elle a besoin de repos.`);
   return { butin: butin + butinFilon + (quete?.composants ?? 0) + (explo?.composants ?? 0), nouvelleStrate, victoire, fragment, cartes, eclats, ...(x.fuite ? { fuite: true } : {}), ...(brutXp ? { xp } : {}), ...(quete ? { quete } : {}), ...(explo ? { explorer: explo.retour } : {}) };
 }
 
@@ -995,7 +996,7 @@ function remonterExplorer(j: Jeu, x: Expedition, victoire: boolean, avant: Etoil
   if (releve) {
     j.choix.push({ source: 'releve', options: tirerChoix(j, x.strate, x.strate >= 5 ? 'argent' : 'cuivre') });
     xp += XP.gardien / 2;
-    log(j, `La Strate −${x.strate} est complète : ses cinq Vestiges sont au district. Tes fouilles y verront tout le plan.`);
+    log(j, tr`La Strate −${x.strate} est complète : ses cinq Vestiges sont au district. Tes fouilles y verront tout le plan.`);
   }
   // les étoiles : seulement jusqu'au gardien vaincu
   const etoiles: number[] = [];
@@ -1024,7 +1025,7 @@ function remonterExplorer(j: Jeu, x: Expedition, victoire: boolean, avant: Etoil
       etat.abattu = true;
       const def = RODEURS.find((d) => d.id === r.id)!;
       j.choix.push({ source: 'rodeur', options: tirerChoix(j, x.strate, def.trophee) });
-      log(j, `${ennemiDef(r.id).nom} est abattu. ${def.chute}`);
+      log(j, tr`${ennemiDef(r.id).nom} est abattu. ${def.chute}`);
     }
   }
   return { retour: { vestiges: nouveaux, ...(releve ? { releve: x.strate } : {}), etoiles, paliers, ...(r ? { rodeur: r } : {}), ...(x.eveille && victoire ? { eveille: true } : {}) }, eclats, composants, xp };
@@ -1034,7 +1035,7 @@ function ajouterFragment(j: Jeu): string | null {
   const id = ORDRE_FRAGMENTS.find((f) => !j.fragments.includes(f));
   if (!id) return null;
   j.fragments.push(id);
-  log(j, `Fragment d’archives trouvé : « ${fragmentDef(id)!.titre} ». Il est rangé dans le Codex.`);
+  log(j, tr`Fragment d’archives trouvé : « ${fragmentDef(id)!.titre} ». Il est rangé dans le Codex.`);
   return id;
 }
 
@@ -1044,8 +1045,8 @@ function ajouterFragment(j: Jeu): string | null {
 const ORDRE_TUTO = ['ruee', 'morsure', 'murmure', 'carapace', 'tir', 'bond', 'charge', 'grogner', 'esquive', 'repli', 'glande-ambre'];
 
 export function ouvrirChambre(j: Jeu, rng = graine()): Resultat {
-  if (j.chambre) return non('La chambre est déjà ouverte.');
-  if (j.expedition) return non('Une expédition est déjà en cours.');
+  if (j.chambre) return non(tr('La chambre est déjà ouverte.'));
+  if (j.expedition) return non(tr('Une expédition est déjà en cours.'));
   const escouade = ['ilka', 'doran', 'vela'];
   for (const id of escouade) if (j.porteurs[id]!.poste) j.porteurs[id]!.poste = null;
   const tout = deckEscouade(j, escouade);
@@ -1060,16 +1061,16 @@ export function ouvrirChambre(j: Jeu, rng = graine()): Resultat {
     return { id, pv: pvMaxCombat(j, id), pvMax: pvMaxCombat(j, id), aTerre: false, ...(u > 0 ? { usure: u } : {}) };
   });
   j.expedition = nouvelleExpedition({ porteurs, deck, strate: 1, rng, sequence: ['remanent-faible'], force: 1, tutoriel: true });
-  log(j, 'Ilka, Doran et Véla descendent vers la porte scellée.');
+  log(j, tr('Ilka, Doran et Véla descendent vers la porte scellée.'));
   return { ok: true };
 }
 
 /** La consigne du combat guidé, selon le tour */
 export function leconTutoriel(tour: number): string {
-  if (tour === 1) return 'Leçon 1 : touche 3 cartes de ta main, puis « Lancer la chaîne ».';
-  if (tour === 2) return 'Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +30 % sur toute la chaîne.';
-  if (tour === 3) return 'Leçon 3 : le Rémanent annonce une Entaille sur Doran. Pose des cartes à bouclier : elles protègent toute l’escouade pendant son attaque.';
-  return 'Tu as l’essentiel : vise les suites, protège-toi des grosses attaques annoncées. Achève-le !';
+  if (tour === 1) return tr('Leçon 1 : touche 3 cartes de ta main, puis « Lancer la chaîne ».');
+  if (tour === 2) return tr('Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +30 % sur toute la chaîne.');
+  if (tour === 3) return tr('Leçon 3 : le Rémanent annonce une Entaille sur Doran. Pose des cartes à bouclier : elles protègent toute l’escouade pendant son attaque.');
+  return tr('Tu as l’essentiel : vise les suites, protège-toi des grosses attaques annoncées. Achève-le !');
 }
 
 // ---------- Le résumé du retour ----------
@@ -1078,16 +1079,16 @@ export function leconTutoriel(tour: number): string {
 export function resumeAbsence(avant: Jeu, apres: Jeu, nouvelles: string[]): string[] {
   const l: string[] = [];
   const de = Math.floor(apres.energie) - Math.floor(avant.energie);
-  if (de > 0) l.push(`+${de} cristaux taillés par le Générateur`);
+  if (de > 0) l.push(tr`+${de} cristaux taillés par le Générateur`);
   l.push(...nouvelles);
   const remis = Object.keys(apres.porteurs).filter((id) => avant.porteurs[id]!.usure >= 1 && apres.porteurs[id]!.usure < 1);
-  for (const id of remis) l.push(`${porteurDef(id).nom} est remis de son Usure`);
+  for (const id of remis) l.push(tr`${porteurDef(id).nom} est remis de son Usure`);
   const soignes = Object.keys(apres.porteurs).filter((id) => !remis.includes(id) && avant.porteurs[id]!.usure - apres.porteurs[id]!.usure >= 1);
-  if (soignes.length) l.push(`La Clinique a soigné ${soignes.map((id) => porteurDef(id).nom).join(', ')}`);
+  if (soignes.length) l.push(tr`La Clinique a soigné ${soignes.map((id) => porteurDef(id).nom).join(', ')}`);
   if (!l.length) return l;
   const amelio = apres.chantiers.length >= chantiersMax(apres) ? undefined : BATIMENTS.find((b) => { const c = coutAmelioration(apres, b.id); return !!c && !chantierDe(apres, b.id) && apres.energie >= c.energie && apres.composants >= c.composants && apres.eclats >= (c.eclats ?? 0) && (b.id === 'noyau' || apres.batiments[b.id] < apres.batiments.noyau); });
-  if (amelio) l.push(`Tu peux améliorer : ${amelio.nom}`);
-  else if (!apres.expedition && apres.chambre) l.push(`La Strate −${apres.strate} t’attend`);
+  if (amelio) l.push(tr`Tu peux améliorer : ${amelio.nom}`);
+  else if (!apres.expedition && apres.chambre) l.push(tr`La Strate −${apres.strate} t’attend`);
   return l;
 }
 
@@ -1098,23 +1099,23 @@ export type { Rarete };
 
 export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef) => boolean, min: number = DISTRICT.deckMin, sortie: Sortie = 'explorer'):
   { ok: false; message: string } | { ok: true; message?: undefined; porteurs: PorteurEtat[]; deck: GesteDef[]; bonus: BonusMarques } {
-  if (j.expedition) return refus('Une expédition est déjà en cours.');
-  if (escouade.length !== 3 || new Set(escouade).size !== 3) return refus('Choisis 3 Porteurs.');
+  if (j.expedition) return refus(tr('Une expédition est déjà en cours.'));
+  if (escouade.length !== 3 || new Set(escouade).size !== 3) return refus(tr('Choisis 3 Porteurs.'));
   for (const id of escouade) {
-    if (!porteursPresents(j).includes(id)) return refus('Ce Porteur n’est pas encore arrivé au district.');
-    if (enMission(j, id)) return refus(`${porteurDef(id).nom} est en mission.`);
-    if (j.porteurs[id]?.poste === 'forge' && j.forge) return refus(`${porteurDef(id).nom} ne peut pas quitter la Forge pendant une fabrication.`);
+    if (!porteursPresents(j).includes(id)) return refus(tr('Ce Porteur n’est pas encore arrivé au district.'));
+    if (enMission(j, id)) return refus(tr`${porteurDef(id).nom} est en mission.`);
+    if (j.porteurs[id]?.poste === 'forge' && j.forge) return refus(tr`${porteurDef(id).nom} ne peut pas quitter la Forge pendant une fabrication.`);
     const blesse = tropBlesse(j, id);
     if (blesse) return refus(blesse);
   }
-  if (!j.chambre) return refus('Ouvre d’abord la chambre scellée.');
+  if (!j.chambre) return refus(tr('Ouvre d’abord la chambre scellée.'));
   for (const id of escouade) {
-    if (chargePortee(j, id) > chargeMax(j, id)) return refus(`${porteurDef(id).nom} porte trop lourd (${chargePortee(j, id)} de Charge sur ${chargeMax(j, id)}) : reprends-lui une carte.`);
+    if (chargePortee(j, id) > chargeMax(j, id)) return refus(tr`${porteurDef(id).nom} porte trop lourd (${chargePortee(j, id)} de Charge sur ${chargeMax(j, id)}) : reprends-lui une carte.`);
     const haute = j.porteurs[id]?.modules.find((k) => niveauRequis(k) > niveauPorteur(j, id).niveau);
-    if (haute) return refus(`${moduleDef(haute).nom} demande un Porteur de niveau ${niveauRequis(haute)} : reprends-la à ${porteurDef(id).nom}.`);
+    if (haute) return refus(tr`${moduleDef(haute).nom} demande un Porteur de niveau ${niveauRequis(haute)} : reprends-la à ${porteurDef(id).nom}.`);
   }
   const cartes = deckEscouade(j, escouade, indiceEscouade(j, escouade), sortie).filter((g) => !filtre || g.porteur === null || filtre(g));
-  if (cartes.length < min) return refus(`Ton deck n’a que ${cartes.length} cartes : confie des cartes à ton escouade (${min} au moins).`);
+  if (cartes.length < min) return refus(tr`Ton deck n’a que ${cartes.length} cartes : confie des cartes à ton escouade (${min} au moins).`);
   // chaque Porteur combat avec ses 6 places : celles qu'on n'a pas remplies descendent vides (pas dans les Épreuves, qui retirent des cartes)
   const deck = filtre ? cartes : [...cartes, ...escouade.flatMap((id) => placesVides(id, (j.porteurs[id]?.modules ?? []).filter((k) => j.collection[k]).length))];
   const porteurs: PorteurEtat[] = escouade.map((id) => {
@@ -1128,7 +1129,7 @@ export function escouadePrete(j: Jeu, escouade: string[], filtre?: (g: GesteDef)
 export function partir(j: Jeu, escouade: string[], strate: number, rng = graine()): Resultat {
   const e = escouadePrete(j, escouade);
   if (!e.ok) return e;
-  if (strate < 1 || strate > j.strate) return non('Cette Strate n’est pas encore creusée.');
+  if (strate < 1 || strate > j.strate) return non(tr('Cette Strate n’est pas encore creusée.'));
   // la Strate se parcourt salle par salle (exploration), jusqu'à son gardien
   quitterPostes(j, escouade);
   const halte = halteSuivante(strate, j.haltes?.[strate] ?? 0);
@@ -1144,10 +1145,10 @@ export function partir(j: Jeu, escouade: string[], strate: number, rng = graine(
   // la première exploration du front de la journée (8 novembre 2026) : ses combats rapportent double
   if (strate === j.strate && !j.expedition.tutoriel && j.premiereExploration !== jourDe(j.dernierTick)) {
     j.premiereExploration = jourDe(j.dernierTick);
-    j.expedition = { ...j.expedition, premiere: true, recit: `${j.expedition.recit} Première descente du jour au front : le minerai y compte double.` };
+    j.expedition = { ...j.expedition, premiere: true, recit: tr`${j.expedition.recit} Première descente du jour au front : le minerai y compte double.` };
   }
   retenirDepart(j, escouade);
-  log(j, `L’escouade descend dans la Strate −${strate}.`);
+  log(j, tr`L’escouade descend dans la Strate −${strate}.`);
   return { ok: true };
 }
 
@@ -1163,29 +1164,29 @@ export const FILON_ECLATS = { chance: 0.35, profond: 0.1, releve: 0.2 };
  * d'une lignée (1 = une seule carte, sans choix) ; carte : chance que ce filon ait sa carte ; metal : métal de la première carte du filon.
  */
 export const DIFFICULTES_FOUILLE = {
-  facile: { nom: 'Facile', rangs: 4, force: 0.8, gain: 0.35, choix: 1, carte: 0.35, metal: 'fer' },
-  normale: { nom: 'Normale', rangs: 5, force: 1, gain: 0.9, choix: 1, carte: 1, metal: 'fer' },
-  difficile: { nom: 'Difficile', rangs: 6, force: 1.35, gain: 2.5, choix: 3, carte: 1, metal: 'cuivre' },
+  facile: { nom: tr('Facile'), rangs: 4, force: 0.8, gain: 0.35, choix: 1, carte: 0.35, metal: 'fer' },
+  normale: { nom: tr('Normale'), rangs: 5, force: 1, gain: 0.9, choix: 1, carte: 1, metal: 'fer' },
+  difficile: { nom: tr('Difficile'), rangs: 6, force: 1.35, gain: 2.5, choix: 3, carte: 1, metal: 'cuivre' },
 } as const satisfies Record<string, { nom: string; rangs: number; force: number; gain: number; choix: number; carte: number; metal: Rarete }>;
 export type DifficulteFouille = keyof typeof DIFFICULTES_FOUILLE;
 
 export const CIBLES_FOUILLE: Record<CibleFouille, { nom: string; texte: string }> = {
-  tech: { nom: 'Cartes augmentées', texte: 'Les cartes trouvées sont des cartes d’Augmentés, et le filon en garde une (trois au choix en difficile).' },
-  bio: { nom: 'Cartes génés', texte: 'Les cartes trouvées sont des cartes de Génés, et le filon en garde une (trois au choix en difficile).' },
-  reso: { nom: 'Cartes résonantes', texte: 'Les cartes trouvées sont des cartes de Résonants, et le filon en garde une (trois au choix en difficile).' },
-  composants: { nom: 'Minerai', texte: 'Le filon rapporte du minerai pour chaque combat gagné en route : plus le chemin est long, plus il donne.' },
-  eclats: { nom: 'Éclats', texte: 'Chaque combat gagné en route peut laisser un Éclat au filon : plus le chemin est long, plus tu as de chances.' },
+  tech: { nom: tr('Cartes augmentées'), texte: tr('Les cartes trouvées sont des cartes d’Augmentés, et le filon en garde une (trois au choix en difficile).') },
+  bio: { nom: tr('Cartes génés'), texte: tr('Les cartes trouvées sont des cartes de Génés, et le filon en garde une (trois au choix en difficile).') },
+  reso: { nom: tr('Cartes résonantes'), texte: tr('Les cartes trouvées sont des cartes de Résonants, et le filon en garde une (trois au choix en difficile).') },
+  composants: { nom: tr('Minerai'), texte: tr('Le filon rapporte du minerai pour chaque combat gagné en route : plus le chemin est long, plus il donne.') },
+  eclats: { nom: tr('Éclats'), texte: tr('Chaque combat gagné en route peut laisser un Éclat au filon : plus le chemin est long, plus tu as de chances.') },
 };
 
 export const estLignee = (c?: CibleFouille): c is Lignee => c === 'tech' || c === 'bio' || c === 'reso';
 
 export function fouiller(j: Jeu, escouade: string[], strate: number, cible: CibleFouille, rng = graine(), difficulte: DifficulteFouille = 'normale'): Resultat {
   const d = DIFFICULTES_FOUILLE[difficulte];
-  if (!d) return non('Difficulté inconnue.');
+  if (!d) return non(tr('Difficulté inconnue.'));
   const e = escouadePrete(j, escouade, undefined, DISTRICT.deckMin, 'courte');
   if (!e.ok) return e;
-  if (!CIBLES_FOUILLE[cible]) return non('Cible inconnue.');
-  if (strate < 1 || strate > strateVaincue(j)) return non('On ne fouille que les Strates déjà vaincues.');
+  if (!CIBLES_FOUILLE[cible]) return non(tr('Cible inconnue.'));
+  if (strate < 1 || strate > strateVaincue(j)) return non(tr('On ne fouille que les Strates déjà vaincues.'));
   quitterPostes(j, escouade);
   j.expedition = nouvelleExploration({
     porteurs: e.porteurs, deck: e.deck, strate, rng, garde: j.actes.chambre, facteur: (j.actes.fin === 'scellement' ? 0.9 : 1) * d.force, fouille: cible, semaine: semaineDe(j.dernierTick),
@@ -1193,7 +1194,7 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
     ...(Object.keys(e.bonus).length ? { bonus: e.bonus } : {}), quete: queteOuverte(j, strate), releve: strateRelevee(j, strate),
   });
   retenirDepart(j, escouade, 'courte');
-  log(j, `L’escouade part fouiller la Strate −${strate} (${CIBLES_FOUILLE[cible].nom.toLowerCase()}, ${d.nom.toLowerCase()}).`);
+  log(j, tr`L’escouade part fouiller la Strate −${strate} (${CIBLES_FOUILLE[cible].nom.toLowerCase()}, ${d.nom.toLowerCase()}).`);
   return { ok: true };
 }
 
@@ -1206,7 +1207,7 @@ export function fouiller(j: Jeu, escouade: string[], strate: number, cible: Cibl
  * Deux paliers : l'Épreuve, et la Fêlée (mêmes règles, ennemis plus forts, mieux récompensée).
  */
 export type FamilleEpreuve = 'endurance' | 'tempo' | 'tactique' | 'lecture' | 'deck';
-export const NOMS_FAMILLE: Record<FamilleEpreuve, string> = { endurance: 'Endurance', tempo: 'Tempo', tactique: 'Tactique', lecture: 'Lecture', deck: 'Deck' };
+export const NOMS_FAMILLE: Record<FamilleEpreuve, string> = { endurance: tr('Endurance'), tempo: tr('Tempo'), tactique: tr('Tactique'), lecture: tr('Lecture'), deck: tr('Deck') };
 
 export interface EpreuveDef {
   id: string;
@@ -1236,26 +1237,26 @@ export interface EpreuveDef {
 }
 
 export const EPREUVES: EpreuveDef[] = [
-  { id: 'couloir', nom: 'Le couloir sans halte', famille: 'endurance', strateMin: 1, force: 1.3, enchainement: { soin: 0 },
-    regle: 'Trois combats d’affilée, puis le gardien : aucun PV rendu entre eux.' },
-  { id: 'nul-ne-tombe', nom: 'Nul ne reste au fond', famille: 'endurance', strateMin: 1, force: 0.95, regles: { sansChute: true },
-    regle: 'Le premier Porteur à terre fait perdre l’Épreuve.' },
-  { id: 'mi-souffle', nom: 'À mi-souffle', famille: 'endurance', strateMin: 1, force: 1.2, pvDepart: 0.5,
-    regle: 'L’escouade part avec la moitié de ses PV (rendus au retour).' },
-  { id: 'extinction', nom: 'Avant l’extinction', famille: 'tempo', strateMin: 1, force: 1, regles: { chrono: 13 },
-    regle: 'Abats le gardien en 13 tours, sinon il s’éteint dans le noir.' },
-  { id: 'meute', nom: 'La meute', famille: 'tactique', strateMin: 3, force: 1.9, forceBas: 1.45, meute: true,
-    regle: 'Le gardien vient avec deux bêtes de la Strate : choisis qui tomber d’abord.' },
-  { id: 'derniere-frequence', nom: 'La dernière Fréquence', famille: 'tactique', strateMin: 2, strateMax: 6, force: 1.28, troisiemePhase: true,
-    regle: 'Le gardien garde une 3ᵉ phase cachée sous ses derniers PV.' },
-  { id: 'brouillard', nom: 'Brouillard total', famille: 'lecture', strateMin: 5, force: 1.2, condition: 'brouillard',
-    regle: 'On voit ce que prépare le gardien, jamais combien ni sur qui ; sa Fêlure est cachée.' },
-  { id: 'brouillage', nom: 'Fréquences brouillées', famille: 'lecture', strateMin: 1, force: 1.12, regles: { sansResonance: true },
-    regle: 'Aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.' },
-  { id: 'recrues', nom: 'Les recrues', famille: 'deck', strateMin: 2, force: 1, imposee: true,
-    regle: 'Le Coursier, le Docker et le Guetteur, avec leurs cartes de départ : ta collection ne compte pas.' },
-  { id: 'une-voix', nom: 'Une seule voix', famille: 'deck', strateMin: 1, force: 0.95, regles: { monoLignee: true },
-    regle: 'Chaque chaîne ne joue qu’une lignée (les cartes du district vont avec toutes).' },
+  { id: 'couloir', nom: tr('Le couloir sans halte'), famille: 'endurance', strateMin: 1, force: 1.3, enchainement: { soin: 0 },
+    regle: tr('Trois combats d’affilée, puis le gardien : aucun PV rendu entre eux.') },
+  { id: 'nul-ne-tombe', nom: tr('Nul ne reste au fond'), famille: 'endurance', strateMin: 1, force: 0.95, regles: { sansChute: true },
+    regle: tr('Le premier Porteur à terre fait perdre l’Épreuve.') },
+  { id: 'mi-souffle', nom: tr('À mi-souffle'), famille: 'endurance', strateMin: 1, force: 1.2, pvDepart: 0.5,
+    regle: tr('L’escouade part avec la moitié de ses PV (rendus au retour).') },
+  { id: 'extinction', nom: tr('Avant l’extinction'), famille: 'tempo', strateMin: 1, force: 1, regles: { chrono: 13 },
+    regle: tr('Abats le gardien en 13 tours, sinon il s’éteint dans le noir.') },
+  { id: 'meute', nom: tr('La meute'), famille: 'tactique', strateMin: 3, force: 1.9, forceBas: 1.45, meute: true,
+    regle: tr('Le gardien vient avec deux bêtes de la Strate : choisis qui tomber d’abord.') },
+  { id: 'derniere-frequence', nom: tr('La dernière Fréquence'), famille: 'tactique', strateMin: 2, strateMax: 6, force: 1.28, troisiemePhase: true,
+    regle: tr('Le gardien garde une 3ᵉ phase cachée sous ses derniers PV.') },
+  { id: 'brouillard', nom: tr('Brouillard total'), famille: 'lecture', strateMin: 5, force: 1.2, condition: 'brouillard',
+    regle: tr('On voit ce que prépare le gardien, jamais combien ni sur qui ; sa Fêlure est cachée.') },
+  { id: 'brouillage', nom: tr('Fréquences brouillées'), famille: 'lecture', strateMin: 1, force: 1.12, regles: { sansResonance: true },
+    regle: tr('Aucune Résonance de tout le combat. Les Échos (trois Fréquences identiques) comptent toujours.') },
+  { id: 'recrues', nom: tr('Les recrues'), famille: 'deck', strateMin: 2, force: 1, imposee: true,
+    regle: tr('Le Coursier, le Docker et le Guetteur, avec leurs cartes de départ : ta collection ne compte pas.') },
+  { id: 'une-voix', nom: tr('Une seule voix'), famille: 'deck', strateMin: 1, force: 0.95, regles: { monoLignee: true },
+    regle: tr('Chaque chaîne ne joue qu’une lignée (les cartes du district vont avec toutes).') },
 ];
 
 export const EPREUVE_DECK_MIN = 9;
@@ -1340,8 +1341,8 @@ export const EPREUVES_STRATE = 2;
 
 export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: number, rng = graine(), felee = false): Resultat {
   const ep = epreuveDef(id);
-  if (!ep || !epreuvesDeLaSemaine(now, j).some((e) => e.id === id)) return non('Cette Épreuve n’est pas au programme cette semaine.');
-  if (strateVaincue(j) < EPREUVES_STRATE) return non(`Les Épreuves s’ouvrent quand le gardien de la Strate −${EPREUVES_STRATE} est vaincu.`);
+  if (!ep || !epreuvesDeLaSemaine(now, j).some((e) => e.id === id)) return non(tr('Cette Épreuve n’est pas au programme cette semaine.'));
+  if (strateVaincue(j) < EPREUVES_STRATE) return non(tr`Les Épreuves s’ouvrent quand le gardien de la Strate −${EPREUVES_STRATE} est vaincu.`);
   if (ep.imposee) return partirRecrues(j, ep, now, rng, felee);
   const e = escouadePrete(j, escouade, undefined, EPREUVE_DECK_MIN, 'courte');
   if (!e.ok) return e;
@@ -1370,17 +1371,17 @@ export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: numbe
     ...(ep.enchainement ? { soinEntre: ep.enchainement.soin } : {}),
     ...(ep.pvDepart ? { demiPv: true } : {}),
   };
-  log(j, `Épreuve de la semaine : ${ep.nom}${felee ? ' (Fêlée)' : ''}.`);
+  log(j, tr`Épreuve de la semaine : ${ep.nom}${felee ? ' (Fêlée)' : ''}.`);
   return { ok: true };
 }
 
 /** « Les recrues » : escouade et deck imposés, contre le gardien des Seuils, sans Usure ni poste quitté */
 function partirRecrues(j: Jeu, ep: EpreuveDef, _now: number, rng: number, felee: boolean): Resultat {
-  if (j.expedition) return non('Une expédition est déjà en cours.');
+  if (j.expedition) return non(tr('Une expédition est déjà en cours.'));
   const ids = Object.keys(ESCOUADE_RECRUES);
   for (const id of ids) {
-    if (!porteursPresents(j).includes(id)) return non(`${porteurDef(id).nom} n’est pas encore au district.`);
-    if (enMission(j, id)) return non(`${porteurDef(id).nom} est en mission : attends son retour.`);
+    if (!porteursPresents(j).includes(id)) return non(tr`${porteurDef(id).nom} n’est pas encore au district.`);
+    if (enMission(j, id)) return non(tr`${porteurDef(id).nom} est en mission : attends son retour.`);
   }
   const porteurs: PorteurEtat[] = ids.map((id) => ({ id, pv: porteurDef(id).pvMax, pvMax: porteurDef(id).pvMax, aTerre: false }));
   const force = forceEpreuve(ep, RECRUES.strate, felee);
@@ -1390,7 +1391,7 @@ function partirRecrues(j: Jeu, ep: EpreuveDef, _now: number, rng: number, felee:
     combat: { traitsEnnemis: false, assimilation: false, troisiemePhase: false },
   });
   j.expedition = { ...x, epreuve: ep.id, forceFixe: force, imposee: true, ...(felee ? { felee: true } : {}) };
-  log(j, `Épreuve de la semaine : ${ep.nom}${felee ? ' (Fêlée)' : ''}.`);
+  log(j, tr`Épreuve de la semaine : ${ep.nom}${felee ? ' (Fêlée)' : ''}.`);
   return { ok: true };
 }
 
@@ -1417,7 +1418,7 @@ function avancerQuete(j: Jeu, strate: number): EtapeQuete | null {
   const composants = butinCache(strate);
   j.composants += composants;
   const finie = n >= q.etapes.length;
-  log(j, finie ? `Quête de la Strate −${strate} achevée : « ${q.nom} ». ${q.fin}` : `« ${q.nom} » : étape ${n} sur ${q.etapes.length}.`);
+  log(j, finie ? tr`Quête de la Strate −${strate} achevée : « ${q.nom} ». ${q.fin}` : tr`« ${q.nom} » : étape ${n} sur ${q.etapes.length}.`);
   return { strate, nom: q.nom, etape: n, total: q.etapes.length, texte: q.etapes[n - 1]!, composants, finie, ...(finie ? { fin: q.fin } : {}) };
 }
 
@@ -1432,19 +1433,19 @@ export function gainChoixHalte(j: Jeu, k: number): string {
   const h = halteEnCours(j);
   const c = h?.choix[k];
   if (!c || !j.expedition) return '';
-  return c.effet === 'eclat' ? '+1 Éclat' : c.effet === 'lampe' ? 'Lampe : 2 salles éclairées' : `+${butinCombat(j.expedition.strate, 0)} minerai`;
+  return c.effet === 'eclat' ? tr('+1 Éclat') : c.effet === 'lampe' ? tr('Lampe : 2 salles éclairées') : tr`+${butinCombat(j.expedition.strate, 0)} minerai`;
 }
 
 /** Choisir à la Halte : le souvenir du choix est gardé, la Halte est vue (la suivante attendra la prochaine descente) */
 export function choisirHalte(j: Jeu, k: number): Resultat {
   const x = j.expedition;
   const h = halteEnCours(j);
-  if (!x || !h) return non('Aucune Halte en cours.');
+  if (!x || !h) return non(tr('Aucune Halte en cours.'));
   const c = h.choix[k];
-  if (!c) return non('Choix inconnu.');
+  if (!c) return non(tr('Choix inconnu.'));
   const gains = { ...x.gains!, haltes: (x.gains?.haltes ?? 0) + 1 };
   // le gain n'est plus écrit sur le bouton (7 novembre 2026) : on le découvre dans le récit
-  const dit = c.effet === 'eclat' ? ' (+1 Éclat)' : c.effet === 'composants' ? ` (+${butinCombat(x.strate, 0)} minerai)` : '';
+  const dit = c.effet === 'eclat' ? tr(' (+1 Éclat)') : c.effet === 'composants' ? tr` (+${butinCombat(x.strate, 0)} minerai)` : '';
   let y: Expedition = { ...x, enHalte: false, gains, recit: `${c.recit}${dit}${c.carte ? ` ${RECIT_CARTE[c.carte]}` : ''}` };
   if (c.effet === 'eclat') gains.eclats++;
   else if (c.effet === 'lampe') y.lumiere = RANG_HALTE + 2;
@@ -1459,29 +1460,29 @@ export function choisirHalte(j: Jeu, k: number): Resultat {
 }
 
 export function ouvrirPorte(j: Jeu, rangs: number[]): Resultat {
-  if (!j.expedition) return non('Aucune expédition en cours.');
+  if (!j.expedition) return non(tr('Aucune expédition en cours.'));
   const r = ouvrirPorteX(j.expedition, rangs);
-  if (!r.ok) return non(r.message ?? 'La porte ne s’ouvre pas.');
+  if (!r.ok) return non(r.message ?? tr('La porte ne s’ouvre pas.'));
   j.expedition = r.x;
   return { ok: true };
 }
 export function relancerPorte(j: Jeu): Resultat {
-  if (!j.expedition) return non('Aucune expédition en cours.');
+  if (!j.expedition) return non(tr('Aucune expédition en cours.'));
   const r = relancerPorteX(j.expedition);
   if (!r.ok) return non(r.message ?? 'Impossible.');
   j.expedition = r.x;
   return { ok: true };
 }
 export function passerPorte(j: Jeu): Resultat {
-  if (!j.expedition) return non('Aucune expédition en cours.');
+  if (!j.expedition) return non(tr('Aucune expédition en cours.'));
   const r = passerPorteX(j.expedition);
   if (r.ok) j.expedition = r.x;
-  return r.ok ? { ok: true } : non('Aucune porte.');
+  return r.ok ? { ok: true } : non(tr('Aucune porte.'));
 }
 export function suivrePassage(j: Jeu): Resultat {
-  if (!j.expedition) return non('Aucune expédition en cours.');
+  if (!j.expedition) return non(tr('Aucune expédition en cours.'));
   const r = suivrePassageX(j.expedition);
-  if (!r.ok) return non(r.message ?? 'Pas de passage.');
+  if (!r.ok) return non(r.message ?? tr('Pas de passage.'));
   j.expedition = r.x;
   return { ok: true };
 }

@@ -1,0 +1,53 @@
+{
+ "source": "src/app/parrainage.ts",
+ "entrees": [
+  {
+   "fr": "Un directeur",
+   "en": ""
+  },
+  {
+   "fr": "Ton code ne peut pas être gravé pour l’instant ({0}).",
+   "en": ""
+  },
+  {
+   "fr": "Tes recrues ne répondent pas pour l’instant ({0}).",
+   "en": ""
+  },
+  {
+   "fr": "Ce code n’a pas la bonne forme : 6 lettres et chiffres, par exemple EMP-7KQ2X9.",
+   "en": ""
+  },
+  {
+   "fr": "Le jeu n’est pas connecté : réessaie dans un instant.",
+   "en": ""
+  },
+  {
+   "fr": "Tu as déjà un parrain.",
+   "en": ""
+  },
+  {
+   "fr": "Le parrainage, c’est pour les débuts : ton district est déjà trop avancé.",
+   "en": ""
+  },
+  {
+   "fr": "C’est ton propre code : envoie-le plutôt à un ami.",
+   "en": ""
+  },
+  {
+   "fr": "Aucun directeur n’a ce code. Vérifie-le avec ton ami.",
+   "en": ""
+  },
+  {
+   "fr": "Refusé.",
+   "en": ""
+  },
+  {
+   "fr": "Recommandé par {0} : ta carte au choix et tes cristaux t’attendent.",
+   "en": ""
+  },
+  {
+   "fr": "La vérification a échoué ({0}). Réessaie dans un instant.",
+   "en": ""
+  }
+ ]
+}

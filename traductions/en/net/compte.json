@@ -1,0 +1,65 @@
+{
+ "source": "src/net/compte.ts",
+ "entrees": [
+  {
+   "fr": "Joueur",
+   "en": ""
+  },
+  {
+   "fr": "E-mail ou mot de passe incorrect.",
+   "en": ""
+  },
+  {
+   "fr": "Ce compte est déjà utilisé par une autre partie. Connecte-toi avec lui.",
+   "en": ""
+  },
+  {
+   "fr": "Ta partie est déjà reliée à ce compte.",
+   "en": ""
+  },
+  {
+   "fr": "Adresse e-mail invalide.",
+   "en": ""
+  },
+  {
+   "fr": "Un compte existe déjà avec cette adresse.",
+   "en": ""
+  },
+  {
+   "fr": "Mot de passe trop court (6 caractères minimum).",
+   "en": ""
+  },
+  {
+   "fr": "Fenêtre de connexion fermée.",
+   "en": ""
+  },
+  {
+   "fr": "Ce site n’est pas encore autorisé dans Firebase (Authentication › Paramètres › Domaines autorisés).",
+   "en": ""
+  },
+  {
+   "fr": "Pas de connexion réseau.",
+   "en": ""
+  },
+  {
+   "fr": "La fenêtre de connexion Google a été bloquée. Autorise les fenêtres pour ce site, ou ouvre le jeu dans Chrome.",
+   "en": ""
+  },
+  {
+   "fr": "Une autre fenêtre de connexion était déjà ouverte. Réessaie.",
+   "en": ""
+  },
+  {
+   "fr": "Ce navigateur bloque la connexion (stockage désactivé). Ouvre le jeu dans Chrome ou Safari.",
+   "en": ""
+  },
+  {
+   "fr": "La connexion Google ne marche pas dans ce navigateur intégré. Ouvre le jeu dans Chrome ou Safari.",
+   "en": ""
+  },
+  {
+   "fr": "La connexion a échoué. Réessaie dans un instant.{0}",
+   "en": ""
+  }
+ ]
+}

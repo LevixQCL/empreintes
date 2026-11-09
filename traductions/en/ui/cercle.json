@@ -1,0 +1,529 @@
+{
+ "source": "src/ui/cercle.ts",
+ "entrees": [
+  {
+   "fr": "Le Cercle des quais · la place des directeurs",
+   "en": ""
+  },
+  {
+   "fr": "Ici, on se mesure sans se battre pour de vrai",
+   "en": ""
+  },
+  {
+   "fr": "Piller coûte cher : une escouade, une journée, et la rancune d’un voisin. Alors on accoste au Cercle : on s’y salue, on y montre ses plus belles cartes, on s’y défie sur l’estrade, et on y échange ce qu’on a en double.",
+   "en": ""
+  },
+  {
+   "fr": "Le Cercle est fermé · vaincs le gardien de la Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Aucun directeur ne traite avec un district qui n’a pas encore tenu son puits.",
+   "en": ""
+  },
+  {
+   "fr": "Des amis",
+   "en": ""
+  },
+  {
+   "fr": "Ajoute un directeur par son nom. Tu vois sa vitrine : ses plus belles cartes, ses doubles, ce qu’il cherche.",
+   "en": ""
+  },
+  {
+   "fr": "Des duels",
+   "en": ""
+  },
+  {
+   "fr": "Défie un ami en temps réel, avec tes vraies forces ou à armes égales. Tes {0} premières victoires de la semaine contre des amis différents rapportent {1} cristaux et {2}.",
+   "en": ""
+  },
+  {
+   "fr": "Des échanges",
+   "en": ""
+  },
+  {
+   "fr": "Une carte en double contre une carte du même métal. Ta carte ne part jamais, seulement un exemplaire en double. Fer et cuivre gratuits ; argent et or contre des cristaux ; jamais la nacre.",
+   "en": ""
+  },
+  {
+   "fr": "Construire le Cercle",
+   "en": ""
+  },
+  {
+   "fr": "Retour au Cercle",
+   "en": ""
+  },
+  {
+   "fr": "Entrer au Cercle",
+   "en": ""
+  },
+  {
+   "fr": "Niv. {0} · ",
+   "en": ""
+  },
+  {
+   "fr": "Construire",
+   "en": ""
+  },
+  {
+   "fr": "Niv. {0} · Améliorer",
+   "en": ""
+  },
+  {
+   "fr": "Niv. {0} · Max",
+   "en": ""
+  },
+  {
+   "fr": "{0} : la fiche du bâtiment",
+   "en": ""
+  },
+  {
+   "fr": "Comment marche le Cercle",
+   "en": ""
+  },
+  {
+   "fr": "Le Cercle passe par ton compte",
+   "en": ""
+  },
+  {
+   "fr": "Les amis, les duels et les échanges ont besoin du jeu connecté. Ta partie, elle, ne change pas.",
+   "en": ""
+  },
+  {
+   "fr": "Se connecter",
+   "en": ""
+  },
+  {
+   "fr": "Choisis ton nom de directeur",
+   "en": ""
+  },
+  {
+   "fr": "C’est par lui que tes amis te trouvent. Jamais ton adresse e-mail.",
+   "en": ""
+  },
+  {
+   "fr": "Choisir mon nom",
+   "en": ""
+  },
+  {
+   "fr": "Amis, duels ou échanges",
+   "en": ""
+  },
+  {
+   "fr": "Amis",
+   "en": ""
+  },
+  {
+   "fr": "Échanges",
+   "en": ""
+  },
+  {
+   "fr": "Les quais se remplissent…",
+   "en": ""
+  },
+  {
+   "fr": "Le Cercle ne répond pas.",
+   "en": ""
+  },
+  {
+   "fr": "Réessayer",
+   "en": ""
+  },
+  {
+   "fr": "Ajouter un directeur",
+   "en": ""
+  },
+  {
+   "fr": "Son nom de directeur",
+   "en": ""
+  },
+  {
+   "fr": "Nom de directeur de ton ami",
+   "en": ""
+  },
+  {
+   "fr": "Recherche…",
+   "en": ""
+  },
+  {
+   "fr": "Inviter",
+   "en": ""
+  },
+  {
+   "fr": "Ton nom :",
+   "en": ""
+  },
+  {
+   "fr": ". Donne-le à tes amis pour qu’ils t’ajoutent.",
+   "en": ""
+  },
+  {
+   "fr": "Ils veulent être tes amis",
+   "en": ""
+  },
+  {
+   "fr": "veut rejoindre ton Cercle",
+   "en": ""
+  },
+  {
+   "fr": "Accepter",
+   "en": ""
+  },
+  {
+   "fr": "Refuser {0}",
+   "en": ""
+  },
+  {
+   "fr": "Tes amis",
+   "en": ""
+  },
+  {
+   "fr": "Personne pour l’instant. Invite un directeur par son nom, ou envoie ton lien de recrutement : tes recrues deviennent tes amis.",
+   "en": ""
+  },
+  {
+   "fr": "La vitrine de {0}",
+   "en": ""
+  },
+  {
+   "fr": "Strate −{0} · Cercle {1}",
+   "en": ""
+  },
+  {
+   "fr": "vitrine pas encore ouverte",
+   "en": ""
+  },
+  {
+   "fr": "Il a {0} carte(s) que tu cherches",
+   "en": ""
+  },
+  {
+   "fr": "Il cherche {0} de tes doubles",
+   "en": ""
+  },
+  {
+   "fr": "En attente : {0}",
+   "en": ""
+  },
+  {
+   "fr": "annuler",
+   "en": ""
+  },
+  {
+   "fr": "Ta vitrine",
+   "en": ""
+  },
+  {
+   "fr": "Choisir une carte à montrer",
+   "en": ""
+  },
+  {
+   "fr": "Ce que tes amis voient de toi{0}.",
+   "en": ""
+  },
+  {
+   "fr": " · {0} place{1} de plus avec le Cercle",
+   "en": ""
+  },
+  {
+   "fr": "Strate −{0} · {1} en duel",
+   "en": ""
+  },
+  {
+   "fr": "Sa vitrine n’est pas encore ouverte : elle apparaîtra quand il aura construit son Cercle.",
+   "en": ""
+  },
+  {
+   "fr": "Défier",
+   "en": ""
+  },
+  {
+   "fr": "Échanger",
+   "en": ""
+  },
+  {
+   "fr": "Sa vitrine",
+   "en": ""
+  },
+  {
+   "fr": "Ses doubles",
+   "en": ""
+  },
+  {
+   "fr": "nouvelle pour toi",
+   "en": ""
+  },
+  {
+   "fr": "Rien en double pour l’instant.",
+   "en": ""
+  },
+  {
+   "fr": "Ce qu’il cherche",
+   "en": ""
+  },
+  {
+   "fr": "tu l’as en double",
+   "en": ""
+  },
+  {
+   "fr": "Il n’a encore rien noté.",
+   "en": ""
+  },
+  {
+   "fr": "Retirer {0} de tes amis",
+   "en": ""
+  },
+  {
+   "fr": "{0} victoire(s) récompensée(s) sur {1} cette semaine",
+   "en": ""
+  },
+  {
+   "fr": "Encore {0} récompensée{1} cette semaine",
+   "en": ""
+  },
+  {
+   "fr": "Toutes les victoires de la semaine sont gagnées",
+   "en": ""
+  },
+  {
+   "fr": "{0} cristaux et {1} par ami différent battu. Bilan : {2}, {3}.",
+   "en": ""
+  },
+  {
+   "fr": "défaite",
+   "en": ""
+  },
+  {
+   "fr": "On te défie",
+   "en": ""
+  },
+  {
+   "fr": "avec vos vraies forces",
+   "en": ""
+  },
+  {
+   "fr": "Jouer",
+   "en": ""
+  },
+  {
+   "fr": "Refuser le défi de {0}",
+   "en": ""
+  },
+  {
+   "fr": "Défier un ami",
+   "en": ""
+  },
+  {
+   "fr": "Mode du duel",
+   "en": ""
+  },
+  {
+   "fr": "Vraies forces",
+   "en": ""
+  },
+  {
+   "fr": "À armes égales",
+   "en": ""
+  },
+  {
+   "fr": "{0} Il faut un Augmenté, un Géné et un Résonant dans l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Chaque carte revient au niveau de départ de son métal, chaque Porteur à ses PV de base : seule ta façon de jouer compte.",
+   "en": ""
+  },
+  {
+   "fr": "Chacun vient avec son escouade active, ses cartes et ses niveaux.",
+   "en": ""
+  },
+  {
+   "fr": "Ajoute d’abord un ami dans le volet Amis.",
+   "en": ""
+  },
+  {
+   "fr": "défi envoyé, il doit l’accepter",
+   "en": ""
+  },
+  {
+   "fr": "déjà battu cette semaine",
+   "en": ""
+  },
+  {
+   "fr": "prêt à jouer",
+   "en": ""
+  },
+  {
+   "fr": "Annuler",
+   "en": ""
+  },
+  {
+   "fr": "S’échauffer",
+   "en": ""
+  },
+  {
+   "fr": "Un duel contre le robot d’entraînement, sans rien à gagner ni à perdre.",
+   "en": ""
+  },
+  {
+   "fr": "S’entraîner",
+   "en": ""
+  },
+  {
+   "fr": "échange{0} possible{1} aujourd’hui",
+   "en": ""
+  },
+  {
+   "fr": "propositions en attente",
+   "en": ""
+  },
+  {
+   "fr": "métal le plus rare échangeable",
+   "en": ""
+  },
+  {
+   "fr": "On te propose",
+   "en": ""
+  },
+  {
+   "fr": "te propose",
+   "en": ""
+  },
+  {
+   "fr": "tu la reçois",
+   "en": ""
+  },
+  {
+   "fr": "contre",
+   "en": ""
+  },
+  {
+   "fr": "ton double",
+   "en": ""
+  },
+  {
+   "fr": "Refuser",
+   "en": ""
+  },
+  {
+   "fr": "Tes propositions",
+   "en": ""
+  },
+  {
+   "fr": "sans réponse · revient d’elle-même au bout de {0} h",
+   "en": ""
+  },
+  {
+   "fr": "tu donnes",
+   "en": ""
+  },
+  {
+   "fr": "tu reçois",
+   "en": ""
+  },
+  {
+   "fr": "Reprendre ma carte",
+   "en": ""
+  },
+  {
+   "fr": "Proposer un échange",
+   "en": ""
+  },
+  {
+   "fr": "Tes amis n’ont pas encore ouvert leur vitrine.",
+   "en": ""
+  },
+  {
+   "fr": " · {0} que tu cherches",
+   "en": ""
+  },
+  {
+   "fr": "Tes souhaits",
+   "en": ""
+  },
+  {
+   "fr": "Tes amis voient ce que tu cherches : leurs doubles qui te manquent ressortent en premier.",
+   "en": ""
+  },
+  {
+   "fr": "Ajouter un souhait",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} souhaits",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} en vitrine",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes que tu cherches",
+   "en": ""
+  },
+  {
+   "fr": "Touche une carte pour l’ajouter ou la retirer. Celles qui te manquent passent en premier.",
+   "en": ""
+  },
+  {
+   "fr": "Touche une carte pour la montrer à tes amis, ou la retirer.",
+   "en": ""
+  },
+  {
+   "fr": "Lignée",
+   "en": ""
+  },
+  {
+   "fr": "Toutes",
+   "en": ""
+  },
+  {
+   "fr": "L’or s’échange à partir du niveau {0} du Cercle : tu peux déjà le noter.",
+   "en": ""
+  },
+  {
+   "fr": "Aucune carte ici.",
+   "en": ""
+  },
+  {
+   "fr": "Échange avec {0} · étape {1} sur 2",
+   "en": ""
+  },
+  {
+   "fr": "Que donnes-tu en échange ?",
+   "en": ""
+  },
+  {
+   "fr": "Que veux-tu recevoir ?",
+   "en": ""
+  },
+  {
+   "fr": "Ses doubles. Tes souhaits {0} et les cartes qui te manquent passent en premier.",
+   "en": ""
+  },
+  {
+   "fr": "{0} n’a rien en double que tu puisses recevoir pour l’instant.",
+   "en": ""
+  },
+  {
+   "fr": "Un de tes doubles en {0}. Ce qu’il cherche {1} passe en premier : il acceptera plus volontiers.",
+   "en": ""
+  },
+  {
+   "fr": "{0} en double",
+   "en": ""
+  },
+  {
+   "fr": "Tu n’as aucun double en {0} à donner.",
+   "en": ""
+  },
+  {
+   "fr": "Changer",
+   "en": ""
+  },
+  {
+   "fr": "Proposer",
+   "en": ""
+  }
+ ]
+}

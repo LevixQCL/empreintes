@@ -17,15 +17,16 @@ import { LIEUX, affinite, lieuDef, type Affinite, type LieuDef } from '../lieux'
 import type { Lignee, Rarete } from '../types';
 import { XP, facteurXp, enExpedition, gagnerXp, jourDe, debutJour, log, niveauPorteur, non, porteursPresents, progresMarque, strateVaincue, tropBlesse, usureMax, type Jeu, type RapportMission, type Resultat } from './etat';
 import { MISSIONS, rangerRapport } from './descentes';
+import { t as tr } from '../i18n';
 
 export type RangMaree = 'montante' | 'vive' | 'grande';
 export const RANGS_MAREE: readonly RangMaree[] = ['montante', 'vive', 'grande'];
 
 /** Les chiffres de chaque rang (tous les réglages des contrats sont ici) */
 export const MAREES = {
-  montante: { nom: 'Petite vive-eau', coef: 80, strate: 3, porteurs: 2, difficulte: 6, heures: 4, usure: 5, composants: 90 },
+  montante: { nom: tr('Petite vive-eau'), coef: 80, strate: 3, porteurs: 2, difficulte: 6, heures: 4, usure: 5, composants: 90 },
   vive: { nom: 'Vive-eau', coef: 95, strate: 6, porteurs: 3, difficulte: 11, heures: 8, usure: 8, composants: 158 },
-  grande: { nom: 'Grande marée', coef: 110, strate: 9, porteurs: 3, difficulte: 16, heures: 16, usure: 12, composants: 270 },
+  grande: { nom: tr('Grande marée'), coef: 110, strate: 9, porteurs: 3, difficulte: 16, heures: 16, usure: 12, composants: 270 },
 } as const satisfies Record<RangMaree, { nom: string; coef: number; strate: number; porteurs: number; difficulte: number; heures: number; usure: number; composants: number }>;
 
 export const CONTRAT = {
@@ -88,38 +89,38 @@ const E = (nom: string, lignee: Lignee): EpreuveContrat => ({ nom, lignee });
  * du lieu, plus une autre.
  */
 export const CONTRATS: readonly ContratDef[] = [
-  { rang: 'montante', lieu: 'pompage', titre: 'La vanne maîtresse', ambiance: 'La mer n’est jamais descendue si bas : la vanne affleure.',
-    epreuves: [E('Forcer la vanne maîtresse', 'tech'), E('Tenir l’amarre dans le reflux', 'bio')] },
-  { rang: 'montante', lieu: 'criee', titre: 'Les sirènes de brume', ambiance: 'Les sirènes chantent faux ; tant qu’elles chantent, la glace tient.',
-    epreuves: [E('Tenir la chambre froide qui cède', 'bio'), E('Accorder les sirènes de brume', 'reso')] },
-  { rang: 'montante', lieu: 'clocher', titre: 'La verrière scellée', ambiance: 'Une note juste, et le verre s’ouvre de lui-même.',
-    epreuves: [E('Accorder la cloche', 'reso'), E('Briser la verrière scellée', 'tech')] },
-  { rang: 'montante', lieu: 'dessalement', titre: 'Les jauges effacées', ambiance: 'Le sel a mangé les chiffres ; les pompes, elles, se souviennent.',
-    epreuves: [E('Relancer la pompe à sel', 'tech'), E('Lire les jauges effacées', 'reso')] },
-  { rang: 'montante', lieu: 'marche', titre: 'L’auvent des lanternes', ambiance: 'Les familles du marché gardent leurs lanternes allumées pour la barque.',
-    epreuves: [E('Tenir l’auvent qui s’affaisse', 'bio'), E('Hisser la caisse des lanternes', 'tech')] },
-  { rang: 'montante', lieu: 'phare', titre: 'Le pouls de la lampe', ambiance: 'La lampe bat plus vite quand on approche. Personne ne sait pourquoi.',
-    epreuves: [E('Suivre le pouls de la lampe', 'reso'), E('Tenir la barque dans le ressac', 'bio')] },
+  { rang: 'montante', lieu: 'pompage', titre: tr('La vanne maîtresse'), ambiance: tr('La mer n’est jamais descendue si bas : la vanne affleure.'),
+    epreuves: [E(tr('Forcer la vanne maîtresse'), 'tech'), E(tr('Tenir l’amarre dans le reflux'), 'bio')] },
+  { rang: 'montante', lieu: 'criee', titre: tr('Les sirènes de brume'), ambiance: tr('Les sirènes chantent faux ; tant qu’elles chantent, la glace tient.'),
+    epreuves: [E(tr('Tenir la chambre froide qui cède'), 'bio'), E(tr('Accorder les sirènes de brume'), 'reso')] },
+  { rang: 'montante', lieu: 'clocher', titre: tr('La verrière scellée'), ambiance: tr('Une note juste, et le verre s’ouvre de lui-même.'),
+    epreuves: [E(tr('Accorder la cloche'), 'reso'), E(tr('Briser la verrière scellée'), 'tech')] },
+  { rang: 'montante', lieu: 'dessalement', titre: tr('Les jauges effacées'), ambiance: tr('Le sel a mangé les chiffres ; les pompes, elles, se souviennent.'),
+    epreuves: [E(tr('Relancer la pompe à sel'), 'tech'), E(tr('Lire les jauges effacées'), 'reso')] },
+  { rang: 'montante', lieu: 'marche', titre: tr('L’auvent des lanternes'), ambiance: tr('Les familles du marché gardent leurs lanternes allumées pour la barque.'),
+    epreuves: [E(tr('Tenir l’auvent qui s’affaisse'), 'bio'), E(tr('Hisser la caisse des lanternes'), 'tech')] },
+  { rang: 'montante', lieu: 'phare', titre: tr('Le pouls de la lampe'), ambiance: tr('La lampe bat plus vite quand on approche. Personne ne sait pourquoi.'),
+    epreuves: [E(tr('Suivre le pouls de la lampe'), 'reso'), E(tr('Tenir la barque dans le ressac'), 'bio')] },
 
-  { rang: 'vive', lieu: 'gare', titre: 'Le dernier train des Hauts', ambiance: 'Le dernier train des Hauts n’a jamais été vidé.',
-    epreuves: [E('Forcer l’aiguillage rouillé', 'tech'), E('Tenir le wagon qui penche', 'bio'), E('Lire l’horaire des lumières', 'reso')] },
-  { rang: 'vive', lieu: 'silos', titre: 'Les semences d’avant', ambiance: 'Sous le grain germé dorment les semences d’avant.',
-    epreuves: [E('Tenir la brèche le temps d’un passage', 'bio'), E('Ouvrir la trappe du silo', 'tech'), E('Guider la barque dans les remous', 'reso')] },
-  { rang: 'vive', lieu: 'pilier-effondre', titre: 'L’écho de Sombreverse', ambiance: 'Le pilier tombé répète encore les voix de ceux qui y vivaient.',
-    epreuves: [E('Démêler les échos du pilier', 'reso'), E('Dégager l’escalier effondré', 'tech'), E('Tenir la voûte le temps de passer', 'bio')] },
-  { rang: 'vive', lieu: 'transbordeur', titre: 'La soute du Héron', ambiance: 'Le Héron a gardé sa dernière cargaison, scellée sous la ligne d’eau.',
-    epreuves: [E('Relancer le treuil de la soute', 'tech'), E('Retenir l’eau qui s’engouffre', 'bio'), E('Écouter la coque qui craque', 'reso')] },
-  { rang: 'vive', lieu: 'marche', titre: 'La réserve des Salines', ambiance: 'Les anciens du marché disent qu’une réserve entière dort sous les étals.',
-    epreuves: [E('Tenir les étals qui flottent', 'bio'), E('Forcer la grille de la réserve', 'tech'), E('Retrouver le passage dans le noir', 'reso')] },
-  { rang: 'vive', lieu: 'phare', titre: 'La lentille du phare couché', ambiance: 'La lumière bat plus vite à l’approche.',
-    epreuves: [E('Accorder la lampe qui pulse', 'reso'), E('Tenir la coque contre la houle', 'bio'), E('Démonter la lentille', 'tech')] },
+  { rang: 'vive', lieu: 'gare', titre: tr('Le dernier train des Hauts'), ambiance: tr('Le dernier train des Hauts n’a jamais été vidé.'),
+    epreuves: [E(tr('Forcer l’aiguillage rouillé'), 'tech'), E(tr('Tenir le wagon qui penche'), 'bio'), E(tr('Lire l’horaire des lumières'), 'reso')] },
+  { rang: 'vive', lieu: 'silos', titre: tr('Les semences d’avant'), ambiance: tr('Sous le grain germé dorment les semences d’avant.'),
+    epreuves: [E(tr('Tenir la brèche le temps d’un passage'), 'bio'), E(tr('Ouvrir la trappe du silo'), 'tech'), E(tr('Guider la barque dans les remous'), 'reso')] },
+  { rang: 'vive', lieu: 'pilier-effondre', titre: tr('L’écho de Sombreverse'), ambiance: tr('Le pilier tombé répète encore les voix de ceux qui y vivaient.'),
+    epreuves: [E(tr('Démêler les échos du pilier'), 'reso'), E(tr('Dégager l’escalier effondré'), 'tech'), E(tr('Tenir la voûte le temps de passer'), 'bio')] },
+  { rang: 'vive', lieu: 'transbordeur', titre: tr('La soute du Héron'), ambiance: tr('Le Héron a gardé sa dernière cargaison, scellée sous la ligne d’eau.'),
+    epreuves: [E(tr('Relancer le treuil de la soute'), 'tech'), E(tr('Retenir l’eau qui s’engouffre'), 'bio'), E(tr('Écouter la coque qui craque'), 'reso')] },
+  { rang: 'vive', lieu: 'marche', titre: tr('La réserve des Salines'), ambiance: tr('Les anciens du marché disent qu’une réserve entière dort sous les étals.'),
+    epreuves: [E(tr('Tenir les étals qui flottent'), 'bio'), E(tr('Forcer la grille de la réserve'), 'tech'), E(tr('Retrouver le passage dans le noir'), 'reso')] },
+  { rang: 'vive', lieu: 'phare', titre: tr('La lentille du phare couché'), ambiance: tr('La lumière bat plus vite à l’approche.'),
+    epreuves: [E(tr('Accorder la lampe qui pulse'), 'reso'), E(tr('Tenir la coque contre la houle'), 'bio'), E(tr('Démonter la lentille'), 'tech')] },
 
-  { rang: 'grande', lieu: 'pilier-sans-nom', titre: 'Le brouillard levé', ambiance: 'Une fois l’an, le brouillard se lève tout à fait.',
-    epreuves: [E('Suivre la lumière qui s’éteint', 'reso'), E('Retrouver le chemin du retour', 'reso'), E('Tenir la barque dans le brouillard', 'bio')] },
-  { rang: 'grande', lieu: 'serres', titre: 'Le coffre des jardiniers', ambiance: 'Les racines ont poussé autour de la pierre.',
-    epreuves: [E('Écarter le figuier étrangleur', 'bio'), E('Respirer sous le dôme noyé', 'bio'), E('Forcer le coffre des jardiniers', 'tech')] },
-  { rang: 'grande', lieu: 'gare', titre: 'La salle des machines des Hauts', ambiance: 'Sous la gare, une machine attend qu’on la réveille depuis la montée des eaux.',
-    epreuves: [E('Relancer la turbine noyée', 'tech'), E('Forcer la porte du sas', 'tech'), E('Écouter le rythme des eaux', 'reso')] },
+  { rang: 'grande', lieu: 'pilier-sans-nom', titre: tr('Le brouillard levé'), ambiance: tr('Une fois l’an, le brouillard se lève tout à fait.'),
+    epreuves: [E(tr('Suivre la lumière qui s’éteint'), 'reso'), E(tr('Retrouver le chemin du retour'), 'reso'), E(tr('Tenir la barque dans le brouillard'), 'bio')] },
+  { rang: 'grande', lieu: 'serres', titre: tr('Le coffre des jardiniers'), ambiance: tr('Les racines ont poussé autour de la pierre.'),
+    epreuves: [E(tr('Écarter le figuier étrangleur'), 'bio'), E(tr('Respirer sous le dôme noyé'), 'bio'), E(tr('Forcer le coffre des jardiniers'), 'tech')] },
+  { rang: 'grande', lieu: 'gare', titre: tr('La salle des machines des Hauts'), ambiance: tr('Sous la gare, une machine attend qu’on la réveille depuis la montée des eaux.'),
+    epreuves: [E(tr('Relancer la turbine noyée'), 'tech'), E(tr('Forcer la porte du sas'), 'tech'), E(tr('Écouter le rythme des eaux'), 'reso')] },
 ];
 
 /** Les contrats d'un rang, dans leur ordre de rotation */
@@ -183,10 +184,10 @@ export function tauxContrat(j: Jeu, def: ContratDef, equipe: (string | null)[], 
 
 /** Pourquoi un Porteur ne peut pas monter sur la gabare (null = il peut) */
 export function raisonHorsContrat(j: Jeu, id: string): string | null {
-  if (!porteursPresents(j).includes(id)) return 'Pas encore arrivé.';
-  if (j.porteurs[id]!.poste) return j.porteurs[id]!.poste === 'noyau' ? 'S’entraîne à la Tour.' : 'Travaille au district.';
-  if (enExpedition(j, id)) return 'Pas au district.';
-  if (tropBlesse(j, id)) return 'Se remet à la Clinique.';
+  if (!porteursPresents(j).includes(id)) return tr('Pas encore arrivé.');
+  if (j.porteurs[id]!.poste) return j.porteurs[id]!.poste === 'noyau' ? tr('S’entraîne à la Tour.') : tr('Travaille au district.');
+  if (enExpedition(j, id)) return tr('Pas au district.');
+  if (tropBlesse(j, id)) return tr('Se remet à la Clinique.');
   return null;
 }
 
@@ -213,16 +214,16 @@ export function equipeConseillee(j: Jeu, def: ContratDef, parmi = libresPourCont
 export function envoyerContrat(j: Jeu, id: string, equipe: string[], now: number): Resultat {
   const m = mareesDe(j);
   const c = contratsDuMoment(j, now).find((x) => x.id === id);
-  if (!c) return non('Ce contrat n’est plus proposé : la marée a tourné.');
-  if (!c.ouvert) return non(`Il faut avoir vaincu la Strate −${MAREES[c.rang].strate} pour ce contrat.`);
-  if (c.reussi) return non('Ce contrat est déjà rempli.');
-  if (m.contrat) return non('La gabare du passeur est déjà en mer : un contrat à la fois.');
+  if (!c) return non(tr('Ce contrat n’est plus proposé : la marée a tourné.'));
+  if (!c.ouvert) return non(tr`Il faut avoir vaincu la Strate −${MAREES[c.rang].strate} pour ce contrat.`);
+  if (c.reussi) return non(tr('Ce contrat est déjà rempli.'));
+  if (m.contrat) return non(tr('La gabare du passeur est déjà en mer : un contrat à la fois.'));
   const r = MAREES[c.rang];
-  if (equipe.length !== c.def.epreuves.length || new Set(equipe).size !== equipe.length) return non(`Il faut ${c.def.epreuves.length} Porteurs différents, un par épreuve.`);
-  for (const p of equipe) { const pourquoi = raisonHorsContrat(j, p); if (pourquoi) return non(`${porteurDef(p)?.nom ?? 'Ce Porteur'} : ${pourquoi.toLowerCase()}`); }
+  if (equipe.length !== c.def.epreuves.length || new Set(equipe).size !== equipe.length) return non(tr`Il faut ${c.def.epreuves.length} Porteurs différents, un par épreuve.`);
+  for (const p of equipe) { const pourquoi = raisonHorsContrat(j, p); if (pourquoi) return non(`${porteurDef(p)?.nom ?? tr('Ce Porteur')} : ${pourquoi.toLowerCase()}`); }
   const taux = tauxContrat(j, c.def, equipe, c.indices);
   m.contrat = { id, rang: c.rang, porteurs: [...equipe], debut: now, fin: now + r.heures * 3_600_000, taux, strate: strateVaincue(j) };
-  log(j, `${equipe.map((p) => porteurDef(p).nom).join(', ')} embarquent sur la gabare : ${r.nom}, ${c.def.titre} (${taux} % de chances).`);
+  log(j, tr`${equipe.map((p) => porteurDef(p).nom).join(', ')} embarquent sur la gabare : ${r.nom}, ${c.def.titre} (${taux} % de chances).`);
   return { ok: true };
 }
 
@@ -300,19 +301,19 @@ export function retourDeContrat(j: Jeu): string {
     const avantMarque = progresMarque(j, id)?.acquise;
     q.faits = { ...q.faits, missions: (q.faits?.missions ?? 0) + 1 };
     const mq = progresMarque(j, id);
-    if (mq?.acquise && !avantMarque) { log(j, `${porteurDef(id).nom} gagne la Marque ${mq.nom} : ${mq.texte}`); marque ??= mq.nom; }
+    if (mq?.acquise && !avantMarque) { log(j, tr`${porteurDef(id).nom} gagne la Marque ${mq.nom} : ${mq.texte}`); marque ??= mq.nom; }
   }
   const noms = c.porteurs.map((p) => porteurDef(p).nom);
   const equipe = noms.length > 1 ? `${noms.slice(0, -1).join(', ')} et ${noms[noms.length - 1]}` : noms[0]!;
   const recit: string[] = [lieu.arrivee.replaceAll('{nom}', equipe), def.ambiance];
   if (reussi) {
-    recit.push(`${forces.map(({ ep, k }) => `${porteurDef(c.porteurs[k]!).nom} : ${ep.nom.charAt(0).toLowerCase()}${ep.nom.slice(1)}`).join(' ; ')}. Tout a tenu.`);
-    recit.push(choix ? 'Au cœur de la ruine, trois pierres attendaient côte à côte : à toi de choisir celle qui rentre au district.'
-      : prise === 'cargaison' ? `La gabare est rentrée à ras bord : ${composants} minerai arraché à la ruine.`
-      : `La gabare est rentrée chargée : ${composants} minerai, et une pierre de plus pour tes cartes.`);
+    recit.push(tr`${forces.map(({ ep, k }) => `${porteurDef(c.porteurs[k]!).nom} : ${ep.nom.charAt(0).toLowerCase()}${ep.nom.slice(1)}`).join(' ; ')}. Tout a tenu.`);
+    recit.push(choix ? tr('Au cœur de la ruine, trois pierres attendaient côte à côte : à toi de choisir celle qui rentre au district.')
+      : prise === 'cargaison' ? tr`La gabare est rentrée à ras bord : ${composants} minerai arraché à la ruine.`
+      : tr`La gabare est rentrée chargée : ${composants} minerai, et une pierre de plus pour tes cartes.`);
   } else {
-    recit.push(`${porteurDef(c.porteurs[faible.k]!).nom} n’a pas pu ${faible.ep.nom.charAt(0).toLowerCase()}${faible.ep.nom.slice(1)} : l’équipe a dû faire demi-tour avant la marée descendante.`);
-    recit.push(`Ils rapportent ${composants} minerai, et surtout un Indice : la prochaine tentative sur ce contrat aura +${CONTRAT.indice} % de chances.`);
+    recit.push(tr`${porteurDef(c.porteurs[faible.k]!).nom} n’a pas pu ${faible.ep.nom.charAt(0).toLowerCase()}${faible.ep.nom.slice(1)} : l’équipe a dû faire demi-tour avant la marée descendante.`);
+    recit.push(tr`Ils rapportent ${composants} minerai, et surtout un Indice : la prochaine tentative sur ce contrat aura +${CONTRAT.indice} % de chances.`);
   }
   const rapport: RapportMission = {
     porteur: c.porteurs[0]!, strate: c.strate, duree: 'longue', fin: c.fin, lieu: lieu.id, recit, composants, xp: xpTotal, niveau, cartes, creuseurs: 0,
@@ -321,8 +322,8 @@ export function retourDeContrat(j: Jeu): string {
   };
   rangerRapport(j, rapport);
   const texte = reussi
-    ? `${r.nom} réussie (${def.titre}) : +${composants} minerai${cartes.length ? `, ${cartes.map((x) => moduleDef(x.id).nom).join(', ')}` : ''}${choix ? ', une carte au choix' : ''}.`
-    : `${r.nom} manquée (${def.titre}) : +${composants} minerai et un Indice pour la prochaine tentative.`;
+    ? tr`${r.nom} réussie (${def.titre}) : +${composants} minerai${cartes.length ? `, ${cartes.map((x) => moduleDef(x.id).nom).join(', ')}` : ''}${choix ? tr(', une carte au choix') : ''}.`
+    : tr`${r.nom} manquée (${def.titre}) : +${composants} minerai et un Indice pour la prochaine tentative.`;
   log(j, texte);
   return texte;
 }

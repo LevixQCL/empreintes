@@ -1,0 +1,89 @@
+{
+ "source": "src/core/partie/parrainage.ts",
+ "entrees": [
+  {
+   "fr": "Strate −1 vaincue",
+   "en": ""
+  },
+  {
+   "fr": "Un paquet de cristaux (≈ une journée de jeu)",
+   "en": ""
+  },
+  {
+   "fr": "Strate −3 atteinte",
+   "en": ""
+  },
+  {
+   "fr": "Une carte au choix, dont une d’argent",
+   "en": ""
+  },
+  {
+   "fr": "Tour du Noyau niveau 3",
+   "en": ""
+  },
+  {
+   "fr": "La carte « Empreinte jumelle », à son nom",
+   "en": ""
+  },
+  {
+   "fr": "La carte « Empreinte jumelle », au nom du parrain",
+   "en": ""
+  },
+  {
+   "fr": "Dos « Empreinte partagée »",
+   "en": ""
+  },
+  {
+   "fr": "le dos de carte « Empreinte partagée »",
+   "en": ""
+  },
+  {
+   "fr": "Le dos de tes cartes, quand elles se révèlent : deux empreintes qui se répondent, dans l’or.",
+   "en": ""
+  },
+  {
+   "fr": "Titre « Recruteur »",
+   "en": ""
+  },
+  {
+   "fr": "le titre « Recruteur »",
+   "en": ""
+  },
+  {
+   "fr": "À côté de ton pseudo, sur le Grand Tableau.",
+   "en": ""
+  },
+  {
+   "fr": "C’est ton propre code.",
+   "en": ""
+  },
+  {
+   "fr": "Recommandé par {0} : +{1} cristaux, une carte au choix, et des colis doublés pendant {2} jours.",
+   "en": ""
+  },
+  {
+   "fr": "Parrainage : la Strate −3 est atteinte, une carte au choix t’attend. {0} reçoit la sienne.",
+   "en": ""
+  },
+  {
+   "fr": "Parrainage : la carte « {0} » rejoint ta collection, liée à {1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} a vaincu la Strate −1 : +{1} cristaux et +{2} Éclats.",
+   "en": ""
+  },
+  {
+   "fr": "{0} a atteint la Strate −3 : une carte au choix t’attend.",
+   "en": ""
+  },
+  {
+   "fr": "{0} a monté sa Tour du Noyau au niveau 3 : la carte « {1} » rejoint ta collection.",
+   "en": ""
+  },
+  {
+   "fr": "{0} recrues actives : tu gagnes {1}.",
+   "en": ""
+  }
+ ]
+}

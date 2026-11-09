@@ -12,6 +12,7 @@ import { firebaseConfig } from './firebase-config';
 import { estJeuValide, VERSION_JEU } from '../core/jeu';
 import type { Enveloppe } from '../save/local';
 import { decisionEcriture, prochainJeton, versionDe } from '../save/garde';
+import { t as tr } from '../core/i18n';
 
 const app = initializeApp(firebaseConfig);
 // App Check avant toute requête (net/app-check.ts)
@@ -25,7 +26,7 @@ const db = getFirestore(app);
 /** via et email : avec quoi le joueur est connecté, rappelé dans le panneau Compte (9 novembre 2026) */
 type Utilisateur = { uid: string; nom: string; anonyme: boolean; verifie: boolean; via?: 'google' | 'email'; email?: string };
 
-const versUtilisateur = (u: User): Utilisateur => ({ uid: u.uid, nom: u.displayName || u.email || 'Joueur', anonyme: u.isAnonymous,
+const versUtilisateur = (u: User): Utilisateur => ({ uid: u.uid, nom: u.displayName || u.email || tr('Joueur'), anonyme: u.isAnonymous,
   verifie: !u.isAnonymous && (u.emailVerified || u.providerData.some((p) => p.providerId === 'google.com')),
   via: u.providerData.some((p) => p.providerId === 'google.com') ? 'google' : u.providerData.some((p) => p.providerId === 'password') ? 'email' : undefined,
   email: u.email ?? u.providerData.find((p) => p.email)?.email ?? undefined });
@@ -201,20 +202,20 @@ export async function ecrireDistante(uid: string, env: Enveloppe, attendu: numbe
 export function messageErreur(e: unknown): string {
   const code = (e as { code?: string })?.code ?? '';
   const m: Record<string, string> = {
-    'auth/invalid-credential': 'E-mail ou mot de passe incorrect.',
-    'auth/credential-already-in-use': 'Ce compte est déjà utilisé par une autre partie. Connecte-toi avec lui.',
-    'auth/provider-already-linked': 'Ta partie est déjà reliée à ce compte.',
-    'auth/invalid-email': 'Adresse e-mail invalide.',
-    'auth/email-already-in-use': 'Un compte existe déjà avec cette adresse.',
-    'auth/weak-password': 'Mot de passe trop court (6 caractères minimum).',
-    'auth/popup-closed-by-user': 'Fenêtre de connexion fermée.',
-    'auth/unauthorized-domain': 'Ce site n’est pas encore autorisé dans Firebase (Authentication › Paramètres › Domaines autorisés).',
-    'auth/network-request-failed': 'Pas de connexion réseau.',
-    'auth/popup-blocked': 'La fenêtre de connexion Google a été bloquée. Autorise les fenêtres pour ce site, ou ouvre le jeu dans Chrome.',
-    'auth/cancelled-popup-request': 'Une autre fenêtre de connexion était déjà ouverte. Réessaie.',
-    'auth/web-storage-unsupported': 'Ce navigateur bloque la connexion (stockage désactivé). Ouvre le jeu dans Chrome ou Safari.',
-    'auth/operation-not-supported-in-this-environment': 'La connexion Google ne marche pas dans ce navigateur intégré. Ouvre le jeu dans Chrome ou Safari.',
+    'auth/invalid-credential': tr('E-mail ou mot de passe incorrect.'),
+    'auth/credential-already-in-use': tr('Ce compte est déjà utilisé par une autre partie. Connecte-toi avec lui.'),
+    'auth/provider-already-linked': tr('Ta partie est déjà reliée à ce compte.'),
+    'auth/invalid-email': tr('Adresse e-mail invalide.'),
+    'auth/email-already-in-use': tr('Un compte existe déjà avec cette adresse.'),
+    'auth/weak-password': tr('Mot de passe trop court (6 caractères minimum).'),
+    'auth/popup-closed-by-user': tr('Fenêtre de connexion fermée.'),
+    'auth/unauthorized-domain': tr('Ce site n’est pas encore autorisé dans Firebase (Authentication › Paramètres › Domaines autorisés).'),
+    'auth/network-request-failed': tr('Pas de connexion réseau.'),
+    'auth/popup-blocked': tr('La fenêtre de connexion Google a été bloquée. Autorise les fenêtres pour ce site, ou ouvre le jeu dans Chrome.'),
+    'auth/cancelled-popup-request': tr('Une autre fenêtre de connexion était déjà ouverte. Réessaie.'),
+    'auth/web-storage-unsupported': tr('Ce navigateur bloque la connexion (stockage désactivé). Ouvre le jeu dans Chrome ou Safari.'),
+    'auth/operation-not-supported-in-this-environment': tr('La connexion Google ne marche pas dans ce navigateur intégré. Ouvre le jeu dans Chrome ou Safari.'),
   };
   // le code entre parenthèses permet de savoir ce qui bloque (une capture suffit)
-  return m[code] ?? `La connexion a échoué. Réessaie dans un instant.${code ? ` (${code})` : ''}`;
+  return m[code] ?? tr`La connexion a échoué. Réessaie dans un instant.${code ? ` (${code})` : ''}`;
 }

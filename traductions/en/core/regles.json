@@ -1,0 +1,13 @@
+{
+ "source": "src/core/regles.ts",
+ "entrees": [
+  {
+   "fr": "Écho ×{0}",
+   "en": ""
+  },
+  {
+   "fr": "Écho",
+   "en": ""
+  }
+ ]
+}

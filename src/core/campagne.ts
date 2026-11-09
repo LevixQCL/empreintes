@@ -28,10 +28,10 @@ export interface ContexteCampagne {
 
 /** Ceux qui parlent et ne sont pas des Porteurs (les Porteurs et les gardiens ont déjà leur nom et leur portrait) */
 export const PERSONNAGES: Record<string, { nom: string; role: string; couleur: string }> = {
-  yse: { nom: 'Ysé', role: t('Archiviste des Veilleurs'), couleur: 'var(--or)' },
+  yse: { nom: t('Ysé'), role: t('Archiviste des Veilleurs'), couleur: 'var(--or)' },
   hald: { nom: t('Capitaine Hald'), role: t('Brigades du Serment de Veyr'), couleur: 'var(--reso)' },
-  tobin: { nom: 'Tobin', role: t('Fouilleur des Veilleurs'), couleur: 'var(--ivory)' },
-  brac: { nom: 'Brac', role: t('Pilleur de Strates'), couleur: 'var(--tech)' },
+  tobin: { nom: t('Tobin'), role: t('Fouilleur des Veilleurs'), couleur: 'var(--ivory)' },
+  brac: { nom: t('Brac'), role: t('Pilleur de Strates'), couleur: 'var(--tech)' },
   isaure: { nom: t('Dame Isaure Orsève'), role: t('Maison Orsève, les Hauts'), couleur: 'var(--reso)' },
 };
 
@@ -62,7 +62,7 @@ export interface Scene {
   quand: (c: ContexteCampagne) => boolean;
 }
 
-const ACTES: Record<1 | 2 | 3 | 4, string> = { 1: t('Acte I · La chambre'), 2: t('Acte II · Les salles closes'), 3: t('Acte III · Ceux d’avant'), 4: 'Épilogue' };
+const ACTES: Record<1 | 2 | 3 | 4, string> = { 1: t('Acte I · La chambre'), 2: t('Acte II · Les salles closes'), 3: t('Acte III · Ceux d’avant'), 4: t('Épilogue') };
 export const nomActe = (a: 1 | 2 | 3 | 4) => ACTES[a];
 const acteDe = (strate: number): 1 | 2 | 3 => (strate <= 3 ? 1 : strate <= 6 ? 2 : 3);
 const ROMAIN = { 1: 'I', 2: 'II', 3: 'III' } as const;
@@ -111,7 +111,7 @@ export const SCENES: Scene[] = [
       { qui: 'vela', texte: t('Les cristaux qu’ils emportent ont peur. Je les entends d’ici. Et la Confluence les entend aussi.') },
       { qui: 'ilka', texte: t('Alors on court. Pour une fois, c’est moi qui donne le rythme.') },
     ]),
-  apresGardien(2, 'confluence', 'Brac',
+  apresGardien(2, 'confluence', t('Brac'),
     t('Au fond de la Strate, des sacs éventrés et des cristaux éteints. La Confluence les a trouvés avant vous, et elle a grossi. Dans un recoin, un pilleur tremble.'), [
       { qui: 'brac', texte: t('Je m’appelle Brac. Je ne les ai pas volées, directeur. Elles me l’ont demandé. Toute la nuit, elles m’ont demandé de les emmener plus bas. Jusqu’où, je n’en sais rien. Plus bas que tout ce que j’ai fouillé.') },
       { qui: 'vela', texte: t('Il dit vrai. Les empreintes de la chambre veulent descendre. Je ne sais pas pourquoi. Je sais qu’elles ont peur de rester en haut.') },

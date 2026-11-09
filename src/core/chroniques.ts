@@ -74,7 +74,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
     documents: [
       {
-        titre: 'Alerte', support: t('Une capture d’écran de téléphone, imprimée et pliée en quatre'),
+        titre: t('Alerte'), support: t('Une capture d’écran de téléphone, imprimée et pliée en quatre'),
         lignes: [
           t('ALERTE CANICULE · NIVEAU ROUGE · Délestage électrique programmé de 18 h à 23 h dans votre secteur.'),
           t('Les services prioritaires (hôpitaux, centres de données, réseaux) ne sont pas concernés.'),
@@ -132,7 +132,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
     documents: [
       {
-        titre: 'Avenant', support: t('Une lettre d’assurance, à en-tête déchiré'),
+        titre: t('Avenant'), support: t('Une lettre d’assurance, à en-tête déchiré'),
         lignes: [
           t('Madame, suite à la révision de notre exposition aux risques côtiers, votre contrat ne couvrira plus les dommages liés à l’eau à compter du 1er mars.'),
           t('Les autres garanties restent inchangées. Nous restons à votre écoute pour tout projet futur.'),
@@ -331,7 +331,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'toi', livre: 2, titre: 'Toi', epoque: '2121', image: '00-titre',
+    id: 'toi', livre: 2, titre: t('Toi'), epoque: '2121', image: '00-titre',
     paragraphes: [
       t('Hier, ton district t’a élu. Pas par enthousiasme, ne te vexe pas : l’ancienne directrice est partie après une saison de pannes et de raids, la Forge tourne au ralenti, la Clinique manque de tout, et la digue suinte par trois joints qu’on rebouche à la main. Les gens ont voté pour le changement sans trop y croire. Ça leur laisse une chance d’être surpris.'),
       t('Ton district est une cuvette, comme tous ceux du milieu. Dans les années 2060, chacun était un chantier d’abris : une digue coulée en anneau autour de son puits, pour creuser à sec. Après le mur de 2066, la ville a fermé les chantiers et n’avait pas de quoi payer ceux qui s’y étaient tus. Elle a payé avec ce qu’elle avait en trop : les anneaux eux-mêmes. Les familles d’ouvriers s’y sont installées, sur le dernier vrai sol de Vertiga, avec les pompes pour seule fortune, et vu des tours le milieu de la ville ressemble depuis à un semis d’anneaux de pierre posés sur la mer.'),
@@ -433,7 +433,7 @@ export const CHAPITRES: Chapitre[] = [
       t('De la Ruche d’ambre, une seule de nos fouilleuses est remontée. Elle tenait un éclat de table, gravé tard et mal, par quelqu’un qui recopiait sans comprendre : « Que celui qui lit ceci compte les voix qu’il porte. » Une copie, directeur, tardive et abîmée. Hessa Lorn, notre Doyenne, qui retire des archives tout ce qu’elle juge dangereux à lire, l’a rangée dans une armoire dont je n’ai pas la clé. L’original, s’il existe, est plus bas, là où personne n’est allé. Prends ce que j’écris pour ce que c’est : ce que croit une vieille femme qui a lu une copie une fois.'),
       t('Les Résonants ne mentent pas, directeur. Je veux que tu l’entendes. Ils se trompent. Leur pouvoir est réel, et leurs sauvetages aussi. Mais personne ne les a choisis. Nous avons ouvert une porte que quelqu’un avait fermée de l’intérieur, et nous avons pris ce qu’il y avait derrière pour un cadeau.'),
       t('Sceller à nouveau, partager, tout ouvrir : aucune de ces voies n’est la bonne, chacune répare une chose et en abîme une autre. Je ne choisirai pas à ta place. Je te demande seulement, quoi que tu décides, de regarder aussi la mer. Elle n’a pas oublié de monter.'),
-      'Ysé',
+      t('Ysé'),
     ],
   },
   {

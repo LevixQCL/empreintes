@@ -1,0 +1,481 @@
+{
+ "source": "src/core/partie/district.ts",
+ "entrees": [
+  {
+   "fr": "{0} familles sur {1} te suivent : encore {2} pour le prochain palier.",
+   "en": ""
+  },
+  {
+   "fr": "Tout le district te suit.",
+   "en": ""
+  },
+  {
+   "fr": "{0} les creuseurs",
+   "en": ""
+  },
+  {
+   "fr": "un volontaire rejoint",
+   "en": ""
+  },
+  {
+   "fr": "{0} apporte{1} « {2} » aux Archives",
+   "en": ""
+  },
+  {
+   "fr": "un étal de plus rouvre au Comptoir",
+   "en": ""
+  },
+  {
+   "fr": "{0} familles te suivent{1} !{2}",
+   "en": ""
+  },
+  {
+   "fr": " : tout le district",
+   "en": ""
+  },
+  {
+   "fr": "une famille",
+   "en": ""
+  },
+  {
+   "fr": "Heures pour tailler le minerai",
+   "en": ""
+  },
+  {
+   "fr": "chaque heure, il en taille une part",
+   "en": ""
+  },
+  {
+   "fr": "Éclats recueillis par jour en taillant",
+   "en": ""
+  },
+  {
+   "fr": "Usure soignée par heure",
+   "en": ""
+  },
+  {
+   "fr": "pour chaque Porteur au repos",
+   "en": ""
+  },
+  {
+   "fr": "PV max. des Porteurs",
+   "en": ""
+  },
+  {
+   "fr": "en plus, pour tous",
+   "en": ""
+  },
+  {
+   "fr": "La Clinique peut organiser un Accord ouvert",
+   "en": ""
+  },
+  {
+   "fr": "un nouveau Résonant, quand {0} familles te suivent",
+   "en": ""
+  },
+  {
+   "fr": "Vitesse de refabrication",
+   "en": ""
+  },
+  {
+   "fr": "{0} rejoint le district",
+   "en": ""
+  },
+  {
+   "fr": "une fois la chambre scellée",
+   "en": ""
+  },
+  {
+   "fr": "Cartes en vente chaque jour",
+   "en": ""
+  },
+  {
+   "fr": "Éclats en vente par jour",
+   "en": ""
+  },
+  {
+   "fr": "de {0} à {1} cristaux l’Éclat",
+   "en": ""
+  },
+  {
+   "fr": "Des cartes en argent",
+   "en": ""
+  },
+  {
+   "fr": "une fois la Strate −{0} vaincue",
+   "en": ""
+  },
+  {
+   "fr": "Ouvre les amis, les duels et les échanges",
+   "en": ""
+  },
+  {
+   "fr": "les directeurs des autres districts accostent",
+   "en": ""
+  },
+  {
+   "fr": "Échanges par jour",
+   "en": ""
+  },
+  {
+   "fr": "Propositions en attente",
+   "en": ""
+  },
+  {
+   "fr": "Cartes en vitrine",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes en or s’échangent",
+   "en": ""
+  },
+  {
+   "fr": "la nacre, jamais",
+   "en": ""
+  },
+  {
+   "fr": "Creuseurs logés",
+   "en": ""
+  },
+  {
+   "fr": "plus aucune limite de profondeur",
+   "en": ""
+  },
+  {
+   "fr": "de quoi creuser jusqu’à la Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Ouvre la Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "les creuseurs attendent déjà la place",
+   "en": ""
+  },
+  {
+   "fr": "Niveau max. des autres bâtiments",
+   "en": ""
+  },
+  {
+   "fr": "Places d’entraînement",
+   "en": ""
+  },
+  {
+   "fr": "des Porteurs en même temps à la Tour",
+   "en": ""
+  },
+  {
+   "fr": "Barques en mer",
+   "en": ""
+  },
+  {
+   "fr": "des missions en même temps",
+   "en": ""
+  },
+  {
+   "fr": "Entraînement à la Tour jusqu’au niveau",
+   "en": ""
+  },
+  {
+   "fr": "séances {0} % plus courtes",
+   "en": ""
+  },
+  {
+   "fr": "Deux chantiers en même temps",
+   "en": ""
+  },
+  {
+   "fr": "Nouvelle carte commune : {0}",
+   "en": ""
+  },
+  {
+   "fr": "à prendre au Râtelier de l’escouade",
+   "en": ""
+  },
+  {
+   "fr": "Force de la carte {0}",
+   "en": ""
+  },
+  {
+   "fr": "Niveau maximum atteint.",
+   "en": ""
+  },
+  {
+   "fr": "Un chantier est déjà en cours sur ce bâtiment.",
+   "en": ""
+  },
+  {
+   "fr": "Aucun directeur n’accoste avant que la Strate −{0} soit vaincue.",
+   "en": ""
+  },
+  {
+   "fr": "Améliore d’abord la Tour du Noyau.",
+   "en": ""
+  },
+  {
+   "fr": "Termine d’abord les chantiers en cours avant d’agrandir la Tour du Noyau.",
+   "en": ""
+  },
+  {
+   "fr": "Un seul chantier à la fois pour l’instant (deux au Noyau niveau 4).",
+   "en": ""
+  },
+  {
+   "fr": "Deux chantiers sont déjà en cours.",
+   "en": ""
+  },
+  {
+   "fr": "Pas assez de ressources.",
+   "en": ""
+  },
+  {
+   "fr": "{0} passe au niveau {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Chantier lancé : {0} vers le niveau {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Ce Porteur est en expédition.",
+   "en": ""
+  },
+  {
+   "fr": "La Forge travaille : attends la fin de la fabrication.",
+   "en": ""
+  },
+  {
+   "fr": "{0} a rattrapé ton meilleur Porteur d’escouade : la suite se gagne dans les Strates.",
+   "en": ""
+  },
+  {
+   "fr": "{0} a atteint le plafond de la Tour : monte-la pour aller plus loin.",
+   "en": ""
+  },
+  {
+   "fr": "Les {0} places de la Tour sont prises : arrête une séance ou attends qu’une se termine.",
+   "en": ""
+  },
+  {
+   "fr": "La place de la Tour est prise : arrête la séance ou attends qu’elle se termine.",
+   "en": ""
+  },
+  {
+   "fr": "Il manque {0} cristaux pour cette séance.",
+   "en": ""
+  },
+  {
+   "fr": "{0} commence une séance à la Tour du Noyau : niveau {1} ({2} cristaux).",
+   "en": ""
+  },
+  {
+   "fr": "{0} travaille maintenant : {1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} se repose.",
+   "en": ""
+  },
+  {
+   "fr": "On ne refabrique qu’une carte déjà trouvée.",
+   "en": ""
+  },
+  {
+   "fr": "Une carte de l’Héritage est unique : la Forge ne sait pas la refaire.",
+   "en": ""
+  },
+  {
+   "fr": "La Forge est déjà occupée.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut un Porteur au travail à la Forge.",
+   "en": ""
+  },
+  {
+   "fr": "{0} Éclat{1}",
+   "en": ""
+  },
+  {
+   "fr": "Pour refabriquer {0}, il manque {1}.",
+   "en": ""
+  },
+  {
+   "fr": "La Forge refabrique {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Aucun doublon à recycler.",
+   "en": ""
+  },
+  {
+   "fr": "Un doublon {0} recyclé : +{1} minerai.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut {0} doublon{1}.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut {0} cristaux.",
+   "en": ""
+  },
+  {
+   "fr": "Trop lourd : {0} pèse {1}, il ne reste que {2} de Charge à {3}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} en {1} demande un Porteur de niveau {2} : {3} est niveau {4}.",
+   "en": ""
+  },
+  {
+   "fr": "Cette carte ne convient qu’à sa lignée.",
+   "en": ""
+  },
+  {
+   "fr": "Cette carte est en expédition.",
+   "en": ""
+  },
+  {
+   "fr": "{0} porte déjà {1} cartes : retires-en une.",
+   "en": ""
+  },
+  {
+   "fr": "{0} ({1}) remplace celle en {2} chez {3}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} confiée à {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Ce Porteur ne porte pas cette carte.",
+   "en": ""
+  },
+  {
+   "fr": "{0} porte déjà cette carte.",
+   "en": ""
+  },
+  {
+   "fr": "{0} porte déjà {1} en {2} : échange plutôt celle-là.",
+   "en": ""
+  },
+  {
+   "fr": "{0} remplace {1} chez {2}.",
+   "en": ""
+  },
+  {
+   "fr": "+{0} creuseur{1} : {2}.",
+   "en": ""
+  },
+  {
+   "fr": "Les creuseurs percent la roche : la Strate −{0} est ouverte.",
+   "en": ""
+  },
+  {
+   "fr": "Séance interrompue : {0} quitte la Tour{1}.",
+   "en": ""
+  },
+  {
+   "fr": " ({0} cristaux rendus)",
+   "en": ""
+  },
+  {
+   "fr": "{0} a fini sa séance à la Tour : niveau {1}, {2} PV. Une place se libère.",
+   "en": ""
+  },
+  {
+   "fr": "Le Comptoir est fermé : remets-le d’abord en état.",
+   "en": ""
+  },
+  {
+   "fr": "Les fouilleurs n’ont plus d’Éclats à vendre aujourd’hui : nouvel arrivage demain.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut {0} cristaux pour cet Éclat.",
+   "en": ""
+  },
+  {
+   "fr": "Comptoir : un Éclat acheté ({0} cristaux).",
+   "en": ""
+  },
+  {
+   "fr": "+1 Éclat pour {0} cristaux.",
+   "en": ""
+  },
+  {
+   "fr": "Les étals ont déjà été renouvelés aujourd’hui : nouvel arrivage demain.",
+   "en": ""
+  },
+  {
+   "fr": "Tout est vendu : nouvel arrivage demain.",
+   "en": ""
+  },
+  {
+   "fr": "Pas assez de cristaux.",
+   "en": ""
+  },
+  {
+   "fr": "Comptoir : les étals ont été renouvelés.",
+   "en": ""
+  },
+  {
+   "fr": "Cette offre n’existe pas.",
+   "en": ""
+  },
+  {
+   "fr": "Déjà acheté aujourd’hui : le Comptoir se renouvelle demain.",
+   "en": ""
+  },
+  {
+   "fr": "Comptoir : nouvelle carte, {0} ({1}).",
+   "en": ""
+  },
+  {
+   "fr": "Comptoir : un doublon {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Ce Porteur n’est pas au district.",
+   "en": ""
+  },
+  {
+   "fr": "La Clinique est fermée.",
+   "en": ""
+  },
+  {
+   "fr": "Ce Porteur est en bas.",
+   "en": ""
+  },
+  {
+   "fr": "Il n’a pas d’Usure.",
+   "en": ""
+  },
+  {
+   "fr": "La Clinique offre ses premiers soins intensifs : {0} est remis sur pied (−{1} Usure).",
+   "en": ""
+  },
+  {
+   "fr": "Il faut 1 cristal pour {0} points d’Usure.",
+   "en": ""
+  },
+  {
+   "fr": "Soins intensifs : −{0} Usure pour {1} ({2} cristal{3}).",
+   "en": ""
+  },
+  {
+   "fr": "Objectif pas encore rempli.",
+   "en": ""
+  },
+  {
+   "fr": "des volontaires rejoignent le chantier",
+   "en": ""
+  },
+  {
+   "fr": "Objectif rempli : {0}.",
+   "en": ""
+  }
+ ]
+}

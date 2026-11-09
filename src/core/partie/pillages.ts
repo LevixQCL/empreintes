@@ -19,6 +19,7 @@ import type { Lignee } from '../types';
 import { CONFIANCE, XP, facteurXp, bonusPv, confier, jourDe, escouadeDefense, escouadesDe, gagnerXp, log, niveauPorteur, non, porteursPresents, pvNiveau, strateVaincue, usureAuRetour, type Jeu, type Resultat } from './etat';
 import { escouadePrete, payerRatelier, remonter as remonterDescente, type Retour } from './descentes';
 import { quitterPostes } from './recompenses';
+import { t as tr } from '../i18n';
 
 export const PILLAGE = {
   /** jetons de pillage : 5 au plus, un revient toutes les 4 h 48 (5 par jour) ; rien ne se perd pendant l'absence */
@@ -125,19 +126,19 @@ export function butinPillage(cible: { strate: number; coffre: number }, ecart: n
 /** Une appréciation lisible de l'écart, pour la carte */
 export function difficulte(ecart: number): { nom: string; niveau: 1 | 2 | 3 | 4 } {
   const c = chanceVictoire(ecart);
-  if (c >= 0.85) return { nom: 'Facile', niveau: 1 };
-  if (c >= 0.5) return { nom: 'Équilibré', niveau: 2 };
-  if (c >= 0.15) return { nom: 'Risqué', niveau: 3 };
-  return { nom: 'Redoutable', niveau: 4 };
+  if (c >= 0.85) return { nom: tr('Facile'), niveau: 1 };
+  if (c >= 0.5) return { nom: tr('Équilibré'), niveau: 2 };
+  if (c >= 0.15) return { nom: tr('Risqué'), niveau: 3 };
+  return { nom: tr('Redoutable'), niveau: 4 };
 }
 
 /** Choisit l'escouade qui garde le port (27 octobre 2026). Possible à tout moment, même pendant une descente :
  * la garnison ne quitte pas le district, elle se défend seule. */
 export function choisirDefense(j: Jeu, n: number): Resultat {
-  if (!Number.isInteger(n) || n < 0 || n >= escouadesDe(j).length) return non('Escouade inconnue.');
-  if (!escouadesDe(j)[n]!.length) return non('Cette escouade est vide : choisis-lui d’abord des Porteurs.');
+  if (!Number.isInteger(n) || n < 0 || n >= escouadesDe(j).length) return non(tr('Escouade inconnue.'));
+  if (!escouadesDe(j)[n]!.length) return non(tr('Cette escouade est vide : choisis-lui d’abord des Porteurs.'));
   j.escouadeDefense = n;
-  log(j, `L’escouade ${n + 1} garde désormais le port.`);
+  log(j, tr`L’escouade ${n + 1} garde désormais le port.`);
   return { ok: true };
 }
 
@@ -248,7 +249,7 @@ export function ciblesDuJour(j: Jeu, escouade: string[], now: number, enLigne: C
 export const cibleDe = (id: string, nom: string, g: Garnison): Cible =>
   ({ id, nom, porteurs: g.porteurs.map((p) => p.id), force: forceGarnison(g), strate: g.strate, coffre: g.coffre });
 
-const NOMS_BOTS = ['Haut-Treuil', 'Cendrevigne', 'Ancrefroide', 'Verrelune', 'Salvebrume', 'Pilier-Gris', 'Brisecôte', 'Les Pontons d’Ambre', 'Lierre-Haut', 'Quai Sourd', 'Vasque-Morte', 'Givrecorde'];
+const NOMS_BOTS = ['Haut-Treuil', tr('Cendrevigne'), tr('Ancrefroide'), tr('Verrelune'), tr('Salvebrume'), 'Pilier-Gris', tr('Brisecôte'), tr('Les Pontons d’Ambre'), 'Lierre-Haut', tr('Quai Sourd'), 'Vasque-Morte', tr('Givrecorde')];
 
 /**
  * Les archipels sans directeur du jour : de 0,85 à 1,15 fois la force de l'escouade, renouvelés chaque jour
@@ -301,24 +302,24 @@ export function achatsRestants(j: Jeu, now: number): number {
 export function acheterJeton(j: Jeu, now: number): Resultat {
   majJetons(j, now);
   const e = etatPillage(j);
-  if (j.batiments.generateur < 1) return non('Le Générateur est à l’arrêt.');
-  if (e.jetons >= PILLAGE.jetonsMax) return non('Tous tes jetons sont déjà là.');
-  if (achatsRestants(j, now) < 1) return non(`Déjà ${PILLAGE.achatsJour} jetons achetés aujourd’hui : reviens demain.`);
+  if (j.batiments.generateur < 1) return non(tr('Le Générateur est à l’arrêt.'));
+  if (e.jetons >= PILLAGE.jetonsMax) return non(tr('Tous tes jetons sont déjà là.'));
+  if (achatsRestants(j, now) < 1) return non(tr`Déjà ${PILLAGE.achatsJour} jetons achetés aujourd’hui : reviens demain.`);
   const cout = coutJeton(j);
-  if (j.energie < cout) return non(`Il faut ${cout} cristaux pour armer une barque de plus.`);
+  if (j.energie < cout) return non(tr`Il faut ${cout} cristaux pour armer une barque de plus.`);
   j.energie -= cout;
   const jour = jourDe(now);
   e.achats = { jour, n: (e.achats?.jour === jour ? e.achats.n : 0) + 1 };
   e.jetons++;
   if (e.jetons >= PILLAGE.jetonsMax) e.jetonsLe = now;
-  return { ok: true, message: 'Le Générateur charge une barque de plus : +1 jeton de pillage.' };
+  return { ok: true, message: tr('Le Générateur charge une barque de plus : +1 jeton de pillage.') };
 }
 
 export function peutPiller(j: Jeu, now: number): Resultat {
-  if (strateVaincue(j) < PILLAGE.strateMin) return non(`Les pillages s’ouvrent quand le gardien de la Strate −${PILLAGE.strateMin} est vaincu.`);
-  if (j.expedition) return non('Une expédition est déjà en cours.');
+  if (strateVaincue(j) < PILLAGE.strateMin) return non(tr`Les pillages s’ouvrent quand le gardien de la Strate −${PILLAGE.strateMin} est vaincu.`);
+  if (j.expedition) return non(tr('Une expédition est déjà en cours.'));
   majJetons(j, now);
-  if (etatPillage(j).jetons < 1) return non('Plus de jeton de pillage : le prochain revient bientôt.');
+  if (etatPillage(j).jetons < 1) return non(tr('Plus de jeton de pillage : le prochain revient bientôt.'));
   return { ok: true };
 }
 
@@ -327,7 +328,7 @@ export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rn
   const p = peutPiller(j, now);
   if (!p.ok) return p;
   const faits = faitsDuJour(j, now);
-  if (faits.includes(cible.id)) return non(`${cible.nom} a déjà été attaqué aujourd’hui.`);
+  if (faits.includes(cible.id)) return non(tr`${cible.nom} a déjà été attaqué aujourd’hui.`);
   const e = escouadePrete(j, escouade, undefined, undefined, 'courte');
   if (!e.ok) return e;
   const ecart = cible.force / Math.max(0.01, forceEscouade(j, escouade));
@@ -341,7 +342,7 @@ export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rn
   });
   x.combat.ennemi.porteur = cible.porteurs[0];
   x.combat.autres?.forEach((en, k) => { en.porteur = cible.porteurs[k + 1]; });
-  x.combat.journal = [`La garnison de ${cible.nom} sort à ta rencontre : ${cible.porteurs.slice(0, 3).map((id) => porteurDef(id).nom).join(', ')}.`];
+  x.combat.journal = [tr`La garnison de ${cible.nom} sort à ta rencontre : ${cible.porteurs.slice(0, 3).map((id) => porteurDef(id).nom).join(', ')}.`];
   payerRatelier(j, escouade, 'courte');
   quitterPostes(j, escouade);
   faits.push(cible.id);
@@ -349,7 +350,7 @@ export function piller(j: Jeu, escouade: string[], cible: Cible, now: number, rn
   if (etat.jetons >= PILLAGE.jetonsMax) etat.jetonsLe = now;
   etat.jetons--;
   j.expedition = { ...x, pillage: { cible: cible.id, nom: cible.nom, ...(cible.bot ? { bot: true } : {}), ecart: Math.round(ecart * 1000) / 1000, base: butin.base, vol: butin.vol } };
-  log(j, `L’escouade part piller ${cible.nom}.`);
+  log(j, tr`L’escouade part piller ${cible.nom}.`);
   return { ok: true };
 }
 
@@ -382,13 +383,13 @@ export function remonterPillage(j: Jeu, now: number): RetourPillage | null {
   for (const p of x.combat.porteurs) {
     const d = j.porteurs[p.id]!;
     usureAuRetour(j, p);
-    if (xp) { const avant = niveauPorteur(j, p.id).niveau; const n = gagnerXp(j, p.id, xp); if (n && n > avant) log(j, `${porteurDef(p.id).nom} passe au niveau ${n} !`); }
+    if (xp) { const avant = niveauPorteur(j, p.id).niveau; const n = gagnerXp(j, p.id, xp); if (n && n > avant) log(j, tr`${porteurDef(p.id).nom} passe au niveau ${n} !`); }
     if (victoire) { const f = (d.faits ??= {}); f.combats = (f.combats ?? 0) + 1; }
   }
   j.expedition = null;
   log(j, victoire
-    ? `Pillage réussi à ${pi.nom} : +${gain} minerai${pi.vol ? `, dont ${pi.vol} pris à son coffre` : ''}.`
-    : `Pillage repoussé à ${pi.nom}.${perte ? ` L’escouade laisse ${perte} minerai de son coffre.` : ''}`);
+    ? tr`Pillage réussi à ${pi.nom} : +${gain} minerai${pi.vol ? tr`, dont ${pi.vol} pris à son coffre` : ''}.`
+    : tr`Pillage repoussé à ${pi.nom}.${perte ? tr` L’escouade laisse ${perte} minerai de son coffre.` : ''}`);
   return { nom: pi.nom, victoire, gain, perte };
 }
 
@@ -416,14 +417,14 @@ export function subirPillages(j: Jeu, subis: PillageSubi[]): string[] {
       etat.coffre -= pris;
       j.composants -= pris;
       noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: false, composants: -pris, le: s.le });
-      l.push(`${s.nom} a pillé ton district${pris ? ` et pris ${pris} minerai de ton coffre` : ''}.`);
+      l.push(tr`${s.nom} a pillé ton district${pris ? tr` et pris ${pris} minerai de ton coffre` : ''}.`);
     } else {
       const gagne = Math.min(Math.max(0, Math.floor(s.perte)), plafond);
       etat.coffre += gagne;
       j.composants += gagne;
       noterHistorique(j, { sens: 'defense', nom: s.nom, gagne: true, composants: gagne, le: s.le });
       const venus = confier(j, CONFIANCE.defense, 'defense');
-      l.push(`Ta garnison a repoussé ${s.nom}${gagne ? ` : +${gagne} minerai laissé dans ton coffre` : ''}.${venus ? ` Le quartier l’a vu : ${venus > 1 ? `${venus} familles te rejoignent` : 'une famille te rejoint'}.` : ' Le quartier l’a vu.'}`);
+      l.push(tr`Ta garnison a repoussé ${s.nom}${gagne ? tr` : +${gagne} minerai laissé dans ton coffre` : ''}.${venus ? tr` Le quartier l’a vu : ${venus > 1 ? `${venus} familles te rejoignent` : 'une famille te rejoint'}.` : tr(' Le quartier l’a vu.')}`);
     }
   }
   // on ne garde que deux jours d'attaques : assez pour le bouclier et pour ne rien compter deux fois

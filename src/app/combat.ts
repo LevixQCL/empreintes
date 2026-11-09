@@ -19,6 +19,10 @@ import { app, K, pause, racine, reduit } from './etat';
 import { afficher } from './rendu';
 import { sauver } from './synchro';
 
+/** les effets que le moteur nomme par un mot fixe (impact.ts s'en sert pour choisir l'animation) : affichés traduits */
+const EFFETS_AFFICHES: Record<string, string> = { Fissure: t('Fissure'), Troublé: t('Troublé'), Élan: t('Élan'), Dissonance: t('Dissonance') };
+import { t } from '../core/i18n';
+
 // ---------- Combat ----------
 
 export function finPour(): Fin | null {
@@ -27,73 +31,73 @@ export function finPour(): Fin | null {
   const s = x.combat;
   if (x.carte && x.phase === 'carte') return null;
   if (x.tutoriel) {
-    if (s.issue === 'victoire') return { titre: 'La porte cède', texte: 'Le gardien se dissipe en poussière lumineuse. Derrière lui, des cristaux aux souvenirs mélangés, et un vieux papier tamponné.', bouton: 'Remonter avec ce qu’on a trouvé', action: 'remonter' };
-    if (s.issue === 'defaite') return { titre: 'Repoussés', texte: 'Le gardien a eu le dessus, cette fois. Vise les suites et protège-toi quand il annonce une grosse attaque.', bouton: 'Remonter et réessayer', action: 'remonter' };
+    if (s.issue === 'victoire') return { titre: t('La porte cède'), texte: t('Le gardien se dissipe en poussière lumineuse. Derrière lui, des cristaux aux souvenirs mélangés, et un vieux papier tamponné.'), bouton: t('Remonter avec ce qu’on a trouvé'), action: 'remonter' };
+    if (s.issue === 'defaite') return { issue: 'defaite', titre: t('Repoussés'), texte: t('Le gardien a eu le dessus, cette fois. Vise les suites et protège-toi quand il annonce une grosse attaque.'), bouton: t('Remonter et réessayer'), action: 'remonter' };
     return null;
   }
   if (x.fleche?.defi) {
     const q = x.fleche.quai;
-    const nom = x.fleche.gardien?.nom ?? 'le gardien';
-    if (s.issue === 'victoire') return { titre: `Le quai ${q} est à toi`, texte: `L’escouade de ${nom} cède la passerelle. Une copie de ton escouade y monte la garde ; les Hauts te versent le gage du quai.`, bouton: 'Prendre le quai', action: 'remonter' };
-    if (s.issue === 'defaite') return { titre: `${nom} tient bon`, texte: `Le quai ${q} reste à ${nom}. Ta montée, elle, ne bouge pas : seule l’Usure compte.`, bouton: 'Rentrer au district', action: 'remonter' };
+    const nom = x.fleche.gardien?.nom ?? t('le gardien');
+    if (s.issue === 'victoire') return { titre: t`Le quai ${q} est à toi`, texte: t`L’escouade de ${nom} cède la passerelle. Une copie de ton escouade y monte la garde ; les Hauts te versent le gage du quai.`, bouton: t('Prendre le quai'), action: 'remonter' };
+    if (s.issue === 'defaite') return { titre: t`${nom} tient bon`, texte: t`Le quai ${q} reste à ${nom}. Ta montée, elle, ne bouge pas : seule l’Usure compte.`, bouton: t('Rentrer au district'), action: 'remonter' };
     return null;
   }
   if (x.fleche) {
     const q = x.fleche.quai;
     const f = J.etatFleche(app.jeu);
-    if (s.issue === 'victoire') return { titre: `Le quai ${q} est à toi`, texte: `Les gardiens des Hauts s’écartent de la passerelle. L’escouade monte au quai ${Math.min(J.FLECHE.quais, q + J.pas(q))}.`, bouton: 'Prendre le quai', action: 'remonter' };
+    if (s.issue === 'victoire') return { titre: t`Le quai ${q} est à toi`, texte: t`Les gardiens des Hauts s’écartent de la passerelle. L’escouade monte au quai ${Math.min(J.FLECHE.quais, q + J.pas(q))}.`, bouton: t('Prendre le quai'), action: 'remonter' };
     if (s.issue === 'defaite') {
       const bas = Math.max(J.plancher(f.record), q - J.pas(q));
-      return { titre: 'Repoussés sur la passerelle', texte: `Les gardiens du quai ${q} tiennent bon.${bas < q ? ` L’escouade redescend au quai ${bas}.` : ' L’escouade garde son quai gravé.'} Une escouade mieux montée, ou mieux reposée, passera.`, bouton: 'Rentrer au district', action: 'remonter' };
+      return { issue: 'defaite', titre: t('Repoussés sur la passerelle'), texte: t`Les gardiens du quai ${q} tiennent bon.${bas < q ? t` L’escouade redescend au quai ${bas}.` : t(' L’escouade garde son quai gravé.')} Une escouade mieux montée, ou mieux reposée, passera.`, bouton: t('Rentrer au district'), action: 'remonter' };
     }
     return null;
   }
   if (x.pillage) {
     const p = x.pillage;
-    if (s.issue === 'victoire') return { titre: `${p.nom} est pillé`, texte: `La garnison se replie. L’escouade rapporte ${p.base + p.vol} minerai${p.vol ? `, dont ${p.vol} pris à son coffre` : ''}.`, bouton: 'Rentrer avec le butin', action: 'remonter' };
+    if (s.issue === 'victoire') return { titre: t`${p.nom} est pillé`, texte: t`La garnison se replie. L’escouade rapporte ${p.base + p.vol} minerai${p.vol ? t`, dont ${p.vol} pris à son coffre` : ''}.`, bouton: t('Rentrer avec le butin'), action: 'remonter' };
     if (s.issue === 'defaite') {
       const perte = Math.floor(J.etatPillage(app.jeu).coffre * J.PILLAGE.perteDefaite);
-      return { titre: 'Repoussés par la garnison', texte: `${p.nom} tient bon.${perte ? ` L’escouade laisse ${perte} minerai de son coffre en repartant.` : ''} Une garnison plus faible, ou une escouade mieux montée, passera.`, bouton: 'Rentrer au district', action: 'remonter' };
+      return { issue: 'defaite', titre: t('Repoussés par la garnison'), texte: t`${p.nom} tient bon.${perte ? t` L’escouade laisse ${perte} minerai de son coffre en repartant.` : ''} Une garnison plus faible, ou une escouade mieux montée, passera.`, bouton: t('Rentrer au district'), action: 'remonter' };
     }
     return null;
   }
   if (x.epreuve) {
     const ep = J.epreuveDef(x.epreuve);
-    const nom = s.autres?.length ? 'Le groupe' : ennemiDef(s.ennemi.id).nom;
+    const nom = s.autres?.length ? t('Le groupe') : ennemiDef(s.ennemi.id).nom;
     // « Le couloir sans halte » : on enchaîne, sans PV rendus
-    if (s.issue === 'victoire' && !x.terminee) return { titre: `Combat ${x.index + 1} sur ${x.sequence.length}`, texte: `${nom} se dissipe. Pas de halte : l’escouade garde ses blessures et avance vers le combat suivant.`, bouton: 'Combat suivant', action: 'suivant' };
+    if (s.issue === 'victoire' && !x.terminee) return { titre: t`Combat ${x.index + 1} sur ${x.sequence.length}`, texte: t`${nom} se dissipe. Pas de halte : l’escouade garde ses blessures et avance vers le combat suivant.`, bouton: t('Combat suivant'), action: 'suivant' };
     if (s.issue === 'victoire') {
       const deja = J.epreuveReussie(app.jeu, x.epreuve, false) && (!x.felee || J.epreuveReussie(app.jeu, x.epreuve, true));
-      const gain = deja ? ' Tu l’avais déjà réussie cette semaine : pas de nouvelle récompense.'
-        : x.felee && !J.epreuveReussie(app.jeu, x.epreuve, false) ? ` Fêlée du premier coup : deux cartes au choix et ${J.FELEE.eclats} Éclats t’attendent au district.`
-        : x.felee ? ` Une carte au choix et ${J.FELEE.eclats} Éclats t’attendent au district.` : ' Une carte au choix t’attend au district. La Fêlée est ouverte.';
-      return { titre: x.felee ? 'Épreuve Fêlée réussie' : 'Épreuve réussie', texte: `${ep?.nom ?? 'L’Épreuve'} : ${nom} se dissipe.${gain}`, bouton: 'Remonter au district', action: 'remonter' };
+      const gain = deja ? t(' Tu l’avais déjà réussie cette semaine : pas de nouvelle récompense.')
+        : x.felee && !J.epreuveReussie(app.jeu, x.epreuve, false) ? t` Fêlée du premier coup : deux cartes au choix et ${J.FELEE.eclats} Éclats t’attendent au district.`
+        : x.felee ? t` Une carte au choix et ${J.FELEE.eclats} Éclats t’attendent au district.` : t(' Une carte au choix t’attend au district. La Fêlée est ouverte.');
+      return { titre: x.felee ? t('Épreuve Fêlée réussie') : t('Épreuve réussie'), texte: t`${ep?.nom ?? t('L’Épreuve')} : ${nom} se dissipe.${gain}`, bouton: t('Remonter au district'), action: 'remonter' };
     }
     if (s.issue === 'defaite') {
-      const pourquoi = s.chrono && s.tour > s.chrono ? `${ennemiDef(s.ennemi.id).nom} s’est éteint dans le noir avant de tomber : il fallait frapper plus vite.`
-        : s.sansChute && C.vivants(s).length ? 'Un Porteur est tombé : l’Épreuve demandait que personne ne reste au fond.'
-        : 'L’escouade a été repoussée.';
-      return { titre: 'Épreuve manquée', texte: `${pourquoi} Tu peux la retenter quand tu veux cette semaine.`, bouton: 'Remonter au district', action: 'remonter' };
+      const pourquoi = s.chrono && s.tour > s.chrono ? t`${ennemiDef(s.ennemi.id).nom} s’est éteint dans le noir avant de tomber : il fallait frapper plus vite.`
+        : s.sansChute && C.vivants(s).length ? t('Un Porteur est tombé : l’Épreuve demandait que personne ne reste au fond.')
+        : t('L’escouade a été repoussée.');
+      return { titre: t('Épreuve manquée'), texte: t`${pourquoi} Tu peux la retenter quand tu veux cette semaine.`, bouton: t('Remonter au district'), action: 'remonter' };
     }
     return null;
   }
   if (s.issue === 'defaite') {
-    return { titre: 'Défaite', texte: `Toute l’escouade est à terre. Elle remonte avec la moitié du butin (${Math.floor(x.butin * J.DISTRICT.butinDefaite)} minerai) et devra se reposer à la Clinique.`, bouton: 'Remonter au district', action: 'remonter' };
+    return { issue: 'defaite', titre: t('Défaite'), texte: t`Toute l’escouade est à terre. Elle remonte avec la moitié du butin (${Math.floor(x.butin * J.DISTRICT.butinDefaite)} minerai) et devra se reposer à la Clinique.`, bouton: t('Remonter au district'), action: 'remonter' };
   }
   if (s.issue === 'victoire') {
-    const nom = s.autres?.length ? 'Le groupe' : ennemiDef(s.ennemi.id).nom;
+    const nom = s.autres?.length ? t('Le groupe') : ennemiDef(s.ennemi.id).nom;
     if (x.terminee) {
-      return { titre: `Strate −${x.strate} vaincue`, texte: `${nom} se disperse. L’escouade remonte avec ${x.butin} minerai.${x.strate === app.jeu.strate ? ' Le passage est libre : avec assez de creuseurs, l’étage suivant pourra être percé (voir la Tour du Noyau).' : ''}`, bouton: 'Remonter au district', action: 'remonter' };
+      return { titre: t`Strate −${x.strate} vaincue`, texte: t`${nom} se disperse. L’escouade remonte avec ${x.butin} minerai.${x.strate === app.jeu.strate ? t(' Le passage est libre : avec assez de creuseurs, l’étage suivant pourra être percé (voir la Tour du Noyau).') : ''}`, bouton: t('Remonter au district'), action: 'remonter' };
     }
     // le Rôdeur (explorer.ts) : enfui, il garde ses blessures ; abattu, son trophée attend au district
-    if (x.carte && s.enfui) return { titre: `${nom} s’enfuit`, texte: `${rodeurDef(s.ennemi.id)?.fuite ?? ''} Il ne lui reste que ${Math.round((s.ennemi.pv / s.ennemi.pvMax) * 100)} % de sa vie : ses blessures resteront jusqu’à la prochaine rencontre. Butin : ${x.butin} minerai.`, bouton: 'Retour à la carte', action: 'suivant' };
-    if (x.carte && rodeurDef(s.ennemi.id)) return { titre: `${nom} est abattu`, texte: `${rodeurDef(s.ennemi.id)!.chute} Son trophée t’attend au district : une carte au choix. Butin : ${x.butin} minerai.`, bouton: 'Retour à la carte', action: 'suivant' };
+    if (x.carte && s.enfui) return { titre: t`${nom} s’enfuit`, texte: t`${rodeurDef(s.ennemi.id)?.fuite ?? ''} Il ne lui reste que ${Math.round((s.ennemi.pv / s.ennemi.pvMax) * 100)} % de sa vie : ses blessures resteront jusqu’à la prochaine rencontre. Butin : ${x.butin} minerai.`, bouton: t('Retour à la carte'), action: 'suivant' };
+    if (x.carte && rodeurDef(s.ennemi.id)) return { titre: t`${nom} est abattu`, texte: t`${rodeurDef(s.ennemi.id)!.chute} Son trophée t’attend au district : une carte au choix. Butin : ${x.butin} minerai.`, bouton: t('Retour à la carte'), action: 'suivant' };
     if (x.carte) {
       // la marque de la quête relevée se dit tout de suite, avec ce qu'on a trouvé (31 octobre 2026)
       const q = x.carte.salles[x.carte.position]?.quete ? J.etapeQueteTrouvee(app.jeu, x.strate) : null;
-      return { titre: q ? 'Victoire · marque de la quête relevée' : 'Victoire', texte: (q ? `✦ ${q.nom}, étape ${q.etape} sur ${q.total} : ${q.texte} ` : '') + `${nom} se dissipe. Butin : ${x.butin} minerai. L’escouade reprend sa route : les PV remontent surtout aux campements.`, bouton: 'Retour à la carte', action: 'suivant' };
+      return { issue: 'victoire', titre: q ? t('Victoire · marque de la quête relevée') : t('Victoire'), texte: (q ? t`✦ ${q.nom}, étape ${q.etape} sur ${q.total} : ${q.texte} ` : '') + t`${nom} se dissipe. Butin : ${x.butin} minerai. L’escouade reprend sa route : les PV remontent surtout aux campements.`, bouton: t('Retour à la carte'), action: 'suivant' };
     }
-    return { titre: 'Victoire', texte: `${nom} se dissipe. Butin : ${x.butin} minerai. L’escouade souffle un peu (+50 % de PV) : tu continues, ou tu remontes avec ce que tu as ?`, bouton: 'Combat suivant', action: 'suivant', bouton2: 'Remonter avec le butin', action2: 'remonter' };
+    return { issue: 'victoire', titre: t('Victoire'), texte: t`${nom} se dissipe. Butin : ${x.butin} minerai. L’escouade souffle un peu (+50 % de PV) : tu continues, ou tu remontes avec ce que tu as ?`, bouton: t('Combat suivant'), action: 'suivant', bouton2: t('Remonter avec le butin'), action2: 'remonter' };
   }
   return null;
 }
@@ -115,12 +119,12 @@ function popsDe(ev: Evenement, etat?: CombatEtat) {
     ev = { ...ev, cible: `ennemi-${ev.rang}` } as Evenement;
   }
   // un coup sur l'ennemi grossit avec sa place dans la chaîne et avec sa taille : la fin d'une suite se lit de loin
-  if (ev.kind === 'degats') pop(ev.cible, ev.net ? `−${ev.net}` : 'bloqué', 'var(--danger)', ev.cible === 'ennemi' && ev.net ? Math.min(2, 1 + 0.18 * (K.actif ?? 0) + (ev.net >= 25 ? 0.25 : 0) + (ev.net >= 45 ? 0.2 : 0)) : 1);
+  if (ev.kind === 'degats') pop(ev.cible, ev.net ? `−${ev.net}` : t('bloqué'), 'var(--danger)', ev.cible === 'ennemi' && ev.net ? Math.min(2, 1 + 0.18 * (K.actif ?? 0) + (ev.net >= 25 ? 0.25 : 0) + (ev.net >= 45 ? 0.2 : 0)) : 1);
   else if (ev.kind === 'bouclier') pop(ev.cible, `+${ev.v}`, 'var(--ivory)');
   else if (ev.kind === 'soin' && ev.v) pop(ev.cible, `+${ev.v}`, 'var(--bio)');
   else if (ev.kind === 'echo') pop('escouade', nomEcho(ev.n ?? 3), 'var(--gold)', (ev.n ?? 3) >= 5 ? 1.6 : (ev.n ?? 3) >= 4 ? 1.3 : 1);
-  else if (ev.kind === 'effet') pop(ev.cible, ev.texte, 'var(--gold)');
-  else if (ev.kind === 'flux') pop('escouade', `+${ev.gain} Flux`, 'var(--gold)');
+  else if (ev.kind === 'effet') pop(ev.cible, EFFETS_AFFICHES[ev.texte] ?? ev.texte, 'var(--gold)');
+  else if (ev.kind === 'flux') pop('escouade', t`+${ev.gain} Flux`, 'var(--gold)');
 }
 export async function jouer(pas: Pas[], rapide = false) {
   K.verrou = true;

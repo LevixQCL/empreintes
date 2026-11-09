@@ -7,6 +7,7 @@ import type { Expedition } from '../expedition';
 import type { Palmares } from '../classements';
 import type { BatimentId, GesteDef, BonusMarques, Rarete } from '../types';
 import { FAMILLES_QUARTIER, familleDef } from '../familles';
+import { t as tr } from '../i18n';
 
 export const VERSION_JEU = 10;
 
@@ -131,13 +132,13 @@ export function gagnerXp(j: Jeu, id: string, xp: number): number | null {
   d.xp = (d.xp ?? 0) + Math.round(xp * (tete - avant >= 2 ? XP.rattrapage : 1));
   const apres = niveauPorteur(j, id).niveau;
   if (apres > avant) {
-    log(j, `${porteurDef(id).nom} passe au niveau ${apres} : ${pvNiveau(j, id)} PV.`);
+    log(j, tr`${porteurDef(id).nom} passe au niveau ${apres} : ${pvNiveau(j, id)} PV.`);
     const m = MARQUES[id];
     const pal = palierAuNiveau(apres);
     if (m && pal > palierAuNiveau(avant)) {
       log(j, progresMarque(j, id)?.acquise
-        ? `Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} : ${m.nom} ${deNom(porteurDef(id).nom)} — ${m.paliers[pal - 1]!.court}.`
-        : `${porteurDef(id).nom} est prêt pour sa Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} : il lui reste à gagner ${m.nom}.`);
+        ? tr`Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} : ${m.nom} ${deNom(porteurDef(id).nom)} — ${m.paliers[pal - 1]!.court}.`
+        : tr`${porteurDef(id).nom} est prêt pour sa Marque ${NOMS_PALIER_MARQUE[pal].toLowerCase()} : il lui reste à gagner ${m.nom}.`);
     }
     return apres;
   }
@@ -160,56 +161,56 @@ interface PalierMarque { court: string; texte: string; bonus: BonusMarques }
 // Affirmée au niveau 10 : le même effet, plus fort. Gravée au niveau 20 : l'effet change de nature.
 // Chaque palier gravé suit le rôle de la lignée : Augmentés frappent, Génés tiennent, Résonants orchestrent.
 export const PALIERS_MARQUE = [10, 20] as const;
-export const NOMS_PALIER_MARQUE = ['Gagnée', 'Affirmée', 'Gravée'] as const;
+export const NOMS_PALIER_MARQUE = [tr('Gagnée'), tr('Affirmée'), tr('Gravée')] as const;
 export const MARQUES: Record<string, MarqueDef> = {
-  ilka: { nom: 'Raccourci', fait: 'expeditions', seuil: 30, quoi: 'expéditions réussies', court: '+1 place au premier tour', bonus: { places: 1 },
-    texte: 'Elle connaît tous les raccourcis : +1 place dans la chaîne au premier tour de chaque combat.',
-    paliers: [{ court: '+1 place aussi au 2ᵉ tour', texte: 'Elle a ses repères : la place en plus revient au deuxième tour.', bonus: { places2: 1 } },
-      { court: '+2 places au 1er tour, +1 au 2ᵉ', texte: 'Elle ouvre la voie : 2 places de plus au premier tour, et 1 au deuxième.', bonus: { places: 2 } }] },
-  doran: { nom: 'Fondations', fait: 'fondations', seuil: 20, quoi: 'combats dans les Seuils', court: '8 de bouclier au départ', bonus: { bouclier: 8 },
-    texte: 'Il couvre les siens : chaque combat commence avec 8 de bouclier d’escouade.',
-    paliers: [{ court: '12 de bouclier au départ', texte: 'Il tient plus large : chaque combat commence avec 12 de bouclier d’escouade.', bonus: { bouclier: 12 } },
-      { court: 'le bouclier se reforme une fois', texte: 'Il relève le mur : une fois par combat, quand l’escouade passe sous la moitié de ses PV, 12 de bouclier se reforment.', bonus: { rempart: 12 } }] },
-  vela: { nom: 'Lectrice', fait: 'anciens', seuil: 10, quoi: 'empreintes anciennes vaincues', court: 'insensible à la Dissonance', bonus: { lucide: true },
-    texte: 'Elle lit les Échos : la Dissonance n’a plus de prise sur l’escouade.',
-    paliers: [{ court: 'lit la 1re intention dans le brouillard', texte: 'Elle lit à travers la brume : sous le brouillard, ce que prépare chaque ennemi au premier tour se voit en entier.', bonus: { lecture: true } },
-      { court: 'renvoie la Dissonance', texte: 'Elle retourne le brouillage : un ennemi qui tente une Dissonance perd 30 % de sa prochaine attaque.', bonus: { retourne: 0.3 } }] },
-  sasha: { nom: 'Seconde chance', fait: 'scellees', seuil: 10, quoi: 'salles scellées ouvertes', court: 'relève le premier qui tombe', bonus: { releve: 0.25 },
-    texte: 'Il remet tout le monde d’aplomb : une fois par combat, le premier Porteur qui tombe se relève avec 25 % de ses PV.',
-    paliers: [{ court: 'relève à 35 % des PV', texte: 'Il remet d’aplomb plus solidement : le premier qui tombe se relève avec 35 % de ses PV.', bonus: { releve: 0.35 } },
-      { court: 'relève deux fois par combat', texte: 'Personne ne reste au sol : la Seconde chance sert deux fois par combat.', bonus: { releveFois: 2 } }] },
-  nuit: { nom: 'Œil de nuit', fait: 'abysses', seuil: 25, quoi: 'combats gagnés sous la Strate −3', court: 'l’ennemi commence fissuré', bonus: { fissure: 0.25 },
-    texte: 'Elle voit la faille dans le noir : l’ennemi visé commence chaque combat fissuré (+25 % de dégâts pendant deux tours).',
-    paliers: [{ court: 'fissure de 3 tours', texte: 'La faille reste ouverte : la Fissure du départ dure trois tours.', bonus: { fissureTours: 3 } },
-      { court: 'tout le groupe commence fissuré', texte: 'Elle voit toutes les failles : chaque ennemi du groupe commence le combat fissuré.', bonus: { fissureGroupe: true } }] },
-  aurel: { nom: 'Ombre courtoise', fait: 'gardiens', seuil: 6, quoi: 'gardiens vaincus', court: '1re attaque ennemie −40 %', bonus: { desarme: 0.4 },
-    texte: 'Son ombre retient le premier coup : la première attaque de chaque ennemi perd 40 % de sa force, quel que soit le tour où elle tombe.',
-    paliers: [{ court: '1re attaque ennemie −50 %', texte: 'Son ombre pèse plus : la première attaque de chaque ennemi perd 50 % de sa force.', bonus: { desarme: 0.5 } },
-      { court: 'le coup retenu donne 1 Flux', texte: 'Il retourne la politesse : chaque coup retenu par son ombre donne 1 Flux à l’escouade.', bonus: { retenueFlux: 1 } }] },
-  coursier: { nom: 'Foulée', fait: 'combats', seuil: 40, quoi: 'combats gagnés', court: '1 Flux au départ', bonus: { flux: 1 },
-    texte: 'Il court devant l’escouade : chaque combat commence avec 1 Flux.',
-    paliers: [{ court: '2 Flux au départ contre un gardien', texte: 'Il a repéré l’antre : contre un gardien, le combat commence avec 2 Flux.', bonus: { fluxGardien: 2 } },
-      { court: 'fuir ne coûte plus de butin', texte: 'Il connaît la route du retour : remonter en fuyant ne fait plus perdre de minerai.', bonus: { fuiteSure: true } }] },
-  docker: { nom: 'Bras de quai', fait: 'missions', seuil: 8, quoi: 'missions accomplies', court: 'garde 25 % du bouclier', bonus: { garde: 0.25 },
-    texte: 'Il ne lâche rien : à chaque tour, l’escouade garde 25 % de son bouclier pour le tour suivant.',
-    paliers: [{ court: 'garde 35 % du bouclier', texte: 'Il serre plus fort : l’escouade garde 35 % de son bouclier d’un tour à l’autre.', bonus: { garde: 0.35 } },
-      { court: 'le bouclier restant soigne', texte: 'Rien ne se perd au quai : à la victoire, la moitié du bouclier restant soigne le Porteur le plus blessé.', bonus: { soinQuai: 0.5 } }] },
-  guetteur: { nom: 'Guet', fait: 'anciens', seuil: 12, quoi: 'empreintes anciennes vaincues', court: '+1 carte au premier tour', bonus: { main: 1 },
-    texte: 'Il voit venir de loin : au premier tour de chaque combat, ta main compte une carte de plus.',
-    paliers: [{ court: 'voit l’intention d’après', texte: 'Il voit plus loin : à côté de l’intention, une petite pastille montre ce que l’ennemi visé prépare au tour d’après.', bonus: { presage: true } },
-      { court: '+1 carte à chaque phase de gardien', texte: 'Rien ne le surprend : quand un gardien change de phase, ta main prend une carte de plus.', bonus: { phaseMain: 1 } }] },
-  kessa: { nom: 'Née-de-mue', fait: 'fondations', seuil: 25, quoi: 'combats dans les Seuils', court: 'le bouclier renvoie 30 % des coups', bonus: { chitine: 0.3 },
-    texte: 'Sa chitine pique qui la frappe : quand le bouclier d’escouade encaisse un coup, 30 % de ce qu’il absorbe revient à l’ennemi.',
-    paliers: [{ court: 'le bouclier renvoie 40 %', texte: 'Sa chitine durcit : 40 % de ce que le bouclier d’escouade absorbe revient à l’ennemi.', bonus: { chitine: 0.4 } },
-      { court: 'le renvoi peut achever', texte: 'Sa mue est complète : le renvoi de la chitine peut achever l’ennemi qui frappe.', bonus: { chitineAcheve: true } }] },
-  liane: { nom: 'Galons blancs', fait: 'scellees', seuil: 12, quoi: 'salles scellées ouvertes', court: '+1 Flux par Fêlure résonnante', bonus: { felureFlux: 1 },
-    texte: 'Chaque implant est un galon : une Fêlure brisée par une chaîne qui résonne donne 1 Flux de plus.',
-    paliers: [{ court: '+2 Flux par Fêlure contre un gardien', texte: 'Ses galons pèsent face aux grands : contre un gardien, chaque Fêlure brisée en résonance donne 2 Flux de plus.', bonus: { felureFluxGardien: 2 } },
-      { court: 'Fêlure résonnante : +1 carte', texte: 'Chaque galon ouvre une porte : une Fêlure brisée en résonance fait aussi piocher une carte.', bonus: { felurePioche: 1 } }] },
-  joss: { nom: 'Nuit blanche', fait: 'combats', seuil: 35, quoi: 'combats gagnés', court: 'soigne le plus blessé chaque tour', bonus: { veille: 0.06 },
-    texte: 'Le quartier entier l’a veillé, il veille à son tour : à la fin de chaque tour ennemi, le Porteur le plus blessé récupère 6 % de ses PV.',
-    paliers: [{ court: 'soigne le plus blessé de 8 %', texte: 'Il veille plus fort : à la fin de chaque tour ennemi, le plus blessé récupère 8 % de ses PV.', bonus: { veille: 0.08 } },
-      { court: 'veille sur les deux plus blessés', texte: 'Il ne dort plus : à la fin de chaque tour ennemi, les deux Porteurs les plus blessés récupèrent chacun 8 % de leurs PV.', bonus: { veilleDeux: true } }] },
+  ilka: { nom: tr('Raccourci'), fait: 'expeditions', seuil: 30, quoi: tr('expéditions réussies'), court: tr('+1 place au premier tour'), bonus: { places: 1 },
+    texte: tr('Elle connaît tous les raccourcis : +1 place dans la chaîne au premier tour de chaque combat.'),
+    paliers: [{ court: tr('+1 place aussi au 2ᵉ tour'), texte: tr('Elle a ses repères : la place en plus revient au deuxième tour.'), bonus: { places2: 1 } },
+      { court: tr('+2 places au 1er tour, +1 au 2ᵉ'), texte: tr('Elle ouvre la voie : 2 places de plus au premier tour, et 1 au deuxième.'), bonus: { places: 2 } }] },
+  doran: { nom: tr('Fondations'), fait: 'fondations', seuil: 20, quoi: tr('combats dans les Seuils'), court: tr('8 de bouclier au départ'), bonus: { bouclier: 8 },
+    texte: tr('Il couvre les siens : chaque combat commence avec 8 de bouclier d’escouade.'),
+    paliers: [{ court: tr('12 de bouclier au départ'), texte: tr('Il tient plus large : chaque combat commence avec 12 de bouclier d’escouade.'), bonus: { bouclier: 12 } },
+      { court: tr('le bouclier se reforme une fois'), texte: tr('Il relève le mur : une fois par combat, quand l’escouade passe sous la moitié de ses PV, 12 de bouclier se reforment.'), bonus: { rempart: 12 } }] },
+  vela: { nom: tr('Lectrice'), fait: 'anciens', seuil: 10, quoi: 'empreintes anciennes vaincues', court: tr('insensible à la Dissonance'), bonus: { lucide: true },
+    texte: tr('Elle lit les Échos : la Dissonance n’a plus de prise sur l’escouade.'),
+    paliers: [{ court: tr('lit la 1re intention dans le brouillard'), texte: tr('Elle lit à travers la brume : sous le brouillard, ce que prépare chaque ennemi au premier tour se voit en entier.'), bonus: { lecture: true } },
+      { court: tr('renvoie la Dissonance'), texte: tr('Elle retourne le brouillage : un ennemi qui tente une Dissonance perd 30 % de sa prochaine attaque.'), bonus: { retourne: 0.3 } }] },
+  sasha: { nom: tr('Seconde chance'), fait: 'scellees', seuil: 10, quoi: tr('salles scellées ouvertes'), court: tr('relève le premier qui tombe'), bonus: { releve: 0.25 },
+    texte: tr('Il remet tout le monde d’aplomb : une fois par combat, le premier Porteur qui tombe se relève avec 25 % de ses PV.'),
+    paliers: [{ court: tr('relève à 35 % des PV'), texte: tr('Il remet d’aplomb plus solidement : le premier qui tombe se relève avec 35 % de ses PV.'), bonus: { releve: 0.35 } },
+      { court: tr('relève deux fois par combat'), texte: tr('Personne ne reste au sol : la Seconde chance sert deux fois par combat.'), bonus: { releveFois: 2 } }] },
+  nuit: { nom: tr('Œil de nuit'), fait: 'abysses', seuil: 25, quoi: tr('combats gagnés sous la Strate −3'), court: tr('l’ennemi commence fissuré'), bonus: { fissure: 0.25 },
+    texte: tr('Elle voit la faille dans le noir : l’ennemi visé commence chaque combat fissuré (+25 % de dégâts pendant deux tours).'),
+    paliers: [{ court: tr('fissure de 3 tours'), texte: tr('La faille reste ouverte : la Fissure du départ dure trois tours.'), bonus: { fissureTours: 3 } },
+      { court: tr('tout le groupe commence fissuré'), texte: tr('Elle voit toutes les failles : chaque ennemi du groupe commence le combat fissuré.'), bonus: { fissureGroupe: true } }] },
+  aurel: { nom: tr('Ombre courtoise'), fait: 'gardiens', seuil: 6, quoi: 'gardiens vaincus', court: tr('1re attaque ennemie −40 %'), bonus: { desarme: 0.4 },
+    texte: tr('Son ombre retient le premier coup : la première attaque de chaque ennemi perd 40 % de sa force, quel que soit le tour où elle tombe.'),
+    paliers: [{ court: tr('1re attaque ennemie −50 %'), texte: tr('Son ombre pèse plus : la première attaque de chaque ennemi perd 50 % de sa force.'), bonus: { desarme: 0.5 } },
+      { court: tr('le coup retenu donne 1 Flux'), texte: tr('Il retourne la politesse : chaque coup retenu par son ombre donne 1 Flux à l’escouade.'), bonus: { retenueFlux: 1 } }] },
+  coursier: { nom: tr('Foulée'), fait: 'combats', seuil: 40, quoi: tr('combats gagnés'), court: tr('1 Flux au départ'), bonus: { flux: 1 },
+    texte: tr('Il court devant l’escouade : chaque combat commence avec 1 Flux.'),
+    paliers: [{ court: tr('2 Flux au départ contre un gardien'), texte: tr('Il a repéré l’antre : contre un gardien, le combat commence avec 2 Flux.'), bonus: { fluxGardien: 2 } },
+      { court: tr('fuir ne coûte plus de butin'), texte: tr('Il connaît la route du retour : remonter en fuyant ne fait plus perdre de minerai.'), bonus: { fuiteSure: true } }] },
+  docker: { nom: tr('Bras de quai'), fait: 'missions', seuil: 8, quoi: 'missions accomplies', court: tr('garde 25 % du bouclier'), bonus: { garde: 0.25 },
+    texte: tr('Il ne lâche rien : à chaque tour, l’escouade garde 25 % de son bouclier pour le tour suivant.'),
+    paliers: [{ court: tr('garde 35 % du bouclier'), texte: tr('Il serre plus fort : l’escouade garde 35 % de son bouclier d’un tour à l’autre.'), bonus: { garde: 0.35 } },
+      { court: tr('le bouclier restant soigne'), texte: tr('Rien ne se perd au quai : à la victoire, la moitié du bouclier restant soigne le Porteur le plus blessé.'), bonus: { soinQuai: 0.5 } }] },
+  guetteur: { nom: tr('Guet'), fait: 'anciens', seuil: 12, quoi: 'empreintes anciennes vaincues', court: tr('+1 carte au premier tour'), bonus: { main: 1 },
+    texte: tr('Il voit venir de loin : au premier tour de chaque combat, ta main compte une carte de plus.'),
+    paliers: [{ court: tr('voit l’intention d’après'), texte: tr('Il voit plus loin : à côté de l’intention, une petite pastille montre ce que l’ennemi visé prépare au tour d’après.'), bonus: { presage: true } },
+      { court: tr('+1 carte à chaque phase de gardien'), texte: tr('Rien ne le surprend : quand un gardien change de phase, ta main prend une carte de plus.'), bonus: { phaseMain: 1 } }] },
+  kessa: { nom: tr('Née-de-mue'), fait: 'fondations', seuil: 25, quoi: tr('combats dans les Seuils'), court: tr('le bouclier renvoie 30 % des coups'), bonus: { chitine: 0.3 },
+    texte: tr('Sa chitine pique qui la frappe : quand le bouclier d’escouade encaisse un coup, 30 % de ce qu’il absorbe revient à l’ennemi.'),
+    paliers: [{ court: tr('le bouclier renvoie 40 %'), texte: tr('Sa chitine durcit : 40 % de ce que le bouclier d’escouade absorbe revient à l’ennemi.'), bonus: { chitine: 0.4 } },
+      { court: tr('le renvoi peut achever'), texte: tr('Sa mue est complète : le renvoi de la chitine peut achever l’ennemi qui frappe.'), bonus: { chitineAcheve: true } }] },
+  liane: { nom: tr('Galons blancs'), fait: 'scellees', seuil: 12, quoi: tr('salles scellées ouvertes'), court: tr('+1 Flux par Fêlure résonnante'), bonus: { felureFlux: 1 },
+    texte: tr('Chaque implant est un galon : une Fêlure brisée par une chaîne qui résonne donne 1 Flux de plus.'),
+    paliers: [{ court: tr('+2 Flux par Fêlure contre un gardien'), texte: tr('Ses galons pèsent face aux grands : contre un gardien, chaque Fêlure brisée en résonance donne 2 Flux de plus.'), bonus: { felureFluxGardien: 2 } },
+      { court: tr('Fêlure résonnante : +1 carte'), texte: tr('Chaque galon ouvre une porte : une Fêlure brisée en résonance fait aussi piocher une carte.'), bonus: { felurePioche: 1 } }] },
+  joss: { nom: tr('Nuit blanche'), fait: 'combats', seuil: 35, quoi: tr('combats gagnés'), court: tr('soigne le plus blessé chaque tour'), bonus: { veille: 0.06 },
+    texte: tr('Le quartier entier l’a veillé, il veille à son tour : à la fin de chaque tour ennemi, le Porteur le plus blessé récupère 6 % de ses PV.'),
+    paliers: [{ court: tr('soigne le plus blessé de 8 %'), texte: tr('Il veille plus fort : à la fin de chaque tour ennemi, le plus blessé récupère 8 % de ses PV.'), bonus: { veille: 0.08 } },
+      { court: tr('veille sur les deux plus blessés'), texte: tr('Il ne dort plus : à la fin de chaque tour ennemi, les deux Porteurs les plus blessés récupèrent chacun 8 % de leurs PV.'), bonus: { veilleDeux: true } }] },
 };
 /** Le palier d'une Marque à un niveau : 0 gagnée, 1 affirmée (niv. 10), 2 gravée (niv. 20) */
 export const palierAuNiveau = (niveau: number) => PALIERS_MARQUE.filter((n) => niveau >= n).length as 0 | 1 | 2;
@@ -257,9 +258,9 @@ export interface Choix {
 
 type TypeQuotidien = 'combats' | 'expedition' | 'chantier';
 export const QUOTIDIENS: Record<TypeQuotidien, { titre: string; objectif: number }> = {
-  combats: { titre: 'Gagner 4 combats', objectif: 4 },
-  expedition: { titre: 'Vaincre un gardien, réussir une fouille ou une Épreuve', objectif: 1 },
-  chantier: { titre: 'Lancer une amélioration de bâtiment', objectif: 1 },
+  combats: { titre: tr('Gagner 4 combats'), objectif: 4 },
+  expedition: { titre: tr('Vaincre un gardien, réussir une fouille ou une Épreuve'), objectif: 1 },
+  chantier: { titre: tr('Lancer une amélioration de bâtiment'), objectif: 1 },
 };
 
 /** Une séance d'entraînement à la Tour du Noyau : un niveau, payé au lancement (refonte du 28 octobre 2026) */
@@ -456,7 +457,7 @@ export const CLINIQUE_PV = { des: 3, parNiveau: 0.02 } as const;
 export const partPvClinique = (j: Pick<Jeu, 'batiments'>) => CLINIQUE_PV.parNiveau * Math.max(0, (j.batiments?.clinique ?? 0) - CLINIQUE_PV.des);
 export const bonusClinique = (j: Jeu, id: string) => Math.round(pvNiveau(j, id) * partPvClinique(j));
 /** la carte que Véla gagne après la dernière lecture : la sienne, en plus de ses 6 cartes */
-export const LECTURE_PROFONDE: GesteDef = { id: 'lecture-profonde', porteur: 'vela', nom: 'Lecture profonde', f: 8, type: 'atk', v: 16, effet: { type: 'accord' } };
+export const LECTURE_PROFONDE: GesteDef = { id: 'lecture-profonde', porteur: 'vela', nom: tr('Lecture profonde'), f: 8, type: 'atk', v: 16, effet: { type: 'accord' } };
 
 export interface Resultat {
   ok: boolean;
@@ -532,7 +533,7 @@ export const pvMinDepart = (j: Jeu, id: string) => Math.ceil(usureMax(j, id) * D
 /** Trop blessé pour redescendre : il se repose à la Clinique (null = il peut partir) */
 export function tropBlesse(j: Jeu, id: string): string | null {
   const manque = pvMinDepart(j, id) - pvMaxCombat(j, id);
-  return manque > 0 ? `${porteurDef(id).nom} se remet à la Clinique : il lui faut ${pvMinDepart(j, id)} PV pour redescendre (encore ${manque}).` : null;
+  return manque > 0 ? tr`${porteurDef(id).nom} se remet à la Clinique : il lui faut ${pvMinDepart(j, id)} PV pour redescendre (encore ${manque}).` : null;
 }
 /** L'Usure au retour d'un combat : les PV perdus, plus les malus (à terre, fuite, Coup d'éclat) */
 export function usureAuRetour(j: Jeu, p: { id: string; pv: number; pvMax: number; usureEclat?: number }, malus = 0): void {
@@ -619,7 +620,7 @@ export const CONFIANCE = {
 } as const;
 
 /** Les grands paliers, nommés */
-export const NOMS_CONFIANCE: Record<number, string> = { 0: 'Ils t’observent', 1: 'Ils t’écoutent', 4: 'Ils t’aident', 8: 'Tout le district te suit' };
+export const NOMS_CONFIANCE: Record<number, string> = { 0: tr('Ils t’observent'), 1: tr('Ils t’écoutent'), 4: tr('Ils t’aident'), 8: tr('Tout le district te suit') };
 export const nomConfiance = (palier: number) => NOMS_CONFIANCE[Object.keys(NOMS_CONFIANCE).map(Number).filter((n) => n <= palier).pop() ?? 0]!;
 
 /** Les familles arrivées au district */
@@ -651,7 +652,7 @@ export function accueillirFamille(j: Jeu, id: string, now = j.dernierTick): bool
   j.foyers.push(id);
   const l = semaineDesLignes(j, now);
   l.familles = [...(l.familles ?? []), id];
-  log(j, `${f.nom.charAt(0).toUpperCase()}${f.nom.slice(1)} rejoignent le district.`);
+  log(j, tr`${f.nom.charAt(0).toUpperCase()}${f.nom.slice(1)} rejoignent le district.`);
   return true;
 }
 
@@ -711,7 +712,7 @@ export function nuitDesLignes(j: Jeu, now: number): string | null {
   j.lignes.familles = [];
   j.lignes.derniere = { semaine: l.semaine, sources, gagnes: venues.length, bonus: deLaNuit.length, total: nbFoyers(j), familles: [...venues, ...deLaNuit] };
   const n = venues.length + deLaNuit.length;
-  const t = `La Nuit des lignes : la ligne bleue est repeinte plus haut. ${n ? `${n} famille${n > 1 ? 's t’ont' : ' t’a'} rejoint cette semaine${deLaNuit.length ? `, dont ${deLaNuit.length} cette nuit` : ''}.` : 'Le quartier parle de toi.'}`;
+  const t = tr`La Nuit des lignes : la ligne bleue est repeinte plus haut. ${n ? tr`${n} famille${n > 1 ? 's t’ont' : ' t’a'} rejoint cette semaine${deLaNuit.length ? tr`, dont ${deLaNuit.length} cette nuit` : ''}.` : tr('Le quartier parle de toi.')}`;
   log(j, t);
   return t;
 }

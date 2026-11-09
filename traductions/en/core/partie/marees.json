@@ -1,0 +1,369 @@
+{
+ "source": "src/core/partie/marees.ts",
+ "entrees": [
+  {
+   "fr": "Petite vive-eau",
+   "en": ""
+  },
+  {
+   "fr": "Grande marée",
+   "en": ""
+  },
+  {
+   "fr": "La vanne maîtresse",
+   "en": ""
+  },
+  {
+   "fr": "La mer n’est jamais descendue si bas : la vanne affleure.",
+   "en": ""
+  },
+  {
+   "fr": "Forcer la vanne maîtresse",
+   "en": ""
+  },
+  {
+   "fr": "Tenir l’amarre dans le reflux",
+   "en": ""
+  },
+  {
+   "fr": "Les sirènes de brume",
+   "en": ""
+  },
+  {
+   "fr": "Les sirènes chantent faux ; tant qu’elles chantent, la glace tient.",
+   "en": ""
+  },
+  {
+   "fr": "Tenir la chambre froide qui cède",
+   "en": ""
+  },
+  {
+   "fr": "Accorder les sirènes de brume",
+   "en": ""
+  },
+  {
+   "fr": "La verrière scellée",
+   "en": ""
+  },
+  {
+   "fr": "Une note juste, et le verre s’ouvre de lui-même.",
+   "en": ""
+  },
+  {
+   "fr": "Accorder la cloche",
+   "en": ""
+  },
+  {
+   "fr": "Briser la verrière scellée",
+   "en": ""
+  },
+  {
+   "fr": "Les jauges effacées",
+   "en": ""
+  },
+  {
+   "fr": "Le sel a mangé les chiffres ; les pompes, elles, se souviennent.",
+   "en": ""
+  },
+  {
+   "fr": "Relancer la pompe à sel",
+   "en": ""
+  },
+  {
+   "fr": "Lire les jauges effacées",
+   "en": ""
+  },
+  {
+   "fr": "L’auvent des lanternes",
+   "en": ""
+  },
+  {
+   "fr": "Les familles du marché gardent leurs lanternes allumées pour la barque.",
+   "en": ""
+  },
+  {
+   "fr": "Tenir l’auvent qui s’affaisse",
+   "en": ""
+  },
+  {
+   "fr": "Hisser la caisse des lanternes",
+   "en": ""
+  },
+  {
+   "fr": "Le pouls de la lampe",
+   "en": ""
+  },
+  {
+   "fr": "La lampe bat plus vite quand on approche. Personne ne sait pourquoi.",
+   "en": ""
+  },
+  {
+   "fr": "Suivre le pouls de la lampe",
+   "en": ""
+  },
+  {
+   "fr": "Tenir la barque dans le ressac",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier train des Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier train des Hauts n’a jamais été vidé.",
+   "en": ""
+  },
+  {
+   "fr": "Forcer l’aiguillage rouillé",
+   "en": ""
+  },
+  {
+   "fr": "Tenir le wagon qui penche",
+   "en": ""
+  },
+  {
+   "fr": "Lire l’horaire des lumières",
+   "en": ""
+  },
+  {
+   "fr": "Les semences d’avant",
+   "en": ""
+  },
+  {
+   "fr": "Sous le grain germé dorment les semences d’avant.",
+   "en": ""
+  },
+  {
+   "fr": "Tenir la brèche le temps d’un passage",
+   "en": ""
+  },
+  {
+   "fr": "Ouvrir la trappe du silo",
+   "en": ""
+  },
+  {
+   "fr": "Guider la barque dans les remous",
+   "en": ""
+  },
+  {
+   "fr": "L’écho de Sombreverse",
+   "en": ""
+  },
+  {
+   "fr": "Le pilier tombé répète encore les voix de ceux qui y vivaient.",
+   "en": ""
+  },
+  {
+   "fr": "Démêler les échos du pilier",
+   "en": ""
+  },
+  {
+   "fr": "Dégager l’escalier effondré",
+   "en": ""
+  },
+  {
+   "fr": "Tenir la voûte le temps de passer",
+   "en": ""
+  },
+  {
+   "fr": "La soute du Héron",
+   "en": ""
+  },
+  {
+   "fr": "Le Héron a gardé sa dernière cargaison, scellée sous la ligne d’eau.",
+   "en": ""
+  },
+  {
+   "fr": "Relancer le treuil de la soute",
+   "en": ""
+  },
+  {
+   "fr": "Retenir l’eau qui s’engouffre",
+   "en": ""
+  },
+  {
+   "fr": "Écouter la coque qui craque",
+   "en": ""
+  },
+  {
+   "fr": "La réserve des Salines",
+   "en": ""
+  },
+  {
+   "fr": "Les anciens du marché disent qu’une réserve entière dort sous les étals.",
+   "en": ""
+  },
+  {
+   "fr": "Tenir les étals qui flottent",
+   "en": ""
+  },
+  {
+   "fr": "Forcer la grille de la réserve",
+   "en": ""
+  },
+  {
+   "fr": "Retrouver le passage dans le noir",
+   "en": ""
+  },
+  {
+   "fr": "La lentille du phare couché",
+   "en": ""
+  },
+  {
+   "fr": "La lumière bat plus vite à l’approche.",
+   "en": ""
+  },
+  {
+   "fr": "Accorder la lampe qui pulse",
+   "en": ""
+  },
+  {
+   "fr": "Tenir la coque contre la houle",
+   "en": ""
+  },
+  {
+   "fr": "Démonter la lentille",
+   "en": ""
+  },
+  {
+   "fr": "Le brouillard levé",
+   "en": ""
+  },
+  {
+   "fr": "Une fois l’an, le brouillard se lève tout à fait.",
+   "en": ""
+  },
+  {
+   "fr": "Suivre la lumière qui s’éteint",
+   "en": ""
+  },
+  {
+   "fr": "Retrouver le chemin du retour",
+   "en": ""
+  },
+  {
+   "fr": "Tenir la barque dans le brouillard",
+   "en": ""
+  },
+  {
+   "fr": "Le coffre des jardiniers",
+   "en": ""
+  },
+  {
+   "fr": "Les racines ont poussé autour de la pierre.",
+   "en": ""
+  },
+  {
+   "fr": "Écarter le figuier étrangleur",
+   "en": ""
+  },
+  {
+   "fr": "Respirer sous le dôme noyé",
+   "en": ""
+  },
+  {
+   "fr": "Forcer le coffre des jardiniers",
+   "en": ""
+  },
+  {
+   "fr": "La salle des machines des Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Sous la gare, une machine attend qu’on la réveille depuis la montée des eaux.",
+   "en": ""
+  },
+  {
+   "fr": "Relancer la turbine noyée",
+   "en": ""
+  },
+  {
+   "fr": "Forcer la porte du sas",
+   "en": ""
+  },
+  {
+   "fr": "Écouter le rythme des eaux",
+   "en": ""
+  },
+  {
+   "fr": "Pas encore arrivé.",
+   "en": ""
+  },
+  {
+   "fr": "S’entraîne à la Tour.",
+   "en": ""
+  },
+  {
+   "fr": "Travaille au district.",
+   "en": ""
+  },
+  {
+   "fr": "Pas au district.",
+   "en": ""
+  },
+  {
+   "fr": "Se remet à la Clinique.",
+   "en": ""
+  },
+  {
+   "fr": "Ce contrat n’est plus proposé : la marée a tourné.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut avoir vaincu la Strate −{0} pour ce contrat.",
+   "en": ""
+  },
+  {
+   "fr": "Ce contrat est déjà rempli.",
+   "en": ""
+  },
+  {
+   "fr": "La gabare du passeur est déjà en mer : un contrat à la fois.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut {0} Porteurs différents, un par épreuve.",
+   "en": ""
+  },
+  {
+   "fr": "{0} embarquent sur la gabare : {1}, {2} ({3} % de chances).",
+   "en": ""
+  },
+  {
+   "fr": "{0}. Tout a tenu.",
+   "en": ""
+  },
+  {
+   "fr": "Au cœur de la ruine, trois pierres attendaient côte à côte : à toi de choisir celle qui rentre au district.",
+   "en": ""
+  },
+  {
+   "fr": "La gabare est rentrée à ras bord : {0} minerai arraché à la ruine.",
+   "en": ""
+  },
+  {
+   "fr": "La gabare est rentrée chargée : {0} minerai, et une pierre de plus pour tes cartes.",
+   "en": ""
+  },
+  {
+   "fr": "{0} n’a pas pu {1}{2} : l’équipe a dû faire demi-tour avant la marée descendante.",
+   "en": ""
+  },
+  {
+   "fr": "Ils rapportent {0} minerai, et surtout un Indice : la prochaine tentative sur ce contrat aura +{1} % de chances.",
+   "en": ""
+  },
+  {
+   "fr": "{0} réussie ({1}) : +{2} minerai{3}{4}.",
+   "en": ""
+  },
+  {
+   "fr": ", une carte au choix",
+   "en": ""
+  },
+  {
+   "fr": "{0} manquée ({1}) : +{2} minerai et un Indice pour la prochaine tentative.",
+   "en": ""
+  }
+ ]
+}

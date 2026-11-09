@@ -1,0 +1,373 @@
+{
+ "source": "src/ui/classements.ts",
+ "entrees": [
+  {
+   "fr": "à l’instant",
+   "en": ""
+  },
+  {
+   "fr": "er",
+   "en": ""
+  },
+  {
+   "fr": "{0} sur {1} en profondeur",
+   "en": ""
+  },
+  {
+   "fr": "Compare ta profondeur aux autres directeurs",
+   "en": ""
+  },
+  {
+   "fr": "Ton record de profondeur",
+   "en": ""
+  },
+  {
+   "fr": "Le Grand Tableau",
+   "en": ""
+  },
+  {
+   "fr": "Écrans des marchés · Vertiga",
+   "en": ""
+  },
+  {
+   "fr": "Les districts comparés, chaque jour, sur tous les écrans de la ville. Les Hauts adorent les palmarès.",
+   "en": ""
+  },
+  {
+   "fr": "Classements",
+   "en": ""
+  },
+  {
+   "fr": "bientôt",
+   "en": ""
+  },
+  {
+   "fr": "Période",
+   "en": ""
+  },
+  {
+   "fr": "Record",
+   "en": ""
+  },
+  {
+   "fr": "Cette semaine",
+   "en": ""
+  },
+  {
+   "fr": "{0} depuis lundi. Tout le monde repart de zéro dans",
+   "en": ""
+  },
+  {
+   "fr": "Les Strates gagnées",
+   "en": ""
+  },
+  {
+   "fr": "Les quais de record gagnés sur la Flèche",
+   "en": ""
+  },
+  {
+   "fr": "Les points de Registre gagnés",
+   "en": ""
+  },
+  {
+   "fr": "Comment ça se calcule ?",
+   "en": ""
+  },
+  {
+   "fr": "Le Tableau en ligne n’est pas branché sur cette version.",
+   "en": ""
+  },
+  {
+   "fr": "Protège ta partie pour te mesurer aux autres directeurs.",
+   "en": ""
+  },
+  {
+   "fr": "Connecte-toi pour te mesurer aux autres directeurs.",
+   "en": ""
+  },
+  {
+   "fr": "Protéger ma partie",
+   "en": ""
+  },
+  {
+   "fr": "Choisis ton pseudo pour apparaître sur le Tableau.",
+   "en": ""
+  },
+  {
+   "fr": "Choisir mon pseudo",
+   "en": ""
+  },
+  {
+   "fr": "Mise à jour…",
+   "en": ""
+  },
+  {
+   "fr": "Mis à jour {0}",
+   "en": ""
+  },
+  {
+   "fr": "Actualiser",
+   "en": ""
+  },
+  {
+   "fr": "Changer de pseudo",
+   "en": ""
+  },
+  {
+   "fr": "Ne plus apparaître",
+   "en": ""
+  },
+  {
+   "fr": "Confirmer",
+   "en": ""
+  },
+  {
+   "fr": "Retirer ton district du Tableau ? Tes records restent dans ta partie, et tu pourras revenir.",
+   "en": ""
+  },
+  {
+   "fr": "Me retirer",
+   "en": ""
+  },
+  {
+   "fr": "gardien vaincu",
+   "en": ""
+  },
+  {
+   "fr": "Quai {0} de la Flèche",
+   "en": ""
+  },
+  {
+   "fr": "Pas encore monté à la Flèche",
+   "en": ""
+  },
+  {
+   "fr": "+{0} quais cette semaine",
+   "en": ""
+  },
+  {
+   "fr": "Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "+{0} Strate cette semaine",
+   "en": ""
+  },
+  {
+   "fr": "+{0} points cette semaine",
+   "en": ""
+  },
+  {
+   "fr": "{0} cartes découvertes sur {1}",
+   "en": ""
+  },
+  {
+   "fr": "Les écrans s’allument…",
+   "en": ""
+  },
+  {
+   "fr": "Le Tableau ne répond pas pour l’instant.",
+   "en": ""
+  },
+  {
+   "fr": "Personne n’a encore progressé cette semaine. La première place est libre.",
+   "en": ""
+  },
+  {
+   "fr": "Personne n’est encore inscrit.",
+   "en": ""
+  },
+  {
+   "fr": "Encore",
+   "en": ""
+  },
+  {
+   "fr": "pour passer devant",
+   "en": ""
+  },
+  {
+   "fr": "Tu mènes le Tableau. {0} te suit.",
+   "en": ""
+  },
+  {
+   "fr": "Tu es le seul directeur pour l’instant :",
+   "en": ""
+  },
+  {
+   "fr": "invite tes amis à jouer",
+   "en": ""
+  },
+  {
+   "fr": "Podium",
+   "en": ""
+  },
+  {
+   "fr": "Tu n’apparais pas encore ici : {0}",
+   "en": ""
+  },
+  {
+   "fr": "progresse cette semaine pour entrer dans la course.",
+   "en": ""
+  },
+  {
+   "fr": "ta première publication arrive.",
+   "en": ""
+  },
+  {
+   "fr": "un gardien vaincu",
+   "en": ""
+  },
+  {
+   "fr": " · gardien vaincu",
+   "en": ""
+  },
+  {
+   "fr": "Strate −{0} atteinte",
+   "en": ""
+  },
+  {
+   "fr": "duels gagnés au Cercle des quais",
+   "en": ""
+  },
+  {
+   "fr": "{0} cartes découvertes",
+   "en": ""
+  },
+  {
+   "fr": "Recruteur",
+   "en": ""
+  },
+  {
+   "fr": "toi",
+   "en": ""
+  },
+  {
+   "fr": "le {0}",
+   "en": ""
+  },
+  {
+   "fr": "Les duels gagnés au Cercle des quais contre tes amis. Chaque ami compte une fois par semaine, et trois amis différents au plus : on ne monte pas en jouant toujours contre le même.",
+   "en": ""
+  },
+  {
+   "fr": "La semaine compte les Joutes gagnées depuis lundi.",
+   "en": ""
+  },
+  {
+   "fr": "Aller au Cercle",
+   "en": ""
+  },
+  {
+   "fr": "Le plus haut quai que ton escouade a atteint sur la Flèche ({0} quais). Une défaite te fait redescendre, mais ton record ne bouge pas.",
+   "en": ""
+  },
+  {
+   "fr": "À quai égal, le premier arrivé passe devant : la date est enregistrée au moment où tu atteins ton record.",
+   "en": ""
+  },
+  {
+   "fr": "La semaine compte les quais de record gagnés depuis lundi.",
+   "en": ""
+  },
+  {
+   "fr": "Monter à la Flèche",
+   "en": ""
+  },
+  {
+   "fr": "La Strate la plus profonde ouverte sous ton district. Vaincre son gardien te place devant ceux qui ne l’ont pas encore battu.",
+   "en": ""
+  },
+  {
+   "fr": "À profondeur égale, le premier arrivé passe devant : la date est enregistrée au moment où tu atteins la Strate.",
+   "en": ""
+  },
+  {
+   "fr": "Ton record ne redescend jamais. La semaine compte les Strates gagnées depuis lundi.",
+   "en": ""
+  },
+  {
+   "fr": "Chaque carte que tu possèdes vaut selon son métal, et gagne {0} % de sa valeur par niveau monté. Chaque carte différente découverte ajoute {1} points.",
+   "en": ""
+  },
+  {
+   "fr": "Découvrir compte plus que répéter : quarante doublons de fer pèsent moins que quelques cartes nouvelles. Le record ne redescend pas si tu recycles.",
+   "en": ""
+  },
+  {
+   "fr": "Les Joutes",
+   "en": ""
+  },
+  {
+   "fr": "avec le multijoueur",
+   "en": ""
+  },
+  {
+   "fr": "Bientôt, ton escouade pourra affronter celle d’un autre directeur. Ce tableau classera les combats gagnés contre d’autres joueurs.",
+   "en": ""
+  },
+  {
+   "fr": "Ton deck en défense",
+   "en": ""
+  },
+  {
+   "fr": "Quand tu ne joues pas, ton escouade se défend toute seule.",
+   "en": ""
+  },
+  {
+   "fr": "Les niveaux des cartes seront plafonnés : la stratégie compte plus que le temps passé.",
+   "en": ""
+  },
+  {
+   "fr": "Une saison par mois",
+   "en": ""
+  },
+  {
+   "fr": "Ton record reste, le classement de la saison repart à zéro.",
+   "en": ""
+  },
+  {
+   "fr": "Bienvenue, directeur",
+   "en": ""
+  },
+  {
+   "fr": "Choisis ton pseudo",
+   "en": ""
+  },
+  {
+   "fr": "Ton pseudo",
+   "en": ""
+  },
+  {
+   "fr": "Ton nom de directeur : c’est lui que les autres joueurs verront sur les écrans de Vertiga.",
+   "en": ""
+  },
+  {
+   "fr": "Ton nom de compte Google et ton e-mail ne sont jamais affichés.",
+   "en": ""
+  },
+  {
+   "fr": "3 à 18 caractères",
+   "en": ""
+  },
+  {
+   "fr": "Pseudo",
+   "en": ""
+  },
+  {
+   "fr": "Ton Porteur de tête d’escouade, {0}, sera ton portrait. Tu peux te retirer du Tableau quand tu veux.",
+   "en": ""
+  },
+  {
+   "fr": "Enregistrer",
+   "en": ""
+  },
+  {
+   "fr": "Valider mon pseudo",
+   "en": ""
+  },
+  {
+   "fr": "Plus tard (dans Plus, en tête du menu)",
+   "en": ""
+  }
+ ]
+}

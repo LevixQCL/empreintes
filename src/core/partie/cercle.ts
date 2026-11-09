@@ -14,6 +14,7 @@ import { moduleDef, porteurDef } from '../donnees';
 import type { EscouadeDuel } from '../duel';
 import type { Rarete } from '../types';
 import { CERCLE, CERCLE_OUVERTURE, jourDe, non, semaineDe, strateVaincue, type Jeu, type Resultat } from './etat';
+import { t } from '../i18n';
 
 /** Une proposition envoyée, en attente de la réponse de l'ami : sa carte et son prix sont retenus jusque-là */
 export interface EchangeEnAttente {
@@ -94,11 +95,11 @@ export const coutEchange = (id: string) => CERCLE.cout[metalDe(id)];
 /** Pourquoi une carte ne peut pas changer de mains (null : elle le peut). Vaut pour la carte donnée comme pour la reçue. */
 export function raisonNonEchangeable(j: Jeu, id: string): string | null {
   let m;
-  try { m = moduleDef(id); } catch { return 'Carte inconnue.'; }
-  if (m.legs) return 'Les cartes de l’Héritage ne quittent jamais le district.';
-  if (m.lien) return 'Une carte de parrainage ne s’échange pas : elle se reçoit avec un ami.';
-  if (m.rarete === 'nacre') return 'La nacre ne s’échange pas.';
-  if (RARETES.indexOf(m.rarete) > RARETES.indexOf(metalMax(j))) return `L’or s’échange à partir du niveau ${CERCLE.orAuNiveau} du Cercle.`;
+  try { m = moduleDef(id); } catch { return t('Carte inconnue.'); }
+  if (m.legs) return t('Les cartes de l’Héritage ne quittent jamais le district.');
+  if (m.lien) return t('Une carte de parrainage ne s’échange pas : elle se reçoit avec un ami.');
+  if (m.rarete === 'nacre') return t('La nacre ne s’échange pas.');
+  if (RARETES.indexOf(m.rarete) > RARETES.indexOf(metalMax(j))) return t`L’or s’échange à partir du niveau ${CERCLE.orAuNiveau} du Cercle.`;
   return null;
 }
 
@@ -113,31 +114,31 @@ export const souhaitsComblables = (j: Jeu, doublesAmi: readonly string[]) => eta
 /** Ajouter ou retirer une carte de ses souhaits */
 export function basculerSouhait(j: Jeu, id: string): Resultat {
   const c = etatCercle(j);
-  if (c.souhaits.includes(id)) { c.souhaits = c.souhaits.filter((x) => x !== id); return { ok: true, message: 'Retirée de tes souhaits.' }; }
+  if (c.souhaits.includes(id)) { c.souhaits = c.souhaits.filter((x) => x !== id); return { ok: true, message: t('Retirée de tes souhaits.') }; }
   const r = raisonNonEchangeable(j, id);
   if (r && !r.startsWith('L’or')) return non(r);
-  if (c.souhaits.length >= CERCLE.souhaitsMax) return non(`${CERCLE.souhaitsMax} souhaits au plus : retires-en un d’abord.`);
+  if (c.souhaits.length >= CERCLE.souhaitsMax) return non(t`${CERCLE.souhaitsMax} souhaits au plus : retires-en un d’abord.`);
   c.souhaits.push(id);
-  return { ok: true, message: 'Ajoutée à tes souhaits : tes amis la verront.' };
+  return { ok: true, message: t('Ajoutée à tes souhaits : tes amis la verront.') };
 }
 
 /** Mettre une carte en vitrine (ou l'en retirer) */
 export function basculerVitrine(j: Jeu, id: string): Resultat {
   const c = etatCercle(j);
   if (c.vitrine.includes(id)) { c.vitrine = c.vitrine.filter((x) => x !== id); return { ok: true }; }
-  if (!j.collection[id]) return non('Tu ne possèdes pas cette carte.');
-  if (c.vitrine.length >= vitrineMax(j)) return non(vitrineMax(j) ? `Ta vitrine tient ${vitrineMax(j)} carte${vitrineMax(j) > 1 ? 's' : ''} : améliore le Cercle pour en montrer plus.` : 'Construis d’abord le Cercle.');
+  if (!j.collection[id]) return non(t('Tu ne possèdes pas cette carte.'));
+  if (c.vitrine.length >= vitrineMax(j)) return non(vitrineMax(j) ? t`Ta vitrine tient ${vitrineMax(j)} carte${vitrineMax(j) > 1 ? 's' : ''} : améliore le Cercle pour en montrer plus.` : t('Construis d’abord le Cercle.'));
   c.vitrine.push(id);
   return { ok: true };
 }
 
 /** Ce qui manque pour échanger avec cet ami (null : rien) */
 export function raisonSansEchange(j: Jeu, amitieDepuis: number, now: number): string | null {
-  if (!cercleConstruit(j)) return 'Construis d’abord le Cercle des quais.';
+  if (!cercleConstruit(j)) return t('Construis d’abord le Cercle des quais.');
   const jours = (now - amitieDepuis) / 86_400_000;
   if (jours < CERCLE.amitieJours) {
     const reste = Math.ceil(CERCLE.amitieJours - jours);
-    return `Une amitié doit avoir ${CERCLE.amitieJours} jours avant le premier échange : encore ${reste} jour${reste > 1 ? 's' : ''}.`;
+    return t`Une amitié doit avoir ${CERCLE.amitieJours} jours avant le premier échange : encore ${reste} jour${reste > 1 ? 's' : ''}.`;
   }
   return null;
 }
@@ -148,13 +149,13 @@ export function verifierProposition(j: Jeu, donne: string, recoit: string, amiti
   if (sans) return non(sans);
   const r = raisonNonEchangeable(j, donne) ?? raisonNonEchangeable(j, recoit);
   if (r) return non(r);
-  if (metalDe(donne) !== metalDe(recoit)) return non('Un échange se fait entre deux cartes du même métal.');
-  if (donne === recoit) return non('C’est la même carte.');
-  if ((j.collection[donne]?.doublons ?? 0) < 1) return non('Il te faut un exemplaire en double de cette carte : ta carte, elle, ne part jamais.');
-  if (echangesRestants(j, now) < 1) return non('Plus d’échange possible aujourd’hui : le Cercle rouvre demain.');
-  if (etatCercle(j).enAttente.length >= ouvertesMax(j)) return non(`Tu as déjà ${ouvertesMax(j)} proposition${ouvertesMax(j) > 1 ? 's' : ''} en attente.`);
+  if (metalDe(donne) !== metalDe(recoit)) return non(t('Un échange se fait entre deux cartes du même métal.'));
+  if (donne === recoit) return non(t('C’est la même carte.'));
+  if ((j.collection[donne]?.doublons ?? 0) < 1) return non(t('Il te faut un exemplaire en double de cette carte : ta carte, elle, ne part jamais.'));
+  if (echangesRestants(j, now) < 1) return non(t('Plus d’échange possible aujourd’hui : le Cercle rouvre demain.'));
+  if (etatCercle(j).enAttente.length >= ouvertesMax(j)) return non(t`Tu as déjà ${ouvertesMax(j)} proposition${ouvertesMax(j) > 1 ? 's' : ''} en attente.`);
   const cout = coutEchange(donne);
-  if (j.energie < cout) return non(`Il faut ${cout} cristaux pour échanger une carte en ${NOMS_RARETE[metalDe(donne)].toLowerCase()}.`);
+  if (j.energie < cout) return non(t`Il faut ${cout} cristaux pour échanger une carte en ${NOMS_RARETE[metalDe(donne)].toLowerCase()}.`);
   return { ok: true };
 }
 
@@ -167,7 +168,7 @@ export function proposerEchange(j: Jeu, p: { id: string; ami: string; nomAmi: st
   j.energie -= cout;
   compter(j, now, 1);
   etatCercle(j).enAttente.push({ ...p, cout, le: now });
-  return { ok: true, message: `Proposition envoyée à ${p.nomAmi}.` };
+  return { ok: true, message: t`Proposition envoyée à ${p.nomAmi}.` };
 }
 
 /** Vérifie qu'on peut accepter une proposition reçue (on donne `donne`, on reçoit `recoit`) */
@@ -176,18 +177,18 @@ export function verifierAcceptation(j: Jeu, donne: string, recoit: string, amiti
   if (sans) return non(sans);
   const r = raisonNonEchangeable(j, donne) ?? raisonNonEchangeable(j, recoit);
   if (r) return non(r);
-  if (metalDe(donne) !== metalDe(recoit)) return non('Un échange se fait entre deux cartes du même métal.');
-  if ((j.collection[donne]?.doublons ?? 0) < 1) return non('Tu n’as plus d’exemplaire en double de cette carte.');
-  if (echangesRestants(j, now) < 1) return non('Plus d’échange possible aujourd’hui : le Cercle rouvre demain.');
+  if (metalDe(donne) !== metalDe(recoit)) return non(t('Un échange se fait entre deux cartes du même métal.'));
+  if ((j.collection[donne]?.doublons ?? 0) < 1) return non(t('Tu n’as plus d’exemplaire en double de cette carte.'));
+  if (echangesRestants(j, now) < 1) return non(t('Plus d’échange possible aujourd’hui : le Cercle rouvre demain.'));
   const cout = coutEchange(donne);
-  if (j.energie < cout) return non(`Il faut ${cout} cristaux pour cet échange.`);
+  if (j.energie < cout) return non(t`Il faut ${cout} cristaux pour cet échange.`);
   return { ok: true };
 }
 
 /** Accepter une proposition reçue : on donne son double, on reçoit la carte de l'ami */
 export function accepterEchange(j: Jeu, id: string, donne: string, recoit: string, amitieDepuis: number, now: number): Resultat & { nouvelle?: boolean } {
   const c = etatCercle(j);
-  if (c.conclus.includes(id)) return non('Cet échange est déjà fait.');
+  if (c.conclus.includes(id)) return non(t('Cet échange est déjà fait.'));
   const v = verifierAcceptation(j, donne, recoit, amitieDepuis, now);
   if (!v.ok) return v;
   j.collection[donne]!.doublons--;
@@ -195,7 +196,7 @@ export function accepterEchange(j: Jeu, id: string, donne: string, recoit: strin
   const nouvelle = ajouterCarte(j, recoit);
   compter(j, now, 1);
   noterConclu(c, id);
-  return { ok: true, nouvelle, message: nouvelle ? 'Nouvelle carte !' : 'Un exemplaire de plus.' };
+  return { ok: true, nouvelle, message: nouvelle ? t('Nouvelle carte !') : t('Un exemplaire de plus.') };
 }
 
 function noterConclu(c: EtatCercle, id: string) {

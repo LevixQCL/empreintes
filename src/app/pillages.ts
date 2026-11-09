@@ -6,12 +6,13 @@ import * as J from '../core/jeu';
 import { porteurDef } from '../core/donnees';
 import { app, D } from './etat';
 import { afficher } from './rendu';
+import { t } from '../core/i18n';
 
 let net: typeof import('../net/pillages') | null = null;
 const reseau = async () => (net ??= await import('../net/pillages'));
 
 /** Le nom montré aux autres : le pseudo du Grand Tableau s'il est public, sinon rien qui permette de reconnaître le joueur */
-export const nomPublic = () => (app.jeu.directeur?.public && app.jeu.directeur.nom ? app.jeu.directeur.nom : 'Directeur anonyme');
+export const nomPublic = () => (app.jeu.directeur?.public && app.jeu.directeur.nom ? app.jeu.directeur.nom : t('Directeur anonyme'));
 
 // ---------- La garnison publiée ----------
 // Une écriture quand elle change, au plus toutes les 5 minutes (comme le Grand Tableau).

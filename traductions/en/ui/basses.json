@@ -1,0 +1,245 @@
+{
+ "source": "src/ui/basses.ts",
+ "entrees": [
+  {
+   "fr": "{0} · coef. {1}",
+   "en": ""
+  },
+  {
+   "fr": "Marée montante",
+   "en": ""
+  },
+  {
+   "fr": "Marée descendante",
+   "en": ""
+  },
+  {
+   "fr": "{0}À sec",
+   "en": ""
+  },
+  {
+   "fr": ", à sec",
+   "en": ""
+  },
+  {
+   "fr": ", Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Le flanc de la digue : {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0}Grande marée",
+   "en": ""
+  },
+  {
+   "fr": "La mer monte",
+   "en": ""
+  },
+  {
+   "fr": "La mer descend",
+   "en": ""
+  },
+  {
+   "fr": "{0} · basse à {1}",
+   "en": ""
+  },
+  {
+   "fr": "Ce que la mer a laissé",
+   "en": ""
+  },
+  {
+   "fr": "Ramasser{0} · +{1} minerai{2}",
+   "en": ""
+  },
+  {
+   "fr": "{0}Chaque marée basse dépose quelque chose sur la grève, et ça t’attend : {1} dépôts au plus.",
+   "en": ""
+  },
+  {
+   "fr": "Depuis que tu as touché le Fond, l’eau d’en bas remonte jusqu’à la grève, chargée d’éclats de colonne. ",
+   "en": ""
+  },
+  {
+   "fr": "La grève est vide. La prochaine marée basse, vers {0}, laissera quelque chose : rien ne presse, ça t’attendra.",
+   "en": ""
+  },
+  {
+   "fr": "{0} est dans les Basses",
+   "en": ""
+  },
+  {
+   "fr": "{0}Strate −{1}",
+   "en": ""
+  },
+  {
+   "fr": "Sous l’eau",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} familles ramenées",
+   "en": ""
+  },
+  {
+   "fr": "Trop bas sur le flanc pour l’instant",
+   "en": ""
+  },
+  {
+   "fr": "Dresser le batardeau ici{0}",
+   "en": ""
+  },
+  {
+   "fr": "Le secteur à sec change une fois par semaine. Celui qu’on quitte se remplit, mais ses familles attendent.",
+   "en": ""
+  },
+  {
+   "fr": "{0} vivent au district",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur y est descendu",
+   "en": ""
+  },
+  {
+   "fr": "Une famille attend ici",
+   "en": ""
+  },
+  {
+   "fr": "Envoyer",
+   "en": ""
+  },
+  {
+   "fr": "{0} h dans les Basses · de l’XP et un peu de minerai en plus de la famille.",
+   "en": ""
+  },
+  {
+   "fr": " · dans ton escouade",
+   "en": ""
+  },
+  {
+   "fr": "De l’autre côté de la digue, les quartiers d’avant dorment sous la mer. Des familles y vivent encore, sur ce qui dépasse : va les chercher.",
+   "en": ""
+  },
+  {
+   "fr": "Le batardeau",
+   "en": ""
+  },
+  {
+   "fr": "Il garde un secteur du flanc à sec. Un seul à la fois.",
+   "en": ""
+  },
+  {
+   "fr": "secteurs, du haut vers le bas",
+   "en": ""
+  },
+  {
+   "fr": "déplacement par semaine",
+   "en": ""
+  },
+  {
+   "fr": "chaque secteur s’ouvre avec une Strate",
+   "en": ""
+  },
+  {
+   "fr": "Les familles",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur libre descend au secteur à sec et en ramène une.",
+   "en": ""
+  },
+  {
+   "fr": "par expédition",
+   "en": ""
+  },
+  {
+   "fr": "familles à retrouver",
+   "en": ""
+  },
+  {
+   "fr": "Ce que la mer laisse",
+   "en": ""
+  },
+  {
+   "fr": "Chaque marée basse dépose du minerai au pied de l’écluse.",
+   "en": ""
+  },
+  {
+   "fr": "par dépôt",
+   "en": ""
+  },
+  {
+   "fr": "dépôts attendent au plus",
+   "en": ""
+  },
+  {
+   "fr": "à grande marée",
+   "en": ""
+  },
+  {
+   "fr": "Pourquoi les ramener",
+   "en": ""
+  },
+  {
+   "fr": "Le Mur des empreintes",
+   "en": ""
+  },
+  {
+   "fr": "Chaque famille ramenée pose sa main au Mur du district. Elle te suit désormais.",
+   "en": ""
+  },
+  {
+   "fr": "Les familles te suivent",
+   "en": ""
+  },
+  {
+   "fr": "Plus elles sont nombreuses, plus le district s’anime : de nouveaux étals au Comptoir, des souvenirs confiés, des bonus au fil des paliers.",
+   "en": ""
+  },
+  {
+   "fr": "Le Porteur revient",
+   "en": ""
+  },
+  {
+   "fr": "Il gagne de l’XP et un peu d’Usure ({0}). Il ne peut pas être en bas en même temps.",
+   "en": ""
+  },
+  {
+   "fr": "Descendre le flanc",
+   "en": ""
+  },
+  {
+   "fr": "Fermer",
+   "en": ""
+  },
+  {
+   "fr": "L’ÉCLUSE",
+   "en": ""
+  },
+  {
+   "fr": "Les Basses",
+   "en": ""
+  },
+  {
+   "fr": "L’écluse reste fermée tant que le gardien de la Strate −{0} tient le puits : personne ne laisse le district sans défense pour descendre le flanc de la digue.",
+   "en": ""
+  },
+  {
+   "fr": "Retour à l’écluse",
+   "en": ""
+  },
+  {
+   "fr": "Comment marchent les Basses",
+   "en": ""
+  },
+  {
+   "fr": "De l’autre côté de la digue, les quartiers d’avant dorment sous l’eau, et des familles y vivent encore, sur ce qui dépasse. Le batardeau garde un secteur à sec : tes Porteurs peuvent y descendre et les ramener. Plus bas sur le flanc, c’est plus ancien.",
+   "en": ""
+  },
+  {
+   "fr": "Le flanc de la digue",
+   "en": ""
+  }
+ ]
+}

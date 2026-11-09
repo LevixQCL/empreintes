@@ -23,6 +23,7 @@ import { PILLAGE, achatsRestants, acheterJeton, ciblesDuJour, coutJeton, difficu
 import { strateVaincue } from './partie/etat';
 // (les creuseurs se gagnent par les fouilles, missions et Épreuves que joue déjà ce joueur simulé)
 import type { CombatEtat, Lignee } from './types';
+import { t as tr } from './i18n';
 
 interface Profil {
   nom: string;
@@ -31,8 +32,8 @@ interface Profil {
 }
 
 export const PROFILS: Record<'occasionnel' | 'assidu', Profil> = {
-  occasionnel: { nom: 'Occasionnel (2 expéditions par jour)', sessions: [12.5, 20.5] },
-  assidu: { nom: 'Assidu (5 expéditions par jour)', sessions: [8, 12, 17, 20, 22.5] },
+  occasionnel: { nom: tr('Occasionnel (2 expéditions par jour)'), sessions: [12.5, 20.5] },
+  assidu: { nom: tr('Assidu (5 expéditions par jour)'), sessions: [8, 12, 17, 20, 22.5] },
 };
 
 export interface Parcours {

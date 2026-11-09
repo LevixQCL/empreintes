@@ -1,0 +1,169 @@
+{
+ "source": "src/ui/duel.ts",
+ "entrees": [
+  {
+   "fr": "à terre",
+   "en": ""
+  },
+  {
+   "fr": "{0} PV sur {1}",
+   "en": ""
+  },
+  {
+   "fr": ", visé",
+   "en": ""
+  },
+  {
+   "fr": "Place vide de {0} : elle ne se joue pas",
+   "en": ""
+  },
+  {
+   "fr": "Résonance {0}",
+   "en": ""
+  },
+  {
+   "fr": "Ta chaîne : {0} dégâts sur {1}, {2} de bouclier, {3} de soin",
+   "en": ""
+  },
+  {
+   "fr": "sur {0}",
+   "en": ""
+  },
+  {
+   "fr": "Compose ta chaîne : les deux chaînes partent en même temps.",
+   "en": ""
+  },
+  {
+   "fr": "(à toi)",
+   "en": ""
+  },
+  {
+   "fr": "Tour {0}",
+   "en": ""
+  },
+  {
+   "fr": "infligé",
+   "en": ""
+  },
+  {
+   "fr": "reçu",
+   "en": ""
+  },
+  {
+   "fr": "à terre : {0}",
+   "en": ""
+  },
+  {
+   "fr": "a verrouillé",
+   "en": ""
+  },
+  {
+   "fr": "compose sa chaîne…",
+   "en": ""
+  },
+  {
+   "fr": "Duel · tour {0}",
+   "en": ""
+  },
+  {
+   "fr": "Bouclier gardé {0}",
+   "en": ""
+  },
+  {
+   "fr": "Lecture : {0} attaque{1}, {2} bouclier{3}, {4} soin{5}",
+   "en": ""
+  },
+  {
+   "fr": "{0} secondes",
+   "en": ""
+  },
+  {
+   "fr": "Flux {0} sur {1}",
+   "en": ""
+  },
+  {
+   "fr": "Place",
+   "en": ""
+  },
+  {
+   "fr": "Main",
+   "en": ""
+  },
+  {
+   "fr": "Réclamer la victoire",
+   "en": ""
+  },
+  {
+   "fr": "En attente…",
+   "en": ""
+  },
+  {
+   "fr": "Abandonner",
+   "en": ""
+  },
+  {
+   "fr": "Un choix adverse illisible a été remplacé par une chaîne vide.",
+   "en": ""
+  },
+  {
+   "fr": "Égalité",
+   "en": ""
+  },
+  {
+   "fr": "Tu as quitté le duel.",
+   "en": ""
+  },
+  {
+   "fr": "{0} a quitté le duel.",
+   "en": ""
+  },
+  {
+   "fr": "En {0} tours.",
+   "en": ""
+  },
+  {
+   "fr": "Fin du duel",
+   "en": ""
+  },
+  {
+   "fr": "Revanche",
+   "en": ""
+  },
+  {
+   "fr": "OSSYRA · aperçu, pas encore dans le jeu",
+   "en": ""
+  },
+  {
+   "fr": "Duel en temps réel",
+   "en": ""
+  },
+  {
+   "fr": "Deux escouades d’un Augmenté, d’un Géné et d’un Résonant, une chaîne chacun, {0} secondes par tour : les deux chaînes partent en même temps.",
+   "en": ""
+  },
+  {
+   "fr": "S’entraîner contre le robot",
+   "en": ""
+  },
+  {
+   "fr": "Donne ce code à ton adversaire. Le duel commence dès qu’il le rejoint.",
+   "en": ""
+  },
+  {
+   "fr": "Créer un duel entre amis",
+   "en": ""
+  },
+  {
+   "fr": "CODE",
+   "en": ""
+  },
+  {
+   "fr": "Rejoindre",
+   "en": ""
+  },
+  {
+   "fr": "Le duel entre amis demande une connexion au compte.",
+   "en": ""
+  }
+ ]
+}

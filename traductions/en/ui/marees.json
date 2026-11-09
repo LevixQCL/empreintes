@@ -1,0 +1,161 @@
+{
+ "source": "src/ui/marees.ts",
+ "entrees": [
+  {
+   "fr": "Fait pour ça",
+   "en": ""
+  },
+  {
+   "fr": "Peut le faire",
+   "en": ""
+  },
+  {
+   "fr": "À contre-emploi",
+   "en": ""
+  },
+  {
+   "fr": "argent",
+   "en": ""
+  },
+  {
+   "fr": "Cargaison :",
+   "en": ""
+  },
+  {
+   "fr": "minerai, pas de carte",
+   "en": ""
+  },
+  {
+   "fr": "De l’XP pour toute l’équipe",
+   "en": ""
+  },
+  {
+   "fr": "Prise d’or : 3 cartes des {0} au choix, la première en",
+   "en": ""
+  },
+  {
+   "fr": "3 cartes des {0} au choix, la première {1} au moins",
+   "en": ""
+  },
+  {
+   "fr": "1 carte {0} au choix parmi 3, une par lignée",
+   "en": ""
+  },
+  {
+   "fr": "1 carte {0} des {1}",
+   "en": ""
+  },
+  {
+   "fr": "minerai, et de l’XP pour toute l’équipe",
+   "en": ""
+  },
+  {
+   "fr": "Au choix",
+   "en": ""
+  },
+  {
+   "fr": "Prise d’or",
+   "en": ""
+  },
+  {
+   "fr": "{0}En mer",
+   "en": ""
+  },
+  {
+   "fr": "plus bas",
+   "en": ""
+  },
+  {
+   "fr": "de chances",
+   "en": ""
+  },
+  {
+   "fr": "Aux fortes marées, la mer découvre des ruines qu’aucune barque n’atteint seule. Le passeur affrète sa gabare pour une équipe : un Porteur par tâche, et le bon rôle au bon endroit (frapper, tenir, orchestrer). Plus la marée est haute, plus c’est dur, et plus ça rapporte. Un échec n’est jamais perdu : l’équipe rapporte de quoi faire mieux la fois suivante.",
+   "en": ""
+  },
+  {
+   "fr": "Les trois marées",
+   "en": ""
+  },
+  {
+   "fr": "{0} · coefficient {1} · {2}",
+   "en": ""
+  },
+  {
+   "fr": "Le passeur ne s’aventure à ces marées qu’avec un directeur qui a vaincu la",
+   "en": ""
+  },
+  {
+   "fr": ". Ses équipes doivent avoir fait leurs preuves en bas avant d’affronter le large.",
+   "en": ""
+  },
+  {
+   "fr": "Contrat rempli. {0} {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Une nouvelle marée montera demain",
+   "en": ""
+  },
+  {
+   "fr": "Le prochain contrat de cette marée s’ouvre",
+   "en": ""
+  },
+  {
+   "fr": "Pour un {0} : {1}",
+   "en": ""
+  },
+  {
+   "fr": "{0} sur cette tâche : changer",
+   "en": ""
+  },
+  {
+   "fr": "Choisir un Porteur pour cette tâche",
+   "en": ""
+  },
+  {
+   "fr": "Personne",
+   "en": ""
+  },
+  {
+   "fr": "Choisir",
+   "en": ""
+  },
+  {
+   "fr": "sur une autre épreuve",
+   "en": ""
+  },
+  {
+   "fr": "{0} % de chances de réussir",
+   "en": ""
+  },
+  {
+   "fr": "{0} Indice{1} · +{2} %",
+   "en": ""
+  },
+  {
+   "fr": "{0} h en mer · un échec rapporte {1} % du minerai, toute l’XP et un Indice (+{2} %)",
+   "en": ""
+  },
+  {
+   "fr": "{0} ne pourr{1} pas descendre avant le retour de la gabare.",
+   "en": ""
+  },
+  {
+   "fr": "Meilleure équipe",
+   "en": ""
+  },
+  {
+   "fr": "Embarquer",
+   "en": ""
+  },
+  {
+   "fr": "La gabare est en mer : un contrat à la fois.",
+   "en": ""
+  },
+  {
+   "fr": "Il manque un Porteur libre : libère-en un d’un bâtiment.",
+   "en": ""
+  }
+ ]
+}

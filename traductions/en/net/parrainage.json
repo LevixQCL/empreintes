@@ -1,0 +1,13 @@
+{
+ "source": "src/net/parrainage.ts",
+ "entrees": [
+  {
+   "fr": "Ce compte a déjà un parrain.",
+   "en": ""
+  },
+  {
+   "fr": "Une recrue",
+   "en": ""
+  }
+ ]
+}

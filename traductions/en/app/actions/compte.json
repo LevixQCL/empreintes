@@ -1,0 +1,9 @@
+{
+ "source": "src/app/actions/compte.ts",
+ "entrees": [
+  {
+   "fr": "E-mail de réinitialisation envoyé.",
+   "en": ""
+  }
+ ]
+}

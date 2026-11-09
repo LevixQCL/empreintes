@@ -488,6 +488,8 @@ export interface LigneHisto {
   v?: number;
   /** la place de la carte qui agit dans la chaîne (0 = la première) */
   rang?: number;
+  /** une Fêlure brisée par cette carte (le vécu des cartes la compte, quelle que soit la langue du texte) */
+  felure?: true;
   /** le calcul (un par cible) */
   calculs?: CalculHisto[];
 }

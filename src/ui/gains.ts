@@ -15,6 +15,7 @@ import { filigrane, illustrationModule, portrait } from './art';
 import { icone } from './icones';
 import { vibrer } from './toucher';
 import { centreDe, echap, mouvementReduit as reduit } from './outils';
+import { t as tr } from '../core/i18n';
 
 type Res = 'energie' | 'composants' | 'eclats';
 
@@ -125,7 +126,7 @@ export function comparer(a: Releve, b: Releve, o: { energie?: boolean } = {}): G
 const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
 const COULEUR_METAL: Record<Rarete, string> = { fer: '#A7B0BA', cuivre: '#D88A55', argent: '#DDE3EC', or: '#E8BE5E', nacre: '#E6D6F5' };
 const NOMS: Record<Res | 'cartes', [string, string]> = {
-  energie: ['cristal', 'cristaux'], composants: ['minerai', 'minerai'], eclats: ['Éclat', 'Éclats'], cartes: ['carte', 'cartes'],
+  energie: ['cristal', 'cristaux'], composants: ['minerai', 'minerai'], eclats: [tr('Éclat'), tr('Éclats')], cartes: ['carte', 'cartes'],
 };
 
 function calque(): HTMLElement {
@@ -156,8 +157,8 @@ let file: Promise<void> = Promise.resolve();
  * une scène d'histoire, le briefing, l'intro, une décision à prendre, une saisie de texte. Le reçu attend son tour.
  */
 const NE_PAS_COUVRIR = [
-  '#app .scene-campagne', '#app .scene-rencontre', '#app .scene-briefing', '#app .intro-pas',
-  '#app .gt-feuille', '#app .options-decision', '#app .legs-carte',
+  tr('#app .scene-campagne'), tr('#app .scene-rencontre'), tr('#app .scene-briefing'), tr('#app .intro-pas'),
+  tr('#app .gt-feuille'), tr('#app .options-decision'), tr('#app .legs-carte'),
 ].join(', ');
 function calme(): boolean {
   if (document.querySelector(NE_PAS_COUVRIR)) return false;
@@ -312,7 +313,7 @@ function contenu(g: Exclude<Gain, { kind: 'res' }>): { html: string; onglet: str
     const m = moduleDef(g.cle);
     return {
       classe: `metal-${m.rarete}`, onglet: 'porteurs',
-      html: `${vignetteCarte(g.cle)}<span class="gv-texte"><small>Nouvelle carte</small><strong>${echap(m.nom)}</strong><em style="color:${COULEUR_METAL[m.rarete]}">${echap(NOMS_RARETE[m.rarete])}</em></span>`,
+      html: `${vignetteCarte(g.cle)}<span class="gv-texte"><small>${tr`Nouvelle carte`}</small><strong>${echap(m.nom)}</strong><em style="color:${COULEUR_METAL[m.rarete]}">${echap(NOMS_RARETE[m.rarete])}</em></span>`,
     };
   }
   if (g.kind === 'doublons') {
@@ -320,7 +321,7 @@ function contenu(g: Exclude<Gain, { kind: 'res' }>): { html: string; onglet: str
     const titre = uniques.length === 1 ? `${moduleDef(uniques[0]!).nom}${g.cles.length > 1 ? ` ×${g.cles.length}` : ''}` : `${g.cles.length} cartes`;
     return {
       classe: 'doublons', onglet: 'porteurs',
-      html: `<span class="gv-pile">${uniques.slice(0, 4).map((c) => vignetteCarte(c, true)).join('')}</span><span class="gv-texte"><small>+${g.cles.length} doublon${g.cles.length > 1 ? 's' : ''}</small><strong>${echap(titre)}</strong><em>vers le niveau suivant</em></span>`,
+      html: `<span class="gv-pile">${uniques.slice(0, 4).map((c) => vignetteCarte(c, true)).join('')}</span><span class="gv-texte"><small>${tr`+${g.cles.length} doublon${g.cles.length > 1 ? 's' : ''}`}</small><strong>${echap(titre)}</strong><em>${tr`vers le niveau suivant`}</em></span>`,
     };
   }
   if (g.kind === 'empreinte') {
@@ -329,23 +330,23 @@ function contenu(g: Exclude<Gain, { kind: 'res' }>): { html: string; onglet: str
     return {
       classe: 'empreinte', onglet: 'porteurs',
       html: `<span class="gv-carte" style="--metal:${COULEUR_METAL[m.rarete]};--fil:url(${filigrane(p)})">${illustrationModule(g.cle) ? `<img src="${illustrationModule(g.cle)}" alt="" decoding="async">` : `<i>${echap(m.nom.charAt(0))}</i>`}</span>`
-        + `<span class="gv-texte"><small>${g.epithete ? 'Nouvel épithète' : 'La carte se souvient'}</small><strong>${echap(m.nom)}</strong><em>${g.epithete ? 'à choisir dans sa fiche' : `palier ${NOMS_PALIER[p]}`}</em></span>`,
+        + `<span class="gv-texte"><small>${g.epithete ? tr('Nouvel épithète') : tr('La carte se souvient')}</small><strong>${echap(m.nom)}</strong><em>${g.epithete ? tr('à choisir dans sa fiche') : `palier ${NOMS_PALIER[p]}`}</em></span>`,
     };
   }
   if (g.kind === 'marque') {
     return {
       classe: `marque p${g.palier}`, onglet: 'porteurs',
-      html: `${vignettePorteur(g.id)}<span class="gv-texte"><small>${g.palier ? `Marque ${NOMS_PALIER_MARQUE[g.palier]!.toLowerCase()}` : 'Marque gagnée'}</small><strong>${echap(g.nom)} · ${echap(porteurDef(g.id).nom)}</strong><em>${echap(g.court)}</em></span>`,
+      html: `${vignettePorteur(g.id)}<span class="gv-texte"><small>${g.palier ? `Marque ${NOMS_PALIER_MARQUE[g.palier]!.toLowerCase()}` : tr('Marque gagnée')}</small><strong>${echap(g.nom)} · ${echap(porteurDef(g.id).nom)}</strong><em>${echap(g.court)}</em></span>`,
     };
   }
   if (g.kind === 'porteur') {
     const p = porteurDef(g.id);
-    return { classe: 'porteur', onglet: 'porteurs', html: `${vignettePorteur(g.id)}<span class="gv-texte"><small>Nouveau Porteur</small><strong>${echap(p.nom)}</strong><em>rejoint le district</em></span>` };
+    return { classe: 'porteur', onglet: 'porteurs', html: `${vignettePorteur(g.id)}<span class="gv-texte"><small>${tr`Nouveau Porteur`}</small><strong>${echap(p.nom)}</strong><em>${tr`rejoint le district`}</em></span>` };
   }
   const un = g.ids.length === 1 ? g.ids[0]! : null;
   return {
     classe: 'niveau', onglet: 'porteurs',
-    html: `<span class="gv-pile">${g.ids.slice(0, 3).map((e) => vignettePorteur(e.id)).join('')}</span><span class="gv-texte"><small>Niveau supérieur</small><strong>${un ? `${echap(porteurDef(un.id).nom)} · niv. ${un.niveau}` : g.ids.map((e) => `${echap(porteurDef(e.id).nom)} ${e.niveau}`).join(' · ')}</strong><em>plus de PV en combat</em></span>`,
+    html: `<span class="gv-pile">${g.ids.slice(0, 3).map((e) => vignettePorteur(e.id)).join('')}</span><span class="gv-texte"><small>${tr`Niveau supérieur`}</small><strong>${un ? tr`${echap(porteurDef(un.id).nom)} · niv. ${un.niveau}` : g.ids.map((e) => `${echap(porteurDef(e.id).nom)} ${e.niveau}`).join(' · ')}</strong><em>${tr`plus de PV en combat`}</em></span>`,
   };
 }
 
@@ -440,7 +441,7 @@ const EMPREINTE = `<span class="gr-holo" aria-hidden="true" style="--fp:${MASQUE
 let dosChoisi = '';
 export const choisirDos = (d: string) => { dosChoisi = d; };
 
-const NOM_PALIER: Record<number, string> = { 3: 'Rare', 4: 'Très rare', 5: 'Légendaire' };
+const NOM_PALIER: Record<number, string> = { 3: tr('Rare'), 4: tr('Très rare'), 5: tr('Légendaire') };
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 function grandeRevelation(g: Extract<Gain, { kind: 'carte' | 'porteur' }>, p: number): Promise<void> {
@@ -450,8 +451,8 @@ function grandeRevelation(g: Extract<Gain, { kind: 'carte' | 'porteur' }>, p: nu
     const accent = carte ? COULEUR_METAL[carte.rarete] : '#7FD4FF';
     const img = carte ? illustrationModule(g.kind === 'carte' ? g.cle : '') : portrait(g.kind === 'porteur' ? g.id : '');
     const nom = carte ? carte.nom : porteurDef((g as { id: string }).id).nom;
-    const sur = carte ? `Carte ${carte.rarete === 'or' ? 'd’or' : carte.rarete === 'argent' ? 'd’argent' : 'de nacre'} · ${NOM_PALIER[p]}` : 'Nouveau Porteur';
-    const sous = carte ? 'Nouvelle carte' : 'rejoint le district';
+    const sur = carte ? tr`Carte ${carte.rarete === 'or' ? 'd’or' : carte.rarete === 'argent' ? 'd’argent' : 'de nacre'} · ${NOM_PALIER[p]}` : tr('Nouveau Porteur');
+    const sous = carte ? tr('Nouvelle carte') : tr('rejoint le district');
     const el = document.createElement('div');
     el.className = `gr p${p}${carte ? ` metal-${carte.rarete}` : ' porteur'}`;
     el.style.setProperty('--accent', accent);
@@ -461,7 +462,7 @@ function grandeRevelation(g: Extract<Gain, { kind: 'carte' | 'porteur' }>, p: nu
       + `<div class="gr-pose"><div class="gr-carte${carte ? '' : ' rond'}">`
       + `<div class="gr-face gr-dos${dosChoisi ? ` ${dosChoisi}" style="--dos:url(./art/${dosChoisi}.webp)` : ''}">${dosChoisi === 'dos-partage' ? '' : EMPREINTE}<img src="./art/logo.webp" alt=""></div>`
       + `<div class="gr-face gr-recto">${img ? `<img src="${img}" alt="">` : `<i>${echap(nom.charAt(0))}</i>`}</div></div></div>`
-      + `<div class="gr-texte"><small>${echap(sur)}</small><strong>${echap(nom)}</strong><em>${echap(sous)}</em><span class="gr-suite">Touche pour continuer</span></div>`;
+      + `<div class="gr-texte"><small>${echap(sur)}</small><strong>${echap(nom)}</strong><em>${echap(sous)}</em><span class="gr-suite">${tr`Touche pour continuer`}</span></div>`;
     c.appendChild(el);
     const carteEl = el.querySelector<HTMLElement>('.gr-carte')!;
     const pose = el.querySelector<HTMLElement>('.gr-pose')!;

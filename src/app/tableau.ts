@@ -4,6 +4,7 @@ import { aChange, entreeAPublier, PROFONDEUR_DELAI } from '../core/classements';
 import * as J from '../core/jeu';
 import { app, compteProtege, D, G } from './etat';
 import { afficher } from './rendu';
+import { t } from '../core/i18n';
 
 // ---------- Le Grand Tableau en ligne ----------
 // On publie son entrée quand un score change (au plus une fois toutes les 25 secondes, comme le veulent les règles Firestore),
@@ -56,7 +57,7 @@ export async function lireTableau(force = false) {
     if (mienne) { app.monEntree = mienne; app.monEntreeLue = true; } else app.monEntreeLue = false;
     G.lu = Date.now(); G.etat = 'ok';
   } catch (e) {
-    G.etat = 'erreur'; G.erreur = `Le Tableau ne répond pas pour l’instant (${(e as { code?: string })?.code ?? 'réseau'}).`;
+    G.etat = 'erreur'; G.erreur = t`Le Tableau ne répond pas pour l’instant (${(e as { code?: string })?.code ?? t('réseau')}).`;
     console.warn('Grand Tableau', e);
   }
   if (app.mode === 'district') afficher();
@@ -90,7 +91,7 @@ async function publierTableau() {
       const net = await reseauTableau();
       if (err instanceof net.PseudoPris) {
         G.edition = true; G.accueil = false;
-        G.erreur = `« ${app.jeu.directeur.nom} » a été réservé par un autre directeur. Choisis un autre pseudo.`;
+        G.erreur = t`« ${app.jeu.directeur.nom} » a été réservé par un autre directeur. Choisis un autre pseudo.`;
         app.jeu.directeur.change = 0;
         if (app.mode === 'district') afficher();
       } else planifierPublication(30_000);

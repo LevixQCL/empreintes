@@ -1,0 +1,121 @@
+{
+ "source": "src/core/partie/basses.ts",
+ "entrees": [
+  {
+   "fr": "L’écluse reste fermée tant que le gardien de la Strate −{0} tient le puits.",
+   "en": ""
+  },
+  {
+   "fr": "Rien sur la grève pour l’instant : la mer laissera quelque chose à la prochaine marée basse.",
+   "en": ""
+  },
+  {
+   "fr": "{0} : +{1} minerai et {2} Éclat{3} de colonne.",
+   "en": ""
+  },
+  {
+   "fr": "La grande marée a tout découvert",
+   "en": ""
+  },
+  {
+   "fr": "L’eau du Fond est remontée jusqu’à la grève",
+   "en": ""
+  },
+  {
+   "fr": "{0} : +{1} minerai.",
+   "en": ""
+  },
+  {
+   "fr": "La mer a laissé de quoi faire",
+   "en": ""
+  },
+  {
+   "fr": "Secteur inconnu.",
+   "en": ""
+  },
+  {
+   "fr": "Trop bas sur le flanc : il faut avoir vaincu la Strate −{0}.",
+   "en": ""
+  },
+  {
+   "fr": "Le batardeau garde déjà ce secteur à sec.",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur est encore dans le secteur à sec : on attend son retour.",
+   "en": ""
+  },
+  {
+   "fr": "Le batardeau a déjà été déplacé cette semaine : il pourra bouger lundi.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut {0} cristaux pour pomper un nouveau secteur.",
+   "en": ""
+  },
+  {
+   "fr": "Le batardeau est dressé : {0} restent à sec.",
+   "en": ""
+  },
+  {
+   "fr": "{0} : les pompes vident le secteur. {1}",
+   "en": ""
+  },
+  {
+   "fr": "Des familles y attendent encore.",
+   "en": ""
+  },
+  {
+   "fr": "Plus personne n’y attend.",
+   "en": ""
+  },
+  {
+   "fr": "L’écluse est fermée.",
+   "en": ""
+  },
+  {
+   "fr": "Sa famille vit déjà au district.",
+   "en": ""
+  },
+  {
+   "fr": "Ce secteur est sous l’eau : il faut y dresser le batardeau.",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur est déjà dans les Basses.",
+   "en": ""
+  },
+  {
+   "fr": "Ce Porteur",
+   "en": ""
+  },
+  {
+   "fr": "{0} descend le flanc de la digue : {1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} gagne la Marque {1} : {2}",
+   "en": ""
+  },
+  {
+   "fr": "{0} descend jusqu’à {1}{2}, à la lampe, pendant que les pompes tiennent l’eau.",
+   "en": ""
+  },
+  {
+   "fr": "{0} attendaient là. {1} Ils remontent avec {2} : ils vivent désormais au district.",
+   "en": ""
+  },
+  {
+   "fr": "{0} familles te suivent : un nouveau palier.",
+   "en": ""
+  },
+  {
+   "fr": "{0} remonte des Basses avec {1} : +{2} minerai, +{3} XP.",
+   "en": ""
+  },
+  {
+   "fr": "L’écluse s’ouvre : de l’autre côté de la digue, des familles vivent encore dans les quartiers noyés. Touche l’écluse, au pied de la digue, pour dresser le batardeau et aller les chercher.",
+   "en": ""
+  }
+ ]
+}

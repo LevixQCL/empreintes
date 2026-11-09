@@ -1,0 +1,949 @@
+{
+ "source": "src/ui/coquille.ts",
+ "entrees": [
+  {
+   "fr": "En route",
+   "en": ""
+  },
+  {
+   "fr": "Fouille sur place",
+   "en": ""
+  },
+  {
+   "fr": "Sur le retour",
+   "en": ""
+  },
+  {
+   "fr": "À quai",
+   "en": ""
+  },
+  {
+   "fr": "Augmentés",
+   "en": ""
+  },
+  {
+   "fr": "Génés",
+   "en": ""
+  },
+  {
+   "fr": "Résonants",
+   "en": ""
+  },
+  {
+   "fr": "Ressources",
+   "en": ""
+  },
+  {
+   "fr": "Cristaux : {0}{1}. Détails",
+   "en": ""
+  },
+  {
+   "fr": ", et {0} de minerai en taille au Générateur",
+   "en": ""
+  },
+  {
+   "fr": "Éclats : {0}. Détails",
+   "en": ""
+  },
+  {
+   "fr": "Strate −{0}. Détails",
+   "en": ""
+  },
+  {
+   "fr": "Strate",
+   "en": ""
+  },
+  {
+   "fr": "{0} familles sur {1} te suivent, palier {2}. Détails",
+   "en": ""
+  },
+  {
+   "fr": "palier {0}",
+   "en": ""
+  },
+  {
+   "fr": "Les pompes ont tenu",
+   "en": ""
+  },
+  {
+   "fr": "Des familles ramenées des Basses",
+   "en": ""
+  },
+  {
+   "fr": "Des naufragés recueillis",
+   "en": ""
+  },
+  {
+   "fr": "Des gardiens vaincus",
+   "en": ""
+  },
+  {
+   "fr": "Des choix justes en bas",
+   "en": ""
+  },
+  {
+   "fr": "Des pillages repoussés",
+   "en": ""
+  },
+  {
+   "fr": "Des quais gagnés sur la Flèche",
+   "en": ""
+  },
+  {
+   "fr": "L’histoire du district",
+   "en": ""
+  },
+  {
+   "fr": "L’Accord ouvert : avec la Clinique au niveau {0}, un nouveau Résonant rejoint le district.",
+   "en": ""
+  },
+  {
+   "fr": "Un marchand du quartier rouvre son étal : une carte de plus chaque jour au Comptoir.",
+   "en": ""
+  },
+  {
+   "fr": "Tout le district te suit. Le jour où tu réclameras l’île, personne ne restera en bas.",
+   "en": ""
+  },
+  {
+   "fr": "La Nuit des lignes",
+   "en": ""
+  },
+  {
+   "fr": "Chaque lundi, le district repeint sa ligne bleue un peu plus haut et fait le bilan. Ceux qui ont vu ce que tu as fait en parlent : {0} % de bouche-à-oreille en plus. Une semaine sans rien ne fait rien perdre.",
+   "en": ""
+  },
+  {
+   "fr": "Cette semaine :",
+   "en": ""
+  },
+  {
+   "fr": "famille{0} arrivée{1} pour l’instant.",
+   "en": ""
+  },
+  {
+   "fr": "La dernière Nuit{0}",
+   "en": ""
+  },
+  {
+   "fr": " · {0} famille{1}",
+   "en": ""
+  },
+  {
+   "fr": "Ceux qui ont vu, cette nuit-là",
+   "en": ""
+  },
+  {
+   "fr": "LA MONNAIE DU DISTRICT",
+   "en": ""
+  },
+  {
+   "fr": "La pierre bleue des profondeurs, taillée par le Générateur. Tout ce que tu rapportes en jouant arrive en minerai ; le Générateur le taille en cristaux, même quand tu ne joues pas. Rien ne se perd. Les cristaux paient tout.",
+   "en": ""
+  },
+  {
+   "fr": "cristaux",
+   "en": ""
+  },
+  {
+   "fr": "+{0} de minerai en taille · tout taillé dans {1} h",
+   "en": ""
+  },
+  {
+   "fr": "Aucun minerai en attente : descends ou envoie une barque pour en rapporter",
+   "en": ""
+  },
+  {
+   "fr": "Les expéditions",
+   "en": ""
+  },
+  {
+   "fr": "Chaque combat gagné, chaque cache et chaque salle d’archives rapportent du minerai. Fuir en garde les trois quarts, une défaite la moitié.",
+   "en": ""
+  },
+  {
+   "fr": "Les missions en mer et les marées",
+   "en": ""
+  },
+  {
+   "fr": "Les barques reviennent chargées des ruines noyées.",
+   "en": ""
+  },
+  {
+   "fr": "Les fouilles ciblées",
+   "en": ""
+  },
+  {
+   "fr": "Une descente courte qui peut viser le minerai.",
+   "en": ""
+  },
+  {
+   "fr": "Recycler des doublons",
+   "en": ""
+  },
+  {
+   "fr": "Chaque doublon recyclé rend un peu de minerai.",
+   "en": ""
+  },
+  {
+   "fr": "Le Générateur taille le minerai",
+   "en": ""
+  },
+  {
+   "fr": "Plus il est haut, plus il taille vite. Un Augmenté posté dessus taille deux fois plus vite. Dès le niveau 4, il y recueille aussi quelques Éclats.",
+   "en": ""
+  },
+  {
+   "fr": "Les récompenses arrivent taillées",
+   "en": ""
+  },
+  {
+   "fr": "Ravitaillement du jour, Butin de la semaine, objectifs, gardiens, Flèche : des cristaux tout prêts.",
+   "en": ""
+  },
+  {
+   "fr": "Améliorer les bâtiments",
+   "en": ""
+  },
+  {
+   "fr": "La plus grosse dépense ; les derniers niveaux demandent aussi des Éclats.",
+   "en": ""
+  },
+  {
+   "fr": "Monter les cartes de niveau",
+   "en": ""
+  },
+  {
+   "fr": "Avec leurs doublons.",
+   "en": ""
+  },
+  {
+   "fr": "Acheter au Comptoir",
+   "en": ""
+  },
+  {
+   "fr": "Des cartes précises à prix fixe, et quelques Éclats chaque jour.",
+   "en": ""
+  },
+  {
+   "fr": "Refabriquer une carte à la Forge",
+   "en": ""
+  },
+  {
+   "fr": "De 27 cristaux (fer) à 1 330 (nacre).",
+   "en": ""
+  },
+  {
+   "fr": "Entraîner un Porteur",
+   "en": ""
+  },
+  {
+   "fr": "À la Tour du Noyau : une séance = un niveau, payée au lancement.",
+   "en": ""
+  },
+  {
+   "fr": "Les soins intensifs",
+   "en": ""
+  },
+  {
+   "fr": "À la Clinique : 1 cristal par point d’Usure effacé tout de suite.",
+   "en": ""
+  },
+  {
+   "fr": "Un jeton de pillage de plus",
+   "en": ""
+  },
+  {
+   "fr": "Deux fois par jour au plus.",
+   "en": ""
+  },
+  {
+   "fr": "RESSOURCE RARE",
+   "en": ""
+  },
+  {
+   "fr": "Des fragments de cristal chargés d’empreintes. Rares, ils ne se trouvent qu’en profondeur ou en récompense.",
+   "en": ""
+  },
+  {
+   "fr": "Éclats en réserve",
+   "en": ""
+  },
+  {
+   "fr": "Les gardiens",
+   "en": ""
+  },
+  {
+   "fr": "Chaque gardien vaincu en donne, davantage à partir de la Strate −5.",
+   "en": ""
+  },
+  {
+   "fr": "Les caches et les rencontres",
+   "en": ""
+  },
+  {
+   "fr": "À partir de la Strate −3, une cache en cache parfois un.",
+   "en": ""
+  },
+  {
+   "fr": "Les fouilles « Éclats » et le Butin de la semaine",
+   "en": ""
+  },
+  {
+   "fr": "Pour en gagner quand on bloque.",
+   "en": ""
+  },
+  {
+   "fr": "Refabriquer les cartes rares",
+   "en": ""
+  },
+  {
+   "fr": "Argent, or et nacre en demandent à la Forge.",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes en argent du Comptoir",
+   "en": ""
+  },
+  {
+   "fr": "Elles coûtent aussi des Éclats.",
+   "en": ""
+  },
+  {
+   "fr": "Les grands chantiers",
+   "en": ""
+  },
+  {
+   "fr": "Les derniers niveaux des bâtiments.",
+   "en": ""
+  },
+  {
+   "fr": "LE DISTRICT",
+   "en": ""
+  },
+  {
+   "fr": "Ceux qui te suivent",
+   "en": ""
+  },
+  {
+   "fr": "L’eau monte, et tout le district le sait. Chaque famille que tu protèges décide de te suivre, et ne te quitte plus. Le jour où tu réclameras l’île, elles monteront avec toi.",
+   "en": ""
+  },
+  {
+   "fr": "/ {0} familles",
+   "en": ""
+  },
+  {
+   "fr": " · encore {0} pour le palier {1}",
+   "en": ""
+  },
+  {
+   "fr": "Aller les chercher dans les Basses",
+   "en": ""
+  },
+  {
+   "fr": "À l’écluse, garde un secteur à sec avec le batardeau et envoie un Porteur : chaque lieu cache une famille restée en bas.",
+   "en": ""
+  },
+  {
+   "fr": "Recueillir des naufragés",
+   "en": ""
+  },
+  {
+   "fr": "Une mission « Naufragés » depuis le Port : le quartier voit la barque rentrer.",
+   "en": ""
+  },
+  {
+   "fr": "Vaincre les gardiens",
+   "en": ""
+  },
+  {
+   "fr": "Chaque gardien vaincu de −1 à −10 : l’espoir de l’Écluse grandit.",
+   "en": ""
+  },
+  {
+   "fr": "Les choix justes en bas",
+   "en": ""
+  },
+  {
+   "fr": "Aider ceux qu’on croise se sait au quartier.",
+   "en": ""
+  },
+  {
+   "fr": "Repousser un pillage",
+   "en": ""
+  },
+  {
+   "fr": "Quand la garnison du Port tient.",
+   "en": ""
+  },
+  {
+   "fr": "Gagner des quais sur la Flèche",
+   "en": ""
+  },
+  {
+   "fr": "De la place sur les îles.",
+   "en": ""
+  },
+  {
+   "fr": "{0} familles{1}",
+   "en": ""
+  },
+  {
+   "fr": "{0} creuseur volontaire et un souvenir pour les Archives.",
+   "en": ""
+  },
+  {
+   "fr": "{0} Avec un",
+   "en": ""
+  },
+  {
+   "fr": "CHAQUE SEMAINE",
+   "en": ""
+  },
+  {
+   "fr": "Le Butin de la semaine",
+   "en": ""
+  },
+  {
+   "fr": "Tout ce que tu fais cette semaine remplit un coffre. Chaque cran atteint y ajoute des récompenses. Lundi, le coffre s’ouvre au district et une nouvelle semaine repart de zéro. Rien n’est jamais perdu : un cran atteint reste acquis, et un coffre pas encore ouvert attend le suivant (jusqu’à {0}).",
+   "en": ""
+  },
+  {
+   "fr": "{0} · s’ouvre lundi",
+   "en": ""
+  },
+  {
+   "fr": "Encore {0} points pour le cran {1}",
+   "en": ""
+  },
+  {
+   "fr": "Tous les crans sont atteints : bravo",
+   "en": ""
+  },
+  {
+   "fr": "Gagner un combat en bas",
+   "en": ""
+  },
+  {
+   "fr": "+{0} points.",
+   "en": ""
+  },
+  {
+   "fr": "Finir une descente",
+   "en": ""
+  },
+  {
+   "fr": "Finir un chantier",
+   "en": ""
+  },
+  {
+   "fr": "Remplir l’objectif du jour",
+   "en": ""
+  },
+  {
+   "fr": "Cran 1 · {0} points",
+   "en": ""
+  },
+  {
+   "fr": "{0} cristaux et une carte au choix parmi trois.",
+   "en": ""
+  },
+  {
+   "fr": "Cran 2 · {0} points",
+   "en": ""
+  },
+  {
+   "fr": "{0} Éclats en plus.",
+   "en": ""
+  },
+  {
+   "fr": "Cran 3 · {0} points",
+   "en": ""
+  },
+  {
+   "fr": "Une deuxième carte au choix, dont au moins une en argent.",
+   "en": ""
+  },
+  {
+   "fr": "Cran 4 · {0} points",
+   "en": ""
+  },
+  {
+   "fr": "Une troisième carte au choix avec de l’argent, et {0} Éclats de plus. Pour les plus assidus.",
+   "en": ""
+  },
+  {
+   "fr": "La Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "L’étage le plus profond que ton district a creusé sous la ville. Plus on descend, plus c’est ancien, dangereux et précieux.",
+   "en": ""
+  },
+  {
+   "fr": "Gardien vaincu : il manque {0} pour creuser plus bas",
+   "en": ""
+  },
+  {
+   "fr": "{0} niveau{1} de Tour du Noyau",
+   "en": ""
+  },
+  {
+   "fr": "Prête à être creusée plus bas",
+   "en": ""
+  },
+  {
+   "fr": "Bats son gardien pour pouvoir creuser l’étage suivant",
+   "en": ""
+  },
+  {
+   "fr": "Le gardien de la Strate −{0} garde l’accès à l’étage suivant.",
+   "en": ""
+  },
+  {
+   "fr": "Assez de creuseurs ({0} / {1})",
+   "en": ""
+  },
+  {
+   "fr": "La Tour du Noyau en loge {0}. On en gagne avec les fouilles, les missions, les Épreuves et les gardiens.",
+   "en": ""
+  },
+  {
+   "fr": "Des cartes de meilleur métal",
+   "en": ""
+  },
+  {
+   "fr": "Plus la Strate est profonde, plus les trouvailles sont rares.",
+   "en": ""
+  },
+  {
+   "fr": "Les Chroniques",
+   "en": ""
+  },
+  {
+   "fr": "Les chapitres profonds se débloquent en descendant.",
+   "en": ""
+  },
+  {
+   "fr": "Comment gagner des points",
+   "en": ""
+  },
+  {
+   "fr": "Comment en obtenir",
+   "en": ""
+  },
+  {
+   "fr": "Ce que contient le coffre",
+   "en": ""
+  },
+  {
+   "fr": "Les paliers",
+   "en": ""
+  },
+  {
+   "fr": "À quoi ça sert",
+   "en": ""
+  },
+  {
+   "fr": "Toutes les 6 familles, un palier : un creuseur volontaire, et une famille confie un souvenir aux Archives.",
+   "en": ""
+  },
+  {
+   "fr": "Voir le classement des profondeurs",
+   "en": ""
+  },
+  {
+   "fr": "District",
+   "en": ""
+  },
+  {
+   "fr": "Port",
+   "en": ""
+  },
+  {
+   "fr": "Flèche",
+   "en": ""
+  },
+  {
+   "fr": "Chroniques",
+   "en": ""
+  },
+  {
+   "fr": "Plus",
+   "en": ""
+  },
+  {
+   "fr": "Navigation",
+   "en": ""
+  },
+  {
+   "fr": "Escouade, Porteurs ou cartes",
+   "en": ""
+  },
+  {
+   "fr": "Porteurs",
+   "en": ""
+  },
+  {
+   "fr": "{0} nouveau{1}",
+   "en": ""
+  },
+  {
+   "fr": "Collection",
+   "en": ""
+  },
+  {
+   "fr": "{0} nouvelle{1}",
+   "en": ""
+  },
+  {
+   "fr": "Protège ta partie",
+   "en": ""
+  },
+  {
+   "fr": "Strate −{0} · ta partie grandit",
+   "en": ""
+  },
+  {
+   "fr": "Elle n’est sauvegardée que pour ce téléphone : s’il est perdu ou réinitialisé, elle disparaît. Relie-la à Google ou à un e-mail, en quelques secondes, et tu la retrouveras partout.",
+   "en": ""
+  },
+  {
+   "fr": "Plus tard",
+   "en": ""
+  },
+  {
+   "fr": "minerai",
+   "en": ""
+  },
+  {
+   "fr": "XP{0}",
+   "en": ""
+  },
+  {
+   "fr": " · niveau {0}",
+   "en": ""
+  },
+  {
+   "fr": "creuseur{0}",
+   "en": ""
+  },
+  {
+   "fr": "3 cartes",
+   "en": ""
+  },
+  {
+   "fr": "au choix, au district",
+   "en": ""
+  },
+  {
+   "fr": "+1 Indice",
+   "en": ""
+  },
+  {
+   "fr": "pour la prochaine tentative",
+   "en": ""
+  },
+  {
+   "fr": "Usure",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} % de chances",
+   "en": ""
+  },
+  {
+   "fr": "réussi",
+   "en": ""
+  },
+  {
+   "fr": "manqué",
+   "en": ""
+  },
+  {
+   "fr": "Mission en mer",
+   "en": ""
+  },
+  {
+   "fr": "Retour {0}",
+   "en": ""
+  },
+  {
+   "fr": "Rapport suivant ({0})",
+   "en": ""
+  },
+  {
+   "fr": "Bien reçu",
+   "en": ""
+  },
+  {
+   "fr": "Mission accomplie",
+   "en": ""
+  },
+  {
+   "fr": "Retour au district",
+   "en": ""
+  },
+  {
+   "fr": "Repli précipité",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade a été repoussée",
+   "en": ""
+  },
+  {
+   "fr": "Rapport · {0}",
+   "en": ""
+  },
+  {
+   "fr": "Éclat{0}",
+   "en": ""
+  },
+  {
+   "fr": "fragment d’archives",
+   "en": ""
+  },
+  {
+   "fr": "nouvelle Strate ouverte",
+   "en": ""
+  },
+  {
+   "fr": "{0} cartes trouvées",
+   "en": ""
+  },
+  {
+   "fr": "Une carte trouvée",
+   "en": ""
+  },
+  {
+   "fr": "Nouvelle",
+   "en": ""
+  },
+  {
+   "fr": "Niv. {0} prêt",
+   "en": ""
+  },
+  {
+   "fr": "Doublon",
+   "en": ""
+  },
+  {
+   "fr": "{0} cartes au choix",
+   "en": ""
+  },
+  {
+   "fr": "Une carte au choix",
+   "en": ""
+  },
+  {
+   "fr": "t’attend{0} au district : tu la choisis juste après.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade · +{0} XP",
+   "en": ""
+  },
+  {
+   "fr": "Niveau {0} !",
+   "en": ""
+  },
+  {
+   "fr": "Achevée",
+   "en": ""
+  },
+  {
+   "fr": "quête « {0} »",
+   "en": ""
+  },
+  {
+   "fr": "Vestige{0} : {1}",
+   "en": ""
+  },
+  {
+   "fr": "Strate complète",
+   "en": ""
+  },
+  {
+   "fr": "étoile{0} de Strate",
+   "en": ""
+  },
+  {
+   "fr": " s’est enfui",
+   "en": ""
+  },
+  {
+   "fr": "Dans la Strate",
+   "en": ""
+  },
+  {
+   "fr": "Et maintenant ?",
+   "en": ""
+  },
+  {
+   "fr": "Soigner l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Elle se remet à la Clinique ; une recrue Géné postée là soigne deux fois plus vite.",
+   "en": ""
+  },
+  {
+   "fr": "Renforcer le deck.",
+   "en": ""
+  },
+  {
+   "fr": "Chaque chapitre des Chroniques lu pour la première fois glisse une carte entre les pages ({0} à lire) : confie-la ensuite à un Porteur, dans l’onglet Escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Revoir le deck.",
+   "en": ""
+  },
+  {
+   "fr": "Cherche des suites de Fréquences et quelques boucliers pour les grosses attaques annoncées.",
+   "en": ""
+  },
+  {
+   "fr": "Se protéger.",
+   "en": ""
+  },
+  {
+   "fr": "Les boucliers protègent toute l’escouade : garde-les pour les attaques fortes annoncées par l’ennemi.",
+   "en": ""
+  },
+  {
+   "fr": "Choisir ma carte",
+   "en": ""
+  },
+  {
+   "fr": "Menu",
+   "en": ""
+  },
+  {
+   "fr": "OSSYRA · ALPHA",
+   "en": ""
+  },
+  {
+   "fr": "Les classements des directeurs : profondeur, Registre, Joutes et Flèche",
+   "en": ""
+  },
+  {
+   "fr": "Le Cercle des quais",
+   "en": ""
+  },
+  {
+   "fr": "Tes amis, les duels entre directeurs et les échanges de cartes",
+   "en": ""
+  },
+  {
+   "fr": "À construire : amis, duels et échanges de cartes",
+   "en": ""
+  },
+  {
+   "fr": "Recruter des amis",
+   "en": ""
+  },
+  {
+   "fr": "Ton code de parrainage : vous êtes récompensés tous les deux quand ton ami joue",
+   "en": ""
+  },
+  {
+   "fr": "Compte",
+   "en": ""
+  },
+  {
+   "fr": "Protège ta partie : relie-la à Google ou à un e-mail",
+   "en": ""
+  },
+  {
+   "fr": " · choisis ton pseudo",
+   "en": ""
+  },
+  {
+   "fr": "Retrouver ta progression sur un autre appareil",
+   "en": ""
+  },
+  {
+   "fr": "Comment marche le district",
+   "en": ""
+  },
+  {
+   "fr": "Les ressources, l’escouade et le but : creuser plus bas",
+   "en": ""
+  },
+  {
+   "fr": "Glossaire",
+   "en": ""
+  },
+  {
+   "fr": "Tous les mots du jeu expliqués : Fissure, Flux, Résonance, Charge…",
+   "en": ""
+  },
+  {
+   "fr": "Revoir l’intro complète",
+   "en": ""
+  },
+  {
+   "fr": "L’histoire de 2121, en entier",
+   "en": ""
+  },
+  {
+   "fr": "Paramètres",
+   "en": ""
+  },
+  {
+   "fr": "Combat automatique",
+   "en": ""
+  },
+  {
+   "fr": "Un bouton « Auto » dans les combats ordinaires des Strates déjà vaincues : l’escouade joue seule, en accéléré",
+   "en": ""
+  },
+  {
+   "fr": "Graphismes : {0}. Toucher pour changer",
+   "en": ""
+  },
+  {
+   "fr": "Graphismes",
+   "en": ""
+  },
+  {
+   "fr": "Son",
+   "en": ""
+  },
+  {
+   "fr": "Les sons du combat et de l’interface",
+   "en": ""
+  },
+  {
+   "fr": "Activé",
+   "en": ""
+  },
+  {
+   "fr": "Coupé",
+   "en": ""
+  },
+  {
+   "fr": "Animations",
+   "en": ""
+  },
+  {
+   "fr": "Réduites : presque rien ne bouge, les combats vont droit au résultat",
+   "en": ""
+  },
+  {
+   "fr": "Complètes : la houle, les lueurs, les coups animés",
+   "en": ""
+  },
+  {
+   "fr": "Réduites",
+   "en": ""
+  },
+  {
+   "fr": "Complètes",
+   "en": ""
+  }
+ ]
+}

@@ -5,6 +5,7 @@
 export type Raison = 'version' | 'onglet' | 'appareil' | 'illisible' | 'illisible-compte';
 
 import { mettreDeCoteIllisible } from '../save/local';
+import { t as tr } from '../core/i18n';
 
 let raison: Raison | null = null;
 
@@ -18,24 +19,24 @@ export function reprendreSauvegarde(): void { suspendue = false; }
 
 const TEXTES: Record<Raison, { titre: string; texte: string }> = {
   version: {
-    titre: 'Une nouvelle version t’attend',
-    texte: 'Ta partie a été jouée avec une version plus récente du jeu. Recharge la page pour la retrouver : rien n’est perdu.',
+    titre: tr('Une nouvelle version t’attend'),
+    texte: tr('Ta partie a été jouée avec une version plus récente du jeu. Recharge la page pour la retrouver : rien n’est perdu.'),
   },
   onglet: {
-    titre: 'Ta partie est ouverte ailleurs',
-    texte: 'Tu joues dans un autre onglet ou une autre fenêtre. Pour ne rien écraser, cette page s’arrête là : recharge-la pour reprendre où tu en es.',
+    titre: tr('Ta partie est ouverte ailleurs'),
+    texte: tr('Tu joues dans un autre onglet ou une autre fenêtre. Pour ne rien écraser, cette page s’arrête là : recharge-la pour reprendre où tu en es.'),
   },
   illisible: {
-    titre: 'Ta partie est à l’abri',
-    texte: 'Cette version du jeu n’arrive pas à lire la partie de cet appareil (souvent juste après une mise à jour). Pour ne rien effacer, le jeu s’arrête là. Recharge dans quelques minutes : une correction arrive en général très vite.',
+    titre: tr('Ta partie est à l’abri'),
+    texte: tr('Cette version du jeu n’arrive pas à lire la partie de cet appareil (souvent juste après une mise à jour). Pour ne rien effacer, le jeu s’arrête là. Recharge dans quelques minutes : une correction arrive en général très vite.'),
   },
   'illisible-compte': {
-    titre: 'Ta partie est à l’abri',
-    texte: 'Cette version du jeu n’arrive pas à lire la partie de ton compte (souvent juste après une mise à jour). Pour ne rien écraser, le jeu s’arrête là. Recharge dans quelques minutes : une correction arrive en général très vite.',
+    titre: tr('Ta partie est à l’abri'),
+    texte: tr('Cette version du jeu n’arrive pas à lire la partie de ton compte (souvent juste après une mise à jour). Pour ne rien écraser, le jeu s’arrête là. Recharge dans quelques minutes : une correction arrive en général très vite.'),
   },
   appareil: {
-    titre: 'Ta partie a avancé ailleurs',
-    texte: 'Ton compte a été utilisé sur un autre appareil. Recharge pour reprendre la partie la plus avancée : l’autre sera gardée en secours.',
+    titre: tr('Ta partie a avancé ailleurs'),
+    texte: tr('Ton compte a été utilisé sur un autre appareil. Recharge pour reprendre la partie la plus avancée : l’autre sera gardée en secours.'),
   },
 };
 
@@ -50,9 +51,9 @@ export function bloquerSauvegarde(r: Raison): void {
   el.setAttribute('role', 'alertdialog');
   el.setAttribute('aria-modal', 'true');
   el.innerHTML = `<div class="incident-carte"><h2>${t.titre}</h2><p>${t.texte}</p>`
-    + `<div class="incident-btns"><button type="button" class="prim" data-i="recharger">Recharger</button></div>`
+    + `<div class="incident-btns"><button type="button" class="prim" data-i="recharger">${tr`Recharger`}</button></div>`
     // la partie de l'appareil, illisible : en dernier recours, la mettre de côté (jamais effacée) et repartir, après confirmation
-    + (r === 'illisible' ? `<details class="incident-recours"><summary>Repartir de zéro</summary><p>La partie illisible reste gardée à part sur cet appareil : une prochaine version pourra la rendre.</p><button type="button" data-i="cote">Mettre ma partie de côté et recommencer</button></details>` : '')
+    + (r === 'illisible' ? `<details class="incident-recours"><summary>${tr`Repartir de zéro`}</summary><p>${tr`La partie illisible reste gardée à part sur cet appareil : une prochaine version pourra la rendre.`}</p><button type="button" data-i="cote">${tr`Mettre ma partie de côté et recommencer`}</button></details>` : '')
     + `</div>`;
   el.querySelector('[data-i="recharger"]')?.addEventListener('click', () => location.reload());
   el.querySelector('[data-i="cote"]')?.addEventListener('click', () => { mettreDeCoteIllisible(); location.reload(); });

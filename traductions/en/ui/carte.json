@@ -1,0 +1,53 @@
+{
+ "source": "src/ui/carte.ts",
+ "entrees": [
+  {
+   "fr": "Attaque",
+   "en": ""
+  },
+  {
+   "fr": "Bouclier",
+   "en": ""
+  },
+  {
+   "fr": "Soin",
+   "en": ""
+  },
+  {
+   "fr": "Brise",
+   "en": ""
+  },
+  {
+   "fr": "Héritage",
+   "en": ""
+  },
+  {
+   "fr": "Exclusive",
+   "en": ""
+  },
+  {
+   "fr": "{0}, {1}, {2} {3}, Fréquence {4}{5}{6}{7}",
+   "en": ""
+  },
+  {
+   "fr": "fournie par le district ({0})",
+   "en": ""
+  },
+  {
+   "fr": "{0}, niveau {1} sur {2}, {3}",
+   "en": ""
+  },
+  {
+   "fr": ", prend 2 places",
+   "en": ""
+  },
+  {
+   "fr": ", exclusive : n’existe qu’en {0}",
+   "en": ""
+  },
+  {
+   "fr": ", maîtrisée",
+   "en": ""
+  }
+ ]
+}

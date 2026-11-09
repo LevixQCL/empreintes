@@ -8,6 +8,7 @@ import { vibrer } from '../ui/toucher';
 import { app, K, racine } from './etat';
 import { afficher } from './rendu';
 import { sauver } from './synchro';
+import { t as tr } from '../core/i18n';
 
 /** un groupe = une place de la chaîne : la carte (ou son maillon) et, pour une carte lourde, sa deuxième place reliée */
 interface Groupe { els: HTMLElement[]; centre: number; largeur: number }
@@ -53,7 +54,7 @@ function decaler(p: Prise, dx: number, dy: number) {
     else if (p.vers < p.de && i >= p.vers && i < p.de) t = `translateX(${ecart}px)`;
     for (const el of g.els) {
       el.style.transform = t;
-      el.style.transition = i === p.de ? 'none' : 'transform .16s cubic-bezier(.2,.9,.3,1)';
+      el.style.transition = i === p.de ? 'none' : tr('transform .16s cubic-bezier(.2,.9,.3,1)');
       el.style.zIndex = i === p.de ? '6' : '';
     }
   });

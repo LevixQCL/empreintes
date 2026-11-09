@@ -12,6 +12,7 @@ import { lireMonEntree, planifierPublication } from './tableau';
 import { envoyerPillages, planifierGarnison, recevoirPillages } from './pillages';
 import { envoyerAssauts, recevoirAssauts } from './fleche';
 import { arreterCercle, C, suivreCercle } from './cercle';
+import { t } from '../core/i18n';
 
 let minuteur: number | undefined;
 /** la partie à envoyer au compte (la plus récente), et quand on l'a envoyée la dernière fois */
@@ -73,7 +74,7 @@ export function restaurerSecours() {
   J.tick(app.jeu, Date.now());
   sauver();
   majSecours();
-  compteEtat.info = `Partie de secours restaurée : Strate −${app.jeu.strate}.`;
+  compteEtat.info = t`Partie de secours restaurée : Strate −${app.jeu.strate}.`;
   D.message = compteEtat.info;
   app.mode = app.jeu.expedition ? 'combat' : 'district';
   K.etat = null;
@@ -107,7 +108,7 @@ async function pousser(env: Enveloppe) {
       return;
     }
     compteEtat.synchro = 'erreur';
-    compteEtat.codeErreur = 'écriture : ' + ((e as { code?: string })?.code ?? String(e).slice(0, 60));
+    compteEtat.codeErreur = t('écriture : ') + ((e as { code?: string })?.code ?? String(e).slice(0, 60));
     console.warn('Synchronisation', e);
     // hors ligne ou réseau lent : la partie repartira à la prochaine occasion (avant, elle attendait le geste suivant)
     if (app.uid === uid && !enAttente) {
@@ -136,8 +137,8 @@ async function reconcilier() {
       enregistrer(distante.data, Math.max(distante.updatedAt, Date.now()));
       app.jeu = distante.data;
       J.tick(app.jeu, Date.now());
-      compteEtat.info = 'Progression du compte chargée.';
-      D.message = `Progression du compte chargée : Strate −${app.jeu.strate}.`;
+      compteEtat.info = t('Progression du compte chargée.');
+      D.message = t`Progression du compte chargée : Strate −${app.jeu.strate}.`;
       app.mode = app.mode === 'titre' || app.mode === 'intro' ? app.mode : app.jeu.expedition ? 'combat' : 'district';
       K.etat = null;
       K.fin = finPour();
@@ -168,7 +169,7 @@ export async function demarrerCompte() {
   if (!firebaseActif()) return;
   // un navigateur piloté (tests, captures automatiques) ne crée pas de compte et n'écrit rien dans les vraies données
   if (navigator.webdriver) { comptePret(); return; }
-  window.setTimeout(() => { if (!compteEtat.pret) { compteEtat.info = 'Hors ligne : partie de cet appareil.'; comptePret(); } }, ATTENTE_COMPTE);
+  window.setTimeout(() => { if (!compteEtat.pret) { compteEtat.info = t('Hors ligne : partie de cet appareil.'); comptePret(); } }, ATTENTE_COMPTE);
   try {
     app.compte = await import('../net/compte');
   } catch {
@@ -228,7 +229,7 @@ export async function supprimerCompte() {
   } catch (e) {
     reprendreSauvegarde();
     compteEtat.erreur = e instanceof n.ReconnexionRequise
-      ? 'Par sécurité, Google demande une connexion récente : touche « Se déconnecter », reconnecte-toi, puis supprime ton compte tout de suite après.'
+      ? t('Par sécurité, Google demande une connexion récente : touche « Se déconnecter », reconnecte-toi, puis supprime ton compte tout de suite après.')
       : n.messageErreur(e);
   }
   compteEtat.occupe = false;

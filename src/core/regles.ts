@@ -1,5 +1,6 @@
 import { porteurDef } from './donnees';
 import type { Geste, Lignee, LigneeGeste } from './types';
+import { t } from './i18n';
 
 /** Les réglages chiffrés du combat, au même endroit pour l'équilibrage */
 export const REGLES = {
@@ -202,7 +203,7 @@ export const multEchoN = (n: number) => REGLES.echoPaliers[Math.min(5, Math.max(
 /** « +65 % » pour un Écho de n cartes */
 export const pctEcho = (n = 3) => `+${Math.round((multEchoN(n) - 1) * 100)} %`;
 /** « Écho », « Écho ×4 », « Écho ×5 » */
-export const nomEcho = (n = 3) => (n >= 4 ? `Écho ×${Math.min(5, n)}` : 'Écho');
+export const nomEcho = (n = 3) => (n >= 4 ? t`Écho ×${Math.min(5, n)}` : t('Écho'));
 
 /** Longueur de la suite qui se termine sur le dernier Geste posé */
 export function serieFinale(chaine: Maillon[]): number {

@@ -8,6 +8,8 @@
 // Le constat est gardé une semaine, puis l'appareil est remesuré (un pilote mis à jour, un portable branché…).
 // Quel que soit le réglage, ce qui boucle sans fin s'arrête quand c'est hors de l'écran (une liste de cartes qu'on fait défiler).
 
+import { t as tr } from '../core/i18n';
+
 export type Graphismes = 'auto' | 'complets' | 'legers';
 
 const CLE = 'empreintes.graphismes';
@@ -77,9 +79,9 @@ export function basculerGraphismes(): void {
 /** Le texte du bouton : ce qui est choisi et, en Auto, ce que le jeu a décidé pour cet appareil */
 export function texteGraphismes(): { valeur: string; detail: string } {
   const r = reglageGraphismes();
-  if (r === 'complets') return { valeur: 'Complets', detail: 'Tout bouge et brille : la Cuvette vivante, les reflets des cartes, le verre flouté' };
-  if (r === 'legers') return { valeur: 'Légers', detail: 'Pour un appareil qui chauffe ou rame : la Cuvette reste peinte, les lueurs ne pulsent plus' };
-  return { valeur: 'Auto', detail: leger() ? 'Allégés sur cet appareil, qui peinait à suivre' : 'Complets sur cet appareil ; allégés tout seuls si l’écran peine à suivre' };
+  if (r === 'complets') return { valeur: tr('Complets'), detail: tr('Tout bouge et brille : la Cuvette vivante, les reflets des cartes, le verre flouté') };
+  if (r === 'legers') return { valeur: tr('Légers'), detail: tr('Pour un appareil qui chauffe ou rame : la Cuvette reste peinte, les lueurs ne pulsent plus') };
+  return { valeur: tr('Auto'), detail: leger() ? tr('Allégés sur cet appareil, qui peinait à suivre') : tr('Complets sur cet appareil ; allégés tout seuls si l’écran peine à suivre') };
 }
 
 /**

@@ -9,6 +9,7 @@ import { REGLES, analyserChaine } from './regles';
 import { CONTENU, SECRETS, modeleStrate, nombreHaltes, particularite } from './strates';
 import { EXPLORER, STRATE_RODEUR, rodeurDef } from './explorer';
 import type { BonusMarques, CombatEtat, GesteDef, PorteurEtat } from './types';
+import { t as tr } from './i18n';
 
 export interface Expedition {
   strate: number;
@@ -267,7 +268,7 @@ export function cloturerCombat(x: Expedition): Expedition {
 /** Après une victoire : soin partiel puis combat suivant (ou, en exploration, retour sur la carte) */
 export function combatSuivant(x: Expedition): Expedition {
   if (x.combat.issue !== 'victoire' || x.terminee) return x;
-  if (x.carte) return { ...x, phase: 'carte', recit: `Victoire. ${x.gains?.elites && salleCourante(x).type === 'elite' ? 'Derrière la salle scellée, une carte t’attend : elle te sera remise au retour. ' : ''}L’escouade reprend sa route.` };
+  if (x.carte) return { ...x, phase: 'carte', recit: tr`Victoire. ${x.gains?.elites && salleCourante(x).type === 'elite' ? tr('Derrière la salle scellée, une carte t’attend : elle te sera remise au retour. ') : ''}L’escouade reprend sa route.` };
   const porteurs = x.combat.porteurs.map((p) => ({
     ...p,
     pv: Math.min(p.pvMax, Math.max(p.pv, 0) + Math.round(p.pvMax * (x.soinEntre ?? REGLES.soinEntreCombats))),
@@ -317,9 +318,9 @@ export const peutReculer = (x: Expedition) => peutFuir(x) && !!sallePrecedente(x
 function recitCoup(x: Expedition): string {
   const { coups, attaque } = coupDeFuite(x.combat);
   const touches = coups.filter((c) => c.net > 0);
-  if (!attaque) return x.combat.autres?.length ? 'Aucun ne préparait d’attaque : l’escouade s’échappe sans un coup.' : 'L’ennemi ne préparait pas d’attaque : l’escouade s’échappe sans un coup.';
-  if (!touches.length) return `${attaque} s’écrase sur le bouclier : l’escouade s’échappe sans une égratignure.`;
-  return `En fuyant, ${touches.map((c) => `${porteurDef(c.id).nom} encaisse ${attaque} (−${c.net})`).join(', ')}.`;
+  if (!attaque) return x.combat.autres?.length ? tr('Aucun ne préparait d’attaque : l’escouade s’échappe sans un coup.') : tr('L’ennemi ne préparait pas d’attaque : l’escouade s’échappe sans un coup.');
+  if (!touches.length) return tr`${attaque} s’écrase sur le bouclier : l’escouade s’échappe sans une égratignure.`;
+  return tr`En fuyant, ${touches.map((c) => tr`${porteurDef(c.id).nom} encaisse ${attaque} (−${c.net})`).join(', ')}.`;
 }
 
 /**
@@ -328,30 +329,30 @@ function recitCoup(x: Expedition): string {
  * ou revenir l'affronter plus tard (un combat neuf). Les PV perdus restent perdus.
  */
 export function reculer(x: Expedition): { x: Expedition; ok: boolean; message?: string } {
-  if (!peutFuir(x) || !x.carte) return { x, ok: false, message: 'On ne recule que pendant un combat d’exploration.' };
+  if (!peutFuir(x) || !x.carte) return { x, ok: false, message: tr('On ne recule que pendant un combat d’exploration.') };
   const prec = sallePrecedente(x);
-  if (!prec) return { x, ok: false, message: 'Pas de salle où se replier.' };
+  if (!prec) return { x, ok: false, message: tr('Pas de salle où se replier.') };
   const { porteurs } = coupDeFuite(x.combat);
-  if (!porteurs.some((p) => p.pv > 0)) return { x, ok: false, message: 'L’escouade ne tiendrait plus debout : il faut remonter.' };
+  if (!porteurs.some((p) => p.pv > 0)) return { x, ok: false, message: tr('L’escouade ne tiendrait plus debout : il faut remonter.') };
   const ici = salleCourante(x);
   const salles = x.carte.salles.map((s) => (s.id === ici.id ? { ...s, faite: false } : s));
   // l'ennemi fui ne compte pas parmi les combats livrés (les Marques comptent les ennemis vaincus dans l'ordre)
   const sequence = x.sequence.slice(0, -1);
   const groupe = !!x.combat.autres?.length;
-  const nom = groupe ? 'Le groupe' : ennemiDef(x.combat.ennemi.id).nom;
+  const nom = groupe ? tr('Le groupe') : ennemiDef(x.combat.ennemi.id).nom;
   return {
     ok: true,
     x: {
       ...x, carte: { ...x.carte, salles, position: prec.id }, phase: 'carte', sequence, index: sequence.length - 1, cloture: true,
       porteurs, combat: { ...x.combat, porteurs: porteurs.map((p) => ({ ...p })) },
-      recit: `${recitCoup(x)} L’escouade se replie d’une salle. ${nom} garde la sienne : prends un autre chemin, ou reviens l’affronter.`,
+      recit: tr`${recitCoup(x)} L’escouade se replie d’une salle. ${nom} garde la sienne : prends un autre chemin, ou reviens l’affronter.`,
     },
   };
 }
 
 /** Fuir jusqu'au district : l'ennemi frappe une dernière fois, puis l'escouade remonte (remonter() applique le prix de la fuite) */
 export function fuirAuDistrict(x: Expedition): { x: Expedition; ok: boolean; message?: string } {
-  if (!peutFuir(x)) return { x, ok: false, message: 'On ne fuit que pendant un combat.' };
+  if (!peutFuir(x)) return { x, ok: false, message: tr('On ne fuit que pendant un combat.') };
   const { porteurs } = coupDeFuite(x.combat);
   return {
     ok: true,
@@ -366,11 +367,11 @@ export type Vision = 'claire' | 'indice' | 'brume';
 /** Les indices : volontairement ambigus (une lueur peut être une cache, une salle scellée… ou un ennemi Résonant) */
 export type Indice = 'bruits' | 'lueur' | 'silence' | 'traces' | 'chaleur';
 export const INDICES: Record<Indice, { nom: string; texte: string }> = {
-  bruits: { nom: 'Des bruits', texte: 'Des pas, un grattement, quelque chose qui respire derrière la paroi.' },
-  lueur: { nom: 'Une lueur', texte: 'Une lueur bleutée au bout du couloir. Quelque chose de précieux… ou quelqu’un qui résonne.' },
-  silence: { nom: 'Le silence', texte: 'Rien ne bouge. De la poussière, des gravats : une salle oubliée.' },
-  traces: { nom: 'Des traces', texte: 'Des traces fraîches dans la poussière. Quelqu’un est passé il y a peu.' },
-  chaleur: { nom: 'De la chaleur', texte: 'Une odeur de feu éteint, un air plus doux. Des fouilleurs ont fait halte ici.' },
+  bruits: { nom: tr('Des bruits'), texte: tr('Des pas, un grattement, quelque chose qui respire derrière la paroi.') },
+  lueur: { nom: tr('Une lueur'), texte: tr('Une lueur bleutée au bout du couloir. Quelque chose de précieux… ou quelqu’un qui résonne.') },
+  silence: { nom: tr('Le silence'), texte: tr('Rien ne bouge. De la poussière, des gravats : une salle oubliée.') },
+  traces: { nom: tr('Des traces'), texte: tr('Des traces fraîches dans la poussière. Quelqu’un est passé il y a peu.') },
+  chaleur: { nom: tr('De la chaleur'), texte: tr('Une odeur de feu éteint, un air plus doux. Des fouilleurs ont fait halte ici.') },
 };
 
 /** L'indice que laisse deviner une salle (toujours le même pour une même salle) */
@@ -701,8 +702,8 @@ export function nouvelleExploration(opts: {
     strate: opts.strate, ...(modele !== opts.strate ? { modele } : {}), sequence: [], index: -1, porteurs: opts.porteurs, deck: opts.deck, combat: attente,
     butin: 0, terminee: false, cloture: true, carte, phase: 'carte', gagnes: 0, gains: gainsVides(),
     recit: opts.fouille
-      ? `L’escouade descend fouiller ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Pas de gardien cette fois : le filon est au fond.`
-      : `L’escouade entre dans ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Choisis ton chemin : le gardien attend tout au fond.${particularite(modele) ? ` ${modele !== opts.strate ? `Cette semaine, le Fond emprunte à la Strate −${modele} ${particularite(modele)!.nom.charAt(0).toLowerCase()}${particularite(modele)!.nom.slice(1)}.` : `${particularite(modele)!.nom}.`} ${particularite(modele)!.texte}` : ''}${carte.salles.some((s) => s.quete) ? ` Une marque de quête ✦ brille quelque part sur le plan.` : ''}${places.size ? ` ${places.size > 1 ? `${places.size} Vestiges dorment` : 'Un Vestige dort'} sur le plan.` : ''}${traque ? ` ${rodeurDef(traque.id)!.traces}` : ''}`,
+      ? tr`L’escouade descend fouiller ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Pas de gardien cette fois : le filon est au fond.`
+      : tr`L’escouade entre dans ${ZONES[carte.zone]!.nom.replace(/^L/, 'l')}. Choisis ton chemin : le gardien attend tout au fond.${particularite(modele) ? ` ${modele !== opts.strate ? tr`Cette semaine, le Fond emprunte à la Strate −${modele} ${particularite(modele)!.nom.charAt(0).toLowerCase()}${particularite(modele)!.nom.slice(1)}.` : `${particularite(modele)!.nom}.`} ${particularite(modele)!.texte}` : ''}${carte.salles.some((s) => s.quete) ? tr` Une marque de quête ✦ brille quelque part sur le plan.` : ''}${places.size ? tr` ${places.size > 1 ? tr`${places.size} Vestiges dorment` : tr('Un Vestige dort')} sur le plan.` : ''}${traque ? ` ${rodeurDef(traque.id)!.traces}` : ''}`,
     ...(opts.fouille ? { fouille: opts.fouille } : {}),
     ...(opts.fouille && opts.difficulte ? { difficulte: opts.difficulte } : {}),
     ...(opts.facteur && opts.facteur !== 1 ? { facteur: opts.facteur } : {}),
@@ -773,12 +774,12 @@ export function lancerCombat(x: Expedition, ennemi: string, renfort = 1, escorte
  */
 export function entrerSalle(x: Expedition, id: number, second = false): { x: Expedition; ok: boolean; message?: string } {
   if (!x.carte || x.phase !== 'carte' || x.terminee) return { x, ok: false };
-  if (x.rencontre) return { x, ok: false, message: 'Réponds d’abord à la rencontre.' };
-  if (x.enHalte) return { x, ok: false, message: 'Fais d’abord ton choix à la Halte.' };
-  if (x.porte) return { x, ok: false, message: 'Ouvre la porte, ou passe ton chemin.' };
+  if (x.rencontre) return { x, ok: false, message: tr('Réponds d’abord à la rencontre.') };
+  if (x.enHalte) return { x, ok: false, message: tr('Fais d’abord ton choix à la Halte.') };
+  if (x.porte) return { x, ok: false, message: tr('Ouvre la porte, ou passe ton chemin.') };
   const ici = salleCourante(x);
   const parFil = ici.fil === id && !x.filPris;
-  if (!ici.voisins.includes(id) && !parFil) return { x, ok: false, message: 'Cette salle n’est pas accessible d’ici.' };
+  if (!ici.voisins.includes(id) && !parFil) return { x, ok: false, message: tr('Cette salle n’est pas accessible d’ici.') };
   // −7 : la salle à deux occupants ; on affronte le second si on l'a choisi (il devient l'occupant de la salle)
   const choisi = (s: Salle): Salle => (second && s.double ? { ...s, ennemi: s.double, double: s.ennemi } : s);
   const salles = x.carte.salles.map((s) => (s.id === id ? { ...choisi(s), faite: true } : s));
@@ -790,7 +791,7 @@ export function entrerSalle(x: Expedition, id: number, second = false): { x: Exp
   if (salle.quete && !salle.ennemi) y.gains = { ...(y.gains ?? gainsVides()), etape: true };
   // un Vestige : ramassé en entrant, sauf derrière un combat (il faut le gagner) ou une porte (il faut l'ouvrir)
   if (salle.vestige && !salle.ennemi && salle.type !== 'porte') y.gains = ramasser(y.gains, salle.vestige);
-  const avant = parFil ? 'L’escouade suit le fil d’une salle à l’autre. ' : '';
+  const avant = parFil ? tr('L’escouade suit le fil d’une salle à l’autre. ') : '';
   switch (salle.type) {
     case 'combat':
       if (salle.rodeur && x.rodeur) {
@@ -808,16 +809,16 @@ export function entrerSalle(x: Expedition, id: number, second = false): { x: Exp
     case 'halte':
       // la Halte : un choix à faire (descentes.ts, choisirHalte), ou un lieu déjà connu
       if (typeof x.halte === 'number') y = { ...y, enHalte: true, recit: '' };
-      else y = { ...y, recit: 'Un lieu que l’escouade connaît, maintenant. Elle s’y arrête le temps de reprendre son souffle, puis repart.' };
+      else y = { ...y, recit: tr('Un lieu que l’escouade connaît, maintenant. Elle s’y arrête le temps de reprendre son souffle, puis repart.') };
       break;
     case 'porte': {
       // une porte à Fréquence : une main tirée parmi les cartes des Porteurs debout (ouvrirPorte, passerPorte)
       const main = mainPorte(y, t);
-      y = main.length ? { ...y, porte: { main, relance: false }, recit: '' } : { ...y, recit: 'Une porte ancienne, gravée de Fréquences. Personne dans l’escouade ne tient debout pour l’accorder.' };
+      y = main.length ? { ...y, porte: { main, relance: false }, recit: '' } : { ...y, recit: tr('Une porte ancienne, gravée de Fréquences. Personne dans l’escouade ne tient debout pour l’accorder.') };
       break;
     }
     case 'elite':
-      y = lancerCombat({ ...y, recit: 'Une salle scellée : son occupant est plus coriace, mais quelque chose de précieux dort derrière lui.' }, salle.ennemi!, 1.15, undefined, salle.condition);
+      y = lancerCombat({ ...y, recit: tr('Une salle scellée : son occupant est plus coriace, mais quelque chose de précieux dort derrière lui.') }, salle.ennemi!, 1.15, undefined, salle.condition);
       break;
     case 'cache': {
       // −2 : une cache murée, qu'un Augmenté debout force (le double) ; −5 : une niche, où dort parfois une carte (strates.ts)
@@ -830,22 +831,22 @@ export function entrerSalle(x: Expedition, id: number, second = false): { x: Exp
       // la voie sûre panse un peu l'escouade (30 octobre 2026) : bandages et eau propre oubliés avec les composants
       const porteurs = y.porteurs.map((p) => (p.pv > 0 ? { ...p, pv: Math.min(p.pvMax, p.pv + Math.round(p.pvMax * REGLES.salles.cacheSoin)) } : p));
       const debut = salle.mur
-        ? force ? 'Un abri muré en 2066. Ton Augmenté enfonce le parpaing d’un coup d’épaule : derrière, une réserve intacte'
-          : 'Un abri muré en 2066. Sans Augmenté pour forcer le mur, l’escouade ne fouille que les gravats devant'
-        : niche ? (carte ? 'Une niche du Treillis, oubliée par les Hauts : un cristal y dort encore. Il deviendra une carte au district' : 'Une niche du Treillis, vidée et scellée de cire blanche. Il reste ce que les préleveurs ont laissé tomber')
-        : 'Une cache de fouilleur, oubliée sous des gravats';
-      y = { ...y, porteurs, butin: y.butin + n, gains, recit: `${avant}${debut} : +${n} minerai${eclat ? ', un Éclat' : ''} et de quoi panser l’escouade.` };
+        ? force ? tr('Un abri muré en 2066. Ton Augmenté enfonce le parpaing d’un coup d’épaule : derrière, une réserve intacte')
+          : tr('Un abri muré en 2066. Sans Augmenté pour forcer le mur, l’escouade ne fouille que les gravats devant')
+        : niche ? (carte ? tr('Une niche du Treillis, oubliée par les Hauts : un cristal y dort encore. Il deviendra une carte au district') : tr('Une niche du Treillis, vidée et scellée de cire blanche. Il reste ce que les préleveurs ont laissé tomber'))
+        : tr('Une cache de fouilleur, oubliée sous des gravats');
+      y = { ...y, porteurs, butin: y.butin + n, gains, recit: tr`${avant}${debut} : +${n} minerai${eclat ? tr(', un Éclat') : ''} et de quoi panser l’escouade.` };
       break;
     }
     case 'camp': {
       const porteurs = y.porteurs.map((p) => ({ ...p, pv: Math.min(p.pvMax, Math.max(0, p.pv) + Math.round(p.pvMax * 0.35)), aTerre: false }));
-      y = { ...y, porteurs, campe: true, recit: 'Un campement de fouilleurs, encore tiède. L’escouade souffle (+35 % de PV). Tu peux remonter d’ici avec ce que tu as trouvé.' };
+      y = { ...y, porteurs, campe: true, recit: tr('Un campement de fouilleurs, encore tiède. L’escouade souffle (+35 % de PV). Tu peux remonter d’ici avec ce que tu as trouvé.') };
       break;
     }
     case 'archive': {
       const gains = { ...(y.gains ?? gainsVides()), fragment: true };
       const n = butinArchive(x.strate);
-      y = { ...y, gains, butin: y.butin + n, recit: `Une salle d’archives : des papiers d’époque, rangés avec soin. Tu les rapporteras au district (+${n} minerai).` };
+      y = { ...y, gains, butin: y.butin + n, recit: tr`Une salle d’archives : des papiers d’époque, rangés avec soin. Tu les rapporteras au district (+${n} minerai).` };
       break;
     }
     case 'rencontre':
@@ -853,7 +854,7 @@ export function entrerSalle(x: Expedition, id: number, second = false): { x: Exp
       break;
     case 'filon':
       // fin de la fouille : ce qu'on cherchait est là, l'escouade remonte avec
-      y = { ...y, terminee: true, recit: 'Le filon est là, intact. L’escouade le dégage et remonte avec.' };
+      y = { ...y, terminee: true, recit: tr('Le filon est là, intact. L’escouade le dégage et remonte avec.') };
       break;
     default:
       break;
@@ -897,22 +898,22 @@ export function mainAccordable(x: Expedition): number[] | null {
 
 /** Ouvrir la porte avec les cartes choisies (rangs dans le deck) : un Éclat (deux au fond) et des composants */
 export function ouvrirPorte(x: Expedition, rangs: number[]): { x: Expedition; ok: boolean; message?: string } {
-  if (!x.porte) return { x, ok: false, message: 'Aucune porte à ouvrir.' };
+  if (!x.porte) return { x, ok: false, message: tr('Aucune porte à ouvrir.') };
   const n = suitePorte(x.strate);
-  if (rangs.length !== n || rangs.some((r) => !x.porte!.main.includes(r)) || new Set(rangs).size !== n) return { x, ok: false, message: `Choisis ${n} cartes de la main.` };
-  if (!cartesAccordees(rangs.map((r) => x.deck[r]!), n)) return { x, ok: false, message: `Ces Fréquences ne se suivent pas : il faut une suite de ${n} (par exemple ${Array.from({ length: n }, (_, k) => k + 3).join(', ')}).` };
+  if (rangs.length !== n || rangs.some((r) => !x.porte!.main.includes(r)) || new Set(rangs).size !== n) return { x, ok: false, message: tr`Choisis ${n} cartes de la main.` };
+  if (!cartesAccordees(rangs.map((r) => x.deck[r]!), n)) return { x, ok: false, message: tr`Ces Fréquences ne se suivent pas : il faut une suite de ${n} (par exemple ${Array.from({ length: n }, (_, k) => k + 3).join(', ')}).` };
   const eclats = x.strate >= 10 ? CONTENU.porte.eclatsFond : CONTENU.porte.eclats;
   const plus = Math.round(butinCache(x.strate) * CONTENU.porte.composants);
   let gains: Gains = { ...(x.gains ?? gainsVides()), eclats: (x.gains?.eclats ?? 0) + eclats, portes: (x.gains?.portes ?? 0) + 1 };
   const vestige = x.carte ? salleCourante(x).vestige : undefined;
   if (vestige) gains = ramasser(gains, vestige);
   return { ok: true, x: { ...x, porte: undefined, gains, butin: x.butin + plus,
-    recit: `Les Fréquences s’accordent. La porte tourne sur elle-même sans un bruit : derrière, ${eclats > 1 ? `${eclats} Éclats` : 'un Éclat'} et ${plus} minerai, rangés là depuis toujours.` } };
+    recit: tr`Les Fréquences s’accordent. La porte tourne sur elle-même sans un bruit : derrière, ${eclats > 1 ? `${eclats} Éclats` : tr('un Éclat')} et ${plus} minerai, rangés là depuis toujours.` } };
 }
 
 /** Une seule relance par porte : une nouvelle main */
 export function relancerPorte(x: Expedition): { x: Expedition; ok: boolean; message?: string } {
-  if (!x.porte || x.porte.relance || !x.carte) return { x, ok: false, message: 'La porte ne se laisse essayer qu’une seconde fois.' };
+  if (!x.porte || x.porte.relance || !x.carte) return { x, ok: false, message: tr('La porte ne se laisse essayer qu’une seconde fois.') };
   const etat = { rng: x.carte.rng };
   const main = mainPorte(x, tireur(etat));
   return { ok: true, x: { ...x, carte: { ...x.carte, rng: etat.rng }, porte: { main, relance: true } } };
@@ -921,7 +922,7 @@ export function relancerPorte(x: Expedition): { x: Expedition; ok: boolean; mess
 /** Laisser la porte fermée : rien n'est perdu */
 export function passerPorte(x: Expedition): { x: Expedition; ok: boolean } {
   if (!x.porte) return { x, ok: false };
-  return { ok: true, x: { ...x, porte: undefined, recit: 'La porte reste fermée. Elle a attendu des siècles ; elle attendra bien encore.' } };
+  return { ok: true, x: { ...x, porte: undefined, recit: tr('La porte reste fermée. Elle a attendu des siècles ; elle attendra bien encore.') } };
 }
 
 // ---------- Les passages secrets ----------
@@ -939,13 +940,13 @@ export function suivrePassage(x: Expedition): { x: Expedition; ok: boolean; mess
   const ici = salleCourante(x);
   const qui = reperentPassage(x, ici)[0];
   const def = SECRETS.find((d) => d.id === ici.secret);
-  if (!qui || !def) return { x, ok: false, message: 'Personne ne voit de passage ici.' };
+  if (!qui || !def) return { x, ok: false, message: tr('Personne ne voit de passage ici.') };
   const plus = butinCache(x.strate);
   let gains: Gains = { ...(x.gains ?? gainsVides()), fragment: true, portes: (x.gains?.portes ?? 0) + 1 };
   // derrière le passage, un Vestige de plus quand il en manque encore (explorer.ts)
   if (x.vestigeSecret) gains = ramasser(gains, x.vestigeSecret);
   return { ok: true, qui, x: { ...x, secretVu: true, gains, butin: x.butin + plus,
-    recit: `${def.derriere[Math.min(3, x.carte.zone)]} L’escouade en rapporte ${plus} minerai et des papiers d’époque${x.vestigeSecret ? ', et un Vestige posé là, comme pour vous' : ''}.` } };
+    recit: tr`${def.derriere[Math.min(3, x.carte.zone)]} L’escouade en rapporte ${plus} minerai et des papiers d’époque${x.vestigeSecret ? tr(', et un Vestige posé là, comme pour vous') : ''}.` } };
 }
 
 /** Les Haltes encore à voir dans une Strate (strates.ts) : la prochaine, ou « connu » */

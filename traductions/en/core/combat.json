@@ -1,0 +1,701 @@
+{
+ "source": "src/core/combat.ts",
+ "entrees": [
+  {
+   "fr": "{0} : un groupe surgit dans la Strate.",
+   "en": ""
+  },
+  {
+   "fr": "Un {0} surgit dans la Strate.",
+   "en": ""
+  },
+  {
+   "fr": "Front commun",
+   "en": ""
+  },
+  {
+   "fr": "{0} appelle {1} à ses côtés : à deux, ils ne font plus qu’attaquer.",
+   "en": ""
+  },
+  {
+   "fr": "Plus de bouclier ni de soin en face : protège l’escouade et abats le plus faible des deux avant qu’ils ne te débordent.",
+   "en": ""
+  },
+  {
+   "fr": "Garde rapprochée",
+   "en": ""
+  },
+  {
+   "fr": "Deux {0} accourent : ils ne frappent pas, ils soignent {1} et le couvrent de leur bouclier.",
+   "en": ""
+  },
+  {
+   "fr": "Tant que sa garde tient, le gardien remonte : abats d’abord ceux qui le soignent.",
+   "en": ""
+  },
+  {
+   "fr": "Déferlement",
+   "en": ""
+  },
+  {
+   "fr": "{0} ne retient plus rien : ses coups enflent à chaque tour.",
+   "en": ""
+  },
+  {
+   "fr": "Chaque tour qui passe le rend plus dangereux : mise tout sur les dégâts pour le finir vite.",
+   "en": ""
+  },
+  {
+   "fr": "Appel des profondeurs",
+   "en": ""
+  },
+  {
+   "fr": "{0} cesse de frapper : il appelle {1} et soigne les siens. Eux ne font qu’attaquer.",
+   "en": ""
+  },
+  {
+   "fr": "Le gardien ne frappe plus mais ses renforts reviennent sans cesse : frappe-le, lui, dès que tu peux.",
+   "en": ""
+  },
+  {
+   "fr": "Assaut commun",
+   "en": ""
+  },
+  {
+   "fr": "Coup concerté",
+   "en": ""
+  },
+  {
+   "fr": "Panser le gardien",
+   "en": ""
+  },
+  {
+   "fr": "Soigner les siens",
+   "en": ""
+  },
+  {
+   "fr": "Assaut",
+   "en": ""
+  },
+  {
+   "fr": "Curée",
+   "en": ""
+  },
+  {
+   "fr": "Ruée",
+   "en": ""
+  },
+  {
+   "fr": "Va couvrir un allié : bouclier {0}",
+   "en": ""
+  },
+  {
+   "fr": "Va se protéger : bouclier {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0} : va appeler un renfort",
+   "en": ""
+  },
+  {
+   "fr": "{0} : va soigner un allié, +{1} PV",
+   "en": ""
+  },
+  {
+   "fr": "Se concentre : sa prochaine attaque fera double dégâts",
+   "en": ""
+  },
+  {
+   "fr": "Va se réparer : {0} +{1} PV",
+   "en": ""
+  },
+  {
+   "fr": "{0} : va brouiller tes Fréquences, ni Résonance ni Écho au tour suivant",
+   "en": ""
+  },
+  {
+   "fr": "Va frapper toute l’escouade : {0} {1}",
+   "en": ""
+  },
+  {
+   "fr": "Va frapper {0} : {1} {2}",
+   "en": ""
+  },
+  {
+   "fr": "Une place vide ne se joue pas : confie une carte de plus à ce Porteur.",
+   "en": ""
+  },
+  {
+   "fr": "{0} prend 2 places, il n’en reste {1}.",
+   "en": ""
+  },
+  {
+   "fr": "La chaîne est pleine.",
+   "en": ""
+  },
+  {
+   "fr": " Retire une carte ou dépense 1 Flux (+1 place).",
+   "en": ""
+  },
+  {
+   "fr": " Retire une carte.",
+   "en": ""
+  },
+  {
+   "fr": "Une seule voix : cette chaîne joue déjà les {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Flux dépensé : la chaîne gagne une place ce tour-ci.",
+   "en": ""
+  },
+  {
+   "fr": "Flux dépensé : nouvelle main (la main et la chaîne posée partent à la défausse).",
+   "en": ""
+  },
+  {
+   "fr": "Première main relancée.",
+   "en": ""
+  },
+  {
+   "fr": "Aucune carte ne peut entrer dans la chaîne : tu passes ton tour.",
+   "en": ""
+  },
+  {
+   "fr": "Fréquences brouillées : ni Résonance ni Écho ce tour-ci.",
+   "en": ""
+  },
+  {
+   "fr": "Fréquences brouillées : pas de Résonance ce tour-ci.",
+   "en": ""
+  },
+  {
+   "fr": "Brouillé",
+   "en": ""
+  },
+  {
+   "fr": "Résonance ! Suite de {0} : effets +{1} %.",
+   "en": ""
+  },
+  {
+   "fr": "{0} ! {1} Fréquences identiques : ces cartes {2}.",
+   "en": ""
+  },
+  {
+   "fr": "Cinq",
+   "en": ""
+  },
+  {
+   "fr": "Quatre",
+   "en": ""
+  },
+  {
+   "fr": "Trois",
+   "en": ""
+  },
+  {
+   "fr": "{0} est visé à son tour.",
+   "en": ""
+  },
+  {
+   "fr": "{0} assimile ton dernier coup : le voilà {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Assimilation",
+   "en": ""
+  },
+  {
+   "fr": "La Résonance remplit le Flux (+{0}).",
+   "en": ""
+  },
+  {
+   "fr": "Rappel : {0} revient en tête de pioche.",
+   "en": ""
+  },
+  {
+   "fr": "Rappel",
+   "en": ""
+  },
+  {
+   "fr": "{0} s’éteint dans le noir avant d’être abattu : l’Épreuve est manquée.",
+   "en": ""
+  },
+  {
+   "fr": "{0} s’enfuit dans le noir, blessé. Ses blessures resteront.",
+   "en": ""
+  },
+  {
+   "fr": "Le groupe est vaincu.",
+   "en": ""
+  },
+  {
+   "fr": "{0} est vaincu.",
+   "en": ""
+  },
+  {
+   "fr": "Appel",
+   "en": ""
+  },
+  {
+   "fr": "Bras de quai : le bouclier restant soigne {0} (+{1}).",
+   "en": ""
+  },
+  {
+   "fr": "Spécial",
+   "en": ""
+  },
+  {
+   "fr": "Empreinte : {0} reprend l’effet de la carte d’avant ({1}).",
+   "en": ""
+  },
+  {
+   "fr": "Empreinte",
+   "en": ""
+  },
+  {
+   "fr": "Surtension : {0} brûle {1} PV, +{2} % de force.",
+   "en": ""
+  },
+  {
+   "fr": "Rapt : {0} de bouclier arrachés à l’ennemi, pour l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Brèche : {0} de bouclier ennemi brisés.",
+   "en": ""
+  },
+  {
+   "fr": "Brèche",
+   "en": ""
+  },
+  {
+   "fr": "Décharge : {0} Flux {1}{2}, +{3} % de force.",
+   "en": ""
+  },
+  {
+   "fr": "vidé",
+   "en": ""
+  },
+  {
+   "fr": "Décharge",
+   "en": ""
+  },
+  {
+   "fr": "Décharge : le Flux était vide, {0} le remplit (+{1}).",
+   "en": ""
+  },
+  {
+   "fr": "Blindé",
+   "en": ""
+  },
+  {
+   "fr": "Perçant",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} : {2} dégâts{3}{4}{5}.",
+   "en": ""
+  },
+  {
+   "fr": " (avantage de lignée)",
+   "en": ""
+  },
+  {
+   "fr": ", {0} absorbés",
+   "en": ""
+  },
+  {
+   "fr": ", bouclier transpercé",
+   "en": ""
+  },
+  {
+   "fr": "Épines : {0} se blesse (−{1}).",
+   "en": ""
+  },
+  {
+   "fr": "Rafale",
+   "en": ""
+  },
+  {
+   "fr": "Exécution : {0} n’avait plus que {1} PV, il tombe.",
+   "en": ""
+  },
+  {
+   "fr": "Exécution",
+   "en": ""
+  },
+  {
+   "fr": "Siphon : {0} récupère {1} PV.",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} : bouclier d’escouade +{2}.",
+   "en": ""
+  },
+  {
+   "fr": "Escouade",
+   "en": ""
+  },
+  {
+   "fr": "Riposte ({0} % du bouclier)",
+   "en": ""
+  },
+  {
+   "fr": "Salle favorable",
+   "en": ""
+  },
+  {
+   "fr": "Débridage",
+   "en": ""
+  },
+  {
+   "fr": "Relève : {0} se relève avec {1} PV.",
+   "en": ""
+  },
+  {
+   "fr": "PV déjà pleins",
+   "en": ""
+  },
+  {
+   "fr": "Débord : le soin en trop devient {0} de bouclier d’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Surcharge : Flux +{0}.",
+   "en": ""
+  },
+  {
+   "fr": "Troublé : l’attaque annoncée passe de {0} à {1}.",
+   "en": ""
+  },
+  {
+   "fr": "sa prochaine attaque",
+   "en": ""
+  },
+  {
+   "fr": "son bouclier",
+   "en": ""
+  },
+  {
+   "fr": "son soin",
+   "en": ""
+  },
+  {
+   "fr": "Sourdine : {0} passe de {1} à {2}.",
+   "en": ""
+  },
+  {
+   "fr": "Sourdine",
+   "en": ""
+  },
+  {
+   "fr": "Fissure : l’ennemi subit +{0} % de dégâts jusqu’au tour prochain.",
+   "en": ""
+  },
+  {
+   "fr": "Élan : la prochaine chaîne aura une place de plus.",
+   "en": ""
+  },
+  {
+   "fr": "Ténacité : au tour ennemi, personne ne tombera.",
+   "en": ""
+  },
+  {
+   "fr": "Ténacité",
+   "en": ""
+  },
+  {
+   "fr": "Rempart : {0} % du bouclier restant sera gardé au tour suivant.",
+   "en": ""
+  },
+  {
+   "fr": "Rempart",
+   "en": ""
+  },
+  {
+   "fr": "Résonance (suite de {0})",
+   "en": ""
+  },
+  {
+   "fr": "{0} ({1} Fréquences identiques)",
+   "en": ""
+  },
+  {
+   "fr": "{0} empilés ({1}e)",
+   "en": ""
+  },
+  {
+   "fr": "Boucliers",
+   "en": ""
+  },
+  {
+   "fr": "Soins",
+   "en": ""
+  },
+  {
+   "fr": "Finisseur (termine la suite)",
+   "en": ""
+  },
+  {
+   "fr": "Trois lignées",
+   "en": ""
+  },
+  {
+   "fr": "Crescendo ({0}e de la chaîne)",
+   "en": ""
+  },
+  {
+   "fr": "Secours ({0} à terre)",
+   "en": ""
+  },
+  {
+   "fr": "Décharge ({0} Flux)",
+   "en": ""
+  },
+  {
+   "fr": "Amorce ({0})",
+   "en": ""
+  },
+  {
+   "fr": "Unisson ({0} même{1} Fréquence{2})",
+   "en": ""
+  },
+  {
+   "fr": "Contrepoint ({0} autre{1} lignée{2} dans la suite)",
+   "en": ""
+  },
+  {
+   "fr": "Empreinte (rien à copier)",
+   "en": ""
+  },
+  {
+   "fr": "Surtension",
+   "en": ""
+  },
+  {
+   "fr": "Porteur à terre",
+   "en": ""
+  },
+  {
+   "fr": "Lignée : {0} bat {1}",
+   "en": ""
+  },
+  {
+   "fr": "Curée (ennemi fissuré)",
+   "en": ""
+  },
+  {
+   "fr": "Curée (ennemi à moins de la moitié de ses PV)",
+   "en": ""
+  },
+  {
+   "fr": "Faille (Fêlure brisée)",
+   "en": ""
+  },
+  {
+   "fr": "Évanescent (hors Résonance)",
+   "en": ""
+  },
+  {
+   "fr": "Concentration",
+   "en": ""
+  },
+  {
+   "fr": "Furie",
+   "en": ""
+  },
+  {
+   "fr": "Combat qui s’éternise (tour {0})",
+   "en": ""
+  },
+  {
+   "fr": "Ombre agissante",
+   "en": ""
+  },
+  {
+   "fr": "Éboulis : des pierres tombent (−{0} chacun).",
+   "en": ""
+  },
+  {
+   "fr": "Les pierres frappent aussi {0} (−{1}).",
+   "en": ""
+  },
+  {
+   "fr": "le groupe",
+   "en": ""
+  },
+  {
+   "fr": "Seconde chance : {0} se relève ({1} PV).",
+   "en": ""
+  },
+  {
+   "fr": "{0} est à terre : ses cartes s’éteignent (−15 % de force, sans effet).",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur est à terre : l’Épreuve « Nul ne reste au fond » est manquée.",
+   "en": ""
+  },
+  {
+   "fr": "Fondations : Doran relève le mur, +{0} de bouclier.",
+   "en": ""
+  },
+  {
+   "fr": "Nuit blanche : Joss veille sur {0} (+{1}).",
+   "en": ""
+  },
+  {
+   "fr": "{0} : {1} de bouclier gardés.",
+   "en": ""
+  },
+  {
+   "fr": "Bras de quai",
+   "en": ""
+  },
+  {
+   "fr": "Les coups de ta chaîne frappent {0} % plus fort ce tour-ci.",
+   "en": ""
+  },
+  {
+   "fr": "Sursaut",
+   "en": ""
+  },
+  {
+   "fr": "Toute l’escouade récupère 40 % de ses PV, et un Porteur à terre se relève.",
+   "en": ""
+  },
+  {
+   "fr": "Aucune attaque ennemie ne porte au prochain tour ennemi.",
+   "en": ""
+  },
+  {
+   "fr": "Débridage : {0} pousse ses implants au-delà du raisonnable. La chaîne frappera {1} % plus fort.",
+   "en": ""
+  },
+  {
+   "fr": "Ombre agissante : l’ombre {0} se lève et retiendra les coups du prochain tour.",
+   "en": ""
+  },
+  {
+   "fr": "Sursaut : le corps {0} répond pour tous.{1}",
+   "en": ""
+  },
+  {
+   "fr": " {0} se relève.",
+   "en": ""
+  },
+  {
+   "fr": "Fêlure trouvée",
+   "en": ""
+  },
+  {
+   "fr": "Fêlure",
+   "en": ""
+  },
+  {
+   "fr": "{0} : {1} vacille, {2} passe de {3} à {4}.",
+   "en": ""
+  },
+  {
+   "fr": "son attaque",
+   "en": ""
+  },
+  {
+   "fr": "{0} : {1} vacille, son appel se perd dans les profondeurs.",
+   "en": ""
+  },
+  {
+   "fr": "{0} : {1} vacille, mais ce qu’il prépare ne change pas.",
+   "en": ""
+  },
+  {
+   "fr": "Galons blancs : +{0} carte en main.",
+   "en": ""
+  },
+  {
+   "fr": "Fêlure brisée en Résonance : Flux +{0}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} : plus personne à {1}, son geste se perd.",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} : personne ne répond, la Fêlure a rompu l’appel.",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} : un renfort surgit des profondeurs.",
+   "en": ""
+  },
+  {
+   "fr": "{0} couvre {1} : bouclier {2}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} se protège : bouclier {1}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} se concentre. Sa prochaine attaque fera double dégâts.",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} : Véla lit le brouillage, tes Fréquences restent nettes.",
+   "en": ""
+  },
+  {
+   "fr": "Lucide",
+   "en": ""
+  },
+  {
+   "fr": "Lectrice : Véla lui renvoie son brouillage, sa prochaine attaque perd {0} %.",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} : tes Fréquences sont brouillées, ni Résonance ni Écho au prochain tour.",
+   "en": ""
+  },
+  {
+   "fr": "Ténacité : {0} tient debout à 1 PV.",
+   "en": ""
+  },
+  {
+   "fr": "protégé",
+   "en": ""
+  },
+  {
+   "fr": "Née-de-mue : la chitine renvoie {0} à {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Ombre courtoise : le coup retenu donne {0} Flux.",
+   "en": ""
+  },
+  {
+   "fr": "{0} aspire {1} Flux.",
+   "en": ""
+  },
+  {
+   "fr": "Flux aspiré",
+   "en": ""
+  },
+  {
+   "fr": "{0} · {1} : l’ombre retient le coup.",
+   "en": ""
+  },
+  {
+   "fr": "{0} se régénère (+{1}).",
+   "en": ""
+  },
+  {
+   "fr": "{0} venge son allié : sa prochaine attaque est doublée.",
+   "en": ""
+  },
+  {
+   "fr": "Guet : le Guetteur l’a vu venir, +{0} carte{1} en main.",
+   "en": ""
+  }
+ ]
+}

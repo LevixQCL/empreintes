@@ -1,0 +1,57 @@
+{
+ "source": "src/ui/titre.ts",
+ "entrees": [
+  {
+   "fr": "Compte : {0}, Strate −{1}",
+   "en": ""
+  },
+  {
+   "fr": "Partie de ce téléphone ·",
+   "en": ""
+  },
+  {
+   "fr": "La protéger",
+   "en": ""
+  },
+  {
+   "fr": "Déjà un compte ?",
+   "en": ""
+  },
+  {
+   "fr": "Nouvelle partie",
+   "en": ""
+  },
+  {
+   "fr": "J’ai déjà une partie",
+   "en": ""
+  },
+  {
+   "fr": "Je me connecte pour la retrouver",
+   "en": ""
+  },
+  {
+   "fr": "Installer le jeu sur l’écran d’accueil",
+   "en": ""
+  },
+  {
+   "fr": "Alpha",
+   "en": ""
+  },
+  {
+   "fr": "Récupération de ta partie…",
+   "en": ""
+  },
+  {
+   "fr": "Commencer",
+   "en": ""
+  },
+  {
+   "fr": "Ossyra, écran titre",
+   "en": ""
+  },
+  {
+   "fr": "2121 · Sous les eaux, d’autres se souviennent encore.",
+   "en": ""
+  }
+ ]
+}

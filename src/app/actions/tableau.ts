@@ -6,6 +6,7 @@ import { afficher } from '../rendu';
 import { sauver } from '../synchro';
 import { lireTableau, planifierPublication, reseauTableau } from '../tableau';
 import { ouvrir, type Clic, type Suite } from './commun';
+import { t as tr } from '../../core/i18n';
 
 export async function agirTableau(a: string, c: Clic): Promise<Suite> {
   const { id } = c;
@@ -26,15 +27,15 @@ export async function agirTableau(a: string, c: Clic): Promise<Suite> {
     case 'gt-nom-ok': {
       const nom = nettoyerNom((racine.querySelector('#gt-nom') as HTMLInputElement | null)?.value ?? '');
       const avant = app.jeu.directeur?.nom ?? null;
-      if (!nomValide(nom)) { G.erreur = 'De 3 à 18 caractères : lettres (alphabet latin), chiffres, espaces, points, tirets.'; break; }
-      if (pseudoInterdit(nom)) { G.erreur = 'Ce pseudo n’est pas accepté. Choisis-en un autre.'; break; }
+      if (!nomValide(nom)) { G.erreur = tr('De 3 à 18 caractères : lettres (alphabet latin), chiffres, espaces, points, tirets.'); break; }
+      if (pseudoInterdit(nom)) { G.erreur = tr('Ce pseudo n’est pas accepté. Choisis-en un autre.'); break; }
       const change = !!avant && clePseudo(avant) !== clePseudo(nom);
       const depuis = app.jeu.directeur?.change ?? 0;
       if (change && Date.now() - depuis < DELAI_PSEUDO) {
-        G.erreur = `Un changement de pseudo par semaine : le prochain est possible le ${new Date(depuis + DELAI_PSEUDO).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' })}.`;
+        G.erreur = tr`Un changement de pseudo par semaine : le prochain est possible le ${new Date(depuis + DELAI_PSEUDO).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' })}.`;
         break;
       }
-      if (G.entrees.some((x) => x.uid !== app.uid && x.cle === clePseudo(nom))) { G.erreur = 'Ce pseudo est déjà pris par un autre directeur.'; break; }
+      if (G.entrees.some((x) => x.uid !== app.uid && x.cle === clePseudo(nom))) { G.erreur = tr('Ce pseudo est déjà pris par un autre directeur.'); break; }
       // la réservation en ligne : c'est elle qui garantit qu'il n'y a pas deux fois le même pseudo
       if (app.compte && app.uid) {
         G.etat = 'chargement'; afficher();
@@ -44,7 +45,7 @@ export async function agirTableau(a: string, c: Clic): Promise<Suite> {
         } catch (e) {
           G.etat = 'ok';
           const net = await reseauTableau();
-          G.erreur = e instanceof net.PseudoPris ? 'Ce pseudo est déjà pris par un autre directeur.' : `Impossible de réserver ce pseudo pour l’instant (${(e as { code?: string })?.code ?? 'réseau'}).`;
+          G.erreur = e instanceof net.PseudoPris ? tr('Ce pseudo est déjà pris par un autre directeur.') : tr`Impossible de réserver ce pseudo pour l’instant (${(e as { code?: string })?.code ?? tr('réseau')}).`;
           break;
         }
         app.pseudoReserve = clePseudo(nom);
@@ -52,7 +53,7 @@ export async function agirTableau(a: string, c: Clic): Promise<Suite> {
       app.jeu.directeur = { nom, public: app.jeu.directeur ? app.jeu.directeur.public || D.vue === 'classements' : true, change: change || !avant ? Date.now() : depuis };
       G.edition = false; G.accueil = false; G.erreur = '';
       if (D.apresPseudo) { D.selection = D.apresPseudo; D.apresPseudo = null; }
-      D.message = `Bienvenue, ${nom} : c’est ce nom que verront les autres joueurs.`;
+      D.message = tr`Bienvenue, ${nom} : c’est ce nom que verront les autres joueurs.`;
       sauver();
       planifierPublication(0);
       break;
@@ -67,7 +68,7 @@ export async function agirTableau(a: string, c: Clic): Promise<Suite> {
         G.entrees = G.entrees.filter((x) => x.uid !== app.uid);
         app.monEntree = null; app.monEntreeLue = false;
         sauver();
-      } catch { G.erreur = 'Impossible de te retirer pour l’instant. Réessaie dans un instant.'; G.etat = 'erreur'; }
+      } catch { G.erreur = tr('Impossible de te retirer pour l’instant. Réessaie dans un instant.'); G.etat = 'erreur'; }
       break;
     }
     default: return 'inconnu';

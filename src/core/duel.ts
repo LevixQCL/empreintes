@@ -17,6 +17,7 @@ import { effetsEnJeu, ligneesDeSuite } from './combat';
 import { REGLES, analyserChaine, avantage, frequenceLibre, frequencesEffectives, meilleureFrequence, multEcho, placesChaine, placesEnPlus, peutPayerSurtension } from './regles';
 import { graine, tireur } from './rng';
 import type { Effet, Geste, GesteDef, Lignee, LigneeGeste, PorteurEtat } from './types';
+import { t as tr } from './i18n';
 
 /** Les réglages chiffrés du duel (mesurés au robot : tests/duel.test.ts, « durée d'un duel ») */
 export const DUEL = {
@@ -143,20 +144,20 @@ export function deckDuel(e: EscouadeDuel): GesteDef[] {
 
 /** Une escouade de duel valable : trois Porteurs différents, six cartes au plus chacun, des cartes qui existent */
 export function validerEscouade(e: EscouadeDuel): Resultat {
-  if (typeof e.nom !== 'string' || !e.nom.trim()) return non('Il faut un pseudo.');
-  if (e.porteurs.length !== 3 || new Set(e.porteurs.map((p) => p.id)).size !== 3) return non('Il faut trois Porteurs différents.');
+  if (typeof e.nom !== 'string' || !e.nom.trim()) return non(tr('Il faut un pseudo.'));
+  if (e.porteurs.length !== 3 || new Set(e.porteurs.map((p) => p.id)).size !== 3) return non(tr('Il faut trois Porteurs différents.'));
   for (const p of e.porteurs) {
-    try { porteurDef(p.id); } catch { return non(`Porteur inconnu : ${p.id}.`); }
+    try { porteurDef(p.id); } catch { return non(tr`Porteur inconnu : ${p.id}.`); }
   }
   // Une escouade de duel réunit les trois lignées (3 novembre 2026, choix de Bryan : « c'est le seul moment où on a le contrôle »).
   // Mesuré avant (npm run duel) : une escouade d'une seule lignée battait une escouade mixte 80 % du temps (Augmentés, Génés).
-  if (new Set(e.porteurs.map((p) => porteurDef(p.id).lignee)).size !== 3) return non('Il faut un Porteur de chaque lignée : un Augmenté, un Géné et un Résonant.');
+  if (new Set(e.porteurs.map((p) => porteurDef(p.id).lignee)).size !== 3) return non(tr('Il faut un Porteur de chaque lignée : un Augmenté, un Géné et un Résonant.'));
   for (const p of e.porteurs) {
-    if (!(p.pv > 0)) return non('Un Porteur sans PV ne peut pas combattre.');
-    if (p.cartes.length > PLACES_PORTEUR) return non(`${porteurDef(p.id).nom} porte trop de cartes.`);
+    if (!(p.pv > 0)) return non(tr('Un Porteur sans PV ne peut pas combattre.'));
+    if (p.cartes.length > PLACES_PORTEUR) return non(tr`${porteurDef(p.id).nom} porte trop de cartes.`);
     for (const c of p.cartes) {
-      try { moduleDef(c.id); } catch { return non(`Carte inconnue : ${c.id}.`); }
-      if (!Number.isInteger(c.niveau) || c.niveau < 1) return non('Niveau de carte invalide.');
+      try { moduleDef(c.id); } catch { return non(tr`Carte inconnue : ${c.id}.`); }
+      if (!Number.isInteger(c.niveau) || c.niveau < 1) return non(tr('Niveau de carte invalide.'));
     }
   }
   return OK;
@@ -208,7 +209,7 @@ export function creerDuel(a: EscouadeDuel, b: EscouadeDuel, graine: number): Due
     journal: [],
     derniers: [],
   };
-  log(s, null, `${a.nom} affronte ${b.nom}.`);
+  log(s, null, tr`${a.nom} affronte ${b.nom}.`);
   return s;
 }
 
@@ -247,8 +248,8 @@ export function usureDuel(tour: number): { attaque: number; soin: number } {
 // ---------- Composer sa chaîne (en local, sur une copie de l'état) ----------
 
 function pret(s: DuelEtat, camp: Camp): Resultat | null {
-  if (s.issue !== 'en-cours') return non('Le duel est terminé.');
-  if (s.cotes[camp].pret) return non('Ta chaîne est déjà verrouillée.');
+  if (s.issue !== 'en-cours') return non(tr('Le duel est terminé.'));
+  if (s.cotes[camp].pret) return non(tr('Ta chaîne est déjà verrouillée.'));
   return null;
 }
 
@@ -258,12 +259,12 @@ export function poserDuel(s: DuelEtat, camp: Camp, uid: string, f?: number): Res
   if (r) return r;
   const c = s.cotes[camp];
   const i = c.main.findIndex((g) => g.uid === uid);
-  if (i < 0) return non('Cette carte n’est pas dans ta main.');
+  if (i < 0) return non(tr('Cette carte n’est pas dans ta main.'));
   const g = c.main[i]!;
-  if (g.vide) return non('Une place vide ne se joue pas.');
-  if (placesEnPlus(c.chaine, g) > placesLibresDuel(c)) return non('Plus de place dans la chaîne.');
+  if (g.vide) return non(tr('Une place vide ne se joue pas.'));
+  if (placesEnPlus(c.chaine, g) > placesLibresDuel(c)) return non(tr('Plus de place dans la chaîne.'));
   const fs = g.fs ?? [g.f];
-  if (f !== undefined && !frequenceLibre(g.effet) && !fs.includes(f)) return non('Cette carte ne prend pas cette Fréquence.');
+  if (f !== undefined && !frequenceLibre(g.effet) && !fs.includes(f)) return non(tr('Cette carte ne prend pas cette Fréquence.'));
   c.main.splice(i, 1);
   if (!frequenceLibre(g.effet)) g.f = f ?? meilleureFrequence(c.chaine, fs);
   if (g.type === 'soin' && g.effet?.type !== 'vague' && g.effet?.type !== 'debord') g.cible = plusBlesse(c)?.id;
@@ -277,7 +278,7 @@ export function reprendreDuel(s: DuelEtat, camp: Camp, uid: string): Resultat {
   if (r) return r;
   const c = s.cotes[camp];
   const i = c.chaine.findIndex((g) => g.uid === uid);
-  if (i < 0) return non('Cette carte n’est pas dans la chaîne.');
+  if (i < 0) return non(tr('Cette carte n’est pas dans la chaîne.'));
   const [g] = c.chaine.splice(i, 1);
   if (g!.fs) g!.f = g!.fs[0]!;
   delete g!.cible;
@@ -291,7 +292,7 @@ export function deplacerDuel(s: DuelEtat, camp: Camp, uid: string, vers: number)
   if (r) return r;
   const c = s.cotes[camp];
   const i = c.chaine.findIndex((g) => g.uid === uid);
-  if (i < 0) return non('Cette carte n’est pas dans la chaîne.');
+  if (i < 0) return non(tr('Cette carte n’est pas dans la chaîne.'));
   const [g] = c.chaine.splice(i, 1);
   c.chaine.splice(Math.max(0, Math.min(c.chaine.length, vers)), 0, g!);
   return OK;
@@ -301,7 +302,7 @@ export function deplacerDuel(s: DuelEtat, camp: Camp, uid: string, vers: number)
 export function viserDuel(s: DuelEtat, camp: Camp, porteur: string | null): Resultat {
   const r = pret(s, camp);
   if (r) return r;
-  if (porteur !== null && !debout(s.cotes[autre(camp)]).some((p) => p.id === porteur)) return non('Ce Porteur est déjà à terre.');
+  if (porteur !== null && !debout(s.cotes[autre(camp)]).some((p) => p.id === porteur)) return non(tr('Ce Porteur est déjà à terre.'));
   s.cotes[camp].cible = porteur;
   return OK;
 }
@@ -312,8 +313,8 @@ export function soignerDuel(s: DuelEtat, camp: Camp, uid: string, porteur: strin
   if (r) return r;
   const c = s.cotes[camp];
   const g = c.chaine.find((x) => x.uid === uid);
-  if (!g || g.type !== 'soin') return non('Ce n’est pas une carte de soin posée.');
-  if (!debout(c).some((p) => p.id === porteur)) return non('On ne soigne pas un Porteur à terre (sauf une Relève).');
+  if (!g || g.type !== 'soin') return non(tr('Ce n’est pas une carte de soin posée.'));
+  if (!debout(c).some((p) => p.id === porteur)) return non(tr('On ne soigne pas un Porteur à terre (sauf une Relève).'));
   g.cible = porteur;
   return OK;
 }
@@ -323,7 +324,7 @@ export function allongerDuel(s: DuelEtat, camp: Camp): Resultat {
   const r = pret(s, camp);
   if (r) return r;
   const c = s.cotes[camp];
-  if (c.flux < 1 || capaciteDuel(c) >= REGLES.capaciteMax) return non('Pas assez de Flux, ou chaîne déjà au plus long.');
+  if (c.flux < 1 || capaciteDuel(c) >= REGLES.capaciteMax) return non(tr('Pas assez de Flux, ou chaîne déjà au plus long.'));
   c.flux--;
   c.capaBonus++;
   c.allonges++;
@@ -335,7 +336,7 @@ export function repiocherDuel(s: DuelEtat, camp: Camp): Resultat {
   const r = pret(s, camp);
   if (r) return r;
   const c = s.cotes[camp];
-  if (c.flux < 1) return non('Pas assez de Flux.');
+  if (c.flux < 1) return non(tr('Pas assez de Flux.'));
   c.flux--;
   for (const g of c.chaine) { if (g.fs) g.f = g.fs[0]!; delete g.cible; }
   c.defausse.push(...c.main, ...c.chaine);
@@ -369,7 +370,7 @@ export function appliquerChoix(s: DuelEtat, camp: Camp, choix: ChoixTour): Resul
   if (r) return r;
   const essai = clone(s);
   const c = essai.cotes[camp];
-  if (!Number.isInteger(choix.repioches) || !Number.isInteger(choix.allonges) || choix.repioches < 0 || choix.allonges < 0) return non('Choix invalide.');
+  if (!Number.isInteger(choix.repioches) || !Number.isInteger(choix.allonges) || choix.repioches < 0 || choix.allonges < 0) return non(tr('Choix invalide.'));
   for (let k = 0; k < choix.repioches; k++) { const x = repiocherDuel(essai, camp); if (!x.ok) return x; }
   for (let k = 0; k < choix.allonges; k++) { const x = allongerDuel(essai, camp); if (!x.ok) return x; }
   if (choix.cible !== null) { const x = viserDuel(essai, camp, choix.cible); if (!x.ok) return x; }
@@ -503,8 +504,8 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
   const analyse = camps.map((k) => analyserChaine(ctx[k].chaine));
   for (const k of camps) {
     const a = analyse[k]!;
-    if (a.suite >= 3) log(s, k, `${s.cotes[k].nom} : Résonance, suite de ${a.suite}.`);
-    if (a.echo) log(s, k, `${s.cotes[k].nom} : Écho ×${a.echoN ?? 3}.`);
+    if (a.suite >= 3) log(s, k, tr`${s.cotes[k].nom} : Résonance, suite de ${a.suite}.`);
+    if (a.echo) log(s, k, tr`${s.cotes[k].nom} : Écho ×${a.echoN ?? 3}.`);
   }
 
   // 1. Les boucliers (Riposte : la carte frappera d'une part du bouclier, une fois tous les boucliers posés)
@@ -532,7 +533,7 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
       brise[adv] = true;
       if (rapt) vole[k]! += pris;
       ev.push({ sorte: 'breche', camp: k, uid: g.uid, v: pris, rapt });
-      if (pris) log(s, k, `${g.nom} ${rapt ? 'arrache' : 'brise'} ${pris} de bouclier.`);
+      if (pris) log(s, k, tr`${g.nom} ${rapt ? 'arrache' : 'brise'} ${pris} de bouclier.`);
     });
   }
   for (const k of camps) s.cotes[k].bouclier = (brise[k] ? 0 : bouclierPose[k]!) + vole[k]!;
@@ -605,7 +606,7 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
         const tombe = c.porteurs.find((p) => p.pv <= 0);
         if (tombe) {
           soigner(k, tombe, v, g.uid, true);
-          log(s, k, `${g.nom} relève ${nomP(tombe.id)}.`);
+          log(s, k, tr`${g.nom} relève ${nomP(tombe.id)}.`);
           if (g.unique) g.epuise = true;
           return;
         }
@@ -631,7 +632,7 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
     const c = s.cotes[k];
     const adv = s.cotes[autre(k)];
     for (const p of c.porteurs) {
-      if (p.pv <= 0 && !p.aTerre) { p.aTerre = true; ev.push({ sorte: 'terre', camp: k, porteur: p.id }); log(s, k, `${nomP(p.id)} (${c.nom}) est à terre.`); }
+      if (p.pv <= 0 && !p.aTerre) { p.aTerre = true; ev.push({ sorte: 'terre', camp: k, porteur: p.id }); log(s, k, tr`${nomP(p.id)} (${c.nom}) est à terre.`); }
     }
     const a = analyse[k]!;
     let flux = (a.suite >= 3 ? 1 : 0) + (a.echo ? 1 : 0) + ((a.echoN ?? 0) >= 5 ? REGLES.fluxEcho5 : 0);
@@ -674,11 +675,11 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
     const part = (c: CoteDuel) => c.porteurs.reduce((n, p) => n + p.pv, 0) / c.porteurs.reduce((n, p) => n + p.pvMax, 0);
     const a = part(s.cotes[0]), b = part(s.cotes[1]);
     s.issue = Math.abs(a - b) < 1e-9 ? 'egalite' : a > b ? 'gagne-0' : 'gagne-1';
-    log(s, null, 'Le duel s’éternise : il se décide aux PV restants.');
+    log(s, null, tr('Le duel s’éternise : il se décide aux PV restants.'));
   }
   if (s.issue !== 'en-cours') {
     ev.push({ sorte: 'fin', issue: s.issue });
-    log(s, null, s.issue === 'egalite' ? 'Égalité.' : `${s.cotes[s.issue === 'gagne-0' ? 0 : 1].nom} remporte le duel.`);
+    log(s, null, s.issue === 'egalite' ? tr('Égalité.') : tr`${s.cotes[s.issue === 'gagne-0' ? 0 : 1].nom} remporte le duel.`);
   }
   for (const k of camps) finirTour(s.cotes[k], forces[k]);
   s.tour++;
@@ -728,7 +729,7 @@ export function abandonner(s: DuelEtat, camp: Camp): void {
   if (s.issue !== 'en-cours') return;
   s.abandon = camp;
   s.issue = camp === 0 ? 'gagne-1' : 'gagne-0';
-  log(s, camp, `${s.cotes[camp].nom} quitte le duel.`);
+  log(s, camp, tr`${s.cotes[camp].nom} quitte le duel.`);
 }
 
 /** Le gagnant (null : égalité ou duel en cours) */

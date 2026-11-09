@@ -13,6 +13,7 @@ import {
 } from 'firebase/firestore';
 import { getApp } from 'firebase/app';
 import { validerEscouade, type Camp, type ChoixTour, type EscouadeDuel } from '../core/duel';
+import { t as tr } from '../core/i18n';
 
 const db = () => getFirestore(getApp());
 
@@ -71,10 +72,10 @@ export async function rejoindreSalon(code: string, uid: string, escouade: Escoua
   return runTransaction(db(), async (t) => {
     const ref = doc(db(), 'duels', code.trim().toUpperCase());
     const d = await t.get(ref);
-    if (!d.exists()) throw new Error('Aucun duel ne porte ce code.');
+    if (!d.exists()) throw new Error(tr('Aucun duel ne porte ce code.'));
     const s = d.data() as Salon;
-    if (s.hote.uid === uid) throw new Error('C’est ton propre duel : partage le code à un ami.');
-    if (s.etat !== 'attente' || s.invite) throw new Error('Ce duel a déjà commencé.');
+    if (s.hote.uid === uid) throw new Error(tr('C’est ton propre duel : partage le code à un ami.'));
+    if (s.etat !== 'attente' || s.invite) throw new Error(tr('Ce duel a déjà commencé.'));
     const maj = { invite: { uid, escouade, mise }, etat: 'en-cours' as const, debut: Date.now(), maj: Date.now() };
     t.update(ref, maj);
     return { ...s, ...maj };

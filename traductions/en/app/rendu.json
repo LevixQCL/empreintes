@@ -1,0 +1,29 @@
+{
+ "source": "src/app/rendu.ts",
+ "entrees": [
+  {
+   "fr": "La mer des piliers",
+   "en": ""
+  },
+  {
+   "fr": "Le Port",
+   "en": ""
+  },
+  {
+   "fr": "Les Hauts · Flèche d’amarrage",
+   "en": ""
+  },
+  {
+   "fr": "La Flèche",
+   "en": ""
+  },
+  {
+   "fr": "CERCLE DES QUAIS",
+   "en": ""
+  },
+  {
+   "fr": "Le Cercle",
+   "en": ""
+  }
+ ]
+}

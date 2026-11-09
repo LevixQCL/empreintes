@@ -1,0 +1,13 @@
+{
+ "source": "src/ui/outils.ts",
+ "entrees": [
+  {
+   "fr": "(prefers-reduced-motion: reduce)",
+   "en": ""
+  },
+  {
+   "fr": "Lire la suite",
+   "en": ""
+  }
+ ]
+}

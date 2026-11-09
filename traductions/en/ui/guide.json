@@ -1,0 +1,785 @@
+{
+ "source": "src/ui/guide.ts",
+ "entrees": [
+  {
+   "fr": "Le deck",
+   "en": ""
+  },
+  {
+   "fr": "MODE D’EMPLOI",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes et le deck",
+   "en": ""
+  },
+  {
+   "fr": "Protection",
+   "en": ""
+  },
+  {
+   "fr": "Les Fréquences de chaque lignée : Génés en bas, Augmentés au milieu, Résonants en haut",
+   "en": ""
+  },
+  {
+   "fr": "Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : plus {0} % de dégâts",
+   "en": ""
+  },
+  {
+   "fr": "Le deck : {0} Porteurs de {1} cartes, plus {2} cartes du Râtelier de l’escouade (jusqu’à 4), soit {3} cartes",
+   "en": ""
+  },
+  {
+   "fr": "cartes au plus · main de",
+   "en": ""
+  },
+  {
+   "fr": "· chaîne de",
+   "en": ""
+  },
+  {
+   "fr": "places",
+   "en": ""
+  },
+  {
+   "fr": "En trois gestes",
+   "en": ""
+  },
+  {
+   "fr": "Choisis ton escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Onglet",
+   "en": ""
+  },
+  {
+   "fr": ": tes {0} Porteurs, leur Marque et toutes leurs cartes. « Changer » à côté de l’un d’eux en fait entrer un autre. Elle ne change qu’au district, jamais pendant une descente.",
+   "en": ""
+  },
+  {
+   "fr": "Confie-leur des cartes.",
+   "en": ""
+  },
+  {
+   "fr": "« Gérer ses cartes » au-dessus de la liste d’un Porteur. Ou, dans le volet",
+   "en": ""
+  },
+  {
+   "fr": ", touche une carte puis un Porteur sous « Confier à » (le filtre « Libres » montre celles que personne ne porte).",
+   "en": ""
+  },
+  {
+   "fr": "Vérifie le deck.",
+   "en": ""
+  },
+  {
+   "fr": "En haut de l’onglet",
+   "en": ""
+  },
+  {
+   "fr": ", l’échelle des Fréquences montre ce que donnent les cartes de ton escouade, et où ta suite se coupe.",
+   "en": ""
+  },
+  {
+   "fr": "Les règles du deck",
+   "en": ""
+  },
+  {
+   "fr": "Une carte va à un Porteur",
+   "en": ""
+  },
+  {
+   "fr": "de sa lignée",
+   "en": ""
+  },
+  {
+   "fr": ": Augmenté, Géné ou Résonant.",
+   "en": ""
+  },
+  {
+   "fr": "au plus par Porteur, et",
+   "en": ""
+  },
+  {
+   "fr": "au moins dans le deck pour descendre ({0} pour une Épreuve).",
+   "en": ""
+  },
+  {
+   "fr": "Chaque carte",
+   "en": ""
+  },
+  {
+   "fr": "pèse",
+   "en": ""
+  },
+  {
+   "fr": "selon sa force (le chiffre de glace sur sa tuile). Un Porteur porte une",
+   "en": ""
+  },
+  {
+   "fr": "de {0} au niveau 1, +{1} par niveau : une très grosse carte laisse moins de place aux autres.",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur combat toujours avec ses",
+   "en": ""
+  },
+  {
+   "fr": "{0} places",
+   "en": ""
+  },
+  {
+   "fr": ": une place laissée vide se pioche comme une carte et",
+   "en": ""
+  },
+  {
+   "fr": "ne se joue pas",
+   "en": ""
+  },
+  {
+   "fr": "(sauf dans les Épreuves).",
+   "en": ""
+  },
+  {
+   "fr": "Une carte n’a qu’",
+   "en": ""
+  },
+  {
+   "fr": "un Porteur à la fois",
+   "en": ""
+  },
+  {
+   "fr": ". Un Porteur ne porte pas deux fois la même carte, même dans deux métaux.",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes communes du",
+   "en": ""
+  },
+  {
+   "fr": "Râtelier",
+   "en": ""
+  },
+  {
+   "fr": "de l’escouade (2 à 4, choisies au district) s’ajoutent au deck, si les cristaux du départ sont payés.",
+   "en": ""
+  },
+  {
+   "fr": "Changer d’escouade change le deck. Un Porteur au travail (ou à l’entraînement) peut descendre : il quitte son poste, qui reste vacant.",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur en expédition ou en mission garde ses cartes jusqu’à son retour.",
+   "en": ""
+  },
+  {
+   "fr": "En combat, les cartes d’un Porteur",
+   "en": ""
+  },
+  {
+   "fr": "s’éteignent : elles restent dans le deck un peu moins fortes (−15 %) et sans effet, et leur Fréquence compte toujours pour les suites. Il se relève à un campement.",
+   "en": ""
+  },
+  {
+   "fr": "Bien construire",
+   "en": ""
+  },
+  {
+   "fr": "Couvre les Fréquences de 1 à 9",
+   "en": ""
+  },
+  {
+   "fr": "Des Fréquences qui se suivent font une Résonance (suite de {0}). Chaque lignée a sa zone : une escouade des trois lignées couvre l’échelle, et un chiffre absent coupe tes suites.",
+   "en": ""
+  },
+  {
+   "fr": "Double les Fréquences utiles",
+   "en": ""
+  },
+  {
+   "fr": "Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : ces cartes +{0} % et +1 Flux (quatre : {1}, cinq : {2}). Mais une Fréquence empilée, ce sont moins de suites.",
+   "en": ""
+  },
+  {
+   "fr": "Mélange les actions",
+   "en": ""
+  },
+  {
+   "fr": "Attaque, protection et soin. Le deck de départ en compte {0}, {1} et {2} sur {3} : un bon repère.",
+   "en": ""
+  },
+  {
+   "fr": "{0} attaques, {1} protections, {2} soins",
+   "en": ""
+  },
+  {
+   "fr": "Choisis aussi pour les Marques",
+   "en": ""
+  },
+  {
+   "fr": "Chaque Porteur gagne une Marque par ses exploits, presque toujours en combattant. Elle ne joue que s’il est dans l’escouade : l’onglet Escouade dit ce qu’elle fait et combien il en reste à accomplir.",
+   "en": ""
+  },
+  {
+   "fr": "Répartis les soins",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes d’un Porteur à terre s’éteignent. Si tous tes soins sont chez lui, ils perdent leur effet au pire moment.",
+   "en": ""
+  },
+  {
+   "fr": "Peu de cartes lourdes",
+   "en": ""
+  },
+  {
+   "fr": "Deux lames (deux places) : la carte est forte mais prend deux places. Avec une autre carte, elle remplit une chaîne de {0} places : pas de suite de 3 sans Flux ni Élan.",
+   "en": ""
+  },
+  {
+   "fr": "Des jokers pour les suites",
+   "en": ""
+  },
+  {
+   "fr": "Une carte ∗ (Accord) prend toujours la Fréquence qui prolonge ta suite. En argent et en or, une carte porte 2 Fréquences, en nacre 3.",
+   "en": ""
+  },
+  {
+   "fr": "Pense au triangle",
+   "en": ""
+  },
+  {
+   "fr": "Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : +{0} % de dégâts. Les ennemis en profitent aussi contre tes Porteurs. Le dessin est dans « Lire une carte ».",
+   "en": ""
+  },
+  {
+   "fr": "Un deck court tourne plus vite",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur peut porter moins de {0} cartes : tes meilleures reviennent plus souvent en main, mais tu couvres moins de Fréquences.",
+   "en": ""
+  },
+  {
+   "fr": "Fais monter tes favorites",
+   "en": ""
+  },
+  {
+   "fr": "Doublons et cristaux : chaque niveau ajoute au moins +1 de force (une carte de 10 passe à 19 au niveau 10). Confie-les aux Porteurs que tu emmènes le plus souvent.",
+   "en": ""
+  },
+  {
+   "fr": "La carte",
+   "en": ""
+  },
+  {
+   "fr": "Fréquences",
+   "en": ""
+  },
+  {
+   "fr": ", en haut à gauche : la principale d’abord ; leur couleur suit la Fréquence.",
+   "en": ""
+  },
+  {
+   "fr": "Action et force",
+   "en": ""
+  },
+  {
+   "fr": ": l’icône dit ce qu’elle fait (épée = attaque, écu = protection, + = soin), le chiffre combien. La barre et le bord de l’image prennent sa couleur.",
+   "en": ""
+  },
+  {
+   "fr": "Niveau et nom",
+   "en": ""
+  },
+  {
+   "fr": ": la roue compte les niveaux ({0} crans, dorée au maximum), dans la couleur de la lignée.",
+   "en": ""
+  },
+  {
+   "fr": "Effet",
+   "en": ""
+  },
+  {
+   "fr": ": son icône, son nom et ce qu’il fait, en bref.",
+   "en": ""
+  },
+  {
+   "fr": "Cadre",
+   "en": ""
+  },
+  {
+   "fr": ": le métal de la carte, jusque sous le nom. La nacre n’en a pas.",
+   "en": ""
+  },
+  {
+   "fr": "Des Fréquences qui se suivent font une",
+   "en": ""
+  },
+  {
+   "fr": "Résonance",
+   "en": ""
+  },
+  {
+   "fr": ". Une carte à plusieurs Fréquences (argent et plus) prend seule celle qui prolonge ta suite ; en combat, le bouton sous la carte permet d’en changer.",
+   "en": ""
+  },
+  {
+   "fr": "Dans la Collection (onglet Escouade), la jauge sous la carte compte les",
+   "en": ""
+  },
+  {
+   "fr": "doublons",
+   "en": ""
+  },
+  {
+   "fr": "qu’il faut pour monter. Touche la carte pour lire son effet en entier et sa petite histoire.",
+   "en": ""
+  },
+  {
+   "fr": "En combat",
+   "en": ""
+  },
+  {
+   "fr": "En main, la carte garde l’essentiel : la",
+   "en": ""
+  },
+  {
+   "fr": "Fréquence",
+   "en": ""
+  },
+  {
+   "fr": ", la",
+   "en": ""
+  },
+  {
+   "fr": "force",
+   "en": ""
+  },
+  {
+   "fr": "en bas à droite et, en bas à gauche, le",
+   "en": ""
+  },
+  {
+   "fr": "losange de la lignée",
+   "en": ""
+  },
+  {
+   "fr": "avec l’",
+   "en": ""
+  },
+  {
+   "fr": "icône de l’effet",
+   "en": ""
+  },
+  {
+   "fr": "(liseré d’or quand la carte en a un). Posée dans la chaîne, elle montre aussi son",
+   "en": ""
+  },
+  {
+   "fr": "nom",
+   "en": ""
+  },
+  {
+   "fr": "Garde le doigt",
+   "en": ""
+  },
+  {
+   "fr": "sur une carte (ou le bouton de la souris) : elle s’affiche en grand avec ses effets en entier. Lâche : elle revient à sa place, sans être jouée.",
+   "en": ""
+  },
+  {
+   "fr": "La carte qui prolonge ta suite se soulève et sa capsule de Fréquence s’allume en or.",
+   "en": ""
+  },
+  {
+   "fr": "Trois actions",
+   "en": ""
+  },
+  {
+   "fr": "Des dégâts à l’ennemi visé. Son bouclier encaisse d’abord.",
+   "en": ""
+  },
+  {
+   "fr": "Un bouclier pour toute l’escouade. Il encaisse les coups de l’ennemi, puis disparaît (sauf Rempart).",
+   "en": ""
+  },
+  {
+   "fr": "Des PV à un Porteur : touche son nom sous la carte, dans la chaîne, pour choisir qui. Avec Vague, toute l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Carte lourde",
+   "en": ""
+  },
+  {
+   "fr": "Plus forte, mais elle prend deux places dans la chaîne.",
+   "en": ""
+  },
+  {
+   "fr": "Force",
+   "en": ""
+  },
+  {
+   "fr": "Niveau de départ",
+   "en": ""
+  },
+  {
+   "fr": "Porteur requis",
+   "en": ""
+  },
+  {
+   "fr": "Cinq métaux",
+   "en": ""
+  },
+  {
+   "fr": "Ce que change le métal",
+   "en": ""
+  },
+  {
+   "fr": "Une même carte existe dans les cinq métaux. Le métal est fixé quand tu la trouves : il ne change jamais.",
+   "en": ""
+  },
+  {
+   "fr": "En fer, une carte n’a pas d’effet. Il s’ouvre en cuivre ; en or et en nacre, ses chiffres montent.",
+   "en": ""
+  },
+  {
+   "fr": "Un métal rare demande un Porteur expérimenté : argent au niveau {0}, or au niveau {1}, nacre au niveau {2}. Trouvée plus tôt, la carte t’attend dans ta collection.",
+   "en": ""
+  },
+  {
+   "fr": "Deux métaux d’une carte sont deux cartes à part, chacune avec ses doublons et son niveau.",
+   "en": ""
+  },
+  {
+   "fr": "Doublons et cristaux font monter une carte : chaque niveau ajoute environ un dixième de sa force de départ, jamais moins de +1, jusqu’au niveau {0}. Au maximum, la carte est",
+   "en": ""
+  },
+  {
+   "fr": "maîtrisée",
+   "en": ""
+  },
+  {
+   "fr": ": un liseré de lumière parcourt son cadre.",
+   "en": ""
+  },
+  {
+   "fr": "Chaque flèche donne +{0} % de dégâts à la lignée qui bat l’autre, dans les deux sens : tes cartes contre les ennemis, et les ennemis contre tes Porteurs.",
+   "en": ""
+  },
+  {
+   "fr": "Passe à travers le bouclier et le blindage de l’ennemi.",
+   "en": ""
+  },
+  {
+   "fr": "Remplit le Flux : +1 (+2 en nacre). Le Flux achète une place de plus dans la chaîne, ou une nouvelle main.",
+   "en": ""
+  },
+  {
+   "fr": "Ta prochaine chaîne a une place de plus ({0} au plus).",
+   "en": ""
+  },
+  {
+   "fr": "Le Porteur qui la joue récupère {0} des dégâts infligés (sans effet si son Porteur est à terre).",
+   "en": ""
+  },
+  {
+   "fr": "Le soin touche toute l’escouade au lieu d’un seul Porteur.",
+   "en": ""
+  },
+  {
+   "fr": "{0} du bouclier d’escouade qui reste après l’attaque ennemie passe au tour suivant.",
+   "en": ""
+  },
+  {
+   "fr": "La prochaine attaque de l’ennemi visé perd {0} de sa force.",
+   "en": ""
+  },
+  {
+   "fr": "L’ennemi visé subit {0} de dégâts en plus, ce tour-ci et le suivant.",
+   "en": ""
+  },
+  {
+   "fr": "Fréquence libre, notée ∗ : la carte prend toujours celle qui prolonge ta suite.",
+   "en": ""
+  },
+  {
+   "fr": "+{0} de force pour chaque carte posée avant elle dans la chaîne.",
+   "en": ""
+  },
+  {
+   "fr": "Une carte de bouclier qui riposte : après avoir donné son bouclier, elle frappe l’ennemi de {0} du bouclier d’escouade. Le bouclier n’est pas dépensé.",
+   "en": ""
+  },
+  {
+   "fr": "Vide tout le Flux : +{0} de force par Flux vidé. Sans Flux, elle frappe normalement. Deux variantes : l’Éclair captif ne prend qu’un Flux et garde le reste ; le Noyau instable, s’il trouve le Flux vide, le remplit.",
+   "en": ""
+  },
+  {
+   "fr": "Fréquence libre, notée = : la carte reprend la Fréquence de celle posée juste avant (en tête de chaîne, celle d’après).",
+   "en": ""
+  },
+  {
+   "fr": "+{0} de force si l’ennemi visé est fissuré (une Fissure posée plus tôt, ce tour-ci ou le précédent), ou s’il lui reste moins de la moitié de ses PV.",
+   "en": ""
+  },
+  {
+   "fr": "Brise la Fêlure de l’ennemi visé, quelle que soit sa Fréquence, même cachée. Brisée en Résonance, elle rapporte du Flux comme d’habitude.",
+   "en": ""
+  },
+  {
+   "fr": "+{0} de force si la Fêlure de l’ennemi visé est déjà brisée ce tour-ci.",
+   "en": ""
+  },
+  {
+   "fr": "Si la chaîne compte au moins 4 cartes, elle frappe une seconde fois, avec la même force.",
+   "en": ""
+  },
+  {
+   "fr": "Soigne toute l’escouade, et le soin qui dépasse les PV max n’est pas perdu : il devient du bouclier d’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Avant d’agir, la carte arrache tout le bouclier de l’ennemi visé et l’ajoute au bouclier d’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Après le lancer, la carte la plus forte de la chaîne ne va pas à la défausse : elle revient en tête de pioche, tu la retrouves dans ta prochaine main.",
+   "en": ""
+  },
+  {
+   "fr": "Le Porteur qui la joue brûle une part de ses PV max (jamais au point de tomber), et la carte frappe beaucoup plus fort.",
+   "en": ""
+  },
+  {
+   "fr": "La carte copie l’effet de celle posée juste avant elle (pas une Fréquence libre). S’il n’y a rien à copier (en tête de chaîne, après une carte sans effet), elle frappe +{0} % plus fort.",
+   "en": ""
+  },
+  {
+   "fr": "Au tour suivant, tu pioches une carte de plus : plus de choix pour trouver ta suite.",
+   "en": ""
+  },
+  {
+   "fr": "Avant d’agir, la carte brise tout le bouclier de l’ennemi visé.",
+   "en": ""
+  },
+  {
+   "fr": "La carte gagne de la force pour chaque Porteur à terre : le district tient quand l’escouade s’effondre.",
+   "en": ""
+  },
+  {
+   "fr": "Si un Porteur est à terre, il se relève avec tout le soin. Sinon, la carte soigne comme une autre.",
+   "en": ""
+  },
+  {
+   "fr": "L’ennemi visé perd {0} de ce qu’il prépare, quoi que ce soit : son attaque, son bouclier ou son soin.",
+   "en": ""
+  },
+  {
+   "fr": "La carte posée juste après elle dans la chaîne gagne +{0} de force.",
+   "en": ""
+  },
+  {
+   "fr": "Une carte lourde de la chaîne ne prend qu’une place au lieu de deux. Un Servo par carte lourde, où qu’il soit dans la chaîne.",
+   "en": ""
+  },
+  {
+   "fr": "Si la carte est dans une suite qui résonne, elle gagne +{0} de force pour chaque autre lignée présente dans cette suite (deux au plus).",
+   "en": ""
+  },
+  {
+   "fr": "Après le coup, si l’ennemi visé n’a plus que {0} de ses PV ou moins, il tombe. Un gardien n’est jamais achevé ainsi.",
+   "en": ""
+  },
+  {
+   "fr": "Pendant le tour ennemi qui suit, aucun Porteur ne peut tomber : un coup qui l’aurait mis à terre le laisse à 1 PV.",
+   "en": ""
+  },
+  {
+   "fr": "Garde-la pour un ennemi qui vient de se protéger, ou contre un Blindé.",
+   "en": ""
+  },
+  {
+   "fr": "Une chaîne n’a que {0} places : le Flux ouvre les suites de 4 et de 5.",
+   "en": ""
+  },
+  {
+   "fr": "Joue-la quand ta main n’a pas de belle suite : au tour suivant, vise une suite de 4.",
+   "en": ""
+  },
+  {
+   "fr": "Plus elle frappe fort, plus elle soigne : place-la dans une Résonance, chez un Porteur blessé.",
+   "en": ""
+  },
+  {
+   "fr": "Contre les attaques de zone et les groupes, quand tout le monde a pris des coups.",
+   "en": ""
+  },
+  {
+   "fr": "Quand l’ennemi se protège au lieu de frapper : une partie de ton bouclier sert encore au tour suivant.",
+   "en": ""
+  },
+  {
+   "fr": "Quand l’ennemi annonce un gros coup. S’il n’annonce pas d’attaque, l’effet ne fait rien.",
+   "en": ""
+  },
+  {
+   "fr": "Pose-la tôt : seules les cartes jouées après elle en profitent, et encore au tour suivant.",
+   "en": ""
+  },
+  {
+   "fr": "Elle bouche le trou d’une suite. En tête de chaîne, elle se cale juste avant la carte qui la suit.",
+   "en": ""
+  },
+  {
+   "fr": "Pose-la en dernier : elle profite de tout le bouclier déjà monté dans la chaîne, et de celui gardé par un Rempart ou la Marque de Doran.",
+   "en": ""
+  },
+  {
+   "fr": "Remplis le Flux (Surcharge, Résonance, Écho), puis vide-le d’un coup : à {0} Flux, la force fait plus que doubler. Mais ce Flux ne servira ni au Coup d’éclat ni à une place de plus.",
+   "en": ""
+  },
+  {
+   "fr": "Elle complète un Écho : deux cartes de même Fréquence et un Diapason, et ces trois cartes sont renforcées de +{0} %, avec 1 Flux.",
+   "en": ""
+  },
+  {
+   "fr": "Trois cartes de même Fréquence : chacune compte les deux autres. La Dissonance coupe les suites et l’Écho, mais pas l’Unisson.",
+   "en": ""
+  },
+  {
+   "fr": "Fissure d’abord, Curée ensuite : la Fissure dure deux tours. Et quand l’ennemi passe sous la moitié de ses PV, toutes tes Curées mordent.",
+   "en": ""
+  },
+  {
+   "fr": "Contre un Évanescent, elle trouve la Fêlure cachée ; contre un gros coup annoncé, elle le casse sans chercher la bonne Fréquence.",
+   "en": ""
+  },
+  {
+   "fr": "Pose-la après une Lecture, ou après la carte qui a la Fréquence fêlée.",
+   "en": ""
+  },
+  {
+   "fr": "Une chaîne de 4 demande de la place : Élan et Flux la préparent.",
+   "en": ""
+  },
+  {
+   "fr": "Même quand personne n’est blessé, elle protège : joue-la avant un gros coup annoncé.",
+   "en": ""
+  },
+  {
+   "fr": "Garde-la pour le tour où l’ennemi vient de se protéger : son bouclier devient le tien.",
+   "en": ""
+  },
+  {
+   "fr": "Monte une chaîne autour de ta meilleure carte : elle revient tout de suite au tour d’après.",
+   "en": ""
+  },
+  {
+   "fr": "Quand le Porteur a de la marge, et qu’un soin suit : chaque PV brûlé se rachète.",
+   "en": ""
+  },
+  {
+   "fr": "Pose-la juste après ta meilleure carte d’effet : un Perçant, un Siphon, une Fissure…",
+   "en": ""
+  },
+  {
+   "fr": "Garde-la en main quand un Porteur faiblit : elle annule la chute au lieu de la prévenir.",
+   "en": ""
+  },
+  {
+   "fr": "Pose-la quand ta main ne fait pas de suite : la prochaine aura plus de chances.",
+   "en": ""
+  },
+  {
+   "fr": "Garde-la pour le tour où l’ennemi vient de se protéger.",
+   "en": ""
+  },
+  {
+   "fr": "Ta carte de dernier recours : plus l’escouade tombe, plus elle frappe.",
+   "en": ""
+  },
+  {
+   "fr": "Moins forte que Troubler contre une attaque, mais elle sert aussi quand l’ennemi va se protéger ou se soigner.",
+   "en": ""
+  },
+  {
+   "fr": "Pose-la juste avant ta carte la plus forte : la suivante profite de tout le bonus.",
+   "en": ""
+  },
+  {
+   "fr": "Avec une carte lourde en main, elle rend sa place : un gros coup et une suite de 3 dans la même chaîne.",
+   "en": ""
+  },
+  {
+   "fr": "Une suite qui passe par les trois lignées (Génés, Augmentés, Résonants) lui donne tout son bonus.",
+   "en": ""
+  },
+  {
+   "fr": "Termine la chaîne par elle : les cartes d’avant font descendre l’ennemi, elle l’achève.",
+   "en": ""
+  },
+  {
+   "fr": "Le tour où l’ennemi annonce un coup qui tuerait : tout le monde reste debout, puis on soigne.",
+   "en": ""
+  },
+  {
+   "fr": "En dernière place d’une longue chaîne : cinquième, elle gagne +{0} à {1} %.",
+   "en": ""
+  },
+  {
+   "fr": "En",
+   "en": ""
+  },
+  {
+   "fr": "fer",
+   "en": ""
+  },
+  {
+   "fr": ", une carte n’a pas d’effet. Il s’ouvre en",
+   "en": ""
+  },
+  {
+   "fr": "cuivre",
+   "en": ""
+  },
+  {
+   "fr": ". En",
+   "en": ""
+  },
+  {
+   "fr": "or",
+   "en": ""
+  },
+  {
+   "fr": ", les effets en pourcentage sont {0} % plus forts, en",
+   "en": ""
+  },
+  {
+   "fr": "nacre",
+   "en": ""
+  },
+  {
+   "fr": "Surtout chez les {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0}{1} à trouver",
+   "en": ""
+  },
+  {
+   "fr": "Le Râtelier de l’escouade",
+   "en": ""
+  },
+  {
+   "fr": "{0} {1}, Fréquence {2}{3}.",
+   "en": ""
+  },
+  {
+   "fr": "Au départ, le district fournit ces deux cartes communes : le Stimulant vient de la Clinique, le Pavois de cuivre de la Tour du Noyau. En montant, tes bâtiments en préparent d’autres (Lame d’atelier, Plan des galeries, Brèche, Groupe de secours, Ampoule de relève), et leur force grandit avec eux : chaque niveau du bâtiment leur ajoute de la force (touche une carte pour voir son échelle). Tu choisis celles qui descendent dans le Râtelier de l’escouade : 2 emplacements, 3 au niveau 5 de la Tour du Noyau, 4 au niveau 9. Chaque départ coûte quelques cristaux pour tout le Râtelier à la fois (10 pour explorer, 5 pour une sortie courte) ; sans assez de cristaux, l’escouade part sans elles. Jouées par personne, elles ne s’éteignent jamais quand un Porteur tombe.",
+   "en": ""
+  }
+ ]
+}

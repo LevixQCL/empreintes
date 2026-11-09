@@ -1,0 +1,13 @@
+{
+ "source": "src/app/tableau.ts",
+ "entrees": [
+  {
+   "fr": "Le Tableau ne répond pas pour l’instant ({0}).",
+   "en": ""
+  },
+  {
+   "fr": "« {0} » a été réservé par un autre directeur. Choisis un autre pseudo.",
+   "en": ""
+  }
+ ]
+}

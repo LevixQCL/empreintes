@@ -1,0 +1,129 @@
+{
+ "source": "src/core/partie/pillages.ts",
+ "entrees": [
+  {
+   "fr": "Équilibré",
+   "en": ""
+  },
+  {
+   "fr": "Risqué",
+   "en": ""
+  },
+  {
+   "fr": "Redoutable",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade {0} garde désormais le port.",
+   "en": ""
+  },
+  {
+   "fr": "Cendrevigne",
+   "en": ""
+  },
+  {
+   "fr": "Ancrefroide",
+   "en": ""
+  },
+  {
+   "fr": "Verrelune",
+   "en": ""
+  },
+  {
+   "fr": "Salvebrume",
+   "en": ""
+  },
+  {
+   "fr": "Brisecôte",
+   "en": ""
+  },
+  {
+   "fr": "Les Pontons d’Ambre",
+   "en": ""
+  },
+  {
+   "fr": "Quai Sourd",
+   "en": ""
+  },
+  {
+   "fr": "Givrecorde",
+   "en": ""
+  },
+  {
+   "fr": "Le Générateur est à l’arrêt.",
+   "en": ""
+  },
+  {
+   "fr": "Tous tes jetons sont déjà là.",
+   "en": ""
+  },
+  {
+   "fr": "Déjà {0} jetons achetés aujourd’hui : reviens demain.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut {0} cristaux pour armer une barque de plus.",
+   "en": ""
+  },
+  {
+   "fr": "Le Générateur charge une barque de plus : +1 jeton de pillage.",
+   "en": ""
+  },
+  {
+   "fr": "Les pillages s’ouvrent quand le gardien de la Strate −{0} est vaincu.",
+   "en": ""
+  },
+  {
+   "fr": "Plus de jeton de pillage : le prochain revient bientôt.",
+   "en": ""
+  },
+  {
+   "fr": "{0} a déjà été attaqué aujourd’hui.",
+   "en": ""
+  },
+  {
+   "fr": "La garnison de {0} sort à ta rencontre : {1}.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade part piller {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Pillage réussi à {0} : +{1} minerai{2}.",
+   "en": ""
+  },
+  {
+   "fr": "Pillage repoussé à {0}.{1}",
+   "en": ""
+  },
+  {
+   "fr": " L’escouade laisse {0} minerai de son coffre.",
+   "en": ""
+  },
+  {
+   "fr": "{0} a pillé ton district{1}.",
+   "en": ""
+  },
+  {
+   "fr": " et pris {0} minerai de ton coffre",
+   "en": ""
+  },
+  {
+   "fr": "Ta garnison a repoussé {0}{1}.{2}",
+   "en": ""
+  },
+  {
+   "fr": " : +{0} minerai laissé dans ton coffre",
+   "en": ""
+  },
+  {
+   "fr": " Le quartier l’a vu : {0}.",
+   "en": ""
+  },
+  {
+   "fr": " Le quartier l’a vu.",
+   "en": ""
+  }
+ ]
+}

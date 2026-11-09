@@ -1,0 +1,413 @@
+{
+ "source": "src/ui/fleche.ts",
+ "entrees": [
+  {
+   "fr": "Comment marche la Flèche",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade tient",
+   "en": ""
+  },
+  {
+   "fr": "Quai",
+   "en": ""
+  },
+  {
+   "fr": "Gagnés",
+   "en": ""
+  },
+  {
+   "fr": "Perdus",
+   "en": ""
+  },
+  {
+   "fr": "Prochain quai gravé :",
+   "en": ""
+  },
+  {
+   "fr": "Le récit des îles s’ouvrira quand le fond aura parlé : vaincs le gardien de la Strate −10.",
+   "en": ""
+  },
+  {
+   "fr": "Pas de jeton : monte autant que tu veux. La Clinique soigne l’Usure entre deux assauts.",
+   "en": ""
+  },
+  {
+   "fr": "{0} · quai {1}",
+   "en": ""
+  },
+  {
+   "fr": "Ton quai : {0}",
+   "en": ""
+  },
+  {
+   "fr": "La Flèche : ton escouade au quai {0} sur {1}, record {2}{3}",
+   "en": ""
+  },
+  {
+   "fr": ", tu tiens le quai {0}",
+   "en": ""
+  },
+  {
+   "fr": "Le quai {0}",
+   "en": ""
+  },
+  {
+   "fr": "La montée · gardiens payés par les Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Quai {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0} % de chances",
+   "en": ""
+  },
+  {
+   "fr": "Gardiens",
+   "en": ""
+  },
+  {
+   "fr": "Si tu gagnes",
+   "en": ""
+  },
+  {
+   "fr": "+{0} quai{1}",
+   "en": ""
+  },
+  {
+   "fr": "Si tu perds",
+   "en": ""
+  },
+  {
+   "fr": "tu restes sur ton quai gravé",
+   "en": ""
+  },
+  {
+   "fr": "−{0} quai{1}",
+   "en": ""
+  },
+  {
+   "fr": "Monter à l’assaut",
+   "en": ""
+  },
+  {
+   "fr": "La garde des quais",
+   "en": ""
+  },
+  {
+   "fr": "La garde · compétition",
+   "en": ""
+  },
+  {
+   "fr": "Tiens le quai le plus haut possible. Ta montée, elle, ne dépend jamais des autres directeurs.",
+   "en": ""
+  },
+  {
+   "fr": "Relie ta partie à un compte pour tenir un quai et défier les autres directeurs.",
+   "en": ""
+  },
+  {
+   "fr": "Monte d’abord au-dessus du pied de la Flèche : on ne tient qu’un quai déjà atteint.",
+   "en": ""
+  },
+  {
+   "fr": "Tenir le quai {0}",
+   "en": ""
+  },
+  {
+   "fr": "Le plus haut quai libre que tu as atteint. Une copie de ton escouade y monte la garde pendant que tu continues de grimper ; les Hauts te versent",
+   "en": ""
+  },
+  {
+   "fr": "par jour.",
+   "en": ""
+  },
+  {
+   "fr": "S’installer sur le quai {0}",
+   "en": ""
+  },
+  {
+   "fr": "Le quai {0}, tenu par ton escouade",
+   "en": ""
+  },
+  {
+   "fr": "Gardien du quai",
+   "en": ""
+  },
+  {
+   "fr": "Tu tiens le quai {0}",
+   "en": ""
+  },
+  {
+   "fr": "défense{0} tenue{1}",
+   "en": ""
+  },
+  {
+   "fr": "Gage par jour",
+   "en": ""
+  },
+  {
+   "fr": "tenu depuis {0} jour{1}",
+   "en": ""
+  },
+  {
+   "fr": "tenu depuis aujourd’hui",
+   "en": ""
+  },
+  {
+   "fr": "Dans la caisse",
+   "en": ""
+  },
+  {
+   "fr": "pleine : {0} jours au plus",
+   "en": ""
+  },
+  {
+   "fr": "jusqu’à {0} jours de gage",
+   "en": ""
+  },
+  {
+   "fr": "Une copie figée de ton escouade (force {0}) se défend seule. Chaque défense tenue rapporte un quart de jour de gage ; battue, elle perd le quai, jamais ta montée.",
+   "en": ""
+  },
+  {
+   "fr": "Recevoir le gage",
+   "en": ""
+  },
+  {
+   "fr": "Monter ta garde au quai {0}",
+   "en": ""
+  },
+  {
+   "fr": "Quitter le quai",
+   "en": ""
+  },
+  {
+   "fr": "Le plus haut gardien à ta portée",
+   "en": ""
+  },
+  {
+   "fr": "Gagné : le quai {0} est à toi. Perdu : seulement l’Usure.",
+   "en": ""
+  },
+  {
+   "fr": "Défier {0}",
+   "en": ""
+  },
+  {
+   "fr": "Les gardiens les plus hauts",
+   "en": ""
+  },
+  {
+   "fr": "Les quais se chargent…",
+   "en": ""
+  },
+  {
+   "fr": "Aucun directeur ne tient encore de quai : le plus haut est à prendre.",
+   "en": ""
+  },
+  {
+   "fr": "Les quais gravés",
+   "en": ""
+  },
+  {
+   "fr": "Les {0} quais gravés · {1} reçu{2}",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier quai : l’amarrage",
+   "en": ""
+  },
+  {
+   "fr": "Quai gravé",
+   "en": ""
+  },
+  {
+   "fr": "on y monte de 4 en 4",
+   "en": ""
+  },
+  {
+   "fr": "on y monte de 2 en 2",
+   "en": ""
+  },
+  {
+   "fr": "on y monte quai par quai",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade tient le dernier quai",
+   "en": ""
+  },
+  {
+   "fr": "Au sommet : les {0} Sièges",
+   "en": ""
+  },
+  {
+   "fr": "Tenus par des directeurs, ils s’ouvriront avec les combats entre directeurs.",
+   "en": ""
+  },
+  {
+   "fr": "Clause de la Flèche · Accords de 2101",
+   "en": ""
+  },
+  {
+   "fr": "La dernière route vers les Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Une aiguille de laiton et de verre, si haute qu’elle traverse les nuages. Les îles des Hauts viennent s’y amarrer.",
+   "en": ""
+  },
+  {
+   "fr": "Les quais sont fermés · vaincs le gardien de la Strate −6",
+   "en": ""
+  },
+  {
+   "fr": "Une lettre scellée de cire blanche t’ouvrira les quais.",
+   "en": ""
+  },
+  {
+   "fr": "Comment on monte",
+   "en": ""
+  },
+  {
+   "fr": "Un combat par quai, autant que tu veux : seule l’Usure te freine.",
+   "en": ""
+  },
+  {
+   "fr": "quais par victoire, de moins en moins vite",
+   "en": ""
+  },
+  {
+   "fr": "Plancher",
+   "en": ""
+  },
+  {
+   "fr": "jamais sous ton dernier quai gravé",
+   "en": ""
+  },
+  {
+   "fr": "quais gravés à récompense",
+   "en": ""
+  },
+  {
+   "fr": "Les îles des Hauts ne se posent jamais : elles dérivent au-dessus de la mer et ne s’arrêtent qu’aux flèches d’amarrage. Il n’en reste qu’une debout, et ce sont les Hauts qui la tiennent.",
+   "en": ""
+  },
+  {
+   "fr": "Avant 2101, les districts d’en bas montaient à l’abordage. Les Accords y ont mis fin et n’ont laissé qu’une route légale vers le haut : la Flèche, quai par quai. Tout district invité peut y envoyer une escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. « S’il tient le sommet au passage d’une île, il y est reçu », dit la Clause. Les Hauts ont toujours lu « l’escouade ».",
+   "en": ""
+  },
+  {
+   "fr": "Les Îles ouvertes",
+   "en": ""
+  },
+  {
+   "fr": "Le Noyé, vieux saboteur rescapé de la Grève, garde un brouillon de la Clause, écrit à la main pendant la Grève des pompes : « le district dont l’escouade tient le sommet au passage d’une île y est reçu ». Pas l’escouade : le district.",
+   "en": ""
+  },
+  {
+   "fr": "Ceux qui sont montés ont tous accepté le palais qu’on leur offrait. Le Noyé attend un directeur qui tiendra le sommet, puis refusera, pour réclamer l’île au nom de tous. Le sommet et ses Sièges arrivent bientôt ; l’histoire complète t’attend dans les Chroniques (« Il y est reçu »).",
+   "en": ""
+  },
+  {
+   "fr": "Les règles en détail",
+   "en": ""
+  },
+  {
+   "fr": "Un combat par quai",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade affronte les trois gardiens du quai. Pas de jeton : tu montes autant que tu veux, seule l’Usure te freine.",
+   "en": ""
+  },
+  {
+   "fr": "Vite en bas, lentement en haut",
+   "en": ""
+  },
+  {
+   "fr": "Une victoire fait monter de {0} quais jusqu’au {1}, de {2} jusqu’au {3}, puis d’un seul.",
+   "en": ""
+  },
+  {
+   "fr": "Une défaite fait redescendre",
+   "en": ""
+  },
+  {
+   "fr": "D’autant de quais, mais jamais sous le dernier quai gravé que tu as atteint.",
+   "en": ""
+  },
+  {
+   "fr": "{0} : chacun donne des cristaux et des Éclats, une seule fois. Ton record compte au Grand Tableau.",
+   "en": ""
+  },
+  {
+   "fr": "La garde des quais · compétition",
+   "en": ""
+  },
+  {
+   "fr": "Les Hauts préfèrent payer un directeur qui tient bon qu’un gardien de location. Les meilleurs directeurs se disputent les quais : le but, tenir le plus haut.",
+   "en": ""
+  },
+  {
+   "fr": "Ta montée ne dépend que de toi",
+   "en": ""
+  },
+  {
+   "fr": "L’histoire se joue toujours contre les gardiens payés : aucun directeur ne peut te barrer la route.",
+   "en": ""
+  },
+  {
+   "fr": "Tiens un quai déjà atteint",
+   "en": ""
+  },
+  {
+   "fr": "Une copie figée de ton escouade y monte la garde, pendant que tu continues de grimper avec la vraie.",
+   "en": ""
+  },
+  {
+   "fr": "Les Hauts te versent un gage",
+   "en": ""
+  },
+  {
+   "fr": "Plus le quai est haut, plus il rapporte ({0} par jour au quai 20, {1} au quai 80). La caisse garde jusqu’à {2} jours.",
+   "en": ""
+  },
+  {
+   "fr": "Un quai tenu se prend par un défi",
+   "en": ""
+  },
+  {
+   "fr": "Bats son gardien et le quai est à toi. Perdre ne coûte que l’Usure ; un gardien battu perd son quai, jamais sa montée.",
+   "en": ""
+  },
+  {
+   "fr": "Bientôt · les {0} Sièges",
+   "en": ""
+  },
+  {
+   "fr": "à venir",
+   "en": ""
+  },
+  {
+   "fr": "Au sommet, les Sièges sont tenus par des directeurs. Le temps du passage d’une île, {0} défaites t’éliminent et {1} victoires t’ouvrent le défi d’un Siège.",
+   "en": ""
+  },
+  {
+   "fr": "Entrer sur les quais",
+   "en": ""
+  },
+  {
+   "fr": "Retour aux quais",
+   "en": ""
+  }
+ ]
+}

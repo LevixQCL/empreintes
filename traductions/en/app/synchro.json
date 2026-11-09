@@ -1,0 +1,29 @@
+{
+ "source": "src/app/synchro.ts",
+ "entrees": [
+  {
+   "fr": "Partie de secours restaurée : Strate −{0}.",
+   "en": ""
+  },
+  {
+   "fr": "écriture : ",
+   "en": ""
+  },
+  {
+   "fr": "Progression du compte chargée.",
+   "en": ""
+  },
+  {
+   "fr": "Progression du compte chargée : Strate −{0}.",
+   "en": ""
+  },
+  {
+   "fr": "Hors ligne : partie de cet appareil.",
+   "en": ""
+  },
+  {
+   "fr": "Par sécurité, Google demande une connexion récente : touche « Se déconnecter », reconnecte-toi, puis supprime ton compte tout de suite après.",
+   "en": ""
+  }
+ ]
+}

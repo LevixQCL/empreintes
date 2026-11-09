@@ -1,0 +1,9 @@
+{
+ "source": "src/app/actions/cercle.ts",
+ "entrees": [
+  {
+   "fr": "Tape le nom de directeur de ton ami.",
+   "en": ""
+  }
+ ]
+}

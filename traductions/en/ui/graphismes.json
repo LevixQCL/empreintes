@@ -1,0 +1,33 @@
+{
+ "source": "src/ui/graphismes.ts",
+ "entrees": [
+  {
+   "fr": "Complets",
+   "en": ""
+  },
+  {
+   "fr": "Tout bouge et brille : la Cuvette vivante, les reflets des cartes, le verre flouté",
+   "en": ""
+  },
+  {
+   "fr": "Légers",
+   "en": ""
+  },
+  {
+   "fr": "Pour un appareil qui chauffe ou rame : la Cuvette reste peinte, les lueurs ne pulsent plus",
+   "en": ""
+  },
+  {
+   "fr": "Auto",
+   "en": ""
+  },
+  {
+   "fr": "Allégés sur cet appareil, qui peinait à suivre",
+   "en": ""
+  },
+  {
+   "fr": "Complets sur cet appareil ; allégés tout seuls si l’écran peine à suivre",
+   "en": ""
+  }
+ ]
+}

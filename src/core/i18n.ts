@@ -32,8 +32,16 @@ export function definirLangue(l: Langue, cat: ReadonlyMap<string, string> | null
 export const cleGabarit = (morceaux: readonly string[]): string =>
   morceaux.reduce((cle, m, i) => (i === 0 ? m : `${cle}{${i - 1}}${m}`), '');
 
+/**
+ * Remplit {0}, {1}… ; « {1|s} » écrit « s » quand la valeur n’est pas vide, rien sinon : pour une traduction
+ * qui remplace un accord français (« cristal${n > 1 ? 'x' : ''} ») par le sien (« crystal{1|s} »).
+ */
 const remplir = (modele: string, valeurs: readonly unknown[]): string =>
-  modele.replace(/\{(\d+)\}/g, (tout, n: string) => (Number(n) < valeurs.length ? String(valeurs[Number(n)]) : tout));
+  modele.replace(/\{(\d+)(?:\|([^}]*))?\}/g, (tout, n: string, autre: string | undefined) => {
+    if (Number(n) >= valeurs.length) return tout;
+    const v = String(valeurs[Number(n)]);
+    return autre === undefined ? v : v ? autre : '';
+  });
 
 /**
  * Traduit un texte du jeu.
@@ -51,4 +59,5 @@ export function t(texte: string | TemplateStringsArray, ...valeurs: unknown[]): 
 }
 
 /** Les {0}, {1}… (et les {nom} remplacés ailleurs) d’un texte : une traduction doit tous les garder */
-export const valeursDe = (texte: string): string[] => (texte.match(/\{\w+\}/g) ?? []).sort();
+export const valeursDe = (texte: string): string[] =>
+  (texte.match(/\{\w+(?:\|[^}]*)?\}/g) ?? []).map((v) => v.replace(/\|[^}]*\}$/, '}')).sort();

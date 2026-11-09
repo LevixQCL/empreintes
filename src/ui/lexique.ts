@@ -8,6 +8,7 @@ import { NOMS_EFFET } from '../core/effets';
 import type { TypeEffet } from '../core/types';
 import { ICO } from './icones';
 import { echap } from './outils';
+import { t as tr } from '../core/i18n';
 
 /**
  * Un texte dont les mots du jeu deviennent touchables (le texte est échappé ici : ne pas l'échapper avant).
@@ -15,7 +16,7 @@ import { echap } from './outils';
  */
 export function avecMots(texte: string, sauf: readonly string[] = []): string {
   return decouper(texte, new Set(sauf)).map((m) => m.terme
-    ? `<span class="mot-jeu" role="button" tabindex="0" data-terme="${m.terme}" aria-label="${echap(`${m.texte} : qu’est-ce que c’est ?`)}">${echap(m.texte)}</span>`
+    ? `<span class="mot-jeu" role="button" tabindex="0" data-terme="${m.terme}" aria-label="${echap(tr`${m.texte} : qu’est-ce que c’est ?`)}">${echap(m.texte)}</span>`
     : echap(m.texte)).join('');
 }
 
@@ -39,9 +40,9 @@ function montrerBulle(mot: HTMLElement) {
   b.dataset.cle = id;
   b.setAttribute('role', 'dialog');
   b.setAttribute('aria-label', t.nom);
-  b.innerHTML = `<div class="bm-tete"><b>${echap(t.nom)}</b><button type="button" class="bm-fermer" aria-label="Fermer">${ICO.fermer}</button></div>`
+  b.innerHTML = `<div class="bm-tete"><b>${echap(t.nom)}</b><button type="button" class="bm-fermer" aria-label="${tr`Fermer`}">${ICO.fermer}</button></div>`
     + `<p>${avecMots(t.texte, [id])}</p>`
-    + `<button type="button" class="bm-glossaire">${ICO.aide}<span>Tout le glossaire</span></button>`;
+    + `<button type="button" class="bm-glossaire">${ICO.aide}<span>${tr`Tout le glossaire`}</span></button>`;
   document.body.appendChild(b);
   bulle = b;
   // sous le mot si la place le permet, sinon au-dessus ; jamais hors de l'écran
@@ -133,11 +134,11 @@ export function ongletGlossaire(regleEffet: (t: TypeEffet) => string): string {
   // les effets : le texte complet du mode d'emploi, avec les chiffres réels
   for (const type of Object.keys(NOMS_EFFET) as TypeEffet[]) {
     const id = Object.entries(LEXIQUE).find(([, t]) => t.theme === 'effet' && t.nom === NOMS_EFFET[type])?.[0] ?? `effet-${type}`;
-    entrees.effet.push({ id, nom: NOMS_EFFET[type], texte: regleEffet(type) + (type === 'fissure' ? ' Seules les cartes posées après elle en profitent. On dit alors que l’ennemi est « fissuré ».' : '') });
+    entrees.effet.push({ id, nom: NOMS_EFFET[type], texte: regleEffet(type) + (type === 'fissure' ? tr(' Seules les cartes posées après elle en profitent. On dit alors que l’ennemi est « fissuré ».') : '') });
   }
   const q = sansAccents(recherche.trim());
-  let h = `<p class="g-chapeau">Tous les mots du jeu. Dans le texte des cartes, un mot <span class="mot-jeu exemple">souligné ainsi</span> s’explique d’un toucher.</p>`
-    + `<label class="gl-champ">${ICO.chercher}<input class="gl-recherche" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="Chercher un mot (Fissure, Flux…)" aria-label="Chercher dans le glossaire" value="${echap(recherche)}"></label>`;
+  let h = `<p class="g-chapeau">${tr`Tous les mots du jeu. Dans le texte des cartes, un mot`} <span class="mot-jeu exemple">${tr`souligné ainsi`}</span> ${tr`s’explique d’un toucher.`}</p>`
+    + `<label class="gl-champ">${ICO.chercher}<input class="gl-recherche" type="search" enterkeyhint="search" autocomplete="off" spellcheck="false" placeholder="${tr`Chercher un mot (Fissure, Flux…)`}" aria-label="${tr`Chercher dans le glossaire`}" value="${echap(recherche)}"></label>`;
   let total = 0;
   for (const th of ORDRE) {
     const liste = entrees[th].sort((a, b) => a.nom.localeCompare(b.nom, 'fr'));
@@ -151,7 +152,7 @@ export function ongletGlossaire(regleEffet: (t: TypeEffet) => string): string {
     total += n;
     h += `<section class="bloc gl-theme"${n ? '' : ' hidden'}><h3 class="titre-bloc">${NOMS_THEMES[th]}</h3><ul class="gl-liste">${items}</ul></section>`;
   }
-  h += `<p class="gl-vide aide"${total ? ' hidden' : ''}>Aucun mot ne correspond.</p>`;
+  h += `<p class="gl-vide aide"${total ? ' hidden' : ''}>${tr`Aucun mot ne correspond.`}</p>`;
   if (vise) {
     const id = vise;
     vise = '';

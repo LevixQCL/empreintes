@@ -9,11 +9,12 @@ import { partPvClinique, CERCLE, CERCLE_OUVERTURE, CONFIANCE, accueillirFamille,
 import { OBJECTIFS, objectifCourant } from './objectifs';
 import { ORDRE_FAMILLES, fragmentDef } from '../fragments';
 import { familleDef, familleDuFragment } from '../familles';
+import { t as tr } from '../i18n';
 
 export function humeurDistrict(j: Jeu): string {
   const f = nbFoyers(j);
   const n = niveauConfiance(f);
-  return n.requis ? `${f} familles sur ${CONFIANCE.population} te suivent : encore ${n.requis - n.dans} pour le prochain palier.` : 'Tout le district te suit.';
+  return n.requis ? tr`${f} familles sur ${CONFIANCE.population} te suivent : encore ${n.requis - n.dans} pour le prochain palier.` : tr('Tout le district te suit.');
 }
 
 /**
@@ -35,10 +36,10 @@ export function recompenserConfiance(j: Jeu): string[] {
       const fam = familleDuFragment(fragment);
       if (fam) { accueillirFamille(j, fam.id); porteuse = fam.nom; }
     }
-    const plus = [venus ? `${venus > 1 ? `${venus} volontaires rejoignent` : 'un volontaire rejoint'} les creuseurs` : '',
-      fragment ? `${porteuse || 'une famille'} apporte${porteuse ? 'nt' : ''} « ${fragmentDef(fragment)!.titre} » aux Archives` : '',
-      palier === CONFIANCE.comptoir && j.batiments.comptoir > 0 ? 'un étal de plus rouvre au Comptoir' : ''].filter(Boolean);
-    const t = `${palier * CONFIANCE.palier} familles te suivent${palier === 8 ? ' : tout le district' : ''} !${plus.length ? ` ${plus.join(', ').replace(/^./, (c) => c.toUpperCase())}.` : ''}`;
+    const plus = [venus ? tr`${venus > 1 ? `${venus} volontaires rejoignent` : tr('un volontaire rejoint')} les creuseurs` : '',
+      fragment ? tr`${porteuse || 'une famille'} apporte${porteuse ? 'nt' : ''} « ${fragmentDef(fragment)!.titre} » aux Archives` : '',
+      palier === CONFIANCE.comptoir && j.batiments.comptoir > 0 ? tr('un étal de plus rouvre au Comptoir') : ''].filter(Boolean);
+    const t = tr`${palier * CONFIANCE.palier} familles te suivent${palier === 8 ? tr(' : tout le district') : ''} !${plus.length ? ` ${plus.join(', ').replace(/^./, (c) => c.toUpperCase())}.` : ''}`;
     log(j, t);
     annonces.push(t);
   }
@@ -46,7 +47,7 @@ export function recompenserConfiance(j: Jeu): string[] {
 }
 
 /** Le nom d'une famille, pour les textes (« les Orlan ») */
-export const nomFamille = (id: string) => familleDef(id)?.nom ?? 'une famille';
+export const nomFamille = (id: string) => familleDef(id)?.nom ?? tr('une famille');
 
 export const soinParHeure = (j: Jeu) => (DISTRICT.soinParHeure[j.batiments.clinique] ?? 0) * multiplicateur(j, 'clinique');
 
@@ -102,55 +103,55 @@ export function gainsAmelioration(j: Jeu, b: BatimentId): GainNiveau[] {
   if (niv >= batimentDef(b).niveauMax) return [];
   const apres: Jeu = { ...j, batiments: { ...j.batiments, [b]: niv + 1 } };
   const g: GainNiveau[] = [];
-  if (b === 'generateur') g.push({ quoi: 'energie', texte: 'Heures pour tailler le minerai', avant: heuresDeTaille(j), apres: heuresDeTaille(apres), detail: 'chaque heure, il en taille une part' });
-  if (b === 'generateur' && (DISTRICT.eclatsParJour[niv + 1] ?? 0) > (DISTRICT.eclatsParJour[niv] ?? 0)) g.push({ quoi: 'eclats', texte: 'Éclats recueillis par jour en taillant', avant: DISTRICT.eclatsParJour[niv] ?? 0, apres: DISTRICT.eclatsParJour[niv + 1] ?? 0 });
-  if (b === 'clinique') g.push({ quoi: 'soin', texte: 'Usure soignée par heure', avant: soinParHeure(j), apres: soinParHeure(apres), detail: 'pour chaque Porteur au repos' });
-  if (b === 'clinique' && partPvClinique(apres) > partPvClinique(j)) g.push({ quoi: 'pv', texte: 'PV max. des Porteurs', avant: Math.round(partPvClinique(j) * 100), apres: Math.round(partPvClinique(apres) * 100), unite: '%', detail: 'en plus, pour tous' });
+  if (b === 'generateur') g.push({ quoi: 'energie', texte: tr('Heures pour tailler le minerai'), avant: heuresDeTaille(j), apres: heuresDeTaille(apres), detail: tr('chaque heure, il en taille une part') });
+  if (b === 'generateur' && (DISTRICT.eclatsParJour[niv + 1] ?? 0) > (DISTRICT.eclatsParJour[niv] ?? 0)) g.push({ quoi: 'eclats', texte: tr('Éclats recueillis par jour en taillant'), avant: DISTRICT.eclatsParJour[niv] ?? 0, apres: DISTRICT.eclatsParJour[niv + 1] ?? 0 });
+  if (b === 'clinique') g.push({ quoi: 'soin', texte: tr('Usure soignée par heure'), avant: soinParHeure(j), apres: soinParHeure(apres), detail: tr('pour chaque Porteur au repos') });
+  if (b === 'clinique' && partPvClinique(apres) > partPvClinique(j)) g.push({ quoi: 'pv', texte: tr('PV max. des Porteurs'), avant: Math.round(partPvClinique(j) * 100), apres: Math.round(partPvClinique(apres) * 100), unite: '%', detail: tr('en plus, pour tous') });
   if (b === 'clinique' && niv + 1 === ACCORD_OUVERT.clinique) {
     const joss = PORTEURS.find((p) => p.arrivee?.accord && !j.arrives.includes(p.id));
-    if (joss) g.push({ quoi: 'porteur', texte: 'La Clinique peut organiser un Accord ouvert', detail: `un nouveau Résonant, quand ${ACCORD_OUVERT.confiance * CONFIANCE.palier} familles te suivent` });
+    if (joss) g.push({ quoi: 'porteur', texte: tr('La Clinique peut organiser un Accord ouvert'), detail: tr`un nouveau Résonant, quand ${ACCORD_OUVERT.confiance * CONFIANCE.palier} familles te suivent` });
   }
   if (b === 'forge') {
-    g.push({ quoi: 'forge', texte: 'Vitesse de refabrication', avant: Math.round(vitesseForge(niv) * 100), apres: Math.round(vitesseForge(niv + 1) * 100), unite: '%' });
+    g.push({ quoi: 'forge', texte: tr('Vitesse de refabrication'), avant: Math.round(vitesseForge(niv) * 100), apres: Math.round(vitesseForge(niv + 1) * 100), unite: '%' });
     for (const p of PORTEURS) {
       if (p.arrivee?.forge !== niv + 1 || j.arrives.includes(p.id)) continue;
-      g.push({ quoi: 'porteur', texte: `${p.nom} rejoint le district`, ...(j.chambre ? {} : { detail: 'une fois la chambre scellée' }) });
+      g.push({ quoi: 'porteur', texte: tr`${p.nom} rejoint le district`, ...(j.chambre ? {} : { detail: tr('une fois la chambre scellée') }) });
     }
   }
   if (b === 'comptoir') {
-    g.push({ quoi: 'offres', texte: 'Cartes en vente chaque jour', avant: etalsDuComptoir(j).length, apres: etalsDuComptoir(apres).length });
+    g.push({ quoi: 'offres', texte: tr('Cartes en vente chaque jour'), avant: etalsDuComptoir(j).length, apres: etalsDuComptoir(apres).length });
     const argent = (x: Jeu) => (COMPTOIR.etals[x.batiments.comptoir] ?? []).includes('argent');
     const ec = (x: Jeu) => COMPTOIR.eclats.parJour[x.batiments.comptoir] ?? 0;
-    if (ec(apres) > ec(j)) g.push({ quoi: 'eclats', texte: 'Éclats en vente par jour', avant: ec(j), apres: ec(apres), detail: `de ${COMPTOIR.eclats.prix[0]} à ${COMPTOIR.eclats.prix.at(-1)} cristaux l’Éclat` });
-    if (argent(apres) && !argent(j)) g.push({ quoi: 'argent', texte: 'Des cartes en argent', ...(strateVaincue(j) < COMPTOIR.strateArgent ? { detail: `une fois la Strate −${COMPTOIR.strateArgent} vaincue` } : {}) });
+    if (ec(apres) > ec(j)) g.push({ quoi: 'eclats', texte: tr('Éclats en vente par jour'), avant: ec(j), apres: ec(apres), detail: tr`de ${COMPTOIR.eclats.prix[0]} à ${COMPTOIR.eclats.prix.at(-1)} cristaux l’Éclat` });
+    if (argent(apres) && !argent(j)) g.push({ quoi: 'argent', texte: tr('Des cartes en argent'), ...(strateVaincue(j) < COMPTOIR.strateArgent ? { detail: tr`une fois la Strate −${COMPTOIR.strateArgent} vaincue` } : {}) });
   }
   if (b === 'cercle') {
     const t = (k: 'echangesJour' | 'ouvertes' | 'vitrine', x: Jeu) => CERCLE[k][Math.min(10, x.batiments.cercle ?? 0)] ?? 0;
-    if (!niv) g.push({ quoi: 'cercle', texte: 'Ouvre les amis, les duels et les échanges', detail: 'les directeurs des autres districts accostent' });
-    if (t('echangesJour', apres) > t('echangesJour', j)) g.push({ quoi: 'echanges', texte: 'Échanges par jour', avant: t('echangesJour', j), apres: t('echangesJour', apres) });
-    if (t('ouvertes', apres) > t('ouvertes', j)) g.push({ quoi: 'ouvertes', texte: 'Propositions en attente', avant: t('ouvertes', j), apres: t('ouvertes', apres) });
-    if (t('vitrine', apres) > t('vitrine', j)) g.push({ quoi: 'vitrine', texte: 'Cartes en vitrine', avant: t('vitrine', j), apres: t('vitrine', apres) });
-    if (niv + 1 === CERCLE.orAuNiveau) g.push({ quoi: 'or', texte: 'Les cartes en or s’échangent', detail: 'la nacre, jamais' });
+    if (!niv) g.push({ quoi: 'cercle', texte: tr('Ouvre les amis, les duels et les échanges'), detail: tr('les directeurs des autres districts accostent') });
+    if (t('echangesJour', apres) > t('echangesJour', j)) g.push({ quoi: 'echanges', texte: tr('Échanges par jour'), avant: t('echangesJour', j), apres: t('echangesJour', apres) });
+    if (t('ouvertes', apres) > t('ouvertes', j)) g.push({ quoi: 'ouvertes', texte: tr('Propositions en attente'), avant: t('ouvertes', j), apres: t('ouvertes', apres) });
+    if (t('vitrine', apres) > t('vitrine', j)) g.push({ quoi: 'vitrine', texte: tr('Cartes en vitrine'), avant: t('vitrine', j), apres: t('vitrine', apres) });
+    if (niv + 1 === CERCLE.orAuNiveau) g.push({ quoi: 'or', texte: tr('Les cartes en or s’échangent'), detail: tr('la nacre, jamais') });
   }
   if (b === 'noyau') {
     const prof = profondeurNoyau(niv + 1);
-    g.push({ quoi: 'creuseurs', texte: 'Creuseurs logés', avant: logementCreuseurs(j), apres: logementCreuseurs(apres),
-      detail: prof === Infinity ? 'plus aucune limite de profondeur' : `de quoi creuser jusqu’à la Strate −${prof}` });
+    g.push({ quoi: 'creuseurs', texte: tr('Creuseurs logés'), avant: logementCreuseurs(j), apres: logementCreuseurs(apres),
+      detail: prof === Infinity ? tr('plus aucune limite de profondeur') : tr`de quoi creuser jusqu’à la Strate −${prof}` });
     const manque = manquePourCreuser(j);
-    if (manque && manque.creuseurs === 0 && noyauRequis(j.strate + 1) === niv + 1) g.push({ quoi: 'strate', texte: `Ouvre la Strate −${j.strate + 1}`, detail: 'les creuseurs attendent déjà la place' });
-    g.push({ quoi: 'plafond', texte: 'Niveau max. des autres bâtiments', avant: niv, apres: niv + 1 });
-    if (placesEntrainement(apres) > placesEntrainement(j)) g.push({ quoi: 'places', texte: 'Places d’entraînement', avant: placesEntrainement(j), apres: placesEntrainement(apres), detail: 'des Porteurs en même temps à la Tour' });
-    if (barquesMax(apres) > barquesMax(j)) g.push({ quoi: 'barques', texte: 'Barques en mer', avant: barquesMax(j), apres: barquesMax(apres), detail: 'des missions en même temps' });
-    if (plafondEntrainement(apres) > plafondEntrainement(j)) g.push({ quoi: 'entrainement', texte: 'Entraînement à la Tour jusqu’au niveau', avant: plafondEntrainement(j), apres: plafondEntrainement(apres), detail: `séances ${Math.round(ENTRAINEMENT.vitesseParNoyau * 100)} % plus courtes` });
-    if (niv + 1 === DISTRICT.chantiersNoyau2) g.push({ quoi: 'chantiers', texte: 'Deux chantiers en même temps' });
+    if (manque && manque.creuseurs === 0 && noyauRequis(j.strate + 1) === niv + 1) g.push({ quoi: 'strate', texte: tr`Ouvre la Strate −${j.strate + 1}`, detail: tr('les creuseurs attendent déjà la place') });
+    g.push({ quoi: 'plafond', texte: tr('Niveau max. des autres bâtiments'), avant: niv, apres: niv + 1 });
+    if (placesEntrainement(apres) > placesEntrainement(j)) g.push({ quoi: 'places', texte: tr('Places d’entraînement'), avant: placesEntrainement(j), apres: placesEntrainement(apres), detail: tr('des Porteurs en même temps à la Tour') });
+    if (barquesMax(apres) > barquesMax(j)) g.push({ quoi: 'barques', texte: tr('Barques en mer'), avant: barquesMax(j), apres: barquesMax(apres), detail: tr('des missions en même temps') });
+    if (plafondEntrainement(apres) > plafondEntrainement(j)) g.push({ quoi: 'entrainement', texte: tr('Entraînement à la Tour jusqu’au niveau'), avant: plafondEntrainement(j), apres: plafondEntrainement(apres), detail: tr`séances ${Math.round(ENTRAINEMENT.vitesseParNoyau * 100)} % plus courtes` });
+    if (niv + 1 === DISTRICT.chantiersNoyau2) g.push({ quoi: 'chantiers', texte: tr('Deux chantiers en même temps') });
   }
   // les cartes communes du Râtelier (31 octobre 2026, Luc : « savoir améliorer les cartes de district ») : on les améliore
   // en montant leur bâtiment ; la feuille du bâtiment le dit, carte par carte
   for (const c of CARTES_COMMUNES.filter((x) => x.batiment === b)) {
-    if (c.niveau === niv + 1) g.push({ quoi: 'commune', texte: `Nouvelle carte commune : ${c.geste.nom}`, detail: 'à prendre au Râtelier de l’escouade' });
+    if (c.niveau === niv + 1) g.push({ quoi: 'commune', texte: tr`Nouvelle carte commune : ${c.geste.nom}`, detail: tr('à prendre au Râtelier de l’escouade') });
     else if (c.niveau <= niv) {
       const avant = forceCommune(c, niv), apres = forceCommune(c, niv + 1);
-      if (apres > avant) g.push({ quoi: 'commune', texte: `Force de la carte ${c.geste.nom}`, avant, apres });
+      if (apres > avant) g.push({ quoi: 'commune', texte: tr`Force de la carte ${c.geste.nom}`, avant, apres });
     }
   }
   return g;
@@ -190,13 +191,13 @@ export function batimentConseille(j: Jeu): BatimentId {
 
 export function ameliorer(j: Jeu, b: BatimentId, now = j.dernierTick): Resultat {
   const cout = coutAmelioration(j, b);
-  if (!cout) return non('Niveau maximum atteint.');
-  if (chantierDe(j, b)) return non('Un chantier est déjà en cours sur ce bâtiment.');
-  if (b === 'cercle' && strateVaincue(j) < CERCLE_OUVERTURE) return non(`Aucun directeur n’accoste avant que la Strate −${CERCLE_OUVERTURE} soit vaincue.`);
-  if (b !== 'noyau' && j.batiments[b] >= j.batiments.noyau) return non('Améliore d’abord la Tour du Noyau.');
-  if (b === 'noyau' && j.chantiers.length) return non('Termine d’abord les chantiers en cours avant d’agrandir la Tour du Noyau.');
-  if (j.chantiers.length >= chantiersMax(j)) return non(chantiersMax(j) === 1 ? 'Un seul chantier à la fois pour l’instant (deux au Noyau niveau 4).' : 'Deux chantiers sont déjà en cours.');
-  if (j.energie < cout.energie || j.composants < cout.composants || j.eclats < (cout.eclats ?? 0)) return non('Pas assez de ressources.');
+  if (!cout) return non(tr('Niveau maximum atteint.'));
+  if (chantierDe(j, b)) return non(tr('Un chantier est déjà en cours sur ce bâtiment.'));
+  if (b === 'cercle' && strateVaincue(j) < CERCLE_OUVERTURE) return non(tr`Aucun directeur n’accoste avant que la Strate −${CERCLE_OUVERTURE} soit vaincue.`);
+  if (b !== 'noyau' && j.batiments[b] >= j.batiments.noyau) return non(tr('Améliore d’abord la Tour du Noyau.'));
+  if (b === 'noyau' && j.chantiers.length) return non(tr('Termine d’abord les chantiers en cours avant d’agrandir la Tour du Noyau.'));
+  if (j.chantiers.length >= chantiersMax(j)) return non(chantiersMax(j) === 1 ? tr('Un seul chantier à la fois pour l’instant (deux au Noyau niveau 4).') : tr('Deux chantiers sont déjà en cours.'));
+  if (j.energie < cout.energie || j.composants < cout.composants || j.eclats < (cout.eclats ?? 0)) return non(tr('Pas assez de ressources.'));
   j.energie -= cout.energie;
   j.composants -= cout.composants;
   j.eclats -= cout.eclats ?? 0;
@@ -204,33 +205,33 @@ export function ameliorer(j: Jeu, b: BatimentId, now = j.dernierTick): Resultat 
   progresser(j, 'chantier');
   if (duree <= 0) {
     j.batiments[b]++;
-    log(j, `${batimentDef(b).nom} passe au niveau ${j.batiments[b]}.`);
+    log(j, tr`${batimentDef(b).nom} passe au niveau ${j.batiments[b]}.`);
     if (b === 'noyau') creuser(j);
   } else {
     j.chantiers.push({ batiment: b, debut: now, fin: now + duree });
-    log(j, `Chantier lancé : ${batimentDef(b).nom} vers le niveau ${j.batiments[b] + 1}.`);
+    log(j, tr`Chantier lancé : ${batimentDef(b).nom} vers le niveau ${j.batiments[b] + 1}.`);
   }
   return { ok: true };
 }
 
 export function poster(j: Jeu, id: string, b: Poste | null): Resultat {
   const p = j.porteurs[id];
-  if (!p || !porteursPresents(j).includes(id)) return non('Porteur inconnu.');
-  if (enExpedition(j, id)) return non('Ce Porteur est en expédition.');
-  if (b === 'forge' && j.forge && p.poste === 'forge') return non('La Forge travaille : attends la fin de la fabrication.');
-  if (p.poste === 'forge' && j.forge && b !== 'forge') return non('La Forge travaille : attends la fin de la fabrication.');
+  if (!p || !porteursPresents(j).includes(id)) return non(tr('Porteur inconnu.'));
+  if (enExpedition(j, id)) return non(tr('Ce Porteur est en expédition.'));
+  if (b === 'forge' && j.forge && p.poste === 'forge') return non(tr('La Forge travaille : attends la fin de la fabrication.'));
+  if (p.poste === 'forge' && j.forge && b !== 'forge') return non(tr('La Forge travaille : attends la fin de la fabrication.'));
   if (b === 'noyau') {
     if (seanceDe(j, id)) return { ok: true };
     const a = apercuSeance(j, id);
-    if (!a) return non(plafondSeance(j).par === 'escouade' ? `${porteurDef(id).nom} a rattrapé ton meilleur Porteur d’escouade : la suite se gagne dans les Strates.` : `${porteurDef(id).nom} a atteint le plafond de la Tour : monte-la pour aller plus loin.`);
+    if (!a) return non(plafondSeance(j).par === 'escouade' ? tr`${porteurDef(id).nom} a rattrapé ton meilleur Porteur d’escouade : la suite se gagne dans les Strates.` : tr`${porteurDef(id).nom} a atteint le plafond de la Tour : monte-la pour aller plus loin.`);
     const n = placesEntrainement(j);
-    if (seancesDe(j).length >= n) return non(n > 1 ? `Les ${n} places de la Tour sont prises : arrête une séance ou attends qu’une se termine.` : 'La place de la Tour est prise : arrête la séance ou attends qu’elle se termine.');
-    if (j.energie < a.energie) return non(`Il manque ${a.energie - Math.floor(j.energie)} cristaux pour cette séance.`);
+    if (seancesDe(j).length >= n) return non(n > 1 ? tr`Les ${n} places de la Tour sont prises : arrête une séance ou attends qu’une se termine.` : tr('La place de la Tour est prise : arrête la séance ou attends qu’elle se termine.'));
+    if (j.energie < a.energie) return non(tr`Il manque ${a.energie - Math.floor(j.energie)} cristaux pour cette séance.`);
   }
   if (b && b !== 'noyau') {
     const occupant = posteDe(j, b);
     if (occupant && occupant !== id) {
-      if (b === 'forge' && j.forge) return non('La Forge travaille : attends la fin de la fabrication.');
+      if (b === 'forge' && j.forge) return non(tr('La Forge travaille : attends la fin de la fabrication.'));
       j.porteurs[occupant]!.poste = null;
     }
   }
@@ -239,59 +240,59 @@ export function poster(j: Jeu, id: string, b: Poste | null): Resultat {
     const a = apercuSeance(j, id)!;
     j.energie -= a.energie;
     ouvrirSeance(j, id, a.energie);
-    log(j, `${porteurDef(id).nom} commence une séance à la Tour du Noyau : niveau ${a.cible} (${a.energie} cristaux).`);
+    log(j, tr`${porteurDef(id).nom} commence une séance à la Tour du Noyau : niveau ${a.cible} (${a.energie} cristaux).`);
     return { ok: true };
   }
   p.poste = b;
-  log(j, b ? `${porteurDef(id).nom} travaille maintenant : ${batimentDef(b).nom}.` : `${porteurDef(id).nom} se repose.`);
+  log(j, b ? tr`${porteurDef(id).nom} travaille maintenant : ${batimentDef(b).nom}.` : tr`${porteurDef(id).nom} se repose.`);
   return { ok: true };
 }
 
 /** La Forge refabrique un exemplaire d'une carte déjà trouvée : un doublon de plus */
 export function fabriquer(j: Jeu, moduleId: string, now: number): Resultat {
-  if (!j.collection[moduleId]) return non('On ne refabrique qu’une carte déjà trouvée.');
-  if (moduleDef(moduleId).legs) return non('Une carte de l’Héritage est unique : la Forge ne sait pas la refaire.');
-  if (j.forge) return non('La Forge est déjà occupée.');
-  if (!posteDe(j, 'forge')) return non('Il faut un Porteur au travail à la Forge.');
+  if (!j.collection[moduleId]) return non(tr('On ne refabrique qu’une carte déjà trouvée.'));
+  if (moduleDef(moduleId).legs) return non(tr('Une carte de l’Héritage est unique : la Forge ne sait pas la refaire.'));
+  if (j.forge) return non(tr('La Forge est déjà occupée.'));
+  if (!posteDe(j, 'forge')) return non(tr('Il faut un Porteur au travail à la Forge.'));
   const c = coutRefabrication(moduleId);
   const manque = [
     j.energie < c.energie ? `${c.energie - Math.floor(j.energie)} cristaux` : '',
     j.composants < c.composants ? `${c.composants - j.composants} minerai` : '',
-    j.eclats < c.eclats ? `${c.eclats - j.eclats} Éclat${c.eclats - j.eclats > 1 ? 's' : ''}` : '',
+    j.eclats < c.eclats ? tr`${c.eclats - j.eclats} Éclat${c.eclats - j.eclats > 1 ? 's' : ''}` : '',
   ].filter(Boolean);
-  if (manque.length) return non(`Pour refabriquer ${moduleDef(moduleId).nom}, il manque ${manque.join(' et ').replace(/ et (?=[^]* et )/, ', ')}.`);
+  if (manque.length) return non(tr`Pour refabriquer ${moduleDef(moduleId).nom}, il manque ${manque.join(' et ').replace(/ et (?=[^]* et )/, ', ')}.`);
   j.energie -= c.energie;
   j.composants -= c.composants;
   j.eclats -= c.eclats;
   j.forge = { moduleId, debut: now, fin: now + dureeFabrication(j, moduleId) };
-  log(j, `La Forge refabrique ${moduleDef(moduleId).nom}.`);
+  log(j, tr`La Forge refabrique ${moduleDef(moduleId).nom}.`);
   return { ok: true };
 }
 
 /** Recycle un doublon en minerai (`composants`) */
 export function recycler(j: Jeu, moduleId: string): Resultat {
   const c = j.collection[moduleId];
-  if (!c || c.doublons < 1) return non('Aucun doublon à recycler.');
+  if (!c || c.doublons < 1) return non(tr('Aucun doublon à recycler.'));
   c.doublons--;
   const gain = COLLECTION.recyclage[moduleDef(moduleId).rarete];
   j.composants += gain;
-  log(j, `Un doublon ${deNom(moduleDef(moduleId).nom)} recyclé : +${gain} minerai.`);
+  log(j, tr`Un doublon ${deNom(moduleDef(moduleId).nom)} recyclé : +${gain} minerai.`);
   return { ok: true };
 }
 
 /** Monte une carte d'un niveau avec ses doublons */
 export function monter(j: Jeu, moduleId: string): Resultat {
   const c = j.collection[moduleId];
-  if (!c) return non('Carte inconnue.');
+  if (!c) return non(tr('Carte inconnue.'));
   const requis = doublonsRequis(moduleId, c.niveau);
-  if (requis === null) return non('Niveau maximum atteint.');
-  if (c.doublons < requis) return non(`Il faut ${requis} doublon${requis > 1 ? 's' : ''}.`);
+  if (requis === null) return non(tr('Niveau maximum atteint.'));
+  if (c.doublons < requis) return non(tr`Il faut ${requis} doublon${requis > 1 ? 's' : ''}.`);
   const cout = composantsNiveau(c.niveau + 1);
-  if (j.energie < cout) return non(`Il faut ${cout} cristaux.`);
+  if (j.energie < cout) return non(tr`Il faut ${cout} cristaux.`);
   c.doublons -= requis;
   j.energie -= cout;
   c.niveau++;
-  log(j, `${moduleDef(moduleId).nom} passe au niveau ${c.niveau}.`);
+  log(j, tr`${moduleDef(moduleId).nom} passe au niveau ${c.niveau}.`);
   return { ok: true };
 }
 
@@ -299,30 +300,30 @@ export function monter(j: Jeu, moduleId: string): Resultat {
 function tropLourd(j: Jeu, porteurId: string, cle: string, retire?: string): string | null {
   const libre = chargeMax(j, porteurId) - chargePortee(j, porteurId) + (retire ? poidsCarte(retire) : 0);
   if (poidsCarte(cle) <= libre) return null;
-  return `Trop lourd : ${moduleDef(cle).nom} pèse ${poidsCarte(cle)}, il ne reste que ${libre} de Charge à ${porteurDef(porteurId).nom}.`;
+  return tr`Trop lourd : ${moduleDef(cle).nom} pèse ${poidsCarte(cle)}, il ne reste que ${libre} de Charge à ${porteurDef(porteurId).nom}.`;
 }
 
 /** Le métal d'une carte demande un niveau de Porteur (NIVEAU_METAL) */
 function tropBas(j: Jeu, porteurId: string, cle: string): string | null {
   const requis = niveauRequis(cle);
   if (niveauPorteur(j, porteurId).niveau >= requis) return null;
-  return `${moduleDef(cle).nom} en ${NOMS_RARETE[moduleDef(cle).rarete].toLowerCase()} demande un Porteur de niveau ${requis} : ${porteurDef(porteurId).nom} est niveau ${niveauPorteur(j, porteurId).niveau}.`;
+  return tr`${moduleDef(cle).nom} en ${NOMS_RARETE[moduleDef(cle).rarete].toLowerCase()} demande un Porteur de niveau ${requis} : ${porteurDef(porteurId).nom} est niveau ${niveauPorteur(j, porteurId).niveau}.`;
 }
 
 /** Confie une carte à un Porteur de sa lignée (un exemplaire n'est porté que par un Porteur ; il passe de l'un à l'autre) */
 export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   const p = j.porteurs[porteurId];
-  if (!j.collection[moduleId]) return non('Carte inconnue.');
-  if (!p || !porteursPresents(j).includes(porteurId)) return non('Porteur inconnu.');
-  if (enExpedition(j, porteurId)) return non('Ce Porteur est en expédition.');
-  if (porteurDef(porteurId).lignee !== moduleDef(moduleId).lignee) return non('Cette carte ne convient qu’à sa lignée.');
+  if (!j.collection[moduleId]) return non(tr('Carte inconnue.'));
+  if (!p || !porteursPresents(j).includes(porteurId)) return non(tr('Porteur inconnu.'));
+  if (enExpedition(j, porteurId)) return non(tr('Ce Porteur est en expédition.'));
+  if (porteurDef(porteurId).lignee !== moduleDef(moduleId).lignee) return non(tr('Cette carte ne convient qu’à sa lignée.'));
   const ancien = greffesDe(j, moduleId)[0];
   if (ancien === porteurId) return { ok: true };
-  if (ancien && enExpedition(j, ancien)) return non('Cette carte est en expédition.');
+  if (ancien && enExpedition(j, ancien)) return non(tr('Cette carte est en expédition.'));
   // il porte déjà cette carte dans un autre métal : la nouvelle prend sa place (24 octobre 2026, Bryan : une Morsure en argent
   // n'apparaissait pas pour Doran, qui portait la Morsure en fer). Un Porteur ne porte toujours qu'un métal de chaque carte.
   const autreMetal = p.modules.find((k) => k !== moduleId && moduleDe(k) === moduleDe(moduleId));
-  if (!autreMetal && p.modules.length >= DISTRICT.cartesMax) return non(`${porteurDef(porteurId).nom} porte déjà ${DISTRICT.cartesMax} cartes : retires-en une.`);
+  if (!autreMetal && p.modules.length >= DISTRICT.cartesMax) return non(tr`${porteurDef(porteurId).nom} porte déjà ${DISTRICT.cartesMax} cartes : retires-en une.`);
   const bas = tropBas(j, porteurId, moduleId);
   if (bas) return non(bas);
   const trop = tropLourd(j, porteurId, moduleId, autreMetal);
@@ -330,11 +331,11 @@ export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
   if (ancien) j.porteurs[ancien]!.modules = j.porteurs[ancien]!.modules.filter((m) => m !== moduleId);
   if (autreMetal) {
     p.modules[p.modules.indexOf(autreMetal)] = moduleId;
-    log(j, `${moduleDef(moduleId).nom} (${NOMS_RARETE[moduleDef(moduleId).rarete].toLowerCase()}) remplace celle en ${NOMS_RARETE[moduleDef(autreMetal).rarete].toLowerCase()} chez ${porteurDef(porteurId).nom}.`);
+    log(j, tr`${moduleDef(moduleId).nom} (${NOMS_RARETE[moduleDef(moduleId).rarete].toLowerCase()}) remplace celle en ${NOMS_RARETE[moduleDef(autreMetal).rarete].toLowerCase()} chez ${porteurDef(porteurId).nom}.`);
     return { ok: true };
   }
   p.modules.push(moduleId);
-  log(j, `${moduleDef(moduleId).nom} confiée à ${porteurDef(porteurId).nom}.`);
+  log(j, tr`${moduleDef(moduleId).nom} confiée à ${porteurDef(porteurId).nom}.`);
   return { ok: true };
 }
 
@@ -342,30 +343,30 @@ export function greffer(j: Jeu, moduleId: string, porteurId: string): Resultat {
  *  une puis en confier une autre). La nouvelle prend la place de l'ancienne ; si un autre Porteur la portait, elle passe chez lui. */
 export function echanger(j: Jeu, retireId: string, ajouteId: string, porteurId: string): Resultat {
   const p = j.porteurs[porteurId];
-  if (!p || !p.modules.includes(retireId)) return non('Ce Porteur ne porte pas cette carte.');
+  if (!p || !p.modules.includes(retireId)) return non(tr('Ce Porteur ne porte pas cette carte.'));
   if (retireId === ajouteId) return { ok: true };
-  if (!j.collection[ajouteId]) return non('Carte inconnue.');
-  if (enExpedition(j, porteurId)) return non('Ce Porteur est en expédition.');
-  if (porteurDef(porteurId).lignee !== moduleDef(ajouteId).lignee) return non('Cette carte ne convient qu’à sa lignée.');
-  if (p.modules.includes(ajouteId)) return non(`${porteurDef(porteurId).nom} porte déjà cette carte.`);
+  if (!j.collection[ajouteId]) return non(tr('Carte inconnue.'));
+  if (enExpedition(j, porteurId)) return non(tr('Ce Porteur est en expédition.'));
+  if (porteurDef(porteurId).lignee !== moduleDef(ajouteId).lignee) return non(tr('Cette carte ne convient qu’à sa lignée.'));
+  if (p.modules.includes(ajouteId)) return non(tr`${porteurDef(porteurId).nom} porte déjà cette carte.`);
   const autreMetal = p.modules.find((k) => k !== retireId && moduleDe(k) === moduleDe(ajouteId));
-  if (autreMetal) return non(`${porteurDef(porteurId).nom} porte déjà ${moduleDef(ajouteId).nom} en ${NOMS_RARETE[moduleDef(autreMetal).rarete].toLowerCase()} : échange plutôt celle-là.`);
+  if (autreMetal) return non(tr`${porteurDef(porteurId).nom} porte déjà ${moduleDef(ajouteId).nom} en ${NOMS_RARETE[moduleDef(autreMetal).rarete].toLowerCase()} : échange plutôt celle-là.`);
   const bas = tropBas(j, porteurId, ajouteId);
   if (bas) return non(bas);
   const trop = tropLourd(j, porteurId, ajouteId, retireId);
   if (trop) return non(trop);
   const ancien = greffesDe(j, ajouteId)[0];
-  if (ancien && enExpedition(j, ancien)) return non('Cette carte est en expédition.');
+  if (ancien && enExpedition(j, ancien)) return non(tr('Cette carte est en expédition.'));
   if (ancien) j.porteurs[ancien]!.modules = j.porteurs[ancien]!.modules.filter((m) => m !== ajouteId);
   p.modules[p.modules.indexOf(retireId)] = ajouteId;
-  log(j, `${moduleDef(ajouteId).nom} remplace ${moduleDef(retireId).nom} chez ${porteurDef(porteurId).nom}.`);
+  log(j, tr`${moduleDef(ajouteId).nom} remplace ${moduleDef(retireId).nom} chez ${porteurDef(porteurId).nom}.`);
   return { ok: true };
 }
 
 export function degreffer(j: Jeu, moduleId: string): Resultat {
   const id = greffesDe(j, moduleId)[0];
   if (!id) return { ok: true };
-  if (enExpedition(j, id)) return non('Ce Porteur est en expédition.');
+  if (enExpedition(j, id)) return non(tr('Ce Porteur est en expédition.'));
   j.porteurs[id]!.modules = j.porteurs[id]!.modules.filter((m) => m !== moduleId);
   return { ok: true };
 }
@@ -393,7 +394,7 @@ export function gagnerCreuseurs(j: Jeu, n: number, raison: string): number {
   const avant = j.creuseurs ?? 0;
   j.creuseurs = Math.min(logementCreuseurs(j), avant + n);
   const arrives = j.creuseurs - avant;
-  if (arrives > 0) log(j, `+${arrives} creuseur${arrives > 1 ? 's' : ''} : ${raison}.`);
+  if (arrives > 0) log(j, tr`+${arrives} creuseur${arrives > 1 ? 's' : ''} : ${raison}.`);
   return arrives;
 }
 
@@ -412,7 +413,7 @@ export function creuser(j: Jeu): boolean {
   j.creuseurs -= creuseursRequis(j.strate + 1);
   j.strate++;
   j.frontVaincu = false;
-  log(j, `Les creuseurs percent la roche : la Strate −${j.strate} est ouverte.`);
+  log(j, tr`Les creuseurs percent la roche : la Strate −${j.strate} est ouverte.`);
   return true;
 }
 
@@ -503,7 +504,7 @@ export function interrompreSeance(j: Jeu, id: string): number {
   const rendu = Math.max(0, Math.floor(s.energie * reste));
   j.energie += rendu;
   j.seances = seancesDe(j).filter((x) => x !== s);
-  log(j, `Séance interrompue : ${porteurDef(id).nom} quitte la Tour${rendu ? ` (${rendu} cristaux rendus)` : ''}.`);
+  log(j, tr`Séance interrompue : ${porteurDef(id).nom} quitte la Tour${rendu ? tr` (${rendu} cristaux rendus)` : ''}.`);
   return rendu;
 }
 
@@ -539,7 +540,7 @@ export function entrainer(j: Jeu, heures: number): string[] {
     d.poste = null;
     j.seances = seancesDe(j).filter((x) => x !== s);
     j.derniereSeance = s.porteur;
-    const t = `${porteurDef(s.porteur).nom} a fini sa séance à la Tour : niveau ${niveauPorteur(j, s.porteur).niveau}, ${pvNiveau(j, s.porteur)} PV. Une place se libère.`;
+    const t = tr`${porteurDef(s.porteur).nom} a fini sa séance à la Tour : niveau ${niveauPorteur(j, s.porteur).niveau}, ${pvNiveau(j, s.porteur)} PV. Une place se libère.`;
     log(j, t);
     annonces.push(t);
   }
@@ -587,16 +588,16 @@ export const prixEclatComptoir = (j: Jeu) => COMPTOIR.eclats.prix[Math.min(COMPT
 
 /** Achète un Éclat au Comptoir, contre des composants */
 export function acheterEclat(j: Jeu, now = j.dernierTick): Resultat {
-  if (!j.batiments.comptoir) return non('Le Comptoir est fermé : remets-le d’abord en état.');
+  if (!j.batiments.comptoir) return non(tr('Le Comptoir est fermé : remets-le d’abord en état.'));
   garnirComptoir(j, now);
-  if (!eclatsAuComptoir(j).restants) return non('Les fouilleurs n’ont plus d’Éclats à vendre aujourd’hui : nouvel arrivage demain.');
+  if (!eclatsAuComptoir(j).restants) return non(tr('Les fouilleurs n’ont plus d’Éclats à vendre aujourd’hui : nouvel arrivage demain.'));
   const prix = prixEclatComptoir(j);
-  if (j.energie < prix) return non(`Il faut ${prix} cristaux pour cet Éclat.`);
+  if (j.energie < prix) return non(tr`Il faut ${prix} cristaux pour cet Éclat.`);
   j.energie -= prix;
   j.eclats += 1;
   j.comptoir.eclats = (j.comptoir.eclats ?? 0) + 1;
-  log(j, `Comptoir : un Éclat acheté (${prix} cristaux).`);
-  return { ok: true, message: `+1 Éclat pour ${prix} cristaux.` };
+  log(j, tr`Comptoir : un Éclat acheté (${prix} cristaux).`);
+  return { ok: true, message: tr`+1 Éclat pour ${prix} cristaux.` };
 }
 
 export function comptoirVide(now: number, rng: number): Comptoir {
@@ -653,13 +654,13 @@ export function renouvelablesComptoir(j: Jeu): number[] {
  * vente sont remplacées par d'autres du même métal, jamais les mêmes ; les cartes achetées restent achetées.
  */
 export function renouvelerComptoir(j: Jeu, now = j.dernierTick): Resultat {
-  if (!j.batiments.comptoir) return non('Le Comptoir est fermé : remets-le d’abord en état.');
+  if (!j.batiments.comptoir) return non(tr('Le Comptoir est fermé : remets-le d’abord en état.'));
   garnirComptoir(j, now);
   const c = j.comptoir;
-  if (c.renouvele) return non('Les étals ont déjà été renouvelés aujourd’hui : nouvel arrivage demain.');
+  if (c.renouvele) return non(tr('Les étals ont déjà été renouvelés aujourd’hui : nouvel arrivage demain.'));
   const places = renouvelablesComptoir(j);
-  if (!places.length) return non('Tout est vendu : nouvel arrivage demain.');
-  if (j.energie < COMPTOIR.renouveler) return non('Pas assez de cristaux.');
+  if (!places.length) return non(tr('Tout est vendu : nouvel arrivage demain.'));
+  if (j.energie < COMPTOIR.renouveler) return non(tr('Pas assez de cristaux.'));
   const t = tireur(c);
   const metaux = places.map((i) => moduleDef(c.offres[i]!).rarete);
   // jamais une carte déjà proposée aujourd'hui ; si le métal n'en a plus assez, on garde l'ancienne
@@ -670,25 +671,25 @@ export function renouvelerComptoir(j: Jeu, now = j.dernierTick): Resultat {
   });
   j.energie -= COMPTOIR.renouveler;
   c.renouvele = true;
-  log(j, 'Comptoir : les étals ont été renouvelés.');
+  log(j, tr('Comptoir : les étals ont été renouvelés.'));
   return { ok: true };
 }
 
 /** Achète l'offre n° index du Comptoir : la carte rejoint la collection (nouvelle carte, ou doublon) */
 export function acheter(j: Jeu, index: number, now = j.dernierTick): Resultat {
-  if (!j.batiments.comptoir) return non('Le Comptoir est fermé : remets-le d’abord en état.');
+  if (!j.batiments.comptoir) return non(tr('Le Comptoir est fermé : remets-le d’abord en état.'));
   garnirComptoir(j, now);
   const c = j.comptoir;
   const id = c.offres[index];
-  if (!id) return non('Cette offre n’existe pas.');
-  if (c.achetes.includes(index)) return non('Déjà acheté aujourd’hui : le Comptoir se renouvelle demain.');
+  if (!id) return non(tr('Cette offre n’existe pas.'));
+  if (c.achetes.includes(index)) return non(tr('Déjà acheté aujourd’hui : le Comptoir se renouvelle demain.'));
   const p = prixComptoir(id);
-  if (j.energie < p.composants || j.eclats < p.eclats) return non('Pas assez de ressources.');
+  if (j.energie < p.composants || j.eclats < p.eclats) return non(tr('Pas assez de ressources.'));
   j.energie -= p.composants;
   j.eclats -= p.eclats;
   c.achetes.push(index);
   const neuve = ajouterCarte(j, id);
-  log(j, neuve ? `Comptoir : nouvelle carte, ${moduleDef(id).nom} (${NOMS_RARETE[moduleDef(id).rarete]}).` : `Comptoir : un doublon ${deNom(moduleDef(id).nom)}.`);
+  log(j, neuve ? tr`Comptoir : nouvelle carte, ${moduleDef(id).nom} (${NOMS_RARETE[moduleDef(id).rarete]}).` : tr`Comptoir : un doublon ${deNom(moduleDef(id).nom)}.`);
   return { ok: true };
 }
 
@@ -702,33 +703,33 @@ export const prixSoins = (points: number) => Math.ceil(points / SOINS_INTENSIFS.
 
 export function soignerVite(j: Jeu, id: string): Resultat {
   const p = j.porteurs[id];
-  if (!p || !porteursPresents(j).includes(id)) return non('Ce Porteur n’est pas au district.');
-  if (j.batiments.clinique < 1) return non('La Clinique est fermée.');
-  if (enExpedition(j, id)) return non('Ce Porteur est en bas.');
+  if (!p || !porteursPresents(j).includes(id)) return non(tr('Ce Porteur n’est pas au district.'));
+  if (j.batiments.clinique < 1) return non(tr('La Clinique est fermée.'));
+  if (enExpedition(j, id)) return non(tr('Ce Porteur est en bas.'));
   const usure = Math.ceil(p.usure);
-  if (usure < 1) return non('Il n’a pas d’Usure.');
+  if (usure < 1) return non(tr('Il n’a pas d’Usure.'));
   // la première fois, la Clinique les offre (4 novembre 2026, test critique : après la Strate −1, un Porteur à terre et
   // l'énergie dépensée à la Tour bloquaient toute nouvelle descente ; la première session finissait sur une impasse)
   if (!j.soinOffert) {
     j.soinOffert = true;
     p.usure = 0;
-    return { ok: true, message: `La Clinique offre ses premiers soins intensifs : ${porteurDef(id).nom} est remis sur pied (−${usure} Usure).` };
+    return { ok: true, message: tr`La Clinique offre ses premiers soins intensifs : ${porteurDef(id).nom} est remis sur pied (−${usure} Usure).` };
   }
   const points = Math.min(usure, Math.floor(j.energie) * SOINS_INTENSIFS.usureParCristal);
-  if (points < 1) return non(`Il faut 1 cristal pour ${SOINS_INTENSIFS.usureParCristal} points d’Usure.`);
+  if (points < 1) return non(tr`Il faut 1 cristal pour ${SOINS_INTENSIFS.usureParCristal} points d’Usure.`);
   j.energie -= prixSoins(points);
   p.usure = Math.max(0, p.usure - points);
-  return { ok: true, message: `Soins intensifs : −${points} Usure pour ${porteurDef(id).nom} (${prixSoins(points)} cristal${prixSoins(points) > 1 ? 'x' : ''}).` };
+  return { ok: true, message: tr`Soins intensifs : −${points} Usure pour ${porteurDef(id).nom} (${prixSoins(points)} cristal${prixSoins(points) > 1 ? 'x' : ''}).` };
 }
 
 /** Récupère la récompense de l'objectif en cours s'il est rempli */
 export function reclamer(j: Jeu): Resultat {
   const o = objectifCourant(j);
-  if (!o || !o.fait(j)) return non('Objectif pas encore rempli.');
+  if (!o || !o.fait(j)) return non(tr('Objectif pas encore rempli.'));
   // les récompenses arrivent déjà taillées (9 novembre 2026)
   j.energie += (o.recompense.energie ?? 0) + (o.recompense.composants ?? 0);
-  if (o.recompense.creuseurs && gagnerCreuseurs(j, o.recompense.creuseurs, 'des volontaires rejoignent le chantier')) creuser(j);
+  if (o.recompense.creuseurs && gagnerCreuseurs(j, o.recompense.creuseurs, tr('des volontaires rejoignent le chantier'))) creuser(j);
   j.objectif++;
-  log(j, `Objectif rempli : ${o.titre}.`);
+  log(j, tr`Objectif rempli : ${o.titre}.`);
   return { ok: true };
 }

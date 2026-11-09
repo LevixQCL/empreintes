@@ -1,0 +1,1345 @@
+{
+ "source": "src/core/donnees.ts",
+ "entrees": [
+  {
+   "fr": "Ilka",
+   "en": ""
+  },
+  {
+   "fr": "Doran",
+   "en": ""
+  },
+  {
+   "fr": "Véla",
+   "en": ""
+  },
+  {
+   "fr": "Coursier",
+   "en": ""
+  },
+  {
+   "fr": "Docker",
+   "en": ""
+  },
+  {
+   "fr": "Guetteur",
+   "en": ""
+  },
+  {
+   "fr": "Sasha Ndiaro",
+   "en": ""
+  },
+  {
+   "fr": "Si ça a une vis, ça a une seconde chance.",
+   "en": "If it’s got a screw, it’s got a second chance."
+  },
+  {
+   "fr": "Nuit",
+   "en": ""
+  },
+  {
+   "fr": "Le noir n’est pas vide. Il attend juste qu’on regarde mieux.",
+   "en": "The dark isn’t empty. It’s waiting for you to look properly."
+  },
+  {
+   "fr": "Aurel Orsève",
+   "en": ""
+  },
+  {
+   "fr": "Mon ombre a de meilleures manières que moi. C’est bien ça, le problème.",
+   "en": "My shadow has better manners than I do. That is precisely the problem."
+  },
+  {
+   "fr": "Kessa",
+   "en": ""
+  },
+  {
+   "fr": "On n’a rien choisi. Mais on est les seuls à pouvoir dire ce que ça fait.",
+   "en": "We didn’t choose any of it. But we’re the only ones who can tell you what it’s like."
+  },
+  {
+   "fr": "Liane Orsève",
+   "en": ""
+  },
+  {
+   "fr": "Ils m’ont refusé la mèche d’or. J’ai fait pousser autre chose.",
+   "en": "They refused me the golden streak. So I grew something else."
+  },
+  {
+   "fr": "Joss",
+   "en": ""
+  },
+  {
+   "fr": "J’ai passé des années à cacher l’or des autres. Le mien, je le laisse briller.",
+   "en": "Spent years hiding other people’s gold. Mine, I let shine."
+  },
+  {
+   "fr": "Augmenté",
+   "en": ""
+  },
+  {
+   "fr": "AUGMENTÉ",
+   "en": ""
+  },
+  {
+   "fr": "Géné",
+   "en": ""
+  },
+  {
+   "fr": "GÉNÉ",
+   "en": ""
+  },
+  {
+   "fr": "Résonant",
+   "en": ""
+  },
+  {
+   "fr": "RÉSONANT",
+   "en": ""
+  },
+  {
+   "fr": "SPÉCIAL",
+   "en": ""
+  },
+  {
+   "fr": "Plastron de choc",
+   "en": ""
+  },
+  {
+   "fr": "Talon de cristal",
+   "en": ""
+  },
+  {
+   "fr": "Bracelet de déviation",
+   "en": ""
+  },
+  {
+   "fr": "Canon à cristal",
+   "en": ""
+  },
+  {
+   "fr": "Pistolet à faisceau",
+   "en": ""
+  },
+  {
+   "fr": "Pince de récif",
+   "en": ""
+  },
+  {
+   "fr": "Carapace",
+   "en": ""
+  },
+  {
+   "fr": "Bol de sève",
+   "en": ""
+  },
+  {
+   "fr": "Front de roche",
+   "en": ""
+  },
+  {
+   "fr": "Conque de garde",
+   "en": ""
+  },
+  {
+   "fr": "Voile du murmure",
+   "en": ""
+  },
+  {
+   "fr": "Cristal d’écho",
+   "en": ""
+  },
+  {
+   "fr": "Cor de brume",
+   "en": ""
+  },
+  {
+   "fr": "Cœur d’améthyste",
+   "en": ""
+  },
+  {
+   "fr": "Éclat",
+   "en": ""
+  },
+  {
+   "fr": "Jambes à ressort",
+   "en": ""
+  },
+  {
+   "fr": "Gant à arc",
+   "en": ""
+  },
+  {
+   "fr": "Œil-relais",
+   "en": ""
+  },
+  {
+   "fr": "Grappin à câble",
+   "en": ""
+  },
+  {
+   "fr": "Cœur-turbine",
+   "en": ""
+  },
+  {
+   "fr": "Œil-brouilleur",
+   "en": ""
+  },
+  {
+   "fr": "Dorsale renforcée",
+   "en": ""
+  },
+  {
+   "fr": "Lames orbitales",
+   "en": ""
+  },
+  {
+   "fr": "Cœur de reprise",
+   "en": ""
+  },
+  {
+   "fr": "Glande d’ambre",
+   "en": ""
+  },
+  {
+   "fr": "Crocs fossiles",
+   "en": ""
+  },
+  {
+   "fr": "Cuir de récif",
+   "en": ""
+  },
+  {
+   "fr": "Yeux nocturnes",
+   "en": ""
+  },
+  {
+   "fr": "Poumons d’abysse",
+   "en": ""
+  },
+  {
+   "fr": "Branchies des Fondations",
+   "en": ""
+  },
+  {
+   "fr": "Carapace-mère",
+   "en": ""
+  },
+  {
+   "fr": "Sang d’ambre",
+   "en": ""
+  },
+  {
+   "fr": "Cœur de meute",
+   "en": ""
+  },
+  {
+   "fr": "Mue totale",
+   "en": ""
+  },
+  {
+   "fr": "Éclat qui chante",
+   "en": ""
+  },
+  {
+   "fr": "Miroir de brume",
+   "en": ""
+  },
+  {
+   "fr": "Encre ancienne",
+   "en": ""
+  },
+  {
+   "fr": "Mèche d’or",
+   "en": ""
+  },
+  {
+   "fr": "Plume de givre",
+   "en": ""
+  },
+  {
+   "fr": "Ombre de serpent",
+   "en": ""
+  },
+  {
+   "fr": "Ombre ailée",
+   "en": ""
+  },
+  {
+   "fr": "Sablier inversé",
+   "en": ""
+  },
+  {
+   "fr": "Chant des abysses",
+   "en": ""
+  },
+  {
+   "fr": "Souffle du wyrm",
+   "en": ""
+  },
+  {
+   "fr": "Bobine de récupération",
+   "en": ""
+  },
+  {
+   "fr": "Condensateur",
+   "en": ""
+  },
+  {
+   "fr": "Décharge d’arc",
+   "en": ""
+  },
+  {
+   "fr": "Éclair captif",
+   "en": ""
+  },
+  {
+   "fr": "Noyau instable",
+   "en": ""
+  },
+  {
+   "fr": "Épaulière de roche",
+   "en": ""
+  },
+  {
+   "fr": "Bélier d’os",
+   "en": ""
+  },
+  {
+   "fr": "Coquille de marée",
+   "en": ""
+  },
+  {
+   "fr": "Diapason de cristal",
+   "en": ""
+  },
+  {
+   "fr": "Voix basse",
+   "en": ""
+  },
+  {
+   "fr": "Chorale des ombres",
+   "en": ""
+  },
+  {
+   "fr": "Cloche des abysses",
+   "en": ""
+  },
+  {
+   "fr": "Grand unisson",
+   "en": ""
+  },
+  {
+   "fr": "Flair",
+   "en": ""
+  },
+  {
+   "fr": "Bond du prédateur",
+   "en": ""
+  },
+  {
+   "fr": "Crocs de verre",
+   "en": ""
+  },
+  {
+   "fr": "Chasse à l’aveugle",
+   "en": ""
+  },
+  {
+   "fr": "Hallali",
+   "en": ""
+  },
+  {
+   "fr": "Regard en biais",
+   "en": ""
+  },
+  {
+   "fr": "Lame de doute",
+   "en": ""
+  },
+  {
+   "fr": "Œil du Lecteur",
+   "en": ""
+  },
+  {
+   "fr": "Verdict",
+   "en": ""
+  },
+  {
+   "fr": "Sentence muette",
+   "en": ""
+  },
+  {
+   "fr": "Pollen d’ambre",
+   "en": ""
+  },
+  {
+   "fr": "Sève des piliers",
+   "en": ""
+  },
+  {
+   "fr": "Mue de verre",
+   "en": ""
+  },
+  {
+   "fr": "Floraison des Fondations",
+   "en": ""
+  },
+  {
+   "fr": "Pas chassé",
+   "en": ""
+  },
+  {
+   "fr": "Lames jumelles",
+   "en": ""
+  },
+  {
+   "fr": "Mitraille de clous",
+   "en": ""
+  },
+  {
+   "fr": "Cadence folle",
+   "en": ""
+  },
+  {
+   "fr": "Vérin hydraulique",
+   "en": ""
+  },
+  {
+   "fr": "Exo de chantier",
+   "en": ""
+  },
+  {
+   "fr": "Foreuse des Strates",
+   "en": ""
+  },
+  {
+   "fr": "Fil d’accord",
+   "en": ""
+  },
+  {
+   "fr": "Nuée chorale",
+   "en": ""
+  },
+  {
+   "fr": "Riveteuse",
+   "en": ""
+  },
+  {
+   "fr": "Suture vive",
+   "en": ""
+  },
+  {
+   "fr": "Lamproie des piliers",
+   "en": ""
+  },
+  {
+   "fr": "Berceuse des Strates",
+   "en": ""
+  },
+  {
+   "fr": "Mâchoire-miroir",
+   "en": ""
+  },
+  {
+   "fr": "Boucle de mémoire",
+   "en": ""
+  },
+  {
+   "fr": "Cœur en surrégime",
+   "en": ""
+  },
+  {
+   "fr": "Peau de l’Ancêtre",
+   "en": ""
+  },
+  {
+   "fr": "Miroir des Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Cœur d’étoile",
+   "en": ""
+  },
+  {
+   "fr": "Seconde naissance",
+   "en": ""
+  },
+  {
+   "fr": "Empreinte vive",
+   "en": ""
+  },
+  {
+   "fr": "Silence d’avant",
+   "en": ""
+  },
+  {
+   "fr": "Couperet des Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Racines-mères",
+   "en": ""
+  },
+  {
+   "fr": "Foulée de la directrice",
+   "en": ""
+  },
+  {
+   "fr": "Bras de la Fonderie",
+   "en": ""
+  },
+  {
+   "fr": "Cœur de la Glacière",
+   "en": ""
+  },
+  {
+   "fr": "Carapace des Fondations",
+   "en": ""
+  },
+  {
+   "fr": "Œil de la Grande Nuit",
+   "en": ""
+  },
+  {
+   "fr": "Première mue",
+   "en": ""
+  },
+  {
+   "fr": "Lanterne de la première Lecture",
+   "en": ""
+  },
+  {
+   "fr": "Sceau volé aux Orsève",
+   "en": ""
+  },
+  {
+   "fr": "Voix du quartier",
+   "en": ""
+  },
+  {
+   "fr": "Empreinte jumelle",
+   "en": ""
+  },
+  {
+   "fr": "Le Moteur",
+   "en": ""
+  },
+  {
+   "fr": "La Carapace",
+   "en": ""
+  },
+  {
+   "fr": "Le Chœur",
+   "en": ""
+  },
+  {
+   "fr": "La Traque",
+   "en": ""
+  },
+  {
+   "fr": "La Lecture",
+   "en": ""
+  },
+  {
+   "fr": "La Sève",
+   "en": ""
+  },
+  {
+   "fr": "La Cadence",
+   "en": ""
+  },
+  {
+   "fr": "Les Machines",
+   "en": ""
+  },
+  {
+   "fr": "Stimulant",
+   "en": ""
+  },
+  {
+   "fr": "Pavois de cuivre",
+   "en": ""
+  },
+  {
+   "fr": "Ampoule de relève",
+   "en": ""
+  },
+  {
+   "fr": "Une seringue de lumière verte, préparée par la Clinique pour chaque escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Une balise de la Tour du Noyau : une porte blindée s’ouvre, l’escouade s’y abrite.",
+   "en": ""
+  },
+  {
+   "fr": "Lame d’atelier",
+   "en": ""
+  },
+  {
+   "fr": "Une lame de récupération, affûtée à la Forge entre deux commandes. Rien de rare : elle ne lâche jamais.",
+   "en": ""
+  },
+  {
+   "fr": "Plan des galeries",
+   "en": ""
+  },
+  {
+   "fr": "Les creuseurs de la Tour tiennent le plan des galeries à jour : on sait où se mettre à l’abri, et ce qui vient ensuite.",
+   "en": ""
+  },
+  {
+   "fr": "Groupe de secours",
+   "en": ""
+  },
+  {
+   "fr": "Une équipe du Générateur, prête à descendre au premier signal : plus l’escouade tombe, plus elle frappe fort.",
+   "en": ""
+  },
+  {
+   "fr": "Une charge de forge, posée contre la carapace de l’ennemi : elle ne fait pas mal, elle ouvre.",
+   "en": ""
+  },
+  {
+   "fr": "La dernière trouvaille de la Clinique : une ampoule qui remet un Porteur debout. Une seule par combat.",
+   "en": ""
+  },
+  {
+   "fr": "Clé de l’Héritage",
+   "en": ""
+  },
+  {
+   "fr": "Tour du Noyau",
+   "en": ""
+  },
+  {
+   "fr": "Générateur",
+   "en": ""
+  },
+  {
+   "fr": "Forge",
+   "en": ""
+  },
+  {
+   "fr": "Clinique",
+   "en": ""
+  },
+  {
+   "fr": "Comptoir",
+   "en": ""
+  },
+  {
+   "fr": "Cercle des quais",
+   "en": ""
+  },
+  {
+   "fr": "Héritage du district",
+   "en": ""
+  },
+  {
+   "fr": "La dixième vierge de l’ancienne directrice : une clé de nacre qui ouvre toutes les portes, et les tient fermées derrière l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Le cœur du district : il fixe le niveau des autres bâtiments et loge les creuseurs qui percent les Strates.",
+   "en": ""
+  },
+  {
+   "fr": "Taille en cristaux le minerai rapporté d’en bas et de la mer, même quand tu ne joues pas.",
+   "en": ""
+  },
+  {
+   "fr": "Refabrique une carte déjà trouvée : un doublon de plus. Il faut un Porteur au travail.",
+   "en": ""
+  },
+  {
+   "fr": "Soigne l’Usure des Porteurs présents au district, même au travail.",
+   "en": ""
+  },
+  {
+   "fr": "Les fouilleurs du quartier y revendent chaque jour quelques cartes trouvées dans les Strates. Prix fixes : tu vois toujours ce que tu achètes.",
+   "en": ""
+  },
+  {
+   "fr": "Les directeurs des autres districts y accostent : on s’y fait des amis, on s’y défie en duel et on y échange ses cartes en double.",
+   "en": ""
+  },
+  {
+   "fr": "Rémanent affaibli",
+   "en": ""
+  },
+  {
+   "fr": "GARDIEN DE LA CHAMBRE",
+   "en": ""
+  },
+  {
+   "fr": "Griffe",
+   "en": ""
+  },
+  {
+   "fr": "Entaille",
+   "en": ""
+  },
+  {
+   "fr": "Rémanent",
+   "en": ""
+  },
+  {
+   "fr": "Vigie de dépôt",
+   "en": ""
+  },
+  {
+   "fr": "ANCIENNE MACHINE",
+   "en": ""
+  },
+  {
+   "fr": "Rayon",
+   "en": ""
+  },
+  {
+   "fr": "Balayage",
+   "en": ""
+  },
+  {
+   "fr": "Confluence",
+   "en": ""
+  },
+  {
+   "fr": "BOSS · EMPREINTES MÊLÉES",
+   "en": ""
+  },
+  {
+   "fr": "Crue",
+   "en": ""
+  },
+  {
+   "fr": "Les empreintes mêlées débordent : la Confluence appelle ce qui rampe dans les piliers.",
+   "en": ""
+  },
+  {
+   "fr": "Ressac",
+   "en": ""
+  },
+  {
+   "fr": "Refluer",
+   "en": ""
+  },
+  {
+   "fr": "Fracture",
+   "en": ""
+  },
+  {
+   "fr": "Débordement",
+   "en": ""
+  },
+  {
+   "fr": "Brigadier du Serment",
+   "en": ""
+  },
+  {
+   "fr": "BRIGADES DU SERMENT DE VEYR",
+   "en": ""
+  },
+  {
+   "fr": "Sommation",
+   "en": ""
+  },
+  {
+   "fr": "Matraque",
+   "en": ""
+  },
+  {
+   "fr": "Charge",
+   "en": ""
+  },
+  {
+   "fr": "Rémanent de veilleur",
+   "en": ""
+  },
+  {
+   "fr": "RÉMANENT",
+   "en": ""
+  },
+  {
+   "fr": "Griffe d’ombre",
+   "en": ""
+  },
+  {
+   "fr": "Murmure",
+   "en": ""
+  },
+  {
+   "fr": "Hurlement",
+   "en": ""
+  },
+  {
+   "fr": "Reflux",
+   "en": ""
+  },
+  {
+   "fr": "Sentinelle de verre",
+   "en": ""
+  },
+  {
+   "fr": "Réfraction",
+   "en": ""
+  },
+  {
+   "fr": "Rayon brisé",
+   "en": ""
+  },
+  {
+   "fr": "Gardien des registres",
+   "en": ""
+  },
+  {
+   "fr": "BOSS · LES SALLES CLOSES",
+   "en": ""
+  },
+  {
+   "fr": "Registre ouvert",
+   "en": ""
+  },
+  {
+   "fr": "Le Gardien ouvre son registre et appelle un brigadier à la barre.",
+   "en": ""
+  },
+  {
+   "fr": "Rature",
+   "en": ""
+  },
+  {
+   "fr": "Sceau",
+   "en": ""
+  },
+  {
+   "fr": "Liste des noms",
+   "en": ""
+  },
+  {
+   "fr": "Effacement",
+   "en": ""
+  },
+  {
+   "fr": "Double",
+   "en": ""
+  },
+  {
+   "fr": "ÉCHO DÉDOUBLÉ",
+   "en": ""
+  },
+  {
+   "fr": "Premier souvenir",
+   "en": ""
+  },
+  {
+   "fr": "Second souvenir",
+   "en": ""
+  },
+  {
+   "fr": "Contradiction",
+   "en": ""
+  },
+  {
+   "fr": "Se rassembler",
+   "en": ""
+  },
+  {
+   "fr": "Essaim d’ambre",
+   "en": ""
+  },
+  {
+   "fr": "FAUNE DES STRATES",
+   "en": ""
+  },
+  {
+   "fr": "Piqûres",
+   "en": ""
+  },
+  {
+   "fr": "Automate graveur",
+   "en": ""
+  },
+  {
+   "fr": "Burin",
+   "en": ""
+  },
+  {
+   "fr": "Polissage",
+   "en": ""
+  },
+  {
+   "fr": "Tisseuse de souvenirs",
+   "en": ""
+  },
+  {
+   "fr": "BOSS · MÉMOIRES MÊLÉES",
+   "en": ""
+  },
+  {
+   "fr": "Trame rompue",
+   "en": ""
+  },
+  {
+   "fr": "La Tisseuse déchire sa trame : un essaim d’ambre s’en échappe.",
+   "en": ""
+  },
+  {
+   "fr": "Fil tranchant",
+   "en": ""
+  },
+  {
+   "fr": "Trame",
+   "en": ""
+  },
+  {
+   "fr": "Retisser",
+   "en": ""
+  },
+  {
+   "fr": "Fil",
+   "en": ""
+  },
+  {
+   "fr": "Nœud",
+   "en": ""
+  },
+  {
+   "fr": "Le Premier Porteur",
+   "en": ""
+  },
+  {
+   "fr": "BOSS · CEUX D’AVANT",
+   "en": ""
+  },
+  {
+   "fr": "Le Premier Porteur rappelle son double : ceux d’avant ne se battent jamais seuls.",
+   "en": ""
+  },
+  {
+   "fr": "Marée ancienne",
+   "en": ""
+  },
+  {
+   "fr": "Dernière mise en garde",
+   "en": ""
+  },
+  {
+   "fr": "Souvenir de feu",
+   "en": ""
+  },
+  {
+   "fr": "Dernier mot",
+   "en": ""
+  },
+  {
+   "fr": "Mise en garde",
+   "en": ""
+  },
+  {
+   "fr": "Se souvenir",
+   "en": ""
+  },
+  {
+   "fr": "Rampeur des piliers",
+   "en": ""
+  },
+  {
+   "fr": "FAUNE DES SEUILS",
+   "en": ""
+  },
+  {
+   "fr": "Morsure",
+   "en": ""
+  },
+  {
+   "fr": "Constriction",
+   "en": ""
+  },
+  {
+   "fr": "Sauvage",
+   "en": ""
+  },
+  {
+   "fr": "GREFFÉ SANS CLINIQUE",
+   "en": ""
+  },
+  {
+   "fr": "Penchant mal lu",
+   "en": ""
+  },
+  {
+   "fr": "Accès",
+   "en": ""
+  },
+  {
+   "fr": "Ombre qui tremble",
+   "en": ""
+  },
+  {
+   "fr": "FOUILLEUR SANS LICENCE",
+   "en": ""
+  },
+  {
+   "fr": "Coup bas",
+   "en": ""
+  },
+  {
+   "fr": "Garde augmenté",
+   "en": ""
+  },
+  {
+   "fr": "Salve",
+   "en": ""
+  },
+  {
+   "fr": "Frappe ciblée",
+   "en": ""
+  },
+  {
+   "fr": "Garde géné",
+   "en": ""
+  },
+  {
+   "fr": "Sève",
+   "en": ""
+  },
+  {
+   "fr": "Garde résonant",
+   "en": ""
+  },
+  {
+   "fr": "Onde",
+   "en": ""
+  },
+  {
+   "fr": "Réverbération",
+   "en": ""
+  },
+  {
+   "fr": "Marée-Basse",
+   "en": ""
+  },
+  {
+   "fr": "RÔDEUR DES SEUILS",
+   "en": ""
+  },
+  {
+   "fr": "Étreinte",
+   "en": ""
+  },
+  {
+   "fr": "Sentinelle orpheline",
+   "en": ""
+  },
+  {
+   "fr": "RÔDEUR DES SALLES CLOSES",
+   "en": ""
+  },
+  {
+   "fr": "Éclat perdu",
+   "en": ""
+  },
+  {
+   "fr": "Seuil de verre",
+   "en": ""
+  },
+  {
+   "fr": "Le Liseur",
+   "en": ""
+  },
+  {
+   "fr": "RÔDEUR DES REGISTRES",
+   "en": ""
+  },
+  {
+   "fr": "Nom prononcé",
+   "en": ""
+  },
+  {
+   "fr": "Lecture à voix haute",
+   "en": ""
+  },
+  {
+   "fr": "Page tournée",
+   "en": ""
+  },
+  {
+   "fr": "Relire",
+   "en": ""
+  },
+  {
+   "fr": "Le Plongeur",
+   "en": ""
+  },
+  {
+   "fr": "RÔDEUR DU FOND",
+   "en": ""
+  },
+  {
+   "fr": "Poids mort",
+   "en": ""
+  },
+  {
+   "fr": "Pression",
+   "en": ""
+  },
+  {
+   "fr": "Arrimeur des quais",
+   "en": ""
+  },
+  {
+   "fr": "GARDE DE LA FLÈCHE · QUAIS DU BAS",
+   "en": ""
+  },
+  {
+   "fr": "Treuilliste",
+   "en": ""
+  },
+  {
+   "fr": "Gaffeur des Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Débardeuse à carapace",
+   "en": ""
+  },
+  {
+   "fr": "Brigadier de la Flèche",
+   "en": ""
+  },
+  {
+   "fr": "Vigie des fanions",
+   "en": ""
+  },
+  {
+   "fr": "Canonnier des nuages",
+   "en": ""
+  },
+  {
+   "fr": "GARDE DE LA FLÈCHE · QUAIS DES NUAGES",
+   "en": ""
+  },
+  {
+   "fr": "Mécanicienne d’amarrage",
+   "en": ""
+  },
+  {
+   "fr": "Sentinelle aux ailes de verre",
+   "en": ""
+  },
+  {
+   "fr": "Gardienne des cordages",
+   "en": ""
+  },
+  {
+   "fr": "Écouteuse des vents",
+   "en": ""
+  },
+  {
+   "fr": "Brigadière du Serment",
+   "en": ""
+  },
+  {
+   "fr": "Lancier de la Garde blanche",
+   "en": ""
+  },
+  {
+   "fr": "GARDE DE LA FLÈCHE · QUAIS DES ÎLES",
+   "en": ""
+  },
+  {
+   "fr": "Duelliste de la Garde blanche",
+   "en": ""
+  },
+  {
+   "fr": "Garde de la Maison Orsève",
+   "en": ""
+  },
+  {
+   "fr": "Intendante des Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Héraut de la Clause",
+   "en": ""
+  },
+  {
+   "fr": "Chantre des Sièges",
+   "en": ""
+  },
+  {
+   "fr": "Contremaître des quais",
+   "en": ""
+  },
+  {
+   "fr": "CHEF DE QUAI · QUAIS GRAVÉS 20 ET 40",
+   "en": ""
+  },
+  {
+   "fr": "CHEF DE QUAI · BRIGADES DU SERMENT",
+   "en": ""
+  },
+  {
+   "fr": "Commandeur de la Garde blanche",
+   "en": ""
+  },
+  {
+   "fr": "CHEF DE QUAI · QUAIS GRAVÉS 80 ET 90",
+   "en": ""
+  },
+  {
+   "fr": "Champion des Hauts",
+   "en": ""
+  },
+  {
+   "fr": "CHEF DE QUAI · LE DERNIER QUAI",
+   "en": ""
+  },
+  {
+   "fr": "Chaque carte qui le frappe perd {0} dégâts, un peu plus quand il est plus fort (plus bas dans les Strates). Perçant passe outre. Sa Fêlure ne retire qu’un quart de son intention.",
+   "en": ""
+  },
+  {
+   "fr": "Régénération",
+   "en": ""
+  },
+  {
+   "fr": "Regagne {0} % de ses PV max à la fin de son tour.",
+   "en": ""
+  },
+  {
+   "fr": "Épines",
+   "en": ""
+  },
+  {
+   "fr": "Renvoie {0} % des dégâts au Porteur qui frappe (sans le mettre à terre).",
+   "en": ""
+  },
+  {
+   "fr": "Évanescent",
+   "en": ""
+  },
+  {
+   "fr": "Hors Résonance, tes coups ne lui font que {0} % de leurs dégâts : fais des suites. Sa Fêlure reste cachée.",
+   "en": ""
+  },
+  {
+   "fr": "Essaim",
+   "en": ""
+  },
+  {
+   "fr": "Quand il tombe, un rejeton plus petit surgit (une fois).",
+   "en": ""
+  },
+  {
+   "fr": "Vengeur",
+   "en": ""
+  },
+  {
+   "fr": "Quand un allié tombe, sa prochaine attaque est doublée.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la moitié de ses PV, ses attaques font +30 %.",
+   "en": ""
+  },
+  {
+   "fr": "À la fin de ta chaîne, il prend la lignée de la dernière carte qui l’a frappé : ses forces et ses faiblesses changent avec elle.",
+   "en": ""
+  },
+  {
+   "fr": "Aspiration",
+   "en": ""
+  },
+  {
+   "fr": "Si son coup passe ton bouclier, il aspire {0} Flux à l’escouade. Bloque-le, ou dépense ton Flux avant.",
+   "en": ""
+  },
+  {
+   "fr": "Salle inondée",
+   "en": ""
+  },
+  {
+   "fr": "L’eau porte les Génés : leurs cartes font +20 %.",
+   "en": ""
+  },
+  {
+   "fr": "Câbles à nu",
+   "en": ""
+  },
+  {
+   "fr": "Le courant court partout : les cartes des Augmentés font +20 %.",
+   "en": ""
+  },
+  {
+   "fr": "Pierre qui chante",
+   "en": ""
+  },
+  {
+   "fr": "La roche résonne : les cartes des Résonants font +20 %.",
+   "en": ""
+  },
+  {
+   "fr": "Écho ancien",
+   "en": ""
+  },
+  {
+   "fr": "Une suite de 4 résonne comme une suite de 5.",
+   "en": ""
+  },
+  {
+   "fr": "Source tiède",
+   "en": ""
+  },
+  {
+   "fr": "Les soins de l’escouade font +30 %.",
+   "en": ""
+  },
+  {
+   "fr": "Éboulis",
+   "en": ""
+  },
+  {
+   "fr": "À chaque tour ennemi, des pierres tombent sur tout le monde (escouade et ennemis), sans jamais mettre personne à terre.",
+   "en": ""
+  },
+  {
+   "fr": "Brouillard",
+   "en": ""
+  },
+  {
+   "fr": "Tout le combat, on voit ce que prépare l’ennemi, mais jamais combien ni sur qui. Sa Fêlure reste cachée.",
+   "en": ""
+  },
+  {
+   "fr": "Les Seuils",
+   "en": ""
+  },
+  {
+   "fr": "Les Salles closes",
+   "en": ""
+  },
+  {
+   "fr": "Les Registres",
+   "en": ""
+  },
+  {
+   "fr": "Le Fond",
+   "en": ""
+  },
+  {
+   "fr": "Porteur inconnu : ",
+   "en": ""
+  },
+  {
+   "fr": "Ennemi inconnu : ",
+   "en": ""
+  },
+  {
+   "fr": "Carte inconnue : ",
+   "en": ""
+  }
+ ]
+}

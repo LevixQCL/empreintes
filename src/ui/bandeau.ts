@@ -7,6 +7,7 @@ import { ennemiDef } from '../core/donnees';
 import { artGardien, illustrationEnnemi } from './art';
 import { echap } from './outils';
 import { typoHtml } from './typo';
+import { t as tr } from '../core/i18n';
 
 let courant: HTMLElement | null = null;
 
@@ -43,7 +44,7 @@ function montrer(cls: string, html: string, duree: number, reduit: boolean) {
 /** L'entrée du gardien, une fois au début du combat */
 export function annoncerGardien(id: string, strate: number | null, reduit: boolean): void {
   const d = ennemiDef(id);
-  montrer('entree', `<span class="bg-sur">${strate ? `Gardien · Strate −${strate}` : 'Gardien'}</span>`
+  montrer('entree', `<span class="bg-sur">${strate ? tr`Gardien · Strate −${strate}` : tr('Gardien')}</span>`
     + `<span class="bg-titre">${echap(d.nom)}</span>`
     + `<span class="bg-sous">${echap(d.tag.replace(/^BOSS · /, ''))}</span>`, 2600, reduit);
 }
@@ -54,8 +55,8 @@ export function annoncerPhase(id: string, reduit: boolean): void {
   if (!ph) return;
   const renfort = ph.renforts?.[0];
   const ill = renfort ? illustrationEnnemi(renfort) : null;
-  montrer('phase', `<span class="bg-sur">${echap(ennemiDef(id).nom)} · seconde phase</span>`
+  montrer('phase', `<span class="bg-sur">${tr`${echap(ennemiDef(id).nom)} · seconde phase`}</span>`
     + `<span class="bg-titre">${echap(ph.nom)}</span>`
     + `<span class="bg-sous">${echap(ph.texte)}</span>`
-    + (ill && renfort ? `<img class="bg-renfort" src="${ill}" alt=""><span class="bg-nom">${echap(ennemiDef(renfort).nom)} entre dans le combat</span>` : ''), 3000, reduit);
+    + (ill && renfort ? `<img class="bg-renfort" src="${ill}" alt=""><span class="bg-nom">${tr`${echap(ennemiDef(renfort).nom)} entre dans le combat`}</span>` : ''), 3000, reduit);
 }

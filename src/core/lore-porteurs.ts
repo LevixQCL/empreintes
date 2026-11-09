@@ -27,7 +27,7 @@ export const ORIGINES: Record<string, PalierOrigine[]> = {
     { niveau: 1, titre: t('La passerelle'), texte: t('Ilka avait quatorze ans quand la passerelle des Hauts-Ponts a cédé sous elle. La rouille la rongeait depuis des années ; une fissure avait été signalée trois fois. Le Présage n’avait rien dit, puisque rien de soudain ne s’annonçait. Elle est tombée entre deux piliers, les jambes prises sous la passerelle, l’eau jusqu’au menton.') },
     { niveau: 4, titre: t('Celui qui a plongé'), texte: t('Un ouvrier des Fondations a plongé sans hésiter : un Géné aux poumons d’amphibien, qui tient sous l’eau bien plus longtemps qu’un humain. Il lui a tenu la tête hors de l’eau pendant deux heures, jusqu’à ce qu’on relance les pompes. C’était Doran. Elle ne l’en a jamais remercié à voix haute. Elle lui garde la meilleure part de chaque marché.') },
     { niveau: 8, titre: t('Le goût de la pièce'), texte: t('La Clinique n’a pas pu sauver ses jambes. Ilka a signé un prêt-de-vie avec la compagnie de transport : quinze ans de courses contre des jambes neuves. Leur cœur de cristal porte le geste d’une coursière des années 2070 qu’elle n’a jamais connue. Depuis, elle ne sait plus marcher lentement et parle aussi vite qu’elle court. « Je ne sais pas si c’est moi qui suis pressée, ou elle. » Ses cheveux ont blanchi en un an.') },
-    { niveau: 12, titre: 'Pim', texte: t('Si Ilka meurt avant la fin du contrat, la clause de survivance fait passer la dette à son petit frère, Pim, douze ans. C’est pour lui qu’elle accepte toutes les courses, même celles qu’on ne devrait pas accepter. Même un colis qui contenait un cristal volé.') },
+    { niveau: 12, titre: t('Pim'), texte: t('Si Ilka meurt avant la fin du contrat, la clause de survivance fait passer la dette à son petit frère, Pim, douze ans. C’est pour lui qu’elle accepte toutes les courses, même celles qu’on ne devrait pas accepter. Même un colis qui contenait un cristal volé.') },
   ],
   doran: [
     { niveau: 1, titre: t('La porte murée'), texte: t('Doran est né en 2069 dans une famille des chantiers d’abris. Son père a aidé à murer les accès sous le district en 2066, après « l’accident ». Il n’en a jamais dit qu’une phrase, répétée jusqu’à sa mort : « On a fermé la porte, mais pas de notre côté. »') },
@@ -53,7 +53,7 @@ export const ORIGINES: Record<string, PalierOrigine[]> = {
   ],
   aurel: [
     { niveau: 1, titre: t('La Remise'), texte: t('Chez les Orsève, la greffe d’un héritier s’appelle la Remise. Le jour de ses seize ans, on lui greffe l’empreinte relevée d’un aïeul, et l’on grave son nom sous celui du porteur précédent, sur l’écrin du cristal. Aurel a reçu celle de son arrière-grand-mère : la copie d’un être ailé, déjà portée trois fois.') },
-    { niveau: 4, titre: 'Liane', texte: t('Sa cousine Liane avait tenté l’Accord avant lui. La pierre était morte dans la nuit. Liane a été envoyée « étudier ailleurs », et son nom ne figure plus dans aucun registre. Aurel avait dix ans. Il ne l’a jamais revue.') },
+    { niveau: 4, titre: t('Liane'), texte: t('Sa cousine Liane avait tenté l’Accord avant lui. La pierre était morte dans la nuit. Liane a été envoyée « étudier ailleurs », et son nom ne figure plus dans aucun registre. Aurel avait dix ans. Il ne l’a jamais revue.') },
     { niveau: 8, titre: t('La signature'), texte: t('Après la Remise, Aurel a cessé d’aimer la musique qu’il adorait, et s’est mis à classer les gens par utilité. À vingt ans, il a découvert qu’il avait fait renvoyer son ami d’enfance, un serviteur de la Maison, sans rien ressentir en signant. Il s’est enfui la semaine suivante.') },
   ],
   liane: [
@@ -128,7 +128,7 @@ export const PRESENTATIONS: Record<string, PresentationPorteur> = {
     replique: t('Ils m’ont refusé la mèche d’or. J’ai fait pousser autre chose.'),
   },
   kessa: {
-    titre: 'Née-de-mue',
+    titre: t('Née-de-mue'),
     texte: t('Vingt-quatre ans, née avec une plaque de chitine à l’épaule et des yeux qui brillent la nuit, héritage de la Mue de ses parents. Plongeuse aux pompes, porte-parole discrète des Nés-de-mue du district.'),
     replique: t('On n’a rien choisi. Mais on est les seuls à pouvoir dire ce que ça fait.'),
   },

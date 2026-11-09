@@ -1,0 +1,141 @@
+{
+ "source": "src/ui/fiche.ts",
+ "entrees": [
+  {
+   "fr": "Ta fiche de {0}{1}",
+   "en": ""
+  },
+  {
+   "fr": " : une récompense t’attend",
+   "en": ""
+  },
+  {
+   "fr": "TA FICHE DE {0}",
+   "en": ""
+  },
+  {
+   "fr": "Sans pseudo",
+   "en": ""
+  },
+  {
+   "fr": "Une récompense t’attend",
+   "en": ""
+  },
+  {
+   "fr": "{0} récompenses t’attendent",
+   "en": ""
+  },
+  {
+   "fr": "Tes records et tes cartes marquantes",
+   "en": ""
+  },
+  {
+   "fr": "Récupérer",
+   "en": ""
+  },
+  {
+   "fr": "Objectif {0} sur {1} rempli",
+   "en": ""
+  },
+  {
+   "fr": "Objectif du jour rempli",
+   "en": ""
+  },
+  {
+   "fr": "{0} · une carte ou 2 Éclats, au choix",
+   "en": ""
+  },
+  {
+   "fr": "Palier {0} sur {1} atteint",
+   "en": ""
+  },
+  {
+   "fr": "Ouvrir",
+   "en": ""
+  },
+  {
+   "fr": "Celui-ci contient une carte au choix",
+   "en": ""
+  },
+  {
+   "fr": "Cristaux et un doublon · carte au choix dans {0} colis",
+   "en": ""
+  },
+  {
+   "fr": "{0} : {1}. {2}. Voir le classement",
+   "en": ""
+  },
+  {
+   "fr": "{0} DU DISTRICT",
+   "en": ""
+  },
+  {
+   "fr": "Ce qui t’attend",
+   "en": ""
+  },
+  {
+   "fr": "Tes records",
+   "en": ""
+  },
+  {
+   "fr": "Grand Tableau →",
+   "en": ""
+  },
+  {
+   "fr": "Strate record",
+   "en": ""
+  },
+  {
+   "fr": "Pas encore descendu",
+   "en": ""
+  },
+  {
+   "fr": "{0} cartes · {1} Porteurs",
+   "en": ""
+  },
+  {
+   "fr": "Étage Flèche",
+   "en": ""
+  },
+  {
+   "fr": "Ton meilleur étage",
+   "en": ""
+  },
+  {
+   "fr": "Jours de jeu",
+   "en": ""
+  },
+  {
+   "fr": "Jour de jeu",
+   "en": ""
+  },
+  {
+   "fr": "Depuis ton arrivée",
+   "en": ""
+  },
+  {
+   "fr": "Tes cartes marquantes",
+   "en": ""
+  },
+  {
+   "fr": "{0}, {1}, voir la collection",
+   "en": ""
+  },
+  {
+   "fr": "Journal du district",
+   "en": ""
+  },
+  {
+   "fr": "{0} événement{1}",
+   "en": ""
+  },
+  {
+   "fr": "Ton code :",
+   "en": ""
+  },
+  {
+   "fr": "Recrute tes amis : vous êtes récompensés tous les deux",
+   "en": ""
+  }
+ ]
+}

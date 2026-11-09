@@ -1,0 +1,257 @@
+{
+ "source": "src/ui/briefing.ts",
+ "entrees": [
+  {
+   "fr": "La Fréquence",
+   "en": ""
+  },
+  {
+   "fr": ", de 1 à 9. C’est elle qui compte pour enchaîner.",
+   "en": ""
+  },
+  {
+   "fr": "La force",
+   "en": ""
+  },
+  {
+   "fr": "et ce qu’elle fait :",
+   "en": ""
+  },
+  {
+   "fr": "frappe",
+   "en": ""
+  },
+  {
+   "fr": "protège",
+   "en": ""
+  },
+  {
+   "fr": "soigne",
+   "en": ""
+  },
+  {
+   "fr": ", et l’effet spécial quand elle en a un.",
+   "en": ""
+  },
+  {
+   "fr": ": les chiffres se suivent.",
+   "en": ""
+  },
+  {
+   "fr": "Sans suite",
+   "en": ""
+  },
+  {
+   "fr": "Résonance +{0} %",
+   "en": ""
+  },
+  {
+   "fr": "dégâts",
+   "en": ""
+  },
+  {
+   "fr": "Exemple d’intention : Entaille sur Doran",
+   "en": ""
+  },
+  {
+   "fr": "INTENTION",
+   "en": ""
+  },
+  {
+   "fr": "Entaille sur Doran",
+   "en": ""
+  },
+  {
+   "fr": "de bouclier",
+   "en": ""
+  },
+  {
+   "fr": "pour les trois",
+   "en": ""
+  },
+  {
+   "fr": "En combat, ce bouton rappelle toutes les règles. Pendant ce premier combat, une consigne t’attendra sous la chaîne à chaque tour.",
+   "en": ""
+  },
+  {
+   "fr": "Des gestes, pas des armes",
+   "en": ""
+  },
+  {
+   "fr": "Là-dessous, on ne se bat pas avec des armes. On se bat avec des gestes gravés dans les cristaux : ce sont tes cartes. Chacune appartient à l’un de nous, et sa couleur te dit qui la joue.",
+   "en": ""
+  },
+  {
+   "fr": "Lire une carte",
+   "en": ""
+  },
+  {
+   "fr": "Trois choses à regarder sur une carte. Le reste, tu l’apprendras en route.",
+   "en": ""
+  },
+  {
+   "fr": "La chaîne",
+   "en": ""
+  },
+  {
+   "fr": "À chaque tour, tu as cinq cartes en main. Tu en poses jusqu’à trois : c’est la chaîne. Tu la lances, et elles agissent l’une après l’autre. Si trois chiffres se suivent, la chaîne entre en Résonance : +30 % sur toute la chaîne. Deux ne suffisent pas.",
+   "en": ""
+  },
+  {
+   "fr": "Écoute ce qu’il annonce",
+   "en": ""
+  },
+  {
+   "fr": "Ce qui vit là-dessous ne frappe jamais sans prévenir. Avant chaque tour, il annonce ce qu’il va faire. Si c’est une grosse attaque, glisse des boucliers dans ta chaîne : ils protègent toute l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Je reste avec toi",
+   "en": ""
+  },
+  {
+   "fr": "Je te guiderai pendant ce premier combat, tour après tour. Et si tu as un doute, demande.",
+   "en": ""
+  },
+  {
+   "fr": "Le minerai",
+   "en": ""
+  },
+  {
+   "fr": "Ce que l’escouade rapporte d’en bas : de la pierre bleue encore prise dans sa gangue.",
+   "en": ""
+  },
+  {
+   "fr": "Les cristaux",
+   "en": ""
+  },
+  {
+   "fr": "Le Générateur taille le minerai en cristaux, même quand tu ne joues pas. Ils paient tout : bâtiments, cartes, entraînement.",
+   "en": ""
+  },
+  {
+   "fr": "Les Éclats",
+   "en": ""
+  },
+  {
+   "fr": "Rares, trouvés en profondeur. Pour les cartes précieuses.",
+   "en": ""
+  },
+  {
+   "fr": "Au district",
+   "en": ""
+  },
+  {
+   "fr": "Postés dans un bâtiment, ils le font produire davantage.",
+   "en": ""
+  },
+  {
+   "fr": "Elle descend combattre. Un Porteur qui descend quitte son poste.",
+   "en": ""
+  },
+  {
+   "fr": "Vaincre le gardien",
+   "en": ""
+  },
+  {
+   "fr": "On descend par la Tour du Noyau.",
+   "en": ""
+  },
+  {
+   "fr": "Missions en mer, fouilles, puis Épreuves.",
+   "en": ""
+  },
+  {
+   "fr": "Monter la Tour du Noyau",
+   "en": ""
+  },
+  {
+   "fr": "Pour loger les creuseurs.",
+   "en": ""
+  },
+  {
+   "fr": "La Strate suivante s’ouvre",
+   "en": ""
+  },
+  {
+   "fr": "Plus profond, plus précieux.",
+   "en": ""
+  },
+  {
+   "fr": "L’objectif, en haut",
+   "en": ""
+  },
+  {
+   "fr": "Il dit quoi faire ensuite, et donne une récompense.",
+   "en": ""
+  },
+  {
+   "fr": "Les pastilles orange",
+   "en": ""
+  },
+  {
+   "fr": "Quelque chose t’attend dans cet onglet ou ce bâtiment.",
+   "en": ""
+  },
+  {
+   "fr": "Le ravitaillement du jour",
+   "en": ""
+  },
+  {
+   "fr": "Un colis chaque jour : des cristaux et des cartes.",
+   "en": ""
+  },
+  {
+   "fr": "Ton district",
+   "en": ""
+  },
+  {
+   "fr": "Ici, tout tourne avec trois ressources. Tu les vois en haut de l’écran : touche-en une pour tout savoir sur elle.",
+   "en": ""
+  },
+  {
+   "fr": "Ceux qui restent, ceux qui descendent",
+   "en": ""
+  },
+  {
+   "fr": "Les trois recrues travaillent au district. Nous trois, on descend. Garde-nous pour l’escouade et poste les recrues dans les bâtiments.",
+   "en": ""
+  },
+  {
+   "fr": "Toujours plus bas",
+   "en": ""
+  },
+  {
+   "fr": "Le but, c’est de creuser. Chaque Strate a un gardien qui garde le passage. Pour percer l’étage suivant, il faut trois choses, dans cet ordre.",
+   "en": ""
+  },
+  {
+   "fr": "Un pas à la fois",
+   "en": ""
+  },
+  {
+   "fr": "Tu n’as pas à tout retenir. Suis l’objectif en haut du district : il te montre la prochaine chose à faire. On commence par allumer le Générateur.",
+   "en": ""
+  },
+  {
+   "fr": "Avant d’ouvrir",
+   "en": ""
+  },
+  {
+   "fr": "Ouvrir la porte",
+   "en": ""
+  },
+  {
+   "fr": "Allumer le Générateur",
+   "en": ""
+  },
+  {
+   "fr": "Retour",
+   "en": ""
+  },
+  {
+   "fr": "Suite",
+   "en": ""
+  }
+ ]
+}

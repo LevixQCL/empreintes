@@ -1,0 +1,137 @@
+{
+ "source": "src/ui/parrainage.ts",
+ "entrees": [
+  {
+   "fr": "Recruter des directeurs",
+   "en": ""
+  },
+  {
+   "fr": "La ville ne se tient pas seule. Fais venir un ami : quand il joue vraiment, vous êtes récompensés tous les deux.",
+   "en": ""
+  },
+  {
+   "fr": "Ton code",
+   "en": ""
+  },
+  {
+   "fr": "Ton empreinte de recrutement",
+   "en": ""
+  },
+  {
+   "fr": "Le parrainage passe par ton compte : il s’active dès que le jeu est connecté.",
+   "en": ""
+  },
+  {
+   "fr": "Gravure…",
+   "en": ""
+  },
+  {
+   "fr": "Envoyer le lien",
+   "en": ""
+  },
+  {
+   "fr": "Copier",
+   "en": ""
+  },
+  {
+   "fr": "Le lien ouvre le jeu avec ton code déjà entré. Ton ami peut aussi le saisir lui-même, au début de sa partie.",
+   "en": ""
+  },
+  {
+   "fr": "Un ami t’a fait venir ?",
+   "en": ""
+  },
+  {
+   "fr": "Entre son code avant d’avoir vaincu la Strate −{0} : vous serez liés pour de bon.",
+   "en": ""
+  },
+  {
+   "fr": "EMP-XXXXXX",
+   "en": ""
+  },
+  {
+   "fr": "Code de ton parrain",
+   "en": ""
+  },
+  {
+   "fr": "Vérification…",
+   "en": ""
+  },
+  {
+   "fr": "Valider",
+   "en": ""
+  },
+  {
+   "fr": "Ce que vous gagnez",
+   "en": ""
+  },
+  {
+   "fr": "Dès son arrivée",
+   "en": ""
+  },
+  {
+   "fr": ": {0} cristaux, une carte au choix (au moins du cuivre) et ses colis de Ravitaillement doublés pendant {1} jours.",
+   "en": ""
+  },
+  {
+   "fr": "Tes {0} premières recrues te rapportent ces récompenses. Au-delà, elles comptent toujours pour les distinctions.",
+   "en": ""
+  },
+  {
+   "fr": "Carte du parrainage",
+   "en": ""
+  },
+  {
+   "fr": "Elle ne se trouve nulle part ailleurs. Chaque exemplaire garde dans son journal le nom de l’autre directeur. Une carte de cuivre ordinaire en combat : le parrainage ne fait gagner personne.",
+   "en": ""
+  },
+  {
+   "fr": "Tes recrues",
+   "en": ""
+  },
+  {
+   "fr": "Lecture…",
+   "en": ""
+  },
+  {
+   "fr": "Lecture de tes recrues…",
+   "en": ""
+  },
+  {
+   "fr": "Pas encore de recrue. Envoie ton lien à un ami : il apparaîtra ici dès son arrivée.",
+   "en": ""
+  },
+  {
+   "fr": "hors récompenses",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} recrues récompensées · une recrue est active dès la Strate −1 vaincue.",
+   "en": ""
+  },
+  {
+   "fr": "Distinctions",
+   "en": ""
+  },
+  {
+   "fr": "{0} sur {1} recrues actives",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} recrues actives",
+   "en": ""
+  },
+  {
+   "fr": "Recommandé par {0}",
+   "en": ""
+  },
+  {
+   "fr": "Chaque palier que tu atteins lui rapporte quelque chose : à la Strate −3 et à la Tour du Noyau niveau 3, tu reçois aussi ta part.",
+   "en": ""
+  },
+  {
+   "fr": "Pour que {0} reçoive ses récompenses, relie ta partie à Google (Menu › Compte). Tes paliers partiront à ce moment-là, rien n’est perdu.",
+   "en": ""
+  }
+ ]
+}

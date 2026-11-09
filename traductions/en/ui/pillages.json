@@ -1,0 +1,389 @@
+{
+ "source": "src/ui/pillages.ts",
+ "entrees": [
+  {
+   "fr": "Comment marche le Port",
+   "en": ""
+  },
+  {
+   "fr": "Pillages, missions en mer ou contrats de marée",
+   "en": ""
+  },
+  {
+   "fr": "Pillages",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} jetons",
+   "en": ""
+  },
+  {
+   "fr": "dès la Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Missions",
+   "en": ""
+  },
+  {
+   "fr": "{0} / {1} en mer",
+   "en": ""
+  },
+  {
+   "fr": "Marées",
+   "en": ""
+  },
+  {
+   "fr": "gabare en mer",
+   "en": ""
+  },
+  {
+   "fr": "{0} à remplir",
+   "en": ""
+  },
+  {
+   "fr": "Les districts voisins attendent · vaincs le gardien de la Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Le passeur ne mène pas de grappin chez les voisins pour un district qu’on ne connaît pas encore. Les missions en mer, elles, partent déjà.",
+   "en": ""
+  },
+  {
+   "fr": "Jetons et coffre",
+   "en": ""
+  },
+  {
+   "fr": "Jetons",
+   "en": ""
+  },
+  {
+   "fr": "{0} jetons sur {1}",
+   "en": ""
+  },
+  {
+   "fr": "Un de plus dans ",
+   "en": ""
+  },
+  {
+   "fr": "Tous là : rien ne se perd.",
+   "en": ""
+  },
+  {
+   "fr": "Ton coffre",
+   "en": ""
+  },
+  {
+   "fr": "minerai gagné en pillant : le seul exposé",
+   "en": ""
+  },
+  {
+   "fr": "La carte des districts voisins",
+   "en": ""
+  },
+  {
+   "fr": "déjà pillé aujourd’hui",
+   "en": ""
+  },
+  {
+   "fr": "Pillé",
+   "en": ""
+  },
+  {
+   "fr": "Ton district est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus {0} % de ton coffre, puis {1} h de bouclier ; {2} attaques par jour au plus. Le reste de ton minerai, tes cristaux, tes cartes et tes Éclats ne risquent rien.",
+   "en": ""
+  },
+  {
+   "fr": "Ta garnison",
+   "en": ""
+  },
+  {
+   "fr": "Ta garnison · en défense",
+   "en": ""
+  },
+  {
+   "fr": "Composer",
+   "en": ""
+  },
+  {
+   "fr": "Escouade qui défend le port",
+   "en": ""
+  },
+  {
+   "fr": "Elle se défend seule quand d’autres directeurs t’attaquent. L’escouade qui attaque se choisit au départ du pillage{0}.",
+   "en": ""
+  },
+  {
+   "fr": " : la même peut faire les deux",
+   "en": ""
+  },
+  {
+   "fr": "il y a {0} min",
+   "en": ""
+  },
+  {
+   "fr": "Tu as pillé {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0} a repoussé ton escouade",
+   "en": ""
+  },
+  {
+   "fr": "{0} s’est heurté à ton bouclier",
+   "en": ""
+  },
+  {
+   "fr": "Ta garnison a repoussé {0}",
+   "en": ""
+  },
+  {
+   "fr": "{0} a pillé ton district",
+   "en": ""
+  },
+  {
+   "fr": "Journal du port",
+   "en": ""
+  },
+  {
+   "fr": "Ton attaque",
+   "en": ""
+  },
+  {
+   "fr": "Attaque subie",
+   "en": ""
+  },
+  {
+   "fr": "District sans directeur · ",
+   "en": ""
+  },
+  {
+   "fr": "En défense · ",
+   "en": ""
+  },
+  {
+   "fr": "Aucun pillage pour l’instant. Tes attaques et celles que ta garnison subit s’inscriront ici.",
+   "en": ""
+  },
+  {
+   "fr": "Déjà pillé aujourd’hui : il reviendra demain.",
+   "en": ""
+  },
+  {
+   "fr": "Plus de jeton : le prochain revient bientôt.",
+   "en": ""
+  },
+  {
+   "fr": "District sans directeur · un intendant le tient",
+   "en": ""
+  },
+  {
+   "fr": "La garnison",
+   "en": ""
+  },
+  {
+   "fr": "Garnison",
+   "en": ""
+  },
+  {
+   "fr": "dont {0} pris à son coffre",
+   "en": ""
+  },
+  {
+   "fr": "{0} % de ton coffre",
+   "en": ""
+  },
+  {
+   "fr": "Tu choisis l’escouade qui attaque à l’étape suivante.",
+   "en": ""
+  },
+  {
+   "fr": "Préparer le pillage",
+   "en": ""
+  },
+  {
+   "fr": "Le Port du district",
+   "en": ""
+  },
+  {
+   "fr": "Le Port reprend du service",
+   "en": ""
+  },
+  {
+   "fr": "Devant le sas de la digue, sur ses pilotis, le Port voit partir les barques du passeur : vers les ruines noyées, et vers les cuvettes voisines.",
+   "en": ""
+  },
+  {
+   "fr": "Le bateau reste à quai · vaincs le gardien de la Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Tant que le gardien tient le puits, personne ne quitte le district.",
+   "en": ""
+  },
+  {
+   "fr": "Les missions en mer",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur libre part en barque et revient chargé, même jeu fermé.",
+   "en": ""
+  },
+  {
+   "fr": "courte ou longue",
+   "en": ""
+  },
+  {
+   "fr": "barques à la fois, selon la Tour",
+   "en": ""
+  },
+  {
+   "fr": "Butin",
+   "en": ""
+  },
+  {
+   "fr": "minerai, cartes, creuseurs",
+   "en": ""
+  },
+  {
+   "fr": "Pillages et défense du port · après la Strate −{0}",
+   "en": ""
+  },
+  {
+   "fr": "Les districts voisins ne te prennent pas encore au sérieux. Le détail est dans « Les règles en détail ».",
+   "en": ""
+  },
+  {
+   "fr": "Les pillages",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade attaque la garnison d’un district voisin de ta force.",
+   "en": ""
+  },
+  {
+   "fr": "jetons, un toutes les {0}",
+   "en": ""
+  },
+  {
+   "fr": "du coffre adverse",
+   "en": ""
+  },
+  {
+   "fr": "de ton coffre si tu perds",
+   "en": ""
+  },
+  {
+   "fr": "Ta défense",
+   "en": ""
+  },
+  {
+   "fr": "Seul ton coffre est exposé, et ta garnison se défend seule.",
+   "en": ""
+  },
+  {
+   "fr": "Coffre",
+   "en": ""
+  },
+  {
+   "fr": "gains de pillage seulement",
+   "en": ""
+  },
+  {
+   "fr": "de bouclier après une défaite",
+   "en": ""
+  },
+  {
+   "fr": "attaques subies par jour au plus",
+   "en": ""
+  },
+  {
+   "fr": "Quand la mer est montée, chaque quartier s’est accroché à ses piliers ; le tien s’est retranché derrière sa digue. Entre eux, il ne reste que l’eau, les ruines de l’ancien monde, et les passeurs qui connaissent les courants.",
+   "en": ""
+  },
+  {
+   "fr": "Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : on pille, on se défend, et chacun garde un œil sur son coffre.",
+   "en": ""
+  },
+  {
+   "fr": "Un Porteur libre prend la barque",
+   "en": ""
+  },
+  {
+   "fr": "Vers un pilier abandonné ou une ruine noyée : {0} h ou {1} h, sans rien payer : seulement le temps du Porteur. Le nombre de barques en mer en même temps grandit avec la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 6 et 4 au niveau 9.",
+   "en": ""
+  },
+  {
+   "fr": "Il revient chargé",
+   "en": ""
+  },
+  {
+   "fr": "Du minerai, des doublons de cartes de sa lignée, parfois une carte nouvelle, et des rescapés qui deviennent creuseurs. L’eau froide laisse un peu d’Usure.",
+   "en": ""
+  },
+  {
+   "fr": "{0} jetons, un toutes les {1}",
+   "en": ""
+  },
+  {
+   "fr": "Chaque pillage en coûte un. Rien ne se perd pendant ton absence : ils t’attendent.",
+   "en": ""
+  },
+  {
+   "fr": "Un combat contre la garnison",
+   "en": ""
+  },
+  {
+   "fr": "Des districts de ta force : de vrais directeurs, et des districts sans directeur pour que la carte ne soit jamais vide. Un district par jour au plus.",
+   "en": ""
+  },
+  {
+   "fr": "Le butin",
+   "en": ""
+  },
+  {
+   "fr": "Du minerai, plus {0} du coffre adverse. Plus la garnison est forte, plus le butin est gros. Perdre te coûte {1} de ton coffre.",
+   "en": ""
+  },
+  {
+   "fr": "Seul ton coffre est exposé",
+   "en": ""
+  },
+  {
+   "fr": "Le coffre, c’est le minerai gagné en pillant, tant que le Générateur ne l’a pas taillé. Celui des descentes, des missions, et tous tes cristaux sont à l’abri, comme tes cartes et tes Éclats.",
+   "en": ""
+  },
+  {
+   "fr": "Ta garnison se défend seule",
+   "en": ""
+  },
+  {
+   "fr": "Choisis laquelle de tes trois escouades garde le port. Elle se bat même jeu fermé.",
+   "en": ""
+  },
+  {
+   "fr": "Bouclier et limite",
+   "en": ""
+  },
+  {
+   "fr": "Après une attaque perdue, {0} h de bouclier ; {1} attaques par jour au plus. Le journal du port garde tout.",
+   "en": ""
+  },
+  {
+   "fr": "Larguer les amarres",
+   "en": ""
+  },
+  {
+   "fr": "Retour au Port",
+   "en": ""
+  },
+  {
+   "fr": "Acheter un jeton pour {0} cristaux, encore {1} aujourd’hui",
+   "en": ""
+  },
+  {
+   "fr": "+1 jeton · {0}",
+   "en": ""
+  }
+ ]
+}

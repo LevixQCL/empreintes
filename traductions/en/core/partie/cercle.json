@@ -1,0 +1,105 @@
+{
+ "source": "src/core/partie/cercle.ts",
+ "entrees": [
+  {
+   "fr": "Carte inconnue.",
+   "en": ""
+  },
+  {
+   "fr": "Les cartes de l’Héritage ne quittent jamais le district.",
+   "en": ""
+  },
+  {
+   "fr": "Une carte de parrainage ne s’échange pas : elle se reçoit avec un ami.",
+   "en": ""
+  },
+  {
+   "fr": "La nacre ne s’échange pas.",
+   "en": ""
+  },
+  {
+   "fr": "L’or s’échange à partir du niveau {0} du Cercle.",
+   "en": ""
+  },
+  {
+   "fr": "Retirée de tes souhaits.",
+   "en": ""
+  },
+  {
+   "fr": "{0} souhaits au plus : retires-en un d’abord.",
+   "en": ""
+  },
+  {
+   "fr": "Ajoutée à tes souhaits : tes amis la verront.",
+   "en": ""
+  },
+  {
+   "fr": "Tu ne possèdes pas cette carte.",
+   "en": ""
+  },
+  {
+   "fr": "Ta vitrine tient {0} carte{1} : améliore le Cercle pour en montrer plus.",
+   "en": ""
+  },
+  {
+   "fr": "Construis d’abord le Cercle.",
+   "en": ""
+  },
+  {
+   "fr": "Construis d’abord le Cercle des quais.",
+   "en": ""
+  },
+  {
+   "fr": "Une amitié doit avoir {0} jours avant le premier échange : encore {1} jour{2}.",
+   "en": ""
+  },
+  {
+   "fr": "Un échange se fait entre deux cartes du même métal.",
+   "en": ""
+  },
+  {
+   "fr": "C’est la même carte.",
+   "en": ""
+  },
+  {
+   "fr": "Il te faut un exemplaire en double de cette carte : ta carte, elle, ne part jamais.",
+   "en": ""
+  },
+  {
+   "fr": "Plus d’échange possible aujourd’hui : le Cercle rouvre demain.",
+   "en": ""
+  },
+  {
+   "fr": "Tu as déjà {0} proposition{1} en attente.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut {0} cristaux pour échanger une carte en {1}.",
+   "en": ""
+  },
+  {
+   "fr": "Proposition envoyée à {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Tu n’as plus d’exemplaire en double de cette carte.",
+   "en": ""
+  },
+  {
+   "fr": "Il faut {0} cristaux pour cet échange.",
+   "en": ""
+  },
+  {
+   "fr": "Cet échange est déjà fait.",
+   "en": ""
+  },
+  {
+   "fr": "Nouvelle carte !",
+   "en": ""
+  },
+  {
+   "fr": "Un exemplaire de plus.",
+   "en": ""
+  }
+ ]
+}

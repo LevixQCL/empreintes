@@ -11,6 +11,7 @@ import {
 } from '../cercle';
 import { DL, accepterDefi, confirmerAbandon, defierAmi, duelRobot, quitterDuel, revanche } from '../duel';
 import { ouvrir, type Clic, type Suite } from './commun';
+import { t } from '../../core/i18n';
 
 const fermerFeuilles = () => { C.ami = null; C.choix = null; C.echange = null; };
 
@@ -56,7 +57,7 @@ export async function agirCercle(a: string, c: Clic): Promise<Suite> {
     // les amis
     case 'cercle-ajouter': {
       const nom = champ('cr-pseudo');
-      if (!nom) { C.message = 'Tape le nom de directeur de ton ami.'; break; }
+      if (!nom) { C.message = t('Tape le nom de directeur de ton ami.'); break; }
       await ajouterAmi(nom);
       break;
     }

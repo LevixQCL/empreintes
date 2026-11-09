@@ -1,0 +1,45 @@
+{
+ "source": "src/app/duel.ts",
+ "entrees": [
+  {
+   "fr": "Chargement du duel…",
+   "en": ""
+  },
+  {
+   "fr": "ton ami",
+   "en": ""
+  },
+  {
+   "fr": "{0} a décliné le défi.",
+   "en": ""
+  },
+  {
+   "fr": "Ton ami",
+   "en": ""
+  },
+  {
+   "fr": "+{0} cristaux · +{1} Éclat{2} : première victoire de la semaine contre {3}",
+   "en": ""
+  },
+  {
+   "fr": "Ton escouade active ne peut pas jouer en duel : {0} Change-la dans l’onglet Escouade.",
+   "en": ""
+  },
+  {
+   "fr": "Le duel n’a pas pu s’ouvrir.",
+   "en": ""
+  },
+  {
+   "fr": "Ce défi n’est plus valable.",
+   "en": ""
+  },
+  {
+   "fr": "Robot d’entraînement",
+   "en": ""
+  },
+  {
+   "fr": "Toucher encore pour abandonner",
+   "en": ""
+  }
+ ]
+}

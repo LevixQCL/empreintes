@@ -1,0 +1,233 @@
+{
+ "source": "src/core/expedition.ts",
+ "entrees": [
+  {
+   "fr": "Victoire. {0}L’escouade reprend sa route.",
+   "en": ""
+  },
+  {
+   "fr": "Derrière la salle scellée, une carte t’attend : elle te sera remise au retour. ",
+   "en": ""
+  },
+  {
+   "fr": "Aucun ne préparait d’attaque : l’escouade s’échappe sans un coup.",
+   "en": ""
+  },
+  {
+   "fr": "L’ennemi ne préparait pas d’attaque : l’escouade s’échappe sans un coup.",
+   "en": ""
+  },
+  {
+   "fr": "{0} s’écrase sur le bouclier : l’escouade s’échappe sans une égratignure.",
+   "en": ""
+  },
+  {
+   "fr": "En fuyant, {0}.",
+   "en": ""
+  },
+  {
+   "fr": "{0} encaisse {1} (−{2})",
+   "en": ""
+  },
+  {
+   "fr": "On ne recule que pendant un combat d’exploration.",
+   "en": ""
+  },
+  {
+   "fr": "Pas de salle où se replier.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade ne tiendrait plus debout : il faut remonter.",
+   "en": ""
+  },
+  {
+   "fr": "{0} L’escouade se replie d’une salle. {1} garde la sienne : prends un autre chemin, ou reviens l’affronter.",
+   "en": ""
+  },
+  {
+   "fr": "On ne fuit que pendant un combat.",
+   "en": ""
+  },
+  {
+   "fr": "Des bruits",
+   "en": ""
+  },
+  {
+   "fr": "Des pas, un grattement, quelque chose qui respire derrière la paroi.",
+   "en": ""
+  },
+  {
+   "fr": "Une lueur",
+   "en": ""
+  },
+  {
+   "fr": "Une lueur bleutée au bout du couloir. Quelque chose de précieux… ou quelqu’un qui résonne.",
+   "en": ""
+  },
+  {
+   "fr": "Le silence",
+   "en": "The silence"
+  },
+  {
+   "fr": "Rien ne bouge. De la poussière, des gravats : une salle oubliée.",
+   "en": ""
+  },
+  {
+   "fr": "Des traces",
+   "en": ""
+  },
+  {
+   "fr": "Des traces fraîches dans la poussière. Quelqu’un est passé il y a peu.",
+   "en": ""
+  },
+  {
+   "fr": "De la chaleur",
+   "en": ""
+  },
+  {
+   "fr": "Une odeur de feu éteint, un air plus doux. Des fouilleurs ont fait halte ici.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade descend fouiller {0}. Pas de gardien cette fois : le filon est au fond.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade entre dans {0}. Choisis ton chemin : le gardien attend tout au fond.{1}{2}{3}{4}",
+   "en": ""
+  },
+  {
+   "fr": "Cette semaine, le Fond emprunte à la Strate −{0} {1}{2}.",
+   "en": ""
+  },
+  {
+   "fr": " Une marque de quête ✦ brille quelque part sur le plan.",
+   "en": ""
+  },
+  {
+   "fr": " {0} sur le plan.",
+   "en": ""
+  },
+  {
+   "fr": "{0} Vestiges dorment",
+   "en": ""
+  },
+  {
+   "fr": "Un Vestige dort",
+   "en": ""
+  },
+  {
+   "fr": "Réponds d’abord à la rencontre.",
+   "en": ""
+  },
+  {
+   "fr": "Fais d’abord ton choix à la Halte.",
+   "en": ""
+  },
+  {
+   "fr": "Ouvre la porte, ou passe ton chemin.",
+   "en": ""
+  },
+  {
+   "fr": "Cette salle n’est pas accessible d’ici.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade suit le fil d’une salle à l’autre. ",
+   "en": ""
+  },
+  {
+   "fr": "Un lieu que l’escouade connaît, maintenant. Elle s’y arrête le temps de reprendre son souffle, puis repart.",
+   "en": ""
+  },
+  {
+   "fr": "Une porte ancienne, gravée de Fréquences. Personne dans l’escouade ne tient debout pour l’accorder.",
+   "en": ""
+  },
+  {
+   "fr": "Une salle scellée : son occupant est plus coriace, mais quelque chose de précieux dort derrière lui.",
+   "en": ""
+  },
+  {
+   "fr": "Un abri muré en 2066. Ton Augmenté enfonce le parpaing d’un coup d’épaule : derrière, une réserve intacte",
+   "en": ""
+  },
+  {
+   "fr": "Un abri muré en 2066. Sans Augmenté pour forcer le mur, l’escouade ne fouille que les gravats devant",
+   "en": ""
+  },
+  {
+   "fr": "Une niche du Treillis, oubliée par les Hauts : un cristal y dort encore. Il deviendra une carte au district",
+   "en": ""
+  },
+  {
+   "fr": "Une niche du Treillis, vidée et scellée de cire blanche. Il reste ce que les préleveurs ont laissé tomber",
+   "en": ""
+  },
+  {
+   "fr": "Une cache de fouilleur, oubliée sous des gravats",
+   "en": ""
+  },
+  {
+   "fr": "{0}{1} : +{2} minerai{3} et de quoi panser l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": ", un Éclat",
+   "en": ""
+  },
+  {
+   "fr": "Un campement de fouilleurs, encore tiède. L’escouade souffle (+35 % de PV). Tu peux remonter d’ici avec ce que tu as trouvé.",
+   "en": ""
+  },
+  {
+   "fr": "Une salle d’archives : des papiers d’époque, rangés avec soin. Tu les rapporteras au district (+{0} minerai).",
+   "en": ""
+  },
+  {
+   "fr": "Le filon est là, intact. L’escouade le dégage et remonte avec.",
+   "en": ""
+  },
+  {
+   "fr": "Aucune porte à ouvrir.",
+   "en": ""
+  },
+  {
+   "fr": "Choisis {0} cartes de la main.",
+   "en": ""
+  },
+  {
+   "fr": "Ces Fréquences ne se suivent pas : il faut une suite de {0} (par exemple {1}).",
+   "en": ""
+  },
+  {
+   "fr": "Les Fréquences s’accordent. La porte tourne sur elle-même sans un bruit : derrière, {0} et {1} minerai, rangés là depuis toujours.",
+   "en": ""
+  },
+  {
+   "fr": "un Éclat",
+   "en": ""
+  },
+  {
+   "fr": "La porte ne se laisse essayer qu’une seconde fois.",
+   "en": ""
+  },
+  {
+   "fr": "La porte reste fermée. Elle a attendu des siècles ; elle attendra bien encore.",
+   "en": ""
+  },
+  {
+   "fr": "Personne ne voit de passage ici.",
+   "en": ""
+  },
+  {
+   "fr": "{0} L’escouade en rapporte {1} minerai et des papiers d’époque{2}.",
+   "en": ""
+  },
+  {
+   "fr": ", et un Vestige posé là, comme pour vous",
+   "en": ""
+  }
+ ]
+}
