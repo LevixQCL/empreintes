@@ -155,7 +155,7 @@ export const SCENES: Scene[] = [
       { qui: 'sasha', texte: t('J’ai regardé tes jambes cette nuit, Ilka. Il y a le verrou de ta compagnie, ça, je connais. Et il y a autre chose : une ligne que personne n’a écrite chez nous, signée d’une date. 2029. Elle ne coupe rien. Elle écoute.') },
       { qui: 'vela', texte: t('Derrière ces portes, quelqu’un a rangé les cristaux avec soin. Comme on range une chambre avant de partir pour de bon.') },
     ], (c) => !!c.actes.chambre),
-  apresGardien(4, 'gardien-registres', 'L’appel',
+  apresGardien(4, 'gardien-registres', t('L’appel'),
     t('Le Gardien des registres recule derrière une porte ronde et la referme sur lui. Avant de disparaître, il a lu une liste de noms, lentement, d’une voix de pierre.'), [
       { qui: 'doran', texte: t('Trois noms. Ivens, Daro, et le dernier, celui de mon père. Les trois qu’on n’a jamais barrés au mur des fouilleurs.') },
       { qui: 'vela', texte: t('Il ne nous menaçait pas. Il faisait l’appel. Comme s’il attendait que ceux de la liste reviennent.') },
@@ -175,7 +175,7 @@ export const SCENES: Scene[] = [
       { qui: 'vela', texte: t('Celles qui restent se sont serrées les unes contre les autres. Elles ont froid.') },
       { qui: 'doran', texte: t('Le Gardien est en dessous. Il garde ce qu’il reste. Je commence à le comprendre.') },
     ]),
-  apresGardien(5, 'gardien-registres', 'L’inventaire',
+  apresGardien(5, 'gardien-registres', t('L’inventaire'),
     t('Cette fois, le Gardien a appelé un brigadier à la barre. Le soldat s’est battu en récitant un serment qui n’était pas le sien. Dans la poche de son uniforme, un inventaire.'), [
       { qui: 'ilka', texte: t('Un inventaire de Berceaux, signé en entier, cette fois : « I. Orsève ». Plus besoin de deviner.') },
       { qui: 'aurel', texte: t('Dame Isaure. Ma tante. C’est elle qui tient le Registre des Vierges. Elle ne descend jamais : elle envoie les autres.'), si: present('aurel') },

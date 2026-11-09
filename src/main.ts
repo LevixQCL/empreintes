@@ -75,7 +75,7 @@ racine.addEventListener('pointerdown', (ev) => {
 });
 racine.addEventListener('pointermove', (ev) => { if (appui && Math.hypot(ev.clientX - appui.x, ev.clientY - appui.y) > 10) { clearTimeout(appui.t); appui = null; } });
 for (const t of ['pointerup', 'pointercancel', 'pointerleave'] as const) racine.addEventListener(t, finAppui);
-racine.addEventListener('contextmenu', (ev) => { if ((ev.target as HTMLElement).closest(app.mode === 'combat' ? tr('.geste, .combattant') : '[data-carte]')) ev.preventDefault(); });
+racine.addEventListener('contextmenu', (ev) => { if ((ev.target as HTMLElement).closest(app.mode === 'combat' ? '.geste, .combattant' : '[data-carte]')) ev.preventDefault(); });
 racine.addEventListener('click', (ev) => { if (annulerClic) { annulerClic = false; ev.stopImmediatePropagation(); ev.preventDefault(); } }, true);
 
 /* glisser une carte posée le long de la chaîne la change de place */

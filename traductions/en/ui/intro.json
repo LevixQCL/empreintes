@@ -282,10 +282,6 @@
    "en": "A courier has come to fetch you; an old hand from the Foundations and a reader are waiting for you below. Go down. Look at everything."
   },
   {
-   "fr": "./intro/{0}.webp",
-   "en": "./intro/{0}.webp"
-  },
-  {
    "fr": "Introduction",
    "en": "Introduction"
   },

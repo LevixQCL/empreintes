@@ -200,7 +200,7 @@ function paliers(quai: number, recus: number[]): string {
     + [...FLECHE.paliers].reverse().map((p) => {
       const recu = recus.includes(p);
       return `<li class="${recu ? 'recu' : p <= quai ? 'atteint' : ''}"><b class="fl-plaque-num">${p}</b><span>${p >= FLECHE.quais ? t('Le dernier quai : l’amarrage') : t('Quai gravé')}<small>${p <= 40 ? t('on y monte de 4 en 4') : p <= 70 ? t('on y monte de 2 en 2') : t('on y monte quai par quai')}</small></span>`
-        + `<em>${recu ? `${ICO.ok}Reçu` : recompense(p)}</em></li>`;
+        + `<em>${recu ? `${ICO.ok}${t('Reçu')}` : recompense(p)}</em></li>`;
     }).join('') + `</ol></details>`;
 }
 
@@ -230,7 +230,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', recit = false): stri
       cle(ICO.cristal, String(FLECHE.paliers.length), t('quais gravés à récompense')),
     ])
 
-    + replie('L’histoire', `<p>${t`Les îles des Hauts ne se posent jamais : elles dérivent au-dessus de la mer et ne s’arrêtent qu’aux flèches d’amarrage. Il n’en reste qu’une debout, et ce sont les Hauts qui la tiennent.`}</p>`
+    + replie(t('L’histoire'), `<p>${t`Les îles des Hauts ne se posent jamais : elles dérivent au-dessus de la mer et ne s’arrêtent qu’aux flèches d’amarrage. Il n’en reste qu’une debout, et ce sont les Hauts qui la tiennent.`}</p>`
       + `<p>${t`Avant 2101, les districts d’en bas montaient à l’abordage. Les Accords y ont mis fin et n’ont laissé qu’une route légale vers le haut : la Flèche, quai par quai. Tout district invité peut y envoyer une escouade.`}</p>`
       + `<p>${t`Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. « S’il tient le sommet au passage d’une île, il y est reçu », dit la Clause. Les Hauts ont toujours lu « l’escouade ».`}</p>`)
     + (recit ? replie(t('Les Îles ouvertes'), `<p>${t`Le Noyé, vieux saboteur rescapé de la Grève, garde un brouillon de la Clause, écrit à la main pendant la Grève des pompes : « le district dont l’escouade tient le sommet au passage d’une île y est reçu ». Pas l’escouade : le district.`}</p>`

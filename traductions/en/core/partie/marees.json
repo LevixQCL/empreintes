@@ -3,367 +3,371 @@
  "entrees": [
   {
    "fr": "Petite vive-eau",
-   "en": ""
+   "en": "Small spring tide"
+  },
+  {
+   "fr": "Vive-eau",
+   "en": "Spring tide"
   },
   {
    "fr": "Grande marée",
-   "en": ""
+   "en": "Great tide"
   },
   {
    "fr": "La vanne maîtresse",
-   "en": ""
+   "en": "The master valve"
   },
   {
    "fr": "La mer n’est jamais descendue si bas : la vanne affleure.",
-   "en": ""
+   "en": "The sea has never gone out this far: the valve breaks the surface."
   },
   {
    "fr": "Forcer la vanne maîtresse",
-   "en": ""
+   "en": "Force the master valve"
   },
   {
    "fr": "Tenir l’amarre dans le reflux",
-   "en": ""
+   "en": "Hold the mooring line in the ebb"
   },
   {
    "fr": "Les sirènes de brume",
-   "en": ""
+   "en": "The fog sirens"
   },
   {
    "fr": "Les sirènes chantent faux ; tant qu’elles chantent, la glace tient.",
-   "en": ""
+   "en": "The sirens sing off-key; as long as they sing, the ice holds."
   },
   {
    "fr": "Tenir la chambre froide qui cède",
-   "en": ""
+   "en": "Hold the cold room as it gives way"
   },
   {
    "fr": "Accorder les sirènes de brume",
-   "en": ""
+   "en": "Tune the fog sirens"
   },
   {
    "fr": "La verrière scellée",
-   "en": ""
+   "en": "The sealed glasshouse"
   },
   {
    "fr": "Une note juste, et le verre s’ouvre de lui-même.",
-   "en": ""
+   "en": "One true note, and the glass opens by itself."
   },
   {
    "fr": "Accorder la cloche",
-   "en": ""
+   "en": "Tune the bell"
   },
   {
    "fr": "Briser la verrière scellée",
-   "en": ""
+   "en": "Break the sealed glasshouse"
   },
   {
    "fr": "Les jauges effacées",
-   "en": ""
+   "en": "The faded gauges"
   },
   {
    "fr": "Le sel a mangé les chiffres ; les pompes, elles, se souviennent.",
-   "en": ""
+   "en": "The salt has eaten the numbers; the pumps still remember."
   },
   {
    "fr": "Relancer la pompe à sel",
-   "en": ""
+   "en": "Restart the salt pump"
   },
   {
    "fr": "Lire les jauges effacées",
-   "en": ""
+   "en": "Read the faded gauges"
   },
   {
    "fr": "L’auvent des lanternes",
-   "en": ""
+   "en": "The lantern awning"
   },
   {
    "fr": "Les familles du marché gardent leurs lanternes allumées pour la barque.",
-   "en": ""
+   "en": "The market families keep their lanterns lit for the boat."
   },
   {
    "fr": "Tenir l’auvent qui s’affaisse",
-   "en": ""
+   "en": "Hold up the sagging awning"
   },
   {
    "fr": "Hisser la caisse des lanternes",
-   "en": ""
+   "en": "Hoist the crate of lanterns"
   },
   {
    "fr": "Le pouls de la lampe",
-   "en": ""
+   "en": "The lamp’s pulse"
   },
   {
    "fr": "La lampe bat plus vite quand on approche. Personne ne sait pourquoi.",
-   "en": ""
+   "en": "The lamp beats faster as you get closer. No one knows why."
   },
   {
    "fr": "Suivre le pouls de la lampe",
-   "en": ""
+   "en": "Follow the lamp’s pulse"
   },
   {
    "fr": "Tenir la barque dans le ressac",
-   "en": ""
+   "en": "Hold the boat in the backwash"
   },
   {
    "fr": "Le dernier train des Hauts",
-   "en": ""
+   "en": "The last train from the Heights"
   },
   {
    "fr": "Le dernier train des Hauts n’a jamais été vidé.",
-   "en": ""
+   "en": "The last train from the Heights was never unloaded."
   },
   {
    "fr": "Forcer l’aiguillage rouillé",
-   "en": ""
+   "en": "Force the rusted points"
   },
   {
    "fr": "Tenir le wagon qui penche",
-   "en": ""
+   "en": "Hold the tilting carriage"
   },
   {
    "fr": "Lire l’horaire des lumières",
-   "en": ""
+   "en": "Read the timetable of lights"
   },
   {
    "fr": "Les semences d’avant",
-   "en": ""
+   "en": "The seeds of before"
   },
   {
    "fr": "Sous le grain germé dorment les semences d’avant.",
-   "en": ""
+   "en": "Under the sprouted grain sleep the seeds of before."
   },
   {
    "fr": "Tenir la brèche le temps d’un passage",
-   "en": ""
+   "en": "Hold the breach long enough to pass"
   },
   {
    "fr": "Ouvrir la trappe du silo",
-   "en": ""
+   "en": "Open the silo hatch"
   },
   {
    "fr": "Guider la barque dans les remous",
-   "en": ""
+   "en": "Guide the boat through the eddies"
   },
   {
    "fr": "L’écho de Sombreverse",
-   "en": ""
+   "en": "The echo of Sombreverse"
   },
   {
    "fr": "Le pilier tombé répète encore les voix de ceux qui y vivaient.",
-   "en": ""
+   "en": "The fallen pillar still repeats the voices of those who lived there."
   },
   {
    "fr": "Démêler les échos du pilier",
-   "en": ""
+   "en": "Untangle the pillar’s echoes"
   },
   {
    "fr": "Dégager l’escalier effondré",
-   "en": ""
+   "en": "Clear the collapsed stairway"
   },
   {
    "fr": "Tenir la voûte le temps de passer",
-   "en": ""
+   "en": "Hold the vault long enough to pass"
   },
   {
    "fr": "La soute du Héron",
-   "en": ""
+   "en": "The Heron’s hold"
   },
   {
    "fr": "Le Héron a gardé sa dernière cargaison, scellée sous la ligne d’eau.",
-   "en": ""
+   "en": "The Heron has kept its last cargo, sealed below the waterline."
   },
   {
    "fr": "Relancer le treuil de la soute",
-   "en": ""
+   "en": "Restart the hold’s winch"
   },
   {
    "fr": "Retenir l’eau qui s’engouffre",
-   "en": ""
+   "en": "Hold back the rushing water"
   },
   {
    "fr": "Écouter la coque qui craque",
-   "en": ""
+   "en": "Listen to the creaking hull"
   },
   {
    "fr": "La réserve des Salines",
-   "en": ""
+   "en": "The Salines store"
   },
   {
    "fr": "Les anciens du marché disent qu’une réserve entière dort sous les étals.",
-   "en": ""
+   "en": "The market elders say a whole storeroom sleeps beneath the stalls."
   },
   {
    "fr": "Tenir les étals qui flottent",
-   "en": ""
+   "en": "Hold the floating stalls"
   },
   {
    "fr": "Forcer la grille de la réserve",
-   "en": ""
+   "en": "Force the storeroom grate"
   },
   {
    "fr": "Retrouver le passage dans le noir",
-   "en": ""
+   "en": "Find the passage in the dark"
   },
   {
    "fr": "La lentille du phare couché",
-   "en": ""
+   "en": "The lens of the fallen lighthouse"
   },
   {
    "fr": "La lumière bat plus vite à l’approche.",
-   "en": ""
+   "en": "The light beats faster as you approach."
   },
   {
    "fr": "Accorder la lampe qui pulse",
-   "en": ""
+   "en": "Tune the pulsing lamp"
   },
   {
    "fr": "Tenir la coque contre la houle",
-   "en": ""
+   "en": "Hold the hull against the swell"
   },
   {
    "fr": "Démonter la lentille",
-   "en": ""
+   "en": "Take the lens apart"
   },
   {
    "fr": "Le brouillard levé",
-   "en": ""
+   "en": "The lifted fog"
   },
   {
    "fr": "Une fois l’an, le brouillard se lève tout à fait.",
-   "en": ""
+   "en": "Once a year, the fog lifts completely."
   },
   {
    "fr": "Suivre la lumière qui s’éteint",
-   "en": ""
+   "en": "Follow the fading light"
   },
   {
    "fr": "Retrouver le chemin du retour",
-   "en": ""
+   "en": "Find the way back"
   },
   {
    "fr": "Tenir la barque dans le brouillard",
-   "en": ""
+   "en": "Hold the boat in the fog"
   },
   {
    "fr": "Le coffre des jardiniers",
-   "en": ""
+   "en": "The gardeners’ chest"
   },
   {
    "fr": "Les racines ont poussé autour de la pierre.",
-   "en": ""
+   "en": "The roots have grown around the stone."
   },
   {
    "fr": "Écarter le figuier étrangleur",
-   "en": ""
+   "en": "Pull back the strangler fig"
   },
   {
    "fr": "Respirer sous le dôme noyé",
-   "en": ""
+   "en": "Breathe under the drowned dome"
   },
   {
    "fr": "Forcer le coffre des jardiniers",
-   "en": ""
+   "en": "Force the gardeners’ chest"
   },
   {
    "fr": "La salle des machines des Hauts",
-   "en": ""
+   "en": "The engine room of the Heights"
   },
   {
    "fr": "Sous la gare, une machine attend qu’on la réveille depuis la montée des eaux.",
-   "en": ""
+   "en": "Beneath the station, a machine has been waiting to be woken since the waters rose."
   },
   {
    "fr": "Relancer la turbine noyée",
-   "en": ""
+   "en": "Restart the drowned turbine"
   },
   {
    "fr": "Forcer la porte du sas",
-   "en": ""
+   "en": "Force the airlock door"
   },
   {
    "fr": "Écouter le rythme des eaux",
-   "en": ""
+   "en": "Listen to the rhythm of the water"
   },
   {
    "fr": "Pas encore arrivé.",
-   "en": ""
+   "en": "Not here yet."
   },
   {
    "fr": "S’entraîne à la Tour.",
-   "en": ""
+   "en": "Training at the Tower."
   },
   {
    "fr": "Travaille au district.",
-   "en": ""
+   "en": "Working in the district."
   },
   {
    "fr": "Pas au district.",
-   "en": ""
+   "en": "Not in the district."
   },
   {
    "fr": "Se remet à la Clinique.",
-   "en": ""
+   "en": "Recovering at the Clinic."
   },
   {
    "fr": "Ce contrat n’est plus proposé : la marée a tourné.",
-   "en": ""
+   "en": "This contract is no longer on offer: the tide has turned."
   },
   {
    "fr": "Il faut avoir vaincu la Strate −{0} pour ce contrat.",
-   "en": ""
+   "en": "You need to have beaten Stratum −{0} for this contract."
   },
   {
    "fr": "Ce contrat est déjà rempli.",
-   "en": ""
+   "en": "This contract is already fulfilled."
   },
   {
    "fr": "La gabare du passeur est déjà en mer : un contrat à la fois.",
-   "en": ""
+   "en": "The ferryman’s barge is already at sea: one contract at a time."
   },
   {
    "fr": "Il faut {0} Porteurs différents, un par épreuve.",
-   "en": ""
+   "en": "You need {0} different Bearers, one per task."
   },
   {
    "fr": "{0} embarquent sur la gabare : {1}, {2} ({3} % de chances).",
-   "en": ""
+   "en": "{0} board the barge: {1}, {2} ({3} % chance)."
   },
   {
    "fr": "{0}. Tout a tenu.",
-   "en": ""
+   "en": "{0}. Everything held."
   },
   {
    "fr": "Au cœur de la ruine, trois pierres attendaient côte à côte : à toi de choisir celle qui rentre au district.",
-   "en": ""
+   "en": "At the heart of the ruin, three stones were waiting side by side: it’s up to you which one comes home to the district."
   },
   {
    "fr": "La gabare est rentrée à ras bord : {0} minerai arraché à la ruine.",
-   "en": ""
+   "en": "The barge came home brim-full: {0} ore wrested from the ruin."
   },
   {
    "fr": "La gabare est rentrée chargée : {0} minerai, et une pierre de plus pour tes cartes.",
-   "en": ""
+   "en": "The barge came home loaded: {0} ore, and one more stone for your cards."
   },
   {
    "fr": "{0} n’a pas pu {1}{2} : l’équipe a dû faire demi-tour avant la marée descendante.",
-   "en": ""
+   "en": "{0} couldn’t {1}{2}: the team had to turn back before the ebb."
   },
   {
    "fr": "Ils rapportent {0} minerai, et surtout un Indice : la prochaine tentative sur ce contrat aura +{1} % de chances.",
-   "en": ""
+   "en": "They bring back {0} ore, and above all a Clue: the next attempt at this contract will have +{1} % chance."
   },
   {
    "fr": "{0} réussie ({1}) : +{2} minerai{3}{4}.",
-   "en": ""
+   "en": "{0} succeeded ({1}): +{2} ore{3}{4}."
   },
   {
    "fr": ", une carte au choix",
-   "en": ""
+   "en": ", a card of your choice"
   },
   {
    "fr": "{0} manquée ({1}) : +{2} minerai et un Indice pour la prochaine tentative.",
-   "en": ""
+   "en": "{0} failed ({1}): +{2} ore and a Clue for the next attempt."
   }
  ]
 }

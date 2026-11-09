@@ -3,67 +3,67 @@
  "entrees": [
   {
    "fr": "Victoire. {0}L’escouade reprend sa route.",
-   "en": ""
+   "en": "Victory. {0}The squad sets off again."
   },
   {
    "fr": "Derrière la salle scellée, une carte t’attend : elle te sera remise au retour. ",
-   "en": ""
+   "en": "Behind the sealed room, a card awaits you: it will be handed over when you return. "
   },
   {
    "fr": "Aucun ne préparait d’attaque : l’escouade s’échappe sans un coup.",
-   "en": ""
+   "en": "None of them was preparing an attack: the squad gets away without a scratch."
   },
   {
    "fr": "L’ennemi ne préparait pas d’attaque : l’escouade s’échappe sans un coup.",
-   "en": ""
+   "en": "The enemy wasn’t preparing an attack: the squad gets away without a scratch."
   },
   {
    "fr": "{0} s’écrase sur le bouclier : l’escouade s’échappe sans une égratignure.",
-   "en": ""
+   "en": "{0} smashes into the shield: the squad gets away without a scratch."
   },
   {
    "fr": "En fuyant, {0}.",
-   "en": ""
+   "en": "While fleeing, {0}."
   },
   {
    "fr": "{0} encaisse {1} (−{2})",
-   "en": ""
+   "en": "{0} takes {1} (−{2})"
   },
   {
    "fr": "On ne recule que pendant un combat d’exploration.",
-   "en": ""
+   "en": "You can only fall back during an exploration fight."
   },
   {
    "fr": "Pas de salle où se replier.",
-   "en": ""
+   "en": "No room to fall back to."
   },
   {
    "fr": "L’escouade ne tiendrait plus debout : il faut remonter.",
-   "en": ""
+   "en": "The squad wouldn’t stay standing: you have to go back up."
   },
   {
    "fr": "{0} L’escouade se replie d’une salle. {1} garde la sienne : prends un autre chemin, ou reviens l’affronter.",
-   "en": ""
+   "en": "{0} The squad falls back one room. {1} keeps its own: take another path, or come back to face it."
   },
   {
    "fr": "On ne fuit que pendant un combat.",
-   "en": ""
+   "en": "You can only flee during a fight."
   },
   {
    "fr": "Des bruits",
-   "en": ""
+   "en": "Noises"
   },
   {
    "fr": "Des pas, un grattement, quelque chose qui respire derrière la paroi.",
-   "en": ""
+   "en": "Footsteps, a scratching, something breathing behind the wall."
   },
   {
    "fr": "Une lueur",
-   "en": ""
+   "en": "A glow"
   },
   {
    "fr": "Une lueur bleutée au bout du couloir. Quelque chose de précieux… ou quelqu’un qui résonne.",
-   "en": ""
+   "en": "A bluish glow at the end of the corridor. Something precious… or someone resonating."
   },
   {
    "fr": "Le silence",
@@ -71,163 +71,167 @@
   },
   {
    "fr": "Rien ne bouge. De la poussière, des gravats : une salle oubliée.",
-   "en": ""
+   "en": "Nothing moves. Dust, rubble: a forgotten room."
   },
   {
    "fr": "Des traces",
-   "en": ""
+   "en": "Tracks"
   },
   {
    "fr": "Des traces fraîches dans la poussière. Quelqu’un est passé il y a peu.",
-   "en": ""
+   "en": "Fresh tracks in the dust. Someone came through not long ago."
   },
   {
    "fr": "De la chaleur",
-   "en": ""
+   "en": "Warmth"
   },
   {
    "fr": "Une odeur de feu éteint, un air plus doux. Des fouilleurs ont fait halte ici.",
-   "en": ""
+   "en": "A smell of dead fire, softer air. Diggers stopped here."
   },
   {
    "fr": "L’escouade descend fouiller {0}. Pas de gardien cette fois : le filon est au fond.",
-   "en": ""
+   "en": "The squad goes down to dig {0}. No guardian this time: the seam is at the bottom."
   },
   {
    "fr": "L’escouade entre dans {0}. Choisis ton chemin : le gardien attend tout au fond.{1}{2}{3}{4}",
-   "en": ""
+   "en": "The squad enters {0}. Choose your path: the guardian waits at the very bottom.{1}{2}{3}{4}"
   },
   {
    "fr": "Cette semaine, le Fond emprunte à la Strate −{0} {1}{2}.",
-   "en": ""
+   "en": "This week, the Deep borrows {1}{2} from Stratum −{0}."
   },
   {
    "fr": " Une marque de quête ✦ brille quelque part sur le plan.",
-   "en": ""
+   "en": " A quest mark ✦ glows somewhere on the map."
   },
   {
    "fr": " {0} sur le plan.",
-   "en": ""
+   "en": " {0} on the map."
   },
   {
    "fr": "{0} Vestiges dorment",
-   "en": ""
+   "en": "{0} Relics sleep"
   },
   {
    "fr": "Un Vestige dort",
-   "en": ""
+   "en": "A Relic sleeps"
   },
   {
    "fr": "Réponds d’abord à la rencontre.",
-   "en": ""
+   "en": "Answer the encounter first."
   },
   {
    "fr": "Fais d’abord ton choix à la Halte.",
-   "en": ""
+   "en": "Make your choice at the Waystation first."
   },
   {
    "fr": "Ouvre la porte, ou passe ton chemin.",
-   "en": ""
+   "en": "Open the door, or move on."
   },
   {
    "fr": "Cette salle n’est pas accessible d’ici.",
-   "en": ""
+   "en": "This room can’t be reached from here."
   },
   {
    "fr": "L’escouade suit le fil d’une salle à l’autre. ",
-   "en": ""
+   "en": "The squad follows the thread from one room to the next. "
   },
   {
    "fr": "Un lieu que l’escouade connaît, maintenant. Elle s’y arrête le temps de reprendre son souffle, puis repart.",
-   "en": ""
+   "en": "A place the squad knows now. It stops long enough to catch its breath, then moves on."
   },
   {
    "fr": "Une porte ancienne, gravée de Fréquences. Personne dans l’escouade ne tient debout pour l’accorder.",
-   "en": ""
+   "en": "An ancient door, engraved with Frequencies. No one in the squad is standing to tune it."
   },
   {
    "fr": "Une salle scellée : son occupant est plus coriace, mais quelque chose de précieux dort derrière lui.",
-   "en": ""
+   "en": "A sealed room: its occupant is tougher, but something precious sleeps behind it."
   },
   {
    "fr": "Un abri muré en 2066. Ton Augmenté enfonce le parpaing d’un coup d’épaule : derrière, une réserve intacte",
-   "en": ""
+   "en": "A shelter walled up in 2066. Your Augmented caves the breeze block in with one shoulder: behind it, an untouched store"
   },
   {
    "fr": "Un abri muré en 2066. Sans Augmenté pour forcer le mur, l’escouade ne fouille que les gravats devant",
-   "en": ""
+   "en": "A shelter walled up in 2066. With no Augmented to force the wall, the squad only searches the rubble in front"
   },
   {
    "fr": "Une niche du Treillis, oubliée par les Hauts : un cristal y dort encore. Il deviendra une carte au district",
-   "en": ""
+   "en": "An alcove in the Lattice, forgotten by the Heights: a crystal still sleeps there. It will become a card in the district"
   },
   {
    "fr": "Une niche du Treillis, vidée et scellée de cire blanche. Il reste ce que les préleveurs ont laissé tomber",
-   "en": ""
+   "en": "An alcove in the Lattice, emptied and sealed with white wax. All that’s left is what the collectors dropped"
   },
   {
    "fr": "Une cache de fouilleur, oubliée sous des gravats",
-   "en": ""
+   "en": "A digger’s cache, forgotten under the rubble"
   },
   {
    "fr": "{0}{1} : +{2} minerai{3} et de quoi panser l’escouade.",
-   "en": ""
+   "en": "{0}{1}: +{2} ore{3} and something to patch up the squad."
   },
   {
    "fr": ", un Éclat",
-   "en": ""
+   "en": ", a Shard"
   },
   {
    "fr": "Un campement de fouilleurs, encore tiède. L’escouade souffle (+35 % de PV). Tu peux remonter d’ici avec ce que tu as trouvé.",
-   "en": ""
+   "en": "A diggers’ camp, still warm. The squad catches its breath (+35 % HP). You can head back up from here with what you’ve found."
   },
   {
    "fr": "Une salle d’archives : des papiers d’époque, rangés avec soin. Tu les rapporteras au district (+{0} minerai).",
-   "en": ""
+   "en": "An archive room: papers from the old days, carefully filed. You’ll bring them back to the district (+{0} ore)."
   },
   {
    "fr": "Le filon est là, intact. L’escouade le dégage et remonte avec.",
-   "en": ""
+   "en": "The seam is there, untouched. The squad digs it out and heads up with it."
   },
   {
    "fr": "Aucune porte à ouvrir.",
-   "en": ""
+   "en": "No door to open."
   },
   {
    "fr": "Choisis {0} cartes de la main.",
-   "en": ""
+   "en": "Pick {0} cards from your hand."
   },
   {
    "fr": "Ces Fréquences ne se suivent pas : il faut une suite de {0} (par exemple {1}).",
-   "en": ""
+   "en": "These Frequencies don’t follow each other: you need a chain of {0} (for example {1})."
   },
   {
    "fr": "Les Fréquences s’accordent. La porte tourne sur elle-même sans un bruit : derrière, {0} et {1} minerai, rangés là depuis toujours.",
-   "en": ""
+   "en": "The Frequencies fall into tune. The door turns on itself without a sound: behind it, {0} and {1} ore, stored there since forever."
+  },
+  {
+   "fr": "{0} Éclats",
+   "en": "{0} Shards"
   },
   {
    "fr": "un Éclat",
-   "en": ""
+   "en": "a Shard"
   },
   {
    "fr": "La porte ne se laisse essayer qu’une seconde fois.",
-   "en": ""
+   "en": "The door only lets itself be tried a second time."
   },
   {
    "fr": "La porte reste fermée. Elle a attendu des siècles ; elle attendra bien encore.",
-   "en": ""
+   "en": "The door stays shut. It has waited for centuries; it can wait a little longer."
   },
   {
    "fr": "Personne ne voit de passage ici.",
-   "en": ""
+   "en": "Nobody sees a passage here."
   },
   {
    "fr": "{0} L’escouade en rapporte {1} minerai et des papiers d’époque{2}.",
-   "en": ""
+   "en": "{0} The squad brings back {1} ore and papers from the old days{2}."
   },
   {
    "fr": ", et un Vestige posé là, comme pour vous",
-   "en": ""
+   "en": ", and a Relic left there, as if for you"
   }
  ]
 }

@@ -649,7 +649,7 @@ export const RENCONTRES: Record<string, (j: Jeu) => { titre: string; texte: stri
     options: [tr('Échanger 30 minerai contre une carte'), tr('Acheter des soins (15 minerai, +30 % de PV)'), tr('Passer')] }),
   // Bible, 23 octobre 2026 : un Sauvage (greffé sans Clinique, sans Lecture) et un vendeur de pierres mortes
   sauvage: (j) => ({ titre: tr('Un Sauvage'), texte: tr('Un homme recroquevillé contre un pilier, une mèche à peine dorée collée au front. Il s’est greffé une brisure achetée au marché noir, sans Lecture. Il gronde des mots qui ne sont pas les siens.'),
-    options: [j.expedition?.porteurs.some((p) => p.id === 'vela' && p.pv > 0) ? tr('Laisser Véla lire sa pierre') : tr('Lui parler doucement (−3 PV chacun)'), 'L’affronter', tr('Passer ton chemin')] }),
+    options: [j.expedition?.porteurs.some((p) => p.id === 'vela' && p.pv > 0) ? tr('Laisser Véla lire sa pierre') : tr('Lui parler doucement (−3 PV chacun)'), tr('L’affronter'), tr('Passer ton chemin')] }),
   faussaire: () => ({ titre: tr('Un vendeur de pierres'), texte: tr('Sur une couverture, une rangée de cristaux tous identiques. « Des pierres d’Accord, directeur. Jamais portées. Une vierge pour vingt-cinq de minerai. » Elles sont ternes. Toutes.'),
     options: [tr('Lui acheter une « vierge » (25 minerai)'), tr('Lui faire rendre ses pierres'), tr('Passer')] }),
   source: () => ({ titre: tr('Une source chaude'), texte: tr('Entre deux piliers, une source chaude jaillit de la roche. L’eau sent le fer et le sel.'),
@@ -1371,7 +1371,7 @@ export function partirEpreuve(j: Jeu, escouade: string[], id: string, now: numbe
     ...(ep.enchainement ? { soinEntre: ep.enchainement.soin } : {}),
     ...(ep.pvDepart ? { demiPv: true } : {}),
   };
-  log(j, tr`Épreuve de la semaine : ${ep.nom}${felee ? ' (Fêlée)' : ''}.`);
+  log(j, tr`Épreuve de la semaine : ${ep.nom}${felee ? tr(' (Fêlée)') : ''}.`);
   return { ok: true };
 }
 
@@ -1391,7 +1391,7 @@ function partirRecrues(j: Jeu, ep: EpreuveDef, _now: number, rng: number, felee:
     combat: { traitsEnnemis: false, assimilation: false, troisiemePhase: false },
   });
   j.expedition = { ...x, epreuve: ep.id, forceFixe: force, imposee: true, ...(felee ? { felee: true } : {}) };
-  log(j, tr`Épreuve de la semaine : ${ep.nom}${felee ? ' (Fêlée)' : ''}.`);
+  log(j, tr`Épreuve de la semaine : ${ep.nom}${felee ? tr(' (Fêlée)') : ''}.`);
   return { ok: true };
 }
 

@@ -3,371 +3,367 @@
  "entrees": [
   {
    "fr": "à l’instant",
-   "en": ""
-  },
-  {
-   "fr": "er",
-   "en": ""
+   "en": "just now"
   },
   {
    "fr": "{0} sur {1} en profondeur",
-   "en": ""
+   "en": "{0} of {1} by depth"
   },
   {
    "fr": "Compare ta profondeur aux autres directeurs",
-   "en": ""
+   "en": "Compare your depth with other directors"
   },
   {
    "fr": "Ton record de profondeur",
-   "en": ""
+   "en": "Your depth record"
   },
   {
    "fr": "Le Grand Tableau",
-   "en": ""
+   "en": "The Great Board"
   },
   {
    "fr": "Écrans des marchés · Vertiga",
-   "en": ""
+   "en": "Market screens · Vertiga"
   },
   {
    "fr": "Les districts comparés, chaque jour, sur tous les écrans de la ville. Les Hauts adorent les palmarès.",
-   "en": ""
+   "en": "Districts compared, every day, on every screen in the city. The Heights love a leaderboard."
   },
   {
    "fr": "Classements",
-   "en": ""
+   "en": "Rankings"
   },
   {
    "fr": "bientôt",
-   "en": ""
+   "en": "coming soon"
   },
   {
    "fr": "Période",
-   "en": ""
+   "en": "Period"
   },
   {
    "fr": "Record",
-   "en": ""
+   "en": "Record"
   },
   {
    "fr": "Cette semaine",
-   "en": ""
+   "en": "This week"
   },
   {
    "fr": "{0} depuis lundi. Tout le monde repart de zéro dans",
-   "en": ""
+   "en": "{0} since Monday. Everyone starts from zero again in"
   },
   {
    "fr": "Les Strates gagnées",
-   "en": ""
+   "en": "Strata won"
   },
   {
    "fr": "Les quais de record gagnés sur la Flèche",
-   "en": ""
+   "en": "Record quays won on the Spire"
   },
   {
    "fr": "Les points de Registre gagnés",
-   "en": ""
+   "en": "Register points earned"
   },
   {
    "fr": "Comment ça se calcule ?",
-   "en": ""
+   "en": "How is it calculated?"
   },
   {
    "fr": "Le Tableau en ligne n’est pas branché sur cette version.",
-   "en": ""
+   "en": "The online Board isn’t connected in this version."
   },
   {
    "fr": "Protège ta partie pour te mesurer aux autres directeurs.",
-   "en": ""
+   "en": "Protect your game to measure up against other directors."
   },
   {
    "fr": "Connecte-toi pour te mesurer aux autres directeurs.",
-   "en": ""
+   "en": "Sign in to measure up against other directors."
   },
   {
    "fr": "Protéger ma partie",
-   "en": ""
+   "en": "Protect my game"
   },
   {
    "fr": "Choisis ton pseudo pour apparaître sur le Tableau.",
-   "en": ""
+   "en": "Pick your username to appear on the Board."
   },
   {
    "fr": "Choisir mon pseudo",
-   "en": ""
+   "en": "Pick my username"
   },
   {
    "fr": "Mise à jour…",
-   "en": ""
+   "en": "Updating…"
   },
   {
    "fr": "Mis à jour {0}",
-   "en": ""
+   "en": "Updated {0}"
   },
   {
    "fr": "Actualiser",
-   "en": ""
+   "en": "Refresh"
   },
   {
    "fr": "Changer de pseudo",
-   "en": ""
+   "en": "Change username"
   },
   {
    "fr": "Ne plus apparaître",
-   "en": ""
+   "en": "Stop appearing"
   },
   {
    "fr": "Confirmer",
-   "en": ""
+   "en": "Confirm"
   },
   {
    "fr": "Retirer ton district du Tableau ? Tes records restent dans ta partie, et tu pourras revenir.",
-   "en": ""
+   "en": "Remove your district from the Board? Your records stay in your game, and you can come back."
   },
   {
    "fr": "Me retirer",
-   "en": ""
+   "en": "Remove me"
   },
   {
    "fr": "gardien vaincu",
-   "en": ""
+   "en": "guardian defeated"
   },
   {
    "fr": "Quai {0} de la Flèche",
-   "en": ""
+   "en": "Spire quay {0}"
   },
   {
    "fr": "Pas encore monté à la Flèche",
-   "en": ""
+   "en": "Hasn’t climbed the Spire yet"
   },
   {
    "fr": "+{0} quais cette semaine",
-   "en": ""
+   "en": "+{0} quays this week"
   },
   {
    "fr": "Strate −{0}",
-   "en": ""
+   "en": "Stratum −{0}"
   },
   {
    "fr": "+{0} Strate cette semaine",
-   "en": ""
+   "en": "+{0} Stratum this week"
   },
   {
    "fr": "+{0} points cette semaine",
-   "en": ""
+   "en": "+{0} points this week"
   },
   {
    "fr": "{0} cartes découvertes sur {1}",
-   "en": ""
+   "en": "{0} of {1} cards discovered"
   },
   {
    "fr": "Les écrans s’allument…",
-   "en": ""
+   "en": "The screens are lighting up…"
   },
   {
    "fr": "Le Tableau ne répond pas pour l’instant.",
-   "en": ""
+   "en": "The Board isn’t answering right now."
   },
   {
    "fr": "Personne n’a encore progressé cette semaine. La première place est libre.",
-   "en": ""
+   "en": "Nobody has made progress yet this week. First place is up for grabs."
   },
   {
    "fr": "Personne n’est encore inscrit.",
-   "en": ""
+   "en": "Nobody has signed up yet."
   },
   {
    "fr": "Encore",
-   "en": ""
+   "en": "Still"
   },
   {
    "fr": "pour passer devant",
-   "en": ""
+   "en": "to move ahead"
   },
   {
    "fr": "Tu mènes le Tableau. {0} te suit.",
-   "en": ""
+   "en": "You lead the Board. {0} is right behind you."
   },
   {
    "fr": "Tu es le seul directeur pour l’instant :",
-   "en": ""
+   "en": "You’re the only director for now:"
   },
   {
    "fr": "invite tes amis à jouer",
-   "en": ""
+   "en": "invite your friends to play"
   },
   {
    "fr": "Podium",
-   "en": ""
+   "en": "Podium"
   },
   {
    "fr": "Tu n’apparais pas encore ici : {0}",
-   "en": ""
+   "en": "You don’t appear here yet: {0}"
   },
   {
    "fr": "progresse cette semaine pour entrer dans la course.",
-   "en": ""
+   "en": "make progress this week to join the race."
   },
   {
    "fr": "ta première publication arrive.",
-   "en": ""
+   "en": "your first entry is on its way."
   },
   {
    "fr": "un gardien vaincu",
-   "en": ""
+   "en": "a guardian defeated"
   },
   {
    "fr": " · gardien vaincu",
-   "en": ""
+   "en": " · guardian defeated"
   },
   {
    "fr": "Strate −{0} atteinte",
-   "en": ""
+   "en": "Stratum −{0} reached"
   },
   {
    "fr": "duels gagnés au Cercle des quais",
-   "en": ""
+   "en": "duels won at the Quayside Circle"
   },
   {
    "fr": "{0} cartes découvertes",
-   "en": ""
+   "en": "{0} cards discovered"
   },
   {
    "fr": "Recruteur",
-   "en": ""
+   "en": "Recruiter"
   },
   {
    "fr": "toi",
-   "en": ""
+   "en": "you"
   },
   {
    "fr": "le {0}",
-   "en": ""
+   "en": "on {0}"
   },
   {
    "fr": "Les duels gagnés au Cercle des quais contre tes amis. Chaque ami compte une fois par semaine, et trois amis différents au plus : on ne monte pas en jouant toujours contre le même.",
-   "en": ""
+   "en": "Duels won at the Quayside Circle against your friends. Each friend counts once a week, and three different friends at most: you don’t climb by always playing the same person."
   },
   {
    "fr": "La semaine compte les Joutes gagnées depuis lundi.",
-   "en": ""
+   "en": "The week counts Jousts won since Monday."
   },
   {
    "fr": "Aller au Cercle",
-   "en": ""
+   "en": "Go to the Circle"
   },
   {
    "fr": "Le plus haut quai que ton escouade a atteint sur la Flèche ({0} quais). Une défaite te fait redescendre, mais ton record ne bouge pas.",
-   "en": ""
+   "en": "The highest quay your squad has reached on the Spire ({0} quays). A defeat sends you back down, but your record doesn’t move."
   },
   {
    "fr": "À quai égal, le premier arrivé passe devant : la date est enregistrée au moment où tu atteins ton record.",
-   "en": ""
+   "en": "On equal quays, whoever got there first ranks higher: the date is recorded when you reach your record."
   },
   {
    "fr": "La semaine compte les quais de record gagnés depuis lundi.",
-   "en": ""
+   "en": "The week counts record quays won since Monday."
   },
   {
    "fr": "Monter à la Flèche",
-   "en": ""
+   "en": "Climb the Spire"
   },
   {
    "fr": "La Strate la plus profonde ouverte sous ton district. Vaincre son gardien te place devant ceux qui ne l’ont pas encore battu.",
-   "en": ""
+   "en": "The deepest Stratum opened beneath your district. Defeating its guardian puts you ahead of those who haven’t beaten it yet."
   },
   {
    "fr": "À profondeur égale, le premier arrivé passe devant : la date est enregistrée au moment où tu atteins la Strate.",
-   "en": ""
+   "en": "At equal depth, whoever got there first ranks higher: the date is recorded when you reach the Stratum."
   },
   {
    "fr": "Ton record ne redescend jamais. La semaine compte les Strates gagnées depuis lundi.",
-   "en": ""
+   "en": "Your record never goes down. The week counts Strata won since Monday."
   },
   {
    "fr": "Chaque carte que tu possèdes vaut selon son métal, et gagne {0} % de sa valeur par niveau monté. Chaque carte différente découverte ajoute {1} points.",
-   "en": ""
+   "en": "Each card you own is worth points by its metal, and gains {0} % of its value per level. Each different card discovered adds {1} points."
   },
   {
    "fr": "Découvrir compte plus que répéter : quarante doublons de fer pèsent moins que quelques cartes nouvelles. Le record ne redescend pas si tu recycles.",
-   "en": ""
+   "en": "Discovering counts more than repeating: forty iron duplicates weigh less than a few new cards. The record doesn’t go down if you recycle."
   },
   {
    "fr": "Les Joutes",
-   "en": ""
+   "en": "The Jousts"
   },
   {
    "fr": "avec le multijoueur",
-   "en": ""
+   "en": "with multiplayer"
   },
   {
    "fr": "Bientôt, ton escouade pourra affronter celle d’un autre directeur. Ce tableau classera les combats gagnés contre d’autres joueurs.",
-   "en": ""
+   "en": "Soon, your squad will be able to face another director’s. This board will rank fights won against other players."
   },
   {
    "fr": "Ton deck en défense",
-   "en": ""
+   "en": "Your deck on defence"
   },
   {
    "fr": "Quand tu ne joues pas, ton escouade se défend toute seule.",
-   "en": ""
+   "en": "When you’re not playing, your squad defends itself."
   },
   {
    "fr": "Les niveaux des cartes seront plafonnés : la stratégie compte plus que le temps passé.",
-   "en": ""
+   "en": "Card levels will be capped: strategy counts more than time spent."
   },
   {
    "fr": "Une saison par mois",
-   "en": ""
+   "en": "One season per month"
   },
   {
    "fr": "Ton record reste, le classement de la saison repart à zéro.",
-   "en": ""
+   "en": "Your record stays; the season ranking resets to zero."
   },
   {
    "fr": "Bienvenue, directeur",
-   "en": ""
+   "en": "Welcome, director"
   },
   {
    "fr": "Choisis ton pseudo",
-   "en": ""
+   "en": "Pick your username"
   },
   {
    "fr": "Ton pseudo",
-   "en": ""
+   "en": "Your username"
   },
   {
    "fr": "Ton nom de directeur : c’est lui que les autres joueurs verront sur les écrans de Vertiga.",
-   "en": ""
+   "en": "Your director name: it’s what other players will see on the screens of Vertiga."
   },
   {
    "fr": "Ton nom de compte Google et ton e-mail ne sont jamais affichés.",
-   "en": ""
+   "en": "Your Google account name and your email are never shown."
   },
   {
    "fr": "3 à 18 caractères",
-   "en": ""
+   "en": "3 to 18 characters"
   },
   {
    "fr": "Pseudo",
-   "en": ""
+   "en": "Username"
   },
   {
    "fr": "Ton Porteur de tête d’escouade, {0}, sera ton portrait. Tu peux te retirer du Tableau quand tu veux.",
-   "en": ""
+   "en": "Your squad’s lead Bearer, {0}, will be your portrait. You can leave the Board whenever you like."
   },
   {
    "fr": "Enregistrer",
-   "en": ""
+   "en": "Save"
   },
   {
    "fr": "Valider mon pseudo",
-   "en": ""
+   "en": "Confirm my username"
   },
   {
    "fr": "Plus tard (dans Plus, en tête du menu)",
-   "en": ""
+   "en": "Later (in More, at the top of the menu)"
   }
  ]
 }

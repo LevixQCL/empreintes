@@ -7,7 +7,6 @@ import { app, compteEtat, D, racine } from './etat';
 import { afficher } from './rendu';
 import { sauver } from './synchro';
 import { battreParrainage } from './parrainage';
-import { t as tr } from '../core/i18n';
 
 /**
  * Les comptes à rebours et les jauges de durée du district (decompte, jaugeTemps) avancent chaque seconde sans redessiner l'écran.
@@ -58,7 +57,7 @@ export function battre() {
   const u = compteEtat.utilisateur;
   J.noterTemps(app.jeu, now, {
     actif: !document.hidden && now - app.dernierGeste < 120_000,
-    appareil: matchMedia(tr('(min-width: 1100px)')).matches ? 'pc' : 'telephone',
+    appareil: matchMedia('(min-width: 1100px)').matches ? 'pc' : 'telephone',
     compte: !u ? 'aucun' : u.anonyme ? 'invisible' : 'protege',
   });
   annoncer(nouvelles);

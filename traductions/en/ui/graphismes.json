@@ -3,31 +3,31 @@
  "entrees": [
   {
    "fr": "Complets",
-   "en": ""
+   "en": "Full"
   },
   {
    "fr": "Tout bouge et brille : la Cuvette vivante, les reflets des cartes, le verre flouté",
-   "en": ""
+   "en": "Everything moves and shines: the living Basin, the card reflections, the frosted glass"
   },
   {
    "fr": "Légers",
-   "en": ""
+   "en": "Light"
   },
   {
    "fr": "Pour un appareil qui chauffe ou rame : la Cuvette reste peinte, les lueurs ne pulsent plus",
-   "en": ""
+   "en": "For a device that heats up or lags: the Basin stays painted, the glows stop pulsing"
   },
   {
    "fr": "Auto",
-   "en": ""
+   "en": "Auto"
   },
   {
    "fr": "Allégés sur cet appareil, qui peinait à suivre",
-   "en": ""
+   "en": "Lightened on this device, which was struggling to keep up"
   },
   {
    "fr": "Complets sur cet appareil ; allégés tout seuls si l’écran peine à suivre",
-   "en": ""
+   "en": "Full on this device; lightened automatically if the screen struggles to keep up"
   }
  ]
 }

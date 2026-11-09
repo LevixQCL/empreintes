@@ -7,7 +7,7 @@ import type { GesteDef, Lignee, Rarete } from './types';
 import { t as tr } from './i18n';
 
 export const RARETES: Rarete[] = ['fer', 'cuivre', 'argent', 'or', 'nacre'];
-export const NOMS_RARETE: Record<Rarete, string> = { fer: tr('Fer'), cuivre: tr('Cuivre'), argent: tr('Argent'), or: 'Or', nacre: tr('Nacre') };
+export const NOMS_RARETE: Record<Rarete, string> = { fer: tr('Fer'), cuivre: tr('Cuivre'), argent: tr('Argent'), or: tr('Or'), nacre: tr('Nacre') };
 
 export const COLLECTION = {
   /** chance qu'un combat normal fasse tomber une carte */

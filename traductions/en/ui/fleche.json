@@ -238,6 +238,10 @@
    "en": "you climb one quay at a time"
   },
   {
+   "fr": "Reçu",
+   "en": "Received"
+  },
+  {
    "fr": "Ton escouade tient le dernier quai",
    "en": "Your squad holds the last quay"
   },
@@ -292,6 +296,10 @@
   {
    "fr": "quais gravés à récompense",
    "en": "engraved quays with rewards"
+  },
+  {
+   "fr": "L’histoire",
+   "en": "The story"
   },
   {
    "fr": "Les îles des Hauts ne se posent jamais : elles dérivent au-dessus de la mer et ne s’arrêtent qu’aux flèches d’amarrage. Il n’en reste qu’une debout, et ce sont les Hauts qui la tiennent.",

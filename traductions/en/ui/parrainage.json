@@ -3,135 +3,135 @@
  "entrees": [
   {
    "fr": "Recruter des directeurs",
-   "en": ""
+   "en": "Recruit directors"
   },
   {
    "fr": "La ville ne se tient pas seule. Fais venir un ami : quand il joue vraiment, vous êtes récompensés tous les deux.",
-   "en": ""
+   "en": "The city doesn’t hold itself up. Bring a friend in: when they really play, you’re both rewarded."
   },
   {
    "fr": "Ton code",
-   "en": ""
+   "en": "Your code"
   },
   {
    "fr": "Ton empreinte de recrutement",
-   "en": ""
+   "en": "Your recruitment imprint"
   },
   {
    "fr": "Le parrainage passe par ton compte : il s’active dès que le jeu est connecté.",
-   "en": ""
+   "en": "Sponsorship goes through your account: it activates as soon as the game is online."
   },
   {
    "fr": "Gravure…",
-   "en": ""
+   "en": "Engraving…"
   },
   {
    "fr": "Envoyer le lien",
-   "en": ""
+   "en": "Send the link"
   },
   {
    "fr": "Copier",
-   "en": ""
+   "en": "Copy"
   },
   {
    "fr": "Le lien ouvre le jeu avec ton code déjà entré. Ton ami peut aussi le saisir lui-même, au début de sa partie.",
-   "en": ""
+   "en": "The link opens the game with your code already entered. Your friend can also type it in themselves, at the start of their game."
   },
   {
    "fr": "Un ami t’a fait venir ?",
-   "en": ""
+   "en": "Did a friend bring you here?"
   },
   {
    "fr": "Entre son code avant d’avoir vaincu la Strate −{0} : vous serez liés pour de bon.",
-   "en": ""
+   "en": "Enter their code before you defeat Stratum −{0}: you’ll be linked for good."
   },
   {
    "fr": "EMP-XXXXXX",
-   "en": ""
+   "en": "EMP-XXXXXX"
   },
   {
    "fr": "Code de ton parrain",
-   "en": ""
+   "en": "Your sponsor’s code"
   },
   {
    "fr": "Vérification…",
-   "en": ""
+   "en": "Checking…"
   },
   {
    "fr": "Valider",
-   "en": ""
+   "en": "Confirm"
   },
   {
    "fr": "Ce que vous gagnez",
-   "en": ""
+   "en": "What you both earn"
   },
   {
    "fr": "Dès son arrivée",
-   "en": ""
+   "en": "As soon as they arrive"
   },
   {
    "fr": ": {0} cristaux, une carte au choix (au moins du cuivre) et ses colis de Ravitaillement doublés pendant {1} jours.",
-   "en": ""
+   "en": ": {0} crystals, a card of their choice (copper or better) and their supply parcels doubled for {1} days."
   },
   {
    "fr": "Tes {0} premières recrues te rapportent ces récompenses. Au-delà, elles comptent toujours pour les distinctions.",
-   "en": ""
+   "en": "Your first {0} recruits bring you these rewards. Beyond that, they still count for distinctions."
   },
   {
    "fr": "Carte du parrainage",
-   "en": ""
+   "en": "Sponsorship card"
   },
   {
    "fr": "Elle ne se trouve nulle part ailleurs. Chaque exemplaire garde dans son journal le nom de l’autre directeur. Une carte de cuivre ordinaire en combat : le parrainage ne fait gagner personne.",
-   "en": ""
+   "en": "It can’t be found anywhere else. Each copy keeps the other director’s name in its log. An ordinary copper card in combat: sponsorship doesn’t win anyone a fight."
   },
   {
    "fr": "Tes recrues",
-   "en": ""
+   "en": "Your recruits"
   },
   {
    "fr": "Lecture…",
-   "en": ""
+   "en": "Reading…"
   },
   {
    "fr": "Lecture de tes recrues…",
-   "en": ""
+   "en": "Reading your recruits…"
   },
   {
    "fr": "Pas encore de recrue. Envoie ton lien à un ami : il apparaîtra ici dès son arrivée.",
-   "en": ""
+   "en": "No recruits yet. Send your link to a friend: they’ll appear here as soon as they arrive."
   },
   {
    "fr": "hors récompenses",
-   "en": ""
+   "en": "no more rewards"
   },
   {
    "fr": "{0} / {1} recrues récompensées · une recrue est active dès la Strate −1 vaincue.",
-   "en": ""
+   "en": "{0} / {1} recruits rewarded · a recruit counts as active once Stratum −1 is beaten."
   },
   {
    "fr": "Distinctions",
-   "en": ""
+   "en": "Distinctions"
   },
   {
    "fr": "{0} sur {1} recrues actives",
-   "en": ""
+   "en": "{0} of {1} active recruits"
   },
   {
    "fr": "{0} / {1} recrues actives",
-   "en": ""
+   "en": "{0} / {1} active recruits"
   },
   {
    "fr": "Recommandé par {0}",
-   "en": ""
+   "en": "Recommended by {0}"
   },
   {
    "fr": "Chaque palier que tu atteins lui rapporte quelque chose : à la Strate −3 et à la Tour du Noyau niveau 3, tu reçois aussi ta part.",
-   "en": ""
+   "en": "Every tier you reach brings them something: at Stratum −3 and at Core Tower level 3, you get your share too."
   },
   {
    "fr": "Pour que {0} reçoive ses récompenses, relie ta partie à Google (Menu › Compte). Tes paliers partiront à ce moment-là, rien n’est perdu.",
-   "en": ""
+   "en": "For {0} to receive their rewards, link your game to Google (Menu › Account). Your tiers will be sent then; nothing is lost."
   }
  ]
 }

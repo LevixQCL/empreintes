@@ -91,7 +91,7 @@ const groupe = (titre: string, ids: string[], texte: string) => `<div class="dem
 
 const demoEquipes = () => `<div class="demo-equipes">`
   + groupe(tr('Au district'), ['coursier', 'docker', 'guetteur'], tr('Postés dans un bâtiment, ils le font produire davantage.'))
-  + groupe('L’escouade', ['ilka', 'doran', 'vela'], tr('Elle descend combattre. Un Porteur qui descend quitte son poste.'))
+  + groupe(tr('L’escouade'), ['ilka', 'doran', 'vela'], tr('Elle descend combattre. Un Porteur qui descend quitte son poste.'))
   + `</div>`;
 
 const demoBoucle = () => `<ol class="demo-boucle">`

@@ -71,7 +71,7 @@ function frequencesLignee(l: Lignee): number[] {
 /** La zone de Fréquences d'une lignée (« 1 à 5 »), la même que dans les règles */
 export function plageFrequences(l: Lignee): string {
   const [a, b] = ZONES_FREQUENCES[l];
-  return `${a} à ${b}`;
+  return tr`${a} à ${b}`;
 }
 
 /** Les actions du deck de départ : le repère conseillé */
@@ -93,7 +93,7 @@ function fourchette(t: TypeEffet): string {
   const parts = MODULES.map((m) => m.effet).filter((e): e is NonNullable<typeof e> & { part: number } => !!e && e.type === t && 'part' in e).map((e) => e.part);
   if (!parts.length) return '';
   const a = Math.min(...parts), b = Math.max(...parts);
-  return a === b ? pc(a) : `${Math.round(a * 100)} à ${pc(b)}`;
+  return a === b ? pc(a) : tr`${Math.round(a * 100)} à ${pc(b)}`;
 }
 
 /** Les effets de prédilection d'une lignée (au moins deux cartes), du plus courant au moins courant */

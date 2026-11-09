@@ -98,6 +98,10 @@
    "en": "· a lvl {0} Bearer"
   },
   {
+   "fr": "2 places",
+   "en": "2 slots"
+  },
+  {
    "fr": "{0}, {1} {2}{3}{4}. Voir la carte",
    "en": "{0}, {1} {2}{3}{4}. See the card"
   },
@@ -108,6 +112,30 @@
   {
    "fr": "{0}, carte unique de Véla, {1} {2}, Accord. Voir la carte",
    "en": "{0}, Véla’s unique card, {1} {2}, Accord. See the card"
+  },
+  {
+   "fr": "attaques",
+   "en": "attacks"
+  },
+  {
+   "fr": "attaque",
+   "en": "attack"
+  },
+  {
+   "fr": "protections",
+   "en": "protections"
+  },
+  {
+   "fr": "protection",
+   "en": "protection"
+  },
+  {
+   "fr": "soins",
+   "en": "heals"
+  },
+  {
+   "fr": "soin",
+   "en": "heal"
   },
   {
    "fr": "pour descendre ({0} au moins) : confie-en à un Porteur plus bas.",
@@ -132,6 +160,14 @@
   {
    "fr": ": {0} tes Résonances",
    "en": ": {0} your Resonances"
+  },
+  {
+   "fr": "ces chiffres coupent",
+   "en": "these numbers break"
+  },
+  {
+   "fr": "ce chiffre coupe",
+   "en": "this number breaks"
   },
   {
    "fr": " : toute l’échelle est couverte",
@@ -236,6 +272,10 @@
   {
    "fr": "Mes escouades",
    "en": "My squads"
+  },
+  {
+   "fr": "Descend",
+   "en": "Going down"
   },
   {
    "fr": "Former",
@@ -552,6 +592,10 @@
   {
    "fr": "par l’exploit",
    "en": "through the feat"
+  },
+  {
+   "fr": "Active",
+   "en": "Active"
   },
   {
    "fr": "Niveau atteint · Marque à gagner",

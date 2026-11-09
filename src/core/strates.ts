@@ -336,7 +336,7 @@ export const HALTES: HalteDef[] = [
     t('Les Veilleurs de Tobin, perdus ici, ont planté leur campement dans les trous d’un plus ancien : celui de l’équipe dont une seule fouilleuse est remontée, il y a des années.'), [
       d(t('Les piquets'), v('nuit', t('Deux rangées de trous. Les neufs sont tombés pile dans les vieux. Personne ne leur avait donné le plan.')), v('kessa', t('Leurs piquets sont plantés dans les trous de l’ancien camp. Exactement dans les mêmes.')), v('', t('Les piquets neufs sont plantés pile dans les trous d’un campement plus ancien.'))),
       d(t('Deux relevés'), v('sasha', t('La même table, relevée par les deux équipes. Les anciens comptent quatorze lignes, les nouveaux onze. Signé, contresigné.')), v('doran', t('Deux relevés de la même table. Quatorze lignes pour les anciens, onze pour les nouveaux. Il en manque trois.')), v('', t('Deux relevés de la même table, à des années d’écart : quatorze lignes, puis onze.'))),
-      d('L’ambre', v('kessa', t('L’ambre suinte des murs. Il sent le miel et la cire. Mes parents parlaient de cette odeur, et de la glande qu’on leur a donnée pour le produire.')), v('', t('De l’ambre suinte des murs, épais, doré.'))),
+      d(t('L’ambre'), v('kessa', t('L’ambre suinte des murs. Il sent le miel et la cire. Mes parents parlaient de cette odeur, et de la glande qu’on leur a donnée pour le produire.')), v('', t('De l’ambre suinte des murs, épais, doré.'))),
     ], [
       { texte: t('Rallumer leurs lampes'), effet: 'lampe', piste: 'nous', drapeau: 'lampes-veilleurs', recit: t('Tu rallumes une à une les lampes des Veilleurs. Si l’un d’eux se réveille, il verra qu’on est venu. Tu en gardes une pour la route.') },
       { texte: t('Emporter les relevés'), effet: 'eclat', piste: 'avant', carte: 'archive', recit: t('Les deux relevés remonteront chez les Veilleurs. Glissé dans une reliure, un Éclat qu’un Veilleur gardait pour lui.') },
@@ -458,7 +458,7 @@ export const HALTES: HalteDef[] = [
   // ---------- −11 · L'eau d'en bas ----------
   H(11, 1, t('Le bord de l’eau'),
     t('Sous la salle du Premier Porteur, l’escalier continue. Trente marches plus bas, il entre dans une eau immobile, si claire qu’on voit les marches poursuivre leur descente dessous.'), [
-      d('L’eau', v('sasha', t('Douce. Pas un grain de sel. Ce n’est pas la mer, directeur. Et elle est tiède, comme une main.')), v('kessa', t('Elle est tiède. Une eau qui dort au fond depuis toujours devrait être froide.')), v('', t('Une eau douce, tiède, parfaitement immobile.'))),
+      d(t('L’eau'), v('sasha', t('Douce. Pas un grain de sel. Ce n’est pas la mer, directeur. Et elle est tiède, comme une main.')), v('kessa', t('Elle est tiède. Une eau qui dort au fond depuis toujours devrait être froide.')), v('', t('Une eau douce, tiède, parfaitement immobile.'))),
       d(t('La ligne'), v('doran', t('Un trait gravé dans le mur, avec des signes à côté. Une ligne d’eau, comme la nôtre sur la digue. Sauf que celle-ci est déjà noyée de trois marches.')), v('', t('Une ligne gravée par ceux d’avant, trois marches sous la surface.'))),
       d(t('Le silence'), v('vela', t('Les empreintes d’ici ne dorment pas. Elles écoutent l’eau, comme quelqu’un qui garde une porte et n’ose pas se retourner.')), v('', t('Les cristaux de la voûte se reflètent dans l’eau sans un frisson.'))),
     ], [
@@ -571,7 +571,7 @@ export const HALTES: HalteDef[] = [
   H(15, 1, t('Les vannes'),
     t('Tout en bas, là où l’eau d’en bas entre dans la pierre, une rangée de vannes, d’un métal qui ne rouille pas.'), [
       d(t('Les vannes'), v('sasha', t('Le même métal que les vannes des Citernes, sous les Basses. Les mêmes réglages, sur une marée qui n’existe plus. Ce sont les deux bouts d’une seule machine.')), v('', t('Des vannes d’un métal sans rouille, réglées sur une marée inconnue.'))),
-      d('L’eau', v('vela', t('Elle ne vient pas d’en dessous. Elle vient d’en haut. C’est la mer, filtrée par la pierre, qui descend ici depuis toujours, au lieu de monter chez nous.')), v('', t('L’eau entre par les vannes, venue d’en haut, filtrée par la pierre.'))),
+      d(t('L’eau'), v('vela', t('Elle ne vient pas d’en dessous. Elle vient d’en haut. C’est la mer, filtrée par la pierre, qui descend ici depuis toujours, au lieu de monter chez nous.')), v('', t('L’eau entre par les vannes, venue d’en haut, filtrée par la pierre.'))),
       d(t('Une table'), v('doran', t('Une seule ligne, gravée large : « Ce qui tient ne se reprend pas. Il se rend. »')), v('', t('Une table gravée d’une seule ligne : « Ce qui tient ne se reprend pas. Il se rend. »'))),
     ], [
       { texte: t('Tourner une vanne'), effet: 'composants', piste: 'nous', carte: 'cache', recit: t('Ilka et Doran pèsent sur un volant. Il tourne d’un cran, puis se bloque. Très loin au-dessus, quelque chose répond, comme une pompe qui tousse. Au pied du volant, des outils trop grands pour nos mains.') },
@@ -581,7 +581,7 @@ export const HALTES: HalteDef[] = [
   H(15, 2, t('Se rendre'),
     t('Tu redescends aux vannes. L’escouade se tait. Chacun a compris quelque chose, et personne n’ose dire quoi.'), [
       d(t('Les vannes'), v('ilka', t('Elles sont prêtes. Elles ont toujours été prêtes. Ce qui manque, ce n’est pas la machine.')), v('', t('Les vannes attendent, réglées, intactes.'))),
-      d('L’escouade', v('vela', t('Mes peurs se taisent, ici. Pour la première fois depuis la chambre. Comme si quelqu’un les portait un peu à ma place.')), v('', t('L’escouade se tient près des vannes, sans un mot.'))),
+      d(t('L’escouade'), v('vela', t('Mes peurs se taisent, ici. Pour la première fois depuis la chambre. Comme si quelqu’un les portait un peu à ma place.')), v('', t('L’escouade se tient près des vannes, sans un mot.'))),
     ], [
       { texte: t('Noter le réglage des vannes'), effet: 'composants', piste: 'nous', carte: 'cache', recit: t('Sasha recopie chaque réglage, chaque cran, pour les Citernes. Si un jour on veut ouvrir les deux bouts ensemble, il faudra savoir comment. Derrière la dernière vanne, une réserve de chantier.') },
       { texte: t('Rester un moment'), effet: 'eclat', piste: 'avant', carte: 'archive', recit: t('Tu restes un moment près des vannes, sans rien faire, à écouter l’eau descendre. Quand tu te lèves, un Éclat est posé à l’endroit où tu étais assis.') },

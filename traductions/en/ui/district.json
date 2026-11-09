@@ -106,6 +106,10 @@
    "en": "The sea has left {0} on the shore"
   },
   {
+   "fr": "{0} dépôts",
+   "en": "{0} deposits"
+  },
+  {
    "fr": "un dépôt",
    "en": "a deposit"
   },
@@ -402,6 +406,18 @@
    "en": "Every hour it cuts {0} of what’s waiting, at least {1}: the higher it goes, the faster it works."
   },
   {
+   "fr": "environ un quart",
+   "en": "about a quarter"
+  },
+  {
+   "fr": "environ un {0}ᵉ",
+   "en": "about 1/{0}"
+  },
+  {
+   "fr": "une part",
+   "en": "a share"
+  },
+  {
    "fr": "1 cristal pour {0} points",
    "en": "1 crystal per {0} points"
   },
@@ -456,6 +472,10 @@
   {
    "fr": "{0}/{1} places · niv. {2} max{3}",
    "en": "{0}/{1} slots · lvl {2} max{3}"
+  },
+  {
+   "fr": " (titulaire)",
+   "en": " (regular)"
   },
   {
    "fr": "1 séance = 1 niveau · jusqu’au niv. {0}{1}",
@@ -576,6 +596,10 @@
   {
    "fr": "En vente aujourd’hui",
    "en": "On sale today"
+  },
+  {
+   "fr": "nouvelles cartes dans ",
+   "en": "new cards in "
   },
   {
    "fr": "Reste appuyé sur une carte pour lire son effet.",
@@ -750,6 +774,10 @@
    "en": "At work"
   },
   {
+   "fr": "vitesse normale",
+   "en": "normal speed"
+  },
+  {
    "fr": "fabrique {0} fois plus vite",
    "en": "crafts {0} times faster"
   },
@@ -788,6 +816,10 @@
   {
    "fr": "Améliorer au niveau {0}{1}",
    "en": "Upgrade to level {0}{1}"
+  },
+  {
+   "fr": " : possible",
+   "en": ": possible"
   },
   {
    "fr": "Entrer dans la tour",
@@ -844,10 +876,6 @@
   {
    "fr": "Coût",
    "en": "Cost"
-  },
-  {
-   "fr": "Cristaux",
-   "en": "Crystals"
   },
   {
    "fr": "Passer au niveau {0}",
@@ -1410,6 +1438,14 @@
    "en": "for this departure{0} (you have {1})."
   },
   {
+   "fr": " pour une exploration",
+   "en": " for an exploration"
+  },
+  {
+   "fr": " pour une sortie courte",
+   "en": " for a short trip"
+  },
+  {
    "fr": "Cartes du district · {0}",
    "en": "District cards · {0}"
   },
@@ -1722,6 +1758,10 @@
    "en": "{0}, your Legacy{1}. See the card"
   },
   {
+   "fr": ", scellée",
+   "en": ", sealed"
+  },
+  {
    "fr": "« On attend quoi, l’Élu ? Qu’elle s’ouvre toute seule ? »",
    "en": "“What are we waiting for, Chosen One? For it to open itself?”"
   },
@@ -1952,10 +1992,6 @@
   {
    "fr": "trouve",
    "en": "find"
-  },
-  {
-   "fr": "{0} creuseur{1}",
-   "en": "{0} digger{1}"
   },
   {
    "fr": "monte la Tour du Noyau au",
@@ -2474,6 +2510,10 @@
    "en": "{0}STRATUM −{1} · {2}"
   },
   {
+   "fr": "FOUILLE · ",
+   "en": "DIG · "
+  },
+  {
    "fr": "Défi · quai {0}",
    "en": "Challenge · quay {0}"
   },
@@ -2716,6 +2756,18 @@
   {
    "fr": "{0} cartes, prêt",
    "en": "{0} cards, ready"
+  },
+  {
+   "fr": "Monter",
+   "en": "Climb"
+  },
+  {
+   "fr": "Piller",
+   "en": "Raid"
+  },
+  {
+   "fr": "Partir",
+   "en": "Set off"
   }
  ]
 }

@@ -2,12 +2,8 @@
  "source": "src/main.ts",
  "entrees": [
   {
-   "fr": ".geste, .combattant",
-   "en": ""
-  },
-  {
    "fr": "Essai",
-   "en": ""
+   "en": "Test"
   }
  ]
 }

@@ -281,7 +281,7 @@ export function htmlExploration(j: Jeu, choisie?: number, ui: { details?: readon
     let dedans: string;
     let nom: string;
     if (vision === 'claire') {
-      label = `${s.condition && CONDITIONS[s.condition] ? `${CONDITIONS[s.condition]!.nom} · ` : ''}${NOMS[s.type]}${s.escorte?.length ? tr` : un groupe (${nomsGroupe(s)})` : s.ennemi ? ` : ${ennemiDef(s.ennemi).nom}` : ''}${etat === 'ici' ? tr(' (tu es ici)') : s.faite ? ' (visitée)' : ''}`;
+      label = `${s.condition && CONDITIONS[s.condition] ? `${CONDITIONS[s.condition]!.nom} · ` : ''}${NOMS[s.type]}${s.escorte?.length ? tr` : un groupe (${nomsGroupe(s)})` : s.ennemi ? ` : ${ennemiDef(s.ennemi).nom}` : ''}${etat === 'ici' ? tr(' (tu es ici)') : s.faite ? tr(' (visitée)') : ''}`;
       dedans = medaillon(s);
       if (s.type === 'elite') dedans += `<span class="ex-badge sceau" aria-hidden="true">${ICO.verrou}</span>`;
       if (s.escorte?.length) dedans += `<span class="ex-badge groupe" aria-hidden="true">×${s.escorte.length + 1}</span>`;

@@ -3,27 +3,27 @@
  "entrees": [
   {
    "fr": "Partie de secours restaurée : Strate −{0}.",
-   "en": ""
+   "en": "Backup game restored: Stratum −{0}."
   },
   {
    "fr": "écriture : ",
-   "en": ""
+   "en": "writing: "
   },
   {
    "fr": "Progression du compte chargée.",
-   "en": ""
+   "en": "Account progress loaded."
   },
   {
    "fr": "Progression du compte chargée : Strate −{0}.",
-   "en": ""
+   "en": "Account progress loaded: Stratum −{0}."
   },
   {
    "fr": "Hors ligne : partie de cet appareil.",
-   "en": ""
+   "en": "Offline: game on this device."
   },
   {
    "fr": "Par sécurité, Google demande une connexion récente : touche « Se déconnecter », reconnecte-toi, puis supprime ton compte tout de suite après.",
-   "en": ""
+   "en": "For security, Google asks for a recent sign-in: tap “Sign out”, sign back in, then delete your account right after."
   }
  ]
 }

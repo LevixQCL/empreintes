@@ -3,43 +3,43 @@
  "entrees": [
   {
    "fr": "Allumer le district",
-   "en": ""
+   "en": "Power up the district"
   },
   {
    "fr": "Touche le Générateur et postes-y le Coursier, une recrue augmentée : il y produit deux fois plus. Garde Ilka, Doran et Véla pour l’escouade : en descendant, ils quitteraient leur poste.",
-   "en": ""
+   "en": "Tap the Generator and assign the Courier there, an augmented recruit: he produces twice as much. Keep Ilka, Doran and Véla for the squad: going down, they’d leave their posts."
   },
   {
    "fr": "Construire ton deck",
-   "en": ""
+   "en": "Build your deck"
   },
   {
    "fr": "Dans l’onglet Escouade, touche « Gérer ses cartes » sous Ilka et confie-lui l’Œil-relais, trouvé dans la chambre. Elle porte déjà 6 cartes : reprends-en une d’abord. Les cartes de tes trois Porteurs forment ton deck.",
-   "en": ""
+   "en": "In the Squad tab, tap “Manage cards” under Ilka and give her the Relay Eye, found in the chamber. She already carries 6 cards: take one back first. Your three Bearers’ cards make up your deck."
   },
   {
    "fr": "Écouter Ysé",
-   "en": ""
+   "en": "Listen to Ysé"
   },
   {
    "fr": "Ouvre les Chroniques et lis le premier chapitre. À chaque première lecture, Ysé glisse une carte entre les pages ; confie-la à un Porteur (onglet Escouade) pour qu’elle entre dans ton deck.",
-   "en": ""
+   "en": "Open the Chronicles and read the first chapter. On each first reading, Ysé slips a card between the pages; give it to a Bearer (Squad tab) so it enters your deck."
   },
   {
    "fr": "Vaincre la Strate −1",
-   "en": ""
+   "en": "Defeat Stratum −1"
   },
   {
    "fr": "Ton escouade est prête (onglet Escouade). Entre dans la Tour du Noyau et explore la Strate −1 salle par salle, jusqu’à son gardien.",
-   "en": ""
+   "en": "Your squad is ready (Squad tab). Enter the Core Tower and explore Stratum −1 room by room, up to its guardian."
   },
   {
    "fr": "Trouver des creuseurs",
-   "en": ""
+   "en": "Find diggers"
   },
   {
    "fr": "Pour percer la Strate −2, il faut {0} creuseurs : le gardien t’en a amené un. Au Port (onglet du bas), envoie une recrue en mission en mer : des rescapés des ruines noyées suivront.",
-   "en": ""
+   "en": "To break through to Stratum −2, you need {0} diggers: the guardian brought you one. At the Port (bottom tab), send a recruit on a mission at sea: survivors from the drowned ruins will follow."
   }
  ]
 }

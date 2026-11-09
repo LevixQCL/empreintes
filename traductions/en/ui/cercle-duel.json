@@ -3,35 +3,35 @@
  "entrees": [
   {
    "fr": "Duel",
-   "en": ""
+   "en": "Duel"
   },
   {
    "fr": "Cercle des quais · {0}",
-   "en": ""
+   "en": "Quayside Circle · {0}"
   },
   {
    "fr": "à armes égales",
-   "en": ""
+   "en": "on equal terms"
   },
   {
    "fr": "Défi envoyé",
-   "en": ""
+   "en": "Challenge sent"
   },
   {
    "fr": "{0} le reçoit sur son Cercle. Le duel commence dès qu’il l’accepte : {1} secondes par tour, les deux chaînes partent en même temps.",
-   "en": ""
+   "en": "{0} receives it at their Circle. The duel starts as soon as they accept: {1} seconds per turn, both chains go off at the same time."
   },
   {
    "fr": "Code du duel",
-   "en": ""
+   "en": "Duel code"
   },
   {
    "fr": "Il peut aussi le rejoindre avec ce code.",
-   "en": ""
+   "en": "They can also join with this code."
   },
   {
    "fr": "Annuler le défi",
-   "en": ""
+   "en": "Cancel the challenge"
   }
  ]
 }

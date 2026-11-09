@@ -87,16 +87,16 @@ export function texteEffet(e: Effet): string {
 /** Formule courte (15 signes au plus) posée sur la carte à côté du nom de l'effet ; la phrase entière va dans le détail */
 export function formuleEffet(e: Effet): string {
   switch (e.type) {
-    case 'percant': return 'ignore bouclier';
-    case 'siphon': return `rend ${pc(e.part)}`;
+    case 'percant': return t('ignore bouclier');
+    case 'siphon': return t`rend ${pc(e.part)}`;
     case 'flux': return t`Flux +${e.v}`;
     case 'desarmer': return t`−${pc(e.part)} ennemi`;
     case 'fissure': return t`+${pc(e.part)} dégâts`;
-    case 'elan': return '+1 place';
+    case 'elan': return t('+1 place');
     case 'crescendo': return t`+${pc(e.part)} / carte`;
     case 'accord': return t('Fréquence libre');
-    case 'vague': return 'soigne tous';
-    case 'rempart': return `garde ${pc(e.part)}`;
+    case 'vague': return t('soigne tous');
+    case 'rempart': return t`garde ${pc(e.part)}`;
     case 'riposte': return t`frappe ${pc(e.part)} du bouclier`;
     case 'decharge': return e.max ? t`+${pc(e.part)}, ${e.max} Flux` : e.recharge ? t`+${pc(e.part)} / Flux, recharge` : t`+${pc(e.part)} / Flux vidé`;
     case 'diapason': return t('Fréq. d’avant');
@@ -108,9 +108,9 @@ export function formuleEffet(e: Effet): string {
     case 'debord': return t('tous, trop → bouclier');
     case 'rapt': return t('vole le bouclier');
     case 'rappel': return t('repioche la + forte');
-    case 'surtension': return `+${pc(e.part)}, −PV`;
+    case 'surtension': return t`+${pc(e.part)}, −PV`;
     case 'empreinte': return t('copie l’effet');
-    case 'releve': return 'remet debout';
+    case 'releve': return t('remet debout');
     case 'pioche': return t('+1 carte au tour suivant');
     case 'breche': return t('brise le bouclier');
     case 'secours': return t`+${pc(e.part)} / Porteur à terre`;
@@ -119,7 +119,7 @@ export function formuleEffet(e: Effet): string {
     case 'servo': return t('lourde = 1 place');
     case 'contrepoint': return t`+${pc(e.part)} / lignée`;
     case 'execution': return t`achève sous ${pc(e.part)}`;
-    case 'tenacite': return 'personne ne tombe';
+    case 'tenacite': return t('personne ne tombe');
   }
 }
 

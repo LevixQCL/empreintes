@@ -26,7 +26,7 @@ export function tick(j: Jeu, now: number): string[] {
 
   // le Générateur taille le cristal brut en cristaux (9 novembre 2026) : rien ne se perd, il finit ce qui reste pendant l'absence
   const ec = eclatsDeTaille(j, raffiner(j, heures), now);
-  if (ec) nouvelles.push(tr`Le Générateur a recueilli ${ec > 1 ? `${ec} Éclats` : tr('un Éclat')} en taillant le minerai.`);
+  if (ec) nouvelles.push(tr`Le Générateur a recueilli ${ec > 1 ? tr`${ec} Éclats` : tr('un Éclat')} en taillant le minerai.`);
 
   const soin = soinParHeure(j) * heures;
   for (const id of Object.keys(j.porteurs)) {

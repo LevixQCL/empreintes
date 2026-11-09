@@ -25,7 +25,7 @@ export const RANGS_MAREE: readonly RangMaree[] = ['montante', 'vive', 'grande'];
 /** Les chiffres de chaque rang (tous les réglages des contrats sont ici) */
 export const MAREES = {
   montante: { nom: tr('Petite vive-eau'), coef: 80, strate: 3, porteurs: 2, difficulte: 6, heures: 4, usure: 5, composants: 90 },
-  vive: { nom: 'Vive-eau', coef: 95, strate: 6, porteurs: 3, difficulte: 11, heures: 8, usure: 8, composants: 158 },
+  vive: { nom: tr('Vive-eau'), coef: 95, strate: 6, porteurs: 3, difficulte: 11, heures: 8, usure: 8, composants: 158 },
   grande: { nom: tr('Grande marée'), coef: 110, strate: 9, porteurs: 3, difficulte: 16, heures: 16, usure: 12, composants: 270 },
 } as const satisfies Record<RangMaree, { nom: string; coef: number; strate: number; porteurs: number; difficulte: number; heures: number; usure: number; composants: number }>;
 

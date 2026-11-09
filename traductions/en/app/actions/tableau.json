@@ -3,35 +3,35 @@
  "entrees": [
   {
    "fr": "De 3 à 18 caractères : lettres (alphabet latin), chiffres, espaces, points, tirets.",
-   "en": ""
+   "en": "3 to 18 characters: letters (Latin alphabet), digits, spaces, dots, hyphens."
   },
   {
    "fr": "Ce pseudo n’est pas accepté. Choisis-en un autre.",
-   "en": ""
+   "en": "This username isn’t accepted. Pick another one."
   },
   {
    "fr": "Un changement de pseudo par semaine : le prochain est possible le {0}.",
-   "en": ""
+   "en": "One username change per week: the next one is possible on {0}."
   },
   {
    "fr": "Ce pseudo est déjà pris par un autre directeur.",
-   "en": ""
+   "en": "This username is already taken by another director."
   },
   {
    "fr": "Impossible de réserver ce pseudo pour l’instant ({0}).",
-   "en": ""
+   "en": "Can’t reserve this username right now ({0})."
   },
   {
    "fr": "réseau",
-   "en": ""
+   "en": "network"
   },
   {
    "fr": "Bienvenue, {0} : c’est ce nom que verront les autres joueurs.",
-   "en": ""
+   "en": "Welcome, {0}: that’s the name other players will see."
   },
   {
    "fr": "Impossible de te retirer pour l’instant. Réessaie dans un instant.",
-   "en": ""
+   "en": "Can’t remove you right now. Try again in a moment."
   }
  ]
 }

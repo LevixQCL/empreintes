@@ -3,143 +3,143 @@
  "entrees": [
   {
    "fr": "La Flèche s’ouvrira quand les Hauts t’y auront convié.",
-   "en": ""
+   "en": "The Spire will open once the Heights have invited you."
   },
   {
    "fr": "Ton escouade tient le dernier quai : les Sièges s’ouvriront au passage de la prochaine île.",
-   "en": ""
+   "en": "Your squad holds the last quay: the Seats will open when the next island passes."
   },
   {
    "fr": "Quai {0} de la Flèche : les gardiens des Hauts barrent la passerelle ({1}).",
-   "en": ""
+   "en": "Spire quay {0}: the guardians of the Heights block the gangway ({1})."
   },
   {
    "fr": "L’escouade monte à l’assaut du quai {0} de la Flèche.",
-   "en": ""
+   "en": "The squad launches its assault on Spire quay {0}."
   },
   {
    "fr": "Aucun gardien à défier.",
-   "en": ""
+   "en": "No guardian to challenge."
   },
   {
    "fr": "Il faut avoir atteint le quai {0} pour en défier le gardien.",
-   "en": ""
+   "en": "You need to have reached quay {0} to challenge its guardian."
   },
   {
    "fr": "Tu tiens déjà un quai plus haut que le {0}.",
-   "en": ""
+   "en": "You already hold a quay higher than {0}."
   },
   {
    "fr": "Quai {0} de la Flèche : l’escouade de {1}, qui tient le quai, accepte le défi.",
-   "en": ""
+   "en": "Spire quay {0}: {1}’s squad, holding the quay, accepts the challenge."
   },
   {
    "fr": "L’escouade défie {0}, gardien du quai {1}.",
-   "en": ""
+   "en": "The squad challenges {0}, guardian of quay {1}."
   },
   {
    "fr": "{0} passe au niveau {1} !",
-   "en": ""
+   "en": "{0} reaches level {1}!"
   },
   {
    "fr": "Flèche : {0} est battu, ton escouade tient désormais le quai {1}.",
-   "en": ""
+   "en": "Spire: {0} is beaten, your squad now holds quay {1}."
   },
   {
    "fr": "Flèche : {0} garde le quai {1}.",
-   "en": ""
+   "en": "Spire: {0} keeps quay {1}."
   },
   {
    "fr": "Flèche : le quai {0} tombe, l’escouade monte au quai {1}.",
-   "en": ""
+   "en": "Spire: quay {0} falls, the squad climbs to quay {1}."
   },
   {
    "fr": "Flèche : repoussés au quai {0}{1}.",
-   "en": ""
+   "en": "Spire: driven back to quay {0}{1}."
   },
   {
    "fr": ", l’escouade redescend au quai {0}",
-   "en": ""
+   "en": ", the squad drops back to quay {0}"
   },
   {
    "fr": "Le pied de la Flèche n’a pas de gardien : monte d’abord d’un quai.",
-   "en": ""
+   "en": "The foot of the Spire has no guardian: climb one quay first."
   },
   {
    "fr": "Il faut avoir atteint le quai {0} pour le tenir.",
-   "en": ""
+   "en": "You need to have reached quay {0} to hold it."
   },
   {
    "fr": "Ton escouade tient déjà le quai {0}.",
-   "en": ""
+   "en": "Your squad already holds quay {0}."
   },
   {
    "fr": "Il faut trois Porteurs pour tenir un quai.",
-   "en": ""
+   "en": "It takes three Bearers to hold a quay."
   },
   {
    "fr": "Ton escouade s’installe sur le quai {0} de la Flèche : elle en devient le gardien.",
-   "en": ""
+   "en": "Your squad settles on Spire quay {0}: it becomes its guardian."
   },
   {
    "fr": "Ton escouade quitte le quai {0} de la Flèche.",
-   "en": ""
+   "en": "Your squad leaves Spire quay {0}."
   },
   {
    "fr": "Ton escouade a tenu le quai {0} face à {1} : les Hauts versent +{2} cristaux.",
-   "en": ""
+   "en": "Your squad held quay {0} against {1}: the Heights pay +{2} crystals."
   },
   {
    "fr": "{0} t’a pris le quai {1}.{2} Ta montée, elle, ne bouge pas.",
-   "en": ""
+   "en": "{0} took quay {1} from you.{2} Your climb doesn’t move."
   },
   {
    "fr": "Une pompière de la Nuit des lignes",
-   "en": ""
+   "en": "A pump worker from the Night of Lines"
   },
   {
    "fr": "Monter, c’est bien, directeur. Mais l’eau, elle, vient d’en bas. L’Écluse, c’est en dessous qu’on la cherche.",
-   "en": ""
+   "en": "Climbing’s all well and good, director. But the water comes from below. The Sluice is something you look for underneath."
   },
   {
    "fr": "Le vieux Marek, au marché",
-   "en": ""
+   "en": "Old Marek, at the market"
   },
   {
    "fr": "Les Hauts t’ont ouvert leurs quais ? Méfie-toi des cadeaux qui viennent d’en haut. Les réponses, on les a toujours creusées.",
-   "en": ""
+   "en": "The Heights opened their quays to you? Beware of gifts from up there. We’ve always had to dig for our answers."
   },
   {
    "fr": "Une mère de la rue des pompes",
-   "en": ""
+   "en": "A mother from Pump Street"
   },
   {
    "fr": "Mes enfants dorment au premier étage maintenant. Si tu trouves l’Écluse, dis-le-nous avant d’aller saluer les îles.",
-   "en": ""
+   "en": "My kids sleep on the first floor now. If you find the Sluice, tell us before you go and wave to the islands."
   },
   {
    "fr": "Un creuseur du chantier",
-   "en": ""
+   "en": "A digger from the works"
   },
   {
    "fr": "On a percé la roche pour toi. Ne laisse pas nos galeries à moitié faites pour aller faire le beau sur la Flèche.",
-   "en": ""
+   "en": "We broke through the rock for you. Don’t leave our tunnels half-dug to go showing off on the Spire."
   },
   {
    "fr": "Ysé, dans un mot glissé sous ta porte",
-   "en": ""
+   "en": "Ysé, in a note slipped under your door"
   },
   {
    "fr": "La Flèche ne partira pas. Le fond non plus. Mais c’est lui qui sait ce que ceux d’avant ont fait de leur eau.",
-   "en": ""
+   "en": "The Spire isn’t going anywhere. Neither is the deep. But the deep is what knows what those before did with their water."
   },
   {
    "fr": "Un gamin du quai",
-   "en": ""
+   "en": "A kid from the quay"
   },
   {
    "fr": "Tu nous emmèneras là-haut, dis ? Mais d’abord tu arrêtes la mer. Promis ?",
-   "en": ""
+   "en": "You’ll take us up there, won’t you? But first you stop the sea. Promise?"
   }
  ]
 }

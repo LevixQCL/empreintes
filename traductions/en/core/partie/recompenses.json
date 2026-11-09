@@ -3,175 +3,179 @@
  "entrees": [
   {
    "fr": "Lecture des Chroniques : {0} (Fer){1}.",
-   "en": ""
+   "en": "Reading the Chronicles: {0} (Iron){1}."
   },
   {
    "fr": ", un doublon",
-   "en": ""
+   "en": ", a duplicate"
   },
   {
    "fr": "Pas de colis pour l’instant : le prochain arrive demain.",
-   "en": ""
+   "en": "No parcel for now: the next one arrives tomorrow."
   },
   {
    "fr": "Ravitaillement : +{0} cristaux{1}{2}.",
-   "en": ""
+   "en": "Supplies: +{0} crystals{1}{2}."
   },
   {
    "fr": ", et une carte au choix",
-   "en": ""
+   "en": ", and a card of your choice"
   },
   {
    "fr": "Rien à choisir.",
-   "en": ""
+   "en": "Nothing to choose."
   },
   {
    "fr": "Pas d’Éclats proposés ici.",
-   "en": ""
+   "en": "No Shards offered here."
   },
   {
    "fr": "+{0} Éclats.",
-   "en": ""
+   "en": "+{0} Shards."
   },
   {
    "fr": "Nouvelle carte : {0} ({1}).",
-   "en": ""
+   "en": "New card: {0} ({1})."
   },
   {
    "fr": "Doublon : {0}.",
-   "en": ""
+   "en": "Duplicate: {0}."
   },
   {
    "fr": "Objectif du jour pas encore rempli.",
-   "en": ""
+   "en": "Daily objective not completed yet."
   },
   {
    "fr": "Objectif du jour rempli.",
-   "en": ""
+   "en": "Daily objective completed."
   },
   {
    "fr": "Le Butin de la semaine n’est pas encore prêt.",
-   "en": ""
+   "en": "The weekly loot isn’t ready yet."
   },
   {
    "fr": "Butin de la semaine ouvert : palier {0} sur {1}.",
-   "en": ""
+   "en": "Weekly loot opened: tier {0} of {1}."
   },
   {
    "fr": "{0} quitte l’entraînement pour descendre.",
-   "en": ""
+   "en": "{0} leaves training to go down."
   },
   {
    "fr": "{0} quitte son poste ({1}) pour descendre.",
-   "en": ""
+   "en": "{0} leaves their post ({1}) to go down."
   },
   {
    "fr": "La lettre de la directrice",
-   "en": ""
+   "en": "The director’s letter"
   },
   {
    "fr": "Sous la Tour du Noyau, derrière une plaque, les ouvriers avaient trouvé un coffre de nacre, gravé à la main : « Pour celui qui remontera de la deuxième Strate. Pas avant. » Ce soir, Ilka te le tend. Dedans, une lettre.",
-   "en": ""
+   "en": "Beneath the Core Tower, behind a plate, the workers had found a nacre chest, engraved by hand: “For whoever comes back up from the second Stratum. Not before.” Tonight, Ilka hands it to you. Inside, a letter."
   },
   {
    "fr": "Directeur, une Strate, n’importe qui peut la descendre une fois, par chance ou par orgueil. Deux, et revenir avec les siens, c’est autre chose : tu iras plus bas que moi. Ce qui dort sous la Tour, je n’ai jamais osé le regarder en face. Avant de partir, j’ai mis de côté dix originaux, jamais recopiés, que les Hauts n’auront pas. Un seul est pour toi : dis-moi qui tu es, et je te dirai lequel.",
-   "en": ""
+   "en": "Director, anyone can go down one Stratum once, out of luck or pride. Two, and coming back with your people, is something else: you’ll go deeper than I did. What sleeps beneath the Tower, I never dared look in the face. Before leaving, I set aside ten originals, never copied, that the Heights will never have. Only one is for you: tell me who you are, and I’ll tell you which."
   },
   {
    "fr": "Qu’est-ce qui tient un district debout ?",
-   "en": ""
+   "en": "What keeps a district standing?"
   },
   {
    "fr": "La machine",
-   "en": ""
+   "en": "The machine"
   },
   {
    "fr": "Des mains qui réparent ce que les autres jettent.",
-   "en": ""
+   "en": "Hands that mend what others throw away."
   },
   {
    "fr": "Le corps",
-   "en": ""
+   "en": "The body"
   },
   {
    "fr": "Des épaules qui encaissent pour ceux qui ne peuvent pas.",
-   "en": ""
+   "en": "Shoulders that take the blows for those who can’t."
+  },
+  {
+   "fr": "L’empreinte",
+   "en": "The imprint"
   },
   {
    "fr": "Des yeux qui voient ce que les autres ont oublié.",
-   "en": ""
+   "en": "Eyes that see what others have forgotten."
   },
   {
    "fr": "Personne ne tient seul. Le district non plus.",
-   "en": ""
+   "en": "No one stands alone. Neither does the district."
   },
   {
    "fr": "Et quand la machine s’emballe ?",
-   "en": ""
+   "en": "And when the machine runs wild?"
   },
   {
    "fr": "On court devant elle, plus vite qu’elle.",
-   "en": ""
+   "en": "You run ahead of it, faster than it."
   },
   {
    "fr": "On frappe plus fort qu’elle, une bonne fois.",
-   "en": ""
+   "en": "You hit harder than it, once and for all."
   },
   {
    "fr": "On garde son énergie, et on la relâche au bon moment.",
-   "en": ""
+   "en": "You save your strength, and let it go at the right moment."
   },
   {
    "fr": "Et quand les coups pleuvent ?",
-   "en": ""
+   "en": "And when the blows rain down?"
   },
   {
    "fr": "On encaisse ensemble, et on rend chaque coup.",
-   "en": ""
+   "en": "You take them together, and return every one."
   },
   {
    "fr": "On ne lâche jamais une proie.",
-   "en": ""
+   "en": "You never let go of your prey."
   },
   {
    "fr": "On se relève toujours, tous ensemble.",
-   "en": ""
+   "en": "You always get back up, all together."
   },
   {
    "fr": "Et quand personne ne veut entendre ?",
-   "en": ""
+   "en": "And when no one wants to listen?"
   },
   {
    "fr": "On éclaire la suite, pas à pas.",
-   "en": ""
+   "en": "You light the way ahead, step by step."
   },
   {
    "fr": "On lit la faute de l’autre, et on la lui rend.",
-   "en": ""
+   "en": "You read the other’s mistake, and hand it back to them."
   },
   {
    "fr": "On chante plus fort, tous sur la même note.",
-   "en": ""
+   "en": "You sing louder, all on the same note."
   },
   {
    "fr": "Tu as déjà reçu ton Héritage.",
-   "en": ""
+   "en": "You’ve already received your Legacy."
   },
   {
    "fr": "L’Héritage du district : la Clé de l’Héritage rejoint le paquetage de tes escouades (avec un Porteur de niveau {0}).",
-   "en": ""
+   "en": "The District Legacy: the Legacy Key joins your squads’ kit (with a level {0} Bearer)."
   },
   {
    "fr": "Cette carte ne fait pas partie de l’Héritage.",
-   "en": ""
+   "en": "This card isn’t part of the Legacy."
   },
   {
    "fr": "L’Héritage du district : {0} est à toi. Elle se portera avec un Porteur {1} de niveau {2}.",
-   "en": ""
+   "en": "The District Legacy: {0} is yours. It will be carried by a {1} Bearer of level {2}."
   },
   {
    "fr": "{0} s’éveille avec {1} : niveau {2}.",
-   "en": ""
+   "en": "{0} awakens with {1}: level {2}."
   }
  ]
 }

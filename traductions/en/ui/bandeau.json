@@ -3,19 +3,15 @@
  "entrees": [
   {
    "fr": "Gardien · Strate −{0}",
-   "en": ""
-  },
-  {
-   "fr": "Gardien",
-   "en": ""
+   "en": "Guardian · Stratum −{0}"
   },
   {
    "fr": "{0} · seconde phase",
-   "en": ""
+   "en": "{0} · second phase"
   },
   {
    "fr": "{0} entre dans le combat",
-   "en": ""
+   "en": "{0} joins the fight"
   }
  ]
 }

@@ -2,36 +2,32 @@
  "source": "src/ui/campagne.ts",
  "entrees": [
   {
-   "fr": "intro/{0}.webp",
-   "en": ""
-  },
-  {
    "fr": "◆ Ton choix à −{0}",
-   "en": ""
+   "en": "◆ Your choice at −{0}"
   },
   {
    "fr": "Réplique {0} sur {1}",
-   "en": ""
+   "en": "Line {0} of {1}"
   },
   {
    "fr": "Continuer",
-   "en": ""
+   "en": "Continue"
   },
   {
    "fr": "Touche l’écran pour la suite",
-   "en": ""
+   "en": "Tap the screen to continue"
   },
   {
    "fr": "Touche l’écran pour les écouter",
-   "en": ""
+   "en": "Tap the screen to hear them"
   },
   {
    "fr": "Ton histoire, scène après scène. Touche une scène pour la revoir.",
-   "en": ""
+   "en": "Your story, scene by scene. Tap a scene to replay it."
   },
   {
    "fr": "À vivre",
-   "en": ""
+   "en": "Yet to come"
   }
  ]
 }

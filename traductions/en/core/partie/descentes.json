@@ -114,10 +114,6 @@
    "en": "Castaways"
   },
   {
-   "fr": "Éclats",
-   "en": "Shards"
-  },
-  {
    "fr": "Durée inconnue.",
    "en": "Unknown duration."
   },
@@ -412,6 +408,10 @@
   {
    "fr": "Lui parler doucement (−3 PV chacun)",
    "en": "Talk to him gently (−3 HP each)"
+  },
+  {
+   "fr": "L’affronter",
+   "en": "Face him"
   },
   {
    "fr": "Un vendeur de pierres",
@@ -872,6 +872,10 @@
   {
    "fr": "Épreuve de la semaine : {0}{1}.",
    "en": "Trial of the week: {0}{1}."
+  },
+  {
+   "fr": " (Fêlée)",
+   "en": " (Flawed)"
   },
   {
    "fr": "{0} n’est pas encore au district.",

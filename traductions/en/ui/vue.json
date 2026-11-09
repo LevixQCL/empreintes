@@ -710,10 +710,6 @@
    "en": "Flux: {0} of {1}"
   },
   {
-   "fr": "Flux",
-   "en": "Flux"
-  },
-  {
    "fr": "{0} dégâts",
    "en": "{0} damage"
   },
@@ -744,6 +740,10 @@
   {
    "fr": " ({0} pris par le bouclier)",
    "en": " ({0} taken by the shield)"
+  },
+  {
+   "fr": ", à terre",
+   "en": ", down"
   },
   {
    "fr": "/ {0} PV{1}",
@@ -1116,10 +1116,6 @@
   {
    "fr": "Pioche {0}, défausse {1} : ouvrir le journal du combat",
    "en": "Draw {0}, discard {1}: open the combat log"
-  },
-  {
-   "fr": "Chaîne",
-   "en": "Chain"
   },
   {
    "fr": "CHAÎNE · {0} / {1}",

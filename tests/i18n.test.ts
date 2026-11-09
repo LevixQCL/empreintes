@@ -47,6 +47,13 @@ describe('t()', () => {
     expect(t`${deux} famille${deux > 1 ? 's' : ''}`).toBe('2 families');
   });
 
+  it('un contexte « §…§ » distingue deux traductions du même mot, sans changer le français', () => {
+    expect(t('§poids§Charge')).toBe('Charge');
+    definirLangue('en', new Map([['Charge', 'Charge'], ['§poids§Charge', 'Load']]));
+    expect(t('§poids§Charge')).toBe('Load');
+    expect(t('Charge')).toBe('Charge');
+  });
+
   it('construit la clé d’un gabarit avec {0}, {1}…', () => {
     expect(cleGabarit(['A ', ' et ', '.'])).toBe('A {0} et {1}.');
     expect(cleGabarit(['Seul'])).toBe('Seul');

@@ -384,6 +384,14 @@
   {
    "fr": "+1 jeton · {0}",
    "en": "+1 token · {0}"
+  },
+  {
+   "fr": "{0} / {1} aujourd’hui",
+   "en": "{0} / {1} today"
+  },
+  {
+   "fr": "demain",
+   "en": "tomorrow"
   }
  ]
 }

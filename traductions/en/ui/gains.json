@@ -2,96 +2,80 @@
  "source": "src/ui/gains.ts",
  "entrees": [
   {
-   "fr": "#app .scene-campagne",
-   "en": ""
-  },
-  {
-   "fr": "#app .scene-rencontre",
-   "en": ""
-  },
-  {
-   "fr": "#app .scene-briefing",
-   "en": ""
-  },
-  {
-   "fr": "#app .intro-pas",
-   "en": ""
-  },
-  {
-   "fr": "#app .gt-feuille",
-   "en": ""
-  },
-  {
-   "fr": "#app .options-decision",
-   "en": ""
-  },
-  {
-   "fr": "#app .legs-carte",
-   "en": ""
-  },
-  {
    "fr": "Nouvelle carte",
-   "en": ""
+   "en": "New card"
   },
   {
    "fr": "+{0} doublon{1}",
-   "en": ""
+   "en": "+{0} duplicate{1}"
   },
   {
    "fr": "vers le niveau suivant",
-   "en": ""
+   "en": "toward the next level"
   },
   {
    "fr": "Nouvel épithète",
-   "en": ""
+   "en": "New epithet"
   },
   {
    "fr": "La carte se souvient",
-   "en": ""
+   "en": "The card remembers"
   },
   {
    "fr": "à choisir dans sa fiche",
-   "en": ""
+   "en": "choose it on its page"
   },
   {
    "fr": "Marque gagnée",
-   "en": ""
+   "en": "Mark earned"
   },
   {
    "fr": "Nouveau Porteur",
-   "en": ""
+   "en": "New Bearer"
   },
   {
    "fr": "rejoint le district",
-   "en": ""
+   "en": "joins the district"
   },
   {
    "fr": "Niveau supérieur",
-   "en": ""
+   "en": "Level up"
   },
   {
    "fr": "plus de PV en combat",
-   "en": ""
+   "en": "more HP in combat"
   },
   {
    "fr": "Rare",
-   "en": ""
+   "en": "Rare"
   },
   {
    "fr": "Très rare",
-   "en": ""
+   "en": "Very rare"
   },
   {
    "fr": "Légendaire",
-   "en": ""
+   "en": "Legendary"
   },
   {
    "fr": "Carte {0} · {1}",
-   "en": ""
+   "en": "{0} card · {1}"
+  },
+  {
+   "fr": "d’or",
+   "en": "Gold"
+  },
+  {
+   "fr": "d’argent",
+   "en": "Silver"
+  },
+  {
+   "fr": "de nacre",
+   "en": "Nacre"
   },
   {
    "fr": "Touche pour continuer",
-   "en": ""
+   "en": "Tap to continue"
   }
  ]
 }

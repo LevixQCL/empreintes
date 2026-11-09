@@ -3,139 +3,139 @@
  "entrees": [
   {
    "fr": "Ta fiche de {0}{1}",
-   "en": ""
+   "en": "Your {0} profile{1}"
   },
   {
    "fr": " : une récompense t’attend",
-   "en": ""
+   "en": ": a reward awaits you"
   },
   {
    "fr": "TA FICHE DE {0}",
-   "en": ""
+   "en": "YOUR {0} PROFILE"
   },
   {
    "fr": "Sans pseudo",
-   "en": ""
+   "en": "No username"
   },
   {
    "fr": "Une récompense t’attend",
-   "en": ""
+   "en": "A reward awaits you"
   },
   {
    "fr": "{0} récompenses t’attendent",
-   "en": ""
+   "en": "{0} rewards await you"
   },
   {
    "fr": "Tes records et tes cartes marquantes",
-   "en": ""
+   "en": "Your records and standout cards"
   },
   {
    "fr": "Récupérer",
-   "en": ""
+   "en": "Claim"
   },
   {
    "fr": "Objectif {0} sur {1} rempli",
-   "en": ""
+   "en": "Objective {0} of {1} complete"
   },
   {
    "fr": "Objectif du jour rempli",
-   "en": ""
+   "en": "Daily objective complete"
   },
   {
    "fr": "{0} · une carte ou 2 Éclats, au choix",
-   "en": ""
+   "en": "{0} · a card or 2 Shards, your choice"
   },
   {
    "fr": "Palier {0} sur {1} atteint",
-   "en": ""
+   "en": "Tier {0} of {1} reached"
   },
   {
    "fr": "Ouvrir",
-   "en": ""
+   "en": "Open"
   },
   {
    "fr": "Celui-ci contient une carte au choix",
-   "en": ""
+   "en": "This one holds a card of your choice"
   },
   {
    "fr": "Cristaux et un doublon · carte au choix dans {0} colis",
-   "en": ""
+   "en": "Crystals and a duplicate · card of your choice in {0} parcels"
   },
   {
    "fr": "{0} : {1}. {2}. Voir le classement",
-   "en": ""
+   "en": "{0}: {1}. {2}. See the ranking"
   },
   {
    "fr": "{0} DU DISTRICT",
-   "en": ""
+   "en": "{0} OF THE DISTRICT"
   },
   {
    "fr": "Ce qui t’attend",
-   "en": ""
+   "en": "What’s waiting for you"
   },
   {
    "fr": "Tes records",
-   "en": ""
+   "en": "Your records"
   },
   {
    "fr": "Grand Tableau →",
-   "en": ""
+   "en": "Great Board →"
   },
   {
    "fr": "Strate record",
-   "en": ""
+   "en": "Record Stratum"
   },
   {
    "fr": "Pas encore descendu",
-   "en": ""
+   "en": "Not been down yet"
   },
   {
    "fr": "{0} cartes · {1} Porteurs",
-   "en": ""
+   "en": "{0} cards · {1} Bearers"
   },
   {
    "fr": "Étage Flèche",
-   "en": ""
+   "en": "Spire level"
   },
   {
    "fr": "Ton meilleur étage",
-   "en": ""
+   "en": "Your best level"
   },
   {
    "fr": "Jours de jeu",
-   "en": ""
+   "en": "Days played"
   },
   {
    "fr": "Jour de jeu",
-   "en": ""
+   "en": "Day played"
   },
   {
    "fr": "Depuis ton arrivée",
-   "en": ""
+   "en": "Since you arrived"
   },
   {
    "fr": "Tes cartes marquantes",
-   "en": ""
+   "en": "Your standout cards"
   },
   {
    "fr": "{0}, {1}, voir la collection",
-   "en": ""
+   "en": "{0}, {1}, see the collection"
   },
   {
    "fr": "Journal du district",
-   "en": ""
+   "en": "District log"
   },
   {
    "fr": "{0} événement{1}",
-   "en": ""
+   "en": "{0} event{1}"
   },
   {
    "fr": "Ton code :",
-   "en": ""
+   "en": "Your code:"
   },
   {
    "fr": "Recrute tes amis : vous êtes récompensés tous les deux",
-   "en": ""
+   "en": "Recruit your friends: you’re both rewarded"
   }
  ]
 }

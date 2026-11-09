@@ -3,55 +3,59 @@
  "entrees": [
   {
    "fr": "Fer",
-   "en": ""
+   "en": "Iron"
   },
   {
    "fr": "Cuivre",
-   "en": ""
+   "en": "Copper"
   },
   {
    "fr": "Argent",
-   "en": ""
+   "en": "Silver"
+  },
+  {
+   "fr": "Or",
+   "en": "Gold"
   },
   {
    "fr": "Nacre",
-   "en": ""
+   "en": "Nacre"
   },
   {
    "fr": "Place vide",
-   "en": ""
+   "en": "Empty slot"
   },
   {
    "fr": "Puissance",
-   "en": ""
+   "en": "Power"
   },
   {
    "fr": "La force de la carte à son niveau, ajustée de ses effets, de ses Fréquences et des places qu’elle prend",
-   "en": ""
+   "en": "The card’s power at its level, adjusted for its effects, its Frequencies and the slots it takes"
   },
   {
    "fr": "Métal",
-   "en": ""
+   "en": "Metal"
   },
   {
    "fr": "De la nacre au fer",
-   "en": ""
+   "en": "From nacre to iron"
   },
   {
    "fr": "Niveau",
-   "en": ""
+   "en": "Level"
   },
   {
    "fr": "Du plus haut au plus bas",
-   "en": ""
+   "en": "Highest to lowest"
   },
   {
    "fr": "Nouvelles",
-   "en": ""
+   "en": "New"
   },
   {
    "fr": "Les cartes pas encore vues d’abord, puis par puissance",
-   "en": ""
+   "en": "Unseen cards first, then by power"
   }
  ]
 }

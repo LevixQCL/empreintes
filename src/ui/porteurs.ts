@@ -19,12 +19,12 @@ import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } fr
 import { ICO, sigle } from './icones';
 import { COULEUR } from './vue';
 import { echap, virgule, texteReplie } from './outils';
-import { t as tr } from '../core/i18n';
+import { t as tr, locale, enumerer } from '../core/i18n';
 
 const LIGNEES: Lignee[] = ['tech', 'bio', 'reso'];
 /** pour accorder « Pourquoi il / elle est là » */
 const IL = new Set(['doran', 'sasha', 'aurel', 'coursier', 'docker', 'guetteur']);
-const fr = (x: number) => x.toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
+const fr = (x: number) => x.toLocaleString(locale()).replace(/\u202f/g, '\u00a0');
 
 /** Où est le Porteur en ce moment */
 function statut(j: Jeu, id: string): { texte: string; classe: string } {
@@ -148,7 +148,7 @@ function tuileCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean, scelle
     face = faceCarte({ id: g.id, nom: g.nom, lignee: 'tech', rarete: 'fer', type: g.type, v: g.v, f: [g.f], ...(g.effet ? { effet: g.effet } : {}) } as Parameters<typeof faceCarte>[0], 1, 1, origine ? { origine: origine.batiment } : {});
   }
   const sous = scellee ? `${ICO.cristal}<b>${tr`Scellée`}</b> ${tr`· un Porteur niv. ${NIVEAU_METAL.nacre}`}`
-    : [g.effet ? `<b>${echap(nomsEffets(g))}</b>` : '', g.lourd ? '2 places' : ''].filter(Boolean).join(' · ');
+    : [g.effet ? `<b>${echap(nomsEffets(g))}</b>` : '', g.lourd ? tr('2 places') : ''].filter(Boolean).join(' · ');
   const badges = (cle && prete(cle) ? `<span class="eq-t-monte" title="${tr`Peut monter`}">${ICO.monter}</span>` : '')
     + (cle && !j.vus.cartes.includes(cle) ? `<span class="eq-t-neuve" title="${tr`Nouvelle`}"></span>` : '');
   const corps = `<span class="eq-t-face">${face}${badges}</span>${sous ? `<span class="eq-t-sous">${sous}</span>` : ''}`;
@@ -186,12 +186,12 @@ function bilanDeck(j: Jeu, esc: string[]): string {
   // les trois actions : l'icône de l'action et le nombre, sans capsule (9 novembre 2026, Bryan : les anciens médaillons ne servent plus)
   const actions = (['atk', 'bouclier', 'soin'] as TypeGeste[]).map((t) => {
     const k = cartes.filter((g) => g.type === t).length;
-    return `<span class="eq-action ${t}${k ? '' : ' zero'}"><span class="eq-nb">${ICONES_ACTION[t]}<b>${k}</b></span><small>${t === 'atk' ? 'attaque' : t === 'bouclier' ? 'protection' : 'soin'}${k > 1 ? 's' : ''}</small></span>`;
+    return `<span class="eq-action ${t}${k ? '' : ' zero'}"><span class="eq-nb">${ICONES_ACTION[t]}<b>${k}</b></span><small>${t === 'atk' ? (k > 1 ? tr('attaques') : tr('attaque')) : t === 'bouclier' ? (k > 1 ? tr('protections') : tr('protection')) : k > 1 ? tr('soins') : tr('soin')}</small></span>`;
   }).join('');
   // une seule phrase de conseil, la plus utile
   const conseil = manque ? `<b class="rouge">${tr`Il manque ${manque} carte${manque > 1 ? 's' : ''}`}</b> ${tr`pour descendre (${DISTRICT.deckMin} au moins) : confie-en à un Porteur plus bas.`}`
     : !cartes.some((g) => g.type === 'soin' && g.porteur) ? `<b class="rouge">${tr`Aucun soin`}</b> ${tr`dans les cartes de tes Porteurs : seul le Stimulant du paquetage soigne.`}`
-    : suite.length >= 2 ? `${tr`Ta plus longue suite va de`} <b>${suite[0]} à ${suite[suite.length - 1]}</b>${trous.length ? `${tr`. Rien en`} <b>${trous.join(', ')}</b> ${tr`: ${trous.length > 1 ? 'ces chiffres coupent' : 'ce chiffre coupe'} tes Résonances`}` : tr(' : toute l’échelle est couverte')}${jokers ? tr` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} un trou` : ''}.`
+    : suite.length >= 2 ? `${tr`Ta plus longue suite va de`} <b>${tr`${suite[0]} à ${suite[suite.length - 1]}`}</b>${trous.length ? `${tr`. Rien en`} <b>${trous.join(', ')}</b> ${tr`: ${trous.length > 1 ? tr('ces chiffres coupent') : tr('ce chiffre coupe')} tes Résonances`}` : tr(' : toute l’échelle est couverte')}${jokers ? tr` · ${jokers} carte${jokers > 1 ? 's' : ''} ∗ comble${jokers > 1 ? 'nt' : ''} un trou` : ''}.`
     : tr('Des Fréquences qui se suivent font des Résonances : ajoute des chiffres voisins.');
   return `<section class="eq-bilan" aria-label="${tr`Le deck de l’escouade`}">`
     + `<div class="eq-bilan-tete"><span class="eq-total${manque ? ' maigre' : ''}"><b>${n}</b><span>${tr`cartes`}<small>${tr`dans le deck`}</small></span></span>`
@@ -281,7 +281,7 @@ function ongletsEscouades(j: Jeu, vue: number): string {
     + `<span class="eq-esc-nom">${tr`Escouade ${k + 1}`}</span>`
     // une escouade vide (30 octobre 2026) : un serti de cristal qui attend ses Porteurs, plutôt que trois fantômes
     + (l.length ? `<span class="eq-esc-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 26) : '<i class="eq-esc-place"></i>')).join('')}</span>` : `<span class="esc-serti plus" aria-hidden="true"></span>`)
-    + `<small>${k === active ? `${ICO.descendre}Descend` : l.length ? `${l.length} / 3` : tr('Former')}${k === garde ? `<span class="eq-garde" title="${tr`Garde le port`}">${ICO.bouclier}</span>` : ''}</small></button>`).join('') + `</div>`;
+    + `<small>${k === active ? `${ICO.descendre}${tr('Descend')}` : l.length ? `${l.length} / 3` : tr('Former')}${k === garde ? `<span class="eq-garde" title="${tr`Garde le port`}">${ICO.bouclier}</span>` : ''}</small></button>`).join('') + `</div>`;
 }
 
 function monEscouade(e: EcranDistrict): string {
@@ -352,7 +352,7 @@ function voletRatelier(e: EcranDistrict): string {
     const raison = ouverte ? '' : tr`${bat.nom} niveau ${c.niveau} : ${echap(raisonFermee(c.batiment))}`;
     // une carte commune peut être dans plusieurs Râteliers : on dit où elle est déjà, sans rien imposer
     const ailleurs = escouadesAvecCommune(j, c.geste.id).filter((n) => n !== vue).map((n) => n + 1);
-    const aussi = ailleurs.length ? tr` · aussi dans l’escouade ${ailleurs.join(' et ')}` : '';
+    const aussi = ailleurs.length ? tr` · aussi dans l’escouade ${enumerer(ailleurs.map(String))}` : '';
     const etat = !ouverte ? '' : pris ? `<span class="me-prendre retirer">${tr`Retirer`}</span>` : plein ? '' : `<span class="me-prendre">${tr`Prendre`}</span>`;
     return `<button type="button" class="me-choix rt-choix${ouverte ? '' : ' indispo'}${pris ? ' pris' : ''}" data-action="ratelier-basculer" data-id="${c.geste.id}" data-index="${vue}"${!ouverte || (plein && !pris) ? ' disabled' : ''} style="--c:#CDEFFF;--i:${k}">`
       + `<span class="rt-face">${tuileFace(g)}</span>`
@@ -559,7 +559,7 @@ export function feuillePorteur(e: EcranDistrict): string {
       + `<ol class="fp-mpaliers">` + [{ nom: NOMS_PALIER_MARQUE[0], quand: tr('par l’exploit'), texte: m.texte }, ...m.paliers.map((x, k) => ({ nom: NOMS_PALIER_MARQUE[k + 1], quand: `niveau ${PALIERS_MARQUE[k]}`, texte: x.texte }))].map((x, k) => {
         const atteint = m.acquise && m.palier >= k;
         const etat = atteint ? 'atteint' : k && m.niveau >= PALIERS_MARQUE[k - 1]! ? 'pret' : '';
-        return `<li class="fp-palier${etat ? ' ' + etat : ''}"><span class="fp-palier-tete"><b>${x.nom}</b><small>${atteint ? `${ICO.ok}Active` : etat === 'pret' ? tr('Niveau atteint · Marque à gagner') : x.quand}</small></span><span class="fp-palier-txt">${echap(x.texte)}</span></li>`;
+        return `<li class="fp-palier${etat ? ' ' + etat : ''}"><span class="fp-palier-tete"><b>${x.nom}</b><small>${atteint ? `${ICO.ok}${tr('Active')}` : etat === 'pret' ? tr('Niveau atteint · Marque à gagner') : x.quand}</small></span><span class="fp-palier-txt">${echap(x.texte)}</span></li>`;
       }).join('') + `</ol>`
       + (m.acquise ? `<p class="fp-note or">${tr`Active dans chaque combat où ${echap(p.nom)} fait partie de l’escouade${m.palier < 2 ? tr` : elle s’affirme au niveau ${PALIERS_MARQUE[0]} et se grave au niveau ${PALIERS_MARQUE[1]}` : ''}.`}</p>` : '')
       + `</section>`;

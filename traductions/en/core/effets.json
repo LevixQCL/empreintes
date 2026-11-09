@@ -3,327 +3,359 @@
  "entrees": [
   {
    "fr": "Siphon",
-   "en": ""
+   "en": "Siphon"
   },
   {
    "fr": "Surcharge",
-   "en": ""
+   "en": "Overcharge"
   },
   {
    "fr": "Troubler",
-   "en": ""
+   "en": "Unsettle"
   },
   {
    "fr": "Crescendo",
-   "en": ""
+   "en": "Crescendo"
   },
   {
    "fr": "Accord",
-   "en": ""
+   "en": "Accord"
   },
   {
    "fr": "Vague",
-   "en": ""
+   "en": "Wave"
   },
   {
    "fr": "Riposte",
-   "en": ""
+   "en": "Riposte"
   },
   {
    "fr": "Diapason",
-   "en": ""
+   "en": "Tuning Fork"
   },
   {
    "fr": "Unisson",
-   "en": ""
+   "en": "Unison"
   },
   {
    "fr": "Lecture",
-   "en": ""
+   "en": "Reading"
   },
   {
    "fr": "Faille",
-   "en": ""
+   "en": "Rift"
   },
   {
    "fr": "Débord",
-   "en": ""
+   "en": "Overflow"
   },
   {
    "fr": "Rapt",
-   "en": ""
+   "en": "Seize"
   },
   {
    "fr": "Plan",
-   "en": ""
+   "en": "Plan"
   },
   {
    "fr": "Secours",
-   "en": ""
+   "en": "Rescue"
   },
   {
    "fr": "Relève",
-   "en": ""
+   "en": "Second Wind"
   },
   {
    "fr": "Amorce",
-   "en": ""
+   "en": "Primer"
   },
   {
    "fr": "Servo",
-   "en": ""
+   "en": "Servo"
   },
   {
    "fr": "Contrepoint",
-   "en": ""
+   "en": "Counterpoint"
   },
   {
    "fr": "Ignore le bouclier et le blindage de l’ennemi.",
-   "en": ""
+   "en": "Ignores the enemy’s shield and armour."
   },
   {
    "fr": "Le Porteur qui la joue récupère {0} des dégâts infligés.",
-   "en": ""
+   "en": "The Bearer who plays it recovers {0} of the damage dealt."
   },
   {
    "fr": "Remplit le Flux (+{0}).",
-   "en": ""
+   "en": "Fills the Flux (+{0})."
   },
   {
    "fr": "L’attaque annoncée par l’ennemi visé perd {0} de sa force.",
-   "en": ""
+   "en": "The targeted enemy’s announced attack loses {0} of its power."
   },
   {
    "fr": "L’ennemi subit {0} de dégâts en plus, ce tour-ci et le suivant.",
-   "en": ""
+   "en": "The enemy takes {0} extra damage, this turn and the next."
   },
   {
    "fr": "+1 place dans la chaîne au tour suivant.",
-   "en": ""
+   "en": "+1 chain slot next turn."
   },
   {
    "fr": "+{0} de force pour chaque carte posée avant elle.",
-   "en": ""
+   "en": "+{0} power for each card placed before it."
   },
   {
    "fr": "Fréquence libre : prolonge toujours la suite.",
-   "en": ""
+   "en": "Free Frequency: always extends the chain."
   },
   {
    "fr": "Soigne toute l’escouade.",
-   "en": ""
+   "en": "Heals the whole squad."
   },
   {
    "fr": "Garde {0} du bouclier d’escouade restant pour le tour suivant.",
-   "en": ""
+   "en": "Keeps {0} of the leftover squad shield for the next turn."
   },
   {
    "fr": "Après son bouclier, frappe de {0} du bouclier d’escouade.",
-   "en": ""
+   "en": "After its shield, strikes for {0} of the squad shield."
   },
   {
    "fr": "Prend {0} Flux au plus : +{1} de force par Flux pris ; le reste est gardé.",
-   "en": ""
+   "en": "Takes {0} Flux at most: +{1} power per Flux taken; the rest is kept."
   },
   {
    "fr": "Vide le Flux : +{0} de force par Flux vidé.{1}",
-   "en": ""
+   "en": "Empties the Flux: +{0} power per Flux spent.{1}"
   },
   {
    "fr": " S’il était déjà vide, le remplit (+{0}).",
-   "en": ""
+   "en": " If it was already empty, fills it (+{0})."
   },
   {
    "fr": "Fréquence libre : reprend celle de la carte posée juste avant.",
-   "en": ""
+   "en": "Free Frequency: copies the one of the card placed just before."
   },
   {
    "fr": "+{0} de force pour chaque autre carte de la même Fréquence dans la chaîne.",
-   "en": ""
+   "en": "+{0} power for each other card of the same Frequency in the chain."
   },
   {
    "fr": "+{0} de force si l’ennemi visé est fissuré ou à moins de la moitié de ses PV.",
-   "en": ""
+   "en": "+{0} power if the targeted enemy is fissured or below half its HP."
   },
   {
    "fr": "Brise la Fêlure de l’ennemi visé, quelle que soit sa Fréquence.",
-   "en": ""
+   "en": "Breaks the targeted enemy’s Flaw, whatever its Frequency."
   },
   {
    "fr": "+{0} de force si la Fêlure de l’ennemi visé est brisée.",
-   "en": ""
+   "en": "+{0} power if the targeted enemy’s Flaw is broken."
   },
   {
    "fr": "Frappe une seconde fois si la chaîne compte au moins 4 cartes.",
-   "en": ""
+   "en": "Strikes a second time if the chain holds at least 4 cards."
   },
   {
    "fr": "Soigne toute l’escouade ; le soin en trop devient du bouclier d’escouade.",
-   "en": ""
+   "en": "Heals the whole squad; excess healing becomes squad shield."
   },
   {
    "fr": "Arrache tout le bouclier de l’ennemi visé et le donne à l’escouade.",
-   "en": ""
+   "en": "Rips away the targeted enemy’s whole shield and gives it to the squad."
   },
   {
    "fr": "La carte la plus forte de la chaîne revient en tête de pioche.",
-   "en": ""
+   "en": "The strongest card in the chain goes back on top of the draw pile."
   },
   {
    "fr": "Le Porteur brûle {0} de ses PV max (sans tomber) : +{1} de force.",
-   "en": ""
+   "en": "The Bearer burns {0} of their max HP (without falling): +{1} power."
   },
   {
    "fr": "Copie l’effet de la carte posée juste avant ; s’il n’y en a pas, +{0} de force.",
-   "en": ""
+   "en": "Copies the effect of the card placed just before; if there is none, +{0} power."
   },
   {
    "fr": "Relève un Porteur à terre avec tout le soin ; sinon, soigne normalement.",
-   "en": ""
+   "en": "Revives a downed Bearer with all the healing; otherwise, heals normally."
   },
   {
    "fr": "Au tour suivant, ta main compte une carte de plus.",
-   "en": ""
+   "en": "Next turn, your hand holds one more card."
   },
   {
    "fr": "Brise tout le bouclier de l’ennemi visé avant de frapper.",
-   "en": ""
+   "en": "Shatters the targeted enemy’s whole shield before striking."
   },
   {
    "fr": "+{0} de force pour chaque Porteur à terre.",
-   "en": ""
+   "en": "+{0} power for each downed Bearer."
   },
   {
    "fr": "L’ennemi visé perd {0} de ce qu’il prépare : attaque, bouclier ou soin.",
-   "en": ""
+   "en": "The targeted enemy loses {0} of what it’s preparing: attack, shield or heal."
   },
   {
    "fr": "La carte posée juste après elle gagne +{0} de force.",
-   "en": ""
+   "en": "The card placed right after it gains +{0} power."
   },
   {
    "fr": "Une carte lourde de la chaîne ne prend qu’une place.",
-   "en": ""
+   "en": "A heavy card in the chain takes only one slot."
   },
   {
    "fr": "Dans une suite qui résonne : +{0} de force pour chaque autre lignée de la suite.",
-   "en": ""
+   "en": "In a resonating chain: +{0} power for each other lineage in the chain."
   },
   {
    "fr": "Après le coup, l’ennemi visé tombe s’il lui reste moins de {0} de ses PV (jamais un gardien).",
-   "en": ""
+   "en": "After the blow, the targeted enemy falls if it has less than {0} of its HP left (never a guardian)."
   },
   {
    "fr": "Au tour ennemi qui suit, aucun Porteur ne tombe : le coup fatal le laisse à 1 PV.",
-   "en": ""
+   "en": "On the next enemy turn, no Bearer falls: the fatal blow leaves them at 1 HP."
+  },
+  {
+   "fr": "ignore bouclier",
+   "en": "ignores shield"
+  },
+  {
+   "fr": "rend {0}",
+   "en": "returns {0}"
   },
   {
    "fr": "Flux +{0}",
-   "en": ""
+   "en": "Flux +{0}"
   },
   {
    "fr": "−{0} ennemi",
-   "en": ""
+   "en": "−{0} enemy"
   },
   {
    "fr": "+{0} dégâts",
-   "en": ""
+   "en": "+{0} damage"
+  },
+  {
+   "fr": "+1 place",
+   "en": "+1 slot"
   },
   {
    "fr": "+{0} / carte",
-   "en": ""
+   "en": "+{0} / card"
   },
   {
    "fr": "Fréquence libre",
-   "en": ""
+   "en": "Free Frequency"
+  },
+  {
+   "fr": "soigne tous",
+   "en": "heals all"
+  },
+  {
+   "fr": "garde {0}",
+   "en": "keeps {0}"
   },
   {
    "fr": "frappe {0} du bouclier",
-   "en": ""
+   "en": "strikes for {0} of the shield"
   },
   {
    "fr": "+{0}, {1} Flux",
-   "en": ""
+   "en": "+{0}, {1} Flux"
   },
   {
    "fr": "+{0} / Flux, recharge",
-   "en": ""
+   "en": "+{0} / Flux, recharges"
   },
   {
    "fr": "+{0} / Flux vidé",
-   "en": ""
+   "en": "+{0} / Flux spent"
   },
   {
    "fr": "Fréq. d’avant",
-   "en": ""
+   "en": "Prev. Freq."
   },
   {
    "fr": "+{0} / pareille",
-   "en": ""
+   "en": "+{0} / match"
   },
   {
    "fr": "+{0} proie blessée",
-   "en": ""
+   "en": "+{0} wounded prey"
   },
   {
    "fr": "brise la Fêlure",
-   "en": ""
+   "en": "breaks the Flaw"
   },
   {
    "fr": "+{0} si Fêlure",
-   "en": ""
+   "en": "+{0} if Flaw"
   },
   {
    "fr": "×2 dès 4 cartes",
-   "en": ""
+   "en": "×2 from 4 cards"
   },
   {
    "fr": "tous, trop → bouclier",
-   "en": ""
+   "en": "all, excess → shield"
   },
   {
    "fr": "vole le bouclier",
-   "en": ""
+   "en": "steals the shield"
   },
   {
    "fr": "repioche la + forte",
-   "en": ""
+   "en": "redraws the strongest"
+  },
+  {
+   "fr": "+{0}, −PV",
+   "en": "+{0}, −HP"
   },
   {
    "fr": "copie l’effet",
-   "en": ""
+   "en": "copies the effect"
+  },
+  {
+   "fr": "remet debout",
+   "en": "back on their feet"
   },
   {
    "fr": "+1 carte au tour suivant",
-   "en": ""
+   "en": "+1 card next turn"
   },
   {
    "fr": "brise le bouclier",
-   "en": ""
+   "en": "breaks the shield"
   },
   {
    "fr": "+{0} / Porteur à terre",
-   "en": ""
+   "en": "+{0} / Bearer down"
   },
   {
    "fr": "−{0} intention",
-   "en": ""
+   "en": "−{0} intent"
   },
   {
    "fr": "+{0} suivante",
-   "en": ""
+   "en": "+{0} next"
   },
   {
    "fr": "lourde = 1 place",
-   "en": ""
+   "en": "heavy = 1 slot"
   },
   {
    "fr": "+{0} / lignée",
-   "en": ""
+   "en": "+{0} / lineage"
   },
   {
    "fr": "achève sous {0}",
-   "en": ""
+   "en": "finishes below {0}"
+  },
+  {
+   "fr": "personne ne tombe",
+   "en": "no one falls"
   }
  ]
 }

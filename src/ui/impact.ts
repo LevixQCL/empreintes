@@ -12,7 +12,6 @@ import { echelleScene, ondeDeChoc } from './verre';
 import { annoncerPhase } from './bandeau';
 import { dissoudre } from './dissolution';
 import * as S from './son';
-import { t as tr } from '../core/i18n';
 export { debloquerSon, sonActif, basculerSon } from './son';
 
 const TEINTE: Record<LigneeGeste, string> = { tech: '#8FDCFF', bio: '#FFB44A', reso: '#B98CFF', neutre: '#EBD9A8' };
@@ -1200,7 +1199,7 @@ export function impact(ev: Evenement, racine: HTMLElement): number {
         const part = Math.min(1, ev.net / pvMax);
         voileRouge(0.1 + part * 0.3);
         if (!reduit) {
-          const sel = ev.zone ? tr('.zone-main .geste, .zone-chaine .geste') : `.zone-main .geste[data-porteur="${ev.cible}"], .zone-chaine .geste[data-porteur="${ev.cible}"]`;
+          const sel = ev.zone ? '.zone-main .geste, .zone-chaine .geste' : `.zone-main .geste[data-porteur="${ev.cible}"], .zone-chaine .geste[data-porteur="${ev.cible}"]`;
           racine.querySelectorAll(sel).forEach((c, i) => {
             const a = 2 + part * 5;
             (c as HTMLElement).animate([{ transform: 'none' }, { transform: `translate(${hasard(-a, a)}px, ${a * 0.6}px) rotate(${hasard(-1.5, 1.5)}deg)` }, { transform: 'none' }],

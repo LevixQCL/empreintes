@@ -3,67 +3,67 @@
  "entrees": [
   {
    "fr": "Ravitaillement : +{0} cristaux{1}.{2}",
-   "en": ""
+   "en": "Supplies: +{0} crystals{1}.{2}"
   },
   {
    "fr": ", un doublon {0}",
-   "en": ""
+   "en": ", a duplicate {0}"
   },
   {
    "fr": " Et une carte au choix !",
-   "en": ""
+   "en": " And a card of your choice!"
   },
   {
    "fr": "{0} descend dans les Basses.",
-   "en": ""
+   "en": "{0} goes down into the Lows."
   },
   {
    "fr": "Le souvenir est gravé dans le journal de la carte.",
-   "en": ""
+   "en": "The memory is engraved in the card’s log."
   },
   {
    "fr": "{0} porte déjà {1} cartes : touche celle que {2} remplacera.",
-   "en": ""
+   "en": "{0} already carries {1} cards: tap the one {2} will replace."
   },
   {
    "fr": "Le quai {0} vient d’être pris : défie son gardien, ou tiens un autre quai.",
-   "en": ""
+   "en": "Quay {0} has just been taken: challenge its guardian, or hold another quay."
   },
   {
    "fr": "Ton escouade tient le quai {0}. Les Hauts te versent un gage tant qu’elle y reste ; toi, tu peux continuer de monter.",
-   "en": ""
+   "en": "Your squad holds quay {0}. The Heights pay you a stipend as long as it stays there; you can keep climbing."
   },
   {
    "fr": "Gage du quai : +{0} cristaux{1}.",
-   "en": ""
+   "en": "Quay stipend: +{0} crystals{1}."
   },
   {
    "fr": ", +{0} Éclat{1}",
-   "en": ""
+   "en": ", +{0} Shard{1}"
   },
   {
    "fr": "L’escouade quitte le quai {0}.{1}",
-   "en": ""
+   "en": "The squad leaves quay {0}.{1}"
   },
   {
    "fr": " Gage versé : +{0} cristaux{1}.",
-   "en": ""
+   "en": " Stipend paid: +{0} crystals{1}."
   },
   {
    "fr": ", +{0} Éclats",
-   "en": ""
+   "en": ", +{0} Shards"
   },
   {
    "fr": "{0} est sous bouclier pour l’instant : choisis un autre district.",
-   "en": ""
+   "en": "{0} is shielded for now: pick another district."
   },
   {
    "fr": "Impossible de joindre {0} pour l’instant : réessaie dans un moment.",
-   "en": ""
+   "en": "Can’t reach {0} right now: try again in a moment."
   },
   {
    "fr": "Ysé glisse une carte entre les pages : {0} (Fer) rejoint tes Cartes.",
-   "en": ""
+   "en": "Ysé slips a card between the pages: {0} (Iron) joins your Cards."
   }
  ]
 }

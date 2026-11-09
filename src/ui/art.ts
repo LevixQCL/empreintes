@@ -2,7 +2,6 @@
 // l'affichage garde alors son visuel dessiné en SVG ou sa couleur de fond.
 
 import type { BatimentId, Rarete } from '../core/types';
-import { t } from '../core/i18n';
 
 // URL absolue : une url() dans une variable CSS se résout depuis la feuille de style (assets/), pas depuis la page.
 const base = new URL('art/', document.baseURI).href;
@@ -188,7 +187,7 @@ export const illustrationModule = (cle: string): string | null => {
   return MODULES_ILLUSTRES[id] ? `${base}modules/${MODULES_ILLUSTRES[id]}.webp?v=${VERSION_CARTES}` : null;
 };
 /** Les ornements peints des gardiens (27 octobre 2026) : plaque du nom, cadre de la barre de vie, cran de phase, bandeau d'annonce */
-export const artGardien = (n: 'plaque' | 'barre' | 'cran' | 'bandeau') => t`${base}boss/${n}.webp`;
+export const artGardien = (n: 'plaque' | 'barre' | 'cran' | 'bandeau') => `${base}boss/${n}.webp`;
 /** Les gardes de la Flèche déjà peints (public/art/ennemis/<id>.webp, prompts dans docs/prompts-gardes-fleche.md : un visage
  *  par garde) ; en attendant le sien, un garde porte l'uniforme des Brigades. La capitaine Hald a déjà son portrait. */
 const GARDES_PEINTS = new Set<string>([
@@ -197,10 +196,10 @@ const GARDES_PEINTS = new Set<string>([
 function illustrationGarde(id: string): string {
   if (id === 'flc-hald') return `${base}personnages/hald.webp`;
   if (!GARDES_PEINTS.has(id)) return `${base}ennemis/brigadier.webp`;
-  return t`${base}ennemis/${id}.webp`;
+  return `${base}ennemis/${id}.webp`;
 }
 export const illustrationEnnemi = (id: string): string | null =>
-  (id.startsWith('flc-') ? illustrationGarde(id) : ENNEMIS_ILLUSTRES[id] ? t`${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
+  (id.startsWith('flc-') ? illustrationGarde(id) : ENNEMIS_ILLUSTRES[id] ? `${base}ennemis/${ENNEMIS_ILLUSTRES[id]}.webp` : null);
 /**
  * Visage d'un garde de garnison (pillages) ou d'un garde posté par un autre directeur (Flèche) : 9 novembre 2026,
  * recensement des images, on se battait contre « sa » propre Ilka. Le garde garde le nom du Porteur qu'il sert,
@@ -213,9 +212,9 @@ export function visageGarnison(lignee: string, variante: number, porteur: string
   return GARNISONS_PEINTES.has(id) ? `${base}ennemis/${id}.webp` : portrait(porteur);
 }
 /** Texture du métal d'une rareté (plaque et liseré des cartes) */
-export const textureMetal = (r: Rarete) => t`${base}metaux/${r}.webp`;
+export const textureMetal = (r: Rarete) => `${base}metaux/${r}.webp`;
 /** Le filigrane d'empreinte d'une carte vétérane (28 octobre 2026) : Trace (bleu), Sillon (or), Empreinte (irisée) */
-export const filigrane = (palier: 1 | 2 | 3) => t`${base}empreinte/${['trace', 'sillon', 'empreinte'][palier - 1]}.webp`;
+export const filigrane = (palier: 1 | 2 | 3) => `${base}empreinte/${['trace', 'sillon', 'empreinte'][palier - 1]}.webp`;
 /**
  * Décor d'une Strate : une illustration et une ambiance par Strate (28 octobre 2026, Bryan : « des thèmes différents »),
  * de −1 (fondations noyées, vert d'eau) à −10 (le fond, obsidienne et braise). Au-delà de −10, le décor du fond.
@@ -223,20 +222,20 @@ export const filigrane = (palier: 1 | 2 | 3) => t`${base}empreinte/${['trace', '
  */
 const STRATES_PEINTES = 10;
 const numStrate = (strate: number) => Math.min(STRATES_PEINTES, Math.max(1, Math.round(strate) || 1));
-export const decorStrate = (strate: number): string => t`${base}strates/strate-${numStrate(strate)}.webp`;
+export const decorStrate = (strate: number): string => `${base}strates/strate-${numStrate(strate)}.webp`;
 /**
  * Fond de l'écran de combat : la même illustration de Strate, floutée et assombrie d'avance (strates/strate-N-fond.webp, 600 × 750).
  * Floutée dans le fichier plutôt qu'en CSS : un filtre plein écran coûte cher sur téléphone, une petite image floue s'agrandit sans défaut.
  */
-export const fondCombat = (strate: number): string => t`${base}strates/strate-${numStrate(strate)}-fond.webp`;
+export const fondCombat = (strate: number): string => `${base}strates/strate-${numStrate(strate)}-fond.webp`;
 /** Icônes peintes des conditions de salle (23 octobre 2026), les sept */
 const CONDITIONS_PEINTES = new Set(['inondee', 'courants', 'chant', 'echo', 'sanctuaire', 'eboulis', 'brouillard']);
-export const iconeCondition = (id: string): string | null => (CONDITIONS_PEINTES.has(id) ? t`${base}conditions/${id}.webp` : null);
+export const iconeCondition = (id: string): string | null => (CONDITIONS_PEINTES.has(id) ? `${base}conditions/${id}.webp` : null);
 /** Ysé, l'archiviste des Chroniques (23 octobre 2026) */
 export const portraitYse = `${base}personnages/yse.webp`;
 /** Les personnages de la campagne illustrés (campagne.ts) : les autres gardent leur initiale */
 const PERSONNAGES_ILLUSTRES = new Set(['yse', 'hald', 'isaure', 'brac', 'tobin']);
-export const portraitPersonnage = (id: string): string | null => (PERSONNAGES_ILLUSTRES.has(id) ? t`${base}personnages/${id}.webp` : null);
+export const portraitPersonnage = (id: string): string | null => (PERSONNAGES_ILLUSTRES.has(id) ? `${base}personnages/${id}.webp` : null);
 /** Les scènes de la campagne qui ont leur propre illustration (public/art/scenes/) ; les autres reprennent un décor existant */
 const SCENES_ILLUSTREES = new Set(['entree-2', 'entree-4', 'entree-5', 'entree-6', 'gardien-2', 'gardien-3', 'convocation', 'entree-8', 'gardien-9', 'epilogue',
   // les onze dernières (30 octobre 2026) : toute la campagne est illustrée
@@ -244,11 +243,11 @@ const SCENES_ILLUSTREES = new Set(['entree-2', 'entree-4', 'entree-5', 'entree-6
 /** Le décor des combats de la Flèche : une plateforme d'amarrage au-dessus des nuages (28 octobre 2026) */
 export const fondFleche = `${base}scenes/fleche.webp`;
 /** La Flèche peinte (30 octobre 2026) : la Flèche entière, le médaillon de l'escouade, les plaques, les fanions, la passerelle, le sceau du gardien */
-export const artFleche = (n: 'fleche-entiere' | 'medaillon' | 'plaque' | 'fanion' | 'passerelle' | 'sceau-gardien') => t`${base}fleche/${n}.webp`;
-export const illustrationScene = (id: string): string | null => (SCENES_ILLUSTREES.has(id) ? t`${base}scenes/${id}.webp` : null);
+export const artFleche = (n: 'fleche-entiere' | 'medaillon' | 'plaque' | 'fanion' | 'passerelle' | 'sceau-gardien') => `${base}fleche/${n}.webp`;
+export const illustrationScene = (id: string): string | null => (SCENES_ILLUSTREES.has(id) ? `${base}scenes/${id}.webp` : null);
 /** La salle d'entraînement de la Tour du Noyau (23 octobre 2026) */
 export const salleEntrainement = `${base}salles/entrainement.webp`;
-export const decor = (nom: 'coupe') => t`${base}district/${nom}.webp`;
+export const decor = (nom: 'coupe') => `${base}district/${nom}.webp`;
 /** Le Mur des empreintes (7 novembre 2026) : les 48 mains peintes, découpées en une planche de 8 × 6 (dans l'ordre des familles) */
 export const planchEmpreintes = `${base}district/mur-empreintes.webp`;
 /** Le flanc de la digue, vu en coupe (les Basses, 7 novembre 2026) : 720 × 1285, du haut (Lavoirs) au bas (Palier) */
@@ -296,12 +295,12 @@ export const CALQUES_CUVETTE: readonly CalqueCuvette[] = [
 /** Le Cercle des quais a pris la place du Labo (3 novembre 2026) : tant que ses paliers ne sont pas peints, il garde ceux du Labo */
 export const CERCLE_PEINT = true;
 const fichierLieu = (lieu: string) => (lieu === 'cercle' && !CERCLE_PEINT ? 'labo' : lieu);
-export const calquePalier = (lieu: string, p: PalierCuvette, lueur = false) => t`${base}district/paliers/${fichierLieu(lieu)}-${p}${lueur ? '-lueur' : ''}.webp`;
+export const calquePalier = (lieu: string, p: PalierCuvette, lueur = false) => `${base}district/paliers/${fichierLieu(lieu)}-${p}${lueur ? '-lueur' : ''}.webp`;
 /** Le haut de la cheminée de la Forge à chaque palier (repère 400 × 600) : la fumée en sort */
 export const FUMEE_FORGE: Record<PalierCuvette, [number, number]> = { bas: [96, 236], milieu: [90, 196], haut: [95, 187] };
 const unSeulVisuel = () => CUVETTE && !PALIERS_PEINTS;
 export const illustrationBatiment = (id: BatimentId, niveau: number) =>
-  unSeulVisuel() ? t`${base}batiments/${fichierLieu(id)}.webp` : t`${base}batiments/${fichierLieu(id)}-${visuel(niveau)}.webp`;
+  unSeulVisuel() ? `${base}batiments/${fichierLieu(id)}.webp` : `${base}batiments/${fichierLieu(id)}-${visuel(niveau)}.webp`;
 
 /** Niveau où le bâtiment change d'apparence la prochaine fois (null au légendaire). Pour la Tour, c'est aussi l'âge du district. */
 export function prochainVisuel(niveau: number): number | null {
@@ -331,7 +330,7 @@ export const LIEUX_SLUGS = ['phare', 'serres', 'pilier-effondre', 'pompage', 'ma
 const LIEUX_PEINTS = new Set<string>(LIEUX_SLUGS);
 export const decorLieu = (i: number): string | null => {
   const s = LIEUX_SLUGS[i];
-  return s && LIEUX_PEINTS.has(s) ? t`${base}missions/${s}.webp` : null;
+  return s && LIEUX_PEINTS.has(s) ? `${base}missions/${s}.webp` : null;
 };
 export const BARQUE_PEINTE = true;
 export const barque = `${base}missions/barque.webp`;
@@ -361,7 +360,7 @@ export const vignetteDistrict = (age: number) => (CUVETTE ? `${base}district/cuv
 export const vignetteArchipel = (age: number, graine = '', mini = false) => {
   let h = 0;
   for (const c of graine) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  return t`${base}district/voisin-${Math.max(1, Math.min(age, AGES_PEINTS))}-${(h % 4) + 1}${mini ? '-mini' : ''}.webp`;
+  return `${base}district/voisin-${Math.max(1, Math.min(age, AGES_PEINTS))}-${(h % 4) + 1}${mini ? '-mini' : ''}.webp`;
 };
 /**
  * La Cuvette (2 novembre 2026) : un seul tableau peint pour tous les âges en attendant les paliers des bâtiments
@@ -371,14 +370,14 @@ export const CUVETTE = true;
 export function sceneDistrict(niveauNoyau: number, maintenant = new Date()): { age: 1 | 2 | 3 | 4; url: string; mer: string; horizon: number; video: string | null; nuit: boolean; houle?: string; merMasque?: string } {
   const age = visuel(niveauNoyau);
   const h = maintenant.getHours();
-  if (CUVETTE) return { age, url: `${base}district/cuvette.webp`, mer: `${base}district/cuvette-large.webp`, horizon: 0, video: null, nuit: h < 7 || h >= 20, houle: [1, 2, 3].map((i) => t`${base}district/cuvette-anim-${i}.webp`).join(' '), merMasque: `${base}district/cuvette-large-mer.webp` };
+  if (CUVETTE) return { age, url: `${base}district/cuvette.webp`, mer: `${base}district/cuvette-large.webp`, horizon: 0, video: null, nuit: h < 7 || h >= 20, houle: [1, 2, 3].map((i) => `${base}district/cuvette-anim-${i}.webp`).join(' '), merMasque: `${base}district/cuvette-large-mer.webp` };
   return {
     age,
-    url: t`${base}district/age-${Math.min(age, AGES_PEINTS)}.webp`,
+    url: `${base}district/age-${Math.min(age, AGES_PEINTS)}.webp`,
     // sur PC : le tableau prolongé par sa mer et son ciel (scripts/mer-district.py), 4000 × 1500, le tableau au centre en bas
-    mer: t`${base}district/mer-${Math.min(age, AGES_PEINTS)}.webp`,
+    mer: `${base}district/mer-${Math.min(age, AGES_PEINTS)}.webp`,
     horizon: HORIZON_MER[Math.min(age, AGES_PEINTS) - 1]!,
-    video: AGES_ANIMES.has(age) ? t`${base}district/age-${age}.mp4` : null,
+    video: AGES_ANIMES.has(age) ? `${base}district/age-${age}.mp4` : null,
     nuit: h < 7 || h >= 20,
   };
 }

@@ -3,71 +3,71 @@
  "entrees": [
   {
    "fr": "Là depuis ton arrivée",
-   "en": ""
+   "en": "Here since you arrived"
   },
   {
    "fr": "Venue par le bouche-à-oreille",
-   "en": ""
+   "en": "Came by word of mouth"
   },
   {
    "fr": "Ramenée des Basses · {0}",
-   "en": ""
+   "en": "Brought back from the Lows · {0}"
   },
   {
    "fr": "Ramenée des Basses",
-   "en": ""
+   "en": "Brought back from the Lows"
   },
   {
    "fr": "Chaque famille qui te suit pose sa main sur le mur des habitations. Touche une famille pour lire son souvenir.",
-   "en": ""
+   "en": "Every family that follows you lays its hand on the wall of the homes. Tap a family to read its keepsake."
   },
   {
    "fr": "Bouche-à-oreille : {0} sur {1}",
-   "en": ""
+   "en": "Word of mouth: {0} of {1}"
   },
   {
    "fr": "On parle de toi au quartier",
-   "en": ""
+   "en": "The quarter is talking about you"
   },
   {
    "fr": "{0} / {1} : une famille de plus",
-   "en": ""
+   "en": "{0} / {1}: one more family"
   },
   {
    "fr": ", souvenir confié",
-   "en": ""
+   "en": ", keepsake entrusted"
   },
   {
    "fr": "Une famille qui ne te suit pas encore",
-   "en": ""
+   "en": "A family that doesn’t follow you yet"
   },
   {
    "fr": "Basses",
-   "en": ""
+   "en": "Lows"
   },
   {
    "fr": "Quartier",
-   "en": ""
+   "en": "Quarter"
   },
   {
    "fr": "Ce souvenir est gravé dans",
-   "en": ""
+   "en": "This keepsake is engraved in"
   },
   {
    "fr": "Confier ce souvenir à une carte",
-   "en": ""
+   "en": "Entrust this keepsake to a card"
   },
   {
    "fr": "Une seule carte, pour toujours : une ligne de plus dans son journal, rien de plus en combat. Seules les cartes au palier {0} de leur empreinte ou plus en sont dignes.",
-   "en": ""
+   "en": "A single card, forever: one more line in its log, nothing more in combat. Only cards at tier {0} of their imprint or higher are worthy of it."
   },
   {
    "fr": "{0} autre{1} carte{2} digne{3}",
-   "en": ""
+   "en": "{0} other worthy card{1}{2|}{3|}"
   },
   {
    "fr": "Aucune de tes cartes n’a encore atteint le palier {0}. Descends avec elles : le souvenir attendra.",
-   "en": ""
+   "en": "None of your cards has reached tier {0} yet. Go down with them: the keepsake will wait."
   }
  ]
 }

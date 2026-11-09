@@ -3,47 +3,47 @@
  "entrees": [
   {
    "fr": "Profondeur",
-   "en": ""
+   "en": "Depth"
   },
   {
    "fr": "Strates",
-   "en": ""
+   "en": "Strata"
   },
   {
    "fr": "L’étage le plus profond creusé sous le district. À profondeur égale, le premier arrivé passe devant.",
-   "en": ""
+   "en": "The deepest level dug beneath the district. At equal depth, whoever got there first ranks higher."
   },
   {
    "fr": "Registre",
-   "en": ""
+   "en": "Register"
   },
   {
    "fr": "Cartes",
-   "en": ""
+   "en": "Cards"
   },
   {
    "fr": "La valeur de ta collection : le métal et le niveau de chaque carte, et chaque carte découverte.",
-   "en": ""
+   "en": "The value of your collection: each card’s metal and level, and every card discovered."
   },
   {
    "fr": "Joutes",
-   "en": ""
+   "en": "Jousts"
   },
   {
    "fr": "Duels",
-   "en": ""
+   "en": "Duels"
   },
   {
    "fr": "Les duels gagnés au Cercle des quais contre des amis différents (trois par semaine au plus).",
-   "en": ""
+   "en": "Duels won at the Quayside Circle against different friends (three per week at most)."
   },
   {
    "fr": "Tour",
-   "en": ""
+   "en": "Tower"
   },
   {
    "fr": "Le plus haut quai atteint sur la Flèche d’amarrage, la seule route légale vers les Hauts. À quai égal, le premier arrivé passe devant.",
-   "en": ""
+   "en": "The highest quay reached on the Mooring Spire, the only legal road to the Heights. On equal quays, whoever got there first ranks higher."
   }
  ]
 }

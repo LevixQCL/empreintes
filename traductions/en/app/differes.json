@@ -3,11 +3,11 @@
  "entrees": [
   {
    "fr": "Pas de réseau : cet écran s’ouvrira dès que la connexion revient.",
-   "en": ""
+   "en": "No network: this screen will open as soon as the connection is back."
   },
   {
    "fr": "Chargement…",
-   "en": ""
+   "en": "Loading…"
   }
  ]
 }

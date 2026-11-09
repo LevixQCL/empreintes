@@ -3,55 +3,55 @@
  "entrees": [
   {
    "fr": "Une nouvelle version t’attend",
-   "en": ""
+   "en": "A new version is waiting for you"
   },
   {
    "fr": "Ta partie a été jouée avec une version plus récente du jeu. Recharge la page pour la retrouver : rien n’est perdu.",
-   "en": ""
+   "en": "Your game was played on a newer version of the game. Reload the page to get it back: nothing is lost."
   },
   {
    "fr": "Ta partie est ouverte ailleurs",
-   "en": ""
+   "en": "Your game is open somewhere else"
   },
   {
    "fr": "Tu joues dans un autre onglet ou une autre fenêtre. Pour ne rien écraser, cette page s’arrête là : recharge-la pour reprendre où tu en es.",
-   "en": ""
+   "en": "You’re playing in another tab or window. So nothing gets overwritten, this page stops here: reload it to pick up where you are."
   },
   {
    "fr": "Ta partie est à l’abri",
-   "en": ""
+   "en": "Your game is safe"
   },
   {
    "fr": "Cette version du jeu n’arrive pas à lire la partie de cet appareil (souvent juste après une mise à jour). Pour ne rien effacer, le jeu s’arrête là. Recharge dans quelques minutes : une correction arrive en général très vite.",
-   "en": ""
+   "en": "This version of the game can’t read the save on this device (often right after an update). So nothing gets erased, the game stops here. Reload in a few minutes: a fix usually arrives very quickly."
   },
   {
    "fr": "Cette version du jeu n’arrive pas à lire la partie de ton compte (souvent juste après une mise à jour). Pour ne rien écraser, le jeu s’arrête là. Recharge dans quelques minutes : une correction arrive en général très vite.",
-   "en": ""
+   "en": "This version of the game can’t read your account’s save (often right after an update). So nothing gets overwritten, the game stops here. Reload in a few minutes: a fix usually arrives very quickly."
   },
   {
    "fr": "Ta partie a avancé ailleurs",
-   "en": ""
+   "en": "Your game has moved on elsewhere"
   },
   {
    "fr": "Ton compte a été utilisé sur un autre appareil. Recharge pour reprendre la partie la plus avancée : l’autre sera gardée en secours.",
-   "en": ""
+   "en": "Your account was used on another device. Reload to pick up the furthest-along game: the other will be kept as a backup."
   },
   {
    "fr": "Recharger",
-   "en": ""
+   "en": "Reload"
   },
   {
    "fr": "Repartir de zéro",
-   "en": ""
+   "en": "Start from scratch"
   },
   {
    "fr": "La partie illisible reste gardée à part sur cet appareil : une prochaine version pourra la rendre.",
-   "en": ""
+   "en": "The unreadable save is kept aside on this device: a future version may be able to restore it."
   },
   {
    "fr": "Mettre ma partie de côté et recommencer",
-   "en": ""
+   "en": "Set my game aside and start over"
   }
  ]
 }

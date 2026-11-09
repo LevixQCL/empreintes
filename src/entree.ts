@@ -27,6 +27,11 @@ async function demarrer(): Promise<void> {
     try { definirLangue(l, await chargerCatalogue(l)); } catch { definirLangue('fr', null); }
   }
   document.documentElement.lang = l === 'fr' ? 'fr' : l;
+  if (l === 'en') {
+    // la description de la page (aperçus de lien, moteurs de recherche) suit la langue
+    const description = '2121. Under the water, others still remember. Ossyra, a card and management game.';
+    document.querySelector('meta[name="description"]')?.setAttribute('content', description);
+  }
   await import('./main');
 }
 

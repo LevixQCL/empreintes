@@ -923,7 +923,7 @@
   },
   {
    "fr": "L’étiquette",
-   "en": ""
+   "en": "The label"
   },
   {
    "fr": "« Premier relevé du fondateur. Ne pas ouvrir. Ne pas comparer. » De l’or : une seule copie depuis l’original. Ne pas comparer à quoi ? À celle que porte Isaure, je suppose.",
@@ -1443,7 +1443,7 @@
   },
   {
    "fr": "Conforme",
-   "en": ""
+   "en": "Compliant"
   },
   {
    "fr": "Graver une ligne, c’est écrire ce qui est arrivé. Dans les Archives, la passerelle des Hauts-Ponts n’a jamais cédé : « remplacée, conforme », signé par l’inspecteur du district pour ne pas arrêter l’extraction. Une archive complète peut garder la passerelle neuve.",
@@ -1514,6 +1514,10 @@
    "en": "Two surveys of the same table, years apart: fourteen lines, then eleven."
   },
   {
+   "fr": "L’ambre",
+   "en": "The amber"
+  },
+  {
    "fr": "L’ambre suinte des murs. Il sent le miel et la cire. Mes parents parlaient de cette odeur, et de la glande qu’on leur a donnée pour le produire.",
    "en": "Amber’s seeping out of the walls. Smells of honey and wax. My parents used to talk about that smell. And the gland they were given to make it."
   },
@@ -1575,7 +1579,7 @@
   },
   {
    "fr": "L’écriture",
-   "en": ""
+   "en": "The handwriting"
   },
   {
    "fr": "Regarde le trait. Les tables de −4 sont gravées d’une main sûre. Celle-ci tremble, recommence, rature. Quelqu’un qui ne savait plus bien graver a essayé quand même.",
@@ -2099,7 +2103,7 @@
   },
   {
    "fr": "Lui",
-   "en": ""
+   "en": "Him"
   },
   {
    "fr": "C’est lui qui a glissé l’Éclat sous la porte, tout à l’heure. Il nous a entendus frapper.",
@@ -2204,6 +2208,10 @@
   {
    "fr": "Sous la salle du Premier Porteur, l’escalier continue. Trente marches plus bas, il entre dans une eau immobile, si claire qu’on voit les marches poursuivre leur descente dessous.",
    "en": "Below the First Bearer’s chamber, the staircase goes on. Thirty steps down, it walks into still water, so clear you can watch the steps keep descending beneath it."
+  },
+  {
+   "fr": "L’eau",
+   "en": "The water"
   },
   {
    "fr": "Douce. Pas un grain de sel. Ce n’est pas la mer, directeur. Et elle est tiède, comme une main.",
@@ -2860,6 +2868,10 @@
   {
    "fr": "Les vannes attendent, réglées, intactes.",
    "en": "The valves wait, set, intact."
+  },
+  {
+   "fr": "L’escouade",
+   "en": "The squad"
   },
   {
    "fr": "Mes peurs se taisent, ici. Pour la première fois depuis la chambre. Comme si quelqu’un les portait un peu à ma place.",

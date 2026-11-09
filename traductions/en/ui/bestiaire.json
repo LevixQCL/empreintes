@@ -3,83 +3,83 @@
  "entrees": [
   {
    "fr": "Les Seuils · −1 à −3",
-   "en": ""
+   "en": "The Thresholds · −1 to −3"
   },
   {
    "fr": "Les Salles closes · −4 à −6",
-   "en": ""
+   "en": "The Closed Halls · −4 to −6"
   },
   {
    "fr": "Les Registres · −7 à −9",
-   "en": ""
+   "en": "The Registers · −7 to −9"
   },
   {
    "fr": "Le Fond · −10",
-   "en": ""
+   "en": "The Deep · −10"
   },
   {
    "fr": "Ce que les Veilleurs savent des habitants des Strates. Une fiche s’écrit à force de les vaincre : d’où ils viennent, comment ils se battent, puis leur secret.",
-   "en": ""
+   "en": "What the Watchers know about the inhabitants of the Strata. An entry fills in as you defeat them: where they come from, how they fight, then their secret."
   },
   {
    "fr": "rencontrés.",
-   "en": ""
+   "en": "encountered."
   },
   {
    "fr": "Pas encore vaincu",
-   "en": ""
+   "en": "Not defeated yet"
   },
   {
    "fr": "{0} : à {1} victoires",
-   "en": ""
+   "en": "{0}: at {1} wins"
   },
   {
    "fr": "victoire{0}",
-   "en": ""
+   "en": "win{0}"
   },
   {
    "fr": "Origine",
-   "en": ""
+   "en": "Origin"
   },
   {
    "fr": "Au combat",
-   "en": ""
+   "en": "In combat"
   },
   {
    "fr": "Secret",
-   "en": ""
+   "en": "Secret"
   },
   {
    "fr": "Les Rôdeurs · un par zone, en Explorer",
-   "en": ""
+   "en": "The Prowlers · one per zone, in Explore mode"
   },
   {
    "fr": "Des traces, quelque part",
-   "en": ""
+   "en": "Tracks, somewhere"
   },
   {
    "fr": "{0} · se croise en explorant une Strate déjà vaincue",
-   "en": ""
+   "en": "{0} · met while exploring an already beaten Stratum"
   },
   {
    "fr": "Abattu",
-   "en": ""
+   "en": "Downed"
   },
   {
    "fr": "il lui reste",
-   "en": ""
+   "en": "it has"
   },
   {
    "fr": "de sa vie",
-   "en": ""
+   "en": "of its life left"
   },
   {
    "fr": "{0} · {1} · {2} rencontre{3} · {4}",
-   "en": ""
+   "en": "{0} · {1} · {2} encounter{3} · {4}"
   },
   {
    "fr": "Secret : quand il tombera",
-   "en": ""
+   "en": "Secret: when it falls"
   }
  ]
 }

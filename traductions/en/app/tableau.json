@@ -3,11 +3,11 @@
  "entrees": [
   {
    "fr": "Le Tableau ne répond pas pour l’instant ({0}).",
-   "en": ""
+   "en": "The Board isn’t answering right now ({0})."
   },
   {
    "fr": "« {0} » a été réservé par un autre directeur. Choisis un autre pseudo.",
-   "en": ""
+   "en": "“{0}” was reserved by another director. Pick another username."
   }
  ]
 }

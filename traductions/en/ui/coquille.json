@@ -18,18 +18,6 @@
    "en": "Docked"
   },
   {
-   "fr": "Augmentés",
-   "en": "Augmented"
-  },
-  {
-   "fr": "Génés",
-   "en": "Spliced"
-  },
-  {
-   "fr": "Résonants",
-   "en": "Resonants"
-  },
-  {
    "fr": "Ressources",
    "en": "Resources"
   },
@@ -48,10 +36,6 @@
   {
    "fr": "Strate −{0}. Détails",
    "en": "Stratum −{0}. Details"
-  },
-  {
-   "fr": "Strate",
-   "en": "Stratum"
   },
   {
    "fr": "{0} familles sur {1} te suivent, palier {2}. Détails",
@@ -486,6 +470,10 @@
    "en": "Guardian defeated: {0} missing to dig deeper"
   },
   {
+   "fr": "{0} creuseur{1}",
+   "en": "{0} digger{1}"
+  },
+  {
    "fr": "{0} niveau{1} de Tour du Noyau",
    "en": "{0} Core Tower level{1}"
   },
@@ -578,6 +566,10 @@
    "en": "Navigation"
   },
   {
+   "fr": "une récompense t’attend",
+   "en": "a reward awaits you"
+  },
+  {
    "fr": "Escouade, Porteurs ou cartes",
    "en": "Squad, Bearers or cards"
   },
@@ -626,6 +618,14 @@
    "en": " · level {0}"
   },
   {
+   "fr": " · nouvelle",
+   "en": " · new"
+  },
+  {
+   "fr": " · doublon",
+   "en": " · duplicate"
+  },
+  {
    "fr": "creuseur{0}",
    "en": "digger{0}"
   },
@@ -644,10 +644,6 @@
   {
    "fr": "pour la prochaine tentative",
    "en": "for the next attempt"
-  },
-  {
-   "fr": "Usure",
-   "en": "Strain"
   },
   {
    "fr": "{0} · {1} % de chances",
@@ -724,10 +720,6 @@
   {
    "fr": "Niv. {0} prêt",
    "en": "Lvl {0} ready"
-  },
-  {
-   "fr": "Doublon",
-   "en": "Duplicate"
   },
   {
    "fr": "{0} cartes au choix",
@@ -858,6 +850,10 @@
    "en": "Protect your game: link it to Google or an email"
   },
   {
+   "fr": "Connecté",
+   "en": "Signed in"
+  },
+  {
    "fr": " · choisis ton pseudo",
    "en": " · pick your username"
   },
@@ -944,6 +940,10 @@
   {
    "fr": "Complètes",
    "en": "Full"
+  },
+  {
+   "fr": "Le jeu se recharge dans l’autre langue ; ta partie ne change pas",
+   "en": "The game reloads in the other language; your save doesn’t change"
   }
  ]
 }

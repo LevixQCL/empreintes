@@ -3,103 +3,103 @@
  "entrees": [
   {
    "fr": "Carte inconnue.",
-   "en": ""
+   "en": "Unknown card."
   },
   {
    "fr": "Les cartes de l’Héritage ne quittent jamais le district.",
-   "en": ""
+   "en": "Legacy cards never leave the district."
   },
   {
    "fr": "Une carte de parrainage ne s’échange pas : elle se reçoit avec un ami.",
-   "en": ""
+   "en": "A sponsorship card can’t be traded: it comes with a friend."
   },
   {
    "fr": "La nacre ne s’échange pas.",
-   "en": ""
+   "en": "Nacre can’t be traded."
   },
   {
    "fr": "L’or s’échange à partir du niveau {0} du Cercle.",
-   "en": ""
+   "en": "Gold can be traded from Circle level {0}."
   },
   {
    "fr": "Retirée de tes souhaits.",
-   "en": ""
+   "en": "Removed from your wishes."
   },
   {
    "fr": "{0} souhaits au plus : retires-en un d’abord.",
-   "en": ""
+   "en": "{0} wishes at most: remove one first."
   },
   {
    "fr": "Ajoutée à tes souhaits : tes amis la verront.",
-   "en": ""
+   "en": "Added to your wishes: your friends will see it."
   },
   {
    "fr": "Tu ne possèdes pas cette carte.",
-   "en": ""
+   "en": "You don’t own this card."
   },
   {
    "fr": "Ta vitrine tient {0} carte{1} : améliore le Cercle pour en montrer plus.",
-   "en": ""
+   "en": "Your display holds {0} card{1}: upgrade the Circle to show more."
   },
   {
    "fr": "Construis d’abord le Cercle.",
-   "en": ""
+   "en": "Build the Circle first."
   },
   {
    "fr": "Construis d’abord le Cercle des quais.",
-   "en": ""
+   "en": "Build the Quayside Circle first."
   },
   {
    "fr": "Une amitié doit avoir {0} jours avant le premier échange : encore {1} jour{2}.",
-   "en": ""
+   "en": "A friendship must be {0} days old before the first trade: {1} more day{2}."
   },
   {
    "fr": "Un échange se fait entre deux cartes du même métal.",
-   "en": ""
+   "en": "A trade is between two cards of the same metal."
   },
   {
    "fr": "C’est la même carte.",
-   "en": ""
+   "en": "It’s the same card."
   },
   {
    "fr": "Il te faut un exemplaire en double de cette carte : ta carte, elle, ne part jamais.",
-   "en": ""
+   "en": "You need a spare copy of this card: your own card never leaves."
   },
   {
    "fr": "Plus d’échange possible aujourd’hui : le Cercle rouvre demain.",
-   "en": ""
+   "en": "No more trades possible today: the Circle reopens tomorrow."
   },
   {
    "fr": "Tu as déjà {0} proposition{1} en attente.",
-   "en": ""
+   "en": "You already have {0} pending offer{1}."
   },
   {
    "fr": "Il faut {0} cristaux pour échanger une carte en {1}.",
-   "en": ""
+   "en": "You need {0} crystals to trade a {1} card."
   },
   {
    "fr": "Proposition envoyée à {0}.",
-   "en": ""
+   "en": "Offer sent to {0}."
   },
   {
    "fr": "Tu n’as plus d’exemplaire en double de cette carte.",
-   "en": ""
+   "en": "You no longer have a spare copy of this card."
   },
   {
    "fr": "Il faut {0} cristaux pour cet échange.",
-   "en": ""
+   "en": "You need {0} crystals for this trade."
   },
   {
    "fr": "Cet échange est déjà fait.",
-   "en": ""
+   "en": "This trade is already done."
   },
   {
    "fr": "Nouvelle carte !",
-   "en": ""
+   "en": "New card!"
   },
   {
    "fr": "Un exemplaire de plus.",
-   "en": ""
+   "en": "One more copy."
   }
  ]
 }

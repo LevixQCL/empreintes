@@ -533,7 +533,7 @@ export function resoudreTour(s: DuelEtat): EvDuel[] {
       brise[adv] = true;
       if (rapt) vole[k]! += pris;
       ev.push({ sorte: 'breche', camp: k, uid: g.uid, v: pris, rapt });
-      if (pris) log(s, k, tr`${g.nom} ${rapt ? 'arrache' : 'brise'} ${pris} de bouclier.`);
+      if (pris) log(s, k, (rapt ? tr`${g.nom} arrache ${pris} de bouclier.` : tr`${g.nom} brise ${pris} de bouclier.`));
     });
   }
   for (const k of camps) s.cotes[k].bouclier = (brise[k] ? 0 : bouclierPose[k]!) + vole[k]!;

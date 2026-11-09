@@ -14,7 +14,7 @@
 import { MODULES, moduleDe, moduleDef, zoneDe } from './donnees';
 import type { Rarete } from './types';
 import { COLLECTION, RARETES } from './collection';
-import { t as tr } from './i18n';
+import { t as tr, locale } from './i18n';
 
 export type TableauId = 'profondeur' | 'registre' | 'joutes' | 'fleche';
 export type Periode = 'total' | 'semaine';
@@ -260,7 +260,7 @@ export function texteValeur(t: TableauId, per: Periode, v: number): string {
   if (t === 'profondeur') return per === 'total' ? `−${strateDe(v)}` : `+${demiStrates(v)}`;
   if (t === 'fleche') return per === 'total' ? `Quai ${v}` : `+${v}`;
   if (t === 'joutes') return per === 'total' ? `${v}` : `+${v}`;
-  return (per === 'semaine' ? '+' : '') + Math.round(v).toLocaleString('fr-BE');
+  return (per === 'semaine' ? '+' : '') + Math.round(v).toLocaleString(locale());
 }
 
 /**

@@ -3,151 +3,151 @@
  "entrees": [
   {
    "fr": "Trace",
-   "en": ""
+   "en": "Trace"
   },
   {
    "fr": "Sillon",
-   "en": ""
+   "en": "Furrow"
   },
   {
    "fr": "Vaincre un Gardien avec elle dans la chaîne",
-   "en": ""
+   "en": "Defeat a Guardian with it in the chain"
   },
   {
    "fr": "Porter le dernier coup à un Gardien",
-   "en": ""
+   "en": "Land the final blow on a Guardian"
   },
   {
    "fr": "Gagner un combat à −5 ou plus bas",
-   "en": ""
+   "en": "Win a fight at −5 or deeper"
   },
   {
    "fr": "Vaincre un Gardien à −8 ou plus bas",
-   "en": ""
+   "en": "Defeat a Guardian at −8 or deeper"
   },
   {
    "fr": "Porter 25 derniers coups",
-   "en": ""
+   "en": "Land 25 final blows"
   },
   {
    "fr": "qui achève",
-   "en": ""
+   "en": "that finishes"
   },
   {
    "fr": "Porter 10 derniers coups.",
-   "en": ""
+   "en": "Land 10 final blows."
   },
   {
    "fr": "qui a vu −{0}",
-   "en": ""
+   "en": "that saw −{0}"
   },
   {
    "fr": "Gagner un combat à la Strate −5 ou plus bas.",
-   "en": ""
+   "en": "Win a fight at Stratum −5 or deeper."
   },
   {
    "fr": "qui a fendu le Gardien de −{0}",
-   "en": ""
+   "en": "that split the Guardian of −{0}"
   },
   {
    "fr": "Porter le dernier coup à un Gardien.",
-   "en": ""
+   "en": "Land the final blow on a Guardian."
   },
   {
    "fr": "qui fend les Fêlures",
-   "en": ""
+   "en": "that splits Flaws"
   },
   {
    "fr": "Briser 60 Fêlures.",
-   "en": ""
+   "en": "Break 60 Flaws."
   },
   {
    "fr": "qui a tenu à −{0}",
-   "en": ""
+   "en": "that held at −{0}"
   },
   {
    "fr": "Une carte de bouclier : donner 1 500 de bouclier et gagner à −4 ou plus bas.",
-   "en": ""
+   "en": "A shield card: give 1,500 shield and win at −4 or deeper."
   },
   {
    "fr": "qui n’a laissé tomber personne",
-   "en": ""
+   "en": "that let no one fall"
   },
   {
    "fr": "Une carte de soin : soigner 1 500 PV.",
-   "en": ""
+   "en": "A healing card: heal 1,500 HP."
   },
   {
    "fr": "aux mille coups",
-   "en": ""
+   "en": "of a thousand blows"
   },
   {
    "fr": "Une carte d’attaque : infliger 6 000 dégâts.",
-   "en": ""
+   "en": "An attack card: deal 6,000 damage."
   },
   {
    "fr": "de toutes les descentes",
-   "en": ""
+   "en": "of every descent"
   },
   {
    "fr": "Gagner 300 combats.",
-   "en": ""
+   "en": "Win 300 fights."
   },
   {
    "fr": "Porter le dernier coup à un Rôdeur.",
-   "en": ""
+   "en": "Land the final blow on a Prowler."
   },
   {
    "fr": "Liée à {0}.",
-   "en": ""
+   "en": "Bound to {0}."
   },
   {
    "fr": "Mise au jour à −{0}.",
-   "en": ""
+   "en": "Unearthed at −{0}."
   },
   {
    "fr": "Premier Porteur : {0}.",
-   "en": ""
+   "en": "First Bearer: {0}."
   },
   {
    "fr": "{0} lancer{1} · {2} combat{3} gagné{4}.",
-   "en": ""
+   "en": "{0} cast{1} · {2} fight{3} won{4|}."
   },
   {
    "fr": "{0} dernier{1} coup{2}",
-   "en": ""
+   "en": "{0} final blow{2}{1|}"
   },
   {
    "fr": "{0} Fêlure{1} brisée{2}",
-   "en": ""
+   "en": "{0} Flaw{1} broken{2|}"
   },
   {
    "fr": "A abattu {0}.",
-   "en": ""
+   "en": "Brought down {0}."
   },
   {
    "fr": "A fendu le Gardien de −{0}.",
-   "en": ""
+   "en": "Split the Guardian of −{0}."
   },
   {
    "fr": "Était là contre le Gardien de −{0}.",
-   "en": ""
+   "en": "Was there against the Guardian of −{0}."
   },
   {
    "fr": "Profondeur atteinte : −{0}.",
-   "en": ""
+   "en": "Depth reached: −{0}."
   },
   {
    "fr": "Porte le souvenir {0} : {1}",
-   "en": ""
+   "en": "Carries the memory {0}: {1}"
   },
   {
    "fr": "Elle porte déjà un souvenir.",
-   "en": ""
+   "en": "It already carries a memory."
   },
   {
    "fr": "Il faut que la carte ait atteint le palier {0} de son empreinte.",
-   "en": ""
+   "en": "The card must have reached tier {0} of its imprint."
   }
  ]
 }

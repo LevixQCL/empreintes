@@ -3,87 +3,87 @@
  "entrees": [
   {
    "fr": "Strate −1 vaincue",
-   "en": ""
+   "en": "Stratum −1 defeated"
   },
   {
    "fr": "Un paquet de cristaux (≈ une journée de jeu)",
-   "en": ""
+   "en": "A bundle of crystals (≈ one day of play)"
   },
   {
    "fr": "Strate −3 atteinte",
-   "en": ""
+   "en": "Stratum −3 reached"
   },
   {
    "fr": "Une carte au choix, dont une d’argent",
-   "en": ""
+   "en": "A card of your choice, one of them silver"
   },
   {
    "fr": "Tour du Noyau niveau 3",
-   "en": ""
+   "en": "Core Tower level 3"
   },
   {
    "fr": "La carte « Empreinte jumelle », à son nom",
-   "en": ""
+   "en": "The “Twin Imprint” card, in their name"
   },
   {
    "fr": "La carte « Empreinte jumelle », au nom du parrain",
-   "en": ""
+   "en": "The “Twin Imprint” card, in your sponsor’s name"
   },
   {
    "fr": "Dos « Empreinte partagée »",
-   "en": ""
+   "en": "“Shared Imprint” card back"
   },
   {
    "fr": "le dos de carte « Empreinte partagée »",
-   "en": ""
+   "en": "the “Shared Imprint” card back"
   },
   {
    "fr": "Le dos de tes cartes, quand elles se révèlent : deux empreintes qui se répondent, dans l’or.",
-   "en": ""
+   "en": "The back of your cards, as they’re revealed: two imprints answering each other, in gold."
   },
   {
    "fr": "Titre « Recruteur »",
-   "en": ""
+   "en": "“Recruiter” title"
   },
   {
    "fr": "le titre « Recruteur »",
-   "en": ""
+   "en": "the “Recruiter” title"
   },
   {
    "fr": "À côté de ton pseudo, sur le Grand Tableau.",
-   "en": ""
+   "en": "Next to your username, on the Great Board."
   },
   {
    "fr": "C’est ton propre code.",
-   "en": ""
+   "en": "That’s your own code."
   },
   {
    "fr": "Recommandé par {0} : +{1} cristaux, une carte au choix, et des colis doublés pendant {2} jours.",
-   "en": ""
+   "en": "Recommended by {0}: +{1} crystals, a card of your choice, and doubled parcels for {2} days."
   },
   {
    "fr": "Parrainage : la Strate −3 est atteinte, une carte au choix t’attend. {0} reçoit la sienne.",
-   "en": ""
+   "en": "Sponsorship: Stratum −3 reached, a card of your choice awaits you. {0} receives theirs."
   },
   {
    "fr": "Parrainage : la carte « {0} » rejoint ta collection, liée à {1}.",
-   "en": ""
+   "en": "Sponsorship: the “{0}” card joins your collection, bound to {1}."
   },
   {
    "fr": "{0} a vaincu la Strate −1 : +{1} cristaux et +{2} Éclats.",
-   "en": ""
+   "en": "{0} defeated Stratum −1: +{1} crystals and +{2} Shards."
   },
   {
    "fr": "{0} a atteint la Strate −3 : une carte au choix t’attend.",
-   "en": ""
+   "en": "{0} reached Stratum −3: a card of your choice awaits you."
   },
   {
    "fr": "{0} a monté sa Tour du Noyau au niveau 3 : la carte « {1} » rejoint ta collection.",
-   "en": ""
+   "en": "{0} upgraded their Core Tower to level 3: the “{1}” card joins your collection."
   },
   {
    "fr": "{0} recrues actives : tu gagnes {1}.",
-   "en": ""
+   "en": "{0} active recruits: you earn {1}."
   }
  ]
 }

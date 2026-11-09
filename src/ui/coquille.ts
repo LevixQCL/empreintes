@@ -1,7 +1,7 @@
 // La coquille des écrans du district : barre de ressources en haut, navigation en bas, notifications, menu.
 // Tout l'affichage du district passe par ici pour rester cohérent d'un écran à l'autre.
 
-import { autoActif } from './options';
+import { autoActif, langueReglable, NOMS_LANGUES } from './options';
 import { texteGraphismes } from './graphismes';
 import { sonActif } from './son';
 import { animationsReduites } from './outils';
@@ -20,7 +20,7 @@ import { feuilleNom } from './classements';
 import { cristalAllume, cristalRail, entreeFiche, feuilleFiche } from './fiche';
 import { COULEUR, ICONE_MUET, ICONE_SON, panneauCompte, type Compte } from './vue';
 import { echap, virgule, texteReplie } from './outils';
-import { t as tr } from '../core/i18n';
+import { langue, t as tr, locale, enumerer } from '../core/i18n';
 
 export type Vue = 'archipel' | 'coupe' | 'escouade' | 'rencontre' | 'briefing' | 'accueil' | 'codex' | 'cartes' | 'porteurs' | 'classements' | 'pillages' | 'fleche' | 'recruter' | 'cercle';
 /** filtre de la collection : une lignée, ou les cartes qui peuvent monter, ou celles que personne ne porte */
@@ -143,10 +143,10 @@ export interface EcranDistrict {
   uid?: string | null;
 }
 
-export const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
+export const ent = (n: number) => Math.floor(n).toLocaleString(locale()).replace(/\u202f/g, '\u00a0');
 export const duree = (ms: number) => {
   const s = Math.max(0, Math.ceil(ms / 1000));
-  if (s >= 86_400) return `${Math.floor(s / 86_400)} j ${Math.floor((s % 86_400) / 3600)} h`;
+  if (s >= 86_400) return `${Math.floor(s / 86_400)} ${langue() === 'en' ? 'd' : 'j'} ${Math.floor((s % 86_400) / 3600)} h`;
   if (s >= 3600) return `${Math.floor(s / 3600)} h ${String(Math.floor((s % 3600) / 60)).padStart(2, '0')}`;
   return s >= 60 ? `${Math.floor(s / 60)} min ${String(s % 60).padStart(2, '0')}` : `${s} s`;
 };
@@ -332,7 +332,7 @@ function feuilleRessource(j: Jeu, r: Ressource | null | undefined, famille: stri
     const manque = manquePourCreuser(j);
     surtitre = 'PROFONDEUR'; titre = tr`La Strate −${j.strate}`;
     resume = tr('L’étage le plus profond que ton district a creusé sous la ville. Plus on descend, plus c’est ancien, dangereux et précieux.');
-    etat = `<b>−${j.strate}</b><small>${j.frontVaincu ? (manque ? tr`Gardien vaincu : il manque ${[manque.creuseurs ? `${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : '', manque.noyau ? tr`${manque.noyau} niveau${manque.noyau > 1 ? 'x' : ''} de Tour du Noyau` : ''].filter(Boolean).join(' et ')} pour creuser plus bas` : tr('Prête à être creusée plus bas')) : tr`Bats son gardien pour pouvoir creuser l’étage suivant`}</small>`;
+    etat = `<b>−${j.strate}</b><small>${j.frontVaincu ? (manque ? tr`Gardien vaincu : il manque ${enumerer([manque.creuseurs ? tr`${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : '', manque.noyau ? tr`${manque.noyau} niveau${manque.noyau > 1 ? 'x' : ''} de Tour du Noyau` : ''].filter(Boolean))} pour creuser plus bas` : tr('Prête à être creusée plus bas')) : tr`Bats son gardien pour pouvoir creuser l’étage suivant`}</small>`;
     gagner = [ligne('porte', tr('Vaincre le gardien'), tr`Le gardien de la Strate −${j.strate} garde l’accès à l’étage suivant.`),
       ligne('ouvrier', tr`Assez de creuseurs (${j.creuseurs ?? 0} / ${creuseursRequis(j.strate + 1)})`, tr`La Tour du Noyau en loge ${logementCreuseurs(j)}. On en gagne avec les fouilles, les missions, les Épreuves et les gardiens.`)];
     servir = [ligne('cartes', tr('Des cartes de meilleur métal'), tr('Plus la Strate est profonde, plus les trouvailles sont rares.')),
@@ -408,7 +408,7 @@ export function navigation(e: EcranDistrict): string {
     return `<button type="button" class="onglet${actif === t.vue ? ' actif' : ''}" data-action="${action}"${actif === t.vue ? ' aria-current="page"' : ''}>`
       + `<span class="onglet-ico">${icone(t.icone)}${alerte[t.vue] ? '<i class="pastille-alerte" aria-label="nouveau"></i>'
         // sur téléphone, le cristal n'existe pas : c'est l'onglet Plus (où vit la fiche) qui porte l'appel
-        : t.vue === 'plus' && cristalAllume(e) ? '<i class="pastille-alerte appel-fiche" aria-label="une récompense t’attend"></i>' : ''}</span><span class="onglet-nom">${t.nom}</span></button>`;
+        : t.vue === 'plus' && cristalAllume(e) ? `<i class="pastille-alerte appel-fiche" aria-label="${tr('une récompense t’attend')}"></i>` : ''}</span><span class="onglet-nom">${t.nom}</span></button>`;
   }).join('') + `</nav>`;
 }
 
@@ -454,7 +454,7 @@ export function gainsRapport(r: RapportMission): string {
   return `<ul class="rm-gains">`
     + `<li>${ICO.composants}<b>+${r.composants}</b><small>${tr`minerai`}</small></li>`
     + `<li>${ICO.monter}<b>+${r.xp}</b><small>${tr`XP${r.niveau ? tr` · niveau ${r.niveau}` : ''}`}</small></li>`
-    + r.cartes.map((c) => `<li class="rm-carte${c.nouvelle ? ' nouvelle' : ''}">${ICO.cartes}<b>${echap(moduleDef(c.id).nom)}</b><small>${METAL(moduleDef(c.id).rarete)}${c.nouvelle ? ' · nouvelle' : ' · doublon'}</small></li>`).join('')
+    + r.cartes.map((c) => `<li class="rm-carte${c.nouvelle ? ' nouvelle' : ''}">${ICO.cartes}<b>${echap(moduleDef(c.id).nom)}</b><small>${METAL(moduleDef(c.id).rarete)}${c.nouvelle ? tr(' · nouvelle') : tr(' · doublon')}</small></li>`).join('')
     + (r.creuseurs ? `<li>${ICO.ouvrier}<b>+${r.creuseurs}</b><small>${tr`creuseur${r.creuseurs > 1 ? 's' : ''}`}</small></li>` : '')
     + (r.contrat?.choix ? `<li class="rm-carte nouvelle">${ICO.cartes}<b>${tr`3 cartes`}</b><small>${tr`au choix, au district`}</small></li>` : '')
     + (r.contrat && !r.contrat.reussi ? `<li>${ICO.lueur}<b>${tr`+1 Indice`}</b><small>${tr`pour la prochaine tentative`}</small></li>` : '')
@@ -588,7 +588,7 @@ export function menu(e: EcranDistrict): string {
     // le Cercle des quais (3 novembre 2026) : un raccourci, une fois la Strate −2 vaincue (le bâtiment reste sur la Cuvette)
     + (c.actif && strateVaincue(e.j) >= CERCLE_OUVERTURE ? `<button type="button" class="ligne-menu cr-menu" data-action="${e.j.batiments.cercle ? 'cercle' : 'cercle-batiment'}">${ICO.cercle}<span><strong>${tr`Le Cercle des quais`}</strong><small>${e.j.batiments.cercle ? tr('Tes amis, les duels entre directeurs et les échanges de cartes') : tr('À construire : amis, duels et échanges de cartes')}</small></span>${e.cercle?.aRepondre ? `<span class="pastille-n">${e.cercle.aRepondre}</span>` : ''}</button>` : '')
     + (c.actif ? `<button type="button" class="ligne-menu rc-menu" data-action="recruter">${ICO.porteurs}<span><strong>${tr`Recruter des amis`}</strong><small>${tr`Ton code de parrainage : vous êtes récompensés tous les deux quand ton ami joue`}</small></span></button>` : '')
-    + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>${tr`Compte`}</strong><small>${c.utilisateur?.anonyme ? tr('Protège ta partie : relie-la à Google ou à un e-mail') : c.utilisateur ? `Connecté${c.pseudo ? ` : ${echap(c.pseudo)}` : tr(' · choisis ton pseudo')}` : tr('Retrouver ta progression sur un autre appareil')}</small></span></button>` : '')
+    + (c.actif ? `<button type="button" class="ligne-menu" data-action="compte" aria-expanded="${c.ouvert}">${ICO.compte}<span><strong>${tr`Compte`}</strong><small>${c.utilisateur?.anonyme ? tr('Protège ta partie : relie-la à Google ou à un e-mail') : c.utilisateur ? `${tr('Connecté')}${c.pseudo ? ` : ${echap(c.pseudo)}` : tr(' · choisis ton pseudo')}` : tr('Retrouver ta progression sur un autre appareil')}</small></span></button>` : '')
     + (e.j.chambre ? `<button type="button" class="ligne-menu" data-action="accueil">${icone('district')}<span><strong>${tr`Comment marche le district`}</strong><small>${tr`Les ressources, l’escouade et le but : creuser plus bas`}</small></span></button>` : '')
     // le glossaire (31 octobre 2026, Luc) : tous les mots du jeu, avec une recherche
     + `<button type="button" class="ligne-menu" data-action="guide" data-id="glossaire">${ICO.aide}<span><strong>${tr`Glossaire`}</strong><small>${tr`Tous les mots du jeu expliqués : Fissure, Flux, Résonance, Charge…`}</small></span></button>`
@@ -602,6 +602,8 @@ export function menu(e: EcranDistrict): string {
     // le son et les animations (audit du 7 novembre 2026) : réglables hors combat
     + `<button type="button" class="ligne-menu option" data-action="option-son" role="switch" aria-checked="${sonActif()}">${sonActif() ? ICONE_SON : ICONE_MUET}<span><strong>${tr`Son`}</strong><small>${tr`Les sons du combat et de l’interface`}</small></span><b class="valeur-option">${sonActif() ? tr('Activé') : tr('Coupé')}</b></button>`
     + `<button type="button" class="ligne-menu option" data-action="option-animations" role="switch" aria-checked="${!animationsReduites()}">${ICO.lueur}<span><strong>${tr`Animations`}</strong><small>${animationsReduites() ? tr('Réduites : presque rien ne bouge, les combats vont droit au résultat') : tr('Complètes : la houle, les lueurs, les coups animés')}</small></span><b class="valeur-option">${animationsReduites() ? tr('Réduites') : tr('Complètes')}</b></button>`
+    // la langue (9 novembre 2026) : écrite dans les deux langues, pour qu'on la retrouve même sans lire celle affichée
+    + (langueReglable() ? `<button type="button" class="ligne-menu option" data-action="option-langue" aria-label="Langue · Language : ${NOMS_LANGUES[langue()]}">${ICO.carte}<span><strong>Langue · Language</strong><small>${tr`Le jeu se recharge dans l’autre langue ; ta partie ne change pas`}</small></span><b class="valeur-option">${NOMS_LANGUES[langue()]}</b></button>` : '')
     + `</div></section>`;
   h += panneauCompte(c);
   // le journal du district est passé dans la fiche du directeur (audit du 7 novembre 2026) : le menu ne garde que les réglages et les raccourcis

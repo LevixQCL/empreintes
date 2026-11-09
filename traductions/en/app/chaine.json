@@ -1,9 +1,0 @@
-{
- "source": "src/app/chaine.ts",
- "entrees": [
-  {
-   "fr": "transform .16s cubic-bezier(.2,.9,.3,1)",
-   "en": ""
-  }
- ]
-}

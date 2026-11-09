@@ -41,3 +41,26 @@ Same meaning, same intention, same effect on the reader — not the same words.
 - Game writing: *Hades* and *Disco Elysium* for short barks with character; *Slay the Spire* / *Inscryption* for card flavour text
   (one image, one twist, a single sentence that lands).
 - Card flavour text: aim for one or two sentences, ending on the line that stays with you.
+
+## Interface vocabulary (decided 9 November 2026)
+
+Beyond `traductions/glossaire.json`, keep these consistent across the UI:
+
+| French | English | | French | English |
+|---|---|---|---|---|
+| chaîne / suite | chain | | place (de la chaîne) | slot |
+| Charge (poids) | Load | | Râtelier | Rack |
+| colis / Ravitaillement | parcel / supplies | | Butin de la semaine | weekly loot |
+| palier | tier | | cran (du Butin) | notch |
+| fouille / filon | dig / seam | | barque / gabare | boat / barge |
+| Épreuve / Fêlée | Trial / Flawed | | jeton de pillage | raid token |
+| quai gravé / gage | engraved quay / stipend | | Sièges | Seats |
+| batardeau / flanc de la digue | cofferdam / Dike slope | | doublon | duplicate (a spare, for trades) |
+| Cales / Cœur (d'une ruine) | Holds / Heart | | Grand Tableau / Joutes | Great Board / Jousts |
+| tailler (le minerai) | cut | | métaux | iron, copper, silver, gold, nacre |
+
+Card effects: Piercing, Siphon, Overcharge, Unsettle (Unsettled), Fissure (fissured), Momentum, Crescendo, Accord, Wave,
+Rampart, Riposte, Discharge, Tuning Fork, Unison, Pounce, Reading, Rift, Flurry, Overflow, Seize, Recall, Plan, Breach,
+Rescue, Overvolt, Imprint, Second Wind, Dampen, Primer, Servo, Counterpoint, Finisher, Tenacity.
+Masterstrokes: Unleashed (Augmented), Rally (Spliced), Active Shadow (Resonants).
+UI register: second person, short imperative labels (“Go down”, “Claim”), sentence case, contractions allowed.

@@ -3,547 +3,539 @@
  "entrees": [
   {
    "fr": "Entrée",
-   "en": ""
+   "en": "Entrance"
   },
   {
    "fr": "Combat",
-   "en": ""
+   "en": "Fight"
   },
   {
    "fr": "Salle scellée",
-   "en": ""
+   "en": "Sealed room"
   },
   {
    "fr": "Cache",
-   "en": ""
+   "en": "Cache"
   },
   {
    "fr": "Rencontre",
-   "en": ""
+   "en": "Encounter"
   },
   {
    "fr": "Campement",
-   "en": ""
+   "en": "Camp"
   },
   {
    "fr": "Filon",
-   "en": ""
+   "en": "Seam"
   },
   {
    "fr": "Halte",
-   "en": ""
+   "en": "Waystation"
   },
   {
    "fr": "Porte ancienne",
-   "en": ""
+   "en": "Ancient door"
   },
   {
    "fr": "Dans le brouillard",
-   "en": ""
+   "en": "In the fog"
   },
   {
    "fr": "On ne sait pas ce qui attend l’escouade avant d’entrer.",
-   "en": ""
+   "en": "You don’t know what awaits the squad until you go in."
   },
   {
    "fr": "{0} chacun · {1} de chance de carte",
-   "en": ""
-  },
-  {
-   "fr": "Rôdeur",
-   "en": ""
+   "en": "{0} each · {1} chance of a card"
   },
   {
    "fr": "il s’enfuit au bout de",
-   "en": ""
+   "en": "it flees after"
   },
   {
    "fr": "{0} tours",
-   "en": ""
+   "en": "{0} turns"
   },
   {
    "fr": "faible contre",
-   "en": ""
+   "en": "weak against"
   },
   {
    "fr": "abattu : {0}",
-   "en": ""
+   "en": "downed: {0}"
   },
   {
    "fr": "PV",
-   "en": ""
+   "en": "HP"
   },
   {
    "fr": "Gardien de la zone",
-   "en": ""
+   "en": "Zone guardian"
   },
   {
    "fr": "{0} minerai · fin de la Strate",
-   "en": ""
+   "en": "{0} ore · end of the Stratum"
   },
   {
    "fr": "Plus coriace, mais une carte dort derrière.",
-   "en": ""
+   "en": "Tougher, but a card sleeps behind it."
   },
   {
    "fr": "{0} minerai · {1}",
-   "en": ""
+   "en": "{0} ore · {1}"
   },
   {
    "fr": "Combat · {0} ennemis",
-   "en": ""
+   "en": "Fight · {0} enemies"
   },
   {
    "fr": "Ils viennent ensemble : choisis qui frapper.",
-   "en": ""
+   "en": "They come together: choose who to strike."
   },
   {
    "fr": "Deux souvenirs de la même salle. Choisis celui que l’escouade traverse.",
-   "en": ""
+   "en": "Two memories of the same room. Choose the one the squad walks through."
   },
   {
    "fr": "Cache murée",
-   "en": ""
+   "en": "Walled cache"
   },
   {
    "fr": "Un abri muré en 2066",
-   "en": ""
+   "en": "A shelter walled up in 2066"
   },
   {
    "fr": "Ton Augmenté peut forcer le mur : derrière, une réserve intacte.",
-   "en": ""
+   "en": "Your Augmented can force the wall: behind it, an untouched store."
   },
   {
    "fr": "Il faudrait un Augmenté debout pour forcer le mur.",
-   "en": ""
+   "en": "You’d need an Augmented on their feet to force the wall."
   },
   {
    "fr": " (le double)",
-   "en": ""
+   "en": " (double)"
   },
   {
    "fr": "+{0} % de PV",
-   "en": ""
+   "en": "+{0} % HP"
   },
   {
    "fr": "pour l’escouade debout",
-   "en": ""
+   "en": "for the squad still standing"
   },
   {
    "fr": "Niche",
-   "en": ""
+   "en": "Alcove"
   },
   {
    "fr": "Une niche du Treillis",
-   "en": ""
+   "en": "An alcove in the Lattice"
   },
   {
    "fr": "Vidée par les Hauts, presque toujours. Parfois, un cristal y dort encore.",
-   "en": ""
+   "en": "Emptied by the Heights, almost always. Sometimes a crystal still sleeps there."
   },
   {
    "fr": "{0} minerai · {1} de chance de carte",
-   "en": ""
+   "en": "{0} ore · {1} chance of a card"
   },
   {
    "fr": "Une cache de fouilleur",
-   "en": ""
+   "en": "A digger’s cache"
   },
   {
    "fr": "La voie sûre : un peu de minerai et de quoi panser l’escouade, sans combat.",
-   "en": ""
+   "en": "The safe route: a little ore and something to patch up the squad, no fighting."
   },
   {
    "fr": " · parfois un Éclat",
-   "en": ""
+   "en": " · sometimes a Shard"
   },
   {
    "fr": "Un campement",
-   "en": ""
+   "en": "A camp"
   },
   {
    "fr": "L’escouade souffle. On peut remonter d’ici avec tout le butin.",
-   "en": ""
+   "en": "The squad catches its breath. You can head back up from here with all the loot."
   },
   {
    "fr": "+{0} PV",
-   "en": ""
+   "en": "+{0} HP"
   },
   {
    "fr": "pour l’escouade (+35 %)",
-   "en": ""
+   "en": "for the squad (+35 %)"
   },
   {
    "fr": "L’escouade est déjà en pleine forme",
-   "en": ""
+   "en": "The squad is already in top shape"
   },
   {
    "fr": "Une salle d’archives",
-   "en": ""
+   "en": "An archive room"
   },
   {
    "fr": "Un fragment de l’histoire, à rapporter au district.",
-   "en": ""
+   "en": "A fragment of history, to bring back to the district."
   },
   {
    "fr": "Quelqu’un, dans le noir",
-   "en": ""
+   "en": "Someone, in the dark"
   },
   {
    "fr": "Un choix à faire. On ne sait pas encore qui.",
-   "en": ""
+   "en": "A choice to make. You don’t know with whom yet."
   },
   {
    "fr": "Halte {0} sur {1} · passage obligatoire",
-   "en": ""
+   "en": "Waystation {0} of {1} · no way around"
   },
   {
    "fr": "Tous les chemins passent par ici. Un lieu à regarder de près, et un choix à faire.",
-   "en": ""
+   "en": "Every path goes through here. A place to look at closely, and a choice to make."
   },
   {
    "fr": "{0} chacun · un choix",
-   "en": ""
+   "en": "{0} each · a choice"
   },
   {
    "fr": "Halte · lieu connu",
-   "en": ""
+   "en": "Waystation · known place"
   },
   {
    "fr": "Un lieu connu",
-   "en": ""
+   "en": "A known place"
   },
   {
    "fr": "L’escouade connaît cet endroit, maintenant. Elle y passe sans s’arrêter.",
-   "en": ""
+   "en": "The squad knows this place now. It passes through without stopping."
   },
   {
    "fr": "Elle s’ouvre à qui accorde {0} cartes dont les Fréquences se suivent. Rien à perdre si on échoue.",
-   "en": ""
+   "en": "It opens for whoever tunes {0} cards whose Frequencies follow each other. Nothing to lose if you fail."
   },
   {
    "fr": "{0} Éclat{1} · {2} minerai",
-   "en": ""
+   "en": "{0} Shard{1} · {2} ore"
   },
   {
    "fr": "Le filon",
-   "en": ""
+   "en": "The seam"
   },
   {
    "fr": "Ce que tu cherchais : la fouille s’achève ici.",
-   "en": ""
+   "en": "What you were looking for: the dig ends here."
   },
   {
    "fr": "le filon",
-   "en": ""
+   "en": "the seam"
   },
   {
    "fr": "Fouille · {0}{1}",
-   "en": ""
+   "en": "Dig · {0}{1}"
   },
   {
    "fr": "Salle",
-   "en": ""
+   "en": "Room"
   },
   {
    "fr": "sur {0} · {1} dans",
-   "en": ""
+   "en": "of {0} · {1} in"
   },
   {
    "fr": "salle{0}",
-   "en": ""
+   "en": "room{0}"
   },
   {
    "fr": "Tu es devant {0}",
-   "en": ""
+   "en": "You’re in front of {0}"
   },
   {
    "fr": "Butin de l’expédition",
-   "en": ""
+   "en": "Expedition loot"
   },
   {
    "fr": "carte{0}",
-   "en": ""
+   "en": "card{0}"
   },
   {
    "fr": "archive",
-   "en": ""
+   "en": "archive"
   },
   {
    "fr": "Vestige{0}",
-   "en": ""
+   "en": "Relic{0}"
   },
   {
    "fr": "Remonter au district{0}",
-   "en": ""
+   "en": "Back to the district{0}"
   },
   {
    "fr": " avec {0} minerai",
-   "en": ""
+   "en": " with {0} ore"
   },
   {
    "fr": "Remonter",
-   "en": ""
-  },
-  {
-   "fr": "À terre",
-   "en": ""
+   "en": "Go back up"
   },
   {
    "fr": "{0} PV sur {1}{2}",
-   "en": ""
+   "en": "{0} of {1} HP{2}"
   },
   {
    "fr": ", l’Usure en retire {0}",
-   "en": ""
+   "en": ", Strain takes away {0}"
   },
   {
    "fr": "PV retirés par l’Usure",
-   "en": ""
+   "en": "HP taken by Strain"
   },
   {
    "fr": "Carte de la Strate",
-   "en": ""
+   "en": "Stratum map"
   },
   {
    "fr": "Plan de la Strate",
-   "en": ""
+   "en": "Stratum plan"
   },
   {
    "fr": " : un groupe ({0})",
-   "en": ""
+   "en": ": a group ({0})"
   },
   {
    "fr": " (tu es ici)",
-   "en": ""
+   "en": " (you are here)"
+  },
+  {
+   "fr": " (visitée)",
+   "en": " (visited)"
   },
   {
    "fr": "Vous êtes ici",
-   "en": ""
+   "en": "You are here"
   },
   {
    "fr": "{0} : on ne sait pas ce qui attend",
-   "en": ""
+   "en": "{0}: you don’t know what awaits"
   },
   {
    "fr": "Une salle dans la brume",
-   "en": ""
+   "en": "A room in the mist"
   },
   {
    "fr": " · un passage repéré",
-   "en": ""
+   "en": " · a passage spotted"
   },
   {
    "fr": " · la marque de la quête",
-   "en": ""
+   "en": " · the quest’s mark"
   },
   {
    "fr": " · un Vestige",
-   "en": ""
+   "en": " · a Relic"
   },
   {
    "fr": " · les traces de {0}",
-   "en": ""
+   "en": " · {0}’s tracks"
   },
   {
    "fr": "un Rôdeur",
-   "en": ""
+   "en": "a Prowler"
   },
   {
    "fr": "Voir : {0}",
-   "en": ""
+   "en": "See: {0}"
   },
   {
    "fr": "Le butin de l’expédition n’a que {0} minerai : il en manque {1}.",
-   "en": ""
+   "en": "The expedition loot has only {0} ore: {1} short."
   },
   {
    "fr": "Marque de la quête relevée · étape {0} sur {1}",
-   "en": ""
+   "en": "Quest mark picked up · step {0} of {1}"
   },
   {
    "fr": "Elle sera rangée dans la quête au retour au district.",
-   "en": ""
+   "en": "It will be filed with the quest when you return to the district."
   },
   {
    "fr": "Avancer dans le brouillard",
-   "en": ""
+   "en": "Advance into the fog"
   },
   {
    "fr": "Affronter le gardien",
-   "en": ""
+   "en": "Face the guardian"
   },
   {
    "fr": "Combattre",
-   "en": ""
+   "en": "Fight"
   },
   {
    "fr": "S’arrêter au campement",
-   "en": ""
+   "en": "Stop at the camp"
   },
   {
    "fr": "Entrer",
-   "en": ""
+   "en": "Enter"
   },
   {
    "fr": "Salle choisie",
-   "en": ""
+   "en": "Chosen room"
   },
   {
    "fr": "Fermer la fiche",
-   "en": ""
+   "en": "Close the details"
   },
   {
    "fr": ": la marque de la quête est ici{0}.",
-   "en": ""
+   "en": ": the quest’s mark is here{0}."
   },
   {
    "fr": " (gagne le combat pour la relever)",
-   "en": ""
+   "en": " (win the fight to pick it up)"
   },
   {
    "fr": "Un Vestige",
-   "en": ""
+   "en": "A Relic"
   },
   {
    "fr": "dort ici{0}.",
-   "en": ""
+   "en": "sleeps here{0}."
   },
   {
    "fr": " (gagne le combat pour le ramasser)",
-   "en": ""
+   "en": " (win the fight to pick it up)"
   },
   {
    "fr": " (ouvre la porte pour le ramasser)",
-   "en": ""
+   "en": " (open the door to pick it up)"
   },
   {
    "fr": "y repère un passage caché.",
-   "en": ""
+   "en": "spots a hidden passage here."
   },
   {
    "fr": "Touche une salle qui brille sur le plan : tu verras ce qui t’y attend avant d’entrer{0}.{1}",
-   "en": ""
+   "en": "Tap a glowing room on the map: you’ll see what awaits you before going in{0}.{1}"
   },
   {
    "fr": ", ou du moins ce que le brouillard en laisse deviner",
-   "en": ""
+   "en": ", or at least what the fog lets you guess"
   },
   {
    "fr": "{0} chemins",
-   "en": ""
+   "en": "{0} paths"
   },
   {
    "fr": "Remonter avec le filon",
-   "en": ""
+   "en": "Go back up with the seam"
   },
   {
    "fr": "{0} : tu peux rentrer maintenant avec tout ce que tu as trouvé.",
-   "en": ""
+   "en": "{0}: you can go home now with everything you’ve found."
   },
   {
    "fr": "Le campement est une sortie",
-   "en": ""
+   "en": "The camp is an exit"
   },
   {
    "fr": "L’entrée est une sortie",
-   "en": ""
+   "en": "The entrance is an exit"
   },
   {
    "fr": "Remonter avec {0} minerai",
-   "en": ""
+   "en": "Go back up with {0} ore"
   },
   {
    "fr": "Les PV remontent surtout aux campements (et parfois lors d’une rencontre). On ne peut remonter que depuis l’entrée ou un campement.",
-   "en": ""
+   "en": "HP mostly comes back at camps (and sometimes during an encounter). You can only go back up from the entrance or a camp."
   },
   {
    "fr": "· cette semaine",
-   "en": ""
+   "en": "· this week"
   },
   {
    "fr": "{0} étape{1} sur {2}",
-   "en": ""
+   "en": "{0} step{1} of {2}"
   },
   {
    "fr": "Vestiges de la Strate",
-   "en": ""
+   "en": "Stratum Relics"
   },
   {
    "fr": "+{0} cette descente",
-   "en": ""
-  },
-  {
-   "fr": "Gardien éveillé",
-   "en": ""
+   "en": "+{0} this descent"
   },
   {
    "fr": "plus fort, plus généreux",
-   "en": ""
+   "en": "stronger, more generous"
   },
   {
    "fr": "tout le plan est visible",
-   "en": ""
+   "en": "the whole map is visible"
   },
   {
    "fr": "Halte {0} sur {1} · Strate −{2}",
-   "en": ""
+   "en": "Waystation {0} of {1} · Stratum −{2}"
   },
   {
    "fr": "Regarder",
-   "en": ""
+   "en": "Look"
   },
   {
    "fr": "◆ Ton enquête · {0}",
-   "en": ""
+   "en": "◆ Your investigation · {0}"
   },
   {
    "fr": "Ce que ton enquête a trouvé",
-   "en": ""
+   "en": "What your investigation found"
   },
   {
    "fr": "Découvrir",
-   "en": ""
+   "en": "Discover"
   },
   {
    "fr": "Que fais-tu ?",
-   "en": ""
+   "en": "What do you do?"
   },
   {
    "fr": "Accorde {0} Fréquences",
-   "en": ""
+   "en": "Tune {0} Frequencies"
   },
   {
    "fr": "Choisis {0} cartes dont les Fréquences se suivent, comme une suite en combat (par exemple {1}). Une carte à Accord ∗ prolonge toute suite.",
-   "en": ""
+   "en": "Pick {0} cards whose Frequencies follow each other, like a chain in combat (for example {1}). An Accord ∗ card extends any chain."
   },
   {
    "fr": "{0} carte{1} choisie{2} sur {3}",
-   "en": ""
+   "en": "{0} card{1} chosen{2|} of {3}"
   },
   {
    "fr": "Aucune suite de {0} dans cette main.{1}",
-   "en": ""
+   "en": "No chain of {0} in this hand.{1}"
   },
   {
    "fr": " La porte reste fermée pour cette fois.",
-   "en": ""
+   "en": " The door stays shut this time."
   },
   {
    "fr": " Tu peux tirer une autre main.",
-   "en": ""
+   "en": " You can draw another hand."
   },
   {
    "fr": "Autre main",
-   "en": ""
+   "en": "Another hand"
   },
   {
    "fr": "Laisser la porte",
-   "en": ""
+   "en": "Leave the door"
   },
   {
    "fr": "Suivre le passage{0}",
-   "en": ""
+   "en": "Follow the passage{0}"
   }
  ]
 }

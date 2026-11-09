@@ -13,13 +13,13 @@ import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, avatar, decompte, etapeVoyage, type
 import { ICO, type Icone } from './icones';
 import { echap, texteReplie } from './outils';
 import { COULEUR } from './vue';
-import { t as tr } from '../core/i18n';
+import { t as tr, enumerer } from '../core/i18n';
 
 /** Le rôle de chaque lignée dans une épreuve (frapper, tenir, orchestrer) */
 const ROLE: Record<Lignee, { icone: Icone; verbe: string }> = {
-  tech: { icone: 'atk', verbe: 'frapper' },
-  bio: { icone: 'bouclier', verbe: 'tenir' },
-  reso: { icone: 'flux', verbe: 'orchestrer' },
+  tech: { icone: 'atk', verbe: tr('frapper') },
+  bio: { icone: 'bouclier', verbe: tr('tenir') },
+  reso: { icone: 'flux', verbe: tr('orchestrer') },
 };
 const NOM_AF: Record<Affinite, string> = { bon: tr('Fait pour ça'), neutre: tr('Peut le faire'), mauvais: tr('À contre-emploi') };
 const majuscule = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
@@ -58,11 +58,11 @@ const ETIQUETTE: Partial<Record<ContratOuvert['prise'], string>> = { choix: tr('
 function tuile(j: Jeu, c: ContratOuvert, choisie: boolean, now: number): string {
   const r = MAREES[c.rang];
   const enMer = mareesDe(j).contrat?.id === c.id;
-  const etat = !c.ouvert ? tr`${ICO.verrou}Strate −${r.strate}` : enMer ? tr`${ICO.chrono}En mer` : c.reussi ? `${ICO.ok}Rempli` : `${r.porteurs} Porteurs`;
+  const etat = !c.ouvert ? tr`${ICO.verrou}Strate −${r.strate}` : enMer ? tr`${ICO.chrono}En mer` : c.reussi ? `${ICO.ok}${tr('Rempli')}` : tr`${r.porteurs} Porteurs`;
   return `<button type="button" role="tab" class="mr-tuile r-${c.rang}${choisie ? ' choisi' : ''}${c.ouvert ? '' : ' fermee'}${c.reussi ? ' fait' : ''}" data-action="maree-rang" data-id="${c.rang}" aria-selected="${choisie}">`
     + `<span class="mr-coef" aria-hidden="true">${r.coef}</span><strong>${r.nom}</strong><span class="mr-etat">${etat}</span>`
     + `<em class="mr-prise p-${c.prise}"${c.prise === 'lignee' ? ` style="color:${COULEUR[c.lieu.lignee]}"` : ''}>${ETIQUETTE[c.prise] ?? NOM_LIGNEES[c.lieu.lignee]}</em>`
-    + `<small>${c.ouvert ? decompte(c.fin, now, 'encore ') : tr('plus bas')}</small></button>`;
+    + `<small>${c.ouvert ? decompte(c.fin, now, tr('encore ')) : tr('plus bas')}</small></button>`;
 }
 
 /** La gabare en mer : la même fenêtre sur le large que les barques, avec toute l'équipe */
@@ -79,7 +79,7 @@ function gabare(j: Jeu, now: number): string {
   return `<div class="voyage mr-gabare ph-${phase}${peint ? ' peint' : ''}" style="--c:${COULEUR[lieu.lignee]};--x:${x.toFixed(4)}${peint ? `;--decor:url(${peint})` : ''}" data-vdebut="${m.debut}" data-vfin="${m.fin}">`
     + `<span class="vg-fond" aria-hidden="true"><i class="vg-pano"></i><i class="vg-reflets" style="--reflets:url(${reflets})"></i></span>`
     + `<div class="vg-tete"><span class="mr-equipe">${m.porteurs.map((p) => avatar(p, 34)).join('')}</span><span class="vg-qui"><strong>${MAREES[m.rang].nom} · ${echap(def.titre)}</strong><small>${echap(majuscule(lieu.nom))} · <b class="mr-taux-mini">${m.taux} %</b> ${tr`de chances`}</small></span>`
-    + `<span class="vg-etat"><b data-phase>${NOM_PHASE[phase]}</b><small>${now >= m.fin ? tr('rentre au district') : decompte(m.fin, now, 'retour dans ')}</small></span></div>`
+    + `<span class="vg-etat"><b data-phase>${NOM_PHASE[phase]}</b><small>${now >= m.fin ? tr('rentre au district') : decompte(m.fin, now, tr('retour dans '))}</small></span></div>`
     + `<div class="vg-route" role="img" aria-label="${tr`${NOM_PHASE[phase]}, vers ${echap(lieu.nom)}`}">`
     + `<span class="vg-port"><img src="${vignetteDistrict(age)}" alt="" decoding="async" loading="lazy"></span>`
     + `<span class="vg-eau"><i class="vg-trace"></i><i class="vg-sillage"></i>`
@@ -110,7 +110,7 @@ export function htmlMarees(e: EcranDistrict): string {
   }
   h += `<ul class="mr-gains">${recompense(j, c)}</ul>`;
   if (c.reussi) {
-    h += `<p class="mr-fait">${ICO.ok}<span>${tr`Contrat rempli. ${c.rang === 'montante' ? tr('Une nouvelle marée montera demain') : tr('Le prochain contrat de cette marée s’ouvre')} ${decompte(c.fin, now, 'dans ')}.`}</span></p></article>`;
+    h += `<p class="mr-fait">${ICO.ok}<span>${tr`Contrat rempli. ${c.rang === 'montante' ? tr('Une nouvelle marée montera demain') : tr('Le prochain contrat de cette marée s’ouvre')} ${decompte(c.fin, now, tr('dans '))}.`}</span></p></article>`;
     return h + `</section>`;
   }
 
@@ -149,7 +149,7 @@ export function htmlMarees(e: EcranDistrict): string {
     + `<div class="mr-infos">`
     + (c.indices ? `<span class="mr-indice">${ICO.lueur}${tr`${c.indices} Indice${c.indices > 1 ? 's' : ''} · +${c.indices * CONTRAT.indice} %`}</span>` : '')
     + `<small>${ICO.chrono}${tr`${r.heures} h en mer · un échec rapporte ${Math.round(CONTRAT.partEchec * 100)} % du minerai, toute l’XP et un Indice (+${CONTRAT.indice} %)`}</small>`
-    + (escouade.length ? `<small class="mr-alerte">${tr`${escouade.map((p) => echap(porteurDef(p).nom)).join(' et ')} ne pourr${escouade.length > 1 ? 'ont' : 'a'} pas descendre avant le retour de la gabare.`}</small>` : '')
+    + (escouade.length ? `<small class="mr-alerte">${escouade.length > 1 ? tr`${enumerer(escouade.map((p) => echap(porteurDef(p).nom)))} ne pourront pas descendre avant le retour de la gabare.` : tr`${echap(porteurDef(escouade[0]!).nom)} ne pourra pas descendre avant le retour de la gabare.`}</small>` : '')
     + `<div class="mr-boutons"><button type="button" class="btn sec" data-action="maree-conseil">${tr`Meilleure équipe`}</button>`
     + `<button type="button" class="btn prim" data-action="maree-partir" data-id="${c.id}"${complet && !occupe ? '' : ' disabled'}>${tr`Embarquer`}</button></div>`
     + (occupe ? `<small class="aide">${tr`La gabare est en mer : un contrat à la fois.`}</small>` : !complet ? `<small class="aide">${tr`Il manque un Porteur libre : libère-en un d’un bâtiment.`}</small>` : '')

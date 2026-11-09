@@ -3,167 +3,171 @@
  "entrees": [
   {
    "fr": "à terre",
-   "en": ""
+   "en": "down"
   },
   {
    "fr": "{0} PV sur {1}",
-   "en": ""
+   "en": "{0} of {1} HP"
   },
   {
    "fr": ", visé",
-   "en": ""
+   "en": ", targeted"
   },
   {
    "fr": "Place vide de {0} : elle ne se joue pas",
-   "en": ""
+   "en": "{0}’s empty slot: it can’t be played"
   },
   {
    "fr": "Résonance {0}",
-   "en": ""
+   "en": "Resonance {0}"
   },
   {
    "fr": "Ta chaîne : {0} dégâts sur {1}, {2} de bouclier, {3} de soin",
-   "en": ""
+   "en": "Your chain: {0} damage on {1}, {2} shield, {3} healing"
   },
   {
    "fr": "sur {0}",
-   "en": ""
+   "en": "on {0}"
   },
   {
    "fr": "Compose ta chaîne : les deux chaînes partent en même temps.",
-   "en": ""
+   "en": "Build your chain: both chains go off at the same time."
   },
   {
    "fr": "(à toi)",
-   "en": ""
+   "en": "(your turn)"
   },
   {
    "fr": "Tour {0}",
-   "en": ""
+   "en": "Turn {0}"
   },
   {
    "fr": "infligé",
-   "en": ""
+   "en": "dealt"
   },
   {
    "fr": "reçu",
-   "en": ""
+   "en": "taken"
   },
   {
    "fr": "à terre : {0}",
-   "en": ""
+   "en": "down: {0}"
   },
   {
    "fr": "a verrouillé",
-   "en": ""
+   "en": "has locked in"
   },
   {
    "fr": "compose sa chaîne…",
-   "en": ""
+   "en": "is building their chain…"
   },
   {
    "fr": "Duel · tour {0}",
-   "en": ""
+   "en": "Duel · turn {0}"
   },
   {
    "fr": "Bouclier gardé {0}",
-   "en": ""
+   "en": "Shield kept {0}"
   },
   {
    "fr": "Lecture : {0} attaque{1}, {2} bouclier{3}, {4} soin{5}",
-   "en": ""
+   "en": "Reading: {0} attack{1}, {2} shield{3}, {4} heal{5}"
   },
   {
    "fr": "{0} secondes",
-   "en": ""
+   "en": "{0} seconds"
   },
   {
    "fr": "Flux {0} sur {1}",
-   "en": ""
+   "en": "Flux {0} of {1}"
   },
   {
    "fr": "Place",
-   "en": ""
+   "en": "Slot"
   },
   {
    "fr": "Main",
-   "en": ""
+   "en": "Hand"
   },
   {
    "fr": "Réclamer la victoire",
-   "en": ""
+   "en": "Claim victory"
   },
   {
    "fr": "En attente…",
-   "en": ""
+   "en": "Waiting…"
+  },
+  {
+   "fr": "Verrouiller",
+   "en": "Lock in"
   },
   {
    "fr": "Abandonner",
-   "en": ""
+   "en": "Forfeit"
   },
   {
    "fr": "Un choix adverse illisible a été remplacé par une chaîne vide.",
-   "en": ""
+   "en": "An unreadable move from your opponent was replaced by an empty chain."
   },
   {
    "fr": "Égalité",
-   "en": ""
+   "en": "Draw"
   },
   {
    "fr": "Tu as quitté le duel.",
-   "en": ""
+   "en": "You left the duel."
   },
   {
    "fr": "{0} a quitté le duel.",
-   "en": ""
+   "en": "{0} left the duel."
   },
   {
    "fr": "En {0} tours.",
-   "en": ""
+   "en": "In {0} turns."
   },
   {
    "fr": "Fin du duel",
-   "en": ""
+   "en": "End of the duel"
   },
   {
    "fr": "Revanche",
-   "en": ""
+   "en": "Rematch"
   },
   {
    "fr": "OSSYRA · aperçu, pas encore dans le jeu",
-   "en": ""
+   "en": "OSSYRA · preview, not in the game yet"
   },
   {
    "fr": "Duel en temps réel",
-   "en": ""
+   "en": "Real-time duel"
   },
   {
    "fr": "Deux escouades d’un Augmenté, d’un Géné et d’un Résonant, une chaîne chacun, {0} secondes par tour : les deux chaînes partent en même temps.",
-   "en": ""
+   "en": "Two squads of one Augmented, one Spliced and one Resonant, one chain each, {0} seconds per turn: both chains go off at the same time."
   },
   {
    "fr": "S’entraîner contre le robot",
-   "en": ""
+   "en": "Practise against the robot"
   },
   {
    "fr": "Donne ce code à ton adversaire. Le duel commence dès qu’il le rejoint.",
-   "en": ""
+   "en": "Give this code to your opponent. The duel starts as soon as they join."
   },
   {
    "fr": "Créer un duel entre amis",
-   "en": ""
+   "en": "Create a duel between friends"
   },
   {
    "fr": "CODE",
-   "en": ""
+   "en": "CODE"
   },
   {
    "fr": "Rejoindre",
-   "en": ""
+   "en": "Join"
   },
   {
    "fr": "Le duel entre amis demande une connexion au compte.",
-   "en": ""
+   "en": "Duels between friends need you to be signed in."
   }
  ]
 }

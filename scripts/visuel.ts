@@ -103,6 +103,7 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'debut', sauvegarde: 'debut', faire: ENTRER },
 ];
 // VISUEL_TAILLES=1280x800,1920x1080 : d'autres tailles d'écran (par défaut, un téléphone et un PC)
+// VISUEL_LANGUE=en : la version « après » s'affiche en anglais, pour relire la traduction à côté du français
 const TAILLES = (process.env.VISUEL_TAILLES?.split(',').map((t) => t.split('x').map(Number) as [number, number]) ?? [[390, 844], [1280, 800]]) as readonly (readonly [number, number])[];
 
 /** Ce que l'on compte sur chaque écran (seulement ce qui est visible dans la fenêtre) */
@@ -282,7 +283,8 @@ async function main() {
                 set(v: string) { html.set!.call(this, typeof v === 'string' ? v.replaceAll('loading="lazy"', 'loading="eager"').replaceAll('decoding="async"', 'decoding="sync"') : v); },
               });
             }, [JSON.stringify((saves as Record<string, unknown>)[scene.sauvegarde]), process.env.VISUEL_GRAPHISMES ?? 'complets']);
-            await p.goto(`http://localhost:${port}/`);
+            // VISUEL_LANGUE=en : la version « après » s'ouvre dans cette langue (relire une traduction écran par écran)
+            await p.goto(`http://localhost:${port}/${port === 4402 && process.env.VISUEL_LANGUE ? `?langue=${process.env.VISUEL_LANGUE}` : ''}`);
             await p.waitForTimeout(300);
             try { await scene.faire(p); } catch (e) { console.log(`  ${scene.nom} ${w} px : geste impossible (${String(e).split('\n')[0]})`); }
             // toutes les images visibles chargées (les portraits arrivent en différé)
@@ -299,6 +301,8 @@ async function main() {
               photo = encore;
             }
             photos.push(photo);
+            // VISUEL_LANGUE : le texte visible de la version traduite, pour repérer ce qui reste en français
+            if (process.env.VISUEL_LANGUE && port === 4402) writeFileSync(resolve(sortie, `${scene.nom}-${w}-texte.txt`), await p.evaluate(() => document.body.innerText));
             // la lisibilité (audit du 7 novembre 2026) : petits textes, coins coupés, petites cibles, ancienne police
             mesures.push({ version: port === 4401 ? 'avant' : 'apres', ecran: `${scene.nom}-${w}`, ...(await p.evaluate(MESURER)) });
             await ctx.close();

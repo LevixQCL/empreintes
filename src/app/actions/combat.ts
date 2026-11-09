@@ -9,7 +9,7 @@ import { suitePorte } from '../../core/expedition';
 import { comparer, montrer, relever } from '../../ui/gains';
 import { basculerSon, debloquerSon } from '../../ui/son';
 import { vibrer } from '../../ui/toucher';
-import { autoActif, basculerAuto } from '../../ui/options';
+import { autoActif, basculerAuto, changerLangue } from '../../ui/options';
 import { basculerGraphismes } from '../../ui/graphismes';
 import { basculerAnimations } from '../../ui/outils';
 import { jouer, jouerFuite } from '../combat';
@@ -75,6 +75,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
     case 'option-graphismes': basculerGraphismes(); vibrer(5); break;
     case 'option-son': basculerSon(); vibrer(5); break;
     case 'option-animations': basculerAnimations(); vibrer(5); break;
+    case 'option-langue': sauver(); changerLangue(); return 'fin';
     case 'regles': K.regles = !K.regles; K.fuite = false; K.guide = null; K.journal = null; break;
     case 'fuir': if (!K.verrou) { K.fuite = !K.fuite; K.regles = false; K.guide = null; K.journal = null; } break;
     // le journal du combat : les piles l'ouvrent sur la défausse, la dernière ligne du journal et la fin du combat sur les tours
@@ -184,7 +185,7 @@ export async function agirCombat(a: string, c: Clic): Promise<Suite> {
         const note = (r.fuite ? t`L’escouade a fui : elle rentre épuisée (+${J.DISTRICT.usureFuite} d’Usure chacun). ` : '')
           + (r.nouvelleStrate ? t`Un nouvel étage est creusé : la Strate −${app.jeu.strate} est ouverte.`
           : r.victoire && manque && app.jeu.frontVaincu && J.strateVaincue(app.jeu) === app.jeu.strate
-            ? t`Le gardien est vaincu, mais l’étage suivant attend : ${manque.creuseurs ? t`il manque ${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : ''}${manque.creuseurs && manque.noyau ? ' et ' : ''}${manque.noyau ? t`la Tour du Noyau doit passer au niveau ${J.noyauRequis(app.jeu.strate + 1)}` : ''}.`
+            ? t`Le gardien est vaincu, mais l’étage suivant attend : ${manque.creuseurs ? t`il manque ${manque.creuseurs} creuseur${manque.creuseurs > 1 ? 's' : ''}` : ''}${manque.creuseurs && manque.noyau ? t(' et ') : ''}${manque.noyau ? t`la Tour du Noyau doit passer au niveau ${J.noyauRequis(app.jeu.strate + 1)}` : ''}.`
             : '')
           + (r.quete?.finie && r.quete.fin ? ` ${r.quete.fin}` : '');
         // le rapport d'expédition (31 octobre 2026) remplace la longue phrase du bandeau

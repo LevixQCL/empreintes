@@ -3,7 +3,7 @@
  "entrees": [
   {
    "fr": "Ysé",
-   "en": ""
+   "en": "Ysé"
   },
   {
    "fr": "Archiviste des Veilleurs",
@@ -19,7 +19,7 @@
   },
   {
    "fr": "Tobin",
-   "en": ""
+   "en": "Tobin"
   },
   {
    "fr": "Fouilleur des Veilleurs",
@@ -27,7 +27,7 @@
   },
   {
    "fr": "Brac",
-   "en": ""
+   "en": "Brac"
   },
   {
    "fr": "Pilleur de Strates",
@@ -55,7 +55,7 @@
   },
   {
    "fr": "Épilogue",
-   "en": ""
+   "en": "Epilogue"
   },
   {
    "fr": "{0} · STRATE −{1}",
@@ -278,6 +278,10 @@
    "en": "Behind these doors, someone put the crystals away with care. The way you tidy a room before you leave it for good."
   },
   {
+   "fr": "L’appel",
+   "en": "The Call"
+  },
+  {
    "fr": "Le Gardien des registres recule derrière une porte ronde et la referme sur lui. Avant de disparaître, il a lu une liste de noms, lentement, d’une voix de pierre.",
    "en": "The Guardian of the Registers backs away behind a round door and shuts it on himself. Before he vanishes, he reads out a list of names, slowly, in a voice like stone."
   },
@@ -344,6 +348,10 @@
   {
    "fr": "Le Gardien est en dessous. Il garde ce qu’il reste. Je commence à le comprendre.",
    "en": "The Guardian’s down there. Guarding what’s left. I’m starting to understand him."
+  },
+  {
+   "fr": "L’inventaire",
+   "en": "The Inventory"
   },
   {
    "fr": "Cette fois, le Gardien a appelé un brigadier à la barre. Le soldat s’est battu en récitant un serment qui n’était pas le sien. Dans la poche de son uniforme, un inventaire.",

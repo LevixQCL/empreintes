@@ -3,151 +3,151 @@
  "entrees": [
   {
    "fr": "Qui garde la chambre ?",
-   "en": ""
+   "en": "Who keeps the chamber?"
   },
   {
    "fr": "La Confluence est tombée, et tout Vertiga parle de la chambre aux empreintes mêlées. Les Brigades du Serment de Veyr sont au pied de la Tour, les Veilleurs de Sédime demandent à l’étudier, et le quartier attend ta décision.",
-   "en": ""
+   "en": "The Confluence has fallen, and all of Vertiga is talking about the chamber of tangled imprints. The Brigades of the Oath of Veyr are at the foot of the Tower, the Watchers of Sédime are asking to study it, and the quarter is waiting for your decision."
   },
   {
    "fr": "La Maison Orsève",
-   "en": ""
+   "en": "House Orsève"
   },
   {
    "fr": "Nous n’héritons pas du pouvoir. Nous héritons de la responsabilité de le contenir.",
-   "en": ""
+   "en": "We do not inherit power. We inherit the duty to contain it."
   },
   {
    "fr": "Les Brigades sécurisent la chambre et ne te barrent plus la route dans les Strates. Les Hauts paient : +1 Éclat sur chaque gardien vaincu.",
-   "en": ""
+   "en": "The Brigades secure the chamber and no longer bar your way in the Strata. The Heights pay: +1 Shard for every guardian defeated."
   },
   {
    "fr": "Le district seul",
-   "en": ""
+   "en": "The district alone"
   },
   {
    "fr": "Ce qui est sous notre digue est à nous.",
-   "en": ""
+   "en": "What lies beneath our Dike is ours."
   },
   {
    "fr": "Le quartier se mobilise : +20 % de minerai à chaque expédition. Mais les Brigades contestent, et tu les croiseras dans les salles closes.",
-   "en": ""
+   "en": "The quarter rallies: +20 % ore on every expedition. But the Brigades object, and you’ll run into them in the closed halls."
   },
   {
    "fr": "Une commission avec les Veilleurs",
-   "en": ""
+   "en": "A commission with the Watchers"
   },
   {
    "fr": "Nous ne sommes pas les propriétaires du passé. Nous sommes les prochains à pouvoir le perdre.",
-   "en": ""
+   "en": "We are not the owners of the past. We are simply the next ones who could lose it."
   },
   {
    "fr": "Les Veilleurs partagent leurs fouilles : 25 % de chances de carte par combat au lieu de 20 %.",
-   "en": ""
+   "en": "The Watchers share their digs: 25 % chance of a card per fight instead of 20 %."
   },
   {
    "fr": "La dernière lecture",
-   "en": ""
+   "en": "The last reading"
   },
   {
    "fr": "Sous les salles closes, les cristaux d’un même individu portent des souvenirs qui se contredisent. Véla pense pouvoir lire jusqu’au bout ce qu’ils cachent. Elle sait que son lien avec son empreinte pourrait ne pas y survivre. Elle attend ton accord.",
-   "en": ""
+   "en": "Beneath the closed halls, crystals from a single being carry memories that contradict each other. Véla thinks she can read what they hide all the way to the end. She knows her bond with her own imprint might not survive it. She’s waiting for your go-ahead."
   },
   {
    "fr": "Autoriser la lecture",
-   "en": ""
+   "en": "Allow the reading"
   },
   {
    "fr": "Véla gagne une carte unique, Lecture profonde (Fréquence libre, forte attaque), en plus de ses 6 cartes. Son lien s’effiloche : −4 PV pour de bon.",
-   "en": ""
+   "en": "Véla gains a unique card, Deep Reading (free Frequency, strong attack), on top of her 6 cards. Her bond frays: −4 HP for good."
   },
   {
    "fr": "Refuser, la protéger",
-   "en": ""
+   "en": "Refuse, protect her"
   },
   {
    "fr": "On n’entre pas deux fois chez quelqu’un sans y être invité.",
-   "en": ""
+   "en": "You don’t walk into someone’s home twice without being invited."
   },
   {
    "fr": "Véla garde son empreinte intacte et reprend des forces : +4 PV pour de bon. Ce que cachent les cristaux attendra.",
-   "en": ""
+   "en": "Véla keeps her imprint intact and regains her strength: +4 HP for good. What the crystals hide will have to wait."
   },
   {
    "fr": "La vérité",
-   "en": ""
+   "en": "The truth"
   },
   {
    "fr": "Le Premier Porteur est tombé, et son registre parle enfin : une autre civilisation s’est perdue en se gravant des empreintes, et ses premiers porteurs l’avaient écrit dès le début. Ces mêmes empreintes ont pourtant sauvé l’humanité après la Fonte. Le système qui les tient stables s’use. Il faut décider de ce qu’on en fait.",
-   "en": ""
+   "en": "The First Bearer has fallen, and its register finally speaks: another civilisation lost itself by engraving imprints into its people, and its first bearers wrote it down from the very start. Yet those same imprints saved humanity after the Melt. The system that keeps them stable is wearing out. Something has to be decided."
   },
   {
    "fr": "Le Grand Scellement",
-   "en": ""
+   "en": "The Great Sealing"
   },
   {
    "fr": "Certaines vérités doivent rester enfouies.",
-   "en": ""
+   "en": "Some truths must stay buried."
   },
   {
    "fr": "Les empreintes anciennes sont scellées à nouveau. Moins de risques : les ennemis perdent 10 % de leur force. Du savoir perdu : plus aucune carte en nacre ne tombe.",
-   "en": ""
+   "en": "The ancient imprints are sealed once more. Less risk: enemies lose 10 % of their power. Knowledge lost: no more nacre cards drop."
   },
   {
    "fr": "Le Pacte des empreintes",
-   "en": ""
+   "en": "The Imprint Pact"
   },
   {
    "fr": "Nous héritons de la responsabilité de les contenir, ensemble.",
-   "en": ""
+   "en": "We inherit the duty to contain them, together."
   },
   {
    "fr": "Leur contrôle est partagé entre les Hauts et les districts. Une paix fragile : +10 % de minerai. Une nouvelle bureaucratie : les chantiers durent 25 % plus longtemps.",
-   "en": ""
+   "en": "Control is shared between the Heights and the districts. A fragile peace: +10 % ore. A new bureaucracy: projects take 25 % longer."
   },
   {
    "fr": "Les Archives ouvertes",
-   "en": ""
+   "en": "The Open Archives"
   },
   {
    "fr": "Une empreinte n’est qu’une donnée. Elle n’a rien de sacré.",
-   "en": ""
+   "en": "An imprint is only data. There is nothing sacred about it."
   },
   {
    "fr": "Tout est révélé et accessible à tous. Plus de liberté : deux fois plus de cartes en nacre. Des accidents de greffe : l’Usure en plus d’un Porteur à terre ou d’une fuite augmente de moitié.",
-   "en": ""
+   "en": "Everything is revealed and open to all. More freedom: twice as many nacre cards. Grafting accidents: the extra Strain from a downed Bearer or a retreat goes up by half."
   },
   {
    "fr": "Décision inconnue.",
-   "en": ""
+   "en": "Unknown decision."
   },
   {
    "fr": "La décision est déjà prise.",
-   "en": ""
+   "en": "The decision has already been made."
   },
   {
    "fr": "La chambre est confiée à : {0}.",
-   "en": ""
+   "en": "The chamber is entrusted to: {0}."
   },
   {
    "fr": "Véla : {0}.",
-   "en": ""
+   "en": "Véla: {0}."
   },
   {
    "fr": "Fin de la campagne : {0}. Les Strates continuent.",
-   "en": ""
+   "en": "End of the campaign: {0}. The Strata go on."
   },
   {
    "fr": "Décision prise : {0}.",
-   "en": ""
+   "en": "Decision made: {0}."
   },
   {
    "fr": "Tu viens d’être élu à la tête du district. La digue t’attend.",
-   "en": ""
+   "en": "You’ve just been elected to lead the district. The Dike awaits."
   },
   {
    "fr": "{0} portait des cartes trop lourdes ou d’un métal trop haut pour son niveau, et rend {1} à la collection.",
-   "en": ""
+   "en": "{0} was carrying cards too heavy or of too high a metal for their level, and returns {1} to the collection."
   }
  ]
 }

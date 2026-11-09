@@ -6,7 +6,7 @@ import { afficher } from '../rendu';
 import { sauver } from '../synchro';
 import { lireTableau, planifierPublication, reseauTableau } from '../tableau';
 import { ouvrir, type Clic, type Suite } from './commun';
-import { t as tr } from '../../core/i18n';
+import { t as tr, locale } from '../../core/i18n';
 
 export async function agirTableau(a: string, c: Clic): Promise<Suite> {
   const { id } = c;
@@ -32,7 +32,7 @@ export async function agirTableau(a: string, c: Clic): Promise<Suite> {
       const change = !!avant && clePseudo(avant) !== clePseudo(nom);
       const depuis = app.jeu.directeur?.change ?? 0;
       if (change && Date.now() - depuis < DELAI_PSEUDO) {
-        G.erreur = tr`Un changement de pseudo par semaine : le prochain est possible le ${new Date(depuis + DELAI_PSEUDO).toLocaleDateString('fr-BE', { weekday: 'long', day: 'numeric', month: 'long' })}.`;
+        G.erreur = tr`Un changement de pseudo par semaine : le prochain est possible le ${new Date(depuis + DELAI_PSEUDO).toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long' })}.`;
         break;
       }
       if (G.entrees.some((x) => x.uid !== app.uid && x.cle === clePseudo(nom))) { G.erreur = tr('Ce pseudo est déjà pris par un autre directeur.'); break; }

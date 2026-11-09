@@ -3,27 +3,27 @@
  "entrees": [
   {
    "fr": "Rejoins-moi sur Ossyra : 2121, sous les eaux, d’autres se souviennent encore. Mon code de recrutement : {0}",
-   "en": ""
+   "en": "Join me on Ossyra: 2121, under the water, others still remember. My recruitment code: {0}"
   },
   {
    "fr": "Ossyra",
-   "en": ""
+   "en": "Ossyra"
   },
   {
    "fr": "Lien copié : colle-le dans un message à ton ami.",
-   "en": ""
+   "en": "Link copied: paste it into a message to your friend."
   },
   {
    "fr": "Ton lien : {0}",
-   "en": ""
+   "en": "Your link: {0}"
   },
   {
    "fr": "Code {0} copié.",
-   "en": ""
+   "en": "Code {0} copied."
   },
   {
    "fr": "Ton code : {0}",
-   "en": ""
+   "en": "Your code: {0}"
   }
  ]
 }

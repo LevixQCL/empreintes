@@ -3,195 +3,187 @@
  "entrees": [
   {
    "fr": "Qu’est-ce que : {0} ?",
-   "en": ""
+   "en": "What is: {0}?"
   },
   {
    "fr": "{0}{1} ({2}), Fréquence {3}, force {4}{5}",
-   "en": ""
+   "en": "{0}{1} ({2}), Frequency {3}, power {4}{5}"
+  },
+  {
+   "fr": ", éteinte",
+   "en": ", dark"
   },
   {
    "fr": "annulé",
-   "en": ""
+   "en": "cancelled"
   },
   {
    "fr": "{0} : {1}. Toucher pour l’explication",
-   "en": ""
+   "en": "{0}: {1}. Tap for the explanation"
   },
   {
    "fr": "PV soignés",
-   "en": ""
+   "en": "HP healed"
   },
   {
    "fr": "On part de la force, puis chaque bonus et malus s’applique l’un après l’autre (en pourcentage), on arrondit, on retire le blindage ; enfin, le bouclier de la cible absorbe ce qu’il peut. Le reste touche les PV.",
-   "en": ""
+   "en": "Start from the power, then each bonus and penalty applies one after the other (as percentages), round off, subtract armour; finally, the target’s shield soaks up what it can. The rest hits HP."
   },
   {
    "fr": "Attaque de l’ennemi",
-   "en": ""
-  },
-  {
-   "fr": "Bouclier d’escouade",
-   "en": ""
+   "en": "Enemy attack"
   },
   {
    "fr": "Force de la carte",
-   "en": ""
+   "en": "Card power"
   },
   {
    "fr": "Sur {0}",
-   "en": ""
+   "en": "On {0}"
   },
   {
    "fr": "Avant le bouclier",
-   "en": ""
+   "en": "Before the shield"
   },
   {
    "fr": "Absorbé par le bouclier d’escouade",
-   "en": ""
+   "en": "Absorbed by the squad shield"
   },
   {
    "fr": "Absorbé par son bouclier",
-   "en": ""
+   "en": "Absorbed by its shield"
   },
   {
    "fr": "Total : {0}. Toucher pour savoir comment on calcule",
-   "en": ""
+   "en": "Total: {0}. Tap to see how it’s calculated"
   },
   {
    "fr": "Total",
-   "en": ""
+   "en": "Total"
   },
   {
    "fr": "Carte {0}",
-   "en": ""
+   "en": "Card {0}"
   },
   {
    "fr": "Pourquoi ce chiffre",
-   "en": ""
+   "en": "Why this number"
   },
   {
    "fr": "Détail du calcul",
-   "en": ""
+   "en": "Calculation breakdown"
   },
   {
    "fr": "Dégâts infligés",
-   "en": ""
+   "en": "Damage dealt"
   },
   {
    "fr": "Infligés",
-   "en": ""
+   "en": "Dealt"
   },
   {
    "fr": "Dégâts reçus",
-   "en": ""
+   "en": "Damage taken"
   },
   {
    "fr": "Reçus",
-   "en": ""
+   "en": "Taken"
   },
   {
    "fr": "Soignés",
-   "en": ""
+   "en": "Healed"
   },
   {
    "fr": "Bouclier gagné",
-   "en": ""
+   "en": "Shield gained"
   },
   {
    "fr": "Résonance ×{0}",
-   "en": ""
+   "en": "Resonance ×{0}"
   },
   {
    "fr": "Écho{0}",
-   "en": ""
+   "en": "Echo{0}"
   },
   {
    "fr": "Brouillée",
-   "en": ""
+   "en": "Scrambled"
   },
   {
    "fr": "Tour ennemi",
-   "en": ""
+   "en": "Enemy turn"
   },
   {
    "fr": "Ton tour",
-   "en": ""
+   "en": "Your turn"
   },
   {
    "fr": "Aucune chaîne lancée pour l’instant. Chaque tour joué s’ajoutera ici, avec le calcul de chaque coup.",
-   "en": ""
+   "en": "No chain cast yet. Each turn played will be added here, with the breakdown of every blow."
   },
   {
    "fr": "Depuis le début du combat",
-   "en": ""
+   "en": "Since the start of the fight"
   },
   {
    "fr": "Depuis le début",
-   "en": ""
+   "en": "Since the start"
   },
   {
    "fr": "Les tours avant le {0}e ne sont plus gardés.",
-   "en": ""
+   "en": "Turns before turn {0} are no longer kept."
   },
   {
    "fr": "Tour {0}{1}",
-   "en": ""
+   "en": "Turn {0}{1}"
   },
   {
    "fr": "en cours",
-   "en": ""
+   "en": "in progress"
   },
   {
    "fr": "Et {0} place{1} vide{2} (des Porteurs qui n’ont pas leurs 6 cartes).",
-   "en": ""
+   "en": "And {0} empty slot{1}{2|} (Bearers who don’t have their 6 cards)."
   },
   {
    "fr": "La défausse",
-   "en": ""
+   "en": "The discard pile"
   },
   {
    "fr": "La pioche",
-   "en": ""
-  },
-  {
-   "fr": "Défausse",
-   "en": ""
+   "en": "The draw pile"
   },
   {
    "fr": "Vide : elle vient d’être mélangée dans la pioche.",
-   "en": ""
+   "en": "Empty: it was just shuffled into the draw pile."
   },
   {
    "fr": "La plus récente d’abord.",
-   "en": ""
-  },
-  {
-   "fr": "Pioche",
-   "en": ""
+   "en": "Most recent first."
   },
   {
    "fr": "Vide : la défausse sera mélangée au prochain tirage.",
-   "en": ""
+   "en": "Empty: the discard will be shuffled in at the next draw."
   },
   {
    "fr": "Rangée par Porteur : l’ordre du tirage reste secret.",
-   "en": ""
+   "en": "Sorted by Bearer: the draw order stays secret."
   },
   {
    "fr": "Tours joués{0}",
-   "en": ""
+   "en": "Turns played{0}"
   },
   {
    "fr": "Défausse et pioche",
-   "en": ""
+   "en": "Discard and draw"
   },
   {
    "fr": "JOURNAL",
-   "en": ""
+   "en": "LOG"
   },
   {
    "fr": "Le combat, coup par coup",
-   "en": ""
+   "en": "The fight, blow by blow"
   }
  ]
 }

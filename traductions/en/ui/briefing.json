@@ -3,255 +3,255 @@
  "entrees": [
   {
    "fr": "La Fréquence",
-   "en": ""
+   "en": "The Frequency"
   },
   {
    "fr": ", de 1 à 9. C’est elle qui compte pour enchaîner.",
-   "en": ""
+   "en": ", from 1 to 9. It’s what counts for chaining."
   },
   {
    "fr": "La force",
-   "en": ""
+   "en": "The power"
   },
   {
    "fr": "et ce qu’elle fait :",
-   "en": ""
+   "en": "and what it does:"
   },
   {
    "fr": "frappe",
-   "en": ""
+   "en": "strikes"
   },
   {
    "fr": "protège",
-   "en": ""
+   "en": "protects"
   },
   {
    "fr": "soigne",
-   "en": ""
+   "en": "heals"
   },
   {
    "fr": ", et l’effet spécial quand elle en a un.",
-   "en": ""
+   "en": ", plus the special effect when it has one."
   },
   {
    "fr": ": les chiffres se suivent.",
-   "en": ""
+   "en": ": the numbers follow each other."
   },
   {
    "fr": "Sans suite",
-   "en": ""
+   "en": "No chain"
   },
   {
    "fr": "Résonance +{0} %",
-   "en": ""
+   "en": "Resonance +{0} %"
   },
   {
    "fr": "dégâts",
-   "en": ""
+   "en": "damage"
   },
   {
    "fr": "Exemple d’intention : Entaille sur Doran",
-   "en": ""
+   "en": "Example intent: Slash on Doran"
   },
   {
    "fr": "INTENTION",
-   "en": ""
+   "en": "INTENT"
   },
   {
    "fr": "Entaille sur Doran",
-   "en": ""
+   "en": "Slash on Doran"
   },
   {
    "fr": "de bouclier",
-   "en": ""
+   "en": "shield"
   },
   {
    "fr": "pour les trois",
-   "en": ""
+   "en": "for all three"
   },
   {
    "fr": "En combat, ce bouton rappelle toutes les règles. Pendant ce premier combat, une consigne t’attendra sous la chaîne à chaque tour.",
-   "en": ""
+   "en": "In combat, this button brings up all the rules. During this first fight, a tip will be waiting for you under the chain every turn."
   },
   {
    "fr": "Des gestes, pas des armes",
-   "en": ""
+   "en": "Moves, not weapons"
   },
   {
    "fr": "Là-dessous, on ne se bat pas avec des armes. On se bat avec des gestes gravés dans les cristaux : ce sont tes cartes. Chacune appartient à l’un de nous, et sa couleur te dit qui la joue.",
-   "en": ""
+   "en": "Down there, we don’t fight with weapons. We fight with moves engraved in the crystals: those are your cards. Each one belongs to one of us, and its colour tells you who plays it."
   },
   {
    "fr": "Lire une carte",
-   "en": ""
+   "en": "Reading a card"
   },
   {
    "fr": "Trois choses à regarder sur une carte. Le reste, tu l’apprendras en route.",
-   "en": ""
+   "en": "Three things to look at on a card. You’ll pick up the rest along the way."
   },
   {
    "fr": "La chaîne",
-   "en": ""
+   "en": "The chain"
   },
   {
    "fr": "À chaque tour, tu as cinq cartes en main. Tu en poses jusqu’à trois : c’est la chaîne. Tu la lances, et elles agissent l’une après l’autre. Si trois chiffres se suivent, la chaîne entre en Résonance : +30 % sur toute la chaîne. Deux ne suffisent pas.",
-   "en": ""
+   "en": "Each turn, you hold five cards. You lay down up to three: that’s the chain. You cast it, and they act one after the other. If three numbers follow each other, the chain goes into Resonance: +30 % on the whole chain. Two aren’t enough."
   },
   {
    "fr": "Écoute ce qu’il annonce",
-   "en": ""
+   "en": "Listen to what it announces"
   },
   {
    "fr": "Ce qui vit là-dessous ne frappe jamais sans prévenir. Avant chaque tour, il annonce ce qu’il va faire. Si c’est une grosse attaque, glisse des boucliers dans ta chaîne : ils protègent toute l’escouade.",
-   "en": ""
+   "en": "Whatever lives down there never strikes without warning. Before each turn, it announces what it’s going to do. If it’s a big attack, slip some shields into your chain: they protect the whole squad."
   },
   {
    "fr": "Je reste avec toi",
-   "en": ""
+   "en": "I’ll stay with you"
   },
   {
    "fr": "Je te guiderai pendant ce premier combat, tour après tour. Et si tu as un doute, demande.",
-   "en": ""
+   "en": "I’ll guide you through this first fight, turn by turn. And if you’re ever unsure, just ask."
   },
   {
    "fr": "Le minerai",
-   "en": ""
+   "en": "Ore"
   },
   {
    "fr": "Ce que l’escouade rapporte d’en bas : de la pierre bleue encore prise dans sa gangue.",
-   "en": ""
+   "en": "What the squad brings back from below: blue stone still locked in its rock."
   },
   {
    "fr": "Les cristaux",
-   "en": ""
+   "en": "Crystals"
   },
   {
    "fr": "Le Générateur taille le minerai en cristaux, même quand tu ne joues pas. Ils paient tout : bâtiments, cartes, entraînement.",
-   "en": ""
+   "en": "The Generator cuts the ore into crystals, even when you’re not playing. They pay for everything: buildings, cards, training."
   },
   {
    "fr": "Les Éclats",
-   "en": ""
+   "en": "Shards"
   },
   {
    "fr": "Rares, trouvés en profondeur. Pour les cartes précieuses.",
-   "en": ""
+   "en": "Rare, found deep down. For the precious cards."
   },
   {
    "fr": "Au district",
-   "en": ""
+   "en": "In the district"
   },
   {
    "fr": "Postés dans un bâtiment, ils le font produire davantage.",
-   "en": ""
+   "en": "Assigned to a building, they make it produce more."
   },
   {
    "fr": "Elle descend combattre. Un Porteur qui descend quitte son poste.",
-   "en": ""
+   "en": "It goes down to fight. A Bearer who goes down leaves their post."
   },
   {
    "fr": "Vaincre le gardien",
-   "en": ""
+   "en": "Defeat the guardian"
   },
   {
    "fr": "On descend par la Tour du Noyau.",
-   "en": ""
+   "en": "You go down through the Core Tower."
   },
   {
    "fr": "Missions en mer, fouilles, puis Épreuves.",
-   "en": ""
+   "en": "Missions at sea, digs, then Trials."
   },
   {
    "fr": "Monter la Tour du Noyau",
-   "en": ""
+   "en": "Upgrade the Core Tower"
   },
   {
    "fr": "Pour loger les creuseurs.",
-   "en": ""
+   "en": "To house the diggers."
   },
   {
    "fr": "La Strate suivante s’ouvre",
-   "en": ""
+   "en": "The next Stratum opens"
   },
   {
    "fr": "Plus profond, plus précieux.",
-   "en": ""
+   "en": "Deeper, more precious."
   },
   {
    "fr": "L’objectif, en haut",
-   "en": ""
+   "en": "The objective, at the top"
   },
   {
    "fr": "Il dit quoi faire ensuite, et donne une récompense.",
-   "en": ""
+   "en": "It tells you what to do next, and gives a reward."
   },
   {
    "fr": "Les pastilles orange",
-   "en": ""
+   "en": "The orange dots"
   },
   {
    "fr": "Quelque chose t’attend dans cet onglet ou ce bâtiment.",
-   "en": ""
+   "en": "Something is waiting for you in that tab or building."
   },
   {
    "fr": "Le ravitaillement du jour",
-   "en": ""
+   "en": "Daily supplies"
   },
   {
    "fr": "Un colis chaque jour : des cristaux et des cartes.",
-   "en": ""
+   "en": "A parcel every day: crystals and cards."
   },
   {
    "fr": "Ton district",
-   "en": ""
+   "en": "Your district"
   },
   {
    "fr": "Ici, tout tourne avec trois ressources. Tu les vois en haut de l’écran : touche-en une pour tout savoir sur elle.",
-   "en": ""
+   "en": "Here, everything runs on three resources. You see them at the top of the screen: tap one to learn all about it."
   },
   {
    "fr": "Ceux qui restent, ceux qui descendent",
-   "en": ""
+   "en": "Those who stay, those who go down"
   },
   {
    "fr": "Les trois recrues travaillent au district. Nous trois, on descend. Garde-nous pour l’escouade et poste les recrues dans les bâtiments.",
-   "en": ""
+   "en": "The three recruits work in the district. The three of us go down. Keep us for the squad and assign the recruits to the buildings."
   },
   {
    "fr": "Toujours plus bas",
-   "en": ""
+   "en": "Ever deeper"
   },
   {
    "fr": "Le but, c’est de creuser. Chaque Strate a un gardien qui garde le passage. Pour percer l’étage suivant, il faut trois choses, dans cet ordre.",
-   "en": ""
+   "en": "The goal is to dig. Each Stratum has a guardian holding the passage. To break through to the next level, you need three things, in this order."
   },
   {
    "fr": "Un pas à la fois",
-   "en": ""
+   "en": "One step at a time"
   },
   {
    "fr": "Tu n’as pas à tout retenir. Suis l’objectif en haut du district : il te montre la prochaine chose à faire. On commence par allumer le Générateur.",
-   "en": ""
+   "en": "You don’t have to remember everything. Follow the objective at the top of the district: it shows you the next thing to do. We start by switching on the Generator."
   },
   {
    "fr": "Avant d’ouvrir",
-   "en": ""
+   "en": "Before you open"
   },
   {
    "fr": "Ouvrir la porte",
-   "en": ""
+   "en": "Open the door"
   },
   {
    "fr": "Allumer le Générateur",
-   "en": ""
+   "en": "Switch on the Generator"
   },
   {
    "fr": "Retour",
-   "en": ""
+   "en": "Back"
   },
   {
    "fr": "Suite",
-   "en": ""
+   "en": "Next"
   }
  ]
 }

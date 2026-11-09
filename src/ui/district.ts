@@ -42,9 +42,9 @@ import { bandeauTableau } from './classements';
 import { ICO, baseIcones, icone, type Icone } from './icones';
 import { NOM_LIGNEE, NOM_LIGNEES, NOM_PHASE, etapeVoyage, avatar, coquille, couts, decompte, gainsRapport, duree, jaugeTemps, ent, entete, prix, voletsEscouade, type EcranDistrict, type Filtre } from './coquille';
 
-import { echap, mouvementReduit, virgule, texteReplie } from './outils';
+import { decimal, echap, mouvementReduit, virgule, texteReplie } from './outils';
 import { brancherHoule } from './houle';
-import { t as tr } from '../core/i18n';
+import { t as tr, locale } from '../core/i18n';
 
 export type { EcranDistrict, Vue } from './coquille';
 
@@ -369,7 +369,7 @@ function balises(e: EcranDistrict): string {
         const pb = { x: BALISE_ECLUSE.x + 40, y: BALISE_ECLUSE.y - 14 };
         const bulle = (classe: string, contenu: string, label: string) =>
           `<button type="button" class="bulle-bat ${classe}" ${pos(pb)} data-action="basses" data-lieu="ecluse" aria-label="${label}">${contenu}</button>`;
-        if (bb.depots) h += bulle('info', `${ICO.coffre}<em>${bb.depots}</em>`, tr`La mer a laissé ${bb.depots > 1 ? `${bb.depots} dépôts` : tr('un dépôt')} sur la grève`);
+        if (bb.depots) h += bulle('info', `${ICO.coffre}<em>${bb.depots}</em>`, tr`La mer a laissé ${bb.depots > 1 ? tr`${bb.depots} dépôts` : tr('un dépôt')} sur la grève`);
         else if (bb.aFaire) h += bulle('alerte', `${ICO.porteurs}<em>?</em>`, tr('Une famille attend dans les Basses'));
         else if (bb.expedition) h += bulle('info', `${ICO.chrono}<em>${decompte(j.basses!.expedition!.fin, e.now)}</em>`, tr('Un Porteur est dans les Basses'));
       }
@@ -566,7 +566,7 @@ const ICONE_GAIN: Record<GainNiveau['quoi'] | 'apparence', Icone> = {
   plafond: 'tour', chantiers: 'marteau', porteur: 'porteurs', apparence: 'district', entrainement: 'monter', offres: 'cartes', argent: 'cristal',
   places: 'monter', barques: 'porteurs', commune: 'cartes', cercle: 'cercle', echanges: 'echange', ouvertes: 'chrono', vitrine: 'cartes', or: 'cristal', eclats: 'eclats', pv: 'soin',
 };
-const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${Number.isInteger(v) ? ent(v) : (Math.round(v * 10) / 10).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')}${unite ? ` ${unite}` : ''}`);
+const valeurGain = (v: number, unite?: string) => (v === Infinity ? '∞' : `${Number.isInteger(v) ? ent(v) : (Math.round(v * 10) / 10).toLocaleString(locale()).replace(/\u202f/g, '\u00a0')}${unite ? ` ${unite}` : ''}`);
 
 /** Ce que change le niveau suivant : les chiffres qui montent (avant → après), ce qui se débloque, et la nouvelle apparence */
 function gainsNiveau(j: Jeu, b: BatimentId): string {
@@ -612,7 +612,7 @@ function taille(j: Jeu): string {
     : tr('Rien à tailler : descends ou envoie une barque, il taillera tout ce que tu rapportes.');
   return `<div class="fb-reserve"><div class="fb-reserve-tete">${ICO.composants}<span>${tr`Minerai en taille`}</span><b>${ent(t.brut)}</b></div>`
     + `<div class="fb-jauge" role="meter" aria-valuemin="0" aria-valuemax="${Math.max(1, t.brut + j.energie)}" aria-valuenow="${t.brut}" aria-label="${tr`Minerai en taille`}"><i style="width:${t.brut ? Math.min(100, Math.max(6, (100 * t.brut) / (t.brut + 20 * Math.max(1, raffinageParHeure(j))))) : 0}%"></i></div>`
-    + `<small>${note}</small>${eclatsTailleTexte(j)}<small>${tr`Chaque heure, il taille ${h ? `environ un ${h === 4 ? 'quart' : `${virgule(Math.round(h * 10) / 10)}ᵉ`}` : 'une part'} de ce qui attend, au moins ${ent(plancherTaille(j))} : plus il monte, plus il va vite.`}</small></div>`;
+    + `<small>${note}</small>${eclatsTailleTexte(j)}<small>${tr`Chaque heure, il taille ${h ? (h === 4 ? tr('environ un quart') : tr`environ un ${virgule(Math.round(h * 10) / 10)}ᵉ`) : tr('une part')} de ce qui attend, au moins ${ent(plancherTaille(j))} : plus il monte, plus il va vite.`}</small></div>`;
 }
 
 /** Les soins intensifs de la Clinique (27 octobre 2026) : des cristaux pour effacer l'Usure d'un Porteur tout de suite */
@@ -657,7 +657,7 @@ function blocEntrainement(e: EcranDistrict): string {
   const eligibles = presents.filter((p) => apercuSeance(j, p.id)).sort((x, y) => niveau(x.id) - niveau(y.id));
   const relance = libresN && j.derniereSeance ? eligibles.find((p) => p.id === j.derniereSeance) : undefined;
 
-  let h = `<section class="fb-bloc te"><h3 class="titre-bloc">${ICO.monter}${tr`Entraînement`}<span class="te-regle">${places > 1 && seances.length ? tr`${seances.length}/${places} places · niv. ${plafond} max${ps.par === 'escouade' ? ' (titulaire)' : ''}` : tr`1 séance = 1 niveau · jusqu’au niv. ${plafond}${ps.par === 'escouade' ? tr(' (ton meilleur titulaire)') : ''}`}</span></h3>`;
+  let h = `<section class="fb-bloc te"><h3 class="titre-bloc">${ICO.monter}${tr`Entraînement`}<span class="te-regle">${places > 1 && seances.length ? tr`${seances.length}/${places} places · niv. ${plafond} max${ps.par === 'escouade' ? tr(' (titulaire)') : ''}` : tr`1 séance = 1 niveau · jusqu’au niv. ${plafond}${ps.par === 'escouade' ? tr(' (ton meilleur titulaire)') : ''}`}</span></h3>`;
   const fond = `<img class="te-fond" src="${salleEntrainement}" alt="" decoding="async">`;
   const lignes: string[] = [];
 
@@ -736,7 +736,7 @@ function blocComptoir(e: EcranDistrict): string {
   }
   const c = j.comptoir;
   const demain = debutJour(c.jour + 1) - e.now;
-  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}${tr`En vente aujourd’hui`}<span class="cp-renouv">${ICO.chrono}${decompte(e.now + demain, e.now, 'nouvelles cartes dans ')}</span></h3><small class="aide choix-loupe">${tr`Reste appuyé sur une carte pour lire son effet.`}</small><div class="cp-etals">`;
+  let h = `<section class="fb-bloc"><h3 class="titre-bloc">${ICO.cartes}${tr`En vente aujourd’hui`}<span class="cp-renouv">${ICO.chrono}${decompte(e.now + demain, e.now, tr('nouvelles cartes dans '))}</span></h3><small class="aide choix-loupe">${tr`Reste appuyé sur une carte pour lire son effet.`}</small><div class="cp-etals">`;
   c.offres.forEach((id, i) => {
     const m = moduleDef(id);
     const possede = j.collection[id];
@@ -896,7 +896,7 @@ function feuilleBatiment(e: EcranDistrict): string {
     h += `<section class="fb-bloc"><h3 class="titre-bloc">${icone('ouvrier')}${tr`Au travail`}</h3>`;
     if (occupant) {
       const o = porteurDef(occupant);
-      const apport = poste === 'forge' ? (actuel.v === 1 ? 'vitesse normale' : tr`fabrique ${virgule(actuel.v)} fois plus vite`)
+      const apport = poste === 'forge' ? (actuel.v === 1 ? tr('vitesse normale') : tr`fabrique ${virgule(actuel.v)} fois plus vite`)
         : poste === 'clinique' ? tr`+${virgule(actuel.v - vide.v)} Usure soignée/h` : tr`tout taillé en ${actuel.court} au lieu de ${vide.court}`;
       h += `<div class="fb-occupant fg-forgeron" style="--c:${COULEUR[o.lignee]}"><span class="fb-cand-portrait">${avatar(occupant, 44)}${multPoste(poste, occupant)}</span><div><strong>${echap(o.nom)}</strong><span class="fb-apport">${apport}</span></div>`
         + (ouvert ? `<button type="button" class="btn sec fb-liberer" data-action="liberer" data-id="${occupant}" aria-label="${tr`Libérer ${echap(o.nom)} (${vide.long})`}">${tr`Libérer`}</button>`
@@ -939,7 +939,7 @@ function feuilleBatiment(e: EcranDistrict): string {
     const raccourci = a.ch ? `${ICO.marteau}${decompte(a.ch.fin, e.now)}`
       : `${ICO.monter}<span>${tr`Niv. ${niv + 1}`}</span>`;
     h += `<div class="fb-barre">`
-      + (a.cout || a.ch ? `<button type="button" class="btn sec fb-vers-amelio${a.pret ? ' pret' : ''}" data-action="vers-amelioration" aria-label="${a.ch ? tr('Voir le chantier en cours') : tr`Améliorer au niveau ${niv + 1}${a.pret ? ' : possible' : ''}`}">${raccourci}</button>` : '')
+      + (a.cout || a.ch ? `<button type="button" class="btn sec fb-vers-amelio${a.pret ? ' pret' : ''}" data-action="vers-amelioration" aria-label="${a.ch ? tr('Voir le chantier en cours') : tr`Améliorer au niveau ${niv + 1}${a.pret ? tr(' : possible') : ''}`}">${raccourci}</button>` : '')
       + `<button type="button" class="btn prim large fb-entrer" data-action="entrer">${ICO.tour}${tr`Entrer dans la tour`}</button></div>`;
   } else h += barreAmelioration(e, b, a, true);
   return h + `</footer></section>`;
@@ -971,7 +971,7 @@ function barreAmelioration(e: EcranDistrict, b: BatimentId, a: ReturnType<typeof
   }
   if (!a.cout) return `<small class="raison">${tr`Niveau maximum pour cette version.`}</small>`;
   const c = a.cout;
-  const etiquette = !niv ? `${ICO.marteau}${b === 'comptoir' ? tr('Rouvrir') : tr('Construire')}` : pied ? `${ICO.monter}Niveau ${niv + 1}` : tr`${ICO.monter}Passer au niveau ${niv + 1}`;
+  const etiquette = !niv ? `${ICO.marteau}${b === 'comptoir' ? tr('Rouvrir') : tr('Construire')}` : pied ? `${ICO.monter}${tr`Niveau ${niv + 1}`}` : tr`${ICO.monter}Passer au niveau ${niv + 1}`;
   return (a.raison ? `<p class="fb-raison">${ICO.verrou}<span>${a.raison}</span>${a.bloque ? `<button type="button" class="fb-lien" data-action="batiment" data-id="noyau" data-amelio>${tr`Voir la Tour`}</button>` : ''}</p>` : '')
     + `<div class="fb-barre"><div class="fb-cout" aria-label="${tr`Coût`}">`
     + (c.energie ? coutDetail('energie', c.energie, j.energie, tr('Cristaux')) : '')
@@ -991,13 +991,14 @@ function fenetreDecision(acte: Acte): string {
 /** Une icône qui dit de quoi parle chaque ligne de « Pendant ton absence » */
 function iconeRetour(l: string): Icone {
   const t = l.toLowerCase();
-  if (t.includes('clinique') || t.includes('soign')) return 'soin';
-  if (t.includes('améliorer') || t.includes('niveau')) return 'monter';
-  if (t.includes('chantier')) return 'marteau';
-  if (t.includes('creuseur')) return 'ouvrier';
-  if (t.includes('forge') || t.includes('carte')) return 'cartes';
-  if (t.includes('cristaux') || t.includes('minerai') || t.includes('taill')) return 'energie';
-  if (t.includes('mission') || t.includes('expédition')) return 'descendre';
+  // les mots du français et de l'anglais (la ligne est déjà traduite)
+  if (/clinique|soign|clinic|heal/.test(t)) return 'soin';
+  if (/améliorer|niveau|upgrade|level/.test(t)) return 'monter';
+  if (/chantier|project/.test(t)) return 'marteau';
+  if (/creuseur|digger/.test(t)) return 'ouvrier';
+  if (/forge|carte|card/.test(t)) return 'cartes';
+  if (/cristaux|minerai|taill|crystal|ore\b|cut/.test(t)) return 'energie';
+  if (/mission|expédition|expedition/.test(t)) return 'descendre';
   return 'cristal';
 }
 
@@ -1382,7 +1383,7 @@ function departRatelier(j: Jeu, k: number, sortie: Sortie = 'explorer'): string 
     return `<li class="${paye ? '' : 'reste'}"><button type="button" class="es-rt-carte" data-action="carte" data-id="${g.id}" aria-label="${tr`${echap(g.nom)}${!paye ? tr(', reste au district faute de cristaux') : ''}. Voir la carte`}">${tuileFace(g)}</button>${etiquette}</li>`;
   }).join('');
   const manque = prevues.length - payees.length;
-  const phrase = `${tr`Toutes ensemble, elles coûtent`} <b class="es-rt-total">${ICO.energie}${tr`${ent(total)} cristaux`}</b> ${tr`à ce départ${sortie === 'explorer' ? ' pour une exploration' : ' pour une sortie courte'} (tu en as ${ent(Math.floor(j.energie))}).`}`;
+  const phrase = `${tr`Toutes ensemble, elles coûtent`} <b class="es-rt-total">${ICO.energie}${tr`${ent(total)} cristaux`}</b> ${tr`à ce départ${sortie === 'explorer' ? tr(' pour une exploration') : tr(' pour une sortie courte')} (tu en as ${ent(Math.floor(j.energie))}).`}`;
   return `<div class="es-ratelier"><span class="surtitre">${ICO.district}${tr`Cartes du district · ${payees.length}`}</span><ul class="es-rt">${cartes}</ul>`
     + `<p class="es-freq-aide">${tr`${phrase}${manque ? tr` Il manque des cristaux : elles restent au district, l’escouade part sans elles.` : ''} Elles restent au Râtelier de l’escouade ${k + 1} d’une descente à l’autre ; tu les changes dans l’onglet Escouade.`}</p></div>`;
 }
@@ -1642,7 +1643,7 @@ function carteCle(j: Jeu): string {
   const bas = pret ? `<span class="cl-origine">${tr`Ton Héritage : dans chaque escouade qui compte un Porteur de niveau ${NIVEAU_METAL.nacre}.`}</span>`
     : `<span class="cl-origine">${ICO.cristal}<b>${tr`Scellée`}</b> ${tr`: elle rejoindra le paquetage quand un Porteur de l’escouade aura le niveau ${NIVEAU_METAL.nacre}.`}</span>`;
   // on la touche comme les autres (31 octobre 2026, Bryan), scellée ou non
-  return `<button type="button" class="carte-tuile cl-carte cl-paquetage${pret ? '' : ' cl-scellee'}" data-action="carte" data-id="${g.id}" data-carte="${g.id}" aria-label="${tr`${echap(g.nom)}, ton Héritage${pret ? '' : ', scellée'}. Voir la carte`}">${faceCarte(m, COLLECTION.niveauDepart.nacre, 1, { origine: o.batiment })}<span class="cl-bas">${bas}</span></button>`;
+  return `<button type="button" class="carte-tuile cl-carte cl-paquetage${pret ? '' : ' cl-scellee'}" data-action="carte" data-id="${g.id}" data-carte="${g.id}" aria-label="${tr`${echap(g.nom)}, ton Héritage${pret ? '' : tr(', scellée')}. Voir la carte`}">${faceCarte(m, COLLECTION.niveauDepart.nacre, 1, { origine: o.batiment })}<span class="cl-bas">${bas}</span></button>`;
 }
 
 // ---------- La rencontre, avant la chambre scellée ----------
@@ -2039,7 +2040,7 @@ function voyage(e: EcranDistrict, m: Jeu['missions'][number]): string {
   return `<div class="voyage ph-${phase}${peint ? ' peint' : ''}" style="--c:${COULEUR[p.lignee]};--x:${x.toFixed(4)};${fond}" data-vdebut="${m.debut}" data-vfin="${m.fin}">`
     + `<span class="vg-fond" aria-hidden="true"><i class="vg-pano"></i><i class="vg-reflets" style="--reflets:url(${reflets})"></i></span>`
     + `<div class="vg-tete">${avatar(p.id, 40)}<span class="vg-qui"><strong>${echap(p.nom)}</strong><small>${tr`${m.butin ? `<span class="vg-butin">${ICO[ICONE_BUTIN[m.butin]]}</span>` : ''}Vers ${echap(lieu)}${bm && pct ? ` · <span class="vg-af af-${bm.affinite}">${pct >= 0 ? '+' : '−'}${Math.abs(pct)} %</span>` : ''}`}</small></span>`
-    + `<span class="vg-etat"><b data-phase>${NOM_PHASE[phase]}</b><small>${e.now >= m.fin ? tr('rentre au district') : decompte(m.fin, e.now, 'retour dans ')}</small></span></div>`
+    + `<span class="vg-etat"><b data-phase>${NOM_PHASE[phase]}</b><small>${e.now >= m.fin ? tr('rentre au district') : decompte(m.fin, e.now, tr('retour dans '))}</small></span></div>`
     + `<div class="vg-route" role="img" aria-label="${tr`${NOM_PHASE[phase]}, vers ${echap(lieu)}`}">`
     + `<span class="vg-port"><img src="${vignetteDistrict(age)}" alt="" decoding="async" loading="lazy"></span>`
     + `<span class="vg-eau"><i class="vg-trace"></i><i class="vg-sillage"></i>`
@@ -2203,7 +2204,7 @@ function tuileNiveau(n: DifficulteFouille, choisi: DifficulteFouille, cible: Cib
   const force = d.force === 1 ? 'ennemis normaux' : tr`ennemis ${d.force < 1 ? '−' : '+'}${Math.round(Math.abs(d.force - 1) * 100)} %`;
   const filon = lignee
     ? (d.carte < 1 ? tr`${Math.round(d.carte * 100)} % de chances d’une carte` : d.choix > 1 ? tr`${d.choix} cartes au choix, ${d.metal} au moins` : tr('1 carte assurée'))
-    : tr`filon ×${String(d.gain).replace('.', ',')}`;
+    : tr`filon ×${decimal(d.gain)}`;
   const salles = d.rangs - 2;
   const coul = n === 'facile' ? '#8FD6A8' : n === 'normale' ? '#8FB8DA' : '#E79A72';
   return `<button type="button" role="radio" class="es-tuile${choisi === n ? ' actif' : ''}" style="--c:${coul}" data-action="niveau-fouille" data-id="${n}" aria-checked="${choisi === n}">`
@@ -2223,7 +2224,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const fl = !ep && !fouille && e.fleche ? etatFleche(j) : null;
   const pi = !ep && !fouille && !fl ? e.pillage ?? null : null;
   const df = fl ? e.defi ?? null : null;
-  const titre = df ? tr`FLÈCHE · DÉFI DU QUAI ${df.quai}` : fl ? tr`FLÈCHE · QUAI ${fl.quai}` : pi ? tr`PILLAGE · ${pi.nom.toUpperCase()}` : ep ? tr`ÉPREUVE · ${ep.nom.toUpperCase()}` : tr`${fouille ? 'FOUILLE · ' : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`;
+  const titre = df ? tr`FLÈCHE · DÉFI DU QUAI ${df.quai}` : fl ? tr`FLÈCHE · QUAI ${fl.quai}` : pi ? tr`PILLAGE · ${pi.nom.toUpperCase()}` : ep ? tr`ÉPREUVE · ${ep.nom.toUpperCase()}` : tr`${fouille ? tr('FOUILLE · ') : ''}STRATE −${e.strateChoisie} · ${NOMS_ETAGES[Math.min(e.strateChoisie - 1, 3)]!.toUpperCase()}`;
   let h = `<div class="ecran ecran-escouade es"><main class="contenu">`
     + entete(titre, tr('Escouade'), `<button type="button" class="btn-icone" data-action="${fl ? 'fleche' : pi ? 'pillages' : 'coupe'}" aria-label="${tr`Retour`}">${ICO.retour}</button>`);
 
@@ -2304,7 +2305,7 @@ export function htmlEscouade(e: EcranDistrict): string {
       const n = deckEscouade(j, l).length;
       return `<button type="button" role="radio" class="es-equipe${k === active ? ' actif' : ''}${l.length ? '' : ' vide'}" data-action="depart-escouade" data-index="${k}" aria-checked="${k === active}"${l.length ? '' : ' disabled'}>`
         + `<strong>${tr`Escouade ${k + 1}`}</strong>${l.length ? `<span class="es-equipe-visages">${[0, 1, 2].map((i) => (l[i] ? avatar(l[i]!, 30) : '<i class="es-pastille-vide"></i>')).join('')}</span>` : '<span class="esc-serti" aria-hidden="true"></span>'}`
-        + `<small>${l.length ? `${l.length < 3 ? `${l.length} / 3 · ` : ''}${n} cartes` : tr('À former')}</small></button>`;
+        + `<small>${l.length ? `${l.length < 3 ? `${l.length} / 3 · ` : ''}${tr`${n} cartes`}` : tr('À former')}</small></button>`;
     }).join('') + `</div></section>`;
 
   // les trois Porteurs qui partent : toucher un portrait ouvre sa fiche
@@ -2378,7 +2379,7 @@ export function htmlEscouade(e: EcranDistrict): string {
   const coutDepart = e.escouade.length ? (ratelierPayable(j, indiceEscouade(j, e.escouade), sortie).length ? coutRatelier(j, sortie, indiceEscouade(j, e.escouade)) : 0) : 0;
   h += `<footer class="pied-fixe es-pied"><div class="es-pied-info"><span class="es-avatars">${[0, 1, 2].map((i) => e.escouade[i] ? avatar(e.escouade[i]!, 30) : '<i class="es-pastille-vide"></i>').join('')}</span>`
     + `<span><b>${e.escouade.length} / 3</b><small class="${maigre || blesses.length ? 'alerte' : e.escouade.length === 3 ? 'ok' : ''}">${e.escouade.length < 3 ? tr`Encore ${3 - e.escouade.length} Porteur${3 - e.escouade.length > 1 ? 's' : ''}` : maigre ? tr`${deck} cartes · ${deckMin} au moins` : blesses.length ? tr`${blesses.length} blessé${blesses.length > 1 ? 's' : ''} · au repos` : tr`${deck} cartes, prêt`}</small></span></div>`
-    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${fl ? `${ICO.monter}Monter` : pi ? `${ICO.grappin}Piller` : ep ? `${ICO.boost}${e.felee ? tr('Tenter la Fêlée') : tr('Tenter l’Épreuve')}` : fouille ? `${ICO.cristal}Fouiller` : `${ICO.descendre}Partir`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;
+    + `<button type="button" class="btn prim large" data-action="partir"${pret ? '' : ' disabled'}>${fl ? `${ICO.monter}${tr('Monter')}` : pi ? `${ICO.grappin}${tr('Piller')}` : ep ? `${ICO.boost}${e.felee ? tr('Tenter la Fêlée') : tr('Tenter l’Épreuve')}` : fouille ? `${ICO.cristal}${tr('Fouiller')}` : `${ICO.descendre}${tr('Partir')}`}${coutDepart ? `<span class="es-btn-cout">${ICO.energie}−${ent(coutDepart)}</span>` : ''}</button></footer>`;
   h += e.guide ? feuilleGuide(e.guide, trouveesDe(j.collection)) : e.deck ? feuilleDeck(e) : e.carte ? feuilleCarte(e) : feuillePorteur(e);
   h += e.message ? `<button type="button" class="toast seul" data-action="ok-message" role="status">${ICO.cristal}<span>${echap(e.message)}</span></button>` : '';
   return h + `</div>`;

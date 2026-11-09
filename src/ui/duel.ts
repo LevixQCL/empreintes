@@ -108,7 +108,7 @@ export function htmlDuel(s: SessionDuel, maintenant = Date.now(), cercle: { reco
     + `<button type="button" class="btn-sec" data-action="duel-repiocher"${s.verrouille || moi.flux < 1 ? ' disabled' : ''}>${ICO.repiocher}${t`Main`}</button>`
     + (s.absent(maintenant)
       ? `<button type="button" class="prim" data-action="duel-reclamer">${t`Réclamer la victoire`}</button>`
-      : `<button type="button" class="prim" data-action="duel-verrouiller"${s.verrouille || s.fini ? ' disabled' : ''}>${s.verrouille ? t('En attente…') : `${ICO.lancer}Verrouiller`}</button>`)
+      : `<button type="button" class="prim" data-action="duel-verrouiller"${s.verrouille || s.fini ? ' disabled' : ''}>${s.verrouille ? t('En attente…') : `${ICO.lancer}${t('Verrouiller')}`}</button>`)
     + `</div>`
     + `<button type="button" class="dl-quitter" data-action="duel-quitter"${s.fini ? ' hidden' : ''}>${t`Abandonner`}</button>`
     + (s.desynchro ? `<p class="dl-alerte">${t`Un choix adverse illisible a été remplacé par une chaîne vide.`}</p>` : '')

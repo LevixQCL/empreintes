@@ -3,127 +3,131 @@
  "entrees": [
   {
    "fr": "Il faut un pseudo.",
-   "en": ""
+   "en": "You need a username."
   },
   {
    "fr": "Il faut trois Porteurs différents.",
-   "en": ""
+   "en": "You need three different Bearers."
   },
   {
    "fr": "Porteur inconnu : {0}.",
-   "en": ""
+   "en": "Unknown Bearer: {0}."
   },
   {
    "fr": "Il faut un Porteur de chaque lignée : un Augmenté, un Géné et un Résonant.",
-   "en": ""
+   "en": "You need one Bearer from each lineage: an Augmented, a Spliced and a Resonant."
   },
   {
    "fr": "Un Porteur sans PV ne peut pas combattre.",
-   "en": ""
+   "en": "A Bearer with no HP can’t fight."
   },
   {
    "fr": "{0} porte trop de cartes.",
-   "en": ""
+   "en": "{0} is carrying too many cards."
   },
   {
    "fr": "Carte inconnue : {0}.",
-   "en": ""
+   "en": "Unknown card: {0}."
   },
   {
    "fr": "Niveau de carte invalide.",
-   "en": ""
+   "en": "Invalid card level."
   },
   {
    "fr": "{0} affronte {1}.",
-   "en": ""
+   "en": "{0} faces {1}."
   },
   {
    "fr": "Le duel est terminé.",
-   "en": ""
+   "en": "The duel is over."
   },
   {
    "fr": "Ta chaîne est déjà verrouillée.",
-   "en": ""
+   "en": "Your chain is already locked in."
   },
   {
    "fr": "Cette carte n’est pas dans ta main.",
-   "en": ""
+   "en": "This card isn’t in your hand."
   },
   {
    "fr": "Une place vide ne se joue pas.",
-   "en": ""
+   "en": "An empty slot can’t be played."
   },
   {
    "fr": "Plus de place dans la chaîne.",
-   "en": ""
+   "en": "No room left in the chain."
   },
   {
    "fr": "Cette carte ne prend pas cette Fréquence.",
-   "en": ""
+   "en": "This card can’t take that Frequency."
   },
   {
    "fr": "Cette carte n’est pas dans la chaîne.",
-   "en": ""
+   "en": "This card isn’t in the chain."
   },
   {
    "fr": "Ce Porteur est déjà à terre.",
-   "en": ""
+   "en": "This Bearer is already down."
   },
   {
    "fr": "Ce n’est pas une carte de soin posée.",
-   "en": ""
+   "en": "That’s not a placed healing card."
   },
   {
    "fr": "On ne soigne pas un Porteur à terre (sauf une Relève).",
-   "en": ""
+   "en": "You can’t heal a downed Bearer (except with Second Wind)."
   },
   {
    "fr": "Pas assez de Flux, ou chaîne déjà au plus long.",
-   "en": ""
+   "en": "Not enough Flux, or the chain is already at its longest."
   },
   {
    "fr": "Pas assez de Flux.",
-   "en": ""
+   "en": "Not enough Flux."
   },
   {
    "fr": "Choix invalide.",
-   "en": ""
+   "en": "Invalid choice."
   },
   {
    "fr": "{0} : Résonance, suite de {1}.",
-   "en": ""
+   "en": "{0}: Resonance, chain of {1}."
   },
   {
    "fr": "{0} : Écho ×{1}.",
-   "en": ""
+   "en": "{0}: Echo ×{1}."
   },
   {
-   "fr": "{0} {1} {2} de bouclier.",
-   "en": ""
+   "fr": "{0} arrache {1} de bouclier.",
+   "en": "{0} rips away {1} shield."
+  },
+  {
+   "fr": "{0} brise {1} de bouclier.",
+   "en": "{0} shatters {1} shield."
   },
   {
    "fr": "{0} relève {1}.",
-   "en": ""
+   "en": "{0} revives {1}."
   },
   {
    "fr": "{0} ({1}) est à terre.",
-   "en": ""
+   "en": "{0} ({1}) is down."
   },
   {
    "fr": "Le duel s’éternise : il se décide aux PV restants.",
-   "en": ""
+   "en": "The duel drags on: it’s decided on remaining HP."
   },
   {
    "fr": "Égalité.",
-   "en": ""
+   "en": "Draw."
   },
   {
    "fr": "{0} remporte le duel.",
-   "en": ""
+   "en": "{0} wins the duel."
   },
   {
    "fr": "{0} quitte le duel.",
-   "en": ""
+   "en": "{0} leaves the duel."
   }
  ]
 }

@@ -908,7 +908,7 @@ export function ouvrirPorte(x: Expedition, rangs: number[]): { x: Expedition; ok
   const vestige = x.carte ? salleCourante(x).vestige : undefined;
   if (vestige) gains = ramasser(gains, vestige);
   return { ok: true, x: { ...x, porte: undefined, gains, butin: x.butin + plus,
-    recit: tr`Les Fréquences s’accordent. La porte tourne sur elle-même sans un bruit : derrière, ${eclats > 1 ? `${eclats} Éclats` : tr('un Éclat')} et ${plus} minerai, rangés là depuis toujours.` } };
+    recit: tr`Les Fréquences s’accordent. La porte tourne sur elle-même sans un bruit : derrière, ${eclats > 1 ? tr`${eclats} Éclats` : tr('un Éclat')} et ${plus} minerai, rangés là depuis toujours.` } };
 }
 
 /** Une seule relance par porte : une nouvelle main */

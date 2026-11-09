@@ -16,10 +16,10 @@ import { ICO, sigle } from './icones';
 import { NOM_LIGNEES } from './coquille';
 import type { Decouverte } from '../core/decouvertes';
 import { feuilleGuide, lienGuide, type OngletGuide } from './guide';
-import { echap } from './outils';
+import { decimal, echap } from './outils';
 import { queteDef } from '../core/strates';
 import { feuilleJournal, type OngletJournal } from './journal';
-import { t as tr } from '../core/i18n';
+import { t as tr, locale, enumerer } from '../core/i18n';
 
 interface Pop {
   id: number;
@@ -248,7 +248,7 @@ function maillon(g: Geste, off: boolean, s: CombatEtat) {
 function ligneSecours(c: Compte): string {
   const s = c.secours;
   if (!s) return '';
-  const le = new Date(s.le).toLocaleDateString('fr-BE', { day: 'numeric', month: 'long' });
+  const le = new Date(s.le).toLocaleDateString(locale(), { day: 'numeric', month: 'long' });
   return `<p class="discret">${tr`Partie de secours : Strate −${s.strate}, du ${le}.${s.confirmer ? tr` Ta partie actuelle (Strate −${s.actuelle}) deviendra la partie de secours : tu pourras revenir en arrière.` : ''}`}</p>`
     + `<div class="ligne"><button type="button" class="btn sec" data-action="${s.confirmer ? 'secours-confirmer' : 'secours'}">${s.confirmer ? tr('Confirmer l’échange') : tr('Restaurer cette partie')}</button></div>`;
 }
@@ -592,9 +592,10 @@ function visageEnnemi(en: EnnemiEtat): string | null {
 function texteCoups(s: CombatEtat, recus: CoupAttendu[], pv: number): string {
   const net = recus.reduce((t, c) => t + c.net, 0);
   const absorbe = recus.reduce((t, c) => t + c.absorbe, 0);
-  const noms = [...new Set(recus.map((c) => c.rang))].map((r) => tousEnnemis(s).find((en) => (en.rang ?? 0) === r)).filter((en): en is EnnemiEtat => !!en).map(nomEnnemi).join(' et ');
-  if (net === 0 && absorbe > 0) return tr`${noms} va frapper : le bouclier prend tout le coup.`;
-  return tr`${noms} va frapper : −${net} PV${absorbe ? tr` (${absorbe} pris par le bouclier)` : ''}${net >= pv ? ', à terre' : ''}.`;
+  const noms = [...new Set(recus.map((c) => c.rang))].map((r) => tousEnnemis(s).find((en) => (en.rang ?? 0) === r)).filter((en): en is EnnemiEtat => !!en).map(nomEnnemi);
+  const nomsDits = enumerer(noms);
+  if (net === 0 && absorbe > 0) return tr`${nomsDits} va frapper : le bouclier prend tout le coup.`;
+  return tr`${nomsDits} va frapper : −${net} PV${absorbe ? tr` (${absorbe} pris par le bouclier)` : ''}${net >= pv ? tr(', à terre') : ''}.`;
 }
 
 /** Les tuiles de l'escouade affichées (par Porteur), pour l'appui long */
@@ -763,7 +764,7 @@ function htmlEcranCombat(e: Ecran): string {
   if (enJeu) {
     const qui = enJeu.porteur ? porteurDef(enJeu.porteur).nom : tr('District');
     conseil = `<span class="pas-chaine">${e.actif! + 1} / ${s.chaine.length}</span><span class="carte-agit" style="--c:${COULEUR[ligneeGeste(enJeu)]}">${echap(enJeu.nom)}</span> · ${echap(qui)}`
-      + (a.suite >= 3 ? ` ${tr`· Résonance`} <b>×${a.mult.toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')}</b>` : '');
+      + (a.suite >= 3 ? ` ${tr`· Résonance`} <b>×${a.mult.toLocaleString(locale()).replace(/\u202f/g, '\u00a0')}</b>` : '');
   } else if (e.verrou && !s.chaine.length && s.issue === 'en-cours' && s.ennemi.pv > 0) conseil = enGroupe(s) ? tr('Le groupe riposte…') : `${echap(nomEnnemi(s.ennemi))} riposte…`;
 
   const ill = visageEnnemi(s.ennemi);
@@ -891,11 +892,11 @@ function htmlEcranCombat(e: Ecran): string {
   const piles = `<button type="button" class="piles" data-action="journal" data-id="cartes" aria-label="${echap(tr`Pioche ${s.pioche.length}, défausse ${s.defausse.length} : ouvrir le journal du combat`)}"${e.verrou ? ' disabled' : ''}><span>${ICO.cartes}<em>${tr`Pioche`}</em>${s.pioche.length}</span><span>${ICO.recycler}<em>${tr`Défausse`}</em>${s.defausse.length}</span><i class="piles-journal" aria-hidden="true">${ICO.journal}</i></button>`;
 
   // la chaîne
-  const mult = a.suite >= 3 ? `×${a.mult.toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0')}` : '';
+  const mult = a.suite >= 3 ? `×${a.mult.toLocaleString(locale()).replace(/\u202f/g, '\u00a0')}` : '';
   h += `<section class="zone-chaine${a.suite >= 3 ? ' resonne' : ''}" aria-label="${tr`Chaîne`}"><div class="chaine-tete"><span class="surtitre">${tr`CHAÎNE · ${placesPrises(s)} / ${capacite(s)}`}</span>`
     + (mult ? `<span class="badge-reso">${ICO.flux}${tr`RÉSONANCE ${mult}`}</span>` : a.suite === 2 ? `<span class="badge-reso faible">${tr`SUITE EN COURS`}</span>` : '')
     + (a.echo ? `<span class="badge-reso echo${(a.echoN ?? 3) >= 4 ? ' fort' : ''}">${ICO.boost}${nomEcho(a.echoN ?? 3).toUpperCase()} ${pctEcho(a.echoN ?? 3)}</span>` : '')
-    + (s.debride ? `<span class="badge-reso eclat">${ICO.eclat}${tr`DÉBRIDAGE ×${String(REGLES.eclat.debride).replace('.', ',')}`}</span>` : '')
+    + (s.debride ? `<span class="badge-reso eclat">${ICO.eclat}${tr`DÉBRIDAGE ×${decimal(REGLES.eclat.debride)}`}</span>` : '')
     + (s.chaine.length && e.actif === undefined && !verrou ? bilanChaine(s) : '')
     + `</div><div class="rail">`;
   // pendant l'animation, la carte qui agit s'avance, celles déjà jouées s'éteignent

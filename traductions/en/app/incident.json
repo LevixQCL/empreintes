@@ -2,36 +2,32 @@
  "source": "src/app/incident.ts",
  "entrees": [
   {
-   "fr": "OSSYRA · {0} · {1} · écran {2}/{3}\n{4}\n{5}",
-   "en": ""
-  },
-  {
    "fr": "Un grain de sable",
-   "en": ""
+   "en": "A grain of sand"
   },
   {
    "fr": "Quelque chose s’est mal passé à l’écran. Ta partie est sauvegardée : rien n’est perdu.",
-   "en": ""
+   "en": "Something went wrong on screen. Your game is saved: nothing is lost."
   },
   {
    "fr": "Si ça recommence, copie le détail et envoie-le à Bryan.",
-   "en": ""
+   "en": "If it happens again, copy the details and send them to Bryan."
   },
   {
    "fr": "Revenir au district",
-   "en": ""
+   "en": "Back to the district"
   },
   {
    "fr": "Copier le détail",
-   "en": ""
+   "en": "Copy the details"
   },
   {
    "fr": "Copié",
-   "en": ""
+   "en": "Copied"
   },
   {
    "fr": "Copie impossible",
-   "en": ""
+   "en": "Can’t copy"
   }
  ]
 }

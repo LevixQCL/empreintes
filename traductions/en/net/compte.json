@@ -3,63 +3,63 @@
  "entrees": [
   {
    "fr": "Joueur",
-   "en": ""
+   "en": "Player"
   },
   {
    "fr": "E-mail ou mot de passe incorrect.",
-   "en": ""
+   "en": "Incorrect email or password."
   },
   {
    "fr": "Ce compte est déjà utilisé par une autre partie. Connecte-toi avec lui.",
-   "en": ""
+   "en": "This account is already used by another game. Sign in with it."
   },
   {
    "fr": "Ta partie est déjà reliée à ce compte.",
-   "en": ""
+   "en": "Your game is already linked to this account."
   },
   {
    "fr": "Adresse e-mail invalide.",
-   "en": ""
+   "en": "Invalid email address."
   },
   {
    "fr": "Un compte existe déjà avec cette adresse.",
-   "en": ""
+   "en": "An account already exists with this address."
   },
   {
    "fr": "Mot de passe trop court (6 caractères minimum).",
-   "en": ""
+   "en": "Password too short (6 characters minimum)."
   },
   {
    "fr": "Fenêtre de connexion fermée.",
-   "en": ""
+   "en": "Sign-in window closed."
   },
   {
    "fr": "Ce site n’est pas encore autorisé dans Firebase (Authentication › Paramètres › Domaines autorisés).",
-   "en": ""
+   "en": "This site isn’t authorised in Firebase yet (Authentication › Settings › Authorised domains)."
   },
   {
    "fr": "Pas de connexion réseau.",
-   "en": ""
+   "en": "No network connection."
   },
   {
    "fr": "La fenêtre de connexion Google a été bloquée. Autorise les fenêtres pour ce site, ou ouvre le jeu dans Chrome.",
-   "en": ""
+   "en": "The Google sign-in window was blocked. Allow pop-ups for this site, or open the game in Chrome."
   },
   {
    "fr": "Une autre fenêtre de connexion était déjà ouverte. Réessaie.",
-   "en": ""
+   "en": "Another sign-in window was already open. Try again."
   },
   {
    "fr": "Ce navigateur bloque la connexion (stockage désactivé). Ouvre le jeu dans Chrome ou Safari.",
-   "en": ""
+   "en": "This browser is blocking sign-in (storage disabled). Open the game in Chrome or Safari."
   },
   {
    "fr": "La connexion Google ne marche pas dans ce navigateur intégré. Ouvre le jeu dans Chrome ou Safari.",
-   "en": ""
+   "en": "Google sign-in doesn’t work in this in-app browser. Open the game in Chrome or Safari."
   },
   {
    "fr": "La connexion a échoué. Réessaie dans un instant.{0}",
-   "en": ""
+   "en": "Sign-in failed. Try again in a moment.{0}"
   }
  ]
 }

@@ -149,7 +149,7 @@ export const PLANS: Plan[] = [
     tr('Dans les murs, des cristaux. Chacun garde l’empreinte d’un être : ses gestes, sa force, une part de ce qu’il était.'),
     tr('En 2068, on apprend à graver nos propres empreintes et à les monter dans des outils. Le geste d’un vieux soudeur survit dans d’autres mains.'),
     tr('Mais les cristaux des Strates sont déjà habités. Par des êtres plus anciens que nous : dragons, esprits, sans-nom.')] },
-  { epoque: tr('Vingt ans'), titre: 'L’Ascension', annees: [2071, 2090], ambiance: 'or', camera: 'monte', fonds: [f('07-ascension')], scene: ascension, court: [tr("Greffés d’empreintes anciennes, quelques-uns deviennent les Résonants, une mèche d’or dans les cheveux. Leurs familles s’installent au sommet des tours, puis lèvent des îles au-dessus des nuages : les Hauts.")], lignes: [
+  { epoque: tr('Vingt ans'), titre: tr('L’Ascension'), annees: [2071, 2090], ambiance: 'or', camera: 'monte', fonds: [f('07-ascension')], scene: ascension, court: [tr("Greffés d’empreintes anciennes, quelques-uns deviennent les Résonants, une mèche d’or dans les cheveux. Leurs familles s’installent au sommet des tours, puis lèvent des îles au-dessus des nuages : les Hauts.")], lignes: [
     tr('En 2071, sept volontaires reçoivent en secret des empreintes anciennes. Une mèche d’or leur pousse en une nuit. Leur ombre change.'),
     tr('Ils sentent les tempêtes avant les machines, apaisent une foule d’un mot, et seuls savent éveiller les cristaux anciens : ce sont les Résonants. Certains sauvent des villes, d’autres les prennent.'),
     tr('Leurs familles s’installent au sommet des tours. De 2090 à 2097, elles lèvent des îles qui flottent au-dessus des nuages : les Hauts. Personne en bas ne demande comment.')] },
@@ -188,10 +188,10 @@ function fondActif(i: number, k: number): string | null {
 
 /** Illustrations à précharger pour le plan i (toutes celles du plan) */
 export const imagesPlan = (i: number): string[] =>
-  (PLANS[i]?.fonds ?? []).filter((x) => IMAGES_DISPONIBLES.has(x.id)).map((x) => tr`./intro/${x.id}.webp`);
+  (PLANS[i]?.fonds ?? []).filter((x) => IMAGES_DISPONIBLES.has(x.id)).map((x) => `./intro/${x.id}.webp`);
 
 function fond(id: string, camera: string, mouvement: boolean, foyer?: [number, number]): string {
-  const src = tr`./intro/${id}.webp`;
+  const src = `./intro/${id}.webp`;
   const media = mouvement && VIDEOS_DISPONIBLES.has(id)
     ? `<video poster="${src}" autoplay muted loop playsinline preload="auto"><source src="./intro/${id}.webm" type="video/webm"><source src="./intro/${id}.mp4" type="video/mp4"></video>`
     : `<img src="${src}" alt="" decoding="async">`;

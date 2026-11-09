@@ -3,127 +3,127 @@
  "entrees": [
   {
    "fr": "Équilibré",
-   "en": ""
+   "en": "Balanced"
   },
   {
    "fr": "Risqué",
-   "en": ""
+   "en": "Risky"
   },
   {
    "fr": "Redoutable",
-   "en": ""
+   "en": "Formidable"
   },
   {
    "fr": "L’escouade {0} garde désormais le port.",
-   "en": ""
+   "en": "Squad {0} now guards the port."
   },
   {
    "fr": "Cendrevigne",
-   "en": ""
+   "en": "Ashvine"
   },
   {
    "fr": "Ancrefroide",
-   "en": ""
+   "en": "Coldanchor"
   },
   {
    "fr": "Verrelune",
-   "en": ""
+   "en": "Moonglass"
   },
   {
    "fr": "Salvebrume",
-   "en": ""
+   "en": "Mistsalvo"
   },
   {
    "fr": "Brisecôte",
-   "en": ""
+   "en": "Shorebreak"
   },
   {
    "fr": "Les Pontons d’Ambre",
-   "en": ""
+   "en": "The Amber Pontoons"
   },
   {
    "fr": "Quai Sourd",
-   "en": ""
+   "en": "Deaf Quay"
   },
   {
    "fr": "Givrecorde",
-   "en": ""
+   "en": "Frostrope"
   },
   {
    "fr": "Le Générateur est à l’arrêt.",
-   "en": ""
+   "en": "The Generator is shut down."
   },
   {
    "fr": "Tous tes jetons sont déjà là.",
-   "en": ""
+   "en": "All your tokens are already here."
   },
   {
    "fr": "Déjà {0} jetons achetés aujourd’hui : reviens demain.",
-   "en": ""
+   "en": "Already {0} tokens bought today: come back tomorrow."
   },
   {
    "fr": "Il faut {0} cristaux pour armer une barque de plus.",
-   "en": ""
+   "en": "You need {0} crystals to fit out one more boat."
   },
   {
    "fr": "Le Générateur charge une barque de plus : +1 jeton de pillage.",
-   "en": ""
+   "en": "The Generator loads one more boat: +1 raid token."
   },
   {
    "fr": "Les pillages s’ouvrent quand le gardien de la Strate −{0} est vaincu.",
-   "en": ""
+   "en": "Raids open once the guardian of Stratum −{0} is defeated."
   },
   {
    "fr": "Plus de jeton de pillage : le prochain revient bientôt.",
-   "en": ""
+   "en": "No raid tokens left: the next one is coming soon."
   },
   {
    "fr": "{0} a déjà été attaqué aujourd’hui.",
-   "en": ""
+   "en": "{0} has already been attacked today."
   },
   {
    "fr": "La garnison de {0} sort à ta rencontre : {1}.",
-   "en": ""
+   "en": "{0}’s garrison comes out to meet you: {1}."
   },
   {
    "fr": "L’escouade part piller {0}.",
-   "en": ""
+   "en": "The squad sets off to raid {0}."
   },
   {
    "fr": "Pillage réussi à {0} : +{1} minerai{2}.",
-   "en": ""
+   "en": "Raid on {0} successful: +{1} ore{2}."
   },
   {
    "fr": "Pillage repoussé à {0}.{1}",
-   "en": ""
+   "en": "Raid on {0} repelled.{1}"
   },
   {
    "fr": " L’escouade laisse {0} minerai de son coffre.",
-   "en": ""
+   "en": " The squad leaves {0} ore from its chest."
   },
   {
    "fr": "{0} a pillé ton district{1}.",
-   "en": ""
+   "en": "{0} raided your district{1}."
   },
   {
    "fr": " et pris {0} minerai de ton coffre",
-   "en": ""
+   "en": " and took {0} ore from your chest"
   },
   {
    "fr": "Ta garnison a repoussé {0}{1}.{2}",
-   "en": ""
+   "en": "Your garrison drove off {0}{1}.{2}"
   },
   {
    "fr": " : +{0} minerai laissé dans ton coffre",
-   "en": ""
+   "en": ": +{0} ore left in your chest"
   },
   {
    "fr": " Le quartier l’a vu : {0}.",
-   "en": ""
+   "en": " The quarter saw it: {0}."
   },
   {
    "fr": " Le quartier l’a vu.",
-   "en": ""
+   "en": " The quarter saw it."
   }
  ]
 }

@@ -9,7 +9,7 @@ import type { CalculHisto, CarteHisto, CombatEtat, Geste, LigneeGeste, LigneHist
 import { portrait } from './art';
 import { corpsFace, styleFace, type Face } from './carte';
 import { ICO } from './icones';
-import { echap } from './outils';
+import { decimal, echap } from './outils';
 import { t as tr } from '../core/i18n';
 
 export type OngletJournal = 'tours' | 'cartes';
@@ -36,7 +36,7 @@ function carteMini(c: CarteHisto | Geste, rang?: number): string {
   };
   const qui = c.porteur ? porteurDef(c.porteur).nom : tr('District');
   const eteinte = 'eteinte' in c && c.eteinte;
-  return `<span class="jm${eteinte ? ' eteinte' : ''}" style="--c:${TEINTE[l]}" role="img" aria-label="${echap(tr`${rang !== undefined ? `${rang + 1}. ` : ''}${c.nom} (${qui}), Fréquence ${c.f}, force ${c.v}${eteinte ? ', éteinte' : ''}`)}">`
+  return `<span class="jm${eteinte ? ' eteinte' : ''}" style="--c:${TEINTE[l]}" role="img" aria-label="${echap(tr`${rang !== undefined ? `${rang + 1}. ` : ''}${c.nom} (${qui}), Fréquence ${c.f}, force ${c.v}${eteinte ? tr(', éteinte') : ''}`)}">`
     + (rang !== undefined ? `<b class="jm-rang" aria-hidden="true">${rang + 1}</b>` : '')
     + `<span class="nf nf-${metal}" style="${styleFace(d)}" aria-hidden="true">${corpsFace(d)}</span></span>`;
 }
@@ -145,7 +145,7 @@ function puces(t: Totaux, grand = false): string {
 function corpsTour(t: TourHisto, n: number): string {
   let h = '';
   if (t.chaine.length) {
-    const reso = t.suite ? `<span class="jb reso">${ICO.flux}${tr`Résonance ×${String(t.mult).replace('.', ',')}`}</span>` : '';
+    const reso = t.suite ? `<span class="jb reso">${ICO.flux}${tr`Résonance ×${decimal(t.mult ?? 1)}`}</span>` : '';
     const echo = t.echo ? `<span class="jb echo">${ICO.boost}${tr`Écho${t.echoN && t.echoN > 3 ? ` ×${t.echoN}` : ''}`}</span>` : '';
     const brouille = t.brouille ? `<span class="jb brouille">${tr`Brouillée`}</span>` : '';
     h += `<div class="jt-chaine"><div class="jt-cartes">${t.chaine.map((c, i) => carteMini(c, i)).join('')}</div>${reso || echo || brouille ? `<div class="jt-badges">${reso}${echo}${brouille}</div>` : ''}</div>`;

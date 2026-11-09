@@ -273,7 +273,7 @@ export const CHAPITRES: Chapitre[] = [
     ],
   },
   {
-    id: 'ascension', livre: 2, titre: 'L’Ascension', epoque: '2071 – 2090', image: '07-ascension',
+    id: 'ascension', livre: 2, titre: t('L’Ascension'), epoque: '2071 – 2090', image: '07-ascension',
     paragraphes: [
       t('La plaque de bronze dit que les Sept se sont levés ensemble. Ce sont cinq d’entre eux qui ont changé le monde. Je t’expliquerai un jour pourquoi je dis cinq.'),
       t('Ils sentaient venir les tempêtes. Pas grâce à des instruments : dans le corps. Une lourdeur derrière les yeux, une envie soudaine de fermer les fenêtres, une ville entière vue en rêve sous l’eau trois jours avant qu’elle n’y soit. Dans un monde où une tempête pouvait emporter cent mille personnes en une nuit, c’était le plus grand pouvoir qu’on puisse imaginer. On l’appelle le Présage.'),

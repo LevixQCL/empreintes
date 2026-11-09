@@ -19,6 +19,24 @@ Les traductions vivent dans `traductions/en/`, un fichier JSON par fichier sourc
 
 Une entrée dont `en` est vide s'affiche en français : le jeu ne casse jamais pendant que la traduction avance.
 
+### Les cas particuliers
+
+- **Entourer le texte, jamais le HTML** : `<b>${t`Niveau ${n}`}</b>`, pas `t`<b>Niveau ${n}</b>``. Une classe CSS changée
+  ne doit pas invalider une traduction.
+- **Jamais de code dans `t()`** : classes CSS, sélecteurs, chemins d'images, requêtes `matchMedia`, textes de débogage
+  pour Bryan. `npx tsx scripts/i18n-oublis.ts` liste au contraire les textes à accent restés hors de `t()` (à relire).
+- **Le code ne lit jamais un texte traduit** : pas de `titre.includes('Défaite')` ni de `/minerai/` sur une phrase affichée.
+  Passer l'information par une donnée (`fin.issue`, `ligne.felure`, `reessayer`…).
+- **Les accords** : une phrase dont un morceau change selon le nombre (`${n > 1 ? 's' : ''}`) garde sa valeur `{1}` ;
+  la traduction écrit `{1|s}` (« s » si la valeur n'est pas vide, rien sinon) ou `{1|ies|y}` (« ies » sinon « y »).
+  Quand le français change plusieurs mots (« quitte son poste » / « quittent leur poste »), écrire deux phrases entières.
+- **Les listes** : `enumerer(['Ilka', 'Doran', 'Véla'])` donne « Ilka, Doran et Véla » (« and » en anglais).
+- **Les nombres et les dates** : `locale()` (`fr-BE` ou `en-US`) pour `toLocaleString`, `virgule(n)` (une décimale) et
+  `decimal(n)` (tel quel) pour la virgule française.
+- **Un même mot, deux sens** : `t('§poids§Charge')` s'affiche « Charge » en français mais a sa propre clé (« Load »),
+  distincte du geste ennemi `t('Charge')`.
+- **Les noms et pronoms** : `deNom(nom)` (« de Doran », « d’Ilka », « of Doran ») et `ilElle(p)` suivent la langue.
+
 ## Ce qui se passe quand on modifie un texte
 
 1. On change la phrase française dans le code, comme d'habitude.
@@ -42,7 +60,8 @@ mais écrit comme l'aurait écrit un auteur anglophone. Voix de chaque personnag
 | `npm run i18n -- verifier` | contrôle les valeurs `{n}`, les balises HTML et le glossaire |
 | `npm run i18n -- envelopper <fichiers>` | entoure de `t(…)` les phrases d'un fichier (relire le rapport et le diff) |
 | `npm run i18n -- a-traduire <catalogue> [max]` | liste numérotée des entrées vides |
-| `npm run i18n -- remplir <catalogue> <lot.json>` | remplit les entrées vides, dans l'ordre, avec un tableau JSON |
+| `npm run i18n -- remplir <catalogue> <lot.json>` | remplit les entrées vides : un tableau dans l'ordre, ou `{ "numéro": "texte" }` numéroté comme `a-traduire` (plus sûr) |
+| `npm run i18n -- propager` | recopie une traduction déjà faite dans les entrées vides au texte identique |
 | `npm run i18n -- paires <catalogue> [début] [n]` | montre français et traduction côte à côte, numérotés |
 | `npm run i18n -- reviser <catalogue> <lot.json>` | réécrit les traductions citées (`{ "numéro": "texte" }`) |
 
@@ -55,25 +74,23 @@ mais écrit comme l'aurait écrit un auteur anglophone. Voix de chaque personnag
 
 ## Essayer une langue
 
-Ajouter `?langue=en` à l'adresse du jeu (le choix est retenu sur l'appareil ; `?langue=fr` pour revenir).
+Ajouter `?langue=en` à l'adresse du jeu (le choix est retenu sur l'appareil ; `?langue=fr` pour revenir). Dès qu'on joue
+dans une autre langue, ou qu'une deuxième langue est publiée, Menu › Paramètres propose « Langue · Language ».
+
+Pour relire écran par écran : `VISUEL_LANGUE=en npm run visuel` montre le français (« avant ») à côté de l'anglais
+(« après ») et écrit le texte visible de chaque écran dans `.visuel/*-texte.txt`.
 La langue est choisie au démarrage (`src/entree.ts`), avant le chargement du jeu, parce que les textes de lore sont traduits
 au moment où leurs modules se chargent. Changer de langue recharge donc la page.
 
 L'anglais n'est **pas proposé aux joueurs** tant qu'il n'est pas complet : il entre dans `LANGUES_PUBLIEES`
 (`src/core/i18n.ts`) le jour où `couverture` affiche 100 %. Jusque-là, seuls ceux qui ajoutent `?langue=en` le voient.
 
-## Ce qui reste à faire (état au 9 novembre 2026)
+## État au 9 novembre 2026
 
-1. **Le lore** (`src/core` : Chroniques, Strates, campagne, lore des cartes et des Porteurs, fragments, familles, explorer,
-   découvertes, lieux, rumeurs, fils, digue) : ≈ 47 500 mots, **traduit en anglais le 9 novembre 2026** (relecture
-   par un anglophone conseillée avant la sortie). Seul `core/lexique.ts` attend l'étape 2.
-2. **L'interface** (`src/ui`, `src/app`, le reste de `src/core`, ≈ 30 000 mots) : à entourer **à la main**, morceau de texte
-   par morceau de texte, sans jamais englober le HTML autour (une classe CSS changée ne doit pas invalider une traduction).
-   Le passage automatique ne convient pas ici. Points à traiter au même moment :
-   - les mots isolés (« Forge », « Génés »…) que le passage automatique laisse de côté ;
-   - les pluriels (`n > 1 ? 's' : ''`) : prévoir une petite fonction de pluriel par langue ;
-   - les nombres et dates écrits à la française (`virgule`, `toLocaleString('fr-BE')`) : suivre `langue()` ;
-   - le lexique (`core/lexique.ts`) : ses expressions régulières reconnaissent des mots français dans les textes,
-     il lui faut une version par langue ;
-   - un choix de langue dans les Paramètres ; `index.html` (titre, description) et le manifeste de l'appli.
-3. Les textes déjà enregistrés dans une sauvegarde (journaux, messages) restent dans la langue où ils ont été écrits.
+- **Tout le jeu est traduit en anglais** (≈ 77 000 mots : lore, interface, combat, glossaire), écrans vérifiés à 390 px.
+  Le français n'a pas bougé (`npm run visuel` : aucun changement visible).
+- Avant de publier l'anglais (`LANGUES_PUBLIEES`, demander à Bryan) : une relecture par un anglophone, surtout le lore ;
+  `index.html` (titre « Ossyra » commun aux deux langues) et le manifeste de l'appli restent en français.
+- Les textes déjà enregistrés dans une sauvegarde (journaux, récits d'expédition en cours, messages) restent dans la langue
+  où ils ont été écrits : seuls les nouveaux suivent la langue choisie.
+- Le prototype de duel (`src/duel/`) n'est pas traduit.

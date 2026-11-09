@@ -15,7 +15,7 @@ import { filigrane, illustrationModule, portrait } from './art';
 import { icone } from './icones';
 import { vibrer } from './toucher';
 import { centreDe, echap, mouvementReduit as reduit } from './outils';
-import { t as tr } from '../core/i18n';
+import { t as tr, locale } from '../core/i18n';
 
 type Res = 'energie' | 'composants' | 'eclats';
 
@@ -123,7 +123,7 @@ export function comparer(a: Releve, b: Releve, o: { energie?: boolean } = {}): G
 
 // ---------- L'affichage ----------
 
-const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
+const ent = (n: number) => Math.floor(n).toLocaleString(locale()).replace(/\u202f/g, '\u00a0');
 const COULEUR_METAL: Record<Rarete, string> = { fer: '#A7B0BA', cuivre: '#D88A55', argent: '#DDE3EC', or: '#E8BE5E', nacre: '#E6D6F5' };
 const NOMS: Record<Res | 'cartes', [string, string]> = {
   energie: ['cristal', 'cristaux'], composants: ['minerai', 'minerai'], eclats: [tr('Éclat'), tr('Éclats')], cartes: ['carte', 'cartes'],
@@ -157,8 +157,8 @@ let file: Promise<void> = Promise.resolve();
  * une scène d'histoire, le briefing, l'intro, une décision à prendre, une saisie de texte. Le reçu attend son tour.
  */
 const NE_PAS_COUVRIR = [
-  tr('#app .scene-campagne'), tr('#app .scene-rencontre'), tr('#app .scene-briefing'), tr('#app .intro-pas'),
-  tr('#app .gt-feuille'), tr('#app .options-decision'), tr('#app .legs-carte'),
+  '#app .scene-campagne', '#app .scene-rencontre', '#app .scene-briefing', '#app .intro-pas',
+  '#app .gt-feuille', '#app .options-decision', '#app .legs-carte',
 ].join(', ');
 function calme(): boolean {
   if (document.querySelector(NE_PAS_COUVRIR)) return false;
@@ -451,7 +451,7 @@ function grandeRevelation(g: Extract<Gain, { kind: 'carte' | 'porteur' }>, p: nu
     const accent = carte ? COULEUR_METAL[carte.rarete] : '#7FD4FF';
     const img = carte ? illustrationModule(g.kind === 'carte' ? g.cle : '') : portrait(g.kind === 'porteur' ? g.id : '');
     const nom = carte ? carte.nom : porteurDef((g as { id: string }).id).nom;
-    const sur = carte ? tr`Carte ${carte.rarete === 'or' ? 'd’or' : carte.rarete === 'argent' ? 'd’argent' : 'de nacre'} · ${NOM_PALIER[p]}` : tr('Nouveau Porteur');
+    const sur = carte ? tr`Carte ${carte.rarete === 'or' ? tr('d’or') : carte.rarete === 'argent' ? tr('d’argent') : tr('de nacre')} · ${NOM_PALIER[p]}` : tr('Nouveau Porteur');
     const sous = carte ? tr('Nouvelle carte') : tr('rejoint le district');
     const el = document.createElement('div');
     el.className = `gr p${p}${carte ? ` metal-${carte.rarete}` : ' porteur'}`;

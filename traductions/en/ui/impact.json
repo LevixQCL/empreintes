@@ -1,9 +1,0 @@
-{
- "source": "src/ui/impact.ts",
- "entrees": [
-  {
-   "fr": ".zone-main .geste, .zone-chaine .geste",
-   "en": ""
-  }
- ]
-}

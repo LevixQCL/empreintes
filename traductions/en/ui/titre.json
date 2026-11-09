@@ -3,55 +3,55 @@
  "entrees": [
   {
    "fr": "Compte : {0}, Strate −{1}",
-   "en": ""
+   "en": "Account: {0}, Stratum −{1}"
   },
   {
    "fr": "Partie de ce téléphone ·",
-   "en": ""
+   "en": "Game on this phone ·"
   },
   {
    "fr": "La protéger",
-   "en": ""
+   "en": "Protect it"
   },
   {
    "fr": "Déjà un compte ?",
-   "en": ""
+   "en": "Already have an account?"
   },
   {
    "fr": "Nouvelle partie",
-   "en": ""
+   "en": "New game"
   },
   {
    "fr": "J’ai déjà une partie",
-   "en": ""
+   "en": "I already have a game"
   },
   {
    "fr": "Je me connecte pour la retrouver",
-   "en": ""
+   "en": "Sign in to get it back"
   },
   {
    "fr": "Installer le jeu sur l’écran d’accueil",
-   "en": ""
+   "en": "Install the game on the home screen"
   },
   {
    "fr": "Alpha",
-   "en": ""
+   "en": "Alpha"
   },
   {
    "fr": "Récupération de ta partie…",
-   "en": ""
+   "en": "Retrieving your game…"
   },
   {
    "fr": "Commencer",
-   "en": ""
+   "en": "Start"
   },
   {
    "fr": "Ossyra, écran titre",
-   "en": ""
+   "en": "Ossyra, title screen"
   },
   {
    "fr": "2121 · Sous les eaux, d’autres se souviennent encore.",
-   "en": ""
+   "en": "2121 · Under the water, others still remember."
   }
  ]
 }

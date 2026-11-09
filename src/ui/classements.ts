@@ -21,7 +21,7 @@ import { avatar, coquille, duree, ent, type EcranDistrict } from './coquille';
 import { ICO, icone } from './icones';
 import { fondTableau } from './art';
 import { echap } from './outils';
-import { t as tr } from '../core/i18n';
+import { langue, t as tr, locale } from '../core/i18n';
 
 /** L'état du Tableau en ligne, tenu par main.ts */
 export interface GrandTableau {
@@ -46,7 +46,7 @@ export const tableauVide = (): GrandTableau => ({ tableau: 'profondeur', periode
 
 const connuPorteur = (id: string) => PORTEURS.some((p) => p.id === id) ? id : 'ilka';
 const ilYa = (ms: number) => ms < 60_000 ? tr('à l’instant') : `il y a ${duree(ms)}`;
-const dateCourte = (ms: number) => ms ? new Date(ms).toLocaleDateString('fr-BE', { day: 'numeric', month: 'short' }) : '';
+const dateCourte = (ms: number) => ms ? new Date(ms).toLocaleDateString(locale(), { day: 'numeric', month: 'short' }) : '';
 
 /** Le rang de ce joueur dans un tableau (pour la Tour du Noyau et la fiche de la Strate), ou null */
 function monRang(g: GrandTableau, uid: string | null, t: TableauId, now: number): { rang: number; sur: number } | null {
@@ -57,7 +57,13 @@ function monRang(g: GrandTableau, uid: string | null, t: TableauId, now: number)
 }
 
 /** « 1er », « 2e » */
-const ordinal = (n: number) => `${n}${n === 1 ? `<sup>${tr`er`}</sup>` : '<sup>e</sup>'}`;
+const ordinal = (n: number) => {
+  if (langue() === 'en') {
+    const s = n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] ?? 'th';
+    return `${n}<sup>${s}</sup>`;
+  }
+  return `${n}<sup>${n === 1 ? 'er' : 'e'}</sup>`;
+};
 
 /** Le petit bandeau de la Tour du Noyau : ton rang en profondeur, et l'entrée vers le Tableau */
 export function bandeauTableau(e: EcranDistrict, g: GrandTableau, uid: string | null): string {

@@ -2,160 +2,192 @@
  "source": "src/ui/marees.ts",
  "entrees": [
   {
+   "fr": "frapper",
+   "en": "strike"
+  },
+  {
+   "fr": "tenir",
+   "en": "hold"
+  },
+  {
+   "fr": "orchestrer",
+   "en": "orchestrate"
+  },
+  {
    "fr": "Fait pour ça",
-   "en": ""
+   "en": "Made for this"
   },
   {
    "fr": "Peut le faire",
-   "en": ""
+   "en": "Can do it"
   },
   {
    "fr": "À contre-emploi",
-   "en": ""
+   "en": "Miscast"
   },
   {
    "fr": "argent",
-   "en": ""
+   "en": "silver"
   },
   {
    "fr": "Cargaison :",
-   "en": ""
+   "en": "Cargo:"
   },
   {
    "fr": "minerai, pas de carte",
-   "en": ""
+   "en": "ore, no card"
   },
   {
    "fr": "De l’XP pour toute l’équipe",
-   "en": ""
+   "en": "XP for the whole team"
   },
   {
    "fr": "Prise d’or : 3 cartes des {0} au choix, la première en",
-   "en": ""
+   "en": "Golden haul: 3 {0} cards to choose from, the first in"
   },
   {
    "fr": "3 cartes des {0} au choix, la première {1} au moins",
-   "en": ""
+   "en": "3 {0} cards to choose from, the first {1} or better"
   },
   {
    "fr": "1 carte {0} au choix parmi 3, une par lignée",
-   "en": ""
+   "en": "1 {0} card of your choice out of 3, one per lineage"
   },
   {
    "fr": "1 carte {0} des {1}",
-   "en": ""
+   "en": "1 {0} card from the {1}"
   },
   {
    "fr": "minerai, et de l’XP pour toute l’équipe",
-   "en": ""
+   "en": "ore, and XP for the whole team"
   },
   {
    "fr": "Au choix",
-   "en": ""
+   "en": "Your choice"
   },
   {
    "fr": "Prise d’or",
-   "en": ""
+   "en": "Golden haul"
   },
   {
    "fr": "{0}En mer",
-   "en": ""
+   "en": "{0}At sea"
+  },
+  {
+   "fr": "Rempli",
+   "en": "Fulfilled"
+  },
+  {
+   "fr": "{0} Porteurs",
+   "en": "{0} Bearers"
+  },
+  {
+   "fr": "encore ",
+   "en": "still "
   },
   {
    "fr": "plus bas",
-   "en": ""
+   "en": "further down"
   },
   {
    "fr": "de chances",
-   "en": ""
+   "en": "chance"
   },
   {
    "fr": "Aux fortes marées, la mer découvre des ruines qu’aucune barque n’atteint seule. Le passeur affrète sa gabare pour une équipe : un Porteur par tâche, et le bon rôle au bon endroit (frapper, tenir, orchestrer). Plus la marée est haute, plus c’est dur, et plus ça rapporte. Un échec n’est jamais perdu : l’équipe rapporte de quoi faire mieux la fois suivante.",
-   "en": ""
+   "en": "At the big tides, the sea uncovers ruins no boat can reach alone. The ferryman charters his barge for a team: one Bearer per task, and the right role in the right place (strike, hold, orchestrate). The higher the tide, the harder it is, and the more it pays. A failure is never wasted: the team brings back what it needs to do better next time."
   },
   {
    "fr": "Les trois marées",
-   "en": ""
+   "en": "The three tides"
   },
   {
    "fr": "{0} · coefficient {1} · {2}",
-   "en": ""
+   "en": "{0} · coefficient {1} · {2}"
   },
   {
    "fr": "Le passeur ne s’aventure à ces marées qu’avec un directeur qui a vaincu la",
-   "en": ""
+   "en": "The ferryman only ventures out on these tides with a director who has defeated"
   },
   {
    "fr": ". Ses équipes doivent avoir fait leurs preuves en bas avant d’affronter le large.",
-   "en": ""
+   "en": ". Their teams must have proven themselves below before facing the open sea."
   },
   {
    "fr": "Contrat rempli. {0} {1}.",
-   "en": ""
+   "en": "Contract fulfilled. {0} {1}."
   },
   {
    "fr": "Une nouvelle marée montera demain",
-   "en": ""
+   "en": "A new tide will rise tomorrow"
   },
   {
    "fr": "Le prochain contrat de cette marée s’ouvre",
-   "en": ""
+   "en": "This tide’s next contract opens"
+  },
+  {
+   "fr": "dans ",
+   "en": "in "
   },
   {
    "fr": "Pour un {0} : {1}",
-   "en": ""
+   "en": "For a {0}: {1}"
   },
   {
    "fr": "{0} sur cette tâche : changer",
-   "en": ""
+   "en": "{0} on this task: change"
   },
   {
    "fr": "Choisir un Porteur pour cette tâche",
-   "en": ""
+   "en": "Pick a Bearer for this task"
   },
   {
    "fr": "Personne",
-   "en": ""
+   "en": "Nobody"
   },
   {
    "fr": "Choisir",
-   "en": ""
+   "en": "Pick"
   },
   {
    "fr": "sur une autre épreuve",
-   "en": ""
+   "en": "on another task"
   },
   {
    "fr": "{0} % de chances de réussir",
-   "en": ""
+   "en": "{0} % chance of success"
   },
   {
    "fr": "{0} Indice{1} · +{2} %",
-   "en": ""
+   "en": "{0} Clue{1} · +{2} %"
   },
   {
    "fr": "{0} h en mer · un échec rapporte {1} % du minerai, toute l’XP et un Indice (+{2} %)",
-   "en": ""
+   "en": "{0} h at sea · a failure brings back {1} % of the ore, all the XP and a Clue (+{2} %)"
   },
   {
-   "fr": "{0} ne pourr{1} pas descendre avant le retour de la gabare.",
-   "en": ""
+   "fr": "{0} ne pourront pas descendre avant le retour de la gabare.",
+   "en": "{0} won’t be able to go down before the barge returns."
+  },
+  {
+   "fr": "{0} ne pourra pas descendre avant le retour de la gabare.",
+   "en": "{0} won’t be able to go down before the barge returns."
   },
   {
    "fr": "Meilleure équipe",
-   "en": ""
+   "en": "Best team"
   },
   {
    "fr": "Embarquer",
-   "en": ""
+   "en": "Embark"
   },
   {
    "fr": "La gabare est en mer : un contrat à la fois.",
-   "en": ""
+   "en": "The barge is at sea: one contract at a time."
   },
   {
    "fr": "Il manque un Porteur libre : libère-en un d’un bâtiment.",
-   "en": ""
+   "en": "No free Bearer: release one from a building."
   }
  ]
 }

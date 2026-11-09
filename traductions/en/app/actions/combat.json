@@ -3,83 +3,87 @@
  "entrees": [
   {
    "fr": "Descente",
-   "en": ""
+   "en": "Descent"
   },
   {
    "fr": "Fouille · {0}",
-   "en": ""
+   "en": "Dig · {0}"
   },
   {
    "fr": "Épreuve · {0}",
-   "en": ""
+   "en": "Trial · {0}"
   },
   {
    "fr": "La chambre est ouverte. Derrière la porte, une carte : l’Œil-relais. Trois recrues rejoignent le district, et un premier fragment d’archives attend dans les Chroniques (onglet Archives).",
-   "en": ""
+   "en": "The chamber is open. Behind the door, a card: the Relay Eye. Three recruits join the district, and a first archive fragment is waiting in the Chronicles (Archives tab)."
   },
   {
    "fr": "L’escouade se repose. La porte scellée t’attend toujours.",
-   "en": ""
+   "en": "The squad is resting. The sealed door is still waiting for you."
   },
   {
    "fr": "{0} est battu : ton escouade tient désormais le quai {1}.",
-   "en": ""
+   "en": "{0} is beaten: your squad now holds quay {1}."
   },
   {
    "fr": "{0} garde le quai {1}. Ta montée ne bouge pas.",
-   "en": ""
+   "en": "{0} keeps quay {1}. Your climb doesn’t move."
   },
   {
    "fr": "Quai {0} atteint{1}.{2}",
-   "en": ""
+   "en": "Quay {0} reached{1}.{2}"
   },
   {
    "fr": " : nouveau record",
-   "en": ""
+   "en": ": new record"
   },
   {
    "fr": " Quai gravé {0} : +{1} cristaux, +{2} Éclats.",
-   "en": ""
+   "en": " Engraved quay {0}: +{1} crystals, +{2} Shards."
   },
   {
    "fr": "Repoussés au quai {0} : l’escouade redescend au quai {1}.",
-   "en": ""
+   "en": "Driven back at quay {0}: the squad drops back to quay {1}."
   },
   {
    "fr": "Repoussés au quai {0} : l’escouade garde son quai.",
-   "en": ""
+   "en": "Driven back at quay {0}: the squad keeps its quay."
   },
   {
    "fr": "Pillage réussi à {0} : +{1} minerai, rangé dans ton coffre.",
-   "en": ""
+   "en": "Raid on {0} successful: +{1} ore, stored in your chest."
   },
   {
    "fr": "Repoussés à {0}.{1}",
-   "en": ""
+   "en": "Driven back at {0}.{1}"
   },
   {
    "fr": " L’escouade a laissé {0} minerai de son coffre.",
-   "en": ""
+   "en": " The squad left {0} ore from its chest."
   },
   {
    "fr": "L’escouade a fui : elle rentre épuisée (+{0} d’Usure chacun). ",
-   "en": ""
+   "en": "The squad fled: it comes home exhausted (+{0} Strain each). "
   },
   {
    "fr": "Un nouvel étage est creusé : la Strate −{0} est ouverte.",
-   "en": ""
+   "en": "A new level is dug: Stratum −{0} is open."
   },
   {
    "fr": "Le gardien est vaincu, mais l’étage suivant attend : {0}{1}{2}.",
-   "en": ""
+   "en": "The guardian is defeated, but the next level is waiting: {0}{1}{2}."
   },
   {
    "fr": "il manque {0} creuseur{1}",
-   "en": ""
+   "en": "{0} digger{1} still missing"
+  },
+  {
+   "fr": " et ",
+   "en": " and "
   },
   {
    "fr": "la Tour du Noyau doit passer au niveau {0}",
-   "en": ""
+   "en": "the Core Tower must reach level {0}"
   }
  ]
 }

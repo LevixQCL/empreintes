@@ -14,10 +14,10 @@ import { NOM_LIGNEE, avatar, decompte, jaugeTemps, prix, type EcranDistrict } fr
 import { ICO } from './icones';
 import { echap, texteReplie } from './outils';
 import { bloc, cle, etape, replie } from './presentation';
-import { t as tr } from '../core/i18n';
+import { t as tr, locale } from '../core/i18n';
 
 const majuscule = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
-const heure = (t: number) => new Date(t).toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' });
+const heure = (t: number) => new Date(t).toLocaleTimeString(locale(), { hour: '2-digit', minute: '2-digit' });
 
 /** La hauteur de chaque secteur sur le tableau du flanc (en % du haut), relevée sur l'image */
 const HAUTEUR: Record<string, number> = { lavoirs: 8, treuils: 30, ecole: 50, citernes: 69, palier: 84 };
@@ -63,7 +63,7 @@ function blocExpedition(j: Jeu, now: number): string {
   if (!x) return '';
   const lieu = SECTEURS.flatMap((s) => s.lieux).find((l) => l.id === x.lieu)!;
   return `<section class="fb-bloc bs-expe">${avatar(x.porteur, 44)}<span><strong>${tr`${echap(porteurDef(x.porteur).nom)} est dans les Basses`}</strong>`
-    + `<small>${echap(lieu.nom)} · ${decompte(x.fin, now, 'retour dans ')}</small><span class="jauge">${jaugeTemps(x.debut, x.fin, now)}</span></span></section>`;
+    + `<small>${echap(lieu.nom)} · ${decompte(x.fin, now, tr('retour dans '))}</small><span class="jauge">${jaugeTemps(x.debut, x.fin, now)}</span></span></section>`;
 }
 
 /** Un secteur du flanc : son état, le batardeau, et ses lieux s'il est à sec */

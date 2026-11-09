@@ -19,6 +19,9 @@ let catalogue: ReadonlyMap<string, string> | null = null;
 /** La langue en cours d'affichage */
 export const langue = (): Langue => langueActive;
 
+/** La locale des nombres et des dates (« 1 330 », « 9 novembre » ; en anglais « 1,330 », « November 9 ») */
+export const locale = (): string => (langueActive === 'en' ? 'en-US' : 'fr-BE');
+
 /**
  * Active une langue avec son catalogue (texte français → traduction).
  * À appeler AVANT le chargement des modules qui définissent leurs textes au démarrage (Chroniques, Strates…).
@@ -47,6 +50,12 @@ const remplir = (modele: string, valeurs: readonly unknown[]): string =>
   });
 
 /**
+ * Un même mot français qui doit se traduire de deux façons reçoit un contexte : t('§poids§Charge') s'affiche « Charge »
+ * en français, et sa clé se distingue de t('Charge') (le geste ennemi) dans les catalogues.
+ */
+const sansContexte = (texte: string): string => (texte.startsWith('§') ? texte.slice(texte.indexOf('§', 1) + 1) : texte);
+
+/**
  * Traduit un texte du jeu.
  *   t('Le texte en français.')
  *   t`Il reste ${n} cristaux.`        (clé : « Il reste {0} cristaux. » ; la traduction peut déplacer {0})
@@ -55,11 +64,15 @@ const remplir = (modele: string, valeurs: readonly unknown[]): string =>
 export function t(texte: string): string;
 export function t(morceaux: TemplateStringsArray, ...valeurs: unknown[]): string;
 export function t(texte: string | TemplateStringsArray, ...valeurs: unknown[]): string {
-  if (typeof texte === 'string') return catalogue?.get(texte) || texte;
+  if (typeof texte === 'string') return catalogue?.get(texte) || sansContexte(texte);
   if (!catalogue) return texte.reduce((s, m, i) => (i === 0 ? m : s + String(valeurs[i - 1]) + m), '');
   const cle = cleGabarit(texte);
   return remplir(catalogue.get(cle) || cle, valeurs);
 }
+
+/** Une liste lue à voix haute : « Ilka, Doran et Véla » (en anglais « Ilka, Doran and Véla ») */
+export const enumerer = (l: readonly string[]): string =>
+  l.length > 1 ? `${l.slice(0, -1).join(', ')}${t(' et ')}${l[l.length - 1]}` : l[0] ?? '';
 
 /** Les {0}, {1}… (et les {nom} remplacés ailleurs) d’un texte : une traduction doit tous les garder */
 export const valeursDe = (texte: string): string[] =>

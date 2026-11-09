@@ -3,43 +3,43 @@
  "entrees": [
   {
    "fr": "Chargement du duel…",
-   "en": ""
+   "en": "Loading the duel…"
   },
   {
    "fr": "ton ami",
-   "en": ""
+   "en": "your friend"
   },
   {
    "fr": "{0} a décliné le défi.",
-   "en": ""
+   "en": "{0} declined the challenge."
   },
   {
    "fr": "Ton ami",
-   "en": ""
+   "en": "Your friend"
   },
   {
    "fr": "+{0} cristaux · +{1} Éclat{2} : première victoire de la semaine contre {3}",
-   "en": ""
+   "en": "+{0} crystals · +{1} Shard{2}: first win of the week against {3}"
   },
   {
    "fr": "Ton escouade active ne peut pas jouer en duel : {0} Change-la dans l’onglet Escouade.",
-   "en": ""
+   "en": "Your active squad can’t play in a duel: {0} Change it in the Squad tab."
   },
   {
    "fr": "Le duel n’a pas pu s’ouvrir.",
-   "en": ""
+   "en": "The duel couldn’t open."
   },
   {
    "fr": "Ce défi n’est plus valable.",
-   "en": ""
+   "en": "This challenge is no longer valid."
   },
   {
    "fr": "Robot d’entraînement",
-   "en": ""
+   "en": "Training robot"
   },
   {
    "fr": "Toucher encore pour abandonner",
-   "en": ""
+   "en": "Tap again to forfeit"
   }
  ]
 }

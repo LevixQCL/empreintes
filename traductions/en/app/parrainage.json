@@ -3,51 +3,51 @@
  "entrees": [
   {
    "fr": "Un directeur",
-   "en": ""
+   "en": "A director"
   },
   {
    "fr": "Ton code ne peut pas être gravé pour l’instant ({0}).",
-   "en": ""
+   "en": "Your code can’t be engraved right now ({0})."
   },
   {
    "fr": "Tes recrues ne répondent pas pour l’instant ({0}).",
-   "en": ""
+   "en": "Your recruits aren’t answering right now ({0})."
   },
   {
    "fr": "Ce code n’a pas la bonne forme : 6 lettres et chiffres, par exemple EMP-7KQ2X9.",
-   "en": ""
+   "en": "This code isn’t in the right format: 6 letters and digits, for example EMP-7KQ2X9."
   },
   {
    "fr": "Le jeu n’est pas connecté : réessaie dans un instant.",
-   "en": ""
+   "en": "The game isn’t online: try again in a moment."
   },
   {
    "fr": "Tu as déjà un parrain.",
-   "en": ""
+   "en": "You already have a sponsor."
   },
   {
    "fr": "Le parrainage, c’est pour les débuts : ton district est déjà trop avancé.",
-   "en": ""
+   "en": "Sponsorship is for beginnings: your district is already too far along."
   },
   {
    "fr": "C’est ton propre code : envoie-le plutôt à un ami.",
-   "en": ""
+   "en": "That’s your own code: send it to a friend instead."
   },
   {
    "fr": "Aucun directeur n’a ce code. Vérifie-le avec ton ami.",
-   "en": ""
+   "en": "No director has this code. Check it with your friend."
   },
   {
    "fr": "Refusé.",
-   "en": ""
+   "en": "Refused."
   },
   {
    "fr": "Recommandé par {0} : ta carte au choix et tes cristaux t’attendent.",
-   "en": ""
+   "en": "Recommended by {0}: your card of choice and your crystals are waiting."
   },
   {
    "fr": "La vérification a échoué ({0}). Réessaie dans un instant.",
-   "en": ""
+   "en": "The check failed ({0}). Try again in a moment."
   }
  ]
 }

@@ -9,7 +9,7 @@ import { partPvClinique, CERCLE, CERCLE_OUVERTURE, CONFIANCE, accueillirFamille,
 import { OBJECTIFS, objectifCourant } from './objectifs';
 import { ORDRE_FAMILLES, fragmentDef } from '../fragments';
 import { familleDef, familleDuFragment } from '../familles';
-import { t as tr } from '../i18n';
+import { t as tr, enumerer } from '../i18n';
 
 export function humeurDistrict(j: Jeu): string {
   const f = nbFoyers(j);
@@ -260,7 +260,7 @@ export function fabriquer(j: Jeu, moduleId: string, now: number): Resultat {
     j.composants < c.composants ? `${c.composants - j.composants} minerai` : '',
     j.eclats < c.eclats ? tr`${c.eclats - j.eclats} Éclat${c.eclats - j.eclats > 1 ? 's' : ''}` : '',
   ].filter(Boolean);
-  if (manque.length) return non(tr`Pour refabriquer ${moduleDef(moduleId).nom}, il manque ${manque.join(' et ').replace(/ et (?=[^]* et )/, ', ')}.`);
+  if (manque.length) return non(tr`Pour refabriquer ${moduleDef(moduleId).nom}, il manque ${enumerer(manque)}.`);
   j.energie -= c.energie;
   j.composants -= c.composants;
   j.eclats -= c.eclats;

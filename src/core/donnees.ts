@@ -268,7 +268,7 @@ export const VOIES: { id: string; nom: string; porteur: string; cartes: string[]
   { id: 'cadence', nom: tr('La Cadence'), porteur: 'ilka', cartes: ['pas-chasse', 'lames-jumelles', 'poings-pistons', 'mitraille', 'cadence-folle'] },
   // 4 novembre 2026
   { id: 'machines', nom: tr('Les Machines'), porteur: 'sasha', cartes: ['servo-bras', 'marteau-piston', 'verin', 'exo-chantier', 'foreuse'] },
-  { id: 'harmonie', nom: 'L’Harmonie', porteur: 'vela', cartes: ['contre-chant', 'fil-accord', 'nuee-chorale'] },
+  { id: 'harmonie', nom: tr('L’Harmonie'), porteur: 'vela', cartes: ['contre-chant', 'fil-accord', 'nuee-chorale'] },
 ];
 /** Les exclusives sans illustration prêtent, en attendant, le portrait du Porteur qui leur ressemble le plus */
 export const PORTEUR_EXCLUSIVES: Record<string, string> = {

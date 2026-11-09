@@ -1,0 +1,469 @@
+{
+ "source": "src/core/lexique.ts",
+ "entrees": [
+  {
+   "fr": "Les cartes",
+   "en": "Cards"
+  },
+  {
+   "fr": "Le combat",
+   "en": "Combat"
+  },
+  {
+   "fr": "Les ennemis et les salles",
+   "en": "Enemies and rooms"
+  },
+  {
+   "fr": "Le district et les Strates",
+   "en": "The district and the Strata"
+  },
+  {
+   "fr": "Les Marques des Porteurs",
+   "en": "Bearers’ Marks"
+  },
+  {
+   "fr": "Les effets de cartes",
+   "en": "Card effects"
+  },
+  {
+   "fr": "Résonance",
+   "en": "Resonance"
+  },
+  {
+   "fr": "Au moins trois Fréquences qui se suivent dans l’ordre dans la chaîne (3, 4, 5…) ; deux ne suffisent pas. Suite de {0} : toutes les cartes de la chaîne sont renforcées d’autant, et le Flux monte de 1.",
+   "en": "At least three Frequencies that follow each other in order in the chain (3, 4, 5…); two aren’t enough. Chain of {0}: every card in the chain is boosted by that much, and Flux goes up by 1."
+  },
+  {
+   "fr": "Écho",
+   "en": "Echo"
+  },
+  {
+   "fr": "Trois cartes de la même Fréquence dans la chaîne : ces cartes sont renforcées de +{0} % (dégâts, protection ou soin) et l’escouade gagne 1 Flux. Quatre : {1} (Écho ×4) ; cinq : {2} et 1 Flux de plus (Écho ×5).",
+   "en": "Three cards of the same Frequency in the chain: those cards are boosted by +{0} % (damage, protection or healing) and the squad gains 1 Flux. Four: {1} (Echo ×4); five: {2} and 1 more Flux (Echo ×5)."
+  },
+  {
+   "fr": "Flux",
+   "en": "Flux"
+  },
+  {
+   "fr": "La réserve sous la chaîne ({0} au plus). Elle se remplit par une Résonance, un Écho ou une Fêlure brisée dans une suite ; on la dépense pour une place de plus, une nouvelle main, ou un Coup d’éclat quand elle est pleine.",
+   "en": "The reserve under the chain ({0} at most). It fills with a Resonance, an Echo or a Flaw broken in a chain; you spend it on an extra slot, a new hand, or a Masterstroke when it’s full."
+  },
+  {
+   "fr": "Bouclier d’escouade",
+   "en": "Squad shield"
+  },
+  {
+   "fr": "Commun aux trois Porteurs : il prend les coups ennemis avant leurs PV. Quand plusieurs Porteurs vont être touchés, il couvre d’abord celui marqué d’un bouclier : le plus menacé, ou celui que tu touches. Il retombe à zéro à la fin du tour ennemi (sauf Rempart ou Bras de quai).",
+   "en": "Shared by all three Bearers: it takes enemy blows before their HP. When several Bearers are about to be hit, it covers the one marked with a shield first: the most threatened, or the one you tap. It drops back to zero at the end of the enemy turn (except with Rampart or Dock arm)."
+  },
+  {
+   "fr": "Absorbé",
+   "en": "Absorbed"
+  },
+  {
+   "fr": "La part du coup prise par un bouclier : elle ne touche pas les PV. Perçant passe outre le bouclier de l’ennemi.",
+   "en": "The part of a blow taken by a shield: it doesn’t touch HP. Piercing goes straight past the enemy’s shield."
+  },
+  {
+   "fr": "Triangle des lignées",
+   "en": "Lineage triangle"
+  },
+  {
+   "fr": "Les Augmentés battent les Résonants, les Résonants battent les Génés, les Génés battent les Augmentés : +{0} sur ce coup. Vrai pour toi comme pour l’ennemi.",
+   "en": "The Augmented beat the Resonants, the Resonants beat the Spliced, the Spliced beat the Augmented: +{0} on that blow. True for you and for the enemy alike."
+  },
+  {
+   "fr": "Chaque ennemi montre une Fréquence fêlée. Une carte de cette Fréquence dans la chaîne affaiblit son attaque, son bouclier ou son soin (pas une Concentration ni une Dissonance) ; dans une suite qui résonne, elle donne aussi du Flux.",
+   "en": "Each enemy shows a flawed Frequency. A card of that Frequency in the chain weakens its attack, shield or heal (not a Focus or a Dissonance); in a resonating chain, it also gives Flux."
+  },
+  {
+   "fr": "Un ennemi touché par une carte à effet Fissure devient fissuré : il prend plus de dégâts de toutes les cartes posées après elle, ce tour-ci et le suivant. Certaines cartes (Curée) frappent encore plus fort un ennemi fissuré.",
+   "en": "An enemy hit by a card with the Fissure effect becomes fissured: it takes more damage from every card placed after it, this turn and the next. Some cards (Pounce) hit a fissured enemy even harder."
+  },
+  {
+   "fr": "L’attaque déjà annoncée par l’ennemi visé perd une part de sa force (rien s’il prépare autre chose).",
+   "en": "The targeted enemy’s already-announced attack loses part of its power (nothing if it’s preparing something else)."
+  },
+  {
+   "fr": "La chaîne du tour suivant a une place de plus.",
+   "en": "Next turn’s chain has one more slot."
+  },
+  {
+   "fr": "Une part du bouclier d’escouade qui reste après le tour ennemi est gardée pour le tour suivant.",
+   "en": "Part of the squad shield left after the enemy turn is kept for the next turn."
+  },
+  {
+   "fr": "La Marque de Docker : une part du bouclier d’escouade restant est gardée à chaque tour.",
+   "en": "The Docker’s Mark: part of the leftover squad shield is kept each turn."
+  },
+  {
+   "fr": "L’ennemi brouille tes Fréquences : au tour suivant, ni suite ni Écho ne résonne.",
+   "en": "The enemy scrambles your Frequencies: next turn, neither chain nor Echo resonates."
+  },
+  {
+   "fr": "Le Porteur qui joue la carte récupère une part des dégâts qu’elle inflige.",
+   "en": "The Bearer who plays the card recovers part of the damage it deals."
+  },
+  {
+   "fr": "Cet ennemi renvoie une part des coups au Porteur qui frappe, sans jamais le mettre à terre.",
+   "en": "This enemy reflects part of each blow back to the Bearer who strikes, without ever downing them."
+  },
+  {
+   "fr": "L’ennemi a passé un tour à se concentrer : sa prochaine attaque fait le double de dégâts.",
+   "en": "The enemy spent a turn focusing: its next attack deals double damage."
+  },
+  {
+   "fr": "Sous la moitié de ses PV, cet ennemi frappe 30 % plus fort.",
+   "en": "Below half its HP, this enemy hits 30 % harder."
+  },
+  {
+   "fr": "Cet ennemi regagne une part de ses PV à la fin de chacun de ses tours.",
+   "en": "This enemy regains part of its HP at the end of each of its turns."
+  },
+  {
+   "fr": "Quand un allié tombe, la prochaine attaque de cet ennemi est doublée.",
+   "en": "When an ally falls, this enemy’s next attack is doubled."
+  },
+  {
+   "fr": "Si son coup passe ton bouclier, cet ennemi te prend 1 Flux. Un coup entièrement bloqué ne prend rien.",
+   "en": "If its blow gets past your shield, this enemy takes 1 Flux from you. A fully blocked blow takes nothing."
+  },
+  {
+   "fr": "Une condition de salle : à chaque tour ennemi, des pierres retirent quelques PV à tout le monde, sans mettre personne à terre.",
+   "en": "A room condition: every enemy turn, falling stones take a few HP from everyone, without downing anyone."
+  },
+  {
+   "fr": "À terre",
+   "en": "Down"
+  },
+  {
+   "fr": "Un Porteur à 0 PV ne meurt pas : ses cartes restent dans le deck mais s’éteignent (−{0} de force, sans effet). Elles comptent toujours pour les suites.",
+   "en": "A Bearer at 0 HP doesn’t die: their cards stay in the deck but go dark (−{0} power, no effect). They still count for chains."
+  },
+  {
+   "fr": "Seconde chance",
+   "en": "Second chance"
+  },
+  {
+   "fr": "La Marque de Sasha : le premier Porteur qui tombe se relève, une fois par combat.",
+   "en": "Sasha’s Mark: the first Bearer to fall gets back up, once per fight."
+  },
+  {
+   "fr": "Nuit blanche",
+   "en": "White Night"
+  },
+  {
+   "fr": "La Marque de Joss : après chaque tour ennemi, le Porteur le plus blessé récupère quelques PV.",
+   "en": "Joss’s Mark: after each enemy turn, the most wounded Bearer recovers a few HP."
+  },
+  {
+   "fr": "Née-de-mue",
+   "en": "Moltborn"
+  },
+  {
+   "fr": "La Marque de Kessa : une part de ce que le bouclier d’escouade absorbe est renvoyée à l’ennemi qui frappe.",
+   "en": "Kessa’s Mark: part of what the squad shield absorbs is reflected back at the enemy that strikes."
+  },
+  {
+   "fr": "Coup d’éclat des Augmentés : les attaques de la chaîne de ce tour frappent {0} plus fort.",
+   "en": "The Augmented Masterstroke: this turn’s chain attacks hit {0} harder."
+  },
+  {
+   "fr": "Coup d’éclat des Résonants : aucune attaque ennemie ne porte pendant le tour ennemi qui suit.",
+   "en": "The Resonant Masterstroke: no enemy attack lands during the following enemy turn."
+  },
+  {
+   "fr": "Coup d’éclat des Génés : toute l’escouade récupère une grosse part de ses PV, et un Porteur à terre se relève.",
+   "en": "The Spliced Masterstroke: the whole squad recovers a big part of its HP, and a downed Bearer gets back up."
+  },
+  {
+   "fr": "Un effet de carte : il remplit le Flux.",
+   "en": "A card effect: it fills the Flux."
+  },
+  {
+   "fr": "Un effet de carte : il vide tout le Flux, et la carte gagne de la force pour chaque Flux vidé.",
+   "en": "A card effect: it empties all the Flux, and the card gains power for each Flux spent."
+  },
+  {
+   "fr": "Après son bouclier, la carte frappe d’une part de tout le bouclier d’escouade, sans le dépenser.",
+   "en": "After its shield, the card strikes for part of the whole squad shield, without spending it."
+  },
+  {
+   "fr": "Plus la carte arrive tard dans la chaîne, plus elle frappe fort.",
+   "en": "The later the card comes in the chain, the harder it hits."
+  },
+  {
+   "fr": "La carte gagne de la force pour chaque autre carte de la même Fréquence dans la chaîne.",
+   "en": "The card gains power for each other card of the same Frequency in the chain."
+  },
+  {
+   "fr": "La carte frappe plus fort un ennemi fissuré, ou à moins de la moitié de ses PV.",
+   "en": "The card hits harder against a fissured enemy, or one below half its HP."
+  },
+  {
+   "fr": "La carte frappe plus fort un ennemi dont la Fêlure est déjà brisée.",
+   "en": "The card hits harder against an enemy whose Flaw is already broken."
+  },
+  {
+   "fr": "Dans une chaîne d’au moins 4 cartes, la carte frappe une seconde fois.",
+   "en": "In a chain of at least 4 cards, the card strikes a second time."
+  },
+  {
+   "fr": "La carte soigne toute l’escouade ; le soin qui dépasse les PV max devient du bouclier d’escouade.",
+   "en": "The card heals the whole squad; healing beyond max HP becomes squad shield."
+  },
+  {
+   "fr": "Une carte exclusive : elle arrache tout le bouclier de l’ennemi visé et le donne à l’escouade.",
+   "en": "An exclusive card: it rips away the targeted enemy’s whole shield and gives it to the squad."
+  },
+  {
+   "fr": "Une carte exclusive : la carte la plus forte de la chaîne revient en tête de pioche.",
+   "en": "An exclusive card: the strongest card in the chain goes back on top of the draw pile."
+  },
+  {
+   "fr": "Une carte exclusive : le Porteur brûle une part de ses PV (sans tomber) pour frapper beaucoup plus fort.",
+   "en": "An exclusive card: the Bearer burns part of their HP (without falling) to hit much harder."
+  },
+  {
+   "fr": "Une carte exclusive : elle copie l’effet de la carte posée juste avant elle.",
+   "en": "An exclusive card: it copies the effect of the card placed just before it."
+  },
+  {
+   "fr": "Une carte exclusive : un Porteur à terre se relève avec tout le soin.",
+   "en": "An exclusive card: a downed Bearer gets back up with all the healing."
+  },
+  {
+   "fr": "Cet ennemi retire quelques points à chaque coup (un peu plus en profondeur). Perçant passe outre.",
+   "en": "This enemy takes a few points off every blow (a bit more deeper down). Piercing goes straight past."
+  },
+  {
+   "fr": "Le coup ignore le bouclier et le blindage de l’ennemi.",
+   "en": "The blow ignores the enemy’s shield and armour."
+  },
+  {
+   "fr": "Hors Résonance, cet ennemi ne prend qu’une part des coups : fais des suites.",
+   "en": "Outside a Resonance, this enemy only takes part of each blow: build chains."
+  },
+  {
+   "fr": "Combat qui s’éternise",
+   "en": "Drawn-out fight"
+  },
+  {
+   "fr": "À partir du tour 12, les attaques ennemies grossissent de 15 % par tour (et dès le tour 10, les ennemis se soignent de moins en moins) : aucun combat ne tourne en rond, même avec une escouade qui ne fait que tenir.",
+   "en": "From turn 12, enemy attacks grow by 15 % per turn (and from turn 10, enemies heal less and less): no fight goes round in circles, even with a squad that only holds on."
+  },
+  {
+   "fr": "Un soin ne dépasse jamais les PV max : le surplus est perdu.",
+   "en": "A heal never goes beyond max HP: the surplus is lost."
+  },
+  {
+   "fr": "Nouvelle main",
+   "en": "New hand"
+  },
+  {
+   "fr": "Pour 1 Flux, la main et les cartes déjà posées partent à la défausse, et l’on pioche une main neuve.",
+   "en": "For 1 Flux, the hand and the cards already placed go to the discard, and you draw a fresh hand."
+  },
+  {
+   "fr": "Fréquence",
+   "en": "Frequency"
+  },
+  {
+   "fr": "Le chiffre de 1 à 9 serti dans le cristal en haut à gauche de la carte. Des Fréquences qui se suivent dans la chaîne font une Résonance ; trois identiques font un Écho.",
+   "en": "The number from 1 to 9 set in the crystal at the top left of the card. Frequencies that follow each other in the chain make a Resonance; three of a kind make an Echo."
+  },
+  {
+   "fr": "Force",
+   "en": "Power"
+  },
+  {
+   "fr": "Le chiffre dans le socle en bas à droite de la carte : ses dégâts (étoile rouge), son bouclier (écu bleu) ou son soin (fleur émeraude), sa valeur de base. En combat, la carte affiche le chiffre final, tous bonus et malus compris.",
+   "en": "The number in the base at the bottom right of the card: its damage (red star), shield (blue shield) or healing (emerald flower), at base value. In combat, the card shows the final number, all bonuses and penalties included."
+  },
+  {
+   "fr": "La rareté d’une carte : fer, cuivre, argent, or, nacre. En fer, une carte n’a pas d’effet ; il s’ouvre en cuivre et se renforce en or et en nacre. Une carte a {0} Fréquences en argent et en or, {1} en nacre. Une carte se trouve directement dans son métal.",
+   "en": "A card’s rarity: iron, copper, silver, gold, nacre. In iron, a card has no effect; it unlocks in copper and grows stronger in gold and nacre. A card has {0} Frequencies in silver and gold, {1} in nacre. A card is found directly in its metal."
+  },
+  {
+   "fr": "Doublon",
+   "en": "Duplicate"
+  },
+  {
+   "fr": "Un exemplaire de plus d’une carte que tu as déjà. Les doublons font monter la carte de niveau ; ceux en trop se recyclent en minerai.",
+   "en": "One more copy of a card you already own. Duplicates level the card up; spare ones are recycled into ore."
+  },
+  {
+   "fr": "§poids§Charge",
+   "en": "Load"
+  },
+  {
+   "fr": "Le poids d’une carte confiée à un Porteur : sa puissance (force, effet, deux places, Fréquences) divisée par {0} (1 au moins). Un Porteur porte {1} de Charge au niveau 1, et {2} de plus à chaque niveau.",
+   "en": "The weight of a card given to a Bearer: its power (strength, effect, two slots, Frequencies) divided by {0} (1 at least). A Bearer carries {1} Load at level 1, and {2} more at each level."
+  },
+  {
+   "fr": "Porteur",
+   "en": "Bearer"
+  },
+  {
+   "fr": "Un des personnages qui descendent pour toi. Chacun a une lignée et porte des cartes de sa lignée : ensemble, les cartes de ton escouade forment ton deck.",
+   "en": "One of the people who go down for you. Each has a lineage and carries cards of that lineage: together, your squad’s cards make up your deck."
+  },
+  {
+   "fr": "Les trois Porteurs qui descendent ensemble. On ne la change qu’au district, jamais pendant une descente.",
+   "en": "The three Bearers who go down together. It can only be changed in the district, never during a descent."
+  },
+  {
+   "fr": "Augmentés",
+   "en": "Augmented"
+  },
+  {
+   "fr": "La lignée qui frappe : de grosses attaques. Une carte Augmentée qui termine une suite de 3 ou plus frappe encore plus fort (Finisseur). Ils battent les Résonants.",
+   "en": "The lineage that strikes: big attacks. An Augmented card that ends a chain of 3 or more hits even harder (Finisher). They beat the Resonants."
+  },
+  {
+   "fr": "Génés",
+   "en": "Spliced"
+  },
+  {
+   "fr": "La lignée qui tient : boucliers et soins. Ils battent les Augmentés.",
+   "en": "The lineage that holds: shields and heals. They beat the Augmented."
+  },
+  {
+   "fr": "Résonants",
+   "en": "Resonants"
+  },
+  {
+   "fr": "La lignée qui orchestre : Fréquences, suites, Échos, et affaiblir l’ennemi. Ils battent les Génés.",
+   "en": "The lineage that orchestrates: Frequencies, chains, Echoes, and weakening the enemy. They beat the Spliced."
+  },
+  {
+   "fr": "Chaîne",
+   "en": "Chain"
+  },
+  {
+   "fr": "Les cartes que tu poses ce tour-ci, dans l’ordre où elles agiront. Elle a {0} places ; le Flux ou l’Élan en ajoutent, jusqu’à {1}.",
+   "en": "The cards you lay down this turn, in the order they’ll act. It has {0} slots; Flux or Momentum add more, up to {1}."
+  },
+  {
+   "fr": "Défausse",
+   "en": "Discard"
+  },
+  {
+   "fr": "Les cartes déjà jouées ou rejetées depuis le dernier mélange. Quand la pioche est vide, la défausse est mélangée et devient la nouvelle pioche.",
+   "en": "Cards already played or discarded since the last shuffle. When the draw pile is empty, the discard is shuffled and becomes the new draw pile."
+  },
+  {
+   "fr": "Pioche",
+   "en": "Draw"
+  },
+  {
+   "fr": "Les cartes qui restent à piocher avant le prochain mélange. Tu sais lesquelles, pas dans quel ordre elles viendront.",
+   "en": "The cards still left to draw before the next shuffle. You know which ones, not in what order they’ll come."
+  },
+  {
+   "fr": "Coup d’éclat",
+   "en": "Masterstroke"
+  },
+  {
+   "fr": "Quand le Flux est plein ({0}), on peut le dépenser pour le Coup d’éclat de sa lignée : Débridage (Augmentés), Sursaut (Génés) ou Ombre agissante (Résonants).",
+   "en": "When the Flux is full ({0}), you can spend it on your lineage’s Masterstroke: Unleashed (Augmented), Rally (Spliced) or Active Shadow (Resonants)."
+  },
+  {
+   "fr": "Gardien",
+   "en": "Guardian"
+  },
+  {
+   "fr": "L’ennemi le plus fort d’une Strate : il garde l’accès à l’étage suivant. Le vaincre permet de creuser plus bas.",
+   "en": "The strongest enemy in a Stratum: it guards the way to the next level. Defeating it lets you dig deeper."
+  },
+  {
+   "fr": "Strate",
+   "en": "Stratum"
+  },
+  {
+   "fr": "Un étage creusé sous la ville, exploré salle par salle. Plus on descend, plus c’est ancien, dangereux et précieux.",
+   "en": "A level dug beneath the city, explored room by room. The deeper you go, the older, more dangerous and more precious it gets."
+  },
+  {
+   "fr": "Creuseurs",
+   "en": "Diggers"
+  },
+  {
+   "fr": "Les ouvriers qui creusent l’étage suivant. Pour ouvrir une nouvelle Strate, il faut avoir vaincu son gardien, assez de creuseurs et le bon niveau de Tour du Noyau.",
+   "en": "The workers who dig the next level. To open a new Stratum, you need to have defeated its guardian, enough diggers and the right Core Tower level."
+  },
+  {
+   "fr": "Usure",
+   "en": "Strain"
+  },
+  {
+   "fr": "Les PV perdus en bas restent perdus au retour au district. La Clinique soigne l’Usure pendant que le Porteur se repose.",
+   "en": "HP lost below stays lost when you return to the district. The Clinic heals Strain while the Bearer rests."
+  },
+  {
+   "fr": "Minerai",
+   "en": "Ore"
+  },
+  {
+   "fr": "La pierre bleue rapportée en jouant (descentes, missions, marées, pillages), encore prise dans sa gangue. Le Générateur la taille en cristaux, même quand tu ne joues pas ; rien ne se perd.",
+   "en": "The blue stone brought back by playing (descents, missions, tides, raids), still locked in its rock. The Generator cuts it into crystals, even when you’re not playing; nothing is lost."
+  },
+  {
+   "fr": "Éclats",
+   "en": "Shards"
+  },
+  {
+   "fr": "Des fragments de cristal chargés d’empreintes, rares : gardiens, caches profondes, Butin de la semaine. Ils servent aux cartes rares de la Forge et du Comptoir, et aux grands chantiers.",
+   "en": "Crystal fragments charged with imprints, rare: guardians, deep caches, weekly loot. They’re used for rare cards at the Forge and the Trading Post, and for major works."
+  },
+  {
+   "fr": "Cristaux",
+   "en": "Crystals"
+  },
+  {
+   "fr": "La monnaie du district : la pierre bleue taillée par le Générateur. Elle paie tout : bâtiments, niveaux des cartes, Forge, Comptoir, entraînement, soins. Les récompenses (colis, Butin, objectifs, gardiens) arrivent déjà en cristaux.",
+   "en": "The district’s currency: blue stone cut by the Generator. It pays for everything: buildings, card levels, Forge, Trading Post, training, care. Rewards (parcels, loot, objectives, guardians) already arrive as crystals."
+  },
+  {
+   "fr": "Vestige",
+   "en": "Relic"
+  },
+  {
+   "fr": "Un objet d’autrefois caché dans une Strate, 5 par Strate. On ne les trouve qu’en explorant (jamais en fouille), marqués d’un losange turquoise sur le plan. Les cinq réunis, la Strate est complète : une carte au choix, et ses fouilles voient tout le plan avec un filon plus riche.",
+   "en": "An object from long ago hidden in a Stratum, 5 per Stratum. They’re only found by exploring (never on a dig), marked with a turquoise diamond on the map. Gather all five and the Stratum is complete: a card of your choice, and its digs see the whole map with a richer seam."
+  },
+  {
+   "fr": "Rôdeur",
+   "en": "Prowler"
+  },
+  {
+   "fr": "Une créature unique par zone, croisée en explorant une Strate déjà vaincue. Elle s’enfuit au bout de 4 tours, et garde ses blessures d’une descente à l’autre. Abattue, elle laisse un trophée : une carte au choix.",
+   "en": "A creature unique to each zone, met while exploring an already beaten Stratum. It flees after 4 turns, and keeps its wounds from one descent to the next. Brought down, it leaves a trophy: a card of your choice."
+  },
+  {
+   "fr": "Étoiles de Strate",
+   "en": "Stratum stars"
+  },
+  {
+   "fr": "Trois par Strate, gagnées en explorant jusqu’au gardien : le vaincre, le vaincre sans qu’aucun Porteur ne tombe, le vaincre sans campement. Chaque étoile donne des Éclats, et tous les 5 étoiles, une carte au choix.",
+   "en": "Three per Stratum, earned by exploring up to the guardian: defeat it, defeat it with no Bearer falling, defeat it without a camp. Each star gives Shards, and every 5 stars, a card of your choice."
+  },
+  {
+   "fr": "Gardien éveillé",
+   "en": "Awakened guardian"
+  },
+  {
+   "fr": "Le gardien d’une Strate déjà vaincue, quand on y retourne explorer : un peu plus fort (+10 %), mais il laisse de meilleures cartes et un Éclat de plus.",
+   "en": "The guardian of an already beaten Stratum, when you go back to explore: a little stronger (+10 %), but it leaves better cards and one more Shard."
+  },
+  {
+   "fr": "Marque",
+   "en": "Mark"
+  },
+  {
+   "fr": "L’effet propre à un Porteur, gagné par ses exploits. Chaque Porteur a la sienne.",
+   "en": "A Bearer’s own effect, earned through their feats. Each Bearer has their own."
+  }
+ ]
+}

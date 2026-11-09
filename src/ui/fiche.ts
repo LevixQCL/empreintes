@@ -12,12 +12,12 @@ import { faceCarte } from './carte';
 import { ICO, baseIcones, icone, type Icone } from './icones';
 import { echap } from './outils';
 import type { EcranDistrict } from './coquille';
-import { t as tr } from '../core/i18n';
+import { t as tr, locale } from '../core/i18n';
 
 /** Le titre du joueur, écrit à un seul endroit (un renommage est en réflexion) */
 export const TITRE_JOUEUR = tr('Directeur');
 
-const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
+const ent = (n: number) => Math.floor(n).toLocaleString(locale()).replace(/\u202f/g, '\u00a0');
 const GEMME = `<img class="fj-gemme" src="${baseIcones}pastille.webp" alt="" aria-hidden="true">`;
 const CRISTAL = './art/embleme-cristal.webp';
 /** en tête du rail PC : le logo Ossyra (9 novembre 2026), à la place du cristal */

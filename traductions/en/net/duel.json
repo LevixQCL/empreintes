@@ -3,15 +3,15 @@
  "entrees": [
   {
    "fr": "Aucun duel ne porte ce code.",
-   "en": ""
+   "en": "No duel has this code."
   },
   {
    "fr": "C’est ton propre duel : partage le code à un ami.",
-   "en": ""
+   "en": "It’s your own duel: share the code with a friend."
   },
   {
    "fr": "Ce duel a déjà commencé.",
-   "en": ""
+   "en": "This duel has already started."
   }
  ]
 }

@@ -3,119 +3,119 @@
  "entrees": [
   {
    "fr": "L’écluse reste fermée tant que le gardien de la Strate −{0} tient le puits.",
-   "en": ""
+   "en": "The Sluice stays shut as long as the guardian of Stratum −{0} holds the shaft."
   },
   {
    "fr": "Rien sur la grève pour l’instant : la mer laissera quelque chose à la prochaine marée basse.",
-   "en": ""
+   "en": "Nothing on the shore for now: the sea will leave something at the next low tide."
   },
   {
    "fr": "{0} : +{1} minerai et {2} Éclat{3} de colonne.",
-   "en": ""
+   "en": "{0}: +{1} ore and {2} column Shard{3}."
   },
   {
    "fr": "La grande marée a tout découvert",
-   "en": ""
+   "en": "The great tide has uncovered everything"
   },
   {
    "fr": "L’eau du Fond est remontée jusqu’à la grève",
-   "en": ""
+   "en": "The water from the Deep has risen all the way to the shore"
   },
   {
    "fr": "{0} : +{1} minerai.",
-   "en": ""
+   "en": "{0}: +{1} ore."
   },
   {
    "fr": "La mer a laissé de quoi faire",
-   "en": ""
+   "en": "The sea has left something useful"
   },
   {
    "fr": "Secteur inconnu.",
-   "en": ""
+   "en": "Unknown sector."
   },
   {
    "fr": "Trop bas sur le flanc : il faut avoir vaincu la Strate −{0}.",
-   "en": ""
+   "en": "Too low on the slope: you need to have beaten Stratum −{0}."
   },
   {
    "fr": "Le batardeau garde déjà ce secteur à sec.",
-   "en": ""
+   "en": "The cofferdam is already keeping this sector dry."
   },
   {
    "fr": "Un Porteur est encore dans le secteur à sec : on attend son retour.",
-   "en": ""
+   "en": "A Bearer is still in the dry sector: wait for their return."
   },
   {
    "fr": "Le batardeau a déjà été déplacé cette semaine : il pourra bouger lundi.",
-   "en": ""
+   "en": "The cofferdam has already been moved this week: it can move again on Monday."
   },
   {
    "fr": "Il faut {0} cristaux pour pomper un nouveau secteur.",
-   "en": ""
+   "en": "You need {0} crystals to pump out a new sector."
   },
   {
    "fr": "Le batardeau est dressé : {0} restent à sec.",
-   "en": ""
+   "en": "The cofferdam is up: {0} stay dry."
   },
   {
    "fr": "{0} : les pompes vident le secteur. {1}",
-   "en": ""
+   "en": "{0}: the pumps drain the sector. {1}"
   },
   {
    "fr": "Des familles y attendent encore.",
-   "en": ""
+   "en": "Families are still waiting there."
   },
   {
    "fr": "Plus personne n’y attend.",
-   "en": ""
+   "en": "No one is waiting there anymore."
   },
   {
    "fr": "L’écluse est fermée.",
-   "en": ""
+   "en": "The Sluice is closed."
   },
   {
    "fr": "Sa famille vit déjà au district.",
-   "en": ""
+   "en": "Their family already lives in the district."
   },
   {
    "fr": "Ce secteur est sous l’eau : il faut y dresser le batardeau.",
-   "en": ""
+   "en": "This sector is underwater: you need to raise the cofferdam there."
   },
   {
    "fr": "Un Porteur est déjà dans les Basses.",
-   "en": ""
+   "en": "A Bearer is already in the Lows."
   },
   {
    "fr": "Ce Porteur",
-   "en": ""
+   "en": "This Bearer"
   },
   {
    "fr": "{0} descend le flanc de la digue : {1}.",
-   "en": ""
+   "en": "{0} goes down the Dike slope: {1}."
   },
   {
    "fr": "{0} gagne la Marque {1} : {2}",
-   "en": ""
+   "en": "{0} earns the {1} Mark: {2}"
   },
   {
    "fr": "{0} descend jusqu’à {1}{2}, à la lampe, pendant que les pompes tiennent l’eau.",
-   "en": ""
+   "en": "{0} goes down to {1}{2}, by lamplight, while the pumps hold back the water."
   },
   {
    "fr": "{0} attendaient là. {1} Ils remontent avec {2} : ils vivent désormais au district.",
-   "en": ""
+   "en": "{0} were waiting there. {1} They come back up with {2}: they live in the district now."
   },
   {
    "fr": "{0} familles te suivent : un nouveau palier.",
-   "en": ""
+   "en": "{0} families follow you: a new tier."
   },
   {
    "fr": "{0} remonte des Basses avec {1} : +{2} minerai, +{3} XP.",
-   "en": ""
+   "en": "{0} comes back up from the Lows with {1}: +{2} ore, +{3} XP."
   },
   {
    "fr": "L’écluse s’ouvre : de l’autre côté de la digue, des familles vivent encore dans les quartiers noyés. Touche l’écluse, au pied de la digue, pour dresser le batardeau et aller les chercher.",
-   "en": ""
+   "en": "The Sluice opens: on the other side of the Dike, families still live in the drowned neighbourhoods. Tap the Sluice, at the foot of the Dike, to raise the cofferdam and go and find them."
   }
  ]
 }

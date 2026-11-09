@@ -1,7 +1,7 @@
 // Petits outils d'affichage partagés par les écrans.
 
 /** Échappe un texte avant de le poser dans du HTML */
-import { t as tr } from '../core/i18n';
+import { t as tr, langue } from '../core/i18n';
 
 export const echap = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
 
@@ -14,13 +14,15 @@ export function basculerAnimations(): void {
   try { localStorage.setItem('empreintes.animations', animationsReduites() ? 'completes' : 'reduites'); } catch { /* stockage indisponible */ }
   appliquerAnimations();
 }
-export const mouvementReduit = () => animationsReduites() || window.matchMedia(tr('(prefers-reduced-motion: reduce)')).matches;
+export const mouvementReduit = () => animationsReduites() || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** Le centre d'un élément à l'écran */
 export const centreDe = (el: Element) => { const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
 
-/** Un nombre à une décimale, avec la virgule française (2,5) */
-export const virgule = (n: number) => String(Math.round(n * 10) / 10).replace('.', ',');
+/** Un nombre à une décimale, avec la virgule française (2,5) ; le point en anglais (2.5) */
+/** Un nombre tel quel, avec la virgule française (1,25) ; le point en anglais */
+export const decimal = (n: number) => (langue() === 'en' ? String(n) : String(n).replace('.', ','));
+export const virgule = (n: number) => (langue() === 'en' ? String(Math.round(n * 10) / 10) : String(Math.round(n * 10) / 10).replace('.', ','));
 
 /**
  * Un texte d'aide long, replié (audit du 3 novembre 2026 : trop de paragraphes avant l'action, comme dans un manuel) :

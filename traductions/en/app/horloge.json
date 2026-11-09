@@ -1,9 +1,0 @@
-{
- "source": "src/app/horloge.ts",
- "entrees": [
-  {
-   "fr": "(min-width: 1100px)",
-   "en": ""
-  }
- ]
-}

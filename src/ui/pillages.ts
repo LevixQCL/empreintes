@@ -161,7 +161,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', pillOk = true): stri
     // allégé le 28 octobre 2026 : une phrase et trois chiffres par bloc, le détail se déplie
     + bloc(ICO.porteurs, t('Les missions en mer'), t('Un Porteur libre part en barque et revient chargé, même jeu fermé.'), [
       cle(ICO.chrono, `${MISSIONS.courte.heures} · ${MISSIONS.longue.heures} h`, t('courte ou longue')),
-      cle(ICO.porteurs, '1 à 4', t('barques à la fois, selon la Tour')),
+      cle(ICO.porteurs, t`${1} à ${4}`, t('barques à la fois, selon la Tour')),
       cle(ICO.coffre, t('Butin'), t('minerai, cartes, creuseurs')),
     ])
     // allégé le 4 novembre 2026 : tant que les pillages sont fermés, une ligne au lieu de deux blocs de règles
@@ -177,7 +177,7 @@ function presentation(etat: 'fermee' | 'premiere' | 'aide', pillOk = true): stri
       cle(ICO.atk, String(PILLAGE.subiesMax), t('attaques subies par jour au plus')),
     ]))
 
-    + replie('L’histoire', `<p>${t`Quand la mer est montée, chaque quartier s’est accroché à ses piliers ; le tien s’est retranché derrière sa digue. Entre eux, il ne reste que l’eau, les ruines de l’ancien monde, et les passeurs qui connaissent les courants.`}</p>`
+    + replie(t('L’histoire'), `<p>${t`Quand la mer est montée, chaque quartier s’est accroché à ses piliers ; le tien s’est retranché derrière sa digue. Entre eux, il ne reste que l’eau, les ruines de l’ancien monde, et les passeurs qui connaissent les courants.`}</p>`
       + `<p>${t`Les Accords de 2101 interdisent d’aborder les Hauts. Mais entre districts d’en bas, personne n’a jamais rien signé : on pille, on se défend, et chacun garde un œil sur son coffre.`}</p>`)
     + replie(t('Les règles en détail'), `<ul class="fl-pr-etapes">`
       + etape(ICO.porteurs, t('Un Porteur libre prend la barque'), t`Vers un pilier abandonné ou une ruine noyée : ${MISSIONS.courte.heures} h ou ${MISSIONS.longue.heures} h, sans rien payer : seulement le temps du Porteur. Le nombre de barques en mer en même temps grandit avec la Tour du Noyau : 1, puis 2 au niveau 3, 3 au niveau 6 et 4 au niveau 9.`)
@@ -201,5 +201,5 @@ function boutonAchat(j: Jeu, now: number, jetons: number): string {
   const cout = coutJeton(j);
   const peut = reste > 0 && j.energie >= cout;
   return `<button type="button" class="btn sec pl-achat" data-action="pillage-jeton"${peut ? '' : ' disabled'} aria-label="${t`Acheter un jeton pour ${cout} cristaux, encore ${reste} aujourd’hui`}">`
-    + `<span class="pl-achat-l">${t`+1 jeton · ${ent(cout)}`} ${icone('energie')}</span><small>${reste ? `${reste} / ${PILLAGE.achatsJour} aujourd’hui` : 'demain'}</small></button>`;
+    + `<span class="pl-achat-l">${t`+1 jeton · ${ent(cout)}`} ${icone('energie')}</span><small>${reste ? t`${reste} / ${PILLAGE.achatsJour} aujourd’hui` : t('demain')}</small></button>`;
 }

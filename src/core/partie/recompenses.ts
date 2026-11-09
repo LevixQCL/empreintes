@@ -217,7 +217,7 @@ export const LETTRE_LEGS = {
   lignees: [
     { id: 'tech', nom: t('La machine'), phrase: t('Des mains qui réparent ce que les autres jettent.') },
     { id: 'bio', nom: t('Le corps'), phrase: t('Des épaules qui encaissent pour ceux qui ne peuvent pas.') },
-    { id: 'reso', nom: 'L’empreinte', phrase: t('Des yeux qui voient ce que les autres ont oublié.') },
+    { id: 'reso', nom: t('L’empreinte'), phrase: t('Des yeux qui voient ce que les autres ont oublié.') },
     { id: 'cle', nom: t('Tout le monde à la fois'), phrase: t('Personne ne tient seul. Le district non plus.') },
   ],
   voies: {

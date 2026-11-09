@@ -3,31 +3,31 @@
  "entrees": [
   {
    "fr": "Le Générateur a recueilli {0} en taillant le minerai.",
-   "en": ""
+   "en": "The Generator gathered {0} while cutting the ore."
   },
   {
    "fr": "La Forge a refabriqué {0} : un doublon de plus.",
-   "en": ""
+   "en": "The Forge recrafted {0}: one more duplicate."
   },
   {
    "fr": "La Tour du Noyau loge assez de creuseurs : la Strate −{0} est ouverte.",
-   "en": ""
+   "en": "The Core Tower houses enough diggers: Stratum −{0} is open."
   },
   {
    "fr": "Chantier terminé : {0} passe au niveau {1}.",
-   "en": ""
+   "en": "Project finished: {0} reaches level {1}."
   },
   {
    "fr": "Les volontaires suffisent : la Strate −{0} est ouverte.",
-   "en": ""
+   "en": "The volunteers are enough: Stratum −{0} is open."
   },
   {
    "fr": "Tes creuseurs percent la roche : la Strate −{0} est ouverte.",
-   "en": ""
+   "en": "Your diggers break through the rock: Stratum −{0} is open."
   },
   {
    "fr": "Le Butin de la semaine est prêt à être ouvert.",
-   "en": ""
+   "en": "The weekly loot is ready to open."
   }
  ]
 }
