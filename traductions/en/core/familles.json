@@ -1,0 +1,581 @@
+{
+ "source": "src/core/familles.ts",
+ "entrees": [
+  {
+   "fr": "les Ruel",
+   "en": ""
+  },
+  {
+   "fr": "Ouvriers de l’écluse. Ce sont eux qui ont envoyé Ilka chercher un directeur.",
+   "en": ""
+  },
+  {
+   "fr": "Le jour où Ilka est partie, les Ruel ont laissé une lampe à la fenêtre. Ils ne l’ont éteinte qu’en te voyant arriver.",
+   "en": ""
+  },
+  {
+   "fr": "les Abady",
+   "en": ""
+  },
+  {
+   "fr": "Une famille de soudeurs de la digue, qui a voté pour qu’on rouvre le puits.",
+   "en": ""
+  },
+  {
+   "fr": "Le père Abady a soudé la plaque du directeur lui-même, avec ce qui restait d’une rambarde. Elle est un peu de travers. Il dit que c’est exprès.",
+   "en": ""
+  },
+  {
+   "fr": "les Orlan",
+   "en": ""
+  },
+  {
+   "fr": "Gardiens des pompes depuis trois générations.",
+   "en": ""
+  },
+  {
+   "fr": "Dans le carnet des Orlan, une ligne par nuit : « tenu » ou « pas tenu ». Ils ont écrit ton nom à côté du dernier « tenu ».",
+   "en": ""
+  },
+  {
+   "fr": "les Gaudet",
+   "en": ""
+  },
+  {
+   "fr": "Des passeurs de barque, qui connaissent chaque courant de l’anneau.",
+   "en": ""
+  },
+  {
+   "fr": "La grand-mère Gaudet dit qu’on reconnaît un bon passeur à ce qu’il ramène toujours quelqu’un. Même quand il rentre les mains vides.",
+   "en": ""
+  },
+  {
+   "fr": "les Hollen",
+   "en": ""
+  },
+  {
+   "fr": "Une famille de cuisiniers : la soupe du quai, c’est eux.",
+   "en": ""
+  },
+  {
+   "fr": "Les Hollen ont toujours une louche de plus dans la marmite. Pour celui qui n’a pas osé demander.",
+   "en": ""
+  },
+  {
+   "fr": "les Marsac",
+   "en": ""
+  },
+  {
+   "fr": "Des réparateurs de filets, réfugiés d’une cuvette voisine.",
+   "en": ""
+  },
+  {
+   "fr": "Les Marsac ont quitté leur cuvette avec un seul filet. Ils l’ont réparé tant de fois qu’il ne reste plus un fil d’origine. C’est toujours le leur.",
+   "en": ""
+  },
+  {
+   "fr": "les Trélan",
+   "en": ""
+  },
+  {
+   "fr": "Une mère et ses trois filles, vitrières.",
+   "en": ""
+  },
+  {
+   "fr": "Les Trélan ont posé un carreau bleu dans chaque fenêtre qu’elles ont réparée. Le district en compte deux cent douze.",
+   "en": ""
+  },
+  {
+   "fr": "les Méric",
+   "en": ""
+  },
+  {
+   "fr": "Une famille venue de loin, de ville en ville, toujours plus loin de la mer.",
+   "en": ""
+  },
+  {
+   "fr": "Sur la couverture des Méric, un nom brodé par ville traversée. La grand-mère a laissé de la place après celui du district.",
+   "en": ""
+  },
+  {
+   "fr": "les Cazal",
+   "en": ""
+  },
+  {
+   "fr": "Des sonneurs : ce sont eux qui donnent l’alerte quand l’eau passe la ligne.",
+   "en": ""
+  },
+  {
+   "fr": "Les Cazal ont sonné l’alerte quarante fois en un hiver. La quarante et unième, ils ont sonné pour rien, juste pour entendre qu’on était encore là.",
+   "en": ""
+  },
+  {
+   "fr": "les Dumay",
+   "en": ""
+  },
+  {
+   "fr": "Un vieux couple d’horlogers.",
+   "en": ""
+  },
+  {
+   "fr": "Toutes les horloges des Dumay retardent de onze minutes : l’heure exacte où la mer a franchi l’ancienne digue. Ils refusent de les remettre.",
+   "en": ""
+  },
+  {
+   "fr": "les Esquer",
+   "en": ""
+  },
+  {
+   "fr": "Des pêcheurs de lumière, qui ramassent les algues qui brillent.",
+   "en": ""
+  },
+  {
+   "fr": "Les Esquer ramassent les algues qui brillent la nuit. Ils en laissent toujours une sur la marche de ceux qui n’ont plus de lampe.",
+   "en": ""
+  },
+  {
+   "fr": "les Sorne",
+   "en": ""
+  },
+  {
+   "fr": "Des bâtisseurs : le grand-père a coulé le pilier douze.",
+   "en": ""
+  },
+  {
+   "fr": "Sur la photo des Sorne, des ouvriers dans l’eau jusqu’aux chevilles devant le pilier douze. Au dos : « Soixante ans plus tard, il tient. Nous aussi. »",
+   "en": ""
+  },
+  {
+   "fr": "les Lebrun",
+   "en": ""
+  },
+  {
+   "fr": "Une famille de couturiers qui habille tout le quai.",
+   "en": ""
+  },
+  {
+   "fr": "Les Lebrun cousent un fil bleu dans l’ourlet de chaque vêtement. Pour qu’on sache, s’il faut un jour se retrouver, qu’on vient d’ici.",
+   "en": ""
+  },
+  {
+   "fr": "les Auzan",
+   "en": ""
+  },
+  {
+   "fr": "Un frère et une sœur, conteurs de la Nuit des lignes.",
+   "en": ""
+  },
+  {
+   "fr": "Les Auzan racontent la même histoire à chaque Nuit des lignes, et la changent un peu à chaque fois. Ils disent que c’est comme ça qu’elle reste vivante.",
+   "en": ""
+  },
+  {
+   "fr": "les Peyrol",
+   "en": ""
+  },
+  {
+   "fr": "Des apiculteurs qui gardent leurs ruches sur les toits.",
+   "en": ""
+  },
+  {
+   "fr": "Les abeilles des Peyrol ne vont jamais vers la mer. Le vieux Peyrol dit qu’elles savent, elles aussi.",
+   "en": ""
+  },
+  {
+   "fr": "les Taverne",
+   "en": ""
+  },
+  {
+   "fr": "Une famille de cuisiniers chassés d’une maison noyée.",
+   "en": ""
+  },
+  {
+   "fr": "Les Taverne ont un carreau bleu de leur ancienne cuisine, avec un trait de peinture : la première hauteur de l’eau. Elle n’était qu’au genou.",
+   "en": ""
+  },
+  {
+   "fr": "les Rosel",
+   "en": ""
+  },
+  {
+   "fr": "Des musiciens de rue, qui jouent sur des tuyaux de pompe.",
+   "en": ""
+  },
+  {
+   "fr": "Les Rosel jouent sur de vieux tuyaux de pompe. Chaque tuyau a la note de la profondeur d’où il vient.",
+   "en": ""
+  },
+  {
+   "fr": "les Valade",
+   "en": ""
+  },
+  {
+   "fr": "Une famille de guetteurs, perchée tout en haut de l’anneau.",
+   "en": ""
+  },
+  {
+   "fr": "Depuis le toit des Valade, on voit les îles des Hauts par temps clair. Les enfants leur ont donné des noms. Pas les mêmes que là-haut.",
+   "en": ""
+  },
+  {
+   "fr": "les Crozet",
+   "en": ""
+  },
+  {
+   "fr": "Des tisserands de corde, pour les pontons et les barques.",
+   "en": ""
+  },
+  {
+   "fr": "Les Crozet tressent un fil de chaque famille du quai dans les cordes des barques. Ils disent qu’une corde de tout le monde ne casse pas.",
+   "en": ""
+  },
+  {
+   "fr": "les Vey",
+   "en": ""
+  },
+  {
+   "fr": "Une famille modeste, connue pour donner plus qu’elle n’a.",
+   "en": ""
+  },
+  {
+   "fr": "Les Vey gardent un ticket de pain de l’hiver des Accords, jamais utilisé : l’aïeul avait donné sa part. « Il n’a jamais servi, et il a servi quand même. »",
+   "en": ""
+  },
+  {
+   "fr": "les Morvan",
+   "en": ""
+  },
+  {
+   "fr": "Des charpentiers de barque.",
+   "en": ""
+  },
+  {
+   "fr": "Les Morvan gravent la date de chaque barque sous son banc. La plus vieille qui flotte encore a cent onze ans.",
+   "en": ""
+  },
+  {
+   "fr": "les Bastide",
+   "en": ""
+  },
+  {
+   "fr": "Une famille d’infirmiers, qui a ouvert la première Clinique dans une cave.",
+   "en": ""
+  },
+  {
+   "fr": "La première Clinique des Bastide tenait dans une cave, avec une seule lampe. Ils ont gardé l’ampoule, grillée, sur l’étagère d’honneur.",
+   "en": ""
+  },
+  {
+   "fr": "les Lacour",
+   "en": ""
+  },
+  {
+   "fr": "Des jardiniers de toit, qui font pousser des tomates dans du sel lavé.",
+   "en": ""
+  },
+  {
+   "fr": "Les tomates des Lacour sont petites et un peu salées. Tout le quai jure que ce sont les meilleures du monde.",
+   "en": ""
+  },
+  {
+   "fr": "les Marbel",
+   "en": ""
+  },
+  {
+   "fr": "Des jardiniers qui ont remonté leurs bacs d’un étage à chaque crue.",
+   "en": ""
+  },
+  {
+   "fr": "Sur la boîte de semences des Marbel, gravé à la pointe : « Là-haut, il y aura de la terre. On plantera tout. »",
+   "en": ""
+  },
+  {
+   "fr": "les Servan",
+   "en": ""
+  },
+  {
+   "fr": "Un ancien greffier des Hauts et sa famille, descendus par choix.",
+   "en": ""
+  },
+  {
+   "fr": "Le vieux Servan a renoncé à sa place là-haut pour rester avec sa fille, en bas. Il dit qu’il a gagné au change. Il le dit chaque jour, pour s’en convaincre.",
+   "en": ""
+  },
+  {
+   "fr": "les Pradel",
+   "en": ""
+  },
+  {
+   "fr": "Des boulangers qui cuisent au four de la Forge, la nuit.",
+   "en": ""
+  },
+  {
+   "fr": "Les Pradel cuisent le pain au four de la Forge, la nuit, quand il refroidit. Au matin, tout le quai sent le pain et le métal.",
+   "en": ""
+  },
+  {
+   "fr": "les Doucet",
+   "en": ""
+  },
+  {
+   "fr": "Une famille de pêcheurs, gardienne de la lampe de veille.",
+   "en": ""
+  },
+  {
+   "fr": "La lampe de veille des Doucet est restée allumée onze nuits, une fois. Le pêcheur est rentré la douzième. Depuis tes barques, elle ne s’éteint plus.",
+   "en": ""
+  },
+  {
+   "fr": "les Anciens du conseil",
+   "en": ""
+  },
+  {
+   "fr": "Les doyens du district, gardiens du registre des foyers.",
+   "en": ""
+  },
+  {
+   "fr": "Dans le registre des Anciens, aucune page n’a plus de nom barré au crayon rouge. En marge : « Ils montent tous. Le directeur l’a promis. »",
+   "en": ""
+  },
+  {
+   "fr": "les Pellan",
+   "en": ""
+  },
+  {
+   "fr": "Des lavandières restées aux Lavoirs, sur les bacs les plus hauts.",
+   "en": ""
+  },
+  {
+   "fr": "Les Pellan lavaient le linge des Hauts, autrefois. Ils ont gardé un drap brodé d’un blason qu’aucun d’eux ne sait lire.",
+   "en": ""
+  },
+  {
+   "fr": "les Ardoin",
+   "en": ""
+  },
+  {
+   "fr": "La famille du dernier éclusier, qui n’a jamais quitté sa maison.",
+   "en": ""
+  },
+  {
+   "fr": "Le père Ardoin a fermé l’écluse le dernier soir, de ses mains. Il a attendu dix-neuf ans qu’on vienne lui dire de la rouvrir.",
+   "en": ""
+  },
+  {
+   "fr": "les Sauvel",
+   "en": ""
+  },
+  {
+   "fr": "Une famille nombreuse qui vivait sur la passerelle à linge.",
+   "en": ""
+  },
+  {
+   "fr": "Les enfants Sauvel gravaient leur taille sur la passerelle, à côté de la hauteur de l’eau. Ils ont arrêté le jour où l’eau a grandi plus vite qu’eux.",
+   "en": ""
+  },
+  {
+   "fr": "les Lunel",
+   "en": ""
+  },
+  {
+   "fr": "Deux sœurs âgées, dans l’escalier des blanchisseuses.",
+   "en": ""
+  },
+  {
+   "fr": "Les sœurs Lunel triaient des boutons par couleur pour passer les nuits de houle. Il leur manque un seul bleu pour finir la boîte.",
+   "en": ""
+  },
+  {
+   "fr": "les Kerval",
+   "en": ""
+  },
+  {
+   "fr": "Des forgerons de chaînes, à l’atelier de la Rue des Treuils.",
+   "en": ""
+  },
+  {
+   "fr": "Les Kerval ont forgé les chaînes du quatrième anneau. On ne les a jamais payés. Ils disent que la digue tient, et que c’est un salaire.",
+   "en": ""
+  },
+  {
+   "fr": "les Mirande",
+   "en": ""
+  },
+  {
+   "fr": "Une grutière et son fils, réfugiés dans la cabine de la grue couchée.",
+   "en": ""
+  },
+  {
+   "fr": "La radio des Mirande n’attrape que la mer. Le fils jure qu’une nuit, une voix y a dit son prénom.",
+   "en": ""
+  },
+  {
+   "fr": "les Ibarre",
+   "en": ""
+  },
+  {
+   "fr": "Des ferronniers, gardiens de la forge froide.",
+   "en": ""
+  },
+  {
+   "fr": "L’enclume des Ibarre porte un sigle plus vieux que la digue. Ils frappent dessus chaque matin, pour qu’elle ne s’ennuie pas.",
+   "en": ""
+  },
+  {
+   "fr": "les Nalis",
+   "en": ""
+  },
+  {
+   "fr": "La famille du pontier, avec un plan de la digue que personne n’a jamais vu.",
+   "en": ""
+  },
+  {
+   "fr": "Sur le plan des Nalis, un cercle rouge sous l’anneau : « ne pas creuser ». Le grand-père n’a jamais dit pourquoi. Il a juste dit : « Plus tard. »",
+   "en": ""
+  },
+  {
+   "fr": "les Haudry",
+   "en": ""
+  },
+  {
+   "fr": "L’ancien concierge de l’école et ses petits-enfants.",
+   "en": ""
+  },
+  {
+   "fr": "Le vieux Haudry repeint la marelle du préau chaque été, sous un doigt d’eau. La case du ciel touche la ligne de la mer.",
+   "en": ""
+  },
+  {
+   "fr": "les Prével",
+   "en": ""
+  },
+  {
+   "fr": "L’institutrice de l’École noyée et sa famille.",
+   "en": ""
+  },
+  {
+   "fr": "Madame Prével n’a jamais effacé sa dernière leçon. Ses élèves ont calculé : trois mètres en cent ans, plus haut que le préau. Ils avaient raison, et en avance.",
+   "en": ""
+  },
+  {
+   "fr": "les Casset",
+   "en": ""
+  },
+  {
+   "fr": "Des lecteurs, qui ont sauvé la bibliothèque de l’école livre par livre.",
+   "en": ""
+  },
+  {
+   "fr": "Les Casset ont séché trois mille livres, une page à la fois. Ils ont rangé chacun par le nom du dernier enfant qui l’avait emprunté.",
+   "en": ""
+  },
+  {
+   "fr": "les Bérot",
+   "en": ""
+  },
+  {
+   "fr": "Une famille de sonneurs, qui veille sur la cloche de la cour.",
+   "en": ""
+  },
+  {
+   "fr": "La cloche des Bérot sonne seule les nuits de houle. Ils ont compté : jamais deux fois le même nombre de coups.",
+   "en": ""
+  },
+  {
+   "fr": "les Tessier",
+   "en": ""
+  },
+  {
+   "fr": "Des puisatiers, installés dans la citerne sèche.",
+   "en": ""
+  },
+  {
+   "fr": "Les Tessier montent les marches trop hautes de la citerne chaque jour. Les enfants ont appris à marcher dessus avant de marcher droit.",
+   "en": ""
+  },
+  {
+   "fr": "les Tavel",
+   "en": ""
+  },
+  {
+   "fr": "Un tailleur de pierre et sa fille, sous la galerie des voûtes.",
+   "en": ""
+  },
+  {
+   "fr": "Le père Tavel cherche le joint des voûtes depuis vingt ans. Il n’y en a pas. Il dit que c’est la plus belle pierre qu’il ait jamais touchée.",
+   "en": ""
+  },
+  {
+   "fr": "les Varenne",
+   "en": ""
+  },
+  {
+   "fr": "Des mécaniciens, qui font tourner les vannes des Citernes.",
+   "en": ""
+  },
+  {
+   "fr": "Les Varenne règlent des vannes qui suivent une marée d’un autre temps. Ils ne savent pas pour qui. Ils les règlent quand même.",
+   "en": ""
+  },
+  {
+   "fr": "les Aumont",
+   "en": ""
+  },
+  {
+   "fr": "Une famille au fond du puisard, la plus discrète des Basses.",
+   "en": ""
+  },
+  {
+   "fr": "La petite Aumont a posé sa main dans les empreintes du puisard. Elles étaient exactement à sa taille.",
+   "en": ""
+  },
+  {
+   "fr": "les Roustan",
+   "en": ""
+  },
+  {
+   "fr": "Des gardiens de marches, sur les premières marches du Palier.",
+   "en": ""
+  },
+  {
+   "fr": "Les Roustan balaient les premières marches du Palier chaque matin. Ils disent que quelqu’un doit bien le faire, depuis le temps.",
+   "en": ""
+  },
+  {
+   "fr": "les Falgue",
+   "en": ""
+  },
+  {
+   "fr": "Une famille de lampistes, dans la niche aux lampes.",
+   "en": ""
+  },
+  {
+   "fr": "Les lampes de pierre s’allument quand un Falgue approche. Pour les autres, il faut attendre. Personne ne sait pourquoi.",
+   "en": ""
+  },
+  {
+   "fr": "les Démare",
+   "en": ""
+  },
+  {
+   "fr": "Des copistes, qui recopient les empreintes du palier gravé.",
+   "en": ""
+  },
+  {
+   "fr": "Les Démare ont recopié neuf mille empreintes du palier gravé. Ils disent qu’aucune ne se ressemble, et qu’aucune ne leur est étrangère.",
+   "en": ""
+  },
+  {
+   "fr": "les Huisset",
+   "en": ""
+  },
+  {
+   "fr": "Trois générations assises devant une porte sans poignée.",
+   "en": ""
+  },
+  {
+   "fr": "Les Huisset écoutent l’eau du puits derrière la porte. Ils disent qu’elle a le bruit d’une respiration. Celle de tout le district.",
+   "en": ""
+  }
+ ]
+}

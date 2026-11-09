@@ -1,0 +1,3585 @@
+{
+ "source": "src/core/strates.ts",
+ "entrees": [
+  {
+   "fr": "Piste des nôtres",
+   "en": ""
+  },
+  {
+   "fr": "Piste de ceux d’avant",
+   "en": ""
+  },
+  {
+   "fr": "Le mur des fouilleurs",
+   "en": ""
+  },
+  {
+   "fr": "Un pilier des pompes, couvert de noms grattés au couteau. Les fouilleurs de Vertiga y écrivent le leur avant de descendre, et le barrent quand ils remontent.",
+   "en": ""
+  },
+  {
+   "fr": "Les noms",
+   "en": ""
+  },
+  {
+   "fr": "Le nom de mon père est là, daté de 2066. Jamais barré. Il est remonté, pourtant. Il n’a jamais voulu le barrer.",
+   "en": ""
+  },
+  {
+   "fr": "Des centaines de noms, barrés ou non. Les plus anciens datent de 2066.",
+   "en": ""
+  },
+  {
+   "fr": "Le pied du pilier",
+   "en": ""
+  },
+  {
+   "fr": "Le plan dit : béton jusqu’au roc. Regarde : le pilier est posé sur une marche taillée, de niveau au millimètre. Personne chez nous ne taille comme ça.",
+   "en": ""
+  },
+  {
+   "fr": "Nos plans disent béton jusqu’au roc. Il n’y a pas de roc. Le pilier est posé sur une marche taillée. Une marche, directeur.",
+   "en": ""
+  },
+  {
+   "fr": "Le pilier ne repose pas sur la roche, mais sur une large marche de pierre taillée, parfaitement plane.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la marche",
+   "en": ""
+  },
+  {
+   "fr": "Usée au milieu, comme les marches de la Tour, mais trop haute pour nos jambes. Des milliers de pieds sont passés là, et pas des nôtres. Et sous cette marche, il y en a une autre.",
+   "en": ""
+  },
+  {
+   "fr": "Il y a une autre marche dessous. Et encore une. Un escalier. Sous nos pompes, il y a un escalier.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la marche, une autre, puis une autre : un escalier aux marches trop hautes, qui s’enfonce dans l’eau noire.",
+   "en": ""
+  },
+  {
+   "fr": "Graver ton nom",
+   "en": ""
+  },
+  {
+   "fr": "Tu graves ton nom sous celui des autres. Juste en dessous, un fouilleur a laissé quelques pièces pour le suivant, et une flèche grattée au couteau : « réserve, plus bas ».",
+   "en": ""
+  },
+  {
+   "fr": "Mesurer la marche",
+   "en": ""
+  },
+  {
+   "fr": "Fil à plomb, mètre ruban : 2,10 m de large, de niveau parfait. Les Fondations de ton district reposent sur la marche de quelqu’un d’autre. Dans une fente de la marche, un Éclat.",
+   "en": ""
+  },
+  {
+   "fr": "Les piliers de mon district ne reposent pas sur la roche, mais sur une marche taillée, et sous elle, une autre. Qui a taillé un escalier sous la mer, et pour aller où ?",
+   "en": ""
+  },
+  {
+   "fr": "Le registre des abris",
+   "en": ""
+  },
+  {
+   "fr": "Un abri de 2060, entrouvert. Sur le mur, un registre peint : les quarante familles qui y ont dormi pendant les grandes crues.",
+   "en": ""
+  },
+  {
+   "fr": "Le registre peint",
+   "en": ""
+  },
+  {
+   "fr": "Les familles du chantier. Quand on l’a fermé, la ville leur a donné l’anneau à la place de la paie. La mienne en est. C’est comme ça que le quartier est né.",
+   "en": ""
+  },
+  {
+   "fr": "La moitié de ces familles, je leur livre encore le pain. Aucune ne m’a jamais parlé de cet abri.",
+   "en": ""
+  },
+  {
+   "fr": "Quarante noms de familles, peints en blanc. Presque tous du quartier.",
+   "en": ""
+  },
+  {
+   "fr": "Le plâtre fendu",
+   "en": ""
+  },
+  {
+   "fr": "Ça sonne creux. Derrière le plâtre, ce n’est pas de la brique : c’est un treillis de cristal. On a monté l’abri contre quelque chose qui était déjà là.",
+   "en": ""
+  },
+  {
+   "fr": "Derrière le plâtre, un treillis de cristal. Les maçons de 2060 l’ont couvert sans poser de questions. Pendant les crues, on n’en posait pas.",
+   "en": ""
+  },
+  {
+   "fr": "Par une fente du plâtre, on voit luire un treillis de cristal.",
+   "en": ""
+  },
+  {
+   "fr": "Un cristal tombé",
+   "en": ""
+  },
+  {
+   "fr": "Tombé d’un sac de pilleur. Il ne veut pas remonter avec nous. Il veut rejoindre les autres, plus bas. On dirait qu’il a peur de rester en haut.",
+   "en": ""
+  },
+  {
+   "fr": "Un petit cristal tombé d’un sac luit faiblement sur les marches.",
+   "en": ""
+  },
+  {
+   "fr": "Laisser rouler le cristal",
+   "en": ""
+  },
+  {
+   "fr": "Tu poses le cristal sur la dernière marche. Il roule vers le bas, plus vite que la pente ne le voudrait, et sa lueur file devant vous, salle après salle.",
+   "en": ""
+  },
+  {
+   "fr": "Recopier les quarante noms",
+   "en": ""
+  },
+  {
+   "fr": "Ilka lit les noms à voix haute, tu les recopies. Elle en connaît vingt-deux. « Je leur demanderai pourquoi ils n’en parlent jamais. » Au bas du registre, une main a ajouté : « vivres, salle d’après ».",
+   "en": ""
+  },
+  {
+   "fr": "Les abris de 2060 ont été montés contre un treillis de cristal. Pendant les crues, quarante familles ont dormi contre un Berceau, et n’en ont jamais parlé.",
+   "en": ""
+  },
+  {
+   "fr": "La galerie des Chouettes",
+   "en": ""
+  },
+  {
+   "fr": "La galerie effondrée de 2104. Six enfants mués pour les fouilles de nuit y ont guidé vingt adultes dans le noir, trois jours durant. L’éboulis est dégagé depuis longtemps. Les mains peintes sont restées.",
+   "en": ""
+  },
+  {
+   "fr": "Les mains peintes",
+   "en": ""
+  },
+  {
+   "fr": "Six mains d’enfant, à hauteur de hanche. La promotion d’avant la mienne. On nous les montrait, petits, pour nous donner du courage.",
+   "en": ""
+  },
+  {
+   "fr": "Six petites mains peintes à hauteur de hanche, et une date : 2104.",
+   "en": ""
+  },
+  {
+   "fr": "La cause",
+   "en": ""
+  },
+  {
+   "fr": "Les infos ont dit « infiltration ». Regarde les bords de l’éboulis : c’est du cristal brisé, pas de la roche. Ils ont percé un treillis, comme celui de l’abri. C’est le treillis qui a cédé.",
+   "en": ""
+  },
+  {
+   "fr": "Les infos ont dit « infiltration ». Les bords sont en cristal cassé. Ils ont percé un treillis et tout est tombé. Ça, personne ne l’a dit.",
+   "en": ""
+  },
+  {
+   "fr": "Les bords de l’éboulis sont de cristal brisé, pas de roche.",
+   "en": ""
+  },
+  {
+   "fr": "La gaine",
+   "en": ""
+  },
+  {
+   "fr": "La gaine par où ils sont sortis. Elle n’était sur aucun plan. Ce n’est pas une gaine de chez nous : ronde, lisse, sans une trace d’outil. Elle vient d’en dessous, et elle monte.",
+   "en": ""
+  },
+  {
+   "fr": "Une gaine ronde et lisse, qui n’était sur aucun plan, s’élève dans la roche.",
+   "en": ""
+  },
+  {
+   "fr": "Ajouter ta main",
+   "en": ""
+  },
+  {
+   "fr": "Tu poses ta main dans la peinture, à côté des leurs, à ta hauteur à toi. Un jour, un enfant saura qu’un directeur est passé par là. Contre la plinthe, un Éclat.",
+   "en": ""
+  },
+  {
+   "fr": "Explorer la gaine",
+   "en": ""
+  },
+  {
+   "fr": "La gaine file en spirale, vers le haut comme vers le bas, lisse comme l’intérieur d’un coquillage, sans une marche ni une prise. Au premier coude, du matériel oublié par les secours de 2104. Tout au fond, quelque chose a entendu vos pas.",
+   "en": ""
+  },
+  {
+   "fr": "L’éboulement des Chouettes, en 2104, n’est pas venu de l’eau : on avait percé un treillis de cristal. Et la gaine qui les a sauvés n’est sur aucun plan : ronde, lisse, sans une trace d’outil.",
+   "en": ""
+  },
+  {
+   "fr": "Ce que savaient les familles",
+   "en": ""
+  },
+  {
+   "fr": "Quatre des six Chouettes venaient des familles de l’abri de 2060. Leurs grands-parents avaient vu le cristal derrière le plâtre et s’étaient tus ; quarante ans plus tard, les petits-enfants ont percé le même treillis sans savoir ce que c’était.",
+   "en": ""
+  },
+  {
+   "fr": "Quatre des six Chouettes portent un nom du registre de l’abri. Leurs grands-parents avaient vu le plâtre fendu, et s’étaient tus. Leurs petits-enfants ont percé le même treillis. Le silence des uns a fait l’éboulement ; le courage des autres a sauvé vingt personnes.",
+   "en": ""
+  },
+  {
+   "fr": "Quatre des six noms peints sous les mains figurent aussi au registre de l’abri de 2060. Ces familles avaient vu le cristal derrière le plâtre, et n’en avaient jamais rien dit.",
+   "en": ""
+  },
+  {
+   "fr": "Une gaine qui monte",
+   "en": ""
+  },
+  {
+   "fr": "La gaine des Chouettes a été percée par en dessous : quelqu’un montait. Le cristal de l’abri a pris ce chemin sans hésiter.",
+   "en": ""
+  },
+  {
+   "fr": "Regarde les éclats au bord de la gaine : ils sont tous tombés vers le bas. Ce trou a été creusé par en dessous. Celui qui l’a percé ne descendait pas vers nous, directeur. Il montait.",
+   "en": ""
+  },
+  {
+   "fr": "Les éclats au bord de la gaine sont tombés vers le bas. On a creusé ce trou par en dessous. Quelqu’un montait, et le petit cristal a pris le même chemin, dans l’autre sens.",
+   "en": ""
+  },
+  {
+   "fr": "Les éclats au bord de la gaine sont tous tombés vers le bas : elle a été creusée par en dessous. Une traînée de lueur y file, celle du cristal de l’abri.",
+   "en": ""
+  },
+  {
+   "fr": "La dernière lampe",
+   "en": ""
+  },
+  {
+   "fr": "Ici s’arrêtent les lampes humaines. Une lanterne de fouilleur pend à un clou, éteinte. Plus loin, tous les puits de Vertiga débouchent dans la même nuit.",
+   "en": ""
+  },
+  {
+   "fr": "Personne n’a jamais accroché de lampe plus loin. Les fouilleurs disaient : « Après le clou, c’est le noir qui décide. »",
+   "en": ""
+  },
+  {
+   "fr": "Une lanterne à algues pend à un clou. Personne n’en a jamais accroché plus loin.",
+   "en": ""
+  },
+  {
+   "fr": "Les autres puits",
+   "en": ""
+  },
+  {
+   "fr": "Là, le puits des Hauts-Ponts. Là, celui du marché. Chaque district croit avoir son trou à lui. En bas, c’est le même noir pour tout le monde. Et regarde : chaque bouche tombe pile au-dessus d’un palier de pierre.",
+   "en": ""
+  },
+  {
+   "fr": "Des bouches de puits s’ouvrent dans la voûte, une par district. Toutes donnent ici, chacune au-dessus d’un palier de pierre taillée.",
+   "en": ""
+  },
+  {
+   "fr": "Une lueur au loin",
+   "en": ""
+  },
+  {
+   "fr": "La rampe en laiton du Puits Zéro. Les visiteurs y descendent depuis soixante ans, et ils regardent tous le plafond. Personne ne regarde le sol.",
+   "en": ""
+  },
+  {
+   "fr": "Le Puits Zéro, là-bas. On y vend des souvenirs en plastique. Tout le monde lève les yeux. Personne ne les baisse.",
+   "en": ""
+  },
+  {
+   "fr": "Au loin, la lueur de la rampe de visite du Puits Zéro.",
+   "en": ""
+  },
+  {
+   "fr": "Prendre la lanterne",
+   "en": ""
+  },
+  {
+   "fr": "Tu rallumes la lanterne avec une poignée d’algues. Sa lumière perce le brouillard des deux salles suivantes.",
+   "en": ""
+  },
+  {
+   "fr": "Laisser le clou au noir",
+   "en": ""
+  },
+  {
+   "fr": "Tu laisses la lanterne à son clou, comme les fouilleurs avant toi. Sous le clou, un Éclat brille : quelqu’un d’autre l’y avait laissé, par respect.",
+   "en": ""
+  },
+  {
+   "fr": "À −3, tous les puits de Vertiga débouchent dans la même nuit, et chaque bouche tombe au-dessus d’un palier de pierre. Personne ne m’a jamais dit pourquoi.",
+   "en": ""
+  },
+  {
+   "fr": "Le message des patrouilles",
+   "en": ""
+  },
+  {
+   "fr": "Sur un pilier, des flèches tracées à la craie, et des chiffres. Les Brigades se sont repérées comme elles ont pu dans le noir.",
+   "en": ""
+  },
+  {
+   "fr": "Les chiffres",
+   "en": ""
+  },
+  {
+   "fr": "« 12 », puis « 11 », puis « 9 ». Ils se comptaient. Il en manque trois.",
+   "en": ""
+  },
+  {
+   "fr": "Des chiffres à la craie : 12, puis 11, puis 9.",
+   "en": ""
+  },
+  {
+   "fr": "Une respiration",
+   "en": ""
+  },
+  {
+   "fr": "Neuf respirations, en bas, serrées les unes contre les autres. Ils ont peur du noir. Personne ne leur a appris à le traverser.",
+   "en": ""
+  },
+  {
+   "fr": "Neuf. Je les compte au souffle. Ils ne bougent plus : ils attendent.",
+   "en": ""
+  },
+  {
+   "fr": "Neuf voix, très loin en dessous. Elles attendent.",
+   "en": ""
+  },
+  {
+   "fr": "Un souffle, très loin dans le noir. Ou le vent dans les puits.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la poussière",
+   "en": ""
+  },
+  {
+   "fr": "Des marches, sous la poussière. 2,10 m de large. Exactement la marche de −1. C’est le même escalier que sous nos pompes, directeur. Et il monte.",
+   "en": ""
+  },
+  {
+   "fr": "Il y a des marches sous la poussière. Larges, usées au milieu. Toute la galerie est un escalier. Et il monte vers le Puits Zéro.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la poussière, des marches usées : la galerie entière est un escalier qui monte vers le Puits Zéro.",
+   "en": ""
+  },
+  {
+   "fr": "Laisser une marque pour Hald",
+   "en": ""
+  },
+  {
+   "fr": "Tu ajoutes une flèche, la bonne, et la date. Si une patrouille repasse, elle trouvera le chemin. Dans une fente, un Éclat oublié par un soldat.",
+   "en": ""
+  },
+  {
+   "fr": "Descendre quelques marches",
+   "en": ""
+  },
+  {
+   "fr": "Vous descendez contre le sens de l’usure. À chaque palier, une niche vide, de la taille d’une couchette. Dans l’une, du matériel de patrouille abandonné. Dans la dernière, quelque chose dort encore.",
+   "en": ""
+  },
+  {
+   "fr": "La galerie de −3 est un escalier immense, usé par des milliers de pas. Les patrouilles de Hald sont quelque part en dessous, et elles attendent.",
+   "en": ""
+  },
+  {
+   "fr": "Le cœur qui compte",
+   "en": ""
+  },
+  {
+   "fr": "L’escalier finit ici, juste sous la salle de 2062. Au-dessus, on devine la rampe en laiton du Puits Zéro. En bas des dernières marches, une flaque d’empreintes mêlées, immobile : la Confluence s’est reposée là.",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier palier",
+   "en": ""
+  },
+  {
+   "fr": "La gaine des Chouettes débouche ici, dans la voûte. Ronde, lisse. Elle part de ce palier, et elle continue plus haut que la salle de 2062.",
+   "en": ""
+  },
+  {
+   "fr": "Le palier du dessus, c’est le sol de la salle de 2062. Les visiteurs du Puits Zéro marchent sur la dernière marche de quelqu’un, et ils ne le savent pas.",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier palier de l’escalier est le sol même de la salle de 2062, la Strate zéro.",
+   "en": ""
+  },
+  {
+   "fr": "La forme",
+   "en": ""
+  },
+  {
+   "fr": "Elle s’est roulée en boule autour d’une voix plus petite que les autres. Elle la protège.",
+   "en": ""
+  },
+  {
+   "fr": "Une forme creusée dans les cristaux, comme si quelque chose de grand s’était roulé en boule.",
+   "en": ""
+  },
+  {
+   "fr": "Un murmure",
+   "en": ""
+  },
+  {
+   "fr": "Un mot, toujours le même, trop bas pour que je l’entende. Elle le répète comme si elle avait peur de l’oublier.",
+   "en": ""
+  },
+  {
+   "fr": "Quelqu’un répète un mot, au milieu de tous les autres. Trop bas. Il a peur de l’oublier.",
+   "en": ""
+  },
+  {
+   "fr": "Un murmure, toujours le même mot, trop bas pour qu’on le comprenne.",
+   "en": ""
+  },
+  {
+   "fr": "Écouter jusqu’au bout",
+   "en": ""
+  },
+  {
+   "fr": "Tu restes longtemps à écouter. Le mot finit par se détacher des autres, net : « Compte. » Un Éclat se forme dans la flaque, comme une goutte.",
+   "en": ""
+  },
+  {
+   "fr": "Dégager l’éboulis",
+   "en": ""
+  },
+  {
+   "fr": "Tu fais dégager le haut d’un éboulis voisin, derrière lequel s’arrêtent des traces de bottes. Les patrouilles entendront qu’on vient. Parmi les gravats, du matériel de patrouille.",
+   "en": ""
+  },
+  {
+   "fr": "Le Puits Zéro n’est pas le fond d’un trou : c’est le dernier palier d’un escalier. Et au pied des marches, une voix répète « Compte ».",
+   "en": ""
+  },
+  {
+   "fr": "Les croix de 2062",
+   "en": ""
+  },
+  {
+   "fr": "Sous ta flèche, la craie des ouvriers de 2062 : une croix sous chaque bouche de puits, et « Toutes sur une marche. À signaler. » Ils l’avaient remarqué et noté. Personne ne s’est demandé pourquoi ces piliers tenaient.",
+   "en": ""
+  },
+  {
+   "fr": "Sous ta flèche, il y en a d’autres, plus vieilles : la craie des ouvriers de 2062. Une croix sous chaque bouche de puits, et une note : « Toutes sur une marche. À signaler. » Personne n’y a jamais donné suite. Les gars d’en bas voient toujours ce que personne ne lit.",
+   "en": ""
+  },
+  {
+   "fr": "Sous ta flèche, la craie des ouvriers de 2062 : une croix sous chaque bouche de puits, et « Toutes sur une marche. À signaler. » Ils avaient fait la mesure avant moi. Personne ne l’a refaite.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la flèche, des marques plus anciennes, à la craie : les ouvriers de 2062 avaient mis une croix sous chaque bouche de puits, avec une note : « Toutes sur une marche. À signaler. » Rien d’autre.",
+   "en": ""
+  },
+  {
+   "fr": "La leçon",
+   "en": ""
+  },
+  {
+   "fr": "La petite voix au cœur de la Confluence récite une leçon apprise par cœur, dont il ne reste qu’un mot : « Compte ». Quelqu’un, tout en bas, l’enseignait aux enfants.",
+   "en": ""
+  },
+  {
+   "fr": "La petite voix, au milieu des autres… Je l’ai déjà entendue, dans la dernière niche de l’escalier, là où quelque chose dormait. Elle ne compte pas. Elle récite. Une leçon apprise par cœur, comme à l’école, dont il ne reste qu’un mot. Quelqu’un, plus bas, l’a apprise à un enfant. Et l’enfant la répète encore.",
+   "en": ""
+  },
+  {
+   "fr": "Le murmure a le rythme d’une leçon qu’on récite par cœur. Tout s’est usé, sauf un mot : « Compte ».",
+   "en": ""
+  },
+  {
+   "fr": "Le seuil usé",
+   "en": ""
+  },
+  {
+   "fr": "Des dizaines de portes rondes, toutes fermées. Une seule est entrouverte, de la largeur d’une main.",
+   "en": ""
+  },
+  {
+   "fr": "La porte",
+   "en": ""
+  },
+  {
+   "fr": "Pas de serrure dehors. Seulement un loquet, dedans. Celui qui a fait ça ne voulait pas qu’on l’enferme. Il voulait pouvoir s’enfermer.",
+   "en": ""
+  },
+  {
+   "fr": "Aucune trace de coup, aucune griffure. Personne n’a essayé de sortir.",
+   "en": ""
+  },
+  {
+   "fr": "Pas de serrure côté couloir : seulement un loquet, de l’autre côté.",
+   "en": ""
+  },
+  {
+   "fr": "Usé côté intérieur, intact côté couloir. Quelqu’un a fait les cent pas ici pendant des années, sans jamais repasser le seuil.",
+   "en": ""
+  },
+  {
+   "fr": "Le seuil est creusé côté intérieur, intact côté couloir.",
+   "en": ""
+  },
+  {
+   "fr": "Par la fente",
+   "en": ""
+  },
+  {
+   "fr": "Des cristaux en cercle, et une couche au milieu. Quelqu’un dormait entouré de ses pierres, comme on dort au milieu des siens.",
+   "en": ""
+  },
+  {
+   "fr": "Par la fente, des cristaux rangés en cercle autour d’une couche de pierre.",
+   "en": ""
+  },
+  {
+   "fr": "Compter les cristaux",
+   "en": ""
+  },
+  {
+   "fr": "Vingt-trois cristaux, rangés avec soin, et une seule couche. Tu notes le chiffre. Sur le seuil, un Éclat, comme une pièce laissée pour le passage.",
+   "en": ""
+  },
+  {
+   "fr": "Relever les traces du couloir",
+   "en": ""
+  },
+  {
+   "fr": "Dans la poussière du couloir, des semelles d’en haut, récentes, qui vont de porte en porte sans en ouvrir aucune. Une équipe a fait l’inventaire, et n’en a rien dit. Elle a laissé une caisse un peu plus loin.",
+   "en": ""
+  },
+  {
+   "fr": "Les portes rondes n’enferment rien. Quelqu’un s’est enfermé dedans, de son plein gré, au milieu de ses pierres.",
+   "en": ""
+  },
+  {
+   "fr": "La table des voix",
+   "en": ""
+  },
+  {
+   "fr": "Une porte ronde s’est effondrée. Dedans, une table gravée en deux colonnes, et sous la table, des cristaux étiquetés.",
+   "en": ""
+  },
+  {
+   "fr": "Les colonnes",
+   "en": ""
+  },
+  {
+   "fr": "Un nom, puis un chiffre : 12, 19, 27, 31. Ce ne sont pas des âges. C’est le nombre de voix que chacun portait.",
+   "en": ""
+  },
+  {
+   "fr": "Deux colonnes : des noms, et des chiffres qui montent. 12, 19, 27, 31.",
+   "en": ""
+  },
+  {
+   "fr": "La dernière ligne",
+   "en": ""
+  },
+  {
+   "fr": "Un nom, puis « 31 », barré. À côté, « 1 ». Il s’est ôté trente voix pour n’en garder qu’une. La sienne.",
+   "en": ""
+  },
+  {
+   "fr": "Sur la dernière ligne, « 31 » est barré. À côté, quelqu’un a gravé « 1 ».",
+   "en": ""
+  },
+  {
+   "fr": "Sous la table",
+   "en": ""
+  },
+  {
+   "fr": "Vingt-trois cristaux, une couche, à la porte d’à côté. Ici, trente. Ils se les retiraient un par un, et ils les gardaient près d’eux.",
+   "en": ""
+  },
+  {
+   "fr": "Trente cristaux, avec chacun son étiquette. Il ne les a pas jetés. Il les a rangés, et il s’est enfermé avec eux.",
+   "en": ""
+  },
+  {
+   "fr": "Trente cristaux, chacun avec son étiquette, rangés sous la table.",
+   "en": ""
+  },
+  {
+   "fr": "Relever la table",
+   "en": ""
+  },
+  {
+   "fr": "Tu fais relever la table, nom par nom, chiffre par chiffre. Les Veilleurs n’en ont aucune aussi complète. Un Éclat dormait sous la dernière ligne.",
+   "en": ""
+  },
+  {
+   "fr": "Montrer une étiquette à Tobin",
+   "en": ""
+  },
+  {
+   "fr": "Tu glisses une étiquette dans ton sac pour Tobin : à sa façon de se taire, tu sauras si les Veilleurs en ont déjà vu. Le reste du métal part au district. En tintant, il a réveillé quelque chose, plus bas.",
+   "en": ""
+  },
+  {
+   "fr": "Une table gravée compte les voix que chacun portait : 12, 19, 27, 31. Le dernier s’en est ôté trente pour n’en garder qu’une, la sienne.",
+   "en": ""
+  },
+  {
+   "fr": "Ce que garde le Gardien",
+   "en": ""
+  },
+  {
+   "fr": "Le registre du Gardien, ouvert sur son lutrin de pierre. Des milliers de lignes. Les dernières pages sont gravées en marques que les Veilleurs savent lire : une date, un niveau, des noms.",
+   "en": ""
+  },
+  {
+   "fr": "Les pages anciennes",
+   "en": ""
+  },
+  {
+   "fr": "Pas des noms : des gestes. « Taille la pierre en biais. » « Chante pour endormir. » Il garde ce qu’ils savaient faire. Eux, il les a laissés partir.",
+   "en": ""
+  },
+  {
+   "fr": "Chaque ligne ancienne décrit un geste : tailler une pierre, endormir un enfant, réparer un toit. Jamais un nom.",
+   "en": ""
+  },
+  {
+   "fr": "La page de 2066",
+   "en": ""
+  },
+  {
+   "fr": "« Niveau sept. Un cristal du cercle, sorti avant la fermeture. Ramassé par… » Et rien. Moi, je sais. Le porte-bonheur de mon père, qu’il gardait dans la poche gauche. Je l’ai sur moi depuis sa mort.",
+   "en": ""
+  },
+  {
+   "fr": "Une ligne récente : « 2066. Niveau sept. Un cristal du cercle, sorti avant la fermeture. Ramassé par… » La ligne s’arrête là.",
+   "en": ""
+  },
+  {
+   "fr": "La ligne inachevée",
+   "en": ""
+  },
+  {
+   "fr": "Il n’a pas fini la ligne parce que le cristal n’est jamais revenu. Il attend qu’on le lui rapporte.",
+   "en": ""
+  },
+  {
+   "fr": "La ligne de 2066 s’arrête au milieu, comme une phrase en attente.",
+   "en": ""
+  },
+  {
+   "fr": "Promettre de le rapporter",
+   "en": ""
+  },
+  {
+   "fr": "Une main à plat sur la page : « On le rapportera là où il a été pris. » Le lutrin vibre doucement, comme une gorge qui se racle. Un Éclat glisse d’entre les pages.",
+   "en": ""
+  },
+  {
+   "fr": "Arracher la page",
+   "en": ""
+  },
+  {
+   "fr": "La page se détache avec un bruit de verre. Les Veilleurs voudront la lire. Le Gardien, lui, saura qu’on l’a prise. Sur le lutrin, des outils de graveur.",
+   "en": ""
+  },
+  {
+   "fr": "Le Gardien ne garde pas des gens, il garde ce qu’ils savaient faire. En 2066, le père de Doran a ramassé un cristal du niveau 7 : le porte-bonheur que Doran porte encore.",
+   "en": ""
+  },
+  {
+   "fr": "Le tampon de 2074",
+   "en": ""
+  },
+  {
+   "fr": "Les Veilleurs ont lu le registre du Gardien dès 2074 et savaient pour le cristal de 2066. Ils se sont tus pour que les Hauts ne viennent pas le prendre. Ici, protéger quelqu’un, c’est souvent le laisser seul.",
+   "en": ""
+  },
+  {
+   "fr": "Sous le lutrin, un tampon des archives de Sédime, daté de 2074. Les Veilleurs ont lu « Ramassé par… ». Ils savaient, et ils n’ont jamais rien demandé à mon père, pour que les Hauts ne viennent pas le lui prendre. Ils l’ont laissé tranquille. Tranquille, ici, c’est pareil que seul.",
+   "en": ""
+  },
+  {
+   "fr": "Sous le lutrin, un tampon d’archive des Veilleurs de Sédime, daté de 2074. Ils ont lu ce registre, et la ligne de 2066, sans jamais en parler.",
+   "en": ""
+  },
+  {
+   "fr": "Dix écritures",
+   "en": ""
+  },
+  {
+   "fr": "Dans le registre du Gardien, les gestes anciens sont gravés une fois, d’une main sûre ; les plus récents, dix fois, de dix mains différentes. Vers la fin, ceux d’avant recopiaient tout.",
+   "en": ""
+  },
+  {
+   "fr": "Les gestes anciens sont gravés une fois, d’une main sûre. Les derniers, dix fois, de dix écritures différentes. Chacun voulait sa copie du même geste. Plus ils approchaient de la fin, plus ils recopiaient.",
+   "en": ""
+  },
+  {
+   "fr": "Les dernières pages, c’est le même geste répété dix fois, par dix mains. Comme des gens qui se disputent le même souvenir.",
+   "en": ""
+  },
+  {
+   "fr": "Les dernières pages répètent les mêmes gestes, dix fois, de dix écritures différentes. Les premières n’en ont qu’une.",
+   "en": ""
+  },
+  {
+   "fr": "Les niches vides",
+   "en": ""
+  },
+  {
+   "fr": "Un treillis de cristal monte jusqu’au plafond, percé de niches. Presque toutes sont vides. Sur chacune, un sceau de cire blanche.",
+   "en": ""
+  },
+  {
+   "fr": "Un sceau",
+   "en": ""
+  },
+  {
+   "fr": "Ce sceau, je l’ai vu sur les caisses qui montaient chez nous, quand j’étais enfant. On me disait que c’étaient des fruits.",
+   "en": ""
+  },
+  {
+   "fr": "Cire blanche. Les Hauts mettent ça sur tout ce qu’ils prennent. Même sur les gens.",
+   "en": ""
+  },
+  {
+   "fr": "Un sceau de cire blanche, marqué d’armoiries.",
+   "en": ""
+  },
+  {
+   "fr": "Une niche pleine",
+   "en": ""
+  },
+  {
+   "fr": "Celle-là, ils l’ont oubliée. Regarde le treillis autour : terni, fêlé, comme du verre trop chauffé. Ce n’est pas le cristal qui s’abîme. C’est son lit.",
+   "en": ""
+  },
+  {
+   "fr": "Une seule niche est encore pleine. Autour d’elle, le treillis est terni et fêlé.",
+   "en": ""
+  },
+  {
+   "fr": "Un outil propre",
+   "en": ""
+  },
+  {
+   "fr": "Le sceau de la Compagnie des Fondations. J’ai signé chez eux en 2094. On nous disait qu’on montait des îles. On ne nous disait pas avec quoi.",
+   "en": ""
+  },
+  {
+   "fr": "Une pince de prélèvement, neuve, frappée au sceau de la Compagnie des Fondations. Rien à voir avec nos outils de fouille.",
+   "en": ""
+  },
+  {
+   "fr": "Une pince de prélèvement neuve, frappée au sceau de la Compagnie des Fondations.",
+   "en": ""
+  },
+  {
+   "fr": "Laisser dormir le cristal",
+   "en": ""
+  },
+  {
+   "fr": "Tu ne touches pas à la dernière niche. En partant, tu sens le treillis se détendre, comme un merci. Un Éclat luit au bord de la niche.",
+   "en": ""
+  },
+  {
+   "fr": "Garder la pince comme preuve",
+   "en": ""
+  },
+  {
+   "fr": "La pince frappée au sceau de la Compagnie rejoint ton sac : une preuve, et qui vaut cher. Sur le manche, un numéro de lot. La caisse d’où elle vient est plus bas.",
+   "en": ""
+  },
+  {
+   "fr": "Les Berceaux du Treillis ont été vidés sous les sceaux des Orsève, avec les pinces de la Compagnie des Fondations. Et ce qui s’use, ce n’est pas le cristal : c’est le lit qui le garde.",
+   "en": ""
+  },
+  {
+   "fr": "Le campement blanc",
+   "en": ""
+  },
+  {
+   "fr": "Un campement propre : tentes blanches, caisses scellées, une table pliante. Les gens des Hauts sont venus, ont travaillé, et sont repartis.",
+   "en": ""
+  },
+  {
+   "fr": "Les caisses",
+   "en": ""
+  },
+  {
+   "fr": "Vides. Mais regarde les étiquettes : un numéro par niche. Ils ont tout compté.",
+   "en": ""
+  },
+  {
+   "fr": "Des caisses vides, numérotées une à une.",
+   "en": ""
+  },
+  {
+   "fr": "Un carnet",
+   "en": ""
+  },
+  {
+   "fr": "« Trente-deux prélevés. Aucun refus. » L’écriture de ma mère. Elle a toujours aimé écrire ce mot-là.",
+   "en": ""
+  },
+  {
+   "fr": "« Trente-deux prélevés. Aucun refus. » L’écriture de ma tante. Les Berceaux ne refusent jamais.",
+   "en": ""
+  },
+  {
+   "fr": "Un carnet : « Trente-deux prélevés. Aucun refus. » Signé : I. O.",
+   "en": ""
+  },
+  {
+   "fr": "Un sismographe",
+   "en": ""
+  },
+  {
+   "fr": "Un sismographe de poche, abandonné en marche. La courbe monte depuis trois ans. Chaque bond tombe à une date du carnet : un prélèvement, une secousse.",
+   "en": ""
+  },
+  {
+   "fr": "La courbe monte à chaque date du carnet. Ils savaient que le treillis tremblait un peu plus à chaque fois. Ils ont continué.",
+   "en": ""
+  },
+  {
+   "fr": "Un sismographe abandonné : la courbe bondit à chaque date notée dans le carnet.",
+   "en": ""
+  },
+  {
+   "fr": "Garder le carnet",
+   "en": ""
+  },
+  {
+   "fr": "Le carnet rejoindra les Veilleurs. Entre deux pages, un Éclat taillé que quelqu’un avait mis de côté pour soi.",
+   "en": ""
+  },
+  {
+   "fr": "Lire le sismographe",
+   "en": ""
+  },
+  {
+   "fr": "Tu déroules toute la bande. Chaque secousse suit un prélèvement, puis retombe, comme un cri. Le treillis ne tremble pas : il proteste. La dernière secousse vient d’une salle plus bas. Les piquets des Hauts, eux, repartent au district.",
+   "en": ""
+  },
+  {
+   "fr": "Les Hauts prélèvent les Berceaux en connaissant le prix : à chaque prélèvement, le treillis tremble un peu plus. Le carnet est signé « I. O. ».",
+   "en": ""
+  },
+  {
+   "fr": "Ce qu’il reste",
+   "en": ""
+  },
+  {
+   "fr": "Au fond du Treillis, les dernières niches pleines se sont rapprochées autour d’une seule, scellée deux fois.",
+   "en": ""
+  },
+  {
+   "fr": "Les niches serrées",
+   "en": ""
+  },
+  {
+   "fr": "La niche qu’on a laissée dormir, là-haut, a rejoint les autres. Elles se sont écartées pour nous laisser passer.",
+   "en": ""
+  },
+  {
+   "fr": "Elles se sont rangées autour de 5-1, comme une garde. Personne d’autre ne les protège.",
+   "en": ""
+  },
+  {
+   "fr": "Les dernières niches se sont rapprochées autour de la niche 5-1, comme une garde.",
+   "en": ""
+  },
+  {
+   "fr": "Le sceau de 5-1",
+   "en": ""
+  },
+  {
+   "fr": "Deux cires, l’une sur l’autre. Celle du dessus est datée de 2108, l’année où ma tante a pris la tête de la Maison. Qu’est-ce qu’elle avait peur de voir ?",
+   "en": ""
+  },
+  {
+   "fr": "2108. L’année où ma mère a pris la Maison. Un an avant de m’effacer.",
+   "en": ""
+  },
+  {
+   "fr": "Deux sceaux de cire blanche, l’un sur l’autre. Le plus récent est daté de 2108.",
+   "en": ""
+  },
+  {
+   "fr": "« Premier relevé du fondateur. Ne pas ouvrir. Ne pas comparer. » De l’or : une seule copie depuis l’original. Ne pas comparer à quoi ? À celle que porte Isaure, je suppose.",
+   "en": ""
+  },
+  {
+   "fr": "Une étiquette sous la cire : « Premier relevé du fondateur. Ne pas ouvrir. Ne pas comparer. »",
+   "en": ""
+  },
+  {
+   "fr": "Ouvrir la niche 5-1",
+   "en": ""
+  },
+  {
+   "fr": "La niche s’ouvre sans un bruit. Le premier relevé du fondateur dort là, net, presque sans fêlure. Même endormi, on sent ce qu’il veut : protéger les siens. Pas les enfermer. Un Éclat roule du sceau brisé.",
+   "en": ""
+  },
+  {
+   "fr": "Relever le sceau",
+   "en": ""
+  },
+  {
+   "fr": "Tu relèves les deux cires, dates comprises. Les Veilleurs sauront quoi en faire. Au pied de la niche, du matériel de prélèvement abandonné.",
+   "en": ""
+  },
+  {
+   "fr": "Dans la niche 5-1 dort le premier relevé de l’empreinte du fondateur des Orsève, à une seule copie de l’original. Le sceau qui interdit de le comparer aux copies suivantes date de 2108, l’année où Isaure a pris la Maison.",
+   "en": ""
+  },
+  {
+   "fr": "La colonne « équipe »",
+   "en": ""
+  },
+  {
+   "fr": "Le carnet d’Isaure a une colonne « équipe » : des Génés muées sous contrat avec la Compagnie des Fondations, renouvelées chaque mois. Ce qu’on croyait fini avec la Grève des pompes ne s’est jamais arrêté.",
+   "en": ""
+  },
+  {
+   "fr": "Il y a une colonne « équipe ». Six muées sous contrat, Compagnie des Fondations, renouvelées tous les mois. Mes parents ont signé ce genre de contrat en 2090. Au district, on croit que ça s’est arrêté avec la Grève.",
+   "en": ""
+  },
+  {
+   "fr": "La colonne « équipe » : des Génés muées sous contrat, comme moi en 2094. Des noms qui changent chaque mois. On ne garde pas longtemps une équipe qui travaille sous l’eau.",
+   "en": ""
+  },
+  {
+   "fr": "Une colonne du carnet : « équipe : six muées sous contrat, Compagnie des Fondations ». Les noms changent chaque mois.",
+   "en": ""
+  },
+  {
+   "fr": "La hâte",
+   "en": ""
+  },
+  {
+   "fr": "Les niches du Treillis sont scellées d’une main sûre en bas, d’une main qui tremble en haut. Ceux qui l’ont rempli ont fini dans la hâte.",
+   "en": ""
+  },
+  {
+   "fr": "Les sceaux du bas sont posés au millimètre. Ceux du haut débordent, tremblent, se chevauchent. On a rempli le haut vite, à la fin, comme on boucle ses sacs quand il est trop tard.",
+   "en": ""
+  },
+  {
+   "fr": "Les voix du haut ont été rangées dans la hâte. Ceux qui les ont scellées avaient peur de ne pas finir.",
+   "en": ""
+  },
+  {
+   "fr": "Les niches du bas sont scellées d’une main sûre ; celles du haut d’une main qui tremble, en débordant : on les a remplies vite, à la fin.",
+   "en": ""
+  },
+  {
+   "fr": "Le chantier",
+   "en": ""
+  },
+  {
+   "fr": "Le chantier de 2066, laissé en plan : bétonnière, étais, une radio. Tout a été abandonné en une nuit.",
+   "en": ""
+  },
+  {
+   "fr": "La radio",
+   "en": ""
+  },
+  {
+   "fr": "Encore réglée sur la fréquence du chantier. Si je la répare, on entendra leur dernière conversation.",
+   "en": ""
+  },
+  {
+   "fr": "Une radio de chantier, encore réglée sur sa fréquence.",
+   "en": ""
+  },
+  {
+   "fr": "Le casque",
+   "en": ""
+  },
+  {
+   "fr": "Le numéro de mon père. Il ne laissait jamais son casque. Ce soir-là, il a laissé son casque, et il a ramassé un cristal.",
+   "en": ""
+  },
+  {
+   "fr": "Le numéro de mon père. Il l’a laissé ici. Il ne laissait jamais son casque.",
+   "en": ""
+  },
+  {
+   "fr": "Un casque de chantier posé sur une caisse, avec un numéro.",
+   "en": ""
+  },
+  {
+   "fr": "Le planning",
+   "en": ""
+  },
+  {
+   "fr": "L’ordre disait dix centimètres. Ils en ont coulé quarante, en une nuit, sans que personne le leur demande. Ce n’est pas un éboulement qui leur faisait peur. C’est ce qui pleurait.",
+   "en": ""
+  },
+  {
+   "fr": "Sur l’ordre de service : un mur de dix centimètres. Celui qu’on a coulé en fait quarante.",
+   "en": ""
+  },
+  {
+   "fr": "Réparer la radio",
+   "en": ""
+  },
+  {
+   "fr": "« … on coule, on coule, il pleure… Attends. Tu entends ? Il ferme aussi. De son côté. » La voix se tait. Dans le boîtier, un Éclat servait de pile.",
+   "en": ""
+  },
+  {
+   "fr": "Prendre le casque",
+   "en": ""
+  },
+  {
+   "fr": "Le casque rejoint le sac de l’escouade. Personne ne dit rien pendant longtemps. Le chantier abandonné rend quelques outils.",
+   "en": ""
+  },
+  {
+   "fr": "En 2066, les ouvriers ont coulé un mur quatre fois plus épais que prévu, en une seule nuit. Et de l’autre côté, quelqu’un fermait aussi.",
+   "en": ""
+  },
+  {
+   "fr": "Les pleurs",
+   "en": ""
+  },
+  {
+   "fr": "Plus près du mur, les pleurs. Il n’y a personne. Ils viennent du béton lui-même. Et entre deux sanglots, un petit bruit sec.",
+   "en": ""
+  },
+  {
+   "fr": "Quelqu’un pleure parce qu’il ne sait plus qui il est. Ce n’est pas de la tristesse. C’est de la peur.",
+   "en": ""
+  },
+  {
+   "fr": "Des pleurs étouffés, qui semblent venir du mur lui-même.",
+   "en": ""
+  },
+  {
+   "fr": "Le bruit sec",
+   "en": ""
+  },
+  {
+   "fr": "Un loquet. Il le tire encore, toutes les quelques minutes, comme on vérifie qu’on a bien fermé. Mon père a entendu ce bruit-là.",
+   "en": ""
+  },
+  {
+   "fr": "Un loquet qu’on tire, de l’autre côté, toutes les quelques minutes. Comme on vérifie qu’on a bien fermé.",
+   "en": ""
+  },
+  {
+   "fr": "Ce qui a dérivé",
+   "en": ""
+  },
+  {
+   "fr": "Le relevé de 5-1 voulait protéger les siens. La copie de ma tante veut les enfermer. Deux copies de plus ont suffi. Ce n’est pas le fondateur qui nous a rendus durs : ce sont ses copies.",
+   "en": ""
+  },
+  {
+   "fr": "Ma mère m’a effacée sans hésiter une seconde. Ici, au milieu de voix qui ne savent plus qui elles sont, je me demande pour la première fois si c’était seulement elle.",
+   "en": ""
+  },
+  {
+   "fr": "Mon empreinte a été recopiée trois fois avant moi. Ici, j’entends ce que ça fait, une voix qui ne sait plus d’où elle vient.",
+   "en": ""
+  },
+  {
+   "fr": "Les pleurs changent de ton, sans cesse, comme plusieurs voix qui se disputent une seule gorge.",
+   "en": ""
+  },
+  {
+   "fr": "Poser la main contre le mur",
+   "en": ""
+  },
+  {
+   "fr": "Tu poses la main sur le béton. Les pleurs se calment, un instant. De l’autre côté, le loquet ne bouge plus. Doran, tout bas : « Mon père n’a enfermé personne. Il a répondu à quelqu’un qui fermait sa porte. » Un Éclat suinte du béton.",
+   "en": ""
+  },
+  {
+   "fr": "Lire les noms sur les étais",
+   "en": ""
+  },
+  {
+   "fr": "Sur les étais, quatre noms au marqueur et une date : 14 octobre 2066. Personne ne leur a demandé de signer. Ils ont signé quand même. Il en manque deux, de l’équipe descendue ce soir-là. Le chef de chantier a laissé sa caisse un peu plus loin.",
+   "en": ""
+  },
+  {
+   "fr": "Derrière le mur, on tire encore un loquet, comme en 2066. Et l’empreinte du fondateur des Orsève a dérivé de copie en copie.",
+   "en": ""
+  },
+  {
+   "fr": "La fissure",
+   "en": ""
+  },
+  {
+   "fr": "Le mur de 2066 est fendu de haut en bas. La fissure est récente. Quelque chose pousse de l’autre côté.",
+   "en": ""
+  },
+  {
+   "fr": "La radio disait : « Il ferme aussi, de son côté. » Regarde d’où part la fissure : du loquet. Il essaie d’ouvrir ce qu’il a fermé.",
+   "en": ""
+  },
+  {
+   "fr": "Ce n’est pas le béton qui cède. C’est quelque chose qui le travaille de l’intérieur, depuis des années.",
+   "en": ""
+  },
+  {
+   "fr": "Une fissure de haut en bas, récente.",
+   "en": ""
+  },
+  {
+   "fr": "Le cercle",
+   "en": ""
+  },
+  {
+   "fr": "Des dizaines de cristaux d’un même être, rangés en cercle. Chacun se souvient d’une autre vie. Et il y a une place vide dans le cercle.",
+   "en": ""
+  },
+  {
+   "fr": "Par la fissure, des cristaux rangés en cercle. Une place est vide.",
+   "en": ""
+  },
+  {
+   "fr": "La poche de Doran",
+   "en": ""
+  },
+  {
+   "fr": "Le porte-bonheur de mon père chauffe dans ma poche. Sa place est là, dans le cercle. Je l’ai promis.",
+   "en": ""
+  },
+  {
+   "fr": "Le porte-bonheur de mon père chauffe dans ma poche. Il veut rentrer. Je ne sais pas si j’ai le droit de le rendre, ou celui de le garder.",
+   "en": ""
+  },
+  {
+   "fr": "Dans le cercle, la place vide a la taille d’un petit cristal.",
+   "en": ""
+  },
+  {
+   "fr": "Rendre le cristal de 2066",
+   "en": ""
+  },
+  {
+   "fr": "Le cristal roule par la fissure jusqu’à sa place. Les pleurs ne s’arrêtent pas. Mais l’une des voix se tait, comme quelqu’un qui retrouve enfin la fin de sa phrase. Un Éclat tombe de la fissure.",
+   "en": ""
+  },
+  {
+   "fr": "Le garder",
+   "en": ""
+  },
+  {
+   "fr": "Le cristal reste dans la poche de Doran : « Mon père l’a gardé toute sa vie. Je le garde encore un peu. » La place reste vide. L’escouade dégage les étais pour la percée.",
+   "en": ""
+  },
+  {
+   "fr": "Derrière le mur, des dizaines de cristaux d’un même être, rangés en cercle. Une place était vide : celle du porte-bonheur du père de Doran.",
+   "en": ""
+  },
+  {
+   "fr": "Ivens et Daro",
+   "en": ""
+  },
+  {
+   "fr": "Six sont descendus en 2066, quatre ont coulé le mur. Ivens et Daro étaient déjà de l’autre côté, et le rapport des Fondations dit « aucune victime ». Fermer le mur, c’était aussi les laisser derrière.",
+   "en": ""
+  },
+  {
+   "fr": "Le planning de la nuit : six descendus, quatre pour couler le mur. Ivens et Daro étaient passés de l’autre côté avant qu’on coule. On a coulé quand même. Le rapport des Fondations dit « infiltration, aucune victime ». Mon père, lui, n’a jamais barré son nom.",
+   "en": ""
+  },
+  {
+   "fr": "Six descendus, quatre au mur. Ivens et Daro manquent au rapport : « aucune victime », il dit. Au district, on a appris à lire ce genre de phrase.",
+   "en": ""
+  },
+  {
+   "fr": "Sur le planning de la nuit : six noms descendus, quatre au mur. Ivens et Daro ne figurent pas au rapport officiel : « infiltration, aucune victime ».",
+   "en": ""
+  },
+  {
+   "fr": "Toutes ses copies",
+   "en": ""
+  },
+  {
+   "fr": "Derrière le mur de 2066, un seul être s’est enfermé avec toutes ses copies, pour qu’aucune ne reparte sans les autres. Ce qu’on prend pour une prison est un refus d’être recopié.",
+   "en": ""
+  },
+  {
+   "fr": "Ces pleurs, ce sont les mêmes voix, recopiées des dizaines de fois. Un seul être, et toutes ses copies. Il s’est enfermé avec elles, pour qu’aucune ne reparte sans les autres. Ce n’est pas une prison. C’est un refus.",
+   "en": ""
+  },
+  {
+   "fr": "Les cristaux du cercle ont tous le même grain : des copies d’une même pierre. Il a fermé sur toutes ses copies à la fois.",
+   "en": ""
+  },
+  {
+   "fr": "Par la fissure, les cristaux du cercle ont tous le même grain : les copies d’un seul être, rangées ensemble derrière le loquet.",
+   "en": ""
+  },
+  {
+   "fr": "Les deux passerelles",
+   "en": ""
+  },
+  {
+   "fr": "Deux passerelles franchissent le même gouffre, côte à côte. L’une est neuve, l’autre a cédé. Les deux existent en même temps.",
+   "en": ""
+  },
+  {
+   "fr": "La passerelle cassée",
+   "en": ""
+  },
+  {
+   "fr": "On dirait celle des Hauts-Ponts. Celle qui a cédé sous moi. Elle n’a rien à faire ici, et pourtant.",
+   "en": ""
+  },
+  {
+   "fr": "Une passerelle cassée en son milieu, rouillée.",
+   "en": ""
+  },
+  {
+   "fr": "La passerelle neuve",
+   "en": ""
+  },
+  {
+   "fr": "Et celle-là ressemble à celle qui n’aurait jamais cédé. Celle où j’ai encore mes jambes. Je ne veux pas la regarder.",
+   "en": ""
+  },
+  {
+   "fr": "Une passerelle neuve, intacte, juste à côté de l’autre.",
+   "en": ""
+  },
+  {
+   "fr": "Deux cristaux",
+   "en": ""
+  },
+  {
+   "fr": "Deux cristaux du même être, au bord du gouffre. L’un se souvient d’avoir bâti cette passerelle. L’autre, de l’avoir vue tomber. Les deux sont sincères.",
+   "en": ""
+  },
+  {
+   "fr": "Deux cristaux identiques, posés de part et d’autre du gouffre.",
+   "en": ""
+  },
+  {
+   "fr": "Prendre la passerelle cassée",
+   "en": ""
+  },
+  {
+   "fr": "Vous traversez par la vraie, en sautant le trou. De l’autre côté, un Éclat, là où la passerelle neuve aurait dû arriver.",
+   "en": ""
+  },
+  {
+   "fr": "Prendre la passerelle neuve",
+   "en": ""
+  },
+  {
+   "fr": "La passerelle neuve tient, bien sûr. Au bout, une lanterne qui n’existe que dans ce souvenir. Elle éclaire quand même.",
+   "en": ""
+  },
+  {
+   "fr": "À −7, deux souvenirs vrais peuvent se contredire. Un même être se souvient d’avoir bâti une passerelle, et de l’avoir vue tomber.",
+   "en": ""
+  },
+  {
+   "fr": "Ceux qui regravaient",
+   "en": ""
+  },
+  {
+   "fr": "Un mur entier couvert de lignes d’eau, gravées l’une au-dessus de l’autre. Pas un mot sous aucune d’elles.",
+   "en": ""
+  },
+  {
+   "fr": "La plus basse",
+   "en": ""
+  },
+  {
+   "fr": "Gravée profond, à coups lents. On grave comme ça ce qu’on croit définitif.",
+   "en": ""
+  },
+  {
+   "fr": "La ligne la plus basse est gravée profond, d’un trait appliqué.",
+   "en": ""
+  },
+  {
+   "fr": "Les écarts",
+   "en": ""
+  },
+  {
+   "fr": "Entre les lignes : une main, une main, deux, quatre. Ça accélère.",
+   "en": ""
+  },
+  {
+   "fr": "Une main d’écart, puis une main, puis deux, puis quatre. Ça ne monte pas. Ça accélère.",
+   "en": ""
+  },
+  {
+   "fr": "Les écarts entre les lignes grandissent : une main, une main, deux, quatre.",
+   "en": ""
+  },
+  {
+   "fr": "La plus haute",
+   "en": ""
+  },
+  {
+   "fr": "La dernière n’est qu’une rayure, faite au bout du bras, sur la pointe des pieds.",
+   "en": ""
+  },
+  {
+   "fr": "La dernière, c’est à peine une rayure. Faite à bout de bras, vite.",
+   "en": ""
+  },
+  {
+   "fr": "La ligne la plus haute n’est qu’une rayure, tracée à bout de bras.",
+   "en": ""
+  },
+  {
+   "fr": "Graver une ligne",
+   "en": ""
+  },
+  {
+   "fr": "Tu graves une ligne au-dessus de toutes les autres, profond, à coups lents. Un Éclat se décroche du mur.",
+   "en": ""
+  },
+  {
+   "fr": "Mesurer les écarts",
+   "en": ""
+  },
+  {
+   "fr": "Une main, une main, deux, quatre. Tu fais le calcul que ceux d’avant ont dû faire : la suivante serait à huit mains, au-dessus de la voûte. Personne ne l’a gravée. Les Veilleurs paieront bien ton relevé.",
+   "en": ""
+  },
+  {
+   "fr": "Sur un mur de −7, des lignes d’eau gravées l’une au-dessus de l’autre. Les écarts grandissent : une main, une main, deux, quatre. La dernière n’est qu’une rayure.",
+   "en": ""
+  },
+  {
+   "fr": "Le relevé impossible",
+   "en": ""
+  },
+  {
+   "fr": "Les deux passerelles se rejoignent sur une même pile. Une seule ligne d’eau en fait le tour, d’un seul trait.",
+   "en": ""
+  },
+  {
+   "fr": "Depuis la rive neuve",
+   "en": ""
+  },
+  {
+   "fr": "1,40 m au-dessus du tablier. Mesurée trois fois.",
+   "en": ""
+  },
+  {
+   "fr": "D’ici, la ligne est à 1,40 m du tablier. J’ai mesuré trois fois.",
+   "en": ""
+  },
+  {
+   "fr": "Depuis la rive neuve, la ligne passe à 1,40 m du tablier.",
+   "en": ""
+  },
+  {
+   "fr": "Depuis la rive cassée",
+   "en": ""
+  },
+  {
+   "fr": "D’ici, la même ligne est à 2,60 m. Même trait, même pile. Ton mètre ne ment pas. Le mien non plus.",
+   "en": ""
+  },
+  {
+   "fr": "Depuis la rive cassée, la même ligne passe à 2,60 m.",
+   "en": ""
+  },
+  {
+   "fr": "Les fils",
+   "en": ""
+  },
+  {
+   "fr": "Des fils dans la pierre. Quelqu’un a cousu deux murs en un. Les deux sont vrais. C’est la Tisseuse.",
+   "en": ""
+  },
+  {
+   "fr": "Des fils fins comme des cheveux courent dans la pierre, à l’endroit où les deux rives se rejoignent.",
+   "en": ""
+  },
+  {
+   "fr": "Garder les deux relevés",
+   "en": ""
+  },
+  {
+   "fr": "Tu notes les deux chiffres, sans en barrer aucun. Au pied de la pile, un Éclat t’attendait.",
+   "en": ""
+  },
+  {
+   "fr": "Couper un fil",
+   "en": ""
+  },
+  {
+   "fr": "Tu coupes un fil. Les deux murs se séparent un instant, et une lumière passe entre eux, jusqu’aux salles suivantes.",
+   "en": ""
+  },
+  {
+   "fr": "À −7, la même ligne d’eau mesure 1,40 m d’une rive et 2,60 m de l’autre. Les deux relevés sont justes. Un mur entier ne dit pas où l’eau s’est arrêtée.",
+   "en": ""
+  },
+  {
+   "fr": "Graver une ligne, c’est écrire ce qui est arrivé. Dans les Archives, la passerelle des Hauts-Ponts n’a jamais cédé : « remplacée, conforme », signé par l’inspecteur du district pour ne pas arrêter l’extraction. Une archive complète peut garder la passerelle neuve.",
+   "en": ""
+  },
+  {
+   "fr": "Tu viens de graver une ligne vraie. La mienne, on l’a effacée. Dans tes Archives, après les trois fiches « non prioritaire », il y en a une quatrième : « remplacée, conforme ». Signée par l’inspecteur de mon district. Une passerelle qui tombe, ça arrête l’extraction des mois. Sur le papier, il a gardé la neuve. Moi, je n’ai plus mes jambes.",
+   "en": ""
+  },
+  {
+   "fr": "Ta ligne gravée rappelle les fiches de la passerelle des Hauts-Ponts, dans tes Archives : trois signalements « non prioritaire », puis une quatrième fiche, « remplacée, conforme », signée par l’inspecteur du district. Sur le papier, la chute n’existe pas.",
+   "en": ""
+  },
+  {
+   "fr": "Ce que la copie invente",
+   "en": ""
+  },
+  {
+   "fr": "À −7, deux cristaux d’un même être ne se souviennent pas de la même chose : l’un est une copie, qui a inventé ce qu’elle avait perdu. Un souvenir sincère n’est pas un souvenir vrai.",
+   "en": ""
+  },
+  {
+   "fr": "Le cristal qui se souvient de la passerelle neuve est une copie. Une copie perd un peu, et elle invente pour boucher le trou. Elle ne ment pas, elle y croit. Les deux souvenirs sont sincères, et un seul est arrivé.",
+   "en": ""
+  },
+  {
+   "fr": "L’un des deux cristaux a le grain plus fin, l’éclat plus net : l’original. L’autre est une copie. Et c’est la copie qui se souvient de la passerelle neuve.",
+   "en": ""
+  },
+  {
+   "fr": "Le campement des Veilleurs",
+   "en": ""
+  },
+  {
+   "fr": "Les Veilleurs de Tobin, perdus ici, ont planté leur campement dans les trous d’un plus ancien : celui de l’équipe dont une seule fouilleuse est remontée, il y a des années.",
+   "en": ""
+  },
+  {
+   "fr": "Les piquets",
+   "en": ""
+  },
+  {
+   "fr": "Deux rangées de trous. Les neufs sont tombés pile dans les vieux. Personne ne leur avait donné le plan.",
+   "en": ""
+  },
+  {
+   "fr": "Leurs piquets sont plantés dans les trous de l’ancien camp. Exactement dans les mêmes.",
+   "en": ""
+  },
+  {
+   "fr": "Les piquets neufs sont plantés pile dans les trous d’un campement plus ancien.",
+   "en": ""
+  },
+  {
+   "fr": "Deux relevés",
+   "en": ""
+  },
+  {
+   "fr": "La même table, relevée par les deux équipes. Les anciens comptent quatorze lignes, les nouveaux onze. Signé, contresigné.",
+   "en": ""
+  },
+  {
+   "fr": "Deux relevés de la même table. Quatorze lignes pour les anciens, onze pour les nouveaux. Il en manque trois.",
+   "en": ""
+  },
+  {
+   "fr": "Deux relevés de la même table, à des années d’écart : quatorze lignes, puis onze.",
+   "en": ""
+  },
+  {
+   "fr": "L’ambre suinte des murs. Il sent le miel et la cire. Mes parents parlaient de cette odeur, et de la glande qu’on leur a donnée pour le produire.",
+   "en": ""
+  },
+  {
+   "fr": "De l’ambre suinte des murs, épais, doré.",
+   "en": ""
+  },
+  {
+   "fr": "Rallumer leurs lampes",
+   "en": ""
+  },
+  {
+   "fr": "Tu rallumes une à une les lampes des Veilleurs. Si l’un d’eux se réveille, il verra qu’on est venu. Tu en gardes une pour la route.",
+   "en": ""
+  },
+  {
+   "fr": "Emporter les relevés",
+   "en": ""
+  },
+  {
+   "fr": "Les deux relevés remonteront chez les Veilleurs. Glissé dans une reliure, un Éclat qu’un Veilleur gardait pour lui.",
+   "en": ""
+  },
+  {
+   "fr": "Les Veilleurs perdus ont campé dans les trous d’un campement plus ancien. Les deux équipes ont relevé la même table : quatorze lignes pour l’une, onze pour l’autre.",
+   "en": ""
+  },
+  {
+   "fr": "La table de la Ruche",
+   "en": ""
+  },
+  {
+   "fr": "Une table gravée, à demi prise dans l’ambre. Il manque un morceau, cassé net : celui que la fouilleuse remontée autrefois tenait dans la main.",
+   "en": ""
+  },
+  {
+   "fr": "La cassure",
+   "en": ""
+  },
+  {
+   "fr": "Le morceau qui manque fait trois lignes : une seule phrase, gravée en trois fois. Les trois lignes qui manquent au relevé des nouveaux. La fouilleuse les a emportées.",
+   "en": ""
+  },
+  {
+   "fr": "Il manque un morceau de la table, cassé net : la place de trois lignes.",
+   "en": ""
+  },
+  {
+   "fr": "À −4 : un nom, puis le nombre de voix. Ici, plus de nom. Juste l’empreinte, et combien de fois on l’a recopiée : 40, 112, 300. Ils recopiaient des copies.",
+   "en": ""
+  },
+  {
+   "fr": "Pas de colonne des noms. Juste des empreintes, et à côté de chacune, combien de fois elle a été recopiée. Trois cents, pour certaines.",
+   "en": ""
+  },
+  {
+   "fr": "La table n’a pas de colonne des noms : des empreintes, et un chiffre à côté de chacune, parfois trois cents.",
+   "en": ""
+  },
+  {
+   "fr": "Regarde le trait. Les tables de −4 sont gravées d’une main sûre. Celle-ci tremble, recommence, rature. Quelqu’un qui ne savait plus bien graver a essayé quand même.",
+   "en": ""
+  },
+  {
+   "fr": "Ça tremble, ça rature, ça recommence. On dirait mon frère qui recopie ses devoirs sur ceux d’un autre.",
+   "en": ""
+  },
+  {
+   "fr": "Le trait est maladroit, raturé, repris : rien à voir avec les tables de −4.",
+   "en": ""
+  },
+  {
+   "fr": "Tu relèves la table au fusain, ratures comprises. Les Veilleurs la poseront à côté de celle de −4. Un Éclat reste dans ta paume quand tu touches la cassure.",
+   "en": ""
+  },
+  {
+   "fr": "Suivre la fouilleuse",
+   "en": ""
+  },
+  {
+   "fr": "Dans l’ambre, la trace d’une main qui a cassé la table, puis des pas qui remontent, seuls. Elle n’a pas fui : elle est partie chercher de l’aide. Sous un piquet, son sac, et de l’ambre qui se revendra bien.",
+   "en": ""
+  },
+  {
+   "fr": "À −8, les tables n’ont plus de colonne des noms : seulement des empreintes, recopiées des centaines de fois, d’une main qui ne savait plus graver.",
+   "en": ""
+  },
+  {
+   "fr": "Le souvenir heureux",
+   "en": ""
+  },
+  {
+   "fr": "Au cœur de la Ruche, les Veilleurs perdus sont assis en cercle et sourient. Ils fêtent quelque chose qui n’a jamais eu lieu.",
+   "en": ""
+  },
+  {
+   "fr": "Six Veilleurs de Tobin, et sept verres. Ce n’est pas leur fête : c’est celle de l’ancienne équipe, cousue dans leur rêve. Le septième verre attend la fouilleuse d’autrefois.",
+   "en": ""
+  },
+  {
+   "fr": "Six Veilleurs, et sept verres. Il y en a un pour quelqu’un qui n’est pas là.",
+   "en": ""
+  },
+  {
+   "fr": "Six Veilleurs assis en cercle. Sept verres.",
+   "en": ""
+  },
+  {
+   "fr": "La fête",
+   "en": ""
+  },
+  {
+   "fr": "Ils fêtent la fin de la montée des eaux. Un truc qui n’est jamais arrivé. C’est cruel.",
+   "en": ""
+  },
+  {
+   "fr": "Ils lèvent leurs verres à une fête qui n’a jamais eu lieu.",
+   "en": ""
+  },
+  {
+   "fr": "Un fil",
+   "en": ""
+  },
+  {
+   "fr": "Un fil d’ambre les relie tous à quelque chose, plus bas. La Tisseuse. On coupe le fil, ou on la bat.",
+   "en": ""
+  },
+  {
+   "fr": "Un fil doré relie chacun d’eux à quelque chose, plus bas.",
+   "en": ""
+  },
+  {
+   "fr": "Leur rappeler un vrai détail",
+   "en": ""
+  },
+  {
+   "fr": "Tu dis le nom de Tobin, et le prix du pain au marché. Un Veilleur cligne des yeux. Le souvenir tremble. Un Éclat tombe de son verre.",
+   "en": ""
+  },
+  {
+   "fr": "Suivre leur fil d’ambre",
+   "en": ""
+  },
+  {
+   "fr": "Tu ne les réveilles pas. Tu suis le fil qui les relie, sans le couper. Il descend, tendu, vers la Tisseuse, et passe par une salle où elle a rangé leurs sacs.",
+   "en": ""
+  },
+  {
+   "fr": "Dans le souvenir heureux des Veilleurs, il y a sept verres pour six. Le septième attend la fouilleuse qui est remontée autrefois, avec un morceau de la table.",
+   "en": ""
+  },
+  {
+   "fr": "Le septième verre",
+   "en": ""
+  },
+  {
+   "fr": "La fouilleuse de la Ruche voulait redescendre chercher les siens ; Hessa a mis son éclat sous clé et refusé l’équipe. En bas, l’ancienne équipe l’a attendue jusqu’au bout, et la Tisseuse a gardé cette attente.",
+   "en": ""
+  },
+  {
+   "fr": "Tobin me l’a dit en route. Elle est remontée avec l’éclat et elle a demandé une équipe pour redescendre. Hessa, la Doyenne, a refusé : plus personne ne devait mourir pour une table. En bas, les siens l’ont attendue jusqu’au bout. La Tisseuse a cousu cette attente dans le rêve des nouveaux.",
+   "en": ""
+  },
+  {
+   "fr": "Elle a dû demander qu’on redescende, encore et encore. On lui a dit non, pour son bien. Ceux d’en bas, personne ne leur a rien dit.",
+   "en": ""
+  },
+  {
+   "fr": "Le septième verre est plein. La fouilleuse n’est jamais redescendue : en haut, la Doyenne des Veilleurs a refusé de risquer une autre équipe. En bas, l’ancienne équipe l’a attendue.",
+   "en": ""
+  },
+  {
+   "fr": "Les copistes",
+   "en": ""
+  },
+  {
+   "fr": "Les tables maladroites de −8 sont les plus récentes : leurs auteurs sont redescendus d’en haut, bien après, pour s’y recopier les grandes voix. Les murs les plus vieux portent les gravures les plus fraîches.",
+   "en": ""
+  },
+  {
+   "fr": "Ces tables maladroites ne sont pas plus vieilles que les autres. Elles sont plus récentes. Ceux qui les ont gravées sont redescendus d’en haut pour se recopier les grandes voix.",
+   "en": ""
+  },
+  {
+   "fr": "La pierre est ancienne, la gravure est fraîche. Quelqu’un est venu d’en haut graver ici, bien après les autres.",
+   "en": ""
+  },
+  {
+   "fr": "La pierre des tables est ancienne, mais la gravure maladroite est fraîche : quelqu’un est redescendu d’en haut, bien après, pour graver ici.",
+   "en": ""
+  },
+  {
+   "fr": "Au dos de la lettre",
+   "en": ""
+  },
+  {
+   "fr": "Tu ressors la lettre d’Ysé pour la ranger, et tu vois ce que tu n’avais pas vu : au dos, d’une écriture plus tremblée, un post-scriptum. Derrière toi, tout un mur est gravé d’une côte.",
+   "en": ""
+  },
+  {
+   "fr": "Le post-scriptum",
+   "en": ""
+  },
+  {
+   "fr": "« Celle qui garde les noms des autres a souvent perdu le sien. Écoute-la avant de la combattre. » Elle savait, pour la Tisseuse. Elle a préféré l’écrire au dos.",
+   "en": ""
+  },
+  {
+   "fr": "Au dos, un post-scriptum : « Celle qui garde les noms des autres a souvent perdu le sien. Écoute-la avant de la combattre. »",
+   "en": ""
+  },
+  {
+   "fr": "La côte gravée",
+   "en": ""
+  },
+  {
+   "fr": "Cette côte, je la connais. Je la vois en rêve depuis ma greffe. Je n’y suis jamais allée. Personne n’y est jamais allé.",
+   "en": ""
+  },
+  {
+   "fr": "Une côte. Personne ne l’a jamais vue.",
+   "en": ""
+  },
+  {
+   "fr": "Tout un mur gravé d’une côte inconnue : criques, courants, récifs.",
+   "en": ""
+  },
+  {
+   "fr": "Un fil sur le sol",
+   "en": ""
+  },
+  {
+   "fr": "Ses fils traînent partout, ici. Ils sont usés. Elle les tient depuis trop longtemps.",
+   "en": ""
+  },
+  {
+   "fr": "Des fils usés traînent sur le sol.",
+   "en": ""
+  },
+  {
+   "fr": "Garder la lettre sur toi",
+   "en": ""
+  },
+  {
+   "fr": "Tu ranges la lettre contre toi. Plus loin, un Éclat brille dans un nid de fils : la Tisseuse l’avait gardé pour quelqu’un.",
+   "en": ""
+  },
+  {
+   "fr": "Suivre les fils",
+   "en": ""
+  },
+  {
+   "fr": "Les fils luisent faiblement quand on les suit. Ils éclairent le chemin vers le bas.",
+   "en": ""
+  },
+  {
+   "fr": "À −9, un mur entier montre une côte que personne n’a jamais vue. Véla la voit en rêve depuis sa greffe.",
+   "en": ""
+  },
+  {
+   "fr": "Les visages",
+   "en": ""
+  },
+  {
+   "fr": "Des fils noués autour de petits cristaux, par milliers. Au mur, gravés dans la roche, des dragons, des esprits, des êtres sans nom.",
+   "en": ""
+  },
+  {
+   "fr": "Les dragons",
+   "en": ""
+  },
+  {
+   "fr": "Le même dragon que le mien, gravé dix fois. Le premier est net. Les autres tremblent, de plus en plus. Et le mien… je crois qu’il tremble un peu, lui aussi.",
+   "en": ""
+  },
+  {
+   "fr": "Le même dragon gravé dix fois : net la première fois, puis de plus en plus tremblé.",
+   "en": ""
+  },
+  {
+   "fr": "Un nom, à l’intérieur. Personne ne s’en souvient, sauf elle. Si elle meurt, il meurt avec.",
+   "en": ""
+  },
+  {
+   "fr": "Un nom, là-dedans. Elle est la seule à s’en souvenir. C’est lourd, d’être la seule.",
+   "en": ""
+  },
+  {
+   "fr": "Un petit cristal noué de fil murmure un nom.",
+   "en": ""
+  },
+  {
+   "fr": "Un nœud défait",
+   "en": ""
+  },
+  {
+   "fr": "Un nœud défait, le fil vide. On a donné ce nom à quelqu’un. Chez nous, on grave le nom sous celui du porteur d’avant. Ici, on le donnait.",
+   "en": ""
+  },
+  {
+   "fr": "Un fil vide. Le nom n’est pas perdu : il est parti.",
+   "en": ""
+  },
+  {
+   "fr": "Un seul nœud est défait. Le fil est vide.",
+   "en": ""
+  },
+  {
+   "fr": "Renouer un nom",
+   "en": ""
+  },
+  {
+   "fr": "Tu refais le nœud d’un fil qui glissait. Le nom tient. Quelque part, plus bas, la Tisseuse a senti ta main. Un Éclat attend au bout du fil.",
+   "en": ""
+  },
+  {
+   "fr": "Chercher un nom de chez nous",
+   "en": ""
+  },
+  {
+   "fr": "Tu cherches dans les nœuds un nom de Vertiga. Il y en a : des fouilleurs disparus, des Résonants des bas-fonds sans famille, noués avec les autres. Au pied du mur, le sac de l’un d’eux.",
+   "en": ""
+  },
+  {
+   "fr": "Le même dragon est gravé dix fois : net d’abord, puis de plus en plus tremblé. Plus on le recopie, moins on sait à quoi il ressemblait.",
+   "en": ""
+  },
+  {
+   "fr": "Le nid",
+   "en": ""
+  },
+  {
+   "fr": "La Tisseuse est là, au fond, dans un nid de fils. Elle ne vous attaque pas encore. Ses mains tremblent.",
+   "en": ""
+  },
+  {
+   "fr": "Ses mains",
+   "en": ""
+  },
+  {
+   "fr": "Elle tient tous ses fils, mais elle tremble. Elle est fatiguée. Elle a peur de lâcher.",
+   "en": ""
+  },
+  {
+   "fr": "Ses mains tremblent, et ses fils avec.",
+   "en": ""
+  },
+  {
+   "fr": "Ses yeux",
+   "en": ""
+  },
+  {
+   "fr": "Elle sait que tu as renoué un de ses fils. Elle te regarde comme on regarde quelqu’un qui a rendu service.",
+   "en": ""
+  },
+  {
+   "fr": "Elle nous regarde comme on regarde quelqu’un qu’on attendait depuis très longtemps.",
+   "en": ""
+  },
+  {
+   "fr": "Elle vous regarde, sans colère.",
+   "en": ""
+  },
+  {
+   "fr": "La lettre",
+   "en": ""
+  },
+  {
+   "fr": "Tu as gardé la lettre. Demande-lui, maintenant.",
+   "en": ""
+  },
+  {
+   "fr": "Une fois, on demande. Si elle répond par des coups, on répond pareil.",
+   "en": ""
+  },
+  {
+   "fr": "La lettre d’Ysé, dans ta poche, pèse lourd.",
+   "en": ""
+  },
+  {
+   "fr": "Lui demander son nom",
+   "en": ""
+  },
+  {
+   "fr": "Elle ne répond pas. Pas encore. Mais elle sourit, et un Éclat roule jusqu’à tes pieds.",
+   "en": ""
+  },
+  {
+   "fr": "Lui parler des fouilleurs",
+   "en": ""
+  },
+  {
+   "fr": "Tu lui dis que là-haut, quelqu’un attend encore certains de ces noms. Elle desserre un nœud, et pousse vers toi un vieux sac de fouilleur, comme on rend un objet trouvé.",
+   "en": ""
+  },
+  {
+   "fr": "La Tisseuse tient tous les noms que les tables gravées ont perdus. Elle est fatiguée, et elle a peur de lâcher.",
+   "en": ""
+  },
+  {
+   "fr": "Les effacés",
+   "en": ""
+  },
+  {
+   "fr": "Dans les fils de la Tisseuse, des noms de Vertiga que nos registres ont effacés, dont Ivens et Daro, de l’équipe de 2066. Elle les a noués avec autant de soin que les siens.",
+   "en": ""
+  },
+  {
+   "fr": "Deux nœuds portent des noms de chez nous. Ivens. Daro. L’équipe de mon père, 2066. La ville les a effacés de ses registres. Elle, elle les a noués avec les siens.",
+   "en": ""
+  },
+  {
+   "fr": "Des fouilleurs de Vertiga, noués avec les siens. La ville a effacé leurs noms quand on a cessé de les chercher. Elle, non.",
+   "en": ""
+  },
+  {
+   "fr": "Parmi les nœuds, des noms de Vertiga effacés de nos registres, et deux de 2066 : Ivens, Daro. Ils sont noués avec autant de soin que les autres.",
+   "en": ""
+  },
+  {
+   "fr": "Le nom donné",
+   "en": ""
+  },
+  {
+   "fr": "La Tisseuse a donné son propre nom à quelqu’un qui descendait vers le fond, pour qu’il se souvienne d’elle. Ceux d’avant se passaient leurs noms comme on se passe une lampe.",
+   "en": ""
+  },
+  {
+   "fr": "Le nœud défait, le fil vide… C’était le sien. Elle l’a donné à quelqu’un qui descendait, tout au fond, là où personne ne va. Ils se passaient leurs noms, pour ne pas disparaître. Mon dragon tremble parce qu’il est une copie de copie. Elle tremble parce qu’elle a donné son nom.",
+   "en": ""
+  },
+  {
+   "fr": "Au cœur du nid, le seul fil vide part de ses propres mains et file vers le bas. Le nom qu’il tenait, elle l’a donné à quelqu’un qui descendait.",
+   "en": ""
+  },
+  {
+   "fr": "Les portes nettes",
+   "en": ""
+  },
+  {
+   "fr": "Derrière la première porte du fond, un couloir. Pas une fissure, pas une trace d’eau. Rien n’a vieilli.",
+   "en": ""
+  },
+  {
+   "fr": "Une porte",
+   "en": ""
+  },
+  {
+   "fr": "Fermée de l’intérieur, comme à −4. J’ai le casque de mon père sur mon sac. Ici, il aurait compris ce qu’il a entendu.",
+   "en": ""
+  },
+  {
+   "fr": "Fermée de l’intérieur, comme à −4. En 2066, mon père a entendu quelqu’un tirer un loquet. C’était ce geste-là.",
+   "en": ""
+  },
+  {
+   "fr": "Une porte scellée de l’intérieur, comme celles de −4.",
+   "en": ""
+  },
+  {
+   "fr": "La poussière",
+   "en": ""
+  },
+  {
+   "fr": "Il n’y en a pas. Pas un grain. Quelqu’un entretient tout ça. Ou rien ne s’use, ici.",
+   "en": ""
+  },
+  {
+   "fr": "Pas un grain de poussière.",
+   "en": ""
+  },
+  {
+   "fr": "Une voix",
+   "en": ""
+  },
+  {
+   "fr": "Ici, les cristaux ne murmurent pas. Ils se taisent, tous, comme on se tait quand quelqu’un écoute.",
+   "en": ""
+  },
+  {
+   "fr": "Un silence épais, comme si quelqu’un retenait son souffle.",
+   "en": ""
+  },
+  {
+   "fr": "Frapper à une porte",
+   "en": ""
+  },
+  {
+   "fr": "Tu frappes trois coups. Personne n’ouvre. Mais sous la porte, quelqu’un glisse un Éclat, comme on rend la monnaie.",
+   "en": ""
+  },
+  {
+   "fr": "Marquer le chemin du retour",
+   "en": ""
+  },
+  {
+   "fr": "Tu fais marquer chaque porte à la craie, comme la flèche des patrouilles. Si vous ne remontez pas, d’autres sauront jusqu’où vous êtes allés. Dans une alcôve, du matériel intact.",
+   "en": ""
+  },
+  {
+   "fr": "Au fond, les portes sont fermées de l’intérieur, comme à −4. Mais ici, rien n’a vieilli : pas un grain de poussière.",
+   "en": ""
+  },
+  {
+   "fr": "La salle des tables",
+   "en": ""
+  },
+  {
+   "fr": "Des tables gravées, alignées comme dans une école. Sur chacune, la même phrase, de plus en plus effacée.",
+   "en": ""
+  },
+  {
+   "fr": "La phrase",
+   "en": ""
+  },
+  {
+   "fr": "« Que celui qui lit ceci compte les voix qu’il porte. » Compte. Le mot de la Confluence, à −3. Tu l’as écouté jusqu’au bout. Il venait d’ici.",
+   "en": ""
+  },
+  {
+   "fr": "« Que celui qui lit ceci compte les voix qu’il porte. » Compte. Le mot de la Confluence.",
+   "en": ""
+  },
+  {
+   "fr": "« Que celui qui lit ceci compte les voix qu’il porte. »",
+   "en": ""
+  },
+  {
+   "fr": "Les bancs",
+   "en": ""
+  },
+  {
+   "fr": "Ils apprenaient ça par cœur, comme une leçon. Plus haut, ils la récitaient encore, au milieu de mille autres choses à réciter.",
+   "en": ""
+  },
+  {
+   "fr": "Des bancs de pierre, usés par des générations.",
+   "en": ""
+  },
+  {
+   "fr": "Une table à part",
+   "en": ""
+  },
+  {
+   "fr": "Celle-là est plus récente, de la même écriture que les autres. Quelqu’un l’a portée au centre de la salle, et la garde près de lui.",
+   "en": ""
+  },
+  {
+   "fr": "Une table plus récente a été portée au centre de la salle.",
+   "en": ""
+  },
+  {
+   "fr": "Compter tes voix",
+   "en": ""
+  },
+  {
+   "fr": "Tu fais compter à l’escouade les voix qu’elle porte, cartes comprises. Chacun s’arrête à un chiffre, et personne ne dit le sien. Un Éclat luit sur une table.",
+   "en": ""
+  },
+  {
+   "fr": "Relever les tables",
+   "en": ""
+  },
+  {
+   "fr": "Tu relèves la phrase sur chaque table, de la plus nette à la plus effacée. Pour Ysé. Au fond de la salle, des outils de graveur.",
+   "en": ""
+  },
+  {
+   "fr": "Au fond, la même phrase sur toutes les tables : « Que celui qui lit ceci compte les voix qu’il porte. » Le « Compte » de la Confluence venait d’ici.",
+   "en": ""
+  },
+  {
+   "fr": "Il vous attendait",
+   "en": ""
+  },
+  {
+   "fr": "Au centre de la dernière salle, quelqu’un est assis, plus grand que nous. Il ne se lève pas. Il vous attendait.",
+   "en": ""
+  },
+  {
+   "fr": "C’est lui qui a glissé l’Éclat sous la porte, tout à l’heure. Il nous a entendus frapper.",
+   "en": ""
+  },
+  {
+   "fr": "Le Premier Porteur. Assis, il est aussi haut que Doran debout. Il ne porte qu’une voix, et ce n’est pas la sienne. Il la porte si bien qu’on ne voit plus la différence.",
+   "en": ""
+  },
+  {
+   "fr": "Quelqu’un d’assis, plus grand que nous, très calme, qui vous regarde arriver.",
+   "en": ""
+  },
+  {
+   "fr": "Il a les mains d’un graveur. Il a regardé ma poche, puis il a souri. Il sait que le cercle de −6 est complet.",
+   "en": ""
+  },
+  {
+   "fr": "Il a les mains d’un graveur. Toutes ces tables ont son écriture.",
+   "en": ""
+  },
+  {
+   "fr": "Des mains abîmées, de graveur.",
+   "en": ""
+  },
+  {
+   "fr": "Ton nom",
+   "en": ""
+  },
+  {
+   "fr": "Il connaît ton nom. Il l’a lu sur le mur des fouilleurs, tout en haut.",
+   "en": ""
+  },
+  {
+   "fr": "On est venus jusqu’ici pour des réponses. Allons lui en demander.",
+   "en": ""
+  },
+  {
+   "fr": "Il te regarde comme s’il te connaissait déjà.",
+   "en": ""
+  },
+  {
+   "fr": "Lui dire qui tu es",
+   "en": ""
+  },
+  {
+   "fr": "Tu dis ton nom, ton district, et la mer qui monte. Il hoche la tête, lentement. Un Éclat tombe de la table devant lui.",
+   "en": ""
+  },
+  {
+   "fr": "Écouter sa voix",
+   "en": ""
+  },
+  {
+   "fr": "Tu ne dis rien. Tu écoutes. Il ne porte qu’une voix, et elle parle doucement, dans une langue que personne ne comprend plus. Au pied des marches, ce que ceux d’avant ont laissé.",
+   "en": ""
+  },
+  {
+   "fr": "Le Premier Porteur nous attendait au fond, assis. Il a des mains de graveur, et toutes les tables de la salle portent son écriture.",
+   "en": ""
+  },
+  {
+   "fr": "La moitié du message",
+   "en": ""
+  },
+  {
+   "fr": "Au fond, la table d’origine porte une seconde ligne sous la mise en garde. La copie que les Veilleurs gardent sous clé s’arrête avant : toute leur prudence repose sur une moitié de phrase.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la phrase, une autre ligne, plus récente. La copie des Veilleurs s’arrête juste avant. Ils ont tout gardé fermé en n’en lisant que la moitié.",
+   "en": ""
+  },
+  {
+   "fr": "La table du centre. Dessous la phrase, une autre ligne. La copie de Hessa s’arrête juste avant. Toute leur prudence tient sur une phrase pas finie.",
+   "en": ""
+  },
+  {
+   "fr": "Sur la table du centre, sous la mise en garde, une seconde ligne, plus récente. La copie que les Veilleurs gardent sous clé s’arrête juste avant.",
+   "en": ""
+  },
+  {
+   "fr": "Ils montaient",
+   "en": ""
+  },
+  {
+   "fr": "Ceux d’avant ne sont pas descendus s’enterrer : partis du fond, ils ont bâti en remontant, chaque génération rangée sous la suivante. En 2062, nous sommes tombés sur leur dernier étage. Ils y étaient presque.",
+   "en": ""
+  },
+  {
+   "fr": "Ysé l’avait deviné. Maintenant, je l’ai vu : la gaine qui monte, l’escalier qui monte, leurs marches trop hautes pour nos jambes… Ils ne fuyaient pas vers le bas, directeur. Ils sont partis d’ici, et chaque génération a bâti un étage plus haut. Le Puits Zéro était leur dernier palier. Ils y étaient presque.",
+   "en": ""
+  },
+  {
+   "fr": "Ici, tout commence : le premier puits, les premières tables. Tout ce que tu as vu au-dessus a été bâti ensuite, étage après étage, en remontant. Le Puits Zéro était leur dernier palier.",
+   "en": ""
+  },
+  {
+   "fr": "Le bord de l’eau",
+   "en": ""
+  },
+  {
+   "fr": "Sous la salle du Premier Porteur, l’escalier continue. Trente marches plus bas, il entre dans une eau immobile, si claire qu’on voit les marches poursuivre leur descente dessous.",
+   "en": ""
+  },
+  {
+   "fr": "Douce. Pas un grain de sel. Ce n’est pas la mer, directeur. Et elle est tiède, comme une main.",
+   "en": ""
+  },
+  {
+   "fr": "Elle est tiède. Une eau qui dort au fond depuis toujours devrait être froide.",
+   "en": ""
+  },
+  {
+   "fr": "Une eau douce, tiède, parfaitement immobile.",
+   "en": ""
+  },
+  {
+   "fr": "La ligne",
+   "en": ""
+  },
+  {
+   "fr": "Un trait gravé dans le mur, avec des signes à côté. Une ligne d’eau, comme la nôtre sur la digue. Sauf que celle-ci est déjà noyée de trois marches.",
+   "en": ""
+  },
+  {
+   "fr": "Une ligne gravée par ceux d’avant, trois marches sous la surface.",
+   "en": ""
+  },
+  {
+   "fr": "Le silence",
+   "en": ""
+  },
+  {
+   "fr": "Les empreintes d’ici ne dorment pas. Elles écoutent l’eau, comme quelqu’un qui garde une porte et n’ose pas se retourner.",
+   "en": ""
+  },
+  {
+   "fr": "Les cristaux de la voûte se reflètent dans l’eau sans un frisson.",
+   "en": ""
+  },
+  {
+   "fr": "Planter une jauge",
+   "en": ""
+  },
+  {
+   "fr": "Sasha plante une tige graduée sur la dernière marche sèche et fait une encoche au ras de l’eau. À la prochaine descente, vous saurez. Derrière la jauge, une caisse de fouilleur restée scellée.",
+   "en": ""
+  },
+  {
+   "fr": "Toucher l’eau",
+   "en": ""
+  },
+  {
+   "fr": "Tu poses la main à plat sur l’eau. Elle ne se ride pas : elle pousse, doucement, vers le haut, comme une paume sous la tienne. Un Éclat remonte de lui-même jusqu’à tes doigts.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la salle du Premier Porteur, l’escalier entre dans une eau douce et tiède, qui n’est pas la mer. La ligne d’eau que ceux d’avant ont gravée là est déjà noyée de trois marches.",
+   "en": ""
+  },
+  {
+   "fr": "Une marche de plus",
+   "en": ""
+  },
+  {
+   "fr": "L’eau a gagné une marche depuis ta dernière venue. Au-dessus d’elle, la voûte est fendue en étoile.",
+   "en": ""
+  },
+  {
+   "fr": "La marche",
+   "en": ""
+  },
+  {
+   "fr": "Un centimètre et demi en une semaine. La mer, là-haut, en prend trois par an. Ce n’est pas la même eau, et pas le même pas.",
+   "en": ""
+  },
+  {
+   "fr": "Elle a monté. Une marche entière, en quelques jours. Là-haut, il faut un an à la mer pour en faire autant.",
+   "en": ""
+  },
+  {
+   "fr": "L’eau a recouvert une marche de plus.",
+   "en": ""
+  },
+  {
+   "fr": "La voûte",
+   "en": ""
+  },
+  {
+   "fr": "La même fissure que sur nos Fondations, celles qu’on rebouche la nuit. Même forme, même départ. On dirait qu’elle descend de chez nous.",
+   "en": ""
+  },
+  {
+   "fr": "Une fissure en étoile court sur la voûte, au-dessus de l’eau.",
+   "en": ""
+  },
+  {
+   "fr": "Suivre la fissure",
+   "en": ""
+  },
+  {
+   "fr": "Vous suivez la fissure à la lampe, de pierre en pierre. Elle file droit vers le haut, vers Vertiga. À son pied, un sac de mortier de chantier : quelqu’un est déjà venu la reboucher, il y a longtemps.",
+   "en": ""
+  },
+  {
+   "fr": "Lire la ligne noyée",
+   "en": ""
+  },
+  {
+   "fr": "Véla plonge le bras jusqu’à la ligne et suit les signes du doigt. Il y en a d’autres dessous, beaucoup d’autres. Un Éclat est pris dans la gravure.",
+   "en": ""
+  },
+  {
+   "fr": "L’eau d’en bas monte bien plus vite que la mer, et la voûte au-dessus d’elle se fend comme nos Fondations.",
+   "en": ""
+  },
+  {
+   "fr": "Les deux nuits",
+   "en": ""
+  },
+  {
+   "fr": "La jauge l’a dit : l’eau d’en bas a gagné ses deux crans les deux nuits où une île des Hauts est passée au-dessus de Vertiga. Elle ne monte pas toute seule : elle monte quand on lève.",
+   "en": ""
+  },
+  {
+   "fr": "Deux crans sur ma jauge. J’ai les heures. Les deux nuits où une île est passée au-dessus de la ville. Ce n’est pas une coïncidence, directeur, c’est une mesure.",
+   "en": ""
+  },
+  {
+   "fr": "Deux crans sur la jauge, et deux dates : les deux nuits où une île des Hauts est passée au-dessus de Vertiga.",
+   "en": ""
+  },
+  {
+   "fr": "Mille lignes",
+   "en": ""
+  },
+  {
+   "fr": "Sous la ligne noyée, ceux d’avant en ont gravé des centaines, de plus en plus bas : pendant des millénaires, leur eau a baissé. Elle ne remonte que depuis peu, et c’est la première fois qu’elle passe au-dessus de leur dernière ligne.",
+   "en": ""
+  },
+  {
+   "fr": "Des centaines de lignes, de plus en plus bas. Leur eau descendait, directeur, siècle après siècle. Ils la regardaient partir. Elle ne remonte que depuis nous.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la ligne noyée, des centaines d’autres, de plus en plus basses. Pendant des millénaires, l’eau d’en bas a baissé.",
+   "en": ""
+  },
+  {
+   "fr": "La forêt de cristal",
+   "en": ""
+  },
+  {
+   "fr": "Au-delà de l’eau, une salle si grande que les lampes n’en trouvent pas le bout. Des colonnes de cristal, par milliers, montent du sol à la voûte. Certaines sont éteintes.",
+   "en": ""
+  },
+  {
+   "fr": "Une colonne allumée",
+   "en": ""
+  },
+  {
+   "fr": "Elle ne garde pas un souvenir, celle-là. Elle garde un poids. Comme une épaule sous une poutre.",
+   "en": ""
+  },
+  {
+   "fr": "Une colonne de cristal, chaude au toucher, qui luit d’un bleu très doux.",
+   "en": ""
+  },
+  {
+   "fr": "Une colonne éteinte",
+   "en": ""
+  },
+  {
+   "fr": "Coupée net, à la pince. Les pinces du carnet de ma mère. On a emporté le cœur, et la colonne s’est vidée de sa lumière.",
+   "en": ""
+  },
+  {
+   "fr": "Coupée net. Ça, ce n’est pas le temps. Ce sont des outils.",
+   "en": ""
+  },
+  {
+   "fr": "Une colonne creuse, éteinte, la tranche marquée de coups de pince.",
+   "en": ""
+  },
+  {
+   "fr": "Le sol",
+   "en": ""
+  },
+  {
+   "fr": "Il penche. Un rien. Un ballon roulerait. Tout penche vers les colonnes éteintes.",
+   "en": ""
+  },
+  {
+   "fr": "Le sol penche, très légèrement, vers les colonnes vides.",
+   "en": ""
+  },
+  {
+   "fr": "Compter les colonnes vides",
+   "en": ""
+  },
+  {
+   "fr": "Vous comptez, rangée par rangée, comme on fait l’inventaire d’une récolte. Cent douze colonnes éteintes. Au pied de la dernière, des pinces abandonnées, au sigle de la Compagnie des Fondations.",
+   "en": ""
+  },
+  {
+   "fr": "Écouter une colonne allumée",
+   "en": ""
+  },
+  {
+   "fr": "Tu poses l’oreille contre le cristal. Pas de voix : un souffle long, régulier, comme quelqu’un qui fait un effort et ne veut pas que ça s’entende. Un Éclat se détache de la base.",
+   "en": ""
+  },
+  {
+   "fr": "Sous l’eau d’en bas, une forêt de colonnes de cristal porte la voûte. Cent douze ont été vidées à la pince, et le sol penche vers elles.",
+   "en": ""
+  },
+  {
+   "fr": "Le sigle",
+   "en": ""
+  },
+  {
+   "fr": "Près des colonnes éteintes, un campement de chantier abandonné : des caisses, une lampe à huile, des pinces rangées par taille.",
+   "en": ""
+  },
+  {
+   "fr": "Une pince",
+   "en": ""
+  },
+  {
+   "fr": "Numéro de série, et une date : 2091. Trente ans, directeur. Le temps qu’il faut à une voûte pour descendre d’une marche.",
+   "en": ""
+  },
+  {
+   "fr": "Une pince gravée d’un numéro et d’une date : 2091.",
+   "en": ""
+  },
+  {
+   "fr": "La lampe",
+   "en": ""
+  },
+  {
+   "fr": "Ils ont dormi ici. Plusieurs nuits. Ceux-là savaient où ils étaient.",
+   "en": ""
+  },
+  {
+   "fr": "Une lampe à huile, vidée jusqu’à la mèche.",
+   "en": ""
+  },
+  {
+   "fr": "Fouiller les caisses",
+   "en": ""
+  },
+  {
+   "fr": "Les caisses sont presque vides. Dans la dernière, sous la paille, des papiers de chantier, et assez de matériel pour remonter sans manquer de rien.",
+   "en": ""
+  },
+  {
+   "fr": "Examiner la gravure d’une colonne",
+   "en": ""
+  },
+  {
+   "fr": "Sur une colonne allumée, à hauteur d’yeux, une gravure que tu n’avais pas vue. Un Éclat est serti dans le trait, comme une signature.",
+   "en": ""
+  },
+  {
+   "fr": "En 2091, une équipe de la Compagnie des Fondations a dormi ici, le temps de vider cent douze colonnes.",
+   "en": ""
+  },
+  {
+   "fr": "Le bon de commande",
+   "en": ""
+  },
+  {
+   "fr": "Dans une caisse, un bon de la Compagnie des Fondations, daté de 2091 : « Cœurs porteurs, 112, pour le Levage. » Ils ont écrit « porteurs ». Ils savaient que ces cristaux portaient quelque chose. Ils n’ont pas demandé quoi.",
+   "en": ""
+  },
+  {
+   "fr": "« Cœurs porteurs, cent douze, pour le Levage. » Le tampon de la Compagnie, et la signature d’une Orsève. Ils savaient que ça portait. Ils ont seulement voulu que ça porte autre chose.",
+   "en": ""
+  },
+  {
+   "fr": "Un bon de chantier de 2091 : « Cœurs porteurs, 112, pour le Levage. » Avec le tampon de la Compagnie des Fondations.",
+   "en": ""
+  },
+  {
+   "fr": "Les bras levés",
+   "en": ""
+  },
+  {
+   "fr": "Sur la colonne, un personnage gravé, les bras levés, qui soutient la voûte. Pas un roi : un graveur, ses outils à la ceinture. Ceux d’avant n’ont pas taillé ces colonnes. Ils s’y sont gravés, pour tenir.",
+   "en": ""
+  },
+  {
+   "fr": "Ce n’est pas une décoration, directeur. C’est un portrait. Chaque colonne est quelqu’un. Ils se sont gravés dedans, et depuis, ils tiennent la voûte au-dessus de l’eau.",
+   "en": ""
+  },
+  {
+   "fr": "Un graveur aux bras levés, qui soutient la voûte. Le même trait sur chaque colonne allumée, et un visage différent.",
+   "en": ""
+  },
+  {
+   "fr": "Le registre des colonnes",
+   "en": ""
+  },
+  {
+   "fr": "Le long du mur, une table immense, couverte de signes en colonnes. Véla ne la lit pas : elle la reconnaît.",
+   "en": ""
+  },
+  {
+   "fr": "Les signes",
+   "en": ""
+  },
+  {
+   "fr": "« Ceux qui portent. » Le mot des tables de −7, celui qu’ils employaient pour dire « nous ». Il ne voulait pas dire qu’ils portaient des voix. Il voulait dire ça.",
+   "en": ""
+  },
+  {
+   "fr": "Une table couverte de signes, rangés comme un registre.",
+   "en": ""
+  },
+  {
+   "fr": "Une colonne fendue",
+   "en": ""
+  },
+  {
+   "fr": "Celle-là souffre. Je ne sais pas comment je le sais. Comme un dos qu’on a trop chargé, et qui ne dit rien.",
+   "en": ""
+  },
+  {
+   "fr": "Une colonne allumée, fendue sur toute sa hauteur, qui luit par saccades.",
+   "en": ""
+  },
+  {
+   "fr": "Les cases vides",
+   "en": ""
+  },
+  {
+   "fr": "Cent douze cases barrées d’un trait neuf. Pas leur écriture : la nôtre. Quelqu’un les a rayées en partant, comme on raye une ligne d’inventaire.",
+   "en": ""
+  },
+  {
+   "fr": "Dans le registre, des cases rayées d’un trait récent, d’une écriture humaine.",
+   "en": ""
+  },
+  {
+   "fr": "Recopier le registre",
+   "en": ""
+  },
+  {
+   "fr": "Tu fais recopier le registre, case par case, rayures comprises. Pour Ysé, et pour ceux qui voudront savoir. Sous la table, une réserve de fouilleur, intacte.",
+   "en": ""
+  },
+  {
+   "fr": "Poser la main sur la fendue",
+   "en": ""
+  },
+  {
+   "fr": "Tu poses la main sur la colonne fendue. Elle cesse de clignoter, une seconde, comme quelqu’un qui reprend son souffle quand on l’aide à porter. Un Éclat glisse le long de la fente.",
+   "en": ""
+  },
+  {
+   "fr": "Les colonnes du Fond sont inscrites dans un registre : « ceux qui portent », le mot de −7 pour dire « nous ». Cent douze cases y sont rayées d’une écriture humaine.",
+   "en": ""
+  },
+  {
+   "fr": "Ce qui tient",
+   "en": ""
+  },
+  {
+   "fr": "Au bout du registre, une dernière table, plus grande que les autres, posée face aux colonnes comme une stèle de chantier.",
+   "en": ""
+  },
+  {
+   "fr": "La table",
+   "en": ""
+  },
+  {
+   "fr": "C’est un compte. Ce que chaque colonne porte, et ce qu’il en reste. Ils ont tout mesuré, jusqu’au dernier grain.",
+   "en": ""
+  },
+  {
+   "fr": "Des chiffres. Des charges, en face de chaque nom. Ce sont des calculs de structure, directeur. Les mêmes que les miens, en mieux.",
+   "en": ""
+  },
+  {
+   "fr": "Une table de comptes, une ligne par colonne.",
+   "en": ""
+  },
+  {
+   "fr": "La dernière ligne est vide. Ils l’ont laissée pour quelqu’un.",
+   "en": ""
+  },
+  {
+   "fr": "La dernière ligne du compte est restée vide.",
+   "en": ""
+  },
+  {
+   "fr": "Refaire le compte",
+   "en": ""
+  },
+  {
+   "fr": "Sasha refait le compte avec les colonnes qui restent. Il le refait deux fois, puis il range son carnet sans rien dire. Derrière la table, du matériel de mesure, oublié en 2091.",
+   "en": ""
+  },
+  {
+   "fr": "Lire la stèle jusqu’au bout",
+   "en": ""
+  },
+  {
+   "fr": "Véla lit à voix haute, lentement, jusqu’à la ligne vide. À la dernière phrase, elle s’arrête, et recommence au début. Un Éclat attend au pied de la stèle.",
+   "en": ""
+  },
+  {
+   "fr": "Ceux d’avant ont tenu le compte de ce que porte chaque colonne. La dernière ligne de leur registre est restée vide.",
+   "en": ""
+  },
+  {
+   "fr": "Une île de plus",
+   "en": ""
+  },
+  {
+   "fr": "Le compte de Sasha est simple. Il reste assez de colonnes pour porter Vertiga. Pas assez pour porter Vertiga et une île de plus. Chaque île qu’on lève là-haut se paie ici, d’une colonne qu’on vide.",
+   "en": ""
+  },
+  {
+   "fr": "J’ai refait le compte deux fois. Il reste de quoi porter la ville. Pas la ville et une île de plus. Chaque île qu’on lève, directeur, c’est une colonne qu’on vide ici.",
+   "en": ""
+  },
+  {
+   "fr": "Le compte, refait avec les colonnes qui restent : assez pour porter Vertiga, pas assez pour une île de plus.",
+   "en": ""
+  },
+  {
+   "fr": "Ils ont choisi",
+   "en": ""
+  },
+  {
+   "fr": "Ceux d’avant ne se sont pas tous perdus dans leurs voix. Les derniers sont descendus se graver ici, dans les colonnes, pour retenir l’eau pendant que leurs enfants remontaient. L’Écluse, ce n’était pas une machine : c’était eux.",
+   "en": ""
+  },
+  {
+   "fr": "« Ici se sont rendus ceux qui portent, pour que l’eau reste en bas. » L’Écluse, directeur. On la cherchait comme une machine. C’étaient des gens. Ils ont choisi de tenir.",
+   "en": ""
+  },
+  {
+   "fr": "Sur la stèle : « Ici se sont rendus ceux qui portent, pour que l’eau reste en bas. » L’Écluse, c’étaient eux.",
+   "en": ""
+  },
+  {
+   "fr": "Sous ta Tour",
+   "en": ""
+  },
+  {
+   "fr": "Une colonne seule, au bout d’une galerie, plus fine que les autres. Sasha sort son plomb, son compas et les plans de la Cuvette.",
+   "en": ""
+  },
+  {
+   "fr": "Le compas",
+   "en": ""
+  },
+  {
+   "fr": "J’ai refait trois fois le relevé. La colonne devant nous est exactement sous ta Tour du Noyau. Ton pilier ne bouge jamais parce qu’il est posé sur elle.",
+   "en": ""
+  },
+  {
+   "fr": "D’après les plans, la colonne se dresse juste sous la Tour du Noyau.",
+   "en": ""
+  },
+  {
+   "fr": "La colonne",
+   "en": ""
+  },
+  {
+   "fr": "Elle est plus jeune que les autres. Quelqu’un s’y est gravé tard, bien après les premiers. Et seul.",
+   "en": ""
+  },
+  {
+   "fr": "Une colonne plus fine, plus claire, au cristal plus récent.",
+   "en": ""
+  },
+  {
+   "fr": "Un bruit",
+   "en": ""
+  },
+  {
+   "fr": "Le casque de mon père résonne contre elle. En 2066, ce n’est pas un loquet qu’il a entendu. C’était quelqu’un qui changeait d’épaule.",
+   "en": ""
+  },
+  {
+   "fr": "Écoute. Un craquement, de temps en temps, comme une poutre. Mon père parlait d’un loquet. Je crois que c’était ça.",
+   "en": ""
+  },
+  {
+   "fr": "De temps en temps, un craquement sourd, comme une poutre qui travaille.",
+   "en": ""
+  },
+  {
+   "fr": "Mesurer la charge",
+   "en": ""
+  },
+  {
+   "fr": "Sasha pose ses jauges sur la colonne, de bas en haut. Il note, il efface, il note encore. Contre la paroi, une caisse de chantier marquée au nom de ton district.",
+   "en": ""
+  },
+  {
+   "fr": "Tu demandes son nom à la colonne, à voix basse, comme à −2. La lumière bouge, très lentement, vers le pied du cristal. Un Éclat y attend.",
+   "en": ""
+  },
+  {
+   "fr": "Une colonne seule se dresse exactement sous la Tour du Noyau. C’est pour elle que le pilier de mon district ne bouge jamais.",
+   "en": ""
+  },
+  {
+   "fr": "Le nom de la colonne",
+   "en": ""
+  },
+  {
+   "fr": "Tu reviens sous ta Tour. La colonne n’a pas changé. Toi, si : tu sais maintenant ce qu’elle porte.",
+   "en": ""
+  },
+  {
+   "fr": "Le pied",
+   "en": ""
+  },
+  {
+   "fr": "Il y a une inscription au pied, presque effacée par les mains. Des gens sont venus la toucher, souvent. Pas nous.",
+   "en": ""
+  },
+  {
+   "fr": "Au pied de la colonne, une inscription usée par les mains.",
+   "en": ""
+  },
+  {
+   "fr": "La fente",
+   "en": ""
+  },
+  {
+   "fr": "Elle est fendue sur un tiers. Elle tient. Mais elle tient comme on tient quand on n’a plus le choix.",
+   "en": ""
+  },
+  {
+   "fr": "Une fente monte sur un tiers de la colonne.",
+   "en": ""
+  },
+  {
+   "fr": "Relever la fente",
+   "en": ""
+  },
+  {
+   "fr": "Tu fais marquer la fente à la craie, avec la date. Si elle grandit, la prochaine escouade le verra. Derrière la colonne, du mortier de chantier, encore sec.",
+   "en": ""
+  },
+  {
+   "fr": "Déchiffrer l’inscription",
+   "en": ""
+  },
+  {
+   "fr": "Véla suit l’inscription du doigt, signe par signe, et pâlit à la moitié. Elle te regarde. Elle a reconnu le nom. Un Éclat est posé dans le dernier signe.",
+   "en": ""
+  },
+  {
+   "fr": "La colonne sous ma Tour porte un nom, usé par les mains de ceux d’avant qui venaient la toucher.",
+   "en": ""
+  },
+  {
+   "fr": "Le poids d’un district",
+   "en": ""
+  },
+  {
+   "fr": "La colonne sous ta Tour porte seule tout ton district, digue comprise. Elle est fendue sur un tiers. Les fissures qu’on rebouche la nuit dans les Fondations, ce n’est pas la mer qui les fait : c’est elle qui cède.",
+   "en": ""
+  },
+  {
+   "fr": "Elle porte tout. La Tour, la place, la digue, les pompes. Les fissures qu’on rebouche la nuit, directeur, ce n’est pas la mer. C’est elle qui plie.",
+   "en": ""
+  },
+  {
+   "fr": "La colonne porte tout le district, digue comprise. Elle est fendue sur un tiers de sa hauteur.",
+   "en": ""
+  },
+  {
+   "fr": "Au pied de la colonne, le nom que la Tisseuse de −2 avait donné à quelqu’un qui descendait vers le fond. Il l’a porté jusqu’ici, et s’est gravé sous ton district avec lui, pour qu’elle ne disparaisse pas.",
+   "en": ""
+  },
+  {
+   "fr": "C’est le nom de la Tisseuse, directeur. Celui qu’elle a donné à quelqu’un qui descendait. Il l’a porté jusqu’en bas, et il s’est gravé avec lui. Ton district tient sur un nom qu’on a refusé d’oublier.",
+   "en": ""
+  },
+  {
+   "fr": "L’inscription porte le nom que la Tisseuse de −2 avait donné à quelqu’un qui descendait vers le fond.",
+   "en": ""
+  },
+  {
+   "fr": "Les vannes",
+   "en": ""
+  },
+  {
+   "fr": "Tout en bas, là où l’eau d’en bas entre dans la pierre, une rangée de vannes, d’un métal qui ne rouille pas.",
+   "en": ""
+  },
+  {
+   "fr": "Le même métal que les vannes des Citernes, sous les Basses. Les mêmes réglages, sur une marée qui n’existe plus. Ce sont les deux bouts d’une seule machine.",
+   "en": ""
+  },
+  {
+   "fr": "Des vannes d’un métal sans rouille, réglées sur une marée inconnue.",
+   "en": ""
+  },
+  {
+   "fr": "Elle ne vient pas d’en dessous. Elle vient d’en haut. C’est la mer, filtrée par la pierre, qui descend ici depuis toujours, au lieu de monter chez nous.",
+   "en": ""
+  },
+  {
+   "fr": "L’eau entre par les vannes, venue d’en haut, filtrée par la pierre.",
+   "en": ""
+  },
+  {
+   "fr": "Une table",
+   "en": ""
+  },
+  {
+   "fr": "Une seule ligne, gravée large : « Ce qui tient ne se reprend pas. Il se rend. »",
+   "en": ""
+  },
+  {
+   "fr": "Une table gravée d’une seule ligne : « Ce qui tient ne se reprend pas. Il se rend. »",
+   "en": ""
+  },
+  {
+   "fr": "Tourner une vanne",
+   "en": ""
+  },
+  {
+   "fr": "Ilka et Doran pèsent sur un volant. Il tourne d’un cran, puis se bloque. Très loin au-dessus, quelque chose répond, comme une pompe qui tousse. Au pied du volant, des outils trop grands pour nos mains.",
+   "en": ""
+  },
+  {
+   "fr": "Lire la table",
+   "en": ""
+  },
+  {
+   "fr": "Tu lis la ligne à voix haute. L’eau, derrière les vannes, se calme d’un coup, comme si elle avait entendu. Un Éclat brille dans le creux du dernier mot.",
+   "en": ""
+  },
+  {
+   "fr": "Au fond du Fond, des vannes laissent la mer descendre dans la pierre au lieu de monter. Sur une table : « Ce qui tient ne se reprend pas. Il se rend. »",
+   "en": ""
+  },
+  {
+   "fr": "Se rendre",
+   "en": ""
+  },
+  {
+   "fr": "Tu redescends aux vannes. L’escouade se tait. Chacun a compris quelque chose, et personne n’ose dire quoi.",
+   "en": ""
+  },
+  {
+   "fr": "Elles sont prêtes. Elles ont toujours été prêtes. Ce qui manque, ce n’est pas la machine.",
+   "en": ""
+  },
+  {
+   "fr": "Les vannes attendent, réglées, intactes.",
+   "en": ""
+  },
+  {
+   "fr": "Mes peurs se taisent, ici. Pour la première fois depuis la chambre. Comme si quelqu’un les portait un peu à ma place.",
+   "en": ""
+  },
+  {
+   "fr": "L’escouade se tient près des vannes, sans un mot.",
+   "en": ""
+  },
+  {
+   "fr": "Noter le réglage des vannes",
+   "en": ""
+  },
+  {
+   "fr": "Sasha recopie chaque réglage, chaque cran, pour les Citernes. Si un jour on veut ouvrir les deux bouts ensemble, il faudra savoir comment. Derrière la dernière vanne, une réserve de chantier.",
+   "en": ""
+  },
+  {
+   "fr": "Rester un moment",
+   "en": ""
+  },
+  {
+   "fr": "Tu restes un moment près des vannes, sans rien faire, à écouter l’eau descendre. Quand tu te lèves, un Éclat est posé à l’endroit où tu étais assis.",
+   "en": ""
+  },
+  {
+   "fr": "Au fond du Fond, l’escouade se tait. Les vannes sont prêtes ; ce qui leur manque, ce n’est pas une machine.",
+   "en": ""
+  },
+  {
+   "fr": "Les deux bouts",
+   "en": ""
+  },
+  {
+   "fr": "Les vannes du Fond et celles des Citernes sont une seule machine, toujours réglée : elle laisse la mer descendre ici au lieu de monter là-haut. Il ne lui manque qu’une chose, ce qui tient, pour que la voûte supporte l’eau qu’on lui confierait.",
+   "en": ""
+  },
+  {
+   "fr": "Les Citernes et le Fond, c’est une seule machine. On ouvre en haut, ça descend en bas, et la mer baisse chez nous. Il ne manque que de quoi tenir la voûte. Il ne manque que ce qu’on a emporté.",
+   "en": ""
+  },
+  {
+   "fr": "Les vannes du Fond et celles des Citernes sont les deux bouts d’une même machine. Il ne lui manque que ce qui tient.",
+   "en": ""
+  },
+  {
+   "fr": "Ce qui tient ne se reprend pas de force : une empreinte se rend. Pour rendre sa voûte au Fond, il faudrait que les cœurs montés aux Hauts acceptent de redescendre, ou que d’autres viennent prendre leur place.",
+   "en": ""
+  },
+  {
+   "fr": "« Il se rend. » On ne pourra pas arracher les cœurs aux îles comme on les a arrachés d’ici. Il faudrait qu’ils acceptent de redescendre. Ou que d’autres viennent porter à leur place.",
+   "en": ""
+  },
+  {
+   "fr": "Ce qui tient ne se reprend pas : il se rend. Il faudrait que les cœurs montés aux Hauts acceptent de redescendre, ou que d’autres prennent leur place.",
+   "en": ""
+  },
+  {
+   "fr": "Sur ton plan, une salle juste après la Halte s’éclaire : une réserve, sans combat.",
+   "en": ""
+  },
+  {
+   "fr": "Sur ton plan, une salle juste après la Halte s’éclaire : des papiers d’époque y attendent.",
+   "en": ""
+  },
+  {
+   "fr": "Sur ton plan, une salle juste après la Halte s’éclaire : une salle scellée, gardée, avec une carte au bout.",
+   "en": ""
+  },
+  {
+   "fr": "Caches murées",
+   "en": ""
+  },
+  {
+   "fr": "Des caches murées : un Augmenté les force, et y trouve le double.",
+   "en": ""
+  },
+  {
+   "fr": "Le noir complet",
+   "en": ""
+  },
+  {
+   "fr": "Même un Résonant ne sent rien au-delà des salles voisines. Une lanterne attend à la Halte.",
+   "en": ""
+  },
+  {
+   "fr": "Portes rondes",
+   "en": ""
+  },
+  {
+   "fr": "Toutes closes : deux fois plus de salles scellées.",
+   "en": ""
+  },
+  {
+   "fr": "Les niches",
+   "en": ""
+  },
+  {
+   "fr": "Les caches sont des niches : parfois une carte y dort.",
+   "en": ""
+  },
+  {
+   "fr": "Les archives sont plus nombreuses derrière le mur.",
+   "en": ""
+  },
+  {
+   "fr": "Souvenirs doubles",
+   "en": ""
+  },
+  {
+   "fr": "Certains combats ont deux occupants : choisis lequel affronter.",
+   "en": ""
+  },
+  {
+   "fr": "Un Veilleur égaré attend toujours quelque part sur le plan.",
+   "en": ""
+  },
+  {
+   "fr": "Un fil relie deux salles côte à côte : on peut le suivre une fois.",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier verrou",
+   "en": ""
+  },
+  {
+   "fr": "Les portes à Fréquence demandent une suite de 4.",
+   "en": ""
+  },
+  {
+   "fr": "Les noms du mur",
+   "en": ""
+  },
+  {
+   "fr": "Relever les noms des fouilleurs jamais barrés.",
+   "en": ""
+  },
+  {
+   "fr": "Un nom gravé sur un étai : « Mar. Ivens, 2066 ». Jamais barré.",
+   "en": ""
+  },
+  {
+   "fr": "Un deuxième, sur une pompe noyée : « T. Daro ». Pas barré non plus.",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier, à moitié effacé : le nom du père de Doran. Les trois noms du registre de 2066.",
+   "en": ""
+  },
+  {
+   "fr": "Trois noms de 2066 ne sont jamais barrés. Deux de ces ouvriers ne sont jamais remontés. Le père de Doran est le seul des trois à être remonté, et il n’a jamais voulu barrer le sien.",
+   "en": ""
+  },
+  {
+   "fr": "Les sacs volés",
+   "en": ""
+  },
+  {
+   "fr": "Retrouver les sacs de cristaux tombés des pilleurs.",
+   "en": ""
+  },
+  {
+   "fr": "Un sac éventré, trois cristaux encore dedans. Ils tremblent.",
+   "en": ""
+  },
+  {
+   "fr": "Un deuxième sac, posé avec soin contre un mur. Quelqu’un l’a laissé exprès.",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier sac, avec un mot : « Pour le directeur. Elles voulaient descendre. Je les ai aidées. » Pas de nom, juste une main qui tremble.",
+   "en": ""
+  },
+  {
+   "fr": "Le pilleur n’a pas tout emporté : il a laissé ceux qui tremblaient trop pour le voyage. Ceux-là rentrent à la chambre.",
+   "en": ""
+  },
+  {
+   "fr": "Les patrouilles de Hald",
+   "en": ""
+  },
+  {
+   "fr": "Retrouver les traces des soldats perdus dans le noir.",
+   "en": ""
+  },
+  {
+   "fr": "Une gourde des Brigades, vide, et une flèche à la craie.",
+   "en": ""
+  },
+  {
+   "fr": "Une couverture militaire, et neuf encoches dans un pilier.",
+   "en": ""
+  },
+  {
+   "fr": "Un fil des Brigades, coupé net au couteau. Ils ne voulaient pas que la Confluence les suive.",
+   "en": ""
+  },
+  {
+   "fr": "Les patrouilles de Hald ont coupé leur fil pour que rien ne les suive, et elles ont attendu dans le noir. La capitaine ne le dira jamais, mais elle te doit ça.",
+   "en": ""
+  },
+  {
+   "fr": "Les clés rondes",
+   "en": ""
+  },
+  {
+   "fr": "Rassembler les clés qui ferment les portes rondes.",
+   "en": ""
+  },
+  {
+   "fr": "Un disque de cristal, lisse, de la taille d’une paume. Il s’emboîte dans une porte.",
+   "en": ""
+  },
+  {
+   "fr": "Un deuxième disque, gravé d’un seul nom.",
+   "en": ""
+  },
+  {
+   "fr": "Le troisième disque. Ensemble, ils ouvrent la porte entrouverte : derrière, rien qu’une chaise, et une lampe éteinte.",
+   "en": ""
+  },
+  {
+   "fr": "Les clés n’ouvraient qu’une pièce vide : une chaise, une lampe. Quelqu’un a veillé ici, longtemps, puis il est descendu.",
+   "en": ""
+  },
+  {
+   "fr": "Les sceaux de cire",
+   "en": ""
+  },
+  {
+   "fr": "Relever les sceaux de la Maison Orsève sur les niches vidées.",
+   "en": ""
+  },
+  {
+   "fr": "Un sceau, daté de cette année. Les Hauts sont encore venus récemment.",
+   "en": ""
+  },
+  {
+   "fr": "Un sceau plus ancien, d’il y a vingt ans. Ça ne date pas d’hier.",
+   "en": ""
+  },
+  {
+   "fr": "Un sceau de 2094, posé pendant le Levage. La Maison Orsève vidait déjà les Berceaux.",
+   "en": ""
+  },
+  {
+   "fr": "La Maison Orsève vide les Berceaux depuis au moins 2094, pendant le Levage. Et personne, en bas, ne l’a jamais signalé.",
+   "en": ""
+  },
+  {
+   "fr": "Les tampons de 2066",
+   "en": ""
+  },
+  {
+   "fr": "Retrouver les ordres de service du chantier de la nuit du 14.",
+   "en": ""
+  },
+  {
+   "fr": "Un ordre de service : « Couler le mur, niveau 7. Urgent. »",
+   "en": ""
+  },
+  {
+   "fr": "Un deuxième : « Ne pas écouter. Ne pas répondre. »",
+   "en": ""
+  },
+  {
+   "fr": "Un troisième, signé du chef de chantier : « Sur ordre du bureau des abris. »",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier, de la main du père de Doran : « J’ai entendu le loquet. Ce n’était pas nous. »",
+   "en": ""
+  },
+  {
+   "fr": "En 2066, l’ordre de murer le niveau 7 est venu du bureau des abris. Le loquet, lui, a été tiré de l’autre côté.",
+   "en": ""
+  },
+  {
+   "fr": "Les lignes d’eau",
+   "en": ""
+  },
+  {
+   "fr": "Relever les lignes d’eau de ceux d’avant, de la plus basse à la plus haute.",
+   "en": ""
+  },
+  {
+   "fr": "La ligne la plus basse, gravée profond, presque effacée par l’eau.",
+   "en": ""
+  },
+  {
+   "fr": "Une ligne plus haut, d’une autre main, plus pressée.",
+   "en": ""
+  },
+  {
+   "fr": "Plus haut encore, des dizaines de lignes serrées, à quelques doigts l’une de l’autre.",
+   "en": ""
+  },
+  {
+   "fr": "La dernière, tout en haut. Personne n’a gravé au-dessus.",
+   "en": ""
+  },
+  {
+   "fr": "De la plus basse à la plus haute, pas un mot, pas une date. Rien ne dit ce qu’ils comptaient faire de l’eau.",
+   "en": ""
+  },
+  {
+   "fr": "Les six Veilleurs",
+   "en": ""
+  },
+  {
+   "fr": "Retrouver les Veilleurs de Tobin égarés dans les souvenirs de la Ruche.",
+   "en": ""
+  },
+  {
+   "fr": "Une Veilleuse, endormie contre un pilier. Elle se réveille en demandant l’heure.",
+   "en": ""
+  },
+  {
+   "fr": "Deux Veilleurs, qui se tenaient la main dans le même rêve.",
+   "en": ""
+  },
+  {
+   "fr": "Un Veilleur qui comptait les tables. Il en était à mille deux cents.",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier, le chef d’équipe. Il tient l’éclat d’une autre table, gravé de la même phrase que celui de la fouilleuse d’autrefois.",
+   "en": ""
+  },
+  {
+   "fr": "Les six Veilleurs sont rentrés. Leur chef a remis à Ysé l’éclat d’une autre table, gravé de la même main pressée : « Que celui qui lit ceci compte les voix qu’il porte. » Dessous, la pierre est lisse, comme si le copiste s’était arrêté avant la fin.",
+   "en": ""
+  },
+  {
+   "fr": "Les fils dénoués",
+   "en": ""
+  },
+  {
+   "fr": "Renouer les fils qui gardent des noms oubliés.",
+   "en": ""
+  },
+  {
+   "fr": "Un fil renoué : le nom d’une fille des quarante familles de l’abri de 2060.",
+   "en": ""
+  },
+  {
+   "fr": "Un fil renoué : le nom d’un fouilleur jamais barré au mur de −1.",
+   "en": ""
+  },
+  {
+   "fr": "Un fil renoué : un nom de ceux d’avant, très long, que personne ne sait prononcer.",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier fil : un fil vide. Celui de la Tisseuse elle-même.",
+   "en": ""
+  },
+  {
+   "fr": "Tous les fils sont renoués, sauf un. La Tisseuse a donné son propre nom à celui qui descendait au fond. Il le porte encore, plus bas.",
+   "en": ""
+  },
+  {
+   "fr": "Les loquets",
+   "en": ""
+  },
+  {
+   "fr": "Trouver qui a fermé les portes du fond de l’intérieur.",
+   "en": ""
+  },
+  {
+   "fr": "Un loquet tiré, avec une seule empreinte de doigt.",
+   "en": ""
+  },
+  {
+   "fr": "Un deuxième loquet, la même empreinte.",
+   "en": ""
+  },
+  {
+   "fr": "Un troisième. Toujours la même. Une seule personne a fermé toutes les portes.",
+   "en": ""
+  },
+  {
+   "fr": "Le dernier loquet, encore tiède. Il l’a tiré en vous entendant arriver.",
+   "en": ""
+  },
+  {
+   "fr": "Toutes les portes du fond ont été fermées par la même main, de l’intérieur. Il ne se cachait pas. Il gardait quelque chose dehors.",
+   "en": ""
+  },
+  {
+   "fr": "Un couloir de service",
+   "en": ""
+  },
+  {
+   "fr": "Un couloir de service, derrière cette plaque. L’équipe de mon père les marquait d’une croix. Regarde : la croix.",
+   "en": ""
+  },
+  {
+   "fr": "De l’air passe par là. Un couloir. Mes yeux le voient mieux que les vôtres.",
+   "en": ""
+  },
+  {
+   "fr": "Un abri d’ouvrier : un lit, une gamelle, et un calendrier de 2066 arrêté au 14.",
+   "en": ""
+  },
+  {
+   "fr": "Un local technique scellé. Des plans des salles closes, roulés dans un tube.",
+   "en": ""
+  },
+  {
+   "fr": "Une galerie de graveur, étroite. Les murs sont couverts d’esquisses de visages.",
+   "en": ""
+  },
+  {
+   "fr": "Un couloir parfaitement propre, qui mène à une petite pièce : une seule chaise, face au mur.",
+   "en": ""
+  },
+  {
+   "fr": "Un passage dans le noir",
+   "en": ""
+  },
+  {
+   "fr": "Il y a un passage là, dans le noir. Vous ne le voyez pas : il n’y a pas de lumière qui y entre. Moi, je n’en ai pas besoin.",
+   "en": ""
+  },
+  {
+   "fr": "Quelqu’un chante, derrière la paroi. Doucement. Il y a un passage.",
+   "en": ""
+  },
+  {
+   "fr": "Une grotte où les cristaux s’allument un à un à votre approche, comme pour vous accueillir.",
+   "en": ""
+  },
+  {
+   "fr": "Une niche oubliée par les Hauts, encore pleine. Elle dort.",
+   "en": ""
+  },
+  {
+   "fr": "Une cavité pleine d’ambre où un insecte immense, figé, garde un éclat de table.",
+   "en": ""
+  },
+  {
+   "fr": "Une chambre noire où une seule voix récite, très bas, la liste de ceux d’avant.",
+   "en": ""
+  },
+  {
+   "fr": "Une porte des Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Une porte de service des Hauts. On les fait toujours de la même façon : il suffit de pousser là, en haut à gauche.",
+   "en": ""
+  },
+  {
+   "fr": "Les Hauts ont une porte ici. Je reconnais leurs charnières : dorées, même sous terre.",
+   "en": ""
+  },
+  {
+   "fr": "Un réduit où les Brigades stockent leurs rations. Personne ne viendra les compter.",
+   "en": ""
+  },
+  {
+   "fr": "Un vestiaire des préleveurs : blouses blanches, gants, et une liste de niches cochées.",
+   "en": ""
+  },
+  {
+   "fr": "Un dépôt des Hauts, vide, sauf une lettre jamais envoyée, adressée à « Liane ».",
+   "en": ""
+  },
+  {
+   "fr": "Un escalier de marbre qui ne mène nulle part. Les Hauts ont essayé de venir jusqu’ici.",
+   "en": ""
+  },
+  {
+   "fr": "Une marque de fouilleur",
+   "en": ""
+  },
+  {
+   "fr": "Une marque de fouilleur sur la pierre : « cache derrière ». Je connais ce signe, je l’ai assez utilisé.",
+   "en": ""
+  },
+  {
+   "fr": "Quelqu’un a caché quelque chose ici et en a encore honte. Ça se sent.",
+   "en": ""
+  },
+  {
+   "fr": "Une flèche gravée, toute petite. Les coursiers marquent leurs raccourcis comme ça.",
+   "en": ""
+  },
+  {
+   "fr": "La cachette d’un fouilleur, avec son carnet : « Si tu trouves ça, rends-le à ma fille. »",
+   "en": ""
+  },
+  {
+   "fr": "Une cache de pilleur, avec un plan des portes rondes tracé à la main.",
+   "en": ""
+  },
+  {
+   "fr": "Un trou de fouilleur, et au fond, un carnet de relevés des Veilleurs perdus.",
+   "en": ""
+  },
+  {
+   "fr": "Une marque de fouilleur, très ancienne. Quelqu’un est déjà venu jusqu’ici, bien avant 2066.",
+   "en": ""
+  },
+  {
+   "fr": "Un Rampeur qui n’a jamais cessé de grandir, né dans les eaux chaudes des pompes de 2066. Les fouilleurs l’entendent respirer sous les piliers.",
+   "en": ""
+  },
+  {
+   "fr": "Elle s’enfuit au bout de quatre tours : frappe fort dès le premier. Ses Ressacs touchent toute l’escouade, garde du bouclier.",
+   "en": ""
+  },
+  {
+   "fr": "Marée-Basse ne s’approche jamais des piliers qui tiennent. Elle suit l’eau qui monte, comme tout le monde.",
+   "en": ""
+  },
+  {
+   "fr": "Une Sentinelle de verre dont la porte a été murée en 2066. Elle cherche depuis une porte à garder.",
+   "en": ""
+  },
+  {
+   "fr": "Blindée : mise sur des cartes fortes ou sur Perçant. Elle fuit au bout de quatre tours, ne garde rien pour la fin.",
+   "en": ""
+  },
+  {
+   "fr": "Elle ne frappe jamais quelqu’un qui se tient dans l’encadrement d’une porte. Personne ne sait pourquoi.",
+   "en": ""
+  },
+  {
+   "fr": "Un Écho qui lit à voix haute les noms gravés des Registres. Là où il est passé, les noms s’effacent.",
+   "en": ""
+  },
+  {
+   "fr": "Hors Résonance, tes coups glissent sur lui : enchaîne des suites. Il brouille tes Fréquences un tour sur quatre.",
+   "en": ""
+  },
+  {
+   "fr": "Il ne lit jamais deux fois le même nom. Ceux qu’il a lus, la Tisseuse les avait déjà oubliés.",
+   "en": ""
+  },
+  {
+   "fr": "Un scaphandre de ceux d’avant, lesté, qui marche encore vers la surface. Il ne s’est jamais arrêté.",
+   "en": ""
+  },
+  {
+   "fr": "Très blindé, et ses Poids morts font mal : protège le plus faible, et frappe gros avant qu’il reparte.",
+   "en": ""
+  },
+  {
+   "fr": "Sur son casque, quelqu’un a gravé des vagues, les mêmes que sur la couverture tissée de −4. Il est passé par les portes rondes, un jour.",
+   "en": ""
+  },
+  {
+   "fr": "Une empreinte trop vieille pour se souvenir de son porteur. Elle erre dans les Seuils en cherchant un corps qui n’existe plus.",
+   "en": ""
+  },
+  {
+   "fr": "Ses Fêlures sont cachées : sans suite de Fréquences, tes coups glissent sur lui. Enchaîne 3, 4, 5.",
+   "en": ""
+  },
+  {
+   "fr": "Certains Rémanents répètent la même phrase en boucle. Ysé en a noté une : « Ne fermez pas, il reste quelqu’un. »",
+   "en": ""
+  },
+  {
+   "fr": "Une machine de surveillance des dépôts de 2060. Personne ne lui a dit que les dépôts étaient vides.",
+   "en": ""
+  },
+  {
+   "fr": "Blindée, elle vise les Résonants et vole ton Flux à chaque coup qui passe : protège Véla et frappe fort.",
+   "en": ""
+  },
+  {
+   "fr": "Sa mémoire contient encore la liste des employés du dépôt. Le dernier badge enregistré est celui du père de Doran.",
+   "en": ""
+  },
+  {
+   "fr": "Une bête des piliers, née dans les eaux chaudes des pompes noyées. Elle mange la rouille.",
+   "en": ""
+  },
+  {
+   "fr": "Il se régénère à chaque tour : ne le laisse pas souffler, finis-le vite.",
+   "en": ""
+  },
+  {
+   "fr": "Les Rampeurs ne mangent que la rouille des piliers qui vont céder. Les fouilleurs les suivent pour savoir où ne pas marcher.",
+   "en": ""
+  },
+  {
+   "fr": "Un fouilleur sans licence. La plupart descendent pour nourrir une famille, quelques-uns pour le marché noir.",
+   "en": ""
+  },
+  {
+   "fr": "Vengeur : si tu abats son allié, il frappe double au tour suivant. Abats-le en premier.",
+   "en": ""
+  },
+  {
+   "fr": "Les pilleurs ont leur propre mur des noms, plus bas, à −2. Brac y a gravé le sien deux fois.",
+   "en": ""
+  },
+  {
+   "fr": "Un greffé sans Clinique ni Lecture : une brisure achetée au marché noir, et un penchant qui n’est pas le sien.",
+   "en": ""
+  },
+  {
+   "fr": "Vengeur, comme les pilleurs : quand il est en groupe, c’est lui qu’il faut viser d’abord.",
+   "en": ""
+  },
+  {
+   "fr": "Une Lecture bien faite guérit la plupart des Sauvages. La Clinique du district en a déjà sauvé plusieurs.",
+   "en": ""
+  },
+  {
+   "fr": "Des empreintes mêlées, collées autour d’une seule voix. Elle cherche quelque chose, toujours plus bas.",
+   "en": ""
+  },
+  {
+   "fr": "Elle se régénère et appelle un Rampeur à mi-vie : garde de quoi finir le renfort sans la laisser remonter.",
+   "en": ""
+  },
+  {
+   "fr": "La voix autour de qui les autres se sont collées ne dit qu’un mot : « Compte. »",
+   "en": ""
+  },
+  {
+   "fr": "Un soldat des Brigades du Serment de Veyr, la garde de la Maison Orsève dans les Strates.",
+   "en": ""
+  },
+  {
+   "fr": "Furie : sous la moitié de ses PV, il frappe beaucoup plus fort. Achève-le d’un coup.",
+   "en": ""
+  },
+  {
+   "fr": "Les brigadiers prêtent serment sur une empreinte de la Maison. Certains récitent, en combat, un serment qui n’est pas le leur.",
+   "en": ""
+  },
+  {
+   "fr": "Le rémanent d’un Veilleur mort en service, qui fait encore sa ronde dans les salles closes.",
+   "en": ""
+  },
+  {
+   "fr": "Fêlures cachées, et il prend la lignée de la dernière carte qui le frappe : varie tes coups, et termine par celle qu’il craint.",
+   "en": ""
+  },
+  {
+   "fr": "Les rémanents de veilleurs connaissent encore les mots de passe des Veilleurs de Sédime. Tobin les a tous notés.",
+   "en": ""
+  },
+  {
+   "fr": "Une machine de ceux d’avant, en verre trempé, qui garde les portes rondes.",
+   "en": ""
+  },
+  {
+   "fr": "Épines : chaque coup te coûte un peu. Préfère quelques gros coups, et méfie-toi de ses rayons sur les Génés.",
+   "en": ""
+  },
+  {
+   "fr": "Les sentinelles ne s’allument que si quelqu’un approche d’une porte entrouverte. Elles protègent ceux qui sont dedans.",
+   "en": ""
+  },
+  {
+   "fr": "Le gardien des salles closes. Il fait l’appel de ceux qui sont passés, et attend qu’ils reviennent.",
+   "en": ""
+  },
+  {
+   "fr": "Blindé, il appelle un brigadier à la barre à mi-vie : garde tes plus gros coups pour la seconde phase.",
+   "en": ""
+  },
+  {
+   "fr": "Il ne garde pas des cristaux. Il garde le registre de tous ceux qui sont descendus, ouvriers de 2066 compris.",
+   "en": ""
+  },
+  {
+   "fr": "Un souvenir dédoublé : la même personne, dans deux versions de sa vie qui se contredisent.",
+   "en": ""
+  },
+  {
+   "fr": "Il revient plus petit quand il tombe, et change de lignée : garde de quoi finir son rejeton.",
+   "en": ""
+  },
+  {
+   "fr": "Les Doubles ne se battent pas entre eux. Chacun croit que l’autre est le faux.",
+   "en": ""
+  },
+  {
+   "fr": "Des insectes nés dans l’ambre de la Ruche. Ils gardent les tables gravées comme une reine.",
+   "en": ""
+  },
+  {
+   "fr": "Ses piqûres touchent toute l’escouade et il revient plus petit : un bouclier d’escouade vaut mieux qu’un soin.",
+   "en": ""
+  },
+  {
+   "fr": "L’ambre ne vient pas des insectes : il remonte des empreintes que la Ruche couve.",
+   "en": ""
+  },
+  {
+   "fr": "Une machine de ceux d’avant, qui grave les tables. Elle continue, même quand plus personne ne lit.",
+   "en": ""
+  },
+  {
+   "fr": "Blindé, il vise les Résonants puis se polit : frappe fort, et ne lui laisse pas le temps de se soigner.",
+   "en": ""
+  },
+  {
+   "fr": "Les automates graveurs ne gravent qu’une phrase : « Que celui qui lit ceci compte les voix qu’il porte. »",
+   "en": ""
+  },
+  {
+   "fr": "Elle tisse des souvenirs, vrais ou à venir, et garde les noms que les tables ont perdus.",
+   "en": ""
+  },
+  {
+   "fr": "Épines, et un essaim à mi-vie : préfère quelques gros coups, et garde un soin pour la fin.",
+   "en": ""
+  },
+  {
+   "fr": "Elle a donné son propre nom à quelqu’un, il y a très longtemps, pour qu’il se souvienne d’elle. Il l’a oubliée.",
+   "en": ""
+  },
+  {
+   "fr": "Le premier d’entre ceux d’avant à avoir porté une empreinte. Le seul à n’avoir jamais mêlé sa voix à une autre.",
+   "en": ""
+  },
+  {
+   "fr": "Fêlures cachées, et il rappelle son double à mi-vie : la suite est la seule façon de le toucher pleinement.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la mise en garde, il a gravé une ligne plus récente : « Les voix ne nous ont pas pris, elles nous ont gardés. »",
+   "en": ""
+  }
+ ]
+}

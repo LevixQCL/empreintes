@@ -1,0 +1,177 @@
+{
+ "source": "src/core/lieux.ts",
+ "entrees": [
+  {
+   "fr": "la station de pompage engloutie",
+   "en": ""
+  },
+  {
+   "fr": "Elle pompait la mer hors des rues basses, jusqu’au jour où la mer a gagné. Ses vannes tournent encore quand la marée tire dessus.",
+   "en": ""
+  },
+  {
+   "fr": "Les grandes vannes de la station dépassaient de l’eau verte : la barque s’est glissée entre deux tuyaux, et {nom} a pris pied sur une roue rouillée.",
+   "en": ""
+  },
+  {
+   "fr": "l’usine de dessalement abandonnée",
+   "en": ""
+  },
+  {
+   "fr": "Elle rendait l’eau douce à trois piliers. Ses cuves blanches sont couvertes d’un sel qui brille à midi, et ses pompes n’attendent qu’un courant pour repartir.",
+   "en": ""
+  },
+  {
+   "fr": "Les cuves blanches de l’usine brillaient de sel en plein soleil ; {nom} a sauté sur une passerelle tiède.",
+   "en": ""
+  },
+  {
+   "fr": "la gare suspendue à demi noyée",
+   "en": ""
+  },
+  {
+   "fr": "Les trains des Hauts y passaient au-dessus des toits. Un wagon pend encore au-dessus de l’eau, plein de bagages que personne n’est venu chercher.",
+   "en": ""
+  },
+  {
+   "fr": "La barque s’est arrêtée sous les pieds de fer de la gare ; {nom} a grimpé jusqu’au quai par une échelle de service.",
+   "en": ""
+  },
+  {
+   "fr": "l’épave du transbordeur Héron",
+   "en": ""
+  },
+  {
+   "fr": "Il faisait la navette entre les piliers, cent passagers par traversée. Échoué sur un banc de sable, il abrite encore ceux qui n’ont jamais trouvé d’autre toit.",
+   "en": ""
+  },
+  {
+   "fr": "Le Héron gisait sur son banc de sable, sa proue tendue vers le large ; {nom} est entré par une écoutille entrouverte.",
+   "en": ""
+  },
+  {
+   "fr": "les serres noyées du Jardin d’Hiver",
+   "en": ""
+  },
+  {
+   "fr": "Sous le dôme brisé, les plantes ont tout repris. Les jardiniers d’avant y cachaient des pierres au pied des arbres, pour qu’elles poussent avec eux.",
+   "en": ""
+  },
+  {
+   "fr": "Sous le dôme brisé, l’air sentait la terre mouillée ; {nom} a écarté les lianes pour entrer.",
+   "en": ""
+  },
+  {
+   "fr": "les toits du vieux marché des Salines",
+   "en": ""
+  },
+  {
+   "fr": "Les auvents rayés flottent au ras de l’eau. Des lanternes y brûlent encore chaque soir, entretenues par des familles qui n’ont jamais voulu partir.",
+   "en": ""
+  },
+  {
+   "fr": "Les auvents rayés du vieux marché flottaient au ras de l’eau, et quelques lanternes brûlaient encore pour accueillir la barque.",
+   "en": ""
+  },
+  {
+   "fr": "les quais morts de l’ancienne criée",
+   "en": ""
+  },
+  {
+   "fr": "Ici se vendait le poisson de toute la côte. Les filets pendent toujours, les chambres froides sont intactes, et les mouettes ne sont jamais parties.",
+   "en": ""
+  },
+  {
+   "fr": "Sur les quais de la criée, les filets pendaient toujours, et les mouettes ont salué la barque à grands cris.",
+   "en": ""
+  },
+  {
+   "fr": "les silos de la digue rompue",
+   "en": ""
+  },
+  {
+   "fr": "Les silos gardaient le grain de tout un quartier. La digue a cédé, le grain a germé : des épis sortent des fentes du béton, et des pierres dorment dans les semences.",
+   "en": ""
+  },
+  {
+   "fr": "Des épis sortaient des fentes des silos ; {nom} a longé la digue rompue, de l’eau jusqu’aux genoux.",
+   "en": ""
+  },
+  {
+   "fr": "le clocher de verre sous la marée",
+   "en": ""
+  },
+  {
+   "fr": "Quand la houle frappe le verre, la cloche de bronze sonne seule. Les Résonants disent qu’elle sonne juste, comme une voix qu’on aurait gardée.",
+   "en": ""
+  },
+  {
+   "fr": "En approchant, {nom} a entendu la cloche de verre sonner seule, au rythme de la houle.",
+   "en": ""
+  },
+  {
+   "fr": "le pilier sans nom au large de Brume-Haute",
+   "en": ""
+  },
+  {
+   "fr": "Aucune carte ne le nomme, et aucun passeur n’y accoste deux fois de la même façon. Dans le brouillard, des lumières s’allument et s’éteignent, sans personne pour les tenir.",
+   "en": ""
+  },
+  {
+   "fr": "Le brouillard s’est ouvert juste le temps d’accoster ; derrière la barque, plus rien, ni le district ni la mer.",
+   "en": ""
+  },
+  {
+   "fr": "le phare couché de Pâle-Lune",
+   "en": ""
+  },
+  {
+   "fr": "Il s’est couché dans la mer sans s’éteindre tout à fait. Sa lampe pulse encore, comme un cœur qui dort, et les naufragés suivent sa lueur.",
+   "en": ""
+  },
+  {
+   "fr": "La lampe du phare couché pulsait sous l’eau, comme un cœur endormi ; le passeur s’est guidé sur elle.",
+   "en": ""
+  },
+  {
+   "fr": "le pilier effondré de Sombreverse",
+   "en": ""
+  },
+  {
+   "fr": "Un pilier-cité cassé en deux. Ses étages hauts ont glissé dans l’eau avec leurs ateliers, et l’on y entend encore travailler des voix sans corps.",
+   "en": ""
+  },
+  {
+   "fr": "Les étages tombés du pilier formaient un escalier dans la mer ; {nom} l’a descendu marche après marche.",
+   "en": ""
+  },
+  {
+   "fr": "{nom} a posé la main sur une console morte : ses greffes ont parlé aux machines, et les portes se sont ouvertes une à une.",
+   "en": ""
+  },
+  {
+   "fr": "Les plantes se sont écartées devant {nom} : un Géné sent les sèves, et sait où le vivant cache ce qu’il garde.",
+   "en": ""
+  },
+  {
+   "fr": "Les échos du lieu ont reconnu la pierre de {nom}, et les voix l’ont guidé jusqu’aux cachettes.",
+   "en": ""
+  },
+  {
+   "fr": "Les machines n’ont rien voulu entendre de la pierre de {nom} : les vannes sont restées grippées, il a fallu tout forcer.",
+   "en": ""
+  },
+  {
+   "fr": "Les ronces se sont refermées sur les greffes de {nom}, et l’humidité a grippé ses articulations : une fouille lente et pénible.",
+   "en": ""
+  },
+  {
+   "fr": "Les échos ont égaré {nom}, qui a tourné des heures dans des couloirs qui changeaient de forme.",
+   "en": ""
+  },
+  {
+   "fr": "Rien ne l’a aidé, rien ne l’a gêné : une fouille honnête, à la lampe.",
+   "en": ""
+  }
+ ]
+}

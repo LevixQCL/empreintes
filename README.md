@@ -23,6 +23,7 @@ Autres commandes :
 | `duel.html` | L'essai du duel en temps réel (page à part) : contre le robot ou un ami avec un code — voir `docs/duel.md`. Dans le jeu, le duel passe par le Cercle des quais |
 | `npm run robot` | Lance le robot d'équilibrage (quelques minutes) et écrit `docs/robot-rapport.md` |
 | `npm run voies` | Compare chaque voie à un deck classique de même Charge et écrit `docs/voies-rapport.md` |
+| `npm run i18n` | Met à jour les catalogues de traduction d'après le code et montre ce qui est traduit (voir `docs/traduction/README.md`) |
 
 Chaque `git push` sur `main` lance les tests, construit le site et le publie sur GitHub Pages.
 
@@ -87,6 +88,8 @@ src/
     synchro.ts     la sauvegarde sur l'appareil et sur le compte, la partie de secours
     tableau.ts     le Grand Tableau en ligne
     clavier.ts, intro.ts
+  entree.ts      l'entrée : choisit la langue et charge sa traduction, puis lance main.ts
+  traduction.ts  le chargement d'un catalogue de traduction (traductions/<langue>/)
   main.ts        le démarrage et les gestes du joueur
 public/art/      les illustrations Midjourney (Porteurs, Modules, ennemis, bâtiments, décors, scènes des salles, icônes, textures des métaux) ; src/ui/art.ts dit laquelle va où
 public/fonts/    les polices (Saira, Marcellus SC, Literata), hébergées sur le site : rien ne part chez Google.

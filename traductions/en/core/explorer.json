@@ -1,0 +1,565 @@
+{
+ "source": "src/core/explorer.ts",
+ "entrees": [
+  {
+   "fr": "Un casque de chantier",
+   "en": ""
+  },
+  {
+   "fr": "Un casque jaune de 2066, fendu sur le côté. À l’intérieur, au feutre : « Si tu le trouves, rapporte-le au quai 4. »",
+   "en": ""
+  },
+  {
+   "fr": "Une clé de pompe",
+   "en": ""
+  },
+  {
+   "fr": "Une clé en croix, polie par les mains. Elle ouvre encore la vanne d’une pompe noyée. La pompe repart une seconde, puis tousse.",
+   "en": ""
+  },
+  {
+   "fr": "Un ticket de cantine",
+   "en": ""
+  },
+  {
+   "fr": "Un ticket de la cantine du chantier : « Soupe, pain, 14 octobre 2066 ». Jamais utilisé.",
+   "en": ""
+  },
+  {
+   "fr": "Une craie bleue",
+   "en": ""
+  },
+  {
+   "fr": "Un bout de craie bleue. Sur le mur d’à côté, des flèches tracées avec, toutes vers le haut.",
+   "en": ""
+  },
+  {
+   "fr": "Une photo plastifiée",
+   "en": ""
+  },
+  {
+   "fr": "Une équipe de six, devant la Tour du Noyau encore en chantier. Quelqu’un a entouré un visage au stylo.",
+   "en": ""
+  },
+  {
+   "fr": "Une lampe de pilleur",
+   "en": ""
+  },
+  {
+   "fr": "Une lampe frontale bricolée, la pile scotchée sur le côté. Elle marche encore, faiblement.",
+   "en": ""
+  },
+  {
+   "fr": "Un carnet de comptes",
+   "en": ""
+  },
+  {
+   "fr": "Des colonnes de chiffres : cristaux pris, cristaux vendus. La dernière page dit seulement : « Celles-là, non. »",
+   "en": ""
+  },
+  {
+   "fr": "Une truelle",
+   "en": ""
+  },
+  {
+   "fr": "Une truelle couverte de mortier sec, abandonnée au pied d’un mur de 2066. Le mur n’a jamais été fini.",
+   "en": ""
+  },
+  {
+   "fr": "Un cristal fêlé",
+   "en": ""
+  },
+  {
+   "fr": "Un petit cristal fendu en deux. Les deux moitiés vibrent encore, chacune de leur côté.",
+   "en": ""
+  },
+  {
+   "fr": "Une gamelle gravée",
+   "en": ""
+  },
+  {
+   "fr": "Une gamelle en fer, gravée « B. » au couteau. Dedans, des cailloux ronds, rangés par taille.",
+   "en": ""
+  },
+  {
+   "fr": "Une boussole morte",
+   "en": ""
+  },
+  {
+   "fr": "Une boussole des Brigades. L’aiguille tourne sans s’arrêter, lentement, comme si le nord était partout.",
+   "en": ""
+  },
+  {
+   "fr": "Un sifflet",
+   "en": ""
+  },
+  {
+   "fr": "Un sifflet de patrouille, accroché à une corde. Quand on souffle dedans, rien ne répond dans le noir.",
+   "en": ""
+  },
+  {
+   "fr": "Une ration entamée",
+   "en": ""
+  },
+  {
+   "fr": "Une ration militaire ouverte, à moitié mangée. Le reste a été soigneusement remballé, pour plus tard.",
+   "en": ""
+  },
+  {
+   "fr": "Un fil d’Ariane",
+   "en": ""
+  },
+  {
+   "fr": "Une bobine de fil rouge, presque vide. Le fil part dans le noir et s’arrête net, coupé proprement.",
+   "en": ""
+  },
+  {
+   "fr": "Une lettre pliée",
+   "en": ""
+  },
+  {
+   "fr": "Une lettre d’un soldat à sa sœur, jamais envoyée : « Ici, on n’a pas peur du noir. On a peur de ce qui s’y habitue. »",
+   "en": ""
+  },
+  {
+   "fr": "Un gond de cristal",
+   "en": ""
+  },
+  {
+   "fr": "Un gond taillé dans le cristal, lisse comme du verre. Aucune rouille, après tout ce temps.",
+   "en": ""
+  },
+  {
+   "fr": "Une tasse",
+   "en": ""
+  },
+  {
+   "fr": "Une tasse en grès, posée sur une marche. Le fond est encore taché. Quelqu’un prenait le temps de boire, ici.",
+   "en": ""
+  },
+  {
+   "fr": "Un calendrier gratté",
+   "en": ""
+  },
+  {
+   "fr": "Des bâtons gravés dans la pierre, par groupes de sept. Il y en a des milliers.",
+   "en": ""
+  },
+  {
+   "fr": "Une couverture tissée",
+   "en": ""
+  },
+  {
+   "fr": "Une couverture tissée main, aux motifs de vagues. Personne ne tisse plus comme ça, là-haut.",
+   "en": ""
+  },
+  {
+   "fr": "Une lampe éteinte",
+   "en": ""
+  },
+  {
+   "fr": "Une lampe à huile minuscule, posée au pied d’une porte ronde. Comme si on en avait fabriqué une pour un enfant.",
+   "en": ""
+  },
+  {
+   "fr": "Un bâton de cire blanche",
+   "en": ""
+  },
+  {
+   "fr": "Un bâton de cire blanche, à moitié fondu. La cire des sceaux de la Maison Orsève.",
+   "en": ""
+  },
+  {
+   "fr": "Un gant de préleveur",
+   "en": ""
+  },
+  {
+   "fr": "Un gant fin, doublé de soie. Taille enfant. Les préleveurs des Hauts descendent avec leurs apprentis.",
+   "en": ""
+  },
+  {
+   "fr": "Une étiquette",
+   "en": ""
+  },
+  {
+   "fr": "Une étiquette de caisse : « Berceau 12, lot 3. Ne pas ouvrir avant l’arrivée. » L’arrivée où ?",
+   "en": ""
+  },
+  {
+   "fr": "Un berceau vide",
+   "en": ""
+  },
+  {
+   "fr": "Une niche ronde, tapissée de mousse séchée. La forme d’un cristal y est encore imprimée.",
+   "en": ""
+  },
+  {
+   "fr": "Un sceau brisé",
+   "en": ""
+  },
+  {
+   "fr": "Un sceau de cire brisé, et sous lui un autre, plus ancien. Et sous lui encore un autre. On rescelle ici depuis toujours.",
+   "en": ""
+  },
+  {
+   "fr": "Un bouchon d’oreille",
+   "en": ""
+  },
+  {
+   "fr": "Un bouchon d’oreille en mousse, de ceux qu’on distribuait au chantier. Il y en a des dizaines, par terre.",
+   "en": ""
+  },
+  {
+   "fr": "Une main sur le mur",
+   "en": ""
+  },
+  {
+   "fr": "L’empreinte d’une main dans le béton frais de 2066, côté chantier. De l’autre côté, à la même hauteur, une autre main.",
+   "en": ""
+  },
+  {
+   "fr": "Une radio de chantier",
+   "en": ""
+  },
+  {
+   "fr": "Une radio de chantier, bloquée sur une fréquence. Quand on l’allume, on entend respirer.",
+   "en": ""
+  },
+  {
+   "fr": "Un plan du niveau 7",
+   "en": ""
+  },
+  {
+   "fr": "Un plan du niveau 7, annoté au crayon rouge : « Ici. Et ici. Et là. Couler partout. »",
+   "en": ""
+  },
+  {
+   "fr": "Une berceuse",
+   "en": ""
+  },
+  {
+   "fr": "Une feuille de papier, une berceuse écrite à la main. En marge : « Pour qu’ils arrêtent de pleurer. Ça marche. »",
+   "en": ""
+  },
+  {
+   "fr": "Une jauge de crue",
+   "en": ""
+  },
+  {
+   "fr": "Une règle de bronze graduée, scellée au mur. Ses chiffres ne ressemblent à rien de connu, mais les traits montent.",
+   "en": ""
+  },
+  {
+   "fr": "Une rame de verre",
+   "en": ""
+  },
+  {
+   "fr": "Une rame taillée dans un verre épais et léger. Ceux d’avant ont ramé, quand l’eau est montée.",
+   "en": ""
+  },
+  {
+   "fr": "Un cœur de Berceau",
+   "en": ""
+  },
+  {
+   "fr": "Un cristal énorme, éteint, pris dans une monture d’or. Il a tenu quelque chose, autrefois. Quelque chose de lourd.",
+   "en": ""
+  },
+  {
+   "fr": "Une liste de noms",
+   "en": ""
+  },
+  {
+   "fr": "Une plaque couverte de noms, ligne après ligne. Chacun a été rayé, un par un, avec soin.",
+   "en": ""
+  },
+  {
+   "fr": "Un jouet d’enfant",
+   "en": ""
+  },
+  {
+   "fr": "Un petit bateau de bois, la voile en tissu. Ceux d’avant avaient des enfants, et des enfants qui jouaient à la mer.",
+   "en": ""
+  },
+  {
+   "fr": "Un éclat de table",
+   "en": ""
+  },
+  {
+   "fr": "Un morceau de table de pierre, gravé de lignes fines. Les mêmes lignes que sur la paume d’une main.",
+   "en": ""
+  },
+  {
+   "fr": "Une lanterne de Veilleur",
+   "en": ""
+  },
+  {
+   "fr": "Une lanterne des Veilleurs de Tobin, la mèche encore longue. Quelqu’un l’a éteinte pour dormir.",
+   "en": ""
+  },
+  {
+   "fr": "Un rêve écrit",
+   "en": ""
+  },
+  {
+   "fr": "Une page couverte d’une écriture serrée : le récit d’un rêve, recopié trois fois, de trois mains différentes.",
+   "en": ""
+  },
+  {
+   "fr": "Une alvéole",
+   "en": ""
+  },
+  {
+   "fr": "Une alvéole de la Ruche, assez grande pour s’y allonger. La pierre y est tiède, comme un lit qu’on vient de quitter.",
+   "en": ""
+  },
+  {
+   "fr": "Un compteur",
+   "en": ""
+  },
+  {
+   "fr": "Un boulier de pierre. Les billes sont poussées jusqu’à mille deux cents, puis plus rien.",
+   "en": ""
+  },
+  {
+   "fr": "Une navette",
+   "en": ""
+  },
+  {
+   "fr": "Une navette de tisserand, en os poli. Un fil y est encore enroulé, et ce fil murmure un nom.",
+   "en": ""
+  },
+  {
+   "fr": "Un nœud",
+   "en": ""
+  },
+  {
+   "fr": "Un nœud serré sur lui-même, gros comme un poing. Dedans, on devine des dizaines de noms entortillés.",
+   "en": ""
+  },
+  {
+   "fr": "Une épingle de brigadier",
+   "en": ""
+  },
+  {
+   "fr": "L’épingle d’un brigadier du Serment, prise dans la trame d’un mur de fils. Il est passé par ici, avant −5.",
+   "en": ""
+  },
+  {
+   "fr": "Un dé à coudre",
+   "en": ""
+  },
+  {
+   "fr": "Un dé à coudre de cristal, usé jusqu’à la transparence. La Tisseuse a cousu ici, longtemps.",
+   "en": ""
+  },
+  {
+   "fr": "Une bobine vide",
+   "en": ""
+  },
+  {
+   "fr": "Une bobine dont le fil a été tiré jusqu’au bout. Sur le bois, une seule lettre, presque effacée.",
+   "en": ""
+  },
+  {
+   "fr": "Un trousseau",
+   "en": ""
+  },
+  {
+   "fr": "Un trousseau d’une centaine de clés, toutes différentes. Une seule manque : la plus usée, à en croire l’anneau.",
+   "en": ""
+  },
+  {
+   "fr": "Un tabouret",
+   "en": ""
+  },
+  {
+   "fr": "Un tabouret de pierre, placé face à une porte. La pierre est creusée là où on s’asseyait, des siècles durant.",
+   "en": ""
+  },
+  {
+   "fr": "Une empreinte de doigt",
+   "en": ""
+  },
+  {
+   "fr": "Une empreinte de doigt gravée dans le cristal, si nette qu’on pourrait y poser le sien. Elle est à peine plus petite.",
+   "en": ""
+  },
+  {
+   "fr": "Un registre de garde",
+   "en": ""
+  },
+  {
+   "fr": "Un registre de pierre : une seule colonne, un seul nom, répété ligne après ligne. Tous les jours. Toujours la même main.",
+   "en": ""
+  },
+  {
+   "fr": "Une lampe allumée",
+   "en": ""
+  },
+  {
+   "fr": "Une lampe qui brûle encore, au fond d’une niche. Personne ne l’a allumée pour vous : elle n’a jamais été éteinte.",
+   "en": ""
+  },
+  {
+   "fr": "Le quai 4",
+   "en": ""
+  },
+  {
+   "fr": "Une équipe de six est descendue le 14 octobre 2066, entre la soupe et le pain. Quatre d’entre eux couleraient le mur, plus bas. Elle a marqué le chemin du retour à la craie bleue.",
+   "en": ""
+  },
+  {
+   "fr": "Les cailloux de Brac",
+   "en": ""
+  },
+  {
+   "fr": "Brac comptait ses cristaux comme ses cailloux : un par un, rangés. Il a su lesquels il ne fallait pas vendre.",
+   "en": ""
+  },
+  {
+   "fr": "Ce qui s’habitue",
+   "en": ""
+  },
+  {
+   "fr": "Les patrouilles de −3 n’ont pas eu peur du noir. Coincées sous l’éboulis, elles ont coupé leur propre fil pour que rien ne le suive, et elles ont attendu qu’on vienne.",
+   "en": ""
+  },
+  {
+   "fr": "Le veilleur et l’enfant",
+   "en": ""
+  },
+  {
+   "fr": "Derrière les portes rondes, quelqu’un a compté les semaines, tissé, bu son thé. Et il n’était pas seul : il y avait une petite lampe.",
+   "en": ""
+  },
+  {
+   "fr": "La Maison Orsève emporte les cristaux des Berceaux « avant l’arrivée ». Elle ne dit pas l’arrivée de qui, ni d’où.",
+   "en": ""
+  },
+  {
+   "fr": "La berceuse du niveau 7",
+   "en": ""
+  },
+  {
+   "fr": "En 2066, on a coulé le mur sur des voix. Une ouvrière leur chantait une berceuse pour qu’elles se taisent. Elles se sont tues.",
+   "en": ""
+  },
+  {
+   "fr": "Les enfants de ceux d’avant",
+   "en": ""
+  },
+  {
+   "fr": "Ceux d’avant avaient des enfants qui jouaient à la mer. Ils ont gravé leur ligne plus haut, et laissé les jouets en bas.",
+   "en": ""
+  },
+  {
+   "fr": "Mille deux cents tables",
+   "en": ""
+  },
+  {
+   "fr": "Chaque table de la Ruche garde un rêve. Les Veilleurs les comptaient pour ne pas s’y perdre, jusqu’à ce qu’ils s’y perdent.",
+   "en": ""
+  },
+  {
+   "fr": "La lettre sur la bobine",
+   "en": ""
+  },
+  {
+   "fr": "La Tisseuse a tissé jusqu’au dernier fil. Il ne reste de son nom qu’une lettre, sur le bois d’une bobine.",
+   "en": ""
+  },
+  {
+   "fr": "Celui qui garde",
+   "en": ""
+  },
+  {
+   "fr": "Une seule personne veille au Fond depuis très longtemps. Elle n’a jamais éteint sa lampe. Elle attendait qu’on descende.",
+   "en": ""
+  },
+  {
+   "fr": "De longues traînées humides sur la roche, larges comme un couloir. Marée-Basse est passée par ici.",
+   "en": ""
+  },
+  {
+   "fr": "Marée-Basse se laisse glisser dans une fissure noyée. Elle reviendra : les fouilleurs disent qu’elle revient toujours.",
+   "en": ""
+  },
+  {
+   "fr": "Marée-Basse s’affaisse dans l’eau tiède des pompes. Elle ne remontera plus jamais vers les piliers.",
+   "en": ""
+  },
+  {
+   "fr": "la Sentinelle orpheline",
+   "en": ""
+  },
+  {
+   "fr": "Des éclats de verre posés en ligne, comme pour marquer une porte qui n’est plus là. La Sentinelle orpheline cherche toujours.",
+   "en": ""
+  },
+  {
+   "fr": "La Sentinelle orpheline recule, se recompose en éclats, et disparaît vers une porte qu’elle seule voit.",
+   "en": ""
+  },
+  {
+   "fr": "La Sentinelle orpheline se fige, enfin. Ses éclats dessinent au sol le contour d’une porte. Elle l’a retrouvée.",
+   "en": ""
+  },
+  {
+   "fr": "le Liseur",
+   "en": ""
+  },
+  {
+   "fr": "Des noms gravés à moitié effacés, tout du long du couloir. Le Liseur a lu ici à voix haute.",
+   "en": ""
+  },
+  {
+   "fr": "Le Liseur se tait au milieu d’un nom, et s’efface dans la pierre. Plus loin, la lecture reprend.",
+   "en": ""
+  },
+  {
+   "fr": "Le Liseur prononce un dernier nom, le sien peut-être, puis se dissout. Les noms qu’il n’a pas lus restent gravés.",
+   "en": ""
+  },
+  {
+   "fr": "le Plongeur",
+   "en": ""
+  },
+  {
+   "fr": "Des empreintes de bottes lestées, qui montent. Toujours vers le haut. Le Plongeur cherche la surface.",
+   "en": ""
+  },
+  {
+   "fr": "Le Plongeur se détourne, lourd et lent, et reprend sa marche vers le haut. Il ne vous cherchait pas : vous étiez sur son chemin.",
+   "en": ""
+  },
+  {
+   "fr": "Le scaphandre s’assoit contre la roche, le hublot tourné vers le haut. Il est vide. Il l’a toujours été.",
+   "en": ""
+  },
+  {
+   "fr": "Le gardien",
+   "en": ""
+  },
+  {
+   "fr": "Vaincre le gardien.",
+   "en": ""
+  },
+  {
+   "fr": "Personne à terre",
+   "en": ""
+  },
+  {
+   "fr": "Vaincre le gardien sans qu’aucun Porteur ne tombe pendant la descente.",
+   "en": ""
+  },
+  {
+   "fr": "Sans repos",
+   "en": ""
+  },
+  {
+   "fr": "Vaincre le gardien sans entrer dans un campement.",
+   "en": ""
+  }
+ ]
+}

@@ -2,6 +2,8 @@
 
 Jeu de cartes à collectionner + gestion, SF/fantasy, web mobile d'abord (Vite + TypeScript + Vitest, Firebase).
 Tout est en français : code, commentaires, textes du jeu, messages de commit. Lire le README avant de coder.
+- Traduction (docs/traduction/README.md) : tout nouveau texte affiché au joueur s'écrit en français entouré de `t(…)` / `t\`…\``
+  (src/core/i18n.ts), jamais autour du HTML ; après un changement de texte, lancer `npm run i18n` (les tests l'exigent).
 
 ## Règles du code
 - `src/core` n'utilise jamais le navigateur (il tournera sur un serveur). L'affichage est dans `src/ui`, l'application (état, actions, rendu) dans `src/app`, le démarrage dans `src/main.ts`.

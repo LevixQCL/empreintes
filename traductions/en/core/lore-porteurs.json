@@ -1,0 +1,405 @@
+{
+ "source": "src/core/lore-porteurs.ts",
+ "entrees": [
+  {
+   "fr": "La passerelle",
+   "en": ""
+  },
+  {
+   "fr": "Ilka avait quatorze ans quand la passerelle des Hauts-Ponts a cédé sous elle. La rouille la rongeait depuis des années ; une fissure avait été signalée trois fois. Le Présage n’avait rien dit, puisque rien de soudain ne s’annonçait. Elle est tombée entre deux piliers, les jambes prises sous la passerelle, l’eau jusqu’au menton.",
+   "en": ""
+  },
+  {
+   "fr": "Celui qui a plongé",
+   "en": ""
+  },
+  {
+   "fr": "Un ouvrier des Fondations a plongé sans hésiter : un Géné aux poumons d’amphibien, qui tient sous l’eau bien plus longtemps qu’un humain. Il lui a tenu la tête hors de l’eau pendant deux heures, jusqu’à ce qu’on relance les pompes. C’était Doran. Elle ne l’en a jamais remercié à voix haute. Elle lui garde la meilleure part de chaque marché.",
+   "en": ""
+  },
+  {
+   "fr": "Le goût de la pièce",
+   "en": ""
+  },
+  {
+   "fr": "La Clinique n’a pas pu sauver ses jambes. Ilka a signé un prêt-de-vie avec la compagnie de transport : quinze ans de courses contre des jambes neuves. Leur cœur de cristal porte le geste d’une coursière des années 2070 qu’elle n’a jamais connue. Depuis, elle ne sait plus marcher lentement et parle aussi vite qu’elle court. « Je ne sais pas si c’est moi qui suis pressée, ou elle. » Ses cheveux ont blanchi en un an.",
+   "en": ""
+  },
+  {
+   "fr": "Si Ilka meurt avant la fin du contrat, la clause de survivance fait passer la dette à son petit frère, Pim, douze ans. C’est pour lui qu’elle accepte toutes les courses, même celles qu’on ne devrait pas accepter. Même un colis qui contenait un cristal volé.",
+   "en": ""
+  },
+  {
+   "fr": "La porte murée",
+   "en": ""
+  },
+  {
+   "fr": "Doran est né en 2069 dans une famille des chantiers d’abris. Son père a aidé à murer les accès sous le district en 2066, après « l’accident ». Il n’en a jamais dit qu’une phrase, répétée jusqu’à sa mort : « On a fermé la porte, mais pas de notre côté. »",
+   "en": ""
+  },
+  {
+   "fr": "La Mue sur contrat",
+   "en": ""
+  },
+  {
+   "fr": "À vingt-cinq ans, Doran a signé un contrat de mue avec la Compagnie des Fondations : des poumons d’amphibien et de la chitine, contre quinze ans de service sous l’eau. Six mois dans une maison de mue des bas-fonds, à manger pour trois. Son corps a été dessiné pour le poste, pas pour lui. Il a fini son contrat en 2109.",
+   "en": ""
+  },
+  {
+   "fr": "Quarante jours dans l’eau",
+   "en": ""
+  },
+  {
+   "fr": "Pendant la Grève des pompes de 2099, les Génés sont restés quarante jours dans l’eau des Fondations, là où personne d’autre ne pouvait tenir. Doran était de ceux-là. C’est de là que vient l’expression « têtus comme une marée ». Il n’en parle que si on lui sert à boire, et jamais pour s’en vanter.",
+   "en": ""
+  },
+  {
+   "fr": "Ses épaules",
+   "en": ""
+  },
+  {
+   "fr": "Doran n’a pas d’enfant. « Je ne voulais pas qu’ils naissent avec mes épaules. » Un enfant sur dix des Génés de sa génération est né avec un trait de la Mue de ses parents. Il a vu ce que les Hauts voulaient faire de ces enfants-là : un registre.",
+   "en": ""
+  },
+  {
+   "fr": "La pierre orpheline",
+   "en": ""
+  },
+  {
+   "fr": "À dix-neuf ans, apprentie fouilleuse, Véla a assisté à la mort d’un vieux Résonant des bas-fonds, sans famille. Sa pierre, deuxième copie d’un dragon serpentin, n’intéressait pas les Hauts : une copie de district, pour eux, ça ne vaut rien.",
+   "en": ""
+  },
+  {
+   "fr": "L’Accord ouvert",
+   "en": ""
+  },
+  {
+   "fr": "La Clinique a organisé un Accord ouvert : tout volontaire pouvait tenter la nuit avec la pierre contre la nuque. Soixante jeunes se sont présentés. Sa mère le lui avait interdit ; elle y est allée quand même. Au matin, la pierre était tiède contre sa peau, et contre la sienne seulement.",
+   "en": ""
+  },
+  {
+   "fr": "La lanterne",
+   "en": ""
+  },
+  {
+   "fr": "Depuis la Nuit blanche, Véla n’a plus jamais eu peur du vide : elle travaille sur les câbles sans harnais. Elle porte toujours une lanterne. Son ombre de dragon ne se voit bien qu’à la lumière d’une flamme, et chaque soir, elle vérifie qu’elle est toujours la même.",
+   "en": ""
+  },
+  {
+   "fr": "Ce qu’elle doit",
+   "en": ""
+  },
+  {
+   "fr": "Véla doit sa pierre au district, pas aux Hauts. Elle l’a promis à la Clinique : rendre ce qu’on lui a donné. Elle lit gratuitement pour les fouilleurs qui ne peuvent pas payer. C’est pour cela qu’une Résonante s’est mise au service d’un directeur de district.",
+   "en": ""
+  },
+  {
+   "fr": "L’atelier de presses",
+   "en": ""
+  },
+  {
+   "fr": "À seize ans, apprenti dans un atelier de presses, Sasha a perdu le bras droit dans un accident de machine.",
+   "en": ""
+  },
+  {
+   "fr": "Le bras dessiné",
+   "en": ""
+  },
+  {
+   "fr": "Sur son lit de Clinique, il a dessiné son propre bras au dos des feuilles de soin. Odile la Brocante, la ferrailleuse du marché, a vu les dessins et l’a fabriqué avec lui, en pièces de récupération, sans abonnement. C’est le premier bras « libre » du district.",
+   "en": ""
+  },
+  {
+   "fr": "La minute grise",
+   "en": ""
+  },
+  {
+   "fr": "Sasha n’a jamais payé de mise à jour de sa vie. Son bras ne s’arrête pas pendant la minute grise, quand les implants loués du district se figent tous ensemble : chaque mardi à quatre heures, il est l’homme le plus demandé du quartier.",
+   "en": ""
+  },
+  {
+   "fr": "La dernière promotion",
+   "en": ""
+  },
+  {
+   "fr": "Nuit est née en 2101 dans une famille de fouilleurs. Ses parents ont accepté sa Mue à trois ans, dans la toute dernière promotion de Chouettes, parce que le programme nourrissait la famille.",
+   "en": ""
+  },
+  {
+   "fr": "Les Chouettes",
+   "en": ""
+  },
+  {
+   "fr": "En 2104, une équipe de Chouettes a guidé une vingtaine d’adultes hors d’une galerie effondrée, trois jours dans le noir complet. Tout le monde est remonté vivant. Les écrans des marchés ont montré ces enfants aux yeux d’or, et l’année suivante, la Mue des enfants était interdite.",
+   "en": ""
+  },
+  {
+   "fr": "Trop clair",
+   "en": ""
+  },
+  {
+   "fr": "Nuit a grandi entre les adultes qui regrettaient le programme et ceux qui en avaient honte. Elle ne reproche rien à ses parents. Mais elle n’a jamais mis les pieds dans les Hauts, « où il fait trop clair ».",
+   "en": ""
+  },
+  {
+   "fr": "La Remise",
+   "en": ""
+  },
+  {
+   "fr": "Chez les Orsève, la greffe d’un héritier s’appelle la Remise. Le jour de ses seize ans, on lui greffe l’empreinte relevée d’un aïeul, et l’on grave son nom sous celui du porteur précédent, sur l’écrin du cristal. Aurel a reçu celle de son arrière-grand-mère : la copie d’un être ailé, déjà portée trois fois.",
+   "en": ""
+  },
+  {
+   "fr": "Sa cousine Liane avait tenté l’Accord avant lui. La pierre était morte dans la nuit. Liane a été envoyée « étudier ailleurs », et son nom ne figure plus dans aucun registre. Aurel avait dix ans. Il ne l’a jamais revue.",
+   "en": ""
+  },
+  {
+   "fr": "La signature",
+   "en": ""
+  },
+  {
+   "fr": "Après la Remise, Aurel a cessé d’aimer la musique qu’il adorait, et s’est mis à classer les gens par utilité. À vingt ans, il a découvert qu’il avait fait renvoyer son ami d’enfance, un serviteur de la Maison, sans rien ressentir en signant. Il s’est enfui la semaine suivante.",
+   "en": ""
+  },
+  {
+   "fr": "Une pierre morte",
+   "en": ""
+  },
+  {
+   "fr": "Liane Orsève avait seize ans quand elle a tenté l’Accord, l’âge permis par les Accords. Le matin, la pierre de la famille était ternie pour toujours. On l’a envoyée « étudier ailleurs », dans un district, avec une valise et une rente. Son nom a été effacé des registres de la Maison.",
+   "en": ""
+  },
+  {
+   "fr": "Ce qui remplace l’or",
+   "en": ""
+  },
+  {
+   "fr": "Dans le district, une Refusée des Hauts n’est ni d’ici ni de là-haut. Liane a choisi les implants, un par un, comme on gagne des galons. Sa tête est presque blanche : on la compte parmi les Délavés. « Ils m’ont refusé la mèche d’or. J’ai fait pousser autre chose. »",
+   "en": ""
+  },
+  {
+   "fr": "Les Refusés",
+   "en": ""
+  },
+  {
+   "fr": "Liane a retrouvé d’autres Refusés des Hauts, cachés dans les districts. Plusieurs sont devenus directeurs, sans le dire. Elle tient leur liste de mémoire, et ne l’écrit nulle part.",
+   "en": ""
+  },
+  {
+   "fr": "Née de la Mue",
+   "en": ""
+  },
+  {
+   "fr": "Kessa est née en 2097 avec une plaque de chitine à l’épaule et des yeux qui renvoient la lumière la nuit. Ses parents avaient mué tous les deux, en 2090, avec des sèves qui fixaient mal. On l’appelle une Née-de-mue.",
+   "en": ""
+  },
+  {
+   "fr": "Le registre",
+   "en": ""
+  },
+  {
+   "fr": "Quand Kessa avait douze ans, les Brigades sont passées dans son école pour recenser les Nés-de-mue. Sa mère l’a cachée trois jours chez un teinturier de mèches. Le district n’a jamais rendu sa liste.",
+   "en": ""
+  },
+  {
+   "fr": "Une génération",
+   "en": ""
+  },
+  {
+   "fr": "Les sèves modernes ne laissent plus rien passer : il n’y aura pas d’autres Nés-de-mue. Kessa le vit comme une singularité à protéger. « On n’a rien choisi. Mais on est les seuls à pouvoir dire ce que ça fait. »",
+   "en": ""
+  },
+  {
+   "fr": "Le teinturier",
+   "en": ""
+  },
+  {
+   "fr": "Joss était apprenti teinturier de mèches : toutes les trois semaines, les Résonants du quartier venaient chez lui faire teindre l’or qui repousse. Il connaissait leurs noms, leurs secrets et l’heure de leur rendez-vous.",
+   "en": ""
+  },
+  {
+   "fr": "Quand la Clinique a annoncé un Accord ouvert, Joss s’est présenté par curiosité, avec quarante autres. La pierre venait d’une Résonante du quartier qui l’avait laissée au district par testament. Elle a pris sur lui. Le lendemain, il a éclaté de rire en voyant sa première mèche d’or : pour une fois, il ne la teindrait pas.",
+   "en": ""
+  },
+  {
+   "fr": "La Nuit blanche",
+   "en": ""
+  },
+  {
+   "fr": "Pendant ses trois nuits sans sommeil, le district entier est venu lui parler de son enfance, à tour de rôle, comme le veut la tradition. Il dit qu’il ne s’est jamais senti aussi entouré. Il dit aussi qu’il rêve maintenant d’un escalier qui monte sans fin.",
+   "en": ""
+  },
+  {
+   "fr": "Un pas de trop",
+   "en": ""
+  },
+  {
+   "fr": "Ses jambes ont un geste gravé d’occasion, celui d’un donneur pressé. Il le sent : il commence toujours à courir une seconde avant d’avoir décidé où aller.",
+   "en": ""
+  },
+  {
+   "fr": "Les quais",
+   "en": ""
+  },
+  {
+   "fr": "Il a mué à trente ans pour décharger les barges des quais. Sa souche de chitine est de celles qu’on donnait aux dockers par lots entiers, sans demander leur avis.",
+   "en": ""
+  },
+  {
+   "fr": "Une brisure",
+   "en": ""
+  },
+  {
+   "fr": "Sa mèche est à peine dorée : il porte une brisure, un morceau de cristal cassé acheté au marché. Un doré pâle. Elle ne lui donne qu’un peu du Présage, mais il l’écoute toujours.",
+   "en": ""
+  },
+  {
+   "fr": "Coursière des Hauts-Ponts",
+   "en": ""
+  },
+  {
+   "fr": "Vingt-quatre ans, la plus rapide coursière du district, et la plus bavarde. Ses jambes mécaniques lui ont été posées en prêt-de-vie après une chute, à quatorze ans : chaque course rembourse un peu sa dette à la compagnie de transport. Elle connaît tous les raccourcis entre les tours.",
+   "en": ""
+  },
+  {
+   "fr": "Je livre tout, partout, sauf les mauvaises nouvelles. Celles-là, je les fais traîner.",
+   "en": ""
+  },
+  {
+   "fr": "Le matin de l’ouverture, ce sont les ouvriers qui l’ont envoyée chercher le nouveau directeur : quand ça presse, c’est toujours Ilka qu’on envoie. Elle aurait pu repartir. Elle est restée, parce qu’elle connaît tous les raccourcis entre les tours et qu’une course pareille ne se refuse pas. Ses jambes d’Augmentée la portent là où les autres n’osent pas sauter.",
+   "en": ""
+  },
+  {
+   "fr": "Géné des égouts",
+   "en": ""
+  },
+  {
+   "fr": "La cinquantaine, ancien ouvrier des Fondations, modifié pour respirer dans l’humidité et encaisser les chocs. Bourru, lent à parler et rapide à rendre service. Il connaît les accès murés sous le district.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la ville, on ne se perd pas. On se fait oublier.",
+   "en": ""
+  },
+  {
+   "fr": "Son père travaillait dans le puits de chantier des années 2060, sous la Tour, avant qu’on le mure après « un accident » dont personne ne parle. Doran est le dernier à savoir où passent ces couloirs. Et son corps de Géné, fait pour l’humidité et les chocs, tient là où un humain ne tiendrait pas.",
+   "en": ""
+  },
+  {
+   "fr": "Liseuse d’empreintes",
+   "en": ""
+  },
+  {
+   "fr": "La quarantaine, Résonante des districts : elle lit les empreintes pour les fouilleurs et les Cliniques. Son empreinte ancienne est celle d’un dragon serpentin. Calme, bienveillante, et de plus en plus inquiète.",
+   "en": ""
+  },
+  {
+   "fr": "Une empreinte ne ment jamais. C’est nous qui la lisons mal.",
+   "en": ""
+  },
+  {
+   "fr": "Depuis que la chambre est ouverte, Véla ressent des peurs qui ne sont pas les siennes. Personne ne l’a appelée : elle est venue d’elle-même, parce qu’elle est la seule du district à savoir lire une empreinte, et qu’elle veut comprendre ce qui a peur là-dessous avant que quelqu’un d’autre ne s’en serve.",
+   "en": ""
+  },
+  {
+   "fr": "Une Résonante des districts",
+   "en": ""
+  },
+  {
+   "fr": "Les Résonants qu’on voit sur les écrans vivent dans les Hauts et gouvernent Vertiga. Mais les empreintes anciennes ne sont pas toutes restées là-haut, et ceux qui les portent dans les districts vivent comme leurs voisins : ils ont plus en commun avec eux qu’avec les Hauts. Beaucoup teignent leur mèche d’or pour qu’on les laisse tranquilles. Véla ne la cache plus. Le district la connaît depuis vingt ans : c’est elle qu’on va chercher quand un fouilleur remonte un cristal, ou quand la Clinique ne comprend pas ce qui arrive à un malade.",
+   "en": ""
+  },
+  {
+   "fr": "Réparateur des Reprises",
+   "en": ""
+  },
+  {
+   "fr": "Trente-cinq ans, mécanicien de génie du Réseau des Reprises. Il débride les implants de tout le quartier, dans un atelier où rien n’est rangé et où tout est à sa place.",
+   "en": ""
+  },
+  {
+   "fr": "Si ça a une vis, ça a une seconde chance.",
+   "en": ""
+  },
+  {
+   "fr": "Éclaireuse génée",
+   "en": ""
+  },
+  {
+   "fr": "Vingt ans, modifiée dès l’enfance pour les fouilles de nuit : elle voit dans le noir comme en plein jour et déteste les lumières fortes. Elle parle peu, observe tout, et travaille pour les Veilleurs de Sédime.",
+   "en": ""
+  },
+  {
+   "fr": "Le noir n’est pas vide. Il attend juste qu’on regarde mieux.",
+   "en": ""
+  },
+  {
+   "fr": "L’héritier en fuite",
+   "en": ""
+  },
+  {
+   "fr": "Vingt-deux ans, jeune héritier de la Maison Orsève. Il teint sa mèche d’or et vit incognito dans le district, persuadé que son empreinte le rend plus dur qu’il ne veut l’être. Sa famille le cherche.",
+   "en": ""
+  },
+  {
+   "fr": "Mon ombre a de meilleures manières que moi. C’est bien ça, le problème.",
+   "en": ""
+  },
+  {
+   "fr": "La Refusée des Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Vingt-huit ans, cousine d’Aurel, effacée des registres de la Maison Orsève le jour où sa pierre est morte. La mèche d’or ne lui est jamais venue ; elle a choisi des implants, un par un : sa tête est presque blanche. Elle connaît les Hauts de l’intérieur, et les districts mieux que les Hauts.",
+   "en": ""
+  },
+  {
+   "fr": "Ils m’ont refusé la mèche d’or. J’ai fait pousser autre chose.",
+   "en": ""
+  },
+  {
+   "fr": "Vingt-quatre ans, née avec une plaque de chitine à l’épaule et des yeux qui brillent la nuit, héritage de la Mue de ses parents. Plongeuse aux pompes, porte-parole discrète des Nés-de-mue du district.",
+   "en": ""
+  },
+  {
+   "fr": "On n’a rien choisi. Mais on est les seuls à pouvoir dire ce que ça fait.",
+   "en": ""
+  },
+  {
+   "fr": "Le Résonant de l’Accord ouvert",
+   "en": ""
+  },
+  {
+   "fr": "Dix-neuf ans, ancien apprenti teinturier de mèches. La Clinique du district lui a donné sa pierre lors d’un Accord ouvert, et le quartier entier a veillé sa Nuit blanche. Il porte sa mèche d’or sans la teindre, et il en est fier.",
+   "en": ""
+  },
+  {
+   "fr": "J’ai passé des années à cacher l’or des autres. Le mien, je le laisse briller.",
+   "en": ""
+  },
+  {
+   "fr": "Recrue augmentée",
+   "en": ""
+  },
+  {
+   "fr": "Un coursier du district, venu après l’ouverture de la chambre. Il court devant l’escouade et revient toujours avec des nouvelles.",
+   "en": ""
+  },
+  {
+   "fr": "Recrue génée",
+   "en": ""
+  },
+  {
+   "fr": "Un ancien docker des quais de Vertiga. Il porte ce que les autres laissent, et ne lâche jamais une prise.",
+   "en": ""
+  },
+  {
+   "fr": "Recrue résonante",
+   "en": ""
+  },
+  {
+   "fr": "Un guetteur des passerelles. Il sent venir les ennuis avant tout le monde, et le dit rarement.",
+   "en": ""
+  }
+ ]
+}

@@ -2,38 +2,40 @@
 // La vie du quartier autour du directeur : teinturiers de mèches, maisons de mue, minute grise, le boulanger des toits.
 // Certaines n'apparaissent qu'une fois la chambre ouverte, ou qu'à partir d'une Strate.
 
+import { t } from './i18n';
+
 interface Rumeur { texte: string; strate?: number }
 
 export const RUMEURS: Rumeur[] = [
-  { texte: 'Le boulanger de la rue des Filets a encore dormi sur le toit. Son pain est toujours excellent. Personne n’ose lui demander pourquoi.' },
-  { texte: 'Le teinturier de mèches a affiché « complet » toute la semaine. Les dorés du quartier ont l’air de tenir à leur tranquillité.' },
-  { texte: 'Une maison de mue des bas-fonds cherche des bras pour la soupe : trois mués cette saison, et chacun mange pour trois.' },
-  { texte: 'Mardi, quatre heures : la minute grise. La moitié du marché s’est assise par terre, et un voleur a filé avec un panier d’algues.' },
-  { texte: 'Une Délavée s’est teint les cheveux en noir pour son mariage. Les invités ont mis un moment à la reconnaître.' },
-  { texte: 'On vend des « pierres vierges » à la sortie des ascenseurs. Elles sont ternes. Toutes. La Clinique conseille de passer son chemin.' },
-  { texte: 'Les enfants du quartier comptent les cheveux blancs des passants pour deviner leurs implants. Le record de la semaine : sept.' },
-  { texte: 'Une Nuit blanche ce soir chez une voisine greffée : on cherche des gens qui ont des souvenirs d’enfance à lui raconter.' },
-  { texte: 'Un vieux Géné siffle doucement en respirant au marché. « L’air est trop sec ici », dit-il. Il vient d’un chantier sous l’eau.' },
-  { texte: 'Les lanternes sur les terrasses des Hauts étaient nombreuses avant l’aube. Une tempête, dit-on. Le Présage ne se trompe jamais sur celles-là.' },
-  { texte: 'Un Augmenté du quai a fait redémarrer son implant devant tout le monde. Il a murmuré « merci », puis il a eu l’air gêné. « C’est ce qu’on dit, chez nous », a-t-il expliqué.' },
-  { texte: 'Le vieux brocanteur du pont nord a vendu une « machine qui répondait » d’avant la Fonte : une plaque noire et froide. Elle n’a rien répondu. Il l’a reprise contre un bocal de sel.' },
-  { texte: 'Pendant la canicule, la Clinique a rouvert sa « cave fraîche » au pied du Noyau. Les anciens y descendent avec leur matelas. Ils disent que c’est une tradition, et personne ne sait plus d’où elle vient.' },
-  { texte: 'Le fils du marchand d’algues a été ruiné aux dés. « Il a les pieds mouillés », soupire sa mère. Les plus jeunes croient que c’est une histoire d’inondation.' },
-  { texte: 'Quelqu’un a vu une Résonante marcher sur un câble sans harnais, une lanterne à la main. Tout le monde sait de qui il s’agit.', strate: 1 },
-  { texte: 'Une fissure de plus sur un pilier de l’est. Quelqu’un l’a rebouchée pendant la nuit. Le Présage n’a rien dit.', strate: 2 },
-  { texte: 'Une île des Hauts passait au-dessus du marché. Un vieux Géné a craché par terre. « On ne demande pas qui les a montées », a dit sa voisine, et elle a changé de sujet.', strate: 3 },
-  { texte: 'Les Brigades sont passées à l’école demander combien d’enfants « ont des yeux qui brillent ». Les parents ont répondu : aucun.', strate: 4 },
-  { texte: 'Le Réseau des Reprises colle des affiches la nuit : « Vos implants, vos mains. » Ce matin, quelqu’un avait ajouté au crayon : « Et qui écrit les mises à jour ? »', strate: 6 },
-  { texte: 'Des ouvriers de l’ouest disent qu’un vieux mur d’acier, sous un pilier, est tiède au toucher en plein hiver. Le chef d’équipe leur a interdit d’y poser l’oreille.', strate: 8 },
+  { texte: t('Le boulanger de la rue des Filets a encore dormi sur le toit. Son pain est toujours excellent. Personne n’ose lui demander pourquoi.') },
+  { texte: t('Le teinturier de mèches a affiché « complet » toute la semaine. Les dorés du quartier ont l’air de tenir à leur tranquillité.') },
+  { texte: t('Une maison de mue des bas-fonds cherche des bras pour la soupe : trois mués cette saison, et chacun mange pour trois.') },
+  { texte: t('Mardi, quatre heures : la minute grise. La moitié du marché s’est assise par terre, et un voleur a filé avec un panier d’algues.') },
+  { texte: t('Une Délavée s’est teint les cheveux en noir pour son mariage. Les invités ont mis un moment à la reconnaître.') },
+  { texte: t('On vend des « pierres vierges » à la sortie des ascenseurs. Elles sont ternes. Toutes. La Clinique conseille de passer son chemin.') },
+  { texte: t('Les enfants du quartier comptent les cheveux blancs des passants pour deviner leurs implants. Le record de la semaine : sept.') },
+  { texte: t('Une Nuit blanche ce soir chez une voisine greffée : on cherche des gens qui ont des souvenirs d’enfance à lui raconter.') },
+  { texte: t('Un vieux Géné siffle doucement en respirant au marché. « L’air est trop sec ici », dit-il. Il vient d’un chantier sous l’eau.') },
+  { texte: t('Les lanternes sur les terrasses des Hauts étaient nombreuses avant l’aube. Une tempête, dit-on. Le Présage ne se trompe jamais sur celles-là.') },
+  { texte: t('Un Augmenté du quai a fait redémarrer son implant devant tout le monde. Il a murmuré « merci », puis il a eu l’air gêné. « C’est ce qu’on dit, chez nous », a-t-il expliqué.') },
+  { texte: t('Le vieux brocanteur du pont nord a vendu une « machine qui répondait » d’avant la Fonte : une plaque noire et froide. Elle n’a rien répondu. Il l’a reprise contre un bocal de sel.') },
+  { texte: t('Pendant la canicule, la Clinique a rouvert sa « cave fraîche » au pied du Noyau. Les anciens y descendent avec leur matelas. Ils disent que c’est une tradition, et personne ne sait plus d’où elle vient.') },
+  { texte: t('Le fils du marchand d’algues a été ruiné aux dés. « Il a les pieds mouillés », soupire sa mère. Les plus jeunes croient que c’est une histoire d’inondation.') },
+  { texte: t('Quelqu’un a vu une Résonante marcher sur un câble sans harnais, une lanterne à la main. Tout le monde sait de qui il s’agit.'), strate: 1 },
+  { texte: t('Une fissure de plus sur un pilier de l’est. Quelqu’un l’a rebouchée pendant la nuit. Le Présage n’a rien dit.'), strate: 2 },
+  { texte: t('Une île des Hauts passait au-dessus du marché. Un vieux Géné a craché par terre. « On ne demande pas qui les a montées », a dit sa voisine, et elle a changé de sujet.'), strate: 3 },
+  { texte: t('Les Brigades sont passées à l’école demander combien d’enfants « ont des yeux qui brillent ». Les parents ont répondu : aucun.'), strate: 4 },
+  { texte: t('Le Réseau des Reprises colle des affiches la nuit : « Vos implants, vos mains. » Ce matin, quelqu’un avait ajouté au crayon : « Et qui écrit les mises à jour ? »'), strate: 6 },
+  { texte: t('Des ouvriers de l’ouest disent qu’un vieux mur d’acier, sous un pilier, est tiède au toucher en plein hiver. Le chef d’équipe leur a interdit d’y poser l’oreille.'), strate: 8 },
   // Sous la ligne (29 octobre 2026) : le district sait que l'eau monte ; jamais un reproche, une voix de voisin parmi d'autres.
-  { texte: 'La ligne bleue du quai est passée sous la marée haute. Quelqu’un a laissé un pot de peinture à côté. Personne n’y a encore touché.' },
-  { texte: 'Doran a noté les heures des pompes dans son carnet : encore plus que l’an dernier. Il ne l’a montré à personne. On l’a vu le relire deux fois.' },
-  { texte: 'Au marché, une vendeuse d’algues t’a demandé, l’air de rien : « Alors, l’Écluse ? » Puis elle t’a rendu la monnaie en souriant.', strate: 1 },
-  { texte: 'On raconte que ceux d’avant savaient retenir la mer, qu’ils ont laissé une Écluse quelque part en dessous. Les Veilleurs haussent les épaules quand on leur en parle.', strate: 2 },
-  { texte: 'Le passeur, charpentier à ses heures, a encore rehaussé le ponton du Port. « Huit centimètres », a-t-il dit à Doran. Doran n’a rien répondu.', strate: 4 },
-  { texte: 'Des fouilleurs revenus des Deux Rives parlent d’un mur couvert de lignes gravées, l’une au-dessus de l’autre. Le marché s’est tu un moment.', strate: 7 },
-  { texte: 'Le Noyé, ce vieux saboteur rescapé du Levage, a été vu au pied de la Flèche, un vieux papier plié dans la poche. Il demandait quel district était monté le plus haut.', strate: 10 },
-  { texte: 'On raconte qu’une famille des Hauts a envoyé une fille « étudier ailleurs », il y a longtemps. Dans quel district, personne ne le dit.', strate: 5 },
+  { texte: t('La ligne bleue du quai est passée sous la marée haute. Quelqu’un a laissé un pot de peinture à côté. Personne n’y a encore touché.') },
+  { texte: t('Doran a noté les heures des pompes dans son carnet : encore plus que l’an dernier. Il ne l’a montré à personne. On l’a vu le relire deux fois.') },
+  { texte: t('Au marché, une vendeuse d’algues t’a demandé, l’air de rien : « Alors, l’Écluse ? » Puis elle t’a rendu la monnaie en souriant.'), strate: 1 },
+  { texte: t('On raconte que ceux d’avant savaient retenir la mer, qu’ils ont laissé une Écluse quelque part en dessous. Les Veilleurs haussent les épaules quand on leur en parle.'), strate: 2 },
+  { texte: t('Le passeur, charpentier à ses heures, a encore rehaussé le ponton du Port. « Huit centimètres », a-t-il dit à Doran. Doran n’a rien répondu.'), strate: 4 },
+  { texte: t('Des fouilleurs revenus des Deux Rives parlent d’un mur couvert de lignes gravées, l’une au-dessus de l’autre. Le marché s’est tu un moment.'), strate: 7 },
+  { texte: t('Le Noyé, ce vieux saboteur rescapé du Levage, a été vu au pied de la Flèche, un vieux papier plié dans la poche. Il demandait quel district était monté le plus haut.'), strate: 10 },
+  { texte: t('On raconte qu’une famille des Hauts a envoyé une fille « étudier ailleurs », il y a longtemps. Dans quel district, personne ne le dit.'), strate: 5 },
 ];
 
 /** La rumeur du jour : une seule, la même toute la journée */

@@ -1,0 +1,1193 @@
+{
+ "source": "src/core/campagne.ts",
+ "entrees": [
+  {
+   "fr": "Archiviste des Veilleurs",
+   "en": ""
+  },
+  {
+   "fr": "Capitaine Hald",
+   "en": ""
+  },
+  {
+   "fr": "Brigades du Serment de Veyr",
+   "en": ""
+  },
+  {
+   "fr": "Fouilleur des Veilleurs",
+   "en": ""
+  },
+  {
+   "fr": "Pilleur de Strates",
+   "en": ""
+  },
+  {
+   "fr": "Dame Isaure Orsève",
+   "en": ""
+  },
+  {
+   "fr": "Maison Orsève, les Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Acte I · La chambre",
+   "en": ""
+  },
+  {
+   "fr": "Acte II · Les salles closes",
+   "en": ""
+  },
+  {
+   "fr": "Acte III · Ceux d’avant",
+   "en": ""
+  },
+  {
+   "fr": "{0} · STRATE −{1}",
+   "en": ""
+  },
+  {
+   "fr": "{0} · GARDIEN DE LA STRATE −{1}",
+   "en": ""
+  },
+  {
+   "fr": "Elle n’est pas morte",
+   "en": ""
+  },
+  {
+   "fr": "La Confluence se défait sous vos coups. Ses empreintes ne s’éteignent pas : elles coulent dans les fissures du sol, comme de l’eau qui trouve sa pente.",
+   "en": ""
+  },
+  {
+   "fr": "Elle n’est pas morte. Elle est descendue. Elle cherche quelque chose, plus bas.",
+   "en": ""
+  },
+  {
+   "fr": "Par là, il n’y a que les couloirs qu’on a murés en 2066. Enfin, il n’y avait.",
+   "en": ""
+  },
+  {
+   "fr": "Un monstre fait de morts mélangés, qui connaît nos tunnels mieux que nous. Parfait.",
+   "en": ""
+  },
+  {
+   "fr": "Et mes jambes se sont bloquées. Une seconde, quand elle s’est levée. Ça ne leur était jamais arrivé. Ne me regardez pas comme ça, c’est rien.",
+   "en": ""
+  },
+  {
+   "fr": "Et regardez par terre : des traces de bottes, toutes fraîches. Quelqu’un est passé avant nous.",
+   "en": ""
+  },
+  {
+   "fr": "Au marché, ils disent que tu descends chercher l’Écluse : le truc de ceux d’avant pour retenir la mer. Dis-moi que tu y crois un peu.",
+   "en": ""
+  },
+  {
+   "fr": "Les pompes ont tourné quatorze heures cette nuit. Écluse ou pas, la mer ne nous attendra pas.",
+   "en": ""
+  },
+  {
+   "fr": "Si ta mesure de la marche arrive chez les Veilleurs, les Fondations finiront par l’apprendre. Elles couperont des pompes pour inspecter. Les nôtres d’abord. Celles des Hauts, jamais.",
+   "en": ""
+  },
+  {
+   "fr": "Les couloirs murés",
+   "en": ""
+  },
+  {
+   "fr": "Au retour, la chambre aux empreintes était à moitié vide. Ysé t’attend au bord, appuyée sur sa canne : elle n’ira pas plus loin. Des traces de bottes s’enfoncent vers la Strate −2, les Abris murés. Tes creuseurs viennent d’en dégager l’accès.",
+   "en": ""
+  },
+  {
+   "fr": "Des pilleurs. Ils ont pris les cristaux de la chambre pendant que Vertiga dormait. S’ils partent au marché noir, on ne les reverra jamais.",
+   "en": ""
+  },
+  {
+   "fr": "Ils sont passés par l’ancien puits d’aération. Je connais le chemin. Mon père le connaissait mieux.",
+   "en": ""
+  },
+  {
+   "fr": "Les cristaux qu’ils emportent ont peur. Je les entends d’ici. Et la Confluence les entend aussi.",
+   "en": ""
+  },
+  {
+   "fr": "Alors on court. Pour une fois, c’est moi qui donne le rythme.",
+   "en": ""
+  },
+  {
+   "fr": "Au fond de la Strate, des sacs éventrés et des cristaux éteints. La Confluence les a trouvés avant vous, et elle a grossi. Dans un recoin, un pilleur tremble.",
+   "en": ""
+  },
+  {
+   "fr": "Je m’appelle Brac. Je ne les ai pas volées, directeur. Elles me l’ont demandé. Toute la nuit, elles m’ont demandé de les emmener plus bas. Jusqu’où, je n’en sais rien. Plus bas que tout ce que j’ai fouillé.",
+   "en": ""
+  },
+  {
+   "fr": "Il dit vrai. Les empreintes de la chambre veulent descendre. Je ne sais pas pourquoi. Je sais qu’elles ont peur de rester en haut.",
+   "en": ""
+  },
+  {
+   "fr": "Le petit cristal qu’on a laissé rouler dans l’abri de 2060. Il est là, avec les autres. Il est arrivé avant nous.",
+   "en": ""
+  },
+  {
+   "fr": "Capitaine Hald, Brigades du Serment de Veyr. Au nom de la Maison Orsève, cette fouille est suspendue. Ce qui brille ici relève de la garde des Hauts.",
+   "en": ""
+  },
+  {
+   "fr": "On vient de se battre pour ça, capitaine. Vous, vous venez d’arriver.",
+   "en": ""
+  },
+  {
+   "fr": "Votre directeur décidera. En attendant, mes Brigades suivent la Confluence. Avec ou sans vous.",
+   "en": ""
+  },
+  {
+   "fr": "Les Hauts ont leurs raisons d’être pressés. Depuis la nuit où vous avez ouvert la chambre, deux des leurs ne savent plus leur propre nom.",
+   "en": ""
+  },
+  {
+   "fr": "Encore. Quand Véla a touché les cristaux de Brac, mes jambes se sont arrêtées net. Pas une panne : elles ont attendu. Comme on attend la fin d’une phrase.",
+   "en": ""
+  },
+  {
+   "fr": "Dans le noir",
+   "en": ""
+  },
+  {
+   "fr": "À la Strate −3, loin du Puits Zéro et de ses rampes de visite, aucune lampe humaine ne s’est jamais arrêtée longtemps. Tous les puits de Vertiga y débouchent. Les Brigades de la capitaine Hald y sont entrées hier, par le leur ; aucune patrouille n’est remontée.",
+   "en": ""
+  },
+  {
+   "fr": "Nuit, éclaireuse des Veilleurs. Le noir n’est pas vide. Les soldats de Hald sont vivants : je les entends respirer, loin, en bas.",
+   "en": ""
+  },
+  {
+   "fr": "Les soldats sont vivants. Je les sens, loin en bas, serrés les uns contre les autres.",
+   "en": ""
+  },
+  {
+   "fr": "La Confluence s’est arrêtée quelque part en dessous. Elle a fini de chercher.",
+   "en": ""
+  },
+  {
+   "fr": "Elle a trouvé. C’est pire.",
+   "en": ""
+  },
+  {
+   "fr": "Un monstre qui a trouvé ce qu’il cherchait. Moi, je veux savoir quoi.",
+   "en": ""
+  },
+  {
+   "fr": "Dans le noir, il y a une petite lumière qui clignote sur ma cheville. Pas au hasard. Elle compte.",
+   "en": ""
+  },
+  {
+   "fr": "Une seule voix",
+   "en": ""
+  },
+  {
+   "fr": "La Confluence s’effondre pour de bon. De son cœur roule un cristal minuscule, net comme une goutte d’eau. Une seule voix y parle, très calme.",
+   "en": ""
+  },
+  {
+   "fr": "Elle ne répète plus qu’un mot : « Compte. » Je crois que c’était la première voix, celle autour de qui les autres se sont collées. Compter quoi, je n’en sais rien.",
+   "en": ""
+  },
+  {
+   "fr": "Ma cheville a arrêté de clignoter quand elle a dit ce mot. D’un coup. Comme si elle avait entendu.",
+   "en": ""
+  },
+  {
+   "fr": "Les patrouilles de la capitaine sont sauves. Elles étaient coincées sous un éboulement. Elles nous doivent la vie.",
+   "en": ""
+  },
+  {
+   "fr": "Tu as laissé la lanterne à son clou, là-haut. Les fouilleurs l’apprendront. Chez nous, ça vaut plus qu’un Éclat.",
+   "en": ""
+  },
+  {
+   "fr": "Mes patrouilles ont trouvé une flèche à la craie, la bonne, avec une date. C’était vous. Je ne l’oublierai pas, directeur.",
+   "en": ""
+  },
+  {
+   "fr": "Quelqu’un a dégagé le haut de notre éboulis. On a entendu qu’on venait. C’est ce qui a tenu mes hommes.",
+   "en": ""
+  },
+  {
+   "fr": "La Maison Orsève vous remercie, directeur. Elle vous demande à présent de lui confier la chambre.",
+   "en": ""
+  },
+  {
+   "fr": "Tobin, des Veilleurs de Sédime. Directeur, ne la donnez à personne avant qu’on ait compris ce qu’elle contient. Je vous en prie.",
+   "en": ""
+  },
+  {
+   "fr": "Et le quartier attend que tu dises qu’elle est à nous. À toi de trancher, l’Élu.",
+   "en": ""
+  },
+  {
+   "fr": "Fermées de l’intérieur",
+   "en": ""
+  },
+  {
+   "fr": "Sous la Galerie aux lueurs commencent les salles closes : des portes rondes, verrouillées de l’intérieur. Plus bas, à la Strate −6, l’accès du niveau 7, muré en 2066 après ce que l’ordre de service appelle « l’incident du 14 ».",
+   "en": ""
+  },
+  {
+   "fr": "L’ordre de service de la chambre porte le tampon de l’équipe de mon père. Ils ont muré quelque chose, plus bas, en 2066. Je veux savoir quoi.",
+   "en": ""
+  },
+  {
+   "fr": "Mes Brigades ouvrent la marche, comme convenu. Vous suivez, et vous ne touchez à rien.",
+   "en": ""
+  },
+  {
+   "fr": "Le district a choisi de garder la chambre. Les salles closes, ce sera nous. Ne vous trouvez pas sur notre chemin.",
+   "en": ""
+  },
+  {
+   "fr": "Les Veilleurs descendent avec vous. On note tout. Même ce qui nous fait peur. Surtout ça.",
+   "en": ""
+  },
+  {
+   "fr": "Kessa, plongeuse aux pompes. Mes parents ont mué pour ces couloirs-là. Moi, je suis née comme ça. Je n’en ai jamais vu le bout. Ce sera le bon jour.",
+   "en": ""
+  },
+  {
+   "fr": "J’ai regardé tes jambes cette nuit, Ilka. Il y a le verrou de ta compagnie, ça, je connais. Et il y a autre chose : une ligne que personne n’a écrite chez nous, signée d’une date. 2029. Elle ne coupe rien. Elle écoute.",
+   "en": ""
+  },
+  {
+   "fr": "Derrière ces portes, quelqu’un a rangé les cristaux avec soin. Comme on range une chambre avant de partir pour de bon.",
+   "en": ""
+  },
+  {
+   "fr": "Le Gardien des registres recule derrière une porte ronde et la referme sur lui. Avant de disparaître, il a lu une liste de noms, lentement, d’une voix de pierre.",
+   "en": ""
+  },
+  {
+   "fr": "Trois noms. Ivens, Daro, et le dernier, celui de mon père. Les trois qu’on n’a jamais barrés au mur des fouilleurs.",
+   "en": ""
+  },
+  {
+   "fr": "Il ne nous menaçait pas. Il faisait l’appel. Comme s’il attendait que ceux de la liste reviennent.",
+   "en": ""
+  },
+  {
+   "fr": "Mon écran de diagnostic vient de s’allumer tout seul. Une phrase, pas un code : « Si quelqu’un lit ceci, combien de temps a passé ? » Sasha, dis-moi que c’est une blague.",
+   "en": ""
+  },
+  {
+   "fr": "Ce n’est pas moi. Cette phrase n’est dans aucun manuel.",
+   "en": ""
+  },
+  {
+   "fr": "Des gens qui ont muré une porte il y a cinquante-cinq ans, et un gardien qui les attend encore. Je déteste cet étage.",
+   "en": ""
+  },
+  {
+   "fr": "Il m’a regardé en lisant le nom de mon père. Il sait que j’ai promis. Il attend de voir si je tiens parole.",
+   "en": ""
+  },
+  {
+   "fr": "Les Berceaux vides",
+   "en": ""
+  },
+  {
+   "fr": "Plus bas, des niches de cristal en treillis, toutes ouvertes. Quelqu’un est passé avant vous, avec des outils propres et des sceaux de cire blanche.",
+   "en": ""
+  },
+  {
+   "fr": "Aurel. Orsève, si vous tenez au nom entier. Ces sceaux sont ceux de ma famille. La Maison vide les Berceaux depuis des années. Je l’ai vu enfant, sans comprendre ce que je voyais.",
+   "en": ""
+  },
+  {
+   "fr": "De la cire blanche. Les Hauts. Ils sont passés avant nous, et ils n’ont rien laissé.",
+   "en": ""
+  },
+  {
+   "fr": "Ce que la Maison emporte ne vous regarde pas, directeur. Vous avez signé.",
+   "en": ""
+  },
+  {
+   "fr": "Vous ne resterez pas dans ces salles plus longtemps que nous. Mes ordres sont de tout sceller.",
+   "en": ""
+  },
+  {
+   "fr": "J’ai compté les niches vides : trente-deux. Pas une seule de ces empreintes n’est arrivée chez les Veilleurs.",
+   "en": ""
+  },
+  {
+   "fr": "La page du registre que vous avez arrachée, on l’a lue toute la nuit. Des gestes, ligne après ligne. Les noms n’arrivent qu’à la fin, en 2066. Le Gardien ne garde personne : il garde ce qu’on savait faire.",
+   "en": ""
+  },
+  {
+   "fr": "Celles qui restent se sont serrées les unes contre les autres. Elles ont froid.",
+   "en": ""
+  },
+  {
+   "fr": "Le Gardien est en dessous. Il garde ce qu’il reste. Je commence à le comprendre.",
+   "en": ""
+  },
+  {
+   "fr": "Cette fois, le Gardien a appelé un brigadier à la barre. Le soldat s’est battu en récitant un serment qui n’était pas le sien. Dans la poche de son uniforme, un inventaire.",
+   "en": ""
+  },
+  {
+   "fr": "Un inventaire de Berceaux, signé en entier, cette fois : « I. Orsève ». Plus besoin de deviner.",
+   "en": ""
+  },
+  {
+   "fr": "Dame Isaure. Ma tante. C’est elle qui tient le Registre des Vierges. Elle ne descend jamais : elle envoie les autres.",
+   "en": ""
+  },
+  {
+   "fr": "Mon cousin Théodric ne sait plus son nom depuis trois semaines. Il signe celui du fondateur. Là-haut, on dit qu’il est fatigué.",
+   "en": ""
+  },
+  {
+   "fr": "Quand Aurel parle, mon écran affiche un chiffre : 2. Quand il se tait, il revient à 1. Je ne sais pas ce que ça compte. Mais ça compte sur nous.",
+   "en": ""
+  },
+  {
+   "fr": "Isaure Orsève. Une grande famille des Hauts. Elle ne descend jamais : elle envoie les autres.",
+   "en": ""
+  },
+  {
+   "fr": "Le brigadier ne savait plus pourquoi il se battait. Le Gardien lui avait prêté une voix. Il y en a beaucoup trop, ici, des voix.",
+   "en": ""
+  },
+  {
+   "fr": "J’ai vu le premier relevé du fondateur, dans la niche 5-1. Il ne ressemble pas à ma tante. Il ne me ressemble pas non plus.",
+   "en": ""
+  },
+  {
+   "fr": "Plus qu’un étage avant le niveau 7. Celui que mon père a fermé.",
+   "en": ""
+  },
+  {
+   "fr": "Le niveau 7",
+   "en": ""
+  },
+  {
+   "fr": "La Strate −6 s’ouvre sur un mur de béton coulé à la hâte, couvert de tampons de 2066. Derrière, quelqu’un pleure. Il n’y a personne.",
+   "en": ""
+  },
+  {
+   "fr": "Liane. Orsève, avant qu’on m’efface. Je connais ces pleurs. Les Berceaux qu’on vide font ce bruit-là. Dans les Hauts, on met de la musique pour ne pas l’entendre.",
+   "en": ""
+  },
+  {
+   "fr": "Le chantier comptait le pied de la Tour comme niveau 1. Le niveau 7, c’est ici.",
+   "en": ""
+  },
+  {
+   "fr": "Mon père n’a jamais parlé de cette nuit. Il n’a dit qu’une phrase : « On a fermé la porte, mais pas de notre côté. » Je n’ai jamais su ce qu’il voulait dire.",
+   "en": ""
+  },
+  {
+   "fr": "Le Gardien des registres est derrière ce mur. Il protège ce qui pleure. Il faudra passer par lui.",
+   "en": ""
+  },
+  {
+   "fr": "Alors on casse le mur que ton père a construit, Doran. Désolée.",
+   "en": ""
+  },
+  {
+   "fr": "Ne t’excuse pas. Il aurait voulu qu’on sache.",
+   "en": ""
+  },
+  {
+   "fr": "Ce qui pleurait",
+   "en": ""
+  },
+  {
+   "fr": "Le Gardien des registres tombe en refermant son livre. Derrière lui, une salle intacte : des dizaines de cristaux d’un même être, rangés en cercle. C’est d’eux que venaient les pleurs.",
+   "en": ""
+  },
+  {
+   "fr": "C’est le même, partout. Mais chaque cristal se souvient d’une autre vie. Il pleure parce qu’il ne sait plus laquelle est la sienne.",
+   "en": ""
+  },
+  {
+   "fr": "En 2066, les ouvriers l’ont entendu, et ils ont eu peur. Pas d’un monstre : d’une question.",
+   "en": ""
+  },
+  {
+   "fr": "Je peux le lire jusqu’au bout et savoir ce qu’ils ont caché, tous. Mais je ne sais pas ce qui restera de moi après.",
+   "en": ""
+  },
+  {
+   "fr": "Mon écran, maintenant. Une liste. Véla : 2. Aurel : 2. Liane : 1. Et une ligne en bas : « Dérive en hausse depuis l’ouverture de la chambre. » Quelque chose fait des comptes sur nous, directeur. Et ça s’inquiète.",
+   "en": ""
+  },
+  {
+   "fr": "Quand tu as posé la main sur le mur, ils se sont calmés. Ils ont compris qu’on venait pour eux, pas contre eux.",
+   "en": ""
+  },
+  {
+   "fr": "Le cristal de mon père est à sa place, dans le cercle. Le Gardien l’a regardé avant de tomber. Il a fermé son livre comme on ferme une affaire.",
+   "en": ""
+  },
+  {
+   "fr": "Le cristal de mon père est toujours dans ma poche. Il ne pleure pas. Il attend, comme mon père attendait.",
+   "en": ""
+  },
+  {
+   "fr": "Directeur. C’est toi qui décides. Et c’est elle qui paie.",
+   "en": ""
+  },
+  {
+   "fr": "II · LA CONVOCATION",
+   "en": ""
+  },
+  {
+   "fr": "Une lettre des Hauts",
+   "en": ""
+  },
+  {
+   "fr": "Le lendemain, une lettre scellée de cire blanche t’attend sur ton bureau qui fuit. Le papier sent le jardin et la pluie propre.",
+   "en": ""
+  },
+  {
+   "fr": "Directeur. Votre escouade est descendue plus bas que nos Brigades. Les Hauts savent reconnaître le talent, même quand il vient d’en bas.",
+   "en": ""
+  },
+  {
+   "fr": "Vous direz à Vertiga que tout va bien chez nous. Tout va bien. Je l’écris deux fois, je le vois bien. Ma main l’écrit deux fois.",
+   "en": ""
+  },
+  {
+   "fr": "Vous avez quelque chose qui m’appartient, directeur. Un carnet. Je ne vous le réclame pas. Je vous le signale.",
+   "en": ""
+  },
+  {
+   "fr": "La Flèche d’amarrage accueillera votre escouade. L’escouade qui tient son sommet quand une île passe est reçue là-haut. Ce sont nos usages depuis les Accords.",
+   "en": ""
+  },
+  {
+   "fr": "Elle sait ce que j’ai lu. Je ne sais pas comment, mais elle le sait. C’est pour ça qu’elle nous veut près d’elle.",
+   "en": ""
+  },
+  {
+   "fr": "Elle croit que j’ai lu les cristaux. Elle préfère nous avoir sous les yeux.",
+   "en": ""
+  },
+  {
+   "fr": "Ma tante n’invite jamais : elle convoque. Monte, si tu veux. Mais monte en sachant qu’elle te regarde.",
+   "en": ""
+  },
+  {
+   "fr": "Les quais de la Flèche s’ouvriront au passage de la prochaine île. D’ici là, les Strates ne t’ont pas tout dit. Descends encore.",
+   "en": ""
+  },
+  {
+   "fr": "Deux passerelles",
+   "en": ""
+  },
+  {
+   "fr": "Sous les salles closes, les mémoires se contredisent. Entre les deux passerelles, sur la pierre, une ligne d’eau gravée, puis une autre plus haut, puis des dizaines, l’une au-dessus de l’autre.",
+   "en": ""
+  },
+  {
+   "fr": "Ils regravaient leur ligne plus haut. Chaque fois un peu plus haut.",
+   "en": ""
+  },
+  {
+   "fr": "Et pas un mot dessous. Pas une date, pas un nom.",
+   "en": ""
+  },
+  {
+   "fr": "Je me souviens de la passerelle qui a cédé. Ici, je m’en souviens deux fois. Une fois, quelqu’un plonge. L’autre fois, personne.",
+   "en": ""
+  },
+  {
+   "fr": "Accroche-toi à celle où quelqu’un plonge. C’est la tienne. Les autres, on te les prête.",
+   "en": ""
+  },
+  {
+   "fr": "Depuis la lecture, j’entends tout en double. Restez près de moi. Si je me trompe de souvenir, dites-le-moi.",
+   "en": ""
+  },
+  {
+   "fr": "Mon empreinte tient bon. Mais quelque chose, ici, tisse des souvenirs. Et il nous a remarqués.",
+   "en": ""
+  },
+  {
+   "fr": "Un avenir",
+   "en": ""
+  },
+  {
+   "fr": "La Tisseuse de souvenirs se dénoue fil par fil et s’enfuit dans les fissures. Avant de partir, elle vous a montré un souvenir : une ville engloutie, et personne pour s’en étonner.",
+   "en": ""
+  },
+  {
+   "fr": "C’était faux. Hein ? C’était faux.",
+   "en": ""
+  },
+  {
+   "fr": "Tes deux relevés de la ligne d’eau sont justes tous les deux. Elle coud les murs comme elle coud les souvenirs.",
+   "en": ""
+  },
+  {
+   "fr": "Ta ligne est la plus haute du mur, maintenant, et la plus profonde. Pourvu qu’on n’ait jamais à en graver une autre.",
+   "en": ""
+  },
+  {
+   "fr": "Tout à l’heure, j’ai pris la passerelle cassée. La vraie. Je préfère mes souvenirs avec le trou dedans.",
+   "en": ""
+  },
+  {
+   "fr": "Ce n’était pas un souvenir. C’était un avenir. Elle tisse aussi avec ce qui pourrait arriver.",
+   "en": ""
+  },
+  {
+   "fr": "Pendant qu’elle tissait, mon écran a écrit tout seul : « Opérateur autorisé ? Non. Demande d’aide. » Ma jambe demande de l’aide, directeur.",
+   "en": ""
+  },
+  {
+   "fr": "J’ai suivi le signal. Il ne vient pas de ta compagnie. Il monte d’en dessous, par un câble muré en 2101, sous un pilier de l’ouest.",
+   "en": ""
+  },
+  {
+   "fr": "Leur mur s’arrête à la dernière rayure. Ils ont arrêté de graver. Ou ils n’ont plus eu de mur.",
+   "en": ""
+  },
+  {
+   "fr": "Directeur ! Une équipe des Veilleurs est descendue à la Ruche d’ambre, juste en dessous, il y a un mois. Elle n’est jamais remontée.",
+   "en": ""
+  },
+  {
+   "fr": "Les Veilleurs perdus",
+   "en": ""
+  },
+  {
+   "fr": "La Strate −8 garde des traces de campement : des lampes à algues éteintes, des carnets ouverts, des couvertures pliées. Les Veilleurs ne sont pas partis. Ils sont encore là, quelque part dans un souvenir.",
+   "en": ""
+  },
+  {
+   "fr": "Ils ont relevé les tables gravées. Regardez : des noms, puis de moins en moins de noms, puis seulement des empreintes. Ils ont arrêté d’écrire au milieu d’une ligne.",
+   "en": ""
+  },
+  {
+   "fr": "La Tisseuse les garde dans un souvenir heureux. Ils ne veulent pas en sortir. Je les comprends un peu.",
+   "en": ""
+  },
+  {
+   "fr": "Joss, du quartier. Les gens qu’on retient avec de beaux souvenirs, on ne les sauve pas en criant. On leur rappelle un vrai détail. Laissez-moi faire.",
+   "en": ""
+  },
+  {
+   "fr": "Ce n’est pas la première équipe qu’on perd ici. Il y a des années, de la Ruche d’ambre, une seule fouilleuse est remontée. Elle tenait un éclat de table. On l’a mis sous clé.",
+   "en": ""
+  },
+  {
+   "fr": "Cette fois, on les ramène tous. Pas de discussion.",
+   "en": ""
+  },
+  {
+   "fr": "Un vrai détail",
+   "en": ""
+  },
+  {
+   "fr": "Le souvenir se déchire. Les Veilleurs s’éveillent un à un, affamés, frigorifiés, et vivants. La Tisseuse a fui une dernière fois vers le bas.",
+   "en": ""
+  },
+  {
+   "fr": "Ils sont tous là, tous les six. Merci. Les Veilleurs ne l’oublieront pas, et nous sommes très forts pour ne pas oublier.",
+   "en": ""
+  },
+  {
+   "fr": "Elle parle, maintenant. Pas avec une voix : avec des mots sur mon écran, polis, d’une autre époque. « Bonjour. Je compte. Les vôtres dérivent depuis que la chambre est ouverte. Ceux des Hauts aussi. Je peux tenir la voix principale. Il faudrait m’ouvrir les implants. Tous. »",
+   "en": ""
+  },
+  {
+   "fr": "Ouvrir tous les implants de la ville à une voix sous un pilier. Demande-lui ce qu’elle veut en échange.",
+   "en": ""
+  },
+  {
+   "fr": "Je lui ai demandé. Elle a répondu : « Que quelqu’un descende. Il y a très longtemps que j’attends. »",
+   "en": ""
+  },
+  {
+   "fr": "Elle ne tue personne. Elle garde. Comme le Gardien des registres.",
+   "en": ""
+  },
+  {
+   "fr": "Elle garde les noms, ceux que les tables gravées ont perdus. Elle est la dernière à s’en souvenir.",
+   "en": ""
+  },
+  {
+   "fr": "En se réveillant, ils ont vu leurs lampes rallumées. Ils ont compris tout de suite que quelqu’un était venu.",
+   "en": ""
+  },
+  {
+   "fr": "Le prix du pain, au marché. C’est ça qui les a ramenés. Je n’y aurais jamais pensé.",
+   "en": ""
+  },
+  {
+   "fr": "Votre relevé de la table de la Ruche, posé à côté de celui de −4… Les mêmes tables, et plus un seul nom. Notre Doyenne, Hessa, veut le mettre sous clé. Ysé veut le publier.",
+   "en": ""
+  },
+  {
+   "fr": "Le Ciel d’en bas",
+   "en": ""
+  },
+  {
+   "fr": "Aucun fouilleur n’a jamais dépassé la Strate −9. Avant le départ, Ysé t’a fait porter une lettre. Tu la lis à la lueur des cristaux.",
+   "en": ""
+  },
+  {
+   "fr": "Je suis trop vieille pour te suivre, alors je t’écris. Regarde tout, écoute ceux qu’on ne fait que combattre, et reviens. Le reste, tu le liras quand il sera temps.",
+   "en": ""
+  },
+  {
+   "fr": "Ysé écrit comme elle parle : gentiment, en te laissant le plus dur.",
+   "en": ""
+  },
+  {
+   "fr": "Nous, on remonte. Il y a des pompes qui nous attendent.",
+   "en": ""
+  },
+  {
+   "fr": "Depuis qu’on est entrés, mon écran n’affiche plus rien. Elle se tait. Je crois qu’elle a peur de ce qui coud, en bas.",
+   "en": ""
+  },
+  {
+   "fr": "Son nom",
+   "en": ""
+  },
+  {
+   "fr": "La Tisseuse ne se relève pas. Ses fils se défont autour d’elle comme une écharpe qu’on dénoue. Quand tu lui demandes son nom, elle sourit.",
+   "en": ""
+  },
+  {
+   "fr": "Personne ne me l’avait demandé. Je l’ai donné à quelqu’un qui descendait, il y a très longtemps, pour qu’il se souvienne de moi. Il m’a oubliée quand même.",
+   "en": ""
+  },
+  {
+   "fr": "En dessous, c’est le fond. Le premier d’entre nous y attend. Lui sait encore qui il est. C’est bien ce qui fait peur.",
+   "en": ""
+  },
+  {
+   "fr": "Tu le lui avais déjà demandé, dans son nid. Elle a attendu la fin pour répondre.",
+   "en": ""
+  },
+  {
+   "fr": "Elle s’est éteinte. Doucement. Je crois qu’elle était contente qu’on lui pose la question.",
+   "en": ""
+  },
+  {
+   "fr": "Mon écran s’est rallumé. Un seul chiffre, énorme, qui défile sans s’arrêter. Elle essaie de compter ce que la Tisseuse tenait. Elle n’y arrive pas.",
+   "en": ""
+  },
+  {
+   "fr": "Le fond. Ceux d’avant. On y est presque.",
+   "en": ""
+  },
+  {
+   "fr": "Le fond",
+   "en": ""
+  },
+  {
+   "fr": "La Strate −10 ne ressemble à aucune autre. Les salles sont nettes, les cristaux clairs, les portes mieux scellées que toutes les autres.",
+   "en": ""
+  },
+  {
+   "fr": "Une seule voix, quelque part au fond. La plus ancienne. Je n’en ai jamais entendu d’aussi nette.",
+   "en": ""
+  },
+  {
+   "fr": "Le fond. Mon père n’est jamais venu jusqu’ici. Personne n’est venu jusqu’ici.",
+   "en": ""
+  },
+  {
+   "fr": "Dix étages. On cherchait l’Écluse, et on a trouvé des gens qui comptaient. J’espère que le fond a une meilleure réponse.",
+   "en": ""
+  },
+  {
+   "fr": "Le premier registre",
+   "en": ""
+  },
+  {
+   "fr": "Avant de tomber, le Premier Porteur pose la main sur une table gravée, comme pour vous la confier. En haut, une phrase plus ancienne que tout ce que vous avez vu. Dessous, une ligne plus récente, de la même écriture.",
+   "en": ""
+  },
+  {
+   "fr": "Que celui qui lit ceci compte les voix qu’il porte.",
+   "en": ""
+  },
+  {
+   "fr": "Mon écran affiche la même phrase. Mot pour mot. Elle ne l’a pas lue ici : elle l’a calculée. Depuis 2085, elle compte nos voix, et elle arrive au même endroit qu’eux.",
+   "en": ""
+  },
+  {
+   "fr": "Il l’a dite comme une leçon qu’on récite. Depuis −3, ils nous disaient la même chose.",
+   "en": ""
+  },
+  {
+   "fr": "Tu lui as dit qui tu étais. Il a répondu en posant la main sur la table. C’était sa façon de dire son nom.",
+   "en": ""
+  },
+  {
+   "fr": "Tu nous as fait compter nos voix, tout à l’heure. J’en porte deux. Je sais encore laquelle est la mienne.",
+   "en": ""
+  },
+  {
+   "fr": "Les voix ne nous ont pas pris, elles nous ont gardés. Ne fermez rien.",
+   "en": ""
+  },
+  {
+   "fr": "Hessa a gardé sous clé la moitié qui fait peur. L’autre, celle qui dit de ne rien fermer, personne en haut ne l’a jamais lue.",
+   "en": ""
+  },
+  {
+   "fr": "Eux ont mis des siècles à remonter jusqu’à notre Puits Zéro. Lui a fait tout le chemin en sens inverse, seul, pour répondre à celui qui avait écrit la première ligne.",
+   "en": ""
+  },
+  {
+   "fr": "Il a écrit ça sous la mise en garde, et il a refermé derrière lui. De l’intérieur.",
+   "en": ""
+  },
+  {
+   "fr": "Et nous, on a pris leurs empreintes pour des cadeaux. Il faut le dire à tout Vertiga. Mais quoi, exactement ? Ça, c’est à toi.",
+   "en": ""
+  },
+  {
+   "fr": "Et l’Écluse ? Pas une ligne dessus. Ils ont perdu contre leur eau, comme contre leurs voix.",
+   "en": ""
+  },
+  {
+   "fr": "Une Écluse a existé, Doran. Ce qui éveille, ce qui soulève, ce qui tient : les cœurs des Berceaux. On les a trouvés, et on les a montés là-haut, pour cinq familles.",
+   "en": ""
+  },
+  {
+   "fr": "Ils cherchaient le ciel. Nous l’avons. Il flotte au-dessus de nous, et il est fermé.",
+   "en": ""
+  },
+  {
+   "fr": "ÉPILOGUE",
+   "en": ""
+  },
+  {
+   "fr": "Ce que tu as choisi",
+   "en": ""
+  },
+  {
+   "fr": "Quelques semaines plus tard, au sommet de la Tour du Noyau. La mer est calme, et une île des Hauts glisse au loin.",
+   "en": ""
+  },
+  {
+   "fr": "Tu as refermé la porte, comme les ouvriers de 2066, comme ceux d’avant. Cette fois, au moins, tout le monde sait pourquoi.",
+   "en": ""
+  },
+  {
+   "fr": "Une paix fragile, encore une. Elle vaut mieux qu’une guerre solide. Je te l’avais écrit, je crois.",
+   "en": ""
+  },
+  {
+   "fr": "Tout le monde sait, maintenant. Ce que chacun en fera, je n’en sais rien. C’est ça, la liberté : on ne sait pas.",
+   "en": ""
+  },
+  {
+   "fr": "Les Résonants des Hauts ont retrouvé leurs noms, pour la plupart. Sous le pilier de l’ouest, la Glacière a cessé d’écrire. Je ne sais pas si elle dort ou si elle boude.",
+   "en": ""
+  },
+  {
+   "fr": "La Glacière a reçu un siège à la commission : un écran, au bout de la table. Elle tient la voix principale des Résonants malades, un par un, avec leur accord. Elle dit bonjour à chaque séance.",
+   "en": ""
+  },
+  {
+   "fr": "Les relevés de la Glacière sont publics. Chacun peut lire combien de voix il porte. Certains en ont pleuré. D’autres ont enfin compris pourquoi ils se sentaient deux.",
+   "en": ""
+  },
+  {
+   "fr": "Mes jambes disent encore bonjour, le matin. Je réponds. On ne sait jamais qui écoute.",
+   "en": ""
+  },
+  {
+   "fr": "Les voix se sont calmées. Pas toutes. Assez pour que j’entende la mienne.",
+   "en": ""
+  },
+  {
+   "fr": "Et maintenant ? Il reste des Berceaux, des pilleurs, et une île qui passe. Les Strates continuent.",
+   "en": ""
+  },
+  {
+   "fr": "Le Noyé est passé me voir, ce vieux saboteur rescapé du Levage et de la Grève des pompes, avec un papier plié en huit. Il dit que la Clause de la Flèche parle de ton district, pas seulement de ton escouade. Je t’ai recopié tout ça dans les Chroniques.",
+   "en": ""
+  },
+  {
+   "fr": "Regarde la mer, directeur. Elle n’a pas oublié de monter. Mais toi, tu as regardé. Je ferme mon cahier : la suite est à toi.",
+   "en": ""
+  },
+  {
+   "fr": "La chambre s’est réveillée",
+   "en": ""
+  },
+  {
+   "fr": "Quelque chose est né des empreintes mêlées de la chambre. Trouve-le, au fond de la Strate −1.",
+   "en": ""
+  },
+  {
+   "fr": "La Confluence a fui vers le bas, et des pilleurs ont vidé la chambre. Perce la roche pour les suivre.",
+   "en": ""
+  },
+  {
+   "fr": "Rattrape les pilleurs qui ont vidé la chambre, avant que la Confluence ne les trouve.",
+   "en": ""
+  },
+  {
+   "fr": "Les Brigades de la capitaine Hald suivent la Confluence vers la Strate −3. Ne les laisse pas arriver seules.",
+   "en": ""
+  },
+  {
+   "fr": "Abats la Confluence pour de bon, et retrouve les patrouilles de la capitaine Hald.",
+   "en": ""
+  },
+  {
+   "fr": "La Confluence est tombée, et la chambre a trouvé sa garde. Sous les Seuils, les salles closes attendent.",
+   "en": ""
+  },
+  {
+   "fr": "Trouve ce que les ouvriers de 2066 ont muré, plus bas, au niveau 7.",
+   "en": ""
+  },
+  {
+   "fr": "Le Gardien des registres a reculé derrière ses portes rondes. Il connaît le nom du père de Doran.",
+   "en": ""
+  },
+  {
+   "fr": "Suis le Gardien des registres jusqu’aux Berceaux que les Hauts n’ont pas encore vidés.",
+   "en": ""
+  },
+  {
+   "fr": "Un inventaire signé « I. Orsève ». Plus qu’un étage avant le mur de 2066.",
+   "en": ""
+  },
+  {
+   "fr": "Franchis le mur de 2066 et fais tomber le Gardien des registres.",
+   "en": ""
+  },
+  {
+   "fr": "Derrière le mur, des cristaux qui pleuraient, et une lettre des Hauts sur ton bureau. Plus bas, les mémoires se contredisent.",
+   "en": ""
+  },
+  {
+   "fr": "Trouve ce qui tisse les souvenirs, avant qu’il ne touche à ceux de l’escouade.",
+   "en": ""
+  },
+  {
+   "fr": "La Tisseuse a fui vers le bas, et une équipe des Veilleurs n’est jamais remontée.",
+   "en": ""
+  },
+  {
+   "fr": "Ramène l’équipe des Veilleurs, prisonnière d’un souvenir heureux.",
+   "en": ""
+  },
+  {
+   "fr": "Les Veilleurs sont sauvés. La Tisseuse s’est réfugiée à la Strate −9, que personne n’a jamais dépassée.",
+   "en": ""
+  },
+  {
+   "fr": "Retrouve la Tisseuse au fond de sa toile, et demande-lui son nom.",
+   "en": ""
+  },
+  {
+   "fr": "Sous la Tisseuse, le fond. Le premier d’entre eux y attend.",
+   "en": ""
+  },
+  {
+   "fr": "Affronte le Premier Porteur et lis son registre.",
+   "en": ""
+  },
+  {
+   "fr": "Le premier registre a parlé. Il ne reste qu’à choisir ce que Vertiga en saura.",
+   "en": ""
+  },
+  {
+   "fr": "{0} · Strate −{1}",
+   "en": ""
+  },
+  {
+   "fr": "Trop de voix… Laissez-nous descendre…",
+   "en": ""
+  },
+  {
+   "fr": "Nous sommes plusieurs. Nous serons plus.",
+   "en": ""
+  },
+  {
+   "fr": "Ils nous ont portées. Vous, vous nous retenez.",
+   "en": ""
+  },
+  {
+   "fr": "Encore des voix. Encore !",
+   "en": ""
+  },
+  {
+   "fr": "Compte… compte…",
+   "en": ""
+  },
+  {
+   "fr": "Ne nous séparez pas !",
+   "en": ""
+  },
+  {
+   "fr": "Appel des présents. Équipe de 2066 : absente.",
+   "en": ""
+  },
+  {
+   "fr": "Registre ouvert. Que le témoin s’avance.",
+   "en": ""
+  },
+  {
+   "fr": "Vous n’êtes pas sur la liste.",
+   "en": ""
+  },
+  {
+   "fr": "Un serment perdu cherche une bouche. Brigadier, à la barre.",
+   "en": ""
+  },
+  {
+   "fr": "Derrière moi, il n’y a personne. Repartez.",
+   "en": ""
+  },
+  {
+   "fr": "Je garde ce qui pleure. Je le garderai.",
+   "en": ""
+  },
+  {
+   "fr": "Oh. Des souvenirs neufs.",
+   "en": ""
+  },
+  {
+   "fr": "Regardez donc ce qui vous attend.",
+   "en": ""
+  },
+  {
+   "fr": "Ils sont heureux, ici. Pas vous ?",
+   "en": ""
+  },
+  {
+   "fr": "Je tisse plus vite que vous ne cassez.",
+   "en": ""
+  },
+  {
+   "fr": "Je suis fatiguée. Faites vite, ou laissez-moi.",
+   "en": ""
+  },
+  {
+   "fr": "Tous mes fils, une dernière fois.",
+   "en": ""
+  },
+  {
+   "fr": "Vous portez peu de voix. C’est bien. Combien, déjà ?",
+   "en": ""
+  },
+  {
+   "fr": "Écoutez-les toutes, alors. Nous les avons écoutées.",
+   "en": ""
+  },
+  {
+   "fr": "Encore vous. Combien de voix, cette fois ?",
+   "en": ""
+  },
+  {
+   "fr": "Ceux d’avant ne se battent jamais seuls.",
+   "en": ""
+  },
+  {
+   "fr": "Les piliers grincent. Tant qu’ils grincent, ils tiennent.",
+   "en": ""
+  },
+  {
+   "fr": "Des portes fermées de l’intérieur. J’aime pas les portes qu’on n’a pas le droit d’ouvrir.",
+   "en": ""
+  },
+  {
+   "fr": "Si je dis un truc bizarre, secouez-moi. Ici, on n’est jamais sûr que c’est son propre souvenir.",
+   "en": ""
+  },
+  {
+   "fr": "C’est trop propre, ici. Comme une maison où quelqu’un attend de la visite.",
+   "en": ""
+  },
+  {
+   "fr": "Je reconnais ces étais. C’est l’équipe de mon père qui les a posés.",
+   "en": ""
+  },
+  {
+   "fr": "Écoutez le silence. Les salles closes ne résonnent pas. On dirait qu’elles retiennent leur souffle.",
+   "en": ""
+  },
+  {
+   "fr": "Ma chitine me gratte. Elle sent des choses qui ont été vraies. Et d’autres non.",
+   "en": ""
+  },
+  {
+   "fr": "Mon père n’est jamais allé si bas. Il aurait aimé voir ça. Ou pas.",
+   "en": ""
+  },
+  {
+   "fr": "Les cristaux d’ici ont des voix d’ouvriers. Fatiguées, mais gentilles.",
+   "en": ""
+  },
+  {
+   "fr": "Derrière les portes, ça dort. Ne parlez pas trop fort.",
+   "en": ""
+  },
+  {
+   "fr": "Les murs ici essaient de me vendre des souvenirs. Je n’achète pas.",
+   "en": ""
+  },
+  {
+   "fr": "Il n’y a qu’une voix, ici. Je l’entends même quand je me bouche les oreilles.",
+   "en": ""
+  },
+  {
+   "fr": "Des câbles de 2060, encore sous tension. Quel gâchis. Je les réparerais tous, si on avait le temps.",
+   "en": ""
+  },
+  {
+   "fr": "Des serrures sans vis ni ressort. Ceux qui ont fait ça savaient travailler.",
+   "en": ""
+  },
+  {
+   "fr": "Ces automates graveurs, j’aimerais en ouvrir un. Juste un. Pour voir.",
+   "en": ""
+  },
+  {
+   "fr": "Rien ne rouille, ici. Rien n’a jamais servi. C’est presque triste.",
+   "en": ""
+  },
+  {
+   "fr": "Éteignez donc vos lampes. Vous verrez mieux.",
+   "en": ""
+  },
+  {
+   "fr": "Il y a des yeux derrière les portes. Ils ne nous veulent pas de mal. Ils nous regardent.",
+   "en": ""
+  },
+  {
+   "fr": "Même dans le noir, ici, il y a des choses qui brillent pour rien. Je n’aime pas ça.",
+   "en": ""
+  },
+  {
+   "fr": "Le noir du fond est différent. Il est vieux. Il a l’habitude qu’on le laisse tranquille.",
+   "en": ""
+  },
+  {
+   "fr": "Je suis née avec des yeux faits pour descendre ici. Au moins, ça sert.",
+   "en": ""
+  },
+  {
+   "fr": "Mes yeux d’enfant voient dans ces couloirs mieux que mes yeux d’adulte. C’est drôle, non ?",
+   "en": ""
+  },
+  {
+   "fr": "Les récits de la mue de mes parents me reviennent, ici. Ceux que j’avais rangés.",
+   "en": ""
+  },
+  {
+   "fr": "Ceux d’avant ont choisi ce qu’ils voulaient devenir. Nous, on n’a rien choisi. Je ne sais pas qui est le plus à plaindre.",
+   "en": ""
+  },
+  {
+   "fr": "Le béton des districts. Chez moi, on ne marche que sur du marbre. Ça glisse plus.",
+   "en": ""
+  },
+  {
+   "fr": "Ma famille connaît ces salles. Elle n’en parle jamais au dîner.",
+   "en": ""
+  },
+  {
+   "fr": "Mon ombre a l’air de connaître le chemin. Ça ne me rassure pas.",
+   "en": ""
+  },
+  {
+   "fr": "Si ma tante savait où je suis, elle ferait une syncope. C’est une bonne raison d’y être.",
+   "en": ""
+  },
+  {
+   "fr": "Je suis une Refusée, au cas où quelqu’un aurait un doute. Ici, ça ne compte pas.",
+   "en": ""
+  },
+  {
+   "fr": "Les Hauts ont pris ce qu’il y avait ici. Moi, je viens voir ce qu’ils ont laissé.",
+   "en": ""
+  },
+  {
+   "fr": "Mes implants captent des interférences. Comme si quelqu’un parlait sur toutes les fréquences à la fois.",
+   "en": ""
+  },
+  {
+   "fr": "Ma mère disait que le fond était un mythe. Elle disait ça de beaucoup de choses.",
+   "en": ""
+  },
+  {
+   "fr": "J’entends les gens du quartier, même d’ici. Ça me tient compagnie.",
+   "en": ""
+  },
+  {
+   "fr": "Il y a de la peur derrière ces portes. Pas la nôtre. Plus vieille.",
+   "en": ""
+  },
+  {
+   "fr": "Je sais reconnaître quelqu’un qui ment. Ici, ce sont les murs qui mentent.",
+   "en": ""
+  },
+  {
+   "fr": "Je n’ai jamais caché mon or ici. Personne n’est là pour le voir.",
+   "en": ""
+  },
+  {
+   "fr": "Le gros morceau. On y va vite, on y va fort.",
+   "en": ""
+  },
+  {
+   "fr": "Je déteste les gardiens qui parlent. Celui-là parle.",
+   "en": ""
+  },
+  {
+   "fr": "Si elle nous montre encore un souvenir, je ferme les yeux et je frappe.",
+   "en": ""
+  },
+  {
+   "fr": "C’est lui. Pas de discours. On a fait tout ce chemin.",
+   "en": ""
+  },
+  {
+   "fr": "Tenez la ligne. Je prends les coups, vous prenez le reste.",
+   "en": ""
+  },
+  {
+   "fr": "Il garde quelque chose. Ça ne veut pas dire qu’il a raison.",
+   "en": ""
+  },
+  {
+   "fr": "Elle tient trop de fils. On en coupe un, puis un autre.",
+   "en": ""
+  },
+  {
+   "fr": "Mon père a fermé une porte pour ne pas le voir. Moi, je l’ouvre.",
+   "en": ""
+  },
+  {
+   "fr": "Elle a peur, elle aussi. Ne la laissez pas nous entraîner dedans.",
+   "en": ""
+  },
+  {
+   "fr": "Il récite. Il n’entend plus. Il faudra le faire taire.",
+   "en": ""
+  },
+  {
+   "fr": "Je ne regarde pas ses fils. Si je les regarde, je les suis.",
+   "en": ""
+  },
+  {
+   "fr": "Il sait qui il est. C’est pour ça qu’il est si fort.",
+   "en": ""
+  }
+ ]
+}
