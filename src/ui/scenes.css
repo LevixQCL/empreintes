@@ -210,6 +210,9 @@
 @keyframes cristal-lueur{0%,100%{filter:drop-shadow(0 0 2px rgba(95,168,255,.4))}50%{filter:drop-shadow(0 0 10px rgba(95,168,255,.95))}}
 .titre-nom .lt-trait{opacity:0;animation:apparait 1s ease-out 1.4s forwards}
 @keyframes lettre{from{opacity:0;transform:translateY(-10px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+/* le logo du jeu (9 novembre 2026), posé au-dessus du nom */
+.titre-logo{display:block;width:auto;height:clamp(110px,19vh,170px);margin:0 auto;filter:drop-shadow(0 6px 24px rgba(0,0,0,.7)) drop-shadow(0 0 22px rgba(95,168,255,.25));opacity:0;animation:logo-entre 1.2s cubic-bezier(.2,.7,.2,1) .2s forwards}
+@keyframes logo-entre{from{opacity:0;transform:translateY(12px) scale(.94);filter:blur(6px)}to{opacity:1;transform:none}}
 .titre-sous{margin:0;font-family:var(--mono);letter-spacing:.08em;opacity:0;animation:apparait 1s ease-out 1.6s forwards;text-shadow:0 1px 6px rgba(0,0,0,.8)}
 .titre-bas{display:grid;justify-items:center;gap:12px;opacity:0;animation:apparait 1s ease-out 2.1s forwards}
 .titre-go{min-width:220px;min-height:52px;font-size:16px;letter-spacing:.04em;animation:appel-titre 2.6s ease-in-out 3s infinite}
