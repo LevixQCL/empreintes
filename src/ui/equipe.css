@@ -25,26 +25,26 @@
    la plus longue suite reliée par un rayon d'or, un chiffre absent laissé en cristal éteint et fêlé */
 .eq-freqs{position:relative;display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px;align-items:start}
 .eq-col{position:relative;display:grid;justify-items:center;gap:4px}
-.eq-cristal{--taille:polygon(50% 0,100% 20%,100% 80%,50% 100%,0 80%,0 20%);position:relative;z-index:1;display:grid;place-items:center;width:min(100%,30px);height:38px;
-  font-family:var(--mono);font-size:15px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);clip-path:var(--taille);
-  background:linear-gradient(155deg,color-mix(in srgb,var(--fc) 45%,white) 0%,color-mix(in srgb,var(--fc) 80%,white 8%) 38%,var(--fc) 62%,color-mix(in srgb,var(--fc) 55%,black) 100%);
-  filter:brightness(calc(.85 + .35 * var(--n,1))) drop-shadow(0 0 calc(6px * var(--n,1)) color-mix(in srgb,var(--fc) 70%,white))}
-/* le reflet d'une facette, comme sur le cristal des cartes */
-.eq-cristal::after{content:"";position:absolute;inset:0;clip-path:polygon(50% 0,100% 20%,50% 42%,0 20%);background:linear-gradient(180deg,rgba(255,255,255,.38),rgba(255,255,255,.05))}
-.eq-perles{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;min-height:9px;max-width:32px}
-.eq-perles i{display:block;width:7px;height:7px;transform:rotate(45deg);background:var(--c);box-shadow:0 0 0 1px #0A0E1A,0 0 5px color-mix(in srgb,var(--c) 70%,transparent)}
-.eq-perles em{font-style:normal;font-family:var(--mono);font-size:var(--t-min);line-height:6px;color:var(--x-doux)}
+/* le cristal peint (9 novembre 2026) : une seule image en gris, teintée en multiplication à la couleur de sa Fréquence */
+.eq-cristal{position:relative;z-index:1;display:grid;place-items:center;width:30px;height:56px;isolation:isolate;
+  font-family:var(--mono);font-size:16px;font-weight:700;color:#fff;text-shadow:0 0 3px #000,0 1px 2px #000,0 0 6px rgba(0,0,0,.8);
+  background:url("/art/icones/cristal-frequence.webp") center/contain no-repeat;
+  filter:drop-shadow(0 0 6px color-mix(in srgb,var(--fc) 60%,transparent))}
+.eq-cristal>i{position:absolute;inset:0;z-index:-1;background:var(--fc);mix-blend-mode:multiply;
+  -webkit-mask:url("/art/icones/cristal-frequence.webp") center/contain no-repeat;mask:url("/art/icones/cristal-frequence.webp") center/contain no-repeat}
+.eq-lignees{display:flex;justify-content:center;gap:1px;min-height:16px}
+.eq-lignees .sigle{width:16px;height:16px}
 .eq-col small{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--x-doux)}
 /* la suite : un rayon d'or traverse les cristaux qui se suivent */
-.eq-col.suite::before{content:"";position:absolute;z-index:0;top:18px;left:-3px;right:-3px;height:2px;background:linear-gradient(90deg,#c98a35,#ffe2a0,#c98a35);box-shadow:0 0 8px rgba(255,205,120,.85)}
+.eq-col.suite::before{content:"";position:absolute;z-index:0;top:27px;left:-3px;right:-3px;height:2px;background:linear-gradient(90deg,#c98a35,#ffe2a0,#c98a35);box-shadow:0 0 8px rgba(255,205,120,.85)}
 .eq-col.suite:not(.suite + .suite)::before{left:50%}
 .eq-col.suite:not(:has(+ .suite))::before{right:50%}
 .eq-col.suite small{color:var(--x-or)}
-.eq-col.trou .eq-cristal{color:rgba(255,170,150,.8);text-shadow:none;filter:none;
-  background:linear-gradient(155deg,rgba(255,156,138,.35),rgba(255,156,138,.12) 60%,rgba(255,156,138,.3))}
-.eq-col.trou .eq-cristal::before{content:"";position:absolute;inset:1.5px;z-index:-1;clip-path:var(--taille);background:#0F1424}
-/* la fêlure du cristal éteint */
-.eq-col.trou .eq-cristal::after{clip-path:polygon(58% 6%,62% 6%,44% 46%,60% 56%,40% 96%,36% 96%,54% 58%,38% 48%);background:rgba(255,156,138,.45)}
+/* un chiffre absent : le cristal éteint, gris et sombre */
+.eq-col.trou .eq-cristal{color:var(--x-rouge);filter:none;opacity:1}
+.eq-col.trou .eq-cristal::before{content:"";position:absolute;inset:0;z-index:-1;background:url("/art/icones/cristal-frequence.webp") center/contain no-repeat;opacity:.22}
+.eq-col.trou .eq-cristal{background:none}
+.eq-col.trou .eq-cristal>i{display:none}
 .eq-col.trou small{color:var(--x-rouge)}
 .eq-conseil{margin:0;font-size:13.5px;line-height:1.45;color:var(--x-txt)}
 .eq-conseil b{color:#F6F2EA;font-weight:600}
@@ -53,6 +53,11 @@
 .eq-action{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:0;font-size:12px;color:var(--x-doux)}
 .eq-action.zero small{color:var(--x-rouge)}
 .eq-action small{line-height:1.2}
+.eq-action.atk{--ac:#ff6a4a}.eq-action.bouclier{--ac:#5fb0ff}.eq-action.soin{--ac:#7fe06a}
+.eq-nb{display:flex;align-items:center;gap:7px;color:var(--ac)}
+.eq-nb svg{width:22px;height:22px;filter:drop-shadow(0 0 5px currentColor)}
+.eq-nb b{font-family:var(--display);font-weight:400;font-size:28px;line-height:1;color:#F6F2EA}
+.eq-action.zero .eq-nb{color:var(--x-doux);opacity:.6}
 
 /* ---------- les trois escouades ---------- */
 .eq-escouades{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}

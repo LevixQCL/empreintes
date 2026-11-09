@@ -12,7 +12,7 @@ import { NOMS_EFFET, nomsEffets, texteEffet } from '../core/effets';
 import { multNiveau } from '../core/collection';
 import type { BatimentId, GesteDef, Lignee, PorteurDef, TypeGeste } from '../core/types';
 import { illustrationBatiment, portrait } from './art';
-import { ICONES_ACTION, couleurFrequence, faceCarte } from './carte';
+import { ICONES_ACTION, faceCarte } from './carte';
 import { NOM_LIGNEE, NOM_LIGNEES, avatar, coquille, entete, voletsEscouade, type EcranDistrict } from './coquille';
 import { barreXp, feuilleCarte, feuilleDeck, frequencesDe, jaugeCharge, jaugePv, plusLongueSuite } from './district';
 import { effetsLignee, feuilleGuide, lienGuide, plageFrequences, trouveesDe } from './guide';
@@ -123,11 +123,6 @@ export function htmlPorteurs(e: EcranDistrict): string {
 
 const NOM_ACTION: Record<TypeGeste, string> = { atk: 'Attaque', bouclier: 'Protection', soin: 'Soin' };
 
-/** La force, comme sur la carte : l'icône au trait de l'action (épée, écu, +) et le chiffre, dans une capsule de sa couleur */
-const socle = (t: TypeGeste, v: number, classe: string) =>
-  `<span class="${classe} ${t}" title="${NOM_ACTION[t]} ${v}">${ICONES_ACTION[t]}<b>${v}</b></span>`;
-
-
 /**
  * Une carte du deck en vignette (refonte du 28 octobre 2026, comme Clash Royale ou la Forge) : la vraie face de la carte
  * (illustration, Fréquence, force, métal), trois par rangée ; dessous, seulement ce qui ne se lit pas sur la face :
@@ -159,6 +154,9 @@ function tuileCarte(j: Jeu, g: GesteDef, prete: (cle: string) => boolean, scelle
     : `<li><div class="eq-tuile fixe${scellee ? ' scellee' : ''}">${corps}</div></li>`;
 }
 
+/** les couleurs des Fréquences, plus claires pour teinter le cristal peint (en multiplication, une teinte sombre l'éteindrait) */
+const couleurCristal = (f: number) => `hsl(${8 + (f - 1) * 34} 75% 62%)`;
+
 /** Ce que vaut le deck de l'escouade : sa taille, ses Fréquences (par lignée), ses actions */
 function bilanDeck(j: Jeu, esc: string[]): string {
   const cartes = deckEscouade(j, esc);
@@ -167,20 +165,19 @@ function bilanDeck(j: Jeu, esc: string[]): string {
   const freqs = frequencesDe(cartes);
   const jokers = cartes.filter((g) => g.effet?.type === 'accord').length;
   const suite = plusLongueSuite(freqs, jokers);
-  const max = Math.max(1, ...freqs);
-  // chaque colonne empile les cartes de chaque lignée (les cartes du district en neutre)
-  const couleurDe = (g: GesteDef) => (g.porteur ? COULEUR[porteurDef(g.porteur).lignee] : 'var(--x-doux)');
+    // l'échelle des Fréquences (9 novembre 2026, Bryan) : un cristal peint par chiffre, teinté à la couleur de sa Fréquence,
+  // éteint s'il manque ; sous chaque cristal, le symbole peint des lignées qui le couvrent
   const colonnes = freqs.map((k, i) => {
     const ici = cartes.filter((g) => !frequenceLibre(g.effet) && (g.fs ?? [g.f]).includes(i + 1));
-    // l'échelle des Fréquences (30 octobre 2026) : un cristal par chiffre, allumé s'il est couvert, une perle par carte (couleur de sa lignée)
-    const perles = ici.slice(0, 6).map((g) => `<i style="--c:${couleurDe(g)}"></i>`).join('') + (ici.length > 6 ? `<em>+${ici.length - 6}</em>` : '');
-    return `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}" style="--fc:${couleurFrequence(i + 1)};--n:${Math.min(1, k / max)}">`
-      + `<b class="eq-cristal">${i + 1}</b><span class="eq-perles">${perles}</span><small>${k ? `×${k}` : '—'}</small></span>`;
+    const lignees = [...new Set(ici.filter((g) => g.porteur).map((g) => porteurDef(g.porteur!).lignee))] as Lignee[];
+    return `<span class="eq-col${k ? '' : ' trou'}${suite.includes(i + 1) ? ' suite' : ''}" style="--fc:${couleurCristal(i + 1)}">`
+      + `<b class="eq-cristal"><i aria-hidden="true"></i>${i + 1}</b><span class="eq-lignees">${lignees.map((l) => sigle(l)).join('')}</span><small>${k ? `×${k}` : '—'}</small></span>`;
   }).join('');
   const trous = freqs.map((k, i) => (k ? 0 : i + 1)).filter(Boolean);
+  // les trois actions : l'icône de l'action et le nombre, sans capsule (9 novembre 2026, Bryan : les anciens médaillons ne servent plus)
   const actions = (['atk', 'bouclier', 'soin'] as TypeGeste[]).map((t) => {
     const k = cartes.filter((g) => g.type === t).length;
-    return `<span class="eq-action ${t}${k ? '' : ' zero'}">${socle(t, k, 'eq-socle')}<small>${t === 'atk' ? 'attaque' : t === 'bouclier' ? 'protection' : 'soin'}${k > 1 ? 's' : ''}</small></span>`;
+    return `<span class="eq-action ${t}${k ? '' : ' zero'}"><span class="eq-nb">${ICONES_ACTION[t]}<b>${k}</b></span><small>${t === 'atk' ? 'attaque' : t === 'bouclier' ? 'protection' : 'soin'}${k > 1 ? 's' : ''}</small></span>`;
   }).join('');
   // une seule phrase de conseil, la plus utile
   const conseil = manque ? `<b class="rouge">Il manque ${manque} carte${manque > 1 ? 's' : ''}</b> pour descendre (${DISTRICT.deckMin} au moins) : confie-en à un Porteur plus bas.`
