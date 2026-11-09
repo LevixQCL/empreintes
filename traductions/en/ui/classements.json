@@ -283,7 +283,7 @@
   },
   {
    "fr": "Chaque carte que tu possèdes vaut selon son métal, et gagne {0} % de sa valeur par niveau monté. Chaque carte différente découverte ajoute {1} points.",
-   "en": "Each card you own is worth points by its metal, and gains {0} % of its value per level. Each different card discovered adds {1} points."
+   "en": "Each card you own is worth points by its metal, and gains {0}% of its value per level. Each different card discovered adds {1} points."
   },
   {
    "fr": "Découvrir compte plus que répéter : quarante doublons de fer pèsent moins que quelques cartes nouvelles. Le record ne redescend pas si tu recycles.",
@@ -303,7 +303,7 @@
   },
   {
    "fr": "Ton deck en défense",
-   "en": "Your deck on defence"
+   "en": "Your deck on defense"
   },
   {
    "fr": "Quand tu ne joues pas, ton escouade se défend toute seule.",

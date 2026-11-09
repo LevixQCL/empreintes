@@ -119,7 +119,7 @@
   },
   {
    "fr": "+{0} % de PV",
-   "en": "+{0} % HP"
+   "en": "+{0}% HP"
   },
   {
    "fr": "pour l’escouade debout",
@@ -167,7 +167,7 @@
   },
   {
    "fr": "pour l’escouade (+35 %)",
-   "en": "for the squad (+35 %)"
+   "en": "for the squad (+35%)"
   },
   {
    "fr": "L’escouade est déjà en pleine forme",

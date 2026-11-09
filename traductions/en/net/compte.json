@@ -35,7 +35,7 @@
   },
   {
    "fr": "Ce site n’est pas encore autorisé dans Firebase (Authentication › Paramètres › Domaines autorisés).",
-   "en": "This site isn’t authorised in Firebase yet (Authentication › Settings › Authorised domains)."
+   "en": "This site isn’t authorized in Firebase yet (Authentication › Settings › Authorized domains)."
   },
   {
    "fr": "Pas de connexion réseau.",

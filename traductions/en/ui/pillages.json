@@ -43,11 +43,11 @@
   },
   {
    "fr": "Les districts voisins attendent · vaincs le gardien de la Strate −{0}",
-   "en": "The neighbouring districts are waiting · defeat the guardian of Stratum −{0}"
+   "en": "The neighboring districts are waiting · defeat the guardian of Stratum −{0}"
   },
   {
    "fr": "Le passeur ne mène pas de grappin chez les voisins pour un district qu’on ne connaît pas encore. Les missions en mer, elles, partent déjà.",
-   "en": "The ferryman won’t ferry a grappling crew to the neighbours for a district nobody knows yet. Missions at sea, though, already sail."
+   "en": "The ferryman won’t ferry a grappling crew to the neighbors for a district nobody knows yet. Missions at sea, though, already sail."
   },
   {
    "fr": "Jetons et coffre",
@@ -79,7 +79,7 @@
   },
   {
    "fr": "La carte des districts voisins",
-   "en": "Map of the neighbouring districts"
+   "en": "Map of the neighboring districts"
   },
   {
    "fr": "déjà pillé aujourd’hui",
@@ -91,7 +91,7 @@
   },
   {
    "fr": "Ton district est défendu par ta garnison, même jeu fermé. Une attaque gagnée contre toi prend au plus {0} % de ton coffre, puis {1} h de bouclier ; {2} attaques par jour au plus. Le reste de ton minerai, tes cristaux, tes cartes et tes Éclats ne risquent rien.",
-   "en": "Your district is defended by your garrison, even with the game closed. A successful attack on you takes at most {0} % of your chest, then {1} h of shield; {2} attacks per day at most. The rest of your ore, your crystals, your cards and your Shards are never at risk."
+   "en": "Your district is defended by your garrison, even with the game closed. A successful attack on you takes at most {0}% of your chest, then {1} h of shield; {2} attacks per day at most. The rest of your ore, your crystals, your cards and your Shards are never at risk."
   },
   {
    "fr": "Ta garnison",
@@ -191,7 +191,7 @@
   },
   {
    "fr": "{0} % de ton coffre",
-   "en": "{0} % of your chest"
+   "en": "{0}% of your chest"
   },
   {
    "fr": "Tu choisis l’escouade qui attaque à l’étape suivante.",
@@ -211,7 +211,7 @@
   },
   {
    "fr": "Devant le sas de la digue, sur ses pilotis, le Port voit partir les barques du passeur : vers les ruines noyées, et vers les cuvettes voisines.",
-   "en": "By the Dike airlock, up on its stilts, the Port watches the ferryman’s boats set out: toward the drowned ruins, and toward the neighbouring Basins."
+   "en": "By the Dike airlock, up on its stilts, the Port watches the ferryman’s boats set out: toward the drowned ruins, and toward the neighboring Basins."
   },
   {
    "fr": "Le bateau reste à quai · vaincs le gardien de la Strate −{0}",
@@ -247,11 +247,11 @@
   },
   {
    "fr": "Pillages et défense du port · après la Strate −{0}",
-   "en": "Raids and port defence · after Stratum −{0}"
+   "en": "Raids and port defense · after Stratum −{0}"
   },
   {
    "fr": "Les districts voisins ne te prennent pas encore au sérieux. Le détail est dans « Les règles en détail ».",
-   "en": "The neighbouring districts don’t take you seriously yet. The details are in “The rules in detail”."
+   "en": "The neighboring districts don’t take you seriously yet. The details are in “The rules in detail”."
   },
   {
    "fr": "Les pillages",
@@ -259,7 +259,7 @@
   },
   {
    "fr": "Ton escouade attaque la garnison d’un district voisin de ta force.",
-   "en": "Your squad attacks the garrison of a neighbouring district of your strength."
+   "en": "Your squad attacks the garrison of a neighboring district of your strength."
   },
   {
    "fr": "jetons, un toutes les {0}",
@@ -275,7 +275,7 @@
   },
   {
    "fr": "Ta défense",
-   "en": "Your defence"
+   "en": "Your defense"
   },
   {
    "fr": "Seul ton coffre est exposé, et ta garnison se défend seule.",

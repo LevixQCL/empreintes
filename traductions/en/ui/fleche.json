@@ -63,7 +63,7 @@
   },
   {
    "fr": "{0} % de chances",
-   "en": "{0} % chance"
+   "en": "{0}% chance"
   },
   {
    "fr": "Gardiens",
@@ -143,7 +143,7 @@
   },
   {
    "fr": "défense{0} tenue{1}",
-   "en": "defen{0|ces|ce} held{1|}"
+   "en": "defen{0|ses|se} held{1|}"
   },
   {
    "fr": "Gage par jour",
@@ -171,7 +171,7 @@
   },
   {
    "fr": "Une copie figée de ton escouade (force {0}) se défend seule. Chaque défense tenue rapporte un quart de jour de gage ; battue, elle perd le quai, jamais ta montée.",
-   "en": "A frozen copy of your squad (power {0}) defends on its own. Each defence held earns a quarter of a day’s stipend; beaten, it loses the quay, never your climb."
+   "en": "A frozen copy of your squad (power {0}) defends on its own. Each defense held earns a quarter of a day’s stipend; beaten, it loses the quay, never your climb."
   },
   {
    "fr": "Recevoir le gage",
@@ -311,7 +311,7 @@
   },
   {
    "fr": "Les Hauts paient des gardiens sur chaque quai, plus forts à mesure qu’on monte : c’est leur façon de trier ceux d’en bas. « S’il tient le sommet au passage d’une île, il y est reçu », dit la Clause. Les Hauts ont toujours lu « l’escouade ».",
-   "en": "The Heights pay guardians on every quay, stronger the higher you go: it’s their way of sorting those from below. “Whoever holds the summit as an island passes is received there,” says the Clause. The Heights have always read it as “the squad”."
+   "en": "The Heights pay guardians on every quay, stronger the higher you go: it’s their way of sorting those from below. “Whoever holds the summit as an island passes is received there,” says the Clause. The Heights have always read it as “the squad.”"
   },
   {
    "fr": "Les Îles ouvertes",

@@ -39,7 +39,7 @@
   },
   {
    "fr": "Trois cartes de la même Fréquence dans la chaîne : ces cartes sont renforcées de +{0} % (dégâts, protection ou soin) et l’escouade gagne 1 Flux. Quatre : {1} (Écho ×4) ; cinq : {2} et 1 Flux de plus (Écho ×5).",
-   "en": "Three cards of the same Frequency in the chain: those cards are boosted by +{0} % (damage, protection or healing) and the squad gains 1 Flux. Four: {1} (Echo ×4); five: {2} and 1 more Flux (Echo ×5)."
+   "en": "Three cards of the same Frequency in the chain: those cards are boosted by +{0}% (damage, protection or healing) and the squad gains 1 Flux. Four: {1} (Echo ×4); five: {2} and 1 more Flux (Echo ×5)."
   },
   {
    "fr": "Flux",
@@ -115,7 +115,7 @@
   },
   {
    "fr": "Sous la moitié de ses PV, cet ennemi frappe 30 % plus fort.",
-   "en": "Below half its HP, this enemy hits 30 % harder."
+   "en": "Below half its HP, this enemy hits 30% harder."
   },
   {
    "fr": "Cet ennemi regagne une part de ses PV à la fin de chacun de ses tours.",
@@ -239,7 +239,7 @@
   },
   {
    "fr": "Le coup ignore le bouclier et le blindage de l’ennemi.",
-   "en": "The blow ignores the enemy’s shield and armour."
+   "en": "The blow ignores the enemy’s shield and armor."
   },
   {
    "fr": "Hors Résonance, cet ennemi ne prend qu’une part des coups : fais des suites.",
@@ -251,7 +251,7 @@
   },
   {
    "fr": "À partir du tour 12, les attaques ennemies grossissent de 15 % par tour (et dès le tour 10, les ennemis se soignent de moins en moins) : aucun combat ne tourne en rond, même avec une escouade qui ne fait que tenir.",
-   "en": "From turn 12, enemy attacks grow by 15 % per turn (and from turn 10, enemies heal less and less): no fight goes round in circles, even with a squad that only holds on."
+   "en": "From turn 12, enemy attacks grow by 15% per turn (and from turn 10, enemies heal less and less): no fight goes round in circles, even with a squad that only holds on."
   },
   {
    "fr": "Un soin ne dépasse jamais les PV max : le surplus est perdu.",
@@ -455,7 +455,7 @@
   },
   {
    "fr": "Le gardien d’une Strate déjà vaincue, quand on y retourne explorer : un peu plus fort (+10 %), mais il laisse de meilleures cartes et un Éclat de plus.",
-   "en": "The guardian of an already beaten Stratum, when you go back to explore: a little stronger (+10 %), but it leaves better cards and one more Shard."
+   "en": "The guardian of an already beaten Stratum, when you go back to explore: a little stronger (+10%), but it leaves better cards and one more Shard."
   },
   {
    "fr": "Marque",

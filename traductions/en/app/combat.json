@@ -215,7 +215,7 @@
   },
   {
    "fr": "{0} Il ne lui reste que {1} % de sa vie : ses blessures resteront jusqu’à la prochaine rencontre. Butin : {2} minerai.",
-   "en": "{0} It has only {1} % of its life left: its wounds will remain until the next encounter. Loot: {2} ore."
+   "en": "{0} It has only {1}% of its life left: its wounds will remain until the next encounter. Loot: {2} ore."
   },
   {
    "fr": "Retour à la carte",
@@ -247,7 +247,7 @@
   },
   {
    "fr": "{0} se dissipe. Butin : {1} minerai. L’escouade souffle un peu (+50 % de PV) : tu continues, ou tu remontes avec ce que tu as ?",
-   "en": "{0} dissolves. Loot: {1} ore. The squad catches its breath (+50 % HP): do you keep going, or head back up with what you have?"
+   "en": "{0} dissolves. Loot: {1} ore. The squad catches its breath (+50% HP): do you keep going, or head back up with what you have?"
   },
   {
    "fr": "Remonter avec le butin",

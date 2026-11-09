@@ -7,7 +7,7 @@
   },
   {
    "fr": "Le passage sûr : des équipages partiront d’ici vers les ruines au large et les cuvettes voisines.",
-   "en": "The safe passage: crews will sail from here to the ruins offshore and the neighbouring Basins."
+   "en": "The safe passage: crews will sail from here to the ruins offshore and the neighboring Basins."
   },
   {
    "fr": "Ses volets sont cloués depuis que le dernier marchand a quitté le district, et la balance a rouillé sur le comptoir. Les fouilleurs remontent des Strates les poches pleines, mais personne n’est là pour leur racheter quoi que ce soit.",
@@ -19,7 +19,7 @@
   },
   {
    "fr": "Port : cuvettes voisines, {0} jeton{1} de pillage sur {2}",
-   "en": "Port: neighbouring Basins, {0} raid token{1} of {2}"
+   "en": "Port: neighboring Basins, {0} raid token{1} of {2}"
   },
   {
    "fr": "Port : missions en mer",
@@ -711,7 +711,7 @@
   },
   {
    "fr": "Proches de monter",
-   "en": "Close to levelling up"
+   "en": "Close to leveling up"
   },
   {
    "fr": "Toutes tes cartes sont au niveau maximum.",
@@ -919,7 +919,7 @@
   },
   {
    "fr": "La Tour du Noyau tient bon : les habitants consolident la digue, réparent les toits et rouvrent les ateliers. Le district ressemble enfin à un quartier.",
-   "en": "The Core Tower holds: people shore up the Dike, mend the roofs and reopen the workshops. At last, the district looks like a neighbourhood."
+   "en": "The Core Tower holds: people shore up the Dike, mend the roofs and reopen the workshops. At last, the district looks like a neighborhood."
   },
   {
    "fr": "Le district prospère",
@@ -927,7 +927,7 @@
   },
   {
    "fr": "Le courant circule, les marchands reviennent, et des maisons neuves montent contre la digue. On parle de ton district jusque dans les autres quartiers.",
-   "en": "The power is flowing, the merchants are back, and new houses rise against the Dike. Your district is the talk of other quarters."
+   "en": "The power is flowing, the merchants are back, and new houses rise against the Dike. Your district is the talk of the other quarters."
   },
   {
    "fr": "Le phare de Vertiga",
@@ -1351,7 +1351,7 @@
   },
   {
    "fr": "Sous les salles closes, {0} a lu jusqu’au bout ce que cachaient les cristaux. Elle en est revenue plus fragile, mais elle sait désormais entendre n’importe quelle suite et s’y glisser.",
-   "en": "Beneath the closed halls, {0} read to the very end what the crystals were hiding. She came back more fragile, but now she can hear any chain and slip into it."
+   "en": "Beneath the closed chambers, {0} read to the very end what the crystals were hiding. She came back more fragile, but now she can hear any chain and slip into it."
   },
   {
    "fr": "NACRE · HÉRITAGE DU DISTRICT",
@@ -1939,7 +1939,7 @@
   },
   {
    "fr": "Les Deux Rives",
-   "en": "The Two Shores"
+   "en": "The Two Banks"
   },
   {
    "fr": "La Ruche d’ambre",
@@ -2207,7 +2207,7 @@
   },
   {
    "fr": ", ennemis +{0} %, une carte de plus et {1} Éclats. {2}",
-   "en": " one, enemies +{0} %, one more card and {1} Shards. {2}"
+   "en": " one, enemies +{0}%, one more card and {1} Shards. {2}"
   },
   {
    "fr": "Nouvelles Épreuves lundi, dans ",
@@ -2255,7 +2255,7 @@
   },
   {
    "fr": "+{0} % de force · 1 carte{1} et {2} Éclats",
-   "en": "+{0} % strength · 1 card{1} and {2} Shards"
+   "en": "+{0}% strength · 1 card{1} and {2} Shards"
   },
   {
    "fr": "1 carte au choix, argent au moins",
@@ -2303,7 +2303,7 @@
   },
   {
    "fr": "{0} ({1} % de chances qu’elle soit nouvelle, sinon un doublon)",
-   "en": "{0} ({1} % chance it’s new, otherwise a duplicate)"
+   "en": "{0} ({1}% chance it’s new, otherwise a duplicate)"
   },
   {
    "fr": "un creuseur, parfois deux",
@@ -2319,7 +2319,7 @@
   },
   {
    "fr": "Choisis une destination, puis le Porteur libre qui y part : il revient chargé, même jeu fermé. Chaque jour, le passeur connaît de 2 à 5 ruines et ce qu’on y trouvera (une cargaison, une pierre oubliée, des naufragés ou des Éclats). Plus tu retournes au même endroit, plus tu descends : la Surface, puis les Cales (+25 %), puis le Cœur de la ruine (+60 % et une carte en plus). Le bon Porteur au bon endroit rapporte plus (sa lignée, son niveau). Une barque ne coûte rien : seulement le temps du Porteur.",
-   "en": "Pick a destination, then a free Bearer to send there: they come back loaded, even with the game closed. Each day, the ferryman knows 2 to 5 ruins and what they hold (a cargo, a forgotten stone, castaways or Shards). The more you return to the same place, the deeper you go: the Surface, then the Holds (+25 %), then the Heart of the ruin (+60 % and an extra card). The right Bearer in the right place brings back more (their lineage, their level). A boat costs nothing: only the Bearer’s time."
+   "en": "Pick a destination, then a free Bearer to send there: they come back loaded, even with the game closed. Each day, the ferryman knows 2 to 5 ruins and what they hold (a cargo, a forgotten stone, castaways or Shards). The more you return to the same place, the deeper you go: the Surface, then the Holds (+25%), then the Heart of the ruin (+60% and an extra card). The right Bearer in the right place brings back more (their lineage, their level). A boat costs nothing: only the Bearer’s time."
   },
   {
    "fr": "Chaque barque vers la même destination descend plus profond : Surface, Cales, puis le Cœur et sa trouvaille.",
@@ -2467,11 +2467,11 @@
   },
   {
    "fr": "ennemis {0}{1} %",
-   "en": "enemies {0}{1} %"
+   "en": "enemies {0}{1}%"
   },
   {
    "fr": "{0} % de chances d’une carte",
-   "en": "{0} % chance of a card"
+   "en": "{0}% chance of a card"
   },
   {
    "fr": "{0} cartes au choix, {1} au moins",
@@ -2523,7 +2523,7 @@
   },
   {
    "fr": "{0} % de chances avec cette escouade",
-   "en": "{0} % chance with this squad"
+   "en": "{0}% chance with this squad"
   },
   {
    "fr": "Choisis 3 Porteurs",

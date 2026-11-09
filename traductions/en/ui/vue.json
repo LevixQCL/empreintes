@@ -423,7 +423,7 @@
   },
   {
    "fr": "Le pillage compte comme perdu : tu laisses {0} % de ton coffre à {1}.",
-   "en": "The raid counts as lost: you leave {0} % of your chest to {1}."
+   "en": "The raid counts as lost: you leave {0}% of your chest to {1}."
   },
   {
    "fr": "Tu pourras la retenter cette semaine.",
@@ -435,7 +435,7 @@
   },
   {
    "fr": "Tu gardes {0} % du minerai et toutes les cartes trouvées.",
-   "en": "You keep {0} % of the ore and all the cards found."
+   "en": "You keep {0}% of the ore and all the cards found."
   },
   {
    "fr": "Continuer le combat",
@@ -475,7 +475,7 @@
   },
   {
    "fr": "est le chiffre dans la gemme. Des Fréquences qui se suivent dans l’ordre font une Résonance : suite de 3 = +30 %, de 4 = +60 %, de 5 = +100 %. Une flèche dorée marque la carte qui prolonge ta suite.",
-   "en": "is the number in the gem. Frequencies that follow in order make a Resonance: chain of 3 = +30 %, of 4 = +60 %, of 5 = +100 %. A golden arrow marks the card that extends your chain."
+   "en": "is the number in the gem. Frequencies that follow in order make a Resonance: chain of 3 = +30%, of 4 = +60%, of 5 = +100%. A golden arrow marks the card that extends your chain."
   },
   {
    "fr": "Plusieurs Fréquences :",
@@ -491,7 +491,7 @@
   },
   {
    "fr": "trois Fréquences identiques dans la chaîne renforcent ces cartes de +{0} %, quelle que soit leur action (dégâts, protection ou soin), et donnent 1 Flux. Plus rare qu’une suite, il paie davantage. Quatre identiques : {1} ; cinq : {2} et 1 Flux de plus.",
-   "en": "three identical Frequencies in the chain boost those cards by +{0} %, whatever their action (damage, protection or healing), and give 1 Flux. Rarer than a chain, it pays more. Four of a kind: {1}; five: {2} and 1 more Flux."
+   "en": "three identical Frequencies in the chain boost those cards by +{0}%, whatever their action (damage, protection or healing), and give 1 Flux. Rarer than a chain, it pays more. Four of a kind: {1}; five: {2} and 1 more Flux."
   },
   {
    "fr": "Le Finisseur :",
@@ -499,7 +499,7 @@
   },
   {
    "fr": "une carte d’attaque Augmentée qui termine une suite de 3 ou plus frappe +{0} %.",
-   "en": "an Augmented attack card that ends a chain of 3 or more hits +{0} %."
+   "en": "an Augmented attack card that ends a chain of 3 or more hits +{0}%."
   },
   {
    "fr": "Le Flux",
@@ -539,11 +539,11 @@
   },
   {
    "fr": "gris-violet en pointillés",
-   "en": "dotted grey-violet"
+   "en": "dotted gray-violet"
   },
   {
    "fr": "si elle est affaiblie ; la couleur de l’action ne change pas. Garde le doigt dessus pour voir le détail.",
-   "en": "if it is weakened; the action’s colour doesn’t change. Hold your finger on it to see the breakdown."
+   "en": "if it is weakened; the action’s color doesn’t change. Hold your finger on it to see the breakdown."
   },
   {
    "fr": "(Perçant, Siphon, Accord…) sont écrits en or. Pose la carte dans la chaîne pour lire ce qu’elle fait. « ∗ » : Fréquence libre, elle prolonge toujours la suite.",
@@ -555,7 +555,7 @@
   },
   {
    "fr": "les Augmentés {0} battent les Résonants {1}, les Résonants battent les Génés {2}, les Génés battent les Augmentés (+{3} %). Sous le nom de l’ennemi, « Faible » et un symbole : la lignée qui le bat.",
-   "en": "the Augmented {0} beat the Resonants {1}, the Resonants beat the Spliced {2}, the Spliced beat the Augmented (+{3} %). Under the enemy’s name, “Weak” and a symbol: the lineage that beats it."
+   "en": "the Augmented {0} beat the Resonants {1}, the Resonants beat the Spliced {2}, the Spliced beat the Augmented (+{3}%). Under the enemy’s name, “Weak” and a symbol: the lineage that beats it."
   },
   {
    "fr": "L’ennemi annonce son attaque",
@@ -595,7 +595,7 @@
   },
   {
    "fr": "le bouton en haut à droite. L’attaque annoncée touche pendant la fuite (personne ne meurt), puis tu recules d’une salle sur la carte, ou tu remontes au district avec {0} % du minerai et un peu plus de fatigue.",
-   "en": "the button at the top right. The announced attack lands during the escape (no one dies), then you fall back one room on the map, or head back to the district with {0} % of the ore and a bit more fatigue."
+   "en": "the button at the top right. The announced attack lands during the escape (no one dies), then you fall back one room on the map, or head back to the district with {0}% of the ore and a bit more fatigue."
   },
   {
    "fr": "Le journal du combat",
@@ -927,7 +927,7 @@
   },
   {
    "fr": "pour +30 %",
-   "en": "for +30 %"
+   "en": "for +30%"
   },
   {
    "fr": "Ajoute un",
@@ -1011,11 +1011,11 @@
   },
   {
    "fr": "Fissure : il subit {0} % de dégâts en plus",
-   "en": "Fissure: it takes {0} % more damage"
+   "en": "Fissure: it takes {0}% more damage"
   },
   {
    "fr": "Fissure +{0} % dégâts",
-   "en": "Fissure +{0} % damage"
+   "en": "Fissure +{0}% damage"
   },
   {
    "fr": "Ennemi",
@@ -1031,7 +1031,7 @@
   },
   {
    "fr": "Point faible : les cartes {0} lui font +{1} %",
-   "en": "Weak spot: {0} cards deal +{1} % to it"
+   "en": "Weak spot: {0} cards deal +{1}% to it"
   },
   {
    "fr": "Faible contre les {0}",
@@ -1067,11 +1067,11 @@
   },
   {
    "fr": "Combat qui s’éternise : à partir du tour {0}, l’ennemi frappe {1} % plus fort à chaque tour.",
-   "en": "Drawn-out fight: from turn {0}, the enemy hits {1} % harder each turn."
+   "en": "Drawn-out fight: from turn {0}, the enemy hits {1}% harder each turn."
   },
   {
    "fr": "Enragé +{0} %",
-   "en": "Enraged +{0} %"
+   "en": "Enraged +{0}%"
   },
   {
    "fr": "S’enrage dans {0} tour{1}",

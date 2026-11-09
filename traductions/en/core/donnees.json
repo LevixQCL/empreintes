@@ -575,7 +575,7 @@
   },
   {
    "fr": "Une balise de la Tour du Noyau : une porte blindée s’ouvre, l’escouade s’y abrite.",
-   "en": "A beacon from the Core Tower: an armoured door swings open, and the squad takes cover behind it."
+   "en": "A beacon from the Core Tower: an armored door swings open, and the squad takes cover behind it."
   },
   {
    "fr": "Lame d’atelier",
@@ -795,11 +795,11 @@
   },
   {
    "fr": "Gardien des registres",
-   "en": "Keeper of the Registers"
+   "en": "Guardian of the Registers"
   },
   {
    "fr": "BOSS · LES SALLES CLOSES",
-   "en": "BOSS · THE CLOSED HALLS"
+   "en": "BOSS · THE CLOSED CHAMBERS"
   },
   {
    "fr": "Registre ouvert",
@@ -807,7 +807,7 @@
   },
   {
    "fr": "Le Gardien ouvre son registre et appelle un brigadier à la barre.",
-   "en": "The Keeper opens its register and calls a brigadier to the stand."
+   "en": "The Guardian opens its register and calls a brigadier to the bar."
   },
   {
    "fr": "Rature",
@@ -1039,7 +1039,7 @@
   },
   {
    "fr": "RÔDEUR DES SALLES CLOSES",
-   "en": "PROWLER OF THE CLOSED HALLS"
+   "en": "PROWLER OF THE CLOSED CHAMBERS"
   },
   {
    "fr": "Éclat perdu",
@@ -1155,7 +1155,7 @@
   },
   {
    "fr": "Duelliste de la Garde blanche",
-   "en": "White Guard Duellist"
+   "en": "White Guard Duelist"
   },
   {
    "fr": "Garde de la Maison Orsève",
@@ -1211,7 +1211,7 @@
   },
   {
    "fr": "Regagne {0} % de ses PV max à la fin de son tour.",
-   "en": "Regains {0} % of its max HP at the end of its turn."
+   "en": "Regains {0}% of its max HP at the end of its turn."
   },
   {
    "fr": "Épines",
@@ -1219,7 +1219,7 @@
   },
   {
    "fr": "Renvoie {0} % des dégâts au Porteur qui frappe (sans le mettre à terre).",
-   "en": "Reflects {0} % of the damage back to the Bearer who strikes (without downing them)."
+   "en": "Reflects {0}% of the damage back to the Bearer who strikes (without downing them)."
   },
   {
    "fr": "Évanescent",
@@ -1227,7 +1227,7 @@
   },
   {
    "fr": "Hors Résonance, tes coups ne lui font que {0} % de leurs dégâts : fais des suites. Sa Fêlure reste cachée.",
-   "en": "Outside a Resonance, your blows deal only {0} % of their damage to it: build chains. Its Flaw stays hidden."
+   "en": "Outside a Resonance, your blows deal only {0}% of their damage to it: build chains. Its Flaw stays hidden."
   },
   {
    "fr": "Essaim",
@@ -1247,7 +1247,7 @@
   },
   {
    "fr": "Sous la moitié de ses PV, ses attaques font +30 %.",
-   "en": "Below half its HP, its attacks deal +30 %."
+   "en": "Below half its HP, its attacks deal +30%."
   },
   {
    "fr": "À la fin de ta chaîne, il prend la lignée de la dernière carte qui l’a frappé : ses forces et ses faiblesses changent avec elle.",
@@ -1267,7 +1267,7 @@
   },
   {
    "fr": "L’eau porte les Génés : leurs cartes font +20 %.",
-   "en": "The water carries the Spliced: their cards deal +20 %."
+   "en": "The water carries the Spliced: their cards deal +20%."
   },
   {
    "fr": "Câbles à nu",
@@ -1275,7 +1275,7 @@
   },
   {
    "fr": "Le courant court partout : les cartes des Augmentés font +20 %.",
-   "en": "Current runs everywhere: Augmented cards deal +20 %."
+   "en": "Current runs everywhere: Augmented cards deal +20%."
   },
   {
    "fr": "Pierre qui chante",
@@ -1283,7 +1283,7 @@
   },
   {
    "fr": "La roche résonne : les cartes des Résonants font +20 %.",
-   "en": "The rock resonates: Resonant cards deal +20 %."
+   "en": "The rock resonates: Resonant cards deal +20%."
   },
   {
    "fr": "Écho ancien",
@@ -1299,7 +1299,7 @@
   },
   {
    "fr": "Les soins de l’escouade font +30 %.",
-   "en": "The squad’s heals are +30 %."
+   "en": "The squad’s heals are +30%."
   },
   {
    "fr": "Éboulis",
@@ -1323,7 +1323,7 @@
   },
   {
    "fr": "Les Salles closes",
-   "en": "The Closed Halls"
+   "en": "The Closed Chambers"
   },
   {
    "fr": "Les Registres",

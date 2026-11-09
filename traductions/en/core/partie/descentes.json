@@ -243,7 +243,7 @@
   },
   {
    "fr": "{0} a reconnu des pierres familières : {1}. De quoi faire monter des cartes.",
-   "en": "{0} recognised familiar stones: {1}. Enough to level up some cards."
+   "en": "{0} recognized familiar stones: {1}. Enough to level up some cards."
   },
   {
    "fr": "Des éclats de sa propre lignée attendaient dans les ruines : {0}.",
@@ -327,7 +327,7 @@
   },
   {
    "fr": "Accepter leurs soins (+25 % de PV)",
-   "en": "Accept their care (+25 % HP)"
+   "en": "Accept their care (+25% HP)"
   },
   {
    "fr": "Les saluer et continuer",
@@ -339,7 +339,7 @@
   },
   {
    "fr": "Une patrouille du Serment de Veyr bloque le couloir. Leur sergent réclame un « droit de passage ».",
-   "en": "A patrol of the Oath of Veyr blocks the corridor. Their sergeant demands a “right of passage”."
+   "en": "A patrol of the Oath of Veyr blocks the corridor. Their sergeant demands a “right of passage.”"
   },
   {
    "fr": "Payer le passage (20 minerai)",
@@ -379,7 +379,7 @@
   },
   {
    "fr": "Un marchand a installé son étal dans une ancienne salle, entre deux lampes à algues. Il a « de tout, pour qui sait payer ».",
-   "en": "A trader has set up his stall in an old room, between two algae lamps. He has “a bit of everything, for those who can pay”."
+   "en": "A trader has set up his stall in an old room, between two algae lamps. He has “a bit of everything, for those who can pay.”"
   },
   {
    "fr": "Échanger 30 minerai contre une carte",
@@ -387,7 +387,7 @@
   },
   {
    "fr": "Acheter des soins (15 minerai, +30 % de PV)",
-   "en": "Buy care (15 ore, +30 % HP)"
+   "en": "Buy care (15 ore, +30% HP)"
   },
   {
    "fr": "Passer",
@@ -439,7 +439,7 @@
   },
   {
    "fr": "S’y reposer (+25 % de PV)",
-   "en": "Rest there (+25 % HP)"
+   "en": "Rest there (+25% HP)"
   },
   {
    "fr": "Continuer sans s’arrêter",
@@ -487,7 +487,7 @@
   },
   {
    "fr": "Les Brigades pansent l’escouade (+25 % de PV).",
-   "en": "The Brigades patch up the squad (+25 % HP)."
+   "en": "The Brigades patch up the squad (+25% HP)."
   },
   {
    "fr": "Le sergent empoche le minerai et s’écarte.",
@@ -527,11 +527,11 @@
   },
   {
    "fr": "Onguents d’algues et bandages propres : +30 % de PV.",
-   "en": "Algae salves and clean bandages: +30 % HP."
+   "en": "Algae salves and clean bandages: +30% HP."
   },
   {
    "fr": "L’eau chaude délie les muscles (+25 % de PV).",
-   "en": "The hot water loosens the muscles (+25 % HP)."
+   "en": "The hot water loosens the muscles (+25% HP)."
   },
   {
    "fr": "Véla pose la main sur sa nuque. « C’est une brisure de créature des hauteurs. Elle a peur d’être enfermée. » Il se calme, et vous laisse un Éclat en remerciement. La Clinique le retirera.",
@@ -635,7 +635,7 @@
   },
   {
    "fr": "Leçon 2 : pose un 3, puis un 4, puis un 5, dans cet ordre. Des chiffres qui se suivent font une Résonance : +30 % sur toute la chaîne.",
-   "en": "Lesson 2: place a 3, then a 4, then a 5, in that order. Consecutive numbers make a Resonance: +30 % on the whole chain."
+   "en": "Lesson 2: place a 3, then a 4, then a 5, in that order. Consecutive numbers make a Resonance: +30% on the whole chain."
   },
   {
    "fr": "Leçon 3 : le Rémanent annonce une Entaille sur Doran. Pose des cartes à bouclier : elles protègent toute l’escouade pendant son attaque.",

@@ -23,7 +23,7 @@
   },
   {
    "fr": "Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : plus {0} % de dégâts",
-   "en": "Augmented beats Resonant, Resonant beats Spliced, Spliced beats Augmented: {0} % more damage"
+   "en": "Augmented beats Resonant, Resonant beats Spliced, Spliced beats Augmented: {0}% more damage"
   },
   {
    "fr": "Le deck : {0} Porteurs de {1} cartes, plus {2} cartes du Râtelier de l’escouade (jusqu’à 4), soit {3} cartes",
@@ -179,7 +179,7 @@
   },
   {
    "fr": "s’éteignent : elles restent dans le deck un peu moins fortes (−15 %) et sans effet, et leur Fréquence compte toujours pour les suites. Il se relève à un campement.",
-   "en": "go dark: they stay in the deck a little weaker (−15 %) and without effects, and their Frequency still counts for chains. The Bearer gets back up at a camp."
+   "en": "go dark: they stay in the deck a little weaker (−15%) and without effects, and their Frequency still counts for chains. The Bearer gets back up at a camp."
   },
   {
    "fr": "Bien construire",
@@ -199,7 +199,7 @@
   },
   {
    "fr": "Deux ou trois cartes sur la même Fréquence, et tu l’as plus souvent en main. Trois identiques dans une chaîne font un Écho : ces cartes +{0} % et +1 Flux (quatre : {1}, cinq : {2}). Mais une Fréquence empilée, ce sont moins de suites.",
-   "en": "Two or three cards on the same Frequency and you’ll hold it more often. Three of a kind in a chain make an Echo: those cards +{0} % and +1 Flux (four: {1}, five: {2}). But a stacked Frequency means fewer chains."
+   "en": "Two or three cards on the same Frequency and you’ll hold it more often. Three of a kind in a chain make an Echo: those cards +{0}% and +1 Flux (four: {1}, five: {2}). But a stacked Frequency means fewer chains."
   },
   {
    "fr": "Mélange les actions",
@@ -251,7 +251,7 @@
   },
   {
    "fr": "Augmenté bat Résonant, Résonant bat Géné, Géné bat Augmenté : +{0} % de dégâts. Les ennemis en profitent aussi contre tes Porteurs. Le dessin est dans « Lire une carte ».",
-   "en": "Augmented beats Resonant, Resonant beats Spliced, Spliced beats Augmented: +{0} % damage. Enemies use it against your Bearers too. The diagram is in “Reading a card”."
+   "en": "Augmented beats Resonant, Resonant beats Spliced, Spliced beats Augmented: +{0}% damage. Enemies use it against your Bearers too. The diagram is in “Reading a card”."
   },
   {
    "fr": "Un deck court tourne plus vite",
@@ -263,7 +263,7 @@
   },
   {
    "fr": "Fais monter tes favorites",
-   "en": "Level up your favourites"
+   "en": "Level up your favorites"
   },
   {
    "fr": "Doublons et cristaux : chaque niveau ajoute au moins +1 de force (une carte de 10 passe à 19 au niveau 10). Confie-les aux Porteurs que tu emmènes le plus souvent.",
@@ -279,7 +279,7 @@
   },
   {
    "fr": ", en haut à gauche : la principale d’abord ; leur couleur suit la Fréquence.",
-   "en": ", top left: the main one first; their colour follows the Frequency."
+   "en": ", top left: the main one first; their color follows the Frequency."
   },
   {
    "fr": "Action et force",
@@ -287,7 +287,7 @@
   },
   {
    "fr": ": l’icône dit ce qu’elle fait (épée = attaque, écu = protection, + = soin), le chiffre combien. La barre et le bord de l’image prennent sa couleur.",
-   "en": ": the icon says what it does (sword = attack, shield = protection, + = heal), the number how much. The bar and the edge of the art take its colour."
+   "en": ": the icon says what it does (sword = attack, shield = protection, + = heal), the number how much. The bar and the edge of the art take its color."
   },
   {
    "fr": "Niveau et nom",
@@ -295,7 +295,7 @@
   },
   {
    "fr": ": la roue compte les niveaux ({0} crans, dorée au maximum), dans la couleur de la lignée.",
-   "en": ": the wheel counts the levels ({0} notches, golden at max), in the lineage’s colour."
+   "en": ": the wheel counts the levels ({0} notches, golden at max), in the lineage’s color."
   },
   {
    "fr": "Effet",
@@ -455,11 +455,11 @@
   },
   {
    "fr": "Chaque flèche donne +{0} % de dégâts à la lignée qui bat l’autre, dans les deux sens : tes cartes contre les ennemis, et les ennemis contre tes Porteurs.",
-   "en": "Each arrow gives +{0} % damage to the lineage that beats the other, both ways: your cards against enemies, and enemies against your Bearers."
+   "en": "Each arrow gives +{0}% damage to the lineage that beats the other, both ways: your cards against enemies, and enemies against your Bearers."
   },
   {
    "fr": "Passe à travers le bouclier et le blindage de l’ennemi.",
-   "en": "Goes straight through the enemy’s shield and armour."
+   "en": "Goes straight through the enemy’s shield and armor."
   },
   {
    "fr": "Remplit le Flux : +1 (+2 en nacre). Le Flux achète une place de plus dans la chaîne, ou une nouvelle main.",
@@ -543,7 +543,7 @@
   },
   {
    "fr": "La carte copie l’effet de celle posée juste avant elle (pas une Fréquence libre). S’il n’y a rien à copier (en tête de chaîne, après une carte sans effet), elle frappe +{0} % plus fort.",
-   "en": "The card copies the effect of the one placed just before it (not a free Frequency). If there’s nothing to copy (head of the chain, after a card with no effect), it strikes +{0} % harder."
+   "en": "The card copies the effect of the one placed just before it (not a free Frequency). If there’s nothing to copy (head of the chain, after a card with no effect), it strikes +{0}% harder."
   },
   {
    "fr": "Au tour suivant, tu pioches une carte de plus : plus de choix pour trouver ta suite.",
@@ -631,7 +631,7 @@
   },
   {
    "fr": "Elle complète un Écho : deux cartes de même Fréquence et un Diapason, et ces trois cartes sont renforcées de +{0} %, avec 1 Flux.",
-   "en": "It completes an Echo: two cards of the same Frequency plus a Tuning Fork, and all three get +{0} %, with 1 Flux."
+   "en": "It completes an Echo: two cards of the same Frequency plus a Tuning Fork, and all three get +{0}%, with 1 Flux."
   },
   {
    "fr": "Trois cartes de même Fréquence : chacune compte les deux autres. La Dissonance coupe les suites et l’Écho, mais pas l’Unisson.",
@@ -715,7 +715,7 @@
   },
   {
    "fr": "En dernière place d’une longue chaîne : cinquième, elle gagne +{0} à {1} %.",
-   "en": "In the last slot of a long chain: fifth, it gains +{0} to {1} %."
+   "en": "In the last slot of a long chain: fifth, it gains +{0} to {1}%."
   },
   {
    "fr": "En",
@@ -743,7 +743,7 @@
   },
   {
    "fr": ", les effets en pourcentage sont {0} % plus forts, en",
-   "en": ", percentage effects are {0} % stronger, in"
+   "en": ", percentage effects are {0}% stronger, in"
   },
   {
    "fr": "nacre",

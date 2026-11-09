@@ -175,7 +175,7 @@
   },
   {
    "fr": "Résonance ! Suite de {0} : effets +{1} %.",
-   "en": "Resonance! Chain of {0}: effects +{1} %."
+   "en": "Resonance! Chain of {0}: effects +{1}%."
   },
   {
    "fr": "{0} ! {1} Fréquences identiques : ces cartes {2}.",
@@ -255,7 +255,7 @@
   },
   {
    "fr": "Surtension : {0} brûle {1} PV, +{2} % de force.",
-   "en": "Overvolt: {0} burns {1} HP, +{2} % power."
+   "en": "Overvolt: {0} burns {1} HP, +{2}% power."
   },
   {
    "fr": "Rapt : {0} de bouclier arrachés à l’ennemi, pour l’escouade.",
@@ -271,7 +271,7 @@
   },
   {
    "fr": "Décharge : {0} Flux {1}{2}, +{3} % de force.",
-   "en": "Discharge: {0} Flux {1}{2}, +{3} % power."
+   "en": "Discharge: {0} Flux {1}{2}, +{3}% power."
   },
   {
    "fr": "vidé",
@@ -339,11 +339,11 @@
   },
   {
    "fr": "Riposte ({0} % du bouclier)",
-   "en": "Riposte ({0} % of the shield)"
+   "en": "Riposte ({0}% of the shield)"
   },
   {
    "fr": "Salle favorable",
-   "en": "Favourable room"
+   "en": "Favorable room"
   },
   {
    "fr": "Débridage",
@@ -391,7 +391,7 @@
   },
   {
    "fr": "Fissure : l’ennemi subit +{0} % de dégâts jusqu’au tour prochain.",
-   "en": "Fissure: the enemy takes +{0} % damage until next turn."
+   "en": "Fissure: the enemy takes +{0}% damage until next turn."
   },
   {
    "fr": "Élan : la prochaine chaîne aura une place de plus.",
@@ -407,7 +407,7 @@
   },
   {
    "fr": "Rempart : {0} % du bouclier restant sera gardé au tour suivant.",
-   "en": "Rampart: {0} % of the leftover shield will be kept next turn."
+   "en": "Rampart: {0}% of the leftover shield will be kept next turn."
   },
   {
    "fr": "Rempart",
@@ -531,7 +531,7 @@
   },
   {
    "fr": "{0} est à terre : ses cartes s’éteignent (−15 % de force, sans effet).",
-   "en": "{0} is down: their cards go dark (−15 % power, no effect)."
+   "en": "{0} is down: their cards go dark (−15% power, no effect)."
   },
   {
    "fr": "Un Porteur est à terre : l’Épreuve « Nul ne reste au fond » est manquée.",
@@ -555,7 +555,7 @@
   },
   {
    "fr": "Les coups de ta chaîne frappent {0} % plus fort ce tour-ci.",
-   "en": "Your chain’s blows hit {0} % harder this turn."
+   "en": "Your chain’s blows hit {0}% harder this turn."
   },
   {
    "fr": "Sursaut",
@@ -563,7 +563,7 @@
   },
   {
    "fr": "Toute l’escouade récupère 40 % de ses PV, et un Porteur à terre se relève.",
-   "en": "The whole squad recovers 40 % of its HP, and a downed Bearer gets back up."
+   "en": "The whole squad recovers 40% of its HP, and a downed Bearer gets back up."
   },
   {
    "fr": "Aucune attaque ennemie ne porte au prochain tour ennemi.",
@@ -571,7 +571,7 @@
   },
   {
    "fr": "Débridage : {0} pousse ses implants au-delà du raisonnable. La chaîne frappera {1} % plus fort.",
-   "en": "Unleashed: {0} pushes their implants past all reason. The chain will hit {1} % harder."
+   "en": "Unleashed: {0} pushes their implants past all reason. The chain will hit {1}% harder."
   },
   {
    "fr": "Ombre agissante : l’ombre {0} se lève et retiendra les coups du prochain tour.",
@@ -655,7 +655,7 @@
   },
   {
    "fr": "Lectrice : Véla lui renvoie son brouillage, sa prochaine attaque perd {0} %.",
-   "en": "Reader: Véla throws its jamming back, its next attack loses {0} %."
+   "en": "Reader: Véla throws its jamming back, its next attack loses {0}%."
   },
   {
    "fr": "{0} · {1} : tes Fréquences sont brouillées, ni Résonance ni Écho au prochain tour.",

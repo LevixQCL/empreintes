@@ -15,7 +15,7 @@
   },
   {
    "fr": "Sans suite, tes coups glissent sur lui : enchaîne des Fréquences qui se suivent (3, 4, 5) pour le toucher pleinement.",
-   "en": "Without a run, your blows glance off it: chain consecutive Frequencies (3, 4, 5) to hit it fully."
+   "en": "Without a chain, your blows glance off it: line up consecutive Frequencies (3, 4, 5) to hit it fully."
   },
   {
    "fr": "Il revient plus petit quand il tombe : garde de quoi finir le rejeton.",
@@ -51,7 +51,7 @@
   },
   {
    "fr": "Une suite de 4 suffit pour le bonus maximal : vise 3-4-5-6.",
-   "en": "A run of 4 is enough for the maximum bonus: aim for 3-4-5-6."
+   "en": "A chain of 4 is enough for the maximum bonus: aim for 3-4-5-6."
   },
   {
    "fr": "Les soins rendent plus : un bon endroit pour remettre l’escouade sur pied.",
@@ -95,7 +95,7 @@
   },
   {
    "fr": "Une Fêlure brisée vaut souvent mieux qu’une suite de plus : elle protège l’escouade. Glisse-la dans une suite : elle remplit aussi le Flux pour ton Coup d’éclat.",
-   "en": "A broken Flaw is often worth more than one more run: it protects the squad. Slip it into a run: it also fills the Flux for your Masterstroke."
+   "en": "A broken Flaw is often worth more than one more chain: it protects the squad. Slip it into a chain: it also fills the Flux for your Masterstroke."
   },
   {
    "fr": "FLUX PLEIN",
@@ -215,11 +215,11 @@
   },
   {
    "fr": "Chaque Strate cache 5 Vestiges, des objets d’autrefois. Ils ne se trouvent qu’en explorant, jamais en fouille : quelques-uns par descente, marqués d’un losange turquoise sur le plan, même dans le brouillard. Entre dans la salle (et gagne son combat s’il y en a un) pour le ramasser.",
-   "en": "Each Stratum hides 5 Relics, objects from long ago. They can only be found by exploring, never by searching: a few per descent, marked with a turquoise diamond on the map, even in the fog. Enter the chamber (and win its fight if there is one) to pick it up."
+   "en": "Each Stratum hides 5 Relics, objects from long ago. They can only be found by exploring, never on a dig: a few per descent, marked with a turquoise diamond on the map, even in the fog. Enter the chamber (and win its fight if there is one) to pick it up."
   },
   {
    "fr": "Les cinq réunis, la Strate est complète : une carte au choix, et tes fouilles y verront tout le plan. La Tour montre où tu en es.",
-   "en": "With all five gathered, the Stratum is complete: a card of your choice, and your searches there will see the whole map. The Tower shows where you are."
+   "en": "With all five gathered, the Stratum is complete: a card of your choice, and your digs there will see the whole map. The Tower shows where you are."
   },
   {
    "fr": "Le gardien éveillé",
@@ -275,11 +275,11 @@
   },
   {
    "fr": "Une porte ancienne, gravée de Fréquences. Cinq cartes de ton deck sont tirées : choisis-en {0} dont les Fréquences se suivent, comme une suite en combat (l’Accord ∗ prolonge toute suite). Derrière : un Éclat et du minerai.",
-   "en": "An ancient door, engraved with Frequencies. Five cards from your deck are drawn: choose {0} whose Frequencies follow one another, like a run in combat (the Accord ∗ extends any run). Behind it: a Shard and ore."
+   "en": "An ancient door, engraved with Frequencies. Five cards from your deck are drawn: choose {0} whose Frequencies follow one another, like a chain in combat (the Accord ∗ extends any chain). Behind it: a Shard and ore."
   },
   {
    "fr": "Aucun risque : tu peux retirer la main une fois, ou passer ton chemin si la suite n’y est pas.",
-   "en": "No risk: you can redraw the hand once, or move on if the run isn’t there."
+   "en": "No risk: you can redraw the hand once, or move on if the chain isn’t there."
   },
   {
    "fr": "PREMIÈRE VICTOIRE",

@@ -155,15 +155,15 @@
   },
   {
    "fr": "{0} % de chances de réussir",
-   "en": "{0} % chance of success"
+   "en": "{0}% chance of success"
   },
   {
    "fr": "{0} Indice{1} · +{2} %",
-   "en": "{0} Clue{1} · +{2} %"
+   "en": "{0} Clue{1} · +{2}%"
   },
   {
    "fr": "{0} h en mer · un échec rapporte {1} % du minerai, toute l’XP et un Indice (+{2} %)",
-   "en": "{0} h at sea · a failure brings back {1} % of the ore, all the XP and a Clue (+{2} %)"
+   "en": "{0} h at sea · a failure brings back {1}% of the ore, all the XP and a Clue (+{2}%)"
   },
   {
    "fr": "{0} ne pourront pas descendre avant le retour de la gabare.",

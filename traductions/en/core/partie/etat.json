@@ -115,7 +115,7 @@
   },
   {
    "fr": "Elle retourne le brouillage : un ennemi qui tente une Dissonance perd 30 % de sa prochaine attaque.",
-   "en": "She turns the jamming around: an enemy that attempts a Dissonance loses 30 % of its next attack."
+   "en": "She turns the jamming around: an enemy that attempts a Dissonance loses 30% of its next attack."
   },
   {
    "fr": "salles scellées ouvertes",
@@ -127,15 +127,15 @@
   },
   {
    "fr": "Il remet tout le monde d’aplomb : une fois par combat, le premier Porteur qui tombe se relève avec 25 % de ses PV.",
-   "en": "She gets everyone back on their feet: once per fight, the first Bearer to fall gets back up with 25 % of their HP."
+   "en": "She gets everyone back on their feet: once per fight, the first Bearer to fall gets back up with 25% of their HP."
   },
   {
    "fr": "relève à 35 % des PV",
-   "en": "revives at 35 % HP"
+   "en": "revives at 35% HP"
   },
   {
    "fr": "Il remet d’aplomb plus solidement : le premier qui tombe se relève avec 35 % de ses PV.",
-   "en": "She patches people up more solidly: the first to fall gets back up with 35 % of their HP."
+   "en": "She patches people up more solidly: the first to fall gets back up with 35% of their HP."
   },
   {
    "fr": "relève deux fois par combat",
@@ -159,7 +159,7 @@
   },
   {
    "fr": "Elle voit la faille dans le noir : l’ennemi visé commence chaque combat fissuré (+25 % de dégâts pendant deux tours).",
-   "en": "She sees the crack in the dark: the targeted enemy starts every fight fissured (+25 % damage for two turns)."
+   "en": "She sees the crack in the dark: the targeted enemy starts every fight fissured (+25% damage for two turns)."
   },
   {
    "fr": "fissure de 3 tours",
@@ -183,19 +183,19 @@
   },
   {
    "fr": "1re attaque ennemie −40 %",
-   "en": "1st enemy attack −40 %"
+   "en": "1st enemy attack −40%"
   },
   {
    "fr": "Son ombre retient le premier coup : la première attaque de chaque ennemi perd 40 % de sa force, quel que soit le tour où elle tombe.",
-   "en": "His shadow holds back the first blow: each enemy’s first attack loses 40 % of its power, whatever turn it lands on."
+   "en": "His shadow holds back the first blow: each enemy’s first attack loses 40% of its power, whatever turn it lands on."
   },
   {
    "fr": "1re attaque ennemie −50 %",
-   "en": "1st enemy attack −50 %"
+   "en": "1st enemy attack −50%"
   },
   {
    "fr": "Son ombre pèse plus : la première attaque de chaque ennemi perd 50 % de sa force.",
-   "en": "His shadow weighs more: each enemy’s first attack loses 50 % of its power."
+   "en": "His shadow weighs more: each enemy’s first attack loses 50% of its power."
   },
   {
    "fr": "le coup retenu donne 1 Flux",
@@ -239,19 +239,19 @@
   },
   {
    "fr": "garde 25 % du bouclier",
-   "en": "keeps 25 % of the shield"
+   "en": "keeps 25% of the shield"
   },
   {
    "fr": "Il ne lâche rien : à chaque tour, l’escouade garde 25 % de son bouclier pour le tour suivant.",
-   "en": "He won’t let go: each turn, the squad keeps 25 % of its shield for the next turn."
+   "en": "He won’t let go: each turn, the squad keeps 25% of its shield for the next turn."
   },
   {
    "fr": "garde 35 % du bouclier",
-   "en": "keeps 35 % of the shield"
+   "en": "keeps 35% of the shield"
   },
   {
    "fr": "Il serre plus fort : l’escouade garde 35 % de son bouclier d’un tour à l’autre.",
-   "en": "He holds tighter: the squad keeps 35 % of its shield from one turn to the next."
+   "en": "He holds tighter: the squad keeps 35% of its shield from one turn to the next."
   },
   {
    "fr": "le bouclier restant soigne",
@@ -291,19 +291,19 @@
   },
   {
    "fr": "le bouclier renvoie 30 % des coups",
-   "en": "the shield reflects 30 % of blows"
+   "en": "the shield reflects 30% of blows"
   },
   {
    "fr": "Sa chitine pique qui la frappe : quand le bouclier d’escouade encaisse un coup, 30 % de ce qu’il absorbe revient à l’ennemi.",
-   "en": "Her chitin stings whoever strikes it: when the squad shield takes a blow, 30 % of what it absorbs goes back to the enemy."
+   "en": "Her chitin stings whoever strikes it: when the squad shield takes a blow, 30% of what it absorbs goes back to the enemy."
   },
   {
    "fr": "le bouclier renvoie 40 %",
-   "en": "the shield reflects 40 %"
+   "en": "the shield reflects 40%"
   },
   {
    "fr": "Sa chitine durcit : 40 % de ce que le bouclier d’escouade absorbe revient à l’ennemi.",
-   "en": "Her chitin hardens: 40 % of what the squad shield absorbs goes back to the enemy."
+   "en": "Her chitin hardens: 40% of what the squad shield absorbs goes back to the enemy."
   },
   {
    "fr": "le renvoi peut achever",
@@ -347,15 +347,15 @@
   },
   {
    "fr": "Le quartier entier l’a veillé, il veille à son tour : à la fin de chaque tour ennemi, le Porteur le plus blessé récupère 6 % de ses PV.",
-   "en": "The whole quarter sat up with him, now he keeps watch in turn: at the end of every enemy turn, the most wounded Bearer recovers 6 % of their HP."
+   "en": "The whole quarter sat up with him, now he keeps watch in turn: at the end of every enemy turn, the most wounded Bearer recovers 6% of their HP."
   },
   {
    "fr": "soigne le plus blessé de 8 %",
-   "en": "heals the most wounded for 8 %"
+   "en": "heals the most wounded for 8%"
   },
   {
    "fr": "Il veille plus fort : à la fin de chaque tour ennemi, le plus blessé récupère 8 % de ses PV.",
-   "en": "He watches harder: at the end of every enemy turn, the most wounded recovers 8 % of their HP."
+   "en": "He watches harder: at the end of every enemy turn, the most wounded recovers 8% of their HP."
   },
   {
    "fr": "veille sur les deux plus blessés",
@@ -363,7 +363,7 @@
   },
   {
    "fr": "Il ne dort plus : à la fin de chaque tour ennemi, les deux Porteurs les plus blessés récupèrent chacun 8 % de leurs PV.",
-   "en": "He no longer sleeps: at the end of every enemy turn, the two most wounded Bearers each recover 8 % of their HP."
+   "en": "He no longer sleeps: at the end of every enemy turn, the two most wounded Bearers each recover 8% of their HP."
   },
   {
    "fr": "Gagner 4 combats",

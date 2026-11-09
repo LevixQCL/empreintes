@@ -151,7 +151,7 @@
   },
   {
    "fr": "L’écho de Sombreverse",
-   "en": "The echo of Sombreverse"
+   "en": "The echo of Darkspill"
   },
   {
    "fr": "Le pilier tombé répète encore les voix de ceux qui y vivaient.",
@@ -191,7 +191,7 @@
   },
   {
    "fr": "La réserve des Salines",
-   "en": "The Salines store"
+   "en": "The Salt Pans store"
   },
   {
    "fr": "Les anciens du marché disent qu’une réserve entière dort sous les étals.",
@@ -331,7 +331,7 @@
   },
   {
    "fr": "{0} embarquent sur la gabare : {1}, {2} ({3} % de chances).",
-   "en": "{0} board the barge: {1}, {2} ({3} % chance)."
+   "en": "{0} board the barge: {1}, {2} ({3}% chance)."
   },
   {
    "fr": "{0}. Tout a tenu.",
@@ -355,7 +355,7 @@
   },
   {
    "fr": "Ils rapportent {0} minerai, et surtout un Indice : la prochaine tentative sur ce contrat aura +{1} % de chances.",
-   "en": "They bring back {0} ore, and above all a Clue: the next attempt at this contract will have +{1} % chance."
+   "en": "They bring back {0} ore, and above all a Clue: the next attempt at this contract will have +{1}% chance."
   },
   {
    "fr": "{0} réussie ({1}) : +{2} minerai{3}{4}.",

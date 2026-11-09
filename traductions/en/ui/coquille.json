@@ -95,7 +95,7 @@
   },
   {
    "fr": "Chaque lundi, le district repeint sa ligne bleue un peu plus haut et fait le bilan. Ceux qui ont vu ce que tu as fait en parlent : {0} % de bouche-à-oreille en plus. Une semaine sans rien ne fait rien perdre.",
-   "en": "Every Monday, the district repaints its blue line a little higher and takes stock. Those who saw what you did talk about it: {0} % more word of mouth. A week with nothing loses nothing."
+   "en": "Every Monday, the district repaints its blue line a little higher and takes stock. Those who saw what you did talk about it: {0}% more word of mouth. A week with nothing loses nothing."
   },
   {
    "fr": "Cette semaine :",
@@ -143,7 +143,7 @@
   },
   {
    "fr": "Chaque combat gagné, chaque cache et chaque salle d’archives rapportent du minerai. Fuir en garde les trois quarts, une défaite la moitié.",
-   "en": "Every fight won, every cache and every archive room yields ore. Fleeing keeps three quarters of it, a defeat half."
+   "en": "Every fight won, every cache and every archive room yields ore. Fleeing keeps three quarters of it; a defeat, half."
   },
   {
    "fr": "Les missions en mer et les marées",
@@ -175,7 +175,7 @@
   },
   {
    "fr": "Plus il est haut, plus il taille vite. Un Augmenté posté dessus taille deux fois plus vite. Dès le niveau 4, il y recueille aussi quelques Éclats.",
-   "en": "The higher its level, the faster it cuts. An Augmented assigned there cuts twice as fast. From level 4, it also gathers a few Shards."
+   "en": "The higher its level, the faster it cuts. An Augmented assigned there cuts twice as fast. From level 4 on, it also gathers a few Shards."
   },
   {
    "fr": "Les récompenses arrivent taillées",
@@ -195,7 +195,7 @@
   },
   {
    "fr": "Monter les cartes de niveau",
-   "en": "Levelling up cards"
+   "en": "Leveling up cards"
   },
   {
    "fr": "Avec leurs doublons.",
@@ -259,7 +259,7 @@
   },
   {
    "fr": "Chaque gardien vaincu en donne, davantage à partir de la Strate −5.",
-   "en": "Every guardian defeated gives some, more from Stratum −5."
+   "en": "Every guardian you defeat gives some, and more from Stratum −5 on."
   },
   {
    "fr": "Les caches et les rencontres",
@@ -267,7 +267,7 @@
   },
   {
    "fr": "À partir de la Strate −3, une cache en cache parfois un.",
-   "en": "From Stratum −3, a cache sometimes hides one."
+   "en": "From Stratum −3 on, a cache sometimes hides one."
   },
   {
    "fr": "Les fouilles « Éclats » et le Butin de la semaine",
@@ -467,7 +467,7 @@
   },
   {
    "fr": "Gardien vaincu : il manque {0} pour creuser plus bas",
-   "en": "Guardian defeated: {0} missing to dig deeper"
+   "en": "Guardian defeated · still needed to dig deeper: {0}"
   },
   {
    "fr": "{0} creuseur{1}",
@@ -647,7 +647,7 @@
   },
   {
    "fr": "{0} · {1} % de chances",
-   "en": "{0} · {1} % chance"
+   "en": "{0} · {1}% chance"
   },
   {
    "fr": "réussi",
@@ -787,7 +787,7 @@
   },
   {
    "fr": "Chaque chapitre des Chroniques lu pour la première fois glisse une carte entre les pages ({0} à lire) : confie-la ensuite à un Porteur, dans l’onglet Escouade.",
-   "en": "Each Chronicles chapter you read for the first time slips a card between the pages ({0} to read): then give it to a Bearer, in the Squad tab."
+   "en": "Each Chronicles chapter you read for the first time hides a card between its pages ({0} left to read). Give it to a Bearer in the Squad tab."
   },
   {
    "fr": "Revoir le deck.",
@@ -895,7 +895,7 @@
   },
   {
    "fr": "Un bouton « Auto » dans les combats ordinaires des Strates déjà vaincues : l’escouade joue seule, en accéléré",
-   "en": "An “Auto” button in ordinary fights in Strata you’ve already beaten: the squad plays on its own, sped up"
+   "en": "An “Auto” button for ordinary fights in Strata you’ve already beaten: the squad plays by itself, sped up"
   },
   {
    "fr": "Graphismes : {0}. Toucher pour changer",

@@ -43,7 +43,7 @@
   },
   {
    "fr": "Résonance +{0} %",
-   "en": "Resonance +{0} %"
+   "en": "Resonance +{0}%"
   },
   {
    "fr": "dégâts",
@@ -79,7 +79,7 @@
   },
   {
    "fr": "Là-dessous, on ne se bat pas avec des armes. On se bat avec des gestes gravés dans les cristaux : ce sont tes cartes. Chacune appartient à l’un de nous, et sa couleur te dit qui la joue.",
-   "en": "Down there, we don’t fight with weapons. We fight with moves engraved in the crystals: those are your cards. Each one belongs to one of us, and its colour tells you who plays it."
+   "en": "Down there, we don’t fight with weapons. We fight with moves engraved in the crystals: those are your cards. Each one belongs to one of us, and its color tells you who plays it."
   },
   {
    "fr": "Lire une carte",
@@ -95,7 +95,7 @@
   },
   {
    "fr": "À chaque tour, tu as cinq cartes en main. Tu en poses jusqu’à trois : c’est la chaîne. Tu la lances, et elles agissent l’une après l’autre. Si trois chiffres se suivent, la chaîne entre en Résonance : +30 % sur toute la chaîne. Deux ne suffisent pas.",
-   "en": "Each turn, you hold five cards. You lay down up to three: that’s the chain. You cast it, and they act one after the other. If three numbers follow each other, the chain goes into Resonance: +30 % on the whole chain. Two aren’t enough."
+   "en": "Each turn, you hold five cards. You lay down up to three: that’s the chain. You cast it, and they act one after the other. If three numbers follow each other, the chain goes into Resonance: +30% on the whole chain. Two aren’t enough."
   },
   {
    "fr": "Écoute ce qu’il annonce",
