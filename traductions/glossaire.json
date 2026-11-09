@@ -1,55 +1,430 @@
 {
  "note": "Les termes du jeu et leur traduction fixe. `npm run i18n -- verifier` signale toute traduction qui s'en écarte. formesFr / formesEn : variantes acceptées (expressions régulières). Changer un terme ici = le changer partout dans traductions/en (chercher-remplacer), puis relancer verifier.",
  "termes": [
-  { "fr": "Ossyra", "en": "Ossyra" },
-  { "fr": "directeur", "en": "director", "formesFr": "[dD]irect(?:eur|rice)s?", "formesEn": "[dD]irectors?" },
-  { "fr": "Cuvette", "en": "Basin", "formesFr": "[cC]uvettes?", "formesEn": "[bB]asins?" },
-  { "fr": "Digue", "en": "Dike", "formesFr": "[dD]igues?", "formesEn": "[dD]ikes?" },
-  { "fr": "Strate", "en": "Stratum", "formesFr": "Strates?", "formesEn": "Strat(?:um|a)" },
-  { "fr": "Porteur", "en": "Bearer", "formesFr": "Porteu(?:r|se)s?", "formesEn": "Bearers?" },
-  { "fr": "lignée", "en": "lineage", "formesFr": "[lL]ignées?", "formesEn": "[lL]ineages?" },
-  { "fr": "Génés", "en": "Spliced", "formesFr": "Gén(?:é|ée)s?", "formesEn": "Spliced", "note": "invariable en anglais : a Spliced, the Spliced" },
-  { "fr": "Augmentés", "en": "Augmented", "formesFr": "Augmenté(?:e|s|es)?", "formesEn": "Augmented", "note": "invariable : an Augmented, the Augmented" },
-  { "fr": "Résonants", "en": "Resonants", "formesFr": "Résonant(?:e|s|es)?", "formesEn": "Resonants?" },
-  { "fr": "Fréquence", "en": "Frequency", "formesFr": "Fréquences?", "formesEn": "Frequenc(?:y|ies)" },
-  { "fr": "Résonance", "en": "Resonance", "formesFr": "Résonances?", "formesEn": "Resonances?" },
-  { "fr": "Écho", "en": "Echo", "formesFr": "Échos?", "formesEn": "Echo(?:es)?" },
-  { "fr": "Fêlure", "en": "Flaw", "formesFr": "Fêlures?", "formesEn": "Flaws?" },
-  { "fr": "Éclat", "en": "Shard", "formesFr": "Éclats?", "formesEn": "Shards?" },
-  { "fr": "Usure", "en": "Strain", "formesFr": "Usure", "formesEn": "Strain" },
-  { "fr": "Tour du Noyau", "en": "Core Tower", "formesFr": "Tour du Noyau", "formesEn": "Core Tower" },
-  { "fr": "Générateur", "en": "Generator", "formesFr": "Générateur", "formesEn": "Generator" },
-  { "fr": "Comptoir", "en": "Trading Post", "formesFr": "Comptoir", "formesEn": "Trading Post" },
-  { "fr": "Clinique", "en": "Clinic", "formesFr": "Clinique", "formesEn": "Clinic" },
-  { "fr": "Cercle des quais", "en": "Quayside Circle", "formesFr": "Cercle des quais", "formesEn": "Quayside Circle" },
-  { "fr": "Flèche", "en": "Spire", "formesFr": "Flèche", "formesEn": "Spire" },
-  { "fr": "Hauts", "en": "Heights", "formesFr": "Hauts(?!-)", "formesEn": "Heights" },
-  { "fr": "Veilleurs", "en": "Watchers", "formesFr": "Veilleu(?:r|se)s?", "formesEn": "Watchers?" },
-  { "fr": "Chroniques", "en": "Chronicles", "formesFr": "Chroniques", "formesEn": "Chronicles" },
-  { "fr": "Archives", "en": "Archives", "formesFr": "Archives", "formesEn": "Archives" },
-  { "fr": "Halte", "en": "Waystation", "formesFr": "Haltes?", "formesEn": "Waystations?" },
-  { "fr": "Vestiges", "en": "Relics", "formesFr": "Vestiges?", "formesEn": "Relics?" },
-  { "fr": "Rôdeur", "en": "Prowler", "formesFr": "Rôdeu(?:r|se)s?", "formesEn": "Prowlers?" },
-  { "fr": "escouade", "en": "squad", "formesFr": "[eE]scouades?", "formesEn": "[sS]quads?" },
-  { "fr": "creuseurs", "en": "diggers", "formesFr": "[cC]reuseu(?:r|se)s?", "formesEn": "[dD]iggers?" },
-  { "fr": "empreinte", "en": "imprint", "formesFr": "[eE]mpreintes?", "formesEn": "[iI]mprints?" },
-  { "fr": "ceux d’avant", "en": "those before", "formesFr": "(?:[cC]eux|[cC]elles) d’avant", "formesEn": "(?:[tT]hose|[tT]hem|[tT]he ones|[pP]eople) (?:who came )?before", "note": "le peuple disparu : « those who came before », « those before »" },
-  { "fr": "Écluse", "en": "Sluice", "formesFr": "Écluse", "formesEn": "Sluice" },
-  { "fr": "Glacière", "en": "Icehouse", "formesFr": "Glacière", "formesEn": "Icehouse" },
-  { "fr": "Confluence", "en": "Confluence" },
-  { "fr": "Berceaux", "en": "Cradles", "formesFr": "Berceaux?", "formesEn": "Cradles?" },
-  { "fr": "Tisseuse", "en": "Weaver", "formesFr": "Tisseuse", "formesEn": "Weaver" },
-  { "fr": "Ruche", "en": "Hive", "formesFr": "Ruche", "formesEn": "Hive" },
-  { "fr": "Puits Zéro", "en": "Shaft Zero", "formesFr": "Puits Zéro", "formesEn": "Shaft Zero" },
-  { "fr": "Compagnie des Fondations", "en": "Foundations Company", "formesFr": "Compagnie des Fondations", "formesEn": "Foundations Company" },
-  { "fr": "Maison Orsève", "en": "House Orsève", "formesFr": "Maison Orsève", "formesEn": "House Orsève" },
-  { "fr": "Brigades", "en": "Brigades", "formesFr": "Brigades?", "formesEn": "Brigades?" },
-  { "fr": "Accord", "en": "Accord", "formesFr": "Accords?", "formesEn": "Accords?" },
-  { "fr": "greffe", "en": "graft", "formesFr": "[gG]reff(?:e|es|é|ée|és|ées)", "formesEn": "[gG]raft(?:s|ed)?" },
-  { "fr": "Héritage", "en": "Legacy", "formesFr": "Héritage", "formesEn": "Legacy" },
-  { "fr": "Coup d’éclat", "en": "Masterstroke", "formesFr": "Coups? d’éclat", "formesEn": "Masterstrokes?" },
-  { "fr": "Marque", "en": "Mark", "formesFr": "Marques?(?= d|\\b)", "formesEn": "Marks?" },
-  { "fr": "minerai", "en": "ore", "formesFr": "[mM]inerai", "formesEn": "[oO]re" },
-  { "fr": "Rémanent", "en": "Remnant", "formesFr": "Rémanente?s?", "formesEn": "Remnants?" }
+  {
+   "fr": "Ossyra",
+   "en": "Ossyra"
+  },
+  {
+   "fr": "directeur",
+   "en": "director",
+   "formesFr": "[dD]irect(?:eur|rice)s?",
+   "formesEn": "[dD]irectors?"
+  },
+  {
+   "fr": "Cuvette",
+   "en": "Basin",
+   "formesFr": "[cC]uvettes?",
+   "formesEn": "[bB]asins?"
+  },
+  {
+   "fr": "Digue",
+   "en": "Dike",
+   "formesFr": "[dD]igues?",
+   "formesEn": "[dD]ikes?"
+  },
+  {
+   "fr": "Strate",
+   "en": "Stratum",
+   "formesFr": "Strates?",
+   "formesEn": "Strat(?:um|a)"
+  },
+  {
+   "fr": "Porteur",
+   "en": "Bearer",
+   "formesFr": "Porteu(?:r|se)s?",
+   "formesEn": "Bearers?"
+  },
+  {
+   "fr": "lignée",
+   "en": "lineage",
+   "formesFr": "[lL]ignées?",
+   "formesEn": "[lL]ineages?"
+  },
+  {
+   "fr": "Génés",
+   "en": "Spliced",
+   "formesFr": "Gén(?:é|ée)s?",
+   "formesEn": "Spliced",
+   "note": "invariable en anglais : a Spliced, the Spliced"
+  },
+  {
+   "fr": "Augmentés",
+   "en": "Augmented",
+   "formesFr": "Augmenté(?:e|s|es)?",
+   "formesEn": "Augmented",
+   "note": "invariable : an Augmented, the Augmented"
+  },
+  {
+   "fr": "Résonants",
+   "en": "Resonants",
+   "formesFr": "Résonant(?:e|s|es)?",
+   "formesEn": "Resonants?"
+  },
+  {
+   "fr": "Fréquence",
+   "en": "Frequency",
+   "formesFr": "Fréquences?",
+   "formesEn": "Frequenc(?:y|ies)"
+  },
+  {
+   "fr": "Résonance",
+   "en": "Resonance",
+   "formesFr": "Résonances?",
+   "formesEn": "Resonances?"
+  },
+  {
+   "fr": "Écho",
+   "en": "Echo",
+   "formesFr": "Échos?",
+   "formesEn": "Echo(?:es)?"
+  },
+  {
+   "fr": "Fêlure",
+   "en": "Flaw",
+   "formesFr": "Fêlures?",
+   "formesEn": "Flaws?"
+  },
+  {
+   "fr": "Éclat",
+   "en": "Shard",
+   "formesFr": "Éclats?",
+   "formesEn": "Shards?"
+  },
+  {
+   "fr": "Usure",
+   "en": "Strain",
+   "formesFr": "Usure",
+   "formesEn": "Strain"
+  },
+  {
+   "fr": "Tour du Noyau",
+   "en": "Core Tower",
+   "formesFr": "Tour du Noyau",
+   "formesEn": "Core Tower"
+  },
+  {
+   "fr": "Générateur",
+   "en": "Generator",
+   "formesFr": "Générateur",
+   "formesEn": "Generator"
+  },
+  {
+   "fr": "Comptoir",
+   "en": "Trading Post",
+   "formesFr": "Comptoir",
+   "formesEn": "Trading Post"
+  },
+  {
+   "fr": "Clinique",
+   "en": "Clinic",
+   "formesFr": "Clinique",
+   "formesEn": "Clinic"
+  },
+  {
+   "fr": "Cercle des quais",
+   "en": "Quayside Circle",
+   "formesFr": "Cercle des quais",
+   "formesEn": "Quayside Circle"
+  },
+  {
+   "fr": "Flèche",
+   "en": "Spire",
+   "formesFr": "Flèche",
+   "formesEn": "Spire"
+  },
+  {
+   "fr": "Hauts",
+   "en": "Heights",
+   "formesFr": "Hauts(?!-)",
+   "formesEn": "Heights"
+  },
+  {
+   "fr": "Veilleurs",
+   "en": "Watchers",
+   "formesFr": "Veilleu(?:r|se)s?",
+   "formesEn": "Watchers?"
+  },
+  {
+   "fr": "Chroniques",
+   "en": "Chronicles",
+   "formesFr": "Chroniques",
+   "formesEn": "Chronicles"
+  },
+  {
+   "fr": "Archives",
+   "en": "Archives",
+   "formesFr": "Archives",
+   "formesEn": "Archives"
+  },
+  {
+   "fr": "Halte",
+   "en": "Waystation",
+   "formesFr": "Haltes?",
+   "formesEn": "Waystations?"
+  },
+  {
+   "fr": "Vestiges",
+   "en": "Relics",
+   "formesFr": "Vestiges?",
+   "formesEn": "Relics?"
+  },
+  {
+   "fr": "Rôdeur",
+   "en": "Prowler",
+   "formesFr": "Rôdeu(?:r|se)s?",
+   "formesEn": "Prowlers?"
+  },
+  {
+   "fr": "escouade",
+   "en": "squad",
+   "formesFr": "[eE]scouades?",
+   "formesEn": "[sS]quads?"
+  },
+  {
+   "fr": "creuseurs",
+   "en": "diggers",
+   "formesFr": "[cC]reuseu(?:r|se)s?",
+   "formesEn": "[dD]iggers?"
+  },
+  {
+   "fr": "empreinte",
+   "en": "imprint",
+   "formesFr": "[eE]mpreintes?",
+   "formesEn": "[iI]mprints?"
+  },
+  {
+   "fr": "ceux d’avant",
+   "en": "those before",
+   "formesFr": "(?:[cC]eux|[cC]elles) d’avant",
+   "formesEn": "(?:[tT]hose|[tT]hem|[tT]he [oO]nes|[pP]eople) (?:[wW]ho [cC]ame )?[bB]efore",
+   "note": "le peuple disparu : « those who came before », « those before »"
+  },
+  {
+   "fr": "Écluse",
+   "en": "Sluice",
+   "formesFr": "Écluse",
+   "formesEn": "Sluice"
+  },
+  {
+   "fr": "Glacière",
+   "en": "Icehouse",
+   "formesFr": "Glacière",
+   "formesEn": "Icehouse"
+  },
+  {
+   "fr": "Confluence",
+   "en": "Confluence"
+  },
+  {
+   "fr": "Berceaux",
+   "en": "Cradles",
+   "formesFr": "Berceaux?",
+   "formesEn": "Cradles?"
+  },
+  {
+   "fr": "Tisseuse",
+   "en": "Weaver",
+   "formesFr": "Tisseuse",
+   "formesEn": "Weaver"
+  },
+  {
+   "fr": "Ruche",
+   "en": "Hive",
+   "formesFr": "Ruche",
+   "formesEn": "Hive"
+  },
+  {
+   "fr": "Puits Zéro",
+   "en": "Shaft Zero",
+   "formesFr": "Puits Zéro",
+   "formesEn": "Shaft Zero"
+  },
+  {
+   "fr": "Compagnie des Fondations",
+   "en": "Foundations Company",
+   "formesFr": "Compagnie des Fondations",
+   "formesEn": "Foundations Company"
+  },
+  {
+   "fr": "Maison Orsève",
+   "en": "House Orsève",
+   "formesFr": "Maison Orsève",
+   "formesEn": "House Orsève"
+  },
+  {
+   "fr": "Brigades",
+   "en": "Brigades",
+   "formesFr": "Brigades?",
+   "formesEn": "Brigades?"
+  },
+  {
+   "fr": "Accord",
+   "en": "Accord",
+   "formesFr": "Accords?",
+   "formesEn": "Accords?"
+  },
+  {
+   "fr": "greffe",
+   "en": "graft",
+   "formesFr": "[gG]reff(?:e|es|é|ée|és|ées)",
+   "formesEn": "[gG]raft(?:s|ed)?"
+  },
+  {
+   "fr": "Héritage",
+   "en": "Legacy",
+   "formesFr": "Héritage",
+   "formesEn": "Legacy"
+  },
+  {
+   "fr": "Coup d’éclat",
+   "en": "Masterstroke",
+   "formesFr": "Coups? d’éclat",
+   "formesEn": "Masterstrokes?"
+  },
+  {
+   "fr": "Marque",
+   "en": "Mark",
+   "formesFr": "Marques?(?= d|\\b)",
+   "formesEn": "Marks?"
+  },
+  {
+   "fr": "minerai",
+   "en": "ore",
+   "formesFr": "[mM]inerai",
+   "formesEn": "[oO]re"
+  },
+  {
+   "fr": "Rémanent",
+   "en": "Remnant",
+   "formesFr": "Rémanente?s?",
+   "formesEn": "Remnants?"
+  },
+  {
+   "fr": "Vertiga",
+   "en": "Vertiga"
+  },
+  {
+   "fr": "Fonte",
+   "en": "Melt",
+   "formesFr": "Fonte",
+   "formesEn": "Melt",
+   "note": "la Fonte : les 25 ans de montée des eaux"
+  },
+  {
+   "fr": "Fracture",
+   "en": "Fracture"
+  },
+  {
+   "fr": "Montée",
+   "en": "Rising",
+   "formesFr": "Montée",
+   "formesEn": "Rising"
+  },
+  {
+   "fr": "Fondations",
+   "en": "Foundations"
+  },
+  {
+   "fr": "Levage",
+   "en": "Lifting",
+   "formesFr": "Levage",
+   "formesEn": "Lifting"
+  },
+  {
+   "fr": "Soutiers",
+   "en": "Stokers",
+   "formesFr": "Soutiers?",
+   "formesEn": "Stokers?"
+  },
+  {
+   "fr": "Grève des pompes",
+   "en": "Pump Strike"
+  },
+  {
+   "fr": "Présage",
+   "en": "Presage"
+  },
+  {
+   "fr": "Mue",
+   "en": "Molt",
+   "formesFr": "Mue",
+   "formesEn": "Molt"
+  },
+  {
+   "fr": "Chouettes",
+   "en": "Owls",
+   "formesFr": "Chouettes",
+   "formesEn": "Owls",
+   "note": "les enfants mués pour les fouilles de nuit"
+  },
+  {
+   "fr": "Basses",
+   "en": "Lows",
+   "formesFr": "Basses",
+   "formesEn": "Lows",
+   "note": "les quartiers au pied de la digue"
+  },
+  {
+   "fr": "Racines franches",
+   "en": "Free Roots"
+  },
+  {
+   "fr": "Réseau des Reprises",
+   "en": "Mending Network"
+  },
+  {
+   "fr": "Serment de Veyr",
+   "en": "Oath of Veyr"
+  },
+  {
+   "fr": "vierge",
+   "en": "pristine",
+   "formesFr": "[vV]ierges?",
+   "formesEn": "[pP]ristine",
+   "note": "empreinte jamais recopiée (éviter « virgin »)"
+  },
+  {
+   "fr": "Refusé",
+   "en": "Refused",
+   "formesFr": "Refusée?s?",
+   "formesEn": "Refused"
+  },
+  {
+   "fr": "Ruche d’ambre",
+   "en": "Amber Hive"
+  },
+  {
+   "fr": "Clause de la Flèche",
+   "en": "Spire Clause"
+  },
+  {
+   "fr": "Puits d’avant",
+   "en": "Shaft of Before"
+  },
+  {
+   "fr": "Citernes",
+   "en": "Cisterns"
+  },
+  {
+   "fr": "Hauts-Ponts",
+   "en": "High Bridges"
+  },
+  {
+   "fr": "Graveur",
+   "en": "Engraver"
+  },
+  {
+   "fr": "Premier Porteur",
+   "en": "First Bearer"
+  },
+  {
+   "fr": "Strates du Fond",
+   "en": "Deep Strata"
+  },
+  {
+   "fr": "Dame Isaure",
+   "en": "Lady Isaure"
+  }
  ]
 }

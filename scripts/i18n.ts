@@ -13,7 +13,7 @@
 
 import ts from 'typescript';
 import { existsSync, mkdirSync, readFileSync, readdirSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
-import { dirname, join, relative, sep } from 'node:path';
+import { dirname, join, relative, resolve, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { cleGabarit } from '../src/core/i18n';
 import { compterMots, controlerTout, fichiersCatalogue, lireCatalogue, RACINE, type Entree, type FichierTraduction } from './i18n-controle';
@@ -195,6 +195,13 @@ function remplir(chemin: string, lot: string): void {
   const traductions = JSON.parse(readFileSync(lot, 'utf8')) as string[];
   const vides = f.entrees.filter((e) => !e.en);
   if (traductions.length > vides.length) throw new Error(`${traductions.length} traductions pour ${vides.length} entrées vides`);
+  // garde-fou contre un décalage (une traduction de trop ou de moins au milieu du lot) : longueurs très différentes
+  const suspects = traductions.map((tr, i) => [i, vides[i]!.fr, tr] as const)
+    .filter(([, fr, tr]) => Math.max(fr.length, tr.length) > 40 && (tr.length / fr.length < 0.45 || tr.length / fr.length > 2));
+  if (suspects.length) {
+    for (const [i, fr, tr] of suspects) console.log(`#${i + 1} longueurs suspectes :\n  fr ${fr.slice(0, 90)}\n  en ${tr.slice(0, 90)}`);
+    if (!process.env.FORCER) throw new Error('lot probablement décalé : rien n’a été écrit (FORCER=1 pour passer outre)');
+  }
   traductions.forEach((tr, i) => { const e = vides[i]!; e.en = tr; delete e.ancien; });
   writeFileSync(chemin, `${JSON.stringify(f, null, 1)}\n`);
   console.log(`${traductions.length} entrée(s) remplie(s) ; ${vides.length - traductions.length} encore vide(s).`);
@@ -282,7 +289,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) switch (comma
   case 'couverture': couverture(); break;
   case 'verifier': verifier(); break;
   case 'envelopper': envelopper(args); break;
-  case 'a-traduire': aTraduire(join(RACINE, args[0]!), args[1] ? Number(args[1]) : Infinity); break;
-  case 'remplir': remplir(join(RACINE, args[0]!), join(RACINE, args[1]!)); break;
+  case 'a-traduire': aTraduire(resolve(RACINE, args[0]!), args[1] ? Number(args[1]) : Infinity); break;
+  case 'remplir': remplir(resolve(RACINE, args[0]!), resolve(RACINE, args[1]!)); break;
   default: console.log('Commandes : extraire, couverture, verifier, envelopper <fichiers>, a-traduire <catalogue> [max], remplir <catalogue> <lot.json>');
 }
