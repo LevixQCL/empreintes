@@ -23,7 +23,7 @@
 @media (min-width:1100px) and (min-height:600px){ .fj-entree{display:none} .nav .pastille-alerte.appel-fiche{display:none} }
 
 /* ---------- PC : le cristal du rail ---------- */
-.ecran > .nav .nav-embleme img.fj-gemme{position:absolute;top:2px;right:calc(50% - 30px);width:24px;height:24px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6));transform:none;animation:fj-gemme 1.8s ease-in-out infinite}
+.ecran > .nav .nav-embleme img.fj-gemme{position:absolute;top:0;right:calc(50% - 40px);width:24px;height:24px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6));transform:none;animation:fj-gemme 1.8s ease-in-out infinite}
 @media (min-width:1100px) and (min-height:600px){
   .ecran > .nav .nav-embleme.appelle img{filter:drop-shadow(0 0 18px rgba(255,200,120,.65)) drop-shadow(0 0 30px rgba(95,168,255,.45)) drop-shadow(0 4px 6px rgba(0,0,0,.6));animation:rail-appel 2.4s ease-in-out infinite alternate}
   @keyframes rail-appel{from{filter:drop-shadow(0 0 12px rgba(255,200,120,.45)) drop-shadow(0 4px 6px rgba(0,0,0,.6))}to{filter:drop-shadow(0 0 24px rgba(255,205,130,.8)) drop-shadow(0 0 34px rgba(95,168,255,.45)) drop-shadow(0 4px 6px rgba(0,0,0,.6))}}

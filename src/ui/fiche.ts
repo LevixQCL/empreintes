@@ -19,6 +19,8 @@ export const TITRE_JOUEUR = 'Directeur';
 const ent = (n: number) => Math.floor(n).toLocaleString('fr-BE').replace(/\u202f/g, '\u00a0');
 const GEMME = `<img class="fj-gemme" src="${baseIcones}pastille.webp" alt="" aria-hidden="true">`;
 const CRISTAL = './art/embleme-cristal.webp';
+/** en tête du rail PC : le logo Ossyra (9 novembre 2026), à la place du cristal */
+const LOGO_RAIL = './art/logo-rail.webp';
 
 /** Le cristal s'allume ailleurs qu'au district : là, les panneaux et les bulles montrent déjà ce qui attend */
 export const cristalAllume = (e: EcranDistrict): boolean => e.vue !== 'archipel' && appelDuCristal(e.j);
@@ -29,7 +31,7 @@ const libelle = (e: EcranDistrict) => `Ta fiche de ${TITRE_JOUEUR.toLowerCase()}
 export function cristalRail(e: EcranDistrict): string {
   const allume = cristalAllume(e);
   return `<button type="button" class="nav-embleme${allume ? ' appelle' : ''}" data-action="fiche" aria-expanded="${!!e.fiche}" title="${echap(libelle(e))}" aria-label="${echap(libelle(e))}">`
-    + `<img src="${CRISTAL}" alt="">${allume ? GEMME : ''}</button>`;
+    + `<img src="${LOGO_RAIL}" alt="">${allume ? GEMME : ''}</button>`;
 }
 
 /**
