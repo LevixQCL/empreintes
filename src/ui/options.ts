@@ -18,8 +18,14 @@ export function basculerAuto(): void {
  */
 export const langueReglable = (): boolean => LANGUES_PUBLIEES.length > 1 || langue() !== 'fr';
 export const NOMS_LANGUES: Record<Langue, string> = { fr: 'Français', en: 'English' };
-export function changerLangue(): void {
-  const suivante = LANGUES[(LANGUES.indexOf(langue()) + 1) % LANGUES.length]!;
+
+/** Le choix de langue de l'écran titre (9 novembre 2026, Bryan) : « FR · EN » dans une capsule de verre, en haut à droite */
+export const choixLangueTitre = (): string => (langueReglable()
+  ? `<div class="titre-langues" role="group" aria-label="Langue · Language">${LANGUES_PUBLIEES.map((l) => `<button type="button" class="titre-langue${l === langue() ? ' actif' : ''}" data-action="titre-langue" data-langue="${l}" lang="${l}" aria-label="${NOMS_LANGUES[l]}" aria-pressed="${l === langue()}">${l.toUpperCase()}</button>`).join('')}</div>`
+  : '');
+export function changerLangue(vers?: Langue): void {
+  const suivante = vers ?? LANGUES[(LANGUES.indexOf(langue()) + 1) % LANGUES.length]!;
+  if (suivante === langue()) return;
   const url = new URL(location.href);
   url.searchParams.set('langue', suivante);
   location.replace(url.toString());

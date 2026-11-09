@@ -1,6 +1,7 @@
 // Actions de l'écran titre et de l'intro.
 
 import { installer } from '../../ui/installer';
+import { changerLangue } from '../../ui/options';
 import { finPour } from '../combat';
 import { app, apresTitre, compteEtat, D, K, titrePret } from '../etat';
 import { avancerIntro, reculerIntro } from '../intro';
@@ -41,6 +42,7 @@ export async function agirIntro(a: string, c: Clic): Promise<Suite> {
       sauver();
       break;
     case 'titre-compte': if (compteEtat.ageDemande) { compteEtat.ageDemande = false; break; } compteEtat.ouvert = !compteEtat.ouvert; compteEtat.erreur = ''; compteEtat.info = ''; break;
+    case 'titre-langue': ev.stopPropagation(); sauver(); changerLangue(c.b.dataset.langue === 'en' ? 'en' : 'fr'); return 'fin';
     case 'installer': ev.stopPropagation(); await installer(); afficher(); return 'fin';
     case 'intro': app.introLongue = true; app.plan = 0; app.lignesVues = 1; app.texteCache = false; app.mode = 'intro'; D.menu = false; break;
     default: return 'inconnu';

@@ -1,6 +1,7 @@
 // L'écran titre, affiché à chaque lancement.
 // Illustration Midjourney : public/intro/titre-mobile-*.webp (téléphone) et titre-pc-*.webp (PC).
 
+import { choixLangueTitre } from './options';
 import { particules } from './intro';
 import { LOGOTYPE } from './logotype';
 import { ICO } from './icones';
@@ -71,6 +72,7 @@ export function htmlTitre(introVue: boolean, mouvement: boolean, c: TitreCompte 
     + `<div class="titre-fond" aria-hidden="true">${imageAnimee()}</div>`
     + (mouvement ? particules('cristal') : '')
     + `<div class="titre-voile" aria-hidden="true"></div>`
+    + choixLangueTitre()
     + `<header class="titre-haut"><img class="titre-logo" src="./art/logo.webp" alt="" width="640" height="854" decoding="async"><h1 class="titre-nom">${LOGOTYPE}</h1>`
     + `<p class="titre-sous">${t`2121 · Sous les eaux, d’autres se souviennent encore.`}</p></header>`
     + basTitre(introVue, c) + `</section>`
