@@ -1,5 +1,5 @@
 // L'écran titre, affiché à chaque lancement.
-// Illustration Midjourney : public/intro/00-titre.webp.
+// Illustration Midjourney : public/intro/titre-mobile-*.webp (téléphone) et titre-pc-*.webp (PC).
 
 import { particules } from './intro';
 import { LOGOTYPE } from './logotype';
@@ -8,13 +8,14 @@ import { peutInstaller } from './installer';
 import { echap } from './outils';
 
 /**
- * L'illustration fixe, avec des effets en code posés exactement sur elle (positions en % de l'image) :
- * la flamme de la lanterne qui vacille et la lueur violette des joints de la porte qui pulse.
- * Le cadre garde les proportions de l'image et se recadre comme object-position: 28 % 50 %.
+ * L'illustration (9 novembre 2026) : l'escalier englouti, sous la digue, qui plonge vers les Strates.
+ * Deux cadrages peints sur Midjourney : vertical pour le téléphone, panoramique pour le PC (mer et ciel libres à droite, sous le logo).
+ * Les anciens effets de la lanterne et de la porte restent sur 00-titre.webp, encore utilisée par la rencontre et le briefing.
  */
-const imageAnimee = () => `<div class="titre-image">`
-  + `<img src="./intro/00-titre.webp" alt="" decoding="async">`
-  + `<span class="t-porte"></span><span class="t-flamme"></span><span class="t-halo"></span></div>`;
+const imageAnimee = () => `<div class="titre-image titre-escalier"><picture>`
+  + `<source media="(min-width:1100px) and (min-height:600px)" srcset="./intro/titre-pc-1600.webp 1600w, ./intro/titre-pc-2560.webp 2560w" sizes="100vw">`
+  + `<img src="./intro/titre-mobile-1600.webp" srcset="./intro/titre-mobile-1600.webp 897w, ./intro/titre-mobile-2560.webp 1435w" sizes="57vh" alt="" decoding="async">`
+  + `</picture></div>`;
 
 /**
  * Le compte sur l'écran titre (25 octobre 2026) : on attend la partie du compte avant d'ouvrir le jeu,
@@ -65,7 +66,7 @@ export function htmlTitre(introVue: boolean, mouvement: boolean, c: TitreCompte 
   // toucher l'écran ouvre la partie, sauf pendant qu'on récupère celle du compte,
   // et au premier lancement : un toucher à côté ne doit pas lancer une nouvelle partie à la place de « J'ai déjà une partie »
   const toucher = c?.etat !== 'attente' && !premierLancement(introVue, c);
-  return `<section class="titre"${toucher ? ' data-action="titre-jouer"' : ''} style="--image:url(./intro/00-titre.webp)" aria-label="Ossyra, écran titre">`
+  return `<section class="titre"${toucher ? ' data-action="titre-jouer"' : ''} style="--image:url(./intro/titre-mobile-1600.webp)" aria-label="Ossyra, écran titre">`
     + `<div class="titre-fond" aria-hidden="true">${imageAnimee()}</div>`
     + (mouvement ? particules('cristal') : '')
     + `<div class="titre-voile" aria-hidden="true"></div>`
