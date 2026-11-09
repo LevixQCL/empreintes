@@ -28,6 +28,11 @@ Une entrée dont `en` est vide s'affiche en français : le jeu ne casse jamais p
 
 Seules les phrases modifiées sont à refaire, jamais le reste. Un texte déplacé d'un fichier à l'autre garde sa traduction.
 
+## Le style
+
+On ne traduit pas mot à mot : l'anglais doit être agréable et beau à lire, fidèle au sens, au ton et aux révélations,
+mais écrit comme l'aurait écrit un auteur anglophone. Voix de chaque personnage, règles et inspirations : `docs/traduction/style-en.md`.
+
 ## Les commandes
 
 | Commande | Ce qu'elle fait |
@@ -38,6 +43,8 @@ Seules les phrases modifiées sont à refaire, jamais le reste. Un texte déplac
 | `npm run i18n -- envelopper <fichiers>` | entoure de `t(…)` les phrases d'un fichier (relire le rapport et le diff) |
 | `npm run i18n -- a-traduire <catalogue> [max]` | liste numérotée des entrées vides |
 | `npm run i18n -- remplir <catalogue> <lot.json>` | remplit les entrées vides, dans l'ordre, avec un tableau JSON |
+| `npm run i18n -- paires <catalogue> [début] [n]` | montre français et traduction côte à côte, numérotés |
+| `npm run i18n -- reviser <catalogue> <lot.json>` | réécrit les traductions citées (`{ "numéro": "texte" }`) |
 
 ## Les garde-fous (tests/i18n.test.ts, lancés au déploiement)
 
