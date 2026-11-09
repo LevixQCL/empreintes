@@ -11,7 +11,7 @@
   },
   {
    "fr": "Le jour où Ilka est partie, les Ruel ont laissé une lampe à la fenêtre. Ils ne l’ont éteinte qu’en te voyant arriver.",
-   "en": "The day Ilka left, the Ruels put a lamp in the window. They only put it out when they saw you arrive."
+   "en": "The day Ilka set off, the Ruels put a lamp in the window. They only blew it out when they saw you coming."
   },
   {
    "fr": "les Abady",
@@ -23,7 +23,7 @@
   },
   {
    "fr": "Le père Abady a soudé la plaque du directeur lui-même, avec ce qui restait d’une rambarde. Elle est un peu de travers. Il dit que c’est exprès.",
-   "en": "Old Abady welded the director’s nameplate himself, from what was left of a railing. It’s a little crooked. He says that’s on purpose."
+   "en": "Old Abady welded the director’s nameplate himself, out of a scrap of railing. It’s a bit crooked. He says that’s deliberate."
   },
   {
    "fr": "les Orlan",
@@ -35,7 +35,7 @@
   },
   {
    "fr": "Dans le carnet des Orlan, une ligne par nuit : « tenu » ou « pas tenu ». Ils ont écrit ton nom à côté du dernier « tenu ».",
-   "en": "In the Orlans’ logbook, one line per night: “held” or “didn’t hold.” They wrote your name next to the last “held.”"
+   "en": "One line a night in the Orlans’ log: “held” or “didn’t hold.” Next to the last “held,” they wrote your name."
   },
   {
    "fr": "les Gaudet",
@@ -47,7 +47,7 @@
   },
   {
    "fr": "La grand-mère Gaudet dit qu’on reconnaît un bon passeur à ce qu’il ramène toujours quelqu’un. Même quand il rentre les mains vides.",
-   "en": "Grandma Gaudet says you know a good ferrier because they always bring someone back. Even when they come home empty-handed."
+   "en": "Grandma Gaudet says you can tell a good ferrier because they always bring someone home. Even when they come back with nothing."
   },
   {
    "fr": "les Hollen",
@@ -59,7 +59,7 @@
   },
   {
    "fr": "Les Hollen ont toujours une louche de plus dans la marmite. Pour celui qui n’a pas osé demander.",
-   "en": "The Hollens always have one more ladle in the pot. For whoever didn’t dare ask."
+   "en": "There’s always one more ladleful in the Hollens’ pot. For whoever didn’t dare ask."
   },
   {
    "fr": "les Marsac",
@@ -71,7 +71,7 @@
   },
   {
    "fr": "Les Marsac ont quitté leur cuvette avec un seul filet. Ils l’ont réparé tant de fois qu’il ne reste plus un fil d’origine. C’est toujours le leur.",
-   "en": "The Marsacs left their basin with a single net. They’ve mended it so many times there isn’t an original thread left. It’s still theirs."
+   "en": "The Marsacs fled their basin with one net. They’ve mended it so often there’s not a single original thread left. It’s still theirs."
   },
   {
    "fr": "les Trélan",
@@ -83,7 +83,7 @@
   },
   {
    "fr": "Les Trélan ont posé un carreau bleu dans chaque fenêtre qu’elles ont réparée. Le district en compte deux cent douze.",
-   "en": "The Trélans set a blue pane in every window they’ve repaired. The district counts two hundred and twelve of them."
+   "en": "The Trélans set one blue pane in every window they mend. The district has two hundred and twelve of them now."
   },
   {
    "fr": "les Méric",
@@ -95,7 +95,7 @@
   },
   {
    "fr": "Sur la couverture des Méric, un nom brodé par ville traversée. La grand-mère a laissé de la place après celui du district.",
-   "en": "On the Mérics’ blanket, one name embroidered for each town passed through. The grandmother left room after the district’s."
+   "en": "One name stitched into the Mérics’ blanket for every town they passed through. The grandmother left a space after the district’s."
   },
   {
    "fr": "les Cazal",
@@ -107,7 +107,7 @@
   },
   {
    "fr": "Les Cazal ont sonné l’alerte quarante fois en un hiver. La quarante et unième, ils ont sonné pour rien, juste pour entendre qu’on était encore là.",
-   "en": "The Cazals sounded the alarm forty times in one winter. The forty-first time, they rang for nothing, just to hear that we were still here."
+   "en": "The Cazals rang the alarm forty times in a single winter. The forty-first time, they rang it for nothing, just to hear that everyone was still here."
   },
   {
    "fr": "les Dumay",
@@ -119,7 +119,7 @@
   },
   {
    "fr": "Toutes les horloges des Dumay retardent de onze minutes : l’heure exacte où la mer a franchi l’ancienne digue. Ils refusent de les remettre.",
-   "en": "All the Dumays’ clocks run eleven minutes slow: the exact time the sea crossed the old dike. They refuse to reset them."
+   "en": "Every clock the Dumays own runs eleven minutes slow: the exact moment the sea came over the old dike. They won’t put them right."
   },
   {
    "fr": "les Esquer",
@@ -131,7 +131,7 @@
   },
   {
    "fr": "Les Esquer ramassent les algues qui brillent la nuit. Ils en laissent toujours une sur la marche de ceux qui n’ont plus de lampe.",
-   "en": "The Esquers gather the seaweed that glows at night. They always leave one on the doorstep of those who have no lamp anymore."
+   "en": "The Esquers gather the seaweed that glows at night. They always leave a strand on the step of anyone who has no lamp."
   },
   {
    "fr": "les Sorne",
@@ -155,7 +155,7 @@
   },
   {
    "fr": "Les Lebrun cousent un fil bleu dans l’ourlet de chaque vêtement. Pour qu’on sache, s’il faut un jour se retrouver, qu’on vient d’ici.",
-   "en": "The Lebruns sew a blue thread into the hem of every garment. So that, if people ever need to find each other again, they’ll know you come from here."
+   "en": "The Lebruns sew a blue thread into the hem of everything they make. So that if people ever have to find one another again, they’ll know you’re from here."
   },
   {
    "fr": "les Auzan",
@@ -167,7 +167,7 @@
   },
   {
    "fr": "Les Auzan racontent la même histoire à chaque Nuit des lignes, et la changent un peu à chaque fois. Ils disent que c’est comme ça qu’elle reste vivante.",
-   "en": "The Auzans tell the same story at every Night of Lines, and change it a little each time. They say that’s how it stays alive."
+   "en": "The Auzans tell the same story every Night of Lines, and change it a little every time. They say that’s what keeps it alive."
   },
   {
    "fr": "les Peyrol",
@@ -191,7 +191,7 @@
   },
   {
    "fr": "Les Taverne ont un carreau bleu de leur ancienne cuisine, avec un trait de peinture : la première hauteur de l’eau. Elle n’était qu’au genou.",
-   "en": "The Tavernes have a blue tile from their old kitchen, with a stroke of paint: the first height of the water. It was only knee-high."
+   "en": "The Tavernes have a blue tile from their old kitchen with a stripe of paint across it: the water’s first height. It only came up to the knee."
   },
   {
    "fr": "les Rosel",
@@ -203,7 +203,7 @@
   },
   {
    "fr": "Les Rosel jouent sur de vieux tuyaux de pompe. Chaque tuyau a la note de la profondeur d’où il vient.",
-   "en": "The Rosels play on old pump pipes. Each pipe has the note of the depth it came from."
+   "en": "The Rosels play old pump pipes. Each one sounds the note of the depth it came up from."
   },
   {
    "fr": "les Valade",
@@ -215,7 +215,7 @@
   },
   {
    "fr": "Depuis le toit des Valade, on voit les îles des Hauts par temps clair. Les enfants leur ont donné des noms. Pas les mêmes que là-haut.",
-   "en": "From the Valades’ roof, you can see the islands of the Heights on a clear day. The children have given them names. Not the same as up there."
+   "en": "From the Valades’ roof, on a clear day, you can see the islands of the Heights. The children have named them. Not the names they go by up there."
   },
   {
    "fr": "les Crozet",
@@ -227,7 +227,7 @@
   },
   {
    "fr": "Les Crozet tressent un fil de chaque famille du quai dans les cordes des barques. Ils disent qu’une corde de tout le monde ne casse pas.",
-   "en": "The Crozets braid a thread from every family on the quay into the boat ropes. They say a rope made of everyone doesn’t break."
+   "en": "The Crozets braid a thread from every family on the quay into the boat ropes. They say a rope made of everyone won’t break."
   },
   {
    "fr": "les Vey",
@@ -239,7 +239,7 @@
   },
   {
    "fr": "Les Vey gardent un ticket de pain de l’hiver des Accords, jamais utilisé : l’aïeul avait donné sa part. « Il n’a jamais servi, et il a servi quand même. »",
-   "en": "The Veys keep a bread ticket from the winter of the Accords, never used: their ancestor gave his share away. “It was never used, and it was used all the same.”"
+   "en": "The Veys keep a bread ticket from the winter of the Accords, never used: their great-grandfather gave his ration away. “Never used, and used all the same.”"
   },
   {
    "fr": "les Morvan",
@@ -251,7 +251,7 @@
   },
   {
    "fr": "Les Morvan gravent la date de chaque barque sous son banc. La plus vieille qui flotte encore a cent onze ans.",
-   "en": "The Morvans carve the date of each boat under its bench. The oldest one still afloat is a hundred and eleven."
+   "en": "The Morvans carve each boat’s date under its bench. The oldest one still afloat is a hundred and eleven."
   },
   {
    "fr": "les Bastide",
@@ -263,7 +263,7 @@
   },
   {
    "fr": "La première Clinique des Bastide tenait dans une cave, avec une seule lampe. Ils ont gardé l’ampoule, grillée, sur l’étagère d’honneur.",
-   "en": "The Bastides’ first Clinic fit in a cellar, with a single lamp. They kept the bulb, burned out, on the shelf of honor."
+   "en": "The Bastides’ first Clinic fit in a cellar with a single lamp. They kept the bulb, long dead, on the shelf of honor."
   },
   {
    "fr": "les Lacour",
@@ -275,7 +275,7 @@
   },
   {
    "fr": "Les tomates des Lacour sont petites et un peu salées. Tout le quai jure que ce sont les meilleures du monde.",
-   "en": "The Lacours’ tomatoes are small and a little salty. The whole quay swears they’re the best in the world."
+   "en": "The Lacours’ tomatoes are small and a little salty. The whole quay swears there are none better anywhere."
   },
   {
    "fr": "les Marbel",
@@ -287,7 +287,7 @@
   },
   {
    "fr": "Sur la boîte de semences des Marbel, gravé à la pointe : « Là-haut, il y aura de la terre. On plantera tout. »",
-   "en": "On the Marbels’ seed box, scratched with a point: “Up there, there’ll be soil. We’ll plant everything.”"
+   "en": "On the Marbels’ seed tin, scratched in with a nail: “Up there, there’ll be soil. We’ll plant it all.”"
   },
   {
    "fr": "les Servan",
@@ -299,7 +299,7 @@
   },
   {
    "fr": "Le vieux Servan a renoncé à sa place là-haut pour rester avec sa fille, en bas. Il dit qu’il a gagné au change. Il le dit chaque jour, pour s’en convaincre.",
-   "en": "Old Servan gave up his place up there to stay with his daughter, down here. He says he got the better deal. He says it every day, to convince himself."
+   "en": "Old Servan gave up his place in the Heights to stay down here with his daughter. He says he got the better end of the deal. He says it every day, to convince himself."
   },
   {
    "fr": "les Pradel",
@@ -311,7 +311,7 @@
   },
   {
    "fr": "Les Pradel cuisent le pain au four de la Forge, la nuit, quand il refroidit. Au matin, tout le quai sent le pain et le métal.",
-   "en": "The Pradels bake bread in the Forge’s furnace at night, as it cools. In the morning, the whole quay smells of bread and metal."
+   "en": "The Pradels bake their bread in the Forge furnace overnight, as it cools. By morning the whole quay smells of bread and hot iron."
   },
   {
    "fr": "les Doucet",
@@ -323,7 +323,7 @@
   },
   {
    "fr": "La lampe de veille des Doucet est restée allumée onze nuits, une fois. Le pêcheur est rentré la douzième. Depuis tes barques, elle ne s’éteint plus.",
-   "en": "The Doucets’ vigil lamp once stayed lit for eleven nights. The fisherman came home on the twelfth. Since your boats, it never goes out."
+   "en": "The Doucets’ vigil lamp once burned eleven nights straight. The fisherman came home on the twelfth. Since your boats started, it never goes out."
   },
   {
    "fr": "les Anciens du conseil",
@@ -335,7 +335,7 @@
   },
   {
    "fr": "Dans le registre des Anciens, aucune page n’a plus de nom barré au crayon rouge. En marge : « Ils montent tous. Le directeur l’a promis. »",
-   "en": "In the Elders’ register, no page has a name crossed out in red pencil anymore. In the margin: “They’re all going up. The director promised.”"
+   "en": "In the Elders’ register, no page has a name struck out in red pencil anymore. In the margin: “They’re all going up. The director promised.”"
   },
   {
    "fr": "les Pellan",
@@ -347,7 +347,7 @@
   },
   {
    "fr": "Les Pellan lavaient le linge des Hauts, autrefois. Ils ont gardé un drap brodé d’un blason qu’aucun d’eux ne sait lire.",
-   "en": "The Pellans used to wash the Heights’ linen. They kept a sheet embroidered with a coat of arms none of them can read."
+   "en": "The Pellans used to wash the Heights’ linen. They kept one sheet embroidered with a coat of arms none of them can read."
   },
   {
    "fr": "les Ardoin",
@@ -359,7 +359,7 @@
   },
   {
    "fr": "Le père Ardoin a fermé l’écluse le dernier soir, de ses mains. Il a attendu dix-neuf ans qu’on vienne lui dire de la rouvrir.",
-   "en": "Old Ardoin closed the lock on the last evening, with his own hands. He waited nineteen years for someone to come and tell him to open it again."
+   "en": "Old Ardoin closed the lock with his own hands on the last evening. He waited nineteen years for someone to come and tell him to open it again."
   },
   {
    "fr": "les Sauvel",
@@ -371,7 +371,7 @@
   },
   {
    "fr": "Les enfants Sauvel gravaient leur taille sur la passerelle, à côté de la hauteur de l’eau. Ils ont arrêté le jour où l’eau a grandi plus vite qu’eux.",
-   "en": "The Sauvel children carved their height on the walkway, beside the height of the water. They stopped the day the water grew faster than they did."
+   "en": "The Sauvel children marked their height on the walkway, next to the height of the water. They stopped the day the water grew faster than they did."
   },
   {
    "fr": "les Lunel",
@@ -383,7 +383,7 @@
   },
   {
    "fr": "Les sœurs Lunel triaient des boutons par couleur pour passer les nuits de houle. Il leur manque un seul bleu pour finir la boîte.",
-   "en": "The Lunel sisters sorted buttons by color to get through the nights of swell. They’re missing just one blue to finish the box."
+   "en": "The Lunel sisters sorted buttons by color to get through the nights of swell. One more blue and the box would be finished."
   },
   {
    "fr": "les Kerval",
@@ -395,7 +395,7 @@
   },
   {
    "fr": "Les Kerval ont forgé les chaînes du quatrième anneau. On ne les a jamais payés. Ils disent que la digue tient, et que c’est un salaire.",
-   "en": "The Kervals forged the chains of the fourth ring. They were never paid. They say the dike holds, and that’s a wage."
+   "en": "The Kervals forged the chains of the fourth ring and were never paid. They say the dike is still standing, and that’s wages enough."
   },
   {
    "fr": "les Mirande",
@@ -407,7 +407,7 @@
   },
   {
    "fr": "La radio des Mirande n’attrape que la mer. Le fils jure qu’une nuit, une voix y a dit son prénom.",
-   "en": "The Mirandes’ radio only picks up the sea. The son swears that one night, a voice on it said his first name."
+   "en": "The Mirandes’ radio only picks up the sea. The boy swears that one night a voice on it said his name."
   },
   {
    "fr": "les Ibarre",
@@ -419,7 +419,7 @@
   },
   {
    "fr": "L’enclume des Ibarre porte un sigle plus vieux que la digue. Ils frappent dessus chaque matin, pour qu’elle ne s’ennuie pas.",
-   "en": "The Ibarres’ anvil bears a mark older than the dike. They strike it every morning, so it won’t get bored."
+   "en": "The Ibarres’ anvil bears a maker’s mark older than the dike. They strike it every morning so it won’t get bored."
   },
   {
    "fr": "les Nalis",
@@ -431,7 +431,7 @@
   },
   {
    "fr": "Sur le plan des Nalis, un cercle rouge sous l’anneau : « ne pas creuser ». Le grand-père n’a jamais dit pourquoi. Il a juste dit : « Plus tard. »",
-   "en": "On the Nalis plan, a red circle under the ring: “do not dig.” The grandfather never said why. He just said: “Later.”"
+   "en": "On the Nalis plan, a red circle under the ring: “do not dig.” Grandfather never said why. Only: “Later.”"
   },
   {
    "fr": "les Haudry",
@@ -443,7 +443,7 @@
   },
   {
    "fr": "Le vieux Haudry repeint la marelle du préau chaque été, sous un doigt d’eau. La case du ciel touche la ligne de la mer.",
-   "en": "Old Haudry repaints the hopscotch in the schoolyard every summer, under a finger of water. The sky square touches the sea line."
+   "en": "Every summer, old Haudry repaints the hopscotch in the schoolyard, under a finger’s depth of water. The sky square touches the sea line."
   },
   {
    "fr": "les Prével",
@@ -455,7 +455,7 @@
   },
   {
    "fr": "Madame Prével n’a jamais effacé sa dernière leçon. Ses élèves ont calculé : trois mètres en cent ans, plus haut que le préau. Ils avaient raison, et en avance.",
-   "en": "Madame Prével never erased her last lesson. Her pupils worked it out: three meters in a hundred years, higher than the schoolyard. They were right, and ahead of time."
+   "en": "Madame Prével never wiped off her last lesson. Her pupils did the sum: three meters in a hundred years, higher than the schoolyard. They were right, and early."
   },
   {
    "fr": "les Casset",
@@ -467,7 +467,7 @@
   },
   {
    "fr": "Les Casset ont séché trois mille livres, une page à la fois. Ils ont rangé chacun par le nom du dernier enfant qui l’avait emprunté.",
-   "en": "The Cassets dried three thousand books, one page at a time. They shelved each one under the name of the last child who had borrowed it."
+   "en": "The Cassets dried three thousand books one page at a time, and shelved each under the name of the last child to borrow it."
   },
   {
    "fr": "les Bérot",
@@ -479,7 +479,7 @@
   },
   {
    "fr": "La cloche des Bérot sonne seule les nuits de houle. Ils ont compté : jamais deux fois le même nombre de coups.",
-   "en": "The Bérots’ bell rings by itself on nights of swell. They’ve counted: never the same number of strokes twice."
+   "en": "The Bérots’ bell rings by itself on nights of swell. They’ve kept count: never the same number of strokes twice."
   },
   {
    "fr": "les Tessier",
@@ -491,7 +491,7 @@
   },
   {
    "fr": "Les Tessier montent les marches trop hautes de la citerne chaque jour. Les enfants ont appris à marcher dessus avant de marcher droit.",
-   "en": "The Tessiers climb the cistern’s too-high steps every day. The children learned to walk on them before they learned to walk straight."
+   "en": "The Tessiers climb the cistern’s giant steps every day. Their children learned to walk on them before they learned to walk straight."
   },
   {
    "fr": "les Tavel",
@@ -503,7 +503,7 @@
   },
   {
    "fr": "Le père Tavel cherche le joint des voûtes depuis vingt ans. Il n’y en a pas. Il dit que c’est la plus belle pierre qu’il ait jamais touchée.",
-   "en": "Old Tavel has been looking for the joint in the vaults for twenty years. There isn’t one. He says it’s the most beautiful stone he’s ever touched."
+   "en": "Old Tavel has spent twenty years looking for the joint in the vaults. There isn’t one. He says it’s the most beautiful stone he’s ever laid a hand on."
   },
   {
    "fr": "les Varenne",
@@ -515,7 +515,7 @@
   },
   {
    "fr": "Les Varenne règlent des vannes qui suivent une marée d’un autre temps. Ils ne savent pas pour qui. Ils les règlent quand même.",
-   "en": "The Varennes set valves that follow a tide from another time. They don’t know for whom. They set them anyway."
+   "en": "The Varennes tend valves set for a tide from another age. They don’t know who for. They tend them anyway."
   },
   {
    "fr": "les Aumont",
@@ -527,7 +527,7 @@
   },
   {
    "fr": "La petite Aumont a posé sa main dans les empreintes du puisard. Elles étaient exactement à sa taille.",
-   "en": "The little Aumont girl put her hand in the prints in the sump. They were exactly her size."
+   "en": "The little Aumont girl put her hand into the prints at the bottom of the sump. They were exactly her size."
   },
   {
    "fr": "les Roustan",
@@ -539,7 +539,7 @@
   },
   {
    "fr": "Les Roustan balaient les premières marches du Palier chaque matin. Ils disent que quelqu’un doit bien le faire, depuis le temps.",
-   "en": "The Roustans sweep the first steps of the Landing every morning. They say somebody has to, after all this time."
+   "en": "The Roustans sweep the first steps of the Landing every morning. Someone ought to, they say, after all this time."
   },
   {
    "fr": "les Falgue",
@@ -551,7 +551,7 @@
   },
   {
    "fr": "Les lampes de pierre s’allument quand un Falgue approche. Pour les autres, il faut attendre. Personne ne sait pourquoi.",
-   "en": "The stone lamps light up when a Falgue comes near. For everyone else, you have to wait. Nobody knows why."
+   "en": "The stone lamps light up when a Falgue comes near. Everyone else has to wait. No one knows why."
   },
   {
    "fr": "les Démare",
@@ -563,7 +563,7 @@
   },
   {
    "fr": "Les Démare ont recopié neuf mille empreintes du palier gravé. Ils disent qu’aucune ne se ressemble, et qu’aucune ne leur est étrangère.",
-   "en": "The Démares have copied nine thousand imprints from the engraved landing. They say no two are alike, and none feels foreign to them."
+   "en": "The Démares have copied nine thousand prints from the engraved landing. They say no two are alike, and none of them feels like a stranger’s."
   },
   {
    "fr": "les Huisset",
@@ -575,7 +575,7 @@
   },
   {
    "fr": "Les Huisset écoutent l’eau du puits derrière la porte. Ils disent qu’elle a le bruit d’une respiration. Celle de tout le district.",
-   "en": "The Huissets listen to the water of the shaft behind the door. They say it sounds like breathing. The whole district’s."
+   "en": "The Huissets listen to the shaft water behind the door. They say it sounds like breathing. The whole district’s."
   }
  ]
 }

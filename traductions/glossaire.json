@@ -193,7 +193,7 @@
    "en": "imprint",
    "formesFr": "[eE]mpreintes?",
    "formesEn": "[iI]mprints?",
-   "sauf": "empreintes? (?:de (?:doigt|main|bottes?)|digitales?)|empreintes de mains|empreintes du puisard|la même empreinte|L’empreinte d’une main",
+   "sauf": "empreintes? (?:de (?:doigt|main|bottes?)|digitales?)|empreintes de mains|empreintes du puisard|la même empreinte|L’empreinte d’une main|empreintes du palier gravé|pressé le pouce",
    "note": "la donnée gravée dans un cristal ; une trace de doigt, de main ou de botte reste « print »"
   },
   {
@@ -326,7 +326,8 @@
   },
   {
    "fr": "Fondations",
-   "en": "Foundations"
+   "en": "Foundations",
+   "formesFr": "Fondations?"
   },
   {
    "fr": "Levage",
