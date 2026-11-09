@@ -324,4 +324,9 @@
   .archipel.cuvette .mer-fond::before{background:linear-gradient(90deg,rgba(6,10,22,.35),transparent 20%,transparent 80%,rgba(6,10,22,.35))}
   .archipel.cuvette .mer-reflets{display:none}
   .archipel.cuvette .toile{-webkit-mask-image:none;mask-image:none}
+  /* la mer de part et d'autre du tableau ondule avec lui (9 novembre 2026, houle.ts) ; l'ombre des bords reste par-dessus */
+  .archipel.cuvette .mer-fond::before{z-index:1}
+  .archipel.cuvette .houle-large{position:absolute;inset:0;pointer-events:none}
+  .archipel.cuvette .houle-large canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .6s}
+  .archipel.cuvette .houle-large canvas.prete{opacity:1}
 }

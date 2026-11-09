@@ -1055,7 +1055,7 @@ export function htmlArchipel(e: EcranDistrict): string {
   // Sur PC, la mer et le ciel du tableau continuent jusqu'aux bords de l'écran (.mer-fond, chargée seulement sur PC : bureau.css)
   const scene = sceneDistrict(j.batiments.noyau);
   let h = `<section class="archipel${CUVETTE ? ' cuvette' : ''}" aria-label="Ton district"><img class="tableau-fond" src="${scene.url}" alt="" aria-hidden="true">`
-    + `<span class="mer-fond${scene.nuit ? ' nuit' : ''}" style="--mer:url(${scene.mer});--reflets:url(${reflets});--horizon:${scene.horizon}%" aria-hidden="true"><i class="mer-reflets"></i></span>`
+    + `<span class="mer-fond${scene.nuit ? ' nuit' : ''}" style="--mer:url(${scene.mer});--reflets:url(${reflets});--horizon:${scene.horizon}%" aria-hidden="true"><i class="mer-reflets"></i>${scene.merMasque && !mouvementReduit() ? `<i class="houle-large" data-image="${scene.mer}" data-masque="${scene.merMasque}"></i>` : ''}</span>`
     + `<div class="toile${j.batiments.noyau < 2 ? ' noms' : ''}">${tableau(j)}${zonesBatiments(visuel(j.batiments.noyau), e.selection, CUVETTE ? paliers(j) : null)}${balises(e)}</div>`
     + bulles(e)
     + (e.bulle ? `<button type="button" class="bulle-voile" data-action="bulle" data-id="" aria-label="Replier"></button>` : '')

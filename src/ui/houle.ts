@@ -18,7 +18,7 @@ precision highp float;
 #else
 precision mediump float;
 #endif
-uniform sampler2D img,m1,m2,m3;uniform float t;uniform vec2 FUMEE;varying vec2 uv;
+uniform sampler2D img,m1,m2,m3;uniform float t,cote;uniform vec2 FUMEE;varying vec2 uv;
 float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
 vec3 ecran(vec3 c,vec3 a){return 1.-(1.-c)*(1.-clamp(a,0.,1.));}
@@ -65,7 +65,8 @@ void main(){
     prox=1.-smoothstep(.05,1.,d);
     ress=sin(d*11.-t*1.15+(n(p*.025+vec2(0.,t*.05))-.5)*2.4);
     w=sin(p.x*.045+p.y*.11-t*1.1)*.6+sin(-p.x*.07+p.y*.05-t*.7)*.4+sin(p.y*.31+p.x*.02-t*2.3)*.15;
-    bord=smoothstep(0.,.07,uv.x)*smoothstep(0.,.07,1.-uv.x)*smoothstep(0.,.05,uv.y)*smoothstep(0.,.03,1.-uv.y);
+    // sur PC, la mer prolongée ondule avec le tableau (MER_LARGE) : la houle ne s'éteint plus sur ses côtés
+    bord=mix(1.,smoothstep(0.,.07,uv.x)*smoothstep(0.,.07,1.-uv.x),cote)*smoothstep(0.,.05,uv.y)*smoothstep(0.,.03,1.-uv.y);
     // en pixels du tableau (repère 400 × 600) : la houle déplace d'1 px, le ressac jusqu'à 3,5 px près du bord
     vec2 dpx=vec2(sin(p.y*.09+p.x*.02-t*.9)*.9,w*1.3)+vers*ress*(.6+2.9*prox)*step(.0005,length(gr));
     // l'écume dérive doucement le long du rivage
@@ -143,7 +144,47 @@ void main(){
   gl_FragColor=vec4(c,1.);
 }`;
 
-type Etat = { gl: WebGLRenderingContext; t0: number; tLoc: WebGLUniformLocation | null; fLoc: WebGLUniformLocation | null; fumee: [number, number]; pret: boolean; image: string; tour: number };
+// La mer prolongée sur PC (9 novembre 2026, Bryan : « tout ce côté de la carte n'est pas animé, le côté droit non plus »).
+// L'image large (cuvette-large.webp, 1911 × 1200) a le tableau en son milieu (x = 566 à 1366, même hauteur) : on y calcule
+// la même houle, dans le même repère et à la même horloge que le tableau, pour que la mer reste d'un seul tenant à la jonction.
+// Son masque (scripts/cuvette-large-masque.py) laisse immobiles le dessous du tableau, la digue, les piliers, le bateau,
+// le ponton et le ciel. La mer du fond, près de l'horizon, bouge moins que celle du premier plan.
+const MER_LARGE = `#ifdef GL_FRAGMENT_PRECISION_HIGH
+precision highp float;
+#else
+precision mediump float;
+#endif
+uniform sampler2D img,m1;uniform float t;varying vec2 uv;
+const vec2 L=vec2(1911.,1200.);
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+vec2(1.,1.)),f.x),f.y);}
+vec3 ecran(vec3 c,vec3 a){return 1.-(1.-c)*(1.-clamp(a,0.,1.));}
+void main(){
+  float mer=texture2D(m1,uv).r;
+  if(mer<.02)discard;
+  vec2 P=uv*L,p=(P-vec2(566.,0.))*.5;   // le repère 400 × 600 du tableau, prolongé de chaque côté
+  float loin=mix(.35,1.,smoothstep(60.,320.,P.y));
+  float bord=smoothstep(0.,.05,uv.y)*smoothstep(0.,.03,1.-uv.y)*loin;
+  float w=sin(p.x*.045+p.y*.11-t*1.1)*.6+sin(-p.x*.07+p.y*.05-t*.7)*.4+sin(p.y*.31+p.x*.02-t*2.3)*.15;
+  vec2 dpx=vec2(sin(p.y*.09+p.x*.02-t*.9)*.9,w*1.3);
+  vec2 q=uv+dpx*2./L*bord;
+  if(texture2D(m1,q).r<.5)q=uv;
+  vec3 c=texture2D(img,q).rgb;
+  float cr2=smoothstep(.55,1.,w*.5+.5);c*=1.+bord*mer*(.07*cr2-.035*(1.-cr2));
+  // des éclats qui scintillent sur l'écume crème, comme au pied de la digue dans le tableau
+  float creme=smoothstep(.72,.9,dot(c,vec3(.33)))*step(c.b,c.r-.1);
+  float eclat=smoothstep(.78,.95,n(p*.5+vec2(t*.6,-t*.9))*.6+n(p*1.1-vec2(t*.8,t*.3))*.4);
+  c=ecran(c,vec3(.3)*eclat*creme*mer*.6);
+  gl_FragColor=vec4(c*mer,mer);
+}`;
+/** la même horloge pour le tableau et la mer prolongée */
+const T0 = performance.now();
+const ECRAN_PC = '(min-width:1100px) and (min-height:600px)';
+type Large = { gl: WebGLRenderingContext; toile: HTMLCanvasElement; tLoc: WebGLUniformLocation | null; pret: boolean; image: string };
+let large: Large | null = null;
+let largeEchec = false;
+
+type Etat = { gl: WebGLRenderingContext; t0: number; tLoc: WebGLUniformLocation | null; cLoc: WebGLUniformLocation | null; fLoc: WebGLUniformLocation | null; fumee: [number, number]; pret: boolean; image: string; tour: number };
 let toile: HTMLCanvasElement | null = null;
 let etat: Etat | null = null;
 let echec = false;
@@ -172,12 +213,8 @@ function texture(gl: WebGLRenderingContext, unite: number, img: HTMLImageElement
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
 }
 
-function creer(image: string, masques: string[]): Etat | null {
-  toile = document.createElement('canvas');
-  toile.setAttribute('aria-hidden', 'true');
-  // sans vraie carte graphique (WebGL dessiné par le processeur), la Cuvette reste peinte : sinon elle met le jeu à genoux
-  const gl = toile.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false, powerPreference: 'low-power', failIfMajorPerformanceCaveat: true });
-  if (!gl) return null;
+/** Compile un programme plein écran (deux triangles) ; null si la carte graphique refuse */
+function programme(gl: WebGLRenderingContext, pixels: string): WebGLProgram | null {
   const shader = (type: number, src: string) => {
     const s = gl.createShader(type)!;
     gl.shaderSource(s, src); gl.compileShader(s);
@@ -186,7 +223,7 @@ function creer(image: string, masques: string[]): Etat | null {
   };
   const prog = gl.createProgram()!;
   gl.attachShader(prog, shader(gl.VERTEX_SHADER, SOMMETS));
-  gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, PIXELS));
+  gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, pixels));
   gl.linkProgram(prog);
   if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return null;
   gl.useProgram(prog);
@@ -195,8 +232,51 @@ function creer(image: string, masques: string[]): Etat | null {
   const p = gl.getAttribLocation(prog, 'p');
   gl.enableVertexAttribArray(p);
   gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 0, 0);
+  return prog;
+}
+
+function creerLarge(image: string, masque: string): Large | null {
+  const c = document.createElement('canvas');
+  c.setAttribute('aria-hidden', 'true');
+  const gl = c.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false, powerPreference: 'low-power', failIfMajorPerformanceCaveat: true });
+  if (!gl) return null;
+  const prog = programme(gl, MER_LARGE);
+  if (!prog) return null;
+  ['img', 'm1'].forEach((nom, i) => gl.uniform1i(gl.getUniformLocation(prog, nom), i));
+  const l: Large = { gl, toile: c, tLoc: gl.getUniformLocation(prog, 't'), pret: false, image };
+  Promise.all([image, masque].map(charger)).then((imgs) => {
+    imgs.forEach((im, i) => texture(gl, i, im));
+    l.pret = true;
+  }).catch(() => { largeEchec = true; });
+  return l;
+}
+
+/** La mer prolongée, dessinée juste après le tableau, à la même finesse */
+function dessinerLarge(sec: number) {
+  if (!large?.pret || !large.toile.isConnected || largeEchec) return;
+  const { gl, toile: c } = large;
+  const r = Math.min(window.devicePixelRatio || 1, 1911 / Math.max(1, c.clientWidth)) * finesse;
+  const w = Math.round(c.clientWidth * r), h = Math.round(c.clientHeight * r);
+  if (!w || !h) return;
+  if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+  gl.viewport(0, 0, w, h);
+  gl.clearColor(0, 0, 0, 0);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.uniform1f(large.tLoc, sec);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  c.classList.add('prete');
+}
+
+function creer(image: string, masques: string[]): Etat | null {
+  toile = document.createElement('canvas');
+  toile.setAttribute('aria-hidden', 'true');
+  // sans vraie carte graphique (WebGL dessiné par le processeur), la Cuvette reste peinte : sinon elle met le jeu à genoux
+  const gl = toile.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false, powerPreference: 'low-power', failIfMajorPerformanceCaveat: true });
+  if (!gl) return null;
+  const prog = programme(gl, PIXELS);
+  if (!prog) return null;
   ['img', 'm1', 'm2', 'm3'].forEach((nom, i) => gl.uniform1i(gl.getUniformLocation(prog, nom), i));
-  const e: Etat = { gl, t0: performance.now(), tLoc: gl.getUniformLocation(prog, 't'), fLoc: gl.getUniformLocation(prog, 'FUMEE'), fumee: [90, 196], pret: false, image, tour: 0 };
+  const e: Etat = { gl, t0: T0, tLoc: gl.getUniformLocation(prog, 't'), cLoc: gl.getUniformLocation(prog, 'cote'), fLoc: gl.getUniformLocation(prog, 'FUMEE'), fumee: [90, 196], pret: false, image, tour: 0 };
   Promise.all([image, ...masques].map(charger)).then((imgs) => {
     imgs.forEach((im, i) => texture(gl, i, im));
     e.pret = true;
@@ -213,7 +293,7 @@ function boucle(tour: number) {
   const pas = (now: number) => {
     if (!etat || etat.tour !== tour || !toile?.isConnected || document.hidden || echec) return;
     // passé en graphismes légers en cours de route (Paramètres, ou la mesure des images) : le tableau peint reprend
-    if (leger()) { toile.remove(); return; }
+    if (leger()) { toile.remove(); large?.toile.remove(); return; }
     requestAnimationFrame(pas);
     if (!etat.pret || !visible || now - derniere < 32) return;
     // une longue pause (onglet caché, appareil en veille) ne compte pas ; un redessin de l'écran pèse peu dans la médiane
@@ -243,9 +323,11 @@ function boucle(tour: number) {
     // le temps repart de zéro toutes les heures : les calculs restent précis sur les téléphones
     const sec = ((now - etat.t0) / 1000) % 3600;
     gl.uniform1f(etat.tLoc, sec);
+    gl.uniform1f(etat.cLoc, large?.toile.isConnected && large.pret && !largeEchec ? 0 : 1);
     gl.uniform2f(etat.fLoc, etat.fumee[0], etat.fumee[1]);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     toile.classList.add('prete');
+    dessinerLarge(sec);
   };
   requestAnimationFrame(pas);
 }
@@ -254,6 +336,7 @@ function boucle(tour: number) {
 function arreter() {
   echec = true;
   toile?.remove();
+  large?.toile.remove();
   veille?.disconnect();
   signalerLenteur();
 }
@@ -269,6 +352,14 @@ export function brancherHoule(racine: HTMLElement) {
   // la fumée sort du haut de la cheminée de la Forge, qui change avec son palier
   const f = place.dataset.fumee?.split(' ').map(Number);
   if (f?.length === 2 && f.every(Number.isFinite)) etat.fumee = [f[0]!, f[1]!];
+  // sur PC, la mer prolongée autour du tableau ondule avec lui (sur téléphone, on n'en voit qu'un liseré : elle reste peinte)
+  const placeL = racine.querySelector<HTMLElement>('.mer-fond .houle-large');
+  if (placeL && !largeEchec && window.matchMedia?.(ECRAN_PC).matches) {
+    try {
+      if (!large || large.image !== placeL.dataset.image) { large = creerLarge(placeL.dataset.image!, placeL.dataset.masque!); if (!large) largeEchec = true; }
+    } catch { largeEchec = true; }
+    if (large && !largeEchec) placeL.append(large.toile);
+  } else large?.toile.remove();
   const enCours = toile!.isConnected;
   place.append(toile!);
   // hors de l'écran (le joueur a fait défiler), rien n'est dessiné
