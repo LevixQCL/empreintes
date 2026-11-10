@@ -130,6 +130,8 @@ export interface EcranDistrict {
   apresPseudo?: 'generateur' | null;
   /** Tour du Noyau : le volet affiché sous la prochaine étape (par défaut, les Strates) */
   ongletTour?: 'strates' | 'epreuves' | 'missions';
+  /** Tour du Noyau sur téléphone : l'étage déjà vaincu déplié (les autres restent fins) */
+  etageOuvert?: number | null;
   /** le mode d'emploi des cartes est ouvert, sur cet onglet (guide.ts) */
   guide: import('./guide').OngletGuide | null;
   /** l'ordre des cartes (écran Cartes, cartes d'un Porteur), retenu sur l'appareil */

@@ -1979,14 +1979,18 @@ function htmlStrates(e: EcranDistrict, off: boolean, manque: ReturnType<typeof m
   let h = `<section class="tr-strates" aria-label="${tr`Les Strates`}">`
     + `<ul class="tr-legende"><li>${ICO.cristal}<span><b>${tr`Fouiller`}</b>${tr` : une descente courte, sans gardien, vers un filon (cartes, minerai ou Éclats).`}</span></li>`
     + `<li>${ICO.descendre}<span><b>${tr`Explorer`}</b>${tr` : toute la Strate jusqu’à son gardien, éveillé s’il est déjà vaincu (meilleures cartes). Seul endroit où trouver les Vestiges, les étoiles et les Rôdeurs.`}</span></li></ul>`
-    + `<p class="tr-etoiles-total">${ICO.etoile}<b>${totalEtoiles(j)}</b> ${tr`étoile${totalEtoiles(j) > 1 ? 's' : ''}${prochainPalierEtoiles(j) ? tr` · prochaine récompense à ${prochainPalierEtoiles(j)!.etoiles} (une carte au choix, dont une en ${NOMS_RARETE[prochainPalierEtoiles(j)!.metal]})` : tr(' · toutes les récompenses sont prises')}`}</p><ol>`;
+    + `<p class="tr-etoiles-total">${ICO.etoile}<b>${totalEtoiles(j)}</b> ${tr`étoile${totalEtoiles(j) > 1 ? 's' : ''}${prochainPalierEtoiles(j) ? tr` · prochaine récompense à ${prochainPalierEtoiles(j)!.etoiles} (une carte au choix, dont une en ${NOMS_RARETE[prochainPalierEtoiles(j)!.metal]})` : tr(' · toutes les récompenses sont prises')}`}</p><ol><li class="tr-sommet" aria-hidden="true"><img src="${decor('coupe')}" alt="" loading="lazy" decoding="async"><span>${tr`Surface · la Tour`}</span></li>`;
   for (let n = 1; n <= j.strate; n++) {
     const front = n === j.strate;
     const vaincue = !front || j.frontVaincu;
     const nom = NOMS_ETAGES[Math.min(n - 1, NOMS_ETAGES.length - 1)];
     const zone = zoneDe(n);
     const img = decorStrate(n);
-    h += `<li class="tr-strate${front ? ' front' : ''}${vaincue ? ' vaincue' : ''}">`
+    // sur téléphone, les étages déjà vaincus au-dessus de l'avant-dernier restent fins : on les déplie d'un toucher (10 novembre 2026)
+    const fin = vaincue && n < j.strate - 1;
+    const ouvert = e.etageOuvert === n;
+    h += `<li class="tr-strate${front ? ' front' : ''}${vaincue ? ' vaincue' : ''}${fin ? ` fin${ouvert ? ' ouvert' : ''}` : ''}">`
+      + (fin ? `<button type="button" class="tr-deplier" data-action="tr-etage" data-strate="${n}" aria-expanded="${ouvert}" aria-label="${ouvert ? tr`Replier la Strate −${n}` : tr`Déplier la Strate −${n}`}"></button>` : '')
       + `<span class="tr-vignette">${img ? `<img src="${img}" alt="" loading="lazy" decoding="async">` : ''}<b>−${n}</b></span>`
       + `<div class="tr-infos"><strong>${nom}</strong><small>${echap(zone.nom)}${vaincue ? tr` · ${ICO.ok}vaincue` : ` · <em>${tr`front : son gardien t’attend`}</em>`}</small>`
       + contenuStrate(j, n)
