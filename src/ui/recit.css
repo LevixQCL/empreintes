@@ -1,0 +1,98 @@
+/* « Deux heures » (prototype du Récit d'Ilka, 10 novembre 2026) : la nuit des Hauts-Ponts, l'eau qui monte sur Ilka,
+   la main de Doran en verre fumé. Matière « cristal et lumière » ; l'eau en bleu froid, la lampe de signal en or. */
+
+.ecran.recit{--eau-c:#3E8FB8;gap:12px;padding:calc(12px + var(--sat)) 14px calc(16px + var(--sab));max-width:720px;margin:0 auto;width:100%;
+  background:radial-gradient(120% 60% at 50% 0%,rgba(62,143,184,.18),transparent 70%),linear-gradient(180deg,#0A0F16 0%,#0B0D12 60%)}
+.ecran.recit h1{font:400 26px/1.1 var(--display);color:var(--ink);margin:2px 0 0}
+.ecran.recit .rc-heure{font:700 24px/1 var(--mono);letter-spacing:.02em}
+.ecran.recit h1 small{font:600 13px/1 var(--mono);color:var(--quiet);margin-left:6px;letter-spacing:.02em}
+.ecran.recit .surtitre{color:var(--cristal)}
+
+/* le récit d'avant l'épreuve */
+.rc-recit{display:flex;flex-direction:column;gap:14px;margin:auto 0;padding:8px 2px}
+.rc-recit h1{font-size:34px}
+.rc-lignes{display:flex;flex-direction:column;gap:10px}
+.rc-lignes p{margin:0;font:italic 400 16px/1.5 'Literata',Georgia,serif;color:var(--ink-2)}
+.rc-regles{margin:0;padding:12px 14px 12px 30px;border-radius:14px;background:var(--verre);box-shadow:inset 0 0 0 1px var(--filet);display:flex;flex-direction:column;gap:6px}
+.rc-regles li{font:500 14px/1.4 var(--body);color:var(--ink-2)}
+.rc-pied{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.rc-pied .btn{flex:1 1 140px}
+
+/* la tête : l'heure et le tour */
+.rc-tete{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+
+/* la scène : Ilka et l'eau, l'état à droite */
+.rc-scene{display:grid;grid-template-columns:minmax(120px,40%) 1fr;gap:12px;align-items:stretch}
+.rc-ilka{position:relative;aspect-ratio:3/4;border-radius:16px;overflow:hidden;background:#0E141C;box-shadow:inset 0 0 0 1px var(--filet),0 10px 30px rgba(0,0,0,.45)}
+.rc-ilka img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 18%;filter:saturate(.75) brightness(.85)}
+.rc-eau{position:absolute;left:0;right:0;bottom:0;height:var(--eau);transition:height .7s cubic-bezier(.3,.7,.3,1);
+  background:linear-gradient(180deg,rgba(127,212,255,.55) 0,rgba(62,143,184,.62) 6px,rgba(20,58,84,.82) 100%);
+  box-shadow:0 -1px 0 rgba(200,236,255,.8),0 -8px 18px rgba(127,212,255,.25)}
+.rc-ilka.levres .rc-eau{background:linear-gradient(180deg,rgba(255,181,71,.7) 0,rgba(62,143,184,.68) 6px,rgba(20,58,84,.86) 100%);box-shadow:0 -1px 0 var(--alerte),0 -8px 22px rgba(255,181,71,.3)}
+.rc-niveau{position:absolute;left:8px;bottom:8px;font:700 13px/1 var(--mono);color:#EAF7FF;text-shadow:0 1px 3px #000;padding:5px 8px;border-radius:999px;background:rgba(8,20,30,.6)}
+.rc-etat{display:flex;flex-direction:column;gap:10px;justify-content:space-between}
+.rc-etat small b{color:var(--ink);margin-left:4px}
+.rc-etat small{display:block;font:600 12px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--quiet)}
+.rc-intention{padding:10px 12px;border-radius:14px;background:linear-gradient(180deg,rgba(62,143,184,.22),rgba(62,143,184,.08));box-shadow:inset 0 0 0 1px rgba(127,212,255,.35)}
+.rc-intention strong{display:block;font:400 20px/1.15 var(--display);color:#D8F1FF;margin-top:4px}
+.rc-intention em{font:600 12px/1 var(--mono);color:var(--ok);font-style:normal}
+.rc-intention.relance{box-shadow:inset 0 0 0 1px var(--filet-fort)}
+.rc-jauge{display:flex;gap:4px;margin-top:6px}
+.rc-jauge i{flex:1;min-width:0;height:10px;border-radius:3px;background:var(--track)}
+.rc-jauge.souffle i.plein{background:linear-gradient(180deg,#F3EEE4,#BFD9E6);box-shadow:0 0 6px rgba(200,236,255,.35)}
+.rc-compte{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.rc-compte small{width:100%}
+.rc-compte strong{font:400 32px/1 var(--display);color:var(--gold)}
+.rc-compte em{font:600 13px/1 var(--mono);color:var(--quiet);font-style:normal}
+
+.rc-journal{margin:0;font:500 14px/1.4 var(--body);color:var(--ink-2);padding:8px 12px;border-radius:12px;background:var(--verre)}
+.rc-alerte{margin:0;font:italic 400 15px/1.45 'Literata',Georgia,serif;color:#F2D58C;padding:10px 12px;border-radius:12px;background:rgba(216,180,101,.1);box-shadow:inset 0 0 0 1px var(--filet-fort)}
+
+/* la table : les deux mains de Doran, l'aperçu, sa main */
+.rc-table{display:flex;flex-direction:column;gap:10px}
+.rc-mains{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rc-vide{display:grid;place-items:center;min-height:96px;border-radius:14px;border:1px dashed var(--filet-fort);font:600 13px/1 var(--mono);color:var(--mute)}
+.rc-apercu{margin:0;font:600 14px/1.3 var(--mono);color:var(--ink-2);text-align:center}
+.rc-apercu b{color:var(--danger)}
+.rc-main{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.rc-vide-main{grid-column:1/-1;margin:0;text-align:center;font:italic 15px/1.4 'Literata',Georgia,serif;color:var(--quiet)}
+.rc-pioche{margin:0;font:600 12px/1 var(--mono);color:var(--mute);text-align:right}
+
+.rc-carte{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:4px;text-align:left;min-height:96px;padding:10px 10px 10px 12px;border:none;border-radius:14px;color:var(--ink);
+  background:var(--verre-2);box-shadow:inset 0 0 0 1px var(--filet),inset 3px 0 0 var(--accent,var(--gold));transition:transform .12s ease,box-shadow .15s ease}
+.rc-carte strong{font:400 15px/1.15 var(--display);padding-right:26px}
+.rc-carte small{font:500 13px/1.3 var(--body);color:var(--ink-2)}
+.rc-carte.soulever{--accent:#7FD4FF}
+.rc-carte.respirer{--accent:#F3EEE4}
+.rc-carte.caler{--accent:var(--bio)}
+.rc-carte.relancer{--accent:var(--gold);background:linear-gradient(160deg,rgba(216,180,101,.22),rgba(24,29,39,.9));box-shadow:inset 0 0 0 1px var(--filet-fort),0 0 18px rgba(216,180,101,.25)}
+.rc-carte.suit{box-shadow:inset 0 0 0 1px rgba(216,180,101,.7),inset 3px 0 0 var(--accent),0 0 12px rgba(216,180,101,.18)}
+.rc-carte.rc-posee{transform:translateY(-2px);box-shadow:inset 0 0 0 2px var(--accent),0 8px 20px rgba(0,0,0,.4)}
+.rc-carte[aria-disabled="true"]{opacity:.5}
+.rc-carte:active{transform:scale(.98)}
+.rc-freq{position:absolute;top:8px;right:8px;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;font:700 14px/1 var(--mono);color:#0B0D12;background:var(--accent)}
+.rc-suit{font:600 12px/1 var(--mono);color:var(--gold);font-style:normal}
+.rc-lampe{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:radial-gradient(circle,#FFF4D0 0,#F2C25E 45%,rgba(242,194,94,0) 72%);animation:rc-lampe 1.4s ease-in-out infinite}
+@keyframes rc-lampe{50%{opacity:.35}}
+.rc-tenir{margin-top:2px}
+
+/* la fin */
+.rc-voile{position:fixed;inset:0;background:rgba(5,8,12,.72);z-index:40}
+.rc-fin{position:fixed;left:50%;bottom:calc(14px + var(--sab));transform:translateX(-50%);width:min(560px,calc(100% - 24px));max-height:calc(100dvh - 40px);overflow:auto;z-index:41;
+  display:flex;flex-direction:column;gap:12px;padding:18px;border-radius:18px;background:var(--verre-2);box-shadow:inset 0 0 0 1px var(--filet-fort),0 20px 50px rgba(0,0,0,.6)}
+.rc-fin h2{margin:0;font:400 24px/1.1 var(--display);color:var(--ink)}
+.rc-fin>p{margin:0;font:500 15px/1.45 var(--body);color:var(--ink-2)}
+.rc-conseil{color:var(--quiet)!important;font-size:14px!important}
+.rc-etoiles{margin:0;font-size:30px;line-height:1;color:var(--gold);letter-spacing:4px}
+.rc-etoiles span{color:var(--track)}
+.rc-bilan{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.rc-bilan li{font:500 14px/1.35 var(--body);color:var(--mute);padding-left:22px;position:relative}
+.rc-bilan li::before{content:'○';position:absolute;left:0;color:var(--mute)}
+.rc-bilan li.ok{color:var(--ink-2)}
+.rc-bilan li.ok::before{content:'★';color:var(--gold)}
+
+@media (min-width:1100px){
+  .ecran.recit{padding-top:28px}
+  .rc-scene{grid-template-columns:200px 1fr}
+  .rc-etat{justify-content:flex-start;gap:16px}
+}

@@ -104,6 +104,10 @@ const SCENES: { nom: string; sauvegarde: 'district' | 'combat' | 'debut' | 'flec
   { nom: 'strate-brume', sauvegarde: 'brume', faire: async (p) => { await ENTRER(p); await p.click('.ex-salle.accessible >> nth=0'); await p.waitForTimeout(300); } },
   { nom: 'combat', sauvegarde: 'combat', faire: async (p) => { await ENTRER(p); await p.click('[data-action="salle"]'); await p.waitForTimeout(600); } },
   { nom: 'debut', sauvegarde: 'debut', faire: ENTRER },
+  // « Deux heures » (prototype du Récit d'Ilka, 10 novembre 2026) : le récit d'avant, la table avec deux cartes posées, la fin
+  { nom: 'recit-intro', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="recit-ouvrir"]'); await p.waitForTimeout(300); } },
+  { nom: 'recit-table', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="recit-ouvrir"]'); await p.click('[data-action="recit-commencer"]'); await p.click('.rc-main .rc-carte >> nth=0'); await p.click('.rc-main .rc-carte >> nth=0'); await p.waitForTimeout(300); } },
+  { nom: 'recit-tour', sauvegarde: 'district', faire: async (p) => { await ENTRER(p); await p.click('.onglet[data-action="menu"]'); await p.click('[data-action="recit-ouvrir"]'); await p.click('[data-action="recit-commencer"]'); for (let i = 0; i < 4; i++) { await p.click('.rc-main .rc-carte >> nth=0'); await p.click('[data-action="recit-tenir"]'); } await p.waitForTimeout(900); } },
 ];
 // VISUEL_TAILLES=1280x800,1920x1080 : d'autres tailles d'écran (par défaut, un téléphone et un PC)
 // VISUEL_LANGUE=en : la version « après » s'affiche en anglais, pour relire la traduction à côté du français

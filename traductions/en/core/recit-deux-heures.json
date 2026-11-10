@@ -1,0 +1,65 @@
+{
+ "source": "src/core/recit-deux-heures.ts",
+ "entrees": [
+  {
+   "fr": "Soulever",
+   "en": ""
+  },
+  {
+   "fr": "Repousse l’eau de {0}.",
+   "en": ""
+  },
+  {
+   "fr": "Respire avec moi",
+   "en": ""
+  },
+  {
+   "fr": "Rend {0} de souffle à Ilka.",
+   "en": ""
+  },
+  {
+   "fr": "Caler sa tête",
+   "en": ""
+  },
+  {
+   "fr": "Repousse l’eau de {0}, et la prochaine montée de 1.",
+   "en": ""
+  },
+  {
+   "fr": "Relancez",
+   "en": ""
+  },
+  {
+   "fr": "Trois éclats vers la station. Les pompes repartent, et le courant emporte tout ce qui est pris au fond.",
+   "en": ""
+  },
+  {
+   "fr": "Les pompes repartent.",
+   "en": ""
+  },
+  {
+   "fr": "Ilka compte : {0}.",
+   "en": ""
+  },
+  {
+   "fr": "L’eau monte de {0}.",
+   "en": ""
+  },
+  {
+   "fr": "L’eau recule de {0}.",
+   "en": ""
+  },
+  {
+   "fr": "L’eau ne gagne rien.",
+   "en": ""
+  },
+  {
+   "fr": "L’eau est à ses lèvres.",
+   "en": ""
+  },
+  {
+   "fr": "La station peut relancer.",
+   "en": ""
+  }
+ ]
+}

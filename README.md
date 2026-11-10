@@ -55,6 +55,8 @@ src/
     expedition.ts  une suite de combats ; c'est ce qui est sauvegardé
     explorer.ts    Explorer ou fouiller : Vestiges, étoiles de Strate, gardien éveillé, Rôdeurs (textes et réglages, docs/strates-explorer.md)
     rng.ts         hasard déterministe (même graine = même partie)
+    recit-deux-heures.ts  « Deux heures », prototype de l'épreuve du Récit d'Ilka (menu ▸ Prototype) : l'eau, le souffle, le compte, « Relancez » ;
+                   l'écran est ui/recit.ts, les gestes app/recit.ts, le réglage est joué au robot dans tests/deux-heures.test.ts
   ui/            l'affichage
     coquille.ts    ressources en haut, navigation en bas, menu, notifications (commun au district)
     district.ts    carte du district (la Cuvette), Tour du Noyau, escouade, cartes, Bibliothèque ; les détails s'ouvrent en feuille par le bas
