@@ -1,0 +1,65 @@
+/* OSSYRA — L'Exode (10 novembre 2026). Même matière que le reste : verre fumé, arêtes de glace, or pour la valeur.
+   Textes à 12 px minimum, cibles de 44 px. La feuille reprend la base de celle de l'écluse (.bs-feuille). */
+
+/* ---------- Ceux qui partent avec toi ---------- */
+.xo-compteur{display:grid;gap:8px;margin:6px 0 14px;padding:14px 14px 16px;border-radius:12px;
+  background:linear-gradient(180deg,rgba(242,213,140,.1),rgba(242,213,140,.03));box-shadow:inset 0 0 0 1px rgba(242,213,140,.28)}
+.xo-compteur .surtitre{display:flex;align-items:center;gap:6px;color:#F2D58C}
+.xo-compteur .surtitre .ico{width:14px;height:14px}
+.xo-nombre{display:flex;align-items:baseline;gap:8px;margin:0}
+.xo-nombre b{font:400 40px/1 var(--display);color:#FFF6DC;letter-spacing:.01em}
+.xo-nombre small{font-size:13px;color:#C9D6E6}
+.xo-barre{display:block;height:6px;border-radius:999px;background:rgba(242,213,140,.14);overflow:hidden}
+.xo-barre i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#C99A3F,#F2D58C)}
+.xo-voisins{display:flex;align-items:center;gap:8px;margin:2px 0 0;font-size:13px;line-height:1.4;color:#C9D6E6}
+.xo-voisins .ico{flex:none;width:14px;height:14px;color:#F2D58C}
+
+/* ---------- Le chantier en cours ---------- */
+.xo-chantier header{display:grid;gap:4px}
+.xo-chantier h3{margin:0;font:400 22px/1.15 var(--display);color:#F6F2EA}
+.xo-texte{margin:0;font-size:14px;line-height:1.5;color:#C9D6E6}
+.xo-etapes{display:grid;gap:6px}
+.xo-etapes b{font:600 12px/1 var(--mono);letter-spacing:.04em;color:#93A3B8}
+.xo-crans{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:4px}
+.xo-crans i{height:8px;border-radius:999px;background:rgba(205,239,255,.12)}
+.xo-crans i.fait{background:linear-gradient(90deg,#C99A3F,#F2D58C)}
+.xo-crans i.cours{background:rgba(205,239,255,.5);animation:xo-pouls 1.6s ease-in-out infinite}
+@keyframes xo-pouls{50%{opacity:.45}}
+@media (prefers-reduced-motion:reduce){.xo-crans i.cours{animation:none}}
+.xo-avance{display:grid;gap:3px}
+.xo-avance strong{font-size:14px;font-weight:600;color:#fff}
+.xo-avance small{font-size:12.5px;color:#C9D6E6}
+.xo-avance .jauge{display:block;height:4px;margin-top:5px;border-radius:2px;background:rgba(205,239,255,.12);overflow:hidden}
+.xo-avance .jauge i{display:block;height:100%;background:var(--x-glace,#CDEFFF)}
+.xo-lancer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.xo-prix{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font:600 14px/1 var(--mono)}
+.xo-duree{display:inline-flex;align-items:center;gap:4px;color:#93A3B8;font-weight:500}
+.xo-duree .ico{width:13px;height:13px}
+.xo-lancer .btn{min-height:44px}
+.xo-raison{display:flex;align-items:flex-start;gap:8px;margin:0;font-size:13px;line-height:1.45;color:#F2D58C}
+.xo-raison .ico{flex:none;width:14px;height:14px;margin-top:2px}
+
+/* ---------- Les cinq chantiers ---------- */
+.xo-liste{display:grid;gap:8px;margin:8px 0 4px;padding:0;list-style:none}
+.xo-liste li{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:start;gap:10px;padding:10px 12px;border-radius:10px;
+  background:rgba(205,239,255,.04);box-shadow:inset 0 0 0 1px rgba(205,239,255,.12)}
+.xo-liste li.ici{box-shadow:inset 0 0 0 1px rgba(242,213,140,.45);background:rgba(242,213,140,.05)}
+.xo-liste li.apres{opacity:.72}
+.xo-rang{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;font:400 15px/1 var(--display);color:#CDEFFF;
+  box-shadow:inset 0 0 0 1px rgba(205,239,255,.3)}
+.xo-liste li.fait .xo-rang{color:#1A1408;background:linear-gradient(180deg,#F2D58C,#C99A3F);box-shadow:none}
+.xo-liste li>span{display:grid;gap:3px;min-width:0}
+.xo-liste strong{font-size:14.5px;font-weight:600;color:#fff}
+.xo-liste small{font-size:12.5px;line-height:1.4;color:#C9D6E6}
+.xo-liste em{display:inline-flex;align-items:center;gap:5px;margin-top:2px;font-size:12px;font-style:normal;color:#E6D6F5}
+.xo-liste em .ico{width:13px;height:13px}
+.xo-etat{display:inline-flex;align-items:center;gap:4px;font:600 12px/1.2 var(--mono);font-style:normal;color:#93A3B8;white-space:nowrap}
+.xo-etat .ico{width:12px;height:12px}
+.xo-liste li.fait .xo-etat,.xo-liste li.ici .xo-etat{color:#F2D58C}
+
+/* ---------- La présentation ---------- */
+.xo-presentation{display:grid;gap:12px}
+.xo-accroche{margin:2px 0 0;font:italic 400 15px/1.55 var(--lecture,'Literata',Georgia,serif);color:#E8E2D4}
+
+/* la balise de l'Exode, sur la digue */
+.toile .balise.exode.fermee .bal-nom{opacity:.7}

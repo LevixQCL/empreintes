@@ -61,6 +61,11 @@ export async function agirDistrict(a: string, c: Clic): Promise<Suite> {
     case 'ameliorer': resultat(J.ameliorer(app.jeu, id as BatimentId, Date.now())); break;
     case 'poster': resultat(J.poster(app.jeu, id, (b.dataset.poste as J.Poste) ?? null)); D.posteChanger = false; D.tourChanger = false; break;
     case 'liberer': resultat(J.poster(app.jeu, id, null)); break;
+    // l'Exode, sur la digue (10 novembre 2026)
+    case 'exode': D.exode = !D.exode; D.exodeAide = false; D.basses = false; D.selection = null; D.ressource = null; D.menu = false; break;
+    case 'exode-entrer': J.etatExode(app.jeu).vu = true; D.exodeAide = false; sauver(); break;
+    case 'exode-aide': D.exodeAide = !D.exodeAide; break;
+    case 'exode-lancer': { const r = J.lancerExode(app.jeu, Date.now()); resultat(r); if (r.ok) D.message = r.message ?? ''; break; }
     // les Basses, à l'écluse (7 novembre 2026)
     case 'basses-entrer': app.jeu.bassesVu = true; D.bassesAide = false; sauver(); break;
     case 'basses-aide': D.bassesAide = !D.bassesAide; break;

@@ -254,7 +254,7 @@ export interface Chantier {
 
 /** Un choix de carte en attente (boss, objectif du jour, Archive) */
 export interface Choix {
-  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve' | 'parrainage' | 'releve' | 'etoiles' | 'rodeur' | 'maree' | 'fleche';
+  source: 'boss' | 'quotidien' | 'archive' | 'ravitaillement' | 'fouille' | 'epreuve' | 'parrainage' | 'releve' | 'etoiles' | 'rodeur' | 'maree' | 'fleche' | 'exode';
   options: string[];
   /** le joueur peut prendre des Éclats à la place */
   eclats?: number;
@@ -363,6 +363,8 @@ export interface Jeu {
   soinOffert?: boolean;
   /** la Flèche : le quai atteint, le record, les quais gravés reçus (fleche.ts) ; absente avant la première montée */
   fleche?: import('./fleche').EtatFleche;
+  /** l'Exode : le grand projet du district après −10 (exode.ts) ; absent tant qu'il n'est pas commencé */
+  exode?: import('./exode').EtatExode;
   eclats: number;
   /** les cartes possédées */
   collection: Record<string, CarteCollection>;

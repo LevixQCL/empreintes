@@ -122,6 +122,26 @@
    "en": "A Bearer is in the Lows"
   },
   {
+   "fr": "L’Exode : le projet du district{0}",
+   "en": "The Exodus: the district’s project{0}"
+  },
+  {
+   "fr": ", pas encore ouvert",
+   "en": ", not open yet"
+  },
+  {
+   "fr": "Exode",
+   "en": "Exodus"
+  },
+  {
+   "fr": "Une étape de l’Exode avance",
+   "en": "A stage of the Exodus is under way"
+  },
+  {
+   "fr": "Une étape de l’Exode peut être lancée",
+   "en": "A stage of the Exodus can be started"
+  },
+  {
    "fr": "Objectif",
    "en": "Objective"
   },
@@ -1080,6 +1100,10 @@
   {
    "fr": "Le trophée du Rôdeur",
    "en": "The Prowler’s trophy"
+  },
+  {
+   "fr": "Un chantier de l’Exode est fini",
+   "en": "A work of the Exodus is finished"
   },
   {
    "fr": "Le boss laisse des empreintes",

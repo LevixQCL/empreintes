@@ -116,6 +116,9 @@ export interface EcranDistrict {
   bassesLieu?: string | null;
   /** la présentation des Basses rouverte à la demande (« ? ») */
   bassesAide?: boolean;
+  /** la feuille de l'Exode est ouverte ; `exodeAide` : sa présentation relue à la demande */
+  exode?: boolean;
+  exodeAide?: boolean;
   /** onglet Escouade : le volet « Porteurs » (tous les Porteurs) est affiché au lieu de l’escouade */
   reserve?: boolean;
   /** onglet Escouade : la place de l'escouade (0 à 2) dont on choisit le Porteur, volet ouvert */
