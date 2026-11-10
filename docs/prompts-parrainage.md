@@ -23,6 +23,8 @@ bold graphic fantasy illustration, clean confident ink outlines, cel shading wit
 
 ## Plaque « Recruteur » (facultatif) — `public/art/classements/recruteur.webp`
 
+**Intégrée le 10 novembre 2026** : fond de `.insigne-recruteur` (src/ui/parrainage.css).
+
 La petite plaque à côté du pseudo sur le Grand Tableau. Pour l'instant une étiquette dorée en CSS ; si tu veux une version peinte,
 fond noir pour le détourage, sans texte (le mot est écrit par le jeu).
 

@@ -1,5 +1,8 @@
 # Prompts : les icônes de l'économie à cristal unique (9 novembre 2026)
 
+**Intégré le 10 novembre 2026** : les deux icônes sont peintes et remises dans `PEINTES`.
+
+
 Deux icônes peintes, comme celle des Éclats : `public/art/icones/energie.webp` (les cristaux) et
 `public/art/icones/composants.webp` (le minerai). Fond noir pur pour le détourage. En attendant, le jeu les dessine au trait.
 Une fois déposées, remettre `'energie'` et `'composants'` dans `PEINTES` (src/ui/icones.ts).

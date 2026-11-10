@@ -204,9 +204,10 @@ export const illustrationEnnemi = (id: string): string | null =>
  * Visage d'un garde de garnison (pillages) ou d'un garde posté par un autre directeur (Flèche) : 9 novembre 2026,
  * recensement des images, on se battait contre « sa » propre Ilka. Le garde garde le nom du Porteur qu'il sert,
  * mais prend un visage de garde de sa lignée, en deux variantes pour que deux gardes d'une même lignée diffèrent.
- * Prompts : docs/prompts-recensement.md. Tant qu'un visage n'est pas peint, le garde reprend le portrait du Porteur.
+ * Prompts : docs/prompts-recensement.md. Tant qu'un visage n'est pas peint, le garde reprend le portrait du Porteur
+ * (10 novembre 2026 : tous peints sauf garnison-bio-1).
  */
-const GARNISONS_PEINTES = new Set<string>([]);
+const GARNISONS_PEINTES = new Set<string>(['garnison-tech-1', 'garnison-tech-2', 'garnison-bio-2', 'garnison-reso-1', 'garnison-reso-2']);
 export function visageGarnison(lignee: string, variante: number, porteur: string): string | null {
   const id = `garnison-${lignee}-${(variante % 2) + 1}`;
   return GARNISONS_PEINTES.has(id) ? `${base}ennemis/${id}.webp` : portrait(porteur);

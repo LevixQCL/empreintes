@@ -1,5 +1,9 @@
 # Recensement des images : visages (9 novembre 2026)
 
+**Intégré le 10 novembre 2026** : la porte scellée (Véla à la lanterne violette, lueurs `.t-flamme`/`.t-halo`/`.t-porte` recalées, `apercu.jpg` refait) et 5 gardes sur 6.
+**Reste à faire : `garnison-bio-1.webp`** (garde génée I). Règle de la Bible appliquée aux versions générées : Augmentés = mèches blanches selon les implants, Résonants = mèche d'or ; ne jamais les mettre dans le `--no`.
+
+
 Suite du recensement du 9 novembre (section « Images et personnages »). Chaque prompt est complet : le copier tel quel, rien à remplacer.
 Une image entière à chaque fois, pas de retouche à la gomme. Un visage par personnage.
 

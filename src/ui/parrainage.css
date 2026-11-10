@@ -60,9 +60,10 @@
 .rc-distinction .chiffre{display:block;margin-top:4px}
 .rc-titre-ex{display:grid;place-items:center;height:56px}
 
-/* le titre « Recruteur » : une petite plaque d'or, ici et sur le Grand Tableau */
-.insigne-recruteur,.gt-qui strong em.insigne-recruteur{font-style:normal;display:inline-block;padding:1px 7px;border-radius:0;font:700 var(--t-min)/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;
-  color:#1C1406;background:var(--laiton);clip-path:polygon(4px 0,100% 0,calc(100% - 4px) 100%,0 100%);vertical-align:1px}
+/* le titre « Recruteur » : une petite plaque d'or peinte (10 novembre 2026), ici et sur le Grand Tableau ;
+   le mot est écrit par le jeu, entre les deux cristaux des bouts */
+.insigne-recruteur,.gt-qui strong em.insigne-recruteur{font-style:normal;display:inline-block;padding:2px 13px;border-radius:0;font:700 var(--t-min)/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;
+  color:#1C1406;background:url("/art/classements/recruteur.webp") 50% 50%/100% 100% no-repeat;text-shadow:0 1px 0 rgba(255,236,180,.45);vertical-align:1px}
 
 /* le dos « Empreinte partagée » : peint sur Midjourney (deux empreintes, or et glace, qui se rejoignent au centre).
    L'emblème se pose, plus petit, là où elles se rencontrent : en miniature ici, et sur les grandes révélations (gains.ts) */

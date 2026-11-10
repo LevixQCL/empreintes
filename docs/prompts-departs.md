@@ -1,5 +1,8 @@
 # Decks de départ : casser les doublons (9 novembre 2026)
 
+**Intégré le 10 novembre 2026** : les 4 images (Front de roche, Conque de garde, Pince de récif, Talon de cristal).
+
+
 Recensement du 9 nov. : 4 des 6 cartes de départ de Doran sont des masses vertes en coque, et Ilka a deux paires de bottes bleues.
 On refait 4 images. Carapace reste la seule coque du deck de Doran.
 
