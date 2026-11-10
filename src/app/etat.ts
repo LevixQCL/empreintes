@@ -23,7 +23,7 @@ export const pause = (ms: number) => new Promise((r) => setTimeout(r, reduit ? M
 
 const sauvegarde = charger();
 
-type Mode = 'titre' | 'intro' | 'district' | 'combat' | 'duel' | 'recit';
+type Mode = 'titre' | 'intro' | 'district' | 'combat' | 'duel' | 'lecture';
 
 /** Ce qui change pendant la partie, partagé par tous les modules de l'application */
 export const app: {
