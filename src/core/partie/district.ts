@@ -699,7 +699,9 @@ export function acheter(j: Jeu, index: number, now = j.dernierTick): Resultat {
 
 /** Les soins intensifs de la Clinique : de l'énergie pour effacer l'Usure d'un Porteur tout de suite (sans attendre le repos) */
 /** 9 novembre 2026 (cristal unique) : 1 cristal par point d'Usure (relu par un game designer : moins cher, l'Usure ne voudrait plus rien dire) */
-export const SOINS_INTENSIFS = { usureParCristal: 1 };
+/** 10 novembre 2026 (compte rendu de partie, validé par Bryan) : 2 cristaux par point. À 1 cristal, l'Usure n'existait pas (120 cristaux l'escouade entière).
+ *  Robot (occasionnel moyen, avec la défaite au tiers du butin) : Strate −10 au jour 28 → 30 ; à 3 cristaux et un quart du butin, jour 34. */
+export const SOINS_INTENSIFS = { usureParCristal: 0.5 };
 /** Le prix en cristaux pour effacer `points` d'Usure */
 export const prixSoins = (points: number) => Math.ceil(points / SOINS_INTENSIFS.usureParCristal);
 
@@ -717,8 +719,8 @@ export function soignerVite(j: Jeu, id: string): Resultat {
     p.usure = 0;
     return { ok: true, message: tr`La Clinique offre ses premiers soins intensifs : ${porteurDef(id).nom} est de nouveau sur pied (−${usure} Usure).` };
   }
-  const points = Math.min(usure, Math.floor(j.energie) * SOINS_INTENSIFS.usureParCristal);
-  if (points < 1) return non(tr`Il faut 1 cristal pour ${SOINS_INTENSIFS.usureParCristal} points d’Usure.`);
+  const points = Math.min(usure, Math.floor(Math.floor(j.energie) * SOINS_INTENSIFS.usureParCristal));
+  if (points < 1) return non(tr`Il faut ${prixSoins(1)} cristaux pour un point d’Usure.`);
   j.energie -= prixSoins(points);
   p.usure = Math.max(0, p.usure - points);
   return { ok: true, message: tr`Soins intensifs : −${points} Usure pour ${porteurDef(id).nom} (${prixSoins(points)} cristal${prixSoins(points) > 1 ? 'x' : ''}).` };

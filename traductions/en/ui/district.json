@@ -422,6 +422,10 @@
    "en": "1 crystal per {0} points"
   },
   {
+   "fr": "{0} cristaux par point",
+   "en": "{0} crystals per point"
+  },
+  {
    "fr": "1 cristal par point",
    "en": "1 crystal per point"
   },

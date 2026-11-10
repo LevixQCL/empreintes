@@ -623,7 +623,7 @@ function taille(j: Jeu): string {
 /** Les soins intensifs de la Clinique (27 octobre 2026) : des cristaux pour effacer l'Usure d'un Porteur tout de suite */
 function blocSoinsIntensifs(j: Jeu): string {
   const blesses = PORTEURS.filter((p) => porteursPresents(j).includes(p.id) && !enExpedition(j, p.id) && j.porteurs[p.id]!.usure >= 1);
-  const tarif = SOINS_INTENSIFS.usureParCristal > 1 ? tr`1 cristal pour ${SOINS_INTENSIFS.usureParCristal} points` : tr('1 cristal par point');
+  const tarif = SOINS_INTENSIFS.usureParCristal > 1 ? tr`1 cristal pour ${SOINS_INTENSIFS.usureParCristal} points` : SOINS_INTENSIFS.usureParCristal < 1 ? tr`${prixSoins(1)} cristaux par point` : tr('1 cristal par point');
   let h = `<section class="fb-bloc fb-soins"><h3 class="titre-bloc">${ICO.soin}${tr`Soins intensifs`}</h3>`
     + (j.soinOffert ? `<p class="fb-vide">${tr`Efface l’Usure tout de suite :`} <b>${tarif}</b>.</p>`
       : `<p class="fb-vide">${tr`Efface l’Usure tout de suite.`} <b>${tr`La première fois, c’est offert`}</b> ${tr`; ensuite ${tarif}.`}</p>`);

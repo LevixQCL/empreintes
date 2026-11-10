@@ -45,8 +45,8 @@ export const DISTRICT = {
   cartesMax: PLACES_PORTEUR,
   /** cartes qu'il faut au deck de l'escouade (cartes du district comprises) pour descendre */
   deckMin: 12,
-  /** part du butin gardée après une défaite */
-  butinDefaite: 0.5,
+  /** part du butin gardée après une défaite (10 novembre 2026 : la moitié → un tiers, perdre ne coûtait presque rien) */
+  butinDefaite: 1 / 3,
   /** fuir un combat jusqu'au district (22 octobre 2026) : part des composants gardée, et Usure en plus pour chaque Porteur */
   butinFuite: 0.75,
   usureFuite: 3,

@@ -470,8 +470,8 @@
    "en": "The Clinic offers its first intensive care: {0} is back on their feet (−{1} Strain)."
   },
   {
-   "fr": "Il faut 1 cristal pour {0} points d’Usure.",
-   "en": "You need 1 crystal per {0} Strain points."
+   "fr": "Il faut {0} cristaux pour un point d’Usure.",
+   "en": "It takes {0} crystals to heal one point of Strain."
   },
   {
    "fr": "Soins intensifs : −{0} Usure pour {1} ({2} cristal{3}).",

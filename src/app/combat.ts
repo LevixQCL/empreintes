@@ -82,7 +82,7 @@ export function finPour(): Fin | null {
     return null;
   }
   if (s.issue === 'defaite') {
-    return { issue: 'defaite', titre: t('Défaite'), texte: t`Toute l’escouade est à terre. Elle remonte avec la moitié du butin (${Math.floor(x.butin * J.DISTRICT.butinDefaite)} minerai) et devra se reposer à la Clinique.`, bouton: t('Remonter au district'), action: 'remonter' };
+    return { issue: 'defaite', titre: t('Défaite'), texte: t`Toute l’escouade est à terre. Elle remonte avec un tiers du butin (${Math.floor(x.butin * J.DISTRICT.butinDefaite)} minerai) et devra se reposer à la Clinique.`, bouton: t('Remonter au district'), action: 'remonter' };
   }
   if (s.issue === 'victoire') {
     const nom = s.autres?.length ? t('Le groupe') : ennemiDef(s.ennemi.id).nom;
